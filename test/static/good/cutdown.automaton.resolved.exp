@@ -1,0 +1,140 @@
+State 0:
+goal' -> . goal [ # ]
+-- On NEW shift to state 1
+-- On INTEGER_LITERAL shift to state 3
+-- On primary_not_name shift to state 4
+-- On primary shift to state 5
+-- On left_hand_side shift to state 6
+-- On goal shift to state 18
+-- On expression shift to state 12
+-- On assignment shift to state 19
+-- On array_access shift to state 14
+
+State 1:
+primary_not_name -> NEW . L_BRACKET expression R_BRACKET [ R_BRACKET ASSIGN ]
+-- On L_BRACKET shift to state 2
+
+State 2:
+primary_not_name -> NEW L_BRACKET . expression R_BRACKET [ R_BRACKET ASSIGN ]
+-- On NEW shift to state 1
+-- On INTEGER_LITERAL shift to state 3
+-- On primary_not_name shift to state 4
+-- On primary shift to state 5
+-- On left_hand_side shift to state 6
+-- On expression shift to state 16
+-- On assignment shift to state 13
+-- On array_access shift to state 15
+
+State 3:
+primary -> INTEGER_LITERAL . [ R_BRACKET L_BRACKET EOF ]
+-- On R_BRACKET reduce production primary -> INTEGER_LITERAL
+-- On L_BRACKET reduce production primary -> INTEGER_LITERAL
+-- On EOF reduce production primary -> INTEGER_LITERAL
+
+State 4:
+left_hand_side -> primary_not_name . [ ASSIGN ]
+-- On ASSIGN reduce production left_hand_side -> primary_not_name
+
+State 5:
+expression -> primary . [ R_BRACKET L_BRACKET EOF ]
+-- On R_BRACKET reduce production expression -> primary
+-- On L_BRACKET reduce production expression -> primary
+-- On EOF reduce production expression -> primary
+
+State 6:
+assignment -> left_hand_side . ASSIGN expression [ R_BRACKET L_BRACKET EOF ]
+-- On ASSIGN shift to state 7
+
+State 7:
+assignment -> left_hand_side ASSIGN . expression [ R_BRACKET L_BRACKET EOF ]
+-- On NEW shift to state 1
+-- On INTEGER_LITERAL shift to state 3
+-- On primary_not_name shift to state 4
+-- On primary shift to state 5
+-- On left_hand_side shift to state 6
+-- On expression shift to state 8
+-- On assignment shift to state 13
+-- On array_access shift to state 15
+
+State 8:
+array_access -> expression . L_BRACKET primary_not_name R_BRACKET [ R_BRACKET L_BRACKET EOF ASSIGN ]
+assignment -> left_hand_side ASSIGN expression . [ R_BRACKET L_BRACKET EOF ]
+-- On L_BRACKET shift to state 9
+-- On R_BRACKET reduce production assignment -> left_hand_side ASSIGN expression
+-- On EOF reduce production assignment -> left_hand_side ASSIGN expression
+** Conflict on L_BRACKET
+
+State 9:
+array_access -> expression L_BRACKET . primary_not_name R_BRACKET [ R_BRACKET L_BRACKET EOF ASSIGN ]
+-- On NEW shift to state 1
+-- On INTEGER_LITERAL shift to state 3
+-- On primary_not_name shift to state 10
+-- On primary shift to state 5
+-- On left_hand_side shift to state 6
+-- On expression shift to state 12
+-- On assignment shift to state 13
+-- On array_access shift to state 14
+
+State 10:
+array_access -> expression L_BRACKET primary_not_name . R_BRACKET [ R_BRACKET L_BRACKET EOF ASSIGN ]
+left_hand_side -> primary_not_name . [ ASSIGN ]
+-- On R_BRACKET shift to state 11
+-- On ASSIGN reduce production left_hand_side -> primary_not_name
+
+State 11:
+array_access -> expression L_BRACKET primary_not_name R_BRACKET . [ R_BRACKET L_BRACKET EOF ASSIGN ]
+-- On R_BRACKET reduce production array_access -> expression L_BRACKET primary_not_name R_BRACKET
+-- On L_BRACKET reduce production array_access -> expression L_BRACKET primary_not_name R_BRACKET
+-- On EOF reduce production array_access -> expression L_BRACKET primary_not_name R_BRACKET
+-- On ASSIGN reduce production array_access -> expression L_BRACKET primary_not_name R_BRACKET
+
+State 12:
+array_access -> expression . L_BRACKET primary_not_name R_BRACKET [ R_BRACKET L_BRACKET ASSIGN ]
+-- On L_BRACKET shift to state 9
+
+State 13:
+expression -> assignment . [ R_BRACKET L_BRACKET EOF ]
+-- On R_BRACKET reduce production expression -> assignment
+-- On L_BRACKET reduce production expression -> assignment
+-- On EOF reduce production expression -> assignment
+
+State 14:
+primary -> array_access . [ L_BRACKET ]
+primary_not_name -> array_access . [ R_BRACKET ASSIGN ]
+-- On R_BRACKET reduce production primary_not_name -> array_access
+-- On L_BRACKET reduce production primary -> array_access
+-- On ASSIGN reduce production primary_not_name -> array_access
+
+State 15:
+primary -> array_access . [ R_BRACKET L_BRACKET EOF ]
+primary_not_name -> array_access . [ ASSIGN ]
+-- On R_BRACKET reduce production primary -> array_access
+-- On L_BRACKET reduce production primary -> array_access
+-- On EOF reduce production primary -> array_access
+-- On ASSIGN reduce production primary_not_name -> array_access
+
+State 16:
+array_access -> expression . L_BRACKET primary_not_name R_BRACKET [ R_BRACKET L_BRACKET ASSIGN ]
+primary_not_name -> NEW L_BRACKET expression . R_BRACKET [ R_BRACKET ASSIGN ]
+-- On R_BRACKET shift to state 17
+-- On L_BRACKET shift to state 9
+
+State 17:
+primary_not_name -> NEW L_BRACKET expression R_BRACKET . [ R_BRACKET ASSIGN ]
+-- On R_BRACKET reduce production primary_not_name -> NEW L_BRACKET expression R_BRACKET
+-- On ASSIGN reduce production primary_not_name -> NEW L_BRACKET expression R_BRACKET
+
+State 18:
+goal' -> goal . [ # ]
+-- On # accept goal
+
+State 19:
+expression -> assignment . [ L_BRACKET ]
+goal -> assignment . EOF [ # ]
+-- On EOF shift to state 20
+-- On L_BRACKET reduce production expression -> assignment
+
+State 20:
+goal -> assignment EOF . [ # ]
+-- On # reduce production goal -> assignment EOF
+

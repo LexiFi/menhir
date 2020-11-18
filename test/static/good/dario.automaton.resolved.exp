@@ -1,0 +1,58 @@
+State 0:
+main' -> . main [ # ]
+-- On A shift to state 1
+-- On main shift to state 2
+-- On list(block) shift to state 3
+-- On items shift to state 5
+-- On item shift to state 6
+-- On block shift to state 8
+-- On B reduce production list(block) -> 
+
+State 1:
+item -> A . [ B A ]
+-- On B reduce production item -> A
+-- On A reduce production item -> A
+
+State 2:
+main' -> main . [ # ]
+-- On # accept main
+
+State 3:
+main -> list(block) . B [ # ]
+-- On B shift to state 4
+
+State 4:
+main -> list(block) B . [ # ]
+-- On # reduce production main -> list(block) B
+
+State 5:
+block -> items . [ B A ]
+-- On B reduce production block -> items
+-- On A reduce production block -> items
+
+State 6:
+items -> item . [ B A ]
+items -> item . items [ B A ]
+-- On A shift to state 1
+-- On items shift to state 7
+-- On item shift to state 6
+-- On B reduce production items -> item
+
+State 7:
+items -> item items . [ B A ]
+-- On B reduce production items -> item items
+-- On A reduce production items -> item items
+
+State 8:
+list(block) -> block . list(block) [ B ]
+-- On A shift to state 1
+-- On list(block) shift to state 9
+-- On items shift to state 5
+-- On item shift to state 6
+-- On block shift to state 8
+-- On B reduce production list(block) -> 
+
+State 9:
+list(block) -> block list(block) . [ B ]
+-- On B reduce production list(block) -> block list(block)
+

@@ -1,0 +1,43 @@
+State 0:
+main' -> . main [ # ]
+-- On B shift to state 1
+-- On A shift to state 2
+-- On main shift to state 7
+-- On F(A,id(A)) shift to state 8
+
+State 1:
+F(A,id(A)) -> B . [ # ]
+-- On # reduce production F(A,id(A)) -> B
+
+State 2:
+F(A,id(A)) -> A . F(id(A),A) [ # ]
+-- On B shift to state 3
+-- On A shift to state 4
+-- On F(id(A),A) shift to state 6
+
+State 3:
+F(id(A),A) -> B . [ # ]
+-- On # reduce production F(id(A),A) -> B
+
+State 4:
+F(id(A),A) -> A . F(A,id(A)) [ # ]
+-- On B shift to state 1
+-- On A shift to state 2
+-- On F(A,id(A)) shift to state 5
+
+State 5:
+F(id(A),A) -> A F(A,id(A)) . [ # ]
+-- On # reduce production F(id(A),A) -> A F(A,id(A))
+
+State 6:
+F(A,id(A)) -> A F(id(A),A) . [ # ]
+-- On # reduce production F(A,id(A)) -> A F(id(A),A)
+
+State 7:
+main' -> main . [ # ]
+-- On # accept main
+
+State 8:
+main -> F(A,id(A)) . [ # ]
+-- On # reduce production main -> F(A,id(A))
+

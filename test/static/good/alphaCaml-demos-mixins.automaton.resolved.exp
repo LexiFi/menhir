@@ -1,0 +1,530 @@
+State 0:
+toplevel' -> . toplevel [ # ]
+-- On MIXIN shift to state 1
+-- On LPAREN shift to state 13
+-- On LIDENT shift to state 14
+-- On LET shift to state 15
+-- On LCURLY shift to state 19
+-- On FAKE shift to state 24
+-- On DELETE shift to state 30
+-- On CLOSE shift to state 34
+-- On unary_expression shift to state 41
+-- On toplevel shift to state 65
+-- On summand_expression shift to state 42
+-- On expression shift to state 66
+-- On atomic_expression shift to state 36
+
+State 1:
+atomic_expression -> MIXIN . components END [ VAL RPAREN RCURLY PLUS IN EOF END DOT AND ]
+-- On components shift to state 2
+-- On VAL reduce production components -> 
+-- On END reduce production components -> 
+
+State 2:
+atomic_expression -> MIXIN components . END [ VAL RPAREN RCURLY PLUS IN EOF END DOT AND ]
+components -> components . VAL lident_pun dependencies EQUAL expression [ VAL END ]
+components -> components . VAL WILDCARD AS LIDENT dependencies EQUAL expression [ VAL END ]
+components -> components . VAL lident_pun [ VAL END ]
+-- On VAL shift to state 3
+-- On END shift to state 64
+
+State 3:
+components -> components VAL . lident_pun dependencies EQUAL expression [ VAL END ]
+components -> components VAL . WILDCARD AS LIDENT dependencies EQUAL expression [ VAL END ]
+components -> components VAL . lident_pun [ VAL END ]
+-- On WILDCARD shift to state 4
+-- On LIDENT shift to state 57
+-- On lident_pun shift to state 60
+
+State 4:
+components -> components VAL WILDCARD . AS LIDENT dependencies EQUAL expression [ VAL END ]
+-- On AS shift to state 5
+
+State 5:
+components -> components VAL WILDCARD AS . LIDENT dependencies EQUAL expression [ VAL END ]
+-- On LIDENT shift to state 6
+
+State 6:
+components -> components VAL WILDCARD AS LIDENT . dependencies EQUAL expression [ VAL END ]
+-- On LSQUARE shift to state 7
+-- On dependencies shift to state 11
+-- On EQUAL reduce production dependencies -> 
+
+State 7:
+dependencies -> LSQUARE . variables RSQUARE [ EQUAL ]
+-- On variables shift to state 8
+-- On RSQUARE reduce production variables -> 
+-- On LIDENT reduce production variables -> 
+
+State 8:
+dependencies -> LSQUARE variables . RSQUARE [ EQUAL ]
+variables -> variables . LIDENT [ RSQUARE LIDENT ]
+-- On RSQUARE shift to state 9
+-- On LIDENT shift to state 10
+
+State 9:
+dependencies -> LSQUARE variables RSQUARE . [ EQUAL ]
+-- On EQUAL reduce production dependencies -> LSQUARE variables RSQUARE
+
+State 10:
+variables -> variables LIDENT . [ RSQUARE LIDENT ]
+-- On RSQUARE reduce production variables -> variables LIDENT
+-- On LIDENT reduce production variables -> variables LIDENT
+
+State 11:
+components -> components VAL WILDCARD AS LIDENT dependencies . EQUAL expression [ VAL END ]
+-- On EQUAL shift to state 12
+
+State 12:
+components -> components VAL WILDCARD AS LIDENT dependencies EQUAL . expression [ VAL END ]
+-- On MIXIN shift to state 1
+-- On LPAREN shift to state 13
+-- On LIDENT shift to state 14
+-- On LET shift to state 15
+-- On LCURLY shift to state 19
+-- On FAKE shift to state 24
+-- On DELETE shift to state 30
+-- On CLOSE shift to state 34
+-- On unary_expression shift to state 41
+-- On summand_expression shift to state 42
+-- On expression shift to state 56
+-- On atomic_expression shift to state 36
+
+State 13:
+atomic_expression -> LPAREN . expression RPAREN [ VAL RPAREN RCURLY PLUS IN EOF END DOT AND ]
+-- On MIXIN shift to state 1
+-- On LPAREN shift to state 13
+-- On LIDENT shift to state 14
+-- On LET shift to state 15
+-- On LCURLY shift to state 19
+-- On FAKE shift to state 24
+-- On DELETE shift to state 30
+-- On CLOSE shift to state 34
+-- On unary_expression shift to state 41
+-- On summand_expression shift to state 42
+-- On expression shift to state 54
+-- On atomic_expression shift to state 36
+
+State 14:
+atomic_expression -> LIDENT . [ VAL RPAREN RCURLY PLUS IN EOF END DOT AND ]
+-- On VAL reduce production atomic_expression -> LIDENT
+-- On RPAREN reduce production atomic_expression -> LIDENT
+-- On RCURLY reduce production atomic_expression -> LIDENT
+-- On PLUS reduce production atomic_expression -> LIDENT
+-- On IN reduce production atomic_expression -> LIDENT
+-- On EOF reduce production atomic_expression -> LIDENT
+-- On END reduce production atomic_expression -> LIDENT
+-- On DOT reduce production atomic_expression -> LIDENT
+-- On AND reduce production atomic_expression -> LIDENT
+
+State 15:
+expression -> LET . REC bindings IN expression [ VAL RPAREN RCURLY IN EOF END AND ]
+-- On REC shift to state 16
+
+State 16:
+expression -> LET REC . bindings IN expression [ VAL RPAREN RCURLY IN EOF END AND ]
+-- On LIDENT shift to state 17
+-- On bindings shift to state 48
+-- On binding shift to state 53
+
+State 17:
+binding -> LIDENT . EQUAL expression [ IN AND ]
+-- On EQUAL shift to state 18
+
+State 18:
+binding -> LIDENT EQUAL . expression [ IN AND ]
+-- On MIXIN shift to state 1
+-- On LPAREN shift to state 13
+-- On LIDENT shift to state 14
+-- On LET shift to state 15
+-- On LCURLY shift to state 19
+-- On FAKE shift to state 24
+-- On DELETE shift to state 30
+-- On CLOSE shift to state 34
+-- On unary_expression shift to state 41
+-- On summand_expression shift to state 42
+-- On expression shift to state 47
+-- On atomic_expression shift to state 36
+
+State 19:
+atomic_expression -> LCURLY . record_fields RCURLY [ VAL RPAREN RCURLY PLUS IN EOF END DOT AND ]
+-- On record_fields shift to state 20
+-- On VAL reduce production record_fields -> 
+-- On RCURLY reduce production record_fields -> 
+
+State 20:
+atomic_expression -> LCURLY record_fields . RCURLY [ VAL RPAREN RCURLY PLUS IN EOF END DOT AND ]
+record_fields -> record_fields . VAL LIDENT EQUAL expression [ VAL RCURLY ]
+-- On VAL shift to state 21
+-- On RCURLY shift to state 46
+
+State 21:
+record_fields -> record_fields VAL . LIDENT EQUAL expression [ VAL RCURLY ]
+-- On LIDENT shift to state 22
+
+State 22:
+record_fields -> record_fields VAL LIDENT . EQUAL expression [ VAL RCURLY ]
+-- On EQUAL shift to state 23
+
+State 23:
+record_fields -> record_fields VAL LIDENT EQUAL . expression [ VAL RCURLY ]
+-- On MIXIN shift to state 1
+-- On LPAREN shift to state 13
+-- On LIDENT shift to state 14
+-- On LET shift to state 15
+-- On LCURLY shift to state 19
+-- On FAKE shift to state 24
+-- On DELETE shift to state 30
+-- On CLOSE shift to state 34
+-- On unary_expression shift to state 41
+-- On summand_expression shift to state 42
+-- On expression shift to state 45
+-- On atomic_expression shift to state 36
+
+State 24:
+unary_expression -> FAKE . LIDENT DEPENDS ON LIDENT IN unary_expression [ VAL RPAREN RCURLY PLUS IN EOF END AND ]
+-- On LIDENT shift to state 25
+
+State 25:
+unary_expression -> FAKE LIDENT . DEPENDS ON LIDENT IN unary_expression [ VAL RPAREN RCURLY PLUS IN EOF END AND ]
+-- On DEPENDS shift to state 26
+
+State 26:
+unary_expression -> FAKE LIDENT DEPENDS . ON LIDENT IN unary_expression [ VAL RPAREN RCURLY PLUS IN EOF END AND ]
+-- On ON shift to state 27
+
+State 27:
+unary_expression -> FAKE LIDENT DEPENDS ON . LIDENT IN unary_expression [ VAL RPAREN RCURLY PLUS IN EOF END AND ]
+-- On LIDENT shift to state 28
+
+State 28:
+unary_expression -> FAKE LIDENT DEPENDS ON LIDENT . IN unary_expression [ VAL RPAREN RCURLY PLUS IN EOF END AND ]
+-- On IN shift to state 29
+
+State 29:
+unary_expression -> FAKE LIDENT DEPENDS ON LIDENT IN . unary_expression [ VAL RPAREN RCURLY PLUS IN EOF END AND ]
+-- On MIXIN shift to state 1
+-- On LPAREN shift to state 13
+-- On LIDENT shift to state 14
+-- On LCURLY shift to state 19
+-- On FAKE shift to state 24
+-- On DELETE shift to state 30
+-- On CLOSE shift to state 34
+-- On unary_expression shift to state 40
+-- On atomic_expression shift to state 36
+
+State 30:
+unary_expression -> DELETE . fields IN unary_expression [ VAL RPAREN RCURLY PLUS IN EOF END AND ]
+-- On fields shift to state 31
+-- On LIDENT reduce production fields -> 
+-- On IN reduce production fields -> 
+
+State 31:
+fields -> fields . LIDENT [ LIDENT IN ]
+unary_expression -> DELETE fields . IN unary_expression [ VAL RPAREN RCURLY PLUS IN EOF END AND ]
+-- On LIDENT shift to state 32
+-- On IN shift to state 33
+
+State 32:
+fields -> fields LIDENT . [ LIDENT IN ]
+-- On LIDENT reduce production fields -> fields LIDENT
+-- On IN reduce production fields -> fields LIDENT
+
+State 33:
+unary_expression -> DELETE fields IN . unary_expression [ VAL RPAREN RCURLY PLUS IN EOF END AND ]
+-- On MIXIN shift to state 1
+-- On LPAREN shift to state 13
+-- On LIDENT shift to state 14
+-- On LCURLY shift to state 19
+-- On FAKE shift to state 24
+-- On DELETE shift to state 30
+-- On CLOSE shift to state 34
+-- On unary_expression shift to state 39
+-- On atomic_expression shift to state 36
+
+State 34:
+unary_expression -> CLOSE . unary_expression [ VAL RPAREN RCURLY PLUS IN EOF END AND ]
+-- On MIXIN shift to state 1
+-- On LPAREN shift to state 13
+-- On LIDENT shift to state 14
+-- On LCURLY shift to state 19
+-- On FAKE shift to state 24
+-- On DELETE shift to state 30
+-- On CLOSE shift to state 34
+-- On unary_expression shift to state 35
+-- On atomic_expression shift to state 36
+
+State 35:
+unary_expression -> CLOSE unary_expression . [ VAL RPAREN RCURLY PLUS IN EOF END AND ]
+-- On VAL reduce production unary_expression -> CLOSE unary_expression
+-- On RPAREN reduce production unary_expression -> CLOSE unary_expression
+-- On RCURLY reduce production unary_expression -> CLOSE unary_expression
+-- On PLUS reduce production unary_expression -> CLOSE unary_expression
+-- On IN reduce production unary_expression -> CLOSE unary_expression
+-- On EOF reduce production unary_expression -> CLOSE unary_expression
+-- On END reduce production unary_expression -> CLOSE unary_expression
+-- On AND reduce production unary_expression -> CLOSE unary_expression
+
+State 36:
+atomic_expression -> atomic_expression . DOT LIDENT [ VAL RPAREN RCURLY PLUS IN EOF END DOT AND ]
+unary_expression -> atomic_expression . [ VAL RPAREN RCURLY PLUS IN EOF END AND ]
+-- On DOT shift to state 37
+-- On VAL reduce production unary_expression -> atomic_expression
+-- On RPAREN reduce production unary_expression -> atomic_expression
+-- On RCURLY reduce production unary_expression -> atomic_expression
+-- On PLUS reduce production unary_expression -> atomic_expression
+-- On IN reduce production unary_expression -> atomic_expression
+-- On EOF reduce production unary_expression -> atomic_expression
+-- On END reduce production unary_expression -> atomic_expression
+-- On AND reduce production unary_expression -> atomic_expression
+
+State 37:
+atomic_expression -> atomic_expression DOT . LIDENT [ VAL RPAREN RCURLY PLUS IN EOF END DOT AND ]
+-- On LIDENT shift to state 38
+
+State 38:
+atomic_expression -> atomic_expression DOT LIDENT . [ VAL RPAREN RCURLY PLUS IN EOF END DOT AND ]
+-- On VAL reduce production atomic_expression -> atomic_expression DOT LIDENT
+-- On RPAREN reduce production atomic_expression -> atomic_expression DOT LIDENT
+-- On RCURLY reduce production atomic_expression -> atomic_expression DOT LIDENT
+-- On PLUS reduce production atomic_expression -> atomic_expression DOT LIDENT
+-- On IN reduce production atomic_expression -> atomic_expression DOT LIDENT
+-- On EOF reduce production atomic_expression -> atomic_expression DOT LIDENT
+-- On END reduce production atomic_expression -> atomic_expression DOT LIDENT
+-- On DOT reduce production atomic_expression -> atomic_expression DOT LIDENT
+-- On AND reduce production atomic_expression -> atomic_expression DOT LIDENT
+
+State 39:
+unary_expression -> DELETE fields IN unary_expression . [ VAL RPAREN RCURLY PLUS IN EOF END AND ]
+-- On VAL reduce production unary_expression -> DELETE fields IN unary_expression
+-- On RPAREN reduce production unary_expression -> DELETE fields IN unary_expression
+-- On RCURLY reduce production unary_expression -> DELETE fields IN unary_expression
+-- On PLUS reduce production unary_expression -> DELETE fields IN unary_expression
+-- On IN reduce production unary_expression -> DELETE fields IN unary_expression
+-- On EOF reduce production unary_expression -> DELETE fields IN unary_expression
+-- On END reduce production unary_expression -> DELETE fields IN unary_expression
+-- On AND reduce production unary_expression -> DELETE fields IN unary_expression
+
+State 40:
+unary_expression -> FAKE LIDENT DEPENDS ON LIDENT IN unary_expression . [ VAL RPAREN RCURLY PLUS IN EOF END AND ]
+-- On VAL reduce production unary_expression -> FAKE LIDENT DEPENDS ON LIDENT IN unary_expression
+-- On RPAREN reduce production unary_expression -> FAKE LIDENT DEPENDS ON LIDENT IN unary_expression
+-- On RCURLY reduce production unary_expression -> FAKE LIDENT DEPENDS ON LIDENT IN unary_expression
+-- On PLUS reduce production unary_expression -> FAKE LIDENT DEPENDS ON LIDENT IN unary_expression
+-- On IN reduce production unary_expression -> FAKE LIDENT DEPENDS ON LIDENT IN unary_expression
+-- On EOF reduce production unary_expression -> FAKE LIDENT DEPENDS ON LIDENT IN unary_expression
+-- On END reduce production unary_expression -> FAKE LIDENT DEPENDS ON LIDENT IN unary_expression
+-- On AND reduce production unary_expression -> FAKE LIDENT DEPENDS ON LIDENT IN unary_expression
+
+State 41:
+summand_expression -> unary_expression . [ VAL RPAREN RCURLY PLUS IN EOF END AND ]
+-- On VAL reduce production summand_expression -> unary_expression
+-- On RPAREN reduce production summand_expression -> unary_expression
+-- On RCURLY reduce production summand_expression -> unary_expression
+-- On PLUS reduce production summand_expression -> unary_expression
+-- On IN reduce production summand_expression -> unary_expression
+-- On EOF reduce production summand_expression -> unary_expression
+-- On END reduce production summand_expression -> unary_expression
+-- On AND reduce production summand_expression -> unary_expression
+
+State 42:
+expression -> summand_expression . [ VAL RPAREN RCURLY IN EOF END AND ]
+summand_expression -> summand_expression . PLUS unary_expression [ VAL RPAREN RCURLY PLUS IN EOF END AND ]
+-- On PLUS shift to state 43
+-- On VAL reduce production expression -> summand_expression
+-- On RPAREN reduce production expression -> summand_expression
+-- On RCURLY reduce production expression -> summand_expression
+-- On IN reduce production expression -> summand_expression
+-- On EOF reduce production expression -> summand_expression
+-- On END reduce production expression -> summand_expression
+-- On AND reduce production expression -> summand_expression
+
+State 43:
+summand_expression -> summand_expression PLUS . unary_expression [ VAL RPAREN RCURLY PLUS IN EOF END AND ]
+-- On MIXIN shift to state 1
+-- On LPAREN shift to state 13
+-- On LIDENT shift to state 14
+-- On LCURLY shift to state 19
+-- On FAKE shift to state 24
+-- On DELETE shift to state 30
+-- On CLOSE shift to state 34
+-- On unary_expression shift to state 44
+-- On atomic_expression shift to state 36
+
+State 44:
+summand_expression -> summand_expression PLUS unary_expression . [ VAL RPAREN RCURLY PLUS IN EOF END AND ]
+-- On VAL reduce production summand_expression -> summand_expression PLUS unary_expression
+-- On RPAREN reduce production summand_expression -> summand_expression PLUS unary_expression
+-- On RCURLY reduce production summand_expression -> summand_expression PLUS unary_expression
+-- On PLUS reduce production summand_expression -> summand_expression PLUS unary_expression
+-- On IN reduce production summand_expression -> summand_expression PLUS unary_expression
+-- On EOF reduce production summand_expression -> summand_expression PLUS unary_expression
+-- On END reduce production summand_expression -> summand_expression PLUS unary_expression
+-- On AND reduce production summand_expression -> summand_expression PLUS unary_expression
+
+State 45:
+record_fields -> record_fields VAL LIDENT EQUAL expression . [ VAL RCURLY ]
+-- On VAL reduce production record_fields -> record_fields VAL LIDENT EQUAL expression
+-- On RCURLY reduce production record_fields -> record_fields VAL LIDENT EQUAL expression
+
+State 46:
+atomic_expression -> LCURLY record_fields RCURLY . [ VAL RPAREN RCURLY PLUS IN EOF END DOT AND ]
+-- On VAL reduce production atomic_expression -> LCURLY record_fields RCURLY
+-- On RPAREN reduce production atomic_expression -> LCURLY record_fields RCURLY
+-- On RCURLY reduce production atomic_expression -> LCURLY record_fields RCURLY
+-- On PLUS reduce production atomic_expression -> LCURLY record_fields RCURLY
+-- On IN reduce production atomic_expression -> LCURLY record_fields RCURLY
+-- On EOF reduce production atomic_expression -> LCURLY record_fields RCURLY
+-- On END reduce production atomic_expression -> LCURLY record_fields RCURLY
+-- On DOT reduce production atomic_expression -> LCURLY record_fields RCURLY
+-- On AND reduce production atomic_expression -> LCURLY record_fields RCURLY
+
+State 47:
+binding -> LIDENT EQUAL expression . [ IN AND ]
+-- On IN reduce production binding -> LIDENT EQUAL expression
+-- On AND reduce production binding -> LIDENT EQUAL expression
+
+State 48:
+bindings -> bindings . AND binding [ IN AND ]
+expression -> LET REC bindings . IN expression [ VAL RPAREN RCURLY IN EOF END AND ]
+-- On IN shift to state 49
+-- On AND shift to state 51
+
+State 49:
+expression -> LET REC bindings IN . expression [ VAL RPAREN RCURLY IN EOF END AND ]
+-- On MIXIN shift to state 1
+-- On LPAREN shift to state 13
+-- On LIDENT shift to state 14
+-- On LET shift to state 15
+-- On LCURLY shift to state 19
+-- On FAKE shift to state 24
+-- On DELETE shift to state 30
+-- On CLOSE shift to state 34
+-- On unary_expression shift to state 41
+-- On summand_expression shift to state 42
+-- On expression shift to state 50
+-- On atomic_expression shift to state 36
+
+State 50:
+expression -> LET REC bindings IN expression . [ VAL RPAREN RCURLY IN EOF END AND ]
+-- On VAL reduce production expression -> LET REC bindings IN expression
+-- On RPAREN reduce production expression -> LET REC bindings IN expression
+-- On RCURLY reduce production expression -> LET REC bindings IN expression
+-- On IN reduce production expression -> LET REC bindings IN expression
+-- On EOF reduce production expression -> LET REC bindings IN expression
+-- On END reduce production expression -> LET REC bindings IN expression
+-- On AND reduce production expression -> LET REC bindings IN expression
+
+State 51:
+bindings -> bindings AND . binding [ IN AND ]
+-- On LIDENT shift to state 17
+-- On binding shift to state 52
+
+State 52:
+bindings -> bindings AND binding . [ IN AND ]
+-- On IN reduce production bindings -> bindings AND binding
+-- On AND reduce production bindings -> bindings AND binding
+
+State 53:
+bindings -> binding . [ IN AND ]
+-- On IN reduce production bindings -> binding
+-- On AND reduce production bindings -> binding
+
+State 54:
+atomic_expression -> LPAREN expression . RPAREN [ VAL RPAREN RCURLY PLUS IN EOF END DOT AND ]
+-- On RPAREN shift to state 55
+
+State 55:
+atomic_expression -> LPAREN expression RPAREN . [ VAL RPAREN RCURLY PLUS IN EOF END DOT AND ]
+-- On VAL reduce production atomic_expression -> LPAREN expression RPAREN
+-- On RPAREN reduce production atomic_expression -> LPAREN expression RPAREN
+-- On RCURLY reduce production atomic_expression -> LPAREN expression RPAREN
+-- On PLUS reduce production atomic_expression -> LPAREN expression RPAREN
+-- On IN reduce production atomic_expression -> LPAREN expression RPAREN
+-- On EOF reduce production atomic_expression -> LPAREN expression RPAREN
+-- On END reduce production atomic_expression -> LPAREN expression RPAREN
+-- On DOT reduce production atomic_expression -> LPAREN expression RPAREN
+-- On AND reduce production atomic_expression -> LPAREN expression RPAREN
+
+State 56:
+components -> components VAL WILDCARD AS LIDENT dependencies EQUAL expression . [ VAL END ]
+-- On VAL reduce production components -> components VAL WILDCARD AS LIDENT dependencies EQUAL expression
+-- On END reduce production components -> components VAL WILDCARD AS LIDENT dependencies EQUAL expression
+
+State 57:
+lident_pun -> LIDENT . AS LIDENT [ VAL LSQUARE EQUAL END ]
+lident_pun -> LIDENT . [ VAL LSQUARE EQUAL END ]
+-- On AS shift to state 58
+-- On VAL reduce production lident_pun -> LIDENT
+-- On LSQUARE reduce production lident_pun -> LIDENT
+-- On EQUAL reduce production lident_pun -> LIDENT
+-- On END reduce production lident_pun -> LIDENT
+
+State 58:
+lident_pun -> LIDENT AS . LIDENT [ VAL LSQUARE EQUAL END ]
+-- On LIDENT shift to state 59
+
+State 59:
+lident_pun -> LIDENT AS LIDENT . [ VAL LSQUARE EQUAL END ]
+-- On VAL reduce production lident_pun -> LIDENT AS LIDENT
+-- On LSQUARE reduce production lident_pun -> LIDENT AS LIDENT
+-- On EQUAL reduce production lident_pun -> LIDENT AS LIDENT
+-- On END reduce production lident_pun -> LIDENT AS LIDENT
+
+State 60:
+components -> components VAL lident_pun . dependencies EQUAL expression [ VAL END ]
+components -> components VAL lident_pun . [ VAL END ]
+-- On LSQUARE shift to state 7
+-- On dependencies shift to state 61
+-- On VAL reduce production components -> components VAL lident_pun
+-- On EQUAL reduce production dependencies -> 
+-- On END reduce production components -> components VAL lident_pun
+
+State 61:
+components -> components VAL lident_pun dependencies . EQUAL expression [ VAL END ]
+-- On EQUAL shift to state 62
+
+State 62:
+components -> components VAL lident_pun dependencies EQUAL . expression [ VAL END ]
+-- On MIXIN shift to state 1
+-- On LPAREN shift to state 13
+-- On LIDENT shift to state 14
+-- On LET shift to state 15
+-- On LCURLY shift to state 19
+-- On FAKE shift to state 24
+-- On DELETE shift to state 30
+-- On CLOSE shift to state 34
+-- On unary_expression shift to state 41
+-- On summand_expression shift to state 42
+-- On expression shift to state 63
+-- On atomic_expression shift to state 36
+
+State 63:
+components -> components VAL lident_pun dependencies EQUAL expression . [ VAL END ]
+-- On VAL reduce production components -> components VAL lident_pun dependencies EQUAL expression
+-- On END reduce production components -> components VAL lident_pun dependencies EQUAL expression
+
+State 64:
+atomic_expression -> MIXIN components END . [ VAL RPAREN RCURLY PLUS IN EOF END DOT AND ]
+-- On VAL reduce production atomic_expression -> MIXIN components END
+-- On RPAREN reduce production atomic_expression -> MIXIN components END
+-- On RCURLY reduce production atomic_expression -> MIXIN components END
+-- On PLUS reduce production atomic_expression -> MIXIN components END
+-- On IN reduce production atomic_expression -> MIXIN components END
+-- On EOF reduce production atomic_expression -> MIXIN components END
+-- On END reduce production atomic_expression -> MIXIN components END
+-- On DOT reduce production atomic_expression -> MIXIN components END
+-- On AND reduce production atomic_expression -> MIXIN components END
+
+State 65:
+toplevel' -> toplevel . [ # ]
+-- On # accept toplevel
+
+State 66:
+toplevel -> expression . EOF [ # ]
+-- On EOF shift to state 67
+
+State 67:
+toplevel -> expression EOF . [ # ]
+-- On # reduce production toplevel -> expression EOF
+

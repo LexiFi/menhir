@@ -1,0 +1,181 @@
+State 0:
+doc_822' -> . doc_822 [ # ]
+-- On FIELD shift to state 1
+-- On EOL shift to state 7
+-- On stanzas shift to state 9
+-- On stanza shift to state 10
+-- On fields shift to state 14
+-- On field shift to state 15
+-- On eols shift to state 17
+-- On doc_822 shift to state 19
+
+State 1:
+field -> FIELD . EOL [ FIELD EOL EOF # ]
+field -> FIELD . EOL linecont [ FIELD EOL EOF # ]
+-- On EOL shift to state 2
+
+State 2:
+field -> FIELD EOL . [ FIELD EOL EOF # ]
+field -> FIELD EOL . linecont [ FIELD EOL EOF # ]
+-- On CONT shift to state 3
+-- On linecont shift to state 6
+-- On FIELD reduce production field -> FIELD EOL
+-- On EOL reduce production field -> FIELD EOL
+-- On EOF reduce production field -> FIELD EOL
+
+State 3:
+linecont -> CONT . EOL [ FIELD EOL EOF # ]
+linecont -> CONT . EOL linecont [ FIELD EOL EOF # ]
+-- On EOL shift to state 4
+
+State 4:
+linecont -> CONT EOL . [ FIELD EOL EOF # ]
+linecont -> CONT EOL . linecont [ FIELD EOL EOF # ]
+-- On CONT shift to state 3
+-- On linecont shift to state 5
+-- On FIELD reduce production linecont -> CONT EOL
+-- On EOL reduce production linecont -> CONT EOL
+-- On EOF reduce production linecont -> CONT EOL
+
+State 5:
+linecont -> CONT EOL linecont . [ FIELD EOL EOF # ]
+-- On FIELD reduce production linecont -> CONT EOL linecont
+-- On EOL reduce production linecont -> CONT EOL linecont
+-- On EOF reduce production linecont -> CONT EOL linecont
+
+State 6:
+field -> FIELD EOL linecont . [ FIELD EOL EOF # ]
+-- On FIELD reduce production field -> FIELD EOL linecont
+-- On EOL reduce production field -> FIELD EOL linecont
+-- On EOF reduce production field -> FIELD EOL linecont
+
+State 7:
+eols -> EOL . [ FIELD EOF # ]
+eols -> EOL . eols [ FIELD EOF # ]
+-- On EOL shift to state 7
+-- On eols shift to state 8
+-- On FIELD reduce production eols -> EOL
+-- On EOF reduce production eols -> EOL
+
+State 8:
+eols -> EOL eols . [ FIELD EOF # ]
+-- On FIELD reduce production eols -> EOL eols
+-- On EOF reduce production eols -> EOL eols
+
+State 9:
+doc_822 -> stanzas . [ # ]
+-- On # reduce production doc_822 -> stanzas
+
+State 10:
+stanzas -> stanza . EOF [ # ]
+stanzas -> stanza . eols stanzas [ # ]
+-- On EOL shift to state 7
+-- On EOF shift to state 11
+-- On eols shift to state 12
+
+State 11:
+stanzas -> stanza EOF . [ # ]
+-- On # reduce production stanzas -> stanza EOF
+
+State 12:
+stanzas -> stanza eols . stanzas [ # ]
+-- On FIELD shift to state 1
+-- On stanzas shift to state 13
+-- On stanza shift to state 10
+-- On fields shift to state 14
+-- On field shift to state 15
+
+State 13:
+stanzas -> stanza eols stanzas . [ # ]
+-- On # reduce production stanzas -> stanza eols stanzas
+
+State 14:
+stanza -> fields . [ EOL EOF ]
+-- On EOL reduce production stanza -> fields
+-- On EOF reduce production stanza -> fields
+
+State 15:
+fields -> field . [ EOL EOF ]
+fields -> field . fields [ EOL EOF ]
+-- On FIELD shift to state 1
+-- On fields shift to state 16
+-- On field shift to state 15
+-- On EOL reduce production fields -> field
+-- On EOF reduce production fields -> field
+
+State 16:
+fields -> field fields . [ EOL EOF ]
+-- On EOL reduce production fields -> field fields
+-- On EOF reduce production fields -> field fields
+
+State 17:
+doc_822 -> eols . stanzas [ # ]
+-- On FIELD shift to state 1
+-- On stanzas shift to state 18
+-- On stanza shift to state 10
+-- On fields shift to state 14
+-- On field shift to state 15
+
+State 18:
+doc_822 -> eols stanzas . [ # ]
+-- On # reduce production doc_822 -> eols stanzas
+
+State 19:
+doc_822' -> doc_822 . [ # ]
+-- On # accept doc_822
+
+State 20:
+stanza_822' -> . stanza_822 [ # ]
+-- On FIELD shift to state 1
+-- On EOL shift to state 7
+-- On EOF shift to state 21
+-- On stanza_822 shift to state 22
+-- On stanza shift to state 23
+-- On fields shift to state 24
+-- On field shift to state 25
+-- On eols shift to state 27
+
+State 21:
+stanza_822 -> EOF . [ # ]
+-- On # reduce production stanza_822 -> EOF
+
+State 22:
+stanza_822' -> stanza_822 . [ # ]
+-- On # accept stanza_822
+
+State 23:
+stanza_822 -> stanza . [ # ]
+-- On # reduce production stanza_822 -> stanza
+
+State 24:
+stanza -> fields . [ # ]
+-- On # reduce production stanza -> fields
+
+State 25:
+fields -> field . [ # ]
+fields -> field . fields [ # ]
+-- On FIELD shift to state 1
+-- On fields shift to state 26
+-- On field shift to state 25
+
+State 26:
+fields -> field fields . [ # ]
+-- On # reduce production fields -> field fields
+
+State 27:
+stanza_822 -> eols . stanza [ # ]
+stanza_822 -> eols . EOF [ # ]
+-- On FIELD shift to state 1
+-- On EOF shift to state 28
+-- On stanza shift to state 29
+-- On fields shift to state 24
+-- On field shift to state 25
+
+State 28:
+stanza_822 -> eols EOF . [ # ]
+-- On # reduce production stanza_822 -> eols EOF
+
+State 29:
+stanza_822 -> eols stanza . [ # ]
+-- On # reduce production stanza_822 -> eols stanza
+

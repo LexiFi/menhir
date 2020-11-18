@@ -1,0 +1,91 @@
+State 0:
+desc' -> . desc [ # ]
+-- On SIZE shift to state 1
+-- On BANG shift to state 3
+-- On exprl shift to state 5
+-- On desc shift to state 13
+-- On ARROW reduce production exprl -> 
+
+State 1:
+exprl -> SIZE . exprl [ SIZE EOF BANG ARROW ]
+-- On SIZE shift to state 1
+-- On exprl shift to state 2
+-- On EOF reduce production exprl -> 
+-- On BANG reduce production exprl -> 
+-- On ARROW reduce production exprl -> 
+** Conflict on SIZE
+
+State 2:
+exprl -> SIZE exprl . [ SIZE EOF BANG ARROW ]
+-- On SIZE reduce production exprl -> SIZE exprl
+-- On EOF reduce production exprl -> SIZE exprl
+-- On BANG reduce production exprl -> SIZE exprl
+-- On ARROW reduce production exprl -> SIZE exprl
+
+State 3:
+exprl -> BANG . exprl [ SIZE EOF BANG ARROW ]
+-- On SIZE shift to state 1
+-- On exprl shift to state 4
+-- On EOF reduce production exprl -> 
+-- On BANG reduce production exprl -> 
+-- On ARROW reduce production exprl -> 
+** Conflict on SIZE
+
+State 4:
+exprl -> BANG exprl . [ SIZE EOF BANG ARROW ]
+-- On SIZE reduce production exprl -> BANG exprl
+-- On EOF reduce production exprl -> BANG exprl
+-- On BANG reduce production exprl -> BANG exprl
+-- On ARROW reduce production exprl -> BANG exprl
+
+State 5:
+desc -> exprl . ARROW expr EOF [ # ]
+-- On ARROW shift to state 6
+
+State 6:
+desc -> exprl ARROW . expr EOF [ # ]
+-- On LOG shift to state 7
+-- On expr shift to state 9
+
+State 7:
+expr -> LOG . exprl [ SIZE EOF BANG ]
+-- On SIZE shift to state 1
+-- On exprl shift to state 8
+-- On EOF reduce production exprl -> 
+-- On BANG reduce production exprl -> 
+** Conflict on SIZE
+
+State 8:
+expr -> LOG exprl . [ SIZE EOF BANG ]
+-- On SIZE reduce production expr -> LOG exprl
+-- On EOF reduce production expr -> LOG exprl
+-- On BANG reduce production expr -> LOG exprl
+
+State 9:
+desc -> exprl ARROW expr . EOF [ # ]
+expr -> expr . BANG [ SIZE EOF BANG ]
+expr -> expr . SIZE [ SIZE EOF BANG ]
+-- On SIZE shift to state 10
+-- On EOF shift to state 11
+-- On BANG shift to state 12
+
+State 10:
+expr -> expr SIZE . [ SIZE EOF BANG ]
+-- On SIZE reduce production expr -> expr SIZE
+-- On EOF reduce production expr -> expr SIZE
+-- On BANG reduce production expr -> expr SIZE
+
+State 11:
+desc -> exprl ARROW expr EOF . [ # ]
+-- On # reduce production desc -> exprl ARROW expr EOF
+
+State 12:
+expr -> expr BANG . [ SIZE EOF BANG ]
+-- On SIZE reduce production expr -> expr BANG
+-- On EOF reduce production expr -> expr BANG
+-- On BANG reduce production expr -> expr BANG
+
+State 13:
+desc' -> desc . [ # ]
+-- On # accept desc
+

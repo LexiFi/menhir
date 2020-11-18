@@ -1,0 +1,299 @@
+State 0:
+input_output' -> . input_output [ # ]
+-- On TOKEN shift to state 1
+-- On TILDE shift to state 2
+-- On PROMPT shift to state 3
+-- On IDENT shift to state 5
+-- On AT shift to state 6
+-- On AMPERSAND shift to state 7
+-- On stream_type shift to state 8
+-- On output_record shift to state 10
+-- On output shift to state 12
+-- On option(TOKEN) shift to state 13
+-- On input_prefix shift to state 46
+-- On input_output shift to state 47
+-- On PLUS reduce production option(TOKEN) -> 
+-- On MINUS reduce production option(TOKEN) -> 
+-- On EQUAL reduce production option(TOKEN) -> 
+-- On CARET reduce production option(TOKEN) -> 
+-- On ASTERISK reduce production option(TOKEN) -> 
+
+State 1:
+option(TOKEN) -> TOKEN . [ PLUS MINUS EQUAL CARET ASTERISK ]
+-- On PLUS reduce production option(TOKEN) -> TOKEN
+-- On MINUS reduce production option(TOKEN) -> TOKEN
+-- On EQUAL reduce production option(TOKEN) -> TOKEN
+-- On CARET reduce production option(TOKEN) -> TOKEN
+-- On ASTERISK reduce production option(TOKEN) -> TOKEN
+
+State 2:
+stream_type -> TILDE . [ STRING ]
+-- On STRING reduce production stream_type -> TILDE
+
+State 3:
+input_output -> PROMPT . EOF [ # ]
+-- On EOF shift to state 4
+
+State 4:
+input_output -> PROMPT EOF . [ # ]
+-- On # reduce production input_output -> PROMPT EOF
+
+State 5:
+input_prefix -> IDENT . [ # ]
+-- On # reduce production input_prefix -> IDENT
+
+State 6:
+stream_type -> AT . [ STRING ]
+-- On STRING reduce production stream_type -> AT
+
+State 7:
+stream_type -> AMPERSAND . [ STRING ]
+-- On STRING reduce production stream_type -> AMPERSAND
+
+State 8:
+output_record -> stream_type . STRING [ EOF ]
+-- On STRING shift to state 9
+
+State 9:
+output_record -> stream_type STRING . [ EOF ]
+-- On EOF reduce production output_record -> stream_type STRING
+
+State 10:
+output -> output_record . EOF [ # ]
+-- On EOF shift to state 11
+
+State 11:
+output -> output_record EOF . [ # ]
+-- On # reduce production output -> output_record EOF
+
+State 12:
+input_output -> output . [ # ]
+-- On # reduce production input_output -> output
+
+State 13:
+input_prefix -> option(TOKEN) . MINUS [ # ]
+output_record -> option(TOKEN) . CARET IDENT list(preceded(COMMA,result)) [ EOF ]
+output_record -> option(TOKEN) . async_type IDENT list(preceded(COMMA,result)) [ EOF ]
+-- On PLUS shift to state 14
+-- On MINUS shift to state 15
+-- On EQUAL shift to state 16
+-- On CARET shift to state 17
+-- On ASTERISK shift to state 42
+-- On async_type shift to state 43
+
+State 14:
+async_type -> PLUS . [ IDENT ]
+-- On IDENT reduce production async_type -> PLUS
+
+State 15:
+input_prefix -> option(TOKEN) MINUS . [ # ]
+-- On # reduce production input_prefix -> option(TOKEN) MINUS
+
+State 16:
+async_type -> EQUAL . [ IDENT ]
+-- On IDENT reduce production async_type -> EQUAL
+
+State 17:
+output_record -> option(TOKEN) CARET . IDENT list(preceded(COMMA,result)) [ EOF ]
+-- On IDENT shift to state 18
+
+State 18:
+output_record -> option(TOKEN) CARET IDENT . list(preceded(COMMA,result)) [ EOF ]
+-- On COMMA shift to state 19
+-- On list(preceded(COMMA,result)) shift to state 41
+-- On EOF reduce production list(preceded(COMMA,result)) -> 
+
+State 19:
+list(preceded(COMMA,result)) -> COMMA . result list(preceded(COMMA,result)) [ EOF ]
+-- On IDENT shift to state 20
+-- On result shift to state 39
+
+State 20:
+result -> IDENT . EQUAL value [ RCURLY RBRACKET EOF COMMA ]
+-- On EQUAL shift to state 21
+
+State 21:
+result -> IDENT EQUAL . value [ RCURLY RBRACKET EOF COMMA ]
+-- On STRING shift to state 22
+-- On LCURLY shift to state 23
+-- On LBRACKET shift to state 30
+-- On value shift to state 38
+
+State 22:
+value -> STRING . [ RCURLY RBRACKET EOF COMMA ]
+-- On RCURLY reduce production value -> STRING
+-- On RBRACKET reduce production value -> STRING
+-- On EOF reduce production value -> STRING
+-- On COMMA reduce production value -> STRING
+
+State 23:
+value -> LCURLY . loption(separated_nonempty_list(COMMA,result)) RCURLY [ RCURLY RBRACKET EOF COMMA ]
+-- On IDENT shift to state 20
+-- On separated_nonempty_list(COMMA,result) shift to state 24
+-- On result shift to state 25
+-- On loption(separated_nonempty_list(COMMA,result)) shift to state 28
+-- On RCURLY reduce production loption(separated_nonempty_list(COMMA,result)) -> 
+
+State 24:
+loption(separated_nonempty_list(COMMA,result)) -> separated_nonempty_list(COMMA,result) . [ RCURLY RBRACKET ]
+-- On RCURLY reduce production loption(separated_nonempty_list(COMMA,result)) -> separated_nonempty_list(COMMA,result)
+-- On RBRACKET reduce production loption(separated_nonempty_list(COMMA,result)) -> separated_nonempty_list(COMMA,result)
+
+State 25:
+separated_nonempty_list(COMMA,result) -> result . [ RCURLY RBRACKET ]
+separated_nonempty_list(COMMA,result) -> result . COMMA separated_nonempty_list(COMMA,result) [ RCURLY RBRACKET ]
+-- On COMMA shift to state 26
+-- On RCURLY reduce production separated_nonempty_list(COMMA,result) -> result
+-- On RBRACKET reduce production separated_nonempty_list(COMMA,result) -> result
+
+State 26:
+separated_nonempty_list(COMMA,result) -> result COMMA . separated_nonempty_list(COMMA,result) [ RCURLY RBRACKET ]
+-- On IDENT shift to state 20
+-- On separated_nonempty_list(COMMA,result) shift to state 27
+-- On result shift to state 25
+
+State 27:
+separated_nonempty_list(COMMA,result) -> result COMMA separated_nonempty_list(COMMA,result) . [ RCURLY RBRACKET ]
+-- On RCURLY reduce production separated_nonempty_list(COMMA,result) -> result COMMA separated_nonempty_list(COMMA,result)
+-- On RBRACKET reduce production separated_nonempty_list(COMMA,result) -> result COMMA separated_nonempty_list(COMMA,result)
+
+State 28:
+value -> LCURLY loption(separated_nonempty_list(COMMA,result)) . RCURLY [ RCURLY RBRACKET EOF COMMA ]
+-- On RCURLY shift to state 29
+
+State 29:
+value -> LCURLY loption(separated_nonempty_list(COMMA,result)) RCURLY . [ RCURLY RBRACKET EOF COMMA ]
+-- On RCURLY reduce production value -> LCURLY loption(separated_nonempty_list(COMMA,result)) RCURLY
+-- On RBRACKET reduce production value -> LCURLY loption(separated_nonempty_list(COMMA,result)) RCURLY
+-- On EOF reduce production value -> LCURLY loption(separated_nonempty_list(COMMA,result)) RCURLY
+-- On COMMA reduce production value -> LCURLY loption(separated_nonempty_list(COMMA,result)) RCURLY
+
+State 30:
+value -> LBRACKET . loption(separated_nonempty_list(COMMA,result)) RBRACKET [ RCURLY RBRACKET EOF COMMA ]
+value -> LBRACKET . separated_nonempty_list(COMMA,value) RBRACKET [ RCURLY RBRACKET EOF COMMA ]
+-- On STRING shift to state 22
+-- On LCURLY shift to state 23
+-- On LBRACKET shift to state 30
+-- On IDENT shift to state 20
+-- On value shift to state 31
+-- On separated_nonempty_list(COMMA,value) shift to state 34
+-- On separated_nonempty_list(COMMA,result) shift to state 24
+-- On result shift to state 25
+-- On loption(separated_nonempty_list(COMMA,result)) shift to state 36
+-- On RBRACKET reduce production loption(separated_nonempty_list(COMMA,result)) -> 
+
+State 31:
+separated_nonempty_list(COMMA,value) -> value . [ RBRACKET ]
+separated_nonempty_list(COMMA,value) -> value . COMMA separated_nonempty_list(COMMA,value) [ RBRACKET ]
+-- On COMMA shift to state 32
+-- On RBRACKET reduce production separated_nonempty_list(COMMA,value) -> value
+
+State 32:
+separated_nonempty_list(COMMA,value) -> value COMMA . separated_nonempty_list(COMMA,value) [ RBRACKET ]
+-- On STRING shift to state 22
+-- On LCURLY shift to state 23
+-- On LBRACKET shift to state 30
+-- On value shift to state 31
+-- On separated_nonempty_list(COMMA,value) shift to state 33
+
+State 33:
+separated_nonempty_list(COMMA,value) -> value COMMA separated_nonempty_list(COMMA,value) . [ RBRACKET ]
+-- On RBRACKET reduce production separated_nonempty_list(COMMA,value) -> value COMMA separated_nonempty_list(COMMA,value)
+
+State 34:
+value -> LBRACKET separated_nonempty_list(COMMA,value) . RBRACKET [ RCURLY RBRACKET EOF COMMA ]
+-- On RBRACKET shift to state 35
+
+State 35:
+value -> LBRACKET separated_nonempty_list(COMMA,value) RBRACKET . [ RCURLY RBRACKET EOF COMMA ]
+-- On RCURLY reduce production value -> LBRACKET separated_nonempty_list(COMMA,value) RBRACKET
+-- On RBRACKET reduce production value -> LBRACKET separated_nonempty_list(COMMA,value) RBRACKET
+-- On EOF reduce production value -> LBRACKET separated_nonempty_list(COMMA,value) RBRACKET
+-- On COMMA reduce production value -> LBRACKET separated_nonempty_list(COMMA,value) RBRACKET
+
+State 36:
+value -> LBRACKET loption(separated_nonempty_list(COMMA,result)) . RBRACKET [ RCURLY RBRACKET EOF COMMA ]
+-- On RBRACKET shift to state 37
+
+State 37:
+value -> LBRACKET loption(separated_nonempty_list(COMMA,result)) RBRACKET . [ RCURLY RBRACKET EOF COMMA ]
+-- On RCURLY reduce production value -> LBRACKET loption(separated_nonempty_list(COMMA,result)) RBRACKET
+-- On RBRACKET reduce production value -> LBRACKET loption(separated_nonempty_list(COMMA,result)) RBRACKET
+-- On EOF reduce production value -> LBRACKET loption(separated_nonempty_list(COMMA,result)) RBRACKET
+-- On COMMA reduce production value -> LBRACKET loption(separated_nonempty_list(COMMA,result)) RBRACKET
+
+State 38:
+result -> IDENT EQUAL value . [ RCURLY RBRACKET EOF COMMA ]
+-- On RCURLY reduce production result -> IDENT EQUAL value
+-- On RBRACKET reduce production result -> IDENT EQUAL value
+-- On EOF reduce production result -> IDENT EQUAL value
+-- On COMMA reduce production result -> IDENT EQUAL value
+
+State 39:
+list(preceded(COMMA,result)) -> COMMA result . list(preceded(COMMA,result)) [ EOF ]
+-- On COMMA shift to state 19
+-- On list(preceded(COMMA,result)) shift to state 40
+-- On EOF reduce production list(preceded(COMMA,result)) -> 
+
+State 40:
+list(preceded(COMMA,result)) -> COMMA result list(preceded(COMMA,result)) . [ EOF ]
+-- On EOF reduce production list(preceded(COMMA,result)) -> COMMA result list(preceded(COMMA,result))
+
+State 41:
+output_record -> option(TOKEN) CARET IDENT list(preceded(COMMA,result)) . [ EOF ]
+-- On EOF reduce production output_record -> option(TOKEN) CARET IDENT list(preceded(COMMA,result))
+
+State 42:
+async_type -> ASTERISK . [ IDENT ]
+-- On IDENT reduce production async_type -> ASTERISK
+
+State 43:
+output_record -> option(TOKEN) async_type . IDENT list(preceded(COMMA,result)) [ EOF ]
+-- On IDENT shift to state 44
+
+State 44:
+output_record -> option(TOKEN) async_type IDENT . list(preceded(COMMA,result)) [ EOF ]
+-- On COMMA shift to state 19
+-- On list(preceded(COMMA,result)) shift to state 45
+-- On EOF reduce production list(preceded(COMMA,result)) -> 
+
+State 45:
+output_record -> option(TOKEN) async_type IDENT list(preceded(COMMA,result)) . [ EOF ]
+-- On EOF reduce production output_record -> option(TOKEN) async_type IDENT list(preceded(COMMA,result))
+
+State 46:
+input_output -> input_prefix . [ # ]
+-- On # reduce production input_output -> input_prefix
+
+State 47:
+input_output' -> input_output . [ # ]
+-- On # accept input_output
+
+State 48:
+output' -> . output [ # ]
+-- On TOKEN shift to state 1
+-- On TILDE shift to state 2
+-- On AT shift to state 6
+-- On AMPERSAND shift to state 7
+-- On stream_type shift to state 8
+-- On output_record shift to state 10
+-- On output shift to state 49
+-- On option(TOKEN) shift to state 50
+-- On PLUS reduce production option(TOKEN) -> 
+-- On EQUAL reduce production option(TOKEN) -> 
+-- On CARET reduce production option(TOKEN) -> 
+-- On ASTERISK reduce production option(TOKEN) -> 
+
+State 49:
+output' -> output . [ # ]
+-- On # accept output
+
+State 50:
+output_record -> option(TOKEN) . CARET IDENT list(preceded(COMMA,result)) [ EOF ]
+output_record -> option(TOKEN) . async_type IDENT list(preceded(COMMA,result)) [ EOF ]
+-- On PLUS shift to state 14
+-- On EQUAL shift to state 16
+-- On CARET shift to state 17
+-- On ASTERISK shift to state 42
+-- On async_type shift to state 43
+

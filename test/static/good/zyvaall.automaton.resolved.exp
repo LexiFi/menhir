@@ -1,0 +1,1704 @@
+State 0:
+main' -> . main [ # ]
+-- On PROGRAM shift to state 1
+-- On main shift to state 146
+
+State 1:
+main -> PROGRAM . vars definitions body endtok [ # ]
+-- On VAR shift to state 2
+-- On vars shift to state 18
+-- On PROCEDURE reduce production vars -> 
+-- On FUNCTION reduce production vars -> 
+-- On BEGIN reduce production vars -> 
+
+State 2:
+vars -> VAR . args2 [ PROCEDURE FUNCTION BEGIN ]
+-- On IDENT shift to state 3
+-- On idents shift to state 6
+-- On declvar shift to state 14
+-- On args2 shift to state 17
+-- On PROCEDURE reduce production args2 -> 
+-- On FUNCTION reduce production args2 -> 
+-- On BEGIN reduce production args2 -> 
+
+State 3:
+idents -> IDENT . COMMA idents [ COLON ]
+idents -> IDENT . [ COLON ]
+-- On COMMA shift to state 4
+-- On COLON reduce production idents -> IDENT
+
+State 4:
+idents -> IDENT COMMA . idents [ COLON ]
+-- On IDENT shift to state 3
+-- On idents shift to state 5
+
+State 5:
+idents -> IDENT COMMA idents . [ COLON ]
+-- On COLON reduce production idents -> IDENT COMMA idents
+
+State 6:
+declvar -> idents . COLON type_expr [ SEMI RPAREN ]
+-- On COLON shift to state 7
+
+State 7:
+declvar -> idents COLON . type_expr [ SEMI RPAREN ]
+-- On INTEGER shift to state 8
+-- On BOOLEAN shift to state 9
+-- On ARRAY shift to state 10
+-- On type_expr shift to state 13
+
+State 8:
+type_expr -> INTEGER . [ SEMI RPAREN ]
+-- On SEMI reduce production type_expr -> INTEGER
+-- On RPAREN reduce production type_expr -> INTEGER
+
+State 9:
+type_expr -> BOOLEAN . [ SEMI RPAREN ]
+-- On SEMI reduce production type_expr -> BOOLEAN
+-- On RPAREN reduce production type_expr -> BOOLEAN
+
+State 10:
+type_expr -> ARRAY . OF type_expr [ SEMI RPAREN ]
+-- On OF shift to state 11
+
+State 11:
+type_expr -> ARRAY OF . type_expr [ SEMI RPAREN ]
+-- On INTEGER shift to state 8
+-- On BOOLEAN shift to state 9
+-- On ARRAY shift to state 10
+-- On type_expr shift to state 12
+
+State 12:
+type_expr -> ARRAY OF type_expr . [ SEMI RPAREN ]
+-- On SEMI reduce production type_expr -> ARRAY OF type_expr
+-- On RPAREN reduce production type_expr -> ARRAY OF type_expr
+
+State 13:
+declvar -> idents COLON type_expr . [ SEMI RPAREN ]
+-- On SEMI reduce production declvar -> idents COLON type_expr
+-- On RPAREN reduce production declvar -> idents COLON type_expr
+
+State 14:
+args2 -> declvar . SEMI args2 [ PROCEDURE FUNCTION BEGIN ]
+-- On SEMI shift to state 15
+
+State 15:
+args2 -> declvar SEMI . args2 [ PROCEDURE FUNCTION BEGIN ]
+-- On IDENT shift to state 3
+-- On idents shift to state 6
+-- On declvar shift to state 14
+-- On args2 shift to state 16
+-- On PROCEDURE reduce production args2 -> 
+-- On FUNCTION reduce production args2 -> 
+-- On BEGIN reduce production args2 -> 
+
+State 16:
+args2 -> declvar SEMI args2 . [ PROCEDURE FUNCTION BEGIN ]
+-- On PROCEDURE reduce production args2 -> declvar SEMI args2
+-- On FUNCTION reduce production args2 -> declvar SEMI args2
+-- On BEGIN reduce production args2 -> declvar SEMI args2
+
+State 17:
+vars -> VAR args2 . [ PROCEDURE FUNCTION BEGIN ]
+-- On PROCEDURE reduce production vars -> VAR args2
+-- On FUNCTION reduce production vars -> VAR args2
+-- On BEGIN reduce production vars -> VAR args2
+
+State 18:
+main -> PROGRAM vars . definitions body endtok [ # ]
+-- On PROCEDURE shift to state 19
+-- On FUNCTION shift to state 128
+-- On fonction shift to state 138
+-- On definitions shift to state 141
+-- On BEGIN reduce production definitions -> 
+
+State 19:
+fonction -> PROCEDURE . IDENT LPAREN args RPAREN SEMI vars body [ SEMI ]
+-- On IDENT shift to state 20
+
+State 20:
+fonction -> PROCEDURE IDENT . LPAREN args RPAREN SEMI vars body [ SEMI ]
+-- On LPAREN shift to state 21
+
+State 21:
+fonction -> PROCEDURE IDENT LPAREN . args RPAREN SEMI vars body [ SEMI ]
+-- On IDENT shift to state 3
+-- On idents shift to state 6
+-- On declvar shift to state 22
+-- On args shift to state 27
+-- On RPAREN reduce production args -> 
+
+State 22:
+args -> declvar . args1 [ RPAREN ]
+-- On SEMI shift to state 23
+-- On args1 shift to state 26
+-- On RPAREN reduce production args1 -> 
+
+State 23:
+args1 -> SEMI . declvar args1 [ RPAREN ]
+-- On IDENT shift to state 3
+-- On idents shift to state 6
+-- On declvar shift to state 24
+
+State 24:
+args1 -> SEMI declvar . args1 [ RPAREN ]
+-- On SEMI shift to state 23
+-- On args1 shift to state 25
+-- On RPAREN reduce production args1 -> 
+
+State 25:
+args1 -> SEMI declvar args1 . [ RPAREN ]
+-- On RPAREN reduce production args1 -> SEMI declvar args1
+
+State 26:
+args -> declvar args1 . [ RPAREN ]
+-- On RPAREN reduce production args -> declvar args1
+
+State 27:
+fonction -> PROCEDURE IDENT LPAREN args . RPAREN SEMI vars body [ SEMI ]
+-- On RPAREN shift to state 28
+
+State 28:
+fonction -> PROCEDURE IDENT LPAREN args RPAREN . SEMI vars body [ SEMI ]
+-- On SEMI shift to state 29
+
+State 29:
+fonction -> PROCEDURE IDENT LPAREN args RPAREN SEMI . vars body [ SEMI ]
+-- On VAR shift to state 2
+-- On vars shift to state 30
+-- On BEGIN reduce production vars -> 
+
+State 30:
+fonction -> PROCEDURE IDENT LPAREN args RPAREN SEMI vars . body [ SEMI ]
+-- On BEGIN shift to state 31
+-- On body shift to state 127
+
+State 31:
+body -> BEGIN . bloc END [ SEMISEMI SEMI DOT ]
+-- On WRITELN shift to state 32
+-- On WRITE shift to state 83
+-- On WHILE shift to state 87
+-- On READ shift to state 90
+-- On LPAREN shift to state 94
+-- On IF shift to state 97
+-- On IDENT shift to state 100
+-- On BEGIN shift to state 106
+-- On ALLOC shift to state 40
+-- On instruction shift to state 107
+-- On call_expression shift to state 111
+-- On bloc shift to state 125
+-- On array_expression shift to state 112
+-- On END reduce production bloc -> 
+
+State 32:
+instruction -> WRITELN . LPAREN expression RPAREN [ SEMI END ELSE ]
+-- On LPAREN shift to state 33
+
+State 33:
+instruction -> WRITELN LPAREN . expression RPAREN [ SEMI END ELSE ]
+-- On MINUS shift to state 34
+-- On LPAREN shift to state 35
+-- On INT shift to state 36
+-- On IDENT shift to state 37
+-- On BOOL shift to state 39
+-- On ALLOC shift to state 40
+-- On expression shift to state 81
+-- On call_expression shift to state 45
+-- On array_expression shift to state 46
+
+State 34:
+expression -> MINUS . expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+-- On MINUS shift to state 34
+-- On LPAREN shift to state 35
+-- On INT shift to state 36
+-- On IDENT shift to state 37
+-- On BOOL shift to state 39
+-- On ALLOC shift to state 40
+-- On expression shift to state 80
+-- On call_expression shift to state 45
+-- On array_expression shift to state 46
+
+State 35:
+array_expression -> LPAREN . expression RPAREN [ LBRACKET ]
+expression -> LPAREN . expression RPAREN [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+-- On MINUS shift to state 34
+-- On LPAREN shift to state 35
+-- On INT shift to state 36
+-- On IDENT shift to state 37
+-- On BOOL shift to state 39
+-- On ALLOC shift to state 40
+-- On expression shift to state 78
+-- On call_expression shift to state 45
+-- On array_expression shift to state 46
+
+State 36:
+expression -> INT . [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+-- On TIMES reduce production expression -> INT
+-- On THEN reduce production expression -> INT
+-- On SEMI reduce production expression -> INT
+-- On RPAREN reduce production expression -> INT
+-- On RBRACKET reduce production expression -> INT
+-- On PLUS reduce production expression -> INT
+-- On MINUS reduce production expression -> INT
+-- On LESSGREATER reduce production expression -> INT
+-- On LESSEQUAL reduce production expression -> INT
+-- On LESS reduce production expression -> INT
+-- On GREATEREQUAL reduce production expression -> INT
+-- On GREATER reduce production expression -> INT
+-- On EQUAL reduce production expression -> INT
+-- On END reduce production expression -> INT
+-- On ELSE reduce production expression -> INT
+-- On DO reduce production expression -> INT
+-- On DIV reduce production expression -> INT
+-- On COMMA reduce production expression -> INT
+-- On COLON reduce production expression -> INT
+
+State 37:
+array_expression -> IDENT . [ LBRACKET ]
+call_expression -> IDENT . LPAREN arguments RPAREN [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> IDENT . [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+-- On LPAREN shift to state 38
+-- On TIMES reduce production expression -> IDENT
+-- On THEN reduce production expression -> IDENT
+-- On SEMI reduce production expression -> IDENT
+-- On RPAREN reduce production expression -> IDENT
+-- On RBRACKET reduce production expression -> IDENT
+-- On PLUS reduce production expression -> IDENT
+-- On MINUS reduce production expression -> IDENT
+-- On LESSGREATER reduce production expression -> IDENT
+-- On LESSEQUAL reduce production expression -> IDENT
+-- On LESS reduce production expression -> IDENT
+-- On LBRACKET reduce production array_expression -> IDENT
+-- On GREATEREQUAL reduce production expression -> IDENT
+-- On GREATER reduce production expression -> IDENT
+-- On EQUAL reduce production expression -> IDENT
+-- On END reduce production expression -> IDENT
+-- On ELSE reduce production expression -> IDENT
+-- On DO reduce production expression -> IDENT
+-- On DIV reduce production expression -> IDENT
+-- On COMMA reduce production expression -> IDENT
+-- On COLON reduce production expression -> IDENT
+
+State 38:
+call_expression -> IDENT LPAREN . arguments RPAREN [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+-- On MINUS shift to state 34
+-- On LPAREN shift to state 35
+-- On INT shift to state 36
+-- On IDENT shift to state 37
+-- On BOOL shift to state 39
+-- On ALLOC shift to state 40
+-- On expression shift to state 71
+-- On call_expression shift to state 45
+-- On array_expression shift to state 46
+-- On arguments shift to state 76
+-- On RPAREN reduce production arguments -> 
+
+State 39:
+expression -> BOOL . [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+-- On TIMES reduce production expression -> BOOL
+-- On THEN reduce production expression -> BOOL
+-- On SEMI reduce production expression -> BOOL
+-- On RPAREN reduce production expression -> BOOL
+-- On RBRACKET reduce production expression -> BOOL
+-- On PLUS reduce production expression -> BOOL
+-- On MINUS reduce production expression -> BOOL
+-- On LESSGREATER reduce production expression -> BOOL
+-- On LESSEQUAL reduce production expression -> BOOL
+-- On LESS reduce production expression -> BOOL
+-- On GREATEREQUAL reduce production expression -> BOOL
+-- On GREATER reduce production expression -> BOOL
+-- On EQUAL reduce production expression -> BOOL
+-- On END reduce production expression -> BOOL
+-- On ELSE reduce production expression -> BOOL
+-- On DO reduce production expression -> BOOL
+-- On DIV reduce production expression -> BOOL
+-- On COMMA reduce production expression -> BOOL
+-- On COLON reduce production expression -> BOOL
+
+State 40:
+call_expression -> ALLOC . LPAREN expression COLON type_expr RPAREN [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+-- On LPAREN shift to state 41
+
+State 41:
+call_expression -> ALLOC LPAREN . expression COLON type_expr RPAREN [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+-- On MINUS shift to state 34
+-- On LPAREN shift to state 35
+-- On INT shift to state 36
+-- On IDENT shift to state 37
+-- On BOOL shift to state 39
+-- On ALLOC shift to state 40
+-- On expression shift to state 42
+-- On call_expression shift to state 45
+-- On array_expression shift to state 46
+
+State 42:
+call_expression -> ALLOC LPAREN expression . COLON type_expr RPAREN [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . PLUS expression [ TIMES PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV COLON ]
+expression -> expression . MINUS expression [ TIMES PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV COLON ]
+expression -> expression . TIMES expression [ TIMES PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV COLON ]
+expression -> expression . DIV expression [ TIMES PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV COLON ]
+expression -> expression . LESS expression [ TIMES PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV COLON ]
+expression -> expression . LESSEQUAL expression [ TIMES PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV COLON ]
+expression -> expression . GREATER expression [ TIMES PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV COLON ]
+expression -> expression . GREATEREQUAL expression [ TIMES PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV COLON ]
+expression -> expression . EQUAL expression [ TIMES PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV COLON ]
+expression -> expression . LESSGREATER expression [ TIMES PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV COLON ]
+-- On TIMES shift to state 43
+-- On PLUS shift to state 50
+-- On MINUS shift to state 54
+-- On LESSGREATER shift to state 56
+-- On LESSEQUAL shift to state 58
+-- On LESS shift to state 60
+-- On GREATEREQUAL shift to state 62
+-- On GREATER shift to state 64
+-- On EQUAL shift to state 66
+-- On DIV shift to state 52
+-- On COLON shift to state 68
+
+State 43:
+expression -> expression TIMES . expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+-- On MINUS shift to state 34
+-- On LPAREN shift to state 35
+-- On INT shift to state 36
+-- On IDENT shift to state 37
+-- On BOOL shift to state 39
+-- On ALLOC shift to state 40
+-- On expression shift to state 44
+-- On call_expression shift to state 45
+-- On array_expression shift to state 46
+
+State 44:
+expression -> expression . PLUS expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . MINUS expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . TIMES expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression TIMES expression . [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . DIV expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . LESS expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . LESSEQUAL expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . GREATER expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . GREATEREQUAL expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . EQUAL expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . LESSGREATER expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+-- On TIMES reduce production expression -> expression TIMES expression
+-- On THEN reduce production expression -> expression TIMES expression
+-- On SEMI reduce production expression -> expression TIMES expression
+-- On RPAREN reduce production expression -> expression TIMES expression
+-- On RBRACKET reduce production expression -> expression TIMES expression
+-- On PLUS reduce production expression -> expression TIMES expression
+-- On MINUS reduce production expression -> expression TIMES expression
+-- On LESSGREATER reduce production expression -> expression TIMES expression
+-- On LESSEQUAL reduce production expression -> expression TIMES expression
+-- On LESS reduce production expression -> expression TIMES expression
+-- On GREATEREQUAL reduce production expression -> expression TIMES expression
+-- On GREATER reduce production expression -> expression TIMES expression
+-- On EQUAL reduce production expression -> expression TIMES expression
+-- On END reduce production expression -> expression TIMES expression
+-- On ELSE reduce production expression -> expression TIMES expression
+-- On DO reduce production expression -> expression TIMES expression
+-- On DIV reduce production expression -> expression TIMES expression
+-- On COMMA reduce production expression -> expression TIMES expression
+-- On COLON reduce production expression -> expression TIMES expression
+
+State 45:
+array_expression -> call_expression . [ LBRACKET ]
+expression -> call_expression . [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+-- On TIMES reduce production expression -> call_expression
+-- On THEN reduce production expression -> call_expression
+-- On SEMI reduce production expression -> call_expression
+-- On RPAREN reduce production expression -> call_expression
+-- On RBRACKET reduce production expression -> call_expression
+-- On PLUS reduce production expression -> call_expression
+-- On MINUS reduce production expression -> call_expression
+-- On LESSGREATER reduce production expression -> call_expression
+-- On LESSEQUAL reduce production expression -> call_expression
+-- On LESS reduce production expression -> call_expression
+-- On LBRACKET reduce production array_expression -> call_expression
+-- On GREATEREQUAL reduce production expression -> call_expression
+-- On GREATER reduce production expression -> call_expression
+-- On EQUAL reduce production expression -> call_expression
+-- On END reduce production expression -> call_expression
+-- On ELSE reduce production expression -> call_expression
+-- On DO reduce production expression -> call_expression
+-- On DIV reduce production expression -> call_expression
+-- On COMMA reduce production expression -> call_expression
+-- On COLON reduce production expression -> call_expression
+
+State 46:
+array_expression -> array_expression . LBRACKET expression RBRACKET [ LBRACKET ]
+expression -> array_expression . LBRACKET expression RBRACKET [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+-- On LBRACKET shift to state 47
+
+State 47:
+array_expression -> array_expression LBRACKET . expression RBRACKET [ LBRACKET ]
+expression -> array_expression LBRACKET . expression RBRACKET [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+-- On MINUS shift to state 34
+-- On LPAREN shift to state 35
+-- On INT shift to state 36
+-- On IDENT shift to state 37
+-- On BOOL shift to state 39
+-- On ALLOC shift to state 40
+-- On expression shift to state 48
+-- On call_expression shift to state 45
+-- On array_expression shift to state 46
+
+State 48:
+array_expression -> array_expression LBRACKET expression . RBRACKET [ LBRACKET ]
+expression -> array_expression LBRACKET expression . RBRACKET [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . PLUS expression [ TIMES RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . MINUS expression [ TIMES RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . TIMES expression [ TIMES RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . DIV expression [ TIMES RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . LESS expression [ TIMES RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . LESSEQUAL expression [ TIMES RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . GREATER expression [ TIMES RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . GREATEREQUAL expression [ TIMES RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . EQUAL expression [ TIMES RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . LESSGREATER expression [ TIMES RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+-- On TIMES shift to state 43
+-- On RBRACKET shift to state 49
+-- On PLUS shift to state 50
+-- On MINUS shift to state 54
+-- On LESSGREATER shift to state 56
+-- On LESSEQUAL shift to state 58
+-- On LESS shift to state 60
+-- On GREATEREQUAL shift to state 62
+-- On GREATER shift to state 64
+-- On EQUAL shift to state 66
+-- On DIV shift to state 52
+
+State 49:
+array_expression -> array_expression LBRACKET expression RBRACKET . [ LBRACKET ]
+expression -> array_expression LBRACKET expression RBRACKET . [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+-- On TIMES reduce production expression -> array_expression LBRACKET expression RBRACKET
+-- On THEN reduce production expression -> array_expression LBRACKET expression RBRACKET
+-- On SEMI reduce production expression -> array_expression LBRACKET expression RBRACKET
+-- On RPAREN reduce production expression -> array_expression LBRACKET expression RBRACKET
+-- On RBRACKET reduce production expression -> array_expression LBRACKET expression RBRACKET
+-- On PLUS reduce production expression -> array_expression LBRACKET expression RBRACKET
+-- On MINUS reduce production expression -> array_expression LBRACKET expression RBRACKET
+-- On LESSGREATER reduce production expression -> array_expression LBRACKET expression RBRACKET
+-- On LESSEQUAL reduce production expression -> array_expression LBRACKET expression RBRACKET
+-- On LESS reduce production expression -> array_expression LBRACKET expression RBRACKET
+-- On LBRACKET reduce production array_expression -> array_expression LBRACKET expression RBRACKET
+-- On GREATEREQUAL reduce production expression -> array_expression LBRACKET expression RBRACKET
+-- On GREATER reduce production expression -> array_expression LBRACKET expression RBRACKET
+-- On EQUAL reduce production expression -> array_expression LBRACKET expression RBRACKET
+-- On END reduce production expression -> array_expression LBRACKET expression RBRACKET
+-- On ELSE reduce production expression -> array_expression LBRACKET expression RBRACKET
+-- On DO reduce production expression -> array_expression LBRACKET expression RBRACKET
+-- On DIV reduce production expression -> array_expression LBRACKET expression RBRACKET
+-- On COMMA reduce production expression -> array_expression LBRACKET expression RBRACKET
+-- On COLON reduce production expression -> array_expression LBRACKET expression RBRACKET
+
+State 50:
+expression -> expression PLUS . expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+-- On MINUS shift to state 34
+-- On LPAREN shift to state 35
+-- On INT shift to state 36
+-- On IDENT shift to state 37
+-- On BOOL shift to state 39
+-- On ALLOC shift to state 40
+-- On expression shift to state 51
+-- On call_expression shift to state 45
+-- On array_expression shift to state 46
+
+State 51:
+expression -> expression . PLUS expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression PLUS expression . [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . MINUS expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . TIMES expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . DIV expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . LESS expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . LESSEQUAL expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . GREATER expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . GREATEREQUAL expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . EQUAL expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . LESSGREATER expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+-- On TIMES shift to state 43
+-- On DIV shift to state 52
+-- On THEN reduce production expression -> expression PLUS expression
+-- On SEMI reduce production expression -> expression PLUS expression
+-- On RPAREN reduce production expression -> expression PLUS expression
+-- On RBRACKET reduce production expression -> expression PLUS expression
+-- On PLUS reduce production expression -> expression PLUS expression
+-- On MINUS reduce production expression -> expression PLUS expression
+-- On LESSGREATER reduce production expression -> expression PLUS expression
+-- On LESSEQUAL reduce production expression -> expression PLUS expression
+-- On LESS reduce production expression -> expression PLUS expression
+-- On GREATEREQUAL reduce production expression -> expression PLUS expression
+-- On GREATER reduce production expression -> expression PLUS expression
+-- On EQUAL reduce production expression -> expression PLUS expression
+-- On END reduce production expression -> expression PLUS expression
+-- On ELSE reduce production expression -> expression PLUS expression
+-- On DO reduce production expression -> expression PLUS expression
+-- On COMMA reduce production expression -> expression PLUS expression
+-- On COLON reduce production expression -> expression PLUS expression
+
+State 52:
+expression -> expression DIV . expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+-- On MINUS shift to state 34
+-- On LPAREN shift to state 35
+-- On INT shift to state 36
+-- On IDENT shift to state 37
+-- On BOOL shift to state 39
+-- On ALLOC shift to state 40
+-- On expression shift to state 53
+-- On call_expression shift to state 45
+-- On array_expression shift to state 46
+
+State 53:
+expression -> expression . PLUS expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . MINUS expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . TIMES expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . DIV expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression DIV expression . [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . LESS expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . LESSEQUAL expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . GREATER expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . GREATEREQUAL expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . EQUAL expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . LESSGREATER expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+-- On TIMES reduce production expression -> expression DIV expression
+-- On THEN reduce production expression -> expression DIV expression
+-- On SEMI reduce production expression -> expression DIV expression
+-- On RPAREN reduce production expression -> expression DIV expression
+-- On RBRACKET reduce production expression -> expression DIV expression
+-- On PLUS reduce production expression -> expression DIV expression
+-- On MINUS reduce production expression -> expression DIV expression
+-- On LESSGREATER reduce production expression -> expression DIV expression
+-- On LESSEQUAL reduce production expression -> expression DIV expression
+-- On LESS reduce production expression -> expression DIV expression
+-- On GREATEREQUAL reduce production expression -> expression DIV expression
+-- On GREATER reduce production expression -> expression DIV expression
+-- On EQUAL reduce production expression -> expression DIV expression
+-- On END reduce production expression -> expression DIV expression
+-- On ELSE reduce production expression -> expression DIV expression
+-- On DO reduce production expression -> expression DIV expression
+-- On DIV reduce production expression -> expression DIV expression
+-- On COMMA reduce production expression -> expression DIV expression
+-- On COLON reduce production expression -> expression DIV expression
+
+State 54:
+expression -> expression MINUS . expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+-- On MINUS shift to state 34
+-- On LPAREN shift to state 35
+-- On INT shift to state 36
+-- On IDENT shift to state 37
+-- On BOOL shift to state 39
+-- On ALLOC shift to state 40
+-- On expression shift to state 55
+-- On call_expression shift to state 45
+-- On array_expression shift to state 46
+
+State 55:
+expression -> expression . PLUS expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . MINUS expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression MINUS expression . [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . TIMES expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . DIV expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . LESS expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . LESSEQUAL expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . GREATER expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . GREATEREQUAL expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . EQUAL expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . LESSGREATER expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+-- On TIMES shift to state 43
+-- On DIV shift to state 52
+-- On THEN reduce production expression -> expression MINUS expression
+-- On SEMI reduce production expression -> expression MINUS expression
+-- On RPAREN reduce production expression -> expression MINUS expression
+-- On RBRACKET reduce production expression -> expression MINUS expression
+-- On PLUS reduce production expression -> expression MINUS expression
+-- On MINUS reduce production expression -> expression MINUS expression
+-- On LESSGREATER reduce production expression -> expression MINUS expression
+-- On LESSEQUAL reduce production expression -> expression MINUS expression
+-- On LESS reduce production expression -> expression MINUS expression
+-- On GREATEREQUAL reduce production expression -> expression MINUS expression
+-- On GREATER reduce production expression -> expression MINUS expression
+-- On EQUAL reduce production expression -> expression MINUS expression
+-- On END reduce production expression -> expression MINUS expression
+-- On ELSE reduce production expression -> expression MINUS expression
+-- On DO reduce production expression -> expression MINUS expression
+-- On COMMA reduce production expression -> expression MINUS expression
+-- On COLON reduce production expression -> expression MINUS expression
+
+State 56:
+expression -> expression LESSGREATER . expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+-- On MINUS shift to state 34
+-- On LPAREN shift to state 35
+-- On INT shift to state 36
+-- On IDENT shift to state 37
+-- On BOOL shift to state 39
+-- On ALLOC shift to state 40
+-- On expression shift to state 57
+-- On call_expression shift to state 45
+-- On array_expression shift to state 46
+
+State 57:
+expression -> expression . PLUS expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . MINUS expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . TIMES expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . DIV expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . LESS expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . LESSEQUAL expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . GREATER expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . GREATEREQUAL expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . EQUAL expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . LESSGREATER expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression LESSGREATER expression . [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+-- On TIMES shift to state 43
+-- On PLUS shift to state 50
+-- On MINUS shift to state 54
+-- On DIV shift to state 52
+-- On THEN reduce production expression -> expression LESSGREATER expression
+-- On SEMI reduce production expression -> expression LESSGREATER expression
+-- On RPAREN reduce production expression -> expression LESSGREATER expression
+-- On RBRACKET reduce production expression -> expression LESSGREATER expression
+-- On LESSGREATER reduce production expression -> expression LESSGREATER expression
+-- On LESSEQUAL reduce production expression -> expression LESSGREATER expression
+-- On LESS reduce production expression -> expression LESSGREATER expression
+-- On GREATEREQUAL reduce production expression -> expression LESSGREATER expression
+-- On GREATER reduce production expression -> expression LESSGREATER expression
+-- On EQUAL reduce production expression -> expression LESSGREATER expression
+-- On END reduce production expression -> expression LESSGREATER expression
+-- On ELSE reduce production expression -> expression LESSGREATER expression
+-- On DO reduce production expression -> expression LESSGREATER expression
+-- On COMMA reduce production expression -> expression LESSGREATER expression
+-- On COLON reduce production expression -> expression LESSGREATER expression
+
+State 58:
+expression -> expression LESSEQUAL . expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+-- On MINUS shift to state 34
+-- On LPAREN shift to state 35
+-- On INT shift to state 36
+-- On IDENT shift to state 37
+-- On BOOL shift to state 39
+-- On ALLOC shift to state 40
+-- On expression shift to state 59
+-- On call_expression shift to state 45
+-- On array_expression shift to state 46
+
+State 59:
+expression -> expression . PLUS expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . MINUS expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . TIMES expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . DIV expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . LESS expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . LESSEQUAL expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression LESSEQUAL expression . [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . GREATER expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . GREATEREQUAL expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . EQUAL expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . LESSGREATER expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+-- On TIMES shift to state 43
+-- On PLUS shift to state 50
+-- On MINUS shift to state 54
+-- On DIV shift to state 52
+-- On THEN reduce production expression -> expression LESSEQUAL expression
+-- On SEMI reduce production expression -> expression LESSEQUAL expression
+-- On RPAREN reduce production expression -> expression LESSEQUAL expression
+-- On RBRACKET reduce production expression -> expression LESSEQUAL expression
+-- On LESSGREATER reduce production expression -> expression LESSEQUAL expression
+-- On LESSEQUAL reduce production expression -> expression LESSEQUAL expression
+-- On LESS reduce production expression -> expression LESSEQUAL expression
+-- On GREATEREQUAL reduce production expression -> expression LESSEQUAL expression
+-- On GREATER reduce production expression -> expression LESSEQUAL expression
+-- On EQUAL reduce production expression -> expression LESSEQUAL expression
+-- On END reduce production expression -> expression LESSEQUAL expression
+-- On ELSE reduce production expression -> expression LESSEQUAL expression
+-- On DO reduce production expression -> expression LESSEQUAL expression
+-- On COMMA reduce production expression -> expression LESSEQUAL expression
+-- On COLON reduce production expression -> expression LESSEQUAL expression
+
+State 60:
+expression -> expression LESS . expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+-- On MINUS shift to state 34
+-- On LPAREN shift to state 35
+-- On INT shift to state 36
+-- On IDENT shift to state 37
+-- On BOOL shift to state 39
+-- On ALLOC shift to state 40
+-- On expression shift to state 61
+-- On call_expression shift to state 45
+-- On array_expression shift to state 46
+
+State 61:
+expression -> expression . PLUS expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . MINUS expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . TIMES expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . DIV expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . LESS expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression LESS expression . [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . LESSEQUAL expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . GREATER expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . GREATEREQUAL expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . EQUAL expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . LESSGREATER expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+-- On TIMES shift to state 43
+-- On PLUS shift to state 50
+-- On MINUS shift to state 54
+-- On DIV shift to state 52
+-- On THEN reduce production expression -> expression LESS expression
+-- On SEMI reduce production expression -> expression LESS expression
+-- On RPAREN reduce production expression -> expression LESS expression
+-- On RBRACKET reduce production expression -> expression LESS expression
+-- On LESSGREATER reduce production expression -> expression LESS expression
+-- On LESSEQUAL reduce production expression -> expression LESS expression
+-- On LESS reduce production expression -> expression LESS expression
+-- On GREATEREQUAL reduce production expression -> expression LESS expression
+-- On GREATER reduce production expression -> expression LESS expression
+-- On EQUAL reduce production expression -> expression LESS expression
+-- On END reduce production expression -> expression LESS expression
+-- On ELSE reduce production expression -> expression LESS expression
+-- On DO reduce production expression -> expression LESS expression
+-- On COMMA reduce production expression -> expression LESS expression
+-- On COLON reduce production expression -> expression LESS expression
+
+State 62:
+expression -> expression GREATEREQUAL . expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+-- On MINUS shift to state 34
+-- On LPAREN shift to state 35
+-- On INT shift to state 36
+-- On IDENT shift to state 37
+-- On BOOL shift to state 39
+-- On ALLOC shift to state 40
+-- On expression shift to state 63
+-- On call_expression shift to state 45
+-- On array_expression shift to state 46
+
+State 63:
+expression -> expression . PLUS expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . MINUS expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . TIMES expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . DIV expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . LESS expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . LESSEQUAL expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . GREATER expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . GREATEREQUAL expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression GREATEREQUAL expression . [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . EQUAL expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . LESSGREATER expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+-- On TIMES shift to state 43
+-- On PLUS shift to state 50
+-- On MINUS shift to state 54
+-- On DIV shift to state 52
+-- On THEN reduce production expression -> expression GREATEREQUAL expression
+-- On SEMI reduce production expression -> expression GREATEREQUAL expression
+-- On RPAREN reduce production expression -> expression GREATEREQUAL expression
+-- On RBRACKET reduce production expression -> expression GREATEREQUAL expression
+-- On LESSGREATER reduce production expression -> expression GREATEREQUAL expression
+-- On LESSEQUAL reduce production expression -> expression GREATEREQUAL expression
+-- On LESS reduce production expression -> expression GREATEREQUAL expression
+-- On GREATEREQUAL reduce production expression -> expression GREATEREQUAL expression
+-- On GREATER reduce production expression -> expression GREATEREQUAL expression
+-- On EQUAL reduce production expression -> expression GREATEREQUAL expression
+-- On END reduce production expression -> expression GREATEREQUAL expression
+-- On ELSE reduce production expression -> expression GREATEREQUAL expression
+-- On DO reduce production expression -> expression GREATEREQUAL expression
+-- On COMMA reduce production expression -> expression GREATEREQUAL expression
+-- On COLON reduce production expression -> expression GREATEREQUAL expression
+
+State 64:
+expression -> expression GREATER . expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+-- On MINUS shift to state 34
+-- On LPAREN shift to state 35
+-- On INT shift to state 36
+-- On IDENT shift to state 37
+-- On BOOL shift to state 39
+-- On ALLOC shift to state 40
+-- On expression shift to state 65
+-- On call_expression shift to state 45
+-- On array_expression shift to state 46
+
+State 65:
+expression -> expression . PLUS expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . MINUS expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . TIMES expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . DIV expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . LESS expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . LESSEQUAL expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . GREATER expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression GREATER expression . [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . GREATEREQUAL expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . EQUAL expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . LESSGREATER expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+-- On TIMES shift to state 43
+-- On PLUS shift to state 50
+-- On MINUS shift to state 54
+-- On DIV shift to state 52
+-- On THEN reduce production expression -> expression GREATER expression
+-- On SEMI reduce production expression -> expression GREATER expression
+-- On RPAREN reduce production expression -> expression GREATER expression
+-- On RBRACKET reduce production expression -> expression GREATER expression
+-- On LESSGREATER reduce production expression -> expression GREATER expression
+-- On LESSEQUAL reduce production expression -> expression GREATER expression
+-- On LESS reduce production expression -> expression GREATER expression
+-- On GREATEREQUAL reduce production expression -> expression GREATER expression
+-- On GREATER reduce production expression -> expression GREATER expression
+-- On EQUAL reduce production expression -> expression GREATER expression
+-- On END reduce production expression -> expression GREATER expression
+-- On ELSE reduce production expression -> expression GREATER expression
+-- On DO reduce production expression -> expression GREATER expression
+-- On COMMA reduce production expression -> expression GREATER expression
+-- On COLON reduce production expression -> expression GREATER expression
+
+State 66:
+expression -> expression EQUAL . expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+-- On MINUS shift to state 34
+-- On LPAREN shift to state 35
+-- On INT shift to state 36
+-- On IDENT shift to state 37
+-- On BOOL shift to state 39
+-- On ALLOC shift to state 40
+-- On expression shift to state 67
+-- On call_expression shift to state 45
+-- On array_expression shift to state 46
+
+State 67:
+expression -> expression . PLUS expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . MINUS expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . TIMES expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . DIV expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . LESS expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . LESSEQUAL expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . GREATER expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . GREATEREQUAL expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . EQUAL expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression EQUAL expression . [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . LESSGREATER expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+-- On TIMES shift to state 43
+-- On PLUS shift to state 50
+-- On MINUS shift to state 54
+-- On DIV shift to state 52
+-- On THEN reduce production expression -> expression EQUAL expression
+-- On SEMI reduce production expression -> expression EQUAL expression
+-- On RPAREN reduce production expression -> expression EQUAL expression
+-- On RBRACKET reduce production expression -> expression EQUAL expression
+-- On LESSGREATER reduce production expression -> expression EQUAL expression
+-- On LESSEQUAL reduce production expression -> expression EQUAL expression
+-- On LESS reduce production expression -> expression EQUAL expression
+-- On GREATEREQUAL reduce production expression -> expression EQUAL expression
+-- On GREATER reduce production expression -> expression EQUAL expression
+-- On EQUAL reduce production expression -> expression EQUAL expression
+-- On END reduce production expression -> expression EQUAL expression
+-- On ELSE reduce production expression -> expression EQUAL expression
+-- On DO reduce production expression -> expression EQUAL expression
+-- On COMMA reduce production expression -> expression EQUAL expression
+-- On COLON reduce production expression -> expression EQUAL expression
+
+State 68:
+call_expression -> ALLOC LPAREN expression COLON . type_expr RPAREN [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+-- On INTEGER shift to state 8
+-- On BOOLEAN shift to state 9
+-- On ARRAY shift to state 10
+-- On type_expr shift to state 69
+
+State 69:
+call_expression -> ALLOC LPAREN expression COLON type_expr . RPAREN [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+-- On RPAREN shift to state 70
+
+State 70:
+call_expression -> ALLOC LPAREN expression COLON type_expr RPAREN . [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+-- On TIMES reduce production call_expression -> ALLOC LPAREN expression COLON type_expr RPAREN
+-- On THEN reduce production call_expression -> ALLOC LPAREN expression COLON type_expr RPAREN
+-- On SEMI reduce production call_expression -> ALLOC LPAREN expression COLON type_expr RPAREN
+-- On RPAREN reduce production call_expression -> ALLOC LPAREN expression COLON type_expr RPAREN
+-- On RBRACKET reduce production call_expression -> ALLOC LPAREN expression COLON type_expr RPAREN
+-- On PLUS reduce production call_expression -> ALLOC LPAREN expression COLON type_expr RPAREN
+-- On MINUS reduce production call_expression -> ALLOC LPAREN expression COLON type_expr RPAREN
+-- On LESSGREATER reduce production call_expression -> ALLOC LPAREN expression COLON type_expr RPAREN
+-- On LESSEQUAL reduce production call_expression -> ALLOC LPAREN expression COLON type_expr RPAREN
+-- On LESS reduce production call_expression -> ALLOC LPAREN expression COLON type_expr RPAREN
+-- On LBRACKET reduce production call_expression -> ALLOC LPAREN expression COLON type_expr RPAREN
+-- On GREATEREQUAL reduce production call_expression -> ALLOC LPAREN expression COLON type_expr RPAREN
+-- On GREATER reduce production call_expression -> ALLOC LPAREN expression COLON type_expr RPAREN
+-- On EQUAL reduce production call_expression -> ALLOC LPAREN expression COLON type_expr RPAREN
+-- On END reduce production call_expression -> ALLOC LPAREN expression COLON type_expr RPAREN
+-- On ELSE reduce production call_expression -> ALLOC LPAREN expression COLON type_expr RPAREN
+-- On DO reduce production call_expression -> ALLOC LPAREN expression COLON type_expr RPAREN
+-- On DIV reduce production call_expression -> ALLOC LPAREN expression COLON type_expr RPAREN
+-- On COMMA reduce production call_expression -> ALLOC LPAREN expression COLON type_expr RPAREN
+-- On COLON reduce production call_expression -> ALLOC LPAREN expression COLON type_expr RPAREN
+
+State 71:
+arguments -> expression . arguments1 [ RPAREN ]
+expression -> expression . PLUS expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV COMMA ]
+expression -> expression . MINUS expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV COMMA ]
+expression -> expression . TIMES expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV COMMA ]
+expression -> expression . DIV expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV COMMA ]
+expression -> expression . LESS expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV COMMA ]
+expression -> expression . LESSEQUAL expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV COMMA ]
+expression -> expression . GREATER expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV COMMA ]
+expression -> expression . GREATEREQUAL expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV COMMA ]
+expression -> expression . EQUAL expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV COMMA ]
+expression -> expression . LESSGREATER expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV COMMA ]
+-- On TIMES shift to state 43
+-- On PLUS shift to state 50
+-- On MINUS shift to state 54
+-- On LESSGREATER shift to state 56
+-- On LESSEQUAL shift to state 58
+-- On LESS shift to state 60
+-- On GREATEREQUAL shift to state 62
+-- On GREATER shift to state 64
+-- On EQUAL shift to state 66
+-- On DIV shift to state 52
+-- On COMMA shift to state 72
+-- On arguments1 shift to state 75
+-- On RPAREN reduce production arguments1 -> 
+
+State 72:
+arguments1 -> COMMA . expression arguments1 [ RPAREN ]
+-- On MINUS shift to state 34
+-- On LPAREN shift to state 35
+-- On INT shift to state 36
+-- On IDENT shift to state 37
+-- On BOOL shift to state 39
+-- On ALLOC shift to state 40
+-- On expression shift to state 73
+-- On call_expression shift to state 45
+-- On array_expression shift to state 46
+
+State 73:
+arguments1 -> COMMA expression . arguments1 [ RPAREN ]
+expression -> expression . PLUS expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV COMMA ]
+expression -> expression . MINUS expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV COMMA ]
+expression -> expression . TIMES expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV COMMA ]
+expression -> expression . DIV expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV COMMA ]
+expression -> expression . LESS expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV COMMA ]
+expression -> expression . LESSEQUAL expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV COMMA ]
+expression -> expression . GREATER expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV COMMA ]
+expression -> expression . GREATEREQUAL expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV COMMA ]
+expression -> expression . EQUAL expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV COMMA ]
+expression -> expression . LESSGREATER expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV COMMA ]
+-- On TIMES shift to state 43
+-- On PLUS shift to state 50
+-- On MINUS shift to state 54
+-- On LESSGREATER shift to state 56
+-- On LESSEQUAL shift to state 58
+-- On LESS shift to state 60
+-- On GREATEREQUAL shift to state 62
+-- On GREATER shift to state 64
+-- On EQUAL shift to state 66
+-- On DIV shift to state 52
+-- On COMMA shift to state 72
+-- On arguments1 shift to state 74
+-- On RPAREN reduce production arguments1 -> 
+
+State 74:
+arguments1 -> COMMA expression arguments1 . [ RPAREN ]
+-- On RPAREN reduce production arguments1 -> COMMA expression arguments1
+
+State 75:
+arguments -> expression arguments1 . [ RPAREN ]
+-- On RPAREN reduce production arguments -> expression arguments1
+
+State 76:
+call_expression -> IDENT LPAREN arguments . RPAREN [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+-- On RPAREN shift to state 77
+
+State 77:
+call_expression -> IDENT LPAREN arguments RPAREN . [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+-- On TIMES reduce production call_expression -> IDENT LPAREN arguments RPAREN
+-- On THEN reduce production call_expression -> IDENT LPAREN arguments RPAREN
+-- On SEMI reduce production call_expression -> IDENT LPAREN arguments RPAREN
+-- On RPAREN reduce production call_expression -> IDENT LPAREN arguments RPAREN
+-- On RBRACKET reduce production call_expression -> IDENT LPAREN arguments RPAREN
+-- On PLUS reduce production call_expression -> IDENT LPAREN arguments RPAREN
+-- On MINUS reduce production call_expression -> IDENT LPAREN arguments RPAREN
+-- On LESSGREATER reduce production call_expression -> IDENT LPAREN arguments RPAREN
+-- On LESSEQUAL reduce production call_expression -> IDENT LPAREN arguments RPAREN
+-- On LESS reduce production call_expression -> IDENT LPAREN arguments RPAREN
+-- On LBRACKET reduce production call_expression -> IDENT LPAREN arguments RPAREN
+-- On GREATEREQUAL reduce production call_expression -> IDENT LPAREN arguments RPAREN
+-- On GREATER reduce production call_expression -> IDENT LPAREN arguments RPAREN
+-- On EQUAL reduce production call_expression -> IDENT LPAREN arguments RPAREN
+-- On END reduce production call_expression -> IDENT LPAREN arguments RPAREN
+-- On ELSE reduce production call_expression -> IDENT LPAREN arguments RPAREN
+-- On DO reduce production call_expression -> IDENT LPAREN arguments RPAREN
+-- On DIV reduce production call_expression -> IDENT LPAREN arguments RPAREN
+-- On COMMA reduce production call_expression -> IDENT LPAREN arguments RPAREN
+-- On COLON reduce production call_expression -> IDENT LPAREN arguments RPAREN
+
+State 78:
+array_expression -> LPAREN expression . RPAREN [ LBRACKET ]
+expression -> LPAREN expression . RPAREN [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . PLUS expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . MINUS expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . TIMES expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . DIV expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . LESS expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . LESSEQUAL expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . GREATER expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . GREATEREQUAL expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . EQUAL expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . LESSGREATER expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+-- On TIMES shift to state 43
+-- On RPAREN shift to state 79
+-- On PLUS shift to state 50
+-- On MINUS shift to state 54
+-- On LESSGREATER shift to state 56
+-- On LESSEQUAL shift to state 58
+-- On LESS shift to state 60
+-- On GREATEREQUAL shift to state 62
+-- On GREATER shift to state 64
+-- On EQUAL shift to state 66
+-- On DIV shift to state 52
+
+State 79:
+array_expression -> LPAREN expression RPAREN . [ LBRACKET ]
+expression -> LPAREN expression RPAREN . [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+-- On TIMES reduce production expression -> LPAREN expression RPAREN
+-- On THEN reduce production expression -> LPAREN expression RPAREN
+-- On SEMI reduce production expression -> LPAREN expression RPAREN
+-- On RPAREN reduce production expression -> LPAREN expression RPAREN
+-- On RBRACKET reduce production expression -> LPAREN expression RPAREN
+-- On PLUS reduce production expression -> LPAREN expression RPAREN
+-- On MINUS reduce production expression -> LPAREN expression RPAREN
+-- On LESSGREATER reduce production expression -> LPAREN expression RPAREN
+-- On LESSEQUAL reduce production expression -> LPAREN expression RPAREN
+-- On LESS reduce production expression -> LPAREN expression RPAREN
+-- On LBRACKET reduce production array_expression -> LPAREN expression RPAREN
+-- On GREATEREQUAL reduce production expression -> LPAREN expression RPAREN
+-- On GREATER reduce production expression -> LPAREN expression RPAREN
+-- On EQUAL reduce production expression -> LPAREN expression RPAREN
+-- On END reduce production expression -> LPAREN expression RPAREN
+-- On ELSE reduce production expression -> LPAREN expression RPAREN
+-- On DO reduce production expression -> LPAREN expression RPAREN
+-- On DIV reduce production expression -> LPAREN expression RPAREN
+-- On COMMA reduce production expression -> LPAREN expression RPAREN
+-- On COLON reduce production expression -> LPAREN expression RPAREN
+
+State 80:
+expression -> MINUS expression . [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . PLUS expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . MINUS expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . TIMES expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . DIV expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . LESS expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . LESSEQUAL expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . GREATER expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . GREATEREQUAL expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . EQUAL expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+expression -> expression . LESSGREATER expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
+-- On TIMES reduce production expression -> MINUS expression
+-- On THEN reduce production expression -> MINUS expression
+-- On SEMI reduce production expression -> MINUS expression
+-- On RPAREN reduce production expression -> MINUS expression
+-- On RBRACKET reduce production expression -> MINUS expression
+-- On PLUS reduce production expression -> MINUS expression
+-- On MINUS reduce production expression -> MINUS expression
+-- On LESSGREATER reduce production expression -> MINUS expression
+-- On LESSEQUAL reduce production expression -> MINUS expression
+-- On LESS reduce production expression -> MINUS expression
+-- On GREATEREQUAL reduce production expression -> MINUS expression
+-- On GREATER reduce production expression -> MINUS expression
+-- On EQUAL reduce production expression -> MINUS expression
+-- On END reduce production expression -> MINUS expression
+-- On ELSE reduce production expression -> MINUS expression
+-- On DO reduce production expression -> MINUS expression
+-- On DIV reduce production expression -> MINUS expression
+-- On COMMA reduce production expression -> MINUS expression
+-- On COLON reduce production expression -> MINUS expression
+
+State 81:
+expression -> expression . PLUS expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . MINUS expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . TIMES expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . DIV expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . LESS expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . LESSEQUAL expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . GREATER expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . GREATEREQUAL expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . EQUAL expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . LESSGREATER expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+instruction -> WRITELN LPAREN expression . RPAREN [ SEMI END ELSE ]
+-- On TIMES shift to state 43
+-- On RPAREN shift to state 82
+-- On PLUS shift to state 50
+-- On MINUS shift to state 54
+-- On LESSGREATER shift to state 56
+-- On LESSEQUAL shift to state 58
+-- On LESS shift to state 60
+-- On GREATEREQUAL shift to state 62
+-- On GREATER shift to state 64
+-- On EQUAL shift to state 66
+-- On DIV shift to state 52
+
+State 82:
+instruction -> WRITELN LPAREN expression RPAREN . [ SEMI END ELSE ]
+-- On SEMI reduce production instruction -> WRITELN LPAREN expression RPAREN
+-- On END reduce production instruction -> WRITELN LPAREN expression RPAREN
+-- On ELSE reduce production instruction -> WRITELN LPAREN expression RPAREN
+
+State 83:
+instruction -> WRITE . LPAREN expression RPAREN [ SEMI END ELSE ]
+-- On LPAREN shift to state 84
+
+State 84:
+instruction -> WRITE LPAREN . expression RPAREN [ SEMI END ELSE ]
+-- On MINUS shift to state 34
+-- On LPAREN shift to state 35
+-- On INT shift to state 36
+-- On IDENT shift to state 37
+-- On BOOL shift to state 39
+-- On ALLOC shift to state 40
+-- On expression shift to state 85
+-- On call_expression shift to state 45
+-- On array_expression shift to state 46
+
+State 85:
+expression -> expression . PLUS expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . MINUS expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . TIMES expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . DIV expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . LESS expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . LESSEQUAL expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . GREATER expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . GREATEREQUAL expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . EQUAL expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . LESSGREATER expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+instruction -> WRITE LPAREN expression . RPAREN [ SEMI END ELSE ]
+-- On TIMES shift to state 43
+-- On RPAREN shift to state 86
+-- On PLUS shift to state 50
+-- On MINUS shift to state 54
+-- On LESSGREATER shift to state 56
+-- On LESSEQUAL shift to state 58
+-- On LESS shift to state 60
+-- On GREATEREQUAL shift to state 62
+-- On GREATER shift to state 64
+-- On EQUAL shift to state 66
+-- On DIV shift to state 52
+
+State 86:
+instruction -> WRITE LPAREN expression RPAREN . [ SEMI END ELSE ]
+-- On SEMI reduce production instruction -> WRITE LPAREN expression RPAREN
+-- On END reduce production instruction -> WRITE LPAREN expression RPAREN
+-- On ELSE reduce production instruction -> WRITE LPAREN expression RPAREN
+
+State 87:
+instruction -> WHILE . expression DO instruction [ SEMI END ELSE ]
+-- On MINUS shift to state 34
+-- On LPAREN shift to state 35
+-- On INT shift to state 36
+-- On IDENT shift to state 37
+-- On BOOL shift to state 39
+-- On ALLOC shift to state 40
+-- On expression shift to state 88
+-- On call_expression shift to state 45
+-- On array_expression shift to state 46
+
+State 88:
+expression -> expression . PLUS expression [ TIMES PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DO DIV ]
+expression -> expression . MINUS expression [ TIMES PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DO DIV ]
+expression -> expression . TIMES expression [ TIMES PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DO DIV ]
+expression -> expression . DIV expression [ TIMES PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DO DIV ]
+expression -> expression . LESS expression [ TIMES PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DO DIV ]
+expression -> expression . LESSEQUAL expression [ TIMES PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DO DIV ]
+expression -> expression . GREATER expression [ TIMES PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DO DIV ]
+expression -> expression . GREATEREQUAL expression [ TIMES PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DO DIV ]
+expression -> expression . EQUAL expression [ TIMES PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DO DIV ]
+expression -> expression . LESSGREATER expression [ TIMES PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DO DIV ]
+instruction -> WHILE expression . DO instruction [ SEMI END ELSE ]
+-- On TIMES shift to state 43
+-- On PLUS shift to state 50
+-- On MINUS shift to state 54
+-- On LESSGREATER shift to state 56
+-- On LESSEQUAL shift to state 58
+-- On LESS shift to state 60
+-- On GREATEREQUAL shift to state 62
+-- On GREATER shift to state 64
+-- On EQUAL shift to state 66
+-- On DO shift to state 89
+-- On DIV shift to state 52
+
+State 89:
+instruction -> WHILE expression DO . instruction [ SEMI END ELSE ]
+-- On WRITELN shift to state 32
+-- On WRITE shift to state 83
+-- On WHILE shift to state 87
+-- On READ shift to state 90
+-- On LPAREN shift to state 94
+-- On IF shift to state 97
+-- On IDENT shift to state 100
+-- On BEGIN shift to state 106
+-- On ALLOC shift to state 40
+-- On instruction shift to state 124
+-- On call_expression shift to state 111
+-- On array_expression shift to state 112
+
+State 90:
+instruction -> READ . LPAREN IDENT RPAREN [ SEMI END ELSE ]
+-- On LPAREN shift to state 91
+
+State 91:
+instruction -> READ LPAREN . IDENT RPAREN [ SEMI END ELSE ]
+-- On IDENT shift to state 92
+
+State 92:
+instruction -> READ LPAREN IDENT . RPAREN [ SEMI END ELSE ]
+-- On RPAREN shift to state 93
+
+State 93:
+instruction -> READ LPAREN IDENT RPAREN . [ SEMI END ELSE ]
+-- On SEMI reduce production instruction -> READ LPAREN IDENT RPAREN
+-- On END reduce production instruction -> READ LPAREN IDENT RPAREN
+-- On ELSE reduce production instruction -> READ LPAREN IDENT RPAREN
+
+State 94:
+array_expression -> LPAREN . expression RPAREN [ LBRACKET ]
+-- On MINUS shift to state 34
+-- On LPAREN shift to state 35
+-- On INT shift to state 36
+-- On IDENT shift to state 37
+-- On BOOL shift to state 39
+-- On ALLOC shift to state 40
+-- On expression shift to state 95
+-- On call_expression shift to state 45
+-- On array_expression shift to state 46
+
+State 95:
+array_expression -> LPAREN expression . RPAREN [ LBRACKET ]
+expression -> expression . PLUS expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . MINUS expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . TIMES expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . DIV expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . LESS expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . LESSEQUAL expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . GREATER expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . GREATEREQUAL expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . EQUAL expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . LESSGREATER expression [ TIMES RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+-- On TIMES shift to state 43
+-- On RPAREN shift to state 96
+-- On PLUS shift to state 50
+-- On MINUS shift to state 54
+-- On LESSGREATER shift to state 56
+-- On LESSEQUAL shift to state 58
+-- On LESS shift to state 60
+-- On GREATEREQUAL shift to state 62
+-- On GREATER shift to state 64
+-- On EQUAL shift to state 66
+-- On DIV shift to state 52
+
+State 96:
+array_expression -> LPAREN expression RPAREN . [ LBRACKET ]
+-- On LBRACKET reduce production array_expression -> LPAREN expression RPAREN
+
+State 97:
+instruction -> IF . expression THEN instruction ELSE instruction [ SEMI END ELSE ]
+-- On MINUS shift to state 34
+-- On LPAREN shift to state 35
+-- On INT shift to state 36
+-- On IDENT shift to state 37
+-- On BOOL shift to state 39
+-- On ALLOC shift to state 40
+-- On expression shift to state 98
+-- On call_expression shift to state 45
+-- On array_expression shift to state 46
+
+State 98:
+expression -> expression . PLUS expression [ TIMES THEN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . MINUS expression [ TIMES THEN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . TIMES expression [ TIMES THEN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . DIV expression [ TIMES THEN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . LESS expression [ TIMES THEN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . LESSEQUAL expression [ TIMES THEN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . GREATER expression [ TIMES THEN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . GREATEREQUAL expression [ TIMES THEN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . EQUAL expression [ TIMES THEN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . LESSGREATER expression [ TIMES THEN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+instruction -> IF expression . THEN instruction ELSE instruction [ SEMI END ELSE ]
+-- On TIMES shift to state 43
+-- On THEN shift to state 99
+-- On PLUS shift to state 50
+-- On MINUS shift to state 54
+-- On LESSGREATER shift to state 56
+-- On LESSEQUAL shift to state 58
+-- On LESS shift to state 60
+-- On GREATEREQUAL shift to state 62
+-- On GREATER shift to state 64
+-- On EQUAL shift to state 66
+-- On DIV shift to state 52
+
+State 99:
+instruction -> IF expression THEN . instruction ELSE instruction [ SEMI END ELSE ]
+-- On WRITELN shift to state 32
+-- On WRITE shift to state 83
+-- On WHILE shift to state 87
+-- On READ shift to state 90
+-- On LPAREN shift to state 94
+-- On IF shift to state 97
+-- On IDENT shift to state 100
+-- On BEGIN shift to state 106
+-- On ALLOC shift to state 40
+-- On instruction shift to state 121
+-- On call_expression shift to state 111
+-- On array_expression shift to state 112
+
+State 100:
+array_expression -> IDENT . [ LBRACKET ]
+call_expression -> IDENT . LPAREN arguments RPAREN [ LBRACKET ]
+instruction -> IDENT . COLONEQUAL expression [ SEMI END ELSE ]
+instruction -> IDENT . LPAREN arguments RPAREN [ SEMI END ELSE ]
+-- On LPAREN shift to state 101
+-- On COLONEQUAL shift to state 104
+-- On LBRACKET reduce production array_expression -> IDENT
+
+State 101:
+call_expression -> IDENT LPAREN . arguments RPAREN [ LBRACKET ]
+instruction -> IDENT LPAREN . arguments RPAREN [ SEMI END ELSE ]
+-- On MINUS shift to state 34
+-- On LPAREN shift to state 35
+-- On INT shift to state 36
+-- On IDENT shift to state 37
+-- On BOOL shift to state 39
+-- On ALLOC shift to state 40
+-- On expression shift to state 71
+-- On call_expression shift to state 45
+-- On array_expression shift to state 46
+-- On arguments shift to state 102
+-- On RPAREN reduce production arguments -> 
+
+State 102:
+call_expression -> IDENT LPAREN arguments . RPAREN [ LBRACKET ]
+instruction -> IDENT LPAREN arguments . RPAREN [ SEMI END ELSE ]
+-- On RPAREN shift to state 103
+
+State 103:
+call_expression -> IDENT LPAREN arguments RPAREN . [ LBRACKET ]
+instruction -> IDENT LPAREN arguments RPAREN . [ SEMI END ELSE ]
+-- On SEMI reduce production instruction -> IDENT LPAREN arguments RPAREN
+-- On LBRACKET reduce production call_expression -> IDENT LPAREN arguments RPAREN
+-- On END reduce production instruction -> IDENT LPAREN arguments RPAREN
+-- On ELSE reduce production instruction -> IDENT LPAREN arguments RPAREN
+
+State 104:
+instruction -> IDENT COLONEQUAL . expression [ SEMI END ELSE ]
+-- On MINUS shift to state 34
+-- On LPAREN shift to state 35
+-- On INT shift to state 36
+-- On IDENT shift to state 37
+-- On BOOL shift to state 39
+-- On ALLOC shift to state 40
+-- On expression shift to state 105
+-- On call_expression shift to state 45
+-- On array_expression shift to state 46
+
+State 105:
+expression -> expression . PLUS expression [ TIMES SEMI PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DIV ]
+expression -> expression . MINUS expression [ TIMES SEMI PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DIV ]
+expression -> expression . TIMES expression [ TIMES SEMI PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DIV ]
+expression -> expression . DIV expression [ TIMES SEMI PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DIV ]
+expression -> expression . LESS expression [ TIMES SEMI PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DIV ]
+expression -> expression . LESSEQUAL expression [ TIMES SEMI PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DIV ]
+expression -> expression . GREATER expression [ TIMES SEMI PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DIV ]
+expression -> expression . GREATEREQUAL expression [ TIMES SEMI PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DIV ]
+expression -> expression . EQUAL expression [ TIMES SEMI PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DIV ]
+expression -> expression . LESSGREATER expression [ TIMES SEMI PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DIV ]
+instruction -> IDENT COLONEQUAL expression . [ SEMI END ELSE ]
+-- On TIMES shift to state 43
+-- On PLUS shift to state 50
+-- On MINUS shift to state 54
+-- On LESSGREATER shift to state 56
+-- On LESSEQUAL shift to state 58
+-- On LESS shift to state 60
+-- On GREATEREQUAL shift to state 62
+-- On GREATER shift to state 64
+-- On EQUAL shift to state 66
+-- On DIV shift to state 52
+-- On SEMI reduce production instruction -> IDENT COLONEQUAL expression
+-- On END reduce production instruction -> IDENT COLONEQUAL expression
+-- On ELSE reduce production instruction -> IDENT COLONEQUAL expression
+
+State 106:
+instruction -> BEGIN . bloc END [ SEMI END ELSE ]
+-- On WRITELN shift to state 32
+-- On WRITE shift to state 83
+-- On WHILE shift to state 87
+-- On READ shift to state 90
+-- On LPAREN shift to state 94
+-- On IF shift to state 97
+-- On IDENT shift to state 100
+-- On BEGIN shift to state 106
+-- On ALLOC shift to state 40
+-- On instruction shift to state 107
+-- On call_expression shift to state 111
+-- On bloc shift to state 119
+-- On array_expression shift to state 112
+-- On END reduce production bloc -> 
+
+State 107:
+bloc -> instruction . bloc1 [ END ]
+-- On SEMI shift to state 108
+-- On bloc1 shift to state 118
+-- On END reduce production bloc1 -> 
+
+State 108:
+bloc1 -> SEMI . instruction bloc1 [ END ]
+-- On WRITELN shift to state 32
+-- On WRITE shift to state 83
+-- On WHILE shift to state 87
+-- On READ shift to state 90
+-- On LPAREN shift to state 94
+-- On IF shift to state 97
+-- On IDENT shift to state 100
+-- On BEGIN shift to state 106
+-- On ALLOC shift to state 40
+-- On instruction shift to state 109
+-- On call_expression shift to state 111
+-- On array_expression shift to state 112
+
+State 109:
+bloc1 -> SEMI instruction . bloc1 [ END ]
+-- On SEMI shift to state 108
+-- On bloc1 shift to state 110
+-- On END reduce production bloc1 -> 
+
+State 110:
+bloc1 -> SEMI instruction bloc1 . [ END ]
+-- On END reduce production bloc1 -> SEMI instruction bloc1
+
+State 111:
+array_expression -> call_expression . [ LBRACKET ]
+-- On LBRACKET reduce production array_expression -> call_expression
+
+State 112:
+array_expression -> array_expression . LBRACKET expression RBRACKET [ LBRACKET ]
+instruction -> array_expression . LBRACKET expression RBRACKET COLONEQUAL expression [ SEMI END ELSE ]
+-- On LBRACKET shift to state 113
+
+State 113:
+array_expression -> array_expression LBRACKET . expression RBRACKET [ LBRACKET ]
+instruction -> array_expression LBRACKET . expression RBRACKET COLONEQUAL expression [ SEMI END ELSE ]
+-- On MINUS shift to state 34
+-- On LPAREN shift to state 35
+-- On INT shift to state 36
+-- On IDENT shift to state 37
+-- On BOOL shift to state 39
+-- On ALLOC shift to state 40
+-- On expression shift to state 114
+-- On call_expression shift to state 45
+-- On array_expression shift to state 46
+
+State 114:
+array_expression -> array_expression LBRACKET expression . RBRACKET [ LBRACKET ]
+expression -> expression . PLUS expression [ TIMES RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . MINUS expression [ TIMES RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . TIMES expression [ TIMES RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . DIV expression [ TIMES RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . LESS expression [ TIMES RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . LESSEQUAL expression [ TIMES RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . GREATER expression [ TIMES RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . GREATEREQUAL expression [ TIMES RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . EQUAL expression [ TIMES RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+expression -> expression . LESSGREATER expression [ TIMES RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL DIV ]
+instruction -> array_expression LBRACKET expression . RBRACKET COLONEQUAL expression [ SEMI END ELSE ]
+-- On TIMES shift to state 43
+-- On RBRACKET shift to state 115
+-- On PLUS shift to state 50
+-- On MINUS shift to state 54
+-- On LESSGREATER shift to state 56
+-- On LESSEQUAL shift to state 58
+-- On LESS shift to state 60
+-- On GREATEREQUAL shift to state 62
+-- On GREATER shift to state 64
+-- On EQUAL shift to state 66
+-- On DIV shift to state 52
+
+State 115:
+array_expression -> array_expression LBRACKET expression RBRACKET . [ LBRACKET ]
+instruction -> array_expression LBRACKET expression RBRACKET . COLONEQUAL expression [ SEMI END ELSE ]
+-- On COLONEQUAL shift to state 116
+-- On LBRACKET reduce production array_expression -> array_expression LBRACKET expression RBRACKET
+
+State 116:
+instruction -> array_expression LBRACKET expression RBRACKET COLONEQUAL . expression [ SEMI END ELSE ]
+-- On MINUS shift to state 34
+-- On LPAREN shift to state 35
+-- On INT shift to state 36
+-- On IDENT shift to state 37
+-- On BOOL shift to state 39
+-- On ALLOC shift to state 40
+-- On expression shift to state 117
+-- On call_expression shift to state 45
+-- On array_expression shift to state 46
+
+State 117:
+expression -> expression . PLUS expression [ TIMES SEMI PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DIV ]
+expression -> expression . MINUS expression [ TIMES SEMI PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DIV ]
+expression -> expression . TIMES expression [ TIMES SEMI PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DIV ]
+expression -> expression . DIV expression [ TIMES SEMI PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DIV ]
+expression -> expression . LESS expression [ TIMES SEMI PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DIV ]
+expression -> expression . LESSEQUAL expression [ TIMES SEMI PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DIV ]
+expression -> expression . GREATER expression [ TIMES SEMI PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DIV ]
+expression -> expression . GREATEREQUAL expression [ TIMES SEMI PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DIV ]
+expression -> expression . EQUAL expression [ TIMES SEMI PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DIV ]
+expression -> expression . LESSGREATER expression [ TIMES SEMI PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DIV ]
+instruction -> array_expression LBRACKET expression RBRACKET COLONEQUAL expression . [ SEMI END ELSE ]
+-- On TIMES shift to state 43
+-- On PLUS shift to state 50
+-- On MINUS shift to state 54
+-- On LESSGREATER shift to state 56
+-- On LESSEQUAL shift to state 58
+-- On LESS shift to state 60
+-- On GREATEREQUAL shift to state 62
+-- On GREATER shift to state 64
+-- On EQUAL shift to state 66
+-- On DIV shift to state 52
+-- On SEMI reduce production instruction -> array_expression LBRACKET expression RBRACKET COLONEQUAL expression
+-- On END reduce production instruction -> array_expression LBRACKET expression RBRACKET COLONEQUAL expression
+-- On ELSE reduce production instruction -> array_expression LBRACKET expression RBRACKET COLONEQUAL expression
+
+State 118:
+bloc -> instruction bloc1 . [ END ]
+-- On END reduce production bloc -> instruction bloc1
+
+State 119:
+instruction -> BEGIN bloc . END [ SEMI END ELSE ]
+-- On END shift to state 120
+
+State 120:
+instruction -> BEGIN bloc END . [ SEMI END ELSE ]
+-- On SEMI reduce production instruction -> BEGIN bloc END
+-- On END reduce production instruction -> BEGIN bloc END
+-- On ELSE reduce production instruction -> BEGIN bloc END
+
+State 121:
+instruction -> IF expression THEN instruction . ELSE instruction [ SEMI END ELSE ]
+-- On ELSE shift to state 122
+
+State 122:
+instruction -> IF expression THEN instruction ELSE . instruction [ SEMI END ELSE ]
+-- On WRITELN shift to state 32
+-- On WRITE shift to state 83
+-- On WHILE shift to state 87
+-- On READ shift to state 90
+-- On LPAREN shift to state 94
+-- On IF shift to state 97
+-- On IDENT shift to state 100
+-- On BEGIN shift to state 106
+-- On ALLOC shift to state 40
+-- On instruction shift to state 123
+-- On call_expression shift to state 111
+-- On array_expression shift to state 112
+
+State 123:
+instruction -> IF expression THEN instruction ELSE instruction . [ SEMI END ELSE ]
+-- On SEMI reduce production instruction -> IF expression THEN instruction ELSE instruction
+-- On END reduce production instruction -> IF expression THEN instruction ELSE instruction
+-- On ELSE reduce production instruction -> IF expression THEN instruction ELSE instruction
+
+State 124:
+instruction -> WHILE expression DO instruction . [ SEMI END ELSE ]
+-- On SEMI reduce production instruction -> WHILE expression DO instruction
+-- On END reduce production instruction -> WHILE expression DO instruction
+-- On ELSE reduce production instruction -> WHILE expression DO instruction
+
+State 125:
+body -> BEGIN bloc . END [ SEMISEMI SEMI DOT ]
+-- On END shift to state 126
+
+State 126:
+body -> BEGIN bloc END . [ SEMISEMI SEMI DOT ]
+-- On SEMISEMI reduce production body -> BEGIN bloc END
+-- On SEMI reduce production body -> BEGIN bloc END
+-- On DOT reduce production body -> BEGIN bloc END
+
+State 127:
+fonction -> PROCEDURE IDENT LPAREN args RPAREN SEMI vars body . [ SEMI ]
+-- On SEMI reduce production fonction -> PROCEDURE IDENT LPAREN args RPAREN SEMI vars body
+
+State 128:
+fonction -> FUNCTION . IDENT LPAREN args RPAREN COLON type_expr SEMI vars body [ SEMI ]
+-- On IDENT shift to state 129
+
+State 129:
+fonction -> FUNCTION IDENT . LPAREN args RPAREN COLON type_expr SEMI vars body [ SEMI ]
+-- On LPAREN shift to state 130
+
+State 130:
+fonction -> FUNCTION IDENT LPAREN . args RPAREN COLON type_expr SEMI vars body [ SEMI ]
+-- On IDENT shift to state 3
+-- On idents shift to state 6
+-- On declvar shift to state 22
+-- On args shift to state 131
+-- On RPAREN reduce production args -> 
+
+State 131:
+fonction -> FUNCTION IDENT LPAREN args . RPAREN COLON type_expr SEMI vars body [ SEMI ]
+-- On RPAREN shift to state 132
+
+State 132:
+fonction -> FUNCTION IDENT LPAREN args RPAREN . COLON type_expr SEMI vars body [ SEMI ]
+-- On COLON shift to state 133
+
+State 133:
+fonction -> FUNCTION IDENT LPAREN args RPAREN COLON . type_expr SEMI vars body [ SEMI ]
+-- On INTEGER shift to state 8
+-- On BOOLEAN shift to state 9
+-- On ARRAY shift to state 10
+-- On type_expr shift to state 134
+
+State 134:
+fonction -> FUNCTION IDENT LPAREN args RPAREN COLON type_expr . SEMI vars body [ SEMI ]
+-- On SEMI shift to state 135
+
+State 135:
+fonction -> FUNCTION IDENT LPAREN args RPAREN COLON type_expr SEMI . vars body [ SEMI ]
+-- On VAR shift to state 2
+-- On vars shift to state 136
+-- On BEGIN reduce production vars -> 
+
+State 136:
+fonction -> FUNCTION IDENT LPAREN args RPAREN COLON type_expr SEMI vars . body [ SEMI ]
+-- On BEGIN shift to state 31
+-- On body shift to state 137
+
+State 137:
+fonction -> FUNCTION IDENT LPAREN args RPAREN COLON type_expr SEMI vars body . [ SEMI ]
+-- On SEMI reduce production fonction -> FUNCTION IDENT LPAREN args RPAREN COLON type_expr SEMI vars body
+
+State 138:
+definitions -> fonction . SEMI definitions [ BEGIN ]
+-- On SEMI shift to state 139
+
+State 139:
+definitions -> fonction SEMI . definitions [ BEGIN ]
+-- On PROCEDURE shift to state 19
+-- On FUNCTION shift to state 128
+-- On fonction shift to state 138
+-- On definitions shift to state 140
+-- On BEGIN reduce production definitions -> 
+
+State 140:
+definitions -> fonction SEMI definitions . [ BEGIN ]
+-- On BEGIN reduce production definitions -> fonction SEMI definitions
+
+State 141:
+main -> PROGRAM vars definitions . body endtok [ # ]
+-- On BEGIN shift to state 31
+-- On body shift to state 142
+
+State 142:
+main -> PROGRAM vars definitions body . endtok [ # ]
+-- On SEMISEMI shift to state 143
+-- On DOT shift to state 144
+-- On endtok shift to state 145
+
+State 143:
+endtok -> SEMISEMI . [ # ]
+-- On # reduce production endtok -> SEMISEMI
+
+State 144:
+endtok -> DOT . [ # ]
+-- On # reduce production endtok -> DOT
+
+State 145:
+main -> PROGRAM vars definitions body endtok . [ # ]
+-- On # reduce production main -> PROGRAM vars definitions body endtok
+
+State 146:
+main' -> main . [ # ]
+-- On # accept main
+

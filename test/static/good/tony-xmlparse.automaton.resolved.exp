@@ -1,0 +1,539 @@
+State 0:
+document' -> . document [ # ]
+-- On XMLOPEN shift to state 1
+-- On xmlopen shift to state 2
+-- On xmldecl shift to state 19
+-- On prolog shift to state 44
+-- On misc shift to state 71
+-- On document shift to state 74
+-- On PIOPEN reduce production misc -> 
+-- On OPEN reduce production misc -> 
+-- On DTDOPEN reduce production misc -> 
+-- On COMMENT reduce production misc -> 
+-- On CHUNK reduce production misc -> 
+
+State 1:
+xmlopen -> XMLOPEN . [ VERSION ]
+-- On VERSION reduce production xmlopen -> XMLOPEN
+
+State 2:
+xmldecl -> xmlopen . xmlinfo xmlclose [ PIOPEN OPEN DTDOPEN COMMENT CHUNK ]
+-- On VERSION shift to state 3
+-- On xmlinfo shift to state 6
+-- On version shift to state 9
+
+State 3:
+version -> VERSION . EQ STRING [ XMLCLOSE STANDALONE ENCODING ]
+-- On EQ shift to state 4
+
+State 4:
+version -> VERSION EQ . STRING [ XMLCLOSE STANDALONE ENCODING ]
+-- On STRING shift to state 5
+
+State 5:
+version -> VERSION EQ STRING . [ XMLCLOSE STANDALONE ENCODING ]
+-- On XMLCLOSE reduce production version -> VERSION EQ STRING
+-- On STANDALONE reduce production version -> VERSION EQ STRING
+-- On ENCODING reduce production version -> VERSION EQ STRING
+
+State 6:
+xmldecl -> xmlopen xmlinfo . xmlclose [ PIOPEN OPEN DTDOPEN COMMENT CHUNK ]
+-- On XMLCLOSE shift to state 7
+-- On xmlclose shift to state 8
+
+State 7:
+xmlclose -> XMLCLOSE . [ PIOPEN OPEN DTDOPEN COMMENT CHUNK ]
+-- On PIOPEN reduce production xmlclose -> XMLCLOSE
+-- On OPEN reduce production xmlclose -> XMLCLOSE
+-- On DTDOPEN reduce production xmlclose -> XMLCLOSE
+-- On COMMENT reduce production xmlclose -> XMLCLOSE
+-- On CHUNK reduce production xmlclose -> XMLCLOSE
+
+State 8:
+xmldecl -> xmlopen xmlinfo xmlclose . [ PIOPEN OPEN DTDOPEN COMMENT CHUNK ]
+-- On PIOPEN reduce production xmldecl -> xmlopen xmlinfo xmlclose
+-- On OPEN reduce production xmldecl -> xmlopen xmlinfo xmlclose
+-- On DTDOPEN reduce production xmldecl -> xmlopen xmlinfo xmlclose
+-- On COMMENT reduce production xmldecl -> xmlopen xmlinfo xmlclose
+-- On CHUNK reduce production xmldecl -> xmlopen xmlinfo xmlclose
+
+State 9:
+xmlinfo -> version . encoding sddecl [ XMLCLOSE ]
+xmlinfo -> version . [ XMLCLOSE ]
+xmlinfo -> version . encoding [ XMLCLOSE ]
+xmlinfo -> version . sddecl [ XMLCLOSE ]
+-- On STANDALONE shift to state 10
+-- On ENCODING shift to state 13
+-- On sddecl shift to state 16
+-- On encoding shift to state 17
+-- On XMLCLOSE reduce production xmlinfo -> version
+
+State 10:
+sddecl -> STANDALONE . EQ STRING [ XMLCLOSE ]
+-- On EQ shift to state 11
+
+State 11:
+sddecl -> STANDALONE EQ . STRING [ XMLCLOSE ]
+-- On STRING shift to state 12
+
+State 12:
+sddecl -> STANDALONE EQ STRING . [ XMLCLOSE ]
+-- On XMLCLOSE reduce production sddecl -> STANDALONE EQ STRING
+
+State 13:
+encoding -> ENCODING . EQ STRING [ XMLCLOSE STANDALONE ]
+-- On EQ shift to state 14
+
+State 14:
+encoding -> ENCODING EQ . STRING [ XMLCLOSE STANDALONE ]
+-- On STRING shift to state 15
+
+State 15:
+encoding -> ENCODING EQ STRING . [ XMLCLOSE STANDALONE ]
+-- On XMLCLOSE reduce production encoding -> ENCODING EQ STRING
+-- On STANDALONE reduce production encoding -> ENCODING EQ STRING
+
+State 16:
+xmlinfo -> version sddecl . [ XMLCLOSE ]
+-- On XMLCLOSE reduce production xmlinfo -> version sddecl
+
+State 17:
+xmlinfo -> version encoding . sddecl [ XMLCLOSE ]
+xmlinfo -> version encoding . [ XMLCLOSE ]
+-- On STANDALONE shift to state 10
+-- On sddecl shift to state 18
+-- On XMLCLOSE reduce production xmlinfo -> version encoding
+
+State 18:
+xmlinfo -> version encoding sddecl . [ XMLCLOSE ]
+-- On XMLCLOSE reduce production xmlinfo -> version encoding sddecl
+
+State 19:
+prolog -> xmldecl . misc [ OPEN ]
+prolog -> xmldecl . misc doctype misc [ OPEN ]
+-- On misc shift to state 20
+-- On PIOPEN reduce production misc -> 
+-- On OPEN reduce production misc -> 
+-- On DTDOPEN reduce production misc -> 
+-- On COMMENT reduce production misc -> 
+-- On CHUNK reduce production misc -> 
+
+State 20:
+misc -> misc . pi [ PIOPEN OPEN DTDOPEN COMMENT CHUNK ]
+misc -> misc . CHUNK [ PIOPEN OPEN DTDOPEN COMMENT CHUNK ]
+misc -> misc . COMMENT [ PIOPEN OPEN DTDOPEN COMMENT CHUNK ]
+prolog -> xmldecl misc . [ OPEN ]
+prolog -> xmldecl misc . doctype misc [ OPEN ]
+-- On PIOPEN shift to state 21
+-- On DTDOPEN shift to state 22
+-- On COMMENT shift to state 23
+-- On CHUNK shift to state 24
+-- On piopen shift to state 25
+-- On pi shift to state 29
+-- On dtdopen shift to state 30
+-- On doctype shift to state 42
+-- On OPEN reduce production prolog -> xmldecl misc
+
+State 21:
+piopen -> PIOPEN . [ WORD PICLOSE ]
+-- On WORD reduce production piopen -> PIOPEN
+-- On PICLOSE reduce production piopen -> PIOPEN
+
+State 22:
+dtdopen -> DTDOPEN . [ NAME ]
+-- On NAME reduce production dtdopen -> DTDOPEN
+
+State 23:
+misc -> misc COMMENT . [ PIOPEN OPEN EOF DTDOPEN COMMENT CHUNK ]
+-- On PIOPEN reduce production misc -> misc COMMENT
+-- On OPEN reduce production misc -> misc COMMENT
+-- On EOF reduce production misc -> misc COMMENT
+-- On DTDOPEN reduce production misc -> misc COMMENT
+-- On COMMENT reduce production misc -> misc COMMENT
+-- On CHUNK reduce production misc -> misc COMMENT
+
+State 24:
+misc -> misc CHUNK . [ PIOPEN OPEN EOF DTDOPEN COMMENT CHUNK ]
+-- On PIOPEN reduce production misc -> misc CHUNK
+-- On OPEN reduce production misc -> misc CHUNK
+-- On EOF reduce production misc -> misc CHUNK
+-- On DTDOPEN reduce production misc -> misc CHUNK
+-- On COMMENT reduce production misc -> misc CHUNK
+-- On CHUNK reduce production misc -> misc CHUNK
+
+State 25:
+pi -> piopen . picontent PICLOSE [ PIOPEN OPENSLASH OPEN EOF DTDOPEN COMMENT CHUNK ]
+-- On picontent shift to state 26
+-- On WORD reduce production picontent -> 
+-- On PICLOSE reduce production picontent -> 
+
+State 26:
+pi -> piopen picontent . PICLOSE [ PIOPEN OPENSLASH OPEN EOF DTDOPEN COMMENT CHUNK ]
+picontent -> picontent . WORD [ WORD PICLOSE ]
+-- On WORD shift to state 27
+-- On PICLOSE shift to state 28
+
+State 27:
+picontent -> picontent WORD . [ WORD PICLOSE ]
+-- On WORD reduce production picontent -> picontent WORD
+-- On PICLOSE reduce production picontent -> picontent WORD
+
+State 28:
+pi -> piopen picontent PICLOSE . [ PIOPEN OPENSLASH OPEN EOF DTDOPEN COMMENT CHUNK ]
+-- On PIOPEN reduce production pi -> piopen picontent PICLOSE
+-- On OPENSLASH reduce production pi -> piopen picontent PICLOSE
+-- On OPEN reduce production pi -> piopen picontent PICLOSE
+-- On EOF reduce production pi -> piopen picontent PICLOSE
+-- On DTDOPEN reduce production pi -> piopen picontent PICLOSE
+-- On COMMENT reduce production pi -> piopen picontent PICLOSE
+-- On CHUNK reduce production pi -> piopen picontent PICLOSE
+
+State 29:
+misc -> misc pi . [ PIOPEN OPEN EOF DTDOPEN COMMENT CHUNK ]
+-- On PIOPEN reduce production misc -> misc pi
+-- On OPEN reduce production misc -> misc pi
+-- On EOF reduce production misc -> misc pi
+-- On DTDOPEN reduce production misc -> misc pi
+-- On COMMENT reduce production misc -> misc pi
+-- On CHUNK reduce production misc -> misc pi
+
+State 30:
+doctype -> dtdopen . NAME ext markup dtdclose [ PIOPEN OPEN COMMENT CHUNK ]
+-- On NAME shift to state 31
+
+State 31:
+doctype -> dtdopen NAME . ext markup dtdclose [ PIOPEN OPEN COMMENT CHUNK ]
+-- On SYSTEM shift to state 32
+-- On PUBLIC shift to state 34
+-- On ext shift to state 37
+-- On error reduce production ext -> 
+-- On DTDCLOSE reduce production ext -> 
+
+State 32:
+ext -> SYSTEM . STRING [ error DTDCLOSE ]
+-- On STRING shift to state 33
+
+State 33:
+ext -> SYSTEM STRING . [ error DTDCLOSE ]
+-- On error reduce production ext -> SYSTEM STRING
+-- On DTDCLOSE reduce production ext -> SYSTEM STRING
+
+State 34:
+ext -> PUBLIC . STRING STRING [ error DTDCLOSE ]
+-- On STRING shift to state 35
+
+State 35:
+ext -> PUBLIC STRING . STRING [ error DTDCLOSE ]
+-- On STRING shift to state 36
+
+State 36:
+ext -> PUBLIC STRING STRING . [ error DTDCLOSE ]
+-- On error reduce production ext -> PUBLIC STRING STRING
+-- On DTDCLOSE reduce production ext -> PUBLIC STRING STRING
+
+State 37:
+doctype -> dtdopen NAME ext . markup dtdclose [ PIOPEN OPEN COMMENT CHUNK ]
+-- On error shift to state 38
+-- On markup shift to state 39
+-- On DTDCLOSE reduce production markup -> 
+
+State 38:
+markup -> error . [ DTDCLOSE ]
+-- On DTDCLOSE reduce production markup -> error
+
+State 39:
+doctype -> dtdopen NAME ext markup . dtdclose [ PIOPEN OPEN COMMENT CHUNK ]
+-- On DTDCLOSE shift to state 40
+-- On dtdclose shift to state 41
+
+State 40:
+dtdclose -> DTDCLOSE . [ PIOPEN OPEN COMMENT CHUNK ]
+-- On PIOPEN reduce production dtdclose -> DTDCLOSE
+-- On OPEN reduce production dtdclose -> DTDCLOSE
+-- On COMMENT reduce production dtdclose -> DTDCLOSE
+-- On CHUNK reduce production dtdclose -> DTDCLOSE
+
+State 41:
+doctype -> dtdopen NAME ext markup dtdclose . [ PIOPEN OPEN COMMENT CHUNK ]
+-- On PIOPEN reduce production doctype -> dtdopen NAME ext markup dtdclose
+-- On OPEN reduce production doctype -> dtdopen NAME ext markup dtdclose
+-- On COMMENT reduce production doctype -> dtdopen NAME ext markup dtdclose
+-- On CHUNK reduce production doctype -> dtdopen NAME ext markup dtdclose
+
+State 42:
+prolog -> xmldecl misc doctype . misc [ OPEN ]
+-- On misc shift to state 43
+-- On PIOPEN reduce production misc -> 
+-- On OPEN reduce production misc -> 
+-- On COMMENT reduce production misc -> 
+-- On CHUNK reduce production misc -> 
+
+State 43:
+misc -> misc . pi [ PIOPEN OPEN COMMENT CHUNK ]
+misc -> misc . CHUNK [ PIOPEN OPEN COMMENT CHUNK ]
+misc -> misc . COMMENT [ PIOPEN OPEN COMMENT CHUNK ]
+prolog -> xmldecl misc doctype misc . [ OPEN ]
+-- On PIOPEN shift to state 21
+-- On COMMENT shift to state 23
+-- On CHUNK shift to state 24
+-- On piopen shift to state 25
+-- On pi shift to state 29
+-- On OPEN reduce production prolog -> xmldecl misc doctype misc
+
+State 44:
+document -> prolog . topelement misc EOF [ # ]
+-- On OPEN shift to state 45
+-- On topelement shift to state 46
+-- On sTag shift to state 49
+-- On opn shift to state 58
+-- On emptyElemTag shift to state 67
+-- On element shift to state 70
+
+State 45:
+opn -> OPEN . [ SLASHCLOSE NAME CLOSE ]
+-- On SLASHCLOSE reduce production opn -> OPEN
+-- On NAME reduce production opn -> OPEN
+-- On CLOSE reduce production opn -> OPEN
+
+State 46:
+document -> prolog topelement . misc EOF [ # ]
+-- On misc shift to state 47
+-- On PIOPEN reduce production misc -> 
+-- On EOF reduce production misc -> 
+-- On COMMENT reduce production misc -> 
+-- On CHUNK reduce production misc -> 
+
+State 47:
+document -> prolog topelement misc . EOF [ # ]
+misc -> misc . pi [ PIOPEN EOF COMMENT CHUNK ]
+misc -> misc . CHUNK [ PIOPEN EOF COMMENT CHUNK ]
+misc -> misc . COMMENT [ PIOPEN EOF COMMENT CHUNK ]
+-- On PIOPEN shift to state 21
+-- On EOF shift to state 48
+-- On COMMENT shift to state 23
+-- On CHUNK shift to state 24
+-- On piopen shift to state 25
+-- On pi shift to state 29
+
+State 48:
+document -> prolog topelement misc EOF . [ # ]
+-- On # reduce production document -> prolog topelement misc EOF
+
+State 49:
+element -> sTag . content eTag [ PIOPEN OPENSLASH OPEN EOF COMMENT CHUNK ]
+-- On content shift to state 50
+-- On PIOPEN reduce production content -> 
+-- On OPENSLASH reduce production content -> 
+-- On OPEN reduce production content -> 
+-- On COMMENT reduce production content -> 
+-- On CHUNK reduce production content -> 
+
+State 50:
+content -> content . CHUNK [ PIOPEN OPENSLASH OPEN COMMENT CHUNK ]
+content -> content . element [ PIOPEN OPENSLASH OPEN COMMENT CHUNK ]
+content -> content . pi [ PIOPEN OPENSLASH OPEN COMMENT CHUNK ]
+content -> content . COMMENT [ PIOPEN OPENSLASH OPEN COMMENT CHUNK ]
+element -> sTag content . eTag [ PIOPEN OPENSLASH OPEN EOF COMMENT CHUNK ]
+-- On PIOPEN shift to state 21
+-- On OPENSLASH shift to state 51
+-- On OPEN shift to state 45
+-- On COMMENT shift to state 52
+-- On CHUNK shift to state 53
+-- On sTag shift to state 49
+-- On piopen shift to state 25
+-- On pi shift to state 54
+-- On opnslash shift to state 55
+-- On opn shift to state 58
+-- On emptyElemTag shift to state 67
+-- On element shift to state 68
+-- On eTag shift to state 69
+
+State 51:
+opnslash -> OPENSLASH . [ CLOSE ]
+-- On CLOSE reduce production opnslash -> OPENSLASH
+
+State 52:
+content -> content COMMENT . [ PIOPEN OPENSLASH OPEN COMMENT CHUNK ]
+-- On PIOPEN reduce production content -> content COMMENT
+-- On OPENSLASH reduce production content -> content COMMENT
+-- On OPEN reduce production content -> content COMMENT
+-- On COMMENT reduce production content -> content COMMENT
+-- On CHUNK reduce production content -> content COMMENT
+
+State 53:
+content -> content CHUNK . [ PIOPEN OPENSLASH OPEN COMMENT CHUNK ]
+-- On PIOPEN reduce production content -> content CHUNK
+-- On OPENSLASH reduce production content -> content CHUNK
+-- On OPEN reduce production content -> content CHUNK
+-- On COMMENT reduce production content -> content CHUNK
+-- On CHUNK reduce production content -> content CHUNK
+
+State 54:
+content -> content pi . [ PIOPEN OPENSLASH OPEN COMMENT CHUNK ]
+-- On PIOPEN reduce production content -> content pi
+-- On OPENSLASH reduce production content -> content pi
+-- On OPEN reduce production content -> content pi
+-- On COMMENT reduce production content -> content pi
+-- On CHUNK reduce production content -> content pi
+
+State 55:
+eTag -> opnslash . cls [ PIOPEN OPENSLASH OPEN EOF COMMENT CHUNK ]
+-- On CLOSE shift to state 56
+-- On cls shift to state 57
+
+State 56:
+cls -> CLOSE . [ PIOPEN OPENSLASH OPEN EOF COMMENT CHUNK ]
+-- On PIOPEN reduce production cls -> CLOSE
+-- On OPENSLASH reduce production cls -> CLOSE
+-- On OPEN reduce production cls -> CLOSE
+-- On EOF reduce production cls -> CLOSE
+-- On COMMENT reduce production cls -> CLOSE
+-- On CHUNK reduce production cls -> CLOSE
+
+State 57:
+eTag -> opnslash cls . [ PIOPEN OPENSLASH OPEN EOF COMMENT CHUNK ]
+-- On PIOPEN reduce production eTag -> opnslash cls
+-- On OPENSLASH reduce production eTag -> opnslash cls
+-- On OPEN reduce production eTag -> opnslash cls
+-- On EOF reduce production eTag -> opnslash cls
+-- On COMMENT reduce production eTag -> opnslash cls
+-- On CHUNK reduce production eTag -> opnslash cls
+
+State 58:
+emptyElemTag -> opn . attributes slashcls [ PIOPEN OPENSLASH OPEN EOF COMMENT CHUNK ]
+sTag -> opn . attributes cls [ PIOPEN OPENSLASH OPEN COMMENT CHUNK ]
+-- On attributes shift to state 59
+-- On SLASHCLOSE reduce production attributes -> 
+-- On NAME reduce production attributes -> 
+-- On CLOSE reduce production attributes -> 
+
+State 59:
+attributes -> attributes . attribute [ SLASHCLOSE NAME CLOSE ]
+emptyElemTag -> opn attributes . slashcls [ PIOPEN OPENSLASH OPEN EOF COMMENT CHUNK ]
+sTag -> opn attributes . cls [ PIOPEN OPENSLASH OPEN COMMENT CHUNK ]
+-- On SLASHCLOSE shift to state 60
+-- On NAME shift to state 61
+-- On CLOSE shift to state 56
+-- On slashcls shift to state 64
+-- On cls shift to state 65
+-- On attribute shift to state 66
+
+State 60:
+slashcls -> SLASHCLOSE . [ PIOPEN OPENSLASH OPEN EOF COMMENT CHUNK ]
+-- On PIOPEN reduce production slashcls -> SLASHCLOSE
+-- On OPENSLASH reduce production slashcls -> SLASHCLOSE
+-- On OPEN reduce production slashcls -> SLASHCLOSE
+-- On EOF reduce production slashcls -> SLASHCLOSE
+-- On COMMENT reduce production slashcls -> SLASHCLOSE
+-- On CHUNK reduce production slashcls -> SLASHCLOSE
+
+State 61:
+attribute -> NAME . EQ STRING [ SLASHCLOSE NAME CLOSE ]
+-- On EQ shift to state 62
+
+State 62:
+attribute -> NAME EQ . STRING [ SLASHCLOSE NAME CLOSE ]
+-- On STRING shift to state 63
+
+State 63:
+attribute -> NAME EQ STRING . [ SLASHCLOSE NAME CLOSE ]
+-- On SLASHCLOSE reduce production attribute -> NAME EQ STRING
+-- On NAME reduce production attribute -> NAME EQ STRING
+-- On CLOSE reduce production attribute -> NAME EQ STRING
+
+State 64:
+emptyElemTag -> opn attributes slashcls . [ PIOPEN OPENSLASH OPEN EOF COMMENT CHUNK ]
+-- On PIOPEN reduce production emptyElemTag -> opn attributes slashcls
+-- On OPENSLASH reduce production emptyElemTag -> opn attributes slashcls
+-- On OPEN reduce production emptyElemTag -> opn attributes slashcls
+-- On EOF reduce production emptyElemTag -> opn attributes slashcls
+-- On COMMENT reduce production emptyElemTag -> opn attributes slashcls
+-- On CHUNK reduce production emptyElemTag -> opn attributes slashcls
+
+State 65:
+sTag -> opn attributes cls . [ PIOPEN OPENSLASH OPEN COMMENT CHUNK ]
+-- On PIOPEN reduce production sTag -> opn attributes cls
+-- On OPENSLASH reduce production sTag -> opn attributes cls
+-- On OPEN reduce production sTag -> opn attributes cls
+-- On COMMENT reduce production sTag -> opn attributes cls
+-- On CHUNK reduce production sTag -> opn attributes cls
+
+State 66:
+attributes -> attributes attribute . [ SLASHCLOSE NAME CLOSE ]
+-- On SLASHCLOSE reduce production attributes -> attributes attribute
+-- On NAME reduce production attributes -> attributes attribute
+-- On CLOSE reduce production attributes -> attributes attribute
+
+State 67:
+element -> emptyElemTag . [ PIOPEN OPENSLASH OPEN EOF COMMENT CHUNK ]
+-- On PIOPEN reduce production element -> emptyElemTag
+-- On OPENSLASH reduce production element -> emptyElemTag
+-- On OPEN reduce production element -> emptyElemTag
+-- On EOF reduce production element -> emptyElemTag
+-- On COMMENT reduce production element -> emptyElemTag
+-- On CHUNK reduce production element -> emptyElemTag
+
+State 68:
+content -> content element . [ PIOPEN OPENSLASH OPEN COMMENT CHUNK ]
+-- On PIOPEN reduce production content -> content element
+-- On OPENSLASH reduce production content -> content element
+-- On OPEN reduce production content -> content element
+-- On COMMENT reduce production content -> content element
+-- On CHUNK reduce production content -> content element
+
+State 69:
+element -> sTag content eTag . [ PIOPEN OPENSLASH OPEN EOF COMMENT CHUNK ]
+-- On PIOPEN reduce production element -> sTag content eTag
+-- On OPENSLASH reduce production element -> sTag content eTag
+-- On OPEN reduce production element -> sTag content eTag
+-- On EOF reduce production element -> sTag content eTag
+-- On COMMENT reduce production element -> sTag content eTag
+-- On CHUNK reduce production element -> sTag content eTag
+
+State 70:
+topelement -> element . [ PIOPEN EOF COMMENT CHUNK ]
+-- On PIOPEN reduce production topelement -> element
+-- On EOF reduce production topelement -> element
+-- On COMMENT reduce production topelement -> element
+-- On CHUNK reduce production topelement -> element
+
+State 71:
+misc -> misc . pi [ PIOPEN OPEN DTDOPEN COMMENT CHUNK ]
+misc -> misc . CHUNK [ PIOPEN OPEN DTDOPEN COMMENT CHUNK ]
+misc -> misc . COMMENT [ PIOPEN OPEN DTDOPEN COMMENT CHUNK ]
+prolog -> misc . doctype misc [ OPEN ]
+prolog -> misc . [ OPEN ]
+-- On PIOPEN shift to state 21
+-- On DTDOPEN shift to state 22
+-- On COMMENT shift to state 23
+-- On CHUNK shift to state 24
+-- On piopen shift to state 25
+-- On pi shift to state 29
+-- On dtdopen shift to state 30
+-- On doctype shift to state 72
+-- On OPEN reduce production prolog -> misc
+
+State 72:
+prolog -> misc doctype . misc [ OPEN ]
+-- On misc shift to state 73
+-- On PIOPEN reduce production misc -> 
+-- On OPEN reduce production misc -> 
+-- On COMMENT reduce production misc -> 
+-- On CHUNK reduce production misc -> 
+
+State 73:
+misc -> misc . pi [ PIOPEN OPEN COMMENT CHUNK ]
+misc -> misc . CHUNK [ PIOPEN OPEN COMMENT CHUNK ]
+misc -> misc . COMMENT [ PIOPEN OPEN COMMENT CHUNK ]
+prolog -> misc doctype misc . [ OPEN ]
+-- On PIOPEN shift to state 21
+-- On COMMENT shift to state 23
+-- On CHUNK shift to state 24
+-- On piopen shift to state 25
+-- On pi shift to state 29
+-- On OPEN reduce production prolog -> misc doctype misc
+
+State 74:
+document' -> document . [ # ]
+-- On # accept document
+

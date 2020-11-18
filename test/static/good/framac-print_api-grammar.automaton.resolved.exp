@@ -1,0 +1,148 @@
+State 0:
+main' -> . main [ # ]
+-- On WORD shift to state 1
+-- On LPAR shift to state 2
+-- On word shift to state 3
+-- On type_string shift to state 18
+-- On main shift to state 20
+
+State 1:
+word -> WORD . [ WORD RPAR EOF COMMA ]
+-- On WORD reduce production word -> WORD
+-- On RPAR reduce production word -> WORD
+-- On EOF reduce production word -> WORD
+-- On COMMA reduce production word -> WORD
+
+State 2:
+type_string -> LPAR . type_string COMMA type_string RPAR word [ WORD RPAR EOF COMMA ]
+type_string -> LPAR . type_string COMMA type_string COMMA type_string RPAR word [ WORD RPAR EOF COMMA ]
+type_string -> LPAR . type_string COMMA type_string COMMA type_string COMMA type_string RPAR word [ WORD RPAR EOF COMMA ]
+-- On WORD shift to state 1
+-- On LPAR shift to state 2
+-- On word shift to state 3
+-- On type_string shift to state 4
+
+State 3:
+type_string -> word . [ WORD RPAR EOF COMMA ]
+-- On WORD reduce production type_string -> word
+-- On RPAR reduce production type_string -> word
+-- On EOF reduce production type_string -> word
+-- On COMMA reduce production type_string -> word
+
+State 4:
+type_string -> type_string . word [ WORD COMMA ]
+type_string -> LPAR type_string . COMMA type_string RPAR word [ WORD RPAR EOF COMMA ]
+type_string -> LPAR type_string . COMMA type_string COMMA type_string RPAR word [ WORD RPAR EOF COMMA ]
+type_string -> LPAR type_string . COMMA type_string COMMA type_string COMMA type_string RPAR word [ WORD RPAR EOF COMMA ]
+-- On WORD shift to state 1
+-- On COMMA shift to state 5
+-- On word shift to state 17
+
+State 5:
+type_string -> LPAR type_string COMMA . type_string RPAR word [ WORD RPAR EOF COMMA ]
+type_string -> LPAR type_string COMMA . type_string COMMA type_string RPAR word [ WORD RPAR EOF COMMA ]
+type_string -> LPAR type_string COMMA . type_string COMMA type_string COMMA type_string RPAR word [ WORD RPAR EOF COMMA ]
+-- On WORD shift to state 1
+-- On LPAR shift to state 2
+-- On word shift to state 3
+-- On type_string shift to state 6
+
+State 6:
+type_string -> type_string . word [ WORD RPAR COMMA ]
+type_string -> LPAR type_string COMMA type_string . RPAR word [ WORD RPAR EOF COMMA ]
+type_string -> LPAR type_string COMMA type_string . COMMA type_string RPAR word [ WORD RPAR EOF COMMA ]
+type_string -> LPAR type_string COMMA type_string . COMMA type_string COMMA type_string RPAR word [ WORD RPAR EOF COMMA ]
+-- On WORD shift to state 1
+-- On RPAR shift to state 7
+-- On COMMA shift to state 9
+-- On word shift to state 17
+
+State 7:
+type_string -> LPAR type_string COMMA type_string RPAR . word [ WORD RPAR EOF COMMA ]
+-- On WORD shift to state 1
+-- On word shift to state 8
+
+State 8:
+type_string -> LPAR type_string COMMA type_string RPAR word . [ WORD RPAR EOF COMMA ]
+-- On WORD reduce production type_string -> LPAR type_string COMMA type_string RPAR word
+-- On RPAR reduce production type_string -> LPAR type_string COMMA type_string RPAR word
+-- On EOF reduce production type_string -> LPAR type_string COMMA type_string RPAR word
+-- On COMMA reduce production type_string -> LPAR type_string COMMA type_string RPAR word
+
+State 9:
+type_string -> LPAR type_string COMMA type_string COMMA . type_string RPAR word [ WORD RPAR EOF COMMA ]
+type_string -> LPAR type_string COMMA type_string COMMA . type_string COMMA type_string RPAR word [ WORD RPAR EOF COMMA ]
+-- On WORD shift to state 1
+-- On LPAR shift to state 2
+-- On word shift to state 3
+-- On type_string shift to state 10
+
+State 10:
+type_string -> type_string . word [ WORD RPAR COMMA ]
+type_string -> LPAR type_string COMMA type_string COMMA type_string . RPAR word [ WORD RPAR EOF COMMA ]
+type_string -> LPAR type_string COMMA type_string COMMA type_string . COMMA type_string RPAR word [ WORD RPAR EOF COMMA ]
+-- On WORD shift to state 1
+-- On RPAR shift to state 11
+-- On COMMA shift to state 13
+-- On word shift to state 17
+
+State 11:
+type_string -> LPAR type_string COMMA type_string COMMA type_string RPAR . word [ WORD RPAR EOF COMMA ]
+-- On WORD shift to state 1
+-- On word shift to state 12
+
+State 12:
+type_string -> LPAR type_string COMMA type_string COMMA type_string RPAR word . [ WORD RPAR EOF COMMA ]
+-- On WORD reduce production type_string -> LPAR type_string COMMA type_string COMMA type_string RPAR word
+-- On RPAR reduce production type_string -> LPAR type_string COMMA type_string COMMA type_string RPAR word
+-- On EOF reduce production type_string -> LPAR type_string COMMA type_string COMMA type_string RPAR word
+-- On COMMA reduce production type_string -> LPAR type_string COMMA type_string COMMA type_string RPAR word
+
+State 13:
+type_string -> LPAR type_string COMMA type_string COMMA type_string COMMA . type_string RPAR word [ WORD RPAR EOF COMMA ]
+-- On WORD shift to state 1
+-- On LPAR shift to state 2
+-- On word shift to state 3
+-- On type_string shift to state 14
+
+State 14:
+type_string -> type_string . word [ WORD RPAR ]
+type_string -> LPAR type_string COMMA type_string COMMA type_string COMMA type_string . RPAR word [ WORD RPAR EOF COMMA ]
+-- On WORD shift to state 1
+-- On RPAR shift to state 15
+-- On word shift to state 17
+
+State 15:
+type_string -> LPAR type_string COMMA type_string COMMA type_string COMMA type_string RPAR . word [ WORD RPAR EOF COMMA ]
+-- On WORD shift to state 1
+-- On word shift to state 16
+
+State 16:
+type_string -> LPAR type_string COMMA type_string COMMA type_string COMMA type_string RPAR word . [ WORD RPAR EOF COMMA ]
+-- On WORD reduce production type_string -> LPAR type_string COMMA type_string COMMA type_string COMMA type_string RPAR word
+-- On RPAR reduce production type_string -> LPAR type_string COMMA type_string COMMA type_string COMMA type_string RPAR word
+-- On EOF reduce production type_string -> LPAR type_string COMMA type_string COMMA type_string COMMA type_string RPAR word
+-- On COMMA reduce production type_string -> LPAR type_string COMMA type_string COMMA type_string COMMA type_string RPAR word
+
+State 17:
+type_string -> type_string word . [ WORD RPAR EOF COMMA ]
+-- On WORD reduce production type_string -> type_string word
+-- On RPAR reduce production type_string -> type_string word
+-- On EOF reduce production type_string -> type_string word
+-- On COMMA reduce production type_string -> type_string word
+
+State 18:
+main -> type_string . EOF [ # ]
+type_string -> type_string . word [ WORD EOF ]
+-- On WORD shift to state 1
+-- On EOF shift to state 19
+-- On word shift to state 17
+
+State 19:
+main -> type_string EOF . [ # ]
+-- On # reduce production main -> type_string EOF
+
+State 20:
+main' -> main . [ # ]
+-- On # accept main
+

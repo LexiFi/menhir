@@ -1,0 +1,55 @@
+State 0:
+main' -> . main [ # ]
+-- On A shift to state 1
+-- On main shift to state 12
+
+State 1:
+main -> A . B fst(pair_new_syntax_pair(A,B)) snd(pair_new_syntax_pair(A,B)) C D EOF [ # ]
+-- On B shift to state 2
+
+State 2:
+main -> A B . fst(pair_new_syntax_pair(A,B)) snd(pair_new_syntax_pair(A,B)) C D EOF [ # ]
+-- On A shift to state 3
+-- On fst(pair_new_syntax_pair(A,B)) shift to state 5
+
+State 3:
+fst(pair_new_syntax_pair(A,B)) -> A . B [ A ]
+-- On B shift to state 4
+
+State 4:
+fst(pair_new_syntax_pair(A,B)) -> A B . [ A ]
+-- On A reduce production fst(pair_new_syntax_pair(A,B)) -> A B
+
+State 5:
+main -> A B fst(pair_new_syntax_pair(A,B)) . snd(pair_new_syntax_pair(A,B)) C D EOF [ # ]
+-- On A shift to state 6
+-- On snd(pair_new_syntax_pair(A,B)) shift to state 8
+
+State 6:
+snd(pair_new_syntax_pair(A,B)) -> A . B [ C ]
+-- On B shift to state 7
+
+State 7:
+snd(pair_new_syntax_pair(A,B)) -> A B . [ C ]
+-- On C reduce production snd(pair_new_syntax_pair(A,B)) -> A B
+
+State 8:
+main -> A B fst(pair_new_syntax_pair(A,B)) snd(pair_new_syntax_pair(A,B)) . C D EOF [ # ]
+-- On C shift to state 9
+
+State 9:
+main -> A B fst(pair_new_syntax_pair(A,B)) snd(pair_new_syntax_pair(A,B)) C . D EOF [ # ]
+-- On D shift to state 10
+
+State 10:
+main -> A B fst(pair_new_syntax_pair(A,B)) snd(pair_new_syntax_pair(A,B)) C D . EOF [ # ]
+-- On EOF shift to state 11
+
+State 11:
+main -> A B fst(pair_new_syntax_pair(A,B)) snd(pair_new_syntax_pair(A,B)) C D EOF . [ # ]
+-- On # reduce production main -> A B fst(pair_new_syntax_pair(A,B)) snd(pair_new_syntax_pair(A,B)) C D EOF
+
+State 12:
+main' -> main . [ # ]
+-- On # accept main
+

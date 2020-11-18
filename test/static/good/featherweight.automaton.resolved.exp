@@ -1,0 +1,656 @@
+State 0:
+toplevel' -> . toplevel [ # ]
+-- On COMMAND shift to state 1
+-- On CLASS shift to state 2
+-- On toplevel shift to state 99
+-- On classDecs shift to state 100
+-- On classDec shift to state 103
+
+State 1:
+classDecs -> COMMAND . [ COLON ]
+-- On COLON reduce production classDecs -> COMMAND
+
+State 2:
+classDec -> CLASS . ID EXTENDS ID LCURLY fieldDefs constructorDef methodDefs RCURLY [ COMMAND CLASS ]
+classDec -> CLASS . ID EXTENDS ID LCURLY fieldDefs constructorDef RCURLY [ COMMAND CLASS ]
+classDec -> CLASS . ID EXTENDS ID LCURLY constructorDef methodDefs RCURLY [ COMMAND CLASS ]
+classDec -> CLASS . ID EXTENDS ID LCURLY constructorDef RCURLY [ COMMAND CLASS ]
+-- On ID shift to state 3
+
+State 3:
+classDec -> CLASS ID . EXTENDS ID LCURLY fieldDefs constructorDef methodDefs RCURLY [ COMMAND CLASS ]
+classDec -> CLASS ID . EXTENDS ID LCURLY fieldDefs constructorDef RCURLY [ COMMAND CLASS ]
+classDec -> CLASS ID . EXTENDS ID LCURLY constructorDef methodDefs RCURLY [ COMMAND CLASS ]
+classDec -> CLASS ID . EXTENDS ID LCURLY constructorDef RCURLY [ COMMAND CLASS ]
+-- On EXTENDS shift to state 4
+
+State 4:
+classDec -> CLASS ID EXTENDS . ID LCURLY fieldDefs constructorDef methodDefs RCURLY [ COMMAND CLASS ]
+classDec -> CLASS ID EXTENDS . ID LCURLY fieldDefs constructorDef RCURLY [ COMMAND CLASS ]
+classDec -> CLASS ID EXTENDS . ID LCURLY constructorDef methodDefs RCURLY [ COMMAND CLASS ]
+classDec -> CLASS ID EXTENDS . ID LCURLY constructorDef RCURLY [ COMMAND CLASS ]
+-- On ID shift to state 5
+
+State 5:
+classDec -> CLASS ID EXTENDS ID . LCURLY fieldDefs constructorDef methodDefs RCURLY [ COMMAND CLASS ]
+classDec -> CLASS ID EXTENDS ID . LCURLY fieldDefs constructorDef RCURLY [ COMMAND CLASS ]
+classDec -> CLASS ID EXTENDS ID . LCURLY constructorDef methodDefs RCURLY [ COMMAND CLASS ]
+classDec -> CLASS ID EXTENDS ID . LCURLY constructorDef RCURLY [ COMMAND CLASS ]
+-- On LCURLY shift to state 6
+
+State 6:
+classDec -> CLASS ID EXTENDS ID LCURLY . fieldDefs constructorDef methodDefs RCURLY [ COMMAND CLASS ]
+classDec -> CLASS ID EXTENDS ID LCURLY . fieldDefs constructorDef RCURLY [ COMMAND CLASS ]
+classDec -> CLASS ID EXTENDS ID LCURLY . constructorDef methodDefs RCURLY [ COMMAND CLASS ]
+classDec -> CLASS ID EXTENDS ID LCURLY . constructorDef RCURLY [ COMMAND CLASS ]
+-- On SEMI shift to state 7
+-- On ID shift to state 8
+-- On fieldDefs shift to state 38
+-- On fieldDef shift to state 91
+-- On constructorDef shift to state 95
+
+State 7:
+fieldDefs -> SEMI . [ ID ]
+-- On ID reduce production fieldDefs -> SEMI
+
+State 8:
+constructorDef -> ID . LPAREN paramDefs RPAREN LCURLY SUPER LPAREN argDefs RPAREN SEMI fieldAssignmentDefs RCURLY [ SEMI RCURLY ID ]
+fieldDef -> ID . ID [ SEMI ]
+-- On LPAREN shift to state 9
+-- On ID shift to state 37
+
+State 9:
+constructorDef -> ID LPAREN . paramDefs RPAREN LCURLY SUPER LPAREN argDefs RPAREN SEMI fieldAssignmentDefs RCURLY [ SEMI RCURLY ID ]
+-- On ID shift to state 10
+-- On paramDefs shift to state 12
+-- On paramDef shift to state 34
+-- On RPAREN reduce production paramDefs -> 
+
+State 10:
+paramDef -> ID . ID [ RPAREN COMMA ]
+-- On ID shift to state 11
+
+State 11:
+paramDef -> ID ID . [ RPAREN COMMA ]
+-- On RPAREN reduce production paramDef -> ID ID
+-- On COMMA reduce production paramDef -> ID ID
+
+State 12:
+constructorDef -> ID LPAREN paramDefs . RPAREN LCURLY SUPER LPAREN argDefs RPAREN SEMI fieldAssignmentDefs RCURLY [ SEMI RCURLY ID ]
+-- On RPAREN shift to state 13
+
+State 13:
+constructorDef -> ID LPAREN paramDefs RPAREN . LCURLY SUPER LPAREN argDefs RPAREN SEMI fieldAssignmentDefs RCURLY [ SEMI RCURLY ID ]
+-- On LCURLY shift to state 14
+
+State 14:
+constructorDef -> ID LPAREN paramDefs RPAREN LCURLY . SUPER LPAREN argDefs RPAREN SEMI fieldAssignmentDefs RCURLY [ SEMI RCURLY ID ]
+-- On SUPER shift to state 15
+
+State 15:
+constructorDef -> ID LPAREN paramDefs RPAREN LCURLY SUPER . LPAREN argDefs RPAREN SEMI fieldAssignmentDefs RCURLY [ SEMI RCURLY ID ]
+-- On LPAREN shift to state 16
+
+State 16:
+constructorDef -> ID LPAREN paramDefs RPAREN LCURLY SUPER LPAREN . argDefs RPAREN SEMI fieldAssignmentDefs RCURLY [ SEMI RCURLY ID ]
+-- On ID shift to state 17
+-- On argDefs shift to state 18
+-- On argDef shift to state 31
+-- On RPAREN reduce production argDefs -> 
+
+State 17:
+argDef -> ID . [ RPAREN COMMA ]
+-- On RPAREN reduce production argDef -> ID
+-- On COMMA reduce production argDef -> ID
+
+State 18:
+constructorDef -> ID LPAREN paramDefs RPAREN LCURLY SUPER LPAREN argDefs . RPAREN SEMI fieldAssignmentDefs RCURLY [ SEMI RCURLY ID ]
+-- On RPAREN shift to state 19
+
+State 19:
+constructorDef -> ID LPAREN paramDefs RPAREN LCURLY SUPER LPAREN argDefs RPAREN . SEMI fieldAssignmentDefs RCURLY [ SEMI RCURLY ID ]
+-- On SEMI shift to state 20
+
+State 20:
+constructorDef -> ID LPAREN paramDefs RPAREN LCURLY SUPER LPAREN argDefs RPAREN SEMI . fieldAssignmentDefs RCURLY [ SEMI RCURLY ID ]
+-- On THIS shift to state 21
+-- On fieldAssignmentDefs shift to state 27
+-- On fieldAssignmentDef shift to state 29
+-- On RCURLY reduce production fieldAssignmentDefs -> 
+
+State 21:
+fieldAssignmentDef -> THIS . DOT ID EQ ID SEMI [ THIS RCURLY ]
+-- On DOT shift to state 22
+
+State 22:
+fieldAssignmentDef -> THIS DOT . ID EQ ID SEMI [ THIS RCURLY ]
+-- On ID shift to state 23
+
+State 23:
+fieldAssignmentDef -> THIS DOT ID . EQ ID SEMI [ THIS RCURLY ]
+-- On EQ shift to state 24
+
+State 24:
+fieldAssignmentDef -> THIS DOT ID EQ . ID SEMI [ THIS RCURLY ]
+-- On ID shift to state 25
+
+State 25:
+fieldAssignmentDef -> THIS DOT ID EQ ID . SEMI [ THIS RCURLY ]
+-- On SEMI shift to state 26
+
+State 26:
+fieldAssignmentDef -> THIS DOT ID EQ ID SEMI . [ THIS RCURLY ]
+-- On THIS reduce production fieldAssignmentDef -> THIS DOT ID EQ ID SEMI
+-- On RCURLY reduce production fieldAssignmentDef -> THIS DOT ID EQ ID SEMI
+
+State 27:
+constructorDef -> ID LPAREN paramDefs RPAREN LCURLY SUPER LPAREN argDefs RPAREN SEMI fieldAssignmentDefs . RCURLY [ SEMI RCURLY ID ]
+-- On RCURLY shift to state 28
+
+State 28:
+constructorDef -> ID LPAREN paramDefs RPAREN LCURLY SUPER LPAREN argDefs RPAREN SEMI fieldAssignmentDefs RCURLY . [ SEMI RCURLY ID ]
+-- On SEMI reduce production constructorDef -> ID LPAREN paramDefs RPAREN LCURLY SUPER LPAREN argDefs RPAREN SEMI fieldAssignmentDefs RCURLY
+-- On RCURLY reduce production constructorDef -> ID LPAREN paramDefs RPAREN LCURLY SUPER LPAREN argDefs RPAREN SEMI fieldAssignmentDefs RCURLY
+-- On ID reduce production constructorDef -> ID LPAREN paramDefs RPAREN LCURLY SUPER LPAREN argDefs RPAREN SEMI fieldAssignmentDefs RCURLY
+
+State 29:
+fieldAssignmentDefs -> fieldAssignmentDef . fieldAssignmentDefs [ RCURLY ]
+-- On THIS shift to state 21
+-- On fieldAssignmentDefs shift to state 30
+-- On fieldAssignmentDef shift to state 29
+-- On RCURLY reduce production fieldAssignmentDefs -> 
+
+State 30:
+fieldAssignmentDefs -> fieldAssignmentDef fieldAssignmentDefs . [ RCURLY ]
+-- On RCURLY reduce production fieldAssignmentDefs -> fieldAssignmentDef fieldAssignmentDefs
+
+State 31:
+argDefs -> argDef . [ RPAREN ]
+argDefs -> argDef . COMMA argDefs [ RPAREN ]
+-- On COMMA shift to state 32
+-- On RPAREN reduce production argDefs -> argDef
+
+State 32:
+argDefs -> argDef COMMA . argDefs [ RPAREN ]
+-- On ID shift to state 17
+-- On argDefs shift to state 33
+-- On argDef shift to state 31
+-- On RPAREN reduce production argDefs -> 
+
+State 33:
+argDefs -> argDef COMMA argDefs . [ RPAREN ]
+-- On RPAREN reduce production argDefs -> argDef COMMA argDefs
+
+State 34:
+paramDefs -> paramDef . [ RPAREN ]
+paramDefs -> paramDef . COMMA paramDefs [ RPAREN ]
+-- On COMMA shift to state 35
+-- On RPAREN reduce production paramDefs -> paramDef
+
+State 35:
+paramDefs -> paramDef COMMA . paramDefs [ RPAREN ]
+-- On ID shift to state 10
+-- On paramDefs shift to state 36
+-- On paramDef shift to state 34
+-- On RPAREN reduce production paramDefs -> 
+
+State 36:
+paramDefs -> paramDef COMMA paramDefs . [ RPAREN ]
+-- On RPAREN reduce production paramDefs -> paramDef COMMA paramDefs
+
+State 37:
+fieldDef -> ID ID . [ SEMI ]
+-- On SEMI reduce production fieldDef -> ID ID
+
+State 38:
+classDec -> CLASS ID EXTENDS ID LCURLY fieldDefs . constructorDef methodDefs RCURLY [ COMMAND CLASS ]
+classDec -> CLASS ID EXTENDS ID LCURLY fieldDefs . constructorDef RCURLY [ COMMAND CLASS ]
+-- On ID shift to state 39
+-- On constructorDef shift to state 40
+
+State 39:
+constructorDef -> ID . LPAREN paramDefs RPAREN LCURLY SUPER LPAREN argDefs RPAREN SEMI fieldAssignmentDefs RCURLY [ SEMI RCURLY ID ]
+-- On LPAREN shift to state 9
+
+State 40:
+classDec -> CLASS ID EXTENDS ID LCURLY fieldDefs constructorDef . methodDefs RCURLY [ COMMAND CLASS ]
+classDec -> CLASS ID EXTENDS ID LCURLY fieldDefs constructorDef . RCURLY [ COMMAND CLASS ]
+-- On SEMI shift to state 41
+-- On RCURLY shift to state 42
+-- On ID shift to state 43
+-- On methodDefs shift to state 87
+-- On methodDef shift to state 89
+
+State 41:
+methodDefs -> SEMI . [ RCURLY ]
+-- On RCURLY reduce production methodDefs -> SEMI
+
+State 42:
+classDec -> CLASS ID EXTENDS ID LCURLY fieldDefs constructorDef RCURLY . [ COMMAND CLASS ]
+-- On COMMAND reduce production classDec -> CLASS ID EXTENDS ID LCURLY fieldDefs constructorDef RCURLY
+-- On CLASS reduce production classDec -> CLASS ID EXTENDS ID LCURLY fieldDefs constructorDef RCURLY
+
+State 43:
+methodDef -> ID . ID LPAREN paramDefs RPAREN LCURLY RETURN termDef SEMI RCURLY [ SEMI ID ]
+-- On ID shift to state 44
+
+State 44:
+methodDef -> ID ID . LPAREN paramDefs RPAREN LCURLY RETURN termDef SEMI RCURLY [ SEMI ID ]
+-- On LPAREN shift to state 45
+
+State 45:
+methodDef -> ID ID LPAREN . paramDefs RPAREN LCURLY RETURN termDef SEMI RCURLY [ SEMI ID ]
+-- On ID shift to state 10
+-- On paramDefs shift to state 46
+-- On paramDef shift to state 34
+-- On RPAREN reduce production paramDefs -> 
+
+State 46:
+methodDef -> ID ID LPAREN paramDefs . RPAREN LCURLY RETURN termDef SEMI RCURLY [ SEMI ID ]
+-- On RPAREN shift to state 47
+
+State 47:
+methodDef -> ID ID LPAREN paramDefs RPAREN . LCURLY RETURN termDef SEMI RCURLY [ SEMI ID ]
+-- On LCURLY shift to state 48
+
+State 48:
+methodDef -> ID ID LPAREN paramDefs RPAREN LCURLY . RETURN termDef SEMI RCURLY [ SEMI ID ]
+-- On RETURN shift to state 49
+
+State 49:
+methodDef -> ID ID LPAREN paramDefs RPAREN LCURLY RETURN . termDef SEMI RCURLY [ SEMI ID ]
+-- On THIS shift to state 50
+-- On NEW shift to state 51
+-- On LPAREN shift to state 54
+-- On ID shift to state 57
+-- On termDef shift to state 84
+-- On TmVarDef shift to state 67
+-- On TmThis shift to state 68
+-- On TmObjectCreationDef shift to state 69
+-- On TmMethodInvocationDef shift to state 70
+-- On TmFieldAccessDef shift to state 71
+-- On TmCastDef shift to state 72
+
+State 50:
+TmThis -> THIS . [ SEMI RPAREN DOT COMMA # ]
+-- On SEMI reduce production TmThis -> THIS
+-- On RPAREN reduce production TmThis -> THIS
+-- On DOT reduce production TmThis -> THIS
+-- On COMMA reduce production TmThis -> THIS
+
+State 51:
+TmObjectCreationDef -> NEW . ID LPAREN termDefs RPAREN [ SEMI RPAREN DOT COMMA # ]
+-- On ID shift to state 52
+
+State 52:
+TmObjectCreationDef -> NEW ID . LPAREN termDefs RPAREN [ SEMI RPAREN DOT COMMA # ]
+-- On LPAREN shift to state 53
+
+State 53:
+TmObjectCreationDef -> NEW ID LPAREN . termDefs RPAREN [ SEMI RPAREN DOT COMMA # ]
+-- On THIS shift to state 50
+-- On NEW shift to state 51
+-- On LPAREN shift to state 54
+-- On ID shift to state 57
+-- On termDefs shift to state 82
+-- On termDef shift to state 64
+-- On TmVarDef shift to state 67
+-- On TmThis shift to state 68
+-- On TmObjectCreationDef shift to state 69
+-- On TmMethodInvocationDef shift to state 70
+-- On TmFieldAccessDef shift to state 71
+-- On TmCastDef shift to state 72
+-- On RPAREN reduce production termDefs -> 
+
+State 54:
+TmCastDef -> LPAREN . ID RPAREN termDef [ SEMI RPAREN DOT COMMA # ]
+termDef -> LPAREN . TmFieldAccessDef RPAREN [ SEMI RPAREN DOT COMMA # ]
+termDef -> LPAREN . TmMethodInvocationDef RPAREN [ SEMI RPAREN DOT COMMA # ]
+termDef -> LPAREN . TmObjectCreationDef RPAREN [ SEMI RPAREN DOT COMMA # ]
+termDef -> LPAREN . TmCastDef RPAREN [ SEMI RPAREN DOT COMMA # ]
+-- On THIS shift to state 50
+-- On NEW shift to state 51
+-- On LPAREN shift to state 54
+-- On ID shift to state 55
+-- On termDef shift to state 73
+-- On TmVarDef shift to state 67
+-- On TmThis shift to state 68
+-- On TmObjectCreationDef shift to state 74
+-- On TmMethodInvocationDef shift to state 76
+-- On TmFieldAccessDef shift to state 78
+-- On TmCastDef shift to state 80
+
+State 55:
+TmCastDef -> LPAREN ID . RPAREN termDef [ SEMI RPAREN DOT COMMA # ]
+TmVarDef -> ID . [ DOT ]
+-- On RPAREN shift to state 56
+-- On DOT reduce production TmVarDef -> ID
+
+State 56:
+TmCastDef -> LPAREN ID RPAREN . termDef [ SEMI RPAREN DOT COMMA # ]
+-- On THIS shift to state 50
+-- On NEW shift to state 51
+-- On LPAREN shift to state 54
+-- On ID shift to state 57
+-- On termDef shift to state 58
+-- On TmVarDef shift to state 67
+-- On TmThis shift to state 68
+-- On TmObjectCreationDef shift to state 69
+-- On TmMethodInvocationDef shift to state 70
+-- On TmFieldAccessDef shift to state 71
+-- On TmCastDef shift to state 72
+
+State 57:
+TmVarDef -> ID . [ SEMI RPAREN DOT COMMA # ]
+-- On SEMI reduce production TmVarDef -> ID
+-- On RPAREN reduce production TmVarDef -> ID
+-- On DOT reduce production TmVarDef -> ID
+-- On COMMA reduce production TmVarDef -> ID
+
+State 58:
+TmCastDef -> LPAREN ID RPAREN termDef . [ SEMI RPAREN DOT COMMA # ]
+TmFieldAccessDef -> termDef . DOT ID [ SEMI RPAREN DOT COMMA # ]
+TmMethodInvocationDef -> termDef . DOT ID LPAREN termDefs RPAREN [ SEMI RPAREN DOT COMMA # ]
+-- On DOT shift to state 59
+-- On SEMI reduce production TmCastDef -> LPAREN ID RPAREN termDef
+-- On RPAREN reduce production TmCastDef -> LPAREN ID RPAREN termDef
+-- On COMMA reduce production TmCastDef -> LPAREN ID RPAREN termDef
+** Conflict on DOT
+
+State 59:
+TmFieldAccessDef -> termDef DOT . ID [ SEMI RPAREN DOT COMMA # ]
+TmMethodInvocationDef -> termDef DOT . ID LPAREN termDefs RPAREN [ SEMI RPAREN DOT COMMA # ]
+-- On ID shift to state 60
+
+State 60:
+TmFieldAccessDef -> termDef DOT ID . [ SEMI RPAREN DOT COMMA # ]
+TmMethodInvocationDef -> termDef DOT ID . LPAREN termDefs RPAREN [ SEMI RPAREN DOT COMMA # ]
+-- On LPAREN shift to state 61
+-- On SEMI reduce production TmFieldAccessDef -> termDef DOT ID
+-- On RPAREN reduce production TmFieldAccessDef -> termDef DOT ID
+-- On DOT reduce production TmFieldAccessDef -> termDef DOT ID
+-- On COMMA reduce production TmFieldAccessDef -> termDef DOT ID
+
+State 61:
+TmMethodInvocationDef -> termDef DOT ID LPAREN . termDefs RPAREN [ SEMI RPAREN DOT COMMA # ]
+-- On THIS shift to state 50
+-- On NEW shift to state 51
+-- On LPAREN shift to state 54
+-- On ID shift to state 57
+-- On termDefs shift to state 62
+-- On termDef shift to state 64
+-- On TmVarDef shift to state 67
+-- On TmThis shift to state 68
+-- On TmObjectCreationDef shift to state 69
+-- On TmMethodInvocationDef shift to state 70
+-- On TmFieldAccessDef shift to state 71
+-- On TmCastDef shift to state 72
+-- On RPAREN reduce production termDefs -> 
+
+State 62:
+TmMethodInvocationDef -> termDef DOT ID LPAREN termDefs . RPAREN [ SEMI RPAREN DOT COMMA # ]
+-- On RPAREN shift to state 63
+
+State 63:
+TmMethodInvocationDef -> termDef DOT ID LPAREN termDefs RPAREN . [ SEMI RPAREN DOT COMMA # ]
+-- On SEMI reduce production TmMethodInvocationDef -> termDef DOT ID LPAREN termDefs RPAREN
+-- On RPAREN reduce production TmMethodInvocationDef -> termDef DOT ID LPAREN termDefs RPAREN
+-- On DOT reduce production TmMethodInvocationDef -> termDef DOT ID LPAREN termDefs RPAREN
+-- On COMMA reduce production TmMethodInvocationDef -> termDef DOT ID LPAREN termDefs RPAREN
+
+State 64:
+TmFieldAccessDef -> termDef . DOT ID [ RPAREN DOT COMMA ]
+TmMethodInvocationDef -> termDef . DOT ID LPAREN termDefs RPAREN [ RPAREN DOT COMMA ]
+termDefs -> termDef . [ RPAREN ]
+termDefs -> termDef . COMMA termDefs [ RPAREN ]
+-- On DOT shift to state 59
+-- On COMMA shift to state 65
+-- On RPAREN reduce production termDefs -> termDef
+
+State 65:
+termDefs -> termDef COMMA . termDefs [ RPAREN ]
+-- On THIS shift to state 50
+-- On NEW shift to state 51
+-- On LPAREN shift to state 54
+-- On ID shift to state 57
+-- On termDefs shift to state 66
+-- On termDef shift to state 64
+-- On TmVarDef shift to state 67
+-- On TmThis shift to state 68
+-- On TmObjectCreationDef shift to state 69
+-- On TmMethodInvocationDef shift to state 70
+-- On TmFieldAccessDef shift to state 71
+-- On TmCastDef shift to state 72
+-- On RPAREN reduce production termDefs -> 
+
+State 66:
+termDefs -> termDef COMMA termDefs . [ RPAREN ]
+-- On RPAREN reduce production termDefs -> termDef COMMA termDefs
+
+State 67:
+termDef -> TmVarDef . [ SEMI RPAREN DOT COMMA # ]
+-- On SEMI reduce production termDef -> TmVarDef
+-- On RPAREN reduce production termDef -> TmVarDef
+-- On DOT reduce production termDef -> TmVarDef
+-- On COMMA reduce production termDef -> TmVarDef
+
+State 68:
+termDef -> TmThis . [ SEMI RPAREN DOT COMMA # ]
+-- On SEMI reduce production termDef -> TmThis
+-- On RPAREN reduce production termDef -> TmThis
+-- On DOT reduce production termDef -> TmThis
+-- On COMMA reduce production termDef -> TmThis
+
+State 69:
+termDef -> TmObjectCreationDef . [ SEMI RPAREN DOT COMMA # ]
+-- On SEMI reduce production termDef -> TmObjectCreationDef
+-- On RPAREN reduce production termDef -> TmObjectCreationDef
+-- On DOT reduce production termDef -> TmObjectCreationDef
+-- On COMMA reduce production termDef -> TmObjectCreationDef
+
+State 70:
+termDef -> TmMethodInvocationDef . [ SEMI RPAREN DOT COMMA # ]
+-- On SEMI reduce production termDef -> TmMethodInvocationDef
+-- On RPAREN reduce production termDef -> TmMethodInvocationDef
+-- On DOT reduce production termDef -> TmMethodInvocationDef
+-- On COMMA reduce production termDef -> TmMethodInvocationDef
+
+State 71:
+termDef -> TmFieldAccessDef . [ SEMI RPAREN DOT COMMA # ]
+-- On SEMI reduce production termDef -> TmFieldAccessDef
+-- On RPAREN reduce production termDef -> TmFieldAccessDef
+-- On DOT reduce production termDef -> TmFieldAccessDef
+-- On COMMA reduce production termDef -> TmFieldAccessDef
+
+State 72:
+termDef -> TmCastDef . [ SEMI RPAREN DOT COMMA # ]
+-- On SEMI reduce production termDef -> TmCastDef
+-- On RPAREN reduce production termDef -> TmCastDef
+-- On DOT reduce production termDef -> TmCastDef
+-- On COMMA reduce production termDef -> TmCastDef
+
+State 73:
+TmFieldAccessDef -> termDef . DOT ID [ RPAREN DOT ]
+TmMethodInvocationDef -> termDef . DOT ID LPAREN termDefs RPAREN [ RPAREN DOT ]
+-- On DOT shift to state 59
+
+State 74:
+termDef -> TmObjectCreationDef . [ DOT ]
+termDef -> LPAREN TmObjectCreationDef . RPAREN [ SEMI RPAREN DOT COMMA # ]
+-- On RPAREN shift to state 75
+-- On DOT reduce production termDef -> TmObjectCreationDef
+
+State 75:
+termDef -> LPAREN TmObjectCreationDef RPAREN . [ SEMI RPAREN DOT COMMA # ]
+-- On SEMI reduce production termDef -> LPAREN TmObjectCreationDef RPAREN
+-- On RPAREN reduce production termDef -> LPAREN TmObjectCreationDef RPAREN
+-- On DOT reduce production termDef -> LPAREN TmObjectCreationDef RPAREN
+-- On COMMA reduce production termDef -> LPAREN TmObjectCreationDef RPAREN
+
+State 76:
+termDef -> TmMethodInvocationDef . [ DOT ]
+termDef -> LPAREN TmMethodInvocationDef . RPAREN [ SEMI RPAREN DOT COMMA # ]
+-- On RPAREN shift to state 77
+-- On DOT reduce production termDef -> TmMethodInvocationDef
+
+State 77:
+termDef -> LPAREN TmMethodInvocationDef RPAREN . [ SEMI RPAREN DOT COMMA # ]
+-- On SEMI reduce production termDef -> LPAREN TmMethodInvocationDef RPAREN
+-- On RPAREN reduce production termDef -> LPAREN TmMethodInvocationDef RPAREN
+-- On DOT reduce production termDef -> LPAREN TmMethodInvocationDef RPAREN
+-- On COMMA reduce production termDef -> LPAREN TmMethodInvocationDef RPAREN
+
+State 78:
+termDef -> TmFieldAccessDef . [ DOT ]
+termDef -> LPAREN TmFieldAccessDef . RPAREN [ SEMI RPAREN DOT COMMA # ]
+-- On RPAREN shift to state 79
+-- On DOT reduce production termDef -> TmFieldAccessDef
+
+State 79:
+termDef -> LPAREN TmFieldAccessDef RPAREN . [ SEMI RPAREN DOT COMMA # ]
+-- On SEMI reduce production termDef -> LPAREN TmFieldAccessDef RPAREN
+-- On RPAREN reduce production termDef -> LPAREN TmFieldAccessDef RPAREN
+-- On DOT reduce production termDef -> LPAREN TmFieldAccessDef RPAREN
+-- On COMMA reduce production termDef -> LPAREN TmFieldAccessDef RPAREN
+
+State 80:
+termDef -> TmCastDef . [ DOT ]
+termDef -> LPAREN TmCastDef . RPAREN [ SEMI RPAREN DOT COMMA # ]
+-- On RPAREN shift to state 81
+-- On DOT reduce production termDef -> TmCastDef
+
+State 81:
+termDef -> LPAREN TmCastDef RPAREN . [ SEMI RPAREN DOT COMMA # ]
+-- On SEMI reduce production termDef -> LPAREN TmCastDef RPAREN
+-- On RPAREN reduce production termDef -> LPAREN TmCastDef RPAREN
+-- On DOT reduce production termDef -> LPAREN TmCastDef RPAREN
+-- On COMMA reduce production termDef -> LPAREN TmCastDef RPAREN
+
+State 82:
+TmObjectCreationDef -> NEW ID LPAREN termDefs . RPAREN [ SEMI RPAREN DOT COMMA # ]
+-- On RPAREN shift to state 83
+
+State 83:
+TmObjectCreationDef -> NEW ID LPAREN termDefs RPAREN . [ SEMI RPAREN DOT COMMA # ]
+-- On SEMI reduce production TmObjectCreationDef -> NEW ID LPAREN termDefs RPAREN
+-- On RPAREN reduce production TmObjectCreationDef -> NEW ID LPAREN termDefs RPAREN
+-- On DOT reduce production TmObjectCreationDef -> NEW ID LPAREN termDefs RPAREN
+-- On COMMA reduce production TmObjectCreationDef -> NEW ID LPAREN termDefs RPAREN
+
+State 84:
+TmFieldAccessDef -> termDef . DOT ID [ SEMI DOT ]
+TmMethodInvocationDef -> termDef . DOT ID LPAREN termDefs RPAREN [ SEMI DOT ]
+methodDef -> ID ID LPAREN paramDefs RPAREN LCURLY RETURN termDef . SEMI RCURLY [ SEMI ID ]
+-- On SEMI shift to state 85
+-- On DOT shift to state 59
+
+State 85:
+methodDef -> ID ID LPAREN paramDefs RPAREN LCURLY RETURN termDef SEMI . RCURLY [ SEMI ID ]
+-- On RCURLY shift to state 86
+
+State 86:
+methodDef -> ID ID LPAREN paramDefs RPAREN LCURLY RETURN termDef SEMI RCURLY . [ SEMI ID ]
+-- On SEMI reduce production methodDef -> ID ID LPAREN paramDefs RPAREN LCURLY RETURN termDef SEMI RCURLY
+-- On ID reduce production methodDef -> ID ID LPAREN paramDefs RPAREN LCURLY RETURN termDef SEMI RCURLY
+
+State 87:
+classDec -> CLASS ID EXTENDS ID LCURLY fieldDefs constructorDef methodDefs . RCURLY [ COMMAND CLASS ]
+-- On RCURLY shift to state 88
+
+State 88:
+classDec -> CLASS ID EXTENDS ID LCURLY fieldDefs constructorDef methodDefs RCURLY . [ COMMAND CLASS ]
+-- On COMMAND reduce production classDec -> CLASS ID EXTENDS ID LCURLY fieldDefs constructorDef methodDefs RCURLY
+-- On CLASS reduce production classDec -> CLASS ID EXTENDS ID LCURLY fieldDefs constructorDef methodDefs RCURLY
+
+State 89:
+methodDefs -> methodDef . methodDefs [ RCURLY ]
+-- On SEMI shift to state 41
+-- On ID shift to state 43
+-- On methodDefs shift to state 90
+-- On methodDef shift to state 89
+
+State 90:
+methodDefs -> methodDef methodDefs . [ RCURLY ]
+-- On RCURLY reduce production methodDefs -> methodDef methodDefs
+
+State 91:
+fieldDefs -> fieldDef . SEMI fieldDefs [ ID ]
+-- On SEMI shift to state 92
+
+State 92:
+fieldDefs -> fieldDef SEMI . fieldDefs [ ID ]
+-- On SEMI shift to state 7
+-- On ID shift to state 93
+-- On fieldDefs shift to state 94
+-- On fieldDef shift to state 91
+
+State 93:
+fieldDef -> ID . ID [ SEMI ]
+-- On ID shift to state 37
+
+State 94:
+fieldDefs -> fieldDef SEMI fieldDefs . [ ID ]
+-- On ID reduce production fieldDefs -> fieldDef SEMI fieldDefs
+
+State 95:
+classDec -> CLASS ID EXTENDS ID LCURLY constructorDef . methodDefs RCURLY [ COMMAND CLASS ]
+classDec -> CLASS ID EXTENDS ID LCURLY constructorDef . RCURLY [ COMMAND CLASS ]
+-- On SEMI shift to state 41
+-- On RCURLY shift to state 96
+-- On ID shift to state 43
+-- On methodDefs shift to state 97
+-- On methodDef shift to state 89
+
+State 96:
+classDec -> CLASS ID EXTENDS ID LCURLY constructorDef RCURLY . [ COMMAND CLASS ]
+-- On COMMAND reduce production classDec -> CLASS ID EXTENDS ID LCURLY constructorDef RCURLY
+-- On CLASS reduce production classDec -> CLASS ID EXTENDS ID LCURLY constructorDef RCURLY
+
+State 97:
+classDec -> CLASS ID EXTENDS ID LCURLY constructorDef methodDefs . RCURLY [ COMMAND CLASS ]
+-- On RCURLY shift to state 98
+
+State 98:
+classDec -> CLASS ID EXTENDS ID LCURLY constructorDef methodDefs RCURLY . [ COMMAND CLASS ]
+-- On COMMAND reduce production classDec -> CLASS ID EXTENDS ID LCURLY constructorDef methodDefs RCURLY
+-- On CLASS reduce production classDec -> CLASS ID EXTENDS ID LCURLY constructorDef methodDefs RCURLY
+
+State 99:
+toplevel' -> toplevel . [ # ]
+-- On # accept toplevel
+
+State 100:
+toplevel -> classDecs . COLON termDef [ # ]
+-- On COLON shift to state 101
+
+State 101:
+toplevel -> classDecs COLON . termDef [ # ]
+-- On THIS shift to state 50
+-- On NEW shift to state 51
+-- On LPAREN shift to state 54
+-- On ID shift to state 57
+-- On termDef shift to state 102
+-- On TmVarDef shift to state 67
+-- On TmThis shift to state 68
+-- On TmObjectCreationDef shift to state 69
+-- On TmMethodInvocationDef shift to state 70
+-- On TmFieldAccessDef shift to state 71
+-- On TmCastDef shift to state 72
+
+State 102:
+TmFieldAccessDef -> termDef . DOT ID [ DOT # ]
+TmMethodInvocationDef -> termDef . DOT ID LPAREN termDefs RPAREN [ DOT # ]
+toplevel -> classDecs COLON termDef . [ # ]
+-- On DOT shift to state 59
+
+State 103:
+classDecs -> classDec . classDecs [ COLON ]
+-- On COMMAND shift to state 1
+-- On CLASS shift to state 2
+-- On classDecs shift to state 104
+-- On classDec shift to state 103
+
+State 104:
+classDecs -> classDec classDecs . [ COLON ]
+-- On COLON reduce production classDecs -> classDec classDecs
+

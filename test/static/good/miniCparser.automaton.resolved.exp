@@ -1,0 +1,2691 @@
+State 0:
+implementation' -> . implementation [ # ]
+-- On UIDENT shift to state 1
+-- On STRUCT shift to state 2
+-- On LPAREN shift to state 34
+-- On FUNCTOR shift to state 35
+-- On upath shift to state 79
+-- On modulexpr shift to state 190
+-- On implementation shift to state 192
+
+State 1:
+upath -> UIDENT . [ UIDENT STAR SEMI RPAREN LPAREN LIDENT EOF DOT COMMA COLON ]
+-- On UIDENT reduce production upath -> UIDENT
+-- On STAR reduce production upath -> UIDENT
+-- On SEMI reduce production upath -> UIDENT
+-- On RPAREN reduce production upath -> UIDENT
+-- On LPAREN reduce production upath -> UIDENT
+-- On LIDENT reduce production upath -> UIDENT
+-- On EOF reduce production upath -> UIDENT
+-- On DOT reduce production upath -> UIDENT
+-- On COMMA reduce production upath -> UIDENT
+-- On COLON reduce production upath -> UIDENT
+
+State 2:
+modulexpr -> STRUCT . structure END [ SEMI RPAREN LPAREN EOF COLON ]
+-- On structure shift to state 3
+-- On VOID reduce production structure -> 
+-- On UIDENT reduce production structure -> 
+-- On TYPEDEF reduce production structure -> 
+-- On MODULE reduce production structure -> 
+-- On INT reduce production structure -> 
+-- On FLOAT reduce production structure -> 
+-- On END reduce production structure -> 
+
+State 3:
+modulexpr -> STRUCT structure . END [ SEMI RPAREN LPAREN EOF COLON ]
+structure -> structure . structure_item [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
+-- On VOID shift to state 4
+-- On UIDENT shift to state 1
+-- On TYPEDEF shift to state 5
+-- On MODULE shift to state 31
+-- On INT shift to state 6
+-- On FLOAT shift to state 7
+-- On END shift to state 95
+-- On upath shift to state 8
+-- On term shift to state 96
+-- On structure_item shift to state 97
+-- On ctype shift to state 98
+
+State 4:
+ctype -> VOID . [ UIDENT STAR RPAREN LPAREN LIDENT COMMA ]
+-- On UIDENT reduce production ctype -> VOID
+-- On STAR reduce production ctype -> VOID
+-- On RPAREN reduce production ctype -> VOID
+-- On LPAREN reduce production ctype -> VOID
+-- On LIDENT reduce production ctype -> VOID
+-- On COMMA reduce production ctype -> VOID
+
+State 5:
+structure_item -> TYPEDEF . typedef SEMI [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
+-- On VOID shift to state 4
+-- On UIDENT shift to state 1
+-- On INT shift to state 6
+-- On FLOAT shift to state 7
+-- On upath shift to state 8
+-- On typedef shift to state 11
+-- On ctype shift to state 13
+
+State 6:
+ctype -> INT . [ UIDENT STAR RPAREN LPAREN LIDENT COMMA ]
+-- On UIDENT reduce production ctype -> INT
+-- On STAR reduce production ctype -> INT
+-- On RPAREN reduce production ctype -> INT
+-- On LPAREN reduce production ctype -> INT
+-- On LIDENT reduce production ctype -> INT
+-- On COMMA reduce production ctype -> INT
+
+State 7:
+ctype -> FLOAT . [ UIDENT STAR RPAREN LPAREN LIDENT COMMA ]
+-- On UIDENT reduce production ctype -> FLOAT
+-- On STAR reduce production ctype -> FLOAT
+-- On RPAREN reduce production ctype -> FLOAT
+-- On LPAREN reduce production ctype -> FLOAT
+-- On LIDENT reduce production ctype -> FLOAT
+-- On COMMA reduce production ctype -> FLOAT
+
+State 8:
+ctype -> upath . [ UIDENT STAR RPAREN LPAREN LIDENT COMMA ]
+upath -> upath . DOT UIDENT [ UIDENT STAR RPAREN LPAREN LIDENT DOT COMMA ]
+-- On DOT shift to state 9
+-- On UIDENT reduce production ctype -> upath
+-- On STAR reduce production ctype -> upath
+-- On RPAREN reduce production ctype -> upath
+-- On LPAREN reduce production ctype -> upath
+-- On LIDENT reduce production ctype -> upath
+-- On COMMA reduce production ctype -> upath
+
+State 9:
+upath -> upath DOT . UIDENT [ UIDENT STAR SEMI RPAREN LPAREN LIDENT EOF DOT COMMA COLON ]
+-- On UIDENT shift to state 10
+
+State 10:
+upath -> upath DOT UIDENT . [ UIDENT STAR SEMI RPAREN LPAREN LIDENT EOF DOT COMMA COLON ]
+-- On UIDENT reduce production upath -> upath DOT UIDENT
+-- On STAR reduce production upath -> upath DOT UIDENT
+-- On SEMI reduce production upath -> upath DOT UIDENT
+-- On RPAREN reduce production upath -> upath DOT UIDENT
+-- On LPAREN reduce production upath -> upath DOT UIDENT
+-- On LIDENT reduce production upath -> upath DOT UIDENT
+-- On EOF reduce production upath -> upath DOT UIDENT
+-- On DOT reduce production upath -> upath DOT UIDENT
+-- On COMMA reduce production upath -> upath DOT UIDENT
+-- On COLON reduce production upath -> upath DOT UIDENT
+
+State 11:
+structure_item -> TYPEDEF typedef . SEMI [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
+-- On SEMI shift to state 12
+
+State 12:
+structure_item -> TYPEDEF typedef SEMI . [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
+-- On VOID reduce production structure_item -> TYPEDEF typedef SEMI
+-- On UIDENT reduce production structure_item -> TYPEDEF typedef SEMI
+-- On TYPEDEF reduce production structure_item -> TYPEDEF typedef SEMI
+-- On MODULE reduce production structure_item -> TYPEDEF typedef SEMI
+-- On INT reduce production structure_item -> TYPEDEF typedef SEMI
+-- On FLOAT reduce production structure_item -> TYPEDEF typedef SEMI
+-- On END reduce production structure_item -> TYPEDEF typedef SEMI
+
+State 13:
+ctype -> ctype . STAR [ UIDENT STAR LPAREN ]
+typedef -> ctype . typedef_cont [ SEMI ]
+-- On UIDENT shift to state 14
+-- On STAR shift to state 15
+-- On LPAREN shift to state 16
+-- On typedef_cont shift to state 30
+
+State 14:
+typedef_cont -> UIDENT . [ SEMI RPAREN LPAREN ]
+-- On SEMI reduce production typedef_cont -> UIDENT
+-- On RPAREN reduce production typedef_cont -> UIDENT
+-- On LPAREN reduce production typedef_cont -> UIDENT
+
+State 15:
+ctype -> ctype STAR . [ UIDENT STAR LPAREN ]
+typedef_cont -> STAR . typedef_cont [ SEMI LPAREN ]
+-- On UIDENT shift to state 14
+-- On LPAREN shift to state 16
+-- On typedef_cont shift to state 18
+-- On STAR reduce production ctype -> ctype STAR
+** Conflict on UIDENT
+
+State 16:
+typedef_cont -> LPAREN . typedef_cont RPAREN [ SEMI RPAREN LPAREN ]
+-- On UIDENT shift to state 14
+-- On STAR shift to state 17
+-- On LPAREN shift to state 16
+-- On typedef_cont shift to state 28
+
+State 17:
+typedef_cont -> STAR . typedef_cont [ SEMI RPAREN LPAREN ]
+-- On UIDENT shift to state 14
+-- On STAR shift to state 17
+-- On LPAREN shift to state 16
+-- On typedef_cont shift to state 18
+
+State 18:
+typedef_cont -> STAR typedef_cont . [ SEMI RPAREN LPAREN ]
+typedef_cont -> typedef_cont . LPAREN ty_params RPAREN [ SEMI RPAREN LPAREN ]
+-- On LPAREN shift to state 19
+-- On SEMI reduce production typedef_cont -> STAR typedef_cont
+-- On RPAREN reduce production typedef_cont -> STAR typedef_cont
+
+State 19:
+typedef_cont -> typedef_cont LPAREN . ty_params RPAREN [ SEMI RPAREN LPAREN ]
+-- On VOID shift to state 4
+-- On UIDENT shift to state 1
+-- On INT shift to state 6
+-- On FLOAT shift to state 7
+-- On upath shift to state 8
+-- On ty_params shift to state 20
+-- On ty_param shift to state 27
+-- On ctype shift to state 24
+
+State 20:
+ty_params -> ty_params . COMMA ty_param [ RPAREN COMMA ]
+typedef_cont -> typedef_cont LPAREN ty_params . RPAREN [ SEMI RPAREN LPAREN ]
+-- On RPAREN shift to state 21
+-- On COMMA shift to state 22
+
+State 21:
+typedef_cont -> typedef_cont LPAREN ty_params RPAREN . [ SEMI RPAREN LPAREN ]
+-- On SEMI reduce production typedef_cont -> typedef_cont LPAREN ty_params RPAREN
+-- On RPAREN reduce production typedef_cont -> typedef_cont LPAREN ty_params RPAREN
+-- On LPAREN reduce production typedef_cont -> typedef_cont LPAREN ty_params RPAREN
+
+State 22:
+ty_params -> ty_params COMMA . ty_param [ RPAREN COMMA ]
+-- On VOID shift to state 4
+-- On UIDENT shift to state 1
+-- On INT shift to state 6
+-- On FLOAT shift to state 7
+-- On upath shift to state 8
+-- On ty_param shift to state 23
+-- On ctype shift to state 24
+
+State 23:
+ty_params -> ty_params COMMA ty_param . [ RPAREN COMMA ]
+-- On RPAREN reduce production ty_params -> ty_params COMMA ty_param
+-- On COMMA reduce production ty_params -> ty_params COMMA ty_param
+
+State 24:
+ctype -> ctype . STAR [ STAR RPAREN LIDENT COMMA ]
+ty_param -> ctype . [ RPAREN COMMA ]
+ty_param -> ctype . LIDENT [ RPAREN COMMA ]
+-- On STAR shift to state 25
+-- On LIDENT shift to state 26
+-- On RPAREN reduce production ty_param -> ctype
+-- On COMMA reduce production ty_param -> ctype
+
+State 25:
+ctype -> ctype STAR . [ STAR RPAREN LIDENT COMMA ]
+-- On STAR reduce production ctype -> ctype STAR
+-- On RPAREN reduce production ctype -> ctype STAR
+-- On LIDENT reduce production ctype -> ctype STAR
+-- On COMMA reduce production ctype -> ctype STAR
+
+State 26:
+ty_param -> ctype LIDENT . [ RPAREN COMMA ]
+-- On RPAREN reduce production ty_param -> ctype LIDENT
+-- On COMMA reduce production ty_param -> ctype LIDENT
+
+State 27:
+ty_params -> ty_param . [ RPAREN COMMA ]
+-- On RPAREN reduce production ty_params -> ty_param
+-- On COMMA reduce production ty_params -> ty_param
+
+State 28:
+typedef_cont -> LPAREN typedef_cont . RPAREN [ SEMI RPAREN LPAREN ]
+typedef_cont -> typedef_cont . LPAREN ty_params RPAREN [ RPAREN LPAREN ]
+-- On RPAREN shift to state 29
+-- On LPAREN shift to state 19
+
+State 29:
+typedef_cont -> LPAREN typedef_cont RPAREN . [ SEMI RPAREN LPAREN ]
+-- On SEMI reduce production typedef_cont -> LPAREN typedef_cont RPAREN
+-- On RPAREN reduce production typedef_cont -> LPAREN typedef_cont RPAREN
+-- On LPAREN reduce production typedef_cont -> LPAREN typedef_cont RPAREN
+
+State 30:
+typedef -> ctype typedef_cont . [ SEMI ]
+typedef_cont -> typedef_cont . LPAREN ty_params RPAREN [ SEMI LPAREN ]
+-- On LPAREN shift to state 19
+-- On SEMI reduce production typedef -> ctype typedef_cont
+
+State 31:
+structure_item -> MODULE . UIDENT COLON moduletype EQUAL modulexpr SEMI [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
+structure_item -> MODULE . UIDENT EQUAL modulexpr SEMI [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
+-- On UIDENT shift to state 32
+
+State 32:
+structure_item -> MODULE UIDENT . COLON moduletype EQUAL modulexpr SEMI [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
+structure_item -> MODULE UIDENT . EQUAL modulexpr SEMI [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
+-- On EQUAL shift to state 33
+-- On COLON shift to state 90
+
+State 33:
+structure_item -> MODULE UIDENT EQUAL . modulexpr SEMI [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
+-- On UIDENT shift to state 1
+-- On STRUCT shift to state 2
+-- On LPAREN shift to state 34
+-- On FUNCTOR shift to state 35
+-- On upath shift to state 79
+-- On modulexpr shift to state 88
+
+State 34:
+modulexpr -> LPAREN . modulexpr RPAREN [ SEMI RPAREN LPAREN EOF COLON ]
+-- On UIDENT shift to state 1
+-- On STRUCT shift to state 2
+-- On LPAREN shift to state 34
+-- On FUNCTOR shift to state 35
+-- On upath shift to state 79
+-- On modulexpr shift to state 83
+
+State 35:
+modulexpr -> FUNCTOR . LPAREN UIDENT COLON moduletype RPAREN modulexpr [ SEMI RPAREN LPAREN EOF COLON ]
+-- On LPAREN shift to state 36
+
+State 36:
+modulexpr -> FUNCTOR LPAREN . UIDENT COLON moduletype RPAREN modulexpr [ SEMI RPAREN LPAREN EOF COLON ]
+-- On UIDENT shift to state 37
+
+State 37:
+modulexpr -> FUNCTOR LPAREN UIDENT . COLON moduletype RPAREN modulexpr [ SEMI RPAREN LPAREN EOF COLON ]
+-- On COLON shift to state 38
+
+State 38:
+modulexpr -> FUNCTOR LPAREN UIDENT COLON . moduletype RPAREN modulexpr [ SEMI RPAREN LPAREN EOF COLON ]
+-- On SIG shift to state 39
+-- On LPAREN shift to state 49
+-- On FUNCTOR shift to state 50
+-- On moduletype shift to state 77
+
+State 39:
+moduletype -> SIG . signature END [ SEMI RPAREN LPAREN EQUAL EOF COLON ]
+-- On signature shift to state 40
+-- On VOID reduce production signature -> 
+-- On UIDENT reduce production signature -> 
+-- On TYPEDEF reduce production signature -> 
+-- On MODULE reduce production signature -> 
+-- On INT reduce production signature -> 
+-- On FLOAT reduce production signature -> 
+-- On END reduce production signature -> 
+
+State 40:
+moduletype -> SIG signature . END [ SEMI RPAREN LPAREN EQUAL EOF COLON ]
+signature -> signature . signature_item [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
+-- On VOID shift to state 4
+-- On UIDENT shift to state 1
+-- On TYPEDEF shift to state 41
+-- On MODULE shift to state 46
+-- On INT shift to state 6
+-- On FLOAT shift to state 7
+-- On END shift to state 61
+-- On valuedecl shift to state 62
+-- On upath shift to state 8
+-- On signature_item shift to state 64
+-- On ctype shift to state 65
+
+State 41:
+signature_item -> TYPEDEF . typedef SEMI [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
+signature_item -> TYPEDEF . UIDENT SEMI [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
+-- On VOID shift to state 4
+-- On UIDENT shift to state 42
+-- On INT shift to state 6
+-- On FLOAT shift to state 7
+-- On upath shift to state 8
+-- On typedef shift to state 44
+-- On ctype shift to state 13
+
+State 42:
+signature_item -> TYPEDEF UIDENT . SEMI [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
+upath -> UIDENT . [ UIDENT STAR LPAREN DOT ]
+-- On SEMI shift to state 43
+-- On UIDENT reduce production upath -> UIDENT
+-- On STAR reduce production upath -> UIDENT
+-- On LPAREN reduce production upath -> UIDENT
+-- On DOT reduce production upath -> UIDENT
+
+State 43:
+signature_item -> TYPEDEF UIDENT SEMI . [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
+-- On VOID reduce production signature_item -> TYPEDEF UIDENT SEMI
+-- On UIDENT reduce production signature_item -> TYPEDEF UIDENT SEMI
+-- On TYPEDEF reduce production signature_item -> TYPEDEF UIDENT SEMI
+-- On MODULE reduce production signature_item -> TYPEDEF UIDENT SEMI
+-- On INT reduce production signature_item -> TYPEDEF UIDENT SEMI
+-- On FLOAT reduce production signature_item -> TYPEDEF UIDENT SEMI
+-- On END reduce production signature_item -> TYPEDEF UIDENT SEMI
+
+State 44:
+signature_item -> TYPEDEF typedef . SEMI [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
+-- On SEMI shift to state 45
+
+State 45:
+signature_item -> TYPEDEF typedef SEMI . [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
+-- On VOID reduce production signature_item -> TYPEDEF typedef SEMI
+-- On UIDENT reduce production signature_item -> TYPEDEF typedef SEMI
+-- On TYPEDEF reduce production signature_item -> TYPEDEF typedef SEMI
+-- On MODULE reduce production signature_item -> TYPEDEF typedef SEMI
+-- On INT reduce production signature_item -> TYPEDEF typedef SEMI
+-- On FLOAT reduce production signature_item -> TYPEDEF typedef SEMI
+-- On END reduce production signature_item -> TYPEDEF typedef SEMI
+
+State 46:
+signature_item -> MODULE . UIDENT COLON moduletype SEMI [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
+-- On UIDENT shift to state 47
+
+State 47:
+signature_item -> MODULE UIDENT . COLON moduletype SEMI [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
+-- On COLON shift to state 48
+
+State 48:
+signature_item -> MODULE UIDENT COLON . moduletype SEMI [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
+-- On SIG shift to state 39
+-- On LPAREN shift to state 49
+-- On FUNCTOR shift to state 50
+-- On moduletype shift to state 59
+
+State 49:
+moduletype -> LPAREN . moduletype RPAREN [ SEMI RPAREN LPAREN EQUAL EOF COLON ]
+-- On SIG shift to state 39
+-- On LPAREN shift to state 49
+-- On FUNCTOR shift to state 50
+-- On moduletype shift to state 57
+
+State 50:
+moduletype -> FUNCTOR . LPAREN UIDENT COLON moduletype RPAREN moduletype [ SEMI RPAREN LPAREN EQUAL EOF COLON ]
+-- On LPAREN shift to state 51
+
+State 51:
+moduletype -> FUNCTOR LPAREN . UIDENT COLON moduletype RPAREN moduletype [ SEMI RPAREN LPAREN EQUAL EOF COLON ]
+-- On UIDENT shift to state 52
+
+State 52:
+moduletype -> FUNCTOR LPAREN UIDENT . COLON moduletype RPAREN moduletype [ SEMI RPAREN LPAREN EQUAL EOF COLON ]
+-- On COLON shift to state 53
+
+State 53:
+moduletype -> FUNCTOR LPAREN UIDENT COLON . moduletype RPAREN moduletype [ SEMI RPAREN LPAREN EQUAL EOF COLON ]
+-- On SIG shift to state 39
+-- On LPAREN shift to state 49
+-- On FUNCTOR shift to state 50
+-- On moduletype shift to state 54
+
+State 54:
+moduletype -> FUNCTOR LPAREN UIDENT COLON moduletype . RPAREN moduletype [ SEMI RPAREN LPAREN EQUAL EOF COLON ]
+-- On RPAREN shift to state 55
+
+State 55:
+moduletype -> FUNCTOR LPAREN UIDENT COLON moduletype RPAREN . moduletype [ SEMI RPAREN LPAREN EQUAL EOF COLON ]
+-- On SIG shift to state 39
+-- On LPAREN shift to state 49
+-- On FUNCTOR shift to state 50
+-- On moduletype shift to state 56
+
+State 56:
+moduletype -> FUNCTOR LPAREN UIDENT COLON moduletype RPAREN moduletype . [ SEMI RPAREN LPAREN EQUAL EOF COLON ]
+-- On SEMI reduce production moduletype -> FUNCTOR LPAREN UIDENT COLON moduletype RPAREN moduletype
+-- On RPAREN reduce production moduletype -> FUNCTOR LPAREN UIDENT COLON moduletype RPAREN moduletype
+-- On LPAREN reduce production moduletype -> FUNCTOR LPAREN UIDENT COLON moduletype RPAREN moduletype
+-- On EQUAL reduce production moduletype -> FUNCTOR LPAREN UIDENT COLON moduletype RPAREN moduletype
+-- On EOF reduce production moduletype -> FUNCTOR LPAREN UIDENT COLON moduletype RPAREN moduletype
+-- On COLON reduce production moduletype -> FUNCTOR LPAREN UIDENT COLON moduletype RPAREN moduletype
+
+State 57:
+moduletype -> LPAREN moduletype . RPAREN [ SEMI RPAREN LPAREN EQUAL EOF COLON ]
+-- On RPAREN shift to state 58
+
+State 58:
+moduletype -> LPAREN moduletype RPAREN . [ SEMI RPAREN LPAREN EQUAL EOF COLON ]
+-- On SEMI reduce production moduletype -> LPAREN moduletype RPAREN
+-- On RPAREN reduce production moduletype -> LPAREN moduletype RPAREN
+-- On LPAREN reduce production moduletype -> LPAREN moduletype RPAREN
+-- On EQUAL reduce production moduletype -> LPAREN moduletype RPAREN
+-- On EOF reduce production moduletype -> LPAREN moduletype RPAREN
+-- On COLON reduce production moduletype -> LPAREN moduletype RPAREN
+
+State 59:
+signature_item -> MODULE UIDENT COLON moduletype . SEMI [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
+-- On SEMI shift to state 60
+
+State 60:
+signature_item -> MODULE UIDENT COLON moduletype SEMI . [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
+-- On VOID reduce production signature_item -> MODULE UIDENT COLON moduletype SEMI
+-- On UIDENT reduce production signature_item -> MODULE UIDENT COLON moduletype SEMI
+-- On TYPEDEF reduce production signature_item -> MODULE UIDENT COLON moduletype SEMI
+-- On MODULE reduce production signature_item -> MODULE UIDENT COLON moduletype SEMI
+-- On INT reduce production signature_item -> MODULE UIDENT COLON moduletype SEMI
+-- On FLOAT reduce production signature_item -> MODULE UIDENT COLON moduletype SEMI
+-- On END reduce production signature_item -> MODULE UIDENT COLON moduletype SEMI
+
+State 61:
+moduletype -> SIG signature END . [ SEMI RPAREN LPAREN EQUAL EOF COLON ]
+-- On SEMI reduce production moduletype -> SIG signature END
+-- On RPAREN reduce production moduletype -> SIG signature END
+-- On LPAREN reduce production moduletype -> SIG signature END
+-- On EQUAL reduce production moduletype -> SIG signature END
+-- On EOF reduce production moduletype -> SIG signature END
+-- On COLON reduce production moduletype -> SIG signature END
+
+State 62:
+signature_item -> valuedecl . SEMI [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
+-- On SEMI shift to state 63
+
+State 63:
+signature_item -> valuedecl SEMI . [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
+-- On VOID reduce production signature_item -> valuedecl SEMI
+-- On UIDENT reduce production signature_item -> valuedecl SEMI
+-- On TYPEDEF reduce production signature_item -> valuedecl SEMI
+-- On MODULE reduce production signature_item -> valuedecl SEMI
+-- On INT reduce production signature_item -> valuedecl SEMI
+-- On FLOAT reduce production signature_item -> valuedecl SEMI
+-- On END reduce production signature_item -> valuedecl SEMI
+
+State 64:
+signature -> signature signature_item . [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
+-- On VOID reduce production signature -> signature signature_item
+-- On UIDENT reduce production signature -> signature signature_item
+-- On TYPEDEF reduce production signature -> signature signature_item
+-- On MODULE reduce production signature -> signature signature_item
+-- On INT reduce production signature -> signature signature_item
+-- On FLOAT reduce production signature -> signature signature_item
+-- On END reduce production signature -> signature signature_item
+
+State 65:
+ctype -> ctype . STAR [ STAR LPAREN LIDENT ]
+valuedecl -> ctype . valuedecl_cont [ SEMI ]
+-- On STAR shift to state 66
+-- On LPAREN shift to state 67
+-- On LIDENT shift to state 69
+-- On valuedecl_cont shift to state 76
+
+State 66:
+ctype -> ctype STAR . [ STAR LPAREN LIDENT ]
+valuedecl_cont -> STAR . valuedecl_cont [ SEMI LPAREN ]
+-- On LPAREN shift to state 67
+-- On LIDENT shift to state 69
+-- On valuedecl_cont shift to state 70
+-- On STAR reduce production ctype -> ctype STAR
+** Conflict on LIDENT
+
+State 67:
+valuedecl_cont -> LPAREN . valuedecl_cont RPAREN [ SEMI RPAREN LPAREN ]
+-- On STAR shift to state 68
+-- On LPAREN shift to state 67
+-- On LIDENT shift to state 69
+-- On valuedecl_cont shift to state 74
+
+State 68:
+valuedecl_cont -> STAR . valuedecl_cont [ SEMI RPAREN LPAREN ]
+-- On STAR shift to state 68
+-- On LPAREN shift to state 67
+-- On LIDENT shift to state 69
+-- On valuedecl_cont shift to state 70
+
+State 69:
+valuedecl_cont -> LIDENT . [ SEMI RPAREN LPAREN ]
+-- On SEMI reduce production valuedecl_cont -> LIDENT
+-- On RPAREN reduce production valuedecl_cont -> LIDENT
+-- On LPAREN reduce production valuedecl_cont -> LIDENT
+
+State 70:
+valuedecl_cont -> STAR valuedecl_cont . [ SEMI RPAREN LPAREN ]
+valuedecl_cont -> valuedecl_cont . LPAREN ty_params RPAREN [ SEMI RPAREN LPAREN ]
+-- On LPAREN shift to state 71
+-- On SEMI reduce production valuedecl_cont -> STAR valuedecl_cont
+-- On RPAREN reduce production valuedecl_cont -> STAR valuedecl_cont
+
+State 71:
+valuedecl_cont -> valuedecl_cont LPAREN . ty_params RPAREN [ SEMI RPAREN LPAREN ]
+-- On VOID shift to state 4
+-- On UIDENT shift to state 1
+-- On INT shift to state 6
+-- On FLOAT shift to state 7
+-- On upath shift to state 8
+-- On ty_params shift to state 72
+-- On ty_param shift to state 27
+-- On ctype shift to state 24
+
+State 72:
+ty_params -> ty_params . COMMA ty_param [ RPAREN COMMA ]
+valuedecl_cont -> valuedecl_cont LPAREN ty_params . RPAREN [ SEMI RPAREN LPAREN ]
+-- On RPAREN shift to state 73
+-- On COMMA shift to state 22
+
+State 73:
+valuedecl_cont -> valuedecl_cont LPAREN ty_params RPAREN . [ SEMI RPAREN LPAREN ]
+-- On SEMI reduce production valuedecl_cont -> valuedecl_cont LPAREN ty_params RPAREN
+-- On RPAREN reduce production valuedecl_cont -> valuedecl_cont LPAREN ty_params RPAREN
+-- On LPAREN reduce production valuedecl_cont -> valuedecl_cont LPAREN ty_params RPAREN
+
+State 74:
+valuedecl_cont -> LPAREN valuedecl_cont . RPAREN [ SEMI RPAREN LPAREN ]
+valuedecl_cont -> valuedecl_cont . LPAREN ty_params RPAREN [ RPAREN LPAREN ]
+-- On RPAREN shift to state 75
+-- On LPAREN shift to state 71
+
+State 75:
+valuedecl_cont -> LPAREN valuedecl_cont RPAREN . [ SEMI RPAREN LPAREN ]
+-- On SEMI reduce production valuedecl_cont -> LPAREN valuedecl_cont RPAREN
+-- On RPAREN reduce production valuedecl_cont -> LPAREN valuedecl_cont RPAREN
+-- On LPAREN reduce production valuedecl_cont -> LPAREN valuedecl_cont RPAREN
+
+State 76:
+valuedecl -> ctype valuedecl_cont . [ SEMI ]
+valuedecl_cont -> valuedecl_cont . LPAREN ty_params RPAREN [ SEMI LPAREN ]
+-- On LPAREN shift to state 71
+-- On SEMI reduce production valuedecl -> ctype valuedecl_cont
+
+State 77:
+modulexpr -> FUNCTOR LPAREN UIDENT COLON moduletype . RPAREN modulexpr [ SEMI RPAREN LPAREN EOF COLON ]
+-- On RPAREN shift to state 78
+
+State 78:
+modulexpr -> FUNCTOR LPAREN UIDENT COLON moduletype RPAREN . modulexpr [ SEMI RPAREN LPAREN EOF COLON ]
+-- On UIDENT shift to state 1
+-- On STRUCT shift to state 2
+-- On LPAREN shift to state 34
+-- On FUNCTOR shift to state 35
+-- On upath shift to state 79
+-- On modulexpr shift to state 80
+
+State 79:
+modulexpr -> upath . [ SEMI RPAREN LPAREN EOF COLON ]
+upath -> upath . DOT UIDENT [ SEMI RPAREN LPAREN EOF DOT COLON ]
+-- On DOT shift to state 9
+-- On SEMI reduce production modulexpr -> upath
+-- On RPAREN reduce production modulexpr -> upath
+-- On LPAREN reduce production modulexpr -> upath
+-- On EOF reduce production modulexpr -> upath
+-- On COLON reduce production modulexpr -> upath
+
+State 80:
+modulexpr -> FUNCTOR LPAREN UIDENT COLON moduletype RPAREN modulexpr . [ SEMI RPAREN LPAREN EOF COLON ]
+modulexpr -> modulexpr . LPAREN modulexpr RPAREN [ SEMI RPAREN LPAREN EOF COLON ]
+modulexpr -> modulexpr . COLON moduletype [ SEMI RPAREN LPAREN EOF COLON ]
+-- On COLON shift to state 81
+-- On SEMI reduce production modulexpr -> FUNCTOR LPAREN UIDENT COLON moduletype RPAREN modulexpr
+-- On RPAREN reduce production modulexpr -> FUNCTOR LPAREN UIDENT COLON moduletype RPAREN modulexpr
+-- On LPAREN reduce production modulexpr -> FUNCTOR LPAREN UIDENT COLON moduletype RPAREN modulexpr
+-- On EOF reduce production modulexpr -> FUNCTOR LPAREN UIDENT COLON moduletype RPAREN modulexpr
+** Conflict on COLON
+
+State 81:
+modulexpr -> modulexpr COLON . moduletype [ SEMI RPAREN LPAREN EOF COLON ]
+-- On SIG shift to state 39
+-- On LPAREN shift to state 49
+-- On FUNCTOR shift to state 50
+-- On moduletype shift to state 82
+
+State 82:
+modulexpr -> modulexpr COLON moduletype . [ SEMI RPAREN LPAREN EOF COLON ]
+-- On SEMI reduce production modulexpr -> modulexpr COLON moduletype
+-- On RPAREN reduce production modulexpr -> modulexpr COLON moduletype
+-- On LPAREN reduce production modulexpr -> modulexpr COLON moduletype
+-- On EOF reduce production modulexpr -> modulexpr COLON moduletype
+-- On COLON reduce production modulexpr -> modulexpr COLON moduletype
+
+State 83:
+modulexpr -> modulexpr . LPAREN modulexpr RPAREN [ RPAREN LPAREN COLON ]
+modulexpr -> LPAREN modulexpr . RPAREN [ SEMI RPAREN LPAREN EOF COLON ]
+modulexpr -> modulexpr . COLON moduletype [ RPAREN LPAREN COLON ]
+-- On RPAREN shift to state 84
+-- On LPAREN shift to state 85
+-- On COLON shift to state 81
+
+State 84:
+modulexpr -> LPAREN modulexpr RPAREN . [ SEMI RPAREN LPAREN EOF COLON ]
+-- On SEMI reduce production modulexpr -> LPAREN modulexpr RPAREN
+-- On RPAREN reduce production modulexpr -> LPAREN modulexpr RPAREN
+-- On LPAREN reduce production modulexpr -> LPAREN modulexpr RPAREN
+-- On EOF reduce production modulexpr -> LPAREN modulexpr RPAREN
+-- On COLON reduce production modulexpr -> LPAREN modulexpr RPAREN
+
+State 85:
+modulexpr -> modulexpr LPAREN . modulexpr RPAREN [ SEMI RPAREN LPAREN EOF COLON ]
+-- On UIDENT shift to state 1
+-- On STRUCT shift to state 2
+-- On LPAREN shift to state 34
+-- On FUNCTOR shift to state 35
+-- On upath shift to state 79
+-- On modulexpr shift to state 86
+
+State 86:
+modulexpr -> modulexpr . LPAREN modulexpr RPAREN [ RPAREN LPAREN COLON ]
+modulexpr -> modulexpr LPAREN modulexpr . RPAREN [ SEMI RPAREN LPAREN EOF COLON ]
+modulexpr -> modulexpr . COLON moduletype [ RPAREN LPAREN COLON ]
+-- On RPAREN shift to state 87
+-- On LPAREN shift to state 85
+-- On COLON shift to state 81
+
+State 87:
+modulexpr -> modulexpr LPAREN modulexpr RPAREN . [ SEMI RPAREN LPAREN EOF COLON ]
+-- On SEMI reduce production modulexpr -> modulexpr LPAREN modulexpr RPAREN
+-- On RPAREN reduce production modulexpr -> modulexpr LPAREN modulexpr RPAREN
+-- On LPAREN reduce production modulexpr -> modulexpr LPAREN modulexpr RPAREN
+-- On EOF reduce production modulexpr -> modulexpr LPAREN modulexpr RPAREN
+-- On COLON reduce production modulexpr -> modulexpr LPAREN modulexpr RPAREN
+
+State 88:
+modulexpr -> modulexpr . LPAREN modulexpr RPAREN [ SEMI LPAREN COLON ]
+modulexpr -> modulexpr . COLON moduletype [ SEMI LPAREN COLON ]
+structure_item -> MODULE UIDENT EQUAL modulexpr . SEMI [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
+-- On SEMI shift to state 89
+-- On LPAREN shift to state 85
+-- On COLON shift to state 81
+
+State 89:
+structure_item -> MODULE UIDENT EQUAL modulexpr SEMI . [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
+-- On VOID reduce production structure_item -> MODULE UIDENT EQUAL modulexpr SEMI
+-- On UIDENT reduce production structure_item -> MODULE UIDENT EQUAL modulexpr SEMI
+-- On TYPEDEF reduce production structure_item -> MODULE UIDENT EQUAL modulexpr SEMI
+-- On MODULE reduce production structure_item -> MODULE UIDENT EQUAL modulexpr SEMI
+-- On INT reduce production structure_item -> MODULE UIDENT EQUAL modulexpr SEMI
+-- On FLOAT reduce production structure_item -> MODULE UIDENT EQUAL modulexpr SEMI
+-- On END reduce production structure_item -> MODULE UIDENT EQUAL modulexpr SEMI
+
+State 90:
+structure_item -> MODULE UIDENT COLON . moduletype EQUAL modulexpr SEMI [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
+-- On SIG shift to state 39
+-- On LPAREN shift to state 49
+-- On FUNCTOR shift to state 50
+-- On moduletype shift to state 91
+
+State 91:
+structure_item -> MODULE UIDENT COLON moduletype . EQUAL modulexpr SEMI [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
+-- On EQUAL shift to state 92
+
+State 92:
+structure_item -> MODULE UIDENT COLON moduletype EQUAL . modulexpr SEMI [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
+-- On UIDENT shift to state 1
+-- On STRUCT shift to state 2
+-- On LPAREN shift to state 34
+-- On FUNCTOR shift to state 35
+-- On upath shift to state 79
+-- On modulexpr shift to state 93
+
+State 93:
+modulexpr -> modulexpr . LPAREN modulexpr RPAREN [ SEMI LPAREN COLON ]
+modulexpr -> modulexpr . COLON moduletype [ SEMI LPAREN COLON ]
+structure_item -> MODULE UIDENT COLON moduletype EQUAL modulexpr . SEMI [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
+-- On SEMI shift to state 94
+-- On LPAREN shift to state 85
+-- On COLON shift to state 81
+
+State 94:
+structure_item -> MODULE UIDENT COLON moduletype EQUAL modulexpr SEMI . [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
+-- On VOID reduce production structure_item -> MODULE UIDENT COLON moduletype EQUAL modulexpr SEMI
+-- On UIDENT reduce production structure_item -> MODULE UIDENT COLON moduletype EQUAL modulexpr SEMI
+-- On TYPEDEF reduce production structure_item -> MODULE UIDENT COLON moduletype EQUAL modulexpr SEMI
+-- On MODULE reduce production structure_item -> MODULE UIDENT COLON moduletype EQUAL modulexpr SEMI
+-- On INT reduce production structure_item -> MODULE UIDENT COLON moduletype EQUAL modulexpr SEMI
+-- On FLOAT reduce production structure_item -> MODULE UIDENT COLON moduletype EQUAL modulexpr SEMI
+-- On END reduce production structure_item -> MODULE UIDENT COLON moduletype EQUAL modulexpr SEMI
+
+State 95:
+modulexpr -> STRUCT structure END . [ SEMI RPAREN LPAREN EOF COLON ]
+-- On SEMI reduce production modulexpr -> STRUCT structure END
+-- On RPAREN reduce production modulexpr -> STRUCT structure END
+-- On LPAREN reduce production modulexpr -> STRUCT structure END
+-- On EOF reduce production modulexpr -> STRUCT structure END
+-- On COLON reduce production modulexpr -> STRUCT structure END
+
+State 96:
+structure_item -> term . [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
+-- On VOID reduce production structure_item -> term
+-- On UIDENT reduce production structure_item -> term
+-- On TYPEDEF reduce production structure_item -> term
+-- On MODULE reduce production structure_item -> term
+-- On INT reduce production structure_item -> term
+-- On FLOAT reduce production structure_item -> term
+-- On END reduce production structure_item -> term
+
+State 97:
+structure -> structure structure_item . [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
+-- On VOID reduce production structure -> structure structure_item
+-- On UIDENT reduce production structure -> structure structure_item
+-- On TYPEDEF reduce production structure -> structure structure_item
+-- On MODULE reduce production structure -> structure structure_item
+-- On INT reduce production structure -> structure structure_item
+-- On FLOAT reduce production structure -> structure structure_item
+-- On END reduce production structure -> structure structure_item
+
+State 98:
+ctype -> ctype . STAR [ STAR LIDENT ]
+term -> ctype . LIDENT SEMI [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
+term -> ctype . LIDENT LPAREN parameters RPAREN statement [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
+-- On STAR shift to state 25
+-- On LIDENT shift to state 99
+
+State 99:
+term -> ctype LIDENT . SEMI [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
+term -> ctype LIDENT . LPAREN parameters RPAREN statement [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
+-- On SEMI shift to state 100
+-- On LPAREN shift to state 101
+
+State 100:
+term -> ctype LIDENT SEMI . [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
+-- On VOID reduce production term -> ctype LIDENT SEMI
+-- On UIDENT reduce production term -> ctype LIDENT SEMI
+-- On TYPEDEF reduce production term -> ctype LIDENT SEMI
+-- On MODULE reduce production term -> ctype LIDENT SEMI
+-- On INT reduce production term -> ctype LIDENT SEMI
+-- On FLOAT reduce production term -> ctype LIDENT SEMI
+-- On END reduce production term -> ctype LIDENT SEMI
+
+State 101:
+term -> ctype LIDENT LPAREN . parameters RPAREN statement [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
+-- On VOID shift to state 4
+-- On UIDENT shift to state 1
+-- On INT shift to state 6
+-- On FLOAT shift to state 7
+-- On upath shift to state 8
+-- On parameters shift to state 102
+-- On ctype shift to state 188
+-- On RPAREN reduce production parameters -> 
+-- On COMMA reduce production parameters -> 
+
+State 102:
+parameters -> parameters . COMMA ctype LIDENT [ RPAREN COMMA ]
+term -> ctype LIDENT LPAREN parameters . RPAREN statement [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
+-- On RPAREN shift to state 103
+-- On COMMA shift to state 185
+
+State 103:
+term -> ctype LIDENT LPAREN parameters RPAREN . statement [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
+-- On UIDENT shift to state 1
+-- On STAR shift to state 104
+-- On RETURN shift to state 155
+-- On MINUS shift to state 105
+-- On LPAREN shift to state 106
+-- On LIDENT shift to state 107
+-- On LBRACE shift to state 158
+-- On INTCONST shift to state 108
+-- On IF shift to state 162
+-- On FOR shift to state 166
+-- On FLOATCONST shift to state 109
+-- On BANG shift to state 110
+-- On upath shift to state 111
+-- On statement shift to state 184
+-- On lpath shift to state 114
+-- On expr shift to state 175
+
+State 104:
+expr -> STAR . expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+-- On UIDENT shift to state 1
+-- On STAR shift to state 104
+-- On MINUS shift to state 105
+-- On LPAREN shift to state 106
+-- On LIDENT shift to state 107
+-- On INTCONST shift to state 108
+-- On FLOATCONST shift to state 109
+-- On BANG shift to state 110
+-- On upath shift to state 111
+-- On lpath shift to state 114
+-- On expr shift to state 154
+
+State 105:
+expr -> MINUS . expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+-- On UIDENT shift to state 1
+-- On STAR shift to state 104
+-- On MINUS shift to state 105
+-- On LPAREN shift to state 106
+-- On LIDENT shift to state 107
+-- On INTCONST shift to state 108
+-- On FLOATCONST shift to state 109
+-- On BANG shift to state 110
+-- On upath shift to state 111
+-- On lpath shift to state 114
+-- On expr shift to state 153
+
+State 106:
+expr -> LPAREN . ctype RPAREN expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> LPAREN . expr RPAREN [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+-- On VOID shift to state 4
+-- On UIDENT shift to state 1
+-- On STAR shift to state 104
+-- On MINUS shift to state 105
+-- On LPAREN shift to state 106
+-- On LIDENT shift to state 107
+-- On INTCONST shift to state 108
+-- On INT shift to state 6
+-- On FLOATCONST shift to state 109
+-- On FLOAT shift to state 7
+-- On BANG shift to state 110
+-- On upath shift to state 147
+-- On lpath shift to state 114
+-- On expr shift to state 148
+-- On ctype shift to state 150
+
+State 107:
+lpath -> LIDENT . [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+-- On STAR reduce production lpath -> LIDENT
+-- On SLASH reduce production lpath -> LIDENT
+-- On SEMI reduce production lpath -> LIDENT
+-- On RPAREN reduce production lpath -> LIDENT
+-- On RBRACKET reduce production lpath -> LIDENT
+-- On PLUS reduce production lpath -> LIDENT
+-- On MINUS reduce production lpath -> LIDENT
+-- On LPAREN reduce production lpath -> LIDENT
+-- On LESSEQUAL reduce production lpath -> LIDENT
+-- On LESS reduce production lpath -> LIDENT
+-- On LBRACKET reduce production lpath -> LIDENT
+-- On GREATEREQUAL reduce production lpath -> LIDENT
+-- On GREATER reduce production lpath -> LIDENT
+-- On EQUALEQUAL reduce production lpath -> LIDENT
+-- On EQUAL reduce production lpath -> LIDENT
+-- On COMMA reduce production lpath -> LIDENT
+-- On BANGEQUAL reduce production lpath -> LIDENT
+
+State 108:
+expr -> INTCONST . [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+-- On STAR reduce production expr -> INTCONST
+-- On SLASH reduce production expr -> INTCONST
+-- On SEMI reduce production expr -> INTCONST
+-- On RPAREN reduce production expr -> INTCONST
+-- On RBRACKET reduce production expr -> INTCONST
+-- On PLUS reduce production expr -> INTCONST
+-- On MINUS reduce production expr -> INTCONST
+-- On LPAREN reduce production expr -> INTCONST
+-- On LESSEQUAL reduce production expr -> INTCONST
+-- On LESS reduce production expr -> INTCONST
+-- On LBRACKET reduce production expr -> INTCONST
+-- On GREATEREQUAL reduce production expr -> INTCONST
+-- On GREATER reduce production expr -> INTCONST
+-- On EQUALEQUAL reduce production expr -> INTCONST
+-- On EQUAL reduce production expr -> INTCONST
+-- On COMMA reduce production expr -> INTCONST
+-- On BANGEQUAL reduce production expr -> INTCONST
+
+State 109:
+expr -> FLOATCONST . [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+-- On STAR reduce production expr -> FLOATCONST
+-- On SLASH reduce production expr -> FLOATCONST
+-- On SEMI reduce production expr -> FLOATCONST
+-- On RPAREN reduce production expr -> FLOATCONST
+-- On RBRACKET reduce production expr -> FLOATCONST
+-- On PLUS reduce production expr -> FLOATCONST
+-- On MINUS reduce production expr -> FLOATCONST
+-- On LPAREN reduce production expr -> FLOATCONST
+-- On LESSEQUAL reduce production expr -> FLOATCONST
+-- On LESS reduce production expr -> FLOATCONST
+-- On LBRACKET reduce production expr -> FLOATCONST
+-- On GREATEREQUAL reduce production expr -> FLOATCONST
+-- On GREATER reduce production expr -> FLOATCONST
+-- On EQUALEQUAL reduce production expr -> FLOATCONST
+-- On EQUAL reduce production expr -> FLOATCONST
+-- On COMMA reduce production expr -> FLOATCONST
+-- On BANGEQUAL reduce production expr -> FLOATCONST
+
+State 110:
+expr -> BANG . expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+-- On UIDENT shift to state 1
+-- On STAR shift to state 104
+-- On MINUS shift to state 105
+-- On LPAREN shift to state 106
+-- On LIDENT shift to state 107
+-- On INTCONST shift to state 108
+-- On FLOATCONST shift to state 109
+-- On BANG shift to state 110
+-- On upath shift to state 111
+-- On lpath shift to state 114
+-- On expr shift to state 115
+
+State 111:
+lpath -> upath . DOT LIDENT [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+upath -> upath . DOT UIDENT [ DOT ]
+-- On DOT shift to state 112
+
+State 112:
+lpath -> upath DOT . LIDENT [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+upath -> upath DOT . UIDENT [ STAR RPAREN DOT ]
+-- On UIDENT shift to state 10
+-- On LIDENT shift to state 113
+
+State 113:
+lpath -> upath DOT LIDENT . [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+-- On STAR reduce production lpath -> upath DOT LIDENT
+-- On SLASH reduce production lpath -> upath DOT LIDENT
+-- On SEMI reduce production lpath -> upath DOT LIDENT
+-- On RPAREN reduce production lpath -> upath DOT LIDENT
+-- On RBRACKET reduce production lpath -> upath DOT LIDENT
+-- On PLUS reduce production lpath -> upath DOT LIDENT
+-- On MINUS reduce production lpath -> upath DOT LIDENT
+-- On LPAREN reduce production lpath -> upath DOT LIDENT
+-- On LESSEQUAL reduce production lpath -> upath DOT LIDENT
+-- On LESS reduce production lpath -> upath DOT LIDENT
+-- On LBRACKET reduce production lpath -> upath DOT LIDENT
+-- On GREATEREQUAL reduce production lpath -> upath DOT LIDENT
+-- On GREATER reduce production lpath -> upath DOT LIDENT
+-- On EQUALEQUAL reduce production lpath -> upath DOT LIDENT
+-- On EQUAL reduce production lpath -> upath DOT LIDENT
+-- On COMMA reduce production lpath -> upath DOT LIDENT
+-- On BANGEQUAL reduce production lpath -> upath DOT LIDENT
+
+State 114:
+expr -> lpath . [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+-- On STAR reduce production expr -> lpath
+-- On SLASH reduce production expr -> lpath
+-- On SEMI reduce production expr -> lpath
+-- On RPAREN reduce production expr -> lpath
+-- On RBRACKET reduce production expr -> lpath
+-- On PLUS reduce production expr -> lpath
+-- On MINUS reduce production expr -> lpath
+-- On LPAREN reduce production expr -> lpath
+-- On LESSEQUAL reduce production expr -> lpath
+-- On LESS reduce production expr -> lpath
+-- On LBRACKET reduce production expr -> lpath
+-- On GREATEREQUAL reduce production expr -> lpath
+-- On GREATER reduce production expr -> lpath
+-- On EQUALEQUAL reduce production expr -> lpath
+-- On EQUAL reduce production expr -> lpath
+-- On COMMA reduce production expr -> lpath
+-- On BANGEQUAL reduce production expr -> lpath
+
+State 115:
+expr -> expr . LPAREN expr_comma_list RPAREN [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . EQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> BANG expr . [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . PLUS expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . MINUS expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . STAR expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . SLASH expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . EQUALEQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . BANGEQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . LESS expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . LESSEQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . GREATER expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . GREATEREQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . LBRACKET expr RBRACKET [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+-- On LPAREN shift to state 116
+-- On LBRACKET shift to state 123
+-- On STAR reduce production expr -> BANG expr
+-- On SLASH reduce production expr -> BANG expr
+-- On SEMI reduce production expr -> BANG expr
+-- On RPAREN reduce production expr -> BANG expr
+-- On RBRACKET reduce production expr -> BANG expr
+-- On PLUS reduce production expr -> BANG expr
+-- On MINUS reduce production expr -> BANG expr
+-- On LESSEQUAL reduce production expr -> BANG expr
+-- On LESS reduce production expr -> BANG expr
+-- On GREATEREQUAL reduce production expr -> BANG expr
+-- On GREATER reduce production expr -> BANG expr
+-- On EQUALEQUAL reduce production expr -> BANG expr
+-- On EQUAL reduce production expr -> BANG expr
+-- On COMMA reduce production expr -> BANG expr
+-- On BANGEQUAL reduce production expr -> BANG expr
+
+State 116:
+expr -> expr LPAREN . expr_comma_list RPAREN [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+-- On UIDENT shift to state 1
+-- On STAR shift to state 104
+-- On MINUS shift to state 105
+-- On LPAREN shift to state 106
+-- On LIDENT shift to state 107
+-- On INTCONST shift to state 108
+-- On FLOATCONST shift to state 109
+-- On BANG shift to state 110
+-- On upath shift to state 111
+-- On lpath shift to state 114
+-- On expr_comma_list shift to state 117
+-- On expr shift to state 146
+-- On RPAREN reduce production expr_comma_list -> 
+-- On COMMA reduce production expr_comma_list -> 
+
+State 117:
+expr -> expr LPAREN expr_comma_list . RPAREN [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr_comma_list -> expr_comma_list . COMMA expr [ RPAREN COMMA ]
+-- On RPAREN shift to state 118
+-- On COMMA shift to state 119
+
+State 118:
+expr -> expr LPAREN expr_comma_list RPAREN . [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+-- On STAR reduce production expr -> expr LPAREN expr_comma_list RPAREN
+-- On SLASH reduce production expr -> expr LPAREN expr_comma_list RPAREN
+-- On SEMI reduce production expr -> expr LPAREN expr_comma_list RPAREN
+-- On RPAREN reduce production expr -> expr LPAREN expr_comma_list RPAREN
+-- On RBRACKET reduce production expr -> expr LPAREN expr_comma_list RPAREN
+-- On PLUS reduce production expr -> expr LPAREN expr_comma_list RPAREN
+-- On MINUS reduce production expr -> expr LPAREN expr_comma_list RPAREN
+-- On LPAREN reduce production expr -> expr LPAREN expr_comma_list RPAREN
+-- On LESSEQUAL reduce production expr -> expr LPAREN expr_comma_list RPAREN
+-- On LESS reduce production expr -> expr LPAREN expr_comma_list RPAREN
+-- On LBRACKET reduce production expr -> expr LPAREN expr_comma_list RPAREN
+-- On GREATEREQUAL reduce production expr -> expr LPAREN expr_comma_list RPAREN
+-- On GREATER reduce production expr -> expr LPAREN expr_comma_list RPAREN
+-- On EQUALEQUAL reduce production expr -> expr LPAREN expr_comma_list RPAREN
+-- On EQUAL reduce production expr -> expr LPAREN expr_comma_list RPAREN
+-- On COMMA reduce production expr -> expr LPAREN expr_comma_list RPAREN
+-- On BANGEQUAL reduce production expr -> expr LPAREN expr_comma_list RPAREN
+
+State 119:
+expr_comma_list -> expr_comma_list COMMA . expr [ RPAREN COMMA ]
+-- On UIDENT shift to state 1
+-- On STAR shift to state 104
+-- On MINUS shift to state 105
+-- On LPAREN shift to state 106
+-- On LIDENT shift to state 107
+-- On INTCONST shift to state 108
+-- On FLOATCONST shift to state 109
+-- On BANG shift to state 110
+-- On upath shift to state 111
+-- On lpath shift to state 114
+-- On expr shift to state 120
+
+State 120:
+expr -> expr . LPAREN expr_comma_list RPAREN [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . EQUAL expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . PLUS expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . MINUS expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . STAR expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . SLASH expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . EQUALEQUAL expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . BANGEQUAL expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . LESS expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . LESSEQUAL expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . GREATER expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . GREATEREQUAL expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . LBRACKET expr RBRACKET [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr_comma_list -> expr_comma_list COMMA expr . [ RPAREN COMMA ]
+-- On STAR shift to state 121
+-- On SLASH shift to state 125
+-- On PLUS shift to state 128
+-- On MINUS shift to state 130
+-- On LPAREN shift to state 116
+-- On LESSEQUAL shift to state 132
+-- On LESS shift to state 134
+-- On LBRACKET shift to state 123
+-- On GREATEREQUAL shift to state 136
+-- On GREATER shift to state 138
+-- On EQUALEQUAL shift to state 140
+-- On EQUAL shift to state 142
+-- On BANGEQUAL shift to state 144
+-- On RPAREN reduce production expr_comma_list -> expr_comma_list COMMA expr
+-- On COMMA reduce production expr_comma_list -> expr_comma_list COMMA expr
+
+State 121:
+expr -> expr STAR . expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+-- On UIDENT shift to state 1
+-- On STAR shift to state 104
+-- On MINUS shift to state 105
+-- On LPAREN shift to state 106
+-- On LIDENT shift to state 107
+-- On INTCONST shift to state 108
+-- On FLOATCONST shift to state 109
+-- On BANG shift to state 110
+-- On upath shift to state 111
+-- On lpath shift to state 114
+-- On expr shift to state 122
+
+State 122:
+expr -> expr . LPAREN expr_comma_list RPAREN [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . EQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . PLUS expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . MINUS expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . STAR expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr STAR expr . [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . SLASH expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . EQUALEQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . BANGEQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . LESS expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . LESSEQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . GREATER expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . GREATEREQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . LBRACKET expr RBRACKET [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+-- On LPAREN shift to state 116
+-- On LBRACKET shift to state 123
+-- On STAR reduce production expr -> expr STAR expr
+-- On SLASH reduce production expr -> expr STAR expr
+-- On SEMI reduce production expr -> expr STAR expr
+-- On RPAREN reduce production expr -> expr STAR expr
+-- On RBRACKET reduce production expr -> expr STAR expr
+-- On PLUS reduce production expr -> expr STAR expr
+-- On MINUS reduce production expr -> expr STAR expr
+-- On LESSEQUAL reduce production expr -> expr STAR expr
+-- On LESS reduce production expr -> expr STAR expr
+-- On GREATEREQUAL reduce production expr -> expr STAR expr
+-- On GREATER reduce production expr -> expr STAR expr
+-- On EQUALEQUAL reduce production expr -> expr STAR expr
+-- On EQUAL reduce production expr -> expr STAR expr
+-- On COMMA reduce production expr -> expr STAR expr
+-- On BANGEQUAL reduce production expr -> expr STAR expr
+
+State 123:
+expr -> expr LBRACKET . expr RBRACKET [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+-- On UIDENT shift to state 1
+-- On STAR shift to state 104
+-- On MINUS shift to state 105
+-- On LPAREN shift to state 106
+-- On LIDENT shift to state 107
+-- On INTCONST shift to state 108
+-- On FLOATCONST shift to state 109
+-- On BANG shift to state 110
+-- On upath shift to state 111
+-- On lpath shift to state 114
+-- On expr shift to state 124
+
+State 124:
+expr -> expr . LPAREN expr_comma_list RPAREN [ STAR SLASH RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . EQUAL expr [ STAR SLASH RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . PLUS expr [ STAR SLASH RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . MINUS expr [ STAR SLASH RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . STAR expr [ STAR SLASH RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . SLASH expr [ STAR SLASH RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . EQUALEQUAL expr [ STAR SLASH RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . BANGEQUAL expr [ STAR SLASH RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . LESS expr [ STAR SLASH RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . LESSEQUAL expr [ STAR SLASH RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . GREATER expr [ STAR SLASH RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . GREATEREQUAL expr [ STAR SLASH RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . LBRACKET expr RBRACKET [ STAR SLASH RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr LBRACKET expr . RBRACKET [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+-- On STAR shift to state 121
+-- On SLASH shift to state 125
+-- On RBRACKET shift to state 127
+-- On PLUS shift to state 128
+-- On MINUS shift to state 130
+-- On LPAREN shift to state 116
+-- On LESSEQUAL shift to state 132
+-- On LESS shift to state 134
+-- On LBRACKET shift to state 123
+-- On GREATEREQUAL shift to state 136
+-- On GREATER shift to state 138
+-- On EQUALEQUAL shift to state 140
+-- On EQUAL shift to state 142
+-- On BANGEQUAL shift to state 144
+
+State 125:
+expr -> expr SLASH . expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+-- On UIDENT shift to state 1
+-- On STAR shift to state 104
+-- On MINUS shift to state 105
+-- On LPAREN shift to state 106
+-- On LIDENT shift to state 107
+-- On INTCONST shift to state 108
+-- On FLOATCONST shift to state 109
+-- On BANG shift to state 110
+-- On upath shift to state 111
+-- On lpath shift to state 114
+-- On expr shift to state 126
+
+State 126:
+expr -> expr . LPAREN expr_comma_list RPAREN [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . EQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . PLUS expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . MINUS expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . STAR expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . SLASH expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr SLASH expr . [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . EQUALEQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . BANGEQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . LESS expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . LESSEQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . GREATER expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . GREATEREQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . LBRACKET expr RBRACKET [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+-- On LPAREN shift to state 116
+-- On LBRACKET shift to state 123
+-- On STAR reduce production expr -> expr SLASH expr
+-- On SLASH reduce production expr -> expr SLASH expr
+-- On SEMI reduce production expr -> expr SLASH expr
+-- On RPAREN reduce production expr -> expr SLASH expr
+-- On RBRACKET reduce production expr -> expr SLASH expr
+-- On PLUS reduce production expr -> expr SLASH expr
+-- On MINUS reduce production expr -> expr SLASH expr
+-- On LESSEQUAL reduce production expr -> expr SLASH expr
+-- On LESS reduce production expr -> expr SLASH expr
+-- On GREATEREQUAL reduce production expr -> expr SLASH expr
+-- On GREATER reduce production expr -> expr SLASH expr
+-- On EQUALEQUAL reduce production expr -> expr SLASH expr
+-- On EQUAL reduce production expr -> expr SLASH expr
+-- On COMMA reduce production expr -> expr SLASH expr
+-- On BANGEQUAL reduce production expr -> expr SLASH expr
+
+State 127:
+expr -> expr LBRACKET expr RBRACKET . [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+-- On STAR reduce production expr -> expr LBRACKET expr RBRACKET
+-- On SLASH reduce production expr -> expr LBRACKET expr RBRACKET
+-- On SEMI reduce production expr -> expr LBRACKET expr RBRACKET
+-- On RPAREN reduce production expr -> expr LBRACKET expr RBRACKET
+-- On RBRACKET reduce production expr -> expr LBRACKET expr RBRACKET
+-- On PLUS reduce production expr -> expr LBRACKET expr RBRACKET
+-- On MINUS reduce production expr -> expr LBRACKET expr RBRACKET
+-- On LPAREN reduce production expr -> expr LBRACKET expr RBRACKET
+-- On LESSEQUAL reduce production expr -> expr LBRACKET expr RBRACKET
+-- On LESS reduce production expr -> expr LBRACKET expr RBRACKET
+-- On LBRACKET reduce production expr -> expr LBRACKET expr RBRACKET
+-- On GREATEREQUAL reduce production expr -> expr LBRACKET expr RBRACKET
+-- On GREATER reduce production expr -> expr LBRACKET expr RBRACKET
+-- On EQUALEQUAL reduce production expr -> expr LBRACKET expr RBRACKET
+-- On EQUAL reduce production expr -> expr LBRACKET expr RBRACKET
+-- On COMMA reduce production expr -> expr LBRACKET expr RBRACKET
+-- On BANGEQUAL reduce production expr -> expr LBRACKET expr RBRACKET
+
+State 128:
+expr -> expr PLUS . expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+-- On UIDENT shift to state 1
+-- On STAR shift to state 104
+-- On MINUS shift to state 105
+-- On LPAREN shift to state 106
+-- On LIDENT shift to state 107
+-- On INTCONST shift to state 108
+-- On FLOATCONST shift to state 109
+-- On BANG shift to state 110
+-- On upath shift to state 111
+-- On lpath shift to state 114
+-- On expr shift to state 129
+
+State 129:
+expr -> expr . LPAREN expr_comma_list RPAREN [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . EQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . PLUS expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr PLUS expr . [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . MINUS expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . STAR expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . SLASH expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . EQUALEQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . BANGEQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . LESS expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . LESSEQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . GREATER expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . GREATEREQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . LBRACKET expr RBRACKET [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+-- On STAR shift to state 121
+-- On SLASH shift to state 125
+-- On LPAREN shift to state 116
+-- On LBRACKET shift to state 123
+-- On SEMI reduce production expr -> expr PLUS expr
+-- On RPAREN reduce production expr -> expr PLUS expr
+-- On RBRACKET reduce production expr -> expr PLUS expr
+-- On PLUS reduce production expr -> expr PLUS expr
+-- On MINUS reduce production expr -> expr PLUS expr
+-- On LESSEQUAL reduce production expr -> expr PLUS expr
+-- On LESS reduce production expr -> expr PLUS expr
+-- On GREATEREQUAL reduce production expr -> expr PLUS expr
+-- On GREATER reduce production expr -> expr PLUS expr
+-- On EQUALEQUAL reduce production expr -> expr PLUS expr
+-- On EQUAL reduce production expr -> expr PLUS expr
+-- On COMMA reduce production expr -> expr PLUS expr
+-- On BANGEQUAL reduce production expr -> expr PLUS expr
+
+State 130:
+expr -> expr MINUS . expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+-- On UIDENT shift to state 1
+-- On STAR shift to state 104
+-- On MINUS shift to state 105
+-- On LPAREN shift to state 106
+-- On LIDENT shift to state 107
+-- On INTCONST shift to state 108
+-- On FLOATCONST shift to state 109
+-- On BANG shift to state 110
+-- On upath shift to state 111
+-- On lpath shift to state 114
+-- On expr shift to state 131
+
+State 131:
+expr -> expr . LPAREN expr_comma_list RPAREN [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . EQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . PLUS expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . MINUS expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr MINUS expr . [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . STAR expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . SLASH expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . EQUALEQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . BANGEQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . LESS expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . LESSEQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . GREATER expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . GREATEREQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . LBRACKET expr RBRACKET [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+-- On STAR shift to state 121
+-- On SLASH shift to state 125
+-- On LPAREN shift to state 116
+-- On LBRACKET shift to state 123
+-- On SEMI reduce production expr -> expr MINUS expr
+-- On RPAREN reduce production expr -> expr MINUS expr
+-- On RBRACKET reduce production expr -> expr MINUS expr
+-- On PLUS reduce production expr -> expr MINUS expr
+-- On MINUS reduce production expr -> expr MINUS expr
+-- On LESSEQUAL reduce production expr -> expr MINUS expr
+-- On LESS reduce production expr -> expr MINUS expr
+-- On GREATEREQUAL reduce production expr -> expr MINUS expr
+-- On GREATER reduce production expr -> expr MINUS expr
+-- On EQUALEQUAL reduce production expr -> expr MINUS expr
+-- On EQUAL reduce production expr -> expr MINUS expr
+-- On COMMA reduce production expr -> expr MINUS expr
+-- On BANGEQUAL reduce production expr -> expr MINUS expr
+
+State 132:
+expr -> expr LESSEQUAL . expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+-- On UIDENT shift to state 1
+-- On STAR shift to state 104
+-- On MINUS shift to state 105
+-- On LPAREN shift to state 106
+-- On LIDENT shift to state 107
+-- On INTCONST shift to state 108
+-- On FLOATCONST shift to state 109
+-- On BANG shift to state 110
+-- On upath shift to state 111
+-- On lpath shift to state 114
+-- On expr shift to state 133
+
+State 133:
+expr -> expr . LPAREN expr_comma_list RPAREN [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . EQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . PLUS expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . MINUS expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . STAR expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . SLASH expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . EQUALEQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . BANGEQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . LESS expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . LESSEQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr LESSEQUAL expr . [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . GREATER expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . GREATEREQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . LBRACKET expr RBRACKET [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+-- On STAR shift to state 121
+-- On SLASH shift to state 125
+-- On PLUS shift to state 128
+-- On MINUS shift to state 130
+-- On LPAREN shift to state 116
+-- On LBRACKET shift to state 123
+-- On SEMI reduce production expr -> expr LESSEQUAL expr
+-- On RPAREN reduce production expr -> expr LESSEQUAL expr
+-- On RBRACKET reduce production expr -> expr LESSEQUAL expr
+-- On LESSEQUAL reduce production expr -> expr LESSEQUAL expr
+-- On LESS reduce production expr -> expr LESSEQUAL expr
+-- On GREATEREQUAL reduce production expr -> expr LESSEQUAL expr
+-- On GREATER reduce production expr -> expr LESSEQUAL expr
+-- On EQUALEQUAL reduce production expr -> expr LESSEQUAL expr
+-- On EQUAL reduce production expr -> expr LESSEQUAL expr
+-- On COMMA reduce production expr -> expr LESSEQUAL expr
+-- On BANGEQUAL reduce production expr -> expr LESSEQUAL expr
+
+State 134:
+expr -> expr LESS . expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+-- On UIDENT shift to state 1
+-- On STAR shift to state 104
+-- On MINUS shift to state 105
+-- On LPAREN shift to state 106
+-- On LIDENT shift to state 107
+-- On INTCONST shift to state 108
+-- On FLOATCONST shift to state 109
+-- On BANG shift to state 110
+-- On upath shift to state 111
+-- On lpath shift to state 114
+-- On expr shift to state 135
+
+State 135:
+expr -> expr . LPAREN expr_comma_list RPAREN [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . EQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . PLUS expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . MINUS expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . STAR expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . SLASH expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . EQUALEQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . BANGEQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . LESS expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr LESS expr . [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . LESSEQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . GREATER expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . GREATEREQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . LBRACKET expr RBRACKET [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+-- On STAR shift to state 121
+-- On SLASH shift to state 125
+-- On PLUS shift to state 128
+-- On MINUS shift to state 130
+-- On LPAREN shift to state 116
+-- On LBRACKET shift to state 123
+-- On SEMI reduce production expr -> expr LESS expr
+-- On RPAREN reduce production expr -> expr LESS expr
+-- On RBRACKET reduce production expr -> expr LESS expr
+-- On LESSEQUAL reduce production expr -> expr LESS expr
+-- On LESS reduce production expr -> expr LESS expr
+-- On GREATEREQUAL reduce production expr -> expr LESS expr
+-- On GREATER reduce production expr -> expr LESS expr
+-- On EQUALEQUAL reduce production expr -> expr LESS expr
+-- On EQUAL reduce production expr -> expr LESS expr
+-- On COMMA reduce production expr -> expr LESS expr
+-- On BANGEQUAL reduce production expr -> expr LESS expr
+
+State 136:
+expr -> expr GREATEREQUAL . expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+-- On UIDENT shift to state 1
+-- On STAR shift to state 104
+-- On MINUS shift to state 105
+-- On LPAREN shift to state 106
+-- On LIDENT shift to state 107
+-- On INTCONST shift to state 108
+-- On FLOATCONST shift to state 109
+-- On BANG shift to state 110
+-- On upath shift to state 111
+-- On lpath shift to state 114
+-- On expr shift to state 137
+
+State 137:
+expr -> expr . LPAREN expr_comma_list RPAREN [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . EQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . PLUS expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . MINUS expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . STAR expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . SLASH expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . EQUALEQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . BANGEQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . LESS expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . LESSEQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . GREATER expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . GREATEREQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr GREATEREQUAL expr . [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . LBRACKET expr RBRACKET [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+-- On STAR shift to state 121
+-- On SLASH shift to state 125
+-- On PLUS shift to state 128
+-- On MINUS shift to state 130
+-- On LPAREN shift to state 116
+-- On LBRACKET shift to state 123
+-- On SEMI reduce production expr -> expr GREATEREQUAL expr
+-- On RPAREN reduce production expr -> expr GREATEREQUAL expr
+-- On RBRACKET reduce production expr -> expr GREATEREQUAL expr
+-- On LESSEQUAL reduce production expr -> expr GREATEREQUAL expr
+-- On LESS reduce production expr -> expr GREATEREQUAL expr
+-- On GREATEREQUAL reduce production expr -> expr GREATEREQUAL expr
+-- On GREATER reduce production expr -> expr GREATEREQUAL expr
+-- On EQUALEQUAL reduce production expr -> expr GREATEREQUAL expr
+-- On EQUAL reduce production expr -> expr GREATEREQUAL expr
+-- On COMMA reduce production expr -> expr GREATEREQUAL expr
+-- On BANGEQUAL reduce production expr -> expr GREATEREQUAL expr
+
+State 138:
+expr -> expr GREATER . expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+-- On UIDENT shift to state 1
+-- On STAR shift to state 104
+-- On MINUS shift to state 105
+-- On LPAREN shift to state 106
+-- On LIDENT shift to state 107
+-- On INTCONST shift to state 108
+-- On FLOATCONST shift to state 109
+-- On BANG shift to state 110
+-- On upath shift to state 111
+-- On lpath shift to state 114
+-- On expr shift to state 139
+
+State 139:
+expr -> expr . LPAREN expr_comma_list RPAREN [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . EQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . PLUS expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . MINUS expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . STAR expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . SLASH expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . EQUALEQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . BANGEQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . LESS expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . LESSEQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . GREATER expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr GREATER expr . [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . GREATEREQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . LBRACKET expr RBRACKET [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+-- On STAR shift to state 121
+-- On SLASH shift to state 125
+-- On PLUS shift to state 128
+-- On MINUS shift to state 130
+-- On LPAREN shift to state 116
+-- On LBRACKET shift to state 123
+-- On SEMI reduce production expr -> expr GREATER expr
+-- On RPAREN reduce production expr -> expr GREATER expr
+-- On RBRACKET reduce production expr -> expr GREATER expr
+-- On LESSEQUAL reduce production expr -> expr GREATER expr
+-- On LESS reduce production expr -> expr GREATER expr
+-- On GREATEREQUAL reduce production expr -> expr GREATER expr
+-- On GREATER reduce production expr -> expr GREATER expr
+-- On EQUALEQUAL reduce production expr -> expr GREATER expr
+-- On EQUAL reduce production expr -> expr GREATER expr
+-- On COMMA reduce production expr -> expr GREATER expr
+-- On BANGEQUAL reduce production expr -> expr GREATER expr
+
+State 140:
+expr -> expr EQUALEQUAL . expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+-- On UIDENT shift to state 1
+-- On STAR shift to state 104
+-- On MINUS shift to state 105
+-- On LPAREN shift to state 106
+-- On LIDENT shift to state 107
+-- On INTCONST shift to state 108
+-- On FLOATCONST shift to state 109
+-- On BANG shift to state 110
+-- On upath shift to state 111
+-- On lpath shift to state 114
+-- On expr shift to state 141
+
+State 141:
+expr -> expr . LPAREN expr_comma_list RPAREN [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . EQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . PLUS expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . MINUS expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . STAR expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . SLASH expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . EQUALEQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr EQUALEQUAL expr . [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . BANGEQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . LESS expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . LESSEQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . GREATER expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . GREATEREQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . LBRACKET expr RBRACKET [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+-- On STAR shift to state 121
+-- On SLASH shift to state 125
+-- On PLUS shift to state 128
+-- On MINUS shift to state 130
+-- On LPAREN shift to state 116
+-- On LESSEQUAL shift to state 132
+-- On LESS shift to state 134
+-- On LBRACKET shift to state 123
+-- On GREATEREQUAL shift to state 136
+-- On GREATER shift to state 138
+-- On SEMI reduce production expr -> expr EQUALEQUAL expr
+-- On RPAREN reduce production expr -> expr EQUALEQUAL expr
+-- On RBRACKET reduce production expr -> expr EQUALEQUAL expr
+-- On EQUALEQUAL reduce production expr -> expr EQUALEQUAL expr
+-- On EQUAL reduce production expr -> expr EQUALEQUAL expr
+-- On COMMA reduce production expr -> expr EQUALEQUAL expr
+-- On BANGEQUAL reduce production expr -> expr EQUALEQUAL expr
+
+State 142:
+expr -> expr EQUAL . expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+-- On UIDENT shift to state 1
+-- On STAR shift to state 104
+-- On MINUS shift to state 105
+-- On LPAREN shift to state 106
+-- On LIDENT shift to state 107
+-- On INTCONST shift to state 108
+-- On FLOATCONST shift to state 109
+-- On BANG shift to state 110
+-- On upath shift to state 111
+-- On lpath shift to state 114
+-- On expr shift to state 143
+
+State 143:
+expr -> expr . LPAREN expr_comma_list RPAREN [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . EQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr EQUAL expr . [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . PLUS expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . MINUS expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . STAR expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . SLASH expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . EQUALEQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . BANGEQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . LESS expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . LESSEQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . GREATER expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . GREATEREQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . LBRACKET expr RBRACKET [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+-- On STAR shift to state 121
+-- On SLASH shift to state 125
+-- On PLUS shift to state 128
+-- On MINUS shift to state 130
+-- On LPAREN shift to state 116
+-- On LESSEQUAL shift to state 132
+-- On LESS shift to state 134
+-- On LBRACKET shift to state 123
+-- On GREATEREQUAL shift to state 136
+-- On GREATER shift to state 138
+-- On EQUALEQUAL shift to state 140
+-- On EQUAL shift to state 142
+-- On BANGEQUAL shift to state 144
+-- On SEMI reduce production expr -> expr EQUAL expr
+-- On RPAREN reduce production expr -> expr EQUAL expr
+-- On RBRACKET reduce production expr -> expr EQUAL expr
+-- On COMMA reduce production expr -> expr EQUAL expr
+
+State 144:
+expr -> expr BANGEQUAL . expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+-- On UIDENT shift to state 1
+-- On STAR shift to state 104
+-- On MINUS shift to state 105
+-- On LPAREN shift to state 106
+-- On LIDENT shift to state 107
+-- On INTCONST shift to state 108
+-- On FLOATCONST shift to state 109
+-- On BANG shift to state 110
+-- On upath shift to state 111
+-- On lpath shift to state 114
+-- On expr shift to state 145
+
+State 145:
+expr -> expr . LPAREN expr_comma_list RPAREN [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . EQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . PLUS expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . MINUS expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . STAR expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . SLASH expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . EQUALEQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . BANGEQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr BANGEQUAL expr . [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . LESS expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . LESSEQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . GREATER expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . GREATEREQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . LBRACKET expr RBRACKET [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+-- On STAR shift to state 121
+-- On SLASH shift to state 125
+-- On PLUS shift to state 128
+-- On MINUS shift to state 130
+-- On LPAREN shift to state 116
+-- On LESSEQUAL shift to state 132
+-- On LESS shift to state 134
+-- On LBRACKET shift to state 123
+-- On GREATEREQUAL shift to state 136
+-- On GREATER shift to state 138
+-- On SEMI reduce production expr -> expr BANGEQUAL expr
+-- On RPAREN reduce production expr -> expr BANGEQUAL expr
+-- On RBRACKET reduce production expr -> expr BANGEQUAL expr
+-- On EQUALEQUAL reduce production expr -> expr BANGEQUAL expr
+-- On EQUAL reduce production expr -> expr BANGEQUAL expr
+-- On COMMA reduce production expr -> expr BANGEQUAL expr
+-- On BANGEQUAL reduce production expr -> expr BANGEQUAL expr
+
+State 146:
+expr -> expr . LPAREN expr_comma_list RPAREN [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . EQUAL expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . PLUS expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . MINUS expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . STAR expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . SLASH expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . EQUALEQUAL expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . BANGEQUAL expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . LESS expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . LESSEQUAL expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . GREATER expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . GREATEREQUAL expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . LBRACKET expr RBRACKET [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr_comma_list -> expr . [ RPAREN COMMA ]
+-- On STAR shift to state 121
+-- On SLASH shift to state 125
+-- On PLUS shift to state 128
+-- On MINUS shift to state 130
+-- On LPAREN shift to state 116
+-- On LESSEQUAL shift to state 132
+-- On LESS shift to state 134
+-- On LBRACKET shift to state 123
+-- On GREATEREQUAL shift to state 136
+-- On GREATER shift to state 138
+-- On EQUALEQUAL shift to state 140
+-- On EQUAL shift to state 142
+-- On BANGEQUAL shift to state 144
+-- On RPAREN reduce production expr_comma_list -> expr
+-- On COMMA reduce production expr_comma_list -> expr
+
+State 147:
+ctype -> upath . [ STAR RPAREN ]
+lpath -> upath . DOT LIDENT [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+upath -> upath . DOT UIDENT [ STAR RPAREN DOT ]
+-- On DOT shift to state 112
+-- On STAR reduce production ctype -> upath
+-- On RPAREN reduce production ctype -> upath
+
+State 148:
+expr -> expr . LPAREN expr_comma_list RPAREN [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . EQUAL expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . PLUS expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . MINUS expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . STAR expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . SLASH expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . EQUALEQUAL expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . BANGEQUAL expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . LESS expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . LESSEQUAL expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . GREATER expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . GREATEREQUAL expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . LBRACKET expr RBRACKET [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> LPAREN expr . RPAREN [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+-- On STAR shift to state 121
+-- On SLASH shift to state 125
+-- On RPAREN shift to state 149
+-- On PLUS shift to state 128
+-- On MINUS shift to state 130
+-- On LPAREN shift to state 116
+-- On LESSEQUAL shift to state 132
+-- On LESS shift to state 134
+-- On LBRACKET shift to state 123
+-- On GREATEREQUAL shift to state 136
+-- On GREATER shift to state 138
+-- On EQUALEQUAL shift to state 140
+-- On EQUAL shift to state 142
+-- On BANGEQUAL shift to state 144
+
+State 149:
+expr -> LPAREN expr RPAREN . [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+-- On STAR reduce production expr -> LPAREN expr RPAREN
+-- On SLASH reduce production expr -> LPAREN expr RPAREN
+-- On SEMI reduce production expr -> LPAREN expr RPAREN
+-- On RPAREN reduce production expr -> LPAREN expr RPAREN
+-- On RBRACKET reduce production expr -> LPAREN expr RPAREN
+-- On PLUS reduce production expr -> LPAREN expr RPAREN
+-- On MINUS reduce production expr -> LPAREN expr RPAREN
+-- On LPAREN reduce production expr -> LPAREN expr RPAREN
+-- On LESSEQUAL reduce production expr -> LPAREN expr RPAREN
+-- On LESS reduce production expr -> LPAREN expr RPAREN
+-- On LBRACKET reduce production expr -> LPAREN expr RPAREN
+-- On GREATEREQUAL reduce production expr -> LPAREN expr RPAREN
+-- On GREATER reduce production expr -> LPAREN expr RPAREN
+-- On EQUALEQUAL reduce production expr -> LPAREN expr RPAREN
+-- On EQUAL reduce production expr -> LPAREN expr RPAREN
+-- On COMMA reduce production expr -> LPAREN expr RPAREN
+-- On BANGEQUAL reduce production expr -> LPAREN expr RPAREN
+
+State 150:
+ctype -> ctype . STAR [ STAR RPAREN ]
+expr -> LPAREN ctype . RPAREN expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+-- On STAR shift to state 25
+-- On RPAREN shift to state 151
+
+State 151:
+expr -> LPAREN ctype RPAREN . expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+-- On UIDENT shift to state 1
+-- On STAR shift to state 104
+-- On MINUS shift to state 105
+-- On LPAREN shift to state 106
+-- On LIDENT shift to state 107
+-- On INTCONST shift to state 108
+-- On FLOATCONST shift to state 109
+-- On BANG shift to state 110
+-- On upath shift to state 111
+-- On lpath shift to state 114
+-- On expr shift to state 152
+
+State 152:
+expr -> expr . LPAREN expr_comma_list RPAREN [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . EQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . PLUS expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . MINUS expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . STAR expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . SLASH expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . EQUALEQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . BANGEQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . LESS expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . LESSEQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . GREATER expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . GREATEREQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . LBRACKET expr RBRACKET [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> LPAREN ctype RPAREN expr . [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+-- On STAR reduce production expr -> LPAREN ctype RPAREN expr
+-- On SLASH reduce production expr -> LPAREN ctype RPAREN expr
+-- On SEMI reduce production expr -> LPAREN ctype RPAREN expr
+-- On RPAREN reduce production expr -> LPAREN ctype RPAREN expr
+-- On RBRACKET reduce production expr -> LPAREN ctype RPAREN expr
+-- On PLUS reduce production expr -> LPAREN ctype RPAREN expr
+-- On MINUS reduce production expr -> LPAREN ctype RPAREN expr
+-- On LPAREN reduce production expr -> LPAREN ctype RPAREN expr
+-- On LESSEQUAL reduce production expr -> LPAREN ctype RPAREN expr
+-- On LESS reduce production expr -> LPAREN ctype RPAREN expr
+-- On LBRACKET reduce production expr -> LPAREN ctype RPAREN expr
+-- On GREATEREQUAL reduce production expr -> LPAREN ctype RPAREN expr
+-- On GREATER reduce production expr -> LPAREN ctype RPAREN expr
+-- On EQUALEQUAL reduce production expr -> LPAREN ctype RPAREN expr
+-- On EQUAL reduce production expr -> LPAREN ctype RPAREN expr
+-- On COMMA reduce production expr -> LPAREN ctype RPAREN expr
+-- On BANGEQUAL reduce production expr -> LPAREN ctype RPAREN expr
+
+State 153:
+expr -> expr . LPAREN expr_comma_list RPAREN [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . EQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> MINUS expr . [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . PLUS expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . MINUS expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . STAR expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . SLASH expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . EQUALEQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . BANGEQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . LESS expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . LESSEQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . GREATER expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . GREATEREQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . LBRACKET expr RBRACKET [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+-- On LPAREN shift to state 116
+-- On LBRACKET shift to state 123
+-- On STAR reduce production expr -> MINUS expr
+-- On SLASH reduce production expr -> MINUS expr
+-- On SEMI reduce production expr -> MINUS expr
+-- On RPAREN reduce production expr -> MINUS expr
+-- On RBRACKET reduce production expr -> MINUS expr
+-- On PLUS reduce production expr -> MINUS expr
+-- On MINUS reduce production expr -> MINUS expr
+-- On LESSEQUAL reduce production expr -> MINUS expr
+-- On LESS reduce production expr -> MINUS expr
+-- On GREATEREQUAL reduce production expr -> MINUS expr
+-- On GREATER reduce production expr -> MINUS expr
+-- On EQUALEQUAL reduce production expr -> MINUS expr
+-- On EQUAL reduce production expr -> MINUS expr
+-- On COMMA reduce production expr -> MINUS expr
+-- On BANGEQUAL reduce production expr -> MINUS expr
+
+State 154:
+expr -> expr . LPAREN expr_comma_list RPAREN [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . EQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> STAR expr . [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . PLUS expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . MINUS expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . STAR expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . SLASH expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . EQUALEQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . BANGEQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . LESS expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . LESSEQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . GREATER expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . GREATEREQUAL expr [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+expr -> expr . LBRACKET expr RBRACKET [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
+-- On LPAREN shift to state 116
+-- On LBRACKET shift to state 123
+-- On STAR reduce production expr -> STAR expr
+-- On SLASH reduce production expr -> STAR expr
+-- On SEMI reduce production expr -> STAR expr
+-- On RPAREN reduce production expr -> STAR expr
+-- On RBRACKET reduce production expr -> STAR expr
+-- On PLUS reduce production expr -> STAR expr
+-- On MINUS reduce production expr -> STAR expr
+-- On LESSEQUAL reduce production expr -> STAR expr
+-- On LESS reduce production expr -> STAR expr
+-- On GREATEREQUAL reduce production expr -> STAR expr
+-- On GREATER reduce production expr -> STAR expr
+-- On EQUALEQUAL reduce production expr -> STAR expr
+-- On EQUAL reduce production expr -> STAR expr
+-- On COMMA reduce production expr -> STAR expr
+-- On BANGEQUAL reduce production expr -> STAR expr
+
+State 155:
+statement -> RETURN . expr SEMI [ VOID UIDENT TYPEDEF STAR RETURN RBRACE MODULE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT END ELSE BANG # ]
+-- On UIDENT shift to state 1
+-- On STAR shift to state 104
+-- On MINUS shift to state 105
+-- On LPAREN shift to state 106
+-- On LIDENT shift to state 107
+-- On INTCONST shift to state 108
+-- On FLOATCONST shift to state 109
+-- On BANG shift to state 110
+-- On upath shift to state 111
+-- On lpath shift to state 114
+-- On expr shift to state 156
+
+State 156:
+expr -> expr . LPAREN expr_comma_list RPAREN [ STAR SLASH SEMI PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . EQUAL expr [ STAR SLASH SEMI PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . PLUS expr [ STAR SLASH SEMI PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . MINUS expr [ STAR SLASH SEMI PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . STAR expr [ STAR SLASH SEMI PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . SLASH expr [ STAR SLASH SEMI PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . EQUALEQUAL expr [ STAR SLASH SEMI PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . BANGEQUAL expr [ STAR SLASH SEMI PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . LESS expr [ STAR SLASH SEMI PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . LESSEQUAL expr [ STAR SLASH SEMI PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . GREATER expr [ STAR SLASH SEMI PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . GREATEREQUAL expr [ STAR SLASH SEMI PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . LBRACKET expr RBRACKET [ STAR SLASH SEMI PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+statement -> RETURN expr . SEMI [ VOID UIDENT TYPEDEF STAR RETURN RBRACE MODULE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT END ELSE BANG # ]
+-- On STAR shift to state 121
+-- On SLASH shift to state 125
+-- On SEMI shift to state 157
+-- On PLUS shift to state 128
+-- On MINUS shift to state 130
+-- On LPAREN shift to state 116
+-- On LESSEQUAL shift to state 132
+-- On LESS shift to state 134
+-- On LBRACKET shift to state 123
+-- On GREATEREQUAL shift to state 136
+-- On GREATER shift to state 138
+-- On EQUALEQUAL shift to state 140
+-- On EQUAL shift to state 142
+-- On BANGEQUAL shift to state 144
+
+State 157:
+statement -> RETURN expr SEMI . [ VOID UIDENT TYPEDEF STAR RETURN RBRACE MODULE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT END ELSE BANG # ]
+-- On VOID reduce production statement -> RETURN expr SEMI
+-- On UIDENT reduce production statement -> RETURN expr SEMI
+-- On TYPEDEF reduce production statement -> RETURN expr SEMI
+-- On STAR reduce production statement -> RETURN expr SEMI
+-- On RETURN reduce production statement -> RETURN expr SEMI
+-- On RBRACE reduce production statement -> RETURN expr SEMI
+-- On MODULE reduce production statement -> RETURN expr SEMI
+-- On MINUS reduce production statement -> RETURN expr SEMI
+-- On LPAREN reduce production statement -> RETURN expr SEMI
+-- On LIDENT reduce production statement -> RETURN expr SEMI
+-- On LBRACE reduce production statement -> RETURN expr SEMI
+-- On INTCONST reduce production statement -> RETURN expr SEMI
+-- On INT reduce production statement -> RETURN expr SEMI
+-- On IF reduce production statement -> RETURN expr SEMI
+-- On FOR reduce production statement -> RETURN expr SEMI
+-- On FLOATCONST reduce production statement -> RETURN expr SEMI
+-- On FLOAT reduce production statement -> RETURN expr SEMI
+-- On END reduce production statement -> RETURN expr SEMI
+-- On ELSE reduce production statement -> RETURN expr SEMI
+-- On BANG reduce production statement -> RETURN expr SEMI
+
+State 158:
+statement -> LBRACE . decl_list statement_list RBRACE [ VOID UIDENT TYPEDEF STAR RETURN RBRACE MODULE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT END ELSE BANG # ]
+-- On decl_list shift to state 159
+-- On VOID reduce production decl_list -> 
+-- On UIDENT reduce production decl_list -> 
+-- On STAR reduce production decl_list -> 
+-- On RETURN reduce production decl_list -> 
+-- On RBRACE reduce production decl_list -> 
+-- On MINUS reduce production decl_list -> 
+-- On LPAREN reduce production decl_list -> 
+-- On LIDENT reduce production decl_list -> 
+-- On LBRACE reduce production decl_list -> 
+-- On INTCONST reduce production decl_list -> 
+-- On INT reduce production decl_list -> 
+-- On IF reduce production decl_list -> 
+-- On FOR reduce production decl_list -> 
+-- On FLOATCONST reduce production decl_list -> 
+-- On FLOAT reduce production decl_list -> 
+-- On BANG reduce production decl_list -> 
+
+State 159:
+decl_list -> decl_list . ctype LIDENT SEMI [ VOID UIDENT STAR RETURN RBRACE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT BANG ]
+statement -> LBRACE decl_list . statement_list RBRACE [ VOID UIDENT TYPEDEF STAR RETURN RBRACE MODULE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT END ELSE BANG # ]
+-- On VOID shift to state 4
+-- On UIDENT shift to state 1
+-- On INT shift to state 6
+-- On FLOAT shift to state 7
+-- On upath shift to state 8
+-- On statement_list shift to state 160
+-- On ctype shift to state 181
+-- On STAR reduce production statement_list -> 
+-- On RETURN reduce production statement_list -> 
+-- On RBRACE reduce production statement_list -> 
+-- On MINUS reduce production statement_list -> 
+-- On LPAREN reduce production statement_list -> 
+-- On LIDENT reduce production statement_list -> 
+-- On LBRACE reduce production statement_list -> 
+-- On INTCONST reduce production statement_list -> 
+-- On IF reduce production statement_list -> 
+-- On FOR reduce production statement_list -> 
+-- On FLOATCONST reduce production statement_list -> 
+-- On BANG reduce production statement_list -> 
+** Conflict on UIDENT
+
+State 160:
+statement -> LBRACE decl_list statement_list . RBRACE [ VOID UIDENT TYPEDEF STAR RETURN RBRACE MODULE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT END ELSE BANG # ]
+statement_list -> statement_list . statement [ UIDENT STAR RETURN RBRACE MINUS LPAREN LIDENT LBRACE INTCONST IF FOR FLOATCONST BANG ]
+-- On UIDENT shift to state 1
+-- On STAR shift to state 104
+-- On RETURN shift to state 155
+-- On RBRACE shift to state 161
+-- On MINUS shift to state 105
+-- On LPAREN shift to state 106
+-- On LIDENT shift to state 107
+-- On LBRACE shift to state 158
+-- On INTCONST shift to state 108
+-- On IF shift to state 162
+-- On FOR shift to state 166
+-- On FLOATCONST shift to state 109
+-- On BANG shift to state 110
+-- On upath shift to state 111
+-- On statement shift to state 180
+-- On lpath shift to state 114
+-- On expr shift to state 175
+
+State 161:
+statement -> LBRACE decl_list statement_list RBRACE . [ VOID UIDENT TYPEDEF STAR RETURN RBRACE MODULE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT END ELSE BANG # ]
+-- On VOID reduce production statement -> LBRACE decl_list statement_list RBRACE
+-- On UIDENT reduce production statement -> LBRACE decl_list statement_list RBRACE
+-- On TYPEDEF reduce production statement -> LBRACE decl_list statement_list RBRACE
+-- On STAR reduce production statement -> LBRACE decl_list statement_list RBRACE
+-- On RETURN reduce production statement -> LBRACE decl_list statement_list RBRACE
+-- On RBRACE reduce production statement -> LBRACE decl_list statement_list RBRACE
+-- On MODULE reduce production statement -> LBRACE decl_list statement_list RBRACE
+-- On MINUS reduce production statement -> LBRACE decl_list statement_list RBRACE
+-- On LPAREN reduce production statement -> LBRACE decl_list statement_list RBRACE
+-- On LIDENT reduce production statement -> LBRACE decl_list statement_list RBRACE
+-- On LBRACE reduce production statement -> LBRACE decl_list statement_list RBRACE
+-- On INTCONST reduce production statement -> LBRACE decl_list statement_list RBRACE
+-- On INT reduce production statement -> LBRACE decl_list statement_list RBRACE
+-- On IF reduce production statement -> LBRACE decl_list statement_list RBRACE
+-- On FOR reduce production statement -> LBRACE decl_list statement_list RBRACE
+-- On FLOATCONST reduce production statement -> LBRACE decl_list statement_list RBRACE
+-- On FLOAT reduce production statement -> LBRACE decl_list statement_list RBRACE
+-- On END reduce production statement -> LBRACE decl_list statement_list RBRACE
+-- On ELSE reduce production statement -> LBRACE decl_list statement_list RBRACE
+-- On BANG reduce production statement -> LBRACE decl_list statement_list RBRACE
+
+State 162:
+statement -> IF . LPAREN expr RPAREN statement ELSE statement [ VOID UIDENT TYPEDEF STAR RETURN RBRACE MODULE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT END ELSE BANG # ]
+statement -> IF . LPAREN expr RPAREN statement [ VOID UIDENT TYPEDEF STAR RETURN RBRACE MODULE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT END ELSE BANG # ]
+-- On LPAREN shift to state 163
+
+State 163:
+statement -> IF LPAREN . expr RPAREN statement ELSE statement [ VOID UIDENT TYPEDEF STAR RETURN RBRACE MODULE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT END ELSE BANG # ]
+statement -> IF LPAREN . expr RPAREN statement [ VOID UIDENT TYPEDEF STAR RETURN RBRACE MODULE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT END ELSE BANG # ]
+-- On UIDENT shift to state 1
+-- On STAR shift to state 104
+-- On MINUS shift to state 105
+-- On LPAREN shift to state 106
+-- On LIDENT shift to state 107
+-- On INTCONST shift to state 108
+-- On FLOATCONST shift to state 109
+-- On BANG shift to state 110
+-- On upath shift to state 111
+-- On lpath shift to state 114
+-- On expr shift to state 164
+
+State 164:
+expr -> expr . LPAREN expr_comma_list RPAREN [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . EQUAL expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . PLUS expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . MINUS expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . STAR expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . SLASH expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . EQUALEQUAL expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . BANGEQUAL expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . LESS expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . LESSEQUAL expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . GREATER expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . GREATEREQUAL expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . LBRACKET expr RBRACKET [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+statement -> IF LPAREN expr . RPAREN statement ELSE statement [ VOID UIDENT TYPEDEF STAR RETURN RBRACE MODULE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT END ELSE BANG # ]
+statement -> IF LPAREN expr . RPAREN statement [ VOID UIDENT TYPEDEF STAR RETURN RBRACE MODULE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT END ELSE BANG # ]
+-- On STAR shift to state 121
+-- On SLASH shift to state 125
+-- On RPAREN shift to state 165
+-- On PLUS shift to state 128
+-- On MINUS shift to state 130
+-- On LPAREN shift to state 116
+-- On LESSEQUAL shift to state 132
+-- On LESS shift to state 134
+-- On LBRACKET shift to state 123
+-- On GREATEREQUAL shift to state 136
+-- On GREATER shift to state 138
+-- On EQUALEQUAL shift to state 140
+-- On EQUAL shift to state 142
+-- On BANGEQUAL shift to state 144
+
+State 165:
+statement -> IF LPAREN expr RPAREN . statement ELSE statement [ VOID UIDENT TYPEDEF STAR RETURN RBRACE MODULE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT END ELSE BANG # ]
+statement -> IF LPAREN expr RPAREN . statement [ VOID UIDENT TYPEDEF STAR RETURN RBRACE MODULE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT END ELSE BANG # ]
+-- On UIDENT shift to state 1
+-- On STAR shift to state 104
+-- On RETURN shift to state 155
+-- On MINUS shift to state 105
+-- On LPAREN shift to state 106
+-- On LIDENT shift to state 107
+-- On LBRACE shift to state 158
+-- On INTCONST shift to state 108
+-- On IF shift to state 162
+-- On FOR shift to state 166
+-- On FLOATCONST shift to state 109
+-- On BANG shift to state 110
+-- On upath shift to state 111
+-- On statement shift to state 177
+-- On lpath shift to state 114
+-- On expr shift to state 175
+
+State 166:
+statement -> FOR . LPAREN expr SEMI expr SEMI expr RPAREN statement [ VOID UIDENT TYPEDEF STAR RETURN RBRACE MODULE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT END ELSE BANG # ]
+-- On LPAREN shift to state 167
+
+State 167:
+statement -> FOR LPAREN . expr SEMI expr SEMI expr RPAREN statement [ VOID UIDENT TYPEDEF STAR RETURN RBRACE MODULE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT END ELSE BANG # ]
+-- On UIDENT shift to state 1
+-- On STAR shift to state 104
+-- On MINUS shift to state 105
+-- On LPAREN shift to state 106
+-- On LIDENT shift to state 107
+-- On INTCONST shift to state 108
+-- On FLOATCONST shift to state 109
+-- On BANG shift to state 110
+-- On upath shift to state 111
+-- On lpath shift to state 114
+-- On expr shift to state 168
+
+State 168:
+expr -> expr . LPAREN expr_comma_list RPAREN [ STAR SLASH SEMI PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . EQUAL expr [ STAR SLASH SEMI PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . PLUS expr [ STAR SLASH SEMI PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . MINUS expr [ STAR SLASH SEMI PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . STAR expr [ STAR SLASH SEMI PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . SLASH expr [ STAR SLASH SEMI PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . EQUALEQUAL expr [ STAR SLASH SEMI PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . BANGEQUAL expr [ STAR SLASH SEMI PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . LESS expr [ STAR SLASH SEMI PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . LESSEQUAL expr [ STAR SLASH SEMI PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . GREATER expr [ STAR SLASH SEMI PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . GREATEREQUAL expr [ STAR SLASH SEMI PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . LBRACKET expr RBRACKET [ STAR SLASH SEMI PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+statement -> FOR LPAREN expr . SEMI expr SEMI expr RPAREN statement [ VOID UIDENT TYPEDEF STAR RETURN RBRACE MODULE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT END ELSE BANG # ]
+-- On STAR shift to state 121
+-- On SLASH shift to state 125
+-- On SEMI shift to state 169
+-- On PLUS shift to state 128
+-- On MINUS shift to state 130
+-- On LPAREN shift to state 116
+-- On LESSEQUAL shift to state 132
+-- On LESS shift to state 134
+-- On LBRACKET shift to state 123
+-- On GREATEREQUAL shift to state 136
+-- On GREATER shift to state 138
+-- On EQUALEQUAL shift to state 140
+-- On EQUAL shift to state 142
+-- On BANGEQUAL shift to state 144
+
+State 169:
+statement -> FOR LPAREN expr SEMI . expr SEMI expr RPAREN statement [ VOID UIDENT TYPEDEF STAR RETURN RBRACE MODULE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT END ELSE BANG # ]
+-- On UIDENT shift to state 1
+-- On STAR shift to state 104
+-- On MINUS shift to state 105
+-- On LPAREN shift to state 106
+-- On LIDENT shift to state 107
+-- On INTCONST shift to state 108
+-- On FLOATCONST shift to state 109
+-- On BANG shift to state 110
+-- On upath shift to state 111
+-- On lpath shift to state 114
+-- On expr shift to state 170
+
+State 170:
+expr -> expr . LPAREN expr_comma_list RPAREN [ STAR SLASH SEMI PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . EQUAL expr [ STAR SLASH SEMI PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . PLUS expr [ STAR SLASH SEMI PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . MINUS expr [ STAR SLASH SEMI PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . STAR expr [ STAR SLASH SEMI PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . SLASH expr [ STAR SLASH SEMI PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . EQUALEQUAL expr [ STAR SLASH SEMI PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . BANGEQUAL expr [ STAR SLASH SEMI PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . LESS expr [ STAR SLASH SEMI PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . LESSEQUAL expr [ STAR SLASH SEMI PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . GREATER expr [ STAR SLASH SEMI PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . GREATEREQUAL expr [ STAR SLASH SEMI PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . LBRACKET expr RBRACKET [ STAR SLASH SEMI PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+statement -> FOR LPAREN expr SEMI expr . SEMI expr RPAREN statement [ VOID UIDENT TYPEDEF STAR RETURN RBRACE MODULE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT END ELSE BANG # ]
+-- On STAR shift to state 121
+-- On SLASH shift to state 125
+-- On SEMI shift to state 171
+-- On PLUS shift to state 128
+-- On MINUS shift to state 130
+-- On LPAREN shift to state 116
+-- On LESSEQUAL shift to state 132
+-- On LESS shift to state 134
+-- On LBRACKET shift to state 123
+-- On GREATEREQUAL shift to state 136
+-- On GREATER shift to state 138
+-- On EQUALEQUAL shift to state 140
+-- On EQUAL shift to state 142
+-- On BANGEQUAL shift to state 144
+
+State 171:
+statement -> FOR LPAREN expr SEMI expr SEMI . expr RPAREN statement [ VOID UIDENT TYPEDEF STAR RETURN RBRACE MODULE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT END ELSE BANG # ]
+-- On UIDENT shift to state 1
+-- On STAR shift to state 104
+-- On MINUS shift to state 105
+-- On LPAREN shift to state 106
+-- On LIDENT shift to state 107
+-- On INTCONST shift to state 108
+-- On FLOATCONST shift to state 109
+-- On BANG shift to state 110
+-- On upath shift to state 111
+-- On lpath shift to state 114
+-- On expr shift to state 172
+
+State 172:
+expr -> expr . LPAREN expr_comma_list RPAREN [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . EQUAL expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . PLUS expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . MINUS expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . STAR expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . SLASH expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . EQUALEQUAL expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . BANGEQUAL expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . LESS expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . LESSEQUAL expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . GREATER expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . GREATEREQUAL expr [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . LBRACKET expr RBRACKET [ STAR SLASH RPAREN PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+statement -> FOR LPAREN expr SEMI expr SEMI expr . RPAREN statement [ VOID UIDENT TYPEDEF STAR RETURN RBRACE MODULE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT END ELSE BANG # ]
+-- On STAR shift to state 121
+-- On SLASH shift to state 125
+-- On RPAREN shift to state 173
+-- On PLUS shift to state 128
+-- On MINUS shift to state 130
+-- On LPAREN shift to state 116
+-- On LESSEQUAL shift to state 132
+-- On LESS shift to state 134
+-- On LBRACKET shift to state 123
+-- On GREATEREQUAL shift to state 136
+-- On GREATER shift to state 138
+-- On EQUALEQUAL shift to state 140
+-- On EQUAL shift to state 142
+-- On BANGEQUAL shift to state 144
+
+State 173:
+statement -> FOR LPAREN expr SEMI expr SEMI expr RPAREN . statement [ VOID UIDENT TYPEDEF STAR RETURN RBRACE MODULE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT END ELSE BANG # ]
+-- On UIDENT shift to state 1
+-- On STAR shift to state 104
+-- On RETURN shift to state 155
+-- On MINUS shift to state 105
+-- On LPAREN shift to state 106
+-- On LIDENT shift to state 107
+-- On LBRACE shift to state 158
+-- On INTCONST shift to state 108
+-- On IF shift to state 162
+-- On FOR shift to state 166
+-- On FLOATCONST shift to state 109
+-- On BANG shift to state 110
+-- On upath shift to state 111
+-- On statement shift to state 174
+-- On lpath shift to state 114
+-- On expr shift to state 175
+
+State 174:
+statement -> FOR LPAREN expr SEMI expr SEMI expr RPAREN statement . [ VOID UIDENT TYPEDEF STAR RETURN RBRACE MODULE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT END ELSE BANG # ]
+-- On VOID reduce production statement -> FOR LPAREN expr SEMI expr SEMI expr RPAREN statement
+-- On UIDENT reduce production statement -> FOR LPAREN expr SEMI expr SEMI expr RPAREN statement
+-- On TYPEDEF reduce production statement -> FOR LPAREN expr SEMI expr SEMI expr RPAREN statement
+-- On STAR reduce production statement -> FOR LPAREN expr SEMI expr SEMI expr RPAREN statement
+-- On RETURN reduce production statement -> FOR LPAREN expr SEMI expr SEMI expr RPAREN statement
+-- On RBRACE reduce production statement -> FOR LPAREN expr SEMI expr SEMI expr RPAREN statement
+-- On MODULE reduce production statement -> FOR LPAREN expr SEMI expr SEMI expr RPAREN statement
+-- On MINUS reduce production statement -> FOR LPAREN expr SEMI expr SEMI expr RPAREN statement
+-- On LPAREN reduce production statement -> FOR LPAREN expr SEMI expr SEMI expr RPAREN statement
+-- On LIDENT reduce production statement -> FOR LPAREN expr SEMI expr SEMI expr RPAREN statement
+-- On LBRACE reduce production statement -> FOR LPAREN expr SEMI expr SEMI expr RPAREN statement
+-- On INTCONST reduce production statement -> FOR LPAREN expr SEMI expr SEMI expr RPAREN statement
+-- On INT reduce production statement -> FOR LPAREN expr SEMI expr SEMI expr RPAREN statement
+-- On IF reduce production statement -> FOR LPAREN expr SEMI expr SEMI expr RPAREN statement
+-- On FOR reduce production statement -> FOR LPAREN expr SEMI expr SEMI expr RPAREN statement
+-- On FLOATCONST reduce production statement -> FOR LPAREN expr SEMI expr SEMI expr RPAREN statement
+-- On FLOAT reduce production statement -> FOR LPAREN expr SEMI expr SEMI expr RPAREN statement
+-- On END reduce production statement -> FOR LPAREN expr SEMI expr SEMI expr RPAREN statement
+-- On ELSE reduce production statement -> FOR LPAREN expr SEMI expr SEMI expr RPAREN statement
+-- On BANG reduce production statement -> FOR LPAREN expr SEMI expr SEMI expr RPAREN statement
+
+State 175:
+expr -> expr . LPAREN expr_comma_list RPAREN [ STAR SLASH SEMI PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . EQUAL expr [ STAR SLASH SEMI PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . PLUS expr [ STAR SLASH SEMI PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . MINUS expr [ STAR SLASH SEMI PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . STAR expr [ STAR SLASH SEMI PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . SLASH expr [ STAR SLASH SEMI PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . EQUALEQUAL expr [ STAR SLASH SEMI PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . BANGEQUAL expr [ STAR SLASH SEMI PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . LESS expr [ STAR SLASH SEMI PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . LESSEQUAL expr [ STAR SLASH SEMI PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . GREATER expr [ STAR SLASH SEMI PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . GREATEREQUAL expr [ STAR SLASH SEMI PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+expr -> expr . LBRACKET expr RBRACKET [ STAR SLASH SEMI PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL BANGEQUAL ]
+statement -> expr . SEMI [ VOID UIDENT TYPEDEF STAR RETURN RBRACE MODULE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT END ELSE BANG # ]
+-- On STAR shift to state 121
+-- On SLASH shift to state 125
+-- On SEMI shift to state 176
+-- On PLUS shift to state 128
+-- On MINUS shift to state 130
+-- On LPAREN shift to state 116
+-- On LESSEQUAL shift to state 132
+-- On LESS shift to state 134
+-- On LBRACKET shift to state 123
+-- On GREATEREQUAL shift to state 136
+-- On GREATER shift to state 138
+-- On EQUALEQUAL shift to state 140
+-- On EQUAL shift to state 142
+-- On BANGEQUAL shift to state 144
+
+State 176:
+statement -> expr SEMI . [ VOID UIDENT TYPEDEF STAR RETURN RBRACE MODULE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT END ELSE BANG # ]
+-- On VOID reduce production statement -> expr SEMI
+-- On UIDENT reduce production statement -> expr SEMI
+-- On TYPEDEF reduce production statement -> expr SEMI
+-- On STAR reduce production statement -> expr SEMI
+-- On RETURN reduce production statement -> expr SEMI
+-- On RBRACE reduce production statement -> expr SEMI
+-- On MODULE reduce production statement -> expr SEMI
+-- On MINUS reduce production statement -> expr SEMI
+-- On LPAREN reduce production statement -> expr SEMI
+-- On LIDENT reduce production statement -> expr SEMI
+-- On LBRACE reduce production statement -> expr SEMI
+-- On INTCONST reduce production statement -> expr SEMI
+-- On INT reduce production statement -> expr SEMI
+-- On IF reduce production statement -> expr SEMI
+-- On FOR reduce production statement -> expr SEMI
+-- On FLOATCONST reduce production statement -> expr SEMI
+-- On FLOAT reduce production statement -> expr SEMI
+-- On END reduce production statement -> expr SEMI
+-- On ELSE reduce production statement -> expr SEMI
+-- On BANG reduce production statement -> expr SEMI
+
+State 177:
+statement -> IF LPAREN expr RPAREN statement . ELSE statement [ VOID UIDENT TYPEDEF STAR RETURN RBRACE MODULE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT END ELSE BANG # ]
+statement -> IF LPAREN expr RPAREN statement . [ VOID UIDENT TYPEDEF STAR RETURN RBRACE MODULE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT END ELSE BANG # ]
+-- On ELSE shift to state 178
+-- On VOID reduce production statement -> IF LPAREN expr RPAREN statement
+-- On UIDENT reduce production statement -> IF LPAREN expr RPAREN statement
+-- On TYPEDEF reduce production statement -> IF LPAREN expr RPAREN statement
+-- On STAR reduce production statement -> IF LPAREN expr RPAREN statement
+-- On RETURN reduce production statement -> IF LPAREN expr RPAREN statement
+-- On RBRACE reduce production statement -> IF LPAREN expr RPAREN statement
+-- On MODULE reduce production statement -> IF LPAREN expr RPAREN statement
+-- On MINUS reduce production statement -> IF LPAREN expr RPAREN statement
+-- On LPAREN reduce production statement -> IF LPAREN expr RPAREN statement
+-- On LIDENT reduce production statement -> IF LPAREN expr RPAREN statement
+-- On LBRACE reduce production statement -> IF LPAREN expr RPAREN statement
+-- On INTCONST reduce production statement -> IF LPAREN expr RPAREN statement
+-- On INT reduce production statement -> IF LPAREN expr RPAREN statement
+-- On IF reduce production statement -> IF LPAREN expr RPAREN statement
+-- On FOR reduce production statement -> IF LPAREN expr RPAREN statement
+-- On FLOATCONST reduce production statement -> IF LPAREN expr RPAREN statement
+-- On FLOAT reduce production statement -> IF LPAREN expr RPAREN statement
+-- On END reduce production statement -> IF LPAREN expr RPAREN statement
+-- On BANG reduce production statement -> IF LPAREN expr RPAREN statement
+** Conflict on ELSE
+
+State 178:
+statement -> IF LPAREN expr RPAREN statement ELSE . statement [ VOID UIDENT TYPEDEF STAR RETURN RBRACE MODULE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT END ELSE BANG # ]
+-- On UIDENT shift to state 1
+-- On STAR shift to state 104
+-- On RETURN shift to state 155
+-- On MINUS shift to state 105
+-- On LPAREN shift to state 106
+-- On LIDENT shift to state 107
+-- On LBRACE shift to state 158
+-- On INTCONST shift to state 108
+-- On IF shift to state 162
+-- On FOR shift to state 166
+-- On FLOATCONST shift to state 109
+-- On BANG shift to state 110
+-- On upath shift to state 111
+-- On statement shift to state 179
+-- On lpath shift to state 114
+-- On expr shift to state 175
+
+State 179:
+statement -> IF LPAREN expr RPAREN statement ELSE statement . [ VOID UIDENT TYPEDEF STAR RETURN RBRACE MODULE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT END ELSE BANG # ]
+-- On VOID reduce production statement -> IF LPAREN expr RPAREN statement ELSE statement
+-- On UIDENT reduce production statement -> IF LPAREN expr RPAREN statement ELSE statement
+-- On TYPEDEF reduce production statement -> IF LPAREN expr RPAREN statement ELSE statement
+-- On STAR reduce production statement -> IF LPAREN expr RPAREN statement ELSE statement
+-- On RETURN reduce production statement -> IF LPAREN expr RPAREN statement ELSE statement
+-- On RBRACE reduce production statement -> IF LPAREN expr RPAREN statement ELSE statement
+-- On MODULE reduce production statement -> IF LPAREN expr RPAREN statement ELSE statement
+-- On MINUS reduce production statement -> IF LPAREN expr RPAREN statement ELSE statement
+-- On LPAREN reduce production statement -> IF LPAREN expr RPAREN statement ELSE statement
+-- On LIDENT reduce production statement -> IF LPAREN expr RPAREN statement ELSE statement
+-- On LBRACE reduce production statement -> IF LPAREN expr RPAREN statement ELSE statement
+-- On INTCONST reduce production statement -> IF LPAREN expr RPAREN statement ELSE statement
+-- On INT reduce production statement -> IF LPAREN expr RPAREN statement ELSE statement
+-- On IF reduce production statement -> IF LPAREN expr RPAREN statement ELSE statement
+-- On FOR reduce production statement -> IF LPAREN expr RPAREN statement ELSE statement
+-- On FLOATCONST reduce production statement -> IF LPAREN expr RPAREN statement ELSE statement
+-- On FLOAT reduce production statement -> IF LPAREN expr RPAREN statement ELSE statement
+-- On END reduce production statement -> IF LPAREN expr RPAREN statement ELSE statement
+-- On ELSE reduce production statement -> IF LPAREN expr RPAREN statement ELSE statement
+-- On BANG reduce production statement -> IF LPAREN expr RPAREN statement ELSE statement
+
+State 180:
+statement_list -> statement_list statement . [ UIDENT STAR RETURN RBRACE MINUS LPAREN LIDENT LBRACE INTCONST IF FOR FLOATCONST BANG ]
+-- On UIDENT reduce production statement_list -> statement_list statement
+-- On STAR reduce production statement_list -> statement_list statement
+-- On RETURN reduce production statement_list -> statement_list statement
+-- On RBRACE reduce production statement_list -> statement_list statement
+-- On MINUS reduce production statement_list -> statement_list statement
+-- On LPAREN reduce production statement_list -> statement_list statement
+-- On LIDENT reduce production statement_list -> statement_list statement
+-- On LBRACE reduce production statement_list -> statement_list statement
+-- On INTCONST reduce production statement_list -> statement_list statement
+-- On IF reduce production statement_list -> statement_list statement
+-- On FOR reduce production statement_list -> statement_list statement
+-- On FLOATCONST reduce production statement_list -> statement_list statement
+-- On BANG reduce production statement_list -> statement_list statement
+
+State 181:
+ctype -> ctype . STAR [ STAR LIDENT ]
+decl_list -> decl_list ctype . LIDENT SEMI [ VOID UIDENT STAR RETURN RBRACE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT BANG ]
+-- On STAR shift to state 25
+-- On LIDENT shift to state 182
+
+State 182:
+decl_list -> decl_list ctype LIDENT . SEMI [ VOID UIDENT STAR RETURN RBRACE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT BANG ]
+-- On SEMI shift to state 183
+
+State 183:
+decl_list -> decl_list ctype LIDENT SEMI . [ VOID UIDENT STAR RETURN RBRACE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT BANG ]
+-- On VOID reduce production decl_list -> decl_list ctype LIDENT SEMI
+-- On UIDENT reduce production decl_list -> decl_list ctype LIDENT SEMI
+-- On STAR reduce production decl_list -> decl_list ctype LIDENT SEMI
+-- On RETURN reduce production decl_list -> decl_list ctype LIDENT SEMI
+-- On RBRACE reduce production decl_list -> decl_list ctype LIDENT SEMI
+-- On MINUS reduce production decl_list -> decl_list ctype LIDENT SEMI
+-- On LPAREN reduce production decl_list -> decl_list ctype LIDENT SEMI
+-- On LIDENT reduce production decl_list -> decl_list ctype LIDENT SEMI
+-- On LBRACE reduce production decl_list -> decl_list ctype LIDENT SEMI
+-- On INTCONST reduce production decl_list -> decl_list ctype LIDENT SEMI
+-- On INT reduce production decl_list -> decl_list ctype LIDENT SEMI
+-- On IF reduce production decl_list -> decl_list ctype LIDENT SEMI
+-- On FOR reduce production decl_list -> decl_list ctype LIDENT SEMI
+-- On FLOATCONST reduce production decl_list -> decl_list ctype LIDENT SEMI
+-- On FLOAT reduce production decl_list -> decl_list ctype LIDENT SEMI
+-- On BANG reduce production decl_list -> decl_list ctype LIDENT SEMI
+
+State 184:
+term -> ctype LIDENT LPAREN parameters RPAREN statement . [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
+-- On VOID reduce production term -> ctype LIDENT LPAREN parameters RPAREN statement
+-- On UIDENT reduce production term -> ctype LIDENT LPAREN parameters RPAREN statement
+-- On TYPEDEF reduce production term -> ctype LIDENT LPAREN parameters RPAREN statement
+-- On MODULE reduce production term -> ctype LIDENT LPAREN parameters RPAREN statement
+-- On INT reduce production term -> ctype LIDENT LPAREN parameters RPAREN statement
+-- On FLOAT reduce production term -> ctype LIDENT LPAREN parameters RPAREN statement
+-- On END reduce production term -> ctype LIDENT LPAREN parameters RPAREN statement
+
+State 185:
+parameters -> parameters COMMA . ctype LIDENT [ RPAREN COMMA ]
+-- On VOID shift to state 4
+-- On UIDENT shift to state 1
+-- On INT shift to state 6
+-- On FLOAT shift to state 7
+-- On upath shift to state 8
+-- On ctype shift to state 186
+
+State 186:
+ctype -> ctype . STAR [ STAR LIDENT ]
+parameters -> parameters COMMA ctype . LIDENT [ RPAREN COMMA ]
+-- On STAR shift to state 25
+-- On LIDENT shift to state 187
+
+State 187:
+parameters -> parameters COMMA ctype LIDENT . [ RPAREN COMMA ]
+-- On RPAREN reduce production parameters -> parameters COMMA ctype LIDENT
+-- On COMMA reduce production parameters -> parameters COMMA ctype LIDENT
+
+State 188:
+ctype -> ctype . STAR [ STAR LIDENT ]
+parameters -> ctype . LIDENT [ RPAREN COMMA ]
+-- On STAR shift to state 25
+-- On LIDENT shift to state 189
+
+State 189:
+parameters -> ctype LIDENT . [ RPAREN COMMA ]
+-- On RPAREN reduce production parameters -> ctype LIDENT
+-- On COMMA reduce production parameters -> ctype LIDENT
+
+State 190:
+implementation -> modulexpr . EOF [ # ]
+modulexpr -> modulexpr . LPAREN modulexpr RPAREN [ LPAREN EOF COLON ]
+modulexpr -> modulexpr . COLON moduletype [ LPAREN EOF COLON ]
+-- On LPAREN shift to state 85
+-- On EOF shift to state 191
+-- On COLON shift to state 81
+
+State 191:
+implementation -> modulexpr EOF . [ # ]
+-- On # reduce production implementation -> modulexpr EOF
+
+State 192:
+implementation' -> implementation . [ # ]
+-- On # accept implementation
+
+State 193:
+phrase' -> . phrase [ # ]
+-- On VOID shift to state 4
+-- On UIDENT shift to state 1
+-- On TYPEDEF shift to state 194
+-- On MODULE shift to state 197
+-- On INT shift to state 6
+-- On FLOAT shift to state 7
+-- On EOF shift to state 207
+-- On upath shift to state 8
+-- On term shift to state 208
+-- On structure_item shift to state 209
+-- On phrase shift to state 210
+-- On ctype shift to state 211
+
+State 194:
+structure_item -> TYPEDEF . typedef SEMI [ # ]
+-- On VOID shift to state 4
+-- On UIDENT shift to state 1
+-- On INT shift to state 6
+-- On FLOAT shift to state 7
+-- On upath shift to state 8
+-- On typedef shift to state 195
+-- On ctype shift to state 13
+
+State 195:
+structure_item -> TYPEDEF typedef . SEMI [ # ]
+-- On SEMI shift to state 196
+
+State 196:
+structure_item -> TYPEDEF typedef SEMI . [ # ]
+-- On # reduce production structure_item -> TYPEDEF typedef SEMI
+
+State 197:
+structure_item -> MODULE . UIDENT COLON moduletype EQUAL modulexpr SEMI [ # ]
+structure_item -> MODULE . UIDENT EQUAL modulexpr SEMI [ # ]
+-- On UIDENT shift to state 198
+
+State 198:
+structure_item -> MODULE UIDENT . COLON moduletype EQUAL modulexpr SEMI [ # ]
+structure_item -> MODULE UIDENT . EQUAL modulexpr SEMI [ # ]
+-- On EQUAL shift to state 199
+-- On COLON shift to state 202
+
+State 199:
+structure_item -> MODULE UIDENT EQUAL . modulexpr SEMI [ # ]
+-- On UIDENT shift to state 1
+-- On STRUCT shift to state 2
+-- On LPAREN shift to state 34
+-- On FUNCTOR shift to state 35
+-- On upath shift to state 79
+-- On modulexpr shift to state 200
+
+State 200:
+modulexpr -> modulexpr . LPAREN modulexpr RPAREN [ SEMI LPAREN COLON ]
+modulexpr -> modulexpr . COLON moduletype [ SEMI LPAREN COLON ]
+structure_item -> MODULE UIDENT EQUAL modulexpr . SEMI [ # ]
+-- On SEMI shift to state 201
+-- On LPAREN shift to state 85
+-- On COLON shift to state 81
+
+State 201:
+structure_item -> MODULE UIDENT EQUAL modulexpr SEMI . [ # ]
+-- On # reduce production structure_item -> MODULE UIDENT EQUAL modulexpr SEMI
+
+State 202:
+structure_item -> MODULE UIDENT COLON . moduletype EQUAL modulexpr SEMI [ # ]
+-- On SIG shift to state 39
+-- On LPAREN shift to state 49
+-- On FUNCTOR shift to state 50
+-- On moduletype shift to state 203
+
+State 203:
+structure_item -> MODULE UIDENT COLON moduletype . EQUAL modulexpr SEMI [ # ]
+-- On EQUAL shift to state 204
+
+State 204:
+structure_item -> MODULE UIDENT COLON moduletype EQUAL . modulexpr SEMI [ # ]
+-- On UIDENT shift to state 1
+-- On STRUCT shift to state 2
+-- On LPAREN shift to state 34
+-- On FUNCTOR shift to state 35
+-- On upath shift to state 79
+-- On modulexpr shift to state 205
+
+State 205:
+modulexpr -> modulexpr . LPAREN modulexpr RPAREN [ SEMI LPAREN COLON ]
+modulexpr -> modulexpr . COLON moduletype [ SEMI LPAREN COLON ]
+structure_item -> MODULE UIDENT COLON moduletype EQUAL modulexpr . SEMI [ # ]
+-- On SEMI shift to state 206
+-- On LPAREN shift to state 85
+-- On COLON shift to state 81
+
+State 206:
+structure_item -> MODULE UIDENT COLON moduletype EQUAL modulexpr SEMI . [ # ]
+-- On # reduce production structure_item -> MODULE UIDENT COLON moduletype EQUAL modulexpr SEMI
+
+State 207:
+phrase -> EOF . [ # ]
+-- On # reduce production phrase -> EOF
+
+State 208:
+structure_item -> term . [ # ]
+-- On # reduce production structure_item -> term
+
+State 209:
+phrase -> structure_item . [ # ]
+-- On # reduce production phrase -> structure_item
+
+State 210:
+phrase' -> phrase . [ # ]
+-- On # accept phrase
+
+State 211:
+ctype -> ctype . STAR [ STAR LIDENT ]
+term -> ctype . LIDENT SEMI [ # ]
+term -> ctype . LIDENT LPAREN parameters RPAREN statement [ # ]
+-- On STAR shift to state 25
+-- On LIDENT shift to state 212
+
+State 212:
+term -> ctype LIDENT . SEMI [ # ]
+term -> ctype LIDENT . LPAREN parameters RPAREN statement [ # ]
+-- On SEMI shift to state 213
+-- On LPAREN shift to state 214
+
+State 213:
+term -> ctype LIDENT SEMI . [ # ]
+-- On # reduce production term -> ctype LIDENT SEMI
+
+State 214:
+term -> ctype LIDENT LPAREN . parameters RPAREN statement [ # ]
+-- On VOID shift to state 4
+-- On UIDENT shift to state 1
+-- On INT shift to state 6
+-- On FLOAT shift to state 7
+-- On upath shift to state 8
+-- On parameters shift to state 215
+-- On ctype shift to state 188
+-- On RPAREN reduce production parameters -> 
+-- On COMMA reduce production parameters -> 
+
+State 215:
+parameters -> parameters . COMMA ctype LIDENT [ RPAREN COMMA ]
+term -> ctype LIDENT LPAREN parameters . RPAREN statement [ # ]
+-- On RPAREN shift to state 216
+-- On COMMA shift to state 185
+
+State 216:
+term -> ctype LIDENT LPAREN parameters RPAREN . statement [ # ]
+-- On UIDENT shift to state 1
+-- On STAR shift to state 104
+-- On RETURN shift to state 155
+-- On MINUS shift to state 105
+-- On LPAREN shift to state 106
+-- On LIDENT shift to state 107
+-- On LBRACE shift to state 158
+-- On INTCONST shift to state 108
+-- On IF shift to state 162
+-- On FOR shift to state 166
+-- On FLOATCONST shift to state 109
+-- On BANG shift to state 110
+-- On upath shift to state 111
+-- On statement shift to state 217
+-- On lpath shift to state 114
+-- On expr shift to state 175
+
+State 217:
+term -> ctype LIDENT LPAREN parameters RPAREN statement . [ # ]
+-- On # reduce production term -> ctype LIDENT LPAREN parameters RPAREN statement
+

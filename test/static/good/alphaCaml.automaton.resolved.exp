@@ -1,0 +1,1306 @@
+State 0:
+phrase' -> . phrase [ # ]
+-- On error shift to state 1
+-- On OCAML shift to state 2
+-- On prologue shift to state 3
+-- On phrase shift to state 142
+-- On TYPE reduce production prologue -> 
+-- On SORT reduce production prologue -> 
+-- On IDENTIFIER reduce production prologue -> 
+-- On EOF reduce production prologue -> 
+-- On CONTAINER reduce production prologue -> 
+
+State 1:
+phrase -> error . [ # ]
+-- On # reduce production phrase -> error
+
+State 2:
+prologue -> OCAML . [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+-- On TYPE reduce production prologue -> OCAML
+-- On SORT reduce production prologue -> OCAML
+-- On IDENTIFIER reduce production prologue -> OCAML
+-- On EOF reduce production prologue -> OCAML
+-- On CONTAINER reduce production prologue -> OCAML
+
+State 3:
+phrase -> prologue . declarations EOF [ # ]
+-- On declarations shift to state 4
+-- On TYPE reduce production declarations -> 
+-- On SORT reduce production declarations -> 
+-- On IDENTIFIER reduce production declarations -> 
+-- On EOF reduce production declarations -> 
+-- On CONTAINER reduce production declarations -> 
+
+State 4:
+declarations -> declarations . declaration [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+phrase -> prologue declarations . EOF [ # ]
+-- On TYPE shift to state 5
+-- On SORT shift to state 122
+-- On IDENTIFIER shift to state 125
+-- On EOF shift to state 129
+-- On CONTAINER shift to state 130
+-- On declaration shift to state 141
+
+State 5:
+declaration -> TYPE . params_and_set_current LID EQUAL exprhs [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+declaration -> TYPE . params_and_set_current LID BINDS sorts EQUAL patrhs [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+declaration -> TYPE . error [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+-- On error shift to state 6
+-- On QUOTE shift to state 7
+-- On LPAREN shift to state 9
+-- On typevar shift to state 15
+-- On params_and_set_current shift to state 16
+-- On params shift to state 121
+-- On LID reduce production params -> 
+
+State 6:
+declaration -> TYPE error . [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+-- On TYPE reduce production declaration -> TYPE error
+-- On SORT reduce production declaration -> TYPE error
+-- On IDENTIFIER reduce production declaration -> TYPE error
+-- On EOF reduce production declaration -> TYPE error
+-- On CONTAINER reduce production declaration -> TYPE error
+
+State 7:
+typevar -> QUOTE . LID [ RPAREN LID COMMA ]
+-- On LID shift to state 8
+
+State 8:
+typevar -> QUOTE LID . [ RPAREN LID COMMA ]
+-- On RPAREN reduce production typevar -> QUOTE LID
+-- On LID reduce production typevar -> QUOTE LID
+-- On COMMA reduce production typevar -> QUOTE LID
+
+State 9:
+params -> LPAREN . typevars RPAREN [ LID ]
+-- On QUOTE shift to state 7
+-- On typevars shift to state 10
+-- On typevar shift to state 14
+
+State 10:
+params -> LPAREN typevars . RPAREN [ LID ]
+typevars -> typevars . COMMA typevar [ RPAREN COMMA ]
+-- On RPAREN shift to state 11
+-- On COMMA shift to state 12
+
+State 11:
+params -> LPAREN typevars RPAREN . [ LID ]
+-- On LID reduce production params -> LPAREN typevars RPAREN
+
+State 12:
+typevars -> typevars COMMA . typevar [ RPAREN COMMA ]
+-- On QUOTE shift to state 7
+-- On typevar shift to state 13
+
+State 13:
+typevars -> typevars COMMA typevar . [ RPAREN COMMA ]
+-- On RPAREN reduce production typevars -> typevars COMMA typevar
+-- On COMMA reduce production typevars -> typevars COMMA typevar
+
+State 14:
+typevars -> typevar . [ RPAREN COMMA ]
+-- On RPAREN reduce production typevars -> typevar
+-- On COMMA reduce production typevars -> typevar
+
+State 15:
+params -> typevar . [ LID ]
+-- On LID reduce production params -> typevar
+
+State 16:
+declaration -> TYPE params_and_set_current . LID EQUAL exprhs [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+declaration -> TYPE params_and_set_current . LID BINDS sorts EQUAL patrhs [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+-- On LID shift to state 17
+
+State 17:
+declaration -> TYPE params_and_set_current LID . EQUAL exprhs [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+declaration -> TYPE params_and_set_current LID . BINDS sorts EQUAL patrhs [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+-- On EQUAL shift to state 18
+-- On BINDS shift to state 117
+
+State 18:
+declaration -> TYPE params_and_set_current LID EQUAL . exprhs [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+-- On error shift to state 19
+-- On QUOTE shift to state 7
+-- On OUTER shift to state 20
+-- On OCAML shift to state 21
+-- On NEUTRAL shift to state 22
+-- On LPAREN shift to state 9
+-- On LBRACE shift to state 23
+-- On LANGLE shift to state 27
+-- On INNER shift to state 88
+-- On BAR shift to state 103
+-- On ATOM shift to state 89
+-- On typevar shift to state 15
+-- On params shift to state 92
+-- On expsummands shift to state 112
+-- On expsummand shift to state 114
+-- On exprhs shift to state 115
+-- On expfactors shift to state 116
+-- On expfactor shift to state 111
+-- On LID reduce production params -> 
+
+State 19:
+expfactor -> error . [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONTAINER BAR ]
+-- On error reduce production expfactor -> error
+-- On TYPE reduce production expfactor -> error
+-- On STAR reduce production expfactor -> error
+-- On SORT reduce production expfactor -> error
+-- On SEMICOLON reduce production expfactor -> error
+-- On RBRACE reduce production expfactor -> error
+-- On IDENTIFIER reduce production expfactor -> error
+-- On EOF reduce production expfactor -> error
+-- On CONTAINER reduce production expfactor -> error
+-- On BAR reduce production expfactor -> error
+
+State 20:
+expfactor -> OUTER . [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONTAINER BAR ]
+-- On error reduce production expfactor -> OUTER
+-- On TYPE reduce production expfactor -> OUTER
+-- On STAR reduce production expfactor -> OUTER
+-- On SORT reduce production expfactor -> OUTER
+-- On SEMICOLON reduce production expfactor -> OUTER
+-- On RBRACE reduce production expfactor -> OUTER
+-- On IDENTIFIER reduce production expfactor -> OUTER
+-- On EOF reduce production expfactor -> OUTER
+-- On CONTAINER reduce production expfactor -> OUTER
+-- On BAR reduce production expfactor -> OUTER
+
+State 21:
+expfactor -> OCAML . [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONTAINER BAR ]
+-- On error reduce production expfactor -> OCAML
+-- On TYPE reduce production expfactor -> OCAML
+-- On STAR reduce production expfactor -> OCAML
+-- On SORT reduce production expfactor -> OCAML
+-- On SEMICOLON reduce production expfactor -> OCAML
+-- On RBRACE reduce production expfactor -> OCAML
+-- On IDENTIFIER reduce production expfactor -> OCAML
+-- On EOF reduce production expfactor -> OCAML
+-- On CONTAINER reduce production expfactor -> OCAML
+-- On BAR reduce production expfactor -> OCAML
+
+State 22:
+expfactor -> NEUTRAL . [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONTAINER BAR ]
+-- On error reduce production expfactor -> NEUTRAL
+-- On TYPE reduce production expfactor -> NEUTRAL
+-- On STAR reduce production expfactor -> NEUTRAL
+-- On SORT reduce production expfactor -> NEUTRAL
+-- On SEMICOLON reduce production expfactor -> NEUTRAL
+-- On RBRACE reduce production expfactor -> NEUTRAL
+-- On IDENTIFIER reduce production expfactor -> NEUTRAL
+-- On EOF reduce production expfactor -> NEUTRAL
+-- On CONTAINER reduce production expfactor -> NEUTRAL
+-- On BAR reduce production expfactor -> NEUTRAL
+
+State 23:
+exprhs -> LBRACE . explfactors optional_semicolon RBRACE [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+-- On error shift to state 24
+-- On LID shift to state 25
+-- On explfactors shift to state 96
+-- On explfactor shift to state 102
+
+State 24:
+explfactor -> error . [ error SEMICOLON RBRACE ]
+-- On error reduce production explfactor -> error
+-- On SEMICOLON reduce production explfactor -> error
+-- On RBRACE reduce production explfactor -> error
+
+State 25:
+explfactor -> LID . COLON expfactor [ error SEMICOLON RBRACE ]
+-- On COLON shift to state 26
+
+State 26:
+explfactor -> LID COLON . expfactor [ error SEMICOLON RBRACE ]
+-- On error shift to state 19
+-- On QUOTE shift to state 7
+-- On OUTER shift to state 20
+-- On OCAML shift to state 21
+-- On NEUTRAL shift to state 22
+-- On LPAREN shift to state 9
+-- On LANGLE shift to state 27
+-- On INNER shift to state 88
+-- On ATOM shift to state 89
+-- On typevar shift to state 15
+-- On params shift to state 92
+-- On expfactor shift to state 95
+-- On LID reduce production params -> 
+
+State 27:
+expfactor -> LANGLE . params LID RANGLE [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONTAINER BAR ]
+expfactor -> LANGLE . LPAREN LID BINDS sorts RPAREN patrhs RANGLE [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONTAINER BAR ]
+expfactor -> LANGLE . error [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONTAINER BAR ]
+-- On error shift to state 28
+-- On QUOTE shift to state 7
+-- On LPAREN shift to state 29
+-- On typevar shift to state 15
+-- On params shift to state 85
+-- On LID reduce production params -> 
+
+State 28:
+expfactor -> LANGLE error . [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONTAINER BAR ]
+-- On error reduce production expfactor -> LANGLE error
+-- On TYPE reduce production expfactor -> LANGLE error
+-- On STAR reduce production expfactor -> LANGLE error
+-- On SORT reduce production expfactor -> LANGLE error
+-- On SEMICOLON reduce production expfactor -> LANGLE error
+-- On RBRACE reduce production expfactor -> LANGLE error
+-- On IDENTIFIER reduce production expfactor -> LANGLE error
+-- On EOF reduce production expfactor -> LANGLE error
+-- On CONTAINER reduce production expfactor -> LANGLE error
+-- On BAR reduce production expfactor -> LANGLE error
+
+State 29:
+expfactor -> LANGLE LPAREN . LID BINDS sorts RPAREN patrhs RANGLE [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONTAINER BAR ]
+params -> LPAREN . typevars RPAREN [ LID ]
+-- On QUOTE shift to state 7
+-- On LID shift to state 30
+-- On typevars shift to state 10
+-- On typevar shift to state 14
+
+State 30:
+expfactor -> LANGLE LPAREN LID . BINDS sorts RPAREN patrhs RANGLE [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONTAINER BAR ]
+-- On BINDS shift to state 31
+
+State 31:
+expfactor -> LANGLE LPAREN LID BINDS . sorts RPAREN patrhs RANGLE [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONTAINER BAR ]
+-- On LID shift to state 32
+-- On sorts shift to state 33
+
+State 32:
+sorts -> LID . [ RPAREN EQUAL COMMA ]
+-- On RPAREN reduce production sorts -> LID
+-- On EQUAL reduce production sorts -> LID
+-- On COMMA reduce production sorts -> LID
+
+State 33:
+expfactor -> LANGLE LPAREN LID BINDS sorts . RPAREN patrhs RANGLE [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONTAINER BAR ]
+sorts -> sorts . COMMA LID [ RPAREN COMMA ]
+-- On RPAREN shift to state 34
+-- On COMMA shift to state 83
+
+State 34:
+expfactor -> LANGLE LPAREN LID BINDS sorts RPAREN . patrhs RANGLE [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONTAINER BAR ]
+-- On error shift to state 35
+-- On QUOTE shift to state 7
+-- On OUTER shift to state 36
+-- On OCAML shift to state 37
+-- On NEUTRAL shift to state 38
+-- On LPAREN shift to state 9
+-- On LBRACE shift to state 39
+-- On LANGLE shift to state 43
+-- On INNER shift to state 44
+-- On BAR shift to state 68
+-- On ATOM shift to state 45
+-- On typevar shift to state 15
+-- On patsummands shift to state 77
+-- On patsummand shift to state 79
+-- On patrhs shift to state 80
+-- On patmodifier shift to state 48
+-- On patfactors shift to state 82
+-- On patfactor shift to state 76
+-- On params shift to state 59
+-- On LID reduce production params -> 
+
+State 35:
+patfactor -> error . [ error TYPE STAR SORT SEMICOLON RBRACE RANGLE IDENTIFIER EOF CONTAINER BAR ]
+-- On error reduce production patfactor -> error
+-- On TYPE reduce production patfactor -> error
+-- On STAR reduce production patfactor -> error
+-- On SORT reduce production patfactor -> error
+-- On SEMICOLON reduce production patfactor -> error
+-- On RBRACE reduce production patfactor -> error
+-- On RANGLE reduce production patfactor -> error
+-- On IDENTIFIER reduce production patfactor -> error
+-- On EOF reduce production patfactor -> error
+-- On CONTAINER reduce production patfactor -> error
+-- On BAR reduce production patfactor -> error
+
+State 36:
+patmodifier -> OUTER . [ error QUOTE LPAREN LID ]
+-- On error reduce production patmodifier -> OUTER
+-- On QUOTE reduce production patmodifier -> OUTER
+-- On LPAREN reduce production patmodifier -> OUTER
+-- On LID reduce production patmodifier -> OUTER
+
+State 37:
+patfactor -> OCAML . [ error TYPE STAR SORT SEMICOLON RBRACE RANGLE IDENTIFIER EOF CONTAINER BAR ]
+-- On error reduce production patfactor -> OCAML
+-- On TYPE reduce production patfactor -> OCAML
+-- On STAR reduce production patfactor -> OCAML
+-- On SORT reduce production patfactor -> OCAML
+-- On SEMICOLON reduce production patfactor -> OCAML
+-- On RBRACE reduce production patfactor -> OCAML
+-- On RANGLE reduce production patfactor -> OCAML
+-- On IDENTIFIER reduce production patfactor -> OCAML
+-- On EOF reduce production patfactor -> OCAML
+-- On CONTAINER reduce production patfactor -> OCAML
+-- On BAR reduce production patfactor -> OCAML
+
+State 38:
+patmodifier -> NEUTRAL . [ error QUOTE LPAREN LID ]
+-- On error reduce production patmodifier -> NEUTRAL
+-- On QUOTE reduce production patmodifier -> NEUTRAL
+-- On LPAREN reduce production patmodifier -> NEUTRAL
+-- On LID reduce production patmodifier -> NEUTRAL
+
+State 39:
+patrhs -> LBRACE . patlfactors RBRACE [ TYPE SORT RANGLE IDENTIFIER EOF CONTAINER ]
+-- On error shift to state 40
+-- On LID shift to state 41
+-- On patlfactors shift to state 62
+-- On patlfactor shift to state 67
+
+State 40:
+patlfactor -> error . [ error SEMICOLON RBRACE ]
+-- On error reduce production patlfactor -> error
+-- On SEMICOLON reduce production patlfactor -> error
+-- On RBRACE reduce production patlfactor -> error
+
+State 41:
+patlfactor -> LID . COLON patfactor [ error SEMICOLON RBRACE ]
+-- On COLON shift to state 42
+
+State 42:
+patlfactor -> LID COLON . patfactor [ error SEMICOLON RBRACE ]
+-- On error shift to state 35
+-- On QUOTE shift to state 7
+-- On OUTER shift to state 36
+-- On OCAML shift to state 37
+-- On NEUTRAL shift to state 38
+-- On LPAREN shift to state 9
+-- On LANGLE shift to state 43
+-- On INNER shift to state 44
+-- On ATOM shift to state 45
+-- On typevar shift to state 15
+-- On patmodifier shift to state 48
+-- On patfactor shift to state 58
+-- On params shift to state 59
+-- On LID reduce production params -> 
+
+State 43:
+patfactor -> LANGLE . [ error TYPE STAR SORT SEMICOLON RBRACE RANGLE IDENTIFIER EOF CONTAINER BAR ]
+-- On error reduce production patfactor -> LANGLE
+-- On TYPE reduce production patfactor -> LANGLE
+-- On STAR reduce production patfactor -> LANGLE
+-- On SORT reduce production patfactor -> LANGLE
+-- On SEMICOLON reduce production patfactor -> LANGLE
+-- On RBRACE reduce production patfactor -> LANGLE
+-- On RANGLE reduce production patfactor -> LANGLE
+-- On IDENTIFIER reduce production patfactor -> LANGLE
+-- On EOF reduce production patfactor -> LANGLE
+-- On CONTAINER reduce production patfactor -> LANGLE
+-- On BAR reduce production patfactor -> LANGLE
+
+State 44:
+patmodifier -> INNER . [ error QUOTE LPAREN LID ]
+-- On error reduce production patmodifier -> INNER
+-- On QUOTE reduce production patmodifier -> INNER
+-- On LPAREN reduce production patmodifier -> INNER
+-- On LID reduce production patmodifier -> INNER
+
+State 45:
+patfactor -> ATOM . LID [ error TYPE STAR SORT SEMICOLON RBRACE RANGLE IDENTIFIER EOF CONTAINER BAR ]
+patfactor -> ATOM . error [ error TYPE STAR SORT SEMICOLON RBRACE RANGLE IDENTIFIER EOF CONTAINER BAR ]
+-- On error shift to state 46
+-- On LID shift to state 47
+
+State 46:
+patfactor -> ATOM error . [ error TYPE STAR SORT SEMICOLON RBRACE RANGLE IDENTIFIER EOF CONTAINER BAR ]
+-- On error reduce production patfactor -> ATOM error
+-- On TYPE reduce production patfactor -> ATOM error
+-- On STAR reduce production patfactor -> ATOM error
+-- On SORT reduce production patfactor -> ATOM error
+-- On SEMICOLON reduce production patfactor -> ATOM error
+-- On RBRACE reduce production patfactor -> ATOM error
+-- On RANGLE reduce production patfactor -> ATOM error
+-- On IDENTIFIER reduce production patfactor -> ATOM error
+-- On EOF reduce production patfactor -> ATOM error
+-- On CONTAINER reduce production patfactor -> ATOM error
+-- On BAR reduce production patfactor -> ATOM error
+
+State 47:
+patfactor -> ATOM LID . [ error TYPE STAR SORT SEMICOLON RBRACE RANGLE IDENTIFIER EOF CONTAINER BAR ]
+-- On error reduce production patfactor -> ATOM LID
+-- On TYPE reduce production patfactor -> ATOM LID
+-- On STAR reduce production patfactor -> ATOM LID
+-- On SORT reduce production patfactor -> ATOM LID
+-- On SEMICOLON reduce production patfactor -> ATOM LID
+-- On RBRACE reduce production patfactor -> ATOM LID
+-- On RANGLE reduce production patfactor -> ATOM LID
+-- On IDENTIFIER reduce production patfactor -> ATOM LID
+-- On EOF reduce production patfactor -> ATOM LID
+-- On CONTAINER reduce production patfactor -> ATOM LID
+-- On BAR reduce production patfactor -> ATOM LID
+
+State 48:
+patfactor -> patmodifier . params LID container [ error TYPE STAR SORT SEMICOLON RBRACE RANGLE IDENTIFIER EOF CONTAINER BAR ]
+patfactor -> patmodifier . error [ error TYPE STAR SORT SEMICOLON RBRACE RANGLE IDENTIFIER EOF CONTAINER BAR ]
+-- On error shift to state 49
+-- On QUOTE shift to state 7
+-- On LPAREN shift to state 9
+-- On typevar shift to state 15
+-- On params shift to state 50
+-- On LID reduce production params -> 
+
+State 49:
+patfactor -> patmodifier error . [ error TYPE STAR SORT SEMICOLON RBRACE RANGLE IDENTIFIER EOF CONTAINER BAR ]
+-- On error reduce production patfactor -> patmodifier error
+-- On TYPE reduce production patfactor -> patmodifier error
+-- On STAR reduce production patfactor -> patmodifier error
+-- On SORT reduce production patfactor -> patmodifier error
+-- On SEMICOLON reduce production patfactor -> patmodifier error
+-- On RBRACE reduce production patfactor -> patmodifier error
+-- On RANGLE reduce production patfactor -> patmodifier error
+-- On IDENTIFIER reduce production patfactor -> patmodifier error
+-- On EOF reduce production patfactor -> patmodifier error
+-- On CONTAINER reduce production patfactor -> patmodifier error
+-- On BAR reduce production patfactor -> patmodifier error
+
+State 50:
+patfactor -> patmodifier params . LID container [ error TYPE STAR SORT SEMICOLON RBRACE RANGLE IDENTIFIER EOF CONTAINER BAR ]
+-- On LID shift to state 51
+
+State 51:
+patfactor -> patmodifier params LID . container [ error TYPE STAR SORT SEMICOLON RBRACE RANGLE IDENTIFIER EOF CONTAINER BAR ]
+-- On UID shift to state 52
+-- On LID shift to state 54
+-- On identifier shift to state 56
+-- On container shift to state 57
+-- On error reduce production container -> 
+-- On TYPE reduce production container -> 
+-- On STAR reduce production container -> 
+-- On SORT reduce production container -> 
+-- On SEMICOLON reduce production container -> 
+-- On RBRACE reduce production container -> 
+-- On RANGLE reduce production container -> 
+-- On IDENTIFIER reduce production container -> 
+-- On EOF reduce production container -> 
+-- On CONTAINER reduce production container -> 
+-- On BAR reduce production container -> 
+
+State 52:
+identifier -> UID . DOT identifier [ error TYPE STAR SORT SEMICOLON RBRACE RANGLE IDENTIFIER EOF CONTAINER BAR ]
+-- On DOT shift to state 53
+
+State 53:
+identifier -> UID DOT . identifier [ error TYPE STAR SORT SEMICOLON RBRACE RANGLE IDENTIFIER EOF CONTAINER BAR ]
+-- On UID shift to state 52
+-- On LID shift to state 54
+-- On identifier shift to state 55
+
+State 54:
+identifier -> LID . [ error TYPE STAR SORT SEMICOLON RBRACE RANGLE IDENTIFIER EOF CONTAINER BAR ]
+-- On error reduce production identifier -> LID
+-- On TYPE reduce production identifier -> LID
+-- On STAR reduce production identifier -> LID
+-- On SORT reduce production identifier -> LID
+-- On SEMICOLON reduce production identifier -> LID
+-- On RBRACE reduce production identifier -> LID
+-- On RANGLE reduce production identifier -> LID
+-- On IDENTIFIER reduce production identifier -> LID
+-- On EOF reduce production identifier -> LID
+-- On CONTAINER reduce production identifier -> LID
+-- On BAR reduce production identifier -> LID
+
+State 55:
+identifier -> UID DOT identifier . [ error TYPE STAR SORT SEMICOLON RBRACE RANGLE IDENTIFIER EOF CONTAINER BAR ]
+-- On error reduce production identifier -> UID DOT identifier
+-- On TYPE reduce production identifier -> UID DOT identifier
+-- On STAR reduce production identifier -> UID DOT identifier
+-- On SORT reduce production identifier -> UID DOT identifier
+-- On SEMICOLON reduce production identifier -> UID DOT identifier
+-- On RBRACE reduce production identifier -> UID DOT identifier
+-- On RANGLE reduce production identifier -> UID DOT identifier
+-- On IDENTIFIER reduce production identifier -> UID DOT identifier
+-- On EOF reduce production identifier -> UID DOT identifier
+-- On CONTAINER reduce production identifier -> UID DOT identifier
+-- On BAR reduce production identifier -> UID DOT identifier
+
+State 56:
+container -> identifier . [ error TYPE STAR SORT SEMICOLON RBRACE RANGLE IDENTIFIER EOF CONTAINER BAR ]
+-- On error reduce production container -> identifier
+-- On TYPE reduce production container -> identifier
+-- On STAR reduce production container -> identifier
+-- On SORT reduce production container -> identifier
+-- On SEMICOLON reduce production container -> identifier
+-- On RBRACE reduce production container -> identifier
+-- On RANGLE reduce production container -> identifier
+-- On IDENTIFIER reduce production container -> identifier
+-- On EOF reduce production container -> identifier
+-- On CONTAINER reduce production container -> identifier
+-- On BAR reduce production container -> identifier
+
+State 57:
+patfactor -> patmodifier params LID container . [ error TYPE STAR SORT SEMICOLON RBRACE RANGLE IDENTIFIER EOF CONTAINER BAR ]
+-- On error reduce production patfactor -> patmodifier params LID container
+-- On TYPE reduce production patfactor -> patmodifier params LID container
+-- On STAR reduce production patfactor -> patmodifier params LID container
+-- On SORT reduce production patfactor -> patmodifier params LID container
+-- On SEMICOLON reduce production patfactor -> patmodifier params LID container
+-- On RBRACE reduce production patfactor -> patmodifier params LID container
+-- On RANGLE reduce production patfactor -> patmodifier params LID container
+-- On IDENTIFIER reduce production patfactor -> patmodifier params LID container
+-- On EOF reduce production patfactor -> patmodifier params LID container
+-- On CONTAINER reduce production patfactor -> patmodifier params LID container
+-- On BAR reduce production patfactor -> patmodifier params LID container
+
+State 58:
+patlfactor -> LID COLON patfactor . [ error SEMICOLON RBRACE ]
+-- On error reduce production patlfactor -> LID COLON patfactor
+-- On SEMICOLON reduce production patlfactor -> LID COLON patfactor
+-- On RBRACE reduce production patlfactor -> LID COLON patfactor
+
+State 59:
+patfactor -> params . LID container [ error TYPE STAR SORT SEMICOLON RBRACE RANGLE IDENTIFIER EOF CONTAINER BAR ]
+-- On LID shift to state 60
+
+State 60:
+patfactor -> params LID . container [ error TYPE STAR SORT SEMICOLON RBRACE RANGLE IDENTIFIER EOF CONTAINER BAR ]
+-- On UID shift to state 52
+-- On LID shift to state 54
+-- On identifier shift to state 56
+-- On container shift to state 61
+-- On error reduce production container -> 
+-- On TYPE reduce production container -> 
+-- On STAR reduce production container -> 
+-- On SORT reduce production container -> 
+-- On SEMICOLON reduce production container -> 
+-- On RBRACE reduce production container -> 
+-- On RANGLE reduce production container -> 
+-- On IDENTIFIER reduce production container -> 
+-- On EOF reduce production container -> 
+-- On CONTAINER reduce production container -> 
+-- On BAR reduce production container -> 
+
+State 61:
+patfactor -> params LID container . [ error TYPE STAR SORT SEMICOLON RBRACE RANGLE IDENTIFIER EOF CONTAINER BAR ]
+-- On error reduce production patfactor -> params LID container
+-- On TYPE reduce production patfactor -> params LID container
+-- On STAR reduce production patfactor -> params LID container
+-- On SORT reduce production patfactor -> params LID container
+-- On SEMICOLON reduce production patfactor -> params LID container
+-- On RBRACE reduce production patfactor -> params LID container
+-- On RANGLE reduce production patfactor -> params LID container
+-- On IDENTIFIER reduce production patfactor -> params LID container
+-- On EOF reduce production patfactor -> params LID container
+-- On CONTAINER reduce production patfactor -> params LID container
+-- On BAR reduce production patfactor -> params LID container
+
+State 62:
+patlfactors -> patlfactors . SEMICOLON patlfactor [ error SEMICOLON RBRACE ]
+patlfactors -> patlfactors . error [ error SEMICOLON RBRACE ]
+patrhs -> LBRACE patlfactors . RBRACE [ TYPE SORT RANGLE IDENTIFIER EOF CONTAINER ]
+-- On error shift to state 63
+-- On SEMICOLON shift to state 64
+-- On RBRACE shift to state 66
+
+State 63:
+patlfactors -> patlfactors error . [ error SEMICOLON RBRACE ]
+-- On error reduce production patlfactors -> patlfactors error
+-- On SEMICOLON reduce production patlfactors -> patlfactors error
+-- On RBRACE reduce production patlfactors -> patlfactors error
+
+State 64:
+patlfactors -> patlfactors SEMICOLON . patlfactor [ error SEMICOLON RBRACE ]
+-- On error shift to state 40
+-- On LID shift to state 41
+-- On patlfactor shift to state 65
+
+State 65:
+patlfactors -> patlfactors SEMICOLON patlfactor . [ error SEMICOLON RBRACE ]
+-- On error reduce production patlfactors -> patlfactors SEMICOLON patlfactor
+-- On SEMICOLON reduce production patlfactors -> patlfactors SEMICOLON patlfactor
+-- On RBRACE reduce production patlfactors -> patlfactors SEMICOLON patlfactor
+
+State 66:
+patrhs -> LBRACE patlfactors RBRACE . [ TYPE SORT RANGLE IDENTIFIER EOF CONTAINER ]
+-- On TYPE reduce production patrhs -> LBRACE patlfactors RBRACE
+-- On SORT reduce production patrhs -> LBRACE patlfactors RBRACE
+-- On RANGLE reduce production patrhs -> LBRACE patlfactors RBRACE
+-- On IDENTIFIER reduce production patrhs -> LBRACE patlfactors RBRACE
+-- On EOF reduce production patrhs -> LBRACE patlfactors RBRACE
+-- On CONTAINER reduce production patrhs -> LBRACE patlfactors RBRACE
+
+State 67:
+patlfactors -> patlfactor . [ error SEMICOLON RBRACE ]
+-- On error reduce production patlfactors -> patlfactor
+-- On SEMICOLON reduce production patlfactors -> patlfactor
+-- On RBRACE reduce production patlfactors -> patlfactor
+
+State 68:
+patsummand -> BAR . UID [ TYPE SORT RANGLE IDENTIFIER EOF CONTAINER BAR ]
+patsummand -> BAR . UID OF patfactors [ TYPE SORT RANGLE IDENTIFIER EOF CONTAINER BAR ]
+patsummand -> BAR . error [ TYPE SORT RANGLE IDENTIFIER EOF CONTAINER BAR ]
+-- On error shift to state 69
+-- On UID shift to state 70
+
+State 69:
+patsummand -> BAR error . [ TYPE SORT RANGLE IDENTIFIER EOF CONTAINER BAR ]
+-- On TYPE reduce production patsummand -> BAR error
+-- On SORT reduce production patsummand -> BAR error
+-- On RANGLE reduce production patsummand -> BAR error
+-- On IDENTIFIER reduce production patsummand -> BAR error
+-- On EOF reduce production patsummand -> BAR error
+-- On CONTAINER reduce production patsummand -> BAR error
+-- On BAR reduce production patsummand -> BAR error
+
+State 70:
+patsummand -> BAR UID . [ TYPE SORT RANGLE IDENTIFIER EOF CONTAINER BAR ]
+patsummand -> BAR UID . OF patfactors [ TYPE SORT RANGLE IDENTIFIER EOF CONTAINER BAR ]
+-- On OF shift to state 71
+-- On TYPE reduce production patsummand -> BAR UID
+-- On SORT reduce production patsummand -> BAR UID
+-- On RANGLE reduce production patsummand -> BAR UID
+-- On IDENTIFIER reduce production patsummand -> BAR UID
+-- On EOF reduce production patsummand -> BAR UID
+-- On CONTAINER reduce production patsummand -> BAR UID
+-- On BAR reduce production patsummand -> BAR UID
+
+State 71:
+patsummand -> BAR UID OF . patfactors [ TYPE SORT RANGLE IDENTIFIER EOF CONTAINER BAR ]
+-- On error shift to state 35
+-- On QUOTE shift to state 7
+-- On OUTER shift to state 36
+-- On OCAML shift to state 37
+-- On NEUTRAL shift to state 38
+-- On LPAREN shift to state 9
+-- On LANGLE shift to state 43
+-- On INNER shift to state 44
+-- On ATOM shift to state 45
+-- On typevar shift to state 15
+-- On patmodifier shift to state 48
+-- On patfactors shift to state 72
+-- On patfactor shift to state 76
+-- On params shift to state 59
+-- On LID reduce production params -> 
+
+State 72:
+patfactors -> patfactors . STAR patfactor [ error TYPE STAR SORT RANGLE IDENTIFIER EOF CONTAINER BAR ]
+patfactors -> patfactors . error [ error TYPE STAR SORT RANGLE IDENTIFIER EOF CONTAINER BAR ]
+patsummand -> BAR UID OF patfactors . [ TYPE SORT RANGLE IDENTIFIER EOF CONTAINER BAR ]
+-- On error shift to state 73
+-- On STAR shift to state 74
+-- On TYPE reduce production patsummand -> BAR UID OF patfactors
+-- On SORT reduce production patsummand -> BAR UID OF patfactors
+-- On RANGLE reduce production patsummand -> BAR UID OF patfactors
+-- On IDENTIFIER reduce production patsummand -> BAR UID OF patfactors
+-- On EOF reduce production patsummand -> BAR UID OF patfactors
+-- On CONTAINER reduce production patsummand -> BAR UID OF patfactors
+-- On BAR reduce production patsummand -> BAR UID OF patfactors
+
+State 73:
+patfactors -> patfactors error . [ error TYPE STAR SORT RANGLE IDENTIFIER EOF CONTAINER BAR ]
+-- On error reduce production patfactors -> patfactors error
+-- On TYPE reduce production patfactors -> patfactors error
+-- On STAR reduce production patfactors -> patfactors error
+-- On SORT reduce production patfactors -> patfactors error
+-- On RANGLE reduce production patfactors -> patfactors error
+-- On IDENTIFIER reduce production patfactors -> patfactors error
+-- On EOF reduce production patfactors -> patfactors error
+-- On CONTAINER reduce production patfactors -> patfactors error
+-- On BAR reduce production patfactors -> patfactors error
+
+State 74:
+patfactors -> patfactors STAR . patfactor [ error TYPE STAR SORT RANGLE IDENTIFIER EOF CONTAINER BAR ]
+-- On error shift to state 35
+-- On QUOTE shift to state 7
+-- On OUTER shift to state 36
+-- On OCAML shift to state 37
+-- On NEUTRAL shift to state 38
+-- On LPAREN shift to state 9
+-- On LANGLE shift to state 43
+-- On INNER shift to state 44
+-- On ATOM shift to state 45
+-- On typevar shift to state 15
+-- On patmodifier shift to state 48
+-- On patfactor shift to state 75
+-- On params shift to state 59
+-- On LID reduce production params -> 
+
+State 75:
+patfactors -> patfactors STAR patfactor . [ error TYPE STAR SORT RANGLE IDENTIFIER EOF CONTAINER BAR ]
+-- On error reduce production patfactors -> patfactors STAR patfactor
+-- On TYPE reduce production patfactors -> patfactors STAR patfactor
+-- On STAR reduce production patfactors -> patfactors STAR patfactor
+-- On SORT reduce production patfactors -> patfactors STAR patfactor
+-- On RANGLE reduce production patfactors -> patfactors STAR patfactor
+-- On IDENTIFIER reduce production patfactors -> patfactors STAR patfactor
+-- On EOF reduce production patfactors -> patfactors STAR patfactor
+-- On CONTAINER reduce production patfactors -> patfactors STAR patfactor
+-- On BAR reduce production patfactors -> patfactors STAR patfactor
+
+State 76:
+patfactors -> patfactor . [ error TYPE STAR SORT RANGLE IDENTIFIER EOF CONTAINER BAR ]
+-- On error reduce production patfactors -> patfactor
+-- On TYPE reduce production patfactors -> patfactor
+-- On STAR reduce production patfactors -> patfactor
+-- On SORT reduce production patfactors -> patfactor
+-- On RANGLE reduce production patfactors -> patfactor
+-- On IDENTIFIER reduce production patfactors -> patfactor
+-- On EOF reduce production patfactors -> patfactor
+-- On CONTAINER reduce production patfactors -> patfactor
+-- On BAR reduce production patfactors -> patfactor
+
+State 77:
+patrhs -> patsummands . [ TYPE SORT RANGLE IDENTIFIER EOF CONTAINER ]
+patsummands -> patsummands . patsummand [ TYPE SORT RANGLE IDENTIFIER EOF CONTAINER BAR ]
+-- On BAR shift to state 68
+-- On patsummand shift to state 78
+-- On TYPE reduce production patrhs -> patsummands
+-- On SORT reduce production patrhs -> patsummands
+-- On RANGLE reduce production patrhs -> patsummands
+-- On IDENTIFIER reduce production patrhs -> patsummands
+-- On EOF reduce production patrhs -> patsummands
+-- On CONTAINER reduce production patrhs -> patsummands
+
+State 78:
+patsummands -> patsummands patsummand . [ TYPE SORT RANGLE IDENTIFIER EOF CONTAINER BAR ]
+-- On TYPE reduce production patsummands -> patsummands patsummand
+-- On SORT reduce production patsummands -> patsummands patsummand
+-- On RANGLE reduce production patsummands -> patsummands patsummand
+-- On IDENTIFIER reduce production patsummands -> patsummands patsummand
+-- On EOF reduce production patsummands -> patsummands patsummand
+-- On CONTAINER reduce production patsummands -> patsummands patsummand
+-- On BAR reduce production patsummands -> patsummands patsummand
+
+State 79:
+patsummands -> patsummand . [ TYPE SORT RANGLE IDENTIFIER EOF CONTAINER BAR ]
+-- On TYPE reduce production patsummands -> patsummand
+-- On SORT reduce production patsummands -> patsummand
+-- On RANGLE reduce production patsummands -> patsummand
+-- On IDENTIFIER reduce production patsummands -> patsummand
+-- On EOF reduce production patsummands -> patsummand
+-- On CONTAINER reduce production patsummands -> patsummand
+-- On BAR reduce production patsummands -> patsummand
+
+State 80:
+expfactor -> LANGLE LPAREN LID BINDS sorts RPAREN patrhs . RANGLE [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONTAINER BAR ]
+-- On RANGLE shift to state 81
+
+State 81:
+expfactor -> LANGLE LPAREN LID BINDS sorts RPAREN patrhs RANGLE . [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONTAINER BAR ]
+-- On error reduce production expfactor -> LANGLE LPAREN LID BINDS sorts RPAREN patrhs RANGLE
+-- On TYPE reduce production expfactor -> LANGLE LPAREN LID BINDS sorts RPAREN patrhs RANGLE
+-- On STAR reduce production expfactor -> LANGLE LPAREN LID BINDS sorts RPAREN patrhs RANGLE
+-- On SORT reduce production expfactor -> LANGLE LPAREN LID BINDS sorts RPAREN patrhs RANGLE
+-- On SEMICOLON reduce production expfactor -> LANGLE LPAREN LID BINDS sorts RPAREN patrhs RANGLE
+-- On RBRACE reduce production expfactor -> LANGLE LPAREN LID BINDS sorts RPAREN patrhs RANGLE
+-- On IDENTIFIER reduce production expfactor -> LANGLE LPAREN LID BINDS sorts RPAREN patrhs RANGLE
+-- On EOF reduce production expfactor -> LANGLE LPAREN LID BINDS sorts RPAREN patrhs RANGLE
+-- On CONTAINER reduce production expfactor -> LANGLE LPAREN LID BINDS sorts RPAREN patrhs RANGLE
+-- On BAR reduce production expfactor -> LANGLE LPAREN LID BINDS sorts RPAREN patrhs RANGLE
+
+State 82:
+patfactors -> patfactors . STAR patfactor [ error TYPE STAR SORT RANGLE IDENTIFIER EOF CONTAINER ]
+patfactors -> patfactors . error [ error TYPE STAR SORT RANGLE IDENTIFIER EOF CONTAINER ]
+patrhs -> patfactors . [ TYPE SORT RANGLE IDENTIFIER EOF CONTAINER ]
+-- On error shift to state 73
+-- On STAR shift to state 74
+-- On TYPE reduce production patrhs -> patfactors
+-- On SORT reduce production patrhs -> patfactors
+-- On RANGLE reduce production patrhs -> patfactors
+-- On IDENTIFIER reduce production patrhs -> patfactors
+-- On EOF reduce production patrhs -> patfactors
+-- On CONTAINER reduce production patrhs -> patfactors
+
+State 83:
+sorts -> sorts COMMA . LID [ RPAREN EQUAL COMMA ]
+-- On LID shift to state 84
+
+State 84:
+sorts -> sorts COMMA LID . [ RPAREN EQUAL COMMA ]
+-- On RPAREN reduce production sorts -> sorts COMMA LID
+-- On EQUAL reduce production sorts -> sorts COMMA LID
+-- On COMMA reduce production sorts -> sorts COMMA LID
+
+State 85:
+expfactor -> LANGLE params . LID RANGLE [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONTAINER BAR ]
+-- On LID shift to state 86
+
+State 86:
+expfactor -> LANGLE params LID . RANGLE [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONTAINER BAR ]
+-- On RANGLE shift to state 87
+
+State 87:
+expfactor -> LANGLE params LID RANGLE . [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONTAINER BAR ]
+-- On error reduce production expfactor -> LANGLE params LID RANGLE
+-- On TYPE reduce production expfactor -> LANGLE params LID RANGLE
+-- On STAR reduce production expfactor -> LANGLE params LID RANGLE
+-- On SORT reduce production expfactor -> LANGLE params LID RANGLE
+-- On SEMICOLON reduce production expfactor -> LANGLE params LID RANGLE
+-- On RBRACE reduce production expfactor -> LANGLE params LID RANGLE
+-- On IDENTIFIER reduce production expfactor -> LANGLE params LID RANGLE
+-- On EOF reduce production expfactor -> LANGLE params LID RANGLE
+-- On CONTAINER reduce production expfactor -> LANGLE params LID RANGLE
+-- On BAR reduce production expfactor -> LANGLE params LID RANGLE
+
+State 88:
+expfactor -> INNER . [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONTAINER BAR ]
+-- On error reduce production expfactor -> INNER
+-- On TYPE reduce production expfactor -> INNER
+-- On STAR reduce production expfactor -> INNER
+-- On SORT reduce production expfactor -> INNER
+-- On SEMICOLON reduce production expfactor -> INNER
+-- On RBRACE reduce production expfactor -> INNER
+-- On IDENTIFIER reduce production expfactor -> INNER
+-- On EOF reduce production expfactor -> INNER
+-- On CONTAINER reduce production expfactor -> INNER
+-- On BAR reduce production expfactor -> INNER
+
+State 89:
+expfactor -> ATOM . LID [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONTAINER BAR ]
+expfactor -> ATOM . error [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONTAINER BAR ]
+-- On error shift to state 90
+-- On LID shift to state 91
+
+State 90:
+expfactor -> ATOM error . [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONTAINER BAR ]
+-- On error reduce production expfactor -> ATOM error
+-- On TYPE reduce production expfactor -> ATOM error
+-- On STAR reduce production expfactor -> ATOM error
+-- On SORT reduce production expfactor -> ATOM error
+-- On SEMICOLON reduce production expfactor -> ATOM error
+-- On RBRACE reduce production expfactor -> ATOM error
+-- On IDENTIFIER reduce production expfactor -> ATOM error
+-- On EOF reduce production expfactor -> ATOM error
+-- On CONTAINER reduce production expfactor -> ATOM error
+-- On BAR reduce production expfactor -> ATOM error
+
+State 91:
+expfactor -> ATOM LID . [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONTAINER BAR ]
+-- On error reduce production expfactor -> ATOM LID
+-- On TYPE reduce production expfactor -> ATOM LID
+-- On STAR reduce production expfactor -> ATOM LID
+-- On SORT reduce production expfactor -> ATOM LID
+-- On SEMICOLON reduce production expfactor -> ATOM LID
+-- On RBRACE reduce production expfactor -> ATOM LID
+-- On IDENTIFIER reduce production expfactor -> ATOM LID
+-- On EOF reduce production expfactor -> ATOM LID
+-- On CONTAINER reduce production expfactor -> ATOM LID
+-- On BAR reduce production expfactor -> ATOM LID
+
+State 92:
+expfactor -> params . LID container [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONTAINER BAR ]
+-- On LID shift to state 93
+
+State 93:
+expfactor -> params LID . container [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONTAINER BAR ]
+-- On UID shift to state 52
+-- On LID shift to state 54
+-- On identifier shift to state 56
+-- On container shift to state 94
+-- On error reduce production container -> 
+-- On TYPE reduce production container -> 
+-- On STAR reduce production container -> 
+-- On SORT reduce production container -> 
+-- On SEMICOLON reduce production container -> 
+-- On RBRACE reduce production container -> 
+-- On IDENTIFIER reduce production container -> 
+-- On EOF reduce production container -> 
+-- On CONTAINER reduce production container -> 
+-- On BAR reduce production container -> 
+
+State 94:
+expfactor -> params LID container . [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONTAINER BAR ]
+-- On error reduce production expfactor -> params LID container
+-- On TYPE reduce production expfactor -> params LID container
+-- On STAR reduce production expfactor -> params LID container
+-- On SORT reduce production expfactor -> params LID container
+-- On SEMICOLON reduce production expfactor -> params LID container
+-- On RBRACE reduce production expfactor -> params LID container
+-- On IDENTIFIER reduce production expfactor -> params LID container
+-- On EOF reduce production expfactor -> params LID container
+-- On CONTAINER reduce production expfactor -> params LID container
+-- On BAR reduce production expfactor -> params LID container
+
+State 95:
+explfactor -> LID COLON expfactor . [ error SEMICOLON RBRACE ]
+-- On error reduce production explfactor -> LID COLON expfactor
+-- On SEMICOLON reduce production explfactor -> LID COLON expfactor
+-- On RBRACE reduce production explfactor -> LID COLON expfactor
+
+State 96:
+explfactors -> explfactors . SEMICOLON explfactor [ error SEMICOLON RBRACE ]
+explfactors -> explfactors . error [ error SEMICOLON RBRACE ]
+exprhs -> LBRACE explfactors . optional_semicolon RBRACE [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+-- On error shift to state 97
+-- On SEMICOLON shift to state 98
+-- On optional_semicolon shift to state 100
+-- On RBRACE reduce production optional_semicolon -> 
+
+State 97:
+explfactors -> explfactors error . [ error SEMICOLON RBRACE ]
+-- On error reduce production explfactors -> explfactors error
+-- On SEMICOLON reduce production explfactors -> explfactors error
+-- On RBRACE reduce production explfactors -> explfactors error
+
+State 98:
+explfactors -> explfactors SEMICOLON . explfactor [ error SEMICOLON RBRACE ]
+optional_semicolon -> SEMICOLON . [ RBRACE ]
+-- On error shift to state 24
+-- On LID shift to state 25
+-- On explfactor shift to state 99
+-- On RBRACE reduce production optional_semicolon -> SEMICOLON
+
+State 99:
+explfactors -> explfactors SEMICOLON explfactor . [ error SEMICOLON RBRACE ]
+-- On error reduce production explfactors -> explfactors SEMICOLON explfactor
+-- On SEMICOLON reduce production explfactors -> explfactors SEMICOLON explfactor
+-- On RBRACE reduce production explfactors -> explfactors SEMICOLON explfactor
+
+State 100:
+exprhs -> LBRACE explfactors optional_semicolon . RBRACE [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+-- On RBRACE shift to state 101
+
+State 101:
+exprhs -> LBRACE explfactors optional_semicolon RBRACE . [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+-- On TYPE reduce production exprhs -> LBRACE explfactors optional_semicolon RBRACE
+-- On SORT reduce production exprhs -> LBRACE explfactors optional_semicolon RBRACE
+-- On IDENTIFIER reduce production exprhs -> LBRACE explfactors optional_semicolon RBRACE
+-- On EOF reduce production exprhs -> LBRACE explfactors optional_semicolon RBRACE
+-- On CONTAINER reduce production exprhs -> LBRACE explfactors optional_semicolon RBRACE
+
+State 102:
+explfactors -> explfactor . [ error SEMICOLON RBRACE ]
+-- On error reduce production explfactors -> explfactor
+-- On SEMICOLON reduce production explfactors -> explfactor
+-- On RBRACE reduce production explfactors -> explfactor
+
+State 103:
+expsummand -> BAR . UID [ TYPE SORT IDENTIFIER EOF CONTAINER BAR ]
+expsummand -> BAR . UID OF expfactors [ TYPE SORT IDENTIFIER EOF CONTAINER BAR ]
+expsummand -> BAR . error [ TYPE SORT IDENTIFIER EOF CONTAINER BAR ]
+-- On error shift to state 104
+-- On UID shift to state 105
+
+State 104:
+expsummand -> BAR error . [ TYPE SORT IDENTIFIER EOF CONTAINER BAR ]
+-- On TYPE reduce production expsummand -> BAR error
+-- On SORT reduce production expsummand -> BAR error
+-- On IDENTIFIER reduce production expsummand -> BAR error
+-- On EOF reduce production expsummand -> BAR error
+-- On CONTAINER reduce production expsummand -> BAR error
+-- On BAR reduce production expsummand -> BAR error
+
+State 105:
+expsummand -> BAR UID . [ TYPE SORT IDENTIFIER EOF CONTAINER BAR ]
+expsummand -> BAR UID . OF expfactors [ TYPE SORT IDENTIFIER EOF CONTAINER BAR ]
+-- On OF shift to state 106
+-- On TYPE reduce production expsummand -> BAR UID
+-- On SORT reduce production expsummand -> BAR UID
+-- On IDENTIFIER reduce production expsummand -> BAR UID
+-- On EOF reduce production expsummand -> BAR UID
+-- On CONTAINER reduce production expsummand -> BAR UID
+-- On BAR reduce production expsummand -> BAR UID
+
+State 106:
+expsummand -> BAR UID OF . expfactors [ TYPE SORT IDENTIFIER EOF CONTAINER BAR ]
+-- On error shift to state 19
+-- On QUOTE shift to state 7
+-- On OUTER shift to state 20
+-- On OCAML shift to state 21
+-- On NEUTRAL shift to state 22
+-- On LPAREN shift to state 9
+-- On LANGLE shift to state 27
+-- On INNER shift to state 88
+-- On ATOM shift to state 89
+-- On typevar shift to state 15
+-- On params shift to state 92
+-- On expfactors shift to state 107
+-- On expfactor shift to state 111
+-- On LID reduce production params -> 
+
+State 107:
+expfactors -> expfactors . STAR expfactor [ error TYPE STAR SORT IDENTIFIER EOF CONTAINER BAR ]
+expfactors -> expfactors . error [ error TYPE STAR SORT IDENTIFIER EOF CONTAINER BAR ]
+expsummand -> BAR UID OF expfactors . [ TYPE SORT IDENTIFIER EOF CONTAINER BAR ]
+-- On error shift to state 108
+-- On STAR shift to state 109
+-- On TYPE reduce production expsummand -> BAR UID OF expfactors
+-- On SORT reduce production expsummand -> BAR UID OF expfactors
+-- On IDENTIFIER reduce production expsummand -> BAR UID OF expfactors
+-- On EOF reduce production expsummand -> BAR UID OF expfactors
+-- On CONTAINER reduce production expsummand -> BAR UID OF expfactors
+-- On BAR reduce production expsummand -> BAR UID OF expfactors
+
+State 108:
+expfactors -> expfactors error . [ error TYPE STAR SORT IDENTIFIER EOF CONTAINER BAR ]
+-- On error reduce production expfactors -> expfactors error
+-- On TYPE reduce production expfactors -> expfactors error
+-- On STAR reduce production expfactors -> expfactors error
+-- On SORT reduce production expfactors -> expfactors error
+-- On IDENTIFIER reduce production expfactors -> expfactors error
+-- On EOF reduce production expfactors -> expfactors error
+-- On CONTAINER reduce production expfactors -> expfactors error
+-- On BAR reduce production expfactors -> expfactors error
+
+State 109:
+expfactors -> expfactors STAR . expfactor [ error TYPE STAR SORT IDENTIFIER EOF CONTAINER BAR ]
+-- On error shift to state 19
+-- On QUOTE shift to state 7
+-- On OUTER shift to state 20
+-- On OCAML shift to state 21
+-- On NEUTRAL shift to state 22
+-- On LPAREN shift to state 9
+-- On LANGLE shift to state 27
+-- On INNER shift to state 88
+-- On ATOM shift to state 89
+-- On typevar shift to state 15
+-- On params shift to state 92
+-- On expfactor shift to state 110
+-- On LID reduce production params -> 
+
+State 110:
+expfactors -> expfactors STAR expfactor . [ error TYPE STAR SORT IDENTIFIER EOF CONTAINER BAR ]
+-- On error reduce production expfactors -> expfactors STAR expfactor
+-- On TYPE reduce production expfactors -> expfactors STAR expfactor
+-- On STAR reduce production expfactors -> expfactors STAR expfactor
+-- On SORT reduce production expfactors -> expfactors STAR expfactor
+-- On IDENTIFIER reduce production expfactors -> expfactors STAR expfactor
+-- On EOF reduce production expfactors -> expfactors STAR expfactor
+-- On CONTAINER reduce production expfactors -> expfactors STAR expfactor
+-- On BAR reduce production expfactors -> expfactors STAR expfactor
+
+State 111:
+expfactors -> expfactor . [ error TYPE STAR SORT IDENTIFIER EOF CONTAINER BAR ]
+-- On error reduce production expfactors -> expfactor
+-- On TYPE reduce production expfactors -> expfactor
+-- On STAR reduce production expfactors -> expfactor
+-- On SORT reduce production expfactors -> expfactor
+-- On IDENTIFIER reduce production expfactors -> expfactor
+-- On EOF reduce production expfactors -> expfactor
+-- On CONTAINER reduce production expfactors -> expfactor
+-- On BAR reduce production expfactors -> expfactor
+
+State 112:
+exprhs -> expsummands . [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+expsummands -> expsummands . expsummand [ TYPE SORT IDENTIFIER EOF CONTAINER BAR ]
+-- On BAR shift to state 103
+-- On expsummand shift to state 113
+-- On TYPE reduce production exprhs -> expsummands
+-- On SORT reduce production exprhs -> expsummands
+-- On IDENTIFIER reduce production exprhs -> expsummands
+-- On EOF reduce production exprhs -> expsummands
+-- On CONTAINER reduce production exprhs -> expsummands
+
+State 113:
+expsummands -> expsummands expsummand . [ TYPE SORT IDENTIFIER EOF CONTAINER BAR ]
+-- On TYPE reduce production expsummands -> expsummands expsummand
+-- On SORT reduce production expsummands -> expsummands expsummand
+-- On IDENTIFIER reduce production expsummands -> expsummands expsummand
+-- On EOF reduce production expsummands -> expsummands expsummand
+-- On CONTAINER reduce production expsummands -> expsummands expsummand
+-- On BAR reduce production expsummands -> expsummands expsummand
+
+State 114:
+expsummands -> expsummand . [ TYPE SORT IDENTIFIER EOF CONTAINER BAR ]
+-- On TYPE reduce production expsummands -> expsummand
+-- On SORT reduce production expsummands -> expsummand
+-- On IDENTIFIER reduce production expsummands -> expsummand
+-- On EOF reduce production expsummands -> expsummand
+-- On CONTAINER reduce production expsummands -> expsummand
+-- On BAR reduce production expsummands -> expsummand
+
+State 115:
+declaration -> TYPE params_and_set_current LID EQUAL exprhs . [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+-- On TYPE reduce production declaration -> TYPE params_and_set_current LID EQUAL exprhs
+-- On SORT reduce production declaration -> TYPE params_and_set_current LID EQUAL exprhs
+-- On IDENTIFIER reduce production declaration -> TYPE params_and_set_current LID EQUAL exprhs
+-- On EOF reduce production declaration -> TYPE params_and_set_current LID EQUAL exprhs
+-- On CONTAINER reduce production declaration -> TYPE params_and_set_current LID EQUAL exprhs
+
+State 116:
+expfactors -> expfactors . STAR expfactor [ error TYPE STAR SORT IDENTIFIER EOF CONTAINER ]
+expfactors -> expfactors . error [ error TYPE STAR SORT IDENTIFIER EOF CONTAINER ]
+exprhs -> expfactors . [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+-- On error shift to state 108
+-- On STAR shift to state 109
+-- On TYPE reduce production exprhs -> expfactors
+-- On SORT reduce production exprhs -> expfactors
+-- On IDENTIFIER reduce production exprhs -> expfactors
+-- On EOF reduce production exprhs -> expfactors
+-- On CONTAINER reduce production exprhs -> expfactors
+
+State 117:
+declaration -> TYPE params_and_set_current LID BINDS . sorts EQUAL patrhs [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+-- On LID shift to state 32
+-- On sorts shift to state 118
+
+State 118:
+declaration -> TYPE params_and_set_current LID BINDS sorts . EQUAL patrhs [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+sorts -> sorts . COMMA LID [ EQUAL COMMA ]
+-- On EQUAL shift to state 119
+-- On COMMA shift to state 83
+
+State 119:
+declaration -> TYPE params_and_set_current LID BINDS sorts EQUAL . patrhs [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+-- On error shift to state 35
+-- On QUOTE shift to state 7
+-- On OUTER shift to state 36
+-- On OCAML shift to state 37
+-- On NEUTRAL shift to state 38
+-- On LPAREN shift to state 9
+-- On LBRACE shift to state 39
+-- On LANGLE shift to state 43
+-- On INNER shift to state 44
+-- On BAR shift to state 68
+-- On ATOM shift to state 45
+-- On typevar shift to state 15
+-- On patsummands shift to state 77
+-- On patsummand shift to state 79
+-- On patrhs shift to state 120
+-- On patmodifier shift to state 48
+-- On patfactors shift to state 82
+-- On patfactor shift to state 76
+-- On params shift to state 59
+-- On LID reduce production params -> 
+
+State 120:
+declaration -> TYPE params_and_set_current LID BINDS sorts EQUAL patrhs . [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+-- On TYPE reduce production declaration -> TYPE params_and_set_current LID BINDS sorts EQUAL patrhs
+-- On SORT reduce production declaration -> TYPE params_and_set_current LID BINDS sorts EQUAL patrhs
+-- On IDENTIFIER reduce production declaration -> TYPE params_and_set_current LID BINDS sorts EQUAL patrhs
+-- On EOF reduce production declaration -> TYPE params_and_set_current LID BINDS sorts EQUAL patrhs
+-- On CONTAINER reduce production declaration -> TYPE params_and_set_current LID BINDS sorts EQUAL patrhs
+
+State 121:
+params_and_set_current -> params . [ LID ]
+-- On LID reduce production params_and_set_current -> params
+
+State 122:
+declaration -> SORT . LID [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+declaration -> SORT . error [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+-- On error shift to state 123
+-- On LID shift to state 124
+
+State 123:
+declaration -> SORT error . [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+-- On TYPE reduce production declaration -> SORT error
+-- On SORT reduce production declaration -> SORT error
+-- On IDENTIFIER reduce production declaration -> SORT error
+-- On EOF reduce production declaration -> SORT error
+-- On CONTAINER reduce production declaration -> SORT error
+
+State 124:
+declaration -> SORT LID . [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+-- On TYPE reduce production declaration -> SORT LID
+-- On SORT reduce production declaration -> SORT LID
+-- On IDENTIFIER reduce production declaration -> SORT LID
+-- On EOF reduce production declaration -> SORT LID
+-- On CONTAINER reduce production declaration -> SORT LID
+
+State 125:
+declaration -> IDENTIFIER . MODULE UID [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+declaration -> IDENTIFIER . error [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+-- On error shift to state 126
+-- On MODULE shift to state 127
+
+State 126:
+declaration -> IDENTIFIER error . [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+-- On TYPE reduce production declaration -> IDENTIFIER error
+-- On SORT reduce production declaration -> IDENTIFIER error
+-- On IDENTIFIER reduce production declaration -> IDENTIFIER error
+-- On EOF reduce production declaration -> IDENTIFIER error
+-- On CONTAINER reduce production declaration -> IDENTIFIER error
+
+State 127:
+declaration -> IDENTIFIER MODULE . UID [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+-- On UID shift to state 128
+
+State 128:
+declaration -> IDENTIFIER MODULE UID . [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+-- On TYPE reduce production declaration -> IDENTIFIER MODULE UID
+-- On SORT reduce production declaration -> IDENTIFIER MODULE UID
+-- On IDENTIFIER reduce production declaration -> IDENTIFIER MODULE UID
+-- On EOF reduce production declaration -> IDENTIFIER MODULE UID
+-- On CONTAINER reduce production declaration -> IDENTIFIER MODULE UID
+
+State 129:
+phrase -> prologue declarations EOF . [ # ]
+-- On # reduce production phrase -> prologue declarations EOF
+
+State 130:
+declaration -> CONTAINER . identifier WITH identifier AND identifier [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+declaration -> CONTAINER . error [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+-- On error shift to state 131
+-- On UID shift to state 132
+-- On LID shift to state 134
+-- On identifier shift to state 136
+
+State 131:
+declaration -> CONTAINER error . [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+-- On TYPE reduce production declaration -> CONTAINER error
+-- On SORT reduce production declaration -> CONTAINER error
+-- On IDENTIFIER reduce production declaration -> CONTAINER error
+-- On EOF reduce production declaration -> CONTAINER error
+-- On CONTAINER reduce production declaration -> CONTAINER error
+
+State 132:
+identifier -> UID . DOT identifier [ WITH TYPE SORT IDENTIFIER EOF CONTAINER AND ]
+-- On DOT shift to state 133
+
+State 133:
+identifier -> UID DOT . identifier [ WITH TYPE SORT IDENTIFIER EOF CONTAINER AND ]
+-- On UID shift to state 132
+-- On LID shift to state 134
+-- On identifier shift to state 135
+
+State 134:
+identifier -> LID . [ WITH TYPE SORT IDENTIFIER EOF CONTAINER AND ]
+-- On WITH reduce production identifier -> LID
+-- On TYPE reduce production identifier -> LID
+-- On SORT reduce production identifier -> LID
+-- On IDENTIFIER reduce production identifier -> LID
+-- On EOF reduce production identifier -> LID
+-- On CONTAINER reduce production identifier -> LID
+-- On AND reduce production identifier -> LID
+
+State 135:
+identifier -> UID DOT identifier . [ WITH TYPE SORT IDENTIFIER EOF CONTAINER AND ]
+-- On WITH reduce production identifier -> UID DOT identifier
+-- On TYPE reduce production identifier -> UID DOT identifier
+-- On SORT reduce production identifier -> UID DOT identifier
+-- On IDENTIFIER reduce production identifier -> UID DOT identifier
+-- On EOF reduce production identifier -> UID DOT identifier
+-- On CONTAINER reduce production identifier -> UID DOT identifier
+-- On AND reduce production identifier -> UID DOT identifier
+
+State 136:
+declaration -> CONTAINER identifier . WITH identifier AND identifier [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+-- On WITH shift to state 137
+
+State 137:
+declaration -> CONTAINER identifier WITH . identifier AND identifier [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+-- On UID shift to state 132
+-- On LID shift to state 134
+-- On identifier shift to state 138
+
+State 138:
+declaration -> CONTAINER identifier WITH identifier . AND identifier [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+-- On AND shift to state 139
+
+State 139:
+declaration -> CONTAINER identifier WITH identifier AND . identifier [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+-- On UID shift to state 132
+-- On LID shift to state 134
+-- On identifier shift to state 140
+
+State 140:
+declaration -> CONTAINER identifier WITH identifier AND identifier . [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+-- On TYPE reduce production declaration -> CONTAINER identifier WITH identifier AND identifier
+-- On SORT reduce production declaration -> CONTAINER identifier WITH identifier AND identifier
+-- On IDENTIFIER reduce production declaration -> CONTAINER identifier WITH identifier AND identifier
+-- On EOF reduce production declaration -> CONTAINER identifier WITH identifier AND identifier
+-- On CONTAINER reduce production declaration -> CONTAINER identifier WITH identifier AND identifier
+
+State 141:
+declarations -> declarations declaration . [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+-- On TYPE reduce production declarations -> declarations declaration
+-- On SORT reduce production declarations -> declarations declaration
+-- On IDENTIFIER reduce production declarations -> declarations declaration
+-- On EOF reduce production declarations -> declarations declaration
+-- On CONTAINER reduce production declarations -> declarations declaration
+
+State 142:
+phrase' -> phrase . [ # ]
+-- On # accept phrase
+

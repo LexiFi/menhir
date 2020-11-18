@@ -1,0 +1,396 @@
+State 0:
+main' -> . main [ # ]
+-- On TokPrint shift to state 1
+-- On TokPercentages shift to state 5
+-- On TokLeftParen shift to state 8
+-- On TokLeftBrack shift to state 7
+-- On TokInt shift to state 9
+-- On TokId shift to state 10
+-- On TokFloat shift to state 11
+-- On TokAverage shift to state 12
+-- On multi shift to state 34
+-- On main shift to state 35
+-- On item_result shift to state 16
+-- On item shift to state 36
+-- On expr_list shift to state 37
+-- On expr shift to state 41
+
+State 1:
+item_result -> TokPrint . TokLeftParen TokString TokRightParen [ TokSemi TokRightParen TokRightBrack TokPlus TokMult TokMinus TokEof TokDiv TokComma ]
+-- On TokLeftParen shift to state 2
+
+State 2:
+item_result -> TokPrint TokLeftParen . TokString TokRightParen [ TokSemi TokRightParen TokRightBrack TokPlus TokMult TokMinus TokEof TokDiv TokComma ]
+-- On TokString shift to state 3
+
+State 3:
+item_result -> TokPrint TokLeftParen TokString . TokRightParen [ TokSemi TokRightParen TokRightBrack TokPlus TokMult TokMinus TokEof TokDiv TokComma ]
+-- On TokRightParen shift to state 4
+
+State 4:
+item_result -> TokPrint TokLeftParen TokString TokRightParen . [ TokSemi TokRightParen TokRightBrack TokPlus TokMult TokMinus TokEof TokDiv TokComma ]
+-- On TokSemi reduce production item_result -> TokPrint TokLeftParen TokString TokRightParen
+-- On TokRightParen reduce production item_result -> TokPrint TokLeftParen TokString TokRightParen
+-- On TokRightBrack reduce production item_result -> TokPrint TokLeftParen TokString TokRightParen
+-- On TokPlus reduce production item_result -> TokPrint TokLeftParen TokString TokRightParen
+-- On TokMult reduce production item_result -> TokPrint TokLeftParen TokString TokRightParen
+-- On TokMinus reduce production item_result -> TokPrint TokLeftParen TokString TokRightParen
+-- On TokEof reduce production item_result -> TokPrint TokLeftParen TokString TokRightParen
+-- On TokDiv reduce production item_result -> TokPrint TokLeftParen TokString TokRightParen
+-- On TokComma reduce production item_result -> TokPrint TokLeftParen TokString TokRightParen
+
+State 5:
+multi -> TokPercentages . TokLeftParen multi TokRightParen [ TokSemi TokRightParen TokEof ]
+-- On TokLeftParen shift to state 6
+
+State 6:
+multi -> TokPercentages TokLeftParen . multi TokRightParen [ TokSemi TokRightParen TokEof ]
+-- On TokPercentages shift to state 5
+-- On TokLeftBrack shift to state 7
+-- On multi shift to state 32
+
+State 7:
+multi -> TokLeftBrack . item_list TokRightBrack [ TokSemi TokRightParen TokEof ]
+-- On TokPrint shift to state 1
+-- On TokLeftParen shift to state 8
+-- On TokInt shift to state 9
+-- On TokId shift to state 10
+-- On TokFloat shift to state 11
+-- On TokAverage shift to state 12
+-- On item_result shift to state 16
+-- On item_list shift to state 27
+-- On item shift to state 31
+
+State 8:
+item -> TokLeftParen . item TokRightParen [ TokSemi TokRightParen TokRightBrack TokPlus TokMult TokMinus TokEof TokDiv TokComma ]
+-- On TokPrint shift to state 1
+-- On TokLeftParen shift to state 8
+-- On TokInt shift to state 9
+-- On TokId shift to state 10
+-- On TokFloat shift to state 11
+-- On TokAverage shift to state 12
+-- On item_result shift to state 16
+-- On item shift to state 17
+
+State 9:
+item -> TokInt . [ TokSemi TokRightParen TokRightBrack TokPlus TokMult TokMinus TokEof TokDiv TokComma ]
+-- On TokSemi reduce production item -> TokInt
+-- On TokRightParen reduce production item -> TokInt
+-- On TokRightBrack reduce production item -> TokInt
+-- On TokPlus reduce production item -> TokInt
+-- On TokMult reduce production item -> TokInt
+-- On TokMinus reduce production item -> TokInt
+-- On TokEof reduce production item -> TokInt
+-- On TokDiv reduce production item -> TokInt
+-- On TokComma reduce production item -> TokInt
+
+State 10:
+item -> TokId . [ TokSemi TokRightParen TokRightBrack TokPlus TokMult TokMinus TokEof TokDiv TokComma ]
+-- On TokSemi reduce production item -> TokId
+-- On TokRightParen reduce production item -> TokId
+-- On TokRightBrack reduce production item -> TokId
+-- On TokPlus reduce production item -> TokId
+-- On TokMult reduce production item -> TokId
+-- On TokMinus reduce production item -> TokId
+-- On TokEof reduce production item -> TokId
+-- On TokDiv reduce production item -> TokId
+-- On TokComma reduce production item -> TokId
+
+State 11:
+item -> TokFloat . [ TokSemi TokRightParen TokRightBrack TokPlus TokMult TokMinus TokEof TokDiv TokComma ]
+-- On TokSemi reduce production item -> TokFloat
+-- On TokRightParen reduce production item -> TokFloat
+-- On TokRightBrack reduce production item -> TokFloat
+-- On TokPlus reduce production item -> TokFloat
+-- On TokMult reduce production item -> TokFloat
+-- On TokMinus reduce production item -> TokFloat
+-- On TokEof reduce production item -> TokFloat
+-- On TokDiv reduce production item -> TokFloat
+-- On TokComma reduce production item -> TokFloat
+
+State 12:
+item_result -> TokAverage . TokLeftParen multi TokRightParen [ TokSemi TokRightParen TokRightBrack TokPlus TokMult TokMinus TokEof TokDiv TokComma ]
+-- On TokLeftParen shift to state 13
+
+State 13:
+item_result -> TokAverage TokLeftParen . multi TokRightParen [ TokSemi TokRightParen TokRightBrack TokPlus TokMult TokMinus TokEof TokDiv TokComma ]
+-- On TokPercentages shift to state 5
+-- On TokLeftBrack shift to state 7
+-- On multi shift to state 14
+
+State 14:
+item_result -> TokAverage TokLeftParen multi . TokRightParen [ TokSemi TokRightParen TokRightBrack TokPlus TokMult TokMinus TokEof TokDiv TokComma ]
+-- On TokRightParen shift to state 15
+
+State 15:
+item_result -> TokAverage TokLeftParen multi TokRightParen . [ TokSemi TokRightParen TokRightBrack TokPlus TokMult TokMinus TokEof TokDiv TokComma ]
+-- On TokSemi reduce production item_result -> TokAverage TokLeftParen multi TokRightParen
+-- On TokRightParen reduce production item_result -> TokAverage TokLeftParen multi TokRightParen
+-- On TokRightBrack reduce production item_result -> TokAverage TokLeftParen multi TokRightParen
+-- On TokPlus reduce production item_result -> TokAverage TokLeftParen multi TokRightParen
+-- On TokMult reduce production item_result -> TokAverage TokLeftParen multi TokRightParen
+-- On TokMinus reduce production item_result -> TokAverage TokLeftParen multi TokRightParen
+-- On TokEof reduce production item_result -> TokAverage TokLeftParen multi TokRightParen
+-- On TokDiv reduce production item_result -> TokAverage TokLeftParen multi TokRightParen
+-- On TokComma reduce production item_result -> TokAverage TokLeftParen multi TokRightParen
+
+State 16:
+item -> item_result . [ TokSemi TokRightParen TokRightBrack TokPlus TokMult TokMinus TokEof TokDiv TokComma ]
+-- On TokSemi reduce production item -> item_result
+-- On TokRightParen reduce production item -> item_result
+-- On TokRightBrack reduce production item -> item_result
+-- On TokPlus reduce production item -> item_result
+-- On TokMult reduce production item -> item_result
+-- On TokMinus reduce production item -> item_result
+-- On TokEof reduce production item -> item_result
+-- On TokDiv reduce production item -> item_result
+-- On TokComma reduce production item -> item_result
+
+State 17:
+item -> item . TokPlus item [ TokRightParen TokPlus TokMult TokMinus TokDiv ]
+item -> item . TokMinus item [ TokRightParen TokPlus TokMult TokMinus TokDiv ]
+item -> item . TokDiv item [ TokRightParen TokPlus TokMult TokMinus TokDiv ]
+item -> item . TokMult item [ TokRightParen TokPlus TokMult TokMinus TokDiv ]
+item -> TokLeftParen item . TokRightParen [ TokSemi TokRightParen TokRightBrack TokPlus TokMult TokMinus TokEof TokDiv TokComma ]
+-- On TokRightParen shift to state 18
+-- On TokPlus shift to state 19
+-- On TokMult shift to state 21
+-- On TokMinus shift to state 25
+-- On TokDiv shift to state 23
+
+State 18:
+item -> TokLeftParen item TokRightParen . [ TokSemi TokRightParen TokRightBrack TokPlus TokMult TokMinus TokEof TokDiv TokComma ]
+-- On TokSemi reduce production item -> TokLeftParen item TokRightParen
+-- On TokRightParen reduce production item -> TokLeftParen item TokRightParen
+-- On TokRightBrack reduce production item -> TokLeftParen item TokRightParen
+-- On TokPlus reduce production item -> TokLeftParen item TokRightParen
+-- On TokMult reduce production item -> TokLeftParen item TokRightParen
+-- On TokMinus reduce production item -> TokLeftParen item TokRightParen
+-- On TokEof reduce production item -> TokLeftParen item TokRightParen
+-- On TokDiv reduce production item -> TokLeftParen item TokRightParen
+-- On TokComma reduce production item -> TokLeftParen item TokRightParen
+
+State 19:
+item -> item TokPlus . item [ TokSemi TokRightParen TokRightBrack TokPlus TokMult TokMinus TokEof TokDiv TokComma ]
+-- On TokPrint shift to state 1
+-- On TokLeftParen shift to state 8
+-- On TokInt shift to state 9
+-- On TokId shift to state 10
+-- On TokFloat shift to state 11
+-- On TokAverage shift to state 12
+-- On item_result shift to state 16
+-- On item shift to state 20
+
+State 20:
+item -> item . TokPlus item [ TokSemi TokRightParen TokRightBrack TokPlus TokMult TokMinus TokEof TokDiv TokComma ]
+item -> item TokPlus item . [ TokSemi TokRightParen TokRightBrack TokPlus TokMult TokMinus TokEof TokDiv TokComma ]
+item -> item . TokMinus item [ TokSemi TokRightParen TokRightBrack TokPlus TokMult TokMinus TokEof TokDiv TokComma ]
+item -> item . TokDiv item [ TokSemi TokRightParen TokRightBrack TokPlus TokMult TokMinus TokEof TokDiv TokComma ]
+item -> item . TokMult item [ TokSemi TokRightParen TokRightBrack TokPlus TokMult TokMinus TokEof TokDiv TokComma ]
+-- On TokMult shift to state 21
+-- On TokDiv shift to state 23
+-- On TokSemi reduce production item -> item TokPlus item
+-- On TokRightParen reduce production item -> item TokPlus item
+-- On TokRightBrack reduce production item -> item TokPlus item
+-- On TokPlus reduce production item -> item TokPlus item
+-- On TokMinus reduce production item -> item TokPlus item
+-- On TokEof reduce production item -> item TokPlus item
+-- On TokComma reduce production item -> item TokPlus item
+
+State 21:
+item -> item TokMult . item [ TokSemi TokRightParen TokRightBrack TokPlus TokMult TokMinus TokEof TokDiv TokComma ]
+-- On TokPrint shift to state 1
+-- On TokLeftParen shift to state 8
+-- On TokInt shift to state 9
+-- On TokId shift to state 10
+-- On TokFloat shift to state 11
+-- On TokAverage shift to state 12
+-- On item_result shift to state 16
+-- On item shift to state 22
+
+State 22:
+item -> item . TokPlus item [ TokSemi TokRightParen TokRightBrack TokPlus TokMult TokMinus TokEof TokDiv TokComma ]
+item -> item . TokMinus item [ TokSemi TokRightParen TokRightBrack TokPlus TokMult TokMinus TokEof TokDiv TokComma ]
+item -> item . TokDiv item [ TokSemi TokRightParen TokRightBrack TokPlus TokMult TokMinus TokEof TokDiv TokComma ]
+item -> item . TokMult item [ TokSemi TokRightParen TokRightBrack TokPlus TokMult TokMinus TokEof TokDiv TokComma ]
+item -> item TokMult item . [ TokSemi TokRightParen TokRightBrack TokPlus TokMult TokMinus TokEof TokDiv TokComma ]
+-- On TokSemi reduce production item -> item TokMult item
+-- On TokRightParen reduce production item -> item TokMult item
+-- On TokRightBrack reduce production item -> item TokMult item
+-- On TokPlus reduce production item -> item TokMult item
+-- On TokMult reduce production item -> item TokMult item
+-- On TokMinus reduce production item -> item TokMult item
+-- On TokEof reduce production item -> item TokMult item
+-- On TokDiv reduce production item -> item TokMult item
+-- On TokComma reduce production item -> item TokMult item
+
+State 23:
+item -> item TokDiv . item [ TokSemi TokRightParen TokRightBrack TokPlus TokMult TokMinus TokEof TokDiv TokComma ]
+-- On TokPrint shift to state 1
+-- On TokLeftParen shift to state 8
+-- On TokInt shift to state 9
+-- On TokId shift to state 10
+-- On TokFloat shift to state 11
+-- On TokAverage shift to state 12
+-- On item_result shift to state 16
+-- On item shift to state 24
+
+State 24:
+item -> item . TokPlus item [ TokSemi TokRightParen TokRightBrack TokPlus TokMult TokMinus TokEof TokDiv TokComma ]
+item -> item . TokMinus item [ TokSemi TokRightParen TokRightBrack TokPlus TokMult TokMinus TokEof TokDiv TokComma ]
+item -> item . TokDiv item [ TokSemi TokRightParen TokRightBrack TokPlus TokMult TokMinus TokEof TokDiv TokComma ]
+item -> item TokDiv item . [ TokSemi TokRightParen TokRightBrack TokPlus TokMult TokMinus TokEof TokDiv TokComma ]
+item -> item . TokMult item [ TokSemi TokRightParen TokRightBrack TokPlus TokMult TokMinus TokEof TokDiv TokComma ]
+-- On TokSemi reduce production item -> item TokDiv item
+-- On TokRightParen reduce production item -> item TokDiv item
+-- On TokRightBrack reduce production item -> item TokDiv item
+-- On TokPlus reduce production item -> item TokDiv item
+-- On TokMult reduce production item -> item TokDiv item
+-- On TokMinus reduce production item -> item TokDiv item
+-- On TokEof reduce production item -> item TokDiv item
+-- On TokDiv reduce production item -> item TokDiv item
+-- On TokComma reduce production item -> item TokDiv item
+
+State 25:
+item -> item TokMinus . item [ TokSemi TokRightParen TokRightBrack TokPlus TokMult TokMinus TokEof TokDiv TokComma ]
+-- On TokPrint shift to state 1
+-- On TokLeftParen shift to state 8
+-- On TokInt shift to state 9
+-- On TokId shift to state 10
+-- On TokFloat shift to state 11
+-- On TokAverage shift to state 12
+-- On item_result shift to state 16
+-- On item shift to state 26
+
+State 26:
+item -> item . TokPlus item [ TokSemi TokRightParen TokRightBrack TokPlus TokMult TokMinus TokEof TokDiv TokComma ]
+item -> item . TokMinus item [ TokSemi TokRightParen TokRightBrack TokPlus TokMult TokMinus TokEof TokDiv TokComma ]
+item -> item TokMinus item . [ TokSemi TokRightParen TokRightBrack TokPlus TokMult TokMinus TokEof TokDiv TokComma ]
+item -> item . TokDiv item [ TokSemi TokRightParen TokRightBrack TokPlus TokMult TokMinus TokEof TokDiv TokComma ]
+item -> item . TokMult item [ TokSemi TokRightParen TokRightBrack TokPlus TokMult TokMinus TokEof TokDiv TokComma ]
+-- On TokMult shift to state 21
+-- On TokDiv shift to state 23
+-- On TokSemi reduce production item -> item TokMinus item
+-- On TokRightParen reduce production item -> item TokMinus item
+-- On TokRightBrack reduce production item -> item TokMinus item
+-- On TokPlus reduce production item -> item TokMinus item
+-- On TokMinus reduce production item -> item TokMinus item
+-- On TokEof reduce production item -> item TokMinus item
+-- On TokComma reduce production item -> item TokMinus item
+
+State 27:
+item_list -> item_list . TokComma item [ TokRightBrack TokComma ]
+multi -> TokLeftBrack item_list . TokRightBrack [ TokSemi TokRightParen TokEof ]
+-- On TokRightBrack shift to state 28
+-- On TokComma shift to state 29
+
+State 28:
+multi -> TokLeftBrack item_list TokRightBrack . [ TokSemi TokRightParen TokEof ]
+-- On TokSemi reduce production multi -> TokLeftBrack item_list TokRightBrack
+-- On TokRightParen reduce production multi -> TokLeftBrack item_list TokRightBrack
+-- On TokEof reduce production multi -> TokLeftBrack item_list TokRightBrack
+
+State 29:
+item_list -> item_list TokComma . item [ TokRightBrack TokComma ]
+-- On TokPrint shift to state 1
+-- On TokLeftParen shift to state 8
+-- On TokInt shift to state 9
+-- On TokId shift to state 10
+-- On TokFloat shift to state 11
+-- On TokAverage shift to state 12
+-- On item_result shift to state 16
+-- On item shift to state 30
+
+State 30:
+item -> item . TokPlus item [ TokRightBrack TokPlus TokMult TokMinus TokDiv TokComma ]
+item -> item . TokMinus item [ TokRightBrack TokPlus TokMult TokMinus TokDiv TokComma ]
+item -> item . TokDiv item [ TokRightBrack TokPlus TokMult TokMinus TokDiv TokComma ]
+item -> item . TokMult item [ TokRightBrack TokPlus TokMult TokMinus TokDiv TokComma ]
+item_list -> item_list TokComma item . [ TokRightBrack TokComma ]
+-- On TokPlus shift to state 19
+-- On TokMult shift to state 21
+-- On TokMinus shift to state 25
+-- On TokDiv shift to state 23
+-- On TokRightBrack reduce production item_list -> item_list TokComma item
+-- On TokComma reduce production item_list -> item_list TokComma item
+
+State 31:
+item -> item . TokPlus item [ TokRightBrack TokPlus TokMult TokMinus TokDiv TokComma ]
+item -> item . TokMinus item [ TokRightBrack TokPlus TokMult TokMinus TokDiv TokComma ]
+item -> item . TokDiv item [ TokRightBrack TokPlus TokMult TokMinus TokDiv TokComma ]
+item -> item . TokMult item [ TokRightBrack TokPlus TokMult TokMinus TokDiv TokComma ]
+item_list -> item . [ TokRightBrack TokComma ]
+-- On TokPlus shift to state 19
+-- On TokMult shift to state 21
+-- On TokMinus shift to state 25
+-- On TokDiv shift to state 23
+-- On TokRightBrack reduce production item_list -> item
+-- On TokComma reduce production item_list -> item
+
+State 32:
+multi -> TokPercentages TokLeftParen multi . TokRightParen [ TokSemi TokRightParen TokEof ]
+-- On TokRightParen shift to state 33
+
+State 33:
+multi -> TokPercentages TokLeftParen multi TokRightParen . [ TokSemi TokRightParen TokEof ]
+-- On TokSemi reduce production multi -> TokPercentages TokLeftParen multi TokRightParen
+-- On TokRightParen reduce production multi -> TokPercentages TokLeftParen multi TokRightParen
+-- On TokEof reduce production multi -> TokPercentages TokLeftParen multi TokRightParen
+
+State 34:
+expr -> multi . [ TokSemi TokEof ]
+-- On TokSemi reduce production expr -> multi
+-- On TokEof reduce production expr -> multi
+
+State 35:
+main' -> main . [ # ]
+-- On # accept main
+
+State 36:
+expr -> item . [ TokSemi TokEof ]
+item -> item . TokPlus item [ TokSemi TokPlus TokMult TokMinus TokEof TokDiv ]
+item -> item . TokMinus item [ TokSemi TokPlus TokMult TokMinus TokEof TokDiv ]
+item -> item . TokDiv item [ TokSemi TokPlus TokMult TokMinus TokEof TokDiv ]
+item -> item . TokMult item [ TokSemi TokPlus TokMult TokMinus TokEof TokDiv ]
+-- On TokPlus shift to state 19
+-- On TokMult shift to state 21
+-- On TokMinus shift to state 25
+-- On TokDiv shift to state 23
+-- On TokSemi reduce production expr -> item
+-- On TokEof reduce production expr -> item
+
+State 37:
+expr_list -> expr_list . TokSemi expr [ TokSemi TokEof ]
+main -> expr_list . TokEof [ # ]
+-- On TokSemi shift to state 38
+-- On TokEof shift to state 40
+
+State 38:
+expr_list -> expr_list TokSemi . expr [ TokSemi TokEof ]
+-- On TokPrint shift to state 1
+-- On TokPercentages shift to state 5
+-- On TokLeftParen shift to state 8
+-- On TokLeftBrack shift to state 7
+-- On TokInt shift to state 9
+-- On TokId shift to state 10
+-- On TokFloat shift to state 11
+-- On TokAverage shift to state 12
+-- On multi shift to state 34
+-- On item_result shift to state 16
+-- On item shift to state 36
+-- On expr shift to state 39
+
+State 39:
+expr_list -> expr_list TokSemi expr . [ TokSemi TokEof ]
+-- On TokSemi reduce production expr_list -> expr_list TokSemi expr
+-- On TokEof reduce production expr_list -> expr_list TokSemi expr
+
+State 40:
+main -> expr_list TokEof . [ # ]
+-- On # reduce production main -> expr_list TokEof
+
+State 41:
+expr_list -> expr . [ TokSemi TokEof ]
+-- On TokSemi reduce production expr_list -> expr
+-- On TokEof reduce production expr_list -> expr
+

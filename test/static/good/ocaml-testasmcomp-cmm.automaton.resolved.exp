@@ -1,0 +1,2365 @@
+State 0:
+phrase' -> . phrase [ # ]
+-- On LPAREN shift to state 1
+-- On EOF shift to state 216
+-- On phrase shift to state 217
+-- On fundecl shift to state 218
+-- On datadecl shift to state 219
+
+State 1:
+datadecl -> LPAREN . datalist RPAREN [ # ]
+fundecl -> LPAREN . FUNCTION STRING LPAREN params RPAREN sequence RPAREN [ # ]
+-- On FUNCTION shift to state 2
+-- On datalist shift to state 192
+-- On STRING reduce production datalist -> 
+-- On SKIP reduce production datalist -> 
+-- On RPAREN reduce production datalist -> 
+-- On KSTRING reduce production datalist -> 
+-- On INTCONST reduce production datalist -> 
+-- On INT reduce production datalist -> 
+-- On HALF reduce production datalist -> 
+-- On FLOAT reduce production datalist -> 
+-- On BYTE reduce production datalist -> 
+-- On ALIGN reduce production datalist -> 
+-- On ADDR reduce production datalist -> 
+
+State 2:
+fundecl -> LPAREN FUNCTION . STRING LPAREN params RPAREN sequence RPAREN [ # ]
+-- On STRING shift to state 3
+
+State 3:
+fundecl -> LPAREN FUNCTION STRING . LPAREN params RPAREN sequence RPAREN [ # ]
+-- On LPAREN shift to state 4
+
+State 4:
+fundecl -> LPAREN FUNCTION STRING LPAREN . params RPAREN sequence RPAREN [ # ]
+-- On IDENT shift to state 5
+-- On params shift to state 16
+-- On oneparam shift to state 190
+-- On RPAREN reduce production params -> 
+
+State 5:
+oneparam -> IDENT . COLON machtype [ RPAREN IDENT ]
+-- On COLON shift to state 6
+
+State 6:
+oneparam -> IDENT COLON . machtype [ RPAREN IDENT ]
+-- On UNIT shift to state 7
+-- On INT shift to state 8
+-- On FLOAT shift to state 9
+-- On ADDR shift to state 10
+-- On machtype shift to state 11
+-- On componentlist shift to state 12
+-- On component shift to state 15
+
+State 7:
+machtype -> UNIT . [ RPAREN IDENT ]
+-- On RPAREN reduce production machtype -> UNIT
+-- On IDENT reduce production machtype -> UNIT
+
+State 8:
+component -> INT . [ STAR RPAREN IDENT ]
+-- On STAR reduce production component -> INT
+-- On RPAREN reduce production component -> INT
+-- On IDENT reduce production component -> INT
+
+State 9:
+component -> FLOAT . [ STAR RPAREN IDENT ]
+-- On STAR reduce production component -> FLOAT
+-- On RPAREN reduce production component -> FLOAT
+-- On IDENT reduce production component -> FLOAT
+
+State 10:
+component -> ADDR . [ STAR RPAREN IDENT ]
+-- On STAR reduce production component -> ADDR
+-- On RPAREN reduce production component -> ADDR
+-- On IDENT reduce production component -> ADDR
+
+State 11:
+oneparam -> IDENT COLON machtype . [ RPAREN IDENT ]
+-- On RPAREN reduce production oneparam -> IDENT COLON machtype
+-- On IDENT reduce production oneparam -> IDENT COLON machtype
+
+State 12:
+componentlist -> componentlist . STAR component [ STAR RPAREN IDENT ]
+machtype -> componentlist . [ RPAREN IDENT ]
+-- On STAR shift to state 13
+-- On RPAREN reduce production machtype -> componentlist
+-- On IDENT reduce production machtype -> componentlist
+
+State 13:
+componentlist -> componentlist STAR . component [ STAR RPAREN IDENT ]
+-- On INT shift to state 8
+-- On FLOAT shift to state 9
+-- On ADDR shift to state 10
+-- On component shift to state 14
+
+State 14:
+componentlist -> componentlist STAR component . [ STAR RPAREN IDENT ]
+-- On STAR reduce production componentlist -> componentlist STAR component
+-- On RPAREN reduce production componentlist -> componentlist STAR component
+-- On IDENT reduce production componentlist -> componentlist STAR component
+
+State 15:
+componentlist -> component . [ STAR RPAREN IDENT ]
+-- On STAR reduce production componentlist -> component
+-- On RPAREN reduce production componentlist -> component
+-- On IDENT reduce production componentlist -> component
+
+State 16:
+fundecl -> LPAREN FUNCTION STRING LPAREN params . RPAREN sequence RPAREN [ # ]
+-- On RPAREN shift to state 17
+
+State 17:
+fundecl -> LPAREN FUNCTION STRING LPAREN params RPAREN . sequence RPAREN [ # ]
+-- On STRING shift to state 18
+-- On POINTER shift to state 19
+-- On LPAREN shift to state 20
+-- On LBRACKET shift to state 23
+-- On INTCONST shift to state 25
+-- On IDENT shift to state 26
+-- On FLOATCONST shift to state 27
+-- On EXIT shift to state 28
+-- On sequence shift to state 188
+-- On expr shift to state 32
+
+State 18:
+expr -> STRING . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On WITH reduce production expr -> STRING
+-- On UNIT reduce production expr -> STRING
+-- On STRING reduce production expr -> STRING
+-- On RPAREN reduce production expr -> STRING
+-- On POINTER reduce production expr -> STRING
+-- On LPAREN reduce production expr -> STRING
+-- On LBRACKET reduce production expr -> STRING
+-- On INTCONST reduce production expr -> STRING
+-- On INT reduce production expr -> STRING
+-- On IDENT reduce production expr -> STRING
+-- On FLOATCONST reduce production expr -> STRING
+-- On FLOAT reduce production expr -> STRING
+-- On EXIT reduce production expr -> STRING
+-- On CASE reduce production expr -> STRING
+-- On ADDR reduce production expr -> STRING
+
+State 19:
+expr -> POINTER . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On WITH reduce production expr -> POINTER
+-- On UNIT reduce production expr -> POINTER
+-- On STRING reduce production expr -> POINTER
+-- On RPAREN reduce production expr -> POINTER
+-- On POINTER reduce production expr -> POINTER
+-- On LPAREN reduce production expr -> POINTER
+-- On LBRACKET reduce production expr -> POINTER
+-- On INTCONST reduce production expr -> POINTER
+-- On INT reduce production expr -> POINTER
+-- On IDENT reduce production expr -> POINTER
+-- On FLOATCONST reduce production expr -> POINTER
+-- On FLOAT reduce production expr -> POINTER
+-- On EXIT reduce production expr -> POINTER
+-- On CASE reduce production expr -> POINTER
+-- On ADDR reduce production expr -> POINTER
+
+State 20:
+expr -> LPAREN . LET letdef sequence RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+expr -> LPAREN . ASSIGN IDENT expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+expr -> LPAREN . APPLY expr exprlist machtype RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+expr -> LPAREN . EXTCALL STRING exprlist machtype RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+expr -> LPAREN . SUBF expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+expr -> LPAREN . SUBF expr expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+expr -> LPAREN . unaryop expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+expr -> LPAREN . binaryop expr expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+expr -> LPAREN . SEQ sequence RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+expr -> LPAREN . IF expr expr expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+expr -> LPAREN . SWITCH INTCONST expr caselist RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+expr -> LPAREN . WHILE expr sequence RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+expr -> LPAREN . CATCH sequence WITH sequence RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+expr -> LPAREN . TRY sequence WITH bind_ident sequence RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+expr -> LPAREN . ADDRAREF expr expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+expr -> LPAREN . INTAREF expr expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+expr -> LPAREN . FLOATAREF expr expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+expr -> LPAREN . ADDRASET expr expr expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+expr -> LPAREN . INTASET expr expr expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+expr -> LPAREN . FLOATASET expr expr expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On XOR shift to state 21
+-- On WHILE shift to state 22
+-- On TRY shift to state 34
+-- On SWITCH shift to state 41
+-- On SUBI shift to state 53
+-- On SUBF shift to state 54
+-- On SUBA shift to state 59
+-- On STORE shift to state 60
+-- On SEQ shift to state 75
+-- On RAISE shift to state 78
+-- On OR shift to state 79
+-- On NEI shift to state 80
+-- On NEF shift to state 81
+-- On NEA shift to state 82
+-- On MULI shift to state 83
+-- On MULF shift to state 84
+-- On MODI shift to state 85
+-- On LTI shift to state 86
+-- On LTF shift to state 87
+-- On LTA shift to state 88
+-- On LSR shift to state 89
+-- On LSL shift to state 90
+-- On LOAD shift to state 91
+-- On LET shift to state 93
+-- On LEI shift to state 105
+-- On LEF shift to state 106
+-- On LEA shift to state 107
+-- On INTOFFLOAT shift to state 108
+-- On INTASET shift to state 109
+-- On INTAREF shift to state 114
+-- On IF shift to state 118
+-- On GTI shift to state 123
+-- On GTF shift to state 124
+-- On GTA shift to state 125
+-- On GEI shift to state 126
+-- On GEF shift to state 127
+-- On GEA shift to state 128
+-- On FLOATOFINT shift to state 129
+-- On FLOATASET shift to state 130
+-- On FLOATAREF shift to state 135
+-- On EXTCALL shift to state 139
+-- On EQI shift to state 145
+-- On EQF shift to state 146
+-- On EQA shift to state 147
+-- On DIVI shift to state 148
+-- On DIVF shift to state 149
+-- On CHECKBOUND shift to state 150
+-- On CATCH shift to state 151
+-- On ASSIGN shift to state 156
+-- On ASR shift to state 160
+-- On APPLY shift to state 161
+-- On AND shift to state 166
+-- On ALLOC shift to state 167
+-- On ADDRASET shift to state 168
+-- On ADDRAREF shift to state 173
+-- On ADDI shift to state 177
+-- On ADDF shift to state 178
+-- On ADDA shift to state 179
+-- On ABSF shift to state 180
+-- On unaryop shift to state 181
+-- On binaryop shift to state 184
+
+State 21:
+binaryop -> XOR . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production binaryop -> XOR
+-- On POINTER reduce production binaryop -> XOR
+-- On LPAREN reduce production binaryop -> XOR
+-- On LBRACKET reduce production binaryop -> XOR
+-- On INTCONST reduce production binaryop -> XOR
+-- On IDENT reduce production binaryop -> XOR
+-- On FLOATCONST reduce production binaryop -> XOR
+-- On EXIT reduce production binaryop -> XOR
+
+State 22:
+expr -> LPAREN WHILE . expr sequence RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On STRING shift to state 18
+-- On POINTER shift to state 19
+-- On LPAREN shift to state 20
+-- On LBRACKET shift to state 23
+-- On INTCONST shift to state 25
+-- On IDENT shift to state 26
+-- On FLOATCONST shift to state 27
+-- On EXIT shift to state 28
+-- On expr shift to state 29
+
+State 23:
+expr -> LBRACKET . RBRACKET [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On RBRACKET shift to state 24
+
+State 24:
+expr -> LBRACKET RBRACKET . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On WITH reduce production expr -> LBRACKET RBRACKET
+-- On UNIT reduce production expr -> LBRACKET RBRACKET
+-- On STRING reduce production expr -> LBRACKET RBRACKET
+-- On RPAREN reduce production expr -> LBRACKET RBRACKET
+-- On POINTER reduce production expr -> LBRACKET RBRACKET
+-- On LPAREN reduce production expr -> LBRACKET RBRACKET
+-- On LBRACKET reduce production expr -> LBRACKET RBRACKET
+-- On INTCONST reduce production expr -> LBRACKET RBRACKET
+-- On INT reduce production expr -> LBRACKET RBRACKET
+-- On IDENT reduce production expr -> LBRACKET RBRACKET
+-- On FLOATCONST reduce production expr -> LBRACKET RBRACKET
+-- On FLOAT reduce production expr -> LBRACKET RBRACKET
+-- On EXIT reduce production expr -> LBRACKET RBRACKET
+-- On CASE reduce production expr -> LBRACKET RBRACKET
+-- On ADDR reduce production expr -> LBRACKET RBRACKET
+
+State 25:
+expr -> INTCONST . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On WITH reduce production expr -> INTCONST
+-- On UNIT reduce production expr -> INTCONST
+-- On STRING reduce production expr -> INTCONST
+-- On RPAREN reduce production expr -> INTCONST
+-- On POINTER reduce production expr -> INTCONST
+-- On LPAREN reduce production expr -> INTCONST
+-- On LBRACKET reduce production expr -> INTCONST
+-- On INTCONST reduce production expr -> INTCONST
+-- On INT reduce production expr -> INTCONST
+-- On IDENT reduce production expr -> INTCONST
+-- On FLOATCONST reduce production expr -> INTCONST
+-- On FLOAT reduce production expr -> INTCONST
+-- On EXIT reduce production expr -> INTCONST
+-- On CASE reduce production expr -> INTCONST
+-- On ADDR reduce production expr -> INTCONST
+
+State 26:
+expr -> IDENT . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On WITH reduce production expr -> IDENT
+-- On UNIT reduce production expr -> IDENT
+-- On STRING reduce production expr -> IDENT
+-- On RPAREN reduce production expr -> IDENT
+-- On POINTER reduce production expr -> IDENT
+-- On LPAREN reduce production expr -> IDENT
+-- On LBRACKET reduce production expr -> IDENT
+-- On INTCONST reduce production expr -> IDENT
+-- On INT reduce production expr -> IDENT
+-- On IDENT reduce production expr -> IDENT
+-- On FLOATCONST reduce production expr -> IDENT
+-- On FLOAT reduce production expr -> IDENT
+-- On EXIT reduce production expr -> IDENT
+-- On CASE reduce production expr -> IDENT
+-- On ADDR reduce production expr -> IDENT
+
+State 27:
+expr -> FLOATCONST . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On WITH reduce production expr -> FLOATCONST
+-- On UNIT reduce production expr -> FLOATCONST
+-- On STRING reduce production expr -> FLOATCONST
+-- On RPAREN reduce production expr -> FLOATCONST
+-- On POINTER reduce production expr -> FLOATCONST
+-- On LPAREN reduce production expr -> FLOATCONST
+-- On LBRACKET reduce production expr -> FLOATCONST
+-- On INTCONST reduce production expr -> FLOATCONST
+-- On INT reduce production expr -> FLOATCONST
+-- On IDENT reduce production expr -> FLOATCONST
+-- On FLOATCONST reduce production expr -> FLOATCONST
+-- On FLOAT reduce production expr -> FLOATCONST
+-- On EXIT reduce production expr -> FLOATCONST
+-- On CASE reduce production expr -> FLOATCONST
+-- On ADDR reduce production expr -> FLOATCONST
+
+State 28:
+expr -> EXIT . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On WITH reduce production expr -> EXIT
+-- On UNIT reduce production expr -> EXIT
+-- On STRING reduce production expr -> EXIT
+-- On RPAREN reduce production expr -> EXIT
+-- On POINTER reduce production expr -> EXIT
+-- On LPAREN reduce production expr -> EXIT
+-- On LBRACKET reduce production expr -> EXIT
+-- On INTCONST reduce production expr -> EXIT
+-- On INT reduce production expr -> EXIT
+-- On IDENT reduce production expr -> EXIT
+-- On FLOATCONST reduce production expr -> EXIT
+-- On FLOAT reduce production expr -> EXIT
+-- On EXIT reduce production expr -> EXIT
+-- On CASE reduce production expr -> EXIT
+-- On ADDR reduce production expr -> EXIT
+
+State 29:
+expr -> LPAREN WHILE expr . sequence RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On STRING shift to state 18
+-- On POINTER shift to state 19
+-- On LPAREN shift to state 20
+-- On LBRACKET shift to state 23
+-- On INTCONST shift to state 25
+-- On IDENT shift to state 26
+-- On FLOATCONST shift to state 27
+-- On EXIT shift to state 28
+-- On sequence shift to state 30
+-- On expr shift to state 32
+
+State 30:
+expr -> LPAREN WHILE expr sequence . RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On RPAREN shift to state 31
+
+State 31:
+expr -> LPAREN WHILE expr sequence RPAREN . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On WITH reduce production expr -> LPAREN WHILE expr sequence RPAREN
+-- On UNIT reduce production expr -> LPAREN WHILE expr sequence RPAREN
+-- On STRING reduce production expr -> LPAREN WHILE expr sequence RPAREN
+-- On RPAREN reduce production expr -> LPAREN WHILE expr sequence RPAREN
+-- On POINTER reduce production expr -> LPAREN WHILE expr sequence RPAREN
+-- On LPAREN reduce production expr -> LPAREN WHILE expr sequence RPAREN
+-- On LBRACKET reduce production expr -> LPAREN WHILE expr sequence RPAREN
+-- On INTCONST reduce production expr -> LPAREN WHILE expr sequence RPAREN
+-- On INT reduce production expr -> LPAREN WHILE expr sequence RPAREN
+-- On IDENT reduce production expr -> LPAREN WHILE expr sequence RPAREN
+-- On FLOATCONST reduce production expr -> LPAREN WHILE expr sequence RPAREN
+-- On FLOAT reduce production expr -> LPAREN WHILE expr sequence RPAREN
+-- On EXIT reduce production expr -> LPAREN WHILE expr sequence RPAREN
+-- On CASE reduce production expr -> LPAREN WHILE expr sequence RPAREN
+-- On ADDR reduce production expr -> LPAREN WHILE expr sequence RPAREN
+
+State 32:
+sequence -> expr . sequence [ WITH RPAREN CASE ]
+sequence -> expr . [ WITH RPAREN CASE ]
+-- On STRING shift to state 18
+-- On POINTER shift to state 19
+-- On LPAREN shift to state 20
+-- On LBRACKET shift to state 23
+-- On INTCONST shift to state 25
+-- On IDENT shift to state 26
+-- On FLOATCONST shift to state 27
+-- On EXIT shift to state 28
+-- On sequence shift to state 33
+-- On expr shift to state 32
+-- On WITH reduce production sequence -> expr
+-- On RPAREN reduce production sequence -> expr
+-- On CASE reduce production sequence -> expr
+
+State 33:
+sequence -> expr sequence . [ WITH RPAREN CASE ]
+-- On WITH reduce production sequence -> expr sequence
+-- On RPAREN reduce production sequence -> expr sequence
+-- On CASE reduce production sequence -> expr sequence
+
+State 34:
+expr -> LPAREN TRY . sequence WITH bind_ident sequence RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On STRING shift to state 18
+-- On POINTER shift to state 19
+-- On LPAREN shift to state 20
+-- On LBRACKET shift to state 23
+-- On INTCONST shift to state 25
+-- On IDENT shift to state 26
+-- On FLOATCONST shift to state 27
+-- On EXIT shift to state 28
+-- On sequence shift to state 35
+-- On expr shift to state 32
+
+State 35:
+expr -> LPAREN TRY sequence . WITH bind_ident sequence RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On WITH shift to state 36
+
+State 36:
+expr -> LPAREN TRY sequence WITH . bind_ident sequence RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On IDENT shift to state 37
+-- On bind_ident shift to state 38
+
+State 37:
+bind_ident -> IDENT . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production bind_ident -> IDENT
+-- On POINTER reduce production bind_ident -> IDENT
+-- On LPAREN reduce production bind_ident -> IDENT
+-- On LBRACKET reduce production bind_ident -> IDENT
+-- On INTCONST reduce production bind_ident -> IDENT
+-- On IDENT reduce production bind_ident -> IDENT
+-- On FLOATCONST reduce production bind_ident -> IDENT
+-- On EXIT reduce production bind_ident -> IDENT
+
+State 38:
+expr -> LPAREN TRY sequence WITH bind_ident . sequence RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On STRING shift to state 18
+-- On POINTER shift to state 19
+-- On LPAREN shift to state 20
+-- On LBRACKET shift to state 23
+-- On INTCONST shift to state 25
+-- On IDENT shift to state 26
+-- On FLOATCONST shift to state 27
+-- On EXIT shift to state 28
+-- On sequence shift to state 39
+-- On expr shift to state 32
+
+State 39:
+expr -> LPAREN TRY sequence WITH bind_ident sequence . RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On RPAREN shift to state 40
+
+State 40:
+expr -> LPAREN TRY sequence WITH bind_ident sequence RPAREN . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On WITH reduce production expr -> LPAREN TRY sequence WITH bind_ident sequence RPAREN
+-- On UNIT reduce production expr -> LPAREN TRY sequence WITH bind_ident sequence RPAREN
+-- On STRING reduce production expr -> LPAREN TRY sequence WITH bind_ident sequence RPAREN
+-- On RPAREN reduce production expr -> LPAREN TRY sequence WITH bind_ident sequence RPAREN
+-- On POINTER reduce production expr -> LPAREN TRY sequence WITH bind_ident sequence RPAREN
+-- On LPAREN reduce production expr -> LPAREN TRY sequence WITH bind_ident sequence RPAREN
+-- On LBRACKET reduce production expr -> LPAREN TRY sequence WITH bind_ident sequence RPAREN
+-- On INTCONST reduce production expr -> LPAREN TRY sequence WITH bind_ident sequence RPAREN
+-- On INT reduce production expr -> LPAREN TRY sequence WITH bind_ident sequence RPAREN
+-- On IDENT reduce production expr -> LPAREN TRY sequence WITH bind_ident sequence RPAREN
+-- On FLOATCONST reduce production expr -> LPAREN TRY sequence WITH bind_ident sequence RPAREN
+-- On FLOAT reduce production expr -> LPAREN TRY sequence WITH bind_ident sequence RPAREN
+-- On EXIT reduce production expr -> LPAREN TRY sequence WITH bind_ident sequence RPAREN
+-- On CASE reduce production expr -> LPAREN TRY sequence WITH bind_ident sequence RPAREN
+-- On ADDR reduce production expr -> LPAREN TRY sequence WITH bind_ident sequence RPAREN
+
+State 41:
+expr -> LPAREN SWITCH . INTCONST expr caselist RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On INTCONST shift to state 42
+
+State 42:
+expr -> LPAREN SWITCH INTCONST . expr caselist RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On STRING shift to state 18
+-- On POINTER shift to state 19
+-- On LPAREN shift to state 20
+-- On LBRACKET shift to state 23
+-- On INTCONST shift to state 25
+-- On IDENT shift to state 26
+-- On FLOATCONST shift to state 27
+-- On EXIT shift to state 28
+-- On expr shift to state 43
+
+State 43:
+expr -> LPAREN SWITCH INTCONST expr . caselist RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On CASE shift to state 44
+-- On onecase shift to state 48
+-- On caselist shift to state 51
+-- On RPAREN reduce production caselist -> 
+
+State 44:
+onecase -> CASE . INTCONST COLON onecase [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+onecase -> CASE . INTCONST COLON [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On INTCONST shift to state 45
+
+State 45:
+onecase -> CASE INTCONST . COLON onecase [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+onecase -> CASE INTCONST . COLON [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On COLON shift to state 46
+
+State 46:
+onecase -> CASE INTCONST COLON . onecase [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+onecase -> CASE INTCONST COLON . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On CASE shift to state 44
+-- On onecase shift to state 47
+-- On STRING reduce production onecase -> CASE INTCONST COLON
+-- On POINTER reduce production onecase -> CASE INTCONST COLON
+-- On LPAREN reduce production onecase -> CASE INTCONST COLON
+-- On LBRACKET reduce production onecase -> CASE INTCONST COLON
+-- On INTCONST reduce production onecase -> CASE INTCONST COLON
+-- On IDENT reduce production onecase -> CASE INTCONST COLON
+-- On FLOATCONST reduce production onecase -> CASE INTCONST COLON
+-- On EXIT reduce production onecase -> CASE INTCONST COLON
+
+State 47:
+onecase -> CASE INTCONST COLON onecase . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production onecase -> CASE INTCONST COLON onecase
+-- On POINTER reduce production onecase -> CASE INTCONST COLON onecase
+-- On LPAREN reduce production onecase -> CASE INTCONST COLON onecase
+-- On LBRACKET reduce production onecase -> CASE INTCONST COLON onecase
+-- On INTCONST reduce production onecase -> CASE INTCONST COLON onecase
+-- On IDENT reduce production onecase -> CASE INTCONST COLON onecase
+-- On FLOATCONST reduce production onecase -> CASE INTCONST COLON onecase
+-- On EXIT reduce production onecase -> CASE INTCONST COLON onecase
+
+State 48:
+caselist -> onecase . sequence caselist [ RPAREN ]
+-- On STRING shift to state 18
+-- On POINTER shift to state 19
+-- On LPAREN shift to state 20
+-- On LBRACKET shift to state 23
+-- On INTCONST shift to state 25
+-- On IDENT shift to state 26
+-- On FLOATCONST shift to state 27
+-- On EXIT shift to state 28
+-- On sequence shift to state 49
+-- On expr shift to state 32
+
+State 49:
+caselist -> onecase sequence . caselist [ RPAREN ]
+-- On CASE shift to state 44
+-- On onecase shift to state 48
+-- On caselist shift to state 50
+-- On RPAREN reduce production caselist -> 
+
+State 50:
+caselist -> onecase sequence caselist . [ RPAREN ]
+-- On RPAREN reduce production caselist -> onecase sequence caselist
+
+State 51:
+expr -> LPAREN SWITCH INTCONST expr caselist . RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On RPAREN shift to state 52
+
+State 52:
+expr -> LPAREN SWITCH INTCONST expr caselist RPAREN . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On WITH reduce production expr -> LPAREN SWITCH INTCONST expr caselist RPAREN
+-- On UNIT reduce production expr -> LPAREN SWITCH INTCONST expr caselist RPAREN
+-- On STRING reduce production expr -> LPAREN SWITCH INTCONST expr caselist RPAREN
+-- On RPAREN reduce production expr -> LPAREN SWITCH INTCONST expr caselist RPAREN
+-- On POINTER reduce production expr -> LPAREN SWITCH INTCONST expr caselist RPAREN
+-- On LPAREN reduce production expr -> LPAREN SWITCH INTCONST expr caselist RPAREN
+-- On LBRACKET reduce production expr -> LPAREN SWITCH INTCONST expr caselist RPAREN
+-- On INTCONST reduce production expr -> LPAREN SWITCH INTCONST expr caselist RPAREN
+-- On INT reduce production expr -> LPAREN SWITCH INTCONST expr caselist RPAREN
+-- On IDENT reduce production expr -> LPAREN SWITCH INTCONST expr caselist RPAREN
+-- On FLOATCONST reduce production expr -> LPAREN SWITCH INTCONST expr caselist RPAREN
+-- On FLOAT reduce production expr -> LPAREN SWITCH INTCONST expr caselist RPAREN
+-- On EXIT reduce production expr -> LPAREN SWITCH INTCONST expr caselist RPAREN
+-- On CASE reduce production expr -> LPAREN SWITCH INTCONST expr caselist RPAREN
+-- On ADDR reduce production expr -> LPAREN SWITCH INTCONST expr caselist RPAREN
+
+State 53:
+binaryop -> SUBI . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production binaryop -> SUBI
+-- On POINTER reduce production binaryop -> SUBI
+-- On LPAREN reduce production binaryop -> SUBI
+-- On LBRACKET reduce production binaryop -> SUBI
+-- On INTCONST reduce production binaryop -> SUBI
+-- On IDENT reduce production binaryop -> SUBI
+-- On FLOATCONST reduce production binaryop -> SUBI
+-- On EXIT reduce production binaryop -> SUBI
+
+State 54:
+expr -> LPAREN SUBF . expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+expr -> LPAREN SUBF . expr expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On STRING shift to state 18
+-- On POINTER shift to state 19
+-- On LPAREN shift to state 20
+-- On LBRACKET shift to state 23
+-- On INTCONST shift to state 25
+-- On IDENT shift to state 26
+-- On FLOATCONST shift to state 27
+-- On EXIT shift to state 28
+-- On expr shift to state 55
+
+State 55:
+expr -> LPAREN SUBF expr . RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+expr -> LPAREN SUBF expr . expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On STRING shift to state 18
+-- On RPAREN shift to state 56
+-- On POINTER shift to state 19
+-- On LPAREN shift to state 20
+-- On LBRACKET shift to state 23
+-- On INTCONST shift to state 25
+-- On IDENT shift to state 26
+-- On FLOATCONST shift to state 27
+-- On EXIT shift to state 28
+-- On expr shift to state 57
+
+State 56:
+expr -> LPAREN SUBF expr RPAREN . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On WITH reduce production expr -> LPAREN SUBF expr RPAREN
+-- On UNIT reduce production expr -> LPAREN SUBF expr RPAREN
+-- On STRING reduce production expr -> LPAREN SUBF expr RPAREN
+-- On RPAREN reduce production expr -> LPAREN SUBF expr RPAREN
+-- On POINTER reduce production expr -> LPAREN SUBF expr RPAREN
+-- On LPAREN reduce production expr -> LPAREN SUBF expr RPAREN
+-- On LBRACKET reduce production expr -> LPAREN SUBF expr RPAREN
+-- On INTCONST reduce production expr -> LPAREN SUBF expr RPAREN
+-- On INT reduce production expr -> LPAREN SUBF expr RPAREN
+-- On IDENT reduce production expr -> LPAREN SUBF expr RPAREN
+-- On FLOATCONST reduce production expr -> LPAREN SUBF expr RPAREN
+-- On FLOAT reduce production expr -> LPAREN SUBF expr RPAREN
+-- On EXIT reduce production expr -> LPAREN SUBF expr RPAREN
+-- On CASE reduce production expr -> LPAREN SUBF expr RPAREN
+-- On ADDR reduce production expr -> LPAREN SUBF expr RPAREN
+
+State 57:
+expr -> LPAREN SUBF expr expr . RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On RPAREN shift to state 58
+
+State 58:
+expr -> LPAREN SUBF expr expr RPAREN . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On WITH reduce production expr -> LPAREN SUBF expr expr RPAREN
+-- On UNIT reduce production expr -> LPAREN SUBF expr expr RPAREN
+-- On STRING reduce production expr -> LPAREN SUBF expr expr RPAREN
+-- On RPAREN reduce production expr -> LPAREN SUBF expr expr RPAREN
+-- On POINTER reduce production expr -> LPAREN SUBF expr expr RPAREN
+-- On LPAREN reduce production expr -> LPAREN SUBF expr expr RPAREN
+-- On LBRACKET reduce production expr -> LPAREN SUBF expr expr RPAREN
+-- On INTCONST reduce production expr -> LPAREN SUBF expr expr RPAREN
+-- On INT reduce production expr -> LPAREN SUBF expr expr RPAREN
+-- On IDENT reduce production expr -> LPAREN SUBF expr expr RPAREN
+-- On FLOATCONST reduce production expr -> LPAREN SUBF expr expr RPAREN
+-- On FLOAT reduce production expr -> LPAREN SUBF expr expr RPAREN
+-- On EXIT reduce production expr -> LPAREN SUBF expr expr RPAREN
+-- On CASE reduce production expr -> LPAREN SUBF expr expr RPAREN
+-- On ADDR reduce production expr -> LPAREN SUBF expr expr RPAREN
+
+State 59:
+binaryop -> SUBA . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production binaryop -> SUBA
+-- On POINTER reduce production binaryop -> SUBA
+-- On LPAREN reduce production binaryop -> SUBA
+-- On LBRACKET reduce production binaryop -> SUBA
+-- On INTCONST reduce production binaryop -> SUBA
+-- On IDENT reduce production binaryop -> SUBA
+-- On FLOATCONST reduce production binaryop -> SUBA
+-- On EXIT reduce production binaryop -> SUBA
+
+State 60:
+binaryop -> STORE . chunk [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On UNSIGNED shift to state 61
+-- On SIGNED shift to state 65
+-- On INT shift to state 69
+-- On FLOAT64 shift to state 70
+-- On FLOAT32 shift to state 71
+-- On FLOAT shift to state 72
+-- On ADDR shift to state 73
+-- On chunk shift to state 74
+
+State 61:
+chunk -> UNSIGNED . BYTE [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+chunk -> UNSIGNED . HALF [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+chunk -> UNSIGNED . INT32 [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On INT32 shift to state 62
+-- On HALF shift to state 63
+-- On BYTE shift to state 64
+
+State 62:
+chunk -> UNSIGNED INT32 . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production chunk -> UNSIGNED INT32
+-- On POINTER reduce production chunk -> UNSIGNED INT32
+-- On LPAREN reduce production chunk -> UNSIGNED INT32
+-- On LBRACKET reduce production chunk -> UNSIGNED INT32
+-- On INTCONST reduce production chunk -> UNSIGNED INT32
+-- On IDENT reduce production chunk -> UNSIGNED INT32
+-- On FLOATCONST reduce production chunk -> UNSIGNED INT32
+-- On EXIT reduce production chunk -> UNSIGNED INT32
+
+State 63:
+chunk -> UNSIGNED HALF . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production chunk -> UNSIGNED HALF
+-- On POINTER reduce production chunk -> UNSIGNED HALF
+-- On LPAREN reduce production chunk -> UNSIGNED HALF
+-- On LBRACKET reduce production chunk -> UNSIGNED HALF
+-- On INTCONST reduce production chunk -> UNSIGNED HALF
+-- On IDENT reduce production chunk -> UNSIGNED HALF
+-- On FLOATCONST reduce production chunk -> UNSIGNED HALF
+-- On EXIT reduce production chunk -> UNSIGNED HALF
+
+State 64:
+chunk -> UNSIGNED BYTE . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production chunk -> UNSIGNED BYTE
+-- On POINTER reduce production chunk -> UNSIGNED BYTE
+-- On LPAREN reduce production chunk -> UNSIGNED BYTE
+-- On LBRACKET reduce production chunk -> UNSIGNED BYTE
+-- On INTCONST reduce production chunk -> UNSIGNED BYTE
+-- On IDENT reduce production chunk -> UNSIGNED BYTE
+-- On FLOATCONST reduce production chunk -> UNSIGNED BYTE
+-- On EXIT reduce production chunk -> UNSIGNED BYTE
+
+State 65:
+chunk -> SIGNED . BYTE [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+chunk -> SIGNED . HALF [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+chunk -> SIGNED . INT32 [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On INT32 shift to state 66
+-- On HALF shift to state 67
+-- On BYTE shift to state 68
+
+State 66:
+chunk -> SIGNED INT32 . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production chunk -> SIGNED INT32
+-- On POINTER reduce production chunk -> SIGNED INT32
+-- On LPAREN reduce production chunk -> SIGNED INT32
+-- On LBRACKET reduce production chunk -> SIGNED INT32
+-- On INTCONST reduce production chunk -> SIGNED INT32
+-- On IDENT reduce production chunk -> SIGNED INT32
+-- On FLOATCONST reduce production chunk -> SIGNED INT32
+-- On EXIT reduce production chunk -> SIGNED INT32
+
+State 67:
+chunk -> SIGNED HALF . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production chunk -> SIGNED HALF
+-- On POINTER reduce production chunk -> SIGNED HALF
+-- On LPAREN reduce production chunk -> SIGNED HALF
+-- On LBRACKET reduce production chunk -> SIGNED HALF
+-- On INTCONST reduce production chunk -> SIGNED HALF
+-- On IDENT reduce production chunk -> SIGNED HALF
+-- On FLOATCONST reduce production chunk -> SIGNED HALF
+-- On EXIT reduce production chunk -> SIGNED HALF
+
+State 68:
+chunk -> SIGNED BYTE . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production chunk -> SIGNED BYTE
+-- On POINTER reduce production chunk -> SIGNED BYTE
+-- On LPAREN reduce production chunk -> SIGNED BYTE
+-- On LBRACKET reduce production chunk -> SIGNED BYTE
+-- On INTCONST reduce production chunk -> SIGNED BYTE
+-- On IDENT reduce production chunk -> SIGNED BYTE
+-- On FLOATCONST reduce production chunk -> SIGNED BYTE
+-- On EXIT reduce production chunk -> SIGNED BYTE
+
+State 69:
+chunk -> INT . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production chunk -> INT
+-- On POINTER reduce production chunk -> INT
+-- On LPAREN reduce production chunk -> INT
+-- On LBRACKET reduce production chunk -> INT
+-- On INTCONST reduce production chunk -> INT
+-- On IDENT reduce production chunk -> INT
+-- On FLOATCONST reduce production chunk -> INT
+-- On EXIT reduce production chunk -> INT
+
+State 70:
+chunk -> FLOAT64 . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production chunk -> FLOAT64
+-- On POINTER reduce production chunk -> FLOAT64
+-- On LPAREN reduce production chunk -> FLOAT64
+-- On LBRACKET reduce production chunk -> FLOAT64
+-- On INTCONST reduce production chunk -> FLOAT64
+-- On IDENT reduce production chunk -> FLOAT64
+-- On FLOATCONST reduce production chunk -> FLOAT64
+-- On EXIT reduce production chunk -> FLOAT64
+
+State 71:
+chunk -> FLOAT32 . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production chunk -> FLOAT32
+-- On POINTER reduce production chunk -> FLOAT32
+-- On LPAREN reduce production chunk -> FLOAT32
+-- On LBRACKET reduce production chunk -> FLOAT32
+-- On INTCONST reduce production chunk -> FLOAT32
+-- On IDENT reduce production chunk -> FLOAT32
+-- On FLOATCONST reduce production chunk -> FLOAT32
+-- On EXIT reduce production chunk -> FLOAT32
+
+State 72:
+chunk -> FLOAT . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production chunk -> FLOAT
+-- On POINTER reduce production chunk -> FLOAT
+-- On LPAREN reduce production chunk -> FLOAT
+-- On LBRACKET reduce production chunk -> FLOAT
+-- On INTCONST reduce production chunk -> FLOAT
+-- On IDENT reduce production chunk -> FLOAT
+-- On FLOATCONST reduce production chunk -> FLOAT
+-- On EXIT reduce production chunk -> FLOAT
+
+State 73:
+chunk -> ADDR . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production chunk -> ADDR
+-- On POINTER reduce production chunk -> ADDR
+-- On LPAREN reduce production chunk -> ADDR
+-- On LBRACKET reduce production chunk -> ADDR
+-- On INTCONST reduce production chunk -> ADDR
+-- On IDENT reduce production chunk -> ADDR
+-- On FLOATCONST reduce production chunk -> ADDR
+-- On EXIT reduce production chunk -> ADDR
+
+State 74:
+binaryop -> STORE chunk . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production binaryop -> STORE chunk
+-- On POINTER reduce production binaryop -> STORE chunk
+-- On LPAREN reduce production binaryop -> STORE chunk
+-- On LBRACKET reduce production binaryop -> STORE chunk
+-- On INTCONST reduce production binaryop -> STORE chunk
+-- On IDENT reduce production binaryop -> STORE chunk
+-- On FLOATCONST reduce production binaryop -> STORE chunk
+-- On EXIT reduce production binaryop -> STORE chunk
+
+State 75:
+expr -> LPAREN SEQ . sequence RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On STRING shift to state 18
+-- On POINTER shift to state 19
+-- On LPAREN shift to state 20
+-- On LBRACKET shift to state 23
+-- On INTCONST shift to state 25
+-- On IDENT shift to state 26
+-- On FLOATCONST shift to state 27
+-- On EXIT shift to state 28
+-- On sequence shift to state 76
+-- On expr shift to state 32
+
+State 76:
+expr -> LPAREN SEQ sequence . RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On RPAREN shift to state 77
+
+State 77:
+expr -> LPAREN SEQ sequence RPAREN . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On WITH reduce production expr -> LPAREN SEQ sequence RPAREN
+-- On UNIT reduce production expr -> LPAREN SEQ sequence RPAREN
+-- On STRING reduce production expr -> LPAREN SEQ sequence RPAREN
+-- On RPAREN reduce production expr -> LPAREN SEQ sequence RPAREN
+-- On POINTER reduce production expr -> LPAREN SEQ sequence RPAREN
+-- On LPAREN reduce production expr -> LPAREN SEQ sequence RPAREN
+-- On LBRACKET reduce production expr -> LPAREN SEQ sequence RPAREN
+-- On INTCONST reduce production expr -> LPAREN SEQ sequence RPAREN
+-- On INT reduce production expr -> LPAREN SEQ sequence RPAREN
+-- On IDENT reduce production expr -> LPAREN SEQ sequence RPAREN
+-- On FLOATCONST reduce production expr -> LPAREN SEQ sequence RPAREN
+-- On FLOAT reduce production expr -> LPAREN SEQ sequence RPAREN
+-- On EXIT reduce production expr -> LPAREN SEQ sequence RPAREN
+-- On CASE reduce production expr -> LPAREN SEQ sequence RPAREN
+-- On ADDR reduce production expr -> LPAREN SEQ sequence RPAREN
+
+State 78:
+unaryop -> RAISE . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production unaryop -> RAISE
+-- On POINTER reduce production unaryop -> RAISE
+-- On LPAREN reduce production unaryop -> RAISE
+-- On LBRACKET reduce production unaryop -> RAISE
+-- On INTCONST reduce production unaryop -> RAISE
+-- On IDENT reduce production unaryop -> RAISE
+-- On FLOATCONST reduce production unaryop -> RAISE
+-- On EXIT reduce production unaryop -> RAISE
+
+State 79:
+binaryop -> OR . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production binaryop -> OR
+-- On POINTER reduce production binaryop -> OR
+-- On LPAREN reduce production binaryop -> OR
+-- On LBRACKET reduce production binaryop -> OR
+-- On INTCONST reduce production binaryop -> OR
+-- On IDENT reduce production binaryop -> OR
+-- On FLOATCONST reduce production binaryop -> OR
+-- On EXIT reduce production binaryop -> OR
+
+State 80:
+binaryop -> NEI . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production binaryop -> NEI
+-- On POINTER reduce production binaryop -> NEI
+-- On LPAREN reduce production binaryop -> NEI
+-- On LBRACKET reduce production binaryop -> NEI
+-- On INTCONST reduce production binaryop -> NEI
+-- On IDENT reduce production binaryop -> NEI
+-- On FLOATCONST reduce production binaryop -> NEI
+-- On EXIT reduce production binaryop -> NEI
+
+State 81:
+binaryop -> NEF . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production binaryop -> NEF
+-- On POINTER reduce production binaryop -> NEF
+-- On LPAREN reduce production binaryop -> NEF
+-- On LBRACKET reduce production binaryop -> NEF
+-- On INTCONST reduce production binaryop -> NEF
+-- On IDENT reduce production binaryop -> NEF
+-- On FLOATCONST reduce production binaryop -> NEF
+-- On EXIT reduce production binaryop -> NEF
+
+State 82:
+binaryop -> NEA . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production binaryop -> NEA
+-- On POINTER reduce production binaryop -> NEA
+-- On LPAREN reduce production binaryop -> NEA
+-- On LBRACKET reduce production binaryop -> NEA
+-- On INTCONST reduce production binaryop -> NEA
+-- On IDENT reduce production binaryop -> NEA
+-- On FLOATCONST reduce production binaryop -> NEA
+-- On EXIT reduce production binaryop -> NEA
+
+State 83:
+binaryop -> MULI . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production binaryop -> MULI
+-- On POINTER reduce production binaryop -> MULI
+-- On LPAREN reduce production binaryop -> MULI
+-- On LBRACKET reduce production binaryop -> MULI
+-- On INTCONST reduce production binaryop -> MULI
+-- On IDENT reduce production binaryop -> MULI
+-- On FLOATCONST reduce production binaryop -> MULI
+-- On EXIT reduce production binaryop -> MULI
+
+State 84:
+binaryop -> MULF . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production binaryop -> MULF
+-- On POINTER reduce production binaryop -> MULF
+-- On LPAREN reduce production binaryop -> MULF
+-- On LBRACKET reduce production binaryop -> MULF
+-- On INTCONST reduce production binaryop -> MULF
+-- On IDENT reduce production binaryop -> MULF
+-- On FLOATCONST reduce production binaryop -> MULF
+-- On EXIT reduce production binaryop -> MULF
+
+State 85:
+binaryop -> MODI . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production binaryop -> MODI
+-- On POINTER reduce production binaryop -> MODI
+-- On LPAREN reduce production binaryop -> MODI
+-- On LBRACKET reduce production binaryop -> MODI
+-- On INTCONST reduce production binaryop -> MODI
+-- On IDENT reduce production binaryop -> MODI
+-- On FLOATCONST reduce production binaryop -> MODI
+-- On EXIT reduce production binaryop -> MODI
+
+State 86:
+binaryop -> LTI . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production binaryop -> LTI
+-- On POINTER reduce production binaryop -> LTI
+-- On LPAREN reduce production binaryop -> LTI
+-- On LBRACKET reduce production binaryop -> LTI
+-- On INTCONST reduce production binaryop -> LTI
+-- On IDENT reduce production binaryop -> LTI
+-- On FLOATCONST reduce production binaryop -> LTI
+-- On EXIT reduce production binaryop -> LTI
+
+State 87:
+binaryop -> LTF . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production binaryop -> LTF
+-- On POINTER reduce production binaryop -> LTF
+-- On LPAREN reduce production binaryop -> LTF
+-- On LBRACKET reduce production binaryop -> LTF
+-- On INTCONST reduce production binaryop -> LTF
+-- On IDENT reduce production binaryop -> LTF
+-- On FLOATCONST reduce production binaryop -> LTF
+-- On EXIT reduce production binaryop -> LTF
+
+State 88:
+binaryop -> LTA . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production binaryop -> LTA
+-- On POINTER reduce production binaryop -> LTA
+-- On LPAREN reduce production binaryop -> LTA
+-- On LBRACKET reduce production binaryop -> LTA
+-- On INTCONST reduce production binaryop -> LTA
+-- On IDENT reduce production binaryop -> LTA
+-- On FLOATCONST reduce production binaryop -> LTA
+-- On EXIT reduce production binaryop -> LTA
+
+State 89:
+binaryop -> LSR . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production binaryop -> LSR
+-- On POINTER reduce production binaryop -> LSR
+-- On LPAREN reduce production binaryop -> LSR
+-- On LBRACKET reduce production binaryop -> LSR
+-- On INTCONST reduce production binaryop -> LSR
+-- On IDENT reduce production binaryop -> LSR
+-- On FLOATCONST reduce production binaryop -> LSR
+-- On EXIT reduce production binaryop -> LSR
+
+State 90:
+binaryop -> LSL . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production binaryop -> LSL
+-- On POINTER reduce production binaryop -> LSL
+-- On LPAREN reduce production binaryop -> LSL
+-- On LBRACKET reduce production binaryop -> LSL
+-- On INTCONST reduce production binaryop -> LSL
+-- On IDENT reduce production binaryop -> LSL
+-- On FLOATCONST reduce production binaryop -> LSL
+-- On EXIT reduce production binaryop -> LSL
+
+State 91:
+unaryop -> LOAD . chunk [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On UNSIGNED shift to state 61
+-- On SIGNED shift to state 65
+-- On INT shift to state 69
+-- On FLOAT64 shift to state 70
+-- On FLOAT32 shift to state 71
+-- On FLOAT shift to state 72
+-- On ADDR shift to state 73
+-- On chunk shift to state 92
+
+State 92:
+unaryop -> LOAD chunk . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production unaryop -> LOAD chunk
+-- On POINTER reduce production unaryop -> LOAD chunk
+-- On LPAREN reduce production unaryop -> LOAD chunk
+-- On LBRACKET reduce production unaryop -> LOAD chunk
+-- On INTCONST reduce production unaryop -> LOAD chunk
+-- On IDENT reduce production unaryop -> LOAD chunk
+-- On FLOATCONST reduce production unaryop -> LOAD chunk
+-- On EXIT reduce production unaryop -> LOAD chunk
+
+State 93:
+expr -> LPAREN LET . letdef sequence RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On LPAREN shift to state 94
+-- On IDENT shift to state 95
+-- On oneletdef shift to state 101
+-- On letdef shift to state 102
+
+State 94:
+letdef -> LPAREN . letdefmult RPAREN [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On IDENT shift to state 95
+-- On oneletdef shift to state 97
+-- On letdefmult shift to state 99
+-- On RPAREN reduce production letdefmult -> 
+
+State 95:
+oneletdef -> IDENT . expr [ STRING RPAREN POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING shift to state 18
+-- On POINTER shift to state 19
+-- On LPAREN shift to state 20
+-- On LBRACKET shift to state 23
+-- On INTCONST shift to state 25
+-- On IDENT shift to state 26
+-- On FLOATCONST shift to state 27
+-- On EXIT shift to state 28
+-- On expr shift to state 96
+
+State 96:
+oneletdef -> IDENT expr . [ STRING RPAREN POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production oneletdef -> IDENT expr
+-- On RPAREN reduce production oneletdef -> IDENT expr
+-- On POINTER reduce production oneletdef -> IDENT expr
+-- On LPAREN reduce production oneletdef -> IDENT expr
+-- On LBRACKET reduce production oneletdef -> IDENT expr
+-- On INTCONST reduce production oneletdef -> IDENT expr
+-- On IDENT reduce production oneletdef -> IDENT expr
+-- On FLOATCONST reduce production oneletdef -> IDENT expr
+-- On EXIT reduce production oneletdef -> IDENT expr
+
+State 97:
+letdefmult -> oneletdef . letdefmult [ RPAREN ]
+-- On IDENT shift to state 95
+-- On oneletdef shift to state 97
+-- On letdefmult shift to state 98
+-- On RPAREN reduce production letdefmult -> 
+
+State 98:
+letdefmult -> oneletdef letdefmult . [ RPAREN ]
+-- On RPAREN reduce production letdefmult -> oneletdef letdefmult
+
+State 99:
+letdef -> LPAREN letdefmult . RPAREN [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On RPAREN shift to state 100
+
+State 100:
+letdef -> LPAREN letdefmult RPAREN . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production letdef -> LPAREN letdefmult RPAREN
+-- On POINTER reduce production letdef -> LPAREN letdefmult RPAREN
+-- On LPAREN reduce production letdef -> LPAREN letdefmult RPAREN
+-- On LBRACKET reduce production letdef -> LPAREN letdefmult RPAREN
+-- On INTCONST reduce production letdef -> LPAREN letdefmult RPAREN
+-- On IDENT reduce production letdef -> LPAREN letdefmult RPAREN
+-- On FLOATCONST reduce production letdef -> LPAREN letdefmult RPAREN
+-- On EXIT reduce production letdef -> LPAREN letdefmult RPAREN
+
+State 101:
+letdef -> oneletdef . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production letdef -> oneletdef
+-- On POINTER reduce production letdef -> oneletdef
+-- On LPAREN reduce production letdef -> oneletdef
+-- On LBRACKET reduce production letdef -> oneletdef
+-- On INTCONST reduce production letdef -> oneletdef
+-- On IDENT reduce production letdef -> oneletdef
+-- On FLOATCONST reduce production letdef -> oneletdef
+-- On EXIT reduce production letdef -> oneletdef
+
+State 102:
+expr -> LPAREN LET letdef . sequence RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On STRING shift to state 18
+-- On POINTER shift to state 19
+-- On LPAREN shift to state 20
+-- On LBRACKET shift to state 23
+-- On INTCONST shift to state 25
+-- On IDENT shift to state 26
+-- On FLOATCONST shift to state 27
+-- On EXIT shift to state 28
+-- On sequence shift to state 103
+-- On expr shift to state 32
+
+State 103:
+expr -> LPAREN LET letdef sequence . RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On RPAREN shift to state 104
+
+State 104:
+expr -> LPAREN LET letdef sequence RPAREN . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On WITH reduce production expr -> LPAREN LET letdef sequence RPAREN
+-- On UNIT reduce production expr -> LPAREN LET letdef sequence RPAREN
+-- On STRING reduce production expr -> LPAREN LET letdef sequence RPAREN
+-- On RPAREN reduce production expr -> LPAREN LET letdef sequence RPAREN
+-- On POINTER reduce production expr -> LPAREN LET letdef sequence RPAREN
+-- On LPAREN reduce production expr -> LPAREN LET letdef sequence RPAREN
+-- On LBRACKET reduce production expr -> LPAREN LET letdef sequence RPAREN
+-- On INTCONST reduce production expr -> LPAREN LET letdef sequence RPAREN
+-- On INT reduce production expr -> LPAREN LET letdef sequence RPAREN
+-- On IDENT reduce production expr -> LPAREN LET letdef sequence RPAREN
+-- On FLOATCONST reduce production expr -> LPAREN LET letdef sequence RPAREN
+-- On FLOAT reduce production expr -> LPAREN LET letdef sequence RPAREN
+-- On EXIT reduce production expr -> LPAREN LET letdef sequence RPAREN
+-- On CASE reduce production expr -> LPAREN LET letdef sequence RPAREN
+-- On ADDR reduce production expr -> LPAREN LET letdef sequence RPAREN
+
+State 105:
+binaryop -> LEI . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production binaryop -> LEI
+-- On POINTER reduce production binaryop -> LEI
+-- On LPAREN reduce production binaryop -> LEI
+-- On LBRACKET reduce production binaryop -> LEI
+-- On INTCONST reduce production binaryop -> LEI
+-- On IDENT reduce production binaryop -> LEI
+-- On FLOATCONST reduce production binaryop -> LEI
+-- On EXIT reduce production binaryop -> LEI
+
+State 106:
+binaryop -> LEF . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production binaryop -> LEF
+-- On POINTER reduce production binaryop -> LEF
+-- On LPAREN reduce production binaryop -> LEF
+-- On LBRACKET reduce production binaryop -> LEF
+-- On INTCONST reduce production binaryop -> LEF
+-- On IDENT reduce production binaryop -> LEF
+-- On FLOATCONST reduce production binaryop -> LEF
+-- On EXIT reduce production binaryop -> LEF
+
+State 107:
+binaryop -> LEA . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production binaryop -> LEA
+-- On POINTER reduce production binaryop -> LEA
+-- On LPAREN reduce production binaryop -> LEA
+-- On LBRACKET reduce production binaryop -> LEA
+-- On INTCONST reduce production binaryop -> LEA
+-- On IDENT reduce production binaryop -> LEA
+-- On FLOATCONST reduce production binaryop -> LEA
+-- On EXIT reduce production binaryop -> LEA
+
+State 108:
+unaryop -> INTOFFLOAT . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production unaryop -> INTOFFLOAT
+-- On POINTER reduce production unaryop -> INTOFFLOAT
+-- On LPAREN reduce production unaryop -> INTOFFLOAT
+-- On LBRACKET reduce production unaryop -> INTOFFLOAT
+-- On INTCONST reduce production unaryop -> INTOFFLOAT
+-- On IDENT reduce production unaryop -> INTOFFLOAT
+-- On FLOATCONST reduce production unaryop -> INTOFFLOAT
+-- On EXIT reduce production unaryop -> INTOFFLOAT
+
+State 109:
+expr -> LPAREN INTASET . expr expr expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On STRING shift to state 18
+-- On POINTER shift to state 19
+-- On LPAREN shift to state 20
+-- On LBRACKET shift to state 23
+-- On INTCONST shift to state 25
+-- On IDENT shift to state 26
+-- On FLOATCONST shift to state 27
+-- On EXIT shift to state 28
+-- On expr shift to state 110
+
+State 110:
+expr -> LPAREN INTASET expr . expr expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On STRING shift to state 18
+-- On POINTER shift to state 19
+-- On LPAREN shift to state 20
+-- On LBRACKET shift to state 23
+-- On INTCONST shift to state 25
+-- On IDENT shift to state 26
+-- On FLOATCONST shift to state 27
+-- On EXIT shift to state 28
+-- On expr shift to state 111
+
+State 111:
+expr -> LPAREN INTASET expr expr . expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On STRING shift to state 18
+-- On POINTER shift to state 19
+-- On LPAREN shift to state 20
+-- On LBRACKET shift to state 23
+-- On INTCONST shift to state 25
+-- On IDENT shift to state 26
+-- On FLOATCONST shift to state 27
+-- On EXIT shift to state 28
+-- On expr shift to state 112
+
+State 112:
+expr -> LPAREN INTASET expr expr expr . RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On RPAREN shift to state 113
+
+State 113:
+expr -> LPAREN INTASET expr expr expr RPAREN . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On WITH reduce production expr -> LPAREN INTASET expr expr expr RPAREN
+-- On UNIT reduce production expr -> LPAREN INTASET expr expr expr RPAREN
+-- On STRING reduce production expr -> LPAREN INTASET expr expr expr RPAREN
+-- On RPAREN reduce production expr -> LPAREN INTASET expr expr expr RPAREN
+-- On POINTER reduce production expr -> LPAREN INTASET expr expr expr RPAREN
+-- On LPAREN reduce production expr -> LPAREN INTASET expr expr expr RPAREN
+-- On LBRACKET reduce production expr -> LPAREN INTASET expr expr expr RPAREN
+-- On INTCONST reduce production expr -> LPAREN INTASET expr expr expr RPAREN
+-- On INT reduce production expr -> LPAREN INTASET expr expr expr RPAREN
+-- On IDENT reduce production expr -> LPAREN INTASET expr expr expr RPAREN
+-- On FLOATCONST reduce production expr -> LPAREN INTASET expr expr expr RPAREN
+-- On FLOAT reduce production expr -> LPAREN INTASET expr expr expr RPAREN
+-- On EXIT reduce production expr -> LPAREN INTASET expr expr expr RPAREN
+-- On CASE reduce production expr -> LPAREN INTASET expr expr expr RPAREN
+-- On ADDR reduce production expr -> LPAREN INTASET expr expr expr RPAREN
+
+State 114:
+expr -> LPAREN INTAREF . expr expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On STRING shift to state 18
+-- On POINTER shift to state 19
+-- On LPAREN shift to state 20
+-- On LBRACKET shift to state 23
+-- On INTCONST shift to state 25
+-- On IDENT shift to state 26
+-- On FLOATCONST shift to state 27
+-- On EXIT shift to state 28
+-- On expr shift to state 115
+
+State 115:
+expr -> LPAREN INTAREF expr . expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On STRING shift to state 18
+-- On POINTER shift to state 19
+-- On LPAREN shift to state 20
+-- On LBRACKET shift to state 23
+-- On INTCONST shift to state 25
+-- On IDENT shift to state 26
+-- On FLOATCONST shift to state 27
+-- On EXIT shift to state 28
+-- On expr shift to state 116
+
+State 116:
+expr -> LPAREN INTAREF expr expr . RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On RPAREN shift to state 117
+
+State 117:
+expr -> LPAREN INTAREF expr expr RPAREN . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On WITH reduce production expr -> LPAREN INTAREF expr expr RPAREN
+-- On UNIT reduce production expr -> LPAREN INTAREF expr expr RPAREN
+-- On STRING reduce production expr -> LPAREN INTAREF expr expr RPAREN
+-- On RPAREN reduce production expr -> LPAREN INTAREF expr expr RPAREN
+-- On POINTER reduce production expr -> LPAREN INTAREF expr expr RPAREN
+-- On LPAREN reduce production expr -> LPAREN INTAREF expr expr RPAREN
+-- On LBRACKET reduce production expr -> LPAREN INTAREF expr expr RPAREN
+-- On INTCONST reduce production expr -> LPAREN INTAREF expr expr RPAREN
+-- On INT reduce production expr -> LPAREN INTAREF expr expr RPAREN
+-- On IDENT reduce production expr -> LPAREN INTAREF expr expr RPAREN
+-- On FLOATCONST reduce production expr -> LPAREN INTAREF expr expr RPAREN
+-- On FLOAT reduce production expr -> LPAREN INTAREF expr expr RPAREN
+-- On EXIT reduce production expr -> LPAREN INTAREF expr expr RPAREN
+-- On CASE reduce production expr -> LPAREN INTAREF expr expr RPAREN
+-- On ADDR reduce production expr -> LPAREN INTAREF expr expr RPAREN
+
+State 118:
+expr -> LPAREN IF . expr expr expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On STRING shift to state 18
+-- On POINTER shift to state 19
+-- On LPAREN shift to state 20
+-- On LBRACKET shift to state 23
+-- On INTCONST shift to state 25
+-- On IDENT shift to state 26
+-- On FLOATCONST shift to state 27
+-- On EXIT shift to state 28
+-- On expr shift to state 119
+
+State 119:
+expr -> LPAREN IF expr . expr expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On STRING shift to state 18
+-- On POINTER shift to state 19
+-- On LPAREN shift to state 20
+-- On LBRACKET shift to state 23
+-- On INTCONST shift to state 25
+-- On IDENT shift to state 26
+-- On FLOATCONST shift to state 27
+-- On EXIT shift to state 28
+-- On expr shift to state 120
+
+State 120:
+expr -> LPAREN IF expr expr . expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On STRING shift to state 18
+-- On POINTER shift to state 19
+-- On LPAREN shift to state 20
+-- On LBRACKET shift to state 23
+-- On INTCONST shift to state 25
+-- On IDENT shift to state 26
+-- On FLOATCONST shift to state 27
+-- On EXIT shift to state 28
+-- On expr shift to state 121
+
+State 121:
+expr -> LPAREN IF expr expr expr . RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On RPAREN shift to state 122
+
+State 122:
+expr -> LPAREN IF expr expr expr RPAREN . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On WITH reduce production expr -> LPAREN IF expr expr expr RPAREN
+-- On UNIT reduce production expr -> LPAREN IF expr expr expr RPAREN
+-- On STRING reduce production expr -> LPAREN IF expr expr expr RPAREN
+-- On RPAREN reduce production expr -> LPAREN IF expr expr expr RPAREN
+-- On POINTER reduce production expr -> LPAREN IF expr expr expr RPAREN
+-- On LPAREN reduce production expr -> LPAREN IF expr expr expr RPAREN
+-- On LBRACKET reduce production expr -> LPAREN IF expr expr expr RPAREN
+-- On INTCONST reduce production expr -> LPAREN IF expr expr expr RPAREN
+-- On INT reduce production expr -> LPAREN IF expr expr expr RPAREN
+-- On IDENT reduce production expr -> LPAREN IF expr expr expr RPAREN
+-- On FLOATCONST reduce production expr -> LPAREN IF expr expr expr RPAREN
+-- On FLOAT reduce production expr -> LPAREN IF expr expr expr RPAREN
+-- On EXIT reduce production expr -> LPAREN IF expr expr expr RPAREN
+-- On CASE reduce production expr -> LPAREN IF expr expr expr RPAREN
+-- On ADDR reduce production expr -> LPAREN IF expr expr expr RPAREN
+
+State 123:
+binaryop -> GTI . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production binaryop -> GTI
+-- On POINTER reduce production binaryop -> GTI
+-- On LPAREN reduce production binaryop -> GTI
+-- On LBRACKET reduce production binaryop -> GTI
+-- On INTCONST reduce production binaryop -> GTI
+-- On IDENT reduce production binaryop -> GTI
+-- On FLOATCONST reduce production binaryop -> GTI
+-- On EXIT reduce production binaryop -> GTI
+
+State 124:
+binaryop -> GTF . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production binaryop -> GTF
+-- On POINTER reduce production binaryop -> GTF
+-- On LPAREN reduce production binaryop -> GTF
+-- On LBRACKET reduce production binaryop -> GTF
+-- On INTCONST reduce production binaryop -> GTF
+-- On IDENT reduce production binaryop -> GTF
+-- On FLOATCONST reduce production binaryop -> GTF
+-- On EXIT reduce production binaryop -> GTF
+
+State 125:
+binaryop -> GTA . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production binaryop -> GTA
+-- On POINTER reduce production binaryop -> GTA
+-- On LPAREN reduce production binaryop -> GTA
+-- On LBRACKET reduce production binaryop -> GTA
+-- On INTCONST reduce production binaryop -> GTA
+-- On IDENT reduce production binaryop -> GTA
+-- On FLOATCONST reduce production binaryop -> GTA
+-- On EXIT reduce production binaryop -> GTA
+
+State 126:
+binaryop -> GEI . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production binaryop -> GEI
+-- On POINTER reduce production binaryop -> GEI
+-- On LPAREN reduce production binaryop -> GEI
+-- On LBRACKET reduce production binaryop -> GEI
+-- On INTCONST reduce production binaryop -> GEI
+-- On IDENT reduce production binaryop -> GEI
+-- On FLOATCONST reduce production binaryop -> GEI
+-- On EXIT reduce production binaryop -> GEI
+
+State 127:
+binaryop -> GEF . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production binaryop -> GEF
+-- On POINTER reduce production binaryop -> GEF
+-- On LPAREN reduce production binaryop -> GEF
+-- On LBRACKET reduce production binaryop -> GEF
+-- On INTCONST reduce production binaryop -> GEF
+-- On IDENT reduce production binaryop -> GEF
+-- On FLOATCONST reduce production binaryop -> GEF
+-- On EXIT reduce production binaryop -> GEF
+
+State 128:
+binaryop -> GEA . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production binaryop -> GEA
+-- On POINTER reduce production binaryop -> GEA
+-- On LPAREN reduce production binaryop -> GEA
+-- On LBRACKET reduce production binaryop -> GEA
+-- On INTCONST reduce production binaryop -> GEA
+-- On IDENT reduce production binaryop -> GEA
+-- On FLOATCONST reduce production binaryop -> GEA
+-- On EXIT reduce production binaryop -> GEA
+
+State 129:
+unaryop -> FLOATOFINT . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production unaryop -> FLOATOFINT
+-- On POINTER reduce production unaryop -> FLOATOFINT
+-- On LPAREN reduce production unaryop -> FLOATOFINT
+-- On LBRACKET reduce production unaryop -> FLOATOFINT
+-- On INTCONST reduce production unaryop -> FLOATOFINT
+-- On IDENT reduce production unaryop -> FLOATOFINT
+-- On FLOATCONST reduce production unaryop -> FLOATOFINT
+-- On EXIT reduce production unaryop -> FLOATOFINT
+
+State 130:
+expr -> LPAREN FLOATASET . expr expr expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On STRING shift to state 18
+-- On POINTER shift to state 19
+-- On LPAREN shift to state 20
+-- On LBRACKET shift to state 23
+-- On INTCONST shift to state 25
+-- On IDENT shift to state 26
+-- On FLOATCONST shift to state 27
+-- On EXIT shift to state 28
+-- On expr shift to state 131
+
+State 131:
+expr -> LPAREN FLOATASET expr . expr expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On STRING shift to state 18
+-- On POINTER shift to state 19
+-- On LPAREN shift to state 20
+-- On LBRACKET shift to state 23
+-- On INTCONST shift to state 25
+-- On IDENT shift to state 26
+-- On FLOATCONST shift to state 27
+-- On EXIT shift to state 28
+-- On expr shift to state 132
+
+State 132:
+expr -> LPAREN FLOATASET expr expr . expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On STRING shift to state 18
+-- On POINTER shift to state 19
+-- On LPAREN shift to state 20
+-- On LBRACKET shift to state 23
+-- On INTCONST shift to state 25
+-- On IDENT shift to state 26
+-- On FLOATCONST shift to state 27
+-- On EXIT shift to state 28
+-- On expr shift to state 133
+
+State 133:
+expr -> LPAREN FLOATASET expr expr expr . RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On RPAREN shift to state 134
+
+State 134:
+expr -> LPAREN FLOATASET expr expr expr RPAREN . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On WITH reduce production expr -> LPAREN FLOATASET expr expr expr RPAREN
+-- On UNIT reduce production expr -> LPAREN FLOATASET expr expr expr RPAREN
+-- On STRING reduce production expr -> LPAREN FLOATASET expr expr expr RPAREN
+-- On RPAREN reduce production expr -> LPAREN FLOATASET expr expr expr RPAREN
+-- On POINTER reduce production expr -> LPAREN FLOATASET expr expr expr RPAREN
+-- On LPAREN reduce production expr -> LPAREN FLOATASET expr expr expr RPAREN
+-- On LBRACKET reduce production expr -> LPAREN FLOATASET expr expr expr RPAREN
+-- On INTCONST reduce production expr -> LPAREN FLOATASET expr expr expr RPAREN
+-- On INT reduce production expr -> LPAREN FLOATASET expr expr expr RPAREN
+-- On IDENT reduce production expr -> LPAREN FLOATASET expr expr expr RPAREN
+-- On FLOATCONST reduce production expr -> LPAREN FLOATASET expr expr expr RPAREN
+-- On FLOAT reduce production expr -> LPAREN FLOATASET expr expr expr RPAREN
+-- On EXIT reduce production expr -> LPAREN FLOATASET expr expr expr RPAREN
+-- On CASE reduce production expr -> LPAREN FLOATASET expr expr expr RPAREN
+-- On ADDR reduce production expr -> LPAREN FLOATASET expr expr expr RPAREN
+
+State 135:
+expr -> LPAREN FLOATAREF . expr expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On STRING shift to state 18
+-- On POINTER shift to state 19
+-- On LPAREN shift to state 20
+-- On LBRACKET shift to state 23
+-- On INTCONST shift to state 25
+-- On IDENT shift to state 26
+-- On FLOATCONST shift to state 27
+-- On EXIT shift to state 28
+-- On expr shift to state 136
+
+State 136:
+expr -> LPAREN FLOATAREF expr . expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On STRING shift to state 18
+-- On POINTER shift to state 19
+-- On LPAREN shift to state 20
+-- On LBRACKET shift to state 23
+-- On INTCONST shift to state 25
+-- On IDENT shift to state 26
+-- On FLOATCONST shift to state 27
+-- On EXIT shift to state 28
+-- On expr shift to state 137
+
+State 137:
+expr -> LPAREN FLOATAREF expr expr . RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On RPAREN shift to state 138
+
+State 138:
+expr -> LPAREN FLOATAREF expr expr RPAREN . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On WITH reduce production expr -> LPAREN FLOATAREF expr expr RPAREN
+-- On UNIT reduce production expr -> LPAREN FLOATAREF expr expr RPAREN
+-- On STRING reduce production expr -> LPAREN FLOATAREF expr expr RPAREN
+-- On RPAREN reduce production expr -> LPAREN FLOATAREF expr expr RPAREN
+-- On POINTER reduce production expr -> LPAREN FLOATAREF expr expr RPAREN
+-- On LPAREN reduce production expr -> LPAREN FLOATAREF expr expr RPAREN
+-- On LBRACKET reduce production expr -> LPAREN FLOATAREF expr expr RPAREN
+-- On INTCONST reduce production expr -> LPAREN FLOATAREF expr expr RPAREN
+-- On INT reduce production expr -> LPAREN FLOATAREF expr expr RPAREN
+-- On IDENT reduce production expr -> LPAREN FLOATAREF expr expr RPAREN
+-- On FLOATCONST reduce production expr -> LPAREN FLOATAREF expr expr RPAREN
+-- On FLOAT reduce production expr -> LPAREN FLOATAREF expr expr RPAREN
+-- On EXIT reduce production expr -> LPAREN FLOATAREF expr expr RPAREN
+-- On CASE reduce production expr -> LPAREN FLOATAREF expr expr RPAREN
+-- On ADDR reduce production expr -> LPAREN FLOATAREF expr expr RPAREN
+
+State 139:
+expr -> LPAREN EXTCALL . STRING exprlist machtype RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On STRING shift to state 140
+
+State 140:
+expr -> LPAREN EXTCALL STRING . exprlist machtype RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On exprlist shift to state 141
+-- On UNIT reduce production exprlist -> 
+-- On STRING reduce production exprlist -> 
+-- On POINTER reduce production exprlist -> 
+-- On LPAREN reduce production exprlist -> 
+-- On LBRACKET reduce production exprlist -> 
+-- On INTCONST reduce production exprlist -> 
+-- On INT reduce production exprlist -> 
+-- On IDENT reduce production exprlist -> 
+-- On FLOATCONST reduce production exprlist -> 
+-- On FLOAT reduce production exprlist -> 
+-- On EXIT reduce production exprlist -> 
+-- On ADDR reduce production exprlist -> 
+
+State 141:
+expr -> LPAREN EXTCALL STRING exprlist . machtype RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+exprlist -> exprlist . expr [ UNIT STRING POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT ADDR ]
+-- On UNIT shift to state 7
+-- On STRING shift to state 18
+-- On POINTER shift to state 19
+-- On LPAREN shift to state 20
+-- On LBRACKET shift to state 23
+-- On INTCONST shift to state 25
+-- On INT shift to state 8
+-- On IDENT shift to state 26
+-- On FLOATCONST shift to state 27
+-- On FLOAT shift to state 9
+-- On EXIT shift to state 28
+-- On ADDR shift to state 10
+-- On machtype shift to state 142
+-- On expr shift to state 144
+-- On componentlist shift to state 12
+-- On component shift to state 15
+
+State 142:
+expr -> LPAREN EXTCALL STRING exprlist machtype . RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On RPAREN shift to state 143
+
+State 143:
+expr -> LPAREN EXTCALL STRING exprlist machtype RPAREN . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On WITH reduce production expr -> LPAREN EXTCALL STRING exprlist machtype RPAREN
+-- On UNIT reduce production expr -> LPAREN EXTCALL STRING exprlist machtype RPAREN
+-- On STRING reduce production expr -> LPAREN EXTCALL STRING exprlist machtype RPAREN
+-- On RPAREN reduce production expr -> LPAREN EXTCALL STRING exprlist machtype RPAREN
+-- On POINTER reduce production expr -> LPAREN EXTCALL STRING exprlist machtype RPAREN
+-- On LPAREN reduce production expr -> LPAREN EXTCALL STRING exprlist machtype RPAREN
+-- On LBRACKET reduce production expr -> LPAREN EXTCALL STRING exprlist machtype RPAREN
+-- On INTCONST reduce production expr -> LPAREN EXTCALL STRING exprlist machtype RPAREN
+-- On INT reduce production expr -> LPAREN EXTCALL STRING exprlist machtype RPAREN
+-- On IDENT reduce production expr -> LPAREN EXTCALL STRING exprlist machtype RPAREN
+-- On FLOATCONST reduce production expr -> LPAREN EXTCALL STRING exprlist machtype RPAREN
+-- On FLOAT reduce production expr -> LPAREN EXTCALL STRING exprlist machtype RPAREN
+-- On EXIT reduce production expr -> LPAREN EXTCALL STRING exprlist machtype RPAREN
+-- On CASE reduce production expr -> LPAREN EXTCALL STRING exprlist machtype RPAREN
+-- On ADDR reduce production expr -> LPAREN EXTCALL STRING exprlist machtype RPAREN
+
+State 144:
+exprlist -> exprlist expr . [ UNIT STRING POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT ADDR ]
+-- On UNIT reduce production exprlist -> exprlist expr
+-- On STRING reduce production exprlist -> exprlist expr
+-- On POINTER reduce production exprlist -> exprlist expr
+-- On LPAREN reduce production exprlist -> exprlist expr
+-- On LBRACKET reduce production exprlist -> exprlist expr
+-- On INTCONST reduce production exprlist -> exprlist expr
+-- On INT reduce production exprlist -> exprlist expr
+-- On IDENT reduce production exprlist -> exprlist expr
+-- On FLOATCONST reduce production exprlist -> exprlist expr
+-- On FLOAT reduce production exprlist -> exprlist expr
+-- On EXIT reduce production exprlist -> exprlist expr
+-- On ADDR reduce production exprlist -> exprlist expr
+
+State 145:
+binaryop -> EQI . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production binaryop -> EQI
+-- On POINTER reduce production binaryop -> EQI
+-- On LPAREN reduce production binaryop -> EQI
+-- On LBRACKET reduce production binaryop -> EQI
+-- On INTCONST reduce production binaryop -> EQI
+-- On IDENT reduce production binaryop -> EQI
+-- On FLOATCONST reduce production binaryop -> EQI
+-- On EXIT reduce production binaryop -> EQI
+
+State 146:
+binaryop -> EQF . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production binaryop -> EQF
+-- On POINTER reduce production binaryop -> EQF
+-- On LPAREN reduce production binaryop -> EQF
+-- On LBRACKET reduce production binaryop -> EQF
+-- On INTCONST reduce production binaryop -> EQF
+-- On IDENT reduce production binaryop -> EQF
+-- On FLOATCONST reduce production binaryop -> EQF
+-- On EXIT reduce production binaryop -> EQF
+
+State 147:
+binaryop -> EQA . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production binaryop -> EQA
+-- On POINTER reduce production binaryop -> EQA
+-- On LPAREN reduce production binaryop -> EQA
+-- On LBRACKET reduce production binaryop -> EQA
+-- On INTCONST reduce production binaryop -> EQA
+-- On IDENT reduce production binaryop -> EQA
+-- On FLOATCONST reduce production binaryop -> EQA
+-- On EXIT reduce production binaryop -> EQA
+
+State 148:
+binaryop -> DIVI . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production binaryop -> DIVI
+-- On POINTER reduce production binaryop -> DIVI
+-- On LPAREN reduce production binaryop -> DIVI
+-- On LBRACKET reduce production binaryop -> DIVI
+-- On INTCONST reduce production binaryop -> DIVI
+-- On IDENT reduce production binaryop -> DIVI
+-- On FLOATCONST reduce production binaryop -> DIVI
+-- On EXIT reduce production binaryop -> DIVI
+
+State 149:
+binaryop -> DIVF . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production binaryop -> DIVF
+-- On POINTER reduce production binaryop -> DIVF
+-- On LPAREN reduce production binaryop -> DIVF
+-- On LBRACKET reduce production binaryop -> DIVF
+-- On INTCONST reduce production binaryop -> DIVF
+-- On IDENT reduce production binaryop -> DIVF
+-- On FLOATCONST reduce production binaryop -> DIVF
+-- On EXIT reduce production binaryop -> DIVF
+
+State 150:
+binaryop -> CHECKBOUND . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production binaryop -> CHECKBOUND
+-- On POINTER reduce production binaryop -> CHECKBOUND
+-- On LPAREN reduce production binaryop -> CHECKBOUND
+-- On LBRACKET reduce production binaryop -> CHECKBOUND
+-- On INTCONST reduce production binaryop -> CHECKBOUND
+-- On IDENT reduce production binaryop -> CHECKBOUND
+-- On FLOATCONST reduce production binaryop -> CHECKBOUND
+-- On EXIT reduce production binaryop -> CHECKBOUND
+
+State 151:
+expr -> LPAREN CATCH . sequence WITH sequence RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On STRING shift to state 18
+-- On POINTER shift to state 19
+-- On LPAREN shift to state 20
+-- On LBRACKET shift to state 23
+-- On INTCONST shift to state 25
+-- On IDENT shift to state 26
+-- On FLOATCONST shift to state 27
+-- On EXIT shift to state 28
+-- On sequence shift to state 152
+-- On expr shift to state 32
+
+State 152:
+expr -> LPAREN CATCH sequence . WITH sequence RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On WITH shift to state 153
+
+State 153:
+expr -> LPAREN CATCH sequence WITH . sequence RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On STRING shift to state 18
+-- On POINTER shift to state 19
+-- On LPAREN shift to state 20
+-- On LBRACKET shift to state 23
+-- On INTCONST shift to state 25
+-- On IDENT shift to state 26
+-- On FLOATCONST shift to state 27
+-- On EXIT shift to state 28
+-- On sequence shift to state 154
+-- On expr shift to state 32
+
+State 154:
+expr -> LPAREN CATCH sequence WITH sequence . RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On RPAREN shift to state 155
+
+State 155:
+expr -> LPAREN CATCH sequence WITH sequence RPAREN . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On WITH reduce production expr -> LPAREN CATCH sequence WITH sequence RPAREN
+-- On UNIT reduce production expr -> LPAREN CATCH sequence WITH sequence RPAREN
+-- On STRING reduce production expr -> LPAREN CATCH sequence WITH sequence RPAREN
+-- On RPAREN reduce production expr -> LPAREN CATCH sequence WITH sequence RPAREN
+-- On POINTER reduce production expr -> LPAREN CATCH sequence WITH sequence RPAREN
+-- On LPAREN reduce production expr -> LPAREN CATCH sequence WITH sequence RPAREN
+-- On LBRACKET reduce production expr -> LPAREN CATCH sequence WITH sequence RPAREN
+-- On INTCONST reduce production expr -> LPAREN CATCH sequence WITH sequence RPAREN
+-- On INT reduce production expr -> LPAREN CATCH sequence WITH sequence RPAREN
+-- On IDENT reduce production expr -> LPAREN CATCH sequence WITH sequence RPAREN
+-- On FLOATCONST reduce production expr -> LPAREN CATCH sequence WITH sequence RPAREN
+-- On FLOAT reduce production expr -> LPAREN CATCH sequence WITH sequence RPAREN
+-- On EXIT reduce production expr -> LPAREN CATCH sequence WITH sequence RPAREN
+-- On CASE reduce production expr -> LPAREN CATCH sequence WITH sequence RPAREN
+-- On ADDR reduce production expr -> LPAREN CATCH sequence WITH sequence RPAREN
+
+State 156:
+expr -> LPAREN ASSIGN . IDENT expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On IDENT shift to state 157
+
+State 157:
+expr -> LPAREN ASSIGN IDENT . expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On STRING shift to state 18
+-- On POINTER shift to state 19
+-- On LPAREN shift to state 20
+-- On LBRACKET shift to state 23
+-- On INTCONST shift to state 25
+-- On IDENT shift to state 26
+-- On FLOATCONST shift to state 27
+-- On EXIT shift to state 28
+-- On expr shift to state 158
+
+State 158:
+expr -> LPAREN ASSIGN IDENT expr . RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On RPAREN shift to state 159
+
+State 159:
+expr -> LPAREN ASSIGN IDENT expr RPAREN . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On WITH reduce production expr -> LPAREN ASSIGN IDENT expr RPAREN
+-- On UNIT reduce production expr -> LPAREN ASSIGN IDENT expr RPAREN
+-- On STRING reduce production expr -> LPAREN ASSIGN IDENT expr RPAREN
+-- On RPAREN reduce production expr -> LPAREN ASSIGN IDENT expr RPAREN
+-- On POINTER reduce production expr -> LPAREN ASSIGN IDENT expr RPAREN
+-- On LPAREN reduce production expr -> LPAREN ASSIGN IDENT expr RPAREN
+-- On LBRACKET reduce production expr -> LPAREN ASSIGN IDENT expr RPAREN
+-- On INTCONST reduce production expr -> LPAREN ASSIGN IDENT expr RPAREN
+-- On INT reduce production expr -> LPAREN ASSIGN IDENT expr RPAREN
+-- On IDENT reduce production expr -> LPAREN ASSIGN IDENT expr RPAREN
+-- On FLOATCONST reduce production expr -> LPAREN ASSIGN IDENT expr RPAREN
+-- On FLOAT reduce production expr -> LPAREN ASSIGN IDENT expr RPAREN
+-- On EXIT reduce production expr -> LPAREN ASSIGN IDENT expr RPAREN
+-- On CASE reduce production expr -> LPAREN ASSIGN IDENT expr RPAREN
+-- On ADDR reduce production expr -> LPAREN ASSIGN IDENT expr RPAREN
+
+State 160:
+binaryop -> ASR . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production binaryop -> ASR
+-- On POINTER reduce production binaryop -> ASR
+-- On LPAREN reduce production binaryop -> ASR
+-- On LBRACKET reduce production binaryop -> ASR
+-- On INTCONST reduce production binaryop -> ASR
+-- On IDENT reduce production binaryop -> ASR
+-- On FLOATCONST reduce production binaryop -> ASR
+-- On EXIT reduce production binaryop -> ASR
+
+State 161:
+expr -> LPAREN APPLY . expr exprlist machtype RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On STRING shift to state 18
+-- On POINTER shift to state 19
+-- On LPAREN shift to state 20
+-- On LBRACKET shift to state 23
+-- On INTCONST shift to state 25
+-- On IDENT shift to state 26
+-- On FLOATCONST shift to state 27
+-- On EXIT shift to state 28
+-- On expr shift to state 162
+
+State 162:
+expr -> LPAREN APPLY expr . exprlist machtype RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On exprlist shift to state 163
+-- On UNIT reduce production exprlist -> 
+-- On STRING reduce production exprlist -> 
+-- On POINTER reduce production exprlist -> 
+-- On LPAREN reduce production exprlist -> 
+-- On LBRACKET reduce production exprlist -> 
+-- On INTCONST reduce production exprlist -> 
+-- On INT reduce production exprlist -> 
+-- On IDENT reduce production exprlist -> 
+-- On FLOATCONST reduce production exprlist -> 
+-- On FLOAT reduce production exprlist -> 
+-- On EXIT reduce production exprlist -> 
+-- On ADDR reduce production exprlist -> 
+
+State 163:
+expr -> LPAREN APPLY expr exprlist . machtype RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+exprlist -> exprlist . expr [ UNIT STRING POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT ADDR ]
+-- On UNIT shift to state 7
+-- On STRING shift to state 18
+-- On POINTER shift to state 19
+-- On LPAREN shift to state 20
+-- On LBRACKET shift to state 23
+-- On INTCONST shift to state 25
+-- On INT shift to state 8
+-- On IDENT shift to state 26
+-- On FLOATCONST shift to state 27
+-- On FLOAT shift to state 9
+-- On EXIT shift to state 28
+-- On ADDR shift to state 10
+-- On machtype shift to state 164
+-- On expr shift to state 144
+-- On componentlist shift to state 12
+-- On component shift to state 15
+
+State 164:
+expr -> LPAREN APPLY expr exprlist machtype . RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On RPAREN shift to state 165
+
+State 165:
+expr -> LPAREN APPLY expr exprlist machtype RPAREN . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On WITH reduce production expr -> LPAREN APPLY expr exprlist machtype RPAREN
+-- On UNIT reduce production expr -> LPAREN APPLY expr exprlist machtype RPAREN
+-- On STRING reduce production expr -> LPAREN APPLY expr exprlist machtype RPAREN
+-- On RPAREN reduce production expr -> LPAREN APPLY expr exprlist machtype RPAREN
+-- On POINTER reduce production expr -> LPAREN APPLY expr exprlist machtype RPAREN
+-- On LPAREN reduce production expr -> LPAREN APPLY expr exprlist machtype RPAREN
+-- On LBRACKET reduce production expr -> LPAREN APPLY expr exprlist machtype RPAREN
+-- On INTCONST reduce production expr -> LPAREN APPLY expr exprlist machtype RPAREN
+-- On INT reduce production expr -> LPAREN APPLY expr exprlist machtype RPAREN
+-- On IDENT reduce production expr -> LPAREN APPLY expr exprlist machtype RPAREN
+-- On FLOATCONST reduce production expr -> LPAREN APPLY expr exprlist machtype RPAREN
+-- On FLOAT reduce production expr -> LPAREN APPLY expr exprlist machtype RPAREN
+-- On EXIT reduce production expr -> LPAREN APPLY expr exprlist machtype RPAREN
+-- On CASE reduce production expr -> LPAREN APPLY expr exprlist machtype RPAREN
+-- On ADDR reduce production expr -> LPAREN APPLY expr exprlist machtype RPAREN
+
+State 166:
+binaryop -> AND . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production binaryop -> AND
+-- On POINTER reduce production binaryop -> AND
+-- On LPAREN reduce production binaryop -> AND
+-- On LBRACKET reduce production binaryop -> AND
+-- On INTCONST reduce production binaryop -> AND
+-- On IDENT reduce production binaryop -> AND
+-- On FLOATCONST reduce production binaryop -> AND
+-- On EXIT reduce production binaryop -> AND
+
+State 167:
+unaryop -> ALLOC . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production unaryop -> ALLOC
+-- On POINTER reduce production unaryop -> ALLOC
+-- On LPAREN reduce production unaryop -> ALLOC
+-- On LBRACKET reduce production unaryop -> ALLOC
+-- On INTCONST reduce production unaryop -> ALLOC
+-- On IDENT reduce production unaryop -> ALLOC
+-- On FLOATCONST reduce production unaryop -> ALLOC
+-- On EXIT reduce production unaryop -> ALLOC
+
+State 168:
+expr -> LPAREN ADDRASET . expr expr expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On STRING shift to state 18
+-- On POINTER shift to state 19
+-- On LPAREN shift to state 20
+-- On LBRACKET shift to state 23
+-- On INTCONST shift to state 25
+-- On IDENT shift to state 26
+-- On FLOATCONST shift to state 27
+-- On EXIT shift to state 28
+-- On expr shift to state 169
+
+State 169:
+expr -> LPAREN ADDRASET expr . expr expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On STRING shift to state 18
+-- On POINTER shift to state 19
+-- On LPAREN shift to state 20
+-- On LBRACKET shift to state 23
+-- On INTCONST shift to state 25
+-- On IDENT shift to state 26
+-- On FLOATCONST shift to state 27
+-- On EXIT shift to state 28
+-- On expr shift to state 170
+
+State 170:
+expr -> LPAREN ADDRASET expr expr . expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On STRING shift to state 18
+-- On POINTER shift to state 19
+-- On LPAREN shift to state 20
+-- On LBRACKET shift to state 23
+-- On INTCONST shift to state 25
+-- On IDENT shift to state 26
+-- On FLOATCONST shift to state 27
+-- On EXIT shift to state 28
+-- On expr shift to state 171
+
+State 171:
+expr -> LPAREN ADDRASET expr expr expr . RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On RPAREN shift to state 172
+
+State 172:
+expr -> LPAREN ADDRASET expr expr expr RPAREN . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On WITH reduce production expr -> LPAREN ADDRASET expr expr expr RPAREN
+-- On UNIT reduce production expr -> LPAREN ADDRASET expr expr expr RPAREN
+-- On STRING reduce production expr -> LPAREN ADDRASET expr expr expr RPAREN
+-- On RPAREN reduce production expr -> LPAREN ADDRASET expr expr expr RPAREN
+-- On POINTER reduce production expr -> LPAREN ADDRASET expr expr expr RPAREN
+-- On LPAREN reduce production expr -> LPAREN ADDRASET expr expr expr RPAREN
+-- On LBRACKET reduce production expr -> LPAREN ADDRASET expr expr expr RPAREN
+-- On INTCONST reduce production expr -> LPAREN ADDRASET expr expr expr RPAREN
+-- On INT reduce production expr -> LPAREN ADDRASET expr expr expr RPAREN
+-- On IDENT reduce production expr -> LPAREN ADDRASET expr expr expr RPAREN
+-- On FLOATCONST reduce production expr -> LPAREN ADDRASET expr expr expr RPAREN
+-- On FLOAT reduce production expr -> LPAREN ADDRASET expr expr expr RPAREN
+-- On EXIT reduce production expr -> LPAREN ADDRASET expr expr expr RPAREN
+-- On CASE reduce production expr -> LPAREN ADDRASET expr expr expr RPAREN
+-- On ADDR reduce production expr -> LPAREN ADDRASET expr expr expr RPAREN
+
+State 173:
+expr -> LPAREN ADDRAREF . expr expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On STRING shift to state 18
+-- On POINTER shift to state 19
+-- On LPAREN shift to state 20
+-- On LBRACKET shift to state 23
+-- On INTCONST shift to state 25
+-- On IDENT shift to state 26
+-- On FLOATCONST shift to state 27
+-- On EXIT shift to state 28
+-- On expr shift to state 174
+
+State 174:
+expr -> LPAREN ADDRAREF expr . expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On STRING shift to state 18
+-- On POINTER shift to state 19
+-- On LPAREN shift to state 20
+-- On LBRACKET shift to state 23
+-- On INTCONST shift to state 25
+-- On IDENT shift to state 26
+-- On FLOATCONST shift to state 27
+-- On EXIT shift to state 28
+-- On expr shift to state 175
+
+State 175:
+expr -> LPAREN ADDRAREF expr expr . RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On RPAREN shift to state 176
+
+State 176:
+expr -> LPAREN ADDRAREF expr expr RPAREN . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On WITH reduce production expr -> LPAREN ADDRAREF expr expr RPAREN
+-- On UNIT reduce production expr -> LPAREN ADDRAREF expr expr RPAREN
+-- On STRING reduce production expr -> LPAREN ADDRAREF expr expr RPAREN
+-- On RPAREN reduce production expr -> LPAREN ADDRAREF expr expr RPAREN
+-- On POINTER reduce production expr -> LPAREN ADDRAREF expr expr RPAREN
+-- On LPAREN reduce production expr -> LPAREN ADDRAREF expr expr RPAREN
+-- On LBRACKET reduce production expr -> LPAREN ADDRAREF expr expr RPAREN
+-- On INTCONST reduce production expr -> LPAREN ADDRAREF expr expr RPAREN
+-- On INT reduce production expr -> LPAREN ADDRAREF expr expr RPAREN
+-- On IDENT reduce production expr -> LPAREN ADDRAREF expr expr RPAREN
+-- On FLOATCONST reduce production expr -> LPAREN ADDRAREF expr expr RPAREN
+-- On FLOAT reduce production expr -> LPAREN ADDRAREF expr expr RPAREN
+-- On EXIT reduce production expr -> LPAREN ADDRAREF expr expr RPAREN
+-- On CASE reduce production expr -> LPAREN ADDRAREF expr expr RPAREN
+-- On ADDR reduce production expr -> LPAREN ADDRAREF expr expr RPAREN
+
+State 177:
+binaryop -> ADDI . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production binaryop -> ADDI
+-- On POINTER reduce production binaryop -> ADDI
+-- On LPAREN reduce production binaryop -> ADDI
+-- On LBRACKET reduce production binaryop -> ADDI
+-- On INTCONST reduce production binaryop -> ADDI
+-- On IDENT reduce production binaryop -> ADDI
+-- On FLOATCONST reduce production binaryop -> ADDI
+-- On EXIT reduce production binaryop -> ADDI
+
+State 178:
+binaryop -> ADDF . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production binaryop -> ADDF
+-- On POINTER reduce production binaryop -> ADDF
+-- On LPAREN reduce production binaryop -> ADDF
+-- On LBRACKET reduce production binaryop -> ADDF
+-- On INTCONST reduce production binaryop -> ADDF
+-- On IDENT reduce production binaryop -> ADDF
+-- On FLOATCONST reduce production binaryop -> ADDF
+-- On EXIT reduce production binaryop -> ADDF
+
+State 179:
+binaryop -> ADDA . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production binaryop -> ADDA
+-- On POINTER reduce production binaryop -> ADDA
+-- On LPAREN reduce production binaryop -> ADDA
+-- On LBRACKET reduce production binaryop -> ADDA
+-- On INTCONST reduce production binaryop -> ADDA
+-- On IDENT reduce production binaryop -> ADDA
+-- On FLOATCONST reduce production binaryop -> ADDA
+-- On EXIT reduce production binaryop -> ADDA
+
+State 180:
+unaryop -> ABSF . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+-- On STRING reduce production unaryop -> ABSF
+-- On POINTER reduce production unaryop -> ABSF
+-- On LPAREN reduce production unaryop -> ABSF
+-- On LBRACKET reduce production unaryop -> ABSF
+-- On INTCONST reduce production unaryop -> ABSF
+-- On IDENT reduce production unaryop -> ABSF
+-- On FLOATCONST reduce production unaryop -> ABSF
+-- On EXIT reduce production unaryop -> ABSF
+
+State 181:
+expr -> LPAREN unaryop . expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On STRING shift to state 18
+-- On POINTER shift to state 19
+-- On LPAREN shift to state 20
+-- On LBRACKET shift to state 23
+-- On INTCONST shift to state 25
+-- On IDENT shift to state 26
+-- On FLOATCONST shift to state 27
+-- On EXIT shift to state 28
+-- On expr shift to state 182
+
+State 182:
+expr -> LPAREN unaryop expr . RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On RPAREN shift to state 183
+
+State 183:
+expr -> LPAREN unaryop expr RPAREN . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On WITH reduce production expr -> LPAREN unaryop expr RPAREN
+-- On UNIT reduce production expr -> LPAREN unaryop expr RPAREN
+-- On STRING reduce production expr -> LPAREN unaryop expr RPAREN
+-- On RPAREN reduce production expr -> LPAREN unaryop expr RPAREN
+-- On POINTER reduce production expr -> LPAREN unaryop expr RPAREN
+-- On LPAREN reduce production expr -> LPAREN unaryop expr RPAREN
+-- On LBRACKET reduce production expr -> LPAREN unaryop expr RPAREN
+-- On INTCONST reduce production expr -> LPAREN unaryop expr RPAREN
+-- On INT reduce production expr -> LPAREN unaryop expr RPAREN
+-- On IDENT reduce production expr -> LPAREN unaryop expr RPAREN
+-- On FLOATCONST reduce production expr -> LPAREN unaryop expr RPAREN
+-- On FLOAT reduce production expr -> LPAREN unaryop expr RPAREN
+-- On EXIT reduce production expr -> LPAREN unaryop expr RPAREN
+-- On CASE reduce production expr -> LPAREN unaryop expr RPAREN
+-- On ADDR reduce production expr -> LPAREN unaryop expr RPAREN
+
+State 184:
+expr -> LPAREN binaryop . expr expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On STRING shift to state 18
+-- On POINTER shift to state 19
+-- On LPAREN shift to state 20
+-- On LBRACKET shift to state 23
+-- On INTCONST shift to state 25
+-- On IDENT shift to state 26
+-- On FLOATCONST shift to state 27
+-- On EXIT shift to state 28
+-- On expr shift to state 185
+
+State 185:
+expr -> LPAREN binaryop expr . expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On STRING shift to state 18
+-- On POINTER shift to state 19
+-- On LPAREN shift to state 20
+-- On LBRACKET shift to state 23
+-- On INTCONST shift to state 25
+-- On IDENT shift to state 26
+-- On FLOATCONST shift to state 27
+-- On EXIT shift to state 28
+-- On expr shift to state 186
+
+State 186:
+expr -> LPAREN binaryop expr expr . RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On RPAREN shift to state 187
+
+State 187:
+expr -> LPAREN binaryop expr expr RPAREN . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+-- On WITH reduce production expr -> LPAREN binaryop expr expr RPAREN
+-- On UNIT reduce production expr -> LPAREN binaryop expr expr RPAREN
+-- On STRING reduce production expr -> LPAREN binaryop expr expr RPAREN
+-- On RPAREN reduce production expr -> LPAREN binaryop expr expr RPAREN
+-- On POINTER reduce production expr -> LPAREN binaryop expr expr RPAREN
+-- On LPAREN reduce production expr -> LPAREN binaryop expr expr RPAREN
+-- On LBRACKET reduce production expr -> LPAREN binaryop expr expr RPAREN
+-- On INTCONST reduce production expr -> LPAREN binaryop expr expr RPAREN
+-- On INT reduce production expr -> LPAREN binaryop expr expr RPAREN
+-- On IDENT reduce production expr -> LPAREN binaryop expr expr RPAREN
+-- On FLOATCONST reduce production expr -> LPAREN binaryop expr expr RPAREN
+-- On FLOAT reduce production expr -> LPAREN binaryop expr expr RPAREN
+-- On EXIT reduce production expr -> LPAREN binaryop expr expr RPAREN
+-- On CASE reduce production expr -> LPAREN binaryop expr expr RPAREN
+-- On ADDR reduce production expr -> LPAREN binaryop expr expr RPAREN
+
+State 188:
+fundecl -> LPAREN FUNCTION STRING LPAREN params RPAREN sequence . RPAREN [ # ]
+-- On RPAREN shift to state 189
+
+State 189:
+fundecl -> LPAREN FUNCTION STRING LPAREN params RPAREN sequence RPAREN . [ # ]
+-- On # reduce production fundecl -> LPAREN FUNCTION STRING LPAREN params RPAREN sequence RPAREN
+
+State 190:
+params -> oneparam . params [ RPAREN ]
+-- On IDENT shift to state 5
+-- On params shift to state 191
+-- On oneparam shift to state 190
+-- On RPAREN reduce production params -> 
+
+State 191:
+params -> oneparam params . [ RPAREN ]
+-- On RPAREN reduce production params -> oneparam params
+
+State 192:
+datadecl -> LPAREN datalist . RPAREN [ # ]
+datalist -> datalist . dataitem [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT BYTE ALIGN ADDR ]
+-- On STRING shift to state 193
+-- On SKIP shift to state 195
+-- On RPAREN shift to state 197
+-- On KSTRING shift to state 198
+-- On INTCONST shift to state 200
+-- On INT shift to state 202
+-- On HALF shift to state 204
+-- On FLOAT shift to state 206
+-- On BYTE shift to state 208
+-- On ALIGN shift to state 210
+-- On ADDR shift to state 212
+-- On dataitem shift to state 215
+
+State 193:
+dataitem -> STRING . COLON [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT BYTE ALIGN ADDR ]
+-- On COLON shift to state 194
+
+State 194:
+dataitem -> STRING COLON . [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT BYTE ALIGN ADDR ]
+-- On STRING reduce production dataitem -> STRING COLON
+-- On SKIP reduce production dataitem -> STRING COLON
+-- On RPAREN reduce production dataitem -> STRING COLON
+-- On KSTRING reduce production dataitem -> STRING COLON
+-- On INTCONST reduce production dataitem -> STRING COLON
+-- On INT reduce production dataitem -> STRING COLON
+-- On HALF reduce production dataitem -> STRING COLON
+-- On FLOAT reduce production dataitem -> STRING COLON
+-- On BYTE reduce production dataitem -> STRING COLON
+-- On ALIGN reduce production dataitem -> STRING COLON
+-- On ADDR reduce production dataitem -> STRING COLON
+
+State 195:
+dataitem -> SKIP . INTCONST [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT BYTE ALIGN ADDR ]
+-- On INTCONST shift to state 196
+
+State 196:
+dataitem -> SKIP INTCONST . [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT BYTE ALIGN ADDR ]
+-- On STRING reduce production dataitem -> SKIP INTCONST
+-- On SKIP reduce production dataitem -> SKIP INTCONST
+-- On RPAREN reduce production dataitem -> SKIP INTCONST
+-- On KSTRING reduce production dataitem -> SKIP INTCONST
+-- On INTCONST reduce production dataitem -> SKIP INTCONST
+-- On INT reduce production dataitem -> SKIP INTCONST
+-- On HALF reduce production dataitem -> SKIP INTCONST
+-- On FLOAT reduce production dataitem -> SKIP INTCONST
+-- On BYTE reduce production dataitem -> SKIP INTCONST
+-- On ALIGN reduce production dataitem -> SKIP INTCONST
+-- On ADDR reduce production dataitem -> SKIP INTCONST
+
+State 197:
+datadecl -> LPAREN datalist RPAREN . [ # ]
+-- On # reduce production datadecl -> LPAREN datalist RPAREN
+
+State 198:
+dataitem -> KSTRING . STRING [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT BYTE ALIGN ADDR ]
+-- On STRING shift to state 199
+
+State 199:
+dataitem -> KSTRING STRING . [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT BYTE ALIGN ADDR ]
+-- On STRING reduce production dataitem -> KSTRING STRING
+-- On SKIP reduce production dataitem -> KSTRING STRING
+-- On RPAREN reduce production dataitem -> KSTRING STRING
+-- On KSTRING reduce production dataitem -> KSTRING STRING
+-- On INTCONST reduce production dataitem -> KSTRING STRING
+-- On INT reduce production dataitem -> KSTRING STRING
+-- On HALF reduce production dataitem -> KSTRING STRING
+-- On FLOAT reduce production dataitem -> KSTRING STRING
+-- On BYTE reduce production dataitem -> KSTRING STRING
+-- On ALIGN reduce production dataitem -> KSTRING STRING
+-- On ADDR reduce production dataitem -> KSTRING STRING
+
+State 200:
+dataitem -> INTCONST . COLON [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT BYTE ALIGN ADDR ]
+-- On COLON shift to state 201
+
+State 201:
+dataitem -> INTCONST COLON . [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT BYTE ALIGN ADDR ]
+-- On STRING reduce production dataitem -> INTCONST COLON
+-- On SKIP reduce production dataitem -> INTCONST COLON
+-- On RPAREN reduce production dataitem -> INTCONST COLON
+-- On KSTRING reduce production dataitem -> INTCONST COLON
+-- On INTCONST reduce production dataitem -> INTCONST COLON
+-- On INT reduce production dataitem -> INTCONST COLON
+-- On HALF reduce production dataitem -> INTCONST COLON
+-- On FLOAT reduce production dataitem -> INTCONST COLON
+-- On BYTE reduce production dataitem -> INTCONST COLON
+-- On ALIGN reduce production dataitem -> INTCONST COLON
+-- On ADDR reduce production dataitem -> INTCONST COLON
+
+State 202:
+dataitem -> INT . INTCONST [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT BYTE ALIGN ADDR ]
+-- On INTCONST shift to state 203
+
+State 203:
+dataitem -> INT INTCONST . [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT BYTE ALIGN ADDR ]
+-- On STRING reduce production dataitem -> INT INTCONST
+-- On SKIP reduce production dataitem -> INT INTCONST
+-- On RPAREN reduce production dataitem -> INT INTCONST
+-- On KSTRING reduce production dataitem -> INT INTCONST
+-- On INTCONST reduce production dataitem -> INT INTCONST
+-- On INT reduce production dataitem -> INT INTCONST
+-- On HALF reduce production dataitem -> INT INTCONST
+-- On FLOAT reduce production dataitem -> INT INTCONST
+-- On BYTE reduce production dataitem -> INT INTCONST
+-- On ALIGN reduce production dataitem -> INT INTCONST
+-- On ADDR reduce production dataitem -> INT INTCONST
+
+State 204:
+dataitem -> HALF . INTCONST [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT BYTE ALIGN ADDR ]
+-- On INTCONST shift to state 205
+
+State 205:
+dataitem -> HALF INTCONST . [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT BYTE ALIGN ADDR ]
+-- On STRING reduce production dataitem -> HALF INTCONST
+-- On SKIP reduce production dataitem -> HALF INTCONST
+-- On RPAREN reduce production dataitem -> HALF INTCONST
+-- On KSTRING reduce production dataitem -> HALF INTCONST
+-- On INTCONST reduce production dataitem -> HALF INTCONST
+-- On INT reduce production dataitem -> HALF INTCONST
+-- On HALF reduce production dataitem -> HALF INTCONST
+-- On FLOAT reduce production dataitem -> HALF INTCONST
+-- On BYTE reduce production dataitem -> HALF INTCONST
+-- On ALIGN reduce production dataitem -> HALF INTCONST
+-- On ADDR reduce production dataitem -> HALF INTCONST
+
+State 206:
+dataitem -> FLOAT . FLOATCONST [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT BYTE ALIGN ADDR ]
+-- On FLOATCONST shift to state 207
+
+State 207:
+dataitem -> FLOAT FLOATCONST . [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT BYTE ALIGN ADDR ]
+-- On STRING reduce production dataitem -> FLOAT FLOATCONST
+-- On SKIP reduce production dataitem -> FLOAT FLOATCONST
+-- On RPAREN reduce production dataitem -> FLOAT FLOATCONST
+-- On KSTRING reduce production dataitem -> FLOAT FLOATCONST
+-- On INTCONST reduce production dataitem -> FLOAT FLOATCONST
+-- On INT reduce production dataitem -> FLOAT FLOATCONST
+-- On HALF reduce production dataitem -> FLOAT FLOATCONST
+-- On FLOAT reduce production dataitem -> FLOAT FLOATCONST
+-- On BYTE reduce production dataitem -> FLOAT FLOATCONST
+-- On ALIGN reduce production dataitem -> FLOAT FLOATCONST
+-- On ADDR reduce production dataitem -> FLOAT FLOATCONST
+
+State 208:
+dataitem -> BYTE . INTCONST [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT BYTE ALIGN ADDR ]
+-- On INTCONST shift to state 209
+
+State 209:
+dataitem -> BYTE INTCONST . [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT BYTE ALIGN ADDR ]
+-- On STRING reduce production dataitem -> BYTE INTCONST
+-- On SKIP reduce production dataitem -> BYTE INTCONST
+-- On RPAREN reduce production dataitem -> BYTE INTCONST
+-- On KSTRING reduce production dataitem -> BYTE INTCONST
+-- On INTCONST reduce production dataitem -> BYTE INTCONST
+-- On INT reduce production dataitem -> BYTE INTCONST
+-- On HALF reduce production dataitem -> BYTE INTCONST
+-- On FLOAT reduce production dataitem -> BYTE INTCONST
+-- On BYTE reduce production dataitem -> BYTE INTCONST
+-- On ALIGN reduce production dataitem -> BYTE INTCONST
+-- On ADDR reduce production dataitem -> BYTE INTCONST
+
+State 210:
+dataitem -> ALIGN . INTCONST [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT BYTE ALIGN ADDR ]
+-- On INTCONST shift to state 211
+
+State 211:
+dataitem -> ALIGN INTCONST . [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT BYTE ALIGN ADDR ]
+-- On STRING reduce production dataitem -> ALIGN INTCONST
+-- On SKIP reduce production dataitem -> ALIGN INTCONST
+-- On RPAREN reduce production dataitem -> ALIGN INTCONST
+-- On KSTRING reduce production dataitem -> ALIGN INTCONST
+-- On INTCONST reduce production dataitem -> ALIGN INTCONST
+-- On INT reduce production dataitem -> ALIGN INTCONST
+-- On HALF reduce production dataitem -> ALIGN INTCONST
+-- On FLOAT reduce production dataitem -> ALIGN INTCONST
+-- On BYTE reduce production dataitem -> ALIGN INTCONST
+-- On ALIGN reduce production dataitem -> ALIGN INTCONST
+-- On ADDR reduce production dataitem -> ALIGN INTCONST
+
+State 212:
+dataitem -> ADDR . STRING [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT BYTE ALIGN ADDR ]
+dataitem -> ADDR . INTCONST [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT BYTE ALIGN ADDR ]
+-- On STRING shift to state 213
+-- On INTCONST shift to state 214
+
+State 213:
+dataitem -> ADDR STRING . [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT BYTE ALIGN ADDR ]
+-- On STRING reduce production dataitem -> ADDR STRING
+-- On SKIP reduce production dataitem -> ADDR STRING
+-- On RPAREN reduce production dataitem -> ADDR STRING
+-- On KSTRING reduce production dataitem -> ADDR STRING
+-- On INTCONST reduce production dataitem -> ADDR STRING
+-- On INT reduce production dataitem -> ADDR STRING
+-- On HALF reduce production dataitem -> ADDR STRING
+-- On FLOAT reduce production dataitem -> ADDR STRING
+-- On BYTE reduce production dataitem -> ADDR STRING
+-- On ALIGN reduce production dataitem -> ADDR STRING
+-- On ADDR reduce production dataitem -> ADDR STRING
+
+State 214:
+dataitem -> ADDR INTCONST . [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT BYTE ALIGN ADDR ]
+-- On STRING reduce production dataitem -> ADDR INTCONST
+-- On SKIP reduce production dataitem -> ADDR INTCONST
+-- On RPAREN reduce production dataitem -> ADDR INTCONST
+-- On KSTRING reduce production dataitem -> ADDR INTCONST
+-- On INTCONST reduce production dataitem -> ADDR INTCONST
+-- On INT reduce production dataitem -> ADDR INTCONST
+-- On HALF reduce production dataitem -> ADDR INTCONST
+-- On FLOAT reduce production dataitem -> ADDR INTCONST
+-- On BYTE reduce production dataitem -> ADDR INTCONST
+-- On ALIGN reduce production dataitem -> ADDR INTCONST
+-- On ADDR reduce production dataitem -> ADDR INTCONST
+
+State 215:
+datalist -> datalist dataitem . [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT BYTE ALIGN ADDR ]
+-- On STRING reduce production datalist -> datalist dataitem
+-- On SKIP reduce production datalist -> datalist dataitem
+-- On RPAREN reduce production datalist -> datalist dataitem
+-- On KSTRING reduce production datalist -> datalist dataitem
+-- On INTCONST reduce production datalist -> datalist dataitem
+-- On INT reduce production datalist -> datalist dataitem
+-- On HALF reduce production datalist -> datalist dataitem
+-- On FLOAT reduce production datalist -> datalist dataitem
+-- On BYTE reduce production datalist -> datalist dataitem
+-- On ALIGN reduce production datalist -> datalist dataitem
+-- On ADDR reduce production datalist -> datalist dataitem
+
+State 216:
+phrase -> EOF . [ # ]
+-- On # reduce production phrase -> EOF
+
+State 217:
+phrase' -> phrase . [ # ]
+-- On # accept phrase
+
+State 218:
+phrase -> fundecl . [ # ]
+-- On # reduce production phrase -> fundecl
+
+State 219:
+phrase -> datadecl . [ # ]
+-- On # reduce production phrase -> datadecl
+

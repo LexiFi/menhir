@@ -1,0 +1,324 @@
+State 0:
+bundle' -> . bundle [ # ]
+-- On UIDENT shift to state 1
+-- On STAR shift to state 3
+-- On PUBLIC shift to state 6
+-- On separated_nonempty_list(PLUS,api) shift to state 14
+-- On separated_nonempty_list(DOT,uident) shift to state 10
+-- On separated_nonempty_list(COMMA,pat) shift to state 23
+-- On pat shift to state 20
+-- On mident shift to state 25
+-- On loption(separated_nonempty_list(DOT,uident)) shift to state 13
+-- On bundle shift to state 26
+-- On api shift to state 27
+-- On PLUS reduce production loption(separated_nonempty_list(DOT,uident)) -> 
+-- On EQUALS reduce production loption(separated_nonempty_list(DOT,uident)) -> 
+
+State 1:
+pat -> UIDENT . [ EOF COMMA ]
+pat -> UIDENT . DOT pat [ EOF COMMA ]
+separated_nonempty_list(DOT,uident) -> UIDENT . [ PLUS EQUALS ]
+separated_nonempty_list(DOT,uident) -> UIDENT . DOT separated_nonempty_list(DOT,uident) [ PLUS EQUALS ]
+-- On DOT shift to state 2
+-- On PLUS reduce production separated_nonempty_list(DOT,uident) -> UIDENT
+-- On EQUALS reduce production separated_nonempty_list(DOT,uident) -> UIDENT
+-- On EOF reduce production pat -> UIDENT
+-- On COMMA reduce production pat -> UIDENT
+
+State 2:
+pat -> UIDENT DOT . pat [ EOF COMMA ]
+separated_nonempty_list(DOT,uident) -> UIDENT DOT . separated_nonempty_list(DOT,uident) [ PLUS EQUALS ]
+-- On UIDENT shift to state 1
+-- On STAR shift to state 3
+-- On separated_nonempty_list(DOT,uident) shift to state 4
+-- On pat shift to state 5
+
+State 3:
+pat -> STAR . [ EOF COMMA ]
+-- On EOF reduce production pat -> STAR
+-- On COMMA reduce production pat -> STAR
+
+State 4:
+separated_nonempty_list(DOT,uident) -> UIDENT DOT separated_nonempty_list(DOT,uident) . [ RPAREN PLUS EQUALS ]
+-- On RPAREN reduce production separated_nonempty_list(DOT,uident) -> UIDENT DOT separated_nonempty_list(DOT,uident)
+-- On PLUS reduce production separated_nonempty_list(DOT,uident) -> UIDENT DOT separated_nonempty_list(DOT,uident)
+-- On EQUALS reduce production separated_nonempty_list(DOT,uident) -> UIDENT DOT separated_nonempty_list(DOT,uident)
+
+State 5:
+pat -> UIDENT DOT pat . [ EOF COMMA ]
+-- On EOF reduce production pat -> UIDENT DOT pat
+-- On COMMA reduce production pat -> UIDENT DOT pat
+
+State 6:
+api -> PUBLIC . LPAREN mident RPAREN [ PLUS EQUALS ]
+-- On LPAREN shift to state 7
+
+State 7:
+api -> PUBLIC LPAREN . mident RPAREN [ PLUS EQUALS ]
+-- On UIDENT shift to state 8
+-- On separated_nonempty_list(DOT,uident) shift to state 10
+-- On mident shift to state 11
+-- On loption(separated_nonempty_list(DOT,uident)) shift to state 13
+-- On RPAREN reduce production loption(separated_nonempty_list(DOT,uident)) -> 
+
+State 8:
+separated_nonempty_list(DOT,uident) -> UIDENT . [ RPAREN PLUS EQUALS ]
+separated_nonempty_list(DOT,uident) -> UIDENT . DOT separated_nonempty_list(DOT,uident) [ RPAREN PLUS EQUALS ]
+-- On DOT shift to state 9
+-- On RPAREN reduce production separated_nonempty_list(DOT,uident) -> UIDENT
+-- On PLUS reduce production separated_nonempty_list(DOT,uident) -> UIDENT
+-- On EQUALS reduce production separated_nonempty_list(DOT,uident) -> UIDENT
+
+State 9:
+separated_nonempty_list(DOT,uident) -> UIDENT DOT . separated_nonempty_list(DOT,uident) [ RPAREN PLUS EQUALS ]
+-- On UIDENT shift to state 8
+-- On separated_nonempty_list(DOT,uident) shift to state 4
+
+State 10:
+loption(separated_nonempty_list(DOT,uident)) -> separated_nonempty_list(DOT,uident) . [ RPAREN PLUS EQUALS ]
+-- On RPAREN reduce production loption(separated_nonempty_list(DOT,uident)) -> separated_nonempty_list(DOT,uident)
+-- On PLUS reduce production loption(separated_nonempty_list(DOT,uident)) -> separated_nonempty_list(DOT,uident)
+-- On EQUALS reduce production loption(separated_nonempty_list(DOT,uident)) -> separated_nonempty_list(DOT,uident)
+
+State 11:
+api -> PUBLIC LPAREN mident . RPAREN [ PLUS EQUALS ]
+-- On RPAREN shift to state 12
+
+State 12:
+api -> PUBLIC LPAREN mident RPAREN . [ PLUS EQUALS ]
+-- On PLUS reduce production api -> PUBLIC LPAREN mident RPAREN
+-- On EQUALS reduce production api -> PUBLIC LPAREN mident RPAREN
+
+State 13:
+mident -> loption(separated_nonempty_list(DOT,uident)) . [ RPAREN PLUS EQUALS ]
+-- On RPAREN reduce production mident -> loption(separated_nonempty_list(DOT,uident))
+-- On PLUS reduce production mident -> loption(separated_nonempty_list(DOT,uident))
+-- On EQUALS reduce production mident -> loption(separated_nonempty_list(DOT,uident))
+
+State 14:
+bundle -> separated_nonempty_list(PLUS,api) . EQUALS separated_nonempty_list(COMMA,pat) EOF [ # ]
+-- On EQUALS shift to state 15
+
+State 15:
+bundle -> separated_nonempty_list(PLUS,api) EQUALS . separated_nonempty_list(COMMA,pat) EOF [ # ]
+-- On UIDENT shift to state 16
+-- On STAR shift to state 3
+-- On separated_nonempty_list(COMMA,pat) shift to state 18
+-- On pat shift to state 20
+
+State 16:
+pat -> UIDENT . [ EOF COMMA ]
+pat -> UIDENT . DOT pat [ EOF COMMA ]
+-- On DOT shift to state 17
+-- On EOF reduce production pat -> UIDENT
+-- On COMMA reduce production pat -> UIDENT
+
+State 17:
+pat -> UIDENT DOT . pat [ EOF COMMA ]
+-- On UIDENT shift to state 16
+-- On STAR shift to state 3
+-- On pat shift to state 5
+
+State 18:
+bundle -> separated_nonempty_list(PLUS,api) EQUALS separated_nonempty_list(COMMA,pat) . EOF [ # ]
+-- On EOF shift to state 19
+
+State 19:
+bundle -> separated_nonempty_list(PLUS,api) EQUALS separated_nonempty_list(COMMA,pat) EOF . [ # ]
+-- On # reduce production bundle -> separated_nonempty_list(PLUS,api) EQUALS separated_nonempty_list(COMMA,pat) EOF
+
+State 20:
+separated_nonempty_list(COMMA,pat) -> pat . [ EOF ]
+separated_nonempty_list(COMMA,pat) -> pat . COMMA separated_nonempty_list(COMMA,pat) [ EOF ]
+-- On COMMA shift to state 21
+-- On EOF reduce production separated_nonempty_list(COMMA,pat) -> pat
+
+State 21:
+separated_nonempty_list(COMMA,pat) -> pat COMMA . separated_nonempty_list(COMMA,pat) [ EOF ]
+-- On UIDENT shift to state 16
+-- On STAR shift to state 3
+-- On separated_nonempty_list(COMMA,pat) shift to state 22
+-- On pat shift to state 20
+
+State 22:
+separated_nonempty_list(COMMA,pat) -> pat COMMA separated_nonempty_list(COMMA,pat) . [ EOF ]
+-- On EOF reduce production separated_nonempty_list(COMMA,pat) -> pat COMMA separated_nonempty_list(COMMA,pat)
+
+State 23:
+bundle -> separated_nonempty_list(COMMA,pat) . EOF [ # ]
+-- On EOF shift to state 24
+
+State 24:
+bundle -> separated_nonempty_list(COMMA,pat) EOF . [ # ]
+-- On # reduce production bundle -> separated_nonempty_list(COMMA,pat) EOF
+
+State 25:
+api -> mident . [ PLUS EQUALS ]
+-- On PLUS reduce production api -> mident
+-- On EQUALS reduce production api -> mident
+
+State 26:
+bundle' -> bundle . [ # ]
+-- On # accept bundle
+
+State 27:
+separated_nonempty_list(PLUS,api) -> api . [ EQUALS ]
+separated_nonempty_list(PLUS,api) -> api . PLUS separated_nonempty_list(PLUS,api) [ EQUALS ]
+-- On PLUS shift to state 28
+-- On EQUALS reduce production separated_nonempty_list(PLUS,api) -> api
+
+State 28:
+separated_nonempty_list(PLUS,api) -> api PLUS . separated_nonempty_list(PLUS,api) [ EQUALS ]
+-- On UIDENT shift to state 8
+-- On PUBLIC shift to state 6
+-- On separated_nonempty_list(PLUS,api) shift to state 29
+-- On separated_nonempty_list(DOT,uident) shift to state 10
+-- On mident shift to state 25
+-- On loption(separated_nonempty_list(DOT,uident)) shift to state 13
+-- On api shift to state 27
+-- On PLUS reduce production loption(separated_nonempty_list(DOT,uident)) -> 
+-- On EQUALS reduce production loption(separated_nonempty_list(DOT,uident)) -> 
+
+State 29:
+separated_nonempty_list(PLUS,api) -> api PLUS separated_nonempty_list(PLUS,api) . [ EQUALS ]
+-- On EQUALS reduce production separated_nonempty_list(PLUS,api) -> api PLUS separated_nonempty_list(PLUS,api)
+
+State 30:
+drop' -> . drop [ # ]
+-- On UIDENT shift to state 16
+-- On STAR shift to state 3
+-- On separated_nonempty_list(COMMA,pat) shift to state 31
+-- On pat shift to state 20
+-- On loption(separated_nonempty_list(COMMA,pat)) shift to state 32
+-- On drop shift to state 34
+-- On EOF reduce production loption(separated_nonempty_list(COMMA,pat)) -> 
+
+State 31:
+loption(separated_nonempty_list(COMMA,pat)) -> separated_nonempty_list(COMMA,pat) . [ EOF ]
+-- On EOF reduce production loption(separated_nonempty_list(COMMA,pat)) -> separated_nonempty_list(COMMA,pat)
+
+State 32:
+drop -> loption(separated_nonempty_list(COMMA,pat)) . EOF [ # ]
+-- On EOF shift to state 33
+
+State 33:
+drop -> loption(separated_nonempty_list(COMMA,pat)) EOF . [ # ]
+-- On # reduce production drop -> loption(separated_nonempty_list(COMMA,pat)) EOF
+
+State 34:
+drop' -> drop . [ # ]
+-- On # accept drop
+
+State 35:
+lid' -> . lid [ # ]
+-- On UIDENT shift to state 36
+-- On LIDENT shift to state 38
+-- On lid shift to state 40
+
+State 36:
+lid -> UIDENT . DOT lid [ # ]
+-- On DOT shift to state 37
+
+State 37:
+lid -> UIDENT DOT . lid [ # ]
+-- On UIDENT shift to state 36
+-- On LIDENT shift to state 38
+-- On lid shift to state 39
+
+State 38:
+lid -> LIDENT . [ # ]
+-- On # reduce production lid -> LIDENT
+
+State 39:
+lid -> UIDENT DOT lid . [ # ]
+-- On # reduce production lid -> UIDENT DOT lid
+
+State 40:
+lid' -> lid . [ # ]
+-- On # accept lid
+
+State 41:
+warn_error_list' -> . warn_error_list [ # ]
+-- On PLUS shift to state 42
+-- On MINUS shift to state 43
+-- On AT shift to state 44
+-- On warn_error_list shift to state 45
+-- On warn_error shift to state 46
+-- On nonempty_list(warn_error) shift to state 54
+-- On flag shift to state 48
+
+State 42:
+flag -> PLUS . [ INT ]
+-- On INT reduce production flag -> PLUS
+
+State 43:
+flag -> MINUS . [ INT ]
+-- On INT reduce production flag -> MINUS
+
+State 44:
+flag -> AT . [ INT ]
+-- On INT reduce production flag -> AT
+
+State 45:
+warn_error_list' -> warn_error_list . [ # ]
+-- On # accept warn_error_list
+
+State 46:
+nonempty_list(warn_error) -> warn_error . [ EOF ]
+nonempty_list(warn_error) -> warn_error . nonempty_list(warn_error) [ EOF ]
+-- On PLUS shift to state 42
+-- On MINUS shift to state 43
+-- On AT shift to state 44
+-- On warn_error shift to state 46
+-- On nonempty_list(warn_error) shift to state 47
+-- On flag shift to state 48
+-- On EOF reduce production nonempty_list(warn_error) -> warn_error
+
+State 47:
+nonempty_list(warn_error) -> warn_error nonempty_list(warn_error) . [ EOF ]
+-- On EOF reduce production nonempty_list(warn_error) -> warn_error nonempty_list(warn_error)
+
+State 48:
+warn_error -> flag . range [ PLUS MINUS EOF AT ]
+-- On INT shift to state 49
+-- On range shift to state 53
+
+State 49:
+range -> INT . [ PLUS MINUS EOF AT ]
+range -> INT . DOT DOT INT [ PLUS MINUS EOF AT ]
+-- On DOT shift to state 50
+-- On PLUS reduce production range -> INT
+-- On MINUS reduce production range -> INT
+-- On EOF reduce production range -> INT
+-- On AT reduce production range -> INT
+
+State 50:
+range -> INT DOT . DOT INT [ PLUS MINUS EOF AT ]
+-- On DOT shift to state 51
+
+State 51:
+range -> INT DOT DOT . INT [ PLUS MINUS EOF AT ]
+-- On INT shift to state 52
+
+State 52:
+range -> INT DOT DOT INT . [ PLUS MINUS EOF AT ]
+-- On PLUS reduce production range -> INT DOT DOT INT
+-- On MINUS reduce production range -> INT DOT DOT INT
+-- On EOF reduce production range -> INT DOT DOT INT
+-- On AT reduce production range -> INT DOT DOT INT
+
+State 53:
+warn_error -> flag range . [ PLUS MINUS EOF AT ]
+-- On PLUS reduce production warn_error -> flag range
+-- On MINUS reduce production warn_error -> flag range
+-- On EOF reduce production warn_error -> flag range
+-- On AT reduce production warn_error -> flag range
+
+State 54:
+warn_error_list -> nonempty_list(warn_error) . EOF [ # ]
+-- On EOF shift to state 55
+
+State 55:
+warn_error_list -> nonempty_list(warn_error) EOF . [ # ]
+-- On # reduce production warn_error_list -> nonempty_list(warn_error) EOF
+

@@ -1,0 +1,1094 @@
+State 0:
+promela' -> . promela [ # ]
+-- On PROMELA_NEVER shift to state 1
+-- On promela shift to state 97
+
+State 1:
+promela -> PROMELA_NEVER . PROMELA_LBRACE states PROMELA_RBRACE EOF [ # ]
+promela -> PROMELA_NEVER . PROMELA_LBRACE states PROMELA_SEMICOLON PROMELA_RBRACE EOF [ # ]
+-- On PROMELA_LBRACE shift to state 2
+
+State 2:
+promela -> PROMELA_NEVER PROMELA_LBRACE . states PROMELA_RBRACE EOF [ # ]
+promela -> PROMELA_NEVER PROMELA_LBRACE . states PROMELA_SEMICOLON PROMELA_RBRACE EOF [ # ]
+-- On PROMELA_LABEL shift to state 3
+-- On states shift to state 5
+-- On state_labels shift to state 9
+-- On state shift to state 96
+-- On label shift to state 92
+
+State 3:
+label -> PROMELA_LABEL . PROMELA_COLON [ PROMELA_SKIP PROMELA_LABEL PROMELA_IF PROMELA_FALSE ]
+-- On PROMELA_COLON shift to state 4
+
+State 4:
+label -> PROMELA_LABEL PROMELA_COLON . [ PROMELA_SKIP PROMELA_LABEL PROMELA_IF PROMELA_FALSE ]
+-- On PROMELA_SKIP reduce production label -> PROMELA_LABEL PROMELA_COLON
+-- On PROMELA_LABEL reduce production label -> PROMELA_LABEL PROMELA_COLON
+-- On PROMELA_IF reduce production label -> PROMELA_LABEL PROMELA_COLON
+-- On PROMELA_FALSE reduce production label -> PROMELA_LABEL PROMELA_COLON
+
+State 5:
+promela -> PROMELA_NEVER PROMELA_LBRACE states . PROMELA_RBRACE EOF [ # ]
+promela -> PROMELA_NEVER PROMELA_LBRACE states . PROMELA_SEMICOLON PROMELA_RBRACE EOF [ # ]
+states -> states . PROMELA_SEMICOLON state [ PROMELA_SEMICOLON PROMELA_RBRACE ]
+-- On PROMELA_SEMICOLON shift to state 6
+-- On PROMELA_RBRACE shift to state 94
+
+State 6:
+promela -> PROMELA_NEVER PROMELA_LBRACE states PROMELA_SEMICOLON . PROMELA_RBRACE EOF [ # ]
+states -> states PROMELA_SEMICOLON . state [ PROMELA_SEMICOLON PROMELA_RBRACE ]
+-- On PROMELA_RBRACE shift to state 7
+-- On PROMELA_LABEL shift to state 3
+-- On state_labels shift to state 9
+-- On state shift to state 91
+-- On label shift to state 92
+
+State 7:
+promela -> PROMELA_NEVER PROMELA_LBRACE states PROMELA_SEMICOLON PROMELA_RBRACE . EOF [ # ]
+-- On EOF shift to state 8
+
+State 8:
+promela -> PROMELA_NEVER PROMELA_LBRACE states PROMELA_SEMICOLON PROMELA_RBRACE EOF . [ # ]
+-- On # reduce production promela -> PROMELA_NEVER PROMELA_LBRACE states PROMELA_SEMICOLON PROMELA_RBRACE EOF
+
+State 9:
+state -> state_labels . state_body [ PROMELA_SEMICOLON PROMELA_RBRACE ]
+-- On PROMELA_SKIP shift to state 10
+-- On PROMELA_IF shift to state 11
+-- On PROMELA_FALSE shift to state 89
+-- On state_body shift to state 90
+
+State 10:
+state_body -> PROMELA_SKIP . [ PROMELA_SEMICOLON PROMELA_RBRACE ]
+-- On PROMELA_SEMICOLON reduce production state_body -> PROMELA_SKIP
+-- On PROMELA_RBRACE reduce production state_body -> PROMELA_SKIP
+
+State 11:
+state_body -> PROMELA_IF . transitions PROMELA_FI [ PROMELA_SEMICOLON PROMELA_RBRACE ]
+state_body -> PROMELA_IF . PROMELA_DOUBLE_COLON PROMELA_FALSE PROMELA_FI [ PROMELA_SEMICOLON PROMELA_RBRACE ]
+-- On PROMELA_DOUBLE_COLON shift to state 12
+-- On transitions shift to state 84
+-- On transition shift to state 88
+
+State 12:
+state_body -> PROMELA_IF PROMELA_DOUBLE_COLON . PROMELA_FALSE PROMELA_FI [ PROMELA_SEMICOLON PROMELA_RBRACE ]
+transition -> PROMELA_DOUBLE_COLON . guard PROMELA_RIGHT_ARROW PROMELA_GOTO PROMELA_LABEL [ PROMELA_FI PROMELA_DOUBLE_COLON ]
+-- On PROMELA_TRUE shift to state 13
+-- On PROMELA_STAR shift to state 14
+-- On PROMELA_RETURNOF shift to state 50
+-- On PROMELA_NOT shift to state 51
+-- On PROMELA_MINUS shift to state 23
+-- On PROMELA_LPAREN shift to state 52
+-- On PROMELA_LABEL shift to state 16
+-- On PROMELA_INT shift to state 26
+-- On PROMELA_FALSE shift to state 78
+-- On PROMELA_CALLORRETURNOF shift to state 54
+-- On PROMELA_CALLOF shift to state 55
+-- On logic_relation shift to state 56
+-- On guard shift to state 80
+-- On arith_relation_mul shift to state 27
+-- On arith_relation shift to state 63
+-- On access_or_const shift to state 35
+-- On access_leaf shift to state 20
+-- On access_array shift to state 21
+-- On access shift to state 30
+
+State 13:
+guard -> PROMELA_TRUE . [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+-- On PROMELA_RPAREN reduce production guard -> PROMELA_TRUE
+-- On PROMELA_RIGHT_ARROW reduce production guard -> PROMELA_TRUE
+-- On PROMELA_OR reduce production guard -> PROMELA_TRUE
+-- On PROMELA_AND reduce production guard -> PROMELA_TRUE
+
+State 14:
+access_leaf -> PROMELA_STAR . access [ PROMELA_STAR PROMELA_RPAREN PROMELA_RIGHT_SQUARE PROMELA_RIGHT_ARROW PROMELA_PLUS PROMELA_OR PROMELA_NEQ PROMELA_MODULO PROMELA_MINUS PROMELA_LT PROMELA_LEFT_SQUARE PROMELA_LE PROMELA_GT PROMELA_GE PROMELA_EQ PROMELA_DOT PROMELA_DIV PROMELA_AND ]
+-- On PROMELA_STAR shift to state 14
+-- On PROMELA_LPAREN shift to state 15
+-- On PROMELA_LABEL shift to state 16
+-- On access_leaf shift to state 20
+-- On access_array shift to state 21
+-- On access shift to state 49
+
+State 15:
+access_leaf -> PROMELA_LPAREN . access PROMELA_RPAREN [ PROMELA_STAR PROMELA_RPAREN PROMELA_RIGHT_SQUARE PROMELA_RIGHT_ARROW PROMELA_PLUS PROMELA_OR PROMELA_NEQ PROMELA_MODULO PROMELA_MINUS PROMELA_LT PROMELA_LEFT_SQUARE PROMELA_LE PROMELA_GT PROMELA_GE PROMELA_EQ PROMELA_DOT PROMELA_DIV PROMELA_AND ]
+-- On PROMELA_STAR shift to state 14
+-- On PROMELA_LPAREN shift to state 15
+-- On PROMELA_LABEL shift to state 16
+-- On access_leaf shift to state 20
+-- On access_array shift to state 21
+-- On access shift to state 48
+
+State 16:
+access_leaf -> PROMELA_LABEL . PROMELA_FUNC PROMELA_DOT PROMELA_LABEL [ PROMELA_STAR PROMELA_RPAREN PROMELA_RIGHT_SQUARE PROMELA_RIGHT_ARROW PROMELA_PLUS PROMELA_OR PROMELA_NEQ PROMELA_MODULO PROMELA_MINUS PROMELA_LT PROMELA_LEFT_SQUARE PROMELA_LE PROMELA_GT PROMELA_GE PROMELA_EQ PROMELA_DOT PROMELA_DIV PROMELA_AND ]
+access_leaf -> PROMELA_LABEL . [ PROMELA_STAR PROMELA_RPAREN PROMELA_RIGHT_SQUARE PROMELA_RIGHT_ARROW PROMELA_PLUS PROMELA_OR PROMELA_NEQ PROMELA_MODULO PROMELA_MINUS PROMELA_LT PROMELA_LEFT_SQUARE PROMELA_LE PROMELA_GT PROMELA_GE PROMELA_EQ PROMELA_DOT PROMELA_DIV PROMELA_AND ]
+-- On PROMELA_FUNC shift to state 17
+-- On PROMELA_STAR reduce production access_leaf -> PROMELA_LABEL
+-- On PROMELA_RPAREN reduce production access_leaf -> PROMELA_LABEL
+-- On PROMELA_RIGHT_SQUARE reduce production access_leaf -> PROMELA_LABEL
+-- On PROMELA_RIGHT_ARROW reduce production access_leaf -> PROMELA_LABEL
+-- On PROMELA_PLUS reduce production access_leaf -> PROMELA_LABEL
+-- On PROMELA_OR reduce production access_leaf -> PROMELA_LABEL
+-- On PROMELA_NEQ reduce production access_leaf -> PROMELA_LABEL
+-- On PROMELA_MODULO reduce production access_leaf -> PROMELA_LABEL
+-- On PROMELA_MINUS reduce production access_leaf -> PROMELA_LABEL
+-- On PROMELA_LT reduce production access_leaf -> PROMELA_LABEL
+-- On PROMELA_LEFT_SQUARE reduce production access_leaf -> PROMELA_LABEL
+-- On PROMELA_LE reduce production access_leaf -> PROMELA_LABEL
+-- On PROMELA_GT reduce production access_leaf -> PROMELA_LABEL
+-- On PROMELA_GE reduce production access_leaf -> PROMELA_LABEL
+-- On PROMELA_EQ reduce production access_leaf -> PROMELA_LABEL
+-- On PROMELA_DOT reduce production access_leaf -> PROMELA_LABEL
+-- On PROMELA_DIV reduce production access_leaf -> PROMELA_LABEL
+-- On PROMELA_AND reduce production access_leaf -> PROMELA_LABEL
+
+State 17:
+access_leaf -> PROMELA_LABEL PROMELA_FUNC . PROMELA_DOT PROMELA_LABEL [ PROMELA_STAR PROMELA_RPAREN PROMELA_RIGHT_SQUARE PROMELA_RIGHT_ARROW PROMELA_PLUS PROMELA_OR PROMELA_NEQ PROMELA_MODULO PROMELA_MINUS PROMELA_LT PROMELA_LEFT_SQUARE PROMELA_LE PROMELA_GT PROMELA_GE PROMELA_EQ PROMELA_DOT PROMELA_DIV PROMELA_AND ]
+-- On PROMELA_DOT shift to state 18
+
+State 18:
+access_leaf -> PROMELA_LABEL PROMELA_FUNC PROMELA_DOT . PROMELA_LABEL [ PROMELA_STAR PROMELA_RPAREN PROMELA_RIGHT_SQUARE PROMELA_RIGHT_ARROW PROMELA_PLUS PROMELA_OR PROMELA_NEQ PROMELA_MODULO PROMELA_MINUS PROMELA_LT PROMELA_LEFT_SQUARE PROMELA_LE PROMELA_GT PROMELA_GE PROMELA_EQ PROMELA_DOT PROMELA_DIV PROMELA_AND ]
+-- On PROMELA_LABEL shift to state 19
+
+State 19:
+access_leaf -> PROMELA_LABEL PROMELA_FUNC PROMELA_DOT PROMELA_LABEL . [ PROMELA_STAR PROMELA_RPAREN PROMELA_RIGHT_SQUARE PROMELA_RIGHT_ARROW PROMELA_PLUS PROMELA_OR PROMELA_NEQ PROMELA_MODULO PROMELA_MINUS PROMELA_LT PROMELA_LEFT_SQUARE PROMELA_LE PROMELA_GT PROMELA_GE PROMELA_EQ PROMELA_DOT PROMELA_DIV PROMELA_AND ]
+-- On PROMELA_STAR reduce production access_leaf -> PROMELA_LABEL PROMELA_FUNC PROMELA_DOT PROMELA_LABEL
+-- On PROMELA_RPAREN reduce production access_leaf -> PROMELA_LABEL PROMELA_FUNC PROMELA_DOT PROMELA_LABEL
+-- On PROMELA_RIGHT_SQUARE reduce production access_leaf -> PROMELA_LABEL PROMELA_FUNC PROMELA_DOT PROMELA_LABEL
+-- On PROMELA_RIGHT_ARROW reduce production access_leaf -> PROMELA_LABEL PROMELA_FUNC PROMELA_DOT PROMELA_LABEL
+-- On PROMELA_PLUS reduce production access_leaf -> PROMELA_LABEL PROMELA_FUNC PROMELA_DOT PROMELA_LABEL
+-- On PROMELA_OR reduce production access_leaf -> PROMELA_LABEL PROMELA_FUNC PROMELA_DOT PROMELA_LABEL
+-- On PROMELA_NEQ reduce production access_leaf -> PROMELA_LABEL PROMELA_FUNC PROMELA_DOT PROMELA_LABEL
+-- On PROMELA_MODULO reduce production access_leaf -> PROMELA_LABEL PROMELA_FUNC PROMELA_DOT PROMELA_LABEL
+-- On PROMELA_MINUS reduce production access_leaf -> PROMELA_LABEL PROMELA_FUNC PROMELA_DOT PROMELA_LABEL
+-- On PROMELA_LT reduce production access_leaf -> PROMELA_LABEL PROMELA_FUNC PROMELA_DOT PROMELA_LABEL
+-- On PROMELA_LEFT_SQUARE reduce production access_leaf -> PROMELA_LABEL PROMELA_FUNC PROMELA_DOT PROMELA_LABEL
+-- On PROMELA_LE reduce production access_leaf -> PROMELA_LABEL PROMELA_FUNC PROMELA_DOT PROMELA_LABEL
+-- On PROMELA_GT reduce production access_leaf -> PROMELA_LABEL PROMELA_FUNC PROMELA_DOT PROMELA_LABEL
+-- On PROMELA_GE reduce production access_leaf -> PROMELA_LABEL PROMELA_FUNC PROMELA_DOT PROMELA_LABEL
+-- On PROMELA_EQ reduce production access_leaf -> PROMELA_LABEL PROMELA_FUNC PROMELA_DOT PROMELA_LABEL
+-- On PROMELA_DOT reduce production access_leaf -> PROMELA_LABEL PROMELA_FUNC PROMELA_DOT PROMELA_LABEL
+-- On PROMELA_DIV reduce production access_leaf -> PROMELA_LABEL PROMELA_FUNC PROMELA_DOT PROMELA_LABEL
+-- On PROMELA_AND reduce production access_leaf -> PROMELA_LABEL PROMELA_FUNC PROMELA_DOT PROMELA_LABEL
+
+State 20:
+access_array -> access_leaf . [ PROMELA_STAR PROMELA_RPAREN PROMELA_RIGHT_SQUARE PROMELA_RIGHT_ARROW PROMELA_PLUS PROMELA_OR PROMELA_NEQ PROMELA_MODULO PROMELA_MINUS PROMELA_LT PROMELA_LEFT_SQUARE PROMELA_LE PROMELA_GT PROMELA_GE PROMELA_EQ PROMELA_DOT PROMELA_DIV PROMELA_AND ]
+-- On PROMELA_STAR reduce production access_array -> access_leaf
+-- On PROMELA_RPAREN reduce production access_array -> access_leaf
+-- On PROMELA_RIGHT_SQUARE reduce production access_array -> access_leaf
+-- On PROMELA_RIGHT_ARROW reduce production access_array -> access_leaf
+-- On PROMELA_PLUS reduce production access_array -> access_leaf
+-- On PROMELA_OR reduce production access_array -> access_leaf
+-- On PROMELA_NEQ reduce production access_array -> access_leaf
+-- On PROMELA_MODULO reduce production access_array -> access_leaf
+-- On PROMELA_MINUS reduce production access_array -> access_leaf
+-- On PROMELA_LT reduce production access_array -> access_leaf
+-- On PROMELA_LEFT_SQUARE reduce production access_array -> access_leaf
+-- On PROMELA_LE reduce production access_array -> access_leaf
+-- On PROMELA_GT reduce production access_array -> access_leaf
+-- On PROMELA_GE reduce production access_array -> access_leaf
+-- On PROMELA_EQ reduce production access_array -> access_leaf
+-- On PROMELA_DOT reduce production access_array -> access_leaf
+-- On PROMELA_DIV reduce production access_array -> access_leaf
+-- On PROMELA_AND reduce production access_array -> access_leaf
+
+State 21:
+access -> access_array . [ PROMELA_STAR PROMELA_RPAREN PROMELA_RIGHT_SQUARE PROMELA_RIGHT_ARROW PROMELA_PLUS PROMELA_OR PROMELA_NEQ PROMELA_MODULO PROMELA_MINUS PROMELA_LT PROMELA_LEFT_SQUARE PROMELA_LE PROMELA_GT PROMELA_GE PROMELA_EQ PROMELA_DOT PROMELA_DIV PROMELA_AND ]
+access_array -> access_array . PROMELA_LEFT_SQUARE access_or_const PROMELA_RIGHT_SQUARE [ PROMELA_STAR PROMELA_RPAREN PROMELA_RIGHT_SQUARE PROMELA_RIGHT_ARROW PROMELA_PLUS PROMELA_OR PROMELA_NEQ PROMELA_MODULO PROMELA_MINUS PROMELA_LT PROMELA_LEFT_SQUARE PROMELA_LE PROMELA_GT PROMELA_GE PROMELA_EQ PROMELA_DOT PROMELA_DIV PROMELA_AND ]
+-- On PROMELA_LEFT_SQUARE shift to state 22
+-- On PROMELA_STAR reduce production access -> access_array
+-- On PROMELA_RPAREN reduce production access -> access_array
+-- On PROMELA_RIGHT_SQUARE reduce production access -> access_array
+-- On PROMELA_RIGHT_ARROW reduce production access -> access_array
+-- On PROMELA_PLUS reduce production access -> access_array
+-- On PROMELA_OR reduce production access -> access_array
+-- On PROMELA_NEQ reduce production access -> access_array
+-- On PROMELA_MODULO reduce production access -> access_array
+-- On PROMELA_MINUS reduce production access -> access_array
+-- On PROMELA_LT reduce production access -> access_array
+-- On PROMELA_LE reduce production access -> access_array
+-- On PROMELA_GT reduce production access -> access_array
+-- On PROMELA_GE reduce production access -> access_array
+-- On PROMELA_EQ reduce production access -> access_array
+-- On PROMELA_DOT reduce production access -> access_array
+-- On PROMELA_DIV reduce production access -> access_array
+-- On PROMELA_AND reduce production access -> access_array
+** Conflict on PROMELA_LEFT_SQUARE
+
+State 22:
+access_array -> access_array PROMELA_LEFT_SQUARE . access_or_const PROMELA_RIGHT_SQUARE [ PROMELA_STAR PROMELA_RPAREN PROMELA_RIGHT_SQUARE PROMELA_RIGHT_ARROW PROMELA_PLUS PROMELA_OR PROMELA_NEQ PROMELA_MODULO PROMELA_MINUS PROMELA_LT PROMELA_LEFT_SQUARE PROMELA_LE PROMELA_GT PROMELA_GE PROMELA_EQ PROMELA_DOT PROMELA_DIV PROMELA_AND ]
+-- On PROMELA_STAR shift to state 14
+-- On PROMELA_MINUS shift to state 23
+-- On PROMELA_LPAREN shift to state 25
+-- On PROMELA_LABEL shift to state 16
+-- On PROMELA_INT shift to state 26
+-- On access_or_const shift to state 46
+-- On access_leaf shift to state 20
+-- On access_array shift to state 21
+-- On access shift to state 30
+
+State 23:
+access_or_const -> PROMELA_MINUS . PROMELA_INT [ PROMELA_STAR PROMELA_RPAREN PROMELA_RIGHT_SQUARE PROMELA_RIGHT_ARROW PROMELA_PLUS PROMELA_OR PROMELA_NEQ PROMELA_MODULO PROMELA_MINUS PROMELA_LT PROMELA_LE PROMELA_GT PROMELA_GE PROMELA_EQ PROMELA_DIV PROMELA_AND ]
+-- On PROMELA_INT shift to state 24
+
+State 24:
+access_or_const -> PROMELA_MINUS PROMELA_INT . [ PROMELA_STAR PROMELA_RPAREN PROMELA_RIGHT_SQUARE PROMELA_RIGHT_ARROW PROMELA_PLUS PROMELA_OR PROMELA_NEQ PROMELA_MODULO PROMELA_MINUS PROMELA_LT PROMELA_LE PROMELA_GT PROMELA_GE PROMELA_EQ PROMELA_DIV PROMELA_AND ]
+-- On PROMELA_STAR reduce production access_or_const -> PROMELA_MINUS PROMELA_INT
+-- On PROMELA_RPAREN reduce production access_or_const -> PROMELA_MINUS PROMELA_INT
+-- On PROMELA_RIGHT_SQUARE reduce production access_or_const -> PROMELA_MINUS PROMELA_INT
+-- On PROMELA_RIGHT_ARROW reduce production access_or_const -> PROMELA_MINUS PROMELA_INT
+-- On PROMELA_PLUS reduce production access_or_const -> PROMELA_MINUS PROMELA_INT
+-- On PROMELA_OR reduce production access_or_const -> PROMELA_MINUS PROMELA_INT
+-- On PROMELA_NEQ reduce production access_or_const -> PROMELA_MINUS PROMELA_INT
+-- On PROMELA_MODULO reduce production access_or_const -> PROMELA_MINUS PROMELA_INT
+-- On PROMELA_MINUS reduce production access_or_const -> PROMELA_MINUS PROMELA_INT
+-- On PROMELA_LT reduce production access_or_const -> PROMELA_MINUS PROMELA_INT
+-- On PROMELA_LE reduce production access_or_const -> PROMELA_MINUS PROMELA_INT
+-- On PROMELA_GT reduce production access_or_const -> PROMELA_MINUS PROMELA_INT
+-- On PROMELA_GE reduce production access_or_const -> PROMELA_MINUS PROMELA_INT
+-- On PROMELA_EQ reduce production access_or_const -> PROMELA_MINUS PROMELA_INT
+-- On PROMELA_DIV reduce production access_or_const -> PROMELA_MINUS PROMELA_INT
+-- On PROMELA_AND reduce production access_or_const -> PROMELA_MINUS PROMELA_INT
+
+State 25:
+access_leaf -> PROMELA_LPAREN . access PROMELA_RPAREN [ PROMELA_STAR PROMELA_RPAREN PROMELA_RIGHT_SQUARE PROMELA_RIGHT_ARROW PROMELA_PLUS PROMELA_OR PROMELA_NEQ PROMELA_MODULO PROMELA_MINUS PROMELA_LT PROMELA_LEFT_SQUARE PROMELA_LE PROMELA_GT PROMELA_GE PROMELA_EQ PROMELA_DOT PROMELA_DIV PROMELA_AND ]
+access_or_const -> PROMELA_LPAREN . arith_relation PROMELA_RPAREN [ PROMELA_STAR PROMELA_RPAREN PROMELA_RIGHT_SQUARE PROMELA_RIGHT_ARROW PROMELA_PLUS PROMELA_OR PROMELA_NEQ PROMELA_MODULO PROMELA_MINUS PROMELA_LT PROMELA_LE PROMELA_GT PROMELA_GE PROMELA_EQ PROMELA_DIV PROMELA_AND ]
+-- On PROMELA_STAR shift to state 14
+-- On PROMELA_MINUS shift to state 23
+-- On PROMELA_LPAREN shift to state 25
+-- On PROMELA_LABEL shift to state 16
+-- On PROMELA_INT shift to state 26
+-- On arith_relation_mul shift to state 27
+-- On arith_relation shift to state 42
+-- On access_or_const shift to state 35
+-- On access_leaf shift to state 20
+-- On access_array shift to state 21
+-- On access shift to state 44
+
+State 26:
+access_or_const -> PROMELA_INT . [ PROMELA_STAR PROMELA_RPAREN PROMELA_RIGHT_SQUARE PROMELA_RIGHT_ARROW PROMELA_PLUS PROMELA_OR PROMELA_NEQ PROMELA_MODULO PROMELA_MINUS PROMELA_LT PROMELA_LE PROMELA_GT PROMELA_GE PROMELA_EQ PROMELA_DIV PROMELA_AND ]
+-- On PROMELA_STAR reduce production access_or_const -> PROMELA_INT
+-- On PROMELA_RPAREN reduce production access_or_const -> PROMELA_INT
+-- On PROMELA_RIGHT_SQUARE reduce production access_or_const -> PROMELA_INT
+-- On PROMELA_RIGHT_ARROW reduce production access_or_const -> PROMELA_INT
+-- On PROMELA_PLUS reduce production access_or_const -> PROMELA_INT
+-- On PROMELA_OR reduce production access_or_const -> PROMELA_INT
+-- On PROMELA_NEQ reduce production access_or_const -> PROMELA_INT
+-- On PROMELA_MODULO reduce production access_or_const -> PROMELA_INT
+-- On PROMELA_MINUS reduce production access_or_const -> PROMELA_INT
+-- On PROMELA_LT reduce production access_or_const -> PROMELA_INT
+-- On PROMELA_LE reduce production access_or_const -> PROMELA_INT
+-- On PROMELA_GT reduce production access_or_const -> PROMELA_INT
+-- On PROMELA_GE reduce production access_or_const -> PROMELA_INT
+-- On PROMELA_EQ reduce production access_or_const -> PROMELA_INT
+-- On PROMELA_DIV reduce production access_or_const -> PROMELA_INT
+-- On PROMELA_AND reduce production access_or_const -> PROMELA_INT
+
+State 27:
+arith_relation -> arith_relation_mul . PROMELA_PLUS arith_relation [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_NEQ PROMELA_LT PROMELA_LE PROMELA_GT PROMELA_GE PROMELA_EQ PROMELA_AND ]
+arith_relation -> arith_relation_mul . PROMELA_MINUS arith_relation [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_NEQ PROMELA_LT PROMELA_LE PROMELA_GT PROMELA_GE PROMELA_EQ PROMELA_AND ]
+arith_relation -> arith_relation_mul . [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_NEQ PROMELA_LT PROMELA_LE PROMELA_GT PROMELA_GE PROMELA_EQ PROMELA_AND ]
+arith_relation_mul -> arith_relation_mul . PROMELA_DIV access_or_const [ PROMELA_STAR PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_PLUS PROMELA_OR PROMELA_NEQ PROMELA_MODULO PROMELA_MINUS PROMELA_LT PROMELA_LE PROMELA_GT PROMELA_GE PROMELA_EQ PROMELA_DIV PROMELA_AND ]
+arith_relation_mul -> arith_relation_mul . PROMELA_STAR access_or_const [ PROMELA_STAR PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_PLUS PROMELA_OR PROMELA_NEQ PROMELA_MODULO PROMELA_MINUS PROMELA_LT PROMELA_LE PROMELA_GT PROMELA_GE PROMELA_EQ PROMELA_DIV PROMELA_AND ]
+arith_relation_mul -> arith_relation_mul . PROMELA_MODULO access_or_const [ PROMELA_STAR PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_PLUS PROMELA_OR PROMELA_NEQ PROMELA_MODULO PROMELA_MINUS PROMELA_LT PROMELA_LE PROMELA_GT PROMELA_GE PROMELA_EQ PROMELA_DIV PROMELA_AND ]
+-- On PROMELA_STAR shift to state 28
+-- On PROMELA_PLUS shift to state 33
+-- On PROMELA_MODULO shift to state 36
+-- On PROMELA_MINUS shift to state 38
+-- On PROMELA_DIV shift to state 40
+-- On PROMELA_RPAREN reduce production arith_relation -> arith_relation_mul
+-- On PROMELA_RIGHT_ARROW reduce production arith_relation -> arith_relation_mul
+-- On PROMELA_OR reduce production arith_relation -> arith_relation_mul
+-- On PROMELA_NEQ reduce production arith_relation -> arith_relation_mul
+-- On PROMELA_LT reduce production arith_relation -> arith_relation_mul
+-- On PROMELA_LE reduce production arith_relation -> arith_relation_mul
+-- On PROMELA_GT reduce production arith_relation -> arith_relation_mul
+-- On PROMELA_GE reduce production arith_relation -> arith_relation_mul
+-- On PROMELA_EQ reduce production arith_relation -> arith_relation_mul
+-- On PROMELA_AND reduce production arith_relation -> arith_relation_mul
+
+State 28:
+arith_relation_mul -> arith_relation_mul PROMELA_STAR . access_or_const [ PROMELA_STAR PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_PLUS PROMELA_OR PROMELA_NEQ PROMELA_MODULO PROMELA_MINUS PROMELA_LT PROMELA_LE PROMELA_GT PROMELA_GE PROMELA_EQ PROMELA_DIV PROMELA_AND ]
+-- On PROMELA_STAR shift to state 14
+-- On PROMELA_MINUS shift to state 23
+-- On PROMELA_LPAREN shift to state 25
+-- On PROMELA_LABEL shift to state 16
+-- On PROMELA_INT shift to state 26
+-- On access_or_const shift to state 29
+-- On access_leaf shift to state 20
+-- On access_array shift to state 21
+-- On access shift to state 30
+
+State 29:
+arith_relation_mul -> arith_relation_mul PROMELA_STAR access_or_const . [ PROMELA_STAR PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_PLUS PROMELA_OR PROMELA_NEQ PROMELA_MODULO PROMELA_MINUS PROMELA_LT PROMELA_LE PROMELA_GT PROMELA_GE PROMELA_EQ PROMELA_DIV PROMELA_AND ]
+-- On PROMELA_STAR reduce production arith_relation_mul -> arith_relation_mul PROMELA_STAR access_or_const
+-- On PROMELA_RPAREN reduce production arith_relation_mul -> arith_relation_mul PROMELA_STAR access_or_const
+-- On PROMELA_RIGHT_ARROW reduce production arith_relation_mul -> arith_relation_mul PROMELA_STAR access_or_const
+-- On PROMELA_PLUS reduce production arith_relation_mul -> arith_relation_mul PROMELA_STAR access_or_const
+-- On PROMELA_OR reduce production arith_relation_mul -> arith_relation_mul PROMELA_STAR access_or_const
+-- On PROMELA_NEQ reduce production arith_relation_mul -> arith_relation_mul PROMELA_STAR access_or_const
+-- On PROMELA_MODULO reduce production arith_relation_mul -> arith_relation_mul PROMELA_STAR access_or_const
+-- On PROMELA_MINUS reduce production arith_relation_mul -> arith_relation_mul PROMELA_STAR access_or_const
+-- On PROMELA_LT reduce production arith_relation_mul -> arith_relation_mul PROMELA_STAR access_or_const
+-- On PROMELA_LE reduce production arith_relation_mul -> arith_relation_mul PROMELA_STAR access_or_const
+-- On PROMELA_GT reduce production arith_relation_mul -> arith_relation_mul PROMELA_STAR access_or_const
+-- On PROMELA_GE reduce production arith_relation_mul -> arith_relation_mul PROMELA_STAR access_or_const
+-- On PROMELA_EQ reduce production arith_relation_mul -> arith_relation_mul PROMELA_STAR access_or_const
+-- On PROMELA_DIV reduce production arith_relation_mul -> arith_relation_mul PROMELA_STAR access_or_const
+-- On PROMELA_AND reduce production arith_relation_mul -> arith_relation_mul PROMELA_STAR access_or_const
+
+State 30:
+access -> access . PROMELA_DOT PROMELA_LABEL [ PROMELA_STAR PROMELA_RPAREN PROMELA_RIGHT_SQUARE PROMELA_RIGHT_ARROW PROMELA_PLUS PROMELA_OR PROMELA_NEQ PROMELA_MODULO PROMELA_MINUS PROMELA_LT PROMELA_LE PROMELA_GT PROMELA_GE PROMELA_EQ PROMELA_DOT PROMELA_DIV PROMELA_AND ]
+access_or_const -> access . [ PROMELA_STAR PROMELA_RPAREN PROMELA_RIGHT_SQUARE PROMELA_RIGHT_ARROW PROMELA_PLUS PROMELA_OR PROMELA_NEQ PROMELA_MODULO PROMELA_MINUS PROMELA_LT PROMELA_LE PROMELA_GT PROMELA_GE PROMELA_EQ PROMELA_DIV PROMELA_AND ]
+-- On PROMELA_DOT shift to state 31
+-- On PROMELA_STAR reduce production access_or_const -> access
+-- On PROMELA_RPAREN reduce production access_or_const -> access
+-- On PROMELA_RIGHT_SQUARE reduce production access_or_const -> access
+-- On PROMELA_RIGHT_ARROW reduce production access_or_const -> access
+-- On PROMELA_PLUS reduce production access_or_const -> access
+-- On PROMELA_OR reduce production access_or_const -> access
+-- On PROMELA_NEQ reduce production access_or_const -> access
+-- On PROMELA_MODULO reduce production access_or_const -> access
+-- On PROMELA_MINUS reduce production access_or_const -> access
+-- On PROMELA_LT reduce production access_or_const -> access
+-- On PROMELA_LE reduce production access_or_const -> access
+-- On PROMELA_GT reduce production access_or_const -> access
+-- On PROMELA_GE reduce production access_or_const -> access
+-- On PROMELA_EQ reduce production access_or_const -> access
+-- On PROMELA_DIV reduce production access_or_const -> access
+-- On PROMELA_AND reduce production access_or_const -> access
+
+State 31:
+access -> access PROMELA_DOT . PROMELA_LABEL [ PROMELA_STAR PROMELA_RPAREN PROMELA_RIGHT_SQUARE PROMELA_RIGHT_ARROW PROMELA_PLUS PROMELA_OR PROMELA_NEQ PROMELA_MODULO PROMELA_MINUS PROMELA_LT PROMELA_LEFT_SQUARE PROMELA_LE PROMELA_GT PROMELA_GE PROMELA_EQ PROMELA_DOT PROMELA_DIV PROMELA_AND ]
+-- On PROMELA_LABEL shift to state 32
+
+State 32:
+access -> access PROMELA_DOT PROMELA_LABEL . [ PROMELA_STAR PROMELA_RPAREN PROMELA_RIGHT_SQUARE PROMELA_RIGHT_ARROW PROMELA_PLUS PROMELA_OR PROMELA_NEQ PROMELA_MODULO PROMELA_MINUS PROMELA_LT PROMELA_LEFT_SQUARE PROMELA_LE PROMELA_GT PROMELA_GE PROMELA_EQ PROMELA_DOT PROMELA_DIV PROMELA_AND ]
+-- On PROMELA_STAR reduce production access -> access PROMELA_DOT PROMELA_LABEL
+-- On PROMELA_RPAREN reduce production access -> access PROMELA_DOT PROMELA_LABEL
+-- On PROMELA_RIGHT_SQUARE reduce production access -> access PROMELA_DOT PROMELA_LABEL
+-- On PROMELA_RIGHT_ARROW reduce production access -> access PROMELA_DOT PROMELA_LABEL
+-- On PROMELA_PLUS reduce production access -> access PROMELA_DOT PROMELA_LABEL
+-- On PROMELA_OR reduce production access -> access PROMELA_DOT PROMELA_LABEL
+-- On PROMELA_NEQ reduce production access -> access PROMELA_DOT PROMELA_LABEL
+-- On PROMELA_MODULO reduce production access -> access PROMELA_DOT PROMELA_LABEL
+-- On PROMELA_MINUS reduce production access -> access PROMELA_DOT PROMELA_LABEL
+-- On PROMELA_LT reduce production access -> access PROMELA_DOT PROMELA_LABEL
+-- On PROMELA_LEFT_SQUARE reduce production access -> access PROMELA_DOT PROMELA_LABEL
+-- On PROMELA_LE reduce production access -> access PROMELA_DOT PROMELA_LABEL
+-- On PROMELA_GT reduce production access -> access PROMELA_DOT PROMELA_LABEL
+-- On PROMELA_GE reduce production access -> access PROMELA_DOT PROMELA_LABEL
+-- On PROMELA_EQ reduce production access -> access PROMELA_DOT PROMELA_LABEL
+-- On PROMELA_DOT reduce production access -> access PROMELA_DOT PROMELA_LABEL
+-- On PROMELA_DIV reduce production access -> access PROMELA_DOT PROMELA_LABEL
+-- On PROMELA_AND reduce production access -> access PROMELA_DOT PROMELA_LABEL
+
+State 33:
+arith_relation -> arith_relation_mul PROMELA_PLUS . arith_relation [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_NEQ PROMELA_LT PROMELA_LE PROMELA_GT PROMELA_GE PROMELA_EQ PROMELA_AND ]
+-- On PROMELA_STAR shift to state 14
+-- On PROMELA_MINUS shift to state 23
+-- On PROMELA_LPAREN shift to state 25
+-- On PROMELA_LABEL shift to state 16
+-- On PROMELA_INT shift to state 26
+-- On arith_relation_mul shift to state 27
+-- On arith_relation shift to state 34
+-- On access_or_const shift to state 35
+-- On access_leaf shift to state 20
+-- On access_array shift to state 21
+-- On access shift to state 30
+
+State 34:
+arith_relation -> arith_relation_mul PROMELA_PLUS arith_relation . [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_NEQ PROMELA_LT PROMELA_LE PROMELA_GT PROMELA_GE PROMELA_EQ PROMELA_AND ]
+-- On PROMELA_RPAREN reduce production arith_relation -> arith_relation_mul PROMELA_PLUS arith_relation
+-- On PROMELA_RIGHT_ARROW reduce production arith_relation -> arith_relation_mul PROMELA_PLUS arith_relation
+-- On PROMELA_OR reduce production arith_relation -> arith_relation_mul PROMELA_PLUS arith_relation
+-- On PROMELA_NEQ reduce production arith_relation -> arith_relation_mul PROMELA_PLUS arith_relation
+-- On PROMELA_LT reduce production arith_relation -> arith_relation_mul PROMELA_PLUS arith_relation
+-- On PROMELA_LE reduce production arith_relation -> arith_relation_mul PROMELA_PLUS arith_relation
+-- On PROMELA_GT reduce production arith_relation -> arith_relation_mul PROMELA_PLUS arith_relation
+-- On PROMELA_GE reduce production arith_relation -> arith_relation_mul PROMELA_PLUS arith_relation
+-- On PROMELA_EQ reduce production arith_relation -> arith_relation_mul PROMELA_PLUS arith_relation
+-- On PROMELA_AND reduce production arith_relation -> arith_relation_mul PROMELA_PLUS arith_relation
+
+State 35:
+arith_relation_mul -> access_or_const . [ PROMELA_STAR PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_PLUS PROMELA_OR PROMELA_NEQ PROMELA_MODULO PROMELA_MINUS PROMELA_LT PROMELA_LE PROMELA_GT PROMELA_GE PROMELA_EQ PROMELA_DIV PROMELA_AND ]
+-- On PROMELA_STAR reduce production arith_relation_mul -> access_or_const
+-- On PROMELA_RPAREN reduce production arith_relation_mul -> access_or_const
+-- On PROMELA_RIGHT_ARROW reduce production arith_relation_mul -> access_or_const
+-- On PROMELA_PLUS reduce production arith_relation_mul -> access_or_const
+-- On PROMELA_OR reduce production arith_relation_mul -> access_or_const
+-- On PROMELA_NEQ reduce production arith_relation_mul -> access_or_const
+-- On PROMELA_MODULO reduce production arith_relation_mul -> access_or_const
+-- On PROMELA_MINUS reduce production arith_relation_mul -> access_or_const
+-- On PROMELA_LT reduce production arith_relation_mul -> access_or_const
+-- On PROMELA_LE reduce production arith_relation_mul -> access_or_const
+-- On PROMELA_GT reduce production arith_relation_mul -> access_or_const
+-- On PROMELA_GE reduce production arith_relation_mul -> access_or_const
+-- On PROMELA_EQ reduce production arith_relation_mul -> access_or_const
+-- On PROMELA_DIV reduce production arith_relation_mul -> access_or_const
+-- On PROMELA_AND reduce production arith_relation_mul -> access_or_const
+
+State 36:
+arith_relation_mul -> arith_relation_mul PROMELA_MODULO . access_or_const [ PROMELA_STAR PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_PLUS PROMELA_OR PROMELA_NEQ PROMELA_MODULO PROMELA_MINUS PROMELA_LT PROMELA_LE PROMELA_GT PROMELA_GE PROMELA_EQ PROMELA_DIV PROMELA_AND ]
+-- On PROMELA_STAR shift to state 14
+-- On PROMELA_MINUS shift to state 23
+-- On PROMELA_LPAREN shift to state 25
+-- On PROMELA_LABEL shift to state 16
+-- On PROMELA_INT shift to state 26
+-- On access_or_const shift to state 37
+-- On access_leaf shift to state 20
+-- On access_array shift to state 21
+-- On access shift to state 30
+
+State 37:
+arith_relation_mul -> arith_relation_mul PROMELA_MODULO access_or_const . [ PROMELA_STAR PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_PLUS PROMELA_OR PROMELA_NEQ PROMELA_MODULO PROMELA_MINUS PROMELA_LT PROMELA_LE PROMELA_GT PROMELA_GE PROMELA_EQ PROMELA_DIV PROMELA_AND ]
+-- On PROMELA_STAR reduce production arith_relation_mul -> arith_relation_mul PROMELA_MODULO access_or_const
+-- On PROMELA_RPAREN reduce production arith_relation_mul -> arith_relation_mul PROMELA_MODULO access_or_const
+-- On PROMELA_RIGHT_ARROW reduce production arith_relation_mul -> arith_relation_mul PROMELA_MODULO access_or_const
+-- On PROMELA_PLUS reduce production arith_relation_mul -> arith_relation_mul PROMELA_MODULO access_or_const
+-- On PROMELA_OR reduce production arith_relation_mul -> arith_relation_mul PROMELA_MODULO access_or_const
+-- On PROMELA_NEQ reduce production arith_relation_mul -> arith_relation_mul PROMELA_MODULO access_or_const
+-- On PROMELA_MODULO reduce production arith_relation_mul -> arith_relation_mul PROMELA_MODULO access_or_const
+-- On PROMELA_MINUS reduce production arith_relation_mul -> arith_relation_mul PROMELA_MODULO access_or_const
+-- On PROMELA_LT reduce production arith_relation_mul -> arith_relation_mul PROMELA_MODULO access_or_const
+-- On PROMELA_LE reduce production arith_relation_mul -> arith_relation_mul PROMELA_MODULO access_or_const
+-- On PROMELA_GT reduce production arith_relation_mul -> arith_relation_mul PROMELA_MODULO access_or_const
+-- On PROMELA_GE reduce production arith_relation_mul -> arith_relation_mul PROMELA_MODULO access_or_const
+-- On PROMELA_EQ reduce production arith_relation_mul -> arith_relation_mul PROMELA_MODULO access_or_const
+-- On PROMELA_DIV reduce production arith_relation_mul -> arith_relation_mul PROMELA_MODULO access_or_const
+-- On PROMELA_AND reduce production arith_relation_mul -> arith_relation_mul PROMELA_MODULO access_or_const
+
+State 38:
+arith_relation -> arith_relation_mul PROMELA_MINUS . arith_relation [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_NEQ PROMELA_LT PROMELA_LE PROMELA_GT PROMELA_GE PROMELA_EQ PROMELA_AND ]
+-- On PROMELA_STAR shift to state 14
+-- On PROMELA_MINUS shift to state 23
+-- On PROMELA_LPAREN shift to state 25
+-- On PROMELA_LABEL shift to state 16
+-- On PROMELA_INT shift to state 26
+-- On arith_relation_mul shift to state 27
+-- On arith_relation shift to state 39
+-- On access_or_const shift to state 35
+-- On access_leaf shift to state 20
+-- On access_array shift to state 21
+-- On access shift to state 30
+
+State 39:
+arith_relation -> arith_relation_mul PROMELA_MINUS arith_relation . [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_NEQ PROMELA_LT PROMELA_LE PROMELA_GT PROMELA_GE PROMELA_EQ PROMELA_AND ]
+-- On PROMELA_RPAREN reduce production arith_relation -> arith_relation_mul PROMELA_MINUS arith_relation
+-- On PROMELA_RIGHT_ARROW reduce production arith_relation -> arith_relation_mul PROMELA_MINUS arith_relation
+-- On PROMELA_OR reduce production arith_relation -> arith_relation_mul PROMELA_MINUS arith_relation
+-- On PROMELA_NEQ reduce production arith_relation -> arith_relation_mul PROMELA_MINUS arith_relation
+-- On PROMELA_LT reduce production arith_relation -> arith_relation_mul PROMELA_MINUS arith_relation
+-- On PROMELA_LE reduce production arith_relation -> arith_relation_mul PROMELA_MINUS arith_relation
+-- On PROMELA_GT reduce production arith_relation -> arith_relation_mul PROMELA_MINUS arith_relation
+-- On PROMELA_GE reduce production arith_relation -> arith_relation_mul PROMELA_MINUS arith_relation
+-- On PROMELA_EQ reduce production arith_relation -> arith_relation_mul PROMELA_MINUS arith_relation
+-- On PROMELA_AND reduce production arith_relation -> arith_relation_mul PROMELA_MINUS arith_relation
+
+State 40:
+arith_relation_mul -> arith_relation_mul PROMELA_DIV . access_or_const [ PROMELA_STAR PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_PLUS PROMELA_OR PROMELA_NEQ PROMELA_MODULO PROMELA_MINUS PROMELA_LT PROMELA_LE PROMELA_GT PROMELA_GE PROMELA_EQ PROMELA_DIV PROMELA_AND ]
+-- On PROMELA_STAR shift to state 14
+-- On PROMELA_MINUS shift to state 23
+-- On PROMELA_LPAREN shift to state 25
+-- On PROMELA_LABEL shift to state 16
+-- On PROMELA_INT shift to state 26
+-- On access_or_const shift to state 41
+-- On access_leaf shift to state 20
+-- On access_array shift to state 21
+-- On access shift to state 30
+
+State 41:
+arith_relation_mul -> arith_relation_mul PROMELA_DIV access_or_const . [ PROMELA_STAR PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_PLUS PROMELA_OR PROMELA_NEQ PROMELA_MODULO PROMELA_MINUS PROMELA_LT PROMELA_LE PROMELA_GT PROMELA_GE PROMELA_EQ PROMELA_DIV PROMELA_AND ]
+-- On PROMELA_STAR reduce production arith_relation_mul -> arith_relation_mul PROMELA_DIV access_or_const
+-- On PROMELA_RPAREN reduce production arith_relation_mul -> arith_relation_mul PROMELA_DIV access_or_const
+-- On PROMELA_RIGHT_ARROW reduce production arith_relation_mul -> arith_relation_mul PROMELA_DIV access_or_const
+-- On PROMELA_PLUS reduce production arith_relation_mul -> arith_relation_mul PROMELA_DIV access_or_const
+-- On PROMELA_OR reduce production arith_relation_mul -> arith_relation_mul PROMELA_DIV access_or_const
+-- On PROMELA_NEQ reduce production arith_relation_mul -> arith_relation_mul PROMELA_DIV access_or_const
+-- On PROMELA_MODULO reduce production arith_relation_mul -> arith_relation_mul PROMELA_DIV access_or_const
+-- On PROMELA_MINUS reduce production arith_relation_mul -> arith_relation_mul PROMELA_DIV access_or_const
+-- On PROMELA_LT reduce production arith_relation_mul -> arith_relation_mul PROMELA_DIV access_or_const
+-- On PROMELA_LE reduce production arith_relation_mul -> arith_relation_mul PROMELA_DIV access_or_const
+-- On PROMELA_GT reduce production arith_relation_mul -> arith_relation_mul PROMELA_DIV access_or_const
+-- On PROMELA_GE reduce production arith_relation_mul -> arith_relation_mul PROMELA_DIV access_or_const
+-- On PROMELA_EQ reduce production arith_relation_mul -> arith_relation_mul PROMELA_DIV access_or_const
+-- On PROMELA_DIV reduce production arith_relation_mul -> arith_relation_mul PROMELA_DIV access_or_const
+-- On PROMELA_AND reduce production arith_relation_mul -> arith_relation_mul PROMELA_DIV access_or_const
+
+State 42:
+access_or_const -> PROMELA_LPAREN arith_relation . PROMELA_RPAREN [ PROMELA_STAR PROMELA_RPAREN PROMELA_RIGHT_SQUARE PROMELA_RIGHT_ARROW PROMELA_PLUS PROMELA_OR PROMELA_NEQ PROMELA_MODULO PROMELA_MINUS PROMELA_LT PROMELA_LE PROMELA_GT PROMELA_GE PROMELA_EQ PROMELA_DIV PROMELA_AND ]
+-- On PROMELA_RPAREN shift to state 43
+
+State 43:
+access_or_const -> PROMELA_LPAREN arith_relation PROMELA_RPAREN . [ PROMELA_STAR PROMELA_RPAREN PROMELA_RIGHT_SQUARE PROMELA_RIGHT_ARROW PROMELA_PLUS PROMELA_OR PROMELA_NEQ PROMELA_MODULO PROMELA_MINUS PROMELA_LT PROMELA_LE PROMELA_GT PROMELA_GE PROMELA_EQ PROMELA_DIV PROMELA_AND ]
+-- On PROMELA_STAR reduce production access_or_const -> PROMELA_LPAREN arith_relation PROMELA_RPAREN
+-- On PROMELA_RPAREN reduce production access_or_const -> PROMELA_LPAREN arith_relation PROMELA_RPAREN
+-- On PROMELA_RIGHT_SQUARE reduce production access_or_const -> PROMELA_LPAREN arith_relation PROMELA_RPAREN
+-- On PROMELA_RIGHT_ARROW reduce production access_or_const -> PROMELA_LPAREN arith_relation PROMELA_RPAREN
+-- On PROMELA_PLUS reduce production access_or_const -> PROMELA_LPAREN arith_relation PROMELA_RPAREN
+-- On PROMELA_OR reduce production access_or_const -> PROMELA_LPAREN arith_relation PROMELA_RPAREN
+-- On PROMELA_NEQ reduce production access_or_const -> PROMELA_LPAREN arith_relation PROMELA_RPAREN
+-- On PROMELA_MODULO reduce production access_or_const -> PROMELA_LPAREN arith_relation PROMELA_RPAREN
+-- On PROMELA_MINUS reduce production access_or_const -> PROMELA_LPAREN arith_relation PROMELA_RPAREN
+-- On PROMELA_LT reduce production access_or_const -> PROMELA_LPAREN arith_relation PROMELA_RPAREN
+-- On PROMELA_LE reduce production access_or_const -> PROMELA_LPAREN arith_relation PROMELA_RPAREN
+-- On PROMELA_GT reduce production access_or_const -> PROMELA_LPAREN arith_relation PROMELA_RPAREN
+-- On PROMELA_GE reduce production access_or_const -> PROMELA_LPAREN arith_relation PROMELA_RPAREN
+-- On PROMELA_EQ reduce production access_or_const -> PROMELA_LPAREN arith_relation PROMELA_RPAREN
+-- On PROMELA_DIV reduce production access_or_const -> PROMELA_LPAREN arith_relation PROMELA_RPAREN
+-- On PROMELA_AND reduce production access_or_const -> PROMELA_LPAREN arith_relation PROMELA_RPAREN
+
+State 44:
+access -> access . PROMELA_DOT PROMELA_LABEL [ PROMELA_STAR PROMELA_RPAREN PROMELA_PLUS PROMELA_OR PROMELA_NEQ PROMELA_MODULO PROMELA_MINUS PROMELA_LT PROMELA_LE PROMELA_GT PROMELA_GE PROMELA_EQ PROMELA_DOT PROMELA_DIV PROMELA_AND ]
+access_leaf -> PROMELA_LPAREN access . PROMELA_RPAREN [ PROMELA_STAR PROMELA_RPAREN PROMELA_RIGHT_SQUARE PROMELA_RIGHT_ARROW PROMELA_PLUS PROMELA_OR PROMELA_NEQ PROMELA_MODULO PROMELA_MINUS PROMELA_LT PROMELA_LEFT_SQUARE PROMELA_LE PROMELA_GT PROMELA_GE PROMELA_EQ PROMELA_DOT PROMELA_DIV PROMELA_AND ]
+access_or_const -> access . [ PROMELA_STAR PROMELA_RPAREN PROMELA_PLUS PROMELA_OR PROMELA_NEQ PROMELA_MODULO PROMELA_MINUS PROMELA_LT PROMELA_LE PROMELA_GT PROMELA_GE PROMELA_EQ PROMELA_DIV PROMELA_AND ]
+-- On PROMELA_RPAREN shift to state 45
+-- On PROMELA_DOT shift to state 31
+-- On PROMELA_STAR reduce production access_or_const -> access
+-- On PROMELA_PLUS reduce production access_or_const -> access
+-- On PROMELA_OR reduce production access_or_const -> access
+-- On PROMELA_NEQ reduce production access_or_const -> access
+-- On PROMELA_MODULO reduce production access_or_const -> access
+-- On PROMELA_MINUS reduce production access_or_const -> access
+-- On PROMELA_LT reduce production access_or_const -> access
+-- On PROMELA_LE reduce production access_or_const -> access
+-- On PROMELA_GT reduce production access_or_const -> access
+-- On PROMELA_GE reduce production access_or_const -> access
+-- On PROMELA_EQ reduce production access_or_const -> access
+-- On PROMELA_DIV reduce production access_or_const -> access
+-- On PROMELA_AND reduce production access_or_const -> access
+** Conflict on PROMELA_RPAREN
+
+State 45:
+access_leaf -> PROMELA_LPAREN access PROMELA_RPAREN . [ PROMELA_STAR PROMELA_RPAREN PROMELA_RIGHT_SQUARE PROMELA_RIGHT_ARROW PROMELA_PLUS PROMELA_OR PROMELA_NEQ PROMELA_MODULO PROMELA_MINUS PROMELA_LT PROMELA_LEFT_SQUARE PROMELA_LE PROMELA_GT PROMELA_GE PROMELA_EQ PROMELA_DOT PROMELA_DIV PROMELA_AND ]
+-- On PROMELA_STAR reduce production access_leaf -> PROMELA_LPAREN access PROMELA_RPAREN
+-- On PROMELA_RPAREN reduce production access_leaf -> PROMELA_LPAREN access PROMELA_RPAREN
+-- On PROMELA_RIGHT_SQUARE reduce production access_leaf -> PROMELA_LPAREN access PROMELA_RPAREN
+-- On PROMELA_RIGHT_ARROW reduce production access_leaf -> PROMELA_LPAREN access PROMELA_RPAREN
+-- On PROMELA_PLUS reduce production access_leaf -> PROMELA_LPAREN access PROMELA_RPAREN
+-- On PROMELA_OR reduce production access_leaf -> PROMELA_LPAREN access PROMELA_RPAREN
+-- On PROMELA_NEQ reduce production access_leaf -> PROMELA_LPAREN access PROMELA_RPAREN
+-- On PROMELA_MODULO reduce production access_leaf -> PROMELA_LPAREN access PROMELA_RPAREN
+-- On PROMELA_MINUS reduce production access_leaf -> PROMELA_LPAREN access PROMELA_RPAREN
+-- On PROMELA_LT reduce production access_leaf -> PROMELA_LPAREN access PROMELA_RPAREN
+-- On PROMELA_LEFT_SQUARE reduce production access_leaf -> PROMELA_LPAREN access PROMELA_RPAREN
+-- On PROMELA_LE reduce production access_leaf -> PROMELA_LPAREN access PROMELA_RPAREN
+-- On PROMELA_GT reduce production access_leaf -> PROMELA_LPAREN access PROMELA_RPAREN
+-- On PROMELA_GE reduce production access_leaf -> PROMELA_LPAREN access PROMELA_RPAREN
+-- On PROMELA_EQ reduce production access_leaf -> PROMELA_LPAREN access PROMELA_RPAREN
+-- On PROMELA_DOT reduce production access_leaf -> PROMELA_LPAREN access PROMELA_RPAREN
+-- On PROMELA_DIV reduce production access_leaf -> PROMELA_LPAREN access PROMELA_RPAREN
+-- On PROMELA_AND reduce production access_leaf -> PROMELA_LPAREN access PROMELA_RPAREN
+
+State 46:
+access_array -> access_array PROMELA_LEFT_SQUARE access_or_const . PROMELA_RIGHT_SQUARE [ PROMELA_STAR PROMELA_RPAREN PROMELA_RIGHT_SQUARE PROMELA_RIGHT_ARROW PROMELA_PLUS PROMELA_OR PROMELA_NEQ PROMELA_MODULO PROMELA_MINUS PROMELA_LT PROMELA_LEFT_SQUARE PROMELA_LE PROMELA_GT PROMELA_GE PROMELA_EQ PROMELA_DOT PROMELA_DIV PROMELA_AND ]
+-- On PROMELA_RIGHT_SQUARE shift to state 47
+
+State 47:
+access_array -> access_array PROMELA_LEFT_SQUARE access_or_const PROMELA_RIGHT_SQUARE . [ PROMELA_STAR PROMELA_RPAREN PROMELA_RIGHT_SQUARE PROMELA_RIGHT_ARROW PROMELA_PLUS PROMELA_OR PROMELA_NEQ PROMELA_MODULO PROMELA_MINUS PROMELA_LT PROMELA_LEFT_SQUARE PROMELA_LE PROMELA_GT PROMELA_GE PROMELA_EQ PROMELA_DOT PROMELA_DIV PROMELA_AND ]
+-- On PROMELA_STAR reduce production access_array -> access_array PROMELA_LEFT_SQUARE access_or_const PROMELA_RIGHT_SQUARE
+-- On PROMELA_RPAREN reduce production access_array -> access_array PROMELA_LEFT_SQUARE access_or_const PROMELA_RIGHT_SQUARE
+-- On PROMELA_RIGHT_SQUARE reduce production access_array -> access_array PROMELA_LEFT_SQUARE access_or_const PROMELA_RIGHT_SQUARE
+-- On PROMELA_RIGHT_ARROW reduce production access_array -> access_array PROMELA_LEFT_SQUARE access_or_const PROMELA_RIGHT_SQUARE
+-- On PROMELA_PLUS reduce production access_array -> access_array PROMELA_LEFT_SQUARE access_or_const PROMELA_RIGHT_SQUARE
+-- On PROMELA_OR reduce production access_array -> access_array PROMELA_LEFT_SQUARE access_or_const PROMELA_RIGHT_SQUARE
+-- On PROMELA_NEQ reduce production access_array -> access_array PROMELA_LEFT_SQUARE access_or_const PROMELA_RIGHT_SQUARE
+-- On PROMELA_MODULO reduce production access_array -> access_array PROMELA_LEFT_SQUARE access_or_const PROMELA_RIGHT_SQUARE
+-- On PROMELA_MINUS reduce production access_array -> access_array PROMELA_LEFT_SQUARE access_or_const PROMELA_RIGHT_SQUARE
+-- On PROMELA_LT reduce production access_array -> access_array PROMELA_LEFT_SQUARE access_or_const PROMELA_RIGHT_SQUARE
+-- On PROMELA_LEFT_SQUARE reduce production access_array -> access_array PROMELA_LEFT_SQUARE access_or_const PROMELA_RIGHT_SQUARE
+-- On PROMELA_LE reduce production access_array -> access_array PROMELA_LEFT_SQUARE access_or_const PROMELA_RIGHT_SQUARE
+-- On PROMELA_GT reduce production access_array -> access_array PROMELA_LEFT_SQUARE access_or_const PROMELA_RIGHT_SQUARE
+-- On PROMELA_GE reduce production access_array -> access_array PROMELA_LEFT_SQUARE access_or_const PROMELA_RIGHT_SQUARE
+-- On PROMELA_EQ reduce production access_array -> access_array PROMELA_LEFT_SQUARE access_or_const PROMELA_RIGHT_SQUARE
+-- On PROMELA_DOT reduce production access_array -> access_array PROMELA_LEFT_SQUARE access_or_const PROMELA_RIGHT_SQUARE
+-- On PROMELA_DIV reduce production access_array -> access_array PROMELA_LEFT_SQUARE access_or_const PROMELA_RIGHT_SQUARE
+-- On PROMELA_AND reduce production access_array -> access_array PROMELA_LEFT_SQUARE access_or_const PROMELA_RIGHT_SQUARE
+
+State 48:
+access -> access . PROMELA_DOT PROMELA_LABEL [ PROMELA_RPAREN PROMELA_DOT ]
+access_leaf -> PROMELA_LPAREN access . PROMELA_RPAREN [ PROMELA_STAR PROMELA_RPAREN PROMELA_RIGHT_SQUARE PROMELA_RIGHT_ARROW PROMELA_PLUS PROMELA_OR PROMELA_NEQ PROMELA_MODULO PROMELA_MINUS PROMELA_LT PROMELA_LEFT_SQUARE PROMELA_LE PROMELA_GT PROMELA_GE PROMELA_EQ PROMELA_DOT PROMELA_DIV PROMELA_AND ]
+-- On PROMELA_RPAREN shift to state 45
+-- On PROMELA_DOT shift to state 31
+
+State 49:
+access -> access . PROMELA_DOT PROMELA_LABEL [ PROMELA_STAR PROMELA_RPAREN PROMELA_RIGHT_SQUARE PROMELA_RIGHT_ARROW PROMELA_PLUS PROMELA_OR PROMELA_NEQ PROMELA_MODULO PROMELA_MINUS PROMELA_LT PROMELA_LEFT_SQUARE PROMELA_LE PROMELA_GT PROMELA_GE PROMELA_EQ PROMELA_DOT PROMELA_DIV PROMELA_AND ]
+access_leaf -> PROMELA_STAR access . [ PROMELA_STAR PROMELA_RPAREN PROMELA_RIGHT_SQUARE PROMELA_RIGHT_ARROW PROMELA_PLUS PROMELA_OR PROMELA_NEQ PROMELA_MODULO PROMELA_MINUS PROMELA_LT PROMELA_LEFT_SQUARE PROMELA_LE PROMELA_GT PROMELA_GE PROMELA_EQ PROMELA_DOT PROMELA_DIV PROMELA_AND ]
+-- On PROMELA_DOT shift to state 31
+-- On PROMELA_STAR reduce production access_leaf -> PROMELA_STAR access
+-- On PROMELA_RPAREN reduce production access_leaf -> PROMELA_STAR access
+-- On PROMELA_RIGHT_SQUARE reduce production access_leaf -> PROMELA_STAR access
+-- On PROMELA_RIGHT_ARROW reduce production access_leaf -> PROMELA_STAR access
+-- On PROMELA_PLUS reduce production access_leaf -> PROMELA_STAR access
+-- On PROMELA_OR reduce production access_leaf -> PROMELA_STAR access
+-- On PROMELA_NEQ reduce production access_leaf -> PROMELA_STAR access
+-- On PROMELA_MODULO reduce production access_leaf -> PROMELA_STAR access
+-- On PROMELA_MINUS reduce production access_leaf -> PROMELA_STAR access
+-- On PROMELA_LT reduce production access_leaf -> PROMELA_STAR access
+-- On PROMELA_LEFT_SQUARE reduce production access_leaf -> PROMELA_STAR access
+-- On PROMELA_LE reduce production access_leaf -> PROMELA_STAR access
+-- On PROMELA_GT reduce production access_leaf -> PROMELA_STAR access
+-- On PROMELA_GE reduce production access_leaf -> PROMELA_STAR access
+-- On PROMELA_EQ reduce production access_leaf -> PROMELA_STAR access
+-- On PROMELA_DIV reduce production access_leaf -> PROMELA_STAR access
+-- On PROMELA_AND reduce production access_leaf -> PROMELA_STAR access
+** Conflict on PROMELA_DOT
+
+State 50:
+guard -> PROMELA_RETURNOF . [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+-- On PROMELA_RPAREN reduce production guard -> PROMELA_RETURNOF
+-- On PROMELA_RIGHT_ARROW reduce production guard -> PROMELA_RETURNOF
+-- On PROMELA_OR reduce production guard -> PROMELA_RETURNOF
+-- On PROMELA_AND reduce production guard -> PROMELA_RETURNOF
+
+State 51:
+guard -> PROMELA_NOT . guard [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+-- On PROMELA_TRUE shift to state 13
+-- On PROMELA_STAR shift to state 14
+-- On PROMELA_RETURNOF shift to state 50
+-- On PROMELA_NOT shift to state 51
+-- On PROMELA_MINUS shift to state 23
+-- On PROMELA_LPAREN shift to state 52
+-- On PROMELA_LABEL shift to state 16
+-- On PROMELA_INT shift to state 26
+-- On PROMELA_FALSE shift to state 53
+-- On PROMELA_CALLORRETURNOF shift to state 54
+-- On PROMELA_CALLOF shift to state 55
+-- On logic_relation shift to state 56
+-- On guard shift to state 77
+-- On arith_relation_mul shift to state 27
+-- On arith_relation shift to state 63
+-- On access_or_const shift to state 35
+-- On access_leaf shift to state 20
+-- On access_array shift to state 21
+-- On access shift to state 30
+
+State 52:
+access_leaf -> PROMELA_LPAREN . access PROMELA_RPAREN [ PROMELA_STAR PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_PLUS PROMELA_OR PROMELA_NEQ PROMELA_MODULO PROMELA_MINUS PROMELA_LT PROMELA_LEFT_SQUARE PROMELA_LE PROMELA_GT PROMELA_GE PROMELA_EQ PROMELA_DOT PROMELA_DIV PROMELA_AND ]
+access_or_const -> PROMELA_LPAREN . arith_relation PROMELA_RPAREN [ PROMELA_STAR PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_PLUS PROMELA_OR PROMELA_NEQ PROMELA_MODULO PROMELA_MINUS PROMELA_LT PROMELA_LE PROMELA_GT PROMELA_GE PROMELA_EQ PROMELA_DIV PROMELA_AND ]
+guard -> PROMELA_LPAREN . guard PROMELA_RPAREN [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+-- On PROMELA_TRUE shift to state 13
+-- On PROMELA_STAR shift to state 14
+-- On PROMELA_RETURNOF shift to state 50
+-- On PROMELA_NOT shift to state 51
+-- On PROMELA_MINUS shift to state 23
+-- On PROMELA_LPAREN shift to state 52
+-- On PROMELA_LABEL shift to state 16
+-- On PROMELA_INT shift to state 26
+-- On PROMELA_FALSE shift to state 53
+-- On PROMELA_CALLORRETURNOF shift to state 54
+-- On PROMELA_CALLOF shift to state 55
+-- On logic_relation shift to state 56
+-- On guard shift to state 57
+-- On arith_relation_mul shift to state 27
+-- On arith_relation shift to state 76
+-- On access_or_const shift to state 35
+-- On access_leaf shift to state 20
+-- On access_array shift to state 21
+-- On access shift to state 44
+
+State 53:
+guard -> PROMELA_FALSE . [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+-- On PROMELA_RPAREN reduce production guard -> PROMELA_FALSE
+-- On PROMELA_RIGHT_ARROW reduce production guard -> PROMELA_FALSE
+-- On PROMELA_OR reduce production guard -> PROMELA_FALSE
+-- On PROMELA_AND reduce production guard -> PROMELA_FALSE
+
+State 54:
+guard -> PROMELA_CALLORRETURNOF . [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+-- On PROMELA_RPAREN reduce production guard -> PROMELA_CALLORRETURNOF
+-- On PROMELA_RIGHT_ARROW reduce production guard -> PROMELA_CALLORRETURNOF
+-- On PROMELA_OR reduce production guard -> PROMELA_CALLORRETURNOF
+-- On PROMELA_AND reduce production guard -> PROMELA_CALLORRETURNOF
+
+State 55:
+guard -> PROMELA_CALLOF . [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+-- On PROMELA_RPAREN reduce production guard -> PROMELA_CALLOF
+-- On PROMELA_RIGHT_ARROW reduce production guard -> PROMELA_CALLOF
+-- On PROMELA_OR reduce production guard -> PROMELA_CALLOF
+-- On PROMELA_AND reduce production guard -> PROMELA_CALLOF
+
+State 56:
+guard -> logic_relation . [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+-- On PROMELA_RPAREN reduce production guard -> logic_relation
+-- On PROMELA_RIGHT_ARROW reduce production guard -> logic_relation
+-- On PROMELA_OR reduce production guard -> logic_relation
+-- On PROMELA_AND reduce production guard -> logic_relation
+
+State 57:
+guard -> guard . PROMELA_AND guard [ PROMELA_RPAREN PROMELA_OR PROMELA_AND ]
+guard -> guard . PROMELA_OR guard [ PROMELA_RPAREN PROMELA_OR PROMELA_AND ]
+guard -> PROMELA_LPAREN guard . PROMELA_RPAREN [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+-- On PROMELA_RPAREN shift to state 58
+-- On PROMELA_OR shift to state 59
+-- On PROMELA_AND shift to state 61
+
+State 58:
+guard -> PROMELA_LPAREN guard PROMELA_RPAREN . [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+-- On PROMELA_RPAREN reduce production guard -> PROMELA_LPAREN guard PROMELA_RPAREN
+-- On PROMELA_RIGHT_ARROW reduce production guard -> PROMELA_LPAREN guard PROMELA_RPAREN
+-- On PROMELA_OR reduce production guard -> PROMELA_LPAREN guard PROMELA_RPAREN
+-- On PROMELA_AND reduce production guard -> PROMELA_LPAREN guard PROMELA_RPAREN
+
+State 59:
+guard -> guard PROMELA_OR . guard [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+-- On PROMELA_TRUE shift to state 13
+-- On PROMELA_STAR shift to state 14
+-- On PROMELA_RETURNOF shift to state 50
+-- On PROMELA_NOT shift to state 51
+-- On PROMELA_MINUS shift to state 23
+-- On PROMELA_LPAREN shift to state 52
+-- On PROMELA_LABEL shift to state 16
+-- On PROMELA_INT shift to state 26
+-- On PROMELA_FALSE shift to state 53
+-- On PROMELA_CALLORRETURNOF shift to state 54
+-- On PROMELA_CALLOF shift to state 55
+-- On logic_relation shift to state 56
+-- On guard shift to state 60
+-- On arith_relation_mul shift to state 27
+-- On arith_relation shift to state 63
+-- On access_or_const shift to state 35
+-- On access_leaf shift to state 20
+-- On access_array shift to state 21
+-- On access shift to state 30
+
+State 60:
+guard -> guard . PROMELA_AND guard [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+guard -> guard . PROMELA_OR guard [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+guard -> guard PROMELA_OR guard . [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+-- On PROMELA_OR shift to state 59
+-- On PROMELA_AND shift to state 61
+-- On PROMELA_RPAREN reduce production guard -> guard PROMELA_OR guard
+-- On PROMELA_RIGHT_ARROW reduce production guard -> guard PROMELA_OR guard
+
+State 61:
+guard -> guard PROMELA_AND . guard [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+-- On PROMELA_TRUE shift to state 13
+-- On PROMELA_STAR shift to state 14
+-- On PROMELA_RETURNOF shift to state 50
+-- On PROMELA_NOT shift to state 51
+-- On PROMELA_MINUS shift to state 23
+-- On PROMELA_LPAREN shift to state 52
+-- On PROMELA_LABEL shift to state 16
+-- On PROMELA_INT shift to state 26
+-- On PROMELA_FALSE shift to state 53
+-- On PROMELA_CALLORRETURNOF shift to state 54
+-- On PROMELA_CALLOF shift to state 55
+-- On logic_relation shift to state 56
+-- On guard shift to state 62
+-- On arith_relation_mul shift to state 27
+-- On arith_relation shift to state 63
+-- On access_or_const shift to state 35
+-- On access_leaf shift to state 20
+-- On access_array shift to state 21
+-- On access shift to state 30
+
+State 62:
+guard -> guard . PROMELA_AND guard [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+guard -> guard PROMELA_AND guard . [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+guard -> guard . PROMELA_OR guard [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+-- On PROMELA_AND shift to state 61
+-- On PROMELA_RPAREN reduce production guard -> guard PROMELA_AND guard
+-- On PROMELA_RIGHT_ARROW reduce production guard -> guard PROMELA_AND guard
+-- On PROMELA_OR reduce production guard -> guard PROMELA_AND guard
+
+State 63:
+logic_relation -> arith_relation . PROMELA_EQ arith_relation [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+logic_relation -> arith_relation . PROMELA_LT arith_relation [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+logic_relation -> arith_relation . PROMELA_GT arith_relation [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+logic_relation -> arith_relation . PROMELA_LE arith_relation [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+logic_relation -> arith_relation . PROMELA_GE arith_relation [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+logic_relation -> arith_relation . PROMELA_NEQ arith_relation [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+logic_relation -> arith_relation . [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+-- On PROMELA_NEQ shift to state 64
+-- On PROMELA_LT shift to state 66
+-- On PROMELA_LE shift to state 68
+-- On PROMELA_GT shift to state 70
+-- On PROMELA_GE shift to state 72
+-- On PROMELA_EQ shift to state 74
+-- On PROMELA_RPAREN reduce production logic_relation -> arith_relation
+-- On PROMELA_RIGHT_ARROW reduce production logic_relation -> arith_relation
+-- On PROMELA_OR reduce production logic_relation -> arith_relation
+-- On PROMELA_AND reduce production logic_relation -> arith_relation
+
+State 64:
+logic_relation -> arith_relation PROMELA_NEQ . arith_relation [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+-- On PROMELA_STAR shift to state 14
+-- On PROMELA_MINUS shift to state 23
+-- On PROMELA_LPAREN shift to state 25
+-- On PROMELA_LABEL shift to state 16
+-- On PROMELA_INT shift to state 26
+-- On arith_relation_mul shift to state 27
+-- On arith_relation shift to state 65
+-- On access_or_const shift to state 35
+-- On access_leaf shift to state 20
+-- On access_array shift to state 21
+-- On access shift to state 30
+
+State 65:
+logic_relation -> arith_relation PROMELA_NEQ arith_relation . [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+-- On PROMELA_RPAREN reduce production logic_relation -> arith_relation PROMELA_NEQ arith_relation
+-- On PROMELA_RIGHT_ARROW reduce production logic_relation -> arith_relation PROMELA_NEQ arith_relation
+-- On PROMELA_OR reduce production logic_relation -> arith_relation PROMELA_NEQ arith_relation
+-- On PROMELA_AND reduce production logic_relation -> arith_relation PROMELA_NEQ arith_relation
+
+State 66:
+logic_relation -> arith_relation PROMELA_LT . arith_relation [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+-- On PROMELA_STAR shift to state 14
+-- On PROMELA_MINUS shift to state 23
+-- On PROMELA_LPAREN shift to state 25
+-- On PROMELA_LABEL shift to state 16
+-- On PROMELA_INT shift to state 26
+-- On arith_relation_mul shift to state 27
+-- On arith_relation shift to state 67
+-- On access_or_const shift to state 35
+-- On access_leaf shift to state 20
+-- On access_array shift to state 21
+-- On access shift to state 30
+
+State 67:
+logic_relation -> arith_relation PROMELA_LT arith_relation . [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+-- On PROMELA_RPAREN reduce production logic_relation -> arith_relation PROMELA_LT arith_relation
+-- On PROMELA_RIGHT_ARROW reduce production logic_relation -> arith_relation PROMELA_LT arith_relation
+-- On PROMELA_OR reduce production logic_relation -> arith_relation PROMELA_LT arith_relation
+-- On PROMELA_AND reduce production logic_relation -> arith_relation PROMELA_LT arith_relation
+
+State 68:
+logic_relation -> arith_relation PROMELA_LE . arith_relation [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+-- On PROMELA_STAR shift to state 14
+-- On PROMELA_MINUS shift to state 23
+-- On PROMELA_LPAREN shift to state 25
+-- On PROMELA_LABEL shift to state 16
+-- On PROMELA_INT shift to state 26
+-- On arith_relation_mul shift to state 27
+-- On arith_relation shift to state 69
+-- On access_or_const shift to state 35
+-- On access_leaf shift to state 20
+-- On access_array shift to state 21
+-- On access shift to state 30
+
+State 69:
+logic_relation -> arith_relation PROMELA_LE arith_relation . [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+-- On PROMELA_RPAREN reduce production logic_relation -> arith_relation PROMELA_LE arith_relation
+-- On PROMELA_RIGHT_ARROW reduce production logic_relation -> arith_relation PROMELA_LE arith_relation
+-- On PROMELA_OR reduce production logic_relation -> arith_relation PROMELA_LE arith_relation
+-- On PROMELA_AND reduce production logic_relation -> arith_relation PROMELA_LE arith_relation
+
+State 70:
+logic_relation -> arith_relation PROMELA_GT . arith_relation [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+-- On PROMELA_STAR shift to state 14
+-- On PROMELA_MINUS shift to state 23
+-- On PROMELA_LPAREN shift to state 25
+-- On PROMELA_LABEL shift to state 16
+-- On PROMELA_INT shift to state 26
+-- On arith_relation_mul shift to state 27
+-- On arith_relation shift to state 71
+-- On access_or_const shift to state 35
+-- On access_leaf shift to state 20
+-- On access_array shift to state 21
+-- On access shift to state 30
+
+State 71:
+logic_relation -> arith_relation PROMELA_GT arith_relation . [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+-- On PROMELA_RPAREN reduce production logic_relation -> arith_relation PROMELA_GT arith_relation
+-- On PROMELA_RIGHT_ARROW reduce production logic_relation -> arith_relation PROMELA_GT arith_relation
+-- On PROMELA_OR reduce production logic_relation -> arith_relation PROMELA_GT arith_relation
+-- On PROMELA_AND reduce production logic_relation -> arith_relation PROMELA_GT arith_relation
+
+State 72:
+logic_relation -> arith_relation PROMELA_GE . arith_relation [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+-- On PROMELA_STAR shift to state 14
+-- On PROMELA_MINUS shift to state 23
+-- On PROMELA_LPAREN shift to state 25
+-- On PROMELA_LABEL shift to state 16
+-- On PROMELA_INT shift to state 26
+-- On arith_relation_mul shift to state 27
+-- On arith_relation shift to state 73
+-- On access_or_const shift to state 35
+-- On access_leaf shift to state 20
+-- On access_array shift to state 21
+-- On access shift to state 30
+
+State 73:
+logic_relation -> arith_relation PROMELA_GE arith_relation . [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+-- On PROMELA_RPAREN reduce production logic_relation -> arith_relation PROMELA_GE arith_relation
+-- On PROMELA_RIGHT_ARROW reduce production logic_relation -> arith_relation PROMELA_GE arith_relation
+-- On PROMELA_OR reduce production logic_relation -> arith_relation PROMELA_GE arith_relation
+-- On PROMELA_AND reduce production logic_relation -> arith_relation PROMELA_GE arith_relation
+
+State 74:
+logic_relation -> arith_relation PROMELA_EQ . arith_relation [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+-- On PROMELA_STAR shift to state 14
+-- On PROMELA_MINUS shift to state 23
+-- On PROMELA_LPAREN shift to state 25
+-- On PROMELA_LABEL shift to state 16
+-- On PROMELA_INT shift to state 26
+-- On arith_relation_mul shift to state 27
+-- On arith_relation shift to state 75
+-- On access_or_const shift to state 35
+-- On access_leaf shift to state 20
+-- On access_array shift to state 21
+-- On access shift to state 30
+
+State 75:
+logic_relation -> arith_relation PROMELA_EQ arith_relation . [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+-- On PROMELA_RPAREN reduce production logic_relation -> arith_relation PROMELA_EQ arith_relation
+-- On PROMELA_RIGHT_ARROW reduce production logic_relation -> arith_relation PROMELA_EQ arith_relation
+-- On PROMELA_OR reduce production logic_relation -> arith_relation PROMELA_EQ arith_relation
+-- On PROMELA_AND reduce production logic_relation -> arith_relation PROMELA_EQ arith_relation
+
+State 76:
+access_or_const -> PROMELA_LPAREN arith_relation . PROMELA_RPAREN [ PROMELA_STAR PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_PLUS PROMELA_OR PROMELA_NEQ PROMELA_MODULO PROMELA_MINUS PROMELA_LT PROMELA_LE PROMELA_GT PROMELA_GE PROMELA_EQ PROMELA_DIV PROMELA_AND ]
+logic_relation -> arith_relation . PROMELA_EQ arith_relation [ PROMELA_RPAREN PROMELA_OR PROMELA_AND ]
+logic_relation -> arith_relation . PROMELA_LT arith_relation [ PROMELA_RPAREN PROMELA_OR PROMELA_AND ]
+logic_relation -> arith_relation . PROMELA_GT arith_relation [ PROMELA_RPAREN PROMELA_OR PROMELA_AND ]
+logic_relation -> arith_relation . PROMELA_LE arith_relation [ PROMELA_RPAREN PROMELA_OR PROMELA_AND ]
+logic_relation -> arith_relation . PROMELA_GE arith_relation [ PROMELA_RPAREN PROMELA_OR PROMELA_AND ]
+logic_relation -> arith_relation . PROMELA_NEQ arith_relation [ PROMELA_RPAREN PROMELA_OR PROMELA_AND ]
+logic_relation -> arith_relation . [ PROMELA_RPAREN PROMELA_OR PROMELA_AND ]
+-- On PROMELA_RPAREN shift to state 43
+-- On PROMELA_NEQ shift to state 64
+-- On PROMELA_LT shift to state 66
+-- On PROMELA_LE shift to state 68
+-- On PROMELA_GT shift to state 70
+-- On PROMELA_GE shift to state 72
+-- On PROMELA_EQ shift to state 74
+-- On PROMELA_OR reduce production logic_relation -> arith_relation
+-- On PROMELA_AND reduce production logic_relation -> arith_relation
+** Conflict on PROMELA_RPAREN
+
+State 77:
+guard -> PROMELA_NOT guard . [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+guard -> guard . PROMELA_AND guard [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+guard -> guard . PROMELA_OR guard [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+-- On PROMELA_RPAREN reduce production guard -> PROMELA_NOT guard
+-- On PROMELA_RIGHT_ARROW reduce production guard -> PROMELA_NOT guard
+-- On PROMELA_OR reduce production guard -> PROMELA_NOT guard
+-- On PROMELA_AND reduce production guard -> PROMELA_NOT guard
+
+State 78:
+guard -> PROMELA_FALSE . [ PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+state_body -> PROMELA_IF PROMELA_DOUBLE_COLON PROMELA_FALSE . PROMELA_FI [ PROMELA_SEMICOLON PROMELA_RBRACE ]
+-- On PROMELA_FI shift to state 79
+-- On PROMELA_RIGHT_ARROW reduce production guard -> PROMELA_FALSE
+-- On PROMELA_OR reduce production guard -> PROMELA_FALSE
+-- On PROMELA_AND reduce production guard -> PROMELA_FALSE
+
+State 79:
+state_body -> PROMELA_IF PROMELA_DOUBLE_COLON PROMELA_FALSE PROMELA_FI . [ PROMELA_SEMICOLON PROMELA_RBRACE ]
+-- On PROMELA_SEMICOLON reduce production state_body -> PROMELA_IF PROMELA_DOUBLE_COLON PROMELA_FALSE PROMELA_FI
+-- On PROMELA_RBRACE reduce production state_body -> PROMELA_IF PROMELA_DOUBLE_COLON PROMELA_FALSE PROMELA_FI
+
+State 80:
+guard -> guard . PROMELA_AND guard [ PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+guard -> guard . PROMELA_OR guard [ PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+transition -> PROMELA_DOUBLE_COLON guard . PROMELA_RIGHT_ARROW PROMELA_GOTO PROMELA_LABEL [ PROMELA_FI PROMELA_DOUBLE_COLON ]
+-- On PROMELA_RIGHT_ARROW shift to state 81
+-- On PROMELA_OR shift to state 59
+-- On PROMELA_AND shift to state 61
+
+State 81:
+transition -> PROMELA_DOUBLE_COLON guard PROMELA_RIGHT_ARROW . PROMELA_GOTO PROMELA_LABEL [ PROMELA_FI PROMELA_DOUBLE_COLON ]
+-- On PROMELA_GOTO shift to state 82
+
+State 82:
+transition -> PROMELA_DOUBLE_COLON guard PROMELA_RIGHT_ARROW PROMELA_GOTO . PROMELA_LABEL [ PROMELA_FI PROMELA_DOUBLE_COLON ]
+-- On PROMELA_LABEL shift to state 83
+
+State 83:
+transition -> PROMELA_DOUBLE_COLON guard PROMELA_RIGHT_ARROW PROMELA_GOTO PROMELA_LABEL . [ PROMELA_FI PROMELA_DOUBLE_COLON ]
+-- On PROMELA_FI reduce production transition -> PROMELA_DOUBLE_COLON guard PROMELA_RIGHT_ARROW PROMELA_GOTO PROMELA_LABEL
+-- On PROMELA_DOUBLE_COLON reduce production transition -> PROMELA_DOUBLE_COLON guard PROMELA_RIGHT_ARROW PROMELA_GOTO PROMELA_LABEL
+
+State 84:
+state_body -> PROMELA_IF transitions . PROMELA_FI [ PROMELA_SEMICOLON PROMELA_RBRACE ]
+transitions -> transitions . transition [ PROMELA_FI PROMELA_DOUBLE_COLON ]
+-- On PROMELA_FI shift to state 85
+-- On PROMELA_DOUBLE_COLON shift to state 86
+-- On transition shift to state 87
+
+State 85:
+state_body -> PROMELA_IF transitions PROMELA_FI . [ PROMELA_SEMICOLON PROMELA_RBRACE ]
+-- On PROMELA_SEMICOLON reduce production state_body -> PROMELA_IF transitions PROMELA_FI
+-- On PROMELA_RBRACE reduce production state_body -> PROMELA_IF transitions PROMELA_FI
+
+State 86:
+transition -> PROMELA_DOUBLE_COLON . guard PROMELA_RIGHT_ARROW PROMELA_GOTO PROMELA_LABEL [ PROMELA_FI PROMELA_DOUBLE_COLON ]
+-- On PROMELA_TRUE shift to state 13
+-- On PROMELA_STAR shift to state 14
+-- On PROMELA_RETURNOF shift to state 50
+-- On PROMELA_NOT shift to state 51
+-- On PROMELA_MINUS shift to state 23
+-- On PROMELA_LPAREN shift to state 52
+-- On PROMELA_LABEL shift to state 16
+-- On PROMELA_INT shift to state 26
+-- On PROMELA_FALSE shift to state 53
+-- On PROMELA_CALLORRETURNOF shift to state 54
+-- On PROMELA_CALLOF shift to state 55
+-- On logic_relation shift to state 56
+-- On guard shift to state 80
+-- On arith_relation_mul shift to state 27
+-- On arith_relation shift to state 63
+-- On access_or_const shift to state 35
+-- On access_leaf shift to state 20
+-- On access_array shift to state 21
+-- On access shift to state 30
+
+State 87:
+transitions -> transitions transition . [ PROMELA_FI PROMELA_DOUBLE_COLON ]
+-- On PROMELA_FI reduce production transitions -> transitions transition
+-- On PROMELA_DOUBLE_COLON reduce production transitions -> transitions transition
+
+State 88:
+transitions -> transition . [ PROMELA_FI PROMELA_DOUBLE_COLON ]
+-- On PROMELA_FI reduce production transitions -> transition
+-- On PROMELA_DOUBLE_COLON reduce production transitions -> transition
+
+State 89:
+state_body -> PROMELA_FALSE . [ PROMELA_SEMICOLON PROMELA_RBRACE ]
+-- On PROMELA_SEMICOLON reduce production state_body -> PROMELA_FALSE
+-- On PROMELA_RBRACE reduce production state_body -> PROMELA_FALSE
+
+State 90:
+state -> state_labels state_body . [ PROMELA_SEMICOLON PROMELA_RBRACE ]
+-- On PROMELA_SEMICOLON reduce production state -> state_labels state_body
+-- On PROMELA_RBRACE reduce production state -> state_labels state_body
+
+State 91:
+states -> states PROMELA_SEMICOLON state . [ PROMELA_SEMICOLON PROMELA_RBRACE ]
+-- On PROMELA_SEMICOLON reduce production states -> states PROMELA_SEMICOLON state
+-- On PROMELA_RBRACE reduce production states -> states PROMELA_SEMICOLON state
+
+State 92:
+state_labels -> label . state_labels [ PROMELA_SKIP PROMELA_IF PROMELA_FALSE ]
+state_labels -> label . [ PROMELA_SKIP PROMELA_IF PROMELA_FALSE ]
+-- On PROMELA_LABEL shift to state 3
+-- On state_labels shift to state 93
+-- On label shift to state 92
+-- On PROMELA_SKIP reduce production state_labels -> label
+-- On PROMELA_IF reduce production state_labels -> label
+-- On PROMELA_FALSE reduce production state_labels -> label
+
+State 93:
+state_labels -> label state_labels . [ PROMELA_SKIP PROMELA_IF PROMELA_FALSE ]
+-- On PROMELA_SKIP reduce production state_labels -> label state_labels
+-- On PROMELA_IF reduce production state_labels -> label state_labels
+-- On PROMELA_FALSE reduce production state_labels -> label state_labels
+
+State 94:
+promela -> PROMELA_NEVER PROMELA_LBRACE states PROMELA_RBRACE . EOF [ # ]
+-- On EOF shift to state 95
+
+State 95:
+promela -> PROMELA_NEVER PROMELA_LBRACE states PROMELA_RBRACE EOF . [ # ]
+-- On # reduce production promela -> PROMELA_NEVER PROMELA_LBRACE states PROMELA_RBRACE EOF
+
+State 96:
+states -> state . [ PROMELA_SEMICOLON PROMELA_RBRACE ]
+-- On PROMELA_SEMICOLON reduce production states -> state
+-- On PROMELA_RBRACE reduce production states -> state
+
+State 97:
+promela' -> promela . [ # ]
+-- On # accept promela
+

@@ -1,0 +1,41 @@
+State 0:
+expr' -> . expr [ # ]
+-- On INT shift to state 1
+-- On expr shift to state 2
+
+State 1:
+expr -> INT . [ TIMES PLUS # ]
+-- On TIMES reduce production expr -> INT
+-- On PLUS reduce production expr -> INT
+
+State 2:
+expr' -> expr . [ # ]
+expr -> expr . PLUS expr [ TIMES PLUS # ]
+expr -> expr . TIMES expr [ TIMES PLUS # ]
+-- On TIMES shift to state 3
+-- On PLUS shift to state 5
+
+State 3:
+expr -> expr TIMES . expr [ TIMES PLUS # ]
+-- On INT shift to state 1
+-- On expr shift to state 4
+
+State 4:
+expr -> expr . PLUS expr [ TIMES PLUS # ]
+expr -> expr . TIMES expr [ TIMES PLUS # ]
+expr -> expr TIMES expr . [ TIMES PLUS # ]
+-- On TIMES reduce production expr -> expr TIMES expr
+-- On PLUS reduce production expr -> expr TIMES expr
+
+State 5:
+expr -> expr PLUS . expr [ TIMES PLUS # ]
+-- On INT shift to state 1
+-- On expr shift to state 6
+
+State 6:
+expr -> expr . PLUS expr [ TIMES PLUS # ]
+expr -> expr PLUS expr . [ TIMES PLUS # ]
+expr -> expr . TIMES expr [ TIMES PLUS # ]
+-- On TIMES shift to state 3
+-- On PLUS reduce production expr -> expr PLUS expr
+

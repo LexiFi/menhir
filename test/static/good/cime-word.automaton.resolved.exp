@@ -1,0 +1,250 @@
+State 0:
+precedence_eof' -> . precedence_eof [ # ]
+-- On IDENT shift to state 1
+-- On precedence_eof shift to state 8
+-- On precedence shift to state 9
+-- On ordered_list shift to state 11
+-- On EOF reduce production precedence -> 
+
+State 1:
+ordered_list -> IDENT . [ EOF COMMA ]
+ordered_list -> IDENT . EQ ordered_list [ EOF COMMA ]
+ordered_list -> IDENT . GT ordered_list [ EOF COMMA ]
+ordered_list -> IDENT . LT ordered_list [ EOF COMMA ]
+-- On LT shift to state 2
+-- On GT shift to state 4
+-- On EQ shift to state 6
+-- On EOF reduce production ordered_list -> IDENT
+-- On COMMA reduce production ordered_list -> IDENT
+
+State 2:
+ordered_list -> IDENT LT . ordered_list [ EOF COMMA ]
+-- On IDENT shift to state 1
+-- On ordered_list shift to state 3
+
+State 3:
+ordered_list -> IDENT LT ordered_list . [ EOF COMMA ]
+-- On EOF reduce production ordered_list -> IDENT LT ordered_list
+-- On COMMA reduce production ordered_list -> IDENT LT ordered_list
+
+State 4:
+ordered_list -> IDENT GT . ordered_list [ EOF COMMA ]
+-- On IDENT shift to state 1
+-- On ordered_list shift to state 5
+
+State 5:
+ordered_list -> IDENT GT ordered_list . [ EOF COMMA ]
+-- On EOF reduce production ordered_list -> IDENT GT ordered_list
+-- On COMMA reduce production ordered_list -> IDENT GT ordered_list
+
+State 6:
+ordered_list -> IDENT EQ . ordered_list [ EOF COMMA ]
+-- On IDENT shift to state 1
+-- On ordered_list shift to state 7
+
+State 7:
+ordered_list -> IDENT EQ ordered_list . [ EOF COMMA ]
+-- On EOF reduce production ordered_list -> IDENT EQ ordered_list
+-- On COMMA reduce production ordered_list -> IDENT EQ ordered_list
+
+State 8:
+precedence_eof' -> precedence_eof . [ # ]
+-- On # accept precedence_eof
+
+State 9:
+precedence_eof -> precedence . EOF [ # ]
+-- On EOF shift to state 10
+
+State 10:
+precedence_eof -> precedence EOF . [ # ]
+-- On # reduce production precedence_eof -> precedence EOF
+
+State 11:
+precedence -> ordered_list . [ EOF ]
+precedence -> ordered_list . COMMA precedence [ EOF ]
+-- On COMMA shift to state 12
+-- On EOF reduce production precedence -> ordered_list
+
+State 12:
+precedence -> ordered_list COMMA . precedence [ EOF ]
+-- On IDENT shift to state 1
+-- On precedence shift to state 13
+-- On ordered_list shift to state 11
+-- On EOF reduce production precedence -> 
+
+State 13:
+precedence -> ordered_list COMMA precedence . [ EOF ]
+-- On EOF reduce production precedence -> ordered_list COMMA precedence
+
+State 14:
+rule_set_eof' -> . rule_set_eof [ # ]
+-- On LPAR shift to state 15
+-- On IDENT shift to state 16
+-- On word shift to state 25
+-- On rule_set_eof shift to state 28
+-- On rule_set shift to state 29
+-- On rule shift to state 31
+-- On factor shift to state 19
+-- On EOF reduce production rule_set -> 
+-- On ARROW reduce production word -> 
+
+State 15:
+factor -> LPAR . word RPAR [ SEMICOLON RPAR POWER LPAR IDENT EOF ARROW ]
+-- On LPAR shift to state 15
+-- On IDENT shift to state 16
+-- On word shift to state 17
+-- On factor shift to state 19
+-- On RPAR reduce production word -> 
+
+State 16:
+factor -> IDENT . [ SEMICOLON RPAR POWER LPAR IDENT EOF ARROW ]
+-- On SEMICOLON reduce production factor -> IDENT
+-- On RPAR reduce production factor -> IDENT
+-- On POWER reduce production factor -> IDENT
+-- On LPAR reduce production factor -> IDENT
+-- On IDENT reduce production factor -> IDENT
+-- On EOF reduce production factor -> IDENT
+-- On ARROW reduce production factor -> IDENT
+
+State 17:
+factor -> LPAR word . RPAR [ SEMICOLON RPAR POWER LPAR IDENT EOF ARROW ]
+-- On RPAR shift to state 18
+
+State 18:
+factor -> LPAR word RPAR . [ SEMICOLON RPAR POWER LPAR IDENT EOF ARROW ]
+-- On SEMICOLON reduce production factor -> LPAR word RPAR
+-- On RPAR reduce production factor -> LPAR word RPAR
+-- On POWER reduce production factor -> LPAR word RPAR
+-- On LPAR reduce production factor -> LPAR word RPAR
+-- On IDENT reduce production factor -> LPAR word RPAR
+-- On EOF reduce production factor -> LPAR word RPAR
+-- On ARROW reduce production factor -> LPAR word RPAR
+
+State 19:
+factor -> factor . POWER expo [ SEMICOLON RPAR POWER LPAR IDENT EOF ARROW ]
+word -> factor . word [ SEMICOLON RPAR EOF ARROW ]
+-- On POWER shift to state 20
+-- On LPAR shift to state 15
+-- On IDENT shift to state 16
+-- On word shift to state 24
+-- On factor shift to state 19
+-- On SEMICOLON reduce production word -> 
+-- On RPAR reduce production word -> 
+-- On EOF reduce production word -> 
+-- On ARROW reduce production word -> 
+
+State 20:
+factor -> factor POWER . expo [ SEMICOLON RPAR POWER LPAR IDENT EOF ARROW ]
+-- On INT shift to state 21
+-- On IDENT shift to state 22
+-- On expo shift to state 23
+
+State 21:
+expo -> INT . [ SEMICOLON RPAR POWER LPAR IDENT EOF ARROW ]
+-- On SEMICOLON reduce production expo -> INT
+-- On RPAR reduce production expo -> INT
+-- On POWER reduce production expo -> INT
+-- On LPAR reduce production expo -> INT
+-- On IDENT reduce production expo -> INT
+-- On EOF reduce production expo -> INT
+-- On ARROW reduce production expo -> INT
+
+State 22:
+expo -> IDENT . [ SEMICOLON RPAR POWER LPAR IDENT EOF ARROW ]
+-- On SEMICOLON reduce production expo -> IDENT
+-- On RPAR reduce production expo -> IDENT
+-- On POWER reduce production expo -> IDENT
+-- On LPAR reduce production expo -> IDENT
+-- On IDENT reduce production expo -> IDENT
+-- On EOF reduce production expo -> IDENT
+-- On ARROW reduce production expo -> IDENT
+
+State 23:
+factor -> factor POWER expo . [ SEMICOLON RPAR POWER LPAR IDENT EOF ARROW ]
+-- On SEMICOLON reduce production factor -> factor POWER expo
+-- On RPAR reduce production factor -> factor POWER expo
+-- On POWER reduce production factor -> factor POWER expo
+-- On LPAR reduce production factor -> factor POWER expo
+-- On IDENT reduce production factor -> factor POWER expo
+-- On EOF reduce production factor -> factor POWER expo
+-- On ARROW reduce production factor -> factor POWER expo
+
+State 24:
+word -> factor word . [ SEMICOLON RPAR EOF ARROW ]
+-- On SEMICOLON reduce production word -> factor word
+-- On RPAR reduce production word -> factor word
+-- On EOF reduce production word -> factor word
+-- On ARROW reduce production word -> factor word
+
+State 25:
+rule -> word . ARROW word [ SEMICOLON EOF ]
+-- On ARROW shift to state 26
+
+State 26:
+rule -> word ARROW . word [ SEMICOLON EOF ]
+-- On LPAR shift to state 15
+-- On IDENT shift to state 16
+-- On word shift to state 27
+-- On factor shift to state 19
+-- On SEMICOLON reduce production word -> 
+-- On EOF reduce production word -> 
+
+State 27:
+rule -> word ARROW word . [ SEMICOLON EOF ]
+-- On SEMICOLON reduce production rule -> word ARROW word
+-- On EOF reduce production rule -> word ARROW word
+
+State 28:
+rule_set_eof' -> rule_set_eof . [ # ]
+-- On # accept rule_set_eof
+
+State 29:
+rule_set_eof -> rule_set . EOF [ # ]
+-- On EOF shift to state 30
+
+State 30:
+rule_set_eof -> rule_set EOF . [ # ]
+-- On # reduce production rule_set_eof -> rule_set EOF
+
+State 31:
+rule_set -> rule . [ EOF ]
+rule_set -> rule . SEMICOLON rule_set [ EOF ]
+-- On SEMICOLON shift to state 32
+-- On EOF reduce production rule_set -> rule
+
+State 32:
+rule_set -> rule SEMICOLON . rule_set [ EOF ]
+-- On LPAR shift to state 15
+-- On IDENT shift to state 16
+-- On word shift to state 25
+-- On rule_set shift to state 33
+-- On rule shift to state 31
+-- On factor shift to state 19
+-- On EOF reduce production rule_set -> 
+-- On ARROW reduce production word -> 
+
+State 33:
+rule_set -> rule SEMICOLON rule_set . [ EOF ]
+-- On EOF reduce production rule_set -> rule SEMICOLON rule_set
+
+State 34:
+word_eof' -> . word_eof [ # ]
+-- On LPAR shift to state 15
+-- On IDENT shift to state 16
+-- On word_eof shift to state 35
+-- On word shift to state 36
+-- On factor shift to state 19
+-- On EOF reduce production word -> 
+
+State 35:
+word_eof' -> word_eof . [ # ]
+-- On # accept word_eof
+
+State 36:
+word_eof -> word . EOF [ # ]
+-- On EOF shift to state 37
+
+State 37:
+word_eof -> word EOF . [ # ]
+-- On # reduce production word_eof -> word EOF
+

@@ -1,0 +1,543 @@
+State 0:
+main' -> . main [ # ]
+-- On IDENT shift to state 1
+-- On main shift to state 41
+-- On items shift to state 42
+-- On item shift to state 6
+-- On EOF reduce production items -> 
+
+State 1:
+item -> IDENT . COLON value [ RBRACE IDENT EOF ]
+item -> IDENT . LBRACE items RBRACE [ RBRACE IDENT EOF ]
+item -> IDENT . STRING LBRACE items RBRACE [ RBRACE IDENT EOF ]
+-- On STRING shift to state 2
+-- On LBRACE shift to state 8
+-- On COLON shift to state 11
+
+State 2:
+item -> IDENT STRING . LBRACE items RBRACE [ RBRACE IDENT EOF ]
+-- On LBRACE shift to state 3
+
+State 3:
+item -> IDENT STRING LBRACE . items RBRACE [ RBRACE IDENT EOF ]
+-- On IDENT shift to state 1
+-- On items shift to state 4
+-- On item shift to state 6
+-- On RBRACE reduce production items -> 
+
+State 4:
+item -> IDENT STRING LBRACE items . RBRACE [ RBRACE IDENT EOF ]
+-- On RBRACE shift to state 5
+
+State 5:
+item -> IDENT STRING LBRACE items RBRACE . [ RBRACE IDENT EOF ]
+-- On RBRACE reduce production item -> IDENT STRING LBRACE items RBRACE
+-- On IDENT reduce production item -> IDENT STRING LBRACE items RBRACE
+-- On EOF reduce production item -> IDENT STRING LBRACE items RBRACE
+
+State 6:
+items -> item . items [ RBRACE EOF ]
+-- On IDENT shift to state 1
+-- On items shift to state 7
+-- On item shift to state 6
+-- On RBRACE reduce production items -> 
+-- On EOF reduce production items -> 
+
+State 7:
+items -> item items . [ RBRACE EOF ]
+-- On RBRACE reduce production items -> item items
+-- On EOF reduce production items -> item items
+
+State 8:
+item -> IDENT LBRACE . items RBRACE [ RBRACE IDENT EOF ]
+-- On IDENT shift to state 1
+-- On items shift to state 9
+-- On item shift to state 6
+-- On RBRACE reduce production items -> 
+
+State 9:
+item -> IDENT LBRACE items . RBRACE [ RBRACE IDENT EOF ]
+-- On RBRACE shift to state 10
+
+State 10:
+item -> IDENT LBRACE items RBRACE . [ RBRACE IDENT EOF ]
+-- On RBRACE reduce production item -> IDENT LBRACE items RBRACE
+-- On IDENT reduce production item -> IDENT LBRACE items RBRACE
+-- On EOF reduce production item -> IDENT LBRACE items RBRACE
+
+State 11:
+item -> IDENT COLON . value [ RBRACE IDENT EOF ]
+-- On STRING shift to state 12
+-- On RELOP shift to state 13
+-- On PFXOP shift to state 18
+-- On LPAR shift to state 19
+-- On LBRACKET shift to state 20
+-- On INT shift to state 14
+-- On IDENT shift to state 15
+-- On BOOL shift to state 16
+-- On value shift to state 40
+-- On atom shift to state 29
+
+State 12:
+atom -> STRING . [ STRING RPAR RELOP RBRACKET RBRACE PFXOP OR LPAR LBRACKET LBRACE INT IDENT EOF ENVOP BOOL AND # ]
+-- On STRING reduce production atom -> STRING
+-- On RPAR reduce production atom -> STRING
+-- On RELOP reduce production atom -> STRING
+-- On RBRACKET reduce production atom -> STRING
+-- On RBRACE reduce production atom -> STRING
+-- On PFXOP reduce production atom -> STRING
+-- On OR reduce production atom -> STRING
+-- On LPAR reduce production atom -> STRING
+-- On LBRACKET reduce production atom -> STRING
+-- On LBRACE reduce production atom -> STRING
+-- On INT reduce production atom -> STRING
+-- On IDENT reduce production atom -> STRING
+-- On EOF reduce production atom -> STRING
+-- On ENVOP reduce production atom -> STRING
+-- On BOOL reduce production atom -> STRING
+-- On AND reduce production atom -> STRING
+
+State 13:
+value -> RELOP . atom [ STRING RPAR RELOP RBRACKET RBRACE PFXOP OR LPAR LBRACKET LBRACE INT IDENT EOF BOOL AND # ]
+-- On STRING shift to state 12
+-- On INT shift to state 14
+-- On IDENT shift to state 15
+-- On BOOL shift to state 16
+-- On atom shift to state 17
+
+State 14:
+atom -> INT . [ STRING RPAR RELOP RBRACKET RBRACE PFXOP OR LPAR LBRACKET LBRACE INT IDENT EOF ENVOP BOOL AND # ]
+-- On STRING reduce production atom -> INT
+-- On RPAR reduce production atom -> INT
+-- On RELOP reduce production atom -> INT
+-- On RBRACKET reduce production atom -> INT
+-- On RBRACE reduce production atom -> INT
+-- On PFXOP reduce production atom -> INT
+-- On OR reduce production atom -> INT
+-- On LPAR reduce production atom -> INT
+-- On LBRACKET reduce production atom -> INT
+-- On LBRACE reduce production atom -> INT
+-- On INT reduce production atom -> INT
+-- On IDENT reduce production atom -> INT
+-- On EOF reduce production atom -> INT
+-- On ENVOP reduce production atom -> INT
+-- On BOOL reduce production atom -> INT
+-- On AND reduce production atom -> INT
+
+State 15:
+atom -> IDENT . [ STRING RPAR RELOP RBRACKET RBRACE PFXOP OR LPAR LBRACKET LBRACE INT IDENT EOF ENVOP BOOL AND # ]
+-- On STRING reduce production atom -> IDENT
+-- On RPAR reduce production atom -> IDENT
+-- On RELOP reduce production atom -> IDENT
+-- On RBRACKET reduce production atom -> IDENT
+-- On RBRACE reduce production atom -> IDENT
+-- On PFXOP reduce production atom -> IDENT
+-- On OR reduce production atom -> IDENT
+-- On LPAR reduce production atom -> IDENT
+-- On LBRACKET reduce production atom -> IDENT
+-- On LBRACE reduce production atom -> IDENT
+-- On INT reduce production atom -> IDENT
+-- On IDENT reduce production atom -> IDENT
+-- On EOF reduce production atom -> IDENT
+-- On ENVOP reduce production atom -> IDENT
+-- On BOOL reduce production atom -> IDENT
+-- On AND reduce production atom -> IDENT
+
+State 16:
+atom -> BOOL . [ STRING RPAR RELOP RBRACKET RBRACE PFXOP OR LPAR LBRACKET LBRACE INT IDENT EOF ENVOP BOOL AND # ]
+-- On STRING reduce production atom -> BOOL
+-- On RPAR reduce production atom -> BOOL
+-- On RELOP reduce production atom -> BOOL
+-- On RBRACKET reduce production atom -> BOOL
+-- On RBRACE reduce production atom -> BOOL
+-- On PFXOP reduce production atom -> BOOL
+-- On OR reduce production atom -> BOOL
+-- On LPAR reduce production atom -> BOOL
+-- On LBRACKET reduce production atom -> BOOL
+-- On LBRACE reduce production atom -> BOOL
+-- On INT reduce production atom -> BOOL
+-- On IDENT reduce production atom -> BOOL
+-- On EOF reduce production atom -> BOOL
+-- On ENVOP reduce production atom -> BOOL
+-- On BOOL reduce production atom -> BOOL
+-- On AND reduce production atom -> BOOL
+
+State 17:
+value -> RELOP atom . [ STRING RPAR RELOP RBRACKET RBRACE PFXOP OR LPAR LBRACKET LBRACE INT IDENT EOF BOOL AND # ]
+-- On STRING reduce production value -> RELOP atom
+-- On RPAR reduce production value -> RELOP atom
+-- On RELOP reduce production value -> RELOP atom
+-- On RBRACKET reduce production value -> RELOP atom
+-- On RBRACE reduce production value -> RELOP atom
+-- On PFXOP reduce production value -> RELOP atom
+-- On OR reduce production value -> RELOP atom
+-- On LPAR reduce production value -> RELOP atom
+-- On LBRACKET reduce production value -> RELOP atom
+-- On LBRACE reduce production value -> RELOP atom
+-- On INT reduce production value -> RELOP atom
+-- On IDENT reduce production value -> RELOP atom
+-- On EOF reduce production value -> RELOP atom
+-- On BOOL reduce production value -> RELOP atom
+-- On AND reduce production value -> RELOP atom
+
+State 18:
+value -> PFXOP . value [ STRING RPAR RELOP RBRACKET RBRACE PFXOP OR LPAR LBRACKET LBRACE INT IDENT EOF BOOL AND # ]
+-- On STRING shift to state 12
+-- On RELOP shift to state 13
+-- On PFXOP shift to state 18
+-- On LPAR shift to state 19
+-- On LBRACKET shift to state 20
+-- On INT shift to state 14
+-- On IDENT shift to state 15
+-- On BOOL shift to state 16
+-- On value shift to state 39
+-- On atom shift to state 29
+
+State 19:
+value -> LPAR . values RPAR [ STRING RPAR RELOP RBRACKET RBRACE PFXOP OR LPAR LBRACKET LBRACE INT IDENT EOF BOOL AND # ]
+-- On STRING shift to state 12
+-- On RELOP shift to state 13
+-- On PFXOP shift to state 18
+-- On LPAR shift to state 19
+-- On LBRACKET shift to state 20
+-- On INT shift to state 14
+-- On IDENT shift to state 15
+-- On BOOL shift to state 16
+-- On values shift to state 37
+-- On value shift to state 23
+-- On atom shift to state 29
+-- On RPAR reduce production values -> 
+
+State 20:
+value -> LBRACKET . values RBRACKET [ STRING RPAR RELOP RBRACKET RBRACE PFXOP OR LPAR LBRACKET LBRACE INT IDENT EOF BOOL AND # ]
+-- On STRING shift to state 12
+-- On RELOP shift to state 13
+-- On PFXOP shift to state 18
+-- On LPAR shift to state 19
+-- On LBRACKET shift to state 20
+-- On INT shift to state 14
+-- On IDENT shift to state 15
+-- On BOOL shift to state 16
+-- On values shift to state 21
+-- On value shift to state 23
+-- On atom shift to state 29
+-- On RBRACKET reduce production values -> 
+
+State 21:
+value -> LBRACKET values . RBRACKET [ STRING RPAR RELOP RBRACKET RBRACE PFXOP OR LPAR LBRACKET LBRACE INT IDENT EOF BOOL AND # ]
+-- On RBRACKET shift to state 22
+
+State 22:
+value -> LBRACKET values RBRACKET . [ STRING RPAR RELOP RBRACKET RBRACE PFXOP OR LPAR LBRACKET LBRACE INT IDENT EOF BOOL AND # ]
+-- On STRING reduce production value -> LBRACKET values RBRACKET
+-- On RPAR reduce production value -> LBRACKET values RBRACKET
+-- On RELOP reduce production value -> LBRACKET values RBRACKET
+-- On RBRACKET reduce production value -> LBRACKET values RBRACKET
+-- On RBRACE reduce production value -> LBRACKET values RBRACKET
+-- On PFXOP reduce production value -> LBRACKET values RBRACKET
+-- On OR reduce production value -> LBRACKET values RBRACKET
+-- On LPAR reduce production value -> LBRACKET values RBRACKET
+-- On LBRACKET reduce production value -> LBRACKET values RBRACKET
+-- On LBRACE reduce production value -> LBRACKET values RBRACKET
+-- On INT reduce production value -> LBRACKET values RBRACKET
+-- On IDENT reduce production value -> LBRACKET values RBRACKET
+-- On EOF reduce production value -> LBRACKET values RBRACKET
+-- On BOOL reduce production value -> LBRACKET values RBRACKET
+-- On AND reduce production value -> LBRACKET values RBRACKET
+
+State 23:
+value -> value . LBRACE values RBRACE [ STRING RPAR RELOP RBRACKET RBRACE PFXOP OR LPAR LBRACKET LBRACE INT IDENT BOOL AND ]
+value -> value . AND value [ STRING RPAR RELOP RBRACKET RBRACE PFXOP OR LPAR LBRACKET LBRACE INT IDENT BOOL AND ]
+value -> value . OR value [ STRING RPAR RELOP RBRACKET RBRACE PFXOP OR LPAR LBRACKET LBRACE INT IDENT BOOL AND ]
+values -> value . values [ RPAR RBRACKET RBRACE ]
+-- On STRING shift to state 12
+-- On RELOP shift to state 13
+-- On PFXOP shift to state 18
+-- On OR shift to state 24
+-- On LPAR shift to state 19
+-- On LBRACKET shift to state 20
+-- On LBRACE shift to state 26
+-- On INT shift to state 14
+-- On IDENT shift to state 15
+-- On BOOL shift to state 16
+-- On AND shift to state 34
+-- On values shift to state 36
+-- On value shift to state 23
+-- On atom shift to state 29
+-- On RPAR reduce production values -> 
+-- On RBRACKET reduce production values -> 
+-- On RBRACE reduce production values -> 
+
+State 24:
+value -> value OR . value [ STRING RPAR RELOP RBRACKET RBRACE PFXOP OR LPAR LBRACKET LBRACE INT IDENT EOF BOOL AND # ]
+-- On STRING shift to state 12
+-- On RELOP shift to state 13
+-- On PFXOP shift to state 18
+-- On LPAR shift to state 19
+-- On LBRACKET shift to state 20
+-- On INT shift to state 14
+-- On IDENT shift to state 15
+-- On BOOL shift to state 16
+-- On value shift to state 25
+-- On atom shift to state 29
+
+State 25:
+value -> value . LBRACE values RBRACE [ STRING RPAR RELOP RBRACKET RBRACE PFXOP OR LPAR LBRACKET LBRACE INT IDENT EOF BOOL AND # ]
+value -> value . AND value [ STRING RPAR RELOP RBRACKET RBRACE PFXOP OR LPAR LBRACKET LBRACE INT IDENT EOF BOOL AND # ]
+value -> value . OR value [ STRING RPAR RELOP RBRACKET RBRACE PFXOP OR LPAR LBRACKET LBRACE INT IDENT EOF BOOL AND # ]
+value -> value OR value . [ STRING RPAR RELOP RBRACKET RBRACE PFXOP OR LPAR LBRACKET LBRACE INT IDENT EOF BOOL AND # ]
+-- On LBRACE shift to state 26
+-- On STRING reduce production value -> value OR value
+-- On RPAR reduce production value -> value OR value
+-- On RELOP reduce production value -> value OR value
+-- On RBRACKET reduce production value -> value OR value
+-- On RBRACE reduce production value -> value OR value
+-- On PFXOP reduce production value -> value OR value
+-- On OR reduce production value -> value OR value
+-- On LPAR reduce production value -> value OR value
+-- On LBRACKET reduce production value -> value OR value
+-- On INT reduce production value -> value OR value
+-- On IDENT reduce production value -> value OR value
+-- On EOF reduce production value -> value OR value
+-- On BOOL reduce production value -> value OR value
+-- On AND reduce production value -> value OR value
+
+State 26:
+value -> value LBRACE . values RBRACE [ STRING RPAR RELOP RBRACKET RBRACE PFXOP OR LPAR LBRACKET LBRACE INT IDENT EOF BOOL AND # ]
+-- On STRING shift to state 12
+-- On RELOP shift to state 13
+-- On PFXOP shift to state 18
+-- On LPAR shift to state 19
+-- On LBRACKET shift to state 20
+-- On INT shift to state 14
+-- On IDENT shift to state 15
+-- On BOOL shift to state 16
+-- On values shift to state 27
+-- On value shift to state 23
+-- On atom shift to state 29
+-- On RBRACE reduce production values -> 
+
+State 27:
+value -> value LBRACE values . RBRACE [ STRING RPAR RELOP RBRACKET RBRACE PFXOP OR LPAR LBRACKET LBRACE INT IDENT EOF BOOL AND # ]
+-- On RBRACE shift to state 28
+
+State 28:
+value -> value LBRACE values RBRACE . [ STRING RPAR RELOP RBRACKET RBRACE PFXOP OR LPAR LBRACKET LBRACE INT IDENT EOF BOOL AND # ]
+-- On STRING reduce production value -> value LBRACE values RBRACE
+-- On RPAR reduce production value -> value LBRACE values RBRACE
+-- On RELOP reduce production value -> value LBRACE values RBRACE
+-- On RBRACKET reduce production value -> value LBRACE values RBRACE
+-- On RBRACE reduce production value -> value LBRACE values RBRACE
+-- On PFXOP reduce production value -> value LBRACE values RBRACE
+-- On OR reduce production value -> value LBRACE values RBRACE
+-- On LPAR reduce production value -> value LBRACE values RBRACE
+-- On LBRACKET reduce production value -> value LBRACE values RBRACE
+-- On LBRACE reduce production value -> value LBRACE values RBRACE
+-- On INT reduce production value -> value LBRACE values RBRACE
+-- On IDENT reduce production value -> value LBRACE values RBRACE
+-- On EOF reduce production value -> value LBRACE values RBRACE
+-- On BOOL reduce production value -> value LBRACE values RBRACE
+-- On AND reduce production value -> value LBRACE values RBRACE
+
+State 29:
+value -> atom . [ STRING RPAR RELOP RBRACKET RBRACE PFXOP OR LPAR LBRACKET LBRACE INT IDENT EOF BOOL AND # ]
+value -> atom . RELOP atom [ STRING RPAR RELOP RBRACKET RBRACE PFXOP OR LPAR LBRACKET LBRACE INT IDENT EOF BOOL AND # ]
+value -> atom . ENVOP atom [ STRING RPAR RELOP RBRACKET RBRACE PFXOP OR LPAR LBRACKET LBRACE INT IDENT EOF BOOL AND # ]
+-- On RELOP shift to state 30
+-- On ENVOP shift to state 32
+-- On STRING reduce production value -> atom
+-- On RPAR reduce production value -> atom
+-- On RBRACKET reduce production value -> atom
+-- On RBRACE reduce production value -> atom
+-- On PFXOP reduce production value -> atom
+-- On OR reduce production value -> atom
+-- On LPAR reduce production value -> atom
+-- On LBRACKET reduce production value -> atom
+-- On LBRACE reduce production value -> atom
+-- On INT reduce production value -> atom
+-- On IDENT reduce production value -> atom
+-- On EOF reduce production value -> atom
+-- On BOOL reduce production value -> atom
+-- On AND reduce production value -> atom
+
+State 30:
+value -> atom RELOP . atom [ STRING RPAR RELOP RBRACKET RBRACE PFXOP OR LPAR LBRACKET LBRACE INT IDENT EOF BOOL AND # ]
+-- On STRING shift to state 12
+-- On INT shift to state 14
+-- On IDENT shift to state 15
+-- On BOOL shift to state 16
+-- On atom shift to state 31
+
+State 31:
+value -> atom RELOP atom . [ STRING RPAR RELOP RBRACKET RBRACE PFXOP OR LPAR LBRACKET LBRACE INT IDENT EOF BOOL AND # ]
+-- On STRING reduce production value -> atom RELOP atom
+-- On RPAR reduce production value -> atom RELOP atom
+-- On RELOP reduce production value -> atom RELOP atom
+-- On RBRACKET reduce production value -> atom RELOP atom
+-- On RBRACE reduce production value -> atom RELOP atom
+-- On PFXOP reduce production value -> atom RELOP atom
+-- On OR reduce production value -> atom RELOP atom
+-- On LPAR reduce production value -> atom RELOP atom
+-- On LBRACKET reduce production value -> atom RELOP atom
+-- On LBRACE reduce production value -> atom RELOP atom
+-- On INT reduce production value -> atom RELOP atom
+-- On IDENT reduce production value -> atom RELOP atom
+-- On EOF reduce production value -> atom RELOP atom
+-- On BOOL reduce production value -> atom RELOP atom
+-- On AND reduce production value -> atom RELOP atom
+
+State 32:
+value -> atom ENVOP . atom [ STRING RPAR RELOP RBRACKET RBRACE PFXOP OR LPAR LBRACKET LBRACE INT IDENT EOF BOOL AND # ]
+-- On STRING shift to state 12
+-- On INT shift to state 14
+-- On IDENT shift to state 15
+-- On BOOL shift to state 16
+-- On atom shift to state 33
+
+State 33:
+value -> atom ENVOP atom . [ STRING RPAR RELOP RBRACKET RBRACE PFXOP OR LPAR LBRACKET LBRACE INT IDENT EOF BOOL AND # ]
+-- On STRING reduce production value -> atom ENVOP atom
+-- On RPAR reduce production value -> atom ENVOP atom
+-- On RELOP reduce production value -> atom ENVOP atom
+-- On RBRACKET reduce production value -> atom ENVOP atom
+-- On RBRACE reduce production value -> atom ENVOP atom
+-- On PFXOP reduce production value -> atom ENVOP atom
+-- On OR reduce production value -> atom ENVOP atom
+-- On LPAR reduce production value -> atom ENVOP atom
+-- On LBRACKET reduce production value -> atom ENVOP atom
+-- On LBRACE reduce production value -> atom ENVOP atom
+-- On INT reduce production value -> atom ENVOP atom
+-- On IDENT reduce production value -> atom ENVOP atom
+-- On EOF reduce production value -> atom ENVOP atom
+-- On BOOL reduce production value -> atom ENVOP atom
+-- On AND reduce production value -> atom ENVOP atom
+
+State 34:
+value -> value AND . value [ STRING RPAR RELOP RBRACKET RBRACE PFXOP OR LPAR LBRACKET LBRACE INT IDENT EOF BOOL AND # ]
+-- On STRING shift to state 12
+-- On RELOP shift to state 13
+-- On PFXOP shift to state 18
+-- On LPAR shift to state 19
+-- On LBRACKET shift to state 20
+-- On INT shift to state 14
+-- On IDENT shift to state 15
+-- On BOOL shift to state 16
+-- On value shift to state 35
+-- On atom shift to state 29
+
+State 35:
+value -> value . LBRACE values RBRACE [ STRING RPAR RELOP RBRACKET RBRACE PFXOP OR LPAR LBRACKET LBRACE INT IDENT EOF BOOL AND # ]
+value -> value . AND value [ STRING RPAR RELOP RBRACKET RBRACE PFXOP OR LPAR LBRACKET LBRACE INT IDENT EOF BOOL AND # ]
+value -> value AND value . [ STRING RPAR RELOP RBRACKET RBRACE PFXOP OR LPAR LBRACKET LBRACE INT IDENT EOF BOOL AND # ]
+value -> value . OR value [ STRING RPAR RELOP RBRACKET RBRACE PFXOP OR LPAR LBRACKET LBRACE INT IDENT EOF BOOL AND # ]
+-- On OR shift to state 24
+-- On LBRACE shift to state 26
+-- On STRING reduce production value -> value AND value
+-- On RPAR reduce production value -> value AND value
+-- On RELOP reduce production value -> value AND value
+-- On RBRACKET reduce production value -> value AND value
+-- On RBRACE reduce production value -> value AND value
+-- On PFXOP reduce production value -> value AND value
+-- On LPAR reduce production value -> value AND value
+-- On LBRACKET reduce production value -> value AND value
+-- On INT reduce production value -> value AND value
+-- On IDENT reduce production value -> value AND value
+-- On EOF reduce production value -> value AND value
+-- On BOOL reduce production value -> value AND value
+-- On AND reduce production value -> value AND value
+
+State 36:
+values -> value values . [ RPAR RBRACKET RBRACE ]
+-- On RPAR reduce production values -> value values
+-- On RBRACKET reduce production values -> value values
+-- On RBRACE reduce production values -> value values
+
+State 37:
+value -> LPAR values . RPAR [ STRING RPAR RELOP RBRACKET RBRACE PFXOP OR LPAR LBRACKET LBRACE INT IDENT EOF BOOL AND # ]
+-- On RPAR shift to state 38
+
+State 38:
+value -> LPAR values RPAR . [ STRING RPAR RELOP RBRACKET RBRACE PFXOP OR LPAR LBRACKET LBRACE INT IDENT EOF BOOL AND # ]
+-- On STRING reduce production value -> LPAR values RPAR
+-- On RPAR reduce production value -> LPAR values RPAR
+-- On RELOP reduce production value -> LPAR values RPAR
+-- On RBRACKET reduce production value -> LPAR values RPAR
+-- On RBRACE reduce production value -> LPAR values RPAR
+-- On PFXOP reduce production value -> LPAR values RPAR
+-- On OR reduce production value -> LPAR values RPAR
+-- On LPAR reduce production value -> LPAR values RPAR
+-- On LBRACKET reduce production value -> LPAR values RPAR
+-- On LBRACE reduce production value -> LPAR values RPAR
+-- On INT reduce production value -> LPAR values RPAR
+-- On IDENT reduce production value -> LPAR values RPAR
+-- On EOF reduce production value -> LPAR values RPAR
+-- On BOOL reduce production value -> LPAR values RPAR
+-- On AND reduce production value -> LPAR values RPAR
+
+State 39:
+value -> value . LBRACE values RBRACE [ STRING RPAR RELOP RBRACKET RBRACE PFXOP OR LPAR LBRACKET LBRACE INT IDENT EOF BOOL AND # ]
+value -> value . AND value [ STRING RPAR RELOP RBRACKET RBRACE PFXOP OR LPAR LBRACKET LBRACE INT IDENT EOF BOOL AND # ]
+value -> value . OR value [ STRING RPAR RELOP RBRACKET RBRACE PFXOP OR LPAR LBRACKET LBRACE INT IDENT EOF BOOL AND # ]
+value -> PFXOP value . [ STRING RPAR RELOP RBRACKET RBRACE PFXOP OR LPAR LBRACKET LBRACE INT IDENT EOF BOOL AND # ]
+-- On LBRACE shift to state 26
+-- On STRING reduce production value -> PFXOP value
+-- On RPAR reduce production value -> PFXOP value
+-- On RELOP reduce production value -> PFXOP value
+-- On RBRACKET reduce production value -> PFXOP value
+-- On RBRACE reduce production value -> PFXOP value
+-- On PFXOP reduce production value -> PFXOP value
+-- On OR reduce production value -> PFXOP value
+-- On LPAR reduce production value -> PFXOP value
+-- On LBRACKET reduce production value -> PFXOP value
+-- On INT reduce production value -> PFXOP value
+-- On IDENT reduce production value -> PFXOP value
+-- On EOF reduce production value -> PFXOP value
+-- On BOOL reduce production value -> PFXOP value
+-- On AND reduce production value -> PFXOP value
+
+State 40:
+item -> IDENT COLON value . [ RBRACE IDENT EOF ]
+value -> value . LBRACE values RBRACE [ RBRACE OR LBRACE IDENT EOF AND ]
+value -> value . AND value [ RBRACE OR LBRACE IDENT EOF AND ]
+value -> value . OR value [ RBRACE OR LBRACE IDENT EOF AND ]
+-- On OR shift to state 24
+-- On LBRACE shift to state 26
+-- On AND shift to state 34
+-- On RBRACE reduce production item -> IDENT COLON value
+-- On IDENT reduce production item -> IDENT COLON value
+-- On EOF reduce production item -> IDENT COLON value
+
+State 41:
+main' -> main . [ # ]
+-- On # accept main
+
+State 42:
+main -> items . EOF [ # ]
+-- On EOF shift to state 43
+
+State 43:
+main -> items EOF . [ # ]
+-- On # reduce production main -> items EOF
+
+State 44:
+value' -> . value [ # ]
+-- On STRING shift to state 12
+-- On RELOP shift to state 13
+-- On PFXOP shift to state 18
+-- On LPAR shift to state 19
+-- On LBRACKET shift to state 20
+-- On INT shift to state 14
+-- On IDENT shift to state 15
+-- On BOOL shift to state 16
+-- On value shift to state 45
+-- On atom shift to state 29
+
+State 45:
+value' -> value . [ # ]
+value -> value . LBRACE values RBRACE [ OR LBRACE AND # ]
+value -> value . AND value [ OR LBRACE AND # ]
+value -> value . OR value [ OR LBRACE AND # ]
+-- On OR shift to state 24
+-- On LBRACE shift to state 26
+-- On AND shift to state 34
+

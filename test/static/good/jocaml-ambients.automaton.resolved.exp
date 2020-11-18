@@ -1,0 +1,396 @@
+State 0:
+main' -> . main [ # ]
+-- On ZERO shift to state 1
+-- On STRING shift to state 2
+-- On OUT shift to state 3
+-- On OPEN shift to state 6
+-- On NEW shift to state 8
+-- On LPOINT shift to state 12
+-- On LPAREN shift to state 20
+-- On IN shift to state 13
+-- On IDENT shift to state 4
+-- On DOLLAR shift to state 22
+-- On BANG shift to state 25
+-- On proc shift to state 46
+-- On main shift to state 48
+-- On ident shift to state 27
+-- On capa shift to state 33
+
+State 1:
+proc -> ZERO . [ SEMISEMI RPAREN RBRACKET PAR ]
+-- On SEMISEMI reduce production proc -> ZERO
+-- On RPAREN reduce production proc -> ZERO
+-- On RBRACKET reduce production proc -> ZERO
+-- On PAR reduce production proc -> ZERO
+
+State 2:
+capa -> STRING . [ RPOINT DOT ]
+-- On RPOINT reduce production capa -> STRING
+-- On DOT reduce production capa -> STRING
+
+State 3:
+capa -> OUT . ident [ RPOINT DOT ]
+-- On IDENT shift to state 4
+-- On ident shift to state 5
+
+State 4:
+ident -> IDENT . [ RPOINT LBRACKET DOT ]
+-- On RPOINT reduce production ident -> IDENT
+-- On LBRACKET reduce production ident -> IDENT
+-- On DOT reduce production ident -> IDENT
+
+State 5:
+capa -> OUT ident . [ RPOINT DOT ]
+-- On RPOINT reduce production capa -> OUT ident
+-- On DOT reduce production capa -> OUT ident
+
+State 6:
+capa -> OPEN . ident [ RPOINT DOT ]
+-- On IDENT shift to state 4
+-- On ident shift to state 7
+
+State 7:
+capa -> OPEN ident . [ RPOINT DOT ]
+-- On RPOINT reduce production capa -> OPEN ident
+-- On DOT reduce production capa -> OPEN ident
+
+State 8:
+proc -> NEW . str DOT proc [ SEMISEMI RPAREN RBRACKET PAR ]
+-- On IDENT shift to state 9
+-- On str shift to state 10
+
+State 9:
+str -> IDENT . [ DOT ]
+-- On DOT reduce production str -> IDENT
+
+State 10:
+proc -> NEW str . DOT proc [ SEMISEMI RPAREN RBRACKET PAR ]
+-- On DOT shift to state 11
+
+State 11:
+proc -> NEW str DOT . proc [ SEMISEMI RPAREN RBRACKET PAR ]
+-- On ZERO shift to state 1
+-- On STRING shift to state 2
+-- On OUT shift to state 3
+-- On OPEN shift to state 6
+-- On NEW shift to state 8
+-- On LPOINT shift to state 12
+-- On LPAREN shift to state 20
+-- On IN shift to state 13
+-- On IDENT shift to state 4
+-- On DOLLAR shift to state 22
+-- On BANG shift to state 25
+-- On proc shift to state 45
+-- On ident shift to state 27
+-- On capa shift to state 33
+
+State 12:
+proc -> LPOINT . capa RPOINT [ SEMISEMI RPAREN RBRACKET PAR ]
+-- On STRING shift to state 2
+-- On OUT shift to state 3
+-- On OPEN shift to state 6
+-- On IN shift to state 13
+-- On IDENT shift to state 4
+-- On ident shift to state 15
+-- On capa shift to state 16
+
+State 13:
+capa -> IN . ident [ RPOINT DOT ]
+-- On IDENT shift to state 4
+-- On ident shift to state 14
+
+State 14:
+capa -> IN ident . [ RPOINT DOT ]
+-- On RPOINT reduce production capa -> IN ident
+-- On DOT reduce production capa -> IN ident
+
+State 15:
+capa -> ident . [ RPOINT DOT ]
+-- On RPOINT reduce production capa -> ident
+-- On DOT reduce production capa -> ident
+
+State 16:
+capa -> capa . DOT capa [ RPOINT DOT ]
+proc -> LPOINT capa . RPOINT [ SEMISEMI RPAREN RBRACKET PAR ]
+-- On RPOINT shift to state 17
+-- On DOT shift to state 18
+
+State 17:
+proc -> LPOINT capa RPOINT . [ SEMISEMI RPAREN RBRACKET PAR ]
+-- On SEMISEMI reduce production proc -> LPOINT capa RPOINT
+-- On RPAREN reduce production proc -> LPOINT capa RPOINT
+-- On RBRACKET reduce production proc -> LPOINT capa RPOINT
+-- On PAR reduce production proc -> LPOINT capa RPOINT
+
+State 18:
+capa -> capa DOT . capa [ RPOINT DOT ]
+-- On STRING shift to state 2
+-- On OUT shift to state 3
+-- On OPEN shift to state 6
+-- On IN shift to state 13
+-- On IDENT shift to state 4
+-- On ident shift to state 15
+-- On capa shift to state 19
+
+State 19:
+capa -> capa . DOT capa [ RPOINT DOT ]
+capa -> capa DOT capa . [ RPOINT DOT ]
+-- On DOT shift to state 18
+-- On RPOINT reduce production capa -> capa DOT capa
+
+State 20:
+proc -> LPAREN . proc RPAREN [ SEMISEMI RPAREN RBRACKET PAR ]
+proc -> LPAREN . str RPAREN DOT proc [ SEMISEMI RPAREN RBRACKET PAR ]
+-- On ZERO shift to state 1
+-- On STRING shift to state 2
+-- On OUT shift to state 3
+-- On OPEN shift to state 6
+-- On NEW shift to state 8
+-- On LPOINT shift to state 12
+-- On LPAREN shift to state 20
+-- On IN shift to state 13
+-- On IDENT shift to state 21
+-- On DOLLAR shift to state 22
+-- On BANG shift to state 25
+-- On str shift to state 39
+-- On proc shift to state 43
+-- On ident shift to state 27
+-- On capa shift to state 33
+
+State 21:
+ident -> IDENT . [ LBRACKET DOT ]
+str -> IDENT . [ RPAREN ]
+-- On RPAREN reduce production str -> IDENT
+-- On LBRACKET reduce production ident -> IDENT
+-- On DOT reduce production ident -> IDENT
+
+State 22:
+proc -> DOLLAR . ident LBRACKET proc RBRACKET [ SEMISEMI RPAREN RBRACKET PAR ]
+-- On IDENT shift to state 4
+-- On ident shift to state 23
+
+State 23:
+proc -> DOLLAR ident . LBRACKET proc RBRACKET [ SEMISEMI RPAREN RBRACKET PAR ]
+-- On LBRACKET shift to state 24
+
+State 24:
+proc -> DOLLAR ident LBRACKET . proc RBRACKET [ SEMISEMI RPAREN RBRACKET PAR ]
+-- On ZERO shift to state 1
+-- On STRING shift to state 2
+-- On OUT shift to state 3
+-- On OPEN shift to state 6
+-- On NEW shift to state 8
+-- On LPOINT shift to state 12
+-- On LPAREN shift to state 20
+-- On IN shift to state 13
+-- On IDENT shift to state 4
+-- On DOLLAR shift to state 22
+-- On BANG shift to state 25
+-- On proc shift to state 37
+-- On ident shift to state 27
+-- On capa shift to state 33
+
+State 25:
+proc -> BANG . proc [ SEMISEMI RPAREN RBRACKET PAR ]
+-- On ZERO shift to state 1
+-- On STRING shift to state 2
+-- On OUT shift to state 3
+-- On OPEN shift to state 6
+-- On NEW shift to state 8
+-- On LPOINT shift to state 12
+-- On LPAREN shift to state 20
+-- On IN shift to state 13
+-- On IDENT shift to state 4
+-- On DOLLAR shift to state 22
+-- On BANG shift to state 25
+-- On proc shift to state 26
+-- On ident shift to state 27
+-- On capa shift to state 33
+
+State 26:
+proc -> proc . PAR proc [ SEMISEMI RPAREN RBRACKET PAR ]
+proc -> BANG proc . [ SEMISEMI RPAREN RBRACKET PAR ]
+-- On SEMISEMI reduce production proc -> BANG proc
+-- On RPAREN reduce production proc -> BANG proc
+-- On RBRACKET reduce production proc -> BANG proc
+-- On PAR reduce production proc -> BANG proc
+
+State 27:
+capa -> ident . [ DOT ]
+proc -> ident . LBRACKET proc RBRACKET [ SEMISEMI RPAREN RBRACKET PAR ]
+-- On LBRACKET shift to state 28
+-- On DOT reduce production capa -> ident
+
+State 28:
+proc -> ident LBRACKET . proc RBRACKET [ SEMISEMI RPAREN RBRACKET PAR ]
+-- On ZERO shift to state 1
+-- On STRING shift to state 2
+-- On OUT shift to state 3
+-- On OPEN shift to state 6
+-- On NEW shift to state 8
+-- On LPOINT shift to state 12
+-- On LPAREN shift to state 20
+-- On IN shift to state 13
+-- On IDENT shift to state 4
+-- On DOLLAR shift to state 22
+-- On BANG shift to state 25
+-- On proc shift to state 29
+-- On ident shift to state 27
+-- On capa shift to state 33
+
+State 29:
+proc -> proc . PAR proc [ RBRACKET PAR ]
+proc -> ident LBRACKET proc . RBRACKET [ SEMISEMI RPAREN RBRACKET PAR ]
+-- On RBRACKET shift to state 30
+-- On PAR shift to state 31
+
+State 30:
+proc -> ident LBRACKET proc RBRACKET . [ SEMISEMI RPAREN RBRACKET PAR ]
+-- On SEMISEMI reduce production proc -> ident LBRACKET proc RBRACKET
+-- On RPAREN reduce production proc -> ident LBRACKET proc RBRACKET
+-- On RBRACKET reduce production proc -> ident LBRACKET proc RBRACKET
+-- On PAR reduce production proc -> ident LBRACKET proc RBRACKET
+
+State 31:
+proc -> proc PAR . proc [ SEMISEMI RPAREN RBRACKET PAR ]
+-- On ZERO shift to state 1
+-- On STRING shift to state 2
+-- On OUT shift to state 3
+-- On OPEN shift to state 6
+-- On NEW shift to state 8
+-- On LPOINT shift to state 12
+-- On LPAREN shift to state 20
+-- On IN shift to state 13
+-- On IDENT shift to state 4
+-- On DOLLAR shift to state 22
+-- On BANG shift to state 25
+-- On proc shift to state 32
+-- On ident shift to state 27
+-- On capa shift to state 33
+
+State 32:
+proc -> proc . PAR proc [ SEMISEMI RPAREN RBRACKET PAR ]
+proc -> proc PAR proc . [ SEMISEMI RPAREN RBRACKET PAR ]
+-- On PAR shift to state 31
+-- On SEMISEMI reduce production proc -> proc PAR proc
+-- On RPAREN reduce production proc -> proc PAR proc
+-- On RBRACKET reduce production proc -> proc PAR proc
+
+State 33:
+capa -> capa . DOT capa [ DOT ]
+proc -> capa . DOT proc [ SEMISEMI RPAREN RBRACKET PAR ]
+-- On DOT shift to state 34
+
+State 34:
+capa -> capa DOT . capa [ DOT ]
+proc -> capa DOT . proc [ SEMISEMI RPAREN RBRACKET PAR ]
+-- On ZERO shift to state 1
+-- On STRING shift to state 2
+-- On OUT shift to state 3
+-- On OPEN shift to state 6
+-- On NEW shift to state 8
+-- On LPOINT shift to state 12
+-- On LPAREN shift to state 20
+-- On IN shift to state 13
+-- On IDENT shift to state 4
+-- On DOLLAR shift to state 22
+-- On BANG shift to state 25
+-- On proc shift to state 35
+-- On ident shift to state 27
+-- On capa shift to state 36
+
+State 35:
+proc -> proc . PAR proc [ SEMISEMI RPAREN RBRACKET PAR ]
+proc -> capa DOT proc . [ SEMISEMI RPAREN RBRACKET PAR ]
+-- On SEMISEMI reduce production proc -> capa DOT proc
+-- On RPAREN reduce production proc -> capa DOT proc
+-- On RBRACKET reduce production proc -> capa DOT proc
+-- On PAR reduce production proc -> capa DOT proc
+
+State 36:
+capa -> capa . DOT capa [ DOT ]
+capa -> capa DOT capa . [ DOT ]
+proc -> capa . DOT proc [ SEMISEMI RPAREN RBRACKET PAR ]
+-- On DOT shift to state 34
+
+State 37:
+proc -> proc . PAR proc [ RBRACKET PAR ]
+proc -> DOLLAR ident LBRACKET proc . RBRACKET [ SEMISEMI RPAREN RBRACKET PAR ]
+-- On RBRACKET shift to state 38
+-- On PAR shift to state 31
+
+State 38:
+proc -> DOLLAR ident LBRACKET proc RBRACKET . [ SEMISEMI RPAREN RBRACKET PAR ]
+-- On SEMISEMI reduce production proc -> DOLLAR ident LBRACKET proc RBRACKET
+-- On RPAREN reduce production proc -> DOLLAR ident LBRACKET proc RBRACKET
+-- On RBRACKET reduce production proc -> DOLLAR ident LBRACKET proc RBRACKET
+-- On PAR reduce production proc -> DOLLAR ident LBRACKET proc RBRACKET
+
+State 39:
+proc -> LPAREN str . RPAREN DOT proc [ SEMISEMI RPAREN RBRACKET PAR ]
+-- On RPAREN shift to state 40
+
+State 40:
+proc -> LPAREN str RPAREN . DOT proc [ SEMISEMI RPAREN RBRACKET PAR ]
+-- On DOT shift to state 41
+
+State 41:
+proc -> LPAREN str RPAREN DOT . proc [ SEMISEMI RPAREN RBRACKET PAR ]
+-- On ZERO shift to state 1
+-- On STRING shift to state 2
+-- On OUT shift to state 3
+-- On OPEN shift to state 6
+-- On NEW shift to state 8
+-- On LPOINT shift to state 12
+-- On LPAREN shift to state 20
+-- On IN shift to state 13
+-- On IDENT shift to state 4
+-- On DOLLAR shift to state 22
+-- On BANG shift to state 25
+-- On proc shift to state 42
+-- On ident shift to state 27
+-- On capa shift to state 33
+
+State 42:
+proc -> proc . PAR proc [ SEMISEMI RPAREN RBRACKET PAR ]
+proc -> LPAREN str RPAREN DOT proc . [ SEMISEMI RPAREN RBRACKET PAR ]
+-- On SEMISEMI reduce production proc -> LPAREN str RPAREN DOT proc
+-- On RPAREN reduce production proc -> LPAREN str RPAREN DOT proc
+-- On RBRACKET reduce production proc -> LPAREN str RPAREN DOT proc
+-- On PAR reduce production proc -> LPAREN str RPAREN DOT proc
+
+State 43:
+proc -> proc . PAR proc [ RPAREN PAR ]
+proc -> LPAREN proc . RPAREN [ SEMISEMI RPAREN RBRACKET PAR ]
+-- On RPAREN shift to state 44
+-- On PAR shift to state 31
+
+State 44:
+proc -> LPAREN proc RPAREN . [ SEMISEMI RPAREN RBRACKET PAR ]
+-- On SEMISEMI reduce production proc -> LPAREN proc RPAREN
+-- On RPAREN reduce production proc -> LPAREN proc RPAREN
+-- On RBRACKET reduce production proc -> LPAREN proc RPAREN
+-- On PAR reduce production proc -> LPAREN proc RPAREN
+
+State 45:
+proc -> proc . PAR proc [ SEMISEMI RPAREN RBRACKET PAR ]
+proc -> NEW str DOT proc . [ SEMISEMI RPAREN RBRACKET PAR ]
+-- On SEMISEMI reduce production proc -> NEW str DOT proc
+-- On RPAREN reduce production proc -> NEW str DOT proc
+-- On RBRACKET reduce production proc -> NEW str DOT proc
+-- On PAR reduce production proc -> NEW str DOT proc
+
+State 46:
+main -> proc . SEMISEMI [ # ]
+proc -> proc . PAR proc [ SEMISEMI PAR ]
+-- On SEMISEMI shift to state 47
+-- On PAR shift to state 31
+
+State 47:
+main -> proc SEMISEMI . [ # ]
+-- On # reduce production main -> proc SEMISEMI
+
+State 48:
+main' -> main . [ # ]
+-- On # accept main
+

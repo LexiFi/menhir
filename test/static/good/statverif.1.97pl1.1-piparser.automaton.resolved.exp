@@ -1,0 +1,3451 @@
+State 0:
+all' -> . all [ # ]
+-- On WEAKSECRET shift to state 1
+-- On QUERY shift to state 4
+-- On PRIVATE shift to state 48
+-- On PREDICATE shift to state 49
+-- On PARAM shift to state 54
+-- On NOUNIF shift to state 59
+-- On NOT shift to state 107
+-- On NONINTERF shift to state 123
+-- On LET shift to state 149
+-- On EQUATION shift to state 259
+-- On ELIMTRUE shift to state 267
+-- On DATA shift to state 277
+-- On CLAUSES shift to state 282
+-- On CELL shift to state 295
+-- On privateopt shift to state 301
+-- On lib shift to state 399
+-- On all shift to state 403
+-- On REDUCTION reduce production privateopt -> 
+-- On PROCESS reduce production lib -> 
+-- On FUN reduce production privateopt -> 
+-- On FREE reduce production privateopt -> 
+
+State 1:
+lib -> WEAKSECRET . IDENT DOT lib [ PROCESS ]
+-- On IDENT shift to state 2
+
+State 2:
+lib -> WEAKSECRET IDENT . DOT lib [ PROCESS ]
+-- On DOT shift to state 3
+
+State 3:
+lib -> WEAKSECRET IDENT DOT . lib [ PROCESS ]
+-- On WEAKSECRET shift to state 1
+-- On QUERY shift to state 4
+-- On PRIVATE shift to state 48
+-- On PREDICATE shift to state 49
+-- On PARAM shift to state 54
+-- On NOUNIF shift to state 59
+-- On NOT shift to state 107
+-- On NONINTERF shift to state 123
+-- On LET shift to state 149
+-- On EQUATION shift to state 259
+-- On ELIMTRUE shift to state 267
+-- On DATA shift to state 277
+-- On CLAUSES shift to state 282
+-- On CELL shift to state 295
+-- On privateopt shift to state 301
+-- On lib shift to state 398
+-- On REDUCTION reduce production privateopt -> 
+-- On PROCESS reduce production lib -> 
+-- On FUN reduce production privateopt -> 
+-- On FREE reduce production privateopt -> 
+
+State 4:
+lib -> QUERY . queryseq DOT lib [ PROCESS ]
+-- On PUTBEGIN shift to state 5
+-- On LPAREN shift to state 12
+-- On LET shift to state 38
+-- On IDENT shift to state 42
+-- On realquery shift to state 45
+-- On queryseq shift to state 46
+-- On query shift to state 379
+-- On gterm shift to state 382
+-- On gfact shift to state 360
+-- On event shift to state 383
+
+State 5:
+query -> PUTBEGIN . IDENT COLON neidentseq [ SEMI DOT ]
+-- On IDENT shift to state 6
+
+State 6:
+query -> PUTBEGIN IDENT . COLON neidentseq [ SEMI DOT ]
+-- On COLON shift to state 7
+
+State 7:
+query -> PUTBEGIN IDENT COLON . neidentseq [ SEMI DOT ]
+-- On IDENT shift to state 8
+-- On neidentseq shift to state 11
+
+State 8:
+neidentseq -> IDENT . COMMA neidentseq [ SUCHTHAT SEMI RPAREN DOT ASSIGN AS ]
+neidentseq -> IDENT . [ SUCHTHAT SEMI RPAREN DOT ASSIGN AS ]
+-- On COMMA shift to state 9
+-- On SUCHTHAT reduce production neidentseq -> IDENT
+-- On SEMI reduce production neidentseq -> IDENT
+-- On RPAREN reduce production neidentseq -> IDENT
+-- On DOT reduce production neidentseq -> IDENT
+-- On ASSIGN reduce production neidentseq -> IDENT
+-- On AS reduce production neidentseq -> IDENT
+
+State 9:
+neidentseq -> IDENT COMMA . neidentseq [ SUCHTHAT SEMI RPAREN DOT ASSIGN AS ]
+-- On IDENT shift to state 8
+-- On neidentseq shift to state 10
+
+State 10:
+neidentseq -> IDENT COMMA neidentseq . [ SUCHTHAT SEMI RPAREN DOT ASSIGN AS ]
+-- On SUCHTHAT reduce production neidentseq -> IDENT COMMA neidentseq
+-- On SEMI reduce production neidentseq -> IDENT COMMA neidentseq
+-- On RPAREN reduce production neidentseq -> IDENT COMMA neidentseq
+-- On DOT reduce production neidentseq -> IDENT COMMA neidentseq
+-- On ASSIGN reduce production neidentseq -> IDENT COMMA neidentseq
+-- On AS reduce production neidentseq -> IDENT COMMA neidentseq
+
+State 11:
+query -> PUTBEGIN IDENT COLON neidentseq . [ SEMI DOT ]
+-- On SEMI reduce production query -> PUTBEGIN IDENT COLON neidentseq
+-- On DOT reduce production query -> PUTBEGIN IDENT COLON neidentseq
+
+State 12:
+gterm -> LPAREN . gtermseq RPAREN [ WEDGE SEMI RPAREN RBRACKET PHASE EQUAL DOT DIFF COMMA BEFORE BAR ]
+-- On LPAREN shift to state 12
+-- On IDENT shift to state 13
+-- On negtermseq shift to state 15
+-- On gtermseq shift to state 36
+-- On gterm shift to state 18
+-- On RPAREN reduce production gtermseq -> 
+
+State 13:
+gterm -> IDENT . LPAREN gtermseq RPAREN [ WEDGE SEMI RPAREN RBRACKET PHASE DOT COMMA BEFORE BAR ]
+gterm -> IDENT . [ WEDGE SEMI RPAREN RBRACKET PHASE DOT COMMA BEFORE BAR ]
+gterm -> IDENT . LBRACKET bindingseq RBRACKET [ WEDGE SEMI RPAREN RBRACKET PHASE DOT COMMA BEFORE BAR ]
+-- On LPAREN shift to state 14
+-- On LBRACKET shift to state 21
+-- On WEDGE reduce production gterm -> IDENT
+-- On SEMI reduce production gterm -> IDENT
+-- On RPAREN reduce production gterm -> IDENT
+-- On RBRACKET reduce production gterm -> IDENT
+-- On PHASE reduce production gterm -> IDENT
+-- On DOT reduce production gterm -> IDENT
+-- On COMMA reduce production gterm -> IDENT
+-- On BEFORE reduce production gterm -> IDENT
+-- On BAR reduce production gterm -> IDENT
+
+State 14:
+gterm -> IDENT LPAREN . gtermseq RPAREN [ WEDGE SEMI RPAREN RBRACKET PHASE EQUAL DOT DIFF COMMA BEFORE BAR ]
+-- On LPAREN shift to state 12
+-- On IDENT shift to state 13
+-- On negtermseq shift to state 15
+-- On gtermseq shift to state 16
+-- On gterm shift to state 18
+-- On RPAREN reduce production gtermseq -> 
+
+State 15:
+gtermseq -> negtermseq . [ WEDGE SEMI RPAREN PHASE DOT BEFORE BAR ]
+-- On WEDGE reduce production gtermseq -> negtermseq
+-- On SEMI reduce production gtermseq -> negtermseq
+-- On RPAREN reduce production gtermseq -> negtermseq
+-- On PHASE reduce production gtermseq -> negtermseq
+-- On DOT reduce production gtermseq -> negtermseq
+-- On BEFORE reduce production gtermseq -> negtermseq
+-- On BAR reduce production gtermseq -> negtermseq
+
+State 16:
+gterm -> IDENT LPAREN gtermseq . RPAREN [ WEDGE SEMI RPAREN RBRACKET PHASE EQUAL DOT DIFF COMMA BEFORE BAR ]
+-- On RPAREN shift to state 17
+
+State 17:
+gterm -> IDENT LPAREN gtermseq RPAREN . [ WEDGE SEMI RPAREN RBRACKET PHASE EQUAL DOT DIFF COMMA BEFORE BAR ]
+-- On WEDGE reduce production gterm -> IDENT LPAREN gtermseq RPAREN
+-- On SEMI reduce production gterm -> IDENT LPAREN gtermseq RPAREN
+-- On RPAREN reduce production gterm -> IDENT LPAREN gtermseq RPAREN
+-- On RBRACKET reduce production gterm -> IDENT LPAREN gtermseq RPAREN
+-- On PHASE reduce production gterm -> IDENT LPAREN gtermseq RPAREN
+-- On EQUAL reduce production gterm -> IDENT LPAREN gtermseq RPAREN
+-- On DOT reduce production gterm -> IDENT LPAREN gtermseq RPAREN
+-- On DIFF reduce production gterm -> IDENT LPAREN gtermseq RPAREN
+-- On COMMA reduce production gterm -> IDENT LPAREN gtermseq RPAREN
+-- On BEFORE reduce production gterm -> IDENT LPAREN gtermseq RPAREN
+-- On BAR reduce production gterm -> IDENT LPAREN gtermseq RPAREN
+
+State 18:
+negtermseq -> gterm . COMMA negtermseq [ WEDGE SEMI RPAREN PHASE DOT BEFORE BAR ]
+negtermseq -> gterm . [ WEDGE SEMI RPAREN PHASE DOT BEFORE BAR ]
+-- On COMMA shift to state 19
+-- On WEDGE reduce production negtermseq -> gterm
+-- On SEMI reduce production negtermseq -> gterm
+-- On RPAREN reduce production negtermseq -> gterm
+-- On PHASE reduce production negtermseq -> gterm
+-- On DOT reduce production negtermseq -> gterm
+-- On BEFORE reduce production negtermseq -> gterm
+-- On BAR reduce production negtermseq -> gterm
+
+State 19:
+negtermseq -> gterm COMMA . negtermseq [ WEDGE SEMI RPAREN PHASE DOT BEFORE BAR ]
+-- On LPAREN shift to state 12
+-- On IDENT shift to state 13
+-- On negtermseq shift to state 20
+-- On gterm shift to state 18
+
+State 20:
+negtermseq -> gterm COMMA negtermseq . [ WEDGE SEMI RPAREN PHASE DOT BEFORE BAR ]
+-- On WEDGE reduce production negtermseq -> gterm COMMA negtermseq
+-- On SEMI reduce production negtermseq -> gterm COMMA negtermseq
+-- On RPAREN reduce production negtermseq -> gterm COMMA negtermseq
+-- On PHASE reduce production negtermseq -> gterm COMMA negtermseq
+-- On DOT reduce production negtermseq -> gterm COMMA negtermseq
+-- On BEFORE reduce production negtermseq -> gterm COMMA negtermseq
+-- On BAR reduce production negtermseq -> gterm COMMA negtermseq
+
+State 21:
+gterm -> IDENT LBRACKET . bindingseq RBRACKET [ WEDGE SEMI RPAREN RBRACKET PHASE EQUAL DOT DIFF COMMA BEFORE BAR ]
+-- On REPL shift to state 22
+-- On IDENT shift to state 27
+-- On nesbindingseq shift to state 33
+-- On bindingseq shift to state 34
+-- On RBRACKET reduce production bindingseq -> 
+
+State 22:
+nesbindingseq -> REPL . INT EQUAL gterm SEMI nesbindingseq [ RBRACKET ]
+nesbindingseq -> REPL . INT EQUAL gterm [ RBRACKET ]
+-- On INT shift to state 23
+
+State 23:
+nesbindingseq -> REPL INT . EQUAL gterm SEMI nesbindingseq [ RBRACKET ]
+nesbindingseq -> REPL INT . EQUAL gterm [ RBRACKET ]
+-- On EQUAL shift to state 24
+
+State 24:
+nesbindingseq -> REPL INT EQUAL . gterm SEMI nesbindingseq [ RBRACKET ]
+nesbindingseq -> REPL INT EQUAL . gterm [ RBRACKET ]
+-- On LPAREN shift to state 12
+-- On IDENT shift to state 13
+-- On gterm shift to state 25
+
+State 25:
+nesbindingseq -> REPL INT EQUAL gterm . SEMI nesbindingseq [ RBRACKET ]
+nesbindingseq -> REPL INT EQUAL gterm . [ RBRACKET ]
+-- On SEMI shift to state 26
+-- On RBRACKET reduce production nesbindingseq -> REPL INT EQUAL gterm
+
+State 26:
+nesbindingseq -> REPL INT EQUAL gterm SEMI . nesbindingseq [ RBRACKET ]
+-- On REPL shift to state 22
+-- On IDENT shift to state 27
+-- On nesbindingseq shift to state 32
+
+State 27:
+nesbindingseq -> IDENT . EQUAL gterm SEMI nesbindingseq [ RBRACKET ]
+nesbindingseq -> IDENT . EQUAL gterm [ RBRACKET ]
+-- On EQUAL shift to state 28
+
+State 28:
+nesbindingseq -> IDENT EQUAL . gterm SEMI nesbindingseq [ RBRACKET ]
+nesbindingseq -> IDENT EQUAL . gterm [ RBRACKET ]
+-- On LPAREN shift to state 12
+-- On IDENT shift to state 13
+-- On gterm shift to state 29
+
+State 29:
+nesbindingseq -> IDENT EQUAL gterm . SEMI nesbindingseq [ RBRACKET ]
+nesbindingseq -> IDENT EQUAL gterm . [ RBRACKET ]
+-- On SEMI shift to state 30
+-- On RBRACKET reduce production nesbindingseq -> IDENT EQUAL gterm
+
+State 30:
+nesbindingseq -> IDENT EQUAL gterm SEMI . nesbindingseq [ RBRACKET ]
+-- On REPL shift to state 22
+-- On IDENT shift to state 27
+-- On nesbindingseq shift to state 31
+
+State 31:
+nesbindingseq -> IDENT EQUAL gterm SEMI nesbindingseq . [ RBRACKET ]
+-- On RBRACKET reduce production nesbindingseq -> IDENT EQUAL gterm SEMI nesbindingseq
+
+State 32:
+nesbindingseq -> REPL INT EQUAL gterm SEMI nesbindingseq . [ RBRACKET ]
+-- On RBRACKET reduce production nesbindingseq -> REPL INT EQUAL gterm SEMI nesbindingseq
+
+State 33:
+bindingseq -> nesbindingseq . [ RBRACKET ]
+-- On RBRACKET reduce production bindingseq -> nesbindingseq
+
+State 34:
+gterm -> IDENT LBRACKET bindingseq . RBRACKET [ WEDGE SEMI RPAREN RBRACKET PHASE EQUAL DOT DIFF COMMA BEFORE BAR ]
+-- On RBRACKET shift to state 35
+
+State 35:
+gterm -> IDENT LBRACKET bindingseq RBRACKET . [ WEDGE SEMI RPAREN RBRACKET PHASE EQUAL DOT DIFF COMMA BEFORE BAR ]
+-- On WEDGE reduce production gterm -> IDENT LBRACKET bindingseq RBRACKET
+-- On SEMI reduce production gterm -> IDENT LBRACKET bindingseq RBRACKET
+-- On RPAREN reduce production gterm -> IDENT LBRACKET bindingseq RBRACKET
+-- On RBRACKET reduce production gterm -> IDENT LBRACKET bindingseq RBRACKET
+-- On PHASE reduce production gterm -> IDENT LBRACKET bindingseq RBRACKET
+-- On EQUAL reduce production gterm -> IDENT LBRACKET bindingseq RBRACKET
+-- On DOT reduce production gterm -> IDENT LBRACKET bindingseq RBRACKET
+-- On DIFF reduce production gterm -> IDENT LBRACKET bindingseq RBRACKET
+-- On COMMA reduce production gterm -> IDENT LBRACKET bindingseq RBRACKET
+-- On BEFORE reduce production gterm -> IDENT LBRACKET bindingseq RBRACKET
+-- On BAR reduce production gterm -> IDENT LBRACKET bindingseq RBRACKET
+
+State 36:
+gterm -> LPAREN gtermseq . RPAREN [ WEDGE SEMI RPAREN RBRACKET PHASE EQUAL DOT DIFF COMMA BEFORE BAR ]
+-- On RPAREN shift to state 37
+
+State 37:
+gterm -> LPAREN gtermseq RPAREN . [ WEDGE SEMI RPAREN RBRACKET PHASE EQUAL DOT DIFF COMMA BEFORE BAR ]
+-- On WEDGE reduce production gterm -> LPAREN gtermseq RPAREN
+-- On SEMI reduce production gterm -> LPAREN gtermseq RPAREN
+-- On RPAREN reduce production gterm -> LPAREN gtermseq RPAREN
+-- On RBRACKET reduce production gterm -> LPAREN gtermseq RPAREN
+-- On PHASE reduce production gterm -> LPAREN gtermseq RPAREN
+-- On EQUAL reduce production gterm -> LPAREN gtermseq RPAREN
+-- On DOT reduce production gterm -> LPAREN gtermseq RPAREN
+-- On DIFF reduce production gterm -> LPAREN gtermseq RPAREN
+-- On COMMA reduce production gterm -> LPAREN gtermseq RPAREN
+-- On BEFORE reduce production gterm -> LPAREN gtermseq RPAREN
+-- On BAR reduce production gterm -> LPAREN gtermseq RPAREN
+
+State 38:
+query -> LET . IDENT EQUAL gterm [ SEMI DOT ]
+-- On IDENT shift to state 39
+
+State 39:
+query -> LET IDENT . EQUAL gterm [ SEMI DOT ]
+-- On EQUAL shift to state 40
+
+State 40:
+query -> LET IDENT EQUAL . gterm [ SEMI DOT ]
+-- On LPAREN shift to state 12
+-- On IDENT shift to state 13
+-- On gterm shift to state 41
+
+State 41:
+query -> LET IDENT EQUAL gterm . [ SEMI DOT ]
+-- On SEMI reduce production query -> LET IDENT EQUAL gterm
+-- On DOT reduce production query -> LET IDENT EQUAL gterm
+
+State 42:
+gfact -> IDENT . COLON gtermseq [ WEDGE SEMI RPAREN PHASE DOT BEFORE BAR ]
+gterm -> IDENT . LPAREN gtermseq RPAREN [ SEMI RPAREN PHASE EQUAL DOT DIFF COMMA ]
+gterm -> IDENT . [ SEMI RPAREN PHASE EQUAL DOT DIFF COMMA ]
+gterm -> IDENT . LBRACKET bindingseq RBRACKET [ SEMI RPAREN PHASE EQUAL DOT DIFF COMMA ]
+-- On LPAREN shift to state 14
+-- On LBRACKET shift to state 21
+-- On COLON shift to state 43
+-- On SEMI reduce production gterm -> IDENT
+-- On RPAREN reduce production gterm -> IDENT
+-- On PHASE reduce production gterm -> IDENT
+-- On EQUAL reduce production gterm -> IDENT
+-- On DOT reduce production gterm -> IDENT
+-- On DIFF reduce production gterm -> IDENT
+-- On COMMA reduce production gterm -> IDENT
+
+State 43:
+gfact -> IDENT COLON . gtermseq [ WEDGE SEMI RPAREN PHASE DOT BEFORE BAR ]
+-- On LPAREN shift to state 12
+-- On IDENT shift to state 13
+-- On negtermseq shift to state 15
+-- On gtermseq shift to state 44
+-- On gterm shift to state 18
+-- On WEDGE reduce production gtermseq -> 
+-- On SEMI reduce production gtermseq -> 
+-- On RPAREN reduce production gtermseq -> 
+-- On PHASE reduce production gtermseq -> 
+-- On DOT reduce production gtermseq -> 
+-- On BEFORE reduce production gtermseq -> 
+-- On BAR reduce production gtermseq -> 
+
+State 44:
+gfact -> IDENT COLON gtermseq . [ WEDGE SEMI RPAREN PHASE DOT BEFORE BAR ]
+-- On WEDGE reduce production gfact -> IDENT COLON gtermseq
+-- On SEMI reduce production gfact -> IDENT COLON gtermseq
+-- On RPAREN reduce production gfact -> IDENT COLON gtermseq
+-- On PHASE reduce production gfact -> IDENT COLON gtermseq
+-- On DOT reduce production gfact -> IDENT COLON gtermseq
+-- On BEFORE reduce production gfact -> IDENT COLON gtermseq
+-- On BAR reduce production gfact -> IDENT COLON gtermseq
+
+State 45:
+query -> realquery . [ SEMI DOT ]
+-- On SEMI reduce production query -> realquery
+-- On DOT reduce production query -> realquery
+
+State 46:
+lib -> QUERY queryseq . DOT lib [ PROCESS ]
+-- On DOT shift to state 47
+
+State 47:
+lib -> QUERY queryseq DOT . lib [ PROCESS ]
+-- On WEAKSECRET shift to state 1
+-- On QUERY shift to state 4
+-- On PRIVATE shift to state 48
+-- On PREDICATE shift to state 49
+-- On PARAM shift to state 54
+-- On NOUNIF shift to state 59
+-- On NOT shift to state 107
+-- On NONINTERF shift to state 123
+-- On LET shift to state 149
+-- On EQUATION shift to state 259
+-- On ELIMTRUE shift to state 267
+-- On DATA shift to state 277
+-- On CLAUSES shift to state 282
+-- On CELL shift to state 295
+-- On privateopt shift to state 301
+-- On lib shift to state 378
+-- On REDUCTION reduce production privateopt -> 
+-- On PROCESS reduce production lib -> 
+-- On FUN reduce production privateopt -> 
+-- On FREE reduce production privateopt -> 
+
+State 48:
+privateopt -> PRIVATE . [ REDUCTION FUN FREE ]
+-- On REDUCTION reduce production privateopt -> PRIVATE
+-- On FUN reduce production privateopt -> PRIVATE
+-- On FREE reduce production privateopt -> PRIVATE
+
+State 49:
+lib -> PREDICATE . IDENT SLASH INT neidentseq DOT lib [ PROCESS ]
+lib -> PREDICATE . IDENT SLASH INT DOT lib [ PROCESS ]
+-- On IDENT shift to state 50
+
+State 50:
+lib -> PREDICATE IDENT . SLASH INT neidentseq DOT lib [ PROCESS ]
+lib -> PREDICATE IDENT . SLASH INT DOT lib [ PROCESS ]
+-- On SLASH shift to state 51
+
+State 51:
+lib -> PREDICATE IDENT SLASH . INT neidentseq DOT lib [ PROCESS ]
+lib -> PREDICATE IDENT SLASH . INT DOT lib [ PROCESS ]
+-- On INT shift to state 52
+
+State 52:
+lib -> PREDICATE IDENT SLASH INT . neidentseq DOT lib [ PROCESS ]
+lib -> PREDICATE IDENT SLASH INT . DOT lib [ PROCESS ]
+-- On IDENT shift to state 8
+-- On DOT shift to state 53
+-- On neidentseq shift to state 375
+
+State 53:
+lib -> PREDICATE IDENT SLASH INT DOT . lib [ PROCESS ]
+-- On WEAKSECRET shift to state 1
+-- On QUERY shift to state 4
+-- On PRIVATE shift to state 48
+-- On PREDICATE shift to state 49
+-- On PARAM shift to state 54
+-- On NOUNIF shift to state 59
+-- On NOT shift to state 107
+-- On NONINTERF shift to state 123
+-- On LET shift to state 149
+-- On EQUATION shift to state 259
+-- On ELIMTRUE shift to state 267
+-- On DATA shift to state 277
+-- On CLAUSES shift to state 282
+-- On CELL shift to state 295
+-- On privateopt shift to state 301
+-- On lib shift to state 374
+-- On REDUCTION reduce production privateopt -> 
+-- On PROCESS reduce production lib -> 
+-- On FUN reduce production privateopt -> 
+-- On FREE reduce production privateopt -> 
+
+State 54:
+lib -> PARAM . IDENT EQUAL IDENT DOT lib [ PROCESS ]
+lib -> PARAM . IDENT EQUAL STRING DOT lib [ PROCESS ]
+lib -> PARAM . IDENT EQUAL INT DOT lib [ PROCESS ]
+-- On IDENT shift to state 55
+
+State 55:
+lib -> PARAM IDENT . EQUAL IDENT DOT lib [ PROCESS ]
+lib -> PARAM IDENT . EQUAL STRING DOT lib [ PROCESS ]
+lib -> PARAM IDENT . EQUAL INT DOT lib [ PROCESS ]
+-- On EQUAL shift to state 56
+
+State 56:
+lib -> PARAM IDENT EQUAL . IDENT DOT lib [ PROCESS ]
+lib -> PARAM IDENT EQUAL . STRING DOT lib [ PROCESS ]
+lib -> PARAM IDENT EQUAL . INT DOT lib [ PROCESS ]
+-- On STRING shift to state 57
+-- On INT shift to state 368
+-- On IDENT shift to state 371
+
+State 57:
+lib -> PARAM IDENT EQUAL STRING . DOT lib [ PROCESS ]
+-- On DOT shift to state 58
+
+State 58:
+lib -> PARAM IDENT EQUAL STRING DOT . lib [ PROCESS ]
+-- On WEAKSECRET shift to state 1
+-- On QUERY shift to state 4
+-- On PRIVATE shift to state 48
+-- On PREDICATE shift to state 49
+-- On PARAM shift to state 54
+-- On NOUNIF shift to state 59
+-- On NOT shift to state 107
+-- On NONINTERF shift to state 123
+-- On LET shift to state 149
+-- On EQUATION shift to state 259
+-- On ELIMTRUE shift to state 267
+-- On DATA shift to state 277
+-- On CLAUSES shift to state 282
+-- On CELL shift to state 295
+-- On privateopt shift to state 301
+-- On lib shift to state 367
+-- On REDUCTION reduce production privateopt -> 
+-- On PROCESS reduce production lib -> 
+-- On FUN reduce production privateopt -> 
+-- On FREE reduce production privateopt -> 
+
+State 59:
+lib -> NOUNIF . gfactformat optint foptbindingseq DOT lib [ PROCESS ]
+-- On IDENT shift to state 60
+-- On gfactformat shift to state 94
+
+State 60:
+gfactformat -> IDENT . COLON gformatseq optphase [ SLASH SEMI DOT ]
+-- On COLON shift to state 61
+
+State 61:
+gfactformat -> IDENT COLON . gformatseq optphase [ SLASH SEMI DOT ]
+-- On STAR shift to state 62
+-- On LPAREN shift to state 64
+-- On IDENT shift to state 65
+-- On negformatseq shift to state 67
+-- On gformatseq shift to state 90
+-- On gformat shift to state 70
+-- On SLASH reduce production gformatseq -> 
+-- On SEMI reduce production gformatseq -> 
+-- On PHASE reduce production gformatseq -> 
+-- On DOT reduce production gformatseq -> 
+
+State 62:
+gformat -> STAR . IDENT [ SLASH SEMI RPAREN RBRACKET PHASE DOT COMMA ]
+-- On IDENT shift to state 63
+
+State 63:
+gformat -> STAR IDENT . [ SLASH SEMI RPAREN RBRACKET PHASE DOT COMMA ]
+-- On SLASH reduce production gformat -> STAR IDENT
+-- On SEMI reduce production gformat -> STAR IDENT
+-- On RPAREN reduce production gformat -> STAR IDENT
+-- On RBRACKET reduce production gformat -> STAR IDENT
+-- On PHASE reduce production gformat -> STAR IDENT
+-- On DOT reduce production gformat -> STAR IDENT
+-- On COMMA reduce production gformat -> STAR IDENT
+
+State 64:
+gformat -> LPAREN . gformatseq RPAREN [ SLASH SEMI RPAREN RBRACKET PHASE DOT COMMA ]
+-- On STAR shift to state 62
+-- On LPAREN shift to state 64
+-- On IDENT shift to state 65
+-- On negformatseq shift to state 67
+-- On gformatseq shift to state 88
+-- On gformat shift to state 70
+-- On RPAREN reduce production gformatseq -> 
+
+State 65:
+gformat -> IDENT . LPAREN gformatseq RPAREN [ SLASH SEMI RPAREN RBRACKET PHASE DOT COMMA ]
+gformat -> IDENT . [ SLASH SEMI RPAREN RBRACKET PHASE DOT COMMA ]
+gformat -> IDENT . LBRACKET fbindingseq RBRACKET [ SLASH SEMI RPAREN RBRACKET PHASE DOT COMMA ]
+-- On LPAREN shift to state 66
+-- On LBRACKET shift to state 73
+-- On SLASH reduce production gformat -> IDENT
+-- On SEMI reduce production gformat -> IDENT
+-- On RPAREN reduce production gformat -> IDENT
+-- On RBRACKET reduce production gformat -> IDENT
+-- On PHASE reduce production gformat -> IDENT
+-- On DOT reduce production gformat -> IDENT
+-- On COMMA reduce production gformat -> IDENT
+
+State 66:
+gformat -> IDENT LPAREN . gformatseq RPAREN [ SLASH SEMI RPAREN RBRACKET PHASE DOT COMMA ]
+-- On STAR shift to state 62
+-- On LPAREN shift to state 64
+-- On IDENT shift to state 65
+-- On negformatseq shift to state 67
+-- On gformatseq shift to state 68
+-- On gformat shift to state 70
+-- On RPAREN reduce production gformatseq -> 
+
+State 67:
+gformatseq -> negformatseq . [ SLASH SEMI RPAREN PHASE DOT ]
+-- On SLASH reduce production gformatseq -> negformatseq
+-- On SEMI reduce production gformatseq -> negformatseq
+-- On RPAREN reduce production gformatseq -> negformatseq
+-- On PHASE reduce production gformatseq -> negformatseq
+-- On DOT reduce production gformatseq -> negformatseq
+
+State 68:
+gformat -> IDENT LPAREN gformatseq . RPAREN [ SLASH SEMI RPAREN RBRACKET PHASE DOT COMMA ]
+-- On RPAREN shift to state 69
+
+State 69:
+gformat -> IDENT LPAREN gformatseq RPAREN . [ SLASH SEMI RPAREN RBRACKET PHASE DOT COMMA ]
+-- On SLASH reduce production gformat -> IDENT LPAREN gformatseq RPAREN
+-- On SEMI reduce production gformat -> IDENT LPAREN gformatseq RPAREN
+-- On RPAREN reduce production gformat -> IDENT LPAREN gformatseq RPAREN
+-- On RBRACKET reduce production gformat -> IDENT LPAREN gformatseq RPAREN
+-- On PHASE reduce production gformat -> IDENT LPAREN gformatseq RPAREN
+-- On DOT reduce production gformat -> IDENT LPAREN gformatseq RPAREN
+-- On COMMA reduce production gformat -> IDENT LPAREN gformatseq RPAREN
+
+State 70:
+negformatseq -> gformat . COMMA negformatseq [ SLASH SEMI RPAREN PHASE DOT ]
+negformatseq -> gformat . [ SLASH SEMI RPAREN PHASE DOT ]
+-- On COMMA shift to state 71
+-- On SLASH reduce production negformatseq -> gformat
+-- On SEMI reduce production negformatseq -> gformat
+-- On RPAREN reduce production negformatseq -> gformat
+-- On PHASE reduce production negformatseq -> gformat
+-- On DOT reduce production negformatseq -> gformat
+
+State 71:
+negformatseq -> gformat COMMA . negformatseq [ SLASH SEMI RPAREN PHASE DOT ]
+-- On STAR shift to state 62
+-- On LPAREN shift to state 64
+-- On IDENT shift to state 65
+-- On negformatseq shift to state 72
+-- On gformat shift to state 70
+
+State 72:
+negformatseq -> gformat COMMA negformatseq . [ SLASH SEMI RPAREN PHASE DOT ]
+-- On SLASH reduce production negformatseq -> gformat COMMA negformatseq
+-- On SEMI reduce production negformatseq -> gformat COMMA negformatseq
+-- On RPAREN reduce production negformatseq -> gformat COMMA negformatseq
+-- On PHASE reduce production negformatseq -> gformat COMMA negformatseq
+-- On DOT reduce production negformatseq -> gformat COMMA negformatseq
+
+State 73:
+gformat -> IDENT LBRACKET . fbindingseq RBRACKET [ SLASH SEMI RPAREN RBRACKET PHASE DOT COMMA ]
+-- On REPL shift to state 74
+-- On IDENT shift to state 79
+-- On fnesbindingseq shift to state 85
+-- On fbindingseq shift to state 86
+-- On RBRACKET reduce production fbindingseq -> 
+
+State 74:
+fnesbindingseq -> REPL . INT EQUAL gformat SEMI fnesbindingseq [ RBRACKET ]
+fnesbindingseq -> REPL . INT EQUAL gformat [ RBRACKET ]
+-- On INT shift to state 75
+
+State 75:
+fnesbindingseq -> REPL INT . EQUAL gformat SEMI fnesbindingseq [ RBRACKET ]
+fnesbindingseq -> REPL INT . EQUAL gformat [ RBRACKET ]
+-- On EQUAL shift to state 76
+
+State 76:
+fnesbindingseq -> REPL INT EQUAL . gformat SEMI fnesbindingseq [ RBRACKET ]
+fnesbindingseq -> REPL INT EQUAL . gformat [ RBRACKET ]
+-- On STAR shift to state 62
+-- On LPAREN shift to state 64
+-- On IDENT shift to state 65
+-- On gformat shift to state 77
+
+State 77:
+fnesbindingseq -> REPL INT EQUAL gformat . SEMI fnesbindingseq [ RBRACKET ]
+fnesbindingseq -> REPL INT EQUAL gformat . [ RBRACKET ]
+-- On SEMI shift to state 78
+-- On RBRACKET reduce production fnesbindingseq -> REPL INT EQUAL gformat
+
+State 78:
+fnesbindingseq -> REPL INT EQUAL gformat SEMI . fnesbindingseq [ RBRACKET ]
+-- On REPL shift to state 74
+-- On IDENT shift to state 79
+-- On fnesbindingseq shift to state 84
+
+State 79:
+fnesbindingseq -> IDENT . EQUAL gformat SEMI fnesbindingseq [ RBRACKET ]
+fnesbindingseq -> IDENT . EQUAL gformat [ RBRACKET ]
+-- On EQUAL shift to state 80
+
+State 80:
+fnesbindingseq -> IDENT EQUAL . gformat SEMI fnesbindingseq [ RBRACKET ]
+fnesbindingseq -> IDENT EQUAL . gformat [ RBRACKET ]
+-- On STAR shift to state 62
+-- On LPAREN shift to state 64
+-- On IDENT shift to state 65
+-- On gformat shift to state 81
+
+State 81:
+fnesbindingseq -> IDENT EQUAL gformat . SEMI fnesbindingseq [ RBRACKET ]
+fnesbindingseq -> IDENT EQUAL gformat . [ RBRACKET ]
+-- On SEMI shift to state 82
+-- On RBRACKET reduce production fnesbindingseq -> IDENT EQUAL gformat
+
+State 82:
+fnesbindingseq -> IDENT EQUAL gformat SEMI . fnesbindingseq [ RBRACKET ]
+-- On REPL shift to state 74
+-- On IDENT shift to state 79
+-- On fnesbindingseq shift to state 83
+
+State 83:
+fnesbindingseq -> IDENT EQUAL gformat SEMI fnesbindingseq . [ RBRACKET ]
+-- On RBRACKET reduce production fnesbindingseq -> IDENT EQUAL gformat SEMI fnesbindingseq
+
+State 84:
+fnesbindingseq -> REPL INT EQUAL gformat SEMI fnesbindingseq . [ RBRACKET ]
+-- On RBRACKET reduce production fnesbindingseq -> REPL INT EQUAL gformat SEMI fnesbindingseq
+
+State 85:
+fbindingseq -> fnesbindingseq . [ RBRACKET ]
+-- On RBRACKET reduce production fbindingseq -> fnesbindingseq
+
+State 86:
+gformat -> IDENT LBRACKET fbindingseq . RBRACKET [ SLASH SEMI RPAREN RBRACKET PHASE DOT COMMA ]
+-- On RBRACKET shift to state 87
+
+State 87:
+gformat -> IDENT LBRACKET fbindingseq RBRACKET . [ SLASH SEMI RPAREN RBRACKET PHASE DOT COMMA ]
+-- On SLASH reduce production gformat -> IDENT LBRACKET fbindingseq RBRACKET
+-- On SEMI reduce production gformat -> IDENT LBRACKET fbindingseq RBRACKET
+-- On RPAREN reduce production gformat -> IDENT LBRACKET fbindingseq RBRACKET
+-- On RBRACKET reduce production gformat -> IDENT LBRACKET fbindingseq RBRACKET
+-- On PHASE reduce production gformat -> IDENT LBRACKET fbindingseq RBRACKET
+-- On DOT reduce production gformat -> IDENT LBRACKET fbindingseq RBRACKET
+-- On COMMA reduce production gformat -> IDENT LBRACKET fbindingseq RBRACKET
+
+State 88:
+gformat -> LPAREN gformatseq . RPAREN [ SLASH SEMI RPAREN RBRACKET PHASE DOT COMMA ]
+-- On RPAREN shift to state 89
+
+State 89:
+gformat -> LPAREN gformatseq RPAREN . [ SLASH SEMI RPAREN RBRACKET PHASE DOT COMMA ]
+-- On SLASH reduce production gformat -> LPAREN gformatseq RPAREN
+-- On SEMI reduce production gformat -> LPAREN gformatseq RPAREN
+-- On RPAREN reduce production gformat -> LPAREN gformatseq RPAREN
+-- On RBRACKET reduce production gformat -> LPAREN gformatseq RPAREN
+-- On PHASE reduce production gformat -> LPAREN gformatseq RPAREN
+-- On DOT reduce production gformat -> LPAREN gformatseq RPAREN
+-- On COMMA reduce production gformat -> LPAREN gformatseq RPAREN
+
+State 90:
+gfactformat -> IDENT COLON gformatseq . optphase [ SLASH SEMI DOT ]
+-- On PHASE shift to state 91
+-- On optphase shift to state 93
+-- On SLASH reduce production optphase -> 
+-- On SEMI reduce production optphase -> 
+-- On DOT reduce production optphase -> 
+
+State 91:
+optphase -> PHASE . INT [ WEDGE SLASH SEMI RPAREN DOT BEFORE BAR ]
+-- On INT shift to state 92
+
+State 92:
+optphase -> PHASE INT . [ WEDGE SLASH SEMI RPAREN DOT BEFORE BAR ]
+-- On WEDGE reduce production optphase -> PHASE INT
+-- On SLASH reduce production optphase -> PHASE INT
+-- On SEMI reduce production optphase -> PHASE INT
+-- On RPAREN reduce production optphase -> PHASE INT
+-- On DOT reduce production optphase -> PHASE INT
+-- On BEFORE reduce production optphase -> PHASE INT
+-- On BAR reduce production optphase -> PHASE INT
+
+State 93:
+gfactformat -> IDENT COLON gformatseq optphase . [ SLASH SEMI DOT ]
+-- On SLASH reduce production gfactformat -> IDENT COLON gformatseq optphase
+-- On SEMI reduce production gfactformat -> IDENT COLON gformatseq optphase
+-- On DOT reduce production gfactformat -> IDENT COLON gformatseq optphase
+
+State 94:
+lib -> NOUNIF gfactformat . optint foptbindingseq DOT lib [ PROCESS ]
+-- On SLASH shift to state 95
+-- On optint shift to state 97
+-- On SEMI reduce production optint -> 
+-- On DOT reduce production optint -> 
+
+State 95:
+optint -> SLASH . INT [ SEMI DOT ]
+-- On INT shift to state 96
+
+State 96:
+optint -> SLASH INT . [ SEMI DOT ]
+-- On SEMI reduce production optint -> SLASH INT
+-- On DOT reduce production optint -> SLASH INT
+
+State 97:
+lib -> NOUNIF gfactformat optint . foptbindingseq DOT lib [ PROCESS ]
+-- On SEMI shift to state 98
+-- On foptbindingseq shift to state 105
+-- On DOT reduce production foptbindingseq -> 
+
+State 98:
+foptbindingseq -> SEMI . fnebindingseq [ DOT ]
+-- On IDENT shift to state 99
+-- On fnebindingseq shift to state 104
+
+State 99:
+fnebindingseq -> IDENT . EQUAL gformat SEMI fnebindingseq [ DOT ]
+fnebindingseq -> IDENT . EQUAL gformat [ DOT ]
+-- On EQUAL shift to state 100
+
+State 100:
+fnebindingseq -> IDENT EQUAL . gformat SEMI fnebindingseq [ DOT ]
+fnebindingseq -> IDENT EQUAL . gformat [ DOT ]
+-- On STAR shift to state 62
+-- On LPAREN shift to state 64
+-- On IDENT shift to state 65
+-- On gformat shift to state 101
+
+State 101:
+fnebindingseq -> IDENT EQUAL gformat . SEMI fnebindingseq [ DOT ]
+fnebindingseq -> IDENT EQUAL gformat . [ DOT ]
+-- On SEMI shift to state 102
+-- On DOT reduce production fnebindingseq -> IDENT EQUAL gformat
+
+State 102:
+fnebindingseq -> IDENT EQUAL gformat SEMI . fnebindingseq [ DOT ]
+-- On IDENT shift to state 99
+-- On fnebindingseq shift to state 103
+
+State 103:
+fnebindingseq -> IDENT EQUAL gformat SEMI fnebindingseq . [ DOT ]
+-- On DOT reduce production fnebindingseq -> IDENT EQUAL gformat SEMI fnebindingseq
+
+State 104:
+foptbindingseq -> SEMI fnebindingseq . [ DOT ]
+-- On DOT reduce production foptbindingseq -> SEMI fnebindingseq
+
+State 105:
+lib -> NOUNIF gfactformat optint foptbindingseq . DOT lib [ PROCESS ]
+-- On DOT shift to state 106
+
+State 106:
+lib -> NOUNIF gfactformat optint foptbindingseq DOT . lib [ PROCESS ]
+-- On WEAKSECRET shift to state 1
+-- On QUERY shift to state 4
+-- On PRIVATE shift to state 48
+-- On PREDICATE shift to state 49
+-- On PARAM shift to state 54
+-- On NOUNIF shift to state 59
+-- On NOT shift to state 107
+-- On NONINTERF shift to state 123
+-- On LET shift to state 149
+-- On EQUATION shift to state 259
+-- On ELIMTRUE shift to state 267
+-- On DATA shift to state 277
+-- On CLAUSES shift to state 282
+-- On CELL shift to state 295
+-- On privateopt shift to state 301
+-- On lib shift to state 366
+-- On REDUCTION reduce production privateopt -> 
+-- On PROCESS reduce production lib -> 
+-- On FUN reduce production privateopt -> 
+-- On FREE reduce production privateopt -> 
+
+State 107:
+lib -> NOT . gterm optphase optbindingseq DOT lib [ PROCESS ]
+lib -> NOT . event optbindingseq DOT lib [ PROCESS ]
+-- On LPAREN shift to state 12
+-- On IDENT shift to state 42
+-- On gterm shift to state 108
+-- On gfact shift to state 360
+-- On event shift to state 362
+
+State 108:
+gfact -> gterm . DIFF gterm [ SEMI PHASE DOT ]
+gfact -> gterm . EQUAL gterm [ SEMI PHASE DOT ]
+lib -> NOT gterm . optphase optbindingseq DOT lib [ PROCESS ]
+-- On PHASE shift to state 91
+-- On EQUAL shift to state 109
+-- On DIFF shift to state 111
+-- On optphase shift to state 113
+-- On SEMI reduce production optphase -> 
+-- On DOT reduce production optphase -> 
+
+State 109:
+gfact -> gterm EQUAL . gterm [ WEDGE SEMI RPAREN PHASE DOT BEFORE BAR ]
+-- On LPAREN shift to state 12
+-- On IDENT shift to state 13
+-- On gterm shift to state 110
+
+State 110:
+gfact -> gterm EQUAL gterm . [ WEDGE SEMI RPAREN PHASE DOT BEFORE BAR ]
+-- On WEDGE reduce production gfact -> gterm EQUAL gterm
+-- On SEMI reduce production gfact -> gterm EQUAL gterm
+-- On RPAREN reduce production gfact -> gterm EQUAL gterm
+-- On PHASE reduce production gfact -> gterm EQUAL gterm
+-- On DOT reduce production gfact -> gterm EQUAL gterm
+-- On BEFORE reduce production gfact -> gterm EQUAL gterm
+-- On BAR reduce production gfact -> gterm EQUAL gterm
+
+State 111:
+gfact -> gterm DIFF . gterm [ WEDGE SEMI RPAREN PHASE DOT BEFORE BAR ]
+-- On LPAREN shift to state 12
+-- On IDENT shift to state 13
+-- On gterm shift to state 112
+
+State 112:
+gfact -> gterm DIFF gterm . [ WEDGE SEMI RPAREN PHASE DOT BEFORE BAR ]
+-- On WEDGE reduce production gfact -> gterm DIFF gterm
+-- On SEMI reduce production gfact -> gterm DIFF gterm
+-- On RPAREN reduce production gfact -> gterm DIFF gterm
+-- On PHASE reduce production gfact -> gterm DIFF gterm
+-- On DOT reduce production gfact -> gterm DIFF gterm
+-- On BEFORE reduce production gfact -> gterm DIFF gterm
+-- On BAR reduce production gfact -> gterm DIFF gterm
+
+State 113:
+lib -> NOT gterm optphase . optbindingseq DOT lib [ PROCESS ]
+-- On SEMI shift to state 114
+-- On optbindingseq shift to state 121
+-- On DOT reduce production optbindingseq -> 
+
+State 114:
+optbindingseq -> SEMI . nebindingseq [ DOT ]
+-- On IDENT shift to state 115
+-- On nebindingseq shift to state 120
+
+State 115:
+nebindingseq -> IDENT . EQUAL gterm SEMI nebindingseq [ DOT ]
+nebindingseq -> IDENT . EQUAL gterm [ DOT ]
+-- On EQUAL shift to state 116
+
+State 116:
+nebindingseq -> IDENT EQUAL . gterm SEMI nebindingseq [ DOT ]
+nebindingseq -> IDENT EQUAL . gterm [ DOT ]
+-- On LPAREN shift to state 12
+-- On IDENT shift to state 13
+-- On gterm shift to state 117
+
+State 117:
+nebindingseq -> IDENT EQUAL gterm . SEMI nebindingseq [ DOT ]
+nebindingseq -> IDENT EQUAL gterm . [ DOT ]
+-- On SEMI shift to state 118
+-- On DOT reduce production nebindingseq -> IDENT EQUAL gterm
+
+State 118:
+nebindingseq -> IDENT EQUAL gterm SEMI . nebindingseq [ DOT ]
+-- On IDENT shift to state 115
+-- On nebindingseq shift to state 119
+
+State 119:
+nebindingseq -> IDENT EQUAL gterm SEMI nebindingseq . [ DOT ]
+-- On DOT reduce production nebindingseq -> IDENT EQUAL gterm SEMI nebindingseq
+
+State 120:
+optbindingseq -> SEMI nebindingseq . [ DOT ]
+-- On DOT reduce production optbindingseq -> SEMI nebindingseq
+
+State 121:
+lib -> NOT gterm optphase optbindingseq . DOT lib [ PROCESS ]
+-- On DOT shift to state 122
+
+State 122:
+lib -> NOT gterm optphase optbindingseq DOT . lib [ PROCESS ]
+-- On WEAKSECRET shift to state 1
+-- On QUERY shift to state 4
+-- On PRIVATE shift to state 48
+-- On PREDICATE shift to state 49
+-- On PARAM shift to state 54
+-- On NOUNIF shift to state 59
+-- On NOT shift to state 107
+-- On NONINTERF shift to state 123
+-- On LET shift to state 149
+-- On EQUATION shift to state 259
+-- On ELIMTRUE shift to state 267
+-- On DATA shift to state 277
+-- On CLAUSES shift to state 282
+-- On CELL shift to state 295
+-- On privateopt shift to state 301
+-- On lib shift to state 359
+-- On REDUCTION reduce production privateopt -> 
+-- On PROCESS reduce production lib -> 
+-- On FUN reduce production privateopt -> 
+-- On FREE reduce production privateopt -> 
+
+State 123:
+lib -> NONINTERF . niseq DOT lib [ PROCESS ]
+-- On IDENT shift to state 124
+-- On niseq shift to state 147
+-- On ni shift to state 356
+
+State 124:
+ni -> IDENT . AMONG LPAREN netermseq RPAREN [ DOT COMMA ]
+ni -> IDENT . [ DOT COMMA ]
+-- On AMONG shift to state 125
+-- On DOT reduce production ni -> IDENT
+-- On COMMA reduce production ni -> IDENT
+
+State 125:
+ni -> IDENT AMONG . LPAREN netermseq RPAREN [ DOT COMMA ]
+-- On LPAREN shift to state 126
+
+State 126:
+ni -> IDENT AMONG LPAREN . netermseq RPAREN [ DOT COMMA ]
+-- On LPAREN shift to state 127
+-- On IDENT shift to state 128
+-- On FAIL shift to state 130
+-- On CHOICE shift to state 131
+-- On term shift to state 139
+-- On netermseq shift to state 145
+
+State 127:
+term -> LPAREN . termseq RPAREN [ WHERE WEDGE THEN SEMI RPAREN RED RBRACKET OTHERWISE IN EQUIVEQ EQUIV EQUAL EOF ELSE DOT DIFF COMMA BAR ]
+-- On LPAREN shift to state 127
+-- On IDENT shift to state 128
+-- On FAIL shift to state 130
+-- On CHOICE shift to state 131
+-- On termseq shift to state 143
+-- On term shift to state 139
+-- On netermseq shift to state 142
+-- On RPAREN reduce production termseq -> 
+
+State 128:
+term -> IDENT . LPAREN termseq RPAREN [ WHERE WEDGE THEN SEMI RPAREN RED RBRACKET OTHERWISE IN EQUIVEQ EQUIV EQUAL EOF ELSE DOT COMMA BAR ]
+term -> IDENT . [ WHERE WEDGE THEN SEMI RPAREN RED RBRACKET OTHERWISE IN EQUIVEQ EQUIV EQUAL EOF ELSE DOT COMMA BAR ]
+-- On LPAREN shift to state 129
+-- On WHERE reduce production term -> IDENT
+-- On WEDGE reduce production term -> IDENT
+-- On THEN reduce production term -> IDENT
+-- On SEMI reduce production term -> IDENT
+-- On RPAREN reduce production term -> IDENT
+-- On RED reduce production term -> IDENT
+-- On RBRACKET reduce production term -> IDENT
+-- On OTHERWISE reduce production term -> IDENT
+-- On IN reduce production term -> IDENT
+-- On EQUIVEQ reduce production term -> IDENT
+-- On EQUIV reduce production term -> IDENT
+-- On EQUAL reduce production term -> IDENT
+-- On EOF reduce production term -> IDENT
+-- On ELSE reduce production term -> IDENT
+-- On DOT reduce production term -> IDENT
+-- On COMMA reduce production term -> IDENT
+-- On BAR reduce production term -> IDENT
+
+State 129:
+term -> IDENT LPAREN . termseq RPAREN [ WHERE WEDGE THEN SEMI RPAREN RED RBRACKET OTHERWISE IN EQUIVEQ EQUIV EQUAL EOF ELSE DOT DIFF COMMA BAR ]
+-- On LPAREN shift to state 127
+-- On IDENT shift to state 128
+-- On FAIL shift to state 130
+-- On CHOICE shift to state 131
+-- On termseq shift to state 137
+-- On term shift to state 139
+-- On netermseq shift to state 142
+-- On RPAREN reduce production termseq -> 
+
+State 130:
+term -> FAIL . [ WHERE WEDGE THEN SEMI RPAREN RED RBRACKET OTHERWISE IN EQUIVEQ EQUIV EQUAL EOF ELSE DOT DIFF COMMA BAR ]
+-- On WHERE reduce production term -> FAIL
+-- On WEDGE reduce production term -> FAIL
+-- On THEN reduce production term -> FAIL
+-- On SEMI reduce production term -> FAIL
+-- On RPAREN reduce production term -> FAIL
+-- On RED reduce production term -> FAIL
+-- On RBRACKET reduce production term -> FAIL
+-- On OTHERWISE reduce production term -> FAIL
+-- On IN reduce production term -> FAIL
+-- On EQUIVEQ reduce production term -> FAIL
+-- On EQUIV reduce production term -> FAIL
+-- On EQUAL reduce production term -> FAIL
+-- On EOF reduce production term -> FAIL
+-- On ELSE reduce production term -> FAIL
+-- On DOT reduce production term -> FAIL
+-- On DIFF reduce production term -> FAIL
+-- On COMMA reduce production term -> FAIL
+-- On BAR reduce production term -> FAIL
+
+State 131:
+term -> CHOICE . LBRACKET term COMMA term RBRACKET [ WHERE WEDGE THEN SEMI RPAREN RED RBRACKET OTHERWISE IN EQUIVEQ EQUIV EQUAL EOF ELSE DOT DIFF COMMA BAR ]
+-- On LBRACKET shift to state 132
+
+State 132:
+term -> CHOICE LBRACKET . term COMMA term RBRACKET [ WHERE WEDGE THEN SEMI RPAREN RED RBRACKET OTHERWISE IN EQUIVEQ EQUIV EQUAL EOF ELSE DOT DIFF COMMA BAR ]
+-- On LPAREN shift to state 127
+-- On IDENT shift to state 128
+-- On FAIL shift to state 130
+-- On CHOICE shift to state 131
+-- On term shift to state 133
+
+State 133:
+term -> CHOICE LBRACKET term . COMMA term RBRACKET [ WHERE WEDGE THEN SEMI RPAREN RED RBRACKET OTHERWISE IN EQUIVEQ EQUIV EQUAL EOF ELSE DOT DIFF COMMA BAR ]
+-- On COMMA shift to state 134
+
+State 134:
+term -> CHOICE LBRACKET term COMMA . term RBRACKET [ WHERE WEDGE THEN SEMI RPAREN RED RBRACKET OTHERWISE IN EQUIVEQ EQUIV EQUAL EOF ELSE DOT DIFF COMMA BAR ]
+-- On LPAREN shift to state 127
+-- On IDENT shift to state 128
+-- On FAIL shift to state 130
+-- On CHOICE shift to state 131
+-- On term shift to state 135
+
+State 135:
+term -> CHOICE LBRACKET term COMMA term . RBRACKET [ WHERE WEDGE THEN SEMI RPAREN RED RBRACKET OTHERWISE IN EQUIVEQ EQUIV EQUAL EOF ELSE DOT DIFF COMMA BAR ]
+-- On RBRACKET shift to state 136
+
+State 136:
+term -> CHOICE LBRACKET term COMMA term RBRACKET . [ WHERE WEDGE THEN SEMI RPAREN RED RBRACKET OTHERWISE IN EQUIVEQ EQUIV EQUAL EOF ELSE DOT DIFF COMMA BAR ]
+-- On WHERE reduce production term -> CHOICE LBRACKET term COMMA term RBRACKET
+-- On WEDGE reduce production term -> CHOICE LBRACKET term COMMA term RBRACKET
+-- On THEN reduce production term -> CHOICE LBRACKET term COMMA term RBRACKET
+-- On SEMI reduce production term -> CHOICE LBRACKET term COMMA term RBRACKET
+-- On RPAREN reduce production term -> CHOICE LBRACKET term COMMA term RBRACKET
+-- On RED reduce production term -> CHOICE LBRACKET term COMMA term RBRACKET
+-- On RBRACKET reduce production term -> CHOICE LBRACKET term COMMA term RBRACKET
+-- On OTHERWISE reduce production term -> CHOICE LBRACKET term COMMA term RBRACKET
+-- On IN reduce production term -> CHOICE LBRACKET term COMMA term RBRACKET
+-- On EQUIVEQ reduce production term -> CHOICE LBRACKET term COMMA term RBRACKET
+-- On EQUIV reduce production term -> CHOICE LBRACKET term COMMA term RBRACKET
+-- On EQUAL reduce production term -> CHOICE LBRACKET term COMMA term RBRACKET
+-- On EOF reduce production term -> CHOICE LBRACKET term COMMA term RBRACKET
+-- On ELSE reduce production term -> CHOICE LBRACKET term COMMA term RBRACKET
+-- On DOT reduce production term -> CHOICE LBRACKET term COMMA term RBRACKET
+-- On DIFF reduce production term -> CHOICE LBRACKET term COMMA term RBRACKET
+-- On COMMA reduce production term -> CHOICE LBRACKET term COMMA term RBRACKET
+-- On BAR reduce production term -> CHOICE LBRACKET term COMMA term RBRACKET
+
+State 137:
+term -> IDENT LPAREN termseq . RPAREN [ WHERE WEDGE THEN SEMI RPAREN RED RBRACKET OTHERWISE IN EQUIVEQ EQUIV EQUAL EOF ELSE DOT DIFF COMMA BAR ]
+-- On RPAREN shift to state 138
+
+State 138:
+term -> IDENT LPAREN termseq RPAREN . [ WHERE WEDGE THEN SEMI RPAREN RED RBRACKET OTHERWISE IN EQUIVEQ EQUIV EQUAL EOF ELSE DOT DIFF COMMA BAR ]
+-- On WHERE reduce production term -> IDENT LPAREN termseq RPAREN
+-- On WEDGE reduce production term -> IDENT LPAREN termseq RPAREN
+-- On THEN reduce production term -> IDENT LPAREN termseq RPAREN
+-- On SEMI reduce production term -> IDENT LPAREN termseq RPAREN
+-- On RPAREN reduce production term -> IDENT LPAREN termseq RPAREN
+-- On RED reduce production term -> IDENT LPAREN termseq RPAREN
+-- On RBRACKET reduce production term -> IDENT LPAREN termseq RPAREN
+-- On OTHERWISE reduce production term -> IDENT LPAREN termseq RPAREN
+-- On IN reduce production term -> IDENT LPAREN termseq RPAREN
+-- On EQUIVEQ reduce production term -> IDENT LPAREN termseq RPAREN
+-- On EQUIV reduce production term -> IDENT LPAREN termseq RPAREN
+-- On EQUAL reduce production term -> IDENT LPAREN termseq RPAREN
+-- On EOF reduce production term -> IDENT LPAREN termseq RPAREN
+-- On ELSE reduce production term -> IDENT LPAREN termseq RPAREN
+-- On DOT reduce production term -> IDENT LPAREN termseq RPAREN
+-- On DIFF reduce production term -> IDENT LPAREN termseq RPAREN
+-- On COMMA reduce production term -> IDENT LPAREN termseq RPAREN
+-- On BAR reduce production term -> IDENT LPAREN termseq RPAREN
+
+State 139:
+netermseq -> term . COMMA netermseq [ WHERE WEDGE THEN SEMI RPAREN RED IN EQUIVEQ EQUIV EOF ELSE DOT BAR ]
+netermseq -> term . [ WHERE WEDGE THEN SEMI RPAREN RED IN EQUIVEQ EQUIV EOF ELSE DOT BAR ]
+-- On COMMA shift to state 140
+-- On WHERE reduce production netermseq -> term
+-- On WEDGE reduce production netermseq -> term
+-- On THEN reduce production netermseq -> term
+-- On SEMI reduce production netermseq -> term
+-- On RPAREN reduce production netermseq -> term
+-- On RED reduce production netermseq -> term
+-- On IN reduce production netermseq -> term
+-- On EQUIVEQ reduce production netermseq -> term
+-- On EQUIV reduce production netermseq -> term
+-- On EOF reduce production netermseq -> term
+-- On ELSE reduce production netermseq -> term
+-- On DOT reduce production netermseq -> term
+-- On BAR reduce production netermseq -> term
+
+State 140:
+netermseq -> term COMMA . netermseq [ WHERE WEDGE THEN SEMI RPAREN RED IN EQUIVEQ EQUIV EOF ELSE DOT BAR ]
+-- On LPAREN shift to state 127
+-- On IDENT shift to state 128
+-- On FAIL shift to state 130
+-- On CHOICE shift to state 131
+-- On term shift to state 139
+-- On netermseq shift to state 141
+
+State 141:
+netermseq -> term COMMA netermseq . [ WHERE WEDGE THEN SEMI RPAREN RED IN EQUIVEQ EQUIV EOF ELSE DOT BAR ]
+-- On WHERE reduce production netermseq -> term COMMA netermseq
+-- On WEDGE reduce production netermseq -> term COMMA netermseq
+-- On THEN reduce production netermseq -> term COMMA netermseq
+-- On SEMI reduce production netermseq -> term COMMA netermseq
+-- On RPAREN reduce production netermseq -> term COMMA netermseq
+-- On RED reduce production netermseq -> term COMMA netermseq
+-- On IN reduce production netermseq -> term COMMA netermseq
+-- On EQUIVEQ reduce production netermseq -> term COMMA netermseq
+-- On EQUIV reduce production netermseq -> term COMMA netermseq
+-- On EOF reduce production netermseq -> term COMMA netermseq
+-- On ELSE reduce production netermseq -> term COMMA netermseq
+-- On DOT reduce production netermseq -> term COMMA netermseq
+-- On BAR reduce production netermseq -> term COMMA netermseq
+
+State 142:
+termseq -> netermseq . [ WHERE WEDGE THEN SEMI RPAREN RED IN EQUIVEQ EQUIV DOT ]
+-- On WHERE reduce production termseq -> netermseq
+-- On WEDGE reduce production termseq -> netermseq
+-- On THEN reduce production termseq -> netermseq
+-- On SEMI reduce production termseq -> netermseq
+-- On RPAREN reduce production termseq -> netermseq
+-- On RED reduce production termseq -> netermseq
+-- On IN reduce production termseq -> netermseq
+-- On EQUIVEQ reduce production termseq -> netermseq
+-- On EQUIV reduce production termseq -> netermseq
+-- On DOT reduce production termseq -> netermseq
+
+State 143:
+term -> LPAREN termseq . RPAREN [ WHERE WEDGE THEN SEMI RPAREN RED RBRACKET OTHERWISE IN EQUIVEQ EQUIV EQUAL EOF ELSE DOT DIFF COMMA BAR ]
+-- On RPAREN shift to state 144
+
+State 144:
+term -> LPAREN termseq RPAREN . [ WHERE WEDGE THEN SEMI RPAREN RED RBRACKET OTHERWISE IN EQUIVEQ EQUIV EQUAL EOF ELSE DOT DIFF COMMA BAR ]
+-- On WHERE reduce production term -> LPAREN termseq RPAREN
+-- On WEDGE reduce production term -> LPAREN termseq RPAREN
+-- On THEN reduce production term -> LPAREN termseq RPAREN
+-- On SEMI reduce production term -> LPAREN termseq RPAREN
+-- On RPAREN reduce production term -> LPAREN termseq RPAREN
+-- On RED reduce production term -> LPAREN termseq RPAREN
+-- On RBRACKET reduce production term -> LPAREN termseq RPAREN
+-- On OTHERWISE reduce production term -> LPAREN termseq RPAREN
+-- On IN reduce production term -> LPAREN termseq RPAREN
+-- On EQUIVEQ reduce production term -> LPAREN termseq RPAREN
+-- On EQUIV reduce production term -> LPAREN termseq RPAREN
+-- On EQUAL reduce production term -> LPAREN termseq RPAREN
+-- On EOF reduce production term -> LPAREN termseq RPAREN
+-- On ELSE reduce production term -> LPAREN termseq RPAREN
+-- On DOT reduce production term -> LPAREN termseq RPAREN
+-- On DIFF reduce production term -> LPAREN termseq RPAREN
+-- On COMMA reduce production term -> LPAREN termseq RPAREN
+-- On BAR reduce production term -> LPAREN termseq RPAREN
+
+State 145:
+ni -> IDENT AMONG LPAREN netermseq . RPAREN [ DOT COMMA ]
+-- On RPAREN shift to state 146
+
+State 146:
+ni -> IDENT AMONG LPAREN netermseq RPAREN . [ DOT COMMA ]
+-- On DOT reduce production ni -> IDENT AMONG LPAREN netermseq RPAREN
+-- On COMMA reduce production ni -> IDENT AMONG LPAREN netermseq RPAREN
+
+State 147:
+lib -> NONINTERF niseq . DOT lib [ PROCESS ]
+-- On DOT shift to state 148
+
+State 148:
+lib -> NONINTERF niseq DOT . lib [ PROCESS ]
+-- On WEAKSECRET shift to state 1
+-- On QUERY shift to state 4
+-- On PRIVATE shift to state 48
+-- On PREDICATE shift to state 49
+-- On PARAM shift to state 54
+-- On NOUNIF shift to state 59
+-- On NOT shift to state 107
+-- On NONINTERF shift to state 123
+-- On LET shift to state 149
+-- On EQUATION shift to state 259
+-- On ELIMTRUE shift to state 267
+-- On DATA shift to state 277
+-- On CLAUSES shift to state 282
+-- On CELL shift to state 295
+-- On privateopt shift to state 301
+-- On lib shift to state 355
+-- On REDUCTION reduce production privateopt -> 
+-- On PROCESS reduce production lib -> 
+-- On FUN reduce production privateopt -> 
+-- On FREE reduce production privateopt -> 
+
+State 149:
+lib -> LET . IDENT EQUAL process DOT lib [ PROCESS ]
+-- On IDENT shift to state 150
+
+State 150:
+lib -> LET IDENT . EQUAL process DOT lib [ PROCESS ]
+-- On EQUAL shift to state 151
+
+State 151:
+lib -> LET IDENT EQUAL . process DOT lib [ PROCESS ]
+-- On UNLOCK shift to state 152
+-- On REPL shift to state 157
+-- On READ shift to state 158
+-- On PHASE shift to state 175
+-- On OUT shift to state 178
+-- On NEW shift to state 185
+-- On LPAREN shift to state 188
+-- On LOCK shift to state 189
+-- On LET shift to state 194
+-- On INT shift to state 200
+-- On IN shift to state 201
+-- On IF shift to state 208
+-- On IDENT shift to state 219
+-- On EVENT shift to state 220
+-- On BARRIER shift to state 226
+-- On process shift to state 257
+-- On neidentseq shift to state 238
+
+State 152:
+process -> UNLOCK . LPAREN neidentseq RPAREN optprocess [ RPAREN EOF ELSE DOT BAR ]
+-- On LPAREN shift to state 153
+
+State 153:
+process -> UNLOCK LPAREN . neidentseq RPAREN optprocess [ RPAREN EOF ELSE DOT BAR ]
+-- On IDENT shift to state 8
+-- On neidentseq shift to state 154
+
+State 154:
+process -> UNLOCK LPAREN neidentseq . RPAREN optprocess [ RPAREN EOF ELSE DOT BAR ]
+-- On RPAREN shift to state 155
+
+State 155:
+process -> UNLOCK LPAREN neidentseq RPAREN . optprocess [ RPAREN EOF ELSE DOT BAR ]
+-- On SEMI shift to state 156
+-- On optprocess shift to state 256
+-- On RPAREN reduce production optprocess -> 
+-- On EOF reduce production optprocess -> 
+-- On ELSE reduce production optprocess -> 
+-- On DOT reduce production optprocess -> 
+-- On BAR reduce production optprocess -> 
+
+State 156:
+optprocess -> SEMI . process [ RPAREN EOF ELSE DOT BAR ]
+-- On UNLOCK shift to state 152
+-- On REPL shift to state 157
+-- On READ shift to state 158
+-- On PHASE shift to state 175
+-- On OUT shift to state 178
+-- On NEW shift to state 185
+-- On LPAREN shift to state 188
+-- On LOCK shift to state 189
+-- On LET shift to state 194
+-- On INT shift to state 200
+-- On IN shift to state 201
+-- On IF shift to state 208
+-- On IDENT shift to state 219
+-- On EVENT shift to state 220
+-- On BARRIER shift to state 226
+-- On process shift to state 255
+-- On neidentseq shift to state 238
+
+State 157:
+process -> REPL . process [ RPAREN EOF ELSE DOT BAR ]
+-- On UNLOCK shift to state 152
+-- On REPL shift to state 157
+-- On READ shift to state 158
+-- On PHASE shift to state 175
+-- On OUT shift to state 178
+-- On NEW shift to state 185
+-- On LPAREN shift to state 188
+-- On LOCK shift to state 189
+-- On LET shift to state 194
+-- On INT shift to state 200
+-- On IN shift to state 201
+-- On IF shift to state 208
+-- On IDENT shift to state 219
+-- On EVENT shift to state 220
+-- On BARRIER shift to state 226
+-- On process shift to state 254
+-- On neidentseq shift to state 238
+
+State 158:
+process -> READ . neidentseq AS patternseq optprocess [ RPAREN EOF ELSE DOT BAR ]
+-- On IDENT shift to state 8
+-- On neidentseq shift to state 159
+
+State 159:
+process -> READ neidentseq . AS patternseq optprocess [ RPAREN EOF ELSE DOT BAR ]
+-- On AS shift to state 160
+
+State 160:
+process -> READ neidentseq AS . patternseq optprocess [ RPAREN EOF ELSE DOT BAR ]
+-- On LPAREN shift to state 161
+-- On IDENT shift to state 162
+-- On EQUAL shift to state 164
+-- On patternseq shift to state 173
+-- On pattern shift to state 168
+
+State 161:
+pattern -> LPAREN . patternseq RPAREN [ SEMI RPAREN EQUAL EOF ELSE DOT COMMA BAR ]
+-- On LPAREN shift to state 161
+-- On IDENT shift to state 162
+-- On EQUAL shift to state 164
+-- On patternseq shift to state 171
+-- On pattern shift to state 168
+
+State 162:
+pattern -> IDENT . [ SEMI RPAREN EOF ELSE DOT COMMA BAR ]
+pattern -> IDENT . LPAREN patternseq RPAREN [ SEMI RPAREN EOF ELSE DOT COMMA BAR ]
+-- On LPAREN shift to state 163
+-- On SEMI reduce production pattern -> IDENT
+-- On RPAREN reduce production pattern -> IDENT
+-- On EOF reduce production pattern -> IDENT
+-- On ELSE reduce production pattern -> IDENT
+-- On DOT reduce production pattern -> IDENT
+-- On COMMA reduce production pattern -> IDENT
+-- On BAR reduce production pattern -> IDENT
+
+State 163:
+pattern -> IDENT LPAREN . patternseq RPAREN [ SEMI RPAREN EQUAL EOF ELSE DOT COMMA BAR ]
+-- On LPAREN shift to state 161
+-- On IDENT shift to state 162
+-- On EQUAL shift to state 164
+-- On patternseq shift to state 166
+-- On pattern shift to state 168
+
+State 164:
+pattern -> EQUAL . term [ SEMI RPAREN EQUAL EOF ELSE DOT COMMA BAR ]
+-- On LPAREN shift to state 127
+-- On IDENT shift to state 128
+-- On FAIL shift to state 130
+-- On CHOICE shift to state 131
+-- On term shift to state 165
+
+State 165:
+pattern -> EQUAL term . [ SEMI RPAREN EQUAL EOF ELSE DOT COMMA BAR ]
+-- On SEMI reduce production pattern -> EQUAL term
+-- On RPAREN reduce production pattern -> EQUAL term
+-- On EQUAL reduce production pattern -> EQUAL term
+-- On EOF reduce production pattern -> EQUAL term
+-- On ELSE reduce production pattern -> EQUAL term
+-- On DOT reduce production pattern -> EQUAL term
+-- On COMMA reduce production pattern -> EQUAL term
+-- On BAR reduce production pattern -> EQUAL term
+
+State 166:
+pattern -> IDENT LPAREN patternseq . RPAREN [ SEMI RPAREN EQUAL EOF ELSE DOT COMMA BAR ]
+-- On RPAREN shift to state 167
+
+State 167:
+pattern -> IDENT LPAREN patternseq RPAREN . [ SEMI RPAREN EQUAL EOF ELSE DOT COMMA BAR ]
+-- On SEMI reduce production pattern -> IDENT LPAREN patternseq RPAREN
+-- On RPAREN reduce production pattern -> IDENT LPAREN patternseq RPAREN
+-- On EQUAL reduce production pattern -> IDENT LPAREN patternseq RPAREN
+-- On EOF reduce production pattern -> IDENT LPAREN patternseq RPAREN
+-- On ELSE reduce production pattern -> IDENT LPAREN patternseq RPAREN
+-- On DOT reduce production pattern -> IDENT LPAREN patternseq RPAREN
+-- On COMMA reduce production pattern -> IDENT LPAREN patternseq RPAREN
+-- On BAR reduce production pattern -> IDENT LPAREN patternseq RPAREN
+
+State 168:
+patternseq -> pattern . COMMA patternseq [ SEMI RPAREN EOF ELSE DOT BAR ]
+patternseq -> pattern . [ SEMI RPAREN EOF ELSE DOT BAR ]
+-- On COMMA shift to state 169
+-- On SEMI reduce production patternseq -> pattern
+-- On RPAREN reduce production patternseq -> pattern
+-- On EOF reduce production patternseq -> pattern
+-- On ELSE reduce production patternseq -> pattern
+-- On DOT reduce production patternseq -> pattern
+-- On BAR reduce production patternseq -> pattern
+
+State 169:
+patternseq -> pattern COMMA . patternseq [ SEMI RPAREN EOF ELSE DOT BAR ]
+-- On LPAREN shift to state 161
+-- On IDENT shift to state 162
+-- On EQUAL shift to state 164
+-- On patternseq shift to state 170
+-- On pattern shift to state 168
+
+State 170:
+patternseq -> pattern COMMA patternseq . [ SEMI RPAREN EOF ELSE DOT BAR ]
+-- On SEMI reduce production patternseq -> pattern COMMA patternseq
+-- On RPAREN reduce production patternseq -> pattern COMMA patternseq
+-- On EOF reduce production patternseq -> pattern COMMA patternseq
+-- On ELSE reduce production patternseq -> pattern COMMA patternseq
+-- On DOT reduce production patternseq -> pattern COMMA patternseq
+-- On BAR reduce production patternseq -> pattern COMMA patternseq
+
+State 171:
+pattern -> LPAREN patternseq . RPAREN [ SEMI RPAREN EQUAL EOF ELSE DOT COMMA BAR ]
+-- On RPAREN shift to state 172
+
+State 172:
+pattern -> LPAREN patternseq RPAREN . [ SEMI RPAREN EQUAL EOF ELSE DOT COMMA BAR ]
+-- On SEMI reduce production pattern -> LPAREN patternseq RPAREN
+-- On RPAREN reduce production pattern -> LPAREN patternseq RPAREN
+-- On EQUAL reduce production pattern -> LPAREN patternseq RPAREN
+-- On EOF reduce production pattern -> LPAREN patternseq RPAREN
+-- On ELSE reduce production pattern -> LPAREN patternseq RPAREN
+-- On DOT reduce production pattern -> LPAREN patternseq RPAREN
+-- On COMMA reduce production pattern -> LPAREN patternseq RPAREN
+-- On BAR reduce production pattern -> LPAREN patternseq RPAREN
+
+State 173:
+process -> READ neidentseq AS patternseq . optprocess [ RPAREN EOF ELSE DOT BAR ]
+-- On SEMI shift to state 156
+-- On optprocess shift to state 174
+-- On RPAREN reduce production optprocess -> 
+-- On EOF reduce production optprocess -> 
+-- On ELSE reduce production optprocess -> 
+-- On DOT reduce production optprocess -> 
+-- On BAR reduce production optprocess -> 
+
+State 174:
+process -> READ neidentseq AS patternseq optprocess . [ RPAREN EOF ELSE DOT BAR ]
+-- On RPAREN reduce production process -> READ neidentseq AS patternseq optprocess
+-- On EOF reduce production process -> READ neidentseq AS patternseq optprocess
+-- On ELSE reduce production process -> READ neidentseq AS patternseq optprocess
+-- On DOT reduce production process -> READ neidentseq AS patternseq optprocess
+-- On BAR reduce production process -> READ neidentseq AS patternseq optprocess
+
+State 175:
+process -> PHASE . INT optprocess [ RPAREN EOF ELSE DOT BAR ]
+-- On INT shift to state 176
+
+State 176:
+process -> PHASE INT . optprocess [ RPAREN EOF ELSE DOT BAR ]
+-- On SEMI shift to state 156
+-- On optprocess shift to state 177
+-- On RPAREN reduce production optprocess -> 
+-- On EOF reduce production optprocess -> 
+-- On ELSE reduce production optprocess -> 
+-- On DOT reduce production optprocess -> 
+-- On BAR reduce production optprocess -> 
+
+State 177:
+process -> PHASE INT optprocess . [ RPAREN EOF ELSE DOT BAR ]
+-- On RPAREN reduce production process -> PHASE INT optprocess
+-- On EOF reduce production process -> PHASE INT optprocess
+-- On ELSE reduce production process -> PHASE INT optprocess
+-- On DOT reduce production process -> PHASE INT optprocess
+-- On BAR reduce production process -> PHASE INT optprocess
+
+State 178:
+process -> OUT . LPAREN term COMMA term RPAREN optprocess [ RPAREN EOF ELSE DOT BAR ]
+-- On LPAREN shift to state 179
+
+State 179:
+process -> OUT LPAREN . term COMMA term RPAREN optprocess [ RPAREN EOF ELSE DOT BAR ]
+-- On LPAREN shift to state 127
+-- On IDENT shift to state 128
+-- On FAIL shift to state 130
+-- On CHOICE shift to state 131
+-- On term shift to state 180
+
+State 180:
+process -> OUT LPAREN term . COMMA term RPAREN optprocess [ RPAREN EOF ELSE DOT BAR ]
+-- On COMMA shift to state 181
+
+State 181:
+process -> OUT LPAREN term COMMA . term RPAREN optprocess [ RPAREN EOF ELSE DOT BAR ]
+-- On LPAREN shift to state 127
+-- On IDENT shift to state 128
+-- On FAIL shift to state 130
+-- On CHOICE shift to state 131
+-- On term shift to state 182
+
+State 182:
+process -> OUT LPAREN term COMMA term . RPAREN optprocess [ RPAREN EOF ELSE DOT BAR ]
+-- On RPAREN shift to state 183
+
+State 183:
+process -> OUT LPAREN term COMMA term RPAREN . optprocess [ RPAREN EOF ELSE DOT BAR ]
+-- On SEMI shift to state 156
+-- On optprocess shift to state 184
+-- On RPAREN reduce production optprocess -> 
+-- On EOF reduce production optprocess -> 
+-- On ELSE reduce production optprocess -> 
+-- On DOT reduce production optprocess -> 
+-- On BAR reduce production optprocess -> 
+
+State 184:
+process -> OUT LPAREN term COMMA term RPAREN optprocess . [ RPAREN EOF ELSE DOT BAR ]
+-- On RPAREN reduce production process -> OUT LPAREN term COMMA term RPAREN optprocess
+-- On EOF reduce production process -> OUT LPAREN term COMMA term RPAREN optprocess
+-- On ELSE reduce production process -> OUT LPAREN term COMMA term RPAREN optprocess
+-- On DOT reduce production process -> OUT LPAREN term COMMA term RPAREN optprocess
+-- On BAR reduce production process -> OUT LPAREN term COMMA term RPAREN optprocess
+
+State 185:
+process -> NEW . IDENT optprocess [ RPAREN EOF ELSE DOT BAR ]
+-- On IDENT shift to state 186
+
+State 186:
+process -> NEW IDENT . optprocess [ RPAREN EOF ELSE DOT BAR ]
+-- On SEMI shift to state 156
+-- On optprocess shift to state 187
+-- On RPAREN reduce production optprocess -> 
+-- On EOF reduce production optprocess -> 
+-- On ELSE reduce production optprocess -> 
+-- On DOT reduce production optprocess -> 
+-- On BAR reduce production optprocess -> 
+
+State 187:
+process -> NEW IDENT optprocess . [ RPAREN EOF ELSE DOT BAR ]
+-- On RPAREN reduce production process -> NEW IDENT optprocess
+-- On EOF reduce production process -> NEW IDENT optprocess
+-- On ELSE reduce production process -> NEW IDENT optprocess
+-- On DOT reduce production process -> NEW IDENT optprocess
+-- On BAR reduce production process -> NEW IDENT optprocess
+
+State 188:
+process -> LPAREN . process RPAREN [ RPAREN EOF ELSE DOT BAR ]
+-- On UNLOCK shift to state 152
+-- On REPL shift to state 157
+-- On READ shift to state 158
+-- On PHASE shift to state 175
+-- On OUT shift to state 178
+-- On NEW shift to state 185
+-- On LPAREN shift to state 188
+-- On LOCK shift to state 189
+-- On LET shift to state 194
+-- On INT shift to state 200
+-- On IN shift to state 201
+-- On IF shift to state 208
+-- On IDENT shift to state 219
+-- On EVENT shift to state 220
+-- On BARRIER shift to state 226
+-- On process shift to state 252
+-- On neidentseq shift to state 238
+
+State 189:
+process -> LOCK . LPAREN neidentseq RPAREN optprocess [ RPAREN EOF ELSE DOT BAR ]
+-- On LPAREN shift to state 190
+
+State 190:
+process -> LOCK LPAREN . neidentseq RPAREN optprocess [ RPAREN EOF ELSE DOT BAR ]
+-- On IDENT shift to state 8
+-- On neidentseq shift to state 191
+
+State 191:
+process -> LOCK LPAREN neidentseq . RPAREN optprocess [ RPAREN EOF ELSE DOT BAR ]
+-- On RPAREN shift to state 192
+
+State 192:
+process -> LOCK LPAREN neidentseq RPAREN . optprocess [ RPAREN EOF ELSE DOT BAR ]
+-- On SEMI shift to state 156
+-- On optprocess shift to state 193
+-- On RPAREN reduce production optprocess -> 
+-- On EOF reduce production optprocess -> 
+-- On ELSE reduce production optprocess -> 
+-- On DOT reduce production optprocess -> 
+-- On BAR reduce production optprocess -> 
+
+State 193:
+process -> LOCK LPAREN neidentseq RPAREN optprocess . [ RPAREN EOF ELSE DOT BAR ]
+-- On RPAREN reduce production process -> LOCK LPAREN neidentseq RPAREN optprocess
+-- On EOF reduce production process -> LOCK LPAREN neidentseq RPAREN optprocess
+-- On ELSE reduce production process -> LOCK LPAREN neidentseq RPAREN optprocess
+-- On DOT reduce production process -> LOCK LPAREN neidentseq RPAREN optprocess
+-- On BAR reduce production process -> LOCK LPAREN neidentseq RPAREN optprocess
+
+State 194:
+process -> LET . pattern EQUAL term IN process [ RPAREN EOF ELSE DOT BAR ]
+process -> LET . pattern EQUAL term IN process ELSE process [ RPAREN EOF ELSE DOT BAR ]
+process -> LET . neidentseq SUCHTHAT fact IN process [ RPAREN EOF ELSE DOT BAR ]
+process -> LET . neidentseq SUCHTHAT fact IN process ELSE process [ RPAREN EOF ELSE DOT BAR ]
+-- On LPAREN shift to state 161
+-- On IDENT shift to state 195
+-- On EQUAL shift to state 164
+-- On pattern shift to state 196
+-- On neidentseq shift to state 245
+
+State 195:
+neidentseq -> IDENT . COMMA neidentseq [ SUCHTHAT ]
+neidentseq -> IDENT . [ SUCHTHAT ]
+pattern -> IDENT . [ EQUAL ]
+pattern -> IDENT . LPAREN patternseq RPAREN [ EQUAL ]
+-- On LPAREN shift to state 163
+-- On COMMA shift to state 9
+-- On SUCHTHAT reduce production neidentseq -> IDENT
+-- On EQUAL reduce production pattern -> IDENT
+
+State 196:
+process -> LET pattern . EQUAL term IN process [ RPAREN EOF ELSE DOT BAR ]
+process -> LET pattern . EQUAL term IN process ELSE process [ RPAREN EOF ELSE DOT BAR ]
+-- On EQUAL shift to state 197
+
+State 197:
+process -> LET pattern EQUAL . term IN process [ RPAREN EOF ELSE DOT BAR ]
+process -> LET pattern EQUAL . term IN process ELSE process [ RPAREN EOF ELSE DOT BAR ]
+-- On LPAREN shift to state 127
+-- On IDENT shift to state 128
+-- On FAIL shift to state 130
+-- On CHOICE shift to state 131
+-- On term shift to state 198
+
+State 198:
+process -> LET pattern EQUAL term . IN process [ RPAREN EOF ELSE DOT BAR ]
+process -> LET pattern EQUAL term . IN process ELSE process [ RPAREN EOF ELSE DOT BAR ]
+-- On IN shift to state 199
+
+State 199:
+process -> LET pattern EQUAL term IN . process [ RPAREN EOF ELSE DOT BAR ]
+process -> LET pattern EQUAL term IN . process ELSE process [ RPAREN EOF ELSE DOT BAR ]
+-- On UNLOCK shift to state 152
+-- On REPL shift to state 157
+-- On READ shift to state 158
+-- On PHASE shift to state 175
+-- On OUT shift to state 178
+-- On NEW shift to state 185
+-- On LPAREN shift to state 188
+-- On LOCK shift to state 189
+-- On LET shift to state 194
+-- On INT shift to state 200
+-- On IN shift to state 201
+-- On IF shift to state 208
+-- On IDENT shift to state 219
+-- On EVENT shift to state 220
+-- On BARRIER shift to state 226
+-- On process shift to state 242
+-- On neidentseq shift to state 238
+
+State 200:
+process -> INT . [ RPAREN EOF ELSE DOT BAR ]
+-- On RPAREN reduce production process -> INT
+-- On EOF reduce production process -> INT
+-- On ELSE reduce production process -> INT
+-- On DOT reduce production process -> INT
+-- On BAR reduce production process -> INT
+
+State 201:
+process -> IN . LPAREN term COMMA pattern RPAREN optprocess [ RPAREN EOF ELSE DOT BAR ]
+-- On LPAREN shift to state 202
+
+State 202:
+process -> IN LPAREN . term COMMA pattern RPAREN optprocess [ RPAREN EOF ELSE DOT BAR ]
+-- On LPAREN shift to state 127
+-- On IDENT shift to state 128
+-- On FAIL shift to state 130
+-- On CHOICE shift to state 131
+-- On term shift to state 203
+
+State 203:
+process -> IN LPAREN term . COMMA pattern RPAREN optprocess [ RPAREN EOF ELSE DOT BAR ]
+-- On COMMA shift to state 204
+
+State 204:
+process -> IN LPAREN term COMMA . pattern RPAREN optprocess [ RPAREN EOF ELSE DOT BAR ]
+-- On LPAREN shift to state 161
+-- On IDENT shift to state 162
+-- On EQUAL shift to state 164
+-- On pattern shift to state 205
+
+State 205:
+process -> IN LPAREN term COMMA pattern . RPAREN optprocess [ RPAREN EOF ELSE DOT BAR ]
+-- On RPAREN shift to state 206
+
+State 206:
+process -> IN LPAREN term COMMA pattern RPAREN . optprocess [ RPAREN EOF ELSE DOT BAR ]
+-- On SEMI shift to state 156
+-- On optprocess shift to state 207
+-- On RPAREN reduce production optprocess -> 
+-- On EOF reduce production optprocess -> 
+-- On ELSE reduce production optprocess -> 
+-- On DOT reduce production optprocess -> 
+-- On BAR reduce production optprocess -> 
+
+State 207:
+process -> IN LPAREN term COMMA pattern RPAREN optprocess . [ RPAREN EOF ELSE DOT BAR ]
+-- On RPAREN reduce production process -> IN LPAREN term COMMA pattern RPAREN optprocess
+-- On EOF reduce production process -> IN LPAREN term COMMA pattern RPAREN optprocess
+-- On ELSE reduce production process -> IN LPAREN term COMMA pattern RPAREN optprocess
+-- On DOT reduce production process -> IN LPAREN term COMMA pattern RPAREN optprocess
+-- On BAR reduce production process -> IN LPAREN term COMMA pattern RPAREN optprocess
+
+State 208:
+process -> IF . fact THEN process ELSE process [ RPAREN EOF ELSE DOT BAR ]
+process -> IF . fact THEN process [ RPAREN EOF ELSE DOT BAR ]
+-- On LPAREN shift to state 127
+-- On IDENT shift to state 209
+-- On FAIL shift to state 130
+-- On CHOICE shift to state 131
+-- On term shift to state 212
+-- On fact shift to state 217
+
+State 209:
+fact -> IDENT . COLON termseq [ WHERE WEDGE THEN SEMI RED IN EQUIVEQ EQUIV DOT ]
+term -> IDENT . LPAREN termseq RPAREN [ EQUAL DIFF ]
+term -> IDENT . [ EQUAL DIFF ]
+-- On LPAREN shift to state 129
+-- On COLON shift to state 210
+-- On EQUAL reduce production term -> IDENT
+-- On DIFF reduce production term -> IDENT
+
+State 210:
+fact -> IDENT COLON . termseq [ WHERE WEDGE THEN SEMI RED IN EQUIVEQ EQUIV DOT ]
+-- On LPAREN shift to state 127
+-- On IDENT shift to state 128
+-- On FAIL shift to state 130
+-- On CHOICE shift to state 131
+-- On termseq shift to state 211
+-- On term shift to state 139
+-- On netermseq shift to state 142
+-- On WHERE reduce production termseq -> 
+-- On WEDGE reduce production termseq -> 
+-- On THEN reduce production termseq -> 
+-- On SEMI reduce production termseq -> 
+-- On RED reduce production termseq -> 
+-- On IN reduce production termseq -> 
+-- On EQUIVEQ reduce production termseq -> 
+-- On EQUIV reduce production termseq -> 
+-- On DOT reduce production termseq -> 
+
+State 211:
+fact -> IDENT COLON termseq . [ WHERE WEDGE THEN SEMI RED IN EQUIVEQ EQUIV DOT ]
+-- On WHERE reduce production fact -> IDENT COLON termseq
+-- On WEDGE reduce production fact -> IDENT COLON termseq
+-- On THEN reduce production fact -> IDENT COLON termseq
+-- On SEMI reduce production fact -> IDENT COLON termseq
+-- On RED reduce production fact -> IDENT COLON termseq
+-- On IN reduce production fact -> IDENT COLON termseq
+-- On EQUIVEQ reduce production fact -> IDENT COLON termseq
+-- On EQUIV reduce production fact -> IDENT COLON termseq
+-- On DOT reduce production fact -> IDENT COLON termseq
+
+State 212:
+fact -> term . DIFF term [ WHERE WEDGE THEN SEMI RED IN EQUIVEQ EQUIV DOT ]
+fact -> term . EQUAL term [ WHERE WEDGE THEN SEMI RED IN EQUIVEQ EQUIV DOT ]
+-- On EQUAL shift to state 213
+-- On DIFF shift to state 215
+
+State 213:
+fact -> term EQUAL . term [ WHERE WEDGE THEN SEMI RED IN EQUIVEQ EQUIV DOT ]
+-- On LPAREN shift to state 127
+-- On IDENT shift to state 128
+-- On FAIL shift to state 130
+-- On CHOICE shift to state 131
+-- On term shift to state 214
+
+State 214:
+fact -> term EQUAL term . [ WHERE WEDGE THEN SEMI RED IN EQUIVEQ EQUIV DOT ]
+-- On WHERE reduce production fact -> term EQUAL term
+-- On WEDGE reduce production fact -> term EQUAL term
+-- On THEN reduce production fact -> term EQUAL term
+-- On SEMI reduce production fact -> term EQUAL term
+-- On RED reduce production fact -> term EQUAL term
+-- On IN reduce production fact -> term EQUAL term
+-- On EQUIVEQ reduce production fact -> term EQUAL term
+-- On EQUIV reduce production fact -> term EQUAL term
+-- On DOT reduce production fact -> term EQUAL term
+
+State 215:
+fact -> term DIFF . term [ WHERE WEDGE THEN SEMI RED IN EQUIVEQ EQUIV DOT ]
+-- On LPAREN shift to state 127
+-- On IDENT shift to state 128
+-- On FAIL shift to state 130
+-- On CHOICE shift to state 131
+-- On term shift to state 216
+
+State 216:
+fact -> term DIFF term . [ WHERE WEDGE THEN SEMI RED IN EQUIVEQ EQUIV DOT ]
+-- On WHERE reduce production fact -> term DIFF term
+-- On WEDGE reduce production fact -> term DIFF term
+-- On THEN reduce production fact -> term DIFF term
+-- On SEMI reduce production fact -> term DIFF term
+-- On RED reduce production fact -> term DIFF term
+-- On IN reduce production fact -> term DIFF term
+-- On EQUIVEQ reduce production fact -> term DIFF term
+-- On EQUIV reduce production fact -> term DIFF term
+-- On DOT reduce production fact -> term DIFF term
+
+State 217:
+process -> IF fact . THEN process ELSE process [ RPAREN EOF ELSE DOT BAR ]
+process -> IF fact . THEN process [ RPAREN EOF ELSE DOT BAR ]
+-- On THEN shift to state 218
+
+State 218:
+process -> IF fact THEN . process ELSE process [ RPAREN EOF ELSE DOT BAR ]
+process -> IF fact THEN . process [ RPAREN EOF ELSE DOT BAR ]
+-- On UNLOCK shift to state 152
+-- On REPL shift to state 157
+-- On READ shift to state 158
+-- On PHASE shift to state 175
+-- On OUT shift to state 178
+-- On NEW shift to state 185
+-- On LPAREN shift to state 188
+-- On LOCK shift to state 189
+-- On LET shift to state 194
+-- On INT shift to state 200
+-- On IN shift to state 201
+-- On IF shift to state 208
+-- On IDENT shift to state 219
+-- On EVENT shift to state 220
+-- On BARRIER shift to state 226
+-- On process shift to state 233
+-- On neidentseq shift to state 238
+
+State 219:
+neidentseq -> IDENT . COMMA neidentseq [ ASSIGN ]
+neidentseq -> IDENT . [ ASSIGN ]
+process -> IDENT . [ RPAREN EOF ELSE DOT BAR ]
+-- On COMMA shift to state 9
+-- On RPAREN reduce production process -> IDENT
+-- On EOF reduce production process -> IDENT
+-- On ELSE reduce production process -> IDENT
+-- On DOT reduce production process -> IDENT
+-- On BAR reduce production process -> IDENT
+-- On ASSIGN reduce production neidentseq -> IDENT
+
+State 220:
+process -> EVENT . IDENT LPAREN termseq RPAREN optprocess [ RPAREN EOF ELSE DOT BAR ]
+-- On IDENT shift to state 221
+
+State 221:
+process -> EVENT IDENT . LPAREN termseq RPAREN optprocess [ RPAREN EOF ELSE DOT BAR ]
+-- On LPAREN shift to state 222
+
+State 222:
+process -> EVENT IDENT LPAREN . termseq RPAREN optprocess [ RPAREN EOF ELSE DOT BAR ]
+-- On LPAREN shift to state 127
+-- On IDENT shift to state 128
+-- On FAIL shift to state 130
+-- On CHOICE shift to state 131
+-- On termseq shift to state 223
+-- On term shift to state 139
+-- On netermseq shift to state 142
+-- On RPAREN reduce production termseq -> 
+
+State 223:
+process -> EVENT IDENT LPAREN termseq . RPAREN optprocess [ RPAREN EOF ELSE DOT BAR ]
+-- On RPAREN shift to state 224
+
+State 224:
+process -> EVENT IDENT LPAREN termseq RPAREN . optprocess [ RPAREN EOF ELSE DOT BAR ]
+-- On SEMI shift to state 156
+-- On optprocess shift to state 225
+-- On RPAREN reduce production optprocess -> 
+-- On EOF reduce production optprocess -> 
+-- On ELSE reduce production optprocess -> 
+-- On DOT reduce production optprocess -> 
+-- On BAR reduce production optprocess -> 
+
+State 225:
+process -> EVENT IDENT LPAREN termseq RPAREN optprocess . [ RPAREN EOF ELSE DOT BAR ]
+-- On RPAREN reduce production process -> EVENT IDENT LPAREN termseq RPAREN optprocess
+-- On EOF reduce production process -> EVENT IDENT LPAREN termseq RPAREN optprocess
+-- On ELSE reduce production process -> EVENT IDENT LPAREN termseq RPAREN optprocess
+-- On DOT reduce production process -> EVENT IDENT LPAREN termseq RPAREN optprocess
+-- On BAR reduce production process -> EVENT IDENT LPAREN termseq RPAREN optprocess
+
+State 226:
+process -> BARRIER . INT optprocess [ RPAREN EOF ELSE DOT BAR ]
+process -> BARRIER . INT LBRACKET IDENT RBRACKET optprocess [ RPAREN EOF ELSE DOT BAR ]
+-- On INT shift to state 227
+
+State 227:
+process -> BARRIER INT . optprocess [ RPAREN EOF ELSE DOT BAR ]
+process -> BARRIER INT . LBRACKET IDENT RBRACKET optprocess [ RPAREN EOF ELSE DOT BAR ]
+-- On SEMI shift to state 156
+-- On LBRACKET shift to state 228
+-- On optprocess shift to state 232
+-- On RPAREN reduce production optprocess -> 
+-- On EOF reduce production optprocess -> 
+-- On ELSE reduce production optprocess -> 
+-- On DOT reduce production optprocess -> 
+-- On BAR reduce production optprocess -> 
+
+State 228:
+process -> BARRIER INT LBRACKET . IDENT RBRACKET optprocess [ RPAREN EOF ELSE DOT BAR ]
+-- On IDENT shift to state 229
+
+State 229:
+process -> BARRIER INT LBRACKET IDENT . RBRACKET optprocess [ RPAREN EOF ELSE DOT BAR ]
+-- On RBRACKET shift to state 230
+
+State 230:
+process -> BARRIER INT LBRACKET IDENT RBRACKET . optprocess [ RPAREN EOF ELSE DOT BAR ]
+-- On SEMI shift to state 156
+-- On optprocess shift to state 231
+-- On RPAREN reduce production optprocess -> 
+-- On EOF reduce production optprocess -> 
+-- On ELSE reduce production optprocess -> 
+-- On DOT reduce production optprocess -> 
+-- On BAR reduce production optprocess -> 
+
+State 231:
+process -> BARRIER INT LBRACKET IDENT RBRACKET optprocess . [ RPAREN EOF ELSE DOT BAR ]
+-- On RPAREN reduce production process -> BARRIER INT LBRACKET IDENT RBRACKET optprocess
+-- On EOF reduce production process -> BARRIER INT LBRACKET IDENT RBRACKET optprocess
+-- On ELSE reduce production process -> BARRIER INT LBRACKET IDENT RBRACKET optprocess
+-- On DOT reduce production process -> BARRIER INT LBRACKET IDENT RBRACKET optprocess
+-- On BAR reduce production process -> BARRIER INT LBRACKET IDENT RBRACKET optprocess
+
+State 232:
+process -> BARRIER INT optprocess . [ RPAREN EOF ELSE DOT BAR ]
+-- On RPAREN reduce production process -> BARRIER INT optprocess
+-- On EOF reduce production process -> BARRIER INT optprocess
+-- On ELSE reduce production process -> BARRIER INT optprocess
+-- On DOT reduce production process -> BARRIER INT optprocess
+-- On BAR reduce production process -> BARRIER INT optprocess
+
+State 233:
+process -> IF fact THEN process . ELSE process [ RPAREN EOF ELSE DOT BAR ]
+process -> IF fact THEN process . [ RPAREN EOF ELSE DOT BAR ]
+process -> process . BAR process [ RPAREN EOF ELSE DOT BAR ]
+-- On ELSE shift to state 234
+-- On BAR shift to state 236
+-- On RPAREN reduce production process -> IF fact THEN process
+-- On EOF reduce production process -> IF fact THEN process
+-- On DOT reduce production process -> IF fact THEN process
+** Conflict on ELSE BAR
+
+State 234:
+process -> IF fact THEN process ELSE . process [ RPAREN EOF ELSE DOT BAR ]
+-- On UNLOCK shift to state 152
+-- On REPL shift to state 157
+-- On READ shift to state 158
+-- On PHASE shift to state 175
+-- On OUT shift to state 178
+-- On NEW shift to state 185
+-- On LPAREN shift to state 188
+-- On LOCK shift to state 189
+-- On LET shift to state 194
+-- On INT shift to state 200
+-- On IN shift to state 201
+-- On IF shift to state 208
+-- On IDENT shift to state 219
+-- On EVENT shift to state 220
+-- On BARRIER shift to state 226
+-- On process shift to state 235
+-- On neidentseq shift to state 238
+
+State 235:
+process -> IF fact THEN process ELSE process . [ RPAREN EOF ELSE DOT BAR ]
+process -> process . BAR process [ RPAREN EOF ELSE DOT BAR ]
+-- On BAR shift to state 236
+-- On RPAREN reduce production process -> IF fact THEN process ELSE process
+-- On EOF reduce production process -> IF fact THEN process ELSE process
+-- On ELSE reduce production process -> IF fact THEN process ELSE process
+-- On DOT reduce production process -> IF fact THEN process ELSE process
+** Conflict on BAR
+
+State 236:
+process -> process BAR . process [ RPAREN EOF ELSE DOT BAR ]
+-- On UNLOCK shift to state 152
+-- On REPL shift to state 157
+-- On READ shift to state 158
+-- On PHASE shift to state 175
+-- On OUT shift to state 178
+-- On NEW shift to state 185
+-- On LPAREN shift to state 188
+-- On LOCK shift to state 189
+-- On LET shift to state 194
+-- On INT shift to state 200
+-- On IN shift to state 201
+-- On IF shift to state 208
+-- On IDENT shift to state 219
+-- On EVENT shift to state 220
+-- On BARRIER shift to state 226
+-- On process shift to state 237
+-- On neidentseq shift to state 238
+
+State 237:
+process -> process . BAR process [ RPAREN EOF ELSE DOT BAR ]
+process -> process BAR process . [ RPAREN EOF ELSE DOT BAR ]
+-- On BAR shift to state 236
+-- On RPAREN reduce production process -> process BAR process
+-- On EOF reduce production process -> process BAR process
+-- On ELSE reduce production process -> process BAR process
+-- On DOT reduce production process -> process BAR process
+
+State 238:
+process -> neidentseq . ASSIGN netermseq optprocess [ RPAREN EOF ELSE DOT BAR ]
+-- On ASSIGN shift to state 239
+
+State 239:
+process -> neidentseq ASSIGN . netermseq optprocess [ RPAREN EOF ELSE DOT BAR ]
+-- On LPAREN shift to state 127
+-- On IDENT shift to state 128
+-- On FAIL shift to state 130
+-- On CHOICE shift to state 131
+-- On term shift to state 139
+-- On netermseq shift to state 240
+
+State 240:
+process -> neidentseq ASSIGN netermseq . optprocess [ RPAREN EOF ELSE DOT BAR ]
+-- On SEMI shift to state 156
+-- On optprocess shift to state 241
+-- On RPAREN reduce production optprocess -> 
+-- On EOF reduce production optprocess -> 
+-- On ELSE reduce production optprocess -> 
+-- On DOT reduce production optprocess -> 
+-- On BAR reduce production optprocess -> 
+
+State 241:
+process -> neidentseq ASSIGN netermseq optprocess . [ RPAREN EOF ELSE DOT BAR ]
+-- On RPAREN reduce production process -> neidentseq ASSIGN netermseq optprocess
+-- On EOF reduce production process -> neidentseq ASSIGN netermseq optprocess
+-- On ELSE reduce production process -> neidentseq ASSIGN netermseq optprocess
+-- On DOT reduce production process -> neidentseq ASSIGN netermseq optprocess
+-- On BAR reduce production process -> neidentseq ASSIGN netermseq optprocess
+
+State 242:
+process -> LET pattern EQUAL term IN process . [ RPAREN EOF ELSE DOT BAR ]
+process -> LET pattern EQUAL term IN process . ELSE process [ RPAREN EOF ELSE DOT BAR ]
+process -> process . BAR process [ RPAREN EOF ELSE DOT BAR ]
+-- On ELSE shift to state 243
+-- On BAR shift to state 236
+-- On RPAREN reduce production process -> LET pattern EQUAL term IN process
+-- On EOF reduce production process -> LET pattern EQUAL term IN process
+-- On DOT reduce production process -> LET pattern EQUAL term IN process
+** Conflict on ELSE BAR
+
+State 243:
+process -> LET pattern EQUAL term IN process ELSE . process [ RPAREN EOF ELSE DOT BAR ]
+-- On UNLOCK shift to state 152
+-- On REPL shift to state 157
+-- On READ shift to state 158
+-- On PHASE shift to state 175
+-- On OUT shift to state 178
+-- On NEW shift to state 185
+-- On LPAREN shift to state 188
+-- On LOCK shift to state 189
+-- On LET shift to state 194
+-- On INT shift to state 200
+-- On IN shift to state 201
+-- On IF shift to state 208
+-- On IDENT shift to state 219
+-- On EVENT shift to state 220
+-- On BARRIER shift to state 226
+-- On process shift to state 244
+-- On neidentseq shift to state 238
+
+State 244:
+process -> LET pattern EQUAL term IN process ELSE process . [ RPAREN EOF ELSE DOT BAR ]
+process -> process . BAR process [ RPAREN EOF ELSE DOT BAR ]
+-- On BAR shift to state 236
+-- On RPAREN reduce production process -> LET pattern EQUAL term IN process ELSE process
+-- On EOF reduce production process -> LET pattern EQUAL term IN process ELSE process
+-- On ELSE reduce production process -> LET pattern EQUAL term IN process ELSE process
+-- On DOT reduce production process -> LET pattern EQUAL term IN process ELSE process
+** Conflict on BAR
+
+State 245:
+process -> LET neidentseq . SUCHTHAT fact IN process [ RPAREN EOF ELSE DOT BAR ]
+process -> LET neidentseq . SUCHTHAT fact IN process ELSE process [ RPAREN EOF ELSE DOT BAR ]
+-- On SUCHTHAT shift to state 246
+
+State 246:
+process -> LET neidentseq SUCHTHAT . fact IN process [ RPAREN EOF ELSE DOT BAR ]
+process -> LET neidentseq SUCHTHAT . fact IN process ELSE process [ RPAREN EOF ELSE DOT BAR ]
+-- On LPAREN shift to state 127
+-- On IDENT shift to state 209
+-- On FAIL shift to state 130
+-- On CHOICE shift to state 131
+-- On term shift to state 212
+-- On fact shift to state 247
+
+State 247:
+process -> LET neidentseq SUCHTHAT fact . IN process [ RPAREN EOF ELSE DOT BAR ]
+process -> LET neidentseq SUCHTHAT fact . IN process ELSE process [ RPAREN EOF ELSE DOT BAR ]
+-- On IN shift to state 248
+
+State 248:
+process -> LET neidentseq SUCHTHAT fact IN . process [ RPAREN EOF ELSE DOT BAR ]
+process -> LET neidentseq SUCHTHAT fact IN . process ELSE process [ RPAREN EOF ELSE DOT BAR ]
+-- On UNLOCK shift to state 152
+-- On REPL shift to state 157
+-- On READ shift to state 158
+-- On PHASE shift to state 175
+-- On OUT shift to state 178
+-- On NEW shift to state 185
+-- On LPAREN shift to state 188
+-- On LOCK shift to state 189
+-- On LET shift to state 194
+-- On INT shift to state 200
+-- On IN shift to state 201
+-- On IF shift to state 208
+-- On IDENT shift to state 219
+-- On EVENT shift to state 220
+-- On BARRIER shift to state 226
+-- On process shift to state 249
+-- On neidentseq shift to state 238
+
+State 249:
+process -> LET neidentseq SUCHTHAT fact IN process . [ RPAREN EOF ELSE DOT BAR ]
+process -> LET neidentseq SUCHTHAT fact IN process . ELSE process [ RPAREN EOF ELSE DOT BAR ]
+process -> process . BAR process [ RPAREN EOF ELSE DOT BAR ]
+-- On ELSE shift to state 250
+-- On BAR shift to state 236
+-- On RPAREN reduce production process -> LET neidentseq SUCHTHAT fact IN process
+-- On EOF reduce production process -> LET neidentseq SUCHTHAT fact IN process
+-- On DOT reduce production process -> LET neidentseq SUCHTHAT fact IN process
+** Conflict on ELSE BAR
+
+State 250:
+process -> LET neidentseq SUCHTHAT fact IN process ELSE . process [ RPAREN EOF ELSE DOT BAR ]
+-- On UNLOCK shift to state 152
+-- On REPL shift to state 157
+-- On READ shift to state 158
+-- On PHASE shift to state 175
+-- On OUT shift to state 178
+-- On NEW shift to state 185
+-- On LPAREN shift to state 188
+-- On LOCK shift to state 189
+-- On LET shift to state 194
+-- On INT shift to state 200
+-- On IN shift to state 201
+-- On IF shift to state 208
+-- On IDENT shift to state 219
+-- On EVENT shift to state 220
+-- On BARRIER shift to state 226
+-- On process shift to state 251
+-- On neidentseq shift to state 238
+
+State 251:
+process -> LET neidentseq SUCHTHAT fact IN process ELSE process . [ RPAREN EOF ELSE DOT BAR ]
+process -> process . BAR process [ RPAREN EOF ELSE DOT BAR ]
+-- On BAR shift to state 236
+-- On RPAREN reduce production process -> LET neidentseq SUCHTHAT fact IN process ELSE process
+-- On EOF reduce production process -> LET neidentseq SUCHTHAT fact IN process ELSE process
+-- On ELSE reduce production process -> LET neidentseq SUCHTHAT fact IN process ELSE process
+-- On DOT reduce production process -> LET neidentseq SUCHTHAT fact IN process ELSE process
+** Conflict on BAR
+
+State 252:
+process -> LPAREN process . RPAREN [ RPAREN EOF ELSE DOT BAR ]
+process -> process . BAR process [ RPAREN BAR ]
+-- On RPAREN shift to state 253
+-- On BAR shift to state 236
+
+State 253:
+process -> LPAREN process RPAREN . [ RPAREN EOF ELSE DOT BAR ]
+-- On RPAREN reduce production process -> LPAREN process RPAREN
+-- On EOF reduce production process -> LPAREN process RPAREN
+-- On ELSE reduce production process -> LPAREN process RPAREN
+-- On DOT reduce production process -> LPAREN process RPAREN
+-- On BAR reduce production process -> LPAREN process RPAREN
+
+State 254:
+process -> REPL process . [ RPAREN EOF ELSE DOT BAR ]
+process -> process . BAR process [ RPAREN EOF ELSE DOT BAR ]
+-- On RPAREN reduce production process -> REPL process
+-- On EOF reduce production process -> REPL process
+-- On ELSE reduce production process -> REPL process
+-- On DOT reduce production process -> REPL process
+-- On BAR reduce production process -> REPL process
+
+State 255:
+optprocess -> SEMI process . [ RPAREN EOF ELSE DOT BAR ]
+process -> process . BAR process [ RPAREN EOF ELSE DOT BAR ]
+-- On BAR shift to state 236
+-- On RPAREN reduce production optprocess -> SEMI process
+-- On EOF reduce production optprocess -> SEMI process
+-- On ELSE reduce production optprocess -> SEMI process
+-- On DOT reduce production optprocess -> SEMI process
+** Conflict on BAR
+
+State 256:
+process -> UNLOCK LPAREN neidentseq RPAREN optprocess . [ RPAREN EOF ELSE DOT BAR ]
+-- On RPAREN reduce production process -> UNLOCK LPAREN neidentseq RPAREN optprocess
+-- On EOF reduce production process -> UNLOCK LPAREN neidentseq RPAREN optprocess
+-- On ELSE reduce production process -> UNLOCK LPAREN neidentseq RPAREN optprocess
+-- On DOT reduce production process -> UNLOCK LPAREN neidentseq RPAREN optprocess
+-- On BAR reduce production process -> UNLOCK LPAREN neidentseq RPAREN optprocess
+
+State 257:
+lib -> LET IDENT EQUAL process . DOT lib [ PROCESS ]
+process -> process . BAR process [ DOT BAR ]
+-- On DOT shift to state 258
+-- On BAR shift to state 236
+
+State 258:
+lib -> LET IDENT EQUAL process DOT . lib [ PROCESS ]
+-- On WEAKSECRET shift to state 1
+-- On QUERY shift to state 4
+-- On PRIVATE shift to state 48
+-- On PREDICATE shift to state 49
+-- On PARAM shift to state 54
+-- On NOUNIF shift to state 59
+-- On NOT shift to state 107
+-- On NONINTERF shift to state 123
+-- On LET shift to state 149
+-- On EQUATION shift to state 259
+-- On ELIMTRUE shift to state 267
+-- On DATA shift to state 277
+-- On CLAUSES shift to state 282
+-- On CELL shift to state 295
+-- On privateopt shift to state 301
+-- On lib shift to state 354
+-- On REDUCTION reduce production privateopt -> 
+-- On PROCESS reduce production lib -> 
+-- On FUN reduce production privateopt -> 
+-- On FREE reduce production privateopt -> 
+
+State 259:
+lib -> EQUATION . eqlist DOT lib [ PROCESS ]
+-- On LPAREN shift to state 127
+-- On IDENT shift to state 128
+-- On FAIL shift to state 130
+-- On CHOICE shift to state 131
+-- On term shift to state 260
+-- On eqlist shift to state 265
+
+State 260:
+eqlist -> term . EQUAL term [ DOT ]
+eqlist -> term . EQUAL term SEMI eqlist [ DOT ]
+-- On EQUAL shift to state 261
+
+State 261:
+eqlist -> term EQUAL . term [ DOT ]
+eqlist -> term EQUAL . term SEMI eqlist [ DOT ]
+-- On LPAREN shift to state 127
+-- On IDENT shift to state 128
+-- On FAIL shift to state 130
+-- On CHOICE shift to state 131
+-- On term shift to state 262
+
+State 262:
+eqlist -> term EQUAL term . [ DOT ]
+eqlist -> term EQUAL term . SEMI eqlist [ DOT ]
+-- On SEMI shift to state 263
+-- On DOT reduce production eqlist -> term EQUAL term
+
+State 263:
+eqlist -> term EQUAL term SEMI . eqlist [ DOT ]
+-- On LPAREN shift to state 127
+-- On IDENT shift to state 128
+-- On FAIL shift to state 130
+-- On CHOICE shift to state 131
+-- On term shift to state 260
+-- On eqlist shift to state 264
+
+State 264:
+eqlist -> term EQUAL term SEMI eqlist . [ DOT ]
+-- On DOT reduce production eqlist -> term EQUAL term SEMI eqlist
+
+State 265:
+lib -> EQUATION eqlist . DOT lib [ PROCESS ]
+-- On DOT shift to state 266
+
+State 266:
+lib -> EQUATION eqlist DOT . lib [ PROCESS ]
+-- On WEAKSECRET shift to state 1
+-- On QUERY shift to state 4
+-- On PRIVATE shift to state 48
+-- On PREDICATE shift to state 49
+-- On PARAM shift to state 54
+-- On NOUNIF shift to state 59
+-- On NOT shift to state 107
+-- On NONINTERF shift to state 123
+-- On LET shift to state 149
+-- On EQUATION shift to state 259
+-- On ELIMTRUE shift to state 267
+-- On DATA shift to state 277
+-- On CLAUSES shift to state 282
+-- On CELL shift to state 295
+-- On privateopt shift to state 301
+-- On lib shift to state 353
+-- On REDUCTION reduce production privateopt -> 
+-- On PROCESS reduce production lib -> 
+-- On FUN reduce production privateopt -> 
+-- On FREE reduce production privateopt -> 
+
+State 267:
+lib -> ELIMTRUE . fact DOT lib [ PROCESS ]
+lib -> ELIMTRUE . fact WHERE varmayfail CANTEXT FAIL DOT lib [ PROCESS ]
+-- On LPAREN shift to state 127
+-- On IDENT shift to state 209
+-- On FAIL shift to state 130
+-- On CHOICE shift to state 131
+-- On term shift to state 212
+-- On fact shift to state 268
+
+State 268:
+lib -> ELIMTRUE fact . DOT lib [ PROCESS ]
+lib -> ELIMTRUE fact . WHERE varmayfail CANTEXT FAIL DOT lib [ PROCESS ]
+-- On WHERE shift to state 269
+-- On DOT shift to state 351
+
+State 269:
+lib -> ELIMTRUE fact WHERE . varmayfail CANTEXT FAIL DOT lib [ PROCESS ]
+-- On IDENT shift to state 270
+-- On varmayfail shift to state 273
+
+State 270:
+varmayfail -> IDENT . COMMA varmayfail [ CANTEXT ]
+varmayfail -> IDENT . [ CANTEXT ]
+-- On COMMA shift to state 271
+-- On CANTEXT reduce production varmayfail -> IDENT
+
+State 271:
+varmayfail -> IDENT COMMA . varmayfail [ CANTEXT ]
+-- On IDENT shift to state 270
+-- On varmayfail shift to state 272
+
+State 272:
+varmayfail -> IDENT COMMA varmayfail . [ CANTEXT ]
+-- On CANTEXT reduce production varmayfail -> IDENT COMMA varmayfail
+
+State 273:
+lib -> ELIMTRUE fact WHERE varmayfail . CANTEXT FAIL DOT lib [ PROCESS ]
+-- On CANTEXT shift to state 274
+
+State 274:
+lib -> ELIMTRUE fact WHERE varmayfail CANTEXT . FAIL DOT lib [ PROCESS ]
+-- On FAIL shift to state 275
+
+State 275:
+lib -> ELIMTRUE fact WHERE varmayfail CANTEXT FAIL . DOT lib [ PROCESS ]
+-- On DOT shift to state 276
+
+State 276:
+lib -> ELIMTRUE fact WHERE varmayfail CANTEXT FAIL DOT . lib [ PROCESS ]
+-- On WEAKSECRET shift to state 1
+-- On QUERY shift to state 4
+-- On PRIVATE shift to state 48
+-- On PREDICATE shift to state 49
+-- On PARAM shift to state 54
+-- On NOUNIF shift to state 59
+-- On NOT shift to state 107
+-- On NONINTERF shift to state 123
+-- On LET shift to state 149
+-- On EQUATION shift to state 259
+-- On ELIMTRUE shift to state 267
+-- On DATA shift to state 277
+-- On CLAUSES shift to state 282
+-- On CELL shift to state 295
+-- On privateopt shift to state 301
+-- On lib shift to state 350
+-- On REDUCTION reduce production privateopt -> 
+-- On PROCESS reduce production lib -> 
+-- On FUN reduce production privateopt -> 
+-- On FREE reduce production privateopt -> 
+
+State 277:
+lib -> DATA . IDENT SLASH INT DOT lib [ PROCESS ]
+-- On IDENT shift to state 278
+
+State 278:
+lib -> DATA IDENT . SLASH INT DOT lib [ PROCESS ]
+-- On SLASH shift to state 279
+
+State 279:
+lib -> DATA IDENT SLASH . INT DOT lib [ PROCESS ]
+-- On INT shift to state 280
+
+State 280:
+lib -> DATA IDENT SLASH INT . DOT lib [ PROCESS ]
+-- On DOT shift to state 281
+
+State 281:
+lib -> DATA IDENT SLASH INT DOT . lib [ PROCESS ]
+-- On WEAKSECRET shift to state 1
+-- On QUERY shift to state 4
+-- On PRIVATE shift to state 48
+-- On PREDICATE shift to state 49
+-- On PARAM shift to state 54
+-- On NOUNIF shift to state 59
+-- On NOT shift to state 107
+-- On NONINTERF shift to state 123
+-- On LET shift to state 149
+-- On EQUATION shift to state 259
+-- On ELIMTRUE shift to state 267
+-- On DATA shift to state 277
+-- On CLAUSES shift to state 282
+-- On CELL shift to state 295
+-- On privateopt shift to state 301
+-- On lib shift to state 349
+-- On REDUCTION reduce production privateopt -> 
+-- On PROCESS reduce production lib -> 
+-- On FUN reduce production privateopt -> 
+-- On FREE reduce production privateopt -> 
+
+State 282:
+lib -> CLAUSES . clauses lib [ PROCESS ]
+-- On LPAREN shift to state 127
+-- On IDENT shift to state 209
+-- On FAIL shift to state 130
+-- On CHOICE shift to state 131
+-- On term shift to state 212
+-- On factand shift to state 283
+-- On fact shift to state 290
+-- On clauses shift to state 294
+-- On clausemayfail shift to state 340
+-- On clause shift to state 343
+
+State 283:
+clause -> factand . RED fact [ WHERE SEMI DOT ]
+clause -> factand . EQUIV fact [ WHERE SEMI DOT ]
+clause -> factand . EQUIVEQ fact [ WHERE SEMI DOT ]
+-- On RED shift to state 284
+-- On EQUIVEQ shift to state 286
+-- On EQUIV shift to state 288
+
+State 284:
+clause -> factand RED . fact [ WHERE SEMI DOT ]
+-- On LPAREN shift to state 127
+-- On IDENT shift to state 209
+-- On FAIL shift to state 130
+-- On CHOICE shift to state 131
+-- On term shift to state 212
+-- On fact shift to state 285
+
+State 285:
+clause -> factand RED fact . [ WHERE SEMI DOT ]
+-- On WHERE reduce production clause -> factand RED fact
+-- On SEMI reduce production clause -> factand RED fact
+-- On DOT reduce production clause -> factand RED fact
+
+State 286:
+clause -> factand EQUIVEQ . fact [ WHERE SEMI DOT ]
+-- On LPAREN shift to state 127
+-- On IDENT shift to state 209
+-- On FAIL shift to state 130
+-- On CHOICE shift to state 131
+-- On term shift to state 212
+-- On fact shift to state 287
+
+State 287:
+clause -> factand EQUIVEQ fact . [ WHERE SEMI DOT ]
+-- On WHERE reduce production clause -> factand EQUIVEQ fact
+-- On SEMI reduce production clause -> factand EQUIVEQ fact
+-- On DOT reduce production clause -> factand EQUIVEQ fact
+
+State 288:
+clause -> factand EQUIV . fact [ WHERE SEMI DOT ]
+-- On LPAREN shift to state 127
+-- On IDENT shift to state 209
+-- On FAIL shift to state 130
+-- On CHOICE shift to state 131
+-- On term shift to state 212
+-- On fact shift to state 289
+
+State 289:
+clause -> factand EQUIV fact . [ WHERE SEMI DOT ]
+-- On WHERE reduce production clause -> factand EQUIV fact
+-- On SEMI reduce production clause -> factand EQUIV fact
+-- On DOT reduce production clause -> factand EQUIV fact
+
+State 290:
+clause -> fact . [ WHERE SEMI DOT ]
+factand -> fact . WEDGE factand [ RED EQUIVEQ EQUIV ]
+factand -> fact . [ RED EQUIVEQ EQUIV ]
+-- On WEDGE shift to state 291
+-- On WHERE reduce production clause -> fact
+-- On SEMI reduce production clause -> fact
+-- On RED reduce production factand -> fact
+-- On EQUIVEQ reduce production factand -> fact
+-- On EQUIV reduce production factand -> fact
+-- On DOT reduce production clause -> fact
+
+State 291:
+factand -> fact WEDGE . factand [ RED EQUIVEQ EQUIV ]
+-- On LPAREN shift to state 127
+-- On IDENT shift to state 209
+-- On FAIL shift to state 130
+-- On CHOICE shift to state 131
+-- On term shift to state 212
+-- On factand shift to state 292
+-- On fact shift to state 293
+
+State 292:
+factand -> fact WEDGE factand . [ RED EQUIVEQ EQUIV ]
+-- On RED reduce production factand -> fact WEDGE factand
+-- On EQUIVEQ reduce production factand -> fact WEDGE factand
+-- On EQUIV reduce production factand -> fact WEDGE factand
+
+State 293:
+factand -> fact . WEDGE factand [ RED EQUIVEQ EQUIV ]
+factand -> fact . [ RED EQUIVEQ EQUIV ]
+-- On WEDGE shift to state 291
+-- On RED reduce production factand -> fact
+-- On EQUIVEQ reduce production factand -> fact
+-- On EQUIV reduce production factand -> fact
+
+State 294:
+lib -> CLAUSES clauses . lib [ PROCESS ]
+-- On WEAKSECRET shift to state 1
+-- On QUERY shift to state 4
+-- On PRIVATE shift to state 48
+-- On PREDICATE shift to state 49
+-- On PARAM shift to state 54
+-- On NOUNIF shift to state 59
+-- On NOT shift to state 107
+-- On NONINTERF shift to state 123
+-- On LET shift to state 149
+-- On EQUATION shift to state 259
+-- On ELIMTRUE shift to state 267
+-- On DATA shift to state 277
+-- On CLAUSES shift to state 282
+-- On CELL shift to state 295
+-- On privateopt shift to state 301
+-- On lib shift to state 339
+-- On REDUCTION reduce production privateopt -> 
+-- On PROCESS reduce production lib -> 
+-- On FUN reduce production privateopt -> 
+-- On FREE reduce production privateopt -> 
+
+State 295:
+lib -> CELL . neidentseq optinit DOT lib [ PROCESS ]
+-- On IDENT shift to state 8
+-- On neidentseq shift to state 296
+
+State 296:
+lib -> CELL neidentseq . optinit DOT lib [ PROCESS ]
+-- On ASSIGN shift to state 297
+-- On optinit shift to state 299
+-- On DOT reduce production optinit -> 
+
+State 297:
+optinit -> ASSIGN . term [ DOT ]
+-- On LPAREN shift to state 127
+-- On IDENT shift to state 128
+-- On FAIL shift to state 130
+-- On CHOICE shift to state 131
+-- On term shift to state 298
+
+State 298:
+optinit -> ASSIGN term . [ DOT ]
+-- On DOT reduce production optinit -> ASSIGN term
+
+State 299:
+lib -> CELL neidentseq optinit . DOT lib [ PROCESS ]
+-- On DOT shift to state 300
+
+State 300:
+lib -> CELL neidentseq optinit DOT . lib [ PROCESS ]
+-- On WEAKSECRET shift to state 1
+-- On QUERY shift to state 4
+-- On PRIVATE shift to state 48
+-- On PREDICATE shift to state 49
+-- On PARAM shift to state 54
+-- On NOUNIF shift to state 59
+-- On NOT shift to state 107
+-- On NONINTERF shift to state 123
+-- On LET shift to state 149
+-- On EQUATION shift to state 259
+-- On ELIMTRUE shift to state 267
+-- On DATA shift to state 277
+-- On CLAUSES shift to state 282
+-- On CELL shift to state 295
+-- On privateopt shift to state 301
+-- On lib shift to state 338
+-- On REDUCTION reduce production privateopt -> 
+-- On PROCESS reduce production lib -> 
+-- On FUN reduce production privateopt -> 
+-- On FREE reduce production privateopt -> 
+
+State 301:
+lib -> privateopt . FUN IDENT SLASH INT DOT lib [ PROCESS ]
+lib -> privateopt . REDUCTION term EQUAL term SEMI reduc lib [ PROCESS ]
+lib -> privateopt . REDUCTION reducmayfailseq DOT lib [ PROCESS ]
+lib -> privateopt . FREE neidentseq DOT lib [ PROCESS ]
+-- On REDUCTION shift to state 302
+-- On FUN shift to state 328
+-- On FREE shift to state 334
+
+State 302:
+lib -> privateopt REDUCTION . term EQUAL term SEMI reduc lib [ PROCESS ]
+lib -> privateopt REDUCTION . reducmayfailseq DOT lib [ PROCESS ]
+-- On LPAREN shift to state 127
+-- On IDENT shift to state 128
+-- On FAIL shift to state 130
+-- On CHOICE shift to state 131
+-- On term shift to state 303
+-- On reducmayfailseq shift to state 319
+-- On reducmayfail shift to state 322
+
+State 303:
+lib -> privateopt REDUCTION term . EQUAL term SEMI reduc lib [ PROCESS ]
+reducmayfail -> term . EQUAL term WHERE varmayfail CANTEXT FAIL [ OTHERWISE DOT ]
+reducmayfail -> term . EQUAL term [ OTHERWISE DOT ]
+-- On EQUAL shift to state 304
+
+State 304:
+lib -> privateopt REDUCTION term EQUAL . term SEMI reduc lib [ PROCESS ]
+reducmayfail -> term EQUAL . term WHERE varmayfail CANTEXT FAIL [ OTHERWISE DOT ]
+reducmayfail -> term EQUAL . term [ OTHERWISE DOT ]
+-- On LPAREN shift to state 127
+-- On IDENT shift to state 128
+-- On FAIL shift to state 130
+-- On CHOICE shift to state 131
+-- On term shift to state 305
+
+State 305:
+lib -> privateopt REDUCTION term EQUAL term . SEMI reduc lib [ PROCESS ]
+reducmayfail -> term EQUAL term . WHERE varmayfail CANTEXT FAIL [ OTHERWISE DOT ]
+reducmayfail -> term EQUAL term . [ OTHERWISE DOT ]
+-- On WHERE shift to state 306
+-- On SEMI shift to state 310
+-- On OTHERWISE reduce production reducmayfail -> term EQUAL term
+-- On DOT reduce production reducmayfail -> term EQUAL term
+
+State 306:
+reducmayfail -> term EQUAL term WHERE . varmayfail CANTEXT FAIL [ OTHERWISE DOT ]
+-- On IDENT shift to state 270
+-- On varmayfail shift to state 307
+
+State 307:
+reducmayfail -> term EQUAL term WHERE varmayfail . CANTEXT FAIL [ OTHERWISE DOT ]
+-- On CANTEXT shift to state 308
+
+State 308:
+reducmayfail -> term EQUAL term WHERE varmayfail CANTEXT . FAIL [ OTHERWISE DOT ]
+-- On FAIL shift to state 309
+
+State 309:
+reducmayfail -> term EQUAL term WHERE varmayfail CANTEXT FAIL . [ OTHERWISE DOT ]
+-- On OTHERWISE reduce production reducmayfail -> term EQUAL term WHERE varmayfail CANTEXT FAIL
+-- On DOT reduce production reducmayfail -> term EQUAL term WHERE varmayfail CANTEXT FAIL
+
+State 310:
+lib -> privateopt REDUCTION term EQUAL term SEMI . reduc lib [ PROCESS ]
+-- On LPAREN shift to state 127
+-- On IDENT shift to state 128
+-- On FAIL shift to state 130
+-- On CHOICE shift to state 131
+-- On term shift to state 311
+-- On reduc shift to state 317
+
+State 311:
+reduc -> term . EQUAL term SEMI reduc [ WEAKSECRET REDUCTION QUERY PROCESS PRIVATE PREDICATE PARAM NOUNIF NOT NONINTERF LET FUN FREE EQUATION ELIMTRUE DATA CLAUSES CELL ]
+reduc -> term . EQUAL term DOT [ WEAKSECRET REDUCTION QUERY PROCESS PRIVATE PREDICATE PARAM NOUNIF NOT NONINTERF LET FUN FREE EQUATION ELIMTRUE DATA CLAUSES CELL ]
+-- On EQUAL shift to state 312
+
+State 312:
+reduc -> term EQUAL . term SEMI reduc [ WEAKSECRET REDUCTION QUERY PROCESS PRIVATE PREDICATE PARAM NOUNIF NOT NONINTERF LET FUN FREE EQUATION ELIMTRUE DATA CLAUSES CELL ]
+reduc -> term EQUAL . term DOT [ WEAKSECRET REDUCTION QUERY PROCESS PRIVATE PREDICATE PARAM NOUNIF NOT NONINTERF LET FUN FREE EQUATION ELIMTRUE DATA CLAUSES CELL ]
+-- On LPAREN shift to state 127
+-- On IDENT shift to state 128
+-- On FAIL shift to state 130
+-- On CHOICE shift to state 131
+-- On term shift to state 313
+
+State 313:
+reduc -> term EQUAL term . SEMI reduc [ WEAKSECRET REDUCTION QUERY PROCESS PRIVATE PREDICATE PARAM NOUNIF NOT NONINTERF LET FUN FREE EQUATION ELIMTRUE DATA CLAUSES CELL ]
+reduc -> term EQUAL term . DOT [ WEAKSECRET REDUCTION QUERY PROCESS PRIVATE PREDICATE PARAM NOUNIF NOT NONINTERF LET FUN FREE EQUATION ELIMTRUE DATA CLAUSES CELL ]
+-- On SEMI shift to state 314
+-- On DOT shift to state 316
+
+State 314:
+reduc -> term EQUAL term SEMI . reduc [ WEAKSECRET REDUCTION QUERY PROCESS PRIVATE PREDICATE PARAM NOUNIF NOT NONINTERF LET FUN FREE EQUATION ELIMTRUE DATA CLAUSES CELL ]
+-- On LPAREN shift to state 127
+-- On IDENT shift to state 128
+-- On FAIL shift to state 130
+-- On CHOICE shift to state 131
+-- On term shift to state 311
+-- On reduc shift to state 315
+
+State 315:
+reduc -> term EQUAL term SEMI reduc . [ WEAKSECRET REDUCTION QUERY PROCESS PRIVATE PREDICATE PARAM NOUNIF NOT NONINTERF LET FUN FREE EQUATION ELIMTRUE DATA CLAUSES CELL ]
+-- On WEAKSECRET reduce production reduc -> term EQUAL term SEMI reduc
+-- On REDUCTION reduce production reduc -> term EQUAL term SEMI reduc
+-- On QUERY reduce production reduc -> term EQUAL term SEMI reduc
+-- On PROCESS reduce production reduc -> term EQUAL term SEMI reduc
+-- On PRIVATE reduce production reduc -> term EQUAL term SEMI reduc
+-- On PREDICATE reduce production reduc -> term EQUAL term SEMI reduc
+-- On PARAM reduce production reduc -> term EQUAL term SEMI reduc
+-- On NOUNIF reduce production reduc -> term EQUAL term SEMI reduc
+-- On NOT reduce production reduc -> term EQUAL term SEMI reduc
+-- On NONINTERF reduce production reduc -> term EQUAL term SEMI reduc
+-- On LET reduce production reduc -> term EQUAL term SEMI reduc
+-- On FUN reduce production reduc -> term EQUAL term SEMI reduc
+-- On FREE reduce production reduc -> term EQUAL term SEMI reduc
+-- On EQUATION reduce production reduc -> term EQUAL term SEMI reduc
+-- On ELIMTRUE reduce production reduc -> term EQUAL term SEMI reduc
+-- On DATA reduce production reduc -> term EQUAL term SEMI reduc
+-- On CLAUSES reduce production reduc -> term EQUAL term SEMI reduc
+-- On CELL reduce production reduc -> term EQUAL term SEMI reduc
+
+State 316:
+reduc -> term EQUAL term DOT . [ WEAKSECRET REDUCTION QUERY PROCESS PRIVATE PREDICATE PARAM NOUNIF NOT NONINTERF LET FUN FREE EQUATION ELIMTRUE DATA CLAUSES CELL ]
+-- On WEAKSECRET reduce production reduc -> term EQUAL term DOT
+-- On REDUCTION reduce production reduc -> term EQUAL term DOT
+-- On QUERY reduce production reduc -> term EQUAL term DOT
+-- On PROCESS reduce production reduc -> term EQUAL term DOT
+-- On PRIVATE reduce production reduc -> term EQUAL term DOT
+-- On PREDICATE reduce production reduc -> term EQUAL term DOT
+-- On PARAM reduce production reduc -> term EQUAL term DOT
+-- On NOUNIF reduce production reduc -> term EQUAL term DOT
+-- On NOT reduce production reduc -> term EQUAL term DOT
+-- On NONINTERF reduce production reduc -> term EQUAL term DOT
+-- On LET reduce production reduc -> term EQUAL term DOT
+-- On FUN reduce production reduc -> term EQUAL term DOT
+-- On FREE reduce production reduc -> term EQUAL term DOT
+-- On EQUATION reduce production reduc -> term EQUAL term DOT
+-- On ELIMTRUE reduce production reduc -> term EQUAL term DOT
+-- On DATA reduce production reduc -> term EQUAL term DOT
+-- On CLAUSES reduce production reduc -> term EQUAL term DOT
+-- On CELL reduce production reduc -> term EQUAL term DOT
+
+State 317:
+lib -> privateopt REDUCTION term EQUAL term SEMI reduc . lib [ PROCESS ]
+-- On WEAKSECRET shift to state 1
+-- On QUERY shift to state 4
+-- On PRIVATE shift to state 48
+-- On PREDICATE shift to state 49
+-- On PARAM shift to state 54
+-- On NOUNIF shift to state 59
+-- On NOT shift to state 107
+-- On NONINTERF shift to state 123
+-- On LET shift to state 149
+-- On EQUATION shift to state 259
+-- On ELIMTRUE shift to state 267
+-- On DATA shift to state 277
+-- On CLAUSES shift to state 282
+-- On CELL shift to state 295
+-- On privateopt shift to state 301
+-- On lib shift to state 318
+-- On REDUCTION reduce production privateopt -> 
+-- On PROCESS reduce production lib -> 
+-- On FUN reduce production privateopt -> 
+-- On FREE reduce production privateopt -> 
+
+State 318:
+lib -> privateopt REDUCTION term EQUAL term SEMI reduc lib . [ PROCESS ]
+-- On PROCESS reduce production lib -> privateopt REDUCTION term EQUAL term SEMI reduc lib
+
+State 319:
+lib -> privateopt REDUCTION reducmayfailseq . DOT lib [ PROCESS ]
+-- On DOT shift to state 320
+
+State 320:
+lib -> privateopt REDUCTION reducmayfailseq DOT . lib [ PROCESS ]
+-- On WEAKSECRET shift to state 1
+-- On QUERY shift to state 4
+-- On PRIVATE shift to state 48
+-- On PREDICATE shift to state 49
+-- On PARAM shift to state 54
+-- On NOUNIF shift to state 59
+-- On NOT shift to state 107
+-- On NONINTERF shift to state 123
+-- On LET shift to state 149
+-- On EQUATION shift to state 259
+-- On ELIMTRUE shift to state 267
+-- On DATA shift to state 277
+-- On CLAUSES shift to state 282
+-- On CELL shift to state 295
+-- On privateopt shift to state 301
+-- On lib shift to state 321
+-- On REDUCTION reduce production privateopt -> 
+-- On PROCESS reduce production lib -> 
+-- On FUN reduce production privateopt -> 
+-- On FREE reduce production privateopt -> 
+
+State 321:
+lib -> privateopt REDUCTION reducmayfailseq DOT lib . [ PROCESS ]
+-- On PROCESS reduce production lib -> privateopt REDUCTION reducmayfailseq DOT lib
+
+State 322:
+reducmayfailseq -> reducmayfail . OTHERWISE reducmayfailseq [ DOT ]
+reducmayfailseq -> reducmayfail . [ DOT ]
+-- On OTHERWISE shift to state 323
+-- On DOT reduce production reducmayfailseq -> reducmayfail
+
+State 323:
+reducmayfailseq -> reducmayfail OTHERWISE . reducmayfailseq [ DOT ]
+-- On LPAREN shift to state 127
+-- On IDENT shift to state 128
+-- On FAIL shift to state 130
+-- On CHOICE shift to state 131
+-- On term shift to state 324
+-- On reducmayfailseq shift to state 327
+-- On reducmayfail shift to state 322
+
+State 324:
+reducmayfail -> term . EQUAL term WHERE varmayfail CANTEXT FAIL [ OTHERWISE DOT ]
+reducmayfail -> term . EQUAL term [ OTHERWISE DOT ]
+-- On EQUAL shift to state 325
+
+State 325:
+reducmayfail -> term EQUAL . term WHERE varmayfail CANTEXT FAIL [ OTHERWISE DOT ]
+reducmayfail -> term EQUAL . term [ OTHERWISE DOT ]
+-- On LPAREN shift to state 127
+-- On IDENT shift to state 128
+-- On FAIL shift to state 130
+-- On CHOICE shift to state 131
+-- On term shift to state 326
+
+State 326:
+reducmayfail -> term EQUAL term . WHERE varmayfail CANTEXT FAIL [ OTHERWISE DOT ]
+reducmayfail -> term EQUAL term . [ OTHERWISE DOT ]
+-- On WHERE shift to state 306
+-- On OTHERWISE reduce production reducmayfail -> term EQUAL term
+-- On DOT reduce production reducmayfail -> term EQUAL term
+
+State 327:
+reducmayfailseq -> reducmayfail OTHERWISE reducmayfailseq . [ DOT ]
+-- On DOT reduce production reducmayfailseq -> reducmayfail OTHERWISE reducmayfailseq
+
+State 328:
+lib -> privateopt FUN . IDENT SLASH INT DOT lib [ PROCESS ]
+-- On IDENT shift to state 329
+
+State 329:
+lib -> privateopt FUN IDENT . SLASH INT DOT lib [ PROCESS ]
+-- On SLASH shift to state 330
+
+State 330:
+lib -> privateopt FUN IDENT SLASH . INT DOT lib [ PROCESS ]
+-- On INT shift to state 331
+
+State 331:
+lib -> privateopt FUN IDENT SLASH INT . DOT lib [ PROCESS ]
+-- On DOT shift to state 332
+
+State 332:
+lib -> privateopt FUN IDENT SLASH INT DOT . lib [ PROCESS ]
+-- On WEAKSECRET shift to state 1
+-- On QUERY shift to state 4
+-- On PRIVATE shift to state 48
+-- On PREDICATE shift to state 49
+-- On PARAM shift to state 54
+-- On NOUNIF shift to state 59
+-- On NOT shift to state 107
+-- On NONINTERF shift to state 123
+-- On LET shift to state 149
+-- On EQUATION shift to state 259
+-- On ELIMTRUE shift to state 267
+-- On DATA shift to state 277
+-- On CLAUSES shift to state 282
+-- On CELL shift to state 295
+-- On privateopt shift to state 301
+-- On lib shift to state 333
+-- On REDUCTION reduce production privateopt -> 
+-- On PROCESS reduce production lib -> 
+-- On FUN reduce production privateopt -> 
+-- On FREE reduce production privateopt -> 
+
+State 333:
+lib -> privateopt FUN IDENT SLASH INT DOT lib . [ PROCESS ]
+-- On PROCESS reduce production lib -> privateopt FUN IDENT SLASH INT DOT lib
+
+State 334:
+lib -> privateopt FREE . neidentseq DOT lib [ PROCESS ]
+-- On IDENT shift to state 8
+-- On neidentseq shift to state 335
+
+State 335:
+lib -> privateopt FREE neidentseq . DOT lib [ PROCESS ]
+-- On DOT shift to state 336
+
+State 336:
+lib -> privateopt FREE neidentseq DOT . lib [ PROCESS ]
+-- On WEAKSECRET shift to state 1
+-- On QUERY shift to state 4
+-- On PRIVATE shift to state 48
+-- On PREDICATE shift to state 49
+-- On PARAM shift to state 54
+-- On NOUNIF shift to state 59
+-- On NOT shift to state 107
+-- On NONINTERF shift to state 123
+-- On LET shift to state 149
+-- On EQUATION shift to state 259
+-- On ELIMTRUE shift to state 267
+-- On DATA shift to state 277
+-- On CLAUSES shift to state 282
+-- On CELL shift to state 295
+-- On privateopt shift to state 301
+-- On lib shift to state 337
+-- On REDUCTION reduce production privateopt -> 
+-- On PROCESS reduce production lib -> 
+-- On FUN reduce production privateopt -> 
+-- On FREE reduce production privateopt -> 
+
+State 337:
+lib -> privateopt FREE neidentseq DOT lib . [ PROCESS ]
+-- On PROCESS reduce production lib -> privateopt FREE neidentseq DOT lib
+
+State 338:
+lib -> CELL neidentseq optinit DOT lib . [ PROCESS ]
+-- On PROCESS reduce production lib -> CELL neidentseq optinit DOT lib
+
+State 339:
+lib -> CLAUSES clauses lib . [ PROCESS ]
+-- On PROCESS reduce production lib -> CLAUSES clauses lib
+
+State 340:
+clauses -> clausemayfail . SEMI clauses [ WEAKSECRET REDUCTION QUERY PROCESS PRIVATE PREDICATE PARAM NOUNIF NOT NONINTERF LET FUN FREE EQUATION ELIMTRUE DATA CLAUSES CELL ]
+clauses -> clausemayfail . DOT [ WEAKSECRET REDUCTION QUERY PROCESS PRIVATE PREDICATE PARAM NOUNIF NOT NONINTERF LET FUN FREE EQUATION ELIMTRUE DATA CLAUSES CELL ]
+-- On SEMI shift to state 341
+-- On DOT shift to state 348
+
+State 341:
+clauses -> clausemayfail SEMI . clauses [ WEAKSECRET REDUCTION QUERY PROCESS PRIVATE PREDICATE PARAM NOUNIF NOT NONINTERF LET FUN FREE EQUATION ELIMTRUE DATA CLAUSES CELL ]
+-- On LPAREN shift to state 127
+-- On IDENT shift to state 209
+-- On FAIL shift to state 130
+-- On CHOICE shift to state 131
+-- On term shift to state 212
+-- On factand shift to state 283
+-- On fact shift to state 290
+-- On clauses shift to state 342
+-- On clausemayfail shift to state 340
+-- On clause shift to state 343
+
+State 342:
+clauses -> clausemayfail SEMI clauses . [ WEAKSECRET REDUCTION QUERY PROCESS PRIVATE PREDICATE PARAM NOUNIF NOT NONINTERF LET FUN FREE EQUATION ELIMTRUE DATA CLAUSES CELL ]
+-- On WEAKSECRET reduce production clauses -> clausemayfail SEMI clauses
+-- On REDUCTION reduce production clauses -> clausemayfail SEMI clauses
+-- On QUERY reduce production clauses -> clausemayfail SEMI clauses
+-- On PROCESS reduce production clauses -> clausemayfail SEMI clauses
+-- On PRIVATE reduce production clauses -> clausemayfail SEMI clauses
+-- On PREDICATE reduce production clauses -> clausemayfail SEMI clauses
+-- On PARAM reduce production clauses -> clausemayfail SEMI clauses
+-- On NOUNIF reduce production clauses -> clausemayfail SEMI clauses
+-- On NOT reduce production clauses -> clausemayfail SEMI clauses
+-- On NONINTERF reduce production clauses -> clausemayfail SEMI clauses
+-- On LET reduce production clauses -> clausemayfail SEMI clauses
+-- On FUN reduce production clauses -> clausemayfail SEMI clauses
+-- On FREE reduce production clauses -> clausemayfail SEMI clauses
+-- On EQUATION reduce production clauses -> clausemayfail SEMI clauses
+-- On ELIMTRUE reduce production clauses -> clausemayfail SEMI clauses
+-- On DATA reduce production clauses -> clausemayfail SEMI clauses
+-- On CLAUSES reduce production clauses -> clausemayfail SEMI clauses
+-- On CELL reduce production clauses -> clausemayfail SEMI clauses
+
+State 343:
+clausemayfail -> clause . WHERE varmayfail CANTEXT FAIL [ SEMI DOT ]
+clausemayfail -> clause . [ SEMI DOT ]
+-- On WHERE shift to state 344
+-- On SEMI reduce production clausemayfail -> clause
+-- On DOT reduce production clausemayfail -> clause
+
+State 344:
+clausemayfail -> clause WHERE . varmayfail CANTEXT FAIL [ SEMI DOT ]
+-- On IDENT shift to state 270
+-- On varmayfail shift to state 345
+
+State 345:
+clausemayfail -> clause WHERE varmayfail . CANTEXT FAIL [ SEMI DOT ]
+-- On CANTEXT shift to state 346
+
+State 346:
+clausemayfail -> clause WHERE varmayfail CANTEXT . FAIL [ SEMI DOT ]
+-- On FAIL shift to state 347
+
+State 347:
+clausemayfail -> clause WHERE varmayfail CANTEXT FAIL . [ SEMI DOT ]
+-- On SEMI reduce production clausemayfail -> clause WHERE varmayfail CANTEXT FAIL
+-- On DOT reduce production clausemayfail -> clause WHERE varmayfail CANTEXT FAIL
+
+State 348:
+clauses -> clausemayfail DOT . [ WEAKSECRET REDUCTION QUERY PROCESS PRIVATE PREDICATE PARAM NOUNIF NOT NONINTERF LET FUN FREE EQUATION ELIMTRUE DATA CLAUSES CELL ]
+-- On WEAKSECRET reduce production clauses -> clausemayfail DOT
+-- On REDUCTION reduce production clauses -> clausemayfail DOT
+-- On QUERY reduce production clauses -> clausemayfail DOT
+-- On PROCESS reduce production clauses -> clausemayfail DOT
+-- On PRIVATE reduce production clauses -> clausemayfail DOT
+-- On PREDICATE reduce production clauses -> clausemayfail DOT
+-- On PARAM reduce production clauses -> clausemayfail DOT
+-- On NOUNIF reduce production clauses -> clausemayfail DOT
+-- On NOT reduce production clauses -> clausemayfail DOT
+-- On NONINTERF reduce production clauses -> clausemayfail DOT
+-- On LET reduce production clauses -> clausemayfail DOT
+-- On FUN reduce production clauses -> clausemayfail DOT
+-- On FREE reduce production clauses -> clausemayfail DOT
+-- On EQUATION reduce production clauses -> clausemayfail DOT
+-- On ELIMTRUE reduce production clauses -> clausemayfail DOT
+-- On DATA reduce production clauses -> clausemayfail DOT
+-- On CLAUSES reduce production clauses -> clausemayfail DOT
+-- On CELL reduce production clauses -> clausemayfail DOT
+
+State 349:
+lib -> DATA IDENT SLASH INT DOT lib . [ PROCESS ]
+-- On PROCESS reduce production lib -> DATA IDENT SLASH INT DOT lib
+
+State 350:
+lib -> ELIMTRUE fact WHERE varmayfail CANTEXT FAIL DOT lib . [ PROCESS ]
+-- On PROCESS reduce production lib -> ELIMTRUE fact WHERE varmayfail CANTEXT FAIL DOT lib
+
+State 351:
+lib -> ELIMTRUE fact DOT . lib [ PROCESS ]
+-- On WEAKSECRET shift to state 1
+-- On QUERY shift to state 4
+-- On PRIVATE shift to state 48
+-- On PREDICATE shift to state 49
+-- On PARAM shift to state 54
+-- On NOUNIF shift to state 59
+-- On NOT shift to state 107
+-- On NONINTERF shift to state 123
+-- On LET shift to state 149
+-- On EQUATION shift to state 259
+-- On ELIMTRUE shift to state 267
+-- On DATA shift to state 277
+-- On CLAUSES shift to state 282
+-- On CELL shift to state 295
+-- On privateopt shift to state 301
+-- On lib shift to state 352
+-- On REDUCTION reduce production privateopt -> 
+-- On PROCESS reduce production lib -> 
+-- On FUN reduce production privateopt -> 
+-- On FREE reduce production privateopt -> 
+
+State 352:
+lib -> ELIMTRUE fact DOT lib . [ PROCESS ]
+-- On PROCESS reduce production lib -> ELIMTRUE fact DOT lib
+
+State 353:
+lib -> EQUATION eqlist DOT lib . [ PROCESS ]
+-- On PROCESS reduce production lib -> EQUATION eqlist DOT lib
+
+State 354:
+lib -> LET IDENT EQUAL process DOT lib . [ PROCESS ]
+-- On PROCESS reduce production lib -> LET IDENT EQUAL process DOT lib
+
+State 355:
+lib -> NONINTERF niseq DOT lib . [ PROCESS ]
+-- On PROCESS reduce production lib -> NONINTERF niseq DOT lib
+
+State 356:
+niseq -> ni . COMMA niseq [ DOT ]
+niseq -> ni . [ DOT ]
+-- On COMMA shift to state 357
+-- On DOT reduce production niseq -> ni
+
+State 357:
+niseq -> ni COMMA . niseq [ DOT ]
+-- On IDENT shift to state 124
+-- On niseq shift to state 358
+-- On ni shift to state 356
+
+State 358:
+niseq -> ni COMMA niseq . [ DOT ]
+-- On DOT reduce production niseq -> ni COMMA niseq
+
+State 359:
+lib -> NOT gterm optphase optbindingseq DOT lib . [ PROCESS ]
+-- On PROCESS reduce production lib -> NOT gterm optphase optbindingseq DOT lib
+
+State 360:
+event -> gfact . optphase [ WEDGE SEMI RPAREN DOT BEFORE BAR ]
+-- On PHASE shift to state 91
+-- On optphase shift to state 361
+-- On WEDGE reduce production optphase -> 
+-- On SEMI reduce production optphase -> 
+-- On RPAREN reduce production optphase -> 
+-- On DOT reduce production optphase -> 
+-- On BEFORE reduce production optphase -> 
+-- On BAR reduce production optphase -> 
+
+State 361:
+event -> gfact optphase . [ WEDGE SEMI RPAREN DOT BEFORE BAR ]
+-- On WEDGE reduce production event -> gfact optphase
+-- On SEMI reduce production event -> gfact optphase
+-- On RPAREN reduce production event -> gfact optphase
+-- On DOT reduce production event -> gfact optphase
+-- On BEFORE reduce production event -> gfact optphase
+-- On BAR reduce production event -> gfact optphase
+
+State 362:
+lib -> NOT event . optbindingseq DOT lib [ PROCESS ]
+-- On SEMI shift to state 114
+-- On optbindingseq shift to state 363
+-- On DOT reduce production optbindingseq -> 
+
+State 363:
+lib -> NOT event optbindingseq . DOT lib [ PROCESS ]
+-- On DOT shift to state 364
+
+State 364:
+lib -> NOT event optbindingseq DOT . lib [ PROCESS ]
+-- On WEAKSECRET shift to state 1
+-- On QUERY shift to state 4
+-- On PRIVATE shift to state 48
+-- On PREDICATE shift to state 49
+-- On PARAM shift to state 54
+-- On NOUNIF shift to state 59
+-- On NOT shift to state 107
+-- On NONINTERF shift to state 123
+-- On LET shift to state 149
+-- On EQUATION shift to state 259
+-- On ELIMTRUE shift to state 267
+-- On DATA shift to state 277
+-- On CLAUSES shift to state 282
+-- On CELL shift to state 295
+-- On privateopt shift to state 301
+-- On lib shift to state 365
+-- On REDUCTION reduce production privateopt -> 
+-- On PROCESS reduce production lib -> 
+-- On FUN reduce production privateopt -> 
+-- On FREE reduce production privateopt -> 
+
+State 365:
+lib -> NOT event optbindingseq DOT lib . [ PROCESS ]
+-- On PROCESS reduce production lib -> NOT event optbindingseq DOT lib
+
+State 366:
+lib -> NOUNIF gfactformat optint foptbindingseq DOT lib . [ PROCESS ]
+-- On PROCESS reduce production lib -> NOUNIF gfactformat optint foptbindingseq DOT lib
+
+State 367:
+lib -> PARAM IDENT EQUAL STRING DOT lib . [ PROCESS ]
+-- On PROCESS reduce production lib -> PARAM IDENT EQUAL STRING DOT lib
+
+State 368:
+lib -> PARAM IDENT EQUAL INT . DOT lib [ PROCESS ]
+-- On DOT shift to state 369
+
+State 369:
+lib -> PARAM IDENT EQUAL INT DOT . lib [ PROCESS ]
+-- On WEAKSECRET shift to state 1
+-- On QUERY shift to state 4
+-- On PRIVATE shift to state 48
+-- On PREDICATE shift to state 49
+-- On PARAM shift to state 54
+-- On NOUNIF shift to state 59
+-- On NOT shift to state 107
+-- On NONINTERF shift to state 123
+-- On LET shift to state 149
+-- On EQUATION shift to state 259
+-- On ELIMTRUE shift to state 267
+-- On DATA shift to state 277
+-- On CLAUSES shift to state 282
+-- On CELL shift to state 295
+-- On privateopt shift to state 301
+-- On lib shift to state 370
+-- On REDUCTION reduce production privateopt -> 
+-- On PROCESS reduce production lib -> 
+-- On FUN reduce production privateopt -> 
+-- On FREE reduce production privateopt -> 
+
+State 370:
+lib -> PARAM IDENT EQUAL INT DOT lib . [ PROCESS ]
+-- On PROCESS reduce production lib -> PARAM IDENT EQUAL INT DOT lib
+
+State 371:
+lib -> PARAM IDENT EQUAL IDENT . DOT lib [ PROCESS ]
+-- On DOT shift to state 372
+
+State 372:
+lib -> PARAM IDENT EQUAL IDENT DOT . lib [ PROCESS ]
+-- On WEAKSECRET shift to state 1
+-- On QUERY shift to state 4
+-- On PRIVATE shift to state 48
+-- On PREDICATE shift to state 49
+-- On PARAM shift to state 54
+-- On NOUNIF shift to state 59
+-- On NOT shift to state 107
+-- On NONINTERF shift to state 123
+-- On LET shift to state 149
+-- On EQUATION shift to state 259
+-- On ELIMTRUE shift to state 267
+-- On DATA shift to state 277
+-- On CLAUSES shift to state 282
+-- On CELL shift to state 295
+-- On privateopt shift to state 301
+-- On lib shift to state 373
+-- On REDUCTION reduce production privateopt -> 
+-- On PROCESS reduce production lib -> 
+-- On FUN reduce production privateopt -> 
+-- On FREE reduce production privateopt -> 
+
+State 373:
+lib -> PARAM IDENT EQUAL IDENT DOT lib . [ PROCESS ]
+-- On PROCESS reduce production lib -> PARAM IDENT EQUAL IDENT DOT lib
+
+State 374:
+lib -> PREDICATE IDENT SLASH INT DOT lib . [ PROCESS ]
+-- On PROCESS reduce production lib -> PREDICATE IDENT SLASH INT DOT lib
+
+State 375:
+lib -> PREDICATE IDENT SLASH INT neidentseq . DOT lib [ PROCESS ]
+-- On DOT shift to state 376
+
+State 376:
+lib -> PREDICATE IDENT SLASH INT neidentseq DOT . lib [ PROCESS ]
+-- On WEAKSECRET shift to state 1
+-- On QUERY shift to state 4
+-- On PRIVATE shift to state 48
+-- On PREDICATE shift to state 49
+-- On PARAM shift to state 54
+-- On NOUNIF shift to state 59
+-- On NOT shift to state 107
+-- On NONINTERF shift to state 123
+-- On LET shift to state 149
+-- On EQUATION shift to state 259
+-- On ELIMTRUE shift to state 267
+-- On DATA shift to state 277
+-- On CLAUSES shift to state 282
+-- On CELL shift to state 295
+-- On privateopt shift to state 301
+-- On lib shift to state 377
+-- On REDUCTION reduce production privateopt -> 
+-- On PROCESS reduce production lib -> 
+-- On FUN reduce production privateopt -> 
+-- On FREE reduce production privateopt -> 
+
+State 377:
+lib -> PREDICATE IDENT SLASH INT neidentseq DOT lib . [ PROCESS ]
+-- On PROCESS reduce production lib -> PREDICATE IDENT SLASH INT neidentseq DOT lib
+
+State 378:
+lib -> QUERY queryseq DOT lib . [ PROCESS ]
+-- On PROCESS reduce production lib -> QUERY queryseq DOT lib
+
+State 379:
+queryseq -> query . SEMI queryseq [ DOT ]
+queryseq -> query . [ DOT ]
+-- On SEMI shift to state 380
+-- On DOT reduce production queryseq -> query
+
+State 380:
+queryseq -> query SEMI . queryseq [ DOT ]
+-- On PUTBEGIN shift to state 5
+-- On LPAREN shift to state 12
+-- On LET shift to state 38
+-- On IDENT shift to state 42
+-- On realquery shift to state 45
+-- On queryseq shift to state 381
+-- On query shift to state 379
+-- On gterm shift to state 382
+-- On gfact shift to state 360
+-- On event shift to state 383
+
+State 381:
+queryseq -> query SEMI queryseq . [ DOT ]
+-- On DOT reduce production queryseq -> query SEMI queryseq
+
+State 382:
+gfact -> gterm . DIFF gterm [ WEDGE SEMI RPAREN PHASE DOT BEFORE BAR ]
+gfact -> gterm . EQUAL gterm [ WEDGE SEMI RPAREN PHASE DOT BEFORE BAR ]
+-- On EQUAL shift to state 109
+-- On DIFF shift to state 111
+
+State 383:
+query -> event . [ SEMI DOT ]
+realquery -> event . BEFORE hyp [ SEMI DOT ]
+-- On BEFORE shift to state 384
+-- On SEMI reduce production query -> event
+-- On DOT reduce production query -> event
+
+State 384:
+realquery -> event BEFORE . hyp [ SEMI RPAREN DOT ]
+-- On LPAREN shift to state 385
+-- On IDENT shift to state 42
+-- On hyp shift to state 397
+-- On gterm shift to state 382
+-- On gfact shift to state 360
+-- On event shift to state 391
+
+State 385:
+gterm -> LPAREN . gtermseq RPAREN [ RPAREN EQUAL DIFF COMMA ]
+hyp -> LPAREN . hyp RPAREN [ WEDGE SEMI RPAREN DOT BAR ]
+hyp -> LPAREN . realquery RPAREN [ WEDGE SEMI RPAREN DOT BAR ]
+-- On LPAREN shift to state 385
+-- On IDENT shift to state 42
+-- On realquery shift to state 386
+-- On negtermseq shift to state 15
+-- On hyp shift to state 388
+-- On gtermseq shift to state 36
+-- On gterm shift to state 395
+-- On gfact shift to state 360
+-- On event shift to state 396
+-- On RPAREN reduce production gtermseq -> 
+
+State 386:
+hyp -> LPAREN realquery . RPAREN [ WEDGE SEMI RPAREN DOT BAR ]
+-- On RPAREN shift to state 387
+
+State 387:
+hyp -> LPAREN realquery RPAREN . [ WEDGE SEMI RPAREN DOT BAR ]
+-- On WEDGE reduce production hyp -> LPAREN realquery RPAREN
+-- On SEMI reduce production hyp -> LPAREN realquery RPAREN
+-- On RPAREN reduce production hyp -> LPAREN realquery RPAREN
+-- On DOT reduce production hyp -> LPAREN realquery RPAREN
+-- On BAR reduce production hyp -> LPAREN realquery RPAREN
+
+State 388:
+hyp -> hyp . BAR hyp [ WEDGE RPAREN BAR ]
+hyp -> hyp . WEDGE hyp [ WEDGE RPAREN BAR ]
+hyp -> LPAREN hyp . RPAREN [ WEDGE SEMI RPAREN DOT BAR ]
+-- On WEDGE shift to state 389
+-- On RPAREN shift to state 392
+-- On BAR shift to state 393
+
+State 389:
+hyp -> hyp WEDGE . hyp [ WEDGE SEMI RPAREN DOT BAR ]
+-- On LPAREN shift to state 385
+-- On IDENT shift to state 42
+-- On hyp shift to state 390
+-- On gterm shift to state 382
+-- On gfact shift to state 360
+-- On event shift to state 391
+
+State 390:
+hyp -> hyp . BAR hyp [ WEDGE SEMI RPAREN DOT BAR ]
+hyp -> hyp . WEDGE hyp [ WEDGE SEMI RPAREN DOT BAR ]
+hyp -> hyp WEDGE hyp . [ WEDGE SEMI RPAREN DOT BAR ]
+-- On WEDGE shift to state 389
+-- On SEMI reduce production hyp -> hyp WEDGE hyp
+-- On RPAREN reduce production hyp -> hyp WEDGE hyp
+-- On DOT reduce production hyp -> hyp WEDGE hyp
+-- On BAR reduce production hyp -> hyp WEDGE hyp
+
+State 391:
+hyp -> event . [ WEDGE SEMI RPAREN DOT BAR ]
+-- On WEDGE reduce production hyp -> event
+-- On SEMI reduce production hyp -> event
+-- On RPAREN reduce production hyp -> event
+-- On DOT reduce production hyp -> event
+-- On BAR reduce production hyp -> event
+
+State 392:
+hyp -> LPAREN hyp RPAREN . [ WEDGE SEMI RPAREN DOT BAR ]
+-- On WEDGE reduce production hyp -> LPAREN hyp RPAREN
+-- On SEMI reduce production hyp -> LPAREN hyp RPAREN
+-- On RPAREN reduce production hyp -> LPAREN hyp RPAREN
+-- On DOT reduce production hyp -> LPAREN hyp RPAREN
+-- On BAR reduce production hyp -> LPAREN hyp RPAREN
+
+State 393:
+hyp -> hyp BAR . hyp [ WEDGE SEMI RPAREN DOT BAR ]
+-- On LPAREN shift to state 385
+-- On IDENT shift to state 42
+-- On hyp shift to state 394
+-- On gterm shift to state 382
+-- On gfact shift to state 360
+-- On event shift to state 391
+
+State 394:
+hyp -> hyp . BAR hyp [ WEDGE SEMI RPAREN DOT BAR ]
+hyp -> hyp BAR hyp . [ WEDGE SEMI RPAREN DOT BAR ]
+hyp -> hyp . WEDGE hyp [ WEDGE SEMI RPAREN DOT BAR ]
+-- On WEDGE shift to state 389
+-- On BAR shift to state 393
+-- On SEMI reduce production hyp -> hyp BAR hyp
+-- On RPAREN reduce production hyp -> hyp BAR hyp
+-- On DOT reduce production hyp -> hyp BAR hyp
+
+State 395:
+gfact -> gterm . DIFF gterm [ WEDGE RPAREN PHASE BEFORE BAR ]
+gfact -> gterm . EQUAL gterm [ WEDGE RPAREN PHASE BEFORE BAR ]
+negtermseq -> gterm . COMMA negtermseq [ RPAREN ]
+negtermseq -> gterm . [ RPAREN ]
+-- On EQUAL shift to state 109
+-- On DIFF shift to state 111
+-- On COMMA shift to state 19
+-- On RPAREN reduce production negtermseq -> gterm
+
+State 396:
+hyp -> event . [ WEDGE RPAREN BAR ]
+realquery -> event . BEFORE hyp [ RPAREN ]
+-- On BEFORE shift to state 384
+-- On WEDGE reduce production hyp -> event
+-- On RPAREN reduce production hyp -> event
+-- On BAR reduce production hyp -> event
+
+State 397:
+hyp -> hyp . BAR hyp [ WEDGE SEMI RPAREN DOT BAR ]
+hyp -> hyp . WEDGE hyp [ WEDGE SEMI RPAREN DOT BAR ]
+realquery -> event BEFORE hyp . [ SEMI RPAREN DOT ]
+-- On WEDGE shift to state 389
+-- On BAR shift to state 393
+-- On SEMI reduce production realquery -> event BEFORE hyp
+-- On RPAREN reduce production realquery -> event BEFORE hyp
+-- On DOT reduce production realquery -> event BEFORE hyp
+
+State 398:
+lib -> WEAKSECRET IDENT DOT lib . [ PROCESS ]
+-- On PROCESS reduce production lib -> WEAKSECRET IDENT DOT lib
+
+State 399:
+all -> lib . PROCESS process EOF [ # ]
+-- On PROCESS shift to state 400
+
+State 400:
+all -> lib PROCESS . process EOF [ # ]
+-- On UNLOCK shift to state 152
+-- On REPL shift to state 157
+-- On READ shift to state 158
+-- On PHASE shift to state 175
+-- On OUT shift to state 178
+-- On NEW shift to state 185
+-- On LPAREN shift to state 188
+-- On LOCK shift to state 189
+-- On LET shift to state 194
+-- On INT shift to state 200
+-- On IN shift to state 201
+-- On IF shift to state 208
+-- On IDENT shift to state 219
+-- On EVENT shift to state 220
+-- On BARRIER shift to state 226
+-- On process shift to state 401
+-- On neidentseq shift to state 238
+
+State 401:
+all -> lib PROCESS process . EOF [ # ]
+process -> process . BAR process [ EOF BAR ]
+-- On EOF shift to state 402
+-- On BAR shift to state 236
+
+State 402:
+all -> lib PROCESS process EOF . [ # ]
+-- On # reduce production all -> lib PROCESS process EOF
+
+State 403:
+all' -> all . [ # ]
+-- On # accept all
+

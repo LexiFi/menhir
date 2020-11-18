@@ -1,0 +1,100 @@
+State 0:
+main' -> . main [ # ]
+-- On LET shift to state 1
+-- On EOF shift to state 16
+-- On main shift to state 17
+-- On declaration shift to state 18
+
+State 1:
+declaration -> LET . IDENT EQ regexp END_OF_LET [ LET EOF ]
+-- On IDENT shift to state 2
+
+State 2:
+declaration -> LET IDENT . EQ regexp END_OF_LET [ LET EOF ]
+-- On EQ shift to state 3
+
+State 3:
+declaration -> LET IDENT EQ . regexp END_OF_LET [ LET EOF ]
+-- On LBRACKET shift to state 4
+-- On IDENT shift to state 9
+-- On CHAR shift to state 10
+-- On regexptoken shift to state 11
+-- On regexp shift to state 14
+
+State 4:
+regexptoken -> LBRACKET . CHAR RANGE CHAR RBRACKET [ PIPE END_OF_LET ]
+-- On CHAR shift to state 5
+
+State 5:
+regexptoken -> LBRACKET CHAR . RANGE CHAR RBRACKET [ PIPE END_OF_LET ]
+-- On RANGE shift to state 6
+
+State 6:
+regexptoken -> LBRACKET CHAR RANGE . CHAR RBRACKET [ PIPE END_OF_LET ]
+-- On CHAR shift to state 7
+
+State 7:
+regexptoken -> LBRACKET CHAR RANGE CHAR . RBRACKET [ PIPE END_OF_LET ]
+-- On RBRACKET shift to state 8
+
+State 8:
+regexptoken -> LBRACKET CHAR RANGE CHAR RBRACKET . [ PIPE END_OF_LET ]
+-- On PIPE reduce production regexptoken -> LBRACKET CHAR RANGE CHAR RBRACKET
+-- On END_OF_LET reduce production regexptoken -> LBRACKET CHAR RANGE CHAR RBRACKET
+
+State 9:
+regexptoken -> IDENT . [ PIPE END_OF_LET ]
+-- On PIPE reduce production regexptoken -> IDENT
+-- On END_OF_LET reduce production regexptoken -> IDENT
+
+State 10:
+regexptoken -> CHAR . [ PIPE END_OF_LET ]
+-- On PIPE reduce production regexptoken -> CHAR
+-- On END_OF_LET reduce production regexptoken -> CHAR
+
+State 11:
+regexp -> regexptoken . PIPE regexp [ END_OF_LET ]
+regexp -> regexptoken . [ END_OF_LET ]
+-- On PIPE shift to state 12
+-- On END_OF_LET reduce production regexp -> regexptoken
+
+State 12:
+regexp -> regexptoken PIPE . regexp [ END_OF_LET ]
+-- On LBRACKET shift to state 4
+-- On IDENT shift to state 9
+-- On CHAR shift to state 10
+-- On regexptoken shift to state 11
+-- On regexp shift to state 13
+
+State 13:
+regexp -> regexptoken PIPE regexp . [ END_OF_LET ]
+-- On END_OF_LET reduce production regexp -> regexptoken PIPE regexp
+
+State 14:
+declaration -> LET IDENT EQ regexp . END_OF_LET [ LET EOF ]
+-- On END_OF_LET shift to state 15
+
+State 15:
+declaration -> LET IDENT EQ regexp END_OF_LET . [ LET EOF ]
+-- On LET reduce production declaration -> LET IDENT EQ regexp END_OF_LET
+-- On EOF reduce production declaration -> LET IDENT EQ regexp END_OF_LET
+
+State 16:
+main -> EOF . [ # ]
+-- On # reduce production main -> EOF
+
+State 17:
+main' -> main . [ # ]
+-- On # accept main
+
+State 18:
+main -> declaration . main [ # ]
+-- On LET shift to state 1
+-- On EOF shift to state 16
+-- On main shift to state 19
+-- On declaration shift to state 18
+
+State 19:
+main -> declaration main . [ # ]
+-- On # reduce production main -> declaration main
+

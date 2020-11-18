@@ -1,0 +1,455 @@
+State 0:
+parse_clause' -> . parse_clause [ # ]
+-- On SINGLE_QUOTED shift to state 1
+-- On LOWER_WORD shift to state 2
+-- On DOUBLE_QUOTED shift to state 6
+-- On term shift to state 13
+-- On parse_clause shift to state 34
+-- On clause shift to state 35
+
+State 1:
+term -> SINGLE_QUOTED . [ RIGHT_PARENTHESIS OPERATOR IF EOI DOT COMMA AGGR_EQUAL # ]
+-- On RIGHT_PARENTHESIS reduce production term -> SINGLE_QUOTED
+-- On OPERATOR reduce production term -> SINGLE_QUOTED
+-- On IF reduce production term -> SINGLE_QUOTED
+-- On EOI reduce production term -> SINGLE_QUOTED
+-- On DOT reduce production term -> SINGLE_QUOTED
+-- On COMMA reduce production term -> SINGLE_QUOTED
+-- On AGGR_EQUAL reduce production term -> SINGLE_QUOTED
+
+State 2:
+term -> LOWER_WORD . [ RIGHT_PARENTHESIS OPERATOR IF EOI DOT COMMA AGGR_EQUAL # ]
+term -> LOWER_WORD . LEFT_PARENTHESIS args RIGHT_PARENTHESIS [ RIGHT_PARENTHESIS OPERATOR IF EOI DOT COMMA AGGR_EQUAL # ]
+-- On LEFT_PARENTHESIS shift to state 3
+-- On RIGHT_PARENTHESIS reduce production term -> LOWER_WORD
+-- On OPERATOR reduce production term -> LOWER_WORD
+-- On IF reduce production term -> LOWER_WORD
+-- On EOI reduce production term -> LOWER_WORD
+-- On DOT reduce production term -> LOWER_WORD
+-- On COMMA reduce production term -> LOWER_WORD
+-- On AGGR_EQUAL reduce production term -> LOWER_WORD
+
+State 3:
+term -> LOWER_WORD LEFT_PARENTHESIS . args RIGHT_PARENTHESIS [ RIGHT_PARENTHESIS OPERATOR IF EOI DOT COMMA AGGR_EQUAL # ]
+-- On UPPER_WORD shift to state 4
+-- On SINGLE_QUOTED shift to state 1
+-- On LOWER_WORD shift to state 2
+-- On INT shift to state 5
+-- On DOUBLE_QUOTED shift to state 6
+-- On term shift to state 7
+-- On subterm shift to state 8
+-- On args shift to state 11
+
+State 4:
+subterm -> UPPER_WORD . [ RIGHT_PARENTHESIS OPERATOR EOI DOT COMMA AGGR_EQUAL # ]
+-- On RIGHT_PARENTHESIS reduce production subterm -> UPPER_WORD
+-- On OPERATOR reduce production subterm -> UPPER_WORD
+-- On EOI reduce production subterm -> UPPER_WORD
+-- On DOT reduce production subterm -> UPPER_WORD
+-- On COMMA reduce production subterm -> UPPER_WORD
+-- On AGGR_EQUAL reduce production subterm -> UPPER_WORD
+
+State 5:
+subterm -> INT . [ RIGHT_PARENTHESIS OPERATOR EOI DOT COMMA AGGR_EQUAL # ]
+-- On RIGHT_PARENTHESIS reduce production subterm -> INT
+-- On OPERATOR reduce production subterm -> INT
+-- On EOI reduce production subterm -> INT
+-- On DOT reduce production subterm -> INT
+-- On COMMA reduce production subterm -> INT
+-- On AGGR_EQUAL reduce production subterm -> INT
+
+State 6:
+term -> DOUBLE_QUOTED . [ RIGHT_PARENTHESIS OPERATOR IF EOI DOT COMMA AGGR_EQUAL # ]
+-- On RIGHT_PARENTHESIS reduce production term -> DOUBLE_QUOTED
+-- On OPERATOR reduce production term -> DOUBLE_QUOTED
+-- On IF reduce production term -> DOUBLE_QUOTED
+-- On EOI reduce production term -> DOUBLE_QUOTED
+-- On DOT reduce production term -> DOUBLE_QUOTED
+-- On COMMA reduce production term -> DOUBLE_QUOTED
+-- On AGGR_EQUAL reduce production term -> DOUBLE_QUOTED
+
+State 7:
+subterm -> term . [ RIGHT_PARENTHESIS EOI DOT COMMA # ]
+-- On RIGHT_PARENTHESIS reduce production subterm -> term
+-- On EOI reduce production subterm -> term
+-- On DOT reduce production subterm -> term
+-- On COMMA reduce production subterm -> term
+
+State 8:
+args -> subterm . [ RIGHT_PARENTHESIS ]
+args -> subterm . COMMA args [ RIGHT_PARENTHESIS ]
+-- On COMMA shift to state 9
+-- On RIGHT_PARENTHESIS reduce production args -> subterm
+
+State 9:
+args -> subterm COMMA . args [ RIGHT_PARENTHESIS ]
+-- On UPPER_WORD shift to state 4
+-- On SINGLE_QUOTED shift to state 1
+-- On LOWER_WORD shift to state 2
+-- On INT shift to state 5
+-- On DOUBLE_QUOTED shift to state 6
+-- On term shift to state 7
+-- On subterm shift to state 8
+-- On args shift to state 10
+
+State 10:
+args -> subterm COMMA args . [ RIGHT_PARENTHESIS ]
+-- On RIGHT_PARENTHESIS reduce production args -> subterm COMMA args
+
+State 11:
+term -> LOWER_WORD LEFT_PARENTHESIS args . RIGHT_PARENTHESIS [ RIGHT_PARENTHESIS OPERATOR IF EOI DOT COMMA AGGR_EQUAL # ]
+-- On RIGHT_PARENTHESIS shift to state 12
+
+State 12:
+term -> LOWER_WORD LEFT_PARENTHESIS args RIGHT_PARENTHESIS . [ RIGHT_PARENTHESIS OPERATOR IF EOI DOT COMMA AGGR_EQUAL # ]
+-- On RIGHT_PARENTHESIS reduce production term -> LOWER_WORD LEFT_PARENTHESIS args RIGHT_PARENTHESIS
+-- On OPERATOR reduce production term -> LOWER_WORD LEFT_PARENTHESIS args RIGHT_PARENTHESIS
+-- On IF reduce production term -> LOWER_WORD LEFT_PARENTHESIS args RIGHT_PARENTHESIS
+-- On EOI reduce production term -> LOWER_WORD LEFT_PARENTHESIS args RIGHT_PARENTHESIS
+-- On DOT reduce production term -> LOWER_WORD LEFT_PARENTHESIS args RIGHT_PARENTHESIS
+-- On COMMA reduce production term -> LOWER_WORD LEFT_PARENTHESIS args RIGHT_PARENTHESIS
+-- On AGGR_EQUAL reduce production term -> LOWER_WORD LEFT_PARENTHESIS args RIGHT_PARENTHESIS
+
+State 13:
+clause -> term . DOT [ SINGLE_QUOTED LOWER_WORD EOI DOUBLE_QUOTED ]
+clause -> term . IF literals DOT [ SINGLE_QUOTED LOWER_WORD EOI DOUBLE_QUOTED ]
+-- On IF shift to state 14
+-- On DOT shift to state 33
+
+State 14:
+clause -> term IF . literals DOT [ SINGLE_QUOTED LOWER_WORD EOI DOUBLE_QUOTED ]
+-- On UPPER_WORD shift to state 4
+-- On SINGLE_QUOTED shift to state 1
+-- On NOT shift to state 15
+-- On LOWER_WORD shift to state 2
+-- On INT shift to state 5
+-- On DOUBLE_QUOTED shift to state 6
+-- On term shift to state 16
+-- On subterm shift to state 21
+-- On literals shift to state 27
+-- On literal shift to state 29
+-- On atom shift to state 32
+
+State 15:
+literal -> NOT . atom [ EOI DOT COMMA # ]
+-- On UPPER_WORD shift to state 4
+-- On SINGLE_QUOTED shift to state 1
+-- On LOWER_WORD shift to state 2
+-- On INT shift to state 5
+-- On DOUBLE_QUOTED shift to state 6
+-- On term shift to state 16
+-- On subterm shift to state 17
+-- On atom shift to state 20
+
+State 16:
+atom -> term . [ EOI DOT COMMA # ]
+subterm -> term . [ OPERATOR AGGR_EQUAL ]
+-- On OPERATOR reduce production subterm -> term
+-- On EOI reduce production atom -> term
+-- On DOT reduce production atom -> term
+-- On COMMA reduce production atom -> term
+-- On AGGR_EQUAL reduce production subterm -> term
+
+State 17:
+atom -> subterm . OPERATOR subterm [ EOI DOT COMMA # ]
+-- On OPERATOR shift to state 18
+
+State 18:
+atom -> subterm OPERATOR . subterm [ EOI DOT COMMA # ]
+-- On UPPER_WORD shift to state 4
+-- On SINGLE_QUOTED shift to state 1
+-- On LOWER_WORD shift to state 2
+-- On INT shift to state 5
+-- On DOUBLE_QUOTED shift to state 6
+-- On term shift to state 7
+-- On subterm shift to state 19
+
+State 19:
+atom -> subterm OPERATOR subterm . [ EOI DOT COMMA # ]
+-- On EOI reduce production atom -> subterm OPERATOR subterm
+-- On DOT reduce production atom -> subterm OPERATOR subterm
+-- On COMMA reduce production atom -> subterm OPERATOR subterm
+
+State 20:
+literal -> NOT atom . [ EOI DOT COMMA # ]
+-- On EOI reduce production literal -> NOT atom
+-- On DOT reduce production literal -> NOT atom
+-- On COMMA reduce production literal -> NOT atom
+
+State 21:
+atom -> subterm . OPERATOR subterm [ EOI DOT COMMA # ]
+literal -> subterm . AGGR_EQUAL LOWER_WORD UPPER_WORD COLON term [ EOI DOT COMMA # ]
+-- On OPERATOR shift to state 18
+-- On AGGR_EQUAL shift to state 22
+
+State 22:
+literal -> subterm AGGR_EQUAL . LOWER_WORD UPPER_WORD COLON term [ EOI DOT COMMA # ]
+-- On LOWER_WORD shift to state 23
+
+State 23:
+literal -> subterm AGGR_EQUAL LOWER_WORD . UPPER_WORD COLON term [ EOI DOT COMMA # ]
+-- On UPPER_WORD shift to state 24
+
+State 24:
+literal -> subterm AGGR_EQUAL LOWER_WORD UPPER_WORD . COLON term [ EOI DOT COMMA # ]
+-- On COLON shift to state 25
+
+State 25:
+literal -> subterm AGGR_EQUAL LOWER_WORD UPPER_WORD COLON . term [ EOI DOT COMMA # ]
+-- On SINGLE_QUOTED shift to state 1
+-- On LOWER_WORD shift to state 2
+-- On DOUBLE_QUOTED shift to state 6
+-- On term shift to state 26
+
+State 26:
+literal -> subterm AGGR_EQUAL LOWER_WORD UPPER_WORD COLON term . [ EOI DOT COMMA # ]
+-- On EOI reduce production literal -> subterm AGGR_EQUAL LOWER_WORD UPPER_WORD COLON term
+-- On DOT reduce production literal -> subterm AGGR_EQUAL LOWER_WORD UPPER_WORD COLON term
+-- On COMMA reduce production literal -> subterm AGGR_EQUAL LOWER_WORD UPPER_WORD COLON term
+
+State 27:
+clause -> term IF literals . DOT [ SINGLE_QUOTED LOWER_WORD EOI DOUBLE_QUOTED ]
+-- On DOT shift to state 28
+
+State 28:
+clause -> term IF literals DOT . [ SINGLE_QUOTED LOWER_WORD EOI DOUBLE_QUOTED ]
+-- On SINGLE_QUOTED reduce production clause -> term IF literals DOT
+-- On LOWER_WORD reduce production clause -> term IF literals DOT
+-- On EOI reduce production clause -> term IF literals DOT
+-- On DOUBLE_QUOTED reduce production clause -> term IF literals DOT
+
+State 29:
+literals -> literal . [ EOI DOT ]
+literals -> literal . COMMA literals [ EOI DOT ]
+-- On COMMA shift to state 30
+-- On EOI reduce production literals -> literal
+-- On DOT reduce production literals -> literal
+
+State 30:
+literals -> literal COMMA . literals [ EOI DOT ]
+-- On UPPER_WORD shift to state 4
+-- On SINGLE_QUOTED shift to state 1
+-- On NOT shift to state 15
+-- On LOWER_WORD shift to state 2
+-- On INT shift to state 5
+-- On DOUBLE_QUOTED shift to state 6
+-- On term shift to state 16
+-- On subterm shift to state 21
+-- On literals shift to state 31
+-- On literal shift to state 29
+-- On atom shift to state 32
+
+State 31:
+literals -> literal COMMA literals . [ EOI DOT ]
+-- On EOI reduce production literals -> literal COMMA literals
+-- On DOT reduce production literals -> literal COMMA literals
+
+State 32:
+literal -> atom . [ EOI DOT COMMA # ]
+-- On EOI reduce production literal -> atom
+-- On DOT reduce production literal -> atom
+-- On COMMA reduce production literal -> atom
+
+State 33:
+clause -> term DOT . [ SINGLE_QUOTED LOWER_WORD EOI DOUBLE_QUOTED ]
+-- On SINGLE_QUOTED reduce production clause -> term DOT
+-- On LOWER_WORD reduce production clause -> term DOT
+-- On EOI reduce production clause -> term DOT
+-- On DOUBLE_QUOTED reduce production clause -> term DOT
+
+State 34:
+parse_clause' -> parse_clause . [ # ]
+-- On # accept parse_clause
+
+State 35:
+parse_clause -> clause . EOI [ # ]
+-- On EOI shift to state 36
+
+State 36:
+parse_clause -> clause EOI . [ # ]
+-- On # reduce production parse_clause -> clause EOI
+
+State 37:
+parse_file' -> . parse_file [ # ]
+-- On SINGLE_QUOTED shift to state 1
+-- On LOWER_WORD shift to state 2
+-- On DOUBLE_QUOTED shift to state 6
+-- On term shift to state 13
+-- On parse_file shift to state 38
+-- On clauses shift to state 39
+-- On clause shift to state 41
+
+State 38:
+parse_file' -> parse_file . [ # ]
+-- On # accept parse_file
+
+State 39:
+parse_file -> clauses . EOI [ # ]
+-- On EOI shift to state 40
+
+State 40:
+parse_file -> clauses EOI . [ # ]
+-- On # reduce production parse_file -> clauses EOI
+
+State 41:
+clauses -> clause . [ EOI ]
+clauses -> clause . clauses [ EOI ]
+-- On SINGLE_QUOTED shift to state 1
+-- On LOWER_WORD shift to state 2
+-- On DOUBLE_QUOTED shift to state 6
+-- On term shift to state 13
+-- On clauses shift to state 42
+-- On clause shift to state 41
+-- On EOI reduce production clauses -> clause
+
+State 42:
+clauses -> clause clauses . [ EOI ]
+-- On EOI reduce production clauses -> clause clauses
+
+State 43:
+parse_literal' -> . parse_literal [ # ]
+-- On UPPER_WORD shift to state 4
+-- On SINGLE_QUOTED shift to state 1
+-- On NOT shift to state 15
+-- On LOWER_WORD shift to state 2
+-- On INT shift to state 5
+-- On DOUBLE_QUOTED shift to state 6
+-- On term shift to state 16
+-- On subterm shift to state 21
+-- On parse_literal shift to state 44
+-- On literal shift to state 45
+-- On atom shift to state 32
+
+State 44:
+parse_literal' -> parse_literal . [ # ]
+-- On # accept parse_literal
+
+State 45:
+parse_literal -> literal . EOI [ # ]
+-- On EOI shift to state 46
+
+State 46:
+parse_literal -> literal EOI . [ # ]
+-- On # reduce production parse_literal -> literal EOI
+
+State 47:
+parse_literals' -> . parse_literals [ # ]
+-- On UPPER_WORD shift to state 4
+-- On SINGLE_QUOTED shift to state 1
+-- On NOT shift to state 15
+-- On LOWER_WORD shift to state 2
+-- On INT shift to state 5
+-- On DOUBLE_QUOTED shift to state 6
+-- On term shift to state 16
+-- On subterm shift to state 21
+-- On parse_literals shift to state 48
+-- On literals shift to state 49
+-- On literal shift to state 29
+-- On atom shift to state 32
+
+State 48:
+parse_literals' -> parse_literals . [ # ]
+-- On # accept parse_literals
+
+State 49:
+parse_literals -> literals . EOI [ # ]
+-- On EOI shift to state 50
+
+State 50:
+parse_literals -> literals EOI . [ # ]
+-- On # reduce production parse_literals -> literals EOI
+
+State 51:
+parse_query' -> . parse_query [ # ]
+-- On LEFT_PARENTHESIS shift to state 52
+-- On tuple shift to state 55
+-- On parse_query shift to state 61
+
+State 52:
+tuple -> LEFT_PARENTHESIS . args RIGHT_PARENTHESIS [ IF ]
+-- On UPPER_WORD shift to state 4
+-- On SINGLE_QUOTED shift to state 1
+-- On LOWER_WORD shift to state 2
+-- On INT shift to state 5
+-- On DOUBLE_QUOTED shift to state 6
+-- On term shift to state 7
+-- On subterm shift to state 8
+-- On args shift to state 53
+
+State 53:
+tuple -> LEFT_PARENTHESIS args . RIGHT_PARENTHESIS [ IF ]
+-- On RIGHT_PARENTHESIS shift to state 54
+
+State 54:
+tuple -> LEFT_PARENTHESIS args RIGHT_PARENTHESIS . [ IF ]
+-- On IF reduce production tuple -> LEFT_PARENTHESIS args RIGHT_PARENTHESIS
+
+State 55:
+parse_query -> tuple . IF literals [ # ]
+-- On IF shift to state 56
+
+State 56:
+parse_query -> tuple IF . literals [ # ]
+-- On UPPER_WORD shift to state 4
+-- On SINGLE_QUOTED shift to state 1
+-- On NOT shift to state 15
+-- On LOWER_WORD shift to state 2
+-- On INT shift to state 5
+-- On DOUBLE_QUOTED shift to state 6
+-- On term shift to state 16
+-- On subterm shift to state 21
+-- On literals shift to state 57
+-- On literal shift to state 58
+-- On atom shift to state 32
+
+State 57:
+parse_query -> tuple IF literals . [ # ]
+-- On # reduce production parse_query -> tuple IF literals
+
+State 58:
+literals -> literal . [ # ]
+literals -> literal . COMMA literals [ # ]
+-- On COMMA shift to state 59
+
+State 59:
+literals -> literal COMMA . literals [ # ]
+-- On UPPER_WORD shift to state 4
+-- On SINGLE_QUOTED shift to state 1
+-- On NOT shift to state 15
+-- On LOWER_WORD shift to state 2
+-- On INT shift to state 5
+-- On DOUBLE_QUOTED shift to state 6
+-- On term shift to state 16
+-- On subterm shift to state 21
+-- On literals shift to state 60
+-- On literal shift to state 58
+-- On atom shift to state 32
+
+State 60:
+literals -> literal COMMA literals . [ # ]
+-- On # reduce production literals -> literal COMMA literals
+
+State 61:
+parse_query' -> parse_query . [ # ]
+-- On # accept parse_query
+
+State 62:
+parse_term' -> . parse_term [ # ]
+-- On SINGLE_QUOTED shift to state 1
+-- On LOWER_WORD shift to state 2
+-- On DOUBLE_QUOTED shift to state 6
+-- On term shift to state 63
+-- On parse_term shift to state 65
+
+State 63:
+parse_term -> term . EOI [ # ]
+-- On EOI shift to state 64
+
+State 64:
+parse_term -> term EOI . [ # ]
+-- On # reduce production parse_term -> term EOI
+
+State 65:
+parse_term' -> parse_term . [ # ]
+-- On # accept parse_term
+

@@ -1,0 +1,2444 @@
+State 0:
+file' -> . file [ # ]
+-- On error shift to state 1
+-- On QID shift to state 2
+-- On LBRACK shift to state 114
+-- On ID shift to state 125
+-- On DEFKW shift to state 130
+-- On BEGINPROOF shift to state 192
+-- On goal shift to state 137
+-- On file shift to state 224
+-- On env shift to state 138
+-- On body shift to state 225
+
+State 1:
+file -> error . [ # ]
+-- On # reduce production file -> error
+
+State 2:
+body -> QID . COLON kind DOT body [ EOF ENDPROOF ]
+body -> QID . COLON PROOF term DOT body [ EOF ENDPROOF ]
+body -> QID . COLON arrow_type DOT body [ EOF ENDPROOF ]
+-- On COLON shift to state 3
+
+State 3:
+body -> QID COLON . kind DOT body [ EOF ENDPROOF ]
+body -> QID COLON . PROOF term DOT body [ EOF ENDPROOF ]
+body -> QID COLON . arrow_type DOT body [ EOF ENDPROOF ]
+-- On TYPE shift to state 4
+-- On TERM shift to state 5
+-- On PROP shift to state 20
+-- On PROOF shift to state 21
+-- On LPAREN shift to state 44
+-- On ID shift to state 174
+-- On typ shift to state 49
+-- On kind shift to state 186
+-- On complex_type shift to state 50
+-- On arrow_type shift to state 189
+
+State 4:
+kind -> TYPE . [ DOT ]
+-- On DOT reduce production kind -> TYPE
+
+State 5:
+typ -> TERM . type_simple [ RPAREN RBRACK END_VAR DOUBLE_ARROW DOT DEF COMMA ARROW ]
+-- On QID shift to state 6
+-- On LPAREN shift to state 7
+-- On ID shift to state 8
+-- On type_simple shift to state 19
+-- On type_qid shift to state 12
+
+State 6:
+type_qid -> QID . [ TRUE RPAREN REW RBRACK QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_VAR END_TYPEALIAS END_HYP DOUBLE_ARROW DOT DEF COMMA CCARR ARROW AND ALL_TYPE ALL ]
+-- On TRUE reduce production type_qid -> QID
+-- On RPAREN reduce production type_qid -> QID
+-- On REW reduce production type_qid -> QID
+-- On RBRACK reduce production type_qid -> QID
+-- On QID reduce production type_qid -> QID
+-- On OR reduce production type_qid -> QID
+-- On NUMBER reduce production type_qid -> QID
+-- On NOT reduce production type_qid -> QID
+-- On LPAREN reduce production type_qid -> QID
+-- On IMP reduce production type_qid -> QID
+-- On ID reduce production type_qid -> QID
+-- On FALSE reduce production type_qid -> QID
+-- On EX_TYPE reduce production type_qid -> QID
+-- On EX reduce production type_qid -> QID
+-- On EQV reduce production type_qid -> QID
+-- On EQUAL reduce production type_qid -> QID
+-- On END_VAR reduce production type_qid -> QID
+-- On END_TYPEALIAS reduce production type_qid -> QID
+-- On END_HYP reduce production type_qid -> QID
+-- On DOUBLE_ARROW reduce production type_qid -> QID
+-- On DOT reduce production type_qid -> QID
+-- On DEF reduce production type_qid -> QID
+-- On COMMA reduce production type_qid -> QID
+-- On CCARR reduce production type_qid -> QID
+-- On ARROW reduce production type_qid -> QID
+-- On AND reduce production type_qid -> QID
+-- On ALL_TYPE reduce production type_qid -> QID
+-- On ALL reduce production type_qid -> QID
+
+State 7:
+type_simple -> LPAREN . pre_typ RPAREN [ TRUE RPAREN REW RBRACK QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_VAR END_TYPEALIAS END_HYP DOUBLE_ARROW DOT DEF COMMA CCARR ARROW AND ALL_TYPE ALL ]
+-- On QID shift to state 6
+-- On LPAREN shift to state 7
+-- On ID shift to state 8
+-- On CCARR shift to state 9
+-- On type_simple shift to state 13
+-- On type_qid shift to state 12
+-- On pre_typ shift to state 17
+
+State 8:
+type_qid -> ID . [ TRUE RPAREN REW RBRACK QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_VAR END_TYPEALIAS END_HYP DOUBLE_ARROW DOT DEF COMMA CCARR ARROW AND ALL_TYPE ALL ]
+-- On TRUE reduce production type_qid -> ID
+-- On RPAREN reduce production type_qid -> ID
+-- On REW reduce production type_qid -> ID
+-- On RBRACK reduce production type_qid -> ID
+-- On QID reduce production type_qid -> ID
+-- On OR reduce production type_qid -> ID
+-- On NUMBER reduce production type_qid -> ID
+-- On NOT reduce production type_qid -> ID
+-- On LPAREN reduce production type_qid -> ID
+-- On IMP reduce production type_qid -> ID
+-- On ID reduce production type_qid -> ID
+-- On FALSE reduce production type_qid -> ID
+-- On EX_TYPE reduce production type_qid -> ID
+-- On EX reduce production type_qid -> ID
+-- On EQV reduce production type_qid -> ID
+-- On EQUAL reduce production type_qid -> ID
+-- On END_VAR reduce production type_qid -> ID
+-- On END_TYPEALIAS reduce production type_qid -> ID
+-- On END_HYP reduce production type_qid -> ID
+-- On DOUBLE_ARROW reduce production type_qid -> ID
+-- On DOT reduce production type_qid -> ID
+-- On DEF reduce production type_qid -> ID
+-- On COMMA reduce production type_qid -> ID
+-- On CCARR reduce production type_qid -> ID
+-- On ARROW reduce production type_qid -> ID
+-- On AND reduce production type_qid -> ID
+-- On ALL_TYPE reduce production type_qid -> ID
+-- On ALL reduce production type_qid -> ID
+
+State 9:
+pre_typ -> CCARR . type_simple type_simple [ RPAREN ]
+-- On QID shift to state 6
+-- On LPAREN shift to state 7
+-- On ID shift to state 8
+-- On type_simple shift to state 10
+-- On type_qid shift to state 12
+
+State 10:
+pre_typ -> CCARR type_simple . type_simple [ RPAREN ]
+-- On QID shift to state 6
+-- On LPAREN shift to state 7
+-- On ID shift to state 8
+-- On type_simple shift to state 11
+-- On type_qid shift to state 12
+
+State 11:
+pre_typ -> CCARR type_simple type_simple . [ RPAREN ]
+-- On RPAREN reduce production pre_typ -> CCARR type_simple type_simple
+
+State 12:
+type_simple -> type_qid . [ TRUE RPAREN REW RBRACK QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_VAR END_TYPEALIAS END_HYP DOUBLE_ARROW DOT DEF COMMA CCARR ARROW AND ALL_TYPE ALL ]
+-- On TRUE reduce production type_simple -> type_qid
+-- On RPAREN reduce production type_simple -> type_qid
+-- On REW reduce production type_simple -> type_qid
+-- On RBRACK reduce production type_simple -> type_qid
+-- On QID reduce production type_simple -> type_qid
+-- On OR reduce production type_simple -> type_qid
+-- On NUMBER reduce production type_simple -> type_qid
+-- On NOT reduce production type_simple -> type_qid
+-- On LPAREN reduce production type_simple -> type_qid
+-- On IMP reduce production type_simple -> type_qid
+-- On ID reduce production type_simple -> type_qid
+-- On FALSE reduce production type_simple -> type_qid
+-- On EX_TYPE reduce production type_simple -> type_qid
+-- On EX reduce production type_simple -> type_qid
+-- On EQV reduce production type_simple -> type_qid
+-- On EQUAL reduce production type_simple -> type_qid
+-- On END_VAR reduce production type_simple -> type_qid
+-- On END_TYPEALIAS reduce production type_simple -> type_qid
+-- On END_HYP reduce production type_simple -> type_qid
+-- On DOUBLE_ARROW reduce production type_simple -> type_qid
+-- On DOT reduce production type_simple -> type_qid
+-- On DEF reduce production type_simple -> type_qid
+-- On COMMA reduce production type_simple -> type_qid
+-- On CCARR reduce production type_simple -> type_qid
+-- On ARROW reduce production type_simple -> type_qid
+-- On AND reduce production type_simple -> type_qid
+-- On ALL_TYPE reduce production type_simple -> type_qid
+-- On ALL reduce production type_simple -> type_qid
+
+State 13:
+pre_typ -> type_simple . list(type_simple) [ RPAREN ]
+-- On QID shift to state 6
+-- On LPAREN shift to state 7
+-- On ID shift to state 8
+-- On type_simple shift to state 14
+-- On type_qid shift to state 12
+-- On list(type_simple) shift to state 16
+-- On RPAREN reduce production list(type_simple) -> 
+
+State 14:
+list(type_simple) -> type_simple . list(type_simple) [ RPAREN ]
+-- On QID shift to state 6
+-- On LPAREN shift to state 7
+-- On ID shift to state 8
+-- On type_simple shift to state 14
+-- On type_qid shift to state 12
+-- On list(type_simple) shift to state 15
+-- On RPAREN reduce production list(type_simple) -> 
+
+State 15:
+list(type_simple) -> type_simple list(type_simple) . [ RPAREN ]
+-- On RPAREN reduce production list(type_simple) -> type_simple list(type_simple)
+
+State 16:
+pre_typ -> type_simple list(type_simple) . [ RPAREN ]
+-- On RPAREN reduce production pre_typ -> type_simple list(type_simple)
+
+State 17:
+type_simple -> LPAREN pre_typ . RPAREN [ TRUE RPAREN REW RBRACK QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_VAR END_TYPEALIAS END_HYP DOUBLE_ARROW DOT DEF COMMA CCARR ARROW AND ALL_TYPE ALL ]
+-- On RPAREN shift to state 18
+
+State 18:
+type_simple -> LPAREN pre_typ RPAREN . [ TRUE RPAREN REW RBRACK QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_VAR END_TYPEALIAS END_HYP DOUBLE_ARROW DOT DEF COMMA CCARR ARROW AND ALL_TYPE ALL ]
+-- On TRUE reduce production type_simple -> LPAREN pre_typ RPAREN
+-- On RPAREN reduce production type_simple -> LPAREN pre_typ RPAREN
+-- On REW reduce production type_simple -> LPAREN pre_typ RPAREN
+-- On RBRACK reduce production type_simple -> LPAREN pre_typ RPAREN
+-- On QID reduce production type_simple -> LPAREN pre_typ RPAREN
+-- On OR reduce production type_simple -> LPAREN pre_typ RPAREN
+-- On NUMBER reduce production type_simple -> LPAREN pre_typ RPAREN
+-- On NOT reduce production type_simple -> LPAREN pre_typ RPAREN
+-- On LPAREN reduce production type_simple -> LPAREN pre_typ RPAREN
+-- On IMP reduce production type_simple -> LPAREN pre_typ RPAREN
+-- On ID reduce production type_simple -> LPAREN pre_typ RPAREN
+-- On FALSE reduce production type_simple -> LPAREN pre_typ RPAREN
+-- On EX_TYPE reduce production type_simple -> LPAREN pre_typ RPAREN
+-- On EX reduce production type_simple -> LPAREN pre_typ RPAREN
+-- On EQV reduce production type_simple -> LPAREN pre_typ RPAREN
+-- On EQUAL reduce production type_simple -> LPAREN pre_typ RPAREN
+-- On END_VAR reduce production type_simple -> LPAREN pre_typ RPAREN
+-- On END_TYPEALIAS reduce production type_simple -> LPAREN pre_typ RPAREN
+-- On END_HYP reduce production type_simple -> LPAREN pre_typ RPAREN
+-- On DOUBLE_ARROW reduce production type_simple -> LPAREN pre_typ RPAREN
+-- On DOT reduce production type_simple -> LPAREN pre_typ RPAREN
+-- On DEF reduce production type_simple -> LPAREN pre_typ RPAREN
+-- On COMMA reduce production type_simple -> LPAREN pre_typ RPAREN
+-- On CCARR reduce production type_simple -> LPAREN pre_typ RPAREN
+-- On ARROW reduce production type_simple -> LPAREN pre_typ RPAREN
+-- On AND reduce production type_simple -> LPAREN pre_typ RPAREN
+-- On ALL_TYPE reduce production type_simple -> LPAREN pre_typ RPAREN
+-- On ALL reduce production type_simple -> LPAREN pre_typ RPAREN
+
+State 19:
+typ -> TERM type_simple . [ RPAREN RBRACK END_VAR DOUBLE_ARROW DOT DEF COMMA ARROW ]
+-- On RPAREN reduce production typ -> TERM type_simple
+-- On RBRACK reduce production typ -> TERM type_simple
+-- On END_VAR reduce production typ -> TERM type_simple
+-- On DOUBLE_ARROW reduce production typ -> TERM type_simple
+-- On DOT reduce production typ -> TERM type_simple
+-- On DEF reduce production typ -> TERM type_simple
+-- On COMMA reduce production typ -> TERM type_simple
+-- On ARROW reduce production typ -> TERM type_simple
+
+State 20:
+typ -> PROP . [ RPAREN RBRACK END_VAR DOUBLE_ARROW DOT DEF COMMA ARROW ]
+-- On RPAREN reduce production typ -> PROP
+-- On RBRACK reduce production typ -> PROP
+-- On END_VAR reduce production typ -> PROP
+-- On DOUBLE_ARROW reduce production typ -> PROP
+-- On DOT reduce production typ -> PROP
+-- On DEF reduce production typ -> PROP
+-- On COMMA reduce production typ -> PROP
+-- On ARROW reduce production typ -> PROP
+
+State 21:
+body -> QID COLON PROOF . term DOT body [ EOF ENDPROOF ]
+-- On error shift to state 22
+-- On TRUE shift to state 23
+-- On QID shift to state 24
+-- On OR shift to state 25
+-- On NUMBER shift to state 26
+-- On NOT shift to state 27
+-- On LPAREN shift to state 28
+-- On IMP shift to state 29
+-- On ID shift to state 30
+-- On FALSE shift to state 32
+-- On EX_TYPE shift to state 33
+-- On EX shift to state 39
+-- On EQV shift to state 59
+-- On EQUAL shift to state 60
+-- On CCARR shift to state 62
+-- On AND shift to state 65
+-- On ALL_TYPE shift to state 66
+-- On ALL shift to state 72
+-- On term_simple shift to state 79
+-- On term shift to state 112
+-- On qid shift to state 81
+
+State 22:
+term -> error . [ RPAREN REW DOUBLE_ARROW DOT ]
+-- On RPAREN reduce production term -> error
+-- On REW reduce production term -> error
+-- On DOUBLE_ARROW reduce production term -> error
+-- On DOT reduce production term -> error
+
+State 23:
+term_simple -> TRUE . [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On TRUE reduce production term_simple -> TRUE
+-- On RPAREN reduce production term_simple -> TRUE
+-- On REW reduce production term_simple -> TRUE
+-- On QID reduce production term_simple -> TRUE
+-- On OR reduce production term_simple -> TRUE
+-- On NUMBER reduce production term_simple -> TRUE
+-- On NOT reduce production term_simple -> TRUE
+-- On LPAREN reduce production term_simple -> TRUE
+-- On IMP reduce production term_simple -> TRUE
+-- On ID reduce production term_simple -> TRUE
+-- On FALSE reduce production term_simple -> TRUE
+-- On EX_TYPE reduce production term_simple -> TRUE
+-- On EX reduce production term_simple -> TRUE
+-- On EQV reduce production term_simple -> TRUE
+-- On EQUAL reduce production term_simple -> TRUE
+-- On END_HYP reduce production term_simple -> TRUE
+-- On DOUBLE_ARROW reduce production term_simple -> TRUE
+-- On DOT reduce production term_simple -> TRUE
+-- On CCARR reduce production term_simple -> TRUE
+-- On AND reduce production term_simple -> TRUE
+-- On ALL_TYPE reduce production term_simple -> TRUE
+-- On ALL reduce production term_simple -> TRUE
+
+State 24:
+qid -> QID . [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On TRUE reduce production qid -> QID
+-- On RPAREN reduce production qid -> QID
+-- On REW reduce production qid -> QID
+-- On QID reduce production qid -> QID
+-- On OR reduce production qid -> QID
+-- On NUMBER reduce production qid -> QID
+-- On NOT reduce production qid -> QID
+-- On LPAREN reduce production qid -> QID
+-- On IMP reduce production qid -> QID
+-- On ID reduce production qid -> QID
+-- On FALSE reduce production qid -> QID
+-- On EX_TYPE reduce production qid -> QID
+-- On EX reduce production qid -> QID
+-- On EQV reduce production qid -> QID
+-- On EQUAL reduce production qid -> QID
+-- On END_HYP reduce production qid -> QID
+-- On DOUBLE_ARROW reduce production qid -> QID
+-- On DOT reduce production qid -> QID
+-- On CCARR reduce production qid -> QID
+-- On AND reduce production qid -> QID
+-- On ALL_TYPE reduce production qid -> QID
+-- On ALL reduce production qid -> QID
+
+State 25:
+term_simple -> OR . term_simple term_simple [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On TRUE shift to state 23
+-- On QID shift to state 24
+-- On OR shift to state 25
+-- On NUMBER shift to state 26
+-- On NOT shift to state 27
+-- On LPAREN shift to state 28
+-- On IMP shift to state 29
+-- On ID shift to state 30
+-- On FALSE shift to state 32
+-- On EX_TYPE shift to state 33
+-- On EX shift to state 39
+-- On EQV shift to state 59
+-- On EQUAL shift to state 60
+-- On CCARR shift to state 62
+-- On AND shift to state 65
+-- On ALL_TYPE shift to state 66
+-- On ALL shift to state 72
+-- On term_simple shift to state 110
+-- On qid shift to state 81
+
+State 26:
+term_simple -> NUMBER . [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On TRUE reduce production term_simple -> NUMBER
+-- On RPAREN reduce production term_simple -> NUMBER
+-- On REW reduce production term_simple -> NUMBER
+-- On QID reduce production term_simple -> NUMBER
+-- On OR reduce production term_simple -> NUMBER
+-- On NUMBER reduce production term_simple -> NUMBER
+-- On NOT reduce production term_simple -> NUMBER
+-- On LPAREN reduce production term_simple -> NUMBER
+-- On IMP reduce production term_simple -> NUMBER
+-- On ID reduce production term_simple -> NUMBER
+-- On FALSE reduce production term_simple -> NUMBER
+-- On EX_TYPE reduce production term_simple -> NUMBER
+-- On EX reduce production term_simple -> NUMBER
+-- On EQV reduce production term_simple -> NUMBER
+-- On EQUAL reduce production term_simple -> NUMBER
+-- On END_HYP reduce production term_simple -> NUMBER
+-- On DOUBLE_ARROW reduce production term_simple -> NUMBER
+-- On DOT reduce production term_simple -> NUMBER
+-- On CCARR reduce production term_simple -> NUMBER
+-- On AND reduce production term_simple -> NUMBER
+-- On ALL_TYPE reduce production term_simple -> NUMBER
+-- On ALL reduce production term_simple -> NUMBER
+
+State 27:
+term_simple -> NOT . term_simple [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On TRUE shift to state 23
+-- On QID shift to state 24
+-- On OR shift to state 25
+-- On NUMBER shift to state 26
+-- On NOT shift to state 27
+-- On LPAREN shift to state 28
+-- On IMP shift to state 29
+-- On ID shift to state 30
+-- On FALSE shift to state 32
+-- On EX_TYPE shift to state 33
+-- On EX shift to state 39
+-- On EQV shift to state 59
+-- On EQUAL shift to state 60
+-- On CCARR shift to state 62
+-- On AND shift to state 65
+-- On ALL_TYPE shift to state 66
+-- On ALL shift to state 72
+-- On term_simple shift to state 109
+-- On qid shift to state 81
+
+State 28:
+term_simple -> LPAREN . term RPAREN [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On error shift to state 22
+-- On TRUE shift to state 23
+-- On QID shift to state 24
+-- On OR shift to state 25
+-- On NUMBER shift to state 26
+-- On NOT shift to state 27
+-- On LPAREN shift to state 28
+-- On IMP shift to state 29
+-- On ID shift to state 30
+-- On FALSE shift to state 32
+-- On EX_TYPE shift to state 33
+-- On EX shift to state 39
+-- On EQV shift to state 59
+-- On EQUAL shift to state 60
+-- On CCARR shift to state 62
+-- On AND shift to state 65
+-- On ALL_TYPE shift to state 66
+-- On ALL shift to state 72
+-- On term_simple shift to state 79
+-- On term shift to state 107
+-- On qid shift to state 81
+
+State 29:
+term_simple -> IMP . term_simple term_simple [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On TRUE shift to state 23
+-- On QID shift to state 24
+-- On OR shift to state 25
+-- On NUMBER shift to state 26
+-- On NOT shift to state 27
+-- On LPAREN shift to state 28
+-- On IMP shift to state 29
+-- On ID shift to state 30
+-- On FALSE shift to state 32
+-- On EX_TYPE shift to state 33
+-- On EX shift to state 39
+-- On EQV shift to state 59
+-- On EQUAL shift to state 60
+-- On CCARR shift to state 62
+-- On AND shift to state 65
+-- On ALL_TYPE shift to state 66
+-- On ALL shift to state 72
+-- On term_simple shift to state 105
+-- On qid shift to state 81
+
+State 30:
+qid -> ID . [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+term_simple -> ID . COLON typ DOUBLE_ARROW term_simple [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+term_simple -> ID . DEF term DOUBLE_ARROW term_simple [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On DEF shift to state 31
+-- On COLON shift to state 101
+-- On TRUE reduce production qid -> ID
+-- On RPAREN reduce production qid -> ID
+-- On REW reduce production qid -> ID
+-- On QID reduce production qid -> ID
+-- On OR reduce production qid -> ID
+-- On NUMBER reduce production qid -> ID
+-- On NOT reduce production qid -> ID
+-- On LPAREN reduce production qid -> ID
+-- On IMP reduce production qid -> ID
+-- On ID reduce production qid -> ID
+-- On FALSE reduce production qid -> ID
+-- On EX_TYPE reduce production qid -> ID
+-- On EX reduce production qid -> ID
+-- On EQV reduce production qid -> ID
+-- On EQUAL reduce production qid -> ID
+-- On END_HYP reduce production qid -> ID
+-- On DOUBLE_ARROW reduce production qid -> ID
+-- On DOT reduce production qid -> ID
+-- On CCARR reduce production qid -> ID
+-- On AND reduce production qid -> ID
+-- On ALL_TYPE reduce production qid -> ID
+-- On ALL reduce production qid -> ID
+
+State 31:
+term_simple -> ID DEF . term DOUBLE_ARROW term_simple [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On error shift to state 22
+-- On TRUE shift to state 23
+-- On QID shift to state 24
+-- On OR shift to state 25
+-- On NUMBER shift to state 26
+-- On NOT shift to state 27
+-- On LPAREN shift to state 28
+-- On IMP shift to state 29
+-- On ID shift to state 30
+-- On FALSE shift to state 32
+-- On EX_TYPE shift to state 33
+-- On EX shift to state 39
+-- On EQV shift to state 59
+-- On EQUAL shift to state 60
+-- On CCARR shift to state 62
+-- On AND shift to state 65
+-- On ALL_TYPE shift to state 66
+-- On ALL shift to state 72
+-- On term_simple shift to state 79
+-- On term shift to state 98
+-- On qid shift to state 81
+
+State 32:
+term_simple -> FALSE . [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On TRUE reduce production term_simple -> FALSE
+-- On RPAREN reduce production term_simple -> FALSE
+-- On REW reduce production term_simple -> FALSE
+-- On QID reduce production term_simple -> FALSE
+-- On OR reduce production term_simple -> FALSE
+-- On NUMBER reduce production term_simple -> FALSE
+-- On NOT reduce production term_simple -> FALSE
+-- On LPAREN reduce production term_simple -> FALSE
+-- On IMP reduce production term_simple -> FALSE
+-- On ID reduce production term_simple -> FALSE
+-- On FALSE reduce production term_simple -> FALSE
+-- On EX_TYPE reduce production term_simple -> FALSE
+-- On EX reduce production term_simple -> FALSE
+-- On EQV reduce production term_simple -> FALSE
+-- On EQUAL reduce production term_simple -> FALSE
+-- On END_HYP reduce production term_simple -> FALSE
+-- On DOUBLE_ARROW reduce production term_simple -> FALSE
+-- On DOT reduce production term_simple -> FALSE
+-- On CCARR reduce production term_simple -> FALSE
+-- On AND reduce production term_simple -> FALSE
+-- On ALL_TYPE reduce production term_simple -> FALSE
+-- On ALL reduce production term_simple -> FALSE
+
+State 33:
+term_simple -> EX_TYPE . LPAREN ID COLON TYPE DOUBLE_ARROW term RPAREN [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On LPAREN shift to state 34
+
+State 34:
+term_simple -> EX_TYPE LPAREN . ID COLON TYPE DOUBLE_ARROW term RPAREN [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On ID shift to state 35
+
+State 35:
+term_simple -> EX_TYPE LPAREN ID . COLON TYPE DOUBLE_ARROW term RPAREN [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On COLON shift to state 36
+
+State 36:
+term_simple -> EX_TYPE LPAREN ID COLON . TYPE DOUBLE_ARROW term RPAREN [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On TYPE shift to state 37
+
+State 37:
+term_simple -> EX_TYPE LPAREN ID COLON TYPE . DOUBLE_ARROW term RPAREN [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On DOUBLE_ARROW shift to state 38
+
+State 38:
+term_simple -> EX_TYPE LPAREN ID COLON TYPE DOUBLE_ARROW . term RPAREN [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On error shift to state 22
+-- On TRUE shift to state 23
+-- On QID shift to state 24
+-- On OR shift to state 25
+-- On NUMBER shift to state 26
+-- On NOT shift to state 27
+-- On LPAREN shift to state 28
+-- On IMP shift to state 29
+-- On ID shift to state 30
+-- On FALSE shift to state 32
+-- On EX_TYPE shift to state 33
+-- On EX shift to state 39
+-- On EQV shift to state 59
+-- On EQUAL shift to state 60
+-- On CCARR shift to state 62
+-- On AND shift to state 65
+-- On ALL_TYPE shift to state 66
+-- On ALL shift to state 72
+-- On term_simple shift to state 79
+-- On term shift to state 96
+-- On qid shift to state 81
+
+State 39:
+term_simple -> EX . type_simple LPAREN ID COLON complex_type DOUBLE_ARROW term RPAREN [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On QID shift to state 6
+-- On LPAREN shift to state 7
+-- On ID shift to state 8
+-- On type_simple shift to state 40
+-- On type_qid shift to state 12
+
+State 40:
+term_simple -> EX type_simple . LPAREN ID COLON complex_type DOUBLE_ARROW term RPAREN [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On LPAREN shift to state 41
+
+State 41:
+term_simple -> EX type_simple LPAREN . ID COLON complex_type DOUBLE_ARROW term RPAREN [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On ID shift to state 42
+
+State 42:
+term_simple -> EX type_simple LPAREN ID . COLON complex_type DOUBLE_ARROW term RPAREN [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On COLON shift to state 43
+
+State 43:
+term_simple -> EX type_simple LPAREN ID COLON . complex_type DOUBLE_ARROW term RPAREN [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On TERM shift to state 5
+-- On PROP shift to state 20
+-- On LPAREN shift to state 44
+-- On typ shift to state 56
+-- On complex_type shift to state 57
+
+State 44:
+complex_type -> LPAREN . arrow_type RPAREN [ DOUBLE_ARROW ARROW ]
+-- On TERM shift to state 5
+-- On PROP shift to state 20
+-- On LPAREN shift to state 44
+-- On ID shift to state 45
+-- On typ shift to state 49
+-- On complex_type shift to state 50
+-- On arrow_type shift to state 54
+
+State 45:
+arrow_type -> ID . COLON TYPE ARROW arrow_type [ RPAREN RBRACK DOT COMMA ]
+-- On COLON shift to state 46
+
+State 46:
+arrow_type -> ID COLON . TYPE ARROW arrow_type [ RPAREN RBRACK DOT COMMA ]
+-- On TYPE shift to state 47
+
+State 47:
+arrow_type -> ID COLON TYPE . ARROW arrow_type [ RPAREN RBRACK DOT COMMA ]
+-- On ARROW shift to state 48
+
+State 48:
+arrow_type -> ID COLON TYPE ARROW . arrow_type [ RPAREN RBRACK DOT COMMA ]
+-- On TERM shift to state 5
+-- On PROP shift to state 20
+-- On LPAREN shift to state 44
+-- On ID shift to state 45
+-- On typ shift to state 49
+-- On complex_type shift to state 50
+-- On arrow_type shift to state 53
+
+State 49:
+arrow_type -> typ . [ RPAREN RBRACK DOT COMMA ]
+complex_type -> typ . [ ARROW ]
+-- On RPAREN reduce production arrow_type -> typ
+-- On RBRACK reduce production arrow_type -> typ
+-- On DOT reduce production arrow_type -> typ
+-- On COMMA reduce production arrow_type -> typ
+-- On ARROW reduce production complex_type -> typ
+
+State 50:
+arrow_type -> complex_type . ARROW arrow_type [ RPAREN RBRACK DOT COMMA ]
+-- On ARROW shift to state 51
+
+State 51:
+arrow_type -> complex_type ARROW . arrow_type [ RPAREN RBRACK DOT COMMA ]
+-- On TERM shift to state 5
+-- On PROP shift to state 20
+-- On LPAREN shift to state 44
+-- On ID shift to state 45
+-- On typ shift to state 49
+-- On complex_type shift to state 50
+-- On arrow_type shift to state 52
+
+State 52:
+arrow_type -> complex_type ARROW arrow_type . [ RPAREN RBRACK DOT COMMA ]
+-- On RPAREN reduce production arrow_type -> complex_type ARROW arrow_type
+-- On RBRACK reduce production arrow_type -> complex_type ARROW arrow_type
+-- On DOT reduce production arrow_type -> complex_type ARROW arrow_type
+-- On COMMA reduce production arrow_type -> complex_type ARROW arrow_type
+
+State 53:
+arrow_type -> ID COLON TYPE ARROW arrow_type . [ RPAREN RBRACK DOT COMMA ]
+-- On RPAREN reduce production arrow_type -> ID COLON TYPE ARROW arrow_type
+-- On RBRACK reduce production arrow_type -> ID COLON TYPE ARROW arrow_type
+-- On DOT reduce production arrow_type -> ID COLON TYPE ARROW arrow_type
+-- On COMMA reduce production arrow_type -> ID COLON TYPE ARROW arrow_type
+
+State 54:
+complex_type -> LPAREN arrow_type . RPAREN [ DOUBLE_ARROW ARROW ]
+-- On RPAREN shift to state 55
+
+State 55:
+complex_type -> LPAREN arrow_type RPAREN . [ DOUBLE_ARROW ARROW ]
+-- On DOUBLE_ARROW reduce production complex_type -> LPAREN arrow_type RPAREN
+-- On ARROW reduce production complex_type -> LPAREN arrow_type RPAREN
+
+State 56:
+complex_type -> typ . [ DOUBLE_ARROW ]
+-- On DOUBLE_ARROW reduce production complex_type -> typ
+
+State 57:
+term_simple -> EX type_simple LPAREN ID COLON complex_type . DOUBLE_ARROW term RPAREN [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On DOUBLE_ARROW shift to state 58
+
+State 58:
+term_simple -> EX type_simple LPAREN ID COLON complex_type DOUBLE_ARROW . term RPAREN [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On error shift to state 22
+-- On TRUE shift to state 23
+-- On QID shift to state 24
+-- On OR shift to state 25
+-- On NUMBER shift to state 26
+-- On NOT shift to state 27
+-- On LPAREN shift to state 28
+-- On IMP shift to state 29
+-- On ID shift to state 30
+-- On FALSE shift to state 32
+-- On EX_TYPE shift to state 33
+-- On EX shift to state 39
+-- On EQV shift to state 59
+-- On EQUAL shift to state 60
+-- On CCARR shift to state 62
+-- On AND shift to state 65
+-- On ALL_TYPE shift to state 66
+-- On ALL shift to state 72
+-- On term_simple shift to state 79
+-- On term shift to state 94
+-- On qid shift to state 81
+
+State 59:
+term_simple -> EQV . term_simple term_simple [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On TRUE shift to state 23
+-- On QID shift to state 24
+-- On OR shift to state 25
+-- On NUMBER shift to state 26
+-- On NOT shift to state 27
+-- On LPAREN shift to state 28
+-- On IMP shift to state 29
+-- On ID shift to state 30
+-- On FALSE shift to state 32
+-- On EX_TYPE shift to state 33
+-- On EX shift to state 39
+-- On EQV shift to state 59
+-- On EQUAL shift to state 60
+-- On CCARR shift to state 62
+-- On AND shift to state 65
+-- On ALL_TYPE shift to state 66
+-- On ALL shift to state 72
+-- On term_simple shift to state 92
+-- On qid shift to state 81
+
+State 60:
+term_simple -> EQUAL . type_simple term_simple term_simple [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On QID shift to state 6
+-- On LPAREN shift to state 7
+-- On ID shift to state 8
+-- On type_simple shift to state 61
+-- On type_qid shift to state 12
+
+State 61:
+term_simple -> EQUAL type_simple . term_simple term_simple [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On TRUE shift to state 23
+-- On QID shift to state 24
+-- On OR shift to state 25
+-- On NUMBER shift to state 26
+-- On NOT shift to state 27
+-- On LPAREN shift to state 28
+-- On IMP shift to state 29
+-- On ID shift to state 30
+-- On FALSE shift to state 32
+-- On EX_TYPE shift to state 33
+-- On EX shift to state 39
+-- On EQV shift to state 59
+-- On EQUAL shift to state 60
+-- On CCARR shift to state 62
+-- On AND shift to state 65
+-- On ALL_TYPE shift to state 66
+-- On ALL shift to state 72
+-- On term_simple shift to state 90
+-- On qid shift to state 81
+
+State 62:
+term_simple -> CCARR . type_simple type_simple [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On QID shift to state 6
+-- On LPAREN shift to state 7
+-- On ID shift to state 8
+-- On type_simple shift to state 63
+-- On type_qid shift to state 12
+
+State 63:
+term_simple -> CCARR type_simple . type_simple [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On QID shift to state 6
+-- On LPAREN shift to state 7
+-- On ID shift to state 8
+-- On type_simple shift to state 64
+-- On type_qid shift to state 12
+
+State 64:
+term_simple -> CCARR type_simple type_simple . [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On TRUE reduce production term_simple -> CCARR type_simple type_simple
+-- On RPAREN reduce production term_simple -> CCARR type_simple type_simple
+-- On REW reduce production term_simple -> CCARR type_simple type_simple
+-- On QID reduce production term_simple -> CCARR type_simple type_simple
+-- On OR reduce production term_simple -> CCARR type_simple type_simple
+-- On NUMBER reduce production term_simple -> CCARR type_simple type_simple
+-- On NOT reduce production term_simple -> CCARR type_simple type_simple
+-- On LPAREN reduce production term_simple -> CCARR type_simple type_simple
+-- On IMP reduce production term_simple -> CCARR type_simple type_simple
+-- On ID reduce production term_simple -> CCARR type_simple type_simple
+-- On FALSE reduce production term_simple -> CCARR type_simple type_simple
+-- On EX_TYPE reduce production term_simple -> CCARR type_simple type_simple
+-- On EX reduce production term_simple -> CCARR type_simple type_simple
+-- On EQV reduce production term_simple -> CCARR type_simple type_simple
+-- On EQUAL reduce production term_simple -> CCARR type_simple type_simple
+-- On END_HYP reduce production term_simple -> CCARR type_simple type_simple
+-- On DOUBLE_ARROW reduce production term_simple -> CCARR type_simple type_simple
+-- On DOT reduce production term_simple -> CCARR type_simple type_simple
+-- On CCARR reduce production term_simple -> CCARR type_simple type_simple
+-- On AND reduce production term_simple -> CCARR type_simple type_simple
+-- On ALL_TYPE reduce production term_simple -> CCARR type_simple type_simple
+-- On ALL reduce production term_simple -> CCARR type_simple type_simple
+
+State 65:
+term_simple -> AND . term_simple term_simple [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On TRUE shift to state 23
+-- On QID shift to state 24
+-- On OR shift to state 25
+-- On NUMBER shift to state 26
+-- On NOT shift to state 27
+-- On LPAREN shift to state 28
+-- On IMP shift to state 29
+-- On ID shift to state 30
+-- On FALSE shift to state 32
+-- On EX_TYPE shift to state 33
+-- On EX shift to state 39
+-- On EQV shift to state 59
+-- On EQUAL shift to state 60
+-- On CCARR shift to state 62
+-- On AND shift to state 65
+-- On ALL_TYPE shift to state 66
+-- On ALL shift to state 72
+-- On term_simple shift to state 88
+-- On qid shift to state 81
+
+State 66:
+term_simple -> ALL_TYPE . LPAREN ID COLON TYPE DOUBLE_ARROW term RPAREN [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On LPAREN shift to state 67
+
+State 67:
+term_simple -> ALL_TYPE LPAREN . ID COLON TYPE DOUBLE_ARROW term RPAREN [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On ID shift to state 68
+
+State 68:
+term_simple -> ALL_TYPE LPAREN ID . COLON TYPE DOUBLE_ARROW term RPAREN [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On COLON shift to state 69
+
+State 69:
+term_simple -> ALL_TYPE LPAREN ID COLON . TYPE DOUBLE_ARROW term RPAREN [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On TYPE shift to state 70
+
+State 70:
+term_simple -> ALL_TYPE LPAREN ID COLON TYPE . DOUBLE_ARROW term RPAREN [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On DOUBLE_ARROW shift to state 71
+
+State 71:
+term_simple -> ALL_TYPE LPAREN ID COLON TYPE DOUBLE_ARROW . term RPAREN [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On error shift to state 22
+-- On TRUE shift to state 23
+-- On QID shift to state 24
+-- On OR shift to state 25
+-- On NUMBER shift to state 26
+-- On NOT shift to state 27
+-- On LPAREN shift to state 28
+-- On IMP shift to state 29
+-- On ID shift to state 30
+-- On FALSE shift to state 32
+-- On EX_TYPE shift to state 33
+-- On EX shift to state 39
+-- On EQV shift to state 59
+-- On EQUAL shift to state 60
+-- On CCARR shift to state 62
+-- On AND shift to state 65
+-- On ALL_TYPE shift to state 66
+-- On ALL shift to state 72
+-- On term_simple shift to state 79
+-- On term shift to state 86
+-- On qid shift to state 81
+
+State 72:
+term_simple -> ALL . type_simple LPAREN ID COLON complex_type DOUBLE_ARROW term RPAREN [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On QID shift to state 6
+-- On LPAREN shift to state 7
+-- On ID shift to state 8
+-- On type_simple shift to state 73
+-- On type_qid shift to state 12
+
+State 73:
+term_simple -> ALL type_simple . LPAREN ID COLON complex_type DOUBLE_ARROW term RPAREN [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On LPAREN shift to state 74
+
+State 74:
+term_simple -> ALL type_simple LPAREN . ID COLON complex_type DOUBLE_ARROW term RPAREN [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On ID shift to state 75
+
+State 75:
+term_simple -> ALL type_simple LPAREN ID . COLON complex_type DOUBLE_ARROW term RPAREN [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On COLON shift to state 76
+
+State 76:
+term_simple -> ALL type_simple LPAREN ID COLON . complex_type DOUBLE_ARROW term RPAREN [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On TERM shift to state 5
+-- On PROP shift to state 20
+-- On LPAREN shift to state 44
+-- On typ shift to state 56
+-- On complex_type shift to state 77
+
+State 77:
+term_simple -> ALL type_simple LPAREN ID COLON complex_type . DOUBLE_ARROW term RPAREN [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On DOUBLE_ARROW shift to state 78
+
+State 78:
+term_simple -> ALL type_simple LPAREN ID COLON complex_type DOUBLE_ARROW . term RPAREN [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On error shift to state 22
+-- On TRUE shift to state 23
+-- On QID shift to state 24
+-- On OR shift to state 25
+-- On NUMBER shift to state 26
+-- On NOT shift to state 27
+-- On LPAREN shift to state 28
+-- On IMP shift to state 29
+-- On ID shift to state 30
+-- On FALSE shift to state 32
+-- On EX_TYPE shift to state 33
+-- On EX shift to state 39
+-- On EQV shift to state 59
+-- On EQUAL shift to state 60
+-- On CCARR shift to state 62
+-- On AND shift to state 65
+-- On ALL_TYPE shift to state 66
+-- On ALL shift to state 72
+-- On term_simple shift to state 79
+-- On term shift to state 84
+-- On qid shift to state 81
+
+State 79:
+term -> term_simple . [ RPAREN REW DOUBLE_ARROW DOT ]
+term -> term_simple . nonempty_list(term_simple) [ RPAREN REW DOUBLE_ARROW DOT ]
+-- On TRUE shift to state 23
+-- On QID shift to state 24
+-- On OR shift to state 25
+-- On NUMBER shift to state 26
+-- On NOT shift to state 27
+-- On LPAREN shift to state 28
+-- On IMP shift to state 29
+-- On ID shift to state 30
+-- On FALSE shift to state 32
+-- On EX_TYPE shift to state 33
+-- On EX shift to state 39
+-- On EQV shift to state 59
+-- On EQUAL shift to state 60
+-- On CCARR shift to state 62
+-- On AND shift to state 65
+-- On ALL_TYPE shift to state 66
+-- On ALL shift to state 72
+-- On term_simple shift to state 80
+-- On qid shift to state 81
+-- On nonempty_list(term_simple) shift to state 83
+-- On RPAREN reduce production term -> term_simple
+-- On REW reduce production term -> term_simple
+-- On DOUBLE_ARROW reduce production term -> term_simple
+-- On DOT reduce production term -> term_simple
+
+State 80:
+nonempty_list(term_simple) -> term_simple . [ RPAREN REW DOUBLE_ARROW DOT ]
+nonempty_list(term_simple) -> term_simple . nonempty_list(term_simple) [ RPAREN REW DOUBLE_ARROW DOT ]
+-- On TRUE shift to state 23
+-- On QID shift to state 24
+-- On OR shift to state 25
+-- On NUMBER shift to state 26
+-- On NOT shift to state 27
+-- On LPAREN shift to state 28
+-- On IMP shift to state 29
+-- On ID shift to state 30
+-- On FALSE shift to state 32
+-- On EX_TYPE shift to state 33
+-- On EX shift to state 39
+-- On EQV shift to state 59
+-- On EQUAL shift to state 60
+-- On CCARR shift to state 62
+-- On AND shift to state 65
+-- On ALL_TYPE shift to state 66
+-- On ALL shift to state 72
+-- On term_simple shift to state 80
+-- On qid shift to state 81
+-- On nonempty_list(term_simple) shift to state 82
+-- On RPAREN reduce production nonempty_list(term_simple) -> term_simple
+-- On REW reduce production nonempty_list(term_simple) -> term_simple
+-- On DOUBLE_ARROW reduce production nonempty_list(term_simple) -> term_simple
+-- On DOT reduce production nonempty_list(term_simple) -> term_simple
+
+State 81:
+term_simple -> qid . [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On TRUE reduce production term_simple -> qid
+-- On RPAREN reduce production term_simple -> qid
+-- On REW reduce production term_simple -> qid
+-- On QID reduce production term_simple -> qid
+-- On OR reduce production term_simple -> qid
+-- On NUMBER reduce production term_simple -> qid
+-- On NOT reduce production term_simple -> qid
+-- On LPAREN reduce production term_simple -> qid
+-- On IMP reduce production term_simple -> qid
+-- On ID reduce production term_simple -> qid
+-- On FALSE reduce production term_simple -> qid
+-- On EX_TYPE reduce production term_simple -> qid
+-- On EX reduce production term_simple -> qid
+-- On EQV reduce production term_simple -> qid
+-- On EQUAL reduce production term_simple -> qid
+-- On END_HYP reduce production term_simple -> qid
+-- On DOUBLE_ARROW reduce production term_simple -> qid
+-- On DOT reduce production term_simple -> qid
+-- On CCARR reduce production term_simple -> qid
+-- On AND reduce production term_simple -> qid
+-- On ALL_TYPE reduce production term_simple -> qid
+-- On ALL reduce production term_simple -> qid
+
+State 82:
+nonempty_list(term_simple) -> term_simple nonempty_list(term_simple) . [ RPAREN REW DOUBLE_ARROW DOT ]
+-- On RPAREN reduce production nonempty_list(term_simple) -> term_simple nonempty_list(term_simple)
+-- On REW reduce production nonempty_list(term_simple) -> term_simple nonempty_list(term_simple)
+-- On DOUBLE_ARROW reduce production nonempty_list(term_simple) -> term_simple nonempty_list(term_simple)
+-- On DOT reduce production nonempty_list(term_simple) -> term_simple nonempty_list(term_simple)
+
+State 83:
+term -> term_simple nonempty_list(term_simple) . [ RPAREN REW DOUBLE_ARROW DOT ]
+-- On RPAREN reduce production term -> term_simple nonempty_list(term_simple)
+-- On REW reduce production term -> term_simple nonempty_list(term_simple)
+-- On DOUBLE_ARROW reduce production term -> term_simple nonempty_list(term_simple)
+-- On DOT reduce production term -> term_simple nonempty_list(term_simple)
+
+State 84:
+term_simple -> ALL type_simple LPAREN ID COLON complex_type DOUBLE_ARROW term . RPAREN [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On RPAREN shift to state 85
+
+State 85:
+term_simple -> ALL type_simple LPAREN ID COLON complex_type DOUBLE_ARROW term RPAREN . [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On TRUE reduce production term_simple -> ALL type_simple LPAREN ID COLON complex_type DOUBLE_ARROW term RPAREN
+-- On RPAREN reduce production term_simple -> ALL type_simple LPAREN ID COLON complex_type DOUBLE_ARROW term RPAREN
+-- On REW reduce production term_simple -> ALL type_simple LPAREN ID COLON complex_type DOUBLE_ARROW term RPAREN
+-- On QID reduce production term_simple -> ALL type_simple LPAREN ID COLON complex_type DOUBLE_ARROW term RPAREN
+-- On OR reduce production term_simple -> ALL type_simple LPAREN ID COLON complex_type DOUBLE_ARROW term RPAREN
+-- On NUMBER reduce production term_simple -> ALL type_simple LPAREN ID COLON complex_type DOUBLE_ARROW term RPAREN
+-- On NOT reduce production term_simple -> ALL type_simple LPAREN ID COLON complex_type DOUBLE_ARROW term RPAREN
+-- On LPAREN reduce production term_simple -> ALL type_simple LPAREN ID COLON complex_type DOUBLE_ARROW term RPAREN
+-- On IMP reduce production term_simple -> ALL type_simple LPAREN ID COLON complex_type DOUBLE_ARROW term RPAREN
+-- On ID reduce production term_simple -> ALL type_simple LPAREN ID COLON complex_type DOUBLE_ARROW term RPAREN
+-- On FALSE reduce production term_simple -> ALL type_simple LPAREN ID COLON complex_type DOUBLE_ARROW term RPAREN
+-- On EX_TYPE reduce production term_simple -> ALL type_simple LPAREN ID COLON complex_type DOUBLE_ARROW term RPAREN
+-- On EX reduce production term_simple -> ALL type_simple LPAREN ID COLON complex_type DOUBLE_ARROW term RPAREN
+-- On EQV reduce production term_simple -> ALL type_simple LPAREN ID COLON complex_type DOUBLE_ARROW term RPAREN
+-- On EQUAL reduce production term_simple -> ALL type_simple LPAREN ID COLON complex_type DOUBLE_ARROW term RPAREN
+-- On END_HYP reduce production term_simple -> ALL type_simple LPAREN ID COLON complex_type DOUBLE_ARROW term RPAREN
+-- On DOUBLE_ARROW reduce production term_simple -> ALL type_simple LPAREN ID COLON complex_type DOUBLE_ARROW term RPAREN
+-- On DOT reduce production term_simple -> ALL type_simple LPAREN ID COLON complex_type DOUBLE_ARROW term RPAREN
+-- On CCARR reduce production term_simple -> ALL type_simple LPAREN ID COLON complex_type DOUBLE_ARROW term RPAREN
+-- On AND reduce production term_simple -> ALL type_simple LPAREN ID COLON complex_type DOUBLE_ARROW term RPAREN
+-- On ALL_TYPE reduce production term_simple -> ALL type_simple LPAREN ID COLON complex_type DOUBLE_ARROW term RPAREN
+-- On ALL reduce production term_simple -> ALL type_simple LPAREN ID COLON complex_type DOUBLE_ARROW term RPAREN
+
+State 86:
+term_simple -> ALL_TYPE LPAREN ID COLON TYPE DOUBLE_ARROW term . RPAREN [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On RPAREN shift to state 87
+
+State 87:
+term_simple -> ALL_TYPE LPAREN ID COLON TYPE DOUBLE_ARROW term RPAREN . [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On TRUE reduce production term_simple -> ALL_TYPE LPAREN ID COLON TYPE DOUBLE_ARROW term RPAREN
+-- On RPAREN reduce production term_simple -> ALL_TYPE LPAREN ID COLON TYPE DOUBLE_ARROW term RPAREN
+-- On REW reduce production term_simple -> ALL_TYPE LPAREN ID COLON TYPE DOUBLE_ARROW term RPAREN
+-- On QID reduce production term_simple -> ALL_TYPE LPAREN ID COLON TYPE DOUBLE_ARROW term RPAREN
+-- On OR reduce production term_simple -> ALL_TYPE LPAREN ID COLON TYPE DOUBLE_ARROW term RPAREN
+-- On NUMBER reduce production term_simple -> ALL_TYPE LPAREN ID COLON TYPE DOUBLE_ARROW term RPAREN
+-- On NOT reduce production term_simple -> ALL_TYPE LPAREN ID COLON TYPE DOUBLE_ARROW term RPAREN
+-- On LPAREN reduce production term_simple -> ALL_TYPE LPAREN ID COLON TYPE DOUBLE_ARROW term RPAREN
+-- On IMP reduce production term_simple -> ALL_TYPE LPAREN ID COLON TYPE DOUBLE_ARROW term RPAREN
+-- On ID reduce production term_simple -> ALL_TYPE LPAREN ID COLON TYPE DOUBLE_ARROW term RPAREN
+-- On FALSE reduce production term_simple -> ALL_TYPE LPAREN ID COLON TYPE DOUBLE_ARROW term RPAREN
+-- On EX_TYPE reduce production term_simple -> ALL_TYPE LPAREN ID COLON TYPE DOUBLE_ARROW term RPAREN
+-- On EX reduce production term_simple -> ALL_TYPE LPAREN ID COLON TYPE DOUBLE_ARROW term RPAREN
+-- On EQV reduce production term_simple -> ALL_TYPE LPAREN ID COLON TYPE DOUBLE_ARROW term RPAREN
+-- On EQUAL reduce production term_simple -> ALL_TYPE LPAREN ID COLON TYPE DOUBLE_ARROW term RPAREN
+-- On END_HYP reduce production term_simple -> ALL_TYPE LPAREN ID COLON TYPE DOUBLE_ARROW term RPAREN
+-- On DOUBLE_ARROW reduce production term_simple -> ALL_TYPE LPAREN ID COLON TYPE DOUBLE_ARROW term RPAREN
+-- On DOT reduce production term_simple -> ALL_TYPE LPAREN ID COLON TYPE DOUBLE_ARROW term RPAREN
+-- On CCARR reduce production term_simple -> ALL_TYPE LPAREN ID COLON TYPE DOUBLE_ARROW term RPAREN
+-- On AND reduce production term_simple -> ALL_TYPE LPAREN ID COLON TYPE DOUBLE_ARROW term RPAREN
+-- On ALL_TYPE reduce production term_simple -> ALL_TYPE LPAREN ID COLON TYPE DOUBLE_ARROW term RPAREN
+-- On ALL reduce production term_simple -> ALL_TYPE LPAREN ID COLON TYPE DOUBLE_ARROW term RPAREN
+
+State 88:
+term_simple -> AND term_simple . term_simple [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On TRUE shift to state 23
+-- On QID shift to state 24
+-- On OR shift to state 25
+-- On NUMBER shift to state 26
+-- On NOT shift to state 27
+-- On LPAREN shift to state 28
+-- On IMP shift to state 29
+-- On ID shift to state 30
+-- On FALSE shift to state 32
+-- On EX_TYPE shift to state 33
+-- On EX shift to state 39
+-- On EQV shift to state 59
+-- On EQUAL shift to state 60
+-- On CCARR shift to state 62
+-- On AND shift to state 65
+-- On ALL_TYPE shift to state 66
+-- On ALL shift to state 72
+-- On term_simple shift to state 89
+-- On qid shift to state 81
+
+State 89:
+term_simple -> AND term_simple term_simple . [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On TRUE reduce production term_simple -> AND term_simple term_simple
+-- On RPAREN reduce production term_simple -> AND term_simple term_simple
+-- On REW reduce production term_simple -> AND term_simple term_simple
+-- On QID reduce production term_simple -> AND term_simple term_simple
+-- On OR reduce production term_simple -> AND term_simple term_simple
+-- On NUMBER reduce production term_simple -> AND term_simple term_simple
+-- On NOT reduce production term_simple -> AND term_simple term_simple
+-- On LPAREN reduce production term_simple -> AND term_simple term_simple
+-- On IMP reduce production term_simple -> AND term_simple term_simple
+-- On ID reduce production term_simple -> AND term_simple term_simple
+-- On FALSE reduce production term_simple -> AND term_simple term_simple
+-- On EX_TYPE reduce production term_simple -> AND term_simple term_simple
+-- On EX reduce production term_simple -> AND term_simple term_simple
+-- On EQV reduce production term_simple -> AND term_simple term_simple
+-- On EQUAL reduce production term_simple -> AND term_simple term_simple
+-- On END_HYP reduce production term_simple -> AND term_simple term_simple
+-- On DOUBLE_ARROW reduce production term_simple -> AND term_simple term_simple
+-- On DOT reduce production term_simple -> AND term_simple term_simple
+-- On CCARR reduce production term_simple -> AND term_simple term_simple
+-- On AND reduce production term_simple -> AND term_simple term_simple
+-- On ALL_TYPE reduce production term_simple -> AND term_simple term_simple
+-- On ALL reduce production term_simple -> AND term_simple term_simple
+
+State 90:
+term_simple -> EQUAL type_simple term_simple . term_simple [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On TRUE shift to state 23
+-- On QID shift to state 24
+-- On OR shift to state 25
+-- On NUMBER shift to state 26
+-- On NOT shift to state 27
+-- On LPAREN shift to state 28
+-- On IMP shift to state 29
+-- On ID shift to state 30
+-- On FALSE shift to state 32
+-- On EX_TYPE shift to state 33
+-- On EX shift to state 39
+-- On EQV shift to state 59
+-- On EQUAL shift to state 60
+-- On CCARR shift to state 62
+-- On AND shift to state 65
+-- On ALL_TYPE shift to state 66
+-- On ALL shift to state 72
+-- On term_simple shift to state 91
+-- On qid shift to state 81
+
+State 91:
+term_simple -> EQUAL type_simple term_simple term_simple . [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On TRUE reduce production term_simple -> EQUAL type_simple term_simple term_simple
+-- On RPAREN reduce production term_simple -> EQUAL type_simple term_simple term_simple
+-- On REW reduce production term_simple -> EQUAL type_simple term_simple term_simple
+-- On QID reduce production term_simple -> EQUAL type_simple term_simple term_simple
+-- On OR reduce production term_simple -> EQUAL type_simple term_simple term_simple
+-- On NUMBER reduce production term_simple -> EQUAL type_simple term_simple term_simple
+-- On NOT reduce production term_simple -> EQUAL type_simple term_simple term_simple
+-- On LPAREN reduce production term_simple -> EQUAL type_simple term_simple term_simple
+-- On IMP reduce production term_simple -> EQUAL type_simple term_simple term_simple
+-- On ID reduce production term_simple -> EQUAL type_simple term_simple term_simple
+-- On FALSE reduce production term_simple -> EQUAL type_simple term_simple term_simple
+-- On EX_TYPE reduce production term_simple -> EQUAL type_simple term_simple term_simple
+-- On EX reduce production term_simple -> EQUAL type_simple term_simple term_simple
+-- On EQV reduce production term_simple -> EQUAL type_simple term_simple term_simple
+-- On EQUAL reduce production term_simple -> EQUAL type_simple term_simple term_simple
+-- On END_HYP reduce production term_simple -> EQUAL type_simple term_simple term_simple
+-- On DOUBLE_ARROW reduce production term_simple -> EQUAL type_simple term_simple term_simple
+-- On DOT reduce production term_simple -> EQUAL type_simple term_simple term_simple
+-- On CCARR reduce production term_simple -> EQUAL type_simple term_simple term_simple
+-- On AND reduce production term_simple -> EQUAL type_simple term_simple term_simple
+-- On ALL_TYPE reduce production term_simple -> EQUAL type_simple term_simple term_simple
+-- On ALL reduce production term_simple -> EQUAL type_simple term_simple term_simple
+
+State 92:
+term_simple -> EQV term_simple . term_simple [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On TRUE shift to state 23
+-- On QID shift to state 24
+-- On OR shift to state 25
+-- On NUMBER shift to state 26
+-- On NOT shift to state 27
+-- On LPAREN shift to state 28
+-- On IMP shift to state 29
+-- On ID shift to state 30
+-- On FALSE shift to state 32
+-- On EX_TYPE shift to state 33
+-- On EX shift to state 39
+-- On EQV shift to state 59
+-- On EQUAL shift to state 60
+-- On CCARR shift to state 62
+-- On AND shift to state 65
+-- On ALL_TYPE shift to state 66
+-- On ALL shift to state 72
+-- On term_simple shift to state 93
+-- On qid shift to state 81
+
+State 93:
+term_simple -> EQV term_simple term_simple . [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On TRUE reduce production term_simple -> EQV term_simple term_simple
+-- On RPAREN reduce production term_simple -> EQV term_simple term_simple
+-- On REW reduce production term_simple -> EQV term_simple term_simple
+-- On QID reduce production term_simple -> EQV term_simple term_simple
+-- On OR reduce production term_simple -> EQV term_simple term_simple
+-- On NUMBER reduce production term_simple -> EQV term_simple term_simple
+-- On NOT reduce production term_simple -> EQV term_simple term_simple
+-- On LPAREN reduce production term_simple -> EQV term_simple term_simple
+-- On IMP reduce production term_simple -> EQV term_simple term_simple
+-- On ID reduce production term_simple -> EQV term_simple term_simple
+-- On FALSE reduce production term_simple -> EQV term_simple term_simple
+-- On EX_TYPE reduce production term_simple -> EQV term_simple term_simple
+-- On EX reduce production term_simple -> EQV term_simple term_simple
+-- On EQV reduce production term_simple -> EQV term_simple term_simple
+-- On EQUAL reduce production term_simple -> EQV term_simple term_simple
+-- On END_HYP reduce production term_simple -> EQV term_simple term_simple
+-- On DOUBLE_ARROW reduce production term_simple -> EQV term_simple term_simple
+-- On DOT reduce production term_simple -> EQV term_simple term_simple
+-- On CCARR reduce production term_simple -> EQV term_simple term_simple
+-- On AND reduce production term_simple -> EQV term_simple term_simple
+-- On ALL_TYPE reduce production term_simple -> EQV term_simple term_simple
+-- On ALL reduce production term_simple -> EQV term_simple term_simple
+
+State 94:
+term_simple -> EX type_simple LPAREN ID COLON complex_type DOUBLE_ARROW term . RPAREN [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On RPAREN shift to state 95
+
+State 95:
+term_simple -> EX type_simple LPAREN ID COLON complex_type DOUBLE_ARROW term RPAREN . [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On TRUE reduce production term_simple -> EX type_simple LPAREN ID COLON complex_type DOUBLE_ARROW term RPAREN
+-- On RPAREN reduce production term_simple -> EX type_simple LPAREN ID COLON complex_type DOUBLE_ARROW term RPAREN
+-- On REW reduce production term_simple -> EX type_simple LPAREN ID COLON complex_type DOUBLE_ARROW term RPAREN
+-- On QID reduce production term_simple -> EX type_simple LPAREN ID COLON complex_type DOUBLE_ARROW term RPAREN
+-- On OR reduce production term_simple -> EX type_simple LPAREN ID COLON complex_type DOUBLE_ARROW term RPAREN
+-- On NUMBER reduce production term_simple -> EX type_simple LPAREN ID COLON complex_type DOUBLE_ARROW term RPAREN
+-- On NOT reduce production term_simple -> EX type_simple LPAREN ID COLON complex_type DOUBLE_ARROW term RPAREN
+-- On LPAREN reduce production term_simple -> EX type_simple LPAREN ID COLON complex_type DOUBLE_ARROW term RPAREN
+-- On IMP reduce production term_simple -> EX type_simple LPAREN ID COLON complex_type DOUBLE_ARROW term RPAREN
+-- On ID reduce production term_simple -> EX type_simple LPAREN ID COLON complex_type DOUBLE_ARROW term RPAREN
+-- On FALSE reduce production term_simple -> EX type_simple LPAREN ID COLON complex_type DOUBLE_ARROW term RPAREN
+-- On EX_TYPE reduce production term_simple -> EX type_simple LPAREN ID COLON complex_type DOUBLE_ARROW term RPAREN
+-- On EX reduce production term_simple -> EX type_simple LPAREN ID COLON complex_type DOUBLE_ARROW term RPAREN
+-- On EQV reduce production term_simple -> EX type_simple LPAREN ID COLON complex_type DOUBLE_ARROW term RPAREN
+-- On EQUAL reduce production term_simple -> EX type_simple LPAREN ID COLON complex_type DOUBLE_ARROW term RPAREN
+-- On END_HYP reduce production term_simple -> EX type_simple LPAREN ID COLON complex_type DOUBLE_ARROW term RPAREN
+-- On DOUBLE_ARROW reduce production term_simple -> EX type_simple LPAREN ID COLON complex_type DOUBLE_ARROW term RPAREN
+-- On DOT reduce production term_simple -> EX type_simple LPAREN ID COLON complex_type DOUBLE_ARROW term RPAREN
+-- On CCARR reduce production term_simple -> EX type_simple LPAREN ID COLON complex_type DOUBLE_ARROW term RPAREN
+-- On AND reduce production term_simple -> EX type_simple LPAREN ID COLON complex_type DOUBLE_ARROW term RPAREN
+-- On ALL_TYPE reduce production term_simple -> EX type_simple LPAREN ID COLON complex_type DOUBLE_ARROW term RPAREN
+-- On ALL reduce production term_simple -> EX type_simple LPAREN ID COLON complex_type DOUBLE_ARROW term RPAREN
+
+State 96:
+term_simple -> EX_TYPE LPAREN ID COLON TYPE DOUBLE_ARROW term . RPAREN [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On RPAREN shift to state 97
+
+State 97:
+term_simple -> EX_TYPE LPAREN ID COLON TYPE DOUBLE_ARROW term RPAREN . [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On TRUE reduce production term_simple -> EX_TYPE LPAREN ID COLON TYPE DOUBLE_ARROW term RPAREN
+-- On RPAREN reduce production term_simple -> EX_TYPE LPAREN ID COLON TYPE DOUBLE_ARROW term RPAREN
+-- On REW reduce production term_simple -> EX_TYPE LPAREN ID COLON TYPE DOUBLE_ARROW term RPAREN
+-- On QID reduce production term_simple -> EX_TYPE LPAREN ID COLON TYPE DOUBLE_ARROW term RPAREN
+-- On OR reduce production term_simple -> EX_TYPE LPAREN ID COLON TYPE DOUBLE_ARROW term RPAREN
+-- On NUMBER reduce production term_simple -> EX_TYPE LPAREN ID COLON TYPE DOUBLE_ARROW term RPAREN
+-- On NOT reduce production term_simple -> EX_TYPE LPAREN ID COLON TYPE DOUBLE_ARROW term RPAREN
+-- On LPAREN reduce production term_simple -> EX_TYPE LPAREN ID COLON TYPE DOUBLE_ARROW term RPAREN
+-- On IMP reduce production term_simple -> EX_TYPE LPAREN ID COLON TYPE DOUBLE_ARROW term RPAREN
+-- On ID reduce production term_simple -> EX_TYPE LPAREN ID COLON TYPE DOUBLE_ARROW term RPAREN
+-- On FALSE reduce production term_simple -> EX_TYPE LPAREN ID COLON TYPE DOUBLE_ARROW term RPAREN
+-- On EX_TYPE reduce production term_simple -> EX_TYPE LPAREN ID COLON TYPE DOUBLE_ARROW term RPAREN
+-- On EX reduce production term_simple -> EX_TYPE LPAREN ID COLON TYPE DOUBLE_ARROW term RPAREN
+-- On EQV reduce production term_simple -> EX_TYPE LPAREN ID COLON TYPE DOUBLE_ARROW term RPAREN
+-- On EQUAL reduce production term_simple -> EX_TYPE LPAREN ID COLON TYPE DOUBLE_ARROW term RPAREN
+-- On END_HYP reduce production term_simple -> EX_TYPE LPAREN ID COLON TYPE DOUBLE_ARROW term RPAREN
+-- On DOUBLE_ARROW reduce production term_simple -> EX_TYPE LPAREN ID COLON TYPE DOUBLE_ARROW term RPAREN
+-- On DOT reduce production term_simple -> EX_TYPE LPAREN ID COLON TYPE DOUBLE_ARROW term RPAREN
+-- On CCARR reduce production term_simple -> EX_TYPE LPAREN ID COLON TYPE DOUBLE_ARROW term RPAREN
+-- On AND reduce production term_simple -> EX_TYPE LPAREN ID COLON TYPE DOUBLE_ARROW term RPAREN
+-- On ALL_TYPE reduce production term_simple -> EX_TYPE LPAREN ID COLON TYPE DOUBLE_ARROW term RPAREN
+-- On ALL reduce production term_simple -> EX_TYPE LPAREN ID COLON TYPE DOUBLE_ARROW term RPAREN
+
+State 98:
+term_simple -> ID DEF term . DOUBLE_ARROW term_simple [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On DOUBLE_ARROW shift to state 99
+
+State 99:
+term_simple -> ID DEF term DOUBLE_ARROW . term_simple [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On TRUE shift to state 23
+-- On QID shift to state 24
+-- On OR shift to state 25
+-- On NUMBER shift to state 26
+-- On NOT shift to state 27
+-- On LPAREN shift to state 28
+-- On IMP shift to state 29
+-- On ID shift to state 30
+-- On FALSE shift to state 32
+-- On EX_TYPE shift to state 33
+-- On EX shift to state 39
+-- On EQV shift to state 59
+-- On EQUAL shift to state 60
+-- On CCARR shift to state 62
+-- On AND shift to state 65
+-- On ALL_TYPE shift to state 66
+-- On ALL shift to state 72
+-- On term_simple shift to state 100
+-- On qid shift to state 81
+
+State 100:
+term_simple -> ID DEF term DOUBLE_ARROW term_simple . [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On TRUE reduce production term_simple -> ID DEF term DOUBLE_ARROW term_simple
+-- On RPAREN reduce production term_simple -> ID DEF term DOUBLE_ARROW term_simple
+-- On REW reduce production term_simple -> ID DEF term DOUBLE_ARROW term_simple
+-- On QID reduce production term_simple -> ID DEF term DOUBLE_ARROW term_simple
+-- On OR reduce production term_simple -> ID DEF term DOUBLE_ARROW term_simple
+-- On NUMBER reduce production term_simple -> ID DEF term DOUBLE_ARROW term_simple
+-- On NOT reduce production term_simple -> ID DEF term DOUBLE_ARROW term_simple
+-- On LPAREN reduce production term_simple -> ID DEF term DOUBLE_ARROW term_simple
+-- On IMP reduce production term_simple -> ID DEF term DOUBLE_ARROW term_simple
+-- On ID reduce production term_simple -> ID DEF term DOUBLE_ARROW term_simple
+-- On FALSE reduce production term_simple -> ID DEF term DOUBLE_ARROW term_simple
+-- On EX_TYPE reduce production term_simple -> ID DEF term DOUBLE_ARROW term_simple
+-- On EX reduce production term_simple -> ID DEF term DOUBLE_ARROW term_simple
+-- On EQV reduce production term_simple -> ID DEF term DOUBLE_ARROW term_simple
+-- On EQUAL reduce production term_simple -> ID DEF term DOUBLE_ARROW term_simple
+-- On END_HYP reduce production term_simple -> ID DEF term DOUBLE_ARROW term_simple
+-- On DOUBLE_ARROW reduce production term_simple -> ID DEF term DOUBLE_ARROW term_simple
+-- On DOT reduce production term_simple -> ID DEF term DOUBLE_ARROW term_simple
+-- On CCARR reduce production term_simple -> ID DEF term DOUBLE_ARROW term_simple
+-- On AND reduce production term_simple -> ID DEF term DOUBLE_ARROW term_simple
+-- On ALL_TYPE reduce production term_simple -> ID DEF term DOUBLE_ARROW term_simple
+-- On ALL reduce production term_simple -> ID DEF term DOUBLE_ARROW term_simple
+
+State 101:
+term_simple -> ID COLON . typ DOUBLE_ARROW term_simple [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On TERM shift to state 5
+-- On PROP shift to state 20
+-- On typ shift to state 102
+
+State 102:
+term_simple -> ID COLON typ . DOUBLE_ARROW term_simple [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On DOUBLE_ARROW shift to state 103
+
+State 103:
+term_simple -> ID COLON typ DOUBLE_ARROW . term_simple [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On TRUE shift to state 23
+-- On QID shift to state 24
+-- On OR shift to state 25
+-- On NUMBER shift to state 26
+-- On NOT shift to state 27
+-- On LPAREN shift to state 28
+-- On IMP shift to state 29
+-- On ID shift to state 30
+-- On FALSE shift to state 32
+-- On EX_TYPE shift to state 33
+-- On EX shift to state 39
+-- On EQV shift to state 59
+-- On EQUAL shift to state 60
+-- On CCARR shift to state 62
+-- On AND shift to state 65
+-- On ALL_TYPE shift to state 66
+-- On ALL shift to state 72
+-- On term_simple shift to state 104
+-- On qid shift to state 81
+
+State 104:
+term_simple -> ID COLON typ DOUBLE_ARROW term_simple . [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On TRUE reduce production term_simple -> ID COLON typ DOUBLE_ARROW term_simple
+-- On RPAREN reduce production term_simple -> ID COLON typ DOUBLE_ARROW term_simple
+-- On REW reduce production term_simple -> ID COLON typ DOUBLE_ARROW term_simple
+-- On QID reduce production term_simple -> ID COLON typ DOUBLE_ARROW term_simple
+-- On OR reduce production term_simple -> ID COLON typ DOUBLE_ARROW term_simple
+-- On NUMBER reduce production term_simple -> ID COLON typ DOUBLE_ARROW term_simple
+-- On NOT reduce production term_simple -> ID COLON typ DOUBLE_ARROW term_simple
+-- On LPAREN reduce production term_simple -> ID COLON typ DOUBLE_ARROW term_simple
+-- On IMP reduce production term_simple -> ID COLON typ DOUBLE_ARROW term_simple
+-- On ID reduce production term_simple -> ID COLON typ DOUBLE_ARROW term_simple
+-- On FALSE reduce production term_simple -> ID COLON typ DOUBLE_ARROW term_simple
+-- On EX_TYPE reduce production term_simple -> ID COLON typ DOUBLE_ARROW term_simple
+-- On EX reduce production term_simple -> ID COLON typ DOUBLE_ARROW term_simple
+-- On EQV reduce production term_simple -> ID COLON typ DOUBLE_ARROW term_simple
+-- On EQUAL reduce production term_simple -> ID COLON typ DOUBLE_ARROW term_simple
+-- On END_HYP reduce production term_simple -> ID COLON typ DOUBLE_ARROW term_simple
+-- On DOUBLE_ARROW reduce production term_simple -> ID COLON typ DOUBLE_ARROW term_simple
+-- On DOT reduce production term_simple -> ID COLON typ DOUBLE_ARROW term_simple
+-- On CCARR reduce production term_simple -> ID COLON typ DOUBLE_ARROW term_simple
+-- On AND reduce production term_simple -> ID COLON typ DOUBLE_ARROW term_simple
+-- On ALL_TYPE reduce production term_simple -> ID COLON typ DOUBLE_ARROW term_simple
+-- On ALL reduce production term_simple -> ID COLON typ DOUBLE_ARROW term_simple
+
+State 105:
+term_simple -> IMP term_simple . term_simple [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On TRUE shift to state 23
+-- On QID shift to state 24
+-- On OR shift to state 25
+-- On NUMBER shift to state 26
+-- On NOT shift to state 27
+-- On LPAREN shift to state 28
+-- On IMP shift to state 29
+-- On ID shift to state 30
+-- On FALSE shift to state 32
+-- On EX_TYPE shift to state 33
+-- On EX shift to state 39
+-- On EQV shift to state 59
+-- On EQUAL shift to state 60
+-- On CCARR shift to state 62
+-- On AND shift to state 65
+-- On ALL_TYPE shift to state 66
+-- On ALL shift to state 72
+-- On term_simple shift to state 106
+-- On qid shift to state 81
+
+State 106:
+term_simple -> IMP term_simple term_simple . [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On TRUE reduce production term_simple -> IMP term_simple term_simple
+-- On RPAREN reduce production term_simple -> IMP term_simple term_simple
+-- On REW reduce production term_simple -> IMP term_simple term_simple
+-- On QID reduce production term_simple -> IMP term_simple term_simple
+-- On OR reduce production term_simple -> IMP term_simple term_simple
+-- On NUMBER reduce production term_simple -> IMP term_simple term_simple
+-- On NOT reduce production term_simple -> IMP term_simple term_simple
+-- On LPAREN reduce production term_simple -> IMP term_simple term_simple
+-- On IMP reduce production term_simple -> IMP term_simple term_simple
+-- On ID reduce production term_simple -> IMP term_simple term_simple
+-- On FALSE reduce production term_simple -> IMP term_simple term_simple
+-- On EX_TYPE reduce production term_simple -> IMP term_simple term_simple
+-- On EX reduce production term_simple -> IMP term_simple term_simple
+-- On EQV reduce production term_simple -> IMP term_simple term_simple
+-- On EQUAL reduce production term_simple -> IMP term_simple term_simple
+-- On END_HYP reduce production term_simple -> IMP term_simple term_simple
+-- On DOUBLE_ARROW reduce production term_simple -> IMP term_simple term_simple
+-- On DOT reduce production term_simple -> IMP term_simple term_simple
+-- On CCARR reduce production term_simple -> IMP term_simple term_simple
+-- On AND reduce production term_simple -> IMP term_simple term_simple
+-- On ALL_TYPE reduce production term_simple -> IMP term_simple term_simple
+-- On ALL reduce production term_simple -> IMP term_simple term_simple
+
+State 107:
+term_simple -> LPAREN term . RPAREN [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On RPAREN shift to state 108
+
+State 108:
+term_simple -> LPAREN term RPAREN . [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On TRUE reduce production term_simple -> LPAREN term RPAREN
+-- On RPAREN reduce production term_simple -> LPAREN term RPAREN
+-- On REW reduce production term_simple -> LPAREN term RPAREN
+-- On QID reduce production term_simple -> LPAREN term RPAREN
+-- On OR reduce production term_simple -> LPAREN term RPAREN
+-- On NUMBER reduce production term_simple -> LPAREN term RPAREN
+-- On NOT reduce production term_simple -> LPAREN term RPAREN
+-- On LPAREN reduce production term_simple -> LPAREN term RPAREN
+-- On IMP reduce production term_simple -> LPAREN term RPAREN
+-- On ID reduce production term_simple -> LPAREN term RPAREN
+-- On FALSE reduce production term_simple -> LPAREN term RPAREN
+-- On EX_TYPE reduce production term_simple -> LPAREN term RPAREN
+-- On EX reduce production term_simple -> LPAREN term RPAREN
+-- On EQV reduce production term_simple -> LPAREN term RPAREN
+-- On EQUAL reduce production term_simple -> LPAREN term RPAREN
+-- On END_HYP reduce production term_simple -> LPAREN term RPAREN
+-- On DOUBLE_ARROW reduce production term_simple -> LPAREN term RPAREN
+-- On DOT reduce production term_simple -> LPAREN term RPAREN
+-- On CCARR reduce production term_simple -> LPAREN term RPAREN
+-- On AND reduce production term_simple -> LPAREN term RPAREN
+-- On ALL_TYPE reduce production term_simple -> LPAREN term RPAREN
+-- On ALL reduce production term_simple -> LPAREN term RPAREN
+
+State 109:
+term_simple -> NOT term_simple . [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On TRUE reduce production term_simple -> NOT term_simple
+-- On RPAREN reduce production term_simple -> NOT term_simple
+-- On REW reduce production term_simple -> NOT term_simple
+-- On QID reduce production term_simple -> NOT term_simple
+-- On OR reduce production term_simple -> NOT term_simple
+-- On NUMBER reduce production term_simple -> NOT term_simple
+-- On NOT reduce production term_simple -> NOT term_simple
+-- On LPAREN reduce production term_simple -> NOT term_simple
+-- On IMP reduce production term_simple -> NOT term_simple
+-- On ID reduce production term_simple -> NOT term_simple
+-- On FALSE reduce production term_simple -> NOT term_simple
+-- On EX_TYPE reduce production term_simple -> NOT term_simple
+-- On EX reduce production term_simple -> NOT term_simple
+-- On EQV reduce production term_simple -> NOT term_simple
+-- On EQUAL reduce production term_simple -> NOT term_simple
+-- On END_HYP reduce production term_simple -> NOT term_simple
+-- On DOUBLE_ARROW reduce production term_simple -> NOT term_simple
+-- On DOT reduce production term_simple -> NOT term_simple
+-- On CCARR reduce production term_simple -> NOT term_simple
+-- On AND reduce production term_simple -> NOT term_simple
+-- On ALL_TYPE reduce production term_simple -> NOT term_simple
+-- On ALL reduce production term_simple -> NOT term_simple
+
+State 110:
+term_simple -> OR term_simple . term_simple [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On TRUE shift to state 23
+-- On QID shift to state 24
+-- On OR shift to state 25
+-- On NUMBER shift to state 26
+-- On NOT shift to state 27
+-- On LPAREN shift to state 28
+-- On IMP shift to state 29
+-- On ID shift to state 30
+-- On FALSE shift to state 32
+-- On EX_TYPE shift to state 33
+-- On EX shift to state 39
+-- On EQV shift to state 59
+-- On EQUAL shift to state 60
+-- On CCARR shift to state 62
+-- On AND shift to state 65
+-- On ALL_TYPE shift to state 66
+-- On ALL shift to state 72
+-- On term_simple shift to state 111
+-- On qid shift to state 81
+
+State 111:
+term_simple -> OR term_simple term_simple . [ TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL ]
+-- On TRUE reduce production term_simple -> OR term_simple term_simple
+-- On RPAREN reduce production term_simple -> OR term_simple term_simple
+-- On REW reduce production term_simple -> OR term_simple term_simple
+-- On QID reduce production term_simple -> OR term_simple term_simple
+-- On OR reduce production term_simple -> OR term_simple term_simple
+-- On NUMBER reduce production term_simple -> OR term_simple term_simple
+-- On NOT reduce production term_simple -> OR term_simple term_simple
+-- On LPAREN reduce production term_simple -> OR term_simple term_simple
+-- On IMP reduce production term_simple -> OR term_simple term_simple
+-- On ID reduce production term_simple -> OR term_simple term_simple
+-- On FALSE reduce production term_simple -> OR term_simple term_simple
+-- On EX_TYPE reduce production term_simple -> OR term_simple term_simple
+-- On EX reduce production term_simple -> OR term_simple term_simple
+-- On EQV reduce production term_simple -> OR term_simple term_simple
+-- On EQUAL reduce production term_simple -> OR term_simple term_simple
+-- On END_HYP reduce production term_simple -> OR term_simple term_simple
+-- On DOUBLE_ARROW reduce production term_simple -> OR term_simple term_simple
+-- On DOT reduce production term_simple -> OR term_simple term_simple
+-- On CCARR reduce production term_simple -> OR term_simple term_simple
+-- On AND reduce production term_simple -> OR term_simple term_simple
+-- On ALL_TYPE reduce production term_simple -> OR term_simple term_simple
+-- On ALL reduce production term_simple -> OR term_simple term_simple
+
+State 112:
+body -> QID COLON PROOF term . DOT body [ EOF ENDPROOF ]
+-- On DOT shift to state 113
+
+State 113:
+body -> QID COLON PROOF term DOT . body [ EOF ENDPROOF ]
+-- On QID shift to state 2
+-- On LBRACK shift to state 114
+-- On ID shift to state 125
+-- On DEFKW shift to state 130
+-- On goal shift to state 137
+-- On env shift to state 138
+-- On body shift to state 185
+
+State 114:
+env -> LBRACK . loption(separated_nonempty_list(COMMA,env_decl)) RBRACK [ error TRUE QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL CCARR AND ALL_TYPE ALL ]
+-- On ID shift to state 115
+-- On separated_nonempty_list(COMMA,env_decl) shift to state 119
+-- On loption(separated_nonempty_list(COMMA,env_decl)) shift to state 120
+-- On env_decl shift to state 122
+-- On RBRACK reduce production loption(separated_nonempty_list(COMMA,env_decl)) -> 
+
+State 115:
+env_decl -> ID . COLON arrow_type [ RBRACK COMMA ]
+env_decl -> ID . COLON TYPE [ RBRACK COMMA ]
+env_decl -> ID . [ RBRACK COMMA ]
+-- On COLON shift to state 116
+-- On RBRACK reduce production env_decl -> ID
+-- On COMMA reduce production env_decl -> ID
+
+State 116:
+env_decl -> ID COLON . arrow_type [ RBRACK COMMA ]
+env_decl -> ID COLON . TYPE [ RBRACK COMMA ]
+-- On TYPE shift to state 117
+-- On TERM shift to state 5
+-- On PROP shift to state 20
+-- On LPAREN shift to state 44
+-- On ID shift to state 45
+-- On typ shift to state 49
+-- On complex_type shift to state 50
+-- On arrow_type shift to state 118
+
+State 117:
+env_decl -> ID COLON TYPE . [ RBRACK COMMA ]
+-- On RBRACK reduce production env_decl -> ID COLON TYPE
+-- On COMMA reduce production env_decl -> ID COLON TYPE
+
+State 118:
+env_decl -> ID COLON arrow_type . [ RBRACK COMMA ]
+-- On RBRACK reduce production env_decl -> ID COLON arrow_type
+-- On COMMA reduce production env_decl -> ID COLON arrow_type
+
+State 119:
+loption(separated_nonempty_list(COMMA,env_decl)) -> separated_nonempty_list(COMMA,env_decl) . [ RBRACK ]
+-- On RBRACK reduce production loption(separated_nonempty_list(COMMA,env_decl)) -> separated_nonempty_list(COMMA,env_decl)
+
+State 120:
+env -> LBRACK loption(separated_nonempty_list(COMMA,env_decl)) . RBRACK [ error TRUE QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL CCARR AND ALL_TYPE ALL ]
+-- On RBRACK shift to state 121
+
+State 121:
+env -> LBRACK loption(separated_nonempty_list(COMMA,env_decl)) RBRACK . [ error TRUE QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL CCARR AND ALL_TYPE ALL ]
+-- On error reduce production env -> LBRACK loption(separated_nonempty_list(COMMA,env_decl)) RBRACK
+-- On TRUE reduce production env -> LBRACK loption(separated_nonempty_list(COMMA,env_decl)) RBRACK
+-- On QID reduce production env -> LBRACK loption(separated_nonempty_list(COMMA,env_decl)) RBRACK
+-- On OR reduce production env -> LBRACK loption(separated_nonempty_list(COMMA,env_decl)) RBRACK
+-- On NUMBER reduce production env -> LBRACK loption(separated_nonempty_list(COMMA,env_decl)) RBRACK
+-- On NOT reduce production env -> LBRACK loption(separated_nonempty_list(COMMA,env_decl)) RBRACK
+-- On LPAREN reduce production env -> LBRACK loption(separated_nonempty_list(COMMA,env_decl)) RBRACK
+-- On IMP reduce production env -> LBRACK loption(separated_nonempty_list(COMMA,env_decl)) RBRACK
+-- On ID reduce production env -> LBRACK loption(separated_nonempty_list(COMMA,env_decl)) RBRACK
+-- On FALSE reduce production env -> LBRACK loption(separated_nonempty_list(COMMA,env_decl)) RBRACK
+-- On EX_TYPE reduce production env -> LBRACK loption(separated_nonempty_list(COMMA,env_decl)) RBRACK
+-- On EX reduce production env -> LBRACK loption(separated_nonempty_list(COMMA,env_decl)) RBRACK
+-- On EQV reduce production env -> LBRACK loption(separated_nonempty_list(COMMA,env_decl)) RBRACK
+-- On EQUAL reduce production env -> LBRACK loption(separated_nonempty_list(COMMA,env_decl)) RBRACK
+-- On CCARR reduce production env -> LBRACK loption(separated_nonempty_list(COMMA,env_decl)) RBRACK
+-- On AND reduce production env -> LBRACK loption(separated_nonempty_list(COMMA,env_decl)) RBRACK
+-- On ALL_TYPE reduce production env -> LBRACK loption(separated_nonempty_list(COMMA,env_decl)) RBRACK
+-- On ALL reduce production env -> LBRACK loption(separated_nonempty_list(COMMA,env_decl)) RBRACK
+
+State 122:
+separated_nonempty_list(COMMA,env_decl) -> env_decl . [ RBRACK ]
+separated_nonempty_list(COMMA,env_decl) -> env_decl . COMMA separated_nonempty_list(COMMA,env_decl) [ RBRACK ]
+-- On COMMA shift to state 123
+-- On RBRACK reduce production separated_nonempty_list(COMMA,env_decl) -> env_decl
+
+State 123:
+separated_nonempty_list(COMMA,env_decl) -> env_decl COMMA . separated_nonempty_list(COMMA,env_decl) [ RBRACK ]
+-- On ID shift to state 115
+-- On separated_nonempty_list(COMMA,env_decl) shift to state 124
+-- On env_decl shift to state 122
+
+State 124:
+separated_nonempty_list(COMMA,env_decl) -> env_decl COMMA separated_nonempty_list(COMMA,env_decl) . [ RBRACK ]
+-- On RBRACK reduce production separated_nonempty_list(COMMA,env_decl) -> env_decl COMMA separated_nonempty_list(COMMA,env_decl)
+
+State 125:
+body -> ID . COLON kind DOT body [ EOF ENDPROOF ]
+body -> ID . COLON PROOF term DOT body [ EOF ENDPROOF ]
+body -> ID . COLON arrow_type DOT body [ EOF ENDPROOF ]
+goal -> ID . COLON PROOF term DOT [ EOF ENDPROOF ]
+-- On COLON shift to state 126
+
+State 126:
+body -> ID COLON . kind DOT body [ EOF ENDPROOF ]
+body -> ID COLON . PROOF term DOT body [ EOF ENDPROOF ]
+body -> ID COLON . arrow_type DOT body [ EOF ENDPROOF ]
+goal -> ID COLON . PROOF term DOT [ EOF ENDPROOF ]
+-- On TYPE shift to state 4
+-- On TERM shift to state 5
+-- On PROP shift to state 20
+-- On PROOF shift to state 127
+-- On LPAREN shift to state 44
+-- On ID shift to state 174
+-- On typ shift to state 49
+-- On kind shift to state 179
+-- On complex_type shift to state 50
+-- On arrow_type shift to state 182
+
+State 127:
+body -> ID COLON PROOF . term DOT body [ EOF ENDPROOF ]
+goal -> ID COLON PROOF . term DOT [ EOF ENDPROOF ]
+-- On error shift to state 22
+-- On TRUE shift to state 23
+-- On QID shift to state 24
+-- On OR shift to state 25
+-- On NUMBER shift to state 26
+-- On NOT shift to state 27
+-- On LPAREN shift to state 28
+-- On IMP shift to state 29
+-- On ID shift to state 30
+-- On FALSE shift to state 32
+-- On EX_TYPE shift to state 33
+-- On EX shift to state 39
+-- On EQV shift to state 59
+-- On EQUAL shift to state 60
+-- On CCARR shift to state 62
+-- On AND shift to state 65
+-- On ALL_TYPE shift to state 66
+-- On ALL shift to state 72
+-- On term_simple shift to state 79
+-- On term shift to state 128
+-- On qid shift to state 81
+
+State 128:
+body -> ID COLON PROOF term . DOT body [ EOF ENDPROOF ]
+goal -> ID COLON PROOF term . DOT [ EOF ENDPROOF ]
+-- On DOT shift to state 129
+
+State 129:
+body -> ID COLON PROOF term DOT . body [ EOF ENDPROOF ]
+goal -> ID COLON PROOF term DOT . [ EOF ENDPROOF ]
+-- On QID shift to state 2
+-- On LBRACK shift to state 114
+-- On ID shift to state 125
+-- On DEFKW shift to state 130
+-- On goal shift to state 137
+-- On env shift to state 138
+-- On body shift to state 173
+-- On EOF reduce production goal -> ID COLON PROOF term DOT
+-- On ENDPROOF reduce production goal -> ID COLON PROOF term DOT
+
+State 130:
+body -> DEFKW . ID COLON arrow_type DOT body [ EOF ENDPROOF ]
+body -> DEFKW . QID COLON arrow_type DOT body [ EOF ENDPROOF ]
+body -> DEFKW . ID COLON typ DEF term DOT body [ EOF ENDPROOF ]
+body -> DEFKW . QID COLON typ DEF term DOT body [ EOF ENDPROOF ]
+body -> DEFKW . declared_or_defined_id nonempty_list(compact_arg) COLON typ DEF term DOT body [ EOF ENDPROOF ]
+-- On QID shift to state 131
+-- On ID shift to state 148
+-- On declared_or_defined_id shift to state 158
+
+State 131:
+body -> DEFKW QID . COLON arrow_type DOT body [ EOF ENDPROOF ]
+body -> DEFKW QID . COLON typ DEF term DOT body [ EOF ENDPROOF ]
+declared_or_defined_id -> QID . [ LPAREN ]
+-- On COLON shift to state 132
+-- On LPAREN reduce production declared_or_defined_id -> QID
+
+State 132:
+body -> DEFKW QID COLON . arrow_type DOT body [ EOF ENDPROOF ]
+body -> DEFKW QID COLON . typ DEF term DOT body [ EOF ENDPROOF ]
+-- On TERM shift to state 5
+-- On PROP shift to state 20
+-- On LPAREN shift to state 44
+-- On ID shift to state 45
+-- On typ shift to state 133
+-- On complex_type shift to state 50
+-- On arrow_type shift to state 145
+
+State 133:
+arrow_type -> typ . [ DOT ]
+body -> DEFKW QID COLON typ . DEF term DOT body [ EOF ENDPROOF ]
+complex_type -> typ . [ ARROW ]
+-- On DEF shift to state 134
+-- On DOT reduce production arrow_type -> typ
+-- On ARROW reduce production complex_type -> typ
+
+State 134:
+body -> DEFKW QID COLON typ DEF . term DOT body [ EOF ENDPROOF ]
+-- On error shift to state 22
+-- On TRUE shift to state 23
+-- On QID shift to state 24
+-- On OR shift to state 25
+-- On NUMBER shift to state 26
+-- On NOT shift to state 27
+-- On LPAREN shift to state 28
+-- On IMP shift to state 29
+-- On ID shift to state 30
+-- On FALSE shift to state 32
+-- On EX_TYPE shift to state 33
+-- On EX shift to state 39
+-- On EQV shift to state 59
+-- On EQUAL shift to state 60
+-- On CCARR shift to state 62
+-- On AND shift to state 65
+-- On ALL_TYPE shift to state 66
+-- On ALL shift to state 72
+-- On term_simple shift to state 79
+-- On term shift to state 135
+-- On qid shift to state 81
+
+State 135:
+body -> DEFKW QID COLON typ DEF term . DOT body [ EOF ENDPROOF ]
+-- On DOT shift to state 136
+
+State 136:
+body -> DEFKW QID COLON typ DEF term DOT . body [ EOF ENDPROOF ]
+-- On QID shift to state 2
+-- On LBRACK shift to state 114
+-- On ID shift to state 125
+-- On DEFKW shift to state 130
+-- On goal shift to state 137
+-- On env shift to state 138
+-- On body shift to state 144
+
+State 137:
+body -> goal . [ EOF ENDPROOF ]
+-- On EOF reduce production body -> goal
+-- On ENDPROOF reduce production body -> goal
+
+State 138:
+body -> env . term REW term DOT body [ EOF ENDPROOF ]
+-- On error shift to state 22
+-- On TRUE shift to state 23
+-- On QID shift to state 24
+-- On OR shift to state 25
+-- On NUMBER shift to state 26
+-- On NOT shift to state 27
+-- On LPAREN shift to state 28
+-- On IMP shift to state 29
+-- On ID shift to state 30
+-- On FALSE shift to state 32
+-- On EX_TYPE shift to state 33
+-- On EX shift to state 39
+-- On EQV shift to state 59
+-- On EQUAL shift to state 60
+-- On CCARR shift to state 62
+-- On AND shift to state 65
+-- On ALL_TYPE shift to state 66
+-- On ALL shift to state 72
+-- On term_simple shift to state 79
+-- On term shift to state 139
+-- On qid shift to state 81
+
+State 139:
+body -> env term . REW term DOT body [ EOF ENDPROOF ]
+-- On REW shift to state 140
+
+State 140:
+body -> env term REW . term DOT body [ EOF ENDPROOF ]
+-- On error shift to state 22
+-- On TRUE shift to state 23
+-- On QID shift to state 24
+-- On OR shift to state 25
+-- On NUMBER shift to state 26
+-- On NOT shift to state 27
+-- On LPAREN shift to state 28
+-- On IMP shift to state 29
+-- On ID shift to state 30
+-- On FALSE shift to state 32
+-- On EX_TYPE shift to state 33
+-- On EX shift to state 39
+-- On EQV shift to state 59
+-- On EQUAL shift to state 60
+-- On CCARR shift to state 62
+-- On AND shift to state 65
+-- On ALL_TYPE shift to state 66
+-- On ALL shift to state 72
+-- On term_simple shift to state 79
+-- On term shift to state 141
+-- On qid shift to state 81
+
+State 141:
+body -> env term REW term . DOT body [ EOF ENDPROOF ]
+-- On DOT shift to state 142
+
+State 142:
+body -> env term REW term DOT . body [ EOF ENDPROOF ]
+-- On QID shift to state 2
+-- On LBRACK shift to state 114
+-- On ID shift to state 125
+-- On DEFKW shift to state 130
+-- On goal shift to state 137
+-- On env shift to state 138
+-- On body shift to state 143
+
+State 143:
+body -> env term REW term DOT body . [ EOF ENDPROOF ]
+-- On EOF reduce production body -> env term REW term DOT body
+-- On ENDPROOF reduce production body -> env term REW term DOT body
+
+State 144:
+body -> DEFKW QID COLON typ DEF term DOT body . [ EOF ENDPROOF ]
+-- On EOF reduce production body -> DEFKW QID COLON typ DEF term DOT body
+-- On ENDPROOF reduce production body -> DEFKW QID COLON typ DEF term DOT body
+
+State 145:
+body -> DEFKW QID COLON arrow_type . DOT body [ EOF ENDPROOF ]
+-- On DOT shift to state 146
+
+State 146:
+body -> DEFKW QID COLON arrow_type DOT . body [ EOF ENDPROOF ]
+-- On QID shift to state 2
+-- On LBRACK shift to state 114
+-- On ID shift to state 125
+-- On DEFKW shift to state 130
+-- On goal shift to state 137
+-- On env shift to state 138
+-- On body shift to state 147
+
+State 147:
+body -> DEFKW QID COLON arrow_type DOT body . [ EOF ENDPROOF ]
+-- On EOF reduce production body -> DEFKW QID COLON arrow_type DOT body
+-- On ENDPROOF reduce production body -> DEFKW QID COLON arrow_type DOT body
+
+State 148:
+body -> DEFKW ID . COLON arrow_type DOT body [ EOF ENDPROOF ]
+body -> DEFKW ID . COLON typ DEF term DOT body [ EOF ENDPROOF ]
+declared_or_defined_id -> ID . [ LPAREN ]
+-- On COLON shift to state 149
+-- On LPAREN reduce production declared_or_defined_id -> ID
+
+State 149:
+body -> DEFKW ID COLON . arrow_type DOT body [ EOF ENDPROOF ]
+body -> DEFKW ID COLON . typ DEF term DOT body [ EOF ENDPROOF ]
+-- On TERM shift to state 5
+-- On PROP shift to state 20
+-- On LPAREN shift to state 44
+-- On ID shift to state 45
+-- On typ shift to state 150
+-- On complex_type shift to state 50
+-- On arrow_type shift to state 155
+
+State 150:
+arrow_type -> typ . [ DOT ]
+body -> DEFKW ID COLON typ . DEF term DOT body [ EOF ENDPROOF ]
+complex_type -> typ . [ ARROW ]
+-- On DEF shift to state 151
+-- On DOT reduce production arrow_type -> typ
+-- On ARROW reduce production complex_type -> typ
+
+State 151:
+body -> DEFKW ID COLON typ DEF . term DOT body [ EOF ENDPROOF ]
+-- On error shift to state 22
+-- On TRUE shift to state 23
+-- On QID shift to state 24
+-- On OR shift to state 25
+-- On NUMBER shift to state 26
+-- On NOT shift to state 27
+-- On LPAREN shift to state 28
+-- On IMP shift to state 29
+-- On ID shift to state 30
+-- On FALSE shift to state 32
+-- On EX_TYPE shift to state 33
+-- On EX shift to state 39
+-- On EQV shift to state 59
+-- On EQUAL shift to state 60
+-- On CCARR shift to state 62
+-- On AND shift to state 65
+-- On ALL_TYPE shift to state 66
+-- On ALL shift to state 72
+-- On term_simple shift to state 79
+-- On term shift to state 152
+-- On qid shift to state 81
+
+State 152:
+body -> DEFKW ID COLON typ DEF term . DOT body [ EOF ENDPROOF ]
+-- On DOT shift to state 153
+
+State 153:
+body -> DEFKW ID COLON typ DEF term DOT . body [ EOF ENDPROOF ]
+-- On QID shift to state 2
+-- On LBRACK shift to state 114
+-- On ID shift to state 125
+-- On DEFKW shift to state 130
+-- On goal shift to state 137
+-- On env shift to state 138
+-- On body shift to state 154
+
+State 154:
+body -> DEFKW ID COLON typ DEF term DOT body . [ EOF ENDPROOF ]
+-- On EOF reduce production body -> DEFKW ID COLON typ DEF term DOT body
+-- On ENDPROOF reduce production body -> DEFKW ID COLON typ DEF term DOT body
+
+State 155:
+body -> DEFKW ID COLON arrow_type . DOT body [ EOF ENDPROOF ]
+-- On DOT shift to state 156
+
+State 156:
+body -> DEFKW ID COLON arrow_type DOT . body [ EOF ENDPROOF ]
+-- On QID shift to state 2
+-- On LBRACK shift to state 114
+-- On ID shift to state 125
+-- On DEFKW shift to state 130
+-- On goal shift to state 137
+-- On env shift to state 138
+-- On body shift to state 157
+
+State 157:
+body -> DEFKW ID COLON arrow_type DOT body . [ EOF ENDPROOF ]
+-- On EOF reduce production body -> DEFKW ID COLON arrow_type DOT body
+-- On ENDPROOF reduce production body -> DEFKW ID COLON arrow_type DOT body
+
+State 158:
+body -> DEFKW declared_or_defined_id . nonempty_list(compact_arg) COLON typ DEF term DOT body [ EOF ENDPROOF ]
+-- On LPAREN shift to state 159
+-- On nonempty_list(compact_arg) shift to state 164
+-- On compact_arg shift to state 171
+
+State 159:
+compact_arg -> LPAREN . ID COLON arrow_type RPAREN [ LPAREN COLON ]
+-- On ID shift to state 160
+
+State 160:
+compact_arg -> LPAREN ID . COLON arrow_type RPAREN [ LPAREN COLON ]
+-- On COLON shift to state 161
+
+State 161:
+compact_arg -> LPAREN ID COLON . arrow_type RPAREN [ LPAREN COLON ]
+-- On TERM shift to state 5
+-- On PROP shift to state 20
+-- On LPAREN shift to state 44
+-- On ID shift to state 45
+-- On typ shift to state 49
+-- On complex_type shift to state 50
+-- On arrow_type shift to state 162
+
+State 162:
+compact_arg -> LPAREN ID COLON arrow_type . RPAREN [ LPAREN COLON ]
+-- On RPAREN shift to state 163
+
+State 163:
+compact_arg -> LPAREN ID COLON arrow_type RPAREN . [ LPAREN COLON ]
+-- On LPAREN reduce production compact_arg -> LPAREN ID COLON arrow_type RPAREN
+-- On COLON reduce production compact_arg -> LPAREN ID COLON arrow_type RPAREN
+
+State 164:
+body -> DEFKW declared_or_defined_id nonempty_list(compact_arg) . COLON typ DEF term DOT body [ EOF ENDPROOF ]
+-- On COLON shift to state 165
+
+State 165:
+body -> DEFKW declared_or_defined_id nonempty_list(compact_arg) COLON . typ DEF term DOT body [ EOF ENDPROOF ]
+-- On TERM shift to state 5
+-- On PROP shift to state 20
+-- On typ shift to state 166
+
+State 166:
+body -> DEFKW declared_or_defined_id nonempty_list(compact_arg) COLON typ . DEF term DOT body [ EOF ENDPROOF ]
+-- On DEF shift to state 167
+
+State 167:
+body -> DEFKW declared_or_defined_id nonempty_list(compact_arg) COLON typ DEF . term DOT body [ EOF ENDPROOF ]
+-- On error shift to state 22
+-- On TRUE shift to state 23
+-- On QID shift to state 24
+-- On OR shift to state 25
+-- On NUMBER shift to state 26
+-- On NOT shift to state 27
+-- On LPAREN shift to state 28
+-- On IMP shift to state 29
+-- On ID shift to state 30
+-- On FALSE shift to state 32
+-- On EX_TYPE shift to state 33
+-- On EX shift to state 39
+-- On EQV shift to state 59
+-- On EQUAL shift to state 60
+-- On CCARR shift to state 62
+-- On AND shift to state 65
+-- On ALL_TYPE shift to state 66
+-- On ALL shift to state 72
+-- On term_simple shift to state 79
+-- On term shift to state 168
+-- On qid shift to state 81
+
+State 168:
+body -> DEFKW declared_or_defined_id nonempty_list(compact_arg) COLON typ DEF term . DOT body [ EOF ENDPROOF ]
+-- On DOT shift to state 169
+
+State 169:
+body -> DEFKW declared_or_defined_id nonempty_list(compact_arg) COLON typ DEF term DOT . body [ EOF ENDPROOF ]
+-- On QID shift to state 2
+-- On LBRACK shift to state 114
+-- On ID shift to state 125
+-- On DEFKW shift to state 130
+-- On goal shift to state 137
+-- On env shift to state 138
+-- On body shift to state 170
+
+State 170:
+body -> DEFKW declared_or_defined_id nonempty_list(compact_arg) COLON typ DEF term DOT body . [ EOF ENDPROOF ]
+-- On EOF reduce production body -> DEFKW declared_or_defined_id nonempty_list(compact_arg) COLON typ DEF term DOT body
+-- On ENDPROOF reduce production body -> DEFKW declared_or_defined_id nonempty_list(compact_arg) COLON typ DEF term DOT body
+
+State 171:
+nonempty_list(compact_arg) -> compact_arg . [ COLON ]
+nonempty_list(compact_arg) -> compact_arg . nonempty_list(compact_arg) [ COLON ]
+-- On LPAREN shift to state 159
+-- On nonempty_list(compact_arg) shift to state 172
+-- On compact_arg shift to state 171
+-- On COLON reduce production nonempty_list(compact_arg) -> compact_arg
+
+State 172:
+nonempty_list(compact_arg) -> compact_arg nonempty_list(compact_arg) . [ COLON ]
+-- On COLON reduce production nonempty_list(compact_arg) -> compact_arg nonempty_list(compact_arg)
+
+State 173:
+body -> ID COLON PROOF term DOT body . [ EOF ENDPROOF ]
+-- On EOF reduce production body -> ID COLON PROOF term DOT body
+-- On ENDPROOF reduce production body -> ID COLON PROOF term DOT body
+
+State 174:
+arrow_type -> ID . COLON TYPE ARROW arrow_type [ DOT ]
+kind -> ID . COLON TYPE ARROW kind [ DOT ]
+-- On COLON shift to state 175
+
+State 175:
+arrow_type -> ID COLON . TYPE ARROW arrow_type [ DOT ]
+kind -> ID COLON . TYPE ARROW kind [ DOT ]
+-- On TYPE shift to state 176
+
+State 176:
+arrow_type -> ID COLON TYPE . ARROW arrow_type [ DOT ]
+kind -> ID COLON TYPE . ARROW kind [ DOT ]
+-- On ARROW shift to state 177
+
+State 177:
+arrow_type -> ID COLON TYPE ARROW . arrow_type [ DOT ]
+kind -> ID COLON TYPE ARROW . kind [ DOT ]
+-- On TYPE shift to state 4
+-- On TERM shift to state 5
+-- On PROP shift to state 20
+-- On LPAREN shift to state 44
+-- On ID shift to state 174
+-- On typ shift to state 49
+-- On kind shift to state 178
+-- On complex_type shift to state 50
+-- On arrow_type shift to state 53
+
+State 178:
+kind -> ID COLON TYPE ARROW kind . [ DOT ]
+-- On DOT reduce production kind -> ID COLON TYPE ARROW kind
+
+State 179:
+body -> ID COLON kind . DOT body [ EOF ENDPROOF ]
+-- On DOT shift to state 180
+
+State 180:
+body -> ID COLON kind DOT . body [ EOF ENDPROOF ]
+-- On QID shift to state 2
+-- On LBRACK shift to state 114
+-- On ID shift to state 125
+-- On DEFKW shift to state 130
+-- On goal shift to state 137
+-- On env shift to state 138
+-- On body shift to state 181
+
+State 181:
+body -> ID COLON kind DOT body . [ EOF ENDPROOF ]
+-- On EOF reduce production body -> ID COLON kind DOT body
+-- On ENDPROOF reduce production body -> ID COLON kind DOT body
+
+State 182:
+body -> ID COLON arrow_type . DOT body [ EOF ENDPROOF ]
+-- On DOT shift to state 183
+
+State 183:
+body -> ID COLON arrow_type DOT . body [ EOF ENDPROOF ]
+-- On QID shift to state 2
+-- On LBRACK shift to state 114
+-- On ID shift to state 125
+-- On DEFKW shift to state 130
+-- On goal shift to state 137
+-- On env shift to state 138
+-- On body shift to state 184
+
+State 184:
+body -> ID COLON arrow_type DOT body . [ EOF ENDPROOF ]
+-- On EOF reduce production body -> ID COLON arrow_type DOT body
+-- On ENDPROOF reduce production body -> ID COLON arrow_type DOT body
+
+State 185:
+body -> QID COLON PROOF term DOT body . [ EOF ENDPROOF ]
+-- On EOF reduce production body -> QID COLON PROOF term DOT body
+-- On ENDPROOF reduce production body -> QID COLON PROOF term DOT body
+
+State 186:
+body -> QID COLON kind . DOT body [ EOF ENDPROOF ]
+-- On DOT shift to state 187
+
+State 187:
+body -> QID COLON kind DOT . body [ EOF ENDPROOF ]
+-- On QID shift to state 2
+-- On LBRACK shift to state 114
+-- On ID shift to state 125
+-- On DEFKW shift to state 130
+-- On goal shift to state 137
+-- On env shift to state 138
+-- On body shift to state 188
+
+State 188:
+body -> QID COLON kind DOT body . [ EOF ENDPROOF ]
+-- On EOF reduce production body -> QID COLON kind DOT body
+-- On ENDPROOF reduce production body -> QID COLON kind DOT body
+
+State 189:
+body -> QID COLON arrow_type . DOT body [ EOF ENDPROOF ]
+-- On DOT shift to state 190
+
+State 190:
+body -> QID COLON arrow_type DOT . body [ EOF ENDPROOF ]
+-- On QID shift to state 2
+-- On LBRACK shift to state 114
+-- On ID shift to state 125
+-- On DEFKW shift to state 130
+-- On goal shift to state 137
+-- On env shift to state 138
+-- On body shift to state 191
+
+State 191:
+body -> QID COLON arrow_type DOT body . [ EOF ENDPROOF ]
+-- On EOF reduce production body -> QID COLON arrow_type DOT body
+-- On ENDPROOF reduce production body -> QID COLON arrow_type DOT body
+
+State 192:
+file -> BEGINPROOF . proofheaders EOF [ # ]
+-- On error shift to state 193
+-- On QID shift to state 2
+-- On LBRACK shift to state 114
+-- On ID shift to state 125
+-- On DEFKW shift to state 130
+-- On BEGIN_VAR shift to state 194
+-- On BEGIN_TYPEALIAS shift to state 199
+-- On BEGIN_TY shift to state 204
+-- On BEGIN_HYP shift to state 206
+-- On BEGINNAME shift to state 212
+-- On BEGINHEADER shift to state 213
+-- On proofheaders shift to state 222
+-- On goal shift to state 137
+-- On env shift to state 138
+-- On body shift to state 215
+
+State 193:
+proofheaders -> error . [ EOF ]
+-- On EOF reduce production proofheaders -> error
+
+State 194:
+proofheaders -> BEGIN_VAR . ID COLON typ END_VAR proofheaders [ EOF ]
+-- On ID shift to state 195
+
+State 195:
+proofheaders -> BEGIN_VAR ID . COLON typ END_VAR proofheaders [ EOF ]
+-- On COLON shift to state 196
+
+State 196:
+proofheaders -> BEGIN_VAR ID COLON . typ END_VAR proofheaders [ EOF ]
+-- On TERM shift to state 5
+-- On PROP shift to state 20
+-- On typ shift to state 197
+
+State 197:
+proofheaders -> BEGIN_VAR ID COLON typ . END_VAR proofheaders [ EOF ]
+-- On END_VAR shift to state 198
+
+State 198:
+proofheaders -> BEGIN_VAR ID COLON typ END_VAR . proofheaders [ EOF ]
+-- On error shift to state 193
+-- On QID shift to state 2
+-- On LBRACK shift to state 114
+-- On ID shift to state 125
+-- On DEFKW shift to state 130
+-- On BEGIN_VAR shift to state 194
+-- On BEGIN_TYPEALIAS shift to state 199
+-- On BEGIN_TY shift to state 204
+-- On BEGIN_HYP shift to state 206
+-- On BEGINNAME shift to state 212
+-- On BEGINHEADER shift to state 213
+-- On proofheaders shift to state 221
+-- On goal shift to state 137
+-- On env shift to state 138
+-- On body shift to state 215
+
+State 199:
+proofheaders -> BEGIN_TYPEALIAS . ID DEF type_simple END_TYPEALIAS proofheaders [ EOF ]
+-- On ID shift to state 200
+
+State 200:
+proofheaders -> BEGIN_TYPEALIAS ID . DEF type_simple END_TYPEALIAS proofheaders [ EOF ]
+-- On DEF shift to state 201
+
+State 201:
+proofheaders -> BEGIN_TYPEALIAS ID DEF . type_simple END_TYPEALIAS proofheaders [ EOF ]
+-- On QID shift to state 6
+-- On LPAREN shift to state 7
+-- On ID shift to state 8
+-- On type_simple shift to state 202
+-- On type_qid shift to state 12
+
+State 202:
+proofheaders -> BEGIN_TYPEALIAS ID DEF type_simple . END_TYPEALIAS proofheaders [ EOF ]
+-- On END_TYPEALIAS shift to state 203
+
+State 203:
+proofheaders -> BEGIN_TYPEALIAS ID DEF type_simple END_TYPEALIAS . proofheaders [ EOF ]
+-- On error shift to state 193
+-- On QID shift to state 2
+-- On LBRACK shift to state 114
+-- On ID shift to state 125
+-- On DEFKW shift to state 130
+-- On BEGIN_VAR shift to state 194
+-- On BEGIN_TYPEALIAS shift to state 199
+-- On BEGIN_TY shift to state 204
+-- On BEGIN_HYP shift to state 206
+-- On BEGINNAME shift to state 212
+-- On BEGINHEADER shift to state 213
+-- On proofheaders shift to state 220
+-- On goal shift to state 137
+-- On env shift to state 138
+-- On body shift to state 215
+
+State 204:
+proofheaders -> BEGIN_TY . ID proofheaders [ EOF ]
+-- On ID shift to state 205
+
+State 205:
+proofheaders -> BEGIN_TY ID . proofheaders [ EOF ]
+-- On error shift to state 193
+-- On QID shift to state 2
+-- On LBRACK shift to state 114
+-- On ID shift to state 125
+-- On DEFKW shift to state 130
+-- On BEGIN_VAR shift to state 194
+-- On BEGIN_TYPEALIAS shift to state 199
+-- On BEGIN_TY shift to state 204
+-- On BEGIN_HYP shift to state 206
+-- On BEGINNAME shift to state 212
+-- On BEGINHEADER shift to state 213
+-- On proofheaders shift to state 219
+-- On goal shift to state 137
+-- On env shift to state 138
+-- On body shift to state 215
+
+State 206:
+proofheaders -> BEGIN_HYP . ID COLON PROOF term_simple END_HYP proofheaders [ EOF ]
+-- On ID shift to state 207
+
+State 207:
+proofheaders -> BEGIN_HYP ID . COLON PROOF term_simple END_HYP proofheaders [ EOF ]
+-- On COLON shift to state 208
+
+State 208:
+proofheaders -> BEGIN_HYP ID COLON . PROOF term_simple END_HYP proofheaders [ EOF ]
+-- On PROOF shift to state 209
+
+State 209:
+proofheaders -> BEGIN_HYP ID COLON PROOF . term_simple END_HYP proofheaders [ EOF ]
+-- On TRUE shift to state 23
+-- On QID shift to state 24
+-- On OR shift to state 25
+-- On NUMBER shift to state 26
+-- On NOT shift to state 27
+-- On LPAREN shift to state 28
+-- On IMP shift to state 29
+-- On ID shift to state 30
+-- On FALSE shift to state 32
+-- On EX_TYPE shift to state 33
+-- On EX shift to state 39
+-- On EQV shift to state 59
+-- On EQUAL shift to state 60
+-- On CCARR shift to state 62
+-- On AND shift to state 65
+-- On ALL_TYPE shift to state 66
+-- On ALL shift to state 72
+-- On term_simple shift to state 210
+-- On qid shift to state 81
+
+State 210:
+proofheaders -> BEGIN_HYP ID COLON PROOF term_simple . END_HYP proofheaders [ EOF ]
+-- On END_HYP shift to state 211
+
+State 211:
+proofheaders -> BEGIN_HYP ID COLON PROOF term_simple END_HYP . proofheaders [ EOF ]
+-- On error shift to state 193
+-- On QID shift to state 2
+-- On LBRACK shift to state 114
+-- On ID shift to state 125
+-- On DEFKW shift to state 130
+-- On BEGIN_VAR shift to state 194
+-- On BEGIN_TYPEALIAS shift to state 199
+-- On BEGIN_TY shift to state 204
+-- On BEGIN_HYP shift to state 206
+-- On BEGINNAME shift to state 212
+-- On BEGINHEADER shift to state 213
+-- On proofheaders shift to state 218
+-- On goal shift to state 137
+-- On env shift to state 138
+-- On body shift to state 215
+
+State 212:
+proofheaders -> BEGINNAME . proofheaders [ EOF ]
+-- On error shift to state 193
+-- On QID shift to state 2
+-- On LBRACK shift to state 114
+-- On ID shift to state 125
+-- On DEFKW shift to state 130
+-- On BEGIN_VAR shift to state 194
+-- On BEGIN_TYPEALIAS shift to state 199
+-- On BEGIN_TY shift to state 204
+-- On BEGIN_HYP shift to state 206
+-- On BEGINNAME shift to state 212
+-- On BEGINHEADER shift to state 213
+-- On proofheaders shift to state 217
+-- On goal shift to state 137
+-- On env shift to state 138
+-- On body shift to state 215
+
+State 213:
+proofheaders -> BEGINHEADER . proofheaders [ EOF ]
+-- On error shift to state 193
+-- On QID shift to state 2
+-- On LBRACK shift to state 114
+-- On ID shift to state 125
+-- On DEFKW shift to state 130
+-- On BEGIN_VAR shift to state 194
+-- On BEGIN_TYPEALIAS shift to state 199
+-- On BEGIN_TY shift to state 204
+-- On BEGIN_HYP shift to state 206
+-- On BEGINNAME shift to state 212
+-- On BEGINHEADER shift to state 213
+-- On proofheaders shift to state 214
+-- On goal shift to state 137
+-- On env shift to state 138
+-- On body shift to state 215
+
+State 214:
+proofheaders -> BEGINHEADER proofheaders . [ EOF ]
+-- On EOF reduce production proofheaders -> BEGINHEADER proofheaders
+
+State 215:
+proofheaders -> body . ENDPROOF [ EOF ]
+-- On ENDPROOF shift to state 216
+
+State 216:
+proofheaders -> body ENDPROOF . [ EOF ]
+-- On EOF reduce production proofheaders -> body ENDPROOF
+
+State 217:
+proofheaders -> BEGINNAME proofheaders . [ EOF ]
+-- On EOF reduce production proofheaders -> BEGINNAME proofheaders
+
+State 218:
+proofheaders -> BEGIN_HYP ID COLON PROOF term_simple END_HYP proofheaders . [ EOF ]
+-- On EOF reduce production proofheaders -> BEGIN_HYP ID COLON PROOF term_simple END_HYP proofheaders
+
+State 219:
+proofheaders -> BEGIN_TY ID proofheaders . [ EOF ]
+-- On EOF reduce production proofheaders -> BEGIN_TY ID proofheaders
+
+State 220:
+proofheaders -> BEGIN_TYPEALIAS ID DEF type_simple END_TYPEALIAS proofheaders . [ EOF ]
+-- On EOF reduce production proofheaders -> BEGIN_TYPEALIAS ID DEF type_simple END_TYPEALIAS proofheaders
+
+State 221:
+proofheaders -> BEGIN_VAR ID COLON typ END_VAR proofheaders . [ EOF ]
+-- On EOF reduce production proofheaders -> BEGIN_VAR ID COLON typ END_VAR proofheaders
+
+State 222:
+file -> BEGINPROOF proofheaders . EOF [ # ]
+-- On EOF shift to state 223
+
+State 223:
+file -> BEGINPROOF proofheaders EOF . [ # ]
+-- On # reduce production file -> BEGINPROOF proofheaders EOF
+
+State 224:
+file' -> file . [ # ]
+-- On # accept file
+
+State 225:
+file -> body . EOF [ # ]
+-- On EOF shift to state 226
+
+State 226:
+file -> body EOF . [ # ]
+-- On # reduce production file -> body EOF
+

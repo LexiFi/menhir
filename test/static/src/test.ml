@@ -298,10 +298,13 @@ let process_positive_test basenames : unit =
   (* Run menhir. *)
   let output = id ^ ".out" in
   let automaton = id ^ ".automaton" in
+  let automaton_resolved = id ^ ".automaton.resolved" in
   let conflicts = id ^ ".conflicts" in
   let timings = id ^ ".timings" in
-  run true basenames [output;automaton;conflicts;timings] (atoms [
+  let targets = [output;automaton;automaton_resolved;conflicts;timings] in
+  run true basenames targets (atoms [
     "--dump";
+    "--dump-resolved";
     "--explain";
     "-lg"; "2";
     "-la"; "2";
@@ -312,6 +315,7 @@ let process_positive_test basenames : unit =
   print (phony id (diff (id ^ ".exp") output));
   (* Check the .automaton and .conflicts files. *)
   print (phony id (diff (id ^ ".automaton.exp") automaton));
+  print (phony id (diff (id ^ ".automaton.resolved.exp") automaton_resolved));
   print (phony id (diff (id ^ ".conflicts.exp") conflicts))
 
 (* -------------------------------------------------------------------------- *)

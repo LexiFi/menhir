@@ -1,0 +1,171 @@
+State 0:
+main' -> . main [ # ]
+-- On QUOTE shift to state 1
+-- On NAME shift to state 2
+-- On LBRACKET shift to state 3
+-- On sexp shift to state 23
+-- On oclisp_list shift to state 21
+-- On main shift to state 24
+-- On atom shift to state 22
+
+State 1:
+sexp -> QUOTE . sexp [ # ]
+-- On QUOTE shift to state 1
+-- On NAME shift to state 2
+-- On LBRACKET shift to state 3
+-- On sexp shift to state 20
+-- On oclisp_list shift to state 21
+-- On atom shift to state 22
+
+State 2:
+atom -> NAME . [ # ]
+-- On # reduce production atom -> NAME
+
+State 3:
+oclisp_list -> LBRACKET . RBRACKET [ # ]
+oclisp_list -> LBRACKET . inside_list RBRACKET [ # ]
+-- On RBRACKET shift to state 4
+-- On QUOTE shift to state 5
+-- On NAME shift to state 6
+-- On LBRACKET shift to state 7
+-- On sexp shift to state 9
+-- On oclisp_list shift to state 12
+-- On inside_list shift to state 18
+-- On atom shift to state 13
+
+State 4:
+oclisp_list -> LBRACKET RBRACKET . [ # ]
+-- On # reduce production oclisp_list -> LBRACKET RBRACKET
+
+State 5:
+sexp -> QUOTE . sexp [ RBRACKET QUOTE NAME LBRACKET DOT ]
+-- On QUOTE shift to state 5
+-- On NAME shift to state 6
+-- On LBRACKET shift to state 7
+-- On sexp shift to state 17
+-- On oclisp_list shift to state 12
+-- On atom shift to state 13
+
+State 6:
+atom -> NAME . [ RBRACKET QUOTE NAME LBRACKET DOT ]
+-- On RBRACKET reduce production atom -> NAME
+-- On QUOTE reduce production atom -> NAME
+-- On NAME reduce production atom -> NAME
+-- On LBRACKET reduce production atom -> NAME
+-- On DOT reduce production atom -> NAME
+
+State 7:
+oclisp_list -> LBRACKET . RBRACKET [ RBRACKET QUOTE NAME LBRACKET DOT ]
+oclisp_list -> LBRACKET . inside_list RBRACKET [ RBRACKET QUOTE NAME LBRACKET DOT ]
+-- On RBRACKET shift to state 8
+-- On QUOTE shift to state 5
+-- On NAME shift to state 6
+-- On LBRACKET shift to state 7
+-- On sexp shift to state 9
+-- On oclisp_list shift to state 12
+-- On inside_list shift to state 15
+-- On atom shift to state 13
+
+State 8:
+oclisp_list -> LBRACKET RBRACKET . [ RBRACKET QUOTE NAME LBRACKET DOT ]
+-- On RBRACKET reduce production oclisp_list -> LBRACKET RBRACKET
+-- On QUOTE reduce production oclisp_list -> LBRACKET RBRACKET
+-- On NAME reduce production oclisp_list -> LBRACKET RBRACKET
+-- On LBRACKET reduce production oclisp_list -> LBRACKET RBRACKET
+-- On DOT reduce production oclisp_list -> LBRACKET RBRACKET
+
+State 9:
+inside_list -> sexp . DOT sexp [ RBRACKET ]
+inside_list -> sexp . [ RBRACKET ]
+inside_list -> sexp . inside_list [ RBRACKET ]
+-- On QUOTE shift to state 5
+-- On NAME shift to state 6
+-- On LBRACKET shift to state 7
+-- On DOT shift to state 10
+-- On sexp shift to state 9
+-- On oclisp_list shift to state 12
+-- On inside_list shift to state 14
+-- On atom shift to state 13
+-- On RBRACKET reduce production inside_list -> sexp
+
+State 10:
+inside_list -> sexp DOT . sexp [ RBRACKET ]
+-- On QUOTE shift to state 5
+-- On NAME shift to state 6
+-- On LBRACKET shift to state 7
+-- On sexp shift to state 11
+-- On oclisp_list shift to state 12
+-- On atom shift to state 13
+
+State 11:
+inside_list -> sexp DOT sexp . [ RBRACKET ]
+-- On RBRACKET reduce production inside_list -> sexp DOT sexp
+
+State 12:
+sexp -> oclisp_list . [ RBRACKET QUOTE NAME LBRACKET DOT ]
+-- On RBRACKET reduce production sexp -> oclisp_list
+-- On QUOTE reduce production sexp -> oclisp_list
+-- On NAME reduce production sexp -> oclisp_list
+-- On LBRACKET reduce production sexp -> oclisp_list
+-- On DOT reduce production sexp -> oclisp_list
+
+State 13:
+sexp -> atom . [ RBRACKET QUOTE NAME LBRACKET DOT ]
+-- On RBRACKET reduce production sexp -> atom
+-- On QUOTE reduce production sexp -> atom
+-- On NAME reduce production sexp -> atom
+-- On LBRACKET reduce production sexp -> atom
+-- On DOT reduce production sexp -> atom
+
+State 14:
+inside_list -> sexp inside_list . [ RBRACKET ]
+-- On RBRACKET reduce production inside_list -> sexp inside_list
+
+State 15:
+oclisp_list -> LBRACKET inside_list . RBRACKET [ RBRACKET QUOTE NAME LBRACKET DOT ]
+-- On RBRACKET shift to state 16
+
+State 16:
+oclisp_list -> LBRACKET inside_list RBRACKET . [ RBRACKET QUOTE NAME LBRACKET DOT ]
+-- On RBRACKET reduce production oclisp_list -> LBRACKET inside_list RBRACKET
+-- On QUOTE reduce production oclisp_list -> LBRACKET inside_list RBRACKET
+-- On NAME reduce production oclisp_list -> LBRACKET inside_list RBRACKET
+-- On LBRACKET reduce production oclisp_list -> LBRACKET inside_list RBRACKET
+-- On DOT reduce production oclisp_list -> LBRACKET inside_list RBRACKET
+
+State 17:
+sexp -> QUOTE sexp . [ RBRACKET QUOTE NAME LBRACKET DOT ]
+-- On RBRACKET reduce production sexp -> QUOTE sexp
+-- On QUOTE reduce production sexp -> QUOTE sexp
+-- On NAME reduce production sexp -> QUOTE sexp
+-- On LBRACKET reduce production sexp -> QUOTE sexp
+-- On DOT reduce production sexp -> QUOTE sexp
+
+State 18:
+oclisp_list -> LBRACKET inside_list . RBRACKET [ # ]
+-- On RBRACKET shift to state 19
+
+State 19:
+oclisp_list -> LBRACKET inside_list RBRACKET . [ # ]
+-- On # reduce production oclisp_list -> LBRACKET inside_list RBRACKET
+
+State 20:
+sexp -> QUOTE sexp . [ # ]
+-- On # reduce production sexp -> QUOTE sexp
+
+State 21:
+sexp -> oclisp_list . [ # ]
+-- On # reduce production sexp -> oclisp_list
+
+State 22:
+sexp -> atom . [ # ]
+-- On # reduce production sexp -> atom
+
+State 23:
+main -> sexp . [ # ]
+-- On # reduce production main -> sexp
+
+State 24:
+main' -> main . [ # ]
+-- On # accept main
+

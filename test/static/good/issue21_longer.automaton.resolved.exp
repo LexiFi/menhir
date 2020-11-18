@@ -1,0 +1,188 @@
+State 0:
+commandline' -> . commandline [ # ]
+-- On NUMERAL shift to state 1
+-- On LET shift to state 2
+-- On term shift to state 30
+-- On infix_term_ shift to state 13
+-- On infix_term shift to state 14
+-- On commandline shift to state 32
+
+State 1:
+infix_term -> NUMERAL . [ INFIXOP0 ]
+infix_term_ -> NUMERAL . [ IN EOF AND ]
+-- On INFIXOP0 reduce production infix_term -> NUMERAL
+-- On IN reduce production infix_term_ -> NUMERAL
+-- On EOF reduce production infix_term_ -> NUMERAL
+-- On AND reduce production infix_term_ -> NUMERAL
+
+State 2:
+commandline -> LET . NAME EQUAL term EOF [ # ]
+term -> LET . NAME EQUAL infix_term IN term [ EOF ]
+term -> LET . REC separated_nonempty_list(AND,recursive_clause) IN term [ EOF ]
+-- On REC shift to state 3
+-- On NAME shift to state 24
+
+State 3:
+term -> LET REC . separated_nonempty_list(AND,recursive_clause) IN term [ IN EOF AND ]
+-- On NAME shift to state 4
+-- On separated_nonempty_list(AND,recursive_clause) shift to state 18
+-- On recursive_clause shift to state 21
+
+State 4:
+recursive_clause -> NAME . EQUAL term [ IN AND ]
+-- On EQUAL shift to state 5
+
+State 5:
+recursive_clause -> NAME EQUAL . term [ IN AND ]
+-- On NUMERAL shift to state 1
+-- On LET shift to state 6
+-- On term shift to state 17
+-- On infix_term_ shift to state 13
+-- On infix_term shift to state 14
+
+State 6:
+term -> LET . NAME EQUAL infix_term IN term [ IN EOF AND ]
+term -> LET . REC separated_nonempty_list(AND,recursive_clause) IN term [ IN EOF AND ]
+-- On REC shift to state 3
+-- On NAME shift to state 7
+
+State 7:
+term -> LET NAME . EQUAL infix_term IN term [ IN EOF AND ]
+-- On EQUAL shift to state 8
+
+State 8:
+term -> LET NAME EQUAL . infix_term IN term [ IN EOF AND ]
+-- On NUMERAL shift to state 9
+-- On infix_term shift to state 10
+
+State 9:
+infix_term -> NUMERAL . [ IN EOF AND ]
+-- On IN reduce production infix_term -> NUMERAL
+-- On EOF reduce production infix_term -> NUMERAL
+-- On AND reduce production infix_term -> NUMERAL
+
+State 10:
+term -> LET NAME EQUAL infix_term . IN term [ IN EOF AND ]
+-- On IN shift to state 11
+
+State 11:
+term -> LET NAME EQUAL infix_term IN . term [ IN EOF AND ]
+-- On NUMERAL shift to state 1
+-- On LET shift to state 6
+-- On term shift to state 12
+-- On infix_term_ shift to state 13
+-- On infix_term shift to state 14
+
+State 12:
+term -> LET NAME EQUAL infix_term IN term . [ IN EOF AND ]
+-- On IN reduce production term -> LET NAME EQUAL infix_term IN term
+-- On EOF reduce production term -> LET NAME EQUAL infix_term IN term
+-- On AND reduce production term -> LET NAME EQUAL infix_term IN term
+
+State 13:
+term -> infix_term_ . [ IN EOF AND ]
+-- On IN reduce production term -> infix_term_
+-- On EOF reduce production term -> infix_term_
+-- On AND reduce production term -> infix_term_
+
+State 14:
+infix_term_ -> infix_term . INFIXOP0 infix_term [ IN EOF AND ]
+-- On INFIXOP0 shift to state 15
+
+State 15:
+infix_term_ -> infix_term INFIXOP0 . infix_term [ IN EOF AND ]
+-- On NUMERAL shift to state 9
+-- On infix_term shift to state 16
+
+State 16:
+infix_term_ -> infix_term INFIXOP0 infix_term . [ IN EOF AND ]
+-- On IN reduce production infix_term_ -> infix_term INFIXOP0 infix_term
+-- On EOF reduce production infix_term_ -> infix_term INFIXOP0 infix_term
+-- On AND reduce production infix_term_ -> infix_term INFIXOP0 infix_term
+
+State 17:
+recursive_clause -> NAME EQUAL term . [ IN AND ]
+-- On IN reduce production recursive_clause -> NAME EQUAL term
+-- On AND reduce production recursive_clause -> NAME EQUAL term
+
+State 18:
+term -> LET REC separated_nonempty_list(AND,recursive_clause) . IN term [ IN EOF AND ]
+-- On IN shift to state 19
+
+State 19:
+term -> LET REC separated_nonempty_list(AND,recursive_clause) IN . term [ IN EOF AND ]
+-- On NUMERAL shift to state 1
+-- On LET shift to state 6
+-- On term shift to state 20
+-- On infix_term_ shift to state 13
+-- On infix_term shift to state 14
+
+State 20:
+term -> LET REC separated_nonempty_list(AND,recursive_clause) IN term . [ IN EOF AND ]
+-- On IN reduce production term -> LET REC separated_nonempty_list(AND,recursive_clause) IN term
+-- On EOF reduce production term -> LET REC separated_nonempty_list(AND,recursive_clause) IN term
+-- On AND reduce production term -> LET REC separated_nonempty_list(AND,recursive_clause) IN term
+
+State 21:
+separated_nonempty_list(AND,recursive_clause) -> recursive_clause . [ IN ]
+separated_nonempty_list(AND,recursive_clause) -> recursive_clause . AND separated_nonempty_list(AND,recursive_clause) [ IN ]
+-- On AND shift to state 22
+-- On IN reduce production separated_nonempty_list(AND,recursive_clause) -> recursive_clause
+
+State 22:
+separated_nonempty_list(AND,recursive_clause) -> recursive_clause AND . separated_nonempty_list(AND,recursive_clause) [ IN ]
+-- On NAME shift to state 4
+-- On separated_nonempty_list(AND,recursive_clause) shift to state 23
+-- On recursive_clause shift to state 21
+
+State 23:
+separated_nonempty_list(AND,recursive_clause) -> recursive_clause AND separated_nonempty_list(AND,recursive_clause) . [ IN ]
+-- On IN reduce production separated_nonempty_list(AND,recursive_clause) -> recursive_clause AND separated_nonempty_list(AND,recursive_clause)
+
+State 24:
+commandline -> LET NAME . EQUAL term EOF [ # ]
+term -> LET NAME . EQUAL infix_term IN term [ EOF ]
+-- On EQUAL shift to state 25
+
+State 25:
+commandline -> LET NAME EQUAL . term EOF [ # ]
+term -> LET NAME EQUAL . infix_term IN term [ EOF ]
+-- On NUMERAL shift to state 26
+-- On LET shift to state 6
+-- On term shift to state 27
+-- On infix_term_ shift to state 13
+-- On infix_term shift to state 29
+
+State 26:
+infix_term -> NUMERAL . [ INFIXOP0 IN ]
+infix_term_ -> NUMERAL . [ EOF ]
+-- On INFIXOP0 reduce production infix_term -> NUMERAL
+-- On IN reduce production infix_term -> NUMERAL
+-- On EOF reduce production infix_term_ -> NUMERAL
+
+State 27:
+commandline -> LET NAME EQUAL term . EOF [ # ]
+-- On EOF shift to state 28
+
+State 28:
+commandline -> LET NAME EQUAL term EOF . [ # ]
+-- On # reduce production commandline -> LET NAME EQUAL term EOF
+
+State 29:
+infix_term_ -> infix_term . INFIXOP0 infix_term [ EOF ]
+term -> LET NAME EQUAL infix_term . IN term [ EOF ]
+-- On INFIXOP0 shift to state 15
+-- On IN shift to state 11
+
+State 30:
+commandline -> term . EOF [ # ]
+-- On EOF shift to state 31
+
+State 31:
+commandline -> term EOF . [ # ]
+-- On # reduce production commandline -> term EOF
+
+State 32:
+commandline' -> commandline . [ # ]
+-- On # accept commandline
+

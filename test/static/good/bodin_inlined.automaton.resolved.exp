@@ -1,0 +1,109 @@
+State 0:
+main' -> . main [ # ]
+-- On UNIT shift to state 1
+-- On main shift to state 2
+-- On expr_or_assign(empty) shift to state 3
+-- On expr(empty) shift to state 4
+-- On empty shift to state 5
+-- On LPAR reduce production empty -> 
+
+State 1:
+expr(empty) -> UNIT . [ # ]
+-- On # reduce production expr(empty) -> UNIT
+
+State 2:
+main' -> main . [ # ]
+-- On # accept main
+
+State 3:
+main -> expr_or_assign(empty) . [ # ]
+-- On # reduce production main -> expr_or_assign(empty)
+
+State 4:
+expr_or_assign(empty) -> expr(empty) . [ # ]
+-- On # reduce production expr_or_assign(empty) -> expr(empty)
+
+State 5:
+expr(empty) -> empty . LPAR expr_or_assign_cr cr RPAR [ # ]
+-- On LPAR shift to state 6
+
+State 6:
+expr(empty) -> empty LPAR . expr_or_assign_cr cr RPAR [ # ]
+-- On UNIT shift to state 7
+-- On NEW_LINE shift to state 8
+-- On expr_or_assign_cr shift to state 10
+-- On expr_or_assign(cr) shift to state 13
+-- On expr(cr) shift to state 14
+-- On cr shift to state 15
+-- On LPAR reduce production cr -> 
+
+State 7:
+expr(cr) -> UNIT . [ RPAR NEW_LINE ]
+-- On RPAR reduce production expr(cr) -> UNIT
+-- On NEW_LINE reduce production expr(cr) -> UNIT
+
+State 8:
+cr -> NEW_LINE . cr [ RPAR LPAR ]
+-- On NEW_LINE shift to state 8
+-- On cr shift to state 9
+-- On RPAR reduce production cr -> 
+-- On LPAR reduce production cr -> 
+
+State 9:
+cr -> NEW_LINE cr . [ RPAR LPAR ]
+-- On RPAR reduce production cr -> NEW_LINE cr
+-- On LPAR reduce production cr -> NEW_LINE cr
+
+State 10:
+expr(empty) -> empty LPAR expr_or_assign_cr . cr RPAR [ # ]
+-- On NEW_LINE shift to state 8
+-- On cr shift to state 11
+-- On RPAR reduce production cr -> 
+
+State 11:
+expr(empty) -> empty LPAR expr_or_assign_cr cr . RPAR [ # ]
+-- On RPAR shift to state 12
+
+State 12:
+expr(empty) -> empty LPAR expr_or_assign_cr cr RPAR . [ # ]
+-- On # reduce production expr(empty) -> empty LPAR expr_or_assign_cr cr RPAR
+
+State 13:
+expr_or_assign_cr -> expr_or_assign(cr) . [ RPAR NEW_LINE ]
+-- On RPAR reduce production expr_or_assign_cr -> expr_or_assign(cr)
+-- On NEW_LINE reduce production expr_or_assign_cr -> expr_or_assign(cr)
+
+State 14:
+expr_or_assign(cr) -> expr(cr) . [ RPAR NEW_LINE ]
+-- On RPAR reduce production expr_or_assign(cr) -> expr(cr)
+-- On NEW_LINE reduce production expr_or_assign(cr) -> expr(cr)
+
+State 15:
+expr(cr) -> cr . LPAR expr_or_assign_cr cr RPAR [ RPAR NEW_LINE ]
+-- On LPAR shift to state 16
+
+State 16:
+expr(cr) -> cr LPAR . expr_or_assign_cr cr RPAR [ RPAR NEW_LINE ]
+-- On UNIT shift to state 7
+-- On NEW_LINE shift to state 8
+-- On expr_or_assign_cr shift to state 17
+-- On expr_or_assign(cr) shift to state 13
+-- On expr(cr) shift to state 14
+-- On cr shift to state 15
+-- On LPAR reduce production cr -> 
+
+State 17:
+expr(cr) -> cr LPAR expr_or_assign_cr . cr RPAR [ RPAR NEW_LINE ]
+-- On NEW_LINE shift to state 8
+-- On cr shift to state 18
+-- On RPAR reduce production cr -> 
+
+State 18:
+expr(cr) -> cr LPAR expr_or_assign_cr cr . RPAR [ RPAR NEW_LINE ]
+-- On RPAR shift to state 19
+
+State 19:
+expr(cr) -> cr LPAR expr_or_assign_cr cr RPAR . [ RPAR NEW_LINE ]
+-- On RPAR reduce production expr(cr) -> cr LPAR expr_or_assign_cr cr RPAR
+-- On NEW_LINE reduce production expr(cr) -> cr LPAR expr_or_assign_cr cr RPAR
+

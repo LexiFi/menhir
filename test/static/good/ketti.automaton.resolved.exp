@@ -1,0 +1,99 @@
+State 0:
+expr' -> . expr [ # ]
+-- On PLUS shift to state 1
+-- On INT shift to state 3
+-- On plus shift to state 4
+-- On indir shift to state 5
+-- On expr shift to state 14
+
+State 1:
+expr -> PLUS . PLUS expr INT [ PLUS MINUS INT # ]
+-- On PLUS shift to state 2
+
+State 2:
+expr -> PLUS PLUS . expr INT [ PLUS MINUS INT # ]
+-- On PLUS shift to state 1
+-- On INT shift to state 3
+-- On plus shift to state 4
+-- On indir shift to state 5
+-- On expr shift to state 12
+
+State 3:
+expr -> INT . [ PLUS MINUS INT # ]
+-- On PLUS reduce production expr -> INT
+-- On MINUS reduce production expr -> INT
+-- On INT reduce production expr -> INT
+
+State 4:
+expr -> plus . [ PLUS MINUS INT # ]
+indir -> plus . [ MINUS ]
+-- On PLUS reduce production expr -> plus
+-- On MINUS reduce production expr -> plus
+-- On INT reduce production expr -> plus
+** Conflict on MINUS
+
+State 5:
+expr -> indir . MINUS indir [ PLUS MINUS INT # ]
+-- On MINUS shift to state 6
+
+State 6:
+expr -> indir MINUS . indir [ PLUS MINUS INT # ]
+-- On PLUS shift to state 1
+-- On INT shift to state 3
+-- On plus shift to state 7
+-- On indir shift to state 8
+-- On expr shift to state 9
+
+State 7:
+expr -> plus . [ PLUS ]
+indir -> plus . [ PLUS MINUS INT # ]
+-- On PLUS reduce production expr -> plus
+-- On MINUS reduce production indir -> plus
+-- On INT reduce production indir -> plus
+** Conflict on PLUS
+
+State 8:
+expr -> indir . MINUS indir [ PLUS ]
+expr -> indir MINUS indir . [ PLUS MINUS INT # ]
+-- On MINUS shift to state 6
+-- On PLUS reduce production expr -> indir MINUS indir
+-- On INT reduce production expr -> indir MINUS indir
+** Conflict on MINUS
+
+State 9:
+plus -> expr . PLUS expr [ PLUS MINUS INT # ]
+-- On PLUS shift to state 10
+
+State 10:
+plus -> expr PLUS . expr [ PLUS MINUS INT # ]
+-- On PLUS shift to state 1
+-- On INT shift to state 3
+-- On plus shift to state 4
+-- On indir shift to state 5
+-- On expr shift to state 11
+
+State 11:
+plus -> expr . PLUS expr [ PLUS MINUS INT # ]
+plus -> expr PLUS expr . [ PLUS MINUS INT # ]
+-- On PLUS shift to state 10
+-- On MINUS reduce production plus -> expr PLUS expr
+-- On INT reduce production plus -> expr PLUS expr
+** Conflict on PLUS
+
+State 12:
+expr -> PLUS PLUS expr . INT [ PLUS MINUS INT # ]
+plus -> expr . PLUS expr [ PLUS MINUS INT ]
+-- On PLUS shift to state 10
+-- On INT shift to state 13
+
+State 13:
+expr -> PLUS PLUS expr INT . [ PLUS MINUS INT # ]
+-- On PLUS reduce production expr -> PLUS PLUS expr INT
+-- On MINUS reduce production expr -> PLUS PLUS expr INT
+-- On INT reduce production expr -> PLUS PLUS expr INT
+
+State 14:
+expr' -> expr . [ # ]
+plus -> expr . PLUS expr [ PLUS MINUS # ]
+-- On PLUS shift to state 10
+

@@ -1,0 +1,719 @@
+State 0:
+constraint_entry' -> . constraint_entry [ # ]
+-- On TRUE shift to state 1
+-- On PARGAUCHE shift to state 2
+-- On NOT shift to state 3
+-- On MINUS shift to state 4
+-- On INT shift to state 6
+-- On IDENT shift to state 7
+-- On FORALL shift to state 21
+-- On FALSE shift to state 26
+-- On EXISTS shift to state 27
+-- On formula shift to state 53
+-- On expr shift to state 35
+-- On constraint_entry shift to state 55
+
+State 1:
+formula -> TRUE . [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+-- On PARDROITE reduce production formula -> TRUE
+-- On OR reduce production formula -> TRUE
+-- On IMPLIES reduce production formula -> TRUE
+-- On EQUIV reduce production formula -> TRUE
+-- On EOF reduce production formula -> TRUE
+-- On AND reduce production formula -> TRUE
+
+State 2:
+expr -> PARGAUCHE . expr PARDROITE [ VERTICALBAR PLUS PARDROITE MULT MINUS EXP DIV COMP ]
+formula -> PARGAUCHE . formula PARDROITE [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+-- On TRUE shift to state 1
+-- On PARGAUCHE shift to state 2
+-- On NOT shift to state 3
+-- On MINUS shift to state 4
+-- On INT shift to state 6
+-- On IDENT shift to state 7
+-- On FORALL shift to state 21
+-- On FALSE shift to state 26
+-- On EXISTS shift to state 27
+-- On formula shift to state 50
+-- On expr shift to state 52
+
+State 3:
+formula -> NOT . formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+-- On TRUE shift to state 1
+-- On PARGAUCHE shift to state 2
+-- On NOT shift to state 3
+-- On MINUS shift to state 4
+-- On INT shift to state 6
+-- On IDENT shift to state 7
+-- On FORALL shift to state 21
+-- On FALSE shift to state 26
+-- On EXISTS shift to state 27
+-- On formula shift to state 49
+-- On expr shift to state 35
+
+State 4:
+expr -> MINUS . expr [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+-- On PARGAUCHE shift to state 5
+-- On MINUS shift to state 4
+-- On INT shift to state 6
+-- On IDENT shift to state 7
+-- On expr shift to state 20
+
+State 5:
+expr -> PARGAUCHE . expr PARDROITE [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+-- On PARGAUCHE shift to state 5
+-- On MINUS shift to state 4
+-- On INT shift to state 6
+-- On IDENT shift to state 7
+-- On expr shift to state 8
+
+State 6:
+expr -> INT . [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+-- On VERTICALBAR reduce production expr -> INT
+-- On PLUS reduce production expr -> INT
+-- On PARDROITE reduce production expr -> INT
+-- On OR reduce production expr -> INT
+-- On MULT reduce production expr -> INT
+-- On MINUS reduce production expr -> INT
+-- On IMPLIES reduce production expr -> INT
+-- On EXP reduce production expr -> INT
+-- On EQUIV reduce production expr -> INT
+-- On EOF reduce production expr -> INT
+-- On DIV reduce production expr -> INT
+-- On COMP reduce production expr -> INT
+-- On AND reduce production expr -> INT
+
+State 7:
+expr -> IDENT . [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+-- On VERTICALBAR reduce production expr -> IDENT
+-- On PLUS reduce production expr -> IDENT
+-- On PARDROITE reduce production expr -> IDENT
+-- On OR reduce production expr -> IDENT
+-- On MULT reduce production expr -> IDENT
+-- On MINUS reduce production expr -> IDENT
+-- On IMPLIES reduce production expr -> IDENT
+-- On EXP reduce production expr -> IDENT
+-- On EQUIV reduce production expr -> IDENT
+-- On EOF reduce production expr -> IDENT
+-- On DIV reduce production expr -> IDENT
+-- On COMP reduce production expr -> IDENT
+-- On AND reduce production expr -> IDENT
+
+State 8:
+expr -> PARGAUCHE expr . PARDROITE [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+expr -> expr . PLUS expr [ PLUS PARDROITE MULT MINUS EXP DIV ]
+expr -> expr . MINUS expr [ PLUS PARDROITE MULT MINUS EXP DIV ]
+expr -> expr . MULT expr [ PLUS PARDROITE MULT MINUS EXP DIV ]
+expr -> expr . DIV expr [ PLUS PARDROITE MULT MINUS EXP DIV ]
+expr -> expr . EXP INT [ PLUS PARDROITE MULT MINUS EXP DIV ]
+-- On PLUS shift to state 9
+-- On PARDROITE shift to state 17
+-- On MULT shift to state 11
+-- On MINUS shift to state 18
+-- On EXP shift to state 13
+-- On DIV shift to state 15
+
+State 9:
+expr -> expr PLUS . expr [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+-- On PARGAUCHE shift to state 5
+-- On MINUS shift to state 4
+-- On INT shift to state 6
+-- On IDENT shift to state 7
+-- On expr shift to state 10
+
+State 10:
+expr -> expr . PLUS expr [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+expr -> expr PLUS expr . [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+expr -> expr . MINUS expr [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+expr -> expr . MULT expr [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+expr -> expr . DIV expr [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+expr -> expr . EXP INT [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+-- On MULT shift to state 11
+-- On EXP shift to state 13
+-- On DIV shift to state 15
+-- On VERTICALBAR reduce production expr -> expr PLUS expr
+-- On PLUS reduce production expr -> expr PLUS expr
+-- On PARDROITE reduce production expr -> expr PLUS expr
+-- On OR reduce production expr -> expr PLUS expr
+-- On MINUS reduce production expr -> expr PLUS expr
+-- On IMPLIES reduce production expr -> expr PLUS expr
+-- On EQUIV reduce production expr -> expr PLUS expr
+-- On EOF reduce production expr -> expr PLUS expr
+-- On COMP reduce production expr -> expr PLUS expr
+-- On AND reduce production expr -> expr PLUS expr
+
+State 11:
+expr -> expr MULT . expr [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+-- On PARGAUCHE shift to state 5
+-- On MINUS shift to state 4
+-- On INT shift to state 6
+-- On IDENT shift to state 7
+-- On expr shift to state 12
+
+State 12:
+expr -> expr . PLUS expr [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+expr -> expr . MINUS expr [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+expr -> expr . MULT expr [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+expr -> expr MULT expr . [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+expr -> expr . DIV expr [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+expr -> expr . EXP INT [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+-- On EXP shift to state 13
+-- On VERTICALBAR reduce production expr -> expr MULT expr
+-- On PLUS reduce production expr -> expr MULT expr
+-- On PARDROITE reduce production expr -> expr MULT expr
+-- On OR reduce production expr -> expr MULT expr
+-- On MULT reduce production expr -> expr MULT expr
+-- On MINUS reduce production expr -> expr MULT expr
+-- On IMPLIES reduce production expr -> expr MULT expr
+-- On EQUIV reduce production expr -> expr MULT expr
+-- On EOF reduce production expr -> expr MULT expr
+-- On DIV reduce production expr -> expr MULT expr
+-- On COMP reduce production expr -> expr MULT expr
+-- On AND reduce production expr -> expr MULT expr
+
+State 13:
+expr -> expr EXP . INT [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+-- On INT shift to state 14
+
+State 14:
+expr -> expr EXP INT . [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+-- On VERTICALBAR reduce production expr -> expr EXP INT
+-- On PLUS reduce production expr -> expr EXP INT
+-- On PARDROITE reduce production expr -> expr EXP INT
+-- On OR reduce production expr -> expr EXP INT
+-- On MULT reduce production expr -> expr EXP INT
+-- On MINUS reduce production expr -> expr EXP INT
+-- On IMPLIES reduce production expr -> expr EXP INT
+-- On EXP reduce production expr -> expr EXP INT
+-- On EQUIV reduce production expr -> expr EXP INT
+-- On EOF reduce production expr -> expr EXP INT
+-- On DIV reduce production expr -> expr EXP INT
+-- On COMP reduce production expr -> expr EXP INT
+-- On AND reduce production expr -> expr EXP INT
+
+State 15:
+expr -> expr DIV . expr [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+-- On PARGAUCHE shift to state 5
+-- On MINUS shift to state 4
+-- On INT shift to state 6
+-- On IDENT shift to state 7
+-- On expr shift to state 16
+
+State 16:
+expr -> expr . PLUS expr [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+expr -> expr . MINUS expr [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+expr -> expr . MULT expr [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+expr -> expr . DIV expr [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+expr -> expr DIV expr . [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+expr -> expr . EXP INT [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+-- On EXP shift to state 13
+-- On VERTICALBAR reduce production expr -> expr DIV expr
+-- On PLUS reduce production expr -> expr DIV expr
+-- On PARDROITE reduce production expr -> expr DIV expr
+-- On OR reduce production expr -> expr DIV expr
+-- On MULT reduce production expr -> expr DIV expr
+-- On MINUS reduce production expr -> expr DIV expr
+-- On IMPLIES reduce production expr -> expr DIV expr
+-- On EQUIV reduce production expr -> expr DIV expr
+-- On EOF reduce production expr -> expr DIV expr
+-- On DIV reduce production expr -> expr DIV expr
+-- On COMP reduce production expr -> expr DIV expr
+-- On AND reduce production expr -> expr DIV expr
+
+State 17:
+expr -> PARGAUCHE expr PARDROITE . [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+-- On VERTICALBAR reduce production expr -> PARGAUCHE expr PARDROITE
+-- On PLUS reduce production expr -> PARGAUCHE expr PARDROITE
+-- On PARDROITE reduce production expr -> PARGAUCHE expr PARDROITE
+-- On OR reduce production expr -> PARGAUCHE expr PARDROITE
+-- On MULT reduce production expr -> PARGAUCHE expr PARDROITE
+-- On MINUS reduce production expr -> PARGAUCHE expr PARDROITE
+-- On IMPLIES reduce production expr -> PARGAUCHE expr PARDROITE
+-- On EXP reduce production expr -> PARGAUCHE expr PARDROITE
+-- On EQUIV reduce production expr -> PARGAUCHE expr PARDROITE
+-- On EOF reduce production expr -> PARGAUCHE expr PARDROITE
+-- On DIV reduce production expr -> PARGAUCHE expr PARDROITE
+-- On COMP reduce production expr -> PARGAUCHE expr PARDROITE
+-- On AND reduce production expr -> PARGAUCHE expr PARDROITE
+
+State 18:
+expr -> expr MINUS . expr [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+-- On PARGAUCHE shift to state 5
+-- On MINUS shift to state 4
+-- On INT shift to state 6
+-- On IDENT shift to state 7
+-- On expr shift to state 19
+
+State 19:
+expr -> expr . PLUS expr [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+expr -> expr . MINUS expr [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+expr -> expr MINUS expr . [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+expr -> expr . MULT expr [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+expr -> expr . DIV expr [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+expr -> expr . EXP INT [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+-- On MULT shift to state 11
+-- On EXP shift to state 13
+-- On DIV shift to state 15
+-- On VERTICALBAR reduce production expr -> expr MINUS expr
+-- On PLUS reduce production expr -> expr MINUS expr
+-- On PARDROITE reduce production expr -> expr MINUS expr
+-- On OR reduce production expr -> expr MINUS expr
+-- On MINUS reduce production expr -> expr MINUS expr
+-- On IMPLIES reduce production expr -> expr MINUS expr
+-- On EQUIV reduce production expr -> expr MINUS expr
+-- On EOF reduce production expr -> expr MINUS expr
+-- On COMP reduce production expr -> expr MINUS expr
+-- On AND reduce production expr -> expr MINUS expr
+
+State 20:
+expr -> expr . PLUS expr [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+expr -> expr . MINUS expr [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+expr -> MINUS expr . [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+expr -> expr . MULT expr [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+expr -> expr . DIV expr [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+expr -> expr . EXP INT [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+-- On EXP shift to state 13
+-- On VERTICALBAR reduce production expr -> MINUS expr
+-- On PLUS reduce production expr -> MINUS expr
+-- On PARDROITE reduce production expr -> MINUS expr
+-- On OR reduce production expr -> MINUS expr
+-- On MULT reduce production expr -> MINUS expr
+-- On MINUS reduce production expr -> MINUS expr
+-- On IMPLIES reduce production expr -> MINUS expr
+-- On EQUIV reduce production expr -> MINUS expr
+-- On EOF reduce production expr -> MINUS expr
+-- On DIV reduce production expr -> MINUS expr
+-- On COMP reduce production expr -> MINUS expr
+-- On AND reduce production expr -> MINUS expr
+
+State 21:
+formula -> FORALL . id_list COMMA formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+-- On IDENT shift to state 22
+-- On id_list shift to state 24
+
+State 22:
+id_list -> IDENT . [ COMMA ]
+id_list -> IDENT . id_list [ COMMA ]
+-- On IDENT shift to state 22
+-- On id_list shift to state 23
+-- On COMMA reduce production id_list -> IDENT
+
+State 23:
+id_list -> IDENT id_list . [ COMMA ]
+-- On COMMA reduce production id_list -> IDENT id_list
+
+State 24:
+formula -> FORALL id_list . COMMA formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+-- On COMMA shift to state 25
+
+State 25:
+formula -> FORALL id_list COMMA . formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+-- On TRUE shift to state 1
+-- On PARGAUCHE shift to state 2
+-- On NOT shift to state 3
+-- On MINUS shift to state 4
+-- On INT shift to state 6
+-- On IDENT shift to state 7
+-- On FORALL shift to state 21
+-- On FALSE shift to state 26
+-- On EXISTS shift to state 27
+-- On formula shift to state 48
+-- On expr shift to state 35
+
+State 26:
+formula -> FALSE . [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+-- On PARDROITE reduce production formula -> FALSE
+-- On OR reduce production formula -> FALSE
+-- On IMPLIES reduce production formula -> FALSE
+-- On EQUIV reduce production formula -> FALSE
+-- On EOF reduce production formula -> FALSE
+-- On AND reduce production formula -> FALSE
+
+State 27:
+formula -> EXISTS . id_list COMMA formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+-- On IDENT shift to state 22
+-- On id_list shift to state 28
+
+State 28:
+formula -> EXISTS id_list . COMMA formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+-- On COMMA shift to state 29
+
+State 29:
+formula -> EXISTS id_list COMMA . formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+-- On TRUE shift to state 1
+-- On PARGAUCHE shift to state 2
+-- On NOT shift to state 3
+-- On MINUS shift to state 4
+-- On INT shift to state 6
+-- On IDENT shift to state 7
+-- On FORALL shift to state 21
+-- On FALSE shift to state 26
+-- On EXISTS shift to state 27
+-- On formula shift to state 30
+-- On expr shift to state 35
+
+State 30:
+formula -> formula . AND formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+formula -> formula . OR formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+formula -> formula . IMPLIES formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+formula -> formula . EQUIV formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+formula -> EXISTS id_list COMMA formula . [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+-- On OR shift to state 31
+-- On IMPLIES shift to state 44
+-- On EQUIV shift to state 46
+-- On AND shift to state 33
+-- On PARDROITE reduce production formula -> EXISTS id_list COMMA formula
+-- On EOF reduce production formula -> EXISTS id_list COMMA formula
+** Conflict on OR IMPLIES EQUIV AND
+
+State 31:
+formula -> formula OR . formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+-- On TRUE shift to state 1
+-- On PARGAUCHE shift to state 2
+-- On NOT shift to state 3
+-- On MINUS shift to state 4
+-- On INT shift to state 6
+-- On IDENT shift to state 7
+-- On FORALL shift to state 21
+-- On FALSE shift to state 26
+-- On EXISTS shift to state 27
+-- On formula shift to state 32
+-- On expr shift to state 35
+
+State 32:
+formula -> formula . AND formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+formula -> formula . OR formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+formula -> formula OR formula . [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+formula -> formula . IMPLIES formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+formula -> formula . EQUIV formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+-- On AND shift to state 33
+-- On PARDROITE reduce production formula -> formula OR formula
+-- On OR reduce production formula -> formula OR formula
+-- On IMPLIES reduce production formula -> formula OR formula
+-- On EQUIV reduce production formula -> formula OR formula
+-- On EOF reduce production formula -> formula OR formula
+
+State 33:
+formula -> formula AND . formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+-- On TRUE shift to state 1
+-- On PARGAUCHE shift to state 2
+-- On NOT shift to state 3
+-- On MINUS shift to state 4
+-- On INT shift to state 6
+-- On IDENT shift to state 7
+-- On FORALL shift to state 21
+-- On FALSE shift to state 26
+-- On EXISTS shift to state 27
+-- On formula shift to state 34
+-- On expr shift to state 35
+
+State 34:
+formula -> formula . AND formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+formula -> formula AND formula . [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+formula -> formula . OR formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+formula -> formula . IMPLIES formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+formula -> formula . EQUIV formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+-- On PARDROITE reduce production formula -> formula AND formula
+-- On OR reduce production formula -> formula AND formula
+-- On IMPLIES reduce production formula -> formula AND formula
+-- On EQUIV reduce production formula -> formula AND formula
+-- On EOF reduce production formula -> formula AND formula
+-- On AND reduce production formula -> formula AND formula
+
+State 35:
+expr -> expr . PLUS expr [ VERTICALBAR PLUS MULT MINUS EXP DIV COMP ]
+expr -> expr . MINUS expr [ VERTICALBAR PLUS MULT MINUS EXP DIV COMP ]
+expr -> expr . MULT expr [ VERTICALBAR PLUS MULT MINUS EXP DIV COMP ]
+expr -> expr . DIV expr [ VERTICALBAR PLUS MULT MINUS EXP DIV COMP ]
+expr -> expr . EXP INT [ VERTICALBAR PLUS MULT MINUS EXP DIV COMP ]
+formula -> expr . COMP expr [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+formula -> expr . VERTICALBAR expr [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+formula -> expr . COMP expr COMP expr [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+formula -> expr . COMP expr COMP expr COMP expr [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+-- On VERTICALBAR shift to state 36
+-- On PLUS shift to state 9
+-- On MULT shift to state 11
+-- On MINUS shift to state 18
+-- On EXP shift to state 13
+-- On DIV shift to state 15
+-- On COMP shift to state 38
+
+State 36:
+formula -> expr VERTICALBAR . expr [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+-- On PARGAUCHE shift to state 5
+-- On MINUS shift to state 4
+-- On INT shift to state 6
+-- On IDENT shift to state 7
+-- On expr shift to state 37
+
+State 37:
+expr -> expr . PLUS expr [ PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV AND ]
+expr -> expr . MINUS expr [ PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV AND ]
+expr -> expr . MULT expr [ PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV AND ]
+expr -> expr . DIV expr [ PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV AND ]
+expr -> expr . EXP INT [ PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV AND ]
+formula -> expr VERTICALBAR expr . [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+-- On PLUS shift to state 9
+-- On MULT shift to state 11
+-- On MINUS shift to state 18
+-- On EXP shift to state 13
+-- On DIV shift to state 15
+-- On PARDROITE reduce production formula -> expr VERTICALBAR expr
+-- On OR reduce production formula -> expr VERTICALBAR expr
+-- On IMPLIES reduce production formula -> expr VERTICALBAR expr
+-- On EQUIV reduce production formula -> expr VERTICALBAR expr
+-- On EOF reduce production formula -> expr VERTICALBAR expr
+-- On AND reduce production formula -> expr VERTICALBAR expr
+
+State 38:
+formula -> expr COMP . expr [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+formula -> expr COMP . expr COMP expr [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+formula -> expr COMP . expr COMP expr COMP expr [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+-- On PARGAUCHE shift to state 5
+-- On MINUS shift to state 4
+-- On INT shift to state 6
+-- On IDENT shift to state 7
+-- On expr shift to state 39
+
+State 39:
+expr -> expr . PLUS expr [ PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND ]
+expr -> expr . MINUS expr [ PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND ]
+expr -> expr . MULT expr [ PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND ]
+expr -> expr . DIV expr [ PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND ]
+expr -> expr . EXP INT [ PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND ]
+formula -> expr COMP expr . [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+formula -> expr COMP expr . COMP expr [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+formula -> expr COMP expr . COMP expr COMP expr [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+-- On PLUS shift to state 9
+-- On MULT shift to state 11
+-- On MINUS shift to state 18
+-- On EXP shift to state 13
+-- On DIV shift to state 15
+-- On COMP shift to state 40
+-- On PARDROITE reduce production formula -> expr COMP expr
+-- On OR reduce production formula -> expr COMP expr
+-- On IMPLIES reduce production formula -> expr COMP expr
+-- On EQUIV reduce production formula -> expr COMP expr
+-- On EOF reduce production formula -> expr COMP expr
+-- On AND reduce production formula -> expr COMP expr
+
+State 40:
+formula -> expr COMP expr COMP . expr [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+formula -> expr COMP expr COMP . expr COMP expr [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+-- On PARGAUCHE shift to state 5
+-- On MINUS shift to state 4
+-- On INT shift to state 6
+-- On IDENT shift to state 7
+-- On expr shift to state 41
+
+State 41:
+expr -> expr . PLUS expr [ PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND ]
+expr -> expr . MINUS expr [ PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND ]
+expr -> expr . MULT expr [ PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND ]
+expr -> expr . DIV expr [ PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND ]
+expr -> expr . EXP INT [ PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND ]
+formula -> expr COMP expr COMP expr . [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+formula -> expr COMP expr COMP expr . COMP expr [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+-- On PLUS shift to state 9
+-- On MULT shift to state 11
+-- On MINUS shift to state 18
+-- On EXP shift to state 13
+-- On DIV shift to state 15
+-- On COMP shift to state 42
+-- On PARDROITE reduce production formula -> expr COMP expr COMP expr
+-- On OR reduce production formula -> expr COMP expr COMP expr
+-- On IMPLIES reduce production formula -> expr COMP expr COMP expr
+-- On EQUIV reduce production formula -> expr COMP expr COMP expr
+-- On EOF reduce production formula -> expr COMP expr COMP expr
+-- On AND reduce production formula -> expr COMP expr COMP expr
+
+State 42:
+formula -> expr COMP expr COMP expr COMP . expr [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+-- On PARGAUCHE shift to state 5
+-- On MINUS shift to state 4
+-- On INT shift to state 6
+-- On IDENT shift to state 7
+-- On expr shift to state 43
+
+State 43:
+expr -> expr . PLUS expr [ PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV AND ]
+expr -> expr . MINUS expr [ PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV AND ]
+expr -> expr . MULT expr [ PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV AND ]
+expr -> expr . DIV expr [ PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV AND ]
+expr -> expr . EXP INT [ PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV AND ]
+formula -> expr COMP expr COMP expr COMP expr . [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+-- On PLUS shift to state 9
+-- On MULT shift to state 11
+-- On MINUS shift to state 18
+-- On EXP shift to state 13
+-- On DIV shift to state 15
+-- On PARDROITE reduce production formula -> expr COMP expr COMP expr COMP expr
+-- On OR reduce production formula -> expr COMP expr COMP expr COMP expr
+-- On IMPLIES reduce production formula -> expr COMP expr COMP expr COMP expr
+-- On EQUIV reduce production formula -> expr COMP expr COMP expr COMP expr
+-- On EOF reduce production formula -> expr COMP expr COMP expr COMP expr
+-- On AND reduce production formula -> expr COMP expr COMP expr COMP expr
+
+State 44:
+formula -> formula IMPLIES . formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+-- On TRUE shift to state 1
+-- On PARGAUCHE shift to state 2
+-- On NOT shift to state 3
+-- On MINUS shift to state 4
+-- On INT shift to state 6
+-- On IDENT shift to state 7
+-- On FORALL shift to state 21
+-- On FALSE shift to state 26
+-- On EXISTS shift to state 27
+-- On formula shift to state 45
+-- On expr shift to state 35
+
+State 45:
+formula -> formula . AND formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+formula -> formula . OR formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+formula -> formula . IMPLIES formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+formula -> formula IMPLIES formula . [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+formula -> formula . EQUIV formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+-- On OR shift to state 31
+-- On IMPLIES shift to state 44
+-- On EQUIV shift to state 46
+-- On AND shift to state 33
+-- On PARDROITE reduce production formula -> formula IMPLIES formula
+-- On EOF reduce production formula -> formula IMPLIES formula
+
+State 46:
+formula -> formula EQUIV . formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+-- On TRUE shift to state 1
+-- On PARGAUCHE shift to state 2
+-- On NOT shift to state 3
+-- On MINUS shift to state 4
+-- On INT shift to state 6
+-- On IDENT shift to state 7
+-- On FORALL shift to state 21
+-- On FALSE shift to state 26
+-- On EXISTS shift to state 27
+-- On formula shift to state 47
+-- On expr shift to state 35
+
+State 47:
+formula -> formula . AND formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+formula -> formula . OR formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+formula -> formula . IMPLIES formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+formula -> formula . EQUIV formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+formula -> formula EQUIV formula . [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+-- On OR shift to state 31
+-- On IMPLIES shift to state 44
+-- On EQUIV shift to state 46
+-- On AND shift to state 33
+-- On PARDROITE reduce production formula -> formula EQUIV formula
+-- On EOF reduce production formula -> formula EQUIV formula
+
+State 48:
+formula -> formula . AND formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+formula -> formula . OR formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+formula -> formula . IMPLIES formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+formula -> formula . EQUIV formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+formula -> FORALL id_list COMMA formula . [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+-- On OR shift to state 31
+-- On IMPLIES shift to state 44
+-- On EQUIV shift to state 46
+-- On AND shift to state 33
+-- On PARDROITE reduce production formula -> FORALL id_list COMMA formula
+-- On EOF reduce production formula -> FORALL id_list COMMA formula
+** Conflict on OR IMPLIES EQUIV AND
+
+State 49:
+formula -> formula . AND formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+formula -> formula . OR formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+formula -> NOT formula . [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+formula -> formula . IMPLIES formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+formula -> formula . EQUIV formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+-- On PARDROITE reduce production formula -> NOT formula
+-- On OR reduce production formula -> NOT formula
+-- On IMPLIES reduce production formula -> NOT formula
+-- On EQUIV reduce production formula -> NOT formula
+-- On EOF reduce production formula -> NOT formula
+-- On AND reduce production formula -> NOT formula
+
+State 50:
+formula -> formula . AND formula [ PARDROITE OR IMPLIES EQUIV AND ]
+formula -> formula . OR formula [ PARDROITE OR IMPLIES EQUIV AND ]
+formula -> formula . IMPLIES formula [ PARDROITE OR IMPLIES EQUIV AND ]
+formula -> formula . EQUIV formula [ PARDROITE OR IMPLIES EQUIV AND ]
+formula -> PARGAUCHE formula . PARDROITE [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+-- On PARDROITE shift to state 51
+-- On OR shift to state 31
+-- On IMPLIES shift to state 44
+-- On EQUIV shift to state 46
+-- On AND shift to state 33
+
+State 51:
+formula -> PARGAUCHE formula PARDROITE . [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+-- On PARDROITE reduce production formula -> PARGAUCHE formula PARDROITE
+-- On OR reduce production formula -> PARGAUCHE formula PARDROITE
+-- On IMPLIES reduce production formula -> PARGAUCHE formula PARDROITE
+-- On EQUIV reduce production formula -> PARGAUCHE formula PARDROITE
+-- On EOF reduce production formula -> PARGAUCHE formula PARDROITE
+-- On AND reduce production formula -> PARGAUCHE formula PARDROITE
+
+State 52:
+expr -> PARGAUCHE expr . PARDROITE [ VERTICALBAR PLUS PARDROITE MULT MINUS EXP DIV COMP ]
+expr -> expr . PLUS expr [ VERTICALBAR PLUS PARDROITE MULT MINUS EXP DIV COMP ]
+expr -> expr . MINUS expr [ VERTICALBAR PLUS PARDROITE MULT MINUS EXP DIV COMP ]
+expr -> expr . MULT expr [ VERTICALBAR PLUS PARDROITE MULT MINUS EXP DIV COMP ]
+expr -> expr . DIV expr [ VERTICALBAR PLUS PARDROITE MULT MINUS EXP DIV COMP ]
+expr -> expr . EXP INT [ VERTICALBAR PLUS PARDROITE MULT MINUS EXP DIV COMP ]
+formula -> expr . COMP expr [ PARDROITE OR IMPLIES EQUIV AND ]
+formula -> expr . VERTICALBAR expr [ PARDROITE OR IMPLIES EQUIV AND ]
+formula -> expr . COMP expr COMP expr [ PARDROITE OR IMPLIES EQUIV AND ]
+formula -> expr . COMP expr COMP expr COMP expr [ PARDROITE OR IMPLIES EQUIV AND ]
+-- On VERTICALBAR shift to state 36
+-- On PLUS shift to state 9
+-- On PARDROITE shift to state 17
+-- On MULT shift to state 11
+-- On MINUS shift to state 18
+-- On EXP shift to state 13
+-- On DIV shift to state 15
+-- On COMP shift to state 38
+
+State 53:
+constraint_entry -> formula . EOF [ # ]
+formula -> formula . AND formula [ OR IMPLIES EQUIV EOF AND ]
+formula -> formula . OR formula [ OR IMPLIES EQUIV EOF AND ]
+formula -> formula . IMPLIES formula [ OR IMPLIES EQUIV EOF AND ]
+formula -> formula . EQUIV formula [ OR IMPLIES EQUIV EOF AND ]
+-- On OR shift to state 31
+-- On IMPLIES shift to state 44
+-- On EQUIV shift to state 46
+-- On EOF shift to state 54
+-- On AND shift to state 33
+
+State 54:
+constraint_entry -> formula EOF . [ # ]
+-- On # reduce production constraint_entry -> formula EOF
+
+State 55:
+constraint_entry' -> constraint_entry . [ # ]
+-- On # accept constraint_entry
+
+State 56:
+expr' -> . expr [ # ]
+-- On PARGAUCHE shift to state 5
+-- On MINUS shift to state 4
+-- On INT shift to state 6
+-- On IDENT shift to state 7
+-- On expr shift to state 57
+
+State 57:
+expr' -> expr . [ # ]
+expr -> expr . PLUS expr [ PLUS MULT MINUS EXP DIV # ]
+expr -> expr . MINUS expr [ PLUS MULT MINUS EXP DIV # ]
+expr -> expr . MULT expr [ PLUS MULT MINUS EXP DIV # ]
+expr -> expr . DIV expr [ PLUS MULT MINUS EXP DIV # ]
+expr -> expr . EXP INT [ PLUS MULT MINUS EXP DIV # ]
+-- On PLUS shift to state 9
+-- On MULT shift to state 11
+-- On MINUS shift to state 18
+-- On EXP shift to state 13
+-- On DIV shift to state 15
+

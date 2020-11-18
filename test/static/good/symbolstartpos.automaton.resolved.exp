@@ -1,0 +1,74 @@
+State 0:
+main' -> . main [ # ]
+-- On A shift to state 1
+-- On main shift to state 15
+
+State 1:
+main -> A . B hop sugar [ # ]
+-- On B shift to state 2
+
+State 2:
+main -> A B . hop sugar [ # ]
+-- On nothing shift to state 3
+-- On hop shift to state 12
+-- On C reduce production nothing -> 
+-- On B reduce production nothing -> 
+
+State 3:
+hop -> nothing . bar A B [ C ]
+-- On C shift to state 4
+-- On option(foo) shift to state 6
+-- On foo shift to state 8
+-- On bar shift to state 9
+-- On B reduce production option(foo) -> 
+
+State 4:
+foo -> C . nothing [ B ]
+-- On nothing shift to state 5
+-- On B reduce production nothing -> 
+
+State 5:
+foo -> C nothing . [ B ]
+-- On B reduce production foo -> C nothing
+
+State 6:
+bar -> option(foo) . B [ A ]
+-- On B shift to state 7
+
+State 7:
+bar -> option(foo) B . [ A ]
+-- On A reduce production bar -> option(foo) B
+
+State 8:
+option(foo) -> foo . [ B ]
+-- On B reduce production option(foo) -> foo
+
+State 9:
+hop -> nothing bar . A B [ C ]
+-- On A shift to state 10
+
+State 10:
+hop -> nothing bar A . B [ C ]
+-- On B shift to state 11
+
+State 11:
+hop -> nothing bar A B . [ C ]
+-- On C reduce production hop -> nothing bar A B
+
+State 12:
+main -> A B hop . sugar [ # ]
+-- On C shift to state 13
+-- On sugar shift to state 14
+
+State 13:
+sugar -> C . [ # ]
+-- On # reduce production sugar -> C
+
+State 14:
+main -> A B hop sugar . [ # ]
+-- On # reduce production main -> A B hop sugar
+
+State 15:
+main' -> main . [ # ]
+-- On # accept main
+

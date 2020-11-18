@@ -1,0 +1,280 @@
+State 0:
+query' -> . query [ # ]
+-- On YESTERDAY shift to state 1
+-- On TRUE shift to state 2
+-- On TODAY shift to state 3
+-- On ON shift to state 4
+-- On NOT shift to state 15
+-- On NAME shift to state 16
+-- On MATCHES shift to state 18
+-- On LPAREN shift to state 20
+-- On HAS shift to state 21
+-- On BEFORE shift to state 23
+-- On AFTER shift to state 25
+-- On query2 shift to state 37
+-- On query1 shift to state 33
+-- On query0 shift to state 32
+-- On query shift to state 38
+
+State 1:
+query0 -> YESTERDAY . [ RPAREN OR AND # ]
+-- On RPAREN reduce production query0 -> YESTERDAY
+-- On OR reduce production query0 -> YESTERDAY
+-- On AND reduce production query0 -> YESTERDAY
+
+State 2:
+query0 -> TRUE . [ RPAREN OR AND # ]
+-- On RPAREN reduce production query0 -> TRUE
+-- On OR reduce production query0 -> TRUE
+-- On AND reduce production query0 -> TRUE
+
+State 3:
+query0 -> TODAY . [ RPAREN OR AND # ]
+-- On RPAREN reduce production query0 -> TODAY
+-- On OR reduce production query0 -> TODAY
+-- On AND reduce production query0 -> TODAY
+
+State 4:
+query0 -> ON . date [ RPAREN OR AND # ]
+-- On NUMBER shift to state 5
+-- On date shift to state 14
+
+State 5:
+date -> NUMBER . SLASH NUMBER SLASH NUMBER [ RPAREN OR AND # ]
+date -> NUMBER . SLASH NUMBER SLASH error [ RPAREN OR AND # ]
+date -> NUMBER . SLASH NUMBER error [ RPAREN OR AND # ]
+date -> NUMBER . SLASH error [ RPAREN OR AND # ]
+date -> NUMBER . error [ RPAREN OR AND # ]
+-- On error shift to state 6
+-- On SLASH shift to state 7
+
+State 6:
+date -> NUMBER error . [ RPAREN OR AND # ]
+-- On RPAREN reduce production date -> NUMBER error
+-- On OR reduce production date -> NUMBER error
+-- On AND reduce production date -> NUMBER error
+
+State 7:
+date -> NUMBER SLASH . NUMBER SLASH NUMBER [ RPAREN OR AND # ]
+date -> NUMBER SLASH . NUMBER SLASH error [ RPAREN OR AND # ]
+date -> NUMBER SLASH . NUMBER error [ RPAREN OR AND # ]
+date -> NUMBER SLASH . error [ RPAREN OR AND # ]
+-- On error shift to state 8
+-- On NUMBER shift to state 9
+
+State 8:
+date -> NUMBER SLASH error . [ RPAREN OR AND # ]
+-- On RPAREN reduce production date -> NUMBER SLASH error
+-- On OR reduce production date -> NUMBER SLASH error
+-- On AND reduce production date -> NUMBER SLASH error
+
+State 9:
+date -> NUMBER SLASH NUMBER . SLASH NUMBER [ RPAREN OR AND # ]
+date -> NUMBER SLASH NUMBER . SLASH error [ RPAREN OR AND # ]
+date -> NUMBER SLASH NUMBER . error [ RPAREN OR AND # ]
+-- On error shift to state 10
+-- On SLASH shift to state 11
+
+State 10:
+date -> NUMBER SLASH NUMBER error . [ RPAREN OR AND # ]
+-- On RPAREN reduce production date -> NUMBER SLASH NUMBER error
+-- On OR reduce production date -> NUMBER SLASH NUMBER error
+-- On AND reduce production date -> NUMBER SLASH NUMBER error
+
+State 11:
+date -> NUMBER SLASH NUMBER SLASH . NUMBER [ RPAREN OR AND # ]
+date -> NUMBER SLASH NUMBER SLASH . error [ RPAREN OR AND # ]
+-- On error shift to state 12
+-- On NUMBER shift to state 13
+
+State 12:
+date -> NUMBER SLASH NUMBER SLASH error . [ RPAREN OR AND # ]
+-- On RPAREN reduce production date -> NUMBER SLASH NUMBER SLASH error
+-- On OR reduce production date -> NUMBER SLASH NUMBER SLASH error
+-- On AND reduce production date -> NUMBER SLASH NUMBER SLASH error
+
+State 13:
+date -> NUMBER SLASH NUMBER SLASH NUMBER . [ RPAREN OR AND # ]
+-- On RPAREN reduce production date -> NUMBER SLASH NUMBER SLASH NUMBER
+-- On OR reduce production date -> NUMBER SLASH NUMBER SLASH NUMBER
+-- On AND reduce production date -> NUMBER SLASH NUMBER SLASH NUMBER
+
+State 14:
+query0 -> ON date . [ RPAREN OR AND # ]
+-- On RPAREN reduce production query0 -> ON date
+-- On OR reduce production query0 -> ON date
+-- On AND reduce production query0 -> ON date
+
+State 15:
+query0 -> NOT . query0 [ RPAREN OR AND # ]
+-- On YESTERDAY shift to state 1
+-- On TRUE shift to state 2
+-- On TODAY shift to state 3
+-- On ON shift to state 4
+-- On NOT shift to state 15
+-- On NAME shift to state 16
+-- On MATCHES shift to state 18
+-- On LPAREN shift to state 20
+-- On HAS shift to state 21
+-- On BEFORE shift to state 23
+-- On AFTER shift to state 25
+-- On query0 shift to state 36
+
+State 16:
+query0 -> NAME . LITERAL [ RPAREN OR AND # ]
+-- On LITERAL shift to state 17
+
+State 17:
+query0 -> NAME LITERAL . [ RPAREN OR AND # ]
+-- On RPAREN reduce production query0 -> NAME LITERAL
+-- On OR reduce production query0 -> NAME LITERAL
+-- On AND reduce production query0 -> NAME LITERAL
+
+State 18:
+query0 -> MATCHES . LITERAL [ RPAREN OR AND # ]
+-- On LITERAL shift to state 19
+
+State 19:
+query0 -> MATCHES LITERAL . [ RPAREN OR AND # ]
+-- On RPAREN reduce production query0 -> MATCHES LITERAL
+-- On OR reduce production query0 -> MATCHES LITERAL
+-- On AND reduce production query0 -> MATCHES LITERAL
+
+State 20:
+query0 -> LPAREN . query RPAREN [ RPAREN OR AND # ]
+-- On YESTERDAY shift to state 1
+-- On TRUE shift to state 2
+-- On TODAY shift to state 3
+-- On ON shift to state 4
+-- On NOT shift to state 15
+-- On NAME shift to state 16
+-- On MATCHES shift to state 18
+-- On LPAREN shift to state 20
+-- On HAS shift to state 21
+-- On BEFORE shift to state 23
+-- On AFTER shift to state 25
+-- On query2 shift to state 27
+-- On query1 shift to state 33
+-- On query0 shift to state 32
+-- On query shift to state 34
+
+State 21:
+query0 -> HAS . LITERAL [ RPAREN OR AND # ]
+-- On LITERAL shift to state 22
+
+State 22:
+query0 -> HAS LITERAL . [ RPAREN OR AND # ]
+-- On RPAREN reduce production query0 -> HAS LITERAL
+-- On OR reduce production query0 -> HAS LITERAL
+-- On AND reduce production query0 -> HAS LITERAL
+
+State 23:
+query0 -> BEFORE . date [ RPAREN OR AND # ]
+-- On NUMBER shift to state 5
+-- On date shift to state 24
+
+State 24:
+query0 -> BEFORE date . [ RPAREN OR AND # ]
+-- On RPAREN reduce production query0 -> BEFORE date
+-- On OR reduce production query0 -> BEFORE date
+-- On AND reduce production query0 -> BEFORE date
+
+State 25:
+query0 -> AFTER . date [ RPAREN OR AND # ]
+-- On NUMBER shift to state 5
+-- On date shift to state 26
+
+State 26:
+query0 -> AFTER date . [ RPAREN OR AND # ]
+-- On RPAREN reduce production query0 -> AFTER date
+-- On OR reduce production query0 -> AFTER date
+-- On AND reduce production query0 -> AFTER date
+
+State 27:
+query -> query2 . [ RPAREN ]
+query2 -> query2 . OR query1 [ RPAREN OR ]
+-- On OR shift to state 28
+-- On RPAREN reduce production query -> query2
+
+State 28:
+query2 -> query2 OR . query1 [ RPAREN OR # ]
+-- On YESTERDAY shift to state 1
+-- On TRUE shift to state 2
+-- On TODAY shift to state 3
+-- On ON shift to state 4
+-- On NOT shift to state 15
+-- On NAME shift to state 16
+-- On MATCHES shift to state 18
+-- On LPAREN shift to state 20
+-- On HAS shift to state 21
+-- On BEFORE shift to state 23
+-- On AFTER shift to state 25
+-- On query1 shift to state 29
+-- On query0 shift to state 32
+
+State 29:
+query1 -> query1 . AND query0 [ RPAREN OR AND # ]
+query2 -> query2 OR query1 . [ RPAREN OR # ]
+-- On AND shift to state 30
+-- On RPAREN reduce production query2 -> query2 OR query1
+-- On OR reduce production query2 -> query2 OR query1
+
+State 30:
+query1 -> query1 AND . query0 [ RPAREN OR AND # ]
+-- On YESTERDAY shift to state 1
+-- On TRUE shift to state 2
+-- On TODAY shift to state 3
+-- On ON shift to state 4
+-- On NOT shift to state 15
+-- On NAME shift to state 16
+-- On MATCHES shift to state 18
+-- On LPAREN shift to state 20
+-- On HAS shift to state 21
+-- On BEFORE shift to state 23
+-- On AFTER shift to state 25
+-- On query0 shift to state 31
+
+State 31:
+query1 -> query1 AND query0 . [ RPAREN OR AND # ]
+-- On RPAREN reduce production query1 -> query1 AND query0
+-- On OR reduce production query1 -> query1 AND query0
+-- On AND reduce production query1 -> query1 AND query0
+
+State 32:
+query1 -> query0 . [ RPAREN OR AND # ]
+-- On RPAREN reduce production query1 -> query0
+-- On OR reduce production query1 -> query0
+-- On AND reduce production query1 -> query0
+
+State 33:
+query1 -> query1 . AND query0 [ RPAREN OR AND # ]
+query2 -> query1 . [ RPAREN OR # ]
+-- On AND shift to state 30
+-- On RPAREN reduce production query2 -> query1
+-- On OR reduce production query2 -> query1
+
+State 34:
+query0 -> LPAREN query . RPAREN [ RPAREN OR AND # ]
+-- On RPAREN shift to state 35
+
+State 35:
+query0 -> LPAREN query RPAREN . [ RPAREN OR AND # ]
+-- On RPAREN reduce production query0 -> LPAREN query RPAREN
+-- On OR reduce production query0 -> LPAREN query RPAREN
+-- On AND reduce production query0 -> LPAREN query RPAREN
+
+State 36:
+query0 -> NOT query0 . [ RPAREN OR AND # ]
+-- On RPAREN reduce production query0 -> NOT query0
+-- On OR reduce production query0 -> NOT query0
+-- On AND reduce production query0 -> NOT query0
+
+State 37:
+query -> query2 . [ # ]
+query2 -> query2 . OR query1 [ OR # ]
+-- On OR shift to state 28
+
+State 38:
+query' -> query . [ # ]
+-- On # accept query
+

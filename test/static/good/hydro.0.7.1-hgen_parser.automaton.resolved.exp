@@ -1,0 +1,1285 @@
+State 0:
+start' -> . start [ # ]
+-- On LDBRACK shift to state 1
+-- On LBRACK shift to state 9
+-- On start shift to state 12
+-- On meta_data_opt shift to state 13
+-- On global_meta_data shift to state 17
+-- On defs shift to state 155
+-- On def shift to state 19
+-- On K_STRUCT reduce production meta_data_opt -> 
+-- On K_SEQUENCE reduce production meta_data_opt -> 
+-- On K_MODULE reduce production meta_data_opt -> 
+-- On K_LOCAL reduce production meta_data_opt -> 
+-- On K_INTERFACE reduce production meta_data_opt -> 
+-- On K_EXCEPTION reduce production meta_data_opt -> 
+-- On K_ENUM reduce production meta_data_opt -> 
+-- On K_DICTIONARY reduce production meta_data_opt -> 
+-- On K_CONST reduce production meta_data_opt -> 
+-- On K_CLASS reduce production meta_data_opt -> 
+-- On EOF reduce production defs -> 
+
+State 1:
+global_meta_data -> LDBRACK . string_list RDBRACK [ RBRACE LDBRACK LBRACK K_STRUCT K_SEQUENCE K_MODULE K_LOCAL K_INTERFACE K_EXCEPTION K_ENUM K_DICTIONARY K_CONST K_CLASS EOF ]
+-- On STRING_LITERAL shift to state 2
+-- On string_lit shift to state 4
+-- On string_list shift to state 7
+
+State 2:
+string_lit -> STRING_LITERAL . string_lit [ RDBRACK RBRACK COMMA ]
+string_lit -> STRING_LITERAL . [ RDBRACK RBRACK COMMA ]
+-- On STRING_LITERAL shift to state 2
+-- On string_lit shift to state 3
+-- On RDBRACK reduce production string_lit -> STRING_LITERAL
+-- On RBRACK reduce production string_lit -> STRING_LITERAL
+-- On COMMA reduce production string_lit -> STRING_LITERAL
+
+State 3:
+string_lit -> STRING_LITERAL string_lit . [ RDBRACK RBRACK COMMA ]
+-- On RDBRACK reduce production string_lit -> STRING_LITERAL string_lit
+-- On RBRACK reduce production string_lit -> STRING_LITERAL string_lit
+-- On COMMA reduce production string_lit -> STRING_LITERAL string_lit
+
+State 4:
+string_list -> string_lit . COMMA string_list [ RDBRACK RBRACK ]
+string_list -> string_lit . [ RDBRACK RBRACK ]
+-- On COMMA shift to state 5
+-- On RDBRACK reduce production string_list -> string_lit
+-- On RBRACK reduce production string_list -> string_lit
+
+State 5:
+string_list -> string_lit COMMA . string_list [ RDBRACK RBRACK ]
+-- On STRING_LITERAL shift to state 2
+-- On string_lit shift to state 4
+-- On string_list shift to state 6
+
+State 6:
+string_list -> string_lit COMMA string_list . [ RDBRACK RBRACK ]
+-- On RDBRACK reduce production string_list -> string_lit COMMA string_list
+-- On RBRACK reduce production string_list -> string_lit COMMA string_list
+
+State 7:
+global_meta_data -> LDBRACK string_list . RDBRACK [ RBRACE LDBRACK LBRACK K_STRUCT K_SEQUENCE K_MODULE K_LOCAL K_INTERFACE K_EXCEPTION K_ENUM K_DICTIONARY K_CONST K_CLASS EOF ]
+-- On RDBRACK shift to state 8
+
+State 8:
+global_meta_data -> LDBRACK string_list RDBRACK . [ RBRACE LDBRACK LBRACK K_STRUCT K_SEQUENCE K_MODULE K_LOCAL K_INTERFACE K_EXCEPTION K_ENUM K_DICTIONARY K_CONST K_CLASS EOF ]
+-- On RBRACE reduce production global_meta_data -> LDBRACK string_list RDBRACK
+-- On LDBRACK reduce production global_meta_data -> LDBRACK string_list RDBRACK
+-- On LBRACK reduce production global_meta_data -> LDBRACK string_list RDBRACK
+-- On K_STRUCT reduce production global_meta_data -> LDBRACK string_list RDBRACK
+-- On K_SEQUENCE reduce production global_meta_data -> LDBRACK string_list RDBRACK
+-- On K_MODULE reduce production global_meta_data -> LDBRACK string_list RDBRACK
+-- On K_LOCAL reduce production global_meta_data -> LDBRACK string_list RDBRACK
+-- On K_INTERFACE reduce production global_meta_data -> LDBRACK string_list RDBRACK
+-- On K_EXCEPTION reduce production global_meta_data -> LDBRACK string_list RDBRACK
+-- On K_ENUM reduce production global_meta_data -> LDBRACK string_list RDBRACK
+-- On K_DICTIONARY reduce production global_meta_data -> LDBRACK string_list RDBRACK
+-- On K_CONST reduce production global_meta_data -> LDBRACK string_list RDBRACK
+-- On K_CLASS reduce production global_meta_data -> LDBRACK string_list RDBRACK
+-- On EOF reduce production global_meta_data -> LDBRACK string_list RDBRACK
+
+State 9:
+meta_data_opt -> LBRACK . string_list RBRACK [ K_VOID K_STRUCT K_STRING K_SHORT K_SEQUENCE K_MODULE K_LONG K_LOCAL K_INTERFACE K_INT K_IDEMPOTENT K_FLOAT K_EXCEPTION K_ENUM K_DOUBLE K_DICTIONARY K_CONST K_CLASS K_BYTE K_BOOL IDENT DCOLON ]
+-- On STRING_LITERAL shift to state 2
+-- On string_lit shift to state 4
+-- On string_list shift to state 10
+
+State 10:
+meta_data_opt -> LBRACK string_list . RBRACK [ K_VOID K_STRUCT K_STRING K_SHORT K_SEQUENCE K_MODULE K_LONG K_LOCAL K_INTERFACE K_INT K_IDEMPOTENT K_FLOAT K_EXCEPTION K_ENUM K_DOUBLE K_DICTIONARY K_CONST K_CLASS K_BYTE K_BOOL IDENT DCOLON ]
+-- On RBRACK shift to state 11
+
+State 11:
+meta_data_opt -> LBRACK string_list RBRACK . [ K_VOID K_STRUCT K_STRING K_SHORT K_SEQUENCE K_MODULE K_LONG K_LOCAL K_INTERFACE K_INT K_IDEMPOTENT K_FLOAT K_EXCEPTION K_ENUM K_DOUBLE K_DICTIONARY K_CONST K_CLASS K_BYTE K_BOOL IDENT DCOLON ]
+-- On K_VOID reduce production meta_data_opt -> LBRACK string_list RBRACK
+-- On K_STRUCT reduce production meta_data_opt -> LBRACK string_list RBRACK
+-- On K_STRING reduce production meta_data_opt -> LBRACK string_list RBRACK
+-- On K_SHORT reduce production meta_data_opt -> LBRACK string_list RBRACK
+-- On K_SEQUENCE reduce production meta_data_opt -> LBRACK string_list RBRACK
+-- On K_MODULE reduce production meta_data_opt -> LBRACK string_list RBRACK
+-- On K_LONG reduce production meta_data_opt -> LBRACK string_list RBRACK
+-- On K_LOCAL reduce production meta_data_opt -> LBRACK string_list RBRACK
+-- On K_INTERFACE reduce production meta_data_opt -> LBRACK string_list RBRACK
+-- On K_INT reduce production meta_data_opt -> LBRACK string_list RBRACK
+-- On K_IDEMPOTENT reduce production meta_data_opt -> LBRACK string_list RBRACK
+-- On K_FLOAT reduce production meta_data_opt -> LBRACK string_list RBRACK
+-- On K_EXCEPTION reduce production meta_data_opt -> LBRACK string_list RBRACK
+-- On K_ENUM reduce production meta_data_opt -> LBRACK string_list RBRACK
+-- On K_DOUBLE reduce production meta_data_opt -> LBRACK string_list RBRACK
+-- On K_DICTIONARY reduce production meta_data_opt -> LBRACK string_list RBRACK
+-- On K_CONST reduce production meta_data_opt -> LBRACK string_list RBRACK
+-- On K_CLASS reduce production meta_data_opt -> LBRACK string_list RBRACK
+-- On K_BYTE reduce production meta_data_opt -> LBRACK string_list RBRACK
+-- On K_BOOL reduce production meta_data_opt -> LBRACK string_list RBRACK
+-- On IDENT reduce production meta_data_opt -> LBRACK string_list RBRACK
+-- On DCOLON reduce production meta_data_opt -> LBRACK string_list RBRACK
+
+State 12:
+start' -> start . [ # ]
+-- On # accept start
+
+State 13:
+def -> meta_data_opt . K_MODULE IDENT LBRACE defs RBRACE [ SEMI ]
+def -> meta_data_opt . local_flag K_CLASS IDENT class_def_opt [ SEMI ]
+def -> meta_data_opt . local_flag K_INTERFACE IDENT intf_def_opt [ SEMI ]
+def -> meta_data_opt . local_flag K_EXCEPTION IDENT exn_def_opt [ SEMI ]
+def -> meta_data_opt . local_flag K_STRUCT IDENT struct_def_opt [ SEMI ]
+def -> meta_data_opt . local_flag K_SEQUENCE LANGLE typ RANGLE IDENT [ SEMI ]
+def -> meta_data_opt . local_flag K_DICTIONARY LANGLE typ COMMA typ RANGLE IDENT [ SEMI ]
+def -> meta_data_opt . local_flag K_ENUM IDENT LBRACE enum_list RBRACE [ SEMI ]
+def -> meta_data_opt . K_CONST typ IDENT EQUAL const_value [ SEMI ]
+-- On K_MODULE shift to state 14
+-- On K_LOCAL shift to state 24
+-- On K_CONST shift to state 25
+-- On local_flag shift to state 55
+-- On K_STRUCT reduce production local_flag -> 
+-- On K_SEQUENCE reduce production local_flag -> 
+-- On K_INTERFACE reduce production local_flag -> 
+-- On K_EXCEPTION reduce production local_flag -> 
+-- On K_ENUM reduce production local_flag -> 
+-- On K_DICTIONARY reduce production local_flag -> 
+-- On K_CLASS reduce production local_flag -> 
+
+State 14:
+def -> meta_data_opt K_MODULE . IDENT LBRACE defs RBRACE [ SEMI ]
+-- On IDENT shift to state 15
+
+State 15:
+def -> meta_data_opt K_MODULE IDENT . LBRACE defs RBRACE [ SEMI ]
+-- On LBRACE shift to state 16
+
+State 16:
+def -> meta_data_opt K_MODULE IDENT LBRACE . defs RBRACE [ SEMI ]
+-- On LDBRACK shift to state 1
+-- On LBRACK shift to state 9
+-- On meta_data_opt shift to state 13
+-- On global_meta_data shift to state 17
+-- On defs shift to state 22
+-- On def shift to state 19
+-- On RBRACE reduce production defs -> 
+-- On K_STRUCT reduce production meta_data_opt -> 
+-- On K_SEQUENCE reduce production meta_data_opt -> 
+-- On K_MODULE reduce production meta_data_opt -> 
+-- On K_LOCAL reduce production meta_data_opt -> 
+-- On K_INTERFACE reduce production meta_data_opt -> 
+-- On K_EXCEPTION reduce production meta_data_opt -> 
+-- On K_ENUM reduce production meta_data_opt -> 
+-- On K_DICTIONARY reduce production meta_data_opt -> 
+-- On K_CONST reduce production meta_data_opt -> 
+-- On K_CLASS reduce production meta_data_opt -> 
+
+State 17:
+defs -> global_meta_data . defs [ RBRACE EOF ]
+-- On LDBRACK shift to state 1
+-- On LBRACK shift to state 9
+-- On meta_data_opt shift to state 13
+-- On global_meta_data shift to state 17
+-- On defs shift to state 18
+-- On def shift to state 19
+-- On RBRACE reduce production defs -> 
+-- On K_STRUCT reduce production meta_data_opt -> 
+-- On K_SEQUENCE reduce production meta_data_opt -> 
+-- On K_MODULE reduce production meta_data_opt -> 
+-- On K_LOCAL reduce production meta_data_opt -> 
+-- On K_INTERFACE reduce production meta_data_opt -> 
+-- On K_EXCEPTION reduce production meta_data_opt -> 
+-- On K_ENUM reduce production meta_data_opt -> 
+-- On K_DICTIONARY reduce production meta_data_opt -> 
+-- On K_CONST reduce production meta_data_opt -> 
+-- On K_CLASS reduce production meta_data_opt -> 
+-- On EOF reduce production defs -> 
+
+State 18:
+defs -> global_meta_data defs . [ RBRACE EOF ]
+-- On RBRACE reduce production defs -> global_meta_data defs
+-- On EOF reduce production defs -> global_meta_data defs
+
+State 19:
+defs -> def . SEMI defs [ RBRACE EOF ]
+-- On SEMI shift to state 20
+
+State 20:
+defs -> def SEMI . defs [ RBRACE EOF ]
+-- On LDBRACK shift to state 1
+-- On LBRACK shift to state 9
+-- On meta_data_opt shift to state 13
+-- On global_meta_data shift to state 17
+-- On defs shift to state 21
+-- On def shift to state 19
+-- On RBRACE reduce production defs -> 
+-- On K_STRUCT reduce production meta_data_opt -> 
+-- On K_SEQUENCE reduce production meta_data_opt -> 
+-- On K_MODULE reduce production meta_data_opt -> 
+-- On K_LOCAL reduce production meta_data_opt -> 
+-- On K_INTERFACE reduce production meta_data_opt -> 
+-- On K_EXCEPTION reduce production meta_data_opt -> 
+-- On K_ENUM reduce production meta_data_opt -> 
+-- On K_DICTIONARY reduce production meta_data_opt -> 
+-- On K_CONST reduce production meta_data_opt -> 
+-- On K_CLASS reduce production meta_data_opt -> 
+-- On EOF reduce production defs -> 
+
+State 21:
+defs -> def SEMI defs . [ RBRACE EOF ]
+-- On RBRACE reduce production defs -> def SEMI defs
+-- On EOF reduce production defs -> def SEMI defs
+
+State 22:
+def -> meta_data_opt K_MODULE IDENT LBRACE defs . RBRACE [ SEMI ]
+-- On RBRACE shift to state 23
+
+State 23:
+def -> meta_data_opt K_MODULE IDENT LBRACE defs RBRACE . [ SEMI ]
+-- On SEMI reduce production def -> meta_data_opt K_MODULE IDENT LBRACE defs RBRACE
+
+State 24:
+local_flag -> K_LOCAL . [ K_STRUCT K_SEQUENCE K_INTERFACE K_EXCEPTION K_ENUM K_DICTIONARY K_CLASS ]
+-- On K_STRUCT reduce production local_flag -> K_LOCAL
+-- On K_SEQUENCE reduce production local_flag -> K_LOCAL
+-- On K_INTERFACE reduce production local_flag -> K_LOCAL
+-- On K_EXCEPTION reduce production local_flag -> K_LOCAL
+-- On K_ENUM reduce production local_flag -> K_LOCAL
+-- On K_DICTIONARY reduce production local_flag -> K_LOCAL
+-- On K_CLASS reduce production local_flag -> K_LOCAL
+
+State 25:
+def -> meta_data_opt K_CONST . typ IDENT EQUAL const_value [ SEMI ]
+-- On LBRACK shift to state 9
+-- On typ shift to state 26
+-- On meta_data_opt shift to state 42
+-- On K_VOID reduce production meta_data_opt -> 
+-- On K_STRING reduce production meta_data_opt -> 
+-- On K_SHORT reduce production meta_data_opt -> 
+-- On K_LONG reduce production meta_data_opt -> 
+-- On K_INT reduce production meta_data_opt -> 
+-- On K_FLOAT reduce production meta_data_opt -> 
+-- On K_DOUBLE reduce production meta_data_opt -> 
+-- On K_BYTE reduce production meta_data_opt -> 
+-- On K_BOOL reduce production meta_data_opt -> 
+-- On IDENT reduce production meta_data_opt -> 
+-- On DCOLON reduce production meta_data_opt -> 
+
+State 26:
+def -> meta_data_opt K_CONST typ . IDENT EQUAL const_value [ SEMI ]
+-- On IDENT shift to state 27
+
+State 27:
+def -> meta_data_opt K_CONST typ IDENT . EQUAL const_value [ SEMI ]
+-- On EQUAL shift to state 28
+
+State 28:
+def -> meta_data_opt K_CONST typ IDENT EQUAL . const_value [ SEMI ]
+-- On STRING_LITERAL shift to state 29
+-- On K_TRUE shift to state 30
+-- On K_FALSE shift to state 31
+-- On INT_LITERAL shift to state 32
+-- On IDENT shift to state 33
+-- On FLOAT_LITERAL shift to state 36
+-- On DCOLON shift to state 37
+-- On rel_name shift to state 39
+-- On name shift to state 40
+-- On const_value shift to state 41
+
+State 29:
+const_value -> STRING_LITERAL . [ SEMI ]
+-- On SEMI reduce production const_value -> STRING_LITERAL
+
+State 30:
+const_value -> K_TRUE . [ SEMI ]
+-- On SEMI reduce production const_value -> K_TRUE
+
+State 31:
+const_value -> K_FALSE . [ SEMI ]
+-- On SEMI reduce production const_value -> K_FALSE
+
+State 32:
+const_value -> INT_LITERAL . [ SEMI ]
+-- On SEMI reduce production const_value -> INT_LITERAL
+
+State 33:
+rel_name -> IDENT . [ SEMI RANGLE LBRACE K_IMPLEMENTS IDENT COMMA ASTERISK ]
+rel_name -> IDENT . DCOLON rel_name [ SEMI RANGLE LBRACE K_IMPLEMENTS IDENT COMMA ASTERISK ]
+-- On DCOLON shift to state 34
+-- On SEMI reduce production rel_name -> IDENT
+-- On RANGLE reduce production rel_name -> IDENT
+-- On LBRACE reduce production rel_name -> IDENT
+-- On K_IMPLEMENTS reduce production rel_name -> IDENT
+-- On IDENT reduce production rel_name -> IDENT
+-- On COMMA reduce production rel_name -> IDENT
+-- On ASTERISK reduce production rel_name -> IDENT
+
+State 34:
+rel_name -> IDENT DCOLON . rel_name [ SEMI RANGLE LBRACE K_IMPLEMENTS IDENT COMMA ASTERISK ]
+-- On IDENT shift to state 33
+-- On rel_name shift to state 35
+
+State 35:
+rel_name -> IDENT DCOLON rel_name . [ SEMI RANGLE LBRACE K_IMPLEMENTS IDENT COMMA ASTERISK ]
+-- On SEMI reduce production rel_name -> IDENT DCOLON rel_name
+-- On RANGLE reduce production rel_name -> IDENT DCOLON rel_name
+-- On LBRACE reduce production rel_name -> IDENT DCOLON rel_name
+-- On K_IMPLEMENTS reduce production rel_name -> IDENT DCOLON rel_name
+-- On IDENT reduce production rel_name -> IDENT DCOLON rel_name
+-- On COMMA reduce production rel_name -> IDENT DCOLON rel_name
+-- On ASTERISK reduce production rel_name -> IDENT DCOLON rel_name
+
+State 36:
+const_value -> FLOAT_LITERAL . [ SEMI ]
+-- On SEMI reduce production const_value -> FLOAT_LITERAL
+
+State 37:
+name -> DCOLON . rel_name [ SEMI RANGLE LBRACE K_IMPLEMENTS IDENT COMMA ASTERISK ]
+-- On IDENT shift to state 33
+-- On rel_name shift to state 38
+
+State 38:
+name -> DCOLON rel_name . [ SEMI RANGLE LBRACE K_IMPLEMENTS IDENT COMMA ASTERISK ]
+-- On SEMI reduce production name -> DCOLON rel_name
+-- On RANGLE reduce production name -> DCOLON rel_name
+-- On LBRACE reduce production name -> DCOLON rel_name
+-- On K_IMPLEMENTS reduce production name -> DCOLON rel_name
+-- On IDENT reduce production name -> DCOLON rel_name
+-- On COMMA reduce production name -> DCOLON rel_name
+-- On ASTERISK reduce production name -> DCOLON rel_name
+
+State 39:
+name -> rel_name . [ SEMI RANGLE LBRACE K_IMPLEMENTS IDENT COMMA ASTERISK ]
+-- On SEMI reduce production name -> rel_name
+-- On RANGLE reduce production name -> rel_name
+-- On LBRACE reduce production name -> rel_name
+-- On K_IMPLEMENTS reduce production name -> rel_name
+-- On IDENT reduce production name -> rel_name
+-- On COMMA reduce production name -> rel_name
+-- On ASTERISK reduce production name -> rel_name
+
+State 40:
+const_value -> name . [ SEMI ]
+-- On SEMI reduce production const_value -> name
+
+State 41:
+def -> meta_data_opt K_CONST typ IDENT EQUAL const_value . [ SEMI ]
+-- On SEMI reduce production def -> meta_data_opt K_CONST typ IDENT EQUAL const_value
+
+State 42:
+typ -> meta_data_opt . typ_name [ RANGLE IDENT COMMA ]
+-- On K_VOID shift to state 43
+-- On K_STRING shift to state 44
+-- On K_SHORT shift to state 45
+-- On K_LONG shift to state 46
+-- On K_INT shift to state 47
+-- On K_FLOAT shift to state 48
+-- On K_DOUBLE shift to state 49
+-- On K_BYTE shift to state 50
+-- On K_BOOL shift to state 51
+-- On IDENT shift to state 33
+-- On DCOLON shift to state 37
+-- On typ_name shift to state 52
+-- On rel_name shift to state 39
+-- On name shift to state 53
+
+State 43:
+typ_name -> K_VOID . [ RANGLE IDENT COMMA ]
+-- On RANGLE reduce production typ_name -> K_VOID
+-- On IDENT reduce production typ_name -> K_VOID
+-- On COMMA reduce production typ_name -> K_VOID
+
+State 44:
+typ_name -> K_STRING . [ RANGLE IDENT COMMA ]
+-- On RANGLE reduce production typ_name -> K_STRING
+-- On IDENT reduce production typ_name -> K_STRING
+-- On COMMA reduce production typ_name -> K_STRING
+
+State 45:
+typ_name -> K_SHORT . [ RANGLE IDENT COMMA ]
+-- On RANGLE reduce production typ_name -> K_SHORT
+-- On IDENT reduce production typ_name -> K_SHORT
+-- On COMMA reduce production typ_name -> K_SHORT
+
+State 46:
+typ_name -> K_LONG . [ RANGLE IDENT COMMA ]
+-- On RANGLE reduce production typ_name -> K_LONG
+-- On IDENT reduce production typ_name -> K_LONG
+-- On COMMA reduce production typ_name -> K_LONG
+
+State 47:
+typ_name -> K_INT . [ RANGLE IDENT COMMA ]
+-- On RANGLE reduce production typ_name -> K_INT
+-- On IDENT reduce production typ_name -> K_INT
+-- On COMMA reduce production typ_name -> K_INT
+
+State 48:
+typ_name -> K_FLOAT . [ RANGLE IDENT COMMA ]
+-- On RANGLE reduce production typ_name -> K_FLOAT
+-- On IDENT reduce production typ_name -> K_FLOAT
+-- On COMMA reduce production typ_name -> K_FLOAT
+
+State 49:
+typ_name -> K_DOUBLE . [ RANGLE IDENT COMMA ]
+-- On RANGLE reduce production typ_name -> K_DOUBLE
+-- On IDENT reduce production typ_name -> K_DOUBLE
+-- On COMMA reduce production typ_name -> K_DOUBLE
+
+State 50:
+typ_name -> K_BYTE . [ RANGLE IDENT COMMA ]
+-- On RANGLE reduce production typ_name -> K_BYTE
+-- On IDENT reduce production typ_name -> K_BYTE
+-- On COMMA reduce production typ_name -> K_BYTE
+
+State 51:
+typ_name -> K_BOOL . [ RANGLE IDENT COMMA ]
+-- On RANGLE reduce production typ_name -> K_BOOL
+-- On IDENT reduce production typ_name -> K_BOOL
+-- On COMMA reduce production typ_name -> K_BOOL
+
+State 52:
+typ -> meta_data_opt typ_name . [ RANGLE IDENT COMMA ]
+-- On RANGLE reduce production typ -> meta_data_opt typ_name
+-- On IDENT reduce production typ -> meta_data_opt typ_name
+-- On COMMA reduce production typ -> meta_data_opt typ_name
+
+State 53:
+typ_name -> name . [ RANGLE IDENT COMMA ]
+typ_name -> name . ASTERISK [ RANGLE IDENT COMMA ]
+-- On ASTERISK shift to state 54
+-- On RANGLE reduce production typ_name -> name
+-- On IDENT reduce production typ_name -> name
+-- On COMMA reduce production typ_name -> name
+
+State 54:
+typ_name -> name ASTERISK . [ RANGLE IDENT COMMA ]
+-- On RANGLE reduce production typ_name -> name ASTERISK
+-- On IDENT reduce production typ_name -> name ASTERISK
+-- On COMMA reduce production typ_name -> name ASTERISK
+
+State 55:
+def -> meta_data_opt local_flag . K_CLASS IDENT class_def_opt [ SEMI ]
+def -> meta_data_opt local_flag . K_INTERFACE IDENT intf_def_opt [ SEMI ]
+def -> meta_data_opt local_flag . K_EXCEPTION IDENT exn_def_opt [ SEMI ]
+def -> meta_data_opt local_flag . K_STRUCT IDENT struct_def_opt [ SEMI ]
+def -> meta_data_opt local_flag . K_SEQUENCE LANGLE typ RANGLE IDENT [ SEMI ]
+def -> meta_data_opt local_flag . K_DICTIONARY LANGLE typ COMMA typ RANGLE IDENT [ SEMI ]
+def -> meta_data_opt local_flag . K_ENUM IDENT LBRACE enum_list RBRACE [ SEMI ]
+-- On K_STRUCT shift to state 56
+-- On K_SEQUENCE shift to state 67
+-- On K_INTERFACE shift to state 72
+-- On K_EXCEPTION shift to state 107
+-- On K_ENUM shift to state 118
+-- On K_DICTIONARY shift to state 126
+-- On K_CLASS shift to state 133
+
+State 56:
+def -> meta_data_opt local_flag K_STRUCT . IDENT struct_def_opt [ SEMI ]
+-- On IDENT shift to state 57
+
+State 57:
+def -> meta_data_opt local_flag K_STRUCT IDENT . struct_def_opt [ SEMI ]
+-- On LBRACE shift to state 58
+-- On struct_def_opt shift to state 66
+-- On SEMI reduce production struct_def_opt -> 
+
+State 58:
+struct_def_opt -> LBRACE . struct_members RBRACE [ SEMI ]
+-- On LBRACK shift to state 9
+-- On typ shift to state 59
+-- On struct_members shift to state 62
+-- On meta_data_opt shift to state 42
+-- On data_member shift to state 64
+-- On RBRACE reduce production struct_members -> 
+-- On K_VOID reduce production meta_data_opt -> 
+-- On K_STRING reduce production meta_data_opt -> 
+-- On K_SHORT reduce production meta_data_opt -> 
+-- On K_LONG reduce production meta_data_opt -> 
+-- On K_INT reduce production meta_data_opt -> 
+-- On K_FLOAT reduce production meta_data_opt -> 
+-- On K_DOUBLE reduce production meta_data_opt -> 
+-- On K_BYTE reduce production meta_data_opt -> 
+-- On K_BOOL reduce production meta_data_opt -> 
+-- On IDENT reduce production meta_data_opt -> 
+-- On DCOLON reduce production meta_data_opt -> 
+
+State 59:
+data_member -> typ . IDENT SEMI [ RBRACE LBRACK K_VOID K_STRING K_SHORT K_LONG K_INT K_FLOAT K_DOUBLE K_BYTE K_BOOL IDENT DCOLON ]
+-- On IDENT shift to state 60
+
+State 60:
+data_member -> typ IDENT . SEMI [ RBRACE LBRACK K_VOID K_STRING K_SHORT K_LONG K_INT K_FLOAT K_DOUBLE K_BYTE K_BOOL IDENT DCOLON ]
+-- On SEMI shift to state 61
+
+State 61:
+data_member -> typ IDENT SEMI . [ RBRACE LBRACK K_VOID K_STRING K_SHORT K_LONG K_INT K_FLOAT K_DOUBLE K_BYTE K_BOOL IDENT DCOLON ]
+-- On RBRACE reduce production data_member -> typ IDENT SEMI
+-- On LBRACK reduce production data_member -> typ IDENT SEMI
+-- On K_VOID reduce production data_member -> typ IDENT SEMI
+-- On K_STRING reduce production data_member -> typ IDENT SEMI
+-- On K_SHORT reduce production data_member -> typ IDENT SEMI
+-- On K_LONG reduce production data_member -> typ IDENT SEMI
+-- On K_INT reduce production data_member -> typ IDENT SEMI
+-- On K_FLOAT reduce production data_member -> typ IDENT SEMI
+-- On K_DOUBLE reduce production data_member -> typ IDENT SEMI
+-- On K_BYTE reduce production data_member -> typ IDENT SEMI
+-- On K_BOOL reduce production data_member -> typ IDENT SEMI
+-- On IDENT reduce production data_member -> typ IDENT SEMI
+-- On DCOLON reduce production data_member -> typ IDENT SEMI
+
+State 62:
+struct_def_opt -> LBRACE struct_members . RBRACE [ SEMI ]
+-- On RBRACE shift to state 63
+
+State 63:
+struct_def_opt -> LBRACE struct_members RBRACE . [ SEMI ]
+-- On SEMI reduce production struct_def_opt -> LBRACE struct_members RBRACE
+
+State 64:
+struct_members -> data_member . struct_members [ RBRACE ]
+-- On LBRACK shift to state 9
+-- On typ shift to state 59
+-- On struct_members shift to state 65
+-- On meta_data_opt shift to state 42
+-- On data_member shift to state 64
+-- On RBRACE reduce production struct_members -> 
+-- On K_VOID reduce production meta_data_opt -> 
+-- On K_STRING reduce production meta_data_opt -> 
+-- On K_SHORT reduce production meta_data_opt -> 
+-- On K_LONG reduce production meta_data_opt -> 
+-- On K_INT reduce production meta_data_opt -> 
+-- On K_FLOAT reduce production meta_data_opt -> 
+-- On K_DOUBLE reduce production meta_data_opt -> 
+-- On K_BYTE reduce production meta_data_opt -> 
+-- On K_BOOL reduce production meta_data_opt -> 
+-- On IDENT reduce production meta_data_opt -> 
+-- On DCOLON reduce production meta_data_opt -> 
+
+State 65:
+struct_members -> data_member struct_members . [ RBRACE ]
+-- On RBRACE reduce production struct_members -> data_member struct_members
+
+State 66:
+def -> meta_data_opt local_flag K_STRUCT IDENT struct_def_opt . [ SEMI ]
+-- On SEMI reduce production def -> meta_data_opt local_flag K_STRUCT IDENT struct_def_opt
+
+State 67:
+def -> meta_data_opt local_flag K_SEQUENCE . LANGLE typ RANGLE IDENT [ SEMI ]
+-- On LANGLE shift to state 68
+
+State 68:
+def -> meta_data_opt local_flag K_SEQUENCE LANGLE . typ RANGLE IDENT [ SEMI ]
+-- On LBRACK shift to state 9
+-- On typ shift to state 69
+-- On meta_data_opt shift to state 42
+-- On K_VOID reduce production meta_data_opt -> 
+-- On K_STRING reduce production meta_data_opt -> 
+-- On K_SHORT reduce production meta_data_opt -> 
+-- On K_LONG reduce production meta_data_opt -> 
+-- On K_INT reduce production meta_data_opt -> 
+-- On K_FLOAT reduce production meta_data_opt -> 
+-- On K_DOUBLE reduce production meta_data_opt -> 
+-- On K_BYTE reduce production meta_data_opt -> 
+-- On K_BOOL reduce production meta_data_opt -> 
+-- On IDENT reduce production meta_data_opt -> 
+-- On DCOLON reduce production meta_data_opt -> 
+
+State 69:
+def -> meta_data_opt local_flag K_SEQUENCE LANGLE typ . RANGLE IDENT [ SEMI ]
+-- On RANGLE shift to state 70
+
+State 70:
+def -> meta_data_opt local_flag K_SEQUENCE LANGLE typ RANGLE . IDENT [ SEMI ]
+-- On IDENT shift to state 71
+
+State 71:
+def -> meta_data_opt local_flag K_SEQUENCE LANGLE typ RANGLE IDENT . [ SEMI ]
+-- On SEMI reduce production def -> meta_data_opt local_flag K_SEQUENCE LANGLE typ RANGLE IDENT
+
+State 72:
+def -> meta_data_opt local_flag K_INTERFACE . IDENT intf_def_opt [ SEMI ]
+-- On IDENT shift to state 73
+
+State 73:
+def -> meta_data_opt local_flag K_INTERFACE IDENT . intf_def_opt [ SEMI ]
+-- On K_EXTENDS shift to state 74
+-- On intf_extends_clause_opt shift to state 79
+-- On intf_def_opt shift to state 106
+-- On SEMI reduce production intf_def_opt -> 
+-- On LBRACE reduce production intf_extends_clause_opt -> 
+
+State 74:
+intf_extends_clause_opt -> K_EXTENDS . name_list [ LBRACE ]
+-- On IDENT shift to state 33
+-- On DCOLON shift to state 37
+-- On rel_name shift to state 39
+-- On name_list shift to state 75
+-- On name shift to state 76
+
+State 75:
+intf_extends_clause_opt -> K_EXTENDS name_list . [ LBRACE ]
+-- On LBRACE reduce production intf_extends_clause_opt -> K_EXTENDS name_list
+
+State 76:
+name_list -> name . [ SEMI LBRACE ]
+name_list -> name . COMMA name_list [ SEMI LBRACE ]
+-- On COMMA shift to state 77
+-- On SEMI reduce production name_list -> name
+-- On LBRACE reduce production name_list -> name
+
+State 77:
+name_list -> name COMMA . name_list [ SEMI LBRACE ]
+-- On IDENT shift to state 33
+-- On DCOLON shift to state 37
+-- On rel_name shift to state 39
+-- On name_list shift to state 78
+-- On name shift to state 76
+
+State 78:
+name_list -> name COMMA name_list . [ SEMI LBRACE ]
+-- On SEMI reduce production name_list -> name COMMA name_list
+-- On LBRACE reduce production name_list -> name COMMA name_list
+
+State 79:
+intf_def_opt -> intf_extends_clause_opt . LBRACE intf_members RBRACE [ SEMI ]
+-- On LBRACE shift to state 80
+
+State 80:
+intf_def_opt -> intf_extends_clause_opt LBRACE . intf_members RBRACE [ SEMI ]
+-- On LBRACK shift to state 9
+-- On operation_member shift to state 81
+-- On op_typ shift to state 82
+-- On meta_data_opt shift to state 99
+-- On intf_members shift to state 104
+-- On RBRACE reduce production intf_members -> 
+-- On K_VOID reduce production meta_data_opt -> 
+-- On K_STRING reduce production meta_data_opt -> 
+-- On K_SHORT reduce production meta_data_opt -> 
+-- On K_LONG reduce production meta_data_opt -> 
+-- On K_INT reduce production meta_data_opt -> 
+-- On K_IDEMPOTENT reduce production meta_data_opt -> 
+-- On K_FLOAT reduce production meta_data_opt -> 
+-- On K_DOUBLE reduce production meta_data_opt -> 
+-- On K_BYTE reduce production meta_data_opt -> 
+-- On K_BOOL reduce production meta_data_opt -> 
+-- On IDENT reduce production meta_data_opt -> 
+-- On DCOLON reduce production meta_data_opt -> 
+
+State 81:
+intf_members -> operation_member . intf_members [ RBRACE ]
+-- On LBRACK shift to state 9
+-- On operation_member shift to state 81
+-- On op_typ shift to state 82
+-- On meta_data_opt shift to state 99
+-- On intf_members shift to state 103
+-- On RBRACE reduce production intf_members -> 
+-- On K_VOID reduce production meta_data_opt -> 
+-- On K_STRING reduce production meta_data_opt -> 
+-- On K_SHORT reduce production meta_data_opt -> 
+-- On K_LONG reduce production meta_data_opt -> 
+-- On K_INT reduce production meta_data_opt -> 
+-- On K_IDEMPOTENT reduce production meta_data_opt -> 
+-- On K_FLOAT reduce production meta_data_opt -> 
+-- On K_DOUBLE reduce production meta_data_opt -> 
+-- On K_BYTE reduce production meta_data_opt -> 
+-- On K_BOOL reduce production meta_data_opt -> 
+-- On IDENT reduce production meta_data_opt -> 
+-- On DCOLON reduce production meta_data_opt -> 
+
+State 82:
+operation_member -> op_typ . IDENT LPAREN params RPAREN throws_clause_opt SEMI [ RBRACE LBRACK K_VOID K_STRING K_SHORT K_LONG K_INT K_IDEMPOTENT K_FLOAT K_DOUBLE K_BYTE K_BOOL IDENT DCOLON ]
+-- On IDENT shift to state 83
+
+State 83:
+operation_member -> op_typ IDENT . LPAREN params RPAREN throws_clause_opt SEMI [ RBRACE LBRACK K_VOID K_STRING K_SHORT K_LONG K_INT K_IDEMPOTENT K_FLOAT K_DOUBLE K_BYTE K_BOOL IDENT DCOLON ]
+-- On LPAREN shift to state 84
+
+State 84:
+operation_member -> op_typ IDENT LPAREN . params RPAREN throws_clause_opt SEMI [ RBRACE LBRACK K_VOID K_STRING K_SHORT K_LONG K_INT K_IDEMPOTENT K_FLOAT K_DOUBLE K_BYTE K_BOOL IDENT DCOLON ]
+-- On K_OUT shift to state 85
+-- On params1 shift to state 86
+-- On params shift to state 87
+-- On param shift to state 93
+-- On out_flag shift to state 96
+-- On RPAREN reduce production params -> 
+-- On LBRACK reduce production out_flag -> 
+-- On K_VOID reduce production out_flag -> 
+-- On K_STRING reduce production out_flag -> 
+-- On K_SHORT reduce production out_flag -> 
+-- On K_LONG reduce production out_flag -> 
+-- On K_INT reduce production out_flag -> 
+-- On K_FLOAT reduce production out_flag -> 
+-- On K_DOUBLE reduce production out_flag -> 
+-- On K_BYTE reduce production out_flag -> 
+-- On K_BOOL reduce production out_flag -> 
+-- On IDENT reduce production out_flag -> 
+-- On DCOLON reduce production out_flag -> 
+
+State 85:
+out_flag -> K_OUT . [ LBRACK K_VOID K_STRING K_SHORT K_LONG K_INT K_FLOAT K_DOUBLE K_BYTE K_BOOL IDENT DCOLON ]
+-- On LBRACK reduce production out_flag -> K_OUT
+-- On K_VOID reduce production out_flag -> K_OUT
+-- On K_STRING reduce production out_flag -> K_OUT
+-- On K_SHORT reduce production out_flag -> K_OUT
+-- On K_LONG reduce production out_flag -> K_OUT
+-- On K_INT reduce production out_flag -> K_OUT
+-- On K_FLOAT reduce production out_flag -> K_OUT
+-- On K_DOUBLE reduce production out_flag -> K_OUT
+-- On K_BYTE reduce production out_flag -> K_OUT
+-- On K_BOOL reduce production out_flag -> K_OUT
+-- On IDENT reduce production out_flag -> K_OUT
+-- On DCOLON reduce production out_flag -> K_OUT
+
+State 86:
+params -> params1 . [ RPAREN ]
+-- On RPAREN reduce production params -> params1
+
+State 87:
+operation_member -> op_typ IDENT LPAREN params . RPAREN throws_clause_opt SEMI [ RBRACE LBRACK K_VOID K_STRING K_SHORT K_LONG K_INT K_IDEMPOTENT K_FLOAT K_DOUBLE K_BYTE K_BOOL IDENT DCOLON ]
+-- On RPAREN shift to state 88
+
+State 88:
+operation_member -> op_typ IDENT LPAREN params RPAREN . throws_clause_opt SEMI [ RBRACE LBRACK K_VOID K_STRING K_SHORT K_LONG K_INT K_IDEMPOTENT K_FLOAT K_DOUBLE K_BYTE K_BOOL IDENT DCOLON ]
+-- On K_THROWS shift to state 89
+-- On throws_clause_opt shift to state 91
+-- On SEMI reduce production throws_clause_opt -> 
+
+State 89:
+throws_clause_opt -> K_THROWS . name_list [ SEMI ]
+-- On IDENT shift to state 33
+-- On DCOLON shift to state 37
+-- On rel_name shift to state 39
+-- On name_list shift to state 90
+-- On name shift to state 76
+
+State 90:
+throws_clause_opt -> K_THROWS name_list . [ SEMI ]
+-- On SEMI reduce production throws_clause_opt -> K_THROWS name_list
+
+State 91:
+operation_member -> op_typ IDENT LPAREN params RPAREN throws_clause_opt . SEMI [ RBRACE LBRACK K_VOID K_STRING K_SHORT K_LONG K_INT K_IDEMPOTENT K_FLOAT K_DOUBLE K_BYTE K_BOOL IDENT DCOLON ]
+-- On SEMI shift to state 92
+
+State 92:
+operation_member -> op_typ IDENT LPAREN params RPAREN throws_clause_opt SEMI . [ RBRACE LBRACK K_VOID K_STRING K_SHORT K_LONG K_INT K_IDEMPOTENT K_FLOAT K_DOUBLE K_BYTE K_BOOL IDENT DCOLON ]
+-- On RBRACE reduce production operation_member -> op_typ IDENT LPAREN params RPAREN throws_clause_opt SEMI
+-- On LBRACK reduce production operation_member -> op_typ IDENT LPAREN params RPAREN throws_clause_opt SEMI
+-- On K_VOID reduce production operation_member -> op_typ IDENT LPAREN params RPAREN throws_clause_opt SEMI
+-- On K_STRING reduce production operation_member -> op_typ IDENT LPAREN params RPAREN throws_clause_opt SEMI
+-- On K_SHORT reduce production operation_member -> op_typ IDENT LPAREN params RPAREN throws_clause_opt SEMI
+-- On K_LONG reduce production operation_member -> op_typ IDENT LPAREN params RPAREN throws_clause_opt SEMI
+-- On K_INT reduce production operation_member -> op_typ IDENT LPAREN params RPAREN throws_clause_opt SEMI
+-- On K_IDEMPOTENT reduce production operation_member -> op_typ IDENT LPAREN params RPAREN throws_clause_opt SEMI
+-- On K_FLOAT reduce production operation_member -> op_typ IDENT LPAREN params RPAREN throws_clause_opt SEMI
+-- On K_DOUBLE reduce production operation_member -> op_typ IDENT LPAREN params RPAREN throws_clause_opt SEMI
+-- On K_BYTE reduce production operation_member -> op_typ IDENT LPAREN params RPAREN throws_clause_opt SEMI
+-- On K_BOOL reduce production operation_member -> op_typ IDENT LPAREN params RPAREN throws_clause_opt SEMI
+-- On IDENT reduce production operation_member -> op_typ IDENT LPAREN params RPAREN throws_clause_opt SEMI
+-- On DCOLON reduce production operation_member -> op_typ IDENT LPAREN params RPAREN throws_clause_opt SEMI
+
+State 93:
+params1 -> param . COMMA params1 [ RPAREN ]
+params1 -> param . [ RPAREN ]
+-- On COMMA shift to state 94
+-- On RPAREN reduce production params1 -> param
+
+State 94:
+params1 -> param COMMA . params1 [ RPAREN ]
+-- On K_OUT shift to state 85
+-- On params1 shift to state 95
+-- On param shift to state 93
+-- On out_flag shift to state 96
+-- On LBRACK reduce production out_flag -> 
+-- On K_VOID reduce production out_flag -> 
+-- On K_STRING reduce production out_flag -> 
+-- On K_SHORT reduce production out_flag -> 
+-- On K_LONG reduce production out_flag -> 
+-- On K_INT reduce production out_flag -> 
+-- On K_FLOAT reduce production out_flag -> 
+-- On K_DOUBLE reduce production out_flag -> 
+-- On K_BYTE reduce production out_flag -> 
+-- On K_BOOL reduce production out_flag -> 
+-- On IDENT reduce production out_flag -> 
+-- On DCOLON reduce production out_flag -> 
+
+State 95:
+params1 -> param COMMA params1 . [ RPAREN ]
+-- On RPAREN reduce production params1 -> param COMMA params1
+
+State 96:
+param -> out_flag . typ IDENT [ RPAREN COMMA ]
+-- On LBRACK shift to state 9
+-- On typ shift to state 97
+-- On meta_data_opt shift to state 42
+-- On K_VOID reduce production meta_data_opt -> 
+-- On K_STRING reduce production meta_data_opt -> 
+-- On K_SHORT reduce production meta_data_opt -> 
+-- On K_LONG reduce production meta_data_opt -> 
+-- On K_INT reduce production meta_data_opt -> 
+-- On K_FLOAT reduce production meta_data_opt -> 
+-- On K_DOUBLE reduce production meta_data_opt -> 
+-- On K_BYTE reduce production meta_data_opt -> 
+-- On K_BOOL reduce production meta_data_opt -> 
+-- On IDENT reduce production meta_data_opt -> 
+-- On DCOLON reduce production meta_data_opt -> 
+
+State 97:
+param -> out_flag typ . IDENT [ RPAREN COMMA ]
+-- On IDENT shift to state 98
+
+State 98:
+param -> out_flag typ IDENT . [ RPAREN COMMA ]
+-- On RPAREN reduce production param -> out_flag typ IDENT
+-- On COMMA reduce production param -> out_flag typ IDENT
+
+State 99:
+op_typ -> meta_data_opt . idempotent_flag typ_name [ IDENT ]
+-- On K_IDEMPOTENT shift to state 100
+-- On idempotent_flag shift to state 101
+-- On K_VOID reduce production idempotent_flag -> 
+-- On K_STRING reduce production idempotent_flag -> 
+-- On K_SHORT reduce production idempotent_flag -> 
+-- On K_LONG reduce production idempotent_flag -> 
+-- On K_INT reduce production idempotent_flag -> 
+-- On K_FLOAT reduce production idempotent_flag -> 
+-- On K_DOUBLE reduce production idempotent_flag -> 
+-- On K_BYTE reduce production idempotent_flag -> 
+-- On K_BOOL reduce production idempotent_flag -> 
+-- On IDENT reduce production idempotent_flag -> 
+-- On DCOLON reduce production idempotent_flag -> 
+
+State 100:
+idempotent_flag -> K_IDEMPOTENT . [ K_VOID K_STRING K_SHORT K_LONG K_INT K_FLOAT K_DOUBLE K_BYTE K_BOOL IDENT DCOLON ]
+-- On K_VOID reduce production idempotent_flag -> K_IDEMPOTENT
+-- On K_STRING reduce production idempotent_flag -> K_IDEMPOTENT
+-- On K_SHORT reduce production idempotent_flag -> K_IDEMPOTENT
+-- On K_LONG reduce production idempotent_flag -> K_IDEMPOTENT
+-- On K_INT reduce production idempotent_flag -> K_IDEMPOTENT
+-- On K_FLOAT reduce production idempotent_flag -> K_IDEMPOTENT
+-- On K_DOUBLE reduce production idempotent_flag -> K_IDEMPOTENT
+-- On K_BYTE reduce production idempotent_flag -> K_IDEMPOTENT
+-- On K_BOOL reduce production idempotent_flag -> K_IDEMPOTENT
+-- On IDENT reduce production idempotent_flag -> K_IDEMPOTENT
+-- On DCOLON reduce production idempotent_flag -> K_IDEMPOTENT
+
+State 101:
+op_typ -> meta_data_opt idempotent_flag . typ_name [ IDENT ]
+-- On K_VOID shift to state 43
+-- On K_STRING shift to state 44
+-- On K_SHORT shift to state 45
+-- On K_LONG shift to state 46
+-- On K_INT shift to state 47
+-- On K_FLOAT shift to state 48
+-- On K_DOUBLE shift to state 49
+-- On K_BYTE shift to state 50
+-- On K_BOOL shift to state 51
+-- On IDENT shift to state 33
+-- On DCOLON shift to state 37
+-- On typ_name shift to state 102
+-- On rel_name shift to state 39
+-- On name shift to state 53
+
+State 102:
+op_typ -> meta_data_opt idempotent_flag typ_name . [ IDENT ]
+-- On IDENT reduce production op_typ -> meta_data_opt idempotent_flag typ_name
+
+State 103:
+intf_members -> operation_member intf_members . [ RBRACE ]
+-- On RBRACE reduce production intf_members -> operation_member intf_members
+
+State 104:
+intf_def_opt -> intf_extends_clause_opt LBRACE intf_members . RBRACE [ SEMI ]
+-- On RBRACE shift to state 105
+
+State 105:
+intf_def_opt -> intf_extends_clause_opt LBRACE intf_members RBRACE . [ SEMI ]
+-- On SEMI reduce production intf_def_opt -> intf_extends_clause_opt LBRACE intf_members RBRACE
+
+State 106:
+def -> meta_data_opt local_flag K_INTERFACE IDENT intf_def_opt . [ SEMI ]
+-- On SEMI reduce production def -> meta_data_opt local_flag K_INTERFACE IDENT intf_def_opt
+
+State 107:
+def -> meta_data_opt local_flag K_EXCEPTION . IDENT exn_def_opt [ SEMI ]
+-- On IDENT shift to state 108
+
+State 108:
+def -> meta_data_opt local_flag K_EXCEPTION IDENT . exn_def_opt [ SEMI ]
+-- On K_EXTENDS shift to state 109
+-- On single_extends_clause_opt shift to state 111
+-- On exn_def_opt shift to state 117
+-- On SEMI reduce production exn_def_opt -> 
+-- On LBRACE reduce production single_extends_clause_opt -> 
+
+State 109:
+single_extends_clause_opt -> K_EXTENDS . name [ LBRACE K_IMPLEMENTS ]
+-- On IDENT shift to state 33
+-- On DCOLON shift to state 37
+-- On rel_name shift to state 39
+-- On name shift to state 110
+
+State 110:
+single_extends_clause_opt -> K_EXTENDS name . [ LBRACE K_IMPLEMENTS ]
+-- On LBRACE reduce production single_extends_clause_opt -> K_EXTENDS name
+-- On K_IMPLEMENTS reduce production single_extends_clause_opt -> K_EXTENDS name
+
+State 111:
+exn_def_opt -> single_extends_clause_opt . LBRACE exn_members RBRACE [ SEMI ]
+-- On LBRACE shift to state 112
+
+State 112:
+exn_def_opt -> single_extends_clause_opt LBRACE . exn_members RBRACE [ SEMI ]
+-- On LBRACK shift to state 9
+-- On typ shift to state 59
+-- On meta_data_opt shift to state 42
+-- On exn_members shift to state 113
+-- On data_member shift to state 115
+-- On RBRACE reduce production exn_members -> 
+-- On K_VOID reduce production meta_data_opt -> 
+-- On K_STRING reduce production meta_data_opt -> 
+-- On K_SHORT reduce production meta_data_opt -> 
+-- On K_LONG reduce production meta_data_opt -> 
+-- On K_INT reduce production meta_data_opt -> 
+-- On K_FLOAT reduce production meta_data_opt -> 
+-- On K_DOUBLE reduce production meta_data_opt -> 
+-- On K_BYTE reduce production meta_data_opt -> 
+-- On K_BOOL reduce production meta_data_opt -> 
+-- On IDENT reduce production meta_data_opt -> 
+-- On DCOLON reduce production meta_data_opt -> 
+
+State 113:
+exn_def_opt -> single_extends_clause_opt LBRACE exn_members . RBRACE [ SEMI ]
+-- On RBRACE shift to state 114
+
+State 114:
+exn_def_opt -> single_extends_clause_opt LBRACE exn_members RBRACE . [ SEMI ]
+-- On SEMI reduce production exn_def_opt -> single_extends_clause_opt LBRACE exn_members RBRACE
+
+State 115:
+exn_members -> data_member . exn_members [ RBRACE ]
+-- On LBRACK shift to state 9
+-- On typ shift to state 59
+-- On meta_data_opt shift to state 42
+-- On exn_members shift to state 116
+-- On data_member shift to state 115
+-- On RBRACE reduce production exn_members -> 
+-- On K_VOID reduce production meta_data_opt -> 
+-- On K_STRING reduce production meta_data_opt -> 
+-- On K_SHORT reduce production meta_data_opt -> 
+-- On K_LONG reduce production meta_data_opt -> 
+-- On K_INT reduce production meta_data_opt -> 
+-- On K_FLOAT reduce production meta_data_opt -> 
+-- On K_DOUBLE reduce production meta_data_opt -> 
+-- On K_BYTE reduce production meta_data_opt -> 
+-- On K_BOOL reduce production meta_data_opt -> 
+-- On IDENT reduce production meta_data_opt -> 
+-- On DCOLON reduce production meta_data_opt -> 
+
+State 116:
+exn_members -> data_member exn_members . [ RBRACE ]
+-- On RBRACE reduce production exn_members -> data_member exn_members
+
+State 117:
+def -> meta_data_opt local_flag K_EXCEPTION IDENT exn_def_opt . [ SEMI ]
+-- On SEMI reduce production def -> meta_data_opt local_flag K_EXCEPTION IDENT exn_def_opt
+
+State 118:
+def -> meta_data_opt local_flag K_ENUM . IDENT LBRACE enum_list RBRACE [ SEMI ]
+-- On IDENT shift to state 119
+
+State 119:
+def -> meta_data_opt local_flag K_ENUM IDENT . LBRACE enum_list RBRACE [ SEMI ]
+-- On LBRACE shift to state 120
+
+State 120:
+def -> meta_data_opt local_flag K_ENUM IDENT LBRACE . enum_list RBRACE [ SEMI ]
+-- On IDENT shift to state 121
+-- On enum_list shift to state 124
+
+State 121:
+enum_list -> IDENT . [ RBRACE ]
+enum_list -> IDENT . COMMA enum_list [ RBRACE ]
+-- On COMMA shift to state 122
+-- On RBRACE reduce production enum_list -> IDENT
+
+State 122:
+enum_list -> IDENT COMMA . enum_list [ RBRACE ]
+-- On IDENT shift to state 121
+-- On enum_list shift to state 123
+
+State 123:
+enum_list -> IDENT COMMA enum_list . [ RBRACE ]
+-- On RBRACE reduce production enum_list -> IDENT COMMA enum_list
+
+State 124:
+def -> meta_data_opt local_flag K_ENUM IDENT LBRACE enum_list . RBRACE [ SEMI ]
+-- On RBRACE shift to state 125
+
+State 125:
+def -> meta_data_opt local_flag K_ENUM IDENT LBRACE enum_list RBRACE . [ SEMI ]
+-- On SEMI reduce production def -> meta_data_opt local_flag K_ENUM IDENT LBRACE enum_list RBRACE
+
+State 126:
+def -> meta_data_opt local_flag K_DICTIONARY . LANGLE typ COMMA typ RANGLE IDENT [ SEMI ]
+-- On LANGLE shift to state 127
+
+State 127:
+def -> meta_data_opt local_flag K_DICTIONARY LANGLE . typ COMMA typ RANGLE IDENT [ SEMI ]
+-- On LBRACK shift to state 9
+-- On typ shift to state 128
+-- On meta_data_opt shift to state 42
+-- On K_VOID reduce production meta_data_opt -> 
+-- On K_STRING reduce production meta_data_opt -> 
+-- On K_SHORT reduce production meta_data_opt -> 
+-- On K_LONG reduce production meta_data_opt -> 
+-- On K_INT reduce production meta_data_opt -> 
+-- On K_FLOAT reduce production meta_data_opt -> 
+-- On K_DOUBLE reduce production meta_data_opt -> 
+-- On K_BYTE reduce production meta_data_opt -> 
+-- On K_BOOL reduce production meta_data_opt -> 
+-- On IDENT reduce production meta_data_opt -> 
+-- On DCOLON reduce production meta_data_opt -> 
+
+State 128:
+def -> meta_data_opt local_flag K_DICTIONARY LANGLE typ . COMMA typ RANGLE IDENT [ SEMI ]
+-- On COMMA shift to state 129
+
+State 129:
+def -> meta_data_opt local_flag K_DICTIONARY LANGLE typ COMMA . typ RANGLE IDENT [ SEMI ]
+-- On LBRACK shift to state 9
+-- On typ shift to state 130
+-- On meta_data_opt shift to state 42
+-- On K_VOID reduce production meta_data_opt -> 
+-- On K_STRING reduce production meta_data_opt -> 
+-- On K_SHORT reduce production meta_data_opt -> 
+-- On K_LONG reduce production meta_data_opt -> 
+-- On K_INT reduce production meta_data_opt -> 
+-- On K_FLOAT reduce production meta_data_opt -> 
+-- On K_DOUBLE reduce production meta_data_opt -> 
+-- On K_BYTE reduce production meta_data_opt -> 
+-- On K_BOOL reduce production meta_data_opt -> 
+-- On IDENT reduce production meta_data_opt -> 
+-- On DCOLON reduce production meta_data_opt -> 
+
+State 130:
+def -> meta_data_opt local_flag K_DICTIONARY LANGLE typ COMMA typ . RANGLE IDENT [ SEMI ]
+-- On RANGLE shift to state 131
+
+State 131:
+def -> meta_data_opt local_flag K_DICTIONARY LANGLE typ COMMA typ RANGLE . IDENT [ SEMI ]
+-- On IDENT shift to state 132
+
+State 132:
+def -> meta_data_opt local_flag K_DICTIONARY LANGLE typ COMMA typ RANGLE IDENT . [ SEMI ]
+-- On SEMI reduce production def -> meta_data_opt local_flag K_DICTIONARY LANGLE typ COMMA typ RANGLE IDENT
+
+State 133:
+def -> meta_data_opt local_flag K_CLASS . IDENT class_def_opt [ SEMI ]
+-- On IDENT shift to state 134
+
+State 134:
+def -> meta_data_opt local_flag K_CLASS IDENT . class_def_opt [ SEMI ]
+-- On K_EXTENDS shift to state 109
+-- On single_extends_clause_opt shift to state 135
+-- On class_def_opt shift to state 154
+-- On SEMI reduce production class_def_opt -> 
+-- On LBRACE reduce production single_extends_clause_opt -> 
+-- On K_IMPLEMENTS reduce production single_extends_clause_opt -> 
+
+State 135:
+class_def_opt -> single_extends_clause_opt . implements_clause_opt LBRACE class_members RBRACE [ SEMI ]
+-- On K_IMPLEMENTS shift to state 136
+-- On implements_clause_opt shift to state 138
+-- On LBRACE reduce production implements_clause_opt -> 
+
+State 136:
+implements_clause_opt -> K_IMPLEMENTS . name_list [ LBRACE ]
+-- On IDENT shift to state 33
+-- On DCOLON shift to state 37
+-- On rel_name shift to state 39
+-- On name_list shift to state 137
+-- On name shift to state 76
+
+State 137:
+implements_clause_opt -> K_IMPLEMENTS name_list . [ LBRACE ]
+-- On LBRACE reduce production implements_clause_opt -> K_IMPLEMENTS name_list
+
+State 138:
+class_def_opt -> single_extends_clause_opt implements_clause_opt . LBRACE class_members RBRACE [ SEMI ]
+-- On LBRACE shift to state 139
+
+State 139:
+class_def_opt -> single_extends_clause_opt implements_clause_opt LBRACE . class_members RBRACE [ SEMI ]
+-- On LBRACK shift to state 9
+-- On op_typ shift to state 140
+-- On meta_data_opt shift to state 99
+-- On data_or_operation_member shift to state 149
+-- On class_members shift to state 150
+-- On class_member shift to state 152
+-- On RBRACE reduce production class_members -> 
+-- On K_VOID reduce production meta_data_opt -> 
+-- On K_STRING reduce production meta_data_opt -> 
+-- On K_SHORT reduce production meta_data_opt -> 
+-- On K_LONG reduce production meta_data_opt -> 
+-- On K_INT reduce production meta_data_opt -> 
+-- On K_IDEMPOTENT reduce production meta_data_opt -> 
+-- On K_FLOAT reduce production meta_data_opt -> 
+-- On K_DOUBLE reduce production meta_data_opt -> 
+-- On K_BYTE reduce production meta_data_opt -> 
+-- On K_BOOL reduce production meta_data_opt -> 
+-- On IDENT reduce production meta_data_opt -> 
+-- On DCOLON reduce production meta_data_opt -> 
+
+State 140:
+data_or_operation_member -> op_typ . IDENT data_or_operation_cont [ RBRACE LBRACK K_VOID K_STRING K_SHORT K_LONG K_INT K_IDEMPOTENT K_FLOAT K_DOUBLE K_BYTE K_BOOL IDENT DCOLON ]
+-- On IDENT shift to state 141
+
+State 141:
+data_or_operation_member -> op_typ IDENT . data_or_operation_cont [ RBRACE LBRACK K_VOID K_STRING K_SHORT K_LONG K_INT K_IDEMPOTENT K_FLOAT K_DOUBLE K_BYTE K_BOOL IDENT DCOLON ]
+-- On SEMI shift to state 142
+-- On LPAREN shift to state 143
+-- On data_or_operation_cont shift to state 148
+
+State 142:
+data_or_operation_cont -> SEMI . [ RBRACE LBRACK K_VOID K_STRING K_SHORT K_LONG K_INT K_IDEMPOTENT K_FLOAT K_DOUBLE K_BYTE K_BOOL IDENT DCOLON ]
+-- On RBRACE reduce production data_or_operation_cont -> SEMI
+-- On LBRACK reduce production data_or_operation_cont -> SEMI
+-- On K_VOID reduce production data_or_operation_cont -> SEMI
+-- On K_STRING reduce production data_or_operation_cont -> SEMI
+-- On K_SHORT reduce production data_or_operation_cont -> SEMI
+-- On K_LONG reduce production data_or_operation_cont -> SEMI
+-- On K_INT reduce production data_or_operation_cont -> SEMI
+-- On K_IDEMPOTENT reduce production data_or_operation_cont -> SEMI
+-- On K_FLOAT reduce production data_or_operation_cont -> SEMI
+-- On K_DOUBLE reduce production data_or_operation_cont -> SEMI
+-- On K_BYTE reduce production data_or_operation_cont -> SEMI
+-- On K_BOOL reduce production data_or_operation_cont -> SEMI
+-- On IDENT reduce production data_or_operation_cont -> SEMI
+-- On DCOLON reduce production data_or_operation_cont -> SEMI
+
+State 143:
+data_or_operation_cont -> LPAREN . params RPAREN throws_clause_opt SEMI [ RBRACE LBRACK K_VOID K_STRING K_SHORT K_LONG K_INT K_IDEMPOTENT K_FLOAT K_DOUBLE K_BYTE K_BOOL IDENT DCOLON ]
+-- On K_OUT shift to state 85
+-- On params1 shift to state 86
+-- On params shift to state 144
+-- On param shift to state 93
+-- On out_flag shift to state 96
+-- On RPAREN reduce production params -> 
+-- On LBRACK reduce production out_flag -> 
+-- On K_VOID reduce production out_flag -> 
+-- On K_STRING reduce production out_flag -> 
+-- On K_SHORT reduce production out_flag -> 
+-- On K_LONG reduce production out_flag -> 
+-- On K_INT reduce production out_flag -> 
+-- On K_FLOAT reduce production out_flag -> 
+-- On K_DOUBLE reduce production out_flag -> 
+-- On K_BYTE reduce production out_flag -> 
+-- On K_BOOL reduce production out_flag -> 
+-- On IDENT reduce production out_flag -> 
+-- On DCOLON reduce production out_flag -> 
+
+State 144:
+data_or_operation_cont -> LPAREN params . RPAREN throws_clause_opt SEMI [ RBRACE LBRACK K_VOID K_STRING K_SHORT K_LONG K_INT K_IDEMPOTENT K_FLOAT K_DOUBLE K_BYTE K_BOOL IDENT DCOLON ]
+-- On RPAREN shift to state 145
+
+State 145:
+data_or_operation_cont -> LPAREN params RPAREN . throws_clause_opt SEMI [ RBRACE LBRACK K_VOID K_STRING K_SHORT K_LONG K_INT K_IDEMPOTENT K_FLOAT K_DOUBLE K_BYTE K_BOOL IDENT DCOLON ]
+-- On K_THROWS shift to state 89
+-- On throws_clause_opt shift to state 146
+-- On SEMI reduce production throws_clause_opt -> 
+
+State 146:
+data_or_operation_cont -> LPAREN params RPAREN throws_clause_opt . SEMI [ RBRACE LBRACK K_VOID K_STRING K_SHORT K_LONG K_INT K_IDEMPOTENT K_FLOAT K_DOUBLE K_BYTE K_BOOL IDENT DCOLON ]
+-- On SEMI shift to state 147
+
+State 147:
+data_or_operation_cont -> LPAREN params RPAREN throws_clause_opt SEMI . [ RBRACE LBRACK K_VOID K_STRING K_SHORT K_LONG K_INT K_IDEMPOTENT K_FLOAT K_DOUBLE K_BYTE K_BOOL IDENT DCOLON ]
+-- On RBRACE reduce production data_or_operation_cont -> LPAREN params RPAREN throws_clause_opt SEMI
+-- On LBRACK reduce production data_or_operation_cont -> LPAREN params RPAREN throws_clause_opt SEMI
+-- On K_VOID reduce production data_or_operation_cont -> LPAREN params RPAREN throws_clause_opt SEMI
+-- On K_STRING reduce production data_or_operation_cont -> LPAREN params RPAREN throws_clause_opt SEMI
+-- On K_SHORT reduce production data_or_operation_cont -> LPAREN params RPAREN throws_clause_opt SEMI
+-- On K_LONG reduce production data_or_operation_cont -> LPAREN params RPAREN throws_clause_opt SEMI
+-- On K_INT reduce production data_or_operation_cont -> LPAREN params RPAREN throws_clause_opt SEMI
+-- On K_IDEMPOTENT reduce production data_or_operation_cont -> LPAREN params RPAREN throws_clause_opt SEMI
+-- On K_FLOAT reduce production data_or_operation_cont -> LPAREN params RPAREN throws_clause_opt SEMI
+-- On K_DOUBLE reduce production data_or_operation_cont -> LPAREN params RPAREN throws_clause_opt SEMI
+-- On K_BYTE reduce production data_or_operation_cont -> LPAREN params RPAREN throws_clause_opt SEMI
+-- On K_BOOL reduce production data_or_operation_cont -> LPAREN params RPAREN throws_clause_opt SEMI
+-- On IDENT reduce production data_or_operation_cont -> LPAREN params RPAREN throws_clause_opt SEMI
+-- On DCOLON reduce production data_or_operation_cont -> LPAREN params RPAREN throws_clause_opt SEMI
+
+State 148:
+data_or_operation_member -> op_typ IDENT data_or_operation_cont . [ RBRACE LBRACK K_VOID K_STRING K_SHORT K_LONG K_INT K_IDEMPOTENT K_FLOAT K_DOUBLE K_BYTE K_BOOL IDENT DCOLON ]
+-- On RBRACE reduce production data_or_operation_member -> op_typ IDENT data_or_operation_cont
+-- On LBRACK reduce production data_or_operation_member -> op_typ IDENT data_or_operation_cont
+-- On K_VOID reduce production data_or_operation_member -> op_typ IDENT data_or_operation_cont
+-- On K_STRING reduce production data_or_operation_member -> op_typ IDENT data_or_operation_cont
+-- On K_SHORT reduce production data_or_operation_member -> op_typ IDENT data_or_operation_cont
+-- On K_LONG reduce production data_or_operation_member -> op_typ IDENT data_or_operation_cont
+-- On K_INT reduce production data_or_operation_member -> op_typ IDENT data_or_operation_cont
+-- On K_IDEMPOTENT reduce production data_or_operation_member -> op_typ IDENT data_or_operation_cont
+-- On K_FLOAT reduce production data_or_operation_member -> op_typ IDENT data_or_operation_cont
+-- On K_DOUBLE reduce production data_or_operation_member -> op_typ IDENT data_or_operation_cont
+-- On K_BYTE reduce production data_or_operation_member -> op_typ IDENT data_or_operation_cont
+-- On K_BOOL reduce production data_or_operation_member -> op_typ IDENT data_or_operation_cont
+-- On IDENT reduce production data_or_operation_member -> op_typ IDENT data_or_operation_cont
+-- On DCOLON reduce production data_or_operation_member -> op_typ IDENT data_or_operation_cont
+
+State 149:
+class_member -> data_or_operation_member . [ RBRACE LBRACK K_VOID K_STRING K_SHORT K_LONG K_INT K_IDEMPOTENT K_FLOAT K_DOUBLE K_BYTE K_BOOL IDENT DCOLON ]
+-- On RBRACE reduce production class_member -> data_or_operation_member
+-- On LBRACK reduce production class_member -> data_or_operation_member
+-- On K_VOID reduce production class_member -> data_or_operation_member
+-- On K_STRING reduce production class_member -> data_or_operation_member
+-- On K_SHORT reduce production class_member -> data_or_operation_member
+-- On K_LONG reduce production class_member -> data_or_operation_member
+-- On K_INT reduce production class_member -> data_or_operation_member
+-- On K_IDEMPOTENT reduce production class_member -> data_or_operation_member
+-- On K_FLOAT reduce production class_member -> data_or_operation_member
+-- On K_DOUBLE reduce production class_member -> data_or_operation_member
+-- On K_BYTE reduce production class_member -> data_or_operation_member
+-- On K_BOOL reduce production class_member -> data_or_operation_member
+-- On IDENT reduce production class_member -> data_or_operation_member
+-- On DCOLON reduce production class_member -> data_or_operation_member
+
+State 150:
+class_def_opt -> single_extends_clause_opt implements_clause_opt LBRACE class_members . RBRACE [ SEMI ]
+-- On RBRACE shift to state 151
+
+State 151:
+class_def_opt -> single_extends_clause_opt implements_clause_opt LBRACE class_members RBRACE . [ SEMI ]
+-- On SEMI reduce production class_def_opt -> single_extends_clause_opt implements_clause_opt LBRACE class_members RBRACE
+
+State 152:
+class_members -> class_member . class_members [ RBRACE ]
+-- On LBRACK shift to state 9
+-- On op_typ shift to state 140
+-- On meta_data_opt shift to state 99
+-- On data_or_operation_member shift to state 149
+-- On class_members shift to state 153
+-- On class_member shift to state 152
+-- On RBRACE reduce production class_members -> 
+-- On K_VOID reduce production meta_data_opt -> 
+-- On K_STRING reduce production meta_data_opt -> 
+-- On K_SHORT reduce production meta_data_opt -> 
+-- On K_LONG reduce production meta_data_opt -> 
+-- On K_INT reduce production meta_data_opt -> 
+-- On K_IDEMPOTENT reduce production meta_data_opt -> 
+-- On K_FLOAT reduce production meta_data_opt -> 
+-- On K_DOUBLE reduce production meta_data_opt -> 
+-- On K_BYTE reduce production meta_data_opt -> 
+-- On K_BOOL reduce production meta_data_opt -> 
+-- On IDENT reduce production meta_data_opt -> 
+-- On DCOLON reduce production meta_data_opt -> 
+
+State 153:
+class_members -> class_member class_members . [ RBRACE ]
+-- On RBRACE reduce production class_members -> class_member class_members
+
+State 154:
+def -> meta_data_opt local_flag K_CLASS IDENT class_def_opt . [ SEMI ]
+-- On SEMI reduce production def -> meta_data_opt local_flag K_CLASS IDENT class_def_opt
+
+State 155:
+start -> defs . EOF [ # ]
+-- On EOF shift to state 156
+
+State 156:
+start -> defs EOF . [ # ]
+-- On # reduce production start -> defs EOF
+

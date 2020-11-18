@@ -1,0 +1,195 @@
+State 0:
+main' -> . main [ # ]
+-- On IMPORT shift to state 1
+-- On EOF shift to state 22
+-- On COQ shift to state 23
+-- On CAMLI shift to state 25
+-- On CAML shift to state 27
+-- On main shift to state 29
+-- On header_def shift to state 30
+-- On coll_def shift to state 32
+
+State 1:
+coll_def -> IMPORT . FOR ID limport IMPORT [ IMPORT EOF COQ CAMLI CAML ]
+-- On FOR shift to state 2
+
+State 2:
+coll_def -> IMPORT FOR . ID limport IMPORT [ IMPORT EOF COQ CAMLI CAML ]
+-- On ID shift to state 3
+
+State 3:
+coll_def -> IMPORT FOR ID . limport IMPORT [ IMPORT EOF COQ CAMLI CAML ]
+-- On ID shift to state 4
+-- On END shift to state 14
+-- On limport shift to state 20
+
+State 4:
+limport -> ID . idlist def SEP limport [ IMPORT ]
+limport -> ID . idlist def LINK def SEP limport [ IMPORT ]
+-- On ID shift to state 5
+-- On EQ shift to state 6
+-- On idlist shift to state 8
+
+State 5:
+idlist -> ID . idlist [ ID DEF ]
+-- On ID shift to state 5
+-- On EQ shift to state 6
+-- On idlist shift to state 7
+
+State 6:
+idlist -> EQ . [ ID DEF ]
+-- On ID reduce production idlist -> EQ
+-- On DEF reduce production idlist -> EQ
+
+State 7:
+idlist -> ID idlist . [ ID DEF ]
+-- On ID reduce production idlist -> ID idlist
+-- On DEF reduce production idlist -> ID idlist
+
+State 8:
+limport -> ID idlist . def SEP limport [ IMPORT ]
+limport -> ID idlist . def LINK def SEP limport [ IMPORT ]
+-- On ID shift to state 9
+-- On DEF shift to state 11
+-- On def shift to state 12
+
+State 9:
+def -> ID . DEF [ SEP LINK ]
+-- On DEF shift to state 10
+
+State 10:
+def -> ID DEF . [ SEP LINK ]
+-- On SEP reduce production def -> ID DEF
+-- On LINK reduce production def -> ID DEF
+
+State 11:
+def -> DEF . [ SEP LINK ]
+-- On SEP reduce production def -> DEF
+-- On LINK reduce production def -> DEF
+
+State 12:
+limport -> ID idlist def . SEP limport [ IMPORT ]
+limport -> ID idlist def . LINK def SEP limport [ IMPORT ]
+-- On SEP shift to state 13
+-- On LINK shift to state 16
+
+State 13:
+limport -> ID idlist def SEP . limport [ IMPORT ]
+-- On ID shift to state 4
+-- On END shift to state 14
+-- On limport shift to state 15
+
+State 14:
+limport -> END . [ IMPORT ]
+-- On IMPORT reduce production limport -> END
+
+State 15:
+limport -> ID idlist def SEP limport . [ IMPORT ]
+-- On IMPORT reduce production limport -> ID idlist def SEP limport
+
+State 16:
+limport -> ID idlist def LINK . def SEP limport [ IMPORT ]
+-- On ID shift to state 9
+-- On DEF shift to state 11
+-- On def shift to state 17
+
+State 17:
+limport -> ID idlist def LINK def . SEP limport [ IMPORT ]
+-- On SEP shift to state 18
+
+State 18:
+limport -> ID idlist def LINK def SEP . limport [ IMPORT ]
+-- On ID shift to state 4
+-- On END shift to state 14
+-- On limport shift to state 19
+
+State 19:
+limport -> ID idlist def LINK def SEP limport . [ IMPORT ]
+-- On IMPORT reduce production limport -> ID idlist def LINK def SEP limport
+
+State 20:
+coll_def -> IMPORT FOR ID limport . IMPORT [ IMPORT EOF COQ CAMLI CAML ]
+-- On IMPORT shift to state 21
+
+State 21:
+coll_def -> IMPORT FOR ID limport IMPORT . [ IMPORT EOF COQ CAMLI CAML ]
+-- On IMPORT reduce production coll_def -> IMPORT FOR ID limport IMPORT
+-- On EOF reduce production coll_def -> IMPORT FOR ID limport IMPORT
+-- On COQ reduce production coll_def -> IMPORT FOR ID limport IMPORT
+-- On CAMLI reduce production coll_def -> IMPORT FOR ID limport IMPORT
+-- On CAML reduce production coll_def -> IMPORT FOR ID limport IMPORT
+
+State 22:
+main -> EOF . [ # ]
+-- On # reduce production main -> EOF
+
+State 23:
+header_def -> COQ . HEADER [ IMPORT EOF COQ CAMLI CAML ]
+-- On HEADER shift to state 24
+
+State 24:
+header_def -> COQ HEADER . [ IMPORT EOF COQ CAMLI CAML ]
+-- On IMPORT reduce production header_def -> COQ HEADER
+-- On EOF reduce production header_def -> COQ HEADER
+-- On COQ reduce production header_def -> COQ HEADER
+-- On CAMLI reduce production header_def -> COQ HEADER
+-- On CAML reduce production header_def -> COQ HEADER
+
+State 25:
+header_def -> CAMLI . HEADER [ IMPORT EOF COQ CAMLI CAML ]
+-- On HEADER shift to state 26
+
+State 26:
+header_def -> CAMLI HEADER . [ IMPORT EOF COQ CAMLI CAML ]
+-- On IMPORT reduce production header_def -> CAMLI HEADER
+-- On EOF reduce production header_def -> CAMLI HEADER
+-- On COQ reduce production header_def -> CAMLI HEADER
+-- On CAMLI reduce production header_def -> CAMLI HEADER
+-- On CAML reduce production header_def -> CAMLI HEADER
+
+State 27:
+header_def -> CAML . HEADER [ IMPORT EOF COQ CAMLI CAML ]
+-- On HEADER shift to state 28
+
+State 28:
+header_def -> CAML HEADER . [ IMPORT EOF COQ CAMLI CAML ]
+-- On IMPORT reduce production header_def -> CAML HEADER
+-- On EOF reduce production header_def -> CAML HEADER
+-- On COQ reduce production header_def -> CAML HEADER
+-- On CAMLI reduce production header_def -> CAML HEADER
+-- On CAML reduce production header_def -> CAML HEADER
+
+State 29:
+main' -> main . [ # ]
+-- On # accept main
+
+State 30:
+main -> header_def . main [ # ]
+-- On IMPORT shift to state 1
+-- On EOF shift to state 22
+-- On COQ shift to state 23
+-- On CAMLI shift to state 25
+-- On CAML shift to state 27
+-- On main shift to state 31
+-- On header_def shift to state 30
+-- On coll_def shift to state 32
+
+State 31:
+main -> header_def main . [ # ]
+-- On # reduce production main -> header_def main
+
+State 32:
+main -> coll_def . main [ # ]
+-- On IMPORT shift to state 1
+-- On EOF shift to state 22
+-- On COQ shift to state 23
+-- On CAMLI shift to state 25
+-- On CAML shift to state 27
+-- On main shift to state 33
+-- On header_def shift to state 30
+-- On coll_def shift to state 32
+
+State 33:
+main -> coll_def main . [ # ]
+-- On # reduce production main -> coll_def main
+

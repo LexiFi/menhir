@@ -1,0 +1,535 @@
+State 0:
+parse_io_module' -> . parse_io_module [ # ]
+-- On Limport shift to state 1
+-- On parse_io_module shift to state 10
+-- On imports shift to state 11
+-- On Lvariable reduce production imports -> 
+-- On Lprimitive reduce production imports -> 
+-- On Llambda reduce production imports -> 
+-- On Lident reduce production imports -> 
+-- On Lexport reduce production imports -> 
+-- On Ldeclare reduce production imports -> 
+
+State 1:
+imports -> Limport . Lident importlist Lperiod imports [ Lvariable Lprimitive Llambda Lident Lexport Ldeclare ]
+-- On Lident shift to state 2
+
+State 2:
+imports -> Limport Lident . importlist Lperiod imports [ Lvariable Lprimitive Llambda Lident Lexport Ldeclare ]
+-- On Lcolon shift to state 3
+-- On importlist shift to state 7
+-- On Lperiod reduce production importlist -> 
+
+State 3:
+importlist -> Lcolon . idlist [ Lperiod ]
+-- On Lident shift to state 4
+-- On idlist shift to state 6
+-- On Lperiod reduce production idlist -> 
+
+State 4:
+idlist -> Lident . idlist [ Lstring Lsemi Lperiod Llpar Lint ]
+-- On Lident shift to state 4
+-- On idlist shift to state 5
+-- On Lstring reduce production idlist -> 
+-- On Lsemi reduce production idlist -> 
+-- On Lperiod reduce production idlist -> 
+-- On Llpar reduce production idlist -> 
+-- On Lint reduce production idlist -> 
+
+State 5:
+idlist -> Lident idlist . [ Lstring Lsemi Lperiod Llpar Lint ]
+-- On Lstring reduce production idlist -> Lident idlist
+-- On Lsemi reduce production idlist -> Lident idlist
+-- On Lperiod reduce production idlist -> Lident idlist
+-- On Llpar reduce production idlist -> Lident idlist
+-- On Lint reduce production idlist -> Lident idlist
+
+State 6:
+importlist -> Lcolon idlist . [ Lperiod ]
+-- On Lperiod reduce production importlist -> Lcolon idlist
+
+State 7:
+imports -> Limport Lident importlist . Lperiod imports [ Lvariable Lprimitive Llambda Lident Lexport Ldeclare ]
+-- On Lperiod shift to state 8
+
+State 8:
+imports -> Limport Lident importlist Lperiod . imports [ Lvariable Lprimitive Llambda Lident Lexport Ldeclare ]
+-- On Limport shift to state 1
+-- On imports shift to state 9
+-- On Lvariable reduce production imports -> 
+-- On Lprimitive reduce production imports -> 
+-- On Llambda reduce production imports -> 
+-- On Lident reduce production imports -> 
+-- On Lexport reduce production imports -> 
+-- On Ldeclare reduce production imports -> 
+
+State 9:
+imports -> Limport Lident importlist Lperiod imports . [ Lvariable Lprimitive Llambda Lident Lexport Ldeclare ]
+-- On Lvariable reduce production imports -> Limport Lident importlist Lperiod imports
+-- On Lprimitive reduce production imports -> Limport Lident importlist Lperiod imports
+-- On Llambda reduce production imports -> Limport Lident importlist Lperiod imports
+-- On Lident reduce production imports -> Limport Lident importlist Lperiod imports
+-- On Lexport reduce production imports -> Limport Lident importlist Lperiod imports
+-- On Ldeclare reduce production imports -> Limport Lident importlist Lperiod imports
+
+State 10:
+parse_io_module' -> parse_io_module . [ # ]
+-- On # accept parse_io_module
+
+State 11:
+parse_io_module -> imports . export decll expr Lend [ # ]
+-- On Lexport shift to state 12
+-- On export shift to state 15
+-- On Lvariable reduce production export -> 
+-- On Lprimitive reduce production export -> 
+-- On Llambda reduce production export -> 
+-- On Lident reduce production export -> 
+-- On Ldeclare reduce production export -> 
+
+State 12:
+export -> Lexport . idlist Lperiod [ Lvariable Lprimitive Llambda Lident Ldeclare ]
+-- On Lident shift to state 4
+-- On idlist shift to state 13
+-- On Lperiod reduce production idlist -> 
+
+State 13:
+export -> Lexport idlist . Lperiod [ Lvariable Lprimitive Llambda Lident Ldeclare ]
+-- On Lperiod shift to state 14
+
+State 14:
+export -> Lexport idlist Lperiod . [ Lvariable Lprimitive Llambda Lident Ldeclare ]
+-- On Lvariable reduce production export -> Lexport idlist Lperiod
+-- On Lprimitive reduce production export -> Lexport idlist Lperiod
+-- On Llambda reduce production export -> Lexport idlist Lperiod
+-- On Lident reduce production export -> Lexport idlist Lperiod
+-- On Ldeclare reduce production export -> Lexport idlist Lperiod
+
+State 15:
+parse_io_module -> imports export . decll expr Lend [ # ]
+-- On Lvariable shift to state 16
+-- On Lprimitive shift to state 55
+-- On Ldeclare shift to state 60
+-- On decll shift to state 68
+-- On Llambda reduce production decll -> 
+-- On Lident reduce production decll -> 
+
+State 16:
+decll -> Lvariable . Lident Lcolon eatom Lperiod decll [ Llambda Lident ]
+-- On Lident shift to state 17
+
+State 17:
+decll -> Lvariable Lident . Lcolon eatom Lperiod decll [ Llambda Lident ]
+-- On Lcolon shift to state 18
+
+State 18:
+decll -> Lvariable Lident Lcolon . eatom Lperiod decll [ Llambda Lident ]
+-- On Lstring shift to state 19
+-- On Llpar shift to state 20
+-- On Llambda shift to state 21
+-- On Lint shift to state 24
+-- On Lident shift to state 25
+-- On stmt shift to state 27
+-- On expr shift to state 28
+-- On eatom shift to state 53
+-- On atom shift to state 30
+
+State 19:
+atom -> Lstring . [ Lstring Lsemi Lrpar Lperiod Llpar Llambda Lint Lident Lend ]
+-- On Lstring reduce production atom -> Lstring
+-- On Lsemi reduce production atom -> Lstring
+-- On Lrpar reduce production atom -> Lstring
+-- On Lperiod reduce production atom -> Lstring
+-- On Llpar reduce production atom -> Lstring
+-- On Llambda reduce production atom -> Lstring
+-- On Lint reduce production atom -> Lstring
+-- On Lident reduce production atom -> Lstring
+-- On Lend reduce production atom -> Lstring
+
+State 20:
+atom -> Llpar . expr Lrpar [ Lstring Lsemi Lrpar Lperiod Llpar Llambda Lint Lident Lend ]
+-- On Llambda shift to state 21
+-- On Lident shift to state 25
+-- On stmt shift to state 27
+-- On expr shift to state 51
+
+State 21:
+stmt -> Llambda . idlist stmttail [ Lrpar Lperiod Lend ]
+-- On Lident shift to state 4
+-- On idlist shift to state 22
+-- On Lstring reduce production idlist -> 
+-- On Lsemi reduce production idlist -> 
+-- On Llpar reduce production idlist -> 
+-- On Lint reduce production idlist -> 
+
+State 22:
+stmt -> Llambda idlist . stmttail [ Lrpar Lperiod Lend ]
+-- On Lstring shift to state 19
+-- On Lsemi shift to state 23
+-- On Llpar shift to state 20
+-- On Lint shift to state 24
+-- On stmttail shift to state 50
+-- On atom shift to state 35
+
+State 23:
+stmttail -> Lsemi . eatom [ Lrpar Lperiod Lend ]
+-- On Lstring shift to state 19
+-- On Llpar shift to state 20
+-- On Llambda shift to state 21
+-- On Lint shift to state 24
+-- On Lident shift to state 25
+-- On stmt shift to state 27
+-- On expr shift to state 28
+-- On eatom shift to state 49
+-- On atom shift to state 30
+
+State 24:
+atom -> Lint . [ Lstring Lsemi Lrpar Lperiod Llpar Llambda Lint Lident Lend ]
+-- On Lstring reduce production atom -> Lint
+-- On Lsemi reduce production atom -> Lint
+-- On Lrpar reduce production atom -> Lint
+-- On Lperiod reduce production atom -> Lint
+-- On Llpar reduce production atom -> Lint
+-- On Llambda reduce production atom -> Lint
+-- On Lint reduce production atom -> Lint
+-- On Lident reduce production atom -> Lint
+-- On Lend reduce production atom -> Lint
+
+State 25:
+expr -> Lident . paramlist [ Lrpar Lperiod Lend ]
+expr -> Lident . [ Lrpar Lperiod Lend ]
+expr -> Lident . Lputvar patom stmttail [ Lrpar Lperiod Lend ]
+expr -> Lident . Lgetvar Lident stmttail [ Lrpar Lperiod Lend ]
+-- On Lstring shift to state 19
+-- On Lsemi shift to state 26
+-- On Lputvar shift to state 31
+-- On Llpar shift to state 20
+-- On Llambda shift to state 21
+-- On Lint shift to state 24
+-- On Lident shift to state 32
+-- On Lgetvar shift to state 37
+-- On stmt shift to state 40
+-- On patom shift to state 41
+-- On paramlist shift to state 48
+-- On atom shift to state 36
+-- On Lrpar reduce production expr -> Lident
+-- On Lperiod reduce production expr -> Lident
+-- On Lend reduce production expr -> Lident
+
+State 26:
+paramlist -> Lsemi . eatom [ Lrpar Lperiod Lend ]
+-- On Lstring shift to state 19
+-- On Llpar shift to state 20
+-- On Llambda shift to state 21
+-- On Lint shift to state 24
+-- On Lident shift to state 25
+-- On stmt shift to state 27
+-- On expr shift to state 28
+-- On eatom shift to state 29
+-- On atom shift to state 30
+
+State 27:
+expr -> stmt . [ Lrpar Lperiod Lend ]
+-- On Lrpar reduce production expr -> stmt
+-- On Lperiod reduce production expr -> stmt
+-- On Lend reduce production expr -> stmt
+
+State 28:
+eatom -> expr . [ Lrpar Lperiod Lend ]
+-- On Lrpar reduce production eatom -> expr
+-- On Lperiod reduce production eatom -> expr
+-- On Lend reduce production eatom -> expr
+
+State 29:
+paramlist -> Lsemi eatom . [ Lrpar Lperiod Lend ]
+-- On Lrpar reduce production paramlist -> Lsemi eatom
+-- On Lperiod reduce production paramlist -> Lsemi eatom
+-- On Lend reduce production paramlist -> Lsemi eatom
+
+State 30:
+eatom -> atom . [ Lrpar Lperiod Lend ]
+-- On Lrpar reduce production eatom -> atom
+-- On Lperiod reduce production eatom -> atom
+-- On Lend reduce production eatom -> atom
+
+State 31:
+expr -> Lident Lputvar . patom stmttail [ Lrpar Lperiod Lend ]
+-- On Lstring shift to state 19
+-- On Llpar shift to state 20
+-- On Lint shift to state 24
+-- On Lident shift to state 32
+-- On patom shift to state 33
+-- On atom shift to state 36
+
+State 32:
+patom -> Lident . [ Lstring Lsemi Lrpar Lperiod Llpar Llambda Lint Lident Lend ]
+-- On Lstring reduce production patom -> Lident
+-- On Lsemi reduce production patom -> Lident
+-- On Lrpar reduce production patom -> Lident
+-- On Lperiod reduce production patom -> Lident
+-- On Llpar reduce production patom -> Lident
+-- On Llambda reduce production patom -> Lident
+-- On Lint reduce production patom -> Lident
+-- On Lident reduce production patom -> Lident
+-- On Lend reduce production patom -> Lident
+
+State 33:
+expr -> Lident Lputvar patom . stmttail [ Lrpar Lperiod Lend ]
+-- On Lstring shift to state 19
+-- On Lsemi shift to state 23
+-- On Llpar shift to state 20
+-- On Lint shift to state 24
+-- On stmttail shift to state 34
+-- On atom shift to state 35
+
+State 34:
+expr -> Lident Lputvar patom stmttail . [ Lrpar Lperiod Lend ]
+-- On Lrpar reduce production expr -> Lident Lputvar patom stmttail
+-- On Lperiod reduce production expr -> Lident Lputvar patom stmttail
+-- On Lend reduce production expr -> Lident Lputvar patom stmttail
+
+State 35:
+stmttail -> atom . [ Lrpar Lperiod Lend ]
+-- On Lrpar reduce production stmttail -> atom
+-- On Lperiod reduce production stmttail -> atom
+-- On Lend reduce production stmttail -> atom
+
+State 36:
+patom -> atom . [ Lstring Lsemi Lrpar Lperiod Llpar Llambda Lint Lident Lend ]
+-- On Lstring reduce production patom -> atom
+-- On Lsemi reduce production patom -> atom
+-- On Lrpar reduce production patom -> atom
+-- On Lperiod reduce production patom -> atom
+-- On Llpar reduce production patom -> atom
+-- On Llambda reduce production patom -> atom
+-- On Lint reduce production patom -> atom
+-- On Lident reduce production patom -> atom
+-- On Lend reduce production patom -> atom
+
+State 37:
+expr -> Lident Lgetvar . Lident stmttail [ Lrpar Lperiod Lend ]
+-- On Lident shift to state 38
+
+State 38:
+expr -> Lident Lgetvar Lident . stmttail [ Lrpar Lperiod Lend ]
+-- On Lstring shift to state 19
+-- On Lsemi shift to state 23
+-- On Llpar shift to state 20
+-- On Lint shift to state 24
+-- On stmttail shift to state 39
+-- On atom shift to state 35
+
+State 39:
+expr -> Lident Lgetvar Lident stmttail . [ Lrpar Lperiod Lend ]
+-- On Lrpar reduce production expr -> Lident Lgetvar Lident stmttail
+-- On Lperiod reduce production expr -> Lident Lgetvar Lident stmttail
+-- On Lend reduce production expr -> Lident Lgetvar Lident stmttail
+
+State 40:
+paramlist -> stmt . [ Lrpar Lperiod Lend ]
+-- On Lrpar reduce production paramlist -> stmt
+-- On Lperiod reduce production paramlist -> stmt
+-- On Lend reduce production paramlist -> stmt
+
+State 41:
+paramlist -> patom . paramlisttail [ Lrpar Lperiod Lend ]
+-- On Lstring shift to state 19
+-- On Lsemi shift to state 42
+-- On Llpar shift to state 20
+-- On Llambda shift to state 21
+-- On Lint shift to state 24
+-- On Lident shift to state 32
+-- On stmt shift to state 44
+-- On patom shift to state 45
+-- On paramlisttail shift to state 47
+-- On atom shift to state 36
+-- On Lrpar reduce production paramlisttail -> 
+-- On Lperiod reduce production paramlisttail -> 
+-- On Lend reduce production paramlisttail -> 
+
+State 42:
+paramlisttail -> Lsemi . eatom [ Lrpar Lperiod Lend ]
+-- On Lstring shift to state 19
+-- On Llpar shift to state 20
+-- On Llambda shift to state 21
+-- On Lint shift to state 24
+-- On Lident shift to state 25
+-- On stmt shift to state 27
+-- On expr shift to state 28
+-- On eatom shift to state 43
+-- On atom shift to state 30
+
+State 43:
+paramlisttail -> Lsemi eatom . [ Lrpar Lperiod Lend ]
+-- On Lrpar reduce production paramlisttail -> Lsemi eatom
+-- On Lperiod reduce production paramlisttail -> Lsemi eatom
+-- On Lend reduce production paramlisttail -> Lsemi eatom
+
+State 44:
+paramlisttail -> stmt . [ Lrpar Lperiod Lend ]
+-- On Lrpar reduce production paramlisttail -> stmt
+-- On Lperiod reduce production paramlisttail -> stmt
+-- On Lend reduce production paramlisttail -> stmt
+
+State 45:
+paramlisttail -> patom . paramlisttail [ Lrpar Lperiod Lend ]
+-- On Lstring shift to state 19
+-- On Lsemi shift to state 42
+-- On Llpar shift to state 20
+-- On Llambda shift to state 21
+-- On Lint shift to state 24
+-- On Lident shift to state 32
+-- On stmt shift to state 44
+-- On patom shift to state 45
+-- On paramlisttail shift to state 46
+-- On atom shift to state 36
+-- On Lrpar reduce production paramlisttail -> 
+-- On Lperiod reduce production paramlisttail -> 
+-- On Lend reduce production paramlisttail -> 
+
+State 46:
+paramlisttail -> patom paramlisttail . [ Lrpar Lperiod Lend ]
+-- On Lrpar reduce production paramlisttail -> patom paramlisttail
+-- On Lperiod reduce production paramlisttail -> patom paramlisttail
+-- On Lend reduce production paramlisttail -> patom paramlisttail
+
+State 47:
+paramlist -> patom paramlisttail . [ Lrpar Lperiod Lend ]
+-- On Lrpar reduce production paramlist -> patom paramlisttail
+-- On Lperiod reduce production paramlist -> patom paramlisttail
+-- On Lend reduce production paramlist -> patom paramlisttail
+
+State 48:
+expr -> Lident paramlist . [ Lrpar Lperiod Lend ]
+-- On Lrpar reduce production expr -> Lident paramlist
+-- On Lperiod reduce production expr -> Lident paramlist
+-- On Lend reduce production expr -> Lident paramlist
+
+State 49:
+stmttail -> Lsemi eatom . [ Lrpar Lperiod Lend ]
+-- On Lrpar reduce production stmttail -> Lsemi eatom
+-- On Lperiod reduce production stmttail -> Lsemi eatom
+-- On Lend reduce production stmttail -> Lsemi eatom
+
+State 50:
+stmt -> Llambda idlist stmttail . [ Lrpar Lperiod Lend ]
+-- On Lrpar reduce production stmt -> Llambda idlist stmttail
+-- On Lperiod reduce production stmt -> Llambda idlist stmttail
+-- On Lend reduce production stmt -> Llambda idlist stmttail
+
+State 51:
+atom -> Llpar expr . Lrpar [ Lstring Lsemi Lrpar Lperiod Llpar Llambda Lint Lident Lend ]
+-- On Lrpar shift to state 52
+
+State 52:
+atom -> Llpar expr Lrpar . [ Lstring Lsemi Lrpar Lperiod Llpar Llambda Lint Lident Lend ]
+-- On Lstring reduce production atom -> Llpar expr Lrpar
+-- On Lsemi reduce production atom -> Llpar expr Lrpar
+-- On Lrpar reduce production atom -> Llpar expr Lrpar
+-- On Lperiod reduce production atom -> Llpar expr Lrpar
+-- On Llpar reduce production atom -> Llpar expr Lrpar
+-- On Llambda reduce production atom -> Llpar expr Lrpar
+-- On Lint reduce production atom -> Llpar expr Lrpar
+-- On Lident reduce production atom -> Llpar expr Lrpar
+-- On Lend reduce production atom -> Llpar expr Lrpar
+
+State 53:
+decll -> Lvariable Lident Lcolon eatom . Lperiod decll [ Llambda Lident ]
+-- On Lperiod shift to state 54
+
+State 54:
+decll -> Lvariable Lident Lcolon eatom Lperiod . decll [ Llambda Lident ]
+-- On Lvariable shift to state 16
+-- On Lprimitive shift to state 55
+-- On Ldeclare shift to state 60
+-- On decll shift to state 67
+-- On Llambda reduce production decll -> 
+-- On Lident reduce production decll -> 
+
+State 55:
+decll -> Lprimitive . Lident Lcolon Lident Lperiod decll [ Llambda Lident ]
+-- On Lident shift to state 56
+
+State 56:
+decll -> Lprimitive Lident . Lcolon Lident Lperiod decll [ Llambda Lident ]
+-- On Lcolon shift to state 57
+
+State 57:
+decll -> Lprimitive Lident Lcolon . Lident Lperiod decll [ Llambda Lident ]
+-- On Lident shift to state 58
+
+State 58:
+decll -> Lprimitive Lident Lcolon Lident . Lperiod decll [ Llambda Lident ]
+-- On Lperiod shift to state 59
+
+State 59:
+decll -> Lprimitive Lident Lcolon Lident Lperiod . decll [ Llambda Lident ]
+-- On Lvariable shift to state 16
+-- On Lprimitive shift to state 55
+-- On Ldeclare shift to state 60
+-- On decll shift to state 66
+-- On Llambda reduce production decll -> 
+-- On Lident reduce production decll -> 
+
+State 60:
+decll -> Ldeclare . Lident Lcolon eatom Lperiod decll [ Llambda Lident ]
+-- On Lident shift to state 61
+
+State 61:
+decll -> Ldeclare Lident . Lcolon eatom Lperiod decll [ Llambda Lident ]
+-- On Lcolon shift to state 62
+
+State 62:
+decll -> Ldeclare Lident Lcolon . eatom Lperiod decll [ Llambda Lident ]
+-- On Lstring shift to state 19
+-- On Llpar shift to state 20
+-- On Llambda shift to state 21
+-- On Lint shift to state 24
+-- On Lident shift to state 25
+-- On stmt shift to state 27
+-- On expr shift to state 28
+-- On eatom shift to state 63
+-- On atom shift to state 30
+
+State 63:
+decll -> Ldeclare Lident Lcolon eatom . Lperiod decll [ Llambda Lident ]
+-- On Lperiod shift to state 64
+
+State 64:
+decll -> Ldeclare Lident Lcolon eatom Lperiod . decll [ Llambda Lident ]
+-- On Lvariable shift to state 16
+-- On Lprimitive shift to state 55
+-- On Ldeclare shift to state 60
+-- On decll shift to state 65
+-- On Llambda reduce production decll -> 
+-- On Lident reduce production decll -> 
+
+State 65:
+decll -> Ldeclare Lident Lcolon eatom Lperiod decll . [ Llambda Lident ]
+-- On Llambda reduce production decll -> Ldeclare Lident Lcolon eatom Lperiod decll
+-- On Lident reduce production decll -> Ldeclare Lident Lcolon eatom Lperiod decll
+
+State 66:
+decll -> Lprimitive Lident Lcolon Lident Lperiod decll . [ Llambda Lident ]
+-- On Llambda reduce production decll -> Lprimitive Lident Lcolon Lident Lperiod decll
+-- On Lident reduce production decll -> Lprimitive Lident Lcolon Lident Lperiod decll
+
+State 67:
+decll -> Lvariable Lident Lcolon eatom Lperiod decll . [ Llambda Lident ]
+-- On Llambda reduce production decll -> Lvariable Lident Lcolon eatom Lperiod decll
+-- On Lident reduce production decll -> Lvariable Lident Lcolon eatom Lperiod decll
+
+State 68:
+parse_io_module -> imports export decll . expr Lend [ # ]
+-- On Llambda shift to state 21
+-- On Lident shift to state 25
+-- On stmt shift to state 27
+-- On expr shift to state 69
+
+State 69:
+parse_io_module -> imports export decll expr . Lend [ # ]
+-- On Lend shift to state 70
+
+State 70:
+parse_io_module -> imports export decll expr Lend . [ # ]
+-- On # reduce production parse_io_module -> imports export decll expr Lend
+

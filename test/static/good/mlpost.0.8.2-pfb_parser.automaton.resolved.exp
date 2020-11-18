@@ -1,0 +1,90 @@
+State 0:
+enc_main' -> . enc_main [ # ]
+-- On DUMB shift to state 1
+-- On enc_main shift to state 6
+
+State 1:
+enc_main -> DUMB . enc_aux DUMB [ # ]
+-- On NAME_ENCODING shift to state 2
+-- On enc_aux shift to state 4
+-- On DUMB reduce production enc_aux -> 
+
+State 2:
+enc_aux -> NAME_ENCODING . enc_aux [ DUMB ]
+-- On NAME_ENCODING shift to state 2
+-- On enc_aux shift to state 3
+-- On DUMB reduce production enc_aux -> 
+
+State 3:
+enc_aux -> NAME_ENCODING enc_aux . [ DUMB ]
+-- On DUMB reduce production enc_aux -> NAME_ENCODING enc_aux
+
+State 4:
+enc_main -> DUMB enc_aux . DUMB [ # ]
+-- On DUMB shift to state 5
+
+State 5:
+enc_main -> DUMB enc_aux DUMB . [ # ]
+-- On # reduce production enc_main -> DUMB enc_aux DUMB
+
+State 6:
+enc_main' -> enc_main . [ # ]
+-- On # accept enc_main
+
+State 7:
+pfb_human_main' -> . pfb_human_main [ # ]
+-- On DUMB shift to state 8
+-- On pfb_human_main shift to state 18
+
+State 8:
+pfb_human_main -> DUMB . encoding DUMB charstrings DUMB [ # ]
+-- On ID_ENCODING shift to state 9
+-- On encoding shift to state 12
+-- On DUMB reduce production encoding -> 
+
+State 9:
+encoding -> ID_ENCODING . NAME_ENCODING encoding [ DUMB ]
+-- On NAME_ENCODING shift to state 10
+
+State 10:
+encoding -> ID_ENCODING NAME_ENCODING . encoding [ DUMB ]
+-- On ID_ENCODING shift to state 9
+-- On encoding shift to state 11
+-- On DUMB reduce production encoding -> 
+
+State 11:
+encoding -> ID_ENCODING NAME_ENCODING encoding . [ DUMB ]
+-- On DUMB reduce production encoding -> ID_ENCODING NAME_ENCODING encoding
+
+State 12:
+pfb_human_main -> DUMB encoding . DUMB charstrings DUMB [ # ]
+-- On DUMB shift to state 13
+
+State 13:
+pfb_human_main -> DUMB encoding DUMB . charstrings DUMB [ # ]
+-- On NAME_CHARSTRING shift to state 14
+-- On charstrings shift to state 16
+-- On DUMB reduce production charstrings -> 
+
+State 14:
+charstrings -> NAME_CHARSTRING . charstrings [ DUMB ]
+-- On NAME_CHARSTRING shift to state 14
+-- On charstrings shift to state 15
+-- On DUMB reduce production charstrings -> 
+
+State 15:
+charstrings -> NAME_CHARSTRING charstrings . [ DUMB ]
+-- On DUMB reduce production charstrings -> NAME_CHARSTRING charstrings
+
+State 16:
+pfb_human_main -> DUMB encoding DUMB charstrings . DUMB [ # ]
+-- On DUMB shift to state 17
+
+State 17:
+pfb_human_main -> DUMB encoding DUMB charstrings DUMB . [ # ]
+-- On # reduce production pfb_human_main -> DUMB encoding DUMB charstrings DUMB
+
+State 18:
+pfb_human_main' -> pfb_human_main . [ # ]
+-- On # accept pfb_human_main
+
