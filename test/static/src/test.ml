@@ -1,5 +1,6 @@
-(* This script produces the file [dune.auto], which describes the tests we
-   would like dune to execute. *)
+(* This script produces a file [dune.auto], which describes the tests we
+   would like dune to execute. It is used to produce [../good/dune.auto]
+   and [../bad/dune.auto]. *)
 
 (* Note: the contents of the .conflicts and .automaton files are not tested. *)
 
@@ -13,43 +14,53 @@ open List
 open Printf
 open Auxiliary
 
+(* (Unused.)
 let up =
   Filename.parent_dir_name
 let (/) =
   Filename.concat
 let (//) directory filenames =
   map (fun filename -> directory/filename) filenames
+ *)
 
 (* -------------------------------------------------------------------------- *)
 
 (* Settings. *)
 
+module Settings = struct
+
 let extra : string list ref =
   ref []
 
+let polarity : bool ref =
+  ref true
+
+let source : string ref =
+  ref "."
+
 let usage =
-  sprintf "Usage: %s\n" argv.(0)
+  sprintf "Usage: %s <options> <directory>\n" argv.(0)
 
 let spec = Arg.align [
   "--extra-flags",     Arg.String (fun flag -> extra := flag :: !extra),
                        "<string> specify extra flags for Menhir";
+  "--polarity",        Arg.Bool ((:=) polarity),
+                       "<bool> is this is a positive or negative test suite?";
 ]
 
 let () =
-  Arg.parse spec (fun _ -> ()) usage
+  Arg.parse spec (fun d -> source := d) usage
 
 let extra : string list =
   rev !extra
 
-(* -------------------------------------------------------------------------- *)
+let polarity =
+  !polarity
 
-(* Paths. *)
+let source =
+  !source
 
-let good =
-  up / "good"
-
-let bad =
-  up / "bad"
+end
 
 (* -------------------------------------------------------------------------- *)
 
@@ -151,7 +162,7 @@ let redirect filename action =
 
 (* Changing the working directory of an action. *)
 
-let chdir directory action =
+let _chdir directory action =
   L[A"chdir"; A directory; action]
 
 (* Expressing the fact that an action is expected to fail. *)
@@ -178,12 +189,12 @@ let base basenames =
 (* The extra flags passed to Menhir are those found in a local .flags file,
    if there is one, plus those passed to us via --extra-flags. *)
 
-let extra source id =
-  let flags_file = source / id ^ ".flags" in
+let extra id =
+  let flags_file = id ^ ".flags" in
   if file_exists flags_file then
-    A(sprintf "%%{read-lines:%s}" flags_file) :: atoms extra
+    A(sprintf "%%{read-lines:%s}" flags_file) :: atoms Settings.extra
   else
-    atoms extra
+    atoms Settings.extra
 
 (* The Menhir command, for use inside a rule, with an optional timeout. *)
 
@@ -216,7 +227,6 @@ let menhir (timeout : bool) base flags =
 (* Constructing and printing a rule to run Menhir.
 
    [positive]   positive or negative test?
-   [source]     directory where the .mly files reside
    [basenames]  base names of the .mly files
    [outputs]    names of the files created by this command
    [flags]      flags for Menhir
@@ -229,61 +239,46 @@ let menhir (timeout : bool) base flags =
 
    If this is a positive test, then a timeout is imposed. *)
 
-let run positive source basenames outputs flags =
+let run positive basenames outputs flags =
   let output = hd outputs in
   let timeout = positive in
   (* Run Menhir. *)
   print (rule
     outputs
-    (source // mlys basenames)
-    (redirect output (chdir source (
+    (mlys basenames)
+    (redirect output (
       possibly_expecting_failure positive (
         menhir timeout (base basenames) flags
-  )))))
+  ))))
 
 (* -------------------------------------------------------------------------- *)
 
 (* Running a negative test. *)
 
-(* The input files for this test are in the directory [bad].
-
-   The file %.flags   (if it exists) stores flags for Menhir.
+(* The file %.flags   (if it exists) stores flags for Menhir.
    The file %.exp     stores the expected output. *)
 
-(* The output files for this test are in the current directory, that is,
-   actually, in the clone of the current directory that dune creates for us,
-   namely [_build/default/test/static/src]. We do not have a choice; dune
-   does not allow declaring targets elsewhere than in the current directory.
-
-   The file %.out     stores the output of Menhir. *)
+(* The file %.out     stores the output of Menhir. *)
 
 let process_negative_test basenames : unit =
   (* Run menhir. *)
-  let source = bad in
   let id = id basenames in
   let output = id ^ ".out" in
   let expected = id ^ ".exp" in
-  let flags = extra source id in
-  run false source basenames [output] flags;
+  let flags = extra id in
+  run false basenames [output] flags;
   (* Check that the output coincides with what was expected. *)
-  print (phony id (diff (source/expected) output))
+  print (phony id (diff expected output))
 
 (* -------------------------------------------------------------------------- *)
 
 (* Running a positive test. *)
 
-(* The input files for this test are in the directory [good].
-
-   The file %.flags   (if it exists) stores flags for Menhir.
+(* The file %.flags   (if it exists) stores flags for Menhir.
    The file %.opp.exp stores its expected output.
    The file %.exp     stores its expected output. *)
 
-(* The output files for this test are in the current directory, that is,
-   actually, in the clone of the current directory that dune creates for us,
-   namely [_build/default/test/static/src]. We do not have a choice; dune
-   does not allow declaring targets elsewhere than in the current directory.
-
-   The file %.opp.out stores the output of menhir --only-preprocess.
+(* The file %.opp.out stores the output of menhir --only-preprocess.
    The file %.out     stores the output of menhir.
    The file %.out.timings stores performance data.
 
@@ -291,31 +286,32 @@ let process_negative_test basenames : unit =
    it is not compared against a reference. *)
 
 let process_positive_test basenames : unit =
-  let source = good in
   let id = id basenames in
-  let flags = extra source id in
+  let flags = extra id in
   (* Run menhir --only-preprocess. *)
   let output = id ^ ".opp.out" in
   let expected = id ^ ".opp.exp" in
-  run true source basenames [output] (atoms [
+  run true basenames [output] (atoms [
     "--only-preprocess";
   ] @ flags);
   (* Check that the output coincides with what was expected. *)
-  print (phony id (diff (source/expected) output));
+  print (phony id (diff expected output));
   (* Run menhir. *)
   let output = id ^ ".out" in
   let expected = id ^ ".exp" in
+  let _automaton = id ^ ".automaton" in
+  let _conflicts = id ^ ".conflicts" in
   let timings = id ^ ".out.timings" in
-  run true source basenames [output;timings] (atoms [
+  run true basenames [output;timings] (atoms [
     "--dump";
     "--explain";
     "-lg"; "2";
     "-la"; "2";
     "-lc"; "2";
-    "--timings-to"; (up / "src" / timings);
+    "--timings-to"; timings;
   ] @ flags);
   (* Check that the output coincides with what was expected. *)
-  print (phony id (diff (source/expected) output))
+  print (phony id (diff expected output))
 
 (* -------------------------------------------------------------------------- *)
 
@@ -355,29 +351,23 @@ let run (inputs : inputs) =
    files have the same name up to a numeric suffix, then they belong in a
    single group and should be fed together to Menhir. *)
 
-let inputs directory : filename list list =
-     readdir directory
-  |> to_list
-  |> filter (has_suffix ".mly")
-  |> map Filename.chop_extension
-  |> sort compare
-  |> groups equal_up_to_numeric_suffix
-
-let positive : inputs =
-     inputs good
-  |> map (fun basenames -> PositiveTest basenames)
-
-let negative : inputs =
-     inputs bad
-  |> map (fun basenames -> NegativeTest basenames)
-
-let inputs =
-  positive @ negative
+let tag basenames =
+  if Settings.polarity then
+    PositiveTest basenames
+  else
+    NegativeTest basenames
 
 let () =
   print_endline
     ";; This file has been auto-generated. Please do not edit it.\n\
      ;; Instead, edit [test.ml] and run [make depend].\n"
+  ;
 
-let () =
-  run inputs
+     readdir Settings.source
+  |> to_list
+  |> filter (has_suffix ".mly")
+  |> map Filename.chop_extension
+  |> sort compare
+  |> groups equal_up_to_numeric_suffix
+  |> map tag
+  |> run
