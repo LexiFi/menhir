@@ -615,38 +615,54 @@ let out =
 (* If requested, dump a verbose description of the automaton. *)
 
 let dump_node out node =
+  let open Printf in
 
-  Printf.fprintf out "State %d:\n%s"
-    (number node)
+  (* Print the state number. *)
+
+  fprintf out "State %d:\n"
+    (number node);
+
+  (* Print the items. *)
+
+  fprintf out "%s"
     (Lr0.print "" (state node));
 
+  (* Print the transitions. *)
+
   SymbolMap.iter (fun symbol node ->
-    Printf.fprintf out "-- On %s shift to state %d\n"
+    fprintf out "-- On %s shift to state %d\n"
       (Symbol.print symbol) (number node)
   ) (transitions node);
 
-  (* TEMPORARY In the following, one might wish to group all symbols that
+  (* Print the reductions. *)
+
+  (* One might wish to group all symbols that
      lead to reducing a common production. *)
 
   TerminalMap.iter (fun tok prods ->
     List.iter (fun prod ->
-      Printf.fprintf out "-- On %s " (Terminal.print tok);
+      fprintf out "-- On %s " (Terminal.print tok);
       match Production.classify prod with
       | Some nt ->
-          Printf.fprintf out "accept %s\n" (Nonterminal.print false nt)
+          fprintf out "accept %s\n" (Nonterminal.print false nt)
       | None ->
-          Printf.fprintf out "reduce production %s\n" (Production.print prod)
+          fprintf out "reduce production %s\n" (Production.print prod)
     ) prods
   ) (reductions node);
 
+  (* Print the conflicts. *)
+
   if not (TerminalSet.is_empty (conflict_tokens node)) then
-    Printf.fprintf out "** Conflict on %s\n"
+    fprintf out "** Conflict on %s\n"
       (TerminalSet.print (conflict_tokens node));
 
-  Printf.fprintf out "\n%!"
+  (* Skip a line. *)
+
+  fprintf out "\n"
 
 let dump out =
-  iter (dump_node out)
+  iter (dump_node out);
+  flush out
 
 let () =
   Time.tick "Construction of the LR(1) automaton";
