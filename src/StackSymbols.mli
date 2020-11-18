@@ -21,3 +21,9 @@ open Grammar
    the stack is the end of the array. *)
 
 val stack_symbols: Lr1.node -> Symbol.t array
+
+(* [print_stack_symbols s] is a printed representation of the known
+   prefix of the stack at state [s]. Every symbol is preceded with
+   a space. *)
+
+val print_stack_symbols: Lr1.node -> string
