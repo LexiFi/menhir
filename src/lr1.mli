@@ -146,6 +146,16 @@ val targets: ('a -> node list -> node -> 'a) -> 'a -> Symbol.t -> 'a
 
 val conflicts: (TerminalSet.t -> node -> unit) -> unit
 
+(* [has_eos_conflict node] indicates whether [node] has an end-of-stream
+   conflict. If so, the list of productions and the lookahead tokens that are
+   involved are returned.
+
+   This function can be called either before or after end-of-stream conflicts
+   have been resolved. Once they have been resolved, however, no end-of-stream
+   conflicts remain. *)
+
+val has_eos_conflict: node -> (Production.index list * TerminalSet.t) option
+
 (* ------------------------------------------------------------------------- *)
 (* Modifications of the automaton. *)
 

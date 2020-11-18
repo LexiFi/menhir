@@ -158,7 +158,7 @@ let conflict_tokens : TerminalSet.t array =
 
 (* Information about end-of-stream conflicts in each state. *)
 
-let has_eos_conflict : (Production.index list * TerminalSet.t) option array =
+let _has_eos_conflict : (Production.index list * TerminalSet.t) option array =
   Array.make Raw.n None
 
 (* (New as of 2012/01/23.) This flag records whether a shift/reduce conflict
@@ -372,7 +372,7 @@ let discover (raw_node : Raw.node) =
         (Lr0.reduction_tokens reductions)
     in
     (* Record this end-of-stream conflict. *)
-    has_eos_conflict.(i) <- Some (prods, toks)
+    _has_eos_conflict.(i) <- Some (prods, toks)
   end;
 
   (* Record statistics about conflicts. *)
@@ -524,6 +524,9 @@ let conflicts f =
 let forbid_default_reduction node =
   forbid_default_reduction.(raw node)
 
+let has_eos_conflict node =
+  _has_eos_conflict.(raw node)
+
 (* -------------------------------------------------------------------------- *)
 
 (* The incoming symbol of a node can be computed by going through its LR(0)
@@ -650,7 +653,7 @@ let dump_node out node =
 
   (* Print the end-of-stream conflicts. *)
 
-  has_eos_conflict.(raw node) |> Option.iter begin fun (prods, toks) ->
+  has_eos_conflict node |> Option.iter begin fun (prods, toks) ->
 
     (* If this function is invoked before conflict resolution has been
        performed, then the list [prods] could have several elements.
@@ -964,7 +967,7 @@ let default_conflict_resolution () =
       set_reductions node reductions;
 
       (* Mark this end-of-stream conflict as resolved. *)
-      has_eos_conflict.(raw node) <- None;
+      _has_eos_conflict.(raw node) <- None;
 
       (* Count this end-of-stream conflict. *)
       incr eos_conflicts
