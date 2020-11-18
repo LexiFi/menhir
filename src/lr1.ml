@@ -153,7 +153,7 @@ let reductions : Lr0.reductions array =
    automaton are known as conflict tokens. This array is populated during the
    traversal. *)
 
-let conflict_tokens : TerminalSet.t array =
+let _conflict_tokens : TerminalSet.t array =
   Array.make Raw.n TerminalSet.empty
 
 (* Information about end-of-stream conflicts in each state. *)
@@ -286,7 +286,7 @@ let discover (raw_node : Raw.node) =
             (* Priorities don't allow concluding. Record the existence of a
                shift/reduce conflict. *)
 
-            conflict_tokens.(i) <- Grammar.TerminalSet.add tok conflict_tokens.(i);
+            _conflict_tokens.(i) <- Grammar.TerminalSet.add tok _conflict_tokens.(i);
             has_shift_reduce := true;
             TerminalMap.add tok prods reductions
 
@@ -326,7 +326,7 @@ let discover (raw_node : Raw.node) =
 
           (* Record a shift/reduce/reduce conflict. Keep all reductions. *)
 
-          conflict_tokens.(i) <- Grammar.TerminalSet.add tok conflict_tokens.(i);
+          _conflict_tokens.(i) <- Grammar.TerminalSet.add tok _conflict_tokens.(i);
           has_shift_reduce := true;
           has_reduce_reduce := true;
           TerminalMap.add tok prods reductions
@@ -343,7 +343,7 @@ let discover (raw_node : Raw.node) =
       if List.length prods >= 2 then begin
         (* If there are multiple reductions, then we have a pure
            reduce/reduce conflict. Do nothing about it at this point. *)
-        conflict_tokens.(i) <- Grammar.TerminalSet.add tok conflict_tokens.(i);
+        _conflict_tokens.(i) <- Grammar.TerminalSet.add tok _conflict_tokens.(i);
         has_reduce_reduce := true
       end;
 
@@ -377,7 +377,7 @@ let discover (raw_node : Raw.node) =
 
   (* Record statistics about conflicts. *)
 
-  if not (TerminalSet.is_empty conflict_tokens.(i)) then begin
+  if not (TerminalSet.is_empty _conflict_tokens.(i)) then begin
     conflict_nodes := node :: !conflict_nodes;
     if !has_shift_reduce then
       incr shift_reduce;
@@ -514,7 +514,7 @@ module BackwardEdges = struct
 end
 
 let conflict_tokens node =
-  conflict_tokens.(raw node)
+  _conflict_tokens.(raw node)
 
 let conflicts f =
   List.iter (fun node ->
