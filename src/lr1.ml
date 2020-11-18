@@ -156,6 +156,14 @@ let reductions : Lr0.reductions array =
 let conflict_tokens : TerminalSet.t array =
   Array.make Raw.n TerminalSet.empty
 
+(* Information about end-of-stream conflicts in each state. *)
+
+let eos_conflicts =
+  ref 0
+
+let has_eos_conflict : (Production.index list * TerminalSet.t) option array =
+  Array.make Raw.n None
+
 (* (New as of 2012/01/23.) This flag records whether a shift/reduce conflict
    in this node was solved in favor of neither (%nonassoc). This is later used
    to forbid a default reduction at this node. *)
@@ -346,6 +354,29 @@ let discover (raw_node : Raw.node) =
 
     end
 
+  end;
+
+  (* Detect end-of-stream conflicts at this node. If it has both a reduce
+     action at [#] and some other (shift or reduce) action, this is an
+     end-of-stream conflict. *)
+
+  let transitions = transitions.(i)
+  and reductions = reductions.(i) in
+
+  if Lr0.has_eos_conflict transitions reductions then begin
+    (* Conceptually suppress the reduce action at [#]. *)
+      let prods, reductions =
+        TerminalMap.lookup_and_remove Terminal.sharp reductions in
+    (* Compute the tokens involved in the transitions and remaining
+       reductions. *)
+    let toks =
+      TerminalSet.union
+        (Lr0.transition_tokens transitions)
+        (Lr0.reduction_tokens reductions)
+    in
+    (* Record this end-of-stream conflict. *)
+    has_eos_conflict.(i) <- Some (prods, toks);
+    incr eos_conflicts
   end;
 
   (* Record statistics about conflicts. *)
