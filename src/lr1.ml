@@ -616,9 +616,8 @@ let out =
 
 let dump_node out node =
 
-  Printf.fprintf out "State %d%s:\n%s"
+  Printf.fprintf out "State %d:\n%s"
     (number node)
-    (if Settings.follow then Printf.sprintf " (r%d)" (raw node) else "")
     (Lr0.print "" (state node));
 
   SymbolMap.iter (fun symbol node ->

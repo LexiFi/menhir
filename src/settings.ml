@@ -68,9 +68,6 @@ let base =
 let dump =
   ref false
 
-let follow =
-  ref false
-
 let graph =
   ref false
 
@@ -309,7 +306,6 @@ let options = Arg.align [
   "--explain", Arg.Set explain, " Explain conflicts in <basename>.conflicts";
   "--external-tokens", Arg.String codeonly, "<module> Import token type definition from <module>";
   "--fixed-exception", Arg.Set fixedexc, " Declares Error = Parsing.Parse_error";
-  "--follow-construction", Arg.Set follow, " (undocumented)";
   "--graph", Arg.Set graph, " Write a dependency graph to a .dot file";
   "--infer", Arg.Unit enable_infer, " Invoke ocamlc to do type inference";
   "--infer-protocol-supported", Arg.Unit (fun () -> exit 0), " Stop with exit code 0";
@@ -454,9 +450,6 @@ let explain =
 
 let dump =
   !dump
-
-let follow =
-  !follow
 
 let graph =
   !graph

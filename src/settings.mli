@@ -47,10 +47,6 @@ val explain: bool
 
 val dump: bool
 
-(* Whether the automaton's construction should be explained (very verbose). *)
-
-val follow: bool
-
 (* Whether the grammar's dependence graph should be dumped. *)
 
 val graph: bool
