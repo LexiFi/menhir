@@ -50,11 +50,6 @@ val fold: ('a -> bool -> Symbol.t -> Lr1.NodeSet.t -> 'a) -> 'a -> word -> 'a
 
 val fold_top: (bool -> Symbol.t -> 'a) -> 'a -> word -> 'a
 
-(* [print w] produces a string representation of the word [w]. Only the
-   symbols are shown. One space is printed in front of each symbol. *)
-
-val print: word -> string
-
 (* ------------------------------------------------------------------------- *)
 (* Information about the stack. *)
 

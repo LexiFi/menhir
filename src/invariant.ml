@@ -476,14 +476,6 @@ let fold_top f accu w =
   | (symbol, states) :: _ ->
       f (representeds states) symbol
 
-let print (w : word) =
-  let b = Buffer.create 64 in
-  fold (fun () _represented symbol _states ->
-    Buffer.add_char b ' ';
-    Buffer.add_string b (Symbol.print symbol)
-  ) () w;
-  Buffer.contents b
-
 (* ------------------------------------------------------------------------ *)
 (* Explain how the stack should be deconstructed when an error is
    found.
