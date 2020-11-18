@@ -499,25 +499,29 @@ module Symbol = struct
      print a dot at this offset, if we find it. Note that [dot] can be
      equal to [length]. *)
 
+  let buffer =
+    Buffer.create 1024
+
   let printaod offset dot symbols =
-    let b = Buffer.create 512 in
     let length = Array.length symbols in
     let first = ref true in
     let separate () =
-      if not !first then Printf.bprintf b " ";
+      if not !first then Printf.bprintf buffer " ";
       first := false
     in
     for i = offset to length do
       if i = dot then begin
         separate();
-        Printf.bprintf b "."
+        Printf.bprintf buffer "."
       end;
       if i < length then begin
         separate();
-        Printf.bprintf b "%s" (print symbols.(i))
+        Printf.bprintf buffer "%s" (print symbols.(i))
       end
     done;
-    Buffer.contents b
+    let s = Buffer.contents buffer in
+    Buffer.clear buffer;
+    s
 
   let printao offset symbols =
     printaod offset (-1) symbols
