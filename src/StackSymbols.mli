@@ -16,14 +16,18 @@
 
 open Grammar
 
-(* [stack_symbols s] is the known prefix of the stack at state [s]. It
-   is represented as an array of symbols. By convention, the top of
-   the stack is the end of the array. *)
+module Run () : sig
 
-val stack_symbols: Lr1.node -> Symbol.t array
+  (* [stack_symbols s] is the known prefix of the stack at state [s]. It
+     is represented as an array of symbols. By convention, the top of
+     the stack is the end of the array. *)
 
-(* [print_stack_symbols s] is a printed representation of the known
-   prefix of the stack at state [s]. Every symbol is preceded with
-   a space. *)
+  val stack_symbols: Lr1.node -> Symbol.t array
 
-val print_stack_symbols: Lr1.node -> string
+  (* [print_stack_symbols s] is a printed representation of the known
+     prefix of the stack at state [s]. Every symbol is preceded with
+     a space. *)
+
+  val print_stack_symbols: Lr1.node -> string
+
+end

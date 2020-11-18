@@ -18,7 +18,8 @@ open Grammar
 module C = Conflict (* artificial dependency; ensures that [Conflict] runs first *)
 
 let stack_symbols =
-  StackSymbols.stack_symbols
+  let module SS = StackSymbols.Run() in
+  SS.stack_symbols
 
 let stack_height (node : Lr1.node) : int =
   Array.length (stack_symbols node)
