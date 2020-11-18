@@ -40,6 +40,9 @@ module C = Conflict (* artificial dependency; ensures that [Conflict] runs first
 (* We first compute and tabulate this information at the level of the LR(0)
    automaton. *)
 
+(* This analysis is extremely fast: on an automaton with over 100,000 states,
+   it takes under 0.01 second. *)
+
 let stack_symbols : Lr0.node -> Symbol.t array =
   let dummy =
     Array.make 0 (Symbol.T Terminal.sharp)
