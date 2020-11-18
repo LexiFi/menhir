@@ -213,25 +213,25 @@ let menhir (timeout : bool) base flags =
     (* We can use a [run] action. *)
     L(A"run" :: A"menhir" :: menhir_args base flags)
 
-(* Constructing (and printing) a pair of rules to run Menhir and compare its
-   output against an expected-output file.
+(* Constructing and printing a rule to run Menhir.
 
-   [id]         name of the phony target
    [positive]   positive or negative test?
    [source]     directory where the .mly files reside
    [basenames]  base names of the .mly files
-   [outputs]    names of the output files
-   [expected]   name of the expected-output file
+   [outputs]    names of the files created by this command
    [flags]      flags for Menhir
 
    There can be several output files in the list [outputs], in
    which case all of them are declared to [dune] as targets.
-   The first element of this list is considered the main output
-   file and is compared with the expected-output file. *)
 
-let run_and_compare id positive source basenames outputs expected flags =
+   The first file named in this list is used as the target of
+   the redirection of Menhir's output channels.
+
+   If this is a positive test, then a timeout is imposed. *)
+
+let run positive source basenames outputs flags =
   let output = hd outputs in
-  let timeout = positive in (* set up a timeout for positive tests *)
+  let timeout = positive in
   (* Run Menhir. *)
   print (rule
     outputs
@@ -239,11 +239,7 @@ let run_and_compare id positive source basenames outputs expected flags =
     (redirect output (chdir source (
       possibly_expecting_failure positive (
         menhir timeout (base basenames) flags
-  )))));
-  (* Check that the output coincides with what was expected. *)
-  print (phony id (
-    diff (source/expected) output
-  ))
+  )))))
 
 (* -------------------------------------------------------------------------- *)
 
@@ -268,7 +264,9 @@ let process_negative_test basenames : unit =
   let output = id ^ ".out" in
   let expected = id ^ ".exp" in
   let flags = extra source id in
-  run_and_compare id false source basenames [output] expected flags
+  run false source basenames [output] flags;
+  (* Check that the output coincides with what was expected. *)
+  print (phony id (diff (source/expected) output))
 
 (* -------------------------------------------------------------------------- *)
 
@@ -299,21 +297,25 @@ let process_positive_test basenames : unit =
   (* Run menhir --only-preprocess. *)
   let output = id ^ ".opp.out" in
   let expected = id ^ ".opp.exp" in
-  run_and_compare id true source basenames [output] expected (atoms [
+  run true source basenames [output] (atoms [
     "--only-preprocess";
   ] @ flags);
+  (* Check that the output coincides with what was expected. *)
+  print (phony id (diff (source/expected) output));
   (* Run menhir. *)
   let output = id ^ ".out" in
   let expected = id ^ ".exp" in
   let timings = id ^ ".out.timings" in
-  run_and_compare id true source basenames [output;timings] expected (atoms [
+  run true source basenames [output;timings] (atoms [
     "--dump";
     "--explain";
     "-lg"; "2";
     "-la"; "2";
     "-lc"; "2";
     "--timings-to"; (up / "src" / timings);
-  ] @ flags)
+  ] @ flags);
+  (* Check that the output coincides with what was expected. *)
+  print (phony id (diff (source/expected) output))
 
 (* -------------------------------------------------------------------------- *)
 
