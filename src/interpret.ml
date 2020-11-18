@@ -271,7 +271,7 @@ let print_messages_auto (nt, sentence, otarget) : unit =
         "## The known suffix of the stack is as follows:\n\
          ##%s\n\
          ##\n"
-        (Invariant.print (Invariant.stack s'))
+        (StackSymbols.print_stack_symbols s')
       ;
       if spurious <> [] then begin
         Printf.printf
