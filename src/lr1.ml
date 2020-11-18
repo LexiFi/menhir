@@ -477,6 +477,9 @@ let transitions : node SymbolMap.t array =
 
 (* The array [conflict_tokens] is now frozen. *)
 
+let () =
+  Time.tick "Construction of the LR(1) automaton"
+
 (* -------------------------------------------------------------------------- *)
 
 (* Accessors. *)
@@ -670,17 +673,15 @@ let dump_node out node =
 
   fprintf out "\n"
 
-let dump out =
-  iter (dump_node out)
+let dump filename =
+  let out = open_out filename in
+  iter (dump_node out);
+  close_out out;
+  Time.tick "Dumping the LR(1) automaton"
 
 let () =
-  Time.tick "Construction of the LR(1) automaton";
-  if Settings.dump then begin
-    let out = open_out (Settings.base ^ ".automaton") in
-    dump out;
-    close_out out;
-    Time.tick "Dumping the LR(1) automaton"
-  end
+  if Settings.dump then
+    dump (Settings.base ^ ".automaton")
 
 (* -------------------------------------------------------------------------- *)
 

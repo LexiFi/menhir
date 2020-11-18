@@ -68,6 +68,9 @@ let base =
 let dump =
   ref false
 
+let dump_resolved =
+  ref false
+
 let graph =
   ref false
 
@@ -301,6 +304,7 @@ let options = Arg.align [
   "--coq-no-complete", Arg.Set coq_no_complete, " Do not generate a proof of completeness";
   "--depend", Arg.Unit enable_depend, " Invoke ocamldep and display dependencies";
   "--dump", Arg.Set dump, " Write an .automaton file";
+  "--dump-resolved", Arg.Set dump_resolved, " Write an .automaton.resolved file";
   "--echo-errors", Arg.String set_echo_errors, "<filename> Echo the sentences in a .messages file";
   "--error-recovery", Arg.Set recovery, " (no longer supported)";
   "--explain", Arg.Set explain, " Explain conflicts in <basename>.conflicts";
@@ -450,6 +454,9 @@ let explain =
 
 let dump =
   !dump
+
+let dump_resolved =
+  !dump_resolved
 
 let graph =
   !graph

@@ -43,9 +43,13 @@ val construction_mode: construction_mode
 
 val explain: bool
 
-(* Whether the automaton should be dumped. *)
+(* Whether the automaton should be dumped before conflict resolution. *)
 
 val dump: bool
+
+(* Whether the automaton should be dumped after conflict resolution. *)
+
+val dump_resolved: bool
 
 (* Whether the grammar's dependence graph should be dumped. *)
 

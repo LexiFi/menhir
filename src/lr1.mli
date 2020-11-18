@@ -179,6 +179,15 @@ val default_conflict_resolution: unit -> unit
 val extra_reductions: unit -> unit
 
 (* ------------------------------------------------------------------------- *)
+(* Dumping the automaton. *)
+
+(* This function dumps a description of the automaton to the file whose
+   name is passed as an argument. It can be called before or after conflict
+   resolution has taken place. *)
+
+val dump: string -> unit
+
+(* ------------------------------------------------------------------------- *)
 (* Information about which productions are reduced and where. *)
 
 (* [production_where prod] is the set of all states [s] where production
