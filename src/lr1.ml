@@ -601,13 +601,6 @@ let targets f accu symbol =
 
 (* -------------------------------------------------------------------------- *)
 
-(* Our output channel. *)
-
-let out =
-  lazy (open_out (Settings.base ^ ".automaton"))
-
-(* -------------------------------------------------------------------------- *)
-
 (* If requested, dump a verbose description of the automaton. *)
 
 let dump_node out node =
@@ -678,13 +671,14 @@ let dump_node out node =
   fprintf out "\n"
 
 let dump out =
-  iter (dump_node out);
-  flush out
+  iter (dump_node out)
 
 let () =
   Time.tick "Construction of the LR(1) automaton";
   if Settings.dump then begin
-    dump (Lazy.force out);
+    let out = open_out (Settings.base ^ ".automaton") in
+    dump out;
+    close_out out;
     Time.tick "Dumping the LR(1) automaton"
   end
 
