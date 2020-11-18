@@ -20,6 +20,9 @@ do
     # Create the expected-output files if they are missing.
     touch test/static/$name.opp.exp
     touch test/static/$name.exp
+    touch test/static/$name.automaton.exp
+    touch test/static/$name.automaton.resolved.exp
+    touch test/static/$name.conflicts.exp
     base=${name#good/}
     # Ask dune to update the expected-output files.
     dune build @$base --auto-promote
