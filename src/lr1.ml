@@ -583,7 +583,7 @@ let out =
 
 (* If requested, dump a verbose description of the automaton. *)
 
-let describe out node =
+let dump_node out node =
 
   Printf.fprintf out "State %d%s:\n%s"
     (number node)
@@ -615,10 +615,13 @@ let describe out node =
 
   Printf.fprintf out "\n%!"
 
+let dump out =
+  iter (dump_node out)
+
 let () =
   Time.tick "Construction of the LR(1) automaton";
   if Settings.dump then begin
-    iter (describe (Lazy.force out));
+    dump (Lazy.force out);
     Time.tick "Dumping the LR(1) automaton"
   end
 
