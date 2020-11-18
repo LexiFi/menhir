@@ -1,6 +1,6 @@
 # Changes
 
-## 2020/11/18
+## 2020/11/19
 
 * The new command line switch `--dump-resolved` writes a description of the
   automaton to the file `.automaton.resolved` *after* conflicts have been
@@ -10,6 +10,10 @@
   the file `.automaton` *before* conflicts have been resolved and extra
   reductions have been introduced. This behavior is unchanged. The manner in
   which end-of-stream conflicts are displayed in this file has been improved.
+
+* In the files `.automaton` and `.automaton.resolved`, the known suffix of the
+  stack in each state is now explicitly shown. (Although it can be deduced
+  from the LR(1) items, showing it helps.)
 
 * Document the problem caused by placing a module alias declaration
   in an `.mly` file. (See *Questions and Answers* in the manual.)
