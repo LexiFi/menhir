@@ -552,15 +552,6 @@ let () =
   Time.tick "Adding extra reductions"
 
 (* ------------------------------------------------------------------------ *)
-(* The automaton is now frozen and will no longer be modified.
-   It is time to dump a new description of it, if requested by
-   the user. *)
-
-let () =
-  if Settings.dump_resolved then
-    Lr1.dump (Settings.base ^ ".automaton.resolved")
-
-(* ------------------------------------------------------------------------ *)
 (* If any warnings about the grammar have been emitted up to this point,
    and if [--strict] is enabled, now is the time to stop, before going
    into the back-end. *)

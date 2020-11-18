@@ -13,6 +13,13 @@
 
 (* Driver for the back-end. *)
 
+(* The automaton is now frozen and will no longer be modified. It is
+   time to dump a new description of it, if requested by the user. *)
+
+let () =
+  if Settings.dump_resolved then
+    Lr1.dump (Settings.base ^ ".automaton.resolved")
+
 (* Let [Interpret] handle the command line options [--interpret],
    [--interpret-error], [--compile-errors], [--compare-errors]. *)
 
