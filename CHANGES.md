@@ -1,6 +1,15 @@
 # Changes
 
-## 2020/07/XX
+## 2020/11/18
+
+* The new command line switch `--dump-resolved` writes a description of the
+  automaton to the file `.automaton.resolved` *after* conflicts have been
+  resolved and extra reductions have been introduced.
+
+* The command line switch `--dump` writes a description of the automaton to
+  the file `.automaton` *before* conflicts have been resolved and extra
+  reductions have been introduced. This behavior is unchanged. The manner in
+  which end-of-stream conflicts are displayed in this file has been improved.
 
 * Document the problem caused by placing a module alias declaration
   in an `.mly` file. (See *Questions and Answers* in the manual.)
