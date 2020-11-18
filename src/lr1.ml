@@ -972,9 +972,11 @@ let default_conflict_resolution () =
   end;
 
   if !eos_conflicts = 1 then
-    Error.grammar_warning [] "one state has an end-of-stream conflict."
+    Error.grammar_warning []
+      "one state end-of-stream conflict was arbitrarily resolved."
   else if !eos_conflicts > 1 then
-    Error.grammar_warning [] "%d states have an end-of-stream conflict."
+    Error.grammar_warning []
+      "%d end-of-stream conflicts were arbitrarily resolved."
       !eos_conflicts;
 
   (* We can now compute where productions are reduced. *)
