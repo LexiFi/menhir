@@ -8,8 +8,8 @@ main' -> . main [ # ]
 
 State 1:
 expr -> INT . [ PLUS # ]
--- On PLUS reduce production expr -> INT 
--- On # reduce production expr -> INT 
+-- On PLUS reduce production expr -> INT
+-- On # reduce production expr -> INT
 
 State 2:
 instruction -> IDENT . PARENG PAREND [ # ]
@@ -21,7 +21,7 @@ instruction -> IDENT PARENG . PAREND [ # ]
 
 State 4:
 instruction -> IDENT PARENG PAREND . [ # ]
--- On # reduce production instruction -> IDENT PARENG PAREND 
+-- On # reduce production instruction -> IDENT PARENG PAREND
 
 State 5:
 main' -> main . [ # ]
@@ -29,13 +29,13 @@ main' -> main . [ # ]
 
 State 6:
 main -> instruction . [ # ]
--- On # reduce production main -> instruction 
+-- On # reduce production main -> instruction
 
 State 7:
 expr -> expr . PLUS expr [ PLUS # ]
 instruction -> expr . [ # ]
 -- On PLUS shift to state 8
--- On # reduce production instruction -> expr 
+-- On # reduce production instruction -> expr
 
 State 8:
 expr -> expr PLUS . expr [ PLUS # ]
@@ -45,23 +45,23 @@ expr -> expr PLUS . expr [ PLUS # ]
 State 9:
 expr -> expr . PLUS expr [ PLUS # ]
 expr -> expr PLUS expr . [ PLUS # ]
--- On PLUS reduce production expr -> expr PLUS expr 
--- On # reduce production expr -> expr PLUS expr 
+-- On PLUS reduce production expr -> expr PLUS expr
+-- On # reduce production expr -> expr PLUS expr
 
 State 1 has an end-of-stream conflict. There is a tension between
-(1) reducing production expr -> INT 
+(1) reducing production expr -> INT
 without even requesting a lookahead token, and
 (2) checking whether the lookahead token is PLUS,
 which would require some other action.
 
 State 7 has an end-of-stream conflict. There is a tension between
-(1) reducing production instruction -> expr 
+(1) reducing production instruction -> expr
 without even requesting a lookahead token, and
 (2) checking whether the lookahead token is PLUS,
 which would require some other action.
 
 State 9 has an end-of-stream conflict. There is a tension between
-(1) reducing production expr -> expr PLUS expr 
+(1) reducing production expr -> expr PLUS expr
 without even requesting a lookahead token, and
 (2) checking whether the lookahead token is PLUS,
 which would require some other action.

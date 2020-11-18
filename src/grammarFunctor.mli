@@ -465,6 +465,11 @@ module Production : sig
 
   val print: index -> string
 
+  (* This produces a representation of a production as a string of
+     the form "accepting <nt>" or "reducing <nt> -> <rhs>". *)
+
+  val describe: index -> string
+
   (* Tabulation of a function over productions. *)
 
   val tabulate: (index -> 'a) -> (index -> 'a)

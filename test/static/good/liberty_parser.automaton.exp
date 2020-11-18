@@ -26,46 +26,46 @@ head -> ID LPAR . RPAR [ SEMI RCURLY LCURLY KW_DEFINE_GROUP KW_DEFINE ID ]
 
 State 3:
 s_or_i -> STRING . [ RPAR COMMA COLON ]
--- On RPAR reduce production s_or_i -> STRING 
--- On COMMA reduce production s_or_i -> STRING 
--- On COLON reduce production s_or_i -> STRING 
+-- On RPAR reduce production s_or_i -> STRING
+-- On COMMA reduce production s_or_i -> STRING
+-- On COLON reduce production s_or_i -> STRING
 
 State 4:
 head -> ID LPAR RPAR . [ SEMI RCURLY LCURLY KW_DEFINE_GROUP KW_DEFINE ID ]
--- On SEMI reduce production head -> ID LPAR RPAR 
--- On RCURLY reduce production head -> ID LPAR RPAR 
--- On LCURLY reduce production head -> ID LPAR RPAR 
--- On KW_DEFINE_GROUP reduce production head -> ID LPAR RPAR 
--- On KW_DEFINE reduce production head -> ID LPAR RPAR 
--- On ID reduce production head -> ID LPAR RPAR 
+-- On SEMI reduce production head -> ID LPAR RPAR
+-- On RCURLY reduce production head -> ID LPAR RPAR
+-- On LCURLY reduce production head -> ID LPAR RPAR
+-- On KW_DEFINE_GROUP reduce production head -> ID LPAR RPAR
+-- On KW_DEFINE reduce production head -> ID LPAR RPAR
+-- On ID reduce production head -> ID LPAR RPAR
 
 State 5:
 attr_val -> NUM . [ RPAR COMMA ]
--- On RPAR reduce production attr_val -> NUM 
--- On COMMA reduce production attr_val -> NUM 
+-- On RPAR reduce production attr_val -> NUM
+-- On COMMA reduce production attr_val -> NUM
 
 State 6:
 attr_val -> KW_TRUE . [ RPAR COMMA ]
--- On RPAR reduce production attr_val -> KW_TRUE 
--- On COMMA reduce production attr_val -> KW_TRUE 
+-- On RPAR reduce production attr_val -> KW_TRUE
+-- On COMMA reduce production attr_val -> KW_TRUE
 
 State 7:
 attr_val -> KW_FALSE . [ RPAR COMMA ]
--- On RPAR reduce production attr_val -> KW_FALSE 
--- On COMMA reduce production attr_val -> KW_FALSE 
+-- On RPAR reduce production attr_val -> KW_FALSE
+-- On COMMA reduce production attr_val -> KW_FALSE
 
 State 8:
 s_or_i -> ID . [ RPAR COMMA COLON ]
--- On RPAR reduce production s_or_i -> ID 
--- On COMMA reduce production s_or_i -> ID 
--- On COLON reduce production s_or_i -> ID 
+-- On RPAR reduce production s_or_i -> ID
+-- On COMMA reduce production s_or_i -> ID
+-- On COLON reduce production s_or_i -> ID
 
 State 9:
 attr_val -> s_or_i . [ RPAR COMMA ]
 attr_val -> s_or_i . COLON s_or_i [ RPAR COMMA ]
 -- On COLON shift to state 10
--- On RPAR reduce production attr_val -> s_or_i 
--- On COMMA reduce production attr_val -> s_or_i 
+-- On RPAR reduce production attr_val -> s_or_i
+-- On COMMA reduce production attr_val -> s_or_i
 
 State 10:
 attr_val -> s_or_i COLON . s_or_i [ RPAR COMMA ]
@@ -75,8 +75,8 @@ attr_val -> s_or_i COLON . s_or_i [ RPAR COMMA ]
 
 State 11:
 attr_val -> s_or_i COLON s_or_i . [ RPAR COMMA ]
--- On RPAR reduce production attr_val -> s_or_i COLON s_or_i 
--- On COMMA reduce production attr_val -> s_or_i COLON s_or_i 
+-- On RPAR reduce production attr_val -> s_or_i COLON s_or_i
+-- On COMMA reduce production attr_val -> s_or_i COLON s_or_i
 
 State 12:
 head -> ID LPAR param_list . RPAR [ SEMI RCURLY LCURLY KW_DEFINE_GROUP KW_DEFINE ID ]
@@ -86,12 +86,12 @@ param_list -> param_list . COMMA attr_val [ RPAR COMMA ]
 
 State 13:
 head -> ID LPAR param_list RPAR . [ SEMI RCURLY LCURLY KW_DEFINE_GROUP KW_DEFINE ID ]
--- On SEMI reduce production head -> ID LPAR param_list RPAR 
--- On RCURLY reduce production head -> ID LPAR param_list RPAR 
--- On LCURLY reduce production head -> ID LPAR param_list RPAR 
--- On KW_DEFINE_GROUP reduce production head -> ID LPAR param_list RPAR 
--- On KW_DEFINE reduce production head -> ID LPAR param_list RPAR 
--- On ID reduce production head -> ID LPAR param_list RPAR 
+-- On SEMI reduce production head -> ID LPAR param_list RPAR
+-- On RCURLY reduce production head -> ID LPAR param_list RPAR
+-- On LCURLY reduce production head -> ID LPAR param_list RPAR
+-- On KW_DEFINE_GROUP reduce production head -> ID LPAR param_list RPAR
+-- On KW_DEFINE reduce production head -> ID LPAR param_list RPAR
+-- On ID reduce production head -> ID LPAR param_list RPAR
 
 State 14:
 param_list -> param_list COMMA . attr_val [ RPAR COMMA ]
@@ -105,17 +105,17 @@ param_list -> param_list COMMA . attr_val [ RPAR COMMA ]
 
 State 15:
 param_list -> param_list COMMA attr_val . [ RPAR COMMA ]
--- On RPAR reduce production param_list -> param_list COMMA attr_val 
--- On COMMA reduce production param_list -> param_list COMMA attr_val 
+-- On RPAR reduce production param_list -> param_list COMMA attr_val
+-- On COMMA reduce production param_list -> param_list COMMA attr_val
 
 State 16:
 param_list -> attr_val . [ RPAR COMMA ]
--- On RPAR reduce production param_list -> attr_val 
--- On COMMA reduce production param_list -> attr_val 
+-- On RPAR reduce production param_list -> attr_val
+-- On COMMA reduce production param_list -> attr_val
 
 State 17:
 file -> ENDOFFILE . [ # ]
--- On # reduce production file -> ENDOFFILE 
+-- On # reduce production file -> ENDOFFILE
 
 State 18:
 group -> head . LCURLY statements RCURLY [ # ]
@@ -140,7 +140,7 @@ group -> head LCURLY . RCURLY [ # ]
 
 State 20:
 group -> head LCURLY RCURLY . [ # ]
--- On # reduce production group -> head LCURLY RCURLY 
+-- On # reduce production group -> head LCURLY RCURLY
 
 State 21:
 define_group -> KW_DEFINE_GROUP . LPAR s_or_i COMMA s_or_i RPAR SEMI [ RCURLY KW_DEFINE_GROUP KW_DEFINE ID ]
@@ -172,10 +172,10 @@ define_group -> KW_DEFINE_GROUP LPAR s_or_i COMMA s_or_i RPAR . SEMI [ RCURLY KW
 
 State 27:
 define_group -> KW_DEFINE_GROUP LPAR s_or_i COMMA s_or_i RPAR SEMI . [ RCURLY KW_DEFINE_GROUP KW_DEFINE ID ]
--- On RCURLY reduce production define_group -> KW_DEFINE_GROUP LPAR s_or_i COMMA s_or_i RPAR SEMI 
--- On KW_DEFINE_GROUP reduce production define_group -> KW_DEFINE_GROUP LPAR s_or_i COMMA s_or_i RPAR SEMI 
--- On KW_DEFINE reduce production define_group -> KW_DEFINE_GROUP LPAR s_or_i COMMA s_or_i RPAR SEMI 
--- On ID reduce production define_group -> KW_DEFINE_GROUP LPAR s_or_i COMMA s_or_i RPAR SEMI 
+-- On RCURLY reduce production define_group -> KW_DEFINE_GROUP LPAR s_or_i COMMA s_or_i RPAR SEMI
+-- On KW_DEFINE_GROUP reduce production define_group -> KW_DEFINE_GROUP LPAR s_or_i COMMA s_or_i RPAR SEMI
+-- On KW_DEFINE reduce production define_group -> KW_DEFINE_GROUP LPAR s_or_i COMMA s_or_i RPAR SEMI
+-- On ID reduce production define_group -> KW_DEFINE_GROUP LPAR s_or_i COMMA s_or_i RPAR SEMI
 
 State 28:
 define -> KW_DEFINE . LPAR s_or_i COMMA s_or_i COMMA s_or_i RPAR SEMI [ RCURLY KW_DEFINE_GROUP KW_DEFINE ID ]
@@ -217,10 +217,10 @@ define -> KW_DEFINE LPAR s_or_i COMMA s_or_i COMMA s_or_i RPAR . SEMI [ RCURLY K
 
 State 36:
 define -> KW_DEFINE LPAR s_or_i COMMA s_or_i COMMA s_or_i RPAR SEMI . [ RCURLY KW_DEFINE_GROUP KW_DEFINE ID ]
--- On RCURLY reduce production define -> KW_DEFINE LPAR s_or_i COMMA s_or_i COMMA s_or_i RPAR SEMI 
--- On KW_DEFINE_GROUP reduce production define -> KW_DEFINE LPAR s_or_i COMMA s_or_i COMMA s_or_i RPAR SEMI 
--- On KW_DEFINE reduce production define -> KW_DEFINE LPAR s_or_i COMMA s_or_i COMMA s_or_i RPAR SEMI 
--- On ID reduce production define -> KW_DEFINE LPAR s_or_i COMMA s_or_i COMMA s_or_i RPAR SEMI 
+-- On RCURLY reduce production define -> KW_DEFINE LPAR s_or_i COMMA s_or_i COMMA s_or_i RPAR SEMI
+-- On KW_DEFINE_GROUP reduce production define -> KW_DEFINE LPAR s_or_i COMMA s_or_i COMMA s_or_i RPAR SEMI
+-- On KW_DEFINE reduce production define -> KW_DEFINE LPAR s_or_i COMMA s_or_i COMMA s_or_i RPAR SEMI
+-- On ID reduce production define -> KW_DEFINE LPAR s_or_i COMMA s_or_i COMMA s_or_i RPAR SEMI
 
 State 37:
 head -> ID . LPAR param_list RPAR [ SEMI RCURLY LCURLY KW_DEFINE_GROUP KW_DEFINE ID ]
@@ -247,11 +247,11 @@ simple_attr -> ID EQ . attr_val_expr [ RCURLY KW_DEFINE_GROUP KW_DEFINE ID ]
 
 State 39:
 attr_val_expr -> STRING . [ SEMI RCURLY KW_DEFINE_GROUP KW_DEFINE ID ]
--- On SEMI reduce production attr_val_expr -> STRING 
--- On RCURLY reduce production attr_val_expr -> STRING 
--- On KW_DEFINE_GROUP reduce production attr_val_expr -> STRING 
--- On KW_DEFINE reduce production attr_val_expr -> STRING 
--- On ID reduce production attr_val_expr -> STRING 
+-- On SEMI reduce production attr_val_expr -> STRING
+-- On RCURLY reduce production attr_val_expr -> STRING
+-- On KW_DEFINE_GROUP reduce production attr_val_expr -> STRING
+-- On KW_DEFINE reduce production attr_val_expr -> STRING
+-- On ID reduce production attr_val_expr -> STRING
 
 State 40:
 expr -> PLUS . expr [ SEMI RPAR RCURLY PLUS MULT MINUS KW_DEFINE_GROUP KW_DEFINE ID DIV ]
@@ -264,16 +264,16 @@ expr -> PLUS . expr [ SEMI RPAR RCURLY PLUS MULT MINUS KW_DEFINE_GROUP KW_DEFINE
 
 State 41:
 expr -> NUM . [ SEMI RPAR RCURLY PLUS MULT MINUS KW_DEFINE_GROUP KW_DEFINE ID DIV ]
--- On SEMI reduce production expr -> NUM 
--- On RPAR reduce production expr -> NUM 
--- On RCURLY reduce production expr -> NUM 
--- On PLUS reduce production expr -> NUM 
--- On MULT reduce production expr -> NUM 
--- On MINUS reduce production expr -> NUM 
--- On KW_DEFINE_GROUP reduce production expr -> NUM 
--- On KW_DEFINE reduce production expr -> NUM 
--- On ID reduce production expr -> NUM 
--- On DIV reduce production expr -> NUM 
+-- On SEMI reduce production expr -> NUM
+-- On RPAR reduce production expr -> NUM
+-- On RCURLY reduce production expr -> NUM
+-- On PLUS reduce production expr -> NUM
+-- On MULT reduce production expr -> NUM
+-- On MINUS reduce production expr -> NUM
+-- On KW_DEFINE_GROUP reduce production expr -> NUM
+-- On KW_DEFINE reduce production expr -> NUM
+-- On ID reduce production expr -> NUM
+-- On DIV reduce production expr -> NUM
 
 State 42:
 expr -> MINUS . expr [ SEMI RPAR RCURLY PLUS MULT MINUS KW_DEFINE_GROUP KW_DEFINE ID DIV ]
@@ -295,16 +295,16 @@ expr -> LPAR . expr RPAR [ SEMI RPAR RCURLY PLUS MULT MINUS KW_DEFINE_GROUP KW_D
 
 State 44:
 expr -> ID . [ SEMI RPAR RCURLY PLUS MULT MINUS KW_DEFINE_GROUP KW_DEFINE ID DIV ]
--- On SEMI reduce production expr -> ID 
--- On RPAR reduce production expr -> ID 
--- On RCURLY reduce production expr -> ID 
--- On PLUS reduce production expr -> ID 
--- On MULT reduce production expr -> ID 
--- On MINUS reduce production expr -> ID 
--- On KW_DEFINE_GROUP reduce production expr -> ID 
--- On KW_DEFINE reduce production expr -> ID 
--- On ID reduce production expr -> ID 
--- On DIV reduce production expr -> ID 
+-- On SEMI reduce production expr -> ID
+-- On RPAR reduce production expr -> ID
+-- On RCURLY reduce production expr -> ID
+-- On PLUS reduce production expr -> ID
+-- On MULT reduce production expr -> ID
+-- On MINUS reduce production expr -> ID
+-- On KW_DEFINE_GROUP reduce production expr -> ID
+-- On KW_DEFINE reduce production expr -> ID
+-- On ID reduce production expr -> ID
+-- On DIV reduce production expr -> ID
 
 State 45:
 expr -> expr . PLUS expr [ RPAR PLUS MULT MINUS DIV ]
@@ -320,16 +320,16 @@ expr -> LPAR expr . RPAR [ SEMI RPAR RCURLY PLUS MULT MINUS KW_DEFINE_GROUP KW_D
 
 State 46:
 expr -> LPAR expr RPAR . [ SEMI RPAR RCURLY PLUS MULT MINUS KW_DEFINE_GROUP KW_DEFINE ID DIV ]
--- On SEMI reduce production expr -> LPAR expr RPAR 
--- On RPAR reduce production expr -> LPAR expr RPAR 
--- On RCURLY reduce production expr -> LPAR expr RPAR 
--- On PLUS reduce production expr -> LPAR expr RPAR 
--- On MULT reduce production expr -> LPAR expr RPAR 
--- On MINUS reduce production expr -> LPAR expr RPAR 
--- On KW_DEFINE_GROUP reduce production expr -> LPAR expr RPAR 
--- On KW_DEFINE reduce production expr -> LPAR expr RPAR 
--- On ID reduce production expr -> LPAR expr RPAR 
--- On DIV reduce production expr -> LPAR expr RPAR 
+-- On SEMI reduce production expr -> LPAR expr RPAR
+-- On RPAR reduce production expr -> LPAR expr RPAR
+-- On RCURLY reduce production expr -> LPAR expr RPAR
+-- On PLUS reduce production expr -> LPAR expr RPAR
+-- On MULT reduce production expr -> LPAR expr RPAR
+-- On MINUS reduce production expr -> LPAR expr RPAR
+-- On KW_DEFINE_GROUP reduce production expr -> LPAR expr RPAR
+-- On KW_DEFINE reduce production expr -> LPAR expr RPAR
+-- On ID reduce production expr -> LPAR expr RPAR
+-- On DIV reduce production expr -> LPAR expr RPAR
 
 State 47:
 expr -> expr PLUS . expr [ SEMI RPAR RCURLY PLUS MULT MINUS KW_DEFINE_GROUP KW_DEFINE ID DIV ]
@@ -348,14 +348,14 @@ expr -> expr . MULT expr [ SEMI RPAR RCURLY PLUS MULT MINUS KW_DEFINE_GROUP KW_D
 expr -> expr . DIV expr [ SEMI RPAR RCURLY PLUS MULT MINUS KW_DEFINE_GROUP KW_DEFINE ID DIV ]
 -- On MULT shift to state 49
 -- On DIV shift to state 51
--- On SEMI reduce production expr -> expr PLUS expr 
--- On RPAR reduce production expr -> expr PLUS expr 
--- On RCURLY reduce production expr -> expr PLUS expr 
--- On PLUS reduce production expr -> expr PLUS expr 
--- On MINUS reduce production expr -> expr PLUS expr 
--- On KW_DEFINE_GROUP reduce production expr -> expr PLUS expr 
--- On KW_DEFINE reduce production expr -> expr PLUS expr 
--- On ID reduce production expr -> expr PLUS expr 
+-- On SEMI reduce production expr -> expr PLUS expr
+-- On RPAR reduce production expr -> expr PLUS expr
+-- On RCURLY reduce production expr -> expr PLUS expr
+-- On PLUS reduce production expr -> expr PLUS expr
+-- On MINUS reduce production expr -> expr PLUS expr
+-- On KW_DEFINE_GROUP reduce production expr -> expr PLUS expr
+-- On KW_DEFINE reduce production expr -> expr PLUS expr
+-- On ID reduce production expr -> expr PLUS expr
 
 State 49:
 expr -> expr MULT . expr [ SEMI RPAR RCURLY PLUS MULT MINUS KW_DEFINE_GROUP KW_DEFINE ID DIV ]
@@ -372,16 +372,16 @@ expr -> expr . MINUS expr [ SEMI RPAR RCURLY PLUS MULT MINUS KW_DEFINE_GROUP KW_
 expr -> expr . MULT expr [ SEMI RPAR RCURLY PLUS MULT MINUS KW_DEFINE_GROUP KW_DEFINE ID DIV ]
 expr -> expr MULT expr . [ SEMI RPAR RCURLY PLUS MULT MINUS KW_DEFINE_GROUP KW_DEFINE ID DIV ]
 expr -> expr . DIV expr [ SEMI RPAR RCURLY PLUS MULT MINUS KW_DEFINE_GROUP KW_DEFINE ID DIV ]
--- On SEMI reduce production expr -> expr MULT expr 
--- On RPAR reduce production expr -> expr MULT expr 
--- On RCURLY reduce production expr -> expr MULT expr 
--- On PLUS reduce production expr -> expr MULT expr 
--- On MULT reduce production expr -> expr MULT expr 
--- On MINUS reduce production expr -> expr MULT expr 
--- On KW_DEFINE_GROUP reduce production expr -> expr MULT expr 
--- On KW_DEFINE reduce production expr -> expr MULT expr 
--- On ID reduce production expr -> expr MULT expr 
--- On DIV reduce production expr -> expr MULT expr 
+-- On SEMI reduce production expr -> expr MULT expr
+-- On RPAR reduce production expr -> expr MULT expr
+-- On RCURLY reduce production expr -> expr MULT expr
+-- On PLUS reduce production expr -> expr MULT expr
+-- On MULT reduce production expr -> expr MULT expr
+-- On MINUS reduce production expr -> expr MULT expr
+-- On KW_DEFINE_GROUP reduce production expr -> expr MULT expr
+-- On KW_DEFINE reduce production expr -> expr MULT expr
+-- On ID reduce production expr -> expr MULT expr
+-- On DIV reduce production expr -> expr MULT expr
 
 State 51:
 expr -> expr DIV . expr [ SEMI RPAR RCURLY PLUS MULT MINUS KW_DEFINE_GROUP KW_DEFINE ID DIV ]
@@ -398,16 +398,16 @@ expr -> expr . MINUS expr [ SEMI RPAR RCURLY PLUS MULT MINUS KW_DEFINE_GROUP KW_
 expr -> expr . MULT expr [ SEMI RPAR RCURLY PLUS MULT MINUS KW_DEFINE_GROUP KW_DEFINE ID DIV ]
 expr -> expr . DIV expr [ SEMI RPAR RCURLY PLUS MULT MINUS KW_DEFINE_GROUP KW_DEFINE ID DIV ]
 expr -> expr DIV expr . [ SEMI RPAR RCURLY PLUS MULT MINUS KW_DEFINE_GROUP KW_DEFINE ID DIV ]
--- On SEMI reduce production expr -> expr DIV expr 
--- On RPAR reduce production expr -> expr DIV expr 
--- On RCURLY reduce production expr -> expr DIV expr 
--- On PLUS reduce production expr -> expr DIV expr 
--- On MULT reduce production expr -> expr DIV expr 
--- On MINUS reduce production expr -> expr DIV expr 
--- On KW_DEFINE_GROUP reduce production expr -> expr DIV expr 
--- On KW_DEFINE reduce production expr -> expr DIV expr 
--- On ID reduce production expr -> expr DIV expr 
--- On DIV reduce production expr -> expr DIV expr 
+-- On SEMI reduce production expr -> expr DIV expr
+-- On RPAR reduce production expr -> expr DIV expr
+-- On RCURLY reduce production expr -> expr DIV expr
+-- On PLUS reduce production expr -> expr DIV expr
+-- On MULT reduce production expr -> expr DIV expr
+-- On MINUS reduce production expr -> expr DIV expr
+-- On KW_DEFINE_GROUP reduce production expr -> expr DIV expr
+-- On KW_DEFINE reduce production expr -> expr DIV expr
+-- On ID reduce production expr -> expr DIV expr
+-- On DIV reduce production expr -> expr DIV expr
 
 State 53:
 expr -> expr MINUS . expr [ SEMI RPAR RCURLY PLUS MULT MINUS KW_DEFINE_GROUP KW_DEFINE ID DIV ]
@@ -426,14 +426,14 @@ expr -> expr . MULT expr [ SEMI RPAR RCURLY PLUS MULT MINUS KW_DEFINE_GROUP KW_D
 expr -> expr . DIV expr [ SEMI RPAR RCURLY PLUS MULT MINUS KW_DEFINE_GROUP KW_DEFINE ID DIV ]
 -- On MULT shift to state 49
 -- On DIV shift to state 51
--- On SEMI reduce production expr -> expr MINUS expr 
--- On RPAR reduce production expr -> expr MINUS expr 
--- On RCURLY reduce production expr -> expr MINUS expr 
--- On PLUS reduce production expr -> expr MINUS expr 
--- On MINUS reduce production expr -> expr MINUS expr 
--- On KW_DEFINE_GROUP reduce production expr -> expr MINUS expr 
--- On KW_DEFINE reduce production expr -> expr MINUS expr 
--- On ID reduce production expr -> expr MINUS expr 
+-- On SEMI reduce production expr -> expr MINUS expr
+-- On RPAR reduce production expr -> expr MINUS expr
+-- On RCURLY reduce production expr -> expr MINUS expr
+-- On PLUS reduce production expr -> expr MINUS expr
+-- On MINUS reduce production expr -> expr MINUS expr
+-- On KW_DEFINE_GROUP reduce production expr -> expr MINUS expr
+-- On KW_DEFINE reduce production expr -> expr MINUS expr
+-- On ID reduce production expr -> expr MINUS expr
 
 State 55:
 expr -> expr . PLUS expr [ SEMI RPAR RCURLY PLUS MULT MINUS KW_DEFINE_GROUP KW_DEFINE ID DIV ]
@@ -441,16 +441,16 @@ expr -> expr . MINUS expr [ SEMI RPAR RCURLY PLUS MULT MINUS KW_DEFINE_GROUP KW_
 expr -> expr . MULT expr [ SEMI RPAR RCURLY PLUS MULT MINUS KW_DEFINE_GROUP KW_DEFINE ID DIV ]
 expr -> expr . DIV expr [ SEMI RPAR RCURLY PLUS MULT MINUS KW_DEFINE_GROUP KW_DEFINE ID DIV ]
 expr -> MINUS expr . [ SEMI RPAR RCURLY PLUS MULT MINUS KW_DEFINE_GROUP KW_DEFINE ID DIV ]
--- On SEMI reduce production expr -> MINUS expr 
--- On RPAR reduce production expr -> MINUS expr 
--- On RCURLY reduce production expr -> MINUS expr 
--- On PLUS reduce production expr -> MINUS expr 
--- On MULT reduce production expr -> MINUS expr 
--- On MINUS reduce production expr -> MINUS expr 
--- On KW_DEFINE_GROUP reduce production expr -> MINUS expr 
--- On KW_DEFINE reduce production expr -> MINUS expr 
--- On ID reduce production expr -> MINUS expr 
--- On DIV reduce production expr -> MINUS expr 
+-- On SEMI reduce production expr -> MINUS expr
+-- On RPAR reduce production expr -> MINUS expr
+-- On RCURLY reduce production expr -> MINUS expr
+-- On PLUS reduce production expr -> MINUS expr
+-- On MULT reduce production expr -> MINUS expr
+-- On MINUS reduce production expr -> MINUS expr
+-- On KW_DEFINE_GROUP reduce production expr -> MINUS expr
+-- On KW_DEFINE reduce production expr -> MINUS expr
+-- On ID reduce production expr -> MINUS expr
+-- On DIV reduce production expr -> MINUS expr
 
 State 56:
 expr -> expr . PLUS expr [ SEMI RPAR RCURLY PLUS MULT MINUS KW_DEFINE_GROUP KW_DEFINE ID DIV ]
@@ -458,32 +458,32 @@ expr -> expr . MINUS expr [ SEMI RPAR RCURLY PLUS MULT MINUS KW_DEFINE_GROUP KW_
 expr -> expr . MULT expr [ SEMI RPAR RCURLY PLUS MULT MINUS KW_DEFINE_GROUP KW_DEFINE ID DIV ]
 expr -> expr . DIV expr [ SEMI RPAR RCURLY PLUS MULT MINUS KW_DEFINE_GROUP KW_DEFINE ID DIV ]
 expr -> PLUS expr . [ SEMI RPAR RCURLY PLUS MULT MINUS KW_DEFINE_GROUP KW_DEFINE ID DIV ]
--- On SEMI reduce production expr -> PLUS expr 
--- On RPAR reduce production expr -> PLUS expr 
--- On RCURLY reduce production expr -> PLUS expr 
--- On PLUS reduce production expr -> PLUS expr 
--- On MULT reduce production expr -> PLUS expr 
--- On MINUS reduce production expr -> PLUS expr 
--- On KW_DEFINE_GROUP reduce production expr -> PLUS expr 
--- On KW_DEFINE reduce production expr -> PLUS expr 
--- On ID reduce production expr -> PLUS expr 
--- On DIV reduce production expr -> PLUS expr 
+-- On SEMI reduce production expr -> PLUS expr
+-- On RPAR reduce production expr -> PLUS expr
+-- On RCURLY reduce production expr -> PLUS expr
+-- On PLUS reduce production expr -> PLUS expr
+-- On MULT reduce production expr -> PLUS expr
+-- On MINUS reduce production expr -> PLUS expr
+-- On KW_DEFINE_GROUP reduce production expr -> PLUS expr
+-- On KW_DEFINE reduce production expr -> PLUS expr
+-- On ID reduce production expr -> PLUS expr
+-- On DIV reduce production expr -> PLUS expr
 
 State 57:
 attr_val_expr -> KW_TRUE . [ SEMI RCURLY KW_DEFINE_GROUP KW_DEFINE ID ]
--- On SEMI reduce production attr_val_expr -> KW_TRUE 
--- On RCURLY reduce production attr_val_expr -> KW_TRUE 
--- On KW_DEFINE_GROUP reduce production attr_val_expr -> KW_TRUE 
--- On KW_DEFINE reduce production attr_val_expr -> KW_TRUE 
--- On ID reduce production attr_val_expr -> KW_TRUE 
+-- On SEMI reduce production attr_val_expr -> KW_TRUE
+-- On RCURLY reduce production attr_val_expr -> KW_TRUE
+-- On KW_DEFINE_GROUP reduce production attr_val_expr -> KW_TRUE
+-- On KW_DEFINE reduce production attr_val_expr -> KW_TRUE
+-- On ID reduce production attr_val_expr -> KW_TRUE
 
 State 58:
 attr_val_expr -> KW_FALSE . [ SEMI RCURLY KW_DEFINE_GROUP KW_DEFINE ID ]
--- On SEMI reduce production attr_val_expr -> KW_FALSE 
--- On RCURLY reduce production attr_val_expr -> KW_FALSE 
--- On KW_DEFINE_GROUP reduce production attr_val_expr -> KW_FALSE 
--- On KW_DEFINE reduce production attr_val_expr -> KW_FALSE 
--- On ID reduce production attr_val_expr -> KW_FALSE 
+-- On SEMI reduce production attr_val_expr -> KW_FALSE
+-- On RCURLY reduce production attr_val_expr -> KW_FALSE
+-- On KW_DEFINE_GROUP reduce production attr_val_expr -> KW_FALSE
+-- On KW_DEFINE reduce production attr_val_expr -> KW_FALSE
+-- On ID reduce production attr_val_expr -> KW_FALSE
 
 State 59:
 attr_val_expr -> expr . [ SEMI RCURLY KW_DEFINE_GROUP KW_DEFINE ID ]
@@ -495,18 +495,18 @@ expr -> expr . DIV expr [ SEMI RCURLY PLUS MULT MINUS KW_DEFINE_GROUP KW_DEFINE 
 -- On MULT shift to state 49
 -- On MINUS shift to state 53
 -- On DIV shift to state 51
--- On SEMI reduce production attr_val_expr -> expr 
--- On RCURLY reduce production attr_val_expr -> expr 
--- On KW_DEFINE_GROUP reduce production attr_val_expr -> expr 
--- On KW_DEFINE reduce production attr_val_expr -> expr 
--- On ID reduce production attr_val_expr -> expr 
+-- On SEMI reduce production attr_val_expr -> expr
+-- On RCURLY reduce production attr_val_expr -> expr
+-- On KW_DEFINE_GROUP reduce production attr_val_expr -> expr
+-- On KW_DEFINE reduce production attr_val_expr -> expr
+-- On ID reduce production attr_val_expr -> expr
 
 State 60:
 simple_attr -> ID EQ attr_val_expr . [ RCURLY KW_DEFINE_GROUP KW_DEFINE ID ]
--- On RCURLY reduce production simple_attr -> ID EQ attr_val_expr 
--- On KW_DEFINE_GROUP reduce production simple_attr -> ID EQ attr_val_expr 
--- On KW_DEFINE reduce production simple_attr -> ID EQ attr_val_expr 
--- On ID reduce production simple_attr -> ID EQ attr_val_expr 
+-- On RCURLY reduce production simple_attr -> ID EQ attr_val_expr
+-- On KW_DEFINE_GROUP reduce production simple_attr -> ID EQ attr_val_expr
+-- On KW_DEFINE reduce production simple_attr -> ID EQ attr_val_expr
+-- On ID reduce production simple_attr -> ID EQ attr_val_expr
 
 State 61:
 simple_attr -> ID COLON . attr_val_expr SEMI [ RCURLY KW_DEFINE_GROUP KW_DEFINE ID ]
@@ -526,17 +526,17 @@ State 62:
 simple_attr -> ID COLON attr_val_expr . SEMI [ RCURLY KW_DEFINE_GROUP KW_DEFINE ID ]
 simple_attr -> ID COLON attr_val_expr . [ RCURLY KW_DEFINE_GROUP KW_DEFINE ID ]
 -- On SEMI shift to state 63
--- On RCURLY reduce production simple_attr -> ID COLON attr_val_expr 
--- On KW_DEFINE_GROUP reduce production simple_attr -> ID COLON attr_val_expr 
--- On KW_DEFINE reduce production simple_attr -> ID COLON attr_val_expr 
--- On ID reduce production simple_attr -> ID COLON attr_val_expr 
+-- On RCURLY reduce production simple_attr -> ID COLON attr_val_expr
+-- On KW_DEFINE_GROUP reduce production simple_attr -> ID COLON attr_val_expr
+-- On KW_DEFINE reduce production simple_attr -> ID COLON attr_val_expr
+-- On ID reduce production simple_attr -> ID COLON attr_val_expr
 
 State 63:
 simple_attr -> ID COLON attr_val_expr SEMI . [ RCURLY KW_DEFINE_GROUP KW_DEFINE ID ]
--- On RCURLY reduce production simple_attr -> ID COLON attr_val_expr SEMI 
--- On KW_DEFINE_GROUP reduce production simple_attr -> ID COLON attr_val_expr SEMI 
--- On KW_DEFINE reduce production simple_attr -> ID COLON attr_val_expr SEMI 
--- On ID reduce production simple_attr -> ID COLON attr_val_expr SEMI 
+-- On RCURLY reduce production simple_attr -> ID COLON attr_val_expr SEMI
+-- On KW_DEFINE_GROUP reduce production simple_attr -> ID COLON attr_val_expr SEMI
+-- On KW_DEFINE reduce production simple_attr -> ID COLON attr_val_expr SEMI
+-- On ID reduce production simple_attr -> ID COLON attr_val_expr SEMI
 
 State 64:
 group -> head LCURLY statements . RCURLY [ # ]
@@ -555,21 +555,21 @@ statements -> statements . statement [ RCURLY KW_DEFINE_GROUP KW_DEFINE ID ]
 
 State 65:
 group -> head LCURLY statements RCURLY . [ # ]
--- On # reduce production group -> head LCURLY statements RCURLY 
+-- On # reduce production group -> head LCURLY statements RCURLY
 
 State 66:
 statements -> statements statement . [ RCURLY KW_DEFINE_GROUP KW_DEFINE ID ]
--- On RCURLY reduce production statements -> statements statement 
--- On KW_DEFINE_GROUP reduce production statements -> statements statement 
--- On KW_DEFINE reduce production statements -> statements statement 
--- On ID reduce production statements -> statements statement 
+-- On RCURLY reduce production statements -> statements statement
+-- On KW_DEFINE_GROUP reduce production statements -> statements statement
+-- On KW_DEFINE reduce production statements -> statements statement
+-- On ID reduce production statements -> statements statement
 
 State 67:
 statement -> simple_attr . [ RCURLY KW_DEFINE_GROUP KW_DEFINE ID ]
--- On RCURLY reduce production statement -> simple_attr 
--- On KW_DEFINE_GROUP reduce production statement -> simple_attr 
--- On KW_DEFINE reduce production statement -> simple_attr 
--- On ID reduce production statement -> simple_attr 
+-- On RCURLY reduce production statement -> simple_attr
+-- On KW_DEFINE_GROUP reduce production statement -> simple_attr
+-- On KW_DEFINE reduce production statement -> simple_attr
+-- On ID reduce production statement -> simple_attr
 
 State 68:
 complex_attr -> head . SEMI [ RCURLY KW_DEFINE_GROUP KW_DEFINE ID ]
@@ -578,17 +578,17 @@ group -> head . LCURLY RCURLY [ RCURLY KW_DEFINE_GROUP KW_DEFINE ID ]
 simple_attr -> head . [ RCURLY KW_DEFINE_GROUP KW_DEFINE ID ]
 -- On SEMI shift to state 69
 -- On LCURLY shift to state 70
--- On RCURLY reduce production simple_attr -> head 
--- On KW_DEFINE_GROUP reduce production simple_attr -> head 
--- On KW_DEFINE reduce production simple_attr -> head 
--- On ID reduce production simple_attr -> head 
+-- On RCURLY reduce production simple_attr -> head
+-- On KW_DEFINE_GROUP reduce production simple_attr -> head
+-- On KW_DEFINE reduce production simple_attr -> head
+-- On ID reduce production simple_attr -> head
 
 State 69:
 complex_attr -> head SEMI . [ RCURLY KW_DEFINE_GROUP KW_DEFINE ID ]
--- On RCURLY reduce production complex_attr -> head SEMI 
--- On KW_DEFINE_GROUP reduce production complex_attr -> head SEMI 
--- On KW_DEFINE reduce production complex_attr -> head SEMI 
--- On ID reduce production complex_attr -> head SEMI 
+-- On RCURLY reduce production complex_attr -> head SEMI
+-- On KW_DEFINE_GROUP reduce production complex_attr -> head SEMI
+-- On KW_DEFINE reduce production complex_attr -> head SEMI
+-- On ID reduce production complex_attr -> head SEMI
 
 State 70:
 group -> head LCURLY . statements RCURLY [ RCURLY KW_DEFINE_GROUP KW_DEFINE ID ]
@@ -608,10 +608,10 @@ group -> head LCURLY . RCURLY [ RCURLY KW_DEFINE_GROUP KW_DEFINE ID ]
 
 State 71:
 group -> head LCURLY RCURLY . [ RCURLY KW_DEFINE_GROUP KW_DEFINE ID ]
--- On RCURLY reduce production group -> head LCURLY RCURLY 
--- On KW_DEFINE_GROUP reduce production group -> head LCURLY RCURLY 
--- On KW_DEFINE reduce production group -> head LCURLY RCURLY 
--- On ID reduce production group -> head LCURLY RCURLY 
+-- On RCURLY reduce production group -> head LCURLY RCURLY
+-- On KW_DEFINE_GROUP reduce production group -> head LCURLY RCURLY
+-- On KW_DEFINE reduce production group -> head LCURLY RCURLY
+-- On ID reduce production group -> head LCURLY RCURLY
 
 State 72:
 group -> head LCURLY statements . RCURLY [ RCURLY KW_DEFINE_GROUP KW_DEFINE ID ]
@@ -630,49 +630,49 @@ statements -> statements . statement [ RCURLY KW_DEFINE_GROUP KW_DEFINE ID ]
 
 State 73:
 group -> head LCURLY statements RCURLY . [ RCURLY KW_DEFINE_GROUP KW_DEFINE ID ]
--- On RCURLY reduce production group -> head LCURLY statements RCURLY 
--- On KW_DEFINE_GROUP reduce production group -> head LCURLY statements RCURLY 
--- On KW_DEFINE reduce production group -> head LCURLY statements RCURLY 
--- On ID reduce production group -> head LCURLY statements RCURLY 
+-- On RCURLY reduce production group -> head LCURLY statements RCURLY
+-- On KW_DEFINE_GROUP reduce production group -> head LCURLY statements RCURLY
+-- On KW_DEFINE reduce production group -> head LCURLY statements RCURLY
+-- On ID reduce production group -> head LCURLY statements RCURLY
 
 State 74:
 statement -> group . [ RCURLY KW_DEFINE_GROUP KW_DEFINE ID ]
--- On RCURLY reduce production statement -> group 
--- On KW_DEFINE_GROUP reduce production statement -> group 
--- On KW_DEFINE reduce production statement -> group 
--- On ID reduce production statement -> group 
+-- On RCURLY reduce production statement -> group
+-- On KW_DEFINE_GROUP reduce production statement -> group
+-- On KW_DEFINE reduce production statement -> group
+-- On ID reduce production statement -> group
 
 State 75:
 statement -> define_group . [ RCURLY KW_DEFINE_GROUP KW_DEFINE ID ]
--- On RCURLY reduce production statement -> define_group 
--- On KW_DEFINE_GROUP reduce production statement -> define_group 
--- On KW_DEFINE reduce production statement -> define_group 
--- On ID reduce production statement -> define_group 
+-- On RCURLY reduce production statement -> define_group
+-- On KW_DEFINE_GROUP reduce production statement -> define_group
+-- On KW_DEFINE reduce production statement -> define_group
+-- On ID reduce production statement -> define_group
 
 State 76:
 statement -> define . [ RCURLY KW_DEFINE_GROUP KW_DEFINE ID ]
--- On RCURLY reduce production statement -> define 
--- On KW_DEFINE_GROUP reduce production statement -> define 
--- On KW_DEFINE reduce production statement -> define 
--- On ID reduce production statement -> define 
+-- On RCURLY reduce production statement -> define
+-- On KW_DEFINE_GROUP reduce production statement -> define
+-- On KW_DEFINE reduce production statement -> define
+-- On ID reduce production statement -> define
 
 State 77:
 statement -> complex_attr . [ RCURLY KW_DEFINE_GROUP KW_DEFINE ID ]
--- On RCURLY reduce production statement -> complex_attr 
--- On KW_DEFINE_GROUP reduce production statement -> complex_attr 
--- On KW_DEFINE reduce production statement -> complex_attr 
--- On ID reduce production statement -> complex_attr 
+-- On RCURLY reduce production statement -> complex_attr
+-- On KW_DEFINE_GROUP reduce production statement -> complex_attr
+-- On KW_DEFINE reduce production statement -> complex_attr
+-- On ID reduce production statement -> complex_attr
 
 State 78:
 statements -> statement . [ RCURLY KW_DEFINE_GROUP KW_DEFINE ID ]
--- On RCURLY reduce production statements -> statement 
--- On KW_DEFINE_GROUP reduce production statements -> statement 
--- On KW_DEFINE reduce production statements -> statement 
--- On ID reduce production statements -> statement 
+-- On RCURLY reduce production statements -> statement
+-- On KW_DEFINE_GROUP reduce production statements -> statement
+-- On KW_DEFINE reduce production statements -> statement
+-- On ID reduce production statements -> statement
 
 State 79:
 file -> group . [ # ]
--- On # reduce production file -> group 
+-- On # reduce production file -> group
 
 State 80:
 file' -> file . [ # ]

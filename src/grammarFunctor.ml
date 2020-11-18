@@ -496,20 +496,28 @@ module Symbol = struct
 
   (* Printing an array of symbols. [offset] is the start offset -- we
      print everything to its right. [dot] is the dot offset -- we
-     print a dot at this offset, if we find it. *)
+     print a dot at this offset, if we find it. Note that [dot] can be
+     equal to [length]. *)
 
   let printaod offset dot symbols =
-    let buffer = Buffer.create 512 in
+    let b = Buffer.create 512 in
     let length = Array.length symbols in
+    let first = ref true in
+    let separate () =
+      if not !first then Printf.bprintf b " ";
+      first := false
+    in
     for i = offset to length do
-      if i = dot then
-        Buffer.add_string buffer ". ";
+      if i = dot then begin
+        separate();
+        Printf.bprintf b "."
+      end;
       if i < length then begin
-        Buffer.add_string buffer (print symbols.(i));
-        Buffer.add_char buffer ' '
+        separate();
+        Printf.bprintf b "%s" (print symbols.(i))
       end
     done;
-    Buffer.contents buffer
+    Buffer.contents b
 
   let printao offset symbols =
     printaod offset (-1) symbols
@@ -821,6 +829,13 @@ module Production = struct
     assert (not (is_start prod));
     let nt, rhs = table.(prod) in
     Printf.sprintf "%s -> %s" (Nonterminal.print false nt) (Symbol.printao 0 rhs)
+
+  let describe prod =
+    match classify prod with
+    | Some nt ->
+        Printf.sprintf "accepting %s" (Nonterminal.print false nt)
+    | None ->
+        Printf.sprintf "reducing production %s" (print prod)
 
   (* Tabulation and sum. *)
 
@@ -1447,7 +1462,7 @@ let rec convert = function
         (Terminal.print tok)
   | ENullable (symbols, e) ->
       let e = convert e in
-      Printf.sprintf "%scan vanish%s%s"
+      Printf.sprintf "%s can vanish%s%s"
         (Symbol.printl symbols)
         (if e = "" then "" else " and ")
         e

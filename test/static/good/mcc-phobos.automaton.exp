@@ -11,32 +11,32 @@ module_name -> TokModule . identifier [ TokTerms TokInclude ]
 
 State 2:
 identifier -> TokId . [ TokTerms TokStart TokRightBrace TokRightAssoc TokQuotedId TokQuestionMark TokPrec TokNonAssoc TokLeftBrack TokLeftBrace TokLeftAssoc TokInt TokInclude TokId TokGrammar TokDoubledArrow TokDot TokDeclare TokComma TokBang TokArrow ]
--- On TokTerms reduce production identifier -> TokId 
--- On TokStart reduce production identifier -> TokId 
--- On TokRightBrace reduce production identifier -> TokId 
--- On TokRightAssoc reduce production identifier -> TokId 
--- On TokQuotedId reduce production identifier -> TokId 
--- On TokQuestionMark reduce production identifier -> TokId 
--- On TokPrec reduce production identifier -> TokId 
--- On TokNonAssoc reduce production identifier -> TokId 
--- On TokLeftBrack reduce production identifier -> TokId 
--- On TokLeftBrace reduce production identifier -> TokId 
--- On TokLeftAssoc reduce production identifier -> TokId 
--- On TokInt reduce production identifier -> TokId 
--- On TokInclude reduce production identifier -> TokId 
--- On TokId reduce production identifier -> TokId 
--- On TokGrammar reduce production identifier -> TokId 
--- On TokDoubledArrow reduce production identifier -> TokId 
--- On TokDot reduce production identifier -> TokId 
--- On TokDeclare reduce production identifier -> TokId 
--- On TokComma reduce production identifier -> TokId 
--- On TokBang reduce production identifier -> TokId 
--- On TokArrow reduce production identifier -> TokId 
+-- On TokTerms reduce production identifier -> TokId
+-- On TokStart reduce production identifier -> TokId
+-- On TokRightBrace reduce production identifier -> TokId
+-- On TokRightAssoc reduce production identifier -> TokId
+-- On TokQuotedId reduce production identifier -> TokId
+-- On TokQuestionMark reduce production identifier -> TokId
+-- On TokPrec reduce production identifier -> TokId
+-- On TokNonAssoc reduce production identifier -> TokId
+-- On TokLeftBrack reduce production identifier -> TokId
+-- On TokLeftBrace reduce production identifier -> TokId
+-- On TokLeftAssoc reduce production identifier -> TokId
+-- On TokInt reduce production identifier -> TokId
+-- On TokInclude reduce production identifier -> TokId
+-- On TokId reduce production identifier -> TokId
+-- On TokGrammar reduce production identifier -> TokId
+-- On TokDoubledArrow reduce production identifier -> TokId
+-- On TokDot reduce production identifier -> TokId
+-- On TokDeclare reduce production identifier -> TokId
+-- On TokComma reduce production identifier -> TokId
+-- On TokBang reduce production identifier -> TokId
+-- On TokArrow reduce production identifier -> TokId
 
 State 3:
 module_name -> TokModule identifier . [ TokTerms TokInclude ]
--- On TokTerms reduce production module_name -> TokModule identifier 
--- On TokInclude reduce production module_name -> TokModule identifier 
+-- On TokTerms reduce production module_name -> TokModule identifier
+-- On TokInclude reduce production module_name -> TokModule identifier
 
 State 4:
 main -> module_name . includes term_sections opt_preamble lexer opt_assocs grammar opt_rewrites_section opt_inline_forms TokEof [ # ]
@@ -57,33 +57,33 @@ include_item -> TokInclude . identifier [ TokTerms TokInclude ]
 
 State 6:
 string_list_rev -> TokString . [ TokTerms TokString TokInclude ]
--- On TokTerms reduce production string_list_rev -> TokString 
--- On TokString reduce production string_list_rev -> TokString 
--- On TokInclude reduce production string_list_rev -> TokString 
+-- On TokTerms reduce production string_list_rev -> TokString
+-- On TokString reduce production string_list_rev -> TokString
+-- On TokInclude reduce production string_list_rev -> TokString
 
 State 7:
 string_list -> string_list_rev . [ TokTerms TokString TokInclude ]
--- On TokTerms reduce production string_list -> string_list_rev 
--- On TokString reduce production string_list -> string_list_rev 
--- On TokInclude reduce production string_list -> string_list_rev 
+-- On TokTerms reduce production string_list -> string_list_rev
+-- On TokString reduce production string_list -> string_list_rev
+-- On TokInclude reduce production string_list -> string_list_rev
 
 State 8:
 include_item -> TokInclude string_list . [ TokTerms TokInclude ]
 string_list_rev -> string_list . TokString [ TokTerms TokString TokInclude ]
 -- On TokString shift to state 9
--- On TokTerms reduce production include_item -> TokInclude string_list 
--- On TokInclude reduce production include_item -> TokInclude string_list 
+-- On TokTerms reduce production include_item -> TokInclude string_list
+-- On TokInclude reduce production include_item -> TokInclude string_list
 
 State 9:
 string_list_rev -> string_list TokString . [ TokTerms TokString TokInclude ]
--- On TokTerms reduce production string_list_rev -> string_list TokString 
--- On TokString reduce production string_list_rev -> string_list TokString 
--- On TokInclude reduce production string_list_rev -> string_list TokString 
+-- On TokTerms reduce production string_list_rev -> string_list TokString
+-- On TokString reduce production string_list_rev -> string_list TokString
+-- On TokInclude reduce production string_list_rev -> string_list TokString
 
 State 10:
 include_item -> TokInclude identifier . [ TokTerms TokInclude ]
--- On TokTerms reduce production include_item -> TokInclude identifier 
--- On TokInclude reduce production include_item -> TokInclude identifier 
+-- On TokTerms reduce production include_item -> TokInclude identifier
+-- On TokInclude reduce production include_item -> TokInclude identifier
 
 State 11:
 main -> module_name includes . term_sections opt_preamble lexer opt_assocs grammar opt_rewrites_section opt_inline_forms TokEof [ # ]
@@ -102,11 +102,11 @@ term_section -> TokTerms . term_options [ TokTokens TokTerms TokLeftBrace ]
 
 State 13:
 term_option -> TokOption . [ TokTokens TokTerms TokOption TokLeftBrace TokExtend ]
--- On TokTokens reduce production term_option -> TokOption 
--- On TokTerms reduce production term_option -> TokOption 
--- On TokOption reduce production term_option -> TokOption 
--- On TokLeftBrace reduce production term_option -> TokOption 
--- On TokExtend reduce production term_option -> TokOption 
+-- On TokTokens reduce production term_option -> TokOption
+-- On TokTerms reduce production term_option -> TokOption
+-- On TokOption reduce production term_option -> TokOption
+-- On TokLeftBrace reduce production term_option -> TokOption
+-- On TokExtend reduce production term_option -> TokOption
 
 State 14:
 term_option -> TokExtend . TokString TokLeftBrace opt_term_declarations TokRightBrace [ TokTokens TokTerms TokOption TokLeftBrace TokExtend ]
@@ -135,15 +135,15 @@ term_declaration -> TokDeclare . syntax_terms [ TokRightBrace TokDeclare ]
 
 State 18:
 term_declaration -> TokDeclare syntax_terms . [ TokRightBrace TokDeclare ]
--- On TokRightBrace reduce production term_declaration -> TokDeclare syntax_terms 
--- On TokDeclare reduce production term_declaration -> TokDeclare syntax_terms 
+-- On TokRightBrace reduce production term_declaration -> TokDeclare syntax_terms
+-- On TokDeclare reduce production term_declaration -> TokDeclare syntax_terms
 
 State 19:
 syntax_term_list_rev -> syntax_term_list_rev . TokComma syntax_term [ TokRightBrace TokDeclare TokComma ]
 syntax_terms -> syntax_term_list_rev . [ TokRightBrace TokDeclare ]
 -- On TokComma shift to state 20
--- On TokRightBrace reduce production syntax_terms -> syntax_term_list_rev 
--- On TokDeclare reduce production syntax_terms -> syntax_term_list_rev 
+-- On TokRightBrace reduce production syntax_terms -> syntax_term_list_rev
+-- On TokDeclare reduce production syntax_terms -> syntax_term_list_rev
 
 State 20:
 syntax_term_list_rev -> syntax_term_list_rev TokComma . syntax_term [ TokRightBrace TokDeclare TokComma ]
@@ -154,17 +154,17 @@ syntax_term_list_rev -> syntax_term_list_rev TokComma . syntax_term [ TokRightBr
 
 State 21:
 syntax_term_list_rev -> syntax_term_list_rev TokComma syntax_term . [ TokRightBrace TokDeclare TokComma ]
--- On TokRightBrace reduce production syntax_term_list_rev -> syntax_term_list_rev TokComma syntax_term 
--- On TokDeclare reduce production syntax_term_list_rev -> syntax_term_list_rev TokComma syntax_term 
--- On TokComma reduce production syntax_term_list_rev -> syntax_term_list_rev TokComma syntax_term 
+-- On TokRightBrace reduce production syntax_term_list_rev -> syntax_term_list_rev TokComma syntax_term
+-- On TokDeclare reduce production syntax_term_list_rev -> syntax_term_list_rev TokComma syntax_term
+-- On TokComma reduce production syntax_term_list_rev -> syntax_term_list_rev TokComma syntax_term
 
 State 22:
 syntax_term -> st_identifier . [ TokRightBrace TokDeclare TokComma ]
 syntax_term -> st_identifier . TokLeftBrace opt_syntax_subterms TokRightBrace [ TokRightBrace TokDeclare TokComma ]
 -- On TokLeftBrace shift to state 23
--- On TokRightBrace reduce production syntax_term -> st_identifier 
--- On TokDeclare reduce production syntax_term -> st_identifier 
--- On TokComma reduce production syntax_term -> st_identifier 
+-- On TokRightBrace reduce production syntax_term -> st_identifier
+-- On TokDeclare reduce production syntax_term -> st_identifier
+-- On TokComma reduce production syntax_term -> st_identifier
 
 State 23:
 syntax_term -> st_identifier TokLeftBrace . opt_syntax_subterms TokRightBrace [ TokRightBrace TokDeclare TokComma ]
@@ -181,28 +181,28 @@ syntax_term -> st_identifier TokLeftBrace . opt_syntax_subterms TokRightBrace [ 
 
 State 24:
 quoted_identifier -> TokQuotedId . [ TokSemi TokRightBrack TokRightBrace TokQuotedId TokQuestionMark TokPipe TokLeftBrack TokInt TokInline TokId TokEof TokArrow ]
--- On TokSemi reduce production quoted_identifier -> TokQuotedId 
--- On TokRightBrack reduce production quoted_identifier -> TokQuotedId 
--- On TokRightBrace reduce production quoted_identifier -> TokQuotedId 
--- On TokQuotedId reduce production quoted_identifier -> TokQuotedId 
--- On TokQuestionMark reduce production quoted_identifier -> TokQuotedId 
--- On TokPipe reduce production quoted_identifier -> TokQuotedId 
--- On TokLeftBrack reduce production quoted_identifier -> TokQuotedId 
--- On TokInt reduce production quoted_identifier -> TokQuotedId 
--- On TokInline reduce production quoted_identifier -> TokQuotedId 
--- On TokId reduce production quoted_identifier -> TokQuotedId 
--- On TokEof reduce production quoted_identifier -> TokQuotedId 
--- On TokArrow reduce production quoted_identifier -> TokQuotedId 
+-- On TokSemi reduce production quoted_identifier -> TokQuotedId
+-- On TokRightBrack reduce production quoted_identifier -> TokQuotedId
+-- On TokRightBrace reduce production quoted_identifier -> TokQuotedId
+-- On TokQuotedId reduce production quoted_identifier -> TokQuotedId
+-- On TokQuestionMark reduce production quoted_identifier -> TokQuotedId
+-- On TokPipe reduce production quoted_identifier -> TokQuotedId
+-- On TokLeftBrack reduce production quoted_identifier -> TokQuotedId
+-- On TokInt reduce production quoted_identifier -> TokQuotedId
+-- On TokInline reduce production quoted_identifier -> TokQuotedId
+-- On TokId reduce production quoted_identifier -> TokQuotedId
+-- On TokEof reduce production quoted_identifier -> TokQuotedId
+-- On TokArrow reduce production quoted_identifier -> TokQuotedId
 
 State 25:
 opt_syntax_subterms -> syntax_subterms . [ TokRightBrace ]
--- On TokRightBrace reduce production opt_syntax_subterms -> syntax_subterms 
+-- On TokRightBrace reduce production opt_syntax_subterms -> syntax_subterms
 
 State 26:
 syntax_subterm_list -> syntax_subterm_list . TokSemi syntax_subterm [ TokSemi TokRightBrace ]
 syntax_subterms -> syntax_subterm_list . [ TokRightBrace ]
 -- On TokSemi shift to state 27
--- On TokRightBrace reduce production syntax_subterms -> syntax_subterm_list 
+-- On TokRightBrace reduce production syntax_subterms -> syntax_subterm_list
 
 State 27:
 syntax_subterm_list -> syntax_subterm_list TokSemi . syntax_subterm [ TokSemi TokRightBrace ]
@@ -215,20 +215,20 @@ syntax_subterm_list -> syntax_subterm_list TokSemi . syntax_subterm [ TokSemi To
 
 State 28:
 syntax_subterm -> syntax_subterm_base . [ TokSemi TokRightBrace ]
--- On TokSemi reduce production syntax_subterm -> syntax_subterm_base 
--- On TokRightBrace reduce production syntax_subterm -> syntax_subterm_base 
+-- On TokSemi reduce production syntax_subterm -> syntax_subterm_base
+-- On TokRightBrace reduce production syntax_subterm -> syntax_subterm_base
 
 State 29:
 syntax_subterm_list -> syntax_subterm_list TokSemi syntax_subterm . [ TokSemi TokRightBrace ]
--- On TokSemi reduce production syntax_subterm_list -> syntax_subterm_list TokSemi syntax_subterm 
--- On TokRightBrace reduce production syntax_subterm_list -> syntax_subterm_list TokSemi syntax_subterm 
+-- On TokSemi reduce production syntax_subterm_list -> syntax_subterm_list TokSemi syntax_subterm
+-- On TokRightBrace reduce production syntax_subterm_list -> syntax_subterm_list TokSemi syntax_subterm
 
 State 30:
 syntax_subterm_base -> quoted_identifier . [ TokSemi TokRightBrace ]
 syntax_subterm_base -> quoted_identifier . TokLeftBrack quoted_identifier TokRightBrack [ TokSemi TokRightBrace ]
 -- On TokLeftBrack shift to state 31
--- On TokSemi reduce production syntax_subterm_base -> quoted_identifier 
--- On TokRightBrace reduce production syntax_subterm_base -> quoted_identifier 
+-- On TokSemi reduce production syntax_subterm_base -> quoted_identifier
+-- On TokRightBrace reduce production syntax_subterm_base -> quoted_identifier
 
 State 31:
 syntax_subterm_base -> quoted_identifier TokLeftBrack . quoted_identifier TokRightBrack [ TokSemi TokRightBrace ]
@@ -241,8 +241,8 @@ syntax_subterm_base -> quoted_identifier TokLeftBrack quoted_identifier . TokRig
 
 State 33:
 syntax_subterm_base -> quoted_identifier TokLeftBrack quoted_identifier TokRightBrack . [ TokSemi TokRightBrace ]
--- On TokSemi reduce production syntax_subterm_base -> quoted_identifier TokLeftBrack quoted_identifier TokRightBrack 
--- On TokRightBrace reduce production syntax_subterm_base -> quoted_identifier TokLeftBrack quoted_identifier TokRightBrack 
+-- On TokSemi reduce production syntax_subterm_base -> quoted_identifier TokLeftBrack quoted_identifier TokRightBrack
+-- On TokRightBrace reduce production syntax_subterm_base -> quoted_identifier TokLeftBrack quoted_identifier TokRightBrack
 
 State 34:
 syntax_subterm -> identifier . TokDot syntax_subterm_base [ TokSemi TokRightBrace ]
@@ -256,13 +256,13 @@ syntax_subterm -> identifier TokDot . syntax_subterm_base [ TokSemi TokRightBrac
 
 State 36:
 syntax_subterm -> identifier TokDot syntax_subterm_base . [ TokSemi TokRightBrace ]
--- On TokSemi reduce production syntax_subterm -> identifier TokDot syntax_subterm_base 
--- On TokRightBrace reduce production syntax_subterm -> identifier TokDot syntax_subterm_base 
+-- On TokSemi reduce production syntax_subterm -> identifier TokDot syntax_subterm_base
+-- On TokRightBrace reduce production syntax_subterm -> identifier TokDot syntax_subterm_base
 
 State 37:
 syntax_subterm_list -> syntax_subterm . [ TokSemi TokRightBrace ]
--- On TokSemi reduce production syntax_subterm_list -> syntax_subterm 
--- On TokRightBrace reduce production syntax_subterm_list -> syntax_subterm 
+-- On TokSemi reduce production syntax_subterm_list -> syntax_subterm
+-- On TokRightBrace reduce production syntax_subterm_list -> syntax_subterm
 
 State 38:
 syntax_term -> st_identifier TokLeftBrace opt_syntax_subterms . TokRightBrace [ TokRightBrace TokDeclare TokComma ]
@@ -270,18 +270,18 @@ syntax_term -> st_identifier TokLeftBrace opt_syntax_subterms . TokRightBrace [ 
 
 State 39:
 syntax_term -> st_identifier TokLeftBrace opt_syntax_subterms TokRightBrace . [ TokRightBrace TokDeclare TokComma ]
--- On TokRightBrace reduce production syntax_term -> st_identifier TokLeftBrace opt_syntax_subterms TokRightBrace 
--- On TokDeclare reduce production syntax_term -> st_identifier TokLeftBrace opt_syntax_subterms TokRightBrace 
--- On TokComma reduce production syntax_term -> st_identifier TokLeftBrace opt_syntax_subterms TokRightBrace 
+-- On TokRightBrace reduce production syntax_term -> st_identifier TokLeftBrace opt_syntax_subterms TokRightBrace
+-- On TokDeclare reduce production syntax_term -> st_identifier TokLeftBrace opt_syntax_subterms TokRightBrace
+-- On TokComma reduce production syntax_term -> st_identifier TokLeftBrace opt_syntax_subterms TokRightBrace
 
 State 40:
 st_identifier -> identifier . [ TokRightBrace TokLeftBrace TokDeclare TokComma ]
 st_identifier -> identifier . TokLeftBrack param_type_id TokRightBrack [ TokRightBrace TokLeftBrace TokDeclare TokComma ]
 -- On TokLeftBrack shift to state 41
--- On TokRightBrace reduce production st_identifier -> identifier 
--- On TokLeftBrace reduce production st_identifier -> identifier 
--- On TokDeclare reduce production st_identifier -> identifier 
--- On TokComma reduce production st_identifier -> identifier 
+-- On TokRightBrace reduce production st_identifier -> identifier
+-- On TokLeftBrace reduce production st_identifier -> identifier
+-- On TokDeclare reduce production st_identifier -> identifier
+-- On TokComma reduce production st_identifier -> identifier
 
 State 41:
 st_identifier -> identifier TokLeftBrack . param_type_id TokRightBrack [ TokRightBrace TokLeftBrace TokDeclare TokComma ]
@@ -290,10 +290,10 @@ st_identifier -> identifier TokLeftBrack . param_type_id TokRightBrack [ TokRigh
 
 State 42:
 param_type_id -> TokId . [ TokString TokRightBrack TokInt TokId ]
--- On TokString reduce production param_type_id -> TokId 
--- On TokRightBrack reduce production param_type_id -> TokId 
--- On TokInt reduce production param_type_id -> TokId 
--- On TokId reduce production param_type_id -> TokId 
+-- On TokString reduce production param_type_id -> TokId
+-- On TokRightBrack reduce production param_type_id -> TokId
+-- On TokInt reduce production param_type_id -> TokId
+-- On TokId reduce production param_type_id -> TokId
 
 State 43:
 st_identifier -> identifier TokLeftBrack param_type_id . TokRightBrack [ TokRightBrace TokLeftBrace TokDeclare TokComma ]
@@ -301,33 +301,33 @@ st_identifier -> identifier TokLeftBrack param_type_id . TokRightBrack [ TokRigh
 
 State 44:
 st_identifier -> identifier TokLeftBrack param_type_id TokRightBrack . [ TokRightBrace TokLeftBrace TokDeclare TokComma ]
--- On TokRightBrace reduce production st_identifier -> identifier TokLeftBrack param_type_id TokRightBrack 
--- On TokLeftBrace reduce production st_identifier -> identifier TokLeftBrack param_type_id TokRightBrack 
--- On TokDeclare reduce production st_identifier -> identifier TokLeftBrack param_type_id TokRightBrack 
--- On TokComma reduce production st_identifier -> identifier TokLeftBrack param_type_id TokRightBrack 
+-- On TokRightBrace reduce production st_identifier -> identifier TokLeftBrack param_type_id TokRightBrack
+-- On TokLeftBrace reduce production st_identifier -> identifier TokLeftBrack param_type_id TokRightBrack
+-- On TokDeclare reduce production st_identifier -> identifier TokLeftBrack param_type_id TokRightBrack
+-- On TokComma reduce production st_identifier -> identifier TokLeftBrack param_type_id TokRightBrack
 
 State 45:
 syntax_term_list_rev -> syntax_term . [ TokRightBrace TokDeclare TokComma ]
--- On TokRightBrace reduce production syntax_term_list_rev -> syntax_term 
--- On TokDeclare reduce production syntax_term_list_rev -> syntax_term 
--- On TokComma reduce production syntax_term_list_rev -> syntax_term 
+-- On TokRightBrace reduce production syntax_term_list_rev -> syntax_term
+-- On TokDeclare reduce production syntax_term_list_rev -> syntax_term
+-- On TokComma reduce production syntax_term_list_rev -> syntax_term
 
 State 46:
 opt_term_declarations -> term_declaration_list . [ TokRightBrace ]
 term_declaration_list -> term_declaration_list . term_declaration [ TokRightBrace TokDeclare ]
 -- On TokDeclare shift to state 17
 -- On term_declaration shift to state 47
--- On TokRightBrace reduce production opt_term_declarations -> term_declaration_list 
+-- On TokRightBrace reduce production opt_term_declarations -> term_declaration_list
 
 State 47:
 term_declaration_list -> term_declaration_list term_declaration . [ TokRightBrace TokDeclare ]
--- On TokRightBrace reduce production term_declaration_list -> term_declaration_list term_declaration 
--- On TokDeclare reduce production term_declaration_list -> term_declaration_list term_declaration 
+-- On TokRightBrace reduce production term_declaration_list -> term_declaration_list term_declaration
+-- On TokDeclare reduce production term_declaration_list -> term_declaration_list term_declaration
 
 State 48:
 term_declaration_list -> term_declaration . [ TokRightBrace TokDeclare ]
--- On TokRightBrace reduce production term_declaration_list -> term_declaration 
--- On TokDeclare reduce production term_declaration_list -> term_declaration 
+-- On TokRightBrace reduce production term_declaration_list -> term_declaration
+-- On TokDeclare reduce production term_declaration_list -> term_declaration
 
 State 49:
 term_option -> TokExtend TokString TokLeftBrace opt_term_declarations . TokRightBrace [ TokTokens TokTerms TokOption TokLeftBrace TokExtend ]
@@ -335,17 +335,17 @@ term_option -> TokExtend TokString TokLeftBrace opt_term_declarations . TokRight
 
 State 50:
 term_option -> TokExtend TokString TokLeftBrace opt_term_declarations TokRightBrace . [ TokTokens TokTerms TokOption TokLeftBrace TokExtend ]
--- On TokTokens reduce production term_option -> TokExtend TokString TokLeftBrace opt_term_declarations TokRightBrace 
--- On TokTerms reduce production term_option -> TokExtend TokString TokLeftBrace opt_term_declarations TokRightBrace 
--- On TokOption reduce production term_option -> TokExtend TokString TokLeftBrace opt_term_declarations TokRightBrace 
--- On TokLeftBrace reduce production term_option -> TokExtend TokString TokLeftBrace opt_term_declarations TokRightBrace 
--- On TokExtend reduce production term_option -> TokExtend TokString TokLeftBrace opt_term_declarations TokRightBrace 
+-- On TokTokens reduce production term_option -> TokExtend TokString TokLeftBrace opt_term_declarations TokRightBrace
+-- On TokTerms reduce production term_option -> TokExtend TokString TokLeftBrace opt_term_declarations TokRightBrace
+-- On TokOption reduce production term_option -> TokExtend TokString TokLeftBrace opt_term_declarations TokRightBrace
+-- On TokLeftBrace reduce production term_option -> TokExtend TokString TokLeftBrace opt_term_declarations TokRightBrace
+-- On TokExtend reduce production term_option -> TokExtend TokString TokLeftBrace opt_term_declarations TokRightBrace
 
 State 51:
 term_section -> TokTerms term_options . [ TokTokens TokTerms TokLeftBrace ]
--- On TokTokens reduce production term_section -> TokTerms term_options 
--- On TokTerms reduce production term_section -> TokTerms term_options 
--- On TokLeftBrace reduce production term_section -> TokTerms term_options 
+-- On TokTokens reduce production term_section -> TokTerms term_options
+-- On TokTerms reduce production term_section -> TokTerms term_options
+-- On TokLeftBrace reduce production term_section -> TokTerms term_options
 
 State 52:
 term_option_list -> term_option_list . term_option [ TokTokens TokTerms TokOption TokLeftBrace TokExtend ]
@@ -353,25 +353,25 @@ term_options -> term_option_list . [ TokTokens TokTerms TokLeftBrace ]
 -- On TokOption shift to state 13
 -- On TokExtend shift to state 14
 -- On term_option shift to state 53
--- On TokTokens reduce production term_options -> term_option_list 
--- On TokTerms reduce production term_options -> term_option_list 
--- On TokLeftBrace reduce production term_options -> term_option_list 
+-- On TokTokens reduce production term_options -> term_option_list
+-- On TokTerms reduce production term_options -> term_option_list
+-- On TokLeftBrace reduce production term_options -> term_option_list
 
 State 53:
 term_option_list -> term_option_list term_option . [ TokTokens TokTerms TokOption TokLeftBrace TokExtend ]
--- On TokTokens reduce production term_option_list -> term_option_list term_option 
--- On TokTerms reduce production term_option_list -> term_option_list term_option 
--- On TokOption reduce production term_option_list -> term_option_list term_option 
--- On TokLeftBrace reduce production term_option_list -> term_option_list term_option 
--- On TokExtend reduce production term_option_list -> term_option_list term_option 
+-- On TokTokens reduce production term_option_list -> term_option_list term_option
+-- On TokTerms reduce production term_option_list -> term_option_list term_option
+-- On TokOption reduce production term_option_list -> term_option_list term_option
+-- On TokLeftBrace reduce production term_option_list -> term_option_list term_option
+-- On TokExtend reduce production term_option_list -> term_option_list term_option
 
 State 54:
 term_option_list -> term_option . [ TokTokens TokTerms TokOption TokLeftBrace TokExtend ]
--- On TokTokens reduce production term_option_list -> term_option 
--- On TokTerms reduce production term_option_list -> term_option 
--- On TokOption reduce production term_option_list -> term_option 
--- On TokLeftBrace reduce production term_option_list -> term_option 
--- On TokExtend reduce production term_option_list -> term_option 
+-- On TokTokens reduce production term_option_list -> term_option
+-- On TokTerms reduce production term_option_list -> term_option
+-- On TokOption reduce production term_option_list -> term_option
+-- On TokLeftBrace reduce production term_option_list -> term_option
+-- On TokExtend reduce production term_option_list -> term_option
 
 State 55:
 main -> module_name includes term_sections . opt_preamble lexer opt_assocs grammar opt_rewrites_section opt_inline_forms TokEof [ # ]
@@ -399,50 +399,50 @@ preamble -> TokLeftBrace . new_rewrites TokRightBrace [ TokTokens ]
 
 State 57:
 simple_term -> TokQuestionMark . [ TokSemi TokRightBrace TokQuotedId TokQuestionMark TokPipe TokInt TokInline TokId TokEof TokArrow ]
--- On TokSemi reduce production simple_term -> TokQuestionMark 
--- On TokRightBrace reduce production simple_term -> TokQuestionMark 
--- On TokQuotedId reduce production simple_term -> TokQuestionMark 
--- On TokQuestionMark reduce production simple_term -> TokQuestionMark 
--- On TokPipe reduce production simple_term -> TokQuestionMark 
--- On TokInt reduce production simple_term -> TokQuestionMark 
--- On TokInline reduce production simple_term -> TokQuestionMark 
--- On TokId reduce production simple_term -> TokQuestionMark 
--- On TokEof reduce production simple_term -> TokQuestionMark 
--- On TokArrow reduce production simple_term -> TokQuestionMark 
+-- On TokSemi reduce production simple_term -> TokQuestionMark
+-- On TokRightBrace reduce production simple_term -> TokQuestionMark
+-- On TokQuotedId reduce production simple_term -> TokQuestionMark
+-- On TokQuestionMark reduce production simple_term -> TokQuestionMark
+-- On TokPipe reduce production simple_term -> TokQuestionMark
+-- On TokInt reduce production simple_term -> TokQuestionMark
+-- On TokInline reduce production simple_term -> TokQuestionMark
+-- On TokId reduce production simple_term -> TokQuestionMark
+-- On TokEof reduce production simple_term -> TokQuestionMark
+-- On TokArrow reduce production simple_term -> TokQuestionMark
 
 State 58:
 simple_term -> TokInt . [ TokSemi TokRightBrace TokQuotedId TokQuestionMark TokPipe TokInt TokInline TokId TokEof TokArrow ]
--- On TokSemi reduce production simple_term -> TokInt 
--- On TokRightBrace reduce production simple_term -> TokInt 
--- On TokQuotedId reduce production simple_term -> TokInt 
--- On TokQuestionMark reduce production simple_term -> TokInt 
--- On TokPipe reduce production simple_term -> TokInt 
--- On TokInt reduce production simple_term -> TokInt 
--- On TokInline reduce production simple_term -> TokInt 
--- On TokId reduce production simple_term -> TokInt 
--- On TokEof reduce production simple_term -> TokInt 
--- On TokArrow reduce production simple_term -> TokInt 
+-- On TokSemi reduce production simple_term -> TokInt
+-- On TokRightBrace reduce production simple_term -> TokInt
+-- On TokQuotedId reduce production simple_term -> TokInt
+-- On TokQuestionMark reduce production simple_term -> TokInt
+-- On TokPipe reduce production simple_term -> TokInt
+-- On TokInt reduce production simple_term -> TokInt
+-- On TokInline reduce production simple_term -> TokInt
+-- On TokId reduce production simple_term -> TokInt
+-- On TokEof reduce production simple_term -> TokInt
+-- On TokArrow reduce production simple_term -> TokInt
 
 State 59:
 from -> simple_term . [ TokQuotedId TokQuestionMark TokInt TokId TokArrow ]
--- On TokQuotedId reduce production from -> simple_term 
--- On TokQuestionMark reduce production from -> simple_term 
--- On TokInt reduce production from -> simple_term 
--- On TokId reduce production from -> simple_term 
--- On TokArrow reduce production from -> simple_term 
+-- On TokQuotedId reduce production from -> simple_term
+-- On TokQuestionMark reduce production from -> simple_term
+-- On TokInt reduce production from -> simple_term
+-- On TokId reduce production from -> simple_term
+-- On TokArrow reduce production from -> simple_term
 
 State 60:
 simple_term -> quoted_identifier . [ TokSemi TokRightBrace TokQuotedId TokQuestionMark TokPipe TokInt TokInline TokId TokEof TokArrow ]
--- On TokSemi reduce production simple_term -> quoted_identifier 
--- On TokRightBrace reduce production simple_term -> quoted_identifier 
--- On TokQuotedId reduce production simple_term -> quoted_identifier 
--- On TokQuestionMark reduce production simple_term -> quoted_identifier 
--- On TokPipe reduce production simple_term -> quoted_identifier 
--- On TokInt reduce production simple_term -> quoted_identifier 
--- On TokInline reduce production simple_term -> quoted_identifier 
--- On TokId reduce production simple_term -> quoted_identifier 
--- On TokEof reduce production simple_term -> quoted_identifier 
--- On TokArrow reduce production simple_term -> quoted_identifier 
+-- On TokSemi reduce production simple_term -> quoted_identifier
+-- On TokRightBrace reduce production simple_term -> quoted_identifier
+-- On TokQuotedId reduce production simple_term -> quoted_identifier
+-- On TokQuestionMark reduce production simple_term -> quoted_identifier
+-- On TokPipe reduce production simple_term -> quoted_identifier
+-- On TokInt reduce production simple_term -> quoted_identifier
+-- On TokInline reduce production simple_term -> quoted_identifier
+-- On TokId reduce production simple_term -> quoted_identifier
+-- On TokEof reduce production simple_term -> quoted_identifier
+-- On TokArrow reduce production simple_term -> quoted_identifier
 
 State 61:
 preamble -> TokLeftBrace new_rewrites . TokRightBrace [ TokTokens ]
@@ -450,7 +450,7 @@ preamble -> TokLeftBrace new_rewrites . TokRightBrace [ TokTokens ]
 
 State 62:
 preamble -> TokLeftBrace new_rewrites TokRightBrace . [ TokTokens ]
--- On TokTokens reduce production preamble -> TokLeftBrace new_rewrites TokRightBrace 
+-- On TokTokens reduce production preamble -> TokLeftBrace new_rewrites TokRightBrace
 
 State 63:
 new_rewrite_list -> new_rewrite_list . new_rewrite [ TokRightBrace TokQuotedId TokQuestionMark TokInt TokId ]
@@ -466,22 +466,22 @@ new_rewrites -> new_rewrite_list . [ TokRightBrace ]
 -- On module_identifier shift to state 68
 -- On identifier shift to state 103
 -- On from shift to state 104
--- On TokRightBrace reduce production new_rewrites -> new_rewrite_list 
+-- On TokRightBrace reduce production new_rewrites -> new_rewrite_list
 
 State 64:
 new_rewrite_list -> new_rewrite_list new_rewrite . [ TokRightBrace TokQuotedId TokQuestionMark TokInt TokId ]
--- On TokRightBrace reduce production new_rewrite_list -> new_rewrite_list new_rewrite 
--- On TokQuotedId reduce production new_rewrite_list -> new_rewrite_list new_rewrite 
--- On TokQuestionMark reduce production new_rewrite_list -> new_rewrite_list new_rewrite 
--- On TokInt reduce production new_rewrite_list -> new_rewrite_list new_rewrite 
--- On TokId reduce production new_rewrite_list -> new_rewrite_list new_rewrite 
+-- On TokRightBrace reduce production new_rewrite_list -> new_rewrite_list new_rewrite
+-- On TokQuotedId reduce production new_rewrite_list -> new_rewrite_list new_rewrite
+-- On TokQuestionMark reduce production new_rewrite_list -> new_rewrite_list new_rewrite
+-- On TokInt reduce production new_rewrite_list -> new_rewrite_list new_rewrite
+-- On TokId reduce production new_rewrite_list -> new_rewrite_list new_rewrite
 
 State 65:
 module_identifier -> modules_rev . [ TokLeftBrack TokLeftBrace ]
 modules_rev -> modules_rev . TokBang identifier [ TokLeftBrack TokLeftBrace TokBang ]
 -- On TokBang shift to state 66
--- On TokLeftBrack reduce production module_identifier -> modules_rev 
--- On TokLeftBrace reduce production module_identifier -> modules_rev 
+-- On TokLeftBrack reduce production module_identifier -> modules_rev
+-- On TokLeftBrace reduce production module_identifier -> modules_rev
 
 State 66:
 modules_rev -> modules_rev TokBang . identifier [ TokLeftBrack TokLeftBrace TokBang ]
@@ -490,9 +490,9 @@ modules_rev -> modules_rev TokBang . identifier [ TokLeftBrack TokLeftBrace TokB
 
 State 67:
 modules_rev -> modules_rev TokBang identifier . [ TokLeftBrack TokLeftBrace TokBang ]
--- On TokLeftBrack reduce production modules_rev -> modules_rev TokBang identifier 
--- On TokLeftBrace reduce production modules_rev -> modules_rev TokBang identifier 
--- On TokBang reduce production modules_rev -> modules_rev TokBang identifier 
+-- On TokLeftBrack reduce production modules_rev -> modules_rev TokBang identifier
+-- On TokLeftBrace reduce production modules_rev -> modules_rev TokBang identifier
+-- On TokBang reduce production modules_rev -> modules_rev TokBang identifier
 
 State 68:
 simple_term -> module_identifier . opt_term_params subterms [ TokSemi TokRightBrace TokQuotedId TokQuestionMark TokPipe TokInt TokInline TokId TokEof TokArrow ]
@@ -514,10 +514,10 @@ State 70:
 term_param -> TokString . TokColon param_type_id [ TokString TokRightBrack TokInt TokId ]
 term_param -> TokString . [ TokString TokRightBrack TokInt TokId ]
 -- On TokColon shift to state 71
--- On TokString reduce production term_param -> TokString 
--- On TokRightBrack reduce production term_param -> TokString 
--- On TokInt reduce production term_param -> TokString 
--- On TokId reduce production term_param -> TokString 
+-- On TokString reduce production term_param -> TokString
+-- On TokRightBrack reduce production term_param -> TokString
+-- On TokInt reduce production term_param -> TokString
+-- On TokId reduce production term_param -> TokString
 
 State 71:
 term_param -> TokString TokColon . param_type_id [ TokString TokRightBrack TokInt TokId ]
@@ -526,19 +526,19 @@ term_param -> TokString TokColon . param_type_id [ TokString TokRightBrack TokIn
 
 State 72:
 term_param -> TokString TokColon param_type_id . [ TokString TokRightBrack TokInt TokId ]
--- On TokString reduce production term_param -> TokString TokColon param_type_id 
--- On TokRightBrack reduce production term_param -> TokString TokColon param_type_id 
--- On TokInt reduce production term_param -> TokString TokColon param_type_id 
--- On TokId reduce production term_param -> TokString TokColon param_type_id 
+-- On TokString reduce production term_param -> TokString TokColon param_type_id
+-- On TokRightBrack reduce production term_param -> TokString TokColon param_type_id
+-- On TokInt reduce production term_param -> TokString TokColon param_type_id
+-- On TokId reduce production term_param -> TokString TokColon param_type_id
 
 State 73:
 term_param -> TokInt . TokColon param_type_id [ TokString TokRightBrack TokInt TokId ]
 term_param -> TokInt . [ TokString TokRightBrack TokInt TokId ]
 -- On TokColon shift to state 74
--- On TokString reduce production term_param -> TokInt 
--- On TokRightBrack reduce production term_param -> TokInt 
--- On TokInt reduce production term_param -> TokInt 
--- On TokId reduce production term_param -> TokInt 
+-- On TokString reduce production term_param -> TokInt
+-- On TokRightBrack reduce production term_param -> TokInt
+-- On TokInt reduce production term_param -> TokInt
+-- On TokId reduce production term_param -> TokInt
 
 State 74:
 term_param -> TokInt TokColon . param_type_id [ TokString TokRightBrack TokInt TokId ]
@@ -547,19 +547,19 @@ term_param -> TokInt TokColon . param_type_id [ TokString TokRightBrack TokInt T
 
 State 75:
 term_param -> TokInt TokColon param_type_id . [ TokString TokRightBrack TokInt TokId ]
--- On TokString reduce production term_param -> TokInt TokColon param_type_id 
--- On TokRightBrack reduce production term_param -> TokInt TokColon param_type_id 
--- On TokInt reduce production term_param -> TokInt TokColon param_type_id 
--- On TokId reduce production term_param -> TokInt TokColon param_type_id 
+-- On TokString reduce production term_param -> TokInt TokColon param_type_id
+-- On TokRightBrack reduce production term_param -> TokInt TokColon param_type_id
+-- On TokInt reduce production term_param -> TokInt TokColon param_type_id
+-- On TokId reduce production term_param -> TokInt TokColon param_type_id
 
 State 76:
 term_param -> TokId . TokColon TokId [ TokString TokRightBrack TokInt TokId ]
 term_param -> TokId . [ TokString TokRightBrack TokInt TokId ]
 -- On TokColon shift to state 77
--- On TokString reduce production term_param -> TokId 
--- On TokRightBrack reduce production term_param -> TokId 
--- On TokInt reduce production term_param -> TokId 
--- On TokId reduce production term_param -> TokId 
+-- On TokString reduce production term_param -> TokId
+-- On TokRightBrack reduce production term_param -> TokId
+-- On TokInt reduce production term_param -> TokId
+-- On TokId reduce production term_param -> TokId
 
 State 77:
 term_param -> TokId TokColon . TokId [ TokString TokRightBrack TokInt TokId ]
@@ -567,10 +567,10 @@ term_param -> TokId TokColon . TokId [ TokString TokRightBrack TokInt TokId ]
 
 State 78:
 term_param -> TokId TokColon TokId . [ TokString TokRightBrack TokInt TokId ]
--- On TokString reduce production term_param -> TokId TokColon TokId 
--- On TokRightBrack reduce production term_param -> TokId TokColon TokId 
--- On TokInt reduce production term_param -> TokId TokColon TokId 
--- On TokId reduce production term_param -> TokId TokColon TokId 
+-- On TokString reduce production term_param -> TokId TokColon TokId
+-- On TokRightBrack reduce production term_param -> TokId TokColon TokId
+-- On TokInt reduce production term_param -> TokId TokColon TokId
+-- On TokId reduce production term_param -> TokId TokColon TokId
 
 State 79:
 term_param_list -> term_param_list . term_param [ TokString TokRightBrack TokInt TokId ]
@@ -583,46 +583,46 @@ term_params -> TokLeftBrack term_param_list . TokRightBrack [ TokSemi TokRightBr
 
 State 80:
 term_params -> TokLeftBrack term_param_list TokRightBrack . [ TokSemi TokRightBrace TokQuotedId TokQuestionMark TokPipe TokLeftBrace TokInt TokInline TokId TokEof TokArrow ]
--- On TokSemi reduce production term_params -> TokLeftBrack term_param_list TokRightBrack 
--- On TokRightBrace reduce production term_params -> TokLeftBrack term_param_list TokRightBrack 
--- On TokQuotedId reduce production term_params -> TokLeftBrack term_param_list TokRightBrack 
--- On TokQuestionMark reduce production term_params -> TokLeftBrack term_param_list TokRightBrack 
--- On TokPipe reduce production term_params -> TokLeftBrack term_param_list TokRightBrack 
--- On TokLeftBrace reduce production term_params -> TokLeftBrack term_param_list TokRightBrack 
--- On TokInt reduce production term_params -> TokLeftBrack term_param_list TokRightBrack 
--- On TokInline reduce production term_params -> TokLeftBrack term_param_list TokRightBrack 
--- On TokId reduce production term_params -> TokLeftBrack term_param_list TokRightBrack 
--- On TokEof reduce production term_params -> TokLeftBrack term_param_list TokRightBrack 
--- On TokArrow reduce production term_params -> TokLeftBrack term_param_list TokRightBrack 
+-- On TokSemi reduce production term_params -> TokLeftBrack term_param_list TokRightBrack
+-- On TokRightBrace reduce production term_params -> TokLeftBrack term_param_list TokRightBrack
+-- On TokQuotedId reduce production term_params -> TokLeftBrack term_param_list TokRightBrack
+-- On TokQuestionMark reduce production term_params -> TokLeftBrack term_param_list TokRightBrack
+-- On TokPipe reduce production term_params -> TokLeftBrack term_param_list TokRightBrack
+-- On TokLeftBrace reduce production term_params -> TokLeftBrack term_param_list TokRightBrack
+-- On TokInt reduce production term_params -> TokLeftBrack term_param_list TokRightBrack
+-- On TokInline reduce production term_params -> TokLeftBrack term_param_list TokRightBrack
+-- On TokId reduce production term_params -> TokLeftBrack term_param_list TokRightBrack
+-- On TokEof reduce production term_params -> TokLeftBrack term_param_list TokRightBrack
+-- On TokArrow reduce production term_params -> TokLeftBrack term_param_list TokRightBrack
 
 State 81:
 term_param_list -> term_param_list term_param . [ TokString TokRightBrack TokInt TokId ]
--- On TokString reduce production term_param_list -> term_param_list term_param 
--- On TokRightBrack reduce production term_param_list -> term_param_list term_param 
--- On TokInt reduce production term_param_list -> term_param_list term_param 
--- On TokId reduce production term_param_list -> term_param_list term_param 
+-- On TokString reduce production term_param_list -> term_param_list term_param
+-- On TokRightBrack reduce production term_param_list -> term_param_list term_param
+-- On TokInt reduce production term_param_list -> term_param_list term_param
+-- On TokId reduce production term_param_list -> term_param_list term_param
 
 State 82:
 term_param_list -> term_param . [ TokString TokRightBrack TokInt TokId ]
--- On TokString reduce production term_param_list -> term_param 
--- On TokRightBrack reduce production term_param_list -> term_param 
--- On TokInt reduce production term_param_list -> term_param 
--- On TokId reduce production term_param_list -> term_param 
+-- On TokString reduce production term_param_list -> term_param
+-- On TokRightBrack reduce production term_param_list -> term_param
+-- On TokInt reduce production term_param_list -> term_param
+-- On TokId reduce production term_param_list -> term_param
 
 State 83:
 opt_term_params -> term_params . [ TokLeftBrace ]
 simple_term -> module_identifier term_params . [ TokSemi TokRightBrace TokQuotedId TokQuestionMark TokPipe TokInt TokInline TokId TokEof TokArrow ]
--- On TokSemi reduce production simple_term -> module_identifier term_params 
--- On TokRightBrace reduce production simple_term -> module_identifier term_params 
--- On TokQuotedId reduce production simple_term -> module_identifier term_params 
--- On TokQuestionMark reduce production simple_term -> module_identifier term_params 
--- On TokPipe reduce production simple_term -> module_identifier term_params 
--- On TokLeftBrace reduce production opt_term_params -> term_params 
--- On TokInt reduce production simple_term -> module_identifier term_params 
--- On TokInline reduce production simple_term -> module_identifier term_params 
--- On TokId reduce production simple_term -> module_identifier term_params 
--- On TokEof reduce production simple_term -> module_identifier term_params 
--- On TokArrow reduce production simple_term -> module_identifier term_params 
+-- On TokSemi reduce production simple_term -> module_identifier term_params
+-- On TokRightBrace reduce production simple_term -> module_identifier term_params
+-- On TokQuotedId reduce production simple_term -> module_identifier term_params
+-- On TokQuestionMark reduce production simple_term -> module_identifier term_params
+-- On TokPipe reduce production simple_term -> module_identifier term_params
+-- On TokLeftBrace reduce production opt_term_params -> term_params
+-- On TokInt reduce production simple_term -> module_identifier term_params
+-- On TokInline reduce production simple_term -> module_identifier term_params
+-- On TokId reduce production simple_term -> module_identifier term_params
+-- On TokEof reduce production simple_term -> module_identifier term_params
+-- On TokArrow reduce production simple_term -> module_identifier term_params
 
 State 84:
 simple_term -> module_identifier opt_term_params . subterms [ TokSemi TokRightBrace TokQuotedId TokQuestionMark TokPipe TokInt TokInline TokId TokEof TokArrow ]
@@ -650,13 +650,13 @@ subterms -> TokLeftBrace . opt_subterm_list_semi TokRightBrace [ TokSemi TokRigh
 
 State 86:
 opt_subterm_list_semi -> subterms_with_semi . [ TokRightBrace ]
--- On TokRightBrace reduce production opt_subterm_list_semi -> subterms_with_semi 
+-- On TokRightBrace reduce production opt_subterm_list_semi -> subterms_with_semi
 
 State 87:
 subterm_list_with_semi -> subterm_list_with_semi . TokSemi sub_term [ TokSemi TokRightBrace ]
 subterms_with_semi -> subterm_list_with_semi . [ TokRightBrace ]
 -- On TokSemi shift to state 88
--- On TokRightBrace reduce production subterms_with_semi -> subterm_list_with_semi 
+-- On TokRightBrace reduce production subterms_with_semi -> subterm_list_with_semi
 
 State 88:
 subterm_list_with_semi -> subterm_list_with_semi TokSemi . sub_term [ TokSemi TokRightBrace ]
@@ -675,19 +675,19 @@ subterm_list_with_semi -> subterm_list_with_semi TokSemi . sub_term [ TokSemi To
 
 State 89:
 subterm_list_with_semi -> subterm_list_with_semi TokSemi sub_term . [ TokSemi TokRightBrace ]
--- On TokSemi reduce production subterm_list_with_semi -> subterm_list_with_semi TokSemi sub_term 
--- On TokRightBrace reduce production subterm_list_with_semi -> subterm_list_with_semi TokSemi sub_term 
+-- On TokSemi reduce production subterm_list_with_semi -> subterm_list_with_semi TokSemi sub_term
+-- On TokRightBrace reduce production subterm_list_with_semi -> subterm_list_with_semi TokSemi sub_term
 
 State 90:
 sub_term -> simple_term . [ TokSemi TokRightBrace ]
--- On TokSemi reduce production sub_term -> simple_term 
--- On TokRightBrace reduce production sub_term -> simple_term 
+-- On TokSemi reduce production sub_term -> simple_term
+-- On TokRightBrace reduce production sub_term -> simple_term
 
 State 91:
 identifiers_with_comma -> rev_identifier_list_with_comma . [ TokDot ]
 rev_identifier_list_with_comma -> rev_identifier_list_with_comma . TokComma identifier [ TokDot TokComma ]
 -- On TokComma shift to state 92
--- On TokDot reduce production identifiers_with_comma -> rev_identifier_list_with_comma 
+-- On TokDot reduce production identifiers_with_comma -> rev_identifier_list_with_comma
 
 State 92:
 rev_identifier_list_with_comma -> rev_identifier_list_with_comma TokComma . identifier [ TokDot TokComma ]
@@ -696,8 +696,8 @@ rev_identifier_list_with_comma -> rev_identifier_list_with_comma TokComma . iden
 
 State 93:
 rev_identifier_list_with_comma -> rev_identifier_list_with_comma TokComma identifier . [ TokDot TokComma ]
--- On TokDot reduce production rev_identifier_list_with_comma -> rev_identifier_list_with_comma TokComma identifier 
--- On TokComma reduce production rev_identifier_list_with_comma -> rev_identifier_list_with_comma TokComma identifier 
+-- On TokDot reduce production rev_identifier_list_with_comma -> rev_identifier_list_with_comma TokComma identifier
+-- On TokComma reduce production rev_identifier_list_with_comma -> rev_identifier_list_with_comma TokComma identifier
 
 State 94:
 sub_term -> identifiers_with_comma . TokDot simple_term [ TokSemi TokRightBrace ]
@@ -717,28 +717,28 @@ sub_term -> identifiers_with_comma TokDot . simple_term [ TokSemi TokRightBrace 
 
 State 96:
 sub_term -> identifiers_with_comma TokDot simple_term . [ TokSemi TokRightBrace ]
--- On TokSemi reduce production sub_term -> identifiers_with_comma TokDot simple_term 
--- On TokRightBrace reduce production sub_term -> identifiers_with_comma TokDot simple_term 
+-- On TokSemi reduce production sub_term -> identifiers_with_comma TokDot simple_term
+-- On TokRightBrace reduce production sub_term -> identifiers_with_comma TokDot simple_term
 
 State 97:
 modules_rev -> identifier . [ TokLeftBrack TokLeftBrace TokBang ]
--- On TokLeftBrack reduce production modules_rev -> identifier 
--- On TokLeftBrace reduce production modules_rev -> identifier 
--- On TokBang reduce production modules_rev -> identifier 
+-- On TokLeftBrack reduce production modules_rev -> identifier
+-- On TokLeftBrace reduce production modules_rev -> identifier
+-- On TokBang reduce production modules_rev -> identifier
 
 State 98:
 modules_rev -> identifier . [ TokLeftBrack TokLeftBrace TokBang ]
 rev_identifier_list_with_comma -> identifier . [ TokDot TokComma ]
--- On TokLeftBrack reduce production modules_rev -> identifier 
--- On TokLeftBrace reduce production modules_rev -> identifier 
--- On TokDot reduce production rev_identifier_list_with_comma -> identifier 
--- On TokComma reduce production rev_identifier_list_with_comma -> identifier 
--- On TokBang reduce production modules_rev -> identifier 
+-- On TokLeftBrack reduce production modules_rev -> identifier
+-- On TokLeftBrace reduce production modules_rev -> identifier
+-- On TokDot reduce production rev_identifier_list_with_comma -> identifier
+-- On TokComma reduce production rev_identifier_list_with_comma -> identifier
+-- On TokBang reduce production modules_rev -> identifier
 
 State 99:
 subterm_list_with_semi -> sub_term . [ TokSemi TokRightBrace ]
--- On TokSemi reduce production subterm_list_with_semi -> sub_term 
--- On TokRightBrace reduce production subterm_list_with_semi -> sub_term 
+-- On TokSemi reduce production subterm_list_with_semi -> sub_term
+-- On TokRightBrace reduce production subterm_list_with_semi -> sub_term
 
 State 100:
 subterms -> TokLeftBrace opt_subterm_list_semi . TokRightBrace [ TokSemi TokRightBrace TokQuotedId TokQuestionMark TokPipe TokInt TokInline TokId TokEof TokArrow ]
@@ -746,41 +746,41 @@ subterms -> TokLeftBrace opt_subterm_list_semi . TokRightBrace [ TokSemi TokRigh
 
 State 101:
 subterms -> TokLeftBrace opt_subterm_list_semi TokRightBrace . [ TokSemi TokRightBrace TokQuotedId TokQuestionMark TokPipe TokInt TokInline TokId TokEof TokArrow ]
--- On TokSemi reduce production subterms -> TokLeftBrace opt_subterm_list_semi TokRightBrace 
--- On TokRightBrace reduce production subterms -> TokLeftBrace opt_subterm_list_semi TokRightBrace 
--- On TokQuotedId reduce production subterms -> TokLeftBrace opt_subterm_list_semi TokRightBrace 
--- On TokQuestionMark reduce production subterms -> TokLeftBrace opt_subterm_list_semi TokRightBrace 
--- On TokPipe reduce production subterms -> TokLeftBrace opt_subterm_list_semi TokRightBrace 
--- On TokInt reduce production subterms -> TokLeftBrace opt_subterm_list_semi TokRightBrace 
--- On TokInline reduce production subterms -> TokLeftBrace opt_subterm_list_semi TokRightBrace 
--- On TokId reduce production subterms -> TokLeftBrace opt_subterm_list_semi TokRightBrace 
--- On TokEof reduce production subterms -> TokLeftBrace opt_subterm_list_semi TokRightBrace 
--- On TokArrow reduce production subterms -> TokLeftBrace opt_subterm_list_semi TokRightBrace 
+-- On TokSemi reduce production subterms -> TokLeftBrace opt_subterm_list_semi TokRightBrace
+-- On TokRightBrace reduce production subterms -> TokLeftBrace opt_subterm_list_semi TokRightBrace
+-- On TokQuotedId reduce production subterms -> TokLeftBrace opt_subterm_list_semi TokRightBrace
+-- On TokQuestionMark reduce production subterms -> TokLeftBrace opt_subterm_list_semi TokRightBrace
+-- On TokPipe reduce production subterms -> TokLeftBrace opt_subterm_list_semi TokRightBrace
+-- On TokInt reduce production subterms -> TokLeftBrace opt_subterm_list_semi TokRightBrace
+-- On TokInline reduce production subterms -> TokLeftBrace opt_subterm_list_semi TokRightBrace
+-- On TokId reduce production subterms -> TokLeftBrace opt_subterm_list_semi TokRightBrace
+-- On TokEof reduce production subterms -> TokLeftBrace opt_subterm_list_semi TokRightBrace
+-- On TokArrow reduce production subterms -> TokLeftBrace opt_subterm_list_semi TokRightBrace
 
 State 102:
 simple_term -> module_identifier opt_term_params subterms . [ TokSemi TokRightBrace TokQuotedId TokQuestionMark TokPipe TokInt TokInline TokId TokEof TokArrow ]
--- On TokSemi reduce production simple_term -> module_identifier opt_term_params subterms 
--- On TokRightBrace reduce production simple_term -> module_identifier opt_term_params subterms 
--- On TokQuotedId reduce production simple_term -> module_identifier opt_term_params subterms 
--- On TokQuestionMark reduce production simple_term -> module_identifier opt_term_params subterms 
--- On TokPipe reduce production simple_term -> module_identifier opt_term_params subterms 
--- On TokInt reduce production simple_term -> module_identifier opt_term_params subterms 
--- On TokInline reduce production simple_term -> module_identifier opt_term_params subterms 
--- On TokId reduce production simple_term -> module_identifier opt_term_params subterms 
--- On TokEof reduce production simple_term -> module_identifier opt_term_params subterms 
--- On TokArrow reduce production simple_term -> module_identifier opt_term_params subterms 
+-- On TokSemi reduce production simple_term -> module_identifier opt_term_params subterms
+-- On TokRightBrace reduce production simple_term -> module_identifier opt_term_params subterms
+-- On TokQuotedId reduce production simple_term -> module_identifier opt_term_params subterms
+-- On TokQuestionMark reduce production simple_term -> module_identifier opt_term_params subterms
+-- On TokPipe reduce production simple_term -> module_identifier opt_term_params subterms
+-- On TokInt reduce production simple_term -> module_identifier opt_term_params subterms
+-- On TokInline reduce production simple_term -> module_identifier opt_term_params subterms
+-- On TokId reduce production simple_term -> module_identifier opt_term_params subterms
+-- On TokEof reduce production simple_term -> module_identifier opt_term_params subterms
+-- On TokArrow reduce production simple_term -> module_identifier opt_term_params subterms
 
 State 103:
 from -> identifier . [ TokQuotedId TokQuestionMark TokInt TokId TokArrow ]
 modules_rev -> identifier . [ TokLeftBrack TokLeftBrace TokBang ]
--- On TokQuotedId reduce production from -> identifier 
--- On TokQuestionMark reduce production from -> identifier 
--- On TokLeftBrack reduce production modules_rev -> identifier 
--- On TokLeftBrace reduce production modules_rev -> identifier 
--- On TokInt reduce production from -> identifier 
--- On TokId reduce production from -> identifier 
--- On TokBang reduce production modules_rev -> identifier 
--- On TokArrow reduce production from -> identifier 
+-- On TokQuotedId reduce production from -> identifier
+-- On TokQuestionMark reduce production from -> identifier
+-- On TokLeftBrack reduce production modules_rev -> identifier
+-- On TokLeftBrace reduce production modules_rev -> identifier
+-- On TokInt reduce production from -> identifier
+-- On TokId reduce production from -> identifier
+-- On TokBang reduce production modules_rev -> identifier
+-- On TokArrow reduce production from -> identifier
 
 State 104:
 new_rewrite -> from . TokArrow simple_term [ TokRightBrace TokQuotedId TokQuestionMark TokInt TokId ]
@@ -800,23 +800,23 @@ new_rewrite -> from TokArrow . simple_term [ TokRightBrace TokQuotedId TokQuesti
 
 State 106:
 new_rewrite -> from TokArrow simple_term . [ TokRightBrace TokQuotedId TokQuestionMark TokInt TokId ]
--- On TokRightBrace reduce production new_rewrite -> from TokArrow simple_term 
--- On TokQuotedId reduce production new_rewrite -> from TokArrow simple_term 
--- On TokQuestionMark reduce production new_rewrite -> from TokArrow simple_term 
--- On TokInt reduce production new_rewrite -> from TokArrow simple_term 
--- On TokId reduce production new_rewrite -> from TokArrow simple_term 
+-- On TokRightBrace reduce production new_rewrite -> from TokArrow simple_term
+-- On TokQuotedId reduce production new_rewrite -> from TokArrow simple_term
+-- On TokQuestionMark reduce production new_rewrite -> from TokArrow simple_term
+-- On TokInt reduce production new_rewrite -> from TokArrow simple_term
+-- On TokId reduce production new_rewrite -> from TokArrow simple_term
 
 State 107:
 new_rewrite_list -> new_rewrite . [ TokRightBrace TokQuotedId TokQuestionMark TokInt TokId ]
--- On TokRightBrace reduce production new_rewrite_list -> new_rewrite 
--- On TokQuotedId reduce production new_rewrite_list -> new_rewrite 
--- On TokQuestionMark reduce production new_rewrite_list -> new_rewrite 
--- On TokInt reduce production new_rewrite_list -> new_rewrite 
--- On TokId reduce production new_rewrite_list -> new_rewrite 
+-- On TokRightBrace reduce production new_rewrite_list -> new_rewrite
+-- On TokQuotedId reduce production new_rewrite_list -> new_rewrite
+-- On TokQuestionMark reduce production new_rewrite_list -> new_rewrite
+-- On TokInt reduce production new_rewrite_list -> new_rewrite
+-- On TokId reduce production new_rewrite_list -> new_rewrite
 
 State 108:
 opt_preamble -> preamble . [ TokTokens ]
--- On TokTokens reduce production opt_preamble -> preamble 
+-- On TokTokens reduce production opt_preamble -> preamble
 
 State 109:
 main -> module_name includes term_sections opt_preamble . lexer opt_assocs grammar opt_rewrites_section opt_inline_forms TokEof [ # ]
@@ -835,24 +835,24 @@ lexer -> TokTokens . opt_lexer_options TokLeftBrace tokens TokRightBrace [ TokRi
 
 State 111:
 lexer_option -> TokOption . [ TokOption TokLongest TokLeftBrace TokFirst ]
--- On TokOption reduce production lexer_option -> TokOption 
--- On TokLongest reduce production lexer_option -> TokOption 
--- On TokLeftBrace reduce production lexer_option -> TokOption 
--- On TokFirst reduce production lexer_option -> TokOption 
+-- On TokOption reduce production lexer_option -> TokOption
+-- On TokLongest reduce production lexer_option -> TokOption
+-- On TokLeftBrace reduce production lexer_option -> TokOption
+-- On TokFirst reduce production lexer_option -> TokOption
 
 State 112:
 lexer_option -> TokLongest . [ TokOption TokLongest TokLeftBrace TokFirst ]
--- On TokOption reduce production lexer_option -> TokLongest 
--- On TokLongest reduce production lexer_option -> TokLongest 
--- On TokLeftBrace reduce production lexer_option -> TokLongest 
--- On TokFirst reduce production lexer_option -> TokLongest 
+-- On TokOption reduce production lexer_option -> TokLongest
+-- On TokLongest reduce production lexer_option -> TokLongest
+-- On TokLeftBrace reduce production lexer_option -> TokLongest
+-- On TokFirst reduce production lexer_option -> TokLongest
 
 State 113:
 lexer_option -> TokFirst . [ TokOption TokLongest TokLeftBrace TokFirst ]
--- On TokOption reduce production lexer_option -> TokFirst 
--- On TokLongest reduce production lexer_option -> TokFirst 
--- On TokLeftBrace reduce production lexer_option -> TokFirst 
--- On TokFirst reduce production lexer_option -> TokFirst 
+-- On TokOption reduce production lexer_option -> TokFirst
+-- On TokLongest reduce production lexer_option -> TokFirst
+-- On TokLeftBrace reduce production lexer_option -> TokFirst
+-- On TokFirst reduce production lexer_option -> TokFirst
 
 State 114:
 lexer -> TokTokens opt_lexer_options . TokLeftBrace tokens TokRightBrace [ TokRightAssoc TokNonAssoc TokLeftAssoc TokGrammar ]
@@ -908,15 +908,15 @@ token_body -> TokLeftBrace token_term_matches . TokRightBrace [ TokRightBrace To
 
 State 122:
 token_body -> TokLeftBrace token_term_matches TokRightBrace . [ TokRightBrace TokIgnore TokId ]
--- On TokRightBrace reduce production token_body -> TokLeftBrace token_term_matches TokRightBrace 
--- On TokIgnore reduce production token_body -> TokLeftBrace token_term_matches TokRightBrace 
--- On TokId reduce production token_body -> TokLeftBrace token_term_matches TokRightBrace 
+-- On TokRightBrace reduce production token_body -> TokLeftBrace token_term_matches TokRightBrace
+-- On TokIgnore reduce production token_body -> TokLeftBrace token_term_matches TokRightBrace
+-- On TokId reduce production token_body -> TokLeftBrace token_term_matches TokRightBrace
 
 State 123:
 term_match_list -> term_match_list . TokPipe term_match [ TokRightBrace TokPipe ]
 token_term_matches -> term_match_list . [ TokRightBrace ]
 -- On TokPipe shift to state 124
--- On TokRightBrace reduce production token_term_matches -> term_match_list 
+-- On TokRightBrace reduce production token_term_matches -> term_match_list
 
 State 124:
 term_match_list -> term_match_list TokPipe . term_match [ TokRightBrace TokPipe ]
@@ -936,8 +936,8 @@ term_match_list -> term_match_list TokPipe . term_match [ TokRightBrace TokPipe 
 
 State 125:
 term_match_list -> term_match_list TokPipe term_match . [ TokRightBrace TokPipe ]
--- On TokRightBrace reduce production term_match_list -> term_match_list TokPipe term_match 
--- On TokPipe reduce production term_match_list -> term_match_list TokPipe term_match 
+-- On TokRightBrace reduce production term_match_list -> term_match_list TokPipe term_match
+-- On TokPipe reduce production term_match_list -> term_match_list TokPipe term_match
 
 State 126:
 term_match -> froms . TokArrow simple_term [ TokRightBrace TokPipe ]
@@ -957,8 +957,8 @@ term_match -> froms TokArrow . simple_term [ TokRightBrace TokPipe ]
 
 State 128:
 term_match -> froms TokArrow simple_term . [ TokRightBrace TokPipe ]
--- On TokRightBrace reduce production term_match -> froms TokArrow simple_term 
--- On TokPipe reduce production term_match -> froms TokArrow simple_term 
+-- On TokRightBrace reduce production term_match -> froms TokArrow simple_term
+-- On TokPipe reduce production term_match -> froms TokArrow simple_term
 
 State 129:
 from_list -> from_list . from [ TokQuotedId TokQuestionMark TokInt TokId TokArrow ]
@@ -973,34 +973,34 @@ froms -> from_list . [ TokArrow ]
 -- On module_identifier shift to state 68
 -- On identifier shift to state 103
 -- On from shift to state 130
--- On TokArrow reduce production froms -> from_list 
+-- On TokArrow reduce production froms -> from_list
 
 State 130:
 from_list -> from_list from . [ TokQuotedId TokQuestionMark TokInt TokId TokArrow ]
--- On TokQuotedId reduce production from_list -> from_list from 
--- On TokQuestionMark reduce production from_list -> from_list from 
--- On TokInt reduce production from_list -> from_list from 
--- On TokId reduce production from_list -> from_list from 
--- On TokArrow reduce production from_list -> from_list from 
+-- On TokQuotedId reduce production from_list -> from_list from
+-- On TokQuestionMark reduce production from_list -> from_list from
+-- On TokInt reduce production from_list -> from_list from
+-- On TokId reduce production from_list -> from_list from
+-- On TokArrow reduce production from_list -> from_list from
 
 State 131:
 from_list -> from . [ TokQuotedId TokQuestionMark TokInt TokId TokArrow ]
--- On TokQuotedId reduce production from_list -> from 
--- On TokQuestionMark reduce production from_list -> from 
--- On TokInt reduce production from_list -> from 
--- On TokId reduce production from_list -> from 
--- On TokArrow reduce production from_list -> from 
+-- On TokQuotedId reduce production from_list -> from
+-- On TokQuestionMark reduce production from_list -> from
+-- On TokInt reduce production from_list -> from
+-- On TokId reduce production from_list -> from
+-- On TokArrow reduce production from_list -> from
 
 State 132:
 term_match_list -> term_match . [ TokRightBrace TokPipe ]
--- On TokRightBrace reduce production term_match_list -> term_match 
--- On TokPipe reduce production term_match_list -> term_match 
+-- On TokRightBrace reduce production term_match_list -> term_match
+-- On TokPipe reduce production term_match_list -> term_match
 
 State 133:
 token -> TokIgnore TokId TokEq TokString token_body . [ TokRightBrace TokIgnore TokId ]
--- On TokRightBrace reduce production token -> TokIgnore TokId TokEq TokString token_body 
--- On TokIgnore reduce production token -> TokIgnore TokId TokEq TokString token_body 
--- On TokId reduce production token -> TokIgnore TokId TokEq TokString token_body 
+-- On TokRightBrace reduce production token -> TokIgnore TokId TokEq TokString token_body
+-- On TokIgnore reduce production token -> TokIgnore TokId TokEq TokString token_body
+-- On TokId reduce production token -> TokIgnore TokId TokEq TokString token_body
 
 State 134:
 token -> TokId . TokEq TokString token_body [ TokRightBrace TokIgnore TokId ]
@@ -1017,9 +1017,9 @@ token -> TokId TokEq TokString . token_body [ TokRightBrace TokIgnore TokId ]
 
 State 137:
 token -> TokId TokEq TokString token_body . [ TokRightBrace TokIgnore TokId ]
--- On TokRightBrace reduce production token -> TokId TokEq TokString token_body 
--- On TokIgnore reduce production token -> TokId TokEq TokString token_body 
--- On TokId reduce production token -> TokId TokEq TokString token_body 
+-- On TokRightBrace reduce production token -> TokId TokEq TokString token_body
+-- On TokIgnore reduce production token -> TokId TokEq TokString token_body
+-- On TokId reduce production token -> TokId TokEq TokString token_body
 
 State 138:
 lexer -> TokTokens opt_lexer_options TokLeftBrace tokens . TokRightBrace [ TokRightAssoc TokNonAssoc TokLeftAssoc TokGrammar ]
@@ -1027,10 +1027,10 @@ lexer -> TokTokens opt_lexer_options TokLeftBrace tokens . TokRightBrace [ TokRi
 
 State 139:
 lexer -> TokTokens opt_lexer_options TokLeftBrace tokens TokRightBrace . [ TokRightAssoc TokNonAssoc TokLeftAssoc TokGrammar ]
--- On TokRightAssoc reduce production lexer -> TokTokens opt_lexer_options TokLeftBrace tokens TokRightBrace 
--- On TokNonAssoc reduce production lexer -> TokTokens opt_lexer_options TokLeftBrace tokens TokRightBrace 
--- On TokLeftAssoc reduce production lexer -> TokTokens opt_lexer_options TokLeftBrace tokens TokRightBrace 
--- On TokGrammar reduce production lexer -> TokTokens opt_lexer_options TokLeftBrace tokens TokRightBrace 
+-- On TokRightAssoc reduce production lexer -> TokTokens opt_lexer_options TokLeftBrace tokens TokRightBrace
+-- On TokNonAssoc reduce production lexer -> TokTokens opt_lexer_options TokLeftBrace tokens TokRightBrace
+-- On TokLeftAssoc reduce production lexer -> TokTokens opt_lexer_options TokLeftBrace tokens TokRightBrace
+-- On TokGrammar reduce production lexer -> TokTokens opt_lexer_options TokLeftBrace tokens TokRightBrace
 
 State 140:
 token_list -> token_list . token [ TokRightBrace TokIgnore TokId ]
@@ -1038,19 +1038,19 @@ tokens -> token_list . [ TokRightBrace ]
 -- On TokIgnore shift to state 116
 -- On TokId shift to state 134
 -- On token shift to state 141
--- On TokRightBrace reduce production tokens -> token_list 
+-- On TokRightBrace reduce production tokens -> token_list
 
 State 141:
 token_list -> token_list token . [ TokRightBrace TokIgnore TokId ]
--- On TokRightBrace reduce production token_list -> token_list token 
--- On TokIgnore reduce production token_list -> token_list token 
--- On TokId reduce production token_list -> token_list token 
+-- On TokRightBrace reduce production token_list -> token_list token
+-- On TokIgnore reduce production token_list -> token_list token
+-- On TokId reduce production token_list -> token_list token
 
 State 142:
 token_list -> token . [ TokRightBrace TokIgnore TokId ]
--- On TokRightBrace reduce production token_list -> token 
--- On TokIgnore reduce production token_list -> token 
--- On TokId reduce production token_list -> token 
+-- On TokRightBrace reduce production token_list -> token
+-- On TokIgnore reduce production token_list -> token
+-- On TokId reduce production token_list -> token
 
 State 143:
 lexer_option_list -> lexer_option_list . lexer_option [ TokOption TokLongest TokLeftBrace TokFirst ]
@@ -1059,21 +1059,21 @@ opt_lexer_options -> lexer_option_list . [ TokLeftBrace ]
 -- On TokLongest shift to state 112
 -- On TokFirst shift to state 113
 -- On lexer_option shift to state 144
--- On TokLeftBrace reduce production opt_lexer_options -> lexer_option_list 
+-- On TokLeftBrace reduce production opt_lexer_options -> lexer_option_list
 
 State 144:
 lexer_option_list -> lexer_option_list lexer_option . [ TokOption TokLongest TokLeftBrace TokFirst ]
--- On TokOption reduce production lexer_option_list -> lexer_option_list lexer_option 
--- On TokLongest reduce production lexer_option_list -> lexer_option_list lexer_option 
--- On TokLeftBrace reduce production lexer_option_list -> lexer_option_list lexer_option 
--- On TokFirst reduce production lexer_option_list -> lexer_option_list lexer_option 
+-- On TokOption reduce production lexer_option_list -> lexer_option_list lexer_option
+-- On TokLongest reduce production lexer_option_list -> lexer_option_list lexer_option
+-- On TokLeftBrace reduce production lexer_option_list -> lexer_option_list lexer_option
+-- On TokFirst reduce production lexer_option_list -> lexer_option_list lexer_option
 
 State 145:
 lexer_option_list -> lexer_option . [ TokOption TokLongest TokLeftBrace TokFirst ]
--- On TokOption reduce production lexer_option_list -> lexer_option 
--- On TokLongest reduce production lexer_option_list -> lexer_option 
--- On TokLeftBrace reduce production lexer_option_list -> lexer_option 
--- On TokFirst reduce production lexer_option_list -> lexer_option 
+-- On TokOption reduce production lexer_option_list -> lexer_option
+-- On TokLongest reduce production lexer_option_list -> lexer_option
+-- On TokLeftBrace reduce production lexer_option_list -> lexer_option
+-- On TokFirst reduce production lexer_option_list -> lexer_option
 
 State 146:
 main -> module_name includes term_sections opt_preamble lexer . opt_assocs grammar opt_rewrites_section opt_inline_forms TokEof [ # ]
@@ -1097,42 +1097,42 @@ identifiers -> rev_identifier_list . [ TokRightAssoc TokPrec TokNonAssoc TokLeft
 rev_identifier_list -> rev_identifier_list . identifier [ TokRightAssoc TokPrec TokNonAssoc TokLeftBrace TokLeftAssoc TokId TokGrammar TokDoubledArrow ]
 -- On TokId shift to state 2
 -- On identifier shift to state 149
--- On TokRightAssoc reduce production identifiers -> rev_identifier_list 
--- On TokPrec reduce production identifiers -> rev_identifier_list 
--- On TokNonAssoc reduce production identifiers -> rev_identifier_list 
--- On TokLeftBrace reduce production identifiers -> rev_identifier_list 
--- On TokLeftAssoc reduce production identifiers -> rev_identifier_list 
--- On TokGrammar reduce production identifiers -> rev_identifier_list 
--- On TokDoubledArrow reduce production identifiers -> rev_identifier_list 
+-- On TokRightAssoc reduce production identifiers -> rev_identifier_list
+-- On TokPrec reduce production identifiers -> rev_identifier_list
+-- On TokNonAssoc reduce production identifiers -> rev_identifier_list
+-- On TokLeftBrace reduce production identifiers -> rev_identifier_list
+-- On TokLeftAssoc reduce production identifiers -> rev_identifier_list
+-- On TokGrammar reduce production identifiers -> rev_identifier_list
+-- On TokDoubledArrow reduce production identifiers -> rev_identifier_list
 
 State 149:
 rev_identifier_list -> rev_identifier_list identifier . [ TokRightAssoc TokPrec TokNonAssoc TokLeftBrace TokLeftAssoc TokId TokGrammar TokDoubledArrow ]
--- On TokRightAssoc reduce production rev_identifier_list -> rev_identifier_list identifier 
--- On TokPrec reduce production rev_identifier_list -> rev_identifier_list identifier 
--- On TokNonAssoc reduce production rev_identifier_list -> rev_identifier_list identifier 
--- On TokLeftBrace reduce production rev_identifier_list -> rev_identifier_list identifier 
--- On TokLeftAssoc reduce production rev_identifier_list -> rev_identifier_list identifier 
--- On TokId reduce production rev_identifier_list -> rev_identifier_list identifier 
--- On TokGrammar reduce production rev_identifier_list -> rev_identifier_list identifier 
--- On TokDoubledArrow reduce production rev_identifier_list -> rev_identifier_list identifier 
+-- On TokRightAssoc reduce production rev_identifier_list -> rev_identifier_list identifier
+-- On TokPrec reduce production rev_identifier_list -> rev_identifier_list identifier
+-- On TokNonAssoc reduce production rev_identifier_list -> rev_identifier_list identifier
+-- On TokLeftBrace reduce production rev_identifier_list -> rev_identifier_list identifier
+-- On TokLeftAssoc reduce production rev_identifier_list -> rev_identifier_list identifier
+-- On TokId reduce production rev_identifier_list -> rev_identifier_list identifier
+-- On TokGrammar reduce production rev_identifier_list -> rev_identifier_list identifier
+-- On TokDoubledArrow reduce production rev_identifier_list -> rev_identifier_list identifier
 
 State 150:
 assoc -> TokRightAssoc identifiers . [ TokRightAssoc TokNonAssoc TokLeftAssoc TokGrammar ]
--- On TokRightAssoc reduce production assoc -> TokRightAssoc identifiers 
--- On TokNonAssoc reduce production assoc -> TokRightAssoc identifiers 
--- On TokLeftAssoc reduce production assoc -> TokRightAssoc identifiers 
--- On TokGrammar reduce production assoc -> TokRightAssoc identifiers 
+-- On TokRightAssoc reduce production assoc -> TokRightAssoc identifiers
+-- On TokNonAssoc reduce production assoc -> TokRightAssoc identifiers
+-- On TokLeftAssoc reduce production assoc -> TokRightAssoc identifiers
+-- On TokGrammar reduce production assoc -> TokRightAssoc identifiers
 
 State 151:
 rev_identifier_list -> identifier . [ TokRightAssoc TokPrec TokNonAssoc TokLeftBrace TokLeftAssoc TokId TokGrammar TokDoubledArrow ]
--- On TokRightAssoc reduce production rev_identifier_list -> identifier 
--- On TokPrec reduce production rev_identifier_list -> identifier 
--- On TokNonAssoc reduce production rev_identifier_list -> identifier 
--- On TokLeftBrace reduce production rev_identifier_list -> identifier 
--- On TokLeftAssoc reduce production rev_identifier_list -> identifier 
--- On TokId reduce production rev_identifier_list -> identifier 
--- On TokGrammar reduce production rev_identifier_list -> identifier 
--- On TokDoubledArrow reduce production rev_identifier_list -> identifier 
+-- On TokRightAssoc reduce production rev_identifier_list -> identifier
+-- On TokPrec reduce production rev_identifier_list -> identifier
+-- On TokNonAssoc reduce production rev_identifier_list -> identifier
+-- On TokLeftBrace reduce production rev_identifier_list -> identifier
+-- On TokLeftAssoc reduce production rev_identifier_list -> identifier
+-- On TokId reduce production rev_identifier_list -> identifier
+-- On TokGrammar reduce production rev_identifier_list -> identifier
+-- On TokDoubledArrow reduce production rev_identifier_list -> identifier
 
 State 152:
 assoc -> TokNonAssoc . identifiers [ TokRightAssoc TokNonAssoc TokLeftAssoc TokGrammar ]
@@ -1143,10 +1143,10 @@ assoc -> TokNonAssoc . identifiers [ TokRightAssoc TokNonAssoc TokLeftAssoc TokG
 
 State 153:
 assoc -> TokNonAssoc identifiers . [ TokRightAssoc TokNonAssoc TokLeftAssoc TokGrammar ]
--- On TokRightAssoc reduce production assoc -> TokNonAssoc identifiers 
--- On TokNonAssoc reduce production assoc -> TokNonAssoc identifiers 
--- On TokLeftAssoc reduce production assoc -> TokNonAssoc identifiers 
--- On TokGrammar reduce production assoc -> TokNonAssoc identifiers 
+-- On TokRightAssoc reduce production assoc -> TokNonAssoc identifiers
+-- On TokNonAssoc reduce production assoc -> TokNonAssoc identifiers
+-- On TokLeftAssoc reduce production assoc -> TokNonAssoc identifiers
+-- On TokGrammar reduce production assoc -> TokNonAssoc identifiers
 
 State 154:
 assoc -> TokLeftAssoc . identifiers [ TokRightAssoc TokNonAssoc TokLeftAssoc TokGrammar ]
@@ -1157,10 +1157,10 @@ assoc -> TokLeftAssoc . identifiers [ TokRightAssoc TokNonAssoc TokLeftAssoc Tok
 
 State 155:
 assoc -> TokLeftAssoc identifiers . [ TokRightAssoc TokNonAssoc TokLeftAssoc TokGrammar ]
--- On TokRightAssoc reduce production assoc -> TokLeftAssoc identifiers 
--- On TokNonAssoc reduce production assoc -> TokLeftAssoc identifiers 
--- On TokLeftAssoc reduce production assoc -> TokLeftAssoc identifiers 
--- On TokGrammar reduce production assoc -> TokLeftAssoc identifiers 
+-- On TokRightAssoc reduce production assoc -> TokLeftAssoc identifiers
+-- On TokNonAssoc reduce production assoc -> TokLeftAssoc identifiers
+-- On TokLeftAssoc reduce production assoc -> TokLeftAssoc identifiers
+-- On TokGrammar reduce production assoc -> TokLeftAssoc identifiers
 
 State 156:
 main -> module_name includes term_sections opt_preamble lexer opt_assocs . grammar opt_rewrites_section opt_inline_forms TokEof [ # ]
@@ -1182,8 +1182,8 @@ grammar_option -> TokStart . identifier [ TokStart TokLeftBrace ]
 
 State 159:
 grammar_option -> TokStart identifier . [ TokStart TokLeftBrace ]
--- On TokStart reduce production grammar_option -> TokStart identifier 
--- On TokLeftBrace reduce production grammar_option -> TokStart identifier 
+-- On TokStart reduce production grammar_option -> TokStart identifier
+-- On TokLeftBrace reduce production grammar_option -> TokStart identifier
 
 State 160:
 grammar -> TokGrammar opt_grammar_options . TokLeftBrace rules TokRightBrace [ TokRewrites TokInline TokEof ]
@@ -1211,8 +1211,8 @@ rule -> TokId TokRuleEq . productions [ TokRightBrace TokId ]
 
 State 164:
 rule -> TokId TokRuleEq productions . [ TokRightBrace TokId ]
--- On TokRightBrace reduce production rule -> TokId TokRuleEq productions 
--- On TokId reduce production rule -> TokId TokRuleEq productions 
+-- On TokRightBrace reduce production rule -> TokId TokRuleEq productions
+-- On TokId reduce production rule -> TokId TokRuleEq productions
 
 State 165:
 productions -> prod_body . prods [ TokRightBrace TokId ]
@@ -1221,8 +1221,8 @@ productions -> prod_body . [ TokRightBrace TokId ]
 -- On prods shift to state 179
 -- On prod_list_prim shift to state 180
 -- On prod_list shift to state 181
--- On TokRightBrace reduce production productions -> prod_body 
--- On TokId reduce production productions -> prod_body 
+-- On TokRightBrace reduce production productions -> prod_body
+-- On TokId reduce production productions -> prod_body
 
 State 166:
 prod_list_prim -> TokPipe . prod_body [ TokRightBrace TokPipe TokId ]
@@ -1234,9 +1234,9 @@ prod_list_prim -> TokPipe . prod_body [ TokRightBrace TokPipe TokId ]
 
 State 167:
 prod_list_prim -> TokPipe prod_body . [ TokRightBrace TokPipe TokId ]
--- On TokRightBrace reduce production prod_list_prim -> TokPipe prod_body 
--- On TokPipe reduce production prod_list_prim -> TokPipe prod_body 
--- On TokId reduce production prod_list_prim -> TokPipe prod_body 
+-- On TokRightBrace reduce production prod_list_prim -> TokPipe prod_body
+-- On TokPipe reduce production prod_list_prim -> TokPipe prod_body
+-- On TokId reduce production prod_list_prim -> TokPipe prod_body
 
 State 168:
 prod_body -> identifiers . opt_prec body [ TokRightBrace TokPipe TokId ]
@@ -1252,8 +1252,8 @@ opt_prec -> TokPrec . TokId [ TokLeftBrace TokDoubledArrow ]
 
 State 170:
 opt_prec -> TokPrec TokId . [ TokLeftBrace TokDoubledArrow ]
--- On TokLeftBrace reduce production opt_prec -> TokPrec TokId 
--- On TokDoubledArrow reduce production opt_prec -> TokPrec TokId 
+-- On TokLeftBrace reduce production opt_prec -> TokPrec TokId
+-- On TokDoubledArrow reduce production opt_prec -> TokPrec TokId
 
 State 171:
 prod_body -> identifiers opt_prec . body [ TokRightBrace TokPipe TokId ]
@@ -1285,7 +1285,7 @@ State 173:
 opt_term_matches -> term_match_list . [ TokRightBrace ]
 term_match_list -> term_match_list . TokPipe term_match [ TokRightBrace TokPipe ]
 -- On TokPipe shift to state 124
--- On TokRightBrace reduce production opt_term_matches -> term_match_list 
+-- On TokRightBrace reduce production opt_term_matches -> term_match_list
 
 State 174:
 body -> TokLeftBrace opt_term_matches . TokRightBrace [ TokRightBrace TokPipe TokId ]
@@ -1293,9 +1293,9 @@ body -> TokLeftBrace opt_term_matches . TokRightBrace [ TokRightBrace TokPipe To
 
 State 175:
 body -> TokLeftBrace opt_term_matches TokRightBrace . [ TokRightBrace TokPipe TokId ]
--- On TokRightBrace reduce production body -> TokLeftBrace opt_term_matches TokRightBrace 
--- On TokPipe reduce production body -> TokLeftBrace opt_term_matches TokRightBrace 
--- On TokId reduce production body -> TokLeftBrace opt_term_matches TokRightBrace 
+-- On TokRightBrace reduce production body -> TokLeftBrace opt_term_matches TokRightBrace
+-- On TokPipe reduce production body -> TokLeftBrace opt_term_matches TokRightBrace
+-- On TokId reduce production body -> TokLeftBrace opt_term_matches TokRightBrace
 
 State 176:
 prod_body -> identifiers opt_prec TokDoubledArrow . simple_term [ TokRightBrace TokPipe TokId ]
@@ -1311,40 +1311,40 @@ prod_body -> identifiers opt_prec TokDoubledArrow . simple_term [ TokRightBrace 
 
 State 177:
 prod_body -> identifiers opt_prec TokDoubledArrow simple_term . [ TokRightBrace TokPipe TokId ]
--- On TokRightBrace reduce production prod_body -> identifiers opt_prec TokDoubledArrow simple_term 
--- On TokPipe reduce production prod_body -> identifiers opt_prec TokDoubledArrow simple_term 
--- On TokId reduce production prod_body -> identifiers opt_prec TokDoubledArrow simple_term 
+-- On TokRightBrace reduce production prod_body -> identifiers opt_prec TokDoubledArrow simple_term
+-- On TokPipe reduce production prod_body -> identifiers opt_prec TokDoubledArrow simple_term
+-- On TokId reduce production prod_body -> identifiers opt_prec TokDoubledArrow simple_term
 
 State 178:
 prod_body -> identifiers opt_prec body . [ TokRightBrace TokPipe TokId ]
--- On TokRightBrace reduce production prod_body -> identifiers opt_prec body 
--- On TokPipe reduce production prod_body -> identifiers opt_prec body 
--- On TokId reduce production prod_body -> identifiers opt_prec body 
+-- On TokRightBrace reduce production prod_body -> identifiers opt_prec body
+-- On TokPipe reduce production prod_body -> identifiers opt_prec body
+-- On TokId reduce production prod_body -> identifiers opt_prec body
 
 State 179:
 productions -> prod_body prods . [ TokRightBrace TokId ]
--- On TokRightBrace reduce production productions -> prod_body prods 
--- On TokId reduce production productions -> prod_body prods 
+-- On TokRightBrace reduce production productions -> prod_body prods
+-- On TokId reduce production productions -> prod_body prods
 
 State 180:
 prod_list -> prod_list_prim . [ TokRightBrace TokPipe TokId ]
--- On TokRightBrace reduce production prod_list -> prod_list_prim 
--- On TokPipe reduce production prod_list -> prod_list_prim 
--- On TokId reduce production prod_list -> prod_list_prim 
+-- On TokRightBrace reduce production prod_list -> prod_list_prim
+-- On TokPipe reduce production prod_list -> prod_list_prim
+-- On TokId reduce production prod_list -> prod_list_prim
 
 State 181:
 prod_list -> prod_list . prod_list_prim [ TokRightBrace TokPipe TokId ]
 prods -> prod_list . [ TokRightBrace TokId ]
 -- On TokPipe shift to state 166
 -- On prod_list_prim shift to state 182
--- On TokRightBrace reduce production prods -> prod_list 
--- On TokId reduce production prods -> prod_list 
+-- On TokRightBrace reduce production prods -> prod_list
+-- On TokId reduce production prods -> prod_list
 
 State 182:
 prod_list -> prod_list prod_list_prim . [ TokRightBrace TokPipe TokId ]
--- On TokRightBrace reduce production prod_list -> prod_list prod_list_prim 
--- On TokPipe reduce production prod_list -> prod_list prod_list_prim 
--- On TokId reduce production prod_list -> prod_list prod_list_prim 
+-- On TokRightBrace reduce production prod_list -> prod_list prod_list_prim
+-- On TokPipe reduce production prod_list -> prod_list prod_list_prim
+-- On TokId reduce production prod_list -> prod_list prod_list_prim
 
 State 183:
 grammar -> TokGrammar opt_grammar_options TokLeftBrace rules . TokRightBrace [ TokRewrites TokInline TokEof ]
@@ -1352,43 +1352,43 @@ grammar -> TokGrammar opt_grammar_options TokLeftBrace rules . TokRightBrace [ T
 
 State 184:
 grammar -> TokGrammar opt_grammar_options TokLeftBrace rules TokRightBrace . [ TokRewrites TokInline TokEof ]
--- On TokRewrites reduce production grammar -> TokGrammar opt_grammar_options TokLeftBrace rules TokRightBrace 
--- On TokInline reduce production grammar -> TokGrammar opt_grammar_options TokLeftBrace rules TokRightBrace 
--- On TokEof reduce production grammar -> TokGrammar opt_grammar_options TokLeftBrace rules TokRightBrace 
+-- On TokRewrites reduce production grammar -> TokGrammar opt_grammar_options TokLeftBrace rules TokRightBrace
+-- On TokInline reduce production grammar -> TokGrammar opt_grammar_options TokLeftBrace rules TokRightBrace
+-- On TokEof reduce production grammar -> TokGrammar opt_grammar_options TokLeftBrace rules TokRightBrace
 
 State 185:
 rule_list -> rule_list . rule [ TokRightBrace TokId ]
 rules -> rule_list . [ TokRightBrace ]
 -- On TokId shift to state 162
 -- On rule shift to state 186
--- On TokRightBrace reduce production rules -> rule_list 
+-- On TokRightBrace reduce production rules -> rule_list
 
 State 186:
 rule_list -> rule_list rule . [ TokRightBrace TokId ]
--- On TokRightBrace reduce production rule_list -> rule_list rule 
--- On TokId reduce production rule_list -> rule_list rule 
+-- On TokRightBrace reduce production rule_list -> rule_list rule
+-- On TokId reduce production rule_list -> rule_list rule
 
 State 187:
 rule_list -> rule . [ TokRightBrace TokId ]
--- On TokRightBrace reduce production rule_list -> rule 
--- On TokId reduce production rule_list -> rule 
+-- On TokRightBrace reduce production rule_list -> rule
+-- On TokId reduce production rule_list -> rule
 
 State 188:
 grammar_option_list -> grammar_option_list . grammar_option [ TokStart TokLeftBrace ]
 opt_grammar_options -> grammar_option_list . [ TokLeftBrace ]
 -- On TokStart shift to state 158
 -- On grammar_option shift to state 189
--- On TokLeftBrace reduce production opt_grammar_options -> grammar_option_list 
+-- On TokLeftBrace reduce production opt_grammar_options -> grammar_option_list
 
 State 189:
 grammar_option_list -> grammar_option_list grammar_option . [ TokStart TokLeftBrace ]
--- On TokStart reduce production grammar_option_list -> grammar_option_list grammar_option 
--- On TokLeftBrace reduce production grammar_option_list -> grammar_option_list grammar_option 
+-- On TokStart reduce production grammar_option_list -> grammar_option_list grammar_option
+-- On TokLeftBrace reduce production grammar_option_list -> grammar_option_list grammar_option
 
 State 190:
 grammar_option_list -> grammar_option . [ TokStart TokLeftBrace ]
--- On TokStart reduce production grammar_option_list -> grammar_option 
--- On TokLeftBrace reduce production grammar_option_list -> grammar_option 
+-- On TokStart reduce production grammar_option_list -> grammar_option
+-- On TokLeftBrace reduce production grammar_option_list -> grammar_option
 
 State 191:
 main -> module_name includes term_sections opt_preamble lexer opt_assocs grammar . opt_rewrites_section opt_inline_forms TokEof [ # ]
@@ -1426,29 +1426,29 @@ rewrites_section -> TokRewrites TokLeftBrace new_rewrites . TokRightBrace [ TokR
 
 State 195:
 rewrites_section -> TokRewrites TokLeftBrace new_rewrites TokRightBrace . [ TokRewrites TokInline TokEof ]
--- On TokRewrites reduce production rewrites_section -> TokRewrites TokLeftBrace new_rewrites TokRightBrace 
--- On TokInline reduce production rewrites_section -> TokRewrites TokLeftBrace new_rewrites TokRightBrace 
--- On TokEof reduce production rewrites_section -> TokRewrites TokLeftBrace new_rewrites TokRightBrace 
+-- On TokRewrites reduce production rewrites_section -> TokRewrites TokLeftBrace new_rewrites TokRightBrace
+-- On TokInline reduce production rewrites_section -> TokRewrites TokLeftBrace new_rewrites TokRightBrace
+-- On TokEof reduce production rewrites_section -> TokRewrites TokLeftBrace new_rewrites TokRightBrace
 
 State 196:
 rev_rewrites_section_list -> rewrites_section . [ TokRewrites TokInline TokEof ]
--- On TokRewrites reduce production rev_rewrites_section_list -> rewrites_section 
--- On TokInline reduce production rev_rewrites_section_list -> rewrites_section 
--- On TokEof reduce production rev_rewrites_section_list -> rewrites_section 
+-- On TokRewrites reduce production rev_rewrites_section_list -> rewrites_section
+-- On TokInline reduce production rev_rewrites_section_list -> rewrites_section
+-- On TokEof reduce production rev_rewrites_section_list -> rewrites_section
 
 State 197:
 opt_rewrites_section -> rev_rewrites_section_list . [ TokInline TokEof ]
 rev_rewrites_section_list -> rev_rewrites_section_list . rewrites_section [ TokRewrites TokInline TokEof ]
 -- On TokRewrites shift to state 192
 -- On rewrites_section shift to state 198
--- On TokInline reduce production opt_rewrites_section -> rev_rewrites_section_list 
--- On TokEof reduce production opt_rewrites_section -> rev_rewrites_section_list 
+-- On TokInline reduce production opt_rewrites_section -> rev_rewrites_section_list
+-- On TokEof reduce production opt_rewrites_section -> rev_rewrites_section_list
 
 State 198:
 rev_rewrites_section_list -> rev_rewrites_section_list rewrites_section . [ TokRewrites TokInline TokEof ]
--- On TokRewrites reduce production rev_rewrites_section_list -> rev_rewrites_section_list rewrites_section 
--- On TokInline reduce production rev_rewrites_section_list -> rev_rewrites_section_list rewrites_section 
--- On TokEof reduce production rev_rewrites_section_list -> rev_rewrites_section_list rewrites_section 
+-- On TokRewrites reduce production rev_rewrites_section_list -> rev_rewrites_section_list rewrites_section
+-- On TokInline reduce production rev_rewrites_section_list -> rev_rewrites_section_list rewrites_section
+-- On TokEof reduce production rev_rewrites_section_list -> rev_rewrites_section_list rewrites_section
 
 State 199:
 main -> module_name includes term_sections opt_preamble lexer opt_assocs grammar opt_rewrites_section . opt_inline_forms TokEof [ # ]
@@ -1472,8 +1472,8 @@ inline_form -> TokInline . simple_term [ TokInline TokEof ]
 
 State 201:
 inline_form -> TokInline simple_term . [ TokInline TokEof ]
--- On TokInline reduce production inline_form -> TokInline simple_term 
--- On TokEof reduce production inline_form -> TokInline simple_term 
+-- On TokInline reduce production inline_form -> TokInline simple_term
+-- On TokEof reduce production inline_form -> TokInline simple_term
 
 State 202:
 main -> module_name includes term_sections opt_preamble lexer opt_assocs grammar opt_rewrites_section opt_inline_forms . TokEof [ # ]
@@ -1481,24 +1481,24 @@ main -> module_name includes term_sections opt_preamble lexer opt_assocs grammar
 
 State 203:
 main -> module_name includes term_sections opt_preamble lexer opt_assocs grammar opt_rewrites_section opt_inline_forms TokEof . [ # ]
--- On # reduce production main -> module_name includes term_sections opt_preamble lexer opt_assocs grammar opt_rewrites_section opt_inline_forms TokEof 
+-- On # reduce production main -> module_name includes term_sections opt_preamble lexer opt_assocs grammar opt_rewrites_section opt_inline_forms TokEof
 
 State 204:
 inline_form_list_rev -> inline_form_list_rev . inline_form [ TokInline TokEof ]
 opt_inline_forms -> inline_form_list_rev . [ TokEof ]
 -- On TokInline shift to state 200
 -- On inline_form shift to state 205
--- On TokEof reduce production opt_inline_forms -> inline_form_list_rev 
+-- On TokEof reduce production opt_inline_forms -> inline_form_list_rev
 
 State 205:
 inline_form_list_rev -> inline_form_list_rev inline_form . [ TokInline TokEof ]
--- On TokInline reduce production inline_form_list_rev -> inline_form_list_rev inline_form 
--- On TokEof reduce production inline_form_list_rev -> inline_form_list_rev inline_form 
+-- On TokInline reduce production inline_form_list_rev -> inline_form_list_rev inline_form
+-- On TokEof reduce production inline_form_list_rev -> inline_form_list_rev inline_form
 
 State 206:
 inline_form_list_rev -> inline_form . [ TokInline TokEof ]
--- On TokInline reduce production inline_form_list_rev -> inline_form 
--- On TokEof reduce production inline_form_list_rev -> inline_form 
+-- On TokInline reduce production inline_form_list_rev -> inline_form
+-- On TokEof reduce production inline_form_list_rev -> inline_form
 
 State 207:
 assoc_list -> assoc_list . assoc [ TokRightAssoc TokNonAssoc TokLeftAssoc TokGrammar ]
@@ -1507,58 +1507,58 @@ opt_assocs -> assoc_list . [ TokGrammar ]
 -- On TokNonAssoc shift to state 152
 -- On TokLeftAssoc shift to state 154
 -- On assoc shift to state 208
--- On TokGrammar reduce production opt_assocs -> assoc_list 
+-- On TokGrammar reduce production opt_assocs -> assoc_list
 
 State 208:
 assoc_list -> assoc_list assoc . [ TokRightAssoc TokNonAssoc TokLeftAssoc TokGrammar ]
--- On TokRightAssoc reduce production assoc_list -> assoc_list assoc 
--- On TokNonAssoc reduce production assoc_list -> assoc_list assoc 
--- On TokLeftAssoc reduce production assoc_list -> assoc_list assoc 
--- On TokGrammar reduce production assoc_list -> assoc_list assoc 
+-- On TokRightAssoc reduce production assoc_list -> assoc_list assoc
+-- On TokNonAssoc reduce production assoc_list -> assoc_list assoc
+-- On TokLeftAssoc reduce production assoc_list -> assoc_list assoc
+-- On TokGrammar reduce production assoc_list -> assoc_list assoc
 
 State 209:
 assoc_list -> assoc . [ TokRightAssoc TokNonAssoc TokLeftAssoc TokGrammar ]
--- On TokRightAssoc reduce production assoc_list -> assoc 
--- On TokNonAssoc reduce production assoc_list -> assoc 
--- On TokLeftAssoc reduce production assoc_list -> assoc 
--- On TokGrammar reduce production assoc_list -> assoc 
+-- On TokRightAssoc reduce production assoc_list -> assoc
+-- On TokNonAssoc reduce production assoc_list -> assoc
+-- On TokLeftAssoc reduce production assoc_list -> assoc
+-- On TokGrammar reduce production assoc_list -> assoc
 
 State 210:
 term_section_list -> term_section_list . term_section [ TokTokens TokTerms TokLeftBrace ]
 term_sections -> term_section_list . [ TokTokens TokLeftBrace ]
 -- On TokTerms shift to state 12
 -- On term_section shift to state 211
--- On TokTokens reduce production term_sections -> term_section_list 
--- On TokLeftBrace reduce production term_sections -> term_section_list 
+-- On TokTokens reduce production term_sections -> term_section_list
+-- On TokLeftBrace reduce production term_sections -> term_section_list
 
 State 211:
 term_section_list -> term_section_list term_section . [ TokTokens TokTerms TokLeftBrace ]
--- On TokTokens reduce production term_section_list -> term_section_list term_section 
--- On TokTerms reduce production term_section_list -> term_section_list term_section 
--- On TokLeftBrace reduce production term_section_list -> term_section_list term_section 
+-- On TokTokens reduce production term_section_list -> term_section_list term_section
+-- On TokTerms reduce production term_section_list -> term_section_list term_section
+-- On TokLeftBrace reduce production term_section_list -> term_section_list term_section
 
 State 212:
 term_section_list -> term_section . [ TokTokens TokTerms TokLeftBrace ]
--- On TokTokens reduce production term_section_list -> term_section 
--- On TokTerms reduce production term_section_list -> term_section 
--- On TokLeftBrace reduce production term_section_list -> term_section 
+-- On TokTokens reduce production term_section_list -> term_section
+-- On TokTerms reduce production term_section_list -> term_section
+-- On TokLeftBrace reduce production term_section_list -> term_section
 
 State 213:
 include_list_rev -> include_list_rev . include_item [ TokTerms TokInclude ]
 includes -> include_list_rev . [ TokTerms ]
 -- On TokInclude shift to state 5
 -- On include_item shift to state 214
--- On TokTerms reduce production includes -> include_list_rev 
+-- On TokTerms reduce production includes -> include_list_rev
 
 State 214:
 include_list_rev -> include_list_rev include_item . [ TokTerms TokInclude ]
--- On TokTerms reduce production include_list_rev -> include_list_rev include_item 
--- On TokInclude reduce production include_list_rev -> include_list_rev include_item 
+-- On TokTerms reduce production include_list_rev -> include_list_rev include_item
+-- On TokInclude reduce production include_list_rev -> include_list_rev include_item
 
 State 215:
 include_list_rev -> include_item . [ TokTerms TokInclude ]
--- On TokTerms reduce production include_list_rev -> include_item 
--- On TokInclude reduce production include_list_rev -> include_item 
+-- On TokTerms reduce production include_list_rev -> include_item
+-- On TokInclude reduce production include_list_rev -> include_item
 
 State 216:
 main' -> main . [ # ]

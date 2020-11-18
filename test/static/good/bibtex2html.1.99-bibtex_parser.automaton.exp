@@ -16,15 +16,15 @@ command -> Tpreamble . sharp_string_list Trbrace [ # ]
 
 State 2:
 atom -> Tstring . [ Tsharp Trbrace Tcomma ]
--- On Tsharp reduce production atom -> Tstring 
--- On Trbrace reduce production atom -> Tstring 
--- On Tcomma reduce production atom -> Tstring 
+-- On Tsharp reduce production atom -> Tstring
+-- On Trbrace reduce production atom -> Tstring
+-- On Tcomma reduce production atom -> Tstring
 
 State 3:
 atom -> Tident . [ Tsharp Trbrace Tcomma ]
--- On Tsharp reduce production atom -> Tident 
--- On Trbrace reduce production atom -> Tident 
--- On Tcomma reduce production atom -> Tident 
+-- On Tsharp reduce production atom -> Tident
+-- On Trbrace reduce production atom -> Tident
+-- On Tcomma reduce production atom -> Tident
 
 State 4:
 command -> Tpreamble sharp_string_list . Trbrace [ # ]
@@ -32,14 +32,14 @@ command -> Tpreamble sharp_string_list . Trbrace [ # ]
 
 State 5:
 command -> Tpreamble sharp_string_list Trbrace . [ # ]
--- On # reduce production command -> Tpreamble sharp_string_list Trbrace 
+-- On # reduce production command -> Tpreamble sharp_string_list Trbrace
 
 State 6:
 sharp_string_list -> atom . Tsharp sharp_string_list [ Trbrace Tcomma ]
 sharp_string_list -> atom . [ Trbrace Tcomma ]
 -- On Tsharp shift to state 7
--- On Trbrace reduce production sharp_string_list -> atom 
--- On Tcomma reduce production sharp_string_list -> atom 
+-- On Trbrace reduce production sharp_string_list -> atom
+-- On Tcomma reduce production sharp_string_list -> atom
 
 State 7:
 sharp_string_list -> atom Tsharp . sharp_string_list [ Trbrace Tcomma ]
@@ -50,16 +50,16 @@ sharp_string_list -> atom Tsharp . sharp_string_list [ Trbrace Tcomma ]
 
 State 8:
 sharp_string_list -> atom Tsharp sharp_string_list . [ Trbrace Tcomma ]
--- On Trbrace reduce production sharp_string_list -> atom Tsharp sharp_string_list 
--- On Tcomma reduce production sharp_string_list -> atom Tsharp sharp_string_list 
+-- On Trbrace reduce production sharp_string_list -> atom Tsharp sharp_string_list
+-- On Tcomma reduce production sharp_string_list -> atom Tsharp sharp_string_list
 
 State 9:
 entry -> Tentry . [ Tcomma ]
--- On Tcomma reduce production entry -> Tentry 
+-- On Tcomma reduce production entry -> Tentry
 
 State 10:
 command -> Tcomment . [ # ]
--- On # reduce production command -> Tcomment 
+-- On # reduce production command -> Tcomment
 
 State 11:
 command -> Tabbrev . Tident Tequal sharp_string_list Trbrace [ # ]
@@ -82,7 +82,7 @@ command -> Tabbrev Tident Tequal sharp_string_list . Trbrace [ # ]
 
 State 15:
 command -> Tabbrev Tident Tequal sharp_string_list Trbrace . [ # ]
--- On # reduce production command -> Tabbrev Tident Tequal sharp_string_list Trbrace 
+-- On # reduce production command -> Tabbrev Tident Tequal sharp_string_list Trbrace
 
 State 16:
 command -> entry . Tcomma comma_field_list Trbrace [ # ]
@@ -98,11 +98,11 @@ command -> entry Tcomma . comma_field_list Trbrace [ # ]
 
 State 18:
 field_name -> Tident . [ Tequal ]
--- On Tequal reduce production field_name -> Tident 
+-- On Tequal reduce production field_name -> Tident
 
 State 19:
 field_name -> Tcomment . [ Tequal ]
--- On Tequal reduce production field_name -> Tcomment 
+-- On Tequal reduce production field_name -> Tcomment
 
 State 20:
 field -> field_name . Tequal sharp_string_list [ Trbrace Tcomma ]
@@ -116,20 +116,20 @@ field -> field_name Tequal . [ Trbrace Tcomma ]
 -- On Tident shift to state 3
 -- On sharp_string_list shift to state 22
 -- On atom shift to state 6
--- On Trbrace reduce production field -> field_name Tequal 
--- On Tcomma reduce production field -> field_name Tequal 
+-- On Trbrace reduce production field -> field_name Tequal
+-- On Tcomma reduce production field -> field_name Tequal
 
 State 22:
 field -> field_name Tequal sharp_string_list . [ Trbrace Tcomma ]
--- On Trbrace reduce production field -> field_name Tequal sharp_string_list 
--- On Tcomma reduce production field -> field_name Tequal sharp_string_list 
+-- On Trbrace reduce production field -> field_name Tequal sharp_string_list
+-- On Tcomma reduce production field -> field_name Tequal sharp_string_list
 
 State 23:
 comma_field_list -> field . Tcomma comma_field_list [ Trbrace ]
 comma_field_list -> field . [ Trbrace ]
 comma_field_list -> field . Tcomma [ Trbrace ]
 -- On Tcomma shift to state 24
--- On Trbrace reduce production comma_field_list -> field 
+-- On Trbrace reduce production comma_field_list -> field
 
 State 24:
 comma_field_list -> field Tcomma . comma_field_list [ Trbrace ]
@@ -139,11 +139,11 @@ comma_field_list -> field Tcomma . [ Trbrace ]
 -- On field_name shift to state 20
 -- On field shift to state 23
 -- On comma_field_list shift to state 25
--- On Trbrace reduce production comma_field_list -> field Tcomma 
+-- On Trbrace reduce production comma_field_list -> field Tcomma
 
 State 25:
 comma_field_list -> field Tcomma comma_field_list . [ Trbrace ]
--- On Trbrace reduce production comma_field_list -> field Tcomma comma_field_list 
+-- On Trbrace reduce production comma_field_list -> field Tcomma comma_field_list
 
 State 26:
 command -> entry Tcomma comma_field_list . Trbrace [ # ]
@@ -151,7 +151,7 @@ command -> entry Tcomma comma_field_list . Trbrace [ # ]
 
 State 27:
 command -> entry Tcomma comma_field_list Trbrace . [ # ]
--- On # reduce production command -> entry Tcomma comma_field_list Trbrace 
+-- On # reduce production command -> entry Tcomma comma_field_list Trbrace
 
 State 28:
 command' -> command . [ # ]
@@ -191,19 +191,19 @@ command -> Tpreamble sharp_string_list . Trbrace [ Tpreamble Tentry Tcomment Tab
 
 State 33:
 command -> Tpreamble sharp_string_list Trbrace . [ Tpreamble Tentry Tcomment Tabbrev EOF ]
--- On Tpreamble reduce production command -> Tpreamble sharp_string_list Trbrace 
--- On Tentry reduce production command -> Tpreamble sharp_string_list Trbrace 
--- On Tcomment reduce production command -> Tpreamble sharp_string_list Trbrace 
--- On Tabbrev reduce production command -> Tpreamble sharp_string_list Trbrace 
--- On EOF reduce production command -> Tpreamble sharp_string_list Trbrace 
+-- On Tpreamble reduce production command -> Tpreamble sharp_string_list Trbrace
+-- On Tentry reduce production command -> Tpreamble sharp_string_list Trbrace
+-- On Tcomment reduce production command -> Tpreamble sharp_string_list Trbrace
+-- On Tabbrev reduce production command -> Tpreamble sharp_string_list Trbrace
+-- On EOF reduce production command -> Tpreamble sharp_string_list Trbrace
 
 State 34:
 command -> Tcomment . [ Tpreamble Tentry Tcomment Tabbrev EOF ]
--- On Tpreamble reduce production command -> Tcomment 
--- On Tentry reduce production command -> Tcomment 
--- On Tcomment reduce production command -> Tcomment 
--- On Tabbrev reduce production command -> Tcomment 
--- On EOF reduce production command -> Tcomment 
+-- On Tpreamble reduce production command -> Tcomment
+-- On Tentry reduce production command -> Tcomment
+-- On Tcomment reduce production command -> Tcomment
+-- On Tabbrev reduce production command -> Tcomment
+-- On EOF reduce production command -> Tcomment
 
 State 35:
 command -> Tabbrev . Tident Tequal sharp_string_list Trbrace [ Tpreamble Tentry Tcomment Tabbrev EOF ]
@@ -226,15 +226,15 @@ command -> Tabbrev Tident Tequal sharp_string_list . Trbrace [ Tpreamble Tentry 
 
 State 39:
 command -> Tabbrev Tident Tequal sharp_string_list Trbrace . [ Tpreamble Tentry Tcomment Tabbrev EOF ]
--- On Tpreamble reduce production command -> Tabbrev Tident Tequal sharp_string_list Trbrace 
--- On Tentry reduce production command -> Tabbrev Tident Tequal sharp_string_list Trbrace 
--- On Tcomment reduce production command -> Tabbrev Tident Tequal sharp_string_list Trbrace 
--- On Tabbrev reduce production command -> Tabbrev Tident Tequal sharp_string_list Trbrace 
--- On EOF reduce production command -> Tabbrev Tident Tequal sharp_string_list Trbrace 
+-- On Tpreamble reduce production command -> Tabbrev Tident Tequal sharp_string_list Trbrace
+-- On Tentry reduce production command -> Tabbrev Tident Tequal sharp_string_list Trbrace
+-- On Tcomment reduce production command -> Tabbrev Tident Tequal sharp_string_list Trbrace
+-- On Tabbrev reduce production command -> Tabbrev Tident Tequal sharp_string_list Trbrace
+-- On EOF reduce production command -> Tabbrev Tident Tequal sharp_string_list Trbrace
 
 State 40:
 command_list -> commands EOF . [ # ]
--- On # reduce production command_list -> commands EOF 
+-- On # reduce production command_list -> commands EOF
 
 State 41:
 command -> entry . Tcomma comma_field_list Trbrace [ Tpreamble Tentry Tcomment Tabbrev EOF ]
@@ -254,19 +254,19 @@ command -> entry Tcomma comma_field_list . Trbrace [ Tpreamble Tentry Tcomment T
 
 State 44:
 command -> entry Tcomma comma_field_list Trbrace . [ Tpreamble Tentry Tcomment Tabbrev EOF ]
--- On Tpreamble reduce production command -> entry Tcomma comma_field_list Trbrace 
--- On Tentry reduce production command -> entry Tcomma comma_field_list Trbrace 
--- On Tcomment reduce production command -> entry Tcomma comma_field_list Trbrace 
--- On Tabbrev reduce production command -> entry Tcomma comma_field_list Trbrace 
--- On EOF reduce production command -> entry Tcomma comma_field_list Trbrace 
+-- On Tpreamble reduce production command -> entry Tcomma comma_field_list Trbrace
+-- On Tentry reduce production command -> entry Tcomma comma_field_list Trbrace
+-- On Tcomment reduce production command -> entry Tcomma comma_field_list Trbrace
+-- On Tabbrev reduce production command -> entry Tcomma comma_field_list Trbrace
+-- On EOF reduce production command -> entry Tcomma comma_field_list Trbrace
 
 State 45:
 commands -> commands command . [ Tpreamble Tentry Tcomment Tabbrev EOF ]
--- On Tpreamble reduce production commands -> commands command 
--- On Tentry reduce production commands -> commands command 
--- On Tcomment reduce production commands -> commands command 
--- On Tabbrev reduce production commands -> commands command 
--- On EOF reduce production commands -> commands command 
+-- On Tpreamble reduce production commands -> commands command
+-- On Tentry reduce production commands -> commands command
+-- On Tcomment reduce production commands -> commands command
+-- On Tabbrev reduce production commands -> commands command
+-- On EOF reduce production commands -> commands command
 
 State 46:
 command_list' -> command_list . [ # ]

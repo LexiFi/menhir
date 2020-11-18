@@ -10,13 +10,13 @@ def' -> . def [ # ]
 State 1:
 name -> ID . [ COMMA COLON ]
 typ -> ID . [ ID ]
--- On ID reduce production typ -> ID 
--- On COMMA reduce production name -> ID 
--- On COLON reduce production name -> ID 
+-- On ID reduce production typ -> ID
+-- On COMMA reduce production name -> ID
+-- On COLON reduce production name -> ID
 
 State 2:
 param_spec -> typ . [ ID ]
--- On ID reduce production param_spec -> typ 
+-- On ID reduce production param_spec -> typ
 
 State 3:
 param_spec -> separated_nonempty_list(COMMA,name) . COLON typ [ ID ]
@@ -29,12 +29,12 @@ param_spec -> separated_nonempty_list(COMMA,name) COLON . typ [ ID ]
 
 State 5:
 typ -> ID . [ ID COMMA ]
--- On ID reduce production typ -> ID 
--- On COMMA reduce production typ -> ID 
+-- On ID reduce production typ -> ID
+-- On COMMA reduce production typ -> ID
 
 State 6:
 param_spec -> separated_nonempty_list(COMMA,name) COLON typ . [ ID ]
--- On ID reduce production param_spec -> separated_nonempty_list(COMMA,name) COLON typ 
+-- On ID reduce production param_spec -> separated_nonempty_list(COMMA,name) COLON typ
 
 State 7:
 def -> param_spec . return_spec COMMA [ # ]
@@ -46,12 +46,12 @@ def -> param_spec . return_spec COMMA [ # ]
 State 8:
 name -> ID . [ COLON ]
 typ -> ID . [ COMMA ]
--- On COMMA reduce production typ -> ID 
--- On COLON reduce production name -> ID 
+-- On COMMA reduce production typ -> ID
+-- On COLON reduce production name -> ID
 
 State 9:
 return_spec -> typ . [ COMMA ]
--- On COMMA reduce production return_spec -> typ 
+-- On COMMA reduce production return_spec -> typ
 
 State 10:
 def -> param_spec return_spec . COMMA [ # ]
@@ -59,7 +59,7 @@ def -> param_spec return_spec . COMMA [ # ]
 
 State 11:
 def -> param_spec return_spec COMMA . [ # ]
--- On # reduce production def -> param_spec return_spec COMMA 
+-- On # reduce production def -> param_spec return_spec COMMA
 
 State 12:
 return_spec -> name . COLON typ [ COMMA ]
@@ -72,13 +72,13 @@ return_spec -> name COLON . typ [ COMMA ]
 
 State 14:
 return_spec -> name COLON typ . [ COMMA ]
--- On COMMA reduce production return_spec -> name COLON typ 
+-- On COMMA reduce production return_spec -> name COLON typ
 
 State 15:
 separated_nonempty_list(COMMA,name) -> name . [ COLON ]
 separated_nonempty_list(COMMA,name) -> name . COMMA separated_nonempty_list(COMMA,name) [ COLON ]
 -- On COMMA shift to state 16
--- On COLON reduce production separated_nonempty_list(COMMA,name) -> name 
+-- On COLON reduce production separated_nonempty_list(COMMA,name) -> name
 
 State 16:
 separated_nonempty_list(COMMA,name) -> name COMMA . separated_nonempty_list(COMMA,name) [ COLON ]
@@ -88,12 +88,12 @@ separated_nonempty_list(COMMA,name) -> name COMMA . separated_nonempty_list(COMM
 
 State 17:
 name -> ID . [ COMMA COLON ]
--- On COMMA reduce production name -> ID 
--- On COLON reduce production name -> ID 
+-- On COMMA reduce production name -> ID
+-- On COLON reduce production name -> ID
 
 State 18:
 separated_nonempty_list(COMMA,name) -> name COMMA separated_nonempty_list(COMMA,name) . [ COLON ]
--- On COLON reduce production separated_nonempty_list(COMMA,name) -> name COMMA separated_nonempty_list(COMMA,name) 
+-- On COLON reduce production separated_nonempty_list(COMMA,name) -> name COMMA separated_nonempty_list(COMMA,name)
 
 State 19:
 def' -> def . [ # ]

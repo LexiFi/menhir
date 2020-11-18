@@ -7,9 +7,9 @@ expression' -> . expression [ # ]
 
 State 1:
 expression -> TRUE . [ THEN ELSE # ]
--- On THEN reduce production expression -> TRUE 
--- On ELSE reduce production expression -> TRUE 
--- On # reduce production expression -> TRUE 
+-- On THEN reduce production expression -> TRUE
+-- On ELSE reduce production expression -> TRUE
+-- On # reduce production expression -> TRUE
 
 State 2:
 expression -> IF . expression THEN expression [ THEN ELSE # ]
@@ -21,9 +21,9 @@ expression -> IF . expression THEN expression ELSE expression [ THEN ELSE # ]
 
 State 3:
 expression -> FALSE . [ THEN ELSE # ]
--- On THEN reduce production expression -> FALSE 
--- On ELSE reduce production expression -> FALSE 
--- On # reduce production expression -> FALSE 
+-- On THEN reduce production expression -> FALSE
+-- On ELSE reduce production expression -> FALSE
+-- On # reduce production expression -> FALSE
 
 State 4:
 expression -> IF expression . THEN expression [ THEN ELSE # ]
@@ -42,9 +42,9 @@ State 6:
 expression -> IF expression THEN expression . [ THEN ELSE # ]
 expression -> IF expression THEN expression . ELSE expression [ THEN ELSE # ]
 -- On ELSE shift to state 7
--- On THEN reduce production expression -> IF expression THEN expression 
--- On ELSE reduce production expression -> IF expression THEN expression 
--- On # reduce production expression -> IF expression THEN expression 
+-- On THEN reduce production expression -> IF expression THEN expression
+-- On ELSE reduce production expression -> IF expression THEN expression
+-- On # reduce production expression -> IF expression THEN expression
 ** Conflict on ELSE
 
 State 7:
@@ -56,34 +56,34 @@ expression -> IF expression THEN expression ELSE . expression [ THEN ELSE # ]
 
 State 8:
 expression -> IF expression THEN expression ELSE expression . [ THEN ELSE # ]
--- On THEN reduce production expression -> IF expression THEN expression ELSE expression 
--- On ELSE reduce production expression -> IF expression THEN expression ELSE expression 
--- On # reduce production expression -> IF expression THEN expression ELSE expression 
+-- On THEN reduce production expression -> IF expression THEN expression ELSE expression
+-- On ELSE reduce production expression -> IF expression THEN expression ELSE expression
+-- On # reduce production expression -> IF expression THEN expression ELSE expression
 
 State 9:
 expression' -> expression . [ # ]
 -- On # accept expression
 
 State 1 has an end-of-stream conflict. There is a tension between
-(1) reducing production expression -> TRUE 
+(1) reducing production expression -> TRUE
 without even requesting a lookahead token, and
 (2) checking whether the lookahead token is one of THEN ELSE,
 which would require some other action.
 
 State 3 has an end-of-stream conflict. There is a tension between
-(1) reducing production expression -> FALSE 
+(1) reducing production expression -> FALSE
 without even requesting a lookahead token, and
 (2) checking whether the lookahead token is one of THEN ELSE,
 which would require some other action.
 
 State 6 has an end-of-stream conflict. There is a tension between
-(1) reducing production expression -> IF expression THEN expression 
+(1) reducing production expression -> IF expression THEN expression
 without even requesting a lookahead token, and
 (2) checking whether the lookahead token is one of THEN ELSE,
 which would require some other action.
 
 State 8 has an end-of-stream conflict. There is a tension between
-(1) reducing production expression -> IF expression THEN expression ELSE expression 
+(1) reducing production expression -> IF expression THEN expression ELSE expression
 without even requesting a lookahead token, and
 (2) checking whether the lookahead token is one of THEN ELSE,
 which would require some other action.

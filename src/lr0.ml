@@ -306,7 +306,7 @@ let export (k, toksr) =
 let print_concrete leading (state : concretelr1state) =
   let buffer = Buffer.create 1024 in
   Item.Map.iter (fun item toks ->
-    Printf.bprintf buffer "%s%s[ %s ]\n"
+    Printf.bprintf buffer "%s%s [ %s ]\n"
       leading
       (Item.print item)
       (TerminalSet.print toks)

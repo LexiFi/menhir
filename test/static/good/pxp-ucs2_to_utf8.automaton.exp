@@ -39,24 +39,24 @@ regexptoken -> LBRACKET CHAR RANGE CHAR . RBRACKET [ PIPE END_OF_LET ]
 
 State 8:
 regexptoken -> LBRACKET CHAR RANGE CHAR RBRACKET . [ PIPE END_OF_LET ]
--- On PIPE reduce production regexptoken -> LBRACKET CHAR RANGE CHAR RBRACKET 
--- On END_OF_LET reduce production regexptoken -> LBRACKET CHAR RANGE CHAR RBRACKET 
+-- On PIPE reduce production regexptoken -> LBRACKET CHAR RANGE CHAR RBRACKET
+-- On END_OF_LET reduce production regexptoken -> LBRACKET CHAR RANGE CHAR RBRACKET
 
 State 9:
 regexptoken -> IDENT . [ PIPE END_OF_LET ]
--- On PIPE reduce production regexptoken -> IDENT 
--- On END_OF_LET reduce production regexptoken -> IDENT 
+-- On PIPE reduce production regexptoken -> IDENT
+-- On END_OF_LET reduce production regexptoken -> IDENT
 
 State 10:
 regexptoken -> CHAR . [ PIPE END_OF_LET ]
--- On PIPE reduce production regexptoken -> CHAR 
--- On END_OF_LET reduce production regexptoken -> CHAR 
+-- On PIPE reduce production regexptoken -> CHAR
+-- On END_OF_LET reduce production regexptoken -> CHAR
 
 State 11:
 regexp -> regexptoken . PIPE regexp [ END_OF_LET ]
 regexp -> regexptoken . [ END_OF_LET ]
 -- On PIPE shift to state 12
--- On END_OF_LET reduce production regexp -> regexptoken 
+-- On END_OF_LET reduce production regexp -> regexptoken
 
 State 12:
 regexp -> regexptoken PIPE . regexp [ END_OF_LET ]
@@ -68,7 +68,7 @@ regexp -> regexptoken PIPE . regexp [ END_OF_LET ]
 
 State 13:
 regexp -> regexptoken PIPE regexp . [ END_OF_LET ]
--- On END_OF_LET reduce production regexp -> regexptoken PIPE regexp 
+-- On END_OF_LET reduce production regexp -> regexptoken PIPE regexp
 
 State 14:
 declaration -> LET IDENT EQ regexp . END_OF_LET [ LET EOF ]
@@ -76,12 +76,12 @@ declaration -> LET IDENT EQ regexp . END_OF_LET [ LET EOF ]
 
 State 15:
 declaration -> LET IDENT EQ regexp END_OF_LET . [ LET EOF ]
--- On LET reduce production declaration -> LET IDENT EQ regexp END_OF_LET 
--- On EOF reduce production declaration -> LET IDENT EQ regexp END_OF_LET 
+-- On LET reduce production declaration -> LET IDENT EQ regexp END_OF_LET
+-- On EOF reduce production declaration -> LET IDENT EQ regexp END_OF_LET
 
 State 16:
 main -> EOF . [ # ]
--- On # reduce production main -> EOF 
+-- On # reduce production main -> EOF
 
 State 17:
 main' -> main . [ # ]
@@ -96,5 +96,5 @@ main -> declaration . main [ # ]
 
 State 19:
 main -> declaration main . [ # ]
--- On # reduce production main -> declaration main 
+-- On # reduce production main -> declaration main
 

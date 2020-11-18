@@ -234,7 +234,7 @@ let rec follow1 tok derivation offset' = function
 
           let comment =
             "lookahead token is inherited" ^
-            (if pos + 1 < length then Printf.sprintf " because %scan vanish" (Symbol.printao (pos + 1) rhs) else "")
+            (if pos + 1 < length then Printf.sprintf " because %s can vanish" (Symbol.printao (pos + 1) rhs) else "")
           in
           let derivation =
             Derivation.build pos rhs derivation (Some comment)

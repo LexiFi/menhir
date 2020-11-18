@@ -7,8 +7,8 @@ main' -> . main [ # ]
 
 State 1:
 statement -> TReturn . [ TElse EOF ]
--- On TElse reduce production statement -> TReturn 
--- On EOF reduce production statement -> TReturn 
+-- On TElse reduce production statement -> TReturn
+-- On EOF reduce production statement -> TReturn
 
 State 2:
 statement -> TIf . TOPar expr TCPar statement [ TElse EOF ]
@@ -23,7 +23,7 @@ statement -> TIf TOPar . expr TCPar statement TElse statement [ TElse EOF ]
 
 State 4:
 expr -> TIdent . [ TCPar ]
--- On TCPar reduce production expr -> TIdent 
+-- On TCPar reduce production expr -> TIdent
 
 State 5:
 statement -> TIf TOPar expr . TCPar statement [ TElse EOF ]
@@ -41,7 +41,7 @@ State 7:
 statement -> TIf TOPar expr TCPar statement . [ TElse EOF ]
 statement -> TIf TOPar expr TCPar statement . TElse statement [ TElse EOF ]
 -- On TElse shift to state 8
--- On EOF reduce production statement -> TIf TOPar expr TCPar statement 
+-- On EOF reduce production statement -> TIf TOPar expr TCPar statement
 
 State 8:
 statement -> TIf TOPar expr TCPar statement TElse . statement [ TElse EOF ]
@@ -51,8 +51,8 @@ statement -> TIf TOPar expr TCPar statement TElse . statement [ TElse EOF ]
 
 State 9:
 statement -> TIf TOPar expr TCPar statement TElse statement . [ TElse EOF ]
--- On TElse reduce production statement -> TIf TOPar expr TCPar statement TElse statement 
--- On EOF reduce production statement -> TIf TOPar expr TCPar statement TElse statement 
+-- On TElse reduce production statement -> TIf TOPar expr TCPar statement TElse statement
+-- On EOF reduce production statement -> TIf TOPar expr TCPar statement TElse statement
 
 State 10:
 main -> statement . EOF [ # ]
@@ -60,7 +60,7 @@ main -> statement . EOF [ # ]
 
 State 11:
 main -> statement EOF . [ # ]
--- On # reduce production main -> statement EOF 
+-- On # reduce production main -> statement EOF
 
 State 12:
 main' -> main . [ # ]

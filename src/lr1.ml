@@ -841,7 +841,7 @@ let warn_about_productions_never_reduced () =
           incr count;
           Error.grammar_warning
             (Production.positions prod)
-            "production %sis never reduced." (Production.print prod)
+            "production %s is never reduced." (Production.print prod)
   );
   if !count > 0 then
     let plural_mark, be = if !count > 1 then ("s", "are") else ("", "is") in
@@ -972,11 +972,7 @@ let default_conflict_resolution () =
            (2) checking whether the lookahead token is %s%s,\n\
            which would require some other action.\n\n"
           (number node)
-          (match Production.classify prod with
-          | Some nt ->
-              Printf.sprintf "accepting %s" (Nonterminal.print false nt)
-          | None ->
-              Printf.sprintf "reducing production %s" (Production.print prod))
+          (Production.describe prod)
           (if TerminalSet.cardinal toks > 1 then "one of " else "")
           (TerminalSet.print toks)
 

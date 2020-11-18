@@ -10,10 +10,10 @@ commandline' -> . commandline [ # ]
 State 1:
 infix_term -> NUMERAL . [ INFIXOP0 ]
 infix_term_ -> NUMERAL . [ IN EOF AND ]
--- On INFIXOP0 reduce production infix_term -> NUMERAL 
--- On IN reduce production infix_term_ -> NUMERAL 
--- On EOF reduce production infix_term_ -> NUMERAL 
--- On AND reduce production infix_term_ -> NUMERAL 
+-- On INFIXOP0 reduce production infix_term -> NUMERAL
+-- On IN reduce production infix_term_ -> NUMERAL
+-- On EOF reduce production infix_term_ -> NUMERAL
+-- On AND reduce production infix_term_ -> NUMERAL
 
 State 2:
 commandline -> LET . NAME EQUAL term EOF [ # ]
@@ -57,9 +57,9 @@ term -> LET NAME EQUAL . infix_term IN term [ IN EOF AND ]
 
 State 9:
 infix_term -> NUMERAL . [ IN EOF AND ]
--- On IN reduce production infix_term -> NUMERAL 
--- On EOF reduce production infix_term -> NUMERAL 
--- On AND reduce production infix_term -> NUMERAL 
+-- On IN reduce production infix_term -> NUMERAL
+-- On EOF reduce production infix_term -> NUMERAL
+-- On AND reduce production infix_term -> NUMERAL
 
 State 10:
 term -> LET NAME EQUAL infix_term . IN term [ IN EOF AND ]
@@ -75,15 +75,15 @@ term -> LET NAME EQUAL infix_term IN . term [ IN EOF AND ]
 
 State 12:
 term -> LET NAME EQUAL infix_term IN term . [ IN EOF AND ]
--- On IN reduce production term -> LET NAME EQUAL infix_term IN term 
--- On EOF reduce production term -> LET NAME EQUAL infix_term IN term 
--- On AND reduce production term -> LET NAME EQUAL infix_term IN term 
+-- On IN reduce production term -> LET NAME EQUAL infix_term IN term
+-- On EOF reduce production term -> LET NAME EQUAL infix_term IN term
+-- On AND reduce production term -> LET NAME EQUAL infix_term IN term
 
 State 13:
 term -> infix_term_ . [ IN EOF AND ]
--- On IN reduce production term -> infix_term_ 
--- On EOF reduce production term -> infix_term_ 
--- On AND reduce production term -> infix_term_ 
+-- On IN reduce production term -> infix_term_
+-- On EOF reduce production term -> infix_term_
+-- On AND reduce production term -> infix_term_
 
 State 14:
 infix_term_ -> infix_term . INFIXOP0 infix_term [ IN EOF AND ]
@@ -96,14 +96,14 @@ infix_term_ -> infix_term INFIXOP0 . infix_term [ IN EOF AND ]
 
 State 16:
 infix_term_ -> infix_term INFIXOP0 infix_term . [ IN EOF AND ]
--- On IN reduce production infix_term_ -> infix_term INFIXOP0 infix_term 
--- On EOF reduce production infix_term_ -> infix_term INFIXOP0 infix_term 
--- On AND reduce production infix_term_ -> infix_term INFIXOP0 infix_term 
+-- On IN reduce production infix_term_ -> infix_term INFIXOP0 infix_term
+-- On EOF reduce production infix_term_ -> infix_term INFIXOP0 infix_term
+-- On AND reduce production infix_term_ -> infix_term INFIXOP0 infix_term
 
 State 17:
 recursive_clause -> NAME EQUAL term . [ IN AND ]
--- On IN reduce production recursive_clause -> NAME EQUAL term 
--- On AND reduce production recursive_clause -> NAME EQUAL term 
+-- On IN reduce production recursive_clause -> NAME EQUAL term
+-- On AND reduce production recursive_clause -> NAME EQUAL term
 
 State 18:
 term -> LET REC separated_nonempty_list(AND,recursive_clause) . IN term [ IN EOF AND ]
@@ -119,15 +119,15 @@ term -> LET REC separated_nonempty_list(AND,recursive_clause) IN . term [ IN EOF
 
 State 20:
 term -> LET REC separated_nonempty_list(AND,recursive_clause) IN term . [ IN EOF AND ]
--- On IN reduce production term -> LET REC separated_nonempty_list(AND,recursive_clause) IN term 
--- On EOF reduce production term -> LET REC separated_nonempty_list(AND,recursive_clause) IN term 
--- On AND reduce production term -> LET REC separated_nonempty_list(AND,recursive_clause) IN term 
+-- On IN reduce production term -> LET REC separated_nonempty_list(AND,recursive_clause) IN term
+-- On EOF reduce production term -> LET REC separated_nonempty_list(AND,recursive_clause) IN term
+-- On AND reduce production term -> LET REC separated_nonempty_list(AND,recursive_clause) IN term
 
 State 21:
 separated_nonempty_list(AND,recursive_clause) -> recursive_clause . [ IN ]
 separated_nonempty_list(AND,recursive_clause) -> recursive_clause . AND separated_nonempty_list(AND,recursive_clause) [ IN ]
 -- On AND shift to state 22
--- On IN reduce production separated_nonempty_list(AND,recursive_clause) -> recursive_clause 
+-- On IN reduce production separated_nonempty_list(AND,recursive_clause) -> recursive_clause
 
 State 22:
 separated_nonempty_list(AND,recursive_clause) -> recursive_clause AND . separated_nonempty_list(AND,recursive_clause) [ IN ]
@@ -137,7 +137,7 @@ separated_nonempty_list(AND,recursive_clause) -> recursive_clause AND . separate
 
 State 23:
 separated_nonempty_list(AND,recursive_clause) -> recursive_clause AND separated_nonempty_list(AND,recursive_clause) . [ IN ]
--- On IN reduce production separated_nonempty_list(AND,recursive_clause) -> recursive_clause AND separated_nonempty_list(AND,recursive_clause) 
+-- On IN reduce production separated_nonempty_list(AND,recursive_clause) -> recursive_clause AND separated_nonempty_list(AND,recursive_clause)
 
 State 24:
 commandline -> LET NAME . EQUAL term EOF [ # ]
@@ -156,9 +156,9 @@ term -> LET NAME EQUAL . infix_term IN term [ EOF ]
 State 26:
 infix_term -> NUMERAL . [ INFIXOP0 IN ]
 infix_term_ -> NUMERAL . [ EOF ]
--- On INFIXOP0 reduce production infix_term -> NUMERAL 
--- On IN reduce production infix_term -> NUMERAL 
--- On EOF reduce production infix_term_ -> NUMERAL 
+-- On INFIXOP0 reduce production infix_term -> NUMERAL
+-- On IN reduce production infix_term -> NUMERAL
+-- On EOF reduce production infix_term_ -> NUMERAL
 
 State 27:
 commandline -> LET NAME EQUAL term . EOF [ # ]
@@ -166,7 +166,7 @@ commandline -> LET NAME EQUAL term . EOF [ # ]
 
 State 28:
 commandline -> LET NAME EQUAL term EOF . [ # ]
--- On # reduce production commandline -> LET NAME EQUAL term EOF 
+-- On # reduce production commandline -> LET NAME EQUAL term EOF
 
 State 29:
 infix_term_ -> infix_term . INFIXOP0 infix_term [ EOF ]
@@ -180,7 +180,7 @@ commandline -> term . EOF [ # ]
 
 State 31:
 commandline -> term EOF . [ # ]
--- On # reduce production commandline -> term EOF 
+-- On # reduce production commandline -> term EOF
 
 State 32:
 commandline' -> commandline . [ # ]

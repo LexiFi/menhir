@@ -20,15 +20,15 @@ input_output' -> . input_output [ # ]
 
 State 1:
 option(TOKEN) -> TOKEN . [ PLUS MINUS EQUAL CARET ASTERISK ]
--- On PLUS reduce production option(TOKEN) -> TOKEN 
--- On MINUS reduce production option(TOKEN) -> TOKEN 
--- On EQUAL reduce production option(TOKEN) -> TOKEN 
--- On CARET reduce production option(TOKEN) -> TOKEN 
--- On ASTERISK reduce production option(TOKEN) -> TOKEN 
+-- On PLUS reduce production option(TOKEN) -> TOKEN
+-- On MINUS reduce production option(TOKEN) -> TOKEN
+-- On EQUAL reduce production option(TOKEN) -> TOKEN
+-- On CARET reduce production option(TOKEN) -> TOKEN
+-- On ASTERISK reduce production option(TOKEN) -> TOKEN
 
 State 2:
 stream_type -> TILDE . [ STRING ]
--- On STRING reduce production stream_type -> TILDE 
+-- On STRING reduce production stream_type -> TILDE
 
 State 3:
 input_output -> PROMPT . EOF [ # ]
@@ -36,19 +36,19 @@ input_output -> PROMPT . EOF [ # ]
 
 State 4:
 input_output -> PROMPT EOF . [ # ]
--- On # reduce production input_output -> PROMPT EOF 
+-- On # reduce production input_output -> PROMPT EOF
 
 State 5:
 input_prefix -> IDENT . [ # ]
--- On # reduce production input_prefix -> IDENT 
+-- On # reduce production input_prefix -> IDENT
 
 State 6:
 stream_type -> AT . [ STRING ]
--- On STRING reduce production stream_type -> AT 
+-- On STRING reduce production stream_type -> AT
 
 State 7:
 stream_type -> AMPERSAND . [ STRING ]
--- On STRING reduce production stream_type -> AMPERSAND 
+-- On STRING reduce production stream_type -> AMPERSAND
 
 State 8:
 output_record -> stream_type . STRING [ EOF ]
@@ -56,7 +56,7 @@ output_record -> stream_type . STRING [ EOF ]
 
 State 9:
 output_record -> stream_type STRING . [ EOF ]
--- On EOF reduce production output_record -> stream_type STRING 
+-- On EOF reduce production output_record -> stream_type STRING
 
 State 10:
 output -> output_record . EOF [ # ]
@@ -64,11 +64,11 @@ output -> output_record . EOF [ # ]
 
 State 11:
 output -> output_record EOF . [ # ]
--- On # reduce production output -> output_record EOF 
+-- On # reduce production output -> output_record EOF
 
 State 12:
 input_output -> output . [ # ]
--- On # reduce production input_output -> output 
+-- On # reduce production input_output -> output
 
 State 13:
 input_prefix -> option(TOKEN) . MINUS [ # ]
@@ -83,15 +83,15 @@ output_record -> option(TOKEN) . async_type IDENT list(preceded(COMMA,result)) [
 
 State 14:
 async_type -> PLUS . [ IDENT ]
--- On IDENT reduce production async_type -> PLUS 
+-- On IDENT reduce production async_type -> PLUS
 
 State 15:
 input_prefix -> option(TOKEN) MINUS . [ # ]
--- On # reduce production input_prefix -> option(TOKEN) MINUS 
+-- On # reduce production input_prefix -> option(TOKEN) MINUS
 
 State 16:
 async_type -> EQUAL . [ IDENT ]
--- On IDENT reduce production async_type -> EQUAL 
+-- On IDENT reduce production async_type -> EQUAL
 
 State 17:
 output_record -> option(TOKEN) CARET . IDENT list(preceded(COMMA,result)) [ EOF ]
@@ -121,10 +121,10 @@ result -> IDENT EQUAL . value [ RCURLY RBRACKET EOF COMMA ]
 
 State 22:
 value -> STRING . [ RCURLY RBRACKET EOF COMMA ]
--- On RCURLY reduce production value -> STRING 
--- On RBRACKET reduce production value -> STRING 
--- On EOF reduce production value -> STRING 
--- On COMMA reduce production value -> STRING 
+-- On RCURLY reduce production value -> STRING
+-- On RBRACKET reduce production value -> STRING
+-- On EOF reduce production value -> STRING
+-- On COMMA reduce production value -> STRING
 
 State 23:
 value -> LCURLY . loption(separated_nonempty_list(COMMA,result)) RCURLY [ RCURLY RBRACKET EOF COMMA ]
@@ -136,15 +136,15 @@ value -> LCURLY . loption(separated_nonempty_list(COMMA,result)) RCURLY [ RCURLY
 
 State 24:
 loption(separated_nonempty_list(COMMA,result)) -> separated_nonempty_list(COMMA,result) . [ RCURLY RBRACKET ]
--- On RCURLY reduce production loption(separated_nonempty_list(COMMA,result)) -> separated_nonempty_list(COMMA,result) 
--- On RBRACKET reduce production loption(separated_nonempty_list(COMMA,result)) -> separated_nonempty_list(COMMA,result) 
+-- On RCURLY reduce production loption(separated_nonempty_list(COMMA,result)) -> separated_nonempty_list(COMMA,result)
+-- On RBRACKET reduce production loption(separated_nonempty_list(COMMA,result)) -> separated_nonempty_list(COMMA,result)
 
 State 25:
 separated_nonempty_list(COMMA,result) -> result . [ RCURLY RBRACKET ]
 separated_nonempty_list(COMMA,result) -> result . COMMA separated_nonempty_list(COMMA,result) [ RCURLY RBRACKET ]
 -- On COMMA shift to state 26
--- On RCURLY reduce production separated_nonempty_list(COMMA,result) -> result 
--- On RBRACKET reduce production separated_nonempty_list(COMMA,result) -> result 
+-- On RCURLY reduce production separated_nonempty_list(COMMA,result) -> result
+-- On RBRACKET reduce production separated_nonempty_list(COMMA,result) -> result
 
 State 26:
 separated_nonempty_list(COMMA,result) -> result COMMA . separated_nonempty_list(COMMA,result) [ RCURLY RBRACKET ]
@@ -154,8 +154,8 @@ separated_nonempty_list(COMMA,result) -> result COMMA . separated_nonempty_list(
 
 State 27:
 separated_nonempty_list(COMMA,result) -> result COMMA separated_nonempty_list(COMMA,result) . [ RCURLY RBRACKET ]
--- On RCURLY reduce production separated_nonempty_list(COMMA,result) -> result COMMA separated_nonempty_list(COMMA,result) 
--- On RBRACKET reduce production separated_nonempty_list(COMMA,result) -> result COMMA separated_nonempty_list(COMMA,result) 
+-- On RCURLY reduce production separated_nonempty_list(COMMA,result) -> result COMMA separated_nonempty_list(COMMA,result)
+-- On RBRACKET reduce production separated_nonempty_list(COMMA,result) -> result COMMA separated_nonempty_list(COMMA,result)
 
 State 28:
 value -> LCURLY loption(separated_nonempty_list(COMMA,result)) . RCURLY [ RCURLY RBRACKET EOF COMMA ]
@@ -163,10 +163,10 @@ value -> LCURLY loption(separated_nonempty_list(COMMA,result)) . RCURLY [ RCURLY
 
 State 29:
 value -> LCURLY loption(separated_nonempty_list(COMMA,result)) RCURLY . [ RCURLY RBRACKET EOF COMMA ]
--- On RCURLY reduce production value -> LCURLY loption(separated_nonempty_list(COMMA,result)) RCURLY 
--- On RBRACKET reduce production value -> LCURLY loption(separated_nonempty_list(COMMA,result)) RCURLY 
--- On EOF reduce production value -> LCURLY loption(separated_nonempty_list(COMMA,result)) RCURLY 
--- On COMMA reduce production value -> LCURLY loption(separated_nonempty_list(COMMA,result)) RCURLY 
+-- On RCURLY reduce production value -> LCURLY loption(separated_nonempty_list(COMMA,result)) RCURLY
+-- On RBRACKET reduce production value -> LCURLY loption(separated_nonempty_list(COMMA,result)) RCURLY
+-- On EOF reduce production value -> LCURLY loption(separated_nonempty_list(COMMA,result)) RCURLY
+-- On COMMA reduce production value -> LCURLY loption(separated_nonempty_list(COMMA,result)) RCURLY
 
 State 30:
 value -> LBRACKET . loption(separated_nonempty_list(COMMA,result)) RBRACKET [ RCURLY RBRACKET EOF COMMA ]
@@ -186,7 +186,7 @@ State 31:
 separated_nonempty_list(COMMA,value) -> value . [ RBRACKET ]
 separated_nonempty_list(COMMA,value) -> value . COMMA separated_nonempty_list(COMMA,value) [ RBRACKET ]
 -- On COMMA shift to state 32
--- On RBRACKET reduce production separated_nonempty_list(COMMA,value) -> value 
+-- On RBRACKET reduce production separated_nonempty_list(COMMA,value) -> value
 
 State 32:
 separated_nonempty_list(COMMA,value) -> value COMMA . separated_nonempty_list(COMMA,value) [ RBRACKET ]
@@ -198,7 +198,7 @@ separated_nonempty_list(COMMA,value) -> value COMMA . separated_nonempty_list(CO
 
 State 33:
 separated_nonempty_list(COMMA,value) -> value COMMA separated_nonempty_list(COMMA,value) . [ RBRACKET ]
--- On RBRACKET reduce production separated_nonempty_list(COMMA,value) -> value COMMA separated_nonempty_list(COMMA,value) 
+-- On RBRACKET reduce production separated_nonempty_list(COMMA,value) -> value COMMA separated_nonempty_list(COMMA,value)
 
 State 34:
 value -> LBRACKET separated_nonempty_list(COMMA,value) . RBRACKET [ RCURLY RBRACKET EOF COMMA ]
@@ -206,10 +206,10 @@ value -> LBRACKET separated_nonempty_list(COMMA,value) . RBRACKET [ RCURLY RBRAC
 
 State 35:
 value -> LBRACKET separated_nonempty_list(COMMA,value) RBRACKET . [ RCURLY RBRACKET EOF COMMA ]
--- On RCURLY reduce production value -> LBRACKET separated_nonempty_list(COMMA,value) RBRACKET 
--- On RBRACKET reduce production value -> LBRACKET separated_nonempty_list(COMMA,value) RBRACKET 
--- On EOF reduce production value -> LBRACKET separated_nonempty_list(COMMA,value) RBRACKET 
--- On COMMA reduce production value -> LBRACKET separated_nonempty_list(COMMA,value) RBRACKET 
+-- On RCURLY reduce production value -> LBRACKET separated_nonempty_list(COMMA,value) RBRACKET
+-- On RBRACKET reduce production value -> LBRACKET separated_nonempty_list(COMMA,value) RBRACKET
+-- On EOF reduce production value -> LBRACKET separated_nonempty_list(COMMA,value) RBRACKET
+-- On COMMA reduce production value -> LBRACKET separated_nonempty_list(COMMA,value) RBRACKET
 
 State 36:
 value -> LBRACKET loption(separated_nonempty_list(COMMA,result)) . RBRACKET [ RCURLY RBRACKET EOF COMMA ]
@@ -217,17 +217,17 @@ value -> LBRACKET loption(separated_nonempty_list(COMMA,result)) . RBRACKET [ RC
 
 State 37:
 value -> LBRACKET loption(separated_nonempty_list(COMMA,result)) RBRACKET . [ RCURLY RBRACKET EOF COMMA ]
--- On RCURLY reduce production value -> LBRACKET loption(separated_nonempty_list(COMMA,result)) RBRACKET 
--- On RBRACKET reduce production value -> LBRACKET loption(separated_nonempty_list(COMMA,result)) RBRACKET 
--- On EOF reduce production value -> LBRACKET loption(separated_nonempty_list(COMMA,result)) RBRACKET 
--- On COMMA reduce production value -> LBRACKET loption(separated_nonempty_list(COMMA,result)) RBRACKET 
+-- On RCURLY reduce production value -> LBRACKET loption(separated_nonempty_list(COMMA,result)) RBRACKET
+-- On RBRACKET reduce production value -> LBRACKET loption(separated_nonempty_list(COMMA,result)) RBRACKET
+-- On EOF reduce production value -> LBRACKET loption(separated_nonempty_list(COMMA,result)) RBRACKET
+-- On COMMA reduce production value -> LBRACKET loption(separated_nonempty_list(COMMA,result)) RBRACKET
 
 State 38:
 result -> IDENT EQUAL value . [ RCURLY RBRACKET EOF COMMA ]
--- On RCURLY reduce production result -> IDENT EQUAL value 
--- On RBRACKET reduce production result -> IDENT EQUAL value 
--- On EOF reduce production result -> IDENT EQUAL value 
--- On COMMA reduce production result -> IDENT EQUAL value 
+-- On RCURLY reduce production result -> IDENT EQUAL value
+-- On RBRACKET reduce production result -> IDENT EQUAL value
+-- On EOF reduce production result -> IDENT EQUAL value
+-- On COMMA reduce production result -> IDENT EQUAL value
 
 State 39:
 list(preceded(COMMA,result)) -> COMMA result . list(preceded(COMMA,result)) [ EOF ]
@@ -237,15 +237,15 @@ list(preceded(COMMA,result)) -> COMMA result . list(preceded(COMMA,result)) [ EO
 
 State 40:
 list(preceded(COMMA,result)) -> COMMA result list(preceded(COMMA,result)) . [ EOF ]
--- On EOF reduce production list(preceded(COMMA,result)) -> COMMA result list(preceded(COMMA,result)) 
+-- On EOF reduce production list(preceded(COMMA,result)) -> COMMA result list(preceded(COMMA,result))
 
 State 41:
 output_record -> option(TOKEN) CARET IDENT list(preceded(COMMA,result)) . [ EOF ]
--- On EOF reduce production output_record -> option(TOKEN) CARET IDENT list(preceded(COMMA,result)) 
+-- On EOF reduce production output_record -> option(TOKEN) CARET IDENT list(preceded(COMMA,result))
 
 State 42:
 async_type -> ASTERISK . [ IDENT ]
--- On IDENT reduce production async_type -> ASTERISK 
+-- On IDENT reduce production async_type -> ASTERISK
 
 State 43:
 output_record -> option(TOKEN) async_type . IDENT list(preceded(COMMA,result)) [ EOF ]
@@ -259,11 +259,11 @@ output_record -> option(TOKEN) async_type IDENT . list(preceded(COMMA,result)) [
 
 State 45:
 output_record -> option(TOKEN) async_type IDENT list(preceded(COMMA,result)) . [ EOF ]
--- On EOF reduce production output_record -> option(TOKEN) async_type IDENT list(preceded(COMMA,result)) 
+-- On EOF reduce production output_record -> option(TOKEN) async_type IDENT list(preceded(COMMA,result))
 
 State 46:
 input_output -> input_prefix . [ # ]
--- On # reduce production input_output -> input_prefix 
+-- On # reduce production input_output -> input_prefix
 
 State 47:
 input_output' -> input_output . [ # ]

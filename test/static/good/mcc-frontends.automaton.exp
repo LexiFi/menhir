@@ -13,8 +13,8 @@ section -> TokLeftBrack . identifier TokRightBrack assignment_list [ TokLeftBrac
 
 State 2:
 identifier -> TokId . [ TokRightBrack TokEq ]
--- On TokRightBrack reduce production identifier -> TokId 
--- On TokEq reduce production identifier -> TokId 
+-- On TokRightBrack reduce production identifier -> TokId
+-- On TokEq reduce production identifier -> TokId
 
 State 3:
 section -> TokLeftBrack identifier . TokRightBrack assignment_list [ TokLeftBrack TokEof ]
@@ -40,18 +40,18 @@ assignment -> identifier TokEq . string_list [ TokLeftBrack TokId TokEof ]
 
 State 7:
 string_list_rev -> TokString . [ TokLeftBrack TokId TokEof TokComma ]
--- On TokLeftBrack reduce production string_list_rev -> TokString 
--- On TokId reduce production string_list_rev -> TokString 
--- On TokEof reduce production string_list_rev -> TokString 
--- On TokComma reduce production string_list_rev -> TokString 
+-- On TokLeftBrack reduce production string_list_rev -> TokString
+-- On TokId reduce production string_list_rev -> TokString
+-- On TokEof reduce production string_list_rev -> TokString
+-- On TokComma reduce production string_list_rev -> TokString
 
 State 8:
 string_list -> string_list_rev . [ TokLeftBrack TokId TokEof ]
 string_list_rev -> string_list_rev . TokComma TokString [ TokLeftBrack TokId TokEof TokComma ]
 -- On TokComma shift to state 9
--- On TokLeftBrack reduce production string_list -> string_list_rev 
--- On TokId reduce production string_list -> string_list_rev 
--- On TokEof reduce production string_list -> string_list_rev 
+-- On TokLeftBrack reduce production string_list -> string_list_rev
+-- On TokId reduce production string_list -> string_list_rev
+-- On TokEof reduce production string_list -> string_list_rev
 
 State 9:
 string_list_rev -> string_list_rev TokComma . TokString [ TokLeftBrack TokId TokEof TokComma ]
@@ -59,16 +59,16 @@ string_list_rev -> string_list_rev TokComma . TokString [ TokLeftBrack TokId Tok
 
 State 10:
 string_list_rev -> string_list_rev TokComma TokString . [ TokLeftBrack TokId TokEof TokComma ]
--- On TokLeftBrack reduce production string_list_rev -> string_list_rev TokComma TokString 
--- On TokId reduce production string_list_rev -> string_list_rev TokComma TokString 
--- On TokEof reduce production string_list_rev -> string_list_rev TokComma TokString 
--- On TokComma reduce production string_list_rev -> string_list_rev TokComma TokString 
+-- On TokLeftBrack reduce production string_list_rev -> string_list_rev TokComma TokString
+-- On TokId reduce production string_list_rev -> string_list_rev TokComma TokString
+-- On TokEof reduce production string_list_rev -> string_list_rev TokComma TokString
+-- On TokComma reduce production string_list_rev -> string_list_rev TokComma TokString
 
 State 11:
 assignment -> identifier TokEq string_list . [ TokLeftBrack TokId TokEof ]
--- On TokLeftBrack reduce production assignment -> identifier TokEq string_list 
--- On TokId reduce production assignment -> identifier TokEq string_list 
--- On TokEof reduce production assignment -> identifier TokEq string_list 
+-- On TokLeftBrack reduce production assignment -> identifier TokEq string_list
+-- On TokId reduce production assignment -> identifier TokEq string_list
+-- On TokEof reduce production assignment -> identifier TokEq string_list
 
 State 12:
 assignment_list -> assignment_list_rev . [ TokLeftBrack TokEof ]
@@ -76,37 +76,37 @@ assignment_list_rev -> assignment_list_rev . assignment [ TokLeftBrack TokId Tok
 -- On TokId shift to state 2
 -- On identifier shift to state 5
 -- On assignment shift to state 13
--- On TokLeftBrack reduce production assignment_list -> assignment_list_rev 
--- On TokEof reduce production assignment_list -> assignment_list_rev 
+-- On TokLeftBrack reduce production assignment_list -> assignment_list_rev
+-- On TokEof reduce production assignment_list -> assignment_list_rev
 
 State 13:
 assignment_list_rev -> assignment_list_rev assignment . [ TokLeftBrack TokId TokEof ]
--- On TokLeftBrack reduce production assignment_list_rev -> assignment_list_rev assignment 
--- On TokId reduce production assignment_list_rev -> assignment_list_rev assignment 
--- On TokEof reduce production assignment_list_rev -> assignment_list_rev assignment 
+-- On TokLeftBrack reduce production assignment_list_rev -> assignment_list_rev assignment
+-- On TokId reduce production assignment_list_rev -> assignment_list_rev assignment
+-- On TokEof reduce production assignment_list_rev -> assignment_list_rev assignment
 
 State 14:
 section -> TokLeftBrack identifier TokRightBrack assignment_list . [ TokLeftBrack TokEof ]
--- On TokLeftBrack reduce production section -> TokLeftBrack identifier TokRightBrack assignment_list 
--- On TokEof reduce production section -> TokLeftBrack identifier TokRightBrack assignment_list 
+-- On TokLeftBrack reduce production section -> TokLeftBrack identifier TokRightBrack assignment_list
+-- On TokEof reduce production section -> TokLeftBrack identifier TokRightBrack assignment_list
 
 State 15:
 assignment_list_rev -> assignment . [ TokLeftBrack TokId TokEof ]
--- On TokLeftBrack reduce production assignment_list_rev -> assignment 
--- On TokId reduce production assignment_list_rev -> assignment 
--- On TokEof reduce production assignment_list_rev -> assignment 
+-- On TokLeftBrack reduce production assignment_list_rev -> assignment
+-- On TokId reduce production assignment_list_rev -> assignment
+-- On TokEof reduce production assignment_list_rev -> assignment
 
 State 16:
 section_list -> section_list_rev . [ TokEof ]
 section_list_rev -> section_list_rev . section [ TokLeftBrack TokEof ]
 -- On TokLeftBrack shift to state 1
 -- On section shift to state 17
--- On TokEof reduce production section_list -> section_list_rev 
+-- On TokEof reduce production section_list -> section_list_rev
 
 State 17:
 section_list_rev -> section_list_rev section . [ TokLeftBrack TokEof ]
--- On TokLeftBrack reduce production section_list_rev -> section_list_rev section 
--- On TokEof reduce production section_list_rev -> section_list_rev section 
+-- On TokLeftBrack reduce production section_list_rev -> section_list_rev section
+-- On TokEof reduce production section_list_rev -> section_list_rev section
 
 State 18:
 main -> section_list . TokEof [ # ]
@@ -114,12 +114,12 @@ main -> section_list . TokEof [ # ]
 
 State 19:
 main -> section_list TokEof . [ # ]
--- On # reduce production main -> section_list TokEof 
+-- On # reduce production main -> section_list TokEof
 
 State 20:
 section_list_rev -> section . [ TokLeftBrack TokEof ]
--- On TokLeftBrack reduce production section_list_rev -> section 
--- On TokEof reduce production section_list_rev -> section 
+-- On TokLeftBrack reduce production section_list_rev -> section
+-- On TokEof reduce production section_list_rev -> section
 
 State 21:
 main' -> main . [ # ]
