@@ -196,31 +196,33 @@ let extra id =
 
 (* The Menhir command, for use inside a rule, with an optional timeout. *)
 
-(* If the [timeout] parameter is [true], we assume that a [timeout] command
-   exists on the system, and we use it to limit Menhir's execution time. This
-   is normally not necessary, but can be useful when testing experimental
-   extensions of Menhir. This should be used for positive tests only. *)
+(* If this is a positive test and if the [threshold] parameter is [Some _],
+   then we assume that a [timeout] command exists on the system, and we use it
+   to limit Menhir's execution time. This is normally not necessary, but can
+   be useful when testing experimental extensions of Menhir. *)
 
 let threshold =
-  60 (* in seconds *)
+  None
+  (* or: [Some seconds] *)
 
 let menhir_args base flags =
   base @ flags @ A"%{deps}" :: []
 
-let menhir (timeout : bool) base flags =
-  if timeout then
-    (* We must use a [system] action. *)
-    let command =
-      sprintf
-        "timeout %d %%{bin:menhir}%s || echo 'TIMEOUT after %d seconds.'"
-          threshold
-          (show_list (menhir_args base flags))
-          threshold
-    in
-    L[A"system"; A (sprintf "\"%s\"" command)]
-  else
-    (* We can use a [run] action. *)
-    L(A"run" :: A"menhir" :: menhir_args base flags)
+let menhir (impose_timeout : bool) base flags =
+  match impose_timeout, threshold with
+  | true, Some threshold ->
+      (* We must use a [system] action. *)
+      let command =
+        sprintf
+          "timeout %d %%{bin:menhir}%s || echo 'TIMEOUT after %d seconds.'"
+            threshold
+            (show_list (menhir_args base flags))
+            threshold
+      in
+      L[A"system"; A (sprintf "\"%s\"" command)]
+  | _, _ ->
+      (* We can use a [run] action. *)
+      L(A"run" :: A"menhir" :: menhir_args base flags)
 
 (* Constructing and printing a rule to run Menhir.
 
@@ -239,14 +241,13 @@ let menhir (timeout : bool) base flags =
 
 let run positive basenames outputs flags =
   let output = hd outputs in
-  let timeout = positive in
   (* Run Menhir. *)
   print (rule
     outputs
     (mlys basenames)
     (redirect output (
       possibly_expecting_failure positive (
-        menhir timeout (base basenames) flags
+        menhir positive (base basenames) flags
   ))))
 
 (* -------------------------------------------------------------------------- *)
