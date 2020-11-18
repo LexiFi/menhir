@@ -771,6 +771,30 @@
 (rule (alias bare-bones)
   (action (diff bare-bones.conflicts.exp bare-bones.conflicts)))
 
+(rule (target basile.opp.out) (deps basile.mly)
+  (action
+    (with-outputs-to basile.opp.out (run menhir --only-preprocess %{deps}))))
+
+(rule (alias basile) (action (diff basile.opp.exp basile.opp.out)))
+
+(rule
+  (targets basile.out basile.automaton basile.automaton.resolved
+    basile.conflicts basile.timings)
+  (deps basile.mly)
+  (action
+    (with-outputs-to basile.out
+      (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
+        --timings-to basile.timings %{deps}))))
+
+(rule (alias basile) (action (diff basile.exp basile.out)))
+
+(rule (alias basile) (action (diff basile.automaton.exp basile.automaton)))
+
+(rule (alias basile)
+  (action (diff basile.automaton.resolved.exp basile.automaton.resolved)))
+
+(rule (alias basile) (action (diff basile.conflicts.exp basile.conflicts)))
+
 (rule (target batsh.0.0.6-parser_yacc.opp.out)
   (deps batsh.0.0.6-parser_yacc.mly)
   (action
@@ -11676,6 +11700,7 @@
     (alias attributes-expansion)
     (alias bamboo.0.0.03-parser)
     (alias bare-bones)
+    (alias basile)
     (alias batsh.0.0.6-parser_yacc)
     (alias bauer)
     (alias belloeil)

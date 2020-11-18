@@ -1,0 +1,105 @@
+State 0:
+file' -> . file [ # ]
+-- On STRUCT shift to state 1
+-- On mkloc(decl_desc) shift to state 14
+-- On file shift to state 15
+-- On decl_desc shift to state 16
+-- On decl shift to state 17
+
+State 1:
+decl_desc -> STRUCT . separated(SEMI,param) END [ EOF ]
+-- On SEMI shift to state 2
+-- On IDENT shift to state 3
+-- On separated(SEMI,param) shift to state 12
+-- On param shift to state 5
+-- On mkloc(IDENT) shift to state 8
+-- On END reduce production separated(SEMI,param) -> 
+
+State 2:
+separated(SEMI,param) -> SEMI . separated(SEMI,param) [ END ]
+-- On SEMI shift to state 2
+-- On IDENT shift to state 3
+-- On separated(SEMI,param) shift to state 4
+-- On param shift to state 5
+-- On mkloc(IDENT) shift to state 8
+-- On END reduce production separated(SEMI,param) -> 
+
+State 3:
+mkloc(IDENT) -> IDENT . [ T_PAAMAYIM_NEKUDOTAYIM SEMI END ]
+-- On T_PAAMAYIM_NEKUDOTAYIM reduce production mkloc(IDENT) -> IDENT
+-- On SEMI reduce production mkloc(IDENT) -> IDENT
+-- On END reduce production mkloc(IDENT) -> IDENT
+
+State 4:
+separated(SEMI,param) -> SEMI separated(SEMI,param) . [ END ]
+-- On END reduce production separated(SEMI,param) -> SEMI separated(SEMI,param)
+
+State 5:
+separated(SEMI,param) -> param . [ END ]
+separated(SEMI,param) -> param . SEMI separated(SEMI,param) [ END ]
+-- On SEMI shift to state 6
+-- On END reduce production separated(SEMI,param) -> param
+
+State 6:
+separated(SEMI,param) -> param SEMI . separated(SEMI,param) [ END ]
+-- On SEMI shift to state 2
+-- On IDENT shift to state 3
+-- On separated(SEMI,param) shift to state 7
+-- On param shift to state 5
+-- On mkloc(IDENT) shift to state 8
+-- On END reduce production separated(SEMI,param) -> 
+
+State 7:
+separated(SEMI,param) -> param SEMI separated(SEMI,param) . [ END ]
+-- On END reduce production separated(SEMI,param) -> param SEMI separated(SEMI,param)
+
+State 8:
+param -> mkloc(IDENT) . option(__anonymous_0) [ SEMI END ]
+-- On T_PAAMAYIM_NEKUDOTAYIM shift to state 9
+-- On option(__anonymous_0) shift to state 11
+-- On SEMI reduce production option(__anonymous_0) -> 
+-- On END reduce production option(__anonymous_0) -> 
+
+State 9:
+option(__anonymous_0) -> T_PAAMAYIM_NEKUDOTAYIM . mkloc(IDENT) [ SEMI END ]
+-- On IDENT shift to state 3
+-- On mkloc(IDENT) shift to state 10
+
+State 10:
+option(__anonymous_0) -> T_PAAMAYIM_NEKUDOTAYIM mkloc(IDENT) . [ SEMI END ]
+-- On SEMI reduce production option(__anonymous_0) -> T_PAAMAYIM_NEKUDOTAYIM mkloc(IDENT)
+-- On END reduce production option(__anonymous_0) -> T_PAAMAYIM_NEKUDOTAYIM mkloc(IDENT)
+
+State 11:
+param -> mkloc(IDENT) option(__anonymous_0) . [ SEMI END ]
+-- On SEMI reduce production param -> mkloc(IDENT) option(__anonymous_0)
+-- On END reduce production param -> mkloc(IDENT) option(__anonymous_0)
+
+State 12:
+decl_desc -> STRUCT separated(SEMI,param) . END [ EOF ]
+-- On END shift to state 13
+
+State 13:
+decl_desc -> STRUCT separated(SEMI,param) END . [ EOF ]
+-- On EOF reduce production decl_desc -> STRUCT separated(SEMI,param) END
+
+State 14:
+decl -> mkloc(decl_desc) . [ EOF ]
+-- On EOF reduce production decl -> mkloc(decl_desc)
+
+State 15:
+file' -> file . [ # ]
+-- On # accept file
+
+State 16:
+mkloc(decl_desc) -> decl_desc . [ EOF ]
+-- On EOF reduce production mkloc(decl_desc) -> decl_desc
+
+State 17:
+file -> decl . EOF [ # ]
+-- On EOF shift to state 18
+
+State 18:
+file -> decl EOF . [ # ]
+-- On # reduce production file -> decl EOF
+
