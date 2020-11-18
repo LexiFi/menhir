@@ -307,6 +307,7 @@ let process_positive_test basenames : unit =
   let expected = id ^ ".exp" in
   let timings = id ^ ".out.timings" in
   run_and_compare id true source basenames [output;timings] expected (atoms [
+    "--dump";
     "--explain";
     "-lg"; "2";
     "-la"; "2";
