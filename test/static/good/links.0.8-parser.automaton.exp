@@ -32716,6 +32716,11 @@ links_open -> OPEN CONSTRUCTOR . [ # ]
 qualified_type_name -> CONSTRUCTOR . DOT qualified_type_name_inner [ # ]
 -- On DOT shift to state 1092
 -- On # reduce production links_open -> OPEN CONSTRUCTOR
+** End-of-stream conflict on DOT
+**   There is a tension between
+**   (1) reducing production links_open -> OPEN CONSTRUCTOR
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 1092:
 qualified_type_name -> CONSTRUCTOR DOT . qualified_type_name_inner [ # ]
@@ -32727,6 +32732,11 @@ qualified_type_name_inner -> CONSTRUCTOR . DOT qualified_type_name_inner [ # ]
 qualified_type_name_inner -> CONSTRUCTOR . [ # ]
 -- On DOT shift to state 1094
 -- On # reduce production qualified_type_name_inner -> CONSTRUCTOR
+** End-of-stream conflict on DOT
+**   There is a tension between
+**   (1) reducing production qualified_type_name_inner -> CONSTRUCTOR
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 1094:
 qualified_type_name_inner -> CONSTRUCTOR DOT . qualified_type_name_inner [ # ]
@@ -33265,16 +33275,4 @@ just_datatype -> datatype . END [ # ]
 State 1154:
 just_datatype -> datatype END . [ # ]
 -- On # reduce production just_datatype -> datatype END
-
-State 1091 has an end-of-stream conflict. There is a tension between
-(1) reducing production links_open -> OPEN CONSTRUCTOR
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is DOT,
-which would require some other action.
-
-State 1093 has an end-of-stream conflict. There is a tension between
-(1) reducing production qualified_type_name_inner -> CONSTRUCTOR
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is DOT,
-which would require some other action.
 

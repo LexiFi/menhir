@@ -670,6 +670,11 @@ opt_identifier' -> . opt_identifier [ # ]
 -- On opt_identifier shift to state 101
 -- On identifier shift to state 102
 -- On # reduce production opt_identifier -> 
+** End-of-stream conflict on UIDENT LIDENT
+**   There is a tension between
+**   (1) reducing production opt_identifier -> 
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 101:
 opt_identifier' -> opt_identifier . [ # ]
@@ -772,10 +777,4 @@ opt_signed_integer_eol' -> opt_signed_integer_eol . [ # ]
 State 120:
 opt_signed_integer_eol -> opt_integer_eol . [ # ]
 -- On # reduce production opt_signed_integer_eol -> opt_integer_eol
-
-State 100 has an end-of-stream conflict. There is a tension between
-(1) reducing production opt_identifier -> 
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of UIDENT LIDENT,
-which would require some other action.
 

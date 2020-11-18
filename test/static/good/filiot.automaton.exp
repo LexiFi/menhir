@@ -21,6 +21,11 @@ main' -> . main [ # ]
 -- On Body shift to state 86
 -- On BinPredPref shift to state 62
 -- On # reduce production main -> 
+** End-of-stream conflict on VAR TRUE STR SING ROOT NS LPAR LEAF LAB FC FALSE EX2 EX1 CHILD ALL2 ALL1
+**   There is a tension between
+**   (1) reducing production main -> 
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 1:
 Body -> VAR . VariablesDec Formula POINTVIRGULE [ EOF ]
@@ -789,10 +794,4 @@ main -> Body . EOF [ # ]
 State 87:
 main -> Body EOF . [ # ]
 -- On # reduce production main -> Body EOF
-
-State 0 has an end-of-stream conflict. There is a tension between
-(1) reducing production main -> 
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of VAR TRUE STR SING ROOT NS LPAR LEAF LAB FC FALSE EX2 EX1 CHILD ALL2 ALL1,
-which would require some other action.
 

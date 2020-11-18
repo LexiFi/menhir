@@ -1863,6 +1863,11 @@ State 145:
 state -> IDENTIFIER COLON transitions SEMI_COLON . [ IDENTIFIER # ]
 -- On IDENTIFIER reduce production state -> IDENTIFIER COLON transitions SEMI_COLON
 -- On # reduce production state -> IDENTIFIER COLON transitions SEMI_COLON
+** End-of-stream conflict on IDENTIFIER
+**   There is a tension between
+**   (1) reducing production state -> IDENTIFIER COLON transitions SEMI_COLON
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 146:
 transitions -> transitions PIPE . transition [ SEMI_COLON PIPE ]
@@ -1892,42 +1897,33 @@ states -> states . state [ IDENTIFIER # ]
 -- On IDENTIFIER shift to state 12
 -- On state shift to state 151
 -- On # reduce production main -> options states
+** End-of-stream conflict on IDENTIFIER
+**   There is a tension between
+**   (1) reducing production main -> options states
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 151:
 states -> states state . [ IDENTIFIER # ]
 -- On IDENTIFIER reduce production states -> states state
 -- On # reduce production states -> states state
+** End-of-stream conflict on IDENTIFIER
+**   There is a tension between
+**   (1) reducing production states -> states state
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 152:
 states -> state . [ IDENTIFIER # ]
 -- On IDENTIFIER reduce production states -> state
 -- On # reduce production states -> state
+** End-of-stream conflict on IDENTIFIER
+**   There is a tension between
+**   (1) reducing production states -> state
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 153:
 main' -> main . [ # ]
 -- On # accept main
-
-State 145 has an end-of-stream conflict. There is a tension between
-(1) reducing production state -> IDENTIFIER COLON transitions SEMI_COLON
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is IDENTIFIER,
-which would require some other action.
-
-State 150 has an end-of-stream conflict. There is a tension between
-(1) reducing production main -> options states
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is IDENTIFIER,
-which would require some other action.
-
-State 151 has an end-of-stream conflict. There is a tension between
-(1) reducing production states -> states state
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is IDENTIFIER,
-which would require some other action.
-
-State 152 has an end-of-stream conflict. There is a tension between
-(1) reducing production states -> state
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is IDENTIFIER,
-which would require some other action.
 

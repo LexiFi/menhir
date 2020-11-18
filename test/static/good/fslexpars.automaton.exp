@@ -521,12 +521,22 @@ clause -> regexp CODE . [ CODE BAR AND # ]
 -- On BAR reduce production clause -> regexp CODE
 -- On AND reduce production clause -> regexp CODE
 -- On # reduce production clause -> regexp CODE
+** End-of-stream conflict on CODE BAR AND
+**   There is a tension between
+**   (1) reducing production clause -> regexp CODE
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 44:
 rule -> IDENT args EQUALS PARSE optbar clauses . [ CODE AND # ]
 -- On CODE reduce production rule -> IDENT args EQUALS PARSE optbar clauses
 -- On AND reduce production rule -> IDENT args EQUALS PARSE optbar clauses
 -- On # reduce production rule -> IDENT args EQUALS PARSE optbar clauses
+** End-of-stream conflict on CODE AND
+**   There is a tension between
+**   (1) reducing production rule -> IDENT args EQUALS PARSE optbar clauses
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 45:
 clauses -> clause . BAR clauses [ CODE AND # ]
@@ -535,6 +545,11 @@ clauses -> clause . [ CODE AND # ]
 -- On CODE reduce production clauses -> clause
 -- On AND reduce production clauses -> clause
 -- On # reduce production clauses -> clause
+** End-of-stream conflict on CODE BAR AND
+**   There is a tension between
+**   (1) reducing production clauses -> clause
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 46:
 clauses -> clause BAR . clauses [ CODE AND # ]
@@ -554,12 +569,22 @@ clauses -> clause BAR clauses . [ CODE AND # ]
 -- On CODE reduce production clauses -> clause BAR clauses
 -- On AND reduce production clauses -> clause BAR clauses
 -- On # reduce production clauses -> clause BAR clauses
+** End-of-stream conflict on CODE AND
+**   There is a tension between
+**   (1) reducing production clauses -> clause BAR clauses
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 48:
 spec -> codeopt macros RULE rules . codeopt [ # ]
 -- On CODE shift to state 49
 -- On codeopt shift to state 50
 -- On # reduce production codeopt -> 
+** End-of-stream conflict on CODE
+**   There is a tension between
+**   (1) reducing production codeopt -> 
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 49:
 codeopt -> CODE . [ # ]
@@ -575,6 +600,11 @@ rules -> rule . [ CODE # ]
 -- On AND shift to state 52
 -- On CODE reduce production rules -> rule
 -- On # reduce production rules -> rule
+** End-of-stream conflict on CODE AND
+**   There is a tension between
+**   (1) reducing production rules -> rule
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 52:
 rules -> rule AND . rules [ CODE # ]
@@ -586,6 +616,11 @@ State 53:
 rules -> rule AND rules . [ CODE # ]
 -- On CODE reduce production rules -> rule AND rules
 -- On # reduce production rules -> rule AND rules
+** End-of-stream conflict on CODE
+**   There is a tension between
+**   (1) reducing production rules -> rule AND rules
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 54:
 macros -> macro . macros [ RULE ]
@@ -597,46 +632,4 @@ macros -> macro . macros [ RULE ]
 State 55:
 macros -> macro macros . [ RULE ]
 -- On RULE reduce production macros -> macro macros
-
-State 43 has an end-of-stream conflict. There is a tension between
-(1) reducing production clause -> regexp CODE
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of CODE BAR AND,
-which would require some other action.
-
-State 44 has an end-of-stream conflict. There is a tension between
-(1) reducing production rule -> IDENT args EQUALS PARSE optbar clauses
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of CODE AND,
-which would require some other action.
-
-State 45 has an end-of-stream conflict. There is a tension between
-(1) reducing production clauses -> clause
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of CODE BAR AND,
-which would require some other action.
-
-State 47 has an end-of-stream conflict. There is a tension between
-(1) reducing production clauses -> clause BAR clauses
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of CODE AND,
-which would require some other action.
-
-State 48 has an end-of-stream conflict. There is a tension between
-(1) reducing production codeopt -> 
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is CODE,
-which would require some other action.
-
-State 51 has an end-of-stream conflict. There is a tension between
-(1) reducing production rules -> rule
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of CODE AND,
-which would require some other action.
-
-State 53 has an end-of-stream conflict. There is a tension between
-(1) reducing production rules -> rule AND rules
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is CODE,
-which would require some other action.
 

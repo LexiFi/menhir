@@ -11799,6 +11799,11 @@ spec -> L_BRACE formula R_BRACE L_BRACE formula R_BRACE . exp_posts [ # ]
 -- On L_BRACE shift to state 674
 -- On exp_posts shift to state 680
 -- On # reduce production exp_posts -> 
+** End-of-stream conflict on L_BRACE
+**   There is a tension between
+**   (1) reducing production exp_posts -> 
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 674:
 exp_posts -> L_BRACE . identifier COLON formula R_BRACE exp_posts [ # ]
@@ -11858,6 +11863,11 @@ exp_posts -> L_BRACE identifier COLON formula R_BRACE . exp_posts [ # ]
 -- On L_BRACE shift to state 674
 -- On exp_posts shift to state 679
 -- On # reduce production exp_posts -> 
+** End-of-stream conflict on L_BRACE
+**   There is a tension between
+**   (1) reducing production exp_posts -> 
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 679:
 exp_posts -> L_BRACE identifier COLON formula R_BRACE exp_posts . [ # ]
@@ -14250,16 +14260,4 @@ test_file -> test . test_file [ # ]
 State 872:
 test_file -> test test_file . [ # ]
 -- On # reduce production test_file -> test test_file
-
-State 673 has an end-of-stream conflict. There is a tension between
-(1) reducing production exp_posts -> 
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is L_BRACE,
-which would require some other action.
-
-State 678 has an end-of-stream conflict. There is a tension between
-(1) reducing production exp_posts -> 
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is L_BRACE,
-which would require some other action.
 

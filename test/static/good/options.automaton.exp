@@ -5,17 +5,32 @@ main' -> . main [ # ]
 -- On main shift to state 5
 -- On B reduce production option1(A) -> 
 -- On # reduce production option1(A) -> 
+** End-of-stream conflict on B A
+**   There is a tension between
+**   (1) reducing production option1(A) -> 
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 1:
 option1(A) -> A . [ B # ]
 -- On B reduce production option1(A) -> A
 -- On # reduce production option1(A) -> A
+** End-of-stream conflict on B
+**   There is a tension between
+**   (1) reducing production option1(A) -> A
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 2:
 main -> option1(A) . option2(B) [ # ]
 -- On B shift to state 3
 -- On option2(B) shift to state 4
 -- On # reduce production option2(B) -> 
+** End-of-stream conflict on B
+**   There is a tension between
+**   (1) reducing production option2(B) -> 
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 3:
 option2(B) -> B . [ # ]
@@ -28,22 +43,4 @@ main -> option1(A) option2(B) . [ # ]
 State 5:
 main' -> main . [ # ]
 -- On # accept main
-
-State 0 has an end-of-stream conflict. There is a tension between
-(1) reducing production option1(A) -> 
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of B A,
-which would require some other action.
-
-State 1 has an end-of-stream conflict. There is a tension between
-(1) reducing production option1(A) -> A
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is B,
-which would require some other action.
-
-State 2 has an end-of-stream conflict. There is a tension between
-(1) reducing production option2(B) -> 
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is B,
-which would require some other action.
 

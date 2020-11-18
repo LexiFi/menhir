@@ -11,6 +11,11 @@ mod_ext_longident -> UIDENT . [ LPAREN DOT ]
 -- On LPAREN reduce production mod_ext_longident -> UIDENT
 -- On DOT reduce production mod_ext_longident -> UIDENT
 -- On # reduce production exception_longident -> UIDENT
+** End-of-stream conflict on LPAREN DOT
+**   There is a tension between
+**   (1) reducing production exception_longident -> UIDENT
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 2:
 exception_longident -> LIDENT . [ # ]
@@ -111,6 +116,11 @@ mod_ext_longident -> mod_ext_longident DOT UIDENT . [ LPAREN DOT ]
 -- On LPAREN reduce production mod_ext_longident -> mod_ext_longident DOT UIDENT
 -- On DOT reduce production mod_ext_longident -> mod_ext_longident DOT UIDENT
 -- On # reduce production exception_longident -> mod_ext_longident DOT UIDENT
+** End-of-stream conflict on LPAREN DOT
+**   There is a tension between
+**   (1) reducing production exception_longident -> mod_ext_longident DOT UIDENT
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 12:
 exception_longident' -> exception_longident . [ # ]
@@ -35617,6 +35627,11 @@ mod_ext_longident -> UIDENT . [ LPAREN DOT ]
 -- On LPAREN reduce production mod_ext_longident -> UIDENT
 -- On DOT reduce production mod_ext_longident -> UIDENT
 -- On # reduce production level_longident -> UIDENT
+** End-of-stream conflict on LPAREN DOT
+**   There is a tension between
+**   (1) reducing production level_longident -> UIDENT
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 1494:
 level_longident -> mod_ext_longident . DOT UIDENT [ # ]
@@ -35636,6 +35651,11 @@ mod_ext_longident -> mod_ext_longident DOT UIDENT . [ LPAREN DOT ]
 -- On LPAREN reduce production mod_ext_longident -> mod_ext_longident DOT UIDENT
 -- On DOT reduce production mod_ext_longident -> mod_ext_longident DOT UIDENT
 -- On # reduce production level_longident -> mod_ext_longident DOT UIDENT
+** End-of-stream conflict on LPAREN DOT
+**   There is a tension between
+**   (1) reducing production level_longident -> mod_ext_longident DOT UIDENT
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 1497:
 level_longident' -> level_longident . [ # ]
@@ -36192,28 +36212,4 @@ val_longident -> mod_longident DOT . val_ident [ # ]
 State 1551:
 val_longident -> mod_longident DOT val_ident . [ # ]
 -- On # reduce production val_longident -> mod_longident DOT val_ident
-
-State 1 has an end-of-stream conflict. There is a tension between
-(1) reducing production exception_longident -> UIDENT
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of LPAREN DOT,
-which would require some other action.
-
-State 11 has an end-of-stream conflict. There is a tension between
-(1) reducing production exception_longident -> mod_ext_longident DOT UIDENT
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of LPAREN DOT,
-which would require some other action.
-
-State 1493 has an end-of-stream conflict. There is a tension between
-(1) reducing production level_longident -> UIDENT
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of LPAREN DOT,
-which would require some other action.
-
-State 1496 has an end-of-stream conflict. There is a tension between
-(1) reducing production level_longident -> mod_ext_longident DOT UIDENT
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of LPAREN DOT,
-which would require some other action.
 

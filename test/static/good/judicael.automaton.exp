@@ -10,6 +10,11 @@ State 1:
 expr -> INT . [ PLUS # ]
 -- On PLUS reduce production expr -> INT
 -- On # reduce production expr -> INT
+** End-of-stream conflict on PLUS
+**   There is a tension between
+**   (1) reducing production expr -> INT
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 2:
 instruction -> IDENT . PARENG PAREND [ # ]
@@ -36,6 +41,11 @@ expr -> expr . PLUS expr [ PLUS # ]
 instruction -> expr . [ # ]
 -- On PLUS shift to state 8
 -- On # reduce production instruction -> expr
+** End-of-stream conflict on PLUS
+**   There is a tension between
+**   (1) reducing production instruction -> expr
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 8:
 expr -> expr PLUS . expr [ PLUS # ]
@@ -47,22 +57,9 @@ expr -> expr . PLUS expr [ PLUS # ]
 expr -> expr PLUS expr . [ PLUS # ]
 -- On PLUS reduce production expr -> expr PLUS expr
 -- On # reduce production expr -> expr PLUS expr
-
-State 1 has an end-of-stream conflict. There is a tension between
-(1) reducing production expr -> INT
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is PLUS,
-which would require some other action.
-
-State 7 has an end-of-stream conflict. There is a tension between
-(1) reducing production instruction -> expr
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is PLUS,
-which would require some other action.
-
-State 9 has an end-of-stream conflict. There is a tension between
-(1) reducing production expr -> expr PLUS expr
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is PLUS,
-which would require some other action.
+** End-of-stream conflict on PLUS
+**   There is a tension between
+**   (1) reducing production expr -> expr PLUS expr
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 

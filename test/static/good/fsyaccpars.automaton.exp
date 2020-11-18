@@ -281,6 +281,11 @@ clause -> syms optprec CODE . [ SEMI IDENT BAR # ]
 -- On IDENT reduce production clause -> syms optprec CODE
 -- On BAR reduce production clause -> syms optprec CODE
 -- On # reduce production clause -> syms optprec CODE
+** End-of-stream conflict on SEMI IDENT BAR
+**   There is a tension between
+**   (1) reducing production clause -> syms optprec CODE
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 33:
 rule -> IDENT COLON optbar clauses . optsemi [ IDENT # ]
@@ -288,16 +293,31 @@ rule -> IDENT COLON optbar clauses . optsemi [ IDENT # ]
 -- On optsemi shift to state 35
 -- On IDENT reduce production optsemi -> 
 -- On # reduce production optsemi -> 
+** End-of-stream conflict on SEMI IDENT
+**   There is a tension between
+**   (1) reducing production optsemi -> 
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 34:
 optsemi -> SEMI . [ IDENT # ]
 -- On IDENT reduce production optsemi -> SEMI
 -- On # reduce production optsemi -> SEMI
+** End-of-stream conflict on IDENT
+**   There is a tension between
+**   (1) reducing production optsemi -> SEMI
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 35:
 rule -> IDENT COLON optbar clauses optsemi . [ IDENT # ]
 -- On IDENT reduce production rule -> IDENT COLON optbar clauses optsemi
 -- On # reduce production rule -> IDENT COLON optbar clauses optsemi
+** End-of-stream conflict on IDENT
+**   There is a tension between
+**   (1) reducing production rule -> IDENT COLON optbar clauses optsemi
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 36:
 clauses -> clause . BAR clauses [ SEMI IDENT # ]
@@ -306,6 +326,11 @@ clauses -> clause . [ SEMI IDENT # ]
 -- On SEMI reduce production clauses -> clause
 -- On IDENT reduce production clauses -> clause
 -- On # reduce production clauses -> clause
+** End-of-stream conflict on SEMI IDENT BAR
+**   There is a tension between
+**   (1) reducing production clauses -> clause
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 37:
 clauses -> clause BAR . clauses [ SEMI IDENT # ]
@@ -322,6 +347,11 @@ clauses -> clause BAR clauses . [ SEMI IDENT # ]
 -- On SEMI reduce production clauses -> clause BAR clauses
 -- On IDENT reduce production clauses -> clause BAR clauses
 -- On # reduce production clauses -> clause BAR clauses
+** End-of-stream conflict on SEMI IDENT
+**   There is a tension between
+**   (1) reducing production clauses -> clause BAR clauses
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 39:
 spec -> headeropt decls PERCENT_PERCENT rules . [ # ]
@@ -334,6 +364,11 @@ rules -> rule . [ # ]
 -- On rules shift to state 41
 -- On rule shift to state 40
 -- On # reduce production rules -> rule
+** End-of-stream conflict on IDENT
+**   There is a tension between
+**   (1) reducing production rules -> rule
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 41:
 rules -> rule rules . [ # ]
@@ -354,46 +389,4 @@ decls -> decl . decls [ PERCENT_PERCENT ]
 State 43:
 decls -> decl decls . [ PERCENT_PERCENT ]
 -- On PERCENT_PERCENT reduce production decls -> decl decls
-
-State 32 has an end-of-stream conflict. There is a tension between
-(1) reducing production clause -> syms optprec CODE
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI IDENT BAR,
-which would require some other action.
-
-State 33 has an end-of-stream conflict. There is a tension between
-(1) reducing production optsemi -> 
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI IDENT,
-which would require some other action.
-
-State 34 has an end-of-stream conflict. There is a tension between
-(1) reducing production optsemi -> SEMI
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is IDENT,
-which would require some other action.
-
-State 35 has an end-of-stream conflict. There is a tension between
-(1) reducing production rule -> IDENT COLON optbar clauses optsemi
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is IDENT,
-which would require some other action.
-
-State 36 has an end-of-stream conflict. There is a tension between
-(1) reducing production clauses -> clause
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI IDENT BAR,
-which would require some other action.
-
-State 38 has an end-of-stream conflict. There is a tension between
-(1) reducing production clauses -> clause BAR clauses
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI IDENT,
-which would require some other action.
-
-State 40 has an end-of-stream conflict. There is a tension between
-(1) reducing production rules -> rule
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is IDENT,
-which would require some other action.
 

@@ -661,6 +661,11 @@ signature -> SIGNATURE BEGIN lattice_list END PRIORITY . constructor_list [ # ]
 -- On UIDENT shift to state 90
 -- On constructor_list shift to state 92
 -- On # reduce production constructor_list -> 
+** End-of-stream conflict on error UIDENT
+**   There is a tension between
+**   (1) reducing production constructor_list -> 
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 89:
 constructor_list -> error . [ # ]
@@ -672,6 +677,11 @@ constructor_list -> UIDENT . constructor_list [ # ]
 -- On UIDENT shift to state 90
 -- On constructor_list shift to state 91
 -- On # reduce production constructor_list -> 
+** End-of-stream conflict on error UIDENT
+**   There is a tension between
+**   (1) reducing production constructor_list -> 
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 91:
 constructor_list -> UIDENT constructor_list . [ # ]
@@ -697,16 +707,4 @@ lattice_list -> lattice lattice_list . [ END ]
 State 95:
 signature' -> signature . [ # ]
 -- On # accept signature
-
-State 88 has an end-of-stream conflict. There is a tension between
-(1) reducing production constructor_list -> 
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of error UIDENT,
-which would require some other action.
-
-State 90 has an end-of-stream conflict. There is a tension between
-(1) reducing production constructor_list -> 
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of error UIDENT,
-which would require some other action.
 

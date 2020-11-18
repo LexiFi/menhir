@@ -17,6 +17,11 @@ term -> SINGLE_QUOTED . [ RIGHT_PARENTHESIS OPERATOR IF EOI DOT COMMA AGGR_EQUAL
 -- On COMMA reduce production term -> SINGLE_QUOTED
 -- On AGGR_EQUAL reduce production term -> SINGLE_QUOTED
 -- On # reduce production term -> SINGLE_QUOTED
+** End-of-stream conflict on RIGHT_PARENTHESIS OPERATOR IF EOI DOT COMMA AGGR_EQUAL
+**   There is a tension between
+**   (1) reducing production term -> SINGLE_QUOTED
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 2:
 term -> LOWER_WORD . [ RIGHT_PARENTHESIS OPERATOR IF EOI DOT COMMA AGGR_EQUAL # ]
@@ -30,6 +35,11 @@ term -> LOWER_WORD . LEFT_PARENTHESIS args RIGHT_PARENTHESIS [ RIGHT_PARENTHESIS
 -- On COMMA reduce production term -> LOWER_WORD
 -- On AGGR_EQUAL reduce production term -> LOWER_WORD
 -- On # reduce production term -> LOWER_WORD
+** End-of-stream conflict on RIGHT_PARENTHESIS OPERATOR LEFT_PARENTHESIS IF EOI DOT COMMA AGGR_EQUAL
+**   There is a tension between
+**   (1) reducing production term -> LOWER_WORD
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 3:
 term -> LOWER_WORD LEFT_PARENTHESIS . args RIGHT_PARENTHESIS [ RIGHT_PARENTHESIS OPERATOR IF EOI DOT COMMA AGGR_EQUAL # ]
@@ -51,6 +61,11 @@ subterm -> UPPER_WORD . [ RIGHT_PARENTHESIS OPERATOR EOI DOT COMMA AGGR_EQUAL # 
 -- On COMMA reduce production subterm -> UPPER_WORD
 -- On AGGR_EQUAL reduce production subterm -> UPPER_WORD
 -- On # reduce production subterm -> UPPER_WORD
+** End-of-stream conflict on RIGHT_PARENTHESIS OPERATOR EOI DOT COMMA AGGR_EQUAL
+**   There is a tension between
+**   (1) reducing production subterm -> UPPER_WORD
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 5:
 subterm -> INT . [ RIGHT_PARENTHESIS OPERATOR EOI DOT COMMA AGGR_EQUAL # ]
@@ -61,6 +76,11 @@ subterm -> INT . [ RIGHT_PARENTHESIS OPERATOR EOI DOT COMMA AGGR_EQUAL # ]
 -- On COMMA reduce production subterm -> INT
 -- On AGGR_EQUAL reduce production subterm -> INT
 -- On # reduce production subterm -> INT
+** End-of-stream conflict on RIGHT_PARENTHESIS OPERATOR EOI DOT COMMA AGGR_EQUAL
+**   There is a tension between
+**   (1) reducing production subterm -> INT
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 6:
 term -> DOUBLE_QUOTED . [ RIGHT_PARENTHESIS OPERATOR IF EOI DOT COMMA AGGR_EQUAL # ]
@@ -72,6 +92,11 @@ term -> DOUBLE_QUOTED . [ RIGHT_PARENTHESIS OPERATOR IF EOI DOT COMMA AGGR_EQUAL
 -- On COMMA reduce production term -> DOUBLE_QUOTED
 -- On AGGR_EQUAL reduce production term -> DOUBLE_QUOTED
 -- On # reduce production term -> DOUBLE_QUOTED
+** End-of-stream conflict on RIGHT_PARENTHESIS OPERATOR IF EOI DOT COMMA AGGR_EQUAL
+**   There is a tension between
+**   (1) reducing production term -> DOUBLE_QUOTED
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 7:
 subterm -> term . [ RIGHT_PARENTHESIS EOI DOT COMMA # ]
@@ -80,6 +105,11 @@ subterm -> term . [ RIGHT_PARENTHESIS EOI DOT COMMA # ]
 -- On DOT reduce production subterm -> term
 -- On COMMA reduce production subterm -> term
 -- On # reduce production subterm -> term
+** End-of-stream conflict on RIGHT_PARENTHESIS EOI DOT COMMA
+**   There is a tension between
+**   (1) reducing production subterm -> term
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 8:
 args -> subterm . [ RIGHT_PARENTHESIS ]
@@ -116,6 +146,11 @@ term -> LOWER_WORD LEFT_PARENTHESIS args RIGHT_PARENTHESIS . [ RIGHT_PARENTHESIS
 -- On COMMA reduce production term -> LOWER_WORD LEFT_PARENTHESIS args RIGHT_PARENTHESIS
 -- On AGGR_EQUAL reduce production term -> LOWER_WORD LEFT_PARENTHESIS args RIGHT_PARENTHESIS
 -- On # reduce production term -> LOWER_WORD LEFT_PARENTHESIS args RIGHT_PARENTHESIS
+** End-of-stream conflict on RIGHT_PARENTHESIS OPERATOR IF EOI DOT COMMA AGGR_EQUAL
+**   There is a tension between
+**   (1) reducing production term -> LOWER_WORD LEFT_PARENTHESIS args RIGHT_PARENTHESIS
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 13:
 clause -> term . DOT [ SINGLE_QUOTED LOWER_WORD EOI DOUBLE_QUOTED ]
@@ -157,6 +192,11 @@ subterm -> term . [ OPERATOR AGGR_EQUAL ]
 -- On COMMA reduce production atom -> term
 -- On AGGR_EQUAL reduce production subterm -> term
 -- On # reduce production atom -> term
+** End-of-stream conflict on OPERATOR EOI DOT COMMA AGGR_EQUAL
+**   There is a tension between
+**   (1) reducing production atom -> term
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 17:
 atom -> subterm . OPERATOR subterm [ EOI DOT COMMA # ]
@@ -178,6 +218,11 @@ atom -> subterm OPERATOR subterm . [ EOI DOT COMMA # ]
 -- On DOT reduce production atom -> subterm OPERATOR subterm
 -- On COMMA reduce production atom -> subterm OPERATOR subterm
 -- On # reduce production atom -> subterm OPERATOR subterm
+** End-of-stream conflict on EOI DOT COMMA
+**   There is a tension between
+**   (1) reducing production atom -> subterm OPERATOR subterm
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 20:
 literal -> NOT atom . [ EOI DOT COMMA # ]
@@ -185,6 +230,11 @@ literal -> NOT atom . [ EOI DOT COMMA # ]
 -- On DOT reduce production literal -> NOT atom
 -- On COMMA reduce production literal -> NOT atom
 -- On # reduce production literal -> NOT atom
+** End-of-stream conflict on EOI DOT COMMA
+**   There is a tension between
+**   (1) reducing production literal -> NOT atom
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 21:
 atom -> subterm . OPERATOR subterm [ EOI DOT COMMA # ]
@@ -217,6 +267,11 @@ literal -> subterm AGGR_EQUAL LOWER_WORD UPPER_WORD COLON term . [ EOI DOT COMMA
 -- On DOT reduce production literal -> subterm AGGR_EQUAL LOWER_WORD UPPER_WORD COLON term
 -- On COMMA reduce production literal -> subterm AGGR_EQUAL LOWER_WORD UPPER_WORD COLON term
 -- On # reduce production literal -> subterm AGGR_EQUAL LOWER_WORD UPPER_WORD COLON term
+** End-of-stream conflict on EOI DOT COMMA
+**   There is a tension between
+**   (1) reducing production literal -> subterm AGGR_EQUAL LOWER_WORD UPPER_WORD COLON term
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 27:
 clause -> term IF literals . DOT [ SINGLE_QUOTED LOWER_WORD EOI DOUBLE_QUOTED ]
@@ -261,6 +316,11 @@ literal -> atom . [ EOI DOT COMMA # ]
 -- On DOT reduce production literal -> atom
 -- On COMMA reduce production literal -> atom
 -- On # reduce production literal -> atom
+** End-of-stream conflict on EOI DOT COMMA
+**   There is a tension between
+**   (1) reducing production literal -> atom
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 33:
 clause -> term DOT . [ SINGLE_QUOTED LOWER_WORD EOI DOUBLE_QUOTED ]
@@ -423,6 +483,11 @@ literals -> literal . [ # ]
 literals -> literal . COMMA literals [ # ]
 -- On COMMA shift to state 59
 -- On # reduce production literals -> literal
+** End-of-stream conflict on COMMA
+**   There is a tension between
+**   (1) reducing production literals -> literal
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 59:
 literals -> literal COMMA . literals [ # ]
@@ -465,82 +530,4 @@ parse_term -> term EOI . [ # ]
 State 65:
 parse_term' -> parse_term . [ # ]
 -- On # accept parse_term
-
-State 1 has an end-of-stream conflict. There is a tension between
-(1) reducing production term -> SINGLE_QUOTED
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of RIGHT_PARENTHESIS OPERATOR IF EOI DOT COMMA AGGR_EQUAL,
-which would require some other action.
-
-State 2 has an end-of-stream conflict. There is a tension between
-(1) reducing production term -> LOWER_WORD
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of RIGHT_PARENTHESIS OPERATOR LEFT_PARENTHESIS IF EOI DOT COMMA AGGR_EQUAL,
-which would require some other action.
-
-State 4 has an end-of-stream conflict. There is a tension between
-(1) reducing production subterm -> UPPER_WORD
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of RIGHT_PARENTHESIS OPERATOR EOI DOT COMMA AGGR_EQUAL,
-which would require some other action.
-
-State 5 has an end-of-stream conflict. There is a tension between
-(1) reducing production subterm -> INT
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of RIGHT_PARENTHESIS OPERATOR EOI DOT COMMA AGGR_EQUAL,
-which would require some other action.
-
-State 6 has an end-of-stream conflict. There is a tension between
-(1) reducing production term -> DOUBLE_QUOTED
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of RIGHT_PARENTHESIS OPERATOR IF EOI DOT COMMA AGGR_EQUAL,
-which would require some other action.
-
-State 7 has an end-of-stream conflict. There is a tension between
-(1) reducing production subterm -> term
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of RIGHT_PARENTHESIS EOI DOT COMMA,
-which would require some other action.
-
-State 12 has an end-of-stream conflict. There is a tension between
-(1) reducing production term -> LOWER_WORD LEFT_PARENTHESIS args RIGHT_PARENTHESIS
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of RIGHT_PARENTHESIS OPERATOR IF EOI DOT COMMA AGGR_EQUAL,
-which would require some other action.
-
-State 16 has an end-of-stream conflict. There is a tension between
-(1) reducing production atom -> term
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of OPERATOR EOI DOT COMMA AGGR_EQUAL,
-which would require some other action.
-
-State 19 has an end-of-stream conflict. There is a tension between
-(1) reducing production atom -> subterm OPERATOR subterm
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of EOI DOT COMMA,
-which would require some other action.
-
-State 20 has an end-of-stream conflict. There is a tension between
-(1) reducing production literal -> NOT atom
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of EOI DOT COMMA,
-which would require some other action.
-
-State 26 has an end-of-stream conflict. There is a tension between
-(1) reducing production literal -> subterm AGGR_EQUAL LOWER_WORD UPPER_WORD COLON term
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of EOI DOT COMMA,
-which would require some other action.
-
-State 32 has an end-of-stream conflict. There is a tension between
-(1) reducing production literal -> atom
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of EOI DOT COMMA,
-which would require some other action.
-
-State 58 has an end-of-stream conflict. There is a tension between
-(1) reducing production literals -> literal
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is COMMA,
-which would require some other action.
 

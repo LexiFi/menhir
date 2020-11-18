@@ -14,6 +14,11 @@ instr_option_seq' -> . instr_option_seq [ # ]
 -- On instr shift to state 87
 -- On SEMI reduce production instr_option -> 
 -- On # reduce production instr_option -> 
+** End-of-stream conflict on WRITE SEMI RMW READ NAME MOV FENCE CODEVAR CALL BRANCH
+**   There is a tension between
+**   (1) reducing production instr_option -> 
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 1:
 instr -> WRITE . annot_list_option addr_op reg_or_imm [ SEMI PIPE # ]
@@ -58,6 +63,11 @@ name -> WRITE . [ WRITE SYMB_REG SEMI RPAR REG READ RBRACE RBRAC PLUS PIPE NUM N
 -- On COMMA reduce production name -> WRITE
 -- On BRANCH reduce production name -> WRITE
 -- On # reduce production name -> WRITE
+** End-of-stream conflict on WRITE SYMB_REG SEMI RPAR REG READ RBRACE RBRAC PLUS PIPE NUM NAME META FENCE COMMA BRANCH
+**   There is a tension between
+**   (1) reducing production name -> WRITE
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 4:
 name -> READ . [ WRITE SYMB_REG SEMI RPAR REG READ RBRACE RBRAC PLUS PIPE NUM NAME META FENCE COMMA BRANCH # ]
@@ -78,6 +88,11 @@ name -> READ . [ WRITE SYMB_REG SEMI RPAR REG READ RBRACE RBRAC PLUS PIPE NUM NA
 -- On COMMA reduce production name -> READ
 -- On BRANCH reduce production name -> READ
 -- On # reduce production name -> READ
+** End-of-stream conflict on WRITE SYMB_REG SEMI RPAR REG READ RBRACE RBRAC PLUS PIPE NUM NAME META FENCE COMMA BRANCH
+**   There is a tension between
+**   (1) reducing production name -> READ
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 5:
 name -> NAME . [ WRITE SYMB_REG SEMI RPAR REG READ RBRACE RBRAC PLUS PIPE NUM NAME META FENCE COMMA BRANCH # ]
@@ -98,6 +113,11 @@ name -> NAME . [ WRITE SYMB_REG SEMI RPAR REG READ RBRACE RBRAC PLUS PIPE NUM NA
 -- On COMMA reduce production name -> NAME
 -- On BRANCH reduce production name -> NAME
 -- On # reduce production name -> NAME
+** End-of-stream conflict on WRITE SYMB_REG SEMI RPAR REG READ RBRACE RBRAC PLUS PIPE NUM NAME META FENCE COMMA BRANCH
+**   There is a tension between
+**   (1) reducing production name -> NAME
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 6:
 name -> FENCE . [ WRITE SYMB_REG SEMI RPAR REG READ RBRACE RBRAC PLUS PIPE NUM NAME META FENCE COMMA BRANCH # ]
@@ -118,6 +138,11 @@ name -> FENCE . [ WRITE SYMB_REG SEMI RPAR REG READ RBRACE RBRAC PLUS PIPE NUM N
 -- On COMMA reduce production name -> FENCE
 -- On BRANCH reduce production name -> FENCE
 -- On # reduce production name -> FENCE
+** End-of-stream conflict on WRITE SYMB_REG SEMI RPAR REG READ RBRACE RBRAC PLUS PIPE NUM NAME META FENCE COMMA BRANCH
+**   There is a tension between
+**   (1) reducing production name -> FENCE
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 7:
 name -> BRANCH . [ WRITE SYMB_REG SEMI RPAR REG READ RBRACE RBRAC PLUS PIPE NUM NAME META FENCE COMMA BRANCH # ]
@@ -138,6 +163,11 @@ name -> BRANCH . [ WRITE SYMB_REG SEMI RPAR REG READ RBRACE RBRAC PLUS PIPE NUM 
 -- On COMMA reduce production name -> BRANCH
 -- On BRANCH reduce production name -> BRANCH
 -- On # reduce production name -> BRANCH
+** End-of-stream conflict on WRITE SYMB_REG SEMI RPAR REG READ RBRACE RBRAC PLUS PIPE NUM NAME META FENCE COMMA BRANCH
+**   There is a tension between
+**   (1) reducing production name -> BRANCH
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 8:
 name_list -> name_list_ne . [ RBRACE RBRAC ]
@@ -161,6 +191,11 @@ annot_list_option -> LBRAC name_list RBRAC . [ WRITE SYMB_REG SEMI REG READ PIPE
 -- On FENCE reduce production annot_list_option -> LBRAC name_list RBRAC
 -- On BRANCH reduce production annot_list_option -> LBRAC name_list RBRAC
 -- On # reduce production annot_list_option -> LBRAC name_list RBRAC
+** End-of-stream conflict on WRITE SYMB_REG SEMI REG READ PIPE NAME LBRACE FENCE BRANCH
+**   There is a tension between
+**   (1) reducing production annot_list_option -> LBRAC name_list RBRAC
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 11:
 name_list_ne -> name . COMMA name_list_ne [ RBRACE RBRAC ]
@@ -215,6 +250,11 @@ reg -> SYMB_REG . [ WRITE SYMB_REG SEMI RPAR REG READ PLUS PIPE NUM NAME META LP
 -- On FENCE reduce production reg -> SYMB_REG
 -- On BRANCH reduce production reg -> SYMB_REG
 -- On # reduce production reg -> SYMB_REG
+** End-of-stream conflict on WRITE SYMB_REG SEMI RPAR REG READ PLUS PIPE NUM NAME META LPAR FENCE BRANCH
+**   There is a tension between
+**   (1) reducing production reg -> SYMB_REG
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 16:
 reg -> REG . [ WRITE SYMB_REG SEMI RPAR REG READ PLUS PIPE NUM NAME META LPAR FENCE BRANCH # ]
@@ -233,6 +273,11 @@ reg -> REG . [ WRITE SYMB_REG SEMI RPAR REG READ PLUS PIPE NUM NAME META LPAR FE
 -- On FENCE reduce production reg -> REG
 -- On BRANCH reduce production reg -> REG
 -- On # reduce production reg -> REG
+** End-of-stream conflict on WRITE SYMB_REG SEMI RPAR REG READ PLUS PIPE NUM NAME META LPAR FENCE BRANCH
+**   There is a tension between
+**   (1) reducing production reg -> REG
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 17:
 addr_op -> reg_or_addr . [ SYMB_REG SEMI REG PIPE NUM META # ]
@@ -245,6 +290,11 @@ addr_op -> reg_or_addr . PLUS reg_or_imm [ SYMB_REG SEMI REG PIPE NUM META # ]
 -- On NUM reduce production addr_op -> reg_or_addr
 -- On META reduce production addr_op -> reg_or_addr
 -- On # reduce production addr_op -> reg_or_addr
+** End-of-stream conflict on SYMB_REG SEMI REG PLUS PIPE NUM META
+**   There is a tension between
+**   (1) reducing production addr_op -> reg_or_addr
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 18:
 addr_op -> reg_or_addr PLUS . reg_or_imm [ SYMB_REG SEMI REG PIPE NUM META # ]
@@ -271,6 +321,11 @@ k -> NUM . [ WRITE SYMB_REG SEMI RPAR REG READ PIPE NUM NAME META FENCE BRANCH #
 -- On FENCE reduce production k -> NUM
 -- On BRANCH reduce production k -> NUM
 -- On # reduce production k -> NUM
+** End-of-stream conflict on WRITE SYMB_REG SEMI RPAR REG READ PIPE NUM NAME META FENCE BRANCH
+**   There is a tension between
+**   (1) reducing production k -> NUM
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 20:
 k -> META . [ WRITE SYMB_REG SEMI RPAR REG READ PIPE NUM NAME META FENCE BRANCH # ]
@@ -287,6 +342,11 @@ k -> META . [ WRITE SYMB_REG SEMI RPAR REG READ PIPE NUM NAME META FENCE BRANCH 
 -- On FENCE reduce production k -> META
 -- On BRANCH reduce production k -> META
 -- On # reduce production k -> META
+** End-of-stream conflict on WRITE SYMB_REG SEMI RPAR REG READ PIPE NUM NAME META FENCE BRANCH
+**   There is a tension between
+**   (1) reducing production k -> META
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 21:
 addr_op -> reg_or_addr PLUS reg_or_imm . [ SYMB_REG SEMI REG PIPE NUM META # ]
@@ -297,6 +357,11 @@ addr_op -> reg_or_addr PLUS reg_or_imm . [ SYMB_REG SEMI REG PIPE NUM META # ]
 -- On NUM reduce production addr_op -> reg_or_addr PLUS reg_or_imm
 -- On META reduce production addr_op -> reg_or_addr PLUS reg_or_imm
 -- On # reduce production addr_op -> reg_or_addr PLUS reg_or_imm
+** End-of-stream conflict on SYMB_REG SEMI REG PIPE NUM META
+**   There is a tension between
+**   (1) reducing production addr_op -> reg_or_addr PLUS reg_or_imm
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 22:
 reg_or_imm -> reg . [ SYMB_REG SEMI REG PIPE NUM META # ]
@@ -307,6 +372,11 @@ reg_or_imm -> reg . [ SYMB_REG SEMI REG PIPE NUM META # ]
 -- On NUM reduce production reg_or_imm -> reg
 -- On META reduce production reg_or_imm -> reg
 -- On # reduce production reg_or_imm -> reg
+** End-of-stream conflict on SYMB_REG SEMI REG PIPE NUM META
+**   There is a tension between
+**   (1) reducing production reg_or_imm -> reg
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 23:
 reg_or_imm -> k . [ SYMB_REG SEMI REG PIPE NUM META # ]
@@ -317,6 +387,11 @@ reg_or_imm -> k . [ SYMB_REG SEMI REG PIPE NUM META # ]
 -- On NUM reduce production reg_or_imm -> k
 -- On META reduce production reg_or_imm -> k
 -- On # reduce production reg_or_imm -> k
+** End-of-stream conflict on SYMB_REG SEMI REG PIPE NUM META
+**   There is a tension between
+**   (1) reducing production reg_or_imm -> k
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 24:
 reg_or_addr -> reg . [ WRITE SYMB_REG SEMI RPAR REG READ PLUS PIPE NUM NAME META FENCE BRANCH # ]
@@ -334,6 +409,11 @@ reg_or_addr -> reg . [ WRITE SYMB_REG SEMI RPAR REG READ PLUS PIPE NUM NAME META
 -- On FENCE reduce production reg_or_addr -> reg
 -- On BRANCH reduce production reg_or_addr -> reg
 -- On # reduce production reg_or_addr -> reg
+** End-of-stream conflict on WRITE SYMB_REG SEMI RPAR REG READ PLUS PIPE NUM NAME META FENCE BRANCH
+**   There is a tension between
+**   (1) reducing production reg_or_addr -> reg
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 25:
 reg_or_addr -> name . [ WRITE SYMB_REG SEMI RPAR REG READ PLUS PIPE NUM NAME META FENCE BRANCH # ]
@@ -351,6 +431,11 @@ reg_or_addr -> name . [ WRITE SYMB_REG SEMI RPAR REG READ PLUS PIPE NUM NAME MET
 -- On FENCE reduce production reg_or_addr -> name
 -- On BRANCH reduce production reg_or_addr -> name
 -- On # reduce production reg_or_addr -> name
+** End-of-stream conflict on WRITE SYMB_REG SEMI RPAR REG READ PLUS PIPE NUM NAME META FENCE BRANCH
+**   There is a tension between
+**   (1) reducing production reg_or_addr -> name
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 26:
 instr -> WRITE annot_list_option addr_op . reg_or_imm [ SEMI PIPE # ]
@@ -367,6 +452,11 @@ instr -> WRITE annot_list_option addr_op reg_or_imm . [ SEMI PIPE # ]
 -- On SEMI reduce production instr -> WRITE annot_list_option addr_op reg_or_imm
 -- On PIPE reduce production instr -> WRITE annot_list_option addr_op reg_or_imm
 -- On # reduce production instr -> WRITE annot_list_option addr_op reg_or_imm
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr -> WRITE annot_list_option addr_op reg_or_imm
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 28:
 instr -> RMW . annot_list_option reg operation addr_op [ SEMI PIPE # ]
@@ -444,6 +534,11 @@ any_value -> reg_or_addr . [ WRITE SYMB_REG SEMI RPAR REG READ PIPE NUM NAME MET
 -- On FENCE reduce production any_value -> reg_or_addr
 -- On BRANCH reduce production any_value -> reg_or_addr
 -- On # reduce production any_value -> reg_or_addr
+** End-of-stream conflict on WRITE SYMB_REG SEMI RPAR REG READ PIPE NUM NAME META FENCE BRANCH
+**   There is a tension between
+**   (1) reducing production any_value -> reg_or_addr
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 34:
 any_value -> k . [ WRITE SYMB_REG SEMI RPAR REG READ PIPE NUM NAME META FENCE BRANCH # ]
@@ -460,6 +555,11 @@ any_value -> k . [ WRITE SYMB_REG SEMI RPAR REG READ PIPE NUM NAME META FENCE BR
 -- On FENCE reduce production any_value -> k
 -- On BRANCH reduce production any_value -> k
 -- On # reduce production any_value -> k
+** End-of-stream conflict on WRITE SYMB_REG SEMI RPAR REG READ PIPE NUM NAME META FENCE BRANCH
+**   There is a tension between
+**   (1) reducing production any_value -> k
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 35:
 operation -> LPAR XOR any_value . any_value RPAR [ WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH # ]
@@ -494,6 +594,11 @@ operation -> LPAR XOR any_value any_value RPAR . [ WRITE SYMB_REG SEMI REG READ 
 -- On FENCE reduce production operation -> LPAR XOR any_value any_value RPAR
 -- On BRANCH reduce production operation -> LPAR XOR any_value any_value RPAR
 -- On # reduce production operation -> LPAR XOR any_value any_value RPAR
+** End-of-stream conflict on WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH
+**   There is a tension between
+**   (1) reducing production operation -> LPAR XOR any_value any_value RPAR
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 38:
 operation -> LPAR NEQ . any_value any_value RPAR [ WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH # ]
@@ -545,6 +650,11 @@ operation -> LPAR NEQ any_value any_value RPAR . [ WRITE SYMB_REG SEMI REG READ 
 -- On FENCE reduce production operation -> LPAR NEQ any_value any_value RPAR
 -- On BRANCH reduce production operation -> LPAR NEQ any_value any_value RPAR
 -- On # reduce production operation -> LPAR NEQ any_value any_value RPAR
+** End-of-stream conflict on WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH
+**   There is a tension between
+**   (1) reducing production operation -> LPAR NEQ any_value any_value RPAR
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 42:
 operation -> LPAR EQ . any_value any_value RPAR [ WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH # ]
@@ -596,6 +706,11 @@ operation -> LPAR EQ any_value any_value RPAR . [ WRITE SYMB_REG SEMI REG READ P
 -- On FENCE reduce production operation -> LPAR EQ any_value any_value RPAR
 -- On BRANCH reduce production operation -> LPAR EQ any_value any_value RPAR
 -- On # reduce production operation -> LPAR EQ any_value any_value RPAR
+** End-of-stream conflict on WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH
+**   There is a tension between
+**   (1) reducing production operation -> LPAR EQ any_value any_value RPAR
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 46:
 operation -> LPAR AND . any_value any_value RPAR [ WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH # ]
@@ -647,6 +762,11 @@ operation -> LPAR AND any_value any_value RPAR . [ WRITE SYMB_REG SEMI REG READ 
 -- On FENCE reduce production operation -> LPAR AND any_value any_value RPAR
 -- On BRANCH reduce production operation -> LPAR AND any_value any_value RPAR
 -- On # reduce production operation -> LPAR AND any_value any_value RPAR
+** End-of-stream conflict on WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH
+**   There is a tension between
+**   (1) reducing production operation -> LPAR AND any_value any_value RPAR
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 50:
 operation -> LPAR ADD . any_value any_value RPAR [ WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH # ]
@@ -698,6 +818,11 @@ operation -> LPAR ADD any_value any_value RPAR . [ WRITE SYMB_REG SEMI REG READ 
 -- On FENCE reduce production operation -> LPAR ADD any_value any_value RPAR
 -- On BRANCH reduce production operation -> LPAR ADD any_value any_value RPAR
 -- On # reduce production operation -> LPAR ADD any_value any_value RPAR
+** End-of-stream conflict on WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH
+**   There is a tension between
+**   (1) reducing production operation -> LPAR ADD any_value any_value RPAR
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 54:
 instr -> RMW annot_list_option reg operation . addr_op [ SEMI PIPE # ]
@@ -718,6 +843,11 @@ instr -> RMW annot_list_option reg operation addr_op . [ SEMI PIPE # ]
 -- On SEMI reduce production instr -> RMW annot_list_option reg operation addr_op
 -- On PIPE reduce production instr -> RMW annot_list_option reg operation addr_op
 -- On # reduce production instr -> RMW annot_list_option reg operation addr_op
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr -> RMW annot_list_option reg operation addr_op
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 56:
 operation -> any_value . [ WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH # ]
@@ -731,6 +861,11 @@ operation -> any_value . [ WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH #
 -- On FENCE reduce production operation -> any_value
 -- On BRANCH reduce production operation -> any_value
 -- On # reduce production operation -> any_value
+** End-of-stream conflict on WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH
+**   There is a tension between
+**   (1) reducing production operation -> any_value
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 57:
 instr -> READ . annot_list_option reg addr_op [ SEMI PIPE # ]
@@ -764,6 +899,11 @@ instr -> READ annot_list_option reg addr_op . [ SEMI PIPE # ]
 -- On SEMI reduce production instr -> READ annot_list_option reg addr_op
 -- On PIPE reduce production instr -> READ annot_list_option reg addr_op
 -- On # reduce production instr -> READ annot_list_option reg addr_op
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr -> READ annot_list_option reg addr_op
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 61:
 instr_option -> NAME . COLON instr_option [ SEMI PIPE # ]
@@ -785,6 +925,11 @@ instr_option -> NAME COLON . instr_option [ SEMI PIPE # ]
 -- On SEMI reduce production instr_option -> 
 -- On PIPE reduce production instr_option -> 
 -- On # reduce production instr_option -> 
+** End-of-stream conflict on WRITE SEMI RMW READ PIPE NAME MOV FENCE CODEVAR CALL BRANCH
+**   There is a tension between
+**   (1) reducing production instr_option -> 
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 63:
 instr -> MOV . reg operation [ SEMI PIPE # ]
@@ -816,6 +961,11 @@ instr -> MOV reg operation . [ SEMI PIPE # ]
 -- On SEMI reduce production instr -> MOV reg operation
 -- On PIPE reduce production instr -> MOV reg operation
 -- On # reduce production instr -> MOV reg operation
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr -> MOV reg operation
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 66:
 instr -> FENCE . annot_list_option fence_labels_option [ SEMI PIPE # ]
@@ -825,6 +975,11 @@ instr -> FENCE . annot_list_option fence_labels_option [ SEMI PIPE # ]
 -- On PIPE reduce production annot_list_option -> 
 -- On LBRACE reduce production annot_list_option -> 
 -- On # reduce production annot_list_option -> 
+** End-of-stream conflict on SEMI PIPE LBRACE LBRAC
+**   There is a tension between
+**   (1) reducing production annot_list_option -> 
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 67:
 instr -> FENCE annot_list_option . fence_labels_option [ SEMI PIPE # ]
@@ -833,6 +988,11 @@ instr -> FENCE annot_list_option . fence_labels_option [ SEMI PIPE # ]
 -- On SEMI reduce production fence_labels_option -> 
 -- On PIPE reduce production fence_labels_option -> 
 -- On # reduce production fence_labels_option -> 
+** End-of-stream conflict on SEMI PIPE LBRACE
+**   There is a tension between
+**   (1) reducing production fence_labels_option -> 
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 68:
 fence_labels_option -> LBRACE . name_set RBRACE LBRACE name_set RBRACE [ SEMI PIPE # ]
@@ -877,6 +1037,11 @@ fence_labels_option -> LBRACE name_set RBRACE LBRACE name_set RBRACE . [ SEMI PI
 -- On SEMI reduce production fence_labels_option -> LBRACE name_set RBRACE LBRACE name_set RBRACE
 -- On PIPE reduce production fence_labels_option -> LBRACE name_set RBRACE LBRACE name_set RBRACE
 -- On # reduce production fence_labels_option -> LBRACE name_set RBRACE LBRACE name_set RBRACE
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production fence_labels_option -> LBRACE name_set RBRACE LBRACE name_set RBRACE
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 74:
 name_set -> name_list . [ RBRACE ]
@@ -887,12 +1052,22 @@ instr -> FENCE annot_list_option fence_labels_option . [ SEMI PIPE # ]
 -- On SEMI reduce production instr -> FENCE annot_list_option fence_labels_option
 -- On PIPE reduce production instr -> FENCE annot_list_option fence_labels_option
 -- On # reduce production instr -> FENCE annot_list_option fence_labels_option
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr -> FENCE annot_list_option fence_labels_option
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 76:
 instr_option -> CODEVAR . [ SEMI PIPE # ]
 -- On SEMI reduce production instr_option -> CODEVAR
 -- On PIPE reduce production instr_option -> CODEVAR
 -- On # reduce production instr_option -> CODEVAR
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr_option -> CODEVAR
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 77:
 instr -> CALL . LBRAC name RBRAC [ SEMI PIPE # ]
@@ -916,6 +1091,11 @@ instr -> CALL LBRAC name RBRAC . [ SEMI PIPE # ]
 -- On SEMI reduce production instr -> CALL LBRAC name RBRAC
 -- On PIPE reduce production instr -> CALL LBRAC name RBRAC
 -- On # reduce production instr -> CALL LBRAC name RBRAC
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr -> CALL LBRAC name RBRAC
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 81:
 instr -> BRANCH . annot_list_option reg NAME [ SEMI PIPE # ]
@@ -939,6 +1119,11 @@ instr -> BRANCH annot_list_option NAME . [ SEMI PIPE # ]
 -- On SEMI reduce production instr -> BRANCH annot_list_option NAME
 -- On PIPE reduce production instr -> BRANCH annot_list_option NAME
 -- On # reduce production instr -> BRANCH annot_list_option NAME
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr -> BRANCH annot_list_option NAME
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 84:
 instr -> BRANCH annot_list_option reg . NAME [ SEMI PIPE # ]
@@ -949,18 +1134,33 @@ instr -> BRANCH annot_list_option reg NAME . [ SEMI PIPE # ]
 -- On SEMI reduce production instr -> BRANCH annot_list_option reg NAME
 -- On PIPE reduce production instr -> BRANCH annot_list_option reg NAME
 -- On # reduce production instr -> BRANCH annot_list_option reg NAME
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr -> BRANCH annot_list_option reg NAME
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 86:
 instr_option -> NAME COLON instr_option . [ SEMI PIPE # ]
 -- On SEMI reduce production instr_option -> NAME COLON instr_option
 -- On PIPE reduce production instr_option -> NAME COLON instr_option
 -- On # reduce production instr_option -> NAME COLON instr_option
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr_option -> NAME COLON instr_option
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 87:
 instr_option -> instr . [ SEMI PIPE # ]
 -- On SEMI reduce production instr_option -> instr
 -- On PIPE reduce production instr_option -> instr
 -- On # reduce production instr_option -> instr
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr_option -> instr
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 88:
 instr_option_seq' -> instr_option_seq . [ # ]
@@ -971,6 +1171,11 @@ instr_option_seq -> instr_option . [ # ]
 instr_option_seq -> instr_option . SEMI instr_option_seq [ # ]
 -- On SEMI shift to state 90
 -- On # reduce production instr_option_seq -> instr_option
+** End-of-stream conflict on SEMI
+**   There is a tension between
+**   (1) reducing production instr_option_seq -> instr_option
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 90:
 instr_option_seq -> instr_option SEMI . instr_option_seq [ # ]
@@ -988,6 +1193,11 @@ instr_option_seq -> instr_option SEMI . instr_option_seq [ # ]
 -- On instr shift to state 87
 -- On SEMI reduce production instr_option -> 
 -- On # reduce production instr_option -> 
+** End-of-stream conflict on WRITE SEMI RMW READ NAME MOV FENCE CODEVAR CALL BRANCH
+**   There is a tension between
+**   (1) reducing production instr_option -> 
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 91:
 instr_option_seq -> instr_option SEMI instr_option_seq . [ # ]
@@ -1300,256 +1510,4 @@ instr_option_list -> instr_option PIPE instr_option_list . [ SEMI ]
 State 136:
 main' -> main . [ # ]
 -- On # accept main
-
-State 0 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr_option -> 
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of WRITE SEMI RMW READ NAME MOV FENCE CODEVAR CALL BRANCH,
-which would require some other action.
-
-State 3 has an end-of-stream conflict. There is a tension between
-(1) reducing production name -> WRITE
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of WRITE SYMB_REG SEMI RPAR REG READ RBRACE RBRAC PLUS PIPE NUM NAME META FENCE COMMA BRANCH,
-which would require some other action.
-
-State 4 has an end-of-stream conflict. There is a tension between
-(1) reducing production name -> READ
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of WRITE SYMB_REG SEMI RPAR REG READ RBRACE RBRAC PLUS PIPE NUM NAME META FENCE COMMA BRANCH,
-which would require some other action.
-
-State 5 has an end-of-stream conflict. There is a tension between
-(1) reducing production name -> NAME
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of WRITE SYMB_REG SEMI RPAR REG READ RBRACE RBRAC PLUS PIPE NUM NAME META FENCE COMMA BRANCH,
-which would require some other action.
-
-State 6 has an end-of-stream conflict. There is a tension between
-(1) reducing production name -> FENCE
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of WRITE SYMB_REG SEMI RPAR REG READ RBRACE RBRAC PLUS PIPE NUM NAME META FENCE COMMA BRANCH,
-which would require some other action.
-
-State 7 has an end-of-stream conflict. There is a tension between
-(1) reducing production name -> BRANCH
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of WRITE SYMB_REG SEMI RPAR REG READ RBRACE RBRAC PLUS PIPE NUM NAME META FENCE COMMA BRANCH,
-which would require some other action.
-
-State 10 has an end-of-stream conflict. There is a tension between
-(1) reducing production annot_list_option -> LBRAC name_list RBRAC
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of WRITE SYMB_REG SEMI REG READ PIPE NAME LBRACE FENCE BRANCH,
-which would require some other action.
-
-State 15 has an end-of-stream conflict. There is a tension between
-(1) reducing production reg -> SYMB_REG
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of WRITE SYMB_REG SEMI RPAR REG READ PLUS PIPE NUM NAME META LPAR FENCE BRANCH,
-which would require some other action.
-
-State 16 has an end-of-stream conflict. There is a tension between
-(1) reducing production reg -> REG
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of WRITE SYMB_REG SEMI RPAR REG READ PLUS PIPE NUM NAME META LPAR FENCE BRANCH,
-which would require some other action.
-
-State 17 has an end-of-stream conflict. There is a tension between
-(1) reducing production addr_op -> reg_or_addr
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SYMB_REG SEMI REG PLUS PIPE NUM META,
-which would require some other action.
-
-State 19 has an end-of-stream conflict. There is a tension between
-(1) reducing production k -> NUM
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of WRITE SYMB_REG SEMI RPAR REG READ PIPE NUM NAME META FENCE BRANCH,
-which would require some other action.
-
-State 20 has an end-of-stream conflict. There is a tension between
-(1) reducing production k -> META
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of WRITE SYMB_REG SEMI RPAR REG READ PIPE NUM NAME META FENCE BRANCH,
-which would require some other action.
-
-State 21 has an end-of-stream conflict. There is a tension between
-(1) reducing production addr_op -> reg_or_addr PLUS reg_or_imm
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SYMB_REG SEMI REG PIPE NUM META,
-which would require some other action.
-
-State 22 has an end-of-stream conflict. There is a tension between
-(1) reducing production reg_or_imm -> reg
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SYMB_REG SEMI REG PIPE NUM META,
-which would require some other action.
-
-State 23 has an end-of-stream conflict. There is a tension between
-(1) reducing production reg_or_imm -> k
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SYMB_REG SEMI REG PIPE NUM META,
-which would require some other action.
-
-State 24 has an end-of-stream conflict. There is a tension between
-(1) reducing production reg_or_addr -> reg
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of WRITE SYMB_REG SEMI RPAR REG READ PLUS PIPE NUM NAME META FENCE BRANCH,
-which would require some other action.
-
-State 25 has an end-of-stream conflict. There is a tension between
-(1) reducing production reg_or_addr -> name
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of WRITE SYMB_REG SEMI RPAR REG READ PLUS PIPE NUM NAME META FENCE BRANCH,
-which would require some other action.
-
-State 27 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr -> WRITE annot_list_option addr_op reg_or_imm
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 33 has an end-of-stream conflict. There is a tension between
-(1) reducing production any_value -> reg_or_addr
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of WRITE SYMB_REG SEMI RPAR REG READ PIPE NUM NAME META FENCE BRANCH,
-which would require some other action.
-
-State 34 has an end-of-stream conflict. There is a tension between
-(1) reducing production any_value -> k
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of WRITE SYMB_REG SEMI RPAR REG READ PIPE NUM NAME META FENCE BRANCH,
-which would require some other action.
-
-State 37 has an end-of-stream conflict. There is a tension between
-(1) reducing production operation -> LPAR XOR any_value any_value RPAR
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH,
-which would require some other action.
-
-State 41 has an end-of-stream conflict. There is a tension between
-(1) reducing production operation -> LPAR NEQ any_value any_value RPAR
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH,
-which would require some other action.
-
-State 45 has an end-of-stream conflict. There is a tension between
-(1) reducing production operation -> LPAR EQ any_value any_value RPAR
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH,
-which would require some other action.
-
-State 49 has an end-of-stream conflict. There is a tension between
-(1) reducing production operation -> LPAR AND any_value any_value RPAR
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH,
-which would require some other action.
-
-State 53 has an end-of-stream conflict. There is a tension between
-(1) reducing production operation -> LPAR ADD any_value any_value RPAR
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH,
-which would require some other action.
-
-State 55 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr -> RMW annot_list_option reg operation addr_op
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 56 has an end-of-stream conflict. There is a tension between
-(1) reducing production operation -> any_value
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH,
-which would require some other action.
-
-State 60 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr -> READ annot_list_option reg addr_op
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 62 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr_option -> 
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of WRITE SEMI RMW READ PIPE NAME MOV FENCE CODEVAR CALL BRANCH,
-which would require some other action.
-
-State 65 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr -> MOV reg operation
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 66 has an end-of-stream conflict. There is a tension between
-(1) reducing production annot_list_option -> 
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE LBRACE LBRAC,
-which would require some other action.
-
-State 67 has an end-of-stream conflict. There is a tension between
-(1) reducing production fence_labels_option -> 
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE LBRACE,
-which would require some other action.
-
-State 73 has an end-of-stream conflict. There is a tension between
-(1) reducing production fence_labels_option -> LBRACE name_set RBRACE LBRACE name_set RBRACE
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 75 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr -> FENCE annot_list_option fence_labels_option
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 76 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr_option -> CODEVAR
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 80 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr -> CALL LBRAC name RBRAC
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 83 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr -> BRANCH annot_list_option NAME
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 85 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr -> BRANCH annot_list_option reg NAME
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 86 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr_option -> NAME COLON instr_option
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 87 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr_option -> instr
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 89 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr_option_seq -> instr_option
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is SEMI,
-which would require some other action.
-
-State 90 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr_option -> 
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of WRITE SEMI RMW READ NAME MOV FENCE CODEVAR CALL BRANCH,
-which would require some other action.
 

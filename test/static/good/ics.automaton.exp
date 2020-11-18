@@ -9248,6 +9248,11 @@ commandsequence -> command DOT . [ # ]
 -- On apply shift to state 120
 -- On app shift to state 121
 -- On # reduce production commandsequence -> command DOT
+** End-of-stream conflict on VALID USE UNTRACE UNSAT UNDO TRUE TRACE TAIL SYMTAB SUP SUB SPLIT SOLVE SIMPLIFY SIGMA SIG SHOW SAVE SAT S RESTORE RESET REMOVE RATCONST PROP OUTR OUTL OUT NIL MODEL MINUS LPAR LAMBDA K INV INTCONST INR INL INJ INF IDENT I HELP HEAD GET FULL FORGET FIND FALSE EXIT EOF EMPTY ECHO DROP DOM DISEQ DEF CTXT CREATE CONS CONC COMPL CHECK CDR CAR CAN C BVCONST ASSERT
+**   There is a tension between
+**   (1) reducing production commandsequence -> command DOT
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 386:
 commandsequence -> command DOT commandsequence . [ # ]
@@ -9417,10 +9422,4 @@ termeof -> term . EOF [ # ]
 State 394:
 termeof -> term EOF . [ # ]
 -- On # reduce production termeof -> term EOF
-
-State 385 has an end-of-stream conflict. There is a tension between
-(1) reducing production commandsequence -> command DOT
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of VALID USE UNTRACE UNSAT UNDO TRUE TRACE TAIL SYMTAB SUP SUB SPLIT SOLVE SIMPLIFY SIGMA SIG SHOW SAVE SAT S RESTORE RESET REMOVE RATCONST PROP OUTR OUTL OUT NIL MODEL MINUS LPAR LAMBDA K INV INTCONST INR INL INJ INF IDENT I HELP HEAD GET FULL FORGET FIND FALSE EXIT EOF EMPTY ECHO DROP DOM DISEQ DEF CTXT CREATE CONS CONC COMPL CHECK CDR CAR CAN C BVCONST ASSERT,
-which would require some other action.
 

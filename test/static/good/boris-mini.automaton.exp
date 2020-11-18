@@ -120,14 +120,13 @@ inst -> expr DOT . [ DOT ]
 -- On DOT reduce production inst -> expr DOT
 -- On # reduce production debut -> expr DOT
 ** Conflict on DOT
+** End-of-stream conflict on DOT
+**   There is a tension between
+**   (1) reducing production debut -> expr DOT
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 15:
 debut' -> debut . [ # ]
 -- On # accept debut
-
-State 14 has an end-of-stream conflict. There is a tension between
-(1) reducing production debut -> expr DOT
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is DOT,
-which would require some other action.
 

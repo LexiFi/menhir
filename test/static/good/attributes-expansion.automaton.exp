@@ -6,6 +6,11 @@ main' -> . main [ # ]
 -- On C reduce production liste(A) -> 
 -- On B reduce production liste(A) -> 
 -- On # reduce production liste(A) -> 
+** End-of-stream conflict on C B A
+**   There is a tension between
+**   (1) reducing production liste(A) -> 
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 1:
 liste(A) -> A . liste(A) [ C B # ]
@@ -14,12 +19,22 @@ liste(A) -> A . liste(A) [ C B # ]
 -- On C reduce production liste(A) -> 
 -- On B reduce production liste(A) -> 
 -- On # reduce production liste(A) -> 
+** End-of-stream conflict on C B A
+**   There is a tension between
+**   (1) reducing production liste(A) -> 
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 2:
 liste(A) -> A liste(A) . [ C B # ]
 -- On C reduce production liste(A) -> A liste(A)
 -- On B reduce production liste(A) -> A liste(A)
 -- On # reduce production liste(A) -> A liste(A)
+** End-of-stream conflict on C B
+**   There is a tension between
+**   (1) reducing production liste(A) -> A liste(A)
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 3:
 main' -> main . [ # ]
@@ -31,6 +46,11 @@ main -> liste(A) . liste(B) liste(C) [ # ]
 -- On liste(B) shift to state 7
 -- On C reduce production liste(B) -> 
 -- On # reduce production liste(B) -> 
+** End-of-stream conflict on C B
+**   There is a tension between
+**   (1) reducing production liste(B) -> 
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 5:
 liste(B) -> B . liste(B) [ C # ]
@@ -38,23 +58,43 @@ liste(B) -> B . liste(B) [ C # ]
 -- On liste(B) shift to state 6
 -- On C reduce production liste(B) -> 
 -- On # reduce production liste(B) -> 
+** End-of-stream conflict on C B
+**   There is a tension between
+**   (1) reducing production liste(B) -> 
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 6:
 liste(B) -> B liste(B) . [ C # ]
 -- On C reduce production liste(B) -> B liste(B)
 -- On # reduce production liste(B) -> B liste(B)
+** End-of-stream conflict on C
+**   There is a tension between
+**   (1) reducing production liste(B) -> B liste(B)
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 7:
 main -> liste(A) liste(B) . liste(C) [ # ]
 -- On C shift to state 8
 -- On liste(C) shift to state 10
 -- On # reduce production liste(C) -> 
+** End-of-stream conflict on C
+**   There is a tension between
+**   (1) reducing production liste(C) -> 
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 8:
 liste(C) -> C . liste(C) [ # ]
 -- On C shift to state 8
 -- On liste(C) shift to state 9
 -- On # reduce production liste(C) -> 
+** End-of-stream conflict on C
+**   There is a tension between
+**   (1) reducing production liste(C) -> 
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 9:
 liste(C) -> C liste(C) . [ # ]
@@ -63,52 +103,4 @@ liste(C) -> C liste(C) . [ # ]
 State 10:
 main -> liste(A) liste(B) liste(C) . [ # ]
 -- On # reduce production main -> liste(A) liste(B) liste(C)
-
-State 0 has an end-of-stream conflict. There is a tension between
-(1) reducing production liste(A) -> 
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of C B A,
-which would require some other action.
-
-State 1 has an end-of-stream conflict. There is a tension between
-(1) reducing production liste(A) -> 
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of C B A,
-which would require some other action.
-
-State 2 has an end-of-stream conflict. There is a tension between
-(1) reducing production liste(A) -> A liste(A)
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of C B,
-which would require some other action.
-
-State 4 has an end-of-stream conflict. There is a tension between
-(1) reducing production liste(B) -> 
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of C B,
-which would require some other action.
-
-State 5 has an end-of-stream conflict. There is a tension between
-(1) reducing production liste(B) -> 
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of C B,
-which would require some other action.
-
-State 6 has an end-of-stream conflict. There is a tension between
-(1) reducing production liste(B) -> B liste(B)
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is C,
-which would require some other action.
-
-State 7 has an end-of-stream conflict. There is a tension between
-(1) reducing production liste(C) -> 
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is C,
-which would require some other action.
-
-State 8 has an end-of-stream conflict. There is a tension between
-(1) reducing production liste(C) -> 
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is C,
-which would require some other action.
 

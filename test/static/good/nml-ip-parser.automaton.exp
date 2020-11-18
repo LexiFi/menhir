@@ -51,6 +51,11 @@ toplevel_phrase' -> . toplevel_phrase [ # ]
 -- On constant shift to state 415
 -- On basic_seq_expr shift to state 479
 -- On # reduce production toplevel_phrase -> 
+** End-of-stream conflict on WHILE WHERE UIDENT TYPE TRY STRING SHARP SEMISEMI RAISE PREFIXOP PLUS OPEN MODULE MINUS MATCH LVECTOR LPAREN LMATRIX LIDENT LET LBRACKBAR LBRACK LBRACE LAZY INT IMAGINARY IF FUNCTION FUN FOR FLOAT EXCEPTION DOLLAR CHAR CASE BEGIN ASSERT
+**   There is a tension between
+**   (1) reducing production toplevel_phrase -> 
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 1:
 no_value_expr -> WHILE . expr DO seq_expr DONE [ WITH WHILE WHERE UIDENT TYPE TRY TO THEN STRING STAR SHARP SEMISEMI SEMI RPAREN RAISE QUESTION PREFIXOP PLUS OPEN MODULE MINUSGREATER MINUS MATCH LVECTOR LPAREN LMATRIX LIDENT LET LBRACKBAR LBRACK LBRACE LAZY INT INFIXOP5R INFIXOP5L INFIXOP4R INFIXOP4L INFIXOP3R INFIXOP3L INFIXOP2R INFIXOP2L INFIXOP1R INFIXOP1L IN IMAGINARY IF FUNCTION FUN FOR FLOAT EXCEPTION EQ EOF ELSE DOWNTO DONE DOLLAR DO COMMA COLONEQUAL COLONCOLON COLON CHAR CASE BELOW BEGIN BARBAR BAR ASSERT AND AMPERAMPER ABOVE ]
@@ -34755,10 +34760,4 @@ use_file -> use_file_exprs EOF . [ # ]
 State 998:
 use_file' -> use_file . [ # ]
 -- On # accept use_file
-
-State 0 has an end-of-stream conflict. There is a tension between
-(1) reducing production toplevel_phrase -> 
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of WHILE WHERE UIDENT TYPE TRY STRING SHARP SEMISEMI RAISE PREFIXOP PLUS OPEN MODULE MINUS MATCH LVECTOR LPAREN LMATRIX LIDENT LET LBRACKBAR LBRACK LBRACE LAZY INT IMAGINARY IF FUNCTION FUN FOR FLOAT EXCEPTION DOLLAR CHAR CASE BEGIN ASSERT,
-which would require some other action.
 

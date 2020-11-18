@@ -28,6 +28,11 @@ string_list -> STRING . [ STRING MSGSTR MSGID_PLURAL MSGID DOMAIN COMMENT_SPECIA
 -- On COMMENT_SPECIAL reduce production string_list -> STRING
 -- On COMMENT_FILEPOS reduce production string_list -> STRING
 -- On # reduce production string_list -> STRING
+** End-of-stream conflict on STRING MSGSTR MSGID_PLURAL MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS
+**   There is a tension between
+**   (1) reducing production string_list -> STRING
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 3:
 message -> MSGID string_list . MSGSTR string_list [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
@@ -48,6 +53,11 @@ string_list -> string_list STRING . [ STRING MSGSTR MSGID_PLURAL MSGID DOMAIN CO
 -- On COMMENT_SPECIAL reduce production string_list -> string_list STRING
 -- On COMMENT_FILEPOS reduce production string_list -> string_list STRING
 -- On # reduce production string_list -> string_list STRING
+** End-of-stream conflict on STRING MSGSTR MSGID_PLURAL MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS
+**   There is a tension between
+**   (1) reducing production string_list -> string_list STRING
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 5:
 message -> MSGID string_list MSGSTR . string_list [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
@@ -63,6 +73,11 @@ string_list -> string_list . STRING [ STRING MSGID DOMAIN COMMENT_SPECIAL COMMEN
 -- On COMMENT_SPECIAL reduce production message -> MSGID string_list MSGSTR string_list
 -- On COMMENT_FILEPOS reduce production message -> MSGID string_list MSGSTR string_list
 -- On # reduce production message -> MSGID string_list MSGSTR string_list
+** End-of-stream conflict on STRING MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS
+**   There is a tension between
+**   (1) reducing production message -> MSGID string_list MSGSTR string_list
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 7:
 msgid_pluralform -> MSGID_PLURAL . string_list [ MSGSTR ]
@@ -108,6 +123,11 @@ string_list -> string_list . STRING [ STRING MSGSTR MSGID DOMAIN COMMENT_SPECIAL
 -- On COMMENT_SPECIAL reduce production pluralform -> MSGSTR LBRACKET NUMBER RBRACKET string_list
 -- On COMMENT_FILEPOS reduce production pluralform -> MSGSTR LBRACKET NUMBER RBRACKET string_list
 -- On # reduce production pluralform -> MSGSTR LBRACKET NUMBER RBRACKET string_list
+** End-of-stream conflict on STRING MSGSTR MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS
+**   There is a tension between
+**   (1) reducing production pluralform -> MSGSTR LBRACKET NUMBER RBRACKET string_list
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 15:
 message -> MSGID string_list msgid_pluralform pluralform_list . [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
@@ -119,6 +139,11 @@ pluralform_list -> pluralform_list . pluralform [ MSGSTR MSGID DOMAIN COMMENT_SP
 -- On COMMENT_SPECIAL reduce production message -> MSGID string_list msgid_pluralform pluralform_list
 -- On COMMENT_FILEPOS reduce production message -> MSGID string_list msgid_pluralform pluralform_list
 -- On # reduce production message -> MSGID string_list msgid_pluralform pluralform_list
+** End-of-stream conflict on MSGSTR MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS
+**   There is a tension between
+**   (1) reducing production message -> MSGID string_list msgid_pluralform pluralform_list
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 16:
 pluralform_list -> pluralform_list pluralform . [ MSGSTR MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
@@ -128,6 +153,11 @@ pluralform_list -> pluralform_list pluralform . [ MSGSTR MSGID DOMAIN COMMENT_SP
 -- On COMMENT_SPECIAL reduce production pluralform_list -> pluralform_list pluralform
 -- On COMMENT_FILEPOS reduce production pluralform_list -> pluralform_list pluralform
 -- On # reduce production pluralform_list -> pluralform_list pluralform
+** End-of-stream conflict on MSGSTR MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS
+**   There is a tension between
+**   (1) reducing production pluralform_list -> pluralform_list pluralform
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 17:
 pluralform_list -> pluralform . [ MSGSTR MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
@@ -137,6 +167,11 @@ pluralform_list -> pluralform . [ MSGSTR MSGID DOMAIN COMMENT_SPECIAL COMMENT_FI
 -- On COMMENT_SPECIAL reduce production pluralform_list -> pluralform
 -- On COMMENT_FILEPOS reduce production pluralform_list -> pluralform
 -- On # reduce production pluralform_list -> pluralform
+** End-of-stream conflict on MSGSTR MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS
+**   There is a tension between
+**   (1) reducing production pluralform_list -> pluralform
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 18:
 msgfmt -> EOF . [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
@@ -145,6 +180,11 @@ msgfmt -> EOF . [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
 -- On COMMENT_SPECIAL reduce production msgfmt -> EOF
 -- On COMMENT_FILEPOS reduce production msgfmt -> EOF
 -- On # reduce production msgfmt -> EOF
+** End-of-stream conflict on MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS
+**   There is a tension between
+**   (1) reducing production msgfmt -> EOF
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 19:
 domain -> DOMAIN . STRING message_list [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
@@ -167,6 +207,11 @@ domain -> DOMAIN STRING . [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
 -- On COMMENT_FILEPOS reduce production domain -> DOMAIN STRING
 -- On # reduce production domain -> DOMAIN STRING
 ** Conflict on MSGID COMMENT_SPECIAL COMMENT_FILEPOS
+** End-of-stream conflict on MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS
+**   There is a tension between
+**   (1) reducing production domain -> DOMAIN STRING
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 21:
 comment -> COMMENT_SPECIAL . [ MSGID COMMENT_SPECIAL COMMENT_FILEPOS ]
@@ -195,6 +240,11 @@ message_list -> message_list . message [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FI
 -- On COMMENT_FILEPOS reduce production domain -> DOMAIN STRING message_list
 -- On # reduce production domain -> DOMAIN STRING message_list
 ** Conflict on MSGID COMMENT_SPECIAL COMMENT_FILEPOS
+** End-of-stream conflict on MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS
+**   There is a tension between
+**   (1) reducing production domain -> DOMAIN STRING message_list
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 24:
 message_list -> message_list message . [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
@@ -203,6 +253,11 @@ message_list -> message_list message . [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FI
 -- On COMMENT_SPECIAL reduce production message_list -> message_list message
 -- On COMMENT_FILEPOS reduce production message_list -> message_list message
 -- On # reduce production message_list -> message_list message
+** End-of-stream conflict on MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS
+**   There is a tension between
+**   (1) reducing production message_list -> message_list message
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 25:
 comment_list -> comment_list . comment [ MSGID COMMENT_SPECIAL COMMENT_FILEPOS ]
@@ -242,6 +297,11 @@ string_list -> string_list . STRING [ STRING MSGID DOMAIN COMMENT_SPECIAL COMMEN
 -- On COMMENT_SPECIAL reduce production message -> comment_list MSGID string_list MSGSTR string_list
 -- On COMMENT_FILEPOS reduce production message -> comment_list MSGID string_list MSGSTR string_list
 -- On # reduce production message -> comment_list MSGID string_list MSGSTR string_list
+** End-of-stream conflict on STRING MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS
+**   There is a tension between
+**   (1) reducing production message -> comment_list MSGID string_list MSGSTR string_list
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 30:
 message -> comment_list MSGID string_list msgid_pluralform . pluralform_list [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
@@ -259,6 +319,11 @@ pluralform_list -> pluralform_list . pluralform [ MSGSTR MSGID DOMAIN COMMENT_SP
 -- On COMMENT_SPECIAL reduce production message -> comment_list MSGID string_list msgid_pluralform pluralform_list
 -- On COMMENT_FILEPOS reduce production message -> comment_list MSGID string_list msgid_pluralform pluralform_list
 -- On # reduce production message -> comment_list MSGID string_list msgid_pluralform pluralform_list
+** End-of-stream conflict on MSGSTR MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS
+**   There is a tension between
+**   (1) reducing production message -> comment_list MSGID string_list msgid_pluralform pluralform_list
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 32:
 comment_list -> comment_list comment . [ MSGID COMMENT_SPECIAL COMMENT_FILEPOS ]
@@ -279,6 +344,11 @@ message_list -> message . [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
 -- On COMMENT_SPECIAL reduce production message_list -> message
 -- On COMMENT_FILEPOS reduce production message_list -> message
 -- On # reduce production message_list -> message
+** End-of-stream conflict on MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS
+**   There is a tension between
+**   (1) reducing production message_list -> message
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 35:
 msgfmt' -> msgfmt . [ # ]
@@ -294,6 +364,11 @@ msgfmt -> msgfmt . message_list [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS #
 -- On comment_list shift to state 25
 -- On comment shift to state 33
 -- On # accept msgfmt
+** End-of-stream conflict on MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS
+**   There is a tension between
+**   (1) accepting msgfmt
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 36:
 message_list -> message_list . message [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
@@ -310,6 +385,11 @@ msgfmt -> msgfmt message_list . [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS #
 -- On COMMENT_FILEPOS reduce production msgfmt -> msgfmt message_list
 -- On # reduce production msgfmt -> msgfmt message_list
 ** Conflict on MSGID COMMENT_SPECIAL COMMENT_FILEPOS
+** End-of-stream conflict on MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS
+**   There is a tension between
+**   (1) reducing production msgfmt -> msgfmt message_list
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 37:
 msgfmt -> msgfmt domain . [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
@@ -318,6 +398,11 @@ msgfmt -> msgfmt domain . [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
 -- On COMMENT_SPECIAL reduce production msgfmt -> msgfmt domain
 -- On COMMENT_FILEPOS reduce production msgfmt -> msgfmt domain
 -- On # reduce production msgfmt -> msgfmt domain
+** End-of-stream conflict on MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS
+**   There is a tension between
+**   (1) reducing production msgfmt -> msgfmt domain
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 38:
 message_list -> message_list . message [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
@@ -334,6 +419,11 @@ msgfmt -> message_list . [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
 -- On COMMENT_FILEPOS reduce production msgfmt -> message_list
 -- On # reduce production msgfmt -> message_list
 ** Conflict on MSGID COMMENT_SPECIAL COMMENT_FILEPOS
+** End-of-stream conflict on MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS
+**   There is a tension between
+**   (1) reducing production msgfmt -> message_list
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 39:
 msgfmt -> domain . [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
@@ -342,118 +432,9 @@ msgfmt -> domain . [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
 -- On COMMENT_SPECIAL reduce production msgfmt -> domain
 -- On COMMENT_FILEPOS reduce production msgfmt -> domain
 -- On # reduce production msgfmt -> domain
-
-State 2 has an end-of-stream conflict. There is a tension between
-(1) reducing production string_list -> STRING
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of STRING MSGSTR MSGID_PLURAL MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS,
-which would require some other action.
-
-State 4 has an end-of-stream conflict. There is a tension between
-(1) reducing production string_list -> string_list STRING
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of STRING MSGSTR MSGID_PLURAL MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS,
-which would require some other action.
-
-State 6 has an end-of-stream conflict. There is a tension between
-(1) reducing production message -> MSGID string_list MSGSTR string_list
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of STRING MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS,
-which would require some other action.
-
-State 14 has an end-of-stream conflict. There is a tension between
-(1) reducing production pluralform -> MSGSTR LBRACKET NUMBER RBRACKET string_list
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of STRING MSGSTR MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS,
-which would require some other action.
-
-State 15 has an end-of-stream conflict. There is a tension between
-(1) reducing production message -> MSGID string_list msgid_pluralform pluralform_list
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of MSGSTR MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS,
-which would require some other action.
-
-State 16 has an end-of-stream conflict. There is a tension between
-(1) reducing production pluralform_list -> pluralform_list pluralform
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of MSGSTR MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS,
-which would require some other action.
-
-State 17 has an end-of-stream conflict. There is a tension between
-(1) reducing production pluralform_list -> pluralform
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of MSGSTR MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS,
-which would require some other action.
-
-State 18 has an end-of-stream conflict. There is a tension between
-(1) reducing production msgfmt -> EOF
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS,
-which would require some other action.
-
-State 20 has an end-of-stream conflict. There is a tension between
-(1) reducing production domain -> DOMAIN STRING
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS,
-which would require some other action.
-
-State 23 has an end-of-stream conflict. There is a tension between
-(1) reducing production domain -> DOMAIN STRING message_list
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS,
-which would require some other action.
-
-State 24 has an end-of-stream conflict. There is a tension between
-(1) reducing production message_list -> message_list message
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS,
-which would require some other action.
-
-State 29 has an end-of-stream conflict. There is a tension between
-(1) reducing production message -> comment_list MSGID string_list MSGSTR string_list
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of STRING MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS,
-which would require some other action.
-
-State 31 has an end-of-stream conflict. There is a tension between
-(1) reducing production message -> comment_list MSGID string_list msgid_pluralform pluralform_list
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of MSGSTR MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS,
-which would require some other action.
-
-State 34 has an end-of-stream conflict. There is a tension between
-(1) reducing production message_list -> message
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS,
-which would require some other action.
-
-State 35 has an end-of-stream conflict. There is a tension between
-(1) accepting msgfmt
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS,
-which would require some other action.
-
-State 36 has an end-of-stream conflict. There is a tension between
-(1) reducing production msgfmt -> msgfmt message_list
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS,
-which would require some other action.
-
-State 37 has an end-of-stream conflict. There is a tension between
-(1) reducing production msgfmt -> msgfmt domain
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS,
-which would require some other action.
-
-State 38 has an end-of-stream conflict. There is a tension between
-(1) reducing production msgfmt -> message_list
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS,
-which would require some other action.
-
-State 39 has an end-of-stream conflict. There is a tension between
-(1) reducing production msgfmt -> domain
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS,
-which would require some other action.
+** End-of-stream conflict on MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS
+**   There is a tension between
+**   (1) reducing production msgfmt -> domain
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 

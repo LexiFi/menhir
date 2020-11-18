@@ -42,6 +42,11 @@ instr_option_seq' -> . instr_option_seq [ # ]
 -- On instr shift to state 272
 -- On SEMI reduce production instr_option -> 
 -- On # reduce production instr_option -> 
+** End-of-stream conflict on SXTW STXR STRH STRB STR STP STNP STLXR STLR SEMI OP NAME MOV LDXR LDRH LDRB LDR LDP LDNP LDAXR LDAR LDAPR ISB DSB DMB CSNEG CSINV CSINC CSEL CODEVAR CMP CBZ CBNZ BNE BEQ B
+**   There is a tension between
+**   (1) reducing production instr_option -> 
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 1:
 instr -> SXTW . xreg COMMA wreg [ SEMI PIPE # ]
@@ -56,6 +61,11 @@ xreg -> SYMB_XREG . [ SEMI RBRK PIPE COMMA # ]
 -- On PIPE reduce production xreg -> SYMB_XREG
 -- On COMMA reduce production xreg -> SYMB_XREG
 -- On # reduce production xreg -> SYMB_XREG
+** End-of-stream conflict on SEMI RBRK PIPE COMMA
+**   There is a tension between
+**   (1) reducing production xreg -> SYMB_XREG
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 3:
 xreg -> ARCH_XREG . [ SEMI RBRK PIPE COMMA # ]
@@ -64,6 +74,11 @@ xreg -> ARCH_XREG . [ SEMI RBRK PIPE COMMA # ]
 -- On PIPE reduce production xreg -> ARCH_XREG
 -- On COMMA reduce production xreg -> ARCH_XREG
 -- On # reduce production xreg -> ARCH_XREG
+** End-of-stream conflict on SEMI RBRK PIPE COMMA
+**   There is a tension between
+**   (1) reducing production xreg -> ARCH_XREG
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 4:
 instr -> SXTW xreg . COMMA wreg [ SEMI PIPE # ]
@@ -81,6 +96,11 @@ wreg -> SYMB_WREG . [ SEMI PIPE COMMA # ]
 -- On PIPE reduce production wreg -> SYMB_WREG
 -- On COMMA reduce production wreg -> SYMB_WREG
 -- On # reduce production wreg -> SYMB_WREG
+** End-of-stream conflict on SEMI PIPE COMMA
+**   There is a tension between
+**   (1) reducing production wreg -> SYMB_WREG
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 7:
 wreg -> ARCH_WREG . [ SEMI PIPE COMMA # ]
@@ -88,12 +108,22 @@ wreg -> ARCH_WREG . [ SEMI PIPE COMMA # ]
 -- On PIPE reduce production wreg -> ARCH_WREG
 -- On COMMA reduce production wreg -> ARCH_WREG
 -- On # reduce production wreg -> ARCH_WREG
+** End-of-stream conflict on SEMI PIPE COMMA
+**   There is a tension between
+**   (1) reducing production wreg -> ARCH_WREG
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 8:
 instr -> SXTW xreg COMMA wreg . [ SEMI PIPE # ]
 -- On SEMI reduce production instr -> SXTW xreg COMMA wreg
 -- On PIPE reduce production instr -> SXTW xreg COMMA wreg
 -- On # reduce production instr -> SXTW xreg COMMA wreg
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr -> SXTW xreg COMMA wreg
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 9:
 instr -> STXR . wreg COMMA reg COMMA LBRK xreg RBRK [ SEMI PIPE # ]
@@ -152,6 +182,11 @@ instr -> STXR wreg COMMA reg COMMA LBRK xreg RBRK . [ SEMI PIPE # ]
 -- On SEMI reduce production instr -> STXR wreg COMMA reg COMMA LBRK xreg RBRK
 -- On PIPE reduce production instr -> STXR wreg COMMA reg COMMA LBRK xreg RBRK
 -- On # reduce production instr -> STXR wreg COMMA reg COMMA LBRK xreg RBRK
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr -> STXR wreg COMMA reg COMMA LBRK xreg RBRK
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 21:
 instr -> STRH . wreg COMMA LBRK xreg kr0 RBRK [ SEMI PIPE # ]
@@ -198,6 +233,11 @@ k -> NUM . [ SEMI RBRK PIPE # ]
 -- On RBRK reduce production k -> NUM
 -- On PIPE reduce production k -> NUM
 -- On # reduce production k -> NUM
+** End-of-stream conflict on SEMI RBRK PIPE
+**   There is a tension between
+**   (1) reducing production k -> NUM
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 28:
 k -> META . [ SEMI RBRK PIPE # ]
@@ -205,6 +245,11 @@ k -> META . [ SEMI RBRK PIPE # ]
 -- On RBRK reduce production k -> META
 -- On PIPE reduce production k -> META
 -- On # reduce production k -> META
+** End-of-stream conflict on SEMI RBRK PIPE
+**   There is a tension between
+**   (1) reducing production k -> META
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 29:
 kr -> xreg . [ SEMI RBRK PIPE # ]
@@ -212,6 +257,11 @@ kr -> xreg . [ SEMI RBRK PIPE # ]
 -- On RBRK reduce production kr -> xreg
 -- On PIPE reduce production kr -> xreg
 -- On # reduce production kr -> xreg
+** End-of-stream conflict on SEMI RBRK PIPE
+**   There is a tension between
+**   (1) reducing production kr -> xreg
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 30:
 kr -> wreg . COMMA SXTW [ SEMI RBRK PIPE # ]
@@ -227,6 +277,11 @@ kr -> wreg COMMA SXTW . [ SEMI RBRK PIPE # ]
 -- On RBRK reduce production kr -> wreg COMMA SXTW
 -- On PIPE reduce production kr -> wreg COMMA SXTW
 -- On # reduce production kr -> wreg COMMA SXTW
+** End-of-stream conflict on SEMI RBRK PIPE
+**   There is a tension between
+**   (1) reducing production kr -> wreg COMMA SXTW
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 33:
 kr0 -> COMMA kr . [ RBRK ]
@@ -238,6 +293,11 @@ kr -> k . [ SEMI RBRK PIPE # ]
 -- On RBRK reduce production kr -> k
 -- On PIPE reduce production kr -> k
 -- On # reduce production kr -> k
+** End-of-stream conflict on SEMI RBRK PIPE
+**   There is a tension between
+**   (1) reducing production kr -> k
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 35:
 instr -> STRH wreg COMMA LBRK xreg kr0 . RBRK [ SEMI PIPE # ]
@@ -248,6 +308,11 @@ instr -> STRH wreg COMMA LBRK xreg kr0 RBRK . [ SEMI PIPE # ]
 -- On SEMI reduce production instr -> STRH wreg COMMA LBRK xreg kr0 RBRK
 -- On PIPE reduce production instr -> STRH wreg COMMA LBRK xreg kr0 RBRK
 -- On # reduce production instr -> STRH wreg COMMA LBRK xreg kr0 RBRK
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr -> STRH wreg COMMA LBRK xreg kr0 RBRK
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 37:
 instr -> STRB . wreg COMMA LBRK xreg kr0 RBRK [ SEMI PIPE # ]
@@ -284,6 +349,11 @@ instr -> STRB wreg COMMA LBRK xreg kr0 RBRK . [ SEMI PIPE # ]
 -- On SEMI reduce production instr -> STRB wreg COMMA LBRK xreg kr0 RBRK
 -- On PIPE reduce production instr -> STRB wreg COMMA LBRK xreg kr0 RBRK
 -- On # reduce production instr -> STRB wreg COMMA LBRK xreg kr0 RBRK
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr -> STRB wreg COMMA LBRK xreg kr0 RBRK
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 44:
 instr -> STR . reg COMMA LBRK xreg kr0 RBRK [ SEMI PIPE # ]
@@ -322,6 +392,11 @@ instr -> STR reg COMMA LBRK xreg kr0 RBRK . [ SEMI PIPE # ]
 -- On SEMI reduce production instr -> STR reg COMMA LBRK xreg kr0 RBRK
 -- On PIPE reduce production instr -> STR reg COMMA LBRK xreg kr0 RBRK
 -- On # reduce production instr -> STR reg COMMA LBRK xreg kr0 RBRK
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr -> STR reg COMMA LBRK xreg kr0 RBRK
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 51:
 stp_instr -> STP . [ SYMB_XREG SYMB_WREG ARCH_XREG ARCH_WREG ]
@@ -378,6 +453,11 @@ instr -> STLXR wreg COMMA reg COMMA LBRK xreg RBRK . [ SEMI PIPE # ]
 -- On SEMI reduce production instr -> STLXR wreg COMMA reg COMMA LBRK xreg RBRK
 -- On PIPE reduce production instr -> STLXR wreg COMMA reg COMMA LBRK xreg RBRK
 -- On # reduce production instr -> STLXR wreg COMMA reg COMMA LBRK xreg RBRK
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr -> STLXR wreg COMMA reg COMMA LBRK xreg RBRK
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 61:
 instr -> STLR . reg COMMA LBRK xreg RBRK [ SEMI PIPE # ]
@@ -410,6 +490,11 @@ instr -> STLR reg COMMA LBRK xreg RBRK . [ SEMI PIPE # ]
 -- On SEMI reduce production instr -> STLR reg COMMA LBRK xreg RBRK
 -- On PIPE reduce production instr -> STLR reg COMMA LBRK xreg RBRK
 -- On # reduce production instr -> STLR reg COMMA LBRK xreg RBRK
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr -> STLR reg COMMA LBRK xreg RBRK
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 67:
 instr -> OP . xreg COMMA xreg COMMA kr [ SEMI PIPE # ]
@@ -453,6 +538,11 @@ instr -> OP xreg COMMA xreg COMMA kr . [ SEMI PIPE # ]
 -- On SEMI reduce production instr -> OP xreg COMMA xreg COMMA kr
 -- On PIPE reduce production instr -> OP xreg COMMA xreg COMMA kr
 -- On # reduce production instr -> OP xreg COMMA xreg COMMA kr
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr -> OP xreg COMMA xreg COMMA kr
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 73:
 instr -> OP wreg . COMMA wreg COMMA kwr [ SEMI PIPE # ]
@@ -483,18 +573,33 @@ kwr -> wreg . [ SEMI PIPE # ]
 -- On SEMI reduce production kwr -> wreg
 -- On PIPE reduce production kwr -> wreg
 -- On # reduce production kwr -> wreg
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production kwr -> wreg
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 78:
 instr -> OP wreg COMMA wreg COMMA kwr . [ SEMI PIPE # ]
 -- On SEMI reduce production instr -> OP wreg COMMA wreg COMMA kwr
 -- On PIPE reduce production instr -> OP wreg COMMA wreg COMMA kwr
 -- On # reduce production instr -> OP wreg COMMA wreg COMMA kwr
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr -> OP wreg COMMA wreg COMMA kwr
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 79:
 kwr -> k . [ SEMI PIPE # ]
 -- On SEMI reduce production kwr -> k
 -- On PIPE reduce production kwr -> k
 -- On # reduce production kwr -> k
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production kwr -> k
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 80:
 instr_option -> NAME . COLON instr_option [ SEMI PIPE # ]
@@ -544,6 +649,11 @@ instr_option -> NAME COLON . instr_option [ SEMI PIPE # ]
 -- On SEMI reduce production instr_option -> 
 -- On PIPE reduce production instr_option -> 
 -- On # reduce production instr_option -> 
+** End-of-stream conflict on SXTW STXR STRH STRB STR STP STNP STLXR STLR SEMI PIPE OP NAME MOV LDXR LDRH LDRB LDR LDP LDNP LDAXR LDAR LDAPR ISB DSB DMB CSNEG CSINV CSINC CSEL CODEVAR CMP CBZ CBNZ BNE BEQ B
+**   There is a tension between
+**   (1) reducing production instr_option -> 
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 82:
 instr -> MOV . xreg COMMA kr [ SEMI PIPE # ]
@@ -577,6 +687,11 @@ instr -> MOV xreg COMMA kr . [ SEMI PIPE # ]
 -- On SEMI reduce production instr -> MOV xreg COMMA kr
 -- On PIPE reduce production instr -> MOV xreg COMMA kr
 -- On # reduce production instr -> MOV xreg COMMA kr
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr -> MOV xreg COMMA kr
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 86:
 instr -> MOV wreg . COMMA kwr [ SEMI PIPE # ]
@@ -597,6 +712,11 @@ instr -> MOV wreg COMMA kwr . [ SEMI PIPE # ]
 -- On SEMI reduce production instr -> MOV wreg COMMA kwr
 -- On PIPE reduce production instr -> MOV wreg COMMA kwr
 -- On # reduce production instr -> MOV wreg COMMA kwr
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr -> MOV wreg COMMA kwr
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 89:
 instr -> LDXR . reg COMMA LBRK xreg RBRK [ SEMI PIPE # ]
@@ -629,6 +749,11 @@ instr -> LDXR reg COMMA LBRK xreg RBRK . [ SEMI PIPE # ]
 -- On SEMI reduce production instr -> LDXR reg COMMA LBRK xreg RBRK
 -- On PIPE reduce production instr -> LDXR reg COMMA LBRK xreg RBRK
 -- On # reduce production instr -> LDXR reg COMMA LBRK xreg RBRK
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr -> LDXR reg COMMA LBRK xreg RBRK
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 95:
 instr -> LDRH . wreg COMMA LBRK xreg kr0 RBRK [ SEMI PIPE # ]
@@ -665,6 +790,11 @@ instr -> LDRH wreg COMMA LBRK xreg kr0 RBRK . [ SEMI PIPE # ]
 -- On SEMI reduce production instr -> LDRH wreg COMMA LBRK xreg kr0 RBRK
 -- On PIPE reduce production instr -> LDRH wreg COMMA LBRK xreg kr0 RBRK
 -- On # reduce production instr -> LDRH wreg COMMA LBRK xreg kr0 RBRK
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr -> LDRH wreg COMMA LBRK xreg kr0 RBRK
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 102:
 instr -> LDRB . wreg COMMA LBRK xreg kr0 RBRK [ SEMI PIPE # ]
@@ -701,6 +831,11 @@ instr -> LDRB wreg COMMA LBRK xreg kr0 RBRK . [ SEMI PIPE # ]
 -- On SEMI reduce production instr -> LDRB wreg COMMA LBRK xreg kr0 RBRK
 -- On PIPE reduce production instr -> LDRB wreg COMMA LBRK xreg kr0 RBRK
 -- On # reduce production instr -> LDRB wreg COMMA LBRK xreg kr0 RBRK
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr -> LDRB wreg COMMA LBRK xreg kr0 RBRK
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 109:
 instr -> LDR . reg COMMA LBRK xreg kr0 RBRK [ SEMI PIPE # ]
@@ -739,6 +874,11 @@ instr -> LDR reg COMMA LBRK xreg kr0 RBRK . [ SEMI PIPE # ]
 -- On SEMI reduce production instr -> LDR reg COMMA LBRK xreg kr0 RBRK
 -- On PIPE reduce production instr -> LDR reg COMMA LBRK xreg kr0 RBRK
 -- On # reduce production instr -> LDR reg COMMA LBRK xreg kr0 RBRK
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr -> LDR reg COMMA LBRK xreg kr0 RBRK
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 116:
 ldp_instr -> LDP . [ SYMB_XREG SYMB_WREG ARCH_XREG ARCH_WREG ]
@@ -785,6 +925,11 @@ instr -> LDAXR reg COMMA LBRK xreg RBRK . [ SEMI PIPE # ]
 -- On SEMI reduce production instr -> LDAXR reg COMMA LBRK xreg RBRK
 -- On PIPE reduce production instr -> LDAXR reg COMMA LBRK xreg RBRK
 -- On # reduce production instr -> LDAXR reg COMMA LBRK xreg RBRK
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr -> LDAXR reg COMMA LBRK xreg RBRK
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 124:
 instr -> LDAR . reg COMMA LBRK xreg RBRK [ SEMI PIPE # ]
@@ -817,6 +962,11 @@ instr -> LDAR reg COMMA LBRK xreg RBRK . [ SEMI PIPE # ]
 -- On SEMI reduce production instr -> LDAR reg COMMA LBRK xreg RBRK
 -- On PIPE reduce production instr -> LDAR reg COMMA LBRK xreg RBRK
 -- On # reduce production instr -> LDAR reg COMMA LBRK xreg RBRK
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr -> LDAR reg COMMA LBRK xreg RBRK
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 130:
 instr -> LDAPR . reg COMMA LBRK xreg RBRK [ SEMI PIPE # ]
@@ -849,12 +999,22 @@ instr -> LDAPR reg COMMA LBRK xreg RBRK . [ SEMI PIPE # ]
 -- On SEMI reduce production instr -> LDAPR reg COMMA LBRK xreg RBRK
 -- On PIPE reduce production instr -> LDAPR reg COMMA LBRK xreg RBRK
 -- On # reduce production instr -> LDAPR reg COMMA LBRK xreg RBRK
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr -> LDAPR reg COMMA LBRK xreg RBRK
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 136:
 instr -> ISB . [ SEMI PIPE # ]
 -- On SEMI reduce production instr -> ISB
 -- On PIPE reduce production instr -> ISB
 -- On # reduce production instr -> ISB
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr -> ISB
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 137:
 instr -> DSB . fenceopt [ SEMI PIPE # ]
@@ -877,78 +1037,143 @@ fenceopt -> SY . [ SEMI PIPE # ]
 -- On SEMI reduce production fenceopt -> SY
 -- On PIPE reduce production fenceopt -> SY
 -- On # reduce production fenceopt -> SY
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production fenceopt -> SY
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 139:
 fenceopt -> ST . [ SEMI PIPE # ]
 -- On SEMI reduce production fenceopt -> ST
 -- On PIPE reduce production fenceopt -> ST
 -- On # reduce production fenceopt -> ST
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production fenceopt -> ST
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 140:
 fenceopt -> OSHST . [ SEMI PIPE # ]
 -- On SEMI reduce production fenceopt -> OSHST
 -- On PIPE reduce production fenceopt -> OSHST
 -- On # reduce production fenceopt -> OSHST
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production fenceopt -> OSHST
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 141:
 fenceopt -> OSHLD . [ SEMI PIPE # ]
 -- On SEMI reduce production fenceopt -> OSHLD
 -- On PIPE reduce production fenceopt -> OSHLD
 -- On # reduce production fenceopt -> OSHLD
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production fenceopt -> OSHLD
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 142:
 fenceopt -> OSH . [ SEMI PIPE # ]
 -- On SEMI reduce production fenceopt -> OSH
 -- On PIPE reduce production fenceopt -> OSH
 -- On # reduce production fenceopt -> OSH
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production fenceopt -> OSH
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 143:
 fenceopt -> NSHST . [ SEMI PIPE # ]
 -- On SEMI reduce production fenceopt -> NSHST
 -- On PIPE reduce production fenceopt -> NSHST
 -- On # reduce production fenceopt -> NSHST
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production fenceopt -> NSHST
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 144:
 fenceopt -> NSHLD . [ SEMI PIPE # ]
 -- On SEMI reduce production fenceopt -> NSHLD
 -- On PIPE reduce production fenceopt -> NSHLD
 -- On # reduce production fenceopt -> NSHLD
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production fenceopt -> NSHLD
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 145:
 fenceopt -> NSH . [ SEMI PIPE # ]
 -- On SEMI reduce production fenceopt -> NSH
 -- On PIPE reduce production fenceopt -> NSH
 -- On # reduce production fenceopt -> NSH
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production fenceopt -> NSH
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 146:
 fenceopt -> LD . [ SEMI PIPE # ]
 -- On SEMI reduce production fenceopt -> LD
 -- On PIPE reduce production fenceopt -> LD
 -- On # reduce production fenceopt -> LD
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production fenceopt -> LD
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 147:
 fenceopt -> ISHST . [ SEMI PIPE # ]
 -- On SEMI reduce production fenceopt -> ISHST
 -- On PIPE reduce production fenceopt -> ISHST
 -- On # reduce production fenceopt -> ISHST
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production fenceopt -> ISHST
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 148:
 fenceopt -> ISHLD . [ SEMI PIPE # ]
 -- On SEMI reduce production fenceopt -> ISHLD
 -- On PIPE reduce production fenceopt -> ISHLD
 -- On # reduce production fenceopt -> ISHLD
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production fenceopt -> ISHLD
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 149:
 fenceopt -> ISH . [ SEMI PIPE # ]
 -- On SEMI reduce production fenceopt -> ISH
 -- On PIPE reduce production fenceopt -> ISH
 -- On # reduce production fenceopt -> ISH
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production fenceopt -> ISH
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 150:
 instr -> DSB fenceopt . [ SEMI PIPE # ]
 -- On SEMI reduce production instr -> DSB fenceopt
 -- On PIPE reduce production instr -> DSB fenceopt
 -- On # reduce production instr -> DSB fenceopt
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr -> DSB fenceopt
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 151:
 instr -> DMB . fenceopt [ SEMI PIPE # ]
@@ -971,6 +1196,11 @@ instr -> DMB fenceopt . [ SEMI PIPE # ]
 -- On SEMI reduce production instr -> DMB fenceopt
 -- On PIPE reduce production instr -> DMB fenceopt
 -- On # reduce production instr -> DMB fenceopt
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr -> DMB fenceopt
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 153:
 instr -> CSNEG . xreg COMMA xreg COMMA xreg COMMA cond [ SEMI PIPE # ]
@@ -1017,18 +1247,33 @@ cond -> NE . [ SEMI PIPE # ]
 -- On SEMI reduce production cond -> NE
 -- On PIPE reduce production cond -> NE
 -- On # reduce production cond -> NE
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production cond -> NE
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 161:
 cond -> EQ . [ SEMI PIPE # ]
 -- On SEMI reduce production cond -> EQ
 -- On PIPE reduce production cond -> EQ
 -- On # reduce production cond -> EQ
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production cond -> EQ
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 162:
 instr -> CSNEG xreg COMMA xreg COMMA xreg COMMA cond . [ SEMI PIPE # ]
 -- On SEMI reduce production instr -> CSNEG xreg COMMA xreg COMMA xreg COMMA cond
 -- On PIPE reduce production instr -> CSNEG xreg COMMA xreg COMMA xreg COMMA cond
 -- On # reduce production instr -> CSNEG xreg COMMA xreg COMMA xreg COMMA cond
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr -> CSNEG xreg COMMA xreg COMMA xreg COMMA cond
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 163:
 instr -> CSNEG wreg . COMMA wreg COMMA wreg COMMA cond [ SEMI PIPE # ]
@@ -1065,6 +1310,11 @@ instr -> CSNEG wreg COMMA wreg COMMA wreg COMMA cond . [ SEMI PIPE # ]
 -- On SEMI reduce production instr -> CSNEG wreg COMMA wreg COMMA wreg COMMA cond
 -- On PIPE reduce production instr -> CSNEG wreg COMMA wreg COMMA wreg COMMA cond
 -- On # reduce production instr -> CSNEG wreg COMMA wreg COMMA wreg COMMA cond
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr -> CSNEG wreg COMMA wreg COMMA wreg COMMA cond
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 170:
 instr -> CSINV . xreg COMMA xreg COMMA xreg COMMA cond [ SEMI PIPE # ]
@@ -1111,6 +1361,11 @@ instr -> CSINV xreg COMMA xreg COMMA xreg COMMA cond . [ SEMI PIPE # ]
 -- On SEMI reduce production instr -> CSINV xreg COMMA xreg COMMA xreg COMMA cond
 -- On PIPE reduce production instr -> CSINV xreg COMMA xreg COMMA xreg COMMA cond
 -- On # reduce production instr -> CSINV xreg COMMA xreg COMMA xreg COMMA cond
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr -> CSINV xreg COMMA xreg COMMA xreg COMMA cond
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 178:
 instr -> CSINV wreg . COMMA wreg COMMA wreg COMMA cond [ SEMI PIPE # ]
@@ -1147,6 +1402,11 @@ instr -> CSINV wreg COMMA wreg COMMA wreg COMMA cond . [ SEMI PIPE # ]
 -- On SEMI reduce production instr -> CSINV wreg COMMA wreg COMMA wreg COMMA cond
 -- On PIPE reduce production instr -> CSINV wreg COMMA wreg COMMA wreg COMMA cond
 -- On # reduce production instr -> CSINV wreg COMMA wreg COMMA wreg COMMA cond
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr -> CSINV wreg COMMA wreg COMMA wreg COMMA cond
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 185:
 instr -> CSINC . xreg COMMA xreg COMMA xreg COMMA cond [ SEMI PIPE # ]
@@ -1193,6 +1453,11 @@ instr -> CSINC xreg COMMA xreg COMMA xreg COMMA cond . [ SEMI PIPE # ]
 -- On SEMI reduce production instr -> CSINC xreg COMMA xreg COMMA xreg COMMA cond
 -- On PIPE reduce production instr -> CSINC xreg COMMA xreg COMMA xreg COMMA cond
 -- On # reduce production instr -> CSINC xreg COMMA xreg COMMA xreg COMMA cond
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr -> CSINC xreg COMMA xreg COMMA xreg COMMA cond
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 193:
 instr -> CSINC wreg . COMMA wreg COMMA wreg COMMA cond [ SEMI PIPE # ]
@@ -1229,6 +1494,11 @@ instr -> CSINC wreg COMMA wreg COMMA wreg COMMA cond . [ SEMI PIPE # ]
 -- On SEMI reduce production instr -> CSINC wreg COMMA wreg COMMA wreg COMMA cond
 -- On PIPE reduce production instr -> CSINC wreg COMMA wreg COMMA wreg COMMA cond
 -- On # reduce production instr -> CSINC wreg COMMA wreg COMMA wreg COMMA cond
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr -> CSINC wreg COMMA wreg COMMA wreg COMMA cond
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 200:
 instr -> CSEL . xreg COMMA xreg COMMA xreg COMMA cond [ SEMI PIPE # ]
@@ -1275,6 +1545,11 @@ instr -> CSEL xreg COMMA xreg COMMA xreg COMMA cond . [ SEMI PIPE # ]
 -- On SEMI reduce production instr -> CSEL xreg COMMA xreg COMMA xreg COMMA cond
 -- On PIPE reduce production instr -> CSEL xreg COMMA xreg COMMA xreg COMMA cond
 -- On # reduce production instr -> CSEL xreg COMMA xreg COMMA xreg COMMA cond
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr -> CSEL xreg COMMA xreg COMMA xreg COMMA cond
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 208:
 instr -> CSEL wreg . COMMA wreg COMMA wreg COMMA cond [ SEMI PIPE # ]
@@ -1311,12 +1586,22 @@ instr -> CSEL wreg COMMA wreg COMMA wreg COMMA cond . [ SEMI PIPE # ]
 -- On SEMI reduce production instr -> CSEL wreg COMMA wreg COMMA wreg COMMA cond
 -- On PIPE reduce production instr -> CSEL wreg COMMA wreg COMMA wreg COMMA cond
 -- On # reduce production instr -> CSEL wreg COMMA wreg COMMA wreg COMMA cond
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr -> CSEL wreg COMMA wreg COMMA wreg COMMA cond
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 215:
 instr_option -> CODEVAR . [ SEMI PIPE # ]
 -- On SEMI reduce production instr_option -> CODEVAR
 -- On PIPE reduce production instr_option -> CODEVAR
 -- On # reduce production instr_option -> CODEVAR
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr_option -> CODEVAR
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 216:
 instr -> CMP . wreg COMMA kwr [ SEMI PIPE # ]
@@ -1350,6 +1635,11 @@ instr -> CMP xreg COMMA kr . [ SEMI PIPE # ]
 -- On SEMI reduce production instr -> CMP xreg COMMA kr
 -- On PIPE reduce production instr -> CMP xreg COMMA kr
 -- On # reduce production instr -> CMP xreg COMMA kr
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr -> CMP xreg COMMA kr
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 220:
 instr -> CMP wreg . COMMA kwr [ SEMI PIPE # ]
@@ -1370,6 +1660,11 @@ instr -> CMP wreg COMMA kwr . [ SEMI PIPE # ]
 -- On SEMI reduce production instr -> CMP wreg COMMA kwr
 -- On PIPE reduce production instr -> CMP wreg COMMA kwr
 -- On # reduce production instr -> CMP wreg COMMA kwr
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr -> CMP wreg COMMA kwr
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 223:
 instr -> CBZ . reg COMMA NAME [ SEMI PIPE # ]
@@ -1392,6 +1687,11 @@ instr -> CBZ reg COMMA NAME . [ SEMI PIPE # ]
 -- On SEMI reduce production instr -> CBZ reg COMMA NAME
 -- On PIPE reduce production instr -> CBZ reg COMMA NAME
 -- On # reduce production instr -> CBZ reg COMMA NAME
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr -> CBZ reg COMMA NAME
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 227:
 instr -> CBNZ . reg COMMA NAME [ SEMI PIPE # ]
@@ -1414,6 +1714,11 @@ instr -> CBNZ reg COMMA NAME . [ SEMI PIPE # ]
 -- On SEMI reduce production instr -> CBNZ reg COMMA NAME
 -- On PIPE reduce production instr -> CBNZ reg COMMA NAME
 -- On # reduce production instr -> CBNZ reg COMMA NAME
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr -> CBNZ reg COMMA NAME
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 231:
 instr -> BNE . NAME [ SEMI PIPE # ]
@@ -1424,6 +1729,11 @@ instr -> BNE NAME . [ SEMI PIPE # ]
 -- On SEMI reduce production instr -> BNE NAME
 -- On PIPE reduce production instr -> BNE NAME
 -- On # reduce production instr -> BNE NAME
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr -> BNE NAME
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 233:
 instr -> BEQ . NAME [ SEMI PIPE # ]
@@ -1434,6 +1744,11 @@ instr -> BEQ NAME . [ SEMI PIPE # ]
 -- On SEMI reduce production instr -> BEQ NAME
 -- On PIPE reduce production instr -> BEQ NAME
 -- On # reduce production instr -> BEQ NAME
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr -> BEQ NAME
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 235:
 instr -> B . NAME [ SEMI PIPE # ]
@@ -1444,6 +1759,11 @@ instr -> B NAME . [ SEMI PIPE # ]
 -- On SEMI reduce production instr -> B NAME
 -- On PIPE reduce production instr -> B NAME
 -- On # reduce production instr -> B NAME
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr -> B NAME
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 237:
 instr -> stp_instr . wreg COMMA wreg COMMA LBRK xreg kr0 RBRK [ SEMI PIPE # ]
@@ -1494,6 +1814,11 @@ instr -> stp_instr xreg COMMA xreg COMMA LBRK xreg kr0 RBRK . [ SEMI PIPE # ]
 -- On SEMI reduce production instr -> stp_instr xreg COMMA xreg COMMA LBRK xreg kr0 RBRK
 -- On PIPE reduce production instr -> stp_instr xreg COMMA xreg COMMA LBRK xreg kr0 RBRK
 -- On # reduce production instr -> stp_instr xreg COMMA xreg COMMA LBRK xreg kr0 RBRK
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr -> stp_instr xreg COMMA xreg COMMA LBRK xreg kr0 RBRK
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 246:
 instr -> stp_instr wreg . COMMA wreg COMMA LBRK xreg kr0 RBRK [ SEMI PIPE # ]
@@ -1534,6 +1859,11 @@ instr -> stp_instr wreg COMMA wreg COMMA LBRK xreg kr0 RBRK . [ SEMI PIPE # ]
 -- On SEMI reduce production instr -> stp_instr wreg COMMA wreg COMMA LBRK xreg kr0 RBRK
 -- On PIPE reduce production instr -> stp_instr wreg COMMA wreg COMMA LBRK xreg kr0 RBRK
 -- On # reduce production instr -> stp_instr wreg COMMA wreg COMMA LBRK xreg kr0 RBRK
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr -> stp_instr wreg COMMA wreg COMMA LBRK xreg kr0 RBRK
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 254:
 instr -> ldp_instr . wreg COMMA wreg COMMA LBRK xreg kr0 RBRK [ SEMI PIPE # ]
@@ -1584,6 +1914,11 @@ instr -> ldp_instr xreg COMMA xreg COMMA LBRK xreg kr0 RBRK . [ SEMI PIPE # ]
 -- On SEMI reduce production instr -> ldp_instr xreg COMMA xreg COMMA LBRK xreg kr0 RBRK
 -- On PIPE reduce production instr -> ldp_instr xreg COMMA xreg COMMA LBRK xreg kr0 RBRK
 -- On # reduce production instr -> ldp_instr xreg COMMA xreg COMMA LBRK xreg kr0 RBRK
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr -> ldp_instr xreg COMMA xreg COMMA LBRK xreg kr0 RBRK
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 263:
 instr -> ldp_instr wreg . COMMA wreg COMMA LBRK xreg kr0 RBRK [ SEMI PIPE # ]
@@ -1624,18 +1959,33 @@ instr -> ldp_instr wreg COMMA wreg COMMA LBRK xreg kr0 RBRK . [ SEMI PIPE # ]
 -- On SEMI reduce production instr -> ldp_instr wreg COMMA wreg COMMA LBRK xreg kr0 RBRK
 -- On PIPE reduce production instr -> ldp_instr wreg COMMA wreg COMMA LBRK xreg kr0 RBRK
 -- On # reduce production instr -> ldp_instr wreg COMMA wreg COMMA LBRK xreg kr0 RBRK
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr -> ldp_instr wreg COMMA wreg COMMA LBRK xreg kr0 RBRK
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 271:
 instr_option -> NAME COLON instr_option . [ SEMI PIPE # ]
 -- On SEMI reduce production instr_option -> NAME COLON instr_option
 -- On PIPE reduce production instr_option -> NAME COLON instr_option
 -- On # reduce production instr_option -> NAME COLON instr_option
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr_option -> NAME COLON instr_option
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 272:
 instr_option -> instr . [ SEMI PIPE # ]
 -- On SEMI reduce production instr_option -> instr
 -- On PIPE reduce production instr_option -> instr
 -- On # reduce production instr_option -> instr
+** End-of-stream conflict on SEMI PIPE
+**   There is a tension between
+**   (1) reducing production instr_option -> instr
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 273:
 instr_option_seq' -> instr_option_seq . [ # ]
@@ -1646,6 +1996,11 @@ instr_option_seq -> instr_option . [ # ]
 instr_option_seq -> instr_option . SEMI instr_option_seq [ # ]
 -- On SEMI shift to state 275
 -- On # reduce production instr_option_seq -> instr_option
+** End-of-stream conflict on SEMI
+**   There is a tension between
+**   (1) reducing production instr_option_seq -> instr_option
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 275:
 instr_option_seq -> instr_option SEMI . instr_option_seq [ # ]
@@ -1691,6 +2046,11 @@ instr_option_seq -> instr_option SEMI . instr_option_seq [ # ]
 -- On instr shift to state 272
 -- On SEMI reduce production instr_option -> 
 -- On # reduce production instr_option -> 
+** End-of-stream conflict on SXTW STXR STRH STRB STR STP STNP STLXR STLR SEMI OP NAME MOV LDXR LDRH LDRB LDR LDP LDNP LDAXR LDAR LDAPR ISB DSB DMB CSNEG CSINV CSINC CSEL CODEVAR CMP CBZ CBNZ BNE BEQ B
+**   There is a tension between
+**   (1) reducing production instr_option -> 
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 276:
 instr_option_seq -> instr_option SEMI instr_option_seq . [ # ]
@@ -1972,436 +2332,4 @@ instr_option_list -> instr_option PIPE instr_option_list . [ SEMI ]
 State 293:
 main' -> main . [ # ]
 -- On # accept main
-
-State 0 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr_option -> 
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SXTW STXR STRH STRB STR STP STNP STLXR STLR SEMI OP NAME MOV LDXR LDRH LDRB LDR LDP LDNP LDAXR LDAR LDAPR ISB DSB DMB CSNEG CSINV CSINC CSEL CODEVAR CMP CBZ CBNZ BNE BEQ B,
-which would require some other action.
-
-State 2 has an end-of-stream conflict. There is a tension between
-(1) reducing production xreg -> SYMB_XREG
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI RBRK PIPE COMMA,
-which would require some other action.
-
-State 3 has an end-of-stream conflict. There is a tension between
-(1) reducing production xreg -> ARCH_XREG
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI RBRK PIPE COMMA,
-which would require some other action.
-
-State 6 has an end-of-stream conflict. There is a tension between
-(1) reducing production wreg -> SYMB_WREG
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE COMMA,
-which would require some other action.
-
-State 7 has an end-of-stream conflict. There is a tension between
-(1) reducing production wreg -> ARCH_WREG
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE COMMA,
-which would require some other action.
-
-State 8 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr -> SXTW xreg COMMA wreg
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 20 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr -> STXR wreg COMMA reg COMMA LBRK xreg RBRK
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 27 has an end-of-stream conflict. There is a tension between
-(1) reducing production k -> NUM
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI RBRK PIPE,
-which would require some other action.
-
-State 28 has an end-of-stream conflict. There is a tension between
-(1) reducing production k -> META
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI RBRK PIPE,
-which would require some other action.
-
-State 29 has an end-of-stream conflict. There is a tension between
-(1) reducing production kr -> xreg
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI RBRK PIPE,
-which would require some other action.
-
-State 32 has an end-of-stream conflict. There is a tension between
-(1) reducing production kr -> wreg COMMA SXTW
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI RBRK PIPE,
-which would require some other action.
-
-State 34 has an end-of-stream conflict. There is a tension between
-(1) reducing production kr -> k
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI RBRK PIPE,
-which would require some other action.
-
-State 36 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr -> STRH wreg COMMA LBRK xreg kr0 RBRK
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 43 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr -> STRB wreg COMMA LBRK xreg kr0 RBRK
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 50 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr -> STR reg COMMA LBRK xreg kr0 RBRK
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 60 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr -> STLXR wreg COMMA reg COMMA LBRK xreg RBRK
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 66 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr -> STLR reg COMMA LBRK xreg RBRK
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 72 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr -> OP xreg COMMA xreg COMMA kr
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 77 has an end-of-stream conflict. There is a tension between
-(1) reducing production kwr -> wreg
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 78 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr -> OP wreg COMMA wreg COMMA kwr
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 79 has an end-of-stream conflict. There is a tension between
-(1) reducing production kwr -> k
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 81 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr_option -> 
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SXTW STXR STRH STRB STR STP STNP STLXR STLR SEMI PIPE OP NAME MOV LDXR LDRH LDRB LDR LDP LDNP LDAXR LDAR LDAPR ISB DSB DMB CSNEG CSINV CSINC CSEL CODEVAR CMP CBZ CBNZ BNE BEQ B,
-which would require some other action.
-
-State 85 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr -> MOV xreg COMMA kr
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 88 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr -> MOV wreg COMMA kwr
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 94 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr -> LDXR reg COMMA LBRK xreg RBRK
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 101 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr -> LDRH wreg COMMA LBRK xreg kr0 RBRK
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 108 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr -> LDRB wreg COMMA LBRK xreg kr0 RBRK
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 115 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr -> LDR reg COMMA LBRK xreg kr0 RBRK
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 123 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr -> LDAXR reg COMMA LBRK xreg RBRK
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 129 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr -> LDAR reg COMMA LBRK xreg RBRK
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 135 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr -> LDAPR reg COMMA LBRK xreg RBRK
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 136 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr -> ISB
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 138 has an end-of-stream conflict. There is a tension between
-(1) reducing production fenceopt -> SY
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 139 has an end-of-stream conflict. There is a tension between
-(1) reducing production fenceopt -> ST
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 140 has an end-of-stream conflict. There is a tension between
-(1) reducing production fenceopt -> OSHST
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 141 has an end-of-stream conflict. There is a tension between
-(1) reducing production fenceopt -> OSHLD
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 142 has an end-of-stream conflict. There is a tension between
-(1) reducing production fenceopt -> OSH
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 143 has an end-of-stream conflict. There is a tension between
-(1) reducing production fenceopt -> NSHST
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 144 has an end-of-stream conflict. There is a tension between
-(1) reducing production fenceopt -> NSHLD
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 145 has an end-of-stream conflict. There is a tension between
-(1) reducing production fenceopt -> NSH
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 146 has an end-of-stream conflict. There is a tension between
-(1) reducing production fenceopt -> LD
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 147 has an end-of-stream conflict. There is a tension between
-(1) reducing production fenceopt -> ISHST
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 148 has an end-of-stream conflict. There is a tension between
-(1) reducing production fenceopt -> ISHLD
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 149 has an end-of-stream conflict. There is a tension between
-(1) reducing production fenceopt -> ISH
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 150 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr -> DSB fenceopt
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 152 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr -> DMB fenceopt
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 160 has an end-of-stream conflict. There is a tension between
-(1) reducing production cond -> NE
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 161 has an end-of-stream conflict. There is a tension between
-(1) reducing production cond -> EQ
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 162 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr -> CSNEG xreg COMMA xreg COMMA xreg COMMA cond
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 169 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr -> CSNEG wreg COMMA wreg COMMA wreg COMMA cond
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 177 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr -> CSINV xreg COMMA xreg COMMA xreg COMMA cond
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 184 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr -> CSINV wreg COMMA wreg COMMA wreg COMMA cond
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 192 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr -> CSINC xreg COMMA xreg COMMA xreg COMMA cond
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 199 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr -> CSINC wreg COMMA wreg COMMA wreg COMMA cond
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 207 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr -> CSEL xreg COMMA xreg COMMA xreg COMMA cond
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 214 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr -> CSEL wreg COMMA wreg COMMA wreg COMMA cond
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 215 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr_option -> CODEVAR
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 219 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr -> CMP xreg COMMA kr
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 222 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr -> CMP wreg COMMA kwr
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 226 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr -> CBZ reg COMMA NAME
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 230 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr -> CBNZ reg COMMA NAME
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 232 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr -> BNE NAME
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 234 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr -> BEQ NAME
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 236 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr -> B NAME
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 245 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr -> stp_instr xreg COMMA xreg COMMA LBRK xreg kr0 RBRK
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 253 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr -> stp_instr wreg COMMA wreg COMMA LBRK xreg kr0 RBRK
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 262 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr -> ldp_instr xreg COMMA xreg COMMA LBRK xreg kr0 RBRK
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 270 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr -> ldp_instr wreg COMMA wreg COMMA LBRK xreg kr0 RBRK
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 271 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr_option -> NAME COLON instr_option
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 272 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr_option -> instr
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SEMI PIPE,
-which would require some other action.
-
-State 274 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr_option_seq -> instr_option
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is SEMI,
-which would require some other action.
-
-State 275 has an end-of-stream conflict. There is a tension between
-(1) reducing production instr_option -> 
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of SXTW STXR STRH STRB STR STP STNP STLXR STLR SEMI OP NAME MOV LDXR LDRH LDRB LDR LDP LDNP LDAXR LDAR LDAPR ISB DSB DMB CSNEG CSINV CSINC CSEL CODEVAR CMP CBZ CBNZ BNE BEQ B,
-which would require some other action.
 

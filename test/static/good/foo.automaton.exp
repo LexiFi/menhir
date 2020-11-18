@@ -8,6 +8,11 @@ exp -> INT . [ TIMES PLUS # ]
 -- On TIMES reduce production exp -> INT
 -- On PLUS reduce production exp -> INT
 -- On # reduce production exp -> INT
+** End-of-stream conflict on TIMES PLUS
+**   There is a tension between
+**   (1) reducing production exp -> INT
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 2:
 exp' -> exp . [ # ]
@@ -16,6 +21,11 @@ exp -> exp . PLUS exp [ TIMES PLUS # ]
 -- On TIMES shift to state 3
 -- On PLUS shift to state 5
 -- On # accept exp
+** End-of-stream conflict on TIMES PLUS
+**   There is a tension between
+**   (1) accepting exp
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 3:
 exp -> exp TIMES . exp [ TIMES PLUS # ]
@@ -29,6 +39,11 @@ exp -> exp . PLUS exp [ TIMES PLUS # ]
 -- On TIMES reduce production exp -> exp TIMES exp
 -- On PLUS reduce production exp -> exp TIMES exp
 -- On # reduce production exp -> exp TIMES exp
+** End-of-stream conflict on TIMES PLUS
+**   There is a tension between
+**   (1) reducing production exp -> exp TIMES exp
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 5:
 exp -> exp PLUS . exp [ TIMES PLUS # ]
@@ -42,28 +57,9 @@ exp -> exp PLUS exp . [ TIMES PLUS # ]
 -- On TIMES shift to state 3
 -- On PLUS reduce production exp -> exp PLUS exp
 -- On # reduce production exp -> exp PLUS exp
-
-State 1 has an end-of-stream conflict. There is a tension between
-(1) reducing production exp -> INT
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of TIMES PLUS,
-which would require some other action.
-
-State 2 has an end-of-stream conflict. There is a tension between
-(1) accepting exp
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of TIMES PLUS,
-which would require some other action.
-
-State 4 has an end-of-stream conflict. There is a tension between
-(1) reducing production exp -> exp TIMES exp
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of TIMES PLUS,
-which would require some other action.
-
-State 6 has an end-of-stream conflict. There is a tension between
-(1) reducing production exp -> exp PLUS exp
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of TIMES PLUS,
-which would require some other action.
+** End-of-stream conflict on TIMES PLUS
+**   There is a tension between
+**   (1) reducing production exp -> exp PLUS exp
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 

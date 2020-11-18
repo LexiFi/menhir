@@ -9,6 +9,11 @@ doc_822' -> . doc_822 [ # ]
 -- On eols shift to state 17
 -- On doc_822 shift to state 19
 -- On # reduce production stanzas -> 
+** End-of-stream conflict on FIELD EOL
+**   There is a tension between
+**   (1) reducing production stanzas -> 
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 1:
 field -> FIELD . EOL [ FIELD EOL EOF # ]
@@ -24,6 +29,11 @@ field -> FIELD EOL . linecont [ FIELD EOL EOF # ]
 -- On EOL reduce production field -> FIELD EOL
 -- On EOF reduce production field -> FIELD EOL
 -- On # reduce production field -> FIELD EOL
+** End-of-stream conflict on FIELD EOL EOF CONT
+**   There is a tension between
+**   (1) reducing production field -> FIELD EOL
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 3:
 linecont -> CONT . EOL [ FIELD EOL EOF # ]
@@ -39,6 +49,11 @@ linecont -> CONT EOL . linecont [ FIELD EOL EOF # ]
 -- On EOL reduce production linecont -> CONT EOL
 -- On EOF reduce production linecont -> CONT EOL
 -- On # reduce production linecont -> CONT EOL
+** End-of-stream conflict on FIELD EOL EOF CONT
+**   There is a tension between
+**   (1) reducing production linecont -> CONT EOL
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 5:
 linecont -> CONT EOL linecont . [ FIELD EOL EOF # ]
@@ -46,6 +61,11 @@ linecont -> CONT EOL linecont . [ FIELD EOL EOF # ]
 -- On EOL reduce production linecont -> CONT EOL linecont
 -- On EOF reduce production linecont -> CONT EOL linecont
 -- On # reduce production linecont -> CONT EOL linecont
+** End-of-stream conflict on FIELD EOL EOF
+**   There is a tension between
+**   (1) reducing production linecont -> CONT EOL linecont
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 6:
 field -> FIELD EOL linecont . [ FIELD EOL EOF # ]
@@ -53,6 +73,11 @@ field -> FIELD EOL linecont . [ FIELD EOL EOF # ]
 -- On EOL reduce production field -> FIELD EOL linecont
 -- On EOF reduce production field -> FIELD EOL linecont
 -- On # reduce production field -> FIELD EOL linecont
+** End-of-stream conflict on FIELD EOL EOF
+**   There is a tension between
+**   (1) reducing production field -> FIELD EOL linecont
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 7:
 eols -> EOL . [ FIELD EOF # ]
@@ -62,12 +87,22 @@ eols -> EOL . eols [ FIELD EOF # ]
 -- On FIELD reduce production eols -> EOL
 -- On EOF reduce production eols -> EOL
 -- On # reduce production eols -> EOL
+** End-of-stream conflict on FIELD EOL EOF
+**   There is a tension between
+**   (1) reducing production eols -> EOL
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 8:
 eols -> EOL eols . [ FIELD EOF # ]
 -- On FIELD reduce production eols -> EOL eols
 -- On EOF reduce production eols -> EOL eols
 -- On # reduce production eols -> EOL eols
+** End-of-stream conflict on FIELD EOF
+**   There is a tension between
+**   (1) reducing production eols -> EOL eols
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 9:
 doc_822 -> stanzas . [ # ]
@@ -92,6 +127,11 @@ stanzas -> stanza eols . stanzas [ # ]
 -- On fields shift to state 14
 -- On field shift to state 15
 -- On # reduce production stanzas -> 
+** End-of-stream conflict on FIELD
+**   There is a tension between
+**   (1) reducing production stanzas -> 
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 13:
 stanzas -> stanza eols stanzas . [ # ]
@@ -124,6 +164,11 @@ doc_822 -> eols . stanzas [ # ]
 -- On fields shift to state 14
 -- On field shift to state 15
 -- On # reduce production stanzas -> 
+** End-of-stream conflict on FIELD
+**   There is a tension between
+**   (1) reducing production stanzas -> 
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 18:
 doc_822 -> eols stanzas . [ # ]
@@ -167,6 +212,11 @@ fields -> field . fields [ # ]
 -- On fields shift to state 26
 -- On field shift to state 25
 -- On # reduce production fields -> field
+** End-of-stream conflict on FIELD
+**   There is a tension between
+**   (1) reducing production fields -> field
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 26:
 fields -> field fields . [ # ]
@@ -188,64 +238,4 @@ stanza_822 -> eols EOF . [ # ]
 State 29:
 stanza_822 -> eols stanza . [ # ]
 -- On # reduce production stanza_822 -> eols stanza
-
-State 0 has an end-of-stream conflict. There is a tension between
-(1) reducing production stanzas -> 
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of FIELD EOL,
-which would require some other action.
-
-State 2 has an end-of-stream conflict. There is a tension between
-(1) reducing production field -> FIELD EOL
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of FIELD EOL EOF CONT,
-which would require some other action.
-
-State 4 has an end-of-stream conflict. There is a tension between
-(1) reducing production linecont -> CONT EOL
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of FIELD EOL EOF CONT,
-which would require some other action.
-
-State 5 has an end-of-stream conflict. There is a tension between
-(1) reducing production linecont -> CONT EOL linecont
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of FIELD EOL EOF,
-which would require some other action.
-
-State 6 has an end-of-stream conflict. There is a tension between
-(1) reducing production field -> FIELD EOL linecont
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of FIELD EOL EOF,
-which would require some other action.
-
-State 7 has an end-of-stream conflict. There is a tension between
-(1) reducing production eols -> EOL
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of FIELD EOL EOF,
-which would require some other action.
-
-State 8 has an end-of-stream conflict. There is a tension between
-(1) reducing production eols -> EOL eols
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of FIELD EOF,
-which would require some other action.
-
-State 12 has an end-of-stream conflict. There is a tension between
-(1) reducing production stanzas -> 
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is FIELD,
-which would require some other action.
-
-State 17 has an end-of-stream conflict. There is a tension between
-(1) reducing production stanzas -> 
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is FIELD,
-which would require some other action.
-
-State 25 has an end-of-stream conflict. There is a tension between
-(1) reducing production fields -> field
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is FIELD,
-which would require some other action.
 

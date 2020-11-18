@@ -8,6 +8,11 @@ code_list' -> . code_list [ # ]
 -- On code_list shift to state 18
 -- On code shift to state 19
 -- On # reduce production code_list -> 
+** End-of-stream conflict on UNDEF OTHER IFNDEF IFDEF DEFINE
+**   There is a tension between
+**   (1) reducing production code_list -> 
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 1:
 code -> UNDEF . [ UNDEF OTHER IFNDEF IFDEF ENDIF ELSE DEFINE # ]
@@ -19,6 +24,11 @@ code -> UNDEF . [ UNDEF OTHER IFNDEF IFDEF ENDIF ELSE DEFINE # ]
 -- On ELSE reduce production code -> UNDEF
 -- On DEFINE reduce production code -> UNDEF
 -- On # reduce production code -> UNDEF
+** End-of-stream conflict on UNDEF OTHER IFNDEF IFDEF ENDIF ELSE DEFINE
+**   There is a tension between
+**   (1) reducing production code -> UNDEF
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 2:
 code -> OTHER . [ UNDEF OTHER IFNDEF IFDEF ENDIF ELSE DEFINE # ]
@@ -30,6 +40,11 @@ code -> OTHER . [ UNDEF OTHER IFNDEF IFDEF ENDIF ELSE DEFINE # ]
 -- On ELSE reduce production code -> OTHER
 -- On DEFINE reduce production code -> OTHER
 -- On # reduce production code -> OTHER
+** End-of-stream conflict on UNDEF OTHER IFNDEF IFDEF ENDIF ELSE DEFINE
+**   There is a tension between
+**   (1) reducing production code -> OTHER
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 3:
 code -> IFNDEF . code_list ELSE code_list ENDIF [ UNDEF OTHER IFNDEF IFDEF ENDIF ELSE DEFINE # ]
@@ -67,6 +82,11 @@ code -> DEFINE . [ UNDEF OTHER IFNDEF IFDEF ENDIF ELSE DEFINE # ]
 -- On ELSE reduce production code -> DEFINE
 -- On DEFINE reduce production code -> DEFINE
 -- On # reduce production code -> DEFINE
+** End-of-stream conflict on UNDEF OTHER IFNDEF IFDEF ENDIF ELSE DEFINE
+**   There is a tension between
+**   (1) reducing production code -> DEFINE
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 6:
 code -> IFDEF code_list . ELSE code_list ENDIF [ UNDEF OTHER IFNDEF IFDEF ENDIF ELSE DEFINE # ]
@@ -84,6 +104,11 @@ code -> IFDEF code_list ENDIF . [ UNDEF OTHER IFNDEF IFDEF ENDIF ELSE DEFINE # ]
 -- On ELSE reduce production code -> IFDEF code_list ENDIF
 -- On DEFINE reduce production code -> IFDEF code_list ENDIF
 -- On # reduce production code -> IFDEF code_list ENDIF
+** End-of-stream conflict on UNDEF OTHER IFNDEF IFDEF ENDIF ELSE DEFINE
+**   There is a tension between
+**   (1) reducing production code -> IFDEF code_list ENDIF
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 8:
 code -> IFDEF code_list ELSE . code_list ENDIF [ UNDEF OTHER IFNDEF IFDEF ENDIF ELSE DEFINE # ]
@@ -110,6 +135,11 @@ code -> IFDEF code_list ELSE code_list ENDIF . [ UNDEF OTHER IFNDEF IFDEF ENDIF 
 -- On ELSE reduce production code -> IFDEF code_list ELSE code_list ENDIF
 -- On DEFINE reduce production code -> IFDEF code_list ELSE code_list ENDIF
 -- On # reduce production code -> IFDEF code_list ELSE code_list ENDIF
+** End-of-stream conflict on UNDEF OTHER IFNDEF IFDEF ENDIF ELSE DEFINE
+**   There is a tension between
+**   (1) reducing production code -> IFDEF code_list ELSE code_list ENDIF
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 11:
 code_list -> code . code_list [ ENDIF ELSE ]
@@ -144,6 +174,11 @@ code -> IFNDEF code_list ENDIF . [ UNDEF OTHER IFNDEF IFDEF ENDIF ELSE DEFINE # 
 -- On ELSE reduce production code -> IFNDEF code_list ENDIF
 -- On DEFINE reduce production code -> IFNDEF code_list ENDIF
 -- On # reduce production code -> IFNDEF code_list ENDIF
+** End-of-stream conflict on UNDEF OTHER IFNDEF IFDEF ENDIF ELSE DEFINE
+**   There is a tension between
+**   (1) reducing production code -> IFNDEF code_list ENDIF
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 15:
 code -> IFNDEF code_list ELSE . code_list ENDIF [ UNDEF OTHER IFNDEF IFDEF ENDIF ELSE DEFINE # ]
@@ -170,6 +205,11 @@ code -> IFNDEF code_list ELSE code_list ENDIF . [ UNDEF OTHER IFNDEF IFDEF ENDIF
 -- On ELSE reduce production code -> IFNDEF code_list ELSE code_list ENDIF
 -- On DEFINE reduce production code -> IFNDEF code_list ELSE code_list ENDIF
 -- On # reduce production code -> IFNDEF code_list ELSE code_list ENDIF
+** End-of-stream conflict on UNDEF OTHER IFNDEF IFDEF ENDIF ELSE DEFINE
+**   There is a tension between
+**   (1) reducing production code -> IFNDEF code_list ELSE code_list ENDIF
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 18:
 code_list' -> code_list . [ # ]
@@ -185,62 +225,13 @@ code_list -> code . code_list [ # ]
 -- On code_list shift to state 20
 -- On code shift to state 19
 -- On # reduce production code_list -> 
+** End-of-stream conflict on UNDEF OTHER IFNDEF IFDEF DEFINE
+**   There is a tension between
+**   (1) reducing production code_list -> 
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 20:
 code_list -> code code_list . [ # ]
 -- On # reduce production code_list -> code code_list
-
-State 0 has an end-of-stream conflict. There is a tension between
-(1) reducing production code_list -> 
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of UNDEF OTHER IFNDEF IFDEF DEFINE,
-which would require some other action.
-
-State 1 has an end-of-stream conflict. There is a tension between
-(1) reducing production code -> UNDEF
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of UNDEF OTHER IFNDEF IFDEF ENDIF ELSE DEFINE,
-which would require some other action.
-
-State 2 has an end-of-stream conflict. There is a tension between
-(1) reducing production code -> OTHER
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of UNDEF OTHER IFNDEF IFDEF ENDIF ELSE DEFINE,
-which would require some other action.
-
-State 5 has an end-of-stream conflict. There is a tension between
-(1) reducing production code -> DEFINE
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of UNDEF OTHER IFNDEF IFDEF ENDIF ELSE DEFINE,
-which would require some other action.
-
-State 7 has an end-of-stream conflict. There is a tension between
-(1) reducing production code -> IFDEF code_list ENDIF
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of UNDEF OTHER IFNDEF IFDEF ENDIF ELSE DEFINE,
-which would require some other action.
-
-State 10 has an end-of-stream conflict. There is a tension between
-(1) reducing production code -> IFDEF code_list ELSE code_list ENDIF
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of UNDEF OTHER IFNDEF IFDEF ENDIF ELSE DEFINE,
-which would require some other action.
-
-State 14 has an end-of-stream conflict. There is a tension between
-(1) reducing production code -> IFNDEF code_list ENDIF
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of UNDEF OTHER IFNDEF IFDEF ENDIF ELSE DEFINE,
-which would require some other action.
-
-State 17 has an end-of-stream conflict. There is a tension between
-(1) reducing production code -> IFNDEF code_list ELSE code_list ENDIF
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of UNDEF OTHER IFNDEF IFDEF ENDIF ELSE DEFINE,
-which would require some other action.
-
-State 19 has an end-of-stream conflict. There is a tension between
-(1) reducing production code_list -> 
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of UNDEF OTHER IFNDEF IFDEF DEFINE,
-which would require some other action.
 

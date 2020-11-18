@@ -24,6 +24,11 @@ expr -> INT . [ PLUS MINUS INT # ]
 -- On MINUS reduce production expr -> INT
 -- On INT reduce production expr -> INT
 -- On # reduce production expr -> INT
+** End-of-stream conflict on PLUS MINUS INT
+**   There is a tension between
+**   (1) reducing production expr -> INT
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 4:
 expr -> plus . [ PLUS MINUS INT # ]
@@ -34,6 +39,11 @@ indir -> plus . [ MINUS ]
 -- On INT reduce production expr -> plus
 -- On # reduce production expr -> plus
 ** Conflict on MINUS
+** End-of-stream conflict on PLUS MINUS INT
+**   There is a tension between
+**   (1) reducing production expr -> plus
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 5:
 expr -> indir . MINUS indir [ PLUS MINUS INT # ]
@@ -56,6 +66,11 @@ indir -> plus . [ PLUS MINUS INT # ]
 -- On INT reduce production indir -> plus
 -- On # reduce production indir -> plus
 ** Conflict on PLUS
+** End-of-stream conflict on PLUS MINUS INT
+**   There is a tension between
+**   (1) reducing production indir -> plus
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 8:
 expr -> indir . MINUS indir [ PLUS ]
@@ -66,6 +81,11 @@ expr -> indir MINUS indir . [ PLUS MINUS INT # ]
 -- On INT reduce production expr -> indir MINUS indir
 -- On # reduce production expr -> indir MINUS indir
 ** Conflict on MINUS
+** End-of-stream conflict on PLUS MINUS INT
+**   There is a tension between
+**   (1) reducing production expr -> indir MINUS indir
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 9:
 plus -> expr . PLUS expr [ PLUS MINUS INT # ]
@@ -88,6 +108,11 @@ plus -> expr PLUS expr . [ PLUS MINUS INT # ]
 -- On INT reduce production plus -> expr PLUS expr
 -- On # reduce production plus -> expr PLUS expr
 ** Conflict on PLUS
+** End-of-stream conflict on PLUS MINUS INT
+**   There is a tension between
+**   (1) reducing production plus -> expr PLUS expr
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 12:
 expr -> PLUS PLUS expr . INT [ PLUS MINUS INT # ]
@@ -101,52 +126,20 @@ expr -> PLUS PLUS expr INT . [ PLUS MINUS INT # ]
 -- On MINUS reduce production expr -> PLUS PLUS expr INT
 -- On INT reduce production expr -> PLUS PLUS expr INT
 -- On # reduce production expr -> PLUS PLUS expr INT
+** End-of-stream conflict on PLUS MINUS INT
+**   There is a tension between
+**   (1) reducing production expr -> PLUS PLUS expr INT
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 
 State 14:
 expr' -> expr . [ # ]
 plus -> expr . PLUS expr [ PLUS MINUS # ]
 -- On PLUS shift to state 10
 -- On # accept expr
-
-State 3 has an end-of-stream conflict. There is a tension between
-(1) reducing production expr -> INT
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of PLUS MINUS INT,
-which would require some other action.
-
-State 4 has an end-of-stream conflict. There is a tension between
-(1) reducing production expr -> plus
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of PLUS MINUS INT,
-which would require some other action.
-
-State 7 has an end-of-stream conflict. There is a tension between
-(1) reducing production indir -> plus
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of PLUS MINUS INT,
-which would require some other action.
-
-State 8 has an end-of-stream conflict. There is a tension between
-(1) reducing production expr -> indir MINUS indir
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of PLUS MINUS INT,
-which would require some other action.
-
-State 11 has an end-of-stream conflict. There is a tension between
-(1) reducing production plus -> expr PLUS expr
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of PLUS MINUS INT,
-which would require some other action.
-
-State 13 has an end-of-stream conflict. There is a tension between
-(1) reducing production expr -> PLUS PLUS expr INT
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is one of PLUS MINUS INT,
-which would require some other action.
-
-State 14 has an end-of-stream conflict. There is a tension between
-(1) accepting expr
-without even requesting a lookahead token, and
-(2) checking whether the lookahead token is PLUS,
-which would require some other action.
+** End-of-stream conflict on PLUS
+**   There is a tension between
+**   (1) accepting expr
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
 

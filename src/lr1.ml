@@ -652,6 +652,27 @@ let dump_node out node =
     fprintf out "** Conflict on %s\n"
       (TerminalSet.print (conflict_tokens node));
 
+  (* Print the end-of-stream conflicts. *)
+
+  has_eos_conflict.(raw node) |> Option.iter begin fun (prods, toks) ->
+
+    (* If this function is invoked before conflict resolution has been
+       performed, then the list [prods] could have several elements.
+       We pick one. *)
+    assert (prods <> []);
+    let prod = List.hd prods in
+
+    fprintf out "** End-of-stream conflict on %s\n"
+      (TerminalSet.print toks);
+    fprintf out
+      "**   There is a tension between\n\
+       **   (1) %s\n\
+       **   without even requesting a lookahead token, and\n\
+       **   (2) testing whether the lookahead token is a member of the above set.\n"
+      (Production.describe prod)
+
+  end;
+
   (* Skip a line. *)
 
   fprintf out "\n"
@@ -940,39 +961,12 @@ let default_conflict_resolution () =
     if Lr0.has_eos_conflict transitions reductions then begin
 
       (* Suppress the reduce action at [#]. *)
-      let prods, reductions =
+      let _, reductions =
         TerminalMap.lookup_and_remove Terminal.sharp reductions in
       set_reductions node reductions;
-      (* We can assume that there is only one reduction on [#]. *)
-      let prod = Misc.single prods in
 
       (* Count this end-of-stream conflict. *)
-      incr eos_conflicts;
-
-      (* Signal this end-of-stream conflict in the .automaton file. *)
-      if Settings.dump then begin
-
-        (* Compute the tokens involved in the transitions and remaining
-           reductions. *)
-        let toks =
-          TerminalSet.union
-            (Lr0.transition_tokens transitions)
-            (Lr0.reduction_tokens reductions)
-        in
-
-        (* Emit a message. *)
-        Printf.fprintf (Lazy.force out)
-          "State %d has an end-of-stream conflict. There is a tension between\n\
-           (1) %s\n\
-           without even requesting a lookahead token, and\n\
-           (2) checking whether the lookahead token is %s%s,\n\
-           which would require some other action.\n\n"
-          (number node)
-          (Production.describe prod)
-          (if TerminalSet.cardinal toks > 1 then "one of " else "")
-          (TerminalSet.print toks)
-
-      end
+      incr eos_conflicts
 
     end
   end;
