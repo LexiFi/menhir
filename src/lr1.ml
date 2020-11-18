@@ -820,6 +820,7 @@ let default_conflict_resolution () =
   in
 
   conflict_nodes |> List.iter (fun node ->
+    _conflict_tokens.(raw node) <- TerminalSet.empty;
     set_reductions node (
       TerminalMap.fold (fun tok prods reductions ->
 

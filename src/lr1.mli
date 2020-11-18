@@ -140,14 +140,20 @@ val iterx: (node -> unit) -> unit
 
 val targets: ('a -> node list -> node -> 'a) -> 'a -> Symbol.t -> 'a
 
-(* Iteration over all nodes with conflicts. [conflicts f] invokes [f
-   toks node] once for every node [node] with a conflict, where [toks]
-   are the tokens involved in the conflicts at that node. *)
+(* Iteration over all nodes with conflicts. [conflicts f] invokes [f toks
+   node] once for every node [node] with a conflict, where [toks] are the
+   tokens involved in the conflicts at that node.
+
+   If this function is invoked after conflicts have been resolved, then
+   no conflicts are reported. *)
 
 val conflicts: (TerminalSet.t -> node -> unit) -> unit
 
 (* [conflict_tokens node] returns the set of tokens where [node] has a
-   conflict. *)
+   conflict.
+
+   If this function is invoked after conflicts have been resolved, then
+   no conflict tokens are reported. *)
 
 val conflict_tokens: node -> TerminalSet.t
 
@@ -155,9 +161,8 @@ val conflict_tokens: node -> TerminalSet.t
    conflict. If so, the list of productions and the lookahead tokens that are
    involved are returned.
 
-   This function can be called either before or after end-of-stream conflicts
-   have been resolved. Once they have been resolved, however, no end-of-stream
-   conflicts remain. *)
+   If this function is invoked after conflicts have been resolved, then
+   no end-of-stream conflicts are reported. *)
 
 val has_eos_conflict: node -> (Production.index list * TerminalSet.t) option
 
