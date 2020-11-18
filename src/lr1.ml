@@ -931,7 +931,7 @@ let default_conflict_resolution () =
      an end-of-stream conflict. This conflict is resolved by suppressing
      the reduce action at [#]. *)
 
-  let ambiguities = ref 0 in
+  let eos_conflicts = ref 0 in
 
   iter begin fun node ->
     let transitions = transitions node
@@ -947,7 +947,7 @@ let default_conflict_resolution () =
       let prod = Misc.single prods in
 
       (* Count this end-of-stream conflict. *)
-      incr ambiguities;
+      incr eos_conflicts;
 
       (* Signal this end-of-stream conflict in the .automaton file. *)
       if Settings.dump then begin
@@ -977,11 +977,11 @@ let default_conflict_resolution () =
     end
   end;
 
-  if !ambiguities = 1 then
+  if !eos_conflicts = 1 then
     Error.grammar_warning [] "one state has an end-of-stream conflict."
-  else if !ambiguities > 1 then
+  else if !eos_conflicts > 1 then
     Error.grammar_warning [] "%d states have an end-of-stream conflict."
-      !ambiguities;
+      !eos_conflicts;
 
   (* We can now compute where productions are reduced. *)
   initialize_production_where();
