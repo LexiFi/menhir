@@ -1,68 +1,133 @@
 State 0:
+## Known stack suffix:
+##
+## LR(1) items:
 main' -> . main [ # ]
+## Transitions:
 -- On TReturn shift to state 1
 -- On TIf shift to state 2
 -- On statement shift to state 10
 -- On main shift to state 12
+## Reductions:
 
 State 1:
+## Known stack suffix:
+## TReturn
+## LR(1) items:
 statement -> TReturn . [ TElse EOF ]
+## Transitions:
+## Reductions:
 -- On TElse reduce production statement -> TReturn
 -- On EOF reduce production statement -> TReturn
 
 State 2:
+## Known stack suffix:
+## TIf
+## LR(1) items:
 statement -> TIf . TOPar expr TCPar statement [ TElse EOF ]
 statement -> TIf . TOPar expr TCPar statement TElse statement [ TElse EOF ]
+## Transitions:
 -- On TOPar shift to state 3
+## Reductions:
 
 State 3:
+## Known stack suffix:
+## TIf TOPar
+## LR(1) items:
 statement -> TIf TOPar . expr TCPar statement [ TElse EOF ]
 statement -> TIf TOPar . expr TCPar statement TElse statement [ TElse EOF ]
+## Transitions:
 -- On TIdent shift to state 4
 -- On expr shift to state 5
+## Reductions:
 
 State 4:
+## Known stack suffix:
+## TIdent
+## LR(1) items:
 expr -> TIdent . [ TCPar ]
+## Transitions:
+## Reductions:
 -- On TCPar reduce production expr -> TIdent
 
 State 5:
+## Known stack suffix:
+## TIf TOPar expr
+## LR(1) items:
 statement -> TIf TOPar expr . TCPar statement [ TElse EOF ]
 statement -> TIf TOPar expr . TCPar statement TElse statement [ TElse EOF ]
+## Transitions:
 -- On TCPar shift to state 6
+## Reductions:
 
 State 6:
+## Known stack suffix:
+## TIf TOPar expr TCPar
+## LR(1) items:
 statement -> TIf TOPar expr TCPar . statement [ TElse EOF ]
 statement -> TIf TOPar expr TCPar . statement TElse statement [ TElse EOF ]
+## Transitions:
 -- On TReturn shift to state 1
 -- On TIf shift to state 2
 -- On statement shift to state 7
+## Reductions:
 
 State 7:
+## Known stack suffix:
+## TIf TOPar expr TCPar statement
+## LR(1) items:
 statement -> TIf TOPar expr TCPar statement . [ TElse EOF ]
 statement -> TIf TOPar expr TCPar statement . TElse statement [ TElse EOF ]
+## Transitions:
 -- On TElse shift to state 8
+## Reductions:
 -- On EOF reduce production statement -> TIf TOPar expr TCPar statement
 
 State 8:
+## Known stack suffix:
+## TIf TOPar expr TCPar statement TElse
+## LR(1) items:
 statement -> TIf TOPar expr TCPar statement TElse . statement [ TElse EOF ]
+## Transitions:
 -- On TReturn shift to state 1
 -- On TIf shift to state 2
 -- On statement shift to state 9
+## Reductions:
 
 State 9:
+## Known stack suffix:
+## TIf TOPar expr TCPar statement TElse statement
+## LR(1) items:
 statement -> TIf TOPar expr TCPar statement TElse statement . [ TElse EOF ]
+## Transitions:
+## Reductions:
 -- On TElse reduce production statement -> TIf TOPar expr TCPar statement TElse statement
 -- On EOF reduce production statement -> TIf TOPar expr TCPar statement TElse statement
 
 State 10:
+## Known stack suffix:
+## statement
+## LR(1) items:
 main -> statement . EOF [ # ]
+## Transitions:
 -- On EOF shift to state 11
+## Reductions:
 
 State 11:
+## Known stack suffix:
+## statement EOF
+## LR(1) items:
 main -> statement EOF . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production main -> statement EOF
 
 State 12:
+## Known stack suffix:
+## main
+## LR(1) items:
 main' -> main . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept main
 

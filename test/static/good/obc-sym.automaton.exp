@@ -1,16 +1,31 @@
 State 0:
+## Known stack suffix:
+##
+## LR(1) items:
 file' -> . file [ # ]
+## Transitions:
 -- On SYMFILE shift to state 1
 -- On header shift to state 5
 -- On file shift to state 112
+## Reductions:
 
 State 1:
+## Known stack suffix:
+## SYMFILE
+## LR(1) items:
 header -> SYMFILE . ident HEX [ VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE METHOD END DEF CONST ]
+## Transitions:
 -- On TAG shift to state 2
 -- On ident shift to state 3
+## Reductions:
 
 State 2:
+## Known stack suffix:
+## TAG
+## LR(1) items:
 ident -> TAG . [ RECORD PROC POINTER NUM METH MARK HEX FLEX ENUM ARRAY ABSREC ABSMETH ]
+## Transitions:
+## Reductions:
 -- On RECORD reduce production ident -> TAG
 -- On PROC reduce production ident -> TAG
 -- On POINTER reduce production ident -> TAG
@@ -25,11 +40,21 @@ ident -> TAG . [ RECORD PROC POINTER NUM METH MARK HEX FLEX ENUM ARRAY ABSREC AB
 -- On ABSMETH reduce production ident -> TAG
 
 State 3:
+## Known stack suffix:
+## SYMFILE ident
+## LR(1) items:
 header -> SYMFILE ident . HEX [ VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE METHOD END DEF CONST ]
+## Transitions:
 -- On HEX shift to state 4
+## Reductions:
 
 State 4:
+## Known stack suffix:
+## SYMFILE ident HEX
+## LR(1) items:
 header -> SYMFILE ident HEX . [ VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE METHOD END DEF CONST ]
+## Transitions:
+## Reductions:
 -- On VARINFO reduce production header -> SYMFILE ident HEX
 -- On VAR reduce production header -> SYMFILE ident HEX
 -- On TYPE reduce production header -> SYMFILE ident HEX
@@ -44,8 +69,13 @@ header -> SYMFILE ident HEX . [ VARINFO VAR TYPE TARGET STRING REF PROCINFO PROC
 -- On CONST reduce production header -> SYMFILE ident HEX
 
 State 5:
+## Known stack suffix:
+## header
+## LR(1) items:
 file -> header . defs END HEX [ # ]
+## Transitions:
 -- On defs shift to state 6
+## Reductions:
 -- On VARINFO reduce production defs ->
 -- On VAR reduce production defs ->
 -- On TYPE reduce production defs ->
@@ -60,9 +90,13 @@ file -> header . defs END HEX [ # ]
 -- On CONST reduce production defs ->
 
 State 6:
+## Known stack suffix:
+## header defs
+## LR(1) items:
 defs -> defs . def [ VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE METHOD END DEF CONST ]
 defs -> defs . fixup [ VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE METHOD END DEF CONST ]
 file -> header defs . END HEX [ # ]
+## Transitions:
 -- On VARINFO shift to state 7
 -- On VAR shift to state 82
 -- On TYPE shift to state 86
@@ -78,14 +112,25 @@ file -> header defs . END HEX [ # ]
 -- On typedef shift to state 60
 -- On fixup shift to state 110
 -- On def shift to state 111
+## Reductions:
 
 State 7:
+## Known stack suffix:
+## VARINFO
+## LR(1) items:
 fixup -> VARINFO . symbol otype [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL FIELD END DEF CONST ]
+## Transitions:
 -- On TAG shift to state 8
 -- On symbol shift to state 9
+## Reductions:
 
 State 8:
+## Known stack suffix:
+## TAG
+## LR(1) items:
 symbol -> TAG . [ VARINFO VAR USE TYPE TARGET STRING REF PROCINFO PROCEDURE NUM METHOD END DEF CONST BASICTYPE ]
+## Transitions:
+## Reductions:
 -- On VARINFO reduce production symbol -> TAG
 -- On VAR reduce production symbol -> TAG
 -- On USE reduce production symbol -> TAG
@@ -103,21 +148,36 @@ symbol -> TAG . [ VARINFO VAR USE TYPE TARGET STRING REF PROCINFO PROCEDURE NUM 
 -- On BASICTYPE reduce production symbol -> TAG
 
 State 9:
+## Known stack suffix:
+## VARINFO symbol
+## LR(1) items:
 fixup -> VARINFO symbol . otype [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL FIELD END DEF CONST ]
+## Transitions:
 -- On USE shift to state 10
 -- On REF shift to state 13
 -- On DEF shift to state 22
 -- On BASICTYPE shift to state 28
 -- On typedef shift to state 29
 -- On otype shift to state 81
+## Reductions:
 
 State 10:
+## Known stack suffix:
+## USE
+## LR(1) items:
 otype -> USE . int [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL I FIELD F END DEF CONST ]
+## Transitions:
 -- On NUM shift to state 11
 -- On int shift to state 12
+## Reductions:
 
 State 11:
+## Known stack suffix:
+## NUM
+## LR(1) items:
 int -> NUM . [ VPARAM VARINFO VAR USE TYPE TARGET TAG STRING REF RECORD PROCINFO PROCEDURE PROC POINTER PARAM METHOD METH LOCAL I FLEX FIELD F ENUM END DEF CONST BASICTYPE ARRAY ANON ABSREC ABSMETH ]
+## Transitions:
+## Reductions:
 -- On VPARAM reduce production int -> NUM
 -- On VARINFO reduce production int -> NUM
 -- On VAR reduce production int -> NUM
@@ -151,7 +211,12 @@ int -> NUM . [ VPARAM VARINFO VAR USE TYPE TARGET TAG STRING REF RECORD PROCINFO
 -- On ABSMETH reduce production int -> NUM
 
 State 12:
+## Known stack suffix:
+## USE int
+## LR(1) items:
 otype -> USE int . [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL I FIELD F END DEF CONST ]
+## Transitions:
+## Reductions:
 -- On VPARAM reduce production otype -> USE int
 -- On VARINFO reduce production otype -> USE int
 -- On VAR reduce production otype -> USE int
@@ -172,29 +237,54 @@ otype -> USE int . [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDUR
 -- On CONST reduce production otype -> USE int
 
 State 13:
+## Known stack suffix:
+## REF
+## LR(1) items:
 typedef -> REF . int ident int tname tguts [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL I FIELD F END DEF CONST ]
+## Transitions:
 -- On NUM shift to state 11
 -- On int shift to state 14
+## Reductions:
 
 State 14:
+## Known stack suffix:
+## REF int
+## LR(1) items:
 typedef -> REF int . ident int tname tguts [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL I FIELD F END DEF CONST ]
+## Transitions:
 -- On TAG shift to state 2
 -- On ident shift to state 15
+## Reductions:
 
 State 15:
+## Known stack suffix:
+## REF int ident
+## LR(1) items:
 typedef -> REF int ident . int tname tguts [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL I FIELD F END DEF CONST ]
+## Transitions:
 -- On NUM shift to state 11
 -- On int shift to state 16
+## Reductions:
 
 State 16:
+## Known stack suffix:
+## REF int ident int
+## LR(1) items:
 typedef -> REF int ident int . tname tguts [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL I FIELD F END DEF CONST ]
+## Transitions:
 -- On TAG shift to state 2
 -- On ANON shift to state 17
 -- On tname shift to state 18
 -- On ident shift to state 80
+## Reductions:
 
 State 17:
+## Known stack suffix:
+## ANON
+## LR(1) items:
 tname -> ANON . [ RECORD PROC POINTER METH FLEX ENUM ARRAY ABSREC ABSMETH ]
+## Transitions:
+## Reductions:
 -- On RECORD reduce production tname -> ANON
 -- On PROC reduce production tname -> ANON
 -- On POINTER reduce production tname -> ANON
@@ -206,7 +296,11 @@ tname -> ANON . [ RECORD PROC POINTER METH FLEX ENUM ARRAY ABSREC ABSMETH ]
 -- On ABSMETH reduce production tname -> ANON
 
 State 18:
+## Known stack suffix:
+## REF int ident int tname
+## LR(1) items:
 typedef -> REF int ident int tname . tguts [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL I FIELD F END DEF CONST ]
+## Transitions:
 -- On RECORD shift to state 19
 -- On PROC shift to state 24
 -- On POINTER shift to state 25
@@ -218,33 +312,58 @@ typedef -> REF int ident int tname . tguts [ VPARAM VARINFO VAR TYPE TARGET STRI
 -- On ABSMETH shift to state 69
 -- On tguts shift to state 79
 -- On prockind shift to state 71
+## Reductions:
 
 State 19:
+## Known stack suffix:
+## RECORD
+## LR(1) items:
 tguts -> RECORD . symbol int otype locals END [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL I FIELD F END DEF CONST ]
+## Transitions:
 -- On TAG shift to state 8
 -- On symbol shift to state 20
+## Reductions:
 
 State 20:
+## Known stack suffix:
+## RECORD symbol
+## LR(1) items:
 tguts -> RECORD symbol . int otype locals END [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL I FIELD F END DEF CONST ]
+## Transitions:
 -- On NUM shift to state 11
 -- On int shift to state 21
+## Reductions:
 
 State 21:
+## Known stack suffix:
+## RECORD symbol int
+## LR(1) items:
 tguts -> RECORD symbol int . otype locals END [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL I FIELD F END DEF CONST ]
+## Transitions:
 -- On USE shift to state 10
 -- On REF shift to state 13
 -- On DEF shift to state 22
 -- On BASICTYPE shift to state 28
 -- On typedef shift to state 29
 -- On otype shift to state 76
+## Reductions:
 
 State 22:
+## Known stack suffix:
+## DEF
+## LR(1) items:
 typedef -> DEF . int tguts [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL I FIELD F END DEF CONST ]
+## Transitions:
 -- On NUM shift to state 11
 -- On int shift to state 23
+## Reductions:
 
 State 23:
+## Known stack suffix:
+## DEF int
+## LR(1) items:
 typedef -> DEF int . tguts [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL I FIELD F END DEF CONST ]
+## Transitions:
 -- On RECORD shift to state 19
 -- On PROC shift to state 24
 -- On POINTER shift to state 25
@@ -256,13 +375,24 @@ typedef -> DEF int . tguts [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO 
 -- On ABSMETH shift to state 69
 -- On tguts shift to state 70
 -- On prockind shift to state 71
+## Reductions:
 
 State 24:
+## Known stack suffix:
+## PROC
+## LR(1) items:
 prockind -> PROC . [ NUM ]
+## Transitions:
+## Reductions:
 -- On NUM reduce production prockind -> PROC
 
 State 25:
+## Known stack suffix:
+## POINTER
+## LR(1) items:
 tguts -> POINTER . [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL I FIELD F END DEF CONST ]
+## Transitions:
+## Reductions:
 -- On VPARAM reduce production tguts -> POINTER
 -- On VARINFO reduce production tguts -> POINTER
 -- On VAR reduce production tguts -> POINTER
@@ -283,20 +413,35 @@ tguts -> POINTER . [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDUR
 -- On CONST reduce production tguts -> POINTER
 
 State 26:
+## Known stack suffix:
+## METH
+## LR(1) items:
 prockind -> METH . [ NUM ]
+## Transitions:
+## Reductions:
 -- On NUM reduce production prockind -> METH
 
 State 27:
+## Known stack suffix:
+## FLEX
+## LR(1) items:
 tguts -> FLEX . otype [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL I FIELD F END DEF CONST ]
+## Transitions:
 -- On USE shift to state 10
 -- On REF shift to state 13
 -- On DEF shift to state 22
 -- On BASICTYPE shift to state 28
 -- On typedef shift to state 29
 -- On otype shift to state 30
+## Reductions:
 
 State 28:
+## Known stack suffix:
+## BASICTYPE
+## LR(1) items:
 otype -> BASICTYPE . [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL I FIELD F END DEF CONST ]
+## Transitions:
+## Reductions:
 -- On VPARAM reduce production otype -> BASICTYPE
 -- On VARINFO reduce production otype -> BASICTYPE
 -- On VAR reduce production otype -> BASICTYPE
@@ -317,7 +462,12 @@ otype -> BASICTYPE . [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCED
 -- On CONST reduce production otype -> BASICTYPE
 
 State 29:
+## Known stack suffix:
+## typedef
+## LR(1) items:
 otype -> typedef . [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL I FIELD F END DEF CONST ]
+## Transitions:
+## Reductions:
 -- On VPARAM reduce production otype -> typedef
 -- On VARINFO reduce production otype -> typedef
 -- On VAR reduce production otype -> typedef
@@ -338,7 +488,12 @@ otype -> typedef . [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDUR
 -- On CONST reduce production otype -> typedef
 
 State 30:
+## Known stack suffix:
+## FLEX otype
+## LR(1) items:
 tguts -> FLEX otype . [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL I FIELD F END DEF CONST ]
+## Transitions:
+## Reductions:
 -- On VPARAM reduce production tguts -> FLEX otype
 -- On VARINFO reduce production tguts -> FLEX otype
 -- On VAR reduce production tguts -> FLEX otype
@@ -359,12 +514,22 @@ tguts -> FLEX otype . [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCE
 -- On CONST reduce production tguts -> FLEX otype
 
 State 31:
+## Known stack suffix:
+## ENUM
+## LR(1) items:
 tguts -> ENUM . int [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL I FIELD F END DEF CONST ]
+## Transitions:
 -- On NUM shift to state 11
 -- On int shift to state 32
+## Reductions:
 
 State 32:
+## Known stack suffix:
+## ENUM int
+## LR(1) items:
 tguts -> ENUM int . [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL I FIELD F END DEF CONST ]
+## Transitions:
+## Reductions:
 -- On VPARAM reduce production tguts -> ENUM int
 -- On VARINFO reduce production tguts -> ENUM int
 -- On VAR reduce production tguts -> ENUM int
@@ -385,21 +550,36 @@ tguts -> ENUM int . [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDU
 -- On CONST reduce production tguts -> ENUM int
 
 State 33:
+## Known stack suffix:
+## ARRAY
+## LR(1) items:
 tguts -> ARRAY . int otype [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL I FIELD F END DEF CONST ]
+## Transitions:
 -- On NUM shift to state 11
 -- On int shift to state 34
+## Reductions:
 
 State 34:
+## Known stack suffix:
+## ARRAY int
+## LR(1) items:
 tguts -> ARRAY int . otype [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL I FIELD F END DEF CONST ]
+## Transitions:
 -- On USE shift to state 10
 -- On REF shift to state 13
 -- On DEF shift to state 22
 -- On BASICTYPE shift to state 28
 -- On typedef shift to state 29
 -- On otype shift to state 35
+## Reductions:
 
 State 35:
+## Known stack suffix:
+## ARRAY int otype
+## LR(1) items:
 tguts -> ARRAY int otype . [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL I FIELD F END DEF CONST ]
+## Transitions:
+## Reductions:
 -- On VPARAM reduce production tguts -> ARRAY int otype
 -- On VARINFO reduce production tguts -> ARRAY int otype
 -- On VAR reduce production tguts -> ARRAY int otype
@@ -420,27 +600,47 @@ tguts -> ARRAY int otype . [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO 
 -- On CONST reduce production tguts -> ARRAY int otype
 
 State 36:
+## Known stack suffix:
+## ABSREC
+## LR(1) items:
 tguts -> ABSREC . symbol int otype locals END [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL I FIELD F END DEF CONST ]
+## Transitions:
 -- On TAG shift to state 8
 -- On symbol shift to state 37
+## Reductions:
 
 State 37:
+## Known stack suffix:
+## ABSREC symbol
+## LR(1) items:
 tguts -> ABSREC symbol . int otype locals END [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL I FIELD F END DEF CONST ]
+## Transitions:
 -- On NUM shift to state 11
 -- On int shift to state 38
+## Reductions:
 
 State 38:
+## Known stack suffix:
+## ABSREC symbol int
+## LR(1) items:
 tguts -> ABSREC symbol int . otype locals END [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL I FIELD F END DEF CONST ]
+## Transitions:
 -- On USE shift to state 10
 -- On REF shift to state 13
 -- On DEF shift to state 22
 -- On BASICTYPE shift to state 28
 -- On typedef shift to state 29
 -- On otype shift to state 39
+## Reductions:
 
 State 39:
+## Known stack suffix:
+## ABSREC symbol int otype
+## LR(1) items:
 tguts -> ABSREC symbol int otype . locals END [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL I FIELD F END DEF CONST ]
+## Transitions:
 -- On locals shift to state 40
+## Reductions:
 -- On VPARAM reduce production locals ->
 -- On VARINFO reduce production locals ->
 -- On TARGET reduce production locals ->
@@ -454,9 +654,13 @@ tguts -> ABSREC symbol int otype . locals END [ VPARAM VARINFO VAR TYPE TARGET S
 -- On DEF reduce production locals ->
 
 State 40:
+## Known stack suffix:
+## ABSREC symbol int otype locals
+## LR(1) items:
 locals -> locals . local [ VPARAM VARINFO TARGET REF PROCINFO PARAM METHOD LOCAL FIELD END DEF ]
 locals -> locals . fixup [ VPARAM VARINFO TARGET REF PROCINFO PARAM METHOD LOCAL FIELD END DEF ]
 tguts -> ABSREC symbol int otype locals . END [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL I FIELD F END DEF CONST ]
+## Transitions:
 -- On VPARAM shift to state 41
 -- On VARINFO shift to state 7
 -- On TARGET shift to state 42
@@ -472,27 +676,48 @@ tguts -> ABSREC symbol int otype locals . END [ VPARAM VARINFO VAR TYPE TARGET S
 -- On local shift to state 61
 -- On kind shift to state 62
 -- On fixup shift to state 67
+## Reductions:
 
 State 41:
+## Known stack suffix:
+## VPARAM
+## LR(1) items:
 kind -> VPARAM . [ TAG ]
+## Transitions:
+## Reductions:
 -- On TAG reduce production kind -> VPARAM
 
 State 42:
+## Known stack suffix:
+## TARGET
+## LR(1) items:
 fixup -> TARGET . int otype [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL FIELD END DEF CONST ]
+## Transitions:
 -- On NUM shift to state 11
 -- On int shift to state 43
+## Reductions:
 
 State 43:
+## Known stack suffix:
+## TARGET int
+## LR(1) items:
 fixup -> TARGET int . otype [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL FIELD END DEF CONST ]
+## Transitions:
 -- On USE shift to state 10
 -- On REF shift to state 13
 -- On DEF shift to state 22
 -- On BASICTYPE shift to state 28
 -- On typedef shift to state 29
 -- On otype shift to state 44
+## Reductions:
 
 State 44:
+## Known stack suffix:
+## TARGET int otype
+## LR(1) items:
 fixup -> TARGET int otype . [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL FIELD END DEF CONST ]
+## Transitions:
+## Reductions:
 -- On VPARAM reduce production fixup -> TARGET int otype
 -- On VARINFO reduce production fixup -> TARGET int otype
 -- On VAR reduce production fixup -> TARGET int otype
@@ -511,22 +736,37 @@ fixup -> TARGET int otype . [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO
 -- On CONST reduce production fixup -> TARGET int otype
 
 State 45:
+## Known stack suffix:
+## PROCINFO
+## LR(1) items:
 fixup -> PROCINFO . symbol otype locals END [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL FIELD END DEF CONST ]
+## Transitions:
 -- On TAG shift to state 8
 -- On symbol shift to state 46
+## Reductions:
 
 State 46:
+## Known stack suffix:
+## PROCINFO symbol
+## LR(1) items:
 fixup -> PROCINFO symbol . otype locals END [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL FIELD END DEF CONST ]
+## Transitions:
 -- On USE shift to state 10
 -- On REF shift to state 13
 -- On DEF shift to state 22
 -- On BASICTYPE shift to state 28
 -- On typedef shift to state 29
 -- On otype shift to state 47
+## Reductions:
 
 State 47:
+## Known stack suffix:
+## PROCINFO symbol otype
+## LR(1) items:
 fixup -> PROCINFO symbol otype . locals END [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL FIELD END DEF CONST ]
+## Transitions:
 -- On locals shift to state 48
+## Reductions:
 -- On VPARAM reduce production locals ->
 -- On VARINFO reduce production locals ->
 -- On TARGET reduce production locals ->
@@ -540,9 +780,13 @@ fixup -> PROCINFO symbol otype . locals END [ VPARAM VARINFO VAR TYPE TARGET STR
 -- On DEF reduce production locals ->
 
 State 48:
+## Known stack suffix:
+## PROCINFO symbol otype locals
+## LR(1) items:
 fixup -> PROCINFO symbol otype locals . END [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL FIELD END DEF CONST ]
 locals -> locals . local [ VPARAM VARINFO TARGET REF PROCINFO PARAM METHOD LOCAL FIELD END DEF ]
 locals -> locals . fixup [ VPARAM VARINFO TARGET REF PROCINFO PARAM METHOD LOCAL FIELD END DEF ]
+## Transitions:
 -- On VPARAM shift to state 41
 -- On VARINFO shift to state 7
 -- On TARGET shift to state 42
@@ -558,46 +802,87 @@ locals -> locals . fixup [ VPARAM VARINFO TARGET REF PROCINFO PARAM METHOD LOCAL
 -- On local shift to state 61
 -- On kind shift to state 62
 -- On fixup shift to state 67
+## Reductions:
 
 State 49:
+## Known stack suffix:
+## PARAM
+## LR(1) items:
 kind -> PARAM . [ TAG ]
+## Transitions:
+## Reductions:
 -- On TAG reduce production kind -> PARAM
 
 State 50:
+## Known stack suffix:
+## METHOD
+## LR(1) items:
 fixup -> METHOD . int ident MARK int symbol otype [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL FIELD END DEF CONST ]
+## Transitions:
 -- On NUM shift to state 11
 -- On int shift to state 51
+## Reductions:
 
 State 51:
+## Known stack suffix:
+## METHOD int
+## LR(1) items:
 fixup -> METHOD int . ident MARK int symbol otype [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL FIELD END DEF CONST ]
+## Transitions:
 -- On TAG shift to state 2
 -- On ident shift to state 52
+## Reductions:
 
 State 52:
+## Known stack suffix:
+## METHOD int ident
+## LR(1) items:
 fixup -> METHOD int ident . MARK int symbol otype [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL FIELD END DEF CONST ]
+## Transitions:
 -- On MARK shift to state 53
+## Reductions:
 
 State 53:
+## Known stack suffix:
+## METHOD int ident MARK
+## LR(1) items:
 fixup -> METHOD int ident MARK . int symbol otype [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL FIELD END DEF CONST ]
+## Transitions:
 -- On NUM shift to state 11
 -- On int shift to state 54
+## Reductions:
 
 State 54:
+## Known stack suffix:
+## METHOD int ident MARK int
+## LR(1) items:
 fixup -> METHOD int ident MARK int . symbol otype [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL FIELD END DEF CONST ]
+## Transitions:
 -- On TAG shift to state 8
 -- On symbol shift to state 55
+## Reductions:
 
 State 55:
+## Known stack suffix:
+## METHOD int ident MARK int symbol
+## LR(1) items:
 fixup -> METHOD int ident MARK int symbol . otype [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL FIELD END DEF CONST ]
+## Transitions:
 -- On USE shift to state 10
 -- On REF shift to state 13
 -- On DEF shift to state 22
 -- On BASICTYPE shift to state 28
 -- On typedef shift to state 29
 -- On otype shift to state 56
+## Reductions:
 
 State 56:
+## Known stack suffix:
+## METHOD int ident MARK int symbol otype
+## LR(1) items:
 fixup -> METHOD int ident MARK int symbol otype . [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL FIELD END DEF CONST ]
+## Transitions:
+## Reductions:
 -- On VPARAM reduce production fixup -> METHOD int ident MARK int symbol otype
 -- On VARINFO reduce production fixup -> METHOD int ident MARK int symbol otype
 -- On VAR reduce production fixup -> METHOD int ident MARK int symbol otype
@@ -616,15 +901,30 @@ fixup -> METHOD int ident MARK int symbol otype . [ VPARAM VARINFO VAR TYPE TARG
 -- On CONST reduce production fixup -> METHOD int ident MARK int symbol otype
 
 State 57:
+## Known stack suffix:
+## LOCAL
+## LR(1) items:
 kind -> LOCAL . [ TAG ]
+## Transitions:
+## Reductions:
 -- On TAG reduce production kind -> LOCAL
 
 State 58:
+## Known stack suffix:
+## FIELD
+## LR(1) items:
 kind -> FIELD . [ TAG ]
+## Transitions:
+## Reductions:
 -- On TAG reduce production kind -> FIELD
 
 State 59:
+## Known stack suffix:
+## PROCINFO symbol otype locals END
+## LR(1) items:
 fixup -> PROCINFO symbol otype locals END . [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL FIELD END DEF CONST ]
+## Transitions:
+## Reductions:
 -- On VPARAM reduce production fixup -> PROCINFO symbol otype locals END
 -- On VARINFO reduce production fixup -> PROCINFO symbol otype locals END
 -- On VAR reduce production fixup -> PROCINFO symbol otype locals END
@@ -643,7 +943,12 @@ fixup -> PROCINFO symbol otype locals END . [ VPARAM VARINFO VAR TYPE TARGET STR
 -- On CONST reduce production fixup -> PROCINFO symbol otype locals END
 
 State 60:
+## Known stack suffix:
+## typedef
+## LR(1) items:
 fixup -> typedef . [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL FIELD END DEF CONST ]
+## Transitions:
+## Reductions:
 -- On VPARAM reduce production fixup -> typedef
 -- On VARINFO reduce production fixup -> typedef
 -- On VAR reduce production fixup -> typedef
@@ -662,7 +967,12 @@ fixup -> typedef . [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDUR
 -- On CONST reduce production fixup -> typedef
 
 State 61:
+## Known stack suffix:
+## locals local
+## LR(1) items:
 locals -> locals local . [ VPARAM VARINFO TARGET REF PROCINFO PARAM METHOD LOCAL FIELD END DEF ]
+## Transitions:
+## Reductions:
 -- On VPARAM reduce production locals -> locals local
 -- On VARINFO reduce production locals -> locals local
 -- On TARGET reduce production locals -> locals local
@@ -676,30 +986,55 @@ locals -> locals local . [ VPARAM VARINFO TARGET REF PROCINFO PARAM METHOD LOCAL
 -- On DEF reduce production locals -> locals local
 
 State 62:
+## Known stack suffix:
+## kind
+## LR(1) items:
 local -> kind . ident MARK int otype [ VPARAM VARINFO TARGET REF PROCINFO PARAM METHOD LOCAL FIELD END DEF ]
+## Transitions:
 -- On TAG shift to state 2
 -- On ident shift to state 63
+## Reductions:
 
 State 63:
+## Known stack suffix:
+## kind ident
+## LR(1) items:
 local -> kind ident . MARK int otype [ VPARAM VARINFO TARGET REF PROCINFO PARAM METHOD LOCAL FIELD END DEF ]
+## Transitions:
 -- On MARK shift to state 64
+## Reductions:
 
 State 64:
+## Known stack suffix:
+## kind ident MARK
+## LR(1) items:
 local -> kind ident MARK . int otype [ VPARAM VARINFO TARGET REF PROCINFO PARAM METHOD LOCAL FIELD END DEF ]
+## Transitions:
 -- On NUM shift to state 11
 -- On int shift to state 65
+## Reductions:
 
 State 65:
+## Known stack suffix:
+## kind ident MARK int
+## LR(1) items:
 local -> kind ident MARK int . otype [ VPARAM VARINFO TARGET REF PROCINFO PARAM METHOD LOCAL FIELD END DEF ]
+## Transitions:
 -- On USE shift to state 10
 -- On REF shift to state 13
 -- On DEF shift to state 22
 -- On BASICTYPE shift to state 28
 -- On typedef shift to state 29
 -- On otype shift to state 66
+## Reductions:
 
 State 66:
+## Known stack suffix:
+## kind ident MARK int otype
+## LR(1) items:
 local -> kind ident MARK int otype . [ VPARAM VARINFO TARGET REF PROCINFO PARAM METHOD LOCAL FIELD END DEF ]
+## Transitions:
+## Reductions:
 -- On VPARAM reduce production local -> kind ident MARK int otype
 -- On VARINFO reduce production local -> kind ident MARK int otype
 -- On TARGET reduce production local -> kind ident MARK int otype
@@ -713,7 +1048,12 @@ local -> kind ident MARK int otype . [ VPARAM VARINFO TARGET REF PROCINFO PARAM 
 -- On DEF reduce production local -> kind ident MARK int otype
 
 State 67:
+## Known stack suffix:
+## locals fixup
+## LR(1) items:
 locals -> locals fixup . [ VPARAM VARINFO TARGET REF PROCINFO PARAM METHOD LOCAL FIELD END DEF ]
+## Transitions:
+## Reductions:
 -- On VPARAM reduce production locals -> locals fixup
 -- On VARINFO reduce production locals -> locals fixup
 -- On TARGET reduce production locals -> locals fixup
@@ -727,7 +1067,12 @@ locals -> locals fixup . [ VPARAM VARINFO TARGET REF PROCINFO PARAM METHOD LOCAL
 -- On DEF reduce production locals -> locals fixup
 
 State 68:
+## Known stack suffix:
+## ABSREC symbol int otype locals END
+## LR(1) items:
 tguts -> ABSREC symbol int otype locals END . [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL I FIELD F END DEF CONST ]
+## Transitions:
+## Reductions:
 -- On VPARAM reduce production tguts -> ABSREC symbol int otype locals END
 -- On VARINFO reduce production tguts -> ABSREC symbol int otype locals END
 -- On VAR reduce production tguts -> ABSREC symbol int otype locals END
@@ -748,11 +1093,21 @@ tguts -> ABSREC symbol int otype locals END . [ VPARAM VARINFO VAR TYPE TARGET S
 -- On CONST reduce production tguts -> ABSREC symbol int otype locals END
 
 State 69:
+## Known stack suffix:
+## ABSMETH
+## LR(1) items:
 prockind -> ABSMETH . [ NUM ]
+## Transitions:
+## Reductions:
 -- On NUM reduce production prockind -> ABSMETH
 
 State 70:
+## Known stack suffix:
+## DEF int tguts
+## LR(1) items:
 typedef -> DEF int tguts . [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL I FIELD F END DEF CONST ]
+## Transitions:
+## Reductions:
 -- On VPARAM reduce production typedef -> DEF int tguts
 -- On VARINFO reduce production typedef -> DEF int tguts
 -- On VAR reduce production typedef -> DEF int tguts
@@ -773,22 +1128,37 @@ typedef -> DEF int tguts . [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO 
 -- On CONST reduce production typedef -> DEF int tguts
 
 State 71:
+## Known stack suffix:
+## prockind
+## LR(1) items:
 tguts -> prockind . int otype locals END [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL I FIELD F END DEF CONST ]
+## Transitions:
 -- On NUM shift to state 11
 -- On int shift to state 72
+## Reductions:
 
 State 72:
+## Known stack suffix:
+## prockind int
+## LR(1) items:
 tguts -> prockind int . otype locals END [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL I FIELD F END DEF CONST ]
+## Transitions:
 -- On USE shift to state 10
 -- On REF shift to state 13
 -- On DEF shift to state 22
 -- On BASICTYPE shift to state 28
 -- On typedef shift to state 29
 -- On otype shift to state 73
+## Reductions:
 
 State 73:
+## Known stack suffix:
+## prockind int otype
+## LR(1) items:
 tguts -> prockind int otype . locals END [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL I FIELD F END DEF CONST ]
+## Transitions:
 -- On locals shift to state 74
+## Reductions:
 -- On VPARAM reduce production locals ->
 -- On VARINFO reduce production locals ->
 -- On TARGET reduce production locals ->
@@ -802,9 +1172,13 @@ tguts -> prockind int otype . locals END [ VPARAM VARINFO VAR TYPE TARGET STRING
 -- On DEF reduce production locals ->
 
 State 74:
+## Known stack suffix:
+## prockind int otype locals
+## LR(1) items:
 locals -> locals . local [ VPARAM VARINFO TARGET REF PROCINFO PARAM METHOD LOCAL FIELD END DEF ]
 locals -> locals . fixup [ VPARAM VARINFO TARGET REF PROCINFO PARAM METHOD LOCAL FIELD END DEF ]
 tguts -> prockind int otype locals . END [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL I FIELD F END DEF CONST ]
+## Transitions:
 -- On VPARAM shift to state 41
 -- On VARINFO shift to state 7
 -- On TARGET shift to state 42
@@ -820,9 +1194,15 @@ tguts -> prockind int otype locals . END [ VPARAM VARINFO VAR TYPE TARGET STRING
 -- On local shift to state 61
 -- On kind shift to state 62
 -- On fixup shift to state 67
+## Reductions:
 
 State 75:
+## Known stack suffix:
+## prockind int otype locals END
+## LR(1) items:
 tguts -> prockind int otype locals END . [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL I FIELD F END DEF CONST ]
+## Transitions:
+## Reductions:
 -- On VPARAM reduce production tguts -> prockind int otype locals END
 -- On VARINFO reduce production tguts -> prockind int otype locals END
 -- On VAR reduce production tguts -> prockind int otype locals END
@@ -843,8 +1223,13 @@ tguts -> prockind int otype locals END . [ VPARAM VARINFO VAR TYPE TARGET STRING
 -- On CONST reduce production tguts -> prockind int otype locals END
 
 State 76:
+## Known stack suffix:
+## RECORD symbol int otype
+## LR(1) items:
 tguts -> RECORD symbol int otype . locals END [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL I FIELD F END DEF CONST ]
+## Transitions:
 -- On locals shift to state 77
+## Reductions:
 -- On VPARAM reduce production locals ->
 -- On VARINFO reduce production locals ->
 -- On TARGET reduce production locals ->
@@ -858,9 +1243,13 @@ tguts -> RECORD symbol int otype . locals END [ VPARAM VARINFO VAR TYPE TARGET S
 -- On DEF reduce production locals ->
 
 State 77:
+## Known stack suffix:
+## RECORD symbol int otype locals
+## LR(1) items:
 locals -> locals . local [ VPARAM VARINFO TARGET REF PROCINFO PARAM METHOD LOCAL FIELD END DEF ]
 locals -> locals . fixup [ VPARAM VARINFO TARGET REF PROCINFO PARAM METHOD LOCAL FIELD END DEF ]
 tguts -> RECORD symbol int otype locals . END [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL I FIELD F END DEF CONST ]
+## Transitions:
 -- On VPARAM shift to state 41
 -- On VARINFO shift to state 7
 -- On TARGET shift to state 42
@@ -876,9 +1265,15 @@ tguts -> RECORD symbol int otype locals . END [ VPARAM VARINFO VAR TYPE TARGET S
 -- On local shift to state 61
 -- On kind shift to state 62
 -- On fixup shift to state 67
+## Reductions:
 
 State 78:
+## Known stack suffix:
+## RECORD symbol int otype locals END
+## LR(1) items:
 tguts -> RECORD symbol int otype locals END . [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL I FIELD F END DEF CONST ]
+## Transitions:
+## Reductions:
 -- On VPARAM reduce production tguts -> RECORD symbol int otype locals END
 -- On VARINFO reduce production tguts -> RECORD symbol int otype locals END
 -- On VAR reduce production tguts -> RECORD symbol int otype locals END
@@ -899,7 +1294,12 @@ tguts -> RECORD symbol int otype locals END . [ VPARAM VARINFO VAR TYPE TARGET S
 -- On CONST reduce production tguts -> RECORD symbol int otype locals END
 
 State 79:
+## Known stack suffix:
+## REF int ident int tname tguts
+## LR(1) items:
 typedef -> REF int ident int tname tguts . [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL I FIELD F END DEF CONST ]
+## Transitions:
+## Reductions:
 -- On VPARAM reduce production typedef -> REF int ident int tname tguts
 -- On VARINFO reduce production typedef -> REF int ident int tname tguts
 -- On VAR reduce production typedef -> REF int ident int tname tguts
@@ -920,7 +1320,12 @@ typedef -> REF int ident int tname tguts . [ VPARAM VARINFO VAR TYPE TARGET STRI
 -- On CONST reduce production typedef -> REF int ident int tname tguts
 
 State 80:
+## Known stack suffix:
+## ident
+## LR(1) items:
 tname -> ident . [ RECORD PROC POINTER METH FLEX ENUM ARRAY ABSREC ABSMETH ]
+## Transitions:
+## Reductions:
 -- On RECORD reduce production tname -> ident
 -- On PROC reduce production tname -> ident
 -- On POINTER reduce production tname -> ident
@@ -932,7 +1337,12 @@ tname -> ident . [ RECORD PROC POINTER METH FLEX ENUM ARRAY ABSREC ABSMETH ]
 -- On ABSMETH reduce production tname -> ident
 
 State 81:
+## Known stack suffix:
+## VARINFO symbol otype
+## LR(1) items:
 fixup -> VARINFO symbol otype . [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE PARAM METHOD LOCAL FIELD END DEF CONST ]
+## Transitions:
+## Reductions:
 -- On VPARAM reduce production fixup -> VARINFO symbol otype
 -- On VARINFO reduce production fixup -> VARINFO symbol otype
 -- On VAR reduce production fixup -> VARINFO symbol otype
@@ -951,25 +1361,45 @@ fixup -> VARINFO symbol otype . [ VPARAM VARINFO VAR TYPE TARGET STRING REF PROC
 -- On CONST reduce production fixup -> VARINFO symbol otype
 
 State 82:
+## Known stack suffix:
+## VAR
+## LR(1) items:
 def -> VAR . ident MARK otype [ VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE METHOD END DEF CONST ]
+## Transitions:
 -- On TAG shift to state 2
 -- On ident shift to state 83
+## Reductions:
 
 State 83:
+## Known stack suffix:
+## VAR ident
+## LR(1) items:
 def -> VAR ident . MARK otype [ VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE METHOD END DEF CONST ]
+## Transitions:
 -- On MARK shift to state 84
+## Reductions:
 
 State 84:
+## Known stack suffix:
+## VAR ident MARK
+## LR(1) items:
 def -> VAR ident MARK . otype [ VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE METHOD END DEF CONST ]
+## Transitions:
 -- On USE shift to state 10
 -- On REF shift to state 13
 -- On DEF shift to state 22
 -- On BASICTYPE shift to state 28
 -- On typedef shift to state 29
 -- On otype shift to state 85
+## Reductions:
 
 State 85:
+## Known stack suffix:
+## VAR ident MARK otype
+## LR(1) items:
 def -> VAR ident MARK otype . [ VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE METHOD END DEF CONST ]
+## Transitions:
+## Reductions:
 -- On VARINFO reduce production def -> VAR ident MARK otype
 -- On VAR reduce production def -> VAR ident MARK otype
 -- On TYPE reduce production def -> VAR ident MARK otype
@@ -984,25 +1414,45 @@ def -> VAR ident MARK otype . [ VARINFO VAR TYPE TARGET STRING REF PROCINFO PROC
 -- On CONST reduce production def -> VAR ident MARK otype
 
 State 86:
+## Known stack suffix:
+## TYPE
+## LR(1) items:
 def -> TYPE . ident MARK otype [ VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE METHOD END DEF CONST ]
+## Transitions:
 -- On TAG shift to state 2
 -- On ident shift to state 87
+## Reductions:
 
 State 87:
+## Known stack suffix:
+## TYPE ident
+## LR(1) items:
 def -> TYPE ident . MARK otype [ VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE METHOD END DEF CONST ]
+## Transitions:
 -- On MARK shift to state 88
+## Reductions:
 
 State 88:
+## Known stack suffix:
+## TYPE ident MARK
+## LR(1) items:
 def -> TYPE ident MARK . otype [ VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE METHOD END DEF CONST ]
+## Transitions:
 -- On USE shift to state 10
 -- On REF shift to state 13
 -- On DEF shift to state 22
 -- On BASICTYPE shift to state 28
 -- On typedef shift to state 29
 -- On otype shift to state 89
+## Reductions:
 
 State 89:
+## Known stack suffix:
+## TYPE ident MARK otype
+## LR(1) items:
 def -> TYPE ident MARK otype . [ VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE METHOD END DEF CONST ]
+## Transitions:
+## Reductions:
 -- On VARINFO reduce production def -> TYPE ident MARK otype
 -- On VAR reduce production def -> TYPE ident MARK otype
 -- On TYPE reduce production def -> TYPE ident MARK otype
@@ -1017,26 +1467,51 @@ def -> TYPE ident MARK otype . [ VARINFO VAR TYPE TARGET STRING REF PROCINFO PRO
 -- On CONST reduce production def -> TYPE ident MARK otype
 
 State 90:
+## Known stack suffix:
+## STRING
+## LR(1) items:
 def -> STRING . ident MARK int symbol [ VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE METHOD END DEF CONST ]
+## Transitions:
 -- On TAG shift to state 2
 -- On ident shift to state 91
+## Reductions:
 
 State 91:
+## Known stack suffix:
+## STRING ident
+## LR(1) items:
 def -> STRING ident . MARK int symbol [ VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE METHOD END DEF CONST ]
+## Transitions:
 -- On MARK shift to state 92
+## Reductions:
 
 State 92:
+## Known stack suffix:
+## STRING ident MARK
+## LR(1) items:
 def -> STRING ident MARK . int symbol [ VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE METHOD END DEF CONST ]
+## Transitions:
 -- On NUM shift to state 11
 -- On int shift to state 93
+## Reductions:
 
 State 93:
+## Known stack suffix:
+## STRING ident MARK int
+## LR(1) items:
 def -> STRING ident MARK int . symbol [ VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE METHOD END DEF CONST ]
+## Transitions:
 -- On TAG shift to state 8
 -- On symbol shift to state 94
+## Reductions:
 
 State 94:
+## Known stack suffix:
+## STRING ident MARK int symbol
+## LR(1) items:
 def -> STRING ident MARK int symbol . [ VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE METHOD END DEF CONST ]
+## Transitions:
+## Reductions:
 -- On VARINFO reduce production def -> STRING ident MARK int symbol
 -- On VAR reduce production def -> STRING ident MARK int symbol
 -- On TYPE reduce production def -> STRING ident MARK int symbol
@@ -1051,25 +1526,45 @@ def -> STRING ident MARK int symbol . [ VARINFO VAR TYPE TARGET STRING REF PROCI
 -- On CONST reduce production def -> STRING ident MARK int symbol
 
 State 95:
+## Known stack suffix:
+## PROCEDURE
+## LR(1) items:
 def -> PROCEDURE . ident MARK otype [ VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE METHOD END DEF CONST ]
+## Transitions:
 -- On TAG shift to state 2
 -- On ident shift to state 96
+## Reductions:
 
 State 96:
+## Known stack suffix:
+## PROCEDURE ident
+## LR(1) items:
 def -> PROCEDURE ident . MARK otype [ VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE METHOD END DEF CONST ]
+## Transitions:
 -- On MARK shift to state 97
+## Reductions:
 
 State 97:
+## Known stack suffix:
+## PROCEDURE ident MARK
+## LR(1) items:
 def -> PROCEDURE ident MARK . otype [ VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE METHOD END DEF CONST ]
+## Transitions:
 -- On USE shift to state 10
 -- On REF shift to state 13
 -- On DEF shift to state 22
 -- On BASICTYPE shift to state 28
 -- On typedef shift to state 29
 -- On otype shift to state 98
+## Reductions:
 
 State 98:
+## Known stack suffix:
+## PROCEDURE ident MARK otype
+## LR(1) items:
 def -> PROCEDURE ident MARK otype . [ VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE METHOD END DEF CONST ]
+## Transitions:
+## Reductions:
 -- On VARINFO reduce production def -> PROCEDURE ident MARK otype
 -- On VAR reduce production def -> PROCEDURE ident MARK otype
 -- On TYPE reduce production def -> PROCEDURE ident MARK otype
@@ -1084,43 +1579,83 @@ def -> PROCEDURE ident MARK otype . [ VARINFO VAR TYPE TARGET STRING REF PROCINF
 -- On CONST reduce production def -> PROCEDURE ident MARK otype
 
 State 99:
+## Known stack suffix:
+## header defs END
+## LR(1) items:
 file -> header defs END . HEX [ # ]
+## Transitions:
 -- On HEX shift to state 100
+## Reductions:
 
 State 100:
+## Known stack suffix:
+## header defs END HEX
+## LR(1) items:
 file -> header defs END HEX . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production file -> header defs END HEX
 
 State 101:
+## Known stack suffix:
+## CONST
+## LR(1) items:
 def -> CONST . ident MARK otype const [ VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE METHOD END DEF CONST ]
+## Transitions:
 -- On TAG shift to state 2
 -- On ident shift to state 102
+## Reductions:
 
 State 102:
+## Known stack suffix:
+## CONST ident
+## LR(1) items:
 def -> CONST ident . MARK otype const [ VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE METHOD END DEF CONST ]
+## Transitions:
 -- On MARK shift to state 103
+## Reductions:
 
 State 103:
+## Known stack suffix:
+## CONST ident MARK
+## LR(1) items:
 def -> CONST ident MARK . otype const [ VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE METHOD END DEF CONST ]
+## Transitions:
 -- On USE shift to state 10
 -- On REF shift to state 13
 -- On DEF shift to state 22
 -- On BASICTYPE shift to state 28
 -- On typedef shift to state 29
 -- On otype shift to state 104
+## Reductions:
 
 State 104:
+## Known stack suffix:
+## CONST ident MARK otype
+## LR(1) items:
 def -> CONST ident MARK otype . const [ VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE METHOD END DEF CONST ]
+## Transitions:
 -- On I shift to state 105
 -- On F shift to state 107
 -- On const shift to state 109
+## Reductions:
 
 State 105:
+## Known stack suffix:
+## I
+## LR(1) items:
 const -> I . NUM [ VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE METHOD END DEF CONST ]
+## Transitions:
 -- On NUM shift to state 106
+## Reductions:
 
 State 106:
+## Known stack suffix:
+## I NUM
+## LR(1) items:
 const -> I NUM . [ VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE METHOD END DEF CONST ]
+## Transitions:
+## Reductions:
 -- On VARINFO reduce production const -> I NUM
 -- On VAR reduce production const -> I NUM
 -- On TYPE reduce production const -> I NUM
@@ -1135,11 +1670,21 @@ const -> I NUM . [ VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE METHOD 
 -- On CONST reduce production const -> I NUM
 
 State 107:
+## Known stack suffix:
+## F
+## LR(1) items:
 const -> F . FLO [ VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE METHOD END DEF CONST ]
+## Transitions:
 -- On FLO shift to state 108
+## Reductions:
 
 State 108:
+## Known stack suffix:
+## F FLO
+## LR(1) items:
 const -> F FLO . [ VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE METHOD END DEF CONST ]
+## Transitions:
+## Reductions:
 -- On VARINFO reduce production const -> F FLO
 -- On VAR reduce production const -> F FLO
 -- On TYPE reduce production const -> F FLO
@@ -1154,7 +1699,12 @@ const -> F FLO . [ VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE METHOD 
 -- On CONST reduce production const -> F FLO
 
 State 109:
+## Known stack suffix:
+## CONST ident MARK otype const
+## LR(1) items:
 def -> CONST ident MARK otype const . [ VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE METHOD END DEF CONST ]
+## Transitions:
+## Reductions:
 -- On VARINFO reduce production def -> CONST ident MARK otype const
 -- On VAR reduce production def -> CONST ident MARK otype const
 -- On TYPE reduce production def -> CONST ident MARK otype const
@@ -1169,7 +1719,12 @@ def -> CONST ident MARK otype const . [ VARINFO VAR TYPE TARGET STRING REF PROCI
 -- On CONST reduce production def -> CONST ident MARK otype const
 
 State 110:
+## Known stack suffix:
+## defs fixup
+## LR(1) items:
 defs -> defs fixup . [ VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE METHOD END DEF CONST ]
+## Transitions:
+## Reductions:
 -- On VARINFO reduce production defs -> defs fixup
 -- On VAR reduce production defs -> defs fixup
 -- On TYPE reduce production defs -> defs fixup
@@ -1184,7 +1739,12 @@ defs -> defs fixup . [ VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE MET
 -- On CONST reduce production defs -> defs fixup
 
 State 111:
+## Known stack suffix:
+## defs def
+## LR(1) items:
 defs -> defs def . [ VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE METHOD END DEF CONST ]
+## Transitions:
+## Reductions:
 -- On VARINFO reduce production defs -> defs def
 -- On VAR reduce production defs -> defs def
 -- On TYPE reduce production defs -> defs def
@@ -1199,6 +1759,11 @@ defs -> defs def . [ VARINFO VAR TYPE TARGET STRING REF PROCINFO PROCEDURE METHO
 -- On CONST reduce production defs -> defs def
 
 State 112:
+## Known stack suffix:
+## file
+## LR(1) items:
 file' -> file . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept file
 

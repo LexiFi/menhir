@@ -1,5 +1,9 @@
 State 0:
+## Known stack suffix:
+##
+## LR(1) items:
 parse_statement' -> . parse_statement [ # ]
+## Transitions:
 -- On THEORY shift to state 1
 -- On RAW shift to state 154
 -- On LEMMA shift to state 172
@@ -12,30 +16,51 @@ parse_statement' -> . parse_statement [ # ]
 -- On include_ shift to state 195
 -- On clause shift to state 196
 -- On axiom shift to state 197
+## Reductions:
 
 State 1:
+## Known stack suffix:
+## THEORY
+## LR(1) items:
 theory -> THEORY . datalog_atom IS premises DOT [ EOI ]
+## Transitions:
 -- On LOWER_WORD shift to state 2
 -- On datalog_atom shift to state 11
+## Reductions:
 
 State 2:
+## Known stack suffix:
+## LOWER_WORD
+## LR(1) items:
 datalog_atom -> LOWER_WORD . [ IS IF DOT AND_ALSO ]
 datalog_atom -> LOWER_WORD . LEFT_PAREN separated_nonempty_list(COMMA,atomic_word) RIGHT_PAREN [ IS IF DOT AND_ALSO ]
+## Transitions:
 -- On LEFT_PAREN shift to state 3
+## Reductions:
 -- On IS reduce production datalog_atom -> LOWER_WORD
 -- On IF reduce production datalog_atom -> LOWER_WORD
 -- On DOT reduce production datalog_atom -> LOWER_WORD
 -- On AND_ALSO reduce production datalog_atom -> LOWER_WORD
 
 State 3:
+## Known stack suffix:
+## LOWER_WORD LEFT_PAREN
+## LR(1) items:
 datalog_atom -> LOWER_WORD LEFT_PAREN . separated_nonempty_list(COMMA,atomic_word) RIGHT_PAREN [ IS IF DOT AND_ALSO ]
+## Transitions:
 -- On SINGLE_QUOTED shift to state 4
 -- On LOWER_WORD shift to state 5
 -- On separated_nonempty_list(COMMA,atomic_word) shift to state 6
 -- On atomic_word shift to state 8
+## Reductions:
 
 State 4:
+## Known stack suffix:
+## SINGLE_QUOTED
+## LR(1) items:
 atomic_word -> SINGLE_QUOTED . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_PAREN LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA AND_ALSO AND ]
+## Transitions:
+## Reductions:
 -- On XOR reduce production atomic_word -> SINGLE_QUOTED
 -- On VLINE reduce production atomic_word -> SINGLE_QUOTED
 -- On RIGHT_PAREN reduce production atomic_word -> SINGLE_QUOTED
@@ -55,7 +80,12 @@ atomic_word -> SINGLE_QUOTED . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL N
 -- On AND reduce production atomic_word -> SINGLE_QUOTED
 
 State 5:
+## Known stack suffix:
+## LOWER_WORD
+## LR(1) items:
 atomic_word -> LOWER_WORD . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_PAREN LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA AND_ALSO AND ]
+## Transitions:
+## Reductions:
 -- On XOR reduce production atomic_word -> LOWER_WORD
 -- On VLINE reduce production atomic_word -> LOWER_WORD
 -- On RIGHT_PAREN reduce production atomic_word -> LOWER_WORD
@@ -75,39 +105,73 @@ atomic_word -> LOWER_WORD . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTV
 -- On AND reduce production atomic_word -> LOWER_WORD
 
 State 6:
+## Known stack suffix:
+## LOWER_WORD LEFT_PAREN separated_nonempty_list(COMMA,atomic_word)
+## LR(1) items:
 datalog_atom -> LOWER_WORD LEFT_PAREN separated_nonempty_list(COMMA,atomic_word) . RIGHT_PAREN [ IS IF DOT AND_ALSO ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 7
+## Reductions:
 
 State 7:
+## Known stack suffix:
+## LOWER_WORD LEFT_PAREN separated_nonempty_list(COMMA,atomic_word) RIGHT_PAREN
+## LR(1) items:
 datalog_atom -> LOWER_WORD LEFT_PAREN separated_nonempty_list(COMMA,atomic_word) RIGHT_PAREN . [ IS IF DOT AND_ALSO ]
+## Transitions:
+## Reductions:
 -- On IS reduce production datalog_atom -> LOWER_WORD LEFT_PAREN separated_nonempty_list(COMMA,atomic_word) RIGHT_PAREN
 -- On IF reduce production datalog_atom -> LOWER_WORD LEFT_PAREN separated_nonempty_list(COMMA,atomic_word) RIGHT_PAREN
 -- On DOT reduce production datalog_atom -> LOWER_WORD LEFT_PAREN separated_nonempty_list(COMMA,atomic_word) RIGHT_PAREN
 -- On AND_ALSO reduce production datalog_atom -> LOWER_WORD LEFT_PAREN separated_nonempty_list(COMMA,atomic_word) RIGHT_PAREN
 
 State 8:
+## Known stack suffix:
+## atomic_word
+## LR(1) items:
 separated_nonempty_list(COMMA,atomic_word) -> atomic_word . [ RIGHT_PAREN ]
 separated_nonempty_list(COMMA,atomic_word) -> atomic_word . COMMA separated_nonempty_list(COMMA,atomic_word) [ RIGHT_PAREN ]
+## Transitions:
 -- On COMMA shift to state 9
+## Reductions:
 -- On RIGHT_PAREN reduce production separated_nonempty_list(COMMA,atomic_word) -> atomic_word
 
 State 9:
+## Known stack suffix:
+## atomic_word COMMA
+## LR(1) items:
 separated_nonempty_list(COMMA,atomic_word) -> atomic_word COMMA . separated_nonempty_list(COMMA,atomic_word) [ RIGHT_PAREN ]
+## Transitions:
 -- On SINGLE_QUOTED shift to state 4
 -- On LOWER_WORD shift to state 5
 -- On separated_nonempty_list(COMMA,atomic_word) shift to state 10
 -- On atomic_word shift to state 8
+## Reductions:
 
 State 10:
+## Known stack suffix:
+## atomic_word COMMA separated_nonempty_list(COMMA,atomic_word)
+## LR(1) items:
 separated_nonempty_list(COMMA,atomic_word) -> atomic_word COMMA separated_nonempty_list(COMMA,atomic_word) . [ RIGHT_PAREN ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production separated_nonempty_list(COMMA,atomic_word) -> atomic_word COMMA separated_nonempty_list(COMMA,atomic_word)
 
 State 11:
+## Known stack suffix:
+## THEORY datalog_atom
+## LR(1) items:
 theory -> THEORY datalog_atom . IS premises DOT [ EOI ]
+## Transitions:
 -- On IS shift to state 12
+## Reductions:
 
 State 12:
+## Known stack suffix:
+## THEORY datalog_atom IS
+## LR(1) items:
 theory -> THEORY datalog_atom IS . premises DOT [ EOI ]
+## Transitions:
 -- On UPPER_WORD shift to state 13
 -- On TRUE shift to state 43
 -- On THEORY shift to state 44
@@ -155,11 +219,17 @@ theory -> THEORY datalog_atom IS . premises DOT [ EOI ]
 -- On atomic_system_word shift to state 90
 -- On atomic_formula shift to state 104
 -- On atomic_defined_word shift to state 91
+## Reductions:
 
 State 13:
+## Known stack suffix:
+## UPPER_WORD
+## LR(1) items:
 variable -> UPPER_WORD . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA AND_ALSO AND ]
 variable -> UPPER_WORD . COLUMN tff_type [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA AND_ALSO AND ]
+## Transitions:
 -- On COLUMN shift to state 14
+## Reductions:
 -- On XOR reduce production variable -> UPPER_WORD
 -- On VLINE reduce production variable -> UPPER_WORD
 -- On RIGHT_PAREN reduce production variable -> UPPER_WORD
@@ -178,7 +248,11 @@ variable -> UPPER_WORD . COLUMN tff_type [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET N
 -- On AND reduce production variable -> UPPER_WORD
 
 State 14:
+## Known stack suffix:
+## UPPER_WORD COLUMN
+## LR(1) items:
 variable -> UPPER_WORD COLUMN . tff_type [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA AND_ALSO AND ]
+## Transitions:
 -- On UPPER_WORD shift to state 15
 -- On TYPE_TY shift to state 16
 -- On LOWER_WORD shift to state 17
@@ -188,9 +262,15 @@ variable -> UPPER_WORD COLUMN . tff_type [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET N
 -- On tff_type shift to state 42
 -- On tff_ty_var shift to state 24
 -- On tff_atom_type shift to state 25
+## Reductions:
 
 State 15:
+## Known stack suffix:
+## UPPER_WORD
+## LR(1) items:
 tff_ty_var -> UPPER_WORD . [ XOR VLINE STAR RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA ARROW AND_ALSO AND ]
+## Transitions:
+## Reductions:
 -- On XOR reduce production tff_ty_var -> UPPER_WORD
 -- On VLINE reduce production tff_ty_var -> UPPER_WORD
 -- On STAR reduce production tff_ty_var -> UPPER_WORD
@@ -211,7 +291,12 @@ tff_ty_var -> UPPER_WORD . [ XOR VLINE STAR RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL 
 -- On AND reduce production tff_ty_var -> UPPER_WORD
 
 State 16:
+## Known stack suffix:
+## TYPE_TY
+## LR(1) items:
 tff_atom_type -> TYPE_TY . [ XOR VLINE STAR RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA ARROW AND_ALSO AND ]
+## Transitions:
+## Reductions:
 -- On XOR reduce production tff_atom_type -> TYPE_TY
 -- On VLINE reduce production tff_atom_type -> TYPE_TY
 -- On STAR reduce production tff_atom_type -> TYPE_TY
@@ -232,7 +317,12 @@ tff_atom_type -> TYPE_TY . [ XOR VLINE STAR RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL 
 -- On AND reduce production tff_atom_type -> TYPE_TY
 
 State 17:
+## Known stack suffix:
+## LOWER_WORD
+## LR(1) items:
 type_const -> LOWER_WORD . [ XOR VLINE STAR RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_PAREN LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA ARROW AND_ALSO AND ]
+## Transitions:
+## Reductions:
 -- On XOR reduce production type_const -> LOWER_WORD
 -- On VLINE reduce production type_const -> LOWER_WORD
 -- On STAR reduce production type_const -> LOWER_WORD
@@ -254,8 +344,12 @@ type_const -> LOWER_WORD . [ XOR VLINE STAR RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL 
 -- On AND reduce production type_const -> LOWER_WORD
 
 State 18:
+## Known stack suffix:
+## LEFT_PAREN
+## LR(1) items:
 tff_atom_type -> LEFT_PAREN . tff_type RIGHT_PAREN [ XOR VLINE STAR RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA ARROW AND_ALSO AND ]
 tff_type -> LEFT_PAREN . tff_ty_args RIGHT_PAREN ARROW tff_atom_type [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA AND_ALSO AND ]
+## Transitions:
 -- On UPPER_WORD shift to state 15
 -- On TYPE_TY shift to state 16
 -- On LOWER_WORD shift to state 17
@@ -266,9 +360,15 @@ tff_type -> LEFT_PAREN . tff_ty_args RIGHT_PAREN ARROW tff_atom_type [ XOR VLINE
 -- On tff_ty_var shift to state 24
 -- On tff_ty_args shift to state 34
 -- On tff_atom_type shift to state 38
+## Reductions:
 
 State 19:
+## Known stack suffix:
+## DOLLAR_WORD
+## LR(1) items:
 type_const -> DOLLAR_WORD . [ XOR VLINE STAR RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_PAREN LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA ARROW AND_ALSO AND ]
+## Transitions:
+## Reductions:
 -- On XOR reduce production type_const -> DOLLAR_WORD
 -- On VLINE reduce production type_const -> DOLLAR_WORD
 -- On STAR reduce production type_const -> DOLLAR_WORD
@@ -290,9 +390,14 @@ type_const -> DOLLAR_WORD . [ XOR VLINE STAR RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL
 -- On AND reduce production type_const -> DOLLAR_WORD
 
 State 20:
+## Known stack suffix:
+## type_const
+## LR(1) items:
 tff_atom_type -> type_const . [ XOR VLINE STAR RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA ARROW AND_ALSO AND ]
 tff_atom_type -> type_const . LEFT_PAREN separated_nonempty_list(COMMA,tff_type) RIGHT_PAREN [ XOR VLINE STAR RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA ARROW AND_ALSO AND ]
+## Transitions:
 -- On LEFT_PAREN shift to state 21
+## Reductions:
 -- On XOR reduce production tff_atom_type -> type_const
 -- On VLINE reduce production tff_atom_type -> type_const
 -- On STAR reduce production tff_atom_type -> type_const
@@ -313,7 +418,11 @@ tff_atom_type -> type_const . LEFT_PAREN separated_nonempty_list(COMMA,tff_type)
 -- On AND reduce production tff_atom_type -> type_const
 
 State 21:
+## Known stack suffix:
+## type_const LEFT_PAREN
+## LR(1) items:
 tff_atom_type -> type_const LEFT_PAREN . separated_nonempty_list(COMMA,tff_type) RIGHT_PAREN [ XOR VLINE STAR RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA ARROW AND_ALSO AND ]
+## Transitions:
 -- On UPPER_WORD shift to state 15
 -- On TYPE_TY shift to state 16
 -- On LOWER_WORD shift to state 17
@@ -324,15 +433,25 @@ tff_atom_type -> type_const LEFT_PAREN . separated_nonempty_list(COMMA,tff_type)
 -- On tff_ty_var shift to state 24
 -- On tff_atom_type shift to state 25
 -- On separated_nonempty_list(COMMA,tff_type) shift to state 32
+## Reductions:
 
 State 22:
+## Known stack suffix:
+## tff_type
+## LR(1) items:
 separated_nonempty_list(COMMA,tff_type) -> tff_type . [ RIGHT_PAREN ]
 separated_nonempty_list(COMMA,tff_type) -> tff_type . COMMA separated_nonempty_list(COMMA,tff_type) [ RIGHT_PAREN ]
+## Transitions:
 -- On COMMA shift to state 23
+## Reductions:
 -- On RIGHT_PAREN reduce production separated_nonempty_list(COMMA,tff_type) -> tff_type
 
 State 23:
+## Known stack suffix:
+## tff_type COMMA
+## LR(1) items:
 separated_nonempty_list(COMMA,tff_type) -> tff_type COMMA . separated_nonempty_list(COMMA,tff_type) [ RIGHT_PAREN ]
+## Transitions:
 -- On UPPER_WORD shift to state 15
 -- On TYPE_TY shift to state 16
 -- On LOWER_WORD shift to state 17
@@ -343,9 +462,15 @@ separated_nonempty_list(COMMA,tff_type) -> tff_type COMMA . separated_nonempty_l
 -- On tff_ty_var shift to state 24
 -- On tff_atom_type shift to state 25
 -- On separated_nonempty_list(COMMA,tff_type) shift to state 31
+## Reductions:
 
 State 24:
+## Known stack suffix:
+## tff_ty_var
+## LR(1) items:
 tff_atom_type -> tff_ty_var . [ XOR VLINE STAR RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA ARROW AND_ALSO AND ]
+## Transitions:
+## Reductions:
 -- On XOR reduce production tff_atom_type -> tff_ty_var
 -- On VLINE reduce production tff_atom_type -> tff_ty_var
 -- On STAR reduce production tff_atom_type -> tff_ty_var
@@ -366,9 +491,14 @@ tff_atom_type -> tff_ty_var . [ XOR VLINE STAR RIGHT_PAREN RIGHT_BRACKET NOT_EQU
 -- On AND reduce production tff_atom_type -> tff_ty_var
 
 State 25:
+## Known stack suffix:
+## tff_atom_type
+## LR(1) items:
 tff_type -> tff_atom_type . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA AND_ALSO AND ]
 tff_type -> tff_atom_type . ARROW tff_atom_type [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA AND_ALSO AND ]
+## Transitions:
 -- On ARROW shift to state 26
+## Reductions:
 -- On XOR reduce production tff_type -> tff_atom_type
 -- On VLINE reduce production tff_type -> tff_atom_type
 -- On RIGHT_PAREN reduce production tff_type -> tff_atom_type
@@ -387,7 +517,11 @@ tff_type -> tff_atom_type . ARROW tff_atom_type [ XOR VLINE RIGHT_PAREN RIGHT_BR
 -- On AND reduce production tff_type -> tff_atom_type
 
 State 26:
+## Known stack suffix:
+## tff_atom_type ARROW
+## LR(1) items:
 tff_type -> tff_atom_type ARROW . tff_atom_type [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA AND_ALSO AND ]
+## Transitions:
 -- On UPPER_WORD shift to state 15
 -- On TYPE_TY shift to state 16
 -- On LOWER_WORD shift to state 17
@@ -396,9 +530,14 @@ tff_type -> tff_atom_type ARROW . tff_atom_type [ XOR VLINE RIGHT_PAREN RIGHT_BR
 -- On type_const shift to state 20
 -- On tff_ty_var shift to state 24
 -- On tff_atom_type shift to state 30
+## Reductions:
 
 State 27:
+## Known stack suffix:
+## LEFT_PAREN
+## LR(1) items:
 tff_atom_type -> LEFT_PAREN . tff_type RIGHT_PAREN [ XOR VLINE STAR RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA AND_ALSO AND ]
+## Transitions:
 -- On UPPER_WORD shift to state 15
 -- On TYPE_TY shift to state 16
 -- On LOWER_WORD shift to state 17
@@ -408,13 +547,24 @@ tff_atom_type -> LEFT_PAREN . tff_type RIGHT_PAREN [ XOR VLINE STAR RIGHT_PAREN 
 -- On tff_type shift to state 28
 -- On tff_ty_var shift to state 24
 -- On tff_atom_type shift to state 25
+## Reductions:
 
 State 28:
+## Known stack suffix:
+## LEFT_PAREN tff_type
+## LR(1) items:
 tff_atom_type -> LEFT_PAREN tff_type . RIGHT_PAREN [ XOR VLINE STAR RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA ARROW AND_ALSO AND ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 29
+## Reductions:
 
 State 29:
+## Known stack suffix:
+## LEFT_PAREN tff_type RIGHT_PAREN
+## LR(1) items:
 tff_atom_type -> LEFT_PAREN tff_type RIGHT_PAREN . [ XOR VLINE STAR RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA ARROW AND_ALSO AND ]
+## Transitions:
+## Reductions:
 -- On XOR reduce production tff_atom_type -> LEFT_PAREN tff_type RIGHT_PAREN
 -- On VLINE reduce production tff_atom_type -> LEFT_PAREN tff_type RIGHT_PAREN
 -- On STAR reduce production tff_atom_type -> LEFT_PAREN tff_type RIGHT_PAREN
@@ -435,7 +585,12 @@ tff_atom_type -> LEFT_PAREN tff_type RIGHT_PAREN . [ XOR VLINE STAR RIGHT_PAREN 
 -- On AND reduce production tff_atom_type -> LEFT_PAREN tff_type RIGHT_PAREN
 
 State 30:
+## Known stack suffix:
+## tff_atom_type ARROW tff_atom_type
+## LR(1) items:
 tff_type -> tff_atom_type ARROW tff_atom_type . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA AND_ALSO AND ]
+## Transitions:
+## Reductions:
 -- On XOR reduce production tff_type -> tff_atom_type ARROW tff_atom_type
 -- On VLINE reduce production tff_type -> tff_atom_type ARROW tff_atom_type
 -- On RIGHT_PAREN reduce production tff_type -> tff_atom_type ARROW tff_atom_type
@@ -454,15 +609,30 @@ tff_type -> tff_atom_type ARROW tff_atom_type . [ XOR VLINE RIGHT_PAREN RIGHT_BR
 -- On AND reduce production tff_type -> tff_atom_type ARROW tff_atom_type
 
 State 31:
+## Known stack suffix:
+## tff_type COMMA separated_nonempty_list(COMMA,tff_type)
+## LR(1) items:
 separated_nonempty_list(COMMA,tff_type) -> tff_type COMMA separated_nonempty_list(COMMA,tff_type) . [ RIGHT_PAREN ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production separated_nonempty_list(COMMA,tff_type) -> tff_type COMMA separated_nonempty_list(COMMA,tff_type)
 
 State 32:
+## Known stack suffix:
+## type_const LEFT_PAREN separated_nonempty_list(COMMA,tff_type)
+## LR(1) items:
 tff_atom_type -> type_const LEFT_PAREN separated_nonempty_list(COMMA,tff_type) . RIGHT_PAREN [ XOR VLINE STAR RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA ARROW AND_ALSO AND ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 33
+## Reductions:
 
 State 33:
+## Known stack suffix:
+## type_const LEFT_PAREN separated_nonempty_list(COMMA,tff_type) RIGHT_PAREN
+## LR(1) items:
 tff_atom_type -> type_const LEFT_PAREN separated_nonempty_list(COMMA,tff_type) RIGHT_PAREN . [ XOR VLINE STAR RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA ARROW AND_ALSO AND ]
+## Transitions:
+## Reductions:
 -- On XOR reduce production tff_atom_type -> type_const LEFT_PAREN separated_nonempty_list(COMMA,tff_type) RIGHT_PAREN
 -- On VLINE reduce production tff_atom_type -> type_const LEFT_PAREN separated_nonempty_list(COMMA,tff_type) RIGHT_PAREN
 -- On STAR reduce production tff_atom_type -> type_const LEFT_PAREN separated_nonempty_list(COMMA,tff_type) RIGHT_PAREN
@@ -483,15 +653,29 @@ tff_atom_type -> type_const LEFT_PAREN separated_nonempty_list(COMMA,tff_type) R
 -- On AND reduce production tff_atom_type -> type_const LEFT_PAREN separated_nonempty_list(COMMA,tff_type) RIGHT_PAREN
 
 State 34:
+## Known stack suffix:
+## LEFT_PAREN tff_ty_args
+## LR(1) items:
 tff_type -> LEFT_PAREN tff_ty_args . RIGHT_PAREN ARROW tff_atom_type [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA AND_ALSO AND ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 35
+## Reductions:
 
 State 35:
+## Known stack suffix:
+## LEFT_PAREN tff_ty_args RIGHT_PAREN
+## LR(1) items:
 tff_type -> LEFT_PAREN tff_ty_args RIGHT_PAREN . ARROW tff_atom_type [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA AND_ALSO AND ]
+## Transitions:
 -- On ARROW shift to state 36
+## Reductions:
 
 State 36:
+## Known stack suffix:
+## LEFT_PAREN tff_ty_args RIGHT_PAREN ARROW
+## LR(1) items:
 tff_type -> LEFT_PAREN tff_ty_args RIGHT_PAREN ARROW . tff_atom_type [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA AND_ALSO AND ]
+## Transitions:
 -- On UPPER_WORD shift to state 15
 -- On TYPE_TY shift to state 16
 -- On LOWER_WORD shift to state 17
@@ -500,9 +684,15 @@ tff_type -> LEFT_PAREN tff_ty_args RIGHT_PAREN ARROW . tff_atom_type [ XOR VLINE
 -- On type_const shift to state 20
 -- On tff_ty_var shift to state 24
 -- On tff_atom_type shift to state 37
+## Reductions:
 
 State 37:
+## Known stack suffix:
+## LEFT_PAREN tff_ty_args RIGHT_PAREN ARROW tff_atom_type
+## LR(1) items:
 tff_type -> LEFT_PAREN tff_ty_args RIGHT_PAREN ARROW tff_atom_type . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA AND_ALSO AND ]
+## Transitions:
+## Reductions:
 -- On XOR reduce production tff_type -> LEFT_PAREN tff_ty_args RIGHT_PAREN ARROW tff_atom_type
 -- On VLINE reduce production tff_type -> LEFT_PAREN tff_ty_args RIGHT_PAREN ARROW tff_atom_type
 -- On RIGHT_PAREN reduce production tff_type -> LEFT_PAREN tff_ty_args RIGHT_PAREN ARROW tff_atom_type
@@ -521,18 +711,27 @@ tff_type -> LEFT_PAREN tff_ty_args RIGHT_PAREN ARROW tff_atom_type . [ XOR VLINE
 -- On AND reduce production tff_type -> LEFT_PAREN tff_ty_args RIGHT_PAREN ARROW tff_atom_type
 
 State 38:
+## Known stack suffix:
+## tff_atom_type
+## LR(1) items:
 tff_ty_args -> tff_atom_type . [ RIGHT_PAREN ]
 tff_ty_args -> tff_atom_type . STAR tff_ty_args [ RIGHT_PAREN ]
 tff_type -> tff_atom_type . [ RIGHT_PAREN ]
 tff_type -> tff_atom_type . ARROW tff_atom_type [ RIGHT_PAREN ]
+## Transitions:
 -- On STAR shift to state 39
 -- On ARROW shift to state 26
+## Reductions:
 -- On RIGHT_PAREN reduce production tff_ty_args -> tff_atom_type
 -- On RIGHT_PAREN reduce production tff_type -> tff_atom_type
 ** Conflict on RIGHT_PAREN
 
 State 39:
+## Known stack suffix:
+## tff_atom_type STAR
+## LR(1) items:
 tff_ty_args -> tff_atom_type STAR . tff_ty_args [ RIGHT_PAREN ]
+## Transitions:
 -- On UPPER_WORD shift to state 15
 -- On TYPE_TY shift to state 16
 -- On LOWER_WORD shift to state 17
@@ -542,19 +741,35 @@ tff_ty_args -> tff_atom_type STAR . tff_ty_args [ RIGHT_PAREN ]
 -- On tff_ty_var shift to state 24
 -- On tff_ty_args shift to state 40
 -- On tff_atom_type shift to state 41
+## Reductions:
 
 State 40:
+## Known stack suffix:
+## tff_atom_type STAR tff_ty_args
+## LR(1) items:
 tff_ty_args -> tff_atom_type STAR tff_ty_args . [ RIGHT_PAREN ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production tff_ty_args -> tff_atom_type STAR tff_ty_args
 
 State 41:
+## Known stack suffix:
+## tff_atom_type
+## LR(1) items:
 tff_ty_args -> tff_atom_type . [ RIGHT_PAREN ]
 tff_ty_args -> tff_atom_type . STAR tff_ty_args [ RIGHT_PAREN ]
+## Transitions:
 -- On STAR shift to state 39
+## Reductions:
 -- On RIGHT_PAREN reduce production tff_ty_args -> tff_atom_type
 
 State 42:
+## Known stack suffix:
+## UPPER_WORD COLUMN tff_type
+## LR(1) items:
 variable -> UPPER_WORD COLUMN tff_type . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA AND_ALSO AND ]
+## Transitions:
+## Reductions:
 -- On XOR reduce production variable -> UPPER_WORD COLUMN tff_type
 -- On VLINE reduce production variable -> UPPER_WORD COLUMN tff_type
 -- On RIGHT_PAREN reduce production variable -> UPPER_WORD COLUMN tff_type
@@ -573,7 +788,12 @@ variable -> UPPER_WORD COLUMN tff_type . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET N
 -- On AND reduce production variable -> UPPER_WORD COLUMN tff_type
 
 State 43:
+## Known stack suffix:
+## TRUE
+## LR(1) items:
 atomic_formula -> TRUE . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
+## Transitions:
+## Reductions:
 -- On XOR reduce production atomic_formula -> TRUE
 -- On VLINE reduce production atomic_formula -> TRUE
 -- On RIGHT_PAREN reduce production atomic_formula -> TRUE
@@ -590,17 +810,32 @@ atomic_formula -> TRUE . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND L
 -- On AND reduce production atomic_formula -> TRUE
 
 State 44:
+## Known stack suffix:
+## THEORY
+## LR(1) items:
 premise -> THEORY . datalog_atom [ DOT AND_ALSO ]
+## Transitions:
 -- On LOWER_WORD shift to state 2
 -- On datalog_atom shift to state 45
+## Reductions:
 
 State 45:
+## Known stack suffix:
+## THEORY datalog_atom
+## LR(1) items:
 premise -> THEORY datalog_atom . [ DOT AND_ALSO ]
+## Transitions:
+## Reductions:
 -- On DOT reduce production premise -> THEORY datalog_atom
 -- On AND_ALSO reduce production premise -> THEORY datalog_atom
 
 State 46:
+## Known stack suffix:
+## REAL
+## LR(1) items:
 defined_atom -> REAL . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA AND_ALSO AND ]
+## Transitions:
+## Reductions:
 -- On XOR reduce production defined_atom -> REAL
 -- On VLINE reduce production defined_atom -> REAL
 -- On RIGHT_PAREN reduce production defined_atom -> REAL
@@ -619,7 +854,12 @@ defined_atom -> REAL . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE 
 -- On AND reduce production defined_atom -> REAL
 
 State 47:
+## Known stack suffix:
+## RATIONAL
+## LR(1) items:
 defined_atom -> RATIONAL . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA AND_ALSO AND ]
+## Transitions:
+## Reductions:
 -- On XOR reduce production defined_atom -> RATIONAL
 -- On VLINE reduce production defined_atom -> RATIONAL
 -- On RIGHT_PAREN reduce production defined_atom -> RATIONAL
@@ -638,7 +878,11 @@ defined_atom -> RATIONAL . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVL
 -- On AND reduce production defined_atom -> RATIONAL
 
 State 48:
+## Known stack suffix:
+## NOT
+## LR(1) items:
 fof_unary_formula -> NOT . fof_unitary_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
+## Transitions:
 -- On UPPER_WORD shift to state 13
 -- On TRUE shift to state 43
 -- On SINGLE_QUOTED shift to state 4
@@ -676,9 +920,14 @@ fof_unary_formula -> NOT . fof_unitary_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRA
 -- On atomic_system_word shift to state 90
 -- On atomic_formula shift to state 104
 -- On atomic_defined_word shift to state 91
+## Reductions:
 
 State 49:
+## Known stack suffix:
+## LEFT_PAREN
+## LR(1) items:
 fof_unitary_formula -> LEFT_PAREN . fof_logic_formula RIGHT_PAREN [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
+## Transitions:
 -- On UPPER_WORD shift to state 13
 -- On TRUE shift to state 43
 -- On SINGLE_QUOTED shift to state 4
@@ -717,9 +966,15 @@ fof_unitary_formula -> LEFT_PAREN . fof_logic_formula RIGHT_PAREN [ XOR VLINE RI
 -- On atomic_system_word shift to state 90
 -- On atomic_formula shift to state 104
 -- On atomic_defined_word shift to state 91
+## Reductions:
 
 State 50:
+## Known stack suffix:
+## INTEGER
+## LR(1) items:
 defined_atom -> INTEGER . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA AND_ALSO AND ]
+## Transitions:
+## Reductions:
 -- On XOR reduce production defined_atom -> INTEGER
 -- On VLINE reduce production defined_atom -> INTEGER
 -- On RIGHT_PAREN reduce production defined_atom -> INTEGER
@@ -738,26 +993,50 @@ defined_atom -> INTEGER . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLI
 -- On AND reduce production defined_atom -> INTEGER
 
 State 51:
+## Known stack suffix:
+## FORALL
+## LR(1) items:
 fof_quantified_formula -> FORALL . LEFT_BRACKET variables RIGHT_BRACKET COLUMN fof_unitary_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
+## Transitions:
 -- On LEFT_BRACKET shift to state 52
+## Reductions:
 
 State 52:
+## Known stack suffix:
+## FORALL LEFT_BRACKET
+## LR(1) items:
 fof_quantified_formula -> FORALL LEFT_BRACKET . variables RIGHT_BRACKET COLUMN fof_unitary_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
+## Transitions:
 -- On UPPER_WORD shift to state 13
 -- On variables shift to state 53
 -- On variable shift to state 105
 -- On separated_nonempty_list(COMMA,variable) shift to state 108
+## Reductions:
 
 State 53:
+## Known stack suffix:
+## FORALL LEFT_BRACKET variables
+## LR(1) items:
 fof_quantified_formula -> FORALL LEFT_BRACKET variables . RIGHT_BRACKET COLUMN fof_unitary_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
+## Transitions:
 -- On RIGHT_BRACKET shift to state 54
+## Reductions:
 
 State 54:
+## Known stack suffix:
+## FORALL LEFT_BRACKET variables RIGHT_BRACKET
+## LR(1) items:
 fof_quantified_formula -> FORALL LEFT_BRACKET variables RIGHT_BRACKET . COLUMN fof_unitary_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
+## Transitions:
 -- On COLUMN shift to state 55
+## Reductions:
 
 State 55:
+## Known stack suffix:
+## FORALL LEFT_BRACKET variables RIGHT_BRACKET COLUMN
+## LR(1) items:
 fof_quantified_formula -> FORALL LEFT_BRACKET variables RIGHT_BRACKET COLUMN . fof_unitary_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
+## Transitions:
 -- On UPPER_WORD shift to state 13
 -- On TRUE shift to state 43
 -- On SINGLE_QUOTED shift to state 4
@@ -795,9 +1074,15 @@ fof_quantified_formula -> FORALL LEFT_BRACKET variables RIGHT_BRACKET COLUMN . f
 -- On atomic_system_word shift to state 90
 -- On atomic_formula shift to state 104
 -- On atomic_defined_word shift to state 91
+## Reductions:
 
 State 56:
+## Known stack suffix:
+## FALSE
+## LR(1) items:
 atomic_formula -> FALSE . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
+## Transitions:
+## Reductions:
 -- On XOR reduce production atomic_formula -> FALSE
 -- On VLINE reduce production atomic_formula -> FALSE
 -- On RIGHT_PAREN reduce production atomic_formula -> FALSE
@@ -814,26 +1099,50 @@ atomic_formula -> FALSE . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND 
 -- On AND reduce production atomic_formula -> FALSE
 
 State 57:
+## Known stack suffix:
+## EXISTS
+## LR(1) items:
 fof_quantified_formula -> EXISTS . LEFT_BRACKET variables RIGHT_BRACKET COLUMN fof_unitary_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
+## Transitions:
 -- On LEFT_BRACKET shift to state 58
+## Reductions:
 
 State 58:
+## Known stack suffix:
+## EXISTS LEFT_BRACKET
+## LR(1) items:
 fof_quantified_formula -> EXISTS LEFT_BRACKET . variables RIGHT_BRACKET COLUMN fof_unitary_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
+## Transitions:
 -- On UPPER_WORD shift to state 13
 -- On variables shift to state 59
 -- On variable shift to state 105
 -- On separated_nonempty_list(COMMA,variable) shift to state 108
+## Reductions:
 
 State 59:
+## Known stack suffix:
+## EXISTS LEFT_BRACKET variables
+## LR(1) items:
 fof_quantified_formula -> EXISTS LEFT_BRACKET variables . RIGHT_BRACKET COLUMN fof_unitary_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
+## Transitions:
 -- On RIGHT_BRACKET shift to state 60
+## Reductions:
 
 State 60:
+## Known stack suffix:
+## EXISTS LEFT_BRACKET variables RIGHT_BRACKET
+## LR(1) items:
 fof_quantified_formula -> EXISTS LEFT_BRACKET variables RIGHT_BRACKET . COLUMN fof_unitary_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
+## Transitions:
 -- On COLUMN shift to state 61
+## Reductions:
 
 State 61:
+## Known stack suffix:
+## EXISTS LEFT_BRACKET variables RIGHT_BRACKET COLUMN
+## LR(1) items:
 fof_quantified_formula -> EXISTS LEFT_BRACKET variables RIGHT_BRACKET COLUMN . fof_unitary_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
+## Transitions:
 -- On UPPER_WORD shift to state 13
 -- On TRUE shift to state 43
 -- On SINGLE_QUOTED shift to state 4
@@ -871,9 +1180,15 @@ fof_quantified_formula -> EXISTS LEFT_BRACKET variables RIGHT_BRACKET COLUMN . f
 -- On atomic_system_word shift to state 90
 -- On atomic_formula shift to state 104
 -- On atomic_defined_word shift to state 91
+## Reductions:
 
 State 62:
+## Known stack suffix:
+## DOLLAR_WORD
+## LR(1) items:
 atomic_defined_word -> DOLLAR_WORD . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_PAREN LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA AND_ALSO AND ]
+## Transitions:
+## Reductions:
 -- On XOR reduce production atomic_defined_word -> DOLLAR_WORD
 -- On VLINE reduce production atomic_defined_word -> DOLLAR_WORD
 -- On RIGHT_PAREN reduce production atomic_defined_word -> DOLLAR_WORD
@@ -893,7 +1208,12 @@ atomic_defined_word -> DOLLAR_WORD . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_E
 -- On AND reduce production atomic_defined_word -> DOLLAR_WORD
 
 State 63:
+## Known stack suffix:
+## DOLLAR_DOLLAR_WORD
+## LR(1) items:
 atomic_system_word -> DOLLAR_DOLLAR_WORD . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_PAREN LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA AND_ALSO AND ]
+## Transitions:
+## Reductions:
 -- On XOR reduce production atomic_system_word -> DOLLAR_DOLLAR_WORD
 -- On VLINE reduce production atomic_system_word -> DOLLAR_DOLLAR_WORD
 -- On RIGHT_PAREN reduce production atomic_system_word -> DOLLAR_DOLLAR_WORD
@@ -913,7 +1233,12 @@ atomic_system_word -> DOLLAR_DOLLAR_WORD . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET
 -- On AND reduce production atomic_system_word -> DOLLAR_DOLLAR_WORD
 
 State 64:
+## Known stack suffix:
+## DISTINCT_OBJECT
+## LR(1) items:
 defined_atom -> DISTINCT_OBJECT . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA AND_ALSO AND ]
+## Transitions:
+## Reductions:
 -- On XOR reduce production defined_atom -> DISTINCT_OBJECT
 -- On VLINE reduce production defined_atom -> DISTINCT_OBJECT
 -- On RIGHT_PAREN reduce production defined_atom -> DISTINCT_OBJECT
@@ -932,7 +1257,12 @@ defined_atom -> DISTINCT_OBJECT . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUA
 -- On AND reduce production defined_atom -> DISTINCT_OBJECT
 
 State 65:
+## Known stack suffix:
+## variable
+## LR(1) items:
 term -> variable . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA AND_ALSO AND ]
+## Transitions:
+## Reductions:
 -- On XOR reduce production term -> variable
 -- On VLINE reduce production term -> variable
 -- On RIGHT_PAREN reduce production term -> variable
@@ -951,13 +1281,22 @@ term -> variable . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTA
 -- On AND reduce production term -> variable
 
 State 66:
+## Known stack suffix:
+## term
+## LR(1) items:
 atomic_formula -> term . EQUAL term [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
 atomic_formula -> term . NOT_EQUAL term [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
+## Transitions:
 -- On NOT_EQUAL shift to state 67
 -- On EQUAL shift to state 98
+## Reductions:
 
 State 67:
+## Known stack suffix:
+## term NOT_EQUAL
+## LR(1) items:
 atomic_formula -> term NOT_EQUAL . term [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
+## Transitions:
 -- On UPPER_WORD shift to state 13
 -- On SINGLE_QUOTED shift to state 4
 -- On REAL shift to state 46
@@ -985,9 +1324,15 @@ atomic_formula -> term NOT_EQUAL . term [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NO
 -- On atomic_word shift to state 89
 -- On atomic_system_word shift to state 90
 -- On atomic_defined_word shift to state 91
+## Reductions:
 
 State 68:
+## Known stack suffix:
+## term NOT_EQUAL term
+## LR(1) items:
 atomic_formula -> term NOT_EQUAL term . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
+## Transitions:
+## Reductions:
 -- On XOR reduce production atomic_formula -> term NOT_EQUAL term
 -- On VLINE reduce production atomic_formula -> term NOT_EQUAL term
 -- On RIGHT_PAREN reduce production atomic_formula -> term NOT_EQUAL term
@@ -1004,7 +1349,12 @@ atomic_formula -> term NOT_EQUAL term . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NO
 -- On AND reduce production atomic_formula -> term NOT_EQUAL term
 
 State 69:
+## Known stack suffix:
+## system_term
+## LR(1) items:
 function_term -> system_term . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA AND_ALSO AND ]
+## Transitions:
+## Reductions:
 -- On XOR reduce production function_term -> system_term
 -- On VLINE reduce production function_term -> system_term
 -- On RIGHT_PAREN reduce production function_term -> system_term
@@ -1023,9 +1373,14 @@ function_term -> system_term . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL N
 -- On AND reduce production function_term -> system_term
 
 State 70:
+## Known stack suffix:
+## system_functor
+## LR(1) items:
 system_constant -> system_functor . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA AND_ALSO AND ]
 system_term -> system_functor . LEFT_PAREN arguments RIGHT_PAREN [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA AND_ALSO AND ]
+## Transitions:
 -- On LEFT_PAREN shift to state 71
+## Reductions:
 -- On XOR reduce production system_constant -> system_functor
 -- On VLINE reduce production system_constant -> system_functor
 -- On RIGHT_PAREN reduce production system_constant -> system_functor
@@ -1044,7 +1399,11 @@ system_term -> system_functor . LEFT_PAREN arguments RIGHT_PAREN [ XOR VLINE RIG
 -- On AND reduce production system_constant -> system_functor
 
 State 71:
+## Known stack suffix:
+## system_functor LEFT_PAREN
+## LR(1) items:
 system_term -> system_functor LEFT_PAREN . arguments RIGHT_PAREN [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA AND_ALSO AND ]
+## Transitions:
 -- On UPPER_WORD shift to state 13
 -- On SINGLE_QUOTED shift to state 4
 -- On REAL shift to state 46
@@ -1074,15 +1433,25 @@ system_term -> system_functor LEFT_PAREN . arguments RIGHT_PAREN [ XOR VLINE RIG
 -- On atomic_system_word shift to state 90
 -- On atomic_defined_word shift to state 91
 -- On arguments shift to state 96
+## Reductions:
 
 State 72:
+## Known stack suffix:
+## term
+## LR(1) items:
 separated_nonempty_list(COMMA,term) -> term . [ RIGHT_PAREN ]
 separated_nonempty_list(COMMA,term) -> term . COMMA separated_nonempty_list(COMMA,term) [ RIGHT_PAREN ]
+## Transitions:
 -- On COMMA shift to state 73
+## Reductions:
 -- On RIGHT_PAREN reduce production separated_nonempty_list(COMMA,term) -> term
 
 State 73:
+## Known stack suffix:
+## term COMMA
+## LR(1) items:
 separated_nonempty_list(COMMA,term) -> term COMMA . separated_nonempty_list(COMMA,term) [ RIGHT_PAREN ]
+## Transitions:
 -- On UPPER_WORD shift to state 13
 -- On SINGLE_QUOTED shift to state 4
 -- On REAL shift to state 46
@@ -1111,9 +1480,15 @@ separated_nonempty_list(COMMA,term) -> term COMMA . separated_nonempty_list(COMM
 -- On atomic_word shift to state 89
 -- On atomic_system_word shift to state 90
 -- On atomic_defined_word shift to state 91
+## Reductions:
 
 State 74:
+## Known stack suffix:
+## system_constant
+## LR(1) items:
 system_term -> system_constant . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA AND_ALSO AND ]
+## Transitions:
+## Reductions:
 -- On XOR reduce production system_term -> system_constant
 -- On VLINE reduce production system_term -> system_constant
 -- On RIGHT_PAREN reduce production system_term -> system_constant
@@ -1132,11 +1507,21 @@ system_term -> system_constant . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL
 -- On AND reduce production system_term -> system_constant
 
 State 75:
+## Known stack suffix:
+## term COMMA separated_nonempty_list(COMMA,term)
+## LR(1) items:
 separated_nonempty_list(COMMA,term) -> term COMMA separated_nonempty_list(COMMA,term) . [ RIGHT_PAREN ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production separated_nonempty_list(COMMA,term) -> term COMMA separated_nonempty_list(COMMA,term)
 
 State 76:
+## Known stack suffix:
+## plain_term
+## LR(1) items:
 function_term -> plain_term . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA AND_ALSO AND ]
+## Transitions:
+## Reductions:
 -- On XOR reduce production function_term -> plain_term
 -- On VLINE reduce production function_term -> plain_term
 -- On RIGHT_PAREN reduce production function_term -> plain_term
@@ -1155,11 +1540,20 @@ function_term -> plain_term . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NO
 -- On AND reduce production function_term -> plain_term
 
 State 77:
+## Known stack suffix:
+## functor_
+## LR(1) items:
 plain_term -> functor_ . LEFT_PAREN arguments RIGHT_PAREN [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA AND_ALSO AND ]
+## Transitions:
 -- On LEFT_PAREN shift to state 78
+## Reductions:
 
 State 78:
+## Known stack suffix:
+## functor_ LEFT_PAREN
+## LR(1) items:
 plain_term -> functor_ LEFT_PAREN . arguments RIGHT_PAREN [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA AND_ALSO AND ]
+## Transitions:
 -- On UPPER_WORD shift to state 13
 -- On SINGLE_QUOTED shift to state 4
 -- On REAL shift to state 46
@@ -1189,13 +1583,24 @@ plain_term -> functor_ LEFT_PAREN . arguments RIGHT_PAREN [ XOR VLINE RIGHT_PARE
 -- On atomic_system_word shift to state 90
 -- On atomic_defined_word shift to state 91
 -- On arguments shift to state 94
+## Reductions:
 
 State 79:
+## Known stack suffix:
+## separated_nonempty_list(COMMA,term)
+## LR(1) items:
 arguments -> separated_nonempty_list(COMMA,term) . [ RIGHT_PAREN ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production arguments -> separated_nonempty_list(COMMA,term)
 
 State 80:
+## Known stack suffix:
+## function_term
+## LR(1) items:
 term -> function_term . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
+## Transitions:
+## Reductions:
 -- On XOR reduce production term -> function_term
 -- On VLINE reduce production term -> function_term
 -- On RIGHT_PAREN reduce production term -> function_term
@@ -1212,7 +1617,12 @@ term -> function_term . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LE
 -- On AND reduce production term -> function_term
 
 State 81:
+## Known stack suffix:
+## defined_term
+## LR(1) items:
 function_term -> defined_term . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA AND_ALSO AND ]
+## Transitions:
+## Reductions:
 -- On XOR reduce production function_term -> defined_term
 -- On VLINE reduce production function_term -> defined_term
 -- On RIGHT_PAREN reduce production function_term -> defined_term
@@ -1231,7 +1641,12 @@ function_term -> defined_term . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL 
 -- On AND reduce production function_term -> defined_term
 
 State 82:
+## Known stack suffix:
+## defined_plain_term
+## LR(1) items:
 defined_atomic_term -> defined_plain_term . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA AND_ALSO AND ]
+## Transitions:
+## Reductions:
 -- On XOR reduce production defined_atomic_term -> defined_plain_term
 -- On VLINE reduce production defined_atomic_term -> defined_plain_term
 -- On RIGHT_PAREN reduce production defined_atomic_term -> defined_plain_term
@@ -1250,9 +1665,14 @@ defined_atomic_term -> defined_plain_term . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKE
 -- On AND reduce production defined_atomic_term -> defined_plain_term
 
 State 83:
+## Known stack suffix:
+## defined_functor
+## LR(1) items:
 defined_constant -> defined_functor . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA AND_ALSO AND ]
 defined_plain_term -> defined_functor . LEFT_PAREN arguments RIGHT_PAREN [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA AND_ALSO AND ]
+## Transitions:
 -- On LEFT_PAREN shift to state 84
+## Reductions:
 -- On XOR reduce production defined_constant -> defined_functor
 -- On VLINE reduce production defined_constant -> defined_functor
 -- On RIGHT_PAREN reduce production defined_constant -> defined_functor
@@ -1271,7 +1691,11 @@ defined_plain_term -> defined_functor . LEFT_PAREN arguments RIGHT_PAREN [ XOR V
 -- On AND reduce production defined_constant -> defined_functor
 
 State 84:
+## Known stack suffix:
+## defined_functor LEFT_PAREN
+## LR(1) items:
 defined_plain_term -> defined_functor LEFT_PAREN . arguments RIGHT_PAREN [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA AND_ALSO AND ]
+## Transitions:
 -- On UPPER_WORD shift to state 13
 -- On SINGLE_QUOTED shift to state 4
 -- On REAL shift to state 46
@@ -1301,9 +1725,15 @@ defined_plain_term -> defined_functor LEFT_PAREN . arguments RIGHT_PAREN [ XOR V
 -- On atomic_system_word shift to state 90
 -- On atomic_defined_word shift to state 91
 -- On arguments shift to state 92
+## Reductions:
 
 State 85:
+## Known stack suffix:
+## defined_constant
+## LR(1) items:
 defined_plain_term -> defined_constant . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA AND_ALSO AND ]
+## Transitions:
+## Reductions:
 -- On XOR reduce production defined_plain_term -> defined_constant
 -- On VLINE reduce production defined_plain_term -> defined_constant
 -- On RIGHT_PAREN reduce production defined_plain_term -> defined_constant
@@ -1322,7 +1752,12 @@ defined_plain_term -> defined_constant . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET N
 -- On AND reduce production defined_plain_term -> defined_constant
 
 State 86:
+## Known stack suffix:
+## defined_atomic_term
+## LR(1) items:
 defined_term -> defined_atomic_term . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA AND_ALSO AND ]
+## Transitions:
+## Reductions:
 -- On XOR reduce production defined_term -> defined_atomic_term
 -- On VLINE reduce production defined_term -> defined_atomic_term
 -- On RIGHT_PAREN reduce production defined_term -> defined_atomic_term
@@ -1341,7 +1776,12 @@ defined_term -> defined_atomic_term . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_
 -- On AND reduce production defined_term -> defined_atomic_term
 
 State 87:
+## Known stack suffix:
+## defined_atom
+## LR(1) items:
 defined_term -> defined_atom . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA AND_ALSO AND ]
+## Transitions:
+## Reductions:
 -- On XOR reduce production defined_term -> defined_atom
 -- On VLINE reduce production defined_term -> defined_atom
 -- On RIGHT_PAREN reduce production defined_term -> defined_atom
@@ -1360,7 +1800,12 @@ defined_term -> defined_atom . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL N
 -- On AND reduce production defined_term -> defined_atom
 
 State 88:
+## Known stack suffix:
+## constant
+## LR(1) items:
 plain_term -> constant . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA AND_ALSO AND ]
+## Transitions:
+## Reductions:
 -- On XOR reduce production plain_term -> constant
 -- On VLINE reduce production plain_term -> constant
 -- On RIGHT_PAREN reduce production plain_term -> constant
@@ -1379,8 +1824,13 @@ plain_term -> constant . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLIN
 -- On AND reduce production plain_term -> constant
 
 State 89:
+## Known stack suffix:
+## atomic_word
+## LR(1) items:
 constant -> atomic_word . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA AND_ALSO AND ]
 functor_ -> atomic_word . [ LEFT_PAREN ]
+## Transitions:
+## Reductions:
 -- On XOR reduce production constant -> atomic_word
 -- On VLINE reduce production constant -> atomic_word
 -- On RIGHT_PAREN reduce production constant -> atomic_word
@@ -1400,7 +1850,12 @@ functor_ -> atomic_word . [ LEFT_PAREN ]
 -- On AND reduce production constant -> atomic_word
 
 State 90:
+## Known stack suffix:
+## atomic_system_word
+## LR(1) items:
 system_functor -> atomic_system_word . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_PAREN LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA AND_ALSO AND ]
+## Transitions:
+## Reductions:
 -- On XOR reduce production system_functor -> atomic_system_word
 -- On VLINE reduce production system_functor -> atomic_system_word
 -- On RIGHT_PAREN reduce production system_functor -> atomic_system_word
@@ -1420,8 +1875,13 @@ system_functor -> atomic_system_word . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT
 -- On AND reduce production system_functor -> atomic_system_word
 
 State 91:
+## Known stack suffix:
+## atomic_defined_word
+## LR(1) items:
 constant -> atomic_defined_word . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA AND_ALSO AND ]
 defined_functor -> atomic_defined_word . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_PAREN LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA AND_ALSO AND ]
+## Transitions:
+## Reductions:
 -- On XOR reduce production constant -> atomic_defined_word
 -- On XOR reduce production defined_functor -> atomic_defined_word
 -- On VLINE reduce production constant -> atomic_defined_word
@@ -1458,11 +1918,21 @@ defined_functor -> atomic_defined_word . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET N
 ** Conflict on XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA AND_ALSO AND
 
 State 92:
+## Known stack suffix:
+## defined_functor LEFT_PAREN arguments
+## LR(1) items:
 defined_plain_term -> defined_functor LEFT_PAREN arguments . RIGHT_PAREN [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA AND_ALSO AND ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 93
+## Reductions:
 
 State 93:
+## Known stack suffix:
+## defined_functor LEFT_PAREN arguments RIGHT_PAREN
+## LR(1) items:
 defined_plain_term -> defined_functor LEFT_PAREN arguments RIGHT_PAREN . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA AND_ALSO AND ]
+## Transitions:
+## Reductions:
 -- On XOR reduce production defined_plain_term -> defined_functor LEFT_PAREN arguments RIGHT_PAREN
 -- On VLINE reduce production defined_plain_term -> defined_functor LEFT_PAREN arguments RIGHT_PAREN
 -- On RIGHT_PAREN reduce production defined_plain_term -> defined_functor LEFT_PAREN arguments RIGHT_PAREN
@@ -1481,11 +1951,21 @@ defined_plain_term -> defined_functor LEFT_PAREN arguments RIGHT_PAREN . [ XOR V
 -- On AND reduce production defined_plain_term -> defined_functor LEFT_PAREN arguments RIGHT_PAREN
 
 State 94:
+## Known stack suffix:
+## functor_ LEFT_PAREN arguments
+## LR(1) items:
 plain_term -> functor_ LEFT_PAREN arguments . RIGHT_PAREN [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA AND_ALSO AND ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 95
+## Reductions:
 
 State 95:
+## Known stack suffix:
+## functor_ LEFT_PAREN arguments RIGHT_PAREN
+## LR(1) items:
 plain_term -> functor_ LEFT_PAREN arguments RIGHT_PAREN . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA AND_ALSO AND ]
+## Transitions:
+## Reductions:
 -- On XOR reduce production plain_term -> functor_ LEFT_PAREN arguments RIGHT_PAREN
 -- On VLINE reduce production plain_term -> functor_ LEFT_PAREN arguments RIGHT_PAREN
 -- On RIGHT_PAREN reduce production plain_term -> functor_ LEFT_PAREN arguments RIGHT_PAREN
@@ -1504,11 +1984,21 @@ plain_term -> functor_ LEFT_PAREN arguments RIGHT_PAREN . [ XOR VLINE RIGHT_PARE
 -- On AND reduce production plain_term -> functor_ LEFT_PAREN arguments RIGHT_PAREN
 
 State 96:
+## Known stack suffix:
+## system_functor LEFT_PAREN arguments
+## LR(1) items:
 system_term -> system_functor LEFT_PAREN arguments . RIGHT_PAREN [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA AND_ALSO AND ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 97
+## Reductions:
 
 State 97:
+## Known stack suffix:
+## system_functor LEFT_PAREN arguments RIGHT_PAREN
+## LR(1) items:
 system_term -> system_functor LEFT_PAREN arguments RIGHT_PAREN . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA AND_ALSO AND ]
+## Transitions:
+## Reductions:
 -- On XOR reduce production system_term -> system_functor LEFT_PAREN arguments RIGHT_PAREN
 -- On VLINE reduce production system_term -> system_functor LEFT_PAREN arguments RIGHT_PAREN
 -- On RIGHT_PAREN reduce production system_term -> system_functor LEFT_PAREN arguments RIGHT_PAREN
@@ -1527,7 +2017,11 @@ system_term -> system_functor LEFT_PAREN arguments RIGHT_PAREN . [ XOR VLINE RIG
 -- On AND reduce production system_term -> system_functor LEFT_PAREN arguments RIGHT_PAREN
 
 State 98:
+## Known stack suffix:
+## term EQUAL
+## LR(1) items:
 atomic_formula -> term EQUAL . term [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
+## Transitions:
 -- On UPPER_WORD shift to state 13
 -- On SINGLE_QUOTED shift to state 4
 -- On REAL shift to state 46
@@ -1555,9 +2049,15 @@ atomic_formula -> term EQUAL . term [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLI
 -- On atomic_word shift to state 89
 -- On atomic_system_word shift to state 90
 -- On atomic_defined_word shift to state 91
+## Reductions:
 
 State 99:
+## Known stack suffix:
+## term EQUAL term
+## LR(1) items:
 atomic_formula -> term EQUAL term . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
+## Transitions:
+## Reductions:
 -- On XOR reduce production atomic_formula -> term EQUAL term
 -- On VLINE reduce production atomic_formula -> term EQUAL term
 -- On RIGHT_PAREN reduce production atomic_formula -> term EQUAL term
@@ -1574,8 +2074,13 @@ atomic_formula -> term EQUAL term . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLI
 -- On AND reduce production atomic_formula -> term EQUAL term
 
 State 100:
+## Known stack suffix:
+## function_term
+## LR(1) items:
 atomic_formula -> function_term . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
 term -> function_term . [ NOT_EQUAL EQUAL ]
+## Transitions:
+## Reductions:
 -- On XOR reduce production atomic_formula -> function_term
 -- On VLINE reduce production atomic_formula -> function_term
 -- On RIGHT_PAREN reduce production atomic_formula -> function_term
@@ -1594,7 +2099,12 @@ term -> function_term . [ NOT_EQUAL EQUAL ]
 -- On AND reduce production atomic_formula -> function_term
 
 State 101:
+## Known stack suffix:
+## EXISTS LEFT_BRACKET variables RIGHT_BRACKET COLUMN fof_unitary_formula
+## LR(1) items:
 fof_quantified_formula -> EXISTS LEFT_BRACKET variables RIGHT_BRACKET COLUMN fof_unitary_formula . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
+## Transitions:
+## Reductions:
 -- On XOR reduce production fof_quantified_formula -> EXISTS LEFT_BRACKET variables RIGHT_BRACKET COLUMN fof_unitary_formula
 -- On VLINE reduce production fof_quantified_formula -> EXISTS LEFT_BRACKET variables RIGHT_BRACKET COLUMN fof_unitary_formula
 -- On RIGHT_PAREN reduce production fof_quantified_formula -> EXISTS LEFT_BRACKET variables RIGHT_BRACKET COLUMN fof_unitary_formula
@@ -1611,7 +2121,12 @@ fof_quantified_formula -> EXISTS LEFT_BRACKET variables RIGHT_BRACKET COLUMN fof
 -- On AND reduce production fof_quantified_formula -> EXISTS LEFT_BRACKET variables RIGHT_BRACKET COLUMN fof_unitary_formula
 
 State 102:
+## Known stack suffix:
+## fof_unary_formula
+## LR(1) items:
 fof_unitary_formula -> fof_unary_formula . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
+## Transitions:
+## Reductions:
 -- On XOR reduce production fof_unitary_formula -> fof_unary_formula
 -- On VLINE reduce production fof_unitary_formula -> fof_unary_formula
 -- On RIGHT_PAREN reduce production fof_unitary_formula -> fof_unary_formula
@@ -1628,7 +2143,12 @@ fof_unitary_formula -> fof_unary_formula . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET
 -- On AND reduce production fof_unitary_formula -> fof_unary_formula
 
 State 103:
+## Known stack suffix:
+## fof_quantified_formula
+## LR(1) items:
 fof_unitary_formula -> fof_quantified_formula . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
+## Transitions:
+## Reductions:
 -- On XOR reduce production fof_unitary_formula -> fof_quantified_formula
 -- On VLINE reduce production fof_unitary_formula -> fof_quantified_formula
 -- On RIGHT_PAREN reduce production fof_unitary_formula -> fof_quantified_formula
@@ -1645,7 +2165,12 @@ fof_unitary_formula -> fof_quantified_formula . [ XOR VLINE RIGHT_PAREN RIGHT_BR
 -- On AND reduce production fof_unitary_formula -> fof_quantified_formula
 
 State 104:
+## Known stack suffix:
+## atomic_formula
+## LR(1) items:
 fof_unitary_formula -> atomic_formula . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
+## Transitions:
+## Reductions:
 -- On XOR reduce production fof_unitary_formula -> atomic_formula
 -- On VLINE reduce production fof_unitary_formula -> atomic_formula
 -- On RIGHT_PAREN reduce production fof_unitary_formula -> atomic_formula
@@ -1662,27 +2187,52 @@ fof_unitary_formula -> atomic_formula . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NO
 -- On AND reduce production fof_unitary_formula -> atomic_formula
 
 State 105:
+## Known stack suffix:
+## variable
+## LR(1) items:
 separated_nonempty_list(COMMA,variable) -> variable . [ RIGHT_BRACKET ]
 separated_nonempty_list(COMMA,variable) -> variable . COMMA separated_nonempty_list(COMMA,variable) [ RIGHT_BRACKET ]
+## Transitions:
 -- On COMMA shift to state 106
+## Reductions:
 -- On RIGHT_BRACKET reduce production separated_nonempty_list(COMMA,variable) -> variable
 
 State 106:
+## Known stack suffix:
+## variable COMMA
+## LR(1) items:
 separated_nonempty_list(COMMA,variable) -> variable COMMA . separated_nonempty_list(COMMA,variable) [ RIGHT_BRACKET ]
+## Transitions:
 -- On UPPER_WORD shift to state 13
 -- On variable shift to state 105
 -- On separated_nonempty_list(COMMA,variable) shift to state 107
+## Reductions:
 
 State 107:
+## Known stack suffix:
+## variable COMMA separated_nonempty_list(COMMA,variable)
+## LR(1) items:
 separated_nonempty_list(COMMA,variable) -> variable COMMA separated_nonempty_list(COMMA,variable) . [ RIGHT_BRACKET ]
+## Transitions:
+## Reductions:
 -- On RIGHT_BRACKET reduce production separated_nonempty_list(COMMA,variable) -> variable COMMA separated_nonempty_list(COMMA,variable)
 
 State 108:
+## Known stack suffix:
+## separated_nonempty_list(COMMA,variable)
+## LR(1) items:
 variables -> separated_nonempty_list(COMMA,variable) . [ RIGHT_BRACKET ]
+## Transitions:
+## Reductions:
 -- On RIGHT_BRACKET reduce production variables -> separated_nonempty_list(COMMA,variable)
 
 State 109:
+## Known stack suffix:
+## FORALL LEFT_BRACKET variables RIGHT_BRACKET COLUMN fof_unitary_formula
+## LR(1) items:
 fof_quantified_formula -> FORALL LEFT_BRACKET variables RIGHT_BRACKET COLUMN fof_unitary_formula . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
+## Transitions:
+## Reductions:
 -- On XOR reduce production fof_quantified_formula -> FORALL LEFT_BRACKET variables RIGHT_BRACKET COLUMN fof_unitary_formula
 -- On VLINE reduce production fof_quantified_formula -> FORALL LEFT_BRACKET variables RIGHT_BRACKET COLUMN fof_unitary_formula
 -- On RIGHT_PAREN reduce production fof_quantified_formula -> FORALL LEFT_BRACKET variables RIGHT_BRACKET COLUMN fof_unitary_formula
@@ -1699,7 +2249,12 @@ fof_quantified_formula -> FORALL LEFT_BRACKET variables RIGHT_BRACKET COLUMN fof
 -- On AND reduce production fof_quantified_formula -> FORALL LEFT_BRACKET variables RIGHT_BRACKET COLUMN fof_unitary_formula
 
 State 110:
+## Known stack suffix:
+## fof_unitary_formula
+## LR(1) items:
 fof_logic_formula -> fof_unitary_formula . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
+## Transitions:
+## Reductions:
 -- On XOR reduce production fof_logic_formula -> fof_unitary_formula
 -- On VLINE reduce production fof_logic_formula -> fof_unitary_formula
 -- On RIGHT_PAREN reduce production fof_logic_formula -> fof_unitary_formula
@@ -1716,6 +2271,9 @@ fof_logic_formula -> fof_unitary_formula . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET
 -- On AND reduce production fof_logic_formula -> fof_unitary_formula
 
 State 111:
+## Known stack suffix:
+## LEFT_PAREN fof_logic_formula
+## LR(1) items:
 fof_logic_formula -> fof_logic_formula . EQUIV fof_logic_formula [ XOR VLINE RIGHT_PAREN NOTVLINE NOTAND LEFT_IMPLY IMPLY EQUIV AND ]
 fof_logic_formula -> fof_logic_formula . IMPLY fof_logic_formula [ XOR VLINE RIGHT_PAREN NOTVLINE NOTAND LEFT_IMPLY IMPLY EQUIV AND ]
 fof_logic_formula -> fof_logic_formula . LEFT_IMPLY fof_logic_formula [ XOR VLINE RIGHT_PAREN NOTVLINE NOTAND LEFT_IMPLY IMPLY EQUIV AND ]
@@ -1725,6 +2283,7 @@ fof_logic_formula -> fof_logic_formula . NOTAND fof_logic_formula [ XOR VLINE RI
 fof_logic_formula -> fof_logic_formula . AND fof_logic_formula [ XOR VLINE RIGHT_PAREN NOTVLINE NOTAND LEFT_IMPLY IMPLY EQUIV AND ]
 fof_logic_formula -> fof_logic_formula . VLINE fof_logic_formula [ XOR VLINE RIGHT_PAREN NOTVLINE NOTAND LEFT_IMPLY IMPLY EQUIV AND ]
 fof_unitary_formula -> LEFT_PAREN fof_logic_formula . RIGHT_PAREN [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
+## Transitions:
 -- On XOR shift to state 112
 -- On VLINE shift to state 122
 -- On RIGHT_PAREN shift to state 128
@@ -1734,9 +2293,14 @@ fof_unitary_formula -> LEFT_PAREN fof_logic_formula . RIGHT_PAREN [ XOR VLINE RI
 -- On IMPLY shift to state 120
 -- On EQUIV shift to state 124
 -- On AND shift to state 126
+## Reductions:
 
 State 112:
+## Known stack suffix:
+## fof_logic_formula XOR
+## LR(1) items:
 fof_logic_formula -> fof_logic_formula XOR . fof_logic_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
+## Transitions:
 -- On UPPER_WORD shift to state 13
 -- On TRUE shift to state 43
 -- On SINGLE_QUOTED shift to state 4
@@ -1775,8 +2339,12 @@ fof_logic_formula -> fof_logic_formula XOR . fof_logic_formula [ XOR VLINE RIGHT
 -- On atomic_system_word shift to state 90
 -- On atomic_formula shift to state 104
 -- On atomic_defined_word shift to state 91
+## Reductions:
 
 State 113:
+## Known stack suffix:
+## fof_logic_formula XOR fof_logic_formula
+## LR(1) items:
 fof_logic_formula -> fof_logic_formula . EQUIV fof_logic_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
 fof_logic_formula -> fof_logic_formula . IMPLY fof_logic_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
 fof_logic_formula -> fof_logic_formula . LEFT_IMPLY fof_logic_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
@@ -1786,10 +2354,12 @@ fof_logic_formula -> fof_logic_formula . NOTVLINE fof_logic_formula [ XOR VLINE 
 fof_logic_formula -> fof_logic_formula . NOTAND fof_logic_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
 fof_logic_formula -> fof_logic_formula . AND fof_logic_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
 fof_logic_formula -> fof_logic_formula . VLINE fof_logic_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
+## Transitions:
 -- On NOTVLINE shift to state 114
 -- On NOTAND shift to state 116
 -- On LEFT_IMPLY shift to state 118
 -- On IMPLY shift to state 120
+## Reductions:
 -- On VLINE reduce production fof_logic_formula -> fof_logic_formula XOR fof_logic_formula
 -- On RIGHT_PAREN reduce production fof_logic_formula -> fof_logic_formula XOR fof_logic_formula
 -- On RIGHT_BRACKET reduce production fof_logic_formula -> fof_logic_formula XOR fof_logic_formula
@@ -1801,7 +2371,11 @@ fof_logic_formula -> fof_logic_formula . VLINE fof_logic_formula [ XOR VLINE RIG
 -- On AND reduce production fof_logic_formula -> fof_logic_formula XOR fof_logic_formula
 
 State 114:
+## Known stack suffix:
+## fof_logic_formula NOTVLINE
+## LR(1) items:
 fof_logic_formula -> fof_logic_formula NOTVLINE . fof_logic_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
+## Transitions:
 -- On UPPER_WORD shift to state 13
 -- On TRUE shift to state 43
 -- On SINGLE_QUOTED shift to state 4
@@ -1840,8 +2414,12 @@ fof_logic_formula -> fof_logic_formula NOTVLINE . fof_logic_formula [ XOR VLINE 
 -- On atomic_system_word shift to state 90
 -- On atomic_formula shift to state 104
 -- On atomic_defined_word shift to state 91
+## Reductions:
 
 State 115:
+## Known stack suffix:
+## fof_logic_formula NOTVLINE fof_logic_formula
+## LR(1) items:
 fof_logic_formula -> fof_logic_formula . EQUIV fof_logic_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
 fof_logic_formula -> fof_logic_formula . IMPLY fof_logic_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
 fof_logic_formula -> fof_logic_formula . LEFT_IMPLY fof_logic_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
@@ -1851,7 +2429,9 @@ fof_logic_formula -> fof_logic_formula NOTVLINE fof_logic_formula . [ XOR VLINE 
 fof_logic_formula -> fof_logic_formula . NOTAND fof_logic_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
 fof_logic_formula -> fof_logic_formula . AND fof_logic_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
 fof_logic_formula -> fof_logic_formula . VLINE fof_logic_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
+## Transitions:
 -- On NOTAND shift to state 116
+## Reductions:
 -- On XOR reduce production fof_logic_formula -> fof_logic_formula NOTVLINE fof_logic_formula
 -- On VLINE reduce production fof_logic_formula -> fof_logic_formula NOTVLINE fof_logic_formula
 -- On RIGHT_PAREN reduce production fof_logic_formula -> fof_logic_formula NOTVLINE fof_logic_formula
@@ -1866,7 +2446,11 @@ fof_logic_formula -> fof_logic_formula . VLINE fof_logic_formula [ XOR VLINE RIG
 -- On AND reduce production fof_logic_formula -> fof_logic_formula NOTVLINE fof_logic_formula
 
 State 116:
+## Known stack suffix:
+## fof_logic_formula NOTAND
+## LR(1) items:
 fof_logic_formula -> fof_logic_formula NOTAND . fof_logic_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
+## Transitions:
 -- On UPPER_WORD shift to state 13
 -- On TRUE shift to state 43
 -- On SINGLE_QUOTED shift to state 4
@@ -1905,8 +2489,12 @@ fof_logic_formula -> fof_logic_formula NOTAND . fof_logic_formula [ XOR VLINE RI
 -- On atomic_system_word shift to state 90
 -- On atomic_formula shift to state 104
 -- On atomic_defined_word shift to state 91
+## Reductions:
 
 State 117:
+## Known stack suffix:
+## fof_logic_formula NOTAND fof_logic_formula
+## LR(1) items:
 fof_logic_formula -> fof_logic_formula . EQUIV fof_logic_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
 fof_logic_formula -> fof_logic_formula . IMPLY fof_logic_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
 fof_logic_formula -> fof_logic_formula . LEFT_IMPLY fof_logic_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
@@ -1916,6 +2504,8 @@ fof_logic_formula -> fof_logic_formula . NOTAND fof_logic_formula [ XOR VLINE RI
 fof_logic_formula -> fof_logic_formula NOTAND fof_logic_formula . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
 fof_logic_formula -> fof_logic_formula . AND fof_logic_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
 fof_logic_formula -> fof_logic_formula . VLINE fof_logic_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
+## Transitions:
+## Reductions:
 -- On XOR reduce production fof_logic_formula -> fof_logic_formula NOTAND fof_logic_formula
 -- On VLINE reduce production fof_logic_formula -> fof_logic_formula NOTAND fof_logic_formula
 -- On RIGHT_PAREN reduce production fof_logic_formula -> fof_logic_formula NOTAND fof_logic_formula
@@ -1931,7 +2521,11 @@ fof_logic_formula -> fof_logic_formula . VLINE fof_logic_formula [ XOR VLINE RIG
 -- On AND reduce production fof_logic_formula -> fof_logic_formula NOTAND fof_logic_formula
 
 State 118:
+## Known stack suffix:
+## fof_logic_formula LEFT_IMPLY
+## LR(1) items:
 fof_logic_formula -> fof_logic_formula LEFT_IMPLY . fof_logic_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
+## Transitions:
 -- On UPPER_WORD shift to state 13
 -- On TRUE shift to state 43
 -- On SINGLE_QUOTED shift to state 4
@@ -1970,8 +2564,12 @@ fof_logic_formula -> fof_logic_formula LEFT_IMPLY . fof_logic_formula [ XOR VLIN
 -- On atomic_system_word shift to state 90
 -- On atomic_formula shift to state 104
 -- On atomic_defined_word shift to state 91
+## Reductions:
 
 State 119:
+## Known stack suffix:
+## fof_logic_formula LEFT_IMPLY fof_logic_formula
+## LR(1) items:
 fof_logic_formula -> fof_logic_formula . EQUIV fof_logic_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
 fof_logic_formula -> fof_logic_formula . IMPLY fof_logic_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
 fof_logic_formula -> fof_logic_formula . LEFT_IMPLY fof_logic_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
@@ -1981,8 +2579,10 @@ fof_logic_formula -> fof_logic_formula . NOTVLINE fof_logic_formula [ XOR VLINE 
 fof_logic_formula -> fof_logic_formula . NOTAND fof_logic_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
 fof_logic_formula -> fof_logic_formula . AND fof_logic_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
 fof_logic_formula -> fof_logic_formula . VLINE fof_logic_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
+## Transitions:
 -- On NOTVLINE shift to state 114
 -- On NOTAND shift to state 116
+## Reductions:
 -- On XOR reduce production fof_logic_formula -> fof_logic_formula LEFT_IMPLY fof_logic_formula
 -- On VLINE reduce production fof_logic_formula -> fof_logic_formula LEFT_IMPLY fof_logic_formula
 -- On RIGHT_PAREN reduce production fof_logic_formula -> fof_logic_formula LEFT_IMPLY fof_logic_formula
@@ -1996,7 +2596,11 @@ fof_logic_formula -> fof_logic_formula . VLINE fof_logic_formula [ XOR VLINE RIG
 -- On AND reduce production fof_logic_formula -> fof_logic_formula LEFT_IMPLY fof_logic_formula
 
 State 120:
+## Known stack suffix:
+## fof_logic_formula IMPLY
+## LR(1) items:
 fof_logic_formula -> fof_logic_formula IMPLY . fof_logic_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
+## Transitions:
 -- On UPPER_WORD shift to state 13
 -- On TRUE shift to state 43
 -- On SINGLE_QUOTED shift to state 4
@@ -2035,8 +2639,12 @@ fof_logic_formula -> fof_logic_formula IMPLY . fof_logic_formula [ XOR VLINE RIG
 -- On atomic_system_word shift to state 90
 -- On atomic_formula shift to state 104
 -- On atomic_defined_word shift to state 91
+## Reductions:
 
 State 121:
+## Known stack suffix:
+## fof_logic_formula IMPLY fof_logic_formula
+## LR(1) items:
 fof_logic_formula -> fof_logic_formula . EQUIV fof_logic_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
 fof_logic_formula -> fof_logic_formula . IMPLY fof_logic_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
 fof_logic_formula -> fof_logic_formula IMPLY fof_logic_formula . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
@@ -2046,9 +2654,11 @@ fof_logic_formula -> fof_logic_formula . NOTVLINE fof_logic_formula [ XOR VLINE 
 fof_logic_formula -> fof_logic_formula . NOTAND fof_logic_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
 fof_logic_formula -> fof_logic_formula . AND fof_logic_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
 fof_logic_formula -> fof_logic_formula . VLINE fof_logic_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
+## Transitions:
 -- On NOTVLINE shift to state 114
 -- On NOTAND shift to state 116
 -- On LEFT_IMPLY shift to state 118
+## Reductions:
 -- On XOR reduce production fof_logic_formula -> fof_logic_formula IMPLY fof_logic_formula
 -- On VLINE reduce production fof_logic_formula -> fof_logic_formula IMPLY fof_logic_formula
 -- On RIGHT_PAREN reduce production fof_logic_formula -> fof_logic_formula IMPLY fof_logic_formula
@@ -2061,7 +2671,11 @@ fof_logic_formula -> fof_logic_formula . VLINE fof_logic_formula [ XOR VLINE RIG
 -- On AND reduce production fof_logic_formula -> fof_logic_formula IMPLY fof_logic_formula
 
 State 122:
+## Known stack suffix:
+## fof_logic_formula VLINE
+## LR(1) items:
 fof_logic_formula -> fof_logic_formula VLINE . fof_logic_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
+## Transitions:
 -- On UPPER_WORD shift to state 13
 -- On TRUE shift to state 43
 -- On SINGLE_QUOTED shift to state 4
@@ -2100,8 +2714,12 @@ fof_logic_formula -> fof_logic_formula VLINE . fof_logic_formula [ XOR VLINE RIG
 -- On atomic_system_word shift to state 90
 -- On atomic_formula shift to state 104
 -- On atomic_defined_word shift to state 91
+## Reductions:
 
 State 123:
+## Known stack suffix:
+## fof_logic_formula VLINE fof_logic_formula
+## LR(1) items:
 fof_logic_formula -> fof_logic_formula . EQUIV fof_logic_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
 fof_logic_formula -> fof_logic_formula . IMPLY fof_logic_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
 fof_logic_formula -> fof_logic_formula . LEFT_IMPLY fof_logic_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
@@ -2111,6 +2729,7 @@ fof_logic_formula -> fof_logic_formula . NOTAND fof_logic_formula [ XOR VLINE RI
 fof_logic_formula -> fof_logic_formula . AND fof_logic_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
 fof_logic_formula -> fof_logic_formula . VLINE fof_logic_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
 fof_logic_formula -> fof_logic_formula VLINE fof_logic_formula . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
+## Transitions:
 -- On XOR shift to state 112
 -- On NOTVLINE shift to state 114
 -- On NOTAND shift to state 116
@@ -2118,6 +2737,7 @@ fof_logic_formula -> fof_logic_formula VLINE fof_logic_formula . [ XOR VLINE RIG
 -- On IMPLY shift to state 120
 -- On EQUIV shift to state 124
 -- On AND shift to state 126
+## Reductions:
 -- On VLINE reduce production fof_logic_formula -> fof_logic_formula VLINE fof_logic_formula
 -- On RIGHT_PAREN reduce production fof_logic_formula -> fof_logic_formula VLINE fof_logic_formula
 -- On RIGHT_BRACKET reduce production fof_logic_formula -> fof_logic_formula VLINE fof_logic_formula
@@ -2127,7 +2747,11 @@ fof_logic_formula -> fof_logic_formula VLINE fof_logic_formula . [ XOR VLINE RIG
 -- On AND_ALSO reduce production fof_logic_formula -> fof_logic_formula VLINE fof_logic_formula
 
 State 124:
+## Known stack suffix:
+## fof_logic_formula EQUIV
+## LR(1) items:
 fof_logic_formula -> fof_logic_formula EQUIV . fof_logic_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
+## Transitions:
 -- On UPPER_WORD shift to state 13
 -- On TRUE shift to state 43
 -- On SINGLE_QUOTED shift to state 4
@@ -2166,8 +2790,12 @@ fof_logic_formula -> fof_logic_formula EQUIV . fof_logic_formula [ XOR VLINE RIG
 -- On atomic_system_word shift to state 90
 -- On atomic_formula shift to state 104
 -- On atomic_defined_word shift to state 91
+## Reductions:
 
 State 125:
+## Known stack suffix:
+## fof_logic_formula EQUIV fof_logic_formula
+## LR(1) items:
 fof_logic_formula -> fof_logic_formula . EQUIV fof_logic_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
 fof_logic_formula -> fof_logic_formula EQUIV fof_logic_formula . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
 fof_logic_formula -> fof_logic_formula . IMPLY fof_logic_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
@@ -2177,11 +2805,13 @@ fof_logic_formula -> fof_logic_formula . NOTVLINE fof_logic_formula [ XOR VLINE 
 fof_logic_formula -> fof_logic_formula . NOTAND fof_logic_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
 fof_logic_formula -> fof_logic_formula . AND fof_logic_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
 fof_logic_formula -> fof_logic_formula . VLINE fof_logic_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
+## Transitions:
 -- On XOR shift to state 112
 -- On NOTVLINE shift to state 114
 -- On NOTAND shift to state 116
 -- On LEFT_IMPLY shift to state 118
 -- On IMPLY shift to state 120
+## Reductions:
 -- On VLINE reduce production fof_logic_formula -> fof_logic_formula EQUIV fof_logic_formula
 -- On RIGHT_PAREN reduce production fof_logic_formula -> fof_logic_formula EQUIV fof_logic_formula
 -- On RIGHT_BRACKET reduce production fof_logic_formula -> fof_logic_formula EQUIV fof_logic_formula
@@ -2192,7 +2822,11 @@ fof_logic_formula -> fof_logic_formula . VLINE fof_logic_formula [ XOR VLINE RIG
 -- On AND reduce production fof_logic_formula -> fof_logic_formula EQUIV fof_logic_formula
 
 State 126:
+## Known stack suffix:
+## fof_logic_formula AND
+## LR(1) items:
 fof_logic_formula -> fof_logic_formula AND . fof_logic_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
+## Transitions:
 -- On UPPER_WORD shift to state 13
 -- On TRUE shift to state 43
 -- On SINGLE_QUOTED shift to state 4
@@ -2231,8 +2865,12 @@ fof_logic_formula -> fof_logic_formula AND . fof_logic_formula [ XOR VLINE RIGHT
 -- On atomic_system_word shift to state 90
 -- On atomic_formula shift to state 104
 -- On atomic_defined_word shift to state 91
+## Reductions:
 
 State 127:
+## Known stack suffix:
+## fof_logic_formula AND fof_logic_formula
+## LR(1) items:
 fof_logic_formula -> fof_logic_formula . EQUIV fof_logic_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
 fof_logic_formula -> fof_logic_formula . IMPLY fof_logic_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
 fof_logic_formula -> fof_logic_formula . LEFT_IMPLY fof_logic_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
@@ -2242,12 +2880,14 @@ fof_logic_formula -> fof_logic_formula . NOTAND fof_logic_formula [ XOR VLINE RI
 fof_logic_formula -> fof_logic_formula . AND fof_logic_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
 fof_logic_formula -> fof_logic_formula AND fof_logic_formula . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
 fof_logic_formula -> fof_logic_formula . VLINE fof_logic_formula [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
+## Transitions:
 -- On XOR shift to state 112
 -- On NOTVLINE shift to state 114
 -- On NOTAND shift to state 116
 -- On LEFT_IMPLY shift to state 118
 -- On IMPLY shift to state 120
 -- On EQUIV shift to state 124
+## Reductions:
 -- On VLINE reduce production fof_logic_formula -> fof_logic_formula AND fof_logic_formula
 -- On RIGHT_PAREN reduce production fof_logic_formula -> fof_logic_formula AND fof_logic_formula
 -- On RIGHT_BRACKET reduce production fof_logic_formula -> fof_logic_formula AND fof_logic_formula
@@ -2258,7 +2898,12 @@ fof_logic_formula -> fof_logic_formula . VLINE fof_logic_formula [ XOR VLINE RIG
 -- On AND reduce production fof_logic_formula -> fof_logic_formula AND fof_logic_formula
 
 State 128:
+## Known stack suffix:
+## LEFT_PAREN fof_logic_formula RIGHT_PAREN
+## LR(1) items:
 fof_unitary_formula -> LEFT_PAREN fof_logic_formula RIGHT_PAREN . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
+## Transitions:
+## Reductions:
 -- On XOR reduce production fof_unitary_formula -> LEFT_PAREN fof_logic_formula RIGHT_PAREN
 -- On VLINE reduce production fof_unitary_formula -> LEFT_PAREN fof_logic_formula RIGHT_PAREN
 -- On RIGHT_PAREN reduce production fof_unitary_formula -> LEFT_PAREN fof_logic_formula RIGHT_PAREN
@@ -2275,7 +2920,12 @@ fof_unitary_formula -> LEFT_PAREN fof_logic_formula RIGHT_PAREN . [ XOR VLINE RI
 -- On AND reduce production fof_unitary_formula -> LEFT_PAREN fof_logic_formula RIGHT_PAREN
 
 State 129:
+## Known stack suffix:
+## NOT fof_unitary_formula
+## LR(1) items:
 fof_unary_formula -> NOT fof_unitary_formula . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT COMMA AND_ALSO AND ]
+## Transitions:
+## Reductions:
 -- On XOR reduce production fof_unary_formula -> NOT fof_unitary_formula
 -- On VLINE reduce production fof_unary_formula -> NOT fof_unitary_formula
 -- On RIGHT_PAREN reduce production fof_unary_formula -> NOT fof_unitary_formula
@@ -2292,8 +2942,12 @@ fof_unary_formula -> NOT fof_unitary_formula . [ XOR VLINE RIGHT_PAREN RIGHT_BRA
 -- On AND reduce production fof_unary_formula -> NOT fof_unitary_formula
 
 State 130:
+## Known stack suffix:
+## LEFT_PAREN
+## LR(1) items:
 fof_sequent -> LEFT_PAREN . fof_sequent RIGHT_PAREN [ RIGHT_PAREN IF DOT AND_ALSO ]
 fof_unitary_formula -> LEFT_PAREN . fof_logic_formula RIGHT_PAREN [ XOR VLINE RIGHT_PAREN NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT AND_ALSO AND ]
+## Transitions:
 -- On UPPER_WORD shift to state 13
 -- On TRUE shift to state 43
 -- On SINGLE_QUOTED shift to state 4
@@ -2335,9 +2989,14 @@ fof_unitary_formula -> LEFT_PAREN . fof_logic_formula RIGHT_PAREN [ XOR VLINE RI
 -- On atomic_system_word shift to state 90
 -- On atomic_formula shift to state 104
 -- On atomic_defined_word shift to state 91
+## Reductions:
 
 State 131:
+## Known stack suffix:
+## LEFT_BRACKET
+## LR(1) items:
 fof_tuple -> LEFT_BRACKET . loption(separated_nonempty_list(COMMA,fof_logic_formula)) RIGHT_BRACKET [ RIGHT_PAREN IF GENTZEN_ARROW DOT AND_ALSO ]
+## Transitions:
 -- On UPPER_WORD shift to state 13
 -- On TRUE shift to state 43
 -- On SINGLE_QUOTED shift to state 4
@@ -2378,18 +3037,34 @@ fof_tuple -> LEFT_BRACKET . loption(separated_nonempty_list(COMMA,fof_logic_form
 -- On atomic_system_word shift to state 90
 -- On atomic_formula shift to state 104
 -- On atomic_defined_word shift to state 91
+## Reductions:
 -- On RIGHT_BRACKET reduce production loption(separated_nonempty_list(COMMA,fof_logic_formula)) ->
 
 State 132:
+## Known stack suffix:
+## separated_nonempty_list(COMMA,fof_logic_formula)
+## LR(1) items:
 loption(separated_nonempty_list(COMMA,fof_logic_formula)) -> separated_nonempty_list(COMMA,fof_logic_formula) . [ RIGHT_BRACKET ]
+## Transitions:
+## Reductions:
 -- On RIGHT_BRACKET reduce production loption(separated_nonempty_list(COMMA,fof_logic_formula)) -> separated_nonempty_list(COMMA,fof_logic_formula)
 
 State 133:
+## Known stack suffix:
+## LEFT_BRACKET loption(separated_nonempty_list(COMMA,fof_logic_formula))
+## LR(1) items:
 fof_tuple -> LEFT_BRACKET loption(separated_nonempty_list(COMMA,fof_logic_formula)) . RIGHT_BRACKET [ RIGHT_PAREN IF GENTZEN_ARROW DOT AND_ALSO ]
+## Transitions:
 -- On RIGHT_BRACKET shift to state 134
+## Reductions:
 
 State 134:
+## Known stack suffix:
+## LEFT_BRACKET loption(separated_nonempty_list(COMMA,fof_logic_formula)) RIGHT_BRACKET
+## LR(1) items:
 fof_tuple -> LEFT_BRACKET loption(separated_nonempty_list(COMMA,fof_logic_formula)) RIGHT_BRACKET . [ RIGHT_PAREN IF GENTZEN_ARROW DOT AND_ALSO ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production fof_tuple -> LEFT_BRACKET loption(separated_nonempty_list(COMMA,fof_logic_formula)) RIGHT_BRACKET
 -- On IF reduce production fof_tuple -> LEFT_BRACKET loption(separated_nonempty_list(COMMA,fof_logic_formula)) RIGHT_BRACKET
 -- On GENTZEN_ARROW reduce production fof_tuple -> LEFT_BRACKET loption(separated_nonempty_list(COMMA,fof_logic_formula)) RIGHT_BRACKET
@@ -2397,6 +3072,9 @@ fof_tuple -> LEFT_BRACKET loption(separated_nonempty_list(COMMA,fof_logic_formul
 -- On AND_ALSO reduce production fof_tuple -> LEFT_BRACKET loption(separated_nonempty_list(COMMA,fof_logic_formula)) RIGHT_BRACKET
 
 State 135:
+## Known stack suffix:
+## fof_logic_formula
+## LR(1) items:
 fof_logic_formula -> fof_logic_formula . EQUIV fof_logic_formula [ XOR VLINE RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY EQUIV COMMA AND ]
 fof_logic_formula -> fof_logic_formula . IMPLY fof_logic_formula [ XOR VLINE RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY EQUIV COMMA AND ]
 fof_logic_formula -> fof_logic_formula . LEFT_IMPLY fof_logic_formula [ XOR VLINE RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY EQUIV COMMA AND ]
@@ -2407,6 +3085,7 @@ fof_logic_formula -> fof_logic_formula . AND fof_logic_formula [ XOR VLINE RIGHT
 fof_logic_formula -> fof_logic_formula . VLINE fof_logic_formula [ XOR VLINE RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY EQUIV COMMA AND ]
 separated_nonempty_list(COMMA,fof_logic_formula) -> fof_logic_formula . [ RIGHT_BRACKET ]
 separated_nonempty_list(COMMA,fof_logic_formula) -> fof_logic_formula . COMMA separated_nonempty_list(COMMA,fof_logic_formula) [ RIGHT_BRACKET ]
+## Transitions:
 -- On XOR shift to state 112
 -- On VLINE shift to state 122
 -- On NOTVLINE shift to state 114
@@ -2416,10 +3095,15 @@ separated_nonempty_list(COMMA,fof_logic_formula) -> fof_logic_formula . COMMA se
 -- On EQUIV shift to state 124
 -- On COMMA shift to state 136
 -- On AND shift to state 126
+## Reductions:
 -- On RIGHT_BRACKET reduce production separated_nonempty_list(COMMA,fof_logic_formula) -> fof_logic_formula
 
 State 136:
+## Known stack suffix:
+## fof_logic_formula COMMA
+## LR(1) items:
 separated_nonempty_list(COMMA,fof_logic_formula) -> fof_logic_formula COMMA . separated_nonempty_list(COMMA,fof_logic_formula) [ RIGHT_BRACKET ]
+## Transitions:
 -- On UPPER_WORD shift to state 13
 -- On TRUE shift to state 43
 -- On SINGLE_QUOTED shift to state 4
@@ -2459,68 +3143,133 @@ separated_nonempty_list(COMMA,fof_logic_formula) -> fof_logic_formula COMMA . se
 -- On atomic_system_word shift to state 90
 -- On atomic_formula shift to state 104
 -- On atomic_defined_word shift to state 91
+## Reductions:
 
 State 137:
+## Known stack suffix:
+## fof_logic_formula COMMA separated_nonempty_list(COMMA,fof_logic_formula)
+## LR(1) items:
 separated_nonempty_list(COMMA,fof_logic_formula) -> fof_logic_formula COMMA separated_nonempty_list(COMMA,fof_logic_formula) . [ RIGHT_BRACKET ]
+## Transitions:
+## Reductions:
 -- On RIGHT_BRACKET reduce production separated_nonempty_list(COMMA,fof_logic_formula) -> fof_logic_formula COMMA separated_nonempty_list(COMMA,fof_logic_formula)
 
 State 138:
+## Known stack suffix:
+## fof_tuple
+## LR(1) items:
 fof_sequent -> fof_tuple . GENTZEN_ARROW fof_tuple [ RIGHT_PAREN IF DOT AND_ALSO ]
+## Transitions:
 -- On GENTZEN_ARROW shift to state 139
+## Reductions:
 
 State 139:
+## Known stack suffix:
+## fof_tuple GENTZEN_ARROW
+## LR(1) items:
 fof_sequent -> fof_tuple GENTZEN_ARROW . fof_tuple [ RIGHT_PAREN IF DOT AND_ALSO ]
+## Transitions:
 -- On LEFT_BRACKET shift to state 131
 -- On fof_tuple shift to state 140
+## Reductions:
 
 State 140:
+## Known stack suffix:
+## fof_tuple GENTZEN_ARROW fof_tuple
+## LR(1) items:
 fof_sequent -> fof_tuple GENTZEN_ARROW fof_tuple . [ RIGHT_PAREN IF DOT AND_ALSO ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production fof_sequent -> fof_tuple GENTZEN_ARROW fof_tuple
 -- On IF reduce production fof_sequent -> fof_tuple GENTZEN_ARROW fof_tuple
 -- On DOT reduce production fof_sequent -> fof_tuple GENTZEN_ARROW fof_tuple
 -- On AND_ALSO reduce production fof_sequent -> fof_tuple GENTZEN_ARROW fof_tuple
 
 State 141:
+## Known stack suffix:
+## LEFT_PAREN fof_sequent
+## LR(1) items:
 fof_sequent -> LEFT_PAREN fof_sequent . RIGHT_PAREN [ RIGHT_PAREN IF DOT AND_ALSO ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 142
+## Reductions:
 
 State 142:
+## Known stack suffix:
+## LEFT_PAREN fof_sequent RIGHT_PAREN
+## LR(1) items:
 fof_sequent -> LEFT_PAREN fof_sequent RIGHT_PAREN . [ RIGHT_PAREN IF DOT AND_ALSO ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production fof_sequent -> LEFT_PAREN fof_sequent RIGHT_PAREN
 -- On IF reduce production fof_sequent -> LEFT_PAREN fof_sequent RIGHT_PAREN
 -- On DOT reduce production fof_sequent -> LEFT_PAREN fof_sequent RIGHT_PAREN
 -- On AND_ALSO reduce production fof_sequent -> LEFT_PAREN fof_sequent RIGHT_PAREN
 
 State 143:
+## Known stack suffix:
+## AXIOM
+## LR(1) items:
 premise -> AXIOM . datalog_atom [ DOT AND_ALSO ]
+## Transitions:
 -- On LOWER_WORD shift to state 2
 -- On datalog_atom shift to state 144
+## Reductions:
 
 State 144:
+## Known stack suffix:
+## AXIOM datalog_atom
+## LR(1) items:
 premise -> AXIOM datalog_atom . [ DOT AND_ALSO ]
+## Transitions:
+## Reductions:
 -- On DOT reduce production premise -> AXIOM datalog_atom
 -- On AND_ALSO reduce production premise -> AXIOM datalog_atom
 
 State 145:
+## Known stack suffix:
+## separated_nonempty_list(AND_ALSO,premise)
+## LR(1) items:
 premises -> separated_nonempty_list(AND_ALSO,premise) . [ DOT ]
+## Transitions:
+## Reductions:
 -- On DOT reduce production premises -> separated_nonempty_list(AND_ALSO,premise)
 
 State 146:
+## Known stack suffix:
+## THEORY datalog_atom IS premises
+## LR(1) items:
 theory -> THEORY datalog_atom IS premises . DOT [ EOI ]
+## Transitions:
 -- On DOT shift to state 147
+## Reductions:
 
 State 147:
+## Known stack suffix:
+## THEORY datalog_atom IS premises DOT
+## LR(1) items:
 theory -> THEORY datalog_atom IS premises DOT . [ EOI ]
+## Transitions:
+## Reductions:
 -- On EOI reduce production theory -> THEORY datalog_atom IS premises DOT
 
 State 148:
+## Known stack suffix:
+## premise
+## LR(1) items:
 separated_nonempty_list(AND_ALSO,premise) -> premise . [ DOT ]
 separated_nonempty_list(AND_ALSO,premise) -> premise . AND_ALSO separated_nonempty_list(AND_ALSO,premise) [ DOT ]
+## Transitions:
 -- On AND_ALSO shift to state 149
+## Reductions:
 -- On DOT reduce production separated_nonempty_list(AND_ALSO,premise) -> premise
 
 State 149:
+## Known stack suffix:
+## premise AND_ALSO
+## LR(1) items:
 separated_nonempty_list(AND_ALSO,premise) -> premise AND_ALSO . separated_nonempty_list(AND_ALSO,premise) [ DOT ]
+## Transitions:
 -- On UPPER_WORD shift to state 13
 -- On TRUE shift to state 43
 -- On THEORY shift to state 44
@@ -2567,18 +3316,32 @@ separated_nonempty_list(AND_ALSO,premise) -> premise AND_ALSO . separated_nonemp
 -- On atomic_system_word shift to state 90
 -- On atomic_formula shift to state 104
 -- On atomic_defined_word shift to state 91
+## Reductions:
 
 State 150:
+## Known stack suffix:
+## premise AND_ALSO separated_nonempty_list(AND_ALSO,premise)
+## LR(1) items:
 separated_nonempty_list(AND_ALSO,premise) -> premise AND_ALSO separated_nonempty_list(AND_ALSO,premise) . [ DOT ]
+## Transitions:
+## Reductions:
 -- On DOT reduce production separated_nonempty_list(AND_ALSO,premise) -> premise AND_ALSO separated_nonempty_list(AND_ALSO,premise)
 
 State 151:
+## Known stack suffix:
+## fof_sequent
+## LR(1) items:
 fof_formula -> fof_sequent . [ IF DOT AND_ALSO ]
+## Transitions:
+## Reductions:
 -- On IF reduce production fof_formula -> fof_sequent
 -- On DOT reduce production fof_formula -> fof_sequent
 -- On AND_ALSO reduce production fof_formula -> fof_sequent
 
 State 152:
+## Known stack suffix:
+## fof_logic_formula
+## LR(1) items:
 fof_formula -> fof_logic_formula . [ IF DOT AND_ALSO ]
 fof_logic_formula -> fof_logic_formula . EQUIV fof_logic_formula [ XOR VLINE NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT AND_ALSO AND ]
 fof_logic_formula -> fof_logic_formula . IMPLY fof_logic_formula [ XOR VLINE NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT AND_ALSO AND ]
@@ -2588,6 +3351,7 @@ fof_logic_formula -> fof_logic_formula . NOTVLINE fof_logic_formula [ XOR VLINE 
 fof_logic_formula -> fof_logic_formula . NOTAND fof_logic_formula [ XOR VLINE NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT AND_ALSO AND ]
 fof_logic_formula -> fof_logic_formula . AND fof_logic_formula [ XOR VLINE NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT AND_ALSO AND ]
 fof_logic_formula -> fof_logic_formula . VLINE fof_logic_formula [ XOR VLINE NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV DOT AND_ALSO AND ]
+## Transitions:
 -- On XOR shift to state 112
 -- On VLINE shift to state 122
 -- On NOTVLINE shift to state 114
@@ -2596,126 +3360,226 @@ fof_logic_formula -> fof_logic_formula . VLINE fof_logic_formula [ XOR VLINE NOT
 -- On IMPLY shift to state 120
 -- On EQUIV shift to state 124
 -- On AND shift to state 126
+## Reductions:
 -- On IF reduce production fof_formula -> fof_logic_formula
 -- On DOT reduce production fof_formula -> fof_logic_formula
 -- On AND_ALSO reduce production fof_formula -> fof_logic_formula
 
 State 153:
+## Known stack suffix:
+## fof_formula
+## LR(1) items:
 premise -> fof_formula . [ DOT AND_ALSO ]
+## Transitions:
+## Reductions:
 -- On DOT reduce production premise -> fof_formula
 -- On AND_ALSO reduce production premise -> fof_formula
 
 State 154:
+## Known stack suffix:
+## RAW
+## LR(1) items:
 clause -> RAW . datalog_lit DOT [ EOI ]
 clause -> RAW . datalog_lit IF separated_nonempty_list(COMMA,datalog_lit) DOT [ EOI ]
+## Transitions:
 -- On SINGLE_QUOTED shift to state 4
 -- On LOWER_WORD shift to state 5
 -- On datalog_lit shift to state 155
 -- On atomic_word shift to state 162
+## Reductions:
 
 State 155:
+## Known stack suffix:
+## RAW datalog_lit
+## LR(1) items:
 clause -> RAW datalog_lit . DOT [ EOI ]
 clause -> RAW datalog_lit . IF separated_nonempty_list(COMMA,datalog_lit) DOT [ EOI ]
+## Transitions:
 -- On IF shift to state 156
 -- On DOT shift to state 171
+## Reductions:
 
 State 156:
+## Known stack suffix:
+## RAW datalog_lit IF
+## LR(1) items:
 clause -> RAW datalog_lit IF . separated_nonempty_list(COMMA,datalog_lit) DOT [ EOI ]
+## Transitions:
 -- On SINGLE_QUOTED shift to state 4
 -- On LOWER_WORD shift to state 5
 -- On separated_nonempty_list(COMMA,datalog_lit) shift to state 157
 -- On datalog_lit shift to state 159
 -- On atomic_word shift to state 162
+## Reductions:
 
 State 157:
+## Known stack suffix:
+## RAW datalog_lit IF separated_nonempty_list(COMMA,datalog_lit)
+## LR(1) items:
 clause -> RAW datalog_lit IF separated_nonempty_list(COMMA,datalog_lit) . DOT [ EOI ]
+## Transitions:
 -- On DOT shift to state 158
+## Reductions:
 
 State 158:
+## Known stack suffix:
+## RAW datalog_lit IF separated_nonempty_list(COMMA,datalog_lit) DOT
+## LR(1) items:
 clause -> RAW datalog_lit IF separated_nonempty_list(COMMA,datalog_lit) DOT . [ EOI ]
+## Transitions:
+## Reductions:
 -- On EOI reduce production clause -> RAW datalog_lit IF separated_nonempty_list(COMMA,datalog_lit) DOT
 
 State 159:
+## Known stack suffix:
+## datalog_lit
+## LR(1) items:
 separated_nonempty_list(COMMA,datalog_lit) -> datalog_lit . [ DOT ]
 separated_nonempty_list(COMMA,datalog_lit) -> datalog_lit . COMMA separated_nonempty_list(COMMA,datalog_lit) [ DOT ]
+## Transitions:
 -- On COMMA shift to state 160
+## Reductions:
 -- On DOT reduce production separated_nonempty_list(COMMA,datalog_lit) -> datalog_lit
 
 State 160:
+## Known stack suffix:
+## datalog_lit COMMA
+## LR(1) items:
 separated_nonempty_list(COMMA,datalog_lit) -> datalog_lit COMMA . separated_nonempty_list(COMMA,datalog_lit) [ DOT ]
+## Transitions:
 -- On SINGLE_QUOTED shift to state 4
 -- On LOWER_WORD shift to state 5
 -- On separated_nonempty_list(COMMA,datalog_lit) shift to state 161
 -- On datalog_lit shift to state 159
 -- On atomic_word shift to state 162
+## Reductions:
 
 State 161:
+## Known stack suffix:
+## datalog_lit COMMA separated_nonempty_list(COMMA,datalog_lit)
+## LR(1) items:
 separated_nonempty_list(COMMA,datalog_lit) -> datalog_lit COMMA separated_nonempty_list(COMMA,datalog_lit) . [ DOT ]
+## Transitions:
+## Reductions:
 -- On DOT reduce production separated_nonempty_list(COMMA,datalog_lit) -> datalog_lit COMMA separated_nonempty_list(COMMA,datalog_lit)
 
 State 162:
+## Known stack suffix:
+## atomic_word
+## LR(1) items:
 datalog_lit -> atomic_word . [ IF DOT COMMA ]
 datalog_lit -> atomic_word . LEFT_PAREN separated_nonempty_list(COMMA,datalog_term) RIGHT_PAREN [ IF DOT COMMA ]
+## Transitions:
 -- On LEFT_PAREN shift to state 163
+## Reductions:
 -- On IF reduce production datalog_lit -> atomic_word
 -- On DOT reduce production datalog_lit -> atomic_word
 -- On COMMA reduce production datalog_lit -> atomic_word
 
 State 163:
+## Known stack suffix:
+## atomic_word LEFT_PAREN
+## LR(1) items:
 datalog_lit -> atomic_word LEFT_PAREN . separated_nonempty_list(COMMA,datalog_term) RIGHT_PAREN [ IF DOT COMMA ]
+## Transitions:
 -- On UPPER_WORD shift to state 164
 -- On SINGLE_QUOTED shift to state 4
 -- On LOWER_WORD shift to state 5
 -- On separated_nonempty_list(COMMA,datalog_term) shift to state 165
 -- On datalog_term shift to state 167
 -- On atomic_word shift to state 170
+## Reductions:
 
 State 164:
+## Known stack suffix:
+## UPPER_WORD
+## LR(1) items:
 datalog_term -> UPPER_WORD . [ RIGHT_PAREN COMMA ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production datalog_term -> UPPER_WORD
 -- On COMMA reduce production datalog_term -> UPPER_WORD
 
 State 165:
+## Known stack suffix:
+## atomic_word LEFT_PAREN separated_nonempty_list(COMMA,datalog_term)
+## LR(1) items:
 datalog_lit -> atomic_word LEFT_PAREN separated_nonempty_list(COMMA,datalog_term) . RIGHT_PAREN [ IF DOT COMMA ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 166
+## Reductions:
 
 State 166:
+## Known stack suffix:
+## atomic_word LEFT_PAREN separated_nonempty_list(COMMA,datalog_term) RIGHT_PAREN
+## LR(1) items:
 datalog_lit -> atomic_word LEFT_PAREN separated_nonempty_list(COMMA,datalog_term) RIGHT_PAREN . [ IF DOT COMMA ]
+## Transitions:
+## Reductions:
 -- On IF reduce production datalog_lit -> atomic_word LEFT_PAREN separated_nonempty_list(COMMA,datalog_term) RIGHT_PAREN
 -- On DOT reduce production datalog_lit -> atomic_word LEFT_PAREN separated_nonempty_list(COMMA,datalog_term) RIGHT_PAREN
 -- On COMMA reduce production datalog_lit -> atomic_word LEFT_PAREN separated_nonempty_list(COMMA,datalog_term) RIGHT_PAREN
 
 State 167:
+## Known stack suffix:
+## datalog_term
+## LR(1) items:
 separated_nonempty_list(COMMA,datalog_term) -> datalog_term . [ RIGHT_PAREN ]
 separated_nonempty_list(COMMA,datalog_term) -> datalog_term . COMMA separated_nonempty_list(COMMA,datalog_term) [ RIGHT_PAREN ]
+## Transitions:
 -- On COMMA shift to state 168
+## Reductions:
 -- On RIGHT_PAREN reduce production separated_nonempty_list(COMMA,datalog_term) -> datalog_term
 
 State 168:
+## Known stack suffix:
+## datalog_term COMMA
+## LR(1) items:
 separated_nonempty_list(COMMA,datalog_term) -> datalog_term COMMA . separated_nonempty_list(COMMA,datalog_term) [ RIGHT_PAREN ]
+## Transitions:
 -- On UPPER_WORD shift to state 164
 -- On SINGLE_QUOTED shift to state 4
 -- On LOWER_WORD shift to state 5
 -- On separated_nonempty_list(COMMA,datalog_term) shift to state 169
 -- On datalog_term shift to state 167
 -- On atomic_word shift to state 170
+## Reductions:
 
 State 169:
+## Known stack suffix:
+## datalog_term COMMA separated_nonempty_list(COMMA,datalog_term)
+## LR(1) items:
 separated_nonempty_list(COMMA,datalog_term) -> datalog_term COMMA separated_nonempty_list(COMMA,datalog_term) . [ RIGHT_PAREN ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production separated_nonempty_list(COMMA,datalog_term) -> datalog_term COMMA separated_nonempty_list(COMMA,datalog_term)
 
 State 170:
+## Known stack suffix:
+## atomic_word
+## LR(1) items:
 datalog_term -> atomic_word . [ RIGHT_PAREN COMMA ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production datalog_term -> atomic_word
 -- On COMMA reduce production datalog_term -> atomic_word
 
 State 171:
+## Known stack suffix:
+## RAW datalog_lit DOT
+## LR(1) items:
 clause -> RAW datalog_lit DOT . [ EOI ]
+## Transitions:
+## Reductions:
 -- On EOI reduce production clause -> RAW datalog_lit DOT
 
 State 172:
+## Known stack suffix:
+## LEMMA
+## LR(1) items:
 lemma -> LEMMA . fof_formula IF premises DOT [ EOI ]
 lemma -> LEMMA . AXIOM datalog_atom IF premises DOT [ EOI ]
+## Transitions:
 -- On UPPER_WORD shift to state 13
 -- On TRUE shift to state 43
 -- On SINGLE_QUOTED shift to state 4
@@ -2759,18 +3623,33 @@ lemma -> LEMMA . AXIOM datalog_atom IF premises DOT [ EOI ]
 -- On atomic_system_word shift to state 90
 -- On atomic_formula shift to state 104
 -- On atomic_defined_word shift to state 91
+## Reductions:
 
 State 173:
+## Known stack suffix:
+## LEMMA AXIOM
+## LR(1) items:
 lemma -> LEMMA AXIOM . datalog_atom IF premises DOT [ EOI ]
+## Transitions:
 -- On LOWER_WORD shift to state 2
 -- On datalog_atom shift to state 174
+## Reductions:
 
 State 174:
+## Known stack suffix:
+## LEMMA AXIOM datalog_atom
+## LR(1) items:
 lemma -> LEMMA AXIOM datalog_atom . IF premises DOT [ EOI ]
+## Transitions:
 -- On IF shift to state 175
+## Reductions:
 
 State 175:
+## Known stack suffix:
+## LEMMA AXIOM datalog_atom IF
+## LR(1) items:
 lemma -> LEMMA AXIOM datalog_atom IF . premises DOT [ EOI ]
+## Transitions:
 -- On UPPER_WORD shift to state 13
 -- On TRUE shift to state 43
 -- On THEORY shift to state 44
@@ -2818,21 +3697,41 @@ lemma -> LEMMA AXIOM datalog_atom IF . premises DOT [ EOI ]
 -- On atomic_system_word shift to state 90
 -- On atomic_formula shift to state 104
 -- On atomic_defined_word shift to state 91
+## Reductions:
 
 State 176:
+## Known stack suffix:
+## LEMMA AXIOM datalog_atom IF premises
+## LR(1) items:
 lemma -> LEMMA AXIOM datalog_atom IF premises . DOT [ EOI ]
+## Transitions:
 -- On DOT shift to state 177
+## Reductions:
 
 State 177:
+## Known stack suffix:
+## LEMMA AXIOM datalog_atom IF premises DOT
+## LR(1) items:
 lemma -> LEMMA AXIOM datalog_atom IF premises DOT . [ EOI ]
+## Transitions:
+## Reductions:
 -- On EOI reduce production lemma -> LEMMA AXIOM datalog_atom IF premises DOT
 
 State 178:
+## Known stack suffix:
+## LEMMA fof_formula
+## LR(1) items:
 lemma -> LEMMA fof_formula . IF premises DOT [ EOI ]
+## Transitions:
 -- On IF shift to state 179
+## Reductions:
 
 State 179:
+## Known stack suffix:
+## LEMMA fof_formula IF
+## LR(1) items:
 lemma -> LEMMA fof_formula IF . premises DOT [ EOI ]
+## Transitions:
 -- On UPPER_WORD shift to state 13
 -- On TRUE shift to state 43
 -- On THEORY shift to state 44
@@ -2880,40 +3779,80 @@ lemma -> LEMMA fof_formula IF . premises DOT [ EOI ]
 -- On atomic_system_word shift to state 90
 -- On atomic_formula shift to state 104
 -- On atomic_defined_word shift to state 91
+## Reductions:
 
 State 180:
+## Known stack suffix:
+## LEMMA fof_formula IF premises
+## LR(1) items:
 lemma -> LEMMA fof_formula IF premises . DOT [ EOI ]
+## Transitions:
 -- On DOT shift to state 181
+## Reductions:
 
 State 181:
+## Known stack suffix:
+## LEMMA fof_formula IF premises DOT
+## LR(1) items:
 lemma -> LEMMA fof_formula IF premises DOT . [ EOI ]
+## Transitions:
+## Reductions:
 -- On EOI reduce production lemma -> LEMMA fof_formula IF premises DOT
 
 State 182:
+## Known stack suffix:
+## INCLUDE
+## LR(1) items:
 include_ -> INCLUDE . atomic_word DOT [ EOI ]
+## Transitions:
 -- On SINGLE_QUOTED shift to state 4
 -- On LOWER_WORD shift to state 5
 -- On atomic_word shift to state 183
+## Reductions:
 
 State 183:
+## Known stack suffix:
+## INCLUDE atomic_word
+## LR(1) items:
 include_ -> INCLUDE atomic_word . DOT [ EOI ]
+## Transitions:
 -- On DOT shift to state 184
+## Reductions:
 
 State 184:
+## Known stack suffix:
+## INCLUDE atomic_word DOT
+## LR(1) items:
 include_ -> INCLUDE atomic_word DOT . [ EOI ]
+## Transitions:
+## Reductions:
 -- On EOI reduce production include_ -> INCLUDE atomic_word DOT
 
 State 185:
+## Known stack suffix:
+## AXIOM
+## LR(1) items:
 axiom -> AXIOM . datalog_atom IS fof_formula DOT [ EOI ]
+## Transitions:
 -- On LOWER_WORD shift to state 2
 -- On datalog_atom shift to state 186
+## Reductions:
 
 State 186:
+## Known stack suffix:
+## AXIOM datalog_atom
+## LR(1) items:
 axiom -> AXIOM datalog_atom . IS fof_formula DOT [ EOI ]
+## Transitions:
 -- On IS shift to state 187
+## Reductions:
 
 State 187:
+## Known stack suffix:
+## AXIOM datalog_atom IS
+## LR(1) items:
 axiom -> AXIOM datalog_atom IS . fof_formula DOT [ EOI ]
+## Transitions:
 -- On UPPER_WORD shift to state 13
 -- On TRUE shift to state 43
 -- On SINGLE_QUOTED shift to state 4
@@ -2956,49 +3895,104 @@ axiom -> AXIOM datalog_atom IS . fof_formula DOT [ EOI ]
 -- On atomic_system_word shift to state 90
 -- On atomic_formula shift to state 104
 -- On atomic_defined_word shift to state 91
+## Reductions:
 
 State 188:
+## Known stack suffix:
+## AXIOM datalog_atom IS fof_formula
+## LR(1) items:
 axiom -> AXIOM datalog_atom IS fof_formula . DOT [ EOI ]
+## Transitions:
 -- On DOT shift to state 189
+## Reductions:
 
 State 189:
+## Known stack suffix:
+## AXIOM datalog_atom IS fof_formula DOT
+## LR(1) items:
 axiom -> AXIOM datalog_atom IS fof_formula DOT . [ EOI ]
+## Transitions:
+## Reductions:
 -- On EOI reduce production axiom -> AXIOM datalog_atom IS fof_formula DOT
 
 State 190:
+## Known stack suffix:
+## theory
+## LR(1) items:
 statement -> theory . [ EOI ]
+## Transitions:
+## Reductions:
 -- On EOI reduce production statement -> theory
 
 State 191:
+## Known stack suffix:
+## statement
+## LR(1) items:
 parse_statement -> statement . EOI [ # ]
+## Transitions:
 -- On EOI shift to state 192
+## Reductions:
 
 State 192:
+## Known stack suffix:
+## statement EOI
+## LR(1) items:
 parse_statement -> statement EOI . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production parse_statement -> statement EOI
 
 State 193:
+## Known stack suffix:
+## parse_statement
+## LR(1) items:
 parse_statement' -> parse_statement . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept parse_statement
 
 State 194:
+## Known stack suffix:
+## lemma
+## LR(1) items:
 statement -> lemma . [ EOI ]
+## Transitions:
+## Reductions:
 -- On EOI reduce production statement -> lemma
 
 State 195:
+## Known stack suffix:
+## include_
+## LR(1) items:
 statement -> include_ . [ EOI ]
+## Transitions:
+## Reductions:
 -- On EOI reduce production statement -> include_
 
 State 196:
+## Known stack suffix:
+## clause
+## LR(1) items:
 statement -> clause . [ EOI ]
+## Transitions:
+## Reductions:
 -- On EOI reduce production statement -> clause
 
 State 197:
+## Known stack suffix:
+## axiom
+## LR(1) items:
 statement -> axiom . [ EOI ]
+## Transitions:
+## Reductions:
 -- On EOI reduce production statement -> axiom
 
 State 198:
+## Known stack suffix:
+##
+## LR(1) items:
 parse_statements' -> . parse_statements [ # ]
+## Transitions:
 -- On error shift to state 199
 -- On THEORY shift to state 200
 -- On RAW shift to state 205
@@ -3014,9 +4008,14 @@ parse_statements' -> . parse_statements [ # ]
 -- On include_ shift to state 235
 -- On clause shift to state 236
 -- On axiom shift to state 237
+## Reductions:
 
 State 199:
+## Known stack suffix:
+## error
+## LR(1) items:
 statements -> error . statements [ EOI ]
+## Transitions:
 -- On error shift to state 199
 -- On THEORY shift to state 200
 -- On RAW shift to state 205
@@ -3031,18 +4030,33 @@ statements -> error . statements [ EOI ]
 -- On include_ shift to state 235
 -- On clause shift to state 236
 -- On axiom shift to state 237
+## Reductions:
 
 State 200:
+## Known stack suffix:
+## THEORY
+## LR(1) items:
 theory -> THEORY . datalog_atom IS premises DOT [ error THEORY RAW LEMMA INCLUDE EOI AXIOM ]
+## Transitions:
 -- On LOWER_WORD shift to state 2
 -- On datalog_atom shift to state 201
+## Reductions:
 
 State 201:
+## Known stack suffix:
+## THEORY datalog_atom
+## LR(1) items:
 theory -> THEORY datalog_atom . IS premises DOT [ error THEORY RAW LEMMA INCLUDE EOI AXIOM ]
+## Transitions:
 -- On IS shift to state 202
+## Reductions:
 
 State 202:
+## Known stack suffix:
+## THEORY datalog_atom IS
+## LR(1) items:
 theory -> THEORY datalog_atom IS . premises DOT [ error THEORY RAW LEMMA INCLUDE EOI AXIOM ]
+## Transitions:
 -- On UPPER_WORD shift to state 13
 -- On TRUE shift to state 43
 -- On THEORY shift to state 44
@@ -3090,13 +4104,24 @@ theory -> THEORY datalog_atom IS . premises DOT [ error THEORY RAW LEMMA INCLUDE
 -- On atomic_system_word shift to state 90
 -- On atomic_formula shift to state 104
 -- On atomic_defined_word shift to state 91
+## Reductions:
 
 State 203:
+## Known stack suffix:
+## THEORY datalog_atom IS premises
+## LR(1) items:
 theory -> THEORY datalog_atom IS premises . DOT [ error THEORY RAW LEMMA INCLUDE EOI AXIOM ]
+## Transitions:
 -- On DOT shift to state 204
+## Reductions:
 
 State 204:
+## Known stack suffix:
+## THEORY datalog_atom IS premises DOT
+## LR(1) items:
 theory -> THEORY datalog_atom IS premises DOT . [ error THEORY RAW LEMMA INCLUDE EOI AXIOM ]
+## Transitions:
+## Reductions:
 -- On error reduce production theory -> THEORY datalog_atom IS premises DOT
 -- On THEORY reduce production theory -> THEORY datalog_atom IS premises DOT
 -- On RAW reduce production theory -> THEORY datalog_atom IS premises DOT
@@ -3106,33 +4131,58 @@ theory -> THEORY datalog_atom IS premises DOT . [ error THEORY RAW LEMMA INCLUDE
 -- On AXIOM reduce production theory -> THEORY datalog_atom IS premises DOT
 
 State 205:
+## Known stack suffix:
+## RAW
+## LR(1) items:
 clause -> RAW . datalog_lit DOT [ error THEORY RAW LEMMA INCLUDE EOI AXIOM ]
 clause -> RAW . datalog_lit IF separated_nonempty_list(COMMA,datalog_lit) DOT [ error THEORY RAW LEMMA INCLUDE EOI AXIOM ]
+## Transitions:
 -- On SINGLE_QUOTED shift to state 4
 -- On LOWER_WORD shift to state 5
 -- On datalog_lit shift to state 206
 -- On atomic_word shift to state 162
+## Reductions:
 
 State 206:
+## Known stack suffix:
+## RAW datalog_lit
+## LR(1) items:
 clause -> RAW datalog_lit . DOT [ error THEORY RAW LEMMA INCLUDE EOI AXIOM ]
 clause -> RAW datalog_lit . IF separated_nonempty_list(COMMA,datalog_lit) DOT [ error THEORY RAW LEMMA INCLUDE EOI AXIOM ]
+## Transitions:
 -- On IF shift to state 207
 -- On DOT shift to state 210
+## Reductions:
 
 State 207:
+## Known stack suffix:
+## RAW datalog_lit IF
+## LR(1) items:
 clause -> RAW datalog_lit IF . separated_nonempty_list(COMMA,datalog_lit) DOT [ error THEORY RAW LEMMA INCLUDE EOI AXIOM ]
+## Transitions:
 -- On SINGLE_QUOTED shift to state 4
 -- On LOWER_WORD shift to state 5
 -- On separated_nonempty_list(COMMA,datalog_lit) shift to state 208
 -- On datalog_lit shift to state 159
 -- On atomic_word shift to state 162
+## Reductions:
 
 State 208:
+## Known stack suffix:
+## RAW datalog_lit IF separated_nonempty_list(COMMA,datalog_lit)
+## LR(1) items:
 clause -> RAW datalog_lit IF separated_nonempty_list(COMMA,datalog_lit) . DOT [ error THEORY RAW LEMMA INCLUDE EOI AXIOM ]
+## Transitions:
 -- On DOT shift to state 209
+## Reductions:
 
 State 209:
+## Known stack suffix:
+## RAW datalog_lit IF separated_nonempty_list(COMMA,datalog_lit) DOT
+## LR(1) items:
 clause -> RAW datalog_lit IF separated_nonempty_list(COMMA,datalog_lit) DOT . [ error THEORY RAW LEMMA INCLUDE EOI AXIOM ]
+## Transitions:
+## Reductions:
 -- On error reduce production clause -> RAW datalog_lit IF separated_nonempty_list(COMMA,datalog_lit) DOT
 -- On THEORY reduce production clause -> RAW datalog_lit IF separated_nonempty_list(COMMA,datalog_lit) DOT
 -- On RAW reduce production clause -> RAW datalog_lit IF separated_nonempty_list(COMMA,datalog_lit) DOT
@@ -3142,7 +4192,12 @@ clause -> RAW datalog_lit IF separated_nonempty_list(COMMA,datalog_lit) DOT . [ 
 -- On AXIOM reduce production clause -> RAW datalog_lit IF separated_nonempty_list(COMMA,datalog_lit) DOT
 
 State 210:
+## Known stack suffix:
+## RAW datalog_lit DOT
+## LR(1) items:
 clause -> RAW datalog_lit DOT . [ error THEORY RAW LEMMA INCLUDE EOI AXIOM ]
+## Transitions:
+## Reductions:
 -- On error reduce production clause -> RAW datalog_lit DOT
 -- On THEORY reduce production clause -> RAW datalog_lit DOT
 -- On RAW reduce production clause -> RAW datalog_lit DOT
@@ -3152,8 +4207,12 @@ clause -> RAW datalog_lit DOT . [ error THEORY RAW LEMMA INCLUDE EOI AXIOM ]
 -- On AXIOM reduce production clause -> RAW datalog_lit DOT
 
 State 211:
+## Known stack suffix:
+## LEMMA
+## LR(1) items:
 lemma -> LEMMA . fof_formula IF premises DOT [ error THEORY RAW LEMMA INCLUDE EOI AXIOM ]
 lemma -> LEMMA . AXIOM datalog_atom IF premises DOT [ error THEORY RAW LEMMA INCLUDE EOI AXIOM ]
+## Transitions:
 -- On UPPER_WORD shift to state 13
 -- On TRUE shift to state 43
 -- On SINGLE_QUOTED shift to state 4
@@ -3197,18 +4256,33 @@ lemma -> LEMMA . AXIOM datalog_atom IF premises DOT [ error THEORY RAW LEMMA INC
 -- On atomic_system_word shift to state 90
 -- On atomic_formula shift to state 104
 -- On atomic_defined_word shift to state 91
+## Reductions:
 
 State 212:
+## Known stack suffix:
+## LEMMA AXIOM
+## LR(1) items:
 lemma -> LEMMA AXIOM . datalog_atom IF premises DOT [ error THEORY RAW LEMMA INCLUDE EOI AXIOM ]
+## Transitions:
 -- On LOWER_WORD shift to state 2
 -- On datalog_atom shift to state 213
+## Reductions:
 
 State 213:
+## Known stack suffix:
+## LEMMA AXIOM datalog_atom
+## LR(1) items:
 lemma -> LEMMA AXIOM datalog_atom . IF premises DOT [ error THEORY RAW LEMMA INCLUDE EOI AXIOM ]
+## Transitions:
 -- On IF shift to state 214
+## Reductions:
 
 State 214:
+## Known stack suffix:
+## LEMMA AXIOM datalog_atom IF
+## LR(1) items:
 lemma -> LEMMA AXIOM datalog_atom IF . premises DOT [ error THEORY RAW LEMMA INCLUDE EOI AXIOM ]
+## Transitions:
 -- On UPPER_WORD shift to state 13
 -- On TRUE shift to state 43
 -- On THEORY shift to state 44
@@ -3256,13 +4330,24 @@ lemma -> LEMMA AXIOM datalog_atom IF . premises DOT [ error THEORY RAW LEMMA INC
 -- On atomic_system_word shift to state 90
 -- On atomic_formula shift to state 104
 -- On atomic_defined_word shift to state 91
+## Reductions:
 
 State 215:
+## Known stack suffix:
+## LEMMA AXIOM datalog_atom IF premises
+## LR(1) items:
 lemma -> LEMMA AXIOM datalog_atom IF premises . DOT [ error THEORY RAW LEMMA INCLUDE EOI AXIOM ]
+## Transitions:
 -- On DOT shift to state 216
+## Reductions:
 
 State 216:
+## Known stack suffix:
+## LEMMA AXIOM datalog_atom IF premises DOT
+## LR(1) items:
 lemma -> LEMMA AXIOM datalog_atom IF premises DOT . [ error THEORY RAW LEMMA INCLUDE EOI AXIOM ]
+## Transitions:
+## Reductions:
 -- On error reduce production lemma -> LEMMA AXIOM datalog_atom IF premises DOT
 -- On THEORY reduce production lemma -> LEMMA AXIOM datalog_atom IF premises DOT
 -- On RAW reduce production lemma -> LEMMA AXIOM datalog_atom IF premises DOT
@@ -3272,11 +4357,20 @@ lemma -> LEMMA AXIOM datalog_atom IF premises DOT . [ error THEORY RAW LEMMA INC
 -- On AXIOM reduce production lemma -> LEMMA AXIOM datalog_atom IF premises DOT
 
 State 217:
+## Known stack suffix:
+## LEMMA fof_formula
+## LR(1) items:
 lemma -> LEMMA fof_formula . IF premises DOT [ error THEORY RAW LEMMA INCLUDE EOI AXIOM ]
+## Transitions:
 -- On IF shift to state 218
+## Reductions:
 
 State 218:
+## Known stack suffix:
+## LEMMA fof_formula IF
+## LR(1) items:
 lemma -> LEMMA fof_formula IF . premises DOT [ error THEORY RAW LEMMA INCLUDE EOI AXIOM ]
+## Transitions:
 -- On UPPER_WORD shift to state 13
 -- On TRUE shift to state 43
 -- On THEORY shift to state 44
@@ -3324,13 +4418,24 @@ lemma -> LEMMA fof_formula IF . premises DOT [ error THEORY RAW LEMMA INCLUDE EO
 -- On atomic_system_word shift to state 90
 -- On atomic_formula shift to state 104
 -- On atomic_defined_word shift to state 91
+## Reductions:
 
 State 219:
+## Known stack suffix:
+## LEMMA fof_formula IF premises
+## LR(1) items:
 lemma -> LEMMA fof_formula IF premises . DOT [ error THEORY RAW LEMMA INCLUDE EOI AXIOM ]
+## Transitions:
 -- On DOT shift to state 220
+## Reductions:
 
 State 220:
+## Known stack suffix:
+## LEMMA fof_formula IF premises DOT
+## LR(1) items:
 lemma -> LEMMA fof_formula IF premises DOT . [ error THEORY RAW LEMMA INCLUDE EOI AXIOM ]
+## Transitions:
+## Reductions:
 -- On error reduce production lemma -> LEMMA fof_formula IF premises DOT
 -- On THEORY reduce production lemma -> LEMMA fof_formula IF premises DOT
 -- On RAW reduce production lemma -> LEMMA fof_formula IF premises DOT
@@ -3340,17 +4445,32 @@ lemma -> LEMMA fof_formula IF premises DOT . [ error THEORY RAW LEMMA INCLUDE EO
 -- On AXIOM reduce production lemma -> LEMMA fof_formula IF premises DOT
 
 State 221:
+## Known stack suffix:
+## INCLUDE
+## LR(1) items:
 include_ -> INCLUDE . atomic_word DOT [ error THEORY RAW LEMMA INCLUDE EOI AXIOM ]
+## Transitions:
 -- On SINGLE_QUOTED shift to state 4
 -- On LOWER_WORD shift to state 5
 -- On atomic_word shift to state 222
+## Reductions:
 
 State 222:
+## Known stack suffix:
+## INCLUDE atomic_word
+## LR(1) items:
 include_ -> INCLUDE atomic_word . DOT [ error THEORY RAW LEMMA INCLUDE EOI AXIOM ]
+## Transitions:
 -- On DOT shift to state 223
+## Reductions:
 
 State 223:
+## Known stack suffix:
+## INCLUDE atomic_word DOT
+## LR(1) items:
 include_ -> INCLUDE atomic_word DOT . [ error THEORY RAW LEMMA INCLUDE EOI AXIOM ]
+## Transitions:
+## Reductions:
 -- On error reduce production include_ -> INCLUDE atomic_word DOT
 -- On THEORY reduce production include_ -> INCLUDE atomic_word DOT
 -- On RAW reduce production include_ -> INCLUDE atomic_word DOT
@@ -3360,20 +4480,39 @@ include_ -> INCLUDE atomic_word DOT . [ error THEORY RAW LEMMA INCLUDE EOI AXIOM
 -- On AXIOM reduce production include_ -> INCLUDE atomic_word DOT
 
 State 224:
+## Known stack suffix:
+## EOI
+## LR(1) items:
 statements -> EOI . [ EOI ]
+## Transitions:
+## Reductions:
 -- On EOI reduce production statements -> EOI
 
 State 225:
+## Known stack suffix:
+## AXIOM
+## LR(1) items:
 axiom -> AXIOM . datalog_atom IS fof_formula DOT [ error THEORY RAW LEMMA INCLUDE EOI AXIOM ]
+## Transitions:
 -- On LOWER_WORD shift to state 2
 -- On datalog_atom shift to state 226
+## Reductions:
 
 State 226:
+## Known stack suffix:
+## AXIOM datalog_atom
+## LR(1) items:
 axiom -> AXIOM datalog_atom . IS fof_formula DOT [ error THEORY RAW LEMMA INCLUDE EOI AXIOM ]
+## Transitions:
 -- On IS shift to state 227
+## Reductions:
 
 State 227:
+## Known stack suffix:
+## AXIOM datalog_atom IS
+## LR(1) items:
 axiom -> AXIOM datalog_atom IS . fof_formula DOT [ error THEORY RAW LEMMA INCLUDE EOI AXIOM ]
+## Transitions:
 -- On UPPER_WORD shift to state 13
 -- On TRUE shift to state 43
 -- On SINGLE_QUOTED shift to state 4
@@ -3416,13 +4555,24 @@ axiom -> AXIOM datalog_atom IS . fof_formula DOT [ error THEORY RAW LEMMA INCLUD
 -- On atomic_system_word shift to state 90
 -- On atomic_formula shift to state 104
 -- On atomic_defined_word shift to state 91
+## Reductions:
 
 State 228:
+## Known stack suffix:
+## AXIOM datalog_atom IS fof_formula
+## LR(1) items:
 axiom -> AXIOM datalog_atom IS fof_formula . DOT [ error THEORY RAW LEMMA INCLUDE EOI AXIOM ]
+## Transitions:
 -- On DOT shift to state 229
+## Reductions:
 
 State 229:
+## Known stack suffix:
+## AXIOM datalog_atom IS fof_formula DOT
+## LR(1) items:
 axiom -> AXIOM datalog_atom IS fof_formula DOT . [ error THEORY RAW LEMMA INCLUDE EOI AXIOM ]
+## Transitions:
+## Reductions:
 -- On error reduce production axiom -> AXIOM datalog_atom IS fof_formula DOT
 -- On THEORY reduce production axiom -> AXIOM datalog_atom IS fof_formula DOT
 -- On RAW reduce production axiom -> AXIOM datalog_atom IS fof_formula DOT
@@ -3432,7 +4582,12 @@ axiom -> AXIOM datalog_atom IS fof_formula DOT . [ error THEORY RAW LEMMA INCLUD
 -- On AXIOM reduce production axiom -> AXIOM datalog_atom IS fof_formula DOT
 
 State 230:
+## Known stack suffix:
+## theory
+## LR(1) items:
 statement -> theory . [ error THEORY RAW LEMMA INCLUDE EOI AXIOM ]
+## Transitions:
+## Reductions:
 -- On error reduce production statement -> theory
 -- On THEORY reduce production statement -> theory
 -- On RAW reduce production statement -> theory
@@ -3442,11 +4597,20 @@ statement -> theory . [ error THEORY RAW LEMMA INCLUDE EOI AXIOM ]
 -- On AXIOM reduce production statement -> theory
 
 State 231:
+## Known stack suffix:
+## error statements
+## LR(1) items:
 statements -> error statements . [ EOI ]
+## Transitions:
+## Reductions:
 -- On EOI reduce production statements -> error statements
 
 State 232:
+## Known stack suffix:
+## statement
+## LR(1) items:
 statements -> statement . statements [ EOI ]
+## Transitions:
 -- On error shift to state 199
 -- On THEORY shift to state 200
 -- On RAW shift to state 205
@@ -3461,13 +4625,24 @@ statements -> statement . statements [ EOI ]
 -- On include_ shift to state 235
 -- On clause shift to state 236
 -- On axiom shift to state 237
+## Reductions:
 
 State 233:
+## Known stack suffix:
+## statement statements
+## LR(1) items:
 statements -> statement statements . [ EOI ]
+## Transitions:
+## Reductions:
 -- On EOI reduce production statements -> statement statements
 
 State 234:
+## Known stack suffix:
+## lemma
+## LR(1) items:
 statement -> lemma . [ error THEORY RAW LEMMA INCLUDE EOI AXIOM ]
+## Transitions:
+## Reductions:
 -- On error reduce production statement -> lemma
 -- On THEORY reduce production statement -> lemma
 -- On RAW reduce production statement -> lemma
@@ -3477,7 +4652,12 @@ statement -> lemma . [ error THEORY RAW LEMMA INCLUDE EOI AXIOM ]
 -- On AXIOM reduce production statement -> lemma
 
 State 235:
+## Known stack suffix:
+## include_
+## LR(1) items:
 statement -> include_ . [ error THEORY RAW LEMMA INCLUDE EOI AXIOM ]
+## Transitions:
+## Reductions:
 -- On error reduce production statement -> include_
 -- On THEORY reduce production statement -> include_
 -- On RAW reduce production statement -> include_
@@ -3487,7 +4667,12 @@ statement -> include_ . [ error THEORY RAW LEMMA INCLUDE EOI AXIOM ]
 -- On AXIOM reduce production statement -> include_
 
 State 236:
+## Known stack suffix:
+## clause
+## LR(1) items:
 statement -> clause . [ error THEORY RAW LEMMA INCLUDE EOI AXIOM ]
+## Transitions:
+## Reductions:
 -- On error reduce production statement -> clause
 -- On THEORY reduce production statement -> clause
 -- On RAW reduce production statement -> clause
@@ -3497,7 +4682,12 @@ statement -> clause . [ error THEORY RAW LEMMA INCLUDE EOI AXIOM ]
 -- On AXIOM reduce production statement -> clause
 
 State 237:
+## Known stack suffix:
+## axiom
+## LR(1) items:
 statement -> axiom . [ error THEORY RAW LEMMA INCLUDE EOI AXIOM ]
+## Transitions:
+## Reductions:
 -- On error reduce production statement -> axiom
 -- On THEORY reduce production statement -> axiom
 -- On RAW reduce production statement -> axiom
@@ -3507,14 +4697,29 @@ statement -> axiom . [ error THEORY RAW LEMMA INCLUDE EOI AXIOM ]
 -- On AXIOM reduce production statement -> axiom
 
 State 238:
+## Known stack suffix:
+## statements
+## LR(1) items:
 parse_statements -> statements . EOI [ # ]
+## Transitions:
 -- On EOI shift to state 239
+## Reductions:
 
 State 239:
+## Known stack suffix:
+## statements EOI
+## LR(1) items:
 parse_statements -> statements EOI . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production parse_statements -> statements EOI
 
 State 240:
+## Known stack suffix:
+## parse_statements
+## LR(1) items:
 parse_statements' -> parse_statements . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept parse_statements
 

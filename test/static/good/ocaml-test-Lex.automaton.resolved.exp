@@ -1,38 +1,77 @@
 State 0:
+## Known stack suffix:
+##
+## LR(1) items:
 lexer_definition' -> . lexer_definition [ # ]
+## Transitions:
 -- On Taction shift to state 1
 -- On lexer_definition shift to state 2
 -- On header shift to state 3
+## Reductions:
 -- On Trule reduce production header ->
 
 State 1:
+## Known stack suffix:
+## Taction
+## LR(1) items:
 header -> Taction . [ Trule ]
+## Transitions:
+## Reductions:
 -- On Trule reduce production header -> Taction
 
 State 2:
+## Known stack suffix:
+## lexer_definition
+## LR(1) items:
 lexer_definition' -> lexer_definition . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept lexer_definition
 
 State 3:
+## Known stack suffix:
+## header
+## LR(1) items:
 lexer_definition -> header . Trule definition other_definitions Tend [ # ]
+## Transitions:
 -- On Trule shift to state 4
+## Reductions:
 
 State 4:
+## Known stack suffix:
+## header Trule
+## LR(1) items:
 lexer_definition -> header Trule . definition other_definitions Tend [ # ]
+## Transitions:
 -- On Tident shift to state 5
 -- On definition shift to state 39
+## Reductions:
 
 State 5:
+## Known stack suffix:
+## Tident
+## LR(1) items:
 definition -> Tident . Tequal entry [ Tend Tand ]
+## Transitions:
 -- On Tequal shift to state 6
+## Reductions:
 
 State 6:
+## Known stack suffix:
+## Tident Tequal
+## LR(1) items:
 definition -> Tident Tequal . entry [ Tend Tand ]
+## Transitions:
 -- On Tparse shift to state 7
 -- On entry shift to state 38
+## Reductions:
 
 State 7:
+## Known stack suffix:
+## Tparse
+## LR(1) items:
 entry -> Tparse . case rest_of_entry [ Tend Tand ]
+## Transitions:
 -- On Tunderscore shift to state 8
 -- On Tstring shift to state 9
 -- On Tlparen shift to state 10
@@ -41,9 +80,15 @@ entry -> Tparse . case rest_of_entry [ Tend Tand ]
 -- On Tchar shift to state 23
 -- On regexp shift to state 32
 -- On case shift to state 34
+## Reductions:
 
 State 8:
+## Known stack suffix:
+## Tunderscore
+## LR(1) items:
 regexp -> Tunderscore . [ Tunderscore Tstring Tstar Trparen Tplus Tor Tmaybe Tlparen Tlbracket Teof Tchar Taction ]
+## Transitions:
+## Reductions:
 -- On Tunderscore reduce production regexp -> Tunderscore
 -- On Tstring reduce production regexp -> Tunderscore
 -- On Tstar reduce production regexp -> Tunderscore
@@ -58,7 +103,12 @@ regexp -> Tunderscore . [ Tunderscore Tstring Tstar Trparen Tplus Tor Tmaybe Tlp
 -- On Taction reduce production regexp -> Tunderscore
 
 State 9:
+## Known stack suffix:
+## Tstring
+## LR(1) items:
 regexp -> Tstring . [ Tunderscore Tstring Tstar Trparen Tplus Tor Tmaybe Tlparen Tlbracket Teof Tchar Taction ]
+## Transitions:
+## Reductions:
 -- On Tunderscore reduce production regexp -> Tstring
 -- On Tstring reduce production regexp -> Tstring
 -- On Tstar reduce production regexp -> Tstring
@@ -73,7 +123,11 @@ regexp -> Tstring . [ Tunderscore Tstring Tstar Trparen Tplus Tor Tmaybe Tlparen
 -- On Taction reduce production regexp -> Tstring
 
 State 10:
+## Known stack suffix:
+## Tlparen
+## LR(1) items:
 regexp -> Tlparen . regexp Trparen [ Tunderscore Tstring Tstar Trparen Tplus Tor Tmaybe Tlparen Tlbracket Teof Tchar Taction ]
+## Transitions:
 -- On Tunderscore shift to state 8
 -- On Tstring shift to state 9
 -- On Tlparen shift to state 10
@@ -81,79 +135,135 @@ regexp -> Tlparen . regexp Trparen [ Tunderscore Tstring Tstar Trparen Tplus Tor
 -- On Teof shift to state 22
 -- On Tchar shift to state 23
 -- On regexp shift to state 24
+## Reductions:
 
 State 11:
+## Known stack suffix:
+## Tlbracket
+## LR(1) items:
 regexp -> Tlbracket . char_class Trbracket [ Tunderscore Tstring Tstar Trparen Tplus Tor Tmaybe Tlparen Tlbracket Teof Tchar Taction ]
+## Transitions:
 -- On Tchar shift to state 12
 -- On Tcaret shift to state 15
 -- On char_class1 shift to state 18
 -- On char_class shift to state 20
+## Reductions:
 
 State 12:
+## Known stack suffix:
+## Tchar
+## LR(1) items:
 char_class1 -> Tchar . Tdash Tchar [ Trbracket Tchar Tcaret ]
 char_class1 -> Tchar . [ Trbracket Tchar Tcaret ]
+## Transitions:
 -- On Tdash shift to state 13
+## Reductions:
 -- On Trbracket reduce production char_class1 -> Tchar
 -- On Tchar reduce production char_class1 -> Tchar
 -- On Tcaret reduce production char_class1 -> Tchar
 
 State 13:
+## Known stack suffix:
+## Tchar Tdash
+## LR(1) items:
 char_class1 -> Tchar Tdash . Tchar [ Trbracket Tchar Tcaret ]
+## Transitions:
 -- On Tchar shift to state 14
+## Reductions:
 
 State 14:
+## Known stack suffix:
+## Tchar Tdash Tchar
+## LR(1) items:
 char_class1 -> Tchar Tdash Tchar . [ Trbracket Tchar Tcaret ]
+## Transitions:
+## Reductions:
 -- On Trbracket reduce production char_class1 -> Tchar Tdash Tchar
 -- On Tchar reduce production char_class1 -> Tchar Tdash Tchar
 -- On Tcaret reduce production char_class1 -> Tchar Tdash Tchar
 
 State 15:
+## Known stack suffix:
+## Tcaret
+## LR(1) items:
 char_class -> Tcaret . char_class1 [ Trbracket Tchar Tcaret ]
+## Transitions:
 -- On Tchar shift to state 12
 -- On Tcaret shift to state 15
 -- On char_class1 shift to state 16
 -- On char_class shift to state 17
+## Reductions:
 
 State 16:
+## Known stack suffix:
+## Tcaret char_class1
+## LR(1) items:
 char_class -> Tcaret char_class1 . [ Trbracket Tchar Tcaret ]
 char_class -> char_class1 . [ Tchar Tcaret ]
+## Transitions:
+## Reductions:
 -- On Trbracket reduce production char_class -> Tcaret char_class1
 -- On Tchar reduce production char_class -> Tcaret char_class1
 -- On Tcaret reduce production char_class -> Tcaret char_class1
 
 State 17:
+## Known stack suffix:
+## char_class
+## LR(1) items:
 char_class1 -> char_class . char_class [ Trbracket Tchar Tcaret ]
+## Transitions:
 -- On Tchar shift to state 12
 -- On Tcaret shift to state 15
 -- On char_class1 shift to state 18
 -- On char_class shift to state 19
+## Reductions:
 
 State 18:
+## Known stack suffix:
+## char_class1
+## LR(1) items:
 char_class -> char_class1 . [ Trbracket Tchar Tcaret ]
+## Transitions:
+## Reductions:
 -- On Trbracket reduce production char_class -> char_class1
 -- On Tchar reduce production char_class -> char_class1
 -- On Tcaret reduce production char_class -> char_class1
 
 State 19:
+## Known stack suffix:
+## char_class char_class
+## LR(1) items:
 char_class1 -> char_class . char_class [ Trbracket Tchar Tcaret ]
 char_class1 -> char_class char_class . [ Trbracket Tchar Tcaret ]
+## Transitions:
 -- On Tchar shift to state 12
 -- On Tcaret shift to state 15
 -- On char_class1 shift to state 18
 -- On char_class shift to state 19
+## Reductions:
 -- On Trbracket reduce production char_class1 -> char_class char_class
 
 State 20:
+## Known stack suffix:
+## Tlbracket char_class
+## LR(1) items:
 char_class1 -> char_class . char_class [ Trbracket Tchar Tcaret ]
 regexp -> Tlbracket char_class . Trbracket [ Tunderscore Tstring Tstar Trparen Tplus Tor Tmaybe Tlparen Tlbracket Teof Tchar Taction ]
+## Transitions:
 -- On Trbracket shift to state 21
 -- On Tchar shift to state 12
 -- On Tcaret shift to state 15
 -- On char_class1 shift to state 18
 -- On char_class shift to state 19
+## Reductions:
 
 State 21:
+## Known stack suffix:
+## Tlbracket char_class Trbracket
+## LR(1) items:
 regexp -> Tlbracket char_class Trbracket . [ Tunderscore Tstring Tstar Trparen Tplus Tor Tmaybe Tlparen Tlbracket Teof Tchar Taction ]
+## Transitions:
+## Reductions:
 -- On Tunderscore reduce production regexp -> Tlbracket char_class Trbracket
 -- On Tstring reduce production regexp -> Tlbracket char_class Trbracket
 -- On Tstar reduce production regexp -> Tlbracket char_class Trbracket
@@ -168,7 +278,12 @@ regexp -> Tlbracket char_class Trbracket . [ Tunderscore Tstring Tstar Trparen T
 -- On Taction reduce production regexp -> Tlbracket char_class Trbracket
 
 State 22:
+## Known stack suffix:
+## Teof
+## LR(1) items:
 regexp -> Teof . [ Tunderscore Tstring Tstar Trparen Tplus Tor Tmaybe Tlparen Tlbracket Teof Tchar Taction ]
+## Transitions:
+## Reductions:
 -- On Tunderscore reduce production regexp -> Teof
 -- On Tstring reduce production regexp -> Teof
 -- On Tstar reduce production regexp -> Teof
@@ -183,7 +298,12 @@ regexp -> Teof . [ Tunderscore Tstring Tstar Trparen Tplus Tor Tmaybe Tlparen Tl
 -- On Taction reduce production regexp -> Teof
 
 State 23:
+## Known stack suffix:
+## Tchar
+## LR(1) items:
 regexp -> Tchar . [ Tunderscore Tstring Tstar Trparen Tplus Tor Tmaybe Tlparen Tlbracket Teof Tchar Taction ]
+## Transitions:
+## Reductions:
 -- On Tunderscore reduce production regexp -> Tchar
 -- On Tstring reduce production regexp -> Tchar
 -- On Tstar reduce production regexp -> Tchar
@@ -198,12 +318,16 @@ regexp -> Tchar . [ Tunderscore Tstring Tstar Trparen Tplus Tor Tmaybe Tlparen T
 -- On Taction reduce production regexp -> Tchar
 
 State 24:
+## Known stack suffix:
+## Tlparen regexp
+## LR(1) items:
 regexp -> regexp . Tstar [ Tunderscore Tstring Tstar Trparen Tplus Tor Tmaybe Tlparen Tlbracket Teof Tchar ]
 regexp -> regexp . Tmaybe [ Tunderscore Tstring Tstar Trparen Tplus Tor Tmaybe Tlparen Tlbracket Teof Tchar ]
 regexp -> regexp . Tplus [ Tunderscore Tstring Tstar Trparen Tplus Tor Tmaybe Tlparen Tlbracket Teof Tchar ]
 regexp -> regexp . Tor regexp [ Tunderscore Tstring Tstar Trparen Tplus Tor Tmaybe Tlparen Tlbracket Teof Tchar ]
 regexp -> regexp . regexp [ Tunderscore Tstring Tstar Trparen Tplus Tor Tmaybe Tlparen Tlbracket Teof Tchar ]
 regexp -> Tlparen regexp . Trparen [ Tunderscore Tstring Tstar Trparen Tplus Tor Tmaybe Tlparen Tlbracket Teof Tchar Taction ]
+## Transitions:
 -- On Tunderscore shift to state 8
 -- On Tstring shift to state 9
 -- On Tstar shift to state 25
@@ -216,9 +340,15 @@ regexp -> Tlparen regexp . Trparen [ Tunderscore Tstring Tstar Trparen Tplus Tor
 -- On Teof shift to state 22
 -- On Tchar shift to state 23
 -- On regexp shift to state 31
+## Reductions:
 
 State 25:
+## Known stack suffix:
+## regexp Tstar
+## LR(1) items:
 regexp -> regexp Tstar . [ Tunderscore Tstring Tstar Trparen Tplus Tor Tmaybe Tlparen Tlbracket Teof Tchar Taction ]
+## Transitions:
+## Reductions:
 -- On Tunderscore reduce production regexp -> regexp Tstar
 -- On Tstring reduce production regexp -> regexp Tstar
 -- On Tstar reduce production regexp -> regexp Tstar
@@ -233,7 +363,12 @@ regexp -> regexp Tstar . [ Tunderscore Tstring Tstar Trparen Tplus Tor Tmaybe Tl
 -- On Taction reduce production regexp -> regexp Tstar
 
 State 26:
+## Known stack suffix:
+## Tlparen regexp Trparen
+## LR(1) items:
 regexp -> Tlparen regexp Trparen . [ Tunderscore Tstring Tstar Trparen Tplus Tor Tmaybe Tlparen Tlbracket Teof Tchar Taction ]
+## Transitions:
+## Reductions:
 -- On Tunderscore reduce production regexp -> Tlparen regexp Trparen
 -- On Tstring reduce production regexp -> Tlparen regexp Trparen
 -- On Tstar reduce production regexp -> Tlparen regexp Trparen
@@ -248,7 +383,12 @@ regexp -> Tlparen regexp Trparen . [ Tunderscore Tstring Tstar Trparen Tplus Tor
 -- On Taction reduce production regexp -> Tlparen regexp Trparen
 
 State 27:
+## Known stack suffix:
+## regexp Tplus
+## LR(1) items:
 regexp -> regexp Tplus . [ Tunderscore Tstring Tstar Trparen Tplus Tor Tmaybe Tlparen Tlbracket Teof Tchar Taction ]
+## Transitions:
+## Reductions:
 -- On Tunderscore reduce production regexp -> regexp Tplus
 -- On Tstring reduce production regexp -> regexp Tplus
 -- On Tstar reduce production regexp -> regexp Tplus
@@ -263,7 +403,11 @@ regexp -> regexp Tplus . [ Tunderscore Tstring Tstar Trparen Tplus Tor Tmaybe Tl
 -- On Taction reduce production regexp -> regexp Tplus
 
 State 28:
+## Known stack suffix:
+## regexp Tor
+## LR(1) items:
 regexp -> regexp Tor . regexp [ Tunderscore Tstring Tstar Trparen Tplus Tor Tmaybe Tlparen Tlbracket Teof Tchar Taction ]
+## Transitions:
 -- On Tunderscore shift to state 8
 -- On Tstring shift to state 9
 -- On Tlparen shift to state 10
@@ -271,14 +415,19 @@ regexp -> regexp Tor . regexp [ Tunderscore Tstring Tstar Trparen Tplus Tor Tmay
 -- On Teof shift to state 22
 -- On Tchar shift to state 23
 -- On regexp shift to state 29
+## Reductions:
 
 State 29:
+## Known stack suffix:
+## regexp Tor regexp
+## LR(1) items:
 regexp -> regexp . Tstar [ Tunderscore Tstring Tstar Trparen Tplus Tor Tmaybe Tlparen Tlbracket Teof Tchar Taction ]
 regexp -> regexp . Tmaybe [ Tunderscore Tstring Tstar Trparen Tplus Tor Tmaybe Tlparen Tlbracket Teof Tchar Taction ]
 regexp -> regexp . Tplus [ Tunderscore Tstring Tstar Trparen Tplus Tor Tmaybe Tlparen Tlbracket Teof Tchar Taction ]
 regexp -> regexp . Tor regexp [ Tunderscore Tstring Tstar Trparen Tplus Tor Tmaybe Tlparen Tlbracket Teof Tchar Taction ]
 regexp -> regexp Tor regexp . [ Tunderscore Tstring Tstar Trparen Tplus Tor Tmaybe Tlparen Tlbracket Teof Tchar Taction ]
 regexp -> regexp . regexp [ Tunderscore Tstring Tstar Trparen Tplus Tor Tmaybe Tlparen Tlbracket Teof Tchar Taction ]
+## Transitions:
 -- On Tunderscore shift to state 8
 -- On Tstring shift to state 9
 -- On Tstar shift to state 25
@@ -289,12 +438,18 @@ regexp -> regexp . regexp [ Tunderscore Tstring Tstar Trparen Tplus Tor Tmaybe T
 -- On Teof shift to state 22
 -- On Tchar shift to state 23
 -- On regexp shift to state 31
+## Reductions:
 -- On Trparen reduce production regexp -> regexp Tor regexp
 -- On Tor reduce production regexp -> regexp Tor regexp
 -- On Taction reduce production regexp -> regexp Tor regexp
 
 State 30:
+## Known stack suffix:
+## regexp Tmaybe
+## LR(1) items:
 regexp -> regexp Tmaybe . [ Tunderscore Tstring Tstar Trparen Tplus Tor Tmaybe Tlparen Tlbracket Teof Tchar Taction ]
+## Transitions:
+## Reductions:
 -- On Tunderscore reduce production regexp -> regexp Tmaybe
 -- On Tstring reduce production regexp -> regexp Tmaybe
 -- On Tstar reduce production regexp -> regexp Tmaybe
@@ -309,12 +464,16 @@ regexp -> regexp Tmaybe . [ Tunderscore Tstring Tstar Trparen Tplus Tor Tmaybe T
 -- On Taction reduce production regexp -> regexp Tmaybe
 
 State 31:
+## Known stack suffix:
+## regexp regexp
+## LR(1) items:
 regexp -> regexp . Tstar [ Tunderscore Tstring Tstar Trparen Tplus Tor Tmaybe Tlparen Tlbracket Teof Tchar Taction ]
 regexp -> regexp . Tmaybe [ Tunderscore Tstring Tstar Trparen Tplus Tor Tmaybe Tlparen Tlbracket Teof Tchar Taction ]
 regexp -> regexp . Tplus [ Tunderscore Tstring Tstar Trparen Tplus Tor Tmaybe Tlparen Tlbracket Teof Tchar Taction ]
 regexp -> regexp . Tor regexp [ Tunderscore Tstring Tstar Trparen Tplus Tor Tmaybe Tlparen Tlbracket Teof Tchar Taction ]
 regexp -> regexp . regexp [ Tunderscore Tstring Tstar Trparen Tplus Tor Tmaybe Tlparen Tlbracket Teof Tchar Taction ]
 regexp -> regexp regexp . [ Tunderscore Tstring Tstar Trparen Tplus Tor Tmaybe Tlparen Tlbracket Teof Tchar Taction ]
+## Transitions:
 -- On Tunderscore shift to state 8
 -- On Tstring shift to state 9
 -- On Tstar shift to state 25
@@ -325,17 +484,22 @@ regexp -> regexp regexp . [ Tunderscore Tstring Tstar Trparen Tplus Tor Tmaybe T
 -- On Teof shift to state 22
 -- On Tchar shift to state 23
 -- On regexp shift to state 31
+## Reductions:
 -- On Trparen reduce production regexp -> regexp regexp
 -- On Tor reduce production regexp -> regexp regexp
 -- On Taction reduce production regexp -> regexp regexp
 
 State 32:
+## Known stack suffix:
+## regexp
+## LR(1) items:
 case -> regexp . Taction [ Tor Tend Tand ]
 regexp -> regexp . Tstar [ Tunderscore Tstring Tstar Tplus Tor Tmaybe Tlparen Tlbracket Teof Tchar Taction ]
 regexp -> regexp . Tmaybe [ Tunderscore Tstring Tstar Tplus Tor Tmaybe Tlparen Tlbracket Teof Tchar Taction ]
 regexp -> regexp . Tplus [ Tunderscore Tstring Tstar Tplus Tor Tmaybe Tlparen Tlbracket Teof Tchar Taction ]
 regexp -> regexp . Tor regexp [ Tunderscore Tstring Tstar Tplus Tor Tmaybe Tlparen Tlbracket Teof Tchar Taction ]
 regexp -> regexp . regexp [ Tunderscore Tstring Tstar Tplus Tor Tmaybe Tlparen Tlbracket Teof Tchar Taction ]
+## Transitions:
 -- On Tunderscore shift to state 8
 -- On Tstring shift to state 9
 -- On Tstar shift to state 25
@@ -348,29 +512,49 @@ regexp -> regexp . regexp [ Tunderscore Tstring Tstar Tplus Tor Tmaybe Tlparen T
 -- On Tchar shift to state 23
 -- On Taction shift to state 33
 -- On regexp shift to state 31
+## Reductions:
 
 State 33:
+## Known stack suffix:
+## regexp Taction
+## LR(1) items:
 case -> regexp Taction . [ Tor Tend Tand ]
+## Transitions:
+## Reductions:
 -- On Tor reduce production case -> regexp Taction
 -- On Tend reduce production case -> regexp Taction
 -- On Tand reduce production case -> regexp Taction
 
 State 34:
+## Known stack suffix:
+## Tparse case
+## LR(1) items:
 entry -> Tparse case . rest_of_entry [ Tend Tand ]
+## Transitions:
 -- On rest_of_entry shift to state 35
+## Reductions:
 -- On Tor reduce production rest_of_entry ->
 -- On Tend reduce production rest_of_entry ->
 -- On Tand reduce production rest_of_entry ->
 
 State 35:
+## Known stack suffix:
+## Tparse case rest_of_entry
+## LR(1) items:
 entry -> Tparse case rest_of_entry . [ Tend Tand ]
 rest_of_entry -> rest_of_entry . Tor case [ Tor Tend Tand ]
+## Transitions:
 -- On Tor shift to state 36
+## Reductions:
 -- On Tend reduce production entry -> Tparse case rest_of_entry
 -- On Tand reduce production entry -> Tparse case rest_of_entry
 
 State 36:
+## Known stack suffix:
+## rest_of_entry Tor
+## LR(1) items:
 rest_of_entry -> rest_of_entry Tor . case [ Tor Tend Tand ]
+## Transitions:
 -- On Tunderscore shift to state 8
 -- On Tstring shift to state 9
 -- On Tlparen shift to state 10
@@ -379,41 +563,77 @@ rest_of_entry -> rest_of_entry Tor . case [ Tor Tend Tand ]
 -- On Tchar shift to state 23
 -- On regexp shift to state 32
 -- On case shift to state 37
+## Reductions:
 
 State 37:
+## Known stack suffix:
+## rest_of_entry Tor case
+## LR(1) items:
 rest_of_entry -> rest_of_entry Tor case . [ Tor Tend Tand ]
+## Transitions:
+## Reductions:
 -- On Tor reduce production rest_of_entry -> rest_of_entry Tor case
 -- On Tend reduce production rest_of_entry -> rest_of_entry Tor case
 -- On Tand reduce production rest_of_entry -> rest_of_entry Tor case
 
 State 38:
+## Known stack suffix:
+## Tident Tequal entry
+## LR(1) items:
 definition -> Tident Tequal entry . [ Tend Tand ]
+## Transitions:
+## Reductions:
 -- On Tend reduce production definition -> Tident Tequal entry
 -- On Tand reduce production definition -> Tident Tequal entry
 
 State 39:
+## Known stack suffix:
+## header Trule definition
+## LR(1) items:
 lexer_definition -> header Trule definition . other_definitions Tend [ # ]
+## Transitions:
 -- On other_definitions shift to state 40
+## Reductions:
 -- On Tend reduce production other_definitions ->
 -- On Tand reduce production other_definitions ->
 
 State 40:
+## Known stack suffix:
+## header Trule definition other_definitions
+## LR(1) items:
 lexer_definition -> header Trule definition other_definitions . Tend [ # ]
 other_definitions -> other_definitions . Tand definition [ Tend Tand ]
+## Transitions:
 -- On Tend shift to state 41
 -- On Tand shift to state 42
+## Reductions:
 
 State 41:
+## Known stack suffix:
+## header Trule definition other_definitions Tend
+## LR(1) items:
 lexer_definition -> header Trule definition other_definitions Tend . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production lexer_definition -> header Trule definition other_definitions Tend
 
 State 42:
+## Known stack suffix:
+## other_definitions Tand
+## LR(1) items:
 other_definitions -> other_definitions Tand . definition [ Tend Tand ]
+## Transitions:
 -- On Tident shift to state 5
 -- On definition shift to state 43
+## Reductions:
 
 State 43:
+## Known stack suffix:
+## other_definitions Tand definition
+## LR(1) items:
 other_definitions -> other_definitions Tand definition . [ Tend Tand ]
+## Transitions:
+## Reductions:
 -- On Tend reduce production other_definitions -> other_definitions Tand definition
 -- On Tand reduce production other_definitions -> other_definitions Tand definition
 

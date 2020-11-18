@@ -1,5 +1,9 @@
 State 0:
+## Known stack suffix:
+##
+## LR(1) items:
 parse_json' -> . parse_json [ # ]
+## Transitions:
 -- On TRUE shift to state 1
 -- On STRING shift to state 2
 -- On NULL shift to state 3
@@ -14,64 +18,129 @@ parse_json' -> . parse_json [ # ]
 -- On object_ shift to state 40
 -- On number shift to state 41
 -- On array shift to state 42
+## Reductions:
 
 State 1:
+## Known stack suffix:
+## TRUE
+## LR(1) items:
 value -> TRUE . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production value -> TRUE
 
 State 2:
+## Known stack suffix:
+## STRING
+## LR(1) items:
 string -> STRING . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production string -> STRING
 
 State 3:
+## Known stack suffix:
+## NULL
+## LR(1) items:
 value -> NULL . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production value -> NULL
 
 State 4:
+## Known stack suffix:
+## LBRACKET
+## LR(1) items:
 array -> LBRACKET . RBRACKET [ # ]
+## Transitions:
 -- On RBRACKET shift to state 5
+## Reductions:
 
 State 5:
+## Known stack suffix:
+## LBRACKET RBRACKET
+## LR(1) items:
 array -> LBRACKET RBRACKET . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production array -> LBRACKET RBRACKET
 
 State 6:
+## Known stack suffix:
+## LBRACE
+## LR(1) items:
 object_ -> LBRACE . RBRACE [ # ]
 object_ -> LBRACE . members RBRACE [ # ]
+## Transitions:
 -- On STRING shift to state 7
 -- On RBRACE shift to state 8
 -- On members shift to state 9
 -- On id shift to state 23
+## Reductions:
 
 State 7:
+## Known stack suffix:
+## STRING
+## LR(1) items:
 id -> STRING . [ COLON ]
+## Transitions:
+## Reductions:
 -- On COLON reduce production id -> STRING
 
 State 8:
+## Known stack suffix:
+## LBRACE RBRACE
+## LR(1) items:
 object_ -> LBRACE RBRACE . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production object_ -> LBRACE RBRACE
 
 State 9:
+## Known stack suffix:
+## LBRACE members
+## LR(1) items:
 members -> members . COMMA id COLON value [ RBRACE COMMA ]
 object_ -> LBRACE members . RBRACE [ # ]
+## Transitions:
 -- On RBRACE shift to state 10
 -- On COMMA shift to state 11
+## Reductions:
 
 State 10:
+## Known stack suffix:
+## LBRACE members RBRACE
+## LR(1) items:
 object_ -> LBRACE members RBRACE . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production object_ -> LBRACE members RBRACE
 
 State 11:
+## Known stack suffix:
+## members COMMA
+## LR(1) items:
 members -> members COMMA . id COLON value [ RBRACE COMMA ]
+## Transitions:
 -- On STRING shift to state 7
 -- On id shift to state 12
+## Reductions:
 
 State 12:
+## Known stack suffix:
+## members COMMA id
+## LR(1) items:
 members -> members COMMA id . COLON value [ RBRACE COMMA ]
+## Transitions:
 -- On COLON shift to state 13
+## Reductions:
 
 State 13:
+## Known stack suffix:
+## members COMMA id COLON
+## LR(1) items:
 members -> members COMMA id COLON . value [ RBRACE COMMA ]
+## Transitions:
 -- On TRUE shift to state 14
 -- On STRING shift to state 15
 -- On NULL shift to state 16
@@ -85,61 +154,116 @@ members -> members COMMA id COLON . value [ RBRACE COMMA ]
 -- On object_ shift to state 30
 -- On number shift to state 31
 -- On array shift to state 32
+## Reductions:
 
 State 14:
+## Known stack suffix:
+## TRUE
+## LR(1) items:
 value -> TRUE . [ RBRACE COMMA ]
+## Transitions:
+## Reductions:
 -- On RBRACE reduce production value -> TRUE
 -- On COMMA reduce production value -> TRUE
 
 State 15:
+## Known stack suffix:
+## STRING
+## LR(1) items:
 string -> STRING . [ RBRACE COMMA ]
+## Transitions:
+## Reductions:
 -- On RBRACE reduce production string -> STRING
 -- On COMMA reduce production string -> STRING
 
 State 16:
+## Known stack suffix:
+## NULL
+## LR(1) items:
 value -> NULL . [ RBRACE COMMA ]
+## Transitions:
+## Reductions:
 -- On RBRACE reduce production value -> NULL
 -- On COMMA reduce production value -> NULL
 
 State 17:
+## Known stack suffix:
+## LBRACKET
+## LR(1) items:
 array -> LBRACKET . RBRACKET [ RBRACE COMMA ]
+## Transitions:
 -- On RBRACKET shift to state 18
+## Reductions:
 
 State 18:
+## Known stack suffix:
+## LBRACKET RBRACKET
+## LR(1) items:
 array -> LBRACKET RBRACKET . [ RBRACE COMMA ]
+## Transitions:
+## Reductions:
 -- On RBRACE reduce production array -> LBRACKET RBRACKET
 -- On COMMA reduce production array -> LBRACKET RBRACKET
 
 State 19:
+## Known stack suffix:
+## LBRACE
+## LR(1) items:
 object_ -> LBRACE . RBRACE [ RBRACE COMMA ]
 object_ -> LBRACE . members RBRACE [ RBRACE COMMA ]
+## Transitions:
 -- On STRING shift to state 7
 -- On RBRACE shift to state 20
 -- On members shift to state 21
 -- On id shift to state 23
+## Reductions:
 
 State 20:
+## Known stack suffix:
+## LBRACE RBRACE
+## LR(1) items:
 object_ -> LBRACE RBRACE . [ RBRACE COMMA ]
+## Transitions:
+## Reductions:
 -- On RBRACE reduce production object_ -> LBRACE RBRACE
 -- On COMMA reduce production object_ -> LBRACE RBRACE
 
 State 21:
+## Known stack suffix:
+## LBRACE members
+## LR(1) items:
 members -> members . COMMA id COLON value [ RBRACE COMMA ]
 object_ -> LBRACE members . RBRACE [ RBRACE COMMA ]
+## Transitions:
 -- On RBRACE shift to state 22
 -- On COMMA shift to state 11
+## Reductions:
 
 State 22:
+## Known stack suffix:
+## LBRACE members RBRACE
+## LR(1) items:
 object_ -> LBRACE members RBRACE . [ RBRACE COMMA ]
+## Transitions:
+## Reductions:
 -- On RBRACE reduce production object_ -> LBRACE members RBRACE
 -- On COMMA reduce production object_ -> LBRACE members RBRACE
 
 State 23:
+## Known stack suffix:
+## id
+## LR(1) items:
 members -> id . COLON value [ RBRACE COMMA ]
+## Transitions:
 -- On COLON shift to state 24
+## Reductions:
 
 State 24:
+## Known stack suffix:
+## id COLON
+## LR(1) items:
 members -> id COLON . value [ RBRACE COMMA ]
+## Transitions:
 -- On TRUE shift to state 14
 -- On STRING shift to state 15
 -- On NULL shift to state 16
@@ -153,110 +277,226 @@ members -> id COLON . value [ RBRACE COMMA ]
 -- On object_ shift to state 30
 -- On number shift to state 31
 -- On array shift to state 32
+## Reductions:
 
 State 25:
+## Known stack suffix:
+## INT
+## LR(1) items:
 number -> INT . [ RBRACE COMMA ]
+## Transitions:
+## Reductions:
 -- On RBRACE reduce production number -> INT
 -- On COMMA reduce production number -> INT
 
 State 26:
+## Known stack suffix:
+## FLOAT
+## LR(1) items:
 number -> FLOAT . [ RBRACE COMMA ]
+## Transitions:
+## Reductions:
 -- On RBRACE reduce production number -> FLOAT
 -- On COMMA reduce production number -> FLOAT
 
 State 27:
+## Known stack suffix:
+## FALSE
+## LR(1) items:
 value -> FALSE . [ RBRACE COMMA ]
+## Transitions:
+## Reductions:
 -- On RBRACE reduce production value -> FALSE
 -- On COMMA reduce production value -> FALSE
 
 State 28:
+## Known stack suffix:
+## id COLON value
+## LR(1) items:
 members -> id COLON value . [ RBRACE COMMA ]
+## Transitions:
+## Reductions:
 -- On RBRACE reduce production members -> id COLON value
 -- On COMMA reduce production members -> id COLON value
 
 State 29:
+## Known stack suffix:
+## string
+## LR(1) items:
 value -> string . [ RBRACE COMMA ]
+## Transitions:
+## Reductions:
 -- On RBRACE reduce production value -> string
 -- On COMMA reduce production value -> string
 
 State 30:
+## Known stack suffix:
+## object_
+## LR(1) items:
 value -> object_ . [ RBRACE COMMA ]
+## Transitions:
+## Reductions:
 -- On RBRACE reduce production value -> object_
 -- On COMMA reduce production value -> object_
 
 State 31:
+## Known stack suffix:
+## number
+## LR(1) items:
 value -> number . [ RBRACE COMMA ]
+## Transitions:
+## Reductions:
 -- On RBRACE reduce production value -> number
 -- On COMMA reduce production value -> number
 
 State 32:
+## Known stack suffix:
+## array
+## LR(1) items:
 value -> array . [ RBRACE COMMA ]
+## Transitions:
+## Reductions:
 -- On RBRACE reduce production value -> array
 -- On COMMA reduce production value -> array
 
 State 33:
+## Known stack suffix:
+## members COMMA id COLON value
+## LR(1) items:
 members -> members COMMA id COLON value . [ RBRACE COMMA ]
+## Transitions:
+## Reductions:
 -- On RBRACE reduce production members -> members COMMA id COLON value
 -- On COMMA reduce production members -> members COMMA id COLON value
 
 State 34:
+## Known stack suffix:
+## INT
+## LR(1) items:
 number -> INT . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production number -> INT
 
 State 35:
+## Known stack suffix:
+## FLOAT
+## LR(1) items:
 number -> FLOAT . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production number -> FLOAT
 
 State 36:
+## Known stack suffix:
+## FALSE
+## LR(1) items:
 value -> FALSE . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production value -> FALSE
 
 State 37:
+## Known stack suffix:
+## value
+## LR(1) items:
 parse_json -> value . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production parse_json -> value
 
 State 38:
+## Known stack suffix:
+## string
+## LR(1) items:
 value -> string . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production value -> string
 
 State 39:
+## Known stack suffix:
+## parse_json
+## LR(1) items:
 parse_json' -> parse_json . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept parse_json
 
 State 40:
+## Known stack suffix:
+## object_
+## LR(1) items:
 value -> object_ . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production value -> object_
 
 State 41:
+## Known stack suffix:
+## number
+## LR(1) items:
 value -> number . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production value -> number
 
 State 42:
+## Known stack suffix:
+## array
+## LR(1) items:
 value -> array . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production value -> array
 
 State 43:
+## Known stack suffix:
+##
+## LR(1) items:
 parse_websocket_request' -> . parse_websocket_request [ # ]
+## Transitions:
 -- On LBRACE shift to state 44
 -- On parse_websocket_request shift to state 47
+## Reductions:
 
 State 44:
+## Known stack suffix:
+## LBRACE
+## LR(1) items:
 parse_websocket_request -> LBRACE . members RBRACE [ # ]
+## Transitions:
 -- On STRING shift to state 7
 -- On members shift to state 45
 -- On id shift to state 23
+## Reductions:
 
 State 45:
+## Known stack suffix:
+## LBRACE members
+## LR(1) items:
 members -> members . COMMA id COLON value [ RBRACE COMMA ]
 parse_websocket_request -> LBRACE members . RBRACE [ # ]
+## Transitions:
 -- On RBRACE shift to state 46
 -- On COMMA shift to state 11
+## Reductions:
 
 State 46:
+## Known stack suffix:
+## LBRACE members RBRACE
+## LR(1) items:
 parse_websocket_request -> LBRACE members RBRACE . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production parse_websocket_request -> LBRACE members RBRACE
 
 State 47:
+## Known stack suffix:
+## parse_websocket_request
+## LR(1) items:
 parse_websocket_request' -> parse_websocket_request . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept parse_websocket_request
 

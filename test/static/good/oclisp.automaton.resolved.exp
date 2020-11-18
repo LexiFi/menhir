@@ -1,5 +1,9 @@
 State 0:
+## Known stack suffix:
+##
+## LR(1) items:
 main' -> . main [ # ]
+## Transitions:
 -- On QUOTE shift to state 1
 -- On NAME shift to state 2
 -- On LBRACKET shift to state 3
@@ -7,23 +11,38 @@ main' -> . main [ # ]
 -- On oclisp_list shift to state 21
 -- On main shift to state 24
 -- On atom shift to state 22
+## Reductions:
 
 State 1:
+## Known stack suffix:
+## QUOTE
+## LR(1) items:
 sexp -> QUOTE . sexp [ # ]
+## Transitions:
 -- On QUOTE shift to state 1
 -- On NAME shift to state 2
 -- On LBRACKET shift to state 3
 -- On sexp shift to state 20
 -- On oclisp_list shift to state 21
 -- On atom shift to state 22
+## Reductions:
 
 State 2:
+## Known stack suffix:
+## NAME
+## LR(1) items:
 atom -> NAME . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production atom -> NAME
 
 State 3:
+## Known stack suffix:
+## LBRACKET
+## LR(1) items:
 oclisp_list -> LBRACKET . RBRACKET [ # ]
 oclisp_list -> LBRACKET . inside_list RBRACKET [ # ]
+## Transitions:
 -- On RBRACKET shift to state 4
 -- On QUOTE shift to state 5
 -- On NAME shift to state 6
@@ -32,22 +51,38 @@ oclisp_list -> LBRACKET . inside_list RBRACKET [ # ]
 -- On oclisp_list shift to state 12
 -- On inside_list shift to state 18
 -- On atom shift to state 13
+## Reductions:
 
 State 4:
+## Known stack suffix:
+## LBRACKET RBRACKET
+## LR(1) items:
 oclisp_list -> LBRACKET RBRACKET . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production oclisp_list -> LBRACKET RBRACKET
 
 State 5:
+## Known stack suffix:
+## QUOTE
+## LR(1) items:
 sexp -> QUOTE . sexp [ RBRACKET QUOTE NAME LBRACKET DOT ]
+## Transitions:
 -- On QUOTE shift to state 5
 -- On NAME shift to state 6
 -- On LBRACKET shift to state 7
 -- On sexp shift to state 17
 -- On oclisp_list shift to state 12
 -- On atom shift to state 13
+## Reductions:
 
 State 6:
+## Known stack suffix:
+## NAME
+## LR(1) items:
 atom -> NAME . [ RBRACKET QUOTE NAME LBRACKET DOT ]
+## Transitions:
+## Reductions:
 -- On RBRACKET reduce production atom -> NAME
 -- On QUOTE reduce production atom -> NAME
 -- On NAME reduce production atom -> NAME
@@ -55,8 +90,12 @@ atom -> NAME . [ RBRACKET QUOTE NAME LBRACKET DOT ]
 -- On DOT reduce production atom -> NAME
 
 State 7:
+## Known stack suffix:
+## LBRACKET
+## LR(1) items:
 oclisp_list -> LBRACKET . RBRACKET [ RBRACKET QUOTE NAME LBRACKET DOT ]
 oclisp_list -> LBRACKET . inside_list RBRACKET [ RBRACKET QUOTE NAME LBRACKET DOT ]
+## Transitions:
 -- On RBRACKET shift to state 8
 -- On QUOTE shift to state 5
 -- On NAME shift to state 6
@@ -65,9 +104,15 @@ oclisp_list -> LBRACKET . inside_list RBRACKET [ RBRACKET QUOTE NAME LBRACKET DO
 -- On oclisp_list shift to state 12
 -- On inside_list shift to state 15
 -- On atom shift to state 13
+## Reductions:
 
 State 8:
+## Known stack suffix:
+## LBRACKET RBRACKET
+## LR(1) items:
 oclisp_list -> LBRACKET RBRACKET . [ RBRACKET QUOTE NAME LBRACKET DOT ]
+## Transitions:
+## Reductions:
 -- On RBRACKET reduce production oclisp_list -> LBRACKET RBRACKET
 -- On QUOTE reduce production oclisp_list -> LBRACKET RBRACKET
 -- On NAME reduce production oclisp_list -> LBRACKET RBRACKET
@@ -75,9 +120,13 @@ oclisp_list -> LBRACKET RBRACKET . [ RBRACKET QUOTE NAME LBRACKET DOT ]
 -- On DOT reduce production oclisp_list -> LBRACKET RBRACKET
 
 State 9:
+## Known stack suffix:
+## sexp
+## LR(1) items:
 inside_list -> sexp . DOT sexp [ RBRACKET ]
 inside_list -> sexp . [ RBRACKET ]
 inside_list -> sexp . inside_list [ RBRACKET ]
+## Transitions:
 -- On QUOTE shift to state 5
 -- On NAME shift to state 6
 -- On LBRACKET shift to state 7
@@ -86,23 +135,39 @@ inside_list -> sexp . inside_list [ RBRACKET ]
 -- On oclisp_list shift to state 12
 -- On inside_list shift to state 14
 -- On atom shift to state 13
+## Reductions:
 -- On RBRACKET reduce production inside_list -> sexp
 
 State 10:
+## Known stack suffix:
+## sexp DOT
+## LR(1) items:
 inside_list -> sexp DOT . sexp [ RBRACKET ]
+## Transitions:
 -- On QUOTE shift to state 5
 -- On NAME shift to state 6
 -- On LBRACKET shift to state 7
 -- On sexp shift to state 11
 -- On oclisp_list shift to state 12
 -- On atom shift to state 13
+## Reductions:
 
 State 11:
+## Known stack suffix:
+## sexp DOT sexp
+## LR(1) items:
 inside_list -> sexp DOT sexp . [ RBRACKET ]
+## Transitions:
+## Reductions:
 -- On RBRACKET reduce production inside_list -> sexp DOT sexp
 
 State 12:
+## Known stack suffix:
+## oclisp_list
+## LR(1) items:
 sexp -> oclisp_list . [ RBRACKET QUOTE NAME LBRACKET DOT ]
+## Transitions:
+## Reductions:
 -- On RBRACKET reduce production sexp -> oclisp_list
 -- On QUOTE reduce production sexp -> oclisp_list
 -- On NAME reduce production sexp -> oclisp_list
@@ -110,7 +175,12 @@ sexp -> oclisp_list . [ RBRACKET QUOTE NAME LBRACKET DOT ]
 -- On DOT reduce production sexp -> oclisp_list
 
 State 13:
+## Known stack suffix:
+## atom
+## LR(1) items:
 sexp -> atom . [ RBRACKET QUOTE NAME LBRACKET DOT ]
+## Transitions:
+## Reductions:
 -- On RBRACKET reduce production sexp -> atom
 -- On QUOTE reduce production sexp -> atom
 -- On NAME reduce production sexp -> atom
@@ -118,15 +188,30 @@ sexp -> atom . [ RBRACKET QUOTE NAME LBRACKET DOT ]
 -- On DOT reduce production sexp -> atom
 
 State 14:
+## Known stack suffix:
+## sexp inside_list
+## LR(1) items:
 inside_list -> sexp inside_list . [ RBRACKET ]
+## Transitions:
+## Reductions:
 -- On RBRACKET reduce production inside_list -> sexp inside_list
 
 State 15:
+## Known stack suffix:
+## LBRACKET inside_list
+## LR(1) items:
 oclisp_list -> LBRACKET inside_list . RBRACKET [ RBRACKET QUOTE NAME LBRACKET DOT ]
+## Transitions:
 -- On RBRACKET shift to state 16
+## Reductions:
 
 State 16:
+## Known stack suffix:
+## LBRACKET inside_list RBRACKET
+## LR(1) items:
 oclisp_list -> LBRACKET inside_list RBRACKET . [ RBRACKET QUOTE NAME LBRACKET DOT ]
+## Transitions:
+## Reductions:
 -- On RBRACKET reduce production oclisp_list -> LBRACKET inside_list RBRACKET
 -- On QUOTE reduce production oclisp_list -> LBRACKET inside_list RBRACKET
 -- On NAME reduce production oclisp_list -> LBRACKET inside_list RBRACKET
@@ -134,7 +219,12 @@ oclisp_list -> LBRACKET inside_list RBRACKET . [ RBRACKET QUOTE NAME LBRACKET DO
 -- On DOT reduce production oclisp_list -> LBRACKET inside_list RBRACKET
 
 State 17:
+## Known stack suffix:
+## QUOTE sexp
+## LR(1) items:
 sexp -> QUOTE sexp . [ RBRACKET QUOTE NAME LBRACKET DOT ]
+## Transitions:
+## Reductions:
 -- On RBRACKET reduce production sexp -> QUOTE sexp
 -- On QUOTE reduce production sexp -> QUOTE sexp
 -- On NAME reduce production sexp -> QUOTE sexp
@@ -142,30 +232,65 @@ sexp -> QUOTE sexp . [ RBRACKET QUOTE NAME LBRACKET DOT ]
 -- On DOT reduce production sexp -> QUOTE sexp
 
 State 18:
+## Known stack suffix:
+## LBRACKET inside_list
+## LR(1) items:
 oclisp_list -> LBRACKET inside_list . RBRACKET [ # ]
+## Transitions:
 -- On RBRACKET shift to state 19
+## Reductions:
 
 State 19:
+## Known stack suffix:
+## LBRACKET inside_list RBRACKET
+## LR(1) items:
 oclisp_list -> LBRACKET inside_list RBRACKET . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production oclisp_list -> LBRACKET inside_list RBRACKET
 
 State 20:
+## Known stack suffix:
+## QUOTE sexp
+## LR(1) items:
 sexp -> QUOTE sexp . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production sexp -> QUOTE sexp
 
 State 21:
+## Known stack suffix:
+## oclisp_list
+## LR(1) items:
 sexp -> oclisp_list . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production sexp -> oclisp_list
 
 State 22:
+## Known stack suffix:
+## atom
+## LR(1) items:
 sexp -> atom . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production sexp -> atom
 
 State 23:
+## Known stack suffix:
+## sexp
+## LR(1) items:
 main -> sexp . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production main -> sexp
 
 State 24:
+## Known stack suffix:
+## main
+## LR(1) items:
 main' -> main . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept main
 

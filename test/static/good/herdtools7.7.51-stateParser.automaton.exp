@@ -1,5 +1,9 @@
 State 0:
+## Known stack suffix:
+##
+## LR(1) items:
 constr' -> . constr [ # ]
+## Transitions:
 -- On OBSERVED shift to state 1
 -- On NOT shift to state 56
 -- On LPAR shift to state 73
@@ -7,6 +11,7 @@ constr' -> . constr [ # ]
 -- On FINAL shift to state 78
 -- On EXISTS shift to state 80
 -- On constr shift to state 82
+## Reductions:
 -- On # reduce production constr ->
 ** End-of-stream conflict on OBSERVED NOT LPAR FORALL FINAL EXISTS
 **   There is a tension between
@@ -15,7 +20,11 @@ constr' -> . constr [ # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 1:
+## Known stack suffix:
+## OBSERVED
+## LR(1) items:
 constr -> OBSERVED . obs [ # ]
+## Transitions:
 -- On SYMB_REG shift to state 2
 -- On PROC shift to state 3
 -- On NUM shift to state 11
@@ -28,6 +37,7 @@ constr -> OBSERVED . obs [ # ]
 -- On location shift to state 31
 -- On loc_deref shift to state 45
 -- On atom_prop shift to state 52
+## Reductions:
 -- On TOKAND reduce production obsone ->
 -- On # reduce production obsone ->
 ** End-of-stream conflict on TOKAND SYMB_REG PROC NUM NAME LBRK
@@ -37,7 +47,12 @@ constr -> OBSERVED . obs [ # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 2:
+## Known stack suffix:
+## SYMB_REG
+## LR(1) items:
 location_reg -> SYMB_REG . [ WITH SYMB_REG STAR SEMI RPAR RBRK PROC OR OBSERVED NUM NOTEQUAL NOT NAME LPAR LBRK IMPLIES FORALL FINAL EXISTS EQUALEQUAL EQUAL EOF AND # ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production location_reg -> SYMB_REG
 -- On SYMB_REG reduce production location_reg -> SYMB_REG
 -- On STAR reduce production location_reg -> SYMB_REG
@@ -69,30 +84,55 @@ location_reg -> SYMB_REG . [ WITH SYMB_REG STAR SEMI RPAR RBRK PROC OR OBSERVED 
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 3:
+## Known stack suffix:
+## PROC
+## LR(1) items:
 location_reg -> PROC . COLON reg [ WITH SYMB_REG STAR SEMI RPAR RBRK PROC OR OBSERVED NUM NOTEQUAL NOT NAME LPAR LBRK IMPLIES FORALL FINAL EXISTS EQUALEQUAL EQUAL EOF AND # ]
 location_reg -> PROC . COLON PTX_REG_DEC PTX_REG_TYPE reg [ WITH SYMB_REG STAR SEMI RPAR RBRK PROC OR OBSERVED NUM NOTEQUAL NOT NAME LPAR LBRK IMPLIES FORALL FINAL EXISTS EQUALEQUAL EQUAL EOF AND # ]
+## Transitions:
 -- On COLON shift to state 4
+## Reductions:
 
 State 4:
+## Known stack suffix:
+## PROC COLON
+## LR(1) items:
 location_reg -> PROC COLON . reg [ WITH SYMB_REG STAR SEMI RPAR RBRK PROC OR OBSERVED NUM NOTEQUAL NOT NAME LPAR LBRK IMPLIES FORALL FINAL EXISTS EQUALEQUAL EQUAL EOF AND # ]
 location_reg -> PROC COLON . PTX_REG_DEC PTX_REG_TYPE reg [ WITH SYMB_REG STAR SEMI RPAR RBRK PROC OR OBSERVED NUM NOTEQUAL NOT NAME LPAR LBRK IMPLIES FORALL FINAL EXISTS EQUALEQUAL EQUAL EOF AND # ]
+## Transitions:
 -- On PTX_REG_DEC shift to state 5
 -- On NAME shift to state 7
 -- On DOLLARNAME shift to state 8
 -- On reg shift to state 10
+## Reductions:
 
 State 5:
+## Known stack suffix:
+## PROC COLON PTX_REG_DEC
+## LR(1) items:
 location_reg -> PROC COLON PTX_REG_DEC . PTX_REG_TYPE reg [ WITH SYMB_REG STAR SEMI RPAR RBRK PROC OR OBSERVED NUM NOTEQUAL NOT NAME LPAR LBRK IMPLIES FORALL FINAL EXISTS EQUALEQUAL EQUAL EOF AND # ]
+## Transitions:
 -- On PTX_REG_TYPE shift to state 6
+## Reductions:
 
 State 6:
+## Known stack suffix:
+## PROC COLON PTX_REG_DEC PTX_REG_TYPE
+## LR(1) items:
 location_reg -> PROC COLON PTX_REG_DEC PTX_REG_TYPE . reg [ WITH SYMB_REG STAR SEMI RPAR RBRK PROC OR OBSERVED NUM NOTEQUAL NOT NAME LPAR LBRK IMPLIES FORALL FINAL EXISTS EQUALEQUAL EQUAL EOF AND # ]
+## Transitions:
 -- On NAME shift to state 7
 -- On DOLLARNAME shift to state 8
 -- On reg shift to state 9
+## Reductions:
 
 State 7:
+## Known stack suffix:
+## NAME
+## LR(1) items:
 reg -> NAME . [ WITH SYMB_REG STAR SEMI RPAR RBRK PROC OR OBSERVED NUM NOTEQUAL NOT NAME LPAR LBRK IMPLIES FORALL FINAL EXISTS EQUALEQUAL EQUAL EOF AND # ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production reg -> NAME
 -- On SYMB_REG reduce production reg -> NAME
 -- On STAR reduce production reg -> NAME
@@ -124,7 +164,12 @@ reg -> NAME . [ WITH SYMB_REG STAR SEMI RPAR RBRK PROC OR OBSERVED NUM NOTEQUAL 
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 8:
+## Known stack suffix:
+## DOLLARNAME
+## LR(1) items:
 reg -> DOLLARNAME . [ WITH SYMB_REG STAR SEMI RPAR RBRK PROC OR OBSERVED NUM NOTEQUAL NOT NAME LPAR LBRK IMPLIES FORALL FINAL EXISTS EQUALEQUAL EQUAL EOF AND # ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production reg -> DOLLARNAME
 -- On SYMB_REG reduce production reg -> DOLLARNAME
 -- On STAR reduce production reg -> DOLLARNAME
@@ -156,7 +201,12 @@ reg -> DOLLARNAME . [ WITH SYMB_REG STAR SEMI RPAR RBRK PROC OR OBSERVED NUM NOT
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 9:
+## Known stack suffix:
+## PROC COLON PTX_REG_DEC PTX_REG_TYPE reg
+## LR(1) items:
 location_reg -> PROC COLON PTX_REG_DEC PTX_REG_TYPE reg . [ WITH SYMB_REG STAR SEMI RPAR RBRK PROC OR OBSERVED NUM NOTEQUAL NOT NAME LPAR LBRK IMPLIES FORALL FINAL EXISTS EQUALEQUAL EQUAL EOF AND # ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production location_reg -> PROC COLON PTX_REG_DEC PTX_REG_TYPE reg
 -- On SYMB_REG reduce production location_reg -> PROC COLON PTX_REG_DEC PTX_REG_TYPE reg
 -- On STAR reduce production location_reg -> PROC COLON PTX_REG_DEC PTX_REG_TYPE reg
@@ -188,7 +238,12 @@ location_reg -> PROC COLON PTX_REG_DEC PTX_REG_TYPE reg . [ WITH SYMB_REG STAR S
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 10:
+## Known stack suffix:
+## PROC COLON reg
+## LR(1) items:
 location_reg -> PROC COLON reg . [ WITH SYMB_REG STAR SEMI RPAR RBRK PROC OR OBSERVED NUM NOTEQUAL NOT NAME LPAR LBRK IMPLIES FORALL FINAL EXISTS EQUALEQUAL EQUAL EOF AND # ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production location_reg -> PROC COLON reg
 -- On SYMB_REG reduce production location_reg -> PROC COLON reg
 -- On STAR reduce production location_reg -> PROC COLON reg
@@ -220,10 +275,15 @@ location_reg -> PROC COLON reg . [ WITH SYMB_REG STAR SEMI RPAR RBRK PROC OR OBS
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 11:
+## Known stack suffix:
+## NUM
+## LR(1) items:
 location_reg -> NUM . COLON reg [ WITH SYMB_REG STAR SEMI RPAR RBRK PROC OR OBSERVED NUM NOTEQUAL NOT NAME LPAR LBRK IMPLIES FORALL FINAL EXISTS EQUALEQUAL EQUAL EOF AND # ]
 location_reg -> NUM . COLON PTX_REG_DEC PTX_REG_TYPE reg [ WITH SYMB_REG STAR SEMI RPAR RBRK PROC OR OBSERVED NUM NOTEQUAL NOT NAME LPAR LBRK IMPLIES FORALL FINAL EXISTS EQUALEQUAL EQUAL EOF AND # ]
 maybev -> NUM . [ WITH SYMB_REG STAR SEMI RPAR RBRK PROC OR OBSERVED NUM NOTEQUAL NOT NAME LPAR LBRK IMPLIES FORALL FINAL EXISTS EQUALEQUAL EQUAL EOF AND # ]
+## Transitions:
 -- On COLON shift to state 12
+## Reductions:
 -- On WITH reduce production maybev -> NUM
 -- On SYMB_REG reduce production maybev -> NUM
 -- On STAR reduce production maybev -> NUM
@@ -255,25 +315,45 @@ maybev -> NUM . [ WITH SYMB_REG STAR SEMI RPAR RBRK PROC OR OBSERVED NUM NOTEQUA
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 12:
+## Known stack suffix:
+## NUM COLON
+## LR(1) items:
 location_reg -> NUM COLON . reg [ WITH SYMB_REG STAR SEMI RPAR RBRK PROC OR OBSERVED NUM NOTEQUAL NOT NAME LPAR LBRK IMPLIES FORALL FINAL EXISTS EQUALEQUAL EQUAL EOF AND # ]
 location_reg -> NUM COLON . PTX_REG_DEC PTX_REG_TYPE reg [ WITH SYMB_REG STAR SEMI RPAR RBRK PROC OR OBSERVED NUM NOTEQUAL NOT NAME LPAR LBRK IMPLIES FORALL FINAL EXISTS EQUALEQUAL EQUAL EOF AND # ]
+## Transitions:
 -- On PTX_REG_DEC shift to state 13
 -- On NAME shift to state 7
 -- On DOLLARNAME shift to state 8
 -- On reg shift to state 16
+## Reductions:
 
 State 13:
+## Known stack suffix:
+## NUM COLON PTX_REG_DEC
+## LR(1) items:
 location_reg -> NUM COLON PTX_REG_DEC . PTX_REG_TYPE reg [ WITH SYMB_REG STAR SEMI RPAR RBRK PROC OR OBSERVED NUM NOTEQUAL NOT NAME LPAR LBRK IMPLIES FORALL FINAL EXISTS EQUALEQUAL EQUAL EOF AND # ]
+## Transitions:
 -- On PTX_REG_TYPE shift to state 14
+## Reductions:
 
 State 14:
+## Known stack suffix:
+## NUM COLON PTX_REG_DEC PTX_REG_TYPE
+## LR(1) items:
 location_reg -> NUM COLON PTX_REG_DEC PTX_REG_TYPE . reg [ WITH SYMB_REG STAR SEMI RPAR RBRK PROC OR OBSERVED NUM NOTEQUAL NOT NAME LPAR LBRK IMPLIES FORALL FINAL EXISTS EQUALEQUAL EQUAL EOF AND # ]
+## Transitions:
 -- On NAME shift to state 7
 -- On DOLLARNAME shift to state 8
 -- On reg shift to state 15
+## Reductions:
 
 State 15:
+## Known stack suffix:
+## NUM COLON PTX_REG_DEC PTX_REG_TYPE reg
+## LR(1) items:
 location_reg -> NUM COLON PTX_REG_DEC PTX_REG_TYPE reg . [ WITH SYMB_REG STAR SEMI RPAR RBRK PROC OR OBSERVED NUM NOTEQUAL NOT NAME LPAR LBRK IMPLIES FORALL FINAL EXISTS EQUALEQUAL EQUAL EOF AND # ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production location_reg -> NUM COLON PTX_REG_DEC PTX_REG_TYPE reg
 -- On SYMB_REG reduce production location_reg -> NUM COLON PTX_REG_DEC PTX_REG_TYPE reg
 -- On STAR reduce production location_reg -> NUM COLON PTX_REG_DEC PTX_REG_TYPE reg
@@ -305,7 +385,12 @@ location_reg -> NUM COLON PTX_REG_DEC PTX_REG_TYPE reg . [ WITH SYMB_REG STAR SE
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 16:
+## Known stack suffix:
+## NUM COLON reg
+## LR(1) items:
 location_reg -> NUM COLON reg . [ WITH SYMB_REG STAR SEMI RPAR RBRK PROC OR OBSERVED NUM NOTEQUAL NOT NAME LPAR LBRK IMPLIES FORALL FINAL EXISTS EQUALEQUAL EQUAL EOF AND # ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production location_reg -> NUM COLON reg
 -- On SYMB_REG reduce production location_reg -> NUM COLON reg
 -- On STAR reduce production location_reg -> NUM COLON reg
@@ -337,9 +422,14 @@ location_reg -> NUM COLON reg . [ WITH SYMB_REG STAR SEMI RPAR RBRK PROC OR OBSE
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 17:
+## Known stack suffix:
+## NAME
+## LR(1) items:
 loc_deref -> NAME . LBRK NUM RBRK [ SEMI RBRK NOTEQUAL EQUALEQUAL EQUAL ]
 maybev -> NAME . [ STAR SEMI RBRK NOTEQUAL NAME EQUALEQUAL EQUAL ]
+## Transitions:
 -- On LBRK shift to state 18
+## Reductions:
 -- On STAR reduce production maybev -> NAME
 -- On SEMI reduce production maybev -> NAME
 -- On RBRK reduce production maybev -> NAME
@@ -349,15 +439,30 @@ maybev -> NAME . [ STAR SEMI RBRK NOTEQUAL NAME EQUALEQUAL EQUAL ]
 -- On EQUAL reduce production maybev -> NAME
 
 State 18:
+## Known stack suffix:
+## NAME LBRK
+## LR(1) items:
 loc_deref -> NAME LBRK . NUM RBRK [ SEMI RBRK NOTEQUAL EQUALEQUAL EQUAL ]
+## Transitions:
 -- On NUM shift to state 19
+## Reductions:
 
 State 19:
+## Known stack suffix:
+## NAME LBRK NUM
+## LR(1) items:
 loc_deref -> NAME LBRK NUM . RBRK [ SEMI RBRK NOTEQUAL EQUALEQUAL EQUAL ]
+## Transitions:
 -- On RBRK shift to state 20
+## Reductions:
 
 State 20:
+## Known stack suffix:
+## NAME LBRK NUM RBRK
+## LR(1) items:
 loc_deref -> NAME LBRK NUM RBRK . [ SEMI RBRK NOTEQUAL EQUALEQUAL EQUAL ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production loc_deref -> NAME LBRK NUM RBRK
 -- On RBRK reduce production loc_deref -> NAME LBRK NUM RBRK
 -- On NOTEQUAL reduce production loc_deref -> NAME LBRK NUM RBRK
@@ -365,13 +470,23 @@ loc_deref -> NAME LBRK NUM RBRK . [ SEMI RBRK NOTEQUAL EQUALEQUAL EQUAL ]
 -- On EQUAL reduce production loc_deref -> NAME LBRK NUM RBRK
 
 State 21:
+## Known stack suffix:
+## LBRK
+## LR(1) items:
 location -> LBRK . maybev RBRK [ SYMB_REG STAR SEMI RBRK PROC NUM NOTEQUAL NAME LBRK EQUALEQUAL EQUAL EOF # ]
+## Transitions:
 -- On NUM shift to state 22
 -- On NAME shift to state 23
 -- On maybev shift to state 24
+## Reductions:
 
 State 22:
+## Known stack suffix:
+## NUM
+## LR(1) items:
 maybev -> NUM . [ WITH SEMI RPAR RBRK OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production maybev -> NUM
 -- On SEMI reduce production maybev -> NUM
 -- On RPAR reduce production maybev -> NUM
@@ -394,7 +509,12 @@ maybev -> NUM . [ WITH SEMI RPAR RBRK OR OBSERVED NOT LPAR IMPLIES FORALL FINAL 
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 23:
+## Known stack suffix:
+## NAME
+## LR(1) items:
 maybev -> NAME . [ WITH SYMB_REG SEMI RPAR RBRK PROC OR OBSERVED NUM NOT NAME LPAR LBRK IMPLIES FORALL FINAL EXISTS EQUAL EOF AND # ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production maybev -> NAME
 -- On SYMB_REG reduce production maybev -> NAME
 -- On SEMI reduce production maybev -> NAME
@@ -423,11 +543,21 @@ maybev -> NAME . [ WITH SYMB_REG SEMI RPAR RBRK PROC OR OBSERVED NUM NOT NAME LP
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 24:
+## Known stack suffix:
+## LBRK maybev
+## LR(1) items:
 location -> LBRK maybev . RBRK [ SYMB_REG STAR SEMI RBRK PROC NUM NOTEQUAL NAME LBRK EQUALEQUAL EQUAL EOF # ]
+## Transitions:
 -- On RBRK shift to state 25
+## Reductions:
 
 State 25:
+## Known stack suffix:
+## LBRK maybev RBRK
+## LR(1) items:
 location -> LBRK maybev RBRK . [ SYMB_REG STAR SEMI RBRK PROC NUM NOTEQUAL NAME LBRK EQUALEQUAL EQUAL EOF # ]
+## Transitions:
+## Reductions:
 -- On SYMB_REG reduce production location -> LBRK maybev RBRK
 -- On STAR reduce production location -> LBRK maybev RBRK
 -- On SEMI reduce production location -> LBRK maybev RBRK
@@ -448,9 +578,14 @@ location -> LBRK maybev RBRK . [ SYMB_REG STAR SEMI RBRK PROC NUM NOTEQUAL NAME 
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 26:
+## Known stack suffix:
+## obsone
+## LR(1) items:
 obs -> obsone . [ # ]
 obs -> obsone . TOKAND obs [ # ]
+## Transitions:
 -- On TOKAND shift to state 27
+## Reductions:
 -- On # reduce production obs -> obsone
 ** End-of-stream conflict on TOKAND
 **   There is a tension between
@@ -459,7 +594,11 @@ obs -> obsone . TOKAND obs [ # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 27:
+## Known stack suffix:
+## obsone TOKAND
+## LR(1) items:
 obs -> obsone TOKAND . obs [ # ]
+## Transitions:
 -- On SYMB_REG shift to state 2
 -- On PROC shift to state 3
 -- On NUM shift to state 11
@@ -472,6 +611,7 @@ obs -> obsone TOKAND . obs [ # ]
 -- On location shift to state 31
 -- On loc_deref shift to state 45
 -- On atom_prop shift to state 52
+## Reductions:
 -- On TOKAND reduce production obsone ->
 -- On # reduce production obsone ->
 ** End-of-stream conflict on TOKAND SYMB_REG PROC NUM NAME LBRK
@@ -481,11 +621,21 @@ obs -> obsone TOKAND . obs [ # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 28:
+## Known stack suffix:
+## obsone TOKAND obs
+## LR(1) items:
 obs -> obsone TOKAND obs . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production obs -> obsone TOKAND obs
 
 State 29:
+## Known stack suffix:
+## maybev
+## LR(1) items:
 location -> maybev . [ SYMB_REG STAR SEMI RBRK PROC NUM NOTEQUAL NAME LBRK EQUALEQUAL EQUAL EOF # ]
+## Transitions:
+## Reductions:
 -- On SYMB_REG reduce production location -> maybev
 -- On STAR reduce production location -> maybev
 -- On SEMI reduce production location -> maybev
@@ -506,7 +656,12 @@ location -> maybev . [ SYMB_REG STAR SEMI RBRK PROC NUM NOTEQUAL NAME LBRK EQUAL
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 30:
+## Known stack suffix:
+## location_reg
+## LR(1) items:
 location -> location_reg . [ SYMB_REG STAR SEMI RBRK PROC NUM NOTEQUAL NAME LBRK EQUALEQUAL EQUAL EOF # ]
+## Transitions:
+## Reductions:
 -- On SYMB_REG reduce production location -> location_reg
 -- On STAR reduce production location -> location_reg
 -- On SEMI reduce production location -> location_reg
@@ -527,23 +682,38 @@ location -> location_reg . [ SYMB_REG STAR SEMI RBRK PROC NUM NOTEQUAL NAME LBRK
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 31:
+## Known stack suffix:
+## location
+## LR(1) items:
 atom_prop -> location . EQUAL maybev [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
 atom_prop -> location . EQUALEQUAL maybev [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
 atom_prop -> location . NOTEQUAL maybev [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
 atom_prop -> location . EQUAL location_deref [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
 atom_prop -> location . EQUALEQUAL location_deref [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
+## Transitions:
 -- On NOTEQUAL shift to state 32
 -- On EQUALEQUAL shift to state 34
 -- On EQUAL shift to state 42
+## Reductions:
 
 State 32:
+## Known stack suffix:
+## location NOTEQUAL
+## LR(1) items:
 atom_prop -> location NOTEQUAL . maybev [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
+## Transitions:
 -- On NUM shift to state 22
 -- On NAME shift to state 23
 -- On maybev shift to state 33
+## Reductions:
 
 State 33:
+## Known stack suffix:
+## location NOTEQUAL maybev
+## LR(1) items:
 atom_prop -> location NOTEQUAL maybev . [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production atom_prop -> location NOTEQUAL maybev
 -- On SEMI reduce production atom_prop -> location NOTEQUAL maybev
 -- On RPAR reduce production atom_prop -> location NOTEQUAL maybev
@@ -565,8 +735,12 @@ atom_prop -> location NOTEQUAL maybev . [ WITH SEMI RPAR OR OBSERVED NOT LPAR IM
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 34:
+## Known stack suffix:
+## location EQUALEQUAL
+## LR(1) items:
 atom_prop -> location EQUALEQUAL . maybev [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
 atom_prop -> location EQUALEQUAL . location_deref [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
+## Transitions:
 -- On SYMB_REG shift to state 2
 -- On STAR shift to state 35
 -- On PROC shift to state 3
@@ -575,23 +749,39 @@ atom_prop -> location EQUALEQUAL . location_deref [ WITH SEMI RPAR OR OBSERVED N
 -- On maybev shift to state 39
 -- On location_reg shift to state 40
 -- On location_deref shift to state 41
+## Reductions:
 
 State 35:
+## Known stack suffix:
+## STAR
+## LR(1) items:
 location_deref -> STAR . location_reg [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
 location_deref -> STAR . NAME [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
+## Transitions:
 -- On SYMB_REG shift to state 2
 -- On PROC shift to state 3
 -- On NUM shift to state 36
 -- On NAME shift to state 37
 -- On location_reg shift to state 38
+## Reductions:
 
 State 36:
+## Known stack suffix:
+## NUM
+## LR(1) items:
 location_reg -> NUM . COLON reg [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
 location_reg -> NUM . COLON PTX_REG_DEC PTX_REG_TYPE reg [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
+## Transitions:
 -- On COLON shift to state 12
+## Reductions:
 
 State 37:
+## Known stack suffix:
+## STAR NAME
+## LR(1) items:
 location_deref -> STAR NAME . [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production location_deref -> STAR NAME
 -- On SEMI reduce production location_deref -> STAR NAME
 -- On RPAR reduce production location_deref -> STAR NAME
@@ -613,7 +803,12 @@ location_deref -> STAR NAME . [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORA
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 38:
+## Known stack suffix:
+## STAR location_reg
+## LR(1) items:
 location_deref -> STAR location_reg . [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production location_deref -> STAR location_reg
 -- On SEMI reduce production location_deref -> STAR location_reg
 -- On RPAR reduce production location_deref -> STAR location_reg
@@ -635,7 +830,12 @@ location_deref -> STAR location_reg . [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPL
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 39:
+## Known stack suffix:
+## location EQUALEQUAL maybev
+## LR(1) items:
 atom_prop -> location EQUALEQUAL maybev . [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production atom_prop -> location EQUALEQUAL maybev
 -- On SEMI reduce production atom_prop -> location EQUALEQUAL maybev
 -- On RPAR reduce production atom_prop -> location EQUALEQUAL maybev
@@ -657,7 +857,12 @@ atom_prop -> location EQUALEQUAL maybev . [ WITH SEMI RPAR OR OBSERVED NOT LPAR 
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 40:
+## Known stack suffix:
+## location_reg
+## LR(1) items:
 location_deref -> location_reg . [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production location_deref -> location_reg
 -- On SEMI reduce production location_deref -> location_reg
 -- On RPAR reduce production location_deref -> location_reg
@@ -679,7 +884,12 @@ location_deref -> location_reg . [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES F
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 41:
+## Known stack suffix:
+## location EQUALEQUAL location_deref
+## LR(1) items:
 atom_prop -> location EQUALEQUAL location_deref . [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production atom_prop -> location EQUALEQUAL location_deref
 -- On SEMI reduce production atom_prop -> location EQUALEQUAL location_deref
 -- On RPAR reduce production atom_prop -> location EQUALEQUAL location_deref
@@ -701,8 +911,12 @@ atom_prop -> location EQUALEQUAL location_deref . [ WITH SEMI RPAR OR OBSERVED N
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 42:
+## Known stack suffix:
+## location EQUAL
+## LR(1) items:
 atom_prop -> location EQUAL . maybev [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
 atom_prop -> location EQUAL . location_deref [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
+## Transitions:
 -- On SYMB_REG shift to state 2
 -- On STAR shift to state 35
 -- On PROC shift to state 3
@@ -711,9 +925,15 @@ atom_prop -> location EQUAL . location_deref [ WITH SEMI RPAR OR OBSERVED NOT LP
 -- On maybev shift to state 43
 -- On location_reg shift to state 40
 -- On location_deref shift to state 44
+## Reductions:
 
 State 43:
+## Known stack suffix:
+## location EQUAL maybev
+## LR(1) items:
 atom_prop -> location EQUAL maybev . [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production atom_prop -> location EQUAL maybev
 -- On SEMI reduce production atom_prop -> location EQUAL maybev
 -- On RPAR reduce production atom_prop -> location EQUAL maybev
@@ -735,7 +955,12 @@ atom_prop -> location EQUAL maybev . [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLI
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 44:
+## Known stack suffix:
+## location EQUAL location_deref
+## LR(1) items:
 atom_prop -> location EQUAL location_deref . [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production atom_prop -> location EQUAL location_deref
 -- On SEMI reduce production atom_prop -> location EQUAL location_deref
 -- On RPAR reduce production atom_prop -> location EQUAL location_deref
@@ -757,21 +982,36 @@ atom_prop -> location EQUAL location_deref . [ WITH SEMI RPAR OR OBSERVED NOT LP
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 45:
+## Known stack suffix:
+## loc_deref
+## LR(1) items:
 atom_prop -> loc_deref . EQUAL maybev [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
 atom_prop -> loc_deref . EQUALEQUAL maybev [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
 atom_prop -> loc_deref . NOTEQUAL maybev [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
+## Transitions:
 -- On NOTEQUAL shift to state 46
 -- On EQUALEQUAL shift to state 48
 -- On EQUAL shift to state 50
+## Reductions:
 
 State 46:
+## Known stack suffix:
+## loc_deref NOTEQUAL
+## LR(1) items:
 atom_prop -> loc_deref NOTEQUAL . maybev [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
+## Transitions:
 -- On NUM shift to state 22
 -- On NAME shift to state 23
 -- On maybev shift to state 47
+## Reductions:
 
 State 47:
+## Known stack suffix:
+## loc_deref NOTEQUAL maybev
+## LR(1) items:
 atom_prop -> loc_deref NOTEQUAL maybev . [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production atom_prop -> loc_deref NOTEQUAL maybev
 -- On SEMI reduce production atom_prop -> loc_deref NOTEQUAL maybev
 -- On RPAR reduce production atom_prop -> loc_deref NOTEQUAL maybev
@@ -793,13 +1033,23 @@ atom_prop -> loc_deref NOTEQUAL maybev . [ WITH SEMI RPAR OR OBSERVED NOT LPAR I
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 48:
+## Known stack suffix:
+## loc_deref EQUALEQUAL
+## LR(1) items:
 atom_prop -> loc_deref EQUALEQUAL . maybev [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
+## Transitions:
 -- On NUM shift to state 22
 -- On NAME shift to state 23
 -- On maybev shift to state 49
+## Reductions:
 
 State 49:
+## Known stack suffix:
+## loc_deref EQUALEQUAL maybev
+## LR(1) items:
 atom_prop -> loc_deref EQUALEQUAL maybev . [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production atom_prop -> loc_deref EQUALEQUAL maybev
 -- On SEMI reduce production atom_prop -> loc_deref EQUALEQUAL maybev
 -- On RPAR reduce production atom_prop -> loc_deref EQUALEQUAL maybev
@@ -821,13 +1071,23 @@ atom_prop -> loc_deref EQUALEQUAL maybev . [ WITH SEMI RPAR OR OBSERVED NOT LPAR
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 50:
+## Known stack suffix:
+## loc_deref EQUAL
+## LR(1) items:
 atom_prop -> loc_deref EQUAL . maybev [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
+## Transitions:
 -- On NUM shift to state 22
 -- On NAME shift to state 23
 -- On maybev shift to state 51
+## Reductions:
 
 State 51:
+## Known stack suffix:
+## loc_deref EQUAL maybev
+## LR(1) items:
 atom_prop -> loc_deref EQUAL maybev . [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production atom_prop -> loc_deref EQUAL maybev
 -- On SEMI reduce production atom_prop -> loc_deref EQUAL maybev
 -- On RPAR reduce production atom_prop -> loc_deref EQUAL maybev
@@ -849,11 +1109,20 @@ atom_prop -> loc_deref EQUAL maybev . [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPL
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 52:
+## Known stack suffix:
+## atom_prop
+## LR(1) items:
 obsone -> atom_prop . SEMI obsone [ WITH TOKAND SEMI EOF # ]
+## Transitions:
 -- On SEMI shift to state 53
+## Reductions:
 
 State 53:
+## Known stack suffix:
+## atom_prop SEMI
+## LR(1) items:
 obsone -> atom_prop SEMI . obsone [ WITH TOKAND SEMI EOF # ]
+## Transitions:
 -- On SYMB_REG shift to state 2
 -- On PROC shift to state 3
 -- On NUM shift to state 11
@@ -865,6 +1134,7 @@ obsone -> atom_prop SEMI . obsone [ WITH TOKAND SEMI EOF # ]
 -- On location shift to state 31
 -- On loc_deref shift to state 45
 -- On atom_prop shift to state 52
+## Reductions:
 -- On WITH reduce production obsone ->
 -- On TOKAND reduce production obsone ->
 -- On SEMI reduce production obsone ->
@@ -877,7 +1147,12 @@ obsone -> atom_prop SEMI . obsone [ WITH TOKAND SEMI EOF # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 54:
+## Known stack suffix:
+## atom_prop SEMI obsone
+## LR(1) items:
 obsone -> atom_prop SEMI obsone . [ WITH TOKAND SEMI EOF # ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production obsone -> atom_prop SEMI obsone
 -- On TOKAND reduce production obsone -> atom_prop SEMI obsone
 -- On SEMI reduce production obsone -> atom_prop SEMI obsone
@@ -890,15 +1165,29 @@ obsone -> atom_prop SEMI obsone . [ WITH TOKAND SEMI EOF # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 55:
+## Known stack suffix:
+## OBSERVED obs
+## LR(1) items:
 constr -> OBSERVED obs . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production constr -> OBSERVED obs
 
 State 56:
+## Known stack suffix:
+## NOT
+## LR(1) items:
 constr -> NOT . EXISTS prop [ # ]
+## Transitions:
 -- On EXISTS shift to state 57
+## Reductions:
 
 State 57:
+## Known stack suffix:
+## NOT EXISTS
+## LR(1) items:
 constr -> NOT EXISTS . prop [ # ]
+## Transitions:
 -- On TRUE shift to state 58
 -- On SYMB_REG shift to state 2
 -- On PROC shift to state 3
@@ -914,9 +1203,15 @@ constr -> NOT EXISTS . prop [ # ]
 -- On location shift to state 31
 -- On loc_deref shift to state 45
 -- On atom_prop shift to state 68
+## Reductions:
 
 State 58:
+## Known stack suffix:
+## TRUE
+## LR(1) items:
 prop -> TRUE . [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production prop -> TRUE
 -- On SEMI reduce production prop -> TRUE
 -- On RPAR reduce production prop -> TRUE
@@ -938,7 +1233,11 @@ prop -> TRUE . [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 59:
+## Known stack suffix:
+## NOT
+## LR(1) items:
 prop -> NOT . prop [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
+## Transitions:
 -- On TRUE shift to state 58
 -- On SYMB_REG shift to state 2
 -- On PROC shift to state 3
@@ -954,9 +1253,14 @@ prop -> NOT . prop [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EX
 -- On location shift to state 31
 -- On loc_deref shift to state 45
 -- On atom_prop shift to state 68
+## Reductions:
 
 State 60:
+## Known stack suffix:
+## LPAR
+## LR(1) items:
 prop -> LPAR . prop RPAR [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
+## Transitions:
 -- On TRUE shift to state 58
 -- On SYMB_REG shift to state 2
 -- On PROC shift to state 3
@@ -972,9 +1276,15 @@ prop -> LPAR . prop RPAR [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FI
 -- On location shift to state 31
 -- On loc_deref shift to state 45
 -- On atom_prop shift to state 68
+## Reductions:
 
 State 61:
+## Known stack suffix:
+## FALSE
+## LR(1) items:
 prop -> FALSE . [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production prop -> FALSE
 -- On SEMI reduce production prop -> FALSE
 -- On RPAR reduce production prop -> FALSE
@@ -996,17 +1306,27 @@ prop -> FALSE . [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXIST
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 62:
+## Known stack suffix:
+## LPAR prop
+## LR(1) items:
 prop -> prop . AND prop [ RPAR OR IMPLIES AND ]
 prop -> prop . OR prop [ RPAR OR IMPLIES AND ]
 prop -> prop . IMPLIES prop [ RPAR OR IMPLIES AND ]
 prop -> LPAR prop . RPAR [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
+## Transitions:
 -- On RPAR shift to state 63
 -- On OR shift to state 64
 -- On IMPLIES shift to state 66
 -- On AND shift to state 69
+## Reductions:
 
 State 63:
+## Known stack suffix:
+## LPAR prop RPAR
+## LR(1) items:
 prop -> LPAR prop RPAR . [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production prop -> LPAR prop RPAR
 -- On SEMI reduce production prop -> LPAR prop RPAR
 -- On RPAR reduce production prop -> LPAR prop RPAR
@@ -1028,7 +1348,11 @@ prop -> LPAR prop RPAR . [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FI
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 64:
+## Known stack suffix:
+## prop OR
+## LR(1) items:
 prop -> prop OR . prop [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
+## Transitions:
 -- On TRUE shift to state 58
 -- On SYMB_REG shift to state 2
 -- On PROC shift to state 3
@@ -1044,14 +1368,20 @@ prop -> prop OR . prop [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINA
 -- On location shift to state 31
 -- On loc_deref shift to state 45
 -- On atom_prop shift to state 68
+## Reductions:
 
 State 65:
+## Known stack suffix:
+## prop OR prop
+## LR(1) items:
 prop -> prop . AND prop [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
 prop -> prop . OR prop [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
 prop -> prop OR prop . [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
 prop -> prop . IMPLIES prop [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
+## Transitions:
 -- On IMPLIES shift to state 66
 -- On AND shift to state 69
+## Reductions:
 -- On WITH reduce production prop -> prop OR prop
 -- On SEMI reduce production prop -> prop OR prop
 -- On RPAR reduce production prop -> prop OR prop
@@ -1071,7 +1401,11 @@ prop -> prop . IMPLIES prop [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 66:
+## Known stack suffix:
+## prop IMPLIES
+## LR(1) items:
 prop -> prop IMPLIES . prop [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
+## Transitions:
 -- On TRUE shift to state 58
 -- On SYMB_REG shift to state 2
 -- On PROC shift to state 3
@@ -1087,13 +1421,19 @@ prop -> prop IMPLIES . prop [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL
 -- On location shift to state 31
 -- On loc_deref shift to state 45
 -- On atom_prop shift to state 68
+## Reductions:
 
 State 67:
+## Known stack suffix:
+## prop IMPLIES prop
+## LR(1) items:
 prop -> prop . AND prop [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
 prop -> prop . OR prop [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
 prop -> prop . IMPLIES prop [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
 prop -> prop IMPLIES prop . [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
+## Transitions:
 -- On IMPLIES shift to state 66
+## Reductions:
 -- On WITH reduce production prop -> prop IMPLIES prop
 -- On SEMI reduce production prop -> prop IMPLIES prop
 -- On RPAR reduce production prop -> prop IMPLIES prop
@@ -1114,7 +1454,12 @@ prop -> prop IMPLIES prop . [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 68:
+## Known stack suffix:
+## atom_prop
+## LR(1) items:
 prop -> atom_prop . [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production prop -> atom_prop
 -- On SEMI reduce production prop -> atom_prop
 -- On RPAR reduce production prop -> atom_prop
@@ -1136,7 +1481,11 @@ prop -> atom_prop . [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL E
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 69:
+## Known stack suffix:
+## prop AND
+## LR(1) items:
 prop -> prop AND . prop [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
+## Transitions:
 -- On TRUE shift to state 58
 -- On SYMB_REG shift to state 2
 -- On PROC shift to state 3
@@ -1152,13 +1501,19 @@ prop -> prop AND . prop [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FIN
 -- On location shift to state 31
 -- On loc_deref shift to state 45
 -- On atom_prop shift to state 68
+## Reductions:
 
 State 70:
+## Known stack suffix:
+## prop AND prop
+## LR(1) items:
 prop -> prop . AND prop [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
 prop -> prop AND prop . [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
 prop -> prop . OR prop [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
 prop -> prop . IMPLIES prop [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
+## Transitions:
 -- On IMPLIES shift to state 66
+## Reductions:
 -- On WITH reduce production prop -> prop AND prop
 -- On SEMI reduce production prop -> prop AND prop
 -- On RPAR reduce production prop -> prop AND prop
@@ -1179,10 +1534,15 @@ prop -> prop . IMPLIES prop [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 71:
+## Known stack suffix:
+## NOT prop
+## LR(1) items:
 prop -> NOT prop . [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
 prop -> prop . AND prop [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
 prop -> prop . OR prop [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
 prop -> prop . IMPLIES prop [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND # ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production prop -> NOT prop
 -- On SEMI reduce production prop -> NOT prop
 -- On RPAR reduce production prop -> NOT prop
@@ -1204,13 +1564,18 @@ prop -> prop . IMPLIES prop [ WITH SEMI RPAR OR OBSERVED NOT LPAR IMPLIES FORALL
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 72:
+## Known stack suffix:
+## NOT EXISTS prop
+## LR(1) items:
 constr -> NOT EXISTS prop . [ # ]
 prop -> prop . AND prop [ OR IMPLIES AND # ]
 prop -> prop . OR prop [ OR IMPLIES AND # ]
 prop -> prop . IMPLIES prop [ OR IMPLIES AND # ]
+## Transitions:
 -- On OR shift to state 64
 -- On IMPLIES shift to state 66
 -- On AND shift to state 69
+## Reductions:
 -- On # reduce production constr -> NOT EXISTS prop
 ** End-of-stream conflict on OR IMPLIES AND
 **   There is a tension between
@@ -1219,7 +1584,11 @@ prop -> prop . IMPLIES prop [ OR IMPLIES AND # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 73:
+## Known stack suffix:
+## LPAR
+## LR(1) items:
 constr -> LPAR . prop RPAR [ # ]
+## Transitions:
 -- On TRUE shift to state 58
 -- On SYMB_REG shift to state 2
 -- On PROC shift to state 3
@@ -1235,23 +1604,38 @@ constr -> LPAR . prop RPAR [ # ]
 -- On location shift to state 31
 -- On loc_deref shift to state 45
 -- On atom_prop shift to state 68
+## Reductions:
 
 State 74:
+## Known stack suffix:
+## LPAR prop
+## LR(1) items:
 constr -> LPAR prop . RPAR [ # ]
 prop -> prop . AND prop [ RPAR OR IMPLIES AND ]
 prop -> prop . OR prop [ RPAR OR IMPLIES AND ]
 prop -> prop . IMPLIES prop [ RPAR OR IMPLIES AND ]
+## Transitions:
 -- On RPAR shift to state 75
 -- On OR shift to state 64
 -- On IMPLIES shift to state 66
 -- On AND shift to state 69
+## Reductions:
 
 State 75:
+## Known stack suffix:
+## LPAR prop RPAR
+## LR(1) items:
 constr -> LPAR prop RPAR . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production constr -> LPAR prop RPAR
 
 State 76:
+## Known stack suffix:
+## FORALL
+## LR(1) items:
 constr -> FORALL . prop [ # ]
+## Transitions:
 -- On TRUE shift to state 58
 -- On SYMB_REG shift to state 2
 -- On PROC shift to state 3
@@ -1267,15 +1651,21 @@ constr -> FORALL . prop [ # ]
 -- On location shift to state 31
 -- On loc_deref shift to state 45
 -- On atom_prop shift to state 68
+## Reductions:
 
 State 77:
+## Known stack suffix:
+## FORALL prop
+## LR(1) items:
 constr -> FORALL prop . [ # ]
 prop -> prop . AND prop [ OR IMPLIES AND # ]
 prop -> prop . OR prop [ OR IMPLIES AND # ]
 prop -> prop . IMPLIES prop [ OR IMPLIES AND # ]
+## Transitions:
 -- On OR shift to state 64
 -- On IMPLIES shift to state 66
 -- On AND shift to state 69
+## Reductions:
 -- On # reduce production constr -> FORALL prop
 ** End-of-stream conflict on OR IMPLIES AND
 **   There is a tension between
@@ -1284,7 +1674,11 @@ prop -> prop . IMPLIES prop [ OR IMPLIES AND # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 78:
+## Known stack suffix:
+## FINAL
+## LR(1) items:
 constr -> FINAL . prop [ # ]
+## Transitions:
 -- On TRUE shift to state 58
 -- On SYMB_REG shift to state 2
 -- On PROC shift to state 3
@@ -1300,15 +1694,21 @@ constr -> FINAL . prop [ # ]
 -- On location shift to state 31
 -- On loc_deref shift to state 45
 -- On atom_prop shift to state 68
+## Reductions:
 
 State 79:
+## Known stack suffix:
+## FINAL prop
+## LR(1) items:
 constr -> FINAL prop . [ # ]
 prop -> prop . AND prop [ OR IMPLIES AND # ]
 prop -> prop . OR prop [ OR IMPLIES AND # ]
 prop -> prop . IMPLIES prop [ OR IMPLIES AND # ]
+## Transitions:
 -- On OR shift to state 64
 -- On IMPLIES shift to state 66
 -- On AND shift to state 69
+## Reductions:
 -- On # reduce production constr -> FINAL prop
 ** End-of-stream conflict on OR IMPLIES AND
 **   There is a tension between
@@ -1317,7 +1717,11 @@ prop -> prop . IMPLIES prop [ OR IMPLIES AND # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 80:
+## Known stack suffix:
+## EXISTS
+## LR(1) items:
 constr -> EXISTS . prop [ # ]
+## Transitions:
 -- On TRUE shift to state 58
 -- On SYMB_REG shift to state 2
 -- On PROC shift to state 3
@@ -1333,15 +1737,21 @@ constr -> EXISTS . prop [ # ]
 -- On location shift to state 31
 -- On loc_deref shift to state 45
 -- On atom_prop shift to state 68
+## Reductions:
 
 State 81:
+## Known stack suffix:
+## EXISTS prop
+## LR(1) items:
 constr -> EXISTS prop . [ # ]
 prop -> prop . AND prop [ OR IMPLIES AND # ]
 prop -> prop . OR prop [ OR IMPLIES AND # ]
 prop -> prop . IMPLIES prop [ OR IMPLIES AND # ]
+## Transitions:
 -- On OR shift to state 64
 -- On IMPLIES shift to state 66
 -- On AND shift to state 69
+## Reductions:
 -- On # reduce production constr -> EXISTS prop
 ** End-of-stream conflict on OR IMPLIES AND
 **   There is a tension between
@@ -1350,14 +1760,24 @@ prop -> prop . IMPLIES prop [ OR IMPLIES AND # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 82:
+## Known stack suffix:
+## constr
+## LR(1) items:
 constr' -> constr . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept constr
 
 State 83:
+## Known stack suffix:
+##
+## LR(1) items:
 constraints' -> . constraints [ # ]
+## Transitions:
 -- On LOCATIONS shift to state 84
 -- On locations shift to state 97
 -- On constraints shift to state 135
+## Reductions:
 -- On WITH reduce production locations ->
 -- On SEMI reduce production locations ->
 -- On OBSERVED reduce production locations ->
@@ -1370,11 +1790,20 @@ constraints' -> . constraints [ # ]
 -- On EOF reduce production locations ->
 
 State 84:
+## Known stack suffix:
+## LOCATIONS
+## LR(1) items:
 locations -> LOCATIONS . LBRK loc_semi_list RBRK [ WITH SEMI OBSERVED NOT LPAR FORALL FINAL FILTER EXISTS EOF # ]
+## Transitions:
 -- On LBRK shift to state 85
+## Reductions:
 
 State 85:
+## Known stack suffix:
+## LOCATIONS LBRK
+## LR(1) items:
 locations -> LOCATIONS LBRK . loc_semi_list RBRK [ WITH SEMI OBSERVED NOT LPAR FORALL FINAL FILTER EXISTS EOF # ]
+## Transitions:
 -- On SYMB_REG shift to state 2
 -- On SEMI shift to state 86
 -- On PROC shift to state 3
@@ -1387,47 +1816,82 @@ locations -> LOCATIONS LBRK . loc_semi_list RBRK [ WITH SEMI OBSERVED NOT LPAR F
 -- On loc_typ shift to state 91
 -- On loc_semi_list shift to state 95
 -- On loc_deref shift to state 94
+## Reductions:
 -- On RBRK reduce production loc_semi_list ->
 
 State 86:
+## Known stack suffix:
+## SEMI
+## LR(1) items:
 loc_semi_list -> SEMI . [ RBRK ]
+## Transitions:
+## Reductions:
 -- On RBRK reduce production loc_semi_list -> SEMI
 
 State 87:
+## Known stack suffix:
+## location
+## LR(1) items:
 loc_typ -> location . [ SEMI RBRK ]
 loc_typ -> location . STAR [ SEMI RBRK ]
 loc_typ -> location . NAME [ SEMI RBRK ]
 loc_typ -> location . NAME STAR [ SEMI RBRK ]
+## Transitions:
 -- On STAR shift to state 88
 -- On NAME shift to state 89
+## Reductions:
 -- On SEMI reduce production loc_typ -> location
 -- On RBRK reduce production loc_typ -> location
 
 State 88:
+## Known stack suffix:
+## location STAR
+## LR(1) items:
 loc_typ -> location STAR . [ SEMI RBRK ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production loc_typ -> location STAR
 -- On RBRK reduce production loc_typ -> location STAR
 
 State 89:
+## Known stack suffix:
+## location NAME
+## LR(1) items:
 loc_typ -> location NAME . [ SEMI RBRK ]
 loc_typ -> location NAME . STAR [ SEMI RBRK ]
+## Transitions:
 -- On STAR shift to state 90
+## Reductions:
 -- On SEMI reduce production loc_typ -> location NAME
 -- On RBRK reduce production loc_typ -> location NAME
 
 State 90:
+## Known stack suffix:
+## location NAME STAR
+## LR(1) items:
 loc_typ -> location NAME STAR . [ SEMI RBRK ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production loc_typ -> location NAME STAR
 -- On RBRK reduce production loc_typ -> location NAME STAR
 
 State 91:
+## Known stack suffix:
+## loc_typ
+## LR(1) items:
 loc_semi_list -> loc_typ . [ RBRK ]
 loc_semi_list -> loc_typ . SEMI loc_semi_list [ RBRK ]
+## Transitions:
 -- On SEMI shift to state 92
+## Reductions:
 -- On RBRK reduce production loc_semi_list -> loc_typ
 
 State 92:
+## Known stack suffix:
+## loc_typ SEMI
+## LR(1) items:
 loc_semi_list -> loc_typ SEMI . loc_semi_list [ RBRK ]
+## Transitions:
 -- On SYMB_REG shift to state 2
 -- On SEMI shift to state 86
 -- On PROC shift to state 3
@@ -1440,23 +1904,44 @@ loc_semi_list -> loc_typ SEMI . loc_semi_list [ RBRK ]
 -- On loc_typ shift to state 91
 -- On loc_semi_list shift to state 93
 -- On loc_deref shift to state 94
+## Reductions:
 -- On RBRK reduce production loc_semi_list ->
 
 State 93:
+## Known stack suffix:
+## loc_typ SEMI loc_semi_list
+## LR(1) items:
 loc_semi_list -> loc_typ SEMI loc_semi_list . [ RBRK ]
+## Transitions:
+## Reductions:
 -- On RBRK reduce production loc_semi_list -> loc_typ SEMI loc_semi_list
 
 State 94:
+## Known stack suffix:
+## loc_deref
+## LR(1) items:
 loc_typ -> loc_deref . [ SEMI RBRK ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production loc_typ -> loc_deref
 -- On RBRK reduce production loc_typ -> loc_deref
 
 State 95:
+## Known stack suffix:
+## LOCATIONS LBRK loc_semi_list
+## LR(1) items:
 locations -> LOCATIONS LBRK loc_semi_list . RBRK [ WITH SEMI OBSERVED NOT LPAR FORALL FINAL FILTER EXISTS EOF # ]
+## Transitions:
 -- On RBRK shift to state 96
+## Reductions:
 
 State 96:
+## Known stack suffix:
+## LOCATIONS LBRK loc_semi_list RBRK
+## LR(1) items:
 locations -> LOCATIONS LBRK loc_semi_list RBRK . [ WITH SEMI OBSERVED NOT LPAR FORALL FINAL FILTER EXISTS EOF # ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production locations -> LOCATIONS LBRK loc_semi_list RBRK
 -- On SEMI reduce production locations -> LOCATIONS LBRK loc_semi_list RBRK
 -- On OBSERVED reduce production locations -> LOCATIONS LBRK loc_semi_list RBRK
@@ -1475,9 +1960,14 @@ locations -> LOCATIONS LBRK loc_semi_list RBRK . [ WITH SEMI OBSERVED NOT LPAR F
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 97:
+## Known stack suffix:
+## locations
+## LR(1) items:
 constraints -> locations . filter old_constraints [ # ]
+## Transitions:
 -- On FILTER shift to state 98
 -- On filter shift to state 100
+## Reductions:
 -- On WITH reduce production filter ->
 -- On SEMI reduce production filter ->
 -- On OBSERVED reduce production filter ->
@@ -1489,7 +1979,11 @@ constraints -> locations . filter old_constraints [ # ]
 -- On EOF reduce production filter ->
 
 State 98:
+## Known stack suffix:
+## FILTER
+## LR(1) items:
 filter -> FILTER . prop [ WITH SEMI OBSERVED NOT LPAR FORALL FINAL EXISTS EOF ]
+## Transitions:
 -- On TRUE shift to state 58
 -- On SYMB_REG shift to state 2
 -- On PROC shift to state 3
@@ -1505,15 +1999,21 @@ filter -> FILTER . prop [ WITH SEMI OBSERVED NOT LPAR FORALL FINAL EXISTS EOF ]
 -- On location shift to state 31
 -- On loc_deref shift to state 45
 -- On atom_prop shift to state 68
+## Reductions:
 
 State 99:
+## Known stack suffix:
+## FILTER prop
+## LR(1) items:
 filter -> FILTER prop . [ WITH SEMI OBSERVED NOT LPAR FORALL FINAL EXISTS EOF ]
 prop -> prop . AND prop [ WITH SEMI OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND ]
 prop -> prop . OR prop [ WITH SEMI OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND ]
 prop -> prop . IMPLIES prop [ WITH SEMI OR OBSERVED NOT LPAR IMPLIES FORALL FINAL EXISTS EOF AND ]
+## Transitions:
 -- On OR shift to state 64
 -- On IMPLIES shift to state 66
 -- On AND shift to state 69
+## Reductions:
 -- On WITH reduce production filter -> FILTER prop
 -- On SEMI reduce production filter -> FILTER prop
 -- On OBSERVED reduce production filter -> FILTER prop
@@ -1525,7 +2025,11 @@ prop -> prop . IMPLIES prop [ WITH SEMI OR OBSERVED NOT LPAR IMPLIES FORALL FINA
 -- On EOF reduce production filter -> FILTER prop
 
 State 100:
+## Known stack suffix:
+## locations filter
+## LR(1) items:
 constraints -> locations filter . old_constraints [ # ]
+## Transitions:
 -- On OBSERVED shift to state 101
 -- On NOT shift to state 106
 -- On LPAR shift to state 109
@@ -1535,12 +2039,17 @@ constraints -> locations filter . old_constraints [ # ]
 -- On old_constraints shift to state 118
 -- On final shift to state 119
 -- On constr shift to state 133
+## Reductions:
 -- On WITH reduce production constr ->
 -- On SEMI reduce production constr ->
 -- On EOF reduce production constr ->
 
 State 101:
+## Known stack suffix:
+## OBSERVED
+## LR(1) items:
 constr -> OBSERVED . obs [ WITH SEMI EOF ]
+## Transitions:
 -- On SYMB_REG shift to state 2
 -- On PROC shift to state 3
 -- On NUM shift to state 11
@@ -1553,21 +2062,31 @@ constr -> OBSERVED . obs [ WITH SEMI EOF ]
 -- On location shift to state 31
 -- On loc_deref shift to state 45
 -- On atom_prop shift to state 52
+## Reductions:
 -- On WITH reduce production obsone ->
 -- On TOKAND reduce production obsone ->
 -- On SEMI reduce production obsone ->
 -- On EOF reduce production obsone ->
 
 State 102:
+## Known stack suffix:
+## obsone
+## LR(1) items:
 obs -> obsone . [ WITH SEMI EOF ]
 obs -> obsone . TOKAND obs [ WITH SEMI EOF ]
+## Transitions:
 -- On TOKAND shift to state 103
+## Reductions:
 -- On WITH reduce production obs -> obsone
 -- On SEMI reduce production obs -> obsone
 -- On EOF reduce production obs -> obsone
 
 State 103:
+## Known stack suffix:
+## obsone TOKAND
+## LR(1) items:
 obs -> obsone TOKAND . obs [ WITH SEMI EOF ]
+## Transitions:
 -- On SYMB_REG shift to state 2
 -- On PROC shift to state 3
 -- On NUM shift to state 11
@@ -1580,29 +2099,49 @@ obs -> obsone TOKAND . obs [ WITH SEMI EOF ]
 -- On location shift to state 31
 -- On loc_deref shift to state 45
 -- On atom_prop shift to state 52
+## Reductions:
 -- On WITH reduce production obsone ->
 -- On TOKAND reduce production obsone ->
 -- On SEMI reduce production obsone ->
 -- On EOF reduce production obsone ->
 
 State 104:
+## Known stack suffix:
+## obsone TOKAND obs
+## LR(1) items:
 obs -> obsone TOKAND obs . [ WITH SEMI EOF ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production obs -> obsone TOKAND obs
 -- On SEMI reduce production obs -> obsone TOKAND obs
 -- On EOF reduce production obs -> obsone TOKAND obs
 
 State 105:
+## Known stack suffix:
+## OBSERVED obs
+## LR(1) items:
 constr -> OBSERVED obs . [ WITH SEMI EOF ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production constr -> OBSERVED obs
 -- On SEMI reduce production constr -> OBSERVED obs
 -- On EOF reduce production constr -> OBSERVED obs
 
 State 106:
+## Known stack suffix:
+## NOT
+## LR(1) items:
 constr -> NOT . EXISTS prop [ WITH SEMI EOF ]
+## Transitions:
 -- On EXISTS shift to state 107
+## Reductions:
 
 State 107:
+## Known stack suffix:
+## NOT EXISTS
+## LR(1) items:
 constr -> NOT EXISTS . prop [ WITH SEMI EOF ]
+## Transitions:
 -- On TRUE shift to state 58
 -- On SYMB_REG shift to state 2
 -- On PROC shift to state 3
@@ -1618,21 +2157,31 @@ constr -> NOT EXISTS . prop [ WITH SEMI EOF ]
 -- On location shift to state 31
 -- On loc_deref shift to state 45
 -- On atom_prop shift to state 68
+## Reductions:
 
 State 108:
+## Known stack suffix:
+## NOT EXISTS prop
+## LR(1) items:
 constr -> NOT EXISTS prop . [ WITH SEMI EOF ]
 prop -> prop . AND prop [ WITH SEMI OR IMPLIES EOF AND ]
 prop -> prop . OR prop [ WITH SEMI OR IMPLIES EOF AND ]
 prop -> prop . IMPLIES prop [ WITH SEMI OR IMPLIES EOF AND ]
+## Transitions:
 -- On OR shift to state 64
 -- On IMPLIES shift to state 66
 -- On AND shift to state 69
+## Reductions:
 -- On WITH reduce production constr -> NOT EXISTS prop
 -- On SEMI reduce production constr -> NOT EXISTS prop
 -- On EOF reduce production constr -> NOT EXISTS prop
 
 State 109:
+## Known stack suffix:
+## LPAR
+## LR(1) items:
 constr -> LPAR . prop RPAR [ WITH SEMI EOF ]
+## Transitions:
 -- On TRUE shift to state 58
 -- On SYMB_REG shift to state 2
 -- On PROC shift to state 3
@@ -1648,25 +2197,40 @@ constr -> LPAR . prop RPAR [ WITH SEMI EOF ]
 -- On location shift to state 31
 -- On loc_deref shift to state 45
 -- On atom_prop shift to state 68
+## Reductions:
 
 State 110:
+## Known stack suffix:
+## LPAR prop
+## LR(1) items:
 constr -> LPAR prop . RPAR [ WITH SEMI EOF ]
 prop -> prop . AND prop [ RPAR OR IMPLIES AND ]
 prop -> prop . OR prop [ RPAR OR IMPLIES AND ]
 prop -> prop . IMPLIES prop [ RPAR OR IMPLIES AND ]
+## Transitions:
 -- On RPAR shift to state 111
 -- On OR shift to state 64
 -- On IMPLIES shift to state 66
 -- On AND shift to state 69
+## Reductions:
 
 State 111:
+## Known stack suffix:
+## LPAR prop RPAR
+## LR(1) items:
 constr -> LPAR prop RPAR . [ WITH SEMI EOF ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production constr -> LPAR prop RPAR
 -- On SEMI reduce production constr -> LPAR prop RPAR
 -- On EOF reduce production constr -> LPAR prop RPAR
 
 State 112:
+## Known stack suffix:
+## FORALL
+## LR(1) items:
 constr -> FORALL . prop [ WITH SEMI EOF ]
+## Transitions:
 -- On TRUE shift to state 58
 -- On SYMB_REG shift to state 2
 -- On PROC shift to state 3
@@ -1682,21 +2246,31 @@ constr -> FORALL . prop [ WITH SEMI EOF ]
 -- On location shift to state 31
 -- On loc_deref shift to state 45
 -- On atom_prop shift to state 68
+## Reductions:
 
 State 113:
+## Known stack suffix:
+## FORALL prop
+## LR(1) items:
 constr -> FORALL prop . [ WITH SEMI EOF ]
 prop -> prop . AND prop [ WITH SEMI OR IMPLIES EOF AND ]
 prop -> prop . OR prop [ WITH SEMI OR IMPLIES EOF AND ]
 prop -> prop . IMPLIES prop [ WITH SEMI OR IMPLIES EOF AND ]
+## Transitions:
 -- On OR shift to state 64
 -- On IMPLIES shift to state 66
 -- On AND shift to state 69
+## Reductions:
 -- On WITH reduce production constr -> FORALL prop
 -- On SEMI reduce production constr -> FORALL prop
 -- On EOF reduce production constr -> FORALL prop
 
 State 114:
+## Known stack suffix:
+## FINAL
+## LR(1) items:
 constr -> FINAL . prop [ WITH SEMI EOF ]
+## Transitions:
 -- On TRUE shift to state 58
 -- On SYMB_REG shift to state 2
 -- On PROC shift to state 3
@@ -1712,21 +2286,31 @@ constr -> FINAL . prop [ WITH SEMI EOF ]
 -- On location shift to state 31
 -- On loc_deref shift to state 45
 -- On atom_prop shift to state 68
+## Reductions:
 
 State 115:
+## Known stack suffix:
+## FINAL prop
+## LR(1) items:
 constr -> FINAL prop . [ WITH SEMI EOF ]
 prop -> prop . AND prop [ WITH SEMI OR IMPLIES EOF AND ]
 prop -> prop . OR prop [ WITH SEMI OR IMPLIES EOF AND ]
 prop -> prop . IMPLIES prop [ WITH SEMI OR IMPLIES EOF AND ]
+## Transitions:
 -- On OR shift to state 64
 -- On IMPLIES shift to state 66
 -- On AND shift to state 69
+## Reductions:
 -- On WITH reduce production constr -> FINAL prop
 -- On SEMI reduce production constr -> FINAL prop
 -- On EOF reduce production constr -> FINAL prop
 
 State 116:
+## Known stack suffix:
+## EXISTS
+## LR(1) items:
 constr -> EXISTS . prop [ WITH SEMI EOF ]
+## Transitions:
 -- On TRUE shift to state 58
 -- On SYMB_REG shift to state 2
 -- On PROC shift to state 3
@@ -1742,119 +2326,220 @@ constr -> EXISTS . prop [ WITH SEMI EOF ]
 -- On location shift to state 31
 -- On loc_deref shift to state 45
 -- On atom_prop shift to state 68
+## Reductions:
 
 State 117:
+## Known stack suffix:
+## EXISTS prop
+## LR(1) items:
 constr -> EXISTS prop . [ WITH SEMI EOF ]
 prop -> prop . AND prop [ WITH SEMI OR IMPLIES EOF AND ]
 prop -> prop . OR prop [ WITH SEMI OR IMPLIES EOF AND ]
 prop -> prop . IMPLIES prop [ WITH SEMI OR IMPLIES EOF AND ]
+## Transitions:
 -- On OR shift to state 64
 -- On IMPLIES shift to state 66
 -- On AND shift to state 69
+## Reductions:
 -- On WITH reduce production constr -> EXISTS prop
 -- On SEMI reduce production constr -> EXISTS prop
 -- On EOF reduce production constr -> EXISTS prop
 
 State 118:
+## Known stack suffix:
+## locations filter old_constraints
+## LR(1) items:
 constraints -> locations filter old_constraints . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production constraints -> locations filter old_constraints
 
 State 119:
+## Known stack suffix:
+## final
+## LR(1) items:
 old_constraints -> final . EOF [ # ]
 old_constraints -> final . WITH kinds EOF [ # ]
+## Transitions:
 -- On WITH shift to state 120
 -- On EOF shift to state 132
+## Reductions:
 
 State 120:
+## Known stack suffix:
+## final WITH
+## LR(1) items:
 old_constraints -> final WITH . kinds EOF [ # ]
+## Transitions:
 -- On NAME shift to state 121
 -- On kinds shift to state 127
 -- On kind shift to state 129
+## Reductions:
 
 State 121:
+## Known stack suffix:
+## NAME
+## LR(1) items:
 kind -> NAME . COLON FORALL [ SEMI EOF ]
 kind -> NAME . COLON EXISTS [ SEMI EOF ]
 kind -> NAME . COLON NOT EXISTS [ SEMI EOF ]
+## Transitions:
 -- On COLON shift to state 122
+## Reductions:
 
 State 122:
+## Known stack suffix:
+## NAME COLON
+## LR(1) items:
 kind -> NAME COLON . FORALL [ SEMI EOF ]
 kind -> NAME COLON . EXISTS [ SEMI EOF ]
 kind -> NAME COLON . NOT EXISTS [ SEMI EOF ]
+## Transitions:
 -- On NOT shift to state 123
 -- On FORALL shift to state 125
 -- On EXISTS shift to state 126
+## Reductions:
 
 State 123:
+## Known stack suffix:
+## NAME COLON NOT
+## LR(1) items:
 kind -> NAME COLON NOT . EXISTS [ SEMI EOF ]
+## Transitions:
 -- On EXISTS shift to state 124
+## Reductions:
 
 State 124:
+## Known stack suffix:
+## NAME COLON NOT EXISTS
+## LR(1) items:
 kind -> NAME COLON NOT EXISTS . [ SEMI EOF ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production kind -> NAME COLON NOT EXISTS
 -- On EOF reduce production kind -> NAME COLON NOT EXISTS
 
 State 125:
+## Known stack suffix:
+## NAME COLON FORALL
+## LR(1) items:
 kind -> NAME COLON FORALL . [ SEMI EOF ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production kind -> NAME COLON FORALL
 -- On EOF reduce production kind -> NAME COLON FORALL
 
 State 126:
+## Known stack suffix:
+## NAME COLON EXISTS
+## LR(1) items:
 kind -> NAME COLON EXISTS . [ SEMI EOF ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production kind -> NAME COLON EXISTS
 -- On EOF reduce production kind -> NAME COLON EXISTS
 
 State 127:
+## Known stack suffix:
+## final WITH kinds
+## LR(1) items:
 old_constraints -> final WITH kinds . EOF [ # ]
+## Transitions:
 -- On EOF shift to state 128
+## Reductions:
 
 State 128:
+## Known stack suffix:
+## final WITH kinds EOF
+## LR(1) items:
 old_constraints -> final WITH kinds EOF . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production old_constraints -> final WITH kinds EOF
 
 State 129:
+## Known stack suffix:
+## kind
+## LR(1) items:
 kinds -> kind . [ EOF ]
 kinds -> kind . SEMI [ EOF ]
 kinds -> kind . SEMI kinds [ EOF ]
+## Transitions:
 -- On SEMI shift to state 130
+## Reductions:
 -- On EOF reduce production kinds -> kind
 
 State 130:
+## Known stack suffix:
+## kind SEMI
+## LR(1) items:
 kinds -> kind SEMI . [ EOF ]
 kinds -> kind SEMI . kinds [ EOF ]
+## Transitions:
 -- On NAME shift to state 121
 -- On kinds shift to state 131
 -- On kind shift to state 129
+## Reductions:
 -- On EOF reduce production kinds -> kind SEMI
 
 State 131:
+## Known stack suffix:
+## kind SEMI kinds
+## LR(1) items:
 kinds -> kind SEMI kinds . [ EOF ]
+## Transitions:
+## Reductions:
 -- On EOF reduce production kinds -> kind SEMI kinds
 
 State 132:
+## Known stack suffix:
+## final EOF
+## LR(1) items:
 old_constraints -> final EOF . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production old_constraints -> final EOF
 
 State 133:
+## Known stack suffix:
+## constr
+## LR(1) items:
 final -> constr . [ WITH EOF ]
 final -> constr . SEMI [ WITH EOF ]
+## Transitions:
 -- On SEMI shift to state 134
+## Reductions:
 -- On WITH reduce production final -> constr
 -- On EOF reduce production final -> constr
 
 State 134:
+## Known stack suffix:
+## constr SEMI
+## LR(1) items:
 final -> constr SEMI . [ WITH EOF ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production final -> constr SEMI
 -- On EOF reduce production final -> constr SEMI
 
 State 135:
+## Known stack suffix:
+## constraints
+## LR(1) items:
 constraints' -> constraints . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept constraints
 
 State 136:
+## Known stack suffix:
+##
+## LR(1) items:
 filter' -> . filter [ # ]
+## Transitions:
 -- On FILTER shift to state 137
 -- On filter shift to state 139
+## Reductions:
 -- On # reduce production filter ->
 ** End-of-stream conflict on FILTER
 **   There is a tension between
@@ -1863,7 +2548,11 @@ filter' -> . filter [ # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 137:
+## Known stack suffix:
+## FILTER
+## LR(1) items:
 filter -> FILTER . prop [ # ]
+## Transitions:
 -- On TRUE shift to state 58
 -- On SYMB_REG shift to state 2
 -- On PROC shift to state 3
@@ -1879,15 +2568,21 @@ filter -> FILTER . prop [ # ]
 -- On location shift to state 31
 -- On loc_deref shift to state 45
 -- On atom_prop shift to state 68
+## Reductions:
 
 State 138:
+## Known stack suffix:
+## FILTER prop
+## LR(1) items:
 filter -> FILTER prop . [ # ]
 prop -> prop . AND prop [ OR IMPLIES AND # ]
 prop -> prop . OR prop [ OR IMPLIES AND # ]
 prop -> prop . IMPLIES prop [ OR IMPLIES AND # ]
+## Transitions:
 -- On OR shift to state 64
 -- On IMPLIES shift to state 66
 -- On AND shift to state 69
+## Reductions:
 -- On # reduce production filter -> FILTER prop
 ** End-of-stream conflict on OR IMPLIES AND
 **   There is a tension between
@@ -1896,11 +2591,20 @@ prop -> prop . IMPLIES prop [ OR IMPLIES AND # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 139:
+## Known stack suffix:
+## filter
+## LR(1) items:
 filter' -> filter . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept filter
 
 State 140:
+## Known stack suffix:
+##
+## LR(1) items:
 init' -> . init [ # ]
+## Transitions:
 -- On SYMB_REG shift to state 2
 -- On STAR shift to state 141
 -- On SEMI shift to state 147
@@ -1916,11 +2620,16 @@ init' -> . init [ # ]
 -- On init shift to state 173
 -- On atom_init shift to state 174
 -- On atom shift to state 177
+## Reductions:
 -- On EOF reduce production init_semi_list ->
 
 State 141:
+## Known stack suffix:
+## STAR
+## LR(1) items:
 atom_init -> STAR . location [ SEMI EOF ]
 atom_init -> STAR . location EQUAL amperopt maybev [ SEMI EOF ]
+## Transitions:
 -- On SYMB_REG shift to state 2
 -- On PROC shift to state 3
 -- On NUM shift to state 11
@@ -1929,42 +2638,76 @@ atom_init -> STAR . location EQUAL amperopt maybev [ SEMI EOF ]
 -- On maybev shift to state 29
 -- On location_reg shift to state 30
 -- On location shift to state 142
+## Reductions:
 
 State 142:
+## Known stack suffix:
+## STAR location
+## LR(1) items:
 atom_init -> STAR location . [ SEMI EOF ]
 atom_init -> STAR location . EQUAL amperopt maybev [ SEMI EOF ]
+## Transitions:
 -- On EQUAL shift to state 143
+## Reductions:
 -- On SEMI reduce production atom_init -> STAR location
 -- On EOF reduce production atom_init -> STAR location
 
 State 143:
+## Known stack suffix:
+## STAR location EQUAL
+## LR(1) items:
 atom_init -> STAR location EQUAL . amperopt maybev [ SEMI EOF ]
+## Transitions:
 -- On AMPER shift to state 144
 -- On amperopt shift to state 145
+## Reductions:
 -- On NUM reduce production amperopt ->
 -- On NAME reduce production amperopt ->
 
 State 144:
+## Known stack suffix:
+## AMPER
+## LR(1) items:
 amperopt -> AMPER . [ NUM NAME ]
+## Transitions:
+## Reductions:
 -- On NUM reduce production amperopt -> AMPER
 -- On NAME reduce production amperopt -> AMPER
 
 State 145:
+## Known stack suffix:
+## STAR location EQUAL amperopt
+## LR(1) items:
 atom_init -> STAR location EQUAL amperopt . maybev [ SEMI EOF ]
+## Transitions:
 -- On NUM shift to state 22
 -- On NAME shift to state 23
 -- On maybev shift to state 146
+## Reductions:
 
 State 146:
+## Known stack suffix:
+## STAR location EQUAL amperopt maybev
+## LR(1) items:
 atom_init -> STAR location EQUAL amperopt maybev . [ SEMI EOF ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production atom_init -> STAR location EQUAL amperopt maybev
 -- On EOF reduce production atom_init -> STAR location EQUAL amperopt maybev
 
 State 147:
+## Known stack suffix:
+## SEMI
+## LR(1) items:
 init_semi_list -> SEMI . [ EOF ]
+## Transitions:
+## Reductions:
 -- On EOF reduce production init_semi_list -> SEMI
 
 State 148:
+## Known stack suffix:
+## NAME
+## LR(1) items:
 atom_init -> NAME . location [ SEMI EOF ]
 atom_init -> NAME . location EQUAL maybev [ SEMI EOF ]
 atom_init -> NAME . location EQUAL ATOMICINIT LPAR maybev RPAR [ SEMI EOF ]
@@ -1972,6 +2715,7 @@ atom_init -> NAME . STAR location [ SEMI EOF ]
 atom_init -> NAME . STAR location EQUAL amperopt maybev [ SEMI EOF ]
 atom_init -> NAME . NAME LBRK NUM RBRK [ SEMI EOF ]
 maybev -> NAME . [ SEMI EQUAL EOF ]
+## Transitions:
 -- On SYMB_REG shift to state 2
 -- On STAR shift to state 149
 -- On PROC shift to state 3
@@ -1981,13 +2725,18 @@ maybev -> NAME . [ SEMI EQUAL EOF ]
 -- On maybev shift to state 29
 -- On location_reg shift to state 30
 -- On location shift to state 158
+## Reductions:
 -- On SEMI reduce production maybev -> NAME
 -- On EQUAL reduce production maybev -> NAME
 -- On EOF reduce production maybev -> NAME
 
 State 149:
+## Known stack suffix:
+## NAME STAR
+## LR(1) items:
 atom_init -> NAME STAR . location [ SEMI EOF ]
 atom_init -> NAME STAR . location EQUAL amperopt maybev [ SEMI EOF ]
+## Transitions:
 -- On SYMB_REG shift to state 2
 -- On PROC shift to state 3
 -- On NUM shift to state 11
@@ -1996,99 +2745,184 @@ atom_init -> NAME STAR . location EQUAL amperopt maybev [ SEMI EOF ]
 -- On maybev shift to state 29
 -- On location_reg shift to state 30
 -- On location shift to state 150
+## Reductions:
 
 State 150:
+## Known stack suffix:
+## NAME STAR location
+## LR(1) items:
 atom_init -> NAME STAR location . [ SEMI EOF ]
 atom_init -> NAME STAR location . EQUAL amperopt maybev [ SEMI EOF ]
+## Transitions:
 -- On EQUAL shift to state 151
+## Reductions:
 -- On SEMI reduce production atom_init -> NAME STAR location
 -- On EOF reduce production atom_init -> NAME STAR location
 
 State 151:
+## Known stack suffix:
+## NAME STAR location EQUAL
+## LR(1) items:
 atom_init -> NAME STAR location EQUAL . amperopt maybev [ SEMI EOF ]
+## Transitions:
 -- On AMPER shift to state 144
 -- On amperopt shift to state 152
+## Reductions:
 -- On NUM reduce production amperopt ->
 -- On NAME reduce production amperopt ->
 
 State 152:
+## Known stack suffix:
+## NAME STAR location EQUAL amperopt
+## LR(1) items:
 atom_init -> NAME STAR location EQUAL amperopt . maybev [ SEMI EOF ]
+## Transitions:
 -- On NUM shift to state 22
 -- On NAME shift to state 23
 -- On maybev shift to state 153
+## Reductions:
 
 State 153:
+## Known stack suffix:
+## NAME STAR location EQUAL amperopt maybev
+## LR(1) items:
 atom_init -> NAME STAR location EQUAL amperopt maybev . [ SEMI EOF ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production atom_init -> NAME STAR location EQUAL amperopt maybev
 -- On EOF reduce production atom_init -> NAME STAR location EQUAL amperopt maybev
 
 State 154:
+## Known stack suffix:
+## NAME NAME
+## LR(1) items:
 atom_init -> NAME NAME . LBRK NUM RBRK [ SEMI EOF ]
 maybev -> NAME . [ SEMI EQUAL EOF ]
+## Transitions:
 -- On LBRK shift to state 155
+## Reductions:
 -- On SEMI reduce production maybev -> NAME
 -- On EQUAL reduce production maybev -> NAME
 -- On EOF reduce production maybev -> NAME
 
 State 155:
+## Known stack suffix:
+## NAME NAME LBRK
+## LR(1) items:
 atom_init -> NAME NAME LBRK . NUM RBRK [ SEMI EOF ]
+## Transitions:
 -- On NUM shift to state 156
+## Reductions:
 
 State 156:
+## Known stack suffix:
+## NAME NAME LBRK NUM
+## LR(1) items:
 atom_init -> NAME NAME LBRK NUM . RBRK [ SEMI EOF ]
+## Transitions:
 -- On RBRK shift to state 157
+## Reductions:
 
 State 157:
+## Known stack suffix:
+## NAME NAME LBRK NUM RBRK
+## LR(1) items:
 atom_init -> NAME NAME LBRK NUM RBRK . [ SEMI EOF ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production atom_init -> NAME NAME LBRK NUM RBRK
 -- On EOF reduce production atom_init -> NAME NAME LBRK NUM RBRK
 
 State 158:
+## Known stack suffix:
+## NAME location
+## LR(1) items:
 atom_init -> NAME location . [ SEMI EOF ]
 atom_init -> NAME location . EQUAL maybev [ SEMI EOF ]
 atom_init -> NAME location . EQUAL ATOMICINIT LPAR maybev RPAR [ SEMI EOF ]
+## Transitions:
 -- On EQUAL shift to state 159
+## Reductions:
 -- On SEMI reduce production atom_init -> NAME location
 -- On EOF reduce production atom_init -> NAME location
 
 State 159:
+## Known stack suffix:
+## NAME location EQUAL
+## LR(1) items:
 atom_init -> NAME location EQUAL . maybev [ SEMI EOF ]
 atom_init -> NAME location EQUAL . ATOMICINIT LPAR maybev RPAR [ SEMI EOF ]
+## Transitions:
 -- On NUM shift to state 22
 -- On NAME shift to state 23
 -- On ATOMICINIT shift to state 160
 -- On maybev shift to state 164
+## Reductions:
 
 State 160:
+## Known stack suffix:
+## NAME location EQUAL ATOMICINIT
+## LR(1) items:
 atom_init -> NAME location EQUAL ATOMICINIT . LPAR maybev RPAR [ SEMI EOF ]
+## Transitions:
 -- On LPAR shift to state 161
+## Reductions:
 
 State 161:
+## Known stack suffix:
+## NAME location EQUAL ATOMICINIT LPAR
+## LR(1) items:
 atom_init -> NAME location EQUAL ATOMICINIT LPAR . maybev RPAR [ SEMI EOF ]
+## Transitions:
 -- On NUM shift to state 22
 -- On NAME shift to state 23
 -- On maybev shift to state 162
+## Reductions:
 
 State 162:
+## Known stack suffix:
+## NAME location EQUAL ATOMICINIT LPAR maybev
+## LR(1) items:
 atom_init -> NAME location EQUAL ATOMICINIT LPAR maybev . RPAR [ SEMI EOF ]
+## Transitions:
 -- On RPAR shift to state 163
+## Reductions:
 
 State 163:
+## Known stack suffix:
+## NAME location EQUAL ATOMICINIT LPAR maybev RPAR
+## LR(1) items:
 atom_init -> NAME location EQUAL ATOMICINIT LPAR maybev RPAR . [ SEMI EOF ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production atom_init -> NAME location EQUAL ATOMICINIT LPAR maybev RPAR
 -- On EOF reduce production atom_init -> NAME location EQUAL ATOMICINIT LPAR maybev RPAR
 
 State 164:
+## Known stack suffix:
+## NAME location EQUAL maybev
+## LR(1) items:
 atom_init -> NAME location EQUAL maybev . [ SEMI EOF ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production atom_init -> NAME location EQUAL maybev
 -- On EOF reduce production atom_init -> NAME location EQUAL maybev
 
 State 165:
+## Known stack suffix:
+## ATOMIC
+## LR(1) items:
 atom_init -> ATOMIC . NAME location [ SEMI EOF ]
+## Transitions:
 -- On NAME shift to state 166
+## Reductions:
 
 State 166:
+## Known stack suffix:
+## ATOMIC NAME
+## LR(1) items:
 atom_init -> ATOMIC NAME . location [ SEMI EOF ]
+## Transitions:
 -- On SYMB_REG shift to state 2
 -- On PROC shift to state 3
 -- On NUM shift to state 11
@@ -2097,50 +2931,95 @@ atom_init -> ATOMIC NAME . location [ SEMI EOF ]
 -- On maybev shift to state 29
 -- On location_reg shift to state 30
 -- On location shift to state 167
+## Reductions:
 
 State 167:
+## Known stack suffix:
+## ATOMIC NAME location
+## LR(1) items:
 atom_init -> ATOMIC NAME location . [ SEMI EOF ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production atom_init -> ATOMIC NAME location
 -- On EOF reduce production atom_init -> ATOMIC NAME location
 
 State 168:
+## Known stack suffix:
+## location
+## LR(1) items:
 atom -> location . [ SEMI EOF ]
 atom -> location . EQUAL maybev [ SEMI EOF ]
+## Transitions:
 -- On EQUAL shift to state 169
+## Reductions:
 -- On SEMI reduce production atom -> location
 -- On EOF reduce production atom -> location
 
 State 169:
+## Known stack suffix:
+## location EQUAL
+## LR(1) items:
 atom -> location EQUAL . maybev [ SEMI EOF ]
+## Transitions:
 -- On NUM shift to state 22
 -- On NAME shift to state 23
 -- On maybev shift to state 170
+## Reductions:
 
 State 170:
+## Known stack suffix:
+## location EQUAL maybev
+## LR(1) items:
 atom -> location EQUAL maybev . [ SEMI EOF ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production atom -> location EQUAL maybev
 -- On EOF reduce production atom -> location EQUAL maybev
 
 State 171:
+## Known stack suffix:
+## init_semi_list
+## LR(1) items:
 init -> init_semi_list . EOF [ # ]
+## Transitions:
 -- On EOF shift to state 172
+## Reductions:
 
 State 172:
+## Known stack suffix:
+## init_semi_list EOF
+## LR(1) items:
 init -> init_semi_list EOF . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production init -> init_semi_list EOF
 
 State 173:
+## Known stack suffix:
+## init
+## LR(1) items:
 init' -> init . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept init
 
 State 174:
+## Known stack suffix:
+## atom_init
+## LR(1) items:
 init_semi_list -> atom_init . [ EOF ]
 init_semi_list -> atom_init . SEMI init_semi_list [ EOF ]
+## Transitions:
 -- On SEMI shift to state 175
+## Reductions:
 -- On EOF reduce production init_semi_list -> atom_init
 
 State 175:
+## Known stack suffix:
+## atom_init SEMI
+## LR(1) items:
 init_semi_list -> atom_init SEMI . init_semi_list [ EOF ]
+## Transitions:
 -- On SYMB_REG shift to state 2
 -- On STAR shift to state 141
 -- On SEMI shift to state 147
@@ -2155,22 +3034,38 @@ init_semi_list -> atom_init SEMI . init_semi_list [ EOF ]
 -- On init_semi_list shift to state 176
 -- On atom_init shift to state 174
 -- On atom shift to state 177
+## Reductions:
 -- On EOF reduce production init_semi_list ->
 
 State 176:
+## Known stack suffix:
+## atom_init SEMI init_semi_list
+## LR(1) items:
 init_semi_list -> atom_init SEMI init_semi_list . [ EOF ]
+## Transitions:
+## Reductions:
 -- On EOF reduce production init_semi_list -> atom_init SEMI init_semi_list
 
 State 177:
+## Known stack suffix:
+## atom
+## LR(1) items:
 atom_init -> atom . [ SEMI EOF ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production atom_init -> atom
 -- On EOF reduce production atom_init -> atom
 
 State 178:
+## Known stack suffix:
+##
+## LR(1) items:
 loc_constr' -> . loc_constr [ # ]
+## Transitions:
 -- On LOCATIONS shift to state 84
 -- On locations shift to state 179
 -- On loc_constr shift to state 181
+## Reductions:
 -- On OBSERVED reduce production locations ->
 -- On NOT reduce production locations ->
 -- On LPAR reduce production locations ->
@@ -2185,7 +3080,11 @@ loc_constr' -> . loc_constr [ # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 179:
+## Known stack suffix:
+## locations
+## LR(1) items:
 loc_constr -> locations . constr [ # ]
+## Transitions:
 -- On OBSERVED shift to state 1
 -- On NOT shift to state 56
 -- On LPAR shift to state 73
@@ -2193,6 +3092,7 @@ loc_constr -> locations . constr [ # ]
 -- On FINAL shift to state 78
 -- On EXISTS shift to state 80
 -- On constr shift to state 180
+## Reductions:
 -- On # reduce production constr ->
 ** End-of-stream conflict on OBSERVED NOT LPAR FORALL FINAL EXISTS
 **   There is a tension between
@@ -2201,15 +3101,29 @@ loc_constr -> locations . constr [ # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 180:
+## Known stack suffix:
+## locations constr
+## LR(1) items:
 loc_constr -> locations constr . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production loc_constr -> locations constr
 
 State 181:
+## Known stack suffix:
+## loc_constr
+## LR(1) items:
 loc_constr' -> loc_constr . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept loc_constr
 
 State 182:
+## Known stack suffix:
+##
+## LR(1) items:
 location' -> . location [ # ]
+## Transitions:
 -- On SYMB_REG shift to state 2
 -- On PROC shift to state 3
 -- On NUM shift to state 11
@@ -2218,13 +3132,23 @@ location' -> . location [ # ]
 -- On maybev shift to state 29
 -- On location_reg shift to state 30
 -- On location shift to state 183
+## Reductions:
 
 State 183:
+## Known stack suffix:
+## location
+## LR(1) items:
 location' -> location . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept location
 
 State 184:
+## Known stack suffix:
+##
+## LR(1) items:
 locs' -> . locs [ # ]
+## Transitions:
 -- On SYMB_REG shift to state 2
 -- On PROC shift to state 3
 -- On NUM shift to state 11
@@ -2234,6 +3158,7 @@ locs' -> . locs [ # ]
 -- On locs shift to state 185
 -- On location_reg shift to state 30
 -- On location shift to state 186
+## Reductions:
 -- On # reduce production locs ->
 ** End-of-stream conflict on SYMB_REG PROC NUM NAME LBRK
 **   There is a tension between
@@ -2242,11 +3167,20 @@ locs' -> . locs [ # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 185:
+## Known stack suffix:
+## locs
+## LR(1) items:
 locs' -> locs . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept locs
 
 State 186:
+## Known stack suffix:
+## location
+## LR(1) items:
 locs -> location . locs [ # ]
+## Transitions:
 -- On SYMB_REG shift to state 2
 -- On PROC shift to state 3
 -- On NUM shift to state 11
@@ -2256,6 +3190,7 @@ locs -> location . locs [ # ]
 -- On locs shift to state 187
 -- On location_reg shift to state 30
 -- On location shift to state 186
+## Reductions:
 -- On # reduce production locs ->
 ** End-of-stream conflict on SYMB_REG PROC NUM NAME LBRK
 **   There is a tension between
@@ -2264,14 +3199,24 @@ locs -> location . locs [ # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 187:
+## Known stack suffix:
+## location locs
+## LR(1) items:
 locs -> location locs . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production locs -> location locs
 
 State 188:
+## Known stack suffix:
+##
+## LR(1) items:
 skip_loc_constr' -> . skip_loc_constr [ # ]
+## Transitions:
 -- On LOCATIONS shift to state 84
 -- On skip_loc_constr shift to state 189
 -- On locations shift to state 190
+## Reductions:
 -- On OBSERVED reduce production locations ->
 -- On NOT reduce production locations ->
 -- On LPAR reduce production locations ->
@@ -2286,11 +3231,20 @@ skip_loc_constr' -> . skip_loc_constr [ # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 189:
+## Known stack suffix:
+## skip_loc_constr
+## LR(1) items:
 skip_loc_constr' -> skip_loc_constr . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept skip_loc_constr
 
 State 190:
+## Known stack suffix:
+## locations
+## LR(1) items:
 skip_loc_constr -> locations . constr [ # ]
+## Transitions:
 -- On OBSERVED shift to state 1
 -- On NOT shift to state 56
 -- On LPAR shift to state 73
@@ -2298,6 +3252,7 @@ skip_loc_constr -> locations . constr [ # ]
 -- On FINAL shift to state 78
 -- On EXISTS shift to state 80
 -- On constr shift to state 191
+## Reductions:
 -- On # reduce production constr ->
 ** End-of-stream conflict on OBSERVED NOT LPAR FORALL FINAL EXISTS
 **   There is a tension between
@@ -2306,6 +3261,11 @@ skip_loc_constr -> locations . constr [ # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 191:
+## Known stack suffix:
+## locations constr
+## LR(1) items:
 skip_loc_constr -> locations constr . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production skip_loc_constr -> locations constr
 

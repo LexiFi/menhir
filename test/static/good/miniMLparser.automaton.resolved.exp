@@ -1,5 +1,9 @@
 State 0:
+## Known stack suffix:
+##
+## LR(1) items:
 implementation' -> . implementation [ # ]
+## Transitions:
 -- On STRUCT shift to state 1
 -- On LPAREN shift to state 91
 -- On IDENT shift to state 14
@@ -7,42 +11,72 @@ implementation' -> . implementation [ # ]
 -- On path shift to state 130
 -- On modulexpr shift to state 147
 -- On implementation shift to state 149
+## Reductions:
 
 State 1:
+## Known stack suffix:
+## STRUCT
+## LR(1) items:
 modulexpr -> STRUCT . structure END [ VALUE TYPE SEMISEMI SEMICOLON RPAREN MODULE LPAREN EOF END COLON ]
+## Transitions:
 -- On structure shift to state 2
+## Reductions:
 -- On VALUE reduce production structure ->
 -- On TYPE reduce production structure ->
 -- On MODULE reduce production structure ->
 -- On END reduce production structure ->
 
 State 2:
+## Known stack suffix:
+## STRUCT structure
+## LR(1) items:
 modulexpr -> STRUCT structure . END [ VALUE TYPE SEMISEMI SEMICOLON RPAREN MODULE LPAREN EOF END COLON ]
 structure -> structure . structure_item opt_semi [ VALUE TYPE MODULE END ]
+## Transitions:
 -- On VALUE shift to state 3
 -- On TYPE shift to state 58
 -- On MODULE shift to state 88
 -- On END shift to state 144
 -- On structure_item shift to state 145
+## Reductions:
 
 State 3:
+## Known stack suffix:
+## VALUE
+## LR(1) items:
 structure_item -> VALUE . IDENT valbind [ VALUE TYPE SEMISEMI SEMICOLON MODULE END ]
+## Transitions:
 -- On IDENT shift to state 4
+## Reductions:
 
 State 4:
+## Known stack suffix:
+## VALUE IDENT
+## LR(1) items:
 structure_item -> VALUE IDENT . valbind [ VALUE TYPE SEMISEMI SEMICOLON MODULE END ]
+## Transitions:
 -- On IDENT shift to state 5
 -- On EQUAL shift to state 6
 -- On valbind shift to state 57
+## Reductions:
 
 State 5:
+## Known stack suffix:
+## IDENT
+## LR(1) items:
 valbind -> IDENT . valbind [ VALUE TYPE SEMISEMI SEMICOLON MODULE IN END ]
+## Transitions:
 -- On IDENT shift to state 5
 -- On EQUAL shift to state 6
 -- On valbind shift to state 56
+## Reductions:
 
 State 6:
+## Known stack suffix:
+## EQUAL
+## LR(1) items:
 valbind -> EQUAL . valexpr [ VALUE TYPE SEMISEMI SEMICOLON MODULE IN END ]
+## Transitions:
 -- On LPAREN shift to state 7
 -- On LET shift to state 8
 -- On INT shift to state 12
@@ -53,9 +87,14 @@ valbind -> EQUAL . valexpr [ VALUE TYPE SEMISEMI SEMICOLON MODULE IN END ]
 -- On valexpr0 shift to state 23
 -- On valexpr shift to state 55
 -- On path shift to state 20
+## Reductions:
 
 State 7:
+## Known stack suffix:
+## LPAREN
+## LR(1) items:
 valexpr0 -> LPAREN . valexpr RPAREN [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LPAREN LESSGREATER LESSEQUAL LESS INT IN IDENT GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
+## Transitions:
 -- On LPAREN shift to state 7
 -- On LET shift to state 8
 -- On INT shift to state 12
@@ -66,23 +105,43 @@ valexpr0 -> LPAREN . valexpr RPAREN [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICO
 -- On valexpr0 shift to state 23
 -- On valexpr shift to state 53
 -- On path shift to state 20
+## Reductions:
 
 State 8:
+## Known stack suffix:
+## LET
+## LR(1) items:
 valexpr -> LET . IDENT valbind IN valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
+## Transitions:
 -- On IDENT shift to state 9
+## Reductions:
 
 State 9:
+## Known stack suffix:
+## LET IDENT
+## LR(1) items:
 valexpr -> LET IDENT . valbind IN valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
+## Transitions:
 -- On IDENT shift to state 5
 -- On EQUAL shift to state 6
 -- On valbind shift to state 10
+## Reductions:
 
 State 10:
+## Known stack suffix:
+## LET IDENT valbind
+## LR(1) items:
 valexpr -> LET IDENT valbind . IN valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
+## Transitions:
 -- On IN shift to state 11
+## Reductions:
 
 State 11:
+## Known stack suffix:
+## LET IDENT valbind IN
+## LR(1) items:
 valexpr -> LET IDENT valbind IN . valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
+## Transitions:
 -- On LPAREN shift to state 7
 -- On LET shift to state 8
 -- On INT shift to state 12
@@ -93,9 +152,15 @@ valexpr -> LET IDENT valbind IN . valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI 
 -- On valexpr0 shift to state 23
 -- On valexpr shift to state 52
 -- On path shift to state 20
+## Reductions:
 
 State 12:
+## Known stack suffix:
+## INT
+## LR(1) items:
 valexpr0 -> INT . [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LPAREN LESSGREATER LESSEQUAL LESS INT IN IDENT GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
+## Transitions:
+## Reductions:
 -- On VALUE reduce production valexpr0 -> INT
 -- On TYPE reduce production valexpr0 -> INT
 -- On THEN reduce production valexpr0 -> INT
@@ -122,7 +187,11 @@ valexpr0 -> INT . [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MO
 -- On COMMA reduce production valexpr0 -> INT
 
 State 13:
+## Known stack suffix:
+## IF
+## LR(1) items:
 valexpr -> IF . valexpr THEN valexpr ELSE valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
+## Transitions:
 -- On LPAREN shift to state 7
 -- On LET shift to state 8
 -- On INT shift to state 12
@@ -133,9 +202,15 @@ valexpr -> IF . valexpr THEN valexpr ELSE valexpr [ VALUE TYPE THEN STAR SLASH S
 -- On valexpr0 shift to state 23
 -- On valexpr shift to state 47
 -- On path shift to state 20
+## Reductions:
 
 State 14:
+## Known stack suffix:
+## IDENT
+## LR(1) items:
 path -> IDENT . [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LPAREN LESSGREATER LESSEQUAL LESS INT IN IDENT GREATEREQUAL GREATER EQUALEQUAL EOF END ELSE DOT COMMA COLON ARROW ]
+## Transitions:
+## Reductions:
 -- On VALUE reduce production path -> IDENT
 -- On TYPE reduce production path -> IDENT
 -- On THEN reduce production path -> IDENT
@@ -166,15 +241,29 @@ path -> IDENT . [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODU
 -- On ARROW reduce production path -> IDENT
 
 State 15:
+## Known stack suffix:
+## FUNCTION
+## LR(1) items:
 valexpr -> FUNCTION . IDENT ARROW valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
+## Transitions:
 -- On IDENT shift to state 16
+## Reductions:
 
 State 16:
+## Known stack suffix:
+## FUNCTION IDENT
+## LR(1) items:
 valexpr -> FUNCTION IDENT . ARROW valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
+## Transitions:
 -- On ARROW shift to state 17
+## Reductions:
 
 State 17:
+## Known stack suffix:
+## FUNCTION IDENT ARROW
+## LR(1) items:
 valexpr -> FUNCTION IDENT ARROW . valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
+## Transitions:
 -- On LPAREN shift to state 7
 -- On LET shift to state 8
 -- On INT shift to state 12
@@ -185,15 +274,21 @@ valexpr -> FUNCTION IDENT ARROW . valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI 
 -- On valexpr0 shift to state 23
 -- On valexpr shift to state 24
 -- On path shift to state 20
+## Reductions:
 
 State 18:
+## Known stack suffix:
+## valexpr1
+## LR(1) items:
 valexpr -> valexpr1 . [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr1 -> valexpr1 . valexpr0 [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LPAREN LESSGREATER LESSEQUAL LESS INT IN IDENT GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
+## Transitions:
 -- On LPAREN shift to state 7
 -- On INT shift to state 12
 -- On IDENT shift to state 14
 -- On valexpr0 shift to state 19
 -- On path shift to state 20
+## Reductions:
 -- On VALUE reduce production valexpr -> valexpr1
 -- On TYPE reduce production valexpr -> valexpr1
 -- On THEN reduce production valexpr -> valexpr1
@@ -217,7 +312,12 @@ valexpr1 -> valexpr1 . valexpr0 [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON 
 -- On COMMA reduce production valexpr -> valexpr1
 
 State 19:
+## Known stack suffix:
+## valexpr1 valexpr0
+## LR(1) items:
 valexpr1 -> valexpr1 valexpr0 . [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LPAREN LESSGREATER LESSEQUAL LESS INT IN IDENT GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
+## Transitions:
+## Reductions:
 -- On VALUE reduce production valexpr1 -> valexpr1 valexpr0
 -- On TYPE reduce production valexpr1 -> valexpr1 valexpr0
 -- On THEN reduce production valexpr1 -> valexpr1 valexpr0
@@ -244,9 +344,14 @@ valexpr1 -> valexpr1 valexpr0 . [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON 
 -- On COMMA reduce production valexpr1 -> valexpr1 valexpr0
 
 State 20:
+## Known stack suffix:
+## path
+## LR(1) items:
 path -> path . DOT IDENT [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LPAREN LESSGREATER LESSEQUAL LESS INT IN IDENT GREATEREQUAL GREATER EQUALEQUAL END ELSE DOT COMMA ]
 valexpr0 -> path . [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LPAREN LESSGREATER LESSEQUAL LESS INT IN IDENT GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
+## Transitions:
 -- On DOT shift to state 21
+## Reductions:
 -- On VALUE reduce production valexpr0 -> path
 -- On TYPE reduce production valexpr0 -> path
 -- On THEN reduce production valexpr0 -> path
@@ -273,11 +378,21 @@ valexpr0 -> path . [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS M
 -- On COMMA reduce production valexpr0 -> path
 
 State 21:
+## Known stack suffix:
+## path DOT
+## LR(1) items:
 path -> path DOT . IDENT [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LPAREN LESSGREATER LESSEQUAL LESS INT IN IDENT GREATEREQUAL GREATER EQUALEQUAL EOF END ELSE DOT COMMA COLON ARROW ]
+## Transitions:
 -- On IDENT shift to state 22
+## Reductions:
 
 State 22:
+## Known stack suffix:
+## path DOT IDENT
+## LR(1) items:
 path -> path DOT IDENT . [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LPAREN LESSGREATER LESSEQUAL LESS INT IN IDENT GREATEREQUAL GREATER EQUALEQUAL EOF END ELSE DOT COMMA COLON ARROW ]
+## Transitions:
+## Reductions:
 -- On VALUE reduce production path -> path DOT IDENT
 -- On TYPE reduce production path -> path DOT IDENT
 -- On THEN reduce production path -> path DOT IDENT
@@ -308,7 +423,12 @@ path -> path DOT IDENT . [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN 
 -- On ARROW reduce production path -> path DOT IDENT
 
 State 23:
+## Known stack suffix:
+## valexpr0
+## LR(1) items:
 valexpr1 -> valexpr0 . [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LPAREN LESSGREATER LESSEQUAL LESS INT IN IDENT GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
+## Transitions:
+## Reductions:
 -- On VALUE reduce production valexpr1 -> valexpr0
 -- On TYPE reduce production valexpr1 -> valexpr0
 -- On THEN reduce production valexpr1 -> valexpr0
@@ -335,6 +455,9 @@ valexpr1 -> valexpr0 . [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PL
 -- On COMMA reduce production valexpr1 -> valexpr0
 
 State 24:
+## Known stack suffix:
+## FUNCTION IDENT ARROW valexpr
+## LR(1) items:
 valexpr -> valexpr . COMMA valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr . PLUS valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr . MINUS valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
@@ -347,6 +470,7 @@ valexpr -> valexpr . LESSEQUAL valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEM
 valexpr -> valexpr . GREATER valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr . GREATEREQUAL valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> FUNCTION IDENT ARROW valexpr . [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
+## Transitions:
 -- On STAR shift to state 25
 -- On SLASH shift to state 27
 -- On PLUS shift to state 31
@@ -358,6 +482,7 @@ valexpr -> FUNCTION IDENT ARROW valexpr . [ VALUE TYPE THEN STAR SLASH SEMISEMI 
 -- On GREATER shift to state 43
 -- On EQUALEQUAL shift to state 29
 -- On COMMA shift to state 45
+## Reductions:
 -- On VALUE reduce production valexpr -> FUNCTION IDENT ARROW valexpr
 -- On TYPE reduce production valexpr -> FUNCTION IDENT ARROW valexpr
 -- On THEN reduce production valexpr -> FUNCTION IDENT ARROW valexpr
@@ -370,7 +495,11 @@ valexpr -> FUNCTION IDENT ARROW valexpr . [ VALUE TYPE THEN STAR SLASH SEMISEMI 
 -- On ELSE reduce production valexpr -> FUNCTION IDENT ARROW valexpr
 
 State 25:
+## Known stack suffix:
+## valexpr STAR
+## LR(1) items:
 valexpr -> valexpr STAR . valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
+## Transitions:
 -- On LPAREN shift to state 7
 -- On LET shift to state 8
 -- On INT shift to state 12
@@ -381,8 +510,12 @@ valexpr -> valexpr STAR . valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLO
 -- On valexpr0 shift to state 23
 -- On valexpr shift to state 26
 -- On path shift to state 20
+## Reductions:
 
 State 26:
+## Known stack suffix:
+## valexpr STAR valexpr
+## LR(1) items:
 valexpr -> valexpr . COMMA valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr . PLUS valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr . MINUS valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
@@ -395,9 +528,11 @@ valexpr -> valexpr . LESS valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLO
 valexpr -> valexpr . LESSEQUAL valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr . GREATER valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr . GREATEREQUAL valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
+## Transitions:
 -- On STAR shift to state 25
 -- On SLASH shift to state 27
 -- On EQUALEQUAL shift to state 29
+## Reductions:
 -- On VALUE reduce production valexpr -> valexpr STAR valexpr
 -- On TYPE reduce production valexpr -> valexpr STAR valexpr
 -- On THEN reduce production valexpr -> valexpr STAR valexpr
@@ -418,7 +553,11 @@ valexpr -> valexpr . GREATEREQUAL valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI 
 -- On COMMA reduce production valexpr -> valexpr STAR valexpr
 
 State 27:
+## Known stack suffix:
+## valexpr SLASH
+## LR(1) items:
 valexpr -> valexpr SLASH . valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
+## Transitions:
 -- On LPAREN shift to state 7
 -- On LET shift to state 8
 -- On INT shift to state 12
@@ -429,8 +568,12 @@ valexpr -> valexpr SLASH . valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOL
 -- On valexpr0 shift to state 23
 -- On valexpr shift to state 28
 -- On path shift to state 20
+## Reductions:
 
 State 28:
+## Known stack suffix:
+## valexpr SLASH valexpr
+## LR(1) items:
 valexpr -> valexpr . COMMA valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr . PLUS valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr . MINUS valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
@@ -443,9 +586,11 @@ valexpr -> valexpr . LESS valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLO
 valexpr -> valexpr . LESSEQUAL valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr . GREATER valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr . GREATEREQUAL valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
+## Transitions:
 -- On STAR shift to state 25
 -- On SLASH shift to state 27
 -- On EQUALEQUAL shift to state 29
+## Reductions:
 -- On VALUE reduce production valexpr -> valexpr SLASH valexpr
 -- On TYPE reduce production valexpr -> valexpr SLASH valexpr
 -- On THEN reduce production valexpr -> valexpr SLASH valexpr
@@ -466,7 +611,11 @@ valexpr -> valexpr . GREATEREQUAL valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI 
 -- On COMMA reduce production valexpr -> valexpr SLASH valexpr
 
 State 29:
+## Known stack suffix:
+## valexpr EQUALEQUAL
+## LR(1) items:
 valexpr -> valexpr EQUALEQUAL . valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
+## Transitions:
 -- On LPAREN shift to state 7
 -- On LET shift to state 8
 -- On INT shift to state 12
@@ -477,8 +626,12 @@ valexpr -> valexpr EQUALEQUAL . valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SE
 -- On valexpr0 shift to state 23
 -- On valexpr shift to state 30
 -- On path shift to state 20
+## Reductions:
 
 State 30:
+## Known stack suffix:
+## valexpr EQUALEQUAL valexpr
+## LR(1) items:
 valexpr -> valexpr . COMMA valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr . PLUS valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr . MINUS valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
@@ -491,6 +644,7 @@ valexpr -> valexpr . LESS valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLO
 valexpr -> valexpr . LESSEQUAL valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr . GREATER valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr . GREATEREQUAL valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
+## Transitions:
 -- On STAR shift to state 25
 -- On SLASH shift to state 27
 -- On PLUS shift to state 31
@@ -502,6 +656,7 @@ valexpr -> valexpr . GREATEREQUAL valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI 
 -- On GREATER shift to state 43
 -- On EQUALEQUAL shift to state 29
 -- On COMMA shift to state 45
+## Reductions:
 -- On VALUE reduce production valexpr -> valexpr EQUALEQUAL valexpr
 -- On TYPE reduce production valexpr -> valexpr EQUALEQUAL valexpr
 -- On THEN reduce production valexpr -> valexpr EQUALEQUAL valexpr
@@ -514,7 +669,11 @@ valexpr -> valexpr . GREATEREQUAL valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI 
 -- On ELSE reduce production valexpr -> valexpr EQUALEQUAL valexpr
 
 State 31:
+## Known stack suffix:
+## valexpr PLUS
+## LR(1) items:
 valexpr -> valexpr PLUS . valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
+## Transitions:
 -- On LPAREN shift to state 7
 -- On LET shift to state 8
 -- On INT shift to state 12
@@ -525,8 +684,12 @@ valexpr -> valexpr PLUS . valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLO
 -- On valexpr0 shift to state 23
 -- On valexpr shift to state 32
 -- On path shift to state 20
+## Reductions:
 
 State 32:
+## Known stack suffix:
+## valexpr PLUS valexpr
+## LR(1) items:
 valexpr -> valexpr . COMMA valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr . PLUS valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr PLUS valexpr . [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
@@ -539,11 +702,13 @@ valexpr -> valexpr . LESS valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLO
 valexpr -> valexpr . LESSEQUAL valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr . GREATER valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr . GREATEREQUAL valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
+## Transitions:
 -- On STAR shift to state 25
 -- On SLASH shift to state 27
 -- On PLUS shift to state 31
 -- On MINUS shift to state 33
 -- On EQUALEQUAL shift to state 29
+## Reductions:
 -- On VALUE reduce production valexpr -> valexpr PLUS valexpr
 -- On TYPE reduce production valexpr -> valexpr PLUS valexpr
 -- On THEN reduce production valexpr -> valexpr PLUS valexpr
@@ -562,7 +727,11 @@ valexpr -> valexpr . GREATEREQUAL valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI 
 -- On COMMA reduce production valexpr -> valexpr PLUS valexpr
 
 State 33:
+## Known stack suffix:
+## valexpr MINUS
+## LR(1) items:
 valexpr -> valexpr MINUS . valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
+## Transitions:
 -- On LPAREN shift to state 7
 -- On LET shift to state 8
 -- On INT shift to state 12
@@ -573,8 +742,12 @@ valexpr -> valexpr MINUS . valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOL
 -- On valexpr0 shift to state 23
 -- On valexpr shift to state 34
 -- On path shift to state 20
+## Reductions:
 
 State 34:
+## Known stack suffix:
+## valexpr MINUS valexpr
+## LR(1) items:
 valexpr -> valexpr . COMMA valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr . PLUS valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr . MINUS valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
@@ -587,11 +760,13 @@ valexpr -> valexpr . LESS valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLO
 valexpr -> valexpr . LESSEQUAL valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr . GREATER valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr . GREATEREQUAL valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
+## Transitions:
 -- On STAR shift to state 25
 -- On SLASH shift to state 27
 -- On PLUS shift to state 31
 -- On MINUS shift to state 33
 -- On EQUALEQUAL shift to state 29
+## Reductions:
 -- On VALUE reduce production valexpr -> valexpr MINUS valexpr
 -- On TYPE reduce production valexpr -> valexpr MINUS valexpr
 -- On THEN reduce production valexpr -> valexpr MINUS valexpr
@@ -610,7 +785,11 @@ valexpr -> valexpr . GREATEREQUAL valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI 
 -- On COMMA reduce production valexpr -> valexpr MINUS valexpr
 
 State 35:
+## Known stack suffix:
+## valexpr LESSGREATER
+## LR(1) items:
 valexpr -> valexpr LESSGREATER . valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
+## Transitions:
 -- On LPAREN shift to state 7
 -- On LET shift to state 8
 -- On INT shift to state 12
@@ -621,8 +800,12 @@ valexpr -> valexpr LESSGREATER . valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI S
 -- On valexpr0 shift to state 23
 -- On valexpr shift to state 36
 -- On path shift to state 20
+## Reductions:
 
 State 36:
+## Known stack suffix:
+## valexpr LESSGREATER valexpr
+## LR(1) items:
 valexpr -> valexpr . COMMA valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr . PLUS valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr . MINUS valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
@@ -635,6 +818,7 @@ valexpr -> valexpr . LESS valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLO
 valexpr -> valexpr . LESSEQUAL valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr . GREATER valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr . GREATEREQUAL valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
+## Transitions:
 -- On STAR shift to state 25
 -- On SLASH shift to state 27
 -- On PLUS shift to state 31
@@ -645,6 +829,7 @@ valexpr -> valexpr . GREATEREQUAL valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI 
 -- On GREATEREQUAL shift to state 41
 -- On GREATER shift to state 43
 -- On EQUALEQUAL shift to state 29
+## Reductions:
 -- On VALUE reduce production valexpr -> valexpr LESSGREATER valexpr
 -- On TYPE reduce production valexpr -> valexpr LESSGREATER valexpr
 -- On THEN reduce production valexpr -> valexpr LESSGREATER valexpr
@@ -658,7 +843,11 @@ valexpr -> valexpr . GREATEREQUAL valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI 
 -- On COMMA reduce production valexpr -> valexpr LESSGREATER valexpr
 
 State 37:
+## Known stack suffix:
+## valexpr LESSEQUAL
+## LR(1) items:
 valexpr -> valexpr LESSEQUAL . valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
+## Transitions:
 -- On LPAREN shift to state 7
 -- On LET shift to state 8
 -- On INT shift to state 12
@@ -669,8 +858,12 @@ valexpr -> valexpr LESSEQUAL . valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEM
 -- On valexpr0 shift to state 23
 -- On valexpr shift to state 38
 -- On path shift to state 20
+## Reductions:
 
 State 38:
+## Known stack suffix:
+## valexpr LESSEQUAL valexpr
+## LR(1) items:
 valexpr -> valexpr . COMMA valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr . PLUS valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr . MINUS valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
@@ -683,6 +876,7 @@ valexpr -> valexpr . LESSEQUAL valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEM
 valexpr -> valexpr LESSEQUAL valexpr . [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr . GREATER valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr . GREATEREQUAL valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
+## Transitions:
 -- On STAR shift to state 25
 -- On SLASH shift to state 27
 -- On PLUS shift to state 31
@@ -693,6 +887,7 @@ valexpr -> valexpr . GREATEREQUAL valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI 
 -- On GREATEREQUAL shift to state 41
 -- On GREATER shift to state 43
 -- On EQUALEQUAL shift to state 29
+## Reductions:
 -- On VALUE reduce production valexpr -> valexpr LESSEQUAL valexpr
 -- On TYPE reduce production valexpr -> valexpr LESSEQUAL valexpr
 -- On THEN reduce production valexpr -> valexpr LESSEQUAL valexpr
@@ -706,7 +901,11 @@ valexpr -> valexpr . GREATEREQUAL valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI 
 -- On COMMA reduce production valexpr -> valexpr LESSEQUAL valexpr
 
 State 39:
+## Known stack suffix:
+## valexpr LESS
+## LR(1) items:
 valexpr -> valexpr LESS . valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
+## Transitions:
 -- On LPAREN shift to state 7
 -- On LET shift to state 8
 -- On INT shift to state 12
@@ -717,8 +916,12 @@ valexpr -> valexpr LESS . valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLO
 -- On valexpr0 shift to state 23
 -- On valexpr shift to state 40
 -- On path shift to state 20
+## Reductions:
 
 State 40:
+## Known stack suffix:
+## valexpr LESS valexpr
+## LR(1) items:
 valexpr -> valexpr . COMMA valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr . PLUS valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr . MINUS valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
@@ -731,6 +934,7 @@ valexpr -> valexpr LESS valexpr . [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLO
 valexpr -> valexpr . LESSEQUAL valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr . GREATER valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr . GREATEREQUAL valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
+## Transitions:
 -- On STAR shift to state 25
 -- On SLASH shift to state 27
 -- On PLUS shift to state 31
@@ -741,6 +945,7 @@ valexpr -> valexpr . GREATEREQUAL valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI 
 -- On GREATEREQUAL shift to state 41
 -- On GREATER shift to state 43
 -- On EQUALEQUAL shift to state 29
+## Reductions:
 -- On VALUE reduce production valexpr -> valexpr LESS valexpr
 -- On TYPE reduce production valexpr -> valexpr LESS valexpr
 -- On THEN reduce production valexpr -> valexpr LESS valexpr
@@ -754,7 +959,11 @@ valexpr -> valexpr . GREATEREQUAL valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI 
 -- On COMMA reduce production valexpr -> valexpr LESS valexpr
 
 State 41:
+## Known stack suffix:
+## valexpr GREATEREQUAL
+## LR(1) items:
 valexpr -> valexpr GREATEREQUAL . valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
+## Transitions:
 -- On LPAREN shift to state 7
 -- On LET shift to state 8
 -- On INT shift to state 12
@@ -765,8 +974,12 @@ valexpr -> valexpr GREATEREQUAL . valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI 
 -- On valexpr0 shift to state 23
 -- On valexpr shift to state 42
 -- On path shift to state 20
+## Reductions:
 
 State 42:
+## Known stack suffix:
+## valexpr GREATEREQUAL valexpr
+## LR(1) items:
 valexpr -> valexpr . COMMA valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr . PLUS valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr . MINUS valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
@@ -779,6 +992,7 @@ valexpr -> valexpr . LESSEQUAL valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEM
 valexpr -> valexpr . GREATER valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr . GREATEREQUAL valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr GREATEREQUAL valexpr . [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
+## Transitions:
 -- On STAR shift to state 25
 -- On SLASH shift to state 27
 -- On PLUS shift to state 31
@@ -789,6 +1003,7 @@ valexpr -> valexpr GREATEREQUAL valexpr . [ VALUE TYPE THEN STAR SLASH SEMISEMI 
 -- On GREATEREQUAL shift to state 41
 -- On GREATER shift to state 43
 -- On EQUALEQUAL shift to state 29
+## Reductions:
 -- On VALUE reduce production valexpr -> valexpr GREATEREQUAL valexpr
 -- On TYPE reduce production valexpr -> valexpr GREATEREQUAL valexpr
 -- On THEN reduce production valexpr -> valexpr GREATEREQUAL valexpr
@@ -802,7 +1017,11 @@ valexpr -> valexpr GREATEREQUAL valexpr . [ VALUE TYPE THEN STAR SLASH SEMISEMI 
 -- On COMMA reduce production valexpr -> valexpr GREATEREQUAL valexpr
 
 State 43:
+## Known stack suffix:
+## valexpr GREATER
+## LR(1) items:
 valexpr -> valexpr GREATER . valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
+## Transitions:
 -- On LPAREN shift to state 7
 -- On LET shift to state 8
 -- On INT shift to state 12
@@ -813,8 +1032,12 @@ valexpr -> valexpr GREATER . valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMIC
 -- On valexpr0 shift to state 23
 -- On valexpr shift to state 44
 -- On path shift to state 20
+## Reductions:
 
 State 44:
+## Known stack suffix:
+## valexpr GREATER valexpr
+## LR(1) items:
 valexpr -> valexpr . COMMA valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr . PLUS valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr . MINUS valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
@@ -827,6 +1050,7 @@ valexpr -> valexpr . LESSEQUAL valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEM
 valexpr -> valexpr . GREATER valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr GREATER valexpr . [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr . GREATEREQUAL valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
+## Transitions:
 -- On STAR shift to state 25
 -- On SLASH shift to state 27
 -- On PLUS shift to state 31
@@ -837,6 +1061,7 @@ valexpr -> valexpr . GREATEREQUAL valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI 
 -- On GREATEREQUAL shift to state 41
 -- On GREATER shift to state 43
 -- On EQUALEQUAL shift to state 29
+## Reductions:
 -- On VALUE reduce production valexpr -> valexpr GREATER valexpr
 -- On TYPE reduce production valexpr -> valexpr GREATER valexpr
 -- On THEN reduce production valexpr -> valexpr GREATER valexpr
@@ -850,7 +1075,11 @@ valexpr -> valexpr . GREATEREQUAL valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI 
 -- On COMMA reduce production valexpr -> valexpr GREATER valexpr
 
 State 45:
+## Known stack suffix:
+## valexpr COMMA
+## LR(1) items:
 valexpr -> valexpr COMMA . valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
+## Transitions:
 -- On LPAREN shift to state 7
 -- On LET shift to state 8
 -- On INT shift to state 12
@@ -861,8 +1090,12 @@ valexpr -> valexpr COMMA . valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOL
 -- On valexpr0 shift to state 23
 -- On valexpr shift to state 46
 -- On path shift to state 20
+## Reductions:
 
 State 46:
+## Known stack suffix:
+## valexpr COMMA valexpr
+## LR(1) items:
 valexpr -> valexpr . COMMA valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr COMMA valexpr . [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr . PLUS valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
@@ -875,6 +1108,7 @@ valexpr -> valexpr . LESS valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLO
 valexpr -> valexpr . LESSEQUAL valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr . GREATER valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr . GREATEREQUAL valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
+## Transitions:
 -- On STAR shift to state 25
 -- On SLASH shift to state 27
 -- On PLUS shift to state 31
@@ -886,6 +1120,7 @@ valexpr -> valexpr . GREATEREQUAL valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI 
 -- On GREATER shift to state 43
 -- On EQUALEQUAL shift to state 29
 -- On COMMA shift to state 45
+## Reductions:
 -- On VALUE reduce production valexpr -> valexpr COMMA valexpr
 -- On TYPE reduce production valexpr -> valexpr COMMA valexpr
 -- On THEN reduce production valexpr -> valexpr COMMA valexpr
@@ -898,6 +1133,9 @@ valexpr -> valexpr . GREATEREQUAL valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI 
 -- On ELSE reduce production valexpr -> valexpr COMMA valexpr
 
 State 47:
+## Known stack suffix:
+## IF valexpr
+## LR(1) items:
 valexpr -> valexpr . COMMA valexpr [ THEN STAR SLASH PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUALEQUAL COMMA ]
 valexpr -> valexpr . PLUS valexpr [ THEN STAR SLASH PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUALEQUAL COMMA ]
 valexpr -> valexpr . MINUS valexpr [ THEN STAR SLASH PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUALEQUAL COMMA ]
@@ -910,6 +1148,7 @@ valexpr -> valexpr . LESSEQUAL valexpr [ THEN STAR SLASH PLUS MINUS LESSGREATER 
 valexpr -> valexpr . GREATER valexpr [ THEN STAR SLASH PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUALEQUAL COMMA ]
 valexpr -> valexpr . GREATEREQUAL valexpr [ THEN STAR SLASH PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUALEQUAL COMMA ]
 valexpr -> IF valexpr . THEN valexpr ELSE valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
+## Transitions:
 -- On THEN shift to state 48
 -- On STAR shift to state 25
 -- On SLASH shift to state 27
@@ -922,9 +1161,14 @@ valexpr -> IF valexpr . THEN valexpr ELSE valexpr [ VALUE TYPE THEN STAR SLASH S
 -- On GREATER shift to state 43
 -- On EQUALEQUAL shift to state 29
 -- On COMMA shift to state 45
+## Reductions:
 
 State 48:
+## Known stack suffix:
+## IF valexpr THEN
+## LR(1) items:
 valexpr -> IF valexpr THEN . valexpr ELSE valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
+## Transitions:
 -- On LPAREN shift to state 7
 -- On LET shift to state 8
 -- On INT shift to state 12
@@ -935,8 +1179,12 @@ valexpr -> IF valexpr THEN . valexpr ELSE valexpr [ VALUE TYPE THEN STAR SLASH S
 -- On valexpr0 shift to state 23
 -- On valexpr shift to state 49
 -- On path shift to state 20
+## Reductions:
 
 State 49:
+## Known stack suffix:
+## IF valexpr THEN valexpr
+## LR(1) items:
 valexpr -> valexpr . COMMA valexpr [ STAR SLASH PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUALEQUAL ELSE COMMA ]
 valexpr -> valexpr . PLUS valexpr [ STAR SLASH PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUALEQUAL ELSE COMMA ]
 valexpr -> valexpr . MINUS valexpr [ STAR SLASH PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUALEQUAL ELSE COMMA ]
@@ -949,6 +1197,7 @@ valexpr -> valexpr . LESSEQUAL valexpr [ STAR SLASH PLUS MINUS LESSGREATER LESSE
 valexpr -> valexpr . GREATER valexpr [ STAR SLASH PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUALEQUAL ELSE COMMA ]
 valexpr -> valexpr . GREATEREQUAL valexpr [ STAR SLASH PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUALEQUAL ELSE COMMA ]
 valexpr -> IF valexpr THEN valexpr . ELSE valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
+## Transitions:
 -- On STAR shift to state 25
 -- On SLASH shift to state 27
 -- On PLUS shift to state 31
@@ -961,9 +1210,14 @@ valexpr -> IF valexpr THEN valexpr . ELSE valexpr [ VALUE TYPE THEN STAR SLASH S
 -- On EQUALEQUAL shift to state 29
 -- On ELSE shift to state 50
 -- On COMMA shift to state 45
+## Reductions:
 
 State 50:
+## Known stack suffix:
+## IF valexpr THEN valexpr ELSE
+## LR(1) items:
 valexpr -> IF valexpr THEN valexpr ELSE . valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
+## Transitions:
 -- On LPAREN shift to state 7
 -- On LET shift to state 8
 -- On INT shift to state 12
@@ -974,8 +1228,12 @@ valexpr -> IF valexpr THEN valexpr ELSE . valexpr [ VALUE TYPE THEN STAR SLASH S
 -- On valexpr0 shift to state 23
 -- On valexpr shift to state 51
 -- On path shift to state 20
+## Reductions:
 
 State 51:
+## Known stack suffix:
+## IF valexpr THEN valexpr ELSE valexpr
+## LR(1) items:
 valexpr -> valexpr . COMMA valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr . PLUS valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr . MINUS valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
@@ -988,6 +1246,7 @@ valexpr -> valexpr . LESSEQUAL valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEM
 valexpr -> valexpr . GREATER valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr . GREATEREQUAL valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> IF valexpr THEN valexpr ELSE valexpr . [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
+## Transitions:
 -- On STAR shift to state 25
 -- On SLASH shift to state 27
 -- On PLUS shift to state 31
@@ -999,6 +1258,7 @@ valexpr -> IF valexpr THEN valexpr ELSE valexpr . [ VALUE TYPE THEN STAR SLASH S
 -- On GREATER shift to state 43
 -- On EQUALEQUAL shift to state 29
 -- On COMMA shift to state 45
+## Reductions:
 -- On VALUE reduce production valexpr -> IF valexpr THEN valexpr ELSE valexpr
 -- On TYPE reduce production valexpr -> IF valexpr THEN valexpr ELSE valexpr
 -- On THEN reduce production valexpr -> IF valexpr THEN valexpr ELSE valexpr
@@ -1011,6 +1271,9 @@ valexpr -> IF valexpr THEN valexpr ELSE valexpr . [ VALUE TYPE THEN STAR SLASH S
 -- On ELSE reduce production valexpr -> IF valexpr THEN valexpr ELSE valexpr
 
 State 52:
+## Known stack suffix:
+## LET IDENT valbind IN valexpr
+## LR(1) items:
 valexpr -> valexpr . COMMA valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr . PLUS valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr . MINUS valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
@@ -1023,6 +1286,7 @@ valexpr -> valexpr . LESSEQUAL valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEM
 valexpr -> valexpr . GREATER valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> valexpr . GREATEREQUAL valexpr [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
 valexpr -> LET IDENT valbind IN valexpr . [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
+## Transitions:
 -- On STAR shift to state 25
 -- On SLASH shift to state 27
 -- On PLUS shift to state 31
@@ -1034,6 +1298,7 @@ valexpr -> LET IDENT valbind IN valexpr . [ VALUE TYPE THEN STAR SLASH SEMISEMI 
 -- On GREATER shift to state 43
 -- On EQUALEQUAL shift to state 29
 -- On COMMA shift to state 45
+## Reductions:
 -- On VALUE reduce production valexpr -> LET IDENT valbind IN valexpr
 -- On TYPE reduce production valexpr -> LET IDENT valbind IN valexpr
 -- On THEN reduce production valexpr -> LET IDENT valbind IN valexpr
@@ -1046,6 +1311,9 @@ valexpr -> LET IDENT valbind IN valexpr . [ VALUE TYPE THEN STAR SLASH SEMISEMI 
 -- On ELSE reduce production valexpr -> LET IDENT valbind IN valexpr
 
 State 53:
+## Known stack suffix:
+## LPAREN valexpr
+## LR(1) items:
 valexpr -> valexpr . COMMA valexpr [ STAR SLASH RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUALEQUAL COMMA ]
 valexpr -> valexpr . PLUS valexpr [ STAR SLASH RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUALEQUAL COMMA ]
 valexpr -> valexpr . MINUS valexpr [ STAR SLASH RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUALEQUAL COMMA ]
@@ -1058,6 +1326,7 @@ valexpr -> valexpr . LESSEQUAL valexpr [ STAR SLASH RPAREN PLUS MINUS LESSGREATE
 valexpr -> valexpr . GREATER valexpr [ STAR SLASH RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUALEQUAL COMMA ]
 valexpr -> valexpr . GREATEREQUAL valexpr [ STAR SLASH RPAREN PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUALEQUAL COMMA ]
 valexpr0 -> LPAREN valexpr . RPAREN [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LPAREN LESSGREATER LESSEQUAL LESS INT IN IDENT GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
+## Transitions:
 -- On STAR shift to state 25
 -- On SLASH shift to state 27
 -- On RPAREN shift to state 54
@@ -1070,9 +1339,15 @@ valexpr0 -> LPAREN valexpr . RPAREN [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICO
 -- On GREATER shift to state 43
 -- On EQUALEQUAL shift to state 29
 -- On COMMA shift to state 45
+## Reductions:
 
 State 54:
+## Known stack suffix:
+## LPAREN valexpr RPAREN
+## LR(1) items:
 valexpr0 -> LPAREN valexpr RPAREN . [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICOLON RPAREN PLUS MODULE MINUS LPAREN LESSGREATER LESSEQUAL LESS INT IN IDENT GREATEREQUAL GREATER EQUALEQUAL END ELSE COMMA ]
+## Transitions:
+## Reductions:
 -- On VALUE reduce production valexpr0 -> LPAREN valexpr RPAREN
 -- On TYPE reduce production valexpr0 -> LPAREN valexpr RPAREN
 -- On THEN reduce production valexpr0 -> LPAREN valexpr RPAREN
@@ -1099,6 +1374,9 @@ valexpr0 -> LPAREN valexpr RPAREN . [ VALUE TYPE THEN STAR SLASH SEMISEMI SEMICO
 -- On COMMA reduce production valexpr0 -> LPAREN valexpr RPAREN
 
 State 55:
+## Known stack suffix:
+## EQUAL valexpr
+## LR(1) items:
 valbind -> EQUAL valexpr . [ VALUE TYPE SEMISEMI SEMICOLON MODULE IN END ]
 valexpr -> valexpr . COMMA valexpr [ VALUE TYPE STAR SLASH SEMISEMI SEMICOLON PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END COMMA ]
 valexpr -> valexpr . PLUS valexpr [ VALUE TYPE STAR SLASH SEMISEMI SEMICOLON PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END COMMA ]
@@ -1111,6 +1389,7 @@ valexpr -> valexpr . LESS valexpr [ VALUE TYPE STAR SLASH SEMISEMI SEMICOLON PLU
 valexpr -> valexpr . LESSEQUAL valexpr [ VALUE TYPE STAR SLASH SEMISEMI SEMICOLON PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END COMMA ]
 valexpr -> valexpr . GREATER valexpr [ VALUE TYPE STAR SLASH SEMISEMI SEMICOLON PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END COMMA ]
 valexpr -> valexpr . GREATEREQUAL valexpr [ VALUE TYPE STAR SLASH SEMISEMI SEMICOLON PLUS MODULE MINUS LESSGREATER LESSEQUAL LESS IN GREATEREQUAL GREATER EQUALEQUAL END COMMA ]
+## Transitions:
 -- On STAR shift to state 25
 -- On SLASH shift to state 27
 -- On PLUS shift to state 31
@@ -1122,6 +1401,7 @@ valexpr -> valexpr . GREATEREQUAL valexpr [ VALUE TYPE STAR SLASH SEMISEMI SEMIC
 -- On GREATER shift to state 43
 -- On EQUALEQUAL shift to state 29
 -- On COMMA shift to state 45
+## Reductions:
 -- On VALUE reduce production valbind -> EQUAL valexpr
 -- On TYPE reduce production valbind -> EQUAL valexpr
 -- On SEMISEMI reduce production valbind -> EQUAL valexpr
@@ -1131,7 +1411,12 @@ valexpr -> valexpr . GREATEREQUAL valexpr [ VALUE TYPE STAR SLASH SEMISEMI SEMIC
 -- On END reduce production valbind -> EQUAL valexpr
 
 State 56:
+## Known stack suffix:
+## IDENT valbind
+## LR(1) items:
 valbind -> IDENT valbind . [ VALUE TYPE SEMISEMI SEMICOLON MODULE IN END ]
+## Transitions:
+## Reductions:
 -- On VALUE reduce production valbind -> IDENT valbind
 -- On TYPE reduce production valbind -> IDENT valbind
 -- On SEMISEMI reduce production valbind -> IDENT valbind
@@ -1141,7 +1426,12 @@ valbind -> IDENT valbind . [ VALUE TYPE SEMISEMI SEMICOLON MODULE IN END ]
 -- On END reduce production valbind -> IDENT valbind
 
 State 57:
+## Known stack suffix:
+## VALUE IDENT valbind
+## LR(1) items:
 structure_item -> VALUE IDENT valbind . [ VALUE TYPE SEMISEMI SEMICOLON MODULE END ]
+## Transitions:
+## Reductions:
 -- On VALUE reduce production structure_item -> VALUE IDENT valbind
 -- On TYPE reduce production structure_item -> VALUE IDENT valbind
 -- On SEMISEMI reduce production structure_item -> VALUE IDENT valbind
@@ -1150,77 +1440,147 @@ structure_item -> VALUE IDENT valbind . [ VALUE TYPE SEMISEMI SEMICOLON MODULE E
 -- On END reduce production structure_item -> VALUE IDENT valbind
 
 State 58:
+## Known stack suffix:
+## TYPE
+## LR(1) items:
 structure_item -> TYPE . typedef [ VALUE TYPE SEMISEMI SEMICOLON MODULE END ]
+## Transitions:
 -- On QUOTE shift to state 59
 -- On LPAREN shift to state 61
 -- On typeparams shift to state 67
 -- On typeparam shift to state 86
 -- On typedef shift to state 87
+## Reductions:
 -- On IDENT reduce production typeparams ->
 
 State 59:
+## Known stack suffix:
+## QUOTE
+## LR(1) items:
 typeparam -> QUOTE . IDENT [ RPAREN IDENT COMMA ]
+## Transitions:
 -- On IDENT shift to state 60
+## Reductions:
 
 State 60:
+## Known stack suffix:
+## QUOTE IDENT
+## LR(1) items:
 typeparam -> QUOTE IDENT . [ RPAREN IDENT COMMA ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production typeparam -> QUOTE IDENT
 -- On IDENT reduce production typeparam -> QUOTE IDENT
 -- On COMMA reduce production typeparam -> QUOTE IDENT
 
 State 61:
+## Known stack suffix:
+## LPAREN
+## LR(1) items:
 typeparams -> LPAREN . typeparamlist RPAREN [ IDENT ]
+## Transitions:
 -- On QUOTE shift to state 59
 -- On typeparamlist shift to state 62
 -- On typeparam shift to state 66
+## Reductions:
 
 State 62:
+## Known stack suffix:
+## LPAREN typeparamlist
+## LR(1) items:
 typeparamlist -> typeparamlist . COMMA typeparam [ RPAREN COMMA ]
 typeparams -> LPAREN typeparamlist . RPAREN [ IDENT ]
+## Transitions:
 -- On RPAREN shift to state 63
 -- On COMMA shift to state 64
+## Reductions:
 
 State 63:
+## Known stack suffix:
+## LPAREN typeparamlist RPAREN
+## LR(1) items:
 typeparams -> LPAREN typeparamlist RPAREN . [ IDENT ]
+## Transitions:
+## Reductions:
 -- On IDENT reduce production typeparams -> LPAREN typeparamlist RPAREN
 
 State 64:
+## Known stack suffix:
+## typeparamlist COMMA
+## LR(1) items:
 typeparamlist -> typeparamlist COMMA . typeparam [ RPAREN COMMA ]
+## Transitions:
 -- On QUOTE shift to state 59
 -- On typeparam shift to state 65
+## Reductions:
 
 State 65:
+## Known stack suffix:
+## typeparamlist COMMA typeparam
+## LR(1) items:
 typeparamlist -> typeparamlist COMMA typeparam . [ RPAREN COMMA ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production typeparamlist -> typeparamlist COMMA typeparam
 -- On COMMA reduce production typeparamlist -> typeparamlist COMMA typeparam
 
 State 66:
+## Known stack suffix:
+## typeparam
+## LR(1) items:
 typeparamlist -> typeparam . [ RPAREN COMMA ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production typeparamlist -> typeparam
 -- On COMMA reduce production typeparamlist -> typeparam
 
 State 67:
+## Known stack suffix:
+## typeparams
+## LR(1) items:
 typedef -> typeparams . IDENT EQUAL simpletype [ VALUE TYPE SEMISEMI SEMICOLON MODULE END ]
+## Transitions:
 -- On IDENT shift to state 68
+## Reductions:
 
 State 68:
+## Known stack suffix:
+## typeparams IDENT
+## LR(1) items:
 typedef -> typeparams IDENT . EQUAL simpletype [ VALUE TYPE SEMISEMI SEMICOLON MODULE END ]
+## Transitions:
 -- On EQUAL shift to state 69
+## Reductions:
 
 State 69:
+## Known stack suffix:
+## typeparams IDENT EQUAL
+## LR(1) items:
 typedef -> typeparams IDENT EQUAL . simpletype [ VALUE TYPE SEMISEMI SEMICOLON MODULE END ]
+## Transitions:
 -- On QUOTE shift to state 70
 -- On LPAREN shift to state 72
 -- On IDENT shift to state 14
 -- On simpletype shift to state 85
 -- On path shift to state 81
+## Reductions:
 
 State 70:
+## Known stack suffix:
+## QUOTE
+## LR(1) items:
 simpletype -> QUOTE . IDENT [ VALUE TYPE STAR SEMISEMI SEMICOLON RPAREN MODULE IDENT END COMMA ARROW ]
+## Transitions:
 -- On IDENT shift to state 71
+## Reductions:
 
 State 71:
+## Known stack suffix:
+## QUOTE IDENT
+## LR(1) items:
 simpletype -> QUOTE IDENT . [ VALUE TYPE STAR SEMISEMI SEMICOLON RPAREN MODULE IDENT END COMMA ARROW ]
+## Transitions:
+## Reductions:
 -- On VALUE reduce production simpletype -> QUOTE IDENT
 -- On TYPE reduce production simpletype -> QUOTE IDENT
 -- On STAR reduce production simpletype -> QUOTE IDENT
@@ -1234,29 +1594,49 @@ simpletype -> QUOTE IDENT . [ VALUE TYPE STAR SEMISEMI SEMICOLON RPAREN MODULE I
 -- On ARROW reduce production simpletype -> QUOTE IDENT
 
 State 72:
+## Known stack suffix:
+## LPAREN
+## LR(1) items:
 simpletype -> LPAREN . simpletypelist RPAREN path [ VALUE TYPE STAR SEMISEMI SEMICOLON RPAREN MODULE IDENT END COMMA ARROW ]
+## Transitions:
 -- On QUOTE shift to state 70
 -- On LPAREN shift to state 72
 -- On IDENT shift to state 14
 -- On simpletypelist shift to state 73
 -- On simpletype shift to state 84
 -- On path shift to state 81
+## Reductions:
 
 State 73:
+## Known stack suffix:
+## LPAREN simpletypelist
+## LR(1) items:
 simpletype -> LPAREN simpletypelist . RPAREN path [ VALUE TYPE STAR SEMISEMI SEMICOLON RPAREN MODULE IDENT END COMMA ARROW ]
 simpletypelist -> simpletypelist . COMMA simpletype [ RPAREN COMMA ]
+## Transitions:
 -- On RPAREN shift to state 74
 -- On COMMA shift to state 76
+## Reductions:
 
 State 74:
+## Known stack suffix:
+## LPAREN simpletypelist RPAREN
+## LR(1) items:
 simpletype -> LPAREN simpletypelist RPAREN . path [ VALUE TYPE STAR SEMISEMI SEMICOLON RPAREN MODULE IDENT END COMMA ARROW ]
+## Transitions:
 -- On IDENT shift to state 14
 -- On path shift to state 75
+## Reductions:
 
 State 75:
+## Known stack suffix:
+## LPAREN simpletypelist RPAREN path
+## LR(1) items:
 path -> path . DOT IDENT [ VALUE TYPE STAR SEMISEMI SEMICOLON RPAREN MODULE IDENT END DOT COMMA ARROW ]
 simpletype -> LPAREN simpletypelist RPAREN path . [ VALUE TYPE STAR SEMISEMI SEMICOLON RPAREN MODULE IDENT END COMMA ARROW ]
+## Transitions:
 -- On DOT shift to state 21
+## Reductions:
 -- On VALUE reduce production simpletype -> LPAREN simpletypelist RPAREN path
 -- On TYPE reduce production simpletype -> LPAREN simpletypelist RPAREN path
 -- On STAR reduce production simpletype -> LPAREN simpletypelist RPAREN path
@@ -1270,41 +1650,61 @@ simpletype -> LPAREN simpletypelist RPAREN path . [ VALUE TYPE STAR SEMISEMI SEM
 -- On ARROW reduce production simpletype -> LPAREN simpletypelist RPAREN path
 
 State 76:
+## Known stack suffix:
+## simpletypelist COMMA
+## LR(1) items:
 simpletypelist -> simpletypelist COMMA . simpletype [ RPAREN COMMA ]
+## Transitions:
 -- On QUOTE shift to state 70
 -- On LPAREN shift to state 72
 -- On IDENT shift to state 14
 -- On simpletype shift to state 77
 -- On path shift to state 81
+## Reductions:
 
 State 77:
+## Known stack suffix:
+## simpletypelist COMMA simpletype
+## LR(1) items:
 simpletype -> simpletype . ARROW simpletype [ STAR RPAREN IDENT COMMA ARROW ]
 simpletype -> simpletype . STAR simpletype [ STAR RPAREN IDENT COMMA ARROW ]
 simpletype -> simpletype . path [ STAR RPAREN IDENT COMMA ARROW ]
 simpletypelist -> simpletypelist COMMA simpletype . [ RPAREN COMMA ]
+## Transitions:
 -- On STAR shift to state 78
 -- On IDENT shift to state 14
 -- On ARROW shift to state 82
 -- On path shift to state 80
+## Reductions:
 -- On RPAREN reduce production simpletypelist -> simpletypelist COMMA simpletype
 -- On COMMA reduce production simpletypelist -> simpletypelist COMMA simpletype
 
 State 78:
+## Known stack suffix:
+## simpletype STAR
+## LR(1) items:
 simpletype -> simpletype STAR . simpletype [ VALUE TYPE STAR SEMISEMI SEMICOLON RPAREN MODULE IDENT END COMMA ARROW ]
+## Transitions:
 -- On QUOTE shift to state 70
 -- On LPAREN shift to state 72
 -- On IDENT shift to state 14
 -- On simpletype shift to state 79
 -- On path shift to state 81
+## Reductions:
 
 State 79:
+## Known stack suffix:
+## simpletype STAR simpletype
+## LR(1) items:
 simpletype -> simpletype . ARROW simpletype [ VALUE TYPE STAR SEMISEMI SEMICOLON RPAREN MODULE IDENT END COMMA ARROW ]
 simpletype -> simpletype . STAR simpletype [ VALUE TYPE STAR SEMISEMI SEMICOLON RPAREN MODULE IDENT END COMMA ARROW ]
 simpletype -> simpletype STAR simpletype . [ VALUE TYPE STAR SEMISEMI SEMICOLON RPAREN MODULE IDENT END COMMA ARROW ]
 simpletype -> simpletype . path [ VALUE TYPE STAR SEMISEMI SEMICOLON RPAREN MODULE IDENT END COMMA ARROW ]
+## Transitions:
 -- On STAR shift to state 78
 -- On IDENT shift to state 14
 -- On path shift to state 80
+## Reductions:
 -- On VALUE reduce production simpletype -> simpletype STAR simpletype
 -- On TYPE reduce production simpletype -> simpletype STAR simpletype
 -- On SEMISEMI reduce production simpletype -> simpletype STAR simpletype
@@ -1316,9 +1716,14 @@ simpletype -> simpletype . path [ VALUE TYPE STAR SEMISEMI SEMICOLON RPAREN MODU
 -- On ARROW reduce production simpletype -> simpletype STAR simpletype
 
 State 80:
+## Known stack suffix:
+## simpletype path
+## LR(1) items:
 path -> path . DOT IDENT [ VALUE TYPE STAR SEMISEMI SEMICOLON RPAREN MODULE IDENT END DOT COMMA ARROW ]
 simpletype -> simpletype path . [ VALUE TYPE STAR SEMISEMI SEMICOLON RPAREN MODULE IDENT END COMMA ARROW ]
+## Transitions:
 -- On DOT shift to state 21
+## Reductions:
 -- On VALUE reduce production simpletype -> simpletype path
 -- On TYPE reduce production simpletype -> simpletype path
 -- On STAR reduce production simpletype -> simpletype path
@@ -1332,9 +1737,14 @@ simpletype -> simpletype path . [ VALUE TYPE STAR SEMISEMI SEMICOLON RPAREN MODU
 -- On ARROW reduce production simpletype -> simpletype path
 
 State 81:
+## Known stack suffix:
+## path
+## LR(1) items:
 path -> path . DOT IDENT [ VALUE TYPE STAR SEMISEMI SEMICOLON RPAREN MODULE IDENT END DOT COMMA ARROW ]
 simpletype -> path . [ VALUE TYPE STAR SEMISEMI SEMICOLON RPAREN MODULE IDENT END COMMA ARROW ]
+## Transitions:
 -- On DOT shift to state 21
+## Reductions:
 -- On VALUE reduce production simpletype -> path
 -- On TYPE reduce production simpletype -> path
 -- On STAR reduce production simpletype -> path
@@ -1348,22 +1758,32 @@ simpletype -> path . [ VALUE TYPE STAR SEMISEMI SEMICOLON RPAREN MODULE IDENT EN
 -- On ARROW reduce production simpletype -> path
 
 State 82:
+## Known stack suffix:
+## simpletype ARROW
+## LR(1) items:
 simpletype -> simpletype ARROW . simpletype [ VALUE TYPE STAR SEMISEMI SEMICOLON RPAREN MODULE IDENT END COMMA ARROW ]
+## Transitions:
 -- On QUOTE shift to state 70
 -- On LPAREN shift to state 72
 -- On IDENT shift to state 14
 -- On simpletype shift to state 83
 -- On path shift to state 81
+## Reductions:
 
 State 83:
+## Known stack suffix:
+## simpletype ARROW simpletype
+## LR(1) items:
 simpletype -> simpletype . ARROW simpletype [ VALUE TYPE STAR SEMISEMI SEMICOLON RPAREN MODULE IDENT END COMMA ARROW ]
 simpletype -> simpletype ARROW simpletype . [ VALUE TYPE STAR SEMISEMI SEMICOLON RPAREN MODULE IDENT END COMMA ARROW ]
 simpletype -> simpletype . STAR simpletype [ VALUE TYPE STAR SEMISEMI SEMICOLON RPAREN MODULE IDENT END COMMA ARROW ]
 simpletype -> simpletype . path [ VALUE TYPE STAR SEMISEMI SEMICOLON RPAREN MODULE IDENT END COMMA ARROW ]
+## Transitions:
 -- On STAR shift to state 78
 -- On IDENT shift to state 14
 -- On ARROW shift to state 82
 -- On path shift to state 80
+## Reductions:
 -- On VALUE reduce production simpletype -> simpletype ARROW simpletype
 -- On TYPE reduce production simpletype -> simpletype ARROW simpletype
 -- On SEMISEMI reduce production simpletype -> simpletype ARROW simpletype
@@ -1374,26 +1794,36 @@ simpletype -> simpletype . path [ VALUE TYPE STAR SEMISEMI SEMICOLON RPAREN MODU
 -- On COMMA reduce production simpletype -> simpletype ARROW simpletype
 
 State 84:
+## Known stack suffix:
+## simpletype
+## LR(1) items:
 simpletype -> simpletype . ARROW simpletype [ STAR RPAREN IDENT COMMA ARROW ]
 simpletype -> simpletype . STAR simpletype [ STAR RPAREN IDENT COMMA ARROW ]
 simpletype -> simpletype . path [ STAR RPAREN IDENT COMMA ARROW ]
 simpletypelist -> simpletype . [ RPAREN COMMA ]
+## Transitions:
 -- On STAR shift to state 78
 -- On IDENT shift to state 14
 -- On ARROW shift to state 82
 -- On path shift to state 80
+## Reductions:
 -- On RPAREN reduce production simpletypelist -> simpletype
 -- On COMMA reduce production simpletypelist -> simpletype
 
 State 85:
+## Known stack suffix:
+## typeparams IDENT EQUAL simpletype
+## LR(1) items:
 simpletype -> simpletype . ARROW simpletype [ VALUE TYPE STAR SEMISEMI SEMICOLON MODULE IDENT END ARROW ]
 simpletype -> simpletype . STAR simpletype [ VALUE TYPE STAR SEMISEMI SEMICOLON MODULE IDENT END ARROW ]
 simpletype -> simpletype . path [ VALUE TYPE STAR SEMISEMI SEMICOLON MODULE IDENT END ARROW ]
 typedef -> typeparams IDENT EQUAL simpletype . [ VALUE TYPE SEMISEMI SEMICOLON MODULE END ]
+## Transitions:
 -- On STAR shift to state 78
 -- On IDENT shift to state 14
 -- On ARROW shift to state 82
 -- On path shift to state 80
+## Reductions:
 -- On VALUE reduce production typedef -> typeparams IDENT EQUAL simpletype
 -- On TYPE reduce production typedef -> typeparams IDENT EQUAL simpletype
 -- On SEMISEMI reduce production typedef -> typeparams IDENT EQUAL simpletype
@@ -1402,11 +1832,21 @@ typedef -> typeparams IDENT EQUAL simpletype . [ VALUE TYPE SEMISEMI SEMICOLON M
 -- On END reduce production typedef -> typeparams IDENT EQUAL simpletype
 
 State 86:
+## Known stack suffix:
+## typeparam
+## LR(1) items:
 typeparams -> typeparam . [ IDENT ]
+## Transitions:
+## Reductions:
 -- On IDENT reduce production typeparams -> typeparam
 
 State 87:
+## Known stack suffix:
+## TYPE typedef
+## LR(1) items:
 structure_item -> TYPE typedef . [ VALUE TYPE SEMISEMI SEMICOLON MODULE END ]
+## Transitions:
+## Reductions:
 -- On VALUE reduce production structure_item -> TYPE typedef
 -- On TYPE reduce production structure_item -> TYPE typedef
 -- On SEMISEMI reduce production structure_item -> TYPE typedef
@@ -1415,88 +1855,158 @@ structure_item -> TYPE typedef . [ VALUE TYPE SEMISEMI SEMICOLON MODULE END ]
 -- On END reduce production structure_item -> TYPE typedef
 
 State 88:
+## Known stack suffix:
+## MODULE
+## LR(1) items:
 structure_item -> MODULE . IDENT COLON moduletype EQUAL modulexpr [ VALUE TYPE SEMISEMI SEMICOLON MODULE END ]
 structure_item -> MODULE . IDENT EQUAL modulexpr [ VALUE TYPE SEMISEMI SEMICOLON MODULE END ]
+## Transitions:
 -- On IDENT shift to state 89
+## Reductions:
 
 State 89:
+## Known stack suffix:
+## MODULE IDENT
+## LR(1) items:
 structure_item -> MODULE IDENT . COLON moduletype EQUAL modulexpr [ VALUE TYPE SEMISEMI SEMICOLON MODULE END ]
 structure_item -> MODULE IDENT . EQUAL modulexpr [ VALUE TYPE SEMISEMI SEMICOLON MODULE END ]
+## Transitions:
 -- On EQUAL shift to state 90
 -- On COLON shift to state 140
+## Reductions:
 
 State 90:
+## Known stack suffix:
+## MODULE IDENT EQUAL
+## LR(1) items:
 structure_item -> MODULE IDENT EQUAL . modulexpr [ VALUE TYPE SEMISEMI SEMICOLON MODULE END ]
+## Transitions:
 -- On STRUCT shift to state 1
 -- On LPAREN shift to state 91
 -- On IDENT shift to state 14
 -- On FUNCTOR shift to state 92
 -- On path shift to state 130
 -- On modulexpr shift to state 139
+## Reductions:
 
 State 91:
+## Known stack suffix:
+## LPAREN
+## LR(1) items:
 modulexpr -> LPAREN . modulexpr RPAREN [ VALUE TYPE SEMISEMI SEMICOLON RPAREN MODULE LPAREN EOF END COLON ]
+## Transitions:
 -- On STRUCT shift to state 1
 -- On LPAREN shift to state 91
 -- On IDENT shift to state 14
 -- On FUNCTOR shift to state 92
 -- On path shift to state 130
 -- On modulexpr shift to state 137
+## Reductions:
 
 State 92:
+## Known stack suffix:
+## FUNCTOR
+## LR(1) items:
 modulexpr -> FUNCTOR . LPAREN IDENT COLON moduletype RPAREN modulexpr [ VALUE TYPE SEMISEMI SEMICOLON RPAREN MODULE LPAREN EOF END COLON ]
+## Transitions:
 -- On LPAREN shift to state 93
+## Reductions:
 
 State 93:
+## Known stack suffix:
+## FUNCTOR LPAREN
+## LR(1) items:
 modulexpr -> FUNCTOR LPAREN . IDENT COLON moduletype RPAREN modulexpr [ VALUE TYPE SEMISEMI SEMICOLON RPAREN MODULE LPAREN EOF END COLON ]
+## Transitions:
 -- On IDENT shift to state 94
+## Reductions:
 
 State 94:
+## Known stack suffix:
+## FUNCTOR LPAREN IDENT
+## LR(1) items:
 modulexpr -> FUNCTOR LPAREN IDENT . COLON moduletype RPAREN modulexpr [ VALUE TYPE SEMISEMI SEMICOLON RPAREN MODULE LPAREN EOF END COLON ]
+## Transitions:
 -- On COLON shift to state 95
+## Reductions:
 
 State 95:
+## Known stack suffix:
+## FUNCTOR LPAREN IDENT COLON
+## LR(1) items:
 modulexpr -> FUNCTOR LPAREN IDENT COLON . moduletype RPAREN modulexpr [ VALUE TYPE SEMISEMI SEMICOLON RPAREN MODULE LPAREN EOF END COLON ]
+## Transitions:
 -- On SIG shift to state 96
 -- On LPAREN shift to state 113
 -- On FUNCTOR shift to state 114
 -- On moduletype shift to state 128
+## Reductions:
 
 State 96:
+## Known stack suffix:
+## SIG
+## LR(1) items:
 moduletype -> SIG . signature END [ VALUE TYPE SEMISEMI SEMICOLON RPAREN MODULE LPAREN EQUAL EOF END COLON ]
+## Transitions:
 -- On signature shift to state 97
+## Reductions:
 -- On VALUE reduce production signature ->
 -- On TYPE reduce production signature ->
 -- On MODULE reduce production signature ->
 -- On END reduce production signature ->
 
 State 97:
+## Known stack suffix:
+## SIG signature
+## LR(1) items:
 moduletype -> SIG signature . END [ VALUE TYPE SEMISEMI SEMICOLON RPAREN MODULE LPAREN EQUAL EOF END COLON ]
 signature -> signature . signature_item opt_semi [ VALUE TYPE MODULE END ]
+## Transitions:
 -- On VALUE shift to state 98
 -- On TYPE shift to state 104
 -- On MODULE shift to state 110
 -- On END shift to state 124
 -- On signature_item shift to state 125
+## Reductions:
 
 State 98:
+## Known stack suffix:
+## VALUE
+## LR(1) items:
 signature_item -> VALUE . IDENT valuedecl [ VALUE TYPE SEMICOLON MODULE END ]
+## Transitions:
 -- On IDENT shift to state 99
+## Reductions:
 
 State 99:
+## Known stack suffix:
+## VALUE IDENT
+## LR(1) items:
 signature_item -> VALUE IDENT . valuedecl [ VALUE TYPE SEMICOLON MODULE END ]
+## Transitions:
 -- On COLON shift to state 100
 -- On valuedecl shift to state 101
 -- On colon_begin_scheme shift to state 102
+## Reductions:
 
 State 100:
+## Known stack suffix:
+## COLON
+## LR(1) items:
 colon_begin_scheme -> COLON . [ QUOTE LPAREN IDENT ]
+## Transitions:
+## Reductions:
 -- On QUOTE reduce production colon_begin_scheme -> COLON
 -- On LPAREN reduce production colon_begin_scheme -> COLON
 -- On IDENT reduce production colon_begin_scheme -> COLON
 
 State 101:
+## Known stack suffix:
+## VALUE IDENT valuedecl
+## LR(1) items:
 signature_item -> VALUE IDENT valuedecl . [ VALUE TYPE SEMICOLON MODULE END ]
+## Transitions:
+## Reductions:
 -- On VALUE reduce production signature_item -> VALUE IDENT valuedecl
 -- On TYPE reduce production signature_item -> VALUE IDENT valuedecl
 -- On SEMICOLON reduce production signature_item -> VALUE IDENT valuedecl
@@ -1504,22 +2014,32 @@ signature_item -> VALUE IDENT valuedecl . [ VALUE TYPE SEMICOLON MODULE END ]
 -- On END reduce production signature_item -> VALUE IDENT valuedecl
 
 State 102:
+## Known stack suffix:
+## colon_begin_scheme
+## LR(1) items:
 valuedecl -> colon_begin_scheme . simpletype [ VALUE TYPE SEMICOLON MODULE END ]
+## Transitions:
 -- On QUOTE shift to state 70
 -- On LPAREN shift to state 72
 -- On IDENT shift to state 14
 -- On simpletype shift to state 103
 -- On path shift to state 81
+## Reductions:
 
 State 103:
+## Known stack suffix:
+## colon_begin_scheme simpletype
+## LR(1) items:
 simpletype -> simpletype . ARROW simpletype [ VALUE TYPE STAR SEMICOLON MODULE IDENT END ARROW ]
 simpletype -> simpletype . STAR simpletype [ VALUE TYPE STAR SEMICOLON MODULE IDENT END ARROW ]
 simpletype -> simpletype . path [ VALUE TYPE STAR SEMICOLON MODULE IDENT END ARROW ]
 valuedecl -> colon_begin_scheme simpletype . [ VALUE TYPE SEMICOLON MODULE END ]
+## Transitions:
 -- On STAR shift to state 78
 -- On IDENT shift to state 14
 -- On ARROW shift to state 82
 -- On path shift to state 80
+## Reductions:
 -- On VALUE reduce production valuedecl -> colon_begin_scheme simpletype
 -- On TYPE reduce production valuedecl -> colon_begin_scheme simpletype
 -- On SEMICOLON reduce production valuedecl -> colon_begin_scheme simpletype
@@ -1527,7 +2047,11 @@ valuedecl -> colon_begin_scheme simpletype . [ VALUE TYPE SEMICOLON MODULE END ]
 -- On END reduce production valuedecl -> colon_begin_scheme simpletype
 
 State 104:
+## Known stack suffix:
+## TYPE
+## LR(1) items:
 signature_item -> TYPE . typeinfo [ VALUE TYPE SEMICOLON MODULE END ]
+## Transitions:
 -- On QUOTE shift to state 59
 -- On LPAREN shift to state 61
 -- On typeparams shift to state 105
@@ -1535,17 +2059,28 @@ signature_item -> TYPE . typeinfo [ VALUE TYPE SEMICOLON MODULE END ]
 -- On typeinfo shift to state 107
 -- On typedef shift to state 108
 -- On typedecl shift to state 109
+## Reductions:
 -- On IDENT reduce production typeparams ->
 
 State 105:
+## Known stack suffix:
+## typeparams
+## LR(1) items:
 typedecl -> typeparams . IDENT [ VALUE TYPE SEMICOLON MODULE END ]
 typedef -> typeparams . IDENT EQUAL simpletype [ VALUE TYPE SEMICOLON MODULE END ]
+## Transitions:
 -- On IDENT shift to state 106
+## Reductions:
 
 State 106:
+## Known stack suffix:
+## typeparams IDENT
+## LR(1) items:
 typedecl -> typeparams IDENT . [ VALUE TYPE SEMICOLON MODULE END ]
 typedef -> typeparams IDENT . EQUAL simpletype [ VALUE TYPE SEMICOLON MODULE END ]
+## Transitions:
 -- On EQUAL shift to state 69
+## Reductions:
 -- On VALUE reduce production typedecl -> typeparams IDENT
 -- On TYPE reduce production typedecl -> typeparams IDENT
 -- On SEMICOLON reduce production typedecl -> typeparams IDENT
@@ -1553,7 +2088,12 @@ typedef -> typeparams IDENT . EQUAL simpletype [ VALUE TYPE SEMICOLON MODULE END
 -- On END reduce production typedecl -> typeparams IDENT
 
 State 107:
+## Known stack suffix:
+## TYPE typeinfo
+## LR(1) items:
 signature_item -> TYPE typeinfo . [ VALUE TYPE SEMICOLON MODULE END ]
+## Transitions:
+## Reductions:
 -- On VALUE reduce production signature_item -> TYPE typeinfo
 -- On TYPE reduce production signature_item -> TYPE typeinfo
 -- On SEMICOLON reduce production signature_item -> TYPE typeinfo
@@ -1561,7 +2101,12 @@ signature_item -> TYPE typeinfo . [ VALUE TYPE SEMICOLON MODULE END ]
 -- On END reduce production signature_item -> TYPE typeinfo
 
 State 108:
+## Known stack suffix:
+## typedef
+## LR(1) items:
 typeinfo -> typedef . [ VALUE TYPE SEMICOLON MODULE END ]
+## Transitions:
+## Reductions:
 -- On VALUE reduce production typeinfo -> typedef
 -- On TYPE reduce production typeinfo -> typedef
 -- On SEMICOLON reduce production typeinfo -> typedef
@@ -1569,7 +2114,12 @@ typeinfo -> typedef . [ VALUE TYPE SEMICOLON MODULE END ]
 -- On END reduce production typeinfo -> typedef
 
 State 109:
+## Known stack suffix:
+## typedecl
+## LR(1) items:
 typeinfo -> typedecl . [ VALUE TYPE SEMICOLON MODULE END ]
+## Transitions:
+## Reductions:
 -- On VALUE reduce production typeinfo -> typedecl
 -- On TYPE reduce production typeinfo -> typedecl
 -- On SEMICOLON reduce production typeinfo -> typedecl
@@ -1577,59 +2127,114 @@ typeinfo -> typedecl . [ VALUE TYPE SEMICOLON MODULE END ]
 -- On END reduce production typeinfo -> typedecl
 
 State 110:
+## Known stack suffix:
+## MODULE
+## LR(1) items:
 signature_item -> MODULE . IDENT COLON moduletype [ VALUE TYPE SEMICOLON MODULE END ]
+## Transitions:
 -- On IDENT shift to state 111
+## Reductions:
 
 State 111:
+## Known stack suffix:
+## MODULE IDENT
+## LR(1) items:
 signature_item -> MODULE IDENT . COLON moduletype [ VALUE TYPE SEMICOLON MODULE END ]
+## Transitions:
 -- On COLON shift to state 112
+## Reductions:
 
 State 112:
+## Known stack suffix:
+## MODULE IDENT COLON
+## LR(1) items:
 signature_item -> MODULE IDENT COLON . moduletype [ VALUE TYPE SEMICOLON MODULE END ]
+## Transitions:
 -- On SIG shift to state 96
 -- On LPAREN shift to state 113
 -- On FUNCTOR shift to state 114
 -- On moduletype shift to state 123
+## Reductions:
 
 State 113:
+## Known stack suffix:
+## LPAREN
+## LR(1) items:
 moduletype -> LPAREN . moduletype RPAREN [ VALUE TYPE SEMISEMI SEMICOLON RPAREN MODULE LPAREN EQUAL EOF END COLON ]
+## Transitions:
 -- On SIG shift to state 96
 -- On LPAREN shift to state 113
 -- On FUNCTOR shift to state 114
 -- On moduletype shift to state 121
+## Reductions:
 
 State 114:
+## Known stack suffix:
+## FUNCTOR
+## LR(1) items:
 moduletype -> FUNCTOR . LPAREN IDENT COLON moduletype RPAREN moduletype [ VALUE TYPE SEMISEMI SEMICOLON RPAREN MODULE LPAREN EQUAL EOF END COLON ]
+## Transitions:
 -- On LPAREN shift to state 115
+## Reductions:
 
 State 115:
+## Known stack suffix:
+## FUNCTOR LPAREN
+## LR(1) items:
 moduletype -> FUNCTOR LPAREN . IDENT COLON moduletype RPAREN moduletype [ VALUE TYPE SEMISEMI SEMICOLON RPAREN MODULE LPAREN EQUAL EOF END COLON ]
+## Transitions:
 -- On IDENT shift to state 116
+## Reductions:
 
 State 116:
+## Known stack suffix:
+## FUNCTOR LPAREN IDENT
+## LR(1) items:
 moduletype -> FUNCTOR LPAREN IDENT . COLON moduletype RPAREN moduletype [ VALUE TYPE SEMISEMI SEMICOLON RPAREN MODULE LPAREN EQUAL EOF END COLON ]
+## Transitions:
 -- On COLON shift to state 117
+## Reductions:
 
 State 117:
+## Known stack suffix:
+## FUNCTOR LPAREN IDENT COLON
+## LR(1) items:
 moduletype -> FUNCTOR LPAREN IDENT COLON . moduletype RPAREN moduletype [ VALUE TYPE SEMISEMI SEMICOLON RPAREN MODULE LPAREN EQUAL EOF END COLON ]
+## Transitions:
 -- On SIG shift to state 96
 -- On LPAREN shift to state 113
 -- On FUNCTOR shift to state 114
 -- On moduletype shift to state 118
+## Reductions:
 
 State 118:
+## Known stack suffix:
+## FUNCTOR LPAREN IDENT COLON moduletype
+## LR(1) items:
 moduletype -> FUNCTOR LPAREN IDENT COLON moduletype . RPAREN moduletype [ VALUE TYPE SEMISEMI SEMICOLON RPAREN MODULE LPAREN EQUAL EOF END COLON ]
+## Transitions:
 -- On RPAREN shift to state 119
+## Reductions:
 
 State 119:
+## Known stack suffix:
+## FUNCTOR LPAREN IDENT COLON moduletype RPAREN
+## LR(1) items:
 moduletype -> FUNCTOR LPAREN IDENT COLON moduletype RPAREN . moduletype [ VALUE TYPE SEMISEMI SEMICOLON RPAREN MODULE LPAREN EQUAL EOF END COLON ]
+## Transitions:
 -- On SIG shift to state 96
 -- On LPAREN shift to state 113
 -- On FUNCTOR shift to state 114
 -- On moduletype shift to state 120
+## Reductions:
 
 State 120:
+## Known stack suffix:
+## FUNCTOR LPAREN IDENT COLON moduletype RPAREN moduletype
+## LR(1) items:
 moduletype -> FUNCTOR LPAREN IDENT COLON moduletype RPAREN moduletype . [ VALUE TYPE SEMISEMI SEMICOLON RPAREN MODULE LPAREN EQUAL EOF END COLON ]
+## Transitions:
+## Reductions:
 -- On VALUE reduce production moduletype -> FUNCTOR LPAREN IDENT COLON moduletype RPAREN moduletype
 -- On TYPE reduce production moduletype -> FUNCTOR LPAREN IDENT COLON moduletype RPAREN moduletype
 -- On SEMISEMI reduce production moduletype -> FUNCTOR LPAREN IDENT COLON moduletype RPAREN moduletype
@@ -1643,11 +2248,21 @@ moduletype -> FUNCTOR LPAREN IDENT COLON moduletype RPAREN moduletype . [ VALUE 
 -- On COLON reduce production moduletype -> FUNCTOR LPAREN IDENT COLON moduletype RPAREN moduletype
 
 State 121:
+## Known stack suffix:
+## LPAREN moduletype
+## LR(1) items:
 moduletype -> LPAREN moduletype . RPAREN [ VALUE TYPE SEMISEMI SEMICOLON RPAREN MODULE LPAREN EQUAL EOF END COLON ]
+## Transitions:
 -- On RPAREN shift to state 122
+## Reductions:
 
 State 122:
+## Known stack suffix:
+## LPAREN moduletype RPAREN
+## LR(1) items:
 moduletype -> LPAREN moduletype RPAREN . [ VALUE TYPE SEMISEMI SEMICOLON RPAREN MODULE LPAREN EQUAL EOF END COLON ]
+## Transitions:
+## Reductions:
 -- On VALUE reduce production moduletype -> LPAREN moduletype RPAREN
 -- On TYPE reduce production moduletype -> LPAREN moduletype RPAREN
 -- On SEMISEMI reduce production moduletype -> LPAREN moduletype RPAREN
@@ -1661,7 +2276,12 @@ moduletype -> LPAREN moduletype RPAREN . [ VALUE TYPE SEMISEMI SEMICOLON RPAREN 
 -- On COLON reduce production moduletype -> LPAREN moduletype RPAREN
 
 State 123:
+## Known stack suffix:
+## MODULE IDENT COLON moduletype
+## LR(1) items:
 signature_item -> MODULE IDENT COLON moduletype . [ VALUE TYPE SEMICOLON MODULE END ]
+## Transitions:
+## Reductions:
 -- On VALUE reduce production signature_item -> MODULE IDENT COLON moduletype
 -- On TYPE reduce production signature_item -> MODULE IDENT COLON moduletype
 -- On SEMICOLON reduce production signature_item -> MODULE IDENT COLON moduletype
@@ -1669,7 +2289,12 @@ signature_item -> MODULE IDENT COLON moduletype . [ VALUE TYPE SEMICOLON MODULE 
 -- On END reduce production signature_item -> MODULE IDENT COLON moduletype
 
 State 124:
+## Known stack suffix:
+## SIG signature END
+## LR(1) items:
 moduletype -> SIG signature END . [ VALUE TYPE SEMISEMI SEMICOLON RPAREN MODULE LPAREN EQUAL EOF END COLON ]
+## Transitions:
+## Reductions:
 -- On VALUE reduce production moduletype -> SIG signature END
 -- On TYPE reduce production moduletype -> SIG signature END
 -- On SEMISEMI reduce production moduletype -> SIG signature END
@@ -1683,45 +2308,75 @@ moduletype -> SIG signature END . [ VALUE TYPE SEMISEMI SEMICOLON RPAREN MODULE 
 -- On COLON reduce production moduletype -> SIG signature END
 
 State 125:
+## Known stack suffix:
+## signature signature_item
+## LR(1) items:
 signature -> signature signature_item . opt_semi [ VALUE TYPE MODULE END ]
+## Transitions:
 -- On SEMICOLON shift to state 126
 -- On opt_semi shift to state 127
+## Reductions:
 -- On VALUE reduce production opt_semi ->
 -- On TYPE reduce production opt_semi ->
 -- On MODULE reduce production opt_semi ->
 -- On END reduce production opt_semi ->
 
 State 126:
+## Known stack suffix:
+## SEMICOLON
+## LR(1) items:
 opt_semi -> SEMICOLON . [ VALUE TYPE MODULE END ]
+## Transitions:
+## Reductions:
 -- On VALUE reduce production opt_semi -> SEMICOLON
 -- On TYPE reduce production opt_semi -> SEMICOLON
 -- On MODULE reduce production opt_semi -> SEMICOLON
 -- On END reduce production opt_semi -> SEMICOLON
 
 State 127:
+## Known stack suffix:
+## signature signature_item opt_semi
+## LR(1) items:
 signature -> signature signature_item opt_semi . [ VALUE TYPE MODULE END ]
+## Transitions:
+## Reductions:
 -- On VALUE reduce production signature -> signature signature_item opt_semi
 -- On TYPE reduce production signature -> signature signature_item opt_semi
 -- On MODULE reduce production signature -> signature signature_item opt_semi
 -- On END reduce production signature -> signature signature_item opt_semi
 
 State 128:
+## Known stack suffix:
+## FUNCTOR LPAREN IDENT COLON moduletype
+## LR(1) items:
 modulexpr -> FUNCTOR LPAREN IDENT COLON moduletype . RPAREN modulexpr [ VALUE TYPE SEMISEMI SEMICOLON RPAREN MODULE LPAREN EOF END COLON ]
+## Transitions:
 -- On RPAREN shift to state 129
+## Reductions:
 
 State 129:
+## Known stack suffix:
+## FUNCTOR LPAREN IDENT COLON moduletype RPAREN
+## LR(1) items:
 modulexpr -> FUNCTOR LPAREN IDENT COLON moduletype RPAREN . modulexpr [ VALUE TYPE SEMISEMI SEMICOLON RPAREN MODULE LPAREN EOF END COLON ]
+## Transitions:
 -- On STRUCT shift to state 1
 -- On LPAREN shift to state 91
 -- On IDENT shift to state 14
 -- On FUNCTOR shift to state 92
 -- On path shift to state 130
 -- On modulexpr shift to state 131
+## Reductions:
 
 State 130:
+## Known stack suffix:
+## path
+## LR(1) items:
 modulexpr -> path . [ VALUE TYPE SEMISEMI SEMICOLON RPAREN MODULE LPAREN EOF END COLON ]
 path -> path . DOT IDENT [ VALUE TYPE SEMISEMI SEMICOLON RPAREN MODULE LPAREN EOF END DOT COLON ]
+## Transitions:
 -- On DOT shift to state 21
+## Reductions:
 -- On VALUE reduce production modulexpr -> path
 -- On TYPE reduce production modulexpr -> path
 -- On SEMISEMI reduce production modulexpr -> path
@@ -1734,11 +2389,16 @@ path -> path . DOT IDENT [ VALUE TYPE SEMISEMI SEMICOLON RPAREN MODULE LPAREN EO
 -- On COLON reduce production modulexpr -> path
 
 State 131:
+## Known stack suffix:
+## FUNCTOR LPAREN IDENT COLON moduletype RPAREN modulexpr
+## LR(1) items:
 modulexpr -> FUNCTOR LPAREN IDENT COLON moduletype RPAREN modulexpr . [ VALUE TYPE SEMISEMI SEMICOLON RPAREN MODULE LPAREN EOF END COLON ]
 modulexpr -> modulexpr . LPAREN modulexpr RPAREN [ VALUE TYPE SEMISEMI SEMICOLON RPAREN MODULE LPAREN EOF END COLON ]
 modulexpr -> modulexpr . COLON moduletype [ VALUE TYPE SEMISEMI SEMICOLON RPAREN MODULE LPAREN EOF END COLON ]
+## Transitions:
 -- On LPAREN shift to state 132
 -- On COLON shift to state 135
+## Reductions:
 -- On VALUE reduce production modulexpr -> FUNCTOR LPAREN IDENT COLON moduletype RPAREN modulexpr
 -- On TYPE reduce production modulexpr -> FUNCTOR LPAREN IDENT COLON moduletype RPAREN modulexpr
 -- On SEMISEMI reduce production modulexpr -> FUNCTOR LPAREN IDENT COLON moduletype RPAREN modulexpr
@@ -1749,24 +2409,39 @@ modulexpr -> modulexpr . COLON moduletype [ VALUE TYPE SEMISEMI SEMICOLON RPAREN
 -- On END reduce production modulexpr -> FUNCTOR LPAREN IDENT COLON moduletype RPAREN modulexpr
 
 State 132:
+## Known stack suffix:
+## modulexpr LPAREN
+## LR(1) items:
 modulexpr -> modulexpr LPAREN . modulexpr RPAREN [ VALUE TYPE SEMISEMI SEMICOLON RPAREN MODULE LPAREN EOF END COLON ]
+## Transitions:
 -- On STRUCT shift to state 1
 -- On LPAREN shift to state 91
 -- On IDENT shift to state 14
 -- On FUNCTOR shift to state 92
 -- On path shift to state 130
 -- On modulexpr shift to state 133
+## Reductions:
 
 State 133:
+## Known stack suffix:
+## modulexpr LPAREN modulexpr
+## LR(1) items:
 modulexpr -> modulexpr . LPAREN modulexpr RPAREN [ RPAREN LPAREN COLON ]
 modulexpr -> modulexpr LPAREN modulexpr . RPAREN [ VALUE TYPE SEMISEMI SEMICOLON RPAREN MODULE LPAREN EOF END COLON ]
 modulexpr -> modulexpr . COLON moduletype [ RPAREN LPAREN COLON ]
+## Transitions:
 -- On RPAREN shift to state 134
 -- On LPAREN shift to state 132
 -- On COLON shift to state 135
+## Reductions:
 
 State 134:
+## Known stack suffix:
+## modulexpr LPAREN modulexpr RPAREN
+## LR(1) items:
 modulexpr -> modulexpr LPAREN modulexpr RPAREN . [ VALUE TYPE SEMISEMI SEMICOLON RPAREN MODULE LPAREN EOF END COLON ]
+## Transitions:
+## Reductions:
 -- On VALUE reduce production modulexpr -> modulexpr LPAREN modulexpr RPAREN
 -- On TYPE reduce production modulexpr -> modulexpr LPAREN modulexpr RPAREN
 -- On SEMISEMI reduce production modulexpr -> modulexpr LPAREN modulexpr RPAREN
@@ -1779,14 +2454,24 @@ modulexpr -> modulexpr LPAREN modulexpr RPAREN . [ VALUE TYPE SEMISEMI SEMICOLON
 -- On COLON reduce production modulexpr -> modulexpr LPAREN modulexpr RPAREN
 
 State 135:
+## Known stack suffix:
+## modulexpr COLON
+## LR(1) items:
 modulexpr -> modulexpr COLON . moduletype [ VALUE TYPE SEMISEMI SEMICOLON RPAREN MODULE LPAREN EOF END COLON ]
+## Transitions:
 -- On SIG shift to state 96
 -- On LPAREN shift to state 113
 -- On FUNCTOR shift to state 114
 -- On moduletype shift to state 136
+## Reductions:
 
 State 136:
+## Known stack suffix:
+## modulexpr COLON moduletype
+## LR(1) items:
 modulexpr -> modulexpr COLON moduletype . [ VALUE TYPE SEMISEMI SEMICOLON RPAREN MODULE LPAREN EOF END COLON ]
+## Transitions:
+## Reductions:
 -- On VALUE reduce production modulexpr -> modulexpr COLON moduletype
 -- On TYPE reduce production modulexpr -> modulexpr COLON moduletype
 -- On SEMISEMI reduce production modulexpr -> modulexpr COLON moduletype
@@ -1799,15 +2484,25 @@ modulexpr -> modulexpr COLON moduletype . [ VALUE TYPE SEMISEMI SEMICOLON RPAREN
 -- On COLON reduce production modulexpr -> modulexpr COLON moduletype
 
 State 137:
+## Known stack suffix:
+## LPAREN modulexpr
+## LR(1) items:
 modulexpr -> modulexpr . LPAREN modulexpr RPAREN [ RPAREN LPAREN COLON ]
 modulexpr -> LPAREN modulexpr . RPAREN [ VALUE TYPE SEMISEMI SEMICOLON RPAREN MODULE LPAREN EOF END COLON ]
 modulexpr -> modulexpr . COLON moduletype [ RPAREN LPAREN COLON ]
+## Transitions:
 -- On RPAREN shift to state 138
 -- On LPAREN shift to state 132
 -- On COLON shift to state 135
+## Reductions:
 
 State 138:
+## Known stack suffix:
+## LPAREN modulexpr RPAREN
+## LR(1) items:
 modulexpr -> LPAREN modulexpr RPAREN . [ VALUE TYPE SEMISEMI SEMICOLON RPAREN MODULE LPAREN EOF END COLON ]
+## Transitions:
+## Reductions:
 -- On VALUE reduce production modulexpr -> LPAREN modulexpr RPAREN
 -- On TYPE reduce production modulexpr -> LPAREN modulexpr RPAREN
 -- On SEMISEMI reduce production modulexpr -> LPAREN modulexpr RPAREN
@@ -1820,11 +2515,16 @@ modulexpr -> LPAREN modulexpr RPAREN . [ VALUE TYPE SEMISEMI SEMICOLON RPAREN MO
 -- On COLON reduce production modulexpr -> LPAREN modulexpr RPAREN
 
 State 139:
+## Known stack suffix:
+## MODULE IDENT EQUAL modulexpr
+## LR(1) items:
 modulexpr -> modulexpr . LPAREN modulexpr RPAREN [ VALUE TYPE SEMISEMI SEMICOLON MODULE LPAREN END COLON ]
 modulexpr -> modulexpr . COLON moduletype [ VALUE TYPE SEMISEMI SEMICOLON MODULE LPAREN END COLON ]
 structure_item -> MODULE IDENT EQUAL modulexpr . [ VALUE TYPE SEMISEMI SEMICOLON MODULE END ]
+## Transitions:
 -- On LPAREN shift to state 132
 -- On COLON shift to state 135
+## Reductions:
 -- On VALUE reduce production structure_item -> MODULE IDENT EQUAL modulexpr
 -- On TYPE reduce production structure_item -> MODULE IDENT EQUAL modulexpr
 -- On SEMISEMI reduce production structure_item -> MODULE IDENT EQUAL modulexpr
@@ -1833,31 +2533,51 @@ structure_item -> MODULE IDENT EQUAL modulexpr . [ VALUE TYPE SEMISEMI SEMICOLON
 -- On END reduce production structure_item -> MODULE IDENT EQUAL modulexpr
 
 State 140:
+## Known stack suffix:
+## MODULE IDENT COLON
+## LR(1) items:
 structure_item -> MODULE IDENT COLON . moduletype EQUAL modulexpr [ VALUE TYPE SEMISEMI SEMICOLON MODULE END ]
+## Transitions:
 -- On SIG shift to state 96
 -- On LPAREN shift to state 113
 -- On FUNCTOR shift to state 114
 -- On moduletype shift to state 141
+## Reductions:
 
 State 141:
+## Known stack suffix:
+## MODULE IDENT COLON moduletype
+## LR(1) items:
 structure_item -> MODULE IDENT COLON moduletype . EQUAL modulexpr [ VALUE TYPE SEMISEMI SEMICOLON MODULE END ]
+## Transitions:
 -- On EQUAL shift to state 142
+## Reductions:
 
 State 142:
+## Known stack suffix:
+## MODULE IDENT COLON moduletype EQUAL
+## LR(1) items:
 structure_item -> MODULE IDENT COLON moduletype EQUAL . modulexpr [ VALUE TYPE SEMISEMI SEMICOLON MODULE END ]
+## Transitions:
 -- On STRUCT shift to state 1
 -- On LPAREN shift to state 91
 -- On IDENT shift to state 14
 -- On FUNCTOR shift to state 92
 -- On path shift to state 130
 -- On modulexpr shift to state 143
+## Reductions:
 
 State 143:
+## Known stack suffix:
+## MODULE IDENT COLON moduletype EQUAL modulexpr
+## LR(1) items:
 modulexpr -> modulexpr . LPAREN modulexpr RPAREN [ VALUE TYPE SEMISEMI SEMICOLON MODULE LPAREN END COLON ]
 modulexpr -> modulexpr . COLON moduletype [ VALUE TYPE SEMISEMI SEMICOLON MODULE LPAREN END COLON ]
 structure_item -> MODULE IDENT COLON moduletype EQUAL modulexpr . [ VALUE TYPE SEMISEMI SEMICOLON MODULE END ]
+## Transitions:
 -- On LPAREN shift to state 132
 -- On COLON shift to state 135
+## Reductions:
 -- On VALUE reduce production structure_item -> MODULE IDENT COLON moduletype EQUAL modulexpr
 -- On TYPE reduce production structure_item -> MODULE IDENT COLON moduletype EQUAL modulexpr
 -- On SEMISEMI reduce production structure_item -> MODULE IDENT COLON moduletype EQUAL modulexpr
@@ -1866,7 +2586,12 @@ structure_item -> MODULE IDENT COLON moduletype EQUAL modulexpr . [ VALUE TYPE S
 -- On END reduce production structure_item -> MODULE IDENT COLON moduletype EQUAL modulexpr
 
 State 144:
+## Known stack suffix:
+## STRUCT structure END
+## LR(1) items:
 modulexpr -> STRUCT structure END . [ VALUE TYPE SEMISEMI SEMICOLON RPAREN MODULE LPAREN EOF END COLON ]
+## Transitions:
+## Reductions:
 -- On VALUE reduce production modulexpr -> STRUCT structure END
 -- On TYPE reduce production modulexpr -> STRUCT structure END
 -- On SEMISEMI reduce production modulexpr -> STRUCT structure END
@@ -1879,59 +2604,109 @@ modulexpr -> STRUCT structure END . [ VALUE TYPE SEMISEMI SEMICOLON RPAREN MODUL
 -- On COLON reduce production modulexpr -> STRUCT structure END
 
 State 145:
+## Known stack suffix:
+## structure structure_item
+## LR(1) items:
 structure -> structure structure_item . opt_semi [ VALUE TYPE MODULE END ]
+## Transitions:
 -- On SEMICOLON shift to state 126
 -- On opt_semi shift to state 146
+## Reductions:
 -- On VALUE reduce production opt_semi ->
 -- On TYPE reduce production opt_semi ->
 -- On MODULE reduce production opt_semi ->
 -- On END reduce production opt_semi ->
 
 State 146:
+## Known stack suffix:
+## structure structure_item opt_semi
+## LR(1) items:
 structure -> structure structure_item opt_semi . [ VALUE TYPE MODULE END ]
+## Transitions:
+## Reductions:
 -- On VALUE reduce production structure -> structure structure_item opt_semi
 -- On TYPE reduce production structure -> structure structure_item opt_semi
 -- On MODULE reduce production structure -> structure structure_item opt_semi
 -- On END reduce production structure -> structure structure_item opt_semi
 
 State 147:
+## Known stack suffix:
+## modulexpr
+## LR(1) items:
 implementation -> modulexpr . EOF [ # ]
 modulexpr -> modulexpr . LPAREN modulexpr RPAREN [ LPAREN EOF COLON ]
 modulexpr -> modulexpr . COLON moduletype [ LPAREN EOF COLON ]
+## Transitions:
 -- On LPAREN shift to state 132
 -- On EOF shift to state 148
 -- On COLON shift to state 135
+## Reductions:
 
 State 148:
+## Known stack suffix:
+## modulexpr EOF
+## LR(1) items:
 implementation -> modulexpr EOF . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production implementation -> modulexpr EOF
 
 State 149:
+## Known stack suffix:
+## implementation
+## LR(1) items:
 implementation' -> implementation . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept implementation
 
 State 150:
+## Known stack suffix:
+##
+## LR(1) items:
 phrase' -> . phrase [ # ]
+## Transitions:
 -- On VALUE shift to state 3
 -- On TYPE shift to state 58
 -- On MODULE shift to state 88
 -- On EOF shift to state 151
 -- On structure_item shift to state 152
 -- On phrase shift to state 154
+## Reductions:
 
 State 151:
+## Known stack suffix:
+## EOF
+## LR(1) items:
 phrase -> EOF . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production phrase -> EOF
 
 State 152:
+## Known stack suffix:
+## structure_item
+## LR(1) items:
 phrase -> structure_item . SEMISEMI [ # ]
+## Transitions:
 -- On SEMISEMI shift to state 153
+## Reductions:
 
 State 153:
+## Known stack suffix:
+## structure_item SEMISEMI
+## LR(1) items:
 phrase -> structure_item SEMISEMI . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production phrase -> structure_item SEMISEMI
 
 State 154:
+## Known stack suffix:
+## phrase
+## LR(1) items:
 phrase' -> phrase . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept phrase
 

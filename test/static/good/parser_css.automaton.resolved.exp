@@ -1,7 +1,12 @@
 State 0:
+## Known stack suffix:
+##
+## LR(1) items:
 stylesheet' -> . stylesheet [ # ]
+## Transitions:
 -- On stylesheet shift to state 1
 -- On s_star shift to state 2
+## Reductions:
 -- On SEL_FUNC reduce production s_star ->
 -- On S reduce production s_star ->
 -- On PERIOD reduce production s_star ->
@@ -14,14 +19,24 @@ stylesheet' -> . stylesheet [ # ]
 -- On ASTERISK reduce production s_star ->
 
 State 1:
+## Known stack suffix:
+## stylesheet
+## LR(1) items:
 stylesheet' -> stylesheet . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept stylesheet
 
 State 2:
+## Known stack suffix:
+## s_star
+## LR(1) items:
 s_star -> s_star . S [ SEL_FUNC S PERIOD OPEN_SQUARE IDENT HASH EOF DOUBLE_COLON COLON ASTERISK ]
 stylesheet -> s_star . statement_star EOF [ # ]
+## Transitions:
 -- On S shift to state 3
 -- On statement_star shift to state 4
+## Reductions:
 -- On SEL_FUNC reduce production statement_star ->
 -- On PERIOD reduce production statement_star ->
 -- On OPEN_SQUARE reduce production statement_star ->
@@ -33,7 +48,12 @@ stylesheet -> s_star . statement_star EOF [ # ]
 -- On ASTERISK reduce production statement_star ->
 
 State 3:
+## Known stack suffix:
+## s_star S
+## LR(1) items:
 s_star -> s_star S . [ SEL_FUNC S PERIOD OPEN_SQUARE IDENT HASH EOF DOUBLE_COLON COLON ASTERISK ]
+## Transitions:
+## Reductions:
 -- On SEL_FUNC reduce production s_star -> s_star S
 -- On S reduce production s_star -> s_star S
 -- On PERIOD reduce production s_star -> s_star S
@@ -46,8 +66,12 @@ s_star -> s_star S . [ SEL_FUNC S PERIOD OPEN_SQUARE IDENT HASH EOF DOUBLE_COLON
 -- On ASTERISK reduce production s_star -> s_star S
 
 State 4:
+## Known stack suffix:
+## s_star statement_star
+## LR(1) items:
 statement_star -> statement_star . statement [ SEL_FUNC PERIOD OPEN_SQUARE IDENT HASH EOF DOUBLE_COLON COLON ASTERISK ]
 stylesheet -> s_star statement_star . EOF [ # ]
+## Transitions:
 -- On SEL_FUNC shift to state 5
 -- On PERIOD shift to state 6
 -- On OPEN_SQUARE shift to state 8
@@ -66,9 +90,14 @@ stylesheet -> s_star statement_star . EOF [ # ]
 -- On qualifier_plus shift to state 50
 -- On qualifier shift to state 35
 -- On element shift to state 51
+## Reductions:
 
 State 5:
+## Known stack suffix:
+## SEL_FUNC
+## LR(1) items:
 qualifier -> SEL_FUNC . function_args CLOSE_ROUND [ TILDE SEL_FUNC S PLUS PERIOD OPEN_SQUARE OPEN_CURLY HASH GT DOUBLE_COLON COMMA COLON CLOSE_ROUND ]
+## Transitions:
 -- On SEL_FUNC shift to state 5
 -- On PERIOD shift to state 6
 -- On OPEN_SQUARE shift to state 8
@@ -80,13 +109,24 @@ qualifier -> SEL_FUNC . function_args CLOSE_ROUND [ TILDE SEL_FUNC S PLUS PERIOD
 -- On qualifier_plus shift to state 33
 -- On qualifier shift to state 35
 -- On function_args shift to state 36
+## Reductions:
 
 State 6:
+## Known stack suffix:
+## PERIOD
+## LR(1) items:
 qualifier -> PERIOD . IDENT [ TILDE SEL_FUNC S PLUS PERIOD OPEN_SQUARE OPEN_CURLY HASH GT DOUBLE_COLON COMMA COLON CLOSE_ROUND ]
+## Transitions:
 -- On IDENT shift to state 7
+## Reductions:
 
 State 7:
+## Known stack suffix:
+## PERIOD IDENT
+## LR(1) items:
 qualifier -> PERIOD IDENT . [ TILDE SEL_FUNC S PLUS PERIOD OPEN_SQUARE OPEN_CURLY HASH GT DOUBLE_COLON COMMA COLON CLOSE_ROUND ]
+## Transitions:
+## Reductions:
 -- On TILDE reduce production qualifier -> PERIOD IDENT
 -- On SEL_FUNC reduce production qualifier -> PERIOD IDENT
 -- On S reduce production qualifier -> PERIOD IDENT
@@ -102,11 +142,20 @@ qualifier -> PERIOD IDENT . [ TILDE SEL_FUNC S PLUS PERIOD OPEN_SQUARE OPEN_CURL
 -- On CLOSE_ROUND reduce production qualifier -> PERIOD IDENT
 
 State 8:
+## Known stack suffix:
+## OPEN_SQUARE
+## LR(1) items:
 qualifier -> OPEN_SQUARE . IDENT attr_operation CLOSE_SQUARE [ TILDE SEL_FUNC S PLUS PERIOD OPEN_SQUARE OPEN_CURLY HASH GT DOUBLE_COLON COMMA COLON CLOSE_ROUND ]
+## Transitions:
 -- On IDENT shift to state 9
+## Reductions:
 
 State 9:
+## Known stack suffix:
+## OPEN_SQUARE IDENT
+## LR(1) items:
 qualifier -> OPEN_SQUARE IDENT . attr_operation CLOSE_SQUARE [ TILDE SEL_FUNC S PLUS PERIOD OPEN_SQUARE OPEN_CURLY HASH GT DOUBLE_COLON COMMA COLON CLOSE_ROUND ]
+## Transitions:
 -- On ATTR_SUFFIX shift to state 10
 -- On ATTR_SUBSTRING shift to state 14
 -- On ATTR_PREFIX shift to state 16
@@ -114,82 +163,163 @@ qualifier -> OPEN_SQUARE IDENT . attr_operation CLOSE_SQUARE [ TILDE SEL_FUNC S 
 -- On ATTR_EQUALS shift to state 20
 -- On ATTR_DASHMATCH shift to state 22
 -- On attr_operation shift to state 24
+## Reductions:
 -- On CLOSE_SQUARE reduce production attr_operation ->
 
 State 10:
+## Known stack suffix:
+## ATTR_SUFFIX
+## LR(1) items:
 attr_operation -> ATTR_SUFFIX . attr_operand [ CLOSE_SQUARE ]
+## Transitions:
 -- On TString shift to state 11
 -- On IDENT shift to state 12
 -- On attr_operand shift to state 13
+## Reductions:
 
 State 11:
+## Known stack suffix:
+## TString
+## LR(1) items:
 attr_operand -> TString . [ CLOSE_SQUARE ]
+## Transitions:
+## Reductions:
 -- On CLOSE_SQUARE reduce production attr_operand -> TString
 
 State 12:
+## Known stack suffix:
+## IDENT
+## LR(1) items:
 attr_operand -> IDENT . [ CLOSE_SQUARE ]
+## Transitions:
+## Reductions:
 -- On CLOSE_SQUARE reduce production attr_operand -> IDENT
 
 State 13:
+## Known stack suffix:
+## ATTR_SUFFIX attr_operand
+## LR(1) items:
 attr_operation -> ATTR_SUFFIX attr_operand . [ CLOSE_SQUARE ]
+## Transitions:
+## Reductions:
 -- On CLOSE_SQUARE reduce production attr_operation -> ATTR_SUFFIX attr_operand
 
 State 14:
+## Known stack suffix:
+## ATTR_SUBSTRING
+## LR(1) items:
 attr_operation -> ATTR_SUBSTRING . attr_operand [ CLOSE_SQUARE ]
+## Transitions:
 -- On TString shift to state 11
 -- On IDENT shift to state 12
 -- On attr_operand shift to state 15
+## Reductions:
 
 State 15:
+## Known stack suffix:
+## ATTR_SUBSTRING attr_operand
+## LR(1) items:
 attr_operation -> ATTR_SUBSTRING attr_operand . [ CLOSE_SQUARE ]
+## Transitions:
+## Reductions:
 -- On CLOSE_SQUARE reduce production attr_operation -> ATTR_SUBSTRING attr_operand
 
 State 16:
+## Known stack suffix:
+## ATTR_PREFIX
+## LR(1) items:
 attr_operation -> ATTR_PREFIX . attr_operand [ CLOSE_SQUARE ]
+## Transitions:
 -- On TString shift to state 11
 -- On IDENT shift to state 12
 -- On attr_operand shift to state 17
+## Reductions:
 
 State 17:
+## Known stack suffix:
+## ATTR_PREFIX attr_operand
+## LR(1) items:
 attr_operation -> ATTR_PREFIX attr_operand . [ CLOSE_SQUARE ]
+## Transitions:
+## Reductions:
 -- On CLOSE_SQUARE reduce production attr_operation -> ATTR_PREFIX attr_operand
 
 State 18:
+## Known stack suffix:
+## ATTR_INCLUDES
+## LR(1) items:
 attr_operation -> ATTR_INCLUDES . attr_operand [ CLOSE_SQUARE ]
+## Transitions:
 -- On TString shift to state 11
 -- On IDENT shift to state 12
 -- On attr_operand shift to state 19
+## Reductions:
 
 State 19:
+## Known stack suffix:
+## ATTR_INCLUDES attr_operand
+## LR(1) items:
 attr_operation -> ATTR_INCLUDES attr_operand . [ CLOSE_SQUARE ]
+## Transitions:
+## Reductions:
 -- On CLOSE_SQUARE reduce production attr_operation -> ATTR_INCLUDES attr_operand
 
 State 20:
+## Known stack suffix:
+## ATTR_EQUALS
+## LR(1) items:
 attr_operation -> ATTR_EQUALS . attr_operand [ CLOSE_SQUARE ]
+## Transitions:
 -- On TString shift to state 11
 -- On IDENT shift to state 12
 -- On attr_operand shift to state 21
+## Reductions:
 
 State 21:
+## Known stack suffix:
+## ATTR_EQUALS attr_operand
+## LR(1) items:
 attr_operation -> ATTR_EQUALS attr_operand . [ CLOSE_SQUARE ]
+## Transitions:
+## Reductions:
 -- On CLOSE_SQUARE reduce production attr_operation -> ATTR_EQUALS attr_operand
 
 State 22:
+## Known stack suffix:
+## ATTR_DASHMATCH
+## LR(1) items:
 attr_operation -> ATTR_DASHMATCH . attr_operand [ CLOSE_SQUARE ]
+## Transitions:
 -- On TString shift to state 11
 -- On IDENT shift to state 12
 -- On attr_operand shift to state 23
+## Reductions:
 
 State 23:
+## Known stack suffix:
+## ATTR_DASHMATCH attr_operand
+## LR(1) items:
 attr_operation -> ATTR_DASHMATCH attr_operand . [ CLOSE_SQUARE ]
+## Transitions:
+## Reductions:
 -- On CLOSE_SQUARE reduce production attr_operation -> ATTR_DASHMATCH attr_operand
 
 State 24:
+## Known stack suffix:
+## OPEN_SQUARE IDENT attr_operation
+## LR(1) items:
 qualifier -> OPEN_SQUARE IDENT attr_operation . CLOSE_SQUARE [ TILDE SEL_FUNC S PLUS PERIOD OPEN_SQUARE OPEN_CURLY HASH GT DOUBLE_COLON COMMA COLON CLOSE_ROUND ]
+## Transitions:
 -- On CLOSE_SQUARE shift to state 25
+## Reductions:
 
 State 25:
+## Known stack suffix:
+## OPEN_SQUARE IDENT attr_operation CLOSE_SQUARE
+## LR(1) items:
 qualifier -> OPEN_SQUARE IDENT attr_operation CLOSE_SQUARE . [ TILDE SEL_FUNC S PLUS PERIOD OPEN_SQUARE OPEN_CURLY HASH GT DOUBLE_COLON COMMA COLON CLOSE_ROUND ]
+## Transitions:
+## Reductions:
 -- On TILDE reduce production qualifier -> OPEN_SQUARE IDENT attr_operation CLOSE_SQUARE
 -- On SEL_FUNC reduce production qualifier -> OPEN_SQUARE IDENT attr_operation CLOSE_SQUARE
 -- On S reduce production qualifier -> OPEN_SQUARE IDENT attr_operation CLOSE_SQUARE
@@ -205,15 +335,30 @@ qualifier -> OPEN_SQUARE IDENT attr_operation CLOSE_SQUARE . [ TILDE SEL_FUNC S 
 -- On CLOSE_ROUND reduce production qualifier -> OPEN_SQUARE IDENT attr_operation CLOSE_SQUARE
 
 State 26:
+## Known stack suffix:
+## NTH
+## LR(1) items:
 function_args -> NTH . [ CLOSE_ROUND ]
+## Transitions:
+## Reductions:
 -- On CLOSE_ROUND reduce production function_args -> NTH
 
 State 27:
+## Known stack suffix:
+## IDENT
+## LR(1) items:
 function_args -> IDENT . [ CLOSE_ROUND ]
+## Transitions:
+## Reductions:
 -- On CLOSE_ROUND reduce production function_args -> IDENT
 
 State 28:
+## Known stack suffix:
+## HASH
+## LR(1) items:
 qualifier -> HASH . [ TILDE SEL_FUNC S PLUS PERIOD OPEN_SQUARE OPEN_CURLY HASH GT DOUBLE_COLON COMMA COLON CLOSE_ROUND ]
+## Transitions:
+## Reductions:
 -- On TILDE reduce production qualifier -> HASH
 -- On SEL_FUNC reduce production qualifier -> HASH
 -- On S reduce production qualifier -> HASH
@@ -229,11 +374,21 @@ qualifier -> HASH . [ TILDE SEL_FUNC S PLUS PERIOD OPEN_SQUARE OPEN_CURLY HASH G
 -- On CLOSE_ROUND reduce production qualifier -> HASH
 
 State 29:
+## Known stack suffix:
+## DOUBLE_COLON
+## LR(1) items:
 qualifier -> DOUBLE_COLON . IDENT [ TILDE SEL_FUNC S PLUS PERIOD OPEN_SQUARE OPEN_CURLY HASH GT DOUBLE_COLON COMMA COLON CLOSE_ROUND ]
+## Transitions:
 -- On IDENT shift to state 30
+## Reductions:
 
 State 30:
+## Known stack suffix:
+## DOUBLE_COLON IDENT
+## LR(1) items:
 qualifier -> DOUBLE_COLON IDENT . [ TILDE SEL_FUNC S PLUS PERIOD OPEN_SQUARE OPEN_CURLY HASH GT DOUBLE_COLON COMMA COLON CLOSE_ROUND ]
+## Transitions:
+## Reductions:
 -- On TILDE reduce production qualifier -> DOUBLE_COLON IDENT
 -- On SEL_FUNC reduce production qualifier -> DOUBLE_COLON IDENT
 -- On S reduce production qualifier -> DOUBLE_COLON IDENT
@@ -249,11 +404,21 @@ qualifier -> DOUBLE_COLON IDENT . [ TILDE SEL_FUNC S PLUS PERIOD OPEN_SQUARE OPE
 -- On CLOSE_ROUND reduce production qualifier -> DOUBLE_COLON IDENT
 
 State 31:
+## Known stack suffix:
+## COLON
+## LR(1) items:
 qualifier -> COLON . IDENT [ TILDE SEL_FUNC S PLUS PERIOD OPEN_SQUARE OPEN_CURLY HASH GT DOUBLE_COLON COMMA COLON CLOSE_ROUND ]
+## Transitions:
 -- On IDENT shift to state 32
+## Reductions:
 
 State 32:
+## Known stack suffix:
+## COLON IDENT
+## LR(1) items:
 qualifier -> COLON IDENT . [ TILDE SEL_FUNC S PLUS PERIOD OPEN_SQUARE OPEN_CURLY HASH GT DOUBLE_COLON COMMA COLON CLOSE_ROUND ]
+## Transitions:
+## Reductions:
 -- On TILDE reduce production qualifier -> COLON IDENT
 -- On SEL_FUNC reduce production qualifier -> COLON IDENT
 -- On S reduce production qualifier -> COLON IDENT
@@ -269,8 +434,12 @@ qualifier -> COLON IDENT . [ TILDE SEL_FUNC S PLUS PERIOD OPEN_SQUARE OPEN_CURLY
 -- On CLOSE_ROUND reduce production qualifier -> COLON IDENT
 
 State 33:
+## Known stack suffix:
+## qualifier_plus
+## LR(1) items:
 function_args -> qualifier_plus . [ CLOSE_ROUND ]
 qualifier_plus -> qualifier_plus . qualifier [ SEL_FUNC PERIOD OPEN_SQUARE HASH DOUBLE_COLON COLON CLOSE_ROUND ]
+## Transitions:
 -- On SEL_FUNC shift to state 5
 -- On PERIOD shift to state 6
 -- On OPEN_SQUARE shift to state 8
@@ -278,10 +447,16 @@ qualifier_plus -> qualifier_plus . qualifier [ SEL_FUNC PERIOD OPEN_SQUARE HASH 
 -- On DOUBLE_COLON shift to state 29
 -- On COLON shift to state 31
 -- On qualifier shift to state 34
+## Reductions:
 -- On CLOSE_ROUND reduce production function_args -> qualifier_plus
 
 State 34:
+## Known stack suffix:
+## qualifier_plus qualifier
+## LR(1) items:
 qualifier_plus -> qualifier_plus qualifier . [ TILDE SEL_FUNC S PLUS PERIOD OPEN_SQUARE OPEN_CURLY HASH GT DOUBLE_COLON COMMA COLON CLOSE_ROUND ]
+## Transitions:
+## Reductions:
 -- On TILDE reduce production qualifier_plus -> qualifier_plus qualifier
 -- On SEL_FUNC reduce production qualifier_plus -> qualifier_plus qualifier
 -- On S reduce production qualifier_plus -> qualifier_plus qualifier
@@ -297,7 +472,12 @@ qualifier_plus -> qualifier_plus qualifier . [ TILDE SEL_FUNC S PLUS PERIOD OPEN
 -- On CLOSE_ROUND reduce production qualifier_plus -> qualifier_plus qualifier
 
 State 35:
+## Known stack suffix:
+## qualifier
+## LR(1) items:
 qualifier_plus -> qualifier . [ TILDE SEL_FUNC S PLUS PERIOD OPEN_SQUARE OPEN_CURLY HASH GT DOUBLE_COLON COMMA COLON CLOSE_ROUND ]
+## Transitions:
+## Reductions:
 -- On TILDE reduce production qualifier_plus -> qualifier
 -- On SEL_FUNC reduce production qualifier_plus -> qualifier
 -- On S reduce production qualifier_plus -> qualifier
@@ -313,11 +493,21 @@ qualifier_plus -> qualifier . [ TILDE SEL_FUNC S PLUS PERIOD OPEN_SQUARE OPEN_CU
 -- On CLOSE_ROUND reduce production qualifier_plus -> qualifier
 
 State 36:
+## Known stack suffix:
+## SEL_FUNC function_args
+## LR(1) items:
 qualifier -> SEL_FUNC function_args . CLOSE_ROUND [ TILDE SEL_FUNC S PLUS PERIOD OPEN_SQUARE OPEN_CURLY HASH GT DOUBLE_COLON COMMA COLON CLOSE_ROUND ]
+## Transitions:
 -- On CLOSE_ROUND shift to state 37
+## Reductions:
 
 State 37:
+## Known stack suffix:
+## SEL_FUNC function_args CLOSE_ROUND
+## LR(1) items:
 qualifier -> SEL_FUNC function_args CLOSE_ROUND . [ TILDE SEL_FUNC S PLUS PERIOD OPEN_SQUARE OPEN_CURLY HASH GT DOUBLE_COLON COMMA COLON CLOSE_ROUND ]
+## Transitions:
+## Reductions:
 -- On TILDE reduce production qualifier -> SEL_FUNC function_args CLOSE_ROUND
 -- On SEL_FUNC reduce production qualifier -> SEL_FUNC function_args CLOSE_ROUND
 -- On S reduce production qualifier -> SEL_FUNC function_args CLOSE_ROUND
@@ -333,7 +523,12 @@ qualifier -> SEL_FUNC function_args CLOSE_ROUND . [ TILDE SEL_FUNC S PLUS PERIOD
 -- On CLOSE_ROUND reduce production qualifier -> SEL_FUNC function_args CLOSE_ROUND
 
 State 38:
+## Known stack suffix:
+## IDENT
+## LR(1) items:
 element -> IDENT . [ TILDE SEL_FUNC S PLUS PERIOD OPEN_SQUARE OPEN_CURLY HASH GT DOUBLE_COLON COMMA COLON ]
+## Transitions:
+## Reductions:
 -- On TILDE reduce production element -> IDENT
 -- On SEL_FUNC reduce production element -> IDENT
 -- On S reduce production element -> IDENT
@@ -348,11 +543,21 @@ element -> IDENT . [ TILDE SEL_FUNC S PLUS PERIOD OPEN_SQUARE OPEN_CURLY HASH GT
 -- On COLON reduce production element -> IDENT
 
 State 39:
+## Known stack suffix:
+## s_star statement_star EOF
+## LR(1) items:
 stylesheet -> s_star statement_star EOF . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production stylesheet -> s_star statement_star EOF
 
 State 40:
+## Known stack suffix:
+## ASTERISK
+## LR(1) items:
 element -> ASTERISK . [ TILDE SEL_FUNC S PLUS PERIOD OPEN_SQUARE OPEN_CURLY HASH GT DOUBLE_COLON COMMA COLON ]
+## Transitions:
+## Reductions:
 -- On TILDE reduce production element -> ASTERISK
 -- On SEL_FUNC reduce production element -> ASTERISK
 -- On S reduce production element -> ASTERISK
@@ -367,7 +572,12 @@ element -> ASTERISK . [ TILDE SEL_FUNC S PLUS PERIOD OPEN_SQUARE OPEN_CURLY HASH
 -- On COLON reduce production element -> ASTERISK
 
 State 41:
+## Known stack suffix:
+## statement_star statement
+## LR(1) items:
 statement_star -> statement_star statement . [ SEL_FUNC PERIOD OPEN_SQUARE IDENT HASH EOF DOUBLE_COLON COLON ASTERISK ]
+## Transitions:
+## Reductions:
 -- On SEL_FUNC reduce production statement_star -> statement_star statement
 -- On PERIOD reduce production statement_star -> statement_star statement
 -- On OPEN_SQUARE reduce production statement_star -> statement_star statement
@@ -379,8 +589,13 @@ statement_star -> statement_star statement . [ SEL_FUNC PERIOD OPEN_SQUARE IDENT
 -- On ASTERISK reduce production statement_star -> statement_star statement
 
 State 42:
+## Known stack suffix:
+## simple_selector
+## LR(1) items:
 selector -> simple_selector . combination_star [ OPEN_CURLY COMMA ]
+## Transitions:
 -- On combination_star shift to state 43
+## Reductions:
 -- On TILDE reduce production combination_star ->
 -- On S reduce production combination_star ->
 -- On PLUS reduce production combination_star ->
@@ -389,19 +604,29 @@ selector -> simple_selector . combination_star [ OPEN_CURLY COMMA ]
 -- On COMMA reduce production combination_star ->
 
 State 43:
+## Known stack suffix:
+## simple_selector combination_star
+## LR(1) items:
 combination_star -> combination_star . combination [ TILDE S PLUS OPEN_CURLY GT COMMA ]
 selector -> simple_selector combination_star . [ OPEN_CURLY COMMA ]
+## Transitions:
 -- On TILDE shift to state 44
 -- On S shift to state 45
 -- On PLUS shift to state 46
 -- On GT shift to state 47
 -- On combinator shift to state 48
 -- On combination shift to state 54
+## Reductions:
 -- On OPEN_CURLY reduce production selector -> simple_selector combination_star
 -- On COMMA reduce production selector -> simple_selector combination_star
 
 State 44:
+## Known stack suffix:
+## TILDE
+## LR(1) items:
 combinator -> TILDE . [ SEL_FUNC PERIOD OPEN_SQUARE IDENT HASH DOUBLE_COLON COLON ASTERISK ]
+## Transitions:
+## Reductions:
 -- On SEL_FUNC reduce production combinator -> TILDE
 -- On PERIOD reduce production combinator -> TILDE
 -- On OPEN_SQUARE reduce production combinator -> TILDE
@@ -412,7 +637,12 @@ combinator -> TILDE . [ SEL_FUNC PERIOD OPEN_SQUARE IDENT HASH DOUBLE_COLON COLO
 -- On ASTERISK reduce production combinator -> TILDE
 
 State 45:
+## Known stack suffix:
+## S
+## LR(1) items:
 combinator -> S . [ SEL_FUNC PERIOD OPEN_SQUARE IDENT HASH DOUBLE_COLON COLON ASTERISK ]
+## Transitions:
+## Reductions:
 -- On SEL_FUNC reduce production combinator -> S
 -- On PERIOD reduce production combinator -> S
 -- On OPEN_SQUARE reduce production combinator -> S
@@ -423,7 +653,12 @@ combinator -> S . [ SEL_FUNC PERIOD OPEN_SQUARE IDENT HASH DOUBLE_COLON COLON AS
 -- On ASTERISK reduce production combinator -> S
 
 State 46:
+## Known stack suffix:
+## PLUS
+## LR(1) items:
 combinator -> PLUS . [ SEL_FUNC PERIOD OPEN_SQUARE IDENT HASH DOUBLE_COLON COLON ASTERISK ]
+## Transitions:
+## Reductions:
 -- On SEL_FUNC reduce production combinator -> PLUS
 -- On PERIOD reduce production combinator -> PLUS
 -- On OPEN_SQUARE reduce production combinator -> PLUS
@@ -434,7 +669,12 @@ combinator -> PLUS . [ SEL_FUNC PERIOD OPEN_SQUARE IDENT HASH DOUBLE_COLON COLON
 -- On ASTERISK reduce production combinator -> PLUS
 
 State 47:
+## Known stack suffix:
+## GT
+## LR(1) items:
 combinator -> GT . [ SEL_FUNC PERIOD OPEN_SQUARE IDENT HASH DOUBLE_COLON COLON ASTERISK ]
+## Transitions:
+## Reductions:
 -- On SEL_FUNC reduce production combinator -> GT
 -- On PERIOD reduce production combinator -> GT
 -- On OPEN_SQUARE reduce production combinator -> GT
@@ -445,7 +685,11 @@ combinator -> GT . [ SEL_FUNC PERIOD OPEN_SQUARE IDENT HASH DOUBLE_COLON COLON A
 -- On ASTERISK reduce production combinator -> GT
 
 State 48:
+## Known stack suffix:
+## combinator
+## LR(1) items:
 combination -> combinator . simple_selector [ TILDE S PLUS OPEN_CURLY GT COMMA ]
+## Transitions:
 -- On SEL_FUNC shift to state 5
 -- On PERIOD shift to state 6
 -- On OPEN_SQUARE shift to state 8
@@ -458,9 +702,15 @@ combination -> combinator . simple_selector [ TILDE S PLUS OPEN_CURLY GT COMMA ]
 -- On qualifier_plus shift to state 50
 -- On qualifier shift to state 35
 -- On element shift to state 51
+## Reductions:
 
 State 49:
+## Known stack suffix:
+## combinator simple_selector
+## LR(1) items:
 combination -> combinator simple_selector . [ TILDE S PLUS OPEN_CURLY GT COMMA ]
+## Transitions:
+## Reductions:
 -- On TILDE reduce production combination -> combinator simple_selector
 -- On S reduce production combination -> combinator simple_selector
 -- On PLUS reduce production combination -> combinator simple_selector
@@ -469,8 +719,12 @@ combination -> combinator simple_selector . [ TILDE S PLUS OPEN_CURLY GT COMMA ]
 -- On COMMA reduce production combination -> combinator simple_selector
 
 State 50:
+## Known stack suffix:
+## qualifier_plus
+## LR(1) items:
 qualifier_plus -> qualifier_plus . qualifier [ TILDE SEL_FUNC S PLUS PERIOD OPEN_SQUARE OPEN_CURLY HASH GT DOUBLE_COLON COMMA COLON ]
 simple_selector -> qualifier_plus . [ TILDE S PLUS OPEN_CURLY GT COMMA ]
+## Transitions:
 -- On SEL_FUNC shift to state 5
 -- On PERIOD shift to state 6
 -- On OPEN_SQUARE shift to state 8
@@ -478,6 +732,7 @@ simple_selector -> qualifier_plus . [ TILDE S PLUS OPEN_CURLY GT COMMA ]
 -- On DOUBLE_COLON shift to state 29
 -- On COLON shift to state 31
 -- On qualifier shift to state 34
+## Reductions:
 -- On TILDE reduce production simple_selector -> qualifier_plus
 -- On S reduce production simple_selector -> qualifier_plus
 -- On PLUS reduce production simple_selector -> qualifier_plus
@@ -486,8 +741,13 @@ simple_selector -> qualifier_plus . [ TILDE S PLUS OPEN_CURLY GT COMMA ]
 -- On COMMA reduce production simple_selector -> qualifier_plus
 
 State 51:
+## Known stack suffix:
+## element
+## LR(1) items:
 simple_selector -> element . qualifier_star [ TILDE S PLUS OPEN_CURLY GT COMMA ]
+## Transitions:
 -- On qualifier_star shift to state 52
+## Reductions:
 -- On TILDE reduce production qualifier_star ->
 -- On SEL_FUNC reduce production qualifier_star ->
 -- On S reduce production qualifier_star ->
@@ -502,8 +762,12 @@ simple_selector -> element . qualifier_star [ TILDE S PLUS OPEN_CURLY GT COMMA ]
 -- On COLON reduce production qualifier_star ->
 
 State 52:
+## Known stack suffix:
+## element qualifier_star
+## LR(1) items:
 qualifier_star -> qualifier_star . qualifier [ TILDE SEL_FUNC S PLUS PERIOD OPEN_SQUARE OPEN_CURLY HASH GT DOUBLE_COLON COMMA COLON ]
 simple_selector -> element qualifier_star . [ TILDE S PLUS OPEN_CURLY GT COMMA ]
+## Transitions:
 -- On SEL_FUNC shift to state 5
 -- On PERIOD shift to state 6
 -- On OPEN_SQUARE shift to state 8
@@ -511,6 +775,7 @@ simple_selector -> element qualifier_star . [ TILDE S PLUS OPEN_CURLY GT COMMA ]
 -- On DOUBLE_COLON shift to state 29
 -- On COLON shift to state 31
 -- On qualifier shift to state 53
+## Reductions:
 -- On TILDE reduce production simple_selector -> element qualifier_star
 -- On S reduce production simple_selector -> element qualifier_star
 -- On PLUS reduce production simple_selector -> element qualifier_star
@@ -519,7 +784,12 @@ simple_selector -> element qualifier_star . [ TILDE S PLUS OPEN_CURLY GT COMMA ]
 -- On COMMA reduce production simple_selector -> element qualifier_star
 
 State 53:
+## Known stack suffix:
+## qualifier_star qualifier
+## LR(1) items:
 qualifier_star -> qualifier_star qualifier . [ TILDE SEL_FUNC S PLUS PERIOD OPEN_SQUARE OPEN_CURLY HASH GT DOUBLE_COLON COMMA COLON ]
+## Transitions:
+## Reductions:
 -- On TILDE reduce production qualifier_star -> qualifier_star qualifier
 -- On SEL_FUNC reduce production qualifier_star -> qualifier_star qualifier
 -- On S reduce production qualifier_star -> qualifier_star qualifier
@@ -534,7 +804,12 @@ qualifier_star -> qualifier_star qualifier . [ TILDE SEL_FUNC S PLUS PERIOD OPEN
 -- On COLON reduce production qualifier_star -> qualifier_star qualifier
 
 State 54:
+## Known stack suffix:
+## combination_star combination
+## LR(1) items:
 combination_star -> combination_star combination . [ TILDE S PLUS OPEN_CURLY GT COMMA ]
+## Transitions:
+## Reductions:
 -- On TILDE reduce production combination_star -> combination_star combination
 -- On S reduce production combination_star -> combination_star combination
 -- On PLUS reduce production combination_star -> combination_star combination
@@ -543,13 +818,22 @@ combination_star -> combination_star combination . [ TILDE S PLUS OPEN_CURLY GT 
 -- On COMMA reduce production combination_star -> combination_star combination
 
 State 55:
+## Known stack suffix:
+## selector_separated_nonempty_list_COMMA
+## LR(1) items:
 selector_list -> selector_separated_nonempty_list_COMMA . [ OPEN_CURLY ]
 selector_separated_nonempty_list_COMMA -> selector_separated_nonempty_list_COMMA . COMMA selector [ OPEN_CURLY COMMA ]
+## Transitions:
 -- On COMMA shift to state 56
+## Reductions:
 -- On OPEN_CURLY reduce production selector_list -> selector_separated_nonempty_list_COMMA
 
 State 56:
+## Known stack suffix:
+## selector_separated_nonempty_list_COMMA COMMA
+## LR(1) items:
 selector_separated_nonempty_list_COMMA -> selector_separated_nonempty_list_COMMA COMMA . selector [ OPEN_CURLY COMMA ]
+## Transitions:
 -- On SEL_FUNC shift to state 5
 -- On PERIOD shift to state 6
 -- On OPEN_SQUARE shift to state 8
@@ -563,29 +847,54 @@ selector_separated_nonempty_list_COMMA -> selector_separated_nonempty_list_COMMA
 -- On qualifier_plus shift to state 50
 -- On qualifier shift to state 35
 -- On element shift to state 51
+## Reductions:
 
 State 57:
+## Known stack suffix:
+## selector_separated_nonempty_list_COMMA COMMA selector
+## LR(1) items:
 selector_separated_nonempty_list_COMMA -> selector_separated_nonempty_list_COMMA COMMA selector . [ OPEN_CURLY COMMA ]
+## Transitions:
+## Reductions:
 -- On OPEN_CURLY reduce production selector_separated_nonempty_list_COMMA -> selector_separated_nonempty_list_COMMA COMMA selector
 -- On COMMA reduce production selector_separated_nonempty_list_COMMA -> selector_separated_nonempty_list_COMMA COMMA selector
 
 State 58:
+## Known stack suffix:
+## selector_list
+## LR(1) items:
 rule -> selector_list . declaration_block [ SEL_FUNC PERIOD OPEN_SQUARE IDENT HASH EOF DOUBLE_COLON COLON ASTERISK ]
+## Transitions:
 -- On OPEN_CURLY shift to state 59
 -- On declaration_block shift to state 91
+## Reductions:
 
 State 59:
+## Known stack suffix:
+## OPEN_CURLY
+## LR(1) items:
 declaration_block -> OPEN_CURLY . declaration_plus CLOSE_CURLY [ SEL_FUNC PERIOD OPEN_SQUARE IDENT HASH EOF DOUBLE_COLON COLON ASTERISK ]
+## Transitions:
 -- On IDENT shift to state 60
 -- On declaration_plus shift to state 87
 -- On declaration shift to state 90
+## Reductions:
 
 State 60:
+## Known stack suffix:
+## IDENT
+## LR(1) items:
 declaration -> IDENT . COLON expr boption_IMPORTANT SEMICOLON [ IDENT CLOSE_CURLY ]
+## Transitions:
 -- On COLON shift to state 61
+## Reductions:
 
 State 61:
+## Known stack suffix:
+## IDENT COLON
+## LR(1) items:
 declaration -> IDENT COLON . expr boption_IMPORTANT SEMICOLON [ IDENT CLOSE_CURLY ]
+## Transitions:
 -- On VAR shift to state 62
 -- On URI shift to state 63
 -- On TString shift to state 66
@@ -600,9 +909,15 @@ declaration -> IDENT COLON . expr boption_IMPORTANT SEMICOLON [ IDENT CLOSE_CURL
 -- On sentence shift to state 80
 -- On expr shift to state 83
 -- On calc shift to state 75
+## Reductions:
 
 State 62:
+## Known stack suffix:
+## VAR
+## LR(1) items:
 calc -> VAR . [ SEMICOLON S IMPORTANT COMMA CLOSE_ROUND ]
+## Transitions:
+## Reductions:
 -- On SEMICOLON reduce production calc -> VAR
 -- On S reduce production calc -> VAR
 -- On IMPORTANT reduce production calc -> VAR
@@ -610,15 +925,30 @@ calc -> VAR . [ SEMICOLON S IMPORTANT COMMA CLOSE_ROUND ]
 -- On CLOSE_ROUND reduce production calc -> VAR
 
 State 63:
+## Known stack suffix:
+## URI
+## LR(1) items:
 term -> URI . TString CLOSE_ROUND [ SEMICOLON S IMPORTANT COMMA CLOSE_ROUND ]
+## Transitions:
 -- On TString shift to state 64
+## Reductions:
 
 State 64:
+## Known stack suffix:
+## URI TString
+## LR(1) items:
 term -> URI TString . CLOSE_ROUND [ SEMICOLON S IMPORTANT COMMA CLOSE_ROUND ]
+## Transitions:
 -- On CLOSE_ROUND shift to state 65
+## Reductions:
 
 State 65:
+## Known stack suffix:
+## URI TString CLOSE_ROUND
+## LR(1) items:
 term -> URI TString CLOSE_ROUND . [ SEMICOLON S IMPORTANT COMMA CLOSE_ROUND ]
+## Transitions:
+## Reductions:
 -- On SEMICOLON reduce production term -> URI TString CLOSE_ROUND
 -- On S reduce production term -> URI TString CLOSE_ROUND
 -- On IMPORTANT reduce production term -> URI TString CLOSE_ROUND
@@ -626,7 +956,12 @@ term -> URI TString CLOSE_ROUND . [ SEMICOLON S IMPORTANT COMMA CLOSE_ROUND ]
 -- On CLOSE_ROUND reduce production term -> URI TString CLOSE_ROUND
 
 State 66:
+## Known stack suffix:
+## TString
+## LR(1) items:
 term -> TString . [ SEMICOLON S IMPORTANT COMMA CLOSE_ROUND ]
+## Transitions:
+## Reductions:
 -- On SEMICOLON reduce production term -> TString
 -- On S reduce production term -> TString
 -- On IMPORTANT reduce production term -> TString
@@ -634,7 +969,11 @@ term -> TString . [ SEMICOLON S IMPORTANT COMMA CLOSE_ROUND ]
 -- On CLOSE_ROUND reduce production term -> TString
 
 State 67:
+## Known stack suffix:
+## TERM_FUNC
+## LR(1) items:
 term -> TERM_FUNC . expr CLOSE_ROUND [ SEMICOLON S IMPORTANT COMMA CLOSE_ROUND ]
+## Transitions:
 -- On VAR shift to state 62
 -- On URI shift to state 63
 -- On TString shift to state 66
@@ -649,9 +988,15 @@ term -> TERM_FUNC . expr CLOSE_ROUND [ SEMICOLON S IMPORTANT COMMA CLOSE_ROUND ]
 -- On sentence shift to state 80
 -- On expr shift to state 81
 -- On calc shift to state 75
+## Reductions:
 
 State 68:
+## Known stack suffix:
+## SLASH
+## LR(1) items:
 term -> SLASH . [ SEMICOLON S IMPORTANT COMMA CLOSE_ROUND ]
+## Transitions:
+## Reductions:
 -- On SEMICOLON reduce production term -> SLASH
 -- On S reduce production term -> SLASH
 -- On IMPORTANT reduce production term -> SLASH
@@ -659,7 +1004,12 @@ term -> SLASH . [ SEMICOLON S IMPORTANT COMMA CLOSE_ROUND ]
 -- On CLOSE_ROUND reduce production term -> SLASH
 
 State 69:
+## Known stack suffix:
+## QUANTITY
+## LR(1) items:
 calc -> QUANTITY . [ SEMICOLON S IMPORTANT COMMA CLOSE_ROUND ]
+## Transitions:
+## Reductions:
 -- On SEMICOLON reduce production calc -> QUANTITY
 -- On S reduce production calc -> QUANTITY
 -- On IMPORTANT reduce production calc -> QUANTITY
@@ -667,7 +1017,12 @@ calc -> QUANTITY . [ SEMICOLON S IMPORTANT COMMA CLOSE_ROUND ]
 -- On CLOSE_ROUND reduce production calc -> QUANTITY
 
 State 70:
+## Known stack suffix:
+## IDENT
+## LR(1) items:
 term -> IDENT . [ SEMICOLON S IMPORTANT COMMA CLOSE_ROUND ]
+## Transitions:
+## Reductions:
 -- On SEMICOLON reduce production term -> IDENT
 -- On S reduce production term -> IDENT
 -- On IMPORTANT reduce production term -> IDENT
@@ -675,7 +1030,12 @@ term -> IDENT . [ SEMICOLON S IMPORTANT COMMA CLOSE_ROUND ]
 -- On CLOSE_ROUND reduce production term -> IDENT
 
 State 71:
+## Known stack suffix:
+## HASH
+## LR(1) items:
 term -> HASH . [ SEMICOLON S IMPORTANT COMMA CLOSE_ROUND ]
+## Transitions:
+## Reductions:
 -- On SEMICOLON reduce production term -> HASH
 -- On S reduce production term -> HASH
 -- On IMPORTANT reduce production term -> HASH
@@ -683,16 +1043,25 @@ term -> HASH . [ SEMICOLON S IMPORTANT COMMA CLOSE_ROUND ]
 -- On CLOSE_ROUND reduce production term -> HASH
 
 State 72:
+## Known stack suffix:
+## term_separated_nonempty_list_sopt
+## LR(1) items:
 sentence -> term_separated_nonempty_list_sopt . [ SEMICOLON IMPORTANT COMMA CLOSE_ROUND ]
 term_separated_nonempty_list_sopt -> term_separated_nonempty_list_sopt . S term [ SEMICOLON S IMPORTANT COMMA CLOSE_ROUND ]
+## Transitions:
 -- On S shift to state 73
+## Reductions:
 -- On SEMICOLON reduce production sentence -> term_separated_nonempty_list_sopt
 -- On IMPORTANT reduce production sentence -> term_separated_nonempty_list_sopt
 -- On COMMA reduce production sentence -> term_separated_nonempty_list_sopt
 -- On CLOSE_ROUND reduce production sentence -> term_separated_nonempty_list_sopt
 
 State 73:
+## Known stack suffix:
+## term_separated_nonempty_list_sopt S
+## LR(1) items:
 term_separated_nonempty_list_sopt -> term_separated_nonempty_list_sopt S . term [ SEMICOLON S IMPORTANT COMMA CLOSE_ROUND ]
+## Transitions:
 -- On VAR shift to state 62
 -- On URI shift to state 63
 -- On TString shift to state 66
@@ -703,9 +1072,15 @@ term_separated_nonempty_list_sopt -> term_separated_nonempty_list_sopt S . term 
 -- On HASH shift to state 71
 -- On term shift to state 74
 -- On calc shift to state 75
+## Reductions:
 
 State 74:
+## Known stack suffix:
+## term_separated_nonempty_list_sopt S term
+## LR(1) items:
 term_separated_nonempty_list_sopt -> term_separated_nonempty_list_sopt S term . [ SEMICOLON S IMPORTANT COMMA CLOSE_ROUND ]
+## Transitions:
+## Reductions:
 -- On SEMICOLON reduce production term_separated_nonempty_list_sopt -> term_separated_nonempty_list_sopt S term
 -- On S reduce production term_separated_nonempty_list_sopt -> term_separated_nonempty_list_sopt S term
 -- On IMPORTANT reduce production term_separated_nonempty_list_sopt -> term_separated_nonempty_list_sopt S term
@@ -713,7 +1088,12 @@ term_separated_nonempty_list_sopt -> term_separated_nonempty_list_sopt S term . 
 -- On CLOSE_ROUND reduce production term_separated_nonempty_list_sopt -> term_separated_nonempty_list_sopt S term
 
 State 75:
+## Known stack suffix:
+## calc
+## LR(1) items:
 term -> calc . [ SEMICOLON S IMPORTANT COMMA CLOSE_ROUND ]
+## Transitions:
+## Reductions:
 -- On SEMICOLON reduce production term -> calc
 -- On S reduce production term -> calc
 -- On IMPORTANT reduce production term -> calc
@@ -721,7 +1101,12 @@ term -> calc . [ SEMICOLON S IMPORTANT COMMA CLOSE_ROUND ]
 -- On CLOSE_ROUND reduce production term -> calc
 
 State 76:
+## Known stack suffix:
+## term
+## LR(1) items:
 term_separated_nonempty_list_sopt -> term . [ SEMICOLON S IMPORTANT COMMA CLOSE_ROUND ]
+## Transitions:
+## Reductions:
 -- On SEMICOLON reduce production term_separated_nonempty_list_sopt -> term
 -- On S reduce production term_separated_nonempty_list_sopt -> term
 -- On IMPORTANT reduce production term_separated_nonempty_list_sopt -> term
@@ -729,15 +1114,24 @@ term_separated_nonempty_list_sopt -> term . [ SEMICOLON S IMPORTANT COMMA CLOSE_
 -- On CLOSE_ROUND reduce production term_separated_nonempty_list_sopt -> term
 
 State 77:
+## Known stack suffix:
+## sentence_separated_nonempty_list_COMMA
+## LR(1) items:
 expr -> sentence_separated_nonempty_list_COMMA . [ SEMICOLON IMPORTANT CLOSE_ROUND ]
 sentence_separated_nonempty_list_COMMA -> sentence_separated_nonempty_list_COMMA . COMMA sentence [ SEMICOLON IMPORTANT COMMA CLOSE_ROUND ]
+## Transitions:
 -- On COMMA shift to state 78
+## Reductions:
 -- On SEMICOLON reduce production expr -> sentence_separated_nonempty_list_COMMA
 -- On IMPORTANT reduce production expr -> sentence_separated_nonempty_list_COMMA
 -- On CLOSE_ROUND reduce production expr -> sentence_separated_nonempty_list_COMMA
 
 State 78:
+## Known stack suffix:
+## sentence_separated_nonempty_list_COMMA COMMA
+## LR(1) items:
 sentence_separated_nonempty_list_COMMA -> sentence_separated_nonempty_list_COMMA COMMA . sentence [ SEMICOLON IMPORTANT COMMA CLOSE_ROUND ]
+## Transitions:
 -- On VAR shift to state 62
 -- On URI shift to state 63
 -- On TString shift to state 66
@@ -750,27 +1144,48 @@ sentence_separated_nonempty_list_COMMA -> sentence_separated_nonempty_list_COMMA
 -- On term shift to state 76
 -- On sentence shift to state 79
 -- On calc shift to state 75
+## Reductions:
 
 State 79:
+## Known stack suffix:
+## sentence_separated_nonempty_list_COMMA COMMA sentence
+## LR(1) items:
 sentence_separated_nonempty_list_COMMA -> sentence_separated_nonempty_list_COMMA COMMA sentence . [ SEMICOLON IMPORTANT COMMA CLOSE_ROUND ]
+## Transitions:
+## Reductions:
 -- On SEMICOLON reduce production sentence_separated_nonempty_list_COMMA -> sentence_separated_nonempty_list_COMMA COMMA sentence
 -- On IMPORTANT reduce production sentence_separated_nonempty_list_COMMA -> sentence_separated_nonempty_list_COMMA COMMA sentence
 -- On COMMA reduce production sentence_separated_nonempty_list_COMMA -> sentence_separated_nonempty_list_COMMA COMMA sentence
 -- On CLOSE_ROUND reduce production sentence_separated_nonempty_list_COMMA -> sentence_separated_nonempty_list_COMMA COMMA sentence
 
 State 80:
+## Known stack suffix:
+## sentence
+## LR(1) items:
 sentence_separated_nonempty_list_COMMA -> sentence . [ SEMICOLON IMPORTANT COMMA CLOSE_ROUND ]
+## Transitions:
+## Reductions:
 -- On SEMICOLON reduce production sentence_separated_nonempty_list_COMMA -> sentence
 -- On IMPORTANT reduce production sentence_separated_nonempty_list_COMMA -> sentence
 -- On COMMA reduce production sentence_separated_nonempty_list_COMMA -> sentence
 -- On CLOSE_ROUND reduce production sentence_separated_nonempty_list_COMMA -> sentence
 
 State 81:
+## Known stack suffix:
+## TERM_FUNC expr
+## LR(1) items:
 term -> TERM_FUNC expr . CLOSE_ROUND [ SEMICOLON S IMPORTANT COMMA CLOSE_ROUND ]
+## Transitions:
 -- On CLOSE_ROUND shift to state 82
+## Reductions:
 
 State 82:
+## Known stack suffix:
+## TERM_FUNC expr CLOSE_ROUND
+## LR(1) items:
 term -> TERM_FUNC expr CLOSE_ROUND . [ SEMICOLON S IMPORTANT COMMA CLOSE_ROUND ]
+## Transitions:
+## Reductions:
 -- On SEMICOLON reduce production term -> TERM_FUNC expr CLOSE_ROUND
 -- On S reduce production term -> TERM_FUNC expr CLOSE_ROUND
 -- On IMPORTANT reduce production term -> TERM_FUNC expr CLOSE_ROUND
@@ -778,33 +1193,63 @@ term -> TERM_FUNC expr CLOSE_ROUND . [ SEMICOLON S IMPORTANT COMMA CLOSE_ROUND ]
 -- On CLOSE_ROUND reduce production term -> TERM_FUNC expr CLOSE_ROUND
 
 State 83:
+## Known stack suffix:
+## IDENT COLON expr
+## LR(1) items:
 declaration -> IDENT COLON expr . boption_IMPORTANT SEMICOLON [ IDENT CLOSE_CURLY ]
+## Transitions:
 -- On IMPORTANT shift to state 84
 -- On boption_IMPORTANT shift to state 85
+## Reductions:
 -- On SEMICOLON reduce production boption_IMPORTANT ->
 
 State 84:
+## Known stack suffix:
+## IMPORTANT
+## LR(1) items:
 boption_IMPORTANT -> IMPORTANT . [ SEMICOLON ]
+## Transitions:
+## Reductions:
 -- On SEMICOLON reduce production boption_IMPORTANT -> IMPORTANT
 
 State 85:
+## Known stack suffix:
+## IDENT COLON expr boption_IMPORTANT
+## LR(1) items:
 declaration -> IDENT COLON expr boption_IMPORTANT . SEMICOLON [ IDENT CLOSE_CURLY ]
+## Transitions:
 -- On SEMICOLON shift to state 86
+## Reductions:
 
 State 86:
+## Known stack suffix:
+## IDENT COLON expr boption_IMPORTANT SEMICOLON
+## LR(1) items:
 declaration -> IDENT COLON expr boption_IMPORTANT SEMICOLON . [ IDENT CLOSE_CURLY ]
+## Transitions:
+## Reductions:
 -- On IDENT reduce production declaration -> IDENT COLON expr boption_IMPORTANT SEMICOLON
 -- On CLOSE_CURLY reduce production declaration -> IDENT COLON expr boption_IMPORTANT SEMICOLON
 
 State 87:
+## Known stack suffix:
+## OPEN_CURLY declaration_plus
+## LR(1) items:
 declaration_block -> OPEN_CURLY declaration_plus . CLOSE_CURLY [ SEL_FUNC PERIOD OPEN_SQUARE IDENT HASH EOF DOUBLE_COLON COLON ASTERISK ]
 declaration_plus -> declaration_plus . declaration [ IDENT CLOSE_CURLY ]
+## Transitions:
 -- On IDENT shift to state 60
 -- On CLOSE_CURLY shift to state 88
 -- On declaration shift to state 89
+## Reductions:
 
 State 88:
+## Known stack suffix:
+## OPEN_CURLY declaration_plus CLOSE_CURLY
+## LR(1) items:
 declaration_block -> OPEN_CURLY declaration_plus CLOSE_CURLY . [ SEL_FUNC PERIOD OPEN_SQUARE IDENT HASH EOF DOUBLE_COLON COLON ASTERISK ]
+## Transitions:
+## Reductions:
 -- On SEL_FUNC reduce production declaration_block -> OPEN_CURLY declaration_plus CLOSE_CURLY
 -- On PERIOD reduce production declaration_block -> OPEN_CURLY declaration_plus CLOSE_CURLY
 -- On OPEN_SQUARE reduce production declaration_block -> OPEN_CURLY declaration_plus CLOSE_CURLY
@@ -816,17 +1261,32 @@ declaration_block -> OPEN_CURLY declaration_plus CLOSE_CURLY . [ SEL_FUNC PERIOD
 -- On ASTERISK reduce production declaration_block -> OPEN_CURLY declaration_plus CLOSE_CURLY
 
 State 89:
+## Known stack suffix:
+## declaration_plus declaration
+## LR(1) items:
 declaration_plus -> declaration_plus declaration . [ IDENT CLOSE_CURLY ]
+## Transitions:
+## Reductions:
 -- On IDENT reduce production declaration_plus -> declaration_plus declaration
 -- On CLOSE_CURLY reduce production declaration_plus -> declaration_plus declaration
 
 State 90:
+## Known stack suffix:
+## declaration
+## LR(1) items:
 declaration_plus -> declaration . [ IDENT CLOSE_CURLY ]
+## Transitions:
+## Reductions:
 -- On IDENT reduce production declaration_plus -> declaration
 -- On CLOSE_CURLY reduce production declaration_plus -> declaration
 
 State 91:
+## Known stack suffix:
+## selector_list declaration_block
+## LR(1) items:
 rule -> selector_list declaration_block . [ SEL_FUNC PERIOD OPEN_SQUARE IDENT HASH EOF DOUBLE_COLON COLON ASTERISK ]
+## Transitions:
+## Reductions:
 -- On SEL_FUNC reduce production rule -> selector_list declaration_block
 -- On PERIOD reduce production rule -> selector_list declaration_block
 -- On OPEN_SQUARE reduce production rule -> selector_list declaration_block
@@ -838,12 +1298,22 @@ rule -> selector_list declaration_block . [ SEL_FUNC PERIOD OPEN_SQUARE IDENT HA
 -- On ASTERISK reduce production rule -> selector_list declaration_block
 
 State 92:
+## Known stack suffix:
+## selector
+## LR(1) items:
 selector_separated_nonempty_list_COMMA -> selector . [ OPEN_CURLY COMMA ]
+## Transitions:
+## Reductions:
 -- On OPEN_CURLY reduce production selector_separated_nonempty_list_COMMA -> selector
 -- On COMMA reduce production selector_separated_nonempty_list_COMMA -> selector
 
 State 93:
+## Known stack suffix:
+## rule
+## LR(1) items:
 statement -> rule . [ SEL_FUNC PERIOD OPEN_SQUARE IDENT HASH EOF DOUBLE_COLON COLON ASTERISK ]
+## Transitions:
+## Reductions:
 -- On SEL_FUNC reduce production statement -> rule
 -- On PERIOD reduce production statement -> rule
 -- On OPEN_SQUARE reduce production statement -> rule

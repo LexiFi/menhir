@@ -1,15 +1,29 @@
 State 0:
+## Known stack suffix:
+##
+## LR(1) items:
 search' -> . search [ # ]
+## Transitions:
 -- On SEARCH shift to state 1
 -- On ERROR shift to state 13
 -- On search shift to state 15
+## Reductions:
 
 State 1:
+## Known stack suffix:
+## SEARCH
+## LR(1) items:
 search -> SEARCH . IDENT comment [ # ]
+## Transitions:
 -- On IDENT shift to state 2
+## Reductions:
 
 State 2:
+## Known stack suffix:
+## SEARCH IDENT
+## LR(1) items:
 search -> SEARCH IDENT . comment [ # ]
+## Transitions:
 -- On RIGHT_PAR shift to state 3
 -- On NEWLINE shift to state 4
 -- On LEFT_PAR shift to state 5
@@ -18,9 +32,15 @@ search -> SEARCH IDENT . comment [ # ]
 -- On COLON shift to state 8
 -- On punctuation shift to state 9
 -- On comment shift to state 12
+## Reductions:
 
 State 3:
+## Known stack suffix:
+## RIGHT_PAR
+## LR(1) items:
 punctuation -> RIGHT_PAR . [ RIGHT_PAR NEWLINE LEFT_PAR IDENT COMMA COLON ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAR reduce production punctuation -> RIGHT_PAR
 -- On NEWLINE reduce production punctuation -> RIGHT_PAR
 -- On LEFT_PAR reduce production punctuation -> RIGHT_PAR
@@ -29,11 +49,21 @@ punctuation -> RIGHT_PAR . [ RIGHT_PAR NEWLINE LEFT_PAR IDENT COMMA COLON ]
 -- On COLON reduce production punctuation -> RIGHT_PAR
 
 State 4:
+## Known stack suffix:
+## NEWLINE
+## LR(1) items:
 comment -> NEWLINE . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production comment -> NEWLINE
 
 State 5:
+## Known stack suffix:
+## LEFT_PAR
+## LR(1) items:
 punctuation -> LEFT_PAR . [ RIGHT_PAR NEWLINE LEFT_PAR IDENT COMMA COLON ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAR reduce production punctuation -> LEFT_PAR
 -- On NEWLINE reduce production punctuation -> LEFT_PAR
 -- On LEFT_PAR reduce production punctuation -> LEFT_PAR
@@ -42,7 +72,11 @@ punctuation -> LEFT_PAR . [ RIGHT_PAR NEWLINE LEFT_PAR IDENT COMMA COLON ]
 -- On COLON reduce production punctuation -> LEFT_PAR
 
 State 6:
+## Known stack suffix:
+## IDENT
+## LR(1) items:
 comment -> IDENT . comment [ # ]
+## Transitions:
 -- On RIGHT_PAR shift to state 3
 -- On NEWLINE shift to state 4
 -- On LEFT_PAR shift to state 5
@@ -51,9 +85,15 @@ comment -> IDENT . comment [ # ]
 -- On COLON shift to state 8
 -- On punctuation shift to state 9
 -- On comment shift to state 11
+## Reductions:
 
 State 7:
+## Known stack suffix:
+## COMMA
+## LR(1) items:
 punctuation -> COMMA . [ RIGHT_PAR NEWLINE LEFT_PAR IDENT COMMA COLON ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAR reduce production punctuation -> COMMA
 -- On NEWLINE reduce production punctuation -> COMMA
 -- On LEFT_PAR reduce production punctuation -> COMMA
@@ -62,7 +102,12 @@ punctuation -> COMMA . [ RIGHT_PAR NEWLINE LEFT_PAR IDENT COMMA COLON ]
 -- On COLON reduce production punctuation -> COMMA
 
 State 8:
+## Known stack suffix:
+## COLON
+## LR(1) items:
 punctuation -> COLON . [ RIGHT_PAR NEWLINE LEFT_PAR IDENT COMMA COLON ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAR reduce production punctuation -> COLON
 -- On NEWLINE reduce production punctuation -> COLON
 -- On LEFT_PAR reduce production punctuation -> COLON
@@ -71,7 +116,11 @@ punctuation -> COLON . [ RIGHT_PAR NEWLINE LEFT_PAR IDENT COMMA COLON ]
 -- On COLON reduce production punctuation -> COLON
 
 State 9:
+## Known stack suffix:
+## punctuation
+## LR(1) items:
 comment -> punctuation . comment [ # ]
+## Transitions:
 -- On RIGHT_PAR shift to state 3
 -- On NEWLINE shift to state 4
 -- On LEFT_PAR shift to state 5
@@ -80,21 +129,41 @@ comment -> punctuation . comment [ # ]
 -- On COLON shift to state 8
 -- On punctuation shift to state 9
 -- On comment shift to state 10
+## Reductions:
 
 State 10:
+## Known stack suffix:
+## punctuation comment
+## LR(1) items:
 comment -> punctuation comment . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production comment -> punctuation comment
 
 State 11:
+## Known stack suffix:
+## IDENT comment
+## LR(1) items:
 comment -> IDENT comment . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production comment -> IDENT comment
 
 State 12:
+## Known stack suffix:
+## SEARCH IDENT comment
+## LR(1) items:
 search -> SEARCH IDENT comment . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production search -> SEARCH IDENT comment
 
 State 13:
+## Known stack suffix:
+## ERROR
+## LR(1) items:
 search -> ERROR . comment [ # ]
+## Transitions:
 -- On RIGHT_PAR shift to state 3
 -- On NEWLINE shift to state 4
 -- On LEFT_PAR shift to state 5
@@ -103,24 +172,44 @@ search -> ERROR . comment [ # ]
 -- On COLON shift to state 8
 -- On punctuation shift to state 9
 -- On comment shift to state 14
+## Reductions:
 
 State 14:
+## Known stack suffix:
+## ERROR comment
+## LR(1) items:
 search -> ERROR comment . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production search -> ERROR comment
 
 State 15:
+## Known stack suffix:
+## search
+## LR(1) items:
 search' -> search . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept search
 
 State 16:
+## Known stack suffix:
+##
+## LR(1) items:
 term_oe' -> . term_oe [ # ]
+## Transitions:
 -- On TERM shift to state 17
 -- On QUIT shift to state 34
 -- On ERROR shift to state 36
 -- On term_oe shift to state 38
+## Reductions:
 
 State 17:
+## Known stack suffix:
+## TERM
+## LR(1) items:
 term_oe -> TERM . comment term NEWLINE END [ # ]
+## Transitions:
 -- On RIGHT_PAR shift to state 3
 -- On NEWLINE shift to state 18
 -- On LEFT_PAR shift to state 5
@@ -129,15 +218,25 @@ term_oe -> TERM . comment term NEWLINE END [ # ]
 -- On COLON shift to state 8
 -- On punctuation shift to state 20
 -- On comment shift to state 23
+## Reductions:
 
 State 18:
+## Known stack suffix:
+## NEWLINE
+## LR(1) items:
 comment -> NEWLINE . [ SORT LEFT_PAR IDENT ]
+## Transitions:
+## Reductions:
 -- On SORT reduce production comment -> NEWLINE
 -- On LEFT_PAR reduce production comment -> NEWLINE
 -- On IDENT reduce production comment -> NEWLINE
 
 State 19:
+## Known stack suffix:
+## IDENT
+## LR(1) items:
 comment -> IDENT . comment [ SORT LEFT_PAR IDENT ]
+## Transitions:
 -- On RIGHT_PAR shift to state 3
 -- On NEWLINE shift to state 18
 -- On LEFT_PAR shift to state 5
@@ -146,9 +245,14 @@ comment -> IDENT . comment [ SORT LEFT_PAR IDENT ]
 -- On COLON shift to state 8
 -- On punctuation shift to state 20
 -- On comment shift to state 22
+## Reductions:
 
 State 20:
+## Known stack suffix:
+## punctuation
+## LR(1) items:
 comment -> punctuation . comment [ SORT LEFT_PAR IDENT ]
+## Transitions:
 -- On RIGHT_PAR shift to state 3
 -- On NEWLINE shift to state 18
 -- On LEFT_PAR shift to state 5
@@ -157,38 +261,69 @@ comment -> punctuation . comment [ SORT LEFT_PAR IDENT ]
 -- On COLON shift to state 8
 -- On punctuation shift to state 20
 -- On comment shift to state 21
+## Reductions:
 
 State 21:
+## Known stack suffix:
+## punctuation comment
+## LR(1) items:
 comment -> punctuation comment . [ SORT LEFT_PAR IDENT ]
+## Transitions:
+## Reductions:
 -- On SORT reduce production comment -> punctuation comment
 -- On LEFT_PAR reduce production comment -> punctuation comment
 -- On IDENT reduce production comment -> punctuation comment
 
 State 22:
+## Known stack suffix:
+## IDENT comment
+## LR(1) items:
 comment -> IDENT comment . [ SORT LEFT_PAR IDENT ]
+## Transitions:
+## Reductions:
 -- On SORT reduce production comment -> IDENT comment
 -- On LEFT_PAR reduce production comment -> IDENT comment
 -- On IDENT reduce production comment -> IDENT comment
 
 State 23:
+## Known stack suffix:
+## TERM comment
+## LR(1) items:
 term_oe -> TERM comment . term NEWLINE END [ # ]
+## Transitions:
 -- On LEFT_PAR shift to state 24
 -- On IDENT shift to state 26
 -- On term shift to state 31
+## Reductions:
 
 State 24:
+## Known stack suffix:
+## LEFT_PAR
+## LR(1) items:
 term -> LEFT_PAR . IDENT term_seq RIGHT_PAR [ RIGHT_PAR NEWLINE LEFT_PAR IDENT EQUAL ]
+## Transitions:
 -- On IDENT shift to state 25
+## Reductions:
 
 State 25:
+## Known stack suffix:
+## LEFT_PAR IDENT
+## LR(1) items:
 term -> LEFT_PAR IDENT . term_seq RIGHT_PAR [ RIGHT_PAR NEWLINE LEFT_PAR IDENT EQUAL ]
+## Transitions:
 -- On LEFT_PAR shift to state 24
 -- On IDENT shift to state 26
 -- On term_seq shift to state 27
 -- On term shift to state 29
+## Reductions:
 
 State 26:
+## Known stack suffix:
+## IDENT
+## LR(1) items:
 term -> IDENT . [ RIGHT_PAR NEWLINE LEFT_PAR IDENT EQUAL ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAR reduce production term -> IDENT
 -- On NEWLINE reduce production term -> IDENT
 -- On LEFT_PAR reduce production term -> IDENT
@@ -196,11 +331,21 @@ term -> IDENT . [ RIGHT_PAR NEWLINE LEFT_PAR IDENT EQUAL ]
 -- On EQUAL reduce production term -> IDENT
 
 State 27:
+## Known stack suffix:
+## LEFT_PAR IDENT term_seq
+## LR(1) items:
 term -> LEFT_PAR IDENT term_seq . RIGHT_PAR [ RIGHT_PAR NEWLINE LEFT_PAR IDENT EQUAL ]
+## Transitions:
 -- On RIGHT_PAR shift to state 28
+## Reductions:
 
 State 28:
+## Known stack suffix:
+## LEFT_PAR IDENT term_seq RIGHT_PAR
+## LR(1) items:
 term -> LEFT_PAR IDENT term_seq RIGHT_PAR . [ RIGHT_PAR NEWLINE LEFT_PAR IDENT EQUAL ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAR reduce production term -> LEFT_PAR IDENT term_seq RIGHT_PAR
 -- On NEWLINE reduce production term -> LEFT_PAR IDENT term_seq RIGHT_PAR
 -- On LEFT_PAR reduce production term -> LEFT_PAR IDENT term_seq RIGHT_PAR
@@ -208,32 +353,61 @@ term -> LEFT_PAR IDENT term_seq RIGHT_PAR . [ RIGHT_PAR NEWLINE LEFT_PAR IDENT E
 -- On EQUAL reduce production term -> LEFT_PAR IDENT term_seq RIGHT_PAR
 
 State 29:
+## Known stack suffix:
+## term
+## LR(1) items:
 term_seq -> term . [ RIGHT_PAR ]
 term_seq -> term . term_seq [ RIGHT_PAR ]
+## Transitions:
 -- On LEFT_PAR shift to state 24
 -- On IDENT shift to state 26
 -- On term_seq shift to state 30
 -- On term shift to state 29
+## Reductions:
 -- On RIGHT_PAR reduce production term_seq -> term
 
 State 30:
+## Known stack suffix:
+## term term_seq
+## LR(1) items:
 term_seq -> term term_seq . [ RIGHT_PAR ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAR reduce production term_seq -> term term_seq
 
 State 31:
+## Known stack suffix:
+## TERM comment term
+## LR(1) items:
 term_oe -> TERM comment term . NEWLINE END [ # ]
+## Transitions:
 -- On NEWLINE shift to state 32
+## Reductions:
 
 State 32:
+## Known stack suffix:
+## TERM comment term NEWLINE
+## LR(1) items:
 term_oe -> TERM comment term NEWLINE . END [ # ]
+## Transitions:
 -- On END shift to state 33
+## Reductions:
 
 State 33:
+## Known stack suffix:
+## TERM comment term NEWLINE END
+## LR(1) items:
 term_oe -> TERM comment term NEWLINE END . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production term_oe -> TERM comment term NEWLINE END
 
 State 34:
+## Known stack suffix:
+## QUIT
+## LR(1) items:
 term_oe -> QUIT . comment [ # ]
+## Transitions:
 -- On RIGHT_PAR shift to state 3
 -- On NEWLINE shift to state 4
 -- On LEFT_PAR shift to state 5
@@ -242,13 +416,23 @@ term_oe -> QUIT . comment [ # ]
 -- On COLON shift to state 8
 -- On punctuation shift to state 9
 -- On comment shift to state 35
+## Reductions:
 
 State 35:
+## Known stack suffix:
+## QUIT comment
+## LR(1) items:
 term_oe -> QUIT comment . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production term_oe -> QUIT comment
 
 State 36:
+## Known stack suffix:
+## ERROR
+## LR(1) items:
 term_oe -> ERROR . comment [ # ]
+## Transitions:
 -- On RIGHT_PAR shift to state 3
 -- On NEWLINE shift to state 4
 -- On LEFT_PAR shift to state 5
@@ -257,27 +441,52 @@ term_oe -> ERROR . comment [ # ]
 -- On COLON shift to state 8
 -- On punctuation shift to state 9
 -- On comment shift to state 37
+## Reductions:
 
 State 37:
+## Known stack suffix:
+## ERROR comment
+## LR(1) items:
 term_oe -> ERROR comment . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production term_oe -> ERROR comment
 
 State 38:
+## Known stack suffix:
+## term_oe
+## LR(1) items:
 term_oe' -> term_oe . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept term_oe
 
 State 39:
+## Known stack suffix:
+##
+## LR(1) items:
 theory_oe' -> . theory_oe [ # ]
+## Transitions:
 -- On THEORY shift to state 40
 -- On ERROR shift to state 74
 -- On theory_oe shift to state 76
+## Reductions:
 
 State 40:
+## Known stack suffix:
+## THEORY
+## LR(1) items:
 theory_oe -> THEORY . IDENT comment sortp signature rule_set END comment [ # ]
+## Transitions:
 -- On IDENT shift to state 41
+## Reductions:
 
 State 41:
+## Known stack suffix:
+## THEORY IDENT
+## LR(1) items:
 theory_oe -> THEORY IDENT . comment sortp signature rule_set END comment [ # ]
+## Transitions:
 -- On RIGHT_PAR shift to state 3
 -- On NEWLINE shift to state 18
 -- On LEFT_PAR shift to state 5
@@ -286,141 +495,276 @@ theory_oe -> THEORY IDENT . comment sortp signature rule_set END comment [ # ]
 -- On COLON shift to state 8
 -- On punctuation shift to state 20
 -- On comment shift to state 42
+## Reductions:
 
 State 42:
+## Known stack suffix:
+## THEORY IDENT comment
+## LR(1) items:
 theory_oe -> THEORY IDENT comment . sortp signature rule_set END comment [ # ]
+## Transitions:
 -- On SORT shift to state 43
 -- On sortp shift to state 49
 -- On sort shift to state 72
+## Reductions:
 
 State 43:
+## Known stack suffix:
+## SORT
+## LR(1) items:
 sort -> SORT . ident_seq NEWLINE [ SORT FUNCTION ]
+## Transitions:
 -- On IDENT shift to state 44
 -- On ident_seq shift to state 47
+## Reductions:
 
 State 44:
+## Known stack suffix:
+## IDENT
+## LR(1) items:
 ident_seq -> IDENT . [ NEWLINE COLON ]
 ident_seq -> IDENT . COMMA ident_seq [ NEWLINE COLON ]
+## Transitions:
 -- On COMMA shift to state 45
+## Reductions:
 -- On NEWLINE reduce production ident_seq -> IDENT
 -- On COLON reduce production ident_seq -> IDENT
 
 State 45:
+## Known stack suffix:
+## IDENT COMMA
+## LR(1) items:
 ident_seq -> IDENT COMMA . ident_seq [ NEWLINE COLON ]
+## Transitions:
 -- On IDENT shift to state 44
 -- On ident_seq shift to state 46
+## Reductions:
 
 State 46:
+## Known stack suffix:
+## IDENT COMMA ident_seq
+## LR(1) items:
 ident_seq -> IDENT COMMA ident_seq . [ NEWLINE COLON ]
+## Transitions:
+## Reductions:
 -- On NEWLINE reduce production ident_seq -> IDENT COMMA ident_seq
 -- On COLON reduce production ident_seq -> IDENT COMMA ident_seq
 
 State 47:
+## Known stack suffix:
+## SORT ident_seq
+## LR(1) items:
 sort -> SORT ident_seq . NEWLINE [ SORT FUNCTION ]
+## Transitions:
 -- On NEWLINE shift to state 48
+## Reductions:
 
 State 48:
+## Known stack suffix:
+## SORT ident_seq NEWLINE
+## LR(1) items:
 sort -> SORT ident_seq NEWLINE . [ SORT FUNCTION ]
+## Transitions:
+## Reductions:
 -- On SORT reduce production sort -> SORT ident_seq NEWLINE
 -- On FUNCTION reduce production sort -> SORT ident_seq NEWLINE
 
 State 49:
+## Known stack suffix:
+## THEORY IDENT comment sortp
+## LR(1) items:
 theory_oe -> THEORY IDENT comment sortp . signature rule_set END comment [ # ]
+## Transitions:
 -- On FUNCTION shift to state 50
 -- On symbol shift to state 58
 -- On signature shift to state 60
+## Reductions:
 
 State 50:
+## Known stack suffix:
+## FUNCTION
+## LR(1) items:
 symbol -> FUNCTION . ident_seq COLON types NEWLINE [ RULE FUNCTION ]
+## Transitions:
 -- On IDENT shift to state 44
 -- On ident_seq shift to state 51
+## Reductions:
 
 State 51:
+## Known stack suffix:
+## FUNCTION ident_seq
+## LR(1) items:
 symbol -> FUNCTION ident_seq . COLON types NEWLINE [ RULE FUNCTION ]
+## Transitions:
 -- On COLON shift to state 52
+## Reductions:
 
 State 52:
+## Known stack suffix:
+## FUNCTION ident_seq COLON
+## LR(1) items:
 symbol -> FUNCTION ident_seq COLON . types NEWLINE [ RULE FUNCTION ]
+## Transitions:
 -- On IDENT shift to state 53
 -- On types shift to state 56
+## Reductions:
 
 State 53:
+## Known stack suffix:
+## IDENT
+## LR(1) items:
 types -> IDENT . [ NEWLINE ]
 types -> IDENT . RIGHTARROW types [ NEWLINE ]
+## Transitions:
 -- On RIGHTARROW shift to state 54
+## Reductions:
 -- On NEWLINE reduce production types -> IDENT
 
 State 54:
+## Known stack suffix:
+## IDENT RIGHTARROW
+## LR(1) items:
 types -> IDENT RIGHTARROW . types [ NEWLINE ]
+## Transitions:
 -- On IDENT shift to state 53
 -- On types shift to state 55
+## Reductions:
 
 State 55:
+## Known stack suffix:
+## IDENT RIGHTARROW types
+## LR(1) items:
 types -> IDENT RIGHTARROW types . [ NEWLINE ]
+## Transitions:
+## Reductions:
 -- On NEWLINE reduce production types -> IDENT RIGHTARROW types
 
 State 56:
+## Known stack suffix:
+## FUNCTION ident_seq COLON types
+## LR(1) items:
 symbol -> FUNCTION ident_seq COLON types . NEWLINE [ RULE FUNCTION ]
+## Transitions:
 -- On NEWLINE shift to state 57
+## Reductions:
 
 State 57:
+## Known stack suffix:
+## FUNCTION ident_seq COLON types NEWLINE
+## LR(1) items:
 symbol -> FUNCTION ident_seq COLON types NEWLINE . [ RULE FUNCTION ]
+## Transitions:
+## Reductions:
 -- On RULE reduce production symbol -> FUNCTION ident_seq COLON types NEWLINE
 -- On FUNCTION reduce production symbol -> FUNCTION ident_seq COLON types NEWLINE
 
 State 58:
+## Known stack suffix:
+## symbol
+## LR(1) items:
 signature -> symbol . [ RULE ]
 signature -> symbol . signature [ RULE ]
+## Transitions:
 -- On FUNCTION shift to state 50
 -- On symbol shift to state 58
 -- On signature shift to state 59
+## Reductions:
 -- On RULE reduce production signature -> symbol
 
 State 59:
+## Known stack suffix:
+## symbol signature
+## LR(1) items:
 signature -> symbol signature . [ RULE ]
+## Transitions:
+## Reductions:
 -- On RULE reduce production signature -> symbol signature
 
 State 60:
+## Known stack suffix:
+## THEORY IDENT comment sortp signature
+## LR(1) items:
 theory_oe -> THEORY IDENT comment sortp signature . rule_set END comment [ # ]
+## Transitions:
 -- On RULE shift to state 61
 -- On rule_set shift to state 67
 -- On rule shift to state 70
+## Reductions:
 
 State 61:
+## Known stack suffix:
+## RULE
+## LR(1) items:
 rule -> RULE . IDENT term EQUAL term NEWLINE [ RULE END ]
+## Transitions:
 -- On IDENT shift to state 62
+## Reductions:
 
 State 62:
+## Known stack suffix:
+## RULE IDENT
+## LR(1) items:
 rule -> RULE IDENT . term EQUAL term NEWLINE [ RULE END ]
+## Transitions:
 -- On LEFT_PAR shift to state 24
 -- On IDENT shift to state 26
 -- On term shift to state 63
+## Reductions:
 
 State 63:
+## Known stack suffix:
+## RULE IDENT term
+## LR(1) items:
 rule -> RULE IDENT term . EQUAL term NEWLINE [ RULE END ]
+## Transitions:
 -- On EQUAL shift to state 64
+## Reductions:
 
 State 64:
+## Known stack suffix:
+## RULE IDENT term EQUAL
+## LR(1) items:
 rule -> RULE IDENT term EQUAL . term NEWLINE [ RULE END ]
+## Transitions:
 -- On LEFT_PAR shift to state 24
 -- On IDENT shift to state 26
 -- On term shift to state 65
+## Reductions:
 
 State 65:
+## Known stack suffix:
+## RULE IDENT term EQUAL term
+## LR(1) items:
 rule -> RULE IDENT term EQUAL term . NEWLINE [ RULE END ]
+## Transitions:
 -- On NEWLINE shift to state 66
+## Reductions:
 
 State 66:
+## Known stack suffix:
+## RULE IDENT term EQUAL term NEWLINE
+## LR(1) items:
 rule -> RULE IDENT term EQUAL term NEWLINE . [ RULE END ]
+## Transitions:
+## Reductions:
 -- On RULE reduce production rule -> RULE IDENT term EQUAL term NEWLINE
 -- On END reduce production rule -> RULE IDENT term EQUAL term NEWLINE
 
 State 67:
+## Known stack suffix:
+## THEORY IDENT comment sortp signature rule_set
+## LR(1) items:
 theory_oe -> THEORY IDENT comment sortp signature rule_set . END comment [ # ]
+## Transitions:
 -- On END shift to state 68
+## Reductions:
 
 State 68:
+## Known stack suffix:
+## THEORY IDENT comment sortp signature rule_set END
+## LR(1) items:
 theory_oe -> THEORY IDENT comment sortp signature rule_set END . comment [ # ]
+## Transitions:
 -- On RIGHT_PAR shift to state 3
 -- On NEWLINE shift to state 4
 -- On LEFT_PAR shift to state 5
@@ -429,37 +773,67 @@ theory_oe -> THEORY IDENT comment sortp signature rule_set END . comment [ # ]
 -- On COLON shift to state 8
 -- On punctuation shift to state 9
 -- On comment shift to state 69
+## Reductions:
 
 State 69:
+## Known stack suffix:
+## THEORY IDENT comment sortp signature rule_set END comment
+## LR(1) items:
 theory_oe -> THEORY IDENT comment sortp signature rule_set END comment . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production theory_oe -> THEORY IDENT comment sortp signature rule_set END comment
 
 State 70:
+## Known stack suffix:
+## rule
+## LR(1) items:
 rule_set -> rule . [ END ]
 rule_set -> rule . rule_set [ END ]
+## Transitions:
 -- On RULE shift to state 61
 -- On rule_set shift to state 71
 -- On rule shift to state 70
+## Reductions:
 -- On END reduce production rule_set -> rule
 
 State 71:
+## Known stack suffix:
+## rule rule_set
+## LR(1) items:
 rule_set -> rule rule_set . [ END ]
+## Transitions:
+## Reductions:
 -- On END reduce production rule_set -> rule rule_set
 
 State 72:
+## Known stack suffix:
+## sort
+## LR(1) items:
 sortp -> sort . [ FUNCTION ]
 sortp -> sort . sortp [ FUNCTION ]
+## Transitions:
 -- On SORT shift to state 43
 -- On sortp shift to state 73
 -- On sort shift to state 72
+## Reductions:
 -- On FUNCTION reduce production sortp -> sort
 
 State 73:
+## Known stack suffix:
+## sort sortp
+## LR(1) items:
 sortp -> sort sortp . [ FUNCTION ]
+## Transitions:
+## Reductions:
 -- On FUNCTION reduce production sortp -> sort sortp
 
 State 74:
+## Known stack suffix:
+## ERROR
+## LR(1) items:
 theory_oe -> ERROR . comment [ # ]
+## Transitions:
 -- On RIGHT_PAR shift to state 3
 -- On NEWLINE shift to state 4
 -- On LEFT_PAR shift to state 5
@@ -468,12 +842,23 @@ theory_oe -> ERROR . comment [ # ]
 -- On COLON shift to state 8
 -- On punctuation shift to state 9
 -- On comment shift to state 75
+## Reductions:
 
 State 75:
+## Known stack suffix:
+## ERROR comment
+## LR(1) items:
 theory_oe -> ERROR comment . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production theory_oe -> ERROR comment
 
 State 76:
+## Known stack suffix:
+## theory_oe
+## LR(1) items:
 theory_oe' -> theory_oe . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept theory_oe
 

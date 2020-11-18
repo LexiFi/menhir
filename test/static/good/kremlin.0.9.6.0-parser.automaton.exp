@@ -1,5 +1,9 @@
 State 0:
+## Known stack suffix:
+##
+## LR(1) items:
 bundle' -> . bundle [ # ]
+## Transitions:
 -- On UIDENT shift to state 1
 -- On STAR shift to state 3
 -- On PUBLIC shift to state 6
@@ -11,164 +15,304 @@ bundle' -> . bundle [ # ]
 -- On loption(separated_nonempty_list(DOT,uident)) shift to state 13
 -- On bundle shift to state 26
 -- On api shift to state 27
+## Reductions:
 -- On PLUS reduce production loption(separated_nonempty_list(DOT,uident)) ->
 -- On EQUALS reduce production loption(separated_nonempty_list(DOT,uident)) ->
 
 State 1:
+## Known stack suffix:
+## UIDENT
+## LR(1) items:
 pat -> UIDENT . [ EOF COMMA ]
 pat -> UIDENT . DOT pat [ EOF COMMA ]
 separated_nonempty_list(DOT,uident) -> UIDENT . [ PLUS EQUALS ]
 separated_nonempty_list(DOT,uident) -> UIDENT . DOT separated_nonempty_list(DOT,uident) [ PLUS EQUALS ]
+## Transitions:
 -- On DOT shift to state 2
+## Reductions:
 -- On PLUS reduce production separated_nonempty_list(DOT,uident) -> UIDENT
 -- On EQUALS reduce production separated_nonempty_list(DOT,uident) -> UIDENT
 -- On EOF reduce production pat -> UIDENT
 -- On COMMA reduce production pat -> UIDENT
 
 State 2:
+## Known stack suffix:
+## UIDENT DOT
+## LR(1) items:
 pat -> UIDENT DOT . pat [ EOF COMMA ]
 separated_nonempty_list(DOT,uident) -> UIDENT DOT . separated_nonempty_list(DOT,uident) [ PLUS EQUALS ]
+## Transitions:
 -- On UIDENT shift to state 1
 -- On STAR shift to state 3
 -- On separated_nonempty_list(DOT,uident) shift to state 4
 -- On pat shift to state 5
+## Reductions:
 
 State 3:
+## Known stack suffix:
+## STAR
+## LR(1) items:
 pat -> STAR . [ EOF COMMA ]
+## Transitions:
+## Reductions:
 -- On EOF reduce production pat -> STAR
 -- On COMMA reduce production pat -> STAR
 
 State 4:
+## Known stack suffix:
+## UIDENT DOT separated_nonempty_list(DOT,uident)
+## LR(1) items:
 separated_nonempty_list(DOT,uident) -> UIDENT DOT separated_nonempty_list(DOT,uident) . [ RPAREN PLUS EQUALS ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production separated_nonempty_list(DOT,uident) -> UIDENT DOT separated_nonempty_list(DOT,uident)
 -- On PLUS reduce production separated_nonempty_list(DOT,uident) -> UIDENT DOT separated_nonempty_list(DOT,uident)
 -- On EQUALS reduce production separated_nonempty_list(DOT,uident) -> UIDENT DOT separated_nonempty_list(DOT,uident)
 
 State 5:
+## Known stack suffix:
+## UIDENT DOT pat
+## LR(1) items:
 pat -> UIDENT DOT pat . [ EOF COMMA ]
+## Transitions:
+## Reductions:
 -- On EOF reduce production pat -> UIDENT DOT pat
 -- On COMMA reduce production pat -> UIDENT DOT pat
 
 State 6:
+## Known stack suffix:
+## PUBLIC
+## LR(1) items:
 api -> PUBLIC . LPAREN mident RPAREN [ PLUS EQUALS ]
+## Transitions:
 -- On LPAREN shift to state 7
+## Reductions:
 
 State 7:
+## Known stack suffix:
+## PUBLIC LPAREN
+## LR(1) items:
 api -> PUBLIC LPAREN . mident RPAREN [ PLUS EQUALS ]
+## Transitions:
 -- On UIDENT shift to state 8
 -- On separated_nonempty_list(DOT,uident) shift to state 10
 -- On mident shift to state 11
 -- On loption(separated_nonempty_list(DOT,uident)) shift to state 13
+## Reductions:
 -- On RPAREN reduce production loption(separated_nonempty_list(DOT,uident)) ->
 
 State 8:
+## Known stack suffix:
+## UIDENT
+## LR(1) items:
 separated_nonempty_list(DOT,uident) -> UIDENT . [ RPAREN PLUS EQUALS ]
 separated_nonempty_list(DOT,uident) -> UIDENT . DOT separated_nonempty_list(DOT,uident) [ RPAREN PLUS EQUALS ]
+## Transitions:
 -- On DOT shift to state 9
+## Reductions:
 -- On RPAREN reduce production separated_nonempty_list(DOT,uident) -> UIDENT
 -- On PLUS reduce production separated_nonempty_list(DOT,uident) -> UIDENT
 -- On EQUALS reduce production separated_nonempty_list(DOT,uident) -> UIDENT
 
 State 9:
+## Known stack suffix:
+## UIDENT DOT
+## LR(1) items:
 separated_nonempty_list(DOT,uident) -> UIDENT DOT . separated_nonempty_list(DOT,uident) [ RPAREN PLUS EQUALS ]
+## Transitions:
 -- On UIDENT shift to state 8
 -- On separated_nonempty_list(DOT,uident) shift to state 4
+## Reductions:
 
 State 10:
+## Known stack suffix:
+## separated_nonempty_list(DOT,uident)
+## LR(1) items:
 loption(separated_nonempty_list(DOT,uident)) -> separated_nonempty_list(DOT,uident) . [ RPAREN PLUS EQUALS ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production loption(separated_nonempty_list(DOT,uident)) -> separated_nonempty_list(DOT,uident)
 -- On PLUS reduce production loption(separated_nonempty_list(DOT,uident)) -> separated_nonempty_list(DOT,uident)
 -- On EQUALS reduce production loption(separated_nonempty_list(DOT,uident)) -> separated_nonempty_list(DOT,uident)
 
 State 11:
+## Known stack suffix:
+## PUBLIC LPAREN mident
+## LR(1) items:
 api -> PUBLIC LPAREN mident . RPAREN [ PLUS EQUALS ]
+## Transitions:
 -- On RPAREN shift to state 12
+## Reductions:
 
 State 12:
+## Known stack suffix:
+## PUBLIC LPAREN mident RPAREN
+## LR(1) items:
 api -> PUBLIC LPAREN mident RPAREN . [ PLUS EQUALS ]
+## Transitions:
+## Reductions:
 -- On PLUS reduce production api -> PUBLIC LPAREN mident RPAREN
 -- On EQUALS reduce production api -> PUBLIC LPAREN mident RPAREN
 
 State 13:
+## Known stack suffix:
+## loption(separated_nonempty_list(DOT,uident))
+## LR(1) items:
 mident -> loption(separated_nonempty_list(DOT,uident)) . [ RPAREN PLUS EQUALS ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production mident -> loption(separated_nonempty_list(DOT,uident))
 -- On PLUS reduce production mident -> loption(separated_nonempty_list(DOT,uident))
 -- On EQUALS reduce production mident -> loption(separated_nonempty_list(DOT,uident))
 
 State 14:
+## Known stack suffix:
+## separated_nonempty_list(PLUS,api)
+## LR(1) items:
 bundle -> separated_nonempty_list(PLUS,api) . EQUALS separated_nonempty_list(COMMA,pat) EOF [ # ]
+## Transitions:
 -- On EQUALS shift to state 15
+## Reductions:
 
 State 15:
+## Known stack suffix:
+## separated_nonempty_list(PLUS,api) EQUALS
+## LR(1) items:
 bundle -> separated_nonempty_list(PLUS,api) EQUALS . separated_nonempty_list(COMMA,pat) EOF [ # ]
+## Transitions:
 -- On UIDENT shift to state 16
 -- On STAR shift to state 3
 -- On separated_nonempty_list(COMMA,pat) shift to state 18
 -- On pat shift to state 20
+## Reductions:
 
 State 16:
+## Known stack suffix:
+## UIDENT
+## LR(1) items:
 pat -> UIDENT . [ EOF COMMA ]
 pat -> UIDENT . DOT pat [ EOF COMMA ]
+## Transitions:
 -- On DOT shift to state 17
+## Reductions:
 -- On EOF reduce production pat -> UIDENT
 -- On COMMA reduce production pat -> UIDENT
 
 State 17:
+## Known stack suffix:
+## UIDENT DOT
+## LR(1) items:
 pat -> UIDENT DOT . pat [ EOF COMMA ]
+## Transitions:
 -- On UIDENT shift to state 16
 -- On STAR shift to state 3
 -- On pat shift to state 5
+## Reductions:
 
 State 18:
+## Known stack suffix:
+## separated_nonempty_list(PLUS,api) EQUALS separated_nonempty_list(COMMA,pat)
+## LR(1) items:
 bundle -> separated_nonempty_list(PLUS,api) EQUALS separated_nonempty_list(COMMA,pat) . EOF [ # ]
+## Transitions:
 -- On EOF shift to state 19
+## Reductions:
 
 State 19:
+## Known stack suffix:
+## separated_nonempty_list(PLUS,api) EQUALS separated_nonempty_list(COMMA,pat) EOF
+## LR(1) items:
 bundle -> separated_nonempty_list(PLUS,api) EQUALS separated_nonempty_list(COMMA,pat) EOF . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production bundle -> separated_nonempty_list(PLUS,api) EQUALS separated_nonempty_list(COMMA,pat) EOF
 
 State 20:
+## Known stack suffix:
+## pat
+## LR(1) items:
 separated_nonempty_list(COMMA,pat) -> pat . [ EOF ]
 separated_nonempty_list(COMMA,pat) -> pat . COMMA separated_nonempty_list(COMMA,pat) [ EOF ]
+## Transitions:
 -- On COMMA shift to state 21
+## Reductions:
 -- On EOF reduce production separated_nonempty_list(COMMA,pat) -> pat
 
 State 21:
+## Known stack suffix:
+## pat COMMA
+## LR(1) items:
 separated_nonempty_list(COMMA,pat) -> pat COMMA . separated_nonempty_list(COMMA,pat) [ EOF ]
+## Transitions:
 -- On UIDENT shift to state 16
 -- On STAR shift to state 3
 -- On separated_nonempty_list(COMMA,pat) shift to state 22
 -- On pat shift to state 20
+## Reductions:
 
 State 22:
+## Known stack suffix:
+## pat COMMA separated_nonempty_list(COMMA,pat)
+## LR(1) items:
 separated_nonempty_list(COMMA,pat) -> pat COMMA separated_nonempty_list(COMMA,pat) . [ EOF ]
+## Transitions:
+## Reductions:
 -- On EOF reduce production separated_nonempty_list(COMMA,pat) -> pat COMMA separated_nonempty_list(COMMA,pat)
 
 State 23:
+## Known stack suffix:
+## separated_nonempty_list(COMMA,pat)
+## LR(1) items:
 bundle -> separated_nonempty_list(COMMA,pat) . EOF [ # ]
+## Transitions:
 -- On EOF shift to state 24
+## Reductions:
 
 State 24:
+## Known stack suffix:
+## separated_nonempty_list(COMMA,pat) EOF
+## LR(1) items:
 bundle -> separated_nonempty_list(COMMA,pat) EOF . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production bundle -> separated_nonempty_list(COMMA,pat) EOF
 
 State 25:
+## Known stack suffix:
+## mident
+## LR(1) items:
 api -> mident . [ PLUS EQUALS ]
+## Transitions:
+## Reductions:
 -- On PLUS reduce production api -> mident
 -- On EQUALS reduce production api -> mident
 
 State 26:
+## Known stack suffix:
+## bundle
+## LR(1) items:
 bundle' -> bundle . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept bundle
 
 State 27:
+## Known stack suffix:
+## api
+## LR(1) items:
 separated_nonempty_list(PLUS,api) -> api . [ EQUALS ]
 separated_nonempty_list(PLUS,api) -> api . PLUS separated_nonempty_list(PLUS,api) [ EQUALS ]
+## Transitions:
 -- On PLUS shift to state 28
+## Reductions:
 -- On EQUALS reduce production separated_nonempty_list(PLUS,api) -> api
 
 State 28:
+## Known stack suffix:
+## api PLUS
+## LR(1) items:
 separated_nonempty_list(PLUS,api) -> api PLUS . separated_nonempty_list(PLUS,api) [ EQUALS ]
+## Transitions:
 -- On UIDENT shift to state 8
 -- On PUBLIC shift to state 6
 -- On separated_nonempty_list(PLUS,api) shift to state 29
@@ -176,69 +320,134 @@ separated_nonempty_list(PLUS,api) -> api PLUS . separated_nonempty_list(PLUS,api
 -- On mident shift to state 25
 -- On loption(separated_nonempty_list(DOT,uident)) shift to state 13
 -- On api shift to state 27
+## Reductions:
 -- On PLUS reduce production loption(separated_nonempty_list(DOT,uident)) ->
 -- On EQUALS reduce production loption(separated_nonempty_list(DOT,uident)) ->
 
 State 29:
+## Known stack suffix:
+## api PLUS separated_nonempty_list(PLUS,api)
+## LR(1) items:
 separated_nonempty_list(PLUS,api) -> api PLUS separated_nonempty_list(PLUS,api) . [ EQUALS ]
+## Transitions:
+## Reductions:
 -- On EQUALS reduce production separated_nonempty_list(PLUS,api) -> api PLUS separated_nonempty_list(PLUS,api)
 
 State 30:
+## Known stack suffix:
+##
+## LR(1) items:
 drop' -> . drop [ # ]
+## Transitions:
 -- On UIDENT shift to state 16
 -- On STAR shift to state 3
 -- On separated_nonempty_list(COMMA,pat) shift to state 31
 -- On pat shift to state 20
 -- On loption(separated_nonempty_list(COMMA,pat)) shift to state 32
 -- On drop shift to state 34
+## Reductions:
 -- On EOF reduce production loption(separated_nonempty_list(COMMA,pat)) ->
 
 State 31:
+## Known stack suffix:
+## separated_nonempty_list(COMMA,pat)
+## LR(1) items:
 loption(separated_nonempty_list(COMMA,pat)) -> separated_nonempty_list(COMMA,pat) . [ EOF ]
+## Transitions:
+## Reductions:
 -- On EOF reduce production loption(separated_nonempty_list(COMMA,pat)) -> separated_nonempty_list(COMMA,pat)
 
 State 32:
+## Known stack suffix:
+## loption(separated_nonempty_list(COMMA,pat))
+## LR(1) items:
 drop -> loption(separated_nonempty_list(COMMA,pat)) . EOF [ # ]
+## Transitions:
 -- On EOF shift to state 33
+## Reductions:
 
 State 33:
+## Known stack suffix:
+## loption(separated_nonempty_list(COMMA,pat)) EOF
+## LR(1) items:
 drop -> loption(separated_nonempty_list(COMMA,pat)) EOF . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production drop -> loption(separated_nonempty_list(COMMA,pat)) EOF
 
 State 34:
+## Known stack suffix:
+## drop
+## LR(1) items:
 drop' -> drop . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept drop
 
 State 35:
+## Known stack suffix:
+##
+## LR(1) items:
 lid' -> . lid [ # ]
+## Transitions:
 -- On UIDENT shift to state 36
 -- On LIDENT shift to state 38
 -- On lid shift to state 40
+## Reductions:
 
 State 36:
+## Known stack suffix:
+## UIDENT
+## LR(1) items:
 lid -> UIDENT . DOT lid [ # ]
+## Transitions:
 -- On DOT shift to state 37
+## Reductions:
 
 State 37:
+## Known stack suffix:
+## UIDENT DOT
+## LR(1) items:
 lid -> UIDENT DOT . lid [ # ]
+## Transitions:
 -- On UIDENT shift to state 36
 -- On LIDENT shift to state 38
 -- On lid shift to state 39
+## Reductions:
 
 State 38:
+## Known stack suffix:
+## LIDENT
+## LR(1) items:
 lid -> LIDENT . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production lid -> LIDENT
 
 State 39:
+## Known stack suffix:
+## UIDENT DOT lid
+## LR(1) items:
 lid -> UIDENT DOT lid . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production lid -> UIDENT DOT lid
 
 State 40:
+## Known stack suffix:
+## lid
+## LR(1) items:
 lid' -> lid . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept lid
 
 State 41:
+## Known stack suffix:
+##
+## LR(1) items:
 warn_error_list' -> . warn_error_list [ # ]
+## Transitions:
 -- On PLUS shift to state 42
 -- On MINUS shift to state 43
 -- On AT shift to state 44
@@ -246,79 +455,150 @@ warn_error_list' -> . warn_error_list [ # ]
 -- On warn_error shift to state 46
 -- On nonempty_list(warn_error) shift to state 54
 -- On flag shift to state 48
+## Reductions:
 
 State 42:
+## Known stack suffix:
+## PLUS
+## LR(1) items:
 flag -> PLUS . [ INT ]
+## Transitions:
+## Reductions:
 -- On INT reduce production flag -> PLUS
 
 State 43:
+## Known stack suffix:
+## MINUS
+## LR(1) items:
 flag -> MINUS . [ INT ]
+## Transitions:
+## Reductions:
 -- On INT reduce production flag -> MINUS
 
 State 44:
+## Known stack suffix:
+## AT
+## LR(1) items:
 flag -> AT . [ INT ]
+## Transitions:
+## Reductions:
 -- On INT reduce production flag -> AT
 
 State 45:
+## Known stack suffix:
+## warn_error_list
+## LR(1) items:
 warn_error_list' -> warn_error_list . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept warn_error_list
 
 State 46:
+## Known stack suffix:
+## warn_error
+## LR(1) items:
 nonempty_list(warn_error) -> warn_error . [ EOF ]
 nonempty_list(warn_error) -> warn_error . nonempty_list(warn_error) [ EOF ]
+## Transitions:
 -- On PLUS shift to state 42
 -- On MINUS shift to state 43
 -- On AT shift to state 44
 -- On warn_error shift to state 46
 -- On nonempty_list(warn_error) shift to state 47
 -- On flag shift to state 48
+## Reductions:
 -- On EOF reduce production nonempty_list(warn_error) -> warn_error
 
 State 47:
+## Known stack suffix:
+## warn_error nonempty_list(warn_error)
+## LR(1) items:
 nonempty_list(warn_error) -> warn_error nonempty_list(warn_error) . [ EOF ]
+## Transitions:
+## Reductions:
 -- On EOF reduce production nonempty_list(warn_error) -> warn_error nonempty_list(warn_error)
 
 State 48:
+## Known stack suffix:
+## flag
+## LR(1) items:
 warn_error -> flag . range [ PLUS MINUS EOF AT ]
+## Transitions:
 -- On INT shift to state 49
 -- On range shift to state 53
+## Reductions:
 
 State 49:
+## Known stack suffix:
+## INT
+## LR(1) items:
 range -> INT . [ PLUS MINUS EOF AT ]
 range -> INT . DOT DOT INT [ PLUS MINUS EOF AT ]
+## Transitions:
 -- On DOT shift to state 50
+## Reductions:
 -- On PLUS reduce production range -> INT
 -- On MINUS reduce production range -> INT
 -- On EOF reduce production range -> INT
 -- On AT reduce production range -> INT
 
 State 50:
+## Known stack suffix:
+## INT DOT
+## LR(1) items:
 range -> INT DOT . DOT INT [ PLUS MINUS EOF AT ]
+## Transitions:
 -- On DOT shift to state 51
+## Reductions:
 
 State 51:
+## Known stack suffix:
+## INT DOT DOT
+## LR(1) items:
 range -> INT DOT DOT . INT [ PLUS MINUS EOF AT ]
+## Transitions:
 -- On INT shift to state 52
+## Reductions:
 
 State 52:
+## Known stack suffix:
+## INT DOT DOT INT
+## LR(1) items:
 range -> INT DOT DOT INT . [ PLUS MINUS EOF AT ]
+## Transitions:
+## Reductions:
 -- On PLUS reduce production range -> INT DOT DOT INT
 -- On MINUS reduce production range -> INT DOT DOT INT
 -- On EOF reduce production range -> INT DOT DOT INT
 -- On AT reduce production range -> INT DOT DOT INT
 
 State 53:
+## Known stack suffix:
+## flag range
+## LR(1) items:
 warn_error -> flag range . [ PLUS MINUS EOF AT ]
+## Transitions:
+## Reductions:
 -- On PLUS reduce production warn_error -> flag range
 -- On MINUS reduce production warn_error -> flag range
 -- On EOF reduce production warn_error -> flag range
 -- On AT reduce production warn_error -> flag range
 
 State 54:
+## Known stack suffix:
+## nonempty_list(warn_error)
+## LR(1) items:
 warn_error_list -> nonempty_list(warn_error) . EOF [ # ]
+## Transitions:
 -- On EOF shift to state 55
+## Reductions:
 
 State 55:
+## Known stack suffix:
+## nonempty_list(warn_error) EOF
+## LR(1) items:
 warn_error_list -> nonempty_list(warn_error) EOF . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production warn_error_list -> nonempty_list(warn_error) EOF
 

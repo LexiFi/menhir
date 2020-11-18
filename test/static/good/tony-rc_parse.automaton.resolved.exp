@@ -1,25 +1,44 @@
 State 0:
+## Known stack suffix:
+##
+## LR(1) items:
 rcfile' -> . rcfile [ # ]
+## Transitions:
 -- On rclines shift to state 1
 -- On rcfile shift to state 18
+## Reductions:
 -- On ID reduce production rclines ->
 -- On EOF reduce production rclines ->
 
 State 1:
+## Known stack suffix:
+## rclines
+## LR(1) items:
 rcfile -> rclines . EOF [ # ]
 rclines -> rclines . rcline [ ID EOF ]
+## Transitions:
 -- On ID shift to state 2
 -- On EOF shift to state 16
 -- On rcline shift to state 17
+## Reductions:
 
 State 2:
+## Known stack suffix:
+## ID
+## LR(1) items:
 rcline -> ID . EQUAL value [ ID EOF ]
 rcline -> ID . EQUAL values [ ID EOF ]
+## Transitions:
 -- On EQUAL shift to state 3
+## Reductions:
 
 State 3:
+## Known stack suffix:
+## ID EQUAL
+## LR(1) items:
 rcline -> ID EQUAL . value [ ID EOF ]
 rcline -> ID EQUAL . values [ ID EOF ]
+## Transitions:
 -- On TRUE shift to state 4
 -- On STR shift to state 5
 -- On INT shift to state 6
@@ -28,52 +47,92 @@ rcline -> ID EQUAL . values [ ID EOF ]
 -- On FALSE shift to state 9
 -- On values shift to state 10
 -- On value shift to state 13
+## Reductions:
 
 State 4:
+## Known stack suffix:
+## TRUE
+## LR(1) items:
 value -> TRUE . [ ID EOF COMMA ]
+## Transitions:
+## Reductions:
 -- On ID reduce production value -> TRUE
 -- On EOF reduce production value -> TRUE
 -- On COMMA reduce production value -> TRUE
 
 State 5:
+## Known stack suffix:
+## STR
+## LR(1) items:
 value -> STR . [ ID EOF COMMA ]
+## Transitions:
+## Reductions:
 -- On ID reduce production value -> STR
 -- On EOF reduce production value -> STR
 -- On COMMA reduce production value -> STR
 
 State 6:
+## Known stack suffix:
+## INT
+## LR(1) items:
 value -> INT . [ ID EOF COMMA ]
+## Transitions:
+## Reductions:
 -- On ID reduce production value -> INT
 -- On EOF reduce production value -> INT
 -- On COMMA reduce production value -> INT
 
 State 7:
+## Known stack suffix:
+## ID
+## LR(1) items:
 value -> ID . [ ID EOF COMMA ]
+## Transitions:
+## Reductions:
 -- On ID reduce production value -> ID
 -- On EOF reduce production value -> ID
 -- On COMMA reduce production value -> ID
 
 State 8:
+## Known stack suffix:
+## FLOAT
+## LR(1) items:
 value -> FLOAT . [ ID EOF COMMA ]
+## Transitions:
+## Reductions:
 -- On ID reduce production value -> FLOAT
 -- On EOF reduce production value -> FLOAT
 -- On COMMA reduce production value -> FLOAT
 
 State 9:
+## Known stack suffix:
+## FALSE
+## LR(1) items:
 value -> FALSE . [ ID EOF COMMA ]
+## Transitions:
+## Reductions:
 -- On ID reduce production value -> FALSE
 -- On EOF reduce production value -> FALSE
 -- On COMMA reduce production value -> FALSE
 
 State 10:
+## Known stack suffix:
+## ID EQUAL values
+## LR(1) items:
 rcline -> ID EQUAL values . [ ID EOF ]
 values -> values . COMMA value [ ID EOF COMMA ]
+## Transitions:
 -- On COMMA shift to state 11
+## Reductions:
 -- On ID reduce production rcline -> ID EQUAL values
 -- On EOF reduce production rcline -> ID EQUAL values
 
 State 11:
+## Known stack suffix:
+## values COMMA
+## LR(1) items:
 values -> values COMMA . value [ ID EOF COMMA ]
+## Transitions:
 -- On TRUE shift to state 4
 -- On STR shift to state 5
 -- On INT shift to state 6
@@ -81,22 +140,37 @@ values -> values COMMA . value [ ID EOF COMMA ]
 -- On FLOAT shift to state 8
 -- On FALSE shift to state 9
 -- On value shift to state 12
+## Reductions:
 
 State 12:
+## Known stack suffix:
+## values COMMA value
+## LR(1) items:
 values -> values COMMA value . [ ID EOF COMMA ]
+## Transitions:
+## Reductions:
 -- On ID reduce production values -> values COMMA value
 -- On EOF reduce production values -> values COMMA value
 -- On COMMA reduce production values -> values COMMA value
 
 State 13:
+## Known stack suffix:
+## ID EQUAL value
+## LR(1) items:
 rcline -> ID EQUAL value . [ ID EOF ]
 values -> value . COMMA value [ ID EOF COMMA ]
+## Transitions:
 -- On COMMA shift to state 14
+## Reductions:
 -- On ID reduce production rcline -> ID EQUAL value
 -- On EOF reduce production rcline -> ID EQUAL value
 
 State 14:
+## Known stack suffix:
+## value COMMA
+## LR(1) items:
 values -> value COMMA . value [ ID EOF COMMA ]
+## Transitions:
 -- On TRUE shift to state 4
 -- On STR shift to state 5
 -- On INT shift to state 6
@@ -104,23 +178,44 @@ values -> value COMMA . value [ ID EOF COMMA ]
 -- On FLOAT shift to state 8
 -- On FALSE shift to state 9
 -- On value shift to state 15
+## Reductions:
 
 State 15:
+## Known stack suffix:
+## value COMMA value
+## LR(1) items:
 values -> value COMMA value . [ ID EOF COMMA ]
+## Transitions:
+## Reductions:
 -- On ID reduce production values -> value COMMA value
 -- On EOF reduce production values -> value COMMA value
 -- On COMMA reduce production values -> value COMMA value
 
 State 16:
+## Known stack suffix:
+## rclines EOF
+## LR(1) items:
 rcfile -> rclines EOF . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production rcfile -> rclines EOF
 
 State 17:
+## Known stack suffix:
+## rclines rcline
+## LR(1) items:
 rclines -> rclines rcline . [ ID EOF ]
+## Transitions:
+## Reductions:
 -- On ID reduce production rclines -> rclines rcline
 -- On EOF reduce production rclines -> rclines rcline
 
 State 18:
+## Known stack suffix:
+## rcfile
+## LR(1) items:
 rcfile' -> rcfile . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept rcfile
 

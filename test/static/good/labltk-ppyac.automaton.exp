@@ -1,5 +1,9 @@
 State 0:
+## Known stack suffix:
+##
+## LR(1) items:
 code_list' -> . code_list [ # ]
+## Transitions:
 -- On UNDEF shift to state 1
 -- On OTHER shift to state 2
 -- On IFNDEF shift to state 3
@@ -7,6 +11,7 @@ code_list' -> . code_list [ # ]
 -- On DEFINE shift to state 5
 -- On code_list shift to state 18
 -- On code shift to state 19
+## Reductions:
 -- On # reduce production code_list ->
 ** End-of-stream conflict on UNDEF OTHER IFNDEF IFDEF DEFINE
 **   There is a tension between
@@ -15,7 +20,12 @@ code_list' -> . code_list [ # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 1:
+## Known stack suffix:
+## UNDEF
+## LR(1) items:
 code -> UNDEF . [ UNDEF OTHER IFNDEF IFDEF ENDIF ELSE DEFINE # ]
+## Transitions:
+## Reductions:
 -- On UNDEF reduce production code -> UNDEF
 -- On OTHER reduce production code -> UNDEF
 -- On IFNDEF reduce production code -> UNDEF
@@ -31,7 +41,12 @@ code -> UNDEF . [ UNDEF OTHER IFNDEF IFDEF ENDIF ELSE DEFINE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 2:
+## Known stack suffix:
+## OTHER
+## LR(1) items:
 code -> OTHER . [ UNDEF OTHER IFNDEF IFDEF ENDIF ELSE DEFINE # ]
+## Transitions:
+## Reductions:
 -- On UNDEF reduce production code -> OTHER
 -- On OTHER reduce production code -> OTHER
 -- On IFNDEF reduce production code -> OTHER
@@ -47,8 +62,12 @@ code -> OTHER . [ UNDEF OTHER IFNDEF IFDEF ENDIF ELSE DEFINE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 3:
+## Known stack suffix:
+## IFNDEF
+## LR(1) items:
 code -> IFNDEF . code_list ELSE code_list ENDIF [ UNDEF OTHER IFNDEF IFDEF ENDIF ELSE DEFINE # ]
 code -> IFNDEF . code_list ENDIF [ UNDEF OTHER IFNDEF IFDEF ENDIF ELSE DEFINE # ]
+## Transitions:
 -- On UNDEF shift to state 1
 -- On OTHER shift to state 2
 -- On IFNDEF shift to state 3
@@ -56,12 +75,17 @@ code -> IFNDEF . code_list ENDIF [ UNDEF OTHER IFNDEF IFDEF ENDIF ELSE DEFINE # 
 -- On DEFINE shift to state 5
 -- On code_list shift to state 13
 -- On code shift to state 11
+## Reductions:
 -- On ENDIF reduce production code_list ->
 -- On ELSE reduce production code_list ->
 
 State 4:
+## Known stack suffix:
+## IFDEF
+## LR(1) items:
 code -> IFDEF . code_list ELSE code_list ENDIF [ UNDEF OTHER IFNDEF IFDEF ENDIF ELSE DEFINE # ]
 code -> IFDEF . code_list ENDIF [ UNDEF OTHER IFNDEF IFDEF ENDIF ELSE DEFINE # ]
+## Transitions:
 -- On UNDEF shift to state 1
 -- On OTHER shift to state 2
 -- On IFNDEF shift to state 3
@@ -69,11 +93,17 @@ code -> IFDEF . code_list ENDIF [ UNDEF OTHER IFNDEF IFDEF ENDIF ELSE DEFINE # ]
 -- On DEFINE shift to state 5
 -- On code_list shift to state 6
 -- On code shift to state 11
+## Reductions:
 -- On ENDIF reduce production code_list ->
 -- On ELSE reduce production code_list ->
 
 State 5:
+## Known stack suffix:
+## DEFINE
+## LR(1) items:
 code -> DEFINE . [ UNDEF OTHER IFNDEF IFDEF ENDIF ELSE DEFINE # ]
+## Transitions:
+## Reductions:
 -- On UNDEF reduce production code -> DEFINE
 -- On OTHER reduce production code -> DEFINE
 -- On IFNDEF reduce production code -> DEFINE
@@ -89,13 +119,23 @@ code -> DEFINE . [ UNDEF OTHER IFNDEF IFDEF ENDIF ELSE DEFINE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 6:
+## Known stack suffix:
+## IFDEF code_list
+## LR(1) items:
 code -> IFDEF code_list . ELSE code_list ENDIF [ UNDEF OTHER IFNDEF IFDEF ENDIF ELSE DEFINE # ]
 code -> IFDEF code_list . ENDIF [ UNDEF OTHER IFNDEF IFDEF ENDIF ELSE DEFINE # ]
+## Transitions:
 -- On ENDIF shift to state 7
 -- On ELSE shift to state 8
+## Reductions:
 
 State 7:
+## Known stack suffix:
+## IFDEF code_list ENDIF
+## LR(1) items:
 code -> IFDEF code_list ENDIF . [ UNDEF OTHER IFNDEF IFDEF ENDIF ELSE DEFINE # ]
+## Transitions:
+## Reductions:
 -- On UNDEF reduce production code -> IFDEF code_list ENDIF
 -- On OTHER reduce production code -> IFDEF code_list ENDIF
 -- On IFNDEF reduce production code -> IFDEF code_list ENDIF
@@ -111,7 +151,11 @@ code -> IFDEF code_list ENDIF . [ UNDEF OTHER IFNDEF IFDEF ENDIF ELSE DEFINE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 8:
+## Known stack suffix:
+## IFDEF code_list ELSE
+## LR(1) items:
 code -> IFDEF code_list ELSE . code_list ENDIF [ UNDEF OTHER IFNDEF IFDEF ENDIF ELSE DEFINE # ]
+## Transitions:
 -- On UNDEF shift to state 1
 -- On OTHER shift to state 2
 -- On IFNDEF shift to state 3
@@ -119,14 +163,25 @@ code -> IFDEF code_list ELSE . code_list ENDIF [ UNDEF OTHER IFNDEF IFDEF ENDIF 
 -- On DEFINE shift to state 5
 -- On code_list shift to state 9
 -- On code shift to state 11
+## Reductions:
 -- On ENDIF reduce production code_list ->
 
 State 9:
+## Known stack suffix:
+## IFDEF code_list ELSE code_list
+## LR(1) items:
 code -> IFDEF code_list ELSE code_list . ENDIF [ UNDEF OTHER IFNDEF IFDEF ENDIF ELSE DEFINE # ]
+## Transitions:
 -- On ENDIF shift to state 10
+## Reductions:
 
 State 10:
+## Known stack suffix:
+## IFDEF code_list ELSE code_list ENDIF
+## LR(1) items:
 code -> IFDEF code_list ELSE code_list ENDIF . [ UNDEF OTHER IFNDEF IFDEF ENDIF ELSE DEFINE # ]
+## Transitions:
+## Reductions:
 -- On UNDEF reduce production code -> IFDEF code_list ELSE code_list ENDIF
 -- On OTHER reduce production code -> IFDEF code_list ELSE code_list ENDIF
 -- On IFNDEF reduce production code -> IFDEF code_list ELSE code_list ENDIF
@@ -142,7 +197,11 @@ code -> IFDEF code_list ELSE code_list ENDIF . [ UNDEF OTHER IFNDEF IFDEF ENDIF 
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 11:
+## Known stack suffix:
+## code
+## LR(1) items:
 code_list -> code . code_list [ ENDIF ELSE ]
+## Transitions:
 -- On UNDEF shift to state 1
 -- On OTHER shift to state 2
 -- On IFNDEF shift to state 3
@@ -150,22 +209,38 @@ code_list -> code . code_list [ ENDIF ELSE ]
 -- On DEFINE shift to state 5
 -- On code_list shift to state 12
 -- On code shift to state 11
+## Reductions:
 -- On ENDIF reduce production code_list ->
 -- On ELSE reduce production code_list ->
 
 State 12:
+## Known stack suffix:
+## code code_list
+## LR(1) items:
 code_list -> code code_list . [ ENDIF ELSE ]
+## Transitions:
+## Reductions:
 -- On ENDIF reduce production code_list -> code code_list
 -- On ELSE reduce production code_list -> code code_list
 
 State 13:
+## Known stack suffix:
+## IFNDEF code_list
+## LR(1) items:
 code -> IFNDEF code_list . ELSE code_list ENDIF [ UNDEF OTHER IFNDEF IFDEF ENDIF ELSE DEFINE # ]
 code -> IFNDEF code_list . ENDIF [ UNDEF OTHER IFNDEF IFDEF ENDIF ELSE DEFINE # ]
+## Transitions:
 -- On ENDIF shift to state 14
 -- On ELSE shift to state 15
+## Reductions:
 
 State 14:
+## Known stack suffix:
+## IFNDEF code_list ENDIF
+## LR(1) items:
 code -> IFNDEF code_list ENDIF . [ UNDEF OTHER IFNDEF IFDEF ENDIF ELSE DEFINE # ]
+## Transitions:
+## Reductions:
 -- On UNDEF reduce production code -> IFNDEF code_list ENDIF
 -- On OTHER reduce production code -> IFNDEF code_list ENDIF
 -- On IFNDEF reduce production code -> IFNDEF code_list ENDIF
@@ -181,7 +256,11 @@ code -> IFNDEF code_list ENDIF . [ UNDEF OTHER IFNDEF IFDEF ENDIF ELSE DEFINE # 
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 15:
+## Known stack suffix:
+## IFNDEF code_list ELSE
+## LR(1) items:
 code -> IFNDEF code_list ELSE . code_list ENDIF [ UNDEF OTHER IFNDEF IFDEF ENDIF ELSE DEFINE # ]
+## Transitions:
 -- On UNDEF shift to state 1
 -- On OTHER shift to state 2
 -- On IFNDEF shift to state 3
@@ -189,14 +268,25 @@ code -> IFNDEF code_list ELSE . code_list ENDIF [ UNDEF OTHER IFNDEF IFDEF ENDIF
 -- On DEFINE shift to state 5
 -- On code_list shift to state 16
 -- On code shift to state 11
+## Reductions:
 -- On ENDIF reduce production code_list ->
 
 State 16:
+## Known stack suffix:
+## IFNDEF code_list ELSE code_list
+## LR(1) items:
 code -> IFNDEF code_list ELSE code_list . ENDIF [ UNDEF OTHER IFNDEF IFDEF ENDIF ELSE DEFINE # ]
+## Transitions:
 -- On ENDIF shift to state 17
+## Reductions:
 
 State 17:
+## Known stack suffix:
+## IFNDEF code_list ELSE code_list ENDIF
+## LR(1) items:
 code -> IFNDEF code_list ELSE code_list ENDIF . [ UNDEF OTHER IFNDEF IFDEF ENDIF ELSE DEFINE # ]
+## Transitions:
+## Reductions:
 -- On UNDEF reduce production code -> IFNDEF code_list ELSE code_list ENDIF
 -- On OTHER reduce production code -> IFNDEF code_list ELSE code_list ENDIF
 -- On IFNDEF reduce production code -> IFNDEF code_list ELSE code_list ENDIF
@@ -212,11 +302,20 @@ code -> IFNDEF code_list ELSE code_list ENDIF . [ UNDEF OTHER IFNDEF IFDEF ENDIF
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 18:
+## Known stack suffix:
+## code_list
+## LR(1) items:
 code_list' -> code_list . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept code_list
 
 State 19:
+## Known stack suffix:
+## code
+## LR(1) items:
 code_list -> code . code_list [ # ]
+## Transitions:
 -- On UNDEF shift to state 1
 -- On OTHER shift to state 2
 -- On IFNDEF shift to state 3
@@ -224,6 +323,7 @@ code_list -> code . code_list [ # ]
 -- On DEFINE shift to state 5
 -- On code_list shift to state 20
 -- On code shift to state 19
+## Reductions:
 -- On # reduce production code_list ->
 ** End-of-stream conflict on UNDEF OTHER IFNDEF IFDEF DEFINE
 **   There is a tension between
@@ -232,6 +332,11 @@ code_list -> code . code_list [ # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 20:
+## Known stack suffix:
+## code code_list
+## LR(1) items:
 code_list -> code code_list . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production code_list -> code code_list
 

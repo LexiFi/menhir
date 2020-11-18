@@ -1,101 +1,171 @@
 State 0:
+## Known stack suffix:
+##
+## LR(1) items:
 program' -> . program [ # ]
+## Transitions:
 -- On program shift to state 1
 -- On bindings shift to state 2
+## Reductions:
 -- On LET reduce production bindings ->
 -- On EOF reduce production bindings ->
 
 State 1:
+## Known stack suffix:
+## program
+## LR(1) items:
 program' -> program . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept program
 
 State 2:
+## Known stack suffix:
+## bindings
+## LR(1) items:
 bindings -> bindings . binding [ LET EOF ]
 program -> bindings . EOF [ # ]
+## Transitions:
 -- On LET shift to state 3
 -- On EOF shift to state 127
 -- On binding shift to state 66
+## Reductions:
 
 State 3:
+## Known stack suffix:
+## LET
+## LR(1) items:
 binding -> LET . value_definitions [ RBRACE LET IN EOF ]
 binding -> LET . REC value_definitions [ RBRACE LET IN EOF ]
+## Transitions:
 -- On REC shift to state 4
 -- On FORALL shift to state 5
 -- On value_definitions shift to state 126
 -- On value_definition shift to state 125
 -- On forall shift to state 14
+## Reductions:
 -- On WILD reduce production forall ->
 -- On LPAREN reduce production forall ->
 -- On LID reduce production forall ->
 -- On INTEGER reduce production forall ->
 
 State 4:
+## Known stack suffix:
+## LET REC
+## LR(1) items:
 binding -> LET REC . value_definitions [ RBRACE LET IN EOF ]
+## Transitions:
 -- On FORALL shift to state 5
 -- On value_definitions shift to state 11
 -- On value_definition shift to state 125
 -- On forall shift to state 14
+## Reductions:
 -- On WILD reduce production forall ->
 -- On LPAREN reduce production forall ->
 -- On LID reduce production forall ->
 -- On INTEGER reduce production forall ->
 
 State 5:
+## Known stack suffix:
+## FORALL
+## LR(1) items:
 forall -> FORALL . quantifiers DOT [ WILD LPAREN LID INTEGER ]
+## Transitions:
 -- On LID shift to state 6
 -- On quantifiers shift to state 7
 -- On quantifier shift to state 10
+## Reductions:
 
 State 6:
+## Known stack suffix:
+## LID
+## LR(1) items:
 quantifier -> LID . [ LID DOT ]
+## Transitions:
+## Reductions:
 -- On LID reduce production quantifier -> LID
 -- On DOT reduce production quantifier -> LID
 
 State 7:
+## Known stack suffix:
+## FORALL quantifiers
+## LR(1) items:
 forall -> FORALL quantifiers . DOT [ WILD LPAREN LID INTEGER ]
 quantifiers -> quantifiers . quantifier [ LID DOT ]
+## Transitions:
 -- On LID shift to state 6
 -- On DOT shift to state 8
 -- On quantifier shift to state 9
+## Reductions:
 
 State 8:
+## Known stack suffix:
+## FORALL quantifiers DOT
+## LR(1) items:
 forall -> FORALL quantifiers DOT . [ WILD LPAREN LID INTEGER ]
+## Transitions:
+## Reductions:
 -- On WILD reduce production forall -> FORALL quantifiers DOT
 -- On LPAREN reduce production forall -> FORALL quantifiers DOT
 -- On LID reduce production forall -> FORALL quantifiers DOT
 -- On INTEGER reduce production forall -> FORALL quantifiers DOT
 
 State 9:
+## Known stack suffix:
+## quantifiers quantifier
+## LR(1) items:
 quantifiers -> quantifiers quantifier . [ LID DOT ]
+## Transitions:
+## Reductions:
 -- On LID reduce production quantifiers -> quantifiers quantifier
 -- On DOT reduce production quantifiers -> quantifiers quantifier
 
 State 10:
+## Known stack suffix:
+## quantifier
+## LR(1) items:
 quantifiers -> quantifier . [ LID DOT ]
+## Transitions:
+## Reductions:
 -- On LID reduce production quantifiers -> quantifier
 -- On DOT reduce production quantifiers -> quantifier
 
 State 11:
+## Known stack suffix:
+## LET REC value_definitions
+## LR(1) items:
 binding -> LET REC value_definitions . [ RBRACE LET IN EOF ]
 value_definitions -> value_definitions . AND value_definition [ RBRACE LET IN EOF AND ]
+## Transitions:
 -- On AND shift to state 12
+## Reductions:
 -- On RBRACE reduce production binding -> LET REC value_definitions
 -- On LET reduce production binding -> LET REC value_definitions
 -- On IN reduce production binding -> LET REC value_definitions
 -- On EOF reduce production binding -> LET REC value_definitions
 
 State 12:
+## Known stack suffix:
+## value_definitions AND
+## LR(1) items:
 value_definitions -> value_definitions AND . value_definition [ RBRACE LET IN EOF AND ]
+## Transitions:
 -- On FORALL shift to state 5
 -- On value_definition shift to state 13
 -- On forall shift to state 14
+## Reductions:
 -- On WILD reduce production forall ->
 -- On LPAREN reduce production forall ->
 -- On LID reduce production forall ->
 -- On INTEGER reduce production forall ->
 
 State 13:
+## Known stack suffix:
+## value_definitions AND value_definition
+## LR(1) items:
 value_definitions -> value_definitions AND value_definition . [ RBRACE LET IN EOF AND ]
+## Transitions:
+## Reductions:
 -- On RBRACE reduce production value_definitions -> value_definitions AND value_definition
 -- On LET reduce production value_definitions -> value_definitions AND value_definition
 -- On IN reduce production value_definitions -> value_definitions AND value_definition
@@ -103,15 +173,25 @@ value_definitions -> value_definitions AND value_definition . [ RBRACE LET IN EO
 -- On AND reduce production value_definitions -> value_definitions AND value_definition
 
 State 14:
+## Known stack suffix:
+## forall
+## LR(1) items:
 value_definition -> forall . pattern0 equal_expression [ RBRACE LET IN EOF AND ]
+## Transitions:
 -- On WILD shift to state 15
 -- On LPAREN shift to state 16
 -- On LID shift to state 19
 -- On INTEGER shift to state 20
 -- On pattern0 shift to state 58
+## Reductions:
 
 State 15:
+## Known stack suffix:
+## WILD
+## LR(1) items:
 pattern0 -> WILD . [ WILD RPAREN LPAREN LID INTEGER EQUAL DOT COMMA COLON ]
+## Transitions:
+## Reductions:
 -- On WILD reduce production pattern0 -> WILD
 -- On RPAREN reduce production pattern0 -> WILD
 -- On LPAREN reduce production pattern0 -> WILD
@@ -123,9 +203,13 @@ pattern0 -> WILD . [ WILD RPAREN LPAREN LID INTEGER EQUAL DOT COMMA COLON ]
 -- On COLON reduce production pattern0 -> WILD
 
 State 16:
+## Known stack suffix:
+## LPAREN
+## LR(1) items:
 pattern0 -> LPAREN . RPAREN [ WILD RPAREN LPAREN LID INTEGER EQUAL DOT COMMA COLON ]
 pattern0 -> LPAREN . pattern RPAREN [ WILD RPAREN LPAREN LID INTEGER EQUAL DOT COMMA COLON ]
 pattern0 -> LPAREN . pattern COMMA patterns RPAREN [ WILD RPAREN LPAREN LID INTEGER EQUAL DOT COMMA COLON ]
+## Transitions:
 -- On WILD shift to state 15
 -- On UID shift to state 17
 -- On RPAREN shift to state 22
@@ -137,10 +221,16 @@ pattern0 -> LPAREN . pattern COMMA patterns RPAREN [ WILD RPAREN LPAREN LID INTE
 -- On pattern1 shift to state 26
 -- On pattern0 shift to state 27
 -- On pattern shift to state 50
+## Reductions:
 
 State 17:
+## Known stack suffix:
+## UID
+## LR(1) items:
 pattern1 -> UID . pattern0s [ RPAREN DOT COMMA COLON ]
+## Transitions:
 -- On pattern0s shift to state 18
+## Reductions:
 -- On WILD reduce production pattern0s ->
 -- On RPAREN reduce production pattern0s ->
 -- On LPAREN reduce production pattern0s ->
@@ -151,20 +241,30 @@ pattern1 -> UID . pattern0s [ RPAREN DOT COMMA COLON ]
 -- On COLON reduce production pattern0s ->
 
 State 18:
+## Known stack suffix:
+## UID pattern0s
+## LR(1) items:
 pattern0s -> pattern0s . pattern0 [ WILD RPAREN LPAREN LID INTEGER DOT COMMA COLON ]
 pattern1 -> UID pattern0s . [ RPAREN DOT COMMA COLON ]
+## Transitions:
 -- On WILD shift to state 15
 -- On LPAREN shift to state 16
 -- On LID shift to state 19
 -- On INTEGER shift to state 20
 -- On pattern0 shift to state 21
+## Reductions:
 -- On RPAREN reduce production pattern1 -> UID pattern0s
 -- On DOT reduce production pattern1 -> UID pattern0s
 -- On COMMA reduce production pattern1 -> UID pattern0s
 -- On COLON reduce production pattern1 -> UID pattern0s
 
 State 19:
+## Known stack suffix:
+## LID
+## LR(1) items:
 pattern0 -> LID . [ WILD RPAREN LPAREN LID INTEGER EQUAL DOT COMMA COLON ]
+## Transitions:
+## Reductions:
 -- On WILD reduce production pattern0 -> LID
 -- On RPAREN reduce production pattern0 -> LID
 -- On LPAREN reduce production pattern0 -> LID
@@ -176,7 +276,12 @@ pattern0 -> LID . [ WILD RPAREN LPAREN LID INTEGER EQUAL DOT COMMA COLON ]
 -- On COLON reduce production pattern0 -> LID
 
 State 20:
+## Known stack suffix:
+## INTEGER
+## LR(1) items:
 pattern0 -> INTEGER . [ WILD RPAREN LPAREN LID INTEGER EQUAL DOT COMMA COLON ]
+## Transitions:
+## Reductions:
 -- On WILD reduce production pattern0 -> INTEGER
 -- On RPAREN reduce production pattern0 -> INTEGER
 -- On LPAREN reduce production pattern0 -> INTEGER
@@ -188,7 +293,12 @@ pattern0 -> INTEGER . [ WILD RPAREN LPAREN LID INTEGER EQUAL DOT COMMA COLON ]
 -- On COLON reduce production pattern0 -> INTEGER
 
 State 21:
+## Known stack suffix:
+## pattern0s pattern0
+## LR(1) items:
 pattern0s -> pattern0s pattern0 . [ WILD RPAREN LPAREN LID INTEGER DOT COMMA COLON ]
+## Transitions:
+## Reductions:
 -- On WILD reduce production pattern0s -> pattern0s pattern0
 -- On RPAREN reduce production pattern0s -> pattern0s pattern0
 -- On LPAREN reduce production pattern0s -> pattern0s pattern0
@@ -199,7 +309,12 @@ pattern0s -> pattern0s pattern0 . [ WILD RPAREN LPAREN LID INTEGER DOT COMMA COL
 -- On COLON reduce production pattern0s -> pattern0s pattern0
 
 State 22:
+## Known stack suffix:
+## LPAREN RPAREN
+## LR(1) items:
 pattern0 -> LPAREN RPAREN . [ WILD RPAREN LPAREN LID INTEGER EQUAL DOT COMMA COLON ]
+## Transitions:
+## Reductions:
 -- On WILD reduce production pattern0 -> LPAREN RPAREN
 -- On RPAREN reduce production pattern0 -> LPAREN RPAREN
 -- On LPAREN reduce production pattern0 -> LPAREN RPAREN
@@ -211,16 +326,25 @@ pattern0 -> LPAREN RPAREN . [ WILD RPAREN LPAREN LID INTEGER EQUAL DOT COMMA COL
 -- On COLON reduce production pattern0 -> LPAREN RPAREN
 
 State 23:
+## Known stack suffix:
+## LID
+## LR(1) items:
 pattern0 -> LID . [ RPAREN DOT COMMA COLON ]
 pattern2 -> LID . AS pattern2 [ RPAREN DOT COMMA COLON ]
+## Transitions:
 -- On AS shift to state 24
+## Reductions:
 -- On RPAREN reduce production pattern0 -> LID
 -- On DOT reduce production pattern0 -> LID
 -- On COMMA reduce production pattern0 -> LID
 -- On COLON reduce production pattern0 -> LID
 
 State 24:
+## Known stack suffix:
+## LID AS
+## LR(1) items:
 pattern2 -> LID AS . pattern2 [ RPAREN DOT COMMA COLON ]
+## Transitions:
 -- On WILD shift to state 15
 -- On UID shift to state 17
 -- On LPAREN shift to state 16
@@ -229,38 +353,63 @@ pattern2 -> LID AS . pattern2 [ RPAREN DOT COMMA COLON ]
 -- On pattern2 shift to state 25
 -- On pattern1 shift to state 26
 -- On pattern0 shift to state 27
+## Reductions:
 
 State 25:
+## Known stack suffix:
+## LID AS pattern2
+## LR(1) items:
 pattern2 -> LID AS pattern2 . [ RPAREN DOT COMMA COLON ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production pattern2 -> LID AS pattern2
 -- On DOT reduce production pattern2 -> LID AS pattern2
 -- On COMMA reduce production pattern2 -> LID AS pattern2
 -- On COLON reduce production pattern2 -> LID AS pattern2
 
 State 26:
+## Known stack suffix:
+## pattern1
+## LR(1) items:
 pattern2 -> pattern1 . [ RPAREN DOT COMMA COLON ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production pattern2 -> pattern1
 -- On DOT reduce production pattern2 -> pattern1
 -- On COMMA reduce production pattern2 -> pattern1
 -- On COLON reduce production pattern2 -> pattern1
 
 State 27:
+## Known stack suffix:
+## pattern0
+## LR(1) items:
 pattern1 -> pattern0 . [ RPAREN DOT COMMA COLON ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production pattern1 -> pattern0
 -- On DOT reduce production pattern1 -> pattern0
 -- On COMMA reduce production pattern1 -> pattern0
 -- On COLON reduce production pattern1 -> pattern0
 
 State 28:
+## Known stack suffix:
+## pattern3
+## LR(1) items:
 pattern -> pattern3 . [ RPAREN DOT COMMA ]
 pattern3 -> pattern3 . COLON typ [ RPAREN DOT COMMA COLON ]
+## Transitions:
 -- On COLON shift to state 29
+## Reductions:
 -- On RPAREN reduce production pattern -> pattern3
 -- On DOT reduce production pattern -> pattern3
 -- On COMMA reduce production pattern -> pattern3
 
 State 29:
+## Known stack suffix:
+## pattern3 COLON
+## LR(1) items:
 pattern3 -> pattern3 COLON . typ [ RPAREN DOT COMMA COLON ]
+## Transitions:
 -- On UNIT shift to state 30
 -- On LPAREN shift to state 31
 -- On LID shift to state 32
@@ -268,9 +417,15 @@ pattern3 -> pattern3 COLON . typ [ RPAREN DOT COMMA COLON ]
 -- On type1 shift to state 34
 -- On type0 shift to state 37
 -- On typ shift to state 48
+## Reductions:
 
 State 30:
+## Known stack suffix:
+## UNIT
+## LR(1) items:
 type0 -> UNIT . [ STAR RPAREN EQUAL DOT COMMA COLON ARROW ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production type0 -> UNIT
 -- On RPAREN reduce production type0 -> UNIT
 -- On EQUAL reduce production type0 -> UNIT
@@ -280,8 +435,12 @@ type0 -> UNIT . [ STAR RPAREN EQUAL DOT COMMA COLON ARROW ]
 -- On ARROW reduce production type0 -> UNIT
 
 State 31:
+## Known stack suffix:
+## LPAREN
+## LR(1) items:
 type0 -> LPAREN . typ RPAREN [ STAR RPAREN EQUAL DOT COMMA COLON ARROW ]
 type0 -> LPAREN . typ COMMA types RPAREN [ STAR RPAREN EQUAL DOT COMMA COLON ARROW ]
+## Transitions:
 -- On UNIT shift to state 30
 -- On LPAREN shift to state 31
 -- On LID shift to state 32
@@ -289,9 +448,15 @@ type0 -> LPAREN . typ COMMA types RPAREN [ STAR RPAREN EQUAL DOT COMMA COLON ARR
 -- On type1 shift to state 34
 -- On type0 shift to state 37
 -- On typ shift to state 40
+## Reductions:
 
 State 32:
+## Known stack suffix:
+## LID
+## LR(1) items:
 type0 -> LID . [ STAR RPAREN EQUAL DOT COMMA COLON ARROW ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production type0 -> LID
 -- On RPAREN reduce production type0 -> LID
 -- On EQUAL reduce production type0 -> LID
@@ -301,7 +466,12 @@ type0 -> LID . [ STAR RPAREN EQUAL DOT COMMA COLON ARROW ]
 -- On ARROW reduce production type0 -> LID
 
 State 33:
+## Known stack suffix:
+## type2
+## LR(1) items:
 typ -> type2 . [ RPAREN EQUAL DOT COMMA COLON ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production typ -> type2
 -- On EQUAL reduce production typ -> type2
 -- On DOT reduce production typ -> type2
@@ -309,9 +479,14 @@ typ -> type2 . [ RPAREN EQUAL DOT COMMA COLON ]
 -- On COLON reduce production typ -> type2
 
 State 34:
+## Known stack suffix:
+## type1
+## LR(1) items:
 type2 -> type1 . ARROW type2 [ RPAREN EQUAL DOT COMMA COLON ]
 type2 -> type1 . [ RPAREN EQUAL DOT COMMA COLON ]
+## Transitions:
 -- On ARROW shift to state 35
+## Reductions:
 -- On RPAREN reduce production type2 -> type1
 -- On EQUAL reduce production type2 -> type1
 -- On DOT reduce production type2 -> type1
@@ -319,16 +494,26 @@ type2 -> type1 . [ RPAREN EQUAL DOT COMMA COLON ]
 -- On COLON reduce production type2 -> type1
 
 State 35:
+## Known stack suffix:
+## type1 ARROW
+## LR(1) items:
 type2 -> type1 ARROW . type2 [ RPAREN EQUAL DOT COMMA COLON ]
+## Transitions:
 -- On UNIT shift to state 30
 -- On LPAREN shift to state 31
 -- On LID shift to state 32
 -- On type2 shift to state 36
 -- On type1 shift to state 34
 -- On type0 shift to state 37
+## Reductions:
 
 State 36:
+## Known stack suffix:
+## type1 ARROW type2
+## LR(1) items:
 type2 -> type1 ARROW type2 . [ RPAREN EQUAL DOT COMMA COLON ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production type2 -> type1 ARROW type2
 -- On EQUAL reduce production type2 -> type1 ARROW type2
 -- On DOT reduce production type2 -> type1 ARROW type2
@@ -336,9 +521,14 @@ type2 -> type1 ARROW type2 . [ RPAREN EQUAL DOT COMMA COLON ]
 -- On COLON reduce production type2 -> type1 ARROW type2
 
 State 37:
+## Known stack suffix:
+## type0
+## LR(1) items:
 type1 -> type0 . STAR type1 [ RPAREN EQUAL DOT COMMA COLON ARROW ]
 type1 -> type0 . [ RPAREN EQUAL DOT COMMA COLON ARROW ]
+## Transitions:
 -- On STAR shift to state 38
+## Reductions:
 -- On RPAREN reduce production type1 -> type0
 -- On EQUAL reduce production type1 -> type0
 -- On DOT reduce production type1 -> type0
@@ -347,15 +537,25 @@ type1 -> type0 . [ RPAREN EQUAL DOT COMMA COLON ARROW ]
 -- On ARROW reduce production type1 -> type0
 
 State 38:
+## Known stack suffix:
+## type0 STAR
+## LR(1) items:
 type1 -> type0 STAR . type1 [ RPAREN EQUAL DOT COMMA COLON ARROW ]
+## Transitions:
 -- On UNIT shift to state 30
 -- On LPAREN shift to state 31
 -- On LID shift to state 32
 -- On type1 shift to state 39
 -- On type0 shift to state 37
+## Reductions:
 
 State 39:
+## Known stack suffix:
+## type0 STAR type1
+## LR(1) items:
 type1 -> type0 STAR type1 . [ RPAREN EQUAL DOT COMMA COLON ARROW ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production type1 -> type0 STAR type1
 -- On EQUAL reduce production type1 -> type0 STAR type1
 -- On DOT reduce production type1 -> type0 STAR type1
@@ -364,13 +564,23 @@ type1 -> type0 STAR type1 . [ RPAREN EQUAL DOT COMMA COLON ARROW ]
 -- On ARROW reduce production type1 -> type0 STAR type1
 
 State 40:
+## Known stack suffix:
+## LPAREN typ
+## LR(1) items:
 type0 -> LPAREN typ . RPAREN [ STAR RPAREN EQUAL DOT COMMA COLON ARROW ]
 type0 -> LPAREN typ . COMMA types RPAREN [ STAR RPAREN EQUAL DOT COMMA COLON ARROW ]
+## Transitions:
 -- On RPAREN shift to state 41
 -- On COMMA shift to state 42
+## Reductions:
 
 State 41:
+## Known stack suffix:
+## LPAREN typ RPAREN
+## LR(1) items:
 type0 -> LPAREN typ RPAREN . [ STAR RPAREN EQUAL DOT COMMA COLON ARROW ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production type0 -> LPAREN typ RPAREN
 -- On RPAREN reduce production type0 -> LPAREN typ RPAREN
 -- On EQUAL reduce production type0 -> LPAREN typ RPAREN
@@ -380,7 +590,11 @@ type0 -> LPAREN typ RPAREN . [ STAR RPAREN EQUAL DOT COMMA COLON ARROW ]
 -- On ARROW reduce production type0 -> LPAREN typ RPAREN
 
 State 42:
+## Known stack suffix:
+## LPAREN typ COMMA
+## LR(1) items:
 type0 -> LPAREN typ COMMA . types RPAREN [ STAR RPAREN EQUAL DOT COMMA COLON ARROW ]
+## Transitions:
 -- On UNIT shift to state 30
 -- On LPAREN shift to state 31
 -- On LID shift to state 32
@@ -389,13 +603,24 @@ type0 -> LPAREN typ COMMA . types RPAREN [ STAR RPAREN EQUAL DOT COMMA COLON ARR
 -- On type1 shift to state 34
 -- On type0 shift to state 37
 -- On typ shift to state 45
+## Reductions:
 
 State 43:
+## Known stack suffix:
+## LPAREN typ COMMA types
+## LR(1) items:
 type0 -> LPAREN typ COMMA types . RPAREN [ STAR RPAREN EQUAL DOT COMMA COLON ARROW ]
+## Transitions:
 -- On RPAREN shift to state 44
+## Reductions:
 
 State 44:
+## Known stack suffix:
+## LPAREN typ COMMA types RPAREN
+## LR(1) items:
 type0 -> LPAREN typ COMMA types RPAREN . [ STAR RPAREN EQUAL DOT COMMA COLON ARROW ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production type0 -> LPAREN typ COMMA types RPAREN
 -- On RPAREN reduce production type0 -> LPAREN typ COMMA types RPAREN
 -- On EQUAL reduce production type0 -> LPAREN typ COMMA types RPAREN
@@ -405,13 +630,22 @@ type0 -> LPAREN typ COMMA types RPAREN . [ STAR RPAREN EQUAL DOT COMMA COLON ARR
 -- On ARROW reduce production type0 -> LPAREN typ COMMA types RPAREN
 
 State 45:
+## Known stack suffix:
+## typ
+## LR(1) items:
 types -> typ . [ RPAREN ]
 types -> typ . COMMA types [ RPAREN ]
+## Transitions:
 -- On COMMA shift to state 46
+## Reductions:
 -- On RPAREN reduce production types -> typ
 
 State 46:
+## Known stack suffix:
+## typ COMMA
+## LR(1) items:
 types -> typ COMMA . types [ RPAREN ]
+## Transitions:
 -- On UNIT shift to state 30
 -- On LPAREN shift to state 31
 -- On LID shift to state 32
@@ -420,33 +654,59 @@ types -> typ COMMA . types [ RPAREN ]
 -- On type1 shift to state 34
 -- On type0 shift to state 37
 -- On typ shift to state 45
+## Reductions:
 
 State 47:
+## Known stack suffix:
+## typ COMMA types
+## LR(1) items:
 types -> typ COMMA types . [ RPAREN ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production types -> typ COMMA types
 
 State 48:
+## Known stack suffix:
+## pattern3 COLON typ
+## LR(1) items:
 pattern3 -> pattern3 COLON typ . [ RPAREN DOT COMMA COLON ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production pattern3 -> pattern3 COLON typ
 -- On DOT reduce production pattern3 -> pattern3 COLON typ
 -- On COMMA reduce production pattern3 -> pattern3 COLON typ
 -- On COLON reduce production pattern3 -> pattern3 COLON typ
 
 State 49:
+## Known stack suffix:
+## pattern2
+## LR(1) items:
 pattern3 -> pattern2 . [ RPAREN DOT COMMA COLON ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production pattern3 -> pattern2
 -- On DOT reduce production pattern3 -> pattern2
 -- On COMMA reduce production pattern3 -> pattern2
 -- On COLON reduce production pattern3 -> pattern2
 
 State 50:
+## Known stack suffix:
+## LPAREN pattern
+## LR(1) items:
 pattern0 -> LPAREN pattern . RPAREN [ WILD RPAREN LPAREN LID INTEGER EQUAL DOT COMMA COLON ]
 pattern0 -> LPAREN pattern . COMMA patterns RPAREN [ WILD RPAREN LPAREN LID INTEGER EQUAL DOT COMMA COLON ]
+## Transitions:
 -- On RPAREN shift to state 51
 -- On COMMA shift to state 52
+## Reductions:
 
 State 51:
+## Known stack suffix:
+## LPAREN pattern RPAREN
+## LR(1) items:
 pattern0 -> LPAREN pattern RPAREN . [ WILD RPAREN LPAREN LID INTEGER EQUAL DOT COMMA COLON ]
+## Transitions:
+## Reductions:
 -- On WILD reduce production pattern0 -> LPAREN pattern RPAREN
 -- On RPAREN reduce production pattern0 -> LPAREN pattern RPAREN
 -- On LPAREN reduce production pattern0 -> LPAREN pattern RPAREN
@@ -458,7 +718,11 @@ pattern0 -> LPAREN pattern RPAREN . [ WILD RPAREN LPAREN LID INTEGER EQUAL DOT C
 -- On COLON reduce production pattern0 -> LPAREN pattern RPAREN
 
 State 52:
+## Known stack suffix:
+## LPAREN pattern COMMA
+## LR(1) items:
 pattern0 -> LPAREN pattern COMMA . patterns RPAREN [ WILD RPAREN LPAREN LID INTEGER EQUAL DOT COMMA COLON ]
+## Transitions:
 -- On WILD shift to state 15
 -- On UID shift to state 17
 -- On LPAREN shift to state 16
@@ -470,13 +734,24 @@ pattern0 -> LPAREN pattern COMMA . patterns RPAREN [ WILD RPAREN LPAREN LID INTE
 -- On pattern1 shift to state 26
 -- On pattern0 shift to state 27
 -- On pattern shift to state 55
+## Reductions:
 
 State 53:
+## Known stack suffix:
+## LPAREN pattern COMMA patterns
+## LR(1) items:
 pattern0 -> LPAREN pattern COMMA patterns . RPAREN [ WILD RPAREN LPAREN LID INTEGER EQUAL DOT COMMA COLON ]
+## Transitions:
 -- On RPAREN shift to state 54
+## Reductions:
 
 State 54:
+## Known stack suffix:
+## LPAREN pattern COMMA patterns RPAREN
+## LR(1) items:
 pattern0 -> LPAREN pattern COMMA patterns RPAREN . [ WILD RPAREN LPAREN LID INTEGER EQUAL DOT COMMA COLON ]
+## Transitions:
+## Reductions:
 -- On WILD reduce production pattern0 -> LPAREN pattern COMMA patterns RPAREN
 -- On RPAREN reduce production pattern0 -> LPAREN pattern COMMA patterns RPAREN
 -- On LPAREN reduce production pattern0 -> LPAREN pattern COMMA patterns RPAREN
@@ -488,13 +763,22 @@ pattern0 -> LPAREN pattern COMMA patterns RPAREN . [ WILD RPAREN LPAREN LID INTE
 -- On COLON reduce production pattern0 -> LPAREN pattern COMMA patterns RPAREN
 
 State 55:
+## Known stack suffix:
+## pattern
+## LR(1) items:
 patterns -> pattern . [ RPAREN ]
 patterns -> pattern . COMMA patterns [ RPAREN ]
+## Transitions:
 -- On COMMA shift to state 56
+## Reductions:
 -- On RPAREN reduce production patterns -> pattern
 
 State 56:
+## Known stack suffix:
+## pattern COMMA
+## LR(1) items:
 patterns -> pattern COMMA . patterns [ RPAREN ]
+## Transitions:
 -- On WILD shift to state 15
 -- On UID shift to state 17
 -- On LPAREN shift to state 16
@@ -506,13 +790,23 @@ patterns -> pattern COMMA . patterns [ RPAREN ]
 -- On pattern1 shift to state 26
 -- On pattern0 shift to state 27
 -- On pattern shift to state 55
+## Reductions:
 
 State 57:
+## Known stack suffix:
+## pattern COMMA patterns
+## LR(1) items:
 patterns -> pattern COMMA patterns . [ RPAREN ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production patterns -> pattern COMMA patterns
 
 State 58:
+## Known stack suffix:
+## forall pattern0
+## LR(1) items:
 value_definition -> forall pattern0 . equal_expression [ RBRACE LET IN EOF AND ]
+## Transitions:
 -- On WILD shift to state 15
 -- On LPAREN shift to state 16
 -- On LID shift to state 19
@@ -521,9 +815,14 @@ value_definition -> forall pattern0 . equal_expression [ RBRACE LET IN EOF AND ]
 -- On COLON shift to state 118
 -- On pattern0 shift to state 122
 -- On equal_expression shift to state 124
+## Reductions:
 
 State 59:
+## Known stack suffix:
+## EQUAL
+## LR(1) items:
 equal_expression -> EQUAL . expression [ RBRACE LET IN EOF AND ]
+## Transitions:
 -- On LPAREN shift to state 60
 -- On LID shift to state 62
 -- On LET shift to state 3
@@ -538,12 +837,17 @@ equal_expression -> EQUAL . expression [ RBRACE LET IN EOF AND ]
 -- On expression0 shift to state 96
 -- On expression shift to state 117
 -- On binding shift to state 101
+## Reductions:
 
 State 60:
+## Known stack suffix:
+## LPAREN
+## LR(1) items:
 expression0 -> LPAREN . RPAREN [ SEMI RPAREN RBRACE LPAREN LID LET LBRACE INTEGER INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF DOT COMMA COLON AND ]
 expression0 -> LPAREN . expression RPAREN [ SEMI RPAREN RBRACE LPAREN LID LET LBRACE INTEGER INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF DOT COMMA COLON AND ]
 expression0 -> LPAREN . expression COLON typ RPAREN [ SEMI RPAREN RBRACE LPAREN LID LET LBRACE INTEGER INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF DOT COMMA COLON AND ]
 expression0 -> LPAREN . expression COMMA expressions RPAREN [ SEMI RPAREN RBRACE LPAREN LID LET LBRACE INTEGER INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF DOT COMMA COLON AND ]
+## Transitions:
 -- On RPAREN shift to state 61
 -- On LPAREN shift to state 60
 -- On LID shift to state 62
@@ -559,9 +863,15 @@ expression0 -> LPAREN . expression COMMA expressions RPAREN [ SEMI RPAREN RBRACE
 -- On expression0 shift to state 96
 -- On expression shift to state 106
 -- On binding shift to state 101
+## Reductions:
 
 State 61:
+## Known stack suffix:
+## LPAREN RPAREN
+## LR(1) items:
 expression0 -> LPAREN RPAREN . [ SEMI RPAREN RBRACE LPAREN LID LET LBRACE INTEGER INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF DOT COMMA COLON AND ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production expression0 -> LPAREN RPAREN
 -- On RPAREN reduce production expression0 -> LPAREN RPAREN
 -- On RBRACE reduce production expression0 -> LPAREN RPAREN
@@ -584,7 +894,12 @@ expression0 -> LPAREN RPAREN . [ SEMI RPAREN RBRACE LPAREN LID LET LBRACE INTEGE
 -- On AND reduce production expression0 -> LPAREN RPAREN
 
 State 62:
+## Known stack suffix:
+## LID
+## LR(1) items:
 expression0 -> LID . [ SEMI RPAREN RBRACE LPAREN LID LET LBRACE INTEGER INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF DOT COMMA COLON AND ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production expression0 -> LID
 -- On RPAREN reduce production expression0 -> LID
 -- On RBRACE reduce production expression0 -> LID
@@ -607,20 +922,35 @@ expression0 -> LID . [ SEMI RPAREN RBRACE LPAREN LID LET LBRACE INTEGER INFIXOP4
 -- On AND reduce production expression0 -> LID
 
 State 63:
+## Known stack suffix:
+## LBRACE
+## LR(1) items:
 expression0 -> LBRACE . bindings RBRACE [ SEMI RPAREN RBRACE LPAREN LID LET LBRACE INTEGER INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF DOT COMMA COLON AND ]
+## Transitions:
 -- On bindings shift to state 64
+## Reductions:
 -- On RBRACE reduce production bindings ->
 -- On LET reduce production bindings ->
 
 State 64:
+## Known stack suffix:
+## LBRACE bindings
+## LR(1) items:
 bindings -> bindings . binding [ RBRACE LET ]
 expression0 -> LBRACE bindings . RBRACE [ SEMI RPAREN RBRACE LPAREN LID LET LBRACE INTEGER INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF DOT COMMA COLON AND ]
+## Transitions:
 -- On RBRACE shift to state 65
 -- On LET shift to state 3
 -- On binding shift to state 66
+## Reductions:
 
 State 65:
+## Known stack suffix:
+## LBRACE bindings RBRACE
+## LR(1) items:
 expression0 -> LBRACE bindings RBRACE . [ SEMI RPAREN RBRACE LPAREN LID LET LBRACE INTEGER INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF DOT COMMA COLON AND ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production expression0 -> LBRACE bindings RBRACE
 -- On RPAREN reduce production expression0 -> LBRACE bindings RBRACE
 -- On RBRACE reduce production expression0 -> LBRACE bindings RBRACE
@@ -643,13 +973,23 @@ expression0 -> LBRACE bindings RBRACE . [ SEMI RPAREN RBRACE LPAREN LID LET LBRA
 -- On AND reduce production expression0 -> LBRACE bindings RBRACE
 
 State 66:
+## Known stack suffix:
+## bindings binding
+## LR(1) items:
 bindings -> bindings binding . [ RBRACE LET EOF ]
+## Transitions:
+## Reductions:
 -- On RBRACE reduce production bindings -> bindings binding
 -- On LET reduce production bindings -> bindings binding
 -- On EOF reduce production bindings -> bindings binding
 
 State 67:
+## Known stack suffix:
+## INTEGER
+## LR(1) items:
 expression0 -> INTEGER . [ SEMI RPAREN RBRACE LPAREN LID LET LBRACE INTEGER INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF DOT COMMA COLON AND ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production expression0 -> INTEGER
 -- On RPAREN reduce production expression0 -> INTEGER
 -- On RBRACE reduce production expression0 -> INTEGER
@@ -672,20 +1012,34 @@ expression0 -> INTEGER . [ SEMI RPAREN RBRACE LPAREN LID LET LBRACE INTEGER INFI
 -- On AND reduce production expression0 -> INTEGER
 
 State 68:
+## Known stack suffix:
+## EXISTS
+## LR(1) items:
 expression400 -> EXISTS . quantifiers DOT expression400 [ RPAREN RBRACE LET IN EOF COMMA COLON AND ]
+## Transitions:
 -- On LID shift to state 6
 -- On quantifiers shift to state 69
 -- On quantifier shift to state 10
+## Reductions:
 
 State 69:
+## Known stack suffix:
+## EXISTS quantifiers
+## LR(1) items:
 expression400 -> EXISTS quantifiers . DOT expression400 [ RPAREN RBRACE LET IN EOF COMMA COLON AND ]
 quantifiers -> quantifiers . quantifier [ LID DOT ]
+## Transitions:
 -- On LID shift to state 6
 -- On DOT shift to state 70
 -- On quantifier shift to state 9
+## Reductions:
 
 State 70:
+## Known stack suffix:
+## EXISTS quantifiers DOT
+## LR(1) items:
 expression400 -> EXISTS quantifiers DOT . expression400 [ RPAREN RBRACE LET IN EOF COMMA COLON AND ]
+## Transitions:
 -- On LPAREN shift to state 60
 -- On LID shift to state 62
 -- On LET shift to state 3
@@ -699,9 +1053,14 @@ expression400 -> EXISTS quantifiers DOT . expression400 [ RPAREN RBRACE LET IN E
 -- On expression100 shift to state 81
 -- On expression0 shift to state 96
 -- On binding shift to state 101
+## Reductions:
 
 State 71:
+## Known stack suffix:
+## BACKSLASH
+## LR(1) items:
 expression400 -> BACKSLASH . pattern DOT expression400 [ RPAREN RBRACE LET IN EOF COMMA COLON AND ]
+## Transitions:
 -- On WILD shift to state 15
 -- On UID shift to state 17
 -- On LPAREN shift to state 16
@@ -712,13 +1071,23 @@ expression400 -> BACKSLASH . pattern DOT expression400 [ RPAREN RBRACE LET IN EO
 -- On pattern1 shift to state 26
 -- On pattern0 shift to state 27
 -- On pattern shift to state 72
+## Reductions:
 
 State 72:
+## Known stack suffix:
+## BACKSLASH pattern
+## LR(1) items:
 expression400 -> BACKSLASH pattern . DOT expression400 [ RPAREN RBRACE LET IN EOF COMMA COLON AND ]
+## Transitions:
 -- On DOT shift to state 73
+## Reductions:
 
 State 73:
+## Known stack suffix:
+## BACKSLASH pattern DOT
+## LR(1) items:
 expression400 -> BACKSLASH pattern DOT . expression400 [ RPAREN RBRACE LET IN EOF COMMA COLON AND ]
+## Transitions:
 -- On LPAREN shift to state 60
 -- On LID shift to state 62
 -- On LET shift to state 3
@@ -732,9 +1101,15 @@ expression400 -> BACKSLASH pattern DOT . expression400 [ RPAREN RBRACE LET IN EO
 -- On expression100 shift to state 81
 -- On expression0 shift to state 96
 -- On binding shift to state 101
+## Reductions:
 
 State 74:
+## Known stack suffix:
+## BACKSLASH pattern DOT expression400
+## LR(1) items:
 expression400 -> BACKSLASH pattern DOT expression400 . [ RPAREN RBRACE LET IN EOF COMMA COLON AND ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production expression400 -> BACKSLASH pattern DOT expression400
 -- On RBRACE reduce production expression400 -> BACKSLASH pattern DOT expression400
 -- On LET reduce production expression400 -> BACKSLASH pattern DOT expression400
@@ -745,9 +1120,14 @@ expression400 -> BACKSLASH pattern DOT expression400 . [ RPAREN RBRACE LET IN EO
 -- On AND reduce production expression400 -> BACKSLASH pattern DOT expression400
 
 State 75:
+## Known stack suffix:
+## expression300
+## LR(1) items:
 expression400 -> expression300 . SEMI expression400 [ RPAREN RBRACE LET IN EOF COMMA COLON AND ]
 expression400 -> expression300 . [ RPAREN RBRACE LET IN EOF COMMA COLON AND ]
+## Transitions:
 -- On SEMI shift to state 76
+## Reductions:
 -- On RPAREN reduce production expression400 -> expression300
 -- On RBRACE reduce production expression400 -> expression300
 -- On LET reduce production expression400 -> expression300
@@ -758,7 +1138,11 @@ expression400 -> expression300 . [ RPAREN RBRACE LET IN EOF COMMA COLON AND ]
 -- On AND reduce production expression400 -> expression300
 
 State 76:
+## Known stack suffix:
+## expression300 SEMI
+## LR(1) items:
 expression400 -> expression300 SEMI . expression400 [ RPAREN RBRACE LET IN EOF COMMA COLON AND ]
+## Transitions:
 -- On LPAREN shift to state 60
 -- On LID shift to state 62
 -- On LET shift to state 3
@@ -772,9 +1156,15 @@ expression400 -> expression300 SEMI . expression400 [ RPAREN RBRACE LET IN EOF C
 -- On expression100 shift to state 81
 -- On expression0 shift to state 96
 -- On binding shift to state 101
+## Reductions:
 
 State 77:
+## Known stack suffix:
+## expression300 SEMI expression400
+## LR(1) items:
 expression400 -> expression300 SEMI expression400 . [ RPAREN RBRACE LET IN EOF COMMA COLON AND ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production expression400 -> expression300 SEMI expression400
 -- On RBRACE reduce production expression400 -> expression300 SEMI expression400
 -- On LET reduce production expression400 -> expression300 SEMI expression400
@@ -785,6 +1175,9 @@ expression400 -> expression300 SEMI expression400 . [ RPAREN RBRACE LET IN EOF C
 -- On AND reduce production expression400 -> expression300 SEMI expression400
 
 State 78:
+## Known stack suffix:
+## expression200
+## LR(1) items:
 expression200 -> expression200 . INFIXOP0 expression200 [ SEMI RPAREN RBRACE LET INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF COMMA COLON AND ]
 expression200 -> expression200 . INFIXOP1 expression200 [ SEMI RPAREN RBRACE LET INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF COMMA COLON AND ]
 expression200 -> expression200 . INFIXOP2 expression200 [ SEMI RPAREN RBRACE LET INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF COMMA COLON AND ]
@@ -792,12 +1185,14 @@ expression200 -> expression200 . INFIXOP3 expression200 [ SEMI RPAREN RBRACE LET
 expression200 -> expression200 . INFIXOP4 expression200 [ SEMI RPAREN RBRACE LET INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF COMMA COLON AND ]
 expression200 -> expression200 . EQUAL expression200 [ SEMI RPAREN RBRACE LET INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF COMMA COLON AND ]
 expression300 -> expression200 . [ SEMI RPAREN RBRACE LET IN EOF COMMA COLON AND ]
+## Transitions:
 -- On INFIXOP4 shift to state 79
 -- On INFIXOP3 shift to state 86
 -- On INFIXOP2 shift to state 88
 -- On INFIXOP1 shift to state 90
 -- On INFIXOP0 shift to state 92
 -- On EQUAL shift to state 94
+## Reductions:
 -- On SEMI reduce production expression300 -> expression200
 -- On RPAREN reduce production expression300 -> expression200
 -- On RBRACE reduce production expression300 -> expression200
@@ -809,7 +1204,11 @@ expression300 -> expression200 . [ SEMI RPAREN RBRACE LET IN EOF COMMA COLON AND
 -- On AND reduce production expression300 -> expression200
 
 State 79:
+## Known stack suffix:
+## expression200 INFIXOP4
+## LR(1) items:
 expression200 -> expression200 INFIXOP4 . expression200 [ SEMI RPAREN RBRACE LET INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF COMMA COLON AND ]
+## Transitions:
 -- On LPAREN shift to state 60
 -- On LID shift to state 62
 -- On LBRACE shift to state 63
@@ -817,8 +1216,12 @@ expression200 -> expression200 INFIXOP4 . expression200 [ SEMI RPAREN RBRACE LET
 -- On expression200 shift to state 80
 -- On expression100 shift to state 81
 -- On expression0 shift to state 85
+## Reductions:
 
 State 80:
+## Known stack suffix:
+## expression200 INFIXOP4 expression200
+## LR(1) items:
 expression200 -> expression200 . INFIXOP0 expression200 [ SEMI RPAREN RBRACE LET INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF COMMA COLON AND ]
 expression200 -> expression200 . INFIXOP1 expression200 [ SEMI RPAREN RBRACE LET INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF COMMA COLON AND ]
 expression200 -> expression200 . INFIXOP2 expression200 [ SEMI RPAREN RBRACE LET INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF COMMA COLON AND ]
@@ -826,7 +1229,9 @@ expression200 -> expression200 . INFIXOP3 expression200 [ SEMI RPAREN RBRACE LET
 expression200 -> expression200 . INFIXOP4 expression200 [ SEMI RPAREN RBRACE LET INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF COMMA COLON AND ]
 expression200 -> expression200 INFIXOP4 expression200 . [ SEMI RPAREN RBRACE LET INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF COMMA COLON AND ]
 expression200 -> expression200 . EQUAL expression200 [ SEMI RPAREN RBRACE LET INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF COMMA COLON AND ]
+## Transitions:
 -- On INFIXOP4 shift to state 79
+## Reductions:
 -- On SEMI reduce production expression200 -> expression200 INFIXOP4 expression200
 -- On RPAREN reduce production expression200 -> expression200 INFIXOP4 expression200
 -- On RBRACE reduce production expression200 -> expression200 INFIXOP4 expression200
@@ -843,13 +1248,18 @@ expression200 -> expression200 . EQUAL expression200 [ SEMI RPAREN RBRACE LET IN
 -- On AND reduce production expression200 -> expression200 INFIXOP4 expression200
 
 State 81:
+## Known stack suffix:
+## expression100
+## LR(1) items:
 expression100 -> expression100 . expression0 [ SEMI RPAREN RBRACE LPAREN LID LET LBRACE INTEGER INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF COMMA COLON AND ]
 expression200 -> expression100 . [ SEMI RPAREN RBRACE LET INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF COMMA COLON AND ]
+## Transitions:
 -- On LPAREN shift to state 60
 -- On LID shift to state 62
 -- On LBRACE shift to state 63
 -- On INTEGER shift to state 67
 -- On expression0 shift to state 82
+## Reductions:
 -- On SEMI reduce production expression200 -> expression100
 -- On RPAREN reduce production expression200 -> expression100
 -- On RBRACE reduce production expression200 -> expression100
@@ -867,9 +1277,14 @@ expression200 -> expression100 . [ SEMI RPAREN RBRACE LET INFIXOP4 INFIXOP3 INFI
 -- On AND reduce production expression200 -> expression100
 
 State 82:
+## Known stack suffix:
+## expression100 expression0
+## LR(1) items:
 expression0 -> expression0 . DOT LID [ SEMI RPAREN RBRACE LPAREN LID LET LBRACE INTEGER INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF DOT COMMA COLON AND ]
 expression100 -> expression100 expression0 . [ SEMI RPAREN RBRACE LPAREN LID LET LBRACE INTEGER INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF COMMA COLON AND ]
+## Transitions:
 -- On DOT shift to state 83
+## Reductions:
 -- On SEMI reduce production expression100 -> expression100 expression0
 -- On RPAREN reduce production expression100 -> expression100 expression0
 -- On RBRACE reduce production expression100 -> expression100 expression0
@@ -891,11 +1306,21 @@ expression100 -> expression100 expression0 . [ SEMI RPAREN RBRACE LPAREN LID LET
 -- On AND reduce production expression100 -> expression100 expression0
 
 State 83:
+## Known stack suffix:
+## expression0 DOT
+## LR(1) items:
 expression0 -> expression0 DOT . LID [ SEMI RPAREN RBRACE LPAREN LID LET LBRACE INTEGER INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF DOT COMMA COLON AND ]
+## Transitions:
 -- On LID shift to state 84
+## Reductions:
 
 State 84:
+## Known stack suffix:
+## expression0 DOT LID
+## LR(1) items:
 expression0 -> expression0 DOT LID . [ SEMI RPAREN RBRACE LPAREN LID LET LBRACE INTEGER INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF DOT COMMA COLON AND ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production expression0 -> expression0 DOT LID
 -- On RPAREN reduce production expression0 -> expression0 DOT LID
 -- On RBRACE reduce production expression0 -> expression0 DOT LID
@@ -918,9 +1343,14 @@ expression0 -> expression0 DOT LID . [ SEMI RPAREN RBRACE LPAREN LID LET LBRACE 
 -- On AND reduce production expression0 -> expression0 DOT LID
 
 State 85:
+## Known stack suffix:
+## expression0
+## LR(1) items:
 expression0 -> expression0 . DOT LID [ SEMI RPAREN RBRACE LPAREN LID LET LBRACE INTEGER INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF DOT COMMA COLON AND ]
 expression100 -> expression0 . [ SEMI RPAREN RBRACE LPAREN LID LET LBRACE INTEGER INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF COMMA COLON AND ]
+## Transitions:
 -- On DOT shift to state 83
+## Reductions:
 -- On SEMI reduce production expression100 -> expression0
 -- On RPAREN reduce production expression100 -> expression0
 -- On RBRACE reduce production expression100 -> expression0
@@ -942,7 +1372,11 @@ expression100 -> expression0 . [ SEMI RPAREN RBRACE LPAREN LID LET LBRACE INTEGE
 -- On AND reduce production expression100 -> expression0
 
 State 86:
+## Known stack suffix:
+## expression200 INFIXOP3
+## LR(1) items:
 expression200 -> expression200 INFIXOP3 . expression200 [ SEMI RPAREN RBRACE LET INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF COMMA COLON AND ]
+## Transitions:
 -- On LPAREN shift to state 60
 -- On LID shift to state 62
 -- On LBRACE shift to state 63
@@ -950,8 +1384,12 @@ expression200 -> expression200 INFIXOP3 . expression200 [ SEMI RPAREN RBRACE LET
 -- On expression200 shift to state 87
 -- On expression100 shift to state 81
 -- On expression0 shift to state 85
+## Reductions:
 
 State 87:
+## Known stack suffix:
+## expression200 INFIXOP3 expression200
+## LR(1) items:
 expression200 -> expression200 . INFIXOP0 expression200 [ SEMI RPAREN RBRACE LET INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF COMMA COLON AND ]
 expression200 -> expression200 . INFIXOP1 expression200 [ SEMI RPAREN RBRACE LET INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF COMMA COLON AND ]
 expression200 -> expression200 . INFIXOP2 expression200 [ SEMI RPAREN RBRACE LET INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF COMMA COLON AND ]
@@ -959,7 +1397,9 @@ expression200 -> expression200 . INFIXOP3 expression200 [ SEMI RPAREN RBRACE LET
 expression200 -> expression200 INFIXOP3 expression200 . [ SEMI RPAREN RBRACE LET INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF COMMA COLON AND ]
 expression200 -> expression200 . INFIXOP4 expression200 [ SEMI RPAREN RBRACE LET INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF COMMA COLON AND ]
 expression200 -> expression200 . EQUAL expression200 [ SEMI RPAREN RBRACE LET INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF COMMA COLON AND ]
+## Transitions:
 -- On INFIXOP4 shift to state 79
+## Reductions:
 -- On SEMI reduce production expression200 -> expression200 INFIXOP3 expression200
 -- On RPAREN reduce production expression200 -> expression200 INFIXOP3 expression200
 -- On RBRACE reduce production expression200 -> expression200 INFIXOP3 expression200
@@ -976,7 +1416,11 @@ expression200 -> expression200 . EQUAL expression200 [ SEMI RPAREN RBRACE LET IN
 -- On AND reduce production expression200 -> expression200 INFIXOP3 expression200
 
 State 88:
+## Known stack suffix:
+## expression200 INFIXOP2
+## LR(1) items:
 expression200 -> expression200 INFIXOP2 . expression200 [ SEMI RPAREN RBRACE LET INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF COMMA COLON AND ]
+## Transitions:
 -- On LPAREN shift to state 60
 -- On LID shift to state 62
 -- On LBRACE shift to state 63
@@ -984,8 +1428,12 @@ expression200 -> expression200 INFIXOP2 . expression200 [ SEMI RPAREN RBRACE LET
 -- On expression200 shift to state 89
 -- On expression100 shift to state 81
 -- On expression0 shift to state 85
+## Reductions:
 
 State 89:
+## Known stack suffix:
+## expression200 INFIXOP2 expression200
+## LR(1) items:
 expression200 -> expression200 . INFIXOP0 expression200 [ SEMI RPAREN RBRACE LET INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF COMMA COLON AND ]
 expression200 -> expression200 . INFIXOP1 expression200 [ SEMI RPAREN RBRACE LET INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF COMMA COLON AND ]
 expression200 -> expression200 . INFIXOP2 expression200 [ SEMI RPAREN RBRACE LET INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF COMMA COLON AND ]
@@ -993,8 +1441,10 @@ expression200 -> expression200 INFIXOP2 expression200 . [ SEMI RPAREN RBRACE LET
 expression200 -> expression200 . INFIXOP3 expression200 [ SEMI RPAREN RBRACE LET INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF COMMA COLON AND ]
 expression200 -> expression200 . INFIXOP4 expression200 [ SEMI RPAREN RBRACE LET INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF COMMA COLON AND ]
 expression200 -> expression200 . EQUAL expression200 [ SEMI RPAREN RBRACE LET INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF COMMA COLON AND ]
+## Transitions:
 -- On INFIXOP4 shift to state 79
 -- On INFIXOP3 shift to state 86
+## Reductions:
 -- On SEMI reduce production expression200 -> expression200 INFIXOP2 expression200
 -- On RPAREN reduce production expression200 -> expression200 INFIXOP2 expression200
 -- On RBRACE reduce production expression200 -> expression200 INFIXOP2 expression200
@@ -1010,7 +1460,11 @@ expression200 -> expression200 . EQUAL expression200 [ SEMI RPAREN RBRACE LET IN
 -- On AND reduce production expression200 -> expression200 INFIXOP2 expression200
 
 State 90:
+## Known stack suffix:
+## expression200 INFIXOP1
+## LR(1) items:
 expression200 -> expression200 INFIXOP1 . expression200 [ SEMI RPAREN RBRACE LET INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF COMMA COLON AND ]
+## Transitions:
 -- On LPAREN shift to state 60
 -- On LID shift to state 62
 -- On LBRACE shift to state 63
@@ -1018,8 +1472,12 @@ expression200 -> expression200 INFIXOP1 . expression200 [ SEMI RPAREN RBRACE LET
 -- On expression200 shift to state 91
 -- On expression100 shift to state 81
 -- On expression0 shift to state 85
+## Reductions:
 
 State 91:
+## Known stack suffix:
+## expression200 INFIXOP1 expression200
+## LR(1) items:
 expression200 -> expression200 . INFIXOP0 expression200 [ SEMI RPAREN RBRACE LET INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF COMMA COLON AND ]
 expression200 -> expression200 . INFIXOP1 expression200 [ SEMI RPAREN RBRACE LET INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF COMMA COLON AND ]
 expression200 -> expression200 INFIXOP1 expression200 . [ SEMI RPAREN RBRACE LET INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF COMMA COLON AND ]
@@ -1027,10 +1485,12 @@ expression200 -> expression200 . INFIXOP2 expression200 [ SEMI RPAREN RBRACE LET
 expression200 -> expression200 . INFIXOP3 expression200 [ SEMI RPAREN RBRACE LET INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF COMMA COLON AND ]
 expression200 -> expression200 . INFIXOP4 expression200 [ SEMI RPAREN RBRACE LET INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF COMMA COLON AND ]
 expression200 -> expression200 . EQUAL expression200 [ SEMI RPAREN RBRACE LET INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF COMMA COLON AND ]
+## Transitions:
 -- On INFIXOP4 shift to state 79
 -- On INFIXOP3 shift to state 86
 -- On INFIXOP2 shift to state 88
 -- On INFIXOP1 shift to state 90
+## Reductions:
 -- On SEMI reduce production expression200 -> expression200 INFIXOP1 expression200
 -- On RPAREN reduce production expression200 -> expression200 INFIXOP1 expression200
 -- On RBRACE reduce production expression200 -> expression200 INFIXOP1 expression200
@@ -1044,7 +1504,11 @@ expression200 -> expression200 . EQUAL expression200 [ SEMI RPAREN RBRACE LET IN
 -- On AND reduce production expression200 -> expression200 INFIXOP1 expression200
 
 State 92:
+## Known stack suffix:
+## expression200 INFIXOP0
+## LR(1) items:
 expression200 -> expression200 INFIXOP0 . expression200 [ SEMI RPAREN RBRACE LET INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF COMMA COLON AND ]
+## Transitions:
 -- On LPAREN shift to state 60
 -- On LID shift to state 62
 -- On LBRACE shift to state 63
@@ -1052,8 +1516,12 @@ expression200 -> expression200 INFIXOP0 . expression200 [ SEMI RPAREN RBRACE LET
 -- On expression200 shift to state 93
 -- On expression100 shift to state 81
 -- On expression0 shift to state 85
+## Reductions:
 
 State 93:
+## Known stack suffix:
+## expression200 INFIXOP0 expression200
+## LR(1) items:
 expression200 -> expression200 . INFIXOP0 expression200 [ SEMI RPAREN RBRACE LET INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF COMMA COLON AND ]
 expression200 -> expression200 INFIXOP0 expression200 . [ SEMI RPAREN RBRACE LET INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF COMMA COLON AND ]
 expression200 -> expression200 . INFIXOP1 expression200 [ SEMI RPAREN RBRACE LET INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF COMMA COLON AND ]
@@ -1061,10 +1529,12 @@ expression200 -> expression200 . INFIXOP2 expression200 [ SEMI RPAREN RBRACE LET
 expression200 -> expression200 . INFIXOP3 expression200 [ SEMI RPAREN RBRACE LET INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF COMMA COLON AND ]
 expression200 -> expression200 . INFIXOP4 expression200 [ SEMI RPAREN RBRACE LET INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF COMMA COLON AND ]
 expression200 -> expression200 . EQUAL expression200 [ SEMI RPAREN RBRACE LET INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF COMMA COLON AND ]
+## Transitions:
 -- On INFIXOP4 shift to state 79
 -- On INFIXOP3 shift to state 86
 -- On INFIXOP2 shift to state 88
 -- On INFIXOP1 shift to state 90
+## Reductions:
 -- On SEMI reduce production expression200 -> expression200 INFIXOP0 expression200
 -- On RPAREN reduce production expression200 -> expression200 INFIXOP0 expression200
 -- On RBRACE reduce production expression200 -> expression200 INFIXOP0 expression200
@@ -1078,7 +1548,11 @@ expression200 -> expression200 . EQUAL expression200 [ SEMI RPAREN RBRACE LET IN
 -- On AND reduce production expression200 -> expression200 INFIXOP0 expression200
 
 State 94:
+## Known stack suffix:
+## expression200 EQUAL
+## LR(1) items:
 expression200 -> expression200 EQUAL . expression200 [ SEMI RPAREN RBRACE LET INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF COMMA COLON AND ]
+## Transitions:
 -- On LPAREN shift to state 60
 -- On LID shift to state 62
 -- On LBRACE shift to state 63
@@ -1086,8 +1560,12 @@ expression200 -> expression200 EQUAL . expression200 [ SEMI RPAREN RBRACE LET IN
 -- On expression200 shift to state 95
 -- On expression100 shift to state 81
 -- On expression0 shift to state 85
+## Reductions:
 
 State 95:
+## Known stack suffix:
+## expression200 EQUAL expression200
+## LR(1) items:
 expression200 -> expression200 . INFIXOP0 expression200 [ SEMI RPAREN RBRACE LET INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF COMMA COLON AND ]
 expression200 -> expression200 . INFIXOP1 expression200 [ SEMI RPAREN RBRACE LET INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF COMMA COLON AND ]
 expression200 -> expression200 . INFIXOP2 expression200 [ SEMI RPAREN RBRACE LET INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF COMMA COLON AND ]
@@ -1095,10 +1573,12 @@ expression200 -> expression200 . INFIXOP3 expression200 [ SEMI RPAREN RBRACE LET
 expression200 -> expression200 . INFIXOP4 expression200 [ SEMI RPAREN RBRACE LET INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF COMMA COLON AND ]
 expression200 -> expression200 . EQUAL expression200 [ SEMI RPAREN RBRACE LET INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF COMMA COLON AND ]
 expression200 -> expression200 EQUAL expression200 . [ SEMI RPAREN RBRACE LET INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF COMMA COLON AND ]
+## Transitions:
 -- On INFIXOP4 shift to state 79
 -- On INFIXOP3 shift to state 86
 -- On INFIXOP2 shift to state 88
 -- On INFIXOP1 shift to state 90
+## Reductions:
 -- On SEMI reduce production expression200 -> expression200 EQUAL expression200
 -- On RPAREN reduce production expression200 -> expression200 EQUAL expression200
 -- On RBRACE reduce production expression200 -> expression200 EQUAL expression200
@@ -1112,10 +1592,15 @@ expression200 -> expression200 EQUAL expression200 . [ SEMI RPAREN RBRACE LET IN
 -- On AND reduce production expression200 -> expression200 EQUAL expression200
 
 State 96:
+## Known stack suffix:
+## expression0
+## LR(1) items:
 expression0 -> expression0 . DOT LID [ SEMI RPAREN RBRACE LPAREN LID LET LBRACE INTEGER INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF DOT COMMA COLON AND ]
 expression100 -> expression0 . [ SEMI RPAREN RBRACE LPAREN LID LET LBRACE INTEGER INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF COMMA COLON AND ]
 expression300 -> expression0 . DOT LID LEFTARROW expression100 [ SEMI RPAREN RBRACE LET IN EOF COMMA COLON AND ]
+## Transitions:
 -- On DOT shift to state 97
+## Reductions:
 -- On SEMI reduce production expression100 -> expression0
 -- On RPAREN reduce production expression100 -> expression0
 -- On RBRACE reduce production expression100 -> expression0
@@ -1137,14 +1622,24 @@ expression300 -> expression0 . DOT LID LEFTARROW expression100 [ SEMI RPAREN RBR
 -- On AND reduce production expression100 -> expression0
 
 State 97:
+## Known stack suffix:
+## expression0 DOT
+## LR(1) items:
 expression0 -> expression0 DOT . LID [ SEMI RPAREN RBRACE LPAREN LID LET LBRACE INTEGER INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF DOT COMMA COLON AND ]
 expression300 -> expression0 DOT . LID LEFTARROW expression100 [ SEMI RPAREN RBRACE LET IN EOF COMMA COLON AND ]
+## Transitions:
 -- On LID shift to state 98
+## Reductions:
 
 State 98:
+## Known stack suffix:
+## expression0 DOT LID
+## LR(1) items:
 expression0 -> expression0 DOT LID . [ SEMI RPAREN RBRACE LPAREN LID LET LBRACE INTEGER INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF DOT COMMA COLON AND ]
 expression300 -> expression0 DOT LID . LEFTARROW expression100 [ SEMI RPAREN RBRACE LET IN EOF COMMA COLON AND ]
+## Transitions:
 -- On LEFTARROW shift to state 99
+## Reductions:
 -- On SEMI reduce production expression0 -> expression0 DOT LID
 -- On RPAREN reduce production expression0 -> expression0 DOT LID
 -- On RBRACE reduce production expression0 -> expression0 DOT LID
@@ -1167,22 +1662,32 @@ expression300 -> expression0 DOT LID . LEFTARROW expression100 [ SEMI RPAREN RBR
 -- On AND reduce production expression0 -> expression0 DOT LID
 
 State 99:
+## Known stack suffix:
+## expression0 DOT LID LEFTARROW
+## LR(1) items:
 expression300 -> expression0 DOT LID LEFTARROW . expression100 [ SEMI RPAREN RBRACE LET IN EOF COMMA COLON AND ]
+## Transitions:
 -- On LPAREN shift to state 60
 -- On LID shift to state 62
 -- On LBRACE shift to state 63
 -- On INTEGER shift to state 67
 -- On expression100 shift to state 100
 -- On expression0 shift to state 85
+## Reductions:
 
 State 100:
+## Known stack suffix:
+## expression0 DOT LID LEFTARROW expression100
+## LR(1) items:
 expression100 -> expression100 . expression0 [ SEMI RPAREN RBRACE LPAREN LID LET LBRACE INTEGER IN EOF COMMA COLON AND ]
 expression300 -> expression0 DOT LID LEFTARROW expression100 . [ SEMI RPAREN RBRACE LET IN EOF COMMA COLON AND ]
+## Transitions:
 -- On LPAREN shift to state 60
 -- On LID shift to state 62
 -- On LBRACE shift to state 63
 -- On INTEGER shift to state 67
 -- On expression0 shift to state 82
+## Reductions:
 -- On SEMI reduce production expression300 -> expression0 DOT LID LEFTARROW expression100
 -- On RPAREN reduce production expression300 -> expression0 DOT LID LEFTARROW expression100
 -- On RBRACE reduce production expression300 -> expression0 DOT LID LEFTARROW expression100
@@ -1194,11 +1699,20 @@ expression300 -> expression0 DOT LID LEFTARROW expression100 . [ SEMI RPAREN RBR
 -- On AND reduce production expression300 -> expression0 DOT LID LEFTARROW expression100
 
 State 101:
+## Known stack suffix:
+## binding
+## LR(1) items:
 expression400 -> binding . IN expression400 [ RPAREN RBRACE LET IN EOF COMMA COLON AND ]
+## Transitions:
 -- On IN shift to state 102
+## Reductions:
 
 State 102:
+## Known stack suffix:
+## binding IN
+## LR(1) items:
 expression400 -> binding IN . expression400 [ RPAREN RBRACE LET IN EOF COMMA COLON AND ]
+## Transitions:
 -- On LPAREN shift to state 60
 -- On LID shift to state 62
 -- On LET shift to state 3
@@ -1212,9 +1726,15 @@ expression400 -> binding IN . expression400 [ RPAREN RBRACE LET IN EOF COMMA COL
 -- On expression100 shift to state 81
 -- On expression0 shift to state 96
 -- On binding shift to state 101
+## Reductions:
 
 State 103:
+## Known stack suffix:
+## binding IN expression400
+## LR(1) items:
 expression400 -> binding IN expression400 . [ RPAREN RBRACE LET IN EOF COMMA COLON AND ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production expression400 -> binding IN expression400
 -- On RBRACE reduce production expression400 -> binding IN expression400
 -- On LET reduce production expression400 -> binding IN expression400
@@ -1225,7 +1745,12 @@ expression400 -> binding IN expression400 . [ RPAREN RBRACE LET IN EOF COMMA COL
 -- On AND reduce production expression400 -> binding IN expression400
 
 State 104:
+## Known stack suffix:
+## EXISTS quantifiers DOT expression400
+## LR(1) items:
 expression400 -> EXISTS quantifiers DOT expression400 . [ RPAREN RBRACE LET IN EOF COMMA COLON AND ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production expression400 -> EXISTS quantifiers DOT expression400
 -- On RBRACE reduce production expression400 -> EXISTS quantifiers DOT expression400
 -- On LET reduce production expression400 -> EXISTS quantifiers DOT expression400
@@ -1236,7 +1761,12 @@ expression400 -> EXISTS quantifiers DOT expression400 . [ RPAREN RBRACE LET IN E
 -- On AND reduce production expression400 -> EXISTS quantifiers DOT expression400
 
 State 105:
+## Known stack suffix:
+## expression400
+## LR(1) items:
 expression -> expression400 . [ RPAREN RBRACE LET IN EOF COMMA COLON AND ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production expression -> expression400
 -- On RBRACE reduce production expression -> expression400
 -- On LET reduce production expression -> expression400
@@ -1247,15 +1777,25 @@ expression -> expression400 . [ RPAREN RBRACE LET IN EOF COMMA COLON AND ]
 -- On AND reduce production expression -> expression400
 
 State 106:
+## Known stack suffix:
+## LPAREN expression
+## LR(1) items:
 expression0 -> LPAREN expression . RPAREN [ SEMI RPAREN RBRACE LPAREN LID LET LBRACE INTEGER INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF DOT COMMA COLON AND ]
 expression0 -> LPAREN expression . COLON typ RPAREN [ SEMI RPAREN RBRACE LPAREN LID LET LBRACE INTEGER INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF DOT COMMA COLON AND ]
 expression0 -> LPAREN expression . COMMA expressions RPAREN [ SEMI RPAREN RBRACE LPAREN LID LET LBRACE INTEGER INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF DOT COMMA COLON AND ]
+## Transitions:
 -- On RPAREN shift to state 107
 -- On COMMA shift to state 108
 -- On COLON shift to state 114
+## Reductions:
 
 State 107:
+## Known stack suffix:
+## LPAREN expression RPAREN
+## LR(1) items:
 expression0 -> LPAREN expression RPAREN . [ SEMI RPAREN RBRACE LPAREN LID LET LBRACE INTEGER INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF DOT COMMA COLON AND ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production expression0 -> LPAREN expression RPAREN
 -- On RPAREN reduce production expression0 -> LPAREN expression RPAREN
 -- On RBRACE reduce production expression0 -> LPAREN expression RPAREN
@@ -1278,7 +1818,11 @@ expression0 -> LPAREN expression RPAREN . [ SEMI RPAREN RBRACE LPAREN LID LET LB
 -- On AND reduce production expression0 -> LPAREN expression RPAREN
 
 State 108:
+## Known stack suffix:
+## LPAREN expression COMMA
+## LR(1) items:
 expression0 -> LPAREN expression COMMA . expressions RPAREN [ SEMI RPAREN RBRACE LPAREN LID LET LBRACE INTEGER INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF DOT COMMA COLON AND ]
+## Transitions:
 -- On LPAREN shift to state 60
 -- On LID shift to state 62
 -- On LET shift to state 3
@@ -1294,13 +1838,24 @@ expression0 -> LPAREN expression COMMA . expressions RPAREN [ SEMI RPAREN RBRACE
 -- On expression0 shift to state 96
 -- On expression shift to state 111
 -- On binding shift to state 101
+## Reductions:
 
 State 109:
+## Known stack suffix:
+## LPAREN expression COMMA expressions
+## LR(1) items:
 expression0 -> LPAREN expression COMMA expressions . RPAREN [ SEMI RPAREN RBRACE LPAREN LID LET LBRACE INTEGER INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF DOT COMMA COLON AND ]
+## Transitions:
 -- On RPAREN shift to state 110
+## Reductions:
 
 State 110:
+## Known stack suffix:
+## LPAREN expression COMMA expressions RPAREN
+## LR(1) items:
 expression0 -> LPAREN expression COMMA expressions RPAREN . [ SEMI RPAREN RBRACE LPAREN LID LET LBRACE INTEGER INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF DOT COMMA COLON AND ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production expression0 -> LPAREN expression COMMA expressions RPAREN
 -- On RPAREN reduce production expression0 -> LPAREN expression COMMA expressions RPAREN
 -- On RBRACE reduce production expression0 -> LPAREN expression COMMA expressions RPAREN
@@ -1323,13 +1878,22 @@ expression0 -> LPAREN expression COMMA expressions RPAREN . [ SEMI RPAREN RBRACE
 -- On AND reduce production expression0 -> LPAREN expression COMMA expressions RPAREN
 
 State 111:
+## Known stack suffix:
+## expression
+## LR(1) items:
 expressions -> expression . [ RPAREN ]
 expressions -> expression . COMMA expressions [ RPAREN ]
+## Transitions:
 -- On COMMA shift to state 112
+## Reductions:
 -- On RPAREN reduce production expressions -> expression
 
 State 112:
+## Known stack suffix:
+## expression COMMA
+## LR(1) items:
 expressions -> expression COMMA . expressions [ RPAREN ]
+## Transitions:
 -- On LPAREN shift to state 60
 -- On LID shift to state 62
 -- On LET shift to state 3
@@ -1345,13 +1909,23 @@ expressions -> expression COMMA . expressions [ RPAREN ]
 -- On expression0 shift to state 96
 -- On expression shift to state 111
 -- On binding shift to state 101
+## Reductions:
 
 State 113:
+## Known stack suffix:
+## expression COMMA expressions
+## LR(1) items:
 expressions -> expression COMMA expressions . [ RPAREN ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production expressions -> expression COMMA expressions
 
 State 114:
+## Known stack suffix:
+## LPAREN expression COLON
+## LR(1) items:
 expression0 -> LPAREN expression COLON . typ RPAREN [ SEMI RPAREN RBRACE LPAREN LID LET LBRACE INTEGER INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF DOT COMMA COLON AND ]
+## Transitions:
 -- On UNIT shift to state 30
 -- On LPAREN shift to state 31
 -- On LID shift to state 32
@@ -1359,13 +1933,24 @@ expression0 -> LPAREN expression COLON . typ RPAREN [ SEMI RPAREN RBRACE LPAREN 
 -- On type1 shift to state 34
 -- On type0 shift to state 37
 -- On typ shift to state 115
+## Reductions:
 
 State 115:
+## Known stack suffix:
+## LPAREN expression COLON typ
+## LR(1) items:
 expression0 -> LPAREN expression COLON typ . RPAREN [ SEMI RPAREN RBRACE LPAREN LID LET LBRACE INTEGER INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF DOT COMMA COLON AND ]
+## Transitions:
 -- On RPAREN shift to state 116
+## Reductions:
 
 State 116:
+## Known stack suffix:
+## LPAREN expression COLON typ RPAREN
+## LR(1) items:
 expression0 -> LPAREN expression COLON typ RPAREN . [ SEMI RPAREN RBRACE LPAREN LID LET LBRACE INTEGER INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF DOT COMMA COLON AND ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production expression0 -> LPAREN expression COLON typ RPAREN
 -- On RPAREN reduce production expression0 -> LPAREN expression COLON typ RPAREN
 -- On RBRACE reduce production expression0 -> LPAREN expression COLON typ RPAREN
@@ -1388,7 +1973,12 @@ expression0 -> LPAREN expression COLON typ RPAREN . [ SEMI RPAREN RBRACE LPAREN 
 -- On AND reduce production expression0 -> LPAREN expression COLON typ RPAREN
 
 State 117:
+## Known stack suffix:
+## EQUAL expression
+## LR(1) items:
 equal_expression -> EQUAL expression . [ RBRACE LET IN EOF AND ]
+## Transitions:
+## Reductions:
 -- On RBRACE reduce production equal_expression -> EQUAL expression
 -- On LET reduce production equal_expression -> EQUAL expression
 -- On IN reduce production equal_expression -> EQUAL expression
@@ -1396,7 +1986,11 @@ equal_expression -> EQUAL expression . [ RBRACE LET IN EOF AND ]
 -- On AND reduce production equal_expression -> EQUAL expression
 
 State 118:
+## Known stack suffix:
+## COLON
+## LR(1) items:
 equal_expression -> COLON . typ EQUAL expression [ RBRACE LET IN EOF AND ]
+## Transitions:
 -- On UNIT shift to state 30
 -- On LPAREN shift to state 31
 -- On LID shift to state 32
@@ -1404,13 +1998,23 @@ equal_expression -> COLON . typ EQUAL expression [ RBRACE LET IN EOF AND ]
 -- On type1 shift to state 34
 -- On type0 shift to state 37
 -- On typ shift to state 119
+## Reductions:
 
 State 119:
+## Known stack suffix:
+## COLON typ
+## LR(1) items:
 equal_expression -> COLON typ . EQUAL expression [ RBRACE LET IN EOF AND ]
+## Transitions:
 -- On EQUAL shift to state 120
+## Reductions:
 
 State 120:
+## Known stack suffix:
+## COLON typ EQUAL
+## LR(1) items:
 equal_expression -> COLON typ EQUAL . expression [ RBRACE LET IN EOF AND ]
+## Transitions:
 -- On LPAREN shift to state 60
 -- On LID shift to state 62
 -- On LET shift to state 3
@@ -1425,9 +2029,15 @@ equal_expression -> COLON typ EQUAL . expression [ RBRACE LET IN EOF AND ]
 -- On expression0 shift to state 96
 -- On expression shift to state 121
 -- On binding shift to state 101
+## Reductions:
 
 State 121:
+## Known stack suffix:
+## COLON typ EQUAL expression
+## LR(1) items:
 equal_expression -> COLON typ EQUAL expression . [ RBRACE LET IN EOF AND ]
+## Transitions:
+## Reductions:
 -- On RBRACE reduce production equal_expression -> COLON typ EQUAL expression
 -- On LET reduce production equal_expression -> COLON typ EQUAL expression
 -- On IN reduce production equal_expression -> COLON typ EQUAL expression
@@ -1435,7 +2045,11 @@ equal_expression -> COLON typ EQUAL expression . [ RBRACE LET IN EOF AND ]
 -- On AND reduce production equal_expression -> COLON typ EQUAL expression
 
 State 122:
+## Known stack suffix:
+## pattern0
+## LR(1) items:
 equal_expression -> pattern0 . equal_expression [ RBRACE LET IN EOF AND ]
+## Transitions:
 -- On WILD shift to state 15
 -- On LPAREN shift to state 16
 -- On LID shift to state 19
@@ -1444,9 +2058,15 @@ equal_expression -> pattern0 . equal_expression [ RBRACE LET IN EOF AND ]
 -- On COLON shift to state 118
 -- On pattern0 shift to state 122
 -- On equal_expression shift to state 123
+## Reductions:
 
 State 123:
+## Known stack suffix:
+## pattern0 equal_expression
+## LR(1) items:
 equal_expression -> pattern0 equal_expression . [ RBRACE LET IN EOF AND ]
+## Transitions:
+## Reductions:
 -- On RBRACE reduce production equal_expression -> pattern0 equal_expression
 -- On LET reduce production equal_expression -> pattern0 equal_expression
 -- On IN reduce production equal_expression -> pattern0 equal_expression
@@ -1454,7 +2074,12 @@ equal_expression -> pattern0 equal_expression . [ RBRACE LET IN EOF AND ]
 -- On AND reduce production equal_expression -> pattern0 equal_expression
 
 State 124:
+## Known stack suffix:
+## forall pattern0 equal_expression
+## LR(1) items:
 value_definition -> forall pattern0 equal_expression . [ RBRACE LET IN EOF AND ]
+## Transitions:
+## Reductions:
 -- On RBRACE reduce production value_definition -> forall pattern0 equal_expression
 -- On LET reduce production value_definition -> forall pattern0 equal_expression
 -- On IN reduce production value_definition -> forall pattern0 equal_expression
@@ -1462,7 +2087,12 @@ value_definition -> forall pattern0 equal_expression . [ RBRACE LET IN EOF AND ]
 -- On AND reduce production value_definition -> forall pattern0 equal_expression
 
 State 125:
+## Known stack suffix:
+## value_definition
+## LR(1) items:
 value_definitions -> value_definition . [ RBRACE LET IN EOF AND ]
+## Transitions:
+## Reductions:
 -- On RBRACE reduce production value_definitions -> value_definition
 -- On LET reduce production value_definitions -> value_definition
 -- On IN reduce production value_definitions -> value_definition
@@ -1470,15 +2100,25 @@ value_definitions -> value_definition . [ RBRACE LET IN EOF AND ]
 -- On AND reduce production value_definitions -> value_definition
 
 State 126:
+## Known stack suffix:
+## LET value_definitions
+## LR(1) items:
 binding -> LET value_definitions . [ RBRACE LET IN EOF ]
 value_definitions -> value_definitions . AND value_definition [ RBRACE LET IN EOF AND ]
+## Transitions:
 -- On AND shift to state 12
+## Reductions:
 -- On RBRACE reduce production binding -> LET value_definitions
 -- On LET reduce production binding -> LET value_definitions
 -- On IN reduce production binding -> LET value_definitions
 -- On EOF reduce production binding -> LET value_definitions
 
 State 127:
+## Known stack suffix:
+## bindings EOF
+## LR(1) items:
 program -> bindings EOF . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production program -> bindings EOF
 

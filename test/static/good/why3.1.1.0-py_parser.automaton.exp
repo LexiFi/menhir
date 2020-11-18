@@ -1,9 +1,14 @@
 State 0:
+## Known stack suffix:
+##
+## LR(1) items:
 file' -> . file [ # ]
+## Transitions:
 -- On NEWLINE shift to state 1
 -- On option(NEWLINE) shift to state 4
 -- On list(NEWLINE) shift to state 245
 -- On file shift to state 247
+## Reductions:
 -- On WHILE reduce production option(NEWLINE) ->
 -- On TRUE reduce production option(NEWLINE) ->
 -- On STRING reduce production option(NEWLINE) ->
@@ -30,10 +35,15 @@ file' -> . file [ # ]
 -- On ASSERT reduce production option(NEWLINE) ->
 
 State 1:
+## Known stack suffix:
+## NEWLINE
+## LR(1) items:
 list(NEWLINE) -> NEWLINE . list(NEWLINE) [ EOF ]
 option(NEWLINE) -> NEWLINE . [ WHILE TRUE STRING RETURN PREDICATE NOT NONE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On NEWLINE shift to state 2
 -- On list(NEWLINE) shift to state 3
+## Reductions:
 -- On WHILE reduce production option(NEWLINE) -> NEWLINE
 -- On TRUE reduce production option(NEWLINE) -> NEWLINE
 -- On STRING reduce production option(NEWLINE) -> NEWLINE
@@ -60,17 +70,31 @@ option(NEWLINE) -> NEWLINE . [ WHILE TRUE STRING RETURN PREDICATE NOT NONE MINUS
 -- On ASSERT reduce production option(NEWLINE) -> NEWLINE
 
 State 2:
+## Known stack suffix:
+## NEWLINE
+## LR(1) items:
 list(NEWLINE) -> NEWLINE . list(NEWLINE) [ EOF ]
+## Transitions:
 -- On NEWLINE shift to state 2
 -- On list(NEWLINE) shift to state 3
+## Reductions:
 -- On EOF reduce production list(NEWLINE) ->
 
 State 3:
+## Known stack suffix:
+## NEWLINE list(NEWLINE)
+## LR(1) items:
 list(NEWLINE) -> NEWLINE list(NEWLINE) . [ EOF ]
+## Transitions:
+## Reductions:
 -- On EOF reduce production list(NEWLINE) -> NEWLINE list(NEWLINE)
 
 State 4:
+## Known stack suffix:
+## option(NEWLINE)
+## LR(1) items:
 file -> option(NEWLINE) . nonempty_list(decl) option(NEWLINE) EOF [ # ]
+## Transitions:
 -- On WHILE shift to state 5
 -- On TRUE shift to state 6
 -- On STRING shift to state 7
@@ -109,9 +133,14 @@ file -> option(NEWLINE) . nonempty_list(decl) option(NEWLINE) EOF [ # ]
 -- On def shift to state 242
 -- On decl shift to state 243
 -- On assertion_kind shift to state 171
+## Reductions:
 
 State 5:
+## Known stack suffix:
+## WHILE
+## LR(1) items:
 stmt_desc -> WHILE . expr COLON loop_body [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF END DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On TRUE shift to state 6
 -- On STRING shift to state 7
 -- On NOT shift to state 8
@@ -125,9 +154,15 @@ stmt_desc -> WHILE . expr COLON loop_body [ WHILE TRUE STRING RETURN PREDICATE N
 -- On ident shift to state 16
 -- On expr_desc shift to state 21
 -- On expr shift to state 50
+## Reductions:
 
 State 6:
+## Known stack suffix:
+## TRUE
+## LR(1) items:
 expr_desc -> TRUE . [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
+## Transitions:
+## Reductions:
 -- On TIMES reduce production expr_desc -> TRUE
 -- On RIGHTSQ reduce production expr_desc -> TRUE
 -- On RIGHTPAR reduce production expr_desc -> TRUE
@@ -144,7 +179,12 @@ expr_desc -> TRUE . [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DI
 -- On AND reduce production expr_desc -> TRUE
 
 State 7:
+## Known stack suffix:
+## STRING
+## LR(1) items:
 expr_desc -> STRING . [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
+## Transitions:
+## Reductions:
 -- On TIMES reduce production expr_desc -> STRING
 -- On RIGHTSQ reduce production expr_desc -> STRING
 -- On RIGHTPAR reduce production expr_desc -> STRING
@@ -161,7 +201,11 @@ expr_desc -> STRING . [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ 
 -- On AND reduce production expr_desc -> STRING
 
 State 8:
+## Known stack suffix:
+## NOT
+## LR(1) items:
 expr_desc -> NOT . expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
+## Transitions:
 -- On TRUE shift to state 6
 -- On STRING shift to state 7
 -- On NOT shift to state 8
@@ -175,9 +219,15 @@ expr_desc -> NOT . expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTS
 -- On ident shift to state 16
 -- On expr_desc shift to state 21
 -- On expr shift to state 49
+## Reductions:
 
 State 9:
+## Known stack suffix:
+## NONE
+## LR(1) items:
 expr_desc -> NONE . [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
+## Transitions:
+## Reductions:
 -- On TIMES reduce production expr_desc -> NONE
 -- On RIGHTSQ reduce production expr_desc -> NONE
 -- On RIGHTPAR reduce production expr_desc -> NONE
@@ -194,7 +244,11 @@ expr_desc -> NONE . [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DI
 -- On AND reduce production expr_desc -> NONE
 
 State 10:
+## Known stack suffix:
+## MINUS
+## LR(1) items:
 expr_desc -> MINUS . expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
+## Transitions:
 -- On TRUE shift to state 6
 -- On STRING shift to state 7
 -- On NOT shift to state 8
@@ -208,9 +262,14 @@ expr_desc -> MINUS . expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEF
 -- On ident shift to state 16
 -- On expr_desc shift to state 21
 -- On expr shift to state 48
+## Reductions:
 
 State 11:
+## Known stack suffix:
+## LEFTSQ
+## LR(1) items:
 expr_desc -> LEFTSQ . loption(separated_nonempty_list(COMMA,expr)) RIGHTSQ [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
+## Transitions:
 -- On TRUE shift to state 6
 -- On STRING shift to state 7
 -- On NOT shift to state 8
@@ -226,10 +285,15 @@ expr_desc -> LEFTSQ . loption(separated_nonempty_list(COMMA,expr)) RIGHTSQ [ TIM
 -- On ident shift to state 16
 -- On expr_desc shift to state 21
 -- On expr shift to state 22
+## Reductions:
 -- On RIGHTSQ reduce production loption(separated_nonempty_list(COMMA,expr)) ->
 
 State 12:
+## Known stack suffix:
+## LEFTPAR
+## LR(1) items:
 expr_desc -> LEFTPAR . expr RIGHTPAR [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
+## Transitions:
 -- On TRUE shift to state 6
 -- On STRING shift to state 7
 -- On NOT shift to state 8
@@ -243,9 +307,15 @@ expr_desc -> LEFTPAR . expr RIGHTPAR [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MO
 -- On ident shift to state 16
 -- On expr_desc shift to state 21
 -- On expr shift to state 44
+## Reductions:
 
 State 13:
+## Known stack suffix:
+## INTEGER
+## LR(1) items:
 expr_desc -> INTEGER . [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
+## Transitions:
+## Reductions:
 -- On TIMES reduce production expr_desc -> INTEGER
 -- On RIGHTSQ reduce production expr_desc -> INTEGER
 -- On RIGHTPAR reduce production expr_desc -> INTEGER
@@ -262,7 +332,12 @@ expr_desc -> INTEGER . [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ
 -- On AND reduce production expr_desc -> INTEGER
 
 State 14:
+## Known stack suffix:
+## IDENT
+## LR(1) items:
 ident -> IDENT . [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LEFTSQ LEFTPAR LARROW IN IMPORT EQUAL ELSE DOT DIV COMMA COLON CMP ARROW AND ]
+## Transitions:
+## Reductions:
 -- On TIMES reduce production ident -> IDENT
 -- On THEN reduce production ident -> IDENT
 -- On RIGHTSQ reduce production ident -> IDENT
@@ -289,7 +364,12 @@ ident -> IDENT . [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW
 -- On AND reduce production ident -> IDENT
 
 State 15:
+## Known stack suffix:
+## FALSE
+## LR(1) items:
 expr_desc -> FALSE . [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
+## Transitions:
+## Reductions:
 -- On TIMES reduce production expr_desc -> FALSE
 -- On RIGHTSQ reduce production expr_desc -> FALSE
 -- On RIGHTPAR reduce production expr_desc -> FALSE
@@ -306,9 +386,14 @@ expr_desc -> FALSE . [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ D
 -- On AND reduce production expr_desc -> FALSE
 
 State 16:
+## Known stack suffix:
+## ident
+## LR(1) items:
 expr_desc -> ident . [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
 expr_desc -> ident . LEFTPAR loption(separated_nonempty_list(COMMA,expr)) RIGHTPAR [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
+## Transitions:
 -- On LEFTPAR shift to state 17
+## Reductions:
 -- On TIMES reduce production expr_desc -> ident
 -- On RIGHTSQ reduce production expr_desc -> ident
 -- On RIGHTPAR reduce production expr_desc -> ident
@@ -325,7 +410,11 @@ expr_desc -> ident . LEFTPAR loption(separated_nonempty_list(COMMA,expr)) RIGHTP
 -- On AND reduce production expr_desc -> ident
 
 State 17:
+## Known stack suffix:
+## ident LEFTPAR
+## LR(1) items:
 expr_desc -> ident LEFTPAR . loption(separated_nonempty_list(COMMA,expr)) RIGHTPAR [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
+## Transitions:
 -- On TRUE shift to state 6
 -- On STRING shift to state 7
 -- On NOT shift to state 8
@@ -341,19 +430,35 @@ expr_desc -> ident LEFTPAR . loption(separated_nonempty_list(COMMA,expr)) RIGHTP
 -- On ident shift to state 16
 -- On expr_desc shift to state 21
 -- On expr shift to state 22
+## Reductions:
 -- On RIGHTPAR reduce production loption(separated_nonempty_list(COMMA,expr)) ->
 
 State 18:
+## Known stack suffix:
+## separated_nonempty_list(COMMA,expr)
+## LR(1) items:
 loption(separated_nonempty_list(COMMA,expr)) -> separated_nonempty_list(COMMA,expr) . [ RIGHTSQ RIGHTPAR ]
+## Transitions:
+## Reductions:
 -- On RIGHTSQ reduce production loption(separated_nonempty_list(COMMA,expr)) -> separated_nonempty_list(COMMA,expr)
 -- On RIGHTPAR reduce production loption(separated_nonempty_list(COMMA,expr)) -> separated_nonempty_list(COMMA,expr)
 
 State 19:
+## Known stack suffix:
+## ident LEFTPAR loption(separated_nonempty_list(COMMA,expr))
+## LR(1) items:
 expr_desc -> ident LEFTPAR loption(separated_nonempty_list(COMMA,expr)) . RIGHTPAR [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
+## Transitions:
 -- On RIGHTPAR shift to state 20
+## Reductions:
 
 State 20:
+## Known stack suffix:
+## ident LEFTPAR loption(separated_nonempty_list(COMMA,expr)) RIGHTPAR
+## LR(1) items:
 expr_desc -> ident LEFTPAR loption(separated_nonempty_list(COMMA,expr)) RIGHTPAR . [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
+## Transitions:
+## Reductions:
 -- On TIMES reduce production expr_desc -> ident LEFTPAR loption(separated_nonempty_list(COMMA,expr)) RIGHTPAR
 -- On RIGHTSQ reduce production expr_desc -> ident LEFTPAR loption(separated_nonempty_list(COMMA,expr)) RIGHTPAR
 -- On RIGHTPAR reduce production expr_desc -> ident LEFTPAR loption(separated_nonempty_list(COMMA,expr)) RIGHTPAR
@@ -370,7 +475,12 @@ expr_desc -> ident LEFTPAR loption(separated_nonempty_list(COMMA,expr)) RIGHTPAR
 -- On AND reduce production expr_desc -> ident LEFTPAR loption(separated_nonempty_list(COMMA,expr)) RIGHTPAR
 
 State 21:
+## Known stack suffix:
+## expr_desc
+## LR(1) items:
 expr -> expr_desc . [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
+## Transitions:
+## Reductions:
 -- On TIMES reduce production expr -> expr_desc
 -- On RIGHTSQ reduce production expr -> expr_desc
 -- On RIGHTPAR reduce production expr -> expr_desc
@@ -387,6 +497,9 @@ expr -> expr_desc . [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DI
 -- On AND reduce production expr -> expr_desc
 
 State 22:
+## Known stack suffix:
+## expr
+## LR(1) items:
 expr_desc -> expr . LEFTSQ expr RIGHTSQ [ TIMES RIGHTSQ RIGHTPAR PLUS OR MOD MINUS LEFTSQ DIV COMMA CMP AND ]
 expr_desc -> expr . PLUS expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR MOD MINUS LEFTSQ DIV COMMA CMP AND ]
 expr_desc -> expr . MINUS expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR MOD MINUS LEFTSQ DIV COMMA CMP AND ]
@@ -398,6 +511,7 @@ expr_desc -> expr . OR expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR MOD MINUS LEFTSQ DI
 expr_desc -> expr . TIMES expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR MOD MINUS LEFTSQ DIV COMMA CMP AND ]
 separated_nonempty_list(COMMA,expr) -> expr . [ RIGHTSQ RIGHTPAR ]
 separated_nonempty_list(COMMA,expr) -> expr . COMMA separated_nonempty_list(COMMA,expr) [ RIGHTSQ RIGHTPAR ]
+## Transitions:
 -- On TIMES shift to state 23
 -- On PLUS shift to state 28
 -- On OR shift to state 34
@@ -408,11 +522,16 @@ separated_nonempty_list(COMMA,expr) -> expr . COMMA separated_nonempty_list(COMM
 -- On COMMA shift to state 42
 -- On CMP shift to state 38
 -- On AND shift to state 40
+## Reductions:
 -- On RIGHTSQ reduce production separated_nonempty_list(COMMA,expr) -> expr
 -- On RIGHTPAR reduce production separated_nonempty_list(COMMA,expr) -> expr
 
 State 23:
+## Known stack suffix:
+## expr TIMES
+## LR(1) items:
 expr_desc -> expr TIMES . expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
+## Transitions:
 -- On TRUE shift to state 6
 -- On STRING shift to state 7
 -- On NOT shift to state 8
@@ -426,8 +545,12 @@ expr_desc -> expr TIMES . expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINU
 -- On ident shift to state 16
 -- On expr_desc shift to state 21
 -- On expr shift to state 24
+## Reductions:
 
 State 24:
+## Known stack suffix:
+## expr TIMES expr
+## LR(1) items:
 expr_desc -> expr . LEFTSQ expr RIGHTSQ [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
 expr_desc -> expr . PLUS expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
 expr_desc -> expr . MINUS expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
@@ -438,7 +561,9 @@ expr_desc -> expr . AND expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS 
 expr_desc -> expr . OR expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
 expr_desc -> expr . TIMES expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
 expr_desc -> expr TIMES expr . [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
+## Transitions:
 -- On LEFTSQ shift to state 25
+## Reductions:
 -- On TIMES reduce production expr_desc -> expr TIMES expr
 -- On RIGHTSQ reduce production expr_desc -> expr TIMES expr
 -- On RIGHTPAR reduce production expr_desc -> expr TIMES expr
@@ -454,7 +579,11 @@ expr_desc -> expr TIMES expr . [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINU
 -- On AND reduce production expr_desc -> expr TIMES expr
 
 State 25:
+## Known stack suffix:
+## expr LEFTSQ
+## LR(1) items:
 expr_desc -> expr LEFTSQ . expr RIGHTSQ [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
+## Transitions:
 -- On TRUE shift to state 6
 -- On STRING shift to state 7
 -- On NOT shift to state 8
@@ -468,8 +597,12 @@ expr_desc -> expr LEFTSQ . expr RIGHTSQ [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE
 -- On ident shift to state 16
 -- On expr_desc shift to state 21
 -- On expr shift to state 26
+## Reductions:
 
 State 26:
+## Known stack suffix:
+## expr LEFTSQ expr
+## LR(1) items:
 expr_desc -> expr . LEFTSQ expr RIGHTSQ [ TIMES RIGHTSQ PLUS OR MOD MINUS LEFTSQ DIV CMP AND ]
 expr_desc -> expr LEFTSQ expr . RIGHTSQ [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
 expr_desc -> expr . PLUS expr [ TIMES RIGHTSQ PLUS OR MOD MINUS LEFTSQ DIV CMP AND ]
@@ -480,6 +613,7 @@ expr_desc -> expr . CMP expr [ TIMES RIGHTSQ PLUS OR MOD MINUS LEFTSQ DIV CMP AN
 expr_desc -> expr . AND expr [ TIMES RIGHTSQ PLUS OR MOD MINUS LEFTSQ DIV CMP AND ]
 expr_desc -> expr . OR expr [ TIMES RIGHTSQ PLUS OR MOD MINUS LEFTSQ DIV CMP AND ]
 expr_desc -> expr . TIMES expr [ TIMES RIGHTSQ PLUS OR MOD MINUS LEFTSQ DIV CMP AND ]
+## Transitions:
 -- On TIMES shift to state 23
 -- On RIGHTSQ shift to state 27
 -- On PLUS shift to state 28
@@ -490,9 +624,15 @@ expr_desc -> expr . TIMES expr [ TIMES RIGHTSQ PLUS OR MOD MINUS LEFTSQ DIV CMP 
 -- On DIV shift to state 32
 -- On CMP shift to state 38
 -- On AND shift to state 40
+## Reductions:
 
 State 27:
+## Known stack suffix:
+## expr LEFTSQ expr RIGHTSQ
+## LR(1) items:
 expr_desc -> expr LEFTSQ expr RIGHTSQ . [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
+## Transitions:
+## Reductions:
 -- On TIMES reduce production expr_desc -> expr LEFTSQ expr RIGHTSQ
 -- On RIGHTSQ reduce production expr_desc -> expr LEFTSQ expr RIGHTSQ
 -- On RIGHTPAR reduce production expr_desc -> expr LEFTSQ expr RIGHTSQ
@@ -509,7 +649,11 @@ expr_desc -> expr LEFTSQ expr RIGHTSQ . [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE
 -- On AND reduce production expr_desc -> expr LEFTSQ expr RIGHTSQ
 
 State 28:
+## Known stack suffix:
+## expr PLUS
+## LR(1) items:
 expr_desc -> expr PLUS . expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
+## Transitions:
 -- On TRUE shift to state 6
 -- On STRING shift to state 7
 -- On NOT shift to state 8
@@ -523,8 +667,12 @@ expr_desc -> expr PLUS . expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS
 -- On ident shift to state 16
 -- On expr_desc shift to state 21
 -- On expr shift to state 29
+## Reductions:
 
 State 29:
+## Known stack suffix:
+## expr PLUS expr
+## LR(1) items:
 expr_desc -> expr . LEFTSQ expr RIGHTSQ [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
 expr_desc -> expr . PLUS expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
 expr_desc -> expr PLUS expr . [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
@@ -535,10 +683,12 @@ expr_desc -> expr . CMP expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS 
 expr_desc -> expr . AND expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
 expr_desc -> expr . OR expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
 expr_desc -> expr . TIMES expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
+## Transitions:
 -- On TIMES shift to state 23
 -- On MOD shift to state 30
 -- On LEFTSQ shift to state 25
 -- On DIV shift to state 32
+## Reductions:
 -- On RIGHTSQ reduce production expr_desc -> expr PLUS expr
 -- On RIGHTPAR reduce production expr_desc -> expr PLUS expr
 -- On PLUS reduce production expr_desc -> expr PLUS expr
@@ -551,7 +701,11 @@ expr_desc -> expr . TIMES expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINU
 -- On AND reduce production expr_desc -> expr PLUS expr
 
 State 30:
+## Known stack suffix:
+## expr MOD
+## LR(1) items:
 expr_desc -> expr MOD . expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
+## Transitions:
 -- On TRUE shift to state 6
 -- On STRING shift to state 7
 -- On NOT shift to state 8
@@ -565,8 +719,12 @@ expr_desc -> expr MOD . expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS 
 -- On ident shift to state 16
 -- On expr_desc shift to state 21
 -- On expr shift to state 31
+## Reductions:
 
 State 31:
+## Known stack suffix:
+## expr MOD expr
+## LR(1) items:
 expr_desc -> expr . LEFTSQ expr RIGHTSQ [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
 expr_desc -> expr . PLUS expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
 expr_desc -> expr . MINUS expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
@@ -577,7 +735,9 @@ expr_desc -> expr . CMP expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS 
 expr_desc -> expr . AND expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
 expr_desc -> expr . OR expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
 expr_desc -> expr . TIMES expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
+## Transitions:
 -- On LEFTSQ shift to state 25
+## Reductions:
 -- On TIMES reduce production expr_desc -> expr MOD expr
 -- On RIGHTSQ reduce production expr_desc -> expr MOD expr
 -- On RIGHTPAR reduce production expr_desc -> expr MOD expr
@@ -593,7 +753,11 @@ expr_desc -> expr . TIMES expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINU
 -- On AND reduce production expr_desc -> expr MOD expr
 
 State 32:
+## Known stack suffix:
+## expr DIV
+## LR(1) items:
 expr_desc -> expr DIV . expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
+## Transitions:
 -- On TRUE shift to state 6
 -- On STRING shift to state 7
 -- On NOT shift to state 8
@@ -607,8 +771,12 @@ expr_desc -> expr DIV . expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS 
 -- On ident shift to state 16
 -- On expr_desc shift to state 21
 -- On expr shift to state 33
+## Reductions:
 
 State 33:
+## Known stack suffix:
+## expr DIV expr
+## LR(1) items:
 expr_desc -> expr . LEFTSQ expr RIGHTSQ [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
 expr_desc -> expr . PLUS expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
 expr_desc -> expr . MINUS expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
@@ -619,7 +787,9 @@ expr_desc -> expr . CMP expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS 
 expr_desc -> expr . AND expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
 expr_desc -> expr . OR expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
 expr_desc -> expr . TIMES expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
+## Transitions:
 -- On LEFTSQ shift to state 25
+## Reductions:
 -- On TIMES reduce production expr_desc -> expr DIV expr
 -- On RIGHTSQ reduce production expr_desc -> expr DIV expr
 -- On RIGHTPAR reduce production expr_desc -> expr DIV expr
@@ -635,7 +805,11 @@ expr_desc -> expr . TIMES expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINU
 -- On AND reduce production expr_desc -> expr DIV expr
 
 State 34:
+## Known stack suffix:
+## expr OR
+## LR(1) items:
 expr_desc -> expr OR . expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
+## Transitions:
 -- On TRUE shift to state 6
 -- On STRING shift to state 7
 -- On NOT shift to state 8
@@ -649,8 +823,12 @@ expr_desc -> expr OR . expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS L
 -- On ident shift to state 16
 -- On expr_desc shift to state 21
 -- On expr shift to state 35
+## Reductions:
 
 State 35:
+## Known stack suffix:
+## expr OR expr
+## LR(1) items:
 expr_desc -> expr . LEFTSQ expr RIGHTSQ [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
 expr_desc -> expr . PLUS expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
 expr_desc -> expr . MINUS expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
@@ -661,6 +839,7 @@ expr_desc -> expr . AND expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS 
 expr_desc -> expr . OR expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
 expr_desc -> expr OR expr . [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
 expr_desc -> expr . TIMES expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
+## Transitions:
 -- On TIMES shift to state 23
 -- On PLUS shift to state 28
 -- On OR shift to state 34
@@ -670,6 +849,7 @@ expr_desc -> expr . TIMES expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINU
 -- On DIV shift to state 32
 -- On CMP shift to state 38
 -- On AND shift to state 40
+## Reductions:
 -- On RIGHTSQ reduce production expr_desc -> expr OR expr
 -- On RIGHTPAR reduce production expr_desc -> expr OR expr
 -- On NEWLINE reduce production expr_desc -> expr OR expr
@@ -677,7 +857,11 @@ expr_desc -> expr . TIMES expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINU
 -- On COLON reduce production expr_desc -> expr OR expr
 
 State 36:
+## Known stack suffix:
+## expr MINUS
+## LR(1) items:
 expr_desc -> expr MINUS . expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
+## Transitions:
 -- On TRUE shift to state 6
 -- On STRING shift to state 7
 -- On NOT shift to state 8
@@ -691,8 +875,12 @@ expr_desc -> expr MINUS . expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINU
 -- On ident shift to state 16
 -- On expr_desc shift to state 21
 -- On expr shift to state 37
+## Reductions:
 
 State 37:
+## Known stack suffix:
+## expr MINUS expr
+## LR(1) items:
 expr_desc -> expr . LEFTSQ expr RIGHTSQ [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
 expr_desc -> expr . PLUS expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
 expr_desc -> expr . MINUS expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
@@ -703,10 +891,12 @@ expr_desc -> expr . CMP expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS 
 expr_desc -> expr . AND expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
 expr_desc -> expr . OR expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
 expr_desc -> expr . TIMES expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
+## Transitions:
 -- On TIMES shift to state 23
 -- On MOD shift to state 30
 -- On LEFTSQ shift to state 25
 -- On DIV shift to state 32
+## Reductions:
 -- On RIGHTSQ reduce production expr_desc -> expr MINUS expr
 -- On RIGHTPAR reduce production expr_desc -> expr MINUS expr
 -- On PLUS reduce production expr_desc -> expr MINUS expr
@@ -719,7 +909,11 @@ expr_desc -> expr . TIMES expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINU
 -- On AND reduce production expr_desc -> expr MINUS expr
 
 State 38:
+## Known stack suffix:
+## expr CMP
+## LR(1) items:
 expr_desc -> expr CMP . expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
+## Transitions:
 -- On TRUE shift to state 6
 -- On STRING shift to state 7
 -- On NOT shift to state 8
@@ -733,8 +927,12 @@ expr_desc -> expr CMP . expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS 
 -- On ident shift to state 16
 -- On expr_desc shift to state 21
 -- On expr shift to state 39
+## Reductions:
 
 State 39:
+## Known stack suffix:
+## expr CMP expr
+## LR(1) items:
 expr_desc -> expr . LEFTSQ expr RIGHTSQ [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
 expr_desc -> expr . PLUS expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
 expr_desc -> expr . MINUS expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
@@ -745,6 +943,7 @@ expr_desc -> expr CMP expr . [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS 
 expr_desc -> expr . AND expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
 expr_desc -> expr . OR expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
 expr_desc -> expr . TIMES expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
+## Transitions:
 -- On TIMES shift to state 23
 -- On PLUS shift to state 28
 -- On MOD shift to state 30
@@ -752,6 +951,7 @@ expr_desc -> expr . TIMES expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINU
 -- On LEFTSQ shift to state 25
 -- On DIV shift to state 32
 -- On CMP shift to state 38
+## Reductions:
 -- On RIGHTSQ reduce production expr_desc -> expr CMP expr
 -- On RIGHTPAR reduce production expr_desc -> expr CMP expr
 -- On OR reduce production expr_desc -> expr CMP expr
@@ -761,7 +961,11 @@ expr_desc -> expr . TIMES expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINU
 -- On AND reduce production expr_desc -> expr CMP expr
 
 State 40:
+## Known stack suffix:
+## expr AND
+## LR(1) items:
 expr_desc -> expr AND . expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
+## Transitions:
 -- On TRUE shift to state 6
 -- On STRING shift to state 7
 -- On NOT shift to state 8
@@ -775,8 +979,12 @@ expr_desc -> expr AND . expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS 
 -- On ident shift to state 16
 -- On expr_desc shift to state 21
 -- On expr shift to state 41
+## Reductions:
 
 State 41:
+## Known stack suffix:
+## expr AND expr
+## LR(1) items:
 expr_desc -> expr . LEFTSQ expr RIGHTSQ [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
 expr_desc -> expr . PLUS expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
 expr_desc -> expr . MINUS expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
@@ -787,6 +995,7 @@ expr_desc -> expr . AND expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS 
 expr_desc -> expr AND expr . [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
 expr_desc -> expr . OR expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
 expr_desc -> expr . TIMES expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
+## Transitions:
 -- On TIMES shift to state 23
 -- On PLUS shift to state 28
 -- On MOD shift to state 30
@@ -795,6 +1004,7 @@ expr_desc -> expr . TIMES expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINU
 -- On DIV shift to state 32
 -- On CMP shift to state 38
 -- On AND shift to state 40
+## Reductions:
 -- On RIGHTSQ reduce production expr_desc -> expr AND expr
 -- On RIGHTPAR reduce production expr_desc -> expr AND expr
 -- On OR reduce production expr_desc -> expr AND expr
@@ -803,7 +1013,11 @@ expr_desc -> expr . TIMES expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINU
 -- On COLON reduce production expr_desc -> expr AND expr
 
 State 42:
+## Known stack suffix:
+## expr COMMA
+## LR(1) items:
 separated_nonempty_list(COMMA,expr) -> expr COMMA . separated_nonempty_list(COMMA,expr) [ RIGHTSQ RIGHTPAR ]
+## Transitions:
 -- On TRUE shift to state 6
 -- On STRING shift to state 7
 -- On NOT shift to state 8
@@ -818,13 +1032,22 @@ separated_nonempty_list(COMMA,expr) -> expr COMMA . separated_nonempty_list(COMM
 -- On ident shift to state 16
 -- On expr_desc shift to state 21
 -- On expr shift to state 22
+## Reductions:
 
 State 43:
+## Known stack suffix:
+## expr COMMA separated_nonempty_list(COMMA,expr)
+## LR(1) items:
 separated_nonempty_list(COMMA,expr) -> expr COMMA separated_nonempty_list(COMMA,expr) . [ RIGHTSQ RIGHTPAR ]
+## Transitions:
+## Reductions:
 -- On RIGHTSQ reduce production separated_nonempty_list(COMMA,expr) -> expr COMMA separated_nonempty_list(COMMA,expr)
 -- On RIGHTPAR reduce production separated_nonempty_list(COMMA,expr) -> expr COMMA separated_nonempty_list(COMMA,expr)
 
 State 44:
+## Known stack suffix:
+## LEFTPAR expr
+## LR(1) items:
 expr_desc -> expr . LEFTSQ expr RIGHTSQ [ TIMES RIGHTPAR PLUS OR MOD MINUS LEFTSQ DIV CMP AND ]
 expr_desc -> expr . PLUS expr [ TIMES RIGHTPAR PLUS OR MOD MINUS LEFTSQ DIV CMP AND ]
 expr_desc -> expr . MINUS expr [ TIMES RIGHTPAR PLUS OR MOD MINUS LEFTSQ DIV CMP AND ]
@@ -835,6 +1058,7 @@ expr_desc -> expr . AND expr [ TIMES RIGHTPAR PLUS OR MOD MINUS LEFTSQ DIV CMP A
 expr_desc -> expr . OR expr [ TIMES RIGHTPAR PLUS OR MOD MINUS LEFTSQ DIV CMP AND ]
 expr_desc -> expr . TIMES expr [ TIMES RIGHTPAR PLUS OR MOD MINUS LEFTSQ DIV CMP AND ]
 expr_desc -> LEFTPAR expr . RIGHTPAR [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
+## Transitions:
 -- On TIMES shift to state 23
 -- On RIGHTPAR shift to state 45
 -- On PLUS shift to state 28
@@ -845,9 +1069,15 @@ expr_desc -> LEFTPAR expr . RIGHTPAR [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MO
 -- On DIV shift to state 32
 -- On CMP shift to state 38
 -- On AND shift to state 40
+## Reductions:
 
 State 45:
+## Known stack suffix:
+## LEFTPAR expr RIGHTPAR
+## LR(1) items:
 expr_desc -> LEFTPAR expr RIGHTPAR . [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
+## Transitions:
+## Reductions:
 -- On TIMES reduce production expr_desc -> LEFTPAR expr RIGHTPAR
 -- On RIGHTSQ reduce production expr_desc -> LEFTPAR expr RIGHTPAR
 -- On RIGHTPAR reduce production expr_desc -> LEFTPAR expr RIGHTPAR
@@ -864,11 +1094,21 @@ expr_desc -> LEFTPAR expr RIGHTPAR . [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MO
 -- On AND reduce production expr_desc -> LEFTPAR expr RIGHTPAR
 
 State 46:
+## Known stack suffix:
+## LEFTSQ loption(separated_nonempty_list(COMMA,expr))
+## LR(1) items:
 expr_desc -> LEFTSQ loption(separated_nonempty_list(COMMA,expr)) . RIGHTSQ [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
+## Transitions:
 -- On RIGHTSQ shift to state 47
+## Reductions:
 
 State 47:
+## Known stack suffix:
+## LEFTSQ loption(separated_nonempty_list(COMMA,expr)) RIGHTSQ
+## LR(1) items:
 expr_desc -> LEFTSQ loption(separated_nonempty_list(COMMA,expr)) RIGHTSQ . [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
+## Transitions:
+## Reductions:
 -- On TIMES reduce production expr_desc -> LEFTSQ loption(separated_nonempty_list(COMMA,expr)) RIGHTSQ
 -- On RIGHTSQ reduce production expr_desc -> LEFTSQ loption(separated_nonempty_list(COMMA,expr)) RIGHTSQ
 -- On RIGHTPAR reduce production expr_desc -> LEFTSQ loption(separated_nonempty_list(COMMA,expr)) RIGHTSQ
@@ -885,6 +1125,9 @@ expr_desc -> LEFTSQ loption(separated_nonempty_list(COMMA,expr)) RIGHTSQ . [ TIM
 -- On AND reduce production expr_desc -> LEFTSQ loption(separated_nonempty_list(COMMA,expr)) RIGHTSQ
 
 State 48:
+## Known stack suffix:
+## MINUS expr
+## LR(1) items:
 expr_desc -> expr . LEFTSQ expr RIGHTSQ [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
 expr_desc -> MINUS expr . [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
 expr_desc -> expr . PLUS expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
@@ -895,7 +1138,9 @@ expr_desc -> expr . CMP expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS 
 expr_desc -> expr . AND expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
 expr_desc -> expr . OR expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
 expr_desc -> expr . TIMES expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
+## Transitions:
 -- On LEFTSQ shift to state 25
+## Reductions:
 -- On TIMES reduce production expr_desc -> MINUS expr
 -- On RIGHTSQ reduce production expr_desc -> MINUS expr
 -- On RIGHTPAR reduce production expr_desc -> MINUS expr
@@ -911,6 +1156,9 @@ expr_desc -> expr . TIMES expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINU
 -- On AND reduce production expr_desc -> MINUS expr
 
 State 49:
+## Known stack suffix:
+## NOT expr
+## LR(1) items:
 expr_desc -> expr . LEFTSQ expr RIGHTSQ [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
 expr_desc -> NOT expr . [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
 expr_desc -> expr . PLUS expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
@@ -921,6 +1169,7 @@ expr_desc -> expr . CMP expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS 
 expr_desc -> expr . AND expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
 expr_desc -> expr . OR expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
 expr_desc -> expr . TIMES expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LEFTSQ DIV COMMA COLON CMP AND ]
+## Transitions:
 -- On TIMES shift to state 23
 -- On PLUS shift to state 28
 -- On MOD shift to state 30
@@ -928,6 +1177,7 @@ expr_desc -> expr . TIMES expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINU
 -- On LEFTSQ shift to state 25
 -- On DIV shift to state 32
 -- On CMP shift to state 38
+## Reductions:
 -- On RIGHTSQ reduce production expr_desc -> NOT expr
 -- On RIGHTPAR reduce production expr_desc -> NOT expr
 -- On OR reduce production expr_desc -> NOT expr
@@ -937,6 +1187,9 @@ expr_desc -> expr . TIMES expr [ TIMES RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINU
 -- On AND reduce production expr_desc -> NOT expr
 
 State 50:
+## Known stack suffix:
+## WHILE expr
+## LR(1) items:
 expr_desc -> expr . LEFTSQ expr RIGHTSQ [ TIMES PLUS OR MOD MINUS LEFTSQ DIV COLON CMP AND ]
 expr_desc -> expr . PLUS expr [ TIMES PLUS OR MOD MINUS LEFTSQ DIV COLON CMP AND ]
 expr_desc -> expr . MINUS expr [ TIMES PLUS OR MOD MINUS LEFTSQ DIV COLON CMP AND ]
@@ -947,6 +1200,7 @@ expr_desc -> expr . AND expr [ TIMES PLUS OR MOD MINUS LEFTSQ DIV COLON CMP AND 
 expr_desc -> expr . OR expr [ TIMES PLUS OR MOD MINUS LEFTSQ DIV COLON CMP AND ]
 expr_desc -> expr . TIMES expr [ TIMES PLUS OR MOD MINUS LEFTSQ DIV COLON CMP AND ]
 stmt_desc -> WHILE expr . COLON loop_body [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF END DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On TIMES shift to state 23
 -- On PLUS shift to state 28
 -- On OR shift to state 34
@@ -957,9 +1211,14 @@ stmt_desc -> WHILE expr . COLON loop_body [ WHILE TRUE STRING RETURN PREDICATE N
 -- On COLON shift to state 51
 -- On CMP shift to state 38
 -- On AND shift to state 40
+## Reductions:
 
 State 51:
+## Known stack suffix:
+## WHILE expr COLON
+## LR(1) items:
 stmt_desc -> WHILE expr COLON . loop_body [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF END DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On TRUE shift to state 6
 -- On STRING shift to state 7
 -- On RETURN shift to state 52
@@ -985,9 +1244,14 @@ stmt_desc -> WHILE expr COLON . loop_body [ WHILE TRUE STRING RETURN PREDICATE N
 -- On expr_desc shift to state 21
 -- On expr shift to state 165
 -- On assertion_kind shift to state 171
+## Reductions:
 
 State 52:
+## Known stack suffix:
+## RETURN
+## LR(1) items:
 simple_stmt_desc -> RETURN . expr [ NEWLINE ]
+## Transitions:
 -- On TRUE shift to state 6
 -- On STRING shift to state 7
 -- On NOT shift to state 8
@@ -1001,8 +1265,12 @@ simple_stmt_desc -> RETURN . expr [ NEWLINE ]
 -- On ident shift to state 16
 -- On expr_desc shift to state 21
 -- On expr shift to state 53
+## Reductions:
 
 State 53:
+## Known stack suffix:
+## RETURN expr
+## LR(1) items:
 expr_desc -> expr . LEFTSQ expr RIGHTSQ [ TIMES PLUS OR NEWLINE MOD MINUS LEFTSQ DIV CMP AND ]
 expr_desc -> expr . PLUS expr [ TIMES PLUS OR NEWLINE MOD MINUS LEFTSQ DIV CMP AND ]
 expr_desc -> expr . MINUS expr [ TIMES PLUS OR NEWLINE MOD MINUS LEFTSQ DIV CMP AND ]
@@ -1013,6 +1281,7 @@ expr_desc -> expr . AND expr [ TIMES PLUS OR NEWLINE MOD MINUS LEFTSQ DIV CMP AN
 expr_desc -> expr . OR expr [ TIMES PLUS OR NEWLINE MOD MINUS LEFTSQ DIV CMP AND ]
 expr_desc -> expr . TIMES expr [ TIMES PLUS OR NEWLINE MOD MINUS LEFTSQ DIV CMP AND ]
 simple_stmt_desc -> RETURN expr . [ NEWLINE ]
+## Transitions:
 -- On TIMES shift to state 23
 -- On PLUS shift to state 28
 -- On OR shift to state 34
@@ -1022,19 +1291,30 @@ simple_stmt_desc -> RETURN expr . [ NEWLINE ]
 -- On DIV shift to state 32
 -- On CMP shift to state 38
 -- On AND shift to state 40
+## Reductions:
 -- On NEWLINE reduce production simple_stmt_desc -> RETURN expr
 
 State 54:
+## Known stack suffix:
+## NEWLINE
+## LR(1) items:
 loop_body -> NEWLINE . BEGIN loop_annotation nonempty_list(stmt) END [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF END DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On BEGIN shift to state 55
+## Reductions:
 
 State 55:
+## Known stack suffix:
+## NEWLINE BEGIN
+## LR(1) items:
 loop_body -> NEWLINE BEGIN . loop_annotation nonempty_list(stmt) END [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF END DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On VARIANT shift to state 56
 -- On INVARIANT shift to state 133
 -- On variant shift to state 136
 -- On loop_annotation shift to state 140
 -- On invariant shift to state 138
+## Reductions:
 -- On WHILE reduce production loop_annotation ->
 -- On TRUE reduce production loop_annotation ->
 -- On STRING reduce production loop_annotation ->
@@ -1056,7 +1336,11 @@ loop_body -> NEWLINE BEGIN . loop_annotation nonempty_list(stmt) END [ WHILE TRU
 -- On ASSERT reduce production loop_annotation ->
 
 State 56:
+## Known stack suffix:
+## VARIANT
+## LR(1) items:
 variant -> VARIANT . comma_list1(term) NEWLINE [ WHILE VARIANT TRUE STRING RETURN REQUIRES NOT NONE MINUS LEFTSQ LEFTPAR LABEL INVARIANT INTEGER IF IDENT FOR FALSE ENSURES CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On TRUE shift to state 57
 -- On NOT shift to state 58
 -- On NONE shift to state 59
@@ -1080,9 +1364,15 @@ variant -> VARIANT . comma_list1(term) NEWLINE [ WHILE VARIANT TRUE STRING RETUR
 -- On mk_term(term_) shift to state 91
 -- On ident shift to state 92
 -- On comma_list1(term) shift to state 131
+## Reductions:
 
 State 57:
+## Known stack suffix:
+## TRUE
+## LR(1) items:
 term_arg_ -> TRUE . [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LEFTSQ LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
+## Reductions:
 -- On TIMES reduce production term_arg_ -> TRUE
 -- On THEN reduce production term_arg_ -> TRUE
 -- On RIGHTSQ reduce production term_arg_ -> TRUE
@@ -1104,7 +1394,11 @@ term_arg_ -> TRUE . [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRAR
 -- On AND reduce production term_arg_ -> TRUE
 
 State 58:
+## Known stack suffix:
+## NOT
+## LR(1) items:
 term_ -> NOT . term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
 -- On TRUE shift to state 57
 -- On NOT shift to state 58
 -- On NONE shift to state 59
@@ -1126,9 +1420,15 @@ term_ -> NOT . term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRAR
 -- On mk_term(term_arg_) shift to state 90
 -- On mk_term(term_) shift to state 91
 -- On ident shift to state 92
+## Reductions:
 
 State 59:
+## Known stack suffix:
+## NONE
+## LR(1) items:
 term_arg_ -> NONE . [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LEFTSQ LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
+## Reductions:
 -- On TIMES reduce production term_arg_ -> NONE
 -- On THEN reduce production term_arg_ -> NONE
 -- On RIGHTSQ reduce production term_arg_ -> NONE
@@ -1150,7 +1450,11 @@ term_arg_ -> NONE . [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRAR
 -- On AND reduce production term_arg_ -> NONE
 
 State 60:
+## Known stack suffix:
+## MINUS
+## LR(1) items:
 term_ -> MINUS . term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
 -- On TRUE shift to state 57
 -- On NOT shift to state 58
 -- On NONE shift to state 59
@@ -1172,18 +1476,33 @@ term_ -> MINUS . term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LR
 -- On mk_term(term_arg_) shift to state 90
 -- On mk_term(term_) shift to state 91
 -- On ident shift to state 92
+## Reductions:
 
 State 61:
+## Known stack suffix:
+## LET
+## LR(1) items:
 term_ -> LET . ident EQUAL term IN term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
 -- On IDENT shift to state 14
 -- On ident shift to state 62
+## Reductions:
 
 State 62:
+## Known stack suffix:
+## LET ident
+## LR(1) items:
 term_ -> LET ident . EQUAL term IN term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
 -- On EQUAL shift to state 63
+## Reductions:
 
 State 63:
+## Known stack suffix:
+## LET ident EQUAL
+## LR(1) items:
 term_ -> LET ident EQUAL . term IN term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
 -- On TRUE shift to state 57
 -- On NOT shift to state 58
 -- On NONE shift to state 59
@@ -1205,9 +1524,14 @@ term_ -> LET ident EQUAL . term IN term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NE
 -- On mk_term(term_arg_) shift to state 90
 -- On mk_term(term_) shift to state 91
 -- On ident shift to state 92
+## Reductions:
 
 State 64:
+## Known stack suffix:
+## LEFTPAR
+## LR(1) items:
 term_sub_ -> LEFTPAR . term RIGHTPAR [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LEFTSQ LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
 -- On TRUE shift to state 57
 -- On NOT shift to state 58
 -- On NONE shift to state 59
@@ -1229,9 +1553,15 @@ term_sub_ -> LEFTPAR . term RIGHTPAR [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLI
 -- On mk_term(term_arg_) shift to state 90
 -- On mk_term(term_) shift to state 91
 -- On ident shift to state 92
+## Reductions:
 
 State 65:
+## Known stack suffix:
+## INTEGER
+## LR(1) items:
 term_arg_ -> INTEGER . [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LEFTSQ LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
+## Reductions:
 -- On TIMES reduce production term_arg_ -> INTEGER
 -- On THEN reduce production term_arg_ -> INTEGER
 -- On RIGHTSQ reduce production term_arg_ -> INTEGER
@@ -1253,7 +1583,11 @@ term_arg_ -> INTEGER . [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS L
 -- On AND reduce production term_arg_ -> INTEGER
 
 State 66:
+## Known stack suffix:
+## IF
+## LR(1) items:
 term_ -> IF . term THEN term ELSE term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
 -- On TRUE shift to state 57
 -- On NOT shift to state 58
 -- On NONE shift to state 59
@@ -1275,13 +1609,24 @@ term_ -> IF . term THEN term ELSE term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEW
 -- On mk_term(term_arg_) shift to state 90
 -- On mk_term(term_) shift to state 91
 -- On ident shift to state 92
+## Reductions:
 
 State 67:
+## Known stack suffix:
+## FORALL
+## LR(1) items:
 quant -> FORALL . [ IDENT ]
+## Transitions:
+## Reductions:
 -- On IDENT reduce production quant -> FORALL
 
 State 68:
+## Known stack suffix:
+## FALSE
+## LR(1) items:
 term_arg_ -> FALSE . [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LEFTSQ LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
+## Reductions:
 -- On TIMES reduce production term_arg_ -> FALSE
 -- On THEN reduce production term_arg_ -> FALSE
 -- On RIGHTSQ reduce production term_arg_ -> FALSE
@@ -1303,11 +1648,21 @@ term_arg_ -> FALSE . [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRA
 -- On AND reduce production term_arg_ -> FALSE
 
 State 69:
+## Known stack suffix:
+## EXISTS
+## LR(1) items:
 quant -> EXISTS . [ IDENT ]
+## Transitions:
+## Reductions:
 -- On IDENT reduce production quant -> EXISTS
 
 State 70:
+## Known stack suffix:
+## term_sub_
+## LR(1) items:
 term_arg_ -> term_sub_ . [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LEFTSQ LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
+## Reductions:
 -- On TIMES reduce production term_arg_ -> term_sub_
 -- On THEN reduce production term_arg_ -> term_sub_
 -- On RIGHTSQ reduce production term_arg_ -> term_sub_
@@ -1329,8 +1684,13 @@ term_arg_ -> term_sub_ . [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS
 -- On AND reduce production term_arg_ -> term_sub_
 
 State 71:
+## Known stack suffix:
+## term_arg_
+## LR(1) items:
 mk_term(term_arg_) -> term_arg_ . [ LEFTSQ ]
 term_ -> term_arg_ . [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
+## Reductions:
 -- On TIMES reduce production term_ -> term_arg_
 -- On THEN reduce production term_ -> term_arg_
 -- On RIGHTSQ reduce production term_ -> term_arg_
@@ -1352,13 +1712,22 @@ term_ -> term_arg_ . [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRA
 -- On AND reduce production term_ -> term_arg_
 
 State 72:
+## Known stack suffix:
+## term_arg
+## LR(1) items:
 term_sub_ -> term_arg . LEFTSQ term RIGHTSQ [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LEFTSQ LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_sub_ -> term_arg . LEFTSQ term LARROW term RIGHTSQ [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LEFTSQ LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
 -- On LEFTSQ shift to state 73
+## Reductions:
 
 State 73:
+## Known stack suffix:
+## term_arg LEFTSQ
+## LR(1) items:
 term_sub_ -> term_arg LEFTSQ . term RIGHTSQ [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LEFTSQ LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_sub_ -> term_arg LEFTSQ . term LARROW term RIGHTSQ [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LEFTSQ LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
 -- On TRUE shift to state 57
 -- On NOT shift to state 58
 -- On NONE shift to state 59
@@ -1380,9 +1749,15 @@ term_sub_ -> term_arg LEFTSQ . term LARROW term RIGHTSQ [ TIMES THEN RIGHTSQ RIG
 -- On mk_term(term_arg_) shift to state 90
 -- On mk_term(term_) shift to state 91
 -- On ident shift to state 92
+## Reductions:
 
 State 74:
+## Known stack suffix:
+## term_
+## LR(1) items:
 mk_term(term_) -> term_ . [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
+## Reductions:
 -- On TIMES reduce production mk_term(term_) -> term_
 -- On THEN reduce production mk_term(term_) -> term_
 -- On RIGHTSQ reduce production mk_term(term_) -> term_
@@ -1403,6 +1778,9 @@ mk_term(term_) -> term_ . [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINU
 -- On AND reduce production mk_term(term_) -> term_
 
 State 75:
+## Known stack suffix:
+## term_arg LEFTSQ term
+## LR(1) items:
 term_ -> term . ARROW term [ TIMES RIGHTSQ PLUS OR MOD MINUS LRARROW LARROW DIV CMP ARROW AND ]
 term_ -> term . LRARROW term [ TIMES RIGHTSQ PLUS OR MOD MINUS LRARROW LARROW DIV CMP ARROW AND ]
 term_ -> term . OR term [ TIMES RIGHTSQ PLUS OR MOD MINUS LRARROW LARROW DIV CMP ARROW AND ]
@@ -1415,6 +1793,7 @@ term_ -> term . MINUS term [ TIMES RIGHTSQ PLUS OR MOD MINUS LRARROW LARROW DIV 
 term_ -> term . TIMES term [ TIMES RIGHTSQ PLUS OR MOD MINUS LRARROW LARROW DIV CMP ARROW AND ]
 term_sub_ -> term_arg LEFTSQ term . RIGHTSQ [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LEFTSQ LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_sub_ -> term_arg LEFTSQ term . LARROW term RIGHTSQ [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LEFTSQ LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
 -- On TIMES shift to state 76
 -- On RIGHTSQ shift to state 114
 -- On PLUS shift to state 86
@@ -1427,9 +1806,14 @@ term_sub_ -> term_arg LEFTSQ term . LARROW term RIGHTSQ [ TIMES THEN RIGHTSQ RIG
 -- On CMP shift to state 101
 -- On ARROW shift to state 107
 -- On AND shift to state 103
+## Reductions:
 
 State 76:
+## Known stack suffix:
+## term TIMES
+## LR(1) items:
 term_ -> term TIMES . term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
 -- On TRUE shift to state 57
 -- On NOT shift to state 58
 -- On NONE shift to state 59
@@ -1451,8 +1835,12 @@ term_ -> term TIMES . term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MIN
 -- On mk_term(term_arg_) shift to state 90
 -- On mk_term(term_) shift to state 91
 -- On ident shift to state 92
+## Reductions:
 
 State 77:
+## Known stack suffix:
+## term TIMES term
+## LR(1) items:
 term_ -> term . ARROW term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . LRARROW term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . OR term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
@@ -1464,6 +1852,8 @@ term_ -> term . PLUS term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINU
 term_ -> term . MINUS term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . TIMES term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term TIMES term . [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
+## Reductions:
 -- On TIMES reduce production term_ -> term TIMES term
 -- On THEN reduce production term_ -> term TIMES term
 -- On RIGHTSQ reduce production term_ -> term TIMES term
@@ -1484,42 +1874,76 @@ term_ -> term TIMES term . [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MIN
 -- On AND reduce production term_ -> term TIMES term
 
 State 78:
+## Known stack suffix:
+## quant
+## LR(1) items:
 term_ -> quant . comma_list1(ident) DOT term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
 -- On IDENT shift to state 14
 -- On separated_nonempty_list(COMMA,ident) shift to state 79
 -- On ident shift to state 80
 -- On comma_list1(ident) shift to state 83
+## Reductions:
 
 State 79:
+## Known stack suffix:
+## separated_nonempty_list(COMMA,ident)
+## LR(1) items:
 comma_list1(ident) -> separated_nonempty_list(COMMA,ident) . [ DOT ]
+## Transitions:
+## Reductions:
 -- On DOT reduce production comma_list1(ident) -> separated_nonempty_list(COMMA,ident)
 
 State 80:
+## Known stack suffix:
+## ident
+## LR(1) items:
 separated_nonempty_list(COMMA,ident) -> ident . [ RIGHTPAR NEWLINE DOT ]
 separated_nonempty_list(COMMA,ident) -> ident . COMMA separated_nonempty_list(COMMA,ident) [ RIGHTPAR NEWLINE DOT ]
+## Transitions:
 -- On COMMA shift to state 81
+## Reductions:
 -- On RIGHTPAR reduce production separated_nonempty_list(COMMA,ident) -> ident
 -- On NEWLINE reduce production separated_nonempty_list(COMMA,ident) -> ident
 -- On DOT reduce production separated_nonempty_list(COMMA,ident) -> ident
 
 State 81:
+## Known stack suffix:
+## ident COMMA
+## LR(1) items:
 separated_nonempty_list(COMMA,ident) -> ident COMMA . separated_nonempty_list(COMMA,ident) [ RIGHTPAR NEWLINE DOT ]
+## Transitions:
 -- On IDENT shift to state 14
 -- On separated_nonempty_list(COMMA,ident) shift to state 82
 -- On ident shift to state 80
+## Reductions:
 
 State 82:
+## Known stack suffix:
+## ident COMMA separated_nonempty_list(COMMA,ident)
+## LR(1) items:
 separated_nonempty_list(COMMA,ident) -> ident COMMA separated_nonempty_list(COMMA,ident) . [ RIGHTPAR NEWLINE DOT ]
+## Transitions:
+## Reductions:
 -- On RIGHTPAR reduce production separated_nonempty_list(COMMA,ident) -> ident COMMA separated_nonempty_list(COMMA,ident)
 -- On NEWLINE reduce production separated_nonempty_list(COMMA,ident) -> ident COMMA separated_nonempty_list(COMMA,ident)
 -- On DOT reduce production separated_nonempty_list(COMMA,ident) -> ident COMMA separated_nonempty_list(COMMA,ident)
 
 State 83:
+## Known stack suffix:
+## quant comma_list1(ident)
+## LR(1) items:
 term_ -> quant comma_list1(ident) . DOT term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
 -- On DOT shift to state 84
+## Reductions:
 
 State 84:
+## Known stack suffix:
+## quant comma_list1(ident) DOT
+## LR(1) items:
 term_ -> quant comma_list1(ident) DOT . term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
 -- On TRUE shift to state 57
 -- On NOT shift to state 58
 -- On NONE shift to state 59
@@ -1541,8 +1965,12 @@ term_ -> quant comma_list1(ident) DOT . term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS 
 -- On mk_term(term_arg_) shift to state 90
 -- On mk_term(term_) shift to state 91
 -- On ident shift to state 92
+## Reductions:
 
 State 85:
+## Known stack suffix:
+## quant comma_list1(ident) DOT term
+## LR(1) items:
 term_ -> term . ARROW term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . LRARROW term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . OR term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
@@ -1554,6 +1982,7 @@ term_ -> term . PLUS term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINU
 term_ -> term . MINUS term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . TIMES term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> quant comma_list1(ident) DOT term . [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
 -- On TIMES shift to state 76
 -- On PLUS shift to state 86
 -- On OR shift to state 95
@@ -1564,6 +1993,7 @@ term_ -> quant comma_list1(ident) DOT term . [ TIMES THEN RIGHTSQ RIGHTPAR PLUS 
 -- On CMP shift to state 101
 -- On ARROW shift to state 107
 -- On AND shift to state 103
+## Reductions:
 -- On THEN reduce production term_ -> quant comma_list1(ident) DOT term
 -- On RIGHTSQ reduce production term_ -> quant comma_list1(ident) DOT term
 -- On RIGHTPAR reduce production term_ -> quant comma_list1(ident) DOT term
@@ -1574,7 +2004,11 @@ term_ -> quant comma_list1(ident) DOT term . [ TIMES THEN RIGHTSQ RIGHTPAR PLUS 
 -- On COMMA reduce production term_ -> quant comma_list1(ident) DOT term
 
 State 86:
+## Known stack suffix:
+## term PLUS
+## LR(1) items:
 term_ -> term PLUS . term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
 -- On TRUE shift to state 57
 -- On NOT shift to state 58
 -- On NONE shift to state 59
@@ -1596,8 +2030,12 @@ term_ -> term PLUS . term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINU
 -- On mk_term(term_arg_) shift to state 90
 -- On mk_term(term_) shift to state 91
 -- On ident shift to state 92
+## Reductions:
 
 State 87:
+## Known stack suffix:
+## term PLUS term
+## LR(1) items:
 term_ -> term . ARROW term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . LRARROW term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . OR term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
@@ -1609,9 +2047,11 @@ term_ -> term . PLUS term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINU
 term_ -> term PLUS term . [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . MINUS term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . TIMES term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
 -- On TIMES shift to state 76
 -- On MOD shift to state 88
 -- On DIV shift to state 99
+## Reductions:
 -- On THEN reduce production term_ -> term PLUS term
 -- On RIGHTSQ reduce production term_ -> term PLUS term
 -- On RIGHTPAR reduce production term_ -> term PLUS term
@@ -1629,7 +2069,11 @@ term_ -> term . TIMES term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MIN
 -- On AND reduce production term_ -> term PLUS term
 
 State 88:
+## Known stack suffix:
+## term MOD
+## LR(1) items:
 term_ -> term MOD . term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
 -- On TRUE shift to state 57
 -- On NOT shift to state 58
 -- On NONE shift to state 59
@@ -1651,8 +2095,12 @@ term_ -> term MOD . term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS
 -- On mk_term(term_arg_) shift to state 90
 -- On mk_term(term_) shift to state 91
 -- On ident shift to state 92
+## Reductions:
 
 State 89:
+## Known stack suffix:
+## term MOD term
+## LR(1) items:
 term_ -> term . ARROW term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . LRARROW term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . OR term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
@@ -1664,6 +2112,8 @@ term_ -> term MOD term . [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS
 term_ -> term . PLUS term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . MINUS term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . TIMES term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
+## Reductions:
 -- On TIMES reduce production term_ -> term MOD term
 -- On THEN reduce production term_ -> term MOD term
 -- On RIGHTSQ reduce production term_ -> term MOD term
@@ -1684,11 +2134,21 @@ term_ -> term . TIMES term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MIN
 -- On AND reduce production term_ -> term MOD term
 
 State 90:
+## Known stack suffix:
+## mk_term(term_arg_)
+## LR(1) items:
 term_arg -> mk_term(term_arg_) . [ LEFTSQ ]
+## Transitions:
+## Reductions:
 -- On LEFTSQ reduce production term_arg -> mk_term(term_arg_)
 
 State 91:
+## Known stack suffix:
+## mk_term(term_)
+## LR(1) items:
 term -> mk_term(term_) . [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
+## Reductions:
 -- On TIMES reduce production term -> mk_term(term_)
 -- On THEN reduce production term -> mk_term(term_)
 -- On RIGHTSQ reduce production term -> mk_term(term_)
@@ -1709,9 +2169,14 @@ term -> mk_term(term_) . [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS
 -- On AND reduce production term -> mk_term(term_)
 
 State 92:
+## Known stack suffix:
+## ident
+## LR(1) items:
 term_ -> ident . LEFTPAR loption(separated_nonempty_list(COMMA,term)) RIGHTPAR [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_arg_ -> ident . [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LEFTSQ LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
 -- On LEFTPAR shift to state 93
+## Reductions:
 -- On TIMES reduce production term_arg_ -> ident
 -- On THEN reduce production term_arg_ -> ident
 -- On RIGHTSQ reduce production term_arg_ -> ident
@@ -1733,7 +2198,11 @@ term_arg_ -> ident . [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRA
 -- On AND reduce production term_arg_ -> ident
 
 State 93:
+## Known stack suffix:
+## ident LEFTPAR
+## LR(1) items:
 term_ -> ident LEFTPAR . loption(separated_nonempty_list(COMMA,term)) RIGHTPAR [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
 -- On TRUE shift to state 57
 -- On NOT shift to state 58
 -- On NONE shift to state 59
@@ -1757,9 +2226,13 @@ term_ -> ident LEFTPAR . loption(separated_nonempty_list(COMMA,term)) RIGHTPAR [
 -- On mk_term(term_) shift to state 91
 -- On loption(separated_nonempty_list(COMMA,term)) shift to state 112
 -- On ident shift to state 92
+## Reductions:
 -- On RIGHTPAR reduce production loption(separated_nonempty_list(COMMA,term)) ->
 
 State 94:
+## Known stack suffix:
+## term
+## LR(1) items:
 separated_nonempty_list(COMMA,term) -> term . [ RIGHTPAR NEWLINE ]
 separated_nonempty_list(COMMA,term) -> term . COMMA separated_nonempty_list(COMMA,term) [ RIGHTPAR NEWLINE ]
 term_ -> term . ARROW term [ TIMES RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW DIV COMMA CMP ARROW AND ]
@@ -1772,6 +2245,7 @@ term_ -> term . MOD term [ TIMES RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW DIV 
 term_ -> term . PLUS term [ TIMES RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW DIV COMMA CMP ARROW AND ]
 term_ -> term . MINUS term [ TIMES RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW DIV COMMA CMP ARROW AND ]
 term_ -> term . TIMES term [ TIMES RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW DIV COMMA CMP ARROW AND ]
+## Transitions:
 -- On TIMES shift to state 76
 -- On PLUS shift to state 86
 -- On OR shift to state 95
@@ -1783,11 +2257,16 @@ term_ -> term . TIMES term [ TIMES RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW DI
 -- On CMP shift to state 101
 -- On ARROW shift to state 107
 -- On AND shift to state 103
+## Reductions:
 -- On RIGHTPAR reduce production separated_nonempty_list(COMMA,term) -> term
 -- On NEWLINE reduce production separated_nonempty_list(COMMA,term) -> term
 
 State 95:
+## Known stack suffix:
+## term OR
+## LR(1) items:
 term_ -> term OR . term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
 -- On TRUE shift to state 57
 -- On NOT shift to state 58
 -- On NONE shift to state 59
@@ -1809,8 +2288,12 @@ term_ -> term OR . term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS 
 -- On mk_term(term_arg_) shift to state 90
 -- On mk_term(term_) shift to state 91
 -- On ident shift to state 92
+## Reductions:
 
 State 96:
+## Known stack suffix:
+## term OR term
+## LR(1) items:
 term_ -> term . ARROW term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . LRARROW term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . OR term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
@@ -1822,6 +2305,7 @@ term_ -> term . MOD term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS
 term_ -> term . PLUS term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . MINUS term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . TIMES term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
 -- On TIMES shift to state 76
 -- On PLUS shift to state 86
 -- On OR shift to state 95
@@ -1830,6 +2314,7 @@ term_ -> term . TIMES term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MIN
 -- On DIV shift to state 99
 -- On CMP shift to state 101
 -- On AND shift to state 103
+## Reductions:
 -- On THEN reduce production term_ -> term OR term
 -- On RIGHTSQ reduce production term_ -> term OR term
 -- On RIGHTPAR reduce production term_ -> term OR term
@@ -1842,7 +2327,11 @@ term_ -> term . TIMES term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MIN
 -- On ARROW reduce production term_ -> term OR term
 
 State 97:
+## Known stack suffix:
+## term MINUS
+## LR(1) items:
 term_ -> term MINUS . term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
 -- On TRUE shift to state 57
 -- On NOT shift to state 58
 -- On NONE shift to state 59
@@ -1864,8 +2353,12 @@ term_ -> term MINUS . term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MIN
 -- On mk_term(term_arg_) shift to state 90
 -- On mk_term(term_) shift to state 91
 -- On ident shift to state 92
+## Reductions:
 
 State 98:
+## Known stack suffix:
+## term MINUS term
+## LR(1) items:
 term_ -> term . ARROW term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . LRARROW term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . OR term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
@@ -1877,9 +2370,11 @@ term_ -> term . PLUS term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINU
 term_ -> term . MINUS term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term MINUS term . [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . TIMES term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
 -- On TIMES shift to state 76
 -- On MOD shift to state 88
 -- On DIV shift to state 99
+## Reductions:
 -- On THEN reduce production term_ -> term MINUS term
 -- On RIGHTSQ reduce production term_ -> term MINUS term
 -- On RIGHTPAR reduce production term_ -> term MINUS term
@@ -1897,7 +2392,11 @@ term_ -> term . TIMES term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MIN
 -- On AND reduce production term_ -> term MINUS term
 
 State 99:
+## Known stack suffix:
+## term DIV
+## LR(1) items:
 term_ -> term DIV . term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
 -- On TRUE shift to state 57
 -- On NOT shift to state 58
 -- On NONE shift to state 59
@@ -1919,8 +2418,12 @@ term_ -> term DIV . term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS
 -- On mk_term(term_arg_) shift to state 90
 -- On mk_term(term_) shift to state 91
 -- On ident shift to state 92
+## Reductions:
 
 State 100:
+## Known stack suffix:
+## term DIV term
+## LR(1) items:
 term_ -> term . ARROW term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . LRARROW term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . OR term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
@@ -1932,6 +2435,8 @@ term_ -> term . MOD term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS
 term_ -> term . PLUS term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . MINUS term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . TIMES term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
+## Reductions:
 -- On TIMES reduce production term_ -> term DIV term
 -- On THEN reduce production term_ -> term DIV term
 -- On RIGHTSQ reduce production term_ -> term DIV term
@@ -1952,7 +2457,11 @@ term_ -> term . TIMES term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MIN
 -- On AND reduce production term_ -> term DIV term
 
 State 101:
+## Known stack suffix:
+## term CMP
+## LR(1) items:
 term_ -> term CMP . term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
 -- On TRUE shift to state 57
 -- On NOT shift to state 58
 -- On NONE shift to state 59
@@ -1974,8 +2483,12 @@ term_ -> term CMP . term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS
 -- On mk_term(term_arg_) shift to state 90
 -- On mk_term(term_) shift to state 91
 -- On ident shift to state 92
+## Reductions:
 
 State 102:
+## Known stack suffix:
+## term CMP term
+## LR(1) items:
 term_ -> term . ARROW term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . LRARROW term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . OR term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
@@ -1987,12 +2500,14 @@ term_ -> term . MOD term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS
 term_ -> term . PLUS term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . MINUS term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . TIMES term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
 -- On TIMES shift to state 76
 -- On PLUS shift to state 86
 -- On MOD shift to state 88
 -- On MINUS shift to state 97
 -- On DIV shift to state 99
 -- On CMP shift to state 101
+## Reductions:
 -- On THEN reduce production term_ -> term CMP term
 -- On RIGHTSQ reduce production term_ -> term CMP term
 -- On RIGHTPAR reduce production term_ -> term CMP term
@@ -2007,7 +2522,11 @@ term_ -> term . TIMES term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MIN
 -- On AND reduce production term_ -> term CMP term
 
 State 103:
+## Known stack suffix:
+## term AND
+## LR(1) items:
 term_ -> term AND . term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
 -- On TRUE shift to state 57
 -- On NOT shift to state 58
 -- On NONE shift to state 59
@@ -2029,8 +2548,12 @@ term_ -> term AND . term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS
 -- On mk_term(term_arg_) shift to state 90
 -- On mk_term(term_) shift to state 91
 -- On ident shift to state 92
+## Reductions:
 
 State 104:
+## Known stack suffix:
+## term AND term
+## LR(1) items:
 term_ -> term . ARROW term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . LRARROW term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . OR term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
@@ -2042,6 +2565,7 @@ term_ -> term . MOD term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS
 term_ -> term . PLUS term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . MINUS term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . TIMES term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
 -- On TIMES shift to state 76
 -- On PLUS shift to state 86
 -- On MOD shift to state 88
@@ -2049,6 +2573,7 @@ term_ -> term . TIMES term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MIN
 -- On DIV shift to state 99
 -- On CMP shift to state 101
 -- On AND shift to state 103
+## Reductions:
 -- On THEN reduce production term_ -> term AND term
 -- On RIGHTSQ reduce production term_ -> term AND term
 -- On RIGHTPAR reduce production term_ -> term AND term
@@ -2062,7 +2587,11 @@ term_ -> term . TIMES term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MIN
 -- On ARROW reduce production term_ -> term AND term
 
 State 105:
+## Known stack suffix:
+## term LRARROW
+## LR(1) items:
 term_ -> term LRARROW . term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
 -- On TRUE shift to state 57
 -- On NOT shift to state 58
 -- On NONE shift to state 59
@@ -2084,8 +2613,12 @@ term_ -> term LRARROW . term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD M
 -- On mk_term(term_arg_) shift to state 90
 -- On mk_term(term_) shift to state 91
 -- On ident shift to state 92
+## Reductions:
 
 State 106:
+## Known stack suffix:
+## term LRARROW term
+## LR(1) items:
 term_ -> term . ARROW term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . LRARROW term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term LRARROW term . [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
@@ -2097,6 +2630,7 @@ term_ -> term . MOD term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS
 term_ -> term . PLUS term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . MINUS term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . TIMES term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
 -- On TIMES shift to state 76
 -- On PLUS shift to state 86
 -- On OR shift to state 95
@@ -2107,6 +2641,7 @@ term_ -> term . TIMES term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MIN
 -- On CMP shift to state 101
 -- On ARROW shift to state 107
 -- On AND shift to state 103
+## Reductions:
 -- On THEN reduce production term_ -> term LRARROW term
 -- On RIGHTSQ reduce production term_ -> term LRARROW term
 -- On RIGHTPAR reduce production term_ -> term LRARROW term
@@ -2117,7 +2652,11 @@ term_ -> term . TIMES term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MIN
 -- On COMMA reduce production term_ -> term LRARROW term
 
 State 107:
+## Known stack suffix:
+## term ARROW
+## LR(1) items:
 term_ -> term ARROW . term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
 -- On TRUE shift to state 57
 -- On NOT shift to state 58
 -- On NONE shift to state 59
@@ -2139,8 +2678,12 @@ term_ -> term ARROW . term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MIN
 -- On mk_term(term_arg_) shift to state 90
 -- On mk_term(term_) shift to state 91
 -- On ident shift to state 92
+## Reductions:
 
 State 108:
+## Known stack suffix:
+## term ARROW term
+## LR(1) items:
 term_ -> term . ARROW term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term ARROW term . [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . LRARROW term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
@@ -2152,6 +2695,7 @@ term_ -> term . MOD term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS
 term_ -> term . PLUS term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . MINUS term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . TIMES term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
 -- On TIMES shift to state 76
 -- On PLUS shift to state 86
 -- On OR shift to state 95
@@ -2162,6 +2706,7 @@ term_ -> term . TIMES term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MIN
 -- On CMP shift to state 101
 -- On ARROW shift to state 107
 -- On AND shift to state 103
+## Reductions:
 -- On THEN reduce production term_ -> term ARROW term
 -- On RIGHTSQ reduce production term_ -> term ARROW term
 -- On RIGHTPAR reduce production term_ -> term ARROW term
@@ -2172,7 +2717,11 @@ term_ -> term . TIMES term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MIN
 -- On COMMA reduce production term_ -> term ARROW term
 
 State 109:
+## Known stack suffix:
+## term COMMA
+## LR(1) items:
 separated_nonempty_list(COMMA,term) -> term COMMA . separated_nonempty_list(COMMA,term) [ RIGHTPAR NEWLINE ]
+## Transitions:
 -- On TRUE shift to state 57
 -- On NOT shift to state 58
 -- On NONE shift to state 59
@@ -2195,22 +2744,43 @@ separated_nonempty_list(COMMA,term) -> term COMMA . separated_nonempty_list(COMM
 -- On mk_term(term_arg_) shift to state 90
 -- On mk_term(term_) shift to state 91
 -- On ident shift to state 92
+## Reductions:
 
 State 110:
+## Known stack suffix:
+## term COMMA separated_nonempty_list(COMMA,term)
+## LR(1) items:
 separated_nonempty_list(COMMA,term) -> term COMMA separated_nonempty_list(COMMA,term) . [ RIGHTPAR NEWLINE ]
+## Transitions:
+## Reductions:
 -- On RIGHTPAR reduce production separated_nonempty_list(COMMA,term) -> term COMMA separated_nonempty_list(COMMA,term)
 -- On NEWLINE reduce production separated_nonempty_list(COMMA,term) -> term COMMA separated_nonempty_list(COMMA,term)
 
 State 111:
+## Known stack suffix:
+## separated_nonempty_list(COMMA,term)
+## LR(1) items:
 loption(separated_nonempty_list(COMMA,term)) -> separated_nonempty_list(COMMA,term) . [ RIGHTPAR ]
+## Transitions:
+## Reductions:
 -- On RIGHTPAR reduce production loption(separated_nonempty_list(COMMA,term)) -> separated_nonempty_list(COMMA,term)
 
 State 112:
+## Known stack suffix:
+## ident LEFTPAR loption(separated_nonempty_list(COMMA,term))
+## LR(1) items:
 term_ -> ident LEFTPAR loption(separated_nonempty_list(COMMA,term)) . RIGHTPAR [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
 -- On RIGHTPAR shift to state 113
+## Reductions:
 
 State 113:
+## Known stack suffix:
+## ident LEFTPAR loption(separated_nonempty_list(COMMA,term)) RIGHTPAR
+## LR(1) items:
 term_ -> ident LEFTPAR loption(separated_nonempty_list(COMMA,term)) RIGHTPAR . [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
+## Reductions:
 -- On TIMES reduce production term_ -> ident LEFTPAR loption(separated_nonempty_list(COMMA,term)) RIGHTPAR
 -- On THEN reduce production term_ -> ident LEFTPAR loption(separated_nonempty_list(COMMA,term)) RIGHTPAR
 -- On RIGHTSQ reduce production term_ -> ident LEFTPAR loption(separated_nonempty_list(COMMA,term)) RIGHTPAR
@@ -2231,7 +2801,12 @@ term_ -> ident LEFTPAR loption(separated_nonempty_list(COMMA,term)) RIGHTPAR . [
 -- On AND reduce production term_ -> ident LEFTPAR loption(separated_nonempty_list(COMMA,term)) RIGHTPAR
 
 State 114:
+## Known stack suffix:
+## term_arg LEFTSQ term RIGHTSQ
+## LR(1) items:
 term_sub_ -> term_arg LEFTSQ term RIGHTSQ . [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LEFTSQ LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
+## Reductions:
 -- On TIMES reduce production term_sub_ -> term_arg LEFTSQ term RIGHTSQ
 -- On THEN reduce production term_sub_ -> term_arg LEFTSQ term RIGHTSQ
 -- On RIGHTSQ reduce production term_sub_ -> term_arg LEFTSQ term RIGHTSQ
@@ -2253,7 +2828,11 @@ term_sub_ -> term_arg LEFTSQ term RIGHTSQ . [ TIMES THEN RIGHTSQ RIGHTPAR PLUS O
 -- On AND reduce production term_sub_ -> term_arg LEFTSQ term RIGHTSQ
 
 State 115:
+## Known stack suffix:
+## term_arg LEFTSQ term LARROW
+## LR(1) items:
 term_sub_ -> term_arg LEFTSQ term LARROW . term RIGHTSQ [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LEFTSQ LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
 -- On TRUE shift to state 57
 -- On NOT shift to state 58
 -- On NONE shift to state 59
@@ -2275,8 +2854,12 @@ term_sub_ -> term_arg LEFTSQ term LARROW . term RIGHTSQ [ TIMES THEN RIGHTSQ RIG
 -- On mk_term(term_arg_) shift to state 90
 -- On mk_term(term_) shift to state 91
 -- On ident shift to state 92
+## Reductions:
 
 State 116:
+## Known stack suffix:
+## term_arg LEFTSQ term LARROW term
+## LR(1) items:
 term_ -> term . ARROW term [ TIMES RIGHTSQ PLUS OR MOD MINUS LRARROW DIV CMP ARROW AND ]
 term_ -> term . LRARROW term [ TIMES RIGHTSQ PLUS OR MOD MINUS LRARROW DIV CMP ARROW AND ]
 term_ -> term . OR term [ TIMES RIGHTSQ PLUS OR MOD MINUS LRARROW DIV CMP ARROW AND ]
@@ -2288,6 +2871,7 @@ term_ -> term . PLUS term [ TIMES RIGHTSQ PLUS OR MOD MINUS LRARROW DIV CMP ARRO
 term_ -> term . MINUS term [ TIMES RIGHTSQ PLUS OR MOD MINUS LRARROW DIV CMP ARROW AND ]
 term_ -> term . TIMES term [ TIMES RIGHTSQ PLUS OR MOD MINUS LRARROW DIV CMP ARROW AND ]
 term_sub_ -> term_arg LEFTSQ term LARROW term . RIGHTSQ [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LEFTSQ LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
 -- On TIMES shift to state 76
 -- On RIGHTSQ shift to state 117
 -- On PLUS shift to state 86
@@ -2299,9 +2883,15 @@ term_sub_ -> term_arg LEFTSQ term LARROW term . RIGHTSQ [ TIMES THEN RIGHTSQ RIG
 -- On CMP shift to state 101
 -- On ARROW shift to state 107
 -- On AND shift to state 103
+## Reductions:
 
 State 117:
+## Known stack suffix:
+## term_arg LEFTSQ term LARROW term RIGHTSQ
+## LR(1) items:
 term_sub_ -> term_arg LEFTSQ term LARROW term RIGHTSQ . [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LEFTSQ LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
+## Reductions:
 -- On TIMES reduce production term_sub_ -> term_arg LEFTSQ term LARROW term RIGHTSQ
 -- On THEN reduce production term_sub_ -> term_arg LEFTSQ term LARROW term RIGHTSQ
 -- On RIGHTSQ reduce production term_sub_ -> term_arg LEFTSQ term LARROW term RIGHTSQ
@@ -2323,6 +2913,9 @@ term_sub_ -> term_arg LEFTSQ term LARROW term RIGHTSQ . [ TIMES THEN RIGHTSQ RIG
 -- On AND reduce production term_sub_ -> term_arg LEFTSQ term LARROW term RIGHTSQ
 
 State 118:
+## Known stack suffix:
+## IF term
+## LR(1) items:
 term_ -> term . ARROW term [ TIMES THEN PLUS OR MOD MINUS LRARROW DIV CMP ARROW AND ]
 term_ -> term . LRARROW term [ TIMES THEN PLUS OR MOD MINUS LRARROW DIV CMP ARROW AND ]
 term_ -> term . OR term [ TIMES THEN PLUS OR MOD MINUS LRARROW DIV CMP ARROW AND ]
@@ -2334,6 +2927,7 @@ term_ -> term . PLUS term [ TIMES THEN PLUS OR MOD MINUS LRARROW DIV CMP ARROW A
 term_ -> term . MINUS term [ TIMES THEN PLUS OR MOD MINUS LRARROW DIV CMP ARROW AND ]
 term_ -> term . TIMES term [ TIMES THEN PLUS OR MOD MINUS LRARROW DIV CMP ARROW AND ]
 term_ -> IF term . THEN term ELSE term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
 -- On TIMES shift to state 76
 -- On THEN shift to state 119
 -- On PLUS shift to state 86
@@ -2345,9 +2939,14 @@ term_ -> IF term . THEN term ELSE term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEW
 -- On CMP shift to state 101
 -- On ARROW shift to state 107
 -- On AND shift to state 103
+## Reductions:
 
 State 119:
+## Known stack suffix:
+## IF term THEN
+## LR(1) items:
 term_ -> IF term THEN . term ELSE term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
 -- On TRUE shift to state 57
 -- On NOT shift to state 58
 -- On NONE shift to state 59
@@ -2369,8 +2968,12 @@ term_ -> IF term THEN . term ELSE term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEW
 -- On mk_term(term_arg_) shift to state 90
 -- On mk_term(term_) shift to state 91
 -- On ident shift to state 92
+## Reductions:
 
 State 120:
+## Known stack suffix:
+## IF term THEN term
+## LR(1) items:
 term_ -> term . ARROW term [ TIMES PLUS OR MOD MINUS LRARROW ELSE DIV CMP ARROW AND ]
 term_ -> term . LRARROW term [ TIMES PLUS OR MOD MINUS LRARROW ELSE DIV CMP ARROW AND ]
 term_ -> term . OR term [ TIMES PLUS OR MOD MINUS LRARROW ELSE DIV CMP ARROW AND ]
@@ -2382,6 +2985,7 @@ term_ -> term . PLUS term [ TIMES PLUS OR MOD MINUS LRARROW ELSE DIV CMP ARROW A
 term_ -> term . MINUS term [ TIMES PLUS OR MOD MINUS LRARROW ELSE DIV CMP ARROW AND ]
 term_ -> term . TIMES term [ TIMES PLUS OR MOD MINUS LRARROW ELSE DIV CMP ARROW AND ]
 term_ -> IF term THEN term . ELSE term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
 -- On TIMES shift to state 76
 -- On PLUS shift to state 86
 -- On OR shift to state 95
@@ -2393,9 +2997,14 @@ term_ -> IF term THEN term . ELSE term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEW
 -- On CMP shift to state 101
 -- On ARROW shift to state 107
 -- On AND shift to state 103
+## Reductions:
 
 State 121:
+## Known stack suffix:
+## IF term THEN term ELSE
+## LR(1) items:
 term_ -> IF term THEN term ELSE . term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
 -- On TRUE shift to state 57
 -- On NOT shift to state 58
 -- On NONE shift to state 59
@@ -2417,8 +3026,12 @@ term_ -> IF term THEN term ELSE . term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEW
 -- On mk_term(term_arg_) shift to state 90
 -- On mk_term(term_) shift to state 91
 -- On ident shift to state 92
+## Reductions:
 
 State 122:
+## Known stack suffix:
+## IF term THEN term ELSE term
+## LR(1) items:
 term_ -> term . ARROW term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . LRARROW term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . OR term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
@@ -2430,6 +3043,7 @@ term_ -> term . PLUS term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINU
 term_ -> term . MINUS term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . TIMES term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> IF term THEN term ELSE term . [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
 -- On TIMES shift to state 76
 -- On PLUS shift to state 86
 -- On OR shift to state 95
@@ -2440,6 +3054,7 @@ term_ -> IF term THEN term ELSE term . [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEW
 -- On CMP shift to state 101
 -- On ARROW shift to state 107
 -- On AND shift to state 103
+## Reductions:
 -- On THEN reduce production term_ -> IF term THEN term ELSE term
 -- On RIGHTSQ reduce production term_ -> IF term THEN term ELSE term
 -- On RIGHTPAR reduce production term_ -> IF term THEN term ELSE term
@@ -2450,6 +3065,9 @@ term_ -> IF term THEN term ELSE term . [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEW
 -- On COMMA reduce production term_ -> IF term THEN term ELSE term
 
 State 123:
+## Known stack suffix:
+## LEFTPAR term
+## LR(1) items:
 term_ -> term . ARROW term [ TIMES RIGHTPAR PLUS OR MOD MINUS LRARROW DIV CMP ARROW AND ]
 term_ -> term . LRARROW term [ TIMES RIGHTPAR PLUS OR MOD MINUS LRARROW DIV CMP ARROW AND ]
 term_ -> term . OR term [ TIMES RIGHTPAR PLUS OR MOD MINUS LRARROW DIV CMP ARROW AND ]
@@ -2461,6 +3079,7 @@ term_ -> term . PLUS term [ TIMES RIGHTPAR PLUS OR MOD MINUS LRARROW DIV CMP ARR
 term_ -> term . MINUS term [ TIMES RIGHTPAR PLUS OR MOD MINUS LRARROW DIV CMP ARROW AND ]
 term_ -> term . TIMES term [ TIMES RIGHTPAR PLUS OR MOD MINUS LRARROW DIV CMP ARROW AND ]
 term_sub_ -> LEFTPAR term . RIGHTPAR [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LEFTSQ LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
 -- On TIMES shift to state 76
 -- On RIGHTPAR shift to state 124
 -- On PLUS shift to state 86
@@ -2472,9 +3091,15 @@ term_sub_ -> LEFTPAR term . RIGHTPAR [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLI
 -- On CMP shift to state 101
 -- On ARROW shift to state 107
 -- On AND shift to state 103
+## Reductions:
 
 State 124:
+## Known stack suffix:
+## LEFTPAR term RIGHTPAR
+## LR(1) items:
 term_sub_ -> LEFTPAR term RIGHTPAR . [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LEFTSQ LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
+## Reductions:
 -- On TIMES reduce production term_sub_ -> LEFTPAR term RIGHTPAR
 -- On THEN reduce production term_sub_ -> LEFTPAR term RIGHTPAR
 -- On RIGHTSQ reduce production term_sub_ -> LEFTPAR term RIGHTPAR
@@ -2496,6 +3121,9 @@ term_sub_ -> LEFTPAR term RIGHTPAR . [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLI
 -- On AND reduce production term_sub_ -> LEFTPAR term RIGHTPAR
 
 State 125:
+## Known stack suffix:
+## LET ident EQUAL term
+## LR(1) items:
 term_ -> term . ARROW term [ TIMES PLUS OR MOD MINUS LRARROW IN DIV CMP ARROW AND ]
 term_ -> term . LRARROW term [ TIMES PLUS OR MOD MINUS LRARROW IN DIV CMP ARROW AND ]
 term_ -> term . OR term [ TIMES PLUS OR MOD MINUS LRARROW IN DIV CMP ARROW AND ]
@@ -2507,6 +3135,7 @@ term_ -> term . PLUS term [ TIMES PLUS OR MOD MINUS LRARROW IN DIV CMP ARROW AND
 term_ -> term . MINUS term [ TIMES PLUS OR MOD MINUS LRARROW IN DIV CMP ARROW AND ]
 term_ -> term . TIMES term [ TIMES PLUS OR MOD MINUS LRARROW IN DIV CMP ARROW AND ]
 term_ -> LET ident EQUAL term . IN term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
 -- On TIMES shift to state 76
 -- On PLUS shift to state 86
 -- On OR shift to state 95
@@ -2518,9 +3147,14 @@ term_ -> LET ident EQUAL term . IN term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NE
 -- On CMP shift to state 101
 -- On ARROW shift to state 107
 -- On AND shift to state 103
+## Reductions:
 
 State 126:
+## Known stack suffix:
+## LET ident EQUAL term IN
+## LR(1) items:
 term_ -> LET ident EQUAL term IN . term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
 -- On TRUE shift to state 57
 -- On NOT shift to state 58
 -- On NONE shift to state 59
@@ -2542,8 +3176,12 @@ term_ -> LET ident EQUAL term IN . term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NE
 -- On mk_term(term_arg_) shift to state 90
 -- On mk_term(term_) shift to state 91
 -- On ident shift to state 92
+## Reductions:
 
 State 127:
+## Known stack suffix:
+## LET ident EQUAL term IN term
+## LR(1) items:
 term_ -> term . ARROW term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . LRARROW term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . OR term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
@@ -2555,6 +3193,7 @@ term_ -> term . PLUS term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINU
 term_ -> term . MINUS term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . TIMES term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> LET ident EQUAL term IN term . [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
 -- On TIMES shift to state 76
 -- On PLUS shift to state 86
 -- On OR shift to state 95
@@ -2565,6 +3204,7 @@ term_ -> LET ident EQUAL term IN term . [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NE
 -- On CMP shift to state 101
 -- On ARROW shift to state 107
 -- On AND shift to state 103
+## Reductions:
 -- On THEN reduce production term_ -> LET ident EQUAL term IN term
 -- On RIGHTSQ reduce production term_ -> LET ident EQUAL term IN term
 -- On RIGHTPAR reduce production term_ -> LET ident EQUAL term IN term
@@ -2575,6 +3215,9 @@ term_ -> LET ident EQUAL term IN term . [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NE
 -- On COMMA reduce production term_ -> LET ident EQUAL term IN term
 
 State 128:
+## Known stack suffix:
+## MINUS term
+## LR(1) items:
 term_ -> MINUS term . [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . ARROW term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . LRARROW term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
@@ -2586,6 +3229,8 @@ term_ -> term . MOD term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS
 term_ -> term . PLUS term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . MINUS term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . TIMES term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
+## Reductions:
 -- On TIMES reduce production term_ -> MINUS term
 -- On THEN reduce production term_ -> MINUS term
 -- On RIGHTSQ reduce production term_ -> MINUS term
@@ -2606,6 +3251,9 @@ term_ -> term . TIMES term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MIN
 -- On AND reduce production term_ -> MINUS term
 
 State 129:
+## Known stack suffix:
+## NOT term
+## LR(1) items:
 term_ -> NOT term . [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . ARROW term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . LRARROW term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
@@ -2617,12 +3265,14 @@ term_ -> term . MOD term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS
 term_ -> term . PLUS term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . MINUS term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
 term_ -> term . TIMES term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MINUS LRARROW LARROW IN ELSE DIV COMMA CMP ARROW AND ]
+## Transitions:
 -- On TIMES shift to state 76
 -- On PLUS shift to state 86
 -- On MOD shift to state 88
 -- On MINUS shift to state 97
 -- On DIV shift to state 99
 -- On CMP shift to state 101
+## Reductions:
 -- On THEN reduce production term_ -> NOT term
 -- On RIGHTSQ reduce production term_ -> NOT term
 -- On RIGHTPAR reduce production term_ -> NOT term
@@ -2637,15 +3287,30 @@ term_ -> term . TIMES term [ TIMES THEN RIGHTSQ RIGHTPAR PLUS OR NEWLINE MOD MIN
 -- On AND reduce production term_ -> NOT term
 
 State 130:
+## Known stack suffix:
+## separated_nonempty_list(COMMA,term)
+## LR(1) items:
 comma_list1(term) -> separated_nonempty_list(COMMA,term) . [ NEWLINE ]
+## Transitions:
+## Reductions:
 -- On NEWLINE reduce production comma_list1(term) -> separated_nonempty_list(COMMA,term)
 
 State 131:
+## Known stack suffix:
+## VARIANT comma_list1(term)
+## LR(1) items:
 variant -> VARIANT comma_list1(term) . NEWLINE [ WHILE VARIANT TRUE STRING RETURN REQUIRES NOT NONE MINUS LEFTSQ LEFTPAR LABEL INVARIANT INTEGER IF IDENT FOR FALSE ENSURES CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On NEWLINE shift to state 132
+## Reductions:
 
 State 132:
+## Known stack suffix:
+## VARIANT comma_list1(term) NEWLINE
+## LR(1) items:
 variant -> VARIANT comma_list1(term) NEWLINE . [ WHILE VARIANT TRUE STRING RETURN REQUIRES NOT NONE MINUS LEFTSQ LEFTPAR LABEL INVARIANT INTEGER IF IDENT FOR FALSE ENSURES CHECK BREAK ASSUME ASSERT ]
+## Transitions:
+## Reductions:
 -- On WHILE reduce production variant -> VARIANT comma_list1(term) NEWLINE
 -- On VARIANT reduce production variant -> VARIANT comma_list1(term) NEWLINE
 -- On TRUE reduce production variant -> VARIANT comma_list1(term) NEWLINE
@@ -2671,7 +3336,11 @@ variant -> VARIANT comma_list1(term) NEWLINE . [ WHILE VARIANT TRUE STRING RETUR
 -- On ASSERT reduce production variant -> VARIANT comma_list1(term) NEWLINE
 
 State 133:
+## Known stack suffix:
+## INVARIANT
+## LR(1) items:
 invariant -> INVARIANT . term NEWLINE [ WHILE VARIANT TRUE STRING RETURN NOT NONE MINUS LEFTSQ LEFTPAR LABEL INVARIANT INTEGER IF IDENT FOR FALSE CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On TRUE shift to state 57
 -- On NOT shift to state 58
 -- On NONE shift to state 59
@@ -2693,8 +3362,12 @@ invariant -> INVARIANT . term NEWLINE [ WHILE VARIANT TRUE STRING RETURN NOT NON
 -- On mk_term(term_arg_) shift to state 90
 -- On mk_term(term_) shift to state 91
 -- On ident shift to state 92
+## Reductions:
 
 State 134:
+## Known stack suffix:
+## INVARIANT term
+## LR(1) items:
 invariant -> INVARIANT term . NEWLINE [ WHILE VARIANT TRUE STRING RETURN NOT NONE MINUS LEFTSQ LEFTPAR LABEL INVARIANT INTEGER IF IDENT FOR FALSE CHECK BREAK ASSUME ASSERT ]
 term_ -> term . ARROW term [ TIMES PLUS OR NEWLINE MOD MINUS LRARROW DIV CMP ARROW AND ]
 term_ -> term . LRARROW term [ TIMES PLUS OR NEWLINE MOD MINUS LRARROW DIV CMP ARROW AND ]
@@ -2706,6 +3379,7 @@ term_ -> term . MOD term [ TIMES PLUS OR NEWLINE MOD MINUS LRARROW DIV CMP ARROW
 term_ -> term . PLUS term [ TIMES PLUS OR NEWLINE MOD MINUS LRARROW DIV CMP ARROW AND ]
 term_ -> term . MINUS term [ TIMES PLUS OR NEWLINE MOD MINUS LRARROW DIV CMP ARROW AND ]
 term_ -> term . TIMES term [ TIMES PLUS OR NEWLINE MOD MINUS LRARROW DIV CMP ARROW AND ]
+## Transitions:
 -- On TIMES shift to state 76
 -- On PLUS shift to state 86
 -- On OR shift to state 95
@@ -2717,9 +3391,15 @@ term_ -> term . TIMES term [ TIMES PLUS OR NEWLINE MOD MINUS LRARROW DIV CMP ARR
 -- On CMP shift to state 101
 -- On ARROW shift to state 107
 -- On AND shift to state 103
+## Reductions:
 
 State 135:
+## Known stack suffix:
+## INVARIANT term NEWLINE
+## LR(1) items:
 invariant -> INVARIANT term NEWLINE . [ WHILE VARIANT TRUE STRING RETURN NOT NONE MINUS LEFTSQ LEFTPAR LABEL INVARIANT INTEGER IF IDENT FOR FALSE CHECK BREAK ASSUME ASSERT ]
+## Transitions:
+## Reductions:
 -- On WHILE reduce production invariant -> INVARIANT term NEWLINE
 -- On VARIANT reduce production invariant -> INVARIANT term NEWLINE
 -- On TRUE reduce production invariant -> INVARIANT term NEWLINE
@@ -2743,12 +3423,17 @@ invariant -> INVARIANT term NEWLINE . [ WHILE VARIANT TRUE STRING RETURN NOT NON
 -- On ASSERT reduce production invariant -> INVARIANT term NEWLINE
 
 State 136:
+## Known stack suffix:
+## variant
+## LR(1) items:
 loop_annotation -> variant . loop_annotation [ WHILE TRUE STRING RETURN NOT NONE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FOR FALSE CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On VARIANT shift to state 56
 -- On INVARIANT shift to state 133
 -- On variant shift to state 136
 -- On loop_annotation shift to state 137
 -- On invariant shift to state 138
+## Reductions:
 -- On WHILE reduce production loop_annotation ->
 -- On TRUE reduce production loop_annotation ->
 -- On STRING reduce production loop_annotation ->
@@ -2770,7 +3455,12 @@ loop_annotation -> variant . loop_annotation [ WHILE TRUE STRING RETURN NOT NONE
 -- On ASSERT reduce production loop_annotation ->
 
 State 137:
+## Known stack suffix:
+## variant loop_annotation
+## LR(1) items:
 loop_annotation -> variant loop_annotation . [ WHILE TRUE STRING RETURN NOT NONE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FOR FALSE CHECK BREAK ASSUME ASSERT ]
+## Transitions:
+## Reductions:
 -- On WHILE reduce production loop_annotation -> variant loop_annotation
 -- On TRUE reduce production loop_annotation -> variant loop_annotation
 -- On STRING reduce production loop_annotation -> variant loop_annotation
@@ -2792,12 +3482,17 @@ loop_annotation -> variant loop_annotation . [ WHILE TRUE STRING RETURN NOT NONE
 -- On ASSERT reduce production loop_annotation -> variant loop_annotation
 
 State 138:
+## Known stack suffix:
+## invariant
+## LR(1) items:
 loop_annotation -> invariant . loop_annotation [ WHILE TRUE STRING RETURN NOT NONE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FOR FALSE CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On VARIANT shift to state 56
 -- On INVARIANT shift to state 133
 -- On variant shift to state 136
 -- On loop_annotation shift to state 139
 -- On invariant shift to state 138
+## Reductions:
 -- On WHILE reduce production loop_annotation ->
 -- On TRUE reduce production loop_annotation ->
 -- On STRING reduce production loop_annotation ->
@@ -2819,7 +3514,12 @@ loop_annotation -> invariant . loop_annotation [ WHILE TRUE STRING RETURN NOT NO
 -- On ASSERT reduce production loop_annotation ->
 
 State 139:
+## Known stack suffix:
+## invariant loop_annotation
+## LR(1) items:
 loop_annotation -> invariant loop_annotation . [ WHILE TRUE STRING RETURN NOT NONE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FOR FALSE CHECK BREAK ASSUME ASSERT ]
+## Transitions:
+## Reductions:
 -- On WHILE reduce production loop_annotation -> invariant loop_annotation
 -- On TRUE reduce production loop_annotation -> invariant loop_annotation
 -- On STRING reduce production loop_annotation -> invariant loop_annotation
@@ -2841,7 +3541,11 @@ loop_annotation -> invariant loop_annotation . [ WHILE TRUE STRING RETURN NOT NO
 -- On ASSERT reduce production loop_annotation -> invariant loop_annotation
 
 State 140:
+## Known stack suffix:
+## NEWLINE BEGIN loop_annotation
+## LR(1) items:
 loop_body -> NEWLINE BEGIN loop_annotation . nonempty_list(stmt) END [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF END DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On WHILE shift to state 5
 -- On TRUE shift to state 6
 -- On STRING shift to state 7
@@ -2872,18 +3576,33 @@ loop_body -> NEWLINE BEGIN loop_annotation . nonempty_list(stmt) END [ WHILE TRU
 -- On expr_desc shift to state 21
 -- On expr shift to state 165
 -- On assertion_kind shift to state 171
+## Reductions:
 
 State 141:
+## Known stack suffix:
+## LABEL
+## LR(1) items:
 simple_stmt_desc -> LABEL . ident [ NEWLINE ]
+## Transitions:
 -- On IDENT shift to state 14
 -- On ident shift to state 142
+## Reductions:
 
 State 142:
+## Known stack suffix:
+## LABEL ident
+## LR(1) items:
 simple_stmt_desc -> LABEL ident . [ NEWLINE ]
+## Transitions:
+## Reductions:
 -- On NEWLINE reduce production simple_stmt_desc -> LABEL ident
 
 State 143:
+## Known stack suffix:
+## IF
+## LR(1) items:
 stmt_desc -> IF . expr COLON suite else_branch [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF END DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On TRUE shift to state 6
 -- On STRING shift to state 7
 -- On NOT shift to state 8
@@ -2897,8 +3616,12 @@ stmt_desc -> IF . expr COLON suite else_branch [ WHILE TRUE STRING RETURN PREDIC
 -- On ident shift to state 16
 -- On expr_desc shift to state 21
 -- On expr shift to state 144
+## Reductions:
 
 State 144:
+## Known stack suffix:
+## IF expr
+## LR(1) items:
 expr_desc -> expr . LEFTSQ expr RIGHTSQ [ TIMES PLUS OR MOD MINUS LEFTSQ DIV COLON CMP AND ]
 expr_desc -> expr . PLUS expr [ TIMES PLUS OR MOD MINUS LEFTSQ DIV COLON CMP AND ]
 expr_desc -> expr . MINUS expr [ TIMES PLUS OR MOD MINUS LEFTSQ DIV COLON CMP AND ]
@@ -2909,6 +3632,7 @@ expr_desc -> expr . AND expr [ TIMES PLUS OR MOD MINUS LEFTSQ DIV COLON CMP AND 
 expr_desc -> expr . OR expr [ TIMES PLUS OR MOD MINUS LEFTSQ DIV COLON CMP AND ]
 expr_desc -> expr . TIMES expr [ TIMES PLUS OR MOD MINUS LEFTSQ DIV COLON CMP AND ]
 stmt_desc -> IF expr . COLON suite else_branch [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF END DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On TIMES shift to state 23
 -- On PLUS shift to state 28
 -- On OR shift to state 34
@@ -2919,9 +3643,14 @@ stmt_desc -> IF expr . COLON suite else_branch [ WHILE TRUE STRING RETURN PREDIC
 -- On COLON shift to state 145
 -- On CMP shift to state 38
 -- On AND shift to state 40
+## Reductions:
 
 State 145:
+## Known stack suffix:
+## IF expr COLON
+## LR(1) items:
 stmt_desc -> IF expr COLON . suite else_branch [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF END DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On TRUE shift to state 6
 -- On STRING shift to state 7
 -- On RETURN shift to state 52
@@ -2947,13 +3676,23 @@ stmt_desc -> IF expr COLON . suite else_branch [ WHILE TRUE STRING RETURN PREDIC
 -- On expr_desc shift to state 21
 -- On expr shift to state 165
 -- On assertion_kind shift to state 171
+## Reductions:
 
 State 146:
+## Known stack suffix:
+## NEWLINE
+## LR(1) items:
 suite -> NEWLINE . BEGIN nonempty_list(stmt) END [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF END ELSE ELIF DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On BEGIN shift to state 147
+## Reductions:
 
 State 147:
+## Known stack suffix:
+## NEWLINE BEGIN
+## LR(1) items:
 suite -> NEWLINE BEGIN . nonempty_list(stmt) END [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF END ELSE ELIF DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On WHILE shift to state 5
 -- On TRUE shift to state 6
 -- On STRING shift to state 7
@@ -2984,18 +3723,33 @@ suite -> NEWLINE BEGIN . nonempty_list(stmt) END [ WHILE TRUE STRING RETURN PRED
 -- On expr_desc shift to state 21
 -- On expr shift to state 165
 -- On assertion_kind shift to state 171
+## Reductions:
 
 State 148:
+## Known stack suffix:
+## FOR
+## LR(1) items:
 stmt_desc -> FOR . ident IN expr COLON loop_body [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF END DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On IDENT shift to state 14
 -- On ident shift to state 149
+## Reductions:
 
 State 149:
+## Known stack suffix:
+## FOR ident
+## LR(1) items:
 stmt_desc -> FOR ident . IN expr COLON loop_body [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF END DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On IN shift to state 150
+## Reductions:
 
 State 150:
+## Known stack suffix:
+## FOR ident IN
+## LR(1) items:
 stmt_desc -> FOR ident IN . expr COLON loop_body [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF END DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On TRUE shift to state 6
 -- On STRING shift to state 7
 -- On NOT shift to state 8
@@ -3009,8 +3763,12 @@ stmt_desc -> FOR ident IN . expr COLON loop_body [ WHILE TRUE STRING RETURN PRED
 -- On ident shift to state 16
 -- On expr_desc shift to state 21
 -- On expr shift to state 151
+## Reductions:
 
 State 151:
+## Known stack suffix:
+## FOR ident IN expr
+## LR(1) items:
 expr_desc -> expr . LEFTSQ expr RIGHTSQ [ TIMES PLUS OR MOD MINUS LEFTSQ DIV COLON CMP AND ]
 expr_desc -> expr . PLUS expr [ TIMES PLUS OR MOD MINUS LEFTSQ DIV COLON CMP AND ]
 expr_desc -> expr . MINUS expr [ TIMES PLUS OR MOD MINUS LEFTSQ DIV COLON CMP AND ]
@@ -3021,6 +3779,7 @@ expr_desc -> expr . AND expr [ TIMES PLUS OR MOD MINUS LEFTSQ DIV COLON CMP AND 
 expr_desc -> expr . OR expr [ TIMES PLUS OR MOD MINUS LEFTSQ DIV COLON CMP AND ]
 expr_desc -> expr . TIMES expr [ TIMES PLUS OR MOD MINUS LEFTSQ DIV COLON CMP AND ]
 stmt_desc -> FOR ident IN expr . COLON loop_body [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF END DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On TIMES shift to state 23
 -- On PLUS shift to state 28
 -- On OR shift to state 34
@@ -3031,9 +3790,14 @@ stmt_desc -> FOR ident IN expr . COLON loop_body [ WHILE TRUE STRING RETURN PRED
 -- On COLON shift to state 152
 -- On CMP shift to state 38
 -- On AND shift to state 40
+## Reductions:
 
 State 152:
+## Known stack suffix:
+## FOR ident IN expr COLON
+## LR(1) items:
 stmt_desc -> FOR ident IN expr COLON . loop_body [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF END DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On TRUE shift to state 6
 -- On STRING shift to state 7
 -- On RETURN shift to state 52
@@ -3059,9 +3823,15 @@ stmt_desc -> FOR ident IN expr COLON . loop_body [ WHILE TRUE STRING RETURN PRED
 -- On expr_desc shift to state 21
 -- On expr shift to state 165
 -- On assertion_kind shift to state 171
+## Reductions:
 
 State 153:
+## Known stack suffix:
+## CHECK
+## LR(1) items:
 assertion_kind -> CHECK . [ TRUE NOT NONE MINUS LET LEFTPAR INTEGER IF IDENT FORALL FALSE EXISTS ]
+## Transitions:
+## Reductions:
 -- On TRUE reduce production assertion_kind -> CHECK
 -- On NOT reduce production assertion_kind -> CHECK
 -- On NONE reduce production assertion_kind -> CHECK
@@ -3076,11 +3846,21 @@ assertion_kind -> CHECK . [ TRUE NOT NONE MINUS LET LEFTPAR INTEGER IF IDENT FOR
 -- On EXISTS reduce production assertion_kind -> CHECK
 
 State 154:
+## Known stack suffix:
+## BREAK
+## LR(1) items:
 simple_stmt_desc -> BREAK . [ NEWLINE ]
+## Transitions:
+## Reductions:
 -- On NEWLINE reduce production simple_stmt_desc -> BREAK
 
 State 155:
+## Known stack suffix:
+## ASSUME
+## LR(1) items:
 assertion_kind -> ASSUME . [ TRUE NOT NONE MINUS LET LEFTPAR INTEGER IF IDENT FORALL FALSE EXISTS ]
+## Transitions:
+## Reductions:
 -- On TRUE reduce production assertion_kind -> ASSUME
 -- On NOT reduce production assertion_kind -> ASSUME
 -- On NONE reduce production assertion_kind -> ASSUME
@@ -3095,7 +3875,12 @@ assertion_kind -> ASSUME . [ TRUE NOT NONE MINUS LET LEFTPAR INTEGER IF IDENT FO
 -- On EXISTS reduce production assertion_kind -> ASSUME
 
 State 156:
+## Known stack suffix:
+## ASSERT
+## LR(1) items:
 assertion_kind -> ASSERT . [ TRUE NOT NONE MINUS LET LEFTPAR INTEGER IF IDENT FORALL FALSE EXISTS ]
+## Transitions:
+## Reductions:
 -- On TRUE reduce production assertion_kind -> ASSERT
 -- On NOT reduce production assertion_kind -> ASSERT
 -- On NONE reduce production assertion_kind -> ASSERT
@@ -3110,15 +3895,30 @@ assertion_kind -> ASSERT . [ TRUE NOT NONE MINUS LET LEFTPAR INTEGER IF IDENT FO
 -- On EXISTS reduce production assertion_kind -> ASSERT
 
 State 157:
+## Known stack suffix:
+## simple_stmt_desc
+## LR(1) items:
 located(simple_stmt_desc) -> simple_stmt_desc . [ NEWLINE ]
+## Transitions:
+## Reductions:
 -- On NEWLINE reduce production located(simple_stmt_desc) -> simple_stmt_desc
 
 State 158:
+## Known stack suffix:
+## simple_stmt
+## LR(1) items:
 loop_body -> simple_stmt . NEWLINE [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF END DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On NEWLINE shift to state 159
+## Reductions:
 
 State 159:
+## Known stack suffix:
+## simple_stmt NEWLINE
+## LR(1) items:
 loop_body -> simple_stmt NEWLINE . [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF END DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
+## Reductions:
 -- On WHILE reduce production loop_body -> simple_stmt NEWLINE
 -- On TRUE reduce production loop_body -> simple_stmt NEWLINE
 -- On STRING reduce production loop_body -> simple_stmt NEWLINE
@@ -3147,7 +3947,12 @@ loop_body -> simple_stmt NEWLINE . [ WHILE TRUE STRING RETURN PREDICATE NOT NONE
 -- On ASSERT reduce production loop_body -> simple_stmt NEWLINE
 
 State 160:
+## Known stack suffix:
+## FOR ident IN expr COLON loop_body
+## LR(1) items:
 stmt_desc -> FOR ident IN expr COLON loop_body . [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF END DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
+## Reductions:
 -- On WHILE reduce production stmt_desc -> FOR ident IN expr COLON loop_body
 -- On TRUE reduce production stmt_desc -> FOR ident IN expr COLON loop_body
 -- On STRING reduce production stmt_desc -> FOR ident IN expr COLON loop_body
@@ -3176,15 +3981,25 @@ stmt_desc -> FOR ident IN expr COLON loop_body . [ WHILE TRUE STRING RETURN PRED
 -- On ASSERT reduce production stmt_desc -> FOR ident IN expr COLON loop_body
 
 State 161:
+## Known stack suffix:
+## located(simple_stmt_desc)
+## LR(1) items:
 simple_stmt -> located(simple_stmt_desc) . [ NEWLINE ]
+## Transitions:
+## Reductions:
 -- On NEWLINE reduce production simple_stmt -> located(simple_stmt_desc)
 
 State 162:
+## Known stack suffix:
+## ident
+## LR(1) items:
 expr_desc -> ident . [ TIMES PLUS OR NEWLINE MOD MINUS LEFTSQ DIV CMP AND ]
 expr_desc -> ident . LEFTPAR loption(separated_nonempty_list(COMMA,expr)) RIGHTPAR [ TIMES PLUS OR NEWLINE MOD MINUS LEFTSQ DIV CMP AND ]
 simple_stmt_desc -> ident . EQUAL expr [ NEWLINE ]
+## Transitions:
 -- On LEFTPAR shift to state 17
 -- On EQUAL shift to state 163
+## Reductions:
 -- On TIMES reduce production expr_desc -> ident
 -- On PLUS reduce production expr_desc -> ident
 -- On OR reduce production expr_desc -> ident
@@ -3197,7 +4012,11 @@ simple_stmt_desc -> ident . EQUAL expr [ NEWLINE ]
 -- On AND reduce production expr_desc -> ident
 
 State 163:
+## Known stack suffix:
+## ident EQUAL
+## LR(1) items:
 simple_stmt_desc -> ident EQUAL . expr [ NEWLINE ]
+## Transitions:
 -- On TRUE shift to state 6
 -- On STRING shift to state 7
 -- On NOT shift to state 8
@@ -3211,8 +4030,12 @@ simple_stmt_desc -> ident EQUAL . expr [ NEWLINE ]
 -- On ident shift to state 16
 -- On expr_desc shift to state 21
 -- On expr shift to state 164
+## Reductions:
 
 State 164:
+## Known stack suffix:
+## ident EQUAL expr
+## LR(1) items:
 expr_desc -> expr . LEFTSQ expr RIGHTSQ [ TIMES PLUS OR NEWLINE MOD MINUS LEFTSQ DIV CMP AND ]
 expr_desc -> expr . PLUS expr [ TIMES PLUS OR NEWLINE MOD MINUS LEFTSQ DIV CMP AND ]
 expr_desc -> expr . MINUS expr [ TIMES PLUS OR NEWLINE MOD MINUS LEFTSQ DIV CMP AND ]
@@ -3223,6 +4046,7 @@ expr_desc -> expr . AND expr [ TIMES PLUS OR NEWLINE MOD MINUS LEFTSQ DIV CMP AN
 expr_desc -> expr . OR expr [ TIMES PLUS OR NEWLINE MOD MINUS LEFTSQ DIV CMP AND ]
 expr_desc -> expr . TIMES expr [ TIMES PLUS OR NEWLINE MOD MINUS LEFTSQ DIV CMP AND ]
 simple_stmt_desc -> ident EQUAL expr . [ NEWLINE ]
+## Transitions:
 -- On TIMES shift to state 23
 -- On PLUS shift to state 28
 -- On OR shift to state 34
@@ -3232,9 +4056,13 @@ simple_stmt_desc -> ident EQUAL expr . [ NEWLINE ]
 -- On DIV shift to state 32
 -- On CMP shift to state 38
 -- On AND shift to state 40
+## Reductions:
 -- On NEWLINE reduce production simple_stmt_desc -> ident EQUAL expr
 
 State 165:
+## Known stack suffix:
+## expr
+## LR(1) items:
 expr_desc -> expr . LEFTSQ expr RIGHTSQ [ TIMES PLUS OR NEWLINE MOD MINUS LEFTSQ DIV CMP AND ]
 expr_desc -> expr . PLUS expr [ TIMES PLUS OR NEWLINE MOD MINUS LEFTSQ DIV CMP AND ]
 expr_desc -> expr . MINUS expr [ TIMES PLUS OR NEWLINE MOD MINUS LEFTSQ DIV CMP AND ]
@@ -3246,6 +4074,7 @@ expr_desc -> expr . OR expr [ TIMES PLUS OR NEWLINE MOD MINUS LEFTSQ DIV CMP AND
 expr_desc -> expr . TIMES expr [ TIMES PLUS OR NEWLINE MOD MINUS LEFTSQ DIV CMP AND ]
 simple_stmt_desc -> expr . LEFTSQ expr RIGHTSQ EQUAL expr [ NEWLINE ]
 simple_stmt_desc -> expr . [ NEWLINE ]
+## Transitions:
 -- On TIMES shift to state 23
 -- On PLUS shift to state 28
 -- On OR shift to state 34
@@ -3255,11 +4084,16 @@ simple_stmt_desc -> expr . [ NEWLINE ]
 -- On DIV shift to state 32
 -- On CMP shift to state 38
 -- On AND shift to state 40
+## Reductions:
 -- On NEWLINE reduce production simple_stmt_desc -> expr
 
 State 166:
+## Known stack suffix:
+## expr LEFTSQ
+## LR(1) items:
 expr_desc -> expr LEFTSQ . expr RIGHTSQ [ TIMES PLUS OR NEWLINE MOD MINUS LEFTSQ DIV CMP AND ]
 simple_stmt_desc -> expr LEFTSQ . expr RIGHTSQ EQUAL expr [ NEWLINE ]
+## Transitions:
 -- On TRUE shift to state 6
 -- On STRING shift to state 7
 -- On NOT shift to state 8
@@ -3273,8 +4107,12 @@ simple_stmt_desc -> expr LEFTSQ . expr RIGHTSQ EQUAL expr [ NEWLINE ]
 -- On ident shift to state 16
 -- On expr_desc shift to state 21
 -- On expr shift to state 167
+## Reductions:
 
 State 167:
+## Known stack suffix:
+## expr LEFTSQ expr
+## LR(1) items:
 expr_desc -> expr . LEFTSQ expr RIGHTSQ [ TIMES RIGHTSQ PLUS OR MOD MINUS LEFTSQ DIV CMP AND ]
 expr_desc -> expr LEFTSQ expr . RIGHTSQ [ TIMES PLUS OR NEWLINE MOD MINUS LEFTSQ DIV CMP AND ]
 expr_desc -> expr . PLUS expr [ TIMES RIGHTSQ PLUS OR MOD MINUS LEFTSQ DIV CMP AND ]
@@ -3286,6 +4124,7 @@ expr_desc -> expr . AND expr [ TIMES RIGHTSQ PLUS OR MOD MINUS LEFTSQ DIV CMP AN
 expr_desc -> expr . OR expr [ TIMES RIGHTSQ PLUS OR MOD MINUS LEFTSQ DIV CMP AND ]
 expr_desc -> expr . TIMES expr [ TIMES RIGHTSQ PLUS OR MOD MINUS LEFTSQ DIV CMP AND ]
 simple_stmt_desc -> expr LEFTSQ expr . RIGHTSQ EQUAL expr [ NEWLINE ]
+## Transitions:
 -- On TIMES shift to state 23
 -- On RIGHTSQ shift to state 168
 -- On PLUS shift to state 28
@@ -3296,11 +4135,17 @@ simple_stmt_desc -> expr LEFTSQ expr . RIGHTSQ EQUAL expr [ NEWLINE ]
 -- On DIV shift to state 32
 -- On CMP shift to state 38
 -- On AND shift to state 40
+## Reductions:
 
 State 168:
+## Known stack suffix:
+## expr LEFTSQ expr RIGHTSQ
+## LR(1) items:
 expr_desc -> expr LEFTSQ expr RIGHTSQ . [ TIMES PLUS OR NEWLINE MOD MINUS LEFTSQ DIV CMP AND ]
 simple_stmt_desc -> expr LEFTSQ expr RIGHTSQ . EQUAL expr [ NEWLINE ]
+## Transitions:
 -- On EQUAL shift to state 169
+## Reductions:
 -- On TIMES reduce production expr_desc -> expr LEFTSQ expr RIGHTSQ
 -- On PLUS reduce production expr_desc -> expr LEFTSQ expr RIGHTSQ
 -- On OR reduce production expr_desc -> expr LEFTSQ expr RIGHTSQ
@@ -3313,7 +4158,11 @@ simple_stmt_desc -> expr LEFTSQ expr RIGHTSQ . EQUAL expr [ NEWLINE ]
 -- On AND reduce production expr_desc -> expr LEFTSQ expr RIGHTSQ
 
 State 169:
+## Known stack suffix:
+## expr LEFTSQ expr RIGHTSQ EQUAL
+## LR(1) items:
 simple_stmt_desc -> expr LEFTSQ expr RIGHTSQ EQUAL . expr [ NEWLINE ]
+## Transitions:
 -- On TRUE shift to state 6
 -- On STRING shift to state 7
 -- On NOT shift to state 8
@@ -3327,8 +4176,12 @@ simple_stmt_desc -> expr LEFTSQ expr RIGHTSQ EQUAL . expr [ NEWLINE ]
 -- On ident shift to state 16
 -- On expr_desc shift to state 21
 -- On expr shift to state 170
+## Reductions:
 
 State 170:
+## Known stack suffix:
+## expr LEFTSQ expr RIGHTSQ EQUAL expr
+## LR(1) items:
 expr_desc -> expr . LEFTSQ expr RIGHTSQ [ TIMES PLUS OR NEWLINE MOD MINUS LEFTSQ DIV CMP AND ]
 expr_desc -> expr . PLUS expr [ TIMES PLUS OR NEWLINE MOD MINUS LEFTSQ DIV CMP AND ]
 expr_desc -> expr . MINUS expr [ TIMES PLUS OR NEWLINE MOD MINUS LEFTSQ DIV CMP AND ]
@@ -3339,6 +4192,7 @@ expr_desc -> expr . AND expr [ TIMES PLUS OR NEWLINE MOD MINUS LEFTSQ DIV CMP AN
 expr_desc -> expr . OR expr [ TIMES PLUS OR NEWLINE MOD MINUS LEFTSQ DIV CMP AND ]
 expr_desc -> expr . TIMES expr [ TIMES PLUS OR NEWLINE MOD MINUS LEFTSQ DIV CMP AND ]
 simple_stmt_desc -> expr LEFTSQ expr RIGHTSQ EQUAL expr . [ NEWLINE ]
+## Transitions:
 -- On TIMES shift to state 23
 -- On PLUS shift to state 28
 -- On OR shift to state 34
@@ -3348,10 +4202,15 @@ simple_stmt_desc -> expr LEFTSQ expr RIGHTSQ EQUAL expr . [ NEWLINE ]
 -- On DIV shift to state 32
 -- On CMP shift to state 38
 -- On AND shift to state 40
+## Reductions:
 -- On NEWLINE reduce production simple_stmt_desc -> expr LEFTSQ expr RIGHTSQ EQUAL expr
 
 State 171:
+## Known stack suffix:
+## assertion_kind
+## LR(1) items:
 simple_stmt_desc -> assertion_kind . term [ NEWLINE ]
+## Transitions:
 -- On TRUE shift to state 57
 -- On NOT shift to state 58
 -- On NONE shift to state 59
@@ -3373,8 +4232,12 @@ simple_stmt_desc -> assertion_kind . term [ NEWLINE ]
 -- On mk_term(term_arg_) shift to state 90
 -- On mk_term(term_) shift to state 91
 -- On ident shift to state 92
+## Reductions:
 
 State 172:
+## Known stack suffix:
+## assertion_kind term
+## LR(1) items:
 simple_stmt_desc -> assertion_kind term . [ NEWLINE ]
 term_ -> term . ARROW term [ TIMES PLUS OR NEWLINE MOD MINUS LRARROW DIV CMP ARROW AND ]
 term_ -> term . LRARROW term [ TIMES PLUS OR NEWLINE MOD MINUS LRARROW DIV CMP ARROW AND ]
@@ -3386,6 +4249,7 @@ term_ -> term . MOD term [ TIMES PLUS OR NEWLINE MOD MINUS LRARROW DIV CMP ARROW
 term_ -> term . PLUS term [ TIMES PLUS OR NEWLINE MOD MINUS LRARROW DIV CMP ARROW AND ]
 term_ -> term . MINUS term [ TIMES PLUS OR NEWLINE MOD MINUS LRARROW DIV CMP ARROW AND ]
 term_ -> term . TIMES term [ TIMES PLUS OR NEWLINE MOD MINUS LRARROW DIV CMP ARROW AND ]
+## Transitions:
 -- On TIMES shift to state 76
 -- On PLUS shift to state 86
 -- On OR shift to state 95
@@ -3396,10 +4260,16 @@ term_ -> term . TIMES term [ TIMES PLUS OR NEWLINE MOD MINUS LRARROW DIV CMP ARR
 -- On CMP shift to state 101
 -- On ARROW shift to state 107
 -- On AND shift to state 103
+## Reductions:
 -- On NEWLINE reduce production simple_stmt_desc -> assertion_kind term
 
 State 173:
+## Known stack suffix:
+## stmt_desc
+## LR(1) items:
 located(stmt_desc) -> stmt_desc . [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF END DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
+## Reductions:
 -- On WHILE reduce production located(stmt_desc) -> stmt_desc
 -- On TRUE reduce production located(stmt_desc) -> stmt_desc
 -- On STRING reduce production located(stmt_desc) -> stmt_desc
@@ -3428,8 +4298,12 @@ located(stmt_desc) -> stmt_desc . [ WHILE TRUE STRING RETURN PREDICATE NOT NONE 
 -- On ASSERT reduce production located(stmt_desc) -> stmt_desc
 
 State 174:
+## Known stack suffix:
+## stmt
+## LR(1) items:
 nonempty_list(stmt) -> stmt . [ END ]
 nonempty_list(stmt) -> stmt . nonempty_list(stmt) [ END ]
+## Transitions:
 -- On WHILE shift to state 5
 -- On TRUE shift to state 6
 -- On STRING shift to state 7
@@ -3460,14 +4334,25 @@ nonempty_list(stmt) -> stmt . nonempty_list(stmt) [ END ]
 -- On expr_desc shift to state 21
 -- On expr shift to state 165
 -- On assertion_kind shift to state 171
+## Reductions:
 -- On END reduce production nonempty_list(stmt) -> stmt
 
 State 175:
+## Known stack suffix:
+## simple_stmt
+## LR(1) items:
 stmt -> simple_stmt . NEWLINE [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF END DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On NEWLINE shift to state 176
+## Reductions:
 
 State 176:
+## Known stack suffix:
+## simple_stmt NEWLINE
+## LR(1) items:
 stmt -> simple_stmt NEWLINE . [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF END DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
+## Reductions:
 -- On WHILE reduce production stmt -> simple_stmt NEWLINE
 -- On TRUE reduce production stmt -> simple_stmt NEWLINE
 -- On STRING reduce production stmt -> simple_stmt NEWLINE
@@ -3496,11 +4381,21 @@ stmt -> simple_stmt NEWLINE . [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWL
 -- On ASSERT reduce production stmt -> simple_stmt NEWLINE
 
 State 177:
+## Known stack suffix:
+## stmt nonempty_list(stmt)
+## LR(1) items:
 nonempty_list(stmt) -> stmt nonempty_list(stmt) . [ END ]
+## Transitions:
+## Reductions:
 -- On END reduce production nonempty_list(stmt) -> stmt nonempty_list(stmt)
 
 State 178:
+## Known stack suffix:
+## located(stmt_desc)
+## LR(1) items:
 stmt -> located(stmt_desc) . [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF END DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
+## Reductions:
 -- On WHILE reduce production stmt -> located(stmt_desc)
 -- On TRUE reduce production stmt -> located(stmt_desc)
 -- On STRING reduce production stmt -> located(stmt_desc)
@@ -3529,11 +4424,21 @@ stmt -> located(stmt_desc) . [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLI
 -- On ASSERT reduce production stmt -> located(stmt_desc)
 
 State 179:
+## Known stack suffix:
+## NEWLINE BEGIN nonempty_list(stmt)
+## LR(1) items:
 suite -> NEWLINE BEGIN nonempty_list(stmt) . END [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF END ELSE ELIF DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On END shift to state 180
+## Reductions:
 
 State 180:
+## Known stack suffix:
+## NEWLINE BEGIN nonempty_list(stmt) END
+## LR(1) items:
 suite -> NEWLINE BEGIN nonempty_list(stmt) END . [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF END ELSE ELIF DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
+## Reductions:
 -- On WHILE reduce production suite -> NEWLINE BEGIN nonempty_list(stmt) END
 -- On TRUE reduce production suite -> NEWLINE BEGIN nonempty_list(stmt) END
 -- On STRING reduce production suite -> NEWLINE BEGIN nonempty_list(stmt) END
@@ -3564,10 +4469,15 @@ suite -> NEWLINE BEGIN nonempty_list(stmt) END . [ WHILE TRUE STRING RETURN PRED
 -- On ASSERT reduce production suite -> NEWLINE BEGIN nonempty_list(stmt) END
 
 State 181:
+## Known stack suffix:
+## IF expr COLON suite
+## LR(1) items:
 stmt_desc -> IF expr COLON suite . else_branch [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF END DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On ELSE shift to state 182
 -- On ELIF shift to state 187
 -- On else_branch shift to state 192
+## Reductions:
 -- On WHILE reduce production else_branch ->
 -- On TRUE reduce production else_branch ->
 -- On STRING reduce production else_branch ->
@@ -3596,11 +4506,20 @@ stmt_desc -> IF expr COLON suite . else_branch [ WHILE TRUE STRING RETURN PREDIC
 -- On ASSERT reduce production else_branch ->
 
 State 182:
+## Known stack suffix:
+## ELSE
+## LR(1) items:
 else_branch -> ELSE . COLON suite [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF END DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On COLON shift to state 183
+## Reductions:
 
 State 183:
+## Known stack suffix:
+## ELSE COLON
+## LR(1) items:
 else_branch -> ELSE COLON . suite [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF END DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On TRUE shift to state 6
 -- On STRING shift to state 7
 -- On RETURN shift to state 52
@@ -3626,9 +4545,15 @@ else_branch -> ELSE COLON . suite [ WHILE TRUE STRING RETURN PREDICATE NOT NONE 
 -- On expr_desc shift to state 21
 -- On expr shift to state 165
 -- On assertion_kind shift to state 171
+## Reductions:
 
 State 184:
+## Known stack suffix:
+## ELSE COLON suite
+## LR(1) items:
 else_branch -> ELSE COLON suite . [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF END DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
+## Reductions:
 -- On WHILE reduce production else_branch -> ELSE COLON suite
 -- On TRUE reduce production else_branch -> ELSE COLON suite
 -- On STRING reduce production else_branch -> ELSE COLON suite
@@ -3657,11 +4582,21 @@ else_branch -> ELSE COLON suite . [ WHILE TRUE STRING RETURN PREDICATE NOT NONE 
 -- On ASSERT reduce production else_branch -> ELSE COLON suite
 
 State 185:
+## Known stack suffix:
+## simple_stmt
+## LR(1) items:
 suite -> simple_stmt . NEWLINE [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF END ELSE ELIF DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On NEWLINE shift to state 186
+## Reductions:
 
 State 186:
+## Known stack suffix:
+## simple_stmt NEWLINE
+## LR(1) items:
 suite -> simple_stmt NEWLINE . [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF END ELSE ELIF DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
+## Reductions:
 -- On WHILE reduce production suite -> simple_stmt NEWLINE
 -- On TRUE reduce production suite -> simple_stmt NEWLINE
 -- On STRING reduce production suite -> simple_stmt NEWLINE
@@ -3692,7 +4627,11 @@ suite -> simple_stmt NEWLINE . [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEW
 -- On ASSERT reduce production suite -> simple_stmt NEWLINE
 
 State 187:
+## Known stack suffix:
+## ELIF
+## LR(1) items:
 else_branch -> ELIF . expr COLON suite else_branch [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF END DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On TRUE shift to state 6
 -- On STRING shift to state 7
 -- On NOT shift to state 8
@@ -3706,8 +4645,12 @@ else_branch -> ELIF . expr COLON suite else_branch [ WHILE TRUE STRING RETURN PR
 -- On ident shift to state 16
 -- On expr_desc shift to state 21
 -- On expr shift to state 188
+## Reductions:
 
 State 188:
+## Known stack suffix:
+## ELIF expr
+## LR(1) items:
 else_branch -> ELIF expr . COLON suite else_branch [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF END DEF CHECK BREAK ASSUME ASSERT ]
 expr_desc -> expr . LEFTSQ expr RIGHTSQ [ TIMES PLUS OR MOD MINUS LEFTSQ DIV COLON CMP AND ]
 expr_desc -> expr . PLUS expr [ TIMES PLUS OR MOD MINUS LEFTSQ DIV COLON CMP AND ]
@@ -3718,6 +4661,7 @@ expr_desc -> expr . CMP expr [ TIMES PLUS OR MOD MINUS LEFTSQ DIV COLON CMP AND 
 expr_desc -> expr . AND expr [ TIMES PLUS OR MOD MINUS LEFTSQ DIV COLON CMP AND ]
 expr_desc -> expr . OR expr [ TIMES PLUS OR MOD MINUS LEFTSQ DIV COLON CMP AND ]
 expr_desc -> expr . TIMES expr [ TIMES PLUS OR MOD MINUS LEFTSQ DIV COLON CMP AND ]
+## Transitions:
 -- On TIMES shift to state 23
 -- On PLUS shift to state 28
 -- On OR shift to state 34
@@ -3728,9 +4672,14 @@ expr_desc -> expr . TIMES expr [ TIMES PLUS OR MOD MINUS LEFTSQ DIV COLON CMP AN
 -- On COLON shift to state 189
 -- On CMP shift to state 38
 -- On AND shift to state 40
+## Reductions:
 
 State 189:
+## Known stack suffix:
+## ELIF expr COLON
+## LR(1) items:
 else_branch -> ELIF expr COLON . suite else_branch [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF END DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On TRUE shift to state 6
 -- On STRING shift to state 7
 -- On RETURN shift to state 52
@@ -3756,12 +4705,18 @@ else_branch -> ELIF expr COLON . suite else_branch [ WHILE TRUE STRING RETURN PR
 -- On expr_desc shift to state 21
 -- On expr shift to state 165
 -- On assertion_kind shift to state 171
+## Reductions:
 
 State 190:
+## Known stack suffix:
+## ELIF expr COLON suite
+## LR(1) items:
 else_branch -> ELIF expr COLON suite . else_branch [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF END DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On ELSE shift to state 182
 -- On ELIF shift to state 187
 -- On else_branch shift to state 191
+## Reductions:
 -- On WHILE reduce production else_branch ->
 -- On TRUE reduce production else_branch ->
 -- On STRING reduce production else_branch ->
@@ -3790,7 +4745,12 @@ else_branch -> ELIF expr COLON suite . else_branch [ WHILE TRUE STRING RETURN PR
 -- On ASSERT reduce production else_branch ->
 
 State 191:
+## Known stack suffix:
+## ELIF expr COLON suite else_branch
+## LR(1) items:
 else_branch -> ELIF expr COLON suite else_branch . [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF END DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
+## Reductions:
 -- On WHILE reduce production else_branch -> ELIF expr COLON suite else_branch
 -- On TRUE reduce production else_branch -> ELIF expr COLON suite else_branch
 -- On STRING reduce production else_branch -> ELIF expr COLON suite else_branch
@@ -3819,7 +4779,12 @@ else_branch -> ELIF expr COLON suite else_branch . [ WHILE TRUE STRING RETURN PR
 -- On ASSERT reduce production else_branch -> ELIF expr COLON suite else_branch
 
 State 192:
+## Known stack suffix:
+## IF expr COLON suite else_branch
+## LR(1) items:
 stmt_desc -> IF expr COLON suite else_branch . [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF END DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
+## Reductions:
 -- On WHILE reduce production stmt_desc -> IF expr COLON suite else_branch
 -- On TRUE reduce production stmt_desc -> IF expr COLON suite else_branch
 -- On STRING reduce production stmt_desc -> IF expr COLON suite else_branch
@@ -3848,11 +4813,21 @@ stmt_desc -> IF expr COLON suite else_branch . [ WHILE TRUE STRING RETURN PREDIC
 -- On ASSERT reduce production stmt_desc -> IF expr COLON suite else_branch
 
 State 193:
+## Known stack suffix:
+## NEWLINE BEGIN loop_annotation nonempty_list(stmt)
+## LR(1) items:
 loop_body -> NEWLINE BEGIN loop_annotation nonempty_list(stmt) . END [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF END DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On END shift to state 194
+## Reductions:
 
 State 194:
+## Known stack suffix:
+## NEWLINE BEGIN loop_annotation nonempty_list(stmt) END
+## LR(1) items:
 loop_body -> NEWLINE BEGIN loop_annotation nonempty_list(stmt) END . [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF END DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
+## Reductions:
 -- On WHILE reduce production loop_body -> NEWLINE BEGIN loop_annotation nonempty_list(stmt) END
 -- On TRUE reduce production loop_body -> NEWLINE BEGIN loop_annotation nonempty_list(stmt) END
 -- On STRING reduce production loop_body -> NEWLINE BEGIN loop_annotation nonempty_list(stmt) END
@@ -3881,7 +4856,12 @@ loop_body -> NEWLINE BEGIN loop_annotation nonempty_list(stmt) END . [ WHILE TRU
 -- On ASSERT reduce production loop_body -> NEWLINE BEGIN loop_annotation nonempty_list(stmt) END
 
 State 195:
+## Known stack suffix:
+## WHILE expr COLON loop_body
+## LR(1) items:
 stmt_desc -> WHILE expr COLON loop_body . [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF END DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
+## Reductions:
 -- On WHILE reduce production stmt_desc -> WHILE expr COLON loop_body
 -- On TRUE reduce production stmt_desc -> WHILE expr COLON loop_body
 -- On STRING reduce production stmt_desc -> WHILE expr COLON loop_body
@@ -3910,37 +4890,72 @@ stmt_desc -> WHILE expr COLON loop_body . [ WHILE TRUE STRING RETURN PREDICATE N
 -- On ASSERT reduce production stmt_desc -> WHILE expr COLON loop_body
 
 State 196:
+## Known stack suffix:
+## PREDICATE
+## LR(1) items:
 func -> PREDICATE . ident LEFTPAR loption(separated_nonempty_list(COMMA,ident)) RIGHTPAR NEWLINE [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On IDENT shift to state 14
 -- On ident shift to state 197
+## Reductions:
 
 State 197:
+## Known stack suffix:
+## PREDICATE ident
+## LR(1) items:
 func -> PREDICATE ident . LEFTPAR loption(separated_nonempty_list(COMMA,ident)) RIGHTPAR NEWLINE [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On LEFTPAR shift to state 198
+## Reductions:
 
 State 198:
+## Known stack suffix:
+## PREDICATE ident LEFTPAR
+## LR(1) items:
 func -> PREDICATE ident LEFTPAR . loption(separated_nonempty_list(COMMA,ident)) RIGHTPAR NEWLINE [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On IDENT shift to state 14
 -- On separated_nonempty_list(COMMA,ident) shift to state 199
 -- On loption(separated_nonempty_list(COMMA,ident)) shift to state 200
 -- On ident shift to state 80
+## Reductions:
 -- On RIGHTPAR reduce production loption(separated_nonempty_list(COMMA,ident)) ->
 
 State 199:
+## Known stack suffix:
+## separated_nonempty_list(COMMA,ident)
+## LR(1) items:
 loption(separated_nonempty_list(COMMA,ident)) -> separated_nonempty_list(COMMA,ident) . [ RIGHTPAR NEWLINE ]
+## Transitions:
+## Reductions:
 -- On RIGHTPAR reduce production loption(separated_nonempty_list(COMMA,ident)) -> separated_nonempty_list(COMMA,ident)
 -- On NEWLINE reduce production loption(separated_nonempty_list(COMMA,ident)) -> separated_nonempty_list(COMMA,ident)
 
 State 200:
+## Known stack suffix:
+## PREDICATE ident LEFTPAR loption(separated_nonempty_list(COMMA,ident))
+## LR(1) items:
 func -> PREDICATE ident LEFTPAR loption(separated_nonempty_list(COMMA,ident)) . RIGHTPAR NEWLINE [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On RIGHTPAR shift to state 201
+## Reductions:
 
 State 201:
+## Known stack suffix:
+## PREDICATE ident LEFTPAR loption(separated_nonempty_list(COMMA,ident)) RIGHTPAR
+## LR(1) items:
 func -> PREDICATE ident LEFTPAR loption(separated_nonempty_list(COMMA,ident)) RIGHTPAR . NEWLINE [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On NEWLINE shift to state 202
+## Reductions:
 
 State 202:
+## Known stack suffix:
+## PREDICATE ident LEFTPAR loption(separated_nonempty_list(COMMA,ident)) RIGHTPAR NEWLINE
+## LR(1) items:
 func -> PREDICATE ident LEFTPAR loption(separated_nonempty_list(COMMA,ident)) RIGHTPAR NEWLINE . [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
+## Reductions:
 -- On WHILE reduce production func -> PREDICATE ident LEFTPAR loption(separated_nonempty_list(COMMA,ident)) RIGHTPAR NEWLINE
 -- On TRUE reduce production func -> PREDICATE ident LEFTPAR loption(separated_nonempty_list(COMMA,ident)) RIGHTPAR NEWLINE
 -- On STRING reduce production func -> PREDICATE ident LEFTPAR loption(separated_nonempty_list(COMMA,ident)) RIGHTPAR NEWLINE
@@ -3968,32 +4983,62 @@ func -> PREDICATE ident LEFTPAR loption(separated_nonempty_list(COMMA,ident)) RI
 -- On ASSERT reduce production func -> PREDICATE ident LEFTPAR loption(separated_nonempty_list(COMMA,ident)) RIGHTPAR NEWLINE
 
 State 203:
+## Known stack suffix:
+## FUNCTION
+## LR(1) items:
 func -> FUNCTION . ident LEFTPAR loption(separated_nonempty_list(COMMA,ident)) RIGHTPAR NEWLINE [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On IDENT shift to state 14
 -- On ident shift to state 204
+## Reductions:
 
 State 204:
+## Known stack suffix:
+## FUNCTION ident
+## LR(1) items:
 func -> FUNCTION ident . LEFTPAR loption(separated_nonempty_list(COMMA,ident)) RIGHTPAR NEWLINE [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On LEFTPAR shift to state 205
+## Reductions:
 
 State 205:
+## Known stack suffix:
+## FUNCTION ident LEFTPAR
+## LR(1) items:
 func -> FUNCTION ident LEFTPAR . loption(separated_nonempty_list(COMMA,ident)) RIGHTPAR NEWLINE [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On IDENT shift to state 14
 -- On separated_nonempty_list(COMMA,ident) shift to state 199
 -- On loption(separated_nonempty_list(COMMA,ident)) shift to state 206
 -- On ident shift to state 80
+## Reductions:
 -- On RIGHTPAR reduce production loption(separated_nonempty_list(COMMA,ident)) ->
 
 State 206:
+## Known stack suffix:
+## FUNCTION ident LEFTPAR loption(separated_nonempty_list(COMMA,ident))
+## LR(1) items:
 func -> FUNCTION ident LEFTPAR loption(separated_nonempty_list(COMMA,ident)) . RIGHTPAR NEWLINE [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On RIGHTPAR shift to state 207
+## Reductions:
 
 State 207:
+## Known stack suffix:
+## FUNCTION ident LEFTPAR loption(separated_nonempty_list(COMMA,ident)) RIGHTPAR
+## LR(1) items:
 func -> FUNCTION ident LEFTPAR loption(separated_nonempty_list(COMMA,ident)) RIGHTPAR . NEWLINE [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On NEWLINE shift to state 208
+## Reductions:
 
 State 208:
+## Known stack suffix:
+## FUNCTION ident LEFTPAR loption(separated_nonempty_list(COMMA,ident)) RIGHTPAR NEWLINE
+## LR(1) items:
 func -> FUNCTION ident LEFTPAR loption(separated_nonempty_list(COMMA,ident)) RIGHTPAR NEWLINE . [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
+## Reductions:
 -- On WHILE reduce production func -> FUNCTION ident LEFTPAR loption(separated_nonempty_list(COMMA,ident)) RIGHTPAR NEWLINE
 -- On TRUE reduce production func -> FUNCTION ident LEFTPAR loption(separated_nonempty_list(COMMA,ident)) RIGHTPAR NEWLINE
 -- On STRING reduce production func -> FUNCTION ident LEFTPAR loption(separated_nonempty_list(COMMA,ident)) RIGHTPAR NEWLINE
@@ -4021,28 +5066,53 @@ func -> FUNCTION ident LEFTPAR loption(separated_nonempty_list(COMMA,ident)) RIG
 -- On ASSERT reduce production func -> FUNCTION ident LEFTPAR loption(separated_nonempty_list(COMMA,ident)) RIGHTPAR NEWLINE
 
 State 209:
+## Known stack suffix:
+## FROM
+## LR(1) items:
 import -> FROM . ident IMPORT loption(separated_nonempty_list(COMMA,ident)) NEWLINE [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On IDENT shift to state 14
 -- On ident shift to state 210
+## Reductions:
 
 State 210:
+## Known stack suffix:
+## FROM ident
+## LR(1) items:
 import -> FROM ident . IMPORT loption(separated_nonempty_list(COMMA,ident)) NEWLINE [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On IMPORT shift to state 211
+## Reductions:
 
 State 211:
+## Known stack suffix:
+## FROM ident IMPORT
+## LR(1) items:
 import -> FROM ident IMPORT . loption(separated_nonempty_list(COMMA,ident)) NEWLINE [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On IDENT shift to state 14
 -- On separated_nonempty_list(COMMA,ident) shift to state 199
 -- On loption(separated_nonempty_list(COMMA,ident)) shift to state 212
 -- On ident shift to state 80
+## Reductions:
 -- On NEWLINE reduce production loption(separated_nonempty_list(COMMA,ident)) ->
 
 State 212:
+## Known stack suffix:
+## FROM ident IMPORT loption(separated_nonempty_list(COMMA,ident))
+## LR(1) items:
 import -> FROM ident IMPORT loption(separated_nonempty_list(COMMA,ident)) . NEWLINE [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On NEWLINE shift to state 213
+## Reductions:
 
 State 213:
+## Known stack suffix:
+## FROM ident IMPORT loption(separated_nonempty_list(COMMA,ident)) NEWLINE
+## LR(1) items:
 import -> FROM ident IMPORT loption(separated_nonempty_list(COMMA,ident)) NEWLINE . [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
+## Reductions:
 -- On WHILE reduce production import -> FROM ident IMPORT loption(separated_nonempty_list(COMMA,ident)) NEWLINE
 -- On TRUE reduce production import -> FROM ident IMPORT loption(separated_nonempty_list(COMMA,ident)) NEWLINE
 -- On STRING reduce production import -> FROM ident IMPORT loption(separated_nonempty_list(COMMA,ident)) NEWLINE
@@ -4070,46 +5140,86 @@ import -> FROM ident IMPORT loption(separated_nonempty_list(COMMA,ident)) NEWLIN
 -- On ASSERT reduce production import -> FROM ident IMPORT loption(separated_nonempty_list(COMMA,ident)) NEWLINE
 
 State 214:
+## Known stack suffix:
+## DEF
+## LR(1) items:
 def -> DEF . ident LEFTPAR loption(separated_nonempty_list(COMMA,ident)) RIGHTPAR COLON NEWLINE BEGIN spec nonempty_list(stmt) END [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On IDENT shift to state 14
 -- On ident shift to state 215
+## Reductions:
 
 State 215:
+## Known stack suffix:
+## DEF ident
+## LR(1) items:
 def -> DEF ident . LEFTPAR loption(separated_nonempty_list(COMMA,ident)) RIGHTPAR COLON NEWLINE BEGIN spec nonempty_list(stmt) END [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On LEFTPAR shift to state 216
+## Reductions:
 
 State 216:
+## Known stack suffix:
+## DEF ident LEFTPAR
+## LR(1) items:
 def -> DEF ident LEFTPAR . loption(separated_nonempty_list(COMMA,ident)) RIGHTPAR COLON NEWLINE BEGIN spec nonempty_list(stmt) END [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On IDENT shift to state 14
 -- On separated_nonempty_list(COMMA,ident) shift to state 199
 -- On loption(separated_nonempty_list(COMMA,ident)) shift to state 217
 -- On ident shift to state 80
+## Reductions:
 -- On RIGHTPAR reduce production loption(separated_nonempty_list(COMMA,ident)) ->
 
 State 217:
+## Known stack suffix:
+## DEF ident LEFTPAR loption(separated_nonempty_list(COMMA,ident))
+## LR(1) items:
 def -> DEF ident LEFTPAR loption(separated_nonempty_list(COMMA,ident)) . RIGHTPAR COLON NEWLINE BEGIN spec nonempty_list(stmt) END [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On RIGHTPAR shift to state 218
+## Reductions:
 
 State 218:
+## Known stack suffix:
+## DEF ident LEFTPAR loption(separated_nonempty_list(COMMA,ident)) RIGHTPAR
+## LR(1) items:
 def -> DEF ident LEFTPAR loption(separated_nonempty_list(COMMA,ident)) RIGHTPAR . COLON NEWLINE BEGIN spec nonempty_list(stmt) END [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On COLON shift to state 219
+## Reductions:
 
 State 219:
+## Known stack suffix:
+## DEF ident LEFTPAR loption(separated_nonempty_list(COMMA,ident)) RIGHTPAR COLON
+## LR(1) items:
 def -> DEF ident LEFTPAR loption(separated_nonempty_list(COMMA,ident)) RIGHTPAR COLON . NEWLINE BEGIN spec nonempty_list(stmt) END [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On NEWLINE shift to state 220
+## Reductions:
 
 State 220:
+## Known stack suffix:
+## DEF ident LEFTPAR loption(separated_nonempty_list(COMMA,ident)) RIGHTPAR COLON NEWLINE
+## LR(1) items:
 def -> DEF ident LEFTPAR loption(separated_nonempty_list(COMMA,ident)) RIGHTPAR COLON NEWLINE . BEGIN spec nonempty_list(stmt) END [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On BEGIN shift to state 221
+## Reductions:
 
 State 221:
+## Known stack suffix:
+## DEF ident LEFTPAR loption(separated_nonempty_list(COMMA,ident)) RIGHTPAR COLON NEWLINE BEGIN
+## LR(1) items:
 def -> DEF ident LEFTPAR loption(separated_nonempty_list(COMMA,ident)) RIGHTPAR COLON NEWLINE BEGIN . spec nonempty_list(stmt) END [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On VARIANT shift to state 56
 -- On REQUIRES shift to state 222
 -- On ENSURES shift to state 225
 -- On variant shift to state 229
 -- On spec shift to state 230
 -- On single_spec shift to state 233
+## Reductions:
 -- On WHILE reduce production spec ->
 -- On TRUE reduce production spec ->
 -- On STRING reduce production spec ->
@@ -4131,7 +5241,11 @@ def -> DEF ident LEFTPAR loption(separated_nonempty_list(COMMA,ident)) RIGHTPAR 
 -- On ASSERT reduce production spec ->
 
 State 222:
+## Known stack suffix:
+## REQUIRES
+## LR(1) items:
 single_spec -> REQUIRES . term NEWLINE [ WHILE VARIANT TRUE STRING RETURN REQUIRES NOT NONE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FOR FALSE ENSURES CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On TRUE shift to state 57
 -- On NOT shift to state 58
 -- On NONE shift to state 59
@@ -4153,8 +5267,12 @@ single_spec -> REQUIRES . term NEWLINE [ WHILE VARIANT TRUE STRING RETURN REQUIR
 -- On mk_term(term_arg_) shift to state 90
 -- On mk_term(term_) shift to state 91
 -- On ident shift to state 92
+## Reductions:
 
 State 223:
+## Known stack suffix:
+## REQUIRES term
+## LR(1) items:
 single_spec -> REQUIRES term . NEWLINE [ WHILE VARIANT TRUE STRING RETURN REQUIRES NOT NONE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FOR FALSE ENSURES CHECK BREAK ASSUME ASSERT ]
 term_ -> term . ARROW term [ TIMES PLUS OR NEWLINE MOD MINUS LRARROW DIV CMP ARROW AND ]
 term_ -> term . LRARROW term [ TIMES PLUS OR NEWLINE MOD MINUS LRARROW DIV CMP ARROW AND ]
@@ -4166,6 +5284,7 @@ term_ -> term . MOD term [ TIMES PLUS OR NEWLINE MOD MINUS LRARROW DIV CMP ARROW
 term_ -> term . PLUS term [ TIMES PLUS OR NEWLINE MOD MINUS LRARROW DIV CMP ARROW AND ]
 term_ -> term . MINUS term [ TIMES PLUS OR NEWLINE MOD MINUS LRARROW DIV CMP ARROW AND ]
 term_ -> term . TIMES term [ TIMES PLUS OR NEWLINE MOD MINUS LRARROW DIV CMP ARROW AND ]
+## Transitions:
 -- On TIMES shift to state 76
 -- On PLUS shift to state 86
 -- On OR shift to state 95
@@ -4177,9 +5296,15 @@ term_ -> term . TIMES term [ TIMES PLUS OR NEWLINE MOD MINUS LRARROW DIV CMP ARR
 -- On CMP shift to state 101
 -- On ARROW shift to state 107
 -- On AND shift to state 103
+## Reductions:
 
 State 224:
+## Known stack suffix:
+## REQUIRES term NEWLINE
+## LR(1) items:
 single_spec -> REQUIRES term NEWLINE . [ WHILE VARIANT TRUE STRING RETURN REQUIRES NOT NONE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FOR FALSE ENSURES CHECK BREAK ASSUME ASSERT ]
+## Transitions:
+## Reductions:
 -- On WHILE reduce production single_spec -> REQUIRES term NEWLINE
 -- On VARIANT reduce production single_spec -> REQUIRES term NEWLINE
 -- On TRUE reduce production single_spec -> REQUIRES term NEWLINE
@@ -4204,7 +5329,11 @@ single_spec -> REQUIRES term NEWLINE . [ WHILE VARIANT TRUE STRING RETURN REQUIR
 -- On ASSERT reduce production single_spec -> REQUIRES term NEWLINE
 
 State 225:
+## Known stack suffix:
+## ENSURES
+## LR(1) items:
 single_spec -> ENSURES . ensures NEWLINE [ WHILE VARIANT TRUE STRING RETURN REQUIRES NOT NONE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FOR FALSE ENSURES CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On TRUE shift to state 57
 -- On NOT shift to state 58
 -- On NONE shift to state 59
@@ -4227,8 +5356,12 @@ single_spec -> ENSURES . ensures NEWLINE [ WHILE VARIANT TRUE STRING RETURN REQU
 -- On mk_term(term_) shift to state 91
 -- On ident shift to state 92
 -- On ensures shift to state 227
+## Reductions:
 
 State 226:
+## Known stack suffix:
+## term
+## LR(1) items:
 ensures -> term . [ NEWLINE ]
 term_ -> term . ARROW term [ TIMES PLUS OR NEWLINE MOD MINUS LRARROW DIV CMP ARROW AND ]
 term_ -> term . LRARROW term [ TIMES PLUS OR NEWLINE MOD MINUS LRARROW DIV CMP ARROW AND ]
@@ -4240,6 +5373,7 @@ term_ -> term . MOD term [ TIMES PLUS OR NEWLINE MOD MINUS LRARROW DIV CMP ARROW
 term_ -> term . PLUS term [ TIMES PLUS OR NEWLINE MOD MINUS LRARROW DIV CMP ARROW AND ]
 term_ -> term . MINUS term [ TIMES PLUS OR NEWLINE MOD MINUS LRARROW DIV CMP ARROW AND ]
 term_ -> term . TIMES term [ TIMES PLUS OR NEWLINE MOD MINUS LRARROW DIV CMP ARROW AND ]
+## Transitions:
 -- On TIMES shift to state 76
 -- On PLUS shift to state 86
 -- On OR shift to state 95
@@ -4250,14 +5384,25 @@ term_ -> term . TIMES term [ TIMES PLUS OR NEWLINE MOD MINUS LRARROW DIV CMP ARR
 -- On CMP shift to state 101
 -- On ARROW shift to state 107
 -- On AND shift to state 103
+## Reductions:
 -- On NEWLINE reduce production ensures -> term
 
 State 227:
+## Known stack suffix:
+## ENSURES ensures
+## LR(1) items:
 single_spec -> ENSURES ensures . NEWLINE [ WHILE VARIANT TRUE STRING RETURN REQUIRES NOT NONE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FOR FALSE ENSURES CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On NEWLINE shift to state 228
+## Reductions:
 
 State 228:
+## Known stack suffix:
+## ENSURES ensures NEWLINE
+## LR(1) items:
 single_spec -> ENSURES ensures NEWLINE . [ WHILE VARIANT TRUE STRING RETURN REQUIRES NOT NONE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FOR FALSE ENSURES CHECK BREAK ASSUME ASSERT ]
+## Transitions:
+## Reductions:
 -- On WHILE reduce production single_spec -> ENSURES ensures NEWLINE
 -- On VARIANT reduce production single_spec -> ENSURES ensures NEWLINE
 -- On TRUE reduce production single_spec -> ENSURES ensures NEWLINE
@@ -4282,7 +5427,12 @@ single_spec -> ENSURES ensures NEWLINE . [ WHILE VARIANT TRUE STRING RETURN REQU
 -- On ASSERT reduce production single_spec -> ENSURES ensures NEWLINE
 
 State 229:
+## Known stack suffix:
+## variant
+## LR(1) items:
 single_spec -> variant . [ WHILE VARIANT TRUE STRING RETURN REQUIRES NOT NONE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FOR FALSE ENSURES CHECK BREAK ASSUME ASSERT ]
+## Transitions:
+## Reductions:
 -- On WHILE reduce production single_spec -> variant
 -- On VARIANT reduce production single_spec -> variant
 -- On TRUE reduce production single_spec -> variant
@@ -4307,7 +5457,11 @@ single_spec -> variant . [ WHILE VARIANT TRUE STRING RETURN REQUIRES NOT NONE MI
 -- On ASSERT reduce production single_spec -> variant
 
 State 230:
+## Known stack suffix:
+## DEF ident LEFTPAR loption(separated_nonempty_list(COMMA,ident)) RIGHTPAR COLON NEWLINE BEGIN spec
+## LR(1) items:
 def -> DEF ident LEFTPAR loption(separated_nonempty_list(COMMA,ident)) RIGHTPAR COLON NEWLINE BEGIN spec . nonempty_list(stmt) END [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On WHILE shift to state 5
 -- On TRUE shift to state 6
 -- On STRING shift to state 7
@@ -4338,13 +5492,24 @@ def -> DEF ident LEFTPAR loption(separated_nonempty_list(COMMA,ident)) RIGHTPAR 
 -- On expr_desc shift to state 21
 -- On expr shift to state 165
 -- On assertion_kind shift to state 171
+## Reductions:
 
 State 231:
+## Known stack suffix:
+## DEF ident LEFTPAR loption(separated_nonempty_list(COMMA,ident)) RIGHTPAR COLON NEWLINE BEGIN spec nonempty_list(stmt)
+## LR(1) items:
 def -> DEF ident LEFTPAR loption(separated_nonempty_list(COMMA,ident)) RIGHTPAR COLON NEWLINE BEGIN spec nonempty_list(stmt) . END [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On END shift to state 232
+## Reductions:
 
 State 232:
+## Known stack suffix:
+## DEF ident LEFTPAR loption(separated_nonempty_list(COMMA,ident)) RIGHTPAR COLON NEWLINE BEGIN spec nonempty_list(stmt) END
+## LR(1) items:
 def -> DEF ident LEFTPAR loption(separated_nonempty_list(COMMA,ident)) RIGHTPAR COLON NEWLINE BEGIN spec nonempty_list(stmt) END . [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
+## Reductions:
 -- On WHILE reduce production def -> DEF ident LEFTPAR loption(separated_nonempty_list(COMMA,ident)) RIGHTPAR COLON NEWLINE BEGIN spec nonempty_list(stmt) END
 -- On TRUE reduce production def -> DEF ident LEFTPAR loption(separated_nonempty_list(COMMA,ident)) RIGHTPAR COLON NEWLINE BEGIN spec nonempty_list(stmt) END
 -- On STRING reduce production def -> DEF ident LEFTPAR loption(separated_nonempty_list(COMMA,ident)) RIGHTPAR COLON NEWLINE BEGIN spec nonempty_list(stmt) END
@@ -4372,13 +5537,18 @@ def -> DEF ident LEFTPAR loption(separated_nonempty_list(COMMA,ident)) RIGHTPAR 
 -- On ASSERT reduce production def -> DEF ident LEFTPAR loption(separated_nonempty_list(COMMA,ident)) RIGHTPAR COLON NEWLINE BEGIN spec nonempty_list(stmt) END
 
 State 233:
+## Known stack suffix:
+## single_spec
+## LR(1) items:
 spec -> single_spec . spec [ WHILE TRUE STRING RETURN NOT NONE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FOR FALSE CHECK BREAK ASSUME ASSERT ]
+## Transitions:
 -- On VARIANT shift to state 56
 -- On REQUIRES shift to state 222
 -- On ENSURES shift to state 225
 -- On variant shift to state 229
 -- On spec shift to state 234
 -- On single_spec shift to state 233
+## Reductions:
 -- On WHILE reduce production spec ->
 -- On TRUE reduce production spec ->
 -- On STRING reduce production spec ->
@@ -4400,7 +5570,12 @@ spec -> single_spec . spec [ WHILE TRUE STRING RETURN NOT NONE MINUS LEFTSQ LEFT
 -- On ASSERT reduce production spec ->
 
 State 234:
+## Known stack suffix:
+## single_spec spec
+## LR(1) items:
 spec -> single_spec spec . [ WHILE TRUE STRING RETURN NOT NONE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FOR FALSE CHECK BREAK ASSUME ASSERT ]
+## Transitions:
+## Reductions:
 -- On WHILE reduce production spec -> single_spec spec
 -- On TRUE reduce production spec -> single_spec spec
 -- On STRING reduce production spec -> single_spec spec
@@ -4422,7 +5597,12 @@ spec -> single_spec spec . [ WHILE TRUE STRING RETURN NOT NONE MINUS LEFTSQ LEFT
 -- On ASSERT reduce production spec -> single_spec spec
 
 State 235:
+## Known stack suffix:
+## stmt
+## LR(1) items:
 decl -> stmt . [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
+## Reductions:
 -- On WHILE reduce production decl -> stmt
 -- On TRUE reduce production decl -> stmt
 -- On STRING reduce production decl -> stmt
@@ -4450,25 +5630,50 @@ decl -> stmt . [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTS
 -- On ASSERT reduce production decl -> stmt
 
 State 236:
+## Known stack suffix:
+## option(NEWLINE) nonempty_list(decl)
+## LR(1) items:
 file -> option(NEWLINE) nonempty_list(decl) . option(NEWLINE) EOF [ # ]
+## Transitions:
 -- On NEWLINE shift to state 237
 -- On option(NEWLINE) shift to state 238
+## Reductions:
 -- On EOF reduce production option(NEWLINE) ->
 
 State 237:
+## Known stack suffix:
+## NEWLINE
+## LR(1) items:
 option(NEWLINE) -> NEWLINE . [ EOF ]
+## Transitions:
+## Reductions:
 -- On EOF reduce production option(NEWLINE) -> NEWLINE
 
 State 238:
+## Known stack suffix:
+## option(NEWLINE) nonempty_list(decl) option(NEWLINE)
+## LR(1) items:
 file -> option(NEWLINE) nonempty_list(decl) option(NEWLINE) . EOF [ # ]
+## Transitions:
 -- On EOF shift to state 239
+## Reductions:
 
 State 239:
+## Known stack suffix:
+## option(NEWLINE) nonempty_list(decl) option(NEWLINE) EOF
+## LR(1) items:
 file -> option(NEWLINE) nonempty_list(decl) option(NEWLINE) EOF . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production file -> option(NEWLINE) nonempty_list(decl) option(NEWLINE) EOF
 
 State 240:
+## Known stack suffix:
+## import
+## LR(1) items:
 decl -> import . [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
+## Reductions:
 -- On WHILE reduce production decl -> import
 -- On TRUE reduce production decl -> import
 -- On STRING reduce production decl -> import
@@ -4496,7 +5701,12 @@ decl -> import . [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEF
 -- On ASSERT reduce production decl -> import
 
 State 241:
+## Known stack suffix:
+## func
+## LR(1) items:
 decl -> func . [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
+## Reductions:
 -- On WHILE reduce production decl -> func
 -- On TRUE reduce production decl -> func
 -- On STRING reduce production decl -> func
@@ -4524,7 +5734,12 @@ decl -> func . [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTS
 -- On ASSERT reduce production decl -> func
 
 State 242:
+## Known stack suffix:
+## def
+## LR(1) items:
 decl -> def . [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ LEFTPAR LABEL INTEGER IF IDENT FUNCTION FROM FOR FALSE EOF DEF CHECK BREAK ASSUME ASSERT ]
+## Transitions:
+## Reductions:
 -- On WHILE reduce production decl -> def
 -- On TRUE reduce production decl -> def
 -- On STRING reduce production decl -> def
@@ -4552,8 +5767,12 @@ decl -> def . [ WHILE TRUE STRING RETURN PREDICATE NOT NONE NEWLINE MINUS LEFTSQ
 -- On ASSERT reduce production decl -> def
 
 State 243:
+## Known stack suffix:
+## decl
+## LR(1) items:
 nonempty_list(decl) -> decl . [ NEWLINE EOF ]
 nonempty_list(decl) -> decl . nonempty_list(decl) [ NEWLINE EOF ]
+## Transitions:
 -- On WHILE shift to state 5
 -- On TRUE shift to state 6
 -- On STRING shift to state 7
@@ -4592,23 +5811,44 @@ nonempty_list(decl) -> decl . nonempty_list(decl) [ NEWLINE EOF ]
 -- On def shift to state 242
 -- On decl shift to state 243
 -- On assertion_kind shift to state 171
+## Reductions:
 -- On NEWLINE reduce production nonempty_list(decl) -> decl
 -- On EOF reduce production nonempty_list(decl) -> decl
 
 State 244:
+## Known stack suffix:
+## decl nonempty_list(decl)
+## LR(1) items:
 nonempty_list(decl) -> decl nonempty_list(decl) . [ NEWLINE EOF ]
+## Transitions:
+## Reductions:
 -- On NEWLINE reduce production nonempty_list(decl) -> decl nonempty_list(decl)
 -- On EOF reduce production nonempty_list(decl) -> decl nonempty_list(decl)
 
 State 245:
+## Known stack suffix:
+## list(NEWLINE)
+## LR(1) items:
 file -> list(NEWLINE) . EOF [ # ]
+## Transitions:
 -- On EOF shift to state 246
+## Reductions:
 
 State 246:
+## Known stack suffix:
+## list(NEWLINE) EOF
+## LR(1) items:
 file -> list(NEWLINE) EOF . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production file -> list(NEWLINE) EOF
 
 State 247:
+## Known stack suffix:
+## file
+## LR(1) items:
 file' -> file . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept file
 

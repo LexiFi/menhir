@@ -1,9 +1,14 @@
 State 0:
+## Known stack suffix:
+##
+## LR(1) items:
 phrase' -> . phrase [ # ]
+## Transitions:
 -- On error shift to state 1
 -- On OCAML shift to state 2
 -- On prologue shift to state 3
 -- On phrase shift to state 142
+## Reductions:
 -- On TYPE reduce production prologue ->
 -- On SORT reduce production prologue ->
 -- On IDENTIFIER reduce production prologue ->
@@ -11,11 +16,21 @@ phrase' -> . phrase [ # ]
 -- On CONTAINER reduce production prologue ->
 
 State 1:
+## Known stack suffix:
+## error
+## LR(1) items:
 phrase -> error . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production phrase -> error
 
 State 2:
+## Known stack suffix:
+## OCAML
+## LR(1) items:
 prologue -> OCAML . [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+## Transitions:
+## Reductions:
 -- On TYPE reduce production prologue -> OCAML
 -- On SORT reduce production prologue -> OCAML
 -- On IDENTIFIER reduce production prologue -> OCAML
@@ -23,8 +38,13 @@ prologue -> OCAML . [ TYPE SORT IDENTIFIER EOF CONTAINER ]
 -- On CONTAINER reduce production prologue -> OCAML
 
 State 3:
+## Known stack suffix:
+## prologue
+## LR(1) items:
 phrase -> prologue . declarations EOF [ # ]
+## Transitions:
 -- On declarations shift to state 4
+## Reductions:
 -- On TYPE reduce production declarations ->
 -- On SORT reduce production declarations ->
 -- On IDENTIFIER reduce production declarations ->
@@ -32,29 +52,44 @@ phrase -> prologue . declarations EOF [ # ]
 -- On CONTAINER reduce production declarations ->
 
 State 4:
+## Known stack suffix:
+## prologue declarations
+## LR(1) items:
 declarations -> declarations . declaration [ TYPE SORT IDENTIFIER EOF CONTAINER ]
 phrase -> prologue declarations . EOF [ # ]
+## Transitions:
 -- On TYPE shift to state 5
 -- On SORT shift to state 122
 -- On IDENTIFIER shift to state 125
 -- On EOF shift to state 129
 -- On CONTAINER shift to state 130
 -- On declaration shift to state 141
+## Reductions:
 
 State 5:
+## Known stack suffix:
+## TYPE
+## LR(1) items:
 declaration -> TYPE . params_and_set_current LID EQUAL exprhs [ TYPE SORT IDENTIFIER EOF CONTAINER ]
 declaration -> TYPE . params_and_set_current LID BINDS sorts EQUAL patrhs [ TYPE SORT IDENTIFIER EOF CONTAINER ]
 declaration -> TYPE . error [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+## Transitions:
 -- On error shift to state 6
 -- On QUOTE shift to state 7
 -- On LPAREN shift to state 9
 -- On typevar shift to state 15
 -- On params_and_set_current shift to state 16
 -- On params shift to state 121
+## Reductions:
 -- On LID reduce production params ->
 
 State 6:
+## Known stack suffix:
+## TYPE error
+## LR(1) items:
 declaration -> TYPE error . [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+## Transitions:
+## Reductions:
 -- On TYPE reduce production declaration -> TYPE error
 -- On SORT reduce production declaration -> TYPE error
 -- On IDENTIFIER reduce production declaration -> TYPE error
@@ -62,63 +97,122 @@ declaration -> TYPE error . [ TYPE SORT IDENTIFIER EOF CONTAINER ]
 -- On CONTAINER reduce production declaration -> TYPE error
 
 State 7:
+## Known stack suffix:
+## QUOTE
+## LR(1) items:
 typevar -> QUOTE . LID [ RPAREN LID COMMA ]
+## Transitions:
 -- On LID shift to state 8
+## Reductions:
 
 State 8:
+## Known stack suffix:
+## QUOTE LID
+## LR(1) items:
 typevar -> QUOTE LID . [ RPAREN LID COMMA ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production typevar -> QUOTE LID
 -- On LID reduce production typevar -> QUOTE LID
 -- On COMMA reduce production typevar -> QUOTE LID
 
 State 9:
+## Known stack suffix:
+## LPAREN
+## LR(1) items:
 params -> LPAREN . typevars RPAREN [ LID ]
+## Transitions:
 -- On QUOTE shift to state 7
 -- On typevars shift to state 10
 -- On typevar shift to state 14
+## Reductions:
 
 State 10:
+## Known stack suffix:
+## LPAREN typevars
+## LR(1) items:
 params -> LPAREN typevars . RPAREN [ LID ]
 typevars -> typevars . COMMA typevar [ RPAREN COMMA ]
+## Transitions:
 -- On RPAREN shift to state 11
 -- On COMMA shift to state 12
+## Reductions:
 
 State 11:
+## Known stack suffix:
+## LPAREN typevars RPAREN
+## LR(1) items:
 params -> LPAREN typevars RPAREN . [ LID ]
+## Transitions:
+## Reductions:
 -- On LID reduce production params -> LPAREN typevars RPAREN
 
 State 12:
+## Known stack suffix:
+## typevars COMMA
+## LR(1) items:
 typevars -> typevars COMMA . typevar [ RPAREN COMMA ]
+## Transitions:
 -- On QUOTE shift to state 7
 -- On typevar shift to state 13
+## Reductions:
 
 State 13:
+## Known stack suffix:
+## typevars COMMA typevar
+## LR(1) items:
 typevars -> typevars COMMA typevar . [ RPAREN COMMA ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production typevars -> typevars COMMA typevar
 -- On COMMA reduce production typevars -> typevars COMMA typevar
 
 State 14:
+## Known stack suffix:
+## typevar
+## LR(1) items:
 typevars -> typevar . [ RPAREN COMMA ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production typevars -> typevar
 -- On COMMA reduce production typevars -> typevar
 
 State 15:
+## Known stack suffix:
+## typevar
+## LR(1) items:
 params -> typevar . [ LID ]
+## Transitions:
+## Reductions:
 -- On LID reduce production params -> typevar
 
 State 16:
+## Known stack suffix:
+## TYPE params_and_set_current
+## LR(1) items:
 declaration -> TYPE params_and_set_current . LID EQUAL exprhs [ TYPE SORT IDENTIFIER EOF CONTAINER ]
 declaration -> TYPE params_and_set_current . LID BINDS sorts EQUAL patrhs [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+## Transitions:
 -- On LID shift to state 17
+## Reductions:
 
 State 17:
+## Known stack suffix:
+## TYPE params_and_set_current LID
+## LR(1) items:
 declaration -> TYPE params_and_set_current LID . EQUAL exprhs [ TYPE SORT IDENTIFIER EOF CONTAINER ]
 declaration -> TYPE params_and_set_current LID . BINDS sorts EQUAL patrhs [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+## Transitions:
 -- On EQUAL shift to state 18
 -- On BINDS shift to state 117
+## Reductions:
 
 State 18:
+## Known stack suffix:
+## TYPE params_and_set_current LID EQUAL
+## LR(1) items:
 declaration -> TYPE params_and_set_current LID EQUAL . exprhs [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+## Transitions:
 -- On error shift to state 19
 -- On QUOTE shift to state 7
 -- On OUTER shift to state 20
@@ -137,10 +231,16 @@ declaration -> TYPE params_and_set_current LID EQUAL . exprhs [ TYPE SORT IDENTI
 -- On exprhs shift to state 115
 -- On expfactors shift to state 116
 -- On expfactor shift to state 111
+## Reductions:
 -- On LID reduce production params ->
 
 State 19:
+## Known stack suffix:
+## error
+## LR(1) items:
 expfactor -> error . [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
+## Reductions:
 -- On error reduce production expfactor -> error
 -- On TYPE reduce production expfactor -> error
 -- On STAR reduce production expfactor -> error
@@ -153,7 +253,12 @@ expfactor -> error . [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONT
 -- On BAR reduce production expfactor -> error
 
 State 20:
+## Known stack suffix:
+## OUTER
+## LR(1) items:
 expfactor -> OUTER . [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
+## Reductions:
 -- On error reduce production expfactor -> OUTER
 -- On TYPE reduce production expfactor -> OUTER
 -- On STAR reduce production expfactor -> OUTER
@@ -166,7 +271,12 @@ expfactor -> OUTER . [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONT
 -- On BAR reduce production expfactor -> OUTER
 
 State 21:
+## Known stack suffix:
+## OCAML
+## LR(1) items:
 expfactor -> OCAML . [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
+## Reductions:
 -- On error reduce production expfactor -> OCAML
 -- On TYPE reduce production expfactor -> OCAML
 -- On STAR reduce production expfactor -> OCAML
@@ -179,7 +289,12 @@ expfactor -> OCAML . [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONT
 -- On BAR reduce production expfactor -> OCAML
 
 State 22:
+## Known stack suffix:
+## NEUTRAL
+## LR(1) items:
 expfactor -> NEUTRAL . [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
+## Reductions:
 -- On error reduce production expfactor -> NEUTRAL
 -- On TYPE reduce production expfactor -> NEUTRAL
 -- On STAR reduce production expfactor -> NEUTRAL
@@ -192,24 +307,43 @@ expfactor -> NEUTRAL . [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CO
 -- On BAR reduce production expfactor -> NEUTRAL
 
 State 23:
+## Known stack suffix:
+## LBRACE
+## LR(1) items:
 exprhs -> LBRACE . explfactors optional_semicolon RBRACE [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+## Transitions:
 -- On error shift to state 24
 -- On LID shift to state 25
 -- On explfactors shift to state 96
 -- On explfactor shift to state 102
+## Reductions:
 
 State 24:
+## Known stack suffix:
+## error
+## LR(1) items:
 explfactor -> error . [ error SEMICOLON RBRACE ]
+## Transitions:
+## Reductions:
 -- On error reduce production explfactor -> error
 -- On SEMICOLON reduce production explfactor -> error
 -- On RBRACE reduce production explfactor -> error
 
 State 25:
+## Known stack suffix:
+## LID
+## LR(1) items:
 explfactor -> LID . COLON expfactor [ error SEMICOLON RBRACE ]
+## Transitions:
 -- On COLON shift to state 26
+## Reductions:
 
 State 26:
+## Known stack suffix:
+## LID COLON
+## LR(1) items:
 explfactor -> LID COLON . expfactor [ error SEMICOLON RBRACE ]
+## Transitions:
 -- On error shift to state 19
 -- On QUOTE shift to state 7
 -- On OUTER shift to state 20
@@ -222,21 +356,32 @@ explfactor -> LID COLON . expfactor [ error SEMICOLON RBRACE ]
 -- On typevar shift to state 15
 -- On params shift to state 92
 -- On expfactor shift to state 95
+## Reductions:
 -- On LID reduce production params ->
 
 State 27:
+## Known stack suffix:
+## LANGLE
+## LR(1) items:
 expfactor -> LANGLE . params LID RANGLE [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONTAINER BAR ]
 expfactor -> LANGLE . LPAREN LID BINDS sorts RPAREN patrhs RANGLE [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONTAINER BAR ]
 expfactor -> LANGLE . error [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
 -- On error shift to state 28
 -- On QUOTE shift to state 7
 -- On LPAREN shift to state 29
 -- On typevar shift to state 15
 -- On params shift to state 85
+## Reductions:
 -- On LID reduce production params ->
 
 State 28:
+## Known stack suffix:
+## LANGLE error
+## LR(1) items:
 expfactor -> LANGLE error . [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
+## Reductions:
 -- On error reduce production expfactor -> LANGLE error
 -- On TYPE reduce production expfactor -> LANGLE error
 -- On STAR reduce production expfactor -> LANGLE error
@@ -249,36 +394,65 @@ expfactor -> LANGLE error . [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER E
 -- On BAR reduce production expfactor -> LANGLE error
 
 State 29:
+## Known stack suffix:
+## LANGLE LPAREN
+## LR(1) items:
 expfactor -> LANGLE LPAREN . LID BINDS sorts RPAREN patrhs RANGLE [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONTAINER BAR ]
 params -> LPAREN . typevars RPAREN [ LID ]
+## Transitions:
 -- On QUOTE shift to state 7
 -- On LID shift to state 30
 -- On typevars shift to state 10
 -- On typevar shift to state 14
+## Reductions:
 
 State 30:
+## Known stack suffix:
+## LANGLE LPAREN LID
+## LR(1) items:
 expfactor -> LANGLE LPAREN LID . BINDS sorts RPAREN patrhs RANGLE [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
 -- On BINDS shift to state 31
+## Reductions:
 
 State 31:
+## Known stack suffix:
+## LANGLE LPAREN LID BINDS
+## LR(1) items:
 expfactor -> LANGLE LPAREN LID BINDS . sorts RPAREN patrhs RANGLE [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
 -- On LID shift to state 32
 -- On sorts shift to state 33
+## Reductions:
 
 State 32:
+## Known stack suffix:
+## LID
+## LR(1) items:
 sorts -> LID . [ RPAREN EQUAL COMMA ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production sorts -> LID
 -- On EQUAL reduce production sorts -> LID
 -- On COMMA reduce production sorts -> LID
 
 State 33:
+## Known stack suffix:
+## LANGLE LPAREN LID BINDS sorts
+## LR(1) items:
 expfactor -> LANGLE LPAREN LID BINDS sorts . RPAREN patrhs RANGLE [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONTAINER BAR ]
 sorts -> sorts . COMMA LID [ RPAREN COMMA ]
+## Transitions:
 -- On RPAREN shift to state 34
 -- On COMMA shift to state 83
+## Reductions:
 
 State 34:
+## Known stack suffix:
+## LANGLE LPAREN LID BINDS sorts RPAREN
+## LR(1) items:
 expfactor -> LANGLE LPAREN LID BINDS sorts RPAREN . patrhs RANGLE [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
 -- On error shift to state 35
 -- On QUOTE shift to state 7
 -- On OUTER shift to state 36
@@ -298,10 +472,16 @@ expfactor -> LANGLE LPAREN LID BINDS sorts RPAREN . patrhs RANGLE [ error TYPE S
 -- On patfactors shift to state 82
 -- On patfactor shift to state 76
 -- On params shift to state 59
+## Reductions:
 -- On LID reduce production params ->
 
 State 35:
+## Known stack suffix:
+## error
+## LR(1) items:
 patfactor -> error . [ error TYPE STAR SORT SEMICOLON RBRACE RANGLE IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
+## Reductions:
 -- On error reduce production patfactor -> error
 -- On TYPE reduce production patfactor -> error
 -- On STAR reduce production patfactor -> error
@@ -315,14 +495,24 @@ patfactor -> error . [ error TYPE STAR SORT SEMICOLON RBRACE RANGLE IDENTIFIER E
 -- On BAR reduce production patfactor -> error
 
 State 36:
+## Known stack suffix:
+## OUTER
+## LR(1) items:
 patmodifier -> OUTER . [ error QUOTE LPAREN LID ]
+## Transitions:
+## Reductions:
 -- On error reduce production patmodifier -> OUTER
 -- On QUOTE reduce production patmodifier -> OUTER
 -- On LPAREN reduce production patmodifier -> OUTER
 -- On LID reduce production patmodifier -> OUTER
 
 State 37:
+## Known stack suffix:
+## OCAML
+## LR(1) items:
 patfactor -> OCAML . [ error TYPE STAR SORT SEMICOLON RBRACE RANGLE IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
+## Reductions:
 -- On error reduce production patfactor -> OCAML
 -- On TYPE reduce production patfactor -> OCAML
 -- On STAR reduce production patfactor -> OCAML
@@ -336,31 +526,55 @@ patfactor -> OCAML . [ error TYPE STAR SORT SEMICOLON RBRACE RANGLE IDENTIFIER E
 -- On BAR reduce production patfactor -> OCAML
 
 State 38:
+## Known stack suffix:
+## NEUTRAL
+## LR(1) items:
 patmodifier -> NEUTRAL . [ error QUOTE LPAREN LID ]
+## Transitions:
+## Reductions:
 -- On error reduce production patmodifier -> NEUTRAL
 -- On QUOTE reduce production patmodifier -> NEUTRAL
 -- On LPAREN reduce production patmodifier -> NEUTRAL
 -- On LID reduce production patmodifier -> NEUTRAL
 
 State 39:
+## Known stack suffix:
+## LBRACE
+## LR(1) items:
 patrhs -> LBRACE . patlfactors RBRACE [ TYPE SORT RANGLE IDENTIFIER EOF CONTAINER ]
+## Transitions:
 -- On error shift to state 40
 -- On LID shift to state 41
 -- On patlfactors shift to state 62
 -- On patlfactor shift to state 67
+## Reductions:
 
 State 40:
+## Known stack suffix:
+## error
+## LR(1) items:
 patlfactor -> error . [ error SEMICOLON RBRACE ]
+## Transitions:
+## Reductions:
 -- On error reduce production patlfactor -> error
 -- On SEMICOLON reduce production patlfactor -> error
 -- On RBRACE reduce production patlfactor -> error
 
 State 41:
+## Known stack suffix:
+## LID
+## LR(1) items:
 patlfactor -> LID . COLON patfactor [ error SEMICOLON RBRACE ]
+## Transitions:
 -- On COLON shift to state 42
+## Reductions:
 
 State 42:
+## Known stack suffix:
+## LID COLON
+## LR(1) items:
 patlfactor -> LID COLON . patfactor [ error SEMICOLON RBRACE ]
+## Transitions:
 -- On error shift to state 35
 -- On QUOTE shift to state 7
 -- On OUTER shift to state 36
@@ -374,10 +588,16 @@ patlfactor -> LID COLON . patfactor [ error SEMICOLON RBRACE ]
 -- On patmodifier shift to state 48
 -- On patfactor shift to state 58
 -- On params shift to state 59
+## Reductions:
 -- On LID reduce production params ->
 
 State 43:
+## Known stack suffix:
+## LANGLE
+## LR(1) items:
 patfactor -> LANGLE . [ error TYPE STAR SORT SEMICOLON RBRACE RANGLE IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
+## Reductions:
 -- On error reduce production patfactor -> LANGLE
 -- On TYPE reduce production patfactor -> LANGLE
 -- On STAR reduce production patfactor -> LANGLE
@@ -391,20 +611,35 @@ patfactor -> LANGLE . [ error TYPE STAR SORT SEMICOLON RBRACE RANGLE IDENTIFIER 
 -- On BAR reduce production patfactor -> LANGLE
 
 State 44:
+## Known stack suffix:
+## INNER
+## LR(1) items:
 patmodifier -> INNER . [ error QUOTE LPAREN LID ]
+## Transitions:
+## Reductions:
 -- On error reduce production patmodifier -> INNER
 -- On QUOTE reduce production patmodifier -> INNER
 -- On LPAREN reduce production patmodifier -> INNER
 -- On LID reduce production patmodifier -> INNER
 
 State 45:
+## Known stack suffix:
+## ATOM
+## LR(1) items:
 patfactor -> ATOM . LID [ error TYPE STAR SORT SEMICOLON RBRACE RANGLE IDENTIFIER EOF CONTAINER BAR ]
 patfactor -> ATOM . error [ error TYPE STAR SORT SEMICOLON RBRACE RANGLE IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
 -- On error shift to state 46
 -- On LID shift to state 47
+## Reductions:
 
 State 46:
+## Known stack suffix:
+## ATOM error
+## LR(1) items:
 patfactor -> ATOM error . [ error TYPE STAR SORT SEMICOLON RBRACE RANGLE IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
+## Reductions:
 -- On error reduce production patfactor -> ATOM error
 -- On TYPE reduce production patfactor -> ATOM error
 -- On STAR reduce production patfactor -> ATOM error
@@ -418,7 +653,12 @@ patfactor -> ATOM error . [ error TYPE STAR SORT SEMICOLON RBRACE RANGLE IDENTIF
 -- On BAR reduce production patfactor -> ATOM error
 
 State 47:
+## Known stack suffix:
+## ATOM LID
+## LR(1) items:
 patfactor -> ATOM LID . [ error TYPE STAR SORT SEMICOLON RBRACE RANGLE IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
+## Reductions:
 -- On error reduce production patfactor -> ATOM LID
 -- On TYPE reduce production patfactor -> ATOM LID
 -- On STAR reduce production patfactor -> ATOM LID
@@ -432,17 +672,27 @@ patfactor -> ATOM LID . [ error TYPE STAR SORT SEMICOLON RBRACE RANGLE IDENTIFIE
 -- On BAR reduce production patfactor -> ATOM LID
 
 State 48:
+## Known stack suffix:
+## patmodifier
+## LR(1) items:
 patfactor -> patmodifier . params LID container [ error TYPE STAR SORT SEMICOLON RBRACE RANGLE IDENTIFIER EOF CONTAINER BAR ]
 patfactor -> patmodifier . error [ error TYPE STAR SORT SEMICOLON RBRACE RANGLE IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
 -- On error shift to state 49
 -- On QUOTE shift to state 7
 -- On LPAREN shift to state 9
 -- On typevar shift to state 15
 -- On params shift to state 50
+## Reductions:
 -- On LID reduce production params ->
 
 State 49:
+## Known stack suffix:
+## patmodifier error
+## LR(1) items:
 patfactor -> patmodifier error . [ error TYPE STAR SORT SEMICOLON RBRACE RANGLE IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
+## Reductions:
 -- On error reduce production patfactor -> patmodifier error
 -- On TYPE reduce production patfactor -> patmodifier error
 -- On STAR reduce production patfactor -> patmodifier error
@@ -456,15 +706,25 @@ patfactor -> patmodifier error . [ error TYPE STAR SORT SEMICOLON RBRACE RANGLE 
 -- On BAR reduce production patfactor -> patmodifier error
 
 State 50:
+## Known stack suffix:
+## patmodifier params
+## LR(1) items:
 patfactor -> patmodifier params . LID container [ error TYPE STAR SORT SEMICOLON RBRACE RANGLE IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
 -- On LID shift to state 51
+## Reductions:
 
 State 51:
+## Known stack suffix:
+## patmodifier params LID
+## LR(1) items:
 patfactor -> patmodifier params LID . container [ error TYPE STAR SORT SEMICOLON RBRACE RANGLE IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
 -- On UID shift to state 52
 -- On LID shift to state 54
 -- On identifier shift to state 56
 -- On container shift to state 57
+## Reductions:
 -- On error reduce production container ->
 -- On TYPE reduce production container ->
 -- On STAR reduce production container ->
@@ -478,17 +738,32 @@ patfactor -> patmodifier params LID . container [ error TYPE STAR SORT SEMICOLON
 -- On BAR reduce production container ->
 
 State 52:
+## Known stack suffix:
+## UID
+## LR(1) items:
 identifier -> UID . DOT identifier [ error TYPE STAR SORT SEMICOLON RBRACE RANGLE IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
 -- On DOT shift to state 53
+## Reductions:
 
 State 53:
+## Known stack suffix:
+## UID DOT
+## LR(1) items:
 identifier -> UID DOT . identifier [ error TYPE STAR SORT SEMICOLON RBRACE RANGLE IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
 -- On UID shift to state 52
 -- On LID shift to state 54
 -- On identifier shift to state 55
+## Reductions:
 
 State 54:
+## Known stack suffix:
+## LID
+## LR(1) items:
 identifier -> LID . [ error TYPE STAR SORT SEMICOLON RBRACE RANGLE IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
+## Reductions:
 -- On error reduce production identifier -> LID
 -- On TYPE reduce production identifier -> LID
 -- On STAR reduce production identifier -> LID
@@ -502,7 +777,12 @@ identifier -> LID . [ error TYPE STAR SORT SEMICOLON RBRACE RANGLE IDENTIFIER EO
 -- On BAR reduce production identifier -> LID
 
 State 55:
+## Known stack suffix:
+## UID DOT identifier
+## LR(1) items:
 identifier -> UID DOT identifier . [ error TYPE STAR SORT SEMICOLON RBRACE RANGLE IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
+## Reductions:
 -- On error reduce production identifier -> UID DOT identifier
 -- On TYPE reduce production identifier -> UID DOT identifier
 -- On STAR reduce production identifier -> UID DOT identifier
@@ -516,7 +796,12 @@ identifier -> UID DOT identifier . [ error TYPE STAR SORT SEMICOLON RBRACE RANGL
 -- On BAR reduce production identifier -> UID DOT identifier
 
 State 56:
+## Known stack suffix:
+## identifier
+## LR(1) items:
 container -> identifier . [ error TYPE STAR SORT SEMICOLON RBRACE RANGLE IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
+## Reductions:
 -- On error reduce production container -> identifier
 -- On TYPE reduce production container -> identifier
 -- On STAR reduce production container -> identifier
@@ -530,7 +815,12 @@ container -> identifier . [ error TYPE STAR SORT SEMICOLON RBRACE RANGLE IDENTIF
 -- On BAR reduce production container -> identifier
 
 State 57:
+## Known stack suffix:
+## patmodifier params LID container
+## LR(1) items:
 patfactor -> patmodifier params LID container . [ error TYPE STAR SORT SEMICOLON RBRACE RANGLE IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
+## Reductions:
 -- On error reduce production patfactor -> patmodifier params LID container
 -- On TYPE reduce production patfactor -> patmodifier params LID container
 -- On STAR reduce production patfactor -> patmodifier params LID container
@@ -544,21 +834,36 @@ patfactor -> patmodifier params LID container . [ error TYPE STAR SORT SEMICOLON
 -- On BAR reduce production patfactor -> patmodifier params LID container
 
 State 58:
+## Known stack suffix:
+## LID COLON patfactor
+## LR(1) items:
 patlfactor -> LID COLON patfactor . [ error SEMICOLON RBRACE ]
+## Transitions:
+## Reductions:
 -- On error reduce production patlfactor -> LID COLON patfactor
 -- On SEMICOLON reduce production patlfactor -> LID COLON patfactor
 -- On RBRACE reduce production patlfactor -> LID COLON patfactor
 
 State 59:
+## Known stack suffix:
+## params
+## LR(1) items:
 patfactor -> params . LID container [ error TYPE STAR SORT SEMICOLON RBRACE RANGLE IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
 -- On LID shift to state 60
+## Reductions:
 
 State 60:
+## Known stack suffix:
+## params LID
+## LR(1) items:
 patfactor -> params LID . container [ error TYPE STAR SORT SEMICOLON RBRACE RANGLE IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
 -- On UID shift to state 52
 -- On LID shift to state 54
 -- On identifier shift to state 56
 -- On container shift to state 61
+## Reductions:
 -- On error reduce production container ->
 -- On TYPE reduce production container ->
 -- On STAR reduce production container ->
@@ -572,7 +877,12 @@ patfactor -> params LID . container [ error TYPE STAR SORT SEMICOLON RBRACE RANG
 -- On BAR reduce production container ->
 
 State 61:
+## Known stack suffix:
+## params LID container
+## LR(1) items:
 patfactor -> params LID container . [ error TYPE STAR SORT SEMICOLON RBRACE RANGLE IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
+## Reductions:
 -- On error reduce production patfactor -> params LID container
 -- On TYPE reduce production patfactor -> params LID container
 -- On STAR reduce production patfactor -> params LID container
@@ -586,33 +896,58 @@ patfactor -> params LID container . [ error TYPE STAR SORT SEMICOLON RBRACE RANG
 -- On BAR reduce production patfactor -> params LID container
 
 State 62:
+## Known stack suffix:
+## LBRACE patlfactors
+## LR(1) items:
 patlfactors -> patlfactors . SEMICOLON patlfactor [ error SEMICOLON RBRACE ]
 patlfactors -> patlfactors . error [ error SEMICOLON RBRACE ]
 patrhs -> LBRACE patlfactors . RBRACE [ TYPE SORT RANGLE IDENTIFIER EOF CONTAINER ]
+## Transitions:
 -- On error shift to state 63
 -- On SEMICOLON shift to state 64
 -- On RBRACE shift to state 66
+## Reductions:
 
 State 63:
+## Known stack suffix:
+## patlfactors error
+## LR(1) items:
 patlfactors -> patlfactors error . [ error SEMICOLON RBRACE ]
+## Transitions:
+## Reductions:
 -- On error reduce production patlfactors -> patlfactors error
 -- On SEMICOLON reduce production patlfactors -> patlfactors error
 -- On RBRACE reduce production patlfactors -> patlfactors error
 
 State 64:
+## Known stack suffix:
+## patlfactors SEMICOLON
+## LR(1) items:
 patlfactors -> patlfactors SEMICOLON . patlfactor [ error SEMICOLON RBRACE ]
+## Transitions:
 -- On error shift to state 40
 -- On LID shift to state 41
 -- On patlfactor shift to state 65
+## Reductions:
 
 State 65:
+## Known stack suffix:
+## patlfactors SEMICOLON patlfactor
+## LR(1) items:
 patlfactors -> patlfactors SEMICOLON patlfactor . [ error SEMICOLON RBRACE ]
+## Transitions:
+## Reductions:
 -- On error reduce production patlfactors -> patlfactors SEMICOLON patlfactor
 -- On SEMICOLON reduce production patlfactors -> patlfactors SEMICOLON patlfactor
 -- On RBRACE reduce production patlfactors -> patlfactors SEMICOLON patlfactor
 
 State 66:
+## Known stack suffix:
+## LBRACE patlfactors RBRACE
+## LR(1) items:
 patrhs -> LBRACE patlfactors RBRACE . [ TYPE SORT RANGLE IDENTIFIER EOF CONTAINER ]
+## Transitions:
+## Reductions:
 -- On TYPE reduce production patrhs -> LBRACE patlfactors RBRACE
 -- On SORT reduce production patrhs -> LBRACE patlfactors RBRACE
 -- On RANGLE reduce production patrhs -> LBRACE patlfactors RBRACE
@@ -621,20 +956,35 @@ patrhs -> LBRACE patlfactors RBRACE . [ TYPE SORT RANGLE IDENTIFIER EOF CONTAINE
 -- On CONTAINER reduce production patrhs -> LBRACE patlfactors RBRACE
 
 State 67:
+## Known stack suffix:
+## patlfactor
+## LR(1) items:
 patlfactors -> patlfactor . [ error SEMICOLON RBRACE ]
+## Transitions:
+## Reductions:
 -- On error reduce production patlfactors -> patlfactor
 -- On SEMICOLON reduce production patlfactors -> patlfactor
 -- On RBRACE reduce production patlfactors -> patlfactor
 
 State 68:
+## Known stack suffix:
+## BAR
+## LR(1) items:
 patsummand -> BAR . UID [ TYPE SORT RANGLE IDENTIFIER EOF CONTAINER BAR ]
 patsummand -> BAR . UID OF patfactors [ TYPE SORT RANGLE IDENTIFIER EOF CONTAINER BAR ]
 patsummand -> BAR . error [ TYPE SORT RANGLE IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
 -- On error shift to state 69
 -- On UID shift to state 70
+## Reductions:
 
 State 69:
+## Known stack suffix:
+## BAR error
+## LR(1) items:
 patsummand -> BAR error . [ TYPE SORT RANGLE IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
+## Reductions:
 -- On TYPE reduce production patsummand -> BAR error
 -- On SORT reduce production patsummand -> BAR error
 -- On RANGLE reduce production patsummand -> BAR error
@@ -644,9 +994,14 @@ patsummand -> BAR error . [ TYPE SORT RANGLE IDENTIFIER EOF CONTAINER BAR ]
 -- On BAR reduce production patsummand -> BAR error
 
 State 70:
+## Known stack suffix:
+## BAR UID
+## LR(1) items:
 patsummand -> BAR UID . [ TYPE SORT RANGLE IDENTIFIER EOF CONTAINER BAR ]
 patsummand -> BAR UID . OF patfactors [ TYPE SORT RANGLE IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
 -- On OF shift to state 71
+## Reductions:
 -- On TYPE reduce production patsummand -> BAR UID
 -- On SORT reduce production patsummand -> BAR UID
 -- On RANGLE reduce production patsummand -> BAR UID
@@ -656,7 +1011,11 @@ patsummand -> BAR UID . OF patfactors [ TYPE SORT RANGLE IDENTIFIER EOF CONTAINE
 -- On BAR reduce production patsummand -> BAR UID
 
 State 71:
+## Known stack suffix:
+## BAR UID OF
+## LR(1) items:
 patsummand -> BAR UID OF . patfactors [ TYPE SORT RANGLE IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
 -- On error shift to state 35
 -- On QUOTE shift to state 7
 -- On OUTER shift to state 36
@@ -671,14 +1030,20 @@ patsummand -> BAR UID OF . patfactors [ TYPE SORT RANGLE IDENTIFIER EOF CONTAINE
 -- On patfactors shift to state 72
 -- On patfactor shift to state 76
 -- On params shift to state 59
+## Reductions:
 -- On LID reduce production params ->
 
 State 72:
+## Known stack suffix:
+## BAR UID OF patfactors
+## LR(1) items:
 patfactors -> patfactors . STAR patfactor [ error TYPE STAR SORT RANGLE IDENTIFIER EOF CONTAINER BAR ]
 patfactors -> patfactors . error [ error TYPE STAR SORT RANGLE IDENTIFIER EOF CONTAINER BAR ]
 patsummand -> BAR UID OF patfactors . [ TYPE SORT RANGLE IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
 -- On error shift to state 73
 -- On STAR shift to state 74
+## Reductions:
 -- On TYPE reduce production patsummand -> BAR UID OF patfactors
 -- On SORT reduce production patsummand -> BAR UID OF patfactors
 -- On RANGLE reduce production patsummand -> BAR UID OF patfactors
@@ -688,7 +1053,12 @@ patsummand -> BAR UID OF patfactors . [ TYPE SORT RANGLE IDENTIFIER EOF CONTAINE
 -- On BAR reduce production patsummand -> BAR UID OF patfactors
 
 State 73:
+## Known stack suffix:
+## patfactors error
+## LR(1) items:
 patfactors -> patfactors error . [ error TYPE STAR SORT RANGLE IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
+## Reductions:
 -- On error reduce production patfactors -> patfactors error
 -- On TYPE reduce production patfactors -> patfactors error
 -- On STAR reduce production patfactors -> patfactors error
@@ -700,7 +1070,11 @@ patfactors -> patfactors error . [ error TYPE STAR SORT RANGLE IDENTIFIER EOF CO
 -- On BAR reduce production patfactors -> patfactors error
 
 State 74:
+## Known stack suffix:
+## patfactors STAR
+## LR(1) items:
 patfactors -> patfactors STAR . patfactor [ error TYPE STAR SORT RANGLE IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
 -- On error shift to state 35
 -- On QUOTE shift to state 7
 -- On OUTER shift to state 36
@@ -714,10 +1088,16 @@ patfactors -> patfactors STAR . patfactor [ error TYPE STAR SORT RANGLE IDENTIFI
 -- On patmodifier shift to state 48
 -- On patfactor shift to state 75
 -- On params shift to state 59
+## Reductions:
 -- On LID reduce production params ->
 
 State 75:
+## Known stack suffix:
+## patfactors STAR patfactor
+## LR(1) items:
 patfactors -> patfactors STAR patfactor . [ error TYPE STAR SORT RANGLE IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
+## Reductions:
 -- On error reduce production patfactors -> patfactors STAR patfactor
 -- On TYPE reduce production patfactors -> patfactors STAR patfactor
 -- On STAR reduce production patfactors -> patfactors STAR patfactor
@@ -729,7 +1109,12 @@ patfactors -> patfactors STAR patfactor . [ error TYPE STAR SORT RANGLE IDENTIFI
 -- On BAR reduce production patfactors -> patfactors STAR patfactor
 
 State 76:
+## Known stack suffix:
+## patfactor
+## LR(1) items:
 patfactors -> patfactor . [ error TYPE STAR SORT RANGLE IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
+## Reductions:
 -- On error reduce production patfactors -> patfactor
 -- On TYPE reduce production patfactors -> patfactor
 -- On STAR reduce production patfactors -> patfactor
@@ -741,10 +1126,15 @@ patfactors -> patfactor . [ error TYPE STAR SORT RANGLE IDENTIFIER EOF CONTAINER
 -- On BAR reduce production patfactors -> patfactor
 
 State 77:
+## Known stack suffix:
+## patsummands
+## LR(1) items:
 patrhs -> patsummands . [ TYPE SORT RANGLE IDENTIFIER EOF CONTAINER ]
 patsummands -> patsummands . patsummand [ TYPE SORT RANGLE IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
 -- On BAR shift to state 68
 -- On patsummand shift to state 78
+## Reductions:
 -- On TYPE reduce production patrhs -> patsummands
 -- On SORT reduce production patrhs -> patsummands
 -- On RANGLE reduce production patrhs -> patsummands
@@ -753,7 +1143,12 @@ patsummands -> patsummands . patsummand [ TYPE SORT RANGLE IDENTIFIER EOF CONTAI
 -- On CONTAINER reduce production patrhs -> patsummands
 
 State 78:
+## Known stack suffix:
+## patsummands patsummand
+## LR(1) items:
 patsummands -> patsummands patsummand . [ TYPE SORT RANGLE IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
+## Reductions:
 -- On TYPE reduce production patsummands -> patsummands patsummand
 -- On SORT reduce production patsummands -> patsummands patsummand
 -- On RANGLE reduce production patsummands -> patsummands patsummand
@@ -763,7 +1158,12 @@ patsummands -> patsummands patsummand . [ TYPE SORT RANGLE IDENTIFIER EOF CONTAI
 -- On BAR reduce production patsummands -> patsummands patsummand
 
 State 79:
+## Known stack suffix:
+## patsummand
+## LR(1) items:
 patsummands -> patsummand . [ TYPE SORT RANGLE IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
+## Reductions:
 -- On TYPE reduce production patsummands -> patsummand
 -- On SORT reduce production patsummands -> patsummand
 -- On RANGLE reduce production patsummands -> patsummand
@@ -773,11 +1173,21 @@ patsummands -> patsummand . [ TYPE SORT RANGLE IDENTIFIER EOF CONTAINER BAR ]
 -- On BAR reduce production patsummands -> patsummand
 
 State 80:
+## Known stack suffix:
+## LANGLE LPAREN LID BINDS sorts RPAREN patrhs
+## LR(1) items:
 expfactor -> LANGLE LPAREN LID BINDS sorts RPAREN patrhs . RANGLE [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
 -- On RANGLE shift to state 81
+## Reductions:
 
 State 81:
+## Known stack suffix:
+## LANGLE LPAREN LID BINDS sorts RPAREN patrhs RANGLE
+## LR(1) items:
 expfactor -> LANGLE LPAREN LID BINDS sorts RPAREN patrhs RANGLE . [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
+## Reductions:
 -- On error reduce production expfactor -> LANGLE LPAREN LID BINDS sorts RPAREN patrhs RANGLE
 -- On TYPE reduce production expfactor -> LANGLE LPAREN LID BINDS sorts RPAREN patrhs RANGLE
 -- On STAR reduce production expfactor -> LANGLE LPAREN LID BINDS sorts RPAREN patrhs RANGLE
@@ -790,11 +1200,16 @@ expfactor -> LANGLE LPAREN LID BINDS sorts RPAREN patrhs RANGLE . [ error TYPE S
 -- On BAR reduce production expfactor -> LANGLE LPAREN LID BINDS sorts RPAREN patrhs RANGLE
 
 State 82:
+## Known stack suffix:
+## patfactors
+## LR(1) items:
 patfactors -> patfactors . STAR patfactor [ error TYPE STAR SORT RANGLE IDENTIFIER EOF CONTAINER ]
 patfactors -> patfactors . error [ error TYPE STAR SORT RANGLE IDENTIFIER EOF CONTAINER ]
 patrhs -> patfactors . [ TYPE SORT RANGLE IDENTIFIER EOF CONTAINER ]
+## Transitions:
 -- On error shift to state 73
 -- On STAR shift to state 74
+## Reductions:
 -- On TYPE reduce production patrhs -> patfactors
 -- On SORT reduce production patrhs -> patfactors
 -- On RANGLE reduce production patrhs -> patfactors
@@ -803,25 +1218,50 @@ patrhs -> patfactors . [ TYPE SORT RANGLE IDENTIFIER EOF CONTAINER ]
 -- On CONTAINER reduce production patrhs -> patfactors
 
 State 83:
+## Known stack suffix:
+## sorts COMMA
+## LR(1) items:
 sorts -> sorts COMMA . LID [ RPAREN EQUAL COMMA ]
+## Transitions:
 -- On LID shift to state 84
+## Reductions:
 
 State 84:
+## Known stack suffix:
+## sorts COMMA LID
+## LR(1) items:
 sorts -> sorts COMMA LID . [ RPAREN EQUAL COMMA ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production sorts -> sorts COMMA LID
 -- On EQUAL reduce production sorts -> sorts COMMA LID
 -- On COMMA reduce production sorts -> sorts COMMA LID
 
 State 85:
+## Known stack suffix:
+## LANGLE params
+## LR(1) items:
 expfactor -> LANGLE params . LID RANGLE [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
 -- On LID shift to state 86
+## Reductions:
 
 State 86:
+## Known stack suffix:
+## LANGLE params LID
+## LR(1) items:
 expfactor -> LANGLE params LID . RANGLE [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
 -- On RANGLE shift to state 87
+## Reductions:
 
 State 87:
+## Known stack suffix:
+## LANGLE params LID RANGLE
+## LR(1) items:
 expfactor -> LANGLE params LID RANGLE . [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
+## Reductions:
 -- On error reduce production expfactor -> LANGLE params LID RANGLE
 -- On TYPE reduce production expfactor -> LANGLE params LID RANGLE
 -- On STAR reduce production expfactor -> LANGLE params LID RANGLE
@@ -834,7 +1274,12 @@ expfactor -> LANGLE params LID RANGLE . [ error TYPE STAR SORT SEMICOLON RBRACE 
 -- On BAR reduce production expfactor -> LANGLE params LID RANGLE
 
 State 88:
+## Known stack suffix:
+## INNER
+## LR(1) items:
 expfactor -> INNER . [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
+## Reductions:
 -- On error reduce production expfactor -> INNER
 -- On TYPE reduce production expfactor -> INNER
 -- On STAR reduce production expfactor -> INNER
@@ -847,13 +1292,23 @@ expfactor -> INNER . [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONT
 -- On BAR reduce production expfactor -> INNER
 
 State 89:
+## Known stack suffix:
+## ATOM
+## LR(1) items:
 expfactor -> ATOM . LID [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONTAINER BAR ]
 expfactor -> ATOM . error [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
 -- On error shift to state 90
 -- On LID shift to state 91
+## Reductions:
 
 State 90:
+## Known stack suffix:
+## ATOM error
+## LR(1) items:
 expfactor -> ATOM error . [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
+## Reductions:
 -- On error reduce production expfactor -> ATOM error
 -- On TYPE reduce production expfactor -> ATOM error
 -- On STAR reduce production expfactor -> ATOM error
@@ -866,7 +1321,12 @@ expfactor -> ATOM error . [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF
 -- On BAR reduce production expfactor -> ATOM error
 
 State 91:
+## Known stack suffix:
+## ATOM LID
+## LR(1) items:
 expfactor -> ATOM LID . [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
+## Reductions:
 -- On error reduce production expfactor -> ATOM LID
 -- On TYPE reduce production expfactor -> ATOM LID
 -- On STAR reduce production expfactor -> ATOM LID
@@ -879,15 +1339,25 @@ expfactor -> ATOM LID . [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF C
 -- On BAR reduce production expfactor -> ATOM LID
 
 State 92:
+## Known stack suffix:
+## params
+## LR(1) items:
 expfactor -> params . LID container [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
 -- On LID shift to state 93
+## Reductions:
 
 State 93:
+## Known stack suffix:
+## params LID
+## LR(1) items:
 expfactor -> params LID . container [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
 -- On UID shift to state 52
 -- On LID shift to state 54
 -- On identifier shift to state 56
 -- On container shift to state 94
+## Reductions:
 -- On error reduce production container ->
 -- On TYPE reduce production container ->
 -- On STAR reduce production container ->
@@ -900,7 +1370,12 @@ expfactor -> params LID . container [ error TYPE STAR SORT SEMICOLON RBRACE IDEN
 -- On BAR reduce production container ->
 
 State 94:
+## Known stack suffix:
+## params LID container
+## LR(1) items:
 expfactor -> params LID container . [ error TYPE STAR SORT SEMICOLON RBRACE IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
+## Reductions:
 -- On error reduce production expfactor -> params LID container
 -- On TYPE reduce production expfactor -> params LID container
 -- On STAR reduce production expfactor -> params LID container
@@ -913,46 +1388,81 @@ expfactor -> params LID container . [ error TYPE STAR SORT SEMICOLON RBRACE IDEN
 -- On BAR reduce production expfactor -> params LID container
 
 State 95:
+## Known stack suffix:
+## LID COLON expfactor
+## LR(1) items:
 explfactor -> LID COLON expfactor . [ error SEMICOLON RBRACE ]
+## Transitions:
+## Reductions:
 -- On error reduce production explfactor -> LID COLON expfactor
 -- On SEMICOLON reduce production explfactor -> LID COLON expfactor
 -- On RBRACE reduce production explfactor -> LID COLON expfactor
 
 State 96:
+## Known stack suffix:
+## LBRACE explfactors
+## LR(1) items:
 explfactors -> explfactors . SEMICOLON explfactor [ error SEMICOLON RBRACE ]
 explfactors -> explfactors . error [ error SEMICOLON RBRACE ]
 exprhs -> LBRACE explfactors . optional_semicolon RBRACE [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+## Transitions:
 -- On error shift to state 97
 -- On SEMICOLON shift to state 98
 -- On optional_semicolon shift to state 100
+## Reductions:
 -- On RBRACE reduce production optional_semicolon ->
 
 State 97:
+## Known stack suffix:
+## explfactors error
+## LR(1) items:
 explfactors -> explfactors error . [ error SEMICOLON RBRACE ]
+## Transitions:
+## Reductions:
 -- On error reduce production explfactors -> explfactors error
 -- On SEMICOLON reduce production explfactors -> explfactors error
 -- On RBRACE reduce production explfactors -> explfactors error
 
 State 98:
+## Known stack suffix:
+## explfactors SEMICOLON
+## LR(1) items:
 explfactors -> explfactors SEMICOLON . explfactor [ error SEMICOLON RBRACE ]
 optional_semicolon -> SEMICOLON . [ RBRACE ]
+## Transitions:
 -- On error shift to state 24
 -- On LID shift to state 25
 -- On explfactor shift to state 99
+## Reductions:
 -- On RBRACE reduce production optional_semicolon -> SEMICOLON
 
 State 99:
+## Known stack suffix:
+## explfactors SEMICOLON explfactor
+## LR(1) items:
 explfactors -> explfactors SEMICOLON explfactor . [ error SEMICOLON RBRACE ]
+## Transitions:
+## Reductions:
 -- On error reduce production explfactors -> explfactors SEMICOLON explfactor
 -- On SEMICOLON reduce production explfactors -> explfactors SEMICOLON explfactor
 -- On RBRACE reduce production explfactors -> explfactors SEMICOLON explfactor
 
 State 100:
+## Known stack suffix:
+## LBRACE explfactors optional_semicolon
+## LR(1) items:
 exprhs -> LBRACE explfactors optional_semicolon . RBRACE [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+## Transitions:
 -- On RBRACE shift to state 101
+## Reductions:
 
 State 101:
+## Known stack suffix:
+## LBRACE explfactors optional_semicolon RBRACE
+## LR(1) items:
 exprhs -> LBRACE explfactors optional_semicolon RBRACE . [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+## Transitions:
+## Reductions:
 -- On TYPE reduce production exprhs -> LBRACE explfactors optional_semicolon RBRACE
 -- On SORT reduce production exprhs -> LBRACE explfactors optional_semicolon RBRACE
 -- On IDENTIFIER reduce production exprhs -> LBRACE explfactors optional_semicolon RBRACE
@@ -960,20 +1470,35 @@ exprhs -> LBRACE explfactors optional_semicolon RBRACE . [ TYPE SORT IDENTIFIER 
 -- On CONTAINER reduce production exprhs -> LBRACE explfactors optional_semicolon RBRACE
 
 State 102:
+## Known stack suffix:
+## explfactor
+## LR(1) items:
 explfactors -> explfactor . [ error SEMICOLON RBRACE ]
+## Transitions:
+## Reductions:
 -- On error reduce production explfactors -> explfactor
 -- On SEMICOLON reduce production explfactors -> explfactor
 -- On RBRACE reduce production explfactors -> explfactor
 
 State 103:
+## Known stack suffix:
+## BAR
+## LR(1) items:
 expsummand -> BAR . UID [ TYPE SORT IDENTIFIER EOF CONTAINER BAR ]
 expsummand -> BAR . UID OF expfactors [ TYPE SORT IDENTIFIER EOF CONTAINER BAR ]
 expsummand -> BAR . error [ TYPE SORT IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
 -- On error shift to state 104
 -- On UID shift to state 105
+## Reductions:
 
 State 104:
+## Known stack suffix:
+## BAR error
+## LR(1) items:
 expsummand -> BAR error . [ TYPE SORT IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
+## Reductions:
 -- On TYPE reduce production expsummand -> BAR error
 -- On SORT reduce production expsummand -> BAR error
 -- On IDENTIFIER reduce production expsummand -> BAR error
@@ -982,9 +1507,14 @@ expsummand -> BAR error . [ TYPE SORT IDENTIFIER EOF CONTAINER BAR ]
 -- On BAR reduce production expsummand -> BAR error
 
 State 105:
+## Known stack suffix:
+## BAR UID
+## LR(1) items:
 expsummand -> BAR UID . [ TYPE SORT IDENTIFIER EOF CONTAINER BAR ]
 expsummand -> BAR UID . OF expfactors [ TYPE SORT IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
 -- On OF shift to state 106
+## Reductions:
 -- On TYPE reduce production expsummand -> BAR UID
 -- On SORT reduce production expsummand -> BAR UID
 -- On IDENTIFIER reduce production expsummand -> BAR UID
@@ -993,7 +1523,11 @@ expsummand -> BAR UID . OF expfactors [ TYPE SORT IDENTIFIER EOF CONTAINER BAR ]
 -- On BAR reduce production expsummand -> BAR UID
 
 State 106:
+## Known stack suffix:
+## BAR UID OF
+## LR(1) items:
 expsummand -> BAR UID OF . expfactors [ TYPE SORT IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
 -- On error shift to state 19
 -- On QUOTE shift to state 7
 -- On OUTER shift to state 20
@@ -1007,14 +1541,20 @@ expsummand -> BAR UID OF . expfactors [ TYPE SORT IDENTIFIER EOF CONTAINER BAR ]
 -- On params shift to state 92
 -- On expfactors shift to state 107
 -- On expfactor shift to state 111
+## Reductions:
 -- On LID reduce production params ->
 
 State 107:
+## Known stack suffix:
+## BAR UID OF expfactors
+## LR(1) items:
 expfactors -> expfactors . STAR expfactor [ error TYPE STAR SORT IDENTIFIER EOF CONTAINER BAR ]
 expfactors -> expfactors . error [ error TYPE STAR SORT IDENTIFIER EOF CONTAINER BAR ]
 expsummand -> BAR UID OF expfactors . [ TYPE SORT IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
 -- On error shift to state 108
 -- On STAR shift to state 109
+## Reductions:
 -- On TYPE reduce production expsummand -> BAR UID OF expfactors
 -- On SORT reduce production expsummand -> BAR UID OF expfactors
 -- On IDENTIFIER reduce production expsummand -> BAR UID OF expfactors
@@ -1023,7 +1563,12 @@ expsummand -> BAR UID OF expfactors . [ TYPE SORT IDENTIFIER EOF CONTAINER BAR ]
 -- On BAR reduce production expsummand -> BAR UID OF expfactors
 
 State 108:
+## Known stack suffix:
+## expfactors error
+## LR(1) items:
 expfactors -> expfactors error . [ error TYPE STAR SORT IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
+## Reductions:
 -- On error reduce production expfactors -> expfactors error
 -- On TYPE reduce production expfactors -> expfactors error
 -- On STAR reduce production expfactors -> expfactors error
@@ -1034,7 +1579,11 @@ expfactors -> expfactors error . [ error TYPE STAR SORT IDENTIFIER EOF CONTAINER
 -- On BAR reduce production expfactors -> expfactors error
 
 State 109:
+## Known stack suffix:
+## expfactors STAR
+## LR(1) items:
 expfactors -> expfactors STAR . expfactor [ error TYPE STAR SORT IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
 -- On error shift to state 19
 -- On QUOTE shift to state 7
 -- On OUTER shift to state 20
@@ -1047,10 +1596,16 @@ expfactors -> expfactors STAR . expfactor [ error TYPE STAR SORT IDENTIFIER EOF 
 -- On typevar shift to state 15
 -- On params shift to state 92
 -- On expfactor shift to state 110
+## Reductions:
 -- On LID reduce production params ->
 
 State 110:
+## Known stack suffix:
+## expfactors STAR expfactor
+## LR(1) items:
 expfactors -> expfactors STAR expfactor . [ error TYPE STAR SORT IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
+## Reductions:
 -- On error reduce production expfactors -> expfactors STAR expfactor
 -- On TYPE reduce production expfactors -> expfactors STAR expfactor
 -- On STAR reduce production expfactors -> expfactors STAR expfactor
@@ -1061,7 +1616,12 @@ expfactors -> expfactors STAR expfactor . [ error TYPE STAR SORT IDENTIFIER EOF 
 -- On BAR reduce production expfactors -> expfactors STAR expfactor
 
 State 111:
+## Known stack suffix:
+## expfactor
+## LR(1) items:
 expfactors -> expfactor . [ error TYPE STAR SORT IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
+## Reductions:
 -- On error reduce production expfactors -> expfactor
 -- On TYPE reduce production expfactors -> expfactor
 -- On STAR reduce production expfactors -> expfactor
@@ -1072,10 +1632,15 @@ expfactors -> expfactor . [ error TYPE STAR SORT IDENTIFIER EOF CONTAINER BAR ]
 -- On BAR reduce production expfactors -> expfactor
 
 State 112:
+## Known stack suffix:
+## expsummands
+## LR(1) items:
 exprhs -> expsummands . [ TYPE SORT IDENTIFIER EOF CONTAINER ]
 expsummands -> expsummands . expsummand [ TYPE SORT IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
 -- On BAR shift to state 103
 -- On expsummand shift to state 113
+## Reductions:
 -- On TYPE reduce production exprhs -> expsummands
 -- On SORT reduce production exprhs -> expsummands
 -- On IDENTIFIER reduce production exprhs -> expsummands
@@ -1083,7 +1648,12 @@ expsummands -> expsummands . expsummand [ TYPE SORT IDENTIFIER EOF CONTAINER BAR
 -- On CONTAINER reduce production exprhs -> expsummands
 
 State 113:
+## Known stack suffix:
+## expsummands expsummand
+## LR(1) items:
 expsummands -> expsummands expsummand . [ TYPE SORT IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
+## Reductions:
 -- On TYPE reduce production expsummands -> expsummands expsummand
 -- On SORT reduce production expsummands -> expsummands expsummand
 -- On IDENTIFIER reduce production expsummands -> expsummands expsummand
@@ -1092,7 +1662,12 @@ expsummands -> expsummands expsummand . [ TYPE SORT IDENTIFIER EOF CONTAINER BAR
 -- On BAR reduce production expsummands -> expsummands expsummand
 
 State 114:
+## Known stack suffix:
+## expsummand
+## LR(1) items:
 expsummands -> expsummand . [ TYPE SORT IDENTIFIER EOF CONTAINER BAR ]
+## Transitions:
+## Reductions:
 -- On TYPE reduce production expsummands -> expsummand
 -- On SORT reduce production expsummands -> expsummand
 -- On IDENTIFIER reduce production expsummands -> expsummand
@@ -1101,7 +1676,12 @@ expsummands -> expsummand . [ TYPE SORT IDENTIFIER EOF CONTAINER BAR ]
 -- On BAR reduce production expsummands -> expsummand
 
 State 115:
+## Known stack suffix:
+## TYPE params_and_set_current LID EQUAL exprhs
+## LR(1) items:
 declaration -> TYPE params_and_set_current LID EQUAL exprhs . [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+## Transitions:
+## Reductions:
 -- On TYPE reduce production declaration -> TYPE params_and_set_current LID EQUAL exprhs
 -- On SORT reduce production declaration -> TYPE params_and_set_current LID EQUAL exprhs
 -- On IDENTIFIER reduce production declaration -> TYPE params_and_set_current LID EQUAL exprhs
@@ -1109,11 +1689,16 @@ declaration -> TYPE params_and_set_current LID EQUAL exprhs . [ TYPE SORT IDENTI
 -- On CONTAINER reduce production declaration -> TYPE params_and_set_current LID EQUAL exprhs
 
 State 116:
+## Known stack suffix:
+## expfactors
+## LR(1) items:
 expfactors -> expfactors . STAR expfactor [ error TYPE STAR SORT IDENTIFIER EOF CONTAINER ]
 expfactors -> expfactors . error [ error TYPE STAR SORT IDENTIFIER EOF CONTAINER ]
 exprhs -> expfactors . [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+## Transitions:
 -- On error shift to state 108
 -- On STAR shift to state 109
+## Reductions:
 -- On TYPE reduce production exprhs -> expfactors
 -- On SORT reduce production exprhs -> expfactors
 -- On IDENTIFIER reduce production exprhs -> expfactors
@@ -1121,18 +1706,32 @@ exprhs -> expfactors . [ TYPE SORT IDENTIFIER EOF CONTAINER ]
 -- On CONTAINER reduce production exprhs -> expfactors
 
 State 117:
+## Known stack suffix:
+## TYPE params_and_set_current LID BINDS
+## LR(1) items:
 declaration -> TYPE params_and_set_current LID BINDS . sorts EQUAL patrhs [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+## Transitions:
 -- On LID shift to state 32
 -- On sorts shift to state 118
+## Reductions:
 
 State 118:
+## Known stack suffix:
+## TYPE params_and_set_current LID BINDS sorts
+## LR(1) items:
 declaration -> TYPE params_and_set_current LID BINDS sorts . EQUAL patrhs [ TYPE SORT IDENTIFIER EOF CONTAINER ]
 sorts -> sorts . COMMA LID [ EQUAL COMMA ]
+## Transitions:
 -- On EQUAL shift to state 119
 -- On COMMA shift to state 83
+## Reductions:
 
 State 119:
+## Known stack suffix:
+## TYPE params_and_set_current LID BINDS sorts EQUAL
+## LR(1) items:
 declaration -> TYPE params_and_set_current LID BINDS sorts EQUAL . patrhs [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+## Transitions:
 -- On error shift to state 35
 -- On QUOTE shift to state 7
 -- On OUTER shift to state 36
@@ -1152,10 +1751,16 @@ declaration -> TYPE params_and_set_current LID BINDS sorts EQUAL . patrhs [ TYPE
 -- On patfactors shift to state 82
 -- On patfactor shift to state 76
 -- On params shift to state 59
+## Reductions:
 -- On LID reduce production params ->
 
 State 120:
+## Known stack suffix:
+## TYPE params_and_set_current LID BINDS sorts EQUAL patrhs
+## LR(1) items:
 declaration -> TYPE params_and_set_current LID BINDS sorts EQUAL patrhs . [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+## Transitions:
+## Reductions:
 -- On TYPE reduce production declaration -> TYPE params_and_set_current LID BINDS sorts EQUAL patrhs
 -- On SORT reduce production declaration -> TYPE params_and_set_current LID BINDS sorts EQUAL patrhs
 -- On IDENTIFIER reduce production declaration -> TYPE params_and_set_current LID BINDS sorts EQUAL patrhs
@@ -1163,17 +1768,32 @@ declaration -> TYPE params_and_set_current LID BINDS sorts EQUAL patrhs . [ TYPE
 -- On CONTAINER reduce production declaration -> TYPE params_and_set_current LID BINDS sorts EQUAL patrhs
 
 State 121:
+## Known stack suffix:
+## params
+## LR(1) items:
 params_and_set_current -> params . [ LID ]
+## Transitions:
+## Reductions:
 -- On LID reduce production params_and_set_current -> params
 
 State 122:
+## Known stack suffix:
+## SORT
+## LR(1) items:
 declaration -> SORT . LID [ TYPE SORT IDENTIFIER EOF CONTAINER ]
 declaration -> SORT . error [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+## Transitions:
 -- On error shift to state 123
 -- On LID shift to state 124
+## Reductions:
 
 State 123:
+## Known stack suffix:
+## SORT error
+## LR(1) items:
 declaration -> SORT error . [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+## Transitions:
+## Reductions:
 -- On TYPE reduce production declaration -> SORT error
 -- On SORT reduce production declaration -> SORT error
 -- On IDENTIFIER reduce production declaration -> SORT error
@@ -1181,7 +1801,12 @@ declaration -> SORT error . [ TYPE SORT IDENTIFIER EOF CONTAINER ]
 -- On CONTAINER reduce production declaration -> SORT error
 
 State 124:
+## Known stack suffix:
+## SORT LID
+## LR(1) items:
 declaration -> SORT LID . [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+## Transitions:
+## Reductions:
 -- On TYPE reduce production declaration -> SORT LID
 -- On SORT reduce production declaration -> SORT LID
 -- On IDENTIFIER reduce production declaration -> SORT LID
@@ -1189,13 +1814,23 @@ declaration -> SORT LID . [ TYPE SORT IDENTIFIER EOF CONTAINER ]
 -- On CONTAINER reduce production declaration -> SORT LID
 
 State 125:
+## Known stack suffix:
+## IDENTIFIER
+## LR(1) items:
 declaration -> IDENTIFIER . MODULE UID [ TYPE SORT IDENTIFIER EOF CONTAINER ]
 declaration -> IDENTIFIER . error [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+## Transitions:
 -- On error shift to state 126
 -- On MODULE shift to state 127
+## Reductions:
 
 State 126:
+## Known stack suffix:
+## IDENTIFIER error
+## LR(1) items:
 declaration -> IDENTIFIER error . [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+## Transitions:
+## Reductions:
 -- On TYPE reduce production declaration -> IDENTIFIER error
 -- On SORT reduce production declaration -> IDENTIFIER error
 -- On IDENTIFIER reduce production declaration -> IDENTIFIER error
@@ -1203,11 +1838,21 @@ declaration -> IDENTIFIER error . [ TYPE SORT IDENTIFIER EOF CONTAINER ]
 -- On CONTAINER reduce production declaration -> IDENTIFIER error
 
 State 127:
+## Known stack suffix:
+## IDENTIFIER MODULE
+## LR(1) items:
 declaration -> IDENTIFIER MODULE . UID [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+## Transitions:
 -- On UID shift to state 128
+## Reductions:
 
 State 128:
+## Known stack suffix:
+## IDENTIFIER MODULE UID
+## LR(1) items:
 declaration -> IDENTIFIER MODULE UID . [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+## Transitions:
+## Reductions:
 -- On TYPE reduce production declaration -> IDENTIFIER MODULE UID
 -- On SORT reduce production declaration -> IDENTIFIER MODULE UID
 -- On IDENTIFIER reduce production declaration -> IDENTIFIER MODULE UID
@@ -1215,19 +1860,34 @@ declaration -> IDENTIFIER MODULE UID . [ TYPE SORT IDENTIFIER EOF CONTAINER ]
 -- On CONTAINER reduce production declaration -> IDENTIFIER MODULE UID
 
 State 129:
+## Known stack suffix:
+## prologue declarations EOF
+## LR(1) items:
 phrase -> prologue declarations EOF . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production phrase -> prologue declarations EOF
 
 State 130:
+## Known stack suffix:
+## CONTAINER
+## LR(1) items:
 declaration -> CONTAINER . identifier WITH identifier AND identifier [ TYPE SORT IDENTIFIER EOF CONTAINER ]
 declaration -> CONTAINER . error [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+## Transitions:
 -- On error shift to state 131
 -- On UID shift to state 132
 -- On LID shift to state 134
 -- On identifier shift to state 136
+## Reductions:
 
 State 131:
+## Known stack suffix:
+## CONTAINER error
+## LR(1) items:
 declaration -> CONTAINER error . [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+## Transitions:
+## Reductions:
 -- On TYPE reduce production declaration -> CONTAINER error
 -- On SORT reduce production declaration -> CONTAINER error
 -- On IDENTIFIER reduce production declaration -> CONTAINER error
@@ -1235,17 +1895,32 @@ declaration -> CONTAINER error . [ TYPE SORT IDENTIFIER EOF CONTAINER ]
 -- On CONTAINER reduce production declaration -> CONTAINER error
 
 State 132:
+## Known stack suffix:
+## UID
+## LR(1) items:
 identifier -> UID . DOT identifier [ WITH TYPE SORT IDENTIFIER EOF CONTAINER AND ]
+## Transitions:
 -- On DOT shift to state 133
+## Reductions:
 
 State 133:
+## Known stack suffix:
+## UID DOT
+## LR(1) items:
 identifier -> UID DOT . identifier [ WITH TYPE SORT IDENTIFIER EOF CONTAINER AND ]
+## Transitions:
 -- On UID shift to state 132
 -- On LID shift to state 134
 -- On identifier shift to state 135
+## Reductions:
 
 State 134:
+## Known stack suffix:
+## LID
+## LR(1) items:
 identifier -> LID . [ WITH TYPE SORT IDENTIFIER EOF CONTAINER AND ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production identifier -> LID
 -- On TYPE reduce production identifier -> LID
 -- On SORT reduce production identifier -> LID
@@ -1255,7 +1930,12 @@ identifier -> LID . [ WITH TYPE SORT IDENTIFIER EOF CONTAINER AND ]
 -- On AND reduce production identifier -> LID
 
 State 135:
+## Known stack suffix:
+## UID DOT identifier
+## LR(1) items:
 identifier -> UID DOT identifier . [ WITH TYPE SORT IDENTIFIER EOF CONTAINER AND ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production identifier -> UID DOT identifier
 -- On TYPE reduce production identifier -> UID DOT identifier
 -- On SORT reduce production identifier -> UID DOT identifier
@@ -1265,27 +1945,52 @@ identifier -> UID DOT identifier . [ WITH TYPE SORT IDENTIFIER EOF CONTAINER AND
 -- On AND reduce production identifier -> UID DOT identifier
 
 State 136:
+## Known stack suffix:
+## CONTAINER identifier
+## LR(1) items:
 declaration -> CONTAINER identifier . WITH identifier AND identifier [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+## Transitions:
 -- On WITH shift to state 137
+## Reductions:
 
 State 137:
+## Known stack suffix:
+## CONTAINER identifier WITH
+## LR(1) items:
 declaration -> CONTAINER identifier WITH . identifier AND identifier [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+## Transitions:
 -- On UID shift to state 132
 -- On LID shift to state 134
 -- On identifier shift to state 138
+## Reductions:
 
 State 138:
+## Known stack suffix:
+## CONTAINER identifier WITH identifier
+## LR(1) items:
 declaration -> CONTAINER identifier WITH identifier . AND identifier [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+## Transitions:
 -- On AND shift to state 139
+## Reductions:
 
 State 139:
+## Known stack suffix:
+## CONTAINER identifier WITH identifier AND
+## LR(1) items:
 declaration -> CONTAINER identifier WITH identifier AND . identifier [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+## Transitions:
 -- On UID shift to state 132
 -- On LID shift to state 134
 -- On identifier shift to state 140
+## Reductions:
 
 State 140:
+## Known stack suffix:
+## CONTAINER identifier WITH identifier AND identifier
+## LR(1) items:
 declaration -> CONTAINER identifier WITH identifier AND identifier . [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+## Transitions:
+## Reductions:
 -- On TYPE reduce production declaration -> CONTAINER identifier WITH identifier AND identifier
 -- On SORT reduce production declaration -> CONTAINER identifier WITH identifier AND identifier
 -- On IDENTIFIER reduce production declaration -> CONTAINER identifier WITH identifier AND identifier
@@ -1293,7 +1998,12 @@ declaration -> CONTAINER identifier WITH identifier AND identifier . [ TYPE SORT
 -- On CONTAINER reduce production declaration -> CONTAINER identifier WITH identifier AND identifier
 
 State 141:
+## Known stack suffix:
+## declarations declaration
+## LR(1) items:
 declarations -> declarations declaration . [ TYPE SORT IDENTIFIER EOF CONTAINER ]
+## Transitions:
+## Reductions:
 -- On TYPE reduce production declarations -> declarations declaration
 -- On SORT reduce production declarations -> declarations declaration
 -- On IDENTIFIER reduce production declarations -> declarations declaration
@@ -1301,6 +2011,11 @@ declarations -> declarations declaration . [ TYPE SORT IDENTIFIER EOF CONTAINER 
 -- On CONTAINER reduce production declarations -> declarations declaration
 
 State 142:
+## Known stack suffix:
+## phrase
+## LR(1) items:
 phrase' -> phrase . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept phrase
 

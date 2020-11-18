@@ -1,23 +1,38 @@
 State 0:
+## Known stack suffix:
+##
+## LR(1) items:
 exp' -> . exp [ # ]
+## Transitions:
 -- On LPAREN shift to state 1
 -- On INT shift to state 2
 -- On term shift to state 23
 -- On product shift to state 7
 -- On fa1 shift to state 10
 -- On exp shift to state 24
+## Reductions:
 
 State 1:
+## Known stack suffix:
+## LPAREN
+## LR(1) items:
 fa1 -> LPAREN . exp RPAREN [ TIMES RPAREN PLUS # ]
+## Transitions:
 -- On LPAREN shift to state 1
 -- On INT shift to state 2
 -- On term shift to state 3
 -- On product shift to state 7
 -- On fa1 shift to state 10
 -- On exp shift to state 21
+## Reductions:
 
 State 2:
+## Known stack suffix:
+## INT
+## LR(1) items:
 fa1 -> INT . [ TIMES RPAREN PLUS # ]
+## Transitions:
+## Reductions:
 -- On TIMES reduce production fa1 -> INT
 -- On RPAREN reduce production fa1 -> INT
 -- On PLUS reduce production fa1 -> INT
@@ -29,17 +44,26 @@ fa1 -> INT . [ TIMES RPAREN PLUS # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 3:
+## Known stack suffix:
+## term
+## LR(1) items:
 exp -> term . [ RPAREN ]
 term -> term . PLUS product [ RPAREN PLUS ]
 term -> term . PLUS tensorproduct [ RPAREN PLUS ]
 term -> term . PLUS tensorproduct [ RPAREN PLUS ]
+## Transitions:
 -- On PLUS shift to state 4
+## Reductions:
 -- On RPAREN reduce production exp -> term
 
 State 4:
+## Known stack suffix:
+## term PLUS
+## LR(1) items:
 term -> term PLUS . product [ RPAREN PLUS # ]
 term -> term PLUS . tensorproduct [ RPAREN PLUS # ]
 term -> term PLUS . tensorproduct [ RPAREN PLUS # ]
+## Transitions:
 -- On MATRIX shift to state 5
 -- On LPAREN shift to state 6
 -- On INT shift to state 2
@@ -47,9 +71,15 @@ term -> term PLUS . tensorproduct [ RPAREN PLUS # ]
 -- On product shift to state 19
 -- On fa4 shift to state 20
 -- On fa1 shift to state 10
+## Reductions:
 
 State 5:
+## Known stack suffix:
+## MATRIX
+## LR(1) items:
 fa4 -> MATRIX . [ TENSOR RPAREN PLUS # ]
+## Transitions:
+## Reductions:
 -- On TENSOR reduce production fa4 -> MATRIX
 -- On RPAREN reduce production fa4 -> MATRIX
 -- On PLUS reduce production fa4 -> MATRIX
@@ -61,19 +91,29 @@ fa4 -> MATRIX . [ TENSOR RPAREN PLUS # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 6:
+## Known stack suffix:
+## LPAREN
+## LR(1) items:
 fa1 -> LPAREN . exp RPAREN [ TIMES RPAREN PLUS # ]
 fa4 -> LPAREN . exp RPAREN [ TENSOR RPAREN PLUS # ]
+## Transitions:
 -- On LPAREN shift to state 1
 -- On INT shift to state 2
 -- On term shift to state 3
 -- On product shift to state 7
 -- On fa1 shift to state 10
 -- On exp shift to state 11
+## Reductions:
 
 State 7:
+## Known stack suffix:
+## product
+## LR(1) items:
 product -> product . TIMES fa1 [ TIMES RPAREN PLUS # ]
 term -> product . [ RPAREN PLUS # ]
+## Transitions:
 -- On TIMES shift to state 8
+## Reductions:
 -- On RPAREN reduce production term -> product
 -- On PLUS reduce production term -> product
 -- On # reduce production term -> product
@@ -84,13 +124,23 @@ term -> product . [ RPAREN PLUS # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 8:
+## Known stack suffix:
+## product TIMES
+## LR(1) items:
 product -> product TIMES . fa1 [ TIMES RPAREN PLUS # ]
+## Transitions:
 -- On LPAREN shift to state 1
 -- On INT shift to state 2
 -- On fa1 shift to state 9
+## Reductions:
 
 State 9:
+## Known stack suffix:
+## product TIMES fa1
+## LR(1) items:
 product -> product TIMES fa1 . [ TIMES RPAREN PLUS # ]
+## Transitions:
+## Reductions:
 -- On TIMES reduce production product -> product TIMES fa1
 -- On RPAREN reduce production product -> product TIMES fa1
 -- On PLUS reduce production product -> product TIMES fa1
@@ -102,7 +152,12 @@ product -> product TIMES fa1 . [ TIMES RPAREN PLUS # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 10:
+## Known stack suffix:
+## fa1
+## LR(1) items:
 product -> fa1 . [ TIMES RPAREN PLUS # ]
+## Transitions:
+## Reductions:
 -- On TIMES reduce production product -> fa1
 -- On RPAREN reduce production product -> fa1
 -- On PLUS reduce production product -> fa1
@@ -114,13 +169,23 @@ product -> fa1 . [ TIMES RPAREN PLUS # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 11:
+## Known stack suffix:
+## LPAREN exp
+## LR(1) items:
 fa1 -> LPAREN exp . RPAREN [ TIMES RPAREN PLUS # ]
 fa4 -> LPAREN exp . RPAREN [ TENSOR RPAREN PLUS # ]
+## Transitions:
 -- On RPAREN shift to state 12
+## Reductions:
 
 State 12:
+## Known stack suffix:
+## LPAREN exp RPAREN
+## LR(1) items:
 fa1 -> LPAREN exp RPAREN . [ TIMES RPAREN PLUS # ]
 fa4 -> LPAREN exp RPAREN . [ TENSOR RPAREN PLUS # ]
+## Transitions:
+## Reductions:
 -- On TIMES reduce production fa1 -> LPAREN exp RPAREN
 -- On TENSOR reduce production fa4 -> LPAREN exp RPAREN
 -- On RPAREN reduce production fa1 -> LPAREN exp RPAREN
@@ -137,10 +202,15 @@ fa4 -> LPAREN exp RPAREN . [ TENSOR RPAREN PLUS # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 13:
+## Known stack suffix:
+## term PLUS tensorproduct
+## LR(1) items:
 tensorproduct -> tensorproduct . TENSOR fa4 [ TENSOR RPAREN PLUS # ]
 term -> term PLUS tensorproduct . [ RPAREN PLUS # ]
 term -> term PLUS tensorproduct . [ RPAREN PLUS # ]
+## Transitions:
 -- On TENSOR shift to state 14
+## Reductions:
 -- On RPAREN reduce production term -> term PLUS tensorproduct
 -- On RPAREN reduce production term -> term PLUS tensorproduct
 -- On PLUS reduce production term -> term PLUS tensorproduct
@@ -155,26 +225,46 @@ term -> term PLUS tensorproduct . [ RPAREN PLUS # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 14:
+## Known stack suffix:
+## tensorproduct TENSOR
+## LR(1) items:
 tensorproduct -> tensorproduct TENSOR . fa4 [ TENSOR RPAREN PLUS # ]
+## Transitions:
 -- On MATRIX shift to state 5
 -- On LPAREN shift to state 15
 -- On fa4 shift to state 18
+## Reductions:
 
 State 15:
+## Known stack suffix:
+## LPAREN
+## LR(1) items:
 fa4 -> LPAREN . exp RPAREN [ TENSOR RPAREN PLUS # ]
+## Transitions:
 -- On LPAREN shift to state 1
 -- On INT shift to state 2
 -- On term shift to state 3
 -- On product shift to state 7
 -- On fa1 shift to state 10
 -- On exp shift to state 16
+## Reductions:
 
 State 16:
+## Known stack suffix:
+## LPAREN exp
+## LR(1) items:
 fa4 -> LPAREN exp . RPAREN [ TENSOR RPAREN PLUS # ]
+## Transitions:
 -- On RPAREN shift to state 17
+## Reductions:
 
 State 17:
+## Known stack suffix:
+## LPAREN exp RPAREN
+## LR(1) items:
 fa4 -> LPAREN exp RPAREN . [ TENSOR RPAREN PLUS # ]
+## Transitions:
+## Reductions:
 -- On TENSOR reduce production fa4 -> LPAREN exp RPAREN
 -- On RPAREN reduce production fa4 -> LPAREN exp RPAREN
 -- On PLUS reduce production fa4 -> LPAREN exp RPAREN
@@ -186,7 +276,12 @@ fa4 -> LPAREN exp RPAREN . [ TENSOR RPAREN PLUS # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 18:
+## Known stack suffix:
+## tensorproduct TENSOR fa4
+## LR(1) items:
 tensorproduct -> tensorproduct TENSOR fa4 . [ TENSOR RPAREN PLUS # ]
+## Transitions:
+## Reductions:
 -- On TENSOR reduce production tensorproduct -> tensorproduct TENSOR fa4
 -- On RPAREN reduce production tensorproduct -> tensorproduct TENSOR fa4
 -- On PLUS reduce production tensorproduct -> tensorproduct TENSOR fa4
@@ -198,9 +293,14 @@ tensorproduct -> tensorproduct TENSOR fa4 . [ TENSOR RPAREN PLUS # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 19:
+## Known stack suffix:
+## term PLUS product
+## LR(1) items:
 product -> product . TIMES fa1 [ TIMES RPAREN PLUS # ]
 term -> term PLUS product . [ RPAREN PLUS # ]
+## Transitions:
 -- On TIMES shift to state 8
+## Reductions:
 -- On RPAREN reduce production term -> term PLUS product
 -- On PLUS reduce production term -> term PLUS product
 -- On # reduce production term -> term PLUS product
@@ -211,7 +311,12 @@ term -> term PLUS product . [ RPAREN PLUS # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 20:
+## Known stack suffix:
+## fa4
+## LR(1) items:
 tensorproduct -> fa4 . [ TENSOR RPAREN PLUS # ]
+## Transitions:
+## Reductions:
 -- On TENSOR reduce production tensorproduct -> fa4
 -- On RPAREN reduce production tensorproduct -> fa4
 -- On PLUS reduce production tensorproduct -> fa4
@@ -223,11 +328,21 @@ tensorproduct -> fa4 . [ TENSOR RPAREN PLUS # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 21:
+## Known stack suffix:
+## LPAREN exp
+## LR(1) items:
 fa1 -> LPAREN exp . RPAREN [ TIMES RPAREN PLUS # ]
+## Transitions:
 -- On RPAREN shift to state 22
+## Reductions:
 
 State 22:
+## Known stack suffix:
+## LPAREN exp RPAREN
+## LR(1) items:
 fa1 -> LPAREN exp RPAREN . [ TIMES RPAREN PLUS # ]
+## Transitions:
+## Reductions:
 -- On TIMES reduce production fa1 -> LPAREN exp RPAREN
 -- On RPAREN reduce production fa1 -> LPAREN exp RPAREN
 -- On PLUS reduce production fa1 -> LPAREN exp RPAREN
@@ -239,11 +354,16 @@ fa1 -> LPAREN exp RPAREN . [ TIMES RPAREN PLUS # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 23:
+## Known stack suffix:
+## term
+## LR(1) items:
 exp -> term . [ # ]
 term -> term . PLUS product [ PLUS # ]
 term -> term . PLUS tensorproduct [ PLUS # ]
 term -> term . PLUS tensorproduct [ PLUS # ]
+## Transitions:
 -- On PLUS shift to state 4
+## Reductions:
 -- On # reduce production exp -> term
 ** End-of-stream conflict on PLUS
 **   There is a tension between
@@ -252,6 +372,11 @@ term -> term . PLUS tensorproduct [ PLUS # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 24:
+## Known stack suffix:
+## exp
+## LR(1) items:
 exp' -> exp . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept exp
 

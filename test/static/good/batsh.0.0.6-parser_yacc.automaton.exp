@@ -1,5 +1,9 @@
 State 0:
+## Known stack suffix:
+##
+## LR(1) items:
 program' -> . program [ # ]
+## Transitions:
 -- On WHILE shift to state 1
 -- On TRUE shift to state 3
 -- On STRING shift to state 4
@@ -27,14 +31,24 @@ program' -> . program [ # ]
 -- On if_statement shift to state 81
 -- On expression shift to state 82
 -- On binary_expression shift to state 23
+## Reductions:
 -- On EOF reduce production toplevel_list ->
 
 State 1:
+## Known stack suffix:
+## WHILE
+## LR(1) items:
 loop_statement -> WHILE . LEFT_PAREN expression RIGHT_PAREN statement [ WHILE TRUE STRING SEMICOLON RIGHT_BRACE RETURN NOT LEFT_PAREN LEFT_BRACK LEFT_BRACE INT IF IDENTIFIER GLOBAL FUNCTION FLOAT FALSE EOF ELSE COMMENT ]
+## Transitions:
 -- On LEFT_PAREN shift to state 2
+## Reductions:
 
 State 2:
+## Known stack suffix:
+## WHILE LEFT_PAREN
+## LR(1) items:
 loop_statement -> WHILE LEFT_PAREN . expression RIGHT_PAREN statement [ WHILE TRUE STRING SEMICOLON RIGHT_BRACE RETURN NOT LEFT_PAREN LEFT_BRACK LEFT_BRACE INT IF IDENTIFIER GLOBAL FUNCTION FLOAT FALSE EOF ELSE COMMENT ]
+## Transitions:
 -- On TRUE shift to state 3
 -- On STRING shift to state 4
 -- On NOT shift to state 5
@@ -48,9 +62,15 @@ loop_statement -> WHILE LEFT_PAREN . expression RIGHT_PAREN statement [ WHILE TR
 -- On leftvalue shift to state 14
 -- On expression shift to state 57
 -- On binary_expression shift to state 23
+## Reductions:
 
 State 3:
+## Known stack suffix:
+## TRUE
+## LR(1) items:
 expression -> TRUE . [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
+## Transitions:
+## Reductions:
 -- On SNE reduce production expression -> TRUE
 -- On SEQ reduce production expression -> TRUE
 -- On SEMICOLON reduce production expression -> TRUE
@@ -71,7 +91,12 @@ expression -> TRUE . [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY M
 -- On AEQ reduce production expression -> TRUE
 
 State 4:
+## Known stack suffix:
+## STRING
+## LR(1) items:
 expression -> STRING . [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
+## Transitions:
+## Reductions:
 -- On SNE reduce production expression -> STRING
 -- On SEQ reduce production expression -> STRING
 -- On SEMICOLON reduce production expression -> STRING
@@ -92,7 +117,11 @@ expression -> STRING . [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY
 -- On AEQ reduce production expression -> STRING
 
 State 5:
+## Known stack suffix:
+## NOT
+## LR(1) items:
 unary_expression -> NOT . expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
+## Transitions:
 -- On TRUE shift to state 3
 -- On STRING shift to state 4
 -- On NOT shift to state 5
@@ -106,9 +135,14 @@ unary_expression -> NOT . expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK
 -- On leftvalue shift to state 14
 -- On expression shift to state 56
 -- On binary_expression shift to state 23
+## Reductions:
 
 State 6:
+## Known stack suffix:
+## LEFT_PAREN
+## LR(1) items:
 expression -> LEFT_PAREN . expression RIGHT_PAREN [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
+## Transitions:
 -- On TRUE shift to state 3
 -- On STRING shift to state 4
 -- On NOT shift to state 5
@@ -122,9 +156,14 @@ expression -> LEFT_PAREN . expression RIGHT_PAREN [ SNE SEQ SEMICOLON RIGHT_PARE
 -- On leftvalue shift to state 14
 -- On expression shift to state 54
 -- On binary_expression shift to state 23
+## Reductions:
 
 State 7:
+## Known stack suffix:
+## LEFT_BRACK
+## LR(1) items:
 expression -> LEFT_BRACK . expression_list RIGHT_BRACK [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
+## Transitions:
 -- On TRUE shift to state 3
 -- On STRING shift to state 4
 -- On NOT shift to state 5
@@ -139,10 +178,16 @@ expression -> LEFT_BRACK . expression_list RIGHT_BRACK [ SNE SEQ SEMICOLON RIGHT
 -- On expression_list shift to state 52
 -- On expression shift to state 49
 -- On binary_expression shift to state 23
+## Reductions:
 -- On RIGHT_BRACK reduce production expression_list ->
 
 State 8:
+## Known stack suffix:
+## INT
+## LR(1) items:
 expression -> INT . [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
+## Transitions:
+## Reductions:
 -- On SNE reduce production expression -> INT
 -- On SEQ reduce production expression -> INT
 -- On SEMICOLON reduce production expression -> INT
@@ -163,9 +208,14 @@ expression -> INT . [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MO
 -- On AEQ reduce production expression -> INT
 
 State 9:
+## Known stack suffix:
+## IDENTIFIER
+## LR(1) items:
 expression -> IDENTIFIER . LEFT_PAREN expression_list RIGHT_PAREN [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 leftvalue -> IDENTIFIER . [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LEFT_BRACK LE GT GE EQUAL DIVIDE CONCAT COMMA ANE AEQ ]
+## Transitions:
 -- On LEFT_PAREN shift to state 10
+## Reductions:
 -- On SNE reduce production leftvalue -> IDENTIFIER
 -- On SEQ reduce production leftvalue -> IDENTIFIER
 -- On SEMICOLON reduce production leftvalue -> IDENTIFIER
@@ -188,7 +238,11 @@ leftvalue -> IDENTIFIER . [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTI
 -- On AEQ reduce production leftvalue -> IDENTIFIER
 
 State 10:
+## Known stack suffix:
+## IDENTIFIER LEFT_PAREN
+## LR(1) items:
 expression -> IDENTIFIER LEFT_PAREN . expression_list RIGHT_PAREN [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
+## Transitions:
 -- On TRUE shift to state 3
 -- On STRING shift to state 4
 -- On NOT shift to state 5
@@ -203,10 +257,16 @@ expression -> IDENTIFIER LEFT_PAREN . expression_list RIGHT_PAREN [ SNE SEQ SEMI
 -- On expression_list shift to state 47
 -- On expression shift to state 49
 -- On binary_expression shift to state 23
+## Reductions:
 -- On RIGHT_PAREN reduce production expression_list ->
 
 State 11:
+## Known stack suffix:
+## FLOAT
+## LR(1) items:
 expression -> FLOAT . [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
+## Transitions:
+## Reductions:
 -- On SNE reduce production expression -> FLOAT
 -- On SEQ reduce production expression -> FLOAT
 -- On SEMICOLON reduce production expression -> FLOAT
@@ -227,7 +287,12 @@ expression -> FLOAT . [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY 
 -- On AEQ reduce production expression -> FLOAT
 
 State 12:
+## Known stack suffix:
+## FALSE
+## LR(1) items:
 expression -> FALSE . [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
+## Transitions:
+## Reductions:
 -- On SNE reduce production expression -> FALSE
 -- On SEQ reduce production expression -> FALSE
 -- On SEMICOLON reduce production expression -> FALSE
@@ -248,7 +313,12 @@ expression -> FALSE . [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY 
 -- On AEQ reduce production expression -> FALSE
 
 State 13:
+## Known stack suffix:
+## unary_expression
+## LR(1) items:
 expression -> unary_expression . [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
+## Transitions:
+## Reductions:
 -- On SNE reduce production expression -> unary_expression
 -- On SEQ reduce production expression -> unary_expression
 -- On SEMICOLON reduce production expression -> unary_expression
@@ -269,9 +339,14 @@ expression -> unary_expression . [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLU
 -- On AEQ reduce production expression -> unary_expression
 
 State 14:
+## Known stack suffix:
+## leftvalue
+## LR(1) items:
 expression -> leftvalue . [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 leftvalue -> leftvalue . LEFT_BRACK expression RIGHT_BRACK [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LEFT_BRACK LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
+## Transitions:
 -- On LEFT_BRACK shift to state 15
+## Reductions:
 -- On SNE reduce production expression -> leftvalue
 -- On SEQ reduce production expression -> leftvalue
 -- On SEMICOLON reduce production expression -> leftvalue
@@ -292,7 +367,11 @@ leftvalue -> leftvalue . LEFT_BRACK expression RIGHT_BRACK [ SNE SEQ SEMICOLON R
 -- On AEQ reduce production expression -> leftvalue
 
 State 15:
+## Known stack suffix:
+## leftvalue LEFT_BRACK
+## LR(1) items:
 leftvalue -> leftvalue LEFT_BRACK . expression RIGHT_BRACK [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LEFT_BRACK LE GT GE EQUAL DIVIDE CONCAT COMMA ANE AEQ ]
+## Transitions:
 -- On TRUE shift to state 3
 -- On STRING shift to state 4
 -- On NOT shift to state 5
@@ -306,8 +385,12 @@ leftvalue -> leftvalue LEFT_BRACK . expression RIGHT_BRACK [ SNE SEQ SEMICOLON R
 -- On leftvalue shift to state 14
 -- On expression shift to state 16
 -- On binary_expression shift to state 23
+## Reductions:
 
 State 16:
+## Known stack suffix:
+## leftvalue LEFT_BRACK expression
+## LR(1) items:
 binary_expression -> expression . PLUS expression [ SNE SEQ RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT ANE AEQ ]
 binary_expression -> expression . MINUS expression [ SNE SEQ RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT ANE AEQ ]
 binary_expression -> expression . MULTIPLY expression [ SNE SEQ RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT ANE AEQ ]
@@ -323,6 +406,7 @@ binary_expression -> expression . CONCAT expression [ SNE SEQ RIGHT_BRACK PLUS M
 binary_expression -> expression . SEQ expression [ SNE SEQ RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT ANE AEQ ]
 binary_expression -> expression . SNE expression [ SNE SEQ RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT ANE AEQ ]
 leftvalue -> leftvalue LEFT_BRACK expression . RIGHT_BRACK [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LEFT_BRACK LE GT GE EQUAL DIVIDE CONCAT COMMA ANE AEQ ]
+## Transitions:
 -- On SNE shift to state 17
 -- On SEQ shift to state 40
 -- On RIGHT_BRACK shift to state 42
@@ -338,9 +422,14 @@ leftvalue -> leftvalue LEFT_BRACK expression . RIGHT_BRACK [ SNE SEQ SEMICOLON R
 -- On CONCAT shift to state 32
 -- On ANE shift to state 43
 -- On AEQ shift to state 45
+## Reductions:
 
 State 17:
+## Known stack suffix:
+## expression SNE
+## LR(1) items:
 binary_expression -> expression SNE . expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
+## Transitions:
 -- On TRUE shift to state 3
 -- On STRING shift to state 4
 -- On NOT shift to state 5
@@ -354,8 +443,12 @@ binary_expression -> expression SNE . expression [ SNE SEQ SEMICOLON RIGHT_PAREN
 -- On leftvalue shift to state 14
 -- On expression shift to state 18
 -- On binary_expression shift to state 23
+## Reductions:
 
 State 18:
+## Known stack suffix:
+## expression SNE expression
+## LR(1) items:
 binary_expression -> expression . PLUS expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . MINUS expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . MULTIPLY expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
@@ -371,6 +464,7 @@ binary_expression -> expression . CONCAT expression [ SNE SEQ SEMICOLON RIGHT_PA
 binary_expression -> expression . SEQ expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . SNE expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression SNE expression . [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
+## Transitions:
 -- On PLUS shift to state 19
 -- On MULTIPLY shift to state 21
 -- On MODULO shift to state 24
@@ -381,13 +475,18 @@ binary_expression -> expression SNE expression . [ SNE SEQ SEMICOLON RIGHT_PAREN
 -- On GE shift to state 38
 -- On DIVIDE shift to state 26
 -- On CONCAT shift to state 32
+## Reductions:
 -- On SEMICOLON reduce production binary_expression -> expression SNE expression
 -- On RIGHT_PAREN reduce production binary_expression -> expression SNE expression
 -- On RIGHT_BRACK reduce production binary_expression -> expression SNE expression
 -- On COMMA reduce production binary_expression -> expression SNE expression
 
 State 19:
+## Known stack suffix:
+## expression PLUS
+## LR(1) items:
 binary_expression -> expression PLUS . expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
+## Transitions:
 -- On TRUE shift to state 3
 -- On STRING shift to state 4
 -- On NOT shift to state 5
@@ -401,8 +500,12 @@ binary_expression -> expression PLUS . expression [ SNE SEQ SEMICOLON RIGHT_PARE
 -- On leftvalue shift to state 14
 -- On expression shift to state 20
 -- On binary_expression shift to state 23
+## Reductions:
 
 State 20:
+## Known stack suffix:
+## expression PLUS expression
+## LR(1) items:
 binary_expression -> expression . PLUS expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression PLUS expression . [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . MINUS expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
@@ -418,9 +521,11 @@ binary_expression -> expression . LE expression [ SNE SEQ SEMICOLON RIGHT_PAREN 
 binary_expression -> expression . CONCAT expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . SEQ expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . SNE expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
+## Transitions:
 -- On MULTIPLY shift to state 21
 -- On MODULO shift to state 24
 -- On DIVIDE shift to state 26
+## Reductions:
 -- On SNE reduce production binary_expression -> expression PLUS expression
 -- On SEQ reduce production binary_expression -> expression PLUS expression
 -- On SEMICOLON reduce production binary_expression -> expression PLUS expression
@@ -438,7 +543,11 @@ binary_expression -> expression . SNE expression [ SNE SEQ SEMICOLON RIGHT_PAREN
 -- On AEQ reduce production binary_expression -> expression PLUS expression
 
 State 21:
+## Known stack suffix:
+## expression MULTIPLY
+## LR(1) items:
 binary_expression -> expression MULTIPLY . expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
+## Transitions:
 -- On TRUE shift to state 3
 -- On STRING shift to state 4
 -- On NOT shift to state 5
@@ -452,8 +561,12 @@ binary_expression -> expression MULTIPLY . expression [ SNE SEQ SEMICOLON RIGHT_
 -- On leftvalue shift to state 14
 -- On expression shift to state 22
 -- On binary_expression shift to state 23
+## Reductions:
 
 State 22:
+## Known stack suffix:
+## expression MULTIPLY expression
+## LR(1) items:
 binary_expression -> expression . PLUS expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . MINUS expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . MULTIPLY expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
@@ -469,6 +582,8 @@ binary_expression -> expression . LE expression [ SNE SEQ SEMICOLON RIGHT_PAREN 
 binary_expression -> expression . CONCAT expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . SEQ expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . SNE expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
+## Transitions:
+## Reductions:
 -- On SNE reduce production binary_expression -> expression MULTIPLY expression
 -- On SEQ reduce production binary_expression -> expression MULTIPLY expression
 -- On SEMICOLON reduce production binary_expression -> expression MULTIPLY expression
@@ -489,7 +604,12 @@ binary_expression -> expression . SNE expression [ SNE SEQ SEMICOLON RIGHT_PAREN
 -- On AEQ reduce production binary_expression -> expression MULTIPLY expression
 
 State 23:
+## Known stack suffix:
+## binary_expression
+## LR(1) items:
 expression -> binary_expression . [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
+## Transitions:
+## Reductions:
 -- On SNE reduce production expression -> binary_expression
 -- On SEQ reduce production expression -> binary_expression
 -- On SEMICOLON reduce production expression -> binary_expression
@@ -510,7 +630,11 @@ expression -> binary_expression . [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PL
 -- On AEQ reduce production expression -> binary_expression
 
 State 24:
+## Known stack suffix:
+## expression MODULO
+## LR(1) items:
 binary_expression -> expression MODULO . expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
+## Transitions:
 -- On TRUE shift to state 3
 -- On STRING shift to state 4
 -- On NOT shift to state 5
@@ -524,8 +648,12 @@ binary_expression -> expression MODULO . expression [ SNE SEQ SEMICOLON RIGHT_PA
 -- On leftvalue shift to state 14
 -- On expression shift to state 25
 -- On binary_expression shift to state 23
+## Reductions:
 
 State 25:
+## Known stack suffix:
+## expression MODULO expression
+## LR(1) items:
 binary_expression -> expression . PLUS expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . MINUS expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . MULTIPLY expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
@@ -541,6 +669,8 @@ binary_expression -> expression . LE expression [ SNE SEQ SEMICOLON RIGHT_PAREN 
 binary_expression -> expression . CONCAT expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . SEQ expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . SNE expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
+## Transitions:
+## Reductions:
 -- On SNE reduce production binary_expression -> expression MODULO expression
 -- On SEQ reduce production binary_expression -> expression MODULO expression
 -- On SEMICOLON reduce production binary_expression -> expression MODULO expression
@@ -561,7 +691,11 @@ binary_expression -> expression . SNE expression [ SNE SEQ SEMICOLON RIGHT_PAREN
 -- On AEQ reduce production binary_expression -> expression MODULO expression
 
 State 26:
+## Known stack suffix:
+## expression DIVIDE
+## LR(1) items:
 binary_expression -> expression DIVIDE . expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
+## Transitions:
 -- On TRUE shift to state 3
 -- On STRING shift to state 4
 -- On NOT shift to state 5
@@ -575,8 +709,12 @@ binary_expression -> expression DIVIDE . expression [ SNE SEQ SEMICOLON RIGHT_PA
 -- On leftvalue shift to state 14
 -- On expression shift to state 27
 -- On binary_expression shift to state 23
+## Reductions:
 
 State 27:
+## Known stack suffix:
+## expression DIVIDE expression
+## LR(1) items:
 binary_expression -> expression . PLUS expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . MINUS expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . MULTIPLY expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
@@ -592,6 +730,8 @@ binary_expression -> expression . LE expression [ SNE SEQ SEMICOLON RIGHT_PAREN 
 binary_expression -> expression . CONCAT expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . SEQ expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . SNE expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
+## Transitions:
+## Reductions:
 -- On SNE reduce production binary_expression -> expression DIVIDE expression
 -- On SEQ reduce production binary_expression -> expression DIVIDE expression
 -- On SEMICOLON reduce production binary_expression -> expression DIVIDE expression
@@ -612,7 +752,11 @@ binary_expression -> expression . SNE expression [ SNE SEQ SEMICOLON RIGHT_PAREN
 -- On AEQ reduce production binary_expression -> expression DIVIDE expression
 
 State 28:
+## Known stack suffix:
+## expression MINUS
+## LR(1) items:
 binary_expression -> expression MINUS . expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
+## Transitions:
 -- On TRUE shift to state 3
 -- On STRING shift to state 4
 -- On NOT shift to state 5
@@ -626,8 +770,12 @@ binary_expression -> expression MINUS . expression [ SNE SEQ SEMICOLON RIGHT_PAR
 -- On leftvalue shift to state 14
 -- On expression shift to state 29
 -- On binary_expression shift to state 23
+## Reductions:
 
 State 29:
+## Known stack suffix:
+## expression MINUS expression
+## LR(1) items:
 binary_expression -> expression . PLUS expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . MINUS expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression MINUS expression . [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
@@ -643,9 +791,11 @@ binary_expression -> expression . LE expression [ SNE SEQ SEMICOLON RIGHT_PAREN 
 binary_expression -> expression . CONCAT expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . SEQ expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . SNE expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
+## Transitions:
 -- On MULTIPLY shift to state 21
 -- On MODULO shift to state 24
 -- On DIVIDE shift to state 26
+## Reductions:
 -- On SNE reduce production binary_expression -> expression MINUS expression
 -- On SEQ reduce production binary_expression -> expression MINUS expression
 -- On SEMICOLON reduce production binary_expression -> expression MINUS expression
@@ -663,7 +813,11 @@ binary_expression -> expression . SNE expression [ SNE SEQ SEMICOLON RIGHT_PAREN
 -- On AEQ reduce production binary_expression -> expression MINUS expression
 
 State 30:
+## Known stack suffix:
+## expression LT
+## LR(1) items:
 binary_expression -> expression LT . expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
+## Transitions:
 -- On TRUE shift to state 3
 -- On STRING shift to state 4
 -- On NOT shift to state 5
@@ -677,8 +831,12 @@ binary_expression -> expression LT . expression [ SNE SEQ SEMICOLON RIGHT_PAREN 
 -- On leftvalue shift to state 14
 -- On expression shift to state 31
 -- On binary_expression shift to state 23
+## Reductions:
 
 State 31:
+## Known stack suffix:
+## expression LT expression
+## LR(1) items:
 binary_expression -> expression . PLUS expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . MINUS expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . MULTIPLY expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
@@ -694,12 +852,14 @@ binary_expression -> expression . LE expression [ SNE SEQ SEMICOLON RIGHT_PAREN 
 binary_expression -> expression . CONCAT expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . SEQ expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . SNE expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
+## Transitions:
 -- On PLUS shift to state 19
 -- On MULTIPLY shift to state 21
 -- On MODULO shift to state 24
 -- On MINUS shift to state 28
 -- On DIVIDE shift to state 26
 -- On CONCAT shift to state 32
+## Reductions:
 -- On SNE reduce production binary_expression -> expression LT expression
 -- On SEQ reduce production binary_expression -> expression LT expression
 -- On SEMICOLON reduce production binary_expression -> expression LT expression
@@ -710,7 +870,11 @@ binary_expression -> expression . SNE expression [ SNE SEQ SEMICOLON RIGHT_PAREN
 -- On AEQ reduce production binary_expression -> expression LT expression
 
 State 32:
+## Known stack suffix:
+## expression CONCAT
+## LR(1) items:
 binary_expression -> expression CONCAT . expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
+## Transitions:
 -- On TRUE shift to state 3
 -- On STRING shift to state 4
 -- On NOT shift to state 5
@@ -724,8 +888,12 @@ binary_expression -> expression CONCAT . expression [ SNE SEQ SEMICOLON RIGHT_PA
 -- On leftvalue shift to state 14
 -- On expression shift to state 33
 -- On binary_expression shift to state 23
+## Reductions:
 
 State 33:
+## Known stack suffix:
+## expression CONCAT expression
+## LR(1) items:
 binary_expression -> expression . PLUS expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . MINUS expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . MULTIPLY expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
@@ -741,11 +909,13 @@ binary_expression -> expression . CONCAT expression [ SNE SEQ SEMICOLON RIGHT_PA
 binary_expression -> expression CONCAT expression . [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . SEQ expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . SNE expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
+## Transitions:
 -- On PLUS shift to state 19
 -- On MULTIPLY shift to state 21
 -- On MODULO shift to state 24
 -- On MINUS shift to state 28
 -- On DIVIDE shift to state 26
+## Reductions:
 -- On SNE reduce production binary_expression -> expression CONCAT expression
 -- On SEQ reduce production binary_expression -> expression CONCAT expression
 -- On SEMICOLON reduce production binary_expression -> expression CONCAT expression
@@ -761,7 +931,11 @@ binary_expression -> expression . SNE expression [ SNE SEQ SEMICOLON RIGHT_PAREN
 -- On AEQ reduce production binary_expression -> expression CONCAT expression
 
 State 34:
+## Known stack suffix:
+## expression LE
+## LR(1) items:
 binary_expression -> expression LE . expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
+## Transitions:
 -- On TRUE shift to state 3
 -- On STRING shift to state 4
 -- On NOT shift to state 5
@@ -775,8 +949,12 @@ binary_expression -> expression LE . expression [ SNE SEQ SEMICOLON RIGHT_PAREN 
 -- On leftvalue shift to state 14
 -- On expression shift to state 35
 -- On binary_expression shift to state 23
+## Reductions:
 
 State 35:
+## Known stack suffix:
+## expression LE expression
+## LR(1) items:
 binary_expression -> expression . PLUS expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . MINUS expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . MULTIPLY expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
@@ -792,12 +970,14 @@ binary_expression -> expression LE expression . [ SNE SEQ SEMICOLON RIGHT_PAREN 
 binary_expression -> expression . CONCAT expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . SEQ expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . SNE expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
+## Transitions:
 -- On PLUS shift to state 19
 -- On MULTIPLY shift to state 21
 -- On MODULO shift to state 24
 -- On MINUS shift to state 28
 -- On DIVIDE shift to state 26
 -- On CONCAT shift to state 32
+## Reductions:
 -- On SNE reduce production binary_expression -> expression LE expression
 -- On SEQ reduce production binary_expression -> expression LE expression
 -- On SEMICOLON reduce production binary_expression -> expression LE expression
@@ -808,7 +988,11 @@ binary_expression -> expression . SNE expression [ SNE SEQ SEMICOLON RIGHT_PAREN
 -- On AEQ reduce production binary_expression -> expression LE expression
 
 State 36:
+## Known stack suffix:
+## expression GT
+## LR(1) items:
 binary_expression -> expression GT . expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
+## Transitions:
 -- On TRUE shift to state 3
 -- On STRING shift to state 4
 -- On NOT shift to state 5
@@ -822,8 +1006,12 @@ binary_expression -> expression GT . expression [ SNE SEQ SEMICOLON RIGHT_PAREN 
 -- On leftvalue shift to state 14
 -- On expression shift to state 37
 -- On binary_expression shift to state 23
+## Reductions:
 
 State 37:
+## Known stack suffix:
+## expression GT expression
+## LR(1) items:
 binary_expression -> expression . PLUS expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . MINUS expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . MULTIPLY expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
@@ -839,12 +1027,14 @@ binary_expression -> expression . LE expression [ SNE SEQ SEMICOLON RIGHT_PAREN 
 binary_expression -> expression . CONCAT expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . SEQ expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . SNE expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
+## Transitions:
 -- On PLUS shift to state 19
 -- On MULTIPLY shift to state 21
 -- On MODULO shift to state 24
 -- On MINUS shift to state 28
 -- On DIVIDE shift to state 26
 -- On CONCAT shift to state 32
+## Reductions:
 -- On SNE reduce production binary_expression -> expression GT expression
 -- On SEQ reduce production binary_expression -> expression GT expression
 -- On SEMICOLON reduce production binary_expression -> expression GT expression
@@ -855,7 +1045,11 @@ binary_expression -> expression . SNE expression [ SNE SEQ SEMICOLON RIGHT_PAREN
 -- On AEQ reduce production binary_expression -> expression GT expression
 
 State 38:
+## Known stack suffix:
+## expression GE
+## LR(1) items:
 binary_expression -> expression GE . expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
+## Transitions:
 -- On TRUE shift to state 3
 -- On STRING shift to state 4
 -- On NOT shift to state 5
@@ -869,8 +1063,12 @@ binary_expression -> expression GE . expression [ SNE SEQ SEMICOLON RIGHT_PAREN 
 -- On leftvalue shift to state 14
 -- On expression shift to state 39
 -- On binary_expression shift to state 23
+## Reductions:
 
 State 39:
+## Known stack suffix:
+## expression GE expression
+## LR(1) items:
 binary_expression -> expression . PLUS expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . MINUS expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . MULTIPLY expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
@@ -886,12 +1084,14 @@ binary_expression -> expression . LE expression [ SNE SEQ SEMICOLON RIGHT_PAREN 
 binary_expression -> expression . CONCAT expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . SEQ expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . SNE expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
+## Transitions:
 -- On PLUS shift to state 19
 -- On MULTIPLY shift to state 21
 -- On MODULO shift to state 24
 -- On MINUS shift to state 28
 -- On DIVIDE shift to state 26
 -- On CONCAT shift to state 32
+## Reductions:
 -- On SNE reduce production binary_expression -> expression GE expression
 -- On SEQ reduce production binary_expression -> expression GE expression
 -- On SEMICOLON reduce production binary_expression -> expression GE expression
@@ -902,7 +1102,11 @@ binary_expression -> expression . SNE expression [ SNE SEQ SEMICOLON RIGHT_PAREN
 -- On AEQ reduce production binary_expression -> expression GE expression
 
 State 40:
+## Known stack suffix:
+## expression SEQ
+## LR(1) items:
 binary_expression -> expression SEQ . expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
+## Transitions:
 -- On TRUE shift to state 3
 -- On STRING shift to state 4
 -- On NOT shift to state 5
@@ -916,8 +1120,12 @@ binary_expression -> expression SEQ . expression [ SNE SEQ SEMICOLON RIGHT_PAREN
 -- On leftvalue shift to state 14
 -- On expression shift to state 41
 -- On binary_expression shift to state 23
+## Reductions:
 
 State 41:
+## Known stack suffix:
+## expression SEQ expression
+## LR(1) items:
 binary_expression -> expression . PLUS expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . MINUS expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . MULTIPLY expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
@@ -933,6 +1141,7 @@ binary_expression -> expression . CONCAT expression [ SNE SEQ SEMICOLON RIGHT_PA
 binary_expression -> expression . SEQ expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression SEQ expression . [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . SNE expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
+## Transitions:
 -- On PLUS shift to state 19
 -- On MULTIPLY shift to state 21
 -- On MODULO shift to state 24
@@ -943,13 +1152,19 @@ binary_expression -> expression . SNE expression [ SNE SEQ SEMICOLON RIGHT_PAREN
 -- On GE shift to state 38
 -- On DIVIDE shift to state 26
 -- On CONCAT shift to state 32
+## Reductions:
 -- On SEMICOLON reduce production binary_expression -> expression SEQ expression
 -- On RIGHT_PAREN reduce production binary_expression -> expression SEQ expression
 -- On RIGHT_BRACK reduce production binary_expression -> expression SEQ expression
 -- On COMMA reduce production binary_expression -> expression SEQ expression
 
 State 42:
+## Known stack suffix:
+## leftvalue LEFT_BRACK expression RIGHT_BRACK
+## LR(1) items:
 leftvalue -> leftvalue LEFT_BRACK expression RIGHT_BRACK . [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LEFT_BRACK LE GT GE EQUAL DIVIDE CONCAT COMMA ANE AEQ ]
+## Transitions:
+## Reductions:
 -- On SNE reduce production leftvalue -> leftvalue LEFT_BRACK expression RIGHT_BRACK
 -- On SEQ reduce production leftvalue -> leftvalue LEFT_BRACK expression RIGHT_BRACK
 -- On SEMICOLON reduce production leftvalue -> leftvalue LEFT_BRACK expression RIGHT_BRACK
@@ -972,7 +1187,11 @@ leftvalue -> leftvalue LEFT_BRACK expression RIGHT_BRACK . [ SNE SEQ SEMICOLON R
 -- On AEQ reduce production leftvalue -> leftvalue LEFT_BRACK expression RIGHT_BRACK
 
 State 43:
+## Known stack suffix:
+## expression ANE
+## LR(1) items:
 binary_expression -> expression ANE . expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
+## Transitions:
 -- On TRUE shift to state 3
 -- On STRING shift to state 4
 -- On NOT shift to state 5
@@ -986,8 +1205,12 @@ binary_expression -> expression ANE . expression [ SNE SEQ SEMICOLON RIGHT_PAREN
 -- On leftvalue shift to state 14
 -- On expression shift to state 44
 -- On binary_expression shift to state 23
+## Reductions:
 
 State 44:
+## Known stack suffix:
+## expression ANE expression
+## LR(1) items:
 binary_expression -> expression . PLUS expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . MINUS expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . MULTIPLY expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
@@ -1003,6 +1226,7 @@ binary_expression -> expression . LE expression [ SNE SEQ SEMICOLON RIGHT_PAREN 
 binary_expression -> expression . CONCAT expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . SEQ expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . SNE expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
+## Transitions:
 -- On PLUS shift to state 19
 -- On MULTIPLY shift to state 21
 -- On MODULO shift to state 24
@@ -1013,13 +1237,18 @@ binary_expression -> expression . SNE expression [ SNE SEQ SEMICOLON RIGHT_PAREN
 -- On GE shift to state 38
 -- On DIVIDE shift to state 26
 -- On CONCAT shift to state 32
+## Reductions:
 -- On SEMICOLON reduce production binary_expression -> expression ANE expression
 -- On RIGHT_PAREN reduce production binary_expression -> expression ANE expression
 -- On RIGHT_BRACK reduce production binary_expression -> expression ANE expression
 -- On COMMA reduce production binary_expression -> expression ANE expression
 
 State 45:
+## Known stack suffix:
+## expression AEQ
+## LR(1) items:
 binary_expression -> expression AEQ . expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
+## Transitions:
 -- On TRUE shift to state 3
 -- On STRING shift to state 4
 -- On NOT shift to state 5
@@ -1033,8 +1262,12 @@ binary_expression -> expression AEQ . expression [ SNE SEQ SEMICOLON RIGHT_PAREN
 -- On leftvalue shift to state 14
 -- On expression shift to state 46
 -- On binary_expression shift to state 23
+## Reductions:
 
 State 46:
+## Known stack suffix:
+## expression AEQ expression
+## LR(1) items:
 binary_expression -> expression . PLUS expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . MINUS expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . MULTIPLY expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
@@ -1050,6 +1283,7 @@ binary_expression -> expression . LE expression [ SNE SEQ SEMICOLON RIGHT_PAREN 
 binary_expression -> expression . CONCAT expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . SEQ expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . SNE expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
+## Transitions:
 -- On PLUS shift to state 19
 -- On MULTIPLY shift to state 21
 -- On MODULO shift to state 24
@@ -1060,17 +1294,28 @@ binary_expression -> expression . SNE expression [ SNE SEQ SEMICOLON RIGHT_PAREN
 -- On GE shift to state 38
 -- On DIVIDE shift to state 26
 -- On CONCAT shift to state 32
+## Reductions:
 -- On SEMICOLON reduce production binary_expression -> expression AEQ expression
 -- On RIGHT_PAREN reduce production binary_expression -> expression AEQ expression
 -- On RIGHT_BRACK reduce production binary_expression -> expression AEQ expression
 -- On COMMA reduce production binary_expression -> expression AEQ expression
 
 State 47:
+## Known stack suffix:
+## IDENTIFIER LEFT_PAREN expression_list
+## LR(1) items:
 expression -> IDENTIFIER LEFT_PAREN expression_list . RIGHT_PAREN [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 48
+## Reductions:
 
 State 48:
+## Known stack suffix:
+## IDENTIFIER LEFT_PAREN expression_list RIGHT_PAREN
+## LR(1) items:
 expression -> IDENTIFIER LEFT_PAREN expression_list RIGHT_PAREN . [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
+## Transitions:
+## Reductions:
 -- On SNE reduce production expression -> IDENTIFIER LEFT_PAREN expression_list RIGHT_PAREN
 -- On SEQ reduce production expression -> IDENTIFIER LEFT_PAREN expression_list RIGHT_PAREN
 -- On SEMICOLON reduce production expression -> IDENTIFIER LEFT_PAREN expression_list RIGHT_PAREN
@@ -1091,6 +1336,9 @@ expression -> IDENTIFIER LEFT_PAREN expression_list RIGHT_PAREN . [ SNE SEQ SEMI
 -- On AEQ reduce production expression -> IDENTIFIER LEFT_PAREN expression_list RIGHT_PAREN
 
 State 49:
+## Known stack suffix:
+## expression
+## LR(1) items:
 binary_expression -> expression . PLUS expression [ SNE SEQ RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . MINUS expression [ SNE SEQ RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . MULTIPLY expression [ SNE SEQ RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
@@ -1107,6 +1355,7 @@ binary_expression -> expression . SEQ expression [ SNE SEQ RIGHT_PAREN RIGHT_BRA
 binary_expression -> expression . SNE expression [ SNE SEQ RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 expression_list -> expression . [ RIGHT_PAREN RIGHT_BRACK ]
 expression_list -> expression . COMMA expression_list [ RIGHT_PAREN RIGHT_BRACK ]
+## Transitions:
 -- On SNE shift to state 17
 -- On SEQ shift to state 40
 -- On PLUS shift to state 19
@@ -1122,11 +1371,16 @@ expression_list -> expression . COMMA expression_list [ RIGHT_PAREN RIGHT_BRACK 
 -- On COMMA shift to state 50
 -- On ANE shift to state 43
 -- On AEQ shift to state 45
+## Reductions:
 -- On RIGHT_PAREN reduce production expression_list -> expression
 -- On RIGHT_BRACK reduce production expression_list -> expression
 
 State 50:
+## Known stack suffix:
+## expression COMMA
+## LR(1) items:
 expression_list -> expression COMMA . expression_list [ RIGHT_PAREN RIGHT_BRACK ]
+## Transitions:
 -- On TRUE shift to state 3
 -- On STRING shift to state 4
 -- On NOT shift to state 5
@@ -1141,20 +1395,36 @@ expression_list -> expression COMMA . expression_list [ RIGHT_PAREN RIGHT_BRACK 
 -- On expression_list shift to state 51
 -- On expression shift to state 49
 -- On binary_expression shift to state 23
+## Reductions:
 -- On RIGHT_PAREN reduce production expression_list ->
 -- On RIGHT_BRACK reduce production expression_list ->
 
 State 51:
+## Known stack suffix:
+## expression COMMA expression_list
+## LR(1) items:
 expression_list -> expression COMMA expression_list . [ RIGHT_PAREN RIGHT_BRACK ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production expression_list -> expression COMMA expression_list
 -- On RIGHT_BRACK reduce production expression_list -> expression COMMA expression_list
 
 State 52:
+## Known stack suffix:
+## LEFT_BRACK expression_list
+## LR(1) items:
 expression -> LEFT_BRACK expression_list . RIGHT_BRACK [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
+## Transitions:
 -- On RIGHT_BRACK shift to state 53
+## Reductions:
 
 State 53:
+## Known stack suffix:
+## LEFT_BRACK expression_list RIGHT_BRACK
+## LR(1) items:
 expression -> LEFT_BRACK expression_list RIGHT_BRACK . [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
+## Transitions:
+## Reductions:
 -- On SNE reduce production expression -> LEFT_BRACK expression_list RIGHT_BRACK
 -- On SEQ reduce production expression -> LEFT_BRACK expression_list RIGHT_BRACK
 -- On SEMICOLON reduce production expression -> LEFT_BRACK expression_list RIGHT_BRACK
@@ -1175,6 +1445,9 @@ expression -> LEFT_BRACK expression_list RIGHT_BRACK . [ SNE SEQ SEMICOLON RIGHT
 -- On AEQ reduce production expression -> LEFT_BRACK expression_list RIGHT_BRACK
 
 State 54:
+## Known stack suffix:
+## LEFT_PAREN expression
+## LR(1) items:
 binary_expression -> expression . PLUS expression [ SNE SEQ RIGHT_PAREN PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT ANE AEQ ]
 binary_expression -> expression . MINUS expression [ SNE SEQ RIGHT_PAREN PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT ANE AEQ ]
 binary_expression -> expression . MULTIPLY expression [ SNE SEQ RIGHT_PAREN PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT ANE AEQ ]
@@ -1190,6 +1463,7 @@ binary_expression -> expression . CONCAT expression [ SNE SEQ RIGHT_PAREN PLUS M
 binary_expression -> expression . SEQ expression [ SNE SEQ RIGHT_PAREN PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT ANE AEQ ]
 binary_expression -> expression . SNE expression [ SNE SEQ RIGHT_PAREN PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT ANE AEQ ]
 expression -> LEFT_PAREN expression . RIGHT_PAREN [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
+## Transitions:
 -- On SNE shift to state 17
 -- On SEQ shift to state 40
 -- On RIGHT_PAREN shift to state 55
@@ -1205,9 +1479,15 @@ expression -> LEFT_PAREN expression . RIGHT_PAREN [ SNE SEQ SEMICOLON RIGHT_PARE
 -- On CONCAT shift to state 32
 -- On ANE shift to state 43
 -- On AEQ shift to state 45
+## Reductions:
 
 State 55:
+## Known stack suffix:
+## LEFT_PAREN expression RIGHT_PAREN
+## LR(1) items:
 expression -> LEFT_PAREN expression RIGHT_PAREN . [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
+## Transitions:
+## Reductions:
 -- On SNE reduce production expression -> LEFT_PAREN expression RIGHT_PAREN
 -- On SEQ reduce production expression -> LEFT_PAREN expression RIGHT_PAREN
 -- On SEMICOLON reduce production expression -> LEFT_PAREN expression RIGHT_PAREN
@@ -1228,6 +1508,9 @@ expression -> LEFT_PAREN expression RIGHT_PAREN . [ SNE SEQ SEMICOLON RIGHT_PARE
 -- On AEQ reduce production expression -> LEFT_PAREN expression RIGHT_PAREN
 
 State 56:
+## Known stack suffix:
+## NOT expression
+## LR(1) items:
 binary_expression -> expression . PLUS expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . MINUS expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . MULTIPLY expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
@@ -1243,11 +1526,13 @@ binary_expression -> expression . CONCAT expression [ SNE SEQ SEMICOLON RIGHT_PA
 binary_expression -> expression . SEQ expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 binary_expression -> expression . SNE expression [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
 unary_expression -> NOT expression . [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT COMMA ANE AEQ ]
+## Transitions:
 -- On PLUS shift to state 19
 -- On MULTIPLY shift to state 21
 -- On MODULO shift to state 24
 -- On MINUS shift to state 28
 -- On DIVIDE shift to state 26
+## Reductions:
 -- On SNE reduce production unary_expression -> NOT expression
 -- On SEQ reduce production unary_expression -> NOT expression
 -- On SEMICOLON reduce production unary_expression -> NOT expression
@@ -1263,6 +1548,9 @@ unary_expression -> NOT expression . [ SNE SEQ SEMICOLON RIGHT_PAREN RIGHT_BRACK
 -- On AEQ reduce production unary_expression -> NOT expression
 
 State 57:
+## Known stack suffix:
+## WHILE LEFT_PAREN expression
+## LR(1) items:
 binary_expression -> expression . PLUS expression [ SNE SEQ RIGHT_PAREN PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT ANE AEQ ]
 binary_expression -> expression . MINUS expression [ SNE SEQ RIGHT_PAREN PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT ANE AEQ ]
 binary_expression -> expression . MULTIPLY expression [ SNE SEQ RIGHT_PAREN PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT ANE AEQ ]
@@ -1278,6 +1566,7 @@ binary_expression -> expression . CONCAT expression [ SNE SEQ RIGHT_PAREN PLUS M
 binary_expression -> expression . SEQ expression [ SNE SEQ RIGHT_PAREN PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT ANE AEQ ]
 binary_expression -> expression . SNE expression [ SNE SEQ RIGHT_PAREN PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT ANE AEQ ]
 loop_statement -> WHILE LEFT_PAREN expression . RIGHT_PAREN statement [ WHILE TRUE STRING SEMICOLON RIGHT_BRACE RETURN NOT LEFT_PAREN LEFT_BRACK LEFT_BRACE INT IF IDENTIFIER GLOBAL FUNCTION FLOAT FALSE EOF ELSE COMMENT ]
+## Transitions:
 -- On SNE shift to state 17
 -- On SEQ shift to state 40
 -- On RIGHT_PAREN shift to state 58
@@ -1293,9 +1582,14 @@ loop_statement -> WHILE LEFT_PAREN expression . RIGHT_PAREN statement [ WHILE TR
 -- On CONCAT shift to state 32
 -- On ANE shift to state 43
 -- On AEQ shift to state 45
+## Reductions:
 
 State 58:
+## Known stack suffix:
+## WHILE LEFT_PAREN expression RIGHT_PAREN
+## LR(1) items:
 loop_statement -> WHILE LEFT_PAREN expression RIGHT_PAREN . statement [ WHILE TRUE STRING SEMICOLON RIGHT_BRACE RETURN NOT LEFT_PAREN LEFT_BRACK LEFT_BRACE INT IF IDENTIFIER GLOBAL FUNCTION FLOAT FALSE EOF ELSE COMMENT ]
+## Transitions:
 -- On WHILE shift to state 1
 -- On TRUE shift to state 3
 -- On STRING shift to state 4
@@ -1319,9 +1613,15 @@ loop_statement -> WHILE LEFT_PAREN expression RIGHT_PAREN . statement [ WHILE TR
 -- On if_statement shift to state 81
 -- On expression shift to state 82
 -- On binary_expression shift to state 23
+## Reductions:
 
 State 59:
+## Known stack suffix:
+## SEMICOLON
+## LR(1) items:
 statement -> SEMICOLON . [ WHILE TRUE STRING SEMICOLON RIGHT_BRACE RETURN NOT LEFT_PAREN LEFT_BRACK LEFT_BRACE INT IF IDENTIFIER GLOBAL FUNCTION FLOAT FALSE EOF ELSE COMMENT ]
+## Transitions:
+## Reductions:
 -- On WHILE reduce production statement -> SEMICOLON
 -- On TRUE reduce production statement -> SEMICOLON
 -- On STRING reduce production statement -> SEMICOLON
@@ -1344,8 +1644,12 @@ statement -> SEMICOLON . [ WHILE TRUE STRING SEMICOLON RIGHT_BRACE RETURN NOT LE
 -- On COMMENT reduce production statement -> SEMICOLON
 
 State 60:
+## Known stack suffix:
+## RETURN
+## LR(1) items:
 statement -> RETURN . expression SEMICOLON [ WHILE TRUE STRING SEMICOLON RIGHT_BRACE RETURN NOT LEFT_PAREN LEFT_BRACK LEFT_BRACE INT IF IDENTIFIER GLOBAL FUNCTION FLOAT FALSE EOF ELSE COMMENT ]
 statement -> RETURN . SEMICOLON [ WHILE TRUE STRING SEMICOLON RIGHT_BRACE RETURN NOT LEFT_PAREN LEFT_BRACK LEFT_BRACE INT IF IDENTIFIER GLOBAL FUNCTION FLOAT FALSE EOF ELSE COMMENT ]
+## Transitions:
 -- On TRUE shift to state 3
 -- On STRING shift to state 4
 -- On SEMICOLON shift to state 61
@@ -1360,9 +1664,15 @@ statement -> RETURN . SEMICOLON [ WHILE TRUE STRING SEMICOLON RIGHT_BRACE RETURN
 -- On leftvalue shift to state 14
 -- On expression shift to state 62
 -- On binary_expression shift to state 23
+## Reductions:
 
 State 61:
+## Known stack suffix:
+## RETURN SEMICOLON
+## LR(1) items:
 statement -> RETURN SEMICOLON . [ WHILE TRUE STRING SEMICOLON RIGHT_BRACE RETURN NOT LEFT_PAREN LEFT_BRACK LEFT_BRACE INT IF IDENTIFIER GLOBAL FUNCTION FLOAT FALSE EOF ELSE COMMENT ]
+## Transitions:
+## Reductions:
 -- On WHILE reduce production statement -> RETURN SEMICOLON
 -- On TRUE reduce production statement -> RETURN SEMICOLON
 -- On STRING reduce production statement -> RETURN SEMICOLON
@@ -1385,6 +1695,9 @@ statement -> RETURN SEMICOLON . [ WHILE TRUE STRING SEMICOLON RIGHT_BRACE RETURN
 -- On COMMENT reduce production statement -> RETURN SEMICOLON
 
 State 62:
+## Known stack suffix:
+## RETURN expression
+## LR(1) items:
 binary_expression -> expression . PLUS expression [ SNE SEQ SEMICOLON PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT ANE AEQ ]
 binary_expression -> expression . MINUS expression [ SNE SEQ SEMICOLON PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT ANE AEQ ]
 binary_expression -> expression . MULTIPLY expression [ SNE SEQ SEMICOLON PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT ANE AEQ ]
@@ -1400,6 +1713,7 @@ binary_expression -> expression . CONCAT expression [ SNE SEQ SEMICOLON PLUS MUL
 binary_expression -> expression . SEQ expression [ SNE SEQ SEMICOLON PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT ANE AEQ ]
 binary_expression -> expression . SNE expression [ SNE SEQ SEMICOLON PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT ANE AEQ ]
 statement -> RETURN expression . SEMICOLON [ WHILE TRUE STRING SEMICOLON RIGHT_BRACE RETURN NOT LEFT_PAREN LEFT_BRACK LEFT_BRACE INT IF IDENTIFIER GLOBAL FUNCTION FLOAT FALSE EOF ELSE COMMENT ]
+## Transitions:
 -- On SNE shift to state 17
 -- On SEQ shift to state 40
 -- On SEMICOLON shift to state 63
@@ -1415,9 +1729,15 @@ statement -> RETURN expression . SEMICOLON [ WHILE TRUE STRING SEMICOLON RIGHT_B
 -- On CONCAT shift to state 32
 -- On ANE shift to state 43
 -- On AEQ shift to state 45
+## Reductions:
 
 State 63:
+## Known stack suffix:
+## RETURN expression SEMICOLON
+## LR(1) items:
 statement -> RETURN expression SEMICOLON . [ WHILE TRUE STRING SEMICOLON RIGHT_BRACE RETURN NOT LEFT_PAREN LEFT_BRACK LEFT_BRACE INT IF IDENTIFIER GLOBAL FUNCTION FLOAT FALSE EOF ELSE COMMENT ]
+## Transitions:
+## Reductions:
 -- On WHILE reduce production statement -> RETURN expression SEMICOLON
 -- On TRUE reduce production statement -> RETURN expression SEMICOLON
 -- On STRING reduce production statement -> RETURN expression SEMICOLON
@@ -1440,7 +1760,11 @@ statement -> RETURN expression SEMICOLON . [ WHILE TRUE STRING SEMICOLON RIGHT_B
 -- On COMMENT reduce production statement -> RETURN expression SEMICOLON
 
 State 64:
+## Known stack suffix:
+## LEFT_BRACE
+## LR(1) items:
 statement -> LEFT_BRACE . statement_list RIGHT_BRACE [ WHILE TRUE STRING SEMICOLON RIGHT_BRACE RETURN NOT LEFT_PAREN LEFT_BRACK LEFT_BRACE INT IF IDENTIFIER GLOBAL FUNCTION FLOAT FALSE EOF ELSE COMMENT ]
+## Transitions:
 -- On WHILE shift to state 1
 -- On TRUE shift to state 3
 -- On STRING shift to state 4
@@ -1465,16 +1789,26 @@ statement -> LEFT_BRACE . statement_list RIGHT_BRACE [ WHILE TRUE STRING SEMICOL
 -- On if_statement shift to state 81
 -- On expression shift to state 82
 -- On binary_expression shift to state 23
+## Reductions:
 -- On RIGHT_BRACE reduce production statement_list ->
 
 State 65:
+## Known stack suffix:
+## IF
+## LR(1) items:
 if_statement -> IF . LEFT_PAREN expression RIGHT_PAREN statement [ WHILE TRUE STRING SEMICOLON RIGHT_BRACE RETURN NOT LEFT_PAREN LEFT_BRACK LEFT_BRACE INT IF IDENTIFIER GLOBAL FUNCTION FLOAT FALSE EOF ELSE COMMENT ]
 if_statement -> IF . LEFT_PAREN expression RIGHT_PAREN statement ELSE statement [ WHILE TRUE STRING SEMICOLON RIGHT_BRACE RETURN NOT LEFT_PAREN LEFT_BRACK LEFT_BRACE INT IF IDENTIFIER GLOBAL FUNCTION FLOAT FALSE EOF ELSE COMMENT ]
+## Transitions:
 -- On LEFT_PAREN shift to state 66
+## Reductions:
 
 State 66:
+## Known stack suffix:
+## IF LEFT_PAREN
+## LR(1) items:
 if_statement -> IF LEFT_PAREN . expression RIGHT_PAREN statement [ WHILE TRUE STRING SEMICOLON RIGHT_BRACE RETURN NOT LEFT_PAREN LEFT_BRACK LEFT_BRACE INT IF IDENTIFIER GLOBAL FUNCTION FLOAT FALSE EOF ELSE COMMENT ]
 if_statement -> IF LEFT_PAREN . expression RIGHT_PAREN statement ELSE statement [ WHILE TRUE STRING SEMICOLON RIGHT_BRACE RETURN NOT LEFT_PAREN LEFT_BRACK LEFT_BRACE INT IF IDENTIFIER GLOBAL FUNCTION FLOAT FALSE EOF ELSE COMMENT ]
+## Transitions:
 -- On TRUE shift to state 3
 -- On STRING shift to state 4
 -- On NOT shift to state 5
@@ -1488,8 +1822,12 @@ if_statement -> IF LEFT_PAREN . expression RIGHT_PAREN statement ELSE statement 
 -- On leftvalue shift to state 14
 -- On expression shift to state 67
 -- On binary_expression shift to state 23
+## Reductions:
 
 State 67:
+## Known stack suffix:
+## IF LEFT_PAREN expression
+## LR(1) items:
 binary_expression -> expression . PLUS expression [ SNE SEQ RIGHT_PAREN PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT ANE AEQ ]
 binary_expression -> expression . MINUS expression [ SNE SEQ RIGHT_PAREN PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT ANE AEQ ]
 binary_expression -> expression . MULTIPLY expression [ SNE SEQ RIGHT_PAREN PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT ANE AEQ ]
@@ -1506,6 +1844,7 @@ binary_expression -> expression . SEQ expression [ SNE SEQ RIGHT_PAREN PLUS MULT
 binary_expression -> expression . SNE expression [ SNE SEQ RIGHT_PAREN PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT ANE AEQ ]
 if_statement -> IF LEFT_PAREN expression . RIGHT_PAREN statement [ WHILE TRUE STRING SEMICOLON RIGHT_BRACE RETURN NOT LEFT_PAREN LEFT_BRACK LEFT_BRACE INT IF IDENTIFIER GLOBAL FUNCTION FLOAT FALSE EOF ELSE COMMENT ]
 if_statement -> IF LEFT_PAREN expression . RIGHT_PAREN statement ELSE statement [ WHILE TRUE STRING SEMICOLON RIGHT_BRACE RETURN NOT LEFT_PAREN LEFT_BRACK LEFT_BRACE INT IF IDENTIFIER GLOBAL FUNCTION FLOAT FALSE EOF ELSE COMMENT ]
+## Transitions:
 -- On SNE shift to state 17
 -- On SEQ shift to state 40
 -- On RIGHT_PAREN shift to state 68
@@ -1521,10 +1860,15 @@ if_statement -> IF LEFT_PAREN expression . RIGHT_PAREN statement ELSE statement 
 -- On CONCAT shift to state 32
 -- On ANE shift to state 43
 -- On AEQ shift to state 45
+## Reductions:
 
 State 68:
+## Known stack suffix:
+## IF LEFT_PAREN expression RIGHT_PAREN
+## LR(1) items:
 if_statement -> IF LEFT_PAREN expression RIGHT_PAREN . statement [ WHILE TRUE STRING SEMICOLON RIGHT_BRACE RETURN NOT LEFT_PAREN LEFT_BRACK LEFT_BRACE INT IF IDENTIFIER GLOBAL FUNCTION FLOAT FALSE EOF ELSE COMMENT ]
 if_statement -> IF LEFT_PAREN expression RIGHT_PAREN . statement ELSE statement [ WHILE TRUE STRING SEMICOLON RIGHT_BRACE RETURN NOT LEFT_PAREN LEFT_BRACK LEFT_BRACE INT IF IDENTIFIER GLOBAL FUNCTION FLOAT FALSE EOF ELSE COMMENT ]
+## Transitions:
 -- On WHILE shift to state 1
 -- On TRUE shift to state 3
 -- On STRING shift to state 4
@@ -1548,17 +1892,33 @@ if_statement -> IF LEFT_PAREN expression RIGHT_PAREN . statement ELSE statement 
 -- On if_statement shift to state 81
 -- On expression shift to state 82
 -- On binary_expression shift to state 23
+## Reductions:
 
 State 69:
+## Known stack suffix:
+## GLOBAL
+## LR(1) items:
 statement -> GLOBAL . IDENTIFIER SEMICOLON [ WHILE TRUE STRING SEMICOLON RIGHT_BRACE RETURN NOT LEFT_PAREN LEFT_BRACK LEFT_BRACE INT IF IDENTIFIER GLOBAL FUNCTION FLOAT FALSE EOF ELSE COMMENT ]
+## Transitions:
 -- On IDENTIFIER shift to state 70
+## Reductions:
 
 State 70:
+## Known stack suffix:
+## GLOBAL IDENTIFIER
+## LR(1) items:
 statement -> GLOBAL IDENTIFIER . SEMICOLON [ WHILE TRUE STRING SEMICOLON RIGHT_BRACE RETURN NOT LEFT_PAREN LEFT_BRACK LEFT_BRACE INT IF IDENTIFIER GLOBAL FUNCTION FLOAT FALSE EOF ELSE COMMENT ]
+## Transitions:
 -- On SEMICOLON shift to state 71
+## Reductions:
 
 State 71:
+## Known stack suffix:
+## GLOBAL IDENTIFIER SEMICOLON
+## LR(1) items:
 statement -> GLOBAL IDENTIFIER SEMICOLON . [ WHILE TRUE STRING SEMICOLON RIGHT_BRACE RETURN NOT LEFT_PAREN LEFT_BRACK LEFT_BRACE INT IF IDENTIFIER GLOBAL FUNCTION FLOAT FALSE EOF ELSE COMMENT ]
+## Transitions:
+## Reductions:
 -- On WHILE reduce production statement -> GLOBAL IDENTIFIER SEMICOLON
 -- On TRUE reduce production statement -> GLOBAL IDENTIFIER SEMICOLON
 -- On STRING reduce production statement -> GLOBAL IDENTIFIER SEMICOLON
@@ -1581,7 +1941,12 @@ statement -> GLOBAL IDENTIFIER SEMICOLON . [ WHILE TRUE STRING SEMICOLON RIGHT_B
 -- On COMMENT reduce production statement -> GLOBAL IDENTIFIER SEMICOLON
 
 State 72:
+## Known stack suffix:
+## COMMENT
+## LR(1) items:
 statement -> COMMENT . [ WHILE TRUE STRING SEMICOLON RIGHT_BRACE RETURN NOT LEFT_PAREN LEFT_BRACK LEFT_BRACE INT IF IDENTIFIER GLOBAL FUNCTION FLOAT FALSE EOF ELSE COMMENT ]
+## Transitions:
+## Reductions:
 -- On WHILE reduce production statement -> COMMENT
 -- On TRUE reduce production statement -> COMMENT
 -- On STRING reduce production statement -> COMMENT
@@ -1604,9 +1969,14 @@ statement -> COMMENT . [ WHILE TRUE STRING SEMICOLON RIGHT_BRACE RETURN NOT LEFT
 -- On COMMENT reduce production statement -> COMMENT
 
 State 73:
+## Known stack suffix:
+## IF LEFT_PAREN expression RIGHT_PAREN statement
+## LR(1) items:
 if_statement -> IF LEFT_PAREN expression RIGHT_PAREN statement . [ WHILE TRUE STRING SEMICOLON RIGHT_BRACE RETURN NOT LEFT_PAREN LEFT_BRACK LEFT_BRACE INT IF IDENTIFIER GLOBAL FUNCTION FLOAT FALSE EOF ELSE COMMENT ]
 if_statement -> IF LEFT_PAREN expression RIGHT_PAREN statement . ELSE statement [ WHILE TRUE STRING SEMICOLON RIGHT_BRACE RETURN NOT LEFT_PAREN LEFT_BRACK LEFT_BRACE INT IF IDENTIFIER GLOBAL FUNCTION FLOAT FALSE EOF ELSE COMMENT ]
+## Transitions:
 -- On ELSE shift to state 74
+## Reductions:
 -- On WHILE reduce production if_statement -> IF LEFT_PAREN expression RIGHT_PAREN statement
 -- On TRUE reduce production if_statement -> IF LEFT_PAREN expression RIGHT_PAREN statement
 -- On STRING reduce production if_statement -> IF LEFT_PAREN expression RIGHT_PAREN statement
@@ -1628,7 +1998,11 @@ if_statement -> IF LEFT_PAREN expression RIGHT_PAREN statement . ELSE statement 
 -- On COMMENT reduce production if_statement -> IF LEFT_PAREN expression RIGHT_PAREN statement
 
 State 74:
+## Known stack suffix:
+## IF LEFT_PAREN expression RIGHT_PAREN statement ELSE
+## LR(1) items:
 if_statement -> IF LEFT_PAREN expression RIGHT_PAREN statement ELSE . statement [ WHILE TRUE STRING SEMICOLON RIGHT_BRACE RETURN NOT LEFT_PAREN LEFT_BRACK LEFT_BRACE INT IF IDENTIFIER GLOBAL FUNCTION FLOAT FALSE EOF ELSE COMMENT ]
+## Transitions:
 -- On WHILE shift to state 1
 -- On TRUE shift to state 3
 -- On STRING shift to state 4
@@ -1652,9 +2026,15 @@ if_statement -> IF LEFT_PAREN expression RIGHT_PAREN statement ELSE . statement 
 -- On if_statement shift to state 81
 -- On expression shift to state 82
 -- On binary_expression shift to state 23
+## Reductions:
 
 State 75:
+## Known stack suffix:
+## IF LEFT_PAREN expression RIGHT_PAREN statement ELSE statement
+## LR(1) items:
 if_statement -> IF LEFT_PAREN expression RIGHT_PAREN statement ELSE statement . [ WHILE TRUE STRING SEMICOLON RIGHT_BRACE RETURN NOT LEFT_PAREN LEFT_BRACK LEFT_BRACE INT IF IDENTIFIER GLOBAL FUNCTION FLOAT FALSE EOF ELSE COMMENT ]
+## Transitions:
+## Reductions:
 -- On WHILE reduce production if_statement -> IF LEFT_PAREN expression RIGHT_PAREN statement ELSE statement
 -- On TRUE reduce production if_statement -> IF LEFT_PAREN expression RIGHT_PAREN statement ELSE statement
 -- On STRING reduce production if_statement -> IF LEFT_PAREN expression RIGHT_PAREN statement ELSE statement
@@ -1677,7 +2057,12 @@ if_statement -> IF LEFT_PAREN expression RIGHT_PAREN statement ELSE statement . 
 -- On COMMENT reduce production if_statement -> IF LEFT_PAREN expression RIGHT_PAREN statement ELSE statement
 
 State 76:
+## Known stack suffix:
+## loop_statement
+## LR(1) items:
 statement -> loop_statement . [ WHILE TRUE STRING SEMICOLON RIGHT_BRACE RETURN NOT LEFT_PAREN LEFT_BRACK LEFT_BRACE INT IF IDENTIFIER GLOBAL FUNCTION FLOAT FALSE EOF ELSE COMMENT ]
+## Transitions:
+## Reductions:
 -- On WHILE reduce production statement -> loop_statement
 -- On TRUE reduce production statement -> loop_statement
 -- On STRING reduce production statement -> loop_statement
@@ -1700,11 +2085,16 @@ statement -> loop_statement . [ WHILE TRUE STRING SEMICOLON RIGHT_BRACE RETURN N
 -- On COMMENT reduce production statement -> loop_statement
 
 State 77:
+## Known stack suffix:
+## leftvalue
+## LR(1) items:
 expression -> leftvalue . [ SNE SEQ SEMICOLON PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT ANE AEQ ]
 leftvalue -> leftvalue . LEFT_BRACK expression RIGHT_BRACK [ SNE SEQ SEMICOLON PLUS MULTIPLY MODULO MINUS LT LEFT_BRACK LE GT GE EQUAL DIVIDE CONCAT ANE AEQ ]
 statement -> leftvalue . EQUAL expression SEMICOLON [ WHILE TRUE STRING SEMICOLON RIGHT_BRACE RETURN NOT LEFT_PAREN LEFT_BRACK LEFT_BRACE INT IF IDENTIFIER GLOBAL FUNCTION FLOAT FALSE EOF ELSE COMMENT ]
+## Transitions:
 -- On LEFT_BRACK shift to state 15
 -- On EQUAL shift to state 78
+## Reductions:
 -- On SNE reduce production expression -> leftvalue
 -- On SEQ reduce production expression -> leftvalue
 -- On SEMICOLON reduce production expression -> leftvalue
@@ -1722,7 +2112,11 @@ statement -> leftvalue . EQUAL expression SEMICOLON [ WHILE TRUE STRING SEMICOLO
 -- On AEQ reduce production expression -> leftvalue
 
 State 78:
+## Known stack suffix:
+## leftvalue EQUAL
+## LR(1) items:
 statement -> leftvalue EQUAL . expression SEMICOLON [ WHILE TRUE STRING SEMICOLON RIGHT_BRACE RETURN NOT LEFT_PAREN LEFT_BRACK LEFT_BRACE INT IF IDENTIFIER GLOBAL FUNCTION FLOAT FALSE EOF ELSE COMMENT ]
+## Transitions:
 -- On TRUE shift to state 3
 -- On STRING shift to state 4
 -- On NOT shift to state 5
@@ -1736,8 +2130,12 @@ statement -> leftvalue EQUAL . expression SEMICOLON [ WHILE TRUE STRING SEMICOLO
 -- On leftvalue shift to state 14
 -- On expression shift to state 79
 -- On binary_expression shift to state 23
+## Reductions:
 
 State 79:
+## Known stack suffix:
+## leftvalue EQUAL expression
+## LR(1) items:
 binary_expression -> expression . PLUS expression [ SNE SEQ SEMICOLON PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT ANE AEQ ]
 binary_expression -> expression . MINUS expression [ SNE SEQ SEMICOLON PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT ANE AEQ ]
 binary_expression -> expression . MULTIPLY expression [ SNE SEQ SEMICOLON PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT ANE AEQ ]
@@ -1753,6 +2151,7 @@ binary_expression -> expression . CONCAT expression [ SNE SEQ SEMICOLON PLUS MUL
 binary_expression -> expression . SEQ expression [ SNE SEQ SEMICOLON PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT ANE AEQ ]
 binary_expression -> expression . SNE expression [ SNE SEQ SEMICOLON PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT ANE AEQ ]
 statement -> leftvalue EQUAL expression . SEMICOLON [ WHILE TRUE STRING SEMICOLON RIGHT_BRACE RETURN NOT LEFT_PAREN LEFT_BRACK LEFT_BRACE INT IF IDENTIFIER GLOBAL FUNCTION FLOAT FALSE EOF ELSE COMMENT ]
+## Transitions:
 -- On SNE shift to state 17
 -- On SEQ shift to state 40
 -- On SEMICOLON shift to state 80
@@ -1768,9 +2167,15 @@ statement -> leftvalue EQUAL expression . SEMICOLON [ WHILE TRUE STRING SEMICOLO
 -- On CONCAT shift to state 32
 -- On ANE shift to state 43
 -- On AEQ shift to state 45
+## Reductions:
 
 State 80:
+## Known stack suffix:
+## leftvalue EQUAL expression SEMICOLON
+## LR(1) items:
 statement -> leftvalue EQUAL expression SEMICOLON . [ WHILE TRUE STRING SEMICOLON RIGHT_BRACE RETURN NOT LEFT_PAREN LEFT_BRACK LEFT_BRACE INT IF IDENTIFIER GLOBAL FUNCTION FLOAT FALSE EOF ELSE COMMENT ]
+## Transitions:
+## Reductions:
 -- On WHILE reduce production statement -> leftvalue EQUAL expression SEMICOLON
 -- On TRUE reduce production statement -> leftvalue EQUAL expression SEMICOLON
 -- On STRING reduce production statement -> leftvalue EQUAL expression SEMICOLON
@@ -1793,7 +2198,12 @@ statement -> leftvalue EQUAL expression SEMICOLON . [ WHILE TRUE STRING SEMICOLO
 -- On COMMENT reduce production statement -> leftvalue EQUAL expression SEMICOLON
 
 State 81:
+## Known stack suffix:
+## if_statement
+## LR(1) items:
 statement -> if_statement . [ WHILE TRUE STRING SEMICOLON RIGHT_BRACE RETURN NOT LEFT_PAREN LEFT_BRACK LEFT_BRACE INT IF IDENTIFIER GLOBAL FUNCTION FLOAT FALSE EOF ELSE COMMENT ]
+## Transitions:
+## Reductions:
 -- On WHILE reduce production statement -> if_statement
 -- On TRUE reduce production statement -> if_statement
 -- On STRING reduce production statement -> if_statement
@@ -1816,6 +2226,9 @@ statement -> if_statement . [ WHILE TRUE STRING SEMICOLON RIGHT_BRACE RETURN NOT
 -- On COMMENT reduce production statement -> if_statement
 
 State 82:
+## Known stack suffix:
+## expression
+## LR(1) items:
 binary_expression -> expression . PLUS expression [ SNE SEQ SEMICOLON PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT ANE AEQ ]
 binary_expression -> expression . MINUS expression [ SNE SEQ SEMICOLON PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT ANE AEQ ]
 binary_expression -> expression . MULTIPLY expression [ SNE SEQ SEMICOLON PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT ANE AEQ ]
@@ -1831,6 +2244,7 @@ binary_expression -> expression . CONCAT expression [ SNE SEQ SEMICOLON PLUS MUL
 binary_expression -> expression . SEQ expression [ SNE SEQ SEMICOLON PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT ANE AEQ ]
 binary_expression -> expression . SNE expression [ SNE SEQ SEMICOLON PLUS MULTIPLY MODULO MINUS LT LE GT GE DIVIDE CONCAT ANE AEQ ]
 statement -> expression . SEMICOLON [ WHILE TRUE STRING SEMICOLON RIGHT_BRACE RETURN NOT LEFT_PAREN LEFT_BRACK LEFT_BRACE INT IF IDENTIFIER GLOBAL FUNCTION FLOAT FALSE EOF ELSE COMMENT ]
+## Transitions:
 -- On SNE shift to state 17
 -- On SEQ shift to state 40
 -- On SEMICOLON shift to state 83
@@ -1846,9 +2260,15 @@ statement -> expression . SEMICOLON [ WHILE TRUE STRING SEMICOLON RIGHT_BRACE RE
 -- On CONCAT shift to state 32
 -- On ANE shift to state 43
 -- On AEQ shift to state 45
+## Reductions:
 
 State 83:
+## Known stack suffix:
+## expression SEMICOLON
+## LR(1) items:
 statement -> expression SEMICOLON . [ WHILE TRUE STRING SEMICOLON RIGHT_BRACE RETURN NOT LEFT_PAREN LEFT_BRACK LEFT_BRACE INT IF IDENTIFIER GLOBAL FUNCTION FLOAT FALSE EOF ELSE COMMENT ]
+## Transitions:
+## Reductions:
 -- On WHILE reduce production statement -> expression SEMICOLON
 -- On TRUE reduce production statement -> expression SEMICOLON
 -- On STRING reduce production statement -> expression SEMICOLON
@@ -1871,11 +2291,21 @@ statement -> expression SEMICOLON . [ WHILE TRUE STRING SEMICOLON RIGHT_BRACE RE
 -- On COMMENT reduce production statement -> expression SEMICOLON
 
 State 84:
+## Known stack suffix:
+## LEFT_BRACE statement_list
+## LR(1) items:
 statement -> LEFT_BRACE statement_list . RIGHT_BRACE [ WHILE TRUE STRING SEMICOLON RIGHT_BRACE RETURN NOT LEFT_PAREN LEFT_BRACK LEFT_BRACE INT IF IDENTIFIER GLOBAL FUNCTION FLOAT FALSE EOF ELSE COMMENT ]
+## Transitions:
 -- On RIGHT_BRACE shift to state 85
+## Reductions:
 
 State 85:
+## Known stack suffix:
+## LEFT_BRACE statement_list RIGHT_BRACE
+## LR(1) items:
 statement -> LEFT_BRACE statement_list RIGHT_BRACE . [ WHILE TRUE STRING SEMICOLON RIGHT_BRACE RETURN NOT LEFT_PAREN LEFT_BRACK LEFT_BRACE INT IF IDENTIFIER GLOBAL FUNCTION FLOAT FALSE EOF ELSE COMMENT ]
+## Transitions:
+## Reductions:
 -- On WHILE reduce production statement -> LEFT_BRACE statement_list RIGHT_BRACE
 -- On TRUE reduce production statement -> LEFT_BRACE statement_list RIGHT_BRACE
 -- On STRING reduce production statement -> LEFT_BRACE statement_list RIGHT_BRACE
@@ -1898,7 +2328,11 @@ statement -> LEFT_BRACE statement_list RIGHT_BRACE . [ WHILE TRUE STRING SEMICOL
 -- On COMMENT reduce production statement -> LEFT_BRACE statement_list RIGHT_BRACE
 
 State 86:
+## Known stack suffix:
+## statement
+## LR(1) items:
 statement_list -> statement . statement_list [ RIGHT_BRACE ]
+## Transitions:
 -- On WHILE shift to state 1
 -- On TRUE shift to state 3
 -- On STRING shift to state 4
@@ -1923,14 +2357,25 @@ statement_list -> statement . statement_list [ RIGHT_BRACE ]
 -- On if_statement shift to state 81
 -- On expression shift to state 82
 -- On binary_expression shift to state 23
+## Reductions:
 -- On RIGHT_BRACE reduce production statement_list ->
 
 State 87:
+## Known stack suffix:
+## statement statement_list
+## LR(1) items:
 statement_list -> statement statement_list . [ RIGHT_BRACE ]
+## Transitions:
+## Reductions:
 -- On RIGHT_BRACE reduce production statement_list -> statement statement_list
 
 State 88:
+## Known stack suffix:
+## WHILE LEFT_PAREN expression RIGHT_PAREN statement
+## LR(1) items:
 loop_statement -> WHILE LEFT_PAREN expression RIGHT_PAREN statement . [ WHILE TRUE STRING SEMICOLON RIGHT_BRACE RETURN NOT LEFT_PAREN LEFT_BRACK LEFT_BRACE INT IF IDENTIFIER GLOBAL FUNCTION FLOAT FALSE EOF ELSE COMMENT ]
+## Transitions:
+## Reductions:
 -- On WHILE reduce production loop_statement -> WHILE LEFT_PAREN expression RIGHT_PAREN statement
 -- On TRUE reduce production loop_statement -> WHILE LEFT_PAREN expression RIGHT_PAREN statement
 -- On STRING reduce production loop_statement -> WHILE LEFT_PAREN expression RIGHT_PAREN statement
@@ -1953,45 +2398,89 @@ loop_statement -> WHILE LEFT_PAREN expression RIGHT_PAREN statement . [ WHILE TR
 -- On COMMENT reduce production loop_statement -> WHILE LEFT_PAREN expression RIGHT_PAREN statement
 
 State 89:
+## Known stack suffix:
+## FUNCTION
+## LR(1) items:
 toplevel -> FUNCTION . IDENTIFIER LEFT_PAREN identifier_list RIGHT_PAREN LEFT_BRACE statement_list RIGHT_BRACE [ WHILE TRUE STRING SEMICOLON RETURN NOT LEFT_PAREN LEFT_BRACK LEFT_BRACE INT IF IDENTIFIER GLOBAL FUNCTION FLOAT FALSE EOF COMMENT ]
+## Transitions:
 -- On IDENTIFIER shift to state 90
+## Reductions:
 
 State 90:
+## Known stack suffix:
+## FUNCTION IDENTIFIER
+## LR(1) items:
 toplevel -> FUNCTION IDENTIFIER . LEFT_PAREN identifier_list RIGHT_PAREN LEFT_BRACE statement_list RIGHT_BRACE [ WHILE TRUE STRING SEMICOLON RETURN NOT LEFT_PAREN LEFT_BRACK LEFT_BRACE INT IF IDENTIFIER GLOBAL FUNCTION FLOAT FALSE EOF COMMENT ]
+## Transitions:
 -- On LEFT_PAREN shift to state 91
+## Reductions:
 
 State 91:
+## Known stack suffix:
+## FUNCTION IDENTIFIER LEFT_PAREN
+## LR(1) items:
 toplevel -> FUNCTION IDENTIFIER LEFT_PAREN . identifier_list RIGHT_PAREN LEFT_BRACE statement_list RIGHT_BRACE [ WHILE TRUE STRING SEMICOLON RETURN NOT LEFT_PAREN LEFT_BRACK LEFT_BRACE INT IF IDENTIFIER GLOBAL FUNCTION FLOAT FALSE EOF COMMENT ]
+## Transitions:
 -- On IDENTIFIER shift to state 92
 -- On identifier_list shift to state 95
+## Reductions:
 -- On RIGHT_PAREN reduce production identifier_list ->
 
 State 92:
+## Known stack suffix:
+## IDENTIFIER
+## LR(1) items:
 identifier_list -> IDENTIFIER . [ RIGHT_PAREN ]
 identifier_list -> IDENTIFIER . COMMA identifier_list [ RIGHT_PAREN ]
+## Transitions:
 -- On COMMA shift to state 93
+## Reductions:
 -- On RIGHT_PAREN reduce production identifier_list -> IDENTIFIER
 
 State 93:
+## Known stack suffix:
+## IDENTIFIER COMMA
+## LR(1) items:
 identifier_list -> IDENTIFIER COMMA . identifier_list [ RIGHT_PAREN ]
+## Transitions:
 -- On IDENTIFIER shift to state 92
 -- On identifier_list shift to state 94
+## Reductions:
 -- On RIGHT_PAREN reduce production identifier_list ->
 
 State 94:
+## Known stack suffix:
+## IDENTIFIER COMMA identifier_list
+## LR(1) items:
 identifier_list -> IDENTIFIER COMMA identifier_list . [ RIGHT_PAREN ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production identifier_list -> IDENTIFIER COMMA identifier_list
 
 State 95:
+## Known stack suffix:
+## FUNCTION IDENTIFIER LEFT_PAREN identifier_list
+## LR(1) items:
 toplevel -> FUNCTION IDENTIFIER LEFT_PAREN identifier_list . RIGHT_PAREN LEFT_BRACE statement_list RIGHT_BRACE [ WHILE TRUE STRING SEMICOLON RETURN NOT LEFT_PAREN LEFT_BRACK LEFT_BRACE INT IF IDENTIFIER GLOBAL FUNCTION FLOAT FALSE EOF COMMENT ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 96
+## Reductions:
 
 State 96:
+## Known stack suffix:
+## FUNCTION IDENTIFIER LEFT_PAREN identifier_list RIGHT_PAREN
+## LR(1) items:
 toplevel -> FUNCTION IDENTIFIER LEFT_PAREN identifier_list RIGHT_PAREN . LEFT_BRACE statement_list RIGHT_BRACE [ WHILE TRUE STRING SEMICOLON RETURN NOT LEFT_PAREN LEFT_BRACK LEFT_BRACE INT IF IDENTIFIER GLOBAL FUNCTION FLOAT FALSE EOF COMMENT ]
+## Transitions:
 -- On LEFT_BRACE shift to state 97
+## Reductions:
 
 State 97:
+## Known stack suffix:
+## FUNCTION IDENTIFIER LEFT_PAREN identifier_list RIGHT_PAREN LEFT_BRACE
+## LR(1) items:
 toplevel -> FUNCTION IDENTIFIER LEFT_PAREN identifier_list RIGHT_PAREN LEFT_BRACE . statement_list RIGHT_BRACE [ WHILE TRUE STRING SEMICOLON RETURN NOT LEFT_PAREN LEFT_BRACK LEFT_BRACE INT IF IDENTIFIER GLOBAL FUNCTION FLOAT FALSE EOF COMMENT ]
+## Transitions:
 -- On WHILE shift to state 1
 -- On TRUE shift to state 3
 -- On STRING shift to state 4
@@ -2016,14 +2505,25 @@ toplevel -> FUNCTION IDENTIFIER LEFT_PAREN identifier_list RIGHT_PAREN LEFT_BRAC
 -- On if_statement shift to state 81
 -- On expression shift to state 82
 -- On binary_expression shift to state 23
+## Reductions:
 -- On RIGHT_BRACE reduce production statement_list ->
 
 State 98:
+## Known stack suffix:
+## FUNCTION IDENTIFIER LEFT_PAREN identifier_list RIGHT_PAREN LEFT_BRACE statement_list
+## LR(1) items:
 toplevel -> FUNCTION IDENTIFIER LEFT_PAREN identifier_list RIGHT_PAREN LEFT_BRACE statement_list . RIGHT_BRACE [ WHILE TRUE STRING SEMICOLON RETURN NOT LEFT_PAREN LEFT_BRACK LEFT_BRACE INT IF IDENTIFIER GLOBAL FUNCTION FLOAT FALSE EOF COMMENT ]
+## Transitions:
 -- On RIGHT_BRACE shift to state 99
+## Reductions:
 
 State 99:
+## Known stack suffix:
+## FUNCTION IDENTIFIER LEFT_PAREN identifier_list RIGHT_PAREN LEFT_BRACE statement_list RIGHT_BRACE
+## LR(1) items:
 toplevel -> FUNCTION IDENTIFIER LEFT_PAREN identifier_list RIGHT_PAREN LEFT_BRACE statement_list RIGHT_BRACE . [ WHILE TRUE STRING SEMICOLON RETURN NOT LEFT_PAREN LEFT_BRACK LEFT_BRACE INT IF IDENTIFIER GLOBAL FUNCTION FLOAT FALSE EOF COMMENT ]
+## Transitions:
+## Reductions:
 -- On WHILE reduce production toplevel -> FUNCTION IDENTIFIER LEFT_PAREN identifier_list RIGHT_PAREN LEFT_BRACE statement_list RIGHT_BRACE
 -- On TRUE reduce production toplevel -> FUNCTION IDENTIFIER LEFT_PAREN identifier_list RIGHT_PAREN LEFT_BRACE statement_list RIGHT_BRACE
 -- On STRING reduce production toplevel -> FUNCTION IDENTIFIER LEFT_PAREN identifier_list RIGHT_PAREN LEFT_BRACE statement_list RIGHT_BRACE
@@ -2044,15 +2544,29 @@ toplevel -> FUNCTION IDENTIFIER LEFT_PAREN identifier_list RIGHT_PAREN LEFT_BRAC
 -- On COMMENT reduce production toplevel -> FUNCTION IDENTIFIER LEFT_PAREN identifier_list RIGHT_PAREN LEFT_BRACE statement_list RIGHT_BRACE
 
 State 100:
+## Known stack suffix:
+## toplevel_list
+## LR(1) items:
 program -> toplevel_list . EOF [ # ]
+## Transitions:
 -- On EOF shift to state 101
+## Reductions:
 
 State 101:
+## Known stack suffix:
+## toplevel_list EOF
+## LR(1) items:
 program -> toplevel_list EOF . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production program -> toplevel_list EOF
 
 State 102:
+## Known stack suffix:
+## toplevel
+## LR(1) items:
 toplevel_list -> toplevel . toplevel_list [ EOF ]
+## Transitions:
 -- On WHILE shift to state 1
 -- On TRUE shift to state 3
 -- On STRING shift to state 4
@@ -2079,14 +2593,25 @@ toplevel_list -> toplevel . toplevel_list [ EOF ]
 -- On if_statement shift to state 81
 -- On expression shift to state 82
 -- On binary_expression shift to state 23
+## Reductions:
 -- On EOF reduce production toplevel_list ->
 
 State 103:
+## Known stack suffix:
+## toplevel toplevel_list
+## LR(1) items:
 toplevel_list -> toplevel toplevel_list . [ EOF ]
+## Transitions:
+## Reductions:
 -- On EOF reduce production toplevel_list -> toplevel toplevel_list
 
 State 104:
+## Known stack suffix:
+## statement
+## LR(1) items:
 toplevel -> statement . [ WHILE TRUE STRING SEMICOLON RETURN NOT LEFT_PAREN LEFT_BRACK LEFT_BRACE INT IF IDENTIFIER GLOBAL FUNCTION FLOAT FALSE EOF COMMENT ]
+## Transitions:
+## Reductions:
 -- On WHILE reduce production toplevel -> statement
 -- On TRUE reduce production toplevel -> statement
 -- On STRING reduce production toplevel -> statement
@@ -2107,6 +2632,11 @@ toplevel -> statement . [ WHILE TRUE STRING SEMICOLON RETURN NOT LEFT_PAREN LEFT
 -- On COMMENT reduce production toplevel -> statement
 
 State 105:
+## Known stack suffix:
+## program
+## LR(1) items:
 program' -> program . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept program
 

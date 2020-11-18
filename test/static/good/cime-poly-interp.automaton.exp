@@ -1,59 +1,114 @@
 State 0:
+## Known stack suffix:
+##
+## LR(1) items:
 poly_interp_entry' -> . poly_interp_entry [ # ]
+## Transitions:
 -- On INTERP shift to state 1
 -- On symbol_interp shift to state 8
 -- On poly_interp_entry shift to state 28
 -- On interp shift to state 29
+## Reductions:
 -- On EOF reduce production interp ->
 
 State 1:
+## Known stack suffix:
+## INTERP
+## LR(1) items:
 symbol_interp -> INTERP . [ EQUAL ]
 symbol_interp -> INTERP . LEFT_PAR vars [ EQUAL ]
+## Transitions:
 -- On LEFT_PAR shift to state 2
+## Reductions:
 -- On EQUAL reduce production symbol_interp -> INTERP
 
 State 2:
+## Known stack suffix:
+## INTERP LEFT_PAR
+## LR(1) items:
 symbol_interp -> INTERP LEFT_PAR . vars [ EQUAL ]
+## Transitions:
 -- On VAR shift to state 3
 -- On vars shift to state 7
+## Reductions:
 
 State 3:
+## Known stack suffix:
+## VAR
+## LR(1) items:
 vars -> VAR . RIGHT_PAR [ EQUAL ]
 vars -> VAR . COMMA vars [ EQUAL ]
+## Transitions:
 -- On RIGHT_PAR shift to state 4
 -- On COMMA shift to state 5
+## Reductions:
 
 State 4:
+## Known stack suffix:
+## VAR RIGHT_PAR
+## LR(1) items:
 vars -> VAR RIGHT_PAR . [ EQUAL ]
+## Transitions:
+## Reductions:
 -- On EQUAL reduce production vars -> VAR RIGHT_PAR
 
 State 5:
+## Known stack suffix:
+## VAR COMMA
+## LR(1) items:
 vars -> VAR COMMA . vars [ EQUAL ]
+## Transitions:
 -- On VAR shift to state 3
 -- On vars shift to state 6
+## Reductions:
 
 State 6:
+## Known stack suffix:
+## VAR COMMA vars
+## LR(1) items:
 vars -> VAR COMMA vars . [ EQUAL ]
+## Transitions:
+## Reductions:
 -- On EQUAL reduce production vars -> VAR COMMA vars
 
 State 7:
+## Known stack suffix:
+## INTERP LEFT_PAR vars
+## LR(1) items:
 symbol_interp -> INTERP LEFT_PAR vars . [ EQUAL ]
+## Transitions:
+## Reductions:
 -- On EQUAL reduce production symbol_interp -> INTERP LEFT_PAR vars
 
 State 8:
+## Known stack suffix:
+## symbol_interp
+## LR(1) items:
 interp -> symbol_interp . EQUAL poly SEMICOLON interp [ EOF ]
+## Transitions:
 -- On EQUAL shift to state 9
+## Reductions:
 
 State 9:
+## Known stack suffix:
+## symbol_interp EQUAL
+## LR(1) items:
 interp -> symbol_interp EQUAL . poly SEMICOLON interp [ EOF ]
+## Transitions:
 -- On VAR shift to state 10
 -- On MINUS shift to state 11
 -- On LEFT_PAR shift to state 12
 -- On INT shift to state 13
 -- On poly shift to state 25
+## Reductions:
 
 State 10:
+## Known stack suffix:
+## VAR
+## LR(1) items:
 poly -> VAR . [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
+## Transitions:
+## Reductions:
 -- On SEMICOLON reduce production poly -> VAR
 -- On RIGHT_PAR reduce production poly -> VAR
 -- On PLUS reduce production poly -> VAR
@@ -62,23 +117,38 @@ poly -> VAR . [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
 -- On EXP reduce production poly -> VAR
 
 State 11:
+## Known stack suffix:
+## MINUS
+## LR(1) items:
 poly -> MINUS . poly [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
+## Transitions:
 -- On VAR shift to state 10
 -- On MINUS shift to state 11
 -- On LEFT_PAR shift to state 12
 -- On INT shift to state 13
 -- On poly shift to state 24
+## Reductions:
 
 State 12:
+## Known stack suffix:
+## LEFT_PAR
+## LR(1) items:
 poly -> LEFT_PAR . poly RIGHT_PAR [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
+## Transitions:
 -- On VAR shift to state 10
 -- On MINUS shift to state 11
 -- On LEFT_PAR shift to state 12
 -- On INT shift to state 13
 -- On poly shift to state 14
+## Reductions:
 
 State 13:
+## Known stack suffix:
+## INT
+## LR(1) items:
 poly -> INT . [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
+## Transitions:
+## Reductions:
 -- On SEMICOLON reduce production poly -> INT
 -- On RIGHT_PAR reduce production poly -> INT
 -- On PLUS reduce production poly -> INT
@@ -87,19 +157,29 @@ poly -> INT . [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
 -- On EXP reduce production poly -> INT
 
 State 14:
+## Known stack suffix:
+## LEFT_PAR poly
+## LR(1) items:
 poly -> LEFT_PAR poly . RIGHT_PAR [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
 poly -> poly . PLUS poly [ RIGHT_PAR PLUS MULT MINUS EXP ]
 poly -> poly . MINUS poly [ RIGHT_PAR PLUS MULT MINUS EXP ]
 poly -> poly . MULT poly [ RIGHT_PAR PLUS MULT MINUS EXP ]
 poly -> poly . EXP INT [ RIGHT_PAR PLUS MULT MINUS EXP ]
+## Transitions:
 -- On RIGHT_PAR shift to state 15
 -- On PLUS shift to state 16
 -- On MULT shift to state 18
 -- On MINUS shift to state 22
 -- On EXP shift to state 20
+## Reductions:
 
 State 15:
+## Known stack suffix:
+## LEFT_PAR poly RIGHT_PAR
+## LR(1) items:
 poly -> LEFT_PAR poly RIGHT_PAR . [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
+## Transitions:
+## Reductions:
 -- On SEMICOLON reduce production poly -> LEFT_PAR poly RIGHT_PAR
 -- On RIGHT_PAR reduce production poly -> LEFT_PAR poly RIGHT_PAR
 -- On PLUS reduce production poly -> LEFT_PAR poly RIGHT_PAR
@@ -108,41 +188,61 @@ poly -> LEFT_PAR poly RIGHT_PAR . [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
 -- On EXP reduce production poly -> LEFT_PAR poly RIGHT_PAR
 
 State 16:
+## Known stack suffix:
+## poly PLUS
+## LR(1) items:
 poly -> poly PLUS . poly [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
+## Transitions:
 -- On VAR shift to state 10
 -- On MINUS shift to state 11
 -- On LEFT_PAR shift to state 12
 -- On INT shift to state 13
 -- On poly shift to state 17
+## Reductions:
 
 State 17:
+## Known stack suffix:
+## poly PLUS poly
+## LR(1) items:
 poly -> poly . PLUS poly [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
 poly -> poly PLUS poly . [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
 poly -> poly . MINUS poly [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
 poly -> poly . MULT poly [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
 poly -> poly . EXP INT [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
+## Transitions:
 -- On MULT shift to state 18
 -- On EXP shift to state 20
+## Reductions:
 -- On SEMICOLON reduce production poly -> poly PLUS poly
 -- On RIGHT_PAR reduce production poly -> poly PLUS poly
 -- On PLUS reduce production poly -> poly PLUS poly
 -- On MINUS reduce production poly -> poly PLUS poly
 
 State 18:
+## Known stack suffix:
+## poly MULT
+## LR(1) items:
 poly -> poly MULT . poly [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
+## Transitions:
 -- On VAR shift to state 10
 -- On MINUS shift to state 11
 -- On LEFT_PAR shift to state 12
 -- On INT shift to state 13
 -- On poly shift to state 19
+## Reductions:
 
 State 19:
+## Known stack suffix:
+## poly MULT poly
+## LR(1) items:
 poly -> poly . PLUS poly [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
 poly -> poly . MINUS poly [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
 poly -> poly . MULT poly [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
 poly -> poly MULT poly . [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
 poly -> poly . EXP INT [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
+## Transitions:
 -- On EXP shift to state 20
+## Reductions:
 -- On SEMICOLON reduce production poly -> poly MULT poly
 -- On RIGHT_PAR reduce production poly -> poly MULT poly
 -- On PLUS reduce production poly -> poly MULT poly
@@ -150,11 +250,21 @@ poly -> poly . EXP INT [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
 -- On MINUS reduce production poly -> poly MULT poly
 
 State 20:
+## Known stack suffix:
+## poly EXP
+## LR(1) items:
 poly -> poly EXP . INT [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
+## Transitions:
 -- On INT shift to state 21
+## Reductions:
 
 State 21:
+## Known stack suffix:
+## poly EXP INT
+## LR(1) items:
 poly -> poly EXP INT . [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
+## Transitions:
+## Reductions:
 -- On SEMICOLON reduce production poly -> poly EXP INT
 -- On RIGHT_PAR reduce production poly -> poly EXP INT
 -- On PLUS reduce production poly -> poly EXP INT
@@ -163,33 +273,48 @@ poly -> poly EXP INT . [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
 -- On EXP reduce production poly -> poly EXP INT
 
 State 22:
+## Known stack suffix:
+## poly MINUS
+## LR(1) items:
 poly -> poly MINUS . poly [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
+## Transitions:
 -- On VAR shift to state 10
 -- On MINUS shift to state 11
 -- On LEFT_PAR shift to state 12
 -- On INT shift to state 13
 -- On poly shift to state 23
+## Reductions:
 
 State 23:
+## Known stack suffix:
+## poly MINUS poly
+## LR(1) items:
 poly -> poly . PLUS poly [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
 poly -> poly . MINUS poly [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
 poly -> poly MINUS poly . [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
 poly -> poly . MULT poly [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
 poly -> poly . EXP INT [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
+## Transitions:
 -- On MULT shift to state 18
 -- On EXP shift to state 20
+## Reductions:
 -- On SEMICOLON reduce production poly -> poly MINUS poly
 -- On RIGHT_PAR reduce production poly -> poly MINUS poly
 -- On PLUS reduce production poly -> poly MINUS poly
 -- On MINUS reduce production poly -> poly MINUS poly
 
 State 24:
+## Known stack suffix:
+## MINUS poly
+## LR(1) items:
 poly -> poly . PLUS poly [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
 poly -> poly . MINUS poly [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
 poly -> MINUS poly . [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
 poly -> poly . MULT poly [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
 poly -> poly . EXP INT [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
+## Transitions:
 -- On EXP shift to state 20
+## Reductions:
 -- On SEMICOLON reduce production poly -> MINUS poly
 -- On RIGHT_PAR reduce production poly -> MINUS poly
 -- On PLUS reduce production poly -> MINUS poly
@@ -197,78 +322,153 @@ poly -> poly . EXP INT [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
 -- On MINUS reduce production poly -> MINUS poly
 
 State 25:
+## Known stack suffix:
+## symbol_interp EQUAL poly
+## LR(1) items:
 interp -> symbol_interp EQUAL poly . SEMICOLON interp [ EOF ]
 poly -> poly . PLUS poly [ SEMICOLON PLUS MULT MINUS EXP ]
 poly -> poly . MINUS poly [ SEMICOLON PLUS MULT MINUS EXP ]
 poly -> poly . MULT poly [ SEMICOLON PLUS MULT MINUS EXP ]
 poly -> poly . EXP INT [ SEMICOLON PLUS MULT MINUS EXP ]
+## Transitions:
 -- On SEMICOLON shift to state 26
 -- On PLUS shift to state 16
 -- On MULT shift to state 18
 -- On MINUS shift to state 22
 -- On EXP shift to state 20
+## Reductions:
 
 State 26:
+## Known stack suffix:
+## symbol_interp EQUAL poly SEMICOLON
+## LR(1) items:
 interp -> symbol_interp EQUAL poly SEMICOLON . interp [ EOF ]
+## Transitions:
 -- On INTERP shift to state 1
 -- On symbol_interp shift to state 8
 -- On interp shift to state 27
+## Reductions:
 -- On EOF reduce production interp ->
 
 State 27:
+## Known stack suffix:
+## symbol_interp EQUAL poly SEMICOLON interp
+## LR(1) items:
 interp -> symbol_interp EQUAL poly SEMICOLON interp . [ EOF ]
+## Transitions:
+## Reductions:
 -- On EOF reduce production interp -> symbol_interp EQUAL poly SEMICOLON interp
 
 State 28:
+## Known stack suffix:
+## poly_interp_entry
+## LR(1) items:
 poly_interp_entry' -> poly_interp_entry . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept poly_interp_entry
 
 State 29:
+## Known stack suffix:
+## interp
+## LR(1) items:
 poly_interp_entry -> interp . EOF [ # ]
+## Transitions:
 -- On EOF shift to state 30
+## Reductions:
 
 State 30:
+## Known stack suffix:
+## interp EOF
+## LR(1) items:
 poly_interp_entry -> interp EOF . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production poly_interp_entry -> interp EOF
 
 State 31:
+## Known stack suffix:
+##
+## LR(1) items:
 weight_entry' -> . weight_entry [ # ]
+## Transitions:
 -- On INTERP shift to state 32
 -- On weight_entry shift to state 37
 -- On weight shift to state 38
+## Reductions:
 -- On EOF reduce production weight ->
 
 State 32:
+## Known stack suffix:
+## INTERP
+## LR(1) items:
 weight -> INTERP . EQUAL INT SEMICOLON weight [ EOF ]
+## Transitions:
 -- On EQUAL shift to state 33
+## Reductions:
 
 State 33:
+## Known stack suffix:
+## INTERP EQUAL
+## LR(1) items:
 weight -> INTERP EQUAL . INT SEMICOLON weight [ EOF ]
+## Transitions:
 -- On INT shift to state 34
+## Reductions:
 
 State 34:
+## Known stack suffix:
+## INTERP EQUAL INT
+## LR(1) items:
 weight -> INTERP EQUAL INT . SEMICOLON weight [ EOF ]
+## Transitions:
 -- On SEMICOLON shift to state 35
+## Reductions:
 
 State 35:
+## Known stack suffix:
+## INTERP EQUAL INT SEMICOLON
+## LR(1) items:
 weight -> INTERP EQUAL INT SEMICOLON . weight [ EOF ]
+## Transitions:
 -- On INTERP shift to state 32
 -- On weight shift to state 36
+## Reductions:
 -- On EOF reduce production weight ->
 
 State 36:
+## Known stack suffix:
+## INTERP EQUAL INT SEMICOLON weight
+## LR(1) items:
 weight -> INTERP EQUAL INT SEMICOLON weight . [ EOF ]
+## Transitions:
+## Reductions:
 -- On EOF reduce production weight -> INTERP EQUAL INT SEMICOLON weight
 
 State 37:
+## Known stack suffix:
+## weight_entry
+## LR(1) items:
 weight_entry' -> weight_entry . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept weight_entry
 
 State 38:
+## Known stack suffix:
+## weight
+## LR(1) items:
 weight_entry -> weight . EOF [ # ]
+## Transitions:
 -- On EOF shift to state 39
+## Reductions:
 
 State 39:
+## Known stack suffix:
+## weight EOF
+## LR(1) items:
 weight_entry -> weight EOF . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production weight_entry -> weight EOF
 

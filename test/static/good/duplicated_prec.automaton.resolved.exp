@@ -1,94 +1,169 @@
 State 0:
+## Known stack suffix:
+##
+## LR(1) items:
 expr_eoi' -> . expr_eoi [ # ]
+## Transitions:
 -- On Ident shift to state 1
 -- On expr_eoi shift to state 2
 -- On expr shift to state 3
+## Reductions:
 
 State 1:
+## Known stack suffix:
+## Ident
+## LR(1) items:
 expr -> Ident . [ Rparen Lparen Eoi Colon ]
+## Transitions:
+## Reductions:
 -- On Rparen reduce production expr -> Ident
 -- On Lparen reduce production expr -> Ident
 -- On Eoi reduce production expr -> Ident
 -- On Colon reduce production expr -> Ident
 
 State 2:
+## Known stack suffix:
+## expr_eoi
+## LR(1) items:
 expr_eoi' -> expr_eoi . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept expr_eoi
 
 State 3:
+## Known stack suffix:
+## expr
+## LR(1) items:
 expr -> expr . Colon type_expr [ Lparen Eoi Colon ]
 expr -> expr . Lparen expr Rparen [ Lparen Eoi Colon ]
 expr_eoi -> expr . Eoi [ # ]
+## Transitions:
 -- On Lparen shift to state 4
 -- On Eoi shift to state 14
 -- On Colon shift to state 7
+## Reductions:
 
 State 4:
+## Known stack suffix:
+## expr Lparen
+## LR(1) items:
 expr -> expr Lparen . expr Rparen [ Rparen Lparen Eoi Colon ]
+## Transitions:
 -- On Ident shift to state 1
 -- On expr shift to state 5
+## Reductions:
 
 State 5:
+## Known stack suffix:
+## expr Lparen expr
+## LR(1) items:
 expr -> expr . Colon type_expr [ Rparen Lparen Colon ]
 expr -> expr . Lparen expr Rparen [ Rparen Lparen Colon ]
 expr -> expr Lparen expr . Rparen [ Rparen Lparen Eoi Colon ]
+## Transitions:
 -- On Rparen shift to state 6
 -- On Lparen shift to state 4
 -- On Colon shift to state 7
+## Reductions:
 
 State 6:
+## Known stack suffix:
+## expr Lparen expr Rparen
+## LR(1) items:
 expr -> expr Lparen expr Rparen . [ Rparen Lparen Eoi Colon ]
+## Transitions:
+## Reductions:
 -- On Rparen reduce production expr -> expr Lparen expr Rparen
 -- On Lparen reduce production expr -> expr Lparen expr Rparen
 -- On Eoi reduce production expr -> expr Lparen expr Rparen
 -- On Colon reduce production expr -> expr Lparen expr Rparen
 
 State 7:
+## Known stack suffix:
+## expr Colon
+## LR(1) items:
 expr -> expr Colon . type_expr [ Rparen Lparen Eoi Colon ]
+## Transitions:
 -- On Typevar shift to state 8
 -- On Ident shift to state 9
 -- On type_expr shift to state 13
+## Reductions:
 
 State 8:
+## Known stack suffix:
+## Typevar
+## LR(1) items:
 type_expr -> Typevar . [ Rparen Lparen Eoi Colon ]
+## Transitions:
+## Reductions:
 -- On Rparen reduce production type_expr -> Typevar
 -- On Lparen reduce production type_expr -> Typevar
 -- On Eoi reduce production type_expr -> Typevar
 -- On Colon reduce production type_expr -> Typevar
 
 State 9:
+## Known stack suffix:
+## Ident
+## LR(1) items:
 type_expr -> Ident . [ Rparen Lparen Eoi Colon ]
 type_expr -> Ident . Lparen type_expr Rparen [ Rparen Lparen Eoi Colon ]
+## Transitions:
 -- On Lparen shift to state 10
+## Reductions:
 -- On Rparen reduce production type_expr -> Ident
 -- On Eoi reduce production type_expr -> Ident
 -- On Colon reduce production type_expr -> Ident
 
 State 10:
+## Known stack suffix:
+## Ident Lparen
+## LR(1) items:
 type_expr -> Ident Lparen . type_expr Rparen [ Rparen Lparen Eoi Colon ]
+## Transitions:
 -- On Typevar shift to state 8
 -- On Ident shift to state 9
 -- On type_expr shift to state 11
+## Reductions:
 
 State 11:
+## Known stack suffix:
+## Ident Lparen type_expr
+## LR(1) items:
 type_expr -> Ident Lparen type_expr . Rparen [ Rparen Lparen Eoi Colon ]
+## Transitions:
 -- On Rparen shift to state 12
+## Reductions:
 
 State 12:
+## Known stack suffix:
+## Ident Lparen type_expr Rparen
+## LR(1) items:
 type_expr -> Ident Lparen type_expr Rparen . [ Rparen Lparen Eoi Colon ]
+## Transitions:
+## Reductions:
 -- On Rparen reduce production type_expr -> Ident Lparen type_expr Rparen
 -- On Lparen reduce production type_expr -> Ident Lparen type_expr Rparen
 -- On Eoi reduce production type_expr -> Ident Lparen type_expr Rparen
 -- On Colon reduce production type_expr -> Ident Lparen type_expr Rparen
 
 State 13:
+## Known stack suffix:
+## expr Colon type_expr
+## LR(1) items:
 expr -> expr Colon type_expr . [ Rparen Lparen Eoi Colon ]
+## Transitions:
+## Reductions:
 -- On Rparen reduce production expr -> expr Colon type_expr
 -- On Lparen reduce production expr -> expr Colon type_expr
 -- On Eoi reduce production expr -> expr Colon type_expr
 -- On Colon reduce production expr -> expr Colon type_expr
 
 State 14:
+## Known stack suffix:
+## expr Eoi
+## LR(1) items:
 expr_eoi -> expr Eoi . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production expr_eoi -> expr Eoi
 

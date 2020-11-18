@@ -1,5 +1,9 @@
 State 0:
+## Known stack suffix:
+##
+## LR(1) items:
 parse_statement' -> . parse_statement [ # ]
+## Transitions:
 -- On error shift to state 1
 -- On VAL shift to state 2
 -- On REWRITE shift to state 156
@@ -11,21 +15,36 @@ parse_statement' -> . parse_statement [ # ]
 -- On ASSERT shift to state 233
 -- On statement shift to state 237
 -- On parse_statement shift to state 239
+## Reductions:
 
 State 1:
+## Known stack suffix:
+## error
+## LR(1) items:
 statement -> error . [ EOI ]
+## Transitions:
+## Reductions:
 -- On EOI reduce production statement -> error
 
 State 2:
+## Known stack suffix:
+## VAL
+## LR(1) items:
 statement -> VAL . attrs raw_var COLON term DOT [ EOI ]
+## Transitions:
 -- On LEFT_BRACKET shift to state 3
 -- On attrs shift to state 27
+## Reductions:
 -- On UPPER_WORD reduce production attrs ->
 -- On SINGLE_QUOTED reduce production attrs ->
 -- On LOWER_WORD reduce production attrs ->
 
 State 3:
+## Known stack suffix:
+## LEFT_BRACKET
+## LR(1) items:
 attrs -> LEFT_BRACKET . separated_nonempty_list(COMMA,attr) RIGHT_BRACKET [ UPPER_WORD SINGLE_QUOTED LOWER_WORD ]
+## Transitions:
 -- On error shift to state 4
 -- On UPPER_WORD shift to state 5
 -- On SINGLE_QUOTED shift to state 6
@@ -37,15 +56,26 @@ attrs -> LEFT_BRACKET . separated_nonempty_list(COMMA,attr) RIGHT_BRACKET [ UPPE
 -- On raw_var shift to state 12
 -- On attr shift to state 19
 -- On atomic_attr shift to state 22
+## Reductions:
 
 State 4:
+## Known stack suffix:
+## error
+## LR(1) items:
 attr -> error . [ RIGHT_PAREN RIGHT_BRACKET COMMA ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production attr -> error
 -- On RIGHT_BRACKET reduce production attr -> error
 -- On COMMA reduce production attr -> error
 
 State 5:
+## Known stack suffix:
+## UPPER_WORD
+## LR(1) items:
 raw_var -> UPPER_WORD . [ WITH WILDCARD WHERE VERTICAL_BAR UPPER_WORD TYPE THEN SINGLE_QUOTED SEMI_COLON RIGHT_PAREN RIGHT_BRACKET QUOTED PROP MATCH LOWER_WORD LOGIC_TRUE LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_FALSE LOGIC_EQUIV LOGIC_EQ LOGIC_AND LEFT_PAREN LEFT_BRACKET INTEGER INT IN EQDEF EOI END ELSE DOT COMMA COLON ARROW ARITH_PRODUCT ARITH_PLUS ARITH_MINUS ARITH_LT ARITH_LEQ ARITH_GT ARITH_GEQ AND ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production raw_var -> UPPER_WORD
 -- On WILDCARD reduce production raw_var -> UPPER_WORD
 -- On WHERE reduce production raw_var -> UPPER_WORD
@@ -92,7 +122,12 @@ raw_var -> UPPER_WORD . [ WITH WILDCARD WHERE VERTICAL_BAR UPPER_WORD TYPE THEN 
 -- On AND reduce production raw_var -> UPPER_WORD
 
 State 6:
+## Known stack suffix:
+## SINGLE_QUOTED
+## LR(1) items:
 raw_var -> SINGLE_QUOTED . [ WITH WILDCARD WHERE VERTICAL_BAR UPPER_WORD TYPE THEN SINGLE_QUOTED SEMI_COLON RIGHT_PAREN RIGHT_BRACKET QUOTED PROP MATCH LOWER_WORD LOGIC_TRUE LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_FALSE LOGIC_EQUIV LOGIC_EQ LOGIC_AND LEFT_PAREN LEFT_BRACKET INTEGER INT IN EQDEF EOI END ELSE DOT COMMA COLON ARROW ARITH_PRODUCT ARITH_PLUS ARITH_MINUS ARITH_LT ARITH_LEQ ARITH_GT ARITH_GEQ AND ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production raw_var -> SINGLE_QUOTED
 -- On WILDCARD reduce production raw_var -> SINGLE_QUOTED
 -- On WHERE reduce production raw_var -> SINGLE_QUOTED
@@ -139,7 +174,12 @@ raw_var -> SINGLE_QUOTED . [ WITH WILDCARD WHERE VERTICAL_BAR UPPER_WORD TYPE TH
 -- On AND reduce production raw_var -> SINGLE_QUOTED
 
 State 7:
+## Known stack suffix:
+## QUOTED
+## LR(1) items:
 atomic_attr -> QUOTED . [ UPPER_WORD SINGLE_QUOTED RIGHT_PAREN RIGHT_BRACKET QUOTED LOWER_WORD LEFT_PAREN LEFT_BRACKET COMMA ]
+## Transitions:
+## Reductions:
 -- On UPPER_WORD reduce production atomic_attr -> QUOTED
 -- On SINGLE_QUOTED reduce production atomic_attr -> QUOTED
 -- On RIGHT_PAREN reduce production atomic_attr -> QUOTED
@@ -151,7 +191,12 @@ atomic_attr -> QUOTED . [ UPPER_WORD SINGLE_QUOTED RIGHT_PAREN RIGHT_BRACKET QUO
 -- On COMMA reduce production atomic_attr -> QUOTED
 
 State 8:
+## Known stack suffix:
+## LOWER_WORD
+## LR(1) items:
 raw_var -> LOWER_WORD . [ WITH WILDCARD WHERE VERTICAL_BAR UPPER_WORD TYPE THEN SINGLE_QUOTED SEMI_COLON RIGHT_PAREN RIGHT_BRACKET QUOTED PROP MATCH LOWER_WORD LOGIC_TRUE LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_FALSE LOGIC_EQUIV LOGIC_EQ LOGIC_AND LEFT_PAREN LEFT_BRACKET INTEGER INT IN EQDEF EOI END ELSE DOT COMMA COLON ARROW ARITH_PRODUCT ARITH_PLUS ARITH_MINUS ARITH_LT ARITH_LEQ ARITH_GT ARITH_GEQ AND ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production raw_var -> LOWER_WORD
 -- On WILDCARD reduce production raw_var -> LOWER_WORD
 -- On WHERE reduce production raw_var -> LOWER_WORD
@@ -198,7 +243,11 @@ raw_var -> LOWER_WORD . [ WITH WILDCARD WHERE VERTICAL_BAR UPPER_WORD TYPE THEN 
 -- On AND reduce production raw_var -> LOWER_WORD
 
 State 9:
+## Known stack suffix:
+## LEFT_PAREN
+## LR(1) items:
 atomic_attr -> LEFT_PAREN . attr RIGHT_PAREN [ UPPER_WORD SINGLE_QUOTED RIGHT_PAREN RIGHT_BRACKET QUOTED LOWER_WORD LEFT_PAREN LEFT_BRACKET COMMA ]
+## Transitions:
 -- On error shift to state 4
 -- On UPPER_WORD shift to state 5
 -- On SINGLE_QUOTED shift to state 6
@@ -209,9 +258,14 @@ atomic_attr -> LEFT_PAREN . attr RIGHT_PAREN [ UPPER_WORD SINGLE_QUOTED RIGHT_PA
 -- On raw_var shift to state 12
 -- On attr shift to state 23
 -- On atomic_attr shift to state 22
+## Reductions:
 
 State 10:
+## Known stack suffix:
+## LEFT_BRACKET
+## LR(1) items:
 atomic_attr -> LEFT_BRACKET . loption(separated_nonempty_list(COMMA,attr)) RIGHT_BRACKET [ UPPER_WORD SINGLE_QUOTED RIGHT_PAREN RIGHT_BRACKET QUOTED LOWER_WORD LEFT_PAREN LEFT_BRACKET COMMA ]
+## Transitions:
 -- On error shift to state 4
 -- On UPPER_WORD shift to state 5
 -- On SINGLE_QUOTED shift to state 6
@@ -224,15 +278,25 @@ atomic_attr -> LEFT_BRACKET . loption(separated_nonempty_list(COMMA,attr)) RIGHT
 -- On loption(separated_nonempty_list(COMMA,attr)) shift to state 17
 -- On attr shift to state 19
 -- On atomic_attr shift to state 22
+## Reductions:
 -- On RIGHT_BRACKET reduce production loption(separated_nonempty_list(COMMA,attr)) ->
 
 State 11:
+## Known stack suffix:
+## separated_nonempty_list(COMMA,attr)
+## LR(1) items:
 loption(separated_nonempty_list(COMMA,attr)) -> separated_nonempty_list(COMMA,attr) . [ RIGHT_BRACKET ]
+## Transitions:
+## Reductions:
 -- On RIGHT_BRACKET reduce production loption(separated_nonempty_list(COMMA,attr)) -> separated_nonempty_list(COMMA,attr)
 
 State 12:
+## Known stack suffix:
+## raw_var
+## LR(1) items:
 atomic_attr -> raw_var . [ RIGHT_PAREN RIGHT_BRACKET COMMA ]
 attr -> raw_var . nonempty_list(atomic_attr) [ RIGHT_PAREN RIGHT_BRACKET COMMA ]
+## Transitions:
 -- On UPPER_WORD shift to state 5
 -- On SINGLE_QUOTED shift to state 6
 -- On QUOTED shift to state 7
@@ -242,12 +306,18 @@ attr -> raw_var . nonempty_list(atomic_attr) [ RIGHT_PAREN RIGHT_BRACKET COMMA ]
 -- On raw_var shift to state 13
 -- On nonempty_list(atomic_attr) shift to state 14
 -- On atomic_attr shift to state 15
+## Reductions:
 -- On RIGHT_PAREN reduce production atomic_attr -> raw_var
 -- On RIGHT_BRACKET reduce production atomic_attr -> raw_var
 -- On COMMA reduce production atomic_attr -> raw_var
 
 State 13:
+## Known stack suffix:
+## raw_var
+## LR(1) items:
 atomic_attr -> raw_var . [ UPPER_WORD SINGLE_QUOTED RIGHT_PAREN RIGHT_BRACKET QUOTED LOWER_WORD LEFT_PAREN LEFT_BRACKET COMMA ]
+## Transitions:
+## Reductions:
 -- On UPPER_WORD reduce production atomic_attr -> raw_var
 -- On SINGLE_QUOTED reduce production atomic_attr -> raw_var
 -- On RIGHT_PAREN reduce production atomic_attr -> raw_var
@@ -259,14 +329,23 @@ atomic_attr -> raw_var . [ UPPER_WORD SINGLE_QUOTED RIGHT_PAREN RIGHT_BRACKET QU
 -- On COMMA reduce production atomic_attr -> raw_var
 
 State 14:
+## Known stack suffix:
+## raw_var nonempty_list(atomic_attr)
+## LR(1) items:
 attr -> raw_var nonempty_list(atomic_attr) . [ RIGHT_PAREN RIGHT_BRACKET COMMA ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production attr -> raw_var nonempty_list(atomic_attr)
 -- On RIGHT_BRACKET reduce production attr -> raw_var nonempty_list(atomic_attr)
 -- On COMMA reduce production attr -> raw_var nonempty_list(atomic_attr)
 
 State 15:
+## Known stack suffix:
+## atomic_attr
+## LR(1) items:
 nonempty_list(atomic_attr) -> atomic_attr . [ RIGHT_PAREN RIGHT_BRACKET COMMA ]
 nonempty_list(atomic_attr) -> atomic_attr . nonempty_list(atomic_attr) [ RIGHT_PAREN RIGHT_BRACKET COMMA ]
+## Transitions:
 -- On UPPER_WORD shift to state 5
 -- On SINGLE_QUOTED shift to state 6
 -- On QUOTED shift to state 7
@@ -276,22 +355,38 @@ nonempty_list(atomic_attr) -> atomic_attr . nonempty_list(atomic_attr) [ RIGHT_P
 -- On raw_var shift to state 13
 -- On nonempty_list(atomic_attr) shift to state 16
 -- On atomic_attr shift to state 15
+## Reductions:
 -- On RIGHT_PAREN reduce production nonempty_list(atomic_attr) -> atomic_attr
 -- On RIGHT_BRACKET reduce production nonempty_list(atomic_attr) -> atomic_attr
 -- On COMMA reduce production nonempty_list(atomic_attr) -> atomic_attr
 
 State 16:
+## Known stack suffix:
+## atomic_attr nonempty_list(atomic_attr)
+## LR(1) items:
 nonempty_list(atomic_attr) -> atomic_attr nonempty_list(atomic_attr) . [ RIGHT_PAREN RIGHT_BRACKET COMMA ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production nonempty_list(atomic_attr) -> atomic_attr nonempty_list(atomic_attr)
 -- On RIGHT_BRACKET reduce production nonempty_list(atomic_attr) -> atomic_attr nonempty_list(atomic_attr)
 -- On COMMA reduce production nonempty_list(atomic_attr) -> atomic_attr nonempty_list(atomic_attr)
 
 State 17:
+## Known stack suffix:
+## LEFT_BRACKET loption(separated_nonempty_list(COMMA,attr))
+## LR(1) items:
 atomic_attr -> LEFT_BRACKET loption(separated_nonempty_list(COMMA,attr)) . RIGHT_BRACKET [ UPPER_WORD SINGLE_QUOTED RIGHT_PAREN RIGHT_BRACKET QUOTED LOWER_WORD LEFT_PAREN LEFT_BRACKET COMMA ]
+## Transitions:
 -- On RIGHT_BRACKET shift to state 18
+## Reductions:
 
 State 18:
+## Known stack suffix:
+## LEFT_BRACKET loption(separated_nonempty_list(COMMA,attr)) RIGHT_BRACKET
+## LR(1) items:
 atomic_attr -> LEFT_BRACKET loption(separated_nonempty_list(COMMA,attr)) RIGHT_BRACKET . [ UPPER_WORD SINGLE_QUOTED RIGHT_PAREN RIGHT_BRACKET QUOTED LOWER_WORD LEFT_PAREN LEFT_BRACKET COMMA ]
+## Transitions:
+## Reductions:
 -- On UPPER_WORD reduce production atomic_attr -> LEFT_BRACKET loption(separated_nonempty_list(COMMA,attr)) RIGHT_BRACKET
 -- On SINGLE_QUOTED reduce production atomic_attr -> LEFT_BRACKET loption(separated_nonempty_list(COMMA,attr)) RIGHT_BRACKET
 -- On RIGHT_PAREN reduce production atomic_attr -> LEFT_BRACKET loption(separated_nonempty_list(COMMA,attr)) RIGHT_BRACKET
@@ -303,13 +398,22 @@ atomic_attr -> LEFT_BRACKET loption(separated_nonempty_list(COMMA,attr)) RIGHT_B
 -- On COMMA reduce production atomic_attr -> LEFT_BRACKET loption(separated_nonempty_list(COMMA,attr)) RIGHT_BRACKET
 
 State 19:
+## Known stack suffix:
+## attr
+## LR(1) items:
 separated_nonempty_list(COMMA,attr) -> attr . [ RIGHT_BRACKET ]
 separated_nonempty_list(COMMA,attr) -> attr . COMMA separated_nonempty_list(COMMA,attr) [ RIGHT_BRACKET ]
+## Transitions:
 -- On COMMA shift to state 20
+## Reductions:
 -- On RIGHT_BRACKET reduce production separated_nonempty_list(COMMA,attr) -> attr
 
 State 20:
+## Known stack suffix:
+## attr COMMA
+## LR(1) items:
 separated_nonempty_list(COMMA,attr) -> attr COMMA . separated_nonempty_list(COMMA,attr) [ RIGHT_BRACKET ]
+## Transitions:
 -- On error shift to state 4
 -- On UPPER_WORD shift to state 5
 -- On SINGLE_QUOTED shift to state 6
@@ -321,23 +425,44 @@ separated_nonempty_list(COMMA,attr) -> attr COMMA . separated_nonempty_list(COMM
 -- On raw_var shift to state 12
 -- On attr shift to state 19
 -- On atomic_attr shift to state 22
+## Reductions:
 
 State 21:
+## Known stack suffix:
+## attr COMMA separated_nonempty_list(COMMA,attr)
+## LR(1) items:
 separated_nonempty_list(COMMA,attr) -> attr COMMA separated_nonempty_list(COMMA,attr) . [ RIGHT_BRACKET ]
+## Transitions:
+## Reductions:
 -- On RIGHT_BRACKET reduce production separated_nonempty_list(COMMA,attr) -> attr COMMA separated_nonempty_list(COMMA,attr)
 
 State 22:
+## Known stack suffix:
+## atomic_attr
+## LR(1) items:
 attr -> atomic_attr . [ RIGHT_PAREN RIGHT_BRACKET COMMA ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production attr -> atomic_attr
 -- On RIGHT_BRACKET reduce production attr -> atomic_attr
 -- On COMMA reduce production attr -> atomic_attr
 
 State 23:
+## Known stack suffix:
+## LEFT_PAREN attr
+## LR(1) items:
 atomic_attr -> LEFT_PAREN attr . RIGHT_PAREN [ UPPER_WORD SINGLE_QUOTED RIGHT_PAREN RIGHT_BRACKET QUOTED LOWER_WORD LEFT_PAREN LEFT_BRACKET COMMA ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 24
+## Reductions:
 
 State 24:
+## Known stack suffix:
+## LEFT_PAREN attr RIGHT_PAREN
+## LR(1) items:
 atomic_attr -> LEFT_PAREN attr RIGHT_PAREN . [ UPPER_WORD SINGLE_QUOTED RIGHT_PAREN RIGHT_BRACKET QUOTED LOWER_WORD LEFT_PAREN LEFT_BRACKET COMMA ]
+## Transitions:
+## Reductions:
 -- On UPPER_WORD reduce production atomic_attr -> LEFT_PAREN attr RIGHT_PAREN
 -- On SINGLE_QUOTED reduce production atomic_attr -> LEFT_PAREN attr RIGHT_PAREN
 -- On RIGHT_PAREN reduce production atomic_attr -> LEFT_PAREN attr RIGHT_PAREN
@@ -349,28 +474,52 @@ atomic_attr -> LEFT_PAREN attr RIGHT_PAREN . [ UPPER_WORD SINGLE_QUOTED RIGHT_PA
 -- On COMMA reduce production atomic_attr -> LEFT_PAREN attr RIGHT_PAREN
 
 State 25:
+## Known stack suffix:
+## LEFT_BRACKET separated_nonempty_list(COMMA,attr)
+## LR(1) items:
 attrs -> LEFT_BRACKET separated_nonempty_list(COMMA,attr) . RIGHT_BRACKET [ UPPER_WORD SINGLE_QUOTED LOWER_WORD ]
+## Transitions:
 -- On RIGHT_BRACKET shift to state 26
+## Reductions:
 
 State 26:
+## Known stack suffix:
+## LEFT_BRACKET separated_nonempty_list(COMMA,attr) RIGHT_BRACKET
+## LR(1) items:
 attrs -> LEFT_BRACKET separated_nonempty_list(COMMA,attr) RIGHT_BRACKET . [ UPPER_WORD SINGLE_QUOTED LOWER_WORD ]
+## Transitions:
+## Reductions:
 -- On UPPER_WORD reduce production attrs -> LEFT_BRACKET separated_nonempty_list(COMMA,attr) RIGHT_BRACKET
 -- On SINGLE_QUOTED reduce production attrs -> LEFT_BRACKET separated_nonempty_list(COMMA,attr) RIGHT_BRACKET
 -- On LOWER_WORD reduce production attrs -> LEFT_BRACKET separated_nonempty_list(COMMA,attr) RIGHT_BRACKET
 
 State 27:
+## Known stack suffix:
+## VAL attrs
+## LR(1) items:
 statement -> VAL attrs . raw_var COLON term DOT [ EOI ]
+## Transitions:
 -- On UPPER_WORD shift to state 5
 -- On SINGLE_QUOTED shift to state 6
 -- On LOWER_WORD shift to state 8
 -- On raw_var shift to state 28
+## Reductions:
 
 State 28:
+## Known stack suffix:
+## VAL attrs raw_var
+## LR(1) items:
 statement -> VAL attrs raw_var . COLON term DOT [ EOI ]
+## Transitions:
 -- On COLON shift to state 29
+## Reductions:
 
 State 29:
+## Known stack suffix:
+## VAL attrs raw_var COLON
+## LR(1) items:
 statement -> VAL attrs raw_var COLON . term DOT [ EOI ]
+## Transitions:
 -- On error shift to state 30
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
@@ -405,9 +554,15 @@ statement -> VAL attrs raw_var COLON . term DOT [ EOI ]
 -- On arith_op_term shift to state 97
 -- On apply_term shift to state 103
 -- On and_term shift to state 106
+## Reductions:
 
 State 30:
+## Known stack suffix:
+## error
+## LR(1) items:
 term -> error . [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production term -> error
 -- On WHERE reduce production term -> error
 -- On VERTICAL_BAR reduce production term -> error
@@ -423,7 +578,12 @@ term -> error . [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN IN EQDEF E
 -- On AND reduce production term -> error
 
 State 31:
+## Known stack suffix:
+## WILDCARD
+## LR(1) items:
 var -> WILDCARD . [ WITH WILDCARD WHERE VERTICAL_BAR UPPER_WORD TYPE THEN SINGLE_QUOTED SEMI_COLON RIGHT_PAREN PROP MATCH LOWER_WORD LOGIC_TRUE LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_FALSE LOGIC_EQUIV LOGIC_EQ LOGIC_AND LEFT_PAREN INTEGER INT IN EQDEF EOI END ELSE DOT ARROW ARITH_PRODUCT ARITH_PLUS ARITH_MINUS ARITH_LT ARITH_LEQ ARITH_GT ARITH_GEQ AND ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production var -> WILDCARD
 -- On WILDCARD reduce production var -> WILDCARD
 -- On WHERE reduce production var -> WILDCARD
@@ -465,7 +625,12 @@ var -> WILDCARD . [ WITH WILDCARD WHERE VERTICAL_BAR UPPER_WORD TYPE THEN SINGLE
 -- On AND reduce production var -> WILDCARD
 
 State 32:
+## Known stack suffix:
+## TYPE
+## LR(1) items:
 const -> TYPE . [ WITH WILDCARD WHERE VERTICAL_BAR UPPER_WORD TYPE THEN SINGLE_QUOTED SEMI_COLON RIGHT_PAREN PROP MATCH LOWER_WORD LOGIC_TRUE LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_FALSE LOGIC_EQUIV LOGIC_EQ LOGIC_AND LEFT_PAREN INTEGER INT IN EQDEF EOI END ELSE DOT ARROW ARITH_PRODUCT ARITH_PLUS ARITH_MINUS ARITH_LT ARITH_LEQ ARITH_GT ARITH_GEQ AND ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production const -> TYPE
 -- On WILDCARD reduce production const -> TYPE
 -- On WHERE reduce production const -> TYPE
@@ -507,7 +672,12 @@ const -> TYPE . [ WITH WILDCARD WHERE VERTICAL_BAR UPPER_WORD TYPE THEN SINGLE_Q
 -- On AND reduce production const -> TYPE
 
 State 33:
+## Known stack suffix:
+## PROP
+## LR(1) items:
 const -> PROP . [ WITH WILDCARD WHERE VERTICAL_BAR UPPER_WORD TYPE THEN SINGLE_QUOTED SEMI_COLON RIGHT_PAREN PROP MATCH LOWER_WORD LOGIC_TRUE LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_FALSE LOGIC_EQUIV LOGIC_EQ LOGIC_AND LEFT_PAREN INTEGER INT IN EQDEF EOI END ELSE DOT ARROW ARITH_PRODUCT ARITH_PLUS ARITH_MINUS ARITH_LT ARITH_LEQ ARITH_GT ARITH_GEQ AND ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production const -> PROP
 -- On WILDCARD reduce production const -> PROP
 -- On WHERE reduce production const -> PROP
@@ -549,7 +719,11 @@ const -> PROP . [ WITH WILDCARD WHERE VERTICAL_BAR UPPER_WORD TYPE THEN SINGLE_Q
 -- On AND reduce production const -> PROP
 
 State 34:
+## Known stack suffix:
+## PI
+## LR(1) items:
 term -> PI . typed_ty_var_list DOT term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
 -- On UPPER_WORD shift to state 5
 -- On SINGLE_QUOTED shift to state 6
 -- On LOWER_WORD shift to state 8
@@ -557,43 +731,79 @@ term -> PI . typed_ty_var_list DOT term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLO
 -- On typed_ty_var_list shift to state 42
 -- On typed_ty_var_block shift to state 149
 -- On raw_var shift to state 151
+## Reductions:
 
 State 35:
+## Known stack suffix:
+## LEFT_PAREN
+## LR(1) items:
 typed_ty_var_block -> LEFT_PAREN . nonempty_list(raw_var) COLON TYPE RIGHT_PAREN [ UPPER_WORD SINGLE_QUOTED LOWER_WORD LEFT_PAREN DOT ]
+## Transitions:
 -- On UPPER_WORD shift to state 5
 -- On SINGLE_QUOTED shift to state 6
 -- On LOWER_WORD shift to state 8
 -- On raw_var shift to state 36
 -- On nonempty_list(raw_var) shift to state 38
+## Reductions:
 
 State 36:
+## Known stack suffix:
+## raw_var
+## LR(1) items:
 nonempty_list(raw_var) -> raw_var . [ COLON ]
 nonempty_list(raw_var) -> raw_var . nonempty_list(raw_var) [ COLON ]
+## Transitions:
 -- On UPPER_WORD shift to state 5
 -- On SINGLE_QUOTED shift to state 6
 -- On LOWER_WORD shift to state 8
 -- On raw_var shift to state 36
 -- On nonempty_list(raw_var) shift to state 37
+## Reductions:
 -- On COLON reduce production nonempty_list(raw_var) -> raw_var
 
 State 37:
+## Known stack suffix:
+## raw_var nonempty_list(raw_var)
+## LR(1) items:
 nonempty_list(raw_var) -> raw_var nonempty_list(raw_var) . [ COLON ]
+## Transitions:
+## Reductions:
 -- On COLON reduce production nonempty_list(raw_var) -> raw_var nonempty_list(raw_var)
 
 State 38:
+## Known stack suffix:
+## LEFT_PAREN nonempty_list(raw_var)
+## LR(1) items:
 typed_ty_var_block -> LEFT_PAREN nonempty_list(raw_var) . COLON TYPE RIGHT_PAREN [ UPPER_WORD SINGLE_QUOTED LOWER_WORD LEFT_PAREN DOT ]
+## Transitions:
 -- On COLON shift to state 39
+## Reductions:
 
 State 39:
+## Known stack suffix:
+## LEFT_PAREN nonempty_list(raw_var) COLON
+## LR(1) items:
 typed_ty_var_block -> LEFT_PAREN nonempty_list(raw_var) COLON . TYPE RIGHT_PAREN [ UPPER_WORD SINGLE_QUOTED LOWER_WORD LEFT_PAREN DOT ]
+## Transitions:
 -- On TYPE shift to state 40
+## Reductions:
 
 State 40:
+## Known stack suffix:
+## LEFT_PAREN nonempty_list(raw_var) COLON TYPE
+## LR(1) items:
 typed_ty_var_block -> LEFT_PAREN nonempty_list(raw_var) COLON TYPE . RIGHT_PAREN [ UPPER_WORD SINGLE_QUOTED LOWER_WORD LEFT_PAREN DOT ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 41
+## Reductions:
 
 State 41:
+## Known stack suffix:
+## LEFT_PAREN nonempty_list(raw_var) COLON TYPE RIGHT_PAREN
+## LR(1) items:
 typed_ty_var_block -> LEFT_PAREN nonempty_list(raw_var) COLON TYPE RIGHT_PAREN . [ UPPER_WORD SINGLE_QUOTED LOWER_WORD LEFT_PAREN DOT ]
+## Transitions:
+## Reductions:
 -- On UPPER_WORD reduce production typed_ty_var_block -> LEFT_PAREN nonempty_list(raw_var) COLON TYPE RIGHT_PAREN
 -- On SINGLE_QUOTED reduce production typed_ty_var_block -> LEFT_PAREN nonempty_list(raw_var) COLON TYPE RIGHT_PAREN
 -- On LOWER_WORD reduce production typed_ty_var_block -> LEFT_PAREN nonempty_list(raw_var) COLON TYPE RIGHT_PAREN
@@ -601,11 +811,20 @@ typed_ty_var_block -> LEFT_PAREN nonempty_list(raw_var) COLON TYPE RIGHT_PAREN .
 -- On DOT reduce production typed_ty_var_block -> LEFT_PAREN nonempty_list(raw_var) COLON TYPE RIGHT_PAREN
 
 State 42:
+## Known stack suffix:
+## PI typed_ty_var_list
+## LR(1) items:
 term -> PI typed_ty_var_list . DOT term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
 -- On DOT shift to state 43
+## Reductions:
 
 State 43:
+## Known stack suffix:
+## PI typed_ty_var_list DOT
+## LR(1) items:
 term -> PI typed_ty_var_list DOT . term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
 -- On error shift to state 30
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
@@ -640,9 +859,14 @@ term -> PI typed_ty_var_list DOT . term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLO
 -- On arith_op_term shift to state 97
 -- On apply_term shift to state 103
 -- On and_term shift to state 106
+## Reductions:
 
 State 44:
+## Known stack suffix:
+## MATCH
+## LR(1) items:
 atomic_term -> MATCH . term WITH nonempty_list(match_branch) END [ WITH WILDCARD WHERE VERTICAL_BAR UPPER_WORD TYPE THEN SINGLE_QUOTED SEMI_COLON RIGHT_PAREN PROP MATCH LOWER_WORD LOGIC_TRUE LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_FALSE LOGIC_EQUIV LOGIC_EQ LOGIC_AND LEFT_PAREN INTEGER INT IN EQDEF EOI END ELSE DOT ARROW ARITH_PRODUCT ARITH_PLUS ARITH_MINUS ARITH_LT ARITH_LEQ ARITH_GT ARITH_GEQ AND ]
+## Transitions:
 -- On error shift to state 30
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
@@ -677,9 +901,15 @@ atomic_term -> MATCH . term WITH nonempty_list(match_branch) END [ WITH WILDCARD
 -- On arith_op_term shift to state 97
 -- On apply_term shift to state 103
 -- On and_term shift to state 106
+## Reductions:
 
 State 45:
+## Known stack suffix:
+## LOGIC_TRUE
+## LR(1) items:
 const -> LOGIC_TRUE . [ WITH WILDCARD WHERE VERTICAL_BAR UPPER_WORD TYPE THEN SINGLE_QUOTED SEMI_COLON RIGHT_PAREN PROP MATCH LOWER_WORD LOGIC_TRUE LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_FALSE LOGIC_EQUIV LOGIC_EQ LOGIC_AND LEFT_PAREN INTEGER INT IN EQDEF EOI END ELSE DOT ARROW ARITH_PRODUCT ARITH_PLUS ARITH_MINUS ARITH_LT ARITH_LEQ ARITH_GT ARITH_GEQ AND ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production const -> LOGIC_TRUE
 -- On WILDCARD reduce production const -> LOGIC_TRUE
 -- On WHERE reduce production const -> LOGIC_TRUE
@@ -721,7 +951,11 @@ const -> LOGIC_TRUE . [ WITH WILDCARD WHERE VERTICAL_BAR UPPER_WORD TYPE THEN SI
 -- On AND reduce production const -> LOGIC_TRUE
 
 State 46:
+## Known stack suffix:
+## LOGIC_NOT
+## LR(1) items:
 not_term -> LOGIC_NOT . arith_op_term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_EQUIV LOGIC_EQ LOGIC_AND IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
 -- On TYPE shift to state 32
@@ -743,9 +977,15 @@ not_term -> LOGIC_NOT . arith_op_term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON 
 -- On atomic_term shift to state 70
 -- On arith_op_term shift to state 132
 -- On apply_term shift to state 82
+## Reductions:
 
 State 47:
+## Known stack suffix:
+## LOGIC_FALSE
+## LR(1) items:
 const -> LOGIC_FALSE . [ WITH WILDCARD WHERE VERTICAL_BAR UPPER_WORD TYPE THEN SINGLE_QUOTED SEMI_COLON RIGHT_PAREN PROP MATCH LOWER_WORD LOGIC_TRUE LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_FALSE LOGIC_EQUIV LOGIC_EQ LOGIC_AND LEFT_PAREN INTEGER INT IN EQDEF EOI END ELSE DOT ARROW ARITH_PRODUCT ARITH_PLUS ARITH_MINUS ARITH_LT ARITH_LEQ ARITH_GT ARITH_GEQ AND ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production const -> LOGIC_FALSE
 -- On WILDCARD reduce production const -> LOGIC_FALSE
 -- On WHERE reduce production const -> LOGIC_FALSE
@@ -787,7 +1027,11 @@ const -> LOGIC_FALSE . [ WITH WILDCARD WHERE VERTICAL_BAR UPPER_WORD TYPE THEN S
 -- On AND reduce production const -> LOGIC_FALSE
 
 State 48:
+## Known stack suffix:
+## LEFT_PAREN
+## LR(1) items:
 atomic_term -> LEFT_PAREN . term RIGHT_PAREN [ WITH WILDCARD WHERE VERTICAL_BAR UPPER_WORD TYPE THEN SINGLE_QUOTED SEMI_COLON RIGHT_PAREN PROP MATCH LOWER_WORD LOGIC_TRUE LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_FALSE LOGIC_EQUIV LOGIC_EQ LOGIC_AND LEFT_PAREN INTEGER INT IN EQDEF EOI END ELSE DOT ARROW ARITH_PRODUCT ARITH_PLUS ARITH_MINUS ARITH_LT ARITH_LEQ ARITH_GT ARITH_GEQ AND ]
+## Transitions:
 -- On error shift to state 30
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
@@ -822,9 +1066,14 @@ atomic_term -> LEFT_PAREN . term RIGHT_PAREN [ WITH WILDCARD WHERE VERTICAL_BAR 
 -- On arith_op_term shift to state 97
 -- On apply_term shift to state 103
 -- On and_term shift to state 106
+## Reductions:
 
 State 49:
+## Known stack suffix:
+## LOGIC_FORALL
+## LR(1) items:
 term -> LOGIC_FORALL . typed_var_list DOT term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
 -- On WILDCARD shift to state 50
 -- On UPPER_WORD shift to state 5
 -- On SINGLE_QUOTED shift to state 6
@@ -833,9 +1082,15 @@ term -> LOGIC_FORALL . typed_var_list DOT term [ WITH WHERE VERTICAL_BAR THEN SE
 -- On typed_var_list shift to state 127
 -- On typed_var_block shift to state 113
 -- On raw_var shift to state 115
+## Reductions:
 
 State 50:
+## Known stack suffix:
+## WILDCARD
+## LR(1) items:
 typed_var_block -> WILDCARD . [ WILDCARD UPPER_WORD SINGLE_QUOTED LOWER_WORD LEFT_PAREN DOT ]
+## Transitions:
+## Reductions:
 -- On WILDCARD reduce production typed_var_block -> WILDCARD
 -- On UPPER_WORD reduce production typed_var_block -> WILDCARD
 -- On SINGLE_QUOTED reduce production typed_var_block -> WILDCARD
@@ -844,19 +1099,33 @@ typed_var_block -> WILDCARD . [ WILDCARD UPPER_WORD SINGLE_QUOTED LOWER_WORD LEF
 -- On DOT reduce production typed_var_block -> WILDCARD
 
 State 51:
+## Known stack suffix:
+## LEFT_PAREN
+## LR(1) items:
 typed_var_block -> LEFT_PAREN . nonempty_list(raw_var) COLON term RIGHT_PAREN [ WILDCARD UPPER_WORD SINGLE_QUOTED LOWER_WORD LEFT_PAREN DOT ]
+## Transitions:
 -- On UPPER_WORD shift to state 5
 -- On SINGLE_QUOTED shift to state 6
 -- On LOWER_WORD shift to state 8
 -- On raw_var shift to state 36
 -- On nonempty_list(raw_var) shift to state 52
+## Reductions:
 
 State 52:
+## Known stack suffix:
+## LEFT_PAREN nonempty_list(raw_var)
+## LR(1) items:
 typed_var_block -> LEFT_PAREN nonempty_list(raw_var) . COLON term RIGHT_PAREN [ WILDCARD UPPER_WORD SINGLE_QUOTED LOWER_WORD LEFT_PAREN DOT ]
+## Transitions:
 -- On COLON shift to state 53
+## Reductions:
 
 State 53:
+## Known stack suffix:
+## LEFT_PAREN nonempty_list(raw_var) COLON
+## LR(1) items:
 typed_var_block -> LEFT_PAREN nonempty_list(raw_var) COLON . term RIGHT_PAREN [ WILDCARD UPPER_WORD SINGLE_QUOTED LOWER_WORD LEFT_PAREN DOT ]
+## Transitions:
 -- On error shift to state 30
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
@@ -891,9 +1160,14 @@ typed_var_block -> LEFT_PAREN nonempty_list(raw_var) COLON . term RIGHT_PAREN [ 
 -- On arith_op_term shift to state 97
 -- On apply_term shift to state 103
 -- On and_term shift to state 106
+## Reductions:
 
 State 54:
+## Known stack suffix:
+## LOGIC_EXISTS
+## LR(1) items:
 term -> LOGIC_EXISTS . typed_var_list DOT term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
 -- On WILDCARD shift to state 50
 -- On UPPER_WORD shift to state 5
 -- On SINGLE_QUOTED shift to state 6
@@ -902,13 +1176,23 @@ term -> LOGIC_EXISTS . typed_var_list DOT term [ WITH WHERE VERTICAL_BAR THEN SE
 -- On typed_var_list shift to state 55
 -- On typed_var_block shift to state 113
 -- On raw_var shift to state 115
+## Reductions:
 
 State 55:
+## Known stack suffix:
+## LOGIC_EXISTS typed_var_list
+## LR(1) items:
 term -> LOGIC_EXISTS typed_var_list . DOT term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
 -- On DOT shift to state 56
+## Reductions:
 
 State 56:
+## Known stack suffix:
+## LOGIC_EXISTS typed_var_list DOT
+## LR(1) items:
 term -> LOGIC_EXISTS typed_var_list DOT . term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
 -- On error shift to state 30
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
@@ -943,20 +1227,35 @@ term -> LOGIC_EXISTS typed_var_list DOT . term [ WITH WHERE VERTICAL_BAR THEN SE
 -- On arith_op_term shift to state 97
 -- On apply_term shift to state 103
 -- On and_term shift to state 106
+## Reductions:
 
 State 57:
+## Known stack suffix:
+## LET
+## LR(1) items:
 term -> LET . raw_var EQDEF term IN term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
 -- On UPPER_WORD shift to state 5
 -- On SINGLE_QUOTED shift to state 6
 -- On LOWER_WORD shift to state 8
 -- On raw_var shift to state 58
+## Reductions:
 
 State 58:
+## Known stack suffix:
+## LET raw_var
+## LR(1) items:
 term -> LET raw_var . EQDEF term IN term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
 -- On EQDEF shift to state 59
+## Reductions:
 
 State 59:
+## Known stack suffix:
+## LET raw_var EQDEF
+## LR(1) items:
 term -> LET raw_var EQDEF . term IN term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
 -- On error shift to state 30
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
@@ -991,9 +1290,15 @@ term -> LET raw_var EQDEF . term IN term [ WITH WHERE VERTICAL_BAR THEN SEMI_COL
 -- On arith_op_term shift to state 97
 -- On apply_term shift to state 103
 -- On and_term shift to state 106
+## Reductions:
 
 State 60:
+## Known stack suffix:
+## INTEGER
+## LR(1) items:
 atomic_term -> INTEGER . [ WITH WILDCARD WHERE VERTICAL_BAR UPPER_WORD TYPE THEN SINGLE_QUOTED SEMI_COLON RIGHT_PAREN PROP MATCH LOWER_WORD LOGIC_TRUE LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_FALSE LOGIC_EQUIV LOGIC_EQ LOGIC_AND LEFT_PAREN INTEGER INT IN EQDEF EOI END ELSE DOT ARROW ARITH_PRODUCT ARITH_PLUS ARITH_MINUS ARITH_LT ARITH_LEQ ARITH_GT ARITH_GEQ AND ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production atomic_term -> INTEGER
 -- On WILDCARD reduce production atomic_term -> INTEGER
 -- On WHERE reduce production atomic_term -> INTEGER
@@ -1035,7 +1340,12 @@ atomic_term -> INTEGER . [ WITH WILDCARD WHERE VERTICAL_BAR UPPER_WORD TYPE THEN
 -- On AND reduce production atomic_term -> INTEGER
 
 State 61:
+## Known stack suffix:
+## INT
+## LR(1) items:
 const -> INT . [ WITH WILDCARD WHERE VERTICAL_BAR UPPER_WORD TYPE THEN SINGLE_QUOTED SEMI_COLON RIGHT_PAREN PROP MATCH LOWER_WORD LOGIC_TRUE LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_FALSE LOGIC_EQUIV LOGIC_EQ LOGIC_AND LEFT_PAREN INTEGER INT IN EQDEF EOI END ELSE DOT ARROW ARITH_PRODUCT ARITH_PLUS ARITH_MINUS ARITH_LT ARITH_LEQ ARITH_GT ARITH_GEQ AND ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production const -> INT
 -- On WILDCARD reduce production const -> INT
 -- On WHERE reduce production const -> INT
@@ -1077,7 +1387,11 @@ const -> INT . [ WITH WILDCARD WHERE VERTICAL_BAR UPPER_WORD TYPE THEN SINGLE_QU
 -- On AND reduce production const -> INT
 
 State 62:
+## Known stack suffix:
+## IF
+## LR(1) items:
 term -> IF . term THEN term ELSE term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
 -- On error shift to state 30
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
@@ -1112,9 +1426,14 @@ term -> IF . term THEN term ELSE term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON 
 -- On arith_op_term shift to state 97
 -- On apply_term shift to state 103
 -- On and_term shift to state 106
+## Reductions:
 
 State 63:
+## Known stack suffix:
+## FUN
+## LR(1) items:
 term -> FUN . typed_var_list DOT term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
 -- On WILDCARD shift to state 50
 -- On UPPER_WORD shift to state 5
 -- On SINGLE_QUOTED shift to state 6
@@ -1123,13 +1442,23 @@ term -> FUN . typed_var_list DOT term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON 
 -- On typed_var_list shift to state 64
 -- On typed_var_block shift to state 113
 -- On raw_var shift to state 115
+## Reductions:
 
 State 64:
+## Known stack suffix:
+## FUN typed_var_list
+## LR(1) items:
 term -> FUN typed_var_list . DOT term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
 -- On DOT shift to state 65
+## Reductions:
 
 State 65:
+## Known stack suffix:
+## FUN typed_var_list DOT
+## LR(1) items:
 term -> FUN typed_var_list DOT . term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
 -- On error shift to state 30
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
@@ -1164,9 +1493,14 @@ term -> FUN typed_var_list DOT . term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON 
 -- On arith_op_term shift to state 97
 -- On apply_term shift to state 103
 -- On and_term shift to state 106
+## Reductions:
 
 State 66:
+## Known stack suffix:
+## ARITH_MINUS
+## LR(1) items:
 apply_term -> ARITH_MINUS . apply_term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_EQUIV LOGIC_EQ LOGIC_AND IN EQDEF EOI END ELSE DOT ARROW ARITH_PRODUCT ARITH_PLUS ARITH_MINUS ARITH_LT ARITH_LEQ ARITH_GT ARITH_GEQ AND ]
+## Transitions:
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
 -- On TYPE shift to state 32
@@ -1185,9 +1519,15 @@ apply_term -> ARITH_MINUS . apply_term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON
 -- On const shift to state 69
 -- On atomic_term shift to state 70
 -- On apply_term shift to state 74
+## Reductions:
 
 State 67:
+## Known stack suffix:
+## var
+## LR(1) items:
 atomic_term -> var . [ WITH WILDCARD WHERE VERTICAL_BAR UPPER_WORD TYPE THEN SINGLE_QUOTED SEMI_COLON RIGHT_PAREN PROP MATCH LOWER_WORD LOGIC_TRUE LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_FALSE LOGIC_EQUIV LOGIC_EQ LOGIC_AND LEFT_PAREN INTEGER INT IN EQDEF EOI END ELSE DOT ARROW ARITH_PRODUCT ARITH_PLUS ARITH_MINUS ARITH_LT ARITH_LEQ ARITH_GT ARITH_GEQ AND ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production atomic_term -> var
 -- On WILDCARD reduce production atomic_term -> var
 -- On WHERE reduce production atomic_term -> var
@@ -1229,7 +1569,12 @@ atomic_term -> var . [ WITH WILDCARD WHERE VERTICAL_BAR UPPER_WORD TYPE THEN SIN
 -- On AND reduce production atomic_term -> var
 
 State 68:
+## Known stack suffix:
+## raw_var
+## LR(1) items:
 var -> raw_var . [ WITH WILDCARD WHERE VERTICAL_BAR UPPER_WORD TYPE THEN SINGLE_QUOTED SEMI_COLON RIGHT_PAREN PROP MATCH LOWER_WORD LOGIC_TRUE LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_FALSE LOGIC_EQUIV LOGIC_EQ LOGIC_AND LEFT_PAREN INTEGER INT IN EQDEF EOI END ELSE DOT ARROW ARITH_PRODUCT ARITH_PLUS ARITH_MINUS ARITH_LT ARITH_LEQ ARITH_GT ARITH_GEQ AND ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production var -> raw_var
 -- On WILDCARD reduce production var -> raw_var
 -- On WHERE reduce production var -> raw_var
@@ -1271,7 +1616,12 @@ var -> raw_var . [ WITH WILDCARD WHERE VERTICAL_BAR UPPER_WORD TYPE THEN SINGLE_
 -- On AND reduce production var -> raw_var
 
 State 69:
+## Known stack suffix:
+## const
+## LR(1) items:
 atomic_term -> const . [ WITH WILDCARD WHERE VERTICAL_BAR UPPER_WORD TYPE THEN SINGLE_QUOTED SEMI_COLON RIGHT_PAREN PROP MATCH LOWER_WORD LOGIC_TRUE LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_FALSE LOGIC_EQUIV LOGIC_EQ LOGIC_AND LEFT_PAREN INTEGER INT IN EQDEF EOI END ELSE DOT ARROW ARITH_PRODUCT ARITH_PLUS ARITH_MINUS ARITH_LT ARITH_LEQ ARITH_GT ARITH_GEQ AND ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production atomic_term -> const
 -- On WILDCARD reduce production atomic_term -> const
 -- On WHERE reduce production atomic_term -> const
@@ -1313,8 +1663,12 @@ atomic_term -> const . [ WITH WILDCARD WHERE VERTICAL_BAR UPPER_WORD TYPE THEN S
 -- On AND reduce production atomic_term -> const
 
 State 70:
+## Known stack suffix:
+## atomic_term
+## LR(1) items:
 apply_term -> atomic_term . [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_EQUIV LOGIC_EQ LOGIC_AND IN EQDEF EOI END ELSE DOT ARROW ARITH_PRODUCT ARITH_PLUS ARITH_MINUS ARITH_LT ARITH_LEQ ARITH_GT ARITH_GEQ AND ]
 apply_term -> atomic_term . nonempty_list(atomic_term) [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_EQUIV LOGIC_EQ LOGIC_AND IN EQDEF EOI END ELSE DOT ARROW ARITH_PRODUCT ARITH_PLUS ARITH_MINUS ARITH_LT ARITH_LEQ ARITH_GT ARITH_GEQ AND ]
+## Transitions:
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
 -- On TYPE shift to state 32
@@ -1332,6 +1686,7 @@ apply_term -> atomic_term . nonempty_list(atomic_term) [ WITH WHERE VERTICAL_BAR
 -- On nonempty_list(atomic_term) shift to state 71
 -- On const shift to state 69
 -- On atomic_term shift to state 72
+## Reductions:
 -- On WITH reduce production apply_term -> atomic_term
 -- On WHERE reduce production apply_term -> atomic_term
 -- On VERTICAL_BAR reduce production apply_term -> atomic_term
@@ -1361,7 +1716,12 @@ apply_term -> atomic_term . nonempty_list(atomic_term) [ WITH WHERE VERTICAL_BAR
 -- On AND reduce production apply_term -> atomic_term
 
 State 71:
+## Known stack suffix:
+## atomic_term nonempty_list(atomic_term)
+## LR(1) items:
 apply_term -> atomic_term nonempty_list(atomic_term) . [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_EQUIV LOGIC_EQ LOGIC_AND IN EQDEF EOI END ELSE DOT ARROW ARITH_PRODUCT ARITH_PLUS ARITH_MINUS ARITH_LT ARITH_LEQ ARITH_GT ARITH_GEQ AND ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production apply_term -> atomic_term nonempty_list(atomic_term)
 -- On WHERE reduce production apply_term -> atomic_term nonempty_list(atomic_term)
 -- On VERTICAL_BAR reduce production apply_term -> atomic_term nonempty_list(atomic_term)
@@ -1391,8 +1751,12 @@ apply_term -> atomic_term nonempty_list(atomic_term) . [ WITH WHERE VERTICAL_BAR
 -- On AND reduce production apply_term -> atomic_term nonempty_list(atomic_term)
 
 State 72:
+## Known stack suffix:
+## atomic_term
+## LR(1) items:
 nonempty_list(atomic_term) -> atomic_term . [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_EQUIV LOGIC_EQ LOGIC_AND IN EQDEF EOI END ELSE DOT ARROW ARITH_PRODUCT ARITH_PLUS ARITH_MINUS ARITH_LT ARITH_LEQ ARITH_GT ARITH_GEQ AND ]
 nonempty_list(atomic_term) -> atomic_term . nonempty_list(atomic_term) [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_EQUIV LOGIC_EQ LOGIC_AND IN EQDEF EOI END ELSE DOT ARROW ARITH_PRODUCT ARITH_PLUS ARITH_MINUS ARITH_LT ARITH_LEQ ARITH_GT ARITH_GEQ AND ]
+## Transitions:
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
 -- On TYPE shift to state 32
@@ -1410,6 +1774,7 @@ nonempty_list(atomic_term) -> atomic_term . nonempty_list(atomic_term) [ WITH WH
 -- On nonempty_list(atomic_term) shift to state 73
 -- On const shift to state 69
 -- On atomic_term shift to state 72
+## Reductions:
 -- On WITH reduce production nonempty_list(atomic_term) -> atomic_term
 -- On WHERE reduce production nonempty_list(atomic_term) -> atomic_term
 -- On VERTICAL_BAR reduce production nonempty_list(atomic_term) -> atomic_term
@@ -1439,7 +1804,12 @@ nonempty_list(atomic_term) -> atomic_term . nonempty_list(atomic_term) [ WITH WH
 -- On AND reduce production nonempty_list(atomic_term) -> atomic_term
 
 State 73:
+## Known stack suffix:
+## atomic_term nonempty_list(atomic_term)
+## LR(1) items:
 nonempty_list(atomic_term) -> atomic_term nonempty_list(atomic_term) . [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_EQUIV LOGIC_EQ LOGIC_AND IN EQDEF EOI END ELSE DOT ARROW ARITH_PRODUCT ARITH_PLUS ARITH_MINUS ARITH_LT ARITH_LEQ ARITH_GT ARITH_GEQ AND ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production nonempty_list(atomic_term) -> atomic_term nonempty_list(atomic_term)
 -- On WHERE reduce production nonempty_list(atomic_term) -> atomic_term nonempty_list(atomic_term)
 -- On VERTICAL_BAR reduce production nonempty_list(atomic_term) -> atomic_term nonempty_list(atomic_term)
@@ -1469,7 +1839,12 @@ nonempty_list(atomic_term) -> atomic_term nonempty_list(atomic_term) . [ WITH WH
 -- On AND reduce production nonempty_list(atomic_term) -> atomic_term nonempty_list(atomic_term)
 
 State 74:
+## Known stack suffix:
+## ARITH_MINUS apply_term
+## LR(1) items:
 apply_term -> ARITH_MINUS apply_term . [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_EQUIV LOGIC_EQ LOGIC_AND IN EQDEF EOI END ELSE DOT ARROW ARITH_PRODUCT ARITH_PLUS ARITH_MINUS ARITH_LT ARITH_LEQ ARITH_GT ARITH_GEQ AND ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production apply_term -> ARITH_MINUS apply_term
 -- On WHERE reduce production apply_term -> ARITH_MINUS apply_term
 -- On VERTICAL_BAR reduce production apply_term -> ARITH_MINUS apply_term
@@ -1499,7 +1874,12 @@ apply_term -> ARITH_MINUS apply_term . [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON
 -- On AND reduce production apply_term -> ARITH_MINUS apply_term
 
 State 75:
+## Known stack suffix:
+## FUN typed_var_list DOT term
+## LR(1) items:
 term -> FUN typed_var_list DOT term . [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production term -> FUN typed_var_list DOT term
 -- On WHERE reduce production term -> FUN typed_var_list DOT term
 -- On VERTICAL_BAR reduce production term -> FUN typed_var_list DOT term
@@ -1515,15 +1895,20 @@ term -> FUN typed_var_list DOT term . [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON 
 -- On AND reduce production term -> FUN typed_var_list DOT term
 
 State 76:
+## Known stack suffix:
+## plus_term
+## LR(1) items:
 arith_op_term -> plus_term . [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_EQUIV LOGIC_EQ LOGIC_AND IN EQDEF EOI END ELSE DOT AND ]
 arith_op_term -> plus_term . ARITH_LT plus_term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_EQUIV LOGIC_EQ LOGIC_AND IN EQDEF EOI END ELSE DOT AND ]
 arith_op_term -> plus_term . ARITH_LEQ plus_term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_EQUIV LOGIC_EQ LOGIC_AND IN EQDEF EOI END ELSE DOT AND ]
 arith_op_term -> plus_term . ARITH_GT plus_term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_EQUIV LOGIC_EQ LOGIC_AND IN EQDEF EOI END ELSE DOT AND ]
 arith_op_term -> plus_term . ARITH_GEQ plus_term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_EQUIV LOGIC_EQ LOGIC_AND IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
 -- On ARITH_LT shift to state 77
 -- On ARITH_LEQ shift to state 87
 -- On ARITH_GT shift to state 89
 -- On ARITH_GEQ shift to state 91
+## Reductions:
 -- On WITH reduce production arith_op_term -> plus_term
 -- On WHERE reduce production arith_op_term -> plus_term
 -- On VERTICAL_BAR reduce production arith_op_term -> plus_term
@@ -1545,7 +1930,11 @@ arith_op_term -> plus_term . ARITH_GEQ plus_term [ WITH WHERE VERTICAL_BAR THEN 
 -- On AND reduce production arith_op_term -> plus_term
 
 State 77:
+## Known stack suffix:
+## plus_term ARITH_LT
+## LR(1) items:
 arith_op_term -> plus_term ARITH_LT . plus_term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_EQUIV LOGIC_EQ LOGIC_AND IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
 -- On TYPE shift to state 32
@@ -1566,9 +1955,15 @@ arith_op_term -> plus_term ARITH_LT . plus_term [ WITH WHERE VERTICAL_BAR THEN S
 -- On const shift to state 69
 -- On atomic_term shift to state 70
 -- On apply_term shift to state 82
+## Reductions:
 
 State 78:
+## Known stack suffix:
+## plus_term ARITH_LT plus_term
+## LR(1) items:
 arith_op_term -> plus_term ARITH_LT plus_term . [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_EQUIV LOGIC_EQ LOGIC_AND IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production arith_op_term -> plus_term ARITH_LT plus_term
 -- On WHERE reduce production arith_op_term -> plus_term ARITH_LT plus_term
 -- On VERTICAL_BAR reduce production arith_op_term -> plus_term ARITH_LT plus_term
@@ -1590,11 +1985,16 @@ arith_op_term -> plus_term ARITH_LT plus_term . [ WITH WHERE VERTICAL_BAR THEN S
 -- On AND reduce production arith_op_term -> plus_term ARITH_LT plus_term
 
 State 79:
+## Known stack suffix:
+## mult_term
+## LR(1) items:
 plus_term -> mult_term . [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_EQUIV LOGIC_EQ LOGIC_AND IN EQDEF EOI END ELSE DOT ARITH_LT ARITH_LEQ ARITH_GT ARITH_GEQ AND ]
 plus_term -> mult_term . ARITH_PLUS plus_term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_EQUIV LOGIC_EQ LOGIC_AND IN EQDEF EOI END ELSE DOT ARITH_LT ARITH_LEQ ARITH_GT ARITH_GEQ AND ]
 plus_term -> mult_term . ARITH_MINUS plus_term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_EQUIV LOGIC_EQ LOGIC_AND IN EQDEF EOI END ELSE DOT ARITH_LT ARITH_LEQ ARITH_GT ARITH_GEQ AND ]
+## Transitions:
 -- On ARITH_PLUS shift to state 80
 -- On ARITH_MINUS shift to state 85
+## Reductions:
 -- On WITH reduce production plus_term -> mult_term
 -- On WHERE reduce production plus_term -> mult_term
 -- On VERTICAL_BAR reduce production plus_term -> mult_term
@@ -1620,7 +2020,11 @@ plus_term -> mult_term . ARITH_MINUS plus_term [ WITH WHERE VERTICAL_BAR THEN SE
 -- On AND reduce production plus_term -> mult_term
 
 State 80:
+## Known stack suffix:
+## mult_term ARITH_PLUS
+## LR(1) items:
 plus_term -> mult_term ARITH_PLUS . plus_term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_EQUIV LOGIC_EQ LOGIC_AND IN EQDEF EOI END ELSE DOT ARITH_LT ARITH_LEQ ARITH_GT ARITH_GEQ AND ]
+## Transitions:
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
 -- On TYPE shift to state 32
@@ -1641,9 +2045,15 @@ plus_term -> mult_term ARITH_PLUS . plus_term [ WITH WHERE VERTICAL_BAR THEN SEM
 -- On const shift to state 69
 -- On atomic_term shift to state 70
 -- On apply_term shift to state 82
+## Reductions:
 
 State 81:
+## Known stack suffix:
+## mult_term ARITH_PLUS plus_term
+## LR(1) items:
 plus_term -> mult_term ARITH_PLUS plus_term . [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_EQUIV LOGIC_EQ LOGIC_AND IN EQDEF EOI END ELSE DOT ARITH_LT ARITH_LEQ ARITH_GT ARITH_GEQ AND ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production plus_term -> mult_term ARITH_PLUS plus_term
 -- On WHERE reduce production plus_term -> mult_term ARITH_PLUS plus_term
 -- On VERTICAL_BAR reduce production plus_term -> mult_term ARITH_PLUS plus_term
@@ -1669,9 +2079,14 @@ plus_term -> mult_term ARITH_PLUS plus_term . [ WITH WHERE VERTICAL_BAR THEN SEM
 -- On AND reduce production plus_term -> mult_term ARITH_PLUS plus_term
 
 State 82:
+## Known stack suffix:
+## apply_term
+## LR(1) items:
 mult_term -> apply_term . [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_EQUIV LOGIC_EQ LOGIC_AND IN EQDEF EOI END ELSE DOT ARITH_PLUS ARITH_MINUS ARITH_LT ARITH_LEQ ARITH_GT ARITH_GEQ AND ]
 mult_term -> apply_term . ARITH_PRODUCT mult_term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_EQUIV LOGIC_EQ LOGIC_AND IN EQDEF EOI END ELSE DOT ARITH_PLUS ARITH_MINUS ARITH_LT ARITH_LEQ ARITH_GT ARITH_GEQ AND ]
+## Transitions:
 -- On ARITH_PRODUCT shift to state 83
+## Reductions:
 -- On WITH reduce production mult_term -> apply_term
 -- On WHERE reduce production mult_term -> apply_term
 -- On VERTICAL_BAR reduce production mult_term -> apply_term
@@ -1699,7 +2114,11 @@ mult_term -> apply_term . ARITH_PRODUCT mult_term [ WITH WHERE VERTICAL_BAR THEN
 -- On AND reduce production mult_term -> apply_term
 
 State 83:
+## Known stack suffix:
+## apply_term ARITH_PRODUCT
+## LR(1) items:
 mult_term -> apply_term ARITH_PRODUCT . mult_term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_EQUIV LOGIC_EQ LOGIC_AND IN EQDEF EOI END ELSE DOT ARITH_PLUS ARITH_MINUS ARITH_LT ARITH_LEQ ARITH_GT ARITH_GEQ AND ]
+## Transitions:
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
 -- On TYPE shift to state 32
@@ -1719,9 +2138,15 @@ mult_term -> apply_term ARITH_PRODUCT . mult_term [ WITH WHERE VERTICAL_BAR THEN
 -- On const shift to state 69
 -- On atomic_term shift to state 70
 -- On apply_term shift to state 82
+## Reductions:
 
 State 84:
+## Known stack suffix:
+## apply_term ARITH_PRODUCT mult_term
+## LR(1) items:
 mult_term -> apply_term ARITH_PRODUCT mult_term . [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_EQUIV LOGIC_EQ LOGIC_AND IN EQDEF EOI END ELSE DOT ARITH_PLUS ARITH_MINUS ARITH_LT ARITH_LEQ ARITH_GT ARITH_GEQ AND ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production mult_term -> apply_term ARITH_PRODUCT mult_term
 -- On WHERE reduce production mult_term -> apply_term ARITH_PRODUCT mult_term
 -- On VERTICAL_BAR reduce production mult_term -> apply_term ARITH_PRODUCT mult_term
@@ -1749,7 +2174,11 @@ mult_term -> apply_term ARITH_PRODUCT mult_term . [ WITH WHERE VERTICAL_BAR THEN
 -- On AND reduce production mult_term -> apply_term ARITH_PRODUCT mult_term
 
 State 85:
+## Known stack suffix:
+## mult_term ARITH_MINUS
+## LR(1) items:
 plus_term -> mult_term ARITH_MINUS . plus_term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_EQUIV LOGIC_EQ LOGIC_AND IN EQDEF EOI END ELSE DOT ARITH_LT ARITH_LEQ ARITH_GT ARITH_GEQ AND ]
+## Transitions:
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
 -- On TYPE shift to state 32
@@ -1770,9 +2199,15 @@ plus_term -> mult_term ARITH_MINUS . plus_term [ WITH WHERE VERTICAL_BAR THEN SE
 -- On const shift to state 69
 -- On atomic_term shift to state 70
 -- On apply_term shift to state 82
+## Reductions:
 
 State 86:
+## Known stack suffix:
+## mult_term ARITH_MINUS plus_term
+## LR(1) items:
 plus_term -> mult_term ARITH_MINUS plus_term . [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_EQUIV LOGIC_EQ LOGIC_AND IN EQDEF EOI END ELSE DOT ARITH_LT ARITH_LEQ ARITH_GT ARITH_GEQ AND ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production plus_term -> mult_term ARITH_MINUS plus_term
 -- On WHERE reduce production plus_term -> mult_term ARITH_MINUS plus_term
 -- On VERTICAL_BAR reduce production plus_term -> mult_term ARITH_MINUS plus_term
@@ -1798,7 +2233,11 @@ plus_term -> mult_term ARITH_MINUS plus_term . [ WITH WHERE VERTICAL_BAR THEN SE
 -- On AND reduce production plus_term -> mult_term ARITH_MINUS plus_term
 
 State 87:
+## Known stack suffix:
+## plus_term ARITH_LEQ
+## LR(1) items:
 arith_op_term -> plus_term ARITH_LEQ . plus_term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_EQUIV LOGIC_EQ LOGIC_AND IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
 -- On TYPE shift to state 32
@@ -1819,9 +2258,15 @@ arith_op_term -> plus_term ARITH_LEQ . plus_term [ WITH WHERE VERTICAL_BAR THEN 
 -- On const shift to state 69
 -- On atomic_term shift to state 70
 -- On apply_term shift to state 82
+## Reductions:
 
 State 88:
+## Known stack suffix:
+## plus_term ARITH_LEQ plus_term
+## LR(1) items:
 arith_op_term -> plus_term ARITH_LEQ plus_term . [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_EQUIV LOGIC_EQ LOGIC_AND IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production arith_op_term -> plus_term ARITH_LEQ plus_term
 -- On WHERE reduce production arith_op_term -> plus_term ARITH_LEQ plus_term
 -- On VERTICAL_BAR reduce production arith_op_term -> plus_term ARITH_LEQ plus_term
@@ -1843,7 +2288,11 @@ arith_op_term -> plus_term ARITH_LEQ plus_term . [ WITH WHERE VERTICAL_BAR THEN 
 -- On AND reduce production arith_op_term -> plus_term ARITH_LEQ plus_term
 
 State 89:
+## Known stack suffix:
+## plus_term ARITH_GT
+## LR(1) items:
 arith_op_term -> plus_term ARITH_GT . plus_term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_EQUIV LOGIC_EQ LOGIC_AND IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
 -- On TYPE shift to state 32
@@ -1864,9 +2313,15 @@ arith_op_term -> plus_term ARITH_GT . plus_term [ WITH WHERE VERTICAL_BAR THEN S
 -- On const shift to state 69
 -- On atomic_term shift to state 70
 -- On apply_term shift to state 82
+## Reductions:
 
 State 90:
+## Known stack suffix:
+## plus_term ARITH_GT plus_term
+## LR(1) items:
 arith_op_term -> plus_term ARITH_GT plus_term . [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_EQUIV LOGIC_EQ LOGIC_AND IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production arith_op_term -> plus_term ARITH_GT plus_term
 -- On WHERE reduce production arith_op_term -> plus_term ARITH_GT plus_term
 -- On VERTICAL_BAR reduce production arith_op_term -> plus_term ARITH_GT plus_term
@@ -1888,7 +2343,11 @@ arith_op_term -> plus_term ARITH_GT plus_term . [ WITH WHERE VERTICAL_BAR THEN S
 -- On AND reduce production arith_op_term -> plus_term ARITH_GT plus_term
 
 State 91:
+## Known stack suffix:
+## plus_term ARITH_GEQ
+## LR(1) items:
 arith_op_term -> plus_term ARITH_GEQ . plus_term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_EQUIV LOGIC_EQ LOGIC_AND IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
 -- On TYPE shift to state 32
@@ -1909,9 +2368,15 @@ arith_op_term -> plus_term ARITH_GEQ . plus_term [ WITH WHERE VERTICAL_BAR THEN 
 -- On const shift to state 69
 -- On atomic_term shift to state 70
 -- On apply_term shift to state 82
+## Reductions:
 
 State 92:
+## Known stack suffix:
+## plus_term ARITH_GEQ plus_term
+## LR(1) items:
 arith_op_term -> plus_term ARITH_GEQ plus_term . [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_EQUIV LOGIC_EQ LOGIC_AND IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production arith_op_term -> plus_term ARITH_GEQ plus_term
 -- On WHERE reduce production arith_op_term -> plus_term ARITH_GEQ plus_term
 -- On VERTICAL_BAR reduce production arith_op_term -> plus_term ARITH_GEQ plus_term
@@ -1933,7 +2398,12 @@ arith_op_term -> plus_term ARITH_GEQ plus_term . [ WITH WHERE VERTICAL_BAR THEN 
 -- On AND reduce production arith_op_term -> plus_term ARITH_GEQ plus_term
 
 State 93:
+## Known stack suffix:
+## or_term
+## LR(1) items:
 term -> or_term . [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production term -> or_term
 -- On WHERE reduce production term -> or_term
 -- On VERTICAL_BAR reduce production term -> or_term
@@ -1949,11 +2419,16 @@ term -> or_term . [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN IN EQDEF
 -- On AND reduce production term -> or_term
 
 State 94:
+## Known stack suffix:
+## not_term
+## LR(1) items:
 eq_term -> not_term . [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_IMPLY LOGIC_EQUIV LOGIC_AND IN EQDEF EOI END ELSE DOT AND ]
 eq_term -> not_term . LOGIC_EQ not_term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_IMPLY LOGIC_EQUIV LOGIC_AND IN EQDEF EOI END ELSE DOT AND ]
 eq_term -> not_term . LOGIC_NEQ not_term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_IMPLY LOGIC_EQUIV LOGIC_AND IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
 -- On LOGIC_NEQ shift to state 95
 -- On LOGIC_EQ shift to state 98
+## Reductions:
 -- On WITH reduce production eq_term -> not_term
 -- On WHERE reduce production eq_term -> not_term
 -- On VERTICAL_BAR reduce production eq_term -> not_term
@@ -1973,7 +2448,11 @@ eq_term -> not_term . LOGIC_NEQ not_term [ WITH WHERE VERTICAL_BAR THEN SEMI_COL
 -- On AND reduce production eq_term -> not_term
 
 State 95:
+## Known stack suffix:
+## not_term LOGIC_NEQ
+## LR(1) items:
 eq_term -> not_term LOGIC_NEQ . not_term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_IMPLY LOGIC_EQUIV LOGIC_AND IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
 -- On TYPE shift to state 32
@@ -1997,9 +2476,15 @@ eq_term -> not_term LOGIC_NEQ . not_term [ WITH WHERE VERTICAL_BAR THEN SEMI_COL
 -- On atomic_term shift to state 70
 -- On arith_op_term shift to state 97
 -- On apply_term shift to state 82
+## Reductions:
 
 State 96:
+## Known stack suffix:
+## not_term LOGIC_NEQ not_term
+## LR(1) items:
 eq_term -> not_term LOGIC_NEQ not_term . [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_IMPLY LOGIC_EQUIV LOGIC_AND IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production eq_term -> not_term LOGIC_NEQ not_term
 -- On WHERE reduce production eq_term -> not_term LOGIC_NEQ not_term
 -- On VERTICAL_BAR reduce production eq_term -> not_term LOGIC_NEQ not_term
@@ -2019,7 +2504,12 @@ eq_term -> not_term LOGIC_NEQ not_term . [ WITH WHERE VERTICAL_BAR THEN SEMI_COL
 -- On AND reduce production eq_term -> not_term LOGIC_NEQ not_term
 
 State 97:
+## Known stack suffix:
+## arith_op_term
+## LR(1) items:
 not_term -> arith_op_term . [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_EQUIV LOGIC_EQ LOGIC_AND IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production not_term -> arith_op_term
 -- On WHERE reduce production not_term -> arith_op_term
 -- On VERTICAL_BAR reduce production not_term -> arith_op_term
@@ -2041,7 +2531,11 @@ not_term -> arith_op_term . [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PARE
 -- On AND reduce production not_term -> arith_op_term
 
 State 98:
+## Known stack suffix:
+## not_term LOGIC_EQ
+## LR(1) items:
 eq_term -> not_term LOGIC_EQ . not_term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_IMPLY LOGIC_EQUIV LOGIC_AND IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
 -- On TYPE shift to state 32
@@ -2065,9 +2559,15 @@ eq_term -> not_term LOGIC_EQ . not_term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLO
 -- On atomic_term shift to state 70
 -- On arith_op_term shift to state 97
 -- On apply_term shift to state 82
+## Reductions:
 
 State 99:
+## Known stack suffix:
+## not_term LOGIC_EQ not_term
+## LR(1) items:
 eq_term -> not_term LOGIC_EQ not_term . [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_IMPLY LOGIC_EQUIV LOGIC_AND IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production eq_term -> not_term LOGIC_EQ not_term
 -- On WHERE reduce production eq_term -> not_term LOGIC_EQ not_term
 -- On VERTICAL_BAR reduce production eq_term -> not_term LOGIC_EQ not_term
@@ -2087,9 +2587,14 @@ eq_term -> not_term LOGIC_EQ not_term . [ WITH WHERE VERTICAL_BAR THEN SEMI_COLO
 -- On AND reduce production eq_term -> not_term LOGIC_EQ not_term
 
 State 100:
+## Known stack suffix:
+## eq_term
+## LR(1) items:
 and_term -> eq_term . [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_IMPLY LOGIC_EQUIV IN EQDEF EOI END ELSE DOT AND ]
 and_term -> eq_term . LOGIC_AND and_term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_IMPLY LOGIC_EQUIV IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
 -- On LOGIC_AND shift to state 101
+## Reductions:
 -- On WITH reduce production and_term -> eq_term
 -- On WHERE reduce production and_term -> eq_term
 -- On VERTICAL_BAR reduce production and_term -> eq_term
@@ -2108,7 +2613,11 @@ and_term -> eq_term . LOGIC_AND and_term [ WITH WHERE VERTICAL_BAR THEN SEMI_COL
 -- On AND reduce production and_term -> eq_term
 
 State 101:
+## Known stack suffix:
+## eq_term LOGIC_AND
+## LR(1) items:
 and_term -> eq_term LOGIC_AND . and_term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_IMPLY LOGIC_EQUIV IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
 -- On TYPE shift to state 32
@@ -2134,9 +2643,15 @@ and_term -> eq_term LOGIC_AND . and_term [ WITH WHERE VERTICAL_BAR THEN SEMI_COL
 -- On arith_op_term shift to state 97
 -- On apply_term shift to state 82
 -- On and_term shift to state 102
+## Reductions:
 
 State 102:
+## Known stack suffix:
+## eq_term LOGIC_AND and_term
+## LR(1) items:
 and_term -> eq_term LOGIC_AND and_term . [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_IMPLY LOGIC_EQUIV IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production and_term -> eq_term LOGIC_AND and_term
 -- On WHERE reduce production and_term -> eq_term LOGIC_AND and_term
 -- On VERTICAL_BAR reduce production and_term -> eq_term LOGIC_AND and_term
@@ -2155,11 +2670,16 @@ and_term -> eq_term LOGIC_AND and_term . [ WITH WHERE VERTICAL_BAR THEN SEMI_COL
 -- On AND reduce production and_term -> eq_term LOGIC_AND and_term
 
 State 103:
+## Known stack suffix:
+## apply_term
+## LR(1) items:
 mult_term -> apply_term . [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_EQUIV LOGIC_EQ LOGIC_AND IN EQDEF EOI END ELSE DOT ARITH_PLUS ARITH_MINUS ARITH_LT ARITH_LEQ ARITH_GT ARITH_GEQ AND ]
 mult_term -> apply_term . ARITH_PRODUCT mult_term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_EQUIV LOGIC_EQ LOGIC_AND IN EQDEF EOI END ELSE DOT ARITH_PLUS ARITH_MINUS ARITH_LT ARITH_LEQ ARITH_GT ARITH_GEQ AND ]
 term -> apply_term . ARROW term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
 -- On ARROW shift to state 104
 -- On ARITH_PRODUCT shift to state 83
+## Reductions:
 -- On WITH reduce production mult_term -> apply_term
 -- On WHERE reduce production mult_term -> apply_term
 -- On VERTICAL_BAR reduce production mult_term -> apply_term
@@ -2187,7 +2707,11 @@ term -> apply_term . ARROW term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_
 -- On AND reduce production mult_term -> apply_term
 
 State 104:
+## Known stack suffix:
+## apply_term ARROW
+## LR(1) items:
 term -> apply_term ARROW . term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
 -- On error shift to state 30
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
@@ -2222,9 +2746,15 @@ term -> apply_term ARROW . term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_
 -- On arith_op_term shift to state 97
 -- On apply_term shift to state 103
 -- On and_term shift to state 106
+## Reductions:
 
 State 105:
+## Known stack suffix:
+## apply_term ARROW term
+## LR(1) items:
 term -> apply_term ARROW term . [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production term -> apply_term ARROW term
 -- On WHERE reduce production term -> apply_term ARROW term
 -- On VERTICAL_BAR reduce production term -> apply_term ARROW term
@@ -2240,13 +2770,18 @@ term -> apply_term ARROW term . [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_
 -- On AND reduce production term -> apply_term ARROW term
 
 State 106:
+## Known stack suffix:
+## and_term
+## LR(1) items:
 or_term -> and_term . [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN IN EQDEF EOI END ELSE DOT AND ]
 or_term -> and_term . LOGIC_OR or_term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN IN EQDEF EOI END ELSE DOT AND ]
 or_term -> and_term . LOGIC_IMPLY or_term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN IN EQDEF EOI END ELSE DOT AND ]
 or_term -> and_term . LOGIC_EQUIV or_term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
 -- On LOGIC_OR shift to state 107
 -- On LOGIC_IMPLY shift to state 109
 -- On LOGIC_EQUIV shift to state 111
+## Reductions:
 -- On WITH reduce production or_term -> and_term
 -- On WHERE reduce production or_term -> and_term
 -- On VERTICAL_BAR reduce production or_term -> and_term
@@ -2262,7 +2797,11 @@ or_term -> and_term . LOGIC_EQUIV or_term [ WITH WHERE VERTICAL_BAR THEN SEMI_CO
 -- On AND reduce production or_term -> and_term
 
 State 107:
+## Known stack suffix:
+## and_term LOGIC_OR
+## LR(1) items:
 or_term -> and_term LOGIC_OR . or_term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
 -- On TYPE shift to state 32
@@ -2289,9 +2828,15 @@ or_term -> and_term LOGIC_OR . or_term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON
 -- On arith_op_term shift to state 97
 -- On apply_term shift to state 82
 -- On and_term shift to state 106
+## Reductions:
 
 State 108:
+## Known stack suffix:
+## and_term LOGIC_OR or_term
+## LR(1) items:
 or_term -> and_term LOGIC_OR or_term . [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production or_term -> and_term LOGIC_OR or_term
 -- On WHERE reduce production or_term -> and_term LOGIC_OR or_term
 -- On VERTICAL_BAR reduce production or_term -> and_term LOGIC_OR or_term
@@ -2307,7 +2852,11 @@ or_term -> and_term LOGIC_OR or_term . [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON
 -- On AND reduce production or_term -> and_term LOGIC_OR or_term
 
 State 109:
+## Known stack suffix:
+## and_term LOGIC_IMPLY
+## LR(1) items:
 or_term -> and_term LOGIC_IMPLY . or_term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
 -- On TYPE shift to state 32
@@ -2334,9 +2883,15 @@ or_term -> and_term LOGIC_IMPLY . or_term [ WITH WHERE VERTICAL_BAR THEN SEMI_CO
 -- On arith_op_term shift to state 97
 -- On apply_term shift to state 82
 -- On and_term shift to state 106
+## Reductions:
 
 State 110:
+## Known stack suffix:
+## and_term LOGIC_IMPLY or_term
+## LR(1) items:
 or_term -> and_term LOGIC_IMPLY or_term . [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production or_term -> and_term LOGIC_IMPLY or_term
 -- On WHERE reduce production or_term -> and_term LOGIC_IMPLY or_term
 -- On VERTICAL_BAR reduce production or_term -> and_term LOGIC_IMPLY or_term
@@ -2352,7 +2907,11 @@ or_term -> and_term LOGIC_IMPLY or_term . [ WITH WHERE VERTICAL_BAR THEN SEMI_CO
 -- On AND reduce production or_term -> and_term LOGIC_IMPLY or_term
 
 State 111:
+## Known stack suffix:
+## and_term LOGIC_EQUIV
+## LR(1) items:
 or_term -> and_term LOGIC_EQUIV . or_term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
 -- On TYPE shift to state 32
@@ -2379,9 +2938,15 @@ or_term -> and_term LOGIC_EQUIV . or_term [ WITH WHERE VERTICAL_BAR THEN SEMI_CO
 -- On arith_op_term shift to state 97
 -- On apply_term shift to state 82
 -- On and_term shift to state 106
+## Reductions:
 
 State 112:
+## Known stack suffix:
+## and_term LOGIC_EQUIV or_term
+## LR(1) items:
 or_term -> and_term LOGIC_EQUIV or_term . [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production or_term -> and_term LOGIC_EQUIV or_term
 -- On WHERE reduce production or_term -> and_term LOGIC_EQUIV or_term
 -- On VERTICAL_BAR reduce production or_term -> and_term LOGIC_EQUIV or_term
@@ -2397,8 +2962,12 @@ or_term -> and_term LOGIC_EQUIV or_term . [ WITH WHERE VERTICAL_BAR THEN SEMI_CO
 -- On AND reduce production or_term -> and_term LOGIC_EQUIV or_term
 
 State 113:
+## Known stack suffix:
+## typed_var_block
+## LR(1) items:
 typed_var_list -> typed_var_block . [ DOT ]
 typed_var_list -> typed_var_block . typed_var_list [ DOT ]
+## Transitions:
 -- On WILDCARD shift to state 50
 -- On UPPER_WORD shift to state 5
 -- On SINGLE_QUOTED shift to state 6
@@ -2407,14 +2976,25 @@ typed_var_list -> typed_var_block . typed_var_list [ DOT ]
 -- On typed_var_list shift to state 114
 -- On typed_var_block shift to state 113
 -- On raw_var shift to state 115
+## Reductions:
 -- On DOT reduce production typed_var_list -> typed_var_block
 
 State 114:
+## Known stack suffix:
+## typed_var_block typed_var_list
+## LR(1) items:
 typed_var_list -> typed_var_block typed_var_list . [ DOT ]
+## Transitions:
+## Reductions:
 -- On DOT reduce production typed_var_list -> typed_var_block typed_var_list
 
 State 115:
+## Known stack suffix:
+## raw_var
+## LR(1) items:
 typed_var_block -> raw_var . [ WILDCARD UPPER_WORD SINGLE_QUOTED LOWER_WORD LEFT_PAREN DOT ]
+## Transitions:
+## Reductions:
 -- On WILDCARD reduce production typed_var_block -> raw_var
 -- On UPPER_WORD reduce production typed_var_block -> raw_var
 -- On SINGLE_QUOTED reduce production typed_var_block -> raw_var
@@ -2423,11 +3003,20 @@ typed_var_block -> raw_var . [ WILDCARD UPPER_WORD SINGLE_QUOTED LOWER_WORD LEFT
 -- On DOT reduce production typed_var_block -> raw_var
 
 State 116:
+## Known stack suffix:
+## IF term
+## LR(1) items:
 term -> IF term . THEN term ELSE term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
 -- On THEN shift to state 117
+## Reductions:
 
 State 117:
+## Known stack suffix:
+## IF term THEN
+## LR(1) items:
 term -> IF term THEN . term ELSE term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
 -- On error shift to state 30
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
@@ -2462,13 +3051,23 @@ term -> IF term THEN . term ELSE term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON 
 -- On arith_op_term shift to state 97
 -- On apply_term shift to state 103
 -- On and_term shift to state 106
+## Reductions:
 
 State 118:
+## Known stack suffix:
+## IF term THEN term
+## LR(1) items:
 term -> IF term THEN term . ELSE term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
 -- On ELSE shift to state 119
+## Reductions:
 
 State 119:
+## Known stack suffix:
+## IF term THEN term ELSE
+## LR(1) items:
 term -> IF term THEN term ELSE . term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
 -- On error shift to state 30
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
@@ -2503,9 +3102,15 @@ term -> IF term THEN term ELSE . term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON 
 -- On arith_op_term shift to state 97
 -- On apply_term shift to state 103
 -- On and_term shift to state 106
+## Reductions:
 
 State 120:
+## Known stack suffix:
+## IF term THEN term ELSE term
+## LR(1) items:
 term -> IF term THEN term ELSE term . [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production term -> IF term THEN term ELSE term
 -- On WHERE reduce production term -> IF term THEN term ELSE term
 -- On VERTICAL_BAR reduce production term -> IF term THEN term ELSE term
@@ -2521,11 +3126,20 @@ term -> IF term THEN term ELSE term . [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON 
 -- On AND reduce production term -> IF term THEN term ELSE term
 
 State 121:
+## Known stack suffix:
+## LET raw_var EQDEF term
+## LR(1) items:
 term -> LET raw_var EQDEF term . IN term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
 -- On IN shift to state 122
+## Reductions:
 
 State 122:
+## Known stack suffix:
+## LET raw_var EQDEF term IN
+## LR(1) items:
 term -> LET raw_var EQDEF term IN . term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
 -- On error shift to state 30
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
@@ -2560,9 +3174,15 @@ term -> LET raw_var EQDEF term IN . term [ WITH WHERE VERTICAL_BAR THEN SEMI_COL
 -- On arith_op_term shift to state 97
 -- On apply_term shift to state 103
 -- On and_term shift to state 106
+## Reductions:
 
 State 123:
+## Known stack suffix:
+## LET raw_var EQDEF term IN term
+## LR(1) items:
 term -> LET raw_var EQDEF term IN term . [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production term -> LET raw_var EQDEF term IN term
 -- On WHERE reduce production term -> LET raw_var EQDEF term IN term
 -- On VERTICAL_BAR reduce production term -> LET raw_var EQDEF term IN term
@@ -2578,7 +3198,12 @@ term -> LET raw_var EQDEF term IN term . [ WITH WHERE VERTICAL_BAR THEN SEMI_COL
 -- On AND reduce production term -> LET raw_var EQDEF term IN term
 
 State 124:
+## Known stack suffix:
+## LOGIC_EXISTS typed_var_list DOT term
+## LR(1) items:
 term -> LOGIC_EXISTS typed_var_list DOT term . [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production term -> LOGIC_EXISTS typed_var_list DOT term
 -- On WHERE reduce production term -> LOGIC_EXISTS typed_var_list DOT term
 -- On VERTICAL_BAR reduce production term -> LOGIC_EXISTS typed_var_list DOT term
@@ -2594,11 +3219,21 @@ term -> LOGIC_EXISTS typed_var_list DOT term . [ WITH WHERE VERTICAL_BAR THEN SE
 -- On AND reduce production term -> LOGIC_EXISTS typed_var_list DOT term
 
 State 125:
+## Known stack suffix:
+## LEFT_PAREN nonempty_list(raw_var) COLON term
+## LR(1) items:
 typed_var_block -> LEFT_PAREN nonempty_list(raw_var) COLON term . RIGHT_PAREN [ WILDCARD UPPER_WORD SINGLE_QUOTED LOWER_WORD LEFT_PAREN DOT ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 126
+## Reductions:
 
 State 126:
+## Known stack suffix:
+## LEFT_PAREN nonempty_list(raw_var) COLON term RIGHT_PAREN
+## LR(1) items:
 typed_var_block -> LEFT_PAREN nonempty_list(raw_var) COLON term RIGHT_PAREN . [ WILDCARD UPPER_WORD SINGLE_QUOTED LOWER_WORD LEFT_PAREN DOT ]
+## Transitions:
+## Reductions:
 -- On WILDCARD reduce production typed_var_block -> LEFT_PAREN nonempty_list(raw_var) COLON term RIGHT_PAREN
 -- On UPPER_WORD reduce production typed_var_block -> LEFT_PAREN nonempty_list(raw_var) COLON term RIGHT_PAREN
 -- On SINGLE_QUOTED reduce production typed_var_block -> LEFT_PAREN nonempty_list(raw_var) COLON term RIGHT_PAREN
@@ -2607,11 +3242,20 @@ typed_var_block -> LEFT_PAREN nonempty_list(raw_var) COLON term RIGHT_PAREN . [ 
 -- On DOT reduce production typed_var_block -> LEFT_PAREN nonempty_list(raw_var) COLON term RIGHT_PAREN
 
 State 127:
+## Known stack suffix:
+## LOGIC_FORALL typed_var_list
+## LR(1) items:
 term -> LOGIC_FORALL typed_var_list . DOT term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
 -- On DOT shift to state 128
+## Reductions:
 
 State 128:
+## Known stack suffix:
+## LOGIC_FORALL typed_var_list DOT
+## LR(1) items:
 term -> LOGIC_FORALL typed_var_list DOT . term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
 -- On error shift to state 30
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
@@ -2646,9 +3290,15 @@ term -> LOGIC_FORALL typed_var_list DOT . term [ WITH WHERE VERTICAL_BAR THEN SE
 -- On arith_op_term shift to state 97
 -- On apply_term shift to state 103
 -- On and_term shift to state 106
+## Reductions:
 
 State 129:
+## Known stack suffix:
+## LOGIC_FORALL typed_var_list DOT term
+## LR(1) items:
 term -> LOGIC_FORALL typed_var_list DOT term . [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production term -> LOGIC_FORALL typed_var_list DOT term
 -- On WHERE reduce production term -> LOGIC_FORALL typed_var_list DOT term
 -- On VERTICAL_BAR reduce production term -> LOGIC_FORALL typed_var_list DOT term
@@ -2664,11 +3314,21 @@ term -> LOGIC_FORALL typed_var_list DOT term . [ WITH WHERE VERTICAL_BAR THEN SE
 -- On AND reduce production term -> LOGIC_FORALL typed_var_list DOT term
 
 State 130:
+## Known stack suffix:
+## LEFT_PAREN term
+## LR(1) items:
 atomic_term -> LEFT_PAREN term . RIGHT_PAREN [ WITH WILDCARD WHERE VERTICAL_BAR UPPER_WORD TYPE THEN SINGLE_QUOTED SEMI_COLON RIGHT_PAREN PROP MATCH LOWER_WORD LOGIC_TRUE LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_FALSE LOGIC_EQUIV LOGIC_EQ LOGIC_AND LEFT_PAREN INTEGER INT IN EQDEF EOI END ELSE DOT ARROW ARITH_PRODUCT ARITH_PLUS ARITH_MINUS ARITH_LT ARITH_LEQ ARITH_GT ARITH_GEQ AND ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 131
+## Reductions:
 
 State 131:
+## Known stack suffix:
+## LEFT_PAREN term RIGHT_PAREN
+## LR(1) items:
 atomic_term -> LEFT_PAREN term RIGHT_PAREN . [ WITH WILDCARD WHERE VERTICAL_BAR UPPER_WORD TYPE THEN SINGLE_QUOTED SEMI_COLON RIGHT_PAREN PROP MATCH LOWER_WORD LOGIC_TRUE LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_FALSE LOGIC_EQUIV LOGIC_EQ LOGIC_AND LEFT_PAREN INTEGER INT IN EQDEF EOI END ELSE DOT ARROW ARITH_PRODUCT ARITH_PLUS ARITH_MINUS ARITH_LT ARITH_LEQ ARITH_GT ARITH_GEQ AND ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production atomic_term -> LEFT_PAREN term RIGHT_PAREN
 -- On WILDCARD reduce production atomic_term -> LEFT_PAREN term RIGHT_PAREN
 -- On WHERE reduce production atomic_term -> LEFT_PAREN term RIGHT_PAREN
@@ -2710,7 +3370,12 @@ atomic_term -> LEFT_PAREN term RIGHT_PAREN . [ WITH WILDCARD WHERE VERTICAL_BAR 
 -- On AND reduce production atomic_term -> LEFT_PAREN term RIGHT_PAREN
 
 State 132:
+## Known stack suffix:
+## LOGIC_NOT arith_op_term
+## LR(1) items:
 not_term -> LOGIC_NOT arith_op_term . [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_EQUIV LOGIC_EQ LOGIC_AND IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production not_term -> LOGIC_NOT arith_op_term
 -- On WHERE reduce production not_term -> LOGIC_NOT arith_op_term
 -- On VERTICAL_BAR reduce production not_term -> LOGIC_NOT arith_op_term
@@ -2732,24 +3397,43 @@ not_term -> LOGIC_NOT arith_op_term . [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON 
 -- On AND reduce production not_term -> LOGIC_NOT arith_op_term
 
 State 133:
+## Known stack suffix:
+## MATCH term
+## LR(1) items:
 atomic_term -> MATCH term . WITH nonempty_list(match_branch) END [ WITH WILDCARD WHERE VERTICAL_BAR UPPER_WORD TYPE THEN SINGLE_QUOTED SEMI_COLON RIGHT_PAREN PROP MATCH LOWER_WORD LOGIC_TRUE LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_FALSE LOGIC_EQUIV LOGIC_EQ LOGIC_AND LEFT_PAREN INTEGER INT IN EQDEF EOI END ELSE DOT ARROW ARITH_PRODUCT ARITH_PLUS ARITH_MINUS ARITH_LT ARITH_LEQ ARITH_GT ARITH_GEQ AND ]
+## Transitions:
 -- On WITH shift to state 134
+## Reductions:
 
 State 134:
+## Known stack suffix:
+## MATCH term WITH
+## LR(1) items:
 atomic_term -> MATCH term WITH . nonempty_list(match_branch) END [ WITH WILDCARD WHERE VERTICAL_BAR UPPER_WORD TYPE THEN SINGLE_QUOTED SEMI_COLON RIGHT_PAREN PROP MATCH LOWER_WORD LOGIC_TRUE LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_FALSE LOGIC_EQUIV LOGIC_EQ LOGIC_AND LEFT_PAREN INTEGER INT IN EQDEF EOI END ELSE DOT ARROW ARITH_PRODUCT ARITH_PLUS ARITH_MINUS ARITH_LT ARITH_LEQ ARITH_GT ARITH_GEQ AND ]
+## Transitions:
 -- On VERTICAL_BAR shift to state 135
 -- On nonempty_list(match_branch) shift to state 144
 -- On match_branch shift to state 146
+## Reductions:
 
 State 135:
+## Known stack suffix:
+## VERTICAL_BAR
+## LR(1) items:
 match_branch -> VERTICAL_BAR . raw_var list(var_or_wildcard) ARROW term [ VERTICAL_BAR END ]
+## Transitions:
 -- On UPPER_WORD shift to state 5
 -- On SINGLE_QUOTED shift to state 6
 -- On LOWER_WORD shift to state 8
 -- On raw_var shift to state 136
+## Reductions:
 
 State 136:
+## Known stack suffix:
+## VERTICAL_BAR raw_var
+## LR(1) items:
 match_branch -> VERTICAL_BAR raw_var . list(var_or_wildcard) ARROW term [ VERTICAL_BAR END ]
+## Transitions:
 -- On WILDCARD shift to state 137
 -- On UPPER_WORD shift to state 5
 -- On SINGLE_QUOTED shift to state 6
@@ -2757,10 +3441,16 @@ match_branch -> VERTICAL_BAR raw_var . list(var_or_wildcard) ARROW term [ VERTIC
 -- On var_or_wildcard shift to state 138
 -- On raw_var shift to state 139
 -- On list(var_or_wildcard) shift to state 141
+## Reductions:
 -- On ARROW reduce production list(var_or_wildcard) ->
 
 State 137:
+## Known stack suffix:
+## WILDCARD
+## LR(1) items:
 var_or_wildcard -> WILDCARD . [ WILDCARD UPPER_WORD SINGLE_QUOTED LOWER_WORD ARROW ]
+## Transitions:
+## Reductions:
 -- On WILDCARD reduce production var_or_wildcard -> WILDCARD
 -- On UPPER_WORD reduce production var_or_wildcard -> WILDCARD
 -- On SINGLE_QUOTED reduce production var_or_wildcard -> WILDCARD
@@ -2768,7 +3458,11 @@ var_or_wildcard -> WILDCARD . [ WILDCARD UPPER_WORD SINGLE_QUOTED LOWER_WORD ARR
 -- On ARROW reduce production var_or_wildcard -> WILDCARD
 
 State 138:
+## Known stack suffix:
+## var_or_wildcard
+## LR(1) items:
 list(var_or_wildcard) -> var_or_wildcard . list(var_or_wildcard) [ ARROW ]
+## Transitions:
 -- On WILDCARD shift to state 137
 -- On UPPER_WORD shift to state 5
 -- On SINGLE_QUOTED shift to state 6
@@ -2776,10 +3470,16 @@ list(var_or_wildcard) -> var_or_wildcard . list(var_or_wildcard) [ ARROW ]
 -- On var_or_wildcard shift to state 138
 -- On raw_var shift to state 139
 -- On list(var_or_wildcard) shift to state 140
+## Reductions:
 -- On ARROW reduce production list(var_or_wildcard) ->
 
 State 139:
+## Known stack suffix:
+## raw_var
+## LR(1) items:
 var_or_wildcard -> raw_var . [ WILDCARD UPPER_WORD SINGLE_QUOTED LOWER_WORD ARROW ]
+## Transitions:
+## Reductions:
 -- On WILDCARD reduce production var_or_wildcard -> raw_var
 -- On UPPER_WORD reduce production var_or_wildcard -> raw_var
 -- On SINGLE_QUOTED reduce production var_or_wildcard -> raw_var
@@ -2787,15 +3487,29 @@ var_or_wildcard -> raw_var . [ WILDCARD UPPER_WORD SINGLE_QUOTED LOWER_WORD ARRO
 -- On ARROW reduce production var_or_wildcard -> raw_var
 
 State 140:
+## Known stack suffix:
+## var_or_wildcard list(var_or_wildcard)
+## LR(1) items:
 list(var_or_wildcard) -> var_or_wildcard list(var_or_wildcard) . [ ARROW ]
+## Transitions:
+## Reductions:
 -- On ARROW reduce production list(var_or_wildcard) -> var_or_wildcard list(var_or_wildcard)
 
 State 141:
+## Known stack suffix:
+## VERTICAL_BAR raw_var list(var_or_wildcard)
+## LR(1) items:
 match_branch -> VERTICAL_BAR raw_var list(var_or_wildcard) . ARROW term [ VERTICAL_BAR END ]
+## Transitions:
 -- On ARROW shift to state 142
+## Reductions:
 
 State 142:
+## Known stack suffix:
+## VERTICAL_BAR raw_var list(var_or_wildcard) ARROW
+## LR(1) items:
 match_branch -> VERTICAL_BAR raw_var list(var_or_wildcard) ARROW . term [ VERTICAL_BAR END ]
+## Transitions:
 -- On error shift to state 30
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
@@ -2830,18 +3544,34 @@ match_branch -> VERTICAL_BAR raw_var list(var_or_wildcard) ARROW . term [ VERTIC
 -- On arith_op_term shift to state 97
 -- On apply_term shift to state 103
 -- On and_term shift to state 106
+## Reductions:
 
 State 143:
+## Known stack suffix:
+## VERTICAL_BAR raw_var list(var_or_wildcard) ARROW term
+## LR(1) items:
 match_branch -> VERTICAL_BAR raw_var list(var_or_wildcard) ARROW term . [ VERTICAL_BAR END ]
+## Transitions:
+## Reductions:
 -- On VERTICAL_BAR reduce production match_branch -> VERTICAL_BAR raw_var list(var_or_wildcard) ARROW term
 -- On END reduce production match_branch -> VERTICAL_BAR raw_var list(var_or_wildcard) ARROW term
 
 State 144:
+## Known stack suffix:
+## MATCH term WITH nonempty_list(match_branch)
+## LR(1) items:
 atomic_term -> MATCH term WITH nonempty_list(match_branch) . END [ WITH WILDCARD WHERE VERTICAL_BAR UPPER_WORD TYPE THEN SINGLE_QUOTED SEMI_COLON RIGHT_PAREN PROP MATCH LOWER_WORD LOGIC_TRUE LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_FALSE LOGIC_EQUIV LOGIC_EQ LOGIC_AND LEFT_PAREN INTEGER INT IN EQDEF EOI END ELSE DOT ARROW ARITH_PRODUCT ARITH_PLUS ARITH_MINUS ARITH_LT ARITH_LEQ ARITH_GT ARITH_GEQ AND ]
+## Transitions:
 -- On END shift to state 145
+## Reductions:
 
 State 145:
+## Known stack suffix:
+## MATCH term WITH nonempty_list(match_branch) END
+## LR(1) items:
 atomic_term -> MATCH term WITH nonempty_list(match_branch) END . [ WITH WILDCARD WHERE VERTICAL_BAR UPPER_WORD TYPE THEN SINGLE_QUOTED SEMI_COLON RIGHT_PAREN PROP MATCH LOWER_WORD LOGIC_TRUE LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_FALSE LOGIC_EQUIV LOGIC_EQ LOGIC_AND LEFT_PAREN INTEGER INT IN EQDEF EOI END ELSE DOT ARROW ARITH_PRODUCT ARITH_PLUS ARITH_MINUS ARITH_LT ARITH_LEQ ARITH_GT ARITH_GEQ AND ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production atomic_term -> MATCH term WITH nonempty_list(match_branch) END
 -- On WILDCARD reduce production atomic_term -> MATCH term WITH nonempty_list(match_branch) END
 -- On WHERE reduce production atomic_term -> MATCH term WITH nonempty_list(match_branch) END
@@ -2883,19 +3613,34 @@ atomic_term -> MATCH term WITH nonempty_list(match_branch) END . [ WITH WILDCARD
 -- On AND reduce production atomic_term -> MATCH term WITH nonempty_list(match_branch) END
 
 State 146:
+## Known stack suffix:
+## match_branch
+## LR(1) items:
 nonempty_list(match_branch) -> match_branch . [ END ]
 nonempty_list(match_branch) -> match_branch . nonempty_list(match_branch) [ END ]
+## Transitions:
 -- On VERTICAL_BAR shift to state 135
 -- On nonempty_list(match_branch) shift to state 147
 -- On match_branch shift to state 146
+## Reductions:
 -- On END reduce production nonempty_list(match_branch) -> match_branch
 
 State 147:
+## Known stack suffix:
+## match_branch nonempty_list(match_branch)
+## LR(1) items:
 nonempty_list(match_branch) -> match_branch nonempty_list(match_branch) . [ END ]
+## Transitions:
+## Reductions:
 -- On END reduce production nonempty_list(match_branch) -> match_branch nonempty_list(match_branch)
 
 State 148:
+## Known stack suffix:
+## PI typed_ty_var_list DOT term
+## LR(1) items:
 term -> PI typed_ty_var_list DOT term . [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN IN EQDEF EOI END ELSE DOT AND ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production term -> PI typed_ty_var_list DOT term
 -- On WHERE reduce production term -> PI typed_ty_var_list DOT term
 -- On VERTICAL_BAR reduce production term -> PI typed_ty_var_list DOT term
@@ -2911,8 +3656,12 @@ term -> PI typed_ty_var_list DOT term . [ WITH WHERE VERTICAL_BAR THEN SEMI_COLO
 -- On AND reduce production term -> PI typed_ty_var_list DOT term
 
 State 149:
+## Known stack suffix:
+## typed_ty_var_block
+## LR(1) items:
 typed_ty_var_list -> typed_ty_var_block . [ DOT ]
 typed_ty_var_list -> typed_ty_var_block . typed_ty_var_list [ DOT ]
+## Transitions:
 -- On UPPER_WORD shift to state 5
 -- On SINGLE_QUOTED shift to state 6
 -- On LOWER_WORD shift to state 8
@@ -2920,16 +3669,27 @@ typed_ty_var_list -> typed_ty_var_block . typed_ty_var_list [ DOT ]
 -- On typed_ty_var_list shift to state 150
 -- On typed_ty_var_block shift to state 149
 -- On raw_var shift to state 151
+## Reductions:
 -- On DOT reduce production typed_ty_var_list -> typed_ty_var_block
 
 State 150:
+## Known stack suffix:
+## typed_ty_var_block typed_ty_var_list
+## LR(1) items:
 typed_ty_var_list -> typed_ty_var_block typed_ty_var_list . [ DOT ]
+## Transitions:
+## Reductions:
 -- On DOT reduce production typed_ty_var_list -> typed_ty_var_block typed_ty_var_list
 
 State 151:
+## Known stack suffix:
+## raw_var
+## LR(1) items:
 typed_ty_var_block -> raw_var . [ UPPER_WORD SINGLE_QUOTED LOWER_WORD LEFT_PAREN DOT ]
 typed_ty_var_block -> raw_var . COLON TYPE [ UPPER_WORD SINGLE_QUOTED LOWER_WORD LEFT_PAREN DOT ]
+## Transitions:
 -- On COLON shift to state 152
+## Reductions:
 -- On UPPER_WORD reduce production typed_ty_var_block -> raw_var
 -- On SINGLE_QUOTED reduce production typed_ty_var_block -> raw_var
 -- On LOWER_WORD reduce production typed_ty_var_block -> raw_var
@@ -2937,11 +3697,21 @@ typed_ty_var_block -> raw_var . COLON TYPE [ UPPER_WORD SINGLE_QUOTED LOWER_WORD
 -- On DOT reduce production typed_ty_var_block -> raw_var
 
 State 152:
+## Known stack suffix:
+## raw_var COLON
+## LR(1) items:
 typed_ty_var_block -> raw_var COLON . TYPE [ UPPER_WORD SINGLE_QUOTED LOWER_WORD LEFT_PAREN DOT ]
+## Transitions:
 -- On TYPE shift to state 153
+## Reductions:
 
 State 153:
+## Known stack suffix:
+## raw_var COLON TYPE
+## LR(1) items:
 typed_ty_var_block -> raw_var COLON TYPE . [ UPPER_WORD SINGLE_QUOTED LOWER_WORD LEFT_PAREN DOT ]
+## Transitions:
+## Reductions:
 -- On UPPER_WORD reduce production typed_ty_var_block -> raw_var COLON TYPE
 -- On SINGLE_QUOTED reduce production typed_ty_var_block -> raw_var COLON TYPE
 -- On LOWER_WORD reduce production typed_ty_var_block -> raw_var COLON TYPE
@@ -2949,17 +3719,32 @@ typed_ty_var_block -> raw_var COLON TYPE . [ UPPER_WORD SINGLE_QUOTED LOWER_WORD
 -- On DOT reduce production typed_ty_var_block -> raw_var COLON TYPE
 
 State 154:
+## Known stack suffix:
+## VAL attrs raw_var COLON term
+## LR(1) items:
 statement -> VAL attrs raw_var COLON term . DOT [ EOI ]
+## Transitions:
 -- On DOT shift to state 155
+## Reductions:
 
 State 155:
+## Known stack suffix:
+## VAL attrs raw_var COLON term DOT
+## LR(1) items:
 statement -> VAL attrs raw_var COLON term DOT . [ EOI ]
+## Transitions:
+## Reductions:
 -- On EOI reduce production statement -> VAL attrs raw_var COLON term DOT
 
 State 156:
+## Known stack suffix:
+## REWRITE
+## LR(1) items:
 statement -> REWRITE . attrs term DOT [ EOI ]
+## Transitions:
 -- On LEFT_BRACKET shift to state 157
 -- On attrs shift to state 160
+## Reductions:
 -- On error reduce production attrs ->
 -- On WILDCARD reduce production attrs ->
 -- On UPPER_WORD reduce production attrs ->
@@ -2983,7 +3768,11 @@ statement -> REWRITE . attrs term DOT [ EOI ]
 -- On ARITH_MINUS reduce production attrs ->
 
 State 157:
+## Known stack suffix:
+## LEFT_BRACKET
+## LR(1) items:
 attrs -> LEFT_BRACKET . separated_nonempty_list(COMMA,attr) RIGHT_BRACKET [ error WILDCARD UPPER_WORD TYPE SINGLE_QUOTED PROP PI MATCH LOWER_WORD LOGIC_TRUE LOGIC_NOT LOGIC_FORALL LOGIC_FALSE LOGIC_EXISTS LET LEFT_PAREN INTEGER INT IF FUN ARITH_MINUS ]
+## Transitions:
 -- On error shift to state 4
 -- On UPPER_WORD shift to state 5
 -- On SINGLE_QUOTED shift to state 6
@@ -2995,13 +3784,24 @@ attrs -> LEFT_BRACKET . separated_nonempty_list(COMMA,attr) RIGHT_BRACKET [ erro
 -- On raw_var shift to state 12
 -- On attr shift to state 19
 -- On atomic_attr shift to state 22
+## Reductions:
 
 State 158:
+## Known stack suffix:
+## LEFT_BRACKET separated_nonempty_list(COMMA,attr)
+## LR(1) items:
 attrs -> LEFT_BRACKET separated_nonempty_list(COMMA,attr) . RIGHT_BRACKET [ error WILDCARD UPPER_WORD TYPE SINGLE_QUOTED PROP PI MATCH LOWER_WORD LOGIC_TRUE LOGIC_NOT LOGIC_FORALL LOGIC_FALSE LOGIC_EXISTS LET LEFT_PAREN INTEGER INT IF FUN ARITH_MINUS ]
+## Transitions:
 -- On RIGHT_BRACKET shift to state 159
+## Reductions:
 
 State 159:
+## Known stack suffix:
+## LEFT_BRACKET separated_nonempty_list(COMMA,attr) RIGHT_BRACKET
+## LR(1) items:
 attrs -> LEFT_BRACKET separated_nonempty_list(COMMA,attr) RIGHT_BRACKET . [ error WILDCARD UPPER_WORD TYPE SINGLE_QUOTED PROP PI MATCH LOWER_WORD LOGIC_TRUE LOGIC_NOT LOGIC_FORALL LOGIC_FALSE LOGIC_EXISTS LET LEFT_PAREN INTEGER INT IF FUN ARITH_MINUS ]
+## Transitions:
+## Reductions:
 -- On error reduce production attrs -> LEFT_BRACKET separated_nonempty_list(COMMA,attr) RIGHT_BRACKET
 -- On WILDCARD reduce production attrs -> LEFT_BRACKET separated_nonempty_list(COMMA,attr) RIGHT_BRACKET
 -- On UPPER_WORD reduce production attrs -> LEFT_BRACKET separated_nonempty_list(COMMA,attr) RIGHT_BRACKET
@@ -3025,7 +3825,11 @@ attrs -> LEFT_BRACKET separated_nonempty_list(COMMA,attr) RIGHT_BRACKET . [ erro
 -- On ARITH_MINUS reduce production attrs -> LEFT_BRACKET separated_nonempty_list(COMMA,attr) RIGHT_BRACKET
 
 State 160:
+## Known stack suffix:
+## REWRITE attrs
+## LR(1) items:
 statement -> REWRITE attrs . term DOT [ EOI ]
+## Transitions:
 -- On error shift to state 30
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
@@ -3060,19 +3864,35 @@ statement -> REWRITE attrs . term DOT [ EOI ]
 -- On arith_op_term shift to state 97
 -- On apply_term shift to state 103
 -- On and_term shift to state 106
+## Reductions:
 
 State 161:
+## Known stack suffix:
+## REWRITE attrs term
+## LR(1) items:
 statement -> REWRITE attrs term . DOT [ EOI ]
+## Transitions:
 -- On DOT shift to state 162
+## Reductions:
 
 State 162:
+## Known stack suffix:
+## REWRITE attrs term DOT
+## LR(1) items:
 statement -> REWRITE attrs term DOT . [ EOI ]
+## Transitions:
+## Reductions:
 -- On EOI reduce production statement -> REWRITE attrs term DOT
 
 State 163:
+## Known stack suffix:
+## LEMMA
+## LR(1) items:
 statement -> LEMMA . attrs term DOT [ EOI ]
+## Transitions:
 -- On LEFT_BRACKET shift to state 157
 -- On attrs shift to state 164
+## Reductions:
 -- On error reduce production attrs ->
 -- On WILDCARD reduce production attrs ->
 -- On UPPER_WORD reduce production attrs ->
@@ -3096,7 +3916,11 @@ statement -> LEMMA . attrs term DOT [ EOI ]
 -- On ARITH_MINUS reduce production attrs ->
 
 State 164:
+## Known stack suffix:
+## LEMMA attrs
+## LR(1) items:
 statement -> LEMMA attrs . term DOT [ EOI ]
+## Transitions:
 -- On error shift to state 30
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
@@ -3131,31 +3955,62 @@ statement -> LEMMA attrs . term DOT [ EOI ]
 -- On arith_op_term shift to state 97
 -- On apply_term shift to state 103
 -- On and_term shift to state 106
+## Reductions:
 
 State 165:
+## Known stack suffix:
+## LEMMA attrs term
+## LR(1) items:
 statement -> LEMMA attrs term . DOT [ EOI ]
+## Transitions:
 -- On DOT shift to state 166
+## Reductions:
 
 State 166:
+## Known stack suffix:
+## LEMMA attrs term DOT
+## LR(1) items:
 statement -> LEMMA attrs term DOT . [ EOI ]
+## Transitions:
+## Reductions:
 -- On EOI reduce production statement -> LEMMA attrs term DOT
 
 State 167:
+## Known stack suffix:
+## INCLUDE
+## LR(1) items:
 statement -> INCLUDE . QUOTED DOT [ EOI ]
+## Transitions:
 -- On QUOTED shift to state 168
+## Reductions:
 
 State 168:
+## Known stack suffix:
+## INCLUDE QUOTED
+## LR(1) items:
 statement -> INCLUDE QUOTED . DOT [ EOI ]
+## Transitions:
 -- On DOT shift to state 169
+## Reductions:
 
 State 169:
+## Known stack suffix:
+## INCLUDE QUOTED DOT
+## LR(1) items:
 statement -> INCLUDE QUOTED DOT . [ EOI ]
+## Transitions:
+## Reductions:
 -- On EOI reduce production statement -> INCLUDE QUOTED DOT
 
 State 170:
+## Known stack suffix:
+## GOAL
+## LR(1) items:
 statement -> GOAL . attrs term DOT [ EOI ]
+## Transitions:
 -- On LEFT_BRACKET shift to state 157
 -- On attrs shift to state 171
+## Reductions:
 -- On error reduce production attrs ->
 -- On WILDCARD reduce production attrs ->
 -- On UPPER_WORD reduce production attrs ->
@@ -3179,7 +4034,11 @@ statement -> GOAL . attrs term DOT [ EOI ]
 -- On ARITH_MINUS reduce production attrs ->
 
 State 171:
+## Known stack suffix:
+## GOAL attrs
+## LR(1) items:
 statement -> GOAL attrs . term DOT [ EOI ]
+## Transitions:
 -- On error shift to state 30
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
@@ -3214,63 +4073,113 @@ statement -> GOAL attrs . term DOT [ EOI ]
 -- On arith_op_term shift to state 97
 -- On apply_term shift to state 103
 -- On and_term shift to state 106
+## Reductions:
 
 State 172:
+## Known stack suffix:
+## GOAL attrs term
+## LR(1) items:
 statement -> GOAL attrs term . DOT [ EOI ]
+## Transitions:
 -- On DOT shift to state 173
+## Reductions:
 
 State 173:
+## Known stack suffix:
+## GOAL attrs term DOT
+## LR(1) items:
 statement -> GOAL attrs term DOT . [ EOI ]
+## Transitions:
+## Reductions:
 -- On EOI reduce production statement -> GOAL attrs term DOT
 
 State 174:
+## Known stack suffix:
+## DEF
+## LR(1) items:
 statement -> DEF . attrs separated_nonempty_list(AND,def) DOT [ EOI ]
+## Transitions:
 -- On LEFT_BRACKET shift to state 3
 -- On attrs shift to state 175
+## Reductions:
 -- On UPPER_WORD reduce production attrs ->
 -- On SINGLE_QUOTED reduce production attrs ->
 -- On LOWER_WORD reduce production attrs ->
 
 State 175:
+## Known stack suffix:
+## DEF attrs
+## LR(1) items:
 statement -> DEF attrs . separated_nonempty_list(AND,def) DOT [ EOI ]
+## Transitions:
 -- On UPPER_WORD shift to state 5
 -- On SINGLE_QUOTED shift to state 6
 -- On LOWER_WORD shift to state 8
 -- On separated_nonempty_list(AND,def) shift to state 176
 -- On raw_var shift to state 178
 -- On def shift to state 200
+## Reductions:
 
 State 176:
+## Known stack suffix:
+## DEF attrs separated_nonempty_list(AND,def)
+## LR(1) items:
 statement -> DEF attrs separated_nonempty_list(AND,def) . DOT [ EOI ]
+## Transitions:
 -- On DOT shift to state 177
+## Reductions:
 
 State 177:
+## Known stack suffix:
+## DEF attrs separated_nonempty_list(AND,def) DOT
+## LR(1) items:
 statement -> DEF attrs separated_nonempty_list(AND,def) DOT . [ EOI ]
+## Transitions:
+## Reductions:
 -- On EOI reduce production statement -> DEF attrs separated_nonempty_list(AND,def) DOT
 
 State 178:
+## Known stack suffix:
+## raw_var
+## LR(1) items:
 def -> raw_var . COLON term EQDEF term [ DOT AND ]
 def -> raw_var . COLON term WHERE separated_nonempty_list(SEMI_COLON,term) [ DOT AND ]
 def -> raw_var . mandatory_typed_var_list COLON term EQDEF term [ DOT AND ]
+## Transitions:
 -- On LEFT_PAREN shift to state 179
 -- On COLON shift to state 184
 -- On mandatory_typed_var_list shift to state 193
 -- On mandatory_typed_var_block shift to state 198
+## Reductions:
 
 State 179:
+## Known stack suffix:
+## LEFT_PAREN
+## LR(1) items:
 mandatory_typed_var_block -> LEFT_PAREN . nonempty_list(raw_var) COLON term RIGHT_PAREN [ LEFT_PAREN COLON ]
+## Transitions:
 -- On UPPER_WORD shift to state 5
 -- On SINGLE_QUOTED shift to state 6
 -- On LOWER_WORD shift to state 8
 -- On raw_var shift to state 36
 -- On nonempty_list(raw_var) shift to state 180
+## Reductions:
 
 State 180:
+## Known stack suffix:
+## LEFT_PAREN nonempty_list(raw_var)
+## LR(1) items:
 mandatory_typed_var_block -> LEFT_PAREN nonempty_list(raw_var) . COLON term RIGHT_PAREN [ LEFT_PAREN COLON ]
+## Transitions:
 -- On COLON shift to state 181
+## Reductions:
 
 State 181:
+## Known stack suffix:
+## LEFT_PAREN nonempty_list(raw_var) COLON
+## LR(1) items:
 mandatory_typed_var_block -> LEFT_PAREN nonempty_list(raw_var) COLON . term RIGHT_PAREN [ LEFT_PAREN COLON ]
+## Transitions:
 -- On error shift to state 30
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
@@ -3305,19 +4214,34 @@ mandatory_typed_var_block -> LEFT_PAREN nonempty_list(raw_var) COLON . term RIGH
 -- On arith_op_term shift to state 97
 -- On apply_term shift to state 103
 -- On and_term shift to state 106
+## Reductions:
 
 State 182:
+## Known stack suffix:
+## LEFT_PAREN nonempty_list(raw_var) COLON term
+## LR(1) items:
 mandatory_typed_var_block -> LEFT_PAREN nonempty_list(raw_var) COLON term . RIGHT_PAREN [ LEFT_PAREN COLON ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 183
+## Reductions:
 
 State 183:
+## Known stack suffix:
+## LEFT_PAREN nonempty_list(raw_var) COLON term RIGHT_PAREN
+## LR(1) items:
 mandatory_typed_var_block -> LEFT_PAREN nonempty_list(raw_var) COLON term RIGHT_PAREN . [ LEFT_PAREN COLON ]
+## Transitions:
+## Reductions:
 -- On LEFT_PAREN reduce production mandatory_typed_var_block -> LEFT_PAREN nonempty_list(raw_var) COLON term RIGHT_PAREN
 -- On COLON reduce production mandatory_typed_var_block -> LEFT_PAREN nonempty_list(raw_var) COLON term RIGHT_PAREN
 
 State 184:
+## Known stack suffix:
+## raw_var COLON
+## LR(1) items:
 def -> raw_var COLON . term EQDEF term [ DOT AND ]
 def -> raw_var COLON . term WHERE separated_nonempty_list(SEMI_COLON,term) [ DOT AND ]
+## Transitions:
 -- On error shift to state 30
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
@@ -3352,15 +4276,25 @@ def -> raw_var COLON . term WHERE separated_nonempty_list(SEMI_COLON,term) [ DOT
 -- On arith_op_term shift to state 97
 -- On apply_term shift to state 103
 -- On and_term shift to state 106
+## Reductions:
 
 State 185:
+## Known stack suffix:
+## raw_var COLON term
+## LR(1) items:
 def -> raw_var COLON term . EQDEF term [ DOT AND ]
 def -> raw_var COLON term . WHERE separated_nonempty_list(SEMI_COLON,term) [ DOT AND ]
+## Transitions:
 -- On WHERE shift to state 186
 -- On EQDEF shift to state 191
+## Reductions:
 
 State 186:
+## Known stack suffix:
+## raw_var COLON term WHERE
+## LR(1) items:
 def -> raw_var COLON term WHERE . separated_nonempty_list(SEMI_COLON,term) [ DOT AND ]
+## Transitions:
 -- On error shift to state 30
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
@@ -3396,16 +4330,26 @@ def -> raw_var COLON term WHERE . separated_nonempty_list(SEMI_COLON,term) [ DOT
 -- On arith_op_term shift to state 97
 -- On apply_term shift to state 103
 -- On and_term shift to state 106
+## Reductions:
 
 State 187:
+## Known stack suffix:
+## term
+## LR(1) items:
 separated_nonempty_list(SEMI_COLON,term) -> term . [ DOT AND ]
 separated_nonempty_list(SEMI_COLON,term) -> term . SEMI_COLON separated_nonempty_list(SEMI_COLON,term) [ DOT AND ]
+## Transitions:
 -- On SEMI_COLON shift to state 188
+## Reductions:
 -- On DOT reduce production separated_nonempty_list(SEMI_COLON,term) -> term
 -- On AND reduce production separated_nonempty_list(SEMI_COLON,term) -> term
 
 State 188:
+## Known stack suffix:
+## term SEMI_COLON
+## LR(1) items:
 separated_nonempty_list(SEMI_COLON,term) -> term SEMI_COLON . separated_nonempty_list(SEMI_COLON,term) [ DOT AND ]
+## Transitions:
 -- On error shift to state 30
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
@@ -3441,19 +4385,34 @@ separated_nonempty_list(SEMI_COLON,term) -> term SEMI_COLON . separated_nonempty
 -- On arith_op_term shift to state 97
 -- On apply_term shift to state 103
 -- On and_term shift to state 106
+## Reductions:
 
 State 189:
+## Known stack suffix:
+## term SEMI_COLON separated_nonempty_list(SEMI_COLON,term)
+## LR(1) items:
 separated_nonempty_list(SEMI_COLON,term) -> term SEMI_COLON separated_nonempty_list(SEMI_COLON,term) . [ DOT AND ]
+## Transitions:
+## Reductions:
 -- On DOT reduce production separated_nonempty_list(SEMI_COLON,term) -> term SEMI_COLON separated_nonempty_list(SEMI_COLON,term)
 -- On AND reduce production separated_nonempty_list(SEMI_COLON,term) -> term SEMI_COLON separated_nonempty_list(SEMI_COLON,term)
 
 State 190:
+## Known stack suffix:
+## raw_var COLON term WHERE separated_nonempty_list(SEMI_COLON,term)
+## LR(1) items:
 def -> raw_var COLON term WHERE separated_nonempty_list(SEMI_COLON,term) . [ DOT AND ]
+## Transitions:
+## Reductions:
 -- On DOT reduce production def -> raw_var COLON term WHERE separated_nonempty_list(SEMI_COLON,term)
 -- On AND reduce production def -> raw_var COLON term WHERE separated_nonempty_list(SEMI_COLON,term)
 
 State 191:
+## Known stack suffix:
+## raw_var COLON term EQDEF
+## LR(1) items:
 def -> raw_var COLON term EQDEF . term [ DOT AND ]
+## Transitions:
 -- On error shift to state 30
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
@@ -3488,18 +4447,33 @@ def -> raw_var COLON term EQDEF . term [ DOT AND ]
 -- On arith_op_term shift to state 97
 -- On apply_term shift to state 103
 -- On and_term shift to state 106
+## Reductions:
 
 State 192:
+## Known stack suffix:
+## raw_var COLON term EQDEF term
+## LR(1) items:
 def -> raw_var COLON term EQDEF term . [ DOT AND ]
+## Transitions:
+## Reductions:
 -- On DOT reduce production def -> raw_var COLON term EQDEF term
 -- On AND reduce production def -> raw_var COLON term EQDEF term
 
 State 193:
+## Known stack suffix:
+## raw_var mandatory_typed_var_list
+## LR(1) items:
 def -> raw_var mandatory_typed_var_list . COLON term EQDEF term [ DOT AND ]
+## Transitions:
 -- On COLON shift to state 194
+## Reductions:
 
 State 194:
+## Known stack suffix:
+## raw_var mandatory_typed_var_list COLON
+## LR(1) items:
 def -> raw_var mandatory_typed_var_list COLON . term EQDEF term [ DOT AND ]
+## Transitions:
 -- On error shift to state 30
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
@@ -3534,13 +4508,23 @@ def -> raw_var mandatory_typed_var_list COLON . term EQDEF term [ DOT AND ]
 -- On arith_op_term shift to state 97
 -- On apply_term shift to state 103
 -- On and_term shift to state 106
+## Reductions:
 
 State 195:
+## Known stack suffix:
+## raw_var mandatory_typed_var_list COLON term
+## LR(1) items:
 def -> raw_var mandatory_typed_var_list COLON term . EQDEF term [ DOT AND ]
+## Transitions:
 -- On EQDEF shift to state 196
+## Reductions:
 
 State 196:
+## Known stack suffix:
+## raw_var mandatory_typed_var_list COLON term EQDEF
+## LR(1) items:
 def -> raw_var mandatory_typed_var_list COLON term EQDEF . term [ DOT AND ]
+## Transitions:
 -- On error shift to state 30
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
@@ -3575,53 +4559,93 @@ def -> raw_var mandatory_typed_var_list COLON term EQDEF . term [ DOT AND ]
 -- On arith_op_term shift to state 97
 -- On apply_term shift to state 103
 -- On and_term shift to state 106
+## Reductions:
 
 State 197:
+## Known stack suffix:
+## raw_var mandatory_typed_var_list COLON term EQDEF term
+## LR(1) items:
 def -> raw_var mandatory_typed_var_list COLON term EQDEF term . [ DOT AND ]
+## Transitions:
+## Reductions:
 -- On DOT reduce production def -> raw_var mandatory_typed_var_list COLON term EQDEF term
 -- On AND reduce production def -> raw_var mandatory_typed_var_list COLON term EQDEF term
 
 State 198:
+## Known stack suffix:
+## mandatory_typed_var_block
+## LR(1) items:
 mandatory_typed_var_list -> mandatory_typed_var_block . [ COLON ]
 mandatory_typed_var_list -> mandatory_typed_var_block . mandatory_typed_var_list [ COLON ]
+## Transitions:
 -- On LEFT_PAREN shift to state 179
 -- On mandatory_typed_var_list shift to state 199
 -- On mandatory_typed_var_block shift to state 198
+## Reductions:
 -- On COLON reduce production mandatory_typed_var_list -> mandatory_typed_var_block
 
 State 199:
+## Known stack suffix:
+## mandatory_typed_var_block mandatory_typed_var_list
+## LR(1) items:
 mandatory_typed_var_list -> mandatory_typed_var_block mandatory_typed_var_list . [ COLON ]
+## Transitions:
+## Reductions:
 -- On COLON reduce production mandatory_typed_var_list -> mandatory_typed_var_block mandatory_typed_var_list
 
 State 200:
+## Known stack suffix:
+## def
+## LR(1) items:
 separated_nonempty_list(AND,def) -> def . [ DOT ]
 separated_nonempty_list(AND,def) -> def . AND separated_nonempty_list(AND,def) [ DOT ]
+## Transitions:
 -- On AND shift to state 201
+## Reductions:
 -- On DOT reduce production separated_nonempty_list(AND,def) -> def
 
 State 201:
+## Known stack suffix:
+## def AND
+## LR(1) items:
 separated_nonempty_list(AND,def) -> def AND . separated_nonempty_list(AND,def) [ DOT ]
+## Transitions:
 -- On UPPER_WORD shift to state 5
 -- On SINGLE_QUOTED shift to state 6
 -- On LOWER_WORD shift to state 8
 -- On separated_nonempty_list(AND,def) shift to state 202
 -- On raw_var shift to state 178
 -- On def shift to state 200
+## Reductions:
 
 State 202:
+## Known stack suffix:
+## def AND separated_nonempty_list(AND,def)
+## LR(1) items:
 separated_nonempty_list(AND,def) -> def AND separated_nonempty_list(AND,def) . [ DOT ]
+## Transitions:
+## Reductions:
 -- On DOT reduce production separated_nonempty_list(AND,def) -> def AND separated_nonempty_list(AND,def)
 
 State 203:
+## Known stack suffix:
+## DATA
+## LR(1) items:
 statement -> DATA . attrs mutual_types DOT [ EOI ]
+## Transitions:
 -- On LEFT_BRACKET shift to state 3
 -- On attrs shift to state 204
+## Reductions:
 -- On UPPER_WORD reduce production attrs ->
 -- On SINGLE_QUOTED reduce production attrs ->
 -- On LOWER_WORD reduce production attrs ->
 
 State 204:
+## Known stack suffix:
+## DATA attrs
+## LR(1) items:
 statement -> DATA attrs . mutual_types DOT [ EOI ]
+## Transitions:
 -- On UPPER_WORD shift to state 5
 -- On SINGLE_QUOTED shift to state 6
 -- On LOWER_WORD shift to state 8
@@ -3629,83 +4653,143 @@ statement -> DATA attrs . mutual_types DOT [ EOI ]
 -- On separated_nonempty_list(AND,type_def) shift to state 230
 -- On raw_var shift to state 208
 -- On mutual_types shift to state 231
+## Reductions:
 
 State 205:
+## Known stack suffix:
+## type_def
+## LR(1) items:
 separated_nonempty_list(AND,type_def) -> type_def . [ DOT ]
 separated_nonempty_list(AND,type_def) -> type_def . AND separated_nonempty_list(AND,type_def) [ DOT ]
+## Transitions:
 -- On AND shift to state 206
+## Reductions:
 -- On DOT reduce production separated_nonempty_list(AND,type_def) -> type_def
 
 State 206:
+## Known stack suffix:
+## type_def AND
+## LR(1) items:
 separated_nonempty_list(AND,type_def) -> type_def AND . separated_nonempty_list(AND,type_def) [ DOT ]
+## Transitions:
 -- On UPPER_WORD shift to state 5
 -- On SINGLE_QUOTED shift to state 6
 -- On LOWER_WORD shift to state 8
 -- On type_def shift to state 205
 -- On separated_nonempty_list(AND,type_def) shift to state 207
 -- On raw_var shift to state 208
+## Reductions:
 
 State 207:
+## Known stack suffix:
+## type_def AND separated_nonempty_list(AND,type_def)
+## LR(1) items:
 separated_nonempty_list(AND,type_def) -> type_def AND separated_nonempty_list(AND,type_def) . [ DOT ]
+## Transitions:
+## Reductions:
 -- On DOT reduce production separated_nonempty_list(AND,type_def) -> type_def AND separated_nonempty_list(AND,type_def)
 
 State 208:
+## Known stack suffix:
+## raw_var
+## LR(1) items:
 type_def -> raw_var . list(raw_var) EQDEF constructors [ DOT AND ]
+## Transitions:
 -- On UPPER_WORD shift to state 5
 -- On SINGLE_QUOTED shift to state 6
 -- On LOWER_WORD shift to state 8
 -- On raw_var shift to state 209
 -- On list(raw_var) shift to state 211
+## Reductions:
 -- On EQDEF reduce production list(raw_var) ->
 
 State 209:
+## Known stack suffix:
+## raw_var
+## LR(1) items:
 list(raw_var) -> raw_var . list(raw_var) [ EQDEF ]
+## Transitions:
 -- On UPPER_WORD shift to state 5
 -- On SINGLE_QUOTED shift to state 6
 -- On LOWER_WORD shift to state 8
 -- On raw_var shift to state 209
 -- On list(raw_var) shift to state 210
+## Reductions:
 -- On EQDEF reduce production list(raw_var) ->
 
 State 210:
+## Known stack suffix:
+## raw_var list(raw_var)
+## LR(1) items:
 list(raw_var) -> raw_var list(raw_var) . [ EQDEF ]
+## Transitions:
+## Reductions:
 -- On EQDEF reduce production list(raw_var) -> raw_var list(raw_var)
 
 State 211:
+## Known stack suffix:
+## raw_var list(raw_var)
+## LR(1) items:
 type_def -> raw_var list(raw_var) . EQDEF constructors [ DOT AND ]
+## Transitions:
 -- On EQDEF shift to state 212
+## Reductions:
 
 State 212:
+## Known stack suffix:
+## raw_var list(raw_var) EQDEF
+## LR(1) items:
 type_def -> raw_var list(raw_var) EQDEF . constructors [ DOT AND ]
+## Transitions:
 -- On VERTICAL_BAR shift to state 213
 -- On option(VERTICAL_BAR) shift to state 214
 -- On constructors shift to state 229
+## Reductions:
 -- On UPPER_WORD reduce production option(VERTICAL_BAR) ->
 -- On SINGLE_QUOTED reduce production option(VERTICAL_BAR) ->
 -- On LOWER_WORD reduce production option(VERTICAL_BAR) ->
 
 State 213:
+## Known stack suffix:
+## VERTICAL_BAR
+## LR(1) items:
 option(VERTICAL_BAR) -> VERTICAL_BAR . [ UPPER_WORD SINGLE_QUOTED LOWER_WORD ]
+## Transitions:
+## Reductions:
 -- On UPPER_WORD reduce production option(VERTICAL_BAR) -> VERTICAL_BAR
 -- On SINGLE_QUOTED reduce production option(VERTICAL_BAR) -> VERTICAL_BAR
 -- On LOWER_WORD reduce production option(VERTICAL_BAR) -> VERTICAL_BAR
 
 State 214:
+## Known stack suffix:
+## option(VERTICAL_BAR)
+## LR(1) items:
 constructors -> option(VERTICAL_BAR) . separated_nonempty_list(VERTICAL_BAR,constructor) [ DOT AND ]
+## Transitions:
 -- On UPPER_WORD shift to state 5
 -- On SINGLE_QUOTED shift to state 6
 -- On LOWER_WORD shift to state 8
 -- On separated_nonempty_list(VERTICAL_BAR,constructor) shift to state 215
 -- On raw_var shift to state 216
 -- On constructor shift to state 226
+## Reductions:
 
 State 215:
+## Known stack suffix:
+## option(VERTICAL_BAR) separated_nonempty_list(VERTICAL_BAR,constructor)
+## LR(1) items:
 constructors -> option(VERTICAL_BAR) separated_nonempty_list(VERTICAL_BAR,constructor) . [ DOT AND ]
+## Transitions:
+## Reductions:
 -- On DOT reduce production constructors -> option(VERTICAL_BAR) separated_nonempty_list(VERTICAL_BAR,constructor)
 -- On AND reduce production constructors -> option(VERTICAL_BAR) separated_nonempty_list(VERTICAL_BAR,constructor)
 
 State 216:
+## Known stack suffix:
+## raw_var
+## LR(1) items:
 constructor -> raw_var . list(constructor_arg) [ VERTICAL_BAR DOT AND ]
+## Transitions:
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
 -- On TYPE shift to state 32
@@ -3724,13 +4808,18 @@ constructor -> raw_var . list(constructor_arg) [ VERTICAL_BAR DOT AND ]
 -- On constructor_arg shift to state 223
 -- On const shift to state 69
 -- On atomic_term shift to state 225
+## Reductions:
 -- On VERTICAL_BAR reduce production list(constructor_arg) ->
 -- On DOT reduce production list(constructor_arg) ->
 -- On AND reduce production list(constructor_arg) ->
 
 State 217:
+## Known stack suffix:
+## LEFT_PAREN
+## LR(1) items:
 atomic_term -> LEFT_PAREN . term RIGHT_PAREN [ WILDCARD VERTICAL_BAR UPPER_WORD TYPE SINGLE_QUOTED PROP MATCH LOWER_WORD LOGIC_TRUE LOGIC_FALSE LEFT_PAREN INTEGER INT DOT AND ]
 constructor_arg -> LEFT_PAREN . raw_var COLON atomic_term RIGHT_PAREN [ WILDCARD VERTICAL_BAR UPPER_WORD TYPE SINGLE_QUOTED PROP MATCH LOWER_WORD LOGIC_TRUE LOGIC_FALSE LEFT_PAREN INTEGER INT DOT AND ]
+## Transitions:
 -- On error shift to state 30
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
@@ -3765,11 +4854,17 @@ constructor_arg -> LEFT_PAREN . raw_var COLON atomic_term RIGHT_PAREN [ WILDCARD
 -- On arith_op_term shift to state 97
 -- On apply_term shift to state 103
 -- On and_term shift to state 106
+## Reductions:
 
 State 218:
+## Known stack suffix:
+## LEFT_PAREN raw_var
+## LR(1) items:
 constructor_arg -> LEFT_PAREN raw_var . COLON atomic_term RIGHT_PAREN [ WILDCARD VERTICAL_BAR UPPER_WORD TYPE SINGLE_QUOTED PROP MATCH LOWER_WORD LOGIC_TRUE LOGIC_FALSE LEFT_PAREN INTEGER INT DOT AND ]
 var -> raw_var . [ WILDCARD UPPER_WORD TYPE SINGLE_QUOTED RIGHT_PAREN PROP MATCH LOWER_WORD LOGIC_TRUE LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_FALSE LOGIC_EQUIV LOGIC_EQ LOGIC_AND LEFT_PAREN INTEGER INT ARROW ARITH_PRODUCT ARITH_PLUS ARITH_MINUS ARITH_LT ARITH_LEQ ARITH_GT ARITH_GEQ ]
+## Transitions:
 -- On COLON shift to state 219
+## Reductions:
 -- On WILDCARD reduce production var -> raw_var
 -- On UPPER_WORD reduce production var -> raw_var
 -- On TYPE reduce production var -> raw_var
@@ -3799,7 +4894,11 @@ var -> raw_var . [ WILDCARD UPPER_WORD TYPE SINGLE_QUOTED RIGHT_PAREN PROP MATCH
 -- On ARITH_GEQ reduce production var -> raw_var
 
 State 219:
+## Known stack suffix:
+## LEFT_PAREN raw_var COLON
+## LR(1) items:
 constructor_arg -> LEFT_PAREN raw_var COLON . atomic_term RIGHT_PAREN [ WILDCARD VERTICAL_BAR UPPER_WORD TYPE SINGLE_QUOTED PROP MATCH LOWER_WORD LOGIC_TRUE LOGIC_FALSE LEFT_PAREN INTEGER INT DOT AND ]
+## Transitions:
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
 -- On TYPE shift to state 32
@@ -3816,13 +4915,24 @@ constructor_arg -> LEFT_PAREN raw_var COLON . atomic_term RIGHT_PAREN [ WILDCARD
 -- On raw_var shift to state 68
 -- On const shift to state 69
 -- On atomic_term shift to state 220
+## Reductions:
 
 State 220:
+## Known stack suffix:
+## LEFT_PAREN raw_var COLON atomic_term
+## LR(1) items:
 constructor_arg -> LEFT_PAREN raw_var COLON atomic_term . RIGHT_PAREN [ WILDCARD VERTICAL_BAR UPPER_WORD TYPE SINGLE_QUOTED PROP MATCH LOWER_WORD LOGIC_TRUE LOGIC_FALSE LEFT_PAREN INTEGER INT DOT AND ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 221
+## Reductions:
 
 State 221:
+## Known stack suffix:
+## LEFT_PAREN raw_var COLON atomic_term RIGHT_PAREN
+## LR(1) items:
 constructor_arg -> LEFT_PAREN raw_var COLON atomic_term RIGHT_PAREN . [ WILDCARD VERTICAL_BAR UPPER_WORD TYPE SINGLE_QUOTED PROP MATCH LOWER_WORD LOGIC_TRUE LOGIC_FALSE LEFT_PAREN INTEGER INT DOT AND ]
+## Transitions:
+## Reductions:
 -- On WILDCARD reduce production constructor_arg -> LEFT_PAREN raw_var COLON atomic_term RIGHT_PAREN
 -- On VERTICAL_BAR reduce production constructor_arg -> LEFT_PAREN raw_var COLON atomic_term RIGHT_PAREN
 -- On UPPER_WORD reduce production constructor_arg -> LEFT_PAREN raw_var COLON atomic_term RIGHT_PAREN
@@ -3840,13 +4950,22 @@ constructor_arg -> LEFT_PAREN raw_var COLON atomic_term RIGHT_PAREN . [ WILDCARD
 -- On AND reduce production constructor_arg -> LEFT_PAREN raw_var COLON atomic_term RIGHT_PAREN
 
 State 222:
+## Known stack suffix:
+## raw_var list(constructor_arg)
+## LR(1) items:
 constructor -> raw_var list(constructor_arg) . [ VERTICAL_BAR DOT AND ]
+## Transitions:
+## Reductions:
 -- On VERTICAL_BAR reduce production constructor -> raw_var list(constructor_arg)
 -- On DOT reduce production constructor -> raw_var list(constructor_arg)
 -- On AND reduce production constructor -> raw_var list(constructor_arg)
 
 State 223:
+## Known stack suffix:
+## constructor_arg
+## LR(1) items:
 list(constructor_arg) -> constructor_arg . list(constructor_arg) [ VERTICAL_BAR DOT AND ]
+## Transitions:
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
 -- On TYPE shift to state 32
@@ -3865,18 +4984,29 @@ list(constructor_arg) -> constructor_arg . list(constructor_arg) [ VERTICAL_BAR 
 -- On constructor_arg shift to state 223
 -- On const shift to state 69
 -- On atomic_term shift to state 225
+## Reductions:
 -- On VERTICAL_BAR reduce production list(constructor_arg) ->
 -- On DOT reduce production list(constructor_arg) ->
 -- On AND reduce production list(constructor_arg) ->
 
 State 224:
+## Known stack suffix:
+## constructor_arg list(constructor_arg)
+## LR(1) items:
 list(constructor_arg) -> constructor_arg list(constructor_arg) . [ VERTICAL_BAR DOT AND ]
+## Transitions:
+## Reductions:
 -- On VERTICAL_BAR reduce production list(constructor_arg) -> constructor_arg list(constructor_arg)
 -- On DOT reduce production list(constructor_arg) -> constructor_arg list(constructor_arg)
 -- On AND reduce production list(constructor_arg) -> constructor_arg list(constructor_arg)
 
 State 225:
+## Known stack suffix:
+## atomic_term
+## LR(1) items:
 constructor_arg -> atomic_term . [ WILDCARD VERTICAL_BAR UPPER_WORD TYPE SINGLE_QUOTED PROP MATCH LOWER_WORD LOGIC_TRUE LOGIC_FALSE LEFT_PAREN INTEGER INT DOT AND ]
+## Transitions:
+## Reductions:
 -- On WILDCARD reduce production constructor_arg -> atomic_term
 -- On VERTICAL_BAR reduce production constructor_arg -> atomic_term
 -- On UPPER_WORD reduce production constructor_arg -> atomic_term
@@ -3894,47 +5024,87 @@ constructor_arg -> atomic_term . [ WILDCARD VERTICAL_BAR UPPER_WORD TYPE SINGLE_
 -- On AND reduce production constructor_arg -> atomic_term
 
 State 226:
+## Known stack suffix:
+## constructor
+## LR(1) items:
 separated_nonempty_list(VERTICAL_BAR,constructor) -> constructor . [ DOT AND ]
 separated_nonempty_list(VERTICAL_BAR,constructor) -> constructor . VERTICAL_BAR separated_nonempty_list(VERTICAL_BAR,constructor) [ DOT AND ]
+## Transitions:
 -- On VERTICAL_BAR shift to state 227
+## Reductions:
 -- On DOT reduce production separated_nonempty_list(VERTICAL_BAR,constructor) -> constructor
 -- On AND reduce production separated_nonempty_list(VERTICAL_BAR,constructor) -> constructor
 
 State 227:
+## Known stack suffix:
+## constructor VERTICAL_BAR
+## LR(1) items:
 separated_nonempty_list(VERTICAL_BAR,constructor) -> constructor VERTICAL_BAR . separated_nonempty_list(VERTICAL_BAR,constructor) [ DOT AND ]
+## Transitions:
 -- On UPPER_WORD shift to state 5
 -- On SINGLE_QUOTED shift to state 6
 -- On LOWER_WORD shift to state 8
 -- On separated_nonempty_list(VERTICAL_BAR,constructor) shift to state 228
 -- On raw_var shift to state 216
 -- On constructor shift to state 226
+## Reductions:
 
 State 228:
+## Known stack suffix:
+## constructor VERTICAL_BAR separated_nonempty_list(VERTICAL_BAR,constructor)
+## LR(1) items:
 separated_nonempty_list(VERTICAL_BAR,constructor) -> constructor VERTICAL_BAR separated_nonempty_list(VERTICAL_BAR,constructor) . [ DOT AND ]
+## Transitions:
+## Reductions:
 -- On DOT reduce production separated_nonempty_list(VERTICAL_BAR,constructor) -> constructor VERTICAL_BAR separated_nonempty_list(VERTICAL_BAR,constructor)
 -- On AND reduce production separated_nonempty_list(VERTICAL_BAR,constructor) -> constructor VERTICAL_BAR separated_nonempty_list(VERTICAL_BAR,constructor)
 
 State 229:
+## Known stack suffix:
+## raw_var list(raw_var) EQDEF constructors
+## LR(1) items:
 type_def -> raw_var list(raw_var) EQDEF constructors . [ DOT AND ]
+## Transitions:
+## Reductions:
 -- On DOT reduce production type_def -> raw_var list(raw_var) EQDEF constructors
 -- On AND reduce production type_def -> raw_var list(raw_var) EQDEF constructors
 
 State 230:
+## Known stack suffix:
+## separated_nonempty_list(AND,type_def)
+## LR(1) items:
 mutual_types -> separated_nonempty_list(AND,type_def) . [ DOT ]
+## Transitions:
+## Reductions:
 -- On DOT reduce production mutual_types -> separated_nonempty_list(AND,type_def)
 
 State 231:
+## Known stack suffix:
+## DATA attrs mutual_types
+## LR(1) items:
 statement -> DATA attrs mutual_types . DOT [ EOI ]
+## Transitions:
 -- On DOT shift to state 232
+## Reductions:
 
 State 232:
+## Known stack suffix:
+## DATA attrs mutual_types DOT
+## LR(1) items:
 statement -> DATA attrs mutual_types DOT . [ EOI ]
+## Transitions:
+## Reductions:
 -- On EOI reduce production statement -> DATA attrs mutual_types DOT
 
 State 233:
+## Known stack suffix:
+## ASSERT
+## LR(1) items:
 statement -> ASSERT . attrs term DOT [ EOI ]
+## Transitions:
 -- On LEFT_BRACKET shift to state 157
 -- On attrs shift to state 234
+## Reductions:
 -- On error reduce production attrs ->
 -- On WILDCARD reduce production attrs ->
 -- On UPPER_WORD reduce production attrs ->
@@ -3958,7 +5128,11 @@ statement -> ASSERT . attrs term DOT [ EOI ]
 -- On ARITH_MINUS reduce production attrs ->
 
 State 234:
+## Known stack suffix:
+## ASSERT attrs
+## LR(1) items:
 statement -> ASSERT attrs . term DOT [ EOI ]
+## Transitions:
 -- On error shift to state 30
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
@@ -3993,29 +5167,59 @@ statement -> ASSERT attrs . term DOT [ EOI ]
 -- On arith_op_term shift to state 97
 -- On apply_term shift to state 103
 -- On and_term shift to state 106
+## Reductions:
 
 State 235:
+## Known stack suffix:
+## ASSERT attrs term
+## LR(1) items:
 statement -> ASSERT attrs term . DOT [ EOI ]
+## Transitions:
 -- On DOT shift to state 236
+## Reductions:
 
 State 236:
+## Known stack suffix:
+## ASSERT attrs term DOT
+## LR(1) items:
 statement -> ASSERT attrs term DOT . [ EOI ]
+## Transitions:
+## Reductions:
 -- On EOI reduce production statement -> ASSERT attrs term DOT
 
 State 237:
+## Known stack suffix:
+## statement
+## LR(1) items:
 parse_statement -> statement . EOI [ # ]
+## Transitions:
 -- On EOI shift to state 238
+## Reductions:
 
 State 238:
+## Known stack suffix:
+## statement EOI
+## LR(1) items:
 parse_statement -> statement EOI . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production parse_statement -> statement EOI
 
 State 239:
+## Known stack suffix:
+## parse_statement
+## LR(1) items:
 parse_statement' -> parse_statement . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept parse_statement
 
 State 240:
+## Known stack suffix:
+##
+## LR(1) items:
 parse_statement_list' -> . parse_statement_list [ # ]
+## Transitions:
 -- On error shift to state 241
 -- On VAL shift to state 242
 -- On REWRITE shift to state 248
@@ -4028,10 +5232,16 @@ parse_statement_list' -> . parse_statement_list [ # ]
 -- On statement shift to state 275
 -- On parse_statement_list shift to state 277
 -- On list(statement) shift to state 278
+## Reductions:
 -- On EOI reduce production list(statement) ->
 
 State 241:
+## Known stack suffix:
+## error
+## LR(1) items:
 statement -> error . [ error VAL REWRITE LEMMA INCLUDE GOAL EOI DEF DATA ASSERT ]
+## Transitions:
+## Reductions:
 -- On error reduce production statement -> error
 -- On VAL reduce production statement -> error
 -- On REWRITE reduce production statement -> error
@@ -4044,26 +5254,45 @@ statement -> error . [ error VAL REWRITE LEMMA INCLUDE GOAL EOI DEF DATA ASSERT 
 -- On ASSERT reduce production statement -> error
 
 State 242:
+## Known stack suffix:
+## VAL
+## LR(1) items:
 statement -> VAL . attrs raw_var COLON term DOT [ error VAL REWRITE LEMMA INCLUDE GOAL EOI DEF DATA ASSERT ]
+## Transitions:
 -- On LEFT_BRACKET shift to state 3
 -- On attrs shift to state 243
+## Reductions:
 -- On UPPER_WORD reduce production attrs ->
 -- On SINGLE_QUOTED reduce production attrs ->
 -- On LOWER_WORD reduce production attrs ->
 
 State 243:
+## Known stack suffix:
+## VAL attrs
+## LR(1) items:
 statement -> VAL attrs . raw_var COLON term DOT [ error VAL REWRITE LEMMA INCLUDE GOAL EOI DEF DATA ASSERT ]
+## Transitions:
 -- On UPPER_WORD shift to state 5
 -- On SINGLE_QUOTED shift to state 6
 -- On LOWER_WORD shift to state 8
 -- On raw_var shift to state 244
+## Reductions:
 
 State 244:
+## Known stack suffix:
+## VAL attrs raw_var
+## LR(1) items:
 statement -> VAL attrs raw_var . COLON term DOT [ error VAL REWRITE LEMMA INCLUDE GOAL EOI DEF DATA ASSERT ]
+## Transitions:
 -- On COLON shift to state 245
+## Reductions:
 
 State 245:
+## Known stack suffix:
+## VAL attrs raw_var COLON
+## LR(1) items:
 statement -> VAL attrs raw_var COLON . term DOT [ error VAL REWRITE LEMMA INCLUDE GOAL EOI DEF DATA ASSERT ]
+## Transitions:
 -- On error shift to state 30
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
@@ -4098,13 +5327,24 @@ statement -> VAL attrs raw_var COLON . term DOT [ error VAL REWRITE LEMMA INCLUD
 -- On arith_op_term shift to state 97
 -- On apply_term shift to state 103
 -- On and_term shift to state 106
+## Reductions:
 
 State 246:
+## Known stack suffix:
+## VAL attrs raw_var COLON term
+## LR(1) items:
 statement -> VAL attrs raw_var COLON term . DOT [ error VAL REWRITE LEMMA INCLUDE GOAL EOI DEF DATA ASSERT ]
+## Transitions:
 -- On DOT shift to state 247
+## Reductions:
 
 State 247:
+## Known stack suffix:
+## VAL attrs raw_var COLON term DOT
+## LR(1) items:
 statement -> VAL attrs raw_var COLON term DOT . [ error VAL REWRITE LEMMA INCLUDE GOAL EOI DEF DATA ASSERT ]
+## Transitions:
+## Reductions:
 -- On error reduce production statement -> VAL attrs raw_var COLON term DOT
 -- On VAL reduce production statement -> VAL attrs raw_var COLON term DOT
 -- On REWRITE reduce production statement -> VAL attrs raw_var COLON term DOT
@@ -4117,9 +5357,14 @@ statement -> VAL attrs raw_var COLON term DOT . [ error VAL REWRITE LEMMA INCLUD
 -- On ASSERT reduce production statement -> VAL attrs raw_var COLON term DOT
 
 State 248:
+## Known stack suffix:
+## REWRITE
+## LR(1) items:
 statement -> REWRITE . attrs term DOT [ error VAL REWRITE LEMMA INCLUDE GOAL EOI DEF DATA ASSERT ]
+## Transitions:
 -- On LEFT_BRACKET shift to state 157
 -- On attrs shift to state 249
+## Reductions:
 -- On error reduce production attrs ->
 -- On WILDCARD reduce production attrs ->
 -- On UPPER_WORD reduce production attrs ->
@@ -4143,7 +5388,11 @@ statement -> REWRITE . attrs term DOT [ error VAL REWRITE LEMMA INCLUDE GOAL EOI
 -- On ARITH_MINUS reduce production attrs ->
 
 State 249:
+## Known stack suffix:
+## REWRITE attrs
+## LR(1) items:
 statement -> REWRITE attrs . term DOT [ error VAL REWRITE LEMMA INCLUDE GOAL EOI DEF DATA ASSERT ]
+## Transitions:
 -- On error shift to state 30
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
@@ -4178,13 +5427,24 @@ statement -> REWRITE attrs . term DOT [ error VAL REWRITE LEMMA INCLUDE GOAL EOI
 -- On arith_op_term shift to state 97
 -- On apply_term shift to state 103
 -- On and_term shift to state 106
+## Reductions:
 
 State 250:
+## Known stack suffix:
+## REWRITE attrs term
+## LR(1) items:
 statement -> REWRITE attrs term . DOT [ error VAL REWRITE LEMMA INCLUDE GOAL EOI DEF DATA ASSERT ]
+## Transitions:
 -- On DOT shift to state 251
+## Reductions:
 
 State 251:
+## Known stack suffix:
+## REWRITE attrs term DOT
+## LR(1) items:
 statement -> REWRITE attrs term DOT . [ error VAL REWRITE LEMMA INCLUDE GOAL EOI DEF DATA ASSERT ]
+## Transitions:
+## Reductions:
 -- On error reduce production statement -> REWRITE attrs term DOT
 -- On VAL reduce production statement -> REWRITE attrs term DOT
 -- On REWRITE reduce production statement -> REWRITE attrs term DOT
@@ -4197,9 +5457,14 @@ statement -> REWRITE attrs term DOT . [ error VAL REWRITE LEMMA INCLUDE GOAL EOI
 -- On ASSERT reduce production statement -> REWRITE attrs term DOT
 
 State 252:
+## Known stack suffix:
+## LEMMA
+## LR(1) items:
 statement -> LEMMA . attrs term DOT [ error VAL REWRITE LEMMA INCLUDE GOAL EOI DEF DATA ASSERT ]
+## Transitions:
 -- On LEFT_BRACKET shift to state 157
 -- On attrs shift to state 253
+## Reductions:
 -- On error reduce production attrs ->
 -- On WILDCARD reduce production attrs ->
 -- On UPPER_WORD reduce production attrs ->
@@ -4223,7 +5488,11 @@ statement -> LEMMA . attrs term DOT [ error VAL REWRITE LEMMA INCLUDE GOAL EOI D
 -- On ARITH_MINUS reduce production attrs ->
 
 State 253:
+## Known stack suffix:
+## LEMMA attrs
+## LR(1) items:
 statement -> LEMMA attrs . term DOT [ error VAL REWRITE LEMMA INCLUDE GOAL EOI DEF DATA ASSERT ]
+## Transitions:
 -- On error shift to state 30
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
@@ -4258,13 +5527,24 @@ statement -> LEMMA attrs . term DOT [ error VAL REWRITE LEMMA INCLUDE GOAL EOI D
 -- On arith_op_term shift to state 97
 -- On apply_term shift to state 103
 -- On and_term shift to state 106
+## Reductions:
 
 State 254:
+## Known stack suffix:
+## LEMMA attrs term
+## LR(1) items:
 statement -> LEMMA attrs term . DOT [ error VAL REWRITE LEMMA INCLUDE GOAL EOI DEF DATA ASSERT ]
+## Transitions:
 -- On DOT shift to state 255
+## Reductions:
 
 State 255:
+## Known stack suffix:
+## LEMMA attrs term DOT
+## LR(1) items:
 statement -> LEMMA attrs term DOT . [ error VAL REWRITE LEMMA INCLUDE GOAL EOI DEF DATA ASSERT ]
+## Transitions:
+## Reductions:
 -- On error reduce production statement -> LEMMA attrs term DOT
 -- On VAL reduce production statement -> LEMMA attrs term DOT
 -- On REWRITE reduce production statement -> LEMMA attrs term DOT
@@ -4277,15 +5557,30 @@ statement -> LEMMA attrs term DOT . [ error VAL REWRITE LEMMA INCLUDE GOAL EOI D
 -- On ASSERT reduce production statement -> LEMMA attrs term DOT
 
 State 256:
+## Known stack suffix:
+## INCLUDE
+## LR(1) items:
 statement -> INCLUDE . QUOTED DOT [ error VAL REWRITE LEMMA INCLUDE GOAL EOI DEF DATA ASSERT ]
+## Transitions:
 -- On QUOTED shift to state 257
+## Reductions:
 
 State 257:
+## Known stack suffix:
+## INCLUDE QUOTED
+## LR(1) items:
 statement -> INCLUDE QUOTED . DOT [ error VAL REWRITE LEMMA INCLUDE GOAL EOI DEF DATA ASSERT ]
+## Transitions:
 -- On DOT shift to state 258
+## Reductions:
 
 State 258:
+## Known stack suffix:
+## INCLUDE QUOTED DOT
+## LR(1) items:
 statement -> INCLUDE QUOTED DOT . [ error VAL REWRITE LEMMA INCLUDE GOAL EOI DEF DATA ASSERT ]
+## Transitions:
+## Reductions:
 -- On error reduce production statement -> INCLUDE QUOTED DOT
 -- On VAL reduce production statement -> INCLUDE QUOTED DOT
 -- On REWRITE reduce production statement -> INCLUDE QUOTED DOT
@@ -4298,9 +5593,14 @@ statement -> INCLUDE QUOTED DOT . [ error VAL REWRITE LEMMA INCLUDE GOAL EOI DEF
 -- On ASSERT reduce production statement -> INCLUDE QUOTED DOT
 
 State 259:
+## Known stack suffix:
+## GOAL
+## LR(1) items:
 statement -> GOAL . attrs term DOT [ error VAL REWRITE LEMMA INCLUDE GOAL EOI DEF DATA ASSERT ]
+## Transitions:
 -- On LEFT_BRACKET shift to state 157
 -- On attrs shift to state 260
+## Reductions:
 -- On error reduce production attrs ->
 -- On WILDCARD reduce production attrs ->
 -- On UPPER_WORD reduce production attrs ->
@@ -4324,7 +5624,11 @@ statement -> GOAL . attrs term DOT [ error VAL REWRITE LEMMA INCLUDE GOAL EOI DE
 -- On ARITH_MINUS reduce production attrs ->
 
 State 260:
+## Known stack suffix:
+## GOAL attrs
+## LR(1) items:
 statement -> GOAL attrs . term DOT [ error VAL REWRITE LEMMA INCLUDE GOAL EOI DEF DATA ASSERT ]
+## Transitions:
 -- On error shift to state 30
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
@@ -4359,13 +5663,24 @@ statement -> GOAL attrs . term DOT [ error VAL REWRITE LEMMA INCLUDE GOAL EOI DE
 -- On arith_op_term shift to state 97
 -- On apply_term shift to state 103
 -- On and_term shift to state 106
+## Reductions:
 
 State 261:
+## Known stack suffix:
+## GOAL attrs term
+## LR(1) items:
 statement -> GOAL attrs term . DOT [ error VAL REWRITE LEMMA INCLUDE GOAL EOI DEF DATA ASSERT ]
+## Transitions:
 -- On DOT shift to state 262
+## Reductions:
 
 State 262:
+## Known stack suffix:
+## GOAL attrs term DOT
+## LR(1) items:
 statement -> GOAL attrs term DOT . [ error VAL REWRITE LEMMA INCLUDE GOAL EOI DEF DATA ASSERT ]
+## Transitions:
+## Reductions:
 -- On error reduce production statement -> GOAL attrs term DOT
 -- On VAL reduce production statement -> GOAL attrs term DOT
 -- On REWRITE reduce production statement -> GOAL attrs term DOT
@@ -4378,28 +5693,48 @@ statement -> GOAL attrs term DOT . [ error VAL REWRITE LEMMA INCLUDE GOAL EOI DE
 -- On ASSERT reduce production statement -> GOAL attrs term DOT
 
 State 263:
+## Known stack suffix:
+## DEF
+## LR(1) items:
 statement -> DEF . attrs separated_nonempty_list(AND,def) DOT [ error VAL REWRITE LEMMA INCLUDE GOAL EOI DEF DATA ASSERT ]
+## Transitions:
 -- On LEFT_BRACKET shift to state 3
 -- On attrs shift to state 264
+## Reductions:
 -- On UPPER_WORD reduce production attrs ->
 -- On SINGLE_QUOTED reduce production attrs ->
 -- On LOWER_WORD reduce production attrs ->
 
 State 264:
+## Known stack suffix:
+## DEF attrs
+## LR(1) items:
 statement -> DEF attrs . separated_nonempty_list(AND,def) DOT [ error VAL REWRITE LEMMA INCLUDE GOAL EOI DEF DATA ASSERT ]
+## Transitions:
 -- On UPPER_WORD shift to state 5
 -- On SINGLE_QUOTED shift to state 6
 -- On LOWER_WORD shift to state 8
 -- On separated_nonempty_list(AND,def) shift to state 265
 -- On raw_var shift to state 178
 -- On def shift to state 200
+## Reductions:
 
 State 265:
+## Known stack suffix:
+## DEF attrs separated_nonempty_list(AND,def)
+## LR(1) items:
 statement -> DEF attrs separated_nonempty_list(AND,def) . DOT [ error VAL REWRITE LEMMA INCLUDE GOAL EOI DEF DATA ASSERT ]
+## Transitions:
 -- On DOT shift to state 266
+## Reductions:
 
 State 266:
+## Known stack suffix:
+## DEF attrs separated_nonempty_list(AND,def) DOT
+## LR(1) items:
 statement -> DEF attrs separated_nonempty_list(AND,def) DOT . [ error VAL REWRITE LEMMA INCLUDE GOAL EOI DEF DATA ASSERT ]
+## Transitions:
+## Reductions:
 -- On error reduce production statement -> DEF attrs separated_nonempty_list(AND,def) DOT
 -- On VAL reduce production statement -> DEF attrs separated_nonempty_list(AND,def) DOT
 -- On REWRITE reduce production statement -> DEF attrs separated_nonempty_list(AND,def) DOT
@@ -4412,15 +5747,24 @@ statement -> DEF attrs separated_nonempty_list(AND,def) DOT . [ error VAL REWRIT
 -- On ASSERT reduce production statement -> DEF attrs separated_nonempty_list(AND,def) DOT
 
 State 267:
+## Known stack suffix:
+## DATA
+## LR(1) items:
 statement -> DATA . attrs mutual_types DOT [ error VAL REWRITE LEMMA INCLUDE GOAL EOI DEF DATA ASSERT ]
+## Transitions:
 -- On LEFT_BRACKET shift to state 3
 -- On attrs shift to state 268
+## Reductions:
 -- On UPPER_WORD reduce production attrs ->
 -- On SINGLE_QUOTED reduce production attrs ->
 -- On LOWER_WORD reduce production attrs ->
 
 State 268:
+## Known stack suffix:
+## DATA attrs
+## LR(1) items:
 statement -> DATA attrs . mutual_types DOT [ error VAL REWRITE LEMMA INCLUDE GOAL EOI DEF DATA ASSERT ]
+## Transitions:
 -- On UPPER_WORD shift to state 5
 -- On SINGLE_QUOTED shift to state 6
 -- On LOWER_WORD shift to state 8
@@ -4428,13 +5772,24 @@ statement -> DATA attrs . mutual_types DOT [ error VAL REWRITE LEMMA INCLUDE GOA
 -- On separated_nonempty_list(AND,type_def) shift to state 230
 -- On raw_var shift to state 208
 -- On mutual_types shift to state 269
+## Reductions:
 
 State 269:
+## Known stack suffix:
+## DATA attrs mutual_types
+## LR(1) items:
 statement -> DATA attrs mutual_types . DOT [ error VAL REWRITE LEMMA INCLUDE GOAL EOI DEF DATA ASSERT ]
+## Transitions:
 -- On DOT shift to state 270
+## Reductions:
 
 State 270:
+## Known stack suffix:
+## DATA attrs mutual_types DOT
+## LR(1) items:
 statement -> DATA attrs mutual_types DOT . [ error VAL REWRITE LEMMA INCLUDE GOAL EOI DEF DATA ASSERT ]
+## Transitions:
+## Reductions:
 -- On error reduce production statement -> DATA attrs mutual_types DOT
 -- On VAL reduce production statement -> DATA attrs mutual_types DOT
 -- On REWRITE reduce production statement -> DATA attrs mutual_types DOT
@@ -4447,9 +5802,14 @@ statement -> DATA attrs mutual_types DOT . [ error VAL REWRITE LEMMA INCLUDE GOA
 -- On ASSERT reduce production statement -> DATA attrs mutual_types DOT
 
 State 271:
+## Known stack suffix:
+## ASSERT
+## LR(1) items:
 statement -> ASSERT . attrs term DOT [ error VAL REWRITE LEMMA INCLUDE GOAL EOI DEF DATA ASSERT ]
+## Transitions:
 -- On LEFT_BRACKET shift to state 157
 -- On attrs shift to state 272
+## Reductions:
 -- On error reduce production attrs ->
 -- On WILDCARD reduce production attrs ->
 -- On UPPER_WORD reduce production attrs ->
@@ -4473,7 +5833,11 @@ statement -> ASSERT . attrs term DOT [ error VAL REWRITE LEMMA INCLUDE GOAL EOI 
 -- On ARITH_MINUS reduce production attrs ->
 
 State 272:
+## Known stack suffix:
+## ASSERT attrs
+## LR(1) items:
 statement -> ASSERT attrs . term DOT [ error VAL REWRITE LEMMA INCLUDE GOAL EOI DEF DATA ASSERT ]
+## Transitions:
 -- On error shift to state 30
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
@@ -4508,13 +5872,24 @@ statement -> ASSERT attrs . term DOT [ error VAL REWRITE LEMMA INCLUDE GOAL EOI 
 -- On arith_op_term shift to state 97
 -- On apply_term shift to state 103
 -- On and_term shift to state 106
+## Reductions:
 
 State 273:
+## Known stack suffix:
+## ASSERT attrs term
+## LR(1) items:
 statement -> ASSERT attrs term . DOT [ error VAL REWRITE LEMMA INCLUDE GOAL EOI DEF DATA ASSERT ]
+## Transitions:
 -- On DOT shift to state 274
+## Reductions:
 
 State 274:
+## Known stack suffix:
+## ASSERT attrs term DOT
+## LR(1) items:
 statement -> ASSERT attrs term DOT . [ error VAL REWRITE LEMMA INCLUDE GOAL EOI DEF DATA ASSERT ]
+## Transitions:
+## Reductions:
 -- On error reduce production statement -> ASSERT attrs term DOT
 -- On VAL reduce production statement -> ASSERT attrs term DOT
 -- On REWRITE reduce production statement -> ASSERT attrs term DOT
@@ -4527,7 +5902,11 @@ statement -> ASSERT attrs term DOT . [ error VAL REWRITE LEMMA INCLUDE GOAL EOI 
 -- On ASSERT reduce production statement -> ASSERT attrs term DOT
 
 State 275:
+## Known stack suffix:
+## statement
+## LR(1) items:
 list(statement) -> statement . list(statement) [ EOI ]
+## Transitions:
 -- On error shift to state 241
 -- On VAL shift to state 242
 -- On REWRITE shift to state 248
@@ -4539,26 +5918,51 @@ list(statement) -> statement . list(statement) [ EOI ]
 -- On ASSERT shift to state 271
 -- On statement shift to state 275
 -- On list(statement) shift to state 276
+## Reductions:
 -- On EOI reduce production list(statement) ->
 
 State 276:
+## Known stack suffix:
+## statement list(statement)
+## LR(1) items:
 list(statement) -> statement list(statement) . [ EOI ]
+## Transitions:
+## Reductions:
 -- On EOI reduce production list(statement) -> statement list(statement)
 
 State 277:
+## Known stack suffix:
+## parse_statement_list
+## LR(1) items:
 parse_statement_list' -> parse_statement_list . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept parse_statement_list
 
 State 278:
+## Known stack suffix:
+## list(statement)
+## LR(1) items:
 parse_statement_list -> list(statement) . EOI [ # ]
+## Transitions:
 -- On EOI shift to state 279
+## Reductions:
 
 State 279:
+## Known stack suffix:
+## list(statement) EOI
+## LR(1) items:
 parse_statement_list -> list(statement) EOI . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production parse_statement_list -> list(statement) EOI
 
 State 280:
+## Known stack suffix:
+##
+## LR(1) items:
 parse_term' -> . parse_term [ # ]
+## Transitions:
 -- On error shift to state 30
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
@@ -4594,21 +5998,41 @@ parse_term' -> . parse_term [ # ]
 -- On arith_op_term shift to state 97
 -- On apply_term shift to state 103
 -- On and_term shift to state 106
+## Reductions:
 
 State 281:
+## Known stack suffix:
+## term
+## LR(1) items:
 parse_term -> term . EOI [ # ]
+## Transitions:
 -- On EOI shift to state 282
+## Reductions:
 
 State 282:
+## Known stack suffix:
+## term EOI
+## LR(1) items:
 parse_term -> term EOI . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production parse_term -> term EOI
 
 State 283:
+## Known stack suffix:
+## parse_term
+## LR(1) items:
 parse_term' -> parse_term . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept parse_term
 
 State 284:
+## Known stack suffix:
+##
+## LR(1) items:
 parse_ty' -> . parse_ty [ # ]
+## Transitions:
 -- On error shift to state 30
 -- On WILDCARD shift to state 31
 -- On UPPER_WORD shift to state 5
@@ -4644,16 +6068,32 @@ parse_ty' -> . parse_ty [ # ]
 -- On arith_op_term shift to state 97
 -- On apply_term shift to state 103
 -- On and_term shift to state 106
+## Reductions:
 
 State 285:
+## Known stack suffix:
+## term
+## LR(1) items:
 parse_ty -> term . EOI [ # ]
+## Transitions:
 -- On EOI shift to state 286
+## Reductions:
 
 State 286:
+## Known stack suffix:
+## term EOI
+## LR(1) items:
 parse_ty -> term EOI . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production parse_ty -> term EOI
 
 State 287:
+## Known stack suffix:
+## parse_ty
+## LR(1) items:
 parse_ty' -> parse_ty . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept parse_ty
 

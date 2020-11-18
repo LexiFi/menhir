@@ -1,5 +1,9 @@
 State 0:
+## Known stack suffix:
+##
+## LR(1) items:
 instr_option_seq' -> . instr_option_seq [ # ]
+## Transitions:
 -- On NAME shift to state 1
 -- On I_XORS shift to state 3
 -- On I_XOR shift to state 11
@@ -31,6 +35,7 @@ instr_option_seq' -> . instr_option_seq [ # ]
 -- On instr_option_seq shift to state 170
 -- On instr_option shift to state 171
 -- On instr shift to state 169
+## Reductions:
 -- On SEMI reduce production instr_option ->
 -- On # reduce production instr_option ->
 ** End-of-stream conflict on SEMI NAME I_XORS I_XOR I_STRNE I_STREX I_STREQ I_STR I_MOVNE I_MOVEQ I_MOV I_LDRNE I_LDREX I_LDREQ I_LDR I_ISB I_DSB I_DMB I_CMP I_CBZ I_CBNZ I_BNE I_BEQ I_B I_ANDS I_AND I_ADDS I_ADD CODEVAR
@@ -40,11 +45,20 @@ instr_option_seq' -> . instr_option_seq [ # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 1:
+## Known stack suffix:
+## NAME
+## LR(1) items:
 instr_option -> NAME . COLON instr_option [ SEMI PIPE # ]
+## Transitions:
 -- On COLON shift to state 2
+## Reductions:
 
 State 2:
+## Known stack suffix:
+## NAME COLON
+## LR(1) items:
 instr_option -> NAME COLON . instr_option [ SEMI PIPE # ]
+## Transitions:
 -- On NAME shift to state 1
 -- On I_XORS shift to state 3
 -- On I_XOR shift to state 11
@@ -75,6 +89,7 @@ instr_option -> NAME COLON . instr_option [ SEMI PIPE # ]
 -- On CODEVAR shift to state 167
 -- On instr_option shift to state 168
 -- On instr shift to state 169
+## Reductions:
 -- On SEMI reduce production instr_option ->
 -- On PIPE reduce production instr_option ->
 -- On # reduce production instr_option ->
@@ -85,13 +100,23 @@ instr_option -> NAME COLON . instr_option [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 3:
+## Known stack suffix:
+## I_XORS
+## LR(1) items:
 instr -> I_XORS . reg COMMA reg COMMA reg [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 6
+## Reductions:
 
 State 4:
+## Known stack suffix:
+## SYMB_REG
+## LR(1) items:
 reg -> SYMB_REG . [ SEMI RBRK PIPE COMMA # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production reg -> SYMB_REG
 -- On RBRK reduce production reg -> SYMB_REG
 -- On PIPE reduce production reg -> SYMB_REG
@@ -104,7 +129,12 @@ reg -> SYMB_REG . [ SEMI RBRK PIPE COMMA # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 5:
+## Known stack suffix:
+## ARCH_REG
+## LR(1) items:
 reg -> ARCH_REG . [ SEMI RBRK PIPE COMMA # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production reg -> ARCH_REG
 -- On RBRK reduce production reg -> ARCH_REG
 -- On PIPE reduce production reg -> ARCH_REG
@@ -117,27 +147,52 @@ reg -> ARCH_REG . [ SEMI RBRK PIPE COMMA # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 6:
+## Known stack suffix:
+## I_XORS reg
+## LR(1) items:
 instr -> I_XORS reg . COMMA reg COMMA reg [ SEMI PIPE # ]
+## Transitions:
 -- On COMMA shift to state 7
+## Reductions:
 
 State 7:
+## Known stack suffix:
+## I_XORS reg COMMA
+## LR(1) items:
 instr -> I_XORS reg COMMA . reg COMMA reg [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 8
+## Reductions:
 
 State 8:
+## Known stack suffix:
+## I_XORS reg COMMA reg
+## LR(1) items:
 instr -> I_XORS reg COMMA reg . COMMA reg [ SEMI PIPE # ]
+## Transitions:
 -- On COMMA shift to state 9
+## Reductions:
 
 State 9:
+## Known stack suffix:
+## I_XORS reg COMMA reg COMMA
+## LR(1) items:
 instr -> I_XORS reg COMMA reg COMMA . reg [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 10
+## Reductions:
 
 State 10:
+## Known stack suffix:
+## I_XORS reg COMMA reg COMMA reg
+## LR(1) items:
 instr -> I_XORS reg COMMA reg COMMA reg . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production instr -> I_XORS reg COMMA reg COMMA reg
 -- On PIPE reduce production instr -> I_XORS reg COMMA reg COMMA reg
 -- On # reduce production instr -> I_XORS reg COMMA reg COMMA reg
@@ -148,33 +203,63 @@ instr -> I_XORS reg COMMA reg COMMA reg . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 11:
+## Known stack suffix:
+## I_XOR
+## LR(1) items:
 instr -> I_XOR . reg COMMA reg COMMA reg [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 12
+## Reductions:
 
 State 12:
+## Known stack suffix:
+## I_XOR reg
+## LR(1) items:
 instr -> I_XOR reg . COMMA reg COMMA reg [ SEMI PIPE # ]
+## Transitions:
 -- On COMMA shift to state 13
+## Reductions:
 
 State 13:
+## Known stack suffix:
+## I_XOR reg COMMA
+## LR(1) items:
 instr -> I_XOR reg COMMA . reg COMMA reg [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 14
+## Reductions:
 
 State 14:
+## Known stack suffix:
+## I_XOR reg COMMA reg
+## LR(1) items:
 instr -> I_XOR reg COMMA reg . COMMA reg [ SEMI PIPE # ]
+## Transitions:
 -- On COMMA shift to state 15
+## Reductions:
 
 State 15:
+## Known stack suffix:
+## I_XOR reg COMMA reg COMMA
+## LR(1) items:
 instr -> I_XOR reg COMMA reg COMMA . reg [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 16
+## Reductions:
 
 State 16:
+## Known stack suffix:
+## I_XOR reg COMMA reg COMMA reg
+## LR(1) items:
 instr -> I_XOR reg COMMA reg COMMA reg . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production instr -> I_XOR reg COMMA reg COMMA reg
 -- On PIPE reduce production instr -> I_XOR reg COMMA reg COMMA reg
 -- On # reduce production instr -> I_XOR reg COMMA reg COMMA reg
@@ -185,43 +270,73 @@ instr -> I_XOR reg COMMA reg COMMA reg . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 17:
+## Known stack suffix:
+## I_STRNE
+## LR(1) items:
 instr -> I_STRNE . reg COMMA reg [ SEMI PIPE # ]
 instr -> I_STRNE . reg COMMA LBRK reg RBRK [ SEMI PIPE # ]
 instr -> I_STRNE . reg COMMA LBRK reg COMMA reg RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 18
+## Reductions:
 
 State 18:
+## Known stack suffix:
+## I_STRNE reg
+## LR(1) items:
 instr -> I_STRNE reg . COMMA reg [ SEMI PIPE # ]
 instr -> I_STRNE reg . COMMA LBRK reg RBRK [ SEMI PIPE # ]
 instr -> I_STRNE reg . COMMA LBRK reg COMMA reg RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On COMMA shift to state 19
+## Reductions:
 
 State 19:
+## Known stack suffix:
+## I_STRNE reg COMMA
+## LR(1) items:
 instr -> I_STRNE reg COMMA . reg [ SEMI PIPE # ]
 instr -> I_STRNE reg COMMA . LBRK reg RBRK [ SEMI PIPE # ]
 instr -> I_STRNE reg COMMA . LBRK reg COMMA reg RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On LBRK shift to state 20
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 26
+## Reductions:
 
 State 20:
+## Known stack suffix:
+## I_STRNE reg COMMA LBRK
+## LR(1) items:
 instr -> I_STRNE reg COMMA LBRK . reg RBRK [ SEMI PIPE # ]
 instr -> I_STRNE reg COMMA LBRK . reg COMMA reg RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 21
+## Reductions:
 
 State 21:
+## Known stack suffix:
+## I_STRNE reg COMMA LBRK reg
+## LR(1) items:
 instr -> I_STRNE reg COMMA LBRK reg . RBRK [ SEMI PIPE # ]
 instr -> I_STRNE reg COMMA LBRK reg . COMMA reg RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On RBRK shift to state 22
 -- On COMMA shift to state 23
+## Reductions:
 
 State 22:
+## Known stack suffix:
+## I_STRNE reg COMMA LBRK reg RBRK
+## LR(1) items:
 instr -> I_STRNE reg COMMA LBRK reg RBRK . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production instr -> I_STRNE reg COMMA LBRK reg RBRK
 -- On PIPE reduce production instr -> I_STRNE reg COMMA LBRK reg RBRK
 -- On # reduce production instr -> I_STRNE reg COMMA LBRK reg RBRK
@@ -232,17 +347,32 @@ instr -> I_STRNE reg COMMA LBRK reg RBRK . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 23:
+## Known stack suffix:
+## I_STRNE reg COMMA LBRK reg COMMA
+## LR(1) items:
 instr -> I_STRNE reg COMMA LBRK reg COMMA . reg RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 24
+## Reductions:
 
 State 24:
+## Known stack suffix:
+## I_STRNE reg COMMA LBRK reg COMMA reg
+## LR(1) items:
 instr -> I_STRNE reg COMMA LBRK reg COMMA reg . RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On RBRK shift to state 25
+## Reductions:
 
 State 25:
+## Known stack suffix:
+## I_STRNE reg COMMA LBRK reg COMMA reg RBRK
+## LR(1) items:
 instr -> I_STRNE reg COMMA LBRK reg COMMA reg RBRK . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production instr -> I_STRNE reg COMMA LBRK reg COMMA reg RBRK
 -- On PIPE reduce production instr -> I_STRNE reg COMMA LBRK reg COMMA reg RBRK
 -- On # reduce production instr -> I_STRNE reg COMMA LBRK reg COMMA reg RBRK
@@ -253,7 +383,12 @@ instr -> I_STRNE reg COMMA LBRK reg COMMA reg RBRK . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 26:
+## Known stack suffix:
+## I_STRNE reg COMMA reg
+## LR(1) items:
 instr -> I_STRNE reg COMMA reg . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production instr -> I_STRNE reg COMMA reg
 -- On PIPE reduce production instr -> I_STRNE reg COMMA reg
 -- On # reduce production instr -> I_STRNE reg COMMA reg
@@ -264,41 +399,81 @@ instr -> I_STRNE reg COMMA reg . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 27:
+## Known stack suffix:
+## I_STREX
+## LR(1) items:
 instr -> I_STREX . reg COMMA reg COMMA LBRK reg RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 28
+## Reductions:
 
 State 28:
+## Known stack suffix:
+## I_STREX reg
+## LR(1) items:
 instr -> I_STREX reg . COMMA reg COMMA LBRK reg RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On COMMA shift to state 29
+## Reductions:
 
 State 29:
+## Known stack suffix:
+## I_STREX reg COMMA
+## LR(1) items:
 instr -> I_STREX reg COMMA . reg COMMA LBRK reg RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 30
+## Reductions:
 
 State 30:
+## Known stack suffix:
+## I_STREX reg COMMA reg
+## LR(1) items:
 instr -> I_STREX reg COMMA reg . COMMA LBRK reg RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On COMMA shift to state 31
+## Reductions:
 
 State 31:
+## Known stack suffix:
+## I_STREX reg COMMA reg COMMA
+## LR(1) items:
 instr -> I_STREX reg COMMA reg COMMA . LBRK reg RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On LBRK shift to state 32
+## Reductions:
 
 State 32:
+## Known stack suffix:
+## I_STREX reg COMMA reg COMMA LBRK
+## LR(1) items:
 instr -> I_STREX reg COMMA reg COMMA LBRK . reg RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 33
+## Reductions:
 
 State 33:
+## Known stack suffix:
+## I_STREX reg COMMA reg COMMA LBRK reg
+## LR(1) items:
 instr -> I_STREX reg COMMA reg COMMA LBRK reg . RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On RBRK shift to state 34
+## Reductions:
 
 State 34:
+## Known stack suffix:
+## I_STREX reg COMMA reg COMMA LBRK reg RBRK
+## LR(1) items:
 instr -> I_STREX reg COMMA reg COMMA LBRK reg RBRK . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production instr -> I_STREX reg COMMA reg COMMA LBRK reg RBRK
 -- On PIPE reduce production instr -> I_STREX reg COMMA reg COMMA LBRK reg RBRK
 -- On # reduce production instr -> I_STREX reg COMMA reg COMMA LBRK reg RBRK
@@ -309,43 +484,73 @@ instr -> I_STREX reg COMMA reg COMMA LBRK reg RBRK . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 35:
+## Known stack suffix:
+## I_STREQ
+## LR(1) items:
 instr -> I_STREQ . reg COMMA reg [ SEMI PIPE # ]
 instr -> I_STREQ . reg COMMA LBRK reg RBRK [ SEMI PIPE # ]
 instr -> I_STREQ . reg COMMA LBRK reg COMMA reg RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 36
+## Reductions:
 
 State 36:
+## Known stack suffix:
+## I_STREQ reg
+## LR(1) items:
 instr -> I_STREQ reg . COMMA reg [ SEMI PIPE # ]
 instr -> I_STREQ reg . COMMA LBRK reg RBRK [ SEMI PIPE # ]
 instr -> I_STREQ reg . COMMA LBRK reg COMMA reg RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On COMMA shift to state 37
+## Reductions:
 
 State 37:
+## Known stack suffix:
+## I_STREQ reg COMMA
+## LR(1) items:
 instr -> I_STREQ reg COMMA . reg [ SEMI PIPE # ]
 instr -> I_STREQ reg COMMA . LBRK reg RBRK [ SEMI PIPE # ]
 instr -> I_STREQ reg COMMA . LBRK reg COMMA reg RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On LBRK shift to state 38
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 44
+## Reductions:
 
 State 38:
+## Known stack suffix:
+## I_STREQ reg COMMA LBRK
+## LR(1) items:
 instr -> I_STREQ reg COMMA LBRK . reg RBRK [ SEMI PIPE # ]
 instr -> I_STREQ reg COMMA LBRK . reg COMMA reg RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 39
+## Reductions:
 
 State 39:
+## Known stack suffix:
+## I_STREQ reg COMMA LBRK reg
+## LR(1) items:
 instr -> I_STREQ reg COMMA LBRK reg . RBRK [ SEMI PIPE # ]
 instr -> I_STREQ reg COMMA LBRK reg . COMMA reg RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On RBRK shift to state 40
 -- On COMMA shift to state 41
+## Reductions:
 
 State 40:
+## Known stack suffix:
+## I_STREQ reg COMMA LBRK reg RBRK
+## LR(1) items:
 instr -> I_STREQ reg COMMA LBRK reg RBRK . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production instr -> I_STREQ reg COMMA LBRK reg RBRK
 -- On PIPE reduce production instr -> I_STREQ reg COMMA LBRK reg RBRK
 -- On # reduce production instr -> I_STREQ reg COMMA LBRK reg RBRK
@@ -356,17 +561,32 @@ instr -> I_STREQ reg COMMA LBRK reg RBRK . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 41:
+## Known stack suffix:
+## I_STREQ reg COMMA LBRK reg COMMA
+## LR(1) items:
 instr -> I_STREQ reg COMMA LBRK reg COMMA . reg RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 42
+## Reductions:
 
 State 42:
+## Known stack suffix:
+## I_STREQ reg COMMA LBRK reg COMMA reg
+## LR(1) items:
 instr -> I_STREQ reg COMMA LBRK reg COMMA reg . RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On RBRK shift to state 43
+## Reductions:
 
 State 43:
+## Known stack suffix:
+## I_STREQ reg COMMA LBRK reg COMMA reg RBRK
+## LR(1) items:
 instr -> I_STREQ reg COMMA LBRK reg COMMA reg RBRK . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production instr -> I_STREQ reg COMMA LBRK reg COMMA reg RBRK
 -- On PIPE reduce production instr -> I_STREQ reg COMMA LBRK reg COMMA reg RBRK
 -- On # reduce production instr -> I_STREQ reg COMMA LBRK reg COMMA reg RBRK
@@ -377,7 +597,12 @@ instr -> I_STREQ reg COMMA LBRK reg COMMA reg RBRK . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 44:
+## Known stack suffix:
+## I_STREQ reg COMMA reg
+## LR(1) items:
 instr -> I_STREQ reg COMMA reg . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production instr -> I_STREQ reg COMMA reg
 -- On PIPE reduce production instr -> I_STREQ reg COMMA reg
 -- On # reduce production instr -> I_STREQ reg COMMA reg
@@ -388,43 +613,73 @@ instr -> I_STREQ reg COMMA reg . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 45:
+## Known stack suffix:
+## I_STR
+## LR(1) items:
 instr -> I_STR . reg COMMA reg [ SEMI PIPE # ]
 instr -> I_STR . reg COMMA LBRK reg RBRK [ SEMI PIPE # ]
 instr -> I_STR . reg COMMA LBRK reg COMMA reg RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 46
+## Reductions:
 
 State 46:
+## Known stack suffix:
+## I_STR reg
+## LR(1) items:
 instr -> I_STR reg . COMMA reg [ SEMI PIPE # ]
 instr -> I_STR reg . COMMA LBRK reg RBRK [ SEMI PIPE # ]
 instr -> I_STR reg . COMMA LBRK reg COMMA reg RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On COMMA shift to state 47
+## Reductions:
 
 State 47:
+## Known stack suffix:
+## I_STR reg COMMA
+## LR(1) items:
 instr -> I_STR reg COMMA . reg [ SEMI PIPE # ]
 instr -> I_STR reg COMMA . LBRK reg RBRK [ SEMI PIPE # ]
 instr -> I_STR reg COMMA . LBRK reg COMMA reg RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On LBRK shift to state 48
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 54
+## Reductions:
 
 State 48:
+## Known stack suffix:
+## I_STR reg COMMA LBRK
+## LR(1) items:
 instr -> I_STR reg COMMA LBRK . reg RBRK [ SEMI PIPE # ]
 instr -> I_STR reg COMMA LBRK . reg COMMA reg RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 49
+## Reductions:
 
 State 49:
+## Known stack suffix:
+## I_STR reg COMMA LBRK reg
+## LR(1) items:
 instr -> I_STR reg COMMA LBRK reg . RBRK [ SEMI PIPE # ]
 instr -> I_STR reg COMMA LBRK reg . COMMA reg RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On RBRK shift to state 50
 -- On COMMA shift to state 51
+## Reductions:
 
 State 50:
+## Known stack suffix:
+## I_STR reg COMMA LBRK reg RBRK
+## LR(1) items:
 instr -> I_STR reg COMMA LBRK reg RBRK . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production instr -> I_STR reg COMMA LBRK reg RBRK
 -- On PIPE reduce production instr -> I_STR reg COMMA LBRK reg RBRK
 -- On # reduce production instr -> I_STR reg COMMA LBRK reg RBRK
@@ -435,17 +690,32 @@ instr -> I_STR reg COMMA LBRK reg RBRK . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 51:
+## Known stack suffix:
+## I_STR reg COMMA LBRK reg COMMA
+## LR(1) items:
 instr -> I_STR reg COMMA LBRK reg COMMA . reg RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 52
+## Reductions:
 
 State 52:
+## Known stack suffix:
+## I_STR reg COMMA LBRK reg COMMA reg
+## LR(1) items:
 instr -> I_STR reg COMMA LBRK reg COMMA reg . RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On RBRK shift to state 53
+## Reductions:
 
 State 53:
+## Known stack suffix:
+## I_STR reg COMMA LBRK reg COMMA reg RBRK
+## LR(1) items:
 instr -> I_STR reg COMMA LBRK reg COMMA reg RBRK . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production instr -> I_STR reg COMMA LBRK reg COMMA reg RBRK
 -- On PIPE reduce production instr -> I_STR reg COMMA LBRK reg COMMA reg RBRK
 -- On # reduce production instr -> I_STR reg COMMA LBRK reg COMMA reg RBRK
@@ -456,7 +726,12 @@ instr -> I_STR reg COMMA LBRK reg COMMA reg RBRK . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 54:
+## Known stack suffix:
+## I_STR reg COMMA reg
+## LR(1) items:
 instr -> I_STR reg COMMA reg . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production instr -> I_STR reg COMMA reg
 -- On PIPE reduce production instr -> I_STR reg COMMA reg
 -- On # reduce production instr -> I_STR reg COMMA reg
@@ -467,29 +742,49 @@ instr -> I_STR reg COMMA reg . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 55:
+## Known stack suffix:
+## I_MOVNE
+## LR(1) items:
 instr -> I_MOVNE . reg COMMA k [ SEMI PIPE # ]
 instr -> I_MOVNE . reg COMMA reg [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 56
+## Reductions:
 
 State 56:
+## Known stack suffix:
+## I_MOVNE reg
+## LR(1) items:
 instr -> I_MOVNE reg . COMMA k [ SEMI PIPE # ]
 instr -> I_MOVNE reg . COMMA reg [ SEMI PIPE # ]
+## Transitions:
 -- On COMMA shift to state 57
+## Reductions:
 
 State 57:
+## Known stack suffix:
+## I_MOVNE reg COMMA
+## LR(1) items:
 instr -> I_MOVNE reg COMMA . k [ SEMI PIPE # ]
 instr -> I_MOVNE reg COMMA . reg [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On NUM shift to state 58
 -- On META shift to state 59
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 60
 -- On k shift to state 61
+## Reductions:
 
 State 58:
+## Known stack suffix:
+## NUM
+## LR(1) items:
 k -> NUM . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production k -> NUM
 -- On PIPE reduce production k -> NUM
 -- On # reduce production k -> NUM
@@ -500,7 +795,12 @@ k -> NUM . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 59:
+## Known stack suffix:
+## META
+## LR(1) items:
 k -> META . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production k -> META
 -- On PIPE reduce production k -> META
 -- On # reduce production k -> META
@@ -511,7 +811,12 @@ k -> META . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 60:
+## Known stack suffix:
+## I_MOVNE reg COMMA reg
+## LR(1) items:
 instr -> I_MOVNE reg COMMA reg . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production instr -> I_MOVNE reg COMMA reg
 -- On PIPE reduce production instr -> I_MOVNE reg COMMA reg
 -- On # reduce production instr -> I_MOVNE reg COMMA reg
@@ -522,7 +827,12 @@ instr -> I_MOVNE reg COMMA reg . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 61:
+## Known stack suffix:
+## I_MOVNE reg COMMA k
+## LR(1) items:
 instr -> I_MOVNE reg COMMA k . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production instr -> I_MOVNE reg COMMA k
 -- On PIPE reduce production instr -> I_MOVNE reg COMMA k
 -- On # reduce production instr -> I_MOVNE reg COMMA k
@@ -533,29 +843,49 @@ instr -> I_MOVNE reg COMMA k . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 62:
+## Known stack suffix:
+## I_MOVEQ
+## LR(1) items:
 instr -> I_MOVEQ . reg COMMA k [ SEMI PIPE # ]
 instr -> I_MOVEQ . reg COMMA reg [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 63
+## Reductions:
 
 State 63:
+## Known stack suffix:
+## I_MOVEQ reg
+## LR(1) items:
 instr -> I_MOVEQ reg . COMMA k [ SEMI PIPE # ]
 instr -> I_MOVEQ reg . COMMA reg [ SEMI PIPE # ]
+## Transitions:
 -- On COMMA shift to state 64
+## Reductions:
 
 State 64:
+## Known stack suffix:
+## I_MOVEQ reg COMMA
+## LR(1) items:
 instr -> I_MOVEQ reg COMMA . k [ SEMI PIPE # ]
 instr -> I_MOVEQ reg COMMA . reg [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On NUM shift to state 58
 -- On META shift to state 59
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 65
 -- On k shift to state 66
+## Reductions:
 
 State 65:
+## Known stack suffix:
+## I_MOVEQ reg COMMA reg
+## LR(1) items:
 instr -> I_MOVEQ reg COMMA reg . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production instr -> I_MOVEQ reg COMMA reg
 -- On PIPE reduce production instr -> I_MOVEQ reg COMMA reg
 -- On # reduce production instr -> I_MOVEQ reg COMMA reg
@@ -566,7 +896,12 @@ instr -> I_MOVEQ reg COMMA reg . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 66:
+## Known stack suffix:
+## I_MOVEQ reg COMMA k
+## LR(1) items:
 instr -> I_MOVEQ reg COMMA k . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production instr -> I_MOVEQ reg COMMA k
 -- On PIPE reduce production instr -> I_MOVEQ reg COMMA k
 -- On # reduce production instr -> I_MOVEQ reg COMMA k
@@ -577,29 +912,49 @@ instr -> I_MOVEQ reg COMMA k . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 67:
+## Known stack suffix:
+## I_MOV
+## LR(1) items:
 instr -> I_MOV . reg COMMA k [ SEMI PIPE # ]
 instr -> I_MOV . reg COMMA reg [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 68
+## Reductions:
 
 State 68:
+## Known stack suffix:
+## I_MOV reg
+## LR(1) items:
 instr -> I_MOV reg . COMMA k [ SEMI PIPE # ]
 instr -> I_MOV reg . COMMA reg [ SEMI PIPE # ]
+## Transitions:
 -- On COMMA shift to state 69
+## Reductions:
 
 State 69:
+## Known stack suffix:
+## I_MOV reg COMMA
+## LR(1) items:
 instr -> I_MOV reg COMMA . k [ SEMI PIPE # ]
 instr -> I_MOV reg COMMA . reg [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On NUM shift to state 58
 -- On META shift to state 59
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 70
 -- On k shift to state 71
+## Reductions:
 
 State 70:
+## Known stack suffix:
+## I_MOV reg COMMA reg
+## LR(1) items:
 instr -> I_MOV reg COMMA reg . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production instr -> I_MOV reg COMMA reg
 -- On PIPE reduce production instr -> I_MOV reg COMMA reg
 -- On # reduce production instr -> I_MOV reg COMMA reg
@@ -610,7 +965,12 @@ instr -> I_MOV reg COMMA reg . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 71:
+## Known stack suffix:
+## I_MOV reg COMMA k
+## LR(1) items:
 instr -> I_MOV reg COMMA k . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production instr -> I_MOV reg COMMA k
 -- On PIPE reduce production instr -> I_MOV reg COMMA k
 -- On # reduce production instr -> I_MOV reg COMMA k
@@ -621,43 +981,73 @@ instr -> I_MOV reg COMMA k . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 72:
+## Known stack suffix:
+## I_LDRNE
+## LR(1) items:
 instr -> I_LDRNE . reg COMMA reg [ SEMI PIPE # ]
 instr -> I_LDRNE . reg COMMA LBRK reg RBRK [ SEMI PIPE # ]
 instr -> I_LDRNE . reg COMMA LBRK reg COMMA reg RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 73
+## Reductions:
 
 State 73:
+## Known stack suffix:
+## I_LDRNE reg
+## LR(1) items:
 instr -> I_LDRNE reg . COMMA reg [ SEMI PIPE # ]
 instr -> I_LDRNE reg . COMMA LBRK reg RBRK [ SEMI PIPE # ]
 instr -> I_LDRNE reg . COMMA LBRK reg COMMA reg RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On COMMA shift to state 74
+## Reductions:
 
 State 74:
+## Known stack suffix:
+## I_LDRNE reg COMMA
+## LR(1) items:
 instr -> I_LDRNE reg COMMA . reg [ SEMI PIPE # ]
 instr -> I_LDRNE reg COMMA . LBRK reg RBRK [ SEMI PIPE # ]
 instr -> I_LDRNE reg COMMA . LBRK reg COMMA reg RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On LBRK shift to state 75
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 81
+## Reductions:
 
 State 75:
+## Known stack suffix:
+## I_LDRNE reg COMMA LBRK
+## LR(1) items:
 instr -> I_LDRNE reg COMMA LBRK . reg RBRK [ SEMI PIPE # ]
 instr -> I_LDRNE reg COMMA LBRK . reg COMMA reg RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 76
+## Reductions:
 
 State 76:
+## Known stack suffix:
+## I_LDRNE reg COMMA LBRK reg
+## LR(1) items:
 instr -> I_LDRNE reg COMMA LBRK reg . RBRK [ SEMI PIPE # ]
 instr -> I_LDRNE reg COMMA LBRK reg . COMMA reg RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On RBRK shift to state 77
 -- On COMMA shift to state 78
+## Reductions:
 
 State 77:
+## Known stack suffix:
+## I_LDRNE reg COMMA LBRK reg RBRK
+## LR(1) items:
 instr -> I_LDRNE reg COMMA LBRK reg RBRK . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production instr -> I_LDRNE reg COMMA LBRK reg RBRK
 -- On PIPE reduce production instr -> I_LDRNE reg COMMA LBRK reg RBRK
 -- On # reduce production instr -> I_LDRNE reg COMMA LBRK reg RBRK
@@ -668,17 +1058,32 @@ instr -> I_LDRNE reg COMMA LBRK reg RBRK . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 78:
+## Known stack suffix:
+## I_LDRNE reg COMMA LBRK reg COMMA
+## LR(1) items:
 instr -> I_LDRNE reg COMMA LBRK reg COMMA . reg RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 79
+## Reductions:
 
 State 79:
+## Known stack suffix:
+## I_LDRNE reg COMMA LBRK reg COMMA reg
+## LR(1) items:
 instr -> I_LDRNE reg COMMA LBRK reg COMMA reg . RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On RBRK shift to state 80
+## Reductions:
 
 State 80:
+## Known stack suffix:
+## I_LDRNE reg COMMA LBRK reg COMMA reg RBRK
+## LR(1) items:
 instr -> I_LDRNE reg COMMA LBRK reg COMMA reg RBRK . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production instr -> I_LDRNE reg COMMA LBRK reg COMMA reg RBRK
 -- On PIPE reduce production instr -> I_LDRNE reg COMMA LBRK reg COMMA reg RBRK
 -- On # reduce production instr -> I_LDRNE reg COMMA LBRK reg COMMA reg RBRK
@@ -689,7 +1094,12 @@ instr -> I_LDRNE reg COMMA LBRK reg COMMA reg RBRK . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 81:
+## Known stack suffix:
+## I_LDRNE reg COMMA reg
+## LR(1) items:
 instr -> I_LDRNE reg COMMA reg . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production instr -> I_LDRNE reg COMMA reg
 -- On PIPE reduce production instr -> I_LDRNE reg COMMA reg
 -- On # reduce production instr -> I_LDRNE reg COMMA reg
@@ -700,37 +1110,67 @@ instr -> I_LDRNE reg COMMA reg . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 82:
+## Known stack suffix:
+## I_LDREX
+## LR(1) items:
 instr -> I_LDREX . reg COMMA reg [ SEMI PIPE # ]
 instr -> I_LDREX . reg COMMA LBRK reg RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 83
+## Reductions:
 
 State 83:
+## Known stack suffix:
+## I_LDREX reg
+## LR(1) items:
 instr -> I_LDREX reg . COMMA reg [ SEMI PIPE # ]
 instr -> I_LDREX reg . COMMA LBRK reg RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On COMMA shift to state 84
+## Reductions:
 
 State 84:
+## Known stack suffix:
+## I_LDREX reg COMMA
+## LR(1) items:
 instr -> I_LDREX reg COMMA . reg [ SEMI PIPE # ]
 instr -> I_LDREX reg COMMA . LBRK reg RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On LBRK shift to state 85
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 88
+## Reductions:
 
 State 85:
+## Known stack suffix:
+## I_LDREX reg COMMA LBRK
+## LR(1) items:
 instr -> I_LDREX reg COMMA LBRK . reg RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 86
+## Reductions:
 
 State 86:
+## Known stack suffix:
+## I_LDREX reg COMMA LBRK reg
+## LR(1) items:
 instr -> I_LDREX reg COMMA LBRK reg . RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On RBRK shift to state 87
+## Reductions:
 
 State 87:
+## Known stack suffix:
+## I_LDREX reg COMMA LBRK reg RBRK
+## LR(1) items:
 instr -> I_LDREX reg COMMA LBRK reg RBRK . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production instr -> I_LDREX reg COMMA LBRK reg RBRK
 -- On PIPE reduce production instr -> I_LDREX reg COMMA LBRK reg RBRK
 -- On # reduce production instr -> I_LDREX reg COMMA LBRK reg RBRK
@@ -741,7 +1181,12 @@ instr -> I_LDREX reg COMMA LBRK reg RBRK . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 88:
+## Known stack suffix:
+## I_LDREX reg COMMA reg
+## LR(1) items:
 instr -> I_LDREX reg COMMA reg . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production instr -> I_LDREX reg COMMA reg
 -- On PIPE reduce production instr -> I_LDREX reg COMMA reg
 -- On # reduce production instr -> I_LDREX reg COMMA reg
@@ -752,43 +1197,73 @@ instr -> I_LDREX reg COMMA reg . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 89:
+## Known stack suffix:
+## I_LDREQ
+## LR(1) items:
 instr -> I_LDREQ . reg COMMA reg [ SEMI PIPE # ]
 instr -> I_LDREQ . reg COMMA LBRK reg RBRK [ SEMI PIPE # ]
 instr -> I_LDREQ . reg COMMA LBRK reg COMMA reg RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 90
+## Reductions:
 
 State 90:
+## Known stack suffix:
+## I_LDREQ reg
+## LR(1) items:
 instr -> I_LDREQ reg . COMMA reg [ SEMI PIPE # ]
 instr -> I_LDREQ reg . COMMA LBRK reg RBRK [ SEMI PIPE # ]
 instr -> I_LDREQ reg . COMMA LBRK reg COMMA reg RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On COMMA shift to state 91
+## Reductions:
 
 State 91:
+## Known stack suffix:
+## I_LDREQ reg COMMA
+## LR(1) items:
 instr -> I_LDREQ reg COMMA . reg [ SEMI PIPE # ]
 instr -> I_LDREQ reg COMMA . LBRK reg RBRK [ SEMI PIPE # ]
 instr -> I_LDREQ reg COMMA . LBRK reg COMMA reg RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On LBRK shift to state 92
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 98
+## Reductions:
 
 State 92:
+## Known stack suffix:
+## I_LDREQ reg COMMA LBRK
+## LR(1) items:
 instr -> I_LDREQ reg COMMA LBRK . reg RBRK [ SEMI PIPE # ]
 instr -> I_LDREQ reg COMMA LBRK . reg COMMA reg RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 93
+## Reductions:
 
 State 93:
+## Known stack suffix:
+## I_LDREQ reg COMMA LBRK reg
+## LR(1) items:
 instr -> I_LDREQ reg COMMA LBRK reg . RBRK [ SEMI PIPE # ]
 instr -> I_LDREQ reg COMMA LBRK reg . COMMA reg RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On RBRK shift to state 94
 -- On COMMA shift to state 95
+## Reductions:
 
 State 94:
+## Known stack suffix:
+## I_LDREQ reg COMMA LBRK reg RBRK
+## LR(1) items:
 instr -> I_LDREQ reg COMMA LBRK reg RBRK . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production instr -> I_LDREQ reg COMMA LBRK reg RBRK
 -- On PIPE reduce production instr -> I_LDREQ reg COMMA LBRK reg RBRK
 -- On # reduce production instr -> I_LDREQ reg COMMA LBRK reg RBRK
@@ -799,17 +1274,32 @@ instr -> I_LDREQ reg COMMA LBRK reg RBRK . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 95:
+## Known stack suffix:
+## I_LDREQ reg COMMA LBRK reg COMMA
+## LR(1) items:
 instr -> I_LDREQ reg COMMA LBRK reg COMMA . reg RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 96
+## Reductions:
 
 State 96:
+## Known stack suffix:
+## I_LDREQ reg COMMA LBRK reg COMMA reg
+## LR(1) items:
 instr -> I_LDREQ reg COMMA LBRK reg COMMA reg . RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On RBRK shift to state 97
+## Reductions:
 
 State 97:
+## Known stack suffix:
+## I_LDREQ reg COMMA LBRK reg COMMA reg RBRK
+## LR(1) items:
 instr -> I_LDREQ reg COMMA LBRK reg COMMA reg RBRK . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production instr -> I_LDREQ reg COMMA LBRK reg COMMA reg RBRK
 -- On PIPE reduce production instr -> I_LDREQ reg COMMA LBRK reg COMMA reg RBRK
 -- On # reduce production instr -> I_LDREQ reg COMMA LBRK reg COMMA reg RBRK
@@ -820,7 +1310,12 @@ instr -> I_LDREQ reg COMMA LBRK reg COMMA reg RBRK . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 98:
+## Known stack suffix:
+## I_LDREQ reg COMMA reg
+## LR(1) items:
 instr -> I_LDREQ reg COMMA reg . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production instr -> I_LDREQ reg COMMA reg
 -- On PIPE reduce production instr -> I_LDREQ reg COMMA reg
 -- On # reduce production instr -> I_LDREQ reg COMMA reg
@@ -831,43 +1326,73 @@ instr -> I_LDREQ reg COMMA reg . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 99:
+## Known stack suffix:
+## I_LDR
+## LR(1) items:
 instr -> I_LDR . reg COMMA reg [ SEMI PIPE # ]
 instr -> I_LDR . reg COMMA LBRK reg RBRK [ SEMI PIPE # ]
 instr -> I_LDR . reg COMMA LBRK reg COMMA reg RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 100
+## Reductions:
 
 State 100:
+## Known stack suffix:
+## I_LDR reg
+## LR(1) items:
 instr -> I_LDR reg . COMMA reg [ SEMI PIPE # ]
 instr -> I_LDR reg . COMMA LBRK reg RBRK [ SEMI PIPE # ]
 instr -> I_LDR reg . COMMA LBRK reg COMMA reg RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On COMMA shift to state 101
+## Reductions:
 
 State 101:
+## Known stack suffix:
+## I_LDR reg COMMA
+## LR(1) items:
 instr -> I_LDR reg COMMA . reg [ SEMI PIPE # ]
 instr -> I_LDR reg COMMA . LBRK reg RBRK [ SEMI PIPE # ]
 instr -> I_LDR reg COMMA . LBRK reg COMMA reg RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On LBRK shift to state 102
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 108
+## Reductions:
 
 State 102:
+## Known stack suffix:
+## I_LDR reg COMMA LBRK
+## LR(1) items:
 instr -> I_LDR reg COMMA LBRK . reg RBRK [ SEMI PIPE # ]
 instr -> I_LDR reg COMMA LBRK . reg COMMA reg RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 103
+## Reductions:
 
 State 103:
+## Known stack suffix:
+## I_LDR reg COMMA LBRK reg
+## LR(1) items:
 instr -> I_LDR reg COMMA LBRK reg . RBRK [ SEMI PIPE # ]
 instr -> I_LDR reg COMMA LBRK reg . COMMA reg RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On RBRK shift to state 104
 -- On COMMA shift to state 105
+## Reductions:
 
 State 104:
+## Known stack suffix:
+## I_LDR reg COMMA LBRK reg RBRK
+## LR(1) items:
 instr -> I_LDR reg COMMA LBRK reg RBRK . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production instr -> I_LDR reg COMMA LBRK reg RBRK
 -- On PIPE reduce production instr -> I_LDR reg COMMA LBRK reg RBRK
 -- On # reduce production instr -> I_LDR reg COMMA LBRK reg RBRK
@@ -878,17 +1403,32 @@ instr -> I_LDR reg COMMA LBRK reg RBRK . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 105:
+## Known stack suffix:
+## I_LDR reg COMMA LBRK reg COMMA
+## LR(1) items:
 instr -> I_LDR reg COMMA LBRK reg COMMA . reg RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 106
+## Reductions:
 
 State 106:
+## Known stack suffix:
+## I_LDR reg COMMA LBRK reg COMMA reg
+## LR(1) items:
 instr -> I_LDR reg COMMA LBRK reg COMMA reg . RBRK [ SEMI PIPE # ]
+## Transitions:
 -- On RBRK shift to state 107
+## Reductions:
 
 State 107:
+## Known stack suffix:
+## I_LDR reg COMMA LBRK reg COMMA reg RBRK
+## LR(1) items:
 instr -> I_LDR reg COMMA LBRK reg COMMA reg RBRK . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production instr -> I_LDR reg COMMA LBRK reg COMMA reg RBRK
 -- On PIPE reduce production instr -> I_LDR reg COMMA LBRK reg COMMA reg RBRK
 -- On # reduce production instr -> I_LDR reg COMMA LBRK reg COMMA reg RBRK
@@ -899,7 +1439,12 @@ instr -> I_LDR reg COMMA LBRK reg COMMA reg RBRK . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 108:
+## Known stack suffix:
+## I_LDR reg COMMA reg
+## LR(1) items:
 instr -> I_LDR reg COMMA reg . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production instr -> I_LDR reg COMMA reg
 -- On PIPE reduce production instr -> I_LDR reg COMMA reg
 -- On # reduce production instr -> I_LDR reg COMMA reg
@@ -910,7 +1455,12 @@ instr -> I_LDR reg COMMA reg . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 109:
+## Known stack suffix:
+## I_ISB
+## LR(1) items:
 instr -> I_ISB . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production instr -> I_ISB
 -- On PIPE reduce production instr -> I_ISB
 -- On # reduce production instr -> I_ISB
@@ -921,8 +1471,12 @@ instr -> I_ISB . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 110:
+## Known stack suffix:
+## I_DSB
+## LR(1) items:
 instr -> I_DSB . opt [ SEMI PIPE # ]
 instr -> I_DSB . [ SEMI PIPE # ]
+## Transitions:
 -- On I_SY shift to state 111
 -- On I_ST shift to state 112
 -- On I_OSHST shift to state 113
@@ -932,6 +1486,7 @@ instr -> I_DSB . [ SEMI PIPE # ]
 -- On I_ISHST shift to state 117
 -- On I_ISH shift to state 118
 -- On opt shift to state 119
+## Reductions:
 -- On SEMI reduce production instr -> I_DSB
 -- On PIPE reduce production instr -> I_DSB
 -- On # reduce production instr -> I_DSB
@@ -942,7 +1497,12 @@ instr -> I_DSB . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 111:
+## Known stack suffix:
+## I_SY
+## LR(1) items:
 opt -> I_SY . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production opt -> I_SY
 -- On PIPE reduce production opt -> I_SY
 -- On # reduce production opt -> I_SY
@@ -953,7 +1513,12 @@ opt -> I_SY . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 112:
+## Known stack suffix:
+## I_ST
+## LR(1) items:
 opt -> I_ST . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production opt -> I_ST
 -- On PIPE reduce production opt -> I_ST
 -- On # reduce production opt -> I_ST
@@ -964,7 +1529,12 @@ opt -> I_ST . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 113:
+## Known stack suffix:
+## I_OSHST
+## LR(1) items:
 opt -> I_OSHST . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production opt -> I_OSHST
 -- On PIPE reduce production opt -> I_OSHST
 -- On # reduce production opt -> I_OSHST
@@ -975,7 +1545,12 @@ opt -> I_OSHST . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 114:
+## Known stack suffix:
+## I_OSH
+## LR(1) items:
 opt -> I_OSH . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production opt -> I_OSH
 -- On PIPE reduce production opt -> I_OSH
 -- On # reduce production opt -> I_OSH
@@ -986,7 +1561,12 @@ opt -> I_OSH . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 115:
+## Known stack suffix:
+## I_NSHST
+## LR(1) items:
 opt -> I_NSHST . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production opt -> I_NSHST
 -- On PIPE reduce production opt -> I_NSHST
 -- On # reduce production opt -> I_NSHST
@@ -997,7 +1577,12 @@ opt -> I_NSHST . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 116:
+## Known stack suffix:
+## I_NSH
+## LR(1) items:
 opt -> I_NSH . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production opt -> I_NSH
 -- On PIPE reduce production opt -> I_NSH
 -- On # reduce production opt -> I_NSH
@@ -1008,7 +1593,12 @@ opt -> I_NSH . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 117:
+## Known stack suffix:
+## I_ISHST
+## LR(1) items:
 opt -> I_ISHST . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production opt -> I_ISHST
 -- On PIPE reduce production opt -> I_ISHST
 -- On # reduce production opt -> I_ISHST
@@ -1019,7 +1609,12 @@ opt -> I_ISHST . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 118:
+## Known stack suffix:
+## I_ISH
+## LR(1) items:
 opt -> I_ISH . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production opt -> I_ISH
 -- On PIPE reduce production opt -> I_ISH
 -- On # reduce production opt -> I_ISH
@@ -1030,7 +1625,12 @@ opt -> I_ISH . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 119:
+## Known stack suffix:
+## I_DSB opt
+## LR(1) items:
 instr -> I_DSB opt . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production instr -> I_DSB opt
 -- On PIPE reduce production instr -> I_DSB opt
 -- On # reduce production instr -> I_DSB opt
@@ -1041,8 +1641,12 @@ instr -> I_DSB opt . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 120:
+## Known stack suffix:
+## I_DMB
+## LR(1) items:
 instr -> I_DMB . [ SEMI PIPE # ]
 instr -> I_DMB . opt [ SEMI PIPE # ]
+## Transitions:
 -- On I_SY shift to state 111
 -- On I_ST shift to state 112
 -- On I_OSHST shift to state 113
@@ -1052,6 +1656,7 @@ instr -> I_DMB . opt [ SEMI PIPE # ]
 -- On I_ISHST shift to state 117
 -- On I_ISH shift to state 118
 -- On opt shift to state 121
+## Reductions:
 -- On SEMI reduce production instr -> I_DMB
 -- On PIPE reduce production instr -> I_DMB
 -- On # reduce production instr -> I_DMB
@@ -1062,7 +1667,12 @@ instr -> I_DMB . opt [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 121:
+## Known stack suffix:
+## I_DMB opt
+## LR(1) items:
 instr -> I_DMB opt . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production instr -> I_DMB opt
 -- On PIPE reduce production instr -> I_DMB opt
 -- On # reduce production instr -> I_DMB opt
@@ -1073,29 +1683,49 @@ instr -> I_DMB opt . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 122:
+## Known stack suffix:
+## I_CMP
+## LR(1) items:
 instr -> I_CMP . reg COMMA k [ SEMI PIPE # ]
 instr -> I_CMP . reg COMMA reg [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 123
+## Reductions:
 
 State 123:
+## Known stack suffix:
+## I_CMP reg
+## LR(1) items:
 instr -> I_CMP reg . COMMA k [ SEMI PIPE # ]
 instr -> I_CMP reg . COMMA reg [ SEMI PIPE # ]
+## Transitions:
 -- On COMMA shift to state 124
+## Reductions:
 
 State 124:
+## Known stack suffix:
+## I_CMP reg COMMA
+## LR(1) items:
 instr -> I_CMP reg COMMA . k [ SEMI PIPE # ]
 instr -> I_CMP reg COMMA . reg [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On NUM shift to state 58
 -- On META shift to state 59
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 125
 -- On k shift to state 126
+## Reductions:
 
 State 125:
+## Known stack suffix:
+## I_CMP reg COMMA reg
+## LR(1) items:
 instr -> I_CMP reg COMMA reg . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production instr -> I_CMP reg COMMA reg
 -- On PIPE reduce production instr -> I_CMP reg COMMA reg
 -- On # reduce production instr -> I_CMP reg COMMA reg
@@ -1106,7 +1736,12 @@ instr -> I_CMP reg COMMA reg . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 126:
+## Known stack suffix:
+## I_CMP reg COMMA k
+## LR(1) items:
 instr -> I_CMP reg COMMA k . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production instr -> I_CMP reg COMMA k
 -- On PIPE reduce production instr -> I_CMP reg COMMA k
 -- On # reduce production instr -> I_CMP reg COMMA k
@@ -1117,21 +1752,41 @@ instr -> I_CMP reg COMMA k . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 127:
+## Known stack suffix:
+## I_CBZ
+## LR(1) items:
 instr -> I_CBZ . reg COMMA NAME [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 128
+## Reductions:
 
 State 128:
+## Known stack suffix:
+## I_CBZ reg
+## LR(1) items:
 instr -> I_CBZ reg . COMMA NAME [ SEMI PIPE # ]
+## Transitions:
 -- On COMMA shift to state 129
+## Reductions:
 
 State 129:
+## Known stack suffix:
+## I_CBZ reg COMMA
+## LR(1) items:
 instr -> I_CBZ reg COMMA . NAME [ SEMI PIPE # ]
+## Transitions:
 -- On NAME shift to state 130
+## Reductions:
 
 State 130:
+## Known stack suffix:
+## I_CBZ reg COMMA NAME
+## LR(1) items:
 instr -> I_CBZ reg COMMA NAME . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production instr -> I_CBZ reg COMMA NAME
 -- On PIPE reduce production instr -> I_CBZ reg COMMA NAME
 -- On # reduce production instr -> I_CBZ reg COMMA NAME
@@ -1142,21 +1797,41 @@ instr -> I_CBZ reg COMMA NAME . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 131:
+## Known stack suffix:
+## I_CBNZ
+## LR(1) items:
 instr -> I_CBNZ . reg COMMA NAME [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 132
+## Reductions:
 
 State 132:
+## Known stack suffix:
+## I_CBNZ reg
+## LR(1) items:
 instr -> I_CBNZ reg . COMMA NAME [ SEMI PIPE # ]
+## Transitions:
 -- On COMMA shift to state 133
+## Reductions:
 
 State 133:
+## Known stack suffix:
+## I_CBNZ reg COMMA
+## LR(1) items:
 instr -> I_CBNZ reg COMMA . NAME [ SEMI PIPE # ]
+## Transitions:
 -- On NAME shift to state 134
+## Reductions:
 
 State 134:
+## Known stack suffix:
+## I_CBNZ reg COMMA NAME
+## LR(1) items:
 instr -> I_CBNZ reg COMMA NAME . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production instr -> I_CBNZ reg COMMA NAME
 -- On PIPE reduce production instr -> I_CBNZ reg COMMA NAME
 -- On # reduce production instr -> I_CBNZ reg COMMA NAME
@@ -1167,11 +1842,21 @@ instr -> I_CBNZ reg COMMA NAME . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 135:
+## Known stack suffix:
+## I_BNE
+## LR(1) items:
 instr -> I_BNE . NAME [ SEMI PIPE # ]
+## Transitions:
 -- On NAME shift to state 136
+## Reductions:
 
 State 136:
+## Known stack suffix:
+## I_BNE NAME
+## LR(1) items:
 instr -> I_BNE NAME . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production instr -> I_BNE NAME
 -- On PIPE reduce production instr -> I_BNE NAME
 -- On # reduce production instr -> I_BNE NAME
@@ -1182,11 +1867,21 @@ instr -> I_BNE NAME . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 137:
+## Known stack suffix:
+## I_BEQ
+## LR(1) items:
 instr -> I_BEQ . NAME [ SEMI PIPE # ]
+## Transitions:
 -- On NAME shift to state 138
+## Reductions:
 
 State 138:
+## Known stack suffix:
+## I_BEQ NAME
+## LR(1) items:
 instr -> I_BEQ NAME . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production instr -> I_BEQ NAME
 -- On PIPE reduce production instr -> I_BEQ NAME
 -- On # reduce production instr -> I_BEQ NAME
@@ -1197,11 +1892,21 @@ instr -> I_BEQ NAME . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 139:
+## Known stack suffix:
+## I_B
+## LR(1) items:
 instr -> I_B . NAME [ SEMI PIPE # ]
+## Transitions:
 -- On NAME shift to state 140
+## Reductions:
 
 State 140:
+## Known stack suffix:
+## I_B NAME
+## LR(1) items:
 instr -> I_B NAME . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production instr -> I_B NAME
 -- On PIPE reduce production instr -> I_B NAME
 -- On # reduce production instr -> I_B NAME
@@ -1212,33 +1917,63 @@ instr -> I_B NAME . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 141:
+## Known stack suffix:
+## I_ANDS
+## LR(1) items:
 instr -> I_ANDS . reg COMMA reg COMMA k [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 142
+## Reductions:
 
 State 142:
+## Known stack suffix:
+## I_ANDS reg
+## LR(1) items:
 instr -> I_ANDS reg . COMMA reg COMMA k [ SEMI PIPE # ]
+## Transitions:
 -- On COMMA shift to state 143
+## Reductions:
 
 State 143:
+## Known stack suffix:
+## I_ANDS reg COMMA
+## LR(1) items:
 instr -> I_ANDS reg COMMA . reg COMMA k [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 144
+## Reductions:
 
 State 144:
+## Known stack suffix:
+## I_ANDS reg COMMA reg
+## LR(1) items:
 instr -> I_ANDS reg COMMA reg . COMMA k [ SEMI PIPE # ]
+## Transitions:
 -- On COMMA shift to state 145
+## Reductions:
 
 State 145:
+## Known stack suffix:
+## I_ANDS reg COMMA reg COMMA
+## LR(1) items:
 instr -> I_ANDS reg COMMA reg COMMA . k [ SEMI PIPE # ]
+## Transitions:
 -- On NUM shift to state 58
 -- On META shift to state 59
 -- On k shift to state 146
+## Reductions:
 
 State 146:
+## Known stack suffix:
+## I_ANDS reg COMMA reg COMMA k
+## LR(1) items:
 instr -> I_ANDS reg COMMA reg COMMA k . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production instr -> I_ANDS reg COMMA reg COMMA k
 -- On PIPE reduce production instr -> I_ANDS reg COMMA reg COMMA k
 -- On # reduce production instr -> I_ANDS reg COMMA reg COMMA k
@@ -1249,33 +1984,63 @@ instr -> I_ANDS reg COMMA reg COMMA k . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 147:
+## Known stack suffix:
+## I_AND
+## LR(1) items:
 instr -> I_AND . reg COMMA reg COMMA k [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 148
+## Reductions:
 
 State 148:
+## Known stack suffix:
+## I_AND reg
+## LR(1) items:
 instr -> I_AND reg . COMMA reg COMMA k [ SEMI PIPE # ]
+## Transitions:
 -- On COMMA shift to state 149
+## Reductions:
 
 State 149:
+## Known stack suffix:
+## I_AND reg COMMA
+## LR(1) items:
 instr -> I_AND reg COMMA . reg COMMA k [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 150
+## Reductions:
 
 State 150:
+## Known stack suffix:
+## I_AND reg COMMA reg
+## LR(1) items:
 instr -> I_AND reg COMMA reg . COMMA k [ SEMI PIPE # ]
+## Transitions:
 -- On COMMA shift to state 151
+## Reductions:
 
 State 151:
+## Known stack suffix:
+## I_AND reg COMMA reg COMMA
+## LR(1) items:
 instr -> I_AND reg COMMA reg COMMA . k [ SEMI PIPE # ]
+## Transitions:
 -- On NUM shift to state 58
 -- On META shift to state 59
 -- On k shift to state 152
+## Reductions:
 
 State 152:
+## Known stack suffix:
+## I_AND reg COMMA reg COMMA k
+## LR(1) items:
 instr -> I_AND reg COMMA reg COMMA k . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production instr -> I_AND reg COMMA reg COMMA k
 -- On PIPE reduce production instr -> I_AND reg COMMA reg COMMA k
 -- On # reduce production instr -> I_AND reg COMMA reg COMMA k
@@ -1286,41 +2051,71 @@ instr -> I_AND reg COMMA reg COMMA k . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 153:
+## Known stack suffix:
+## I_ADDS
+## LR(1) items:
 instr -> I_ADDS . reg COMMA reg COMMA k [ SEMI PIPE # ]
 instr -> I_ADDS . reg COMMA reg COMMA reg [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 154
+## Reductions:
 
 State 154:
+## Known stack suffix:
+## I_ADDS reg
+## LR(1) items:
 instr -> I_ADDS reg . COMMA reg COMMA k [ SEMI PIPE # ]
 instr -> I_ADDS reg . COMMA reg COMMA reg [ SEMI PIPE # ]
+## Transitions:
 -- On COMMA shift to state 155
+## Reductions:
 
 State 155:
+## Known stack suffix:
+## I_ADDS reg COMMA
+## LR(1) items:
 instr -> I_ADDS reg COMMA . reg COMMA k [ SEMI PIPE # ]
 instr -> I_ADDS reg COMMA . reg COMMA reg [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 156
+## Reductions:
 
 State 156:
+## Known stack suffix:
+## I_ADDS reg COMMA reg
+## LR(1) items:
 instr -> I_ADDS reg COMMA reg . COMMA k [ SEMI PIPE # ]
 instr -> I_ADDS reg COMMA reg . COMMA reg [ SEMI PIPE # ]
+## Transitions:
 -- On COMMA shift to state 157
+## Reductions:
 
 State 157:
+## Known stack suffix:
+## I_ADDS reg COMMA reg COMMA
+## LR(1) items:
 instr -> I_ADDS reg COMMA reg COMMA . k [ SEMI PIPE # ]
 instr -> I_ADDS reg COMMA reg COMMA . reg [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On NUM shift to state 58
 -- On META shift to state 59
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 158
 -- On k shift to state 159
+## Reductions:
 
 State 158:
+## Known stack suffix:
+## I_ADDS reg COMMA reg COMMA reg
+## LR(1) items:
 instr -> I_ADDS reg COMMA reg COMMA reg . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production instr -> I_ADDS reg COMMA reg COMMA reg
 -- On PIPE reduce production instr -> I_ADDS reg COMMA reg COMMA reg
 -- On # reduce production instr -> I_ADDS reg COMMA reg COMMA reg
@@ -1331,7 +2126,12 @@ instr -> I_ADDS reg COMMA reg COMMA reg . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 159:
+## Known stack suffix:
+## I_ADDS reg COMMA reg COMMA k
+## LR(1) items:
 instr -> I_ADDS reg COMMA reg COMMA k . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production instr -> I_ADDS reg COMMA reg COMMA k
 -- On PIPE reduce production instr -> I_ADDS reg COMMA reg COMMA k
 -- On # reduce production instr -> I_ADDS reg COMMA reg COMMA k
@@ -1342,41 +2142,71 @@ instr -> I_ADDS reg COMMA reg COMMA k . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 160:
+## Known stack suffix:
+## I_ADD
+## LR(1) items:
 instr -> I_ADD . reg COMMA reg COMMA k [ SEMI PIPE # ]
 instr -> I_ADD . reg COMMA reg COMMA reg [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 161
+## Reductions:
 
 State 161:
+## Known stack suffix:
+## I_ADD reg
+## LR(1) items:
 instr -> I_ADD reg . COMMA reg COMMA k [ SEMI PIPE # ]
 instr -> I_ADD reg . COMMA reg COMMA reg [ SEMI PIPE # ]
+## Transitions:
 -- On COMMA shift to state 162
+## Reductions:
 
 State 162:
+## Known stack suffix:
+## I_ADD reg COMMA
+## LR(1) items:
 instr -> I_ADD reg COMMA . reg COMMA k [ SEMI PIPE # ]
 instr -> I_ADD reg COMMA . reg COMMA reg [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 163
+## Reductions:
 
 State 163:
+## Known stack suffix:
+## I_ADD reg COMMA reg
+## LR(1) items:
 instr -> I_ADD reg COMMA reg . COMMA k [ SEMI PIPE # ]
 instr -> I_ADD reg COMMA reg . COMMA reg [ SEMI PIPE # ]
+## Transitions:
 -- On COMMA shift to state 164
+## Reductions:
 
 State 164:
+## Known stack suffix:
+## I_ADD reg COMMA reg COMMA
+## LR(1) items:
 instr -> I_ADD reg COMMA reg COMMA . k [ SEMI PIPE # ]
 instr -> I_ADD reg COMMA reg COMMA . reg [ SEMI PIPE # ]
+## Transitions:
 -- On SYMB_REG shift to state 4
 -- On NUM shift to state 58
 -- On META shift to state 59
 -- On ARCH_REG shift to state 5
 -- On reg shift to state 165
 -- On k shift to state 166
+## Reductions:
 
 State 165:
+## Known stack suffix:
+## I_ADD reg COMMA reg COMMA reg
+## LR(1) items:
 instr -> I_ADD reg COMMA reg COMMA reg . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production instr -> I_ADD reg COMMA reg COMMA reg
 -- On PIPE reduce production instr -> I_ADD reg COMMA reg COMMA reg
 -- On # reduce production instr -> I_ADD reg COMMA reg COMMA reg
@@ -1387,7 +2217,12 @@ instr -> I_ADD reg COMMA reg COMMA reg . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 166:
+## Known stack suffix:
+## I_ADD reg COMMA reg COMMA k
+## LR(1) items:
 instr -> I_ADD reg COMMA reg COMMA k . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production instr -> I_ADD reg COMMA reg COMMA k
 -- On PIPE reduce production instr -> I_ADD reg COMMA reg COMMA k
 -- On # reduce production instr -> I_ADD reg COMMA reg COMMA k
@@ -1398,7 +2233,12 @@ instr -> I_ADD reg COMMA reg COMMA k . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 167:
+## Known stack suffix:
+## CODEVAR
+## LR(1) items:
 instr_option -> CODEVAR . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production instr_option -> CODEVAR
 -- On PIPE reduce production instr_option -> CODEVAR
 -- On # reduce production instr_option -> CODEVAR
@@ -1409,7 +2249,12 @@ instr_option -> CODEVAR . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 168:
+## Known stack suffix:
+## NAME COLON instr_option
+## LR(1) items:
 instr_option -> NAME COLON instr_option . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production instr_option -> NAME COLON instr_option
 -- On PIPE reduce production instr_option -> NAME COLON instr_option
 -- On # reduce production instr_option -> NAME COLON instr_option
@@ -1420,7 +2265,12 @@ instr_option -> NAME COLON instr_option . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 169:
+## Known stack suffix:
+## instr
+## LR(1) items:
 instr_option -> instr . [ SEMI PIPE # ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production instr_option -> instr
 -- On PIPE reduce production instr_option -> instr
 -- On # reduce production instr_option -> instr
@@ -1431,13 +2281,23 @@ instr_option -> instr . [ SEMI PIPE # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 170:
+## Known stack suffix:
+## instr_option_seq
+## LR(1) items:
 instr_option_seq' -> instr_option_seq . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept instr_option_seq
 
 State 171:
+## Known stack suffix:
+## instr_option
+## LR(1) items:
 instr_option_seq -> instr_option . [ # ]
 instr_option_seq -> instr_option . SEMI instr_option_seq [ # ]
+## Transitions:
 -- On SEMI shift to state 172
+## Reductions:
 -- On # reduce production instr_option_seq -> instr_option
 ** End-of-stream conflict on SEMI
 **   There is a tension between
@@ -1446,7 +2306,11 @@ instr_option_seq -> instr_option . SEMI instr_option_seq [ # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 172:
+## Known stack suffix:
+## instr_option SEMI
+## LR(1) items:
 instr_option_seq -> instr_option SEMI . instr_option_seq [ # ]
+## Transitions:
 -- On NAME shift to state 1
 -- On I_XORS shift to state 3
 -- On I_XOR shift to state 11
@@ -1478,6 +2342,7 @@ instr_option_seq -> instr_option SEMI . instr_option_seq [ # ]
 -- On instr_option_seq shift to state 173
 -- On instr_option shift to state 171
 -- On instr shift to state 169
+## Reductions:
 -- On SEMI reduce production instr_option ->
 -- On # reduce production instr_option ->
 ** End-of-stream conflict on SEMI NAME I_XORS I_XOR I_STRNE I_STREX I_STREQ I_STR I_MOVNE I_MOVEQ I_MOV I_LDRNE I_LDREX I_LDREQ I_LDR I_ISB I_DSB I_DMB I_CMP I_CBZ I_CBNZ I_BNE I_BEQ I_B I_ANDS I_AND I_ADDS I_ADD CODEVAR
@@ -1487,33 +2352,63 @@ instr_option_seq -> instr_option SEMI . instr_option_seq [ # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 173:
+## Known stack suffix:
+## instr_option SEMI instr_option_seq
+## LR(1) items:
 instr_option_seq -> instr_option SEMI instr_option_seq . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production instr_option_seq -> instr_option SEMI instr_option_seq
 
 State 174:
+## Known stack suffix:
+##
+## LR(1) items:
 main' -> . main [ # ]
+## Transitions:
 -- On SEMI shift to state 175
 -- On semi_opt shift to state 176
 -- On main shift to state 190
+## Reductions:
 -- On PROC reduce production semi_opt ->
 
 State 175:
+## Known stack suffix:
+## SEMI
+## LR(1) items:
 semi_opt -> SEMI . [ PROC ]
+## Transitions:
+## Reductions:
 -- On PROC reduce production semi_opt -> SEMI
 
 State 176:
+## Known stack suffix:
+## semi_opt
+## LR(1) items:
 main -> semi_opt . proc_list iol_list EOF [ # ]
+## Transitions:
 -- On PROC shift to state 177
 -- On proc_list shift to state 181
+## Reductions:
 
 State 177:
+## Known stack suffix:
+## PROC
+## LR(1) items:
 proc_list -> PROC . SEMI [ SEMI PIPE NAME I_XORS I_XOR I_STRNE I_STREX I_STREQ I_STR I_MOVNE I_MOVEQ I_MOV I_LDRNE I_LDREX I_LDREQ I_LDR I_ISB I_DSB I_DMB I_CMP I_CBZ I_CBNZ I_BNE I_BEQ I_B I_ANDS I_AND I_ADDS I_ADD CODEVAR ]
 proc_list -> PROC . PIPE proc_list [ SEMI PIPE NAME I_XORS I_XOR I_STRNE I_STREX I_STREQ I_STR I_MOVNE I_MOVEQ I_MOV I_LDRNE I_LDREX I_LDREQ I_LDR I_ISB I_DSB I_DMB I_CMP I_CBZ I_CBNZ I_BNE I_BEQ I_B I_ANDS I_AND I_ADDS I_ADD CODEVAR ]
+## Transitions:
 -- On SEMI shift to state 178
 -- On PIPE shift to state 179
+## Reductions:
 
 State 178:
+## Known stack suffix:
+## PROC SEMI
+## LR(1) items:
 proc_list -> PROC SEMI . [ SEMI PIPE NAME I_XORS I_XOR I_STRNE I_STREX I_STREQ I_STR I_MOVNE I_MOVEQ I_MOV I_LDRNE I_LDREX I_LDREQ I_LDR I_ISB I_DSB I_DMB I_CMP I_CBZ I_CBNZ I_BNE I_BEQ I_B I_ANDS I_AND I_ADDS I_ADD CODEVAR ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production proc_list -> PROC SEMI
 -- On PIPE reduce production proc_list -> PROC SEMI
 -- On NAME reduce production proc_list -> PROC SEMI
@@ -1546,12 +2441,22 @@ proc_list -> PROC SEMI . [ SEMI PIPE NAME I_XORS I_XOR I_STRNE I_STREX I_STREQ I
 -- On CODEVAR reduce production proc_list -> PROC SEMI
 
 State 179:
+## Known stack suffix:
+## PROC PIPE
+## LR(1) items:
 proc_list -> PROC PIPE . proc_list [ SEMI PIPE NAME I_XORS I_XOR I_STRNE I_STREX I_STREQ I_STR I_MOVNE I_MOVEQ I_MOV I_LDRNE I_LDREX I_LDREQ I_LDR I_ISB I_DSB I_DMB I_CMP I_CBZ I_CBNZ I_BNE I_BEQ I_B I_ANDS I_AND I_ADDS I_ADD CODEVAR ]
+## Transitions:
 -- On PROC shift to state 177
 -- On proc_list shift to state 180
+## Reductions:
 
 State 180:
+## Known stack suffix:
+## PROC PIPE proc_list
+## LR(1) items:
 proc_list -> PROC PIPE proc_list . [ SEMI PIPE NAME I_XORS I_XOR I_STRNE I_STREX I_STREQ I_STR I_MOVNE I_MOVEQ I_MOV I_LDRNE I_LDREX I_LDREQ I_LDR I_ISB I_DSB I_DMB I_CMP I_CBZ I_CBNZ I_BNE I_BEQ I_B I_ANDS I_AND I_ADDS I_ADD CODEVAR ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production proc_list -> PROC PIPE proc_list
 -- On PIPE reduce production proc_list -> PROC PIPE proc_list
 -- On NAME reduce production proc_list -> PROC PIPE proc_list
@@ -1584,7 +2489,11 @@ proc_list -> PROC PIPE proc_list . [ SEMI PIPE NAME I_XORS I_XOR I_STRNE I_STREX
 -- On CODEVAR reduce production proc_list -> PROC PIPE proc_list
 
 State 181:
+## Known stack suffix:
+## semi_opt proc_list
+## LR(1) items:
 main -> semi_opt proc_list . iol_list EOF [ # ]
+## Transitions:
 -- On NAME shift to state 1
 -- On I_XORS shift to state 3
 -- On I_XOR shift to state 11
@@ -1617,25 +2526,45 @@ main -> semi_opt proc_list . iol_list EOF [ # ]
 -- On instr_option_list shift to state 184
 -- On instr_option shift to state 187
 -- On instr shift to state 169
+## Reductions:
 -- On SEMI reduce production instr_option ->
 -- On PIPE reduce production instr_option ->
 
 State 182:
+## Known stack suffix:
+## semi_opt proc_list iol_list
+## LR(1) items:
 main -> semi_opt proc_list iol_list . EOF [ # ]
+## Transitions:
 -- On EOF shift to state 183
+## Reductions:
 
 State 183:
+## Known stack suffix:
+## semi_opt proc_list iol_list EOF
+## LR(1) items:
 main -> semi_opt proc_list iol_list EOF . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production main -> semi_opt proc_list iol_list EOF
 
 State 184:
+## Known stack suffix:
+## instr_option_list
+## LR(1) items:
 iol_list -> instr_option_list . SEMI [ EOF ]
 iol_list -> instr_option_list . SEMI iol_list [ EOF ]
+## Transitions:
 -- On SEMI shift to state 185
+## Reductions:
 
 State 185:
+## Known stack suffix:
+## instr_option_list SEMI
+## LR(1) items:
 iol_list -> instr_option_list SEMI . [ EOF ]
 iol_list -> instr_option_list SEMI . iol_list [ EOF ]
+## Transitions:
 -- On NAME shift to state 1
 -- On I_XORS shift to state 3
 -- On I_XOR shift to state 11
@@ -1668,22 +2597,37 @@ iol_list -> instr_option_list SEMI . iol_list [ EOF ]
 -- On instr_option_list shift to state 184
 -- On instr_option shift to state 187
 -- On instr shift to state 169
+## Reductions:
 -- On SEMI reduce production instr_option ->
 -- On PIPE reduce production instr_option ->
 -- On EOF reduce production iol_list -> instr_option_list SEMI
 
 State 186:
+## Known stack suffix:
+## instr_option_list SEMI iol_list
+## LR(1) items:
 iol_list -> instr_option_list SEMI iol_list . [ EOF ]
+## Transitions:
+## Reductions:
 -- On EOF reduce production iol_list -> instr_option_list SEMI iol_list
 
 State 187:
+## Known stack suffix:
+## instr_option
+## LR(1) items:
 instr_option_list -> instr_option . [ SEMI ]
 instr_option_list -> instr_option . PIPE instr_option_list [ SEMI ]
+## Transitions:
 -- On PIPE shift to state 188
+## Reductions:
 -- On SEMI reduce production instr_option_list -> instr_option
 
 State 188:
+## Known stack suffix:
+## instr_option PIPE
+## LR(1) items:
 instr_option_list -> instr_option PIPE . instr_option_list [ SEMI ]
+## Transitions:
 -- On NAME shift to state 1
 -- On I_XORS shift to state 3
 -- On I_XOR shift to state 11
@@ -1715,14 +2659,25 @@ instr_option_list -> instr_option PIPE . instr_option_list [ SEMI ]
 -- On instr_option_list shift to state 189
 -- On instr_option shift to state 187
 -- On instr shift to state 169
+## Reductions:
 -- On SEMI reduce production instr_option ->
 -- On PIPE reduce production instr_option ->
 
 State 189:
+## Known stack suffix:
+## instr_option PIPE instr_option_list
+## LR(1) items:
 instr_option_list -> instr_option PIPE instr_option_list . [ SEMI ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production instr_option_list -> instr_option PIPE instr_option_list
 
 State 190:
+## Known stack suffix:
+## main
+## LR(1) items:
 main' -> main . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept main
 

@@ -1,8 +1,13 @@
 State 0:
+## Known stack suffix:
+##
+## LR(1) items:
 top_level_program' -> . top_level_program [ # ]
+## Transitions:
 -- On top_level_program shift to state 1
 -- On program shift to state 2
 -- On code_list shift to state 4
+## Reductions:
 -- On TERMINATE reduce production code_list ->
 -- On STATIC reduce production code_list ->
 -- On SOURCE reduce production code_list ->
@@ -26,18 +31,36 @@ top_level_program' -> . top_level_program [ # ]
 -- On CONDITION reduce production code_list ->
 
 State 1:
+## Known stack suffix:
+## top_level_program
+## LR(1) items:
 top_level_program' -> top_level_program . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept top_level_program
 
 State 2:
+## Known stack suffix:
+## program
+## LR(1) items:
 top_level_program -> program . ENDOFFILE [ # ]
+## Transitions:
 -- On ENDOFFILE shift to state 3
+## Reductions:
 
 State 3:
+## Known stack suffix:
+## program ENDOFFILE
+## LR(1) items:
 top_level_program -> program ENDOFFILE . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production top_level_program -> program ENDOFFILE
 
 State 4:
+## Known stack suffix:
+## code_list
+## LR(1) items:
 code_list -> code_list . main_fn [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
 code_list -> code_list . expr_part [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
 code_list -> code_list . err_def [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
@@ -51,6 +74,7 @@ code_list -> code_list . plugin_depends_decl [ TERMINATE STATIC SOURCE SEQUENCE 
 code_list -> code_list . term_decl [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
 code_list -> code_list . guard_order_decl [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
 program -> code_list . [ ENDOFFILE END ]
+## Transitions:
 -- On TERMINATE shift to state 5
 -- On STATIC shift to state 11
 -- On SOURCE shift to state 12
@@ -79,6 +103,7 @@ program -> code_list . [ ENDOFFILE END ]
 -- On cond_decl shift to state 246
 -- On atom_decl shift to state 247
 -- On assn shift to state 248
+## Reductions:
 -- On SEQUENCE reduce production external_opt ->
 -- On READWRITE reduce production external_opt ->
 -- On POOL reduce production external_opt ->
@@ -92,14 +117,24 @@ program -> code_list . [ ENDOFFILE END ]
 -- On CONDITION reduce production external_opt ->
 
 State 5:
+## Known stack suffix:
+## TERMINATE
+## LR(1) items:
 term_decl -> TERMINATE . namespaced_ident SEMI [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
 -- On IDENTIFIER shift to state 6
 -- On namespaced_ident shift to state 9
+## Reductions:
 
 State 6:
+## Known stack suffix:
+## IDENTIFIER
+## LR(1) items:
 namespaced_ident -> IDENTIFIER . [ SEMI PIPE LEFT_PAREN IDENTIFIER BEGIN AMPERSAND ]
 namespaced_ident -> IDENTIFIER . DOUBLECOLON namespaced_ident [ SEMI PIPE LEFT_PAREN IDENTIFIER BEGIN AMPERSAND ]
+## Transitions:
 -- On DOUBLECOLON shift to state 7
+## Reductions:
 -- On SEMI reduce production namespaced_ident -> IDENTIFIER
 -- On PIPE reduce production namespaced_ident -> IDENTIFIER
 -- On LEFT_PAREN reduce production namespaced_ident -> IDENTIFIER
@@ -108,12 +143,22 @@ namespaced_ident -> IDENTIFIER . DOUBLECOLON namespaced_ident [ SEMI PIPE LEFT_P
 -- On AMPERSAND reduce production namespaced_ident -> IDENTIFIER
 
 State 7:
+## Known stack suffix:
+## IDENTIFIER DOUBLECOLON
+## LR(1) items:
 namespaced_ident -> IDENTIFIER DOUBLECOLON . namespaced_ident [ SEMI PIPE LEFT_PAREN IDENTIFIER BEGIN AMPERSAND ]
+## Transitions:
 -- On IDENTIFIER shift to state 6
 -- On namespaced_ident shift to state 8
+## Reductions:
 
 State 8:
+## Known stack suffix:
+## IDENTIFIER DOUBLECOLON namespaced_ident
+## LR(1) items:
 namespaced_ident -> IDENTIFIER DOUBLECOLON namespaced_ident . [ SEMI PIPE LEFT_PAREN IDENTIFIER BEGIN AMPERSAND ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production namespaced_ident -> IDENTIFIER DOUBLECOLON namespaced_ident
 -- On PIPE reduce production namespaced_ident -> IDENTIFIER DOUBLECOLON namespaced_ident
 -- On LEFT_PAREN reduce production namespaced_ident -> IDENTIFIER DOUBLECOLON namespaced_ident
@@ -122,11 +167,21 @@ namespaced_ident -> IDENTIFIER DOUBLECOLON namespaced_ident . [ SEMI PIPE LEFT_P
 -- On AMPERSAND reduce production namespaced_ident -> IDENTIFIER DOUBLECOLON namespaced_ident
 
 State 9:
+## Known stack suffix:
+## TERMINATE namespaced_ident
+## LR(1) items:
 term_decl -> TERMINATE namespaced_ident . SEMI [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
 -- On SEMI shift to state 10
+## Reductions:
 
 State 10:
+## Known stack suffix:
+## TERMINATE namespaced_ident SEMI
+## LR(1) items:
 term_decl -> TERMINATE namespaced_ident SEMI . [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
+## Reductions:
 -- On TERMINATE reduce production term_decl -> TERMINATE namespaced_ident SEMI
 -- On STATIC reduce production term_decl -> TERMINATE namespaced_ident SEMI
 -- On SOURCE reduce production term_decl -> TERMINATE namespaced_ident SEMI
@@ -151,22 +206,42 @@ term_decl -> TERMINATE namespaced_ident SEMI . [ TERMINATE STATIC SOURCE SEQUENC
 -- On CONDITION reduce production term_decl -> TERMINATE namespaced_ident SEMI
 
 State 11:
+## Known stack suffix:
+## STATIC
+## LR(1) items:
 mod_modifier -> STATIC . [ STATIC MODULE ]
+## Transitions:
+## Reductions:
 -- On STATIC reduce production mod_modifier -> STATIC
 -- On MODULE reduce production mod_modifier -> STATIC
 
 State 12:
+## Known stack suffix:
+## SOURCE
+## LR(1) items:
 source_or_initial_or_door -> SOURCE . [ IDENTIFIER ]
+## Transitions:
+## Reductions:
 -- On IDENTIFIER reduce production source_or_initial_or_door -> SOURCE
 
 State 13:
+## Known stack suffix:
+## PRECEDENCE
+## LR(1) items:
 guard_order_decl -> PRECEDENCE . guard_order_list SEMI [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
 -- On IDENTIFIER shift to state 14
 -- On ident shift to state 15
 -- On guard_order_list shift to state 19
+## Reductions:
 
 State 14:
+## Known stack suffix:
+## IDENTIFIER
+## LR(1) items:
 ident -> IDENTIFIER . [ STAR SEMI RIGHT_SQ_BRACE RIGHT_PAREN QUESTION PLUS PIPE NUMBER NOTEQUALS MINUS LESSTHAN LEFT_SQ_BRACE LEFT_PAREN ISEQUALS IDENTIFIER GREATERTHAN EXCLAMATION DOUBLECOLON DOUBLEBAR DOUBLEAMPERSAND DOT COMMA COLON BACKARROW ARROW ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production ident -> IDENTIFIER
 -- On SEMI reduce production ident -> IDENTIFIER
 -- On RIGHT_SQ_BRACE reduce production ident -> IDENTIFIER
@@ -194,34 +269,64 @@ ident -> IDENTIFIER . [ STAR SEMI RIGHT_SQ_BRACE RIGHT_PAREN QUESTION PLUS PIPE 
 -- On ARROW reduce production ident -> IDENTIFIER
 
 State 15:
+## Known stack suffix:
+## ident
+## LR(1) items:
 guard_order_list -> ident . LESSTHAN ident [ SEMI ]
 guard_order_list -> ident . LESSTHAN guard_order_list [ SEMI ]
+## Transitions:
 -- On LESSTHAN shift to state 16
+## Reductions:
 
 State 16:
+## Known stack suffix:
+## ident LESSTHAN
+## LR(1) items:
 guard_order_list -> ident LESSTHAN . ident [ SEMI ]
 guard_order_list -> ident LESSTHAN . guard_order_list [ SEMI ]
+## Transitions:
 -- On IDENTIFIER shift to state 14
 -- On ident shift to state 17
 -- On guard_order_list shift to state 18
+## Reductions:
 
 State 17:
+## Known stack suffix:
+## ident LESSTHAN ident
+## LR(1) items:
 guard_order_list -> ident . LESSTHAN ident [ SEMI ]
 guard_order_list -> ident LESSTHAN ident . [ SEMI ]
 guard_order_list -> ident . LESSTHAN guard_order_list [ SEMI ]
+## Transitions:
 -- On LESSTHAN shift to state 16
+## Reductions:
 -- On SEMI reduce production guard_order_list -> ident LESSTHAN ident
 
 State 18:
+## Known stack suffix:
+## ident LESSTHAN guard_order_list
+## LR(1) items:
 guard_order_list -> ident LESSTHAN guard_order_list . [ SEMI ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production guard_order_list -> ident LESSTHAN guard_order_list
 
 State 19:
+## Known stack suffix:
+## PRECEDENCE guard_order_list
+## LR(1) items:
 guard_order_decl -> PRECEDENCE guard_order_list . SEMI [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
 -- On SEMI shift to state 20
+## Reductions:
 
 State 20:
+## Known stack suffix:
+## PRECEDENCE guard_order_list SEMI
+## LR(1) items:
 guard_order_decl -> PRECEDENCE guard_order_list SEMI . [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
+## Reductions:
 -- On TERMINATE reduce production guard_order_decl -> PRECEDENCE guard_order_list SEMI
 -- On STATIC reduce production guard_order_decl -> PRECEDENCE guard_order_list SEMI
 -- On SOURCE reduce production guard_order_decl -> PRECEDENCE guard_order_list SEMI
@@ -246,18 +351,33 @@ guard_order_decl -> PRECEDENCE guard_order_list SEMI . [ TERMINATE STATIC SOURCE
 -- On CONDITION reduce production guard_order_decl -> PRECEDENCE guard_order_list SEMI
 
 State 21:
+## Known stack suffix:
+## PLUGIN
+## LR(1) items:
 plugin_decl -> PLUGIN . namespaced_ident BEGIN program END [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
 -- On IDENTIFIER shift to state 6
 -- On namespaced_ident shift to state 22
+## Reductions:
 
 State 22:
+## Known stack suffix:
+## PLUGIN namespaced_ident
+## LR(1) items:
 plugin_decl -> PLUGIN namespaced_ident . BEGIN program END [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
 -- On BEGIN shift to state 23
+## Reductions:
 
 State 23:
+## Known stack suffix:
+## PLUGIN namespaced_ident BEGIN
+## LR(1) items:
 plugin_decl -> PLUGIN namespaced_ident BEGIN . program END [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
 -- On program shift to state 24
 -- On code_list shift to state 4
+## Reductions:
 -- On TERMINATE reduce production code_list ->
 -- On STATIC reduce production code_list ->
 -- On SOURCE reduce production code_list ->
@@ -281,11 +401,21 @@ plugin_decl -> PLUGIN namespaced_ident BEGIN . program END [ TERMINATE STATIC SO
 -- On CONDITION reduce production code_list ->
 
 State 24:
+## Known stack suffix:
+## PLUGIN namespaced_ident BEGIN program
+## LR(1) items:
 plugin_decl -> PLUGIN namespaced_ident BEGIN program . END [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
 -- On END shift to state 25
+## Reductions:
 
 State 25:
+## Known stack suffix:
+## PLUGIN namespaced_ident BEGIN program END
+## LR(1) items:
 plugin_decl -> PLUGIN namespaced_ident BEGIN program END . [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
+## Reductions:
 -- On TERMINATE reduce production plugin_decl -> PLUGIN namespaced_ident BEGIN program END
 -- On STATIC reduce production plugin_decl -> PLUGIN namespaced_ident BEGIN program END
 -- On SOURCE reduce production plugin_decl -> PLUGIN namespaced_ident BEGIN program END
@@ -310,182 +440,342 @@ plugin_decl -> PLUGIN namespaced_ident BEGIN program END . [ TERMINATE STATIC SO
 -- On CONDITION reduce production plugin_decl -> PLUGIN namespaced_ident BEGIN program END
 
 State 26:
+## Known stack suffix:
+## INITIAL
+## LR(1) items:
 source_or_initial_or_door -> INITIAL . [ IDENTIFIER ]
+## Transitions:
+## Reductions:
 -- On IDENTIFIER reduce production source_or_initial_or_door -> INITIAL
 
 State 27:
+## Known stack suffix:
+## IDENTIFIER
+## LR(1) items:
 assn -> IDENTIFIER . EQUALS ident_list [ SEMI ]
 assn -> IDENTIFIER . COLON LEFT_SQ_BRACE comma_list RIGHT_SQ_BRACE EQUALS ident_list [ SEMI ]
 assn -> IDENTIFIER . EQUALS namespaced_ident AMPERSAND par_ident_list [ SEMI ]
 assn -> IDENTIFIER . AMPERSANDEQUALS namespaced_ident [ SEMI ]
+## Transitions:
 -- On EQUALS shift to state 28
 -- On COLON shift to state 38
 -- On AMPERSANDEQUALS shift to state 50
+## Reductions:
 
 State 28:
+## Known stack suffix:
+## IDENTIFIER EQUALS
+## LR(1) items:
 assn -> IDENTIFIER EQUALS . ident_list [ SEMI ]
 assn -> IDENTIFIER EQUALS . namespaced_ident AMPERSAND par_ident_list [ SEMI ]
+## Transitions:
 -- On IDENTIFIER shift to state 6
 -- On namespaced_ident shift to state 29
 -- On ident_list shift to state 35
+## Reductions:
 -- On SEMI reduce production ident_list ->
 -- On PIPE reduce production ident_list ->
 
 State 29:
+## Known stack suffix:
+## IDENTIFIER EQUALS namespaced_ident
+## LR(1) items:
 assn -> IDENTIFIER EQUALS namespaced_ident . AMPERSAND par_ident_list [ SEMI ]
 ident_list -> namespaced_ident . [ SEMI PIPE ]
+## Transitions:
 -- On AMPERSAND shift to state 30
+## Reductions:
 -- On SEMI reduce production ident_list -> namespaced_ident
 -- On PIPE reduce production ident_list -> namespaced_ident
 
 State 30:
+## Known stack suffix:
+## IDENTIFIER EQUALS namespaced_ident AMPERSAND
+## LR(1) items:
 assn -> IDENTIFIER EQUALS namespaced_ident AMPERSAND . par_ident_list [ SEMI ]
+## Transitions:
 -- On IDENTIFIER shift to state 6
 -- On par_ident_list shift to state 31
 -- On namespaced_ident shift to state 34
+## Reductions:
 
 State 31:
+## Known stack suffix:
+## IDENTIFIER EQUALS namespaced_ident AMPERSAND par_ident_list
+## LR(1) items:
 assn -> IDENTIFIER EQUALS namespaced_ident AMPERSAND par_ident_list . [ SEMI ]
 par_ident_list -> par_ident_list . AMPERSAND namespaced_ident [ SEMI AMPERSAND ]
+## Transitions:
 -- On AMPERSAND shift to state 32
+## Reductions:
 -- On SEMI reduce production assn -> IDENTIFIER EQUALS namespaced_ident AMPERSAND par_ident_list
 
 State 32:
+## Known stack suffix:
+## par_ident_list AMPERSAND
+## LR(1) items:
 par_ident_list -> par_ident_list AMPERSAND . namespaced_ident [ SEMI AMPERSAND ]
+## Transitions:
 -- On IDENTIFIER shift to state 6
 -- On namespaced_ident shift to state 33
+## Reductions:
 
 State 33:
+## Known stack suffix:
+## par_ident_list AMPERSAND namespaced_ident
+## LR(1) items:
 par_ident_list -> par_ident_list AMPERSAND namespaced_ident . [ SEMI AMPERSAND ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production par_ident_list -> par_ident_list AMPERSAND namespaced_ident
 -- On AMPERSAND reduce production par_ident_list -> par_ident_list AMPERSAND namespaced_ident
 
 State 34:
+## Known stack suffix:
+## namespaced_ident
+## LR(1) items:
 par_ident_list -> namespaced_ident . [ SEMI AMPERSAND ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production par_ident_list -> namespaced_ident
 -- On AMPERSAND reduce production par_ident_list -> namespaced_ident
 
 State 35:
+## Known stack suffix:
+## IDENTIFIER EQUALS ident_list
+## LR(1) items:
 assn -> IDENTIFIER EQUALS ident_list . [ SEMI ]
 ident_list -> ident_list . PIPE namespaced_ident [ SEMI PIPE ]
+## Transitions:
 -- On PIPE shift to state 36
+## Reductions:
 -- On SEMI reduce production assn -> IDENTIFIER EQUALS ident_list
 
 State 36:
+## Known stack suffix:
+## ident_list PIPE
+## LR(1) items:
 ident_list -> ident_list PIPE . namespaced_ident [ SEMI PIPE ]
+## Transitions:
 -- On IDENTIFIER shift to state 6
 -- On namespaced_ident shift to state 37
+## Reductions:
 
 State 37:
+## Known stack suffix:
+## ident_list PIPE namespaced_ident
+## LR(1) items:
 ident_list -> ident_list PIPE namespaced_ident . [ SEMI PIPE ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production ident_list -> ident_list PIPE namespaced_ident
 -- On PIPE reduce production ident_list -> ident_list PIPE namespaced_ident
 
 State 38:
+## Known stack suffix:
+## IDENTIFIER COLON
+## LR(1) items:
 assn -> IDENTIFIER COLON . LEFT_SQ_BRACE comma_list RIGHT_SQ_BRACE EQUALS ident_list [ SEMI ]
+## Transitions:
 -- On LEFT_SQ_BRACE shift to state 39
+## Reductions:
 
 State 39:
+## Known stack suffix:
+## IDENTIFIER COLON LEFT_SQ_BRACE
+## LR(1) items:
 assn -> IDENTIFIER COLON LEFT_SQ_BRACE . comma_list RIGHT_SQ_BRACE EQUALS ident_list [ SEMI ]
+## Transitions:
 -- On STAR shift to state 40
 -- On IDENTIFIER shift to state 41
 -- On comma_list shift to state 42
+## Reductions:
 
 State 40:
+## Known stack suffix:
+## STAR
+## LR(1) items:
 comma_list -> STAR . [ RIGHT_SQ_BRACE COMMA ]
+## Transitions:
+## Reductions:
 -- On RIGHT_SQ_BRACE reduce production comma_list -> STAR
 -- On COMMA reduce production comma_list -> STAR
 
 State 41:
+## Known stack suffix:
+## IDENTIFIER
+## LR(1) items:
 comma_list -> IDENTIFIER . [ RIGHT_SQ_BRACE COMMA ]
+## Transitions:
+## Reductions:
 -- On RIGHT_SQ_BRACE reduce production comma_list -> IDENTIFIER
 -- On COMMA reduce production comma_list -> IDENTIFIER
 
 State 42:
+## Known stack suffix:
+## IDENTIFIER COLON LEFT_SQ_BRACE comma_list
+## LR(1) items:
 assn -> IDENTIFIER COLON LEFT_SQ_BRACE comma_list . RIGHT_SQ_BRACE EQUALS ident_list [ SEMI ]
 comma_list -> comma_list . COMMA IDENTIFIER [ RIGHT_SQ_BRACE COMMA ]
 comma_list -> comma_list . COMMA STAR [ RIGHT_SQ_BRACE COMMA ]
+## Transitions:
 -- On RIGHT_SQ_BRACE shift to state 43
 -- On COMMA shift to state 47
+## Reductions:
 
 State 43:
+## Known stack suffix:
+## IDENTIFIER COLON LEFT_SQ_BRACE comma_list RIGHT_SQ_BRACE
+## LR(1) items:
 assn -> IDENTIFIER COLON LEFT_SQ_BRACE comma_list RIGHT_SQ_BRACE . EQUALS ident_list [ SEMI ]
+## Transitions:
 -- On EQUALS shift to state 44
+## Reductions:
 
 State 44:
+## Known stack suffix:
+## IDENTIFIER COLON LEFT_SQ_BRACE comma_list RIGHT_SQ_BRACE EQUALS
+## LR(1) items:
 assn -> IDENTIFIER COLON LEFT_SQ_BRACE comma_list RIGHT_SQ_BRACE EQUALS . ident_list [ SEMI ]
+## Transitions:
 -- On IDENTIFIER shift to state 6
 -- On namespaced_ident shift to state 45
 -- On ident_list shift to state 46
+## Reductions:
 -- On SEMI reduce production ident_list ->
 -- On PIPE reduce production ident_list ->
 
 State 45:
+## Known stack suffix:
+## namespaced_ident
+## LR(1) items:
 ident_list -> namespaced_ident . [ SEMI PIPE ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production ident_list -> namespaced_ident
 -- On PIPE reduce production ident_list -> namespaced_ident
 
 State 46:
+## Known stack suffix:
+## IDENTIFIER COLON LEFT_SQ_BRACE comma_list RIGHT_SQ_BRACE EQUALS ident_list
+## LR(1) items:
 assn -> IDENTIFIER COLON LEFT_SQ_BRACE comma_list RIGHT_SQ_BRACE EQUALS ident_list . [ SEMI ]
 ident_list -> ident_list . PIPE namespaced_ident [ SEMI PIPE ]
+## Transitions:
 -- On PIPE shift to state 36
+## Reductions:
 -- On SEMI reduce production assn -> IDENTIFIER COLON LEFT_SQ_BRACE comma_list RIGHT_SQ_BRACE EQUALS ident_list
 
 State 47:
+## Known stack suffix:
+## comma_list COMMA
+## LR(1) items:
 comma_list -> comma_list COMMA . IDENTIFIER [ RIGHT_SQ_BRACE COMMA ]
 comma_list -> comma_list COMMA . STAR [ RIGHT_SQ_BRACE COMMA ]
+## Transitions:
 -- On STAR shift to state 48
 -- On IDENTIFIER shift to state 49
+## Reductions:
 
 State 48:
+## Known stack suffix:
+## comma_list COMMA STAR
+## LR(1) items:
 comma_list -> comma_list COMMA STAR . [ RIGHT_SQ_BRACE COMMA ]
+## Transitions:
+## Reductions:
 -- On RIGHT_SQ_BRACE reduce production comma_list -> comma_list COMMA STAR
 -- On COMMA reduce production comma_list -> comma_list COMMA STAR
 
 State 49:
+## Known stack suffix:
+## comma_list COMMA IDENTIFIER
+## LR(1) items:
 comma_list -> comma_list COMMA IDENTIFIER . [ RIGHT_SQ_BRACE COMMA ]
+## Transitions:
+## Reductions:
 -- On RIGHT_SQ_BRACE reduce production comma_list -> comma_list COMMA IDENTIFIER
 -- On COMMA reduce production comma_list -> comma_list COMMA IDENTIFIER
 
 State 50:
+## Known stack suffix:
+## IDENTIFIER AMPERSANDEQUALS
+## LR(1) items:
 assn -> IDENTIFIER AMPERSANDEQUALS . namespaced_ident [ SEMI ]
+## Transitions:
 -- On IDENTIFIER shift to state 6
 -- On namespaced_ident shift to state 51
+## Reductions:
 
 State 51:
+## Known stack suffix:
+## IDENTIFIER AMPERSANDEQUALS namespaced_ident
+## LR(1) items:
 assn -> IDENTIFIER AMPERSANDEQUALS namespaced_ident . [ SEMI ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production assn -> IDENTIFIER AMPERSANDEQUALS namespaced_ident
 
 State 52:
+## Known stack suffix:
+## HANDLE
+## LR(1) items:
 err_def -> HANDLE . ERROR ident_list PIPE namespaced_ident SEMI [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
 -- On ERROR shift to state 53
+## Reductions:
 
 State 53:
+## Known stack suffix:
+## HANDLE ERROR
+## LR(1) items:
 err_def -> HANDLE ERROR . ident_list PIPE namespaced_ident SEMI [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
 -- On IDENTIFIER shift to state 6
 -- On namespaced_ident shift to state 45
 -- On ident_list shift to state 54
+## Reductions:
 -- On PIPE reduce production ident_list ->
 
 State 54:
+## Known stack suffix:
+## HANDLE ERROR ident_list
+## LR(1) items:
 err_def -> HANDLE ERROR ident_list . PIPE namespaced_ident SEMI [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
 ident_list -> ident_list . PIPE namespaced_ident [ PIPE ]
+## Transitions:
 -- On PIPE shift to state 55
+## Reductions:
 
 State 55:
+## Known stack suffix:
+## HANDLE ERROR ident_list PIPE
+## LR(1) items:
 err_def -> HANDLE ERROR ident_list PIPE . namespaced_ident SEMI [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
 ident_list -> ident_list PIPE . namespaced_ident [ PIPE ]
+## Transitions:
 -- On IDENTIFIER shift to state 6
 -- On namespaced_ident shift to state 56
+## Reductions:
 
 State 56:
+## Known stack suffix:
+## HANDLE ERROR ident_list PIPE namespaced_ident
+## LR(1) items:
 err_def -> HANDLE ERROR ident_list PIPE namespaced_ident . SEMI [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
 ident_list -> ident_list PIPE namespaced_ident . [ PIPE ]
+## Transitions:
 -- On SEMI shift to state 57
+## Reductions:
 -- On PIPE reduce production ident_list -> ident_list PIPE namespaced_ident
 
 State 57:
+## Known stack suffix:
+## HANDLE ERROR ident_list PIPE namespaced_ident SEMI
+## LR(1) items:
 err_def -> HANDLE ERROR ident_list PIPE namespaced_ident SEMI . [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
+## Reductions:
 -- On TERMINATE reduce production err_def -> HANDLE ERROR ident_list PIPE namespaced_ident SEMI
 -- On STATIC reduce production err_def -> HANDLE ERROR ident_list PIPE namespaced_ident SEMI
 -- On SOURCE reduce production err_def -> HANDLE ERROR ident_list PIPE namespaced_ident SEMI
@@ -510,7 +800,12 @@ err_def -> HANDLE ERROR ident_list PIPE namespaced_ident SEMI . [ TERMINATE STAT
 -- On CONDITION reduce production err_def -> HANDLE ERROR ident_list PIPE namespaced_ident SEMI
 
 State 58:
+## Known stack suffix:
+## EXTERNAL
+## LR(1) items:
 external_opt -> EXTERNAL . [ SEQUENCE READWRITE POOL NODE INSTANCE FREE EXCLUSIVE CONDITION ]
+## Transitions:
+## Reductions:
 -- On SEQUENCE reduce production external_opt -> EXTERNAL
 -- On READWRITE reduce production external_opt -> EXTERNAL
 -- On POOL reduce production external_opt -> EXTERNAL
@@ -521,20 +816,40 @@ external_opt -> EXTERNAL . [ SEQUENCE READWRITE POOL NODE INSTANCE FREE EXCLUSIV
 -- On CONDITION reduce production external_opt -> EXTERNAL
 
 State 59:
+## Known stack suffix:
+## DOOR
+## LR(1) items:
 source_or_initial_or_door -> DOOR . [ IDENTIFIER ]
+## Transitions:
+## Reductions:
 -- On IDENTIFIER reduce production source_or_initial_or_door -> DOOR
 
 State 60:
+## Known stack suffix:
+## DEPENDS
+## LR(1) items:
 plugin_depends_decl -> DEPENDS . namespaced_ident SEMI [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
 -- On IDENTIFIER shift to state 6
 -- On namespaced_ident shift to state 61
+## Reductions:
 
 State 61:
+## Known stack suffix:
+## DEPENDS namespaced_ident
+## LR(1) items:
 plugin_depends_decl -> DEPENDS namespaced_ident . SEMI [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
 -- On SEMI shift to state 62
+## Reductions:
 
 State 62:
+## Known stack suffix:
+## DEPENDS namespaced_ident SEMI
+## LR(1) items:
 plugin_depends_decl -> DEPENDS namespaced_ident SEMI . [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
+## Reductions:
 -- On TERMINATE reduce production plugin_depends_decl -> DEPENDS namespaced_ident SEMI
 -- On STATIC reduce production plugin_depends_decl -> DEPENDS namespaced_ident SEMI
 -- On SOURCE reduce production plugin_depends_decl -> DEPENDS namespaced_ident SEMI
@@ -559,7 +874,12 @@ plugin_depends_decl -> DEPENDS namespaced_ident SEMI . [ TERMINATE STATIC SOURCE
 -- On CONDITION reduce production plugin_depends_decl -> DEPENDS namespaced_ident SEMI
 
 State 63:
+## Known stack suffix:
+## code_list term_decl
+## LR(1) items:
 code_list -> code_list term_decl . [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
+## Reductions:
 -- On TERMINATE reduce production code_list -> code_list term_decl
 -- On STATIC reduce production code_list -> code_list term_decl
 -- On SOURCE reduce production code_list -> code_list term_decl
@@ -584,19 +904,34 @@ code_list -> code_list term_decl . [ TERMINATE STATIC SOURCE SEQUENCE READWRITE 
 -- On CONDITION reduce production code_list -> code_list term_decl
 
 State 64:
+## Known stack suffix:
+## source_or_initial_or_door
+## LR(1) items:
 main_fn -> source_or_initial_or_door . namespaced_ident SEMI [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
 main_fn -> source_or_initial_or_door . namespaced_ident PIPE ident_list SEMI [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
 -- On IDENTIFIER shift to state 6
 -- On namespaced_ident shift to state 65
+## Reductions:
 
 State 65:
+## Known stack suffix:
+## source_or_initial_or_door namespaced_ident
+## LR(1) items:
 main_fn -> source_or_initial_or_door namespaced_ident . SEMI [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
 main_fn -> source_or_initial_or_door namespaced_ident . PIPE ident_list SEMI [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
 -- On SEMI shift to state 66
 -- On PIPE shift to state 67
+## Reductions:
 
 State 66:
+## Known stack suffix:
+## source_or_initial_or_door namespaced_ident SEMI
+## LR(1) items:
 main_fn -> source_or_initial_or_door namespaced_ident SEMI . [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
+## Reductions:
 -- On TERMINATE reduce production main_fn -> source_or_initial_or_door namespaced_ident SEMI
 -- On STATIC reduce production main_fn -> source_or_initial_or_door namespaced_ident SEMI
 -- On SOURCE reduce production main_fn -> source_or_initial_or_door namespaced_ident SEMI
@@ -621,21 +956,36 @@ main_fn -> source_or_initial_or_door namespaced_ident SEMI . [ TERMINATE STATIC 
 -- On CONDITION reduce production main_fn -> source_or_initial_or_door namespaced_ident SEMI
 
 State 67:
+## Known stack suffix:
+## source_or_initial_or_door namespaced_ident PIPE
+## LR(1) items:
 main_fn -> source_or_initial_or_door namespaced_ident PIPE . ident_list SEMI [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
 -- On IDENTIFIER shift to state 6
 -- On namespaced_ident shift to state 45
 -- On ident_list shift to state 68
+## Reductions:
 -- On SEMI reduce production ident_list ->
 -- On PIPE reduce production ident_list ->
 
 State 68:
+## Known stack suffix:
+## source_or_initial_or_door namespaced_ident PIPE ident_list
+## LR(1) items:
 ident_list -> ident_list . PIPE namespaced_ident [ SEMI PIPE ]
 main_fn -> source_or_initial_or_door namespaced_ident PIPE ident_list . SEMI [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
 -- On SEMI shift to state 69
 -- On PIPE shift to state 36
+## Reductions:
 
 State 69:
+## Known stack suffix:
+## source_or_initial_or_door namespaced_ident PIPE ident_list SEMI
+## LR(1) items:
 main_fn -> source_or_initial_or_door namespaced_ident PIPE ident_list SEMI . [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
+## Reductions:
 -- On TERMINATE reduce production main_fn -> source_or_initial_or_door namespaced_ident PIPE ident_list SEMI
 -- On STATIC reduce production main_fn -> source_or_initial_or_door namespaced_ident PIPE ident_list SEMI
 -- On SOURCE reduce production main_fn -> source_or_initial_or_door namespaced_ident PIPE ident_list SEMI
@@ -660,7 +1010,12 @@ main_fn -> source_or_initial_or_door namespaced_ident PIPE ident_list SEMI . [ T
 -- On CONDITION reduce production main_fn -> source_or_initial_or_door namespaced_ident PIPE ident_list SEMI
 
 State 70:
+## Known stack suffix:
+## code_list plugin_depends_decl
+## LR(1) items:
 code_list -> code_list plugin_depends_decl . [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
+## Reductions:
 -- On TERMINATE reduce production code_list -> code_list plugin_depends_decl
 -- On STATIC reduce production code_list -> code_list plugin_depends_decl
 -- On SOURCE reduce production code_list -> code_list plugin_depends_decl
@@ -685,7 +1040,12 @@ code_list -> code_list plugin_depends_decl . [ TERMINATE STATIC SOURCE SEQUENCE 
 -- On CONDITION reduce production code_list -> code_list plugin_depends_decl
 
 State 71:
+## Known stack suffix:
+## code_list plugin_decl
+## LR(1) items:
 code_list -> code_list plugin_decl . [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
+## Reductions:
 -- On TERMINATE reduce production code_list -> code_list plugin_decl
 -- On STATIC reduce production code_list -> code_list plugin_decl
 -- On SOURCE reduce production code_list -> code_list plugin_decl
@@ -710,7 +1070,12 @@ code_list -> code_list plugin_decl . [ TERMINATE STATIC SOURCE SEQUENCE READWRIT
 -- On CONDITION reduce production code_list -> code_list plugin_decl
 
 State 72:
+## Known stack suffix:
+## code_list node_decl
+## LR(1) items:
 code_list -> code_list node_decl . [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
+## Reductions:
 -- On TERMINATE reduce production code_list -> code_list node_decl
 -- On STATIC reduce production code_list -> code_list node_decl
 -- On SOURCE reduce production code_list -> code_list node_decl
@@ -735,22 +1100,42 @@ code_list -> code_list node_decl . [ TERMINATE STATIC SOURCE SEQUENCE READWRITE 
 -- On CONDITION reduce production code_list -> code_list node_decl
 
 State 73:
+## Known stack suffix:
+## mod_modifier_list
+## LR(1) items:
 mod_decl -> mod_modifier_list . MODULE namespaced_ident BEGIN program END [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
 -- On MODULE shift to state 74
+## Reductions:
 
 State 74:
+## Known stack suffix:
+## mod_modifier_list MODULE
+## LR(1) items:
 mod_decl -> mod_modifier_list MODULE . namespaced_ident BEGIN program END [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
 -- On IDENTIFIER shift to state 6
 -- On namespaced_ident shift to state 75
+## Reductions:
 
 State 75:
+## Known stack suffix:
+## mod_modifier_list MODULE namespaced_ident
+## LR(1) items:
 mod_decl -> mod_modifier_list MODULE namespaced_ident . BEGIN program END [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
 -- On BEGIN shift to state 76
+## Reductions:
 
 State 76:
+## Known stack suffix:
+## mod_modifier_list MODULE namespaced_ident BEGIN
+## LR(1) items:
 mod_decl -> mod_modifier_list MODULE namespaced_ident BEGIN . program END [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
 -- On program shift to state 77
 -- On code_list shift to state 4
+## Reductions:
 -- On TERMINATE reduce production code_list ->
 -- On STATIC reduce production code_list ->
 -- On SOURCE reduce production code_list ->
@@ -774,11 +1159,21 @@ mod_decl -> mod_modifier_list MODULE namespaced_ident BEGIN . program END [ TERM
 -- On CONDITION reduce production code_list ->
 
 State 77:
+## Known stack suffix:
+## mod_modifier_list MODULE namespaced_ident BEGIN program
+## LR(1) items:
 mod_decl -> mod_modifier_list MODULE namespaced_ident BEGIN program . END [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
 -- On END shift to state 78
+## Reductions:
 
 State 78:
+## Known stack suffix:
+## mod_modifier_list MODULE namespaced_ident BEGIN program END
+## LR(1) items:
 mod_decl -> mod_modifier_list MODULE namespaced_ident BEGIN program END . [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
+## Reductions:
 -- On TERMINATE reduce production mod_decl -> mod_modifier_list MODULE namespaced_ident BEGIN program END
 -- On STATIC reduce production mod_decl -> mod_modifier_list MODULE namespaced_ident BEGIN program END
 -- On SOURCE reduce production mod_decl -> mod_modifier_list MODULE namespaced_ident BEGIN program END
@@ -803,18 +1198,33 @@ mod_decl -> mod_modifier_list MODULE namespaced_ident BEGIN program END . [ TERM
 -- On CONDITION reduce production mod_decl -> mod_modifier_list MODULE namespaced_ident BEGIN program END
 
 State 79:
+## Known stack suffix:
+## mod_modifier
+## LR(1) items:
 mod_modifier_list -> mod_modifier . mod_modifier_list [ MODULE ]
+## Transitions:
 -- On STATIC shift to state 11
 -- On mod_modifier_list shift to state 80
 -- On mod_modifier shift to state 79
+## Reductions:
 -- On MODULE reduce production mod_modifier_list ->
 
 State 80:
+## Known stack suffix:
+## mod_modifier mod_modifier_list
+## LR(1) items:
 mod_modifier_list -> mod_modifier mod_modifier_list . [ MODULE ]
+## Transitions:
+## Reductions:
 -- On MODULE reduce production mod_modifier_list -> mod_modifier mod_modifier_list
 
 State 81:
+## Known stack suffix:
+## code_list mod_inst
+## LR(1) items:
 code_list -> code_list mod_inst . [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
+## Reductions:
 -- On TERMINATE reduce production code_list -> code_list mod_inst
 -- On STATIC reduce production code_list -> code_list mod_inst
 -- On SOURCE reduce production code_list -> code_list mod_inst
@@ -839,7 +1249,12 @@ code_list -> code_list mod_inst . [ TERMINATE STATIC SOURCE SEQUENCE READWRITE P
 -- On CONDITION reduce production code_list -> code_list mod_inst
 
 State 82:
+## Known stack suffix:
+## code_list mod_decl
+## LR(1) items:
 code_list -> code_list mod_decl . [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
+## Reductions:
 -- On TERMINATE reduce production code_list -> code_list mod_decl
 -- On STATIC reduce production code_list -> code_list mod_decl
 -- On SOURCE reduce production code_list -> code_list mod_decl
@@ -864,7 +1279,12 @@ code_list -> code_list mod_decl . [ TERMINATE STATIC SOURCE SEQUENCE READWRITE P
 -- On CONDITION reduce production code_list -> code_list mod_decl
 
 State 83:
+## Known stack suffix:
+## code_list main_fn
+## LR(1) items:
 code_list -> code_list main_fn . [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
+## Reductions:
 -- On TERMINATE reduce production code_list -> code_list main_fn
 -- On STATIC reduce production code_list -> code_list main_fn
 -- On SOURCE reduce production code_list -> code_list main_fn
@@ -889,7 +1309,12 @@ code_list -> code_list main_fn . [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PR
 -- On CONDITION reduce production code_list -> code_list main_fn
 
 State 84:
+## Known stack suffix:
+## code_list guard_order_decl
+## LR(1) items:
 code_list -> code_list guard_order_decl . [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
+## Reductions:
 -- On TERMINATE reduce production code_list -> code_list guard_order_decl
 -- On STATIC reduce production code_list -> code_list guard_order_decl
 -- On SOURCE reduce production code_list -> code_list guard_order_decl
@@ -914,10 +1339,14 @@ code_list -> code_list guard_order_decl . [ TERMINATE STATIC SOURCE SEQUENCE REA
 -- On CONDITION reduce production code_list -> code_list guard_order_decl
 
 State 85:
+## Known stack suffix:
+## external_opt
+## LR(1) items:
 atom_decl -> external_opt . atom_type atom_mod_opt_list namespaced_ident simple_arg_list ARROW data_type SEMI [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
 cond_decl -> external_opt . CONDITION namespaced_ident simple_arg_list ARROW BOOL SEMI [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
 mod_inst -> external_opt . INSTANCE namespaced_ident IDENTIFIER where_guard_indentifications_opt SEMI [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
 node_decl -> external_opt . NODE node_mod_list namespaced_ident arg_list ARROW node_target_arg_list SEMI [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
 -- On SEQUENCE shift to state 86
 -- On READWRITE shift to state 87
 -- On POOL shift to state 88
@@ -927,79 +1356,144 @@ node_decl -> external_opt . NODE node_mod_list namespaced_ident arg_list ARROW n
 -- On EXCLUSIVE shift to state 225
 -- On CONDITION shift to state 226
 -- On atom_type shift to state 232
+## Reductions:
 
 State 86:
+## Known stack suffix:
+## SEQUENCE
+## LR(1) items:
 atom_type -> SEQUENCE . [ SLASH IDENTIFIER ]
+## Transitions:
+## Reductions:
 -- On SLASH reduce production atom_type -> SEQUENCE
 -- On IDENTIFIER reduce production atom_type -> SEQUENCE
 
 State 87:
+## Known stack suffix:
+## READWRITE
+## LR(1) items:
 atom_type -> READWRITE . [ SLASH IDENTIFIER ]
+## Transitions:
+## Reductions:
 -- On SLASH reduce production atom_type -> READWRITE
 -- On IDENTIFIER reduce production atom_type -> READWRITE
 
 State 88:
+## Known stack suffix:
+## POOL
+## LR(1) items:
 atom_type -> POOL . [ SLASH IDENTIFIER ]
+## Transitions:
+## Reductions:
 -- On SLASH reduce production atom_type -> POOL
 -- On IDENTIFIER reduce production atom_type -> POOL
 
 State 89:
+## Known stack suffix:
+## external_opt NODE
+## LR(1) items:
 node_decl -> external_opt NODE . node_mod_list namespaced_ident arg_list ARROW node_target_arg_list SEMI [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
 -- On MUTABLE shift to state 90
 -- On DETACHED shift to state 91
 -- On ABSTRACT shift to state 92
 -- On node_mod_list shift to state 96
+## Reductions:
 -- On IDENTIFIER reduce production node_mod_list ->
 
 State 90:
+## Known stack suffix:
+## MUTABLE
+## LR(1) items:
 node_mod_list -> MUTABLE . node_mod_list [ IDENTIFIER ]
+## Transitions:
 -- On MUTABLE shift to state 90
 -- On DETACHED shift to state 91
 -- On ABSTRACT shift to state 92
 -- On node_mod_list shift to state 95
+## Reductions:
 -- On IDENTIFIER reduce production node_mod_list ->
 
 State 91:
+## Known stack suffix:
+## DETACHED
+## LR(1) items:
 node_mod_list -> DETACHED . node_mod_list [ IDENTIFIER ]
+## Transitions:
 -- On MUTABLE shift to state 90
 -- On DETACHED shift to state 91
 -- On ABSTRACT shift to state 92
 -- On node_mod_list shift to state 94
+## Reductions:
 -- On IDENTIFIER reduce production node_mod_list ->
 
 State 92:
+## Known stack suffix:
+## ABSTRACT
+## LR(1) items:
 node_mod_list -> ABSTRACT . node_mod_list [ IDENTIFIER ]
+## Transitions:
 -- On MUTABLE shift to state 90
 -- On DETACHED shift to state 91
 -- On ABSTRACT shift to state 92
 -- On node_mod_list shift to state 93
+## Reductions:
 -- On IDENTIFIER reduce production node_mod_list ->
 
 State 93:
+## Known stack suffix:
+## ABSTRACT node_mod_list
+## LR(1) items:
 node_mod_list -> ABSTRACT node_mod_list . [ IDENTIFIER ]
+## Transitions:
+## Reductions:
 -- On IDENTIFIER reduce production node_mod_list -> ABSTRACT node_mod_list
 
 State 94:
+## Known stack suffix:
+## DETACHED node_mod_list
+## LR(1) items:
 node_mod_list -> DETACHED node_mod_list . [ IDENTIFIER ]
+## Transitions:
+## Reductions:
 -- On IDENTIFIER reduce production node_mod_list -> DETACHED node_mod_list
 
 State 95:
+## Known stack suffix:
+## MUTABLE node_mod_list
+## LR(1) items:
 node_mod_list -> MUTABLE node_mod_list . [ IDENTIFIER ]
+## Transitions:
+## Reductions:
 -- On IDENTIFIER reduce production node_mod_list -> MUTABLE node_mod_list
 
 State 96:
+## Known stack suffix:
+## external_opt NODE node_mod_list
+## LR(1) items:
 node_decl -> external_opt NODE node_mod_list . namespaced_ident arg_list ARROW node_target_arg_list SEMI [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
 -- On IDENTIFIER shift to state 6
 -- On namespaced_ident shift to state 97
+## Reductions:
 
 State 97:
+## Known stack suffix:
+## external_opt NODE node_mod_list namespaced_ident
+## LR(1) items:
 node_decl -> external_opt NODE node_mod_list namespaced_ident . arg_list ARROW node_target_arg_list SEMI [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
 -- On LEFT_PAREN shift to state 98
 -- On arg_list shift to state 198
+## Reductions:
 
 State 98:
+## Known stack suffix:
+## LEFT_PAREN
+## LR(1) items:
 arg_list -> LEFT_PAREN . RIGHT_PAREN [ ARROW ]
 arg_list -> LEFT_PAREN . typed_or_guardref_item_list RIGHT_PAREN [ ARROW ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 99
 -- On GUARD shift to state 100
 -- On CONST shift to state 168
@@ -1009,80 +1503,150 @@ arg_list -> LEFT_PAREN . typed_or_guardref_item_list RIGHT_PAREN [ ARROW ]
 -- On type_mod_opt shift to state 174
 -- On guardref_item shift to state 194
 -- On data_type shift to state 195
+## Reductions:
 -- On LEFT_PAREN reduce production type_mod_opt ->
 -- On IDENTIFIER reduce production type_mod_opt ->
 -- On BOOL reduce production type_mod_opt ->
 
 State 99:
+## Known stack suffix:
+## LEFT_PAREN RIGHT_PAREN
+## LR(1) items:
 arg_list -> LEFT_PAREN RIGHT_PAREN . [ ARROW ]
+## Transitions:
+## Reductions:
 -- On ARROW reduce production arg_list -> LEFT_PAREN RIGHT_PAREN
 
 State 100:
+## Known stack suffix:
+## GUARD
+## LR(1) items:
 guardref_item -> GUARD . IDENTIFIER guardref_modifier_list LEFT_PAREN uninterpreted_cpp_code_comma_list RIGHT_PAREN as_named_opt if_condition_opt [ RIGHT_PAREN COMMA ]
+## Transitions:
 -- On IDENTIFIER shift to state 101
+## Reductions:
 
 State 101:
+## Known stack suffix:
+## GUARD IDENTIFIER
+## LR(1) items:
 guardref_item -> GUARD IDENTIFIER . guardref_modifier_list LEFT_PAREN uninterpreted_cpp_code_comma_list RIGHT_PAREN as_named_opt if_condition_opt [ RIGHT_PAREN COMMA ]
+## Transitions:
 -- On SLASH shift to state 102
 -- On guardref_modifier_list shift to state 111
+## Reductions:
 -- On LEFT_PAREN reduce production guardref_modifier_list ->
 
 State 102:
+## Known stack suffix:
+## SLASH
+## LR(1) items:
 guardref_modifier_list -> SLASH . READ guardref_modifier_list [ LEFT_PAREN ]
 guardref_modifier_list -> SLASH . WRITE guardref_modifier_list [ LEFT_PAREN ]
 guardref_modifier_list -> SLASH . UPGRADEABLE guardref_modifier_list [ LEFT_PAREN ]
 guardref_modifier_list -> SLASH . NULLOK guardref_modifier_list [ LEFT_PAREN ]
+## Transitions:
 -- On WRITE shift to state 103
 -- On UPGRADEABLE shift to state 105
 -- On READ shift to state 107
 -- On NULLOK shift to state 109
+## Reductions:
 
 State 103:
+## Known stack suffix:
+## SLASH WRITE
+## LR(1) items:
 guardref_modifier_list -> SLASH WRITE . guardref_modifier_list [ LEFT_PAREN ]
+## Transitions:
 -- On SLASH shift to state 102
 -- On guardref_modifier_list shift to state 104
+## Reductions:
 -- On LEFT_PAREN reduce production guardref_modifier_list ->
 
 State 104:
+## Known stack suffix:
+## SLASH WRITE guardref_modifier_list
+## LR(1) items:
 guardref_modifier_list -> SLASH WRITE guardref_modifier_list . [ LEFT_PAREN ]
+## Transitions:
+## Reductions:
 -- On LEFT_PAREN reduce production guardref_modifier_list -> SLASH WRITE guardref_modifier_list
 
 State 105:
+## Known stack suffix:
+## SLASH UPGRADEABLE
+## LR(1) items:
 guardref_modifier_list -> SLASH UPGRADEABLE . guardref_modifier_list [ LEFT_PAREN ]
+## Transitions:
 -- On SLASH shift to state 102
 -- On guardref_modifier_list shift to state 106
+## Reductions:
 -- On LEFT_PAREN reduce production guardref_modifier_list ->
 
 State 106:
+## Known stack suffix:
+## SLASH UPGRADEABLE guardref_modifier_list
+## LR(1) items:
 guardref_modifier_list -> SLASH UPGRADEABLE guardref_modifier_list . [ LEFT_PAREN ]
+## Transitions:
+## Reductions:
 -- On LEFT_PAREN reduce production guardref_modifier_list -> SLASH UPGRADEABLE guardref_modifier_list
 
 State 107:
+## Known stack suffix:
+## SLASH READ
+## LR(1) items:
 guardref_modifier_list -> SLASH READ . guardref_modifier_list [ LEFT_PAREN ]
+## Transitions:
 -- On SLASH shift to state 102
 -- On guardref_modifier_list shift to state 108
+## Reductions:
 -- On LEFT_PAREN reduce production guardref_modifier_list ->
 
 State 108:
+## Known stack suffix:
+## SLASH READ guardref_modifier_list
+## LR(1) items:
 guardref_modifier_list -> SLASH READ guardref_modifier_list . [ LEFT_PAREN ]
+## Transitions:
+## Reductions:
 -- On LEFT_PAREN reduce production guardref_modifier_list -> SLASH READ guardref_modifier_list
 
 State 109:
+## Known stack suffix:
+## SLASH NULLOK
+## LR(1) items:
 guardref_modifier_list -> SLASH NULLOK . guardref_modifier_list [ LEFT_PAREN ]
+## Transitions:
 -- On SLASH shift to state 102
 -- On guardref_modifier_list shift to state 110
+## Reductions:
 -- On LEFT_PAREN reduce production guardref_modifier_list ->
 
 State 110:
+## Known stack suffix:
+## SLASH NULLOK guardref_modifier_list
+## LR(1) items:
 guardref_modifier_list -> SLASH NULLOK guardref_modifier_list . [ LEFT_PAREN ]
+## Transitions:
+## Reductions:
 -- On LEFT_PAREN reduce production guardref_modifier_list -> SLASH NULLOK guardref_modifier_list
 
 State 111:
+## Known stack suffix:
+## GUARD IDENTIFIER guardref_modifier_list
+## LR(1) items:
 guardref_item -> GUARD IDENTIFIER guardref_modifier_list . LEFT_PAREN uninterpreted_cpp_code_comma_list RIGHT_PAREN as_named_opt if_condition_opt [ RIGHT_PAREN COMMA ]
+## Transitions:
 -- On LEFT_PAREN shift to state 112
+## Reductions:
 
 State 112:
+## Known stack suffix:
+## GUARD IDENTIFIER guardref_modifier_list LEFT_PAREN
+## LR(1) items:
 guardref_item -> GUARD IDENTIFIER guardref_modifier_list LEFT_PAREN . uninterpreted_cpp_code_comma_list RIGHT_PAREN as_named_opt if_condition_opt [ RIGHT_PAREN COMMA ]
+## Transitions:
 -- On STAR shift to state 113
 -- On QUESTION shift to state 114
 -- On PLUS shift to state 115
@@ -1108,11 +1672,16 @@ guardref_item -> GUARD IDENTIFIER guardref_modifier_list LEFT_PAREN . uninterpre
 -- On uninterpreted_cpp_code_comma_list shift to state 160
 -- On uninterpreted_cpp_code shift to state 148
 -- On ident shift to state 134
+## Reductions:
 -- On RIGHT_PAREN reduce production uninterpreted_cpp_code ->
 -- On COMMA reduce production uninterpreted_cpp_code ->
 
 State 113:
+## Known stack suffix:
+## STAR
+## LR(1) items:
 uninterpreted_cpp_code_fragment -> STAR . uninterpreted_cpp_code_fragment [ STAR RIGHT_SQ_BRACE RIGHT_PAREN QUESTION PLUS PIPE NUMBER NOTEQUALS MINUS LESSTHAN LEFT_SQ_BRACE LEFT_PAREN ISEQUALS IDENTIFIER GREATERTHAN EXCLAMATION DOUBLECOLON DOUBLEBAR DOUBLEAMPERSAND DOT COMMA COLON BACKARROW ARROW ]
+## Transitions:
 -- On STAR shift to state 113
 -- On QUESTION shift to state 114
 -- On PLUS shift to state 115
@@ -1136,9 +1705,14 @@ uninterpreted_cpp_code_fragment -> STAR . uninterpreted_cpp_code_fragment [ STAR
 -- On ARROW shift to state 132
 -- On uninterpreted_cpp_code_fragment shift to state 159
 -- On ident shift to state 134
+## Reductions:
 
 State 114:
+## Known stack suffix:
+## QUESTION
+## LR(1) items:
 uninterpreted_cpp_code_fragment -> QUESTION . uninterpreted_cpp_code_fragment [ STAR RIGHT_SQ_BRACE RIGHT_PAREN QUESTION PLUS PIPE NUMBER NOTEQUALS MINUS LESSTHAN LEFT_SQ_BRACE LEFT_PAREN ISEQUALS IDENTIFIER GREATERTHAN EXCLAMATION DOUBLECOLON DOUBLEBAR DOUBLEAMPERSAND DOT COMMA COLON BACKARROW ARROW ]
+## Transitions:
 -- On STAR shift to state 113
 -- On QUESTION shift to state 114
 -- On PLUS shift to state 115
@@ -1162,9 +1736,14 @@ uninterpreted_cpp_code_fragment -> QUESTION . uninterpreted_cpp_code_fragment [ 
 -- On ARROW shift to state 132
 -- On uninterpreted_cpp_code_fragment shift to state 158
 -- On ident shift to state 134
+## Reductions:
 
 State 115:
+## Known stack suffix:
+## PLUS
+## LR(1) items:
 uninterpreted_cpp_code_fragment -> PLUS . uninterpreted_cpp_code_fragment [ STAR RIGHT_SQ_BRACE RIGHT_PAREN QUESTION PLUS PIPE NUMBER NOTEQUALS MINUS LESSTHAN LEFT_SQ_BRACE LEFT_PAREN ISEQUALS IDENTIFIER GREATERTHAN EXCLAMATION DOUBLECOLON DOUBLEBAR DOUBLEAMPERSAND DOT COMMA COLON BACKARROW ARROW ]
+## Transitions:
 -- On STAR shift to state 113
 -- On QUESTION shift to state 114
 -- On PLUS shift to state 115
@@ -1188,9 +1767,14 @@ uninterpreted_cpp_code_fragment -> PLUS . uninterpreted_cpp_code_fragment [ STAR
 -- On ARROW shift to state 132
 -- On uninterpreted_cpp_code_fragment shift to state 157
 -- On ident shift to state 134
+## Reductions:
 
 State 116:
+## Known stack suffix:
+## PIPE
+## LR(1) items:
 uninterpreted_cpp_code_fragment -> PIPE . uninterpreted_cpp_code_fragment [ STAR RIGHT_SQ_BRACE RIGHT_PAREN QUESTION PLUS PIPE NUMBER NOTEQUALS MINUS LESSTHAN LEFT_SQ_BRACE LEFT_PAREN ISEQUALS IDENTIFIER GREATERTHAN EXCLAMATION DOUBLECOLON DOUBLEBAR DOUBLEAMPERSAND DOT COMMA COLON BACKARROW ARROW ]
+## Transitions:
 -- On STAR shift to state 113
 -- On QUESTION shift to state 114
 -- On PLUS shift to state 115
@@ -1214,9 +1798,15 @@ uninterpreted_cpp_code_fragment -> PIPE . uninterpreted_cpp_code_fragment [ STAR
 -- On ARROW shift to state 132
 -- On uninterpreted_cpp_code_fragment shift to state 156
 -- On ident shift to state 134
+## Reductions:
 
 State 117:
+## Known stack suffix:
+## NUMBER
+## LR(1) items:
 uninterpreted_cpp_code_fragment -> NUMBER . [ STAR RIGHT_SQ_BRACE RIGHT_PAREN QUESTION PLUS PIPE NUMBER NOTEQUALS MINUS LESSTHAN LEFT_SQ_BRACE LEFT_PAREN ISEQUALS IDENTIFIER GREATERTHAN EXCLAMATION DOUBLECOLON DOUBLEBAR DOUBLEAMPERSAND DOT COMMA COLON BACKARROW ARROW ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production uninterpreted_cpp_code_fragment -> NUMBER
 -- On RIGHT_SQ_BRACE reduce production uninterpreted_cpp_code_fragment -> NUMBER
 -- On RIGHT_PAREN reduce production uninterpreted_cpp_code_fragment -> NUMBER
@@ -1243,7 +1833,11 @@ uninterpreted_cpp_code_fragment -> NUMBER . [ STAR RIGHT_SQ_BRACE RIGHT_PAREN QU
 -- On ARROW reduce production uninterpreted_cpp_code_fragment -> NUMBER
 
 State 118:
+## Known stack suffix:
+## NOTEQUALS
+## LR(1) items:
 uninterpreted_cpp_code_fragment -> NOTEQUALS . uninterpreted_cpp_code_fragment [ STAR RIGHT_SQ_BRACE RIGHT_PAREN QUESTION PLUS PIPE NUMBER NOTEQUALS MINUS LESSTHAN LEFT_SQ_BRACE LEFT_PAREN ISEQUALS IDENTIFIER GREATERTHAN EXCLAMATION DOUBLECOLON DOUBLEBAR DOUBLEAMPERSAND DOT COMMA COLON BACKARROW ARROW ]
+## Transitions:
 -- On STAR shift to state 113
 -- On QUESTION shift to state 114
 -- On PLUS shift to state 115
@@ -1267,9 +1861,14 @@ uninterpreted_cpp_code_fragment -> NOTEQUALS . uninterpreted_cpp_code_fragment [
 -- On ARROW shift to state 132
 -- On uninterpreted_cpp_code_fragment shift to state 155
 -- On ident shift to state 134
+## Reductions:
 
 State 119:
+## Known stack suffix:
+## MINUS
+## LR(1) items:
 uninterpreted_cpp_code_fragment -> MINUS . uninterpreted_cpp_code_fragment [ STAR RIGHT_SQ_BRACE RIGHT_PAREN QUESTION PLUS PIPE NUMBER NOTEQUALS MINUS LESSTHAN LEFT_SQ_BRACE LEFT_PAREN ISEQUALS IDENTIFIER GREATERTHAN EXCLAMATION DOUBLECOLON DOUBLEBAR DOUBLEAMPERSAND DOT COMMA COLON BACKARROW ARROW ]
+## Transitions:
 -- On STAR shift to state 113
 -- On QUESTION shift to state 114
 -- On PLUS shift to state 115
@@ -1293,9 +1892,14 @@ uninterpreted_cpp_code_fragment -> MINUS . uninterpreted_cpp_code_fragment [ STA
 -- On ARROW shift to state 132
 -- On uninterpreted_cpp_code_fragment shift to state 154
 -- On ident shift to state 134
+## Reductions:
 
 State 120:
+## Known stack suffix:
+## LESSTHAN
+## LR(1) items:
 uninterpreted_cpp_code_fragment -> LESSTHAN . uninterpreted_cpp_code_fragment [ STAR RIGHT_SQ_BRACE RIGHT_PAREN QUESTION PLUS PIPE NUMBER NOTEQUALS MINUS LESSTHAN LEFT_SQ_BRACE LEFT_PAREN ISEQUALS IDENTIFIER GREATERTHAN EXCLAMATION DOUBLECOLON DOUBLEBAR DOUBLEAMPERSAND DOT COMMA COLON BACKARROW ARROW ]
+## Transitions:
 -- On STAR shift to state 113
 -- On QUESTION shift to state 114
 -- On PLUS shift to state 115
@@ -1319,9 +1923,14 @@ uninterpreted_cpp_code_fragment -> LESSTHAN . uninterpreted_cpp_code_fragment [ 
 -- On ARROW shift to state 132
 -- On uninterpreted_cpp_code_fragment shift to state 153
 -- On ident shift to state 134
+## Reductions:
 
 State 121:
+## Known stack suffix:
+## LEFT_SQ_BRACE
+## LR(1) items:
 uninterpreted_cpp_code_fragment -> LEFT_SQ_BRACE . uninterpreted_cpp_code RIGHT_SQ_BRACE [ STAR RIGHT_SQ_BRACE RIGHT_PAREN QUESTION PLUS PIPE NUMBER NOTEQUALS MINUS LESSTHAN LEFT_SQ_BRACE LEFT_PAREN ISEQUALS IDENTIFIER GREATERTHAN EXCLAMATION DOUBLECOLON DOUBLEBAR DOUBLEAMPERSAND DOT COMMA COLON BACKARROW ARROW ]
+## Transitions:
 -- On STAR shift to state 113
 -- On QUESTION shift to state 114
 -- On PLUS shift to state 115
@@ -1346,10 +1955,15 @@ uninterpreted_cpp_code_fragment -> LEFT_SQ_BRACE . uninterpreted_cpp_code RIGHT_
 -- On uninterpreted_cpp_code_fragment shift to state 144
 -- On uninterpreted_cpp_code shift to state 151
 -- On ident shift to state 134
+## Reductions:
 -- On RIGHT_SQ_BRACE reduce production uninterpreted_cpp_code ->
 
 State 122:
+## Known stack suffix:
+## LEFT_PAREN
+## LR(1) items:
 uninterpreted_cpp_code_fragment -> LEFT_PAREN . uninterpreted_cpp_code_comma_list RIGHT_PAREN [ STAR RIGHT_SQ_BRACE RIGHT_PAREN QUESTION PLUS PIPE NUMBER NOTEQUALS MINUS LESSTHAN LEFT_SQ_BRACE LEFT_PAREN ISEQUALS IDENTIFIER GREATERTHAN EXCLAMATION DOUBLECOLON DOUBLEBAR DOUBLEAMPERSAND DOT COMMA COLON BACKARROW ARROW ]
+## Transitions:
 -- On STAR shift to state 113
 -- On QUESTION shift to state 114
 -- On PLUS shift to state 115
@@ -1375,11 +1989,16 @@ uninterpreted_cpp_code_fragment -> LEFT_PAREN . uninterpreted_cpp_code_comma_lis
 -- On uninterpreted_cpp_code_comma_list shift to state 146
 -- On uninterpreted_cpp_code shift to state 148
 -- On ident shift to state 134
+## Reductions:
 -- On RIGHT_PAREN reduce production uninterpreted_cpp_code ->
 -- On COMMA reduce production uninterpreted_cpp_code ->
 
 State 123:
+## Known stack suffix:
+## ISEQUALS
+## LR(1) items:
 uninterpreted_cpp_code_fragment -> ISEQUALS . uninterpreted_cpp_code_fragment [ STAR RIGHT_SQ_BRACE RIGHT_PAREN QUESTION PLUS PIPE NUMBER NOTEQUALS MINUS LESSTHAN LEFT_SQ_BRACE LEFT_PAREN ISEQUALS IDENTIFIER GREATERTHAN EXCLAMATION DOUBLECOLON DOUBLEBAR DOUBLEAMPERSAND DOT COMMA COLON BACKARROW ARROW ]
+## Transitions:
 -- On STAR shift to state 113
 -- On QUESTION shift to state 114
 -- On PLUS shift to state 115
@@ -1403,9 +2022,14 @@ uninterpreted_cpp_code_fragment -> ISEQUALS . uninterpreted_cpp_code_fragment [ 
 -- On ARROW shift to state 132
 -- On uninterpreted_cpp_code_fragment shift to state 143
 -- On ident shift to state 134
+## Reductions:
 
 State 124:
+## Known stack suffix:
+## GREATERTHAN
+## LR(1) items:
 uninterpreted_cpp_code_fragment -> GREATERTHAN . uninterpreted_cpp_code_fragment [ STAR RIGHT_SQ_BRACE RIGHT_PAREN QUESTION PLUS PIPE NUMBER NOTEQUALS MINUS LESSTHAN LEFT_SQ_BRACE LEFT_PAREN ISEQUALS IDENTIFIER GREATERTHAN EXCLAMATION DOUBLECOLON DOUBLEBAR DOUBLEAMPERSAND DOT COMMA COLON BACKARROW ARROW ]
+## Transitions:
 -- On STAR shift to state 113
 -- On QUESTION shift to state 114
 -- On PLUS shift to state 115
@@ -1429,9 +2053,14 @@ uninterpreted_cpp_code_fragment -> GREATERTHAN . uninterpreted_cpp_code_fragment
 -- On ARROW shift to state 132
 -- On uninterpreted_cpp_code_fragment shift to state 142
 -- On ident shift to state 134
+## Reductions:
 
 State 125:
+## Known stack suffix:
+## EXCLAMATION
+## LR(1) items:
 uninterpreted_cpp_code_fragment -> EXCLAMATION . uninterpreted_cpp_code_fragment [ STAR RIGHT_SQ_BRACE RIGHT_PAREN QUESTION PLUS PIPE NUMBER NOTEQUALS MINUS LESSTHAN LEFT_SQ_BRACE LEFT_PAREN ISEQUALS IDENTIFIER GREATERTHAN EXCLAMATION DOUBLECOLON DOUBLEBAR DOUBLEAMPERSAND DOT COMMA COLON BACKARROW ARROW ]
+## Transitions:
 -- On STAR shift to state 113
 -- On QUESTION shift to state 114
 -- On PLUS shift to state 115
@@ -1455,9 +2084,14 @@ uninterpreted_cpp_code_fragment -> EXCLAMATION . uninterpreted_cpp_code_fragment
 -- On ARROW shift to state 132
 -- On uninterpreted_cpp_code_fragment shift to state 141
 -- On ident shift to state 134
+## Reductions:
 
 State 126:
+## Known stack suffix:
+## DOUBLECOLON
+## LR(1) items:
 uninterpreted_cpp_code_fragment -> DOUBLECOLON . uninterpreted_cpp_code_fragment [ STAR RIGHT_SQ_BRACE RIGHT_PAREN QUESTION PLUS PIPE NUMBER NOTEQUALS MINUS LESSTHAN LEFT_SQ_BRACE LEFT_PAREN ISEQUALS IDENTIFIER GREATERTHAN EXCLAMATION DOUBLECOLON DOUBLEBAR DOUBLEAMPERSAND DOT COMMA COLON BACKARROW ARROW ]
+## Transitions:
 -- On STAR shift to state 113
 -- On QUESTION shift to state 114
 -- On PLUS shift to state 115
@@ -1481,9 +2115,14 @@ uninterpreted_cpp_code_fragment -> DOUBLECOLON . uninterpreted_cpp_code_fragment
 -- On ARROW shift to state 132
 -- On uninterpreted_cpp_code_fragment shift to state 140
 -- On ident shift to state 134
+## Reductions:
 
 State 127:
+## Known stack suffix:
+## DOUBLEBAR
+## LR(1) items:
 uninterpreted_cpp_code_fragment -> DOUBLEBAR . uninterpreted_cpp_code_fragment [ STAR RIGHT_SQ_BRACE RIGHT_PAREN QUESTION PLUS PIPE NUMBER NOTEQUALS MINUS LESSTHAN LEFT_SQ_BRACE LEFT_PAREN ISEQUALS IDENTIFIER GREATERTHAN EXCLAMATION DOUBLECOLON DOUBLEBAR DOUBLEAMPERSAND DOT COMMA COLON BACKARROW ARROW ]
+## Transitions:
 -- On STAR shift to state 113
 -- On QUESTION shift to state 114
 -- On PLUS shift to state 115
@@ -1507,9 +2146,14 @@ uninterpreted_cpp_code_fragment -> DOUBLEBAR . uninterpreted_cpp_code_fragment [
 -- On ARROW shift to state 132
 -- On uninterpreted_cpp_code_fragment shift to state 139
 -- On ident shift to state 134
+## Reductions:
 
 State 128:
+## Known stack suffix:
+## DOUBLEAMPERSAND
+## LR(1) items:
 uninterpreted_cpp_code_fragment -> DOUBLEAMPERSAND . uninterpreted_cpp_code_fragment [ STAR RIGHT_SQ_BRACE RIGHT_PAREN QUESTION PLUS PIPE NUMBER NOTEQUALS MINUS LESSTHAN LEFT_SQ_BRACE LEFT_PAREN ISEQUALS IDENTIFIER GREATERTHAN EXCLAMATION DOUBLECOLON DOUBLEBAR DOUBLEAMPERSAND DOT COMMA COLON BACKARROW ARROW ]
+## Transitions:
 -- On STAR shift to state 113
 -- On QUESTION shift to state 114
 -- On PLUS shift to state 115
@@ -1533,9 +2177,14 @@ uninterpreted_cpp_code_fragment -> DOUBLEAMPERSAND . uninterpreted_cpp_code_frag
 -- On ARROW shift to state 132
 -- On uninterpreted_cpp_code_fragment shift to state 138
 -- On ident shift to state 134
+## Reductions:
 
 State 129:
+## Known stack suffix:
+## DOT
+## LR(1) items:
 uninterpreted_cpp_code_fragment -> DOT . uninterpreted_cpp_code_fragment [ STAR RIGHT_SQ_BRACE RIGHT_PAREN QUESTION PLUS PIPE NUMBER NOTEQUALS MINUS LESSTHAN LEFT_SQ_BRACE LEFT_PAREN ISEQUALS IDENTIFIER GREATERTHAN EXCLAMATION DOUBLECOLON DOUBLEBAR DOUBLEAMPERSAND DOT COMMA COLON BACKARROW ARROW ]
+## Transitions:
 -- On STAR shift to state 113
 -- On QUESTION shift to state 114
 -- On PLUS shift to state 115
@@ -1559,9 +2208,14 @@ uninterpreted_cpp_code_fragment -> DOT . uninterpreted_cpp_code_fragment [ STAR 
 -- On ARROW shift to state 132
 -- On uninterpreted_cpp_code_fragment shift to state 137
 -- On ident shift to state 134
+## Reductions:
 
 State 130:
+## Known stack suffix:
+## COLON
+## LR(1) items:
 uninterpreted_cpp_code_fragment -> COLON . uninterpreted_cpp_code_fragment [ STAR RIGHT_SQ_BRACE RIGHT_PAREN QUESTION PLUS PIPE NUMBER NOTEQUALS MINUS LESSTHAN LEFT_SQ_BRACE LEFT_PAREN ISEQUALS IDENTIFIER GREATERTHAN EXCLAMATION DOUBLECOLON DOUBLEBAR DOUBLEAMPERSAND DOT COMMA COLON BACKARROW ARROW ]
+## Transitions:
 -- On STAR shift to state 113
 -- On QUESTION shift to state 114
 -- On PLUS shift to state 115
@@ -1585,9 +2239,14 @@ uninterpreted_cpp_code_fragment -> COLON . uninterpreted_cpp_code_fragment [ STA
 -- On ARROW shift to state 132
 -- On uninterpreted_cpp_code_fragment shift to state 136
 -- On ident shift to state 134
+## Reductions:
 
 State 131:
+## Known stack suffix:
+## BACKARROW
+## LR(1) items:
 uninterpreted_cpp_code_fragment -> BACKARROW . uninterpreted_cpp_code_fragment [ STAR RIGHT_SQ_BRACE RIGHT_PAREN QUESTION PLUS PIPE NUMBER NOTEQUALS MINUS LESSTHAN LEFT_SQ_BRACE LEFT_PAREN ISEQUALS IDENTIFIER GREATERTHAN EXCLAMATION DOUBLECOLON DOUBLEBAR DOUBLEAMPERSAND DOT COMMA COLON BACKARROW ARROW ]
+## Transitions:
 -- On STAR shift to state 113
 -- On QUESTION shift to state 114
 -- On PLUS shift to state 115
@@ -1611,9 +2270,14 @@ uninterpreted_cpp_code_fragment -> BACKARROW . uninterpreted_cpp_code_fragment [
 -- On ARROW shift to state 132
 -- On uninterpreted_cpp_code_fragment shift to state 135
 -- On ident shift to state 134
+## Reductions:
 
 State 132:
+## Known stack suffix:
+## ARROW
+## LR(1) items:
 uninterpreted_cpp_code_fragment -> ARROW . uninterpreted_cpp_code_fragment [ STAR RIGHT_SQ_BRACE RIGHT_PAREN QUESTION PLUS PIPE NUMBER NOTEQUALS MINUS LESSTHAN LEFT_SQ_BRACE LEFT_PAREN ISEQUALS IDENTIFIER GREATERTHAN EXCLAMATION DOUBLECOLON DOUBLEBAR DOUBLEAMPERSAND DOT COMMA COLON BACKARROW ARROW ]
+## Transitions:
 -- On STAR shift to state 113
 -- On QUESTION shift to state 114
 -- On PLUS shift to state 115
@@ -1637,9 +2301,15 @@ uninterpreted_cpp_code_fragment -> ARROW . uninterpreted_cpp_code_fragment [ STA
 -- On ARROW shift to state 132
 -- On uninterpreted_cpp_code_fragment shift to state 133
 -- On ident shift to state 134
+## Reductions:
 
 State 133:
+## Known stack suffix:
+## ARROW uninterpreted_cpp_code_fragment
+## LR(1) items:
 uninterpreted_cpp_code_fragment -> ARROW uninterpreted_cpp_code_fragment . [ STAR RIGHT_SQ_BRACE RIGHT_PAREN QUESTION PLUS PIPE NUMBER NOTEQUALS MINUS LESSTHAN LEFT_SQ_BRACE LEFT_PAREN ISEQUALS IDENTIFIER GREATERTHAN EXCLAMATION DOUBLECOLON DOUBLEBAR DOUBLEAMPERSAND DOT COMMA COLON BACKARROW ARROW ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production uninterpreted_cpp_code_fragment -> ARROW uninterpreted_cpp_code_fragment
 -- On RIGHT_SQ_BRACE reduce production uninterpreted_cpp_code_fragment -> ARROW uninterpreted_cpp_code_fragment
 -- On RIGHT_PAREN reduce production uninterpreted_cpp_code_fragment -> ARROW uninterpreted_cpp_code_fragment
@@ -1666,7 +2336,12 @@ uninterpreted_cpp_code_fragment -> ARROW uninterpreted_cpp_code_fragment . [ STA
 -- On ARROW reduce production uninterpreted_cpp_code_fragment -> ARROW uninterpreted_cpp_code_fragment
 
 State 134:
+## Known stack suffix:
+## ident
+## LR(1) items:
 uninterpreted_cpp_code_fragment -> ident . [ STAR RIGHT_SQ_BRACE RIGHT_PAREN QUESTION PLUS PIPE NUMBER NOTEQUALS MINUS LESSTHAN LEFT_SQ_BRACE LEFT_PAREN ISEQUALS IDENTIFIER GREATERTHAN EXCLAMATION DOUBLECOLON DOUBLEBAR DOUBLEAMPERSAND DOT COMMA COLON BACKARROW ARROW ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production uninterpreted_cpp_code_fragment -> ident
 -- On RIGHT_SQ_BRACE reduce production uninterpreted_cpp_code_fragment -> ident
 -- On RIGHT_PAREN reduce production uninterpreted_cpp_code_fragment -> ident
@@ -1693,7 +2368,12 @@ uninterpreted_cpp_code_fragment -> ident . [ STAR RIGHT_SQ_BRACE RIGHT_PAREN QUE
 -- On ARROW reduce production uninterpreted_cpp_code_fragment -> ident
 
 State 135:
+## Known stack suffix:
+## BACKARROW uninterpreted_cpp_code_fragment
+## LR(1) items:
 uninterpreted_cpp_code_fragment -> BACKARROW uninterpreted_cpp_code_fragment . [ STAR RIGHT_SQ_BRACE RIGHT_PAREN QUESTION PLUS PIPE NUMBER NOTEQUALS MINUS LESSTHAN LEFT_SQ_BRACE LEFT_PAREN ISEQUALS IDENTIFIER GREATERTHAN EXCLAMATION DOUBLECOLON DOUBLEBAR DOUBLEAMPERSAND DOT COMMA COLON BACKARROW ARROW ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production uninterpreted_cpp_code_fragment -> BACKARROW uninterpreted_cpp_code_fragment
 -- On RIGHT_SQ_BRACE reduce production uninterpreted_cpp_code_fragment -> BACKARROW uninterpreted_cpp_code_fragment
 -- On RIGHT_PAREN reduce production uninterpreted_cpp_code_fragment -> BACKARROW uninterpreted_cpp_code_fragment
@@ -1720,7 +2400,12 @@ uninterpreted_cpp_code_fragment -> BACKARROW uninterpreted_cpp_code_fragment . [
 -- On ARROW reduce production uninterpreted_cpp_code_fragment -> BACKARROW uninterpreted_cpp_code_fragment
 
 State 136:
+## Known stack suffix:
+## COLON uninterpreted_cpp_code_fragment
+## LR(1) items:
 uninterpreted_cpp_code_fragment -> COLON uninterpreted_cpp_code_fragment . [ STAR RIGHT_SQ_BRACE RIGHT_PAREN QUESTION PLUS PIPE NUMBER NOTEQUALS MINUS LESSTHAN LEFT_SQ_BRACE LEFT_PAREN ISEQUALS IDENTIFIER GREATERTHAN EXCLAMATION DOUBLECOLON DOUBLEBAR DOUBLEAMPERSAND DOT COMMA COLON BACKARROW ARROW ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production uninterpreted_cpp_code_fragment -> COLON uninterpreted_cpp_code_fragment
 -- On RIGHT_SQ_BRACE reduce production uninterpreted_cpp_code_fragment -> COLON uninterpreted_cpp_code_fragment
 -- On RIGHT_PAREN reduce production uninterpreted_cpp_code_fragment -> COLON uninterpreted_cpp_code_fragment
@@ -1747,7 +2432,12 @@ uninterpreted_cpp_code_fragment -> COLON uninterpreted_cpp_code_fragment . [ STA
 -- On ARROW reduce production uninterpreted_cpp_code_fragment -> COLON uninterpreted_cpp_code_fragment
 
 State 137:
+## Known stack suffix:
+## DOT uninterpreted_cpp_code_fragment
+## LR(1) items:
 uninterpreted_cpp_code_fragment -> DOT uninterpreted_cpp_code_fragment . [ STAR RIGHT_SQ_BRACE RIGHT_PAREN QUESTION PLUS PIPE NUMBER NOTEQUALS MINUS LESSTHAN LEFT_SQ_BRACE LEFT_PAREN ISEQUALS IDENTIFIER GREATERTHAN EXCLAMATION DOUBLECOLON DOUBLEBAR DOUBLEAMPERSAND DOT COMMA COLON BACKARROW ARROW ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production uninterpreted_cpp_code_fragment -> DOT uninterpreted_cpp_code_fragment
 -- On RIGHT_SQ_BRACE reduce production uninterpreted_cpp_code_fragment -> DOT uninterpreted_cpp_code_fragment
 -- On RIGHT_PAREN reduce production uninterpreted_cpp_code_fragment -> DOT uninterpreted_cpp_code_fragment
@@ -1774,7 +2464,12 @@ uninterpreted_cpp_code_fragment -> DOT uninterpreted_cpp_code_fragment . [ STAR 
 -- On ARROW reduce production uninterpreted_cpp_code_fragment -> DOT uninterpreted_cpp_code_fragment
 
 State 138:
+## Known stack suffix:
+## DOUBLEAMPERSAND uninterpreted_cpp_code_fragment
+## LR(1) items:
 uninterpreted_cpp_code_fragment -> DOUBLEAMPERSAND uninterpreted_cpp_code_fragment . [ STAR RIGHT_SQ_BRACE RIGHT_PAREN QUESTION PLUS PIPE NUMBER NOTEQUALS MINUS LESSTHAN LEFT_SQ_BRACE LEFT_PAREN ISEQUALS IDENTIFIER GREATERTHAN EXCLAMATION DOUBLECOLON DOUBLEBAR DOUBLEAMPERSAND DOT COMMA COLON BACKARROW ARROW ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production uninterpreted_cpp_code_fragment -> DOUBLEAMPERSAND uninterpreted_cpp_code_fragment
 -- On RIGHT_SQ_BRACE reduce production uninterpreted_cpp_code_fragment -> DOUBLEAMPERSAND uninterpreted_cpp_code_fragment
 -- On RIGHT_PAREN reduce production uninterpreted_cpp_code_fragment -> DOUBLEAMPERSAND uninterpreted_cpp_code_fragment
@@ -1801,7 +2496,12 @@ uninterpreted_cpp_code_fragment -> DOUBLEAMPERSAND uninterpreted_cpp_code_fragme
 -- On ARROW reduce production uninterpreted_cpp_code_fragment -> DOUBLEAMPERSAND uninterpreted_cpp_code_fragment
 
 State 139:
+## Known stack suffix:
+## DOUBLEBAR uninterpreted_cpp_code_fragment
+## LR(1) items:
 uninterpreted_cpp_code_fragment -> DOUBLEBAR uninterpreted_cpp_code_fragment . [ STAR RIGHT_SQ_BRACE RIGHT_PAREN QUESTION PLUS PIPE NUMBER NOTEQUALS MINUS LESSTHAN LEFT_SQ_BRACE LEFT_PAREN ISEQUALS IDENTIFIER GREATERTHAN EXCLAMATION DOUBLECOLON DOUBLEBAR DOUBLEAMPERSAND DOT COMMA COLON BACKARROW ARROW ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production uninterpreted_cpp_code_fragment -> DOUBLEBAR uninterpreted_cpp_code_fragment
 -- On RIGHT_SQ_BRACE reduce production uninterpreted_cpp_code_fragment -> DOUBLEBAR uninterpreted_cpp_code_fragment
 -- On RIGHT_PAREN reduce production uninterpreted_cpp_code_fragment -> DOUBLEBAR uninterpreted_cpp_code_fragment
@@ -1828,7 +2528,12 @@ uninterpreted_cpp_code_fragment -> DOUBLEBAR uninterpreted_cpp_code_fragment . [
 -- On ARROW reduce production uninterpreted_cpp_code_fragment -> DOUBLEBAR uninterpreted_cpp_code_fragment
 
 State 140:
+## Known stack suffix:
+## DOUBLECOLON uninterpreted_cpp_code_fragment
+## LR(1) items:
 uninterpreted_cpp_code_fragment -> DOUBLECOLON uninterpreted_cpp_code_fragment . [ STAR RIGHT_SQ_BRACE RIGHT_PAREN QUESTION PLUS PIPE NUMBER NOTEQUALS MINUS LESSTHAN LEFT_SQ_BRACE LEFT_PAREN ISEQUALS IDENTIFIER GREATERTHAN EXCLAMATION DOUBLECOLON DOUBLEBAR DOUBLEAMPERSAND DOT COMMA COLON BACKARROW ARROW ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production uninterpreted_cpp_code_fragment -> DOUBLECOLON uninterpreted_cpp_code_fragment
 -- On RIGHT_SQ_BRACE reduce production uninterpreted_cpp_code_fragment -> DOUBLECOLON uninterpreted_cpp_code_fragment
 -- On RIGHT_PAREN reduce production uninterpreted_cpp_code_fragment -> DOUBLECOLON uninterpreted_cpp_code_fragment
@@ -1855,7 +2560,12 @@ uninterpreted_cpp_code_fragment -> DOUBLECOLON uninterpreted_cpp_code_fragment .
 -- On ARROW reduce production uninterpreted_cpp_code_fragment -> DOUBLECOLON uninterpreted_cpp_code_fragment
 
 State 141:
+## Known stack suffix:
+## EXCLAMATION uninterpreted_cpp_code_fragment
+## LR(1) items:
 uninterpreted_cpp_code_fragment -> EXCLAMATION uninterpreted_cpp_code_fragment . [ STAR RIGHT_SQ_BRACE RIGHT_PAREN QUESTION PLUS PIPE NUMBER NOTEQUALS MINUS LESSTHAN LEFT_SQ_BRACE LEFT_PAREN ISEQUALS IDENTIFIER GREATERTHAN EXCLAMATION DOUBLECOLON DOUBLEBAR DOUBLEAMPERSAND DOT COMMA COLON BACKARROW ARROW ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production uninterpreted_cpp_code_fragment -> EXCLAMATION uninterpreted_cpp_code_fragment
 -- On RIGHT_SQ_BRACE reduce production uninterpreted_cpp_code_fragment -> EXCLAMATION uninterpreted_cpp_code_fragment
 -- On RIGHT_PAREN reduce production uninterpreted_cpp_code_fragment -> EXCLAMATION uninterpreted_cpp_code_fragment
@@ -1882,7 +2592,12 @@ uninterpreted_cpp_code_fragment -> EXCLAMATION uninterpreted_cpp_code_fragment .
 -- On ARROW reduce production uninterpreted_cpp_code_fragment -> EXCLAMATION uninterpreted_cpp_code_fragment
 
 State 142:
+## Known stack suffix:
+## GREATERTHAN uninterpreted_cpp_code_fragment
+## LR(1) items:
 uninterpreted_cpp_code_fragment -> GREATERTHAN uninterpreted_cpp_code_fragment . [ STAR RIGHT_SQ_BRACE RIGHT_PAREN QUESTION PLUS PIPE NUMBER NOTEQUALS MINUS LESSTHAN LEFT_SQ_BRACE LEFT_PAREN ISEQUALS IDENTIFIER GREATERTHAN EXCLAMATION DOUBLECOLON DOUBLEBAR DOUBLEAMPERSAND DOT COMMA COLON BACKARROW ARROW ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production uninterpreted_cpp_code_fragment -> GREATERTHAN uninterpreted_cpp_code_fragment
 -- On RIGHT_SQ_BRACE reduce production uninterpreted_cpp_code_fragment -> GREATERTHAN uninterpreted_cpp_code_fragment
 -- On RIGHT_PAREN reduce production uninterpreted_cpp_code_fragment -> GREATERTHAN uninterpreted_cpp_code_fragment
@@ -1909,7 +2624,12 @@ uninterpreted_cpp_code_fragment -> GREATERTHAN uninterpreted_cpp_code_fragment .
 -- On ARROW reduce production uninterpreted_cpp_code_fragment -> GREATERTHAN uninterpreted_cpp_code_fragment
 
 State 143:
+## Known stack suffix:
+## ISEQUALS uninterpreted_cpp_code_fragment
+## LR(1) items:
 uninterpreted_cpp_code_fragment -> ISEQUALS uninterpreted_cpp_code_fragment . [ STAR RIGHT_SQ_BRACE RIGHT_PAREN QUESTION PLUS PIPE NUMBER NOTEQUALS MINUS LESSTHAN LEFT_SQ_BRACE LEFT_PAREN ISEQUALS IDENTIFIER GREATERTHAN EXCLAMATION DOUBLECOLON DOUBLEBAR DOUBLEAMPERSAND DOT COMMA COLON BACKARROW ARROW ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production uninterpreted_cpp_code_fragment -> ISEQUALS uninterpreted_cpp_code_fragment
 -- On RIGHT_SQ_BRACE reduce production uninterpreted_cpp_code_fragment -> ISEQUALS uninterpreted_cpp_code_fragment
 -- On RIGHT_PAREN reduce production uninterpreted_cpp_code_fragment -> ISEQUALS uninterpreted_cpp_code_fragment
@@ -1936,7 +2656,11 @@ uninterpreted_cpp_code_fragment -> ISEQUALS uninterpreted_cpp_code_fragment . [ 
 -- On ARROW reduce production uninterpreted_cpp_code_fragment -> ISEQUALS uninterpreted_cpp_code_fragment
 
 State 144:
+## Known stack suffix:
+## uninterpreted_cpp_code_fragment
+## LR(1) items:
 uninterpreted_cpp_code -> uninterpreted_cpp_code_fragment . uninterpreted_cpp_code [ RIGHT_SQ_BRACE RIGHT_PAREN COMMA ]
+## Transitions:
 -- On STAR shift to state 113
 -- On QUESTION shift to state 114
 -- On PLUS shift to state 115
@@ -1961,22 +2685,38 @@ uninterpreted_cpp_code -> uninterpreted_cpp_code_fragment . uninterpreted_cpp_co
 -- On uninterpreted_cpp_code_fragment shift to state 144
 -- On uninterpreted_cpp_code shift to state 145
 -- On ident shift to state 134
+## Reductions:
 -- On RIGHT_SQ_BRACE reduce production uninterpreted_cpp_code ->
 -- On RIGHT_PAREN reduce production uninterpreted_cpp_code ->
 -- On COMMA reduce production uninterpreted_cpp_code ->
 
 State 145:
+## Known stack suffix:
+## uninterpreted_cpp_code_fragment uninterpreted_cpp_code
+## LR(1) items:
 uninterpreted_cpp_code -> uninterpreted_cpp_code_fragment uninterpreted_cpp_code . [ RIGHT_SQ_BRACE RIGHT_PAREN COMMA ]
+## Transitions:
+## Reductions:
 -- On RIGHT_SQ_BRACE reduce production uninterpreted_cpp_code -> uninterpreted_cpp_code_fragment uninterpreted_cpp_code
 -- On RIGHT_PAREN reduce production uninterpreted_cpp_code -> uninterpreted_cpp_code_fragment uninterpreted_cpp_code
 -- On COMMA reduce production uninterpreted_cpp_code -> uninterpreted_cpp_code_fragment uninterpreted_cpp_code
 
 State 146:
+## Known stack suffix:
+## LEFT_PAREN uninterpreted_cpp_code_comma_list
+## LR(1) items:
 uninterpreted_cpp_code_fragment -> LEFT_PAREN uninterpreted_cpp_code_comma_list . RIGHT_PAREN [ STAR RIGHT_SQ_BRACE RIGHT_PAREN QUESTION PLUS PIPE NUMBER NOTEQUALS MINUS LESSTHAN LEFT_SQ_BRACE LEFT_PAREN ISEQUALS IDENTIFIER GREATERTHAN EXCLAMATION DOUBLECOLON DOUBLEBAR DOUBLEAMPERSAND DOT COMMA COLON BACKARROW ARROW ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 147
+## Reductions:
 
 State 147:
+## Known stack suffix:
+## LEFT_PAREN uninterpreted_cpp_code_comma_list RIGHT_PAREN
+## LR(1) items:
 uninterpreted_cpp_code_fragment -> LEFT_PAREN uninterpreted_cpp_code_comma_list RIGHT_PAREN . [ STAR RIGHT_SQ_BRACE RIGHT_PAREN QUESTION PLUS PIPE NUMBER NOTEQUALS MINUS LESSTHAN LEFT_SQ_BRACE LEFT_PAREN ISEQUALS IDENTIFIER GREATERTHAN EXCLAMATION DOUBLECOLON DOUBLEBAR DOUBLEAMPERSAND DOT COMMA COLON BACKARROW ARROW ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production uninterpreted_cpp_code_fragment -> LEFT_PAREN uninterpreted_cpp_code_comma_list RIGHT_PAREN
 -- On RIGHT_SQ_BRACE reduce production uninterpreted_cpp_code_fragment -> LEFT_PAREN uninterpreted_cpp_code_comma_list RIGHT_PAREN
 -- On RIGHT_PAREN reduce production uninterpreted_cpp_code_fragment -> LEFT_PAREN uninterpreted_cpp_code_comma_list RIGHT_PAREN
@@ -2003,13 +2743,22 @@ uninterpreted_cpp_code_fragment -> LEFT_PAREN uninterpreted_cpp_code_comma_list 
 -- On ARROW reduce production uninterpreted_cpp_code_fragment -> LEFT_PAREN uninterpreted_cpp_code_comma_list RIGHT_PAREN
 
 State 148:
+## Known stack suffix:
+## uninterpreted_cpp_code
+## LR(1) items:
 uninterpreted_cpp_code_comma_list -> uninterpreted_cpp_code . [ RIGHT_PAREN ]
 uninterpreted_cpp_code_comma_list -> uninterpreted_cpp_code . COMMA uninterpreted_cpp_code_comma_list [ RIGHT_PAREN ]
+## Transitions:
 -- On COMMA shift to state 149
+## Reductions:
 -- On RIGHT_PAREN reduce production uninterpreted_cpp_code_comma_list -> uninterpreted_cpp_code
 
 State 149:
+## Known stack suffix:
+## uninterpreted_cpp_code COMMA
+## LR(1) items:
 uninterpreted_cpp_code_comma_list -> uninterpreted_cpp_code COMMA . uninterpreted_cpp_code_comma_list [ RIGHT_PAREN ]
+## Transitions:
 -- On STAR shift to state 113
 -- On QUESTION shift to state 114
 -- On PLUS shift to state 115
@@ -2035,19 +2784,35 @@ uninterpreted_cpp_code_comma_list -> uninterpreted_cpp_code COMMA . uninterprete
 -- On uninterpreted_cpp_code_comma_list shift to state 150
 -- On uninterpreted_cpp_code shift to state 148
 -- On ident shift to state 134
+## Reductions:
 -- On RIGHT_PAREN reduce production uninterpreted_cpp_code ->
 -- On COMMA reduce production uninterpreted_cpp_code ->
 
 State 150:
+## Known stack suffix:
+## uninterpreted_cpp_code COMMA uninterpreted_cpp_code_comma_list
+## LR(1) items:
 uninterpreted_cpp_code_comma_list -> uninterpreted_cpp_code COMMA uninterpreted_cpp_code_comma_list . [ RIGHT_PAREN ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production uninterpreted_cpp_code_comma_list -> uninterpreted_cpp_code COMMA uninterpreted_cpp_code_comma_list
 
 State 151:
+## Known stack suffix:
+## LEFT_SQ_BRACE uninterpreted_cpp_code
+## LR(1) items:
 uninterpreted_cpp_code_fragment -> LEFT_SQ_BRACE uninterpreted_cpp_code . RIGHT_SQ_BRACE [ STAR RIGHT_SQ_BRACE RIGHT_PAREN QUESTION PLUS PIPE NUMBER NOTEQUALS MINUS LESSTHAN LEFT_SQ_BRACE LEFT_PAREN ISEQUALS IDENTIFIER GREATERTHAN EXCLAMATION DOUBLECOLON DOUBLEBAR DOUBLEAMPERSAND DOT COMMA COLON BACKARROW ARROW ]
+## Transitions:
 -- On RIGHT_SQ_BRACE shift to state 152
+## Reductions:
 
 State 152:
+## Known stack suffix:
+## LEFT_SQ_BRACE uninterpreted_cpp_code RIGHT_SQ_BRACE
+## LR(1) items:
 uninterpreted_cpp_code_fragment -> LEFT_SQ_BRACE uninterpreted_cpp_code RIGHT_SQ_BRACE . [ STAR RIGHT_SQ_BRACE RIGHT_PAREN QUESTION PLUS PIPE NUMBER NOTEQUALS MINUS LESSTHAN LEFT_SQ_BRACE LEFT_PAREN ISEQUALS IDENTIFIER GREATERTHAN EXCLAMATION DOUBLECOLON DOUBLEBAR DOUBLEAMPERSAND DOT COMMA COLON BACKARROW ARROW ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production uninterpreted_cpp_code_fragment -> LEFT_SQ_BRACE uninterpreted_cpp_code RIGHT_SQ_BRACE
 -- On RIGHT_SQ_BRACE reduce production uninterpreted_cpp_code_fragment -> LEFT_SQ_BRACE uninterpreted_cpp_code RIGHT_SQ_BRACE
 -- On RIGHT_PAREN reduce production uninterpreted_cpp_code_fragment -> LEFT_SQ_BRACE uninterpreted_cpp_code RIGHT_SQ_BRACE
@@ -2074,7 +2839,12 @@ uninterpreted_cpp_code_fragment -> LEFT_SQ_BRACE uninterpreted_cpp_code RIGHT_SQ
 -- On ARROW reduce production uninterpreted_cpp_code_fragment -> LEFT_SQ_BRACE uninterpreted_cpp_code RIGHT_SQ_BRACE
 
 State 153:
+## Known stack suffix:
+## LESSTHAN uninterpreted_cpp_code_fragment
+## LR(1) items:
 uninterpreted_cpp_code_fragment -> LESSTHAN uninterpreted_cpp_code_fragment . [ STAR RIGHT_SQ_BRACE RIGHT_PAREN QUESTION PLUS PIPE NUMBER NOTEQUALS MINUS LESSTHAN LEFT_SQ_BRACE LEFT_PAREN ISEQUALS IDENTIFIER GREATERTHAN EXCLAMATION DOUBLECOLON DOUBLEBAR DOUBLEAMPERSAND DOT COMMA COLON BACKARROW ARROW ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production uninterpreted_cpp_code_fragment -> LESSTHAN uninterpreted_cpp_code_fragment
 -- On RIGHT_SQ_BRACE reduce production uninterpreted_cpp_code_fragment -> LESSTHAN uninterpreted_cpp_code_fragment
 -- On RIGHT_PAREN reduce production uninterpreted_cpp_code_fragment -> LESSTHAN uninterpreted_cpp_code_fragment
@@ -2101,7 +2871,12 @@ uninterpreted_cpp_code_fragment -> LESSTHAN uninterpreted_cpp_code_fragment . [ 
 -- On ARROW reduce production uninterpreted_cpp_code_fragment -> LESSTHAN uninterpreted_cpp_code_fragment
 
 State 154:
+## Known stack suffix:
+## MINUS uninterpreted_cpp_code_fragment
+## LR(1) items:
 uninterpreted_cpp_code_fragment -> MINUS uninterpreted_cpp_code_fragment . [ STAR RIGHT_SQ_BRACE RIGHT_PAREN QUESTION PLUS PIPE NUMBER NOTEQUALS MINUS LESSTHAN LEFT_SQ_BRACE LEFT_PAREN ISEQUALS IDENTIFIER GREATERTHAN EXCLAMATION DOUBLECOLON DOUBLEBAR DOUBLEAMPERSAND DOT COMMA COLON BACKARROW ARROW ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production uninterpreted_cpp_code_fragment -> MINUS uninterpreted_cpp_code_fragment
 -- On RIGHT_SQ_BRACE reduce production uninterpreted_cpp_code_fragment -> MINUS uninterpreted_cpp_code_fragment
 -- On RIGHT_PAREN reduce production uninterpreted_cpp_code_fragment -> MINUS uninterpreted_cpp_code_fragment
@@ -2128,7 +2903,12 @@ uninterpreted_cpp_code_fragment -> MINUS uninterpreted_cpp_code_fragment . [ STA
 -- On ARROW reduce production uninterpreted_cpp_code_fragment -> MINUS uninterpreted_cpp_code_fragment
 
 State 155:
+## Known stack suffix:
+## NOTEQUALS uninterpreted_cpp_code_fragment
+## LR(1) items:
 uninterpreted_cpp_code_fragment -> NOTEQUALS uninterpreted_cpp_code_fragment . [ STAR RIGHT_SQ_BRACE RIGHT_PAREN QUESTION PLUS PIPE NUMBER NOTEQUALS MINUS LESSTHAN LEFT_SQ_BRACE LEFT_PAREN ISEQUALS IDENTIFIER GREATERTHAN EXCLAMATION DOUBLECOLON DOUBLEBAR DOUBLEAMPERSAND DOT COMMA COLON BACKARROW ARROW ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production uninterpreted_cpp_code_fragment -> NOTEQUALS uninterpreted_cpp_code_fragment
 -- On RIGHT_SQ_BRACE reduce production uninterpreted_cpp_code_fragment -> NOTEQUALS uninterpreted_cpp_code_fragment
 -- On RIGHT_PAREN reduce production uninterpreted_cpp_code_fragment -> NOTEQUALS uninterpreted_cpp_code_fragment
@@ -2155,7 +2935,12 @@ uninterpreted_cpp_code_fragment -> NOTEQUALS uninterpreted_cpp_code_fragment . [
 -- On ARROW reduce production uninterpreted_cpp_code_fragment -> NOTEQUALS uninterpreted_cpp_code_fragment
 
 State 156:
+## Known stack suffix:
+## PIPE uninterpreted_cpp_code_fragment
+## LR(1) items:
 uninterpreted_cpp_code_fragment -> PIPE uninterpreted_cpp_code_fragment . [ STAR RIGHT_SQ_BRACE RIGHT_PAREN QUESTION PLUS PIPE NUMBER NOTEQUALS MINUS LESSTHAN LEFT_SQ_BRACE LEFT_PAREN ISEQUALS IDENTIFIER GREATERTHAN EXCLAMATION DOUBLECOLON DOUBLEBAR DOUBLEAMPERSAND DOT COMMA COLON BACKARROW ARROW ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production uninterpreted_cpp_code_fragment -> PIPE uninterpreted_cpp_code_fragment
 -- On RIGHT_SQ_BRACE reduce production uninterpreted_cpp_code_fragment -> PIPE uninterpreted_cpp_code_fragment
 -- On RIGHT_PAREN reduce production uninterpreted_cpp_code_fragment -> PIPE uninterpreted_cpp_code_fragment
@@ -2182,7 +2967,12 @@ uninterpreted_cpp_code_fragment -> PIPE uninterpreted_cpp_code_fragment . [ STAR
 -- On ARROW reduce production uninterpreted_cpp_code_fragment -> PIPE uninterpreted_cpp_code_fragment
 
 State 157:
+## Known stack suffix:
+## PLUS uninterpreted_cpp_code_fragment
+## LR(1) items:
 uninterpreted_cpp_code_fragment -> PLUS uninterpreted_cpp_code_fragment . [ STAR RIGHT_SQ_BRACE RIGHT_PAREN QUESTION PLUS PIPE NUMBER NOTEQUALS MINUS LESSTHAN LEFT_SQ_BRACE LEFT_PAREN ISEQUALS IDENTIFIER GREATERTHAN EXCLAMATION DOUBLECOLON DOUBLEBAR DOUBLEAMPERSAND DOT COMMA COLON BACKARROW ARROW ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production uninterpreted_cpp_code_fragment -> PLUS uninterpreted_cpp_code_fragment
 -- On RIGHT_SQ_BRACE reduce production uninterpreted_cpp_code_fragment -> PLUS uninterpreted_cpp_code_fragment
 -- On RIGHT_PAREN reduce production uninterpreted_cpp_code_fragment -> PLUS uninterpreted_cpp_code_fragment
@@ -2209,7 +2999,12 @@ uninterpreted_cpp_code_fragment -> PLUS uninterpreted_cpp_code_fragment . [ STAR
 -- On ARROW reduce production uninterpreted_cpp_code_fragment -> PLUS uninterpreted_cpp_code_fragment
 
 State 158:
+## Known stack suffix:
+## QUESTION uninterpreted_cpp_code_fragment
+## LR(1) items:
 uninterpreted_cpp_code_fragment -> QUESTION uninterpreted_cpp_code_fragment . [ STAR RIGHT_SQ_BRACE RIGHT_PAREN QUESTION PLUS PIPE NUMBER NOTEQUALS MINUS LESSTHAN LEFT_SQ_BRACE LEFT_PAREN ISEQUALS IDENTIFIER GREATERTHAN EXCLAMATION DOUBLECOLON DOUBLEBAR DOUBLEAMPERSAND DOT COMMA COLON BACKARROW ARROW ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production uninterpreted_cpp_code_fragment -> QUESTION uninterpreted_cpp_code_fragment
 -- On RIGHT_SQ_BRACE reduce production uninterpreted_cpp_code_fragment -> QUESTION uninterpreted_cpp_code_fragment
 -- On RIGHT_PAREN reduce production uninterpreted_cpp_code_fragment -> QUESTION uninterpreted_cpp_code_fragment
@@ -2236,7 +3031,12 @@ uninterpreted_cpp_code_fragment -> QUESTION uninterpreted_cpp_code_fragment . [ 
 -- On ARROW reduce production uninterpreted_cpp_code_fragment -> QUESTION uninterpreted_cpp_code_fragment
 
 State 159:
+## Known stack suffix:
+## STAR uninterpreted_cpp_code_fragment
+## LR(1) items:
 uninterpreted_cpp_code_fragment -> STAR uninterpreted_cpp_code_fragment . [ STAR RIGHT_SQ_BRACE RIGHT_PAREN QUESTION PLUS PIPE NUMBER NOTEQUALS MINUS LESSTHAN LEFT_SQ_BRACE LEFT_PAREN ISEQUALS IDENTIFIER GREATERTHAN EXCLAMATION DOUBLECOLON DOUBLEBAR DOUBLEAMPERSAND DOT COMMA COLON BACKARROW ARROW ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production uninterpreted_cpp_code_fragment -> STAR uninterpreted_cpp_code_fragment
 -- On RIGHT_SQ_BRACE reduce production uninterpreted_cpp_code_fragment -> STAR uninterpreted_cpp_code_fragment
 -- On RIGHT_PAREN reduce production uninterpreted_cpp_code_fragment -> STAR uninterpreted_cpp_code_fragment
@@ -2263,36 +3063,65 @@ uninterpreted_cpp_code_fragment -> STAR uninterpreted_cpp_code_fragment . [ STAR
 -- On ARROW reduce production uninterpreted_cpp_code_fragment -> STAR uninterpreted_cpp_code_fragment
 
 State 160:
+## Known stack suffix:
+## GUARD IDENTIFIER guardref_modifier_list LEFT_PAREN uninterpreted_cpp_code_comma_list
+## LR(1) items:
 guardref_item -> GUARD IDENTIFIER guardref_modifier_list LEFT_PAREN uninterpreted_cpp_code_comma_list . RIGHT_PAREN as_named_opt if_condition_opt [ RIGHT_PAREN COMMA ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 161
+## Reductions:
 
 State 161:
+## Known stack suffix:
+## GUARD IDENTIFIER guardref_modifier_list LEFT_PAREN uninterpreted_cpp_code_comma_list RIGHT_PAREN
+## LR(1) items:
 guardref_item -> GUARD IDENTIFIER guardref_modifier_list LEFT_PAREN uninterpreted_cpp_code_comma_list RIGHT_PAREN . as_named_opt if_condition_opt [ RIGHT_PAREN COMMA ]
+## Transitions:
 -- On AS shift to state 162
 -- On as_named_opt shift to state 164
+## Reductions:
 -- On RIGHT_PAREN reduce production as_named_opt ->
 -- On IF reduce production as_named_opt ->
 -- On COMMA reduce production as_named_opt ->
 
 State 162:
+## Known stack suffix:
+## AS
+## LR(1) items:
 as_named_opt -> AS . IDENTIFIER [ RIGHT_PAREN IF COMMA ]
+## Transitions:
 -- On IDENTIFIER shift to state 163
+## Reductions:
 
 State 163:
+## Known stack suffix:
+## AS IDENTIFIER
+## LR(1) items:
 as_named_opt -> AS IDENTIFIER . [ RIGHT_PAREN IF COMMA ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production as_named_opt -> AS IDENTIFIER
 -- On IF reduce production as_named_opt -> AS IDENTIFIER
 -- On COMMA reduce production as_named_opt -> AS IDENTIFIER
 
 State 164:
+## Known stack suffix:
+## GUARD IDENTIFIER guardref_modifier_list LEFT_PAREN uninterpreted_cpp_code_comma_list RIGHT_PAREN as_named_opt
+## LR(1) items:
 guardref_item -> GUARD IDENTIFIER guardref_modifier_list LEFT_PAREN uninterpreted_cpp_code_comma_list RIGHT_PAREN as_named_opt . if_condition_opt [ RIGHT_PAREN COMMA ]
+## Transitions:
 -- On IF shift to state 165
 -- On if_condition_opt shift to state 167
+## Reductions:
 -- On RIGHT_PAREN reduce production if_condition_opt ->
 -- On COMMA reduce production if_condition_opt ->
 
 State 165:
+## Known stack suffix:
+## IF
+## LR(1) items:
 if_condition_opt -> IF . uninterpreted_cpp_code [ RIGHT_PAREN COMMA ]
+## Transitions:
 -- On STAR shift to state 113
 -- On QUESTION shift to state 114
 -- On PLUS shift to state 115
@@ -2317,37 +3146,67 @@ if_condition_opt -> IF . uninterpreted_cpp_code [ RIGHT_PAREN COMMA ]
 -- On uninterpreted_cpp_code_fragment shift to state 144
 -- On uninterpreted_cpp_code shift to state 166
 -- On ident shift to state 134
+## Reductions:
 -- On RIGHT_PAREN reduce production uninterpreted_cpp_code ->
 -- On COMMA reduce production uninterpreted_cpp_code ->
 
 State 166:
+## Known stack suffix:
+## IF uninterpreted_cpp_code
+## LR(1) items:
 if_condition_opt -> IF uninterpreted_cpp_code . [ RIGHT_PAREN COMMA ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production if_condition_opt -> IF uninterpreted_cpp_code
 -- On COMMA reduce production if_condition_opt -> IF uninterpreted_cpp_code
 
 State 167:
+## Known stack suffix:
+## GUARD IDENTIFIER guardref_modifier_list LEFT_PAREN uninterpreted_cpp_code_comma_list RIGHT_PAREN as_named_opt if_condition_opt
+## LR(1) items:
 guardref_item -> GUARD IDENTIFIER guardref_modifier_list LEFT_PAREN uninterpreted_cpp_code_comma_list RIGHT_PAREN as_named_opt if_condition_opt . [ RIGHT_PAREN COMMA ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production guardref_item -> GUARD IDENTIFIER guardref_modifier_list LEFT_PAREN uninterpreted_cpp_code_comma_list RIGHT_PAREN as_named_opt if_condition_opt
 -- On COMMA reduce production guardref_item -> GUARD IDENTIFIER guardref_modifier_list LEFT_PAREN uninterpreted_cpp_code_comma_list RIGHT_PAREN as_named_opt if_condition_opt
 
 State 168:
+## Known stack suffix:
+## CONST
+## LR(1) items:
 type_mod_opt -> CONST . [ LEFT_PAREN IDENTIFIER BOOL ]
+## Transitions:
+## Reductions:
 -- On LEFT_PAREN reduce production type_mod_opt -> CONST
 -- On IDENTIFIER reduce production type_mod_opt -> CONST
 -- On BOOL reduce production type_mod_opt -> CONST
 
 State 169:
+## Known stack suffix:
+## LEFT_PAREN typed_or_guardref_item_list
+## LR(1) items:
 arg_list -> LEFT_PAREN typed_or_guardref_item_list . RIGHT_PAREN [ ARROW ]
 typed_or_guardref_item_list -> typed_or_guardref_item_list . COMMA typed_or_guardref_item [ RIGHT_PAREN COMMA ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 170
 -- On COMMA shift to state 171
+## Reductions:
 
 State 170:
+## Known stack suffix:
+## LEFT_PAREN typed_or_guardref_item_list RIGHT_PAREN
+## LR(1) items:
 arg_list -> LEFT_PAREN typed_or_guardref_item_list RIGHT_PAREN . [ ARROW ]
+## Transitions:
+## Reductions:
 -- On ARROW reduce production arg_list -> LEFT_PAREN typed_or_guardref_item_list RIGHT_PAREN
 
 State 171:
+## Known stack suffix:
+## typed_or_guardref_item_list COMMA
+## LR(1) items:
 typed_or_guardref_item_list -> typed_or_guardref_item_list COMMA . typed_or_guardref_item [ RIGHT_PAREN COMMA ]
+## Transitions:
 -- On GUARD shift to state 100
 -- On CONST shift to state 168
 -- On typed_or_guardref_item shift to state 172
@@ -2355,42 +3214,73 @@ typed_or_guardref_item_list -> typed_or_guardref_item_list COMMA . typed_or_guar
 -- On type_mod_opt shift to state 174
 -- On guardref_item shift to state 194
 -- On data_type shift to state 195
+## Reductions:
 -- On LEFT_PAREN reduce production type_mod_opt ->
 -- On IDENTIFIER reduce production type_mod_opt ->
 -- On BOOL reduce production type_mod_opt ->
 
 State 172:
+## Known stack suffix:
+## typed_or_guardref_item_list COMMA typed_or_guardref_item
+## LR(1) items:
 typed_or_guardref_item_list -> typed_or_guardref_item_list COMMA typed_or_guardref_item . [ RIGHT_PAREN COMMA ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production typed_or_guardref_item_list -> typed_or_guardref_item_list COMMA typed_or_guardref_item
 -- On COMMA reduce production typed_or_guardref_item_list -> typed_or_guardref_item_list COMMA typed_or_guardref_item
 
 State 173:
+## Known stack suffix:
+## typed_item
+## LR(1) items:
 typed_or_guardref_item -> typed_item . [ RIGHT_PAREN COMMA ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production typed_or_guardref_item -> typed_item
 -- On COMMA reduce production typed_or_guardref_item -> typed_item
 
 State 174:
+## Known stack suffix:
+## type_mod_opt
+## LR(1) items:
 data_type -> type_mod_opt . raw_data_type star_list [ SEMI RIGHT_PAREN IDENTIFIER GREATERTHAN COMMA ]
+## Transitions:
 -- On LEFT_PAREN shift to state 175
 -- On IDENTIFIER shift to state 178
 -- On BOOL shift to state 188
 -- On raw_data_type shift to state 190
+## Reductions:
 
 State 175:
+## Known stack suffix:
+## LEFT_PAREN
+## LR(1) items:
 raw_data_type -> LEFT_PAREN . data_type RIGHT_PAREN [ STAR SEMI RIGHT_PAREN IDENTIFIER GREATERTHAN COMMA AMPERSAND ]
+## Transitions:
 -- On CONST shift to state 168
 -- On type_mod_opt shift to state 174
 -- On data_type shift to state 176
+## Reductions:
 -- On LEFT_PAREN reduce production type_mod_opt ->
 -- On IDENTIFIER reduce production type_mod_opt ->
 -- On BOOL reduce production type_mod_opt ->
 
 State 176:
+## Known stack suffix:
+## LEFT_PAREN data_type
+## LR(1) items:
 raw_data_type -> LEFT_PAREN data_type . RIGHT_PAREN [ STAR SEMI RIGHT_PAREN IDENTIFIER GREATERTHAN COMMA AMPERSAND ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 177
+## Reductions:
 
 State 177:
+## Known stack suffix:
+## LEFT_PAREN data_type RIGHT_PAREN
+## LR(1) items:
 raw_data_type -> LEFT_PAREN data_type RIGHT_PAREN . [ STAR SEMI RIGHT_PAREN IDENTIFIER GREATERTHAN COMMA AMPERSAND ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production raw_data_type -> LEFT_PAREN data_type RIGHT_PAREN
 -- On SEMI reduce production raw_data_type -> LEFT_PAREN data_type RIGHT_PAREN
 -- On RIGHT_PAREN reduce production raw_data_type -> LEFT_PAREN data_type RIGHT_PAREN
@@ -2400,11 +3290,16 @@ raw_data_type -> LEFT_PAREN data_type RIGHT_PAREN . [ STAR SEMI RIGHT_PAREN IDEN
 -- On AMPERSAND reduce production raw_data_type -> LEFT_PAREN data_type RIGHT_PAREN
 
 State 178:
+## Known stack suffix:
+## IDENTIFIER
+## LR(1) items:
 raw_data_type -> IDENTIFIER . [ STAR SEMI RIGHT_PAREN IDENTIFIER GREATERTHAN COMMA AMPERSAND ]
 raw_data_type -> IDENTIFIER . DOUBLECOLON raw_data_type [ STAR SEMI RIGHT_PAREN IDENTIFIER GREATERTHAN COMMA AMPERSAND ]
 raw_data_type -> IDENTIFIER . LESSTHAN template_item_list GREATERTHAN [ STAR SEMI RIGHT_PAREN IDENTIFIER GREATERTHAN COMMA AMPERSAND ]
+## Transitions:
 -- On LESSTHAN shift to state 179
 -- On DOUBLECOLON shift to state 187
+## Reductions:
 -- On STAR reduce production raw_data_type -> IDENTIFIER
 -- On SEMI reduce production raw_data_type -> IDENTIFIER
 -- On RIGHT_PAREN reduce production raw_data_type -> IDENTIFIER
@@ -2414,30 +3309,50 @@ raw_data_type -> IDENTIFIER . LESSTHAN template_item_list GREATERTHAN [ STAR SEM
 -- On AMPERSAND reduce production raw_data_type -> IDENTIFIER
 
 State 179:
+## Known stack suffix:
+## IDENTIFIER LESSTHAN
+## LR(1) items:
 raw_data_type -> IDENTIFIER LESSTHAN . template_item_list GREATERTHAN [ STAR SEMI RIGHT_PAREN IDENTIFIER GREATERTHAN COMMA AMPERSAND ]
+## Transitions:
 -- On NUMBER shift to state 180
 -- On CONST shift to state 168
 -- On type_mod_opt shift to state 174
 -- On template_item_list shift to state 181
 -- On template_item shift to state 186
 -- On data_type shift to state 185
+## Reductions:
 -- On LEFT_PAREN reduce production type_mod_opt ->
 -- On IDENTIFIER reduce production type_mod_opt ->
 -- On BOOL reduce production type_mod_opt ->
 
 State 180:
+## Known stack suffix:
+## NUMBER
+## LR(1) items:
 template_item -> NUMBER . [ GREATERTHAN COMMA ]
+## Transitions:
+## Reductions:
 -- On GREATERTHAN reduce production template_item -> NUMBER
 -- On COMMA reduce production template_item -> NUMBER
 
 State 181:
+## Known stack suffix:
+## IDENTIFIER LESSTHAN template_item_list
+## LR(1) items:
 raw_data_type -> IDENTIFIER LESSTHAN template_item_list . GREATERTHAN [ STAR SEMI RIGHT_PAREN IDENTIFIER GREATERTHAN COMMA AMPERSAND ]
 template_item_list -> template_item_list . COMMA template_item [ GREATERTHAN COMMA ]
+## Transitions:
 -- On GREATERTHAN shift to state 182
 -- On COMMA shift to state 183
+## Reductions:
 
 State 182:
+## Known stack suffix:
+## IDENTIFIER LESSTHAN template_item_list GREATERTHAN
+## LR(1) items:
 raw_data_type -> IDENTIFIER LESSTHAN template_item_list GREATERTHAN . [ STAR SEMI RIGHT_PAREN IDENTIFIER GREATERTHAN COMMA AMPERSAND ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production raw_data_type -> IDENTIFIER LESSTHAN template_item_list GREATERTHAN
 -- On SEMI reduce production raw_data_type -> IDENTIFIER LESSTHAN template_item_list GREATERTHAN
 -- On RIGHT_PAREN reduce production raw_data_type -> IDENTIFIER LESSTHAN template_item_list GREATERTHAN
@@ -2447,40 +3362,70 @@ raw_data_type -> IDENTIFIER LESSTHAN template_item_list GREATERTHAN . [ STAR SEM
 -- On AMPERSAND reduce production raw_data_type -> IDENTIFIER LESSTHAN template_item_list GREATERTHAN
 
 State 183:
+## Known stack suffix:
+## template_item_list COMMA
+## LR(1) items:
 template_item_list -> template_item_list COMMA . template_item [ GREATERTHAN COMMA ]
+## Transitions:
 -- On NUMBER shift to state 180
 -- On CONST shift to state 168
 -- On type_mod_opt shift to state 174
 -- On template_item shift to state 184
 -- On data_type shift to state 185
+## Reductions:
 -- On LEFT_PAREN reduce production type_mod_opt ->
 -- On IDENTIFIER reduce production type_mod_opt ->
 -- On BOOL reduce production type_mod_opt ->
 
 State 184:
+## Known stack suffix:
+## template_item_list COMMA template_item
+## LR(1) items:
 template_item_list -> template_item_list COMMA template_item . [ GREATERTHAN COMMA ]
+## Transitions:
+## Reductions:
 -- On GREATERTHAN reduce production template_item_list -> template_item_list COMMA template_item
 -- On COMMA reduce production template_item_list -> template_item_list COMMA template_item
 
 State 185:
+## Known stack suffix:
+## data_type
+## LR(1) items:
 template_item -> data_type . [ GREATERTHAN COMMA ]
+## Transitions:
+## Reductions:
 -- On GREATERTHAN reduce production template_item -> data_type
 -- On COMMA reduce production template_item -> data_type
 
 State 186:
+## Known stack suffix:
+## template_item
+## LR(1) items:
 template_item_list -> template_item . [ GREATERTHAN COMMA ]
+## Transitions:
+## Reductions:
 -- On GREATERTHAN reduce production template_item_list -> template_item
 -- On COMMA reduce production template_item_list -> template_item
 
 State 187:
+## Known stack suffix:
+## IDENTIFIER DOUBLECOLON
+## LR(1) items:
 raw_data_type -> IDENTIFIER DOUBLECOLON . raw_data_type [ STAR SEMI RIGHT_PAREN IDENTIFIER GREATERTHAN COMMA AMPERSAND ]
+## Transitions:
 -- On LEFT_PAREN shift to state 175
 -- On IDENTIFIER shift to state 178
 -- On BOOL shift to state 188
 -- On raw_data_type shift to state 189
+## Reductions:
 
 State 188:
+## Known stack suffix:
+## BOOL
+## LR(1) items:
 raw_data_type -> BOOL . [ STAR SEMI RIGHT_PAREN IDENTIFIER GREATERTHAN COMMA AMPERSAND ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production raw_data_type -> BOOL
 -- On SEMI reduce production raw_data_type -> BOOL
 -- On RIGHT_PAREN reduce production raw_data_type -> BOOL
@@ -2490,7 +3435,12 @@ raw_data_type -> BOOL . [ STAR SEMI RIGHT_PAREN IDENTIFIER GREATERTHAN COMMA AMP
 -- On AMPERSAND reduce production raw_data_type -> BOOL
 
 State 189:
+## Known stack suffix:
+## IDENTIFIER DOUBLECOLON raw_data_type
+## LR(1) items:
 raw_data_type -> IDENTIFIER DOUBLECOLON raw_data_type . [ STAR SEMI RIGHT_PAREN IDENTIFIER GREATERTHAN COMMA AMPERSAND ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production raw_data_type -> IDENTIFIER DOUBLECOLON raw_data_type
 -- On SEMI reduce production raw_data_type -> IDENTIFIER DOUBLECOLON raw_data_type
 -- On RIGHT_PAREN reduce production raw_data_type -> IDENTIFIER DOUBLECOLON raw_data_type
@@ -2500,8 +3450,13 @@ raw_data_type -> IDENTIFIER DOUBLECOLON raw_data_type . [ STAR SEMI RIGHT_PAREN 
 -- On AMPERSAND reduce production raw_data_type -> IDENTIFIER DOUBLECOLON raw_data_type
 
 State 190:
+## Known stack suffix:
+## type_mod_opt raw_data_type
+## LR(1) items:
 data_type -> type_mod_opt raw_data_type . star_list [ SEMI RIGHT_PAREN IDENTIFIER GREATERTHAN COMMA ]
+## Transitions:
 -- On star_list shift to state 191
+## Reductions:
 -- On STAR reduce production star_list ->
 -- On SEMI reduce production star_list ->
 -- On RIGHT_PAREN reduce production star_list ->
@@ -2511,11 +3466,16 @@ data_type -> type_mod_opt raw_data_type . star_list [ SEMI RIGHT_PAREN IDENTIFIE
 -- On AMPERSAND reduce production star_list ->
 
 State 191:
+## Known stack suffix:
+## type_mod_opt raw_data_type star_list
+## LR(1) items:
 data_type -> type_mod_opt raw_data_type star_list . [ SEMI RIGHT_PAREN IDENTIFIER GREATERTHAN COMMA ]
 star_list -> star_list . STAR [ STAR SEMI RIGHT_PAREN IDENTIFIER GREATERTHAN COMMA AMPERSAND ]
 star_list -> star_list . AMPERSAND [ STAR SEMI RIGHT_PAREN IDENTIFIER GREATERTHAN COMMA AMPERSAND ]
+## Transitions:
 -- On STAR shift to state 192
 -- On AMPERSAND shift to state 193
+## Reductions:
 -- On SEMI reduce production data_type -> type_mod_opt raw_data_type star_list
 -- On RIGHT_PAREN reduce production data_type -> type_mod_opt raw_data_type star_list
 -- On IDENTIFIER reduce production data_type -> type_mod_opt raw_data_type star_list
@@ -2523,7 +3483,12 @@ star_list -> star_list . AMPERSAND [ STAR SEMI RIGHT_PAREN IDENTIFIER GREATERTHA
 -- On COMMA reduce production data_type -> type_mod_opt raw_data_type star_list
 
 State 192:
+## Known stack suffix:
+## star_list STAR
+## LR(1) items:
 star_list -> star_list STAR . [ STAR SEMI RIGHT_PAREN IDENTIFIER GREATERTHAN COMMA AMPERSAND ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production star_list -> star_list STAR
 -- On SEMI reduce production star_list -> star_list STAR
 -- On RIGHT_PAREN reduce production star_list -> star_list STAR
@@ -2533,7 +3498,12 @@ star_list -> star_list STAR . [ STAR SEMI RIGHT_PAREN IDENTIFIER GREATERTHAN COM
 -- On AMPERSAND reduce production star_list -> star_list STAR
 
 State 193:
+## Known stack suffix:
+## star_list AMPERSAND
+## LR(1) items:
 star_list -> star_list AMPERSAND . [ STAR SEMI RIGHT_PAREN IDENTIFIER GREATERTHAN COMMA AMPERSAND ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production star_list -> star_list AMPERSAND
 -- On SEMI reduce production star_list -> star_list AMPERSAND
 -- On RIGHT_PAREN reduce production star_list -> star_list AMPERSAND
@@ -2543,101 +3513,186 @@ star_list -> star_list AMPERSAND . [ STAR SEMI RIGHT_PAREN IDENTIFIER GREATERTHA
 -- On AMPERSAND reduce production star_list -> star_list AMPERSAND
 
 State 194:
+## Known stack suffix:
+## guardref_item
+## LR(1) items:
 typed_or_guardref_item -> guardref_item . [ RIGHT_PAREN COMMA ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production typed_or_guardref_item -> guardref_item
 -- On COMMA reduce production typed_or_guardref_item -> guardref_item
 
 State 195:
+## Known stack suffix:
+## data_type
+## LR(1) items:
 typed_item -> data_type . [ RIGHT_PAREN COMMA ]
 typed_item -> data_type . IDENTIFIER [ RIGHT_PAREN COMMA ]
+## Transitions:
 -- On IDENTIFIER shift to state 196
+## Reductions:
 -- On RIGHT_PAREN reduce production typed_item -> data_type
 -- On COMMA reduce production typed_item -> data_type
 
 State 196:
+## Known stack suffix:
+## data_type IDENTIFIER
+## LR(1) items:
 typed_item -> data_type IDENTIFIER . [ RIGHT_PAREN COMMA ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production typed_item -> data_type IDENTIFIER
 -- On COMMA reduce production typed_item -> data_type IDENTIFIER
 
 State 197:
+## Known stack suffix:
+## typed_or_guardref_item
+## LR(1) items:
 typed_or_guardref_item_list -> typed_or_guardref_item . [ RIGHT_PAREN COMMA ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production typed_or_guardref_item_list -> typed_or_guardref_item
 -- On COMMA reduce production typed_or_guardref_item_list -> typed_or_guardref_item
 
 State 198:
+## Known stack suffix:
+## external_opt NODE node_mod_list namespaced_ident arg_list
+## LR(1) items:
 node_decl -> external_opt NODE node_mod_list namespaced_ident arg_list . ARROW node_target_arg_list SEMI [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
 -- On ARROW shift to state 199
+## Reductions:
 
 State 199:
+## Known stack suffix:
+## external_opt NODE node_mod_list namespaced_ident arg_list ARROW
+## LR(1) items:
 node_decl -> external_opt NODE node_mod_list namespaced_ident arg_list ARROW . node_target_arg_list SEMI [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
 -- On LEFT_PAREN shift to state 200
 -- On ELLIPSIS shift to state 207
 -- On simple_arg_list shift to state 208
 -- On node_target_arg_list shift to state 209
+## Reductions:
 
 State 200:
+## Known stack suffix:
+## LEFT_PAREN
+## LR(1) items:
 simple_arg_list -> LEFT_PAREN . typed_item_list RIGHT_PAREN [ SEMI ARROW ]
 simple_arg_list -> LEFT_PAREN . RIGHT_PAREN [ SEMI ARROW ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 201
 -- On CONST shift to state 168
 -- On typed_item_list shift to state 202
 -- On typed_item shift to state 206
 -- On type_mod_opt shift to state 174
 -- On data_type shift to state 195
+## Reductions:
 -- On LEFT_PAREN reduce production type_mod_opt ->
 -- On IDENTIFIER reduce production type_mod_opt ->
 -- On BOOL reduce production type_mod_opt ->
 
 State 201:
+## Known stack suffix:
+## LEFT_PAREN RIGHT_PAREN
+## LR(1) items:
 simple_arg_list -> LEFT_PAREN RIGHT_PAREN . [ SEMI ARROW ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production simple_arg_list -> LEFT_PAREN RIGHT_PAREN
 -- On ARROW reduce production simple_arg_list -> LEFT_PAREN RIGHT_PAREN
 
 State 202:
+## Known stack suffix:
+## LEFT_PAREN typed_item_list
+## LR(1) items:
 simple_arg_list -> LEFT_PAREN typed_item_list . RIGHT_PAREN [ SEMI ARROW ]
 typed_item_list -> typed_item_list . COMMA typed_item [ RIGHT_PAREN COMMA ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 203
 -- On COMMA shift to state 204
+## Reductions:
 
 State 203:
+## Known stack suffix:
+## LEFT_PAREN typed_item_list RIGHT_PAREN
+## LR(1) items:
 simple_arg_list -> LEFT_PAREN typed_item_list RIGHT_PAREN . [ SEMI ARROW ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production simple_arg_list -> LEFT_PAREN typed_item_list RIGHT_PAREN
 -- On ARROW reduce production simple_arg_list -> LEFT_PAREN typed_item_list RIGHT_PAREN
 
 State 204:
+## Known stack suffix:
+## typed_item_list COMMA
+## LR(1) items:
 typed_item_list -> typed_item_list COMMA . typed_item [ RIGHT_PAREN COMMA ]
+## Transitions:
 -- On CONST shift to state 168
 -- On typed_item shift to state 205
 -- On type_mod_opt shift to state 174
 -- On data_type shift to state 195
+## Reductions:
 -- On LEFT_PAREN reduce production type_mod_opt ->
 -- On IDENTIFIER reduce production type_mod_opt ->
 -- On BOOL reduce production type_mod_opt ->
 
 State 205:
+## Known stack suffix:
+## typed_item_list COMMA typed_item
+## LR(1) items:
 typed_item_list -> typed_item_list COMMA typed_item . [ RIGHT_PAREN COMMA ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production typed_item_list -> typed_item_list COMMA typed_item
 -- On COMMA reduce production typed_item_list -> typed_item_list COMMA typed_item
 
 State 206:
+## Known stack suffix:
+## typed_item
+## LR(1) items:
 typed_item_list -> typed_item . [ RIGHT_PAREN COMMA ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production typed_item_list -> typed_item
 -- On COMMA reduce production typed_item_list -> typed_item
 
 State 207:
+## Known stack suffix:
+## ELLIPSIS
+## LR(1) items:
 node_target_arg_list -> ELLIPSIS . [ SEMI ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production node_target_arg_list -> ELLIPSIS
 
 State 208:
+## Known stack suffix:
+## simple_arg_list
+## LR(1) items:
 node_target_arg_list -> simple_arg_list . [ SEMI ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production node_target_arg_list -> simple_arg_list
 
 State 209:
+## Known stack suffix:
+## external_opt NODE node_mod_list namespaced_ident arg_list ARROW node_target_arg_list
+## LR(1) items:
 node_decl -> external_opt NODE node_mod_list namespaced_ident arg_list ARROW node_target_arg_list . SEMI [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
 -- On SEMI shift to state 210
+## Reductions:
 
 State 210:
+## Known stack suffix:
+## external_opt NODE node_mod_list namespaced_ident arg_list ARROW node_target_arg_list SEMI
+## LR(1) items:
 node_decl -> external_opt NODE node_mod_list namespaced_ident arg_list ARROW node_target_arg_list SEMI . [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
+## Reductions:
 -- On TERMINATE reduce production node_decl -> external_opt NODE node_mod_list namespaced_ident arg_list ARROW node_target_arg_list SEMI
 -- On STATIC reduce production node_decl -> external_opt NODE node_mod_list namespaced_ident arg_list ARROW node_target_arg_list SEMI
 -- On SOURCE reduce production node_decl -> external_opt NODE node_mod_list namespaced_ident arg_list ARROW node_target_arg_list SEMI
@@ -2662,65 +3717,130 @@ node_decl -> external_opt NODE node_mod_list namespaced_ident arg_list ARROW nod
 -- On CONDITION reduce production node_decl -> external_opt NODE node_mod_list namespaced_ident arg_list ARROW node_target_arg_list SEMI
 
 State 211:
+## Known stack suffix:
+## external_opt INSTANCE
+## LR(1) items:
 mod_inst -> external_opt INSTANCE . namespaced_ident IDENTIFIER where_guard_indentifications_opt SEMI [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
 -- On IDENTIFIER shift to state 6
 -- On namespaced_ident shift to state 212
+## Reductions:
 
 State 212:
+## Known stack suffix:
+## external_opt INSTANCE namespaced_ident
+## LR(1) items:
 mod_inst -> external_opt INSTANCE namespaced_ident . IDENTIFIER where_guard_indentifications_opt SEMI [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
 -- On IDENTIFIER shift to state 213
+## Reductions:
 
 State 213:
+## Known stack suffix:
+## external_opt INSTANCE namespaced_ident IDENTIFIER
+## LR(1) items:
 mod_inst -> external_opt INSTANCE namespaced_ident IDENTIFIER . where_guard_indentifications_opt SEMI [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
 -- On WHERE shift to state 214
 -- On where_guard_indentifications_opt shift to state 222
+## Reductions:
 -- On SEMI reduce production where_guard_indentifications_opt ->
 
 State 214:
+## Known stack suffix:
+## WHERE
+## LR(1) items:
 where_guard_indentifications_opt -> WHERE . guard_indentification_list [ SEMI ]
+## Transitions:
 -- On IDENTIFIER shift to state 215
 -- On guard_indentification_list shift to state 218
 -- On guard_identification shift to state 219
+## Reductions:
 
 State 215:
+## Known stack suffix:
+## IDENTIFIER
+## LR(1) items:
 guard_identification -> IDENTIFIER . EQUALS IDENTIFIER [ SEMI COMMA ]
+## Transitions:
 -- On EQUALS shift to state 216
+## Reductions:
 
 State 216:
+## Known stack suffix:
+## IDENTIFIER EQUALS
+## LR(1) items:
 guard_identification -> IDENTIFIER EQUALS . IDENTIFIER [ SEMI COMMA ]
+## Transitions:
 -- On IDENTIFIER shift to state 217
+## Reductions:
 
 State 217:
+## Known stack suffix:
+## IDENTIFIER EQUALS IDENTIFIER
+## LR(1) items:
 guard_identification -> IDENTIFIER EQUALS IDENTIFIER . [ SEMI COMMA ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production guard_identification -> IDENTIFIER EQUALS IDENTIFIER
 -- On COMMA reduce production guard_identification -> IDENTIFIER EQUALS IDENTIFIER
 
 State 218:
+## Known stack suffix:
+## WHERE guard_indentification_list
+## LR(1) items:
 where_guard_indentifications_opt -> WHERE guard_indentification_list . [ SEMI ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production where_guard_indentifications_opt -> WHERE guard_indentification_list
 
 State 219:
+## Known stack suffix:
+## guard_identification
+## LR(1) items:
 guard_indentification_list -> guard_identification . [ SEMI ]
 guard_indentification_list -> guard_identification . COMMA guard_indentification_list [ SEMI ]
+## Transitions:
 -- On COMMA shift to state 220
+## Reductions:
 -- On SEMI reduce production guard_indentification_list -> guard_identification
 
 State 220:
+## Known stack suffix:
+## guard_identification COMMA
+## LR(1) items:
 guard_indentification_list -> guard_identification COMMA . guard_indentification_list [ SEMI ]
+## Transitions:
 -- On IDENTIFIER shift to state 215
 -- On guard_indentification_list shift to state 221
 -- On guard_identification shift to state 219
+## Reductions:
 
 State 221:
+## Known stack suffix:
+## guard_identification COMMA guard_indentification_list
+## LR(1) items:
 guard_indentification_list -> guard_identification COMMA guard_indentification_list . [ SEMI ]
+## Transitions:
+## Reductions:
 -- On SEMI reduce production guard_indentification_list -> guard_identification COMMA guard_indentification_list
 
 State 222:
+## Known stack suffix:
+## external_opt INSTANCE namespaced_ident IDENTIFIER where_guard_indentifications_opt
+## LR(1) items:
 mod_inst -> external_opt INSTANCE namespaced_ident IDENTIFIER where_guard_indentifications_opt . SEMI [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
 -- On SEMI shift to state 223
+## Reductions:
 
 State 223:
+## Known stack suffix:
+## external_opt INSTANCE namespaced_ident IDENTIFIER where_guard_indentifications_opt SEMI
+## LR(1) items:
 mod_inst -> external_opt INSTANCE namespaced_ident IDENTIFIER where_guard_indentifications_opt SEMI . [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
+## Reductions:
 -- On TERMINATE reduce production mod_inst -> external_opt INSTANCE namespaced_ident IDENTIFIER where_guard_indentifications_opt SEMI
 -- On STATIC reduce production mod_inst -> external_opt INSTANCE namespaced_ident IDENTIFIER where_guard_indentifications_opt SEMI
 -- On SOURCE reduce production mod_inst -> external_opt INSTANCE namespaced_ident IDENTIFIER where_guard_indentifications_opt SEMI
@@ -2745,39 +3865,79 @@ mod_inst -> external_opt INSTANCE namespaced_ident IDENTIFIER where_guard_indent
 -- On CONDITION reduce production mod_inst -> external_opt INSTANCE namespaced_ident IDENTIFIER where_guard_indentifications_opt SEMI
 
 State 224:
+## Known stack suffix:
+## FREE
+## LR(1) items:
 atom_type -> FREE . [ SLASH IDENTIFIER ]
+## Transitions:
+## Reductions:
 -- On SLASH reduce production atom_type -> FREE
 -- On IDENTIFIER reduce production atom_type -> FREE
 
 State 225:
+## Known stack suffix:
+## EXCLUSIVE
+## LR(1) items:
 atom_type -> EXCLUSIVE . [ SLASH IDENTIFIER ]
+## Transitions:
+## Reductions:
 -- On SLASH reduce production atom_type -> EXCLUSIVE
 -- On IDENTIFIER reduce production atom_type -> EXCLUSIVE
 
 State 226:
+## Known stack suffix:
+## external_opt CONDITION
+## LR(1) items:
 cond_decl -> external_opt CONDITION . namespaced_ident simple_arg_list ARROW BOOL SEMI [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
 -- On IDENTIFIER shift to state 6
 -- On namespaced_ident shift to state 227
+## Reductions:
 
 State 227:
+## Known stack suffix:
+## external_opt CONDITION namespaced_ident
+## LR(1) items:
 cond_decl -> external_opt CONDITION namespaced_ident . simple_arg_list ARROW BOOL SEMI [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
 -- On LEFT_PAREN shift to state 200
 -- On simple_arg_list shift to state 228
+## Reductions:
 
 State 228:
+## Known stack suffix:
+## external_opt CONDITION namespaced_ident simple_arg_list
+## LR(1) items:
 cond_decl -> external_opt CONDITION namespaced_ident simple_arg_list . ARROW BOOL SEMI [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
 -- On ARROW shift to state 229
+## Reductions:
 
 State 229:
+## Known stack suffix:
+## external_opt CONDITION namespaced_ident simple_arg_list ARROW
+## LR(1) items:
 cond_decl -> external_opt CONDITION namespaced_ident simple_arg_list ARROW . BOOL SEMI [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
 -- On BOOL shift to state 230
+## Reductions:
 
 State 230:
+## Known stack suffix:
+## external_opt CONDITION namespaced_ident simple_arg_list ARROW BOOL
+## LR(1) items:
 cond_decl -> external_opt CONDITION namespaced_ident simple_arg_list ARROW BOOL . SEMI [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
 -- On SEMI shift to state 231
+## Reductions:
 
 State 231:
+## Known stack suffix:
+## external_opt CONDITION namespaced_ident simple_arg_list ARROW BOOL SEMI
+## LR(1) items:
 cond_decl -> external_opt CONDITION namespaced_ident simple_arg_list ARROW BOOL SEMI . [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
+## Reductions:
 -- On TERMINATE reduce production cond_decl -> external_opt CONDITION namespaced_ident simple_arg_list ARROW BOOL SEMI
 -- On STATIC reduce production cond_decl -> external_opt CONDITION namespaced_ident simple_arg_list ARROW BOOL SEMI
 -- On SOURCE reduce production cond_decl -> external_opt CONDITION namespaced_ident simple_arg_list ARROW BOOL SEMI
@@ -2802,66 +3962,126 @@ cond_decl -> external_opt CONDITION namespaced_ident simple_arg_list ARROW BOOL 
 -- On CONDITION reduce production cond_decl -> external_opt CONDITION namespaced_ident simple_arg_list ARROW BOOL SEMI
 
 State 232:
+## Known stack suffix:
+## external_opt atom_type
+## LR(1) items:
 atom_decl -> external_opt atom_type . atom_mod_opt_list namespaced_ident simple_arg_list ARROW data_type SEMI [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
 -- On SLASH shift to state 233
 -- On atom_mod_opt_list shift to state 238
+## Reductions:
 -- On IDENTIFIER reduce production atom_mod_opt_list ->
 
 State 233:
+## Known stack suffix:
+## SLASH
+## LR(1) items:
 atom_mod_opt_list -> SLASH . atom_mod atom_mod_opt_list [ IDENTIFIER ]
+## Transitions:
 -- On UNORDERED shift to state 234
 -- On GC shift to state 235
 -- On atom_mod shift to state 236
+## Reductions:
 
 State 234:
+## Known stack suffix:
+## UNORDERED
+## LR(1) items:
 atom_mod -> UNORDERED . [ SLASH IDENTIFIER ]
+## Transitions:
+## Reductions:
 -- On SLASH reduce production atom_mod -> UNORDERED
 -- On IDENTIFIER reduce production atom_mod -> UNORDERED
 
 State 235:
+## Known stack suffix:
+## GC
+## LR(1) items:
 atom_mod -> GC . [ SLASH IDENTIFIER ]
+## Transitions:
+## Reductions:
 -- On SLASH reduce production atom_mod -> GC
 -- On IDENTIFIER reduce production atom_mod -> GC
 
 State 236:
+## Known stack suffix:
+## SLASH atom_mod
+## LR(1) items:
 atom_mod_opt_list -> SLASH atom_mod . atom_mod_opt_list [ IDENTIFIER ]
+## Transitions:
 -- On SLASH shift to state 233
 -- On atom_mod_opt_list shift to state 237
+## Reductions:
 -- On IDENTIFIER reduce production atom_mod_opt_list ->
 
 State 237:
+## Known stack suffix:
+## SLASH atom_mod atom_mod_opt_list
+## LR(1) items:
 atom_mod_opt_list -> SLASH atom_mod atom_mod_opt_list . [ IDENTIFIER ]
+## Transitions:
+## Reductions:
 -- On IDENTIFIER reduce production atom_mod_opt_list -> SLASH atom_mod atom_mod_opt_list
 
 State 238:
+## Known stack suffix:
+## external_opt atom_type atom_mod_opt_list
+## LR(1) items:
 atom_decl -> external_opt atom_type atom_mod_opt_list . namespaced_ident simple_arg_list ARROW data_type SEMI [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
 -- On IDENTIFIER shift to state 6
 -- On namespaced_ident shift to state 239
+## Reductions:
 
 State 239:
+## Known stack suffix:
+## external_opt atom_type atom_mod_opt_list namespaced_ident
+## LR(1) items:
 atom_decl -> external_opt atom_type atom_mod_opt_list namespaced_ident . simple_arg_list ARROW data_type SEMI [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
 -- On LEFT_PAREN shift to state 200
 -- On simple_arg_list shift to state 240
+## Reductions:
 
 State 240:
+## Known stack suffix:
+## external_opt atom_type atom_mod_opt_list namespaced_ident simple_arg_list
+## LR(1) items:
 atom_decl -> external_opt atom_type atom_mod_opt_list namespaced_ident simple_arg_list . ARROW data_type SEMI [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
 -- On ARROW shift to state 241
+## Reductions:
 
 State 241:
+## Known stack suffix:
+## external_opt atom_type atom_mod_opt_list namespaced_ident simple_arg_list ARROW
+## LR(1) items:
 atom_decl -> external_opt atom_type atom_mod_opt_list namespaced_ident simple_arg_list ARROW . data_type SEMI [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
 -- On CONST shift to state 168
 -- On type_mod_opt shift to state 174
 -- On data_type shift to state 242
+## Reductions:
 -- On LEFT_PAREN reduce production type_mod_opt ->
 -- On IDENTIFIER reduce production type_mod_opt ->
 -- On BOOL reduce production type_mod_opt ->
 
 State 242:
+## Known stack suffix:
+## external_opt atom_type atom_mod_opt_list namespaced_ident simple_arg_list ARROW data_type
+## LR(1) items:
 atom_decl -> external_opt atom_type atom_mod_opt_list namespaced_ident simple_arg_list ARROW data_type . SEMI [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
 -- On SEMI shift to state 243
+## Reductions:
 
 State 243:
+## Known stack suffix:
+## external_opt atom_type atom_mod_opt_list namespaced_ident simple_arg_list ARROW data_type SEMI
+## LR(1) items:
 atom_decl -> external_opt atom_type atom_mod_opt_list namespaced_ident simple_arg_list ARROW data_type SEMI . [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
+## Reductions:
 -- On TERMINATE reduce production atom_decl -> external_opt atom_type atom_mod_opt_list namespaced_ident simple_arg_list ARROW data_type SEMI
 -- On STATIC reduce production atom_decl -> external_opt atom_type atom_mod_opt_list namespaced_ident simple_arg_list ARROW data_type SEMI
 -- On SOURCE reduce production atom_decl -> external_opt atom_type atom_mod_opt_list namespaced_ident simple_arg_list ARROW data_type SEMI
@@ -2886,7 +4106,12 @@ atom_decl -> external_opt atom_type atom_mod_opt_list namespaced_ident simple_ar
 -- On CONDITION reduce production atom_decl -> external_opt atom_type atom_mod_opt_list namespaced_ident simple_arg_list ARROW data_type SEMI
 
 State 244:
+## Known stack suffix:
+## code_list expr_part
+## LR(1) items:
 code_list -> code_list expr_part . [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
+## Reductions:
 -- On TERMINATE reduce production code_list -> code_list expr_part
 -- On STATIC reduce production code_list -> code_list expr_part
 -- On SOURCE reduce production code_list -> code_list expr_part
@@ -2911,7 +4136,12 @@ code_list -> code_list expr_part . [ TERMINATE STATIC SOURCE SEQUENCE READWRITE 
 -- On CONDITION reduce production code_list -> code_list expr_part
 
 State 245:
+## Known stack suffix:
+## code_list err_def
+## LR(1) items:
 code_list -> code_list err_def . [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
+## Reductions:
 -- On TERMINATE reduce production code_list -> code_list err_def
 -- On STATIC reduce production code_list -> code_list err_def
 -- On SOURCE reduce production code_list -> code_list err_def
@@ -2936,7 +4166,12 @@ code_list -> code_list err_def . [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PR
 -- On CONDITION reduce production code_list -> code_list err_def
 
 State 246:
+## Known stack suffix:
+## code_list cond_decl
+## LR(1) items:
 code_list -> code_list cond_decl . [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
+## Reductions:
 -- On TERMINATE reduce production code_list -> code_list cond_decl
 -- On STATIC reduce production code_list -> code_list cond_decl
 -- On SOURCE reduce production code_list -> code_list cond_decl
@@ -2961,7 +4196,12 @@ code_list -> code_list cond_decl . [ TERMINATE STATIC SOURCE SEQUENCE READWRITE 
 -- On CONDITION reduce production code_list -> code_list cond_decl
 
 State 247:
+## Known stack suffix:
+## code_list atom_decl
+## LR(1) items:
 code_list -> code_list atom_decl . [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
+## Reductions:
 -- On TERMINATE reduce production code_list -> code_list atom_decl
 -- On STATIC reduce production code_list -> code_list atom_decl
 -- On SOURCE reduce production code_list -> code_list atom_decl
@@ -2986,11 +4226,21 @@ code_list -> code_list atom_decl . [ TERMINATE STATIC SOURCE SEQUENCE READWRITE 
 -- On CONDITION reduce production code_list -> code_list atom_decl
 
 State 248:
+## Known stack suffix:
+## assn
+## LR(1) items:
 expr_part -> assn . SEMI [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
 -- On SEMI shift to state 249
+## Reductions:
 
 State 249:
+## Known stack suffix:
+## assn SEMI
+## LR(1) items:
 expr_part -> assn SEMI . [ TERMINATE STATIC SOURCE SEQUENCE READWRITE PRECEDENCE POOL PLUGIN NODE MODULE INSTANCE INITIAL IDENTIFIER HANDLE FREE EXTERNAL EXCLUSIVE ENDOFFILE END DOOR DEPENDS CONDITION ]
+## Transitions:
+## Reductions:
 -- On TERMINATE reduce production expr_part -> assn SEMI
 -- On STATIC reduce production expr_part -> assn SEMI
 -- On SOURCE reduce production expr_part -> assn SEMI

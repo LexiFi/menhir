@@ -1,5 +1,9 @@
 State 0:
+## Known stack suffix:
+##
+## LR(1) items:
 expr' -> . expr [ # ]
+## Transitions:
 -- On VAR shift to state 1
 -- On SLASH shift to state 2
 -- On NUMBER shift to state 14
@@ -34,9 +38,15 @@ expr' -> . expr [ # ]
 -- On and_expr shift to state 77
 -- On additive_expr shift to state 69
 -- On absolute_location_path shift to state 48
+## Reductions:
 
 State 1:
+## Known stack suffix:
+## VAR
+## LR(1) items:
 primary_expr -> VAR . [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT LBRACKET GTE GT EQUAL DOUBLESLASH DIV COMMA AND # ]
+## Transitions:
+## Reductions:
 -- On SLASH reduce production primary_expr -> VAR
 -- On RPAREN reduce production primary_expr -> VAR
 -- On RBRACKET reduce production primary_expr -> VAR
@@ -59,8 +69,12 @@ primary_expr -> VAR . [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINU
 -- On AND reduce production primary_expr -> VAR
 
 State 2:
+## Known stack suffix:
+## SLASH
+## LR(1) items:
 absolute_location_path -> SLASH . [ RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DIV COMMA AND # ]
 absolute_location_path -> SLASH . relative_location_path [ RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DIV COMMA AND # ]
+## Transitions:
 -- On NODE_TYPE shift to state 3
 -- On NAME_TEST shift to state 7
 -- On DOUBLEDOT shift to state 8
@@ -72,6 +86,7 @@ absolute_location_path -> SLASH . relative_location_path [ RPAREN RBRACKET PLUS 
 -- On relative_location_path shift to state 90
 -- On node_test shift to state 25
 -- On axis_specifier shift to state 26
+## Reductions:
 -- On RPAREN reduce production absolute_location_path -> SLASH
 -- On RBRACKET reduce production absolute_location_path -> SLASH
 -- On PLUS reduce production absolute_location_path -> SLASH
@@ -91,13 +106,23 @@ absolute_location_path -> SLASH . relative_location_path [ RPAREN RBRACKET PLUS 
 -- On AND reduce production absolute_location_path -> SLASH
 
 State 3:
+## Known stack suffix:
+## NODE_TYPE
+## LR(1) items:
 node_test -> NODE_TYPE . RPAREN [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT LBRACKET GTE GT EQUAL DOUBLESLASH DIV COMMA AND # ]
 node_test -> NODE_TYPE . LITERAL RPAREN [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT LBRACKET GTE GT EQUAL DOUBLESLASH DIV COMMA AND # ]
+## Transitions:
 -- On RPAREN shift to state 4
 -- On LITERAL shift to state 5
+## Reductions:
 
 State 4:
+## Known stack suffix:
+## NODE_TYPE RPAREN
+## LR(1) items:
 node_test -> NODE_TYPE RPAREN . [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT LBRACKET GTE GT EQUAL DOUBLESLASH DIV COMMA AND # ]
+## Transitions:
+## Reductions:
 -- On SLASH reduce production node_test -> NODE_TYPE RPAREN
 -- On RPAREN reduce production node_test -> NODE_TYPE RPAREN
 -- On RBRACKET reduce production node_test -> NODE_TYPE RPAREN
@@ -120,11 +145,21 @@ node_test -> NODE_TYPE RPAREN . [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MU
 -- On AND reduce production node_test -> NODE_TYPE RPAREN
 
 State 5:
+## Known stack suffix:
+## NODE_TYPE LITERAL
+## LR(1) items:
 node_test -> NODE_TYPE LITERAL . RPAREN [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT LBRACKET GTE GT EQUAL DOUBLESLASH DIV COMMA AND # ]
+## Transitions:
 -- On RPAREN shift to state 6
+## Reductions:
 
 State 6:
+## Known stack suffix:
+## NODE_TYPE LITERAL RPAREN
+## LR(1) items:
 node_test -> NODE_TYPE LITERAL RPAREN . [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT LBRACKET GTE GT EQUAL DOUBLESLASH DIV COMMA AND # ]
+## Transitions:
+## Reductions:
 -- On SLASH reduce production node_test -> NODE_TYPE LITERAL RPAREN
 -- On RPAREN reduce production node_test -> NODE_TYPE LITERAL RPAREN
 -- On RBRACKET reduce production node_test -> NODE_TYPE LITERAL RPAREN
@@ -147,7 +182,12 @@ node_test -> NODE_TYPE LITERAL RPAREN . [ SLASH RPAREN RBRACKET PLUS PIPE OR NOT
 -- On AND reduce production node_test -> NODE_TYPE LITERAL RPAREN
 
 State 7:
+## Known stack suffix:
+## NAME_TEST
+## LR(1) items:
 node_test -> NAME_TEST . [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT LBRACKET GTE GT EQUAL DOUBLESLASH DIV COMMA AND # ]
+## Transitions:
+## Reductions:
 -- On SLASH reduce production node_test -> NAME_TEST
 -- On RPAREN reduce production node_test -> NAME_TEST
 -- On RBRACKET reduce production node_test -> NAME_TEST
@@ -170,7 +210,12 @@ node_test -> NAME_TEST . [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD M
 -- On AND reduce production node_test -> NAME_TEST
 
 State 8:
+## Known stack suffix:
+## DOUBLEDOT
+## LR(1) items:
 step -> DOUBLEDOT . [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DOUBLESLASH DIV COMMA AND # ]
+## Transitions:
+## Reductions:
 -- On SLASH reduce production step -> DOUBLEDOT
 -- On RPAREN reduce production step -> DOUBLEDOT
 -- On RBRACKET reduce production step -> DOUBLEDOT
@@ -192,7 +237,12 @@ step -> DOUBLEDOT . [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS 
 -- On AND reduce production step -> DOUBLEDOT
 
 State 9:
+## Known stack suffix:
+## DOT
+## LR(1) items:
 step -> DOT . [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DOUBLESLASH DIV COMMA AND # ]
+## Transitions:
+## Reductions:
 -- On SLASH reduce production step -> DOT
 -- On RPAREN reduce production step -> DOT
 -- On RBRACKET reduce production step -> DOT
@@ -214,19 +264,34 @@ step -> DOT . [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT
 -- On AND reduce production step -> DOT
 
 State 10:
+## Known stack suffix:
+## AXIS
+## LR(1) items:
 axis_specifier -> AXIS . [ NODE_TYPE NAME_TEST ]
+## Transitions:
+## Reductions:
 -- On NODE_TYPE reduce production axis_specifier -> AXIS
 -- On NAME_TEST reduce production axis_specifier -> AXIS
 
 State 11:
+## Known stack suffix:
+## AT
+## LR(1) items:
 axis_specifier -> AT . [ NODE_TYPE NAME_TEST ]
+## Transitions:
+## Reductions:
 -- On NODE_TYPE reduce production axis_specifier -> AT
 -- On NAME_TEST reduce production axis_specifier -> AT
 
 State 12:
+## Known stack suffix:
+## step2
+## LR(1) items:
 step -> step2 . [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DOUBLESLASH DIV COMMA AND # ]
 step2 -> step2 . LBRACKET expr RBRACKET [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT LBRACKET GTE GT EQUAL DOUBLESLASH DIV COMMA AND # ]
+## Transitions:
 -- On LBRACKET shift to state 13
+## Reductions:
 -- On SLASH reduce production step -> step2
 -- On RPAREN reduce production step -> step2
 -- On RBRACKET reduce production step -> step2
@@ -248,7 +313,11 @@ step2 -> step2 . LBRACKET expr RBRACKET [ SLASH RPAREN RBRACKET PLUS PIPE OR NOT
 -- On AND reduce production step -> step2
 
 State 13:
+## Known stack suffix:
+## step2 LBRACKET
+## LR(1) items:
 step2 -> step2 LBRACKET . expr RBRACKET [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT LBRACKET GTE GT EQUAL DOUBLESLASH DIV COMMA AND # ]
+## Transitions:
 -- On VAR shift to state 1
 -- On SLASH shift to state 2
 -- On NUMBER shift to state 14
@@ -283,9 +352,15 @@ step2 -> step2 LBRACKET . expr RBRACKET [ SLASH RPAREN RBRACKET PLUS PIPE OR NOT
 -- On and_expr shift to state 77
 -- On additive_expr shift to state 69
 -- On absolute_location_path shift to state 48
+## Reductions:
 
 State 14:
+## Known stack suffix:
+## NUMBER
+## LR(1) items:
 primary_expr -> NUMBER . [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT LBRACKET GTE GT EQUAL DOUBLESLASH DIV COMMA AND # ]
+## Transitions:
+## Reductions:
 -- On SLASH reduce production primary_expr -> NUMBER
 -- On RPAREN reduce production primary_expr -> NUMBER
 -- On RBRACKET reduce production primary_expr -> NUMBER
@@ -308,7 +383,11 @@ primary_expr -> NUMBER . [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD M
 -- On AND reduce production primary_expr -> NUMBER
 
 State 15:
+## Known stack suffix:
+## MINUS
+## LR(1) items:
 unary_expr -> MINUS . unary_expr [ RPAREN RBRACKET PLUS OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DIV COMMA AND # ]
+## Transitions:
 -- On VAR shift to state 1
 -- On SLASH shift to state 2
 -- On NUMBER shift to state 14
@@ -336,9 +415,14 @@ unary_expr -> MINUS . unary_expr [ RPAREN RBRACKET PLUS OR NOTEQUAL MUL MOD MINU
 -- On filter_expr shift to state 37
 -- On axis_specifier shift to state 26
 -- On absolute_location_path shift to state 48
+## Reductions:
 
 State 16:
+## Known stack suffix:
+## LPAREN
+## LR(1) items:
 primary_expr -> LPAREN . expr RPAREN [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT LBRACKET GTE GT EQUAL DOUBLESLASH DIV COMMA AND # ]
+## Transitions:
 -- On VAR shift to state 1
 -- On SLASH shift to state 2
 -- On NUMBER shift to state 14
@@ -373,9 +457,15 @@ primary_expr -> LPAREN . expr RPAREN [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQU
 -- On and_expr shift to state 77
 -- On additive_expr shift to state 69
 -- On absolute_location_path shift to state 48
+## Reductions:
 
 State 17:
+## Known stack suffix:
+## LITERAL
+## LR(1) items:
 primary_expr -> LITERAL . [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT LBRACKET GTE GT EQUAL DOUBLESLASH DIV COMMA AND # ]
+## Transitions:
+## Reductions:
 -- On SLASH reduce production primary_expr -> LITERAL
 -- On RPAREN reduce production primary_expr -> LITERAL
 -- On RBRACKET reduce production primary_expr -> LITERAL
@@ -398,8 +488,12 @@ primary_expr -> LITERAL . [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD 
 -- On AND reduce production primary_expr -> LITERAL
 
 State 18:
+## Known stack suffix:
+## FUNCTION_NAME
+## LR(1) items:
 function_call -> FUNCTION_NAME . RPAREN [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT LBRACKET GTE GT EQUAL DOUBLESLASH DIV COMMA AND # ]
 function_call -> FUNCTION_NAME . arguments RPAREN [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT LBRACKET GTE GT EQUAL DOUBLESLASH DIV COMMA AND # ]
+## Transitions:
 -- On VAR shift to state 1
 -- On SLASH shift to state 2
 -- On RPAREN shift to state 19
@@ -436,9 +530,15 @@ function_call -> FUNCTION_NAME . arguments RPAREN [ SLASH RPAREN RBRACKET PLUS P
 -- On and_expr shift to state 77
 -- On additive_expr shift to state 69
 -- On absolute_location_path shift to state 48
+## Reductions:
 
 State 19:
+## Known stack suffix:
+## FUNCTION_NAME RPAREN
+## LR(1) items:
 function_call -> FUNCTION_NAME RPAREN . [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT LBRACKET GTE GT EQUAL DOUBLESLASH DIV COMMA AND # ]
+## Transitions:
+## Reductions:
 -- On SLASH reduce production function_call -> FUNCTION_NAME RPAREN
 -- On RPAREN reduce production function_call -> FUNCTION_NAME RPAREN
 -- On RBRACKET reduce production function_call -> FUNCTION_NAME RPAREN
@@ -461,7 +561,11 @@ function_call -> FUNCTION_NAME RPAREN . [ SLASH RPAREN RBRACKET PLUS PIPE OR NOT
 -- On AND reduce production function_call -> FUNCTION_NAME RPAREN
 
 State 20:
+## Known stack suffix:
+## DOUBLESLASH
+## LR(1) items:
 absolute_location_path -> DOUBLESLASH . relative_location_path [ RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DIV COMMA AND # ]
+## Transitions:
 -- On NODE_TYPE shift to state 3
 -- On NAME_TEST shift to state 7
 -- On DOUBLEDOT shift to state 8
@@ -473,9 +577,15 @@ absolute_location_path -> DOUBLESLASH . relative_location_path [ RPAREN RBRACKET
 -- On relative_location_path shift to state 22
 -- On node_test shift to state 25
 -- On axis_specifier shift to state 26
+## Reductions:
 
 State 21:
+## Known stack suffix:
+## step
+## LR(1) items:
 relative_location_path -> step . [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DOUBLESLASH DIV COMMA AND # ]
+## Transitions:
+## Reductions:
 -- On SLASH reduce production relative_location_path -> step
 -- On RPAREN reduce production relative_location_path -> step
 -- On RBRACKET reduce production relative_location_path -> step
@@ -497,11 +607,16 @@ relative_location_path -> step . [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL M
 -- On AND reduce production relative_location_path -> step
 
 State 22:
+## Known stack suffix:
+## DOUBLESLASH relative_location_path
+## LR(1) items:
 absolute_location_path -> DOUBLESLASH relative_location_path . [ RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DIV COMMA AND # ]
 relative_location_path -> relative_location_path . SLASH step [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DOUBLESLASH DIV COMMA AND # ]
 relative_location_path -> relative_location_path . DOUBLESLASH step [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DOUBLESLASH DIV COMMA AND # ]
+## Transitions:
 -- On SLASH shift to state 23
 -- On DOUBLESLASH shift to state 28
+## Reductions:
 -- On RPAREN reduce production absolute_location_path -> DOUBLESLASH relative_location_path
 -- On RBRACKET reduce production absolute_location_path -> DOUBLESLASH relative_location_path
 -- On PLUS reduce production absolute_location_path -> DOUBLESLASH relative_location_path
@@ -521,7 +636,11 @@ relative_location_path -> relative_location_path . DOUBLESLASH step [ SLASH RPAR
 -- On AND reduce production absolute_location_path -> DOUBLESLASH relative_location_path
 
 State 23:
+## Known stack suffix:
+## relative_location_path SLASH
+## LR(1) items:
 relative_location_path -> relative_location_path SLASH . step [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DOUBLESLASH DIV COMMA AND # ]
+## Transitions:
 -- On NODE_TYPE shift to state 3
 -- On NAME_TEST shift to state 7
 -- On DOUBLEDOT shift to state 8
@@ -532,9 +651,15 @@ relative_location_path -> relative_location_path SLASH . step [ SLASH RPAREN RBR
 -- On step shift to state 24
 -- On node_test shift to state 25
 -- On axis_specifier shift to state 26
+## Reductions:
 
 State 24:
+## Known stack suffix:
+## relative_location_path SLASH step
+## LR(1) items:
 relative_location_path -> relative_location_path SLASH step . [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DOUBLESLASH DIV COMMA AND # ]
+## Transitions:
+## Reductions:
 -- On SLASH reduce production relative_location_path -> relative_location_path SLASH step
 -- On RPAREN reduce production relative_location_path -> relative_location_path SLASH step
 -- On RBRACKET reduce production relative_location_path -> relative_location_path SLASH step
@@ -556,7 +681,12 @@ relative_location_path -> relative_location_path SLASH step . [ SLASH RPAREN RBR
 -- On AND reduce production relative_location_path -> relative_location_path SLASH step
 
 State 25:
+## Known stack suffix:
+## node_test
+## LR(1) items:
 step2 -> node_test . [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT LBRACKET GTE GT EQUAL DOUBLESLASH DIV COMMA AND # ]
+## Transitions:
+## Reductions:
 -- On SLASH reduce production step2 -> node_test
 -- On RPAREN reduce production step2 -> node_test
 -- On RBRACKET reduce production step2 -> node_test
@@ -579,16 +709,26 @@ step2 -> node_test . [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS
 -- On AND reduce production step2 -> node_test
 
 State 26:
+## Known stack suffix:
+## axis_specifier
+## LR(1) items:
 step -> axis_specifier . step2 [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DOUBLESLASH DIV COMMA AND # ]
+## Transitions:
 -- On NODE_TYPE shift to state 3
 -- On NAME_TEST shift to state 7
 -- On step2 shift to state 27
 -- On node_test shift to state 25
+## Reductions:
 
 State 27:
+## Known stack suffix:
+## axis_specifier step2
+## LR(1) items:
 step -> axis_specifier step2 . [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DOUBLESLASH DIV COMMA AND # ]
 step2 -> step2 . LBRACKET expr RBRACKET [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT LBRACKET GTE GT EQUAL DOUBLESLASH DIV COMMA AND # ]
+## Transitions:
 -- On LBRACKET shift to state 13
+## Reductions:
 -- On SLASH reduce production step -> axis_specifier step2
 -- On RPAREN reduce production step -> axis_specifier step2
 -- On RBRACKET reduce production step -> axis_specifier step2
@@ -610,7 +750,11 @@ step2 -> step2 . LBRACKET expr RBRACKET [ SLASH RPAREN RBRACKET PLUS PIPE OR NOT
 -- On AND reduce production step -> axis_specifier step2
 
 State 28:
+## Known stack suffix:
+## relative_location_path DOUBLESLASH
+## LR(1) items:
 relative_location_path -> relative_location_path DOUBLESLASH . step [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DOUBLESLASH DIV COMMA AND # ]
+## Transitions:
 -- On NODE_TYPE shift to state 3
 -- On NAME_TEST shift to state 7
 -- On DOUBLEDOT shift to state 8
@@ -621,9 +765,15 @@ relative_location_path -> relative_location_path DOUBLESLASH . step [ SLASH RPAR
 -- On step shift to state 29
 -- On node_test shift to state 25
 -- On axis_specifier shift to state 26
+## Reductions:
 
 State 29:
+## Known stack suffix:
+## relative_location_path DOUBLESLASH step
+## LR(1) items:
 relative_location_path -> relative_location_path DOUBLESLASH step . [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DOUBLESLASH DIV COMMA AND # ]
+## Transitions:
+## Reductions:
 -- On SLASH reduce production relative_location_path -> relative_location_path DOUBLESLASH step
 -- On RPAREN reduce production relative_location_path -> relative_location_path DOUBLESLASH step
 -- On RBRACKET reduce production relative_location_path -> relative_location_path DOUBLESLASH step
@@ -645,9 +795,14 @@ relative_location_path -> relative_location_path DOUBLESLASH step . [ SLASH RPAR
 -- On AND reduce production relative_location_path -> relative_location_path DOUBLESLASH step
 
 State 30:
+## Known stack suffix:
+## union_expr
+## LR(1) items:
 unary_expr -> union_expr . [ RPAREN RBRACKET PLUS OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DIV COMMA AND # ]
 union_expr -> union_expr . PIPE path_expr [ RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DIV COMMA AND # ]
+## Transitions:
 -- On PIPE shift to state 31
+## Reductions:
 -- On RPAREN reduce production unary_expr -> union_expr
 -- On RBRACKET reduce production unary_expr -> union_expr
 -- On PLUS reduce production unary_expr -> union_expr
@@ -666,7 +821,11 @@ union_expr -> union_expr . PIPE path_expr [ RPAREN RBRACKET PLUS PIPE OR NOTEQUA
 -- On AND reduce production unary_expr -> union_expr
 
 State 31:
+## Known stack suffix:
+## union_expr PIPE
+## LR(1) items:
 union_expr -> union_expr PIPE . path_expr [ RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DIV COMMA AND # ]
+## Transitions:
 -- On VAR shift to state 1
 -- On SLASH shift to state 2
 -- On NUMBER shift to state 14
@@ -691,13 +850,19 @@ union_expr -> union_expr PIPE . path_expr [ RPAREN RBRACKET PLUS PIPE OR NOTEQUA
 -- On filter_expr shift to state 37
 -- On axis_specifier shift to state 26
 -- On absolute_location_path shift to state 48
+## Reductions:
 
 State 32:
+## Known stack suffix:
+## relative_location_path
+## LR(1) items:
 location_path -> relative_location_path . [ RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DIV COMMA AND # ]
 relative_location_path -> relative_location_path . SLASH step [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DOUBLESLASH DIV COMMA AND # ]
 relative_location_path -> relative_location_path . DOUBLESLASH step [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DOUBLESLASH DIV COMMA AND # ]
+## Transitions:
 -- On SLASH shift to state 23
 -- On DOUBLESLASH shift to state 28
+## Reductions:
 -- On RPAREN reduce production location_path -> relative_location_path
 -- On RBRACKET reduce production location_path -> relative_location_path
 -- On PLUS reduce production location_path -> relative_location_path
@@ -717,7 +882,12 @@ relative_location_path -> relative_location_path . DOUBLESLASH step [ SLASH RPAR
 -- On AND reduce production location_path -> relative_location_path
 
 State 33:
+## Known stack suffix:
+## primary_expr
+## LR(1) items:
 filter_expr -> primary_expr . [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT LBRACKET GTE GT EQUAL DOUBLESLASH DIV COMMA AND # ]
+## Transitions:
+## Reductions:
 -- On SLASH reduce production filter_expr -> primary_expr
 -- On RPAREN reduce production filter_expr -> primary_expr
 -- On RBRACKET reduce production filter_expr -> primary_expr
@@ -740,7 +910,12 @@ filter_expr -> primary_expr . [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL 
 -- On AND reduce production filter_expr -> primary_expr
 
 State 34:
+## Known stack suffix:
+## union_expr PIPE path_expr
+## LR(1) items:
 union_expr -> union_expr PIPE path_expr . [ RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DIV COMMA AND # ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production union_expr -> union_expr PIPE path_expr
 -- On RBRACKET reduce production union_expr -> union_expr PIPE path_expr
 -- On PLUS reduce production union_expr -> union_expr PIPE path_expr
@@ -760,7 +935,12 @@ union_expr -> union_expr PIPE path_expr . [ RPAREN RBRACKET PLUS PIPE OR NOTEQUA
 -- On AND reduce production union_expr -> union_expr PIPE path_expr
 
 State 35:
+## Known stack suffix:
+## location_path
+## LR(1) items:
 path_expr -> location_path . [ RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DIV COMMA AND # ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production path_expr -> location_path
 -- On RBRACKET reduce production path_expr -> location_path
 -- On PLUS reduce production path_expr -> location_path
@@ -780,7 +960,12 @@ path_expr -> location_path . [ RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MIN
 -- On AND reduce production path_expr -> location_path
 
 State 36:
+## Known stack suffix:
+## function_call
+## LR(1) items:
 primary_expr -> function_call . [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT LBRACKET GTE GT EQUAL DOUBLESLASH DIV COMMA AND # ]
+## Transitions:
+## Reductions:
 -- On SLASH reduce production primary_expr -> function_call
 -- On RPAREN reduce production primary_expr -> function_call
 -- On RBRACKET reduce production primary_expr -> function_call
@@ -803,13 +988,18 @@ primary_expr -> function_call . [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MU
 -- On AND reduce production primary_expr -> function_call
 
 State 37:
+## Known stack suffix:
+## filter_expr
+## LR(1) items:
 filter_expr -> filter_expr . LBRACKET expr RBRACKET [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT LBRACKET GTE GT EQUAL DOUBLESLASH DIV COMMA AND # ]
 path_expr -> filter_expr . [ RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DIV COMMA AND # ]
 path_expr -> filter_expr . SLASH relative_location_path [ RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DIV COMMA AND # ]
 path_expr -> filter_expr . DOUBLESLASH relative_location_path [ RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DIV COMMA AND # ]
+## Transitions:
 -- On SLASH shift to state 38
 -- On LBRACKET shift to state 40
 -- On DOUBLESLASH shift to state 78
+## Reductions:
 -- On RPAREN reduce production path_expr -> filter_expr
 -- On RBRACKET reduce production path_expr -> filter_expr
 -- On PLUS reduce production path_expr -> filter_expr
@@ -829,7 +1019,11 @@ path_expr -> filter_expr . DOUBLESLASH relative_location_path [ RPAREN RBRACKET 
 -- On AND reduce production path_expr -> filter_expr
 
 State 38:
+## Known stack suffix:
+## filter_expr SLASH
+## LR(1) items:
 path_expr -> filter_expr SLASH . relative_location_path [ RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DIV COMMA AND # ]
+## Transitions:
 -- On NODE_TYPE shift to state 3
 -- On NAME_TEST shift to state 7
 -- On DOUBLEDOT shift to state 8
@@ -841,13 +1035,19 @@ path_expr -> filter_expr SLASH . relative_location_path [ RPAREN RBRACKET PLUS P
 -- On relative_location_path shift to state 39
 -- On node_test shift to state 25
 -- On axis_specifier shift to state 26
+## Reductions:
 
 State 39:
+## Known stack suffix:
+## filter_expr SLASH relative_location_path
+## LR(1) items:
 path_expr -> filter_expr SLASH relative_location_path . [ RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DIV COMMA AND # ]
 relative_location_path -> relative_location_path . SLASH step [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DOUBLESLASH DIV COMMA AND # ]
 relative_location_path -> relative_location_path . DOUBLESLASH step [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DOUBLESLASH DIV COMMA AND # ]
+## Transitions:
 -- On SLASH shift to state 23
 -- On DOUBLESLASH shift to state 28
+## Reductions:
 -- On RPAREN reduce production path_expr -> filter_expr SLASH relative_location_path
 -- On RBRACKET reduce production path_expr -> filter_expr SLASH relative_location_path
 -- On PLUS reduce production path_expr -> filter_expr SLASH relative_location_path
@@ -867,7 +1067,11 @@ relative_location_path -> relative_location_path . DOUBLESLASH step [ SLASH RPAR
 -- On AND reduce production path_expr -> filter_expr SLASH relative_location_path
 
 State 40:
+## Known stack suffix:
+## filter_expr LBRACKET
+## LR(1) items:
 filter_expr -> filter_expr LBRACKET . expr RBRACKET [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT LBRACKET GTE GT EQUAL DOUBLESLASH DIV COMMA AND # ]
+## Transitions:
 -- On VAR shift to state 1
 -- On SLASH shift to state 2
 -- On NUMBER shift to state 14
@@ -902,9 +1106,15 @@ filter_expr -> filter_expr LBRACKET . expr RBRACKET [ SLASH RPAREN RBRACKET PLUS
 -- On and_expr shift to state 77
 -- On additive_expr shift to state 69
 -- On absolute_location_path shift to state 48
+## Reductions:
 
 State 41:
+## Known stack suffix:
+## unary_expr
+## LR(1) items:
 multiplicative_expr -> unary_expr . [ RPAREN RBRACKET PLUS OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DIV COMMA AND # ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production multiplicative_expr -> unary_expr
 -- On RBRACKET reduce production multiplicative_expr -> unary_expr
 -- On PLUS reduce production multiplicative_expr -> unary_expr
@@ -923,15 +1133,20 @@ multiplicative_expr -> unary_expr . [ RPAREN RBRACKET PLUS OR NOTEQUAL MUL MOD M
 -- On AND reduce production multiplicative_expr -> unary_expr
 
 State 42:
+## Known stack suffix:
+## relational_expr
+## LR(1) items:
 equality_expr -> relational_expr . [ RPAREN RBRACKET OR NOTEQUAL EQUAL COMMA AND # ]
 relational_expr -> relational_expr . LT additive_expr [ RPAREN RBRACKET OR NOTEQUAL LTE LT GTE GT EQUAL COMMA AND # ]
 relational_expr -> relational_expr . GT additive_expr [ RPAREN RBRACKET OR NOTEQUAL LTE LT GTE GT EQUAL COMMA AND # ]
 relational_expr -> relational_expr . LTE additive_expr [ RPAREN RBRACKET OR NOTEQUAL LTE LT GTE GT EQUAL COMMA AND # ]
 relational_expr -> relational_expr . GTE additive_expr [ RPAREN RBRACKET OR NOTEQUAL LTE LT GTE GT EQUAL COMMA AND # ]
+## Transitions:
 -- On LTE shift to state 43
 -- On LT shift to state 58
 -- On GTE shift to state 60
 -- On GT shift to state 62
+## Reductions:
 -- On RPAREN reduce production equality_expr -> relational_expr
 -- On RBRACKET reduce production equality_expr -> relational_expr
 -- On OR reduce production equality_expr -> relational_expr
@@ -941,7 +1156,11 @@ relational_expr -> relational_expr . GTE additive_expr [ RPAREN RBRACKET OR NOTE
 -- On AND reduce production equality_expr -> relational_expr
 
 State 43:
+## Known stack suffix:
+## relational_expr LTE
+## LR(1) items:
 relational_expr -> relational_expr LTE . additive_expr [ RPAREN RBRACKET OR NOTEQUAL LTE LT GTE GT EQUAL COMMA AND # ]
+## Transitions:
 -- On VAR shift to state 1
 -- On SLASH shift to state 2
 -- On NUMBER shift to state 14
@@ -971,9 +1190,15 @@ relational_expr -> relational_expr LTE . additive_expr [ RPAREN RBRACKET OR NOTE
 -- On axis_specifier shift to state 26
 -- On additive_expr shift to state 53
 -- On absolute_location_path shift to state 48
+## Reductions:
 
 State 44:
+## Known stack suffix:
+## path_expr
+## LR(1) items:
 union_expr -> path_expr . [ RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DIV COMMA AND # ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production union_expr -> path_expr
 -- On RBRACKET reduce production union_expr -> path_expr
 -- On PLUS reduce production union_expr -> path_expr
@@ -993,13 +1218,18 @@ union_expr -> path_expr . [ RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS 
 -- On AND reduce production union_expr -> path_expr
 
 State 45:
+## Known stack suffix:
+## multiplicative_expr
+## LR(1) items:
 additive_expr -> multiplicative_expr . [ RPAREN RBRACKET PLUS OR NOTEQUAL MINUS LTE LT GTE GT EQUAL COMMA AND # ]
 multiplicative_expr -> multiplicative_expr . MUL unary_expr [ RPAREN RBRACKET PLUS OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DIV COMMA AND # ]
 multiplicative_expr -> multiplicative_expr . DIV unary_expr [ RPAREN RBRACKET PLUS OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DIV COMMA AND # ]
 multiplicative_expr -> multiplicative_expr . MOD unary_expr [ RPAREN RBRACKET PLUS OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DIV COMMA AND # ]
+## Transitions:
 -- On MUL shift to state 46
 -- On MOD shift to state 49
 -- On DIV shift to state 51
+## Reductions:
 -- On RPAREN reduce production additive_expr -> multiplicative_expr
 -- On RBRACKET reduce production additive_expr -> multiplicative_expr
 -- On PLUS reduce production additive_expr -> multiplicative_expr
@@ -1015,7 +1245,11 @@ multiplicative_expr -> multiplicative_expr . MOD unary_expr [ RPAREN RBRACKET PL
 -- On AND reduce production additive_expr -> multiplicative_expr
 
 State 46:
+## Known stack suffix:
+## multiplicative_expr MUL
+## LR(1) items:
 multiplicative_expr -> multiplicative_expr MUL . unary_expr [ RPAREN RBRACKET PLUS OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DIV COMMA AND # ]
+## Transitions:
 -- On VAR shift to state 1
 -- On SLASH shift to state 2
 -- On NUMBER shift to state 14
@@ -1043,9 +1277,15 @@ multiplicative_expr -> multiplicative_expr MUL . unary_expr [ RPAREN RBRACKET PL
 -- On filter_expr shift to state 37
 -- On axis_specifier shift to state 26
 -- On absolute_location_path shift to state 48
+## Reductions:
 
 State 47:
+## Known stack suffix:
+## multiplicative_expr MUL unary_expr
+## LR(1) items:
 multiplicative_expr -> multiplicative_expr MUL unary_expr . [ RPAREN RBRACKET PLUS OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DIV COMMA AND # ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production multiplicative_expr -> multiplicative_expr MUL unary_expr
 -- On RBRACKET reduce production multiplicative_expr -> multiplicative_expr MUL unary_expr
 -- On PLUS reduce production multiplicative_expr -> multiplicative_expr MUL unary_expr
@@ -1064,7 +1304,12 @@ multiplicative_expr -> multiplicative_expr MUL unary_expr . [ RPAREN RBRACKET PL
 -- On AND reduce production multiplicative_expr -> multiplicative_expr MUL unary_expr
 
 State 48:
+## Known stack suffix:
+## absolute_location_path
+## LR(1) items:
 location_path -> absolute_location_path . [ RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DIV COMMA AND # ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production location_path -> absolute_location_path
 -- On RBRACKET reduce production location_path -> absolute_location_path
 -- On PLUS reduce production location_path -> absolute_location_path
@@ -1084,7 +1329,11 @@ location_path -> absolute_location_path . [ RPAREN RBRACKET PLUS PIPE OR NOTEQUA
 -- On AND reduce production location_path -> absolute_location_path
 
 State 49:
+## Known stack suffix:
+## multiplicative_expr MOD
+## LR(1) items:
 multiplicative_expr -> multiplicative_expr MOD . unary_expr [ RPAREN RBRACKET PLUS OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DIV COMMA AND # ]
+## Transitions:
 -- On VAR shift to state 1
 -- On SLASH shift to state 2
 -- On NUMBER shift to state 14
@@ -1112,9 +1361,15 @@ multiplicative_expr -> multiplicative_expr MOD . unary_expr [ RPAREN RBRACKET PL
 -- On filter_expr shift to state 37
 -- On axis_specifier shift to state 26
 -- On absolute_location_path shift to state 48
+## Reductions:
 
 State 50:
+## Known stack suffix:
+## multiplicative_expr MOD unary_expr
+## LR(1) items:
 multiplicative_expr -> multiplicative_expr MOD unary_expr . [ RPAREN RBRACKET PLUS OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DIV COMMA AND # ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production multiplicative_expr -> multiplicative_expr MOD unary_expr
 -- On RBRACKET reduce production multiplicative_expr -> multiplicative_expr MOD unary_expr
 -- On PLUS reduce production multiplicative_expr -> multiplicative_expr MOD unary_expr
@@ -1133,7 +1388,11 @@ multiplicative_expr -> multiplicative_expr MOD unary_expr . [ RPAREN RBRACKET PL
 -- On AND reduce production multiplicative_expr -> multiplicative_expr MOD unary_expr
 
 State 51:
+## Known stack suffix:
+## multiplicative_expr DIV
+## LR(1) items:
 multiplicative_expr -> multiplicative_expr DIV . unary_expr [ RPAREN RBRACKET PLUS OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DIV COMMA AND # ]
+## Transitions:
 -- On VAR shift to state 1
 -- On SLASH shift to state 2
 -- On NUMBER shift to state 14
@@ -1161,9 +1420,15 @@ multiplicative_expr -> multiplicative_expr DIV . unary_expr [ RPAREN RBRACKET PL
 -- On filter_expr shift to state 37
 -- On axis_specifier shift to state 26
 -- On absolute_location_path shift to state 48
+## Reductions:
 
 State 52:
+## Known stack suffix:
+## multiplicative_expr DIV unary_expr
+## LR(1) items:
 multiplicative_expr -> multiplicative_expr DIV unary_expr . [ RPAREN RBRACKET PLUS OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DIV COMMA AND # ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production multiplicative_expr -> multiplicative_expr DIV unary_expr
 -- On RBRACKET reduce production multiplicative_expr -> multiplicative_expr DIV unary_expr
 -- On PLUS reduce production multiplicative_expr -> multiplicative_expr DIV unary_expr
@@ -1182,11 +1447,16 @@ multiplicative_expr -> multiplicative_expr DIV unary_expr . [ RPAREN RBRACKET PL
 -- On AND reduce production multiplicative_expr -> multiplicative_expr DIV unary_expr
 
 State 53:
+## Known stack suffix:
+## relational_expr LTE additive_expr
+## LR(1) items:
 additive_expr -> additive_expr . PLUS multiplicative_expr [ RPAREN RBRACKET PLUS OR NOTEQUAL MINUS LTE LT GTE GT EQUAL COMMA AND # ]
 additive_expr -> additive_expr . MINUS multiplicative_expr [ RPAREN RBRACKET PLUS OR NOTEQUAL MINUS LTE LT GTE GT EQUAL COMMA AND # ]
 relational_expr -> relational_expr LTE additive_expr . [ RPAREN RBRACKET OR NOTEQUAL LTE LT GTE GT EQUAL COMMA AND # ]
+## Transitions:
 -- On PLUS shift to state 54
 -- On MINUS shift to state 56
+## Reductions:
 -- On RPAREN reduce production relational_expr -> relational_expr LTE additive_expr
 -- On RBRACKET reduce production relational_expr -> relational_expr LTE additive_expr
 -- On OR reduce production relational_expr -> relational_expr LTE additive_expr
@@ -1200,7 +1470,11 @@ relational_expr -> relational_expr LTE additive_expr . [ RPAREN RBRACKET OR NOTE
 -- On AND reduce production relational_expr -> relational_expr LTE additive_expr
 
 State 54:
+## Known stack suffix:
+## additive_expr PLUS
+## LR(1) items:
 additive_expr -> additive_expr PLUS . multiplicative_expr [ RPAREN RBRACKET PLUS OR NOTEQUAL MINUS LTE LT GTE GT EQUAL COMMA AND # ]
+## Transitions:
 -- On VAR shift to state 1
 -- On SLASH shift to state 2
 -- On NUMBER shift to state 14
@@ -1229,15 +1503,21 @@ additive_expr -> additive_expr PLUS . multiplicative_expr [ RPAREN RBRACKET PLUS
 -- On filter_expr shift to state 37
 -- On axis_specifier shift to state 26
 -- On absolute_location_path shift to state 48
+## Reductions:
 
 State 55:
+## Known stack suffix:
+## additive_expr PLUS multiplicative_expr
+## LR(1) items:
 additive_expr -> additive_expr PLUS multiplicative_expr . [ RPAREN RBRACKET PLUS OR NOTEQUAL MINUS LTE LT GTE GT EQUAL COMMA AND # ]
 multiplicative_expr -> multiplicative_expr . MUL unary_expr [ RPAREN RBRACKET PLUS OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DIV COMMA AND # ]
 multiplicative_expr -> multiplicative_expr . DIV unary_expr [ RPAREN RBRACKET PLUS OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DIV COMMA AND # ]
 multiplicative_expr -> multiplicative_expr . MOD unary_expr [ RPAREN RBRACKET PLUS OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DIV COMMA AND # ]
+## Transitions:
 -- On MUL shift to state 46
 -- On MOD shift to state 49
 -- On DIV shift to state 51
+## Reductions:
 -- On RPAREN reduce production additive_expr -> additive_expr PLUS multiplicative_expr
 -- On RBRACKET reduce production additive_expr -> additive_expr PLUS multiplicative_expr
 -- On PLUS reduce production additive_expr -> additive_expr PLUS multiplicative_expr
@@ -1253,7 +1533,11 @@ multiplicative_expr -> multiplicative_expr . MOD unary_expr [ RPAREN RBRACKET PL
 -- On AND reduce production additive_expr -> additive_expr PLUS multiplicative_expr
 
 State 56:
+## Known stack suffix:
+## additive_expr MINUS
+## LR(1) items:
 additive_expr -> additive_expr MINUS . multiplicative_expr [ RPAREN RBRACKET PLUS OR NOTEQUAL MINUS LTE LT GTE GT EQUAL COMMA AND # ]
+## Transitions:
 -- On VAR shift to state 1
 -- On SLASH shift to state 2
 -- On NUMBER shift to state 14
@@ -1282,15 +1566,21 @@ additive_expr -> additive_expr MINUS . multiplicative_expr [ RPAREN RBRACKET PLU
 -- On filter_expr shift to state 37
 -- On axis_specifier shift to state 26
 -- On absolute_location_path shift to state 48
+## Reductions:
 
 State 57:
+## Known stack suffix:
+## additive_expr MINUS multiplicative_expr
+## LR(1) items:
 additive_expr -> additive_expr MINUS multiplicative_expr . [ RPAREN RBRACKET PLUS OR NOTEQUAL MINUS LTE LT GTE GT EQUAL COMMA AND # ]
 multiplicative_expr -> multiplicative_expr . MUL unary_expr [ RPAREN RBRACKET PLUS OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DIV COMMA AND # ]
 multiplicative_expr -> multiplicative_expr . DIV unary_expr [ RPAREN RBRACKET PLUS OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DIV COMMA AND # ]
 multiplicative_expr -> multiplicative_expr . MOD unary_expr [ RPAREN RBRACKET PLUS OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DIV COMMA AND # ]
+## Transitions:
 -- On MUL shift to state 46
 -- On MOD shift to state 49
 -- On DIV shift to state 51
+## Reductions:
 -- On RPAREN reduce production additive_expr -> additive_expr MINUS multiplicative_expr
 -- On RBRACKET reduce production additive_expr -> additive_expr MINUS multiplicative_expr
 -- On PLUS reduce production additive_expr -> additive_expr MINUS multiplicative_expr
@@ -1306,7 +1596,11 @@ multiplicative_expr -> multiplicative_expr . MOD unary_expr [ RPAREN RBRACKET PL
 -- On AND reduce production additive_expr -> additive_expr MINUS multiplicative_expr
 
 State 58:
+## Known stack suffix:
+## relational_expr LT
+## LR(1) items:
 relational_expr -> relational_expr LT . additive_expr [ RPAREN RBRACKET OR NOTEQUAL LTE LT GTE GT EQUAL COMMA AND # ]
+## Transitions:
 -- On VAR shift to state 1
 -- On SLASH shift to state 2
 -- On NUMBER shift to state 14
@@ -1336,13 +1630,19 @@ relational_expr -> relational_expr LT . additive_expr [ RPAREN RBRACKET OR NOTEQ
 -- On axis_specifier shift to state 26
 -- On additive_expr shift to state 59
 -- On absolute_location_path shift to state 48
+## Reductions:
 
 State 59:
+## Known stack suffix:
+## relational_expr LT additive_expr
+## LR(1) items:
 additive_expr -> additive_expr . PLUS multiplicative_expr [ RPAREN RBRACKET PLUS OR NOTEQUAL MINUS LTE LT GTE GT EQUAL COMMA AND # ]
 additive_expr -> additive_expr . MINUS multiplicative_expr [ RPAREN RBRACKET PLUS OR NOTEQUAL MINUS LTE LT GTE GT EQUAL COMMA AND # ]
 relational_expr -> relational_expr LT additive_expr . [ RPAREN RBRACKET OR NOTEQUAL LTE LT GTE GT EQUAL COMMA AND # ]
+## Transitions:
 -- On PLUS shift to state 54
 -- On MINUS shift to state 56
+## Reductions:
 -- On RPAREN reduce production relational_expr -> relational_expr LT additive_expr
 -- On RBRACKET reduce production relational_expr -> relational_expr LT additive_expr
 -- On OR reduce production relational_expr -> relational_expr LT additive_expr
@@ -1356,7 +1656,11 @@ relational_expr -> relational_expr LT additive_expr . [ RPAREN RBRACKET OR NOTEQ
 -- On AND reduce production relational_expr -> relational_expr LT additive_expr
 
 State 60:
+## Known stack suffix:
+## relational_expr GTE
+## LR(1) items:
 relational_expr -> relational_expr GTE . additive_expr [ RPAREN RBRACKET OR NOTEQUAL LTE LT GTE GT EQUAL COMMA AND # ]
+## Transitions:
 -- On VAR shift to state 1
 -- On SLASH shift to state 2
 -- On NUMBER shift to state 14
@@ -1386,13 +1690,19 @@ relational_expr -> relational_expr GTE . additive_expr [ RPAREN RBRACKET OR NOTE
 -- On axis_specifier shift to state 26
 -- On additive_expr shift to state 61
 -- On absolute_location_path shift to state 48
+## Reductions:
 
 State 61:
+## Known stack suffix:
+## relational_expr GTE additive_expr
+## LR(1) items:
 additive_expr -> additive_expr . PLUS multiplicative_expr [ RPAREN RBRACKET PLUS OR NOTEQUAL MINUS LTE LT GTE GT EQUAL COMMA AND # ]
 additive_expr -> additive_expr . MINUS multiplicative_expr [ RPAREN RBRACKET PLUS OR NOTEQUAL MINUS LTE LT GTE GT EQUAL COMMA AND # ]
 relational_expr -> relational_expr GTE additive_expr . [ RPAREN RBRACKET OR NOTEQUAL LTE LT GTE GT EQUAL COMMA AND # ]
+## Transitions:
 -- On PLUS shift to state 54
 -- On MINUS shift to state 56
+## Reductions:
 -- On RPAREN reduce production relational_expr -> relational_expr GTE additive_expr
 -- On RBRACKET reduce production relational_expr -> relational_expr GTE additive_expr
 -- On OR reduce production relational_expr -> relational_expr GTE additive_expr
@@ -1406,7 +1716,11 @@ relational_expr -> relational_expr GTE additive_expr . [ RPAREN RBRACKET OR NOTE
 -- On AND reduce production relational_expr -> relational_expr GTE additive_expr
 
 State 62:
+## Known stack suffix:
+## relational_expr GT
+## LR(1) items:
 relational_expr -> relational_expr GT . additive_expr [ RPAREN RBRACKET OR NOTEQUAL LTE LT GTE GT EQUAL COMMA AND # ]
+## Transitions:
 -- On VAR shift to state 1
 -- On SLASH shift to state 2
 -- On NUMBER shift to state 14
@@ -1436,13 +1750,19 @@ relational_expr -> relational_expr GT . additive_expr [ RPAREN RBRACKET OR NOTEQ
 -- On axis_specifier shift to state 26
 -- On additive_expr shift to state 63
 -- On absolute_location_path shift to state 48
+## Reductions:
 
 State 63:
+## Known stack suffix:
+## relational_expr GT additive_expr
+## LR(1) items:
 additive_expr -> additive_expr . PLUS multiplicative_expr [ RPAREN RBRACKET PLUS OR NOTEQUAL MINUS LTE LT GTE GT EQUAL COMMA AND # ]
 additive_expr -> additive_expr . MINUS multiplicative_expr [ RPAREN RBRACKET PLUS OR NOTEQUAL MINUS LTE LT GTE GT EQUAL COMMA AND # ]
 relational_expr -> relational_expr GT additive_expr . [ RPAREN RBRACKET OR NOTEQUAL LTE LT GTE GT EQUAL COMMA AND # ]
+## Transitions:
 -- On PLUS shift to state 54
 -- On MINUS shift to state 56
+## Reductions:
 -- On RPAREN reduce production relational_expr -> relational_expr GT additive_expr
 -- On RBRACKET reduce production relational_expr -> relational_expr GT additive_expr
 -- On OR reduce production relational_expr -> relational_expr GT additive_expr
@@ -1456,15 +1776,24 @@ relational_expr -> relational_expr GT additive_expr . [ RPAREN RBRACKET OR NOTEQ
 -- On AND reduce production relational_expr -> relational_expr GT additive_expr
 
 State 64:
+## Known stack suffix:
+## or_expr
+## LR(1) items:
 expr -> or_expr . [ RPAREN RBRACKET COMMA ]
 or_expr -> or_expr . OR and_expr [ RPAREN RBRACKET OR COMMA ]
+## Transitions:
 -- On OR shift to state 65
+## Reductions:
 -- On RPAREN reduce production expr -> or_expr
 -- On RBRACKET reduce production expr -> or_expr
 -- On COMMA reduce production expr -> or_expr
 
 State 65:
+## Known stack suffix:
+## or_expr OR
+## LR(1) items:
 or_expr -> or_expr OR . and_expr [ RPAREN RBRACKET OR COMMA # ]
+## Transitions:
 -- On VAR shift to state 1
 -- On SLASH shift to state 2
 -- On NUMBER shift to state 14
@@ -1497,13 +1826,19 @@ or_expr -> or_expr OR . and_expr [ RPAREN RBRACKET OR COMMA # ]
 -- On and_expr shift to state 72
 -- On additive_expr shift to state 69
 -- On absolute_location_path shift to state 48
+## Reductions:
 
 State 66:
+## Known stack suffix:
+## equality_expr
+## LR(1) items:
 and_expr -> equality_expr . [ RPAREN RBRACKET OR COMMA AND # ]
 equality_expr -> equality_expr . EQUAL relational_expr [ RPAREN RBRACKET OR NOTEQUAL EQUAL COMMA AND # ]
 equality_expr -> equality_expr . NOTEQUAL relational_expr [ RPAREN RBRACKET OR NOTEQUAL EQUAL COMMA AND # ]
+## Transitions:
 -- On NOTEQUAL shift to state 67
 -- On EQUAL shift to state 70
+## Reductions:
 -- On RPAREN reduce production and_expr -> equality_expr
 -- On RBRACKET reduce production and_expr -> equality_expr
 -- On OR reduce production and_expr -> equality_expr
@@ -1511,7 +1846,11 @@ equality_expr -> equality_expr . NOTEQUAL relational_expr [ RPAREN RBRACKET OR N
 -- On AND reduce production and_expr -> equality_expr
 
 State 67:
+## Known stack suffix:
+## equality_expr NOTEQUAL
+## LR(1) items:
 equality_expr -> equality_expr NOTEQUAL . relational_expr [ RPAREN RBRACKET OR NOTEQUAL EQUAL COMMA AND # ]
+## Transitions:
 -- On VAR shift to state 1
 -- On SLASH shift to state 2
 -- On NUMBER shift to state 14
@@ -1542,17 +1881,23 @@ equality_expr -> equality_expr NOTEQUAL . relational_expr [ RPAREN RBRACKET OR N
 -- On axis_specifier shift to state 26
 -- On additive_expr shift to state 69
 -- On absolute_location_path shift to state 48
+## Reductions:
 
 State 68:
+## Known stack suffix:
+## equality_expr NOTEQUAL relational_expr
+## LR(1) items:
 equality_expr -> equality_expr NOTEQUAL relational_expr . [ RPAREN RBRACKET OR NOTEQUAL EQUAL COMMA AND # ]
 relational_expr -> relational_expr . LT additive_expr [ RPAREN RBRACKET OR NOTEQUAL LTE LT GTE GT EQUAL COMMA AND # ]
 relational_expr -> relational_expr . GT additive_expr [ RPAREN RBRACKET OR NOTEQUAL LTE LT GTE GT EQUAL COMMA AND # ]
 relational_expr -> relational_expr . LTE additive_expr [ RPAREN RBRACKET OR NOTEQUAL LTE LT GTE GT EQUAL COMMA AND # ]
 relational_expr -> relational_expr . GTE additive_expr [ RPAREN RBRACKET OR NOTEQUAL LTE LT GTE GT EQUAL COMMA AND # ]
+## Transitions:
 -- On LTE shift to state 43
 -- On LT shift to state 58
 -- On GTE shift to state 60
 -- On GT shift to state 62
+## Reductions:
 -- On RPAREN reduce production equality_expr -> equality_expr NOTEQUAL relational_expr
 -- On RBRACKET reduce production equality_expr -> equality_expr NOTEQUAL relational_expr
 -- On OR reduce production equality_expr -> equality_expr NOTEQUAL relational_expr
@@ -1562,11 +1907,16 @@ relational_expr -> relational_expr . GTE additive_expr [ RPAREN RBRACKET OR NOTE
 -- On AND reduce production equality_expr -> equality_expr NOTEQUAL relational_expr
 
 State 69:
+## Known stack suffix:
+## additive_expr
+## LR(1) items:
 additive_expr -> additive_expr . PLUS multiplicative_expr [ RPAREN RBRACKET PLUS OR NOTEQUAL MINUS LTE LT GTE GT EQUAL COMMA AND # ]
 additive_expr -> additive_expr . MINUS multiplicative_expr [ RPAREN RBRACKET PLUS OR NOTEQUAL MINUS LTE LT GTE GT EQUAL COMMA AND # ]
 relational_expr -> additive_expr . [ RPAREN RBRACKET OR NOTEQUAL LTE LT GTE GT EQUAL COMMA AND # ]
+## Transitions:
 -- On PLUS shift to state 54
 -- On MINUS shift to state 56
+## Reductions:
 -- On RPAREN reduce production relational_expr -> additive_expr
 -- On RBRACKET reduce production relational_expr -> additive_expr
 -- On OR reduce production relational_expr -> additive_expr
@@ -1580,7 +1930,11 @@ relational_expr -> additive_expr . [ RPAREN RBRACKET OR NOTEQUAL LTE LT GTE GT E
 -- On AND reduce production relational_expr -> additive_expr
 
 State 70:
+## Known stack suffix:
+## equality_expr EQUAL
+## LR(1) items:
 equality_expr -> equality_expr EQUAL . relational_expr [ RPAREN RBRACKET OR NOTEQUAL EQUAL COMMA AND # ]
+## Transitions:
 -- On VAR shift to state 1
 -- On SLASH shift to state 2
 -- On NUMBER shift to state 14
@@ -1611,17 +1965,23 @@ equality_expr -> equality_expr EQUAL . relational_expr [ RPAREN RBRACKET OR NOTE
 -- On axis_specifier shift to state 26
 -- On additive_expr shift to state 69
 -- On absolute_location_path shift to state 48
+## Reductions:
 
 State 71:
+## Known stack suffix:
+## equality_expr EQUAL relational_expr
+## LR(1) items:
 equality_expr -> equality_expr EQUAL relational_expr . [ RPAREN RBRACKET OR NOTEQUAL EQUAL COMMA AND # ]
 relational_expr -> relational_expr . LT additive_expr [ RPAREN RBRACKET OR NOTEQUAL LTE LT GTE GT EQUAL COMMA AND # ]
 relational_expr -> relational_expr . GT additive_expr [ RPAREN RBRACKET OR NOTEQUAL LTE LT GTE GT EQUAL COMMA AND # ]
 relational_expr -> relational_expr . LTE additive_expr [ RPAREN RBRACKET OR NOTEQUAL LTE LT GTE GT EQUAL COMMA AND # ]
 relational_expr -> relational_expr . GTE additive_expr [ RPAREN RBRACKET OR NOTEQUAL LTE LT GTE GT EQUAL COMMA AND # ]
+## Transitions:
 -- On LTE shift to state 43
 -- On LT shift to state 58
 -- On GTE shift to state 60
 -- On GT shift to state 62
+## Reductions:
 -- On RPAREN reduce production equality_expr -> equality_expr EQUAL relational_expr
 -- On RBRACKET reduce production equality_expr -> equality_expr EQUAL relational_expr
 -- On OR reduce production equality_expr -> equality_expr EQUAL relational_expr
@@ -1631,16 +1991,25 @@ relational_expr -> relational_expr . GTE additive_expr [ RPAREN RBRACKET OR NOTE
 -- On AND reduce production equality_expr -> equality_expr EQUAL relational_expr
 
 State 72:
+## Known stack suffix:
+## or_expr OR and_expr
+## LR(1) items:
 and_expr -> and_expr . AND equality_expr [ RPAREN RBRACKET OR COMMA AND # ]
 or_expr -> or_expr OR and_expr . [ RPAREN RBRACKET OR COMMA # ]
+## Transitions:
 -- On AND shift to state 73
+## Reductions:
 -- On RPAREN reduce production or_expr -> or_expr OR and_expr
 -- On RBRACKET reduce production or_expr -> or_expr OR and_expr
 -- On OR reduce production or_expr -> or_expr OR and_expr
 -- On COMMA reduce production or_expr -> or_expr OR and_expr
 
 State 73:
+## Known stack suffix:
+## and_expr AND
+## LR(1) items:
 and_expr -> and_expr AND . equality_expr [ RPAREN RBRACKET OR COMMA AND # ]
+## Transitions:
 -- On VAR shift to state 1
 -- On SLASH shift to state 2
 -- On NUMBER shift to state 14
@@ -1672,13 +2041,19 @@ and_expr -> and_expr AND . equality_expr [ RPAREN RBRACKET OR COMMA AND # ]
 -- On axis_specifier shift to state 26
 -- On additive_expr shift to state 69
 -- On absolute_location_path shift to state 48
+## Reductions:
 
 State 74:
+## Known stack suffix:
+## and_expr AND equality_expr
+## LR(1) items:
 and_expr -> and_expr AND equality_expr . [ RPAREN RBRACKET OR COMMA AND # ]
 equality_expr -> equality_expr . EQUAL relational_expr [ RPAREN RBRACKET OR NOTEQUAL EQUAL COMMA AND # ]
 equality_expr -> equality_expr . NOTEQUAL relational_expr [ RPAREN RBRACKET OR NOTEQUAL EQUAL COMMA AND # ]
+## Transitions:
 -- On NOTEQUAL shift to state 67
 -- On EQUAL shift to state 70
+## Reductions:
 -- On RPAREN reduce production and_expr -> and_expr AND equality_expr
 -- On RBRACKET reduce production and_expr -> and_expr AND equality_expr
 -- On OR reduce production and_expr -> and_expr AND equality_expr
@@ -1686,11 +2061,21 @@ equality_expr -> equality_expr . NOTEQUAL relational_expr [ RPAREN RBRACKET OR N
 -- On AND reduce production and_expr -> and_expr AND equality_expr
 
 State 75:
+## Known stack suffix:
+## filter_expr LBRACKET expr
+## LR(1) items:
 filter_expr -> filter_expr LBRACKET expr . RBRACKET [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT LBRACKET GTE GT EQUAL DOUBLESLASH DIV COMMA AND # ]
+## Transitions:
 -- On RBRACKET shift to state 76
+## Reductions:
 
 State 76:
+## Known stack suffix:
+## filter_expr LBRACKET expr RBRACKET
+## LR(1) items:
 filter_expr -> filter_expr LBRACKET expr RBRACKET . [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT LBRACKET GTE GT EQUAL DOUBLESLASH DIV COMMA AND # ]
+## Transitions:
+## Reductions:
 -- On SLASH reduce production filter_expr -> filter_expr LBRACKET expr RBRACKET
 -- On RPAREN reduce production filter_expr -> filter_expr LBRACKET expr RBRACKET
 -- On RBRACKET reduce production filter_expr -> filter_expr LBRACKET expr RBRACKET
@@ -1713,16 +2098,25 @@ filter_expr -> filter_expr LBRACKET expr RBRACKET . [ SLASH RPAREN RBRACKET PLUS
 -- On AND reduce production filter_expr -> filter_expr LBRACKET expr RBRACKET
 
 State 77:
+## Known stack suffix:
+## and_expr
+## LR(1) items:
 and_expr -> and_expr . AND equality_expr [ RPAREN RBRACKET OR COMMA AND # ]
 or_expr -> and_expr . [ RPAREN RBRACKET OR COMMA # ]
+## Transitions:
 -- On AND shift to state 73
+## Reductions:
 -- On RPAREN reduce production or_expr -> and_expr
 -- On RBRACKET reduce production or_expr -> and_expr
 -- On OR reduce production or_expr -> and_expr
 -- On COMMA reduce production or_expr -> and_expr
 
 State 78:
+## Known stack suffix:
+## filter_expr DOUBLESLASH
+## LR(1) items:
 path_expr -> filter_expr DOUBLESLASH . relative_location_path [ RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DIV COMMA AND # ]
+## Transitions:
 -- On NODE_TYPE shift to state 3
 -- On NAME_TEST shift to state 7
 -- On DOUBLEDOT shift to state 8
@@ -1734,13 +2128,19 @@ path_expr -> filter_expr DOUBLESLASH . relative_location_path [ RPAREN RBRACKET 
 -- On relative_location_path shift to state 79
 -- On node_test shift to state 25
 -- On axis_specifier shift to state 26
+## Reductions:
 
 State 79:
+## Known stack suffix:
+## filter_expr DOUBLESLASH relative_location_path
+## LR(1) items:
 path_expr -> filter_expr DOUBLESLASH relative_location_path . [ RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DIV COMMA AND # ]
 relative_location_path -> relative_location_path . SLASH step [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DOUBLESLASH DIV COMMA AND # ]
 relative_location_path -> relative_location_path . DOUBLESLASH step [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DOUBLESLASH DIV COMMA AND # ]
+## Transitions:
 -- On SLASH shift to state 23
 -- On DOUBLESLASH shift to state 28
+## Reductions:
 -- On RPAREN reduce production path_expr -> filter_expr DOUBLESLASH relative_location_path
 -- On RBRACKET reduce production path_expr -> filter_expr DOUBLESLASH relative_location_path
 -- On PLUS reduce production path_expr -> filter_expr DOUBLESLASH relative_location_path
@@ -1760,18 +2160,33 @@ relative_location_path -> relative_location_path . DOUBLESLASH step [ SLASH RPAR
 -- On AND reduce production path_expr -> filter_expr DOUBLESLASH relative_location_path
 
 State 80:
+## Known stack suffix:
+## expr
+## LR(1) items:
 arguments -> expr . [ RPAREN COMMA ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production arguments -> expr
 -- On COMMA reduce production arguments -> expr
 
 State 81:
+## Known stack suffix:
+## FUNCTION_NAME arguments
+## LR(1) items:
 arguments -> arguments . COMMA expr [ RPAREN COMMA ]
 function_call -> FUNCTION_NAME arguments . RPAREN [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT LBRACKET GTE GT EQUAL DOUBLESLASH DIV COMMA AND # ]
+## Transitions:
 -- On RPAREN shift to state 82
 -- On COMMA shift to state 83
+## Reductions:
 
 State 82:
+## Known stack suffix:
+## FUNCTION_NAME arguments RPAREN
+## LR(1) items:
 function_call -> FUNCTION_NAME arguments RPAREN . [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT LBRACKET GTE GT EQUAL DOUBLESLASH DIV COMMA AND # ]
+## Transitions:
+## Reductions:
 -- On SLASH reduce production function_call -> FUNCTION_NAME arguments RPAREN
 -- On RPAREN reduce production function_call -> FUNCTION_NAME arguments RPAREN
 -- On RBRACKET reduce production function_call -> FUNCTION_NAME arguments RPAREN
@@ -1794,7 +2209,11 @@ function_call -> FUNCTION_NAME arguments RPAREN . [ SLASH RPAREN RBRACKET PLUS P
 -- On AND reduce production function_call -> FUNCTION_NAME arguments RPAREN
 
 State 83:
+## Known stack suffix:
+## arguments COMMA
+## LR(1) items:
 arguments -> arguments COMMA . expr [ RPAREN COMMA ]
+## Transitions:
 -- On VAR shift to state 1
 -- On SLASH shift to state 2
 -- On NUMBER shift to state 14
@@ -1829,18 +2248,34 @@ arguments -> arguments COMMA . expr [ RPAREN COMMA ]
 -- On and_expr shift to state 77
 -- On additive_expr shift to state 69
 -- On absolute_location_path shift to state 48
+## Reductions:
 
 State 84:
+## Known stack suffix:
+## arguments COMMA expr
+## LR(1) items:
 arguments -> arguments COMMA expr . [ RPAREN COMMA ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production arguments -> arguments COMMA expr
 -- On COMMA reduce production arguments -> arguments COMMA expr
 
 State 85:
+## Known stack suffix:
+## LPAREN expr
+## LR(1) items:
 primary_expr -> LPAREN expr . RPAREN [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT LBRACKET GTE GT EQUAL DOUBLESLASH DIV COMMA AND # ]
+## Transitions:
 -- On RPAREN shift to state 86
+## Reductions:
 
 State 86:
+## Known stack suffix:
+## LPAREN expr RPAREN
+## LR(1) items:
 primary_expr -> LPAREN expr RPAREN . [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT LBRACKET GTE GT EQUAL DOUBLESLASH DIV COMMA AND # ]
+## Transitions:
+## Reductions:
 -- On SLASH reduce production primary_expr -> LPAREN expr RPAREN
 -- On RPAREN reduce production primary_expr -> LPAREN expr RPAREN
 -- On RBRACKET reduce production primary_expr -> LPAREN expr RPAREN
@@ -1863,7 +2298,12 @@ primary_expr -> LPAREN expr RPAREN . [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQU
 -- On AND reduce production primary_expr -> LPAREN expr RPAREN
 
 State 87:
+## Known stack suffix:
+## MINUS unary_expr
+## LR(1) items:
 unary_expr -> MINUS unary_expr . [ RPAREN RBRACKET PLUS OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DIV COMMA AND # ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production unary_expr -> MINUS unary_expr
 -- On RBRACKET reduce production unary_expr -> MINUS unary_expr
 -- On PLUS reduce production unary_expr -> MINUS unary_expr
@@ -1882,11 +2322,21 @@ unary_expr -> MINUS unary_expr . [ RPAREN RBRACKET PLUS OR NOTEQUAL MUL MOD MINU
 -- On AND reduce production unary_expr -> MINUS unary_expr
 
 State 88:
+## Known stack suffix:
+## step2 LBRACKET expr
+## LR(1) items:
 step2 -> step2 LBRACKET expr . RBRACKET [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT LBRACKET GTE GT EQUAL DOUBLESLASH DIV COMMA AND # ]
+## Transitions:
 -- On RBRACKET shift to state 89
+## Reductions:
 
 State 89:
+## Known stack suffix:
+## step2 LBRACKET expr RBRACKET
+## LR(1) items:
 step2 -> step2 LBRACKET expr RBRACKET . [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT LBRACKET GTE GT EQUAL DOUBLESLASH DIV COMMA AND # ]
+## Transitions:
+## Reductions:
 -- On SLASH reduce production step2 -> step2 LBRACKET expr RBRACKET
 -- On RPAREN reduce production step2 -> step2 LBRACKET expr RBRACKET
 -- On RBRACKET reduce production step2 -> step2 LBRACKET expr RBRACKET
@@ -1909,11 +2359,16 @@ step2 -> step2 LBRACKET expr RBRACKET . [ SLASH RPAREN RBRACKET PLUS PIPE OR NOT
 -- On AND reduce production step2 -> step2 LBRACKET expr RBRACKET
 
 State 90:
+## Known stack suffix:
+## SLASH relative_location_path
+## LR(1) items:
 absolute_location_path -> SLASH relative_location_path . [ RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DIV COMMA AND # ]
 relative_location_path -> relative_location_path . SLASH step [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DOUBLESLASH DIV COMMA AND # ]
 relative_location_path -> relative_location_path . DOUBLESLASH step [ SLASH RPAREN RBRACKET PLUS PIPE OR NOTEQUAL MUL MOD MINUS LTE LT GTE GT EQUAL DOUBLESLASH DIV COMMA AND # ]
+## Transitions:
 -- On SLASH shift to state 23
 -- On DOUBLESLASH shift to state 28
+## Reductions:
 -- On RPAREN reduce production absolute_location_path -> SLASH relative_location_path
 -- On RBRACKET reduce production absolute_location_path -> SLASH relative_location_path
 -- On PLUS reduce production absolute_location_path -> SLASH relative_location_path
@@ -1933,16 +2388,30 @@ relative_location_path -> relative_location_path . DOUBLESLASH step [ SLASH RPAR
 -- On AND reduce production absolute_location_path -> SLASH relative_location_path
 
 State 91:
+## Known stack suffix:
+## or_expr
+## LR(1) items:
 expr -> or_expr . [ # ]
 or_expr -> or_expr . OR and_expr [ OR # ]
+## Transitions:
 -- On OR shift to state 65
+## Reductions:
 
 State 92:
+## Known stack suffix:
+## expr
+## LR(1) items:
 expr' -> expr . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept expr
 
 State 93:
+## Known stack suffix:
+##
+## LR(1) items:
 location_path' -> . location_path [ # ]
+## Transitions:
 -- On SLASH shift to state 2
 -- On NODE_TYPE shift to state 3
 -- On NAME_TEST shift to state 7
@@ -1958,8 +2427,14 @@ location_path' -> . location_path [ # ]
 -- On location_path shift to state 94
 -- On axis_specifier shift to state 26
 -- On absolute_location_path shift to state 48
+## Reductions:
 
 State 94:
+## Known stack suffix:
+## location_path
+## LR(1) items:
 location_path' -> location_path . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept location_path
 

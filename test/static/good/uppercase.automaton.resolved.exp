@@ -1,40 +1,80 @@
 State 0:
+## Known stack suffix:
+##
+## LR(1) items:
 entry' -> . entry [ # ]
+## Transitions:
 -- On A shift to state 1
 -- On nonempty_list(AB) shift to state 3
 -- On entry shift to state 5
 -- On AB shift to state 6
+## Reductions:
 
 State 1:
+## Known stack suffix:
+## A
+## LR(1) items:
 AB -> A . B [ EOF A ]
+## Transitions:
 -- On B shift to state 2
+## Reductions:
 
 State 2:
+## Known stack suffix:
+## A B
+## LR(1) items:
 AB -> A B . [ EOF A ]
+## Transitions:
+## Reductions:
 -- On EOF reduce production AB -> A B
 -- On A reduce production AB -> A B
 
 State 3:
+## Known stack suffix:
+## nonempty_list(AB)
+## LR(1) items:
 entry -> nonempty_list(AB) . EOF [ # ]
+## Transitions:
 -- On EOF shift to state 4
+## Reductions:
 
 State 4:
+## Known stack suffix:
+## nonempty_list(AB) EOF
+## LR(1) items:
 entry -> nonempty_list(AB) EOF . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production entry -> nonempty_list(AB) EOF
 
 State 5:
+## Known stack suffix:
+## entry
+## LR(1) items:
 entry' -> entry . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept entry
 
 State 6:
+## Known stack suffix:
+## AB
+## LR(1) items:
 nonempty_list(AB) -> AB . [ EOF ]
 nonempty_list(AB) -> AB . nonempty_list(AB) [ EOF ]
+## Transitions:
 -- On A shift to state 1
 -- On nonempty_list(AB) shift to state 7
 -- On AB shift to state 6
+## Reductions:
 -- On EOF reduce production nonempty_list(AB) -> AB
 
 State 7:
+## Known stack suffix:
+## AB nonempty_list(AB)
+## LR(1) items:
 nonempty_list(AB) -> AB nonempty_list(AB) . [ EOF ]
+## Transitions:
+## Reductions:
 -- On EOF reduce production nonempty_list(AB) -> AB nonempty_list(AB)
 

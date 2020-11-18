@@ -1,5 +1,9 @@
 State 0:
+## Known stack suffix:
+##
+## LR(1) items:
 constraint_entry' -> . constraint_entry [ # ]
+## Transitions:
 -- On TRUE shift to state 1
 -- On PARGAUCHE shift to state 2
 -- On NOT shift to state 3
@@ -12,9 +16,15 @@ constraint_entry' -> . constraint_entry [ # ]
 -- On formula shift to state 53
 -- On expr shift to state 35
 -- On constraint_entry shift to state 55
+## Reductions:
 
 State 1:
+## Known stack suffix:
+## TRUE
+## LR(1) items:
 formula -> TRUE . [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+## Transitions:
+## Reductions:
 -- On PARDROITE reduce production formula -> TRUE
 -- On OR reduce production formula -> TRUE
 -- On IMPLIES reduce production formula -> TRUE
@@ -23,8 +33,12 @@ formula -> TRUE . [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 -- On AND reduce production formula -> TRUE
 
 State 2:
+## Known stack suffix:
+## PARGAUCHE
+## LR(1) items:
 expr -> PARGAUCHE . expr PARDROITE [ VERTICALBAR PLUS PARDROITE MULT MINUS EXP DIV COMP ]
 formula -> PARGAUCHE . formula PARDROITE [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+## Transitions:
 -- On TRUE shift to state 1
 -- On PARGAUCHE shift to state 2
 -- On NOT shift to state 3
@@ -36,9 +50,14 @@ formula -> PARGAUCHE . formula PARDROITE [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 -- On EXISTS shift to state 27
 -- On formula shift to state 50
 -- On expr shift to state 52
+## Reductions:
 
 State 3:
+## Known stack suffix:
+## NOT
+## LR(1) items:
 formula -> NOT . formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+## Transitions:
 -- On TRUE shift to state 1
 -- On PARGAUCHE shift to state 2
 -- On NOT shift to state 3
@@ -50,25 +69,41 @@ formula -> NOT . formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 -- On EXISTS shift to state 27
 -- On formula shift to state 49
 -- On expr shift to state 35
+## Reductions:
 
 State 4:
+## Known stack suffix:
+## MINUS
+## LR(1) items:
 expr -> MINUS . expr [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+## Transitions:
 -- On PARGAUCHE shift to state 5
 -- On MINUS shift to state 4
 -- On INT shift to state 6
 -- On IDENT shift to state 7
 -- On expr shift to state 20
+## Reductions:
 
 State 5:
+## Known stack suffix:
+## PARGAUCHE
+## LR(1) items:
 expr -> PARGAUCHE . expr PARDROITE [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+## Transitions:
 -- On PARGAUCHE shift to state 5
 -- On MINUS shift to state 4
 -- On INT shift to state 6
 -- On IDENT shift to state 7
 -- On expr shift to state 8
+## Reductions:
 
 State 6:
+## Known stack suffix:
+## INT
+## LR(1) items:
 expr -> INT . [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+## Transitions:
+## Reductions:
 -- On VERTICALBAR reduce production expr -> INT
 -- On PLUS reduce production expr -> INT
 -- On PARDROITE reduce production expr -> INT
@@ -90,7 +125,12 @@ expr -> INT . [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF D
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 7:
+## Known stack suffix:
+## IDENT
+## LR(1) items:
 expr -> IDENT . [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+## Transitions:
+## Reductions:
 -- On VERTICALBAR reduce production expr -> IDENT
 -- On PLUS reduce production expr -> IDENT
 -- On PARDROITE reduce production expr -> IDENT
@@ -112,37 +152,52 @@ expr -> IDENT . [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 8:
+## Known stack suffix:
+## PARGAUCHE expr
+## LR(1) items:
 expr -> PARGAUCHE expr . PARDROITE [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
 expr -> expr . PLUS expr [ PLUS PARDROITE MULT MINUS EXP DIV ]
 expr -> expr . MINUS expr [ PLUS PARDROITE MULT MINUS EXP DIV ]
 expr -> expr . MULT expr [ PLUS PARDROITE MULT MINUS EXP DIV ]
 expr -> expr . DIV expr [ PLUS PARDROITE MULT MINUS EXP DIV ]
 expr -> expr . EXP INT [ PLUS PARDROITE MULT MINUS EXP DIV ]
+## Transitions:
 -- On PLUS shift to state 9
 -- On PARDROITE shift to state 17
 -- On MULT shift to state 11
 -- On MINUS shift to state 18
 -- On EXP shift to state 13
 -- On DIV shift to state 15
+## Reductions:
 
 State 9:
+## Known stack suffix:
+## expr PLUS
+## LR(1) items:
 expr -> expr PLUS . expr [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+## Transitions:
 -- On PARGAUCHE shift to state 5
 -- On MINUS shift to state 4
 -- On INT shift to state 6
 -- On IDENT shift to state 7
 -- On expr shift to state 10
+## Reductions:
 
 State 10:
+## Known stack suffix:
+## expr PLUS expr
+## LR(1) items:
 expr -> expr . PLUS expr [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
 expr -> expr PLUS expr . [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
 expr -> expr . MINUS expr [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
 expr -> expr . MULT expr [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
 expr -> expr . DIV expr [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
 expr -> expr . EXP INT [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+## Transitions:
 -- On MULT shift to state 11
 -- On EXP shift to state 13
 -- On DIV shift to state 15
+## Reductions:
 -- On VERTICALBAR reduce production expr -> expr PLUS expr
 -- On PLUS reduce production expr -> expr PLUS expr
 -- On PARDROITE reduce production expr -> expr PLUS expr
@@ -161,21 +216,31 @@ expr -> expr . EXP INT [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQ
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 11:
+## Known stack suffix:
+## expr MULT
+## LR(1) items:
 expr -> expr MULT . expr [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+## Transitions:
 -- On PARGAUCHE shift to state 5
 -- On MINUS shift to state 4
 -- On INT shift to state 6
 -- On IDENT shift to state 7
 -- On expr shift to state 12
+## Reductions:
 
 State 12:
+## Known stack suffix:
+## expr MULT expr
+## LR(1) items:
 expr -> expr . PLUS expr [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
 expr -> expr . MINUS expr [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
 expr -> expr . MULT expr [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
 expr -> expr MULT expr . [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
 expr -> expr . DIV expr [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
 expr -> expr . EXP INT [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+## Transitions:
 -- On EXP shift to state 13
+## Reductions:
 -- On VERTICALBAR reduce production expr -> expr MULT expr
 -- On PLUS reduce production expr -> expr MULT expr
 -- On PARDROITE reduce production expr -> expr MULT expr
@@ -196,11 +261,21 @@ expr -> expr . EXP INT [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQ
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 13:
+## Known stack suffix:
+## expr EXP
+## LR(1) items:
 expr -> expr EXP . INT [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+## Transitions:
 -- On INT shift to state 14
+## Reductions:
 
 State 14:
+## Known stack suffix:
+## expr EXP INT
+## LR(1) items:
 expr -> expr EXP INT . [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+## Transitions:
+## Reductions:
 -- On VERTICALBAR reduce production expr -> expr EXP INT
 -- On PLUS reduce production expr -> expr EXP INT
 -- On PARDROITE reduce production expr -> expr EXP INT
@@ -222,21 +297,31 @@ expr -> expr EXP INT . [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQ
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 15:
+## Known stack suffix:
+## expr DIV
+## LR(1) items:
 expr -> expr DIV . expr [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+## Transitions:
 -- On PARGAUCHE shift to state 5
 -- On MINUS shift to state 4
 -- On INT shift to state 6
 -- On IDENT shift to state 7
 -- On expr shift to state 16
+## Reductions:
 
 State 16:
+## Known stack suffix:
+## expr DIV expr
+## LR(1) items:
 expr -> expr . PLUS expr [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
 expr -> expr . MINUS expr [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
 expr -> expr . MULT expr [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
 expr -> expr . DIV expr [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
 expr -> expr DIV expr . [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
 expr -> expr . EXP INT [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+## Transitions:
 -- On EXP shift to state 13
+## Reductions:
 -- On VERTICALBAR reduce production expr -> expr DIV expr
 -- On PLUS reduce production expr -> expr DIV expr
 -- On PARDROITE reduce production expr -> expr DIV expr
@@ -257,7 +342,12 @@ expr -> expr . EXP INT [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQ
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 17:
+## Known stack suffix:
+## PARGAUCHE expr PARDROITE
+## LR(1) items:
 expr -> PARGAUCHE expr PARDROITE . [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+## Transitions:
+## Reductions:
 -- On VERTICALBAR reduce production expr -> PARGAUCHE expr PARDROITE
 -- On PLUS reduce production expr -> PARGAUCHE expr PARDROITE
 -- On PARDROITE reduce production expr -> PARGAUCHE expr PARDROITE
@@ -279,23 +369,33 @@ expr -> PARGAUCHE expr PARDROITE . [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IM
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 18:
+## Known stack suffix:
+## expr MINUS
+## LR(1) items:
 expr -> expr MINUS . expr [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+## Transitions:
 -- On PARGAUCHE shift to state 5
 -- On MINUS shift to state 4
 -- On INT shift to state 6
 -- On IDENT shift to state 7
 -- On expr shift to state 19
+## Reductions:
 
 State 19:
+## Known stack suffix:
+## expr MINUS expr
+## LR(1) items:
 expr -> expr . PLUS expr [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
 expr -> expr . MINUS expr [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
 expr -> expr MINUS expr . [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
 expr -> expr . MULT expr [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
 expr -> expr . DIV expr [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
 expr -> expr . EXP INT [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+## Transitions:
 -- On MULT shift to state 11
 -- On EXP shift to state 13
 -- On DIV shift to state 15
+## Reductions:
 -- On VERTICALBAR reduce production expr -> expr MINUS expr
 -- On PLUS reduce production expr -> expr MINUS expr
 -- On PARDROITE reduce production expr -> expr MINUS expr
@@ -314,13 +414,18 @@ expr -> expr . EXP INT [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQ
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 20:
+## Known stack suffix:
+## MINUS expr
+## LR(1) items:
 expr -> expr . PLUS expr [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
 expr -> expr . MINUS expr [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
 expr -> MINUS expr . [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
 expr -> expr . MULT expr [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
 expr -> expr . DIV expr [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
 expr -> expr . EXP INT [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND # ]
+## Transitions:
 -- On EXP shift to state 13
+## Reductions:
 -- On VERTICALBAR reduce production expr -> MINUS expr
 -- On PLUS reduce production expr -> MINUS expr
 -- On PARDROITE reduce production expr -> MINUS expr
@@ -341,27 +446,51 @@ expr -> expr . EXP INT [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQ
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 21:
+## Known stack suffix:
+## FORALL
+## LR(1) items:
 formula -> FORALL . id_list COMMA formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+## Transitions:
 -- On IDENT shift to state 22
 -- On id_list shift to state 24
+## Reductions:
 
 State 22:
+## Known stack suffix:
+## IDENT
+## LR(1) items:
 id_list -> IDENT . [ COMMA ]
 id_list -> IDENT . id_list [ COMMA ]
+## Transitions:
 -- On IDENT shift to state 22
 -- On id_list shift to state 23
+## Reductions:
 -- On COMMA reduce production id_list -> IDENT
 
 State 23:
+## Known stack suffix:
+## IDENT id_list
+## LR(1) items:
 id_list -> IDENT id_list . [ COMMA ]
+## Transitions:
+## Reductions:
 -- On COMMA reduce production id_list -> IDENT id_list
 
 State 24:
+## Known stack suffix:
+## FORALL id_list
+## LR(1) items:
 formula -> FORALL id_list . COMMA formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+## Transitions:
 -- On COMMA shift to state 25
+## Reductions:
 
 State 25:
+## Known stack suffix:
+## FORALL id_list COMMA
+## LR(1) items:
 formula -> FORALL id_list COMMA . formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+## Transitions:
 -- On TRUE shift to state 1
 -- On PARGAUCHE shift to state 2
 -- On NOT shift to state 3
@@ -373,9 +502,15 @@ formula -> FORALL id_list COMMA . formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 -- On EXISTS shift to state 27
 -- On formula shift to state 48
 -- On expr shift to state 35
+## Reductions:
 
 State 26:
+## Known stack suffix:
+## FALSE
+## LR(1) items:
 formula -> FALSE . [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+## Transitions:
+## Reductions:
 -- On PARDROITE reduce production formula -> FALSE
 -- On OR reduce production formula -> FALSE
 -- On IMPLIES reduce production formula -> FALSE
@@ -384,16 +519,30 @@ formula -> FALSE . [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 -- On AND reduce production formula -> FALSE
 
 State 27:
+## Known stack suffix:
+## EXISTS
+## LR(1) items:
 formula -> EXISTS . id_list COMMA formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+## Transitions:
 -- On IDENT shift to state 22
 -- On id_list shift to state 28
+## Reductions:
 
 State 28:
+## Known stack suffix:
+## EXISTS id_list
+## LR(1) items:
 formula -> EXISTS id_list . COMMA formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+## Transitions:
 -- On COMMA shift to state 29
+## Reductions:
 
 State 29:
+## Known stack suffix:
+## EXISTS id_list COMMA
+## LR(1) items:
 formula -> EXISTS id_list COMMA . formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+## Transitions:
 -- On TRUE shift to state 1
 -- On PARGAUCHE shift to state 2
 -- On NOT shift to state 3
@@ -405,17 +554,23 @@ formula -> EXISTS id_list COMMA . formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 -- On EXISTS shift to state 27
 -- On formula shift to state 30
 -- On expr shift to state 35
+## Reductions:
 
 State 30:
+## Known stack suffix:
+## EXISTS id_list COMMA formula
+## LR(1) items:
 formula -> formula . AND formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 formula -> formula . OR formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 formula -> formula . IMPLIES formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 formula -> formula . EQUIV formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 formula -> EXISTS id_list COMMA formula . [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+## Transitions:
 -- On OR shift to state 31
 -- On IMPLIES shift to state 44
 -- On EQUIV shift to state 46
 -- On AND shift to state 33
+## Reductions:
 -- On PARDROITE reduce production formula -> EXISTS id_list COMMA formula
 -- On OR reduce production formula -> EXISTS id_list COMMA formula
 -- On IMPLIES reduce production formula -> EXISTS id_list COMMA formula
@@ -425,7 +580,11 @@ formula -> EXISTS id_list COMMA formula . [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 ** Conflict on OR IMPLIES EQUIV AND
 
 State 31:
+## Known stack suffix:
+## formula OR
+## LR(1) items:
 formula -> formula OR . formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+## Transitions:
 -- On TRUE shift to state 1
 -- On PARGAUCHE shift to state 2
 -- On NOT shift to state 3
@@ -437,14 +596,20 @@ formula -> formula OR . formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 -- On EXISTS shift to state 27
 -- On formula shift to state 32
 -- On expr shift to state 35
+## Reductions:
 
 State 32:
+## Known stack suffix:
+## formula OR formula
+## LR(1) items:
 formula -> formula . AND formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 formula -> formula . OR formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 formula -> formula OR formula . [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 formula -> formula . IMPLIES formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 formula -> formula . EQUIV formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+## Transitions:
 -- On AND shift to state 33
+## Reductions:
 -- On PARDROITE reduce production formula -> formula OR formula
 -- On OR reduce production formula -> formula OR formula
 -- On IMPLIES reduce production formula -> formula OR formula
@@ -452,7 +617,11 @@ formula -> formula . EQUIV formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 -- On EOF reduce production formula -> formula OR formula
 
 State 33:
+## Known stack suffix:
+## formula AND
+## LR(1) items:
 formula -> formula AND . formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+## Transitions:
 -- On TRUE shift to state 1
 -- On PARGAUCHE shift to state 2
 -- On NOT shift to state 3
@@ -464,13 +633,19 @@ formula -> formula AND . formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 -- On EXISTS shift to state 27
 -- On formula shift to state 34
 -- On expr shift to state 35
+## Reductions:
 
 State 34:
+## Known stack suffix:
+## formula AND formula
+## LR(1) items:
 formula -> formula . AND formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 formula -> formula AND formula . [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 formula -> formula . OR formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 formula -> formula . IMPLIES formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 formula -> formula . EQUIV formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+## Transitions:
+## Reductions:
 -- On PARDROITE reduce production formula -> formula AND formula
 -- On OR reduce production formula -> formula AND formula
 -- On IMPLIES reduce production formula -> formula AND formula
@@ -479,6 +654,9 @@ formula -> formula . EQUIV formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 -- On AND reduce production formula -> formula AND formula
 
 State 35:
+## Known stack suffix:
+## expr
+## LR(1) items:
 expr -> expr . PLUS expr [ VERTICALBAR PLUS MULT MINUS EXP DIV COMP ]
 expr -> expr . MINUS expr [ VERTICALBAR PLUS MULT MINUS EXP DIV COMP ]
 expr -> expr . MULT expr [ VERTICALBAR PLUS MULT MINUS EXP DIV COMP ]
@@ -488,6 +666,7 @@ formula -> expr . COMP expr [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 formula -> expr . VERTICALBAR expr [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 formula -> expr . COMP expr COMP expr [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 formula -> expr . COMP expr COMP expr COMP expr [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+## Transitions:
 -- On VERTICALBAR shift to state 36
 -- On PLUS shift to state 9
 -- On MULT shift to state 11
@@ -495,27 +674,38 @@ formula -> expr . COMP expr COMP expr COMP expr [ PARDROITE OR IMPLIES EQUIV EOF
 -- On EXP shift to state 13
 -- On DIV shift to state 15
 -- On COMP shift to state 38
+## Reductions:
 
 State 36:
+## Known stack suffix:
+## expr VERTICALBAR
+## LR(1) items:
 formula -> expr VERTICALBAR . expr [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+## Transitions:
 -- On PARGAUCHE shift to state 5
 -- On MINUS shift to state 4
 -- On INT shift to state 6
 -- On IDENT shift to state 7
 -- On expr shift to state 37
+## Reductions:
 
 State 37:
+## Known stack suffix:
+## expr VERTICALBAR expr
+## LR(1) items:
 expr -> expr . PLUS expr [ PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV AND ]
 expr -> expr . MINUS expr [ PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV AND ]
 expr -> expr . MULT expr [ PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV AND ]
 expr -> expr . DIV expr [ PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV AND ]
 expr -> expr . EXP INT [ PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV AND ]
 formula -> expr VERTICALBAR expr . [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+## Transitions:
 -- On PLUS shift to state 9
 -- On MULT shift to state 11
 -- On MINUS shift to state 18
 -- On EXP shift to state 13
 -- On DIV shift to state 15
+## Reductions:
 -- On PARDROITE reduce production formula -> expr VERTICALBAR expr
 -- On OR reduce production formula -> expr VERTICALBAR expr
 -- On IMPLIES reduce production formula -> expr VERTICALBAR expr
@@ -524,16 +714,24 @@ formula -> expr VERTICALBAR expr . [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 -- On AND reduce production formula -> expr VERTICALBAR expr
 
 State 38:
+## Known stack suffix:
+## expr COMP
+## LR(1) items:
 formula -> expr COMP . expr [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 formula -> expr COMP . expr COMP expr [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 formula -> expr COMP . expr COMP expr COMP expr [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+## Transitions:
 -- On PARGAUCHE shift to state 5
 -- On MINUS shift to state 4
 -- On INT shift to state 6
 -- On IDENT shift to state 7
 -- On expr shift to state 39
+## Reductions:
 
 State 39:
+## Known stack suffix:
+## expr COMP expr
+## LR(1) items:
 expr -> expr . PLUS expr [ PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND ]
 expr -> expr . MINUS expr [ PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND ]
 expr -> expr . MULT expr [ PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND ]
@@ -542,12 +740,14 @@ expr -> expr . EXP INT [ PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV 
 formula -> expr COMP expr . [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 formula -> expr COMP expr . COMP expr [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 formula -> expr COMP expr . COMP expr COMP expr [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+## Transitions:
 -- On PLUS shift to state 9
 -- On MULT shift to state 11
 -- On MINUS shift to state 18
 -- On EXP shift to state 13
 -- On DIV shift to state 15
 -- On COMP shift to state 40
+## Reductions:
 -- On PARDROITE reduce production formula -> expr COMP expr
 -- On OR reduce production formula -> expr COMP expr
 -- On IMPLIES reduce production formula -> expr COMP expr
@@ -556,15 +756,23 @@ formula -> expr COMP expr . COMP expr COMP expr [ PARDROITE OR IMPLIES EQUIV EOF
 -- On AND reduce production formula -> expr COMP expr
 
 State 40:
+## Known stack suffix:
+## expr COMP expr COMP
+## LR(1) items:
 formula -> expr COMP expr COMP . expr [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 formula -> expr COMP expr COMP . expr COMP expr [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+## Transitions:
 -- On PARGAUCHE shift to state 5
 -- On MINUS shift to state 4
 -- On INT shift to state 6
 -- On IDENT shift to state 7
 -- On expr shift to state 41
+## Reductions:
 
 State 41:
+## Known stack suffix:
+## expr COMP expr COMP expr
+## LR(1) items:
 expr -> expr . PLUS expr [ PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND ]
 expr -> expr . MINUS expr [ PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND ]
 expr -> expr . MULT expr [ PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND ]
@@ -572,12 +780,14 @@ expr -> expr . DIV expr [ PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV
 expr -> expr . EXP INT [ PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV COMP AND ]
 formula -> expr COMP expr COMP expr . [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 formula -> expr COMP expr COMP expr . COMP expr [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+## Transitions:
 -- On PLUS shift to state 9
 -- On MULT shift to state 11
 -- On MINUS shift to state 18
 -- On EXP shift to state 13
 -- On DIV shift to state 15
 -- On COMP shift to state 42
+## Reductions:
 -- On PARDROITE reduce production formula -> expr COMP expr COMP expr
 -- On OR reduce production formula -> expr COMP expr COMP expr
 -- On IMPLIES reduce production formula -> expr COMP expr COMP expr
@@ -586,25 +796,35 @@ formula -> expr COMP expr COMP expr . COMP expr [ PARDROITE OR IMPLIES EQUIV EOF
 -- On AND reduce production formula -> expr COMP expr COMP expr
 
 State 42:
+## Known stack suffix:
+## expr COMP expr COMP expr COMP
+## LR(1) items:
 formula -> expr COMP expr COMP expr COMP . expr [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+## Transitions:
 -- On PARGAUCHE shift to state 5
 -- On MINUS shift to state 4
 -- On INT shift to state 6
 -- On IDENT shift to state 7
 -- On expr shift to state 43
+## Reductions:
 
 State 43:
+## Known stack suffix:
+## expr COMP expr COMP expr COMP expr
+## LR(1) items:
 expr -> expr . PLUS expr [ PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV AND ]
 expr -> expr . MINUS expr [ PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV AND ]
 expr -> expr . MULT expr [ PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV AND ]
 expr -> expr . DIV expr [ PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV AND ]
 expr -> expr . EXP INT [ PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQUIV EOF DIV AND ]
 formula -> expr COMP expr COMP expr COMP expr . [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+## Transitions:
 -- On PLUS shift to state 9
 -- On MULT shift to state 11
 -- On MINUS shift to state 18
 -- On EXP shift to state 13
 -- On DIV shift to state 15
+## Reductions:
 -- On PARDROITE reduce production formula -> expr COMP expr COMP expr COMP expr
 -- On OR reduce production formula -> expr COMP expr COMP expr COMP expr
 -- On IMPLIES reduce production formula -> expr COMP expr COMP expr COMP expr
@@ -613,7 +833,11 @@ formula -> expr COMP expr COMP expr COMP expr . [ PARDROITE OR IMPLIES EQUIV EOF
 -- On AND reduce production formula -> expr COMP expr COMP expr COMP expr
 
 State 44:
+## Known stack suffix:
+## formula IMPLIES
+## LR(1) items:
 formula -> formula IMPLIES . formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+## Transitions:
 -- On TRUE shift to state 1
 -- On PARGAUCHE shift to state 2
 -- On NOT shift to state 3
@@ -625,22 +849,32 @@ formula -> formula IMPLIES . formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 -- On EXISTS shift to state 27
 -- On formula shift to state 45
 -- On expr shift to state 35
+## Reductions:
 
 State 45:
+## Known stack suffix:
+## formula IMPLIES formula
+## LR(1) items:
 formula -> formula . AND formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 formula -> formula . OR formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 formula -> formula . IMPLIES formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 formula -> formula IMPLIES formula . [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 formula -> formula . EQUIV formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+## Transitions:
 -- On OR shift to state 31
 -- On IMPLIES shift to state 44
 -- On EQUIV shift to state 46
 -- On AND shift to state 33
+## Reductions:
 -- On PARDROITE reduce production formula -> formula IMPLIES formula
 -- On EOF reduce production formula -> formula IMPLIES formula
 
 State 46:
+## Known stack suffix:
+## formula EQUIV
+## LR(1) items:
 formula -> formula EQUIV . formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+## Transitions:
 -- On TRUE shift to state 1
 -- On PARGAUCHE shift to state 2
 -- On NOT shift to state 3
@@ -652,30 +886,41 @@ formula -> formula EQUIV . formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 -- On EXISTS shift to state 27
 -- On formula shift to state 47
 -- On expr shift to state 35
+## Reductions:
 
 State 47:
+## Known stack suffix:
+## formula EQUIV formula
+## LR(1) items:
 formula -> formula . AND formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 formula -> formula . OR formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 formula -> formula . IMPLIES formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 formula -> formula . EQUIV formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 formula -> formula EQUIV formula . [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+## Transitions:
 -- On OR shift to state 31
 -- On IMPLIES shift to state 44
 -- On EQUIV shift to state 46
 -- On AND shift to state 33
+## Reductions:
 -- On PARDROITE reduce production formula -> formula EQUIV formula
 -- On EOF reduce production formula -> formula EQUIV formula
 
 State 48:
+## Known stack suffix:
+## FORALL id_list COMMA formula
+## LR(1) items:
 formula -> formula . AND formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 formula -> formula . OR formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 formula -> formula . IMPLIES formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 formula -> formula . EQUIV formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 formula -> FORALL id_list COMMA formula . [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+## Transitions:
 -- On OR shift to state 31
 -- On IMPLIES shift to state 44
 -- On EQUIV shift to state 46
 -- On AND shift to state 33
+## Reductions:
 -- On PARDROITE reduce production formula -> FORALL id_list COMMA formula
 -- On OR reduce production formula -> FORALL id_list COMMA formula
 -- On IMPLIES reduce production formula -> FORALL id_list COMMA formula
@@ -685,11 +930,16 @@ formula -> FORALL id_list COMMA formula . [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 ** Conflict on OR IMPLIES EQUIV AND
 
 State 49:
+## Known stack suffix:
+## NOT formula
+## LR(1) items:
 formula -> formula . AND formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 formula -> formula . OR formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 formula -> NOT formula . [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 formula -> formula . IMPLIES formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 formula -> formula . EQUIV formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+## Transitions:
+## Reductions:
 -- On PARDROITE reduce production formula -> NOT formula
 -- On OR reduce production formula -> NOT formula
 -- On IMPLIES reduce production formula -> NOT formula
@@ -698,19 +948,29 @@ formula -> formula . EQUIV formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 -- On AND reduce production formula -> NOT formula
 
 State 50:
+## Known stack suffix:
+## PARGAUCHE formula
+## LR(1) items:
 formula -> formula . AND formula [ PARDROITE OR IMPLIES EQUIV AND ]
 formula -> formula . OR formula [ PARDROITE OR IMPLIES EQUIV AND ]
 formula -> formula . IMPLIES formula [ PARDROITE OR IMPLIES EQUIV AND ]
 formula -> formula . EQUIV formula [ PARDROITE OR IMPLIES EQUIV AND ]
 formula -> PARGAUCHE formula . PARDROITE [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+## Transitions:
 -- On PARDROITE shift to state 51
 -- On OR shift to state 31
 -- On IMPLIES shift to state 44
 -- On EQUIV shift to state 46
 -- On AND shift to state 33
+## Reductions:
 
 State 51:
+## Known stack suffix:
+## PARGAUCHE formula PARDROITE
+## LR(1) items:
 formula -> PARGAUCHE formula PARDROITE . [ PARDROITE OR IMPLIES EQUIV EOF AND ]
+## Transitions:
+## Reductions:
 -- On PARDROITE reduce production formula -> PARGAUCHE formula PARDROITE
 -- On OR reduce production formula -> PARGAUCHE formula PARDROITE
 -- On IMPLIES reduce production formula -> PARGAUCHE formula PARDROITE
@@ -719,6 +979,9 @@ formula -> PARGAUCHE formula PARDROITE . [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 -- On AND reduce production formula -> PARGAUCHE formula PARDROITE
 
 State 52:
+## Known stack suffix:
+## PARGAUCHE expr
+## LR(1) items:
 expr -> PARGAUCHE expr . PARDROITE [ VERTICALBAR PLUS PARDROITE MULT MINUS EXP DIV COMP ]
 expr -> expr . PLUS expr [ VERTICALBAR PLUS PARDROITE MULT MINUS EXP DIV COMP ]
 expr -> expr . MINUS expr [ VERTICALBAR PLUS PARDROITE MULT MINUS EXP DIV COMP ]
@@ -729,6 +992,7 @@ formula -> expr . COMP expr [ PARDROITE OR IMPLIES EQUIV AND ]
 formula -> expr . VERTICALBAR expr [ PARDROITE OR IMPLIES EQUIV AND ]
 formula -> expr . COMP expr COMP expr [ PARDROITE OR IMPLIES EQUIV AND ]
 formula -> expr . COMP expr COMP expr COMP expr [ PARDROITE OR IMPLIES EQUIV AND ]
+## Transitions:
 -- On VERTICALBAR shift to state 36
 -- On PLUS shift to state 9
 -- On PARDROITE shift to state 17
@@ -737,47 +1001,73 @@ formula -> expr . COMP expr COMP expr COMP expr [ PARDROITE OR IMPLIES EQUIV AND
 -- On EXP shift to state 13
 -- On DIV shift to state 15
 -- On COMP shift to state 38
+## Reductions:
 
 State 53:
+## Known stack suffix:
+## formula
+## LR(1) items:
 constraint_entry -> formula . EOF [ # ]
 formula -> formula . AND formula [ OR IMPLIES EQUIV EOF AND ]
 formula -> formula . OR formula [ OR IMPLIES EQUIV EOF AND ]
 formula -> formula . IMPLIES formula [ OR IMPLIES EQUIV EOF AND ]
 formula -> formula . EQUIV formula [ OR IMPLIES EQUIV EOF AND ]
+## Transitions:
 -- On OR shift to state 31
 -- On IMPLIES shift to state 44
 -- On EQUIV shift to state 46
 -- On EOF shift to state 54
 -- On AND shift to state 33
+## Reductions:
 
 State 54:
+## Known stack suffix:
+## formula EOF
+## LR(1) items:
 constraint_entry -> formula EOF . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production constraint_entry -> formula EOF
 
 State 55:
+## Known stack suffix:
+## constraint_entry
+## LR(1) items:
 constraint_entry' -> constraint_entry . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept constraint_entry
 
 State 56:
+## Known stack suffix:
+##
+## LR(1) items:
 expr' -> . expr [ # ]
+## Transitions:
 -- On PARGAUCHE shift to state 5
 -- On MINUS shift to state 4
 -- On INT shift to state 6
 -- On IDENT shift to state 7
 -- On expr shift to state 57
+## Reductions:
 
 State 57:
+## Known stack suffix:
+## expr
+## LR(1) items:
 expr' -> expr . [ # ]
 expr -> expr . PLUS expr [ PLUS MULT MINUS EXP DIV # ]
 expr -> expr . MINUS expr [ PLUS MULT MINUS EXP DIV # ]
 expr -> expr . MULT expr [ PLUS MULT MINUS EXP DIV # ]
 expr -> expr . DIV expr [ PLUS MULT MINUS EXP DIV # ]
 expr -> expr . EXP INT [ PLUS MULT MINUS EXP DIV # ]
+## Transitions:
 -- On PLUS shift to state 9
 -- On MULT shift to state 11
 -- On MINUS shift to state 18
 -- On EXP shift to state 13
 -- On DIV shift to state 15
+## Reductions:
 -- On # accept expr
 ** End-of-stream conflict on PLUS MULT MINUS EXP DIV
 **   There is a tension between

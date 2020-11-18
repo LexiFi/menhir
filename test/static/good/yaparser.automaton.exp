@@ -1,104 +1,203 @@
 State 0:
+## Known stack suffix:
+##
+## LR(1) items:
 main' -> . main [ # ]
+## Transitions:
 -- On PERCENT shift to state 1
 -- On yaparser_option shift to state 10
 -- On options shift to state 11
 -- On main shift to state 153
+## Reductions:
 
 State 1:
+## Known stack suffix:
+## PERCENT
+## LR(1) items:
 yaparser_option -> PERCENT . IDENTIFIER opt_identifiers SEMI_COLON [ PERCENT IDENTIFIER ]
+## Transitions:
 -- On IDENTIFIER shift to state 2
+## Reductions:
 
 State 2:
+## Known stack suffix:
+## PERCENT IDENTIFIER
+## LR(1) items:
 yaparser_option -> PERCENT IDENTIFIER . opt_identifiers SEMI_COLON [ PERCENT IDENTIFIER ]
+## Transitions:
 -- On COLON shift to state 3
 -- On opt_identifiers shift to state 8
+## Reductions:
 -- On SEMI_COLON reduce production opt_identifiers ->
 
 State 3:
+## Known stack suffix:
+## COLON
+## LR(1) items:
 opt_identifiers -> COLON . id_list [ SEMI_COLON ]
+## Transitions:
 -- On IDENTIFIER shift to state 4
 -- On id_list shift to state 5
+## Reductions:
 
 State 4:
+## Known stack suffix:
+## IDENTIFIER
+## LR(1) items:
 id_list -> IDENTIFIER . [ SEMI_COLON COMMA ]
+## Transitions:
+## Reductions:
 -- On SEMI_COLON reduce production id_list -> IDENTIFIER
 -- On COMMA reduce production id_list -> IDENTIFIER
 
 State 5:
+## Known stack suffix:
+## COLON id_list
+## LR(1) items:
 id_list -> id_list . COMMA IDENTIFIER [ SEMI_COLON COMMA ]
 opt_identifiers -> COLON id_list . [ SEMI_COLON ]
+## Transitions:
 -- On COMMA shift to state 6
+## Reductions:
 -- On SEMI_COLON reduce production opt_identifiers -> COLON id_list
 
 State 6:
+## Known stack suffix:
+## id_list COMMA
+## LR(1) items:
 id_list -> id_list COMMA . IDENTIFIER [ SEMI_COLON COMMA ]
+## Transitions:
 -- On IDENTIFIER shift to state 7
+## Reductions:
 
 State 7:
+## Known stack suffix:
+## id_list COMMA IDENTIFIER
+## LR(1) items:
 id_list -> id_list COMMA IDENTIFIER . [ SEMI_COLON COMMA ]
+## Transitions:
+## Reductions:
 -- On SEMI_COLON reduce production id_list -> id_list COMMA IDENTIFIER
 -- On COMMA reduce production id_list -> id_list COMMA IDENTIFIER
 
 State 8:
+## Known stack suffix:
+## PERCENT IDENTIFIER opt_identifiers
+## LR(1) items:
 yaparser_option -> PERCENT IDENTIFIER opt_identifiers . SEMI_COLON [ PERCENT IDENTIFIER ]
+## Transitions:
 -- On SEMI_COLON shift to state 9
+## Reductions:
 
 State 9:
+## Known stack suffix:
+## PERCENT IDENTIFIER opt_identifiers SEMI_COLON
+## LR(1) items:
 yaparser_option -> PERCENT IDENTIFIER opt_identifiers SEMI_COLON . [ PERCENT IDENTIFIER ]
+## Transitions:
+## Reductions:
 -- On PERCENT reduce production yaparser_option -> PERCENT IDENTIFIER opt_identifiers SEMI_COLON
 -- On IDENTIFIER reduce production yaparser_option -> PERCENT IDENTIFIER opt_identifiers SEMI_COLON
 
 State 10:
+## Known stack suffix:
+## yaparser_option
+## LR(1) items:
 options -> yaparser_option . [ PERCENT IDENTIFIER ]
+## Transitions:
+## Reductions:
 -- On PERCENT reduce production options -> yaparser_option
 -- On IDENTIFIER reduce production options -> yaparser_option
 
 State 11:
+## Known stack suffix:
+## options
+## LR(1) items:
 main -> options . states [ # ]
 options -> options . yaparser_option [ PERCENT IDENTIFIER ]
+## Transitions:
 -- On PERCENT shift to state 1
 -- On IDENTIFIER shift to state 12
 -- On yaparser_option shift to state 149
 -- On states shift to state 150
 -- On state shift to state 152
+## Reductions:
 
 State 12:
+## Known stack suffix:
+## IDENTIFIER
+## LR(1) items:
 state -> IDENTIFIER . COLON transitions SEMI_COLON [ IDENTIFIER # ]
+## Transitions:
 -- On COLON shift to state 13
+## Reductions:
 
 State 13:
+## Known stack suffix:
+## IDENTIFIER COLON
+## LR(1) items:
 state -> IDENTIFIER COLON . transitions SEMI_COLON [ IDENTIFIER # ]
+## Transitions:
 -- On RARROW shift to state 14
 -- On OTHERWISE shift to state 16
 -- On LCURLY shift to state 19
 -- On transitions shift to state 144
 -- On transition shift to state 148
+## Reductions:
 
 State 14:
+## Known stack suffix:
+## RARROW
+## LR(1) items:
 transition -> RARROW . IDENTIFIER [ SEMI_COLON PIPE ]
+## Transitions:
 -- On IDENTIFIER shift to state 15
+## Reductions:
 
 State 15:
+## Known stack suffix:
+## RARROW IDENTIFIER
+## LR(1) items:
 transition -> RARROW IDENTIFIER . [ SEMI_COLON PIPE ]
+## Transitions:
+## Reductions:
 -- On SEMI_COLON reduce production transition -> RARROW IDENTIFIER
 -- On PIPE reduce production transition -> RARROW IDENTIFIER
 
 State 16:
+## Known stack suffix:
+## OTHERWISE
+## LR(1) items:
 transition -> OTHERWISE . RARROW IDENTIFIER [ SEMI_COLON PIPE ]
+## Transitions:
 -- On RARROW shift to state 17
+## Reductions:
 
 State 17:
+## Known stack suffix:
+## OTHERWISE RARROW
+## LR(1) items:
 transition -> OTHERWISE RARROW . IDENTIFIER [ SEMI_COLON PIPE ]
+## Transitions:
 -- On IDENTIFIER shift to state 18
+## Reductions:
 
 State 18:
+## Known stack suffix:
+## OTHERWISE RARROW IDENTIFIER
+## LR(1) items:
 transition -> OTHERWISE RARROW IDENTIFIER . [ SEMI_COLON PIPE ]
+## Transitions:
+## Reductions:
 -- On SEMI_COLON reduce production transition -> OTHERWISE RARROW IDENTIFIER
 -- On PIPE reduce production transition -> OTHERWISE RARROW IDENTIFIER
 
 State 19:
+## Known stack suffix:
+## LCURLY
+## LR(1) items:
 transition -> LCURLY . seq_elt RCURLY RARROW IDENTIFIER [ SEMI_COLON PIPE ]
+## Transitions:
 -- On TRUE shift to state 20
 -- On STAR shift to state 21
 -- On RETURN_OF shift to state 60
@@ -121,9 +220,15 @@ transition -> LCURLY . seq_elt RCURLY RARROW IDENTIFIER [ SEMI_COLON PIPE ]
 -- On access_or_const shift to state 53
 -- On access_leaf shift to state 28
 -- On access shift to state 39
+## Reductions:
 
 State 20:
+## Known stack suffix:
+## TRUE
+## LR(1) items:
 single_cond -> TRUE . [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR LCURLY AND ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production single_cond -> TRUE
 -- On SEMI_COLON reduce production single_cond -> TRUE
 -- On RSQUARE reduce production single_cond -> TRUE
@@ -137,25 +242,40 @@ single_cond -> TRUE . [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUEST
 -- On AND reduce production single_cond -> TRUE
 
 State 21:
+## Known stack suffix:
+## STAR
+## LR(1) items:
 access_leaf -> STAR . access [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS PIPE PERCENT OR NEQ MINUS LT LSQUARE LE LCURLY GT GE EQ DOT COMMA CARET AND AMP ]
+## Transitions:
 -- On STAR shift to state 21
 -- On LPAREN shift to state 22
 -- On IDENTIFIER shift to state 23
 -- On access_leaf shift to state 28
 -- On access shift to state 59
+## Reductions:
 
 State 22:
+## Known stack suffix:
+## LPAREN
+## LR(1) items:
 access_leaf -> LPAREN . access RPAREN [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS PIPE PERCENT OR NEQ MINUS LT LSQUARE LE LCURLY GT GE EQ DOT COMMA CARET AND AMP ]
+## Transitions:
 -- On STAR shift to state 21
 -- On LPAREN shift to state 22
 -- On IDENTIFIER shift to state 23
 -- On access_leaf shift to state 28
 -- On access shift to state 29
+## Reductions:
 
 State 23:
+## Known stack suffix:
+## IDENTIFIER
+## LR(1) items:
 access_leaf -> IDENTIFIER . LPAREN RPAREN DOT IDENTIFIER [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS PIPE PERCENT OR NEQ MINUS LT LSQUARE LE LCURLY GT GE EQ DOT COMMA CARET AND AMP ]
 access_leaf -> IDENTIFIER . [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS PIPE PERCENT OR NEQ MINUS LT LSQUARE LE LCURLY GT GE EQ DOT COMMA CARET AND AMP ]
+## Transitions:
 -- On LPAREN shift to state 24
+## Reductions:
 -- On STAR reduce production access_leaf -> IDENTIFIER
 -- On SLASH reduce production access_leaf -> IDENTIFIER
 -- On SEMI_COLON reduce production access_leaf -> IDENTIFIER
@@ -184,19 +304,39 @@ access_leaf -> IDENTIFIER . [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACE
 -- On AMP reduce production access_leaf -> IDENTIFIER
 
 State 24:
+## Known stack suffix:
+## IDENTIFIER LPAREN
+## LR(1) items:
 access_leaf -> IDENTIFIER LPAREN . RPAREN DOT IDENTIFIER [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS PIPE PERCENT OR NEQ MINUS LT LSQUARE LE LCURLY GT GE EQ DOT COMMA CARET AND AMP ]
+## Transitions:
 -- On RPAREN shift to state 25
+## Reductions:
 
 State 25:
+## Known stack suffix:
+## IDENTIFIER LPAREN RPAREN
+## LR(1) items:
 access_leaf -> IDENTIFIER LPAREN RPAREN . DOT IDENTIFIER [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS PIPE PERCENT OR NEQ MINUS LT LSQUARE LE LCURLY GT GE EQ DOT COMMA CARET AND AMP ]
+## Transitions:
 -- On DOT shift to state 26
+## Reductions:
 
 State 26:
+## Known stack suffix:
+## IDENTIFIER LPAREN RPAREN DOT
+## LR(1) items:
 access_leaf -> IDENTIFIER LPAREN RPAREN DOT . IDENTIFIER [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS PIPE PERCENT OR NEQ MINUS LT LSQUARE LE LCURLY GT GE EQ DOT COMMA CARET AND AMP ]
+## Transitions:
 -- On IDENTIFIER shift to state 27
+## Reductions:
 
 State 27:
+## Known stack suffix:
+## IDENTIFIER LPAREN RPAREN DOT IDENTIFIER
+## LR(1) items:
 access_leaf -> IDENTIFIER LPAREN RPAREN DOT IDENTIFIER . [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS PIPE PERCENT OR NEQ MINUS LT LSQUARE LE LCURLY GT GE EQ DOT COMMA CARET AND AMP ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production access_leaf -> IDENTIFIER LPAREN RPAREN DOT IDENTIFIER
 -- On SLASH reduce production access_leaf -> IDENTIFIER LPAREN RPAREN DOT IDENTIFIER
 -- On SEMI_COLON reduce production access_leaf -> IDENTIFIER LPAREN RPAREN DOT IDENTIFIER
@@ -225,7 +365,12 @@ access_leaf -> IDENTIFIER LPAREN RPAREN DOT IDENTIFIER . [ STAR SLASH SEMI_COLON
 -- On AMP reduce production access_leaf -> IDENTIFIER LPAREN RPAREN DOT IDENTIFIER
 
 State 28:
+## Known stack suffix:
+## access_leaf
+## LR(1) items:
 access -> access_leaf . [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS PIPE PERCENT OR NEQ MINUS LT LSQUARE LE LCURLY GT GE EQ DOT COMMA CARET AND AMP ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production access -> access_leaf
 -- On SLASH reduce production access -> access_leaf
 -- On SEMI_COLON reduce production access -> access_leaf
@@ -254,15 +399,25 @@ access -> access_leaf . [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRA
 -- On AMP reduce production access -> access_leaf
 
 State 29:
+## Known stack suffix:
+## LPAREN access
+## LR(1) items:
 access -> access . DOT IDENTIFIER [ RPAREN LSQUARE DOT ]
 access -> access . LSQUARE access_or_const RSQUARE [ RPAREN LSQUARE DOT ]
 access_leaf -> LPAREN access . RPAREN [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS PIPE PERCENT OR NEQ MINUS LT LSQUARE LE LCURLY GT GE EQ DOT COMMA CARET AND AMP ]
+## Transitions:
 -- On RPAREN shift to state 30
 -- On LSQUARE shift to state 31
 -- On DOT shift to state 40
+## Reductions:
 
 State 30:
+## Known stack suffix:
+## LPAREN access RPAREN
+## LR(1) items:
 access_leaf -> LPAREN access RPAREN . [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS PIPE PERCENT OR NEQ MINUS LT LSQUARE LE LCURLY GT GE EQ DOT COMMA CARET AND AMP ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production access_leaf -> LPAREN access RPAREN
 -- On SLASH reduce production access_leaf -> LPAREN access RPAREN
 -- On SEMI_COLON reduce production access_leaf -> LPAREN access RPAREN
@@ -291,7 +446,11 @@ access_leaf -> LPAREN access RPAREN . [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCU
 -- On AMP reduce production access_leaf -> LPAREN access RPAREN
 
 State 31:
+## Known stack suffix:
+## access LSQUARE
+## LR(1) items:
 access -> access LSQUARE . access_or_const RSQUARE [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS PIPE PERCENT OR NEQ MINUS LT LSQUARE LE LCURLY GT GE EQ DOT COMMA CARET AND AMP ]
+## Transitions:
 -- On STAR shift to state 21
 -- On MINUS shift to state 32
 -- On LPAREN shift to state 34
@@ -300,13 +459,24 @@ access -> access LSQUARE . access_or_const RSQUARE [ STAR SLASH SEMI_COLON RSQUA
 -- On access_or_const shift to state 57
 -- On access_leaf shift to state 28
 -- On access shift to state 39
+## Reductions:
 
 State 32:
+## Known stack suffix:
+## MINUS
+## LR(1) items:
 access_or_const -> MINUS . INT [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS PIPE PERCENT OR NEQ MINUS LT LE LCURLY GT GE EQ COMMA CARET AND AMP ]
+## Transitions:
 -- On INT shift to state 33
+## Reductions:
 
 State 33:
+## Known stack suffix:
+## MINUS INT
+## LR(1) items:
 access_or_const -> MINUS INT . [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS PIPE PERCENT OR NEQ MINUS LT LE LCURLY GT GE EQ COMMA CARET AND AMP ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production access_or_const -> MINUS INT
 -- On SLASH reduce production access_or_const -> MINUS INT
 -- On SEMI_COLON reduce production access_or_const -> MINUS INT
@@ -333,8 +503,12 @@ access_or_const -> MINUS INT . [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBR
 -- On AMP reduce production access_or_const -> MINUS INT
 
 State 34:
+## Known stack suffix:
+## LPAREN
+## LR(1) items:
 access_leaf -> LPAREN . access RPAREN [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS PIPE PERCENT OR NEQ MINUS LT LSQUARE LE LCURLY GT GE EQ DOT COMMA CARET AND AMP ]
 access_or_const -> LPAREN . arith_relation RPAREN [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS PIPE PERCENT OR NEQ MINUS LT LE LCURLY GT GE EQ COMMA CARET AND AMP ]
+## Transitions:
 -- On STAR shift to state 21
 -- On MINUS shift to state 32
 -- On LPAREN shift to state 34
@@ -346,9 +520,15 @@ access_or_const -> LPAREN . arith_relation RPAREN [ STAR SLASH SEMI_COLON RSQUAR
 -- On access_or_const shift to state 53
 -- On access_leaf shift to state 28
 -- On access shift to state 56
+## Reductions:
 
 State 35:
+## Known stack suffix:
+## INT
+## LR(1) items:
 access_or_const -> INT . [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS PIPE PERCENT OR NEQ MINUS LT LE LCURLY GT GE EQ COMMA CARET AND AMP ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production access_or_const -> INT
 -- On SLASH reduce production access_or_const -> INT
 -- On SEMI_COLON reduce production access_or_const -> INT
@@ -375,15 +555,20 @@ access_or_const -> INT . [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBR
 -- On AMP reduce production access_or_const -> INT
 
 State 36:
+## Known stack suffix:
+## arith_relation_mul
+## LR(1) items:
 arith_relation -> arith_relation_mul . PLUS arith_relation [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR NEQ LT LE LCURLY GT GE EQ COMMA AND ]
 arith_relation -> arith_relation_mul . MINUS arith_relation [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR NEQ LT LE LCURLY GT GE EQ COMMA AND ]
 arith_relation -> arith_relation_mul . [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR NEQ LT LE LCURLY GT GE EQ COMMA AND ]
 arith_relation_mul -> arith_relation_mul . SLASH access_or_const [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS PERCENT OR NEQ MINUS LT LE LCURLY GT GE EQ COMMA AND ]
 arith_relation_mul -> arith_relation_mul . STAR access_or_const [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS PERCENT OR NEQ MINUS LT LE LCURLY GT GE EQ COMMA AND ]
 arith_relation_mul -> arith_relation_mul . PERCENT access_or_const [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS PERCENT OR NEQ MINUS LT LE LCURLY GT GE EQ COMMA AND ]
+## Transitions:
 -- On SLASH shift to state 37
 -- On PERCENT shift to state 42
 -- On MINUS shift to state 44
+## Reductions:
 -- On STAR reduce production arith_relation -> arith_relation_mul
 -- On SEMI_COLON reduce production arith_relation -> arith_relation_mul
 -- On RSQUARE reduce production arith_relation -> arith_relation_mul
@@ -404,7 +589,11 @@ arith_relation_mul -> arith_relation_mul . PERCENT access_or_const [ STAR SLASH 
 -- On AND reduce production arith_relation -> arith_relation_mul
 
 State 37:
+## Known stack suffix:
+## arith_relation_mul SLASH
+## LR(1) items:
 arith_relation_mul -> arith_relation_mul SLASH . access_or_const [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS PERCENT OR NEQ MINUS LT LE LCURLY GT GE EQ COMMA AND ]
+## Transitions:
 -- On STAR shift to state 21
 -- On MINUS shift to state 32
 -- On LPAREN shift to state 34
@@ -413,9 +602,15 @@ arith_relation_mul -> arith_relation_mul SLASH . access_or_const [ STAR SLASH SE
 -- On access_or_const shift to state 38
 -- On access_leaf shift to state 28
 -- On access shift to state 39
+## Reductions:
 
 State 38:
+## Known stack suffix:
+## arith_relation_mul SLASH access_or_const
+## LR(1) items:
 arith_relation_mul -> arith_relation_mul SLASH access_or_const . [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS PERCENT OR NEQ MINUS LT LE LCURLY GT GE EQ COMMA AND ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production arith_relation_mul -> arith_relation_mul SLASH access_or_const
 -- On SLASH reduce production arith_relation_mul -> arith_relation_mul SLASH access_or_const
 -- On SEMI_COLON reduce production arith_relation_mul -> arith_relation_mul SLASH access_or_const
@@ -439,11 +634,16 @@ arith_relation_mul -> arith_relation_mul SLASH access_or_const . [ STAR SLASH SE
 -- On AND reduce production arith_relation_mul -> arith_relation_mul SLASH access_or_const
 
 State 39:
+## Known stack suffix:
+## access
+## LR(1) items:
 access -> access . DOT IDENTIFIER [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS PIPE PERCENT OR NEQ MINUS LT LSQUARE LE LCURLY GT GE EQ DOT COMMA CARET AND AMP ]
 access -> access . LSQUARE access_or_const RSQUARE [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS PIPE PERCENT OR NEQ MINUS LT LSQUARE LE LCURLY GT GE EQ DOT COMMA CARET AND AMP ]
 access_or_const -> access . [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS PIPE PERCENT OR NEQ MINUS LT LE LCURLY GT GE EQ COMMA CARET AND AMP ]
+## Transitions:
 -- On LSQUARE shift to state 31
 -- On DOT shift to state 40
+## Reductions:
 -- On STAR reduce production access_or_const -> access
 -- On SLASH reduce production access_or_const -> access
 -- On SEMI_COLON reduce production access_or_const -> access
@@ -470,11 +670,21 @@ access_or_const -> access . [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACE
 -- On AMP reduce production access_or_const -> access
 
 State 40:
+## Known stack suffix:
+## access DOT
+## LR(1) items:
 access -> access DOT . IDENTIFIER [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS PIPE PERCENT OR NEQ MINUS LT LSQUARE LE LCURLY GT GE EQ DOT COMMA CARET AND AMP ]
+## Transitions:
 -- On IDENTIFIER shift to state 41
+## Reductions:
 
 State 41:
+## Known stack suffix:
+## access DOT IDENTIFIER
+## LR(1) items:
 access -> access DOT IDENTIFIER . [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS PIPE PERCENT OR NEQ MINUS LT LSQUARE LE LCURLY GT GE EQ DOT COMMA CARET AND AMP ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production access -> access DOT IDENTIFIER
 -- On SLASH reduce production access -> access DOT IDENTIFIER
 -- On SEMI_COLON reduce production access -> access DOT IDENTIFIER
@@ -503,7 +713,11 @@ access -> access DOT IDENTIFIER . [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY 
 -- On AMP reduce production access -> access DOT IDENTIFIER
 
 State 42:
+## Known stack suffix:
+## arith_relation_mul PERCENT
+## LR(1) items:
 arith_relation_mul -> arith_relation_mul PERCENT . access_or_const [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS PERCENT OR NEQ MINUS LT LE LCURLY GT GE EQ COMMA AND ]
+## Transitions:
 -- On STAR shift to state 21
 -- On MINUS shift to state 32
 -- On LPAREN shift to state 34
@@ -512,9 +726,15 @@ arith_relation_mul -> arith_relation_mul PERCENT . access_or_const [ STAR SLASH 
 -- On access_or_const shift to state 43
 -- On access_leaf shift to state 28
 -- On access shift to state 39
+## Reductions:
 
 State 43:
+## Known stack suffix:
+## arith_relation_mul PERCENT access_or_const
+## LR(1) items:
 arith_relation_mul -> arith_relation_mul PERCENT access_or_const . [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS PERCENT OR NEQ MINUS LT LE LCURLY GT GE EQ COMMA AND ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production arith_relation_mul -> arith_relation_mul PERCENT access_or_const
 -- On SLASH reduce production arith_relation_mul -> arith_relation_mul PERCENT access_or_const
 -- On SEMI_COLON reduce production arith_relation_mul -> arith_relation_mul PERCENT access_or_const
@@ -538,7 +758,11 @@ arith_relation_mul -> arith_relation_mul PERCENT access_or_const . [ STAR SLASH 
 -- On AND reduce production arith_relation_mul -> arith_relation_mul PERCENT access_or_const
 
 State 44:
+## Known stack suffix:
+## arith_relation_mul MINUS
+## LR(1) items:
 arith_relation -> arith_relation_mul MINUS . arith_relation [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR NEQ LT LE LCURLY GT GE EQ COMMA AND ]
+## Transitions:
 -- On STAR shift to state 21
 -- On MINUS shift to state 32
 -- On LPAREN shift to state 34
@@ -550,15 +774,21 @@ arith_relation -> arith_relation_mul MINUS . arith_relation [ STAR SEMI_COLON RS
 -- On access_or_const shift to state 53
 -- On access_leaf shift to state 28
 -- On access shift to state 39
+## Reductions:
 
 State 45:
+## Known stack suffix:
+## arith_relation_bw
+## LR(1) items:
 arith_relation_bw -> arith_relation_bw . AMP access_or_const [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS PIPE PERCENT OR NEQ MINUS LT LE LCURLY GT GE EQ COMMA CARET AND AMP ]
 arith_relation_bw -> arith_relation_bw . PIPE access_or_const [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS PIPE PERCENT OR NEQ MINUS LT LE LCURLY GT GE EQ COMMA CARET AND AMP ]
 arith_relation_bw -> arith_relation_bw . CARET access_or_const [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS PIPE PERCENT OR NEQ MINUS LT LE LCURLY GT GE EQ COMMA CARET AND AMP ]
 arith_relation_mul -> arith_relation_bw . [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS PERCENT OR NEQ MINUS LT LE LCURLY GT GE EQ COMMA AND ]
+## Transitions:
 -- On PIPE shift to state 46
 -- On CARET shift to state 48
 -- On AMP shift to state 50
+## Reductions:
 -- On STAR reduce production arith_relation_mul -> arith_relation_bw
 -- On SLASH reduce production arith_relation_mul -> arith_relation_bw
 -- On SEMI_COLON reduce production arith_relation_mul -> arith_relation_bw
@@ -582,7 +812,11 @@ arith_relation_mul -> arith_relation_bw . [ STAR SLASH SEMI_COLON RSQUARE RPAREN
 -- On AND reduce production arith_relation_mul -> arith_relation_bw
 
 State 46:
+## Known stack suffix:
+## arith_relation_bw PIPE
+## LR(1) items:
 arith_relation_bw -> arith_relation_bw PIPE . access_or_const [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS PIPE PERCENT OR NEQ MINUS LT LE LCURLY GT GE EQ COMMA CARET AND AMP ]
+## Transitions:
 -- On STAR shift to state 21
 -- On MINUS shift to state 32
 -- On LPAREN shift to state 34
@@ -591,9 +825,15 @@ arith_relation_bw -> arith_relation_bw PIPE . access_or_const [ STAR SLASH SEMI_
 -- On access_or_const shift to state 47
 -- On access_leaf shift to state 28
 -- On access shift to state 39
+## Reductions:
 
 State 47:
+## Known stack suffix:
+## arith_relation_bw PIPE access_or_const
+## LR(1) items:
 arith_relation_bw -> arith_relation_bw PIPE access_or_const . [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS PIPE PERCENT OR NEQ MINUS LT LE LCURLY GT GE EQ COMMA CARET AND AMP ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production arith_relation_bw -> arith_relation_bw PIPE access_or_const
 -- On SLASH reduce production arith_relation_bw -> arith_relation_bw PIPE access_or_const
 -- On SEMI_COLON reduce production arith_relation_bw -> arith_relation_bw PIPE access_or_const
@@ -620,7 +860,11 @@ arith_relation_bw -> arith_relation_bw PIPE access_or_const . [ STAR SLASH SEMI_
 -- On AMP reduce production arith_relation_bw -> arith_relation_bw PIPE access_or_const
 
 State 48:
+## Known stack suffix:
+## arith_relation_bw CARET
+## LR(1) items:
 arith_relation_bw -> arith_relation_bw CARET . access_or_const [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS PIPE PERCENT OR NEQ MINUS LT LE LCURLY GT GE EQ COMMA CARET AND AMP ]
+## Transitions:
 -- On STAR shift to state 21
 -- On MINUS shift to state 32
 -- On LPAREN shift to state 34
@@ -629,9 +873,15 @@ arith_relation_bw -> arith_relation_bw CARET . access_or_const [ STAR SLASH SEMI
 -- On access_or_const shift to state 49
 -- On access_leaf shift to state 28
 -- On access shift to state 39
+## Reductions:
 
 State 49:
+## Known stack suffix:
+## arith_relation_bw CARET access_or_const
+## LR(1) items:
 arith_relation_bw -> arith_relation_bw CARET access_or_const . [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS PIPE PERCENT OR NEQ MINUS LT LE LCURLY GT GE EQ COMMA CARET AND AMP ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production arith_relation_bw -> arith_relation_bw CARET access_or_const
 -- On SLASH reduce production arith_relation_bw -> arith_relation_bw CARET access_or_const
 -- On SEMI_COLON reduce production arith_relation_bw -> arith_relation_bw CARET access_or_const
@@ -658,7 +908,11 @@ arith_relation_bw -> arith_relation_bw CARET access_or_const . [ STAR SLASH SEMI
 -- On AMP reduce production arith_relation_bw -> arith_relation_bw CARET access_or_const
 
 State 50:
+## Known stack suffix:
+## arith_relation_bw AMP
+## LR(1) items:
 arith_relation_bw -> arith_relation_bw AMP . access_or_const [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS PIPE PERCENT OR NEQ MINUS LT LE LCURLY GT GE EQ COMMA CARET AND AMP ]
+## Transitions:
 -- On STAR shift to state 21
 -- On MINUS shift to state 32
 -- On LPAREN shift to state 34
@@ -667,9 +921,15 @@ arith_relation_bw -> arith_relation_bw AMP . access_or_const [ STAR SLASH SEMI_C
 -- On access_or_const shift to state 51
 -- On access_leaf shift to state 28
 -- On access shift to state 39
+## Reductions:
 
 State 51:
+## Known stack suffix:
+## arith_relation_bw AMP access_or_const
+## LR(1) items:
 arith_relation_bw -> arith_relation_bw AMP access_or_const . [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS PIPE PERCENT OR NEQ MINUS LT LE LCURLY GT GE EQ COMMA CARET AND AMP ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production arith_relation_bw -> arith_relation_bw AMP access_or_const
 -- On SLASH reduce production arith_relation_bw -> arith_relation_bw AMP access_or_const
 -- On SEMI_COLON reduce production arith_relation_bw -> arith_relation_bw AMP access_or_const
@@ -696,7 +956,12 @@ arith_relation_bw -> arith_relation_bw AMP access_or_const . [ STAR SLASH SEMI_C
 -- On AMP reduce production arith_relation_bw -> arith_relation_bw AMP access_or_const
 
 State 52:
+## Known stack suffix:
+## arith_relation_mul MINUS arith_relation
+## LR(1) items:
 arith_relation -> arith_relation_mul MINUS arith_relation . [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR NEQ LT LE LCURLY GT GE EQ COMMA AND ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production arith_relation -> arith_relation_mul MINUS arith_relation
 -- On SEMI_COLON reduce production arith_relation -> arith_relation_mul MINUS arith_relation
 -- On RSQUARE reduce production arith_relation -> arith_relation_mul MINUS arith_relation
@@ -717,7 +982,12 @@ arith_relation -> arith_relation_mul MINUS arith_relation . [ STAR SEMI_COLON RS
 -- On AND reduce production arith_relation -> arith_relation_mul MINUS arith_relation
 
 State 53:
+## Known stack suffix:
+## access_or_const
+## LR(1) items:
 arith_relation_bw -> access_or_const . [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS PIPE PERCENT OR NEQ MINUS LT LE LCURLY GT GE EQ COMMA CARET AND AMP ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production arith_relation_bw -> access_or_const
 -- On SLASH reduce production arith_relation_bw -> access_or_const
 -- On SEMI_COLON reduce production arith_relation_bw -> access_or_const
@@ -744,11 +1014,21 @@ arith_relation_bw -> access_or_const . [ STAR SLASH SEMI_COLON RSQUARE RPAREN RC
 -- On AMP reduce production arith_relation_bw -> access_or_const
 
 State 54:
+## Known stack suffix:
+## LPAREN arith_relation
+## LR(1) items:
 access_or_const -> LPAREN arith_relation . RPAREN [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS PIPE PERCENT OR NEQ MINUS LT LE LCURLY GT GE EQ COMMA CARET AND AMP ]
+## Transitions:
 -- On RPAREN shift to state 55
+## Reductions:
 
 State 55:
+## Known stack suffix:
+## LPAREN arith_relation RPAREN
+## LR(1) items:
 access_or_const -> LPAREN arith_relation RPAREN . [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS PIPE PERCENT OR NEQ MINUS LT LE LCURLY GT GE EQ COMMA CARET AND AMP ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production access_or_const -> LPAREN arith_relation RPAREN
 -- On SLASH reduce production access_or_const -> LPAREN arith_relation RPAREN
 -- On SEMI_COLON reduce production access_or_const -> LPAREN arith_relation RPAREN
@@ -775,12 +1055,17 @@ access_or_const -> LPAREN arith_relation RPAREN . [ STAR SLASH SEMI_COLON RSQUAR
 -- On AMP reduce production access_or_const -> LPAREN arith_relation RPAREN
 
 State 56:
+## Known stack suffix:
+## LPAREN access
+## LR(1) items:
 access -> access . DOT IDENTIFIER [ STAR SLASH RPAREN PLUS PIPE PERCENT OR NEQ MINUS LT LSQUARE LE GT GE EQ DOT CARET AND AMP ]
 access -> access . LSQUARE access_or_const RSQUARE [ STAR SLASH RPAREN PLUS PIPE PERCENT OR NEQ MINUS LT LSQUARE LE GT GE EQ DOT CARET AND AMP ]
 access_leaf -> LPAREN access . RPAREN [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS PIPE PERCENT OR NEQ MINUS LT LSQUARE LE LCURLY GT GE EQ DOT COMMA CARET AND AMP ]
 access_or_const -> access . [ STAR SLASH RPAREN PLUS PIPE PERCENT OR NEQ MINUS LT LE GT GE EQ CARET AND AMP ]
+## Transitions:
 -- On LSQUARE shift to state 31
 -- On DOT shift to state 40
+## Reductions:
 -- On STAR reduce production access_or_const -> access
 -- On SLASH reduce production access_or_const -> access
 -- On RPAREN reduce production access_or_const -> access
@@ -800,11 +1085,21 @@ access_or_const -> access . [ STAR SLASH RPAREN PLUS PIPE PERCENT OR NEQ MINUS L
 -- On AMP reduce production access_or_const -> access
 
 State 57:
+## Known stack suffix:
+## access LSQUARE access_or_const
+## LR(1) items:
 access -> access LSQUARE access_or_const . RSQUARE [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS PIPE PERCENT OR NEQ MINUS LT LSQUARE LE LCURLY GT GE EQ DOT COMMA CARET AND AMP ]
+## Transitions:
 -- On RSQUARE shift to state 58
+## Reductions:
 
 State 58:
+## Known stack suffix:
+## access LSQUARE access_or_const RSQUARE
+## LR(1) items:
 access -> access LSQUARE access_or_const RSQUARE . [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS PIPE PERCENT OR NEQ MINUS LT LSQUARE LE LCURLY GT GE EQ DOT COMMA CARET AND AMP ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production access -> access LSQUARE access_or_const RSQUARE
 -- On SLASH reduce production access -> access LSQUARE access_or_const RSQUARE
 -- On SEMI_COLON reduce production access -> access LSQUARE access_or_const RSQUARE
@@ -833,11 +1128,16 @@ access -> access LSQUARE access_or_const RSQUARE . [ STAR SLASH SEMI_COLON RSQUA
 -- On AMP reduce production access -> access LSQUARE access_or_const RSQUARE
 
 State 59:
+## Known stack suffix:
+## STAR access
+## LR(1) items:
 access -> access . DOT IDENTIFIER [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS PIPE PERCENT OR NEQ MINUS LT LSQUARE LE LCURLY GT GE EQ DOT COMMA CARET AND AMP ]
 access -> access . LSQUARE access_or_const RSQUARE [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS PIPE PERCENT OR NEQ MINUS LT LSQUARE LE LCURLY GT GE EQ DOT COMMA CARET AND AMP ]
 access_leaf -> STAR access . [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS PIPE PERCENT OR NEQ MINUS LT LSQUARE LE LCURLY GT GE EQ DOT COMMA CARET AND AMP ]
+## Transitions:
 -- On LSQUARE shift to state 31
 -- On DOT shift to state 40
+## Reductions:
 -- On STAR reduce production access_leaf -> STAR access
 -- On SLASH reduce production access_leaf -> STAR access
 -- On SEMI_COLON reduce production access_leaf -> STAR access
@@ -864,19 +1164,39 @@ access_leaf -> STAR access . [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRAC
 -- On AMP reduce production access_leaf -> STAR access
 
 State 60:
+## Known stack suffix:
+## RETURN_OF
+## LR(1) items:
 single_cond -> RETURN_OF . LPAREN IDENTIFIER RPAREN [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR LCURLY AND ]
+## Transitions:
 -- On LPAREN shift to state 61
+## Reductions:
 
 State 61:
+## Known stack suffix:
+## RETURN_OF LPAREN
+## LR(1) items:
 single_cond -> RETURN_OF LPAREN . IDENTIFIER RPAREN [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR LCURLY AND ]
+## Transitions:
 -- On IDENTIFIER shift to state 62
+## Reductions:
 
 State 62:
+## Known stack suffix:
+## RETURN_OF LPAREN IDENTIFIER
+## LR(1) items:
 single_cond -> RETURN_OF LPAREN IDENTIFIER . RPAREN [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR LCURLY AND ]
+## Transitions:
 -- On RPAREN shift to state 63
+## Reductions:
 
 State 63:
+## Known stack suffix:
+## RETURN_OF LPAREN IDENTIFIER RPAREN
+## LR(1) items:
 single_cond -> RETURN_OF LPAREN IDENTIFIER RPAREN . [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR LCURLY AND ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production single_cond -> RETURN_OF LPAREN IDENTIFIER RPAREN
 -- On SEMI_COLON reduce production single_cond -> RETURN_OF LPAREN IDENTIFIER RPAREN
 -- On RSQUARE reduce production single_cond -> RETURN_OF LPAREN IDENTIFIER RPAREN
@@ -890,7 +1210,11 @@ single_cond -> RETURN_OF LPAREN IDENTIFIER RPAREN . [ STAR SEMI_COLON RSQUARE RP
 -- On AND reduce production single_cond -> RETURN_OF LPAREN IDENTIFIER RPAREN
 
 State 64:
+## Known stack suffix:
+## NOT
+## LR(1) items:
 single_cond -> NOT . single_cond [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR LCURLY AND ]
+## Transitions:
 -- On TRUE shift to state 20
 -- On STAR shift to state 21
 -- On RETURN_OF shift to state 60
@@ -910,11 +1234,16 @@ single_cond -> NOT . single_cond [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACER
 -- On access_or_const shift to state 53
 -- On access_leaf shift to state 28
 -- On access shift to state 39
+## Reductions:
 
 State 65:
+## Known stack suffix:
+## LPAREN
+## LR(1) items:
 access_leaf -> LPAREN . access RPAREN [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS PIPE PERCENT OR NEQ MINUS LT LSQUARE LE LCURLY GT GE EQ DOT CARET AND AMP ]
 access_or_const -> LPAREN . arith_relation RPAREN [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS PIPE PERCENT OR NEQ MINUS LT LE LCURLY GT GE EQ CARET AND AMP ]
 single_cond -> LPAREN . single_cond RPAREN [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR LCURLY AND ]
+## Transitions:
 -- On TRUE shift to state 20
 -- On STAR shift to state 21
 -- On RETURN_OF shift to state 60
@@ -934,9 +1263,15 @@ single_cond -> LPAREN . single_cond RPAREN [ STAR SEMI_COLON RSQUARE RPAREN RCUR
 -- On access_or_const shift to state 53
 -- On access_leaf shift to state 28
 -- On access shift to state 56
+## Reductions:
 
 State 66:
+## Known stack suffix:
+## FALSE
+## LR(1) items:
 single_cond -> FALSE . [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR LCURLY AND ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production single_cond -> FALSE
 -- On SEMI_COLON reduce production single_cond -> FALSE
 -- On RSQUARE reduce production single_cond -> FALSE
@@ -950,19 +1285,39 @@ single_cond -> FALSE . [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUES
 -- On AND reduce production single_cond -> FALSE
 
 State 67:
+## Known stack suffix:
+## CALL_OF
+## LR(1) items:
 single_cond -> CALL_OF . LPAREN IDENTIFIER RPAREN [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR LCURLY AND ]
+## Transitions:
 -- On LPAREN shift to state 68
+## Reductions:
 
 State 68:
+## Known stack suffix:
+## CALL_OF LPAREN
+## LR(1) items:
 single_cond -> CALL_OF LPAREN . IDENTIFIER RPAREN [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR LCURLY AND ]
+## Transitions:
 -- On IDENTIFIER shift to state 69
+## Reductions:
 
 State 69:
+## Known stack suffix:
+## CALL_OF LPAREN IDENTIFIER
+## LR(1) items:
 single_cond -> CALL_OF LPAREN IDENTIFIER . RPAREN [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR LCURLY AND ]
+## Transitions:
 -- On RPAREN shift to state 70
+## Reductions:
 
 State 70:
+## Known stack suffix:
+## CALL_OF LPAREN IDENTIFIER RPAREN
+## LR(1) items:
 single_cond -> CALL_OF LPAREN IDENTIFIER RPAREN . [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR LCURLY AND ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production single_cond -> CALL_OF LPAREN IDENTIFIER RPAREN
 -- On SEMI_COLON reduce production single_cond -> CALL_OF LPAREN IDENTIFIER RPAREN
 -- On RSQUARE reduce production single_cond -> CALL_OF LPAREN IDENTIFIER RPAREN
@@ -976,19 +1331,39 @@ single_cond -> CALL_OF LPAREN IDENTIFIER RPAREN . [ STAR SEMI_COLON RSQUARE RPAR
 -- On AND reduce production single_cond -> CALL_OF LPAREN IDENTIFIER RPAREN
 
 State 71:
+## Known stack suffix:
+## CALLORRETURN_OF
+## LR(1) items:
 single_cond -> CALLORRETURN_OF . LPAREN IDENTIFIER RPAREN [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR LCURLY AND ]
+## Transitions:
 -- On LPAREN shift to state 72
+## Reductions:
 
 State 72:
+## Known stack suffix:
+## CALLORRETURN_OF LPAREN
+## LR(1) items:
 single_cond -> CALLORRETURN_OF LPAREN . IDENTIFIER RPAREN [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR LCURLY AND ]
+## Transitions:
 -- On IDENTIFIER shift to state 73
+## Reductions:
 
 State 73:
+## Known stack suffix:
+## CALLORRETURN_OF LPAREN IDENTIFIER
+## LR(1) items:
 single_cond -> CALLORRETURN_OF LPAREN IDENTIFIER . RPAREN [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR LCURLY AND ]
+## Transitions:
 -- On RPAREN shift to state 74
+## Reductions:
 
 State 74:
+## Known stack suffix:
+## CALLORRETURN_OF LPAREN IDENTIFIER RPAREN
+## LR(1) items:
 single_cond -> CALLORRETURN_OF LPAREN IDENTIFIER RPAREN . [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR LCURLY AND ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production single_cond -> CALLORRETURN_OF LPAREN IDENTIFIER RPAREN
 -- On SEMI_COLON reduce production single_cond -> CALLORRETURN_OF LPAREN IDENTIFIER RPAREN
 -- On RSQUARE reduce production single_cond -> CALLORRETURN_OF LPAREN IDENTIFIER RPAREN
@@ -1002,15 +1377,25 @@ single_cond -> CALLORRETURN_OF LPAREN IDENTIFIER RPAREN . [ STAR SEMI_COLON RSQU
 -- On AND reduce production single_cond -> CALLORRETURN_OF LPAREN IDENTIFIER RPAREN
 
 State 75:
+## Known stack suffix:
+## LPAREN single_cond
+## LR(1) items:
 single_cond -> single_cond . AND single_cond [ RPAREN OR AND ]
 single_cond -> single_cond . OR single_cond [ RPAREN OR AND ]
 single_cond -> LPAREN single_cond . RPAREN [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR LCURLY AND ]
+## Transitions:
 -- On RPAREN shift to state 76
 -- On OR shift to state 77
 -- On AND shift to state 79
+## Reductions:
 
 State 76:
+## Known stack suffix:
+## LPAREN single_cond RPAREN
+## LR(1) items:
 single_cond -> LPAREN single_cond RPAREN . [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR LCURLY AND ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production single_cond -> LPAREN single_cond RPAREN
 -- On SEMI_COLON reduce production single_cond -> LPAREN single_cond RPAREN
 -- On RSQUARE reduce production single_cond -> LPAREN single_cond RPAREN
@@ -1024,7 +1409,11 @@ single_cond -> LPAREN single_cond RPAREN . [ STAR SEMI_COLON RSQUARE RPAREN RCUR
 -- On AND reduce production single_cond -> LPAREN single_cond RPAREN
 
 State 77:
+## Known stack suffix:
+## single_cond OR
+## LR(1) items:
 single_cond -> single_cond OR . single_cond [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR LCURLY AND ]
+## Transitions:
 -- On TRUE shift to state 20
 -- On STAR shift to state 21
 -- On RETURN_OF shift to state 60
@@ -1044,13 +1433,19 @@ single_cond -> single_cond OR . single_cond [ STAR SEMI_COLON RSQUARE RPAREN RCU
 -- On access_or_const shift to state 53
 -- On access_leaf shift to state 28
 -- On access shift to state 39
+## Reductions:
 
 State 78:
+## Known stack suffix:
+## single_cond OR single_cond
+## LR(1) items:
 single_cond -> single_cond . AND single_cond [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR LCURLY AND ]
 single_cond -> single_cond . OR single_cond [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR LCURLY AND ]
 single_cond -> single_cond OR single_cond . [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR LCURLY AND ]
+## Transitions:
 -- On OR shift to state 77
 -- On AND shift to state 79
+## Reductions:
 -- On STAR reduce production single_cond -> single_cond OR single_cond
 -- On SEMI_COLON reduce production single_cond -> single_cond OR single_cond
 -- On RSQUARE reduce production single_cond -> single_cond OR single_cond
@@ -1062,7 +1457,11 @@ single_cond -> single_cond OR single_cond . [ STAR SEMI_COLON RSQUARE RPAREN RCU
 -- On LCURLY reduce production single_cond -> single_cond OR single_cond
 
 State 79:
+## Known stack suffix:
+## single_cond AND
+## LR(1) items:
 single_cond -> single_cond AND . single_cond [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR LCURLY AND ]
+## Transitions:
 -- On TRUE shift to state 20
 -- On STAR shift to state 21
 -- On RETURN_OF shift to state 60
@@ -1082,13 +1481,19 @@ single_cond -> single_cond AND . single_cond [ STAR SEMI_COLON RSQUARE RPAREN RC
 -- On access_or_const shift to state 53
 -- On access_leaf shift to state 28
 -- On access shift to state 39
+## Reductions:
 
 State 80:
+## Known stack suffix:
+## single_cond AND single_cond
+## LR(1) items:
 single_cond -> single_cond . AND single_cond [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR LCURLY AND ]
 single_cond -> single_cond AND single_cond . [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR LCURLY AND ]
 single_cond -> single_cond . OR single_cond [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR LCURLY AND ]
+## Transitions:
 -- On OR shift to state 77
 -- On AND shift to state 79
+## Reductions:
 -- On STAR reduce production single_cond -> single_cond AND single_cond
 -- On SEMI_COLON reduce production single_cond -> single_cond AND single_cond
 -- On RSQUARE reduce production single_cond -> single_cond AND single_cond
@@ -1100,7 +1505,12 @@ single_cond -> single_cond . OR single_cond [ STAR SEMI_COLON RSQUARE RPAREN RCU
 -- On LCURLY reduce production single_cond -> single_cond AND single_cond
 
 State 81:
+## Known stack suffix:
+## logic_relation
+## LR(1) items:
 single_cond -> logic_relation . [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR LCURLY AND ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production single_cond -> logic_relation
 -- On SEMI_COLON reduce production single_cond -> logic_relation
 -- On RSQUARE reduce production single_cond -> logic_relation
@@ -1114,6 +1524,9 @@ single_cond -> logic_relation . [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERB
 -- On AND reduce production single_cond -> logic_relation
 
 State 82:
+## Known stack suffix:
+## arith_relation
+## LR(1) items:
 logic_relation -> arith_relation . EQ arith_relation [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR LCURLY AND ]
 logic_relation -> arith_relation . LT arith_relation [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR LCURLY AND ]
 logic_relation -> arith_relation . GT arith_relation [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR LCURLY AND ]
@@ -1121,12 +1534,14 @@ logic_relation -> arith_relation . LE arith_relation [ STAR SEMI_COLON RSQUARE R
 logic_relation -> arith_relation . GE arith_relation [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR LCURLY AND ]
 logic_relation -> arith_relation . NEQ arith_relation [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR LCURLY AND ]
 logic_relation -> arith_relation . [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR LCURLY AND ]
+## Transitions:
 -- On NEQ shift to state 83
 -- On LT shift to state 85
 -- On LE shift to state 87
 -- On GT shift to state 89
 -- On GE shift to state 91
 -- On EQ shift to state 93
+## Reductions:
 -- On STAR reduce production logic_relation -> arith_relation
 -- On SEMI_COLON reduce production logic_relation -> arith_relation
 -- On RSQUARE reduce production logic_relation -> arith_relation
@@ -1140,7 +1555,11 @@ logic_relation -> arith_relation . [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRAC
 -- On AND reduce production logic_relation -> arith_relation
 
 State 83:
+## Known stack suffix:
+## arith_relation NEQ
+## LR(1) items:
 logic_relation -> arith_relation NEQ . arith_relation [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR LCURLY AND ]
+## Transitions:
 -- On STAR shift to state 21
 -- On MINUS shift to state 32
 -- On LPAREN shift to state 34
@@ -1152,9 +1571,15 @@ logic_relation -> arith_relation NEQ . arith_relation [ STAR SEMI_COLON RSQUARE 
 -- On access_or_const shift to state 53
 -- On access_leaf shift to state 28
 -- On access shift to state 39
+## Reductions:
 
 State 84:
+## Known stack suffix:
+## arith_relation NEQ arith_relation
+## LR(1) items:
 logic_relation -> arith_relation NEQ arith_relation . [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR LCURLY AND ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production logic_relation -> arith_relation NEQ arith_relation
 -- On SEMI_COLON reduce production logic_relation -> arith_relation NEQ arith_relation
 -- On RSQUARE reduce production logic_relation -> arith_relation NEQ arith_relation
@@ -1168,7 +1593,11 @@ logic_relation -> arith_relation NEQ arith_relation . [ STAR SEMI_COLON RSQUARE 
 -- On AND reduce production logic_relation -> arith_relation NEQ arith_relation
 
 State 85:
+## Known stack suffix:
+## arith_relation LT
+## LR(1) items:
 logic_relation -> arith_relation LT . arith_relation [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR LCURLY AND ]
+## Transitions:
 -- On STAR shift to state 21
 -- On MINUS shift to state 32
 -- On LPAREN shift to state 34
@@ -1180,9 +1609,15 @@ logic_relation -> arith_relation LT . arith_relation [ STAR SEMI_COLON RSQUARE R
 -- On access_or_const shift to state 53
 -- On access_leaf shift to state 28
 -- On access shift to state 39
+## Reductions:
 
 State 86:
+## Known stack suffix:
+## arith_relation LT arith_relation
+## LR(1) items:
 logic_relation -> arith_relation LT arith_relation . [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR LCURLY AND ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production logic_relation -> arith_relation LT arith_relation
 -- On SEMI_COLON reduce production logic_relation -> arith_relation LT arith_relation
 -- On RSQUARE reduce production logic_relation -> arith_relation LT arith_relation
@@ -1196,7 +1631,11 @@ logic_relation -> arith_relation LT arith_relation . [ STAR SEMI_COLON RSQUARE R
 -- On AND reduce production logic_relation -> arith_relation LT arith_relation
 
 State 87:
+## Known stack suffix:
+## arith_relation LE
+## LR(1) items:
 logic_relation -> arith_relation LE . arith_relation [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR LCURLY AND ]
+## Transitions:
 -- On STAR shift to state 21
 -- On MINUS shift to state 32
 -- On LPAREN shift to state 34
@@ -1208,9 +1647,15 @@ logic_relation -> arith_relation LE . arith_relation [ STAR SEMI_COLON RSQUARE R
 -- On access_or_const shift to state 53
 -- On access_leaf shift to state 28
 -- On access shift to state 39
+## Reductions:
 
 State 88:
+## Known stack suffix:
+## arith_relation LE arith_relation
+## LR(1) items:
 logic_relation -> arith_relation LE arith_relation . [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR LCURLY AND ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production logic_relation -> arith_relation LE arith_relation
 -- On SEMI_COLON reduce production logic_relation -> arith_relation LE arith_relation
 -- On RSQUARE reduce production logic_relation -> arith_relation LE arith_relation
@@ -1224,7 +1669,11 @@ logic_relation -> arith_relation LE arith_relation . [ STAR SEMI_COLON RSQUARE R
 -- On AND reduce production logic_relation -> arith_relation LE arith_relation
 
 State 89:
+## Known stack suffix:
+## arith_relation GT
+## LR(1) items:
 logic_relation -> arith_relation GT . arith_relation [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR LCURLY AND ]
+## Transitions:
 -- On STAR shift to state 21
 -- On MINUS shift to state 32
 -- On LPAREN shift to state 34
@@ -1236,9 +1685,15 @@ logic_relation -> arith_relation GT . arith_relation [ STAR SEMI_COLON RSQUARE R
 -- On access_or_const shift to state 53
 -- On access_leaf shift to state 28
 -- On access shift to state 39
+## Reductions:
 
 State 90:
+## Known stack suffix:
+## arith_relation GT arith_relation
+## LR(1) items:
 logic_relation -> arith_relation GT arith_relation . [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR LCURLY AND ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production logic_relation -> arith_relation GT arith_relation
 -- On SEMI_COLON reduce production logic_relation -> arith_relation GT arith_relation
 -- On RSQUARE reduce production logic_relation -> arith_relation GT arith_relation
@@ -1252,7 +1707,11 @@ logic_relation -> arith_relation GT arith_relation . [ STAR SEMI_COLON RSQUARE R
 -- On AND reduce production logic_relation -> arith_relation GT arith_relation
 
 State 91:
+## Known stack suffix:
+## arith_relation GE
+## LR(1) items:
 logic_relation -> arith_relation GE . arith_relation [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR LCURLY AND ]
+## Transitions:
 -- On STAR shift to state 21
 -- On MINUS shift to state 32
 -- On LPAREN shift to state 34
@@ -1264,9 +1723,15 @@ logic_relation -> arith_relation GE . arith_relation [ STAR SEMI_COLON RSQUARE R
 -- On access_or_const shift to state 53
 -- On access_leaf shift to state 28
 -- On access shift to state 39
+## Reductions:
 
 State 92:
+## Known stack suffix:
+## arith_relation GE arith_relation
+## LR(1) items:
 logic_relation -> arith_relation GE arith_relation . [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR LCURLY AND ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production logic_relation -> arith_relation GE arith_relation
 -- On SEMI_COLON reduce production logic_relation -> arith_relation GE arith_relation
 -- On RSQUARE reduce production logic_relation -> arith_relation GE arith_relation
@@ -1280,7 +1745,11 @@ logic_relation -> arith_relation GE arith_relation . [ STAR SEMI_COLON RSQUARE R
 -- On AND reduce production logic_relation -> arith_relation GE arith_relation
 
 State 93:
+## Known stack suffix:
+## arith_relation EQ
+## LR(1) items:
 logic_relation -> arith_relation EQ . arith_relation [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR LCURLY AND ]
+## Transitions:
 -- On STAR shift to state 21
 -- On MINUS shift to state 32
 -- On LPAREN shift to state 34
@@ -1292,9 +1761,15 @@ logic_relation -> arith_relation EQ . arith_relation [ STAR SEMI_COLON RSQUARE R
 -- On access_or_const shift to state 53
 -- On access_leaf shift to state 28
 -- On access shift to state 39
+## Reductions:
 
 State 94:
+## Known stack suffix:
+## arith_relation EQ arith_relation
+## LR(1) items:
 logic_relation -> arith_relation EQ arith_relation . [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR LCURLY AND ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production logic_relation -> arith_relation EQ arith_relation
 -- On SEMI_COLON reduce production logic_relation -> arith_relation EQ arith_relation
 -- On RSQUARE reduce production logic_relation -> arith_relation EQ arith_relation
@@ -1308,6 +1783,9 @@ logic_relation -> arith_relation EQ arith_relation . [ STAR SEMI_COLON RSQUARE R
 -- On AND reduce production logic_relation -> arith_relation EQ arith_relation
 
 State 95:
+## Known stack suffix:
+## LPAREN arith_relation
+## LR(1) items:
 access_or_const -> LPAREN arith_relation . RPAREN [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS PIPE PERCENT OR NEQ MINUS LT LE LCURLY GT GE EQ CARET AND AMP ]
 logic_relation -> arith_relation . EQ arith_relation [ RPAREN OR AND ]
 logic_relation -> arith_relation . LT arith_relation [ RPAREN OR AND ]
@@ -1316,20 +1794,27 @@ logic_relation -> arith_relation . LE arith_relation [ RPAREN OR AND ]
 logic_relation -> arith_relation . GE arith_relation [ RPAREN OR AND ]
 logic_relation -> arith_relation . NEQ arith_relation [ RPAREN OR AND ]
 logic_relation -> arith_relation . [ RPAREN OR AND ]
+## Transitions:
 -- On NEQ shift to state 83
 -- On LT shift to state 85
 -- On LE shift to state 87
 -- On GT shift to state 89
 -- On GE shift to state 91
 -- On EQ shift to state 93
+## Reductions:
 -- On RPAREN reduce production logic_relation -> arith_relation
 -- On OR reduce production logic_relation -> arith_relation
 -- On AND reduce production logic_relation -> arith_relation
 
 State 96:
+## Known stack suffix:
+## NOT single_cond
+## LR(1) items:
 single_cond -> NOT single_cond . [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR LCURLY AND ]
 single_cond -> single_cond . AND single_cond [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR LCURLY AND ]
 single_cond -> single_cond . OR single_cond [ STAR SEMI_COLON RSQUARE RPAREN RCURLY RBRACERBRACE QUESTION PLUS OR LCURLY AND ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production single_cond -> NOT single_cond
 -- On SEMI_COLON reduce production single_cond -> NOT single_cond
 -- On RSQUARE reduce production single_cond -> NOT single_cond
@@ -1343,7 +1828,11 @@ single_cond -> single_cond . OR single_cond [ STAR SEMI_COLON RSQUARE RPAREN RCU
 -- On AND reduce production single_cond -> NOT single_cond
 
 State 97:
+## Known stack suffix:
+## LSQUARE
+## LR(1) items:
 guard -> LSQUARE . non_empty_seq RSQUARE [ STAR SEMI_COLON RSQUARE RPAREN RCURLY QUESTION PLUS LCURLY ]
+## Transitions:
 -- On TRUE shift to state 20
 -- On STAR shift to state 21
 -- On RETURN_OF shift to state 60
@@ -1367,17 +1856,23 @@ guard -> LSQUARE . non_empty_seq RSQUARE [ STAR SEMI_COLON RSQUARE RPAREN RCURLY
 -- On access_or_const shift to state 53
 -- On access_leaf shift to state 28
 -- On access shift to state 39
+## Reductions:
 
 State 98:
+## Known stack suffix:
+## IDENTIFIER
+## LR(1) items:
 access_leaf -> IDENTIFIER . LPAREN RPAREN DOT IDENTIFIER [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY QUESTION PLUS PIPE PERCENT OR NEQ MINUS LT LSQUARE LE LCURLY GT GE EQ DOT CARET AND AMP ]
 access_leaf -> IDENTIFIER . [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY QUESTION PLUS PIPE PERCENT OR NEQ MINUS LT LSQUARE LE LCURLY GT GE EQ DOT CARET AND AMP ]
 guard -> IDENTIFIER . pre_cond LPAREN seq RPAREN post_cond [ STAR SEMI_COLON RSQUARE RPAREN RCURLY QUESTION PLUS LCURLY ]
 guard -> IDENTIFIER . LPAREN non_empty_seq RPAREN post_cond [ STAR SEMI_COLON RSQUARE RPAREN RCURLY QUESTION PLUS LCURLY ]
 guard -> IDENTIFIER . LPAREN RPAREN post_cond [ STAR SEMI_COLON RSQUARE RPAREN RCURLY QUESTION PLUS LCURLY ]
+## Transitions:
 -- On LPAREN shift to state 99
 -- On LBRACELBRACE shift to state 128
 -- On COLUMNCOLUMN shift to state 131
 -- On pre_cond shift to state 133
+## Reductions:
 -- On STAR reduce production access_leaf -> IDENTIFIER
 -- On SLASH reduce production access_leaf -> IDENTIFIER
 -- On SEMI_COLON reduce production access_leaf -> IDENTIFIER
@@ -1404,9 +1899,13 @@ guard -> IDENTIFIER . LPAREN RPAREN post_cond [ STAR SEMI_COLON RSQUARE RPAREN R
 -- On AMP reduce production access_leaf -> IDENTIFIER
 
 State 99:
+## Known stack suffix:
+## IDENTIFIER LPAREN
+## LR(1) items:
 access_leaf -> IDENTIFIER LPAREN . RPAREN DOT IDENTIFIER [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY QUESTION PLUS PIPE PERCENT OR NEQ MINUS LT LSQUARE LE LCURLY GT GE EQ DOT CARET AND AMP ]
 guard -> IDENTIFIER LPAREN . non_empty_seq RPAREN post_cond [ STAR SEMI_COLON RSQUARE RPAREN RCURLY QUESTION PLUS LCURLY ]
 guard -> IDENTIFIER LPAREN . RPAREN post_cond [ STAR SEMI_COLON RSQUARE RPAREN RCURLY QUESTION PLUS LCURLY ]
+## Transitions:
 -- On TRUE shift to state 20
 -- On STAR shift to state 21
 -- On RPAREN shift to state 100
@@ -1431,13 +1930,19 @@ guard -> IDENTIFIER LPAREN . RPAREN post_cond [ STAR SEMI_COLON RSQUARE RPAREN R
 -- On access_or_const shift to state 53
 -- On access_leaf shift to state 28
 -- On access shift to state 39
+## Reductions:
 
 State 100:
+## Known stack suffix:
+## IDENTIFIER LPAREN RPAREN
+## LR(1) items:
 access_leaf -> IDENTIFIER LPAREN RPAREN . DOT IDENTIFIER [ STAR SLASH SEMI_COLON RSQUARE RPAREN RCURLY QUESTION PLUS PIPE PERCENT OR NEQ MINUS LT LSQUARE LE LCURLY GT GE EQ DOT CARET AND AMP ]
 guard -> IDENTIFIER LPAREN RPAREN . post_cond [ STAR SEMI_COLON RSQUARE RPAREN RCURLY QUESTION PLUS LCURLY ]
+## Transitions:
 -- On LBRACELBRACE shift to state 101
 -- On DOT shift to state 26
 -- On post_cond shift to state 104
+## Reductions:
 -- On STAR reduce production post_cond ->
 -- On SEMI_COLON reduce production post_cond ->
 -- On RSQUARE reduce production post_cond ->
@@ -1448,7 +1953,11 @@ guard -> IDENTIFIER LPAREN RPAREN . post_cond [ STAR SEMI_COLON RSQUARE RPAREN R
 -- On LCURLY reduce production post_cond ->
 
 State 101:
+## Known stack suffix:
+## LBRACELBRACE
+## LR(1) items:
 post_cond -> LBRACELBRACE . single_cond RBRACERBRACE [ STAR SEMI_COLON RSQUARE RPAREN RCURLY QUESTION PLUS LCURLY ]
+## Transitions:
 -- On TRUE shift to state 20
 -- On STAR shift to state 21
 -- On RETURN_OF shift to state 60
@@ -1468,17 +1977,28 @@ post_cond -> LBRACELBRACE . single_cond RBRACERBRACE [ STAR SEMI_COLON RSQUARE R
 -- On access_or_const shift to state 53
 -- On access_leaf shift to state 28
 -- On access shift to state 39
+## Reductions:
 
 State 102:
+## Known stack suffix:
+## LBRACELBRACE single_cond
+## LR(1) items:
 post_cond -> LBRACELBRACE single_cond . RBRACERBRACE [ STAR SEMI_COLON RSQUARE RPAREN RCURLY QUESTION PLUS LCURLY ]
 single_cond -> single_cond . AND single_cond [ RBRACERBRACE OR AND ]
 single_cond -> single_cond . OR single_cond [ RBRACERBRACE OR AND ]
+## Transitions:
 -- On RBRACERBRACE shift to state 103
 -- On OR shift to state 77
 -- On AND shift to state 79
+## Reductions:
 
 State 103:
+## Known stack suffix:
+## LBRACELBRACE single_cond RBRACERBRACE
+## LR(1) items:
 post_cond -> LBRACELBRACE single_cond RBRACERBRACE . [ STAR SEMI_COLON RSQUARE RPAREN RCURLY QUESTION PLUS LCURLY ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production post_cond -> LBRACELBRACE single_cond RBRACERBRACE
 -- On SEMI_COLON reduce production post_cond -> LBRACELBRACE single_cond RBRACERBRACE
 -- On RSQUARE reduce production post_cond -> LBRACELBRACE single_cond RBRACERBRACE
@@ -1489,7 +2009,12 @@ post_cond -> LBRACELBRACE single_cond RBRACERBRACE . [ STAR SEMI_COLON RSQUARE R
 -- On LCURLY reduce production post_cond -> LBRACELBRACE single_cond RBRACERBRACE
 
 State 104:
+## Known stack suffix:
+## IDENTIFIER LPAREN RPAREN post_cond
+## LR(1) items:
 guard -> IDENTIFIER LPAREN RPAREN post_cond . [ STAR SEMI_COLON RSQUARE RPAREN RCURLY QUESTION PLUS LCURLY ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production guard -> IDENTIFIER LPAREN RPAREN post_cond
 -- On SEMI_COLON reduce production guard -> IDENTIFIER LPAREN RPAREN post_cond
 -- On RSQUARE reduce production guard -> IDENTIFIER LPAREN RPAREN post_cond
@@ -1500,11 +2025,16 @@ guard -> IDENTIFIER LPAREN RPAREN post_cond . [ STAR SEMI_COLON RSQUARE RPAREN R
 -- On LCURLY reduce production guard -> IDENTIFIER LPAREN RPAREN post_cond
 
 State 105:
+## Known stack suffix:
+## single_cond
+## LR(1) items:
 guard -> single_cond . [ STAR SEMI_COLON RSQUARE RPAREN RCURLY QUESTION PLUS LCURLY ]
 single_cond -> single_cond . AND single_cond [ STAR SEMI_COLON RSQUARE RPAREN RCURLY QUESTION PLUS OR LCURLY AND ]
 single_cond -> single_cond . OR single_cond [ STAR SEMI_COLON RSQUARE RPAREN RCURLY QUESTION PLUS OR LCURLY AND ]
+## Transitions:
 -- On OR shift to state 77
 -- On AND shift to state 79
+## Reductions:
 -- On STAR reduce production guard -> single_cond
 -- On SEMI_COLON reduce production guard -> single_cond
 -- On RSQUARE reduce production guard -> single_cond
@@ -1515,14 +2045,23 @@ single_cond -> single_cond . OR single_cond [ STAR SEMI_COLON RSQUARE RPAREN RCU
 -- On LCURLY reduce production guard -> single_cond
 
 State 106:
+## Known stack suffix:
+## seq_elt
+## LR(1) items:
 non_empty_seq -> seq_elt . [ RSQUARE RPAREN ]
 non_empty_seq -> seq_elt . SEMI_COLON seq [ RSQUARE RPAREN ]
+## Transitions:
 -- On SEMI_COLON shift to state 107
+## Reductions:
 -- On RSQUARE reduce production non_empty_seq -> seq_elt
 -- On RPAREN reduce production non_empty_seq -> seq_elt
 
 State 107:
+## Known stack suffix:
+## seq_elt SEMI_COLON
+## LR(1) items:
 non_empty_seq -> seq_elt SEMI_COLON . seq [ RSQUARE RPAREN ]
+## Transitions:
 -- On TRUE shift to state 20
 -- On STAR shift to state 21
 -- On RETURN_OF shift to state 60
@@ -1547,57 +2086,92 @@ non_empty_seq -> seq_elt SEMI_COLON . seq [ RSQUARE RPAREN ]
 -- On access_or_const shift to state 53
 -- On access_leaf shift to state 28
 -- On access shift to state 39
+## Reductions:
 -- On RSQUARE reduce production seq ->
 -- On RPAREN reduce production seq ->
 
 State 108:
+## Known stack suffix:
+## seq_elt SEMI_COLON seq
+## LR(1) items:
 non_empty_seq -> seq_elt SEMI_COLON seq . [ RSQUARE RPAREN ]
+## Transitions:
+## Reductions:
 -- On RSQUARE reduce production non_empty_seq -> seq_elt SEMI_COLON seq
 -- On RPAREN reduce production non_empty_seq -> seq_elt SEMI_COLON seq
 
 State 109:
+## Known stack suffix:
+## non_empty_seq
+## LR(1) items:
 seq -> non_empty_seq . [ RSQUARE RPAREN ]
+## Transitions:
+## Reductions:
 -- On RSQUARE reduce production seq -> non_empty_seq
 -- On RPAREN reduce production seq -> non_empty_seq
 
 State 110:
+## Known stack suffix:
+## guard
+## LR(1) items:
 seq_elt -> guard . repetition [ SEMI_COLON RSQUARE RPAREN RCURLY ]
+## Transitions:
 -- On STAR shift to state 111
 -- On QUESTION shift to state 112
 -- On PLUS shift to state 113
 -- On LCURLY shift to state 114
 -- On repetition shift to state 124
+## Reductions:
 -- On SEMI_COLON reduce production repetition ->
 -- On RSQUARE reduce production repetition ->
 -- On RPAREN reduce production repetition ->
 -- On RCURLY reduce production repetition ->
 
 State 111:
+## Known stack suffix:
+## STAR
+## LR(1) items:
 repetition -> STAR . [ SEMI_COLON RSQUARE RPAREN RCURLY ]
+## Transitions:
+## Reductions:
 -- On SEMI_COLON reduce production repetition -> STAR
 -- On RSQUARE reduce production repetition -> STAR
 -- On RPAREN reduce production repetition -> STAR
 -- On RCURLY reduce production repetition -> STAR
 
 State 112:
+## Known stack suffix:
+## QUESTION
+## LR(1) items:
 repetition -> QUESTION . [ SEMI_COLON RSQUARE RPAREN RCURLY ]
+## Transitions:
+## Reductions:
 -- On SEMI_COLON reduce production repetition -> QUESTION
 -- On RSQUARE reduce production repetition -> QUESTION
 -- On RPAREN reduce production repetition -> QUESTION
 -- On RCURLY reduce production repetition -> QUESTION
 
 State 113:
+## Known stack suffix:
+## PLUS
+## LR(1) items:
 repetition -> PLUS . [ SEMI_COLON RSQUARE RPAREN RCURLY ]
+## Transitions:
+## Reductions:
 -- On SEMI_COLON reduce production repetition -> PLUS
 -- On RSQUARE reduce production repetition -> PLUS
 -- On RPAREN reduce production repetition -> PLUS
 -- On RCURLY reduce production repetition -> PLUS
 
 State 114:
+## Known stack suffix:
+## LCURLY
+## LR(1) items:
 repetition -> LCURLY . arith_relation COMMA arith_relation RCURLY [ SEMI_COLON RSQUARE RPAREN RCURLY ]
 repetition -> LCURLY . arith_relation RCURLY [ SEMI_COLON RSQUARE RPAREN RCURLY ]
 repetition -> LCURLY . arith_relation COMMA RCURLY [ SEMI_COLON RSQUARE RPAREN RCURLY ]
 repetition -> LCURLY . COMMA arith_relation RCURLY [ SEMI_COLON RSQUARE RPAREN RCURLY ]
+## Transitions:
 -- On STAR shift to state 21
 -- On MINUS shift to state 32
 -- On LPAREN shift to state 34
@@ -1610,9 +2184,14 @@ repetition -> LCURLY . COMMA arith_relation RCURLY [ SEMI_COLON RSQUARE RPAREN R
 -- On access_or_const shift to state 53
 -- On access_leaf shift to state 28
 -- On access shift to state 39
+## Reductions:
 
 State 115:
+## Known stack suffix:
+## LCURLY COMMA
+## LR(1) items:
 repetition -> LCURLY COMMA . arith_relation RCURLY [ SEMI_COLON RSQUARE RPAREN RCURLY ]
+## Transitions:
 -- On STAR shift to state 21
 -- On MINUS shift to state 32
 -- On LPAREN shift to state 34
@@ -1624,35 +2203,60 @@ repetition -> LCURLY COMMA . arith_relation RCURLY [ SEMI_COLON RSQUARE RPAREN R
 -- On access_or_const shift to state 53
 -- On access_leaf shift to state 28
 -- On access shift to state 39
+## Reductions:
 
 State 116:
+## Known stack suffix:
+## LCURLY COMMA arith_relation
+## LR(1) items:
 repetition -> LCURLY COMMA arith_relation . RCURLY [ SEMI_COLON RSQUARE RPAREN RCURLY ]
+## Transitions:
 -- On RCURLY shift to state 117
+## Reductions:
 
 State 117:
+## Known stack suffix:
+## LCURLY COMMA arith_relation RCURLY
+## LR(1) items:
 repetition -> LCURLY COMMA arith_relation RCURLY . [ SEMI_COLON RSQUARE RPAREN RCURLY ]
+## Transitions:
+## Reductions:
 -- On SEMI_COLON reduce production repetition -> LCURLY COMMA arith_relation RCURLY
 -- On RSQUARE reduce production repetition -> LCURLY COMMA arith_relation RCURLY
 -- On RPAREN reduce production repetition -> LCURLY COMMA arith_relation RCURLY
 -- On RCURLY reduce production repetition -> LCURLY COMMA arith_relation RCURLY
 
 State 118:
+## Known stack suffix:
+## LCURLY arith_relation
+## LR(1) items:
 repetition -> LCURLY arith_relation . COMMA arith_relation RCURLY [ SEMI_COLON RSQUARE RPAREN RCURLY ]
 repetition -> LCURLY arith_relation . RCURLY [ SEMI_COLON RSQUARE RPAREN RCURLY ]
 repetition -> LCURLY arith_relation . COMMA RCURLY [ SEMI_COLON RSQUARE RPAREN RCURLY ]
+## Transitions:
 -- On RCURLY shift to state 119
 -- On COMMA shift to state 120
+## Reductions:
 
 State 119:
+## Known stack suffix:
+## LCURLY arith_relation RCURLY
+## LR(1) items:
 repetition -> LCURLY arith_relation RCURLY . [ SEMI_COLON RSQUARE RPAREN RCURLY ]
+## Transitions:
+## Reductions:
 -- On SEMI_COLON reduce production repetition -> LCURLY arith_relation RCURLY
 -- On RSQUARE reduce production repetition -> LCURLY arith_relation RCURLY
 -- On RPAREN reduce production repetition -> LCURLY arith_relation RCURLY
 -- On RCURLY reduce production repetition -> LCURLY arith_relation RCURLY
 
 State 120:
+## Known stack suffix:
+## LCURLY arith_relation COMMA
+## LR(1) items:
 repetition -> LCURLY arith_relation COMMA . arith_relation RCURLY [ SEMI_COLON RSQUARE RPAREN RCURLY ]
 repetition -> LCURLY arith_relation COMMA . RCURLY [ SEMI_COLON RSQUARE RPAREN RCURLY ]
+## Transitions:
 -- On STAR shift to state 21
 -- On RCURLY shift to state 121
 -- On MINUS shift to state 32
@@ -1665,40 +2269,71 @@ repetition -> LCURLY arith_relation COMMA . RCURLY [ SEMI_COLON RSQUARE RPAREN R
 -- On access_or_const shift to state 53
 -- On access_leaf shift to state 28
 -- On access shift to state 39
+## Reductions:
 
 State 121:
+## Known stack suffix:
+## LCURLY arith_relation COMMA RCURLY
+## LR(1) items:
 repetition -> LCURLY arith_relation COMMA RCURLY . [ SEMI_COLON RSQUARE RPAREN RCURLY ]
+## Transitions:
+## Reductions:
 -- On SEMI_COLON reduce production repetition -> LCURLY arith_relation COMMA RCURLY
 -- On RSQUARE reduce production repetition -> LCURLY arith_relation COMMA RCURLY
 -- On RPAREN reduce production repetition -> LCURLY arith_relation COMMA RCURLY
 -- On RCURLY reduce production repetition -> LCURLY arith_relation COMMA RCURLY
 
 State 122:
+## Known stack suffix:
+## LCURLY arith_relation COMMA arith_relation
+## LR(1) items:
 repetition -> LCURLY arith_relation COMMA arith_relation . RCURLY [ SEMI_COLON RSQUARE RPAREN RCURLY ]
+## Transitions:
 -- On RCURLY shift to state 123
+## Reductions:
 
 State 123:
+## Known stack suffix:
+## LCURLY arith_relation COMMA arith_relation RCURLY
+## LR(1) items:
 repetition -> LCURLY arith_relation COMMA arith_relation RCURLY . [ SEMI_COLON RSQUARE RPAREN RCURLY ]
+## Transitions:
+## Reductions:
 -- On SEMI_COLON reduce production repetition -> LCURLY arith_relation COMMA arith_relation RCURLY
 -- On RSQUARE reduce production repetition -> LCURLY arith_relation COMMA arith_relation RCURLY
 -- On RPAREN reduce production repetition -> LCURLY arith_relation COMMA arith_relation RCURLY
 -- On RCURLY reduce production repetition -> LCURLY arith_relation COMMA arith_relation RCURLY
 
 State 124:
+## Known stack suffix:
+## guard repetition
+## LR(1) items:
 seq_elt -> guard repetition . [ SEMI_COLON RSQUARE RPAREN RCURLY ]
+## Transitions:
+## Reductions:
 -- On SEMI_COLON reduce production seq_elt -> guard repetition
 -- On RSQUARE reduce production seq_elt -> guard repetition
 -- On RPAREN reduce production seq_elt -> guard repetition
 -- On RCURLY reduce production seq_elt -> guard repetition
 
 State 125:
+## Known stack suffix:
+## IDENTIFIER LPAREN non_empty_seq
+## LR(1) items:
 guard -> IDENTIFIER LPAREN non_empty_seq . RPAREN post_cond [ STAR SEMI_COLON RSQUARE RPAREN RCURLY QUESTION PLUS LCURLY ]
+## Transitions:
 -- On RPAREN shift to state 126
+## Reductions:
 
 State 126:
+## Known stack suffix:
+## IDENTIFIER LPAREN non_empty_seq RPAREN
+## LR(1) items:
 guard -> IDENTIFIER LPAREN non_empty_seq RPAREN . post_cond [ STAR SEMI_COLON RSQUARE RPAREN RCURLY QUESTION PLUS LCURLY ]
+## Transitions:
 -- On LBRACELBRACE shift to state 101
 -- On post_cond shift to state 127
+## Reductions:
 -- On STAR reduce production post_cond ->
 -- On SEMI_COLON reduce production post_cond ->
 -- On RSQUARE reduce production post_cond ->
@@ -1709,7 +2344,12 @@ guard -> IDENTIFIER LPAREN non_empty_seq RPAREN . post_cond [ STAR SEMI_COLON RS
 -- On LCURLY reduce production post_cond ->
 
 State 127:
+## Known stack suffix:
+## IDENTIFIER LPAREN non_empty_seq RPAREN post_cond
+## LR(1) items:
 guard -> IDENTIFIER LPAREN non_empty_seq RPAREN post_cond . [ STAR SEMI_COLON RSQUARE RPAREN RCURLY QUESTION PLUS LCURLY ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production guard -> IDENTIFIER LPAREN non_empty_seq RPAREN post_cond
 -- On SEMI_COLON reduce production guard -> IDENTIFIER LPAREN non_empty_seq RPAREN post_cond
 -- On RSQUARE reduce production guard -> IDENTIFIER LPAREN non_empty_seq RPAREN post_cond
@@ -1720,7 +2360,11 @@ guard -> IDENTIFIER LPAREN non_empty_seq RPAREN post_cond . [ STAR SEMI_COLON RS
 -- On LCURLY reduce production guard -> IDENTIFIER LPAREN non_empty_seq RPAREN post_cond
 
 State 128:
+## Known stack suffix:
+## LBRACELBRACE
+## LR(1) items:
 pre_cond -> LBRACELBRACE . single_cond RBRACERBRACE [ LPAREN ]
+## Transitions:
 -- On TRUE shift to state 20
 -- On STAR shift to state 21
 -- On RETURN_OF shift to state 60
@@ -1740,33 +2384,63 @@ pre_cond -> LBRACELBRACE . single_cond RBRACERBRACE [ LPAREN ]
 -- On access_or_const shift to state 53
 -- On access_leaf shift to state 28
 -- On access shift to state 39
+## Reductions:
 
 State 129:
+## Known stack suffix:
+## LBRACELBRACE single_cond
+## LR(1) items:
 pre_cond -> LBRACELBRACE single_cond . RBRACERBRACE [ LPAREN ]
 single_cond -> single_cond . AND single_cond [ RBRACERBRACE OR AND ]
 single_cond -> single_cond . OR single_cond [ RBRACERBRACE OR AND ]
+## Transitions:
 -- On RBRACERBRACE shift to state 130
 -- On OR shift to state 77
 -- On AND shift to state 79
+## Reductions:
 
 State 130:
+## Known stack suffix:
+## LBRACELBRACE single_cond RBRACERBRACE
+## LR(1) items:
 pre_cond -> LBRACELBRACE single_cond RBRACERBRACE . [ LPAREN ]
+## Transitions:
+## Reductions:
 -- On LPAREN reduce production pre_cond -> LBRACELBRACE single_cond RBRACERBRACE
 
 State 131:
+## Known stack suffix:
+## COLUMNCOLUMN
+## LR(1) items:
 pre_cond -> COLUMNCOLUMN . IDENTIFIER [ LPAREN ]
+## Transitions:
 -- On IDENTIFIER shift to state 132
+## Reductions:
 
 State 132:
+## Known stack suffix:
+## COLUMNCOLUMN IDENTIFIER
+## LR(1) items:
 pre_cond -> COLUMNCOLUMN IDENTIFIER . [ LPAREN ]
+## Transitions:
+## Reductions:
 -- On LPAREN reduce production pre_cond -> COLUMNCOLUMN IDENTIFIER
 
 State 133:
+## Known stack suffix:
+## IDENTIFIER pre_cond
+## LR(1) items:
 guard -> IDENTIFIER pre_cond . LPAREN seq RPAREN post_cond [ STAR SEMI_COLON RSQUARE RPAREN RCURLY QUESTION PLUS LCURLY ]
+## Transitions:
 -- On LPAREN shift to state 134
+## Reductions:
 
 State 134:
+## Known stack suffix:
+## IDENTIFIER pre_cond LPAREN
+## LR(1) items:
 guard -> IDENTIFIER pre_cond LPAREN . seq RPAREN post_cond [ STAR SEMI_COLON RSQUARE RPAREN RCURLY QUESTION PLUS LCURLY ]
+## Transitions:
 -- On TRUE shift to state 20
 -- On STAR shift to state 21
 -- On RETURN_OF shift to state 60
@@ -1791,16 +2465,27 @@ guard -> IDENTIFIER pre_cond LPAREN . seq RPAREN post_cond [ STAR SEMI_COLON RSQ
 -- On access_or_const shift to state 53
 -- On access_leaf shift to state 28
 -- On access shift to state 39
+## Reductions:
 -- On RPAREN reduce production seq ->
 
 State 135:
+## Known stack suffix:
+## IDENTIFIER pre_cond LPAREN seq
+## LR(1) items:
 guard -> IDENTIFIER pre_cond LPAREN seq . RPAREN post_cond [ STAR SEMI_COLON RSQUARE RPAREN RCURLY QUESTION PLUS LCURLY ]
+## Transitions:
 -- On RPAREN shift to state 136
+## Reductions:
 
 State 136:
+## Known stack suffix:
+## IDENTIFIER pre_cond LPAREN seq RPAREN
+## LR(1) items:
 guard -> IDENTIFIER pre_cond LPAREN seq RPAREN . post_cond [ STAR SEMI_COLON RSQUARE RPAREN RCURLY QUESTION PLUS LCURLY ]
+## Transitions:
 -- On LBRACELBRACE shift to state 101
 -- On post_cond shift to state 137
+## Reductions:
 -- On STAR reduce production post_cond ->
 -- On SEMI_COLON reduce production post_cond ->
 -- On RSQUARE reduce production post_cond ->
@@ -1811,7 +2496,12 @@ guard -> IDENTIFIER pre_cond LPAREN seq RPAREN . post_cond [ STAR SEMI_COLON RSQ
 -- On LCURLY reduce production post_cond ->
 
 State 137:
+## Known stack suffix:
+## IDENTIFIER pre_cond LPAREN seq RPAREN post_cond
+## LR(1) items:
 guard -> IDENTIFIER pre_cond LPAREN seq RPAREN post_cond . [ STAR SEMI_COLON RSQUARE RPAREN RCURLY QUESTION PLUS LCURLY ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production guard -> IDENTIFIER pre_cond LPAREN seq RPAREN post_cond
 -- On SEMI_COLON reduce production guard -> IDENTIFIER pre_cond LPAREN seq RPAREN post_cond
 -- On RSQUARE reduce production guard -> IDENTIFIER pre_cond LPAREN seq RPAREN post_cond
@@ -1822,11 +2512,21 @@ guard -> IDENTIFIER pre_cond LPAREN seq RPAREN post_cond . [ STAR SEMI_COLON RSQ
 -- On LCURLY reduce production guard -> IDENTIFIER pre_cond LPAREN seq RPAREN post_cond
 
 State 138:
+## Known stack suffix:
+## LSQUARE non_empty_seq
+## LR(1) items:
 guard -> LSQUARE non_empty_seq . RSQUARE [ STAR SEMI_COLON RSQUARE RPAREN RCURLY QUESTION PLUS LCURLY ]
+## Transitions:
 -- On RSQUARE shift to state 139
+## Reductions:
 
 State 139:
+## Known stack suffix:
+## LSQUARE non_empty_seq RSQUARE
+## LR(1) items:
 guard -> LSQUARE non_empty_seq RSQUARE . [ STAR SEMI_COLON RSQUARE RPAREN RCURLY QUESTION PLUS LCURLY ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production guard -> LSQUARE non_empty_seq RSQUARE
 -- On SEMI_COLON reduce production guard -> LSQUARE non_empty_seq RSQUARE
 -- On RSQUARE reduce production guard -> LSQUARE non_empty_seq RSQUARE
@@ -1837,30 +2537,60 @@ guard -> LSQUARE non_empty_seq RSQUARE . [ STAR SEMI_COLON RSQUARE RPAREN RCURLY
 -- On LCURLY reduce production guard -> LSQUARE non_empty_seq RSQUARE
 
 State 140:
+## Known stack suffix:
+## LCURLY seq_elt
+## LR(1) items:
 transition -> LCURLY seq_elt . RCURLY RARROW IDENTIFIER [ SEMI_COLON PIPE ]
+## Transitions:
 -- On RCURLY shift to state 141
+## Reductions:
 
 State 141:
+## Known stack suffix:
+## LCURLY seq_elt RCURLY
+## LR(1) items:
 transition -> LCURLY seq_elt RCURLY . RARROW IDENTIFIER [ SEMI_COLON PIPE ]
+## Transitions:
 -- On RARROW shift to state 142
+## Reductions:
 
 State 142:
+## Known stack suffix:
+## LCURLY seq_elt RCURLY RARROW
+## LR(1) items:
 transition -> LCURLY seq_elt RCURLY RARROW . IDENTIFIER [ SEMI_COLON PIPE ]
+## Transitions:
 -- On IDENTIFIER shift to state 143
+## Reductions:
 
 State 143:
+## Known stack suffix:
+## LCURLY seq_elt RCURLY RARROW IDENTIFIER
+## LR(1) items:
 transition -> LCURLY seq_elt RCURLY RARROW IDENTIFIER . [ SEMI_COLON PIPE ]
+## Transitions:
+## Reductions:
 -- On SEMI_COLON reduce production transition -> LCURLY seq_elt RCURLY RARROW IDENTIFIER
 -- On PIPE reduce production transition -> LCURLY seq_elt RCURLY RARROW IDENTIFIER
 
 State 144:
+## Known stack suffix:
+## IDENTIFIER COLON transitions
+## LR(1) items:
 state -> IDENTIFIER COLON transitions . SEMI_COLON [ IDENTIFIER # ]
 transitions -> transitions . PIPE transition [ SEMI_COLON PIPE ]
+## Transitions:
 -- On SEMI_COLON shift to state 145
 -- On PIPE shift to state 146
+## Reductions:
 
 State 145:
+## Known stack suffix:
+## IDENTIFIER COLON transitions SEMI_COLON
+## LR(1) items:
 state -> IDENTIFIER COLON transitions SEMI_COLON . [ IDENTIFIER # ]
+## Transitions:
+## Reductions:
 -- On IDENTIFIER reduce production state -> IDENTIFIER COLON transitions SEMI_COLON
 -- On # reduce production state -> IDENTIFIER COLON transitions SEMI_COLON
 ** End-of-stream conflict on IDENTIFIER
@@ -1870,32 +2600,57 @@ state -> IDENTIFIER COLON transitions SEMI_COLON . [ IDENTIFIER # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 146:
+## Known stack suffix:
+## transitions PIPE
+## LR(1) items:
 transitions -> transitions PIPE . transition [ SEMI_COLON PIPE ]
+## Transitions:
 -- On RARROW shift to state 14
 -- On OTHERWISE shift to state 16
 -- On LCURLY shift to state 19
 -- On transition shift to state 147
+## Reductions:
 
 State 147:
+## Known stack suffix:
+## transitions PIPE transition
+## LR(1) items:
 transitions -> transitions PIPE transition . [ SEMI_COLON PIPE ]
+## Transitions:
+## Reductions:
 -- On SEMI_COLON reduce production transitions -> transitions PIPE transition
 -- On PIPE reduce production transitions -> transitions PIPE transition
 
 State 148:
+## Known stack suffix:
+## transition
+## LR(1) items:
 transitions -> transition . [ SEMI_COLON PIPE ]
+## Transitions:
+## Reductions:
 -- On SEMI_COLON reduce production transitions -> transition
 -- On PIPE reduce production transitions -> transition
 
 State 149:
+## Known stack suffix:
+## options yaparser_option
+## LR(1) items:
 options -> options yaparser_option . [ PERCENT IDENTIFIER ]
+## Transitions:
+## Reductions:
 -- On PERCENT reduce production options -> options yaparser_option
 -- On IDENTIFIER reduce production options -> options yaparser_option
 
 State 150:
+## Known stack suffix:
+## options states
+## LR(1) items:
 main -> options states . [ # ]
 states -> states . state [ IDENTIFIER # ]
+## Transitions:
 -- On IDENTIFIER shift to state 12
 -- On state shift to state 151
+## Reductions:
 -- On # reduce production main -> options states
 ** End-of-stream conflict on IDENTIFIER
 **   There is a tension between
@@ -1904,7 +2659,12 @@ states -> states . state [ IDENTIFIER # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 151:
+## Known stack suffix:
+## states state
+## LR(1) items:
 states -> states state . [ IDENTIFIER # ]
+## Transitions:
+## Reductions:
 -- On IDENTIFIER reduce production states -> states state
 -- On # reduce production states -> states state
 ** End-of-stream conflict on IDENTIFIER
@@ -1914,7 +2674,12 @@ states -> states state . [ IDENTIFIER # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 152:
+## Known stack suffix:
+## state
+## LR(1) items:
 states -> state . [ IDENTIFIER # ]
+## Transitions:
+## Reductions:
 -- On IDENTIFIER reduce production states -> state
 -- On # reduce production states -> state
 ** End-of-stream conflict on IDENTIFIER
@@ -1924,6 +2689,11 @@ states -> state . [ IDENTIFIER # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 153:
+## Known stack suffix:
+## main
+## LR(1) items:
 main' -> main . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept main
 

@@ -1,53 +1,107 @@
 State 0:
+## Known stack suffix:
+##
+## LR(1) items:
 argument_eol' -> . argument_eol [ # ]
+## Transitions:
 -- On ARGUMENT shift to state 1
 -- On argument_eol shift to state 4
+## Reductions:
 
 State 1:
+## Known stack suffix:
+## ARGUMENT
+## LR(1) items:
 argument_eol -> ARGUMENT . end_of_line [ # ]
+## Transitions:
 -- On EOL shift to state 2
 -- On end_of_line shift to state 3
+## Reductions:
 
 State 2:
+## Known stack suffix:
+## EOL
+## LR(1) items:
 end_of_line -> EOL . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production end_of_line -> EOL
 
 State 3:
+## Known stack suffix:
+## ARGUMENT end_of_line
+## LR(1) items:
 argument_eol -> ARGUMENT end_of_line . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production argument_eol -> ARGUMENT end_of_line
 
 State 4:
+## Known stack suffix:
+## argument_eol
+## LR(1) items:
 argument_eol' -> argument_eol . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept argument_eol
 
 State 5:
+## Known stack suffix:
+##
+## LR(1) items:
 argument_list_eol' -> . argument_list_eol [ # ]
+## Transitions:
 -- On EOL shift to state 2
 -- On ARGUMENT shift to state 6
 -- On end_of_line shift to state 7
 -- On argument_list_eol shift to state 9
+## Reductions:
 
 State 6:
+## Known stack suffix:
+## ARGUMENT
+## LR(1) items:
 argument_list_eol -> ARGUMENT . argument_list_eol [ # ]
+## Transitions:
 -- On EOL shift to state 2
 -- On ARGUMENT shift to state 6
 -- On end_of_line shift to state 7
 -- On argument_list_eol shift to state 8
+## Reductions:
 
 State 7:
+## Known stack suffix:
+## end_of_line
+## LR(1) items:
 argument_list_eol -> end_of_line . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production argument_list_eol -> end_of_line
 
 State 8:
+## Known stack suffix:
+## ARGUMENT argument_list_eol
+## LR(1) items:
 argument_list_eol -> ARGUMENT argument_list_eol . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production argument_list_eol -> ARGUMENT argument_list_eol
 
 State 9:
+## Known stack suffix:
+## argument_list_eol
+## LR(1) items:
 argument_list_eol' -> argument_list_eol . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept argument_list_eol
 
 State 10:
+## Known stack suffix:
+##
+## LR(1) items:
 break_argument_eol' -> . break_argument_eol [ # ]
+## Transitions:
 -- On UIDENT shift to state 11
 -- On STAR shift to state 12
 -- On OPERATOR shift to state 13
@@ -64,13 +118,24 @@ break_argument_eol' -> . break_argument_eol [ # ]
 -- On expression shift to state 51
 -- On end_of_line shift to state 53
 -- On break_argument_eol shift to state 54
+## Reductions:
 
 State 11:
+## Known stack suffix:
+## UIDENT
+## LR(1) items:
 module_path -> UIDENT . [ DOT ]
+## Transitions:
+## Reductions:
 -- On DOT reduce production module_path -> UIDENT
 
 State 12:
+## Known stack suffix:
+## STAR
+## LR(1) items:
 expression -> STAR . [ UIDENT STAR RPAREN OPERATOR LPAREN LIDENT EOL DOT DOLLAR BANG ]
+## Transitions:
+## Reductions:
 -- On UIDENT reduce production expression -> STAR
 -- On STAR reduce production expression -> STAR
 -- On RPAREN reduce production expression -> STAR
@@ -83,7 +148,12 @@ expression -> STAR . [ UIDENT STAR RPAREN OPERATOR LPAREN LIDENT EOL DOT DOLLAR 
 -- On BANG reduce production expression -> STAR
 
 State 13:
+## Known stack suffix:
+## OPERATOR
+## LR(1) items:
 longident -> OPERATOR . [ UIDENT STAR RPAREN OPERATOR LPAREN LIDENT EOL DOT DOLLAR BANG ]
+## Transitions:
+## Reductions:
 -- On UIDENT reduce production longident -> OPERATOR
 -- On STAR reduce production longident -> OPERATOR
 -- On RPAREN reduce production longident -> OPERATOR
@@ -96,7 +166,11 @@ longident -> OPERATOR . [ UIDENT STAR RPAREN OPERATOR LPAREN LIDENT EOL DOT DOLL
 -- On BANG reduce production longident -> OPERATOR
 
 State 14:
+## Known stack suffix:
+## LPAREN
+## LR(1) items:
 expression -> LPAREN . expression RPAREN [ UIDENT STAR RPAREN OPERATOR LPAREN LIDENT EOL DOT DOLLAR BANG ]
+## Transitions:
 -- On UIDENT shift to state 11
 -- On STAR shift to state 12
 -- On OPERATOR shift to state 13
@@ -107,9 +181,15 @@ expression -> LPAREN . expression RPAREN [ UIDENT STAR RPAREN OPERATOR LPAREN LI
 -- On module_path shift to state 19
 -- On longident shift to state 23
 -- On expression shift to state 25
+## Reductions:
 
 State 15:
+## Known stack suffix:
+## LIDENT
+## LR(1) items:
 longident -> LIDENT . [ UIDENT STAR RPAREN OPERATOR LPAREN LIDENT EOL DOT DOLLAR BANG ]
+## Transitions:
+## Reductions:
 -- On UIDENT reduce production longident -> LIDENT
 -- On STAR reduce production longident -> LIDENT
 -- On RPAREN reduce production longident -> LIDENT
@@ -122,11 +202,21 @@ longident -> LIDENT . [ UIDENT STAR RPAREN OPERATOR LPAREN LIDENT EOL DOT DOLLAR
 -- On BANG reduce production longident -> LIDENT
 
 State 16:
+## Known stack suffix:
+## DOLLAR
+## LR(1) items:
 expression -> DOLLAR . INTEGER [ UIDENT STAR RPAREN OPERATOR LPAREN LIDENT EOL DOT DOLLAR BANG ]
+## Transitions:
 -- On INTEGER shift to state 17
+## Reductions:
 
 State 17:
+## Known stack suffix:
+## DOLLAR INTEGER
+## LR(1) items:
 expression -> DOLLAR INTEGER . [ UIDENT STAR RPAREN OPERATOR LPAREN LIDENT EOL DOT DOLLAR BANG ]
+## Transitions:
+## Reductions:
 -- On UIDENT reduce production expression -> DOLLAR INTEGER
 -- On STAR reduce production expression -> DOLLAR INTEGER
 -- On RPAREN reduce production expression -> DOLLAR INTEGER
@@ -139,7 +229,11 @@ expression -> DOLLAR INTEGER . [ UIDENT STAR RPAREN OPERATOR LPAREN LIDENT EOL D
 -- On BANG reduce production expression -> DOLLAR INTEGER
 
 State 18:
+## Known stack suffix:
+## BANG
+## LR(1) items:
 expression -> BANG . expression [ UIDENT STAR RPAREN OPERATOR LPAREN LIDENT EOL DOT DOLLAR BANG ]
+## Transitions:
 -- On UIDENT shift to state 11
 -- On STAR shift to state 12
 -- On OPERATOR shift to state 13
@@ -150,24 +244,45 @@ expression -> BANG . expression [ UIDENT STAR RPAREN OPERATOR LPAREN LIDENT EOL 
 -- On module_path shift to state 19
 -- On longident shift to state 23
 -- On expression shift to state 24
+## Reductions:
 
 State 19:
+## Known stack suffix:
+## module_path
+## LR(1) items:
 longident -> module_path . DOT LIDENT [ UIDENT STAR RPAREN OPERATOR LPAREN LIDENT EOL DOT DOLLAR BANG ]
 module_path -> module_path . DOT UIDENT [ DOT ]
+## Transitions:
 -- On DOT shift to state 20
+## Reductions:
 
 State 20:
+## Known stack suffix:
+## module_path DOT
+## LR(1) items:
 longident -> module_path DOT . LIDENT [ UIDENT STAR RPAREN OPERATOR LPAREN LIDENT EOL DOT DOLLAR BANG ]
 module_path -> module_path DOT . UIDENT [ DOT ]
+## Transitions:
 -- On UIDENT shift to state 21
 -- On LIDENT shift to state 22
+## Reductions:
 
 State 21:
+## Known stack suffix:
+## module_path DOT UIDENT
+## LR(1) items:
 module_path -> module_path DOT UIDENT . [ DOT ]
+## Transitions:
+## Reductions:
 -- On DOT reduce production module_path -> module_path DOT UIDENT
 
 State 22:
+## Known stack suffix:
+## module_path DOT LIDENT
+## LR(1) items:
 longident -> module_path DOT LIDENT . [ UIDENT STAR RPAREN OPERATOR LPAREN LIDENT EOL DOT DOLLAR BANG ]
+## Transitions:
+## Reductions:
 -- On UIDENT reduce production longident -> module_path DOT LIDENT
 -- On STAR reduce production longident -> module_path DOT LIDENT
 -- On RPAREN reduce production longident -> module_path DOT LIDENT
@@ -180,7 +295,12 @@ longident -> module_path DOT LIDENT . [ UIDENT STAR RPAREN OPERATOR LPAREN LIDEN
 -- On BANG reduce production longident -> module_path DOT LIDENT
 
 State 23:
+## Known stack suffix:
+## longident
+## LR(1) items:
 expression -> longident . [ UIDENT STAR RPAREN OPERATOR LPAREN LIDENT EOL DOT DOLLAR BANG ]
+## Transitions:
+## Reductions:
 -- On UIDENT reduce production expression -> longident
 -- On STAR reduce production expression -> longident
 -- On RPAREN reduce production expression -> longident
@@ -193,11 +313,16 @@ expression -> longident . [ UIDENT STAR RPAREN OPERATOR LPAREN LIDENT EOL DOT DO
 -- On BANG reduce production expression -> longident
 
 State 24:
+## Known stack suffix:
+## BANG expression
+## LR(1) items:
 expression -> expression . DOT INTEGER [ UIDENT STAR RPAREN OPERATOR LPAREN LIDENT EOL DOT DOLLAR BANG ]
 expression -> expression . DOT LBRACKET INTEGER RBRACKET [ UIDENT STAR RPAREN OPERATOR LPAREN LIDENT EOL DOT DOLLAR BANG ]
 expression -> expression . DOT LPAREN INTEGER RPAREN [ UIDENT STAR RPAREN OPERATOR LPAREN LIDENT EOL DOT DOLLAR BANG ]
 expression -> expression . DOT LIDENT [ UIDENT STAR RPAREN OPERATOR LPAREN LIDENT EOL DOT DOLLAR BANG ]
 expression -> BANG expression . [ UIDENT STAR RPAREN OPERATOR LPAREN LIDENT EOL DOT DOLLAR BANG ]
+## Transitions:
+## Reductions:
 -- On UIDENT reduce production expression -> BANG expression
 -- On STAR reduce production expression -> BANG expression
 -- On RPAREN reduce production expression -> BANG expression
@@ -210,16 +335,26 @@ expression -> BANG expression . [ UIDENT STAR RPAREN OPERATOR LPAREN LIDENT EOL 
 -- On BANG reduce production expression -> BANG expression
 
 State 25:
+## Known stack suffix:
+## LPAREN expression
+## LR(1) items:
 expression -> expression . DOT INTEGER [ RPAREN DOT ]
 expression -> expression . DOT LBRACKET INTEGER RBRACKET [ RPAREN DOT ]
 expression -> expression . DOT LPAREN INTEGER RPAREN [ RPAREN DOT ]
 expression -> expression . DOT LIDENT [ RPAREN DOT ]
 expression -> LPAREN expression . RPAREN [ UIDENT STAR RPAREN OPERATOR LPAREN LIDENT EOL DOT DOLLAR BANG ]
+## Transitions:
 -- On RPAREN shift to state 26
 -- On DOT shift to state 27
+## Reductions:
 
 State 26:
+## Known stack suffix:
+## LPAREN expression RPAREN
+## LR(1) items:
 expression -> LPAREN expression RPAREN . [ UIDENT STAR RPAREN OPERATOR LPAREN LIDENT EOL DOT DOLLAR BANG ]
+## Transitions:
+## Reductions:
 -- On UIDENT reduce production expression -> LPAREN expression RPAREN
 -- On STAR reduce production expression -> LPAREN expression RPAREN
 -- On RPAREN reduce production expression -> LPAREN expression RPAREN
@@ -232,25 +367,45 @@ expression -> LPAREN expression RPAREN . [ UIDENT STAR RPAREN OPERATOR LPAREN LI
 -- On BANG reduce production expression -> LPAREN expression RPAREN
 
 State 27:
+## Known stack suffix:
+## expression DOT
+## LR(1) items:
 expression -> expression DOT . INTEGER [ UIDENT STAR RPAREN OPERATOR LPAREN LIDENT EOL DOT DOLLAR BANG ]
 expression -> expression DOT . LBRACKET INTEGER RBRACKET [ UIDENT STAR RPAREN OPERATOR LPAREN LIDENT EOL DOT DOLLAR BANG ]
 expression -> expression DOT . LPAREN INTEGER RPAREN [ UIDENT STAR RPAREN OPERATOR LPAREN LIDENT EOL DOT DOLLAR BANG ]
 expression -> expression DOT . LIDENT [ UIDENT STAR RPAREN OPERATOR LPAREN LIDENT EOL DOT DOLLAR BANG ]
+## Transitions:
 -- On LPAREN shift to state 28
 -- On LIDENT shift to state 31
 -- On LBRACKET shift to state 32
 -- On INTEGER shift to state 35
+## Reductions:
 
 State 28:
+## Known stack suffix:
+## expression DOT LPAREN
+## LR(1) items:
 expression -> expression DOT LPAREN . INTEGER RPAREN [ UIDENT STAR RPAREN OPERATOR LPAREN LIDENT EOL DOT DOLLAR BANG ]
+## Transitions:
 -- On INTEGER shift to state 29
+## Reductions:
 
 State 29:
+## Known stack suffix:
+## expression DOT LPAREN INTEGER
+## LR(1) items:
 expression -> expression DOT LPAREN INTEGER . RPAREN [ UIDENT STAR RPAREN OPERATOR LPAREN LIDENT EOL DOT DOLLAR BANG ]
+## Transitions:
 -- On RPAREN shift to state 30
+## Reductions:
 
 State 30:
+## Known stack suffix:
+## expression DOT LPAREN INTEGER RPAREN
+## LR(1) items:
 expression -> expression DOT LPAREN INTEGER RPAREN . [ UIDENT STAR RPAREN OPERATOR LPAREN LIDENT EOL DOT DOLLAR BANG ]
+## Transitions:
+## Reductions:
 -- On UIDENT reduce production expression -> expression DOT LPAREN INTEGER RPAREN
 -- On STAR reduce production expression -> expression DOT LPAREN INTEGER RPAREN
 -- On RPAREN reduce production expression -> expression DOT LPAREN INTEGER RPAREN
@@ -263,7 +418,12 @@ expression -> expression DOT LPAREN INTEGER RPAREN . [ UIDENT STAR RPAREN OPERAT
 -- On BANG reduce production expression -> expression DOT LPAREN INTEGER RPAREN
 
 State 31:
+## Known stack suffix:
+## expression DOT LIDENT
+## LR(1) items:
 expression -> expression DOT LIDENT . [ UIDENT STAR RPAREN OPERATOR LPAREN LIDENT EOL DOT DOLLAR BANG ]
+## Transitions:
+## Reductions:
 -- On UIDENT reduce production expression -> expression DOT LIDENT
 -- On STAR reduce production expression -> expression DOT LIDENT
 -- On RPAREN reduce production expression -> expression DOT LIDENT
@@ -276,15 +436,30 @@ expression -> expression DOT LIDENT . [ UIDENT STAR RPAREN OPERATOR LPAREN LIDEN
 -- On BANG reduce production expression -> expression DOT LIDENT
 
 State 32:
+## Known stack suffix:
+## expression DOT LBRACKET
+## LR(1) items:
 expression -> expression DOT LBRACKET . INTEGER RBRACKET [ UIDENT STAR RPAREN OPERATOR LPAREN LIDENT EOL DOT DOLLAR BANG ]
+## Transitions:
 -- On INTEGER shift to state 33
+## Reductions:
 
 State 33:
+## Known stack suffix:
+## expression DOT LBRACKET INTEGER
+## LR(1) items:
 expression -> expression DOT LBRACKET INTEGER . RBRACKET [ UIDENT STAR RPAREN OPERATOR LPAREN LIDENT EOL DOT DOLLAR BANG ]
+## Transitions:
 -- On RBRACKET shift to state 34
+## Reductions:
 
 State 34:
+## Known stack suffix:
+## expression DOT LBRACKET INTEGER RBRACKET
+## LR(1) items:
 expression -> expression DOT LBRACKET INTEGER RBRACKET . [ UIDENT STAR RPAREN OPERATOR LPAREN LIDENT EOL DOT DOLLAR BANG ]
+## Transitions:
+## Reductions:
 -- On UIDENT reduce production expression -> expression DOT LBRACKET INTEGER RBRACKET
 -- On STAR reduce production expression -> expression DOT LBRACKET INTEGER RBRACKET
 -- On RPAREN reduce production expression -> expression DOT LBRACKET INTEGER RBRACKET
@@ -297,7 +472,12 @@ expression -> expression DOT LBRACKET INTEGER RBRACKET . [ UIDENT STAR RPAREN OP
 -- On BANG reduce production expression -> expression DOT LBRACKET INTEGER RBRACKET
 
 State 35:
+## Known stack suffix:
+## expression DOT INTEGER
+## LR(1) items:
 expression -> expression DOT INTEGER . [ UIDENT STAR RPAREN OPERATOR LPAREN LIDENT EOL DOT DOLLAR BANG ]
+## Transitions:
+## Reductions:
 -- On UIDENT reduce production expression -> expression DOT INTEGER
 -- On STAR reduce production expression -> expression DOT INTEGER
 -- On RPAREN reduce production expression -> expression DOT INTEGER
@@ -310,118 +490,227 @@ expression -> expression DOT INTEGER . [ UIDENT STAR RPAREN OPERATOR LPAREN LIDE
 -- On BANG reduce production expression -> expression DOT INTEGER
 
 State 36:
+## Known stack suffix:
+## INTEGER
+## LR(1) items:
 integer_eol -> INTEGER . end_of_line [ # ]
+## Transitions:
 -- On EOL shift to state 2
 -- On end_of_line shift to state 37
+## Reductions:
 
 State 37:
+## Known stack suffix:
+## INTEGER end_of_line
+## LR(1) items:
 integer_eol -> INTEGER end_of_line . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production integer_eol -> INTEGER end_of_line
 
 State 38:
+## Known stack suffix:
+## AT
+## LR(1) items:
 break_argument_eol -> AT . opt_identifier INTEGER opt_integer_eol [ # ]
 break_argument_eol -> AT . opt_identifier SHARP integer_eol [ # ]
+## Transitions:
 -- On UIDENT shift to state 39
 -- On LIDENT shift to state 40
 -- On opt_identifier shift to state 41
 -- On identifier shift to state 49
+## Reductions:
 -- On SHARP reduce production opt_identifier ->
 -- On INTEGER reduce production opt_identifier ->
 
 State 39:
+## Known stack suffix:
+## UIDENT
+## LR(1) items:
 identifier -> UIDENT . [ SHARP INTEGER EOL ]
+## Transitions:
+## Reductions:
 -- On SHARP reduce production identifier -> UIDENT
 -- On INTEGER reduce production identifier -> UIDENT
 -- On EOL reduce production identifier -> UIDENT
 
 State 40:
+## Known stack suffix:
+## LIDENT
+## LR(1) items:
 identifier -> LIDENT . [ SHARP INTEGER EOL ]
+## Transitions:
+## Reductions:
 -- On SHARP reduce production identifier -> LIDENT
 -- On INTEGER reduce production identifier -> LIDENT
 -- On EOL reduce production identifier -> LIDENT
 
 State 41:
+## Known stack suffix:
+## AT opt_identifier
+## LR(1) items:
 break_argument_eol -> AT opt_identifier . INTEGER opt_integer_eol [ # ]
 break_argument_eol -> AT opt_identifier . SHARP integer_eol [ # ]
+## Transitions:
 -- On SHARP shift to state 42
 -- On INTEGER shift to state 44
+## Reductions:
 
 State 42:
+## Known stack suffix:
+## AT opt_identifier SHARP
+## LR(1) items:
 break_argument_eol -> AT opt_identifier SHARP . integer_eol [ # ]
+## Transitions:
 -- On INTEGER shift to state 36
 -- On integer_eol shift to state 43
+## Reductions:
 
 State 43:
+## Known stack suffix:
+## AT opt_identifier SHARP integer_eol
+## LR(1) items:
 break_argument_eol -> AT opt_identifier SHARP integer_eol . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production break_argument_eol -> AT opt_identifier SHARP integer_eol
 
 State 44:
+## Known stack suffix:
+## AT opt_identifier INTEGER
+## LR(1) items:
 break_argument_eol -> AT opt_identifier INTEGER . opt_integer_eol [ # ]
+## Transitions:
 -- On INTEGER shift to state 45
 -- On EOL shift to state 2
 -- On opt_integer_eol shift to state 47
 -- On end_of_line shift to state 48
+## Reductions:
 
 State 45:
+## Known stack suffix:
+## INTEGER
+## LR(1) items:
 opt_integer_eol -> INTEGER . end_of_line [ # ]
+## Transitions:
 -- On EOL shift to state 2
 -- On end_of_line shift to state 46
+## Reductions:
 
 State 46:
+## Known stack suffix:
+## INTEGER end_of_line
+## LR(1) items:
 opt_integer_eol -> INTEGER end_of_line . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production opt_integer_eol -> INTEGER end_of_line
 
 State 47:
+## Known stack suffix:
+## AT opt_identifier INTEGER opt_integer_eol
+## LR(1) items:
 break_argument_eol -> AT opt_identifier INTEGER opt_integer_eol . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production break_argument_eol -> AT opt_identifier INTEGER opt_integer_eol
 
 State 48:
+## Known stack suffix:
+## end_of_line
+## LR(1) items:
 opt_integer_eol -> end_of_line . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production opt_integer_eol -> end_of_line
 
 State 49:
+## Known stack suffix:
+## identifier
+## LR(1) items:
 opt_identifier -> identifier . [ SHARP INTEGER EOL ]
+## Transitions:
+## Reductions:
 -- On SHARP reduce production opt_identifier -> identifier
 -- On INTEGER reduce production opt_identifier -> identifier
 -- On EOL reduce production opt_identifier -> identifier
 
 State 50:
+## Known stack suffix:
+## integer_eol
+## LR(1) items:
 break_argument_eol -> integer_eol . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production break_argument_eol -> integer_eol
 
 State 51:
+## Known stack suffix:
+## expression
+## LR(1) items:
 break_argument_eol -> expression . end_of_line [ # ]
 expression -> expression . DOT INTEGER [ EOL DOT ]
 expression -> expression . DOT LBRACKET INTEGER RBRACKET [ EOL DOT ]
 expression -> expression . DOT LPAREN INTEGER RPAREN [ EOL DOT ]
 expression -> expression . DOT LIDENT [ EOL DOT ]
+## Transitions:
 -- On EOL shift to state 2
 -- On DOT shift to state 27
 -- On end_of_line shift to state 52
+## Reductions:
 
 State 52:
+## Known stack suffix:
+## expression end_of_line
+## LR(1) items:
 break_argument_eol -> expression end_of_line . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production break_argument_eol -> expression end_of_line
 
 State 53:
+## Known stack suffix:
+## end_of_line
+## LR(1) items:
 break_argument_eol -> end_of_line . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production break_argument_eol -> end_of_line
 
 State 54:
+## Known stack suffix:
+## break_argument_eol
+## LR(1) items:
 break_argument_eol' -> break_argument_eol . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept break_argument_eol
 
 State 55:
+## Known stack suffix:
+##
+## LR(1) items:
 end_of_line' -> . end_of_line [ # ]
+## Transitions:
 -- On EOL shift to state 2
 -- On end_of_line shift to state 56
+## Reductions:
 
 State 56:
+## Known stack suffix:
+## end_of_line
+## LR(1) items:
 end_of_line' -> end_of_line . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept end_of_line
 
 State 57:
+## Known stack suffix:
+##
+## LR(1) items:
 expression_list_eol' -> . expression_list_eol [ # ]
+## Transitions:
 -- On UIDENT shift to state 11
 -- On STAR shift to state 12
 -- On OPERATOR shift to state 13
@@ -435,17 +724,27 @@ expression_list_eol' -> . expression_list_eol [ # ]
 -- On expression_list_eol shift to state 58
 -- On expression shift to state 59
 -- On end_of_line shift to state 61
+## Reductions:
 
 State 58:
+## Known stack suffix:
+## expression_list_eol
+## LR(1) items:
 expression_list_eol' -> expression_list_eol . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept expression_list_eol
 
 State 59:
+## Known stack suffix:
+## expression
+## LR(1) items:
 expression -> expression . DOT INTEGER [ UIDENT STAR OPERATOR LPAREN LIDENT EOL DOT DOLLAR BANG ]
 expression -> expression . DOT LBRACKET INTEGER RBRACKET [ UIDENT STAR OPERATOR LPAREN LIDENT EOL DOT DOLLAR BANG ]
 expression -> expression . DOT LPAREN INTEGER RPAREN [ UIDENT STAR OPERATOR LPAREN LIDENT EOL DOT DOLLAR BANG ]
 expression -> expression . DOT LIDENT [ UIDENT STAR OPERATOR LPAREN LIDENT EOL DOT DOLLAR BANG ]
 expression_list_eol -> expression . expression_list_eol [ # ]
+## Transitions:
 -- On UIDENT shift to state 11
 -- On STAR shift to state 12
 -- On OPERATOR shift to state 13
@@ -460,215 +759,421 @@ expression_list_eol -> expression . expression_list_eol [ # ]
 -- On expression_list_eol shift to state 60
 -- On expression shift to state 59
 -- On end_of_line shift to state 61
+## Reductions:
 
 State 60:
+## Known stack suffix:
+## expression expression_list_eol
+## LR(1) items:
 expression_list_eol -> expression expression_list_eol . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production expression_list_eol -> expression expression_list_eol
 
 State 61:
+## Known stack suffix:
+## end_of_line
+## LR(1) items:
 expression_list_eol -> end_of_line . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production expression_list_eol -> end_of_line
 
 State 62:
+## Known stack suffix:
+##
+## LR(1) items:
 identifier' -> . identifier [ # ]
+## Transitions:
 -- On UIDENT shift to state 63
 -- On LIDENT shift to state 64
 -- On identifier shift to state 65
+## Reductions:
 
 State 63:
+## Known stack suffix:
+## UIDENT
+## LR(1) items:
 identifier -> UIDENT . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production identifier -> UIDENT
 
 State 64:
+## Known stack suffix:
+## LIDENT
+## LR(1) items:
 identifier -> LIDENT . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production identifier -> LIDENT
 
 State 65:
+## Known stack suffix:
+## identifier
+## LR(1) items:
 identifier' -> identifier . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept identifier
 
 State 66:
+## Known stack suffix:
+##
+## LR(1) items:
 identifier_eol' -> . identifier_eol [ # ]
+## Transitions:
 -- On UIDENT shift to state 39
 -- On LIDENT shift to state 40
 -- On identifier_eol shift to state 67
 -- On identifier shift to state 68
+## Reductions:
 
 State 67:
+## Known stack suffix:
+## identifier_eol
+## LR(1) items:
 identifier_eol' -> identifier_eol . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept identifier_eol
 
 State 68:
+## Known stack suffix:
+## identifier
+## LR(1) items:
 identifier_eol -> identifier . end_of_line [ # ]
+## Transitions:
 -- On EOL shift to state 2
 -- On end_of_line shift to state 69
+## Reductions:
 
 State 69:
+## Known stack suffix:
+## identifier end_of_line
+## LR(1) items:
 identifier_eol -> identifier end_of_line . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production identifier_eol -> identifier end_of_line
 
 State 70:
+## Known stack suffix:
+##
+## LR(1) items:
 identifier_or_eol' -> . identifier_or_eol [ # ]
+## Transitions:
 -- On UIDENT shift to state 63
 -- On LIDENT shift to state 64
 -- On EOL shift to state 2
 -- On identifier_or_eol shift to state 71
 -- On identifier shift to state 72
 -- On end_of_line shift to state 73
+## Reductions:
 
 State 71:
+## Known stack suffix:
+## identifier_or_eol
+## LR(1) items:
 identifier_or_eol' -> identifier_or_eol . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept identifier_or_eol
 
 State 72:
+## Known stack suffix:
+## identifier
+## LR(1) items:
 identifier_or_eol -> identifier . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production identifier_or_eol -> identifier
 
 State 73:
+## Known stack suffix:
+## end_of_line
+## LR(1) items:
 identifier_or_eol -> end_of_line . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production identifier_or_eol -> end_of_line
 
 State 74:
+## Known stack suffix:
+##
+## LR(1) items:
 int64_eol' -> . int64_eol [ # ]
+## Transitions:
 -- On INTEGER shift to state 75
 -- On int64_eol shift to state 77
+## Reductions:
 
 State 75:
+## Known stack suffix:
+## INTEGER
+## LR(1) items:
 int64_eol -> INTEGER . end_of_line [ # ]
+## Transitions:
 -- On EOL shift to state 2
 -- On end_of_line shift to state 76
+## Reductions:
 
 State 76:
+## Known stack suffix:
+## INTEGER end_of_line
+## LR(1) items:
 int64_eol -> INTEGER end_of_line . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production int64_eol -> INTEGER end_of_line
 
 State 77:
+## Known stack suffix:
+## int64_eol
+## LR(1) items:
 int64_eol' -> int64_eol . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept int64_eol
 
 State 78:
+## Known stack suffix:
+##
+## LR(1) items:
 integer' -> . integer [ # ]
+## Transitions:
 -- On INTEGER shift to state 79
 -- On integer shift to state 80
+## Reductions:
 
 State 79:
+## Known stack suffix:
+## INTEGER
+## LR(1) items:
 integer -> INTEGER . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production integer -> INTEGER
 
 State 80:
+## Known stack suffix:
+## integer
+## LR(1) items:
 integer' -> integer . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept integer
 
 State 81:
+## Known stack suffix:
+##
+## LR(1) items:
 integer_eol' -> . integer_eol [ # ]
+## Transitions:
 -- On INTEGER shift to state 36
 -- On integer_eol shift to state 82
+## Reductions:
 
 State 82:
+## Known stack suffix:
+## integer_eol
+## LR(1) items:
 integer_eol' -> integer_eol . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept integer_eol
 
 State 83:
+## Known stack suffix:
+##
+## LR(1) items:
 integer_list_eol' -> . integer_list_eol [ # ]
+## Transitions:
 -- On INTEGER shift to state 84
 -- On EOL shift to state 2
 -- On integer_list_eol shift to state 87
 -- On end_of_line shift to state 86
+## Reductions:
 
 State 84:
+## Known stack suffix:
+## INTEGER
+## LR(1) items:
 integer_list_eol -> INTEGER . integer_list_eol [ # ]
+## Transitions:
 -- On INTEGER shift to state 84
 -- On EOL shift to state 2
 -- On integer_list_eol shift to state 85
 -- On end_of_line shift to state 86
+## Reductions:
 
 State 85:
+## Known stack suffix:
+## INTEGER integer_list_eol
+## LR(1) items:
 integer_list_eol -> INTEGER integer_list_eol . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production integer_list_eol -> INTEGER integer_list_eol
 
 State 86:
+## Known stack suffix:
+## end_of_line
+## LR(1) items:
 integer_list_eol -> end_of_line . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production integer_list_eol -> end_of_line
 
 State 87:
+## Known stack suffix:
+## integer_list_eol
+## LR(1) items:
 integer_list_eol' -> integer_list_eol . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept integer_list_eol
 
 State 88:
+## Known stack suffix:
+##
+## LR(1) items:
 list_arguments_eol' -> . list_arguments_eol [ # ]
+## Transitions:
 -- On UIDENT shift to state 39
 -- On LIDENT shift to state 40
 -- On opt_identifier_eol shift to state 89
 -- On opt_identifier shift to state 90
 -- On list_arguments_eol shift to state 95
 -- On identifier shift to state 49
+## Reductions:
 -- On INTEGER reduce production opt_identifier ->
 -- On EOL reduce production opt_identifier ->
 
 State 89:
+## Known stack suffix:
+## opt_identifier_eol
+## LR(1) items:
 list_arguments_eol -> opt_identifier_eol . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production list_arguments_eol -> opt_identifier_eol
 
 State 90:
+## Known stack suffix:
+## opt_identifier
+## LR(1) items:
 list_arguments_eol -> opt_identifier . integer opt_integer_eol [ # ]
 opt_identifier_eol -> opt_identifier . end_of_line [ # ]
+## Transitions:
 -- On INTEGER shift to state 91
 -- On EOL shift to state 2
 -- On integer shift to state 92
 -- On end_of_line shift to state 94
+## Reductions:
 
 State 91:
+## Known stack suffix:
+## INTEGER
+## LR(1) items:
 integer -> INTEGER . [ INTEGER EOL ]
+## Transitions:
+## Reductions:
 -- On INTEGER reduce production integer -> INTEGER
 -- On EOL reduce production integer -> INTEGER
 
 State 92:
+## Known stack suffix:
+## opt_identifier integer
+## LR(1) items:
 list_arguments_eol -> opt_identifier integer . opt_integer_eol [ # ]
+## Transitions:
 -- On INTEGER shift to state 45
 -- On EOL shift to state 2
 -- On opt_integer_eol shift to state 93
 -- On end_of_line shift to state 48
+## Reductions:
 
 State 93:
+## Known stack suffix:
+## opt_identifier integer opt_integer_eol
+## LR(1) items:
 list_arguments_eol -> opt_identifier integer opt_integer_eol . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production list_arguments_eol -> opt_identifier integer opt_integer_eol
 
 State 94:
+## Known stack suffix:
+## opt_identifier end_of_line
+## LR(1) items:
 opt_identifier_eol -> opt_identifier end_of_line . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production opt_identifier_eol -> opt_identifier end_of_line
 
 State 95:
+## Known stack suffix:
+## list_arguments_eol
+## LR(1) items:
 list_arguments_eol' -> list_arguments_eol . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept list_arguments_eol
 
 State 96:
+## Known stack suffix:
+##
+## LR(1) items:
 longident_eol' -> . longident_eol [ # ]
+## Transitions:
 -- On UIDENT shift to state 11
 -- On OPERATOR shift to state 13
 -- On LIDENT shift to state 15
 -- On module_path shift to state 19
 -- On longident_eol shift to state 97
 -- On longident shift to state 98
+## Reductions:
 
 State 97:
+## Known stack suffix:
+## longident_eol
+## LR(1) items:
 longident_eol' -> longident_eol . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept longident_eol
 
 State 98:
+## Known stack suffix:
+## longident
+## LR(1) items:
 longident_eol -> longident . end_of_line [ # ]
+## Transitions:
 -- On EOL shift to state 2
 -- On end_of_line shift to state 99
+## Reductions:
 
 State 99:
+## Known stack suffix:
+## longident end_of_line
+## LR(1) items:
 longident_eol -> longident end_of_line . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production longident_eol -> longident end_of_line
 
 State 100:
+## Known stack suffix:
+##
+## LR(1) items:
 opt_identifier' -> . opt_identifier [ # ]
+## Transitions:
 -- On UIDENT shift to state 63
 -- On LIDENT shift to state 64
 -- On opt_identifier shift to state 101
 -- On identifier shift to state 102
+## Reductions:
 -- On # reduce production opt_identifier ->
 ** End-of-stream conflict on UIDENT LIDENT
 **   There is a tension between
@@ -677,104 +1182,204 @@ opt_identifier' -> . opt_identifier [ # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 101:
+## Known stack suffix:
+## opt_identifier
+## LR(1) items:
 opt_identifier' -> opt_identifier . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept opt_identifier
 
 State 102:
+## Known stack suffix:
+## identifier
+## LR(1) items:
 opt_identifier -> identifier . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production opt_identifier -> identifier
 
 State 103:
+## Known stack suffix:
+##
+## LR(1) items:
 opt_identifier_eol' -> . opt_identifier_eol [ # ]
+## Transitions:
 -- On UIDENT shift to state 39
 -- On LIDENT shift to state 40
 -- On opt_identifier_eol shift to state 104
 -- On opt_identifier shift to state 105
 -- On identifier shift to state 49
+## Reductions:
 -- On EOL reduce production opt_identifier ->
 
 State 104:
+## Known stack suffix:
+## opt_identifier_eol
+## LR(1) items:
 opt_identifier_eol' -> opt_identifier_eol . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept opt_identifier_eol
 
 State 105:
+## Known stack suffix:
+## opt_identifier
+## LR(1) items:
 opt_identifier_eol -> opt_identifier . end_of_line [ # ]
+## Transitions:
 -- On EOL shift to state 2
 -- On end_of_line shift to state 94
+## Reductions:
 
 State 106:
+## Known stack suffix:
+##
+## LR(1) items:
 opt_integer_eol' -> . opt_integer_eol [ # ]
+## Transitions:
 -- On INTEGER shift to state 45
 -- On EOL shift to state 2
 -- On opt_integer_eol shift to state 107
 -- On end_of_line shift to state 48
+## Reductions:
 
 State 107:
+## Known stack suffix:
+## opt_integer_eol
+## LR(1) items:
 opt_integer_eol' -> opt_integer_eol . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept opt_integer_eol
 
 State 108:
+## Known stack suffix:
+##
+## LR(1) items:
 opt_signed_int64_eol' -> . opt_signed_int64_eol [ # ]
+## Transitions:
 -- On MINUS shift to state 109
 -- On INTEGER shift to state 111
 -- On EOL shift to state 2
 -- On opt_signed_int64_eol shift to state 113
 -- On opt_int64_eol shift to state 114
 -- On end_of_line shift to state 115
+## Reductions:
 
 State 109:
+## Known stack suffix:
+## MINUS
+## LR(1) items:
 opt_signed_int64_eol -> MINUS . int64_eol [ # ]
+## Transitions:
 -- On INTEGER shift to state 75
 -- On int64_eol shift to state 110
+## Reductions:
 
 State 110:
+## Known stack suffix:
+## MINUS int64_eol
+## LR(1) items:
 opt_signed_int64_eol -> MINUS int64_eol . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production opt_signed_int64_eol -> MINUS int64_eol
 
 State 111:
+## Known stack suffix:
+## INTEGER
+## LR(1) items:
 opt_int64_eol -> INTEGER . end_of_line [ # ]
+## Transitions:
 -- On EOL shift to state 2
 -- On end_of_line shift to state 112
+## Reductions:
 
 State 112:
+## Known stack suffix:
+## INTEGER end_of_line
+## LR(1) items:
 opt_int64_eol -> INTEGER end_of_line . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production opt_int64_eol -> INTEGER end_of_line
 
 State 113:
+## Known stack suffix:
+## opt_signed_int64_eol
+## LR(1) items:
 opt_signed_int64_eol' -> opt_signed_int64_eol . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept opt_signed_int64_eol
 
 State 114:
+## Known stack suffix:
+## opt_int64_eol
+## LR(1) items:
 opt_signed_int64_eol -> opt_int64_eol . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production opt_signed_int64_eol -> opt_int64_eol
 
 State 115:
+## Known stack suffix:
+## end_of_line
+## LR(1) items:
 opt_int64_eol -> end_of_line . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production opt_int64_eol -> end_of_line
 
 State 116:
+## Known stack suffix:
+##
+## LR(1) items:
 opt_signed_integer_eol' -> . opt_signed_integer_eol [ # ]
+## Transitions:
 -- On MINUS shift to state 117
 -- On INTEGER shift to state 45
 -- On EOL shift to state 2
 -- On opt_signed_integer_eol shift to state 119
 -- On opt_integer_eol shift to state 120
 -- On end_of_line shift to state 48
+## Reductions:
 
 State 117:
+## Known stack suffix:
+## MINUS
+## LR(1) items:
 opt_signed_integer_eol -> MINUS . integer_eol [ # ]
+## Transitions:
 -- On INTEGER shift to state 36
 -- On integer_eol shift to state 118
+## Reductions:
 
 State 118:
+## Known stack suffix:
+## MINUS integer_eol
+## LR(1) items:
 opt_signed_integer_eol -> MINUS integer_eol . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production opt_signed_integer_eol -> MINUS integer_eol
 
 State 119:
+## Known stack suffix:
+## opt_signed_integer_eol
+## LR(1) items:
 opt_signed_integer_eol' -> opt_signed_integer_eol . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept opt_signed_integer_eol
 
 State 120:
+## Known stack suffix:
+## opt_integer_eol
+## LR(1) items:
 opt_signed_integer_eol -> opt_integer_eol . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production opt_signed_integer_eol -> opt_integer_eol
 

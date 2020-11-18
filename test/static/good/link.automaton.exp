@@ -1,5 +1,9 @@
 State 0:
+## Known stack suffix:
+##
+## LR(1) items:
 main' -> . main [ # ]
+## Transitions:
 -- On VDASH shift to state 1
 -- On VAR shift to state 2
 -- On OP shift to state 3
@@ -7,15 +11,26 @@ main' -> . main [ # ]
 -- On sequent shift to state 24
 -- On main shift to state 26
 -- On formimp shift to state 27
+## Reductions:
 
 State 1:
+## Known stack suffix:
+## VDASH
+## LR(1) items:
 sequent -> VDASH . formimp [ END ]
+## Transitions:
 -- On VAR shift to state 2
 -- On OP shift to state 3
 -- On formimp shift to state 21
+## Reductions:
 
 State 2:
+## Known stack suffix:
+## VAR
+## LR(1) items:
 formimp -> VAR . [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
+## Transitions:
+## Reductions:
 -- On VDASH reduce production formimp -> VAR
 -- On TIMES reduce production formimp -> VAR
 -- On SEQ reduce production formimp -> VAR
@@ -29,12 +44,20 @@ formimp -> VAR . [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
 -- On CP reduce production formimp -> VAR
 
 State 3:
+## Known stack suffix:
+## OP
+## LR(1) items:
 formimp -> OP . formimp CP [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
+## Transitions:
 -- On VAR shift to state 2
 -- On OP shift to state 3
 -- On formimp shift to state 4
+## Reductions:
 
 State 4:
+## Known stack suffix:
+## OP formimp
+## LR(1) items:
 formimp -> formimp . PAR formimp [ TIMES SEQ RIMP PAR NEXT NEG LIMP IMP CP ]
 formimp -> formimp . TIMES formimp [ TIMES SEQ RIMP PAR NEXT NEG LIMP IMP CP ]
 formimp -> formimp . NEXT formimp [ TIMES SEQ RIMP PAR NEXT NEG LIMP IMP CP ]
@@ -44,6 +67,7 @@ formimp -> formimp . RIMP formimp [ TIMES SEQ RIMP PAR NEXT NEG LIMP IMP CP ]
 formimp -> formimp . LIMP formimp [ TIMES SEQ RIMP PAR NEXT NEG LIMP IMP CP ]
 formimp -> OP formimp . CP [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
 formimp -> formimp . NEG [ TIMES SEQ RIMP PAR NEXT NEG LIMP IMP CP ]
+## Transitions:
 -- On TIMES shift to state 5
 -- On SEQ shift to state 9
 -- On RIMP shift to state 7
@@ -53,14 +77,23 @@ formimp -> formimp . NEG [ TIMES SEQ RIMP PAR NEXT NEG LIMP IMP CP ]
 -- On LIMP shift to state 14
 -- On IMP shift to state 18
 -- On CP shift to state 20
+## Reductions:
 
 State 5:
+## Known stack suffix:
+## formimp TIMES
+## LR(1) items:
 formimp -> formimp TIMES . formimp [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
+## Transitions:
 -- On VAR shift to state 2
 -- On OP shift to state 3
 -- On formimp shift to state 6
+## Reductions:
 
 State 6:
+## Known stack suffix:
+## formimp TIMES formimp
+## LR(1) items:
 formimp -> formimp . PAR formimp [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
 formimp -> formimp . TIMES formimp [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
 formimp -> formimp TIMES formimp . [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
@@ -70,10 +103,12 @@ formimp -> formimp . IMP formimp [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP EN
 formimp -> formimp . RIMP formimp [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
 formimp -> formimp . LIMP formimp [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
 formimp -> formimp . NEG [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
+## Transitions:
 -- On RIMP shift to state 7
 -- On NEG shift to state 13
 -- On LIMP shift to state 14
 -- On IMP shift to state 18
+## Reductions:
 -- On VDASH reduce production formimp -> formimp TIMES formimp
 -- On TIMES reduce production formimp -> formimp TIMES formimp
 -- On SEQ reduce production formimp -> formimp TIMES formimp
@@ -87,12 +122,20 @@ formimp -> formimp . NEG [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
 ** Conflict on RIMP LIMP IMP
 
 State 7:
+## Known stack suffix:
+## formimp RIMP
+## LR(1) items:
 formimp -> formimp RIMP . formimp [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
+## Transitions:
 -- On VAR shift to state 2
 -- On OP shift to state 3
 -- On formimp shift to state 8
+## Reductions:
 
 State 8:
+## Known stack suffix:
+## formimp RIMP formimp
+## LR(1) items:
 formimp -> formimp . PAR formimp [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
 formimp -> formimp . TIMES formimp [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
 formimp -> formimp . NEXT formimp [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
@@ -102,6 +145,7 @@ formimp -> formimp . RIMP formimp [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP E
 formimp -> formimp RIMP formimp . [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
 formimp -> formimp . LIMP formimp [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
 formimp -> formimp . NEG [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
+## Transitions:
 -- On TIMES shift to state 5
 -- On SEQ shift to state 9
 -- On RIMP shift to state 7
@@ -110,6 +154,7 @@ formimp -> formimp . NEG [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
 -- On NEG shift to state 13
 -- On LIMP shift to state 14
 -- On IMP shift to state 18
+## Reductions:
 -- On VDASH reduce production formimp -> formimp RIMP formimp
 -- On TIMES reduce production formimp -> formimp RIMP formimp
 -- On SEQ reduce production formimp -> formimp RIMP formimp
@@ -124,12 +169,20 @@ formimp -> formimp . NEG [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
 ** Conflict on TIMES SEQ RIMP PAR NEXT NEG LIMP IMP
 
 State 9:
+## Known stack suffix:
+## formimp SEQ
+## LR(1) items:
 formimp -> formimp SEQ . formimp [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
+## Transitions:
 -- On VAR shift to state 2
 -- On OP shift to state 3
 -- On formimp shift to state 10
+## Reductions:
 
 State 10:
+## Known stack suffix:
+## formimp SEQ formimp
+## LR(1) items:
 formimp -> formimp . PAR formimp [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
 formimp -> formimp . TIMES formimp [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
 formimp -> formimp . NEXT formimp [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
@@ -139,12 +192,14 @@ formimp -> formimp . IMP formimp [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP EN
 formimp -> formimp . RIMP formimp [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
 formimp -> formimp . LIMP formimp [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
 formimp -> formimp . NEG [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
+## Transitions:
 -- On TIMES shift to state 5
 -- On RIMP shift to state 7
 -- On NEXT shift to state 11
 -- On NEG shift to state 13
 -- On LIMP shift to state 14
 -- On IMP shift to state 18
+## Reductions:
 -- On VDASH reduce production formimp -> formimp SEQ formimp
 -- On SEQ reduce production formimp -> formimp SEQ formimp
 -- On RIMP reduce production formimp -> formimp SEQ formimp
@@ -156,12 +211,20 @@ formimp -> formimp . NEG [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
 ** Conflict on RIMP LIMP IMP
 
 State 11:
+## Known stack suffix:
+## formimp NEXT
+## LR(1) items:
 formimp -> formimp NEXT . formimp [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
+## Transitions:
 -- On VAR shift to state 2
 -- On OP shift to state 3
 -- On formimp shift to state 12
+## Reductions:
 
 State 12:
+## Known stack suffix:
+## formimp NEXT formimp
+## LR(1) items:
 formimp -> formimp . PAR formimp [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
 formimp -> formimp . TIMES formimp [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
 formimp -> formimp . NEXT formimp [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
@@ -171,10 +234,12 @@ formimp -> formimp . IMP formimp [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP EN
 formimp -> formimp . RIMP formimp [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
 formimp -> formimp . LIMP formimp [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
 formimp -> formimp . NEG [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
+## Transitions:
 -- On RIMP shift to state 7
 -- On NEG shift to state 13
 -- On LIMP shift to state 14
 -- On IMP shift to state 18
+## Reductions:
 -- On VDASH reduce production formimp -> formimp NEXT formimp
 -- On TIMES reduce production formimp -> formimp NEXT formimp
 -- On SEQ reduce production formimp -> formimp NEXT formimp
@@ -188,7 +253,12 @@ formimp -> formimp . NEG [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
 ** Conflict on RIMP LIMP IMP
 
 State 13:
+## Known stack suffix:
+## formimp NEG
+## LR(1) items:
 formimp -> formimp NEG . [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
+## Transitions:
+## Reductions:
 -- On VDASH reduce production formimp -> formimp NEG
 -- On TIMES reduce production formimp -> formimp NEG
 -- On SEQ reduce production formimp -> formimp NEG
@@ -202,12 +272,20 @@ formimp -> formimp NEG . [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
 -- On CP reduce production formimp -> formimp NEG
 
 State 14:
+## Known stack suffix:
+## formimp LIMP
+## LR(1) items:
 formimp -> formimp LIMP . formimp [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
+## Transitions:
 -- On VAR shift to state 2
 -- On OP shift to state 3
 -- On formimp shift to state 15
+## Reductions:
 
 State 15:
+## Known stack suffix:
+## formimp LIMP formimp
+## LR(1) items:
 formimp -> formimp . PAR formimp [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
 formimp -> formimp . TIMES formimp [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
 formimp -> formimp . NEXT formimp [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
@@ -217,6 +295,7 @@ formimp -> formimp . RIMP formimp [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP E
 formimp -> formimp . LIMP formimp [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
 formimp -> formimp LIMP formimp . [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
 formimp -> formimp . NEG [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
+## Transitions:
 -- On TIMES shift to state 5
 -- On SEQ shift to state 9
 -- On RIMP shift to state 7
@@ -225,6 +304,7 @@ formimp -> formimp . NEG [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
 -- On NEG shift to state 13
 -- On LIMP shift to state 14
 -- On IMP shift to state 18
+## Reductions:
 -- On VDASH reduce production formimp -> formimp LIMP formimp
 -- On TIMES reduce production formimp -> formimp LIMP formimp
 -- On SEQ reduce production formimp -> formimp LIMP formimp
@@ -239,12 +319,20 @@ formimp -> formimp . NEG [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
 ** Conflict on TIMES SEQ RIMP PAR NEXT NEG LIMP IMP
 
 State 16:
+## Known stack suffix:
+## formimp PAR
+## LR(1) items:
 formimp -> formimp PAR . formimp [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
+## Transitions:
 -- On VAR shift to state 2
 -- On OP shift to state 3
 -- On formimp shift to state 17
+## Reductions:
 
 State 17:
+## Known stack suffix:
+## formimp PAR formimp
+## LR(1) items:
 formimp -> formimp . PAR formimp [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
 formimp -> formimp PAR formimp . [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
 formimp -> formimp . TIMES formimp [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
@@ -254,12 +342,14 @@ formimp -> formimp . IMP formimp [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP EN
 formimp -> formimp . RIMP formimp [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
 formimp -> formimp . LIMP formimp [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
 formimp -> formimp . NEG [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
+## Transitions:
 -- On TIMES shift to state 5
 -- On RIMP shift to state 7
 -- On NEXT shift to state 11
 -- On NEG shift to state 13
 -- On LIMP shift to state 14
 -- On IMP shift to state 18
+## Reductions:
 -- On VDASH reduce production formimp -> formimp PAR formimp
 -- On SEQ reduce production formimp -> formimp PAR formimp
 -- On RIMP reduce production formimp -> formimp PAR formimp
@@ -271,12 +361,20 @@ formimp -> formimp . NEG [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
 ** Conflict on RIMP LIMP IMP
 
 State 18:
+## Known stack suffix:
+## formimp IMP
+## LR(1) items:
 formimp -> formimp IMP . formimp [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
+## Transitions:
 -- On VAR shift to state 2
 -- On OP shift to state 3
 -- On formimp shift to state 19
+## Reductions:
 
 State 19:
+## Known stack suffix:
+## formimp IMP formimp
+## LR(1) items:
 formimp -> formimp . PAR formimp [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
 formimp -> formimp . TIMES formimp [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
 formimp -> formimp . NEXT formimp [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
@@ -286,6 +384,7 @@ formimp -> formimp IMP formimp . [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP EN
 formimp -> formimp . RIMP formimp [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
 formimp -> formimp . LIMP formimp [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
 formimp -> formimp . NEG [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
+## Transitions:
 -- On TIMES shift to state 5
 -- On SEQ shift to state 9
 -- On RIMP shift to state 7
@@ -294,6 +393,7 @@ formimp -> formimp . NEG [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
 -- On NEG shift to state 13
 -- On LIMP shift to state 14
 -- On IMP shift to state 18
+## Reductions:
 -- On VDASH reduce production formimp -> formimp IMP formimp
 -- On TIMES reduce production formimp -> formimp IMP formimp
 -- On SEQ reduce production formimp -> formimp IMP formimp
@@ -308,7 +408,12 @@ formimp -> formimp . NEG [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
 ** Conflict on TIMES SEQ RIMP PAR NEXT NEG LIMP IMP
 
 State 20:
+## Known stack suffix:
+## OP formimp CP
+## LR(1) items:
 formimp -> OP formimp CP . [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
+## Transitions:
+## Reductions:
 -- On VDASH reduce production formimp -> OP formimp CP
 -- On TIMES reduce production formimp -> OP formimp CP
 -- On SEQ reduce production formimp -> OP formimp CP
@@ -322,6 +427,9 @@ formimp -> OP formimp CP . [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END CP ]
 -- On CP reduce production formimp -> OP formimp CP
 
 State 21:
+## Known stack suffix:
+## VDASH formimp
+## LR(1) items:
 formimp -> formimp . PAR formimp [ TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END ]
 formimp -> formimp . TIMES formimp [ TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END ]
 formimp -> formimp . NEXT formimp [ TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END ]
@@ -331,6 +439,7 @@ formimp -> formimp . RIMP formimp [ TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END ]
 formimp -> formimp . LIMP formimp [ TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END ]
 formimp -> formimp . NEG [ TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END ]
 sequent -> VDASH formimp . [ END ]
+## Transitions:
 -- On TIMES shift to state 5
 -- On SEQ shift to state 9
 -- On RIMP shift to state 7
@@ -339,29 +448,58 @@ sequent -> VDASH formimp . [ END ]
 -- On NEG shift to state 13
 -- On LIMP shift to state 14
 -- On IMP shift to state 18
+## Reductions:
 -- On END reduce production sequent -> VDASH formimp
 
 State 22:
+## Known stack suffix:
+## DIRECTIVE
+## LR(1) items:
 main -> DIRECTIVE . VAR [ # ]
+## Transitions:
 -- On VAR shift to state 23
+## Reductions:
 
 State 23:
+## Known stack suffix:
+## DIRECTIVE VAR
+## LR(1) items:
 main -> DIRECTIVE VAR . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production main -> DIRECTIVE VAR
 
 State 24:
+## Known stack suffix:
+## sequent
+## LR(1) items:
 main -> sequent . END [ # ]
+## Transitions:
 -- On END shift to state 25
+## Reductions:
 
 State 25:
+## Known stack suffix:
+## sequent END
+## LR(1) items:
 main -> sequent END . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production main -> sequent END
 
 State 26:
+## Known stack suffix:
+## main
+## LR(1) items:
 main' -> main . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept main
 
 State 27:
+## Known stack suffix:
+## formimp
+## LR(1) items:
 formimp -> formimp . PAR formimp [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END ]
 formimp -> formimp . TIMES formimp [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END ]
 formimp -> formimp . NEXT formimp [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END ]
@@ -372,6 +510,7 @@ formimp -> formimp . LIMP formimp [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP E
 formimp -> formimp . NEG [ VDASH TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END ]
 sequent -> formimp . VDASH formimp [ END ]
 sequent -> formimp . [ END ]
+## Transitions:
 -- On VDASH shift to state 28
 -- On TIMES shift to state 5
 -- On SEQ shift to state 9
@@ -381,15 +520,24 @@ sequent -> formimp . [ END ]
 -- On NEG shift to state 13
 -- On LIMP shift to state 14
 -- On IMP shift to state 18
+## Reductions:
 -- On END reduce production sequent -> formimp
 
 State 28:
+## Known stack suffix:
+## formimp VDASH
+## LR(1) items:
 sequent -> formimp VDASH . formimp [ END ]
+## Transitions:
 -- On VAR shift to state 2
 -- On OP shift to state 3
 -- On formimp shift to state 29
+## Reductions:
 
 State 29:
+## Known stack suffix:
+## formimp VDASH formimp
+## LR(1) items:
 formimp -> formimp . PAR formimp [ TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END ]
 formimp -> formimp . TIMES formimp [ TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END ]
 formimp -> formimp . NEXT formimp [ TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END ]
@@ -399,6 +547,7 @@ formimp -> formimp . RIMP formimp [ TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END ]
 formimp -> formimp . LIMP formimp [ TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END ]
 formimp -> formimp . NEG [ TIMES SEQ RIMP PAR NEXT NEG LIMP IMP END ]
 sequent -> formimp VDASH formimp . [ END ]
+## Transitions:
 -- On TIMES shift to state 5
 -- On SEQ shift to state 9
 -- On RIMP shift to state 7
@@ -407,5 +556,6 @@ sequent -> formimp VDASH formimp . [ END ]
 -- On NEG shift to state 13
 -- On LIMP shift to state 14
 -- On IMP shift to state 18
+## Reductions:
 -- On END reduce production sequent -> formimp VDASH formimp
 

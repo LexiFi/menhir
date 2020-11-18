@@ -1,5 +1,9 @@
 State 0:
+## Known stack suffix:
+##
+## LR(1) items:
 msgfmt' -> . msgfmt [ # ]
+## Transitions:
 -- On MSGID shift to state 1
 -- On EOF shift to state 18
 -- On DOMAIN shift to state 19
@@ -11,15 +15,26 @@ msgfmt' -> . msgfmt [ # ]
 -- On domain shift to state 39
 -- On comment_list shift to state 25
 -- On comment shift to state 33
+## Reductions:
 
 State 1:
+## Known stack suffix:
+## MSGID
+## LR(1) items:
 message -> MSGID . string_list MSGSTR string_list [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
 message -> MSGID . string_list msgid_pluralform pluralform_list [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+## Transitions:
 -- On STRING shift to state 2
 -- On string_list shift to state 3
+## Reductions:
 
 State 2:
+## Known stack suffix:
+## STRING
+## LR(1) items:
 string_list -> STRING . [ STRING MSGSTR MSGID_PLURAL MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production string_list -> STRING
 -- On MSGSTR reduce production string_list -> STRING
 -- On MSGID_PLURAL reduce production string_list -> STRING
@@ -29,16 +44,26 @@ string_list -> STRING . [ STRING MSGSTR MSGID_PLURAL MSGID DOMAIN COMMENT_SPECIA
 -- On COMMENT_FILEPOS reduce production string_list -> STRING
 
 State 3:
+## Known stack suffix:
+## MSGID string_list
+## LR(1) items:
 message -> MSGID string_list . MSGSTR string_list [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
 message -> MSGID string_list . msgid_pluralform pluralform_list [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
 string_list -> string_list . STRING [ STRING MSGSTR MSGID_PLURAL ]
+## Transitions:
 -- On STRING shift to state 4
 -- On MSGSTR shift to state 5
 -- On MSGID_PLURAL shift to state 7
 -- On msgid_pluralform shift to state 9
+## Reductions:
 
 State 4:
+## Known stack suffix:
+## string_list STRING
+## LR(1) items:
 string_list -> string_list STRING . [ STRING MSGSTR MSGID_PLURAL MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production string_list -> string_list STRING
 -- On MSGSTR reduce production string_list -> string_list STRING
 -- On MSGID_PLURAL reduce production string_list -> string_list STRING
@@ -48,57 +73,107 @@ string_list -> string_list STRING . [ STRING MSGSTR MSGID_PLURAL MSGID DOMAIN CO
 -- On COMMENT_FILEPOS reduce production string_list -> string_list STRING
 
 State 5:
+## Known stack suffix:
+## MSGID string_list MSGSTR
+## LR(1) items:
 message -> MSGID string_list MSGSTR . string_list [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+## Transitions:
 -- On STRING shift to state 2
 -- On string_list shift to state 6
+## Reductions:
 
 State 6:
+## Known stack suffix:
+## MSGID string_list MSGSTR string_list
+## LR(1) items:
 message -> MSGID string_list MSGSTR string_list . [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
 string_list -> string_list . STRING [ STRING MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+## Transitions:
 -- On STRING shift to state 4
+## Reductions:
 -- On MSGID reduce production message -> MSGID string_list MSGSTR string_list
 -- On DOMAIN reduce production message -> MSGID string_list MSGSTR string_list
 -- On COMMENT_SPECIAL reduce production message -> MSGID string_list MSGSTR string_list
 -- On COMMENT_FILEPOS reduce production message -> MSGID string_list MSGSTR string_list
 
 State 7:
+## Known stack suffix:
+## MSGID_PLURAL
+## LR(1) items:
 msgid_pluralform -> MSGID_PLURAL . string_list [ MSGSTR ]
+## Transitions:
 -- On STRING shift to state 2
 -- On string_list shift to state 8
+## Reductions:
 
 State 8:
+## Known stack suffix:
+## MSGID_PLURAL string_list
+## LR(1) items:
 msgid_pluralform -> MSGID_PLURAL string_list . [ MSGSTR ]
 string_list -> string_list . STRING [ STRING MSGSTR ]
+## Transitions:
 -- On STRING shift to state 4
+## Reductions:
 -- On MSGSTR reduce production msgid_pluralform -> MSGID_PLURAL string_list
 
 State 9:
+## Known stack suffix:
+## MSGID string_list msgid_pluralform
+## LR(1) items:
 message -> MSGID string_list msgid_pluralform . pluralform_list [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+## Transitions:
 -- On MSGSTR shift to state 10
 -- On pluralform_list shift to state 15
 -- On pluralform shift to state 17
+## Reductions:
 
 State 10:
+## Known stack suffix:
+## MSGSTR
+## LR(1) items:
 pluralform -> MSGSTR . LBRACKET NUMBER RBRACKET string_list [ MSGSTR MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+## Transitions:
 -- On LBRACKET shift to state 11
+## Reductions:
 
 State 11:
+## Known stack suffix:
+## MSGSTR LBRACKET
+## LR(1) items:
 pluralform -> MSGSTR LBRACKET . NUMBER RBRACKET string_list [ MSGSTR MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+## Transitions:
 -- On NUMBER shift to state 12
+## Reductions:
 
 State 12:
+## Known stack suffix:
+## MSGSTR LBRACKET NUMBER
+## LR(1) items:
 pluralform -> MSGSTR LBRACKET NUMBER . RBRACKET string_list [ MSGSTR MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+## Transitions:
 -- On RBRACKET shift to state 13
+## Reductions:
 
 State 13:
+## Known stack suffix:
+## MSGSTR LBRACKET NUMBER RBRACKET
+## LR(1) items:
 pluralform -> MSGSTR LBRACKET NUMBER RBRACKET . string_list [ MSGSTR MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+## Transitions:
 -- On STRING shift to state 2
 -- On string_list shift to state 14
+## Reductions:
 
 State 14:
+## Known stack suffix:
+## MSGSTR LBRACKET NUMBER RBRACKET string_list
+## LR(1) items:
 pluralform -> MSGSTR LBRACKET NUMBER RBRACKET string_list . [ MSGSTR MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
 string_list -> string_list . STRING [ STRING MSGSTR MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+## Transitions:
 -- On STRING shift to state 4
+## Reductions:
 -- On MSGSTR reduce production pluralform -> MSGSTR LBRACKET NUMBER RBRACKET string_list
 -- On MSGID reduce production pluralform -> MSGSTR LBRACKET NUMBER RBRACKET string_list
 -- On DOMAIN reduce production pluralform -> MSGSTR LBRACKET NUMBER RBRACKET string_list
@@ -106,17 +181,27 @@ string_list -> string_list . STRING [ STRING MSGSTR MSGID DOMAIN COMMENT_SPECIAL
 -- On COMMENT_FILEPOS reduce production pluralform -> MSGSTR LBRACKET NUMBER RBRACKET string_list
 
 State 15:
+## Known stack suffix:
+## MSGID string_list msgid_pluralform pluralform_list
+## LR(1) items:
 message -> MSGID string_list msgid_pluralform pluralform_list . [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
 pluralform_list -> pluralform_list . pluralform [ MSGSTR MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+## Transitions:
 -- On MSGSTR shift to state 10
 -- On pluralform shift to state 16
+## Reductions:
 -- On MSGID reduce production message -> MSGID string_list msgid_pluralform pluralform_list
 -- On DOMAIN reduce production message -> MSGID string_list msgid_pluralform pluralform_list
 -- On COMMENT_SPECIAL reduce production message -> MSGID string_list msgid_pluralform pluralform_list
 -- On COMMENT_FILEPOS reduce production message -> MSGID string_list msgid_pluralform pluralform_list
 
 State 16:
+## Known stack suffix:
+## pluralform_list pluralform
+## LR(1) items:
 pluralform_list -> pluralform_list pluralform . [ MSGSTR MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+## Transitions:
+## Reductions:
 -- On MSGSTR reduce production pluralform_list -> pluralform_list pluralform
 -- On MSGID reduce production pluralform_list -> pluralform_list pluralform
 -- On DOMAIN reduce production pluralform_list -> pluralform_list pluralform
@@ -124,7 +209,12 @@ pluralform_list -> pluralform_list pluralform . [ MSGSTR MSGID DOMAIN COMMENT_SP
 -- On COMMENT_FILEPOS reduce production pluralform_list -> pluralform_list pluralform
 
 State 17:
+## Known stack suffix:
+## pluralform
+## LR(1) items:
 pluralform_list -> pluralform . [ MSGSTR MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+## Transitions:
+## Reductions:
 -- On MSGSTR reduce production pluralform_list -> pluralform
 -- On MSGID reduce production pluralform_list -> pluralform
 -- On DOMAIN reduce production pluralform_list -> pluralform
@@ -132,20 +222,34 @@ pluralform_list -> pluralform . [ MSGSTR MSGID DOMAIN COMMENT_SPECIAL COMMENT_FI
 -- On COMMENT_FILEPOS reduce production pluralform_list -> pluralform
 
 State 18:
+## Known stack suffix:
+## EOF
+## LR(1) items:
 msgfmt -> EOF . [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+## Transitions:
+## Reductions:
 -- On MSGID reduce production msgfmt -> EOF
 -- On DOMAIN reduce production msgfmt -> EOF
 -- On COMMENT_SPECIAL reduce production msgfmt -> EOF
 -- On COMMENT_FILEPOS reduce production msgfmt -> EOF
 
 State 19:
+## Known stack suffix:
+## DOMAIN
+## LR(1) items:
 domain -> DOMAIN . STRING message_list [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
 domain -> DOMAIN . STRING [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+## Transitions:
 -- On STRING shift to state 20
+## Reductions:
 
 State 20:
+## Known stack suffix:
+## DOMAIN STRING
+## LR(1) items:
 domain -> DOMAIN STRING . message_list [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
 domain -> DOMAIN STRING . [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+## Transitions:
 -- On MSGID shift to state 1
 -- On COMMENT_SPECIAL shift to state 21
 -- On COMMENT_FILEPOS shift to state 22
@@ -153,115 +257,190 @@ domain -> DOMAIN STRING . [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
 -- On message shift to state 34
 -- On comment_list shift to state 25
 -- On comment shift to state 33
+## Reductions:
 -- On DOMAIN reduce production domain -> DOMAIN STRING
 
 State 21:
+## Known stack suffix:
+## COMMENT_SPECIAL
+## LR(1) items:
 comment -> COMMENT_SPECIAL . [ MSGID COMMENT_SPECIAL COMMENT_FILEPOS ]
+## Transitions:
+## Reductions:
 -- On MSGID reduce production comment -> COMMENT_SPECIAL
 -- On COMMENT_SPECIAL reduce production comment -> COMMENT_SPECIAL
 -- On COMMENT_FILEPOS reduce production comment -> COMMENT_SPECIAL
 
 State 22:
+## Known stack suffix:
+## COMMENT_FILEPOS
+## LR(1) items:
 comment -> COMMENT_FILEPOS . [ MSGID COMMENT_SPECIAL COMMENT_FILEPOS ]
+## Transitions:
+## Reductions:
 -- On MSGID reduce production comment -> COMMENT_FILEPOS
 -- On COMMENT_SPECIAL reduce production comment -> COMMENT_FILEPOS
 -- On COMMENT_FILEPOS reduce production comment -> COMMENT_FILEPOS
 
 State 23:
+## Known stack suffix:
+## DOMAIN STRING message_list
+## LR(1) items:
 domain -> DOMAIN STRING message_list . [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
 message_list -> message_list . message [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+## Transitions:
 -- On MSGID shift to state 1
 -- On COMMENT_SPECIAL shift to state 21
 -- On COMMENT_FILEPOS shift to state 22
 -- On message shift to state 24
 -- On comment_list shift to state 25
 -- On comment shift to state 33
+## Reductions:
 -- On DOMAIN reduce production domain -> DOMAIN STRING message_list
 
 State 24:
+## Known stack suffix:
+## message_list message
+## LR(1) items:
 message_list -> message_list message . [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+## Transitions:
+## Reductions:
 -- On MSGID reduce production message_list -> message_list message
 -- On DOMAIN reduce production message_list -> message_list message
 -- On COMMENT_SPECIAL reduce production message_list -> message_list message
 -- On COMMENT_FILEPOS reduce production message_list -> message_list message
 
 State 25:
+## Known stack suffix:
+## comment_list
+## LR(1) items:
 comment_list -> comment_list . comment [ MSGID COMMENT_SPECIAL COMMENT_FILEPOS ]
 message -> comment_list . MSGID string_list MSGSTR string_list [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
 message -> comment_list . MSGID string_list msgid_pluralform pluralform_list [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+## Transitions:
 -- On MSGID shift to state 26
 -- On COMMENT_SPECIAL shift to state 21
 -- On COMMENT_FILEPOS shift to state 22
 -- On comment shift to state 32
+## Reductions:
 
 State 26:
+## Known stack suffix:
+## comment_list MSGID
+## LR(1) items:
 message -> comment_list MSGID . string_list MSGSTR string_list [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
 message -> comment_list MSGID . string_list msgid_pluralform pluralform_list [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+## Transitions:
 -- On STRING shift to state 2
 -- On string_list shift to state 27
+## Reductions:
 
 State 27:
+## Known stack suffix:
+## comment_list MSGID string_list
+## LR(1) items:
 message -> comment_list MSGID string_list . MSGSTR string_list [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
 message -> comment_list MSGID string_list . msgid_pluralform pluralform_list [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
 string_list -> string_list . STRING [ STRING MSGSTR MSGID_PLURAL ]
+## Transitions:
 -- On STRING shift to state 4
 -- On MSGSTR shift to state 28
 -- On MSGID_PLURAL shift to state 7
 -- On msgid_pluralform shift to state 30
+## Reductions:
 
 State 28:
+## Known stack suffix:
+## comment_list MSGID string_list MSGSTR
+## LR(1) items:
 message -> comment_list MSGID string_list MSGSTR . string_list [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+## Transitions:
 -- On STRING shift to state 2
 -- On string_list shift to state 29
+## Reductions:
 
 State 29:
+## Known stack suffix:
+## comment_list MSGID string_list MSGSTR string_list
+## LR(1) items:
 message -> comment_list MSGID string_list MSGSTR string_list . [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
 string_list -> string_list . STRING [ STRING MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+## Transitions:
 -- On STRING shift to state 4
+## Reductions:
 -- On MSGID reduce production message -> comment_list MSGID string_list MSGSTR string_list
 -- On DOMAIN reduce production message -> comment_list MSGID string_list MSGSTR string_list
 -- On COMMENT_SPECIAL reduce production message -> comment_list MSGID string_list MSGSTR string_list
 -- On COMMENT_FILEPOS reduce production message -> comment_list MSGID string_list MSGSTR string_list
 
 State 30:
+## Known stack suffix:
+## comment_list MSGID string_list msgid_pluralform
+## LR(1) items:
 message -> comment_list MSGID string_list msgid_pluralform . pluralform_list [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+## Transitions:
 -- On MSGSTR shift to state 10
 -- On pluralform_list shift to state 31
 -- On pluralform shift to state 17
+## Reductions:
 
 State 31:
+## Known stack suffix:
+## comment_list MSGID string_list msgid_pluralform pluralform_list
+## LR(1) items:
 message -> comment_list MSGID string_list msgid_pluralform pluralform_list . [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
 pluralform_list -> pluralform_list . pluralform [ MSGSTR MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+## Transitions:
 -- On MSGSTR shift to state 10
 -- On pluralform shift to state 16
+## Reductions:
 -- On MSGID reduce production message -> comment_list MSGID string_list msgid_pluralform pluralform_list
 -- On DOMAIN reduce production message -> comment_list MSGID string_list msgid_pluralform pluralform_list
 -- On COMMENT_SPECIAL reduce production message -> comment_list MSGID string_list msgid_pluralform pluralform_list
 -- On COMMENT_FILEPOS reduce production message -> comment_list MSGID string_list msgid_pluralform pluralform_list
 
 State 32:
+## Known stack suffix:
+## comment_list comment
+## LR(1) items:
 comment_list -> comment_list comment . [ MSGID COMMENT_SPECIAL COMMENT_FILEPOS ]
+## Transitions:
+## Reductions:
 -- On MSGID reduce production comment_list -> comment_list comment
 -- On COMMENT_SPECIAL reduce production comment_list -> comment_list comment
 -- On COMMENT_FILEPOS reduce production comment_list -> comment_list comment
 
 State 33:
+## Known stack suffix:
+## comment
+## LR(1) items:
 comment_list -> comment . [ MSGID COMMENT_SPECIAL COMMENT_FILEPOS ]
+## Transitions:
+## Reductions:
 -- On MSGID reduce production comment_list -> comment
 -- On COMMENT_SPECIAL reduce production comment_list -> comment
 -- On COMMENT_FILEPOS reduce production comment_list -> comment
 
 State 34:
+## Known stack suffix:
+## message
+## LR(1) items:
 message_list -> message . [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+## Transitions:
+## Reductions:
 -- On MSGID reduce production message_list -> message
 -- On DOMAIN reduce production message_list -> message
 -- On COMMENT_SPECIAL reduce production message_list -> message
 -- On COMMENT_FILEPOS reduce production message_list -> message
 
 State 35:
+## Known stack suffix:
+## msgfmt
+## LR(1) items:
 msgfmt' -> msgfmt . [ # ]
 msgfmt -> msgfmt . domain [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
 msgfmt -> msgfmt . message_list [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+## Transitions:
 -- On MSGID shift to state 1
 -- On DOMAIN shift to state 19
 -- On COMMENT_SPECIAL shift to state 21
@@ -271,38 +450,59 @@ msgfmt -> msgfmt . message_list [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS #
 -- On domain shift to state 37
 -- On comment_list shift to state 25
 -- On comment shift to state 33
+## Reductions:
 
 State 36:
+## Known stack suffix:
+## msgfmt message_list
+## LR(1) items:
 message_list -> message_list . message [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
 msgfmt -> msgfmt message_list . [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+## Transitions:
 -- On MSGID shift to state 1
 -- On COMMENT_SPECIAL shift to state 21
 -- On COMMENT_FILEPOS shift to state 22
 -- On message shift to state 24
 -- On comment_list shift to state 25
 -- On comment shift to state 33
+## Reductions:
 -- On DOMAIN reduce production msgfmt -> msgfmt message_list
 
 State 37:
+## Known stack suffix:
+## msgfmt domain
+## LR(1) items:
 msgfmt -> msgfmt domain . [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+## Transitions:
+## Reductions:
 -- On MSGID reduce production msgfmt -> msgfmt domain
 -- On DOMAIN reduce production msgfmt -> msgfmt domain
 -- On COMMENT_SPECIAL reduce production msgfmt -> msgfmt domain
 -- On COMMENT_FILEPOS reduce production msgfmt -> msgfmt domain
 
 State 38:
+## Known stack suffix:
+## message_list
+## LR(1) items:
 message_list -> message_list . message [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
 msgfmt -> message_list . [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+## Transitions:
 -- On MSGID shift to state 1
 -- On COMMENT_SPECIAL shift to state 21
 -- On COMMENT_FILEPOS shift to state 22
 -- On message shift to state 24
 -- On comment_list shift to state 25
 -- On comment shift to state 33
+## Reductions:
 -- On DOMAIN reduce production msgfmt -> message_list
 
 State 39:
+## Known stack suffix:
+## domain
+## LR(1) items:
 msgfmt -> domain . [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+## Transitions:
+## Reductions:
 -- On MSGID reduce production msgfmt -> domain
 -- On DOMAIN reduce production msgfmt -> domain
 -- On COMMENT_SPECIAL reduce production msgfmt -> domain

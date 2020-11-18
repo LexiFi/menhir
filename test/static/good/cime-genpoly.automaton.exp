@@ -1,14 +1,24 @@
 State 0:
+## Known stack suffix:
+##
+## LR(1) items:
 gen_poly_entry' -> . gen_poly_entry [ # ]
+## Transitions:
 -- On VAR shift to state 1
 -- On PARGAUCHE shift to state 2
 -- On MINUS shift to state 3
 -- On INT shift to state 4
 -- On gen_poly_entry shift to state 16
 -- On gen_poly shift to state 17
+## Reductions:
 
 State 1:
+## Known stack suffix:
+## VAR
+## LR(1) items:
 gen_poly -> VAR . [ PLUS PARDROITE MULT MINUS EXP EOF ]
+## Transitions:
+## Reductions:
 -- On PLUS reduce production gen_poly -> VAR
 -- On PARDROITE reduce production gen_poly -> VAR
 -- On MULT reduce production gen_poly -> VAR
@@ -17,23 +27,38 @@ gen_poly -> VAR . [ PLUS PARDROITE MULT MINUS EXP EOF ]
 -- On EOF reduce production gen_poly -> VAR
 
 State 2:
+## Known stack suffix:
+## PARGAUCHE
+## LR(1) items:
 gen_poly -> PARGAUCHE . gen_poly PARDROITE [ PLUS PARDROITE MULT MINUS EXP EOF ]
+## Transitions:
 -- On VAR shift to state 1
 -- On PARGAUCHE shift to state 2
 -- On MINUS shift to state 3
 -- On INT shift to state 4
 -- On gen_poly shift to state 8
+## Reductions:
 
 State 3:
+## Known stack suffix:
+## MINUS
+## LR(1) items:
 gen_poly -> MINUS . gen_poly [ PLUS PARDROITE MULT MINUS EXP EOF ]
+## Transitions:
 -- On VAR shift to state 1
 -- On PARGAUCHE shift to state 2
 -- On MINUS shift to state 3
 -- On INT shift to state 4
 -- On gen_poly shift to state 5
+## Reductions:
 
 State 4:
+## Known stack suffix:
+## INT
+## LR(1) items:
 gen_poly -> INT . [ PLUS PARDROITE MULT MINUS EXP EOF ]
+## Transitions:
+## Reductions:
 -- On PLUS reduce production gen_poly -> INT
 -- On PARDROITE reduce production gen_poly -> INT
 -- On MULT reduce production gen_poly -> INT
@@ -42,12 +67,17 @@ gen_poly -> INT . [ PLUS PARDROITE MULT MINUS EXP EOF ]
 -- On EOF reduce production gen_poly -> INT
 
 State 5:
+## Known stack suffix:
+## MINUS gen_poly
+## LR(1) items:
 gen_poly -> gen_poly . PLUS gen_poly [ PLUS PARDROITE MULT MINUS EXP EOF ]
 gen_poly -> gen_poly . MINUS gen_poly [ PLUS PARDROITE MULT MINUS EXP EOF ]
 gen_poly -> MINUS gen_poly . [ PLUS PARDROITE MULT MINUS EXP EOF ]
 gen_poly -> gen_poly . MULT gen_poly [ PLUS PARDROITE MULT MINUS EXP EOF ]
 gen_poly -> gen_poly . EXP INT [ PLUS PARDROITE MULT MINUS EXP EOF ]
+## Transitions:
 -- On EXP shift to state 6
+## Reductions:
 -- On PLUS reduce production gen_poly -> MINUS gen_poly
 -- On PARDROITE reduce production gen_poly -> MINUS gen_poly
 -- On MULT reduce production gen_poly -> MINUS gen_poly
@@ -55,11 +85,21 @@ gen_poly -> gen_poly . EXP INT [ PLUS PARDROITE MULT MINUS EXP EOF ]
 -- On EOF reduce production gen_poly -> MINUS gen_poly
 
 State 6:
+## Known stack suffix:
+## gen_poly EXP
+## LR(1) items:
 gen_poly -> gen_poly EXP . INT [ PLUS PARDROITE MULT MINUS EXP EOF ]
+## Transitions:
 -- On INT shift to state 7
+## Reductions:
 
 State 7:
+## Known stack suffix:
+## gen_poly EXP INT
+## LR(1) items:
 gen_poly -> gen_poly EXP INT . [ PLUS PARDROITE MULT MINUS EXP EOF ]
+## Transitions:
+## Reductions:
 -- On PLUS reduce production gen_poly -> gen_poly EXP INT
 -- On PARDROITE reduce production gen_poly -> gen_poly EXP INT
 -- On MULT reduce production gen_poly -> gen_poly EXP INT
@@ -68,53 +108,78 @@ gen_poly -> gen_poly EXP INT . [ PLUS PARDROITE MULT MINUS EXP EOF ]
 -- On EOF reduce production gen_poly -> gen_poly EXP INT
 
 State 8:
+## Known stack suffix:
+## PARGAUCHE gen_poly
+## LR(1) items:
 gen_poly -> PARGAUCHE gen_poly . PARDROITE [ PLUS PARDROITE MULT MINUS EXP EOF ]
 gen_poly -> gen_poly . PLUS gen_poly [ PLUS PARDROITE MULT MINUS EXP ]
 gen_poly -> gen_poly . MINUS gen_poly [ PLUS PARDROITE MULT MINUS EXP ]
 gen_poly -> gen_poly . MULT gen_poly [ PLUS PARDROITE MULT MINUS EXP ]
 gen_poly -> gen_poly . EXP INT [ PLUS PARDROITE MULT MINUS EXP ]
+## Transitions:
 -- On PLUS shift to state 9
 -- On PARDROITE shift to state 13
 -- On MULT shift to state 11
 -- On MINUS shift to state 14
 -- On EXP shift to state 6
+## Reductions:
 
 State 9:
+## Known stack suffix:
+## gen_poly PLUS
+## LR(1) items:
 gen_poly -> gen_poly PLUS . gen_poly [ PLUS PARDROITE MULT MINUS EXP EOF ]
+## Transitions:
 -- On VAR shift to state 1
 -- On PARGAUCHE shift to state 2
 -- On MINUS shift to state 3
 -- On INT shift to state 4
 -- On gen_poly shift to state 10
+## Reductions:
 
 State 10:
+## Known stack suffix:
+## gen_poly PLUS gen_poly
+## LR(1) items:
 gen_poly -> gen_poly . PLUS gen_poly [ PLUS PARDROITE MULT MINUS EXP EOF ]
 gen_poly -> gen_poly PLUS gen_poly . [ PLUS PARDROITE MULT MINUS EXP EOF ]
 gen_poly -> gen_poly . MINUS gen_poly [ PLUS PARDROITE MULT MINUS EXP EOF ]
 gen_poly -> gen_poly . MULT gen_poly [ PLUS PARDROITE MULT MINUS EXP EOF ]
 gen_poly -> gen_poly . EXP INT [ PLUS PARDROITE MULT MINUS EXP EOF ]
+## Transitions:
 -- On MULT shift to state 11
 -- On EXP shift to state 6
+## Reductions:
 -- On PLUS reduce production gen_poly -> gen_poly PLUS gen_poly
 -- On PARDROITE reduce production gen_poly -> gen_poly PLUS gen_poly
 -- On MINUS reduce production gen_poly -> gen_poly PLUS gen_poly
 -- On EOF reduce production gen_poly -> gen_poly PLUS gen_poly
 
 State 11:
+## Known stack suffix:
+## gen_poly MULT
+## LR(1) items:
 gen_poly -> gen_poly MULT . gen_poly [ PLUS PARDROITE MULT MINUS EXP EOF ]
+## Transitions:
 -- On VAR shift to state 1
 -- On PARGAUCHE shift to state 2
 -- On MINUS shift to state 3
 -- On INT shift to state 4
 -- On gen_poly shift to state 12
+## Reductions:
 
 State 12:
+## Known stack suffix:
+## gen_poly MULT gen_poly
+## LR(1) items:
 gen_poly -> gen_poly . PLUS gen_poly [ PLUS PARDROITE MULT MINUS EXP EOF ]
 gen_poly -> gen_poly . MINUS gen_poly [ PLUS PARDROITE MULT MINUS EXP EOF ]
 gen_poly -> gen_poly . MULT gen_poly [ PLUS PARDROITE MULT MINUS EXP EOF ]
 gen_poly -> gen_poly MULT gen_poly . [ PLUS PARDROITE MULT MINUS EXP EOF ]
 gen_poly -> gen_poly . EXP INT [ PLUS PARDROITE MULT MINUS EXP EOF ]
+## Transitions:
 -- On EXP shift to state 6
+## Reductions:
 -- On PLUS reduce production gen_poly -> gen_poly MULT gen_poly
 -- On PARDROITE reduce production gen_poly -> gen_poly MULT gen_poly
 -- On MULT reduce production gen_poly -> gen_poly MULT gen_poly
@@ -122,7 +187,12 @@ gen_poly -> gen_poly . EXP INT [ PLUS PARDROITE MULT MINUS EXP EOF ]
 -- On EOF reduce production gen_poly -> gen_poly MULT gen_poly
 
 State 13:
+## Known stack suffix:
+## PARGAUCHE gen_poly PARDROITE
+## LR(1) items:
 gen_poly -> PARGAUCHE gen_poly PARDROITE . [ PLUS PARDROITE MULT MINUS EXP EOF ]
+## Transitions:
+## Reductions:
 -- On PLUS reduce production gen_poly -> PARGAUCHE gen_poly PARDROITE
 -- On PARDROITE reduce production gen_poly -> PARGAUCHE gen_poly PARDROITE
 -- On MULT reduce production gen_poly -> PARGAUCHE gen_poly PARDROITE
@@ -131,102 +201,182 @@ gen_poly -> PARGAUCHE gen_poly PARDROITE . [ PLUS PARDROITE MULT MINUS EXP EOF ]
 -- On EOF reduce production gen_poly -> PARGAUCHE gen_poly PARDROITE
 
 State 14:
+## Known stack suffix:
+## gen_poly MINUS
+## LR(1) items:
 gen_poly -> gen_poly MINUS . gen_poly [ PLUS PARDROITE MULT MINUS EXP EOF ]
+## Transitions:
 -- On VAR shift to state 1
 -- On PARGAUCHE shift to state 2
 -- On MINUS shift to state 3
 -- On INT shift to state 4
 -- On gen_poly shift to state 15
+## Reductions:
 
 State 15:
+## Known stack suffix:
+## gen_poly MINUS gen_poly
+## LR(1) items:
 gen_poly -> gen_poly . PLUS gen_poly [ PLUS PARDROITE MULT MINUS EXP EOF ]
 gen_poly -> gen_poly . MINUS gen_poly [ PLUS PARDROITE MULT MINUS EXP EOF ]
 gen_poly -> gen_poly MINUS gen_poly . [ PLUS PARDROITE MULT MINUS EXP EOF ]
 gen_poly -> gen_poly . MULT gen_poly [ PLUS PARDROITE MULT MINUS EXP EOF ]
 gen_poly -> gen_poly . EXP INT [ PLUS PARDROITE MULT MINUS EXP EOF ]
+## Transitions:
 -- On MULT shift to state 11
 -- On EXP shift to state 6
+## Reductions:
 -- On PLUS reduce production gen_poly -> gen_poly MINUS gen_poly
 -- On PARDROITE reduce production gen_poly -> gen_poly MINUS gen_poly
 -- On MINUS reduce production gen_poly -> gen_poly MINUS gen_poly
 -- On EOF reduce production gen_poly -> gen_poly MINUS gen_poly
 
 State 16:
+## Known stack suffix:
+## gen_poly_entry
+## LR(1) items:
 gen_poly_entry' -> gen_poly_entry . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept gen_poly_entry
 
 State 17:
+## Known stack suffix:
+## gen_poly
+## LR(1) items:
 gen_poly -> gen_poly . PLUS gen_poly [ PLUS MULT MINUS EXP EOF ]
 gen_poly -> gen_poly . MINUS gen_poly [ PLUS MULT MINUS EXP EOF ]
 gen_poly -> gen_poly . MULT gen_poly [ PLUS MULT MINUS EXP EOF ]
 gen_poly -> gen_poly . EXP INT [ PLUS MULT MINUS EXP EOF ]
 gen_poly_entry -> gen_poly . EOF [ # ]
+## Transitions:
 -- On PLUS shift to state 9
 -- On MULT shift to state 11
 -- On MINUS shift to state 14
 -- On EXP shift to state 6
 -- On EOF shift to state 18
+## Reductions:
 
 State 18:
+## Known stack suffix:
+## gen_poly EOF
+## LR(1) items:
 gen_poly_entry -> gen_poly EOF . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production gen_poly_entry -> gen_poly EOF
 
 State 19:
+## Known stack suffix:
+##
+## LR(1) items:
 poly_interp_entry' -> . poly_interp_entry [ # ]
+## Transitions:
 -- On INTERP shift to state 20
 -- On symbol_interp shift to state 27
 -- On poly_interp_entry shift to state 47
 -- On interp shift to state 48
+## Reductions:
 -- On EOF reduce production interp ->
 
 State 20:
+## Known stack suffix:
+## INTERP
+## LR(1) items:
 symbol_interp -> INTERP . [ EQUAL ]
 symbol_interp -> INTERP . PARGAUCHE vars [ EQUAL ]
+## Transitions:
 -- On PARGAUCHE shift to state 21
+## Reductions:
 -- On EQUAL reduce production symbol_interp -> INTERP
 
 State 21:
+## Known stack suffix:
+## INTERP PARGAUCHE
+## LR(1) items:
 symbol_interp -> INTERP PARGAUCHE . vars [ EQUAL ]
+## Transitions:
 -- On VAR shift to state 22
 -- On vars shift to state 26
+## Reductions:
 
 State 22:
+## Known stack suffix:
+## VAR
+## LR(1) items:
 vars -> VAR . PARDROITE [ EQUAL ]
 vars -> VAR . COMMA vars [ EQUAL ]
+## Transitions:
 -- On PARDROITE shift to state 23
 -- On COMMA shift to state 24
+## Reductions:
 
 State 23:
+## Known stack suffix:
+## VAR PARDROITE
+## LR(1) items:
 vars -> VAR PARDROITE . [ EQUAL ]
+## Transitions:
+## Reductions:
 -- On EQUAL reduce production vars -> VAR PARDROITE
 
 State 24:
+## Known stack suffix:
+## VAR COMMA
+## LR(1) items:
 vars -> VAR COMMA . vars [ EQUAL ]
+## Transitions:
 -- On VAR shift to state 22
 -- On vars shift to state 25
+## Reductions:
 
 State 25:
+## Known stack suffix:
+## VAR COMMA vars
+## LR(1) items:
 vars -> VAR COMMA vars . [ EQUAL ]
+## Transitions:
+## Reductions:
 -- On EQUAL reduce production vars -> VAR COMMA vars
 
 State 26:
+## Known stack suffix:
+## INTERP PARGAUCHE vars
+## LR(1) items:
 symbol_interp -> INTERP PARGAUCHE vars . [ EQUAL ]
+## Transitions:
+## Reductions:
 -- On EQUAL reduce production symbol_interp -> INTERP PARGAUCHE vars
 
 State 27:
+## Known stack suffix:
+## symbol_interp
+## LR(1) items:
 interp -> symbol_interp . EQUAL poly SEMICOLON interp [ EOF ]
+## Transitions:
 -- On EQUAL shift to state 28
+## Reductions:
 
 State 28:
+## Known stack suffix:
+## symbol_interp EQUAL
+## LR(1) items:
 interp -> symbol_interp EQUAL . poly SEMICOLON interp [ EOF ]
+## Transitions:
 -- On VAR shift to state 29
 -- On PARGAUCHE shift to state 30
 -- On MINUS shift to state 31
 -- On INT shift to state 32
 -- On poly shift to state 44
+## Reductions:
 
 State 29:
+## Known stack suffix:
+## VAR
+## LR(1) items:
 poly -> VAR . [ SEMICOLON PLUS PARDROITE MULT MINUS EXP ]
+## Transitions:
+## Reductions:
 -- On SEMICOLON reduce production poly -> VAR
 -- On PLUS reduce production poly -> VAR
 -- On PARDROITE reduce production poly -> VAR
@@ -235,23 +385,38 @@ poly -> VAR . [ SEMICOLON PLUS PARDROITE MULT MINUS EXP ]
 -- On EXP reduce production poly -> VAR
 
 State 30:
+## Known stack suffix:
+## PARGAUCHE
+## LR(1) items:
 poly -> PARGAUCHE . poly PARDROITE [ SEMICOLON PLUS PARDROITE MULT MINUS EXP ]
+## Transitions:
 -- On VAR shift to state 29
 -- On PARGAUCHE shift to state 30
 -- On MINUS shift to state 31
 -- On INT shift to state 32
 -- On poly shift to state 36
+## Reductions:
 
 State 31:
+## Known stack suffix:
+## MINUS
+## LR(1) items:
 poly -> MINUS . poly [ SEMICOLON PLUS PARDROITE MULT MINUS EXP ]
+## Transitions:
 -- On VAR shift to state 29
 -- On PARGAUCHE shift to state 30
 -- On MINUS shift to state 31
 -- On INT shift to state 32
 -- On poly shift to state 33
+## Reductions:
 
 State 32:
+## Known stack suffix:
+## INT
+## LR(1) items:
 poly -> INT . [ SEMICOLON PLUS PARDROITE MULT MINUS EXP ]
+## Transitions:
+## Reductions:
 -- On SEMICOLON reduce production poly -> INT
 -- On PLUS reduce production poly -> INT
 -- On PARDROITE reduce production poly -> INT
@@ -260,12 +425,17 @@ poly -> INT . [ SEMICOLON PLUS PARDROITE MULT MINUS EXP ]
 -- On EXP reduce production poly -> INT
 
 State 33:
+## Known stack suffix:
+## MINUS poly
+## LR(1) items:
 poly -> poly . PLUS poly [ SEMICOLON PLUS PARDROITE MULT MINUS EXP ]
 poly -> poly . MINUS poly [ SEMICOLON PLUS PARDROITE MULT MINUS EXP ]
 poly -> MINUS poly . [ SEMICOLON PLUS PARDROITE MULT MINUS EXP ]
 poly -> poly . MULT poly [ SEMICOLON PLUS PARDROITE MULT MINUS EXP ]
 poly -> poly . EXP INT [ SEMICOLON PLUS PARDROITE MULT MINUS EXP ]
+## Transitions:
 -- On EXP shift to state 34
+## Reductions:
 -- On SEMICOLON reduce production poly -> MINUS poly
 -- On PLUS reduce production poly -> MINUS poly
 -- On PARDROITE reduce production poly -> MINUS poly
@@ -273,11 +443,21 @@ poly -> poly . EXP INT [ SEMICOLON PLUS PARDROITE MULT MINUS EXP ]
 -- On MINUS reduce production poly -> MINUS poly
 
 State 34:
+## Known stack suffix:
+## poly EXP
+## LR(1) items:
 poly -> poly EXP . INT [ SEMICOLON PLUS PARDROITE MULT MINUS EXP ]
+## Transitions:
 -- On INT shift to state 35
+## Reductions:
 
 State 35:
+## Known stack suffix:
+## poly EXP INT
+## LR(1) items:
 poly -> poly EXP INT . [ SEMICOLON PLUS PARDROITE MULT MINUS EXP ]
+## Transitions:
+## Reductions:
 -- On SEMICOLON reduce production poly -> poly EXP INT
 -- On PLUS reduce production poly -> poly EXP INT
 -- On PARDROITE reduce production poly -> poly EXP INT
@@ -286,53 +466,78 @@ poly -> poly EXP INT . [ SEMICOLON PLUS PARDROITE MULT MINUS EXP ]
 -- On EXP reduce production poly -> poly EXP INT
 
 State 36:
+## Known stack suffix:
+## PARGAUCHE poly
+## LR(1) items:
 poly -> PARGAUCHE poly . PARDROITE [ SEMICOLON PLUS PARDROITE MULT MINUS EXP ]
 poly -> poly . PLUS poly [ PLUS PARDROITE MULT MINUS EXP ]
 poly -> poly . MINUS poly [ PLUS PARDROITE MULT MINUS EXP ]
 poly -> poly . MULT poly [ PLUS PARDROITE MULT MINUS EXP ]
 poly -> poly . EXP INT [ PLUS PARDROITE MULT MINUS EXP ]
+## Transitions:
 -- On PLUS shift to state 37
 -- On PARDROITE shift to state 41
 -- On MULT shift to state 39
 -- On MINUS shift to state 42
 -- On EXP shift to state 34
+## Reductions:
 
 State 37:
+## Known stack suffix:
+## poly PLUS
+## LR(1) items:
 poly -> poly PLUS . poly [ SEMICOLON PLUS PARDROITE MULT MINUS EXP ]
+## Transitions:
 -- On VAR shift to state 29
 -- On PARGAUCHE shift to state 30
 -- On MINUS shift to state 31
 -- On INT shift to state 32
 -- On poly shift to state 38
+## Reductions:
 
 State 38:
+## Known stack suffix:
+## poly PLUS poly
+## LR(1) items:
 poly -> poly . PLUS poly [ SEMICOLON PLUS PARDROITE MULT MINUS EXP ]
 poly -> poly PLUS poly . [ SEMICOLON PLUS PARDROITE MULT MINUS EXP ]
 poly -> poly . MINUS poly [ SEMICOLON PLUS PARDROITE MULT MINUS EXP ]
 poly -> poly . MULT poly [ SEMICOLON PLUS PARDROITE MULT MINUS EXP ]
 poly -> poly . EXP INT [ SEMICOLON PLUS PARDROITE MULT MINUS EXP ]
+## Transitions:
 -- On MULT shift to state 39
 -- On EXP shift to state 34
+## Reductions:
 -- On SEMICOLON reduce production poly -> poly PLUS poly
 -- On PLUS reduce production poly -> poly PLUS poly
 -- On PARDROITE reduce production poly -> poly PLUS poly
 -- On MINUS reduce production poly -> poly PLUS poly
 
 State 39:
+## Known stack suffix:
+## poly MULT
+## LR(1) items:
 poly -> poly MULT . poly [ SEMICOLON PLUS PARDROITE MULT MINUS EXP ]
+## Transitions:
 -- On VAR shift to state 29
 -- On PARGAUCHE shift to state 30
 -- On MINUS shift to state 31
 -- On INT shift to state 32
 -- On poly shift to state 40
+## Reductions:
 
 State 40:
+## Known stack suffix:
+## poly MULT poly
+## LR(1) items:
 poly -> poly . PLUS poly [ SEMICOLON PLUS PARDROITE MULT MINUS EXP ]
 poly -> poly . MINUS poly [ SEMICOLON PLUS PARDROITE MULT MINUS EXP ]
 poly -> poly . MULT poly [ SEMICOLON PLUS PARDROITE MULT MINUS EXP ]
 poly -> poly MULT poly . [ SEMICOLON PLUS PARDROITE MULT MINUS EXP ]
 poly -> poly . EXP INT [ SEMICOLON PLUS PARDROITE MULT MINUS EXP ]
+## Transitions:
 -- On EXP shift to state 34
+## Reductions:
 -- On SEMICOLON reduce production poly -> poly MULT poly
 -- On PLUS reduce production poly -> poly MULT poly
 -- On PARDROITE reduce production poly -> poly MULT poly
@@ -340,7 +545,12 @@ poly -> poly . EXP INT [ SEMICOLON PLUS PARDROITE MULT MINUS EXP ]
 -- On MINUS reduce production poly -> poly MULT poly
 
 State 41:
+## Known stack suffix:
+## PARGAUCHE poly PARDROITE
+## LR(1) items:
 poly -> PARGAUCHE poly PARDROITE . [ SEMICOLON PLUS PARDROITE MULT MINUS EXP ]
+## Transitions:
+## Reductions:
 -- On SEMICOLON reduce production poly -> PARGAUCHE poly PARDROITE
 -- On PLUS reduce production poly -> PARGAUCHE poly PARDROITE
 -- On PARDROITE reduce production poly -> PARGAUCHE poly PARDROITE
@@ -349,58 +559,98 @@ poly -> PARGAUCHE poly PARDROITE . [ SEMICOLON PLUS PARDROITE MULT MINUS EXP ]
 -- On EXP reduce production poly -> PARGAUCHE poly PARDROITE
 
 State 42:
+## Known stack suffix:
+## poly MINUS
+## LR(1) items:
 poly -> poly MINUS . poly [ SEMICOLON PLUS PARDROITE MULT MINUS EXP ]
+## Transitions:
 -- On VAR shift to state 29
 -- On PARGAUCHE shift to state 30
 -- On MINUS shift to state 31
 -- On INT shift to state 32
 -- On poly shift to state 43
+## Reductions:
 
 State 43:
+## Known stack suffix:
+## poly MINUS poly
+## LR(1) items:
 poly -> poly . PLUS poly [ SEMICOLON PLUS PARDROITE MULT MINUS EXP ]
 poly -> poly . MINUS poly [ SEMICOLON PLUS PARDROITE MULT MINUS EXP ]
 poly -> poly MINUS poly . [ SEMICOLON PLUS PARDROITE MULT MINUS EXP ]
 poly -> poly . MULT poly [ SEMICOLON PLUS PARDROITE MULT MINUS EXP ]
 poly -> poly . EXP INT [ SEMICOLON PLUS PARDROITE MULT MINUS EXP ]
+## Transitions:
 -- On MULT shift to state 39
 -- On EXP shift to state 34
+## Reductions:
 -- On SEMICOLON reduce production poly -> poly MINUS poly
 -- On PLUS reduce production poly -> poly MINUS poly
 -- On PARDROITE reduce production poly -> poly MINUS poly
 -- On MINUS reduce production poly -> poly MINUS poly
 
 State 44:
+## Known stack suffix:
+## symbol_interp EQUAL poly
+## LR(1) items:
 interp -> symbol_interp EQUAL poly . SEMICOLON interp [ EOF ]
 poly -> poly . PLUS poly [ SEMICOLON PLUS MULT MINUS EXP ]
 poly -> poly . MINUS poly [ SEMICOLON PLUS MULT MINUS EXP ]
 poly -> poly . MULT poly [ SEMICOLON PLUS MULT MINUS EXP ]
 poly -> poly . EXP INT [ SEMICOLON PLUS MULT MINUS EXP ]
+## Transitions:
 -- On SEMICOLON shift to state 45
 -- On PLUS shift to state 37
 -- On MULT shift to state 39
 -- On MINUS shift to state 42
 -- On EXP shift to state 34
+## Reductions:
 
 State 45:
+## Known stack suffix:
+## symbol_interp EQUAL poly SEMICOLON
+## LR(1) items:
 interp -> symbol_interp EQUAL poly SEMICOLON . interp [ EOF ]
+## Transitions:
 -- On INTERP shift to state 20
 -- On symbol_interp shift to state 27
 -- On interp shift to state 46
+## Reductions:
 -- On EOF reduce production interp ->
 
 State 46:
+## Known stack suffix:
+## symbol_interp EQUAL poly SEMICOLON interp
+## LR(1) items:
 interp -> symbol_interp EQUAL poly SEMICOLON interp . [ EOF ]
+## Transitions:
+## Reductions:
 -- On EOF reduce production interp -> symbol_interp EQUAL poly SEMICOLON interp
 
 State 47:
+## Known stack suffix:
+## poly_interp_entry
+## LR(1) items:
 poly_interp_entry' -> poly_interp_entry . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept poly_interp_entry
 
 State 48:
+## Known stack suffix:
+## interp
+## LR(1) items:
 poly_interp_entry -> interp . EOF [ # ]
+## Transitions:
 -- On EOF shift to state 49
+## Reductions:
 
 State 49:
+## Known stack suffix:
+## interp EOF
+## LR(1) items:
 poly_interp_entry -> interp EOF . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production poly_interp_entry -> interp EOF
 

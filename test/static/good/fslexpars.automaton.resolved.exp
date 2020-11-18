@@ -1,37 +1,71 @@
 State 0:
+## Known stack suffix:
+##
+## LR(1) items:
 spec' -> . spec [ # ]
+## Transitions:
 -- On CODE shift to state 1
 -- On spec shift to state 2
 -- On codeopt shift to state 3
+## Reductions:
 -- On RULE reduce production codeopt ->
 -- On LET reduce production codeopt ->
 
 State 1:
+## Known stack suffix:
+## CODE
+## LR(1) items:
 codeopt -> CODE . [ RULE LET ]
+## Transitions:
+## Reductions:
 -- On RULE reduce production codeopt -> CODE
 -- On LET reduce production codeopt -> CODE
 
 State 2:
+## Known stack suffix:
+## spec
+## LR(1) items:
 spec' -> spec . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept spec
 
 State 3:
+## Known stack suffix:
+## codeopt
+## LR(1) items:
 spec -> codeopt . macros RULE rules codeopt [ # ]
+## Transitions:
 -- On LET shift to state 4
 -- On macros shift to state 32
 -- On macro shift to state 54
+## Reductions:
 -- On RULE reduce production macros ->
 
 State 4:
+## Known stack suffix:
+## LET
+## LR(1) items:
 macro -> LET . IDENT EQUALS regexp [ RULE LET ]
+## Transitions:
 -- On IDENT shift to state 5
+## Reductions:
 
 State 5:
+## Known stack suffix:
+## LET IDENT
+## LR(1) items:
 macro -> LET IDENT . EQUALS regexp [ RULE LET ]
+## Transitions:
 -- On EQUALS shift to state 6
+## Reductions:
 
 State 6:
+## Known stack suffix:
+## LET IDENT EQUALS
+## LR(1) items:
 macro -> LET IDENT EQUALS . regexp [ RULE LET ]
+## Transitions:
 -- On UNDERSCORE shift to state 7
 -- On STRING shift to state 8
 -- On LPAREN shift to state 9
@@ -40,9 +74,15 @@ macro -> LET IDENT EQUALS . regexp [ RULE LET ]
 -- On EOF shift to state 21
 -- On CHAR shift to state 22
 -- On regexp shift to state 31
+## Reductions:
 
 State 7:
+## Known stack suffix:
+## UNDERSCORE
+## LR(1) items:
 regexp -> UNDERSCORE . [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
+## Transitions:
+## Reductions:
 -- On UNDERSCORE reduce production regexp -> UNDERSCORE
 -- On STRING reduce production regexp -> UNDERSCORE
 -- On STAR reduce production regexp -> UNDERSCORE
@@ -60,7 +100,12 @@ regexp -> UNDERSCORE . [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LE
 -- On BAR reduce production regexp -> UNDERSCORE
 
 State 8:
+## Known stack suffix:
+## STRING
+## LR(1) items:
 regexp -> STRING . [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
+## Transitions:
+## Reductions:
 -- On UNDERSCORE reduce production regexp -> STRING
 -- On STRING reduce production regexp -> STRING
 -- On STAR reduce production regexp -> STRING
@@ -78,7 +123,11 @@ regexp -> STRING . [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LB
 -- On BAR reduce production regexp -> STRING
 
 State 9:
+## Known stack suffix:
+## LPAREN
+## LR(1) items:
 regexp -> LPAREN . regexp RPAREN [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
+## Transitions:
 -- On UNDERSCORE shift to state 7
 -- On STRING shift to state 8
 -- On LPAREN shift to state 9
@@ -87,44 +136,80 @@ regexp -> LPAREN . regexp RPAREN [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS
 -- On EOF shift to state 21
 -- On CHAR shift to state 22
 -- On regexp shift to state 23
+## Reductions:
 
 State 10:
+## Known stack suffix:
+## LBRACK
+## LR(1) items:
 regexp -> LBRACK . charset RBRACK [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
 regexp -> LBRACK . HAT charset RBRACK [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
+## Transitions:
 -- On HAT shift to state 11
 -- On CHAR shift to state 12
 -- On charset shift to state 18
+## Reductions:
 
 State 11:
+## Known stack suffix:
+## LBRACK HAT
+## LR(1) items:
 regexp -> LBRACK HAT . charset RBRACK [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
+## Transitions:
 -- On CHAR shift to state 12
 -- On charset shift to state 15
+## Reductions:
 
 State 12:
+## Known stack suffix:
+## CHAR
+## LR(1) items:
 charset -> CHAR . [ RBRACK CHAR ]
 charset -> CHAR . DASH CHAR [ RBRACK CHAR ]
+## Transitions:
 -- On DASH shift to state 13
+## Reductions:
 -- On RBRACK reduce production charset -> CHAR
 -- On CHAR reduce production charset -> CHAR
 
 State 13:
+## Known stack suffix:
+## CHAR DASH
+## LR(1) items:
 charset -> CHAR DASH . CHAR [ RBRACK CHAR ]
+## Transitions:
 -- On CHAR shift to state 14
+## Reductions:
 
 State 14:
+## Known stack suffix:
+## CHAR DASH CHAR
+## LR(1) items:
 charset -> CHAR DASH CHAR . [ RBRACK CHAR ]
+## Transitions:
+## Reductions:
 -- On RBRACK reduce production charset -> CHAR DASH CHAR
 -- On CHAR reduce production charset -> CHAR DASH CHAR
 
 State 15:
+## Known stack suffix:
+## LBRACK HAT charset
+## LR(1) items:
 charset -> charset . charset [ RBRACK CHAR ]
 regexp -> LBRACK HAT charset . RBRACK [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
+## Transitions:
 -- On RBRACK shift to state 16
 -- On CHAR shift to state 12
 -- On charset shift to state 17
+## Reductions:
 
 State 16:
+## Known stack suffix:
+## LBRACK HAT charset RBRACK
+## LR(1) items:
 regexp -> LBRACK HAT charset RBRACK . [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
+## Transitions:
+## Reductions:
 -- On UNDERSCORE reduce production regexp -> LBRACK HAT charset RBRACK
 -- On STRING reduce production regexp -> LBRACK HAT charset RBRACK
 -- On STAR reduce production regexp -> LBRACK HAT charset RBRACK
@@ -142,21 +227,36 @@ regexp -> LBRACK HAT charset RBRACK . [ UNDERSCORE STRING STAR RULE RPAREN QMARK
 -- On BAR reduce production regexp -> LBRACK HAT charset RBRACK
 
 State 17:
+## Known stack suffix:
+## charset charset
+## LR(1) items:
 charset -> charset . charset [ RBRACK CHAR ]
 charset -> charset charset . [ RBRACK CHAR ]
+## Transitions:
 -- On CHAR shift to state 12
 -- On charset shift to state 17
+## Reductions:
 -- On RBRACK reduce production charset -> charset charset
 
 State 18:
+## Known stack suffix:
+## LBRACK charset
+## LR(1) items:
 charset -> charset . charset [ RBRACK CHAR ]
 regexp -> LBRACK charset . RBRACK [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
+## Transitions:
 -- On RBRACK shift to state 19
 -- On CHAR shift to state 12
 -- On charset shift to state 17
+## Reductions:
 
 State 19:
+## Known stack suffix:
+## LBRACK charset RBRACK
+## LR(1) items:
 regexp -> LBRACK charset RBRACK . [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
+## Transitions:
+## Reductions:
 -- On UNDERSCORE reduce production regexp -> LBRACK charset RBRACK
 -- On STRING reduce production regexp -> LBRACK charset RBRACK
 -- On STAR reduce production regexp -> LBRACK charset RBRACK
@@ -174,7 +274,12 @@ regexp -> LBRACK charset RBRACK . [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLU
 -- On BAR reduce production regexp -> LBRACK charset RBRACK
 
 State 20:
+## Known stack suffix:
+## IDENT
+## LR(1) items:
 regexp -> IDENT . [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
+## Transitions:
+## Reductions:
 -- On UNDERSCORE reduce production regexp -> IDENT
 -- On STRING reduce production regexp -> IDENT
 -- On STAR reduce production regexp -> IDENT
@@ -192,7 +297,12 @@ regexp -> IDENT . [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBR
 -- On BAR reduce production regexp -> IDENT
 
 State 21:
+## Known stack suffix:
+## EOF
+## LR(1) items:
 regexp -> EOF . [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
+## Transitions:
+## Reductions:
 -- On UNDERSCORE reduce production regexp -> EOF
 -- On STRING reduce production regexp -> EOF
 -- On STAR reduce production regexp -> EOF
@@ -210,7 +320,12 @@ regexp -> EOF . [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRAC
 -- On BAR reduce production regexp -> EOF
 
 State 22:
+## Known stack suffix:
+## CHAR
+## LR(1) items:
 regexp -> CHAR . [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
+## Transitions:
+## Reductions:
 -- On UNDERSCORE reduce production regexp -> CHAR
 -- On STRING reduce production regexp -> CHAR
 -- On STAR reduce production regexp -> CHAR
@@ -228,12 +343,16 @@ regexp -> CHAR . [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRA
 -- On BAR reduce production regexp -> CHAR
 
 State 23:
+## Known stack suffix:
+## LPAREN regexp
+## LR(1) items:
 regexp -> regexp . regexp [ UNDERSCORE STRING STAR RPAREN QMARK PLUS LPAREN LBRACK IDENT EOF CHAR BAR ]
 regexp -> regexp . PLUS [ UNDERSCORE STRING STAR RPAREN QMARK PLUS LPAREN LBRACK IDENT EOF CHAR BAR ]
 regexp -> regexp . STAR [ UNDERSCORE STRING STAR RPAREN QMARK PLUS LPAREN LBRACK IDENT EOF CHAR BAR ]
 regexp -> regexp . QMARK [ UNDERSCORE STRING STAR RPAREN QMARK PLUS LPAREN LBRACK IDENT EOF CHAR BAR ]
 regexp -> regexp . BAR regexp [ UNDERSCORE STRING STAR RPAREN QMARK PLUS LPAREN LBRACK IDENT EOF CHAR BAR ]
 regexp -> LPAREN regexp . RPAREN [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
+## Transitions:
 -- On UNDERSCORE shift to state 7
 -- On STRING shift to state 8
 -- On STAR shift to state 24
@@ -247,9 +366,15 @@ regexp -> LPAREN regexp . RPAREN [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS
 -- On CHAR shift to state 22
 -- On BAR shift to state 28
 -- On regexp shift to state 30
+## Reductions:
 
 State 24:
+## Known stack suffix:
+## regexp STAR
+## LR(1) items:
 regexp -> regexp STAR . [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
+## Transitions:
+## Reductions:
 -- On UNDERSCORE reduce production regexp -> regexp STAR
 -- On STRING reduce production regexp -> regexp STAR
 -- On STAR reduce production regexp -> regexp STAR
@@ -267,7 +392,12 @@ regexp -> regexp STAR . [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN L
 -- On BAR reduce production regexp -> regexp STAR
 
 State 25:
+## Known stack suffix:
+## LPAREN regexp RPAREN
+## LR(1) items:
 regexp -> LPAREN regexp RPAREN . [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
+## Transitions:
+## Reductions:
 -- On UNDERSCORE reduce production regexp -> LPAREN regexp RPAREN
 -- On STRING reduce production regexp -> LPAREN regexp RPAREN
 -- On STAR reduce production regexp -> LPAREN regexp RPAREN
@@ -285,7 +415,12 @@ regexp -> LPAREN regexp RPAREN . [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS
 -- On BAR reduce production regexp -> LPAREN regexp RPAREN
 
 State 26:
+## Known stack suffix:
+## regexp QMARK
+## LR(1) items:
 regexp -> regexp QMARK . [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
+## Transitions:
+## Reductions:
 -- On UNDERSCORE reduce production regexp -> regexp QMARK
 -- On STRING reduce production regexp -> regexp QMARK
 -- On STAR reduce production regexp -> regexp QMARK
@@ -303,7 +438,12 @@ regexp -> regexp QMARK . [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN 
 -- On BAR reduce production regexp -> regexp QMARK
 
 State 27:
+## Known stack suffix:
+## regexp PLUS
+## LR(1) items:
 regexp -> regexp PLUS . [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
+## Transitions:
+## Reductions:
 -- On UNDERSCORE reduce production regexp -> regexp PLUS
 -- On STRING reduce production regexp -> regexp PLUS
 -- On STAR reduce production regexp -> regexp PLUS
@@ -321,7 +461,11 @@ regexp -> regexp PLUS . [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN L
 -- On BAR reduce production regexp -> regexp PLUS
 
 State 28:
+## Known stack suffix:
+## regexp BAR
+## LR(1) items:
 regexp -> regexp BAR . regexp [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
+## Transitions:
 -- On UNDERSCORE shift to state 7
 -- On STRING shift to state 8
 -- On LPAREN shift to state 9
@@ -330,14 +474,19 @@ regexp -> regexp BAR . regexp [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LP
 -- On EOF shift to state 21
 -- On CHAR shift to state 22
 -- On regexp shift to state 29
+## Reductions:
 
 State 29:
+## Known stack suffix:
+## regexp BAR regexp
+## LR(1) items:
 regexp -> regexp . regexp [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
 regexp -> regexp . PLUS [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
 regexp -> regexp . STAR [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
 regexp -> regexp . QMARK [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
 regexp -> regexp . BAR regexp [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
 regexp -> regexp BAR regexp . [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
+## Transitions:
 -- On UNDERSCORE shift to state 7
 -- On STRING shift to state 8
 -- On STAR shift to state 24
@@ -349,6 +498,7 @@ regexp -> regexp BAR regexp . [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LP
 -- On EOF shift to state 21
 -- On CHAR shift to state 22
 -- On regexp shift to state 30
+## Reductions:
 -- On RULE reduce production regexp -> regexp BAR regexp
 -- On RPAREN reduce production regexp -> regexp BAR regexp
 -- On LET reduce production regexp -> regexp BAR regexp
@@ -356,12 +506,16 @@ regexp -> regexp BAR regexp . [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LP
 -- On BAR reduce production regexp -> regexp BAR regexp
 
 State 30:
+## Known stack suffix:
+## regexp regexp
+## LR(1) items:
 regexp -> regexp . regexp [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
 regexp -> regexp regexp . [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
 regexp -> regexp . PLUS [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
 regexp -> regexp . STAR [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
 regexp -> regexp . QMARK [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
 regexp -> regexp . BAR regexp [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
+## Transitions:
 -- On UNDERSCORE shift to state 7
 -- On STRING shift to state 8
 -- On STAR shift to state 24
@@ -373,6 +527,7 @@ regexp -> regexp . BAR regexp [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LP
 -- On EOF shift to state 21
 -- On CHAR shift to state 22
 -- On regexp shift to state 30
+## Reductions:
 -- On RULE reduce production regexp -> regexp regexp
 -- On RPAREN reduce production regexp -> regexp regexp
 -- On LET reduce production regexp -> regexp regexp
@@ -380,12 +535,16 @@ regexp -> regexp . BAR regexp [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LP
 -- On BAR reduce production regexp -> regexp regexp
 
 State 31:
+## Known stack suffix:
+## LET IDENT EQUALS regexp
+## LR(1) items:
 macro -> LET IDENT EQUALS regexp . [ RULE LET ]
 regexp -> regexp . regexp [ UNDERSCORE STRING STAR RULE QMARK PLUS LPAREN LET LBRACK IDENT EOF CHAR BAR ]
 regexp -> regexp . PLUS [ UNDERSCORE STRING STAR RULE QMARK PLUS LPAREN LET LBRACK IDENT EOF CHAR BAR ]
 regexp -> regexp . STAR [ UNDERSCORE STRING STAR RULE QMARK PLUS LPAREN LET LBRACK IDENT EOF CHAR BAR ]
 regexp -> regexp . QMARK [ UNDERSCORE STRING STAR RULE QMARK PLUS LPAREN LET LBRACK IDENT EOF CHAR BAR ]
 regexp -> regexp . BAR regexp [ UNDERSCORE STRING STAR RULE QMARK PLUS LPAREN LET LBRACK IDENT EOF CHAR BAR ]
+## Transitions:
 -- On UNDERSCORE shift to state 7
 -- On STRING shift to state 8
 -- On STAR shift to state 24
@@ -398,47 +557,88 @@ regexp -> regexp . BAR regexp [ UNDERSCORE STRING STAR RULE QMARK PLUS LPAREN LE
 -- On CHAR shift to state 22
 -- On BAR shift to state 28
 -- On regexp shift to state 30
+## Reductions:
 -- On RULE reduce production macro -> LET IDENT EQUALS regexp
 -- On LET reduce production macro -> LET IDENT EQUALS regexp
 
 State 32:
+## Known stack suffix:
+## codeopt macros
+## LR(1) items:
 spec -> codeopt macros . RULE rules codeopt [ # ]
+## Transitions:
 -- On RULE shift to state 33
+## Reductions:
 
 State 33:
+## Known stack suffix:
+## codeopt macros RULE
+## LR(1) items:
 spec -> codeopt macros RULE . rules codeopt [ # ]
+## Transitions:
 -- On IDENT shift to state 34
 -- On rules shift to state 48
 -- On rule shift to state 51
+## Reductions:
 
 State 34:
+## Known stack suffix:
+## IDENT
+## LR(1) items:
 rule -> IDENT . args EQUALS PARSE optbar clauses [ CODE AND # ]
+## Transitions:
 -- On IDENT shift to state 35
 -- On args shift to state 37
+## Reductions:
 -- On EQUALS reduce production args ->
 
 State 35:
+## Known stack suffix:
+## IDENT
+## LR(1) items:
 args -> IDENT . args [ EQUALS ]
+## Transitions:
 -- On IDENT shift to state 35
 -- On args shift to state 36
+## Reductions:
 -- On EQUALS reduce production args ->
 
 State 36:
+## Known stack suffix:
+## IDENT args
+## LR(1) items:
 args -> IDENT args . [ EQUALS ]
+## Transitions:
+## Reductions:
 -- On EQUALS reduce production args -> IDENT args
 
 State 37:
+## Known stack suffix:
+## IDENT args
+## LR(1) items:
 rule -> IDENT args . EQUALS PARSE optbar clauses [ CODE AND # ]
+## Transitions:
 -- On EQUALS shift to state 38
+## Reductions:
 
 State 38:
+## Known stack suffix:
+## IDENT args EQUALS
+## LR(1) items:
 rule -> IDENT args EQUALS . PARSE optbar clauses [ CODE AND # ]
+## Transitions:
 -- On PARSE shift to state 39
+## Reductions:
 
 State 39:
+## Known stack suffix:
+## IDENT args EQUALS PARSE
+## LR(1) items:
 rule -> IDENT args EQUALS PARSE . optbar clauses [ CODE AND # ]
+## Transitions:
 -- On BAR shift to state 40
 -- On optbar shift to state 41
+## Reductions:
 -- On UNDERSCORE reduce production optbar ->
 -- On STRING reduce production optbar ->
 -- On LPAREN reduce production optbar ->
@@ -448,7 +648,12 @@ rule -> IDENT args EQUALS PARSE . optbar clauses [ CODE AND # ]
 -- On CHAR reduce production optbar ->
 
 State 40:
+## Known stack suffix:
+## BAR
+## LR(1) items:
 optbar -> BAR . [ UNDERSCORE STRING LPAREN LBRACK IDENT EOF CHAR ]
+## Transitions:
+## Reductions:
 -- On UNDERSCORE reduce production optbar -> BAR
 -- On STRING reduce production optbar -> BAR
 -- On LPAREN reduce production optbar -> BAR
@@ -458,7 +663,11 @@ optbar -> BAR . [ UNDERSCORE STRING LPAREN LBRACK IDENT EOF CHAR ]
 -- On CHAR reduce production optbar -> BAR
 
 State 41:
+## Known stack suffix:
+## IDENT args EQUALS PARSE optbar
+## LR(1) items:
 rule -> IDENT args EQUALS PARSE optbar . clauses [ CODE AND # ]
+## Transitions:
 -- On UNDERSCORE shift to state 7
 -- On STRING shift to state 8
 -- On LPAREN shift to state 9
@@ -469,14 +678,19 @@ rule -> IDENT args EQUALS PARSE optbar . clauses [ CODE AND # ]
 -- On regexp shift to state 42
 -- On clauses shift to state 44
 -- On clause shift to state 45
+## Reductions:
 
 State 42:
+## Known stack suffix:
+## regexp
+## LR(1) items:
 clause -> regexp . CODE [ CODE BAR AND # ]
 regexp -> regexp . regexp [ UNDERSCORE STRING STAR QMARK PLUS LPAREN LBRACK IDENT EOF CODE CHAR BAR ]
 regexp -> regexp . PLUS [ UNDERSCORE STRING STAR QMARK PLUS LPAREN LBRACK IDENT EOF CODE CHAR BAR ]
 regexp -> regexp . STAR [ UNDERSCORE STRING STAR QMARK PLUS LPAREN LBRACK IDENT EOF CODE CHAR BAR ]
 regexp -> regexp . QMARK [ UNDERSCORE STRING STAR QMARK PLUS LPAREN LBRACK IDENT EOF CODE CHAR BAR ]
 regexp -> regexp . BAR regexp [ UNDERSCORE STRING STAR QMARK PLUS LPAREN LBRACK IDENT EOF CODE CHAR BAR ]
+## Transitions:
 -- On UNDERSCORE shift to state 7
 -- On STRING shift to state 8
 -- On STAR shift to state 24
@@ -490,27 +704,47 @@ regexp -> regexp . BAR regexp [ UNDERSCORE STRING STAR QMARK PLUS LPAREN LBRACK 
 -- On CHAR shift to state 22
 -- On BAR shift to state 28
 -- On regexp shift to state 30
+## Reductions:
 
 State 43:
+## Known stack suffix:
+## regexp CODE
+## LR(1) items:
 clause -> regexp CODE . [ CODE BAR AND # ]
+## Transitions:
+## Reductions:
 -- On CODE reduce production clause -> regexp CODE
 -- On BAR reduce production clause -> regexp CODE
 -- On AND reduce production clause -> regexp CODE
 
 State 44:
+## Known stack suffix:
+## IDENT args EQUALS PARSE optbar clauses
+## LR(1) items:
 rule -> IDENT args EQUALS PARSE optbar clauses . [ CODE AND # ]
+## Transitions:
+## Reductions:
 -- On CODE reduce production rule -> IDENT args EQUALS PARSE optbar clauses
 -- On AND reduce production rule -> IDENT args EQUALS PARSE optbar clauses
 
 State 45:
+## Known stack suffix:
+## clause
+## LR(1) items:
 clauses -> clause . BAR clauses [ CODE AND # ]
 clauses -> clause . [ CODE AND # ]
+## Transitions:
 -- On BAR shift to state 46
+## Reductions:
 -- On CODE reduce production clauses -> clause
 -- On AND reduce production clauses -> clause
 
 State 46:
+## Known stack suffix:
+## clause BAR
+## LR(1) items:
 clauses -> clause BAR . clauses [ CODE AND # ]
+## Transitions:
 -- On UNDERSCORE shift to state 7
 -- On STRING shift to state 8
 -- On LPAREN shift to state 9
@@ -521,49 +755,95 @@ clauses -> clause BAR . clauses [ CODE AND # ]
 -- On regexp shift to state 42
 -- On clauses shift to state 47
 -- On clause shift to state 45
+## Reductions:
 
 State 47:
+## Known stack suffix:
+## clause BAR clauses
+## LR(1) items:
 clauses -> clause BAR clauses . [ CODE AND # ]
+## Transitions:
+## Reductions:
 -- On CODE reduce production clauses -> clause BAR clauses
 -- On AND reduce production clauses -> clause BAR clauses
 
 State 48:
+## Known stack suffix:
+## codeopt macros RULE rules
+## LR(1) items:
 spec -> codeopt macros RULE rules . codeopt [ # ]
+## Transitions:
 -- On CODE shift to state 49
 -- On codeopt shift to state 50
+## Reductions:
 
 State 49:
+## Known stack suffix:
+## CODE
+## LR(1) items:
 codeopt -> CODE . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production codeopt -> CODE
 
 State 50:
+## Known stack suffix:
+## codeopt macros RULE rules codeopt
+## LR(1) items:
 spec -> codeopt macros RULE rules codeopt . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production spec -> codeopt macros RULE rules codeopt
 
 State 51:
+## Known stack suffix:
+## rule
+## LR(1) items:
 rules -> rule . AND rules [ CODE # ]
 rules -> rule . [ CODE # ]
+## Transitions:
 -- On AND shift to state 52
+## Reductions:
 -- On CODE reduce production rules -> rule
 
 State 52:
+## Known stack suffix:
+## rule AND
+## LR(1) items:
 rules -> rule AND . rules [ CODE # ]
+## Transitions:
 -- On IDENT shift to state 34
 -- On rules shift to state 53
 -- On rule shift to state 51
+## Reductions:
 
 State 53:
+## Known stack suffix:
+## rule AND rules
+## LR(1) items:
 rules -> rule AND rules . [ CODE # ]
+## Transitions:
+## Reductions:
 -- On CODE reduce production rules -> rule AND rules
 
 State 54:
+## Known stack suffix:
+## macro
+## LR(1) items:
 macros -> macro . macros [ RULE ]
+## Transitions:
 -- On LET shift to state 4
 -- On macros shift to state 55
 -- On macro shift to state 54
+## Reductions:
 -- On RULE reduce production macros ->
 
 State 55:
+## Known stack suffix:
+## macro macros
+## LR(1) items:
 macros -> macro macros . [ RULE ]
+## Transitions:
+## Reductions:
 -- On RULE reduce production macros -> macro macros
 

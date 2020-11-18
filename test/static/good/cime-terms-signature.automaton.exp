@@ -1,5 +1,9 @@
 State 0:
+## Known stack suffix:
+##
+## LR(1) items:
 signature' -> . signature [ # ]
+## Transitions:
 -- On INT shift to state 1
 -- On IDENT shift to state 2
 -- On EOF shift to state 3
@@ -7,35 +11,66 @@ signature' -> . signature [ # ]
 -- On op_list shift to state 5
 -- On ident shift to state 18
 -- On decl shift to state 21
+## Reductions:
 
 State 1:
+## Known stack suffix:
+## INT
+## LR(1) items:
 ident -> INT . [ COMMA COLON ]
+## Transitions:
+## Reductions:
 -- On COMMA reduce production ident -> INT
 -- On COLON reduce production ident -> INT
 
 State 2:
+## Known stack suffix:
+## IDENT
+## LR(1) items:
 ident -> IDENT . [ COMMA COLON ]
+## Transitions:
+## Reductions:
 -- On COMMA reduce production ident -> IDENT
 -- On COLON reduce production ident -> IDENT
 
 State 3:
+## Known stack suffix:
+## EOF
+## LR(1) items:
 signature -> EOF . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production signature -> EOF
 
 State 4:
+## Known stack suffix:
+## signature
+## LR(1) items:
 signature' -> signature . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept signature
 
 State 5:
+## Known stack suffix:
+## op_list
+## LR(1) items:
 decl -> op_list . COLON fix arity [ SEMICOLON # ]
+## Transitions:
 -- On COLON shift to state 6
+## Reductions:
 
 State 6:
+## Known stack suffix:
+## op_list COLON
+## LR(1) items:
 decl -> op_list COLON . fix arity [ SEMICOLON # ]
+## Transitions:
 -- On KW_PREFIX shift to state 7
 -- On KW_POSTFIX shift to state 8
 -- On KW_INFIX shift to state 9
 -- On fix shift to state 10
+## Reductions:
 -- On KW_UNARY reduce production fix ->
 -- On KW_CONSTANT reduce production fix ->
 -- On KW_C reduce production fix ->
@@ -44,7 +79,12 @@ decl -> op_list COLON . fix arity [ SEMICOLON # ]
 -- On INT reduce production fix ->
 
 State 7:
+## Known stack suffix:
+## KW_PREFIX
+## LR(1) items:
 fix -> KW_PREFIX . [ KW_UNARY KW_CONSTANT KW_C KW_BINARY KW_AC INT ]
+## Transitions:
+## Reductions:
 -- On KW_UNARY reduce production fix -> KW_PREFIX
 -- On KW_CONSTANT reduce production fix -> KW_PREFIX
 -- On KW_C reduce production fix -> KW_PREFIX
@@ -53,7 +93,12 @@ fix -> KW_PREFIX . [ KW_UNARY KW_CONSTANT KW_C KW_BINARY KW_AC INT ]
 -- On INT reduce production fix -> KW_PREFIX
 
 State 8:
+## Known stack suffix:
+## KW_POSTFIX
+## LR(1) items:
 fix -> KW_POSTFIX . [ KW_UNARY KW_CONSTANT KW_C KW_BINARY KW_AC INT ]
+## Transitions:
+## Reductions:
 -- On KW_UNARY reduce production fix -> KW_POSTFIX
 -- On KW_CONSTANT reduce production fix -> KW_POSTFIX
 -- On KW_C reduce production fix -> KW_POSTFIX
@@ -62,7 +107,12 @@ fix -> KW_POSTFIX . [ KW_UNARY KW_CONSTANT KW_C KW_BINARY KW_AC INT ]
 -- On INT reduce production fix -> KW_POSTFIX
 
 State 9:
+## Known stack suffix:
+## KW_INFIX
+## LR(1) items:
 fix -> KW_INFIX . [ KW_UNARY KW_CONSTANT KW_C KW_BINARY KW_AC INT ]
+## Transitions:
+## Reductions:
 -- On KW_UNARY reduce production fix -> KW_INFIX
 -- On KW_CONSTANT reduce production fix -> KW_INFIX
 -- On KW_C reduce production fix -> KW_INFIX
@@ -71,7 +121,11 @@ fix -> KW_INFIX . [ KW_UNARY KW_CONSTANT KW_C KW_BINARY KW_AC INT ]
 -- On INT reduce production fix -> KW_INFIX
 
 State 10:
+## Known stack suffix:
+## op_list COLON fix
+## LR(1) items:
 decl -> op_list COLON fix . arity [ SEMICOLON # ]
+## Transitions:
 -- On KW_UNARY shift to state 11
 -- On KW_CONSTANT shift to state 12
 -- On KW_C shift to state 13
@@ -79,9 +133,15 @@ decl -> op_list COLON fix . arity [ SEMICOLON # ]
 -- On KW_AC shift to state 15
 -- On INT shift to state 16
 -- On arity shift to state 17
+## Reductions:
 
 State 11:
+## Known stack suffix:
+## KW_UNARY
+## LR(1) items:
 arity -> KW_UNARY . [ SEMICOLON AS # ]
+## Transitions:
+## Reductions:
 -- On SEMICOLON reduce production arity -> KW_UNARY
 -- On AS reduce production arity -> KW_UNARY
 -- On # reduce production arity -> KW_UNARY
@@ -92,7 +152,12 @@ arity -> KW_UNARY . [ SEMICOLON AS # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 12:
+## Known stack suffix:
+## KW_CONSTANT
+## LR(1) items:
 arity -> KW_CONSTANT . [ SEMICOLON AS # ]
+## Transitions:
+## Reductions:
 -- On SEMICOLON reduce production arity -> KW_CONSTANT
 -- On AS reduce production arity -> KW_CONSTANT
 -- On # reduce production arity -> KW_CONSTANT
@@ -103,7 +168,12 @@ arity -> KW_CONSTANT . [ SEMICOLON AS # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 13:
+## Known stack suffix:
+## KW_C
+## LR(1) items:
 arity -> KW_C . [ SEMICOLON AS # ]
+## Transitions:
+## Reductions:
 -- On SEMICOLON reduce production arity -> KW_C
 -- On AS reduce production arity -> KW_C
 -- On # reduce production arity -> KW_C
@@ -114,7 +184,12 @@ arity -> KW_C . [ SEMICOLON AS # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 14:
+## Known stack suffix:
+## KW_BINARY
+## LR(1) items:
 arity -> KW_BINARY . [ SEMICOLON AS # ]
+## Transitions:
+## Reductions:
 -- On SEMICOLON reduce production arity -> KW_BINARY
 -- On AS reduce production arity -> KW_BINARY
 -- On # reduce production arity -> KW_BINARY
@@ -125,7 +200,12 @@ arity -> KW_BINARY . [ SEMICOLON AS # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 15:
+## Known stack suffix:
+## KW_AC
+## LR(1) items:
 arity -> KW_AC . [ SEMICOLON AS # ]
+## Transitions:
+## Reductions:
 -- On SEMICOLON reduce production arity -> KW_AC
 -- On AS reduce production arity -> KW_AC
 -- On # reduce production arity -> KW_AC
@@ -136,7 +216,12 @@ arity -> KW_AC . [ SEMICOLON AS # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 16:
+## Known stack suffix:
+## INT
+## LR(1) items:
 arity -> INT . [ SEMICOLON AS # ]
+## Transitions:
+## Reductions:
 -- On SEMICOLON reduce production arity -> INT
 -- On AS reduce production arity -> INT
 -- On # reduce production arity -> INT
@@ -147,7 +232,12 @@ arity -> INT . [ SEMICOLON AS # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 17:
+## Known stack suffix:
+## op_list COLON fix arity
+## LR(1) items:
 decl -> op_list COLON fix arity . [ SEMICOLON # ]
+## Transitions:
+## Reductions:
 -- On SEMICOLON reduce production decl -> op_list COLON fix arity
 -- On # reduce production decl -> op_list COLON fix arity
 ** End-of-stream conflict on SEMICOLON
@@ -157,26 +247,46 @@ decl -> op_list COLON fix arity . [ SEMICOLON # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 18:
+## Known stack suffix:
+## ident
+## LR(1) items:
 op_list -> ident . [ COLON ]
 op_list -> ident . COMMA op_list [ COLON ]
+## Transitions:
 -- On COMMA shift to state 19
+## Reductions:
 -- On COLON reduce production op_list -> ident
 
 State 19:
+## Known stack suffix:
+## ident COMMA
+## LR(1) items:
 op_list -> ident COMMA . op_list [ COLON ]
+## Transitions:
 -- On INT shift to state 1
 -- On IDENT shift to state 2
 -- On op_list shift to state 20
 -- On ident shift to state 18
+## Reductions:
 
 State 20:
+## Known stack suffix:
+## ident COMMA op_list
+## LR(1) items:
 op_list -> ident COMMA op_list . [ COLON ]
+## Transitions:
+## Reductions:
 -- On COLON reduce production op_list -> ident COMMA op_list
 
 State 21:
+## Known stack suffix:
+## decl
+## LR(1) items:
 signature -> decl . [ # ]
 signature -> decl . SEMICOLON signature [ # ]
+## Transitions:
 -- On SEMICOLON shift to state 22
+## Reductions:
 -- On # reduce production signature -> decl
 ** End-of-stream conflict on SEMICOLON
 **   There is a tension between
@@ -185,7 +295,11 @@ signature -> decl . SEMICOLON signature [ # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 22:
+## Known stack suffix:
+## decl SEMICOLON
+## LR(1) items:
 signature -> decl SEMICOLON . signature [ # ]
+## Transitions:
 -- On INT shift to state 1
 -- On IDENT shift to state 2
 -- On EOF shift to state 3
@@ -193,13 +307,23 @@ signature -> decl SEMICOLON . signature [ # ]
 -- On op_list shift to state 5
 -- On ident shift to state 18
 -- On decl shift to state 21
+## Reductions:
 
 State 23:
+## Known stack suffix:
+## decl SEMICOLON signature
+## LR(1) items:
 signature -> decl SEMICOLON signature . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production signature -> decl SEMICOLON signature
 
 State 24:
+## Known stack suffix:
+##
+## LR(1) items:
 sorted_signature' -> . sorted_signature [ # ]
+## Transitions:
 -- On INT shift to state 1
 -- On IDENT shift to state 2
 -- On EOF shift to state 25
@@ -207,19 +331,35 @@ sorted_signature' -> . sorted_signature [ # ]
 -- On sorted_decl shift to state 27
 -- On op_list shift to state 30
 -- On ident shift to state 18
+## Reductions:
 
 State 25:
+## Known stack suffix:
+## EOF
+## LR(1) items:
 sorted_signature -> EOF . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production sorted_signature -> EOF
 
 State 26:
+## Known stack suffix:
+## sorted_signature
+## LR(1) items:
 sorted_signature' -> sorted_signature . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept sorted_signature
 
 State 27:
+## Known stack suffix:
+## sorted_decl
+## LR(1) items:
 sorted_signature -> sorted_decl . [ # ]
 sorted_signature -> sorted_decl . SEMICOLON sorted_signature [ # ]
+## Transitions:
 -- On SEMICOLON shift to state 28
+## Reductions:
 -- On # reduce production sorted_signature -> sorted_decl
 ** End-of-stream conflict on SEMICOLON
 **   There is a tension between
@@ -228,7 +368,11 @@ sorted_signature -> sorted_decl . SEMICOLON sorted_signature [ # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 28:
+## Known stack suffix:
+## sorted_decl SEMICOLON
+## LR(1) items:
 sorted_signature -> sorted_decl SEMICOLON . sorted_signature [ # ]
+## Transitions:
 -- On INT shift to state 1
 -- On IDENT shift to state 2
 -- On EOF shift to state 25
@@ -236,21 +380,37 @@ sorted_signature -> sorted_decl SEMICOLON . sorted_signature [ # ]
 -- On sorted_decl shift to state 27
 -- On op_list shift to state 30
 -- On ident shift to state 18
+## Reductions:
 
 State 29:
+## Known stack suffix:
+## sorted_decl SEMICOLON sorted_signature
+## LR(1) items:
 sorted_signature -> sorted_decl SEMICOLON sorted_signature . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production sorted_signature -> sorted_decl SEMICOLON sorted_signature
 
 State 30:
+## Known stack suffix:
+## op_list
+## LR(1) items:
 sorted_decl -> op_list . COLON fix arity AS profile_list [ SEMICOLON # ]
+## Transitions:
 -- On COLON shift to state 31
+## Reductions:
 
 State 31:
+## Known stack suffix:
+## op_list COLON
+## LR(1) items:
 sorted_decl -> op_list COLON . fix arity AS profile_list [ SEMICOLON # ]
+## Transitions:
 -- On KW_PREFIX shift to state 7
 -- On KW_POSTFIX shift to state 8
 -- On KW_INFIX shift to state 9
 -- On fix shift to state 32
+## Reductions:
 -- On KW_UNARY reduce production fix ->
 -- On KW_CONSTANT reduce production fix ->
 -- On KW_C reduce production fix ->
@@ -259,7 +419,11 @@ sorted_decl -> op_list COLON . fix arity AS profile_list [ SEMICOLON # ]
 -- On INT reduce production fix ->
 
 State 32:
+## Known stack suffix:
+## op_list COLON fix
+## LR(1) items:
 sorted_decl -> op_list COLON fix . arity AS profile_list [ SEMICOLON # ]
+## Transitions:
 -- On KW_UNARY shift to state 11
 -- On KW_CONSTANT shift to state 12
 -- On KW_C shift to state 13
@@ -267,22 +431,38 @@ sorted_decl -> op_list COLON fix . arity AS profile_list [ SEMICOLON # ]
 -- On KW_AC shift to state 15
 -- On INT shift to state 16
 -- On arity shift to state 33
+## Reductions:
 
 State 33:
+## Known stack suffix:
+## op_list COLON fix arity
+## LR(1) items:
 sorted_decl -> op_list COLON fix arity . AS profile_list [ SEMICOLON # ]
+## Transitions:
 -- On AS shift to state 34
+## Reductions:
 
 State 34:
+## Known stack suffix:
+## op_list COLON fix arity AS
+## LR(1) items:
 sorted_decl -> op_list COLON fix arity AS . profile_list [ SEMICOLON # ]
+## Transitions:
 -- On IDENT shift to state 35
 -- On sort_list shift to state 36
 -- On sort shift to state 39
 -- On profile_list shift to state 41
 -- On profile shift to state 42
+## Reductions:
 -- On ARROW reduce production sort_list ->
 
 State 35:
+## Known stack suffix:
+## IDENT
+## LR(1) items:
 sort -> IDENT . [ SEMICOLON IDENT COMMA ARROW # ]
+## Transitions:
+## Reductions:
 -- On SEMICOLON reduce production sort -> IDENT
 -- On IDENT reduce production sort -> IDENT
 -- On COMMA reduce production sort -> IDENT
@@ -295,16 +475,31 @@ sort -> IDENT . [ SEMICOLON IDENT COMMA ARROW # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 36:
+## Known stack suffix:
+## sort_list
+## LR(1) items:
 profile -> sort_list . ARROW sort [ SEMICOLON COMMA # ]
+## Transitions:
 -- On ARROW shift to state 37
+## Reductions:
 
 State 37:
+## Known stack suffix:
+## sort_list ARROW
+## LR(1) items:
 profile -> sort_list ARROW . sort [ SEMICOLON COMMA # ]
+## Transitions:
 -- On IDENT shift to state 35
 -- On sort shift to state 38
+## Reductions:
 
 State 38:
+## Known stack suffix:
+## sort_list ARROW sort
+## LR(1) items:
 profile -> sort_list ARROW sort . [ SEMICOLON COMMA # ]
+## Transitions:
+## Reductions:
 -- On SEMICOLON reduce production profile -> sort_list ARROW sort
 -- On COMMA reduce production profile -> sort_list ARROW sort
 -- On # reduce production profile -> sort_list ARROW sort
@@ -315,18 +510,33 @@ profile -> sort_list ARROW sort . [ SEMICOLON COMMA # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 39:
+## Known stack suffix:
+## sort
+## LR(1) items:
 sort_list -> sort . sort_list [ ARROW ]
+## Transitions:
 -- On IDENT shift to state 35
 -- On sort_list shift to state 40
 -- On sort shift to state 39
+## Reductions:
 -- On ARROW reduce production sort_list ->
 
 State 40:
+## Known stack suffix:
+## sort sort_list
+## LR(1) items:
 sort_list -> sort sort_list . [ ARROW ]
+## Transitions:
+## Reductions:
 -- On ARROW reduce production sort_list -> sort sort_list
 
 State 41:
+## Known stack suffix:
+## op_list COLON fix arity AS profile_list
+## LR(1) items:
 sorted_decl -> op_list COLON fix arity AS profile_list . [ SEMICOLON # ]
+## Transitions:
+## Reductions:
 -- On SEMICOLON reduce production sorted_decl -> op_list COLON fix arity AS profile_list
 -- On # reduce production sorted_decl -> op_list COLON fix arity AS profile_list
 ** End-of-stream conflict on SEMICOLON
@@ -336,9 +546,14 @@ sorted_decl -> op_list COLON fix arity AS profile_list . [ SEMICOLON # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 42:
+## Known stack suffix:
+## profile
+## LR(1) items:
 profile_list -> profile . [ SEMICOLON # ]
 profile_list -> profile . COMMA profile_list [ SEMICOLON # ]
+## Transitions:
 -- On COMMA shift to state 43
+## Reductions:
 -- On SEMICOLON reduce production profile_list -> profile
 -- On # reduce production profile_list -> profile
 ** End-of-stream conflict on SEMICOLON COMMA
@@ -348,16 +563,26 @@ profile_list -> profile . COMMA profile_list [ SEMICOLON # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 43:
+## Known stack suffix:
+## profile COMMA
+## LR(1) items:
 profile_list -> profile COMMA . profile_list [ SEMICOLON # ]
+## Transitions:
 -- On IDENT shift to state 35
 -- On sort_list shift to state 36
 -- On sort shift to state 39
 -- On profile_list shift to state 44
 -- On profile shift to state 42
+## Reductions:
 -- On ARROW reduce production sort_list ->
 
 State 44:
+## Known stack suffix:
+## profile COMMA profile_list
+## LR(1) items:
 profile_list -> profile COMMA profile_list . [ SEMICOLON # ]
+## Transitions:
+## Reductions:
 -- On SEMICOLON reduce production profile_list -> profile COMMA profile_list
 -- On # reduce production profile_list -> profile COMMA profile_list
 ** End-of-stream conflict on SEMICOLON

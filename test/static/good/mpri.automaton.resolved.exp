@@ -1,5 +1,9 @@
 State 0:
+## Known stack suffix:
+##
+## LR(1) items:
 entry' -> . entry [ # ]
+## Transitions:
 -- On PRINT shift to state 1
 -- On LPAREN shift to state 2
 -- On LET shift to state 3
@@ -12,16 +16,26 @@ entry' -> . entry [ # ]
 -- On atomic_term_ shift to state 17
 -- On application_term_ shift to state 20
 -- On any_term_ shift to state 30
+## Reductions:
 
 State 1:
+## Known stack suffix:
+## PRINT
+## LR(1) items:
 application_term_ -> PRINT . atomic_term_ [ RPAREN MULOP LPAREN INTLITERAL IN IDENT EOF ADDOP ]
+## Transitions:
 -- On LPAREN shift to state 2
 -- On INTLITERAL shift to state 8
 -- On IDENT shift to state 9
 -- On atomic_term_ shift to state 28
+## Reductions:
 
 State 2:
+## Known stack suffix:
+## LPAREN
+## LR(1) items:
 atomic_term_ -> LPAREN . any_term_ RPAREN [ RPAREN MULOP LPAREN INTLITERAL IN IDENT EOF ADDOP ]
+## Transitions:
 -- On PRINT shift to state 1
 -- On LPAREN shift to state 2
 -- On LET shift to state 3
@@ -33,27 +47,52 @@ atomic_term_ -> LPAREN . any_term_ RPAREN [ RPAREN MULOP LPAREN INTLITERAL IN ID
 -- On atomic_term_ shift to state 17
 -- On application_term_ shift to state 20
 -- On any_term_ shift to state 26
+## Reductions:
 
 State 3:
+## Known stack suffix:
+## LET
+## LR(1) items:
 any_term_ -> LET . recursive IDENT EQ any_term_ IN any_term_ [ RPAREN IN EOF ]
+## Transitions:
 -- On REC shift to state 4
 -- On recursive shift to state 5
+## Reductions:
 -- On IDENT reduce production recursive ->
 
 State 4:
+## Known stack suffix:
+## REC
+## LR(1) items:
 recursive -> REC . [ IDENT ]
+## Transitions:
+## Reductions:
 -- On IDENT reduce production recursive -> REC
 
 State 5:
+## Known stack suffix:
+## LET recursive
+## LR(1) items:
 any_term_ -> LET recursive . IDENT EQ any_term_ IN any_term_ [ RPAREN IN EOF ]
+## Transitions:
 -- On IDENT shift to state 6
+## Reductions:
 
 State 6:
+## Known stack suffix:
+## LET recursive IDENT
+## LR(1) items:
 any_term_ -> LET recursive IDENT . EQ any_term_ IN any_term_ [ RPAREN IN EOF ]
+## Transitions:
 -- On EQ shift to state 7
+## Reductions:
 
 State 7:
+## Known stack suffix:
+## LET recursive IDENT EQ
+## LR(1) items:
 any_term_ -> LET recursive IDENT EQ . any_term_ IN any_term_ [ RPAREN IN EOF ]
+## Transitions:
 -- On PRINT shift to state 1
 -- On LPAREN shift to state 2
 -- On LET shift to state 3
@@ -65,9 +104,15 @@ any_term_ -> LET recursive IDENT EQ . any_term_ IN any_term_ [ RPAREN IN EOF ]
 -- On atomic_term_ shift to state 17
 -- On application_term_ shift to state 20
 -- On any_term_ shift to state 23
+## Reductions:
 
 State 8:
+## Known stack suffix:
+## INTLITERAL
+## LR(1) items:
 atomic_term_ -> INTLITERAL . [ RPAREN MULOP LPAREN INTLITERAL IN IDENT EOF ADDOP ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production atomic_term_ -> INTLITERAL
 -- On MULOP reduce production atomic_term_ -> INTLITERAL
 -- On LPAREN reduce production atomic_term_ -> INTLITERAL
@@ -78,7 +123,12 @@ atomic_term_ -> INTLITERAL . [ RPAREN MULOP LPAREN INTLITERAL IN IDENT EOF ADDOP
 -- On ADDOP reduce production atomic_term_ -> INTLITERAL
 
 State 9:
+## Known stack suffix:
+## IDENT
+## LR(1) items:
 atomic_term_ -> IDENT . [ RPAREN MULOP LPAREN INTLITERAL IN IDENT EOF ADDOP ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production atomic_term_ -> IDENT
 -- On MULOP reduce production atomic_term_ -> IDENT
 -- On LPAREN reduce production atomic_term_ -> IDENT
@@ -89,15 +139,29 @@ atomic_term_ -> IDENT . [ RPAREN MULOP LPAREN INTLITERAL IN IDENT EOF ADDOP ]
 -- On ADDOP reduce production atomic_term_ -> IDENT
 
 State 10:
+## Known stack suffix:
+## FUN
+## LR(1) items:
 any_term_ -> FUN . IDENT ARROW any_term_ [ RPAREN IN EOF ]
+## Transitions:
 -- On IDENT shift to state 11
+## Reductions:
 
 State 11:
+## Known stack suffix:
+## FUN IDENT
+## LR(1) items:
 any_term_ -> FUN IDENT . ARROW any_term_ [ RPAREN IN EOF ]
+## Transitions:
 -- On ARROW shift to state 12
+## Reductions:
 
 State 12:
+## Known stack suffix:
+## FUN IDENT ARROW
+## LR(1) items:
 any_term_ -> FUN IDENT ARROW . any_term_ [ RPAREN IN EOF ]
+## Transitions:
 -- On PRINT shift to state 1
 -- On LPAREN shift to state 2
 -- On LET shift to state 3
@@ -109,17 +173,27 @@ any_term_ -> FUN IDENT ARROW . any_term_ [ RPAREN IN EOF ]
 -- On atomic_term_ shift to state 17
 -- On application_term_ shift to state 20
 -- On any_term_ shift to state 22
+## Reductions:
 
 State 13:
+## Known stack suffix:
+## left_associative_level(multiplicative_term_,ADDOP,mkbinop)
+## LR(1) items:
 any_term_ -> left_associative_level(multiplicative_term_,ADDOP,mkbinop) . [ RPAREN IN EOF ]
 left_associative_level(multiplicative_term_,ADDOP,mkbinop) -> left_associative_level(multiplicative_term_,ADDOP,mkbinop) . ADDOP left_associative_level(application_term_,MULOP,mkbinop) [ RPAREN IN EOF ADDOP ]
+## Transitions:
 -- On ADDOP shift to state 14
+## Reductions:
 -- On RPAREN reduce production any_term_ -> left_associative_level(multiplicative_term_,ADDOP,mkbinop)
 -- On IN reduce production any_term_ -> left_associative_level(multiplicative_term_,ADDOP,mkbinop)
 -- On EOF reduce production any_term_ -> left_associative_level(multiplicative_term_,ADDOP,mkbinop)
 
 State 14:
+## Known stack suffix:
+## left_associative_level(multiplicative_term_,ADDOP,mkbinop) ADDOP
+## LR(1) items:
 left_associative_level(multiplicative_term_,ADDOP,mkbinop) -> left_associative_level(multiplicative_term_,ADDOP,mkbinop) ADDOP . left_associative_level(application_term_,MULOP,mkbinop) [ RPAREN IN EOF ADDOP ]
+## Transitions:
 -- On PRINT shift to state 1
 -- On LPAREN shift to state 2
 -- On INTLITERAL shift to state 8
@@ -127,27 +201,43 @@ left_associative_level(multiplicative_term_,ADDOP,mkbinop) -> left_associative_l
 -- On left_associative_level(application_term_,MULOP,mkbinop) shift to state 15
 -- On atomic_term_ shift to state 17
 -- On application_term_ shift to state 20
+## Reductions:
 
 State 15:
+## Known stack suffix:
+## left_associative_level(multiplicative_term_,ADDOP,mkbinop) ADDOP left_associative_level(application_term_,MULOP,mkbinop)
+## LR(1) items:
 left_associative_level(application_term_,MULOP,mkbinop) -> left_associative_level(application_term_,MULOP,mkbinop) . MULOP application_term_ [ RPAREN MULOP IN EOF ADDOP ]
 left_associative_level(multiplicative_term_,ADDOP,mkbinop) -> left_associative_level(multiplicative_term_,ADDOP,mkbinop) ADDOP left_associative_level(application_term_,MULOP,mkbinop) . [ RPAREN IN EOF ADDOP ]
+## Transitions:
 -- On MULOP shift to state 16
+## Reductions:
 -- On RPAREN reduce production left_associative_level(multiplicative_term_,ADDOP,mkbinop) -> left_associative_level(multiplicative_term_,ADDOP,mkbinop) ADDOP left_associative_level(application_term_,MULOP,mkbinop)
 -- On IN reduce production left_associative_level(multiplicative_term_,ADDOP,mkbinop) -> left_associative_level(multiplicative_term_,ADDOP,mkbinop) ADDOP left_associative_level(application_term_,MULOP,mkbinop)
 -- On EOF reduce production left_associative_level(multiplicative_term_,ADDOP,mkbinop) -> left_associative_level(multiplicative_term_,ADDOP,mkbinop) ADDOP left_associative_level(application_term_,MULOP,mkbinop)
 -- On ADDOP reduce production left_associative_level(multiplicative_term_,ADDOP,mkbinop) -> left_associative_level(multiplicative_term_,ADDOP,mkbinop) ADDOP left_associative_level(application_term_,MULOP,mkbinop)
 
 State 16:
+## Known stack suffix:
+## left_associative_level(application_term_,MULOP,mkbinop) MULOP
+## LR(1) items:
 left_associative_level(application_term_,MULOP,mkbinop) -> left_associative_level(application_term_,MULOP,mkbinop) MULOP . application_term_ [ RPAREN MULOP IN EOF ADDOP ]
+## Transitions:
 -- On PRINT shift to state 1
 -- On LPAREN shift to state 2
 -- On INTLITERAL shift to state 8
 -- On IDENT shift to state 9
 -- On atomic_term_ shift to state 17
 -- On application_term_ shift to state 18
+## Reductions:
 
 State 17:
+## Known stack suffix:
+## atomic_term_
+## LR(1) items:
 application_term_ -> atomic_term_ . [ RPAREN MULOP LPAREN INTLITERAL IN IDENT EOF ADDOP ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production application_term_ -> atomic_term_
 -- On MULOP reduce production application_term_ -> atomic_term_
 -- On LPAREN reduce production application_term_ -> atomic_term_
@@ -158,12 +248,17 @@ application_term_ -> atomic_term_ . [ RPAREN MULOP LPAREN INTLITERAL IN IDENT EO
 -- On ADDOP reduce production application_term_ -> atomic_term_
 
 State 18:
+## Known stack suffix:
+## left_associative_level(application_term_,MULOP,mkbinop) MULOP application_term_
+## LR(1) items:
 application_term_ -> application_term_ . atomic_term_ [ RPAREN MULOP LPAREN INTLITERAL IN IDENT EOF ADDOP ]
 left_associative_level(application_term_,MULOP,mkbinop) -> left_associative_level(application_term_,MULOP,mkbinop) MULOP application_term_ . [ RPAREN MULOP IN EOF ADDOP ]
+## Transitions:
 -- On LPAREN shift to state 2
 -- On INTLITERAL shift to state 8
 -- On IDENT shift to state 9
 -- On atomic_term_ shift to state 19
+## Reductions:
 -- On RPAREN reduce production left_associative_level(application_term_,MULOP,mkbinop) -> left_associative_level(application_term_,MULOP,mkbinop) MULOP application_term_
 -- On MULOP reduce production left_associative_level(application_term_,MULOP,mkbinop) -> left_associative_level(application_term_,MULOP,mkbinop) MULOP application_term_
 -- On IN reduce production left_associative_level(application_term_,MULOP,mkbinop) -> left_associative_level(application_term_,MULOP,mkbinop) MULOP application_term_
@@ -171,7 +266,12 @@ left_associative_level(application_term_,MULOP,mkbinop) -> left_associative_leve
 -- On ADDOP reduce production left_associative_level(application_term_,MULOP,mkbinop) -> left_associative_level(application_term_,MULOP,mkbinop) MULOP application_term_
 
 State 19:
+## Known stack suffix:
+## application_term_ atomic_term_
+## LR(1) items:
 application_term_ -> application_term_ atomic_term_ . [ RPAREN MULOP LPAREN INTLITERAL IN IDENT EOF ADDOP ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production application_term_ -> application_term_ atomic_term_
 -- On MULOP reduce production application_term_ -> application_term_ atomic_term_
 -- On LPAREN reduce production application_term_ -> application_term_ atomic_term_
@@ -182,12 +282,17 @@ application_term_ -> application_term_ atomic_term_ . [ RPAREN MULOP LPAREN INTL
 -- On ADDOP reduce production application_term_ -> application_term_ atomic_term_
 
 State 20:
+## Known stack suffix:
+## application_term_
+## LR(1) items:
 application_term_ -> application_term_ . atomic_term_ [ RPAREN MULOP LPAREN INTLITERAL IN IDENT EOF ADDOP ]
 left_associative_level(application_term_,MULOP,mkbinop) -> application_term_ . [ RPAREN MULOP IN EOF ADDOP ]
+## Transitions:
 -- On LPAREN shift to state 2
 -- On INTLITERAL shift to state 8
 -- On IDENT shift to state 9
 -- On atomic_term_ shift to state 19
+## Reductions:
 -- On RPAREN reduce production left_associative_level(application_term_,MULOP,mkbinop) -> application_term_
 -- On MULOP reduce production left_associative_level(application_term_,MULOP,mkbinop) -> application_term_
 -- On IN reduce production left_associative_level(application_term_,MULOP,mkbinop) -> application_term_
@@ -195,26 +300,45 @@ left_associative_level(application_term_,MULOP,mkbinop) -> application_term_ . [
 -- On ADDOP reduce production left_associative_level(application_term_,MULOP,mkbinop) -> application_term_
 
 State 21:
+## Known stack suffix:
+## left_associative_level(application_term_,MULOP,mkbinop)
+## LR(1) items:
 left_associative_level(application_term_,MULOP,mkbinop) -> left_associative_level(application_term_,MULOP,mkbinop) . MULOP application_term_ [ RPAREN MULOP IN EOF ADDOP ]
 left_associative_level(multiplicative_term_,ADDOP,mkbinop) -> left_associative_level(application_term_,MULOP,mkbinop) . [ RPAREN IN EOF ADDOP ]
+## Transitions:
 -- On MULOP shift to state 16
+## Reductions:
 -- On RPAREN reduce production left_associative_level(multiplicative_term_,ADDOP,mkbinop) -> left_associative_level(application_term_,MULOP,mkbinop)
 -- On IN reduce production left_associative_level(multiplicative_term_,ADDOP,mkbinop) -> left_associative_level(application_term_,MULOP,mkbinop)
 -- On EOF reduce production left_associative_level(multiplicative_term_,ADDOP,mkbinop) -> left_associative_level(application_term_,MULOP,mkbinop)
 -- On ADDOP reduce production left_associative_level(multiplicative_term_,ADDOP,mkbinop) -> left_associative_level(application_term_,MULOP,mkbinop)
 
 State 22:
+## Known stack suffix:
+## FUN IDENT ARROW any_term_
+## LR(1) items:
 any_term_ -> FUN IDENT ARROW any_term_ . [ RPAREN IN EOF ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production any_term_ -> FUN IDENT ARROW any_term_
 -- On IN reduce production any_term_ -> FUN IDENT ARROW any_term_
 -- On EOF reduce production any_term_ -> FUN IDENT ARROW any_term_
 
 State 23:
+## Known stack suffix:
+## LET recursive IDENT EQ any_term_
+## LR(1) items:
 any_term_ -> LET recursive IDENT EQ any_term_ . IN any_term_ [ RPAREN IN EOF ]
+## Transitions:
 -- On IN shift to state 24
+## Reductions:
 
 State 24:
+## Known stack suffix:
+## LET recursive IDENT EQ any_term_ IN
+## LR(1) items:
 any_term_ -> LET recursive IDENT EQ any_term_ IN . any_term_ [ RPAREN IN EOF ]
+## Transitions:
 -- On PRINT shift to state 1
 -- On LPAREN shift to state 2
 -- On LET shift to state 3
@@ -226,19 +350,35 @@ any_term_ -> LET recursive IDENT EQ any_term_ IN . any_term_ [ RPAREN IN EOF ]
 -- On atomic_term_ shift to state 17
 -- On application_term_ shift to state 20
 -- On any_term_ shift to state 25
+## Reductions:
 
 State 25:
+## Known stack suffix:
+## LET recursive IDENT EQ any_term_ IN any_term_
+## LR(1) items:
 any_term_ -> LET recursive IDENT EQ any_term_ IN any_term_ . [ RPAREN IN EOF ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production any_term_ -> LET recursive IDENT EQ any_term_ IN any_term_
 -- On IN reduce production any_term_ -> LET recursive IDENT EQ any_term_ IN any_term_
 -- On EOF reduce production any_term_ -> LET recursive IDENT EQ any_term_ IN any_term_
 
 State 26:
+## Known stack suffix:
+## LPAREN any_term_
+## LR(1) items:
 atomic_term_ -> LPAREN any_term_ . RPAREN [ RPAREN MULOP LPAREN INTLITERAL IN IDENT EOF ADDOP ]
+## Transitions:
 -- On RPAREN shift to state 27
+## Reductions:
 
 State 27:
+## Known stack suffix:
+## LPAREN any_term_ RPAREN
+## LR(1) items:
 atomic_term_ -> LPAREN any_term_ RPAREN . [ RPAREN MULOP LPAREN INTLITERAL IN IDENT EOF ADDOP ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production atomic_term_ -> LPAREN any_term_ RPAREN
 -- On MULOP reduce production atomic_term_ -> LPAREN any_term_ RPAREN
 -- On LPAREN reduce production atomic_term_ -> LPAREN any_term_ RPAREN
@@ -249,7 +389,12 @@ atomic_term_ -> LPAREN any_term_ RPAREN . [ RPAREN MULOP LPAREN INTLITERAL IN ID
 -- On ADDOP reduce production atomic_term_ -> LPAREN any_term_ RPAREN
 
 State 28:
+## Known stack suffix:
+## PRINT atomic_term_
+## LR(1) items:
 application_term_ -> PRINT atomic_term_ . [ RPAREN MULOP LPAREN INTLITERAL IN IDENT EOF ADDOP ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production application_term_ -> PRINT atomic_term_
 -- On MULOP reduce production application_term_ -> PRINT atomic_term_
 -- On LPAREN reduce production application_term_ -> PRINT atomic_term_
@@ -260,14 +405,29 @@ application_term_ -> PRINT atomic_term_ . [ RPAREN MULOP LPAREN INTLITERAL IN ID
 -- On ADDOP reduce production application_term_ -> PRINT atomic_term_
 
 State 29:
+## Known stack suffix:
+## entry
+## LR(1) items:
 entry' -> entry . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept entry
 
 State 30:
+## Known stack suffix:
+## any_term_
+## LR(1) items:
 entry -> any_term_ . EOF [ # ]
+## Transitions:
 -- On EOF shift to state 31
+## Reductions:
 
 State 31:
+## Known stack suffix:
+## any_term_ EOF
+## LR(1) items:
 entry -> any_term_ EOF . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production entry -> any_term_ EOF
 

@@ -1,15 +1,28 @@
 State 0:
+## Known stack suffix:
+##
+## LR(1) items:
 parse' -> . parse [ # ]
+## Transitions:
 -- On error shift to state 1
 -- On LEFT_PAREN shift to state 2
 -- On stmt shift to state 342
 -- On parse shift to state 344
+## Reductions:
 
 State 1:
+## Known stack suffix:
+## error
+## LR(1) items:
 stmt -> error . [ EOI ]
+## Transitions:
+## Reductions:
 -- On EOI reduce production stmt -> error
 
 State 2:
+## Known stack suffix:
+## LEFT_PAREN
+## LR(1) items:
 stmt -> LEFT_PAREN . ASSERT term RIGHT_PAREN [ EOI ]
 stmt -> LEFT_PAREN . LEMMA term RIGHT_PAREN [ EOI ]
 stmt -> LEFT_PAREN . DECLARE_SORT IDENT IDENT RIGHT_PAREN [ EOI ]
@@ -21,6 +34,7 @@ stmt -> LEFT_PAREN . DEFINE_FUN_REC fun_rec RIGHT_PAREN [ EOI ]
 stmt -> LEFT_PAREN . DEFINE_FUNS_REC LEFT_PAREN nonempty_list(funs_rec_decl) RIGHT_PAREN LEFT_PAREN nonempty_list(term) RIGHT_PAREN RIGHT_PAREN [ EOI ]
 stmt -> LEFT_PAREN . ASSERT_NOT assert_not RIGHT_PAREN [ EOI ]
 stmt -> LEFT_PAREN . CHECK_SAT RIGHT_PAREN [ EOI ]
+## Transitions:
 -- On LEMMA shift to state 3
 -- On DEFINE_FUN_REC shift to state 206
 -- On DEFINE_FUNS_REC shift to state 240
@@ -32,9 +46,14 @@ stmt -> LEFT_PAREN . CHECK_SAT RIGHT_PAREN [ EOI ]
 -- On CHECK_SAT shift to state 324
 -- On ASSERT_NOT shift to state 326
 -- On ASSERT shift to state 339
+## Reductions:
 
 State 3:
+## Known stack suffix:
+## LEFT_PAREN LEMMA
+## LR(1) items:
 stmt -> LEFT_PAREN LEMMA . term RIGHT_PAREN [ EOI ]
+## Transitions:
 -- On error shift to state 4
 -- On TRUE shift to state 5
 -- On QUOTED shift to state 6
@@ -43,9 +62,15 @@ stmt -> LEFT_PAREN LEMMA . term RIGHT_PAREN [ EOI ]
 -- On FALSE shift to state 23
 -- On term shift to state 204
 -- On composite_term shift to state 26
+## Reductions:
 
 State 4:
+## Known stack suffix:
+## error
+## LR(1) items:
 term -> error . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production term -> error
 -- On LEFT_PAREN reduce production term -> error
 -- On IDENT reduce production term -> error
@@ -53,7 +78,12 @@ term -> error . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
 -- On BOOL reduce production term -> error
 
 State 5:
+## Known stack suffix:
+## TRUE
+## LR(1) items:
 term -> TRUE . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production term -> TRUE
 -- On LEFT_PAREN reduce production term -> TRUE
 -- On IDENT reduce production term -> TRUE
@@ -61,7 +91,12 @@ term -> TRUE . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
 -- On BOOL reduce production term -> TRUE
 
 State 6:
+## Known stack suffix:
+## QUOTED
+## LR(1) items:
 term -> QUOTED . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production term -> QUOTED
 -- On LEFT_PAREN reduce production term -> QUOTED
 -- On IDENT reduce production term -> QUOTED
@@ -69,6 +104,9 @@ term -> QUOTED . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
 -- On BOOL reduce production term -> QUOTED
 
 State 7:
+## Known stack suffix:
+## LEFT_PAREN
+## LR(1) items:
 composite_term -> LEFT_PAREN . term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
 composite_term -> LEFT_PAREN . IF term term term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
 composite_term -> LEFT_PAREN . OR nonempty_list(term) RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
@@ -86,6 +124,7 @@ composite_term -> LEFT_PAREN . LET LEFT_PAREN nonempty_list(binding) RIGHT_PAREN
 composite_term -> LEFT_PAREN . AS term ty RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
 composite_term -> LEFT_PAREN . FORALL LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
 composite_term -> LEFT_PAREN . EXISTS LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On error shift to state 4
 -- On TRUE shift to state 5
 -- On QUOTED shift to state 6
@@ -108,9 +147,14 @@ composite_term -> LEFT_PAREN . EXISTS LEFT_PAREN nonempty_list(typed_var) RIGHT_
 -- On AND shift to state 196
 -- On term shift to state 199
 -- On composite_term shift to state 201
+## Reductions:
 
 State 8:
+## Known stack suffix:
+## LEFT_PAREN OR
+## LR(1) items:
 composite_term -> LEFT_PAREN OR . nonempty_list(term) RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On error shift to state 9
 -- On TRUE shift to state 10
 -- On QUOTED shift to state 11
@@ -120,9 +164,15 @@ composite_term -> LEFT_PAREN OR . nonempty_list(term) RIGHT_PAREN [ RIGHT_PAREN 
 -- On term shift to state 16
 -- On nonempty_list(term) shift to state 136
 -- On composite_term shift to state 18
+## Reductions:
 
 State 9:
+## Known stack suffix:
+## error
+## LR(1) items:
 term -> error . [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
+## Reductions:
 -- On error reduce production term -> error
 -- On TRUE reduce production term -> error
 -- On RIGHT_PAREN reduce production term -> error
@@ -132,7 +182,12 @@ term -> error . [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
 -- On FALSE reduce production term -> error
 
 State 10:
+## Known stack suffix:
+## TRUE
+## LR(1) items:
 term -> TRUE . [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
+## Reductions:
 -- On error reduce production term -> TRUE
 -- On TRUE reduce production term -> TRUE
 -- On RIGHT_PAREN reduce production term -> TRUE
@@ -142,7 +197,12 @@ term -> TRUE . [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
 -- On FALSE reduce production term -> TRUE
 
 State 11:
+## Known stack suffix:
+## QUOTED
+## LR(1) items:
 term -> QUOTED . [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
+## Reductions:
 -- On error reduce production term -> QUOTED
 -- On TRUE reduce production term -> QUOTED
 -- On RIGHT_PAREN reduce production term -> QUOTED
@@ -152,6 +212,9 @@ term -> QUOTED . [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
 -- On FALSE reduce production term -> QUOTED
 
 State 12:
+## Known stack suffix:
+## LEFT_PAREN
+## LR(1) items:
 composite_term -> LEFT_PAREN . term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
 composite_term -> LEFT_PAREN . IF term term term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
 composite_term -> LEFT_PAREN . OR nonempty_list(term) RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
@@ -169,6 +232,7 @@ composite_term -> LEFT_PAREN . LET LEFT_PAREN nonempty_list(binding) RIGHT_PAREN
 composite_term -> LEFT_PAREN . AS term ty RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
 composite_term -> LEFT_PAREN . FORALL LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
 composite_term -> LEFT_PAREN . EXISTS LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On error shift to state 4
 -- On TRUE shift to state 5
 -- On QUOTED shift to state 6
@@ -191,9 +255,14 @@ composite_term -> LEFT_PAREN . EXISTS LEFT_PAREN nonempty_list(typed_var) RIGHT_
 -- On AND shift to state 128
 -- On term shift to state 131
 -- On composite_term shift to state 133
+## Reductions:
 
 State 13:
+## Known stack suffix:
+## LEFT_PAREN OR
+## LR(1) items:
 composite_term -> LEFT_PAREN OR . nonempty_list(term) RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On error shift to state 9
 -- On TRUE shift to state 10
 -- On QUOTED shift to state 11
@@ -203,9 +272,15 @@ composite_term -> LEFT_PAREN OR . nonempty_list(term) RIGHT_PAREN [ error TRUE R
 -- On term shift to state 16
 -- On nonempty_list(term) shift to state 19
 -- On composite_term shift to state 18
+## Reductions:
 
 State 14:
+## Known stack suffix:
+## IDENT
+## LR(1) items:
 term -> IDENT . [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
+## Reductions:
 -- On error reduce production term -> IDENT
 -- On TRUE reduce production term -> IDENT
 -- On RIGHT_PAREN reduce production term -> IDENT
@@ -215,7 +290,12 @@ term -> IDENT . [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
 -- On FALSE reduce production term -> IDENT
 
 State 15:
+## Known stack suffix:
+## FALSE
+## LR(1) items:
 term -> FALSE . [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
+## Reductions:
 -- On error reduce production term -> FALSE
 -- On TRUE reduce production term -> FALSE
 -- On RIGHT_PAREN reduce production term -> FALSE
@@ -225,8 +305,12 @@ term -> FALSE . [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
 -- On FALSE reduce production term -> FALSE
 
 State 16:
+## Known stack suffix:
+## term
+## LR(1) items:
 nonempty_list(term) -> term . [ RIGHT_PAREN ]
 nonempty_list(term) -> term . nonempty_list(term) [ RIGHT_PAREN ]
+## Transitions:
 -- On error shift to state 9
 -- On TRUE shift to state 10
 -- On QUOTED shift to state 11
@@ -236,14 +320,25 @@ nonempty_list(term) -> term . nonempty_list(term) [ RIGHT_PAREN ]
 -- On term shift to state 16
 -- On nonempty_list(term) shift to state 17
 -- On composite_term shift to state 18
+## Reductions:
 -- On RIGHT_PAREN reduce production nonempty_list(term) -> term
 
 State 17:
+## Known stack suffix:
+## term nonempty_list(term)
+## LR(1) items:
 nonempty_list(term) -> term nonempty_list(term) . [ RIGHT_PAREN ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production nonempty_list(term) -> term nonempty_list(term)
 
 State 18:
+## Known stack suffix:
+## composite_term
+## LR(1) items:
 term -> composite_term . [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
+## Reductions:
 -- On error reduce production term -> composite_term
 -- On TRUE reduce production term -> composite_term
 -- On RIGHT_PAREN reduce production term -> composite_term
@@ -253,11 +348,21 @@ term -> composite_term . [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE 
 -- On FALSE reduce production term -> composite_term
 
 State 19:
+## Known stack suffix:
+## LEFT_PAREN OR nonempty_list(term)
+## LR(1) items:
 composite_term -> LEFT_PAREN OR nonempty_list(term) . RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 20
+## Reductions:
 
 State 20:
+## Known stack suffix:
+## LEFT_PAREN OR nonempty_list(term) RIGHT_PAREN
+## LR(1) items:
 composite_term -> LEFT_PAREN OR nonempty_list(term) RIGHT_PAREN . [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
+## Reductions:
 -- On error reduce production composite_term -> LEFT_PAREN OR nonempty_list(term) RIGHT_PAREN
 -- On TRUE reduce production composite_term -> LEFT_PAREN OR nonempty_list(term) RIGHT_PAREN
 -- On RIGHT_PAREN reduce production composite_term -> LEFT_PAREN OR nonempty_list(term) RIGHT_PAREN
@@ -267,7 +372,11 @@ composite_term -> LEFT_PAREN OR nonempty_list(term) RIGHT_PAREN . [ error TRUE R
 -- On FALSE reduce production composite_term -> LEFT_PAREN OR nonempty_list(term) RIGHT_PAREN
 
 State 21:
+## Known stack suffix:
+## LEFT_PAREN NOT
+## LR(1) items:
 composite_term -> LEFT_PAREN NOT . term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On error shift to state 4
 -- On TRUE shift to state 5
 -- On QUOTED shift to state 6
@@ -276,9 +385,15 @@ composite_term -> LEFT_PAREN NOT . term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUO
 -- On FALSE shift to state 23
 -- On term shift to state 24
 -- On composite_term shift to state 26
+## Reductions:
 
 State 22:
+## Known stack suffix:
+## IDENT
+## LR(1) items:
 term -> IDENT . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production term -> IDENT
 -- On LEFT_PAREN reduce production term -> IDENT
 -- On IDENT reduce production term -> IDENT
@@ -286,7 +401,12 @@ term -> IDENT . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
 -- On BOOL reduce production term -> IDENT
 
 State 23:
+## Known stack suffix:
+## FALSE
+## LR(1) items:
 term -> FALSE . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production term -> FALSE
 -- On LEFT_PAREN reduce production term -> FALSE
 -- On IDENT reduce production term -> FALSE
@@ -294,11 +414,21 @@ term -> FALSE . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
 -- On BOOL reduce production term -> FALSE
 
 State 24:
+## Known stack suffix:
+## LEFT_PAREN NOT term
+## LR(1) items:
 composite_term -> LEFT_PAREN NOT term . RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 25
+## Reductions:
 
 State 25:
+## Known stack suffix:
+## LEFT_PAREN NOT term RIGHT_PAREN
+## LR(1) items:
 composite_term -> LEFT_PAREN NOT term RIGHT_PAREN . [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
+## Reductions:
 -- On error reduce production composite_term -> LEFT_PAREN NOT term RIGHT_PAREN
 -- On TRUE reduce production composite_term -> LEFT_PAREN NOT term RIGHT_PAREN
 -- On RIGHT_PAREN reduce production composite_term -> LEFT_PAREN NOT term RIGHT_PAREN
@@ -308,7 +438,12 @@ composite_term -> LEFT_PAREN NOT term RIGHT_PAREN . [ error TRUE RIGHT_PAREN QUO
 -- On FALSE reduce production composite_term -> LEFT_PAREN NOT term RIGHT_PAREN
 
 State 26:
+## Known stack suffix:
+## composite_term
+## LR(1) items:
 term -> composite_term . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production term -> composite_term
 -- On LEFT_PAREN reduce production term -> composite_term
 -- On IDENT reduce production term -> composite_term
@@ -316,7 +451,11 @@ term -> composite_term . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
 -- On BOOL reduce production term -> composite_term
 
 State 27:
+## Known stack suffix:
+## LEFT_PAREN MATCH
+## LR(1) items:
 composite_term -> LEFT_PAREN MATCH . term nonempty_list(case) RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On error shift to state 4
 -- On TRUE shift to state 5
 -- On QUOTED shift to state 6
@@ -325,60 +464,110 @@ composite_term -> LEFT_PAREN MATCH . term nonempty_list(case) RIGHT_PAREN [ erro
 -- On FALSE shift to state 23
 -- On term shift to state 28
 -- On composite_term shift to state 26
+## Reductions:
 
 State 28:
+## Known stack suffix:
+## LEFT_PAREN MATCH term
+## LR(1) items:
 composite_term -> LEFT_PAREN MATCH term . nonempty_list(case) RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On LEFT_PAREN shift to state 29
 -- On nonempty_list(case) shift to state 46
 -- On case shift to state 48
+## Reductions:
 
 State 29:
+## Known stack suffix:
+## LEFT_PAREN
+## LR(1) items:
 case -> LEFT_PAREN . CASE IDENT term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
 case -> LEFT_PAREN . CASE LEFT_PAREN IDENT nonempty_list(var) RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
 case -> LEFT_PAREN . CASE DEFAULT term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+## Transitions:
 -- On CASE shift to state 30
+## Reductions:
 
 State 30:
+## Known stack suffix:
+## LEFT_PAREN CASE
+## LR(1) items:
 case -> LEFT_PAREN CASE . IDENT term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
 case -> LEFT_PAREN CASE . LEFT_PAREN IDENT nonempty_list(var) RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
 case -> LEFT_PAREN CASE . DEFAULT term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+## Transitions:
 -- On LEFT_PAREN shift to state 31
 -- On IDENT shift to state 40
 -- On DEFAULT shift to state 43
+## Reductions:
 
 State 31:
+## Known stack suffix:
+## LEFT_PAREN CASE LEFT_PAREN
+## LR(1) items:
 case -> LEFT_PAREN CASE LEFT_PAREN . IDENT nonempty_list(var) RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+## Transitions:
 -- On IDENT shift to state 32
+## Reductions:
 
 State 32:
+## Known stack suffix:
+## LEFT_PAREN CASE LEFT_PAREN IDENT
+## LR(1) items:
 case -> LEFT_PAREN CASE LEFT_PAREN IDENT . nonempty_list(var) RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+## Transitions:
 -- On IDENT shift to state 33
 -- On var shift to state 34
 -- On nonempty_list(var) shift to state 36
+## Reductions:
 
 State 33:
+## Known stack suffix:
+## IDENT
+## LR(1) items:
 var -> IDENT . [ RIGHT_PAREN IDENT ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production var -> IDENT
 -- On IDENT reduce production var -> IDENT
 
 State 34:
+## Known stack suffix:
+## var
+## LR(1) items:
 nonempty_list(var) -> var . [ RIGHT_PAREN ]
 nonempty_list(var) -> var . nonempty_list(var) [ RIGHT_PAREN ]
+## Transitions:
 -- On IDENT shift to state 33
 -- On var shift to state 34
 -- On nonempty_list(var) shift to state 35
+## Reductions:
 -- On RIGHT_PAREN reduce production nonempty_list(var) -> var
 
 State 35:
+## Known stack suffix:
+## var nonempty_list(var)
+## LR(1) items:
 nonempty_list(var) -> var nonempty_list(var) . [ RIGHT_PAREN ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production nonempty_list(var) -> var nonempty_list(var)
 
 State 36:
+## Known stack suffix:
+## LEFT_PAREN CASE LEFT_PAREN IDENT nonempty_list(var)
+## LR(1) items:
 case -> LEFT_PAREN CASE LEFT_PAREN IDENT nonempty_list(var) . RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 37
+## Reductions:
 
 State 37:
+## Known stack suffix:
+## LEFT_PAREN CASE LEFT_PAREN IDENT nonempty_list(var) RIGHT_PAREN
+## LR(1) items:
 case -> LEFT_PAREN CASE LEFT_PAREN IDENT nonempty_list(var) RIGHT_PAREN . term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+## Transitions:
 -- On error shift to state 4
 -- On TRUE shift to state 5
 -- On QUOTED shift to state 6
@@ -387,18 +576,33 @@ case -> LEFT_PAREN CASE LEFT_PAREN IDENT nonempty_list(var) RIGHT_PAREN . term R
 -- On FALSE shift to state 23
 -- On term shift to state 38
 -- On composite_term shift to state 26
+## Reductions:
 
 State 38:
+## Known stack suffix:
+## LEFT_PAREN CASE LEFT_PAREN IDENT nonempty_list(var) RIGHT_PAREN term
+## LR(1) items:
 case -> LEFT_PAREN CASE LEFT_PAREN IDENT nonempty_list(var) RIGHT_PAREN term . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 39
+## Reductions:
 
 State 39:
+## Known stack suffix:
+## LEFT_PAREN CASE LEFT_PAREN IDENT nonempty_list(var) RIGHT_PAREN term RIGHT_PAREN
+## LR(1) items:
 case -> LEFT_PAREN CASE LEFT_PAREN IDENT nonempty_list(var) RIGHT_PAREN term RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production case -> LEFT_PAREN CASE LEFT_PAREN IDENT nonempty_list(var) RIGHT_PAREN term RIGHT_PAREN
 -- On LEFT_PAREN reduce production case -> LEFT_PAREN CASE LEFT_PAREN IDENT nonempty_list(var) RIGHT_PAREN term RIGHT_PAREN
 
 State 40:
+## Known stack suffix:
+## LEFT_PAREN CASE IDENT
+## LR(1) items:
 case -> LEFT_PAREN CASE IDENT . term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+## Transitions:
 -- On error shift to state 4
 -- On TRUE shift to state 5
 -- On QUOTED shift to state 6
@@ -407,18 +611,33 @@ case -> LEFT_PAREN CASE IDENT . term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
 -- On FALSE shift to state 23
 -- On term shift to state 41
 -- On composite_term shift to state 26
+## Reductions:
 
 State 41:
+## Known stack suffix:
+## LEFT_PAREN CASE IDENT term
+## LR(1) items:
 case -> LEFT_PAREN CASE IDENT term . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 42
+## Reductions:
 
 State 42:
+## Known stack suffix:
+## LEFT_PAREN CASE IDENT term RIGHT_PAREN
+## LR(1) items:
 case -> LEFT_PAREN CASE IDENT term RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production case -> LEFT_PAREN CASE IDENT term RIGHT_PAREN
 -- On LEFT_PAREN reduce production case -> LEFT_PAREN CASE IDENT term RIGHT_PAREN
 
 State 43:
+## Known stack suffix:
+## LEFT_PAREN CASE DEFAULT
+## LR(1) items:
 case -> LEFT_PAREN CASE DEFAULT . term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+## Transitions:
 -- On error shift to state 4
 -- On TRUE shift to state 5
 -- On QUOTED shift to state 6
@@ -427,22 +646,43 @@ case -> LEFT_PAREN CASE DEFAULT . term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
 -- On FALSE shift to state 23
 -- On term shift to state 44
 -- On composite_term shift to state 26
+## Reductions:
 
 State 44:
+## Known stack suffix:
+## LEFT_PAREN CASE DEFAULT term
+## LR(1) items:
 case -> LEFT_PAREN CASE DEFAULT term . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 45
+## Reductions:
 
 State 45:
+## Known stack suffix:
+## LEFT_PAREN CASE DEFAULT term RIGHT_PAREN
+## LR(1) items:
 case -> LEFT_PAREN CASE DEFAULT term RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production case -> LEFT_PAREN CASE DEFAULT term RIGHT_PAREN
 -- On LEFT_PAREN reduce production case -> LEFT_PAREN CASE DEFAULT term RIGHT_PAREN
 
 State 46:
+## Known stack suffix:
+## LEFT_PAREN MATCH term nonempty_list(case)
+## LR(1) items:
 composite_term -> LEFT_PAREN MATCH term nonempty_list(case) . RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 47
+## Reductions:
 
 State 47:
+## Known stack suffix:
+## LEFT_PAREN MATCH term nonempty_list(case) RIGHT_PAREN
+## LR(1) items:
 composite_term -> LEFT_PAREN MATCH term nonempty_list(case) RIGHT_PAREN . [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
+## Reductions:
 -- On error reduce production composite_term -> LEFT_PAREN MATCH term nonempty_list(case) RIGHT_PAREN
 -- On TRUE reduce production composite_term -> LEFT_PAREN MATCH term nonempty_list(case) RIGHT_PAREN
 -- On RIGHT_PAREN reduce production composite_term -> LEFT_PAREN MATCH term nonempty_list(case) RIGHT_PAREN
@@ -452,34 +692,64 @@ composite_term -> LEFT_PAREN MATCH term nonempty_list(case) RIGHT_PAREN . [ erro
 -- On FALSE reduce production composite_term -> LEFT_PAREN MATCH term nonempty_list(case) RIGHT_PAREN
 
 State 48:
+## Known stack suffix:
+## case
+## LR(1) items:
 nonempty_list(case) -> case . [ RIGHT_PAREN ]
 nonempty_list(case) -> case . nonempty_list(case) [ RIGHT_PAREN ]
+## Transitions:
 -- On LEFT_PAREN shift to state 29
 -- On nonempty_list(case) shift to state 49
 -- On case shift to state 48
+## Reductions:
 -- On RIGHT_PAREN reduce production nonempty_list(case) -> case
 
 State 49:
+## Known stack suffix:
+## case nonempty_list(case)
+## LR(1) items:
 nonempty_list(case) -> case nonempty_list(case) . [ RIGHT_PAREN ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production nonempty_list(case) -> case nonempty_list(case)
 
 State 50:
+## Known stack suffix:
+## LEFT_PAREN LET
+## LR(1) items:
 composite_term -> LEFT_PAREN LET . LEFT_PAREN nonempty_list(binding) RIGHT_PAREN term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On LEFT_PAREN shift to state 51
+## Reductions:
 
 State 51:
+## Known stack suffix:
+## LEFT_PAREN LET LEFT_PAREN
+## LR(1) items:
 composite_term -> LEFT_PAREN LET LEFT_PAREN . nonempty_list(binding) RIGHT_PAREN term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On LEFT_PAREN shift to state 52
 -- On nonempty_list(binding) shift to state 57
 -- On binding shift to state 61
+## Reductions:
 
 State 52:
+## Known stack suffix:
+## LEFT_PAREN
+## LR(1) items:
 binding -> LEFT_PAREN . var term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+## Transitions:
 -- On IDENT shift to state 53
 -- On var shift to state 54
+## Reductions:
 
 State 53:
+## Known stack suffix:
+## IDENT
+## LR(1) items:
 var -> IDENT . [ error TRUE QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
+## Reductions:
 -- On error reduce production var -> IDENT
 -- On TRUE reduce production var -> IDENT
 -- On QUOTED reduce production var -> IDENT
@@ -488,7 +758,11 @@ var -> IDENT . [ error TRUE QUOTED LEFT_PAREN IDENT FALSE ]
 -- On FALSE reduce production var -> IDENT
 
 State 54:
+## Known stack suffix:
+## LEFT_PAREN var
+## LR(1) items:
 binding -> LEFT_PAREN var . term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+## Transitions:
 -- On error shift to state 4
 -- On TRUE shift to state 5
 -- On QUOTED shift to state 6
@@ -497,22 +771,42 @@ binding -> LEFT_PAREN var . term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
 -- On FALSE shift to state 23
 -- On term shift to state 55
 -- On composite_term shift to state 26
+## Reductions:
 
 State 55:
+## Known stack suffix:
+## LEFT_PAREN var term
+## LR(1) items:
 binding -> LEFT_PAREN var term . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 56
+## Reductions:
 
 State 56:
+## Known stack suffix:
+## LEFT_PAREN var term RIGHT_PAREN
+## LR(1) items:
 binding -> LEFT_PAREN var term RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production binding -> LEFT_PAREN var term RIGHT_PAREN
 -- On LEFT_PAREN reduce production binding -> LEFT_PAREN var term RIGHT_PAREN
 
 State 57:
+## Known stack suffix:
+## LEFT_PAREN LET LEFT_PAREN nonempty_list(binding)
+## LR(1) items:
 composite_term -> LEFT_PAREN LET LEFT_PAREN nonempty_list(binding) . RIGHT_PAREN term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 58
+## Reductions:
 
 State 58:
+## Known stack suffix:
+## LEFT_PAREN LET LEFT_PAREN nonempty_list(binding) RIGHT_PAREN
+## LR(1) items:
 composite_term -> LEFT_PAREN LET LEFT_PAREN nonempty_list(binding) RIGHT_PAREN . term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On error shift to state 4
 -- On TRUE shift to state 5
 -- On QUOTED shift to state 6
@@ -521,13 +815,24 @@ composite_term -> LEFT_PAREN LET LEFT_PAREN nonempty_list(binding) RIGHT_PAREN .
 -- On FALSE shift to state 23
 -- On term shift to state 59
 -- On composite_term shift to state 26
+## Reductions:
 
 State 59:
+## Known stack suffix:
+## LEFT_PAREN LET LEFT_PAREN nonempty_list(binding) RIGHT_PAREN term
+## LR(1) items:
 composite_term -> LEFT_PAREN LET LEFT_PAREN nonempty_list(binding) RIGHT_PAREN term . RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 60
+## Reductions:
 
 State 60:
+## Known stack suffix:
+## LEFT_PAREN LET LEFT_PAREN nonempty_list(binding) RIGHT_PAREN term RIGHT_PAREN
+## LR(1) items:
 composite_term -> LEFT_PAREN LET LEFT_PAREN nonempty_list(binding) RIGHT_PAREN term RIGHT_PAREN . [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
+## Reductions:
 -- On error reduce production composite_term -> LEFT_PAREN LET LEFT_PAREN nonempty_list(binding) RIGHT_PAREN term RIGHT_PAREN
 -- On TRUE reduce production composite_term -> LEFT_PAREN LET LEFT_PAREN nonempty_list(binding) RIGHT_PAREN term RIGHT_PAREN
 -- On RIGHT_PAREN reduce production composite_term -> LEFT_PAREN LET LEFT_PAREN nonempty_list(binding) RIGHT_PAREN term RIGHT_PAREN
@@ -537,19 +842,33 @@ composite_term -> LEFT_PAREN LET LEFT_PAREN nonempty_list(binding) RIGHT_PAREN t
 -- On FALSE reduce production composite_term -> LEFT_PAREN LET LEFT_PAREN nonempty_list(binding) RIGHT_PAREN term RIGHT_PAREN
 
 State 61:
+## Known stack suffix:
+## binding
+## LR(1) items:
 nonempty_list(binding) -> binding . [ RIGHT_PAREN ]
 nonempty_list(binding) -> binding . nonempty_list(binding) [ RIGHT_PAREN ]
+## Transitions:
 -- On LEFT_PAREN shift to state 52
 -- On nonempty_list(binding) shift to state 62
 -- On binding shift to state 61
+## Reductions:
 -- On RIGHT_PAREN reduce production nonempty_list(binding) -> binding
 
 State 62:
+## Known stack suffix:
+## binding nonempty_list(binding)
+## LR(1) items:
 nonempty_list(binding) -> binding nonempty_list(binding) . [ RIGHT_PAREN ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production nonempty_list(binding) -> binding nonempty_list(binding)
 
 State 63:
+## Known stack suffix:
+## LEFT_PAREN IF
+## LR(1) items:
 composite_term -> LEFT_PAREN IF . term term term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On error shift to state 9
 -- On TRUE shift to state 10
 -- On QUOTED shift to state 11
@@ -558,9 +877,14 @@ composite_term -> LEFT_PAREN IF . term term term RIGHT_PAREN [ error TRUE RIGHT_
 -- On FALSE shift to state 15
 -- On term shift to state 64
 -- On composite_term shift to state 18
+## Reductions:
 
 State 64:
+## Known stack suffix:
+## LEFT_PAREN IF term
+## LR(1) items:
 composite_term -> LEFT_PAREN IF term . term term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On error shift to state 9
 -- On TRUE shift to state 10
 -- On QUOTED shift to state 11
@@ -569,9 +893,14 @@ composite_term -> LEFT_PAREN IF term . term term RIGHT_PAREN [ error TRUE RIGHT_
 -- On FALSE shift to state 15
 -- On term shift to state 65
 -- On composite_term shift to state 18
+## Reductions:
 
 State 65:
+## Known stack suffix:
+## LEFT_PAREN IF term term
+## LR(1) items:
 composite_term -> LEFT_PAREN IF term term . term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On error shift to state 4
 -- On TRUE shift to state 5
 -- On QUOTED shift to state 6
@@ -580,13 +909,24 @@ composite_term -> LEFT_PAREN IF term term . term RIGHT_PAREN [ error TRUE RIGHT_
 -- On FALSE shift to state 23
 -- On term shift to state 66
 -- On composite_term shift to state 26
+## Reductions:
 
 State 66:
+## Known stack suffix:
+## LEFT_PAREN IF term term term
+## LR(1) items:
 composite_term -> LEFT_PAREN IF term term term . RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 67
+## Reductions:
 
 State 67:
+## Known stack suffix:
+## LEFT_PAREN IF term term term RIGHT_PAREN
+## LR(1) items:
 composite_term -> LEFT_PAREN IF term term term RIGHT_PAREN . [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
+## Reductions:
 -- On error reduce production composite_term -> LEFT_PAREN IF term term term RIGHT_PAREN
 -- On TRUE reduce production composite_term -> LEFT_PAREN IF term term term RIGHT_PAREN
 -- On RIGHT_PAREN reduce production composite_term -> LEFT_PAREN IF term term term RIGHT_PAREN
@@ -596,8 +936,12 @@ composite_term -> LEFT_PAREN IF term term term RIGHT_PAREN . [ error TRUE RIGHT_
 -- On FALSE reduce production composite_term -> LEFT_PAREN IF term term term RIGHT_PAREN
 
 State 68:
+## Known stack suffix:
+## LEFT_PAREN IDENT
+## LR(1) items:
 composite_term -> LEFT_PAREN IDENT . nonempty_list(term) RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
 term -> IDENT . [ RIGHT_PAREN ]
+## Transitions:
 -- On error shift to state 9
 -- On TRUE shift to state 10
 -- On QUOTED shift to state 11
@@ -607,14 +951,25 @@ term -> IDENT . [ RIGHT_PAREN ]
 -- On term shift to state 16
 -- On nonempty_list(term) shift to state 69
 -- On composite_term shift to state 18
+## Reductions:
 -- On RIGHT_PAREN reduce production term -> IDENT
 
 State 69:
+## Known stack suffix:
+## LEFT_PAREN IDENT nonempty_list(term)
+## LR(1) items:
 composite_term -> LEFT_PAREN IDENT nonempty_list(term) . RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 70
+## Reductions:
 
 State 70:
+## Known stack suffix:
+## LEFT_PAREN IDENT nonempty_list(term) RIGHT_PAREN
+## LR(1) items:
 composite_term -> LEFT_PAREN IDENT nonempty_list(term) RIGHT_PAREN . [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
+## Reductions:
 -- On error reduce production composite_term -> LEFT_PAREN IDENT nonempty_list(term) RIGHT_PAREN
 -- On TRUE reduce production composite_term -> LEFT_PAREN IDENT nonempty_list(term) RIGHT_PAREN
 -- On RIGHT_PAREN reduce production composite_term -> LEFT_PAREN IDENT nonempty_list(term) RIGHT_PAREN
@@ -624,42 +979,77 @@ composite_term -> LEFT_PAREN IDENT nonempty_list(term) RIGHT_PAREN . [ error TRU
 -- On FALSE reduce production composite_term -> LEFT_PAREN IDENT nonempty_list(term) RIGHT_PAREN
 
 State 71:
+## Known stack suffix:
+## LEFT_PAREN FUN
+## LR(1) items:
 composite_term -> LEFT_PAREN FUN . LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On LEFT_PAREN shift to state 72
+## Reductions:
 
 State 72:
+## Known stack suffix:
+## LEFT_PAREN FUN LEFT_PAREN
+## LR(1) items:
 composite_term -> LEFT_PAREN FUN LEFT_PAREN . nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On LEFT_PAREN shift to state 73
 -- On typed_var shift to state 91
 -- On nonempty_list(typed_var) shift to state 93
+## Reductions:
 
 State 73:
+## Known stack suffix:
+## LEFT_PAREN
+## LR(1) items:
 typed_var -> LEFT_PAREN . IDENT ty RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+## Transitions:
 -- On IDENT shift to state 74
+## Reductions:
 
 State 74:
+## Known stack suffix:
+## LEFT_PAREN IDENT
+## LR(1) items:
 typed_var -> LEFT_PAREN IDENT . ty RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+## Transitions:
 -- On LEFT_PAREN shift to state 75
 -- On IDENT shift to state 77
 -- On BOOL shift to state 78
 -- On ty shift to state 89
+## Reductions:
 
 State 75:
+## Known stack suffix:
+## LEFT_PAREN
+## LR(1) items:
 ty -> LEFT_PAREN . IDENT nonempty_list(ty) RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
 ty -> LEFT_PAREN . ARROW ty_arrow_args RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On IDENT shift to state 76
 -- On ARROW shift to state 83
+## Reductions:
 
 State 76:
+## Known stack suffix:
+## LEFT_PAREN IDENT
+## LR(1) items:
 ty -> LEFT_PAREN IDENT . nonempty_list(ty) RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On LEFT_PAREN shift to state 75
 -- On IDENT shift to state 77
 -- On BOOL shift to state 78
 -- On ty shift to state 79
 -- On nonempty_list(ty) shift to state 81
+## Reductions:
 
 State 77:
+## Known stack suffix:
+## IDENT
+## LR(1) items:
 ty -> IDENT . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production ty -> IDENT
 -- On LEFT_PAREN reduce production ty -> IDENT
 -- On IDENT reduce production ty -> IDENT
@@ -667,7 +1057,12 @@ ty -> IDENT . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
 -- On BOOL reduce production ty -> IDENT
 
 State 78:
+## Known stack suffix:
+## BOOL
+## LR(1) items:
 ty -> BOOL . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production ty -> BOOL
 -- On LEFT_PAREN reduce production ty -> BOOL
 -- On IDENT reduce production ty -> BOOL
@@ -675,25 +1070,45 @@ ty -> BOOL . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
 -- On BOOL reduce production ty -> BOOL
 
 State 79:
+## Known stack suffix:
+## ty
+## LR(1) items:
 nonempty_list(ty) -> ty . [ RIGHT_PAREN ]
 nonempty_list(ty) -> ty . nonempty_list(ty) [ RIGHT_PAREN ]
+## Transitions:
 -- On LEFT_PAREN shift to state 75
 -- On IDENT shift to state 77
 -- On BOOL shift to state 78
 -- On ty shift to state 79
 -- On nonempty_list(ty) shift to state 80
+## Reductions:
 -- On RIGHT_PAREN reduce production nonempty_list(ty) -> ty
 
 State 80:
+## Known stack suffix:
+## ty nonempty_list(ty)
+## LR(1) items:
 nonempty_list(ty) -> ty nonempty_list(ty) . [ RIGHT_PAREN ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production nonempty_list(ty) -> ty nonempty_list(ty)
 
 State 81:
+## Known stack suffix:
+## LEFT_PAREN IDENT nonempty_list(ty)
+## LR(1) items:
 ty -> LEFT_PAREN IDENT nonempty_list(ty) . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 82
+## Reductions:
 
 State 82:
+## Known stack suffix:
+## LEFT_PAREN IDENT nonempty_list(ty) RIGHT_PAREN
+## LR(1) items:
 ty -> LEFT_PAREN IDENT nonempty_list(ty) RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production ty -> LEFT_PAREN IDENT nonempty_list(ty) RIGHT_PAREN
 -- On LEFT_PAREN reduce production ty -> LEFT_PAREN IDENT nonempty_list(ty) RIGHT_PAREN
 -- On IDENT reduce production ty -> LEFT_PAREN IDENT nonempty_list(ty) RIGHT_PAREN
@@ -701,19 +1116,34 @@ ty -> LEFT_PAREN IDENT nonempty_list(ty) RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN 
 -- On BOOL reduce production ty -> LEFT_PAREN IDENT nonempty_list(ty) RIGHT_PAREN
 
 State 83:
+## Known stack suffix:
+## LEFT_PAREN ARROW
+## LR(1) items:
 ty -> LEFT_PAREN ARROW . ty_arrow_args RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On LEFT_PAREN shift to state 75
 -- On IDENT shift to state 77
 -- On BOOL shift to state 78
 -- On ty_arrow_args shift to state 84
 -- On ty shift to state 86
+## Reductions:
 
 State 84:
+## Known stack suffix:
+## LEFT_PAREN ARROW ty_arrow_args
+## LR(1) items:
 ty -> LEFT_PAREN ARROW ty_arrow_args . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 85
+## Reductions:
 
 State 85:
+## Known stack suffix:
+## LEFT_PAREN ARROW ty_arrow_args RIGHT_PAREN
+## LR(1) items:
 ty -> LEFT_PAREN ARROW ty_arrow_args RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production ty -> LEFT_PAREN ARROW ty_arrow_args RIGHT_PAREN
 -- On LEFT_PAREN reduce production ty -> LEFT_PAREN ARROW ty_arrow_args RIGHT_PAREN
 -- On IDENT reduce production ty -> LEFT_PAREN ARROW ty_arrow_args RIGHT_PAREN
@@ -721,56 +1151,100 @@ ty -> LEFT_PAREN ARROW ty_arrow_args RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN IDEN
 -- On BOOL reduce production ty -> LEFT_PAREN ARROW ty_arrow_args RIGHT_PAREN
 
 State 86:
+## Known stack suffix:
+## ty
+## LR(1) items:
 ty_arrow_args -> ty . ty [ RIGHT_PAREN ]
 ty_arrow_args -> ty . ty_arrow_args [ RIGHT_PAREN ]
+## Transitions:
 -- On LEFT_PAREN shift to state 75
 -- On IDENT shift to state 77
 -- On BOOL shift to state 78
 -- On ty_arrow_args shift to state 87
 -- On ty shift to state 88
+## Reductions:
 
 State 87:
+## Known stack suffix:
+## ty ty_arrow_args
+## LR(1) items:
 ty_arrow_args -> ty ty_arrow_args . [ RIGHT_PAREN ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production ty_arrow_args -> ty ty_arrow_args
 
 State 88:
+## Known stack suffix:
+## ty ty
+## LR(1) items:
 ty_arrow_args -> ty . ty [ RIGHT_PAREN ]
 ty_arrow_args -> ty ty . [ RIGHT_PAREN ]
 ty_arrow_args -> ty . ty_arrow_args [ RIGHT_PAREN ]
+## Transitions:
 -- On LEFT_PAREN shift to state 75
 -- On IDENT shift to state 77
 -- On BOOL shift to state 78
 -- On ty_arrow_args shift to state 87
 -- On ty shift to state 88
+## Reductions:
 -- On RIGHT_PAREN reduce production ty_arrow_args -> ty ty
 
 State 89:
+## Known stack suffix:
+## LEFT_PAREN IDENT ty
+## LR(1) items:
 typed_var -> LEFT_PAREN IDENT ty . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 90
+## Reductions:
 
 State 90:
+## Known stack suffix:
+## LEFT_PAREN IDENT ty RIGHT_PAREN
+## LR(1) items:
 typed_var -> LEFT_PAREN IDENT ty RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production typed_var -> LEFT_PAREN IDENT ty RIGHT_PAREN
 -- On LEFT_PAREN reduce production typed_var -> LEFT_PAREN IDENT ty RIGHT_PAREN
 
 State 91:
+## Known stack suffix:
+## typed_var
+## LR(1) items:
 nonempty_list(typed_var) -> typed_var . [ RIGHT_PAREN ]
 nonempty_list(typed_var) -> typed_var . nonempty_list(typed_var) [ RIGHT_PAREN ]
+## Transitions:
 -- On LEFT_PAREN shift to state 73
 -- On typed_var shift to state 91
 -- On nonempty_list(typed_var) shift to state 92
+## Reductions:
 -- On RIGHT_PAREN reduce production nonempty_list(typed_var) -> typed_var
 
 State 92:
+## Known stack suffix:
+## typed_var nonempty_list(typed_var)
+## LR(1) items:
 nonempty_list(typed_var) -> typed_var nonempty_list(typed_var) . [ RIGHT_PAREN ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production nonempty_list(typed_var) -> typed_var nonempty_list(typed_var)
 
 State 93:
+## Known stack suffix:
+## LEFT_PAREN FUN LEFT_PAREN nonempty_list(typed_var)
+## LR(1) items:
 composite_term -> LEFT_PAREN FUN LEFT_PAREN nonempty_list(typed_var) . RIGHT_PAREN term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 94
+## Reductions:
 
 State 94:
+## Known stack suffix:
+## LEFT_PAREN FUN LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN
+## LR(1) items:
 composite_term -> LEFT_PAREN FUN LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN . term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On error shift to state 4
 -- On TRUE shift to state 5
 -- On QUOTED shift to state 6
@@ -779,13 +1253,24 @@ composite_term -> LEFT_PAREN FUN LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN
 -- On FALSE shift to state 23
 -- On term shift to state 95
 -- On composite_term shift to state 26
+## Reductions:
 
 State 95:
+## Known stack suffix:
+## LEFT_PAREN FUN LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term
+## LR(1) items:
 composite_term -> LEFT_PAREN FUN LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term . RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 96
+## Reductions:
 
 State 96:
+## Known stack suffix:
+## LEFT_PAREN FUN LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN
+## LR(1) items:
 composite_term -> LEFT_PAREN FUN LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN . [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
+## Reductions:
 -- On error reduce production composite_term -> LEFT_PAREN FUN LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN
 -- On TRUE reduce production composite_term -> LEFT_PAREN FUN LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN
 -- On RIGHT_PAREN reduce production composite_term -> LEFT_PAREN FUN LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN
@@ -795,21 +1280,40 @@ composite_term -> LEFT_PAREN FUN LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN
 -- On FALSE reduce production composite_term -> LEFT_PAREN FUN LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN
 
 State 97:
+## Known stack suffix:
+## LEFT_PAREN FORALL
+## LR(1) items:
 composite_term -> LEFT_PAREN FORALL . LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On LEFT_PAREN shift to state 98
+## Reductions:
 
 State 98:
+## Known stack suffix:
+## LEFT_PAREN FORALL LEFT_PAREN
+## LR(1) items:
 composite_term -> LEFT_PAREN FORALL LEFT_PAREN . nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On LEFT_PAREN shift to state 73
 -- On typed_var shift to state 91
 -- On nonempty_list(typed_var) shift to state 99
+## Reductions:
 
 State 99:
+## Known stack suffix:
+## LEFT_PAREN FORALL LEFT_PAREN nonempty_list(typed_var)
+## LR(1) items:
 composite_term -> LEFT_PAREN FORALL LEFT_PAREN nonempty_list(typed_var) . RIGHT_PAREN term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 100
+## Reductions:
 
 State 100:
+## Known stack suffix:
+## LEFT_PAREN FORALL LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN
+## LR(1) items:
 composite_term -> LEFT_PAREN FORALL LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN . term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On error shift to state 4
 -- On TRUE shift to state 5
 -- On QUOTED shift to state 6
@@ -818,13 +1322,24 @@ composite_term -> LEFT_PAREN FORALL LEFT_PAREN nonempty_list(typed_var) RIGHT_PA
 -- On FALSE shift to state 23
 -- On term shift to state 101
 -- On composite_term shift to state 26
+## Reductions:
 
 State 101:
+## Known stack suffix:
+## LEFT_PAREN FORALL LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term
+## LR(1) items:
 composite_term -> LEFT_PAREN FORALL LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term . RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 102
+## Reductions:
 
 State 102:
+## Known stack suffix:
+## LEFT_PAREN FORALL LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN
+## LR(1) items:
 composite_term -> LEFT_PAREN FORALL LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN . [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
+## Reductions:
 -- On error reduce production composite_term -> LEFT_PAREN FORALL LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN
 -- On TRUE reduce production composite_term -> LEFT_PAREN FORALL LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN
 -- On RIGHT_PAREN reduce production composite_term -> LEFT_PAREN FORALL LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN
@@ -834,21 +1349,40 @@ composite_term -> LEFT_PAREN FORALL LEFT_PAREN nonempty_list(typed_var) RIGHT_PA
 -- On FALSE reduce production composite_term -> LEFT_PAREN FORALL LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN
 
 State 103:
+## Known stack suffix:
+## LEFT_PAREN EXISTS
+## LR(1) items:
 composite_term -> LEFT_PAREN EXISTS . LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On LEFT_PAREN shift to state 104
+## Reductions:
 
 State 104:
+## Known stack suffix:
+## LEFT_PAREN EXISTS LEFT_PAREN
+## LR(1) items:
 composite_term -> LEFT_PAREN EXISTS LEFT_PAREN . nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On LEFT_PAREN shift to state 73
 -- On typed_var shift to state 91
 -- On nonempty_list(typed_var) shift to state 105
+## Reductions:
 
 State 105:
+## Known stack suffix:
+## LEFT_PAREN EXISTS LEFT_PAREN nonempty_list(typed_var)
+## LR(1) items:
 composite_term -> LEFT_PAREN EXISTS LEFT_PAREN nonempty_list(typed_var) . RIGHT_PAREN term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 106
+## Reductions:
 
 State 106:
+## Known stack suffix:
+## LEFT_PAREN EXISTS LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN
+## LR(1) items:
 composite_term -> LEFT_PAREN EXISTS LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN . term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On error shift to state 4
 -- On TRUE shift to state 5
 -- On QUOTED shift to state 6
@@ -857,13 +1391,24 @@ composite_term -> LEFT_PAREN EXISTS LEFT_PAREN nonempty_list(typed_var) RIGHT_PA
 -- On FALSE shift to state 23
 -- On term shift to state 107
 -- On composite_term shift to state 26
+## Reductions:
 
 State 107:
+## Known stack suffix:
+## LEFT_PAREN EXISTS LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term
+## LR(1) items:
 composite_term -> LEFT_PAREN EXISTS LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term . RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 108
+## Reductions:
 
 State 108:
+## Known stack suffix:
+## LEFT_PAREN EXISTS LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN
+## LR(1) items:
 composite_term -> LEFT_PAREN EXISTS LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN . [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
+## Reductions:
 -- On error reduce production composite_term -> LEFT_PAREN EXISTS LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN
 -- On TRUE reduce production composite_term -> LEFT_PAREN EXISTS LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN
 -- On RIGHT_PAREN reduce production composite_term -> LEFT_PAREN EXISTS LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN
@@ -873,7 +1418,11 @@ composite_term -> LEFT_PAREN EXISTS LEFT_PAREN nonempty_list(typed_var) RIGHT_PA
 -- On FALSE reduce production composite_term -> LEFT_PAREN EXISTS LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN
 
 State 109:
+## Known stack suffix:
+## LEFT_PAREN EQ
+## LR(1) items:
 composite_term -> LEFT_PAREN EQ . term term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On error shift to state 9
 -- On TRUE shift to state 10
 -- On QUOTED shift to state 11
@@ -882,9 +1431,14 @@ composite_term -> LEFT_PAREN EQ . term term RIGHT_PAREN [ error TRUE RIGHT_PAREN
 -- On FALSE shift to state 15
 -- On term shift to state 110
 -- On composite_term shift to state 18
+## Reductions:
 
 State 110:
+## Known stack suffix:
+## LEFT_PAREN EQ term
+## LR(1) items:
 composite_term -> LEFT_PAREN EQ term . term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On error shift to state 4
 -- On TRUE shift to state 5
 -- On QUOTED shift to state 6
@@ -893,13 +1447,24 @@ composite_term -> LEFT_PAREN EQ term . term RIGHT_PAREN [ error TRUE RIGHT_PAREN
 -- On FALSE shift to state 23
 -- On term shift to state 111
 -- On composite_term shift to state 26
+## Reductions:
 
 State 111:
+## Known stack suffix:
+## LEFT_PAREN EQ term term
+## LR(1) items:
 composite_term -> LEFT_PAREN EQ term term . RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 112
+## Reductions:
 
 State 112:
+## Known stack suffix:
+## LEFT_PAREN EQ term term RIGHT_PAREN
+## LR(1) items:
 composite_term -> LEFT_PAREN EQ term term RIGHT_PAREN . [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
+## Reductions:
 -- On error reduce production composite_term -> LEFT_PAREN EQ term term RIGHT_PAREN
 -- On TRUE reduce production composite_term -> LEFT_PAREN EQ term term RIGHT_PAREN
 -- On RIGHT_PAREN reduce production composite_term -> LEFT_PAREN EQ term term RIGHT_PAREN
@@ -909,7 +1474,11 @@ composite_term -> LEFT_PAREN EQ term term RIGHT_PAREN . [ error TRUE RIGHT_PAREN
 -- On FALSE reduce production composite_term -> LEFT_PAREN EQ term term RIGHT_PAREN
 
 State 113:
+## Known stack suffix:
+## LEFT_PAREN DISTINCT
+## LR(1) items:
 composite_term -> LEFT_PAREN DISTINCT . nonempty_list(term) RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On error shift to state 9
 -- On TRUE shift to state 10
 -- On QUOTED shift to state 11
@@ -919,13 +1488,24 @@ composite_term -> LEFT_PAREN DISTINCT . nonempty_list(term) RIGHT_PAREN [ error 
 -- On term shift to state 16
 -- On nonempty_list(term) shift to state 114
 -- On composite_term shift to state 18
+## Reductions:
 
 State 114:
+## Known stack suffix:
+## LEFT_PAREN DISTINCT nonempty_list(term)
+## LR(1) items:
 composite_term -> LEFT_PAREN DISTINCT nonempty_list(term) . RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 115
+## Reductions:
 
 State 115:
+## Known stack suffix:
+## LEFT_PAREN DISTINCT nonempty_list(term) RIGHT_PAREN
+## LR(1) items:
 composite_term -> LEFT_PAREN DISTINCT nonempty_list(term) RIGHT_PAREN . [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
+## Reductions:
 -- On error reduce production composite_term -> LEFT_PAREN DISTINCT nonempty_list(term) RIGHT_PAREN
 -- On TRUE reduce production composite_term -> LEFT_PAREN DISTINCT nonempty_list(term) RIGHT_PAREN
 -- On RIGHT_PAREN reduce production composite_term -> LEFT_PAREN DISTINCT nonempty_list(term) RIGHT_PAREN
@@ -935,7 +1515,11 @@ composite_term -> LEFT_PAREN DISTINCT nonempty_list(term) RIGHT_PAREN . [ error 
 -- On FALSE reduce production composite_term -> LEFT_PAREN DISTINCT nonempty_list(term) RIGHT_PAREN
 
 State 116:
+## Known stack suffix:
+## LEFT_PAREN AT
+## LR(1) items:
 composite_term -> LEFT_PAREN AT . term term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On error shift to state 9
 -- On TRUE shift to state 10
 -- On QUOTED shift to state 11
@@ -944,9 +1528,14 @@ composite_term -> LEFT_PAREN AT . term term RIGHT_PAREN [ error TRUE RIGHT_PAREN
 -- On FALSE shift to state 15
 -- On term shift to state 117
 -- On composite_term shift to state 18
+## Reductions:
 
 State 117:
+## Known stack suffix:
+## LEFT_PAREN AT term
+## LR(1) items:
 composite_term -> LEFT_PAREN AT term . term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On error shift to state 4
 -- On TRUE shift to state 5
 -- On QUOTED shift to state 6
@@ -955,13 +1544,24 @@ composite_term -> LEFT_PAREN AT term . term RIGHT_PAREN [ error TRUE RIGHT_PAREN
 -- On FALSE shift to state 23
 -- On term shift to state 118
 -- On composite_term shift to state 26
+## Reductions:
 
 State 118:
+## Known stack suffix:
+## LEFT_PAREN AT term term
+## LR(1) items:
 composite_term -> LEFT_PAREN AT term term . RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 119
+## Reductions:
 
 State 119:
+## Known stack suffix:
+## LEFT_PAREN AT term term RIGHT_PAREN
+## LR(1) items:
 composite_term -> LEFT_PAREN AT term term RIGHT_PAREN . [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
+## Reductions:
 -- On error reduce production composite_term -> LEFT_PAREN AT term term RIGHT_PAREN
 -- On TRUE reduce production composite_term -> LEFT_PAREN AT term term RIGHT_PAREN
 -- On RIGHT_PAREN reduce production composite_term -> LEFT_PAREN AT term term RIGHT_PAREN
@@ -971,7 +1571,11 @@ composite_term -> LEFT_PAREN AT term term RIGHT_PAREN . [ error TRUE RIGHT_PAREN
 -- On FALSE reduce production composite_term -> LEFT_PAREN AT term term RIGHT_PAREN
 
 State 120:
+## Known stack suffix:
+## LEFT_PAREN AS
+## LR(1) items:
 composite_term -> LEFT_PAREN AS . term ty RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On error shift to state 4
 -- On TRUE shift to state 5
 -- On QUOTED shift to state 6
@@ -980,20 +1584,36 @@ composite_term -> LEFT_PAREN AS . term ty RIGHT_PAREN [ error TRUE RIGHT_PAREN Q
 -- On FALSE shift to state 23
 -- On term shift to state 121
 -- On composite_term shift to state 26
+## Reductions:
 
 State 121:
+## Known stack suffix:
+## LEFT_PAREN AS term
+## LR(1) items:
 composite_term -> LEFT_PAREN AS term . ty RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On LEFT_PAREN shift to state 75
 -- On IDENT shift to state 77
 -- On BOOL shift to state 78
 -- On ty shift to state 122
+## Reductions:
 
 State 122:
+## Known stack suffix:
+## LEFT_PAREN AS term ty
+## LR(1) items:
 composite_term -> LEFT_PAREN AS term ty . RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 123
+## Reductions:
 
 State 123:
+## Known stack suffix:
+## LEFT_PAREN AS term ty RIGHT_PAREN
+## LR(1) items:
 composite_term -> LEFT_PAREN AS term ty RIGHT_PAREN . [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
+## Reductions:
 -- On error reduce production composite_term -> LEFT_PAREN AS term ty RIGHT_PAREN
 -- On TRUE reduce production composite_term -> LEFT_PAREN AS term ty RIGHT_PAREN
 -- On RIGHT_PAREN reduce production composite_term -> LEFT_PAREN AS term ty RIGHT_PAREN
@@ -1003,7 +1623,11 @@ composite_term -> LEFT_PAREN AS term ty RIGHT_PAREN . [ error TRUE RIGHT_PAREN Q
 -- On FALSE reduce production composite_term -> LEFT_PAREN AS term ty RIGHT_PAREN
 
 State 124:
+## Known stack suffix:
+## LEFT_PAREN ARROW
+## LR(1) items:
 composite_term -> LEFT_PAREN ARROW . term term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On error shift to state 9
 -- On TRUE shift to state 10
 -- On QUOTED shift to state 11
@@ -1012,9 +1636,14 @@ composite_term -> LEFT_PAREN ARROW . term term RIGHT_PAREN [ error TRUE RIGHT_PA
 -- On FALSE shift to state 15
 -- On term shift to state 125
 -- On composite_term shift to state 18
+## Reductions:
 
 State 125:
+## Known stack suffix:
+## LEFT_PAREN ARROW term
+## LR(1) items:
 composite_term -> LEFT_PAREN ARROW term . term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On error shift to state 4
 -- On TRUE shift to state 5
 -- On QUOTED shift to state 6
@@ -1023,13 +1652,24 @@ composite_term -> LEFT_PAREN ARROW term . term RIGHT_PAREN [ error TRUE RIGHT_PA
 -- On FALSE shift to state 23
 -- On term shift to state 126
 -- On composite_term shift to state 26
+## Reductions:
 
 State 126:
+## Known stack suffix:
+## LEFT_PAREN ARROW term term
+## LR(1) items:
 composite_term -> LEFT_PAREN ARROW term term . RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 127
+## Reductions:
 
 State 127:
+## Known stack suffix:
+## LEFT_PAREN ARROW term term RIGHT_PAREN
+## LR(1) items:
 composite_term -> LEFT_PAREN ARROW term term RIGHT_PAREN . [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
+## Reductions:
 -- On error reduce production composite_term -> LEFT_PAREN ARROW term term RIGHT_PAREN
 -- On TRUE reduce production composite_term -> LEFT_PAREN ARROW term term RIGHT_PAREN
 -- On RIGHT_PAREN reduce production composite_term -> LEFT_PAREN ARROW term term RIGHT_PAREN
@@ -1039,7 +1679,11 @@ composite_term -> LEFT_PAREN ARROW term term RIGHT_PAREN . [ error TRUE RIGHT_PA
 -- On FALSE reduce production composite_term -> LEFT_PAREN ARROW term term RIGHT_PAREN
 
 State 128:
+## Known stack suffix:
+## LEFT_PAREN AND
+## LR(1) items:
 composite_term -> LEFT_PAREN AND . nonempty_list(term) RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On error shift to state 9
 -- On TRUE shift to state 10
 -- On QUOTED shift to state 11
@@ -1049,13 +1693,24 @@ composite_term -> LEFT_PAREN AND . nonempty_list(term) RIGHT_PAREN [ error TRUE 
 -- On term shift to state 16
 -- On nonempty_list(term) shift to state 129
 -- On composite_term shift to state 18
+## Reductions:
 
 State 129:
+## Known stack suffix:
+## LEFT_PAREN AND nonempty_list(term)
+## LR(1) items:
 composite_term -> LEFT_PAREN AND nonempty_list(term) . RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 130
+## Reductions:
 
 State 130:
+## Known stack suffix:
+## LEFT_PAREN AND nonempty_list(term) RIGHT_PAREN
+## LR(1) items:
 composite_term -> LEFT_PAREN AND nonempty_list(term) RIGHT_PAREN . [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
+## Reductions:
 -- On error reduce production composite_term -> LEFT_PAREN AND nonempty_list(term) RIGHT_PAREN
 -- On TRUE reduce production composite_term -> LEFT_PAREN AND nonempty_list(term) RIGHT_PAREN
 -- On RIGHT_PAREN reduce production composite_term -> LEFT_PAREN AND nonempty_list(term) RIGHT_PAREN
@@ -1065,11 +1720,21 @@ composite_term -> LEFT_PAREN AND nonempty_list(term) RIGHT_PAREN . [ error TRUE 
 -- On FALSE reduce production composite_term -> LEFT_PAREN AND nonempty_list(term) RIGHT_PAREN
 
 State 131:
+## Known stack suffix:
+## LEFT_PAREN term
+## LR(1) items:
 composite_term -> LEFT_PAREN term . RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 132
+## Reductions:
 
 State 132:
+## Known stack suffix:
+## LEFT_PAREN term RIGHT_PAREN
+## LR(1) items:
 composite_term -> LEFT_PAREN term RIGHT_PAREN . [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
+## Reductions:
 -- On error reduce production composite_term -> LEFT_PAREN term RIGHT_PAREN
 -- On TRUE reduce production composite_term -> LEFT_PAREN term RIGHT_PAREN
 -- On RIGHT_PAREN reduce production composite_term -> LEFT_PAREN term RIGHT_PAREN
@@ -1079,8 +1744,12 @@ composite_term -> LEFT_PAREN term RIGHT_PAREN . [ error TRUE RIGHT_PAREN QUOTED 
 -- On FALSE reduce production composite_term -> LEFT_PAREN term RIGHT_PAREN
 
 State 133:
+## Known stack suffix:
+## LEFT_PAREN composite_term
+## LR(1) items:
 composite_term -> LEFT_PAREN composite_term . nonempty_list(term) RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
 term -> composite_term . [ RIGHT_PAREN ]
+## Transitions:
 -- On error shift to state 9
 -- On TRUE shift to state 10
 -- On QUOTED shift to state 11
@@ -1090,14 +1759,25 @@ term -> composite_term . [ RIGHT_PAREN ]
 -- On term shift to state 16
 -- On nonempty_list(term) shift to state 134
 -- On composite_term shift to state 18
+## Reductions:
 -- On RIGHT_PAREN reduce production term -> composite_term
 
 State 134:
+## Known stack suffix:
+## LEFT_PAREN composite_term nonempty_list(term)
+## LR(1) items:
 composite_term -> LEFT_PAREN composite_term nonempty_list(term) . RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 135
+## Reductions:
 
 State 135:
+## Known stack suffix:
+## LEFT_PAREN composite_term nonempty_list(term) RIGHT_PAREN
+## LR(1) items:
 composite_term -> LEFT_PAREN composite_term nonempty_list(term) RIGHT_PAREN . [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
+## Reductions:
 -- On error reduce production composite_term -> LEFT_PAREN composite_term nonempty_list(term) RIGHT_PAREN
 -- On TRUE reduce production composite_term -> LEFT_PAREN composite_term nonempty_list(term) RIGHT_PAREN
 -- On RIGHT_PAREN reduce production composite_term -> LEFT_PAREN composite_term nonempty_list(term) RIGHT_PAREN
@@ -1107,11 +1787,21 @@ composite_term -> LEFT_PAREN composite_term nonempty_list(term) RIGHT_PAREN . [ 
 -- On FALSE reduce production composite_term -> LEFT_PAREN composite_term nonempty_list(term) RIGHT_PAREN
 
 State 136:
+## Known stack suffix:
+## LEFT_PAREN OR nonempty_list(term)
+## LR(1) items:
 composite_term -> LEFT_PAREN OR nonempty_list(term) . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 137
+## Reductions:
 
 State 137:
+## Known stack suffix:
+## LEFT_PAREN OR nonempty_list(term) RIGHT_PAREN
+## LR(1) items:
 composite_term -> LEFT_PAREN OR nonempty_list(term) RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production composite_term -> LEFT_PAREN OR nonempty_list(term) RIGHT_PAREN
 -- On LEFT_PAREN reduce production composite_term -> LEFT_PAREN OR nonempty_list(term) RIGHT_PAREN
 -- On IDENT reduce production composite_term -> LEFT_PAREN OR nonempty_list(term) RIGHT_PAREN
@@ -1119,7 +1809,11 @@ composite_term -> LEFT_PAREN OR nonempty_list(term) RIGHT_PAREN . [ RIGHT_PAREN 
 -- On BOOL reduce production composite_term -> LEFT_PAREN OR nonempty_list(term) RIGHT_PAREN
 
 State 138:
+## Known stack suffix:
+## LEFT_PAREN NOT
+## LR(1) items:
 composite_term -> LEFT_PAREN NOT . term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On error shift to state 4
 -- On TRUE shift to state 5
 -- On QUOTED shift to state 6
@@ -1128,13 +1822,24 @@ composite_term -> LEFT_PAREN NOT . term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDE
 -- On FALSE shift to state 23
 -- On term shift to state 139
 -- On composite_term shift to state 26
+## Reductions:
 
 State 139:
+## Known stack suffix:
+## LEFT_PAREN NOT term
+## LR(1) items:
 composite_term -> LEFT_PAREN NOT term . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 140
+## Reductions:
 
 State 140:
+## Known stack suffix:
+## LEFT_PAREN NOT term RIGHT_PAREN
+## LR(1) items:
 composite_term -> LEFT_PAREN NOT term RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production composite_term -> LEFT_PAREN NOT term RIGHT_PAREN
 -- On LEFT_PAREN reduce production composite_term -> LEFT_PAREN NOT term RIGHT_PAREN
 -- On IDENT reduce production composite_term -> LEFT_PAREN NOT term RIGHT_PAREN
@@ -1142,7 +1847,11 @@ composite_term -> LEFT_PAREN NOT term RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN IDE
 -- On BOOL reduce production composite_term -> LEFT_PAREN NOT term RIGHT_PAREN
 
 State 141:
+## Known stack suffix:
+## LEFT_PAREN MATCH
+## LR(1) items:
 composite_term -> LEFT_PAREN MATCH . term nonempty_list(case) RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On error shift to state 4
 -- On TRUE shift to state 5
 -- On QUOTED shift to state 6
@@ -1151,19 +1860,35 @@ composite_term -> LEFT_PAREN MATCH . term nonempty_list(case) RIGHT_PAREN [ RIGH
 -- On FALSE shift to state 23
 -- On term shift to state 142
 -- On composite_term shift to state 26
+## Reductions:
 
 State 142:
+## Known stack suffix:
+## LEFT_PAREN MATCH term
+## LR(1) items:
 composite_term -> LEFT_PAREN MATCH term . nonempty_list(case) RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On LEFT_PAREN shift to state 29
 -- On nonempty_list(case) shift to state 143
 -- On case shift to state 48
+## Reductions:
 
 State 143:
+## Known stack suffix:
+## LEFT_PAREN MATCH term nonempty_list(case)
+## LR(1) items:
 composite_term -> LEFT_PAREN MATCH term nonempty_list(case) . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 144
+## Reductions:
 
 State 144:
+## Known stack suffix:
+## LEFT_PAREN MATCH term nonempty_list(case) RIGHT_PAREN
+## LR(1) items:
 composite_term -> LEFT_PAREN MATCH term nonempty_list(case) RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production composite_term -> LEFT_PAREN MATCH term nonempty_list(case) RIGHT_PAREN
 -- On LEFT_PAREN reduce production composite_term -> LEFT_PAREN MATCH term nonempty_list(case) RIGHT_PAREN
 -- On IDENT reduce production composite_term -> LEFT_PAREN MATCH term nonempty_list(case) RIGHT_PAREN
@@ -1171,21 +1896,40 @@ composite_term -> LEFT_PAREN MATCH term nonempty_list(case) RIGHT_PAREN . [ RIGH
 -- On BOOL reduce production composite_term -> LEFT_PAREN MATCH term nonempty_list(case) RIGHT_PAREN
 
 State 145:
+## Known stack suffix:
+## LEFT_PAREN LET
+## LR(1) items:
 composite_term -> LEFT_PAREN LET . LEFT_PAREN nonempty_list(binding) RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On LEFT_PAREN shift to state 146
+## Reductions:
 
 State 146:
+## Known stack suffix:
+## LEFT_PAREN LET LEFT_PAREN
+## LR(1) items:
 composite_term -> LEFT_PAREN LET LEFT_PAREN . nonempty_list(binding) RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On LEFT_PAREN shift to state 52
 -- On nonempty_list(binding) shift to state 147
 -- On binding shift to state 61
+## Reductions:
 
 State 147:
+## Known stack suffix:
+## LEFT_PAREN LET LEFT_PAREN nonempty_list(binding)
+## LR(1) items:
 composite_term -> LEFT_PAREN LET LEFT_PAREN nonempty_list(binding) . RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 148
+## Reductions:
 
 State 148:
+## Known stack suffix:
+## LEFT_PAREN LET LEFT_PAREN nonempty_list(binding) RIGHT_PAREN
+## LR(1) items:
 composite_term -> LEFT_PAREN LET LEFT_PAREN nonempty_list(binding) RIGHT_PAREN . term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On error shift to state 4
 -- On TRUE shift to state 5
 -- On QUOTED shift to state 6
@@ -1194,13 +1938,24 @@ composite_term -> LEFT_PAREN LET LEFT_PAREN nonempty_list(binding) RIGHT_PAREN .
 -- On FALSE shift to state 23
 -- On term shift to state 149
 -- On composite_term shift to state 26
+## Reductions:
 
 State 149:
+## Known stack suffix:
+## LEFT_PAREN LET LEFT_PAREN nonempty_list(binding) RIGHT_PAREN term
+## LR(1) items:
 composite_term -> LEFT_PAREN LET LEFT_PAREN nonempty_list(binding) RIGHT_PAREN term . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 150
+## Reductions:
 
 State 150:
+## Known stack suffix:
+## LEFT_PAREN LET LEFT_PAREN nonempty_list(binding) RIGHT_PAREN term RIGHT_PAREN
+## LR(1) items:
 composite_term -> LEFT_PAREN LET LEFT_PAREN nonempty_list(binding) RIGHT_PAREN term RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production composite_term -> LEFT_PAREN LET LEFT_PAREN nonempty_list(binding) RIGHT_PAREN term RIGHT_PAREN
 -- On LEFT_PAREN reduce production composite_term -> LEFT_PAREN LET LEFT_PAREN nonempty_list(binding) RIGHT_PAREN term RIGHT_PAREN
 -- On IDENT reduce production composite_term -> LEFT_PAREN LET LEFT_PAREN nonempty_list(binding) RIGHT_PAREN term RIGHT_PAREN
@@ -1208,7 +1963,11 @@ composite_term -> LEFT_PAREN LET LEFT_PAREN nonempty_list(binding) RIGHT_PAREN t
 -- On BOOL reduce production composite_term -> LEFT_PAREN LET LEFT_PAREN nonempty_list(binding) RIGHT_PAREN term RIGHT_PAREN
 
 State 151:
+## Known stack suffix:
+## LEFT_PAREN IF
+## LR(1) items:
 composite_term -> LEFT_PAREN IF . term term term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On error shift to state 9
 -- On TRUE shift to state 10
 -- On QUOTED shift to state 11
@@ -1217,9 +1976,14 @@ composite_term -> LEFT_PAREN IF . term term term RIGHT_PAREN [ RIGHT_PAREN LEFT_
 -- On FALSE shift to state 15
 -- On term shift to state 152
 -- On composite_term shift to state 18
+## Reductions:
 
 State 152:
+## Known stack suffix:
+## LEFT_PAREN IF term
+## LR(1) items:
 composite_term -> LEFT_PAREN IF term . term term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On error shift to state 9
 -- On TRUE shift to state 10
 -- On QUOTED shift to state 11
@@ -1228,9 +1992,14 @@ composite_term -> LEFT_PAREN IF term . term term RIGHT_PAREN [ RIGHT_PAREN LEFT_
 -- On FALSE shift to state 15
 -- On term shift to state 153
 -- On composite_term shift to state 18
+## Reductions:
 
 State 153:
+## Known stack suffix:
+## LEFT_PAREN IF term term
+## LR(1) items:
 composite_term -> LEFT_PAREN IF term term . term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On error shift to state 4
 -- On TRUE shift to state 5
 -- On QUOTED shift to state 6
@@ -1239,13 +2008,24 @@ composite_term -> LEFT_PAREN IF term term . term RIGHT_PAREN [ RIGHT_PAREN LEFT_
 -- On FALSE shift to state 23
 -- On term shift to state 154
 -- On composite_term shift to state 26
+## Reductions:
 
 State 154:
+## Known stack suffix:
+## LEFT_PAREN IF term term term
+## LR(1) items:
 composite_term -> LEFT_PAREN IF term term term . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 155
+## Reductions:
 
 State 155:
+## Known stack suffix:
+## LEFT_PAREN IF term term term RIGHT_PAREN
+## LR(1) items:
 composite_term -> LEFT_PAREN IF term term term RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production composite_term -> LEFT_PAREN IF term term term RIGHT_PAREN
 -- On LEFT_PAREN reduce production composite_term -> LEFT_PAREN IF term term term RIGHT_PAREN
 -- On IDENT reduce production composite_term -> LEFT_PAREN IF term term term RIGHT_PAREN
@@ -1253,8 +2033,12 @@ composite_term -> LEFT_PAREN IF term term term RIGHT_PAREN . [ RIGHT_PAREN LEFT_
 -- On BOOL reduce production composite_term -> LEFT_PAREN IF term term term RIGHT_PAREN
 
 State 156:
+## Known stack suffix:
+## LEFT_PAREN IDENT
+## LR(1) items:
 composite_term -> LEFT_PAREN IDENT . nonempty_list(term) RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
 term -> IDENT . [ RIGHT_PAREN ]
+## Transitions:
 -- On error shift to state 9
 -- On TRUE shift to state 10
 -- On QUOTED shift to state 11
@@ -1264,14 +2048,25 @@ term -> IDENT . [ RIGHT_PAREN ]
 -- On term shift to state 16
 -- On nonempty_list(term) shift to state 157
 -- On composite_term shift to state 18
+## Reductions:
 -- On RIGHT_PAREN reduce production term -> IDENT
 
 State 157:
+## Known stack suffix:
+## LEFT_PAREN IDENT nonempty_list(term)
+## LR(1) items:
 composite_term -> LEFT_PAREN IDENT nonempty_list(term) . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 158
+## Reductions:
 
 State 158:
+## Known stack suffix:
+## LEFT_PAREN IDENT nonempty_list(term) RIGHT_PAREN
+## LR(1) items:
 composite_term -> LEFT_PAREN IDENT nonempty_list(term) RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production composite_term -> LEFT_PAREN IDENT nonempty_list(term) RIGHT_PAREN
 -- On LEFT_PAREN reduce production composite_term -> LEFT_PAREN IDENT nonempty_list(term) RIGHT_PAREN
 -- On IDENT reduce production composite_term -> LEFT_PAREN IDENT nonempty_list(term) RIGHT_PAREN
@@ -1279,21 +2074,40 @@ composite_term -> LEFT_PAREN IDENT nonempty_list(term) RIGHT_PAREN . [ RIGHT_PAR
 -- On BOOL reduce production composite_term -> LEFT_PAREN IDENT nonempty_list(term) RIGHT_PAREN
 
 State 159:
+## Known stack suffix:
+## LEFT_PAREN FUN
+## LR(1) items:
 composite_term -> LEFT_PAREN FUN . LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On LEFT_PAREN shift to state 160
+## Reductions:
 
 State 160:
+## Known stack suffix:
+## LEFT_PAREN FUN LEFT_PAREN
+## LR(1) items:
 composite_term -> LEFT_PAREN FUN LEFT_PAREN . nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On LEFT_PAREN shift to state 73
 -- On typed_var shift to state 91
 -- On nonempty_list(typed_var) shift to state 161
+## Reductions:
 
 State 161:
+## Known stack suffix:
+## LEFT_PAREN FUN LEFT_PAREN nonempty_list(typed_var)
+## LR(1) items:
 composite_term -> LEFT_PAREN FUN LEFT_PAREN nonempty_list(typed_var) . RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 162
+## Reductions:
 
 State 162:
+## Known stack suffix:
+## LEFT_PAREN FUN LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN
+## LR(1) items:
 composite_term -> LEFT_PAREN FUN LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN . term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On error shift to state 4
 -- On TRUE shift to state 5
 -- On QUOTED shift to state 6
@@ -1302,13 +2116,24 @@ composite_term -> LEFT_PAREN FUN LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN
 -- On FALSE shift to state 23
 -- On term shift to state 163
 -- On composite_term shift to state 26
+## Reductions:
 
 State 163:
+## Known stack suffix:
+## LEFT_PAREN FUN LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term
+## LR(1) items:
 composite_term -> LEFT_PAREN FUN LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 164
+## Reductions:
 
 State 164:
+## Known stack suffix:
+## LEFT_PAREN FUN LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN
+## LR(1) items:
 composite_term -> LEFT_PAREN FUN LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production composite_term -> LEFT_PAREN FUN LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN
 -- On LEFT_PAREN reduce production composite_term -> LEFT_PAREN FUN LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN
 -- On IDENT reduce production composite_term -> LEFT_PAREN FUN LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN
@@ -1316,21 +2141,40 @@ composite_term -> LEFT_PAREN FUN LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN
 -- On BOOL reduce production composite_term -> LEFT_PAREN FUN LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN
 
 State 165:
+## Known stack suffix:
+## LEFT_PAREN FORALL
+## LR(1) items:
 composite_term -> LEFT_PAREN FORALL . LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On LEFT_PAREN shift to state 166
+## Reductions:
 
 State 166:
+## Known stack suffix:
+## LEFT_PAREN FORALL LEFT_PAREN
+## LR(1) items:
 composite_term -> LEFT_PAREN FORALL LEFT_PAREN . nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On LEFT_PAREN shift to state 73
 -- On typed_var shift to state 91
 -- On nonempty_list(typed_var) shift to state 167
+## Reductions:
 
 State 167:
+## Known stack suffix:
+## LEFT_PAREN FORALL LEFT_PAREN nonempty_list(typed_var)
+## LR(1) items:
 composite_term -> LEFT_PAREN FORALL LEFT_PAREN nonempty_list(typed_var) . RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 168
+## Reductions:
 
 State 168:
+## Known stack suffix:
+## LEFT_PAREN FORALL LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN
+## LR(1) items:
 composite_term -> LEFT_PAREN FORALL LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN . term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On error shift to state 4
 -- On TRUE shift to state 5
 -- On QUOTED shift to state 6
@@ -1339,13 +2183,24 @@ composite_term -> LEFT_PAREN FORALL LEFT_PAREN nonempty_list(typed_var) RIGHT_PA
 -- On FALSE shift to state 23
 -- On term shift to state 169
 -- On composite_term shift to state 26
+## Reductions:
 
 State 169:
+## Known stack suffix:
+## LEFT_PAREN FORALL LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term
+## LR(1) items:
 composite_term -> LEFT_PAREN FORALL LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 170
+## Reductions:
 
 State 170:
+## Known stack suffix:
+## LEFT_PAREN FORALL LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN
+## LR(1) items:
 composite_term -> LEFT_PAREN FORALL LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production composite_term -> LEFT_PAREN FORALL LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN
 -- On LEFT_PAREN reduce production composite_term -> LEFT_PAREN FORALL LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN
 -- On IDENT reduce production composite_term -> LEFT_PAREN FORALL LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN
@@ -1353,21 +2208,40 @@ composite_term -> LEFT_PAREN FORALL LEFT_PAREN nonempty_list(typed_var) RIGHT_PA
 -- On BOOL reduce production composite_term -> LEFT_PAREN FORALL LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN
 
 State 171:
+## Known stack suffix:
+## LEFT_PAREN EXISTS
+## LR(1) items:
 composite_term -> LEFT_PAREN EXISTS . LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On LEFT_PAREN shift to state 172
+## Reductions:
 
 State 172:
+## Known stack suffix:
+## LEFT_PAREN EXISTS LEFT_PAREN
+## LR(1) items:
 composite_term -> LEFT_PAREN EXISTS LEFT_PAREN . nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On LEFT_PAREN shift to state 73
 -- On typed_var shift to state 91
 -- On nonempty_list(typed_var) shift to state 173
+## Reductions:
 
 State 173:
+## Known stack suffix:
+## LEFT_PAREN EXISTS LEFT_PAREN nonempty_list(typed_var)
+## LR(1) items:
 composite_term -> LEFT_PAREN EXISTS LEFT_PAREN nonempty_list(typed_var) . RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 174
+## Reductions:
 
 State 174:
+## Known stack suffix:
+## LEFT_PAREN EXISTS LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN
+## LR(1) items:
 composite_term -> LEFT_PAREN EXISTS LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN . term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On error shift to state 4
 -- On TRUE shift to state 5
 -- On QUOTED shift to state 6
@@ -1376,13 +2250,24 @@ composite_term -> LEFT_PAREN EXISTS LEFT_PAREN nonempty_list(typed_var) RIGHT_PA
 -- On FALSE shift to state 23
 -- On term shift to state 175
 -- On composite_term shift to state 26
+## Reductions:
 
 State 175:
+## Known stack suffix:
+## LEFT_PAREN EXISTS LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term
+## LR(1) items:
 composite_term -> LEFT_PAREN EXISTS LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 176
+## Reductions:
 
 State 176:
+## Known stack suffix:
+## LEFT_PAREN EXISTS LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN
+## LR(1) items:
 composite_term -> LEFT_PAREN EXISTS LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production composite_term -> LEFT_PAREN EXISTS LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN
 -- On LEFT_PAREN reduce production composite_term -> LEFT_PAREN EXISTS LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN
 -- On IDENT reduce production composite_term -> LEFT_PAREN EXISTS LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN
@@ -1390,7 +2275,11 @@ composite_term -> LEFT_PAREN EXISTS LEFT_PAREN nonempty_list(typed_var) RIGHT_PA
 -- On BOOL reduce production composite_term -> LEFT_PAREN EXISTS LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN
 
 State 177:
+## Known stack suffix:
+## LEFT_PAREN EQ
+## LR(1) items:
 composite_term -> LEFT_PAREN EQ . term term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On error shift to state 9
 -- On TRUE shift to state 10
 -- On QUOTED shift to state 11
@@ -1399,9 +2288,14 @@ composite_term -> LEFT_PAREN EQ . term term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN
 -- On FALSE shift to state 15
 -- On term shift to state 178
 -- On composite_term shift to state 18
+## Reductions:
 
 State 178:
+## Known stack suffix:
+## LEFT_PAREN EQ term
+## LR(1) items:
 composite_term -> LEFT_PAREN EQ term . term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On error shift to state 4
 -- On TRUE shift to state 5
 -- On QUOTED shift to state 6
@@ -1410,13 +2304,24 @@ composite_term -> LEFT_PAREN EQ term . term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN
 -- On FALSE shift to state 23
 -- On term shift to state 179
 -- On composite_term shift to state 26
+## Reductions:
 
 State 179:
+## Known stack suffix:
+## LEFT_PAREN EQ term term
+## LR(1) items:
 composite_term -> LEFT_PAREN EQ term term . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 180
+## Reductions:
 
 State 180:
+## Known stack suffix:
+## LEFT_PAREN EQ term term RIGHT_PAREN
+## LR(1) items:
 composite_term -> LEFT_PAREN EQ term term RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production composite_term -> LEFT_PAREN EQ term term RIGHT_PAREN
 -- On LEFT_PAREN reduce production composite_term -> LEFT_PAREN EQ term term RIGHT_PAREN
 -- On IDENT reduce production composite_term -> LEFT_PAREN EQ term term RIGHT_PAREN
@@ -1424,7 +2329,11 @@ composite_term -> LEFT_PAREN EQ term term RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN
 -- On BOOL reduce production composite_term -> LEFT_PAREN EQ term term RIGHT_PAREN
 
 State 181:
+## Known stack suffix:
+## LEFT_PAREN DISTINCT
+## LR(1) items:
 composite_term -> LEFT_PAREN DISTINCT . nonempty_list(term) RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On error shift to state 9
 -- On TRUE shift to state 10
 -- On QUOTED shift to state 11
@@ -1434,13 +2343,24 @@ composite_term -> LEFT_PAREN DISTINCT . nonempty_list(term) RIGHT_PAREN [ RIGHT_
 -- On term shift to state 16
 -- On nonempty_list(term) shift to state 182
 -- On composite_term shift to state 18
+## Reductions:
 
 State 182:
+## Known stack suffix:
+## LEFT_PAREN DISTINCT nonempty_list(term)
+## LR(1) items:
 composite_term -> LEFT_PAREN DISTINCT nonempty_list(term) . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 183
+## Reductions:
 
 State 183:
+## Known stack suffix:
+## LEFT_PAREN DISTINCT nonempty_list(term) RIGHT_PAREN
+## LR(1) items:
 composite_term -> LEFT_PAREN DISTINCT nonempty_list(term) RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production composite_term -> LEFT_PAREN DISTINCT nonempty_list(term) RIGHT_PAREN
 -- On LEFT_PAREN reduce production composite_term -> LEFT_PAREN DISTINCT nonempty_list(term) RIGHT_PAREN
 -- On IDENT reduce production composite_term -> LEFT_PAREN DISTINCT nonempty_list(term) RIGHT_PAREN
@@ -1448,7 +2368,11 @@ composite_term -> LEFT_PAREN DISTINCT nonempty_list(term) RIGHT_PAREN . [ RIGHT_
 -- On BOOL reduce production composite_term -> LEFT_PAREN DISTINCT nonempty_list(term) RIGHT_PAREN
 
 State 184:
+## Known stack suffix:
+## LEFT_PAREN AT
+## LR(1) items:
 composite_term -> LEFT_PAREN AT . term term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On error shift to state 9
 -- On TRUE shift to state 10
 -- On QUOTED shift to state 11
@@ -1457,9 +2381,14 @@ composite_term -> LEFT_PAREN AT . term term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN
 -- On FALSE shift to state 15
 -- On term shift to state 185
 -- On composite_term shift to state 18
+## Reductions:
 
 State 185:
+## Known stack suffix:
+## LEFT_PAREN AT term
+## LR(1) items:
 composite_term -> LEFT_PAREN AT term . term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On error shift to state 4
 -- On TRUE shift to state 5
 -- On QUOTED shift to state 6
@@ -1468,13 +2397,24 @@ composite_term -> LEFT_PAREN AT term . term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN
 -- On FALSE shift to state 23
 -- On term shift to state 186
 -- On composite_term shift to state 26
+## Reductions:
 
 State 186:
+## Known stack suffix:
+## LEFT_PAREN AT term term
+## LR(1) items:
 composite_term -> LEFT_PAREN AT term term . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 187
+## Reductions:
 
 State 187:
+## Known stack suffix:
+## LEFT_PAREN AT term term RIGHT_PAREN
+## LR(1) items:
 composite_term -> LEFT_PAREN AT term term RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production composite_term -> LEFT_PAREN AT term term RIGHT_PAREN
 -- On LEFT_PAREN reduce production composite_term -> LEFT_PAREN AT term term RIGHT_PAREN
 -- On IDENT reduce production composite_term -> LEFT_PAREN AT term term RIGHT_PAREN
@@ -1482,7 +2422,11 @@ composite_term -> LEFT_PAREN AT term term RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN
 -- On BOOL reduce production composite_term -> LEFT_PAREN AT term term RIGHT_PAREN
 
 State 188:
+## Known stack suffix:
+## LEFT_PAREN AS
+## LR(1) items:
 composite_term -> LEFT_PAREN AS . term ty RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On error shift to state 4
 -- On TRUE shift to state 5
 -- On QUOTED shift to state 6
@@ -1491,20 +2435,36 @@ composite_term -> LEFT_PAREN AS . term ty RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN I
 -- On FALSE shift to state 23
 -- On term shift to state 189
 -- On composite_term shift to state 26
+## Reductions:
 
 State 189:
+## Known stack suffix:
+## LEFT_PAREN AS term
+## LR(1) items:
 composite_term -> LEFT_PAREN AS term . ty RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On LEFT_PAREN shift to state 75
 -- On IDENT shift to state 77
 -- On BOOL shift to state 78
 -- On ty shift to state 190
+## Reductions:
 
 State 190:
+## Known stack suffix:
+## LEFT_PAREN AS term ty
+## LR(1) items:
 composite_term -> LEFT_PAREN AS term ty . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 191
+## Reductions:
 
 State 191:
+## Known stack suffix:
+## LEFT_PAREN AS term ty RIGHT_PAREN
+## LR(1) items:
 composite_term -> LEFT_PAREN AS term ty RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production composite_term -> LEFT_PAREN AS term ty RIGHT_PAREN
 -- On LEFT_PAREN reduce production composite_term -> LEFT_PAREN AS term ty RIGHT_PAREN
 -- On IDENT reduce production composite_term -> LEFT_PAREN AS term ty RIGHT_PAREN
@@ -1512,7 +2472,11 @@ composite_term -> LEFT_PAREN AS term ty RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN I
 -- On BOOL reduce production composite_term -> LEFT_PAREN AS term ty RIGHT_PAREN
 
 State 192:
+## Known stack suffix:
+## LEFT_PAREN ARROW
+## LR(1) items:
 composite_term -> LEFT_PAREN ARROW . term term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On error shift to state 9
 -- On TRUE shift to state 10
 -- On QUOTED shift to state 11
@@ -1521,9 +2485,14 @@ composite_term -> LEFT_PAREN ARROW . term term RIGHT_PAREN [ RIGHT_PAREN LEFT_PA
 -- On FALSE shift to state 15
 -- On term shift to state 193
 -- On composite_term shift to state 18
+## Reductions:
 
 State 193:
+## Known stack suffix:
+## LEFT_PAREN ARROW term
+## LR(1) items:
 composite_term -> LEFT_PAREN ARROW term . term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On error shift to state 4
 -- On TRUE shift to state 5
 -- On QUOTED shift to state 6
@@ -1532,13 +2501,24 @@ composite_term -> LEFT_PAREN ARROW term . term RIGHT_PAREN [ RIGHT_PAREN LEFT_PA
 -- On FALSE shift to state 23
 -- On term shift to state 194
 -- On composite_term shift to state 26
+## Reductions:
 
 State 194:
+## Known stack suffix:
+## LEFT_PAREN ARROW term term
+## LR(1) items:
 composite_term -> LEFT_PAREN ARROW term term . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 195
+## Reductions:
 
 State 195:
+## Known stack suffix:
+## LEFT_PAREN ARROW term term RIGHT_PAREN
+## LR(1) items:
 composite_term -> LEFT_PAREN ARROW term term RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production composite_term -> LEFT_PAREN ARROW term term RIGHT_PAREN
 -- On LEFT_PAREN reduce production composite_term -> LEFT_PAREN ARROW term term RIGHT_PAREN
 -- On IDENT reduce production composite_term -> LEFT_PAREN ARROW term term RIGHT_PAREN
@@ -1546,7 +2526,11 @@ composite_term -> LEFT_PAREN ARROW term term RIGHT_PAREN . [ RIGHT_PAREN LEFT_PA
 -- On BOOL reduce production composite_term -> LEFT_PAREN ARROW term term RIGHT_PAREN
 
 State 196:
+## Known stack suffix:
+## LEFT_PAREN AND
+## LR(1) items:
 composite_term -> LEFT_PAREN AND . nonempty_list(term) RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On error shift to state 9
 -- On TRUE shift to state 10
 -- On QUOTED shift to state 11
@@ -1556,13 +2540,24 @@ composite_term -> LEFT_PAREN AND . nonempty_list(term) RIGHT_PAREN [ RIGHT_PAREN
 -- On term shift to state 16
 -- On nonempty_list(term) shift to state 197
 -- On composite_term shift to state 18
+## Reductions:
 
 State 197:
+## Known stack suffix:
+## LEFT_PAREN AND nonempty_list(term)
+## LR(1) items:
 composite_term -> LEFT_PAREN AND nonempty_list(term) . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 198
+## Reductions:
 
 State 198:
+## Known stack suffix:
+## LEFT_PAREN AND nonempty_list(term) RIGHT_PAREN
+## LR(1) items:
 composite_term -> LEFT_PAREN AND nonempty_list(term) RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production composite_term -> LEFT_PAREN AND nonempty_list(term) RIGHT_PAREN
 -- On LEFT_PAREN reduce production composite_term -> LEFT_PAREN AND nonempty_list(term) RIGHT_PAREN
 -- On IDENT reduce production composite_term -> LEFT_PAREN AND nonempty_list(term) RIGHT_PAREN
@@ -1570,11 +2565,21 @@ composite_term -> LEFT_PAREN AND nonempty_list(term) RIGHT_PAREN . [ RIGHT_PAREN
 -- On BOOL reduce production composite_term -> LEFT_PAREN AND nonempty_list(term) RIGHT_PAREN
 
 State 199:
+## Known stack suffix:
+## LEFT_PAREN term
+## LR(1) items:
 composite_term -> LEFT_PAREN term . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 200
+## Reductions:
 
 State 200:
+## Known stack suffix:
+## LEFT_PAREN term RIGHT_PAREN
+## LR(1) items:
 composite_term -> LEFT_PAREN term RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production composite_term -> LEFT_PAREN term RIGHT_PAREN
 -- On LEFT_PAREN reduce production composite_term -> LEFT_PAREN term RIGHT_PAREN
 -- On IDENT reduce production composite_term -> LEFT_PAREN term RIGHT_PAREN
@@ -1582,8 +2587,12 @@ composite_term -> LEFT_PAREN term RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN IDENT E
 -- On BOOL reduce production composite_term -> LEFT_PAREN term RIGHT_PAREN
 
 State 201:
+## Known stack suffix:
+## LEFT_PAREN composite_term
+## LR(1) items:
 composite_term -> LEFT_PAREN composite_term . nonempty_list(term) RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
 term -> composite_term . [ RIGHT_PAREN ]
+## Transitions:
 -- On error shift to state 9
 -- On TRUE shift to state 10
 -- On QUOTED shift to state 11
@@ -1593,14 +2602,25 @@ term -> composite_term . [ RIGHT_PAREN ]
 -- On term shift to state 16
 -- On nonempty_list(term) shift to state 202
 -- On composite_term shift to state 18
+## Reductions:
 -- On RIGHT_PAREN reduce production term -> composite_term
 
 State 202:
+## Known stack suffix:
+## LEFT_PAREN composite_term nonempty_list(term)
+## LR(1) items:
 composite_term -> LEFT_PAREN composite_term nonempty_list(term) . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 203
+## Reductions:
 
 State 203:
+## Known stack suffix:
+## LEFT_PAREN composite_term nonempty_list(term) RIGHT_PAREN
+## LR(1) items:
 composite_term -> LEFT_PAREN composite_term nonempty_list(term) RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production composite_term -> LEFT_PAREN composite_term nonempty_list(term) RIGHT_PAREN
 -- On LEFT_PAREN reduce production composite_term -> LEFT_PAREN composite_term nonempty_list(term) RIGHT_PAREN
 -- On IDENT reduce production composite_term -> LEFT_PAREN composite_term nonempty_list(term) RIGHT_PAREN
@@ -1608,117 +2628,227 @@ composite_term -> LEFT_PAREN composite_term nonempty_list(term) RIGHT_PAREN . [ 
 -- On BOOL reduce production composite_term -> LEFT_PAREN composite_term nonempty_list(term) RIGHT_PAREN
 
 State 204:
+## Known stack suffix:
+## LEFT_PAREN LEMMA term
+## LR(1) items:
 stmt -> LEFT_PAREN LEMMA term . RIGHT_PAREN [ EOI ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 205
+## Reductions:
 
 State 205:
+## Known stack suffix:
+## LEFT_PAREN LEMMA term RIGHT_PAREN
+## LR(1) items:
 stmt -> LEFT_PAREN LEMMA term RIGHT_PAREN . [ EOI ]
+## Transitions:
+## Reductions:
 -- On EOI reduce production stmt -> LEFT_PAREN LEMMA term RIGHT_PAREN
 
 State 206:
+## Known stack suffix:
+## LEFT_PAREN DEFINE_FUN_REC
+## LR(1) items:
 stmt -> LEFT_PAREN DEFINE_FUN_REC . fun_rec RIGHT_PAREN [ EOI ]
+## Transitions:
 -- On LEFT_PAREN shift to state 207
 -- On IDENT shift to state 216
 -- On fun_rec shift to state 236
 -- On fun_def_mono shift to state 238
+## Reductions:
 
 State 207:
+## Known stack suffix:
+## LEFT_PAREN
+## LR(1) items:
 fun_rec -> LEFT_PAREN . PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN fun_def_mono term RIGHT_PAREN RIGHT_PAREN [ RIGHT_PAREN ]
+## Transitions:
 -- On PAR shift to state 208
+## Reductions:
 
 State 208:
+## Known stack suffix:
+## LEFT_PAREN PAR
+## LR(1) items:
 fun_rec -> LEFT_PAREN PAR . LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN fun_def_mono term RIGHT_PAREN RIGHT_PAREN [ RIGHT_PAREN ]
+## Transitions:
 -- On LEFT_PAREN shift to state 209
+## Reductions:
 
 State 209:
+## Known stack suffix:
+## LEFT_PAREN PAR LEFT_PAREN
+## LR(1) items:
 fun_rec -> LEFT_PAREN PAR LEFT_PAREN . list(tyvar) RIGHT_PAREN LEFT_PAREN fun_def_mono term RIGHT_PAREN RIGHT_PAREN [ RIGHT_PAREN ]
+## Transitions:
 -- On IDENT shift to state 210
 -- On tyvar shift to state 211
 -- On list(tyvar) shift to state 213
+## Reductions:
 -- On RIGHT_PAREN reduce production list(tyvar) ->
 
 State 210:
+## Known stack suffix:
+## IDENT
+## LR(1) items:
 tyvar -> IDENT . [ RIGHT_PAREN IDENT ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production tyvar -> IDENT
 -- On IDENT reduce production tyvar -> IDENT
 
 State 211:
+## Known stack suffix:
+## tyvar
+## LR(1) items:
 list(tyvar) -> tyvar . list(tyvar) [ RIGHT_PAREN ]
+## Transitions:
 -- On IDENT shift to state 210
 -- On tyvar shift to state 211
 -- On list(tyvar) shift to state 212
+## Reductions:
 -- On RIGHT_PAREN reduce production list(tyvar) ->
 
 State 212:
+## Known stack suffix:
+## tyvar list(tyvar)
+## LR(1) items:
 list(tyvar) -> tyvar list(tyvar) . [ RIGHT_PAREN ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production list(tyvar) -> tyvar list(tyvar)
 
 State 213:
+## Known stack suffix:
+## LEFT_PAREN PAR LEFT_PAREN list(tyvar)
+## LR(1) items:
 fun_rec -> LEFT_PAREN PAR LEFT_PAREN list(tyvar) . RIGHT_PAREN LEFT_PAREN fun_def_mono term RIGHT_PAREN RIGHT_PAREN [ RIGHT_PAREN ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 214
+## Reductions:
 
 State 214:
+## Known stack suffix:
+## LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN
+## LR(1) items:
 fun_rec -> LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN . LEFT_PAREN fun_def_mono term RIGHT_PAREN RIGHT_PAREN [ RIGHT_PAREN ]
+## Transitions:
 -- On LEFT_PAREN shift to state 215
+## Reductions:
 
 State 215:
+## Known stack suffix:
+## LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN
+## LR(1) items:
 fun_rec -> LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN . fun_def_mono term RIGHT_PAREN RIGHT_PAREN [ RIGHT_PAREN ]
+## Transitions:
 -- On IDENT shift to state 216
 -- On fun_def_mono shift to state 232
+## Reductions:
 
 State 216:
+## Known stack suffix:
+## IDENT
+## LR(1) items:
 fun_def_mono -> IDENT . LEFT_PAREN list(typed_var) RIGHT_PAREN ty [ error TRUE QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On LEFT_PAREN shift to state 217
+## Reductions:
 
 State 217:
+## Known stack suffix:
+## IDENT LEFT_PAREN
+## LR(1) items:
 fun_def_mono -> IDENT LEFT_PAREN . list(typed_var) RIGHT_PAREN ty [ error TRUE QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On LEFT_PAREN shift to state 73
 -- On typed_var shift to state 218
 -- On list(typed_var) shift to state 220
+## Reductions:
 -- On RIGHT_PAREN reduce production list(typed_var) ->
 
 State 218:
+## Known stack suffix:
+## typed_var
+## LR(1) items:
 list(typed_var) -> typed_var . list(typed_var) [ RIGHT_PAREN ]
+## Transitions:
 -- On LEFT_PAREN shift to state 73
 -- On typed_var shift to state 218
 -- On list(typed_var) shift to state 219
+## Reductions:
 -- On RIGHT_PAREN reduce production list(typed_var) ->
 
 State 219:
+## Known stack suffix:
+## typed_var list(typed_var)
+## LR(1) items:
 list(typed_var) -> typed_var list(typed_var) . [ RIGHT_PAREN ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production list(typed_var) -> typed_var list(typed_var)
 
 State 220:
+## Known stack suffix:
+## IDENT LEFT_PAREN list(typed_var)
+## LR(1) items:
 fun_def_mono -> IDENT LEFT_PAREN list(typed_var) . RIGHT_PAREN ty [ error TRUE QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 221
+## Reductions:
 
 State 221:
+## Known stack suffix:
+## IDENT LEFT_PAREN list(typed_var) RIGHT_PAREN
+## LR(1) items:
 fun_def_mono -> IDENT LEFT_PAREN list(typed_var) RIGHT_PAREN . ty [ error TRUE QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On LEFT_PAREN shift to state 222
 -- On IDENT shift to state 229
 -- On BOOL shift to state 230
 -- On ty shift to state 231
+## Reductions:
 
 State 222:
+## Known stack suffix:
+## LEFT_PAREN
+## LR(1) items:
 ty -> LEFT_PAREN . IDENT nonempty_list(ty) RIGHT_PAREN [ error TRUE QUOTED LEFT_PAREN IDENT FALSE ]
 ty -> LEFT_PAREN . ARROW ty_arrow_args RIGHT_PAREN [ error TRUE QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On IDENT shift to state 223
 -- On ARROW shift to state 226
+## Reductions:
 
 State 223:
+## Known stack suffix:
+## LEFT_PAREN IDENT
+## LR(1) items:
 ty -> LEFT_PAREN IDENT . nonempty_list(ty) RIGHT_PAREN [ error TRUE QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On LEFT_PAREN shift to state 75
 -- On IDENT shift to state 77
 -- On BOOL shift to state 78
 -- On ty shift to state 79
 -- On nonempty_list(ty) shift to state 224
+## Reductions:
 
 State 224:
+## Known stack suffix:
+## LEFT_PAREN IDENT nonempty_list(ty)
+## LR(1) items:
 ty -> LEFT_PAREN IDENT nonempty_list(ty) . RIGHT_PAREN [ error TRUE QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 225
+## Reductions:
 
 State 225:
+## Known stack suffix:
+## LEFT_PAREN IDENT nonempty_list(ty) RIGHT_PAREN
+## LR(1) items:
 ty -> LEFT_PAREN IDENT nonempty_list(ty) RIGHT_PAREN . [ error TRUE QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
+## Reductions:
 -- On error reduce production ty -> LEFT_PAREN IDENT nonempty_list(ty) RIGHT_PAREN
 -- On TRUE reduce production ty -> LEFT_PAREN IDENT nonempty_list(ty) RIGHT_PAREN
 -- On QUOTED reduce production ty -> LEFT_PAREN IDENT nonempty_list(ty) RIGHT_PAREN
@@ -1727,19 +2857,34 @@ ty -> LEFT_PAREN IDENT nonempty_list(ty) RIGHT_PAREN . [ error TRUE QUOTED LEFT_
 -- On FALSE reduce production ty -> LEFT_PAREN IDENT nonempty_list(ty) RIGHT_PAREN
 
 State 226:
+## Known stack suffix:
+## LEFT_PAREN ARROW
+## LR(1) items:
 ty -> LEFT_PAREN ARROW . ty_arrow_args RIGHT_PAREN [ error TRUE QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On LEFT_PAREN shift to state 75
 -- On IDENT shift to state 77
 -- On BOOL shift to state 78
 -- On ty_arrow_args shift to state 227
 -- On ty shift to state 86
+## Reductions:
 
 State 227:
+## Known stack suffix:
+## LEFT_PAREN ARROW ty_arrow_args
+## LR(1) items:
 ty -> LEFT_PAREN ARROW ty_arrow_args . RIGHT_PAREN [ error TRUE QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 228
+## Reductions:
 
 State 228:
+## Known stack suffix:
+## LEFT_PAREN ARROW ty_arrow_args RIGHT_PAREN
+## LR(1) items:
 ty -> LEFT_PAREN ARROW ty_arrow_args RIGHT_PAREN . [ error TRUE QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
+## Reductions:
 -- On error reduce production ty -> LEFT_PAREN ARROW ty_arrow_args RIGHT_PAREN
 -- On TRUE reduce production ty -> LEFT_PAREN ARROW ty_arrow_args RIGHT_PAREN
 -- On QUOTED reduce production ty -> LEFT_PAREN ARROW ty_arrow_args RIGHT_PAREN
@@ -1748,7 +2893,12 @@ ty -> LEFT_PAREN ARROW ty_arrow_args RIGHT_PAREN . [ error TRUE QUOTED LEFT_PARE
 -- On FALSE reduce production ty -> LEFT_PAREN ARROW ty_arrow_args RIGHT_PAREN
 
 State 229:
+## Known stack suffix:
+## IDENT
+## LR(1) items:
 ty -> IDENT . [ error TRUE QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
+## Reductions:
 -- On error reduce production ty -> IDENT
 -- On TRUE reduce production ty -> IDENT
 -- On QUOTED reduce production ty -> IDENT
@@ -1757,7 +2907,12 @@ ty -> IDENT . [ error TRUE QUOTED LEFT_PAREN IDENT FALSE ]
 -- On FALSE reduce production ty -> IDENT
 
 State 230:
+## Known stack suffix:
+## BOOL
+## LR(1) items:
 ty -> BOOL . [ error TRUE QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
+## Reductions:
 -- On error reduce production ty -> BOOL
 -- On TRUE reduce production ty -> BOOL
 -- On QUOTED reduce production ty -> BOOL
@@ -1766,7 +2921,12 @@ ty -> BOOL . [ error TRUE QUOTED LEFT_PAREN IDENT FALSE ]
 -- On FALSE reduce production ty -> BOOL
 
 State 231:
+## Known stack suffix:
+## IDENT LEFT_PAREN list(typed_var) RIGHT_PAREN ty
+## LR(1) items:
 fun_def_mono -> IDENT LEFT_PAREN list(typed_var) RIGHT_PAREN ty . [ error TRUE QUOTED LEFT_PAREN IDENT FALSE ]
+## Transitions:
+## Reductions:
 -- On error reduce production fun_def_mono -> IDENT LEFT_PAREN list(typed_var) RIGHT_PAREN ty
 -- On TRUE reduce production fun_def_mono -> IDENT LEFT_PAREN list(typed_var) RIGHT_PAREN ty
 -- On QUOTED reduce production fun_def_mono -> IDENT LEFT_PAREN list(typed_var) RIGHT_PAREN ty
@@ -1775,7 +2935,11 @@ fun_def_mono -> IDENT LEFT_PAREN list(typed_var) RIGHT_PAREN ty . [ error TRUE Q
 -- On FALSE reduce production fun_def_mono -> IDENT LEFT_PAREN list(typed_var) RIGHT_PAREN ty
 
 State 232:
+## Known stack suffix:
+## LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN fun_def_mono
+## LR(1) items:
 fun_rec -> LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN fun_def_mono . term RIGHT_PAREN RIGHT_PAREN [ RIGHT_PAREN ]
+## Transitions:
 -- On error shift to state 4
 -- On TRUE shift to state 5
 -- On QUOTED shift to state 6
@@ -1784,29 +2948,59 @@ fun_rec -> LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN fun_def_
 -- On FALSE shift to state 23
 -- On term shift to state 233
 -- On composite_term shift to state 26
+## Reductions:
 
 State 233:
+## Known stack suffix:
+## LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN fun_def_mono term
+## LR(1) items:
 fun_rec -> LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN fun_def_mono term . RIGHT_PAREN RIGHT_PAREN [ RIGHT_PAREN ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 234
+## Reductions:
 
 State 234:
+## Known stack suffix:
+## LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN fun_def_mono term RIGHT_PAREN
+## LR(1) items:
 fun_rec -> LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN fun_def_mono term RIGHT_PAREN . RIGHT_PAREN [ RIGHT_PAREN ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 235
+## Reductions:
 
 State 235:
+## Known stack suffix:
+## LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN fun_def_mono term RIGHT_PAREN RIGHT_PAREN
+## LR(1) items:
 fun_rec -> LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN fun_def_mono term RIGHT_PAREN RIGHT_PAREN . [ RIGHT_PAREN ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production fun_rec -> LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN fun_def_mono term RIGHT_PAREN RIGHT_PAREN
 
 State 236:
+## Known stack suffix:
+## LEFT_PAREN DEFINE_FUN_REC fun_rec
+## LR(1) items:
 stmt -> LEFT_PAREN DEFINE_FUN_REC fun_rec . RIGHT_PAREN [ EOI ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 237
+## Reductions:
 
 State 237:
+## Known stack suffix:
+## LEFT_PAREN DEFINE_FUN_REC fun_rec RIGHT_PAREN
+## LR(1) items:
 stmt -> LEFT_PAREN DEFINE_FUN_REC fun_rec RIGHT_PAREN . [ EOI ]
+## Transitions:
+## Reductions:
 -- On EOI reduce production stmt -> LEFT_PAREN DEFINE_FUN_REC fun_rec RIGHT_PAREN
 
 State 238:
+## Known stack suffix:
+## fun_def_mono
+## LR(1) items:
 fun_rec -> fun_def_mono . term [ RIGHT_PAREN ]
+## Transitions:
 -- On error shift to state 4
 -- On TRUE shift to state 5
 -- On QUOTED shift to state 6
@@ -1815,110 +3009,220 @@ fun_rec -> fun_def_mono . term [ RIGHT_PAREN ]
 -- On FALSE shift to state 23
 -- On term shift to state 239
 -- On composite_term shift to state 26
+## Reductions:
 
 State 239:
+## Known stack suffix:
+## fun_def_mono term
+## LR(1) items:
 fun_rec -> fun_def_mono term . [ RIGHT_PAREN ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production fun_rec -> fun_def_mono term
 
 State 240:
+## Known stack suffix:
+## LEFT_PAREN DEFINE_FUNS_REC
+## LR(1) items:
 stmt -> LEFT_PAREN DEFINE_FUNS_REC . LEFT_PAREN nonempty_list(funs_rec_decl) RIGHT_PAREN LEFT_PAREN nonempty_list(term) RIGHT_PAREN RIGHT_PAREN [ EOI ]
+## Transitions:
 -- On LEFT_PAREN shift to state 241
+## Reductions:
 
 State 241:
+## Known stack suffix:
+## LEFT_PAREN DEFINE_FUNS_REC LEFT_PAREN
+## LR(1) items:
 stmt -> LEFT_PAREN DEFINE_FUNS_REC LEFT_PAREN . nonempty_list(funs_rec_decl) RIGHT_PAREN LEFT_PAREN nonempty_list(term) RIGHT_PAREN RIGHT_PAREN [ EOI ]
+## Transitions:
 -- On LEFT_PAREN shift to state 242
 -- On nonempty_list(funs_rec_decl) shift to state 258
 -- On funs_rec_decl shift to state 264
+## Reductions:
 
 State 242:
+## Known stack suffix:
+## LEFT_PAREN
+## LR(1) items:
 funs_rec_decl -> LEFT_PAREN . fun_def_mono RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
 funs_rec_decl -> LEFT_PAREN . PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN fun_def_mono RIGHT_PAREN RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+## Transitions:
 -- On PAR shift to state 243
 -- On IDENT shift to state 248
 -- On fun_def_mono shift to state 256
+## Reductions:
 
 State 243:
+## Known stack suffix:
+## LEFT_PAREN PAR
+## LR(1) items:
 funs_rec_decl -> LEFT_PAREN PAR . LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN fun_def_mono RIGHT_PAREN RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+## Transitions:
 -- On LEFT_PAREN shift to state 244
+## Reductions:
 
 State 244:
+## Known stack suffix:
+## LEFT_PAREN PAR LEFT_PAREN
+## LR(1) items:
 funs_rec_decl -> LEFT_PAREN PAR LEFT_PAREN . list(tyvar) RIGHT_PAREN LEFT_PAREN fun_def_mono RIGHT_PAREN RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+## Transitions:
 -- On IDENT shift to state 210
 -- On tyvar shift to state 211
 -- On list(tyvar) shift to state 245
+## Reductions:
 -- On RIGHT_PAREN reduce production list(tyvar) ->
 
 State 245:
+## Known stack suffix:
+## LEFT_PAREN PAR LEFT_PAREN list(tyvar)
+## LR(1) items:
 funs_rec_decl -> LEFT_PAREN PAR LEFT_PAREN list(tyvar) . RIGHT_PAREN LEFT_PAREN fun_def_mono RIGHT_PAREN RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 246
+## Reductions:
 
 State 246:
+## Known stack suffix:
+## LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN
+## LR(1) items:
 funs_rec_decl -> LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN . LEFT_PAREN fun_def_mono RIGHT_PAREN RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+## Transitions:
 -- On LEFT_PAREN shift to state 247
+## Reductions:
 
 State 247:
+## Known stack suffix:
+## LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN
+## LR(1) items:
 funs_rec_decl -> LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN . fun_def_mono RIGHT_PAREN RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+## Transitions:
 -- On IDENT shift to state 248
 -- On fun_def_mono shift to state 253
+## Reductions:
 
 State 248:
+## Known stack suffix:
+## IDENT
+## LR(1) items:
 fun_def_mono -> IDENT . LEFT_PAREN list(typed_var) RIGHT_PAREN ty [ RIGHT_PAREN ]
+## Transitions:
 -- On LEFT_PAREN shift to state 249
+## Reductions:
 
 State 249:
+## Known stack suffix:
+## IDENT LEFT_PAREN
+## LR(1) items:
 fun_def_mono -> IDENT LEFT_PAREN . list(typed_var) RIGHT_PAREN ty [ RIGHT_PAREN ]
+## Transitions:
 -- On LEFT_PAREN shift to state 73
 -- On typed_var shift to state 218
 -- On list(typed_var) shift to state 250
+## Reductions:
 -- On RIGHT_PAREN reduce production list(typed_var) ->
 
 State 250:
+## Known stack suffix:
+## IDENT LEFT_PAREN list(typed_var)
+## LR(1) items:
 fun_def_mono -> IDENT LEFT_PAREN list(typed_var) . RIGHT_PAREN ty [ RIGHT_PAREN ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 251
+## Reductions:
 
 State 251:
+## Known stack suffix:
+## IDENT LEFT_PAREN list(typed_var) RIGHT_PAREN
+## LR(1) items:
 fun_def_mono -> IDENT LEFT_PAREN list(typed_var) RIGHT_PAREN . ty [ RIGHT_PAREN ]
+## Transitions:
 -- On LEFT_PAREN shift to state 75
 -- On IDENT shift to state 77
 -- On BOOL shift to state 78
 -- On ty shift to state 252
+## Reductions:
 
 State 252:
+## Known stack suffix:
+## IDENT LEFT_PAREN list(typed_var) RIGHT_PAREN ty
+## LR(1) items:
 fun_def_mono -> IDENT LEFT_PAREN list(typed_var) RIGHT_PAREN ty . [ RIGHT_PAREN ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production fun_def_mono -> IDENT LEFT_PAREN list(typed_var) RIGHT_PAREN ty
 
 State 253:
+## Known stack suffix:
+## LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN fun_def_mono
+## LR(1) items:
 funs_rec_decl -> LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN fun_def_mono . RIGHT_PAREN RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 254
+## Reductions:
 
 State 254:
+## Known stack suffix:
+## LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN fun_def_mono RIGHT_PAREN
+## LR(1) items:
 funs_rec_decl -> LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN fun_def_mono RIGHT_PAREN . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 255
+## Reductions:
 
 State 255:
+## Known stack suffix:
+## LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN fun_def_mono RIGHT_PAREN RIGHT_PAREN
+## LR(1) items:
 funs_rec_decl -> LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN fun_def_mono RIGHT_PAREN RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production funs_rec_decl -> LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN fun_def_mono RIGHT_PAREN RIGHT_PAREN
 -- On LEFT_PAREN reduce production funs_rec_decl -> LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN fun_def_mono RIGHT_PAREN RIGHT_PAREN
 
 State 256:
+## Known stack suffix:
+## LEFT_PAREN fun_def_mono
+## LR(1) items:
 funs_rec_decl -> LEFT_PAREN fun_def_mono . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 257
+## Reductions:
 
 State 257:
+## Known stack suffix:
+## LEFT_PAREN fun_def_mono RIGHT_PAREN
+## LR(1) items:
 funs_rec_decl -> LEFT_PAREN fun_def_mono RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production funs_rec_decl -> LEFT_PAREN fun_def_mono RIGHT_PAREN
 -- On LEFT_PAREN reduce production funs_rec_decl -> LEFT_PAREN fun_def_mono RIGHT_PAREN
 
 State 258:
+## Known stack suffix:
+## LEFT_PAREN DEFINE_FUNS_REC LEFT_PAREN nonempty_list(funs_rec_decl)
+## LR(1) items:
 stmt -> LEFT_PAREN DEFINE_FUNS_REC LEFT_PAREN nonempty_list(funs_rec_decl) . RIGHT_PAREN LEFT_PAREN nonempty_list(term) RIGHT_PAREN RIGHT_PAREN [ EOI ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 259
+## Reductions:
 
 State 259:
+## Known stack suffix:
+## LEFT_PAREN DEFINE_FUNS_REC LEFT_PAREN nonempty_list(funs_rec_decl) RIGHT_PAREN
+## LR(1) items:
 stmt -> LEFT_PAREN DEFINE_FUNS_REC LEFT_PAREN nonempty_list(funs_rec_decl) RIGHT_PAREN . LEFT_PAREN nonempty_list(term) RIGHT_PAREN RIGHT_PAREN [ EOI ]
+## Transitions:
 -- On LEFT_PAREN shift to state 260
+## Reductions:
 
 State 260:
+## Known stack suffix:
+## LEFT_PAREN DEFINE_FUNS_REC LEFT_PAREN nonempty_list(funs_rec_decl) RIGHT_PAREN LEFT_PAREN
+## LR(1) items:
 stmt -> LEFT_PAREN DEFINE_FUNS_REC LEFT_PAREN nonempty_list(funs_rec_decl) RIGHT_PAREN LEFT_PAREN . nonempty_list(term) RIGHT_PAREN RIGHT_PAREN [ EOI ]
+## Transitions:
 -- On error shift to state 9
 -- On TRUE shift to state 10
 -- On QUOTED shift to state 11
@@ -1928,330 +3232,660 @@ stmt -> LEFT_PAREN DEFINE_FUNS_REC LEFT_PAREN nonempty_list(funs_rec_decl) RIGHT
 -- On term shift to state 16
 -- On nonempty_list(term) shift to state 261
 -- On composite_term shift to state 18
+## Reductions:
 
 State 261:
+## Known stack suffix:
+## LEFT_PAREN DEFINE_FUNS_REC LEFT_PAREN nonempty_list(funs_rec_decl) RIGHT_PAREN LEFT_PAREN nonempty_list(term)
+## LR(1) items:
 stmt -> LEFT_PAREN DEFINE_FUNS_REC LEFT_PAREN nonempty_list(funs_rec_decl) RIGHT_PAREN LEFT_PAREN nonempty_list(term) . RIGHT_PAREN RIGHT_PAREN [ EOI ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 262
+## Reductions:
 
 State 262:
+## Known stack suffix:
+## LEFT_PAREN DEFINE_FUNS_REC LEFT_PAREN nonempty_list(funs_rec_decl) RIGHT_PAREN LEFT_PAREN nonempty_list(term) RIGHT_PAREN
+## LR(1) items:
 stmt -> LEFT_PAREN DEFINE_FUNS_REC LEFT_PAREN nonempty_list(funs_rec_decl) RIGHT_PAREN LEFT_PAREN nonempty_list(term) RIGHT_PAREN . RIGHT_PAREN [ EOI ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 263
+## Reductions:
 
 State 263:
+## Known stack suffix:
+## LEFT_PAREN DEFINE_FUNS_REC LEFT_PAREN nonempty_list(funs_rec_decl) RIGHT_PAREN LEFT_PAREN nonempty_list(term) RIGHT_PAREN RIGHT_PAREN
+## LR(1) items:
 stmt -> LEFT_PAREN DEFINE_FUNS_REC LEFT_PAREN nonempty_list(funs_rec_decl) RIGHT_PAREN LEFT_PAREN nonempty_list(term) RIGHT_PAREN RIGHT_PAREN . [ EOI ]
+## Transitions:
+## Reductions:
 -- On EOI reduce production stmt -> LEFT_PAREN DEFINE_FUNS_REC LEFT_PAREN nonempty_list(funs_rec_decl) RIGHT_PAREN LEFT_PAREN nonempty_list(term) RIGHT_PAREN RIGHT_PAREN
 
 State 264:
+## Known stack suffix:
+## funs_rec_decl
+## LR(1) items:
 nonempty_list(funs_rec_decl) -> funs_rec_decl . [ RIGHT_PAREN ]
 nonempty_list(funs_rec_decl) -> funs_rec_decl . nonempty_list(funs_rec_decl) [ RIGHT_PAREN ]
+## Transitions:
 -- On LEFT_PAREN shift to state 242
 -- On nonempty_list(funs_rec_decl) shift to state 265
 -- On funs_rec_decl shift to state 264
+## Reductions:
 -- On RIGHT_PAREN reduce production nonempty_list(funs_rec_decl) -> funs_rec_decl
 
 State 265:
+## Known stack suffix:
+## funs_rec_decl nonempty_list(funs_rec_decl)
+## LR(1) items:
 nonempty_list(funs_rec_decl) -> funs_rec_decl nonempty_list(funs_rec_decl) . [ RIGHT_PAREN ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production nonempty_list(funs_rec_decl) -> funs_rec_decl nonempty_list(funs_rec_decl)
 
 State 266:
+## Known stack suffix:
+## LEFT_PAREN DEFINE_FUN
+## LR(1) items:
 stmt -> LEFT_PAREN DEFINE_FUN . fun_rec RIGHT_PAREN [ EOI ]
+## Transitions:
 -- On LEFT_PAREN shift to state 207
 -- On IDENT shift to state 216
 -- On fun_rec shift to state 267
 -- On fun_def_mono shift to state 238
+## Reductions:
 
 State 267:
+## Known stack suffix:
+## LEFT_PAREN DEFINE_FUN fun_rec
+## LR(1) items:
 stmt -> LEFT_PAREN DEFINE_FUN fun_rec . RIGHT_PAREN [ EOI ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 268
+## Reductions:
 
 State 268:
+## Known stack suffix:
+## LEFT_PAREN DEFINE_FUN fun_rec RIGHT_PAREN
+## LR(1) items:
 stmt -> LEFT_PAREN DEFINE_FUN fun_rec RIGHT_PAREN . [ EOI ]
+## Transitions:
+## Reductions:
 -- On EOI reduce production stmt -> LEFT_PAREN DEFINE_FUN fun_rec RIGHT_PAREN
 
 State 269:
+## Known stack suffix:
+## LEFT_PAREN DECLARE_SORT
+## LR(1) items:
 stmt -> LEFT_PAREN DECLARE_SORT . IDENT IDENT RIGHT_PAREN [ EOI ]
+## Transitions:
 -- On IDENT shift to state 270
+## Reductions:
 
 State 270:
+## Known stack suffix:
+## LEFT_PAREN DECLARE_SORT IDENT
+## LR(1) items:
 stmt -> LEFT_PAREN DECLARE_SORT IDENT . IDENT RIGHT_PAREN [ EOI ]
+## Transitions:
 -- On IDENT shift to state 271
+## Reductions:
 
 State 271:
+## Known stack suffix:
+## LEFT_PAREN DECLARE_SORT IDENT IDENT
+## LR(1) items:
 stmt -> LEFT_PAREN DECLARE_SORT IDENT IDENT . RIGHT_PAREN [ EOI ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 272
+## Reductions:
 
 State 272:
+## Known stack suffix:
+## LEFT_PAREN DECLARE_SORT IDENT IDENT RIGHT_PAREN
+## LR(1) items:
 stmt -> LEFT_PAREN DECLARE_SORT IDENT IDENT RIGHT_PAREN . [ EOI ]
+## Transitions:
+## Reductions:
 -- On EOI reduce production stmt -> LEFT_PAREN DECLARE_SORT IDENT IDENT RIGHT_PAREN
 
 State 273:
+## Known stack suffix:
+## LEFT_PAREN DECLARE_FUN
+## LR(1) items:
 stmt -> LEFT_PAREN DECLARE_FUN . fun_decl RIGHT_PAREN [ EOI ]
+## Transitions:
 -- On LEFT_PAREN shift to state 274
 -- On IDENT shift to state 280
 -- On fun_decl_mono shift to state 290
 -- On fun_decl shift to state 291
+## Reductions:
 
 State 274:
+## Known stack suffix:
+## LEFT_PAREN
+## LR(1) items:
 fun_decl -> LEFT_PAREN . PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN fun_decl_mono RIGHT_PAREN RIGHT_PAREN [ RIGHT_PAREN ]
+## Transitions:
 -- On PAR shift to state 275
+## Reductions:
 
 State 275:
+## Known stack suffix:
+## LEFT_PAREN PAR
+## LR(1) items:
 fun_decl -> LEFT_PAREN PAR . LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN fun_decl_mono RIGHT_PAREN RIGHT_PAREN [ RIGHT_PAREN ]
+## Transitions:
 -- On LEFT_PAREN shift to state 276
+## Reductions:
 
 State 276:
+## Known stack suffix:
+## LEFT_PAREN PAR LEFT_PAREN
+## LR(1) items:
 fun_decl -> LEFT_PAREN PAR LEFT_PAREN . list(tyvar) RIGHT_PAREN LEFT_PAREN fun_decl_mono RIGHT_PAREN RIGHT_PAREN [ RIGHT_PAREN ]
+## Transitions:
 -- On IDENT shift to state 210
 -- On tyvar shift to state 211
 -- On list(tyvar) shift to state 277
+## Reductions:
 -- On RIGHT_PAREN reduce production list(tyvar) ->
 
 State 277:
+## Known stack suffix:
+## LEFT_PAREN PAR LEFT_PAREN list(tyvar)
+## LR(1) items:
 fun_decl -> LEFT_PAREN PAR LEFT_PAREN list(tyvar) . RIGHT_PAREN LEFT_PAREN fun_decl_mono RIGHT_PAREN RIGHT_PAREN [ RIGHT_PAREN ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 278
+## Reductions:
 
 State 278:
+## Known stack suffix:
+## LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN
+## LR(1) items:
 fun_decl -> LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN . LEFT_PAREN fun_decl_mono RIGHT_PAREN RIGHT_PAREN [ RIGHT_PAREN ]
+## Transitions:
 -- On LEFT_PAREN shift to state 279
+## Reductions:
 
 State 279:
+## Known stack suffix:
+## LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN
+## LR(1) items:
 fun_decl -> LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN . fun_decl_mono RIGHT_PAREN RIGHT_PAREN [ RIGHT_PAREN ]
+## Transitions:
 -- On IDENT shift to state 280
 -- On fun_decl_mono shift to state 287
+## Reductions:
 
 State 280:
+## Known stack suffix:
+## IDENT
+## LR(1) items:
 fun_decl_mono -> IDENT . LEFT_PAREN list(ty) RIGHT_PAREN ty [ RIGHT_PAREN ]
+## Transitions:
 -- On LEFT_PAREN shift to state 281
+## Reductions:
 
 State 281:
+## Known stack suffix:
+## IDENT LEFT_PAREN
+## LR(1) items:
 fun_decl_mono -> IDENT LEFT_PAREN . list(ty) RIGHT_PAREN ty [ RIGHT_PAREN ]
+## Transitions:
 -- On LEFT_PAREN shift to state 75
 -- On IDENT shift to state 77
 -- On BOOL shift to state 78
 -- On ty shift to state 282
 -- On list(ty) shift to state 284
+## Reductions:
 -- On RIGHT_PAREN reduce production list(ty) ->
 
 State 282:
+## Known stack suffix:
+## ty
+## LR(1) items:
 list(ty) -> ty . list(ty) [ RIGHT_PAREN ]
+## Transitions:
 -- On LEFT_PAREN shift to state 75
 -- On IDENT shift to state 77
 -- On BOOL shift to state 78
 -- On ty shift to state 282
 -- On list(ty) shift to state 283
+## Reductions:
 -- On RIGHT_PAREN reduce production list(ty) ->
 
 State 283:
+## Known stack suffix:
+## ty list(ty)
+## LR(1) items:
 list(ty) -> ty list(ty) . [ RIGHT_PAREN ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production list(ty) -> ty list(ty)
 
 State 284:
+## Known stack suffix:
+## IDENT LEFT_PAREN list(ty)
+## LR(1) items:
 fun_decl_mono -> IDENT LEFT_PAREN list(ty) . RIGHT_PAREN ty [ RIGHT_PAREN ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 285
+## Reductions:
 
 State 285:
+## Known stack suffix:
+## IDENT LEFT_PAREN list(ty) RIGHT_PAREN
+## LR(1) items:
 fun_decl_mono -> IDENT LEFT_PAREN list(ty) RIGHT_PAREN . ty [ RIGHT_PAREN ]
+## Transitions:
 -- On LEFT_PAREN shift to state 75
 -- On IDENT shift to state 77
 -- On BOOL shift to state 78
 -- On ty shift to state 286
+## Reductions:
 
 State 286:
+## Known stack suffix:
+## IDENT LEFT_PAREN list(ty) RIGHT_PAREN ty
+## LR(1) items:
 fun_decl_mono -> IDENT LEFT_PAREN list(ty) RIGHT_PAREN ty . [ RIGHT_PAREN ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production fun_decl_mono -> IDENT LEFT_PAREN list(ty) RIGHT_PAREN ty
 
 State 287:
+## Known stack suffix:
+## LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN fun_decl_mono
+## LR(1) items:
 fun_decl -> LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN fun_decl_mono . RIGHT_PAREN RIGHT_PAREN [ RIGHT_PAREN ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 288
+## Reductions:
 
 State 288:
+## Known stack suffix:
+## LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN fun_decl_mono RIGHT_PAREN
+## LR(1) items:
 fun_decl -> LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN fun_decl_mono RIGHT_PAREN . RIGHT_PAREN [ RIGHT_PAREN ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 289
+## Reductions:
 
 State 289:
+## Known stack suffix:
+## LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN fun_decl_mono RIGHT_PAREN RIGHT_PAREN
+## LR(1) items:
 fun_decl -> LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN fun_decl_mono RIGHT_PAREN RIGHT_PAREN . [ RIGHT_PAREN ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production fun_decl -> LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN fun_decl_mono RIGHT_PAREN RIGHT_PAREN
 
 State 290:
+## Known stack suffix:
+## fun_decl_mono
+## LR(1) items:
 fun_decl -> fun_decl_mono . [ RIGHT_PAREN ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production fun_decl -> fun_decl_mono
 
 State 291:
+## Known stack suffix:
+## LEFT_PAREN DECLARE_FUN fun_decl
+## LR(1) items:
 stmt -> LEFT_PAREN DECLARE_FUN fun_decl . RIGHT_PAREN [ EOI ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 292
+## Reductions:
 
 State 292:
+## Known stack suffix:
+## LEFT_PAREN DECLARE_FUN fun_decl RIGHT_PAREN
+## LR(1) items:
 stmt -> LEFT_PAREN DECLARE_FUN fun_decl RIGHT_PAREN . [ EOI ]
+## Transitions:
+## Reductions:
 -- On EOI reduce production stmt -> LEFT_PAREN DECLARE_FUN fun_decl RIGHT_PAREN
 
 State 293:
+## Known stack suffix:
+## LEFT_PAREN DECLARE_CONST
+## LR(1) items:
 stmt -> LEFT_PAREN DECLARE_CONST . IDENT ty RIGHT_PAREN [ EOI ]
+## Transitions:
 -- On IDENT shift to state 294
+## Reductions:
 
 State 294:
+## Known stack suffix:
+## LEFT_PAREN DECLARE_CONST IDENT
+## LR(1) items:
 stmt -> LEFT_PAREN DECLARE_CONST IDENT . ty RIGHT_PAREN [ EOI ]
+## Transitions:
 -- On LEFT_PAREN shift to state 75
 -- On IDENT shift to state 77
 -- On BOOL shift to state 78
 -- On ty shift to state 295
+## Reductions:
 
 State 295:
+## Known stack suffix:
+## LEFT_PAREN DECLARE_CONST IDENT ty
+## LR(1) items:
 stmt -> LEFT_PAREN DECLARE_CONST IDENT ty . RIGHT_PAREN [ EOI ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 296
+## Reductions:
 
 State 296:
+## Known stack suffix:
+## LEFT_PAREN DECLARE_CONST IDENT ty RIGHT_PAREN
+## LR(1) items:
 stmt -> LEFT_PAREN DECLARE_CONST IDENT ty RIGHT_PAREN . [ EOI ]
+## Transitions:
+## Reductions:
 -- On EOI reduce production stmt -> LEFT_PAREN DECLARE_CONST IDENT ty RIGHT_PAREN
 
 State 297:
+## Known stack suffix:
+## LEFT_PAREN DATA
+## LR(1) items:
 stmt -> LEFT_PAREN DATA . LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN nonempty_list(data) RIGHT_PAREN RIGHT_PAREN [ EOI ]
+## Transitions:
 -- On LEFT_PAREN shift to state 298
+## Reductions:
 
 State 298:
+## Known stack suffix:
+## LEFT_PAREN DATA LEFT_PAREN
+## LR(1) items:
 stmt -> LEFT_PAREN DATA LEFT_PAREN . list(tyvar) RIGHT_PAREN LEFT_PAREN nonempty_list(data) RIGHT_PAREN RIGHT_PAREN [ EOI ]
+## Transitions:
 -- On IDENT shift to state 210
 -- On tyvar shift to state 211
 -- On list(tyvar) shift to state 299
+## Reductions:
 -- On RIGHT_PAREN reduce production list(tyvar) ->
 
 State 299:
+## Known stack suffix:
+## LEFT_PAREN DATA LEFT_PAREN list(tyvar)
+## LR(1) items:
 stmt -> LEFT_PAREN DATA LEFT_PAREN list(tyvar) . RIGHT_PAREN LEFT_PAREN nonempty_list(data) RIGHT_PAREN RIGHT_PAREN [ EOI ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 300
+## Reductions:
 
 State 300:
+## Known stack suffix:
+## LEFT_PAREN DATA LEFT_PAREN list(tyvar) RIGHT_PAREN
+## LR(1) items:
 stmt -> LEFT_PAREN DATA LEFT_PAREN list(tyvar) RIGHT_PAREN . LEFT_PAREN nonempty_list(data) RIGHT_PAREN RIGHT_PAREN [ EOI ]
+## Transitions:
 -- On LEFT_PAREN shift to state 301
+## Reductions:
 
 State 301:
+## Known stack suffix:
+## LEFT_PAREN DATA LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN
+## LR(1) items:
 stmt -> LEFT_PAREN DATA LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN . nonempty_list(data) RIGHT_PAREN RIGHT_PAREN [ EOI ]
+## Transitions:
 -- On LEFT_PAREN shift to state 302
 -- On nonempty_list(data) shift to state 319
 -- On data shift to state 322
+## Reductions:
 
 State 302:
+## Known stack suffix:
+## LEFT_PAREN
+## LR(1) items:
 data -> LEFT_PAREN . IDENT nonempty_list(cstor) RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+## Transitions:
 -- On IDENT shift to state 303
+## Reductions:
 
 State 303:
+## Known stack suffix:
+## LEFT_PAREN IDENT
+## LR(1) items:
 data -> LEFT_PAREN IDENT . nonempty_list(cstor) RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+## Transitions:
 -- On LEFT_PAREN shift to state 304
 -- On nonempty_list(cstor) shift to state 315
 -- On cstor shift to state 317
+## Reductions:
 
 State 304:
+## Known stack suffix:
+## LEFT_PAREN
+## LR(1) items:
 cstor -> LEFT_PAREN . IDENT RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
 cstor -> LEFT_PAREN . IDENT nonempty_list(cstor_arg) RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+## Transitions:
 -- On IDENT shift to state 305
+## Reductions:
 
 State 305:
+## Known stack suffix:
+## LEFT_PAREN IDENT
+## LR(1) items:
 cstor -> LEFT_PAREN IDENT . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
 cstor -> LEFT_PAREN IDENT . nonempty_list(cstor_arg) RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 306
 -- On LEFT_PAREN shift to state 307
 -- On nonempty_list(cstor_arg) shift to state 311
 -- On cstor_arg shift to state 313
+## Reductions:
 
 State 306:
+## Known stack suffix:
+## LEFT_PAREN IDENT RIGHT_PAREN
+## LR(1) items:
 cstor -> LEFT_PAREN IDENT RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production cstor -> LEFT_PAREN IDENT RIGHT_PAREN
 -- On LEFT_PAREN reduce production cstor -> LEFT_PAREN IDENT RIGHT_PAREN
 
 State 307:
+## Known stack suffix:
+## LEFT_PAREN
+## LR(1) items:
 cstor_arg -> LEFT_PAREN . IDENT ty RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+## Transitions:
 -- On IDENT shift to state 308
+## Reductions:
 
 State 308:
+## Known stack suffix:
+## LEFT_PAREN IDENT
+## LR(1) items:
 cstor_arg -> LEFT_PAREN IDENT . ty RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+## Transitions:
 -- On LEFT_PAREN shift to state 75
 -- On IDENT shift to state 77
 -- On BOOL shift to state 78
 -- On ty shift to state 309
+## Reductions:
 
 State 309:
+## Known stack suffix:
+## LEFT_PAREN IDENT ty
+## LR(1) items:
 cstor_arg -> LEFT_PAREN IDENT ty . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 310
+## Reductions:
 
 State 310:
+## Known stack suffix:
+## LEFT_PAREN IDENT ty RIGHT_PAREN
+## LR(1) items:
 cstor_arg -> LEFT_PAREN IDENT ty RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production cstor_arg -> LEFT_PAREN IDENT ty RIGHT_PAREN
 -- On LEFT_PAREN reduce production cstor_arg -> LEFT_PAREN IDENT ty RIGHT_PAREN
 
 State 311:
+## Known stack suffix:
+## LEFT_PAREN IDENT nonempty_list(cstor_arg)
+## LR(1) items:
 cstor -> LEFT_PAREN IDENT nonempty_list(cstor_arg) . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 312
+## Reductions:
 
 State 312:
+## Known stack suffix:
+## LEFT_PAREN IDENT nonempty_list(cstor_arg) RIGHT_PAREN
+## LR(1) items:
 cstor -> LEFT_PAREN IDENT nonempty_list(cstor_arg) RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production cstor -> LEFT_PAREN IDENT nonempty_list(cstor_arg) RIGHT_PAREN
 -- On LEFT_PAREN reduce production cstor -> LEFT_PAREN IDENT nonempty_list(cstor_arg) RIGHT_PAREN
 
 State 313:
+## Known stack suffix:
+## cstor_arg
+## LR(1) items:
 nonempty_list(cstor_arg) -> cstor_arg . [ RIGHT_PAREN ]
 nonempty_list(cstor_arg) -> cstor_arg . nonempty_list(cstor_arg) [ RIGHT_PAREN ]
+## Transitions:
 -- On LEFT_PAREN shift to state 307
 -- On nonempty_list(cstor_arg) shift to state 314
 -- On cstor_arg shift to state 313
+## Reductions:
 -- On RIGHT_PAREN reduce production nonempty_list(cstor_arg) -> cstor_arg
 
 State 314:
+## Known stack suffix:
+## cstor_arg nonempty_list(cstor_arg)
+## LR(1) items:
 nonempty_list(cstor_arg) -> cstor_arg nonempty_list(cstor_arg) . [ RIGHT_PAREN ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production nonempty_list(cstor_arg) -> cstor_arg nonempty_list(cstor_arg)
 
 State 315:
+## Known stack suffix:
+## LEFT_PAREN IDENT nonempty_list(cstor)
+## LR(1) items:
 data -> LEFT_PAREN IDENT nonempty_list(cstor) . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 316
+## Reductions:
 
 State 316:
+## Known stack suffix:
+## LEFT_PAREN IDENT nonempty_list(cstor) RIGHT_PAREN
+## LR(1) items:
 data -> LEFT_PAREN IDENT nonempty_list(cstor) RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production data -> LEFT_PAREN IDENT nonempty_list(cstor) RIGHT_PAREN
 -- On LEFT_PAREN reduce production data -> LEFT_PAREN IDENT nonempty_list(cstor) RIGHT_PAREN
 
 State 317:
+## Known stack suffix:
+## cstor
+## LR(1) items:
 nonempty_list(cstor) -> cstor . [ RIGHT_PAREN ]
 nonempty_list(cstor) -> cstor . nonempty_list(cstor) [ RIGHT_PAREN ]
+## Transitions:
 -- On LEFT_PAREN shift to state 304
 -- On nonempty_list(cstor) shift to state 318
 -- On cstor shift to state 317
+## Reductions:
 -- On RIGHT_PAREN reduce production nonempty_list(cstor) -> cstor
 
 State 318:
+## Known stack suffix:
+## cstor nonempty_list(cstor)
+## LR(1) items:
 nonempty_list(cstor) -> cstor nonempty_list(cstor) . [ RIGHT_PAREN ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production nonempty_list(cstor) -> cstor nonempty_list(cstor)
 
 State 319:
+## Known stack suffix:
+## LEFT_PAREN DATA LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN nonempty_list(data)
+## LR(1) items:
 stmt -> LEFT_PAREN DATA LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN nonempty_list(data) . RIGHT_PAREN RIGHT_PAREN [ EOI ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 320
+## Reductions:
 
 State 320:
+## Known stack suffix:
+## LEFT_PAREN DATA LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN nonempty_list(data) RIGHT_PAREN
+## LR(1) items:
 stmt -> LEFT_PAREN DATA LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN nonempty_list(data) RIGHT_PAREN . RIGHT_PAREN [ EOI ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 321
+## Reductions:
 
 State 321:
+## Known stack suffix:
+## LEFT_PAREN DATA LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN nonempty_list(data) RIGHT_PAREN RIGHT_PAREN
+## LR(1) items:
 stmt -> LEFT_PAREN DATA LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN nonempty_list(data) RIGHT_PAREN RIGHT_PAREN . [ EOI ]
+## Transitions:
+## Reductions:
 -- On EOI reduce production stmt -> LEFT_PAREN DATA LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN nonempty_list(data) RIGHT_PAREN RIGHT_PAREN
 
 State 322:
+## Known stack suffix:
+## data
+## LR(1) items:
 nonempty_list(data) -> data . [ RIGHT_PAREN ]
 nonempty_list(data) -> data . nonempty_list(data) [ RIGHT_PAREN ]
+## Transitions:
 -- On LEFT_PAREN shift to state 302
 -- On nonempty_list(data) shift to state 323
 -- On data shift to state 322
+## Reductions:
 -- On RIGHT_PAREN reduce production nonempty_list(data) -> data
 
 State 323:
+## Known stack suffix:
+## data nonempty_list(data)
+## LR(1) items:
 nonempty_list(data) -> data nonempty_list(data) . [ RIGHT_PAREN ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production nonempty_list(data) -> data nonempty_list(data)
 
 State 324:
+## Known stack suffix:
+## LEFT_PAREN CHECK_SAT
+## LR(1) items:
 stmt -> LEFT_PAREN CHECK_SAT . RIGHT_PAREN [ EOI ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 325
+## Reductions:
 
 State 325:
+## Known stack suffix:
+## LEFT_PAREN CHECK_SAT RIGHT_PAREN
+## LR(1) items:
 stmt -> LEFT_PAREN CHECK_SAT RIGHT_PAREN . [ EOI ]
+## Transitions:
+## Reductions:
 -- On EOI reduce production stmt -> LEFT_PAREN CHECK_SAT RIGHT_PAREN
 
 State 326:
+## Known stack suffix:
+## LEFT_PAREN ASSERT_NOT
+## LR(1) items:
 stmt -> LEFT_PAREN ASSERT_NOT . assert_not RIGHT_PAREN [ EOI ]
+## Transitions:
 -- On error shift to state 4
 -- On TRUE shift to state 5
 -- On QUOTED shift to state 6
@@ -2261,8 +3895,12 @@ stmt -> LEFT_PAREN ASSERT_NOT . assert_not RIGHT_PAREN [ EOI ]
 -- On term shift to state 336
 -- On composite_term shift to state 26
 -- On assert_not shift to state 337
+## Reductions:
 
 State 327:
+## Known stack suffix:
+## LEFT_PAREN
+## LR(1) items:
 assert_not -> LEFT_PAREN . PAR LEFT_PAREN nonempty_list(tyvar) RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN ]
 composite_term -> LEFT_PAREN . term RIGHT_PAREN [ RIGHT_PAREN ]
 composite_term -> LEFT_PAREN . IF term term term RIGHT_PAREN [ RIGHT_PAREN ]
@@ -2281,6 +3919,7 @@ composite_term -> LEFT_PAREN . LET LEFT_PAREN nonempty_list(binding) RIGHT_PAREN
 composite_term -> LEFT_PAREN . AS term ty RIGHT_PAREN [ RIGHT_PAREN ]
 composite_term -> LEFT_PAREN . FORALL LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN ]
 composite_term -> LEFT_PAREN . EXISTS LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN ]
+## Transitions:
 -- On error shift to state 4
 -- On TRUE shift to state 5
 -- On QUOTED shift to state 6
@@ -2304,35 +3943,65 @@ composite_term -> LEFT_PAREN . EXISTS LEFT_PAREN nonempty_list(typed_var) RIGHT_
 -- On AND shift to state 196
 -- On term shift to state 199
 -- On composite_term shift to state 201
+## Reductions:
 
 State 328:
+## Known stack suffix:
+## LEFT_PAREN PAR
+## LR(1) items:
 assert_not -> LEFT_PAREN PAR . LEFT_PAREN nonempty_list(tyvar) RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN ]
+## Transitions:
 -- On LEFT_PAREN shift to state 329
+## Reductions:
 
 State 329:
+## Known stack suffix:
+## LEFT_PAREN PAR LEFT_PAREN
+## LR(1) items:
 assert_not -> LEFT_PAREN PAR LEFT_PAREN . nonempty_list(tyvar) RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN ]
+## Transitions:
 -- On IDENT shift to state 210
 -- On tyvar shift to state 330
 -- On nonempty_list(tyvar) shift to state 332
+## Reductions:
 
 State 330:
+## Known stack suffix:
+## tyvar
+## LR(1) items:
 nonempty_list(tyvar) -> tyvar . [ RIGHT_PAREN ]
 nonempty_list(tyvar) -> tyvar . nonempty_list(tyvar) [ RIGHT_PAREN ]
+## Transitions:
 -- On IDENT shift to state 210
 -- On tyvar shift to state 330
 -- On nonempty_list(tyvar) shift to state 331
+## Reductions:
 -- On RIGHT_PAREN reduce production nonempty_list(tyvar) -> tyvar
 
 State 331:
+## Known stack suffix:
+## tyvar nonempty_list(tyvar)
+## LR(1) items:
 nonempty_list(tyvar) -> tyvar nonempty_list(tyvar) . [ RIGHT_PAREN ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production nonempty_list(tyvar) -> tyvar nonempty_list(tyvar)
 
 State 332:
+## Known stack suffix:
+## LEFT_PAREN PAR LEFT_PAREN nonempty_list(tyvar)
+## LR(1) items:
 assert_not -> LEFT_PAREN PAR LEFT_PAREN nonempty_list(tyvar) . RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 333
+## Reductions:
 
 State 333:
+## Known stack suffix:
+## LEFT_PAREN PAR LEFT_PAREN nonempty_list(tyvar) RIGHT_PAREN
+## LR(1) items:
 assert_not -> LEFT_PAREN PAR LEFT_PAREN nonempty_list(tyvar) RIGHT_PAREN . term RIGHT_PAREN [ RIGHT_PAREN ]
+## Transitions:
 -- On error shift to state 4
 -- On TRUE shift to state 5
 -- On QUOTED shift to state 6
@@ -2341,29 +4010,59 @@ assert_not -> LEFT_PAREN PAR LEFT_PAREN nonempty_list(tyvar) RIGHT_PAREN . term 
 -- On FALSE shift to state 23
 -- On term shift to state 334
 -- On composite_term shift to state 26
+## Reductions:
 
 State 334:
+## Known stack suffix:
+## LEFT_PAREN PAR LEFT_PAREN nonempty_list(tyvar) RIGHT_PAREN term
+## LR(1) items:
 assert_not -> LEFT_PAREN PAR LEFT_PAREN nonempty_list(tyvar) RIGHT_PAREN term . RIGHT_PAREN [ RIGHT_PAREN ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 335
+## Reductions:
 
 State 335:
+## Known stack suffix:
+## LEFT_PAREN PAR LEFT_PAREN nonempty_list(tyvar) RIGHT_PAREN term RIGHT_PAREN
+## LR(1) items:
 assert_not -> LEFT_PAREN PAR LEFT_PAREN nonempty_list(tyvar) RIGHT_PAREN term RIGHT_PAREN . [ RIGHT_PAREN ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production assert_not -> LEFT_PAREN PAR LEFT_PAREN nonempty_list(tyvar) RIGHT_PAREN term RIGHT_PAREN
 
 State 336:
+## Known stack suffix:
+## term
+## LR(1) items:
 assert_not -> term . [ RIGHT_PAREN ]
+## Transitions:
+## Reductions:
 -- On RIGHT_PAREN reduce production assert_not -> term
 
 State 337:
+## Known stack suffix:
+## LEFT_PAREN ASSERT_NOT assert_not
+## LR(1) items:
 stmt -> LEFT_PAREN ASSERT_NOT assert_not . RIGHT_PAREN [ EOI ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 338
+## Reductions:
 
 State 338:
+## Known stack suffix:
+## LEFT_PAREN ASSERT_NOT assert_not RIGHT_PAREN
+## LR(1) items:
 stmt -> LEFT_PAREN ASSERT_NOT assert_not RIGHT_PAREN . [ EOI ]
+## Transitions:
+## Reductions:
 -- On EOI reduce production stmt -> LEFT_PAREN ASSERT_NOT assert_not RIGHT_PAREN
 
 State 339:
+## Known stack suffix:
+## LEFT_PAREN ASSERT
+## LR(1) items:
 stmt -> LEFT_PAREN ASSERT . term RIGHT_PAREN [ EOI ]
+## Transitions:
 -- On error shift to state 4
 -- On TRUE shift to state 5
 -- On QUOTED shift to state 6
@@ -2372,43 +4071,82 @@ stmt -> LEFT_PAREN ASSERT . term RIGHT_PAREN [ EOI ]
 -- On FALSE shift to state 23
 -- On term shift to state 340
 -- On composite_term shift to state 26
+## Reductions:
 
 State 340:
+## Known stack suffix:
+## LEFT_PAREN ASSERT term
+## LR(1) items:
 stmt -> LEFT_PAREN ASSERT term . RIGHT_PAREN [ EOI ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 341
+## Reductions:
 
 State 341:
+## Known stack suffix:
+## LEFT_PAREN ASSERT term RIGHT_PAREN
+## LR(1) items:
 stmt -> LEFT_PAREN ASSERT term RIGHT_PAREN . [ EOI ]
+## Transitions:
+## Reductions:
 -- On EOI reduce production stmt -> LEFT_PAREN ASSERT term RIGHT_PAREN
 
 State 342:
+## Known stack suffix:
+## stmt
+## LR(1) items:
 parse -> stmt . EOI [ # ]
+## Transitions:
 -- On EOI shift to state 343
+## Reductions:
 
 State 343:
+## Known stack suffix:
+## stmt EOI
+## LR(1) items:
 parse -> stmt EOI . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production parse -> stmt EOI
 
 State 344:
+## Known stack suffix:
+## parse
+## LR(1) items:
 parse' -> parse . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept parse
 
 State 345:
+## Known stack suffix:
+##
+## LR(1) items:
 parse_list' -> . parse_list [ # ]
+## Transitions:
 -- On error shift to state 346
 -- On LEFT_PAREN shift to state 347
 -- On stmt shift to state 392
 -- On parse_list shift to state 394
 -- On list(stmt) shift to state 395
+## Reductions:
 -- On EOI reduce production list(stmt) ->
 
 State 346:
+## Known stack suffix:
+## error
+## LR(1) items:
 stmt -> error . [ error LEFT_PAREN EOI ]
+## Transitions:
+## Reductions:
 -- On error reduce production stmt -> error
 -- On LEFT_PAREN reduce production stmt -> error
 -- On EOI reduce production stmt -> error
 
 State 347:
+## Known stack suffix:
+## LEFT_PAREN
+## LR(1) items:
 stmt -> LEFT_PAREN . ASSERT term RIGHT_PAREN [ error LEFT_PAREN EOI ]
 stmt -> LEFT_PAREN . LEMMA term RIGHT_PAREN [ error LEFT_PAREN EOI ]
 stmt -> LEFT_PAREN . DECLARE_SORT IDENT IDENT RIGHT_PAREN [ error LEFT_PAREN EOI ]
@@ -2420,6 +4158,7 @@ stmt -> LEFT_PAREN . DEFINE_FUN_REC fun_rec RIGHT_PAREN [ error LEFT_PAREN EOI ]
 stmt -> LEFT_PAREN . DEFINE_FUNS_REC LEFT_PAREN nonempty_list(funs_rec_decl) RIGHT_PAREN LEFT_PAREN nonempty_list(term) RIGHT_PAREN RIGHT_PAREN [ error LEFT_PAREN EOI ]
 stmt -> LEFT_PAREN . ASSERT_NOT assert_not RIGHT_PAREN [ error LEFT_PAREN EOI ]
 stmt -> LEFT_PAREN . CHECK_SAT RIGHT_PAREN [ error LEFT_PAREN EOI ]
+## Transitions:
 -- On LEMMA shift to state 348
 -- On DEFINE_FUN_REC shift to state 351
 -- On DEFINE_FUNS_REC shift to state 354
@@ -2431,9 +4170,14 @@ stmt -> LEFT_PAREN . CHECK_SAT RIGHT_PAREN [ error LEFT_PAREN EOI ]
 -- On CHECK_SAT shift to state 384
 -- On ASSERT_NOT shift to state 386
 -- On ASSERT shift to state 389
+## Reductions:
 
 State 348:
+## Known stack suffix:
+## LEFT_PAREN LEMMA
+## LR(1) items:
 stmt -> LEFT_PAREN LEMMA . term RIGHT_PAREN [ error LEFT_PAREN EOI ]
+## Transitions:
 -- On error shift to state 4
 -- On TRUE shift to state 5
 -- On QUOTED shift to state 6
@@ -2442,54 +4186,104 @@ stmt -> LEFT_PAREN LEMMA . term RIGHT_PAREN [ error LEFT_PAREN EOI ]
 -- On FALSE shift to state 23
 -- On term shift to state 349
 -- On composite_term shift to state 26
+## Reductions:
 
 State 349:
+## Known stack suffix:
+## LEFT_PAREN LEMMA term
+## LR(1) items:
 stmt -> LEFT_PAREN LEMMA term . RIGHT_PAREN [ error LEFT_PAREN EOI ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 350
+## Reductions:
 
 State 350:
+## Known stack suffix:
+## LEFT_PAREN LEMMA term RIGHT_PAREN
+## LR(1) items:
 stmt -> LEFT_PAREN LEMMA term RIGHT_PAREN . [ error LEFT_PAREN EOI ]
+## Transitions:
+## Reductions:
 -- On error reduce production stmt -> LEFT_PAREN LEMMA term RIGHT_PAREN
 -- On LEFT_PAREN reduce production stmt -> LEFT_PAREN LEMMA term RIGHT_PAREN
 -- On EOI reduce production stmt -> LEFT_PAREN LEMMA term RIGHT_PAREN
 
 State 351:
+## Known stack suffix:
+## LEFT_PAREN DEFINE_FUN_REC
+## LR(1) items:
 stmt -> LEFT_PAREN DEFINE_FUN_REC . fun_rec RIGHT_PAREN [ error LEFT_PAREN EOI ]
+## Transitions:
 -- On LEFT_PAREN shift to state 207
 -- On IDENT shift to state 216
 -- On fun_rec shift to state 352
 -- On fun_def_mono shift to state 238
+## Reductions:
 
 State 352:
+## Known stack suffix:
+## LEFT_PAREN DEFINE_FUN_REC fun_rec
+## LR(1) items:
 stmt -> LEFT_PAREN DEFINE_FUN_REC fun_rec . RIGHT_PAREN [ error LEFT_PAREN EOI ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 353
+## Reductions:
 
 State 353:
+## Known stack suffix:
+## LEFT_PAREN DEFINE_FUN_REC fun_rec RIGHT_PAREN
+## LR(1) items:
 stmt -> LEFT_PAREN DEFINE_FUN_REC fun_rec RIGHT_PAREN . [ error LEFT_PAREN EOI ]
+## Transitions:
+## Reductions:
 -- On error reduce production stmt -> LEFT_PAREN DEFINE_FUN_REC fun_rec RIGHT_PAREN
 -- On LEFT_PAREN reduce production stmt -> LEFT_PAREN DEFINE_FUN_REC fun_rec RIGHT_PAREN
 -- On EOI reduce production stmt -> LEFT_PAREN DEFINE_FUN_REC fun_rec RIGHT_PAREN
 
 State 354:
+## Known stack suffix:
+## LEFT_PAREN DEFINE_FUNS_REC
+## LR(1) items:
 stmt -> LEFT_PAREN DEFINE_FUNS_REC . LEFT_PAREN nonempty_list(funs_rec_decl) RIGHT_PAREN LEFT_PAREN nonempty_list(term) RIGHT_PAREN RIGHT_PAREN [ error LEFT_PAREN EOI ]
+## Transitions:
 -- On LEFT_PAREN shift to state 355
+## Reductions:
 
 State 355:
+## Known stack suffix:
+## LEFT_PAREN DEFINE_FUNS_REC LEFT_PAREN
+## LR(1) items:
 stmt -> LEFT_PAREN DEFINE_FUNS_REC LEFT_PAREN . nonempty_list(funs_rec_decl) RIGHT_PAREN LEFT_PAREN nonempty_list(term) RIGHT_PAREN RIGHT_PAREN [ error LEFT_PAREN EOI ]
+## Transitions:
 -- On LEFT_PAREN shift to state 242
 -- On nonempty_list(funs_rec_decl) shift to state 356
 -- On funs_rec_decl shift to state 264
+## Reductions:
 
 State 356:
+## Known stack suffix:
+## LEFT_PAREN DEFINE_FUNS_REC LEFT_PAREN nonempty_list(funs_rec_decl)
+## LR(1) items:
 stmt -> LEFT_PAREN DEFINE_FUNS_REC LEFT_PAREN nonempty_list(funs_rec_decl) . RIGHT_PAREN LEFT_PAREN nonempty_list(term) RIGHT_PAREN RIGHT_PAREN [ error LEFT_PAREN EOI ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 357
+## Reductions:
 
 State 357:
+## Known stack suffix:
+## LEFT_PAREN DEFINE_FUNS_REC LEFT_PAREN nonempty_list(funs_rec_decl) RIGHT_PAREN
+## LR(1) items:
 stmt -> LEFT_PAREN DEFINE_FUNS_REC LEFT_PAREN nonempty_list(funs_rec_decl) RIGHT_PAREN . LEFT_PAREN nonempty_list(term) RIGHT_PAREN RIGHT_PAREN [ error LEFT_PAREN EOI ]
+## Transitions:
 -- On LEFT_PAREN shift to state 358
+## Reductions:
 
 State 358:
+## Known stack suffix:
+## LEFT_PAREN DEFINE_FUNS_REC LEFT_PAREN nonempty_list(funs_rec_decl) RIGHT_PAREN LEFT_PAREN
+## LR(1) items:
 stmt -> LEFT_PAREN DEFINE_FUNS_REC LEFT_PAREN nonempty_list(funs_rec_decl) RIGHT_PAREN LEFT_PAREN . nonempty_list(term) RIGHT_PAREN RIGHT_PAREN [ error LEFT_PAREN EOI ]
+## Transitions:
 -- On error shift to state 9
 -- On TRUE shift to state 10
 -- On QUOTED shift to state 11
@@ -2499,145 +4293,285 @@ stmt -> LEFT_PAREN DEFINE_FUNS_REC LEFT_PAREN nonempty_list(funs_rec_decl) RIGHT
 -- On term shift to state 16
 -- On nonempty_list(term) shift to state 359
 -- On composite_term shift to state 18
+## Reductions:
 
 State 359:
+## Known stack suffix:
+## LEFT_PAREN DEFINE_FUNS_REC LEFT_PAREN nonempty_list(funs_rec_decl) RIGHT_PAREN LEFT_PAREN nonempty_list(term)
+## LR(1) items:
 stmt -> LEFT_PAREN DEFINE_FUNS_REC LEFT_PAREN nonempty_list(funs_rec_decl) RIGHT_PAREN LEFT_PAREN nonempty_list(term) . RIGHT_PAREN RIGHT_PAREN [ error LEFT_PAREN EOI ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 360
+## Reductions:
 
 State 360:
+## Known stack suffix:
+## LEFT_PAREN DEFINE_FUNS_REC LEFT_PAREN nonempty_list(funs_rec_decl) RIGHT_PAREN LEFT_PAREN nonempty_list(term) RIGHT_PAREN
+## LR(1) items:
 stmt -> LEFT_PAREN DEFINE_FUNS_REC LEFT_PAREN nonempty_list(funs_rec_decl) RIGHT_PAREN LEFT_PAREN nonempty_list(term) RIGHT_PAREN . RIGHT_PAREN [ error LEFT_PAREN EOI ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 361
+## Reductions:
 
 State 361:
+## Known stack suffix:
+## LEFT_PAREN DEFINE_FUNS_REC LEFT_PAREN nonempty_list(funs_rec_decl) RIGHT_PAREN LEFT_PAREN nonempty_list(term) RIGHT_PAREN RIGHT_PAREN
+## LR(1) items:
 stmt -> LEFT_PAREN DEFINE_FUNS_REC LEFT_PAREN nonempty_list(funs_rec_decl) RIGHT_PAREN LEFT_PAREN nonempty_list(term) RIGHT_PAREN RIGHT_PAREN . [ error LEFT_PAREN EOI ]
+## Transitions:
+## Reductions:
 -- On error reduce production stmt -> LEFT_PAREN DEFINE_FUNS_REC LEFT_PAREN nonempty_list(funs_rec_decl) RIGHT_PAREN LEFT_PAREN nonempty_list(term) RIGHT_PAREN RIGHT_PAREN
 -- On LEFT_PAREN reduce production stmt -> LEFT_PAREN DEFINE_FUNS_REC LEFT_PAREN nonempty_list(funs_rec_decl) RIGHT_PAREN LEFT_PAREN nonempty_list(term) RIGHT_PAREN RIGHT_PAREN
 -- On EOI reduce production stmt -> LEFT_PAREN DEFINE_FUNS_REC LEFT_PAREN nonempty_list(funs_rec_decl) RIGHT_PAREN LEFT_PAREN nonempty_list(term) RIGHT_PAREN RIGHT_PAREN
 
 State 362:
+## Known stack suffix:
+## LEFT_PAREN DEFINE_FUN
+## LR(1) items:
 stmt -> LEFT_PAREN DEFINE_FUN . fun_rec RIGHT_PAREN [ error LEFT_PAREN EOI ]
+## Transitions:
 -- On LEFT_PAREN shift to state 207
 -- On IDENT shift to state 216
 -- On fun_rec shift to state 363
 -- On fun_def_mono shift to state 238
+## Reductions:
 
 State 363:
+## Known stack suffix:
+## LEFT_PAREN DEFINE_FUN fun_rec
+## LR(1) items:
 stmt -> LEFT_PAREN DEFINE_FUN fun_rec . RIGHT_PAREN [ error LEFT_PAREN EOI ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 364
+## Reductions:
 
 State 364:
+## Known stack suffix:
+## LEFT_PAREN DEFINE_FUN fun_rec RIGHT_PAREN
+## LR(1) items:
 stmt -> LEFT_PAREN DEFINE_FUN fun_rec RIGHT_PAREN . [ error LEFT_PAREN EOI ]
+## Transitions:
+## Reductions:
 -- On error reduce production stmt -> LEFT_PAREN DEFINE_FUN fun_rec RIGHT_PAREN
 -- On LEFT_PAREN reduce production stmt -> LEFT_PAREN DEFINE_FUN fun_rec RIGHT_PAREN
 -- On EOI reduce production stmt -> LEFT_PAREN DEFINE_FUN fun_rec RIGHT_PAREN
 
 State 365:
+## Known stack suffix:
+## LEFT_PAREN DECLARE_SORT
+## LR(1) items:
 stmt -> LEFT_PAREN DECLARE_SORT . IDENT IDENT RIGHT_PAREN [ error LEFT_PAREN EOI ]
+## Transitions:
 -- On IDENT shift to state 366
+## Reductions:
 
 State 366:
+## Known stack suffix:
+## LEFT_PAREN DECLARE_SORT IDENT
+## LR(1) items:
 stmt -> LEFT_PAREN DECLARE_SORT IDENT . IDENT RIGHT_PAREN [ error LEFT_PAREN EOI ]
+## Transitions:
 -- On IDENT shift to state 367
+## Reductions:
 
 State 367:
+## Known stack suffix:
+## LEFT_PAREN DECLARE_SORT IDENT IDENT
+## LR(1) items:
 stmt -> LEFT_PAREN DECLARE_SORT IDENT IDENT . RIGHT_PAREN [ error LEFT_PAREN EOI ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 368
+## Reductions:
 
 State 368:
+## Known stack suffix:
+## LEFT_PAREN DECLARE_SORT IDENT IDENT RIGHT_PAREN
+## LR(1) items:
 stmt -> LEFT_PAREN DECLARE_SORT IDENT IDENT RIGHT_PAREN . [ error LEFT_PAREN EOI ]
+## Transitions:
+## Reductions:
 -- On error reduce production stmt -> LEFT_PAREN DECLARE_SORT IDENT IDENT RIGHT_PAREN
 -- On LEFT_PAREN reduce production stmt -> LEFT_PAREN DECLARE_SORT IDENT IDENT RIGHT_PAREN
 -- On EOI reduce production stmt -> LEFT_PAREN DECLARE_SORT IDENT IDENT RIGHT_PAREN
 
 State 369:
+## Known stack suffix:
+## LEFT_PAREN DECLARE_FUN
+## LR(1) items:
 stmt -> LEFT_PAREN DECLARE_FUN . fun_decl RIGHT_PAREN [ error LEFT_PAREN EOI ]
+## Transitions:
 -- On LEFT_PAREN shift to state 274
 -- On IDENT shift to state 280
 -- On fun_decl_mono shift to state 290
 -- On fun_decl shift to state 370
+## Reductions:
 
 State 370:
+## Known stack suffix:
+## LEFT_PAREN DECLARE_FUN fun_decl
+## LR(1) items:
 stmt -> LEFT_PAREN DECLARE_FUN fun_decl . RIGHT_PAREN [ error LEFT_PAREN EOI ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 371
+## Reductions:
 
 State 371:
+## Known stack suffix:
+## LEFT_PAREN DECLARE_FUN fun_decl RIGHT_PAREN
+## LR(1) items:
 stmt -> LEFT_PAREN DECLARE_FUN fun_decl RIGHT_PAREN . [ error LEFT_PAREN EOI ]
+## Transitions:
+## Reductions:
 -- On error reduce production stmt -> LEFT_PAREN DECLARE_FUN fun_decl RIGHT_PAREN
 -- On LEFT_PAREN reduce production stmt -> LEFT_PAREN DECLARE_FUN fun_decl RIGHT_PAREN
 -- On EOI reduce production stmt -> LEFT_PAREN DECLARE_FUN fun_decl RIGHT_PAREN
 
 State 372:
+## Known stack suffix:
+## LEFT_PAREN DECLARE_CONST
+## LR(1) items:
 stmt -> LEFT_PAREN DECLARE_CONST . IDENT ty RIGHT_PAREN [ error LEFT_PAREN EOI ]
+## Transitions:
 -- On IDENT shift to state 373
+## Reductions:
 
 State 373:
+## Known stack suffix:
+## LEFT_PAREN DECLARE_CONST IDENT
+## LR(1) items:
 stmt -> LEFT_PAREN DECLARE_CONST IDENT . ty RIGHT_PAREN [ error LEFT_PAREN EOI ]
+## Transitions:
 -- On LEFT_PAREN shift to state 75
 -- On IDENT shift to state 77
 -- On BOOL shift to state 78
 -- On ty shift to state 374
+## Reductions:
 
 State 374:
+## Known stack suffix:
+## LEFT_PAREN DECLARE_CONST IDENT ty
+## LR(1) items:
 stmt -> LEFT_PAREN DECLARE_CONST IDENT ty . RIGHT_PAREN [ error LEFT_PAREN EOI ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 375
+## Reductions:
 
 State 375:
+## Known stack suffix:
+## LEFT_PAREN DECLARE_CONST IDENT ty RIGHT_PAREN
+## LR(1) items:
 stmt -> LEFT_PAREN DECLARE_CONST IDENT ty RIGHT_PAREN . [ error LEFT_PAREN EOI ]
+## Transitions:
+## Reductions:
 -- On error reduce production stmt -> LEFT_PAREN DECLARE_CONST IDENT ty RIGHT_PAREN
 -- On LEFT_PAREN reduce production stmt -> LEFT_PAREN DECLARE_CONST IDENT ty RIGHT_PAREN
 -- On EOI reduce production stmt -> LEFT_PAREN DECLARE_CONST IDENT ty RIGHT_PAREN
 
 State 376:
+## Known stack suffix:
+## LEFT_PAREN DATA
+## LR(1) items:
 stmt -> LEFT_PAREN DATA . LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN nonempty_list(data) RIGHT_PAREN RIGHT_PAREN [ error LEFT_PAREN EOI ]
+## Transitions:
 -- On LEFT_PAREN shift to state 377
+## Reductions:
 
 State 377:
+## Known stack suffix:
+## LEFT_PAREN DATA LEFT_PAREN
+## LR(1) items:
 stmt -> LEFT_PAREN DATA LEFT_PAREN . list(tyvar) RIGHT_PAREN LEFT_PAREN nonempty_list(data) RIGHT_PAREN RIGHT_PAREN [ error LEFT_PAREN EOI ]
+## Transitions:
 -- On IDENT shift to state 210
 -- On tyvar shift to state 211
 -- On list(tyvar) shift to state 378
+## Reductions:
 -- On RIGHT_PAREN reduce production list(tyvar) ->
 
 State 378:
+## Known stack suffix:
+## LEFT_PAREN DATA LEFT_PAREN list(tyvar)
+## LR(1) items:
 stmt -> LEFT_PAREN DATA LEFT_PAREN list(tyvar) . RIGHT_PAREN LEFT_PAREN nonempty_list(data) RIGHT_PAREN RIGHT_PAREN [ error LEFT_PAREN EOI ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 379
+## Reductions:
 
 State 379:
+## Known stack suffix:
+## LEFT_PAREN DATA LEFT_PAREN list(tyvar) RIGHT_PAREN
+## LR(1) items:
 stmt -> LEFT_PAREN DATA LEFT_PAREN list(tyvar) RIGHT_PAREN . LEFT_PAREN nonempty_list(data) RIGHT_PAREN RIGHT_PAREN [ error LEFT_PAREN EOI ]
+## Transitions:
 -- On LEFT_PAREN shift to state 380
+## Reductions:
 
 State 380:
+## Known stack suffix:
+## LEFT_PAREN DATA LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN
+## LR(1) items:
 stmt -> LEFT_PAREN DATA LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN . nonempty_list(data) RIGHT_PAREN RIGHT_PAREN [ error LEFT_PAREN EOI ]
+## Transitions:
 -- On LEFT_PAREN shift to state 302
 -- On nonempty_list(data) shift to state 381
 -- On data shift to state 322
+## Reductions:
 
 State 381:
+## Known stack suffix:
+## LEFT_PAREN DATA LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN nonempty_list(data)
+## LR(1) items:
 stmt -> LEFT_PAREN DATA LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN nonempty_list(data) . RIGHT_PAREN RIGHT_PAREN [ error LEFT_PAREN EOI ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 382
+## Reductions:
 
 State 382:
+## Known stack suffix:
+## LEFT_PAREN DATA LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN nonempty_list(data) RIGHT_PAREN
+## LR(1) items:
 stmt -> LEFT_PAREN DATA LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN nonempty_list(data) RIGHT_PAREN . RIGHT_PAREN [ error LEFT_PAREN EOI ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 383
+## Reductions:
 
 State 383:
+## Known stack suffix:
+## LEFT_PAREN DATA LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN nonempty_list(data) RIGHT_PAREN RIGHT_PAREN
+## LR(1) items:
 stmt -> LEFT_PAREN DATA LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN nonempty_list(data) RIGHT_PAREN RIGHT_PAREN . [ error LEFT_PAREN EOI ]
+## Transitions:
+## Reductions:
 -- On error reduce production stmt -> LEFT_PAREN DATA LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN nonempty_list(data) RIGHT_PAREN RIGHT_PAREN
 -- On LEFT_PAREN reduce production stmt -> LEFT_PAREN DATA LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN nonempty_list(data) RIGHT_PAREN RIGHT_PAREN
 -- On EOI reduce production stmt -> LEFT_PAREN DATA LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN nonempty_list(data) RIGHT_PAREN RIGHT_PAREN
 
 State 384:
+## Known stack suffix:
+## LEFT_PAREN CHECK_SAT
+## LR(1) items:
 stmt -> LEFT_PAREN CHECK_SAT . RIGHT_PAREN [ error LEFT_PAREN EOI ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 385
+## Reductions:
 
 State 385:
+## Known stack suffix:
+## LEFT_PAREN CHECK_SAT RIGHT_PAREN
+## LR(1) items:
 stmt -> LEFT_PAREN CHECK_SAT RIGHT_PAREN . [ error LEFT_PAREN EOI ]
+## Transitions:
+## Reductions:
 -- On error reduce production stmt -> LEFT_PAREN CHECK_SAT RIGHT_PAREN
 -- On LEFT_PAREN reduce production stmt -> LEFT_PAREN CHECK_SAT RIGHT_PAREN
 -- On EOI reduce production stmt -> LEFT_PAREN CHECK_SAT RIGHT_PAREN
 
 State 386:
+## Known stack suffix:
+## LEFT_PAREN ASSERT_NOT
+## LR(1) items:
 stmt -> LEFT_PAREN ASSERT_NOT . assert_not RIGHT_PAREN [ error LEFT_PAREN EOI ]
+## Transitions:
 -- On error shift to state 4
 -- On TRUE shift to state 5
 -- On QUOTED shift to state 6
@@ -2647,19 +4581,34 @@ stmt -> LEFT_PAREN ASSERT_NOT . assert_not RIGHT_PAREN [ error LEFT_PAREN EOI ]
 -- On term shift to state 336
 -- On composite_term shift to state 26
 -- On assert_not shift to state 387
+## Reductions:
 
 State 387:
+## Known stack suffix:
+## LEFT_PAREN ASSERT_NOT assert_not
+## LR(1) items:
 stmt -> LEFT_PAREN ASSERT_NOT assert_not . RIGHT_PAREN [ error LEFT_PAREN EOI ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 388
+## Reductions:
 
 State 388:
+## Known stack suffix:
+## LEFT_PAREN ASSERT_NOT assert_not RIGHT_PAREN
+## LR(1) items:
 stmt -> LEFT_PAREN ASSERT_NOT assert_not RIGHT_PAREN . [ error LEFT_PAREN EOI ]
+## Transitions:
+## Reductions:
 -- On error reduce production stmt -> LEFT_PAREN ASSERT_NOT assert_not RIGHT_PAREN
 -- On LEFT_PAREN reduce production stmt -> LEFT_PAREN ASSERT_NOT assert_not RIGHT_PAREN
 -- On EOI reduce production stmt -> LEFT_PAREN ASSERT_NOT assert_not RIGHT_PAREN
 
 State 389:
+## Known stack suffix:
+## LEFT_PAREN ASSERT
+## LR(1) items:
 stmt -> LEFT_PAREN ASSERT . term RIGHT_PAREN [ error LEFT_PAREN EOI ]
+## Transitions:
 -- On error shift to state 4
 -- On TRUE shift to state 5
 -- On QUOTED shift to state 6
@@ -2668,43 +4617,83 @@ stmt -> LEFT_PAREN ASSERT . term RIGHT_PAREN [ error LEFT_PAREN EOI ]
 -- On FALSE shift to state 23
 -- On term shift to state 390
 -- On composite_term shift to state 26
+## Reductions:
 
 State 390:
+## Known stack suffix:
+## LEFT_PAREN ASSERT term
+## LR(1) items:
 stmt -> LEFT_PAREN ASSERT term . RIGHT_PAREN [ error LEFT_PAREN EOI ]
+## Transitions:
 -- On RIGHT_PAREN shift to state 391
+## Reductions:
 
 State 391:
+## Known stack suffix:
+## LEFT_PAREN ASSERT term RIGHT_PAREN
+## LR(1) items:
 stmt -> LEFT_PAREN ASSERT term RIGHT_PAREN . [ error LEFT_PAREN EOI ]
+## Transitions:
+## Reductions:
 -- On error reduce production stmt -> LEFT_PAREN ASSERT term RIGHT_PAREN
 -- On LEFT_PAREN reduce production stmt -> LEFT_PAREN ASSERT term RIGHT_PAREN
 -- On EOI reduce production stmt -> LEFT_PAREN ASSERT term RIGHT_PAREN
 
 State 392:
+## Known stack suffix:
+## stmt
+## LR(1) items:
 list(stmt) -> stmt . list(stmt) [ EOI ]
+## Transitions:
 -- On error shift to state 346
 -- On LEFT_PAREN shift to state 347
 -- On stmt shift to state 392
 -- On list(stmt) shift to state 393
+## Reductions:
 -- On EOI reduce production list(stmt) ->
 
 State 393:
+## Known stack suffix:
+## stmt list(stmt)
+## LR(1) items:
 list(stmt) -> stmt list(stmt) . [ EOI ]
+## Transitions:
+## Reductions:
 -- On EOI reduce production list(stmt) -> stmt list(stmt)
 
 State 394:
+## Known stack suffix:
+## parse_list
+## LR(1) items:
 parse_list' -> parse_list . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept parse_list
 
 State 395:
+## Known stack suffix:
+## list(stmt)
+## LR(1) items:
 parse_list -> list(stmt) . EOI [ # ]
+## Transitions:
 -- On EOI shift to state 396
+## Reductions:
 
 State 396:
+## Known stack suffix:
+## list(stmt) EOI
+## LR(1) items:
 parse_list -> list(stmt) EOI . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production parse_list -> list(stmt) EOI
 
 State 397:
+## Known stack suffix:
+##
+## LR(1) items:
 parse_term' -> . parse_term [ # ]
+## Transitions:
 -- On error shift to state 4
 -- On TRUE shift to state 5
 -- On QUOTED shift to state 6
@@ -2714,36 +4703,72 @@ parse_term' -> . parse_term [ # ]
 -- On term shift to state 398
 -- On parse_term shift to state 400
 -- On composite_term shift to state 26
+## Reductions:
 
 State 398:
+## Known stack suffix:
+## term
+## LR(1) items:
 parse_term -> term . EOI [ # ]
+## Transitions:
 -- On EOI shift to state 399
+## Reductions:
 
 State 399:
+## Known stack suffix:
+## term EOI
+## LR(1) items:
 parse_term -> term EOI . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production parse_term -> term EOI
 
 State 400:
+## Known stack suffix:
+## parse_term
+## LR(1) items:
 parse_term' -> parse_term . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept parse_term
 
 State 401:
+## Known stack suffix:
+##
+## LR(1) items:
 parse_ty' -> . parse_ty [ # ]
+## Transitions:
 -- On LEFT_PAREN shift to state 75
 -- On IDENT shift to state 77
 -- On BOOL shift to state 78
 -- On ty shift to state 402
 -- On parse_ty shift to state 404
+## Reductions:
 
 State 402:
+## Known stack suffix:
+## ty
+## LR(1) items:
 parse_ty -> ty . EOI [ # ]
+## Transitions:
 -- On EOI shift to state 403
+## Reductions:
 
 State 403:
+## Known stack suffix:
+## ty EOI
+## LR(1) items:
 parse_ty -> ty EOI . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production parse_ty -> ty EOI
 
 State 404:
+## Known stack suffix:
+## parse_ty
+## LR(1) items:
 parse_ty' -> parse_ty . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept parse_ty
 

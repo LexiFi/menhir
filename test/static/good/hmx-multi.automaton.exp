@@ -1,5 +1,9 @@
 State 0:
+## Known stack suffix:
+##
+## LR(1) items:
 phrase' -> . phrase [ # ]
+## Transitions:
 -- On UNIT shift to state 1
 -- On UIDENT shift to state 2
 -- On LPAREN shift to state 3
@@ -14,9 +18,15 @@ phrase' -> . phrase [ # ]
 -- On expression1 shift to state 27
 -- On expression0 shift to state 29
 -- On expression shift to state 97
+## Reductions:
 
 State 1:
+## Known stack suffix:
+## UNIT
+## LR(1) items:
 expression0 -> UNIT . [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
+## Transitions:
+## Reductions:
 -- On UNIT reduce production expression0 -> UNIT
 -- On UIDENT reduce production expression0 -> UNIT
 -- On SETMINUS reduce production expression0 -> UNIT
@@ -36,7 +46,12 @@ expression0 -> UNIT . [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAR
 -- On BAR reduce production expression0 -> UNIT
 
 State 2:
+## Known stack suffix:
+## UIDENT
+## LR(1) items:
 expression0 -> UIDENT . [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
+## Transitions:
+## Reductions:
 -- On UNIT reduce production expression0 -> UIDENT
 -- On UIDENT reduce production expression0 -> UIDENT
 -- On SETMINUS reduce production expression0 -> UIDENT
@@ -56,7 +71,11 @@ expression0 -> UIDENT . [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LP
 -- On BAR reduce production expression0 -> UIDENT
 
 State 3:
+## Known stack suffix:
+## LPAREN
+## LR(1) items:
 expression0 -> LPAREN . expression RPAREN [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
+## Transitions:
 -- On UNIT shift to state 1
 -- On UIDENT shift to state 2
 -- On LPAREN shift to state 3
@@ -70,9 +89,15 @@ expression0 -> LPAREN . expression RPAREN [ UNIT UIDENT SETMINUS SEMISEMI SEMI R
 -- On expression1 shift to state 27
 -- On expression0 shift to state 29
 -- On expression shift to state 82
+## Reductions:
 
 State 4:
+## Known stack suffix:
+## LIDENT
+## LR(1) items:
 expression0 -> LIDENT . [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
+## Transitions:
+## Reductions:
 -- On UNIT reduce production expression0 -> LIDENT
 -- On UIDENT reduce production expression0 -> LIDENT
 -- On SETMINUS reduce production expression0 -> LIDENT
@@ -92,16 +117,26 @@ expression0 -> LIDENT . [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LP
 -- On BAR reduce production expression0 -> LIDENT
 
 State 5:
+## Known stack suffix:
+## LET
+## LR(1) items:
 expression -> LET . pattern pattern_list EQUAL expression IN expression [ SEMISEMI RPAREN OF IN END BAR ]
 expression -> LET . REC LIDENT pattern_list EQUAL expression IN expression [ SEMISEMI RPAREN OF IN END BAR ]
+## Transitions:
 -- On UNIT shift to state 6
 -- On UNDERSCORE shift to state 7
 -- On REC shift to state 8
 -- On LIDENT shift to state 10
 -- On pattern shift to state 76
+## Reductions:
 
 State 6:
+## Known stack suffix:
+## UNIT
+## LR(1) items:
 pattern -> UNIT . [ UNIT UNDERSCORE LIDENT EQUAL ARROW ]
+## Transitions:
+## Reductions:
 -- On UNIT reduce production pattern -> UNIT
 -- On UNDERSCORE reduce production pattern -> UNIT
 -- On LIDENT reduce production pattern -> UNIT
@@ -109,7 +144,12 @@ pattern -> UNIT . [ UNIT UNDERSCORE LIDENT EQUAL ARROW ]
 -- On ARROW reduce production pattern -> UNIT
 
 State 7:
+## Known stack suffix:
+## UNDERSCORE
+## LR(1) items:
 pattern -> UNDERSCORE . [ UNIT UNDERSCORE LIDENT EQUAL ARROW ]
+## Transitions:
+## Reductions:
 -- On UNIT reduce production pattern -> UNDERSCORE
 -- On UNDERSCORE reduce production pattern -> UNDERSCORE
 -- On LIDENT reduce production pattern -> UNDERSCORE
@@ -117,20 +157,35 @@ pattern -> UNDERSCORE . [ UNIT UNDERSCORE LIDENT EQUAL ARROW ]
 -- On ARROW reduce production pattern -> UNDERSCORE
 
 State 8:
+## Known stack suffix:
+## LET REC
+## LR(1) items:
 expression -> LET REC . LIDENT pattern_list EQUAL expression IN expression [ SEMISEMI RPAREN OF IN END BAR ]
+## Transitions:
 -- On LIDENT shift to state 9
+## Reductions:
 
 State 9:
+## Known stack suffix:
+## LET REC LIDENT
+## LR(1) items:
 expression -> LET REC LIDENT . pattern_list EQUAL expression IN expression [ SEMISEMI RPAREN OF IN END BAR ]
+## Transitions:
 -- On UNIT shift to state 6
 -- On UNDERSCORE shift to state 7
 -- On LIDENT shift to state 10
 -- On pattern_list shift to state 11
 -- On pattern shift to state 71
+## Reductions:
 -- On EQUAL reduce production pattern_list ->
 
 State 10:
+## Known stack suffix:
+## LIDENT
+## LR(1) items:
 pattern -> LIDENT . [ UNIT UNDERSCORE LIDENT EQUAL ARROW ]
+## Transitions:
+## Reductions:
 -- On UNIT reduce production pattern -> LIDENT
 -- On UNDERSCORE reduce production pattern -> LIDENT
 -- On LIDENT reduce production pattern -> LIDENT
@@ -138,11 +193,20 @@ pattern -> LIDENT . [ UNIT UNDERSCORE LIDENT EQUAL ARROW ]
 -- On ARROW reduce production pattern -> LIDENT
 
 State 11:
+## Known stack suffix:
+## LET REC LIDENT pattern_list
+## LR(1) items:
 expression -> LET REC LIDENT pattern_list . EQUAL expression IN expression [ SEMISEMI RPAREN OF IN END BAR ]
+## Transitions:
 -- On EQUAL shift to state 12
+## Reductions:
 
 State 12:
+## Known stack suffix:
+## LET REC LIDENT pattern_list EQUAL
+## LR(1) items:
 expression -> LET REC LIDENT pattern_list EQUAL . expression IN expression [ SEMISEMI RPAREN OF IN END BAR ]
+## Transitions:
 -- On UNIT shift to state 1
 -- On UIDENT shift to state 2
 -- On LPAREN shift to state 3
@@ -156,9 +220,15 @@ expression -> LET REC LIDENT pattern_list EQUAL . expression IN expression [ SEM
 -- On expression1 shift to state 27
 -- On expression0 shift to state 29
 -- On expression shift to state 73
+## Reductions:
 
 State 13:
+## Known stack suffix:
+## INT
+## LR(1) items:
 expression0 -> INT . [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
+## Transitions:
+## Reductions:
 -- On UNIT reduce production expression0 -> INT
 -- On UIDENT reduce production expression0 -> INT
 -- On SETMINUS reduce production expression0 -> INT
@@ -178,20 +248,34 @@ expression0 -> INT . [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPARE
 -- On BAR reduce production expression0 -> INT
 
 State 14:
+## Known stack suffix:
+## FUN
+## LR(1) items:
 expression -> FUN . pattern_list ARROW expression [ SEMISEMI RPAREN OF IN END BAR ]
+## Transitions:
 -- On UNIT shift to state 6
 -- On UNDERSCORE shift to state 7
 -- On LIDENT shift to state 10
 -- On pattern_list shift to state 15
 -- On pattern shift to state 71
+## Reductions:
 -- On ARROW reduce production pattern_list ->
 
 State 15:
+## Known stack suffix:
+## FUN pattern_list
+## LR(1) items:
 expression -> FUN pattern_list . ARROW expression [ SEMISEMI RPAREN OF IN END BAR ]
+## Transitions:
 -- On ARROW shift to state 16
+## Reductions:
 
 State 16:
+## Known stack suffix:
+## FUN pattern_list ARROW
+## LR(1) items:
 expression -> FUN pattern_list ARROW . expression [ SEMISEMI RPAREN OF IN END BAR ]
+## Transitions:
 -- On UNIT shift to state 1
 -- On UIDENT shift to state 2
 -- On LPAREN shift to state 3
@@ -205,9 +289,14 @@ expression -> FUN pattern_list ARROW . expression [ SEMISEMI RPAREN OF IN END BA
 -- On expression1 shift to state 27
 -- On expression0 shift to state 29
 -- On expression shift to state 70
+## Reductions:
 
 State 17:
+## Known stack suffix:
+## CHOOSE
+## LR(1) items:
 expression1 -> CHOOSE . expression0 expression0 [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
+## Transitions:
 -- On UNIT shift to state 1
 -- On UIDENT shift to state 2
 -- On LPAREN shift to state 3
@@ -215,48 +304,88 @@ expression1 -> CHOOSE . expression0 expression0 [ UNIT UIDENT SETMINUS SEMISEMI 
 -- On INT shift to state 13
 -- On CASE shift to state 18
 -- On expression0 shift to state 68
+## Reductions:
 
 State 18:
+## Known stack suffix:
+## CASE
+## LR(1) items:
 expression0 -> CASE . LIDENT OF case_list END [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
 expression0 -> CASE . pattern EQUAL expression OF case_list END [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
+## Transitions:
 -- On UNIT shift to state 6
 -- On UNDERSCORE shift to state 7
 -- On LIDENT shift to state 19
 -- On pattern shift to state 62
+## Reductions:
 
 State 19:
+## Known stack suffix:
+## CASE LIDENT
+## LR(1) items:
 expression0 -> CASE LIDENT . OF case_list END [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
 pattern -> LIDENT . [ EQUAL ]
+## Transitions:
 -- On OF shift to state 20
+## Reductions:
 -- On EQUAL reduce production pattern -> LIDENT
 
 State 20:
+## Known stack suffix:
+## CASE LIDENT OF
+## LR(1) items:
 expression0 -> CASE LIDENT OF . case_list END [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
+## Transitions:
 -- On BAR shift to state 21
 -- On case_list shift to state 58
 -- On case_entry shift to state 60
+## Reductions:
 -- On END reduce production case_list ->
 
 State 21:
+## Known stack suffix:
+## BAR
+## LR(1) items:
 case_entry -> BAR . case_pattern ARROW expression [ END BAR ]
+## Transitions:
 -- On UNDERSCORE shift to state 22
 -- On UIDENT shift to state 23
 -- On case_pattern shift to state 24
+## Reductions:
 
 State 22:
+## Known stack suffix:
+## UNDERSCORE
+## LR(1) items:
 case_pattern -> UNDERSCORE . [ ARROW ]
+## Transitions:
+## Reductions:
 -- On ARROW reduce production case_pattern -> UNDERSCORE
 
 State 23:
+## Known stack suffix:
+## UIDENT
+## LR(1) items:
 case_pattern -> UIDENT . [ ARROW ]
+## Transitions:
+## Reductions:
 -- On ARROW reduce production case_pattern -> UIDENT
 
 State 24:
+## Known stack suffix:
+## BAR case_pattern
+## LR(1) items:
 case_entry -> BAR case_pattern . ARROW expression [ END BAR ]
+## Transitions:
 -- On ARROW shift to state 25
+## Reductions:
 
 State 25:
+## Known stack suffix:
+## BAR case_pattern ARROW
+## LR(1) items:
 case_entry -> BAR case_pattern ARROW . expression [ END BAR ]
+## Transitions:
 -- On UNIT shift to state 1
 -- On UIDENT shift to state 2
 -- On LPAREN shift to state 3
@@ -270,9 +399,15 @@ case_entry -> BAR case_pattern ARROW . expression [ END BAR ]
 -- On expression1 shift to state 27
 -- On expression0 shift to state 29
 -- On expression shift to state 57
+## Reductions:
 
 State 26:
+## Known stack suffix:
+## expression2
+## LR(1) items:
 expression -> expression2 . [ SEMISEMI RPAREN OF IN END BAR ]
+## Transitions:
+## Reductions:
 -- On SEMISEMI reduce production expression -> expression2
 -- On RPAREN reduce production expression -> expression2
 -- On OF reduce production expression -> expression2
@@ -281,9 +416,13 @@ expression -> expression2 . [ SEMISEMI RPAREN OF IN END BAR ]
 -- On BAR reduce production expression -> expression2
 
 State 27:
+## Known stack suffix:
+## expression1
+## LR(1) items:
 expression1 -> expression1 . expression0 [ UNIT UIDENT SEMISEMI SEMI RPAREN OF LPAREN LIDENT INT IN END CASE BAR ]
 expression2 -> expression1 . [ SEMISEMI RPAREN OF IN END BAR ]
 expression2 -> expression1 . SEMI expression [ SEMISEMI RPAREN OF IN END BAR ]
+## Transitions:
 -- On UNIT shift to state 1
 -- On UIDENT shift to state 2
 -- On SEMI shift to state 28
@@ -292,6 +431,7 @@ expression2 -> expression1 . SEMI expression [ SEMISEMI RPAREN OF IN END BAR ]
 -- On INT shift to state 13
 -- On CASE shift to state 18
 -- On expression0 shift to state 43
+## Reductions:
 -- On SEMISEMI reduce production expression2 -> expression1
 -- On RPAREN reduce production expression2 -> expression1
 -- On OF reduce production expression2 -> expression1
@@ -300,7 +440,11 @@ expression2 -> expression1 . SEMI expression [ SEMISEMI RPAREN OF IN END BAR ]
 -- On BAR reduce production expression2 -> expression1
 
 State 28:
+## Known stack suffix:
+## expression1 SEMI
+## LR(1) items:
 expression2 -> expression1 SEMI . expression [ SEMISEMI RPAREN OF IN END BAR ]
+## Transitions:
 -- On UNIT shift to state 1
 -- On UIDENT shift to state 2
 -- On LPAREN shift to state 3
@@ -314,17 +458,23 @@ expression2 -> expression1 SEMI . expression [ SEMISEMI RPAREN OF IN END BAR ]
 -- On expression1 shift to state 27
 -- On expression0 shift to state 29
 -- On expression shift to state 56
+## Reductions:
 
 State 29:
+## Known stack suffix:
+## expression0
+## LR(1) items:
 expression0 -> expression0 . LBRACE field_expr_list RBRACE [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
 expression0 -> expression0 . DOT LIDENT [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
 expression0 -> expression0 . SETMINUS LIDENT [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
 expression0 -> expression0 . SETMINUS LBRACE field_list RBRACE [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
 expression0 -> expression0 . DOT LIDENT LEFTARROW expression1 [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
 expression1 -> expression0 . [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
+## Transitions:
 -- On SETMINUS shift to state 30
 -- On LBRACE shift to state 38
 -- On DOT shift to state 44
+## Reductions:
 -- On UNIT reduce production expression1 -> expression0
 -- On UIDENT reduce production expression1 -> expression0
 -- On SETMINUS reduce production expression1 -> expression0
@@ -345,13 +495,23 @@ expression1 -> expression0 . [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE 
 ** Conflict on SETMINUS LBRACE DOT
 
 State 30:
+## Known stack suffix:
+## expression0 SETMINUS
+## LR(1) items:
 expression0 -> expression0 SETMINUS . LIDENT [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
 expression0 -> expression0 SETMINUS . LBRACE field_list RBRACE [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
+## Transitions:
 -- On LIDENT shift to state 31
 -- On LBRACE shift to state 32
+## Reductions:
 
 State 31:
+## Known stack suffix:
+## expression0 SETMINUS LIDENT
+## LR(1) items:
 expression0 -> expression0 SETMINUS LIDENT . [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
+## Transitions:
+## Reductions:
 -- On UNIT reduce production expression0 -> expression0 SETMINUS LIDENT
 -- On UIDENT reduce production expression0 -> expression0 SETMINUS LIDENT
 -- On SETMINUS reduce production expression0 -> expression0 SETMINUS LIDENT
@@ -371,33 +531,63 @@ expression0 -> expression0 SETMINUS LIDENT . [ UNIT UIDENT SETMINUS SEMISEMI SEM
 -- On BAR reduce production expression0 -> expression0 SETMINUS LIDENT
 
 State 32:
+## Known stack suffix:
+## expression0 SETMINUS LBRACE
+## LR(1) items:
 expression0 -> expression0 SETMINUS LBRACE . field_list RBRACE [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
+## Transitions:
 -- On LIDENT shift to state 33
 -- On field_list shift to state 36
+## Reductions:
 -- On RBRACE reduce production field_list ->
 
 State 33:
+## Known stack suffix:
+## LIDENT
+## LR(1) items:
 field_list -> LIDENT . [ RBRACE ]
 field_list -> LIDENT . SEMI field_list [ RBRACE ]
+## Transitions:
 -- On SEMI shift to state 34
+## Reductions:
 -- On RBRACE reduce production field_list -> LIDENT
 
 State 34:
+## Known stack suffix:
+## LIDENT SEMI
+## LR(1) items:
 field_list -> LIDENT SEMI . field_list [ RBRACE ]
+## Transitions:
 -- On LIDENT shift to state 33
 -- On field_list shift to state 35
+## Reductions:
 -- On RBRACE reduce production field_list ->
 
 State 35:
+## Known stack suffix:
+## LIDENT SEMI field_list
+## LR(1) items:
 field_list -> LIDENT SEMI field_list . [ RBRACE ]
+## Transitions:
+## Reductions:
 -- On RBRACE reduce production field_list -> LIDENT SEMI field_list
 
 State 36:
+## Known stack suffix:
+## expression0 SETMINUS LBRACE field_list
+## LR(1) items:
 expression0 -> expression0 SETMINUS LBRACE field_list . RBRACE [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
+## Transitions:
 -- On RBRACE shift to state 37
+## Reductions:
 
 State 37:
+## Known stack suffix:
+## expression0 SETMINUS LBRACE field_list RBRACE
+## LR(1) items:
 expression0 -> expression0 SETMINUS LBRACE field_list RBRACE . [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
+## Transitions:
+## Reductions:
 -- On UNIT reduce production expression0 -> expression0 SETMINUS LBRACE field_list RBRACE
 -- On UIDENT reduce production expression0 -> expression0 SETMINUS LBRACE field_list RBRACE
 -- On SETMINUS reduce production expression0 -> expression0 SETMINUS LBRACE field_list RBRACE
@@ -417,23 +607,42 @@ expression0 -> expression0 SETMINUS LBRACE field_list RBRACE . [ UNIT UIDENT SET
 -- On BAR reduce production expression0 -> expression0 SETMINUS LBRACE field_list RBRACE
 
 State 38:
+## Known stack suffix:
+## expression0 LBRACE
+## LR(1) items:
 expression0 -> expression0 LBRACE . field_expr_list RBRACE [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
+## Transitions:
 -- On MUTABLE shift to state 39
 -- On LIDENT shift to state 48
 -- On field_expr_list shift to state 51
 -- On field_expr shift to state 53
+## Reductions:
 -- On RBRACE reduce production field_expr_list ->
 
 State 39:
+## Known stack suffix:
+## MUTABLE
+## LR(1) items:
 field_expr -> MUTABLE . LIDENT EQUAL expression1 [ SEMI RBRACE ]
+## Transitions:
 -- On LIDENT shift to state 40
+## Reductions:
 
 State 40:
+## Known stack suffix:
+## MUTABLE LIDENT
+## LR(1) items:
 field_expr -> MUTABLE LIDENT . EQUAL expression1 [ SEMI RBRACE ]
+## Transitions:
 -- On EQUAL shift to state 41
+## Reductions:
 
 State 41:
+## Known stack suffix:
+## MUTABLE LIDENT EQUAL
+## LR(1) items:
 field_expr -> MUTABLE LIDENT EQUAL . expression1 [ SEMI RBRACE ]
+## Transitions:
 -- On UNIT shift to state 1
 -- On UIDENT shift to state 2
 -- On LPAREN shift to state 3
@@ -443,10 +652,15 @@ field_expr -> MUTABLE LIDENT EQUAL . expression1 [ SEMI RBRACE ]
 -- On CASE shift to state 18
 -- On expression1 shift to state 42
 -- On expression0 shift to state 29
+## Reductions:
 
 State 42:
+## Known stack suffix:
+## MUTABLE LIDENT EQUAL expression1
+## LR(1) items:
 expression1 -> expression1 . expression0 [ UNIT UIDENT SEMI RBRACE LPAREN LIDENT INT CASE ]
 field_expr -> MUTABLE LIDENT EQUAL expression1 . [ SEMI RBRACE ]
+## Transitions:
 -- On UNIT shift to state 1
 -- On UIDENT shift to state 2
 -- On LPAREN shift to state 3
@@ -454,19 +668,25 @@ field_expr -> MUTABLE LIDENT EQUAL expression1 . [ SEMI RBRACE ]
 -- On INT shift to state 13
 -- On CASE shift to state 18
 -- On expression0 shift to state 43
+## Reductions:
 -- On SEMI reduce production field_expr -> MUTABLE LIDENT EQUAL expression1
 -- On RBRACE reduce production field_expr -> MUTABLE LIDENT EQUAL expression1
 
 State 43:
+## Known stack suffix:
+## expression1 expression0
+## LR(1) items:
 expression0 -> expression0 . LBRACE field_expr_list RBRACE [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
 expression0 -> expression0 . DOT LIDENT [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
 expression0 -> expression0 . SETMINUS LIDENT [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
 expression0 -> expression0 . SETMINUS LBRACE field_list RBRACE [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
 expression0 -> expression0 . DOT LIDENT LEFTARROW expression1 [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
 expression1 -> expression1 expression0 . [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
+## Transitions:
 -- On SETMINUS shift to state 30
 -- On LBRACE shift to state 38
 -- On DOT shift to state 44
+## Reductions:
 -- On UNIT reduce production expression1 -> expression1 expression0
 -- On UIDENT reduce production expression1 -> expression1 expression0
 -- On SETMINUS reduce production expression1 -> expression1 expression0
@@ -487,14 +707,24 @@ expression1 -> expression1 expression0 . [ UNIT UIDENT SETMINUS SEMISEMI SEMI RP
 ** Conflict on SETMINUS LBRACE DOT
 
 State 44:
+## Known stack suffix:
+## expression0 DOT
+## LR(1) items:
 expression0 -> expression0 DOT . LIDENT [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
 expression0 -> expression0 DOT . LIDENT LEFTARROW expression1 [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
+## Transitions:
 -- On LIDENT shift to state 45
+## Reductions:
 
 State 45:
+## Known stack suffix:
+## expression0 DOT LIDENT
+## LR(1) items:
 expression0 -> expression0 DOT LIDENT . [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
 expression0 -> expression0 DOT LIDENT . LEFTARROW expression1 [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
+## Transitions:
 -- On LEFTARROW shift to state 46
+## Reductions:
 -- On UNIT reduce production expression0 -> expression0 DOT LIDENT
 -- On UIDENT reduce production expression0 -> expression0 DOT LIDENT
 -- On SETMINUS reduce production expression0 -> expression0 DOT LIDENT
@@ -514,7 +744,11 @@ expression0 -> expression0 DOT LIDENT . LEFTARROW expression1 [ UNIT UIDENT SETM
 -- On BAR reduce production expression0 -> expression0 DOT LIDENT
 
 State 46:
+## Known stack suffix:
+## expression0 DOT LIDENT LEFTARROW
+## LR(1) items:
 expression0 -> expression0 DOT LIDENT LEFTARROW . expression1 [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
+## Transitions:
 -- On UNIT shift to state 1
 -- On UIDENT shift to state 2
 -- On LPAREN shift to state 3
@@ -524,10 +758,15 @@ expression0 -> expression0 DOT LIDENT LEFTARROW . expression1 [ UNIT UIDENT SETM
 -- On CASE shift to state 18
 -- On expression1 shift to state 47
 -- On expression0 shift to state 29
+## Reductions:
 
 State 47:
+## Known stack suffix:
+## expression0 DOT LIDENT LEFTARROW expression1
+## LR(1) items:
 expression0 -> expression0 DOT LIDENT LEFTARROW expression1 . [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
 expression1 -> expression1 . expression0 [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
+## Transitions:
 -- On UNIT shift to state 1
 -- On UIDENT shift to state 2
 -- On LPAREN shift to state 3
@@ -535,6 +774,7 @@ expression1 -> expression1 . expression0 [ UNIT UIDENT SETMINUS SEMISEMI SEMI RP
 -- On INT shift to state 13
 -- On CASE shift to state 18
 -- On expression0 shift to state 43
+## Reductions:
 -- On UNIT reduce production expression0 -> expression0 DOT LIDENT LEFTARROW expression1
 -- On UIDENT reduce production expression0 -> expression0 DOT LIDENT LEFTARROW expression1
 -- On SETMINUS reduce production expression0 -> expression0 DOT LIDENT LEFTARROW expression1
@@ -555,11 +795,20 @@ expression1 -> expression1 . expression0 [ UNIT UIDENT SETMINUS SEMISEMI SEMI RP
 ** Conflict on UNIT UIDENT LPAREN LIDENT INT CASE
 
 State 48:
+## Known stack suffix:
+## LIDENT
+## LR(1) items:
 field_expr -> LIDENT . EQUAL expression1 [ SEMI RBRACE ]
+## Transitions:
 -- On EQUAL shift to state 49
+## Reductions:
 
 State 49:
+## Known stack suffix:
+## LIDENT EQUAL
+## LR(1) items:
 field_expr -> LIDENT EQUAL . expression1 [ SEMI RBRACE ]
+## Transitions:
 -- On UNIT shift to state 1
 -- On UIDENT shift to state 2
 -- On LPAREN shift to state 3
@@ -569,10 +818,15 @@ field_expr -> LIDENT EQUAL . expression1 [ SEMI RBRACE ]
 -- On CASE shift to state 18
 -- On expression1 shift to state 50
 -- On expression0 shift to state 29
+## Reductions:
 
 State 50:
+## Known stack suffix:
+## LIDENT EQUAL expression1
+## LR(1) items:
 expression1 -> expression1 . expression0 [ UNIT UIDENT SEMI RBRACE LPAREN LIDENT INT CASE ]
 field_expr -> LIDENT EQUAL expression1 . [ SEMI RBRACE ]
+## Transitions:
 -- On UNIT shift to state 1
 -- On UIDENT shift to state 2
 -- On LPAREN shift to state 3
@@ -580,15 +834,26 @@ field_expr -> LIDENT EQUAL expression1 . [ SEMI RBRACE ]
 -- On INT shift to state 13
 -- On CASE shift to state 18
 -- On expression0 shift to state 43
+## Reductions:
 -- On SEMI reduce production field_expr -> LIDENT EQUAL expression1
 -- On RBRACE reduce production field_expr -> LIDENT EQUAL expression1
 
 State 51:
+## Known stack suffix:
+## expression0 LBRACE field_expr_list
+## LR(1) items:
 expression0 -> expression0 LBRACE field_expr_list . RBRACE [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
+## Transitions:
 -- On RBRACE shift to state 52
+## Reductions:
 
 State 52:
+## Known stack suffix:
+## expression0 LBRACE field_expr_list RBRACE
+## LR(1) items:
 expression0 -> expression0 LBRACE field_expr_list RBRACE . [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
+## Transitions:
+## Reductions:
 -- On UNIT reduce production expression0 -> expression0 LBRACE field_expr_list RBRACE
 -- On UIDENT reduce production expression0 -> expression0 LBRACE field_expr_list RBRACE
 -- On SETMINUS reduce production expression0 -> expression0 LBRACE field_expr_list RBRACE
@@ -608,25 +873,45 @@ expression0 -> expression0 LBRACE field_expr_list RBRACE . [ UNIT UIDENT SETMINU
 -- On BAR reduce production expression0 -> expression0 LBRACE field_expr_list RBRACE
 
 State 53:
+## Known stack suffix:
+## field_expr
+## LR(1) items:
 field_expr_list -> field_expr . [ RBRACE ]
 field_expr_list -> field_expr . SEMI field_expr_list [ RBRACE ]
+## Transitions:
 -- On SEMI shift to state 54
+## Reductions:
 -- On RBRACE reduce production field_expr_list -> field_expr
 
 State 54:
+## Known stack suffix:
+## field_expr SEMI
+## LR(1) items:
 field_expr_list -> field_expr SEMI . field_expr_list [ RBRACE ]
+## Transitions:
 -- On MUTABLE shift to state 39
 -- On LIDENT shift to state 48
 -- On field_expr_list shift to state 55
 -- On field_expr shift to state 53
+## Reductions:
 -- On RBRACE reduce production field_expr_list ->
 
 State 55:
+## Known stack suffix:
+## field_expr SEMI field_expr_list
+## LR(1) items:
 field_expr_list -> field_expr SEMI field_expr_list . [ RBRACE ]
+## Transitions:
+## Reductions:
 -- On RBRACE reduce production field_expr_list -> field_expr SEMI field_expr_list
 
 State 56:
+## Known stack suffix:
+## expression1 SEMI expression
+## LR(1) items:
 expression2 -> expression1 SEMI expression . [ SEMISEMI RPAREN OF IN END BAR ]
+## Transitions:
+## Reductions:
 -- On SEMISEMI reduce production expression2 -> expression1 SEMI expression
 -- On RPAREN reduce production expression2 -> expression1 SEMI expression
 -- On OF reduce production expression2 -> expression1 SEMI expression
@@ -635,16 +920,31 @@ expression2 -> expression1 SEMI expression . [ SEMISEMI RPAREN OF IN END BAR ]
 -- On BAR reduce production expression2 -> expression1 SEMI expression
 
 State 57:
+## Known stack suffix:
+## BAR case_pattern ARROW expression
+## LR(1) items:
 case_entry -> BAR case_pattern ARROW expression . [ END BAR ]
+## Transitions:
+## Reductions:
 -- On END reduce production case_entry -> BAR case_pattern ARROW expression
 -- On BAR reduce production case_entry -> BAR case_pattern ARROW expression
 
 State 58:
+## Known stack suffix:
+## CASE LIDENT OF case_list
+## LR(1) items:
 expression0 -> CASE LIDENT OF case_list . END [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
+## Transitions:
 -- On END shift to state 59
+## Reductions:
 
 State 59:
+## Known stack suffix:
+## CASE LIDENT OF case_list END
+## LR(1) items:
 expression0 -> CASE LIDENT OF case_list END . [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
+## Transitions:
+## Reductions:
 -- On UNIT reduce production expression0 -> CASE LIDENT OF case_list END
 -- On UIDENT reduce production expression0 -> CASE LIDENT OF case_list END
 -- On SETMINUS reduce production expression0 -> CASE LIDENT OF case_list END
@@ -664,22 +964,41 @@ expression0 -> CASE LIDENT OF case_list END . [ UNIT UIDENT SETMINUS SEMISEMI SE
 -- On BAR reduce production expression0 -> CASE LIDENT OF case_list END
 
 State 60:
+## Known stack suffix:
+## case_entry
+## LR(1) items:
 case_list -> case_entry . case_list [ END ]
+## Transitions:
 -- On BAR shift to state 21
 -- On case_list shift to state 61
 -- On case_entry shift to state 60
+## Reductions:
 -- On END reduce production case_list ->
 
 State 61:
+## Known stack suffix:
+## case_entry case_list
+## LR(1) items:
 case_list -> case_entry case_list . [ END ]
+## Transitions:
+## Reductions:
 -- On END reduce production case_list -> case_entry case_list
 
 State 62:
+## Known stack suffix:
+## CASE pattern
+## LR(1) items:
 expression0 -> CASE pattern . EQUAL expression OF case_list END [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
+## Transitions:
 -- On EQUAL shift to state 63
+## Reductions:
 
 State 63:
+## Known stack suffix:
+## CASE pattern EQUAL
+## LR(1) items:
 expression0 -> CASE pattern EQUAL . expression OF case_list END [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
+## Transitions:
 -- On UNIT shift to state 1
 -- On UIDENT shift to state 2
 -- On LPAREN shift to state 3
@@ -693,24 +1012,45 @@ expression0 -> CASE pattern EQUAL . expression OF case_list END [ UNIT UIDENT SE
 -- On expression1 shift to state 27
 -- On expression0 shift to state 29
 -- On expression shift to state 64
+## Reductions:
 
 State 64:
+## Known stack suffix:
+## CASE pattern EQUAL expression
+## LR(1) items:
 expression0 -> CASE pattern EQUAL expression . OF case_list END [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
+## Transitions:
 -- On OF shift to state 65
+## Reductions:
 
 State 65:
+## Known stack suffix:
+## CASE pattern EQUAL expression OF
+## LR(1) items:
 expression0 -> CASE pattern EQUAL expression OF . case_list END [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
+## Transitions:
 -- On BAR shift to state 21
 -- On case_list shift to state 66
 -- On case_entry shift to state 60
+## Reductions:
 -- On END reduce production case_list ->
 
 State 66:
+## Known stack suffix:
+## CASE pattern EQUAL expression OF case_list
+## LR(1) items:
 expression0 -> CASE pattern EQUAL expression OF case_list . END [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
+## Transitions:
 -- On END shift to state 67
+## Reductions:
 
 State 67:
+## Known stack suffix:
+## CASE pattern EQUAL expression OF case_list END
+## LR(1) items:
 expression0 -> CASE pattern EQUAL expression OF case_list END . [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
+## Transitions:
+## Reductions:
 -- On UNIT reduce production expression0 -> CASE pattern EQUAL expression OF case_list END
 -- On UIDENT reduce production expression0 -> CASE pattern EQUAL expression OF case_list END
 -- On SETMINUS reduce production expression0 -> CASE pattern EQUAL expression OF case_list END
@@ -730,12 +1070,16 @@ expression0 -> CASE pattern EQUAL expression OF case_list END . [ UNIT UIDENT SE
 -- On BAR reduce production expression0 -> CASE pattern EQUAL expression OF case_list END
 
 State 68:
+## Known stack suffix:
+## CHOOSE expression0
+## LR(1) items:
 expression0 -> expression0 . LBRACE field_expr_list RBRACE [ UNIT UIDENT SETMINUS LPAREN LIDENT LBRACE INT DOT CASE ]
 expression0 -> expression0 . DOT LIDENT [ UNIT UIDENT SETMINUS LPAREN LIDENT LBRACE INT DOT CASE ]
 expression0 -> expression0 . SETMINUS LIDENT [ UNIT UIDENT SETMINUS LPAREN LIDENT LBRACE INT DOT CASE ]
 expression0 -> expression0 . SETMINUS LBRACE field_list RBRACE [ UNIT UIDENT SETMINUS LPAREN LIDENT LBRACE INT DOT CASE ]
 expression0 -> expression0 . DOT LIDENT LEFTARROW expression1 [ UNIT UIDENT SETMINUS LPAREN LIDENT LBRACE INT DOT CASE ]
 expression1 -> CHOOSE expression0 . expression0 [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
+## Transitions:
 -- On UNIT shift to state 1
 -- On UIDENT shift to state 2
 -- On SETMINUS shift to state 30
@@ -746,17 +1090,23 @@ expression1 -> CHOOSE expression0 . expression0 [ UNIT UIDENT SETMINUS SEMISEMI 
 -- On DOT shift to state 44
 -- On CASE shift to state 18
 -- On expression0 shift to state 69
+## Reductions:
 
 State 69:
+## Known stack suffix:
+## CHOOSE expression0 expression0
+## LR(1) items:
 expression0 -> expression0 . LBRACE field_expr_list RBRACE [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
 expression0 -> expression0 . DOT LIDENT [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
 expression0 -> expression0 . SETMINUS LIDENT [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
 expression0 -> expression0 . SETMINUS LBRACE field_list RBRACE [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
 expression0 -> expression0 . DOT LIDENT LEFTARROW expression1 [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
 expression1 -> CHOOSE expression0 expression0 . [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
+## Transitions:
 -- On SETMINUS shift to state 30
 -- On LBRACE shift to state 38
 -- On DOT shift to state 44
+## Reductions:
 -- On UNIT reduce production expression1 -> CHOOSE expression0 expression0
 -- On UIDENT reduce production expression1 -> CHOOSE expression0 expression0
 -- On SETMINUS reduce production expression1 -> CHOOSE expression0 expression0
@@ -777,7 +1127,12 @@ expression1 -> CHOOSE expression0 expression0 . [ UNIT UIDENT SETMINUS SEMISEMI 
 ** Conflict on SETMINUS LBRACE DOT
 
 State 70:
+## Known stack suffix:
+## FUN pattern_list ARROW expression
+## LR(1) items:
 expression -> FUN pattern_list ARROW expression . [ SEMISEMI RPAREN OF IN END BAR ]
+## Transitions:
+## Reductions:
 -- On SEMISEMI reduce production expression -> FUN pattern_list ARROW expression
 -- On RPAREN reduce production expression -> FUN pattern_list ARROW expression
 -- On OF reduce production expression -> FUN pattern_list ARROW expression
@@ -786,26 +1141,45 @@ expression -> FUN pattern_list ARROW expression . [ SEMISEMI RPAREN OF IN END BA
 -- On BAR reduce production expression -> FUN pattern_list ARROW expression
 
 State 71:
+## Known stack suffix:
+## pattern
+## LR(1) items:
 pattern_list -> pattern . pattern_list [ EQUAL ARROW ]
+## Transitions:
 -- On UNIT shift to state 6
 -- On UNDERSCORE shift to state 7
 -- On LIDENT shift to state 10
 -- On pattern_list shift to state 72
 -- On pattern shift to state 71
+## Reductions:
 -- On EQUAL reduce production pattern_list ->
 -- On ARROW reduce production pattern_list ->
 
 State 72:
+## Known stack suffix:
+## pattern pattern_list
+## LR(1) items:
 pattern_list -> pattern pattern_list . [ EQUAL ARROW ]
+## Transitions:
+## Reductions:
 -- On EQUAL reduce production pattern_list -> pattern pattern_list
 -- On ARROW reduce production pattern_list -> pattern pattern_list
 
 State 73:
+## Known stack suffix:
+## LET REC LIDENT pattern_list EQUAL expression
+## LR(1) items:
 expression -> LET REC LIDENT pattern_list EQUAL expression . IN expression [ SEMISEMI RPAREN OF IN END BAR ]
+## Transitions:
 -- On IN shift to state 74
+## Reductions:
 
 State 74:
+## Known stack suffix:
+## LET REC LIDENT pattern_list EQUAL expression IN
+## LR(1) items:
 expression -> LET REC LIDENT pattern_list EQUAL expression IN . expression [ SEMISEMI RPAREN OF IN END BAR ]
+## Transitions:
 -- On UNIT shift to state 1
 -- On UIDENT shift to state 2
 -- On LPAREN shift to state 3
@@ -819,9 +1193,15 @@ expression -> LET REC LIDENT pattern_list EQUAL expression IN . expression [ SEM
 -- On expression1 shift to state 27
 -- On expression0 shift to state 29
 -- On expression shift to state 75
+## Reductions:
 
 State 75:
+## Known stack suffix:
+## LET REC LIDENT pattern_list EQUAL expression IN expression
+## LR(1) items:
 expression -> LET REC LIDENT pattern_list EQUAL expression IN expression . [ SEMISEMI RPAREN OF IN END BAR ]
+## Transitions:
+## Reductions:
 -- On SEMISEMI reduce production expression -> LET REC LIDENT pattern_list EQUAL expression IN expression
 -- On RPAREN reduce production expression -> LET REC LIDENT pattern_list EQUAL expression IN expression
 -- On OF reduce production expression -> LET REC LIDENT pattern_list EQUAL expression IN expression
@@ -830,20 +1210,34 @@ expression -> LET REC LIDENT pattern_list EQUAL expression IN expression . [ SEM
 -- On BAR reduce production expression -> LET REC LIDENT pattern_list EQUAL expression IN expression
 
 State 76:
+## Known stack suffix:
+## LET pattern
+## LR(1) items:
 expression -> LET pattern . pattern_list EQUAL expression IN expression [ SEMISEMI RPAREN OF IN END BAR ]
+## Transitions:
 -- On UNIT shift to state 6
 -- On UNDERSCORE shift to state 7
 -- On LIDENT shift to state 10
 -- On pattern_list shift to state 77
 -- On pattern shift to state 71
+## Reductions:
 -- On EQUAL reduce production pattern_list ->
 
 State 77:
+## Known stack suffix:
+## LET pattern pattern_list
+## LR(1) items:
 expression -> LET pattern pattern_list . EQUAL expression IN expression [ SEMISEMI RPAREN OF IN END BAR ]
+## Transitions:
 -- On EQUAL shift to state 78
+## Reductions:
 
 State 78:
+## Known stack suffix:
+## LET pattern pattern_list EQUAL
+## LR(1) items:
 expression -> LET pattern pattern_list EQUAL . expression IN expression [ SEMISEMI RPAREN OF IN END BAR ]
+## Transitions:
 -- On UNIT shift to state 1
 -- On UIDENT shift to state 2
 -- On LPAREN shift to state 3
@@ -857,13 +1251,23 @@ expression -> LET pattern pattern_list EQUAL . expression IN expression [ SEMISE
 -- On expression1 shift to state 27
 -- On expression0 shift to state 29
 -- On expression shift to state 79
+## Reductions:
 
 State 79:
+## Known stack suffix:
+## LET pattern pattern_list EQUAL expression
+## LR(1) items:
 expression -> LET pattern pattern_list EQUAL expression . IN expression [ SEMISEMI RPAREN OF IN END BAR ]
+## Transitions:
 -- On IN shift to state 80
+## Reductions:
 
 State 80:
+## Known stack suffix:
+## LET pattern pattern_list EQUAL expression IN
+## LR(1) items:
 expression -> LET pattern pattern_list EQUAL expression IN . expression [ SEMISEMI RPAREN OF IN END BAR ]
+## Transitions:
 -- On UNIT shift to state 1
 -- On UIDENT shift to state 2
 -- On LPAREN shift to state 3
@@ -877,9 +1281,15 @@ expression -> LET pattern pattern_list EQUAL expression IN . expression [ SEMISE
 -- On expression1 shift to state 27
 -- On expression0 shift to state 29
 -- On expression shift to state 81
+## Reductions:
 
 State 81:
+## Known stack suffix:
+## LET pattern pattern_list EQUAL expression IN expression
+## LR(1) items:
 expression -> LET pattern pattern_list EQUAL expression IN expression . [ SEMISEMI RPAREN OF IN END BAR ]
+## Transitions:
+## Reductions:
 -- On SEMISEMI reduce production expression -> LET pattern pattern_list EQUAL expression IN expression
 -- On RPAREN reduce production expression -> LET pattern pattern_list EQUAL expression IN expression
 -- On OF reduce production expression -> LET pattern pattern_list EQUAL expression IN expression
@@ -888,11 +1298,21 @@ expression -> LET pattern pattern_list EQUAL expression IN expression . [ SEMISE
 -- On BAR reduce production expression -> LET pattern pattern_list EQUAL expression IN expression
 
 State 82:
+## Known stack suffix:
+## LPAREN expression
+## LR(1) items:
 expression0 -> LPAREN expression . RPAREN [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
+## Transitions:
 -- On RPAREN shift to state 83
+## Reductions:
 
 State 83:
+## Known stack suffix:
+## LPAREN expression RPAREN
+## LR(1) items:
 expression0 -> LPAREN expression RPAREN . [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR ]
+## Transitions:
+## Reductions:
 -- On UNIT reduce production expression0 -> LPAREN expression RPAREN
 -- On UIDENT reduce production expression0 -> LPAREN expression RPAREN
 -- On SETMINUS reduce production expression0 -> LPAREN expression RPAREN
@@ -912,39 +1332,63 @@ expression0 -> LPAREN expression RPAREN . [ UNIT UIDENT SETMINUS SEMISEMI SEMI R
 -- On BAR reduce production expression0 -> LPAREN expression RPAREN
 
 State 84:
+## Known stack suffix:
+## LET
+## LR(1) items:
 expression -> LET . pattern pattern_list EQUAL expression IN expression [ SEMISEMI ]
 expression -> LET . REC LIDENT pattern_list EQUAL expression IN expression [ SEMISEMI ]
 phrase -> LET . pattern pattern_list EQUAL expression SEMISEMI [ # ]
 phrase -> LET . REC LIDENT pattern_list EQUAL expression SEMISEMI [ # ]
+## Transitions:
 -- On UNIT shift to state 6
 -- On UNDERSCORE shift to state 7
 -- On REC shift to state 85
 -- On LIDENT shift to state 10
 -- On pattern shift to state 91
+## Reductions:
 
 State 85:
+## Known stack suffix:
+## LET REC
+## LR(1) items:
 expression -> LET REC . LIDENT pattern_list EQUAL expression IN expression [ SEMISEMI ]
 phrase -> LET REC . LIDENT pattern_list EQUAL expression SEMISEMI [ # ]
+## Transitions:
 -- On LIDENT shift to state 86
+## Reductions:
 
 State 86:
+## Known stack suffix:
+## LET REC LIDENT
+## LR(1) items:
 expression -> LET REC LIDENT . pattern_list EQUAL expression IN expression [ SEMISEMI ]
 phrase -> LET REC LIDENT . pattern_list EQUAL expression SEMISEMI [ # ]
+## Transitions:
 -- On UNIT shift to state 6
 -- On UNDERSCORE shift to state 7
 -- On LIDENT shift to state 10
 -- On pattern_list shift to state 87
 -- On pattern shift to state 71
+## Reductions:
 -- On EQUAL reduce production pattern_list ->
 
 State 87:
+## Known stack suffix:
+## LET REC LIDENT pattern_list
+## LR(1) items:
 expression -> LET REC LIDENT pattern_list . EQUAL expression IN expression [ SEMISEMI ]
 phrase -> LET REC LIDENT pattern_list . EQUAL expression SEMISEMI [ # ]
+## Transitions:
 -- On EQUAL shift to state 88
+## Reductions:
 
 State 88:
+## Known stack suffix:
+## LET REC LIDENT pattern_list EQUAL
+## LR(1) items:
 expression -> LET REC LIDENT pattern_list EQUAL . expression IN expression [ SEMISEMI ]
 phrase -> LET REC LIDENT pattern_list EQUAL . expression SEMISEMI [ # ]
+## Transitions:
 -- On UNIT shift to state 1
 -- On UIDENT shift to state 2
 -- On LPAREN shift to state 3
@@ -958,35 +1402,60 @@ phrase -> LET REC LIDENT pattern_list EQUAL . expression SEMISEMI [ # ]
 -- On expression1 shift to state 27
 -- On expression0 shift to state 29
 -- On expression shift to state 89
+## Reductions:
 
 State 89:
+## Known stack suffix:
+## LET REC LIDENT pattern_list EQUAL expression
+## LR(1) items:
 expression -> LET REC LIDENT pattern_list EQUAL expression . IN expression [ SEMISEMI ]
 phrase -> LET REC LIDENT pattern_list EQUAL expression . SEMISEMI [ # ]
+## Transitions:
 -- On SEMISEMI shift to state 90
 -- On IN shift to state 74
+## Reductions:
 
 State 90:
+## Known stack suffix:
+## LET REC LIDENT pattern_list EQUAL expression SEMISEMI
+## LR(1) items:
 phrase -> LET REC LIDENT pattern_list EQUAL expression SEMISEMI . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production phrase -> LET REC LIDENT pattern_list EQUAL expression SEMISEMI
 
 State 91:
+## Known stack suffix:
+## LET pattern
+## LR(1) items:
 expression -> LET pattern . pattern_list EQUAL expression IN expression [ SEMISEMI ]
 phrase -> LET pattern . pattern_list EQUAL expression SEMISEMI [ # ]
+## Transitions:
 -- On UNIT shift to state 6
 -- On UNDERSCORE shift to state 7
 -- On LIDENT shift to state 10
 -- On pattern_list shift to state 92
 -- On pattern shift to state 71
+## Reductions:
 -- On EQUAL reduce production pattern_list ->
 
 State 92:
+## Known stack suffix:
+## LET pattern pattern_list
+## LR(1) items:
 expression -> LET pattern pattern_list . EQUAL expression IN expression [ SEMISEMI ]
 phrase -> LET pattern pattern_list . EQUAL expression SEMISEMI [ # ]
+## Transitions:
 -- On EQUAL shift to state 93
+## Reductions:
 
 State 93:
+## Known stack suffix:
+## LET pattern pattern_list EQUAL
+## LR(1) items:
 expression -> LET pattern pattern_list EQUAL . expression IN expression [ SEMISEMI ]
 phrase -> LET pattern pattern_list EQUAL . expression SEMISEMI [ # ]
+## Transitions:
 -- On UNIT shift to state 1
 -- On UIDENT shift to state 2
 -- On LPAREN shift to state 3
@@ -1000,26 +1469,52 @@ phrase -> LET pattern pattern_list EQUAL . expression SEMISEMI [ # ]
 -- On expression1 shift to state 27
 -- On expression0 shift to state 29
 -- On expression shift to state 94
+## Reductions:
 
 State 94:
+## Known stack suffix:
+## LET pattern pattern_list EQUAL expression
+## LR(1) items:
 expression -> LET pattern pattern_list EQUAL expression . IN expression [ SEMISEMI ]
 phrase -> LET pattern pattern_list EQUAL expression . SEMISEMI [ # ]
+## Transitions:
 -- On SEMISEMI shift to state 95
 -- On IN shift to state 80
+## Reductions:
 
 State 95:
+## Known stack suffix:
+## LET pattern pattern_list EQUAL expression SEMISEMI
+## LR(1) items:
 phrase -> LET pattern pattern_list EQUAL expression SEMISEMI . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production phrase -> LET pattern pattern_list EQUAL expression SEMISEMI
 
 State 96:
+## Known stack suffix:
+## phrase
+## LR(1) items:
 phrase' -> phrase . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept phrase
 
 State 97:
+## Known stack suffix:
+## expression
+## LR(1) items:
 phrase -> expression . SEMISEMI [ # ]
+## Transitions:
 -- On SEMISEMI shift to state 98
+## Reductions:
 
 State 98:
+## Known stack suffix:
+## expression SEMISEMI
+## LR(1) items:
 phrase -> expression SEMISEMI . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production phrase -> expression SEMISEMI
 

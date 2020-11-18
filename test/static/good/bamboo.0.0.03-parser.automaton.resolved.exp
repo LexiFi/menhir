@@ -1,22 +1,41 @@
 State 0:
+## Known stack suffix:
+##
+## LR(1) items:
 file' -> . file [ # ]
+## Transitions:
 -- On EVENT shift to state 1
 -- On CONTRACT shift to state 24
 -- On list(contract) shift to state 187
 -- On file shift to state 189
 -- On contract shift to state 190
+## Reductions:
 -- On EOF reduce production list(contract) ->
 
 State 1:
+## Known stack suffix:
+## EVENT
+## LR(1) items:
 contract -> EVENT . IDENT LPAR loption(separated_nonempty_list(COMMA,event_arg)) RPAR SEMICOLON [ EVENT EOF CONTRACT ]
+## Transitions:
 -- On IDENT shift to state 2
+## Reductions:
 
 State 2:
+## Known stack suffix:
+## EVENT IDENT
+## LR(1) items:
 contract -> EVENT IDENT . LPAR loption(separated_nonempty_list(COMMA,event_arg)) RPAR SEMICOLON [ EVENT EOF CONTRACT ]
+## Transitions:
 -- On LPAR shift to state 3
+## Reductions:
 
 State 3:
+## Known stack suffix:
+## EVENT IDENT LPAR
+## LR(1) items:
 contract -> EVENT IDENT LPAR . loption(separated_nonempty_list(COMMA,event_arg)) RPAR SEMICOLON [ EVENT EOF CONTRACT ]
+## Transitions:
 -- On UINT8 shift to state 4
 -- On UINT256 shift to state 5
 -- On IDENT shift to state 6
@@ -28,54 +47,94 @@ contract -> EVENT IDENT LPAR . loption(separated_nonempty_list(COMMA,event_arg))
 -- On loption(separated_nonempty_list(COMMA,event_arg)) shift to state 17
 -- On event_arg shift to state 20
 -- On arg shift to state 23
+## Reductions:
 -- On RPAR reduce production loption(separated_nonempty_list(COMMA,event_arg)) ->
 
 State 4:
+## Known stack suffix:
+## UINT8
+## LR(1) items:
 typ -> UINT8 . [ RARROW INDEXED IDENT ]
+## Transitions:
+## Reductions:
 -- On RARROW reduce production typ -> UINT8
 -- On INDEXED reduce production typ -> UINT8
 -- On IDENT reduce production typ -> UINT8
 
 State 5:
+## Known stack suffix:
+## UINT256
+## LR(1) items:
 typ -> UINT256 . [ RARROW INDEXED IDENT ]
+## Transitions:
+## Reductions:
 -- On RARROW reduce production typ -> UINT256
 -- On INDEXED reduce production typ -> UINT256
 -- On IDENT reduce production typ -> UINT256
 
 State 6:
+## Known stack suffix:
+## IDENT
+## LR(1) items:
 typ -> IDENT . [ RARROW INDEXED IDENT ]
+## Transitions:
+## Reductions:
 -- On RARROW reduce production typ -> IDENT
 -- On INDEXED reduce production typ -> IDENT
 -- On IDENT reduce production typ -> IDENT
 
 State 7:
+## Known stack suffix:
+## BYTES32
+## LR(1) items:
 typ -> BYTES32 . [ RARROW INDEXED IDENT ]
+## Transitions:
+## Reductions:
 -- On RARROW reduce production typ -> BYTES32
 -- On INDEXED reduce production typ -> BYTES32
 -- On IDENT reduce production typ -> BYTES32
 
 State 8:
+## Known stack suffix:
+## BOOL
+## LR(1) items:
 typ -> BOOL . [ RARROW INDEXED IDENT ]
+## Transitions:
+## Reductions:
 -- On RARROW reduce production typ -> BOOL
 -- On INDEXED reduce production typ -> BOOL
 -- On IDENT reduce production typ -> BOOL
 
 State 9:
+## Known stack suffix:
+## ADDRESS
+## LR(1) items:
 typ -> ADDRESS . [ RARROW INDEXED IDENT ]
+## Transitions:
+## Reductions:
 -- On RARROW reduce production typ -> ADDRESS
 -- On INDEXED reduce production typ -> ADDRESS
 -- On IDENT reduce production typ -> ADDRESS
 
 State 10:
+## Known stack suffix:
+## typ
+## LR(1) items:
 arg -> typ . IDENT [ RPAR COMMA ]
 event_arg -> typ . INDEXED IDENT [ RPAR COMMA ]
 typ -> typ . RARROW typ [ RARROW INDEXED IDENT ]
+## Transitions:
 -- On RARROW shift to state 11
 -- On INDEXED shift to state 13
 -- On IDENT shift to state 15
+## Reductions:
 
 State 11:
+## Known stack suffix:
+## typ RARROW
+## LR(1) items:
 typ -> typ RARROW . typ [ RARROW INDEXED IDENT ]
+## Transitions:
 -- On UINT8 shift to state 4
 -- On UINT256 shift to state 5
 -- On IDENT shift to state 6
@@ -83,54 +142,104 @@ typ -> typ RARROW . typ [ RARROW INDEXED IDENT ]
 -- On BOOL shift to state 8
 -- On ADDRESS shift to state 9
 -- On typ shift to state 12
+## Reductions:
 
 State 12:
+## Known stack suffix:
+## typ RARROW typ
+## LR(1) items:
 typ -> typ . RARROW typ [ RARROW INDEXED IDENT ]
 typ -> typ RARROW typ . [ RARROW INDEXED IDENT ]
+## Transitions:
 -- On RARROW shift to state 11
+## Reductions:
 -- On INDEXED reduce production typ -> typ RARROW typ
 -- On IDENT reduce production typ -> typ RARROW typ
 
 State 13:
+## Known stack suffix:
+## typ INDEXED
+## LR(1) items:
 event_arg -> typ INDEXED . IDENT [ RPAR COMMA ]
+## Transitions:
 -- On IDENT shift to state 14
+## Reductions:
 
 State 14:
+## Known stack suffix:
+## typ INDEXED IDENT
+## LR(1) items:
 event_arg -> typ INDEXED IDENT . [ RPAR COMMA ]
+## Transitions:
+## Reductions:
 -- On RPAR reduce production event_arg -> typ INDEXED IDENT
 -- On COMMA reduce production event_arg -> typ INDEXED IDENT
 
 State 15:
+## Known stack suffix:
+## typ IDENT
+## LR(1) items:
 arg -> typ IDENT . [ RPAR COMMA ]
+## Transitions:
+## Reductions:
 -- On RPAR reduce production arg -> typ IDENT
 -- On COMMA reduce production arg -> typ IDENT
 
 State 16:
+## Known stack suffix:
+## separated_nonempty_list(COMMA,event_arg)
+## LR(1) items:
 loption(separated_nonempty_list(COMMA,event_arg)) -> separated_nonempty_list(COMMA,event_arg) . [ RPAR ]
+## Transitions:
+## Reductions:
 -- On RPAR reduce production loption(separated_nonempty_list(COMMA,event_arg)) -> separated_nonempty_list(COMMA,event_arg)
 
 State 17:
+## Known stack suffix:
+## EVENT IDENT LPAR loption(separated_nonempty_list(COMMA,event_arg))
+## LR(1) items:
 contract -> EVENT IDENT LPAR loption(separated_nonempty_list(COMMA,event_arg)) . RPAR SEMICOLON [ EVENT EOF CONTRACT ]
+## Transitions:
 -- On RPAR shift to state 18
+## Reductions:
 
 State 18:
+## Known stack suffix:
+## EVENT IDENT LPAR loption(separated_nonempty_list(COMMA,event_arg)) RPAR
+## LR(1) items:
 contract -> EVENT IDENT LPAR loption(separated_nonempty_list(COMMA,event_arg)) RPAR . SEMICOLON [ EVENT EOF CONTRACT ]
+## Transitions:
 -- On SEMICOLON shift to state 19
+## Reductions:
 
 State 19:
+## Known stack suffix:
+## EVENT IDENT LPAR loption(separated_nonempty_list(COMMA,event_arg)) RPAR SEMICOLON
+## LR(1) items:
 contract -> EVENT IDENT LPAR loption(separated_nonempty_list(COMMA,event_arg)) RPAR SEMICOLON . [ EVENT EOF CONTRACT ]
+## Transitions:
+## Reductions:
 -- On EVENT reduce production contract -> EVENT IDENT LPAR loption(separated_nonempty_list(COMMA,event_arg)) RPAR SEMICOLON
 -- On EOF reduce production contract -> EVENT IDENT LPAR loption(separated_nonempty_list(COMMA,event_arg)) RPAR SEMICOLON
 -- On CONTRACT reduce production contract -> EVENT IDENT LPAR loption(separated_nonempty_list(COMMA,event_arg)) RPAR SEMICOLON
 
 State 20:
+## Known stack suffix:
+## event_arg
+## LR(1) items:
 separated_nonempty_list(COMMA,event_arg) -> event_arg . [ RPAR ]
 separated_nonempty_list(COMMA,event_arg) -> event_arg . COMMA separated_nonempty_list(COMMA,event_arg) [ RPAR ]
+## Transitions:
 -- On COMMA shift to state 21
+## Reductions:
 -- On RPAR reduce production separated_nonempty_list(COMMA,event_arg) -> event_arg
 
 State 21:
+## Known stack suffix:
+## event_arg COMMA
+## LR(1) items:
 separated_nonempty_list(COMMA,event_arg) -> event_arg COMMA . separated_nonempty_list(COMMA,event_arg) [ RPAR ]
+## Transitions:
 -- On UINT8 shift to state 4
 -- On UINT256 shift to state 5
 -- On IDENT shift to state 6
@@ -141,26 +250,51 @@ separated_nonempty_list(COMMA,event_arg) -> event_arg COMMA . separated_nonempty
 -- On separated_nonempty_list(COMMA,event_arg) shift to state 22
 -- On event_arg shift to state 20
 -- On arg shift to state 23
+## Reductions:
 
 State 22:
+## Known stack suffix:
+## event_arg COMMA separated_nonempty_list(COMMA,event_arg)
+## LR(1) items:
 separated_nonempty_list(COMMA,event_arg) -> event_arg COMMA separated_nonempty_list(COMMA,event_arg) . [ RPAR ]
+## Transitions:
+## Reductions:
 -- On RPAR reduce production separated_nonempty_list(COMMA,event_arg) -> event_arg COMMA separated_nonempty_list(COMMA,event_arg)
 
 State 23:
+## Known stack suffix:
+## arg
+## LR(1) items:
 event_arg -> arg . [ RPAR COMMA ]
+## Transitions:
+## Reductions:
 -- On RPAR reduce production event_arg -> arg
 -- On COMMA reduce production event_arg -> arg
 
 State 24:
+## Known stack suffix:
+## CONTRACT
+## LR(1) items:
 contract -> CONTRACT . IDENT LPAR loption(separated_nonempty_list(COMMA,arg)) RPAR LBRACE list(case) RBRACE [ EVENT EOF CONTRACT ]
+## Transitions:
 -- On IDENT shift to state 25
+## Reductions:
 
 State 25:
+## Known stack suffix:
+## CONTRACT IDENT
+## LR(1) items:
 contract -> CONTRACT IDENT . LPAR loption(separated_nonempty_list(COMMA,arg)) RPAR LBRACE list(case) RBRACE [ EVENT EOF CONTRACT ]
+## Transitions:
 -- On LPAR shift to state 26
+## Reductions:
 
 State 26:
+## Known stack suffix:
+## CONTRACT IDENT LPAR
+## LR(1) items:
 contract -> CONTRACT IDENT LPAR . loption(separated_nonempty_list(COMMA,arg)) RPAR LBRACE list(case) RBRACE [ EVENT EOF CONTRACT ]
+## Transitions:
 -- On UINT8 shift to state 4
 -- On UINT256 shift to state 5
 -- On IDENT shift to state 6
@@ -171,47 +305,87 @@ contract -> CONTRACT IDENT LPAR . loption(separated_nonempty_list(COMMA,arg)) RP
 -- On separated_nonempty_list(COMMA,arg) shift to state 28
 -- On loption(separated_nonempty_list(COMMA,arg)) shift to state 29
 -- On arg shift to state 41
+## Reductions:
 -- On RPAR reduce production loption(separated_nonempty_list(COMMA,arg)) ->
 
 State 27:
+## Known stack suffix:
+## typ
+## LR(1) items:
 arg -> typ . IDENT [ RPAR COMMA ]
 typ -> typ . RARROW typ [ RARROW IDENT ]
+## Transitions:
 -- On RARROW shift to state 11
 -- On IDENT shift to state 15
+## Reductions:
 
 State 28:
+## Known stack suffix:
+## separated_nonempty_list(COMMA,arg)
+## LR(1) items:
 loption(separated_nonempty_list(COMMA,arg)) -> separated_nonempty_list(COMMA,arg) . [ RPAR ]
+## Transitions:
+## Reductions:
 -- On RPAR reduce production loption(separated_nonempty_list(COMMA,arg)) -> separated_nonempty_list(COMMA,arg)
 
 State 29:
+## Known stack suffix:
+## CONTRACT IDENT LPAR loption(separated_nonempty_list(COMMA,arg))
+## LR(1) items:
 contract -> CONTRACT IDENT LPAR loption(separated_nonempty_list(COMMA,arg)) . RPAR LBRACE list(case) RBRACE [ EVENT EOF CONTRACT ]
+## Transitions:
 -- On RPAR shift to state 30
+## Reductions:
 
 State 30:
+## Known stack suffix:
+## CONTRACT IDENT LPAR loption(separated_nonempty_list(COMMA,arg)) RPAR
+## LR(1) items:
 contract -> CONTRACT IDENT LPAR loption(separated_nonempty_list(COMMA,arg)) RPAR . LBRACE list(case) RBRACE [ EVENT EOF CONTRACT ]
+## Transitions:
 -- On LBRACE shift to state 31
+## Reductions:
 
 State 31:
+## Known stack suffix:
+## CONTRACT IDENT LPAR loption(separated_nonempty_list(COMMA,arg)) RPAR LBRACE
+## LR(1) items:
 contract -> CONTRACT IDENT LPAR loption(separated_nonempty_list(COMMA,arg)) RPAR LBRACE . list(case) RBRACE [ EVENT EOF CONTRACT ]
+## Transitions:
 -- On DEFAULT shift to state 32
 -- On CASE shift to state 33
 -- On list(case) shift to state 50
 -- On case_header shift to state 52
 -- On case shift to state 185
+## Reductions:
 -- On RBRACE reduce production list(case) ->
 
 State 32:
+## Known stack suffix:
+## DEFAULT
+## LR(1) items:
 case_header -> DEFAULT . [ LBRACE ]
+## Transitions:
+## Reductions:
 -- On LBRACE reduce production case_header -> DEFAULT
 
 State 33:
+## Known stack suffix:
+## CASE
+## LR(1) items:
 case_header -> CASE . LPAR typ IDENT LPAR loption(separated_nonempty_list(COMMA,arg)) RPAR RPAR [ LBRACE ]
 case_header -> CASE . LPAR VOID IDENT LPAR loption(separated_nonempty_list(COMMA,arg)) RPAR RPAR [ LBRACE ]
+## Transitions:
 -- On LPAR shift to state 34
+## Reductions:
 
 State 34:
+## Known stack suffix:
+## CASE LPAR
+## LR(1) items:
 case_header -> CASE LPAR . typ IDENT LPAR loption(separated_nonempty_list(COMMA,arg)) RPAR RPAR [ LBRACE ]
 case_header -> CASE LPAR . VOID IDENT LPAR loption(separated_nonempty_list(COMMA,arg)) RPAR RPAR [ LBRACE ]
+## Transitions:
 -- On VOID shift to state 35
 -- On UINT8 shift to state 4
 -- On UINT256 shift to state 5
@@ -220,17 +394,32 @@ case_header -> CASE LPAR . VOID IDENT LPAR loption(separated_nonempty_list(COMMA
 -- On BOOL shift to state 8
 -- On ADDRESS shift to state 9
 -- On typ shift to state 44
+## Reductions:
 
 State 35:
+## Known stack suffix:
+## CASE LPAR VOID
+## LR(1) items:
 case_header -> CASE LPAR VOID . IDENT LPAR loption(separated_nonempty_list(COMMA,arg)) RPAR RPAR [ LBRACE ]
+## Transitions:
 -- On IDENT shift to state 36
+## Reductions:
 
 State 36:
+## Known stack suffix:
+## CASE LPAR VOID IDENT
+## LR(1) items:
 case_header -> CASE LPAR VOID IDENT . LPAR loption(separated_nonempty_list(COMMA,arg)) RPAR RPAR [ LBRACE ]
+## Transitions:
 -- On LPAR shift to state 37
+## Reductions:
 
 State 37:
+## Known stack suffix:
+## CASE LPAR VOID IDENT LPAR
+## LR(1) items:
 case_header -> CASE LPAR VOID IDENT LPAR . loption(separated_nonempty_list(COMMA,arg)) RPAR RPAR [ LBRACE ]
+## Transitions:
 -- On UINT8 shift to state 4
 -- On UINT256 shift to state 5
 -- On IDENT shift to state 6
@@ -241,28 +430,53 @@ case_header -> CASE LPAR VOID IDENT LPAR . loption(separated_nonempty_list(COMMA
 -- On separated_nonempty_list(COMMA,arg) shift to state 28
 -- On loption(separated_nonempty_list(COMMA,arg)) shift to state 38
 -- On arg shift to state 41
+## Reductions:
 -- On RPAR reduce production loption(separated_nonempty_list(COMMA,arg)) ->
 
 State 38:
+## Known stack suffix:
+## CASE LPAR VOID IDENT LPAR loption(separated_nonempty_list(COMMA,arg))
+## LR(1) items:
 case_header -> CASE LPAR VOID IDENT LPAR loption(separated_nonempty_list(COMMA,arg)) . RPAR RPAR [ LBRACE ]
+## Transitions:
 -- On RPAR shift to state 39
+## Reductions:
 
 State 39:
+## Known stack suffix:
+## CASE LPAR VOID IDENT LPAR loption(separated_nonempty_list(COMMA,arg)) RPAR
+## LR(1) items:
 case_header -> CASE LPAR VOID IDENT LPAR loption(separated_nonempty_list(COMMA,arg)) RPAR . RPAR [ LBRACE ]
+## Transitions:
 -- On RPAR shift to state 40
+## Reductions:
 
 State 40:
+## Known stack suffix:
+## CASE LPAR VOID IDENT LPAR loption(separated_nonempty_list(COMMA,arg)) RPAR RPAR
+## LR(1) items:
 case_header -> CASE LPAR VOID IDENT LPAR loption(separated_nonempty_list(COMMA,arg)) RPAR RPAR . [ LBRACE ]
+## Transitions:
+## Reductions:
 -- On LBRACE reduce production case_header -> CASE LPAR VOID IDENT LPAR loption(separated_nonempty_list(COMMA,arg)) RPAR RPAR
 
 State 41:
+## Known stack suffix:
+## arg
+## LR(1) items:
 separated_nonempty_list(COMMA,arg) -> arg . [ RPAR ]
 separated_nonempty_list(COMMA,arg) -> arg . COMMA separated_nonempty_list(COMMA,arg) [ RPAR ]
+## Transitions:
 -- On COMMA shift to state 42
+## Reductions:
 -- On RPAR reduce production separated_nonempty_list(COMMA,arg) -> arg
 
 State 42:
+## Known stack suffix:
+## arg COMMA
+## LR(1) items:
 separated_nonempty_list(COMMA,arg) -> arg COMMA . separated_nonempty_list(COMMA,arg) [ RPAR ]
+## Transitions:
 -- On UINT8 shift to state 4
 -- On UINT256 shift to state 5
 -- On IDENT shift to state 6
@@ -272,23 +486,43 @@ separated_nonempty_list(COMMA,arg) -> arg COMMA . separated_nonempty_list(COMMA,
 -- On typ shift to state 27
 -- On separated_nonempty_list(COMMA,arg) shift to state 43
 -- On arg shift to state 41
+## Reductions:
 
 State 43:
+## Known stack suffix:
+## arg COMMA separated_nonempty_list(COMMA,arg)
+## LR(1) items:
 separated_nonempty_list(COMMA,arg) -> arg COMMA separated_nonempty_list(COMMA,arg) . [ RPAR ]
+## Transitions:
+## Reductions:
 -- On RPAR reduce production separated_nonempty_list(COMMA,arg) -> arg COMMA separated_nonempty_list(COMMA,arg)
 
 State 44:
+## Known stack suffix:
+## CASE LPAR typ
+## LR(1) items:
 case_header -> CASE LPAR typ . IDENT LPAR loption(separated_nonempty_list(COMMA,arg)) RPAR RPAR [ LBRACE ]
 typ -> typ . RARROW typ [ RARROW IDENT ]
+## Transitions:
 -- On RARROW shift to state 11
 -- On IDENT shift to state 45
+## Reductions:
 
 State 45:
+## Known stack suffix:
+## CASE LPAR typ IDENT
+## LR(1) items:
 case_header -> CASE LPAR typ IDENT . LPAR loption(separated_nonempty_list(COMMA,arg)) RPAR RPAR [ LBRACE ]
+## Transitions:
 -- On LPAR shift to state 46
+## Reductions:
 
 State 46:
+## Known stack suffix:
+## CASE LPAR typ IDENT LPAR
+## LR(1) items:
 case_header -> CASE LPAR typ IDENT LPAR . loption(separated_nonempty_list(COMMA,arg)) RPAR RPAR [ LBRACE ]
+## Transitions:
 -- On UINT8 shift to state 4
 -- On UINT256 shift to state 5
 -- On IDENT shift to state 6
@@ -299,37 +533,72 @@ case_header -> CASE LPAR typ IDENT LPAR . loption(separated_nonempty_list(COMMA,
 -- On separated_nonempty_list(COMMA,arg) shift to state 28
 -- On loption(separated_nonempty_list(COMMA,arg)) shift to state 47
 -- On arg shift to state 41
+## Reductions:
 -- On RPAR reduce production loption(separated_nonempty_list(COMMA,arg)) ->
 
 State 47:
+## Known stack suffix:
+## CASE LPAR typ IDENT LPAR loption(separated_nonempty_list(COMMA,arg))
+## LR(1) items:
 case_header -> CASE LPAR typ IDENT LPAR loption(separated_nonempty_list(COMMA,arg)) . RPAR RPAR [ LBRACE ]
+## Transitions:
 -- On RPAR shift to state 48
+## Reductions:
 
 State 48:
+## Known stack suffix:
+## CASE LPAR typ IDENT LPAR loption(separated_nonempty_list(COMMA,arg)) RPAR
+## LR(1) items:
 case_header -> CASE LPAR typ IDENT LPAR loption(separated_nonempty_list(COMMA,arg)) RPAR . RPAR [ LBRACE ]
+## Transitions:
 -- On RPAR shift to state 49
+## Reductions:
 
 State 49:
+## Known stack suffix:
+## CASE LPAR typ IDENT LPAR loption(separated_nonempty_list(COMMA,arg)) RPAR RPAR
+## LR(1) items:
 case_header -> CASE LPAR typ IDENT LPAR loption(separated_nonempty_list(COMMA,arg)) RPAR RPAR . [ LBRACE ]
+## Transitions:
+## Reductions:
 -- On LBRACE reduce production case_header -> CASE LPAR typ IDENT LPAR loption(separated_nonempty_list(COMMA,arg)) RPAR RPAR
 
 State 50:
+## Known stack suffix:
+## CONTRACT IDENT LPAR loption(separated_nonempty_list(COMMA,arg)) RPAR LBRACE list(case)
+## LR(1) items:
 contract -> CONTRACT IDENT LPAR loption(separated_nonempty_list(COMMA,arg)) RPAR LBRACE list(case) . RBRACE [ EVENT EOF CONTRACT ]
+## Transitions:
 -- On RBRACE shift to state 51
+## Reductions:
 
 State 51:
+## Known stack suffix:
+## CONTRACT IDENT LPAR loption(separated_nonempty_list(COMMA,arg)) RPAR LBRACE list(case) RBRACE
+## LR(1) items:
 contract -> CONTRACT IDENT LPAR loption(separated_nonempty_list(COMMA,arg)) RPAR LBRACE list(case) RBRACE . [ EVENT EOF CONTRACT ]
+## Transitions:
+## Reductions:
 -- On EVENT reduce production contract -> CONTRACT IDENT LPAR loption(separated_nonempty_list(COMMA,arg)) RPAR LBRACE list(case) RBRACE
 -- On EOF reduce production contract -> CONTRACT IDENT LPAR loption(separated_nonempty_list(COMMA,arg)) RPAR LBRACE list(case) RBRACE
 -- On CONTRACT reduce production contract -> CONTRACT IDENT LPAR loption(separated_nonempty_list(COMMA,arg)) RPAR LBRACE list(case) RBRACE
 
 State 52:
+## Known stack suffix:
+## case_header
+## LR(1) items:
 case -> case_header . block [ RBRACE DEFAULT CASE ]
+## Transitions:
 -- On LBRACE shift to state 53
 -- On block shift to state 184
+## Reductions:
 
 State 53:
+## Known stack suffix:
+## LBRACE
+## LR(1) items:
 block -> LBRACE . list(sentence) RBRACE [ VOID VALUE UINT8 UINT256 TRUE THIS THEN SENDER SEMICOLON SELFDESTRUCT RSQBR RPAR RETURN REENTRANCE RBRACE PLUS NOW NOT NEQ MULT MINUS LT LSQBR LPAR LOG LAND IF IDENT GT FALSE EQUALITY ELSE DOT DEPLOY DEFAULT DECLIT8 DECLIT256 COMMA CASE BYTES32 BOOL BALANCE ADDRESS ABORT ]
+## Transitions:
 -- On VOID shift to state 54
 -- On VALUE shift to state 56
 -- On UINT8 shift to state 4
@@ -359,14 +628,24 @@ block -> LBRACE . list(sentence) RBRACE [ VOID VALUE UINT8 UINT256 TRUE THIS THE
 -- On list(sentence) shift to state 182
 -- On lexp shift to state 170
 -- On exp shift to state 174
+## Reductions:
 -- On RBRACE reduce production list(sentence) ->
 
 State 54:
+## Known stack suffix:
+## VOID
+## LR(1) items:
 sentence -> VOID . SINGLE_EQ exp SEMICOLON [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
+## Transitions:
 -- On SINGLE_EQ shift to state 55
+## Reductions:
 
 State 55:
+## Known stack suffix:
+## VOID SINGLE_EQ
+## LR(1) items:
 sentence -> VOID SINGLE_EQ . exp SEMICOLON [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
+## Transitions:
 -- On VALUE shift to state 56
 -- On TRUE shift to state 60
 -- On THIS shift to state 61
@@ -383,21 +662,42 @@ sentence -> VOID SINGLE_EQ . exp SEMICOLON [ VOID VALUE UINT8 UINT256 TRUE THIS 
 -- On ADDRESS shift to state 82
 -- On lexp shift to state 84
 -- On exp shift to state 136
+## Reductions:
 
 State 56:
+## Known stack suffix:
+## VALUE
+## LR(1) items:
 exp -> VALUE . LPAR MSG RPAR [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
 -- On LPAR shift to state 57
+## Reductions:
 
 State 57:
+## Known stack suffix:
+## VALUE LPAR
+## LR(1) items:
 exp -> VALUE LPAR . MSG RPAR [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
 -- On MSG shift to state 58
+## Reductions:
 
 State 58:
+## Known stack suffix:
+## VALUE LPAR MSG
+## LR(1) items:
 exp -> VALUE LPAR MSG . RPAR [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
 -- On RPAR shift to state 59
+## Reductions:
 
 State 59:
+## Known stack suffix:
+## VALUE LPAR MSG RPAR
+## LR(1) items:
 exp -> VALUE LPAR MSG RPAR . [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
+## Reductions:
 -- On THEN reduce production exp -> VALUE LPAR MSG RPAR
 -- On SEMICOLON reduce production exp -> VALUE LPAR MSG RPAR
 -- On RSQBR reduce production exp -> VALUE LPAR MSG RPAR
@@ -416,7 +716,12 @@ exp -> VALUE LPAR MSG RPAR . [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MUL
 -- On COMMA reduce production exp -> VALUE LPAR MSG RPAR
 
 State 60:
+## Known stack suffix:
+## TRUE
+## LR(1) items:
 exp -> TRUE . [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
+## Reductions:
 -- On THEN reduce production exp -> TRUE
 -- On SEMICOLON reduce production exp -> TRUE
 -- On RSQBR reduce production exp -> TRUE
@@ -435,7 +740,12 @@ exp -> TRUE . [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQB
 -- On COMMA reduce production exp -> TRUE
 
 State 61:
+## Known stack suffix:
+## THIS
+## LR(1) items:
 exp -> THIS . [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
+## Reductions:
 -- On THEN reduce production exp -> THIS
 -- On SEMICOLON reduce production exp -> THIS
 -- On RSQBR reduce production exp -> THIS
@@ -454,19 +764,39 @@ exp -> THIS . [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQB
 -- On COMMA reduce production exp -> THIS
 
 State 62:
+## Known stack suffix:
+## SENDER
+## LR(1) items:
 exp -> SENDER . LPAR MSG RPAR [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
 -- On LPAR shift to state 63
+## Reductions:
 
 State 63:
+## Known stack suffix:
+## SENDER LPAR
+## LR(1) items:
 exp -> SENDER LPAR . MSG RPAR [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
 -- On MSG shift to state 64
+## Reductions:
 
 State 64:
+## Known stack suffix:
+## SENDER LPAR MSG
+## LR(1) items:
 exp -> SENDER LPAR MSG . RPAR [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
 -- On RPAR shift to state 65
+## Reductions:
 
 State 65:
+## Known stack suffix:
+## SENDER LPAR MSG RPAR
+## LR(1) items:
 exp -> SENDER LPAR MSG RPAR . [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
+## Reductions:
 -- On THEN reduce production exp -> SENDER LPAR MSG RPAR
 -- On SEMICOLON reduce production exp -> SENDER LPAR MSG RPAR
 -- On RSQBR reduce production exp -> SENDER LPAR MSG RPAR
@@ -485,19 +815,39 @@ exp -> SENDER LPAR MSG RPAR . [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MU
 -- On COMMA reduce production exp -> SENDER LPAR MSG RPAR
 
 State 66:
+## Known stack suffix:
+## NOW
+## LR(1) items:
 exp -> NOW . LPAR BLOCK RPAR [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
 -- On LPAR shift to state 67
+## Reductions:
 
 State 67:
+## Known stack suffix:
+## NOW LPAR
+## LR(1) items:
 exp -> NOW LPAR . BLOCK RPAR [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
 -- On BLOCK shift to state 68
+## Reductions:
 
 State 68:
+## Known stack suffix:
+## NOW LPAR BLOCK
+## LR(1) items:
 exp -> NOW LPAR BLOCK . RPAR [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
 -- On RPAR shift to state 69
+## Reductions:
 
 State 69:
+## Known stack suffix:
+## NOW LPAR BLOCK RPAR
+## LR(1) items:
 exp -> NOW LPAR BLOCK RPAR . [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
+## Reductions:
 -- On THEN reduce production exp -> NOW LPAR BLOCK RPAR
 -- On SEMICOLON reduce production exp -> NOW LPAR BLOCK RPAR
 -- On RSQBR reduce production exp -> NOW LPAR BLOCK RPAR
@@ -516,7 +866,11 @@ exp -> NOW LPAR BLOCK RPAR . [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MUL
 -- On COMMA reduce production exp -> NOW LPAR BLOCK RPAR
 
 State 70:
+## Known stack suffix:
+## NOT
+## LR(1) items:
 exp -> NOT . exp [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
 -- On VALUE shift to state 56
 -- On TRUE shift to state 60
 -- On THIS shift to state 61
@@ -533,9 +887,14 @@ exp -> NOT . exp [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT L
 -- On ADDRESS shift to state 82
 -- On lexp shift to state 84
 -- On exp shift to state 135
+## Reductions:
 
 State 71:
+## Known stack suffix:
+## LPAR
+## LR(1) items:
 exp -> LPAR . exp RPAR [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
 -- On VALUE shift to state 56
 -- On TRUE shift to state 60
 -- On THIS shift to state 61
@@ -552,11 +911,17 @@ exp -> LPAR . exp RPAR [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINU
 -- On ADDRESS shift to state 82
 -- On lexp shift to state 84
 -- On exp shift to state 133
+## Reductions:
 
 State 72:
+## Known stack suffix:
+## IDENT
+## LR(1) items:
 exp -> IDENT . [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
 exp -> IDENT . LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
 -- On LPAR shift to state 73
+## Reductions:
 -- On THEN reduce production exp -> IDENT
 -- On SEMICOLON reduce production exp -> IDENT
 -- On RSQBR reduce production exp -> IDENT
@@ -575,7 +940,11 @@ exp -> IDENT . LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR [ THEN SEMI
 -- On COMMA reduce production exp -> IDENT
 
 State 73:
+## Known stack suffix:
+## IDENT LPAR
+## LR(1) items:
 exp -> IDENT LPAR . loption(separated_nonempty_list(COMMA,exp)) RPAR [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
 -- On VALUE shift to state 56
 -- On TRUE shift to state 60
 -- On THIS shift to state 61
@@ -594,10 +963,16 @@ exp -> IDENT LPAR . loption(separated_nonempty_list(COMMA,exp)) RPAR [ THEN SEMI
 -- On loption(separated_nonempty_list(COMMA,exp)) shift to state 131
 -- On lexp shift to state 84
 -- On exp shift to state 119
+## Reductions:
 -- On RPAR reduce production loption(separated_nonempty_list(COMMA,exp)) ->
 
 State 74:
+## Known stack suffix:
+## FALSE
+## LR(1) items:
 exp -> FALSE . [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
+## Reductions:
 -- On THEN reduce production exp -> FALSE
 -- On SEMICOLON reduce production exp -> FALSE
 -- On RSQBR reduce production exp -> FALSE
@@ -616,15 +991,29 @@ exp -> FALSE . [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQ
 -- On COMMA reduce production exp -> FALSE
 
 State 75:
+## Known stack suffix:
+## DEPLOY
+## LR(1) items:
 exp -> DEPLOY . IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR msg_info [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
 -- On IDENT shift to state 76
+## Reductions:
 
 State 76:
+## Known stack suffix:
+## DEPLOY IDENT
+## LR(1) items:
 exp -> DEPLOY IDENT . LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR msg_info [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
 -- On LPAR shift to state 77
+## Reductions:
 
 State 77:
+## Known stack suffix:
+## DEPLOY IDENT LPAR
+## LR(1) items:
 exp -> DEPLOY IDENT LPAR . loption(separated_nonempty_list(COMMA,exp)) RPAR msg_info [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
 -- On VALUE shift to state 56
 -- On TRUE shift to state 60
 -- On THIS shift to state 61
@@ -643,10 +1032,16 @@ exp -> DEPLOY IDENT LPAR . loption(separated_nonempty_list(COMMA,exp)) RPAR msg_
 -- On loption(separated_nonempty_list(COMMA,exp)) shift to state 128
 -- On lexp shift to state 84
 -- On exp shift to state 119
+## Reductions:
 -- On RPAR reduce production loption(separated_nonempty_list(COMMA,exp)) ->
 
 State 78:
+## Known stack suffix:
+## DECLIT8
+## LR(1) items:
 exp -> DECLIT8 . [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
+## Reductions:
 -- On THEN reduce production exp -> DECLIT8
 -- On SEMICOLON reduce production exp -> DECLIT8
 -- On RSQBR reduce production exp -> DECLIT8
@@ -665,7 +1060,12 @@ exp -> DECLIT8 . [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT L
 -- On COMMA reduce production exp -> DECLIT8
 
 State 79:
+## Known stack suffix:
+## DECLIT256
+## LR(1) items:
 exp -> DECLIT256 . [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
+## Reductions:
 -- On THEN reduce production exp -> DECLIT256
 -- On SEMICOLON reduce production exp -> DECLIT256
 -- On RSQBR reduce production exp -> DECLIT256
@@ -684,11 +1084,20 @@ exp -> DECLIT256 . [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT
 -- On COMMA reduce production exp -> DECLIT256
 
 State 80:
+## Known stack suffix:
+## BALANCE
+## LR(1) items:
 exp -> BALANCE . LPAR exp RPAR [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
 -- On LPAR shift to state 81
+## Reductions:
 
 State 81:
+## Known stack suffix:
+## BALANCE LPAR
+## LR(1) items:
 exp -> BALANCE LPAR . exp RPAR [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
 -- On VALUE shift to state 56
 -- On TRUE shift to state 60
 -- On THIS shift to state 61
@@ -705,13 +1114,23 @@ exp -> BALANCE LPAR . exp RPAR [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ M
 -- On ADDRESS shift to state 82
 -- On lexp shift to state 84
 -- On exp shift to state 126
+## Reductions:
 
 State 82:
+## Known stack suffix:
+## ADDRESS
+## LR(1) items:
 exp -> ADDRESS . LPAR exp RPAR [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
 -- On LPAR shift to state 83
+## Reductions:
 
 State 83:
+## Known stack suffix:
+## ADDRESS LPAR
+## LR(1) items:
 exp -> ADDRESS LPAR . exp RPAR [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
 -- On VALUE shift to state 56
 -- On TRUE shift to state 60
 -- On THIS shift to state 61
@@ -728,9 +1147,15 @@ exp -> ADDRESS LPAR . exp RPAR [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ M
 -- On ADDRESS shift to state 82
 -- On lexp shift to state 84
 -- On exp shift to state 85
+## Reductions:
 
 State 84:
+## Known stack suffix:
+## lexp
+## LR(1) items:
 exp -> lexp . [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
+## Reductions:
 -- On THEN reduce production exp -> lexp
 -- On SEMICOLON reduce production exp -> lexp
 -- On RSQBR reduce production exp -> lexp
@@ -749,6 +1174,9 @@ exp -> lexp . [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQB
 -- On COMMA reduce production exp -> lexp
 
 State 85:
+## Known stack suffix:
+## ADDRESS LPAR exp
+## LR(1) items:
 exp -> exp . LAND exp [ RPAR PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 exp -> exp . PLUS exp [ RPAR PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 exp -> exp . MINUS exp [ RPAR PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
@@ -761,6 +1189,7 @@ exp -> exp . DOT DEFAULT LPAR RPAR msg_info [ RPAR PLUS NEQ MULT MINUS LT LSQBR 
 exp -> exp . DOT IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR msg_info [ RPAR PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 exp -> ADDRESS LPAR exp . RPAR [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
 lexp -> exp . LSQBR exp RSQBR [ RPAR PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
+## Transitions:
 -- On RPAR shift to state 86
 -- On PLUS shift to state 87
 -- On NEQ shift to state 94
@@ -772,9 +1201,15 @@ lexp -> exp . LSQBR exp RSQBR [ RPAR PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALI
 -- On GT shift to state 110
 -- On EQUALITY shift to state 112
 -- On DOT shift to state 98
+## Reductions:
 
 State 86:
+## Known stack suffix:
+## ADDRESS LPAR exp RPAR
+## LR(1) items:
 exp -> ADDRESS LPAR exp RPAR . [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
+## Reductions:
 -- On THEN reduce production exp -> ADDRESS LPAR exp RPAR
 -- On SEMICOLON reduce production exp -> ADDRESS LPAR exp RPAR
 -- On RSQBR reduce production exp -> ADDRESS LPAR exp RPAR
@@ -793,7 +1228,11 @@ exp -> ADDRESS LPAR exp RPAR . [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ M
 -- On COMMA reduce production exp -> ADDRESS LPAR exp RPAR
 
 State 87:
+## Known stack suffix:
+## exp PLUS
+## LR(1) items:
 exp -> exp PLUS . exp [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
 -- On VALUE shift to state 56
 -- On TRUE shift to state 60
 -- On THIS shift to state 61
@@ -810,8 +1249,12 @@ exp -> exp PLUS . exp [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS
 -- On ADDRESS shift to state 82
 -- On lexp shift to state 84
 -- On exp shift to state 88
+## Reductions:
 
 State 88:
+## Known stack suffix:
+## exp PLUS exp
+## LR(1) items:
 exp -> exp . LAND exp [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
 exp -> exp . PLUS exp [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
 exp -> exp PLUS exp . [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
@@ -824,9 +1267,11 @@ exp -> exp . EQUALITY exp [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT M
 exp -> exp . DOT DEFAULT LPAR RPAR msg_info [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
 exp -> exp . DOT IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR msg_info [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
 lexp -> exp . LSQBR exp RSQBR [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
 -- On MULT shift to state 89
 -- On LSQBR shift to state 91
 -- On DOT shift to state 98
+## Reductions:
 -- On THEN reduce production exp -> exp PLUS exp
 -- On SEMICOLON reduce production exp -> exp PLUS exp
 -- On RSQBR reduce production exp -> exp PLUS exp
@@ -842,7 +1287,11 @@ lexp -> exp . LSQBR exp RSQBR [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MU
 -- On COMMA reduce production exp -> exp PLUS exp
 
 State 89:
+## Known stack suffix:
+## exp MULT
+## LR(1) items:
 exp -> exp MULT . exp [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
 -- On VALUE shift to state 56
 -- On TRUE shift to state 60
 -- On THIS shift to state 61
@@ -859,8 +1308,12 @@ exp -> exp MULT . exp [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS
 -- On ADDRESS shift to state 82
 -- On lexp shift to state 84
 -- On exp shift to state 90
+## Reductions:
 
 State 90:
+## Known stack suffix:
+## exp MULT exp
+## LR(1) items:
 exp -> exp . LAND exp [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
 exp -> exp . PLUS exp [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
 exp -> exp . MINUS exp [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
@@ -873,8 +1326,10 @@ exp -> exp . EQUALITY exp [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT M
 exp -> exp . DOT DEFAULT LPAR RPAR msg_info [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
 exp -> exp . DOT IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR msg_info [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
 lexp -> exp . LSQBR exp RSQBR [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
 -- On LSQBR shift to state 91
 -- On DOT shift to state 98
+## Reductions:
 -- On THEN reduce production exp -> exp MULT exp
 -- On SEMICOLON reduce production exp -> exp MULT exp
 -- On RSQBR reduce production exp -> exp MULT exp
@@ -891,7 +1346,11 @@ lexp -> exp . LSQBR exp RSQBR [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MU
 -- On COMMA reduce production exp -> exp MULT exp
 
 State 91:
+## Known stack suffix:
+## exp LSQBR
+## LR(1) items:
 lexp -> exp LSQBR . exp RSQBR [ THEN SINGLE_EQ SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
 -- On VALUE shift to state 56
 -- On TRUE shift to state 60
 -- On THIS shift to state 61
@@ -908,8 +1367,12 @@ lexp -> exp LSQBR . exp RSQBR [ THEN SINGLE_EQ SEMICOLON RSQBR RPAR REENTRANCE P
 -- On ADDRESS shift to state 82
 -- On lexp shift to state 84
 -- On exp shift to state 92
+## Reductions:
 
 State 92:
+## Known stack suffix:
+## exp LSQBR exp
+## LR(1) items:
 exp -> exp . LAND exp [ RSQBR PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 exp -> exp . PLUS exp [ RSQBR PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 exp -> exp . MINUS exp [ RSQBR PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
@@ -922,6 +1385,7 @@ exp -> exp . DOT DEFAULT LPAR RPAR msg_info [ RSQBR PLUS NEQ MULT MINUS LT LSQBR
 exp -> exp . DOT IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR msg_info [ RSQBR PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 lexp -> exp . LSQBR exp RSQBR [ RSQBR PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 lexp -> exp LSQBR exp . RSQBR [ THEN SINGLE_EQ SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
 -- On RSQBR shift to state 93
 -- On PLUS shift to state 87
 -- On NEQ shift to state 94
@@ -933,9 +1397,15 @@ lexp -> exp LSQBR exp . RSQBR [ THEN SINGLE_EQ SEMICOLON RSQBR RPAR REENTRANCE P
 -- On GT shift to state 110
 -- On EQUALITY shift to state 112
 -- On DOT shift to state 98
+## Reductions:
 
 State 93:
+## Known stack suffix:
+## exp LSQBR exp RSQBR
+## LR(1) items:
 lexp -> exp LSQBR exp RSQBR . [ THEN SINGLE_EQ SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
+## Reductions:
 -- On THEN reduce production lexp -> exp LSQBR exp RSQBR
 -- On SINGLE_EQ reduce production lexp -> exp LSQBR exp RSQBR
 -- On SEMICOLON reduce production lexp -> exp LSQBR exp RSQBR
@@ -955,7 +1425,11 @@ lexp -> exp LSQBR exp RSQBR . [ THEN SINGLE_EQ SEMICOLON RSQBR RPAR REENTRANCE P
 -- On COMMA reduce production lexp -> exp LSQBR exp RSQBR
 
 State 94:
+## Known stack suffix:
+## exp NEQ
+## LR(1) items:
 exp -> exp NEQ . exp [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
 -- On VALUE shift to state 56
 -- On TRUE shift to state 60
 -- On THIS shift to state 61
@@ -972,8 +1446,12 @@ exp -> exp NEQ . exp [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS 
 -- On ADDRESS shift to state 82
 -- On lexp shift to state 84
 -- On exp shift to state 95
+## Reductions:
 
 State 95:
+## Known stack suffix:
+## exp NEQ exp
+## LR(1) items:
 exp -> exp . LAND exp [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
 exp -> exp . PLUS exp [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
 exp -> exp . MINUS exp [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
@@ -986,11 +1464,13 @@ exp -> exp . EQUALITY exp [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT M
 exp -> exp . DOT DEFAULT LPAR RPAR msg_info [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
 exp -> exp . DOT IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR msg_info [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
 lexp -> exp . LSQBR exp RSQBR [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
 -- On PLUS shift to state 87
 -- On MULT shift to state 89
 -- On MINUS shift to state 96
 -- On LSQBR shift to state 91
 -- On DOT shift to state 98
+## Reductions:
 -- On THEN reduce production exp -> exp NEQ exp
 -- On SEMICOLON reduce production exp -> exp NEQ exp
 -- On RSQBR reduce production exp -> exp NEQ exp
@@ -1004,7 +1484,11 @@ lexp -> exp . LSQBR exp RSQBR [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MU
 -- On COMMA reduce production exp -> exp NEQ exp
 
 State 96:
+## Known stack suffix:
+## exp MINUS
+## LR(1) items:
 exp -> exp MINUS . exp [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
 -- On VALUE shift to state 56
 -- On TRUE shift to state 60
 -- On THIS shift to state 61
@@ -1021,8 +1505,12 @@ exp -> exp MINUS . exp [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINU
 -- On ADDRESS shift to state 82
 -- On lexp shift to state 84
 -- On exp shift to state 97
+## Reductions:
 
 State 97:
+## Known stack suffix:
+## exp MINUS exp
+## LR(1) items:
 exp -> exp . LAND exp [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
 exp -> exp . PLUS exp [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
 exp -> exp . MINUS exp [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
@@ -1035,9 +1523,11 @@ exp -> exp . EQUALITY exp [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT M
 exp -> exp . DOT DEFAULT LPAR RPAR msg_info [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
 exp -> exp . DOT IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR msg_info [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
 lexp -> exp . LSQBR exp RSQBR [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
 -- On MULT shift to state 89
 -- On LSQBR shift to state 91
 -- On DOT shift to state 98
+## Reductions:
 -- On THEN reduce production exp -> exp MINUS exp
 -- On SEMICOLON reduce production exp -> exp MINUS exp
 -- On RSQBR reduce production exp -> exp MINUS exp
@@ -1053,17 +1543,31 @@ lexp -> exp . LSQBR exp RSQBR [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MU
 -- On COMMA reduce production exp -> exp MINUS exp
 
 State 98:
+## Known stack suffix:
+## exp DOT
+## LR(1) items:
 exp -> exp DOT . DEFAULT LPAR RPAR msg_info [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
 exp -> exp DOT . IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR msg_info [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
 -- On IDENT shift to state 99
 -- On DEFAULT shift to state 122
+## Reductions:
 
 State 99:
+## Known stack suffix:
+## exp DOT IDENT
+## LR(1) items:
 exp -> exp DOT IDENT . LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR msg_info [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
 -- On LPAR shift to state 100
+## Reductions:
 
 State 100:
+## Known stack suffix:
+## exp DOT IDENT LPAR
+## LR(1) items:
 exp -> exp DOT IDENT LPAR . loption(separated_nonempty_list(COMMA,exp)) RPAR msg_info [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
 -- On VALUE shift to state 56
 -- On TRUE shift to state 60
 -- On THIS shift to state 61
@@ -1082,25 +1586,45 @@ exp -> exp DOT IDENT LPAR . loption(separated_nonempty_list(COMMA,exp)) RPAR msg
 -- On loption(separated_nonempty_list(COMMA,exp)) shift to state 102
 -- On lexp shift to state 84
 -- On exp shift to state 119
+## Reductions:
 -- On RPAR reduce production loption(separated_nonempty_list(COMMA,exp)) ->
 
 State 101:
+## Known stack suffix:
+## separated_nonempty_list(COMMA,exp)
+## LR(1) items:
 loption(separated_nonempty_list(COMMA,exp)) -> separated_nonempty_list(COMMA,exp) . [ RPAR ]
+## Transitions:
+## Reductions:
 -- On RPAR reduce production loption(separated_nonempty_list(COMMA,exp)) -> separated_nonempty_list(COMMA,exp)
 
 State 102:
+## Known stack suffix:
+## exp DOT IDENT LPAR loption(separated_nonempty_list(COMMA,exp))
+## LR(1) items:
 exp -> exp DOT IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) . RPAR msg_info [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
 -- On RPAR shift to state 103
+## Reductions:
 
 State 103:
+## Known stack suffix:
+## exp DOT IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR
+## LR(1) items:
 exp -> exp DOT IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR . msg_info [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
 -- On ALONG shift to state 104
 -- On value_info shift to state 114
 -- On msg_info shift to state 118
+## Reductions:
 -- On REENTRANCE reduce production value_info ->
 
 State 104:
+## Known stack suffix:
+## ALONG
+## LR(1) items:
 value_info -> ALONG . exp [ REENTRANCE ]
+## Transitions:
 -- On VALUE shift to state 56
 -- On TRUE shift to state 60
 -- On THIS shift to state 61
@@ -1117,8 +1641,12 @@ value_info -> ALONG . exp [ REENTRANCE ]
 -- On ADDRESS shift to state 82
 -- On lexp shift to state 84
 -- On exp shift to state 105
+## Reductions:
 
 State 105:
+## Known stack suffix:
+## ALONG exp
+## LR(1) items:
 exp -> exp . LAND exp [ REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 exp -> exp . PLUS exp [ REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 exp -> exp . MINUS exp [ REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
@@ -1131,6 +1659,7 @@ exp -> exp . DOT DEFAULT LPAR RPAR msg_info [ REENTRANCE PLUS NEQ MULT MINUS LT 
 exp -> exp . DOT IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR msg_info [ REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 lexp -> exp . LSQBR exp RSQBR [ REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 value_info -> ALONG exp . [ REENTRANCE ]
+## Transitions:
 -- On PLUS shift to state 87
 -- On NEQ shift to state 94
 -- On MULT shift to state 89
@@ -1141,10 +1670,15 @@ value_info -> ALONG exp . [ REENTRANCE ]
 -- On GT shift to state 110
 -- On EQUALITY shift to state 112
 -- On DOT shift to state 98
+## Reductions:
 -- On REENTRANCE reduce production value_info -> ALONG exp
 
 State 106:
+## Known stack suffix:
+## exp LT
+## LR(1) items:
 exp -> exp LT . exp [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
 -- On VALUE shift to state 56
 -- On TRUE shift to state 60
 -- On THIS shift to state 61
@@ -1161,8 +1695,12 @@ exp -> exp LT . exp [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS L
 -- On ADDRESS shift to state 82
 -- On lexp shift to state 84
 -- On exp shift to state 107
+## Reductions:
 
 State 107:
+## Known stack suffix:
+## exp LT exp
+## LR(1) items:
 exp -> exp . LAND exp [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
 exp -> exp . PLUS exp [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
 exp -> exp . MINUS exp [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
@@ -1175,11 +1713,13 @@ exp -> exp . EQUALITY exp [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT M
 exp -> exp . DOT DEFAULT LPAR RPAR msg_info [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
 exp -> exp . DOT IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR msg_info [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
 lexp -> exp . LSQBR exp RSQBR [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
 -- On PLUS shift to state 87
 -- On MULT shift to state 89
 -- On MINUS shift to state 96
 -- On LSQBR shift to state 91
 -- On DOT shift to state 98
+## Reductions:
 -- On THEN reduce production exp -> exp LT exp
 -- On SEMICOLON reduce production exp -> exp LT exp
 -- On RSQBR reduce production exp -> exp LT exp
@@ -1193,7 +1733,11 @@ lexp -> exp . LSQBR exp RSQBR [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MU
 -- On COMMA reduce production exp -> exp LT exp
 
 State 108:
+## Known stack suffix:
+## exp LAND
+## LR(1) items:
 exp -> exp LAND . exp [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
 -- On VALUE shift to state 56
 -- On TRUE shift to state 60
 -- On THIS shift to state 61
@@ -1210,8 +1754,12 @@ exp -> exp LAND . exp [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS
 -- On ADDRESS shift to state 82
 -- On lexp shift to state 84
 -- On exp shift to state 109
+## Reductions:
 
 State 109:
+## Known stack suffix:
+## exp LAND exp
+## LR(1) items:
 exp -> exp . LAND exp [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
 exp -> exp LAND exp . [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
 exp -> exp . PLUS exp [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
@@ -1224,6 +1772,7 @@ exp -> exp . EQUALITY exp [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT M
 exp -> exp . DOT DEFAULT LPAR RPAR msg_info [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
 exp -> exp . DOT IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR msg_info [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
 lexp -> exp . LSQBR exp RSQBR [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
 -- On PLUS shift to state 87
 -- On NEQ shift to state 94
 -- On MULT shift to state 89
@@ -1233,6 +1782,7 @@ lexp -> exp . LSQBR exp RSQBR [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MU
 -- On GT shift to state 110
 -- On EQUALITY shift to state 112
 -- On DOT shift to state 98
+## Reductions:
 -- On THEN reduce production exp -> exp LAND exp
 -- On SEMICOLON reduce production exp -> exp LAND exp
 -- On RSQBR reduce production exp -> exp LAND exp
@@ -1242,7 +1792,11 @@ lexp -> exp . LSQBR exp RSQBR [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MU
 -- On COMMA reduce production exp -> exp LAND exp
 
 State 110:
+## Known stack suffix:
+## exp GT
+## LR(1) items:
 exp -> exp GT . exp [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
 -- On VALUE shift to state 56
 -- On TRUE shift to state 60
 -- On THIS shift to state 61
@@ -1259,8 +1813,12 @@ exp -> exp GT . exp [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS L
 -- On ADDRESS shift to state 82
 -- On lexp shift to state 84
 -- On exp shift to state 111
+## Reductions:
 
 State 111:
+## Known stack suffix:
+## exp GT exp
+## LR(1) items:
 exp -> exp . LAND exp [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
 exp -> exp . PLUS exp [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
 exp -> exp . MINUS exp [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
@@ -1273,11 +1831,13 @@ exp -> exp . EQUALITY exp [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT M
 exp -> exp . DOT DEFAULT LPAR RPAR msg_info [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
 exp -> exp . DOT IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR msg_info [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
 lexp -> exp . LSQBR exp RSQBR [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
 -- On PLUS shift to state 87
 -- On MULT shift to state 89
 -- On MINUS shift to state 96
 -- On LSQBR shift to state 91
 -- On DOT shift to state 98
+## Reductions:
 -- On THEN reduce production exp -> exp GT exp
 -- On SEMICOLON reduce production exp -> exp GT exp
 -- On RSQBR reduce production exp -> exp GT exp
@@ -1291,7 +1851,11 @@ lexp -> exp . LSQBR exp RSQBR [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MU
 -- On COMMA reduce production exp -> exp GT exp
 
 State 112:
+## Known stack suffix:
+## exp EQUALITY
+## LR(1) items:
 exp -> exp EQUALITY . exp [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
 -- On VALUE shift to state 56
 -- On TRUE shift to state 60
 -- On THIS shift to state 61
@@ -1308,8 +1872,12 @@ exp -> exp EQUALITY . exp [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT M
 -- On ADDRESS shift to state 82
 -- On lexp shift to state 84
 -- On exp shift to state 113
+## Reductions:
 
 State 113:
+## Known stack suffix:
+## exp EQUALITY exp
+## LR(1) items:
 exp -> exp . LAND exp [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
 exp -> exp . PLUS exp [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
 exp -> exp . MINUS exp [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
@@ -1322,11 +1890,13 @@ exp -> exp EQUALITY exp . [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT M
 exp -> exp . DOT DEFAULT LPAR RPAR msg_info [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
 exp -> exp . DOT IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR msg_info [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
 lexp -> exp . LSQBR exp RSQBR [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
 -- On PLUS shift to state 87
 -- On MULT shift to state 89
 -- On MINUS shift to state 96
 -- On LSQBR shift to state 91
 -- On DOT shift to state 98
+## Reductions:
 -- On THEN reduce production exp -> exp EQUALITY exp
 -- On SEMICOLON reduce production exp -> exp EQUALITY exp
 -- On RSQBR reduce production exp -> exp EQUALITY exp
@@ -1340,17 +1910,32 @@ lexp -> exp . LSQBR exp RSQBR [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MU
 -- On COMMA reduce production exp -> exp EQUALITY exp
 
 State 114:
+## Known stack suffix:
+## value_info
+## LR(1) items:
 msg_info -> value_info . reentrance_info [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
 -- On REENTRANCE shift to state 115
 -- On reentrance_info shift to state 117
+## Reductions:
 
 State 115:
+## Known stack suffix:
+## REENTRANCE
+## LR(1) items:
 reentrance_info -> REENTRANCE . block [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
 -- On LBRACE shift to state 53
 -- On block shift to state 116
+## Reductions:
 
 State 116:
+## Known stack suffix:
+## REENTRANCE block
+## LR(1) items:
 reentrance_info -> REENTRANCE block . [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
+## Reductions:
 -- On THEN reduce production reentrance_info -> REENTRANCE block
 -- On SEMICOLON reduce production reentrance_info -> REENTRANCE block
 -- On RSQBR reduce production reentrance_info -> REENTRANCE block
@@ -1369,7 +1954,12 @@ reentrance_info -> REENTRANCE block . [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLU
 -- On COMMA reduce production reentrance_info -> REENTRANCE block
 
 State 117:
+## Known stack suffix:
+## value_info reentrance_info
+## LR(1) items:
 msg_info -> value_info reentrance_info . [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
+## Reductions:
 -- On THEN reduce production msg_info -> value_info reentrance_info
 -- On SEMICOLON reduce production msg_info -> value_info reentrance_info
 -- On RSQBR reduce production msg_info -> value_info reentrance_info
@@ -1388,7 +1978,12 @@ msg_info -> value_info reentrance_info . [ THEN SEMICOLON RSQBR RPAR REENTRANCE 
 -- On COMMA reduce production msg_info -> value_info reentrance_info
 
 State 118:
+## Known stack suffix:
+## exp DOT IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR msg_info
+## LR(1) items:
 exp -> exp DOT IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR msg_info . [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
+## Reductions:
 -- On THEN reduce production exp -> exp DOT IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR msg_info
 -- On SEMICOLON reduce production exp -> exp DOT IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR msg_info
 -- On RSQBR reduce production exp -> exp DOT IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR msg_info
@@ -1407,6 +2002,9 @@ exp -> exp DOT IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR msg_i
 -- On COMMA reduce production exp -> exp DOT IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR msg_info
 
 State 119:
+## Known stack suffix:
+## exp
+## LR(1) items:
 exp -> exp . LAND exp [ RPAR PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
 exp -> exp . PLUS exp [ RPAR PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
 exp -> exp . MINUS exp [ RPAR PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
@@ -1420,6 +2018,7 @@ exp -> exp . DOT IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR msg
 lexp -> exp . LSQBR exp RSQBR [ RPAR PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
 separated_nonempty_list(COMMA,exp) -> exp . [ RPAR ]
 separated_nonempty_list(COMMA,exp) -> exp . COMMA separated_nonempty_list(COMMA,exp) [ RPAR ]
+## Transitions:
 -- On PLUS shift to state 87
 -- On NEQ shift to state 94
 -- On MULT shift to state 89
@@ -1431,10 +2030,15 @@ separated_nonempty_list(COMMA,exp) -> exp . COMMA separated_nonempty_list(COMMA,
 -- On EQUALITY shift to state 112
 -- On DOT shift to state 98
 -- On COMMA shift to state 120
+## Reductions:
 -- On RPAR reduce production separated_nonempty_list(COMMA,exp) -> exp
 
 State 120:
+## Known stack suffix:
+## exp COMMA
+## LR(1) items:
 separated_nonempty_list(COMMA,exp) -> exp COMMA . separated_nonempty_list(COMMA,exp) [ RPAR ]
+## Transitions:
 -- On VALUE shift to state 56
 -- On TRUE shift to state 60
 -- On THIS shift to state 61
@@ -1452,28 +2056,54 @@ separated_nonempty_list(COMMA,exp) -> exp COMMA . separated_nonempty_list(COMMA,
 -- On separated_nonempty_list(COMMA,exp) shift to state 121
 -- On lexp shift to state 84
 -- On exp shift to state 119
+## Reductions:
 
 State 121:
+## Known stack suffix:
+## exp COMMA separated_nonempty_list(COMMA,exp)
+## LR(1) items:
 separated_nonempty_list(COMMA,exp) -> exp COMMA separated_nonempty_list(COMMA,exp) . [ RPAR ]
+## Transitions:
+## Reductions:
 -- On RPAR reduce production separated_nonempty_list(COMMA,exp) -> exp COMMA separated_nonempty_list(COMMA,exp)
 
 State 122:
+## Known stack suffix:
+## exp DOT DEFAULT
+## LR(1) items:
 exp -> exp DOT DEFAULT . LPAR RPAR msg_info [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
 -- On LPAR shift to state 123
+## Reductions:
 
 State 123:
+## Known stack suffix:
+## exp DOT DEFAULT LPAR
+## LR(1) items:
 exp -> exp DOT DEFAULT LPAR . RPAR msg_info [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
 -- On RPAR shift to state 124
+## Reductions:
 
 State 124:
+## Known stack suffix:
+## exp DOT DEFAULT LPAR RPAR
+## LR(1) items:
 exp -> exp DOT DEFAULT LPAR RPAR . msg_info [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
 -- On ALONG shift to state 104
 -- On value_info shift to state 114
 -- On msg_info shift to state 125
+## Reductions:
 -- On REENTRANCE reduce production value_info ->
 
 State 125:
+## Known stack suffix:
+## exp DOT DEFAULT LPAR RPAR msg_info
+## LR(1) items:
 exp -> exp DOT DEFAULT LPAR RPAR msg_info . [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
+## Reductions:
 -- On THEN reduce production exp -> exp DOT DEFAULT LPAR RPAR msg_info
 -- On SEMICOLON reduce production exp -> exp DOT DEFAULT LPAR RPAR msg_info
 -- On RSQBR reduce production exp -> exp DOT DEFAULT LPAR RPAR msg_info
@@ -1492,6 +2122,9 @@ exp -> exp DOT DEFAULT LPAR RPAR msg_info . [ THEN SEMICOLON RSQBR RPAR REENTRAN
 -- On COMMA reduce production exp -> exp DOT DEFAULT LPAR RPAR msg_info
 
 State 126:
+## Known stack suffix:
+## BALANCE LPAR exp
+## LR(1) items:
 exp -> exp . LAND exp [ RPAR PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 exp -> BALANCE LPAR exp . RPAR [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
 exp -> exp . PLUS exp [ RPAR PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
@@ -1504,6 +2137,7 @@ exp -> exp . EQUALITY exp [ RPAR PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY D
 exp -> exp . DOT DEFAULT LPAR RPAR msg_info [ RPAR PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 exp -> exp . DOT IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR msg_info [ RPAR PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 lexp -> exp . LSQBR exp RSQBR [ RPAR PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
+## Transitions:
 -- On RPAR shift to state 127
 -- On PLUS shift to state 87
 -- On NEQ shift to state 94
@@ -1515,9 +2149,15 @@ lexp -> exp . LSQBR exp RSQBR [ RPAR PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALI
 -- On GT shift to state 110
 -- On EQUALITY shift to state 112
 -- On DOT shift to state 98
+## Reductions:
 
 State 127:
+## Known stack suffix:
+## BALANCE LPAR exp RPAR
+## LR(1) items:
 exp -> BALANCE LPAR exp RPAR . [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
+## Reductions:
 -- On THEN reduce production exp -> BALANCE LPAR exp RPAR
 -- On SEMICOLON reduce production exp -> BALANCE LPAR exp RPAR
 -- On RSQBR reduce production exp -> BALANCE LPAR exp RPAR
@@ -1536,18 +2176,33 @@ exp -> BALANCE LPAR exp RPAR . [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ M
 -- On COMMA reduce production exp -> BALANCE LPAR exp RPAR
 
 State 128:
+## Known stack suffix:
+## DEPLOY IDENT LPAR loption(separated_nonempty_list(COMMA,exp))
+## LR(1) items:
 exp -> DEPLOY IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) . RPAR msg_info [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
 -- On RPAR shift to state 129
+## Reductions:
 
 State 129:
+## Known stack suffix:
+## DEPLOY IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR
+## LR(1) items:
 exp -> DEPLOY IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR . msg_info [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
 -- On ALONG shift to state 104
 -- On value_info shift to state 114
 -- On msg_info shift to state 130
+## Reductions:
 -- On REENTRANCE reduce production value_info ->
 
 State 130:
+## Known stack suffix:
+## DEPLOY IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR msg_info
+## LR(1) items:
 exp -> DEPLOY IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR msg_info . [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
+## Reductions:
 -- On THEN reduce production exp -> DEPLOY IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR msg_info
 -- On SEMICOLON reduce production exp -> DEPLOY IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR msg_info
 -- On RSQBR reduce production exp -> DEPLOY IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR msg_info
@@ -1566,11 +2221,21 @@ exp -> DEPLOY IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR msg_in
 -- On COMMA reduce production exp -> DEPLOY IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR msg_info
 
 State 131:
+## Known stack suffix:
+## IDENT LPAR loption(separated_nonempty_list(COMMA,exp))
+## LR(1) items:
 exp -> IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) . RPAR [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
 -- On RPAR shift to state 132
+## Reductions:
 
 State 132:
+## Known stack suffix:
+## IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR
+## LR(1) items:
 exp -> IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR . [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
+## Reductions:
 -- On THEN reduce production exp -> IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR
 -- On SEMICOLON reduce production exp -> IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR
 -- On RSQBR reduce production exp -> IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR
@@ -1589,6 +2254,9 @@ exp -> IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR . [ THEN SEMI
 -- On COMMA reduce production exp -> IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR
 
 State 133:
+## Known stack suffix:
+## LPAR exp
+## LR(1) items:
 exp -> exp . LAND exp [ RPAR PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 exp -> exp . PLUS exp [ RPAR PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 exp -> exp . MINUS exp [ RPAR PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
@@ -1601,6 +2269,7 @@ exp -> LPAR exp . RPAR [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINU
 exp -> exp . DOT DEFAULT LPAR RPAR msg_info [ RPAR PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 exp -> exp . DOT IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR msg_info [ RPAR PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 lexp -> exp . LSQBR exp RSQBR [ RPAR PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
+## Transitions:
 -- On RPAR shift to state 134
 -- On PLUS shift to state 87
 -- On NEQ shift to state 94
@@ -1612,9 +2281,15 @@ lexp -> exp . LSQBR exp RSQBR [ RPAR PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALI
 -- On GT shift to state 110
 -- On EQUALITY shift to state 112
 -- On DOT shift to state 98
+## Reductions:
 
 State 134:
+## Known stack suffix:
+## LPAR exp RPAR
+## LR(1) items:
 exp -> LPAR exp RPAR . [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
+## Reductions:
 -- On THEN reduce production exp -> LPAR exp RPAR
 -- On SEMICOLON reduce production exp -> LPAR exp RPAR
 -- On RSQBR reduce production exp -> LPAR exp RPAR
@@ -1633,6 +2308,9 @@ exp -> LPAR exp RPAR . [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINU
 -- On COMMA reduce production exp -> LPAR exp RPAR
 
 State 135:
+## Known stack suffix:
+## NOT exp
+## LR(1) items:
 exp -> exp . LAND exp [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
 exp -> exp . PLUS exp [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
 exp -> exp . MINUS exp [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
@@ -1645,6 +2323,7 @@ exp -> exp . DOT DEFAULT LPAR RPAR msg_info [ THEN SEMICOLON RSQBR RPAR REENTRAN
 exp -> exp . DOT IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR msg_info [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
 exp -> NOT exp . [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
 lexp -> exp . LSQBR exp RSQBR [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT COMMA ]
+## Transitions:
 -- On PLUS shift to state 87
 -- On NEQ shift to state 94
 -- On MULT shift to state 89
@@ -1655,6 +2334,7 @@ lexp -> exp . LSQBR exp RSQBR [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MU
 -- On GT shift to state 110
 -- On EQUALITY shift to state 112
 -- On DOT shift to state 98
+## Reductions:
 -- On THEN reduce production exp -> NOT exp
 -- On SEMICOLON reduce production exp -> NOT exp
 -- On RSQBR reduce production exp -> NOT exp
@@ -1663,6 +2343,9 @@ lexp -> exp . LSQBR exp RSQBR [ THEN SEMICOLON RSQBR RPAR REENTRANCE PLUS NEQ MU
 -- On COMMA reduce production exp -> NOT exp
 
 State 136:
+## Known stack suffix:
+## VOID SINGLE_EQ exp
+## LR(1) items:
 exp -> exp . LAND exp [ SEMICOLON PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 exp -> exp . PLUS exp [ SEMICOLON PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 exp -> exp . MINUS exp [ SEMICOLON PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
@@ -1675,6 +2358,7 @@ exp -> exp . DOT DEFAULT LPAR RPAR msg_info [ SEMICOLON PLUS NEQ MULT MINUS LT L
 exp -> exp . DOT IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR msg_info [ SEMICOLON PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 lexp -> exp . LSQBR exp RSQBR [ SEMICOLON PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 sentence -> VOID SINGLE_EQ exp . SEMICOLON [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
+## Transitions:
 -- On SEMICOLON shift to state 137
 -- On PLUS shift to state 87
 -- On NEQ shift to state 94
@@ -1686,9 +2370,15 @@ sentence -> VOID SINGLE_EQ exp . SEMICOLON [ VOID VALUE UINT8 UINT256 TRUE THIS 
 -- On GT shift to state 110
 -- On EQUALITY shift to state 112
 -- On DOT shift to state 98
+## Reductions:
 
 State 137:
+## Known stack suffix:
+## VOID SINGLE_EQ exp SEMICOLON
+## LR(1) items:
 sentence -> VOID SINGLE_EQ exp SEMICOLON . [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
+## Transitions:
+## Reductions:
 -- On VOID reduce production sentence -> VOID SINGLE_EQ exp SEMICOLON
 -- On VALUE reduce production sentence -> VOID SINGLE_EQ exp SEMICOLON
 -- On UINT8 reduce production sentence -> VOID SINGLE_EQ exp SEMICOLON
@@ -1717,7 +2407,11 @@ sentence -> VOID SINGLE_EQ exp SEMICOLON . [ VOID VALUE UINT8 UINT256 TRUE THIS 
 -- On ABORT reduce production sentence -> VOID SINGLE_EQ exp SEMICOLON
 
 State 138:
+## Known stack suffix:
+## SELFDESTRUCT
+## LR(1) items:
 sentence -> SELFDESTRUCT . exp SEMICOLON [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
+## Transitions:
 -- On VALUE shift to state 56
 -- On TRUE shift to state 60
 -- On THIS shift to state 61
@@ -1734,8 +2428,12 @@ sentence -> SELFDESTRUCT . exp SEMICOLON [ VOID VALUE UINT8 UINT256 TRUE THIS SE
 -- On ADDRESS shift to state 82
 -- On lexp shift to state 84
 -- On exp shift to state 139
+## Reductions:
 
 State 139:
+## Known stack suffix:
+## SELFDESTRUCT exp
+## LR(1) items:
 exp -> exp . LAND exp [ SEMICOLON PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 exp -> exp . PLUS exp [ SEMICOLON PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 exp -> exp . MINUS exp [ SEMICOLON PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
@@ -1748,6 +2446,7 @@ exp -> exp . DOT DEFAULT LPAR RPAR msg_info [ SEMICOLON PLUS NEQ MULT MINUS LT L
 exp -> exp . DOT IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR msg_info [ SEMICOLON PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 lexp -> exp . LSQBR exp RSQBR [ SEMICOLON PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 sentence -> SELFDESTRUCT exp . SEMICOLON [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
+## Transitions:
 -- On SEMICOLON shift to state 140
 -- On PLUS shift to state 87
 -- On NEQ shift to state 94
@@ -1759,9 +2458,15 @@ sentence -> SELFDESTRUCT exp . SEMICOLON [ VOID VALUE UINT8 UINT256 TRUE THIS SE
 -- On GT shift to state 110
 -- On EQUALITY shift to state 112
 -- On DOT shift to state 98
+## Reductions:
 
 State 140:
+## Known stack suffix:
+## SELFDESTRUCT exp SEMICOLON
+## LR(1) items:
 sentence -> SELFDESTRUCT exp SEMICOLON . [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
+## Transitions:
+## Reductions:
 -- On VOID reduce production sentence -> SELFDESTRUCT exp SEMICOLON
 -- On VALUE reduce production sentence -> SELFDESTRUCT exp SEMICOLON
 -- On UINT8 reduce production sentence -> SELFDESTRUCT exp SEMICOLON
@@ -1790,7 +2495,11 @@ sentence -> SELFDESTRUCT exp SEMICOLON . [ VOID VALUE UINT8 UINT256 TRUE THIS SE
 -- On ABORT reduce production sentence -> SELFDESTRUCT exp SEMICOLON
 
 State 141:
+## Known stack suffix:
+## RETURN
+## LR(1) items:
 sentence -> RETURN . option(exp) THEN BECOME exp SEMICOLON [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
+## Transitions:
 -- On VALUE shift to state 56
 -- On TRUE shift to state 60
 -- On THIS shift to state 61
@@ -1808,18 +2517,33 @@ sentence -> RETURN . option(exp) THEN BECOME exp SEMICOLON [ VOID VALUE UINT8 UI
 -- On option(exp) shift to state 142
 -- On lexp shift to state 84
 -- On exp shift to state 147
+## Reductions:
 -- On THEN reduce production option(exp) ->
 
 State 142:
+## Known stack suffix:
+## RETURN option(exp)
+## LR(1) items:
 sentence -> RETURN option(exp) . THEN BECOME exp SEMICOLON [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
+## Transitions:
 -- On THEN shift to state 143
+## Reductions:
 
 State 143:
+## Known stack suffix:
+## RETURN option(exp) THEN
+## LR(1) items:
 sentence -> RETURN option(exp) THEN . BECOME exp SEMICOLON [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
+## Transitions:
 -- On BECOME shift to state 144
+## Reductions:
 
 State 144:
+## Known stack suffix:
+## RETURN option(exp) THEN BECOME
+## LR(1) items:
 sentence -> RETURN option(exp) THEN BECOME . exp SEMICOLON [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
+## Transitions:
 -- On VALUE shift to state 56
 -- On TRUE shift to state 60
 -- On THIS shift to state 61
@@ -1836,8 +2560,12 @@ sentence -> RETURN option(exp) THEN BECOME . exp SEMICOLON [ VOID VALUE UINT8 UI
 -- On ADDRESS shift to state 82
 -- On lexp shift to state 84
 -- On exp shift to state 145
+## Reductions:
 
 State 145:
+## Known stack suffix:
+## RETURN option(exp) THEN BECOME exp
+## LR(1) items:
 exp -> exp . LAND exp [ SEMICOLON PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 exp -> exp . PLUS exp [ SEMICOLON PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 exp -> exp . MINUS exp [ SEMICOLON PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
@@ -1850,6 +2578,7 @@ exp -> exp . DOT DEFAULT LPAR RPAR msg_info [ SEMICOLON PLUS NEQ MULT MINUS LT L
 exp -> exp . DOT IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR msg_info [ SEMICOLON PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 lexp -> exp . LSQBR exp RSQBR [ SEMICOLON PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 sentence -> RETURN option(exp) THEN BECOME exp . SEMICOLON [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
+## Transitions:
 -- On SEMICOLON shift to state 146
 -- On PLUS shift to state 87
 -- On NEQ shift to state 94
@@ -1861,9 +2590,15 @@ sentence -> RETURN option(exp) THEN BECOME exp . SEMICOLON [ VOID VALUE UINT8 UI
 -- On GT shift to state 110
 -- On EQUALITY shift to state 112
 -- On DOT shift to state 98
+## Reductions:
 
 State 146:
+## Known stack suffix:
+## RETURN option(exp) THEN BECOME exp SEMICOLON
+## LR(1) items:
 sentence -> RETURN option(exp) THEN BECOME exp SEMICOLON . [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
+## Transitions:
+## Reductions:
 -- On VOID reduce production sentence -> RETURN option(exp) THEN BECOME exp SEMICOLON
 -- On VALUE reduce production sentence -> RETURN option(exp) THEN BECOME exp SEMICOLON
 -- On UINT8 reduce production sentence -> RETURN option(exp) THEN BECOME exp SEMICOLON
@@ -1892,6 +2627,9 @@ sentence -> RETURN option(exp) THEN BECOME exp SEMICOLON . [ VOID VALUE UINT8 UI
 -- On ABORT reduce production sentence -> RETURN option(exp) THEN BECOME exp SEMICOLON
 
 State 147:
+## Known stack suffix:
+## exp
+## LR(1) items:
 exp -> exp . LAND exp [ THEN PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 exp -> exp . PLUS exp [ THEN PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 exp -> exp . MINUS exp [ THEN PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
@@ -1904,6 +2642,7 @@ exp -> exp . DOT DEFAULT LPAR RPAR msg_info [ THEN PLUS NEQ MULT MINUS LT LSQBR 
 exp -> exp . DOT IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR msg_info [ THEN PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 lexp -> exp . LSQBR exp RSQBR [ THEN PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 option(exp) -> exp . [ THEN ]
+## Transitions:
 -- On PLUS shift to state 87
 -- On NEQ shift to state 94
 -- On MULT shift to state 89
@@ -1914,18 +2653,33 @@ option(exp) -> exp . [ THEN ]
 -- On GT shift to state 110
 -- On EQUALITY shift to state 112
 -- On DOT shift to state 98
+## Reductions:
 -- On THEN reduce production option(exp) -> exp
 
 State 148:
+## Known stack suffix:
+## LOG
+## LR(1) items:
 sentence -> LOG . IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR SEMICOLON [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
+## Transitions:
 -- On IDENT shift to state 149
+## Reductions:
 
 State 149:
+## Known stack suffix:
+## LOG IDENT
+## LR(1) items:
 sentence -> LOG IDENT . LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR SEMICOLON [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
+## Transitions:
 -- On LPAR shift to state 150
+## Reductions:
 
 State 150:
+## Known stack suffix:
+## LOG IDENT LPAR
+## LR(1) items:
 sentence -> LOG IDENT LPAR . loption(separated_nonempty_list(COMMA,exp)) RPAR SEMICOLON [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
+## Transitions:
 -- On VALUE shift to state 56
 -- On TRUE shift to state 60
 -- On THIS shift to state 61
@@ -1944,18 +2698,34 @@ sentence -> LOG IDENT LPAR . loption(separated_nonempty_list(COMMA,exp)) RPAR SE
 -- On loption(separated_nonempty_list(COMMA,exp)) shift to state 151
 -- On lexp shift to state 84
 -- On exp shift to state 119
+## Reductions:
 -- On RPAR reduce production loption(separated_nonempty_list(COMMA,exp)) ->
 
 State 151:
+## Known stack suffix:
+## LOG IDENT LPAR loption(separated_nonempty_list(COMMA,exp))
+## LR(1) items:
 sentence -> LOG IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) . RPAR SEMICOLON [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
+## Transitions:
 -- On RPAR shift to state 152
+## Reductions:
 
 State 152:
+## Known stack suffix:
+## LOG IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR
+## LR(1) items:
 sentence -> LOG IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR . SEMICOLON [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
+## Transitions:
 -- On SEMICOLON shift to state 153
+## Reductions:
 
 State 153:
+## Known stack suffix:
+## LOG IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR SEMICOLON
+## LR(1) items:
 sentence -> LOG IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR SEMICOLON . [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
+## Transitions:
+## Reductions:
 -- On VOID reduce production sentence -> LOG IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR SEMICOLON
 -- On VALUE reduce production sentence -> LOG IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR SEMICOLON
 -- On UINT8 reduce production sentence -> LOG IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR SEMICOLON
@@ -1984,21 +2754,30 @@ sentence -> LOG IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR SEMI
 -- On ABORT reduce production sentence -> LOG IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR SEMICOLON
 
 State 154:
+## Known stack suffix:
+## IF
+## LR(1) items:
 sentence -> IF . LPAR exp RPAR sentence ELSE sentence [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
 sentence -> IF . LPAR exp RPAR sentence ELSE block [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
 sentence -> IF . LPAR exp RPAR block ELSE sentence [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
 sentence -> IF . LPAR exp RPAR block ELSE block [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
 sentence -> IF . LPAR exp RPAR sentence [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
 sentence -> IF . LPAR exp RPAR block [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
+## Transitions:
 -- On LPAR shift to state 155
+## Reductions:
 
 State 155:
+## Known stack suffix:
+## IF LPAR
+## LR(1) items:
 sentence -> IF LPAR . exp RPAR sentence ELSE sentence [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
 sentence -> IF LPAR . exp RPAR sentence ELSE block [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
 sentence -> IF LPAR . exp RPAR block ELSE sentence [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
 sentence -> IF LPAR . exp RPAR block ELSE block [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
 sentence -> IF LPAR . exp RPAR sentence [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
 sentence -> IF LPAR . exp RPAR block [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
+## Transitions:
 -- On VALUE shift to state 56
 -- On TRUE shift to state 60
 -- On THIS shift to state 61
@@ -2015,8 +2794,12 @@ sentence -> IF LPAR . exp RPAR block [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER
 -- On ADDRESS shift to state 82
 -- On lexp shift to state 84
 -- On exp shift to state 156
+## Reductions:
 
 State 156:
+## Known stack suffix:
+## IF LPAR exp
+## LR(1) items:
 exp -> exp . LAND exp [ RPAR PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 exp -> exp . PLUS exp [ RPAR PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 exp -> exp . MINUS exp [ RPAR PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
@@ -2034,6 +2817,7 @@ sentence -> IF LPAR exp . RPAR block ELSE sentence [ VOID VALUE UINT8 UINT256 TR
 sentence -> IF LPAR exp . RPAR block ELSE block [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
 sentence -> IF LPAR exp . RPAR sentence [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
 sentence -> IF LPAR exp . RPAR block [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
+## Transitions:
 -- On RPAR shift to state 157
 -- On PLUS shift to state 87
 -- On NEQ shift to state 94
@@ -2045,14 +2829,19 @@ sentence -> IF LPAR exp . RPAR block [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER
 -- On GT shift to state 110
 -- On EQUALITY shift to state 112
 -- On DOT shift to state 98
+## Reductions:
 
 State 157:
+## Known stack suffix:
+## IF LPAR exp RPAR
+## LR(1) items:
 sentence -> IF LPAR exp RPAR . sentence ELSE sentence [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
 sentence -> IF LPAR exp RPAR . sentence ELSE block [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
 sentence -> IF LPAR exp RPAR . block ELSE sentence [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
 sentence -> IF LPAR exp RPAR . block ELSE block [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
 sentence -> IF LPAR exp RPAR . sentence [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
 sentence -> IF LPAR exp RPAR . block [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
+## Transitions:
 -- On VOID shift to state 54
 -- On VALUE shift to state 56
 -- On UINT8 shift to state 4
@@ -2083,12 +2872,18 @@ sentence -> IF LPAR exp RPAR . block [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER
 -- On lexp shift to state 170
 -- On exp shift to state 174
 -- On block shift to state 176
+## Reductions:
 
 State 158:
+## Known stack suffix:
+## IDENT
+## LR(1) items:
 exp -> IDENT . [ PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 exp -> IDENT . LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR [ PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 typ -> IDENT . [ RARROW IDENT ]
+## Transitions:
 -- On LPAR shift to state 73
+## Reductions:
 -- On RARROW reduce production typ -> IDENT
 -- On PLUS reduce production exp -> IDENT
 -- On NEQ reduce production exp -> IDENT
@@ -2103,18 +2898,33 @@ typ -> IDENT . [ RARROW IDENT ]
 -- On DOT reduce production exp -> IDENT
 
 State 159:
+## Known stack suffix:
+## ADDRESS
+## LR(1) items:
 exp -> ADDRESS . LPAR exp RPAR [ PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 typ -> ADDRESS . [ RARROW IDENT ]
+## Transitions:
 -- On LPAR shift to state 83
+## Reductions:
 -- On RARROW reduce production typ -> ADDRESS
 -- On IDENT reduce production typ -> ADDRESS
 
 State 160:
+## Known stack suffix:
+## ABORT
+## LR(1) items:
 sentence -> ABORT . SEMICOLON [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
+## Transitions:
 -- On SEMICOLON shift to state 161
+## Reductions:
 
 State 161:
+## Known stack suffix:
+## ABORT SEMICOLON
+## LR(1) items:
 sentence -> ABORT SEMICOLON . [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
+## Transitions:
+## Reductions:
 -- On VOID reduce production sentence -> ABORT SEMICOLON
 -- On VALUE reduce production sentence -> ABORT SEMICOLON
 -- On UINT8 reduce production sentence -> ABORT SEMICOLON
@@ -2143,17 +2953,31 @@ sentence -> ABORT SEMICOLON . [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDE
 -- On ABORT reduce production sentence -> ABORT SEMICOLON
 
 State 162:
+## Known stack suffix:
+## typ
+## LR(1) items:
 sentence -> typ . IDENT SINGLE_EQ exp SEMICOLON [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
 typ -> typ . RARROW typ [ RARROW IDENT ]
+## Transitions:
 -- On RARROW shift to state 11
 -- On IDENT shift to state 163
+## Reductions:
 
 State 163:
+## Known stack suffix:
+## typ IDENT
+## LR(1) items:
 sentence -> typ IDENT . SINGLE_EQ exp SEMICOLON [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
+## Transitions:
 -- On SINGLE_EQ shift to state 164
+## Reductions:
 
 State 164:
+## Known stack suffix:
+## typ IDENT SINGLE_EQ
+## LR(1) items:
 sentence -> typ IDENT SINGLE_EQ . exp SEMICOLON [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
+## Transitions:
 -- On VALUE shift to state 56
 -- On TRUE shift to state 60
 -- On THIS shift to state 61
@@ -2170,8 +2994,12 @@ sentence -> typ IDENT SINGLE_EQ . exp SEMICOLON [ VOID VALUE UINT8 UINT256 TRUE 
 -- On ADDRESS shift to state 82
 -- On lexp shift to state 84
 -- On exp shift to state 165
+## Reductions:
 
 State 165:
+## Known stack suffix:
+## typ IDENT SINGLE_EQ exp
+## LR(1) items:
 exp -> exp . LAND exp [ SEMICOLON PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 exp -> exp . PLUS exp [ SEMICOLON PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 exp -> exp . MINUS exp [ SEMICOLON PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
@@ -2184,6 +3012,7 @@ exp -> exp . DOT DEFAULT LPAR RPAR msg_info [ SEMICOLON PLUS NEQ MULT MINUS LT L
 exp -> exp . DOT IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR msg_info [ SEMICOLON PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 lexp -> exp . LSQBR exp RSQBR [ SEMICOLON PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 sentence -> typ IDENT SINGLE_EQ exp . SEMICOLON [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
+## Transitions:
 -- On SEMICOLON shift to state 166
 -- On PLUS shift to state 87
 -- On NEQ shift to state 94
@@ -2195,9 +3024,15 @@ sentence -> typ IDENT SINGLE_EQ exp . SEMICOLON [ VOID VALUE UINT8 UINT256 TRUE 
 -- On GT shift to state 110
 -- On EQUALITY shift to state 112
 -- On DOT shift to state 98
+## Reductions:
 
 State 166:
+## Known stack suffix:
+## typ IDENT SINGLE_EQ exp SEMICOLON
+## LR(1) items:
 sentence -> typ IDENT SINGLE_EQ exp SEMICOLON . [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
+## Transitions:
+## Reductions:
 -- On VOID reduce production sentence -> typ IDENT SINGLE_EQ exp SEMICOLON
 -- On VALUE reduce production sentence -> typ IDENT SINGLE_EQ exp SEMICOLON
 -- On UINT8 reduce production sentence -> typ IDENT SINGLE_EQ exp SEMICOLON
@@ -2226,10 +3061,15 @@ sentence -> typ IDENT SINGLE_EQ exp SEMICOLON . [ VOID VALUE UINT8 UINT256 TRUE 
 -- On ABORT reduce production sentence -> typ IDENT SINGLE_EQ exp SEMICOLON
 
 State 167:
+## Known stack suffix:
+## IF LPAR exp RPAR sentence
+## LR(1) items:
 sentence -> IF LPAR exp RPAR sentence . ELSE sentence [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
 sentence -> IF LPAR exp RPAR sentence . ELSE block [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
 sentence -> IF LPAR exp RPAR sentence . [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
+## Transitions:
 -- On ELSE shift to state 168
+## Reductions:
 -- On VOID reduce production sentence -> IF LPAR exp RPAR sentence
 -- On VALUE reduce production sentence -> IF LPAR exp RPAR sentence
 -- On UINT8 reduce production sentence -> IF LPAR exp RPAR sentence
@@ -2257,8 +3097,12 @@ sentence -> IF LPAR exp RPAR sentence . [ VOID VALUE UINT8 UINT256 TRUE THIS SEN
 -- On ABORT reduce production sentence -> IF LPAR exp RPAR sentence
 
 State 168:
+## Known stack suffix:
+## IF LPAR exp RPAR sentence ELSE
+## LR(1) items:
 sentence -> IF LPAR exp RPAR sentence ELSE . sentence [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
 sentence -> IF LPAR exp RPAR sentence ELSE . block [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
+## Transitions:
 -- On VOID shift to state 54
 -- On VALUE shift to state 56
 -- On UINT8 shift to state 4
@@ -2289,9 +3133,15 @@ sentence -> IF LPAR exp RPAR sentence ELSE . block [ VOID VALUE UINT8 UINT256 TR
 -- On lexp shift to state 170
 -- On exp shift to state 174
 -- On block shift to state 175
+## Reductions:
 
 State 169:
+## Known stack suffix:
+## IF LPAR exp RPAR sentence ELSE sentence
+## LR(1) items:
 sentence -> IF LPAR exp RPAR sentence ELSE sentence . [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
+## Transitions:
+## Reductions:
 -- On VOID reduce production sentence -> IF LPAR exp RPAR sentence ELSE sentence
 -- On VALUE reduce production sentence -> IF LPAR exp RPAR sentence ELSE sentence
 -- On UINT8 reduce production sentence -> IF LPAR exp RPAR sentence ELSE sentence
@@ -2320,9 +3170,14 @@ sentence -> IF LPAR exp RPAR sentence ELSE sentence . [ VOID VALUE UINT8 UINT256
 -- On ABORT reduce production sentence -> IF LPAR exp RPAR sentence ELSE sentence
 
 State 170:
+## Known stack suffix:
+## lexp
+## LR(1) items:
 exp -> lexp . [ PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 sentence -> lexp . SINGLE_EQ exp SEMICOLON [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
+## Transitions:
 -- On SINGLE_EQ shift to state 171
+## Reductions:
 -- On PLUS reduce production exp -> lexp
 -- On NEQ reduce production exp -> lexp
 -- On MULT reduce production exp -> lexp
@@ -2335,7 +3190,11 @@ sentence -> lexp . SINGLE_EQ exp SEMICOLON [ VOID VALUE UINT8 UINT256 TRUE THIS 
 -- On DOT reduce production exp -> lexp
 
 State 171:
+## Known stack suffix:
+## lexp SINGLE_EQ
+## LR(1) items:
 sentence -> lexp SINGLE_EQ . exp SEMICOLON [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
+## Transitions:
 -- On VALUE shift to state 56
 -- On TRUE shift to state 60
 -- On THIS shift to state 61
@@ -2352,8 +3211,12 @@ sentence -> lexp SINGLE_EQ . exp SEMICOLON [ VOID VALUE UINT8 UINT256 TRUE THIS 
 -- On ADDRESS shift to state 82
 -- On lexp shift to state 84
 -- On exp shift to state 172
+## Reductions:
 
 State 172:
+## Known stack suffix:
+## lexp SINGLE_EQ exp
+## LR(1) items:
 exp -> exp . LAND exp [ SEMICOLON PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 exp -> exp . PLUS exp [ SEMICOLON PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 exp -> exp . MINUS exp [ SEMICOLON PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
@@ -2366,6 +3229,7 @@ exp -> exp . DOT DEFAULT LPAR RPAR msg_info [ SEMICOLON PLUS NEQ MULT MINUS LT L
 exp -> exp . DOT IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR msg_info [ SEMICOLON PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 lexp -> exp . LSQBR exp RSQBR [ SEMICOLON PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 sentence -> lexp SINGLE_EQ exp . SEMICOLON [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
+## Transitions:
 -- On SEMICOLON shift to state 173
 -- On PLUS shift to state 87
 -- On NEQ shift to state 94
@@ -2377,9 +3241,15 @@ sentence -> lexp SINGLE_EQ exp . SEMICOLON [ VOID VALUE UINT8 UINT256 TRUE THIS 
 -- On GT shift to state 110
 -- On EQUALITY shift to state 112
 -- On DOT shift to state 98
+## Reductions:
 
 State 173:
+## Known stack suffix:
+## lexp SINGLE_EQ exp SEMICOLON
+## LR(1) items:
 sentence -> lexp SINGLE_EQ exp SEMICOLON . [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
+## Transitions:
+## Reductions:
 -- On VOID reduce production sentence -> lexp SINGLE_EQ exp SEMICOLON
 -- On VALUE reduce production sentence -> lexp SINGLE_EQ exp SEMICOLON
 -- On UINT8 reduce production sentence -> lexp SINGLE_EQ exp SEMICOLON
@@ -2408,6 +3278,9 @@ sentence -> lexp SINGLE_EQ exp SEMICOLON . [ VOID VALUE UINT8 UINT256 TRUE THIS 
 -- On ABORT reduce production sentence -> lexp SINGLE_EQ exp SEMICOLON
 
 State 174:
+## Known stack suffix:
+## exp
+## LR(1) items:
 exp -> exp . LAND exp [ PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 exp -> exp . PLUS exp [ PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 exp -> exp . MINUS exp [ PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
@@ -2419,6 +3292,7 @@ exp -> exp . EQUALITY exp [ PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 exp -> exp . DOT DEFAULT LPAR RPAR msg_info [ PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 exp -> exp . DOT IDENT LPAR loption(separated_nonempty_list(COMMA,exp)) RPAR msg_info [ PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
 lexp -> exp . LSQBR exp RSQBR [ SINGLE_EQ PLUS NEQ MULT MINUS LT LSQBR LAND GT EQUALITY DOT ]
+## Transitions:
 -- On PLUS shift to state 87
 -- On NEQ shift to state 94
 -- On MULT shift to state 89
@@ -2429,9 +3303,15 @@ lexp -> exp . LSQBR exp RSQBR [ SINGLE_EQ PLUS NEQ MULT MINUS LT LSQBR LAND GT E
 -- On GT shift to state 110
 -- On EQUALITY shift to state 112
 -- On DOT shift to state 98
+## Reductions:
 
 State 175:
+## Known stack suffix:
+## IF LPAR exp RPAR sentence ELSE block
+## LR(1) items:
 sentence -> IF LPAR exp RPAR sentence ELSE block . [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
+## Transitions:
+## Reductions:
 -- On VOID reduce production sentence -> IF LPAR exp RPAR sentence ELSE block
 -- On VALUE reduce production sentence -> IF LPAR exp RPAR sentence ELSE block
 -- On UINT8 reduce production sentence -> IF LPAR exp RPAR sentence ELSE block
@@ -2460,10 +3340,15 @@ sentence -> IF LPAR exp RPAR sentence ELSE block . [ VOID VALUE UINT8 UINT256 TR
 -- On ABORT reduce production sentence -> IF LPAR exp RPAR sentence ELSE block
 
 State 176:
+## Known stack suffix:
+## IF LPAR exp RPAR block
+## LR(1) items:
 sentence -> IF LPAR exp RPAR block . ELSE sentence [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
 sentence -> IF LPAR exp RPAR block . ELSE block [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
 sentence -> IF LPAR exp RPAR block . [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
+## Transitions:
 -- On ELSE shift to state 177
+## Reductions:
 -- On VOID reduce production sentence -> IF LPAR exp RPAR block
 -- On VALUE reduce production sentence -> IF LPAR exp RPAR block
 -- On UINT8 reduce production sentence -> IF LPAR exp RPAR block
@@ -2491,8 +3376,12 @@ sentence -> IF LPAR exp RPAR block . [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER
 -- On ABORT reduce production sentence -> IF LPAR exp RPAR block
 
 State 177:
+## Known stack suffix:
+## IF LPAR exp RPAR block ELSE
+## LR(1) items:
 sentence -> IF LPAR exp RPAR block ELSE . sentence [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
 sentence -> IF LPAR exp RPAR block ELSE . block [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
+## Transitions:
 -- On VOID shift to state 54
 -- On VALUE shift to state 56
 -- On UINT8 shift to state 4
@@ -2523,9 +3412,15 @@ sentence -> IF LPAR exp RPAR block ELSE . block [ VOID VALUE UINT8 UINT256 TRUE 
 -- On lexp shift to state 170
 -- On exp shift to state 174
 -- On block shift to state 179
+## Reductions:
 
 State 178:
+## Known stack suffix:
+## IF LPAR exp RPAR block ELSE sentence
+## LR(1) items:
 sentence -> IF LPAR exp RPAR block ELSE sentence . [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
+## Transitions:
+## Reductions:
 -- On VOID reduce production sentence -> IF LPAR exp RPAR block ELSE sentence
 -- On VALUE reduce production sentence -> IF LPAR exp RPAR block ELSE sentence
 -- On UINT8 reduce production sentence -> IF LPAR exp RPAR block ELSE sentence
@@ -2554,7 +3449,12 @@ sentence -> IF LPAR exp RPAR block ELSE sentence . [ VOID VALUE UINT8 UINT256 TR
 -- On ABORT reduce production sentence -> IF LPAR exp RPAR block ELSE sentence
 
 State 179:
+## Known stack suffix:
+## IF LPAR exp RPAR block ELSE block
+## LR(1) items:
 sentence -> IF LPAR exp RPAR block ELSE block . [ VOID VALUE UINT8 UINT256 TRUE THIS SENDER SELFDESTRUCT RETURN RBRACE NOW NOT LPAR LOG IF IDENT FALSE ELSE DEPLOY DECLIT8 DECLIT256 BYTES32 BOOL BALANCE ADDRESS ABORT ]
+## Transitions:
+## Reductions:
 -- On VOID reduce production sentence -> IF LPAR exp RPAR block ELSE block
 -- On VALUE reduce production sentence -> IF LPAR exp RPAR block ELSE block
 -- On UINT8 reduce production sentence -> IF LPAR exp RPAR block ELSE block
@@ -2583,7 +3483,11 @@ sentence -> IF LPAR exp RPAR block ELSE block . [ VOID VALUE UINT8 UINT256 TRUE 
 -- On ABORT reduce production sentence -> IF LPAR exp RPAR block ELSE block
 
 State 180:
+## Known stack suffix:
+## sentence
+## LR(1) items:
 list(sentence) -> sentence . list(sentence) [ RBRACE ]
+## Transitions:
 -- On VOID shift to state 54
 -- On VALUE shift to state 56
 -- On UINT8 shift to state 4
@@ -2613,18 +3517,34 @@ list(sentence) -> sentence . list(sentence) [ RBRACE ]
 -- On list(sentence) shift to state 181
 -- On lexp shift to state 170
 -- On exp shift to state 174
+## Reductions:
 -- On RBRACE reduce production list(sentence) ->
 
 State 181:
+## Known stack suffix:
+## sentence list(sentence)
+## LR(1) items:
 list(sentence) -> sentence list(sentence) . [ RBRACE ]
+## Transitions:
+## Reductions:
 -- On RBRACE reduce production list(sentence) -> sentence list(sentence)
 
 State 182:
+## Known stack suffix:
+## LBRACE list(sentence)
+## LR(1) items:
 block -> LBRACE list(sentence) . RBRACE [ VOID VALUE UINT8 UINT256 TRUE THIS THEN SENDER SEMICOLON SELFDESTRUCT RSQBR RPAR RETURN REENTRANCE RBRACE PLUS NOW NOT NEQ MULT MINUS LT LSQBR LPAR LOG LAND IF IDENT GT FALSE EQUALITY ELSE DOT DEPLOY DEFAULT DECLIT8 DECLIT256 COMMA CASE BYTES32 BOOL BALANCE ADDRESS ABORT ]
+## Transitions:
 -- On RBRACE shift to state 183
+## Reductions:
 
 State 183:
+## Known stack suffix:
+## LBRACE list(sentence) RBRACE
+## LR(1) items:
 block -> LBRACE list(sentence) RBRACE . [ VOID VALUE UINT8 UINT256 TRUE THIS THEN SENDER SEMICOLON SELFDESTRUCT RSQBR RPAR RETURN REENTRANCE RBRACE PLUS NOW NOT NEQ MULT MINUS LT LSQBR LPAR LOG LAND IF IDENT GT FALSE EQUALITY ELSE DOT DEPLOY DEFAULT DECLIT8 DECLIT256 COMMA CASE BYTES32 BOOL BALANCE ADDRESS ABORT ]
+## Transitions:
+## Reductions:
 -- On VOID reduce production block -> LBRACE list(sentence) RBRACE
 -- On VALUE reduce production block -> LBRACE list(sentence) RBRACE
 -- On UINT8 reduce production block -> LBRACE list(sentence) RBRACE
@@ -2671,45 +3591,85 @@ block -> LBRACE list(sentence) RBRACE . [ VOID VALUE UINT8 UINT256 TRUE THIS THE
 -- On ABORT reduce production block -> LBRACE list(sentence) RBRACE
 
 State 184:
+## Known stack suffix:
+## case_header block
+## LR(1) items:
 case -> case_header block . [ RBRACE DEFAULT CASE ]
+## Transitions:
+## Reductions:
 -- On RBRACE reduce production case -> case_header block
 -- On DEFAULT reduce production case -> case_header block
 -- On CASE reduce production case -> case_header block
 
 State 185:
+## Known stack suffix:
+## case
+## LR(1) items:
 list(case) -> case . list(case) [ RBRACE ]
+## Transitions:
 -- On DEFAULT shift to state 32
 -- On CASE shift to state 33
 -- On list(case) shift to state 186
 -- On case_header shift to state 52
 -- On case shift to state 185
+## Reductions:
 -- On RBRACE reduce production list(case) ->
 
 State 186:
+## Known stack suffix:
+## case list(case)
+## LR(1) items:
 list(case) -> case list(case) . [ RBRACE ]
+## Transitions:
+## Reductions:
 -- On RBRACE reduce production list(case) -> case list(case)
 
 State 187:
+## Known stack suffix:
+## list(contract)
+## LR(1) items:
 file -> list(contract) . EOF [ # ]
+## Transitions:
 -- On EOF shift to state 188
+## Reductions:
 
 State 188:
+## Known stack suffix:
+## list(contract) EOF
+## LR(1) items:
 file -> list(contract) EOF . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production file -> list(contract) EOF
 
 State 189:
+## Known stack suffix:
+## file
+## LR(1) items:
 file' -> file . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept file
 
 State 190:
+## Known stack suffix:
+## contract
+## LR(1) items:
 list(contract) -> contract . list(contract) [ EOF ]
+## Transitions:
 -- On EVENT shift to state 1
 -- On CONTRACT shift to state 24
 -- On list(contract) shift to state 191
 -- On contract shift to state 190
+## Reductions:
 -- On EOF reduce production list(contract) ->
 
 State 191:
+## Known stack suffix:
+## contract list(contract)
+## LR(1) items:
 list(contract) -> contract list(contract) . [ EOF ]
+## Transitions:
+## Reductions:
 -- On EOF reduce production list(contract) -> contract list(contract)
 

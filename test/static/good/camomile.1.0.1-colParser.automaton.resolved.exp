@@ -1,5 +1,9 @@
 State 0:
+## Known stack suffix:
+##
+## LR(1) items:
 main' -> . main [ # ]
+## Transitions:
 -- On UCHAR shift to state 1
 -- On RESET shift to state 2
 -- On OPTION shift to state 10
@@ -9,27 +13,43 @@ main' -> . main [ # ]
 -- On main shift to state 30
 -- On header_option shift to state 31
 -- On header shift to state 33
+## Reductions:
 
 State 1:
+## Known stack suffix:
+## UCHAR
+## LR(1) items:
 header_option -> UCHAR . [ UCHAR RESET OPTION EOF ]
+## Transitions:
+## Reductions:
 -- On UCHAR reduce production header_option -> UCHAR
 -- On RESET reduce production header_option -> UCHAR
 -- On OPTION reduce production header_option -> UCHAR
 -- On EOF reduce production header_option -> UCHAR
 
 State 2:
+## Known stack suffix:
+## RESET
+## LR(1) items:
 rule -> RESET . init [ TERTIARY SECONDARY RESET PRIMARY EQ EOF ]
 rule -> RESET . OPTION init [ TERTIARY SECONDARY RESET PRIMARY EQ EOF ]
+## Transitions:
 -- On UCHAR shift to state 3
 -- On OPTION shift to state 5
 -- On ulist shift to state 7
 -- On init shift to state 9
+## Reductions:
 
 State 3:
+## Known stack suffix:
+## UCHAR
+## LR(1) items:
 ulist -> UCHAR . [ TERTIARY SECONDARY RESET PRIMARY PREFIX EXPAND EQ EOF ]
 ulist -> UCHAR . ulist [ TERTIARY SECONDARY RESET PRIMARY PREFIX EXPAND EQ EOF ]
+## Transitions:
 -- On UCHAR shift to state 3
 -- On ulist shift to state 4
+## Reductions:
 -- On TERTIARY reduce production ulist -> UCHAR
 -- On SECONDARY reduce production ulist -> UCHAR
 -- On RESET reduce production ulist -> UCHAR
@@ -40,7 +60,12 @@ ulist -> UCHAR . ulist [ TERTIARY SECONDARY RESET PRIMARY PREFIX EXPAND EQ EOF ]
 -- On EOF reduce production ulist -> UCHAR
 
 State 4:
+## Known stack suffix:
+## UCHAR ulist
+## LR(1) items:
 ulist -> UCHAR ulist . [ TERTIARY SECONDARY RESET PRIMARY PREFIX EXPAND EQ EOF ]
+## Transitions:
+## Reductions:
 -- On TERTIARY reduce production ulist -> UCHAR ulist
 -- On SECONDARY reduce production ulist -> UCHAR ulist
 -- On RESET reduce production ulist -> UCHAR ulist
@@ -51,12 +76,17 @@ ulist -> UCHAR ulist . [ TERTIARY SECONDARY RESET PRIMARY PREFIX EXPAND EQ EOF ]
 -- On EOF reduce production ulist -> UCHAR ulist
 
 State 5:
+## Known stack suffix:
+## RESET OPTION
+## LR(1) items:
 init -> OPTION . [ TERTIARY SECONDARY RESET PRIMARY EQ EOF ]
 rule -> RESET OPTION . init [ TERTIARY SECONDARY RESET PRIMARY EQ EOF ]
+## Transitions:
 -- On UCHAR shift to state 3
 -- On OPTION shift to state 6
 -- On ulist shift to state 7
 -- On init shift to state 8
+## Reductions:
 -- On TERTIARY reduce production init -> OPTION
 -- On SECONDARY reduce production init -> OPTION
 -- On RESET reduce production init -> OPTION
@@ -65,7 +95,12 @@ rule -> RESET OPTION . init [ TERTIARY SECONDARY RESET PRIMARY EQ EOF ]
 -- On EOF reduce production init -> OPTION
 
 State 6:
+## Known stack suffix:
+## OPTION
+## LR(1) items:
 init -> OPTION . [ TERTIARY SECONDARY RESET PRIMARY EQ EOF ]
+## Transitions:
+## Reductions:
 -- On TERTIARY reduce production init -> OPTION
 -- On SECONDARY reduce production init -> OPTION
 -- On RESET reduce production init -> OPTION
@@ -74,7 +109,12 @@ init -> OPTION . [ TERTIARY SECONDARY RESET PRIMARY EQ EOF ]
 -- On EOF reduce production init -> OPTION
 
 State 7:
+## Known stack suffix:
+## ulist
+## LR(1) items:
 init -> ulist . [ TERTIARY SECONDARY RESET PRIMARY EQ EOF ]
+## Transitions:
+## Reductions:
 -- On TERTIARY reduce production init -> ulist
 -- On SECONDARY reduce production init -> ulist
 -- On RESET reduce production init -> ulist
@@ -83,7 +123,12 @@ init -> ulist . [ TERTIARY SECONDARY RESET PRIMARY EQ EOF ]
 -- On EOF reduce production init -> ulist
 
 State 8:
+## Known stack suffix:
+## RESET OPTION init
+## LR(1) items:
 rule -> RESET OPTION init . [ TERTIARY SECONDARY RESET PRIMARY EQ EOF ]
+## Transitions:
+## Reductions:
 -- On TERTIARY reduce production rule -> RESET OPTION init
 -- On SECONDARY reduce production rule -> RESET OPTION init
 -- On RESET reduce production rule -> RESET OPTION init
@@ -92,7 +137,12 @@ rule -> RESET OPTION init . [ TERTIARY SECONDARY RESET PRIMARY EQ EOF ]
 -- On EOF reduce production rule -> RESET OPTION init
 
 State 9:
+## Known stack suffix:
+## RESET init
+## LR(1) items:
 rule -> RESET init . [ TERTIARY SECONDARY RESET PRIMARY EQ EOF ]
+## Transitions:
+## Reductions:
 -- On TERTIARY reduce production rule -> RESET init
 -- On SECONDARY reduce production rule -> RESET init
 -- On RESET reduce production rule -> RESET init
@@ -101,31 +151,55 @@ rule -> RESET init . [ TERTIARY SECONDARY RESET PRIMARY EQ EOF ]
 -- On EOF reduce production rule -> RESET init
 
 State 10:
+## Known stack suffix:
+## OPTION
+## LR(1) items:
 header_option -> OPTION . [ UCHAR RESET OPTION EOF ]
+## Transitions:
+## Reductions:
 -- On UCHAR reduce production header_option -> OPTION
 -- On RESET reduce production header_option -> OPTION
 -- On OPTION reduce production header_option -> OPTION
 -- On EOF reduce production header_option -> OPTION
 
 State 11:
+## Known stack suffix:
+## EOF
+## LR(1) items:
 main -> EOF . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production main -> EOF
 
 State 12:
+## Known stack suffix:
+## rules
+## LR(1) items:
 main -> rules . EOF [ # ]
+## Transitions:
 -- On EOF shift to state 13
+## Reductions:
 
 State 13:
+## Known stack suffix:
+## rules EOF
+## LR(1) items:
 main -> rules EOF . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production main -> rules EOF
 
 State 14:
+## Known stack suffix:
+## rule
+## LR(1) items:
 rule -> rule . PRIMARY elem [ TERTIARY SECONDARY RESET PRIMARY EQ EOF ]
 rule -> rule . SECONDARY elem [ TERTIARY SECONDARY RESET PRIMARY EQ EOF ]
 rule -> rule . TERTIARY elem [ TERTIARY SECONDARY RESET PRIMARY EQ EOF ]
 rule -> rule . EQ elem [ TERTIARY SECONDARY RESET PRIMARY EQ EOF ]
 rules -> rule . rules [ EOF ]
 rules -> rule . [ EOF ]
+## Transitions:
 -- On TERTIARY shift to state 15
 -- On SECONDARY shift to state 23
 -- On RESET shift to state 2
@@ -133,17 +207,28 @@ rules -> rule . [ EOF ]
 -- On EQ shift to state 27
 -- On rules shift to state 29
 -- On rule shift to state 14
+## Reductions:
 -- On EOF reduce production rules -> rule
 
 State 15:
+## Known stack suffix:
+## rule TERTIARY
+## LR(1) items:
 rule -> rule TERTIARY . elem [ TERTIARY SECONDARY RESET PRIMARY EQ EOF ]
+## Transitions:
 -- On UCHAR shift to state 3
 -- On OPTION shift to state 16
 -- On ulist shift to state 17
 -- On elem shift to state 20
+## Reductions:
 
 State 16:
+## Known stack suffix:
+## OPTION
+## LR(1) items:
 elem -> OPTION . [ TERTIARY SECONDARY RESET PRIMARY EXPAND EQ EOF ]
+## Transitions:
+## Reductions:
 -- On TERTIARY reduce production elem -> OPTION
 -- On SECONDARY reduce production elem -> OPTION
 -- On RESET reduce production elem -> OPTION
@@ -153,9 +238,14 @@ elem -> OPTION . [ TERTIARY SECONDARY RESET PRIMARY EXPAND EQ EOF ]
 -- On EOF reduce production elem -> OPTION
 
 State 17:
+## Known stack suffix:
+## ulist
+## LR(1) items:
 elem -> ulist . [ TERTIARY SECONDARY RESET PRIMARY EXPAND EQ EOF ]
 elem -> ulist . PREFIX elem [ TERTIARY SECONDARY RESET PRIMARY EXPAND EQ EOF ]
+## Transitions:
 -- On PREFIX shift to state 18
+## Reductions:
 -- On TERTIARY reduce production elem -> ulist
 -- On SECONDARY reduce production elem -> ulist
 -- On RESET reduce production elem -> ulist
@@ -165,15 +255,25 @@ elem -> ulist . PREFIX elem [ TERTIARY SECONDARY RESET PRIMARY EXPAND EQ EOF ]
 -- On EOF reduce production elem -> ulist
 
 State 18:
+## Known stack suffix:
+## ulist PREFIX
+## LR(1) items:
 elem -> ulist PREFIX . elem [ TERTIARY SECONDARY RESET PRIMARY EXPAND EQ EOF ]
+## Transitions:
 -- On UCHAR shift to state 3
 -- On OPTION shift to state 16
 -- On ulist shift to state 17
 -- On elem shift to state 19
+## Reductions:
 
 State 19:
+## Known stack suffix:
+## ulist PREFIX elem
+## LR(1) items:
 elem -> elem . EXPAND ulist [ TERTIARY SECONDARY RESET PRIMARY EXPAND EQ EOF ]
 elem -> ulist PREFIX elem . [ TERTIARY SECONDARY RESET PRIMARY EXPAND EQ EOF ]
+## Transitions:
+## Reductions:
 -- On TERTIARY reduce production elem -> ulist PREFIX elem
 -- On SECONDARY reduce production elem -> ulist PREFIX elem
 -- On RESET reduce production elem -> ulist PREFIX elem
@@ -183,9 +283,14 @@ elem -> ulist PREFIX elem . [ TERTIARY SECONDARY RESET PRIMARY EXPAND EQ EOF ]
 -- On EOF reduce production elem -> ulist PREFIX elem
 
 State 20:
+## Known stack suffix:
+## rule TERTIARY elem
+## LR(1) items:
 elem -> elem . EXPAND ulist [ TERTIARY SECONDARY RESET PRIMARY EXPAND EQ EOF ]
 rule -> rule TERTIARY elem . [ TERTIARY SECONDARY RESET PRIMARY EQ EOF ]
+## Transitions:
 -- On EXPAND shift to state 21
+## Reductions:
 -- On TERTIARY reduce production rule -> rule TERTIARY elem
 -- On SECONDARY reduce production rule -> rule TERTIARY elem
 -- On RESET reduce production rule -> rule TERTIARY elem
@@ -194,12 +299,22 @@ rule -> rule TERTIARY elem . [ TERTIARY SECONDARY RESET PRIMARY EQ EOF ]
 -- On EOF reduce production rule -> rule TERTIARY elem
 
 State 21:
+## Known stack suffix:
+## elem EXPAND
+## LR(1) items:
 elem -> elem EXPAND . ulist [ TERTIARY SECONDARY RESET PRIMARY EXPAND EQ EOF ]
+## Transitions:
 -- On UCHAR shift to state 3
 -- On ulist shift to state 22
+## Reductions:
 
 State 22:
+## Known stack suffix:
+## elem EXPAND ulist
+## LR(1) items:
 elem -> elem EXPAND ulist . [ TERTIARY SECONDARY RESET PRIMARY EXPAND EQ EOF ]
+## Transitions:
+## Reductions:
 -- On TERTIARY reduce production elem -> elem EXPAND ulist
 -- On SECONDARY reduce production elem -> elem EXPAND ulist
 -- On RESET reduce production elem -> elem EXPAND ulist
@@ -209,16 +324,26 @@ elem -> elem EXPAND ulist . [ TERTIARY SECONDARY RESET PRIMARY EXPAND EQ EOF ]
 -- On EOF reduce production elem -> elem EXPAND ulist
 
 State 23:
+## Known stack suffix:
+## rule SECONDARY
+## LR(1) items:
 rule -> rule SECONDARY . elem [ TERTIARY SECONDARY RESET PRIMARY EQ EOF ]
+## Transitions:
 -- On UCHAR shift to state 3
 -- On OPTION shift to state 16
 -- On ulist shift to state 17
 -- On elem shift to state 24
+## Reductions:
 
 State 24:
+## Known stack suffix:
+## rule SECONDARY elem
+## LR(1) items:
 elem -> elem . EXPAND ulist [ TERTIARY SECONDARY RESET PRIMARY EXPAND EQ EOF ]
 rule -> rule SECONDARY elem . [ TERTIARY SECONDARY RESET PRIMARY EQ EOF ]
+## Transitions:
 -- On EXPAND shift to state 21
+## Reductions:
 -- On TERTIARY reduce production rule -> rule SECONDARY elem
 -- On SECONDARY reduce production rule -> rule SECONDARY elem
 -- On RESET reduce production rule -> rule SECONDARY elem
@@ -227,16 +352,26 @@ rule -> rule SECONDARY elem . [ TERTIARY SECONDARY RESET PRIMARY EQ EOF ]
 -- On EOF reduce production rule -> rule SECONDARY elem
 
 State 25:
+## Known stack suffix:
+## rule PRIMARY
+## LR(1) items:
 rule -> rule PRIMARY . elem [ TERTIARY SECONDARY RESET PRIMARY EQ EOF ]
+## Transitions:
 -- On UCHAR shift to state 3
 -- On OPTION shift to state 16
 -- On ulist shift to state 17
 -- On elem shift to state 26
+## Reductions:
 
 State 26:
+## Known stack suffix:
+## rule PRIMARY elem
+## LR(1) items:
 elem -> elem . EXPAND ulist [ TERTIARY SECONDARY RESET PRIMARY EXPAND EQ EOF ]
 rule -> rule PRIMARY elem . [ TERTIARY SECONDARY RESET PRIMARY EQ EOF ]
+## Transitions:
 -- On EXPAND shift to state 21
+## Reductions:
 -- On TERTIARY reduce production rule -> rule PRIMARY elem
 -- On SECONDARY reduce production rule -> rule PRIMARY elem
 -- On RESET reduce production rule -> rule PRIMARY elem
@@ -245,16 +380,26 @@ rule -> rule PRIMARY elem . [ TERTIARY SECONDARY RESET PRIMARY EQ EOF ]
 -- On EOF reduce production rule -> rule PRIMARY elem
 
 State 27:
+## Known stack suffix:
+## rule EQ
+## LR(1) items:
 rule -> rule EQ . elem [ TERTIARY SECONDARY RESET PRIMARY EQ EOF ]
+## Transitions:
 -- On UCHAR shift to state 3
 -- On OPTION shift to state 16
 -- On ulist shift to state 17
 -- On elem shift to state 28
+## Reductions:
 
 State 28:
+## Known stack suffix:
+## rule EQ elem
+## LR(1) items:
 elem -> elem . EXPAND ulist [ TERTIARY SECONDARY RESET PRIMARY EXPAND EQ EOF ]
 rule -> rule EQ elem . [ TERTIARY SECONDARY RESET PRIMARY EQ EOF ]
+## Transitions:
 -- On EXPAND shift to state 21
+## Reductions:
 -- On TERTIARY reduce production rule -> rule EQ elem
 -- On SECONDARY reduce production rule -> rule EQ elem
 -- On RESET reduce production rule -> rule EQ elem
@@ -263,45 +408,85 @@ rule -> rule EQ elem . [ TERTIARY SECONDARY RESET PRIMARY EQ EOF ]
 -- On EOF reduce production rule -> rule EQ elem
 
 State 29:
+## Known stack suffix:
+## rule rules
+## LR(1) items:
 rules -> rule rules . [ EOF ]
+## Transitions:
+## Reductions:
 -- On EOF reduce production rules -> rule rules
 
 State 30:
+## Known stack suffix:
+## main
+## LR(1) items:
 main' -> main . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept main
 
 State 31:
+## Known stack suffix:
+## header_option
+## LR(1) items:
 header -> header_option . header [ RESET EOF ]
 header -> header_option . [ RESET EOF ]
+## Transitions:
 -- On UCHAR shift to state 1
 -- On OPTION shift to state 10
 -- On header_option shift to state 31
 -- On header shift to state 32
+## Reductions:
 -- On RESET reduce production header -> header_option
 -- On EOF reduce production header -> header_option
 
 State 32:
+## Known stack suffix:
+## header_option header
+## LR(1) items:
 header -> header_option header . [ RESET EOF ]
+## Transitions:
+## Reductions:
 -- On RESET reduce production header -> header_option header
 -- On EOF reduce production header -> header_option header
 
 State 33:
+## Known stack suffix:
+## header
+## LR(1) items:
 main -> header . rules EOF [ # ]
 main -> header . EOF [ # ]
+## Transitions:
 -- On RESET shift to state 2
 -- On EOF shift to state 34
 -- On rules shift to state 35
 -- On rule shift to state 14
+## Reductions:
 
 State 34:
+## Known stack suffix:
+## header EOF
+## LR(1) items:
 main -> header EOF . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production main -> header EOF
 
 State 35:
+## Known stack suffix:
+## header rules
+## LR(1) items:
 main -> header rules . EOF [ # ]
+## Transitions:
 -- On EOF shift to state 36
+## Reductions:
 
 State 36:
+## Known stack suffix:
+## header rules EOF
+## LR(1) items:
 main -> header rules EOF . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production main -> header rules EOF
 

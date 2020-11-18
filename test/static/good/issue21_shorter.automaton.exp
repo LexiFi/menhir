@@ -1,118 +1,223 @@
 State 0:
+## Known stack suffix:
+##
+## LR(1) items:
 commandline' -> . commandline [ # ]
+## Transitions:
 -- On REC shift to state 1
 -- On NAME shift to state 2
 -- On LET shift to state 13
 -- On term shift to state 18
 -- On name shift to state 8
 -- On commandline shift to state 20
+## Reductions:
 
 State 1:
+## Known stack suffix:
+## REC
+## LR(1) items:
 term -> REC . term IN term [ IN EOF ]
+## Transitions:
 -- On REC shift to state 1
 -- On NAME shift to state 2
 -- On LET shift to state 3
 -- On term shift to state 10
 -- On name shift to state 8
+## Reductions:
 
 State 2:
+## Known stack suffix:
+## NAME
+## LR(1) items:
 name -> NAME . [ PLUS ]
 term -> NAME . [ IN EOF ]
+## Transitions:
+## Reductions:
 -- On PLUS reduce production name -> NAME
 -- On IN reduce production term -> NAME
 -- On EOF reduce production term -> NAME
 
 State 3:
+## Known stack suffix:
+## LET
+## LR(1) items:
 term -> LET . name IN term [ IN EOF ]
+## Transitions:
 -- On NAME shift to state 4
 -- On name shift to state 5
+## Reductions:
 
 State 4:
+## Known stack suffix:
+## NAME
+## LR(1) items:
 name -> NAME . [ IN ]
+## Transitions:
+## Reductions:
 -- On IN reduce production name -> NAME
 
 State 5:
+## Known stack suffix:
+## LET name
+## LR(1) items:
 term -> LET name . IN term [ IN EOF ]
+## Transitions:
 -- On IN shift to state 6
+## Reductions:
 
 State 6:
+## Known stack suffix:
+## LET name IN
+## LR(1) items:
 term -> LET name IN . term [ IN EOF ]
+## Transitions:
 -- On REC shift to state 1
 -- On NAME shift to state 2
 -- On LET shift to state 3
 -- On term shift to state 7
 -- On name shift to state 8
+## Reductions:
 
 State 7:
+## Known stack suffix:
+## LET name IN term
+## LR(1) items:
 term -> LET name IN term . [ IN EOF ]
+## Transitions:
+## Reductions:
 -- On IN reduce production term -> LET name IN term
 -- On EOF reduce production term -> LET name IN term
 
 State 8:
+## Known stack suffix:
+## name
+## LR(1) items:
 term -> name . PLUS [ IN EOF ]
+## Transitions:
 -- On PLUS shift to state 9
+## Reductions:
 
 State 9:
+## Known stack suffix:
+## name PLUS
+## LR(1) items:
 term -> name PLUS . [ IN EOF ]
+## Transitions:
+## Reductions:
 -- On IN reduce production term -> name PLUS
 -- On EOF reduce production term -> name PLUS
 
 State 10:
+## Known stack suffix:
+## REC term
+## LR(1) items:
 term -> REC term . IN term [ IN EOF ]
+## Transitions:
 -- On IN shift to state 11
+## Reductions:
 
 State 11:
+## Known stack suffix:
+## REC term IN
+## LR(1) items:
 term -> REC term IN . term [ IN EOF ]
+## Transitions:
 -- On REC shift to state 1
 -- On NAME shift to state 2
 -- On LET shift to state 3
 -- On term shift to state 12
 -- On name shift to state 8
+## Reductions:
 
 State 12:
+## Known stack suffix:
+## REC term IN term
+## LR(1) items:
 term -> REC term IN term . [ IN EOF ]
+## Transitions:
+## Reductions:
 -- On IN reduce production term -> REC term IN term
 -- On EOF reduce production term -> REC term IN term
 
 State 13:
+## Known stack suffix:
+## LET
+## LR(1) items:
 commandline -> LET . term EOF [ # ]
 term -> LET . name IN term [ EOF ]
+## Transitions:
 -- On REC shift to state 1
 -- On NAME shift to state 14
 -- On LET shift to state 3
 -- On term shift to state 15
 -- On name shift to state 17
+## Reductions:
 
 State 14:
+## Known stack suffix:
+## NAME
+## LR(1) items:
 name -> NAME . [ PLUS IN ]
 term -> NAME . [ EOF ]
+## Transitions:
+## Reductions:
 -- On PLUS reduce production name -> NAME
 -- On IN reduce production name -> NAME
 -- On EOF reduce production term -> NAME
 
 State 15:
+## Known stack suffix:
+## LET term
+## LR(1) items:
 commandline -> LET term . EOF [ # ]
+## Transitions:
 -- On EOF shift to state 16
+## Reductions:
 
 State 16:
+## Known stack suffix:
+## LET term EOF
+## LR(1) items:
 commandline -> LET term EOF . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production commandline -> LET term EOF
 
 State 17:
+## Known stack suffix:
+## LET name
+## LR(1) items:
 term -> name . PLUS [ EOF ]
 term -> LET name . IN term [ EOF ]
+## Transitions:
 -- On PLUS shift to state 9
 -- On IN shift to state 6
+## Reductions:
 
 State 18:
+## Known stack suffix:
+## term
+## LR(1) items:
 commandline -> term . EOF [ # ]
+## Transitions:
 -- On EOF shift to state 19
+## Reductions:
 
 State 19:
+## Known stack suffix:
+## term EOF
+## LR(1) items:
 commandline -> term EOF . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production commandline -> term EOF
 
 State 20:
+## Known stack suffix:
+## commandline
+## LR(1) items:
 commandline' -> commandline . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept commandline
 

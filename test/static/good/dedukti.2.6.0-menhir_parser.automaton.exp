@@ -1,5 +1,9 @@
 State 0:
+## Known stack suffix:
+##
+## LR(1) items:
 line' -> . line [ # ]
+## Transitions:
 -- On REQUIRE shift to state 1
 -- On PRINT shift to state 3
 -- On NAME shift to state 6
@@ -19,52 +23,102 @@ line' -> . line [ # ]
 -- On rule shift to state 204
 -- On nonempty_list(rule) shift to state 206
 -- On line shift to state 208
+## Reductions:
 
 State 1:
+## Known stack suffix:
+## REQUIRE
+## LR(1) items:
 line -> REQUIRE . DOT [ # ]
+## Transitions:
 -- On DOT shift to state 2
+## Reductions:
 
 State 2:
+## Known stack suffix:
+## REQUIRE DOT
+## LR(1) items:
 line -> REQUIRE DOT . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production line -> REQUIRE DOT
 
 State 3:
+## Known stack suffix:
+## PRINT
+## LR(1) items:
 line -> PRINT . STRING DOT [ # ]
+## Transitions:
 -- On STRING shift to state 4
+## Reductions:
 
 State 4:
+## Known stack suffix:
+## PRINT STRING
+## LR(1) items:
 line -> PRINT STRING . DOT [ # ]
+## Transitions:
 -- On DOT shift to state 5
+## Reductions:
 
 State 5:
+## Known stack suffix:
+## PRINT STRING DOT
+## LR(1) items:
 line -> PRINT STRING DOT . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production line -> PRINT STRING DOT
 
 State 6:
+## Known stack suffix:
+## NAME
+## LR(1) items:
 line -> NAME . DOT [ # ]
+## Transitions:
 -- On DOT shift to state 7
+## Reductions:
 
 State 7:
+## Known stack suffix:
+## NAME DOT
+## LR(1) items:
 line -> NAME DOT . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production line -> NAME DOT
 
 State 8:
+## Known stack suffix:
+## LEFTSQU
+## LR(1) items:
 rule -> LEFTSQU . context RIGHTSQU top_pattern LONGARROW term [ LEFTSQU LEFTBRA DOT ]
+## Transitions:
 -- On ID shift to state 9
 -- On separated_nonempty_list(COMMA,decl) shift to state 51
 -- On decl shift to state 52
 -- On context shift to state 55
+## Reductions:
 -- On RIGHTSQU reduce production context ->
 
 State 9:
+## Known stack suffix:
+## ID
+## LR(1) items:
 decl -> ID . COLON term [ RIGHTSQU COMMA ]
 decl -> ID . [ RIGHTSQU COMMA ]
+## Transitions:
 -- On COLON shift to state 10
+## Reductions:
 -- On RIGHTSQU reduce production decl -> ID
 -- On COMMA reduce production decl -> ID
 
 State 10:
+## Known stack suffix:
+## ID COLON
+## LR(1) items:
 decl -> ID COLON . term [ RIGHTSQU COMMA ]
+## Transitions:
 -- On UNDERSCORE shift to state 11
 -- On TYPE shift to state 13
 -- On QID shift to state 14
@@ -73,14 +127,20 @@ decl -> ID COLON . term [ RIGHTSQU COMMA ]
 -- On term shift to state 50
 -- On sterm shift to state 26
 -- On aterm shift to state 31
+## Reductions:
 
 State 11:
+## Known stack suffix:
+## UNDERSCORE
+## LR(1) items:
 sterm -> UNDERSCORE . [ UNDERSCORE TYPE RIGHTSQU RIGHTPAR RIGHTBRA QID LEFTSQU LEFTPAR LEFTBRA ID DOT DEF COMMA ARROW ]
 term -> UNDERSCORE . COLON aterm ARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
 term -> UNDERSCORE . FATARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
 term -> UNDERSCORE . COLON aterm FATARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+## Transitions:
 -- On FATARROW shift to state 12
 -- On COLON shift to state 44
+## Reductions:
 -- On UNDERSCORE reduce production sterm -> UNDERSCORE
 -- On TYPE reduce production sterm -> UNDERSCORE
 -- On RIGHTSQU reduce production sterm -> UNDERSCORE
@@ -97,7 +157,11 @@ term -> UNDERSCORE . COLON aterm FATARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFT
 -- On ARROW reduce production sterm -> UNDERSCORE
 
 State 12:
+## Known stack suffix:
+## UNDERSCORE FATARROW
+## LR(1) items:
 term -> UNDERSCORE FATARROW . term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+## Transitions:
 -- On UNDERSCORE shift to state 11
 -- On TYPE shift to state 13
 -- On QID shift to state 14
@@ -106,9 +170,15 @@ term -> UNDERSCORE FATARROW . term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA 
 -- On term shift to state 43
 -- On sterm shift to state 26
 -- On aterm shift to state 31
+## Reductions:
 
 State 13:
+## Known stack suffix:
+## TYPE
+## LR(1) items:
 sterm -> TYPE . [ UNDERSCORE TYPE RIGHTSQU RIGHTPAR RIGHTBRA QID LEFTSQU LEFTPAR LEFTBRA ID FATARROW EQUAL DOT DEF COMMA COLON ARROW ]
+## Transitions:
+## Reductions:
 -- On UNDERSCORE reduce production sterm -> TYPE
 -- On TYPE reduce production sterm -> TYPE
 -- On RIGHTSQU reduce production sterm -> TYPE
@@ -128,7 +198,12 @@ sterm -> TYPE . [ UNDERSCORE TYPE RIGHTSQU RIGHTPAR RIGHTBRA QID LEFTSQU LEFTPAR
 -- On ARROW reduce production sterm -> TYPE
 
 State 14:
+## Known stack suffix:
+## QID
+## LR(1) items:
 sterm -> QID . [ UNDERSCORE TYPE RIGHTSQU RIGHTPAR RIGHTBRA QID LEFTSQU LEFTPAR LEFTBRA ID FATARROW EQUAL DOT DEF COMMA COLON ARROW ]
+## Transitions:
+## Reductions:
 -- On UNDERSCORE reduce production sterm -> QID
 -- On TYPE reduce production sterm -> QID
 -- On RIGHTSQU reduce production sterm -> QID
@@ -148,8 +223,12 @@ sterm -> QID . [ UNDERSCORE TYPE RIGHTSQU RIGHTPAR RIGHTBRA QID LEFTSQU LEFTPAR 
 -- On ARROW reduce production sterm -> QID
 
 State 15:
+## Known stack suffix:
+## LEFTPAR
+## LR(1) items:
 sterm -> LEFTPAR . term RIGHTPAR [ UNDERSCORE TYPE RIGHTSQU RIGHTPAR RIGHTBRA QID LEFTSQU LEFTPAR LEFTBRA ID DOT DEF COMMA ARROW ]
 term -> LEFTPAR . ID COLON aterm RIGHTPAR ARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+## Transitions:
 -- On UNDERSCORE shift to state 11
 -- On TYPE shift to state 13
 -- On QID shift to state 14
@@ -158,15 +237,21 @@ term -> LEFTPAR . ID COLON aterm RIGHTPAR ARROW term [ RIGHTSQU RIGHTPAR RIGHTBR
 -- On term shift to state 22
 -- On sterm shift to state 26
 -- On aterm shift to state 31
+## Reductions:
 
 State 16:
+## Known stack suffix:
+## LEFTPAR ID
+## LR(1) items:
 sterm -> ID . [ UNDERSCORE TYPE RIGHTPAR QID LEFTPAR ID ARROW ]
 term -> ID . COLON aterm ARROW term [ RIGHTPAR ARROW ]
 term -> LEFTPAR ID . COLON aterm RIGHTPAR ARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
 term -> ID . FATARROW term [ RIGHTPAR ARROW ]
 term -> ID . COLON aterm FATARROW term [ RIGHTPAR ARROW ]
+## Transitions:
 -- On FATARROW shift to state 17
 -- On COLON shift to state 38
+## Reductions:
 -- On UNDERSCORE reduce production sterm -> ID
 -- On TYPE reduce production sterm -> ID
 -- On RIGHTPAR reduce production sterm -> ID
@@ -176,7 +261,11 @@ term -> ID . COLON aterm FATARROW term [ RIGHTPAR ARROW ]
 -- On ARROW reduce production sterm -> ID
 
 State 17:
+## Known stack suffix:
+## ID FATARROW
+## LR(1) items:
 term -> ID FATARROW . term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+## Transitions:
 -- On UNDERSCORE shift to state 11
 -- On TYPE shift to state 13
 -- On QID shift to state 14
@@ -185,14 +274,20 @@ term -> ID FATARROW . term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF 
 -- On term shift to state 37
 -- On sterm shift to state 26
 -- On aterm shift to state 31
+## Reductions:
 
 State 18:
+## Known stack suffix:
+## ID
+## LR(1) items:
 sterm -> ID . [ UNDERSCORE TYPE RIGHTSQU RIGHTPAR RIGHTBRA QID LEFTSQU LEFTPAR LEFTBRA ID DOT DEF COMMA ARROW ]
 term -> ID . COLON aterm ARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
 term -> ID . FATARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
 term -> ID . COLON aterm FATARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+## Transitions:
 -- On FATARROW shift to state 17
 -- On COLON shift to state 19
+## Reductions:
 -- On UNDERSCORE reduce production sterm -> ID
 -- On TYPE reduce production sterm -> ID
 -- On RIGHTSQU reduce production sterm -> ID
@@ -209,8 +304,12 @@ term -> ID . COLON aterm FATARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFT
 -- On ARROW reduce production sterm -> ID
 
 State 19:
+## Known stack suffix:
+## ID COLON
+## LR(1) items:
 term -> ID COLON . aterm ARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
 term -> ID COLON . aterm FATARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+## Transitions:
 -- On UNDERSCORE shift to state 20
 -- On TYPE shift to state 13
 -- On QID shift to state 14
@@ -218,9 +317,15 @@ term -> ID COLON . aterm FATARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFT
 -- On ID shift to state 27
 -- On sterm shift to state 26
 -- On aterm shift to state 32
+## Reductions:
 
 State 20:
+## Known stack suffix:
+## UNDERSCORE
+## LR(1) items:
 sterm -> UNDERSCORE . [ UNDERSCORE TYPE RIGHTSQU RIGHTPAR RIGHTBRA QID LEFTSQU LEFTPAR LEFTBRA ID FATARROW EQUAL DOT DEF COMMA COLON ARROW ]
+## Transitions:
+## Reductions:
 -- On UNDERSCORE reduce production sterm -> UNDERSCORE
 -- On TYPE reduce production sterm -> UNDERSCORE
 -- On RIGHTSQU reduce production sterm -> UNDERSCORE
@@ -240,7 +345,11 @@ sterm -> UNDERSCORE . [ UNDERSCORE TYPE RIGHTSQU RIGHTPAR RIGHTBRA QID LEFTSQU L
 -- On ARROW reduce production sterm -> UNDERSCORE
 
 State 21:
+## Known stack suffix:
+## LEFTPAR
+## LR(1) items:
 sterm -> LEFTPAR . term RIGHTPAR [ UNDERSCORE TYPE RIGHTSQU RIGHTPAR RIGHTBRA QID LEFTSQU LEFTPAR LEFTBRA ID FATARROW EQUAL DOT DEF COMMA COLON ARROW ]
+## Transitions:
 -- On UNDERSCORE shift to state 11
 -- On TYPE shift to state 13
 -- On QID shift to state 14
@@ -249,15 +358,26 @@ sterm -> LEFTPAR . term RIGHTPAR [ UNDERSCORE TYPE RIGHTSQU RIGHTPAR RIGHTBRA QI
 -- On term shift to state 22
 -- On sterm shift to state 26
 -- On aterm shift to state 31
+## Reductions:
 
 State 22:
+## Known stack suffix:
+## LEFTPAR term
+## LR(1) items:
 sterm -> LEFTPAR term . RIGHTPAR [ UNDERSCORE TYPE RIGHTSQU RIGHTPAR RIGHTBRA QID LEFTSQU LEFTPAR LEFTBRA ID FATARROW EQUAL DOT DEF COMMA COLON ARROW ]
 term -> term . ARROW term [ RIGHTPAR ARROW ]
+## Transitions:
 -- On RIGHTPAR shift to state 23
 -- On ARROW shift to state 24
+## Reductions:
 
 State 23:
+## Known stack suffix:
+## LEFTPAR term RIGHTPAR
+## LR(1) items:
 sterm -> LEFTPAR term RIGHTPAR . [ UNDERSCORE TYPE RIGHTSQU RIGHTPAR RIGHTBRA QID LEFTSQU LEFTPAR LEFTBRA ID FATARROW EQUAL DOT DEF COMMA COLON ARROW ]
+## Transitions:
+## Reductions:
 -- On UNDERSCORE reduce production sterm -> LEFTPAR term RIGHTPAR
 -- On TYPE reduce production sterm -> LEFTPAR term RIGHTPAR
 -- On RIGHTSQU reduce production sterm -> LEFTPAR term RIGHTPAR
@@ -277,7 +397,11 @@ sterm -> LEFTPAR term RIGHTPAR . [ UNDERSCORE TYPE RIGHTSQU RIGHTPAR RIGHTBRA QI
 -- On ARROW reduce production sterm -> LEFTPAR term RIGHTPAR
 
 State 24:
+## Known stack suffix:
+## term ARROW
+## LR(1) items:
 term -> term ARROW . term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+## Transitions:
 -- On UNDERSCORE shift to state 11
 -- On TYPE shift to state 13
 -- On QID shift to state 14
@@ -286,11 +410,17 @@ term -> term ARROW . term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF C
 -- On term shift to state 25
 -- On sterm shift to state 26
 -- On aterm shift to state 31
+## Reductions:
 
 State 25:
+## Known stack suffix:
+## term ARROW term
+## LR(1) items:
 term -> term . ARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
 term -> term ARROW term . [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+## Transitions:
 -- On ARROW shift to state 24
+## Reductions:
 -- On RIGHTSQU reduce production term -> term ARROW term
 -- On RIGHTPAR reduce production term -> term ARROW term
 -- On RIGHTBRA reduce production term -> term ARROW term
@@ -301,7 +431,11 @@ term -> term ARROW term . [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF C
 -- On COMMA reduce production term -> term ARROW term
 
 State 26:
+## Known stack suffix:
+## sterm
+## LR(1) items:
 aterm -> sterm . list(sterm) [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA FATARROW EQUAL DOT DEF COMMA COLON ARROW ]
+## Transitions:
 -- On UNDERSCORE shift to state 20
 -- On TYPE shift to state 13
 -- On QID shift to state 14
@@ -309,6 +443,7 @@ aterm -> sterm . list(sterm) [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA FATARR
 -- On ID shift to state 27
 -- On sterm shift to state 28
 -- On list(sterm) shift to state 30
+## Reductions:
 -- On RIGHTSQU reduce production list(sterm) ->
 -- On RIGHTPAR reduce production list(sterm) ->
 -- On RIGHTBRA reduce production list(sterm) ->
@@ -323,7 +458,12 @@ aterm -> sterm . list(sterm) [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA FATARR
 -- On ARROW reduce production list(sterm) ->
 
 State 27:
+## Known stack suffix:
+## ID
+## LR(1) items:
 sterm -> ID . [ UNDERSCORE TYPE RIGHTSQU RIGHTPAR RIGHTBRA QID LEFTSQU LEFTPAR LEFTBRA ID FATARROW EQUAL DOT DEF COMMA COLON ARROW ]
+## Transitions:
+## Reductions:
 -- On UNDERSCORE reduce production sterm -> ID
 -- On TYPE reduce production sterm -> ID
 -- On RIGHTSQU reduce production sterm -> ID
@@ -343,7 +483,11 @@ sterm -> ID . [ UNDERSCORE TYPE RIGHTSQU RIGHTPAR RIGHTBRA QID LEFTSQU LEFTPAR L
 -- On ARROW reduce production sterm -> ID
 
 State 28:
+## Known stack suffix:
+## sterm
+## LR(1) items:
 list(sterm) -> sterm . list(sterm) [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA FATARROW EQUAL DOT DEF COMMA COLON ARROW ]
+## Transitions:
 -- On UNDERSCORE shift to state 20
 -- On TYPE shift to state 13
 -- On QID shift to state 14
@@ -351,6 +495,7 @@ list(sterm) -> sterm . list(sterm) [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA 
 -- On ID shift to state 27
 -- On sterm shift to state 28
 -- On list(sterm) shift to state 29
+## Reductions:
 -- On RIGHTSQU reduce production list(sterm) ->
 -- On RIGHTPAR reduce production list(sterm) ->
 -- On RIGHTBRA reduce production list(sterm) ->
@@ -365,7 +510,12 @@ list(sterm) -> sterm . list(sterm) [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA 
 -- On ARROW reduce production list(sterm) ->
 
 State 29:
+## Known stack suffix:
+## sterm list(sterm)
+## LR(1) items:
 list(sterm) -> sterm list(sterm) . [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA FATARROW EQUAL DOT DEF COMMA COLON ARROW ]
+## Transitions:
+## Reductions:
 -- On RIGHTSQU reduce production list(sterm) -> sterm list(sterm)
 -- On RIGHTPAR reduce production list(sterm) -> sterm list(sterm)
 -- On RIGHTBRA reduce production list(sterm) -> sterm list(sterm)
@@ -380,7 +530,12 @@ list(sterm) -> sterm list(sterm) . [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA 
 -- On ARROW reduce production list(sterm) -> sterm list(sterm)
 
 State 30:
+## Known stack suffix:
+## sterm list(sterm)
+## LR(1) items:
 aterm -> sterm list(sterm) . [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA FATARROW EQUAL DOT DEF COMMA COLON ARROW ]
+## Transitions:
+## Reductions:
 -- On RIGHTSQU reduce production aterm -> sterm list(sterm)
 -- On RIGHTPAR reduce production aterm -> sterm list(sterm)
 -- On RIGHTBRA reduce production aterm -> sterm list(sterm)
@@ -395,7 +550,12 @@ aterm -> sterm list(sterm) . [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA FATARR
 -- On ARROW reduce production aterm -> sterm list(sterm)
 
 State 31:
+## Known stack suffix:
+## aterm
+## LR(1) items:
 term -> aterm . [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+## Transitions:
+## Reductions:
 -- On RIGHTSQU reduce production term -> aterm
 -- On RIGHTPAR reduce production term -> aterm
 -- On RIGHTBRA reduce production term -> aterm
@@ -407,13 +567,22 @@ term -> aterm . [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW
 -- On ARROW reduce production term -> aterm
 
 State 32:
+## Known stack suffix:
+## ID COLON aterm
+## LR(1) items:
 term -> ID COLON aterm . ARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
 term -> ID COLON aterm . FATARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+## Transitions:
 -- On FATARROW shift to state 33
 -- On ARROW shift to state 35
+## Reductions:
 
 State 33:
+## Known stack suffix:
+## ID COLON aterm FATARROW
+## LR(1) items:
 term -> ID COLON aterm FATARROW . term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+## Transitions:
 -- On UNDERSCORE shift to state 11
 -- On TYPE shift to state 13
 -- On QID shift to state 14
@@ -422,11 +591,17 @@ term -> ID COLON aterm FATARROW . term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFT
 -- On term shift to state 34
 -- On sterm shift to state 26
 -- On aterm shift to state 31
+## Reductions:
 
 State 34:
+## Known stack suffix:
+## ID COLON aterm FATARROW term
+## LR(1) items:
 term -> term . ARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
 term -> ID COLON aterm FATARROW term . [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+## Transitions:
 -- On ARROW shift to state 24
+## Reductions:
 -- On RIGHTSQU reduce production term -> ID COLON aterm FATARROW term
 -- On RIGHTPAR reduce production term -> ID COLON aterm FATARROW term
 -- On RIGHTBRA reduce production term -> ID COLON aterm FATARROW term
@@ -437,7 +612,11 @@ term -> ID COLON aterm FATARROW term . [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFT
 -- On COMMA reduce production term -> ID COLON aterm FATARROW term
 
 State 35:
+## Known stack suffix:
+## ID COLON aterm ARROW
+## LR(1) items:
 term -> ID COLON aterm ARROW . term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+## Transitions:
 -- On UNDERSCORE shift to state 11
 -- On TYPE shift to state 13
 -- On QID shift to state 14
@@ -446,11 +625,17 @@ term -> ID COLON aterm ARROW . term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA
 -- On term shift to state 36
 -- On sterm shift to state 26
 -- On aterm shift to state 31
+## Reductions:
 
 State 36:
+## Known stack suffix:
+## ID COLON aterm ARROW term
+## LR(1) items:
 term -> ID COLON aterm ARROW term . [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
 term -> term . ARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+## Transitions:
 -- On ARROW shift to state 24
+## Reductions:
 -- On RIGHTSQU reduce production term -> ID COLON aterm ARROW term
 -- On RIGHTPAR reduce production term -> ID COLON aterm ARROW term
 -- On RIGHTBRA reduce production term -> ID COLON aterm ARROW term
@@ -461,9 +646,14 @@ term -> term . ARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF C
 -- On COMMA reduce production term -> ID COLON aterm ARROW term
 
 State 37:
+## Known stack suffix:
+## ID FATARROW term
+## LR(1) items:
 term -> term . ARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
 term -> ID FATARROW term . [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+## Transitions:
 -- On ARROW shift to state 24
+## Reductions:
 -- On RIGHTSQU reduce production term -> ID FATARROW term
 -- On RIGHTPAR reduce production term -> ID FATARROW term
 -- On RIGHTBRA reduce production term -> ID FATARROW term
@@ -474,9 +664,13 @@ term -> ID FATARROW term . [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF 
 -- On COMMA reduce production term -> ID FATARROW term
 
 State 38:
+## Known stack suffix:
+## LEFTPAR ID COLON
+## LR(1) items:
 term -> ID COLON . aterm ARROW term [ RIGHTPAR ARROW ]
 term -> LEFTPAR ID COLON . aterm RIGHTPAR ARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
 term -> ID COLON . aterm FATARROW term [ RIGHTPAR ARROW ]
+## Transitions:
 -- On UNDERSCORE shift to state 20
 -- On TYPE shift to state 13
 -- On QID shift to state 14
@@ -484,21 +678,36 @@ term -> ID COLON . aterm FATARROW term [ RIGHTPAR ARROW ]
 -- On ID shift to state 27
 -- On sterm shift to state 26
 -- On aterm shift to state 39
+## Reductions:
 
 State 39:
+## Known stack suffix:
+## LEFTPAR ID COLON aterm
+## LR(1) items:
 term -> ID COLON aterm . ARROW term [ RIGHTPAR ARROW ]
 term -> LEFTPAR ID COLON aterm . RIGHTPAR ARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
 term -> ID COLON aterm . FATARROW term [ RIGHTPAR ARROW ]
+## Transitions:
 -- On RIGHTPAR shift to state 40
 -- On FATARROW shift to state 33
 -- On ARROW shift to state 35
+## Reductions:
 
 State 40:
+## Known stack suffix:
+## LEFTPAR ID COLON aterm RIGHTPAR
+## LR(1) items:
 term -> LEFTPAR ID COLON aterm RIGHTPAR . ARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+## Transitions:
 -- On ARROW shift to state 41
+## Reductions:
 
 State 41:
+## Known stack suffix:
+## LEFTPAR ID COLON aterm RIGHTPAR ARROW
+## LR(1) items:
 term -> LEFTPAR ID COLON aterm RIGHTPAR ARROW . term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+## Transitions:
 -- On UNDERSCORE shift to state 11
 -- On TYPE shift to state 13
 -- On QID shift to state 14
@@ -507,11 +716,17 @@ term -> LEFTPAR ID COLON aterm RIGHTPAR ARROW . term [ RIGHTSQU RIGHTPAR RIGHTBR
 -- On term shift to state 42
 -- On sterm shift to state 26
 -- On aterm shift to state 31
+## Reductions:
 
 State 42:
+## Known stack suffix:
+## LEFTPAR ID COLON aterm RIGHTPAR ARROW term
+## LR(1) items:
 term -> LEFTPAR ID COLON aterm RIGHTPAR ARROW term . [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
 term -> term . ARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+## Transitions:
 -- On ARROW shift to state 24
+## Reductions:
 -- On RIGHTSQU reduce production term -> LEFTPAR ID COLON aterm RIGHTPAR ARROW term
 -- On RIGHTPAR reduce production term -> LEFTPAR ID COLON aterm RIGHTPAR ARROW term
 -- On RIGHTBRA reduce production term -> LEFTPAR ID COLON aterm RIGHTPAR ARROW term
@@ -522,9 +737,14 @@ term -> term . ARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF C
 -- On COMMA reduce production term -> LEFTPAR ID COLON aterm RIGHTPAR ARROW term
 
 State 43:
+## Known stack suffix:
+## UNDERSCORE FATARROW term
+## LR(1) items:
 term -> term . ARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
 term -> UNDERSCORE FATARROW term . [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+## Transitions:
 -- On ARROW shift to state 24
+## Reductions:
 -- On RIGHTSQU reduce production term -> UNDERSCORE FATARROW term
 -- On RIGHTPAR reduce production term -> UNDERSCORE FATARROW term
 -- On RIGHTBRA reduce production term -> UNDERSCORE FATARROW term
@@ -535,8 +755,12 @@ term -> UNDERSCORE FATARROW term . [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA 
 -- On COMMA reduce production term -> UNDERSCORE FATARROW term
 
 State 44:
+## Known stack suffix:
+## UNDERSCORE COLON
+## LR(1) items:
 term -> UNDERSCORE COLON . aterm ARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
 term -> UNDERSCORE COLON . aterm FATARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+## Transitions:
 -- On UNDERSCORE shift to state 20
 -- On TYPE shift to state 13
 -- On QID shift to state 14
@@ -544,15 +768,25 @@ term -> UNDERSCORE COLON . aterm FATARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFT
 -- On ID shift to state 27
 -- On sterm shift to state 26
 -- On aterm shift to state 45
+## Reductions:
 
 State 45:
+## Known stack suffix:
+## UNDERSCORE COLON aterm
+## LR(1) items:
 term -> UNDERSCORE COLON aterm . ARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
 term -> UNDERSCORE COLON aterm . FATARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+## Transitions:
 -- On FATARROW shift to state 46
 -- On ARROW shift to state 48
+## Reductions:
 
 State 46:
+## Known stack suffix:
+## UNDERSCORE COLON aterm FATARROW
+## LR(1) items:
 term -> UNDERSCORE COLON aterm FATARROW . term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+## Transitions:
 -- On UNDERSCORE shift to state 11
 -- On TYPE shift to state 13
 -- On QID shift to state 14
@@ -561,11 +795,17 @@ term -> UNDERSCORE COLON aterm FATARROW . term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFT
 -- On term shift to state 47
 -- On sterm shift to state 26
 -- On aterm shift to state 31
+## Reductions:
 
 State 47:
+## Known stack suffix:
+## UNDERSCORE COLON aterm FATARROW term
+## LR(1) items:
 term -> term . ARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
 term -> UNDERSCORE COLON aterm FATARROW term . [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+## Transitions:
 -- On ARROW shift to state 24
+## Reductions:
 -- On RIGHTSQU reduce production term -> UNDERSCORE COLON aterm FATARROW term
 -- On RIGHTPAR reduce production term -> UNDERSCORE COLON aterm FATARROW term
 -- On RIGHTBRA reduce production term -> UNDERSCORE COLON aterm FATARROW term
@@ -576,7 +816,11 @@ term -> UNDERSCORE COLON aterm FATARROW term . [ RIGHTSQU RIGHTPAR RIGHTBRA LEFT
 -- On COMMA reduce production term -> UNDERSCORE COLON aterm FATARROW term
 
 State 48:
+## Known stack suffix:
+## UNDERSCORE COLON aterm ARROW
+## LR(1) items:
 term -> UNDERSCORE COLON aterm ARROW . term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+## Transitions:
 -- On UNDERSCORE shift to state 11
 -- On TYPE shift to state 13
 -- On QID shift to state 14
@@ -585,11 +829,17 @@ term -> UNDERSCORE COLON aterm ARROW . term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU
 -- On term shift to state 49
 -- On sterm shift to state 26
 -- On aterm shift to state 31
+## Reductions:
 
 State 49:
+## Known stack suffix:
+## UNDERSCORE COLON aterm ARROW term
+## LR(1) items:
 term -> UNDERSCORE COLON aterm ARROW term . [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
 term -> term . ARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+## Transitions:
 -- On ARROW shift to state 24
+## Reductions:
 -- On RIGHTSQU reduce production term -> UNDERSCORE COLON aterm ARROW term
 -- On RIGHTPAR reduce production term -> UNDERSCORE COLON aterm ARROW term
 -- On RIGHTBRA reduce production term -> UNDERSCORE COLON aterm ARROW term
@@ -600,44 +850,83 @@ term -> term . ARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF C
 -- On COMMA reduce production term -> UNDERSCORE COLON aterm ARROW term
 
 State 50:
+## Known stack suffix:
+## ID COLON term
+## LR(1) items:
 decl -> ID COLON term . [ RIGHTSQU COMMA ]
 term -> term . ARROW term [ RIGHTSQU COMMA ARROW ]
+## Transitions:
 -- On ARROW shift to state 24
+## Reductions:
 -- On RIGHTSQU reduce production decl -> ID COLON term
 -- On COMMA reduce production decl -> ID COLON term
 
 State 51:
+## Known stack suffix:
+## separated_nonempty_list(COMMA,decl)
+## LR(1) items:
 context -> separated_nonempty_list(COMMA,decl) . [ RIGHTSQU ]
+## Transitions:
+## Reductions:
 -- On RIGHTSQU reduce production context -> separated_nonempty_list(COMMA,decl)
 
 State 52:
+## Known stack suffix:
+## decl
+## LR(1) items:
 separated_nonempty_list(COMMA,decl) -> decl . [ RIGHTSQU ]
 separated_nonempty_list(COMMA,decl) -> decl . COMMA separated_nonempty_list(COMMA,decl) [ RIGHTSQU ]
+## Transitions:
 -- On COMMA shift to state 53
+## Reductions:
 -- On RIGHTSQU reduce production separated_nonempty_list(COMMA,decl) -> decl
 
 State 53:
+## Known stack suffix:
+## decl COMMA
+## LR(1) items:
 separated_nonempty_list(COMMA,decl) -> decl COMMA . separated_nonempty_list(COMMA,decl) [ RIGHTSQU ]
+## Transitions:
 -- On ID shift to state 9
 -- On separated_nonempty_list(COMMA,decl) shift to state 54
 -- On decl shift to state 52
+## Reductions:
 
 State 54:
+## Known stack suffix:
+## decl COMMA separated_nonempty_list(COMMA,decl)
+## LR(1) items:
 separated_nonempty_list(COMMA,decl) -> decl COMMA separated_nonempty_list(COMMA,decl) . [ RIGHTSQU ]
+## Transitions:
+## Reductions:
 -- On RIGHTSQU reduce production separated_nonempty_list(COMMA,decl) -> decl COMMA separated_nonempty_list(COMMA,decl)
 
 State 55:
+## Known stack suffix:
+## LEFTSQU context
+## LR(1) items:
 rule -> LEFTSQU context . RIGHTSQU top_pattern LONGARROW term [ LEFTSQU LEFTBRA DOT ]
+## Transitions:
 -- On RIGHTSQU shift to state 56
+## Reductions:
 
 State 56:
+## Known stack suffix:
+## LEFTSQU context RIGHTSQU
+## LR(1) items:
 rule -> LEFTSQU context RIGHTSQU . top_pattern LONGARROW term [ LEFTSQU LEFTBRA DOT ]
+## Transitions:
 -- On QID shift to state 57
 -- On ID shift to state 79
 -- On top_pattern shift to state 81
+## Reductions:
 
 State 57:
+## Known stack suffix:
+## QID
+## LR(1) items:
 top_pattern -> QID . list(pattern_wp) [ LONGARROW ]
+## Transitions:
 -- On UNDERSCORE shift to state 58
 -- On QID shift to state 59
 -- On LEFTPAR shift to state 60
@@ -645,10 +934,16 @@ top_pattern -> QID . list(pattern_wp) [ LONGARROW ]
 -- On ID shift to state 65
 -- On pattern_wp shift to state 76
 -- On list(pattern_wp) shift to state 78
+## Reductions:
 -- On LONGARROW reduce production list(pattern_wp) ->
 
 State 58:
+## Known stack suffix:
+## UNDERSCORE
+## LR(1) items:
 pattern_wp -> UNDERSCORE . [ UNDERSCORE RIGHTPAR QID LONGARROW LEFTPAR LEFTBRA ID ]
+## Transitions:
+## Reductions:
 -- On UNDERSCORE reduce production pattern_wp -> UNDERSCORE
 -- On RIGHTPAR reduce production pattern_wp -> UNDERSCORE
 -- On QID reduce production pattern_wp -> UNDERSCORE
@@ -658,7 +953,12 @@ pattern_wp -> UNDERSCORE . [ UNDERSCORE RIGHTPAR QID LONGARROW LEFTPAR LEFTBRA I
 -- On ID reduce production pattern_wp -> UNDERSCORE
 
 State 59:
+## Known stack suffix:
+## QID
+## LR(1) items:
 pattern_wp -> QID . [ UNDERSCORE RIGHTPAR QID LONGARROW LEFTPAR LEFTBRA ID ]
+## Transitions:
+## Reductions:
 -- On UNDERSCORE reduce production pattern_wp -> QID
 -- On RIGHTPAR reduce production pattern_wp -> QID
 -- On QID reduce production pattern_wp -> QID
@@ -668,7 +968,11 @@ pattern_wp -> QID . [ UNDERSCORE RIGHTPAR QID LONGARROW LEFTPAR LEFTBRA ID ]
 -- On ID reduce production pattern_wp -> QID
 
 State 60:
+## Known stack suffix:
+## LEFTPAR
+## LR(1) items:
 pattern_wp -> LEFTPAR . pattern RIGHTPAR [ UNDERSCORE RIGHTPAR QID LONGARROW LEFTPAR LEFTBRA ID ]
+## Transitions:
 -- On UNDERSCORE shift to state 58
 -- On QID shift to state 61
 -- On LEFTPAR shift to state 60
@@ -676,10 +980,15 @@ pattern_wp -> LEFTPAR . pattern RIGHTPAR [ UNDERSCORE RIGHTPAR QID LONGARROW LEF
 -- On ID shift to state 69
 -- On pattern_wp shift to state 71
 -- On pattern shift to state 74
+## Reductions:
 
 State 61:
+## Known stack suffix:
+## QID
+## LR(1) items:
 pattern -> QID . nonempty_list(pattern_wp) [ RIGHTPAR ]
 pattern_wp -> QID . [ RIGHTPAR ]
+## Transitions:
 -- On UNDERSCORE shift to state 58
 -- On QID shift to state 59
 -- On LEFTPAR shift to state 60
@@ -687,10 +996,15 @@ pattern_wp -> QID . [ RIGHTPAR ]
 -- On ID shift to state 65
 -- On pattern_wp shift to state 66
 -- On nonempty_list(pattern_wp) shift to state 68
+## Reductions:
 -- On RIGHTPAR reduce production pattern_wp -> QID
 
 State 62:
+## Known stack suffix:
+## LEFTBRA
+## LR(1) items:
 pattern_wp -> LEFTBRA . term RIGHTBRA [ UNDERSCORE RIGHTPAR QID LONGARROW LEFTPAR LEFTBRA ID ]
+## Transitions:
 -- On UNDERSCORE shift to state 11
 -- On TYPE shift to state 13
 -- On QID shift to state 14
@@ -699,15 +1013,26 @@ pattern_wp -> LEFTBRA . term RIGHTBRA [ UNDERSCORE RIGHTPAR QID LONGARROW LEFTPA
 -- On term shift to state 63
 -- On sterm shift to state 26
 -- On aterm shift to state 31
+## Reductions:
 
 State 63:
+## Known stack suffix:
+## LEFTBRA term
+## LR(1) items:
 pattern_wp -> LEFTBRA term . RIGHTBRA [ UNDERSCORE RIGHTPAR QID LONGARROW LEFTPAR LEFTBRA ID ]
 term -> term . ARROW term [ RIGHTBRA ARROW ]
+## Transitions:
 -- On RIGHTBRA shift to state 64
 -- On ARROW shift to state 24
+## Reductions:
 
 State 64:
+## Known stack suffix:
+## LEFTBRA term RIGHTBRA
+## LR(1) items:
 pattern_wp -> LEFTBRA term RIGHTBRA . [ UNDERSCORE RIGHTPAR QID LONGARROW LEFTPAR LEFTBRA ID ]
+## Transitions:
+## Reductions:
 -- On UNDERSCORE reduce production pattern_wp -> LEFTBRA term RIGHTBRA
 -- On RIGHTPAR reduce production pattern_wp -> LEFTBRA term RIGHTBRA
 -- On QID reduce production pattern_wp -> LEFTBRA term RIGHTBRA
@@ -717,7 +1042,12 @@ pattern_wp -> LEFTBRA term RIGHTBRA . [ UNDERSCORE RIGHTPAR QID LONGARROW LEFTPA
 -- On ID reduce production pattern_wp -> LEFTBRA term RIGHTBRA
 
 State 65:
+## Known stack suffix:
+## ID
+## LR(1) items:
 pattern_wp -> ID . [ UNDERSCORE RIGHTPAR QID LONGARROW LEFTPAR LEFTBRA ID ]
+## Transitions:
+## Reductions:
 -- On UNDERSCORE reduce production pattern_wp -> ID
 -- On RIGHTPAR reduce production pattern_wp -> ID
 -- On QID reduce production pattern_wp -> ID
@@ -727,8 +1057,12 @@ pattern_wp -> ID . [ UNDERSCORE RIGHTPAR QID LONGARROW LEFTPAR LEFTBRA ID ]
 -- On ID reduce production pattern_wp -> ID
 
 State 66:
+## Known stack suffix:
+## pattern_wp
+## LR(1) items:
 nonempty_list(pattern_wp) -> pattern_wp . [ RIGHTPAR ]
 nonempty_list(pattern_wp) -> pattern_wp . nonempty_list(pattern_wp) [ RIGHTPAR ]
+## Transitions:
 -- On UNDERSCORE shift to state 58
 -- On QID shift to state 59
 -- On LEFTPAR shift to state 60
@@ -736,20 +1070,35 @@ nonempty_list(pattern_wp) -> pattern_wp . nonempty_list(pattern_wp) [ RIGHTPAR ]
 -- On ID shift to state 65
 -- On pattern_wp shift to state 66
 -- On nonempty_list(pattern_wp) shift to state 67
+## Reductions:
 -- On RIGHTPAR reduce production nonempty_list(pattern_wp) -> pattern_wp
 
 State 67:
+## Known stack suffix:
+## pattern_wp nonempty_list(pattern_wp)
+## LR(1) items:
 nonempty_list(pattern_wp) -> pattern_wp nonempty_list(pattern_wp) . [ RIGHTPAR ]
+## Transitions:
+## Reductions:
 -- On RIGHTPAR reduce production nonempty_list(pattern_wp) -> pattern_wp nonempty_list(pattern_wp)
 
 State 68:
+## Known stack suffix:
+## QID nonempty_list(pattern_wp)
+## LR(1) items:
 pattern -> QID nonempty_list(pattern_wp) . [ RIGHTPAR ]
+## Transitions:
+## Reductions:
 -- On RIGHTPAR reduce production pattern -> QID nonempty_list(pattern_wp)
 
 State 69:
+## Known stack suffix:
+## ID
+## LR(1) items:
 pattern -> ID . nonempty_list(pattern_wp) [ RIGHTPAR ]
 pattern -> ID . FATARROW pattern [ RIGHTPAR ]
 pattern_wp -> ID . [ RIGHTPAR ]
+## Transitions:
 -- On UNDERSCORE shift to state 58
 -- On QID shift to state 59
 -- On LEFTPAR shift to state 60
@@ -758,10 +1107,15 @@ pattern_wp -> ID . [ RIGHTPAR ]
 -- On FATARROW shift to state 70
 -- On pattern_wp shift to state 66
 -- On nonempty_list(pattern_wp) shift to state 73
+## Reductions:
 -- On RIGHTPAR reduce production pattern_wp -> ID
 
 State 70:
+## Known stack suffix:
+## ID FATARROW
+## LR(1) items:
 pattern -> ID FATARROW . pattern [ RIGHTPAR ]
+## Transitions:
 -- On UNDERSCORE shift to state 58
 -- On QID shift to state 61
 -- On LEFTPAR shift to state 60
@@ -769,25 +1123,51 @@ pattern -> ID FATARROW . pattern [ RIGHTPAR ]
 -- On ID shift to state 69
 -- On pattern_wp shift to state 71
 -- On pattern shift to state 72
+## Reductions:
 
 State 71:
+## Known stack suffix:
+## pattern_wp
+## LR(1) items:
 pattern -> pattern_wp . [ RIGHTPAR ]
+## Transitions:
+## Reductions:
 -- On RIGHTPAR reduce production pattern -> pattern_wp
 
 State 72:
+## Known stack suffix:
+## ID FATARROW pattern
+## LR(1) items:
 pattern -> ID FATARROW pattern . [ RIGHTPAR ]
+## Transitions:
+## Reductions:
 -- On RIGHTPAR reduce production pattern -> ID FATARROW pattern
 
 State 73:
+## Known stack suffix:
+## ID nonempty_list(pattern_wp)
+## LR(1) items:
 pattern -> ID nonempty_list(pattern_wp) . [ RIGHTPAR ]
+## Transitions:
+## Reductions:
 -- On RIGHTPAR reduce production pattern -> ID nonempty_list(pattern_wp)
 
 State 74:
+## Known stack suffix:
+## LEFTPAR pattern
+## LR(1) items:
 pattern_wp -> LEFTPAR pattern . RIGHTPAR [ UNDERSCORE RIGHTPAR QID LONGARROW LEFTPAR LEFTBRA ID ]
+## Transitions:
 -- On RIGHTPAR shift to state 75
+## Reductions:
 
 State 75:
+## Known stack suffix:
+## LEFTPAR pattern RIGHTPAR
+## LR(1) items:
 pattern_wp -> LEFTPAR pattern RIGHTPAR . [ UNDERSCORE RIGHTPAR QID LONGARROW LEFTPAR LEFTBRA ID ]
+## Transitions:
+## Reductions:
 -- On UNDERSCORE reduce production pattern_wp -> LEFTPAR pattern RIGHTPAR
 -- On RIGHTPAR reduce production pattern_wp -> LEFTPAR pattern RIGHTPAR
 -- On QID reduce production pattern_wp -> LEFTPAR pattern RIGHTPAR
@@ -797,7 +1177,11 @@ pattern_wp -> LEFTPAR pattern RIGHTPAR . [ UNDERSCORE RIGHTPAR QID LONGARROW LEF
 -- On ID reduce production pattern_wp -> LEFTPAR pattern RIGHTPAR
 
 State 76:
+## Known stack suffix:
+## pattern_wp
+## LR(1) items:
 list(pattern_wp) -> pattern_wp . list(pattern_wp) [ LONGARROW ]
+## Transitions:
 -- On UNDERSCORE shift to state 58
 -- On QID shift to state 59
 -- On LEFTPAR shift to state 60
@@ -805,18 +1189,33 @@ list(pattern_wp) -> pattern_wp . list(pattern_wp) [ LONGARROW ]
 -- On ID shift to state 65
 -- On pattern_wp shift to state 76
 -- On list(pattern_wp) shift to state 77
+## Reductions:
 -- On LONGARROW reduce production list(pattern_wp) ->
 
 State 77:
+## Known stack suffix:
+## pattern_wp list(pattern_wp)
+## LR(1) items:
 list(pattern_wp) -> pattern_wp list(pattern_wp) . [ LONGARROW ]
+## Transitions:
+## Reductions:
 -- On LONGARROW reduce production list(pattern_wp) -> pattern_wp list(pattern_wp)
 
 State 78:
+## Known stack suffix:
+## QID list(pattern_wp)
+## LR(1) items:
 top_pattern -> QID list(pattern_wp) . [ LONGARROW ]
+## Transitions:
+## Reductions:
 -- On LONGARROW reduce production top_pattern -> QID list(pattern_wp)
 
 State 79:
+## Known stack suffix:
+## ID
+## LR(1) items:
 top_pattern -> ID . list(pattern_wp) [ LONGARROW ]
+## Transitions:
 -- On UNDERSCORE shift to state 58
 -- On QID shift to state 59
 -- On LEFTPAR shift to state 60
@@ -824,18 +1223,33 @@ top_pattern -> ID . list(pattern_wp) [ LONGARROW ]
 -- On ID shift to state 65
 -- On pattern_wp shift to state 76
 -- On list(pattern_wp) shift to state 80
+## Reductions:
 -- On LONGARROW reduce production list(pattern_wp) ->
 
 State 80:
+## Known stack suffix:
+## ID list(pattern_wp)
+## LR(1) items:
 top_pattern -> ID list(pattern_wp) . [ LONGARROW ]
+## Transitions:
+## Reductions:
 -- On LONGARROW reduce production top_pattern -> ID list(pattern_wp)
 
 State 81:
+## Known stack suffix:
+## LEFTSQU context RIGHTSQU top_pattern
+## LR(1) items:
 rule -> LEFTSQU context RIGHTSQU top_pattern . LONGARROW term [ LEFTSQU LEFTBRA DOT ]
+## Transitions:
 -- On LONGARROW shift to state 82
+## Reductions:
 
 State 82:
+## Known stack suffix:
+## LEFTSQU context RIGHTSQU top_pattern LONGARROW
+## LR(1) items:
 rule -> LEFTSQU context RIGHTSQU top_pattern LONGARROW . term [ LEFTSQU LEFTBRA DOT ]
+## Transitions:
 -- On UNDERSCORE shift to state 11
 -- On TYPE shift to state 13
 -- On QID shift to state 14
@@ -844,53 +1258,98 @@ rule -> LEFTSQU context RIGHTSQU top_pattern LONGARROW . term [ LEFTSQU LEFTBRA 
 -- On term shift to state 83
 -- On sterm shift to state 26
 -- On aterm shift to state 31
+## Reductions:
 
 State 83:
+## Known stack suffix:
+## LEFTSQU context RIGHTSQU top_pattern LONGARROW term
+## LR(1) items:
 rule -> LEFTSQU context RIGHTSQU top_pattern LONGARROW term . [ LEFTSQU LEFTBRA DOT ]
 term -> term . ARROW term [ LEFTSQU LEFTBRA DOT ARROW ]
+## Transitions:
 -- On ARROW shift to state 24
+## Reductions:
 -- On LEFTSQU reduce production rule -> LEFTSQU context RIGHTSQU top_pattern LONGARROW term
 -- On LEFTBRA reduce production rule -> LEFTSQU context RIGHTSQU top_pattern LONGARROW term
 -- On DOT reduce production rule -> LEFTSQU context RIGHTSQU top_pattern LONGARROW term
 
 State 84:
+## Known stack suffix:
+## LEFTBRA
+## LR(1) items:
 rule -> LEFTBRA . ID RIGHTBRA LEFTSQU context RIGHTSQU top_pattern LONGARROW term [ LEFTSQU LEFTBRA DOT ]
 rule -> LEFTBRA . QID RIGHTBRA LEFTSQU context RIGHTSQU top_pattern LONGARROW term [ LEFTSQU LEFTBRA DOT ]
+## Transitions:
 -- On QID shift to state 85
 -- On ID shift to state 93
+## Reductions:
 
 State 85:
+## Known stack suffix:
+## LEFTBRA QID
+## LR(1) items:
 rule -> LEFTBRA QID . RIGHTBRA LEFTSQU context RIGHTSQU top_pattern LONGARROW term [ LEFTSQU LEFTBRA DOT ]
+## Transitions:
 -- On RIGHTBRA shift to state 86
+## Reductions:
 
 State 86:
+## Known stack suffix:
+## LEFTBRA QID RIGHTBRA
+## LR(1) items:
 rule -> LEFTBRA QID RIGHTBRA . LEFTSQU context RIGHTSQU top_pattern LONGARROW term [ LEFTSQU LEFTBRA DOT ]
+## Transitions:
 -- On LEFTSQU shift to state 87
+## Reductions:
 
 State 87:
+## Known stack suffix:
+## LEFTBRA QID RIGHTBRA LEFTSQU
+## LR(1) items:
 rule -> LEFTBRA QID RIGHTBRA LEFTSQU . context RIGHTSQU top_pattern LONGARROW term [ LEFTSQU LEFTBRA DOT ]
+## Transitions:
 -- On ID shift to state 9
 -- On separated_nonempty_list(COMMA,decl) shift to state 51
 -- On decl shift to state 52
 -- On context shift to state 88
+## Reductions:
 -- On RIGHTSQU reduce production context ->
 
 State 88:
+## Known stack suffix:
+## LEFTBRA QID RIGHTBRA LEFTSQU context
+## LR(1) items:
 rule -> LEFTBRA QID RIGHTBRA LEFTSQU context . RIGHTSQU top_pattern LONGARROW term [ LEFTSQU LEFTBRA DOT ]
+## Transitions:
 -- On RIGHTSQU shift to state 89
+## Reductions:
 
 State 89:
+## Known stack suffix:
+## LEFTBRA QID RIGHTBRA LEFTSQU context RIGHTSQU
+## LR(1) items:
 rule -> LEFTBRA QID RIGHTBRA LEFTSQU context RIGHTSQU . top_pattern LONGARROW term [ LEFTSQU LEFTBRA DOT ]
+## Transitions:
 -- On QID shift to state 57
 -- On ID shift to state 79
 -- On top_pattern shift to state 90
+## Reductions:
 
 State 90:
+## Known stack suffix:
+## LEFTBRA QID RIGHTBRA LEFTSQU context RIGHTSQU top_pattern
+## LR(1) items:
 rule -> LEFTBRA QID RIGHTBRA LEFTSQU context RIGHTSQU top_pattern . LONGARROW term [ LEFTSQU LEFTBRA DOT ]
+## Transitions:
 -- On LONGARROW shift to state 91
+## Reductions:
 
 State 91:
+## Known stack suffix:
+## LEFTBRA QID RIGHTBRA LEFTSQU context RIGHTSQU top_pattern LONGARROW
+## LR(1) items:
 rule -> LEFTBRA QID RIGHTBRA LEFTSQU context RIGHTSQU top_pattern LONGARROW . term [ LEFTSQU LEFTBRA DOT ]
+## Transitions:
 -- On UNDERSCORE shift to state 11
 -- On TYPE shift to state 13
 -- On QID shift to state 14
@@ -899,47 +1358,87 @@ rule -> LEFTBRA QID RIGHTBRA LEFTSQU context RIGHTSQU top_pattern LONGARROW . te
 -- On term shift to state 92
 -- On sterm shift to state 26
 -- On aterm shift to state 31
+## Reductions:
 
 State 92:
+## Known stack suffix:
+## LEFTBRA QID RIGHTBRA LEFTSQU context RIGHTSQU top_pattern LONGARROW term
+## LR(1) items:
 rule -> LEFTBRA QID RIGHTBRA LEFTSQU context RIGHTSQU top_pattern LONGARROW term . [ LEFTSQU LEFTBRA DOT ]
 term -> term . ARROW term [ LEFTSQU LEFTBRA DOT ARROW ]
+## Transitions:
 -- On ARROW shift to state 24
+## Reductions:
 -- On LEFTSQU reduce production rule -> LEFTBRA QID RIGHTBRA LEFTSQU context RIGHTSQU top_pattern LONGARROW term
 -- On LEFTBRA reduce production rule -> LEFTBRA QID RIGHTBRA LEFTSQU context RIGHTSQU top_pattern LONGARROW term
 -- On DOT reduce production rule -> LEFTBRA QID RIGHTBRA LEFTSQU context RIGHTSQU top_pattern LONGARROW term
 
 State 93:
+## Known stack suffix:
+## LEFTBRA ID
+## LR(1) items:
 rule -> LEFTBRA ID . RIGHTBRA LEFTSQU context RIGHTSQU top_pattern LONGARROW term [ LEFTSQU LEFTBRA DOT ]
+## Transitions:
 -- On RIGHTBRA shift to state 94
+## Reductions:
 
 State 94:
+## Known stack suffix:
+## LEFTBRA ID RIGHTBRA
+## LR(1) items:
 rule -> LEFTBRA ID RIGHTBRA . LEFTSQU context RIGHTSQU top_pattern LONGARROW term [ LEFTSQU LEFTBRA DOT ]
+## Transitions:
 -- On LEFTSQU shift to state 95
+## Reductions:
 
 State 95:
+## Known stack suffix:
+## LEFTBRA ID RIGHTBRA LEFTSQU
+## LR(1) items:
 rule -> LEFTBRA ID RIGHTBRA LEFTSQU . context RIGHTSQU top_pattern LONGARROW term [ LEFTSQU LEFTBRA DOT ]
+## Transitions:
 -- On ID shift to state 9
 -- On separated_nonempty_list(COMMA,decl) shift to state 51
 -- On decl shift to state 52
 -- On context shift to state 96
+## Reductions:
 -- On RIGHTSQU reduce production context ->
 
 State 96:
+## Known stack suffix:
+## LEFTBRA ID RIGHTBRA LEFTSQU context
+## LR(1) items:
 rule -> LEFTBRA ID RIGHTBRA LEFTSQU context . RIGHTSQU top_pattern LONGARROW term [ LEFTSQU LEFTBRA DOT ]
+## Transitions:
 -- On RIGHTSQU shift to state 97
+## Reductions:
 
 State 97:
+## Known stack suffix:
+## LEFTBRA ID RIGHTBRA LEFTSQU context RIGHTSQU
+## LR(1) items:
 rule -> LEFTBRA ID RIGHTBRA LEFTSQU context RIGHTSQU . top_pattern LONGARROW term [ LEFTSQU LEFTBRA DOT ]
+## Transitions:
 -- On QID shift to state 57
 -- On ID shift to state 79
 -- On top_pattern shift to state 98
+## Reductions:
 
 State 98:
+## Known stack suffix:
+## LEFTBRA ID RIGHTBRA LEFTSQU context RIGHTSQU top_pattern
+## LR(1) items:
 rule -> LEFTBRA ID RIGHTBRA LEFTSQU context RIGHTSQU top_pattern . LONGARROW term [ LEFTSQU LEFTBRA DOT ]
+## Transitions:
 -- On LONGARROW shift to state 99
+## Reductions:
 
 State 99:
+## Known stack suffix:
+## LEFTBRA ID RIGHTBRA LEFTSQU context RIGHTSQU top_pattern LONGARROW
+## LR(1) items:
 rule -> LEFTBRA ID RIGHTBRA LEFTSQU context RIGHTSQU top_pattern LONGARROW . term [ LEFTSQU LEFTBRA DOT ]
+## Transitions:
 -- On UNDERSCORE shift to state 11
 -- On TYPE shift to state 13
 -- On QID shift to state 14
@@ -948,38 +1447,68 @@ rule -> LEFTBRA ID RIGHTBRA LEFTSQU context RIGHTSQU top_pattern LONGARROW . ter
 -- On term shift to state 100
 -- On sterm shift to state 26
 -- On aterm shift to state 31
+## Reductions:
 
 State 100:
+## Known stack suffix:
+## LEFTBRA ID RIGHTBRA LEFTSQU context RIGHTSQU top_pattern LONGARROW term
+## LR(1) items:
 rule -> LEFTBRA ID RIGHTBRA LEFTSQU context RIGHTSQU top_pattern LONGARROW term . [ LEFTSQU LEFTBRA DOT ]
 term -> term . ARROW term [ LEFTSQU LEFTBRA DOT ARROW ]
+## Transitions:
 -- On ARROW shift to state 24
+## Reductions:
 -- On LEFTSQU reduce production rule -> LEFTBRA ID RIGHTBRA LEFTSQU context RIGHTSQU top_pattern LONGARROW term
 -- On LEFTBRA reduce production rule -> LEFTBRA ID RIGHTBRA LEFTSQU context RIGHTSQU top_pattern LONGARROW term
 -- On DOT reduce production rule -> LEFTBRA ID RIGHTBRA LEFTSQU context RIGHTSQU top_pattern LONGARROW term
 
 State 101:
+## Known stack suffix:
+## KW_THM
+## LR(1) items:
 line -> KW_THM . ID COLON term DEF term DOT [ # ]
 line -> KW_THM . ID nonempty_list(param) COLON term DEF term DOT [ # ]
+## Transitions:
 -- On ID shift to state 102
+## Reductions:
 
 State 102:
+## Known stack suffix:
+## KW_THM ID
+## LR(1) items:
 line -> KW_THM ID . COLON term DEF term DOT [ # ]
 line -> KW_THM ID . nonempty_list(param) COLON term DEF term DOT [ # ]
+## Transitions:
 -- On LEFTPAR shift to state 103
 -- On COLON shift to state 108
 -- On param shift to state 113
 -- On nonempty_list(param) shift to state 115
+## Reductions:
 
 State 103:
+## Known stack suffix:
+## LEFTPAR
+## LR(1) items:
 param -> LEFTPAR . ID COLON term RIGHTPAR [ LEFTPAR DEF COLON ]
+## Transitions:
 -- On ID shift to state 104
+## Reductions:
 
 State 104:
+## Known stack suffix:
+## LEFTPAR ID
+## LR(1) items:
 param -> LEFTPAR ID . COLON term RIGHTPAR [ LEFTPAR DEF COLON ]
+## Transitions:
 -- On COLON shift to state 105
+## Reductions:
 
 State 105:
+## Known stack suffix:
+## LEFTPAR ID COLON
+## LR(1) items:
 param -> LEFTPAR ID COLON . term RIGHTPAR [ LEFTPAR DEF COLON ]
+## Transitions:
 -- On UNDERSCORE shift to state 11
 -- On TYPE shift to state 13
 -- On QID shift to state 14
@@ -988,21 +1517,36 @@ param -> LEFTPAR ID COLON . term RIGHTPAR [ LEFTPAR DEF COLON ]
 -- On term shift to state 106
 -- On sterm shift to state 26
 -- On aterm shift to state 31
+## Reductions:
 
 State 106:
+## Known stack suffix:
+## LEFTPAR ID COLON term
+## LR(1) items:
 param -> LEFTPAR ID COLON term . RIGHTPAR [ LEFTPAR DEF COLON ]
 term -> term . ARROW term [ RIGHTPAR ARROW ]
+## Transitions:
 -- On RIGHTPAR shift to state 107
 -- On ARROW shift to state 24
+## Reductions:
 
 State 107:
+## Known stack suffix:
+## LEFTPAR ID COLON term RIGHTPAR
+## LR(1) items:
 param -> LEFTPAR ID COLON term RIGHTPAR . [ LEFTPAR DEF COLON ]
+## Transitions:
+## Reductions:
 -- On LEFTPAR reduce production param -> LEFTPAR ID COLON term RIGHTPAR
 -- On DEF reduce production param -> LEFTPAR ID COLON term RIGHTPAR
 -- On COLON reduce production param -> LEFTPAR ID COLON term RIGHTPAR
 
 State 108:
+## Known stack suffix:
+## KW_THM ID COLON
+## LR(1) items:
 line -> KW_THM ID COLON . term DEF term DOT [ # ]
+## Transitions:
 -- On UNDERSCORE shift to state 11
 -- On TYPE shift to state 13
 -- On QID shift to state 14
@@ -1011,15 +1555,25 @@ line -> KW_THM ID COLON . term DEF term DOT [ # ]
 -- On term shift to state 109
 -- On sterm shift to state 26
 -- On aterm shift to state 31
+## Reductions:
 
 State 109:
+## Known stack suffix:
+## KW_THM ID COLON term
+## LR(1) items:
 line -> KW_THM ID COLON term . DEF term DOT [ # ]
 term -> term . ARROW term [ DEF ARROW ]
+## Transitions:
 -- On DEF shift to state 110
 -- On ARROW shift to state 24
+## Reductions:
 
 State 110:
+## Known stack suffix:
+## KW_THM ID COLON term DEF
+## LR(1) items:
 line -> KW_THM ID COLON term DEF . term DOT [ # ]
+## Transitions:
 -- On UNDERSCORE shift to state 11
 -- On TYPE shift to state 13
 -- On QID shift to state 14
@@ -1028,37 +1582,67 @@ line -> KW_THM ID COLON term DEF . term DOT [ # ]
 -- On term shift to state 111
 -- On sterm shift to state 26
 -- On aterm shift to state 31
+## Reductions:
 
 State 111:
+## Known stack suffix:
+## KW_THM ID COLON term DEF term
+## LR(1) items:
 line -> KW_THM ID COLON term DEF term . DOT [ # ]
 term -> term . ARROW term [ DOT ARROW ]
+## Transitions:
 -- On DOT shift to state 112
 -- On ARROW shift to state 24
+## Reductions:
 
 State 112:
+## Known stack suffix:
+## KW_THM ID COLON term DEF term DOT
+## LR(1) items:
 line -> KW_THM ID COLON term DEF term DOT . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production line -> KW_THM ID COLON term DEF term DOT
 
 State 113:
+## Known stack suffix:
+## param
+## LR(1) items:
 nonempty_list(param) -> param . [ DEF COLON ]
 nonempty_list(param) -> param . nonempty_list(param) [ DEF COLON ]
+## Transitions:
 -- On LEFTPAR shift to state 103
 -- On param shift to state 113
 -- On nonempty_list(param) shift to state 114
+## Reductions:
 -- On DEF reduce production nonempty_list(param) -> param
 -- On COLON reduce production nonempty_list(param) -> param
 
 State 114:
+## Known stack suffix:
+## param nonempty_list(param)
+## LR(1) items:
 nonempty_list(param) -> param nonempty_list(param) . [ DEF COLON ]
+## Transitions:
+## Reductions:
 -- On DEF reduce production nonempty_list(param) -> param nonempty_list(param)
 -- On COLON reduce production nonempty_list(param) -> param nonempty_list(param)
 
 State 115:
+## Known stack suffix:
+## KW_THM ID nonempty_list(param)
+## LR(1) items:
 line -> KW_THM ID nonempty_list(param) . COLON term DEF term DOT [ # ]
+## Transitions:
 -- On COLON shift to state 116
+## Reductions:
 
 State 116:
+## Known stack suffix:
+## KW_THM ID nonempty_list(param) COLON
+## LR(1) items:
 line -> KW_THM ID nonempty_list(param) COLON . term DEF term DOT [ # ]
+## Transitions:
 -- On UNDERSCORE shift to state 11
 -- On TYPE shift to state 13
 -- On QID shift to state 14
@@ -1067,15 +1651,25 @@ line -> KW_THM ID nonempty_list(param) COLON . term DEF term DOT [ # ]
 -- On term shift to state 117
 -- On sterm shift to state 26
 -- On aterm shift to state 31
+## Reductions:
 
 State 117:
+## Known stack suffix:
+## KW_THM ID nonempty_list(param) COLON term
+## LR(1) items:
 line -> KW_THM ID nonempty_list(param) COLON term . DEF term DOT [ # ]
 term -> term . ARROW term [ DEF ARROW ]
+## Transitions:
 -- On DEF shift to state 118
 -- On ARROW shift to state 24
+## Reductions:
 
 State 118:
+## Known stack suffix:
+## KW_THM ID nonempty_list(param) COLON term DEF
+## LR(1) items:
 line -> KW_THM ID nonempty_list(param) COLON term DEF . term DOT [ # ]
+## Transitions:
 -- On UNDERSCORE shift to state 11
 -- On TYPE shift to state 13
 -- On QID shift to state 14
@@ -1084,39 +1678,64 @@ line -> KW_THM ID nonempty_list(param) COLON term DEF . term DOT [ # ]
 -- On term shift to state 119
 -- On sterm shift to state 26
 -- On aterm shift to state 31
+## Reductions:
 
 State 119:
+## Known stack suffix:
+## KW_THM ID nonempty_list(param) COLON term DEF term
+## LR(1) items:
 line -> KW_THM ID nonempty_list(param) COLON term DEF term . DOT [ # ]
 term -> term . ARROW term [ DOT ARROW ]
+## Transitions:
 -- On DOT shift to state 120
 -- On ARROW shift to state 24
+## Reductions:
 
 State 120:
+## Known stack suffix:
+## KW_THM ID nonempty_list(param) COLON term DEF term DOT
+## LR(1) items:
 line -> KW_THM ID nonempty_list(param) COLON term DEF term DOT . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production line -> KW_THM ID nonempty_list(param) COLON term DEF term DOT
 
 State 121:
+## Known stack suffix:
+## KW_DEF
+## LR(1) items:
 line -> KW_DEF . ID COLON term DOT [ # ]
 line -> KW_DEF . ID COLON term DEF term DOT [ # ]
 line -> KW_DEF . ID DEF term DOT [ # ]
 line -> KW_DEF . ID nonempty_list(param) COLON term DEF term DOT [ # ]
 line -> KW_DEF . ID nonempty_list(param) DEF term DOT [ # ]
+## Transitions:
 -- On ID shift to state 122
+## Reductions:
 
 State 122:
+## Known stack suffix:
+## KW_DEF ID
+## LR(1) items:
 line -> KW_DEF ID . COLON term DOT [ # ]
 line -> KW_DEF ID . COLON term DEF term DOT [ # ]
 line -> KW_DEF ID . DEF term DOT [ # ]
 line -> KW_DEF ID . nonempty_list(param) COLON term DEF term DOT [ # ]
 line -> KW_DEF ID . nonempty_list(param) DEF term DOT [ # ]
+## Transitions:
 -- On LEFTPAR shift to state 103
 -- On DEF shift to state 123
 -- On COLON shift to state 126
 -- On param shift to state 113
 -- On nonempty_list(param) shift to state 132
+## Reductions:
 
 State 123:
+## Known stack suffix:
+## KW_DEF ID DEF
+## LR(1) items:
 line -> KW_DEF ID DEF . term DOT [ # ]
+## Transitions:
 -- On UNDERSCORE shift to state 11
 -- On TYPE shift to state 13
 -- On QID shift to state 14
@@ -1125,20 +1744,35 @@ line -> KW_DEF ID DEF . term DOT [ # ]
 -- On term shift to state 124
 -- On sterm shift to state 26
 -- On aterm shift to state 31
+## Reductions:
 
 State 124:
+## Known stack suffix:
+## KW_DEF ID DEF term
+## LR(1) items:
 line -> KW_DEF ID DEF term . DOT [ # ]
 term -> term . ARROW term [ DOT ARROW ]
+## Transitions:
 -- On DOT shift to state 125
 -- On ARROW shift to state 24
+## Reductions:
 
 State 125:
+## Known stack suffix:
+## KW_DEF ID DEF term DOT
+## LR(1) items:
 line -> KW_DEF ID DEF term DOT . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production line -> KW_DEF ID DEF term DOT
 
 State 126:
+## Known stack suffix:
+## KW_DEF ID COLON
+## LR(1) items:
 line -> KW_DEF ID COLON . term DOT [ # ]
 line -> KW_DEF ID COLON . term DEF term DOT [ # ]
+## Transitions:
 -- On UNDERSCORE shift to state 11
 -- On TYPE shift to state 13
 -- On QID shift to state 14
@@ -1147,21 +1781,36 @@ line -> KW_DEF ID COLON . term DEF term DOT [ # ]
 -- On term shift to state 127
 -- On sterm shift to state 26
 -- On aterm shift to state 31
+## Reductions:
 
 State 127:
+## Known stack suffix:
+## KW_DEF ID COLON term
+## LR(1) items:
 line -> KW_DEF ID COLON term . DOT [ # ]
 line -> KW_DEF ID COLON term . DEF term DOT [ # ]
 term -> term . ARROW term [ DOT DEF ARROW ]
+## Transitions:
 -- On DOT shift to state 128
 -- On DEF shift to state 129
 -- On ARROW shift to state 24
+## Reductions:
 
 State 128:
+## Known stack suffix:
+## KW_DEF ID COLON term DOT
+## LR(1) items:
 line -> KW_DEF ID COLON term DOT . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production line -> KW_DEF ID COLON term DOT
 
 State 129:
+## Known stack suffix:
+## KW_DEF ID COLON term DEF
+## LR(1) items:
 line -> KW_DEF ID COLON term DEF . term DOT [ # ]
+## Transitions:
 -- On UNDERSCORE shift to state 11
 -- On TYPE shift to state 13
 -- On QID shift to state 14
@@ -1170,25 +1819,45 @@ line -> KW_DEF ID COLON term DEF . term DOT [ # ]
 -- On term shift to state 130
 -- On sterm shift to state 26
 -- On aterm shift to state 31
+## Reductions:
 
 State 130:
+## Known stack suffix:
+## KW_DEF ID COLON term DEF term
+## LR(1) items:
 line -> KW_DEF ID COLON term DEF term . DOT [ # ]
 term -> term . ARROW term [ DOT ARROW ]
+## Transitions:
 -- On DOT shift to state 131
 -- On ARROW shift to state 24
+## Reductions:
 
 State 131:
+## Known stack suffix:
+## KW_DEF ID COLON term DEF term DOT
+## LR(1) items:
 line -> KW_DEF ID COLON term DEF term DOT . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production line -> KW_DEF ID COLON term DEF term DOT
 
 State 132:
+## Known stack suffix:
+## KW_DEF ID nonempty_list(param)
+## LR(1) items:
 line -> KW_DEF ID nonempty_list(param) . COLON term DEF term DOT [ # ]
 line -> KW_DEF ID nonempty_list(param) . DEF term DOT [ # ]
+## Transitions:
 -- On DEF shift to state 133
 -- On COLON shift to state 136
+## Reductions:
 
 State 133:
+## Known stack suffix:
+## KW_DEF ID nonempty_list(param) DEF
+## LR(1) items:
 line -> KW_DEF ID nonempty_list(param) DEF . term DOT [ # ]
+## Transitions:
 -- On UNDERSCORE shift to state 11
 -- On TYPE shift to state 13
 -- On QID shift to state 14
@@ -1197,19 +1866,34 @@ line -> KW_DEF ID nonempty_list(param) DEF . term DOT [ # ]
 -- On term shift to state 134
 -- On sterm shift to state 26
 -- On aterm shift to state 31
+## Reductions:
 
 State 134:
+## Known stack suffix:
+## KW_DEF ID nonempty_list(param) DEF term
+## LR(1) items:
 line -> KW_DEF ID nonempty_list(param) DEF term . DOT [ # ]
 term -> term . ARROW term [ DOT ARROW ]
+## Transitions:
 -- On DOT shift to state 135
 -- On ARROW shift to state 24
+## Reductions:
 
 State 135:
+## Known stack suffix:
+## KW_DEF ID nonempty_list(param) DEF term DOT
+## LR(1) items:
 line -> KW_DEF ID nonempty_list(param) DEF term DOT . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production line -> KW_DEF ID nonempty_list(param) DEF term DOT
 
 State 136:
+## Known stack suffix:
+## KW_DEF ID nonempty_list(param) COLON
+## LR(1) items:
 line -> KW_DEF ID nonempty_list(param) COLON . term DEF term DOT [ # ]
+## Transitions:
 -- On UNDERSCORE shift to state 11
 -- On TYPE shift to state 13
 -- On QID shift to state 14
@@ -1218,15 +1902,25 @@ line -> KW_DEF ID nonempty_list(param) COLON . term DEF term DOT [ # ]
 -- On term shift to state 137
 -- On sterm shift to state 26
 -- On aterm shift to state 31
+## Reductions:
 
 State 137:
+## Known stack suffix:
+## KW_DEF ID nonempty_list(param) COLON term
+## LR(1) items:
 line -> KW_DEF ID nonempty_list(param) COLON term . DEF term DOT [ # ]
 term -> term . ARROW term [ DEF ARROW ]
+## Transitions:
 -- On DEF shift to state 138
 -- On ARROW shift to state 24
+## Reductions:
 
 State 138:
+## Known stack suffix:
+## KW_DEF ID nonempty_list(param) COLON term DEF
+## LR(1) items:
 line -> KW_DEF ID nonempty_list(param) COLON term DEF . term DOT [ # ]
+## Transitions:
 -- On UNDERSCORE shift to state 11
 -- On TYPE shift to state 13
 -- On QID shift to state 14
@@ -1235,20 +1929,35 @@ line -> KW_DEF ID nonempty_list(param) COLON term DEF . term DOT [ # ]
 -- On term shift to state 139
 -- On sterm shift to state 26
 -- On aterm shift to state 31
+## Reductions:
 
 State 139:
+## Known stack suffix:
+## KW_DEF ID nonempty_list(param) COLON term DEF term
+## LR(1) items:
 line -> KW_DEF ID nonempty_list(param) COLON term DEF term . DOT [ # ]
 term -> term . ARROW term [ DOT ARROW ]
+## Transitions:
 -- On DOT shift to state 140
 -- On ARROW shift to state 24
+## Reductions:
 
 State 140:
+## Known stack suffix:
+## KW_DEF ID nonempty_list(param) COLON term DEF term DOT
+## LR(1) items:
 line -> KW_DEF ID nonempty_list(param) COLON term DEF term DOT . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production line -> KW_DEF ID nonempty_list(param) COLON term DEF term DOT
 
 State 141:
+## Known stack suffix:
+## INFER
+## LR(1) items:
 line -> INFER . term DOT [ # ]
 line -> INFER . eval_config term DOT [ # ]
+## Transitions:
 -- On UNDERSCORE shift to state 11
 -- On TYPE shift to state 13
 -- On QID shift to state 14
@@ -1259,20 +1968,36 @@ line -> INFER . eval_config term DOT [ # ]
 -- On sterm shift to state 26
 -- On eval_config shift to state 150
 -- On aterm shift to state 31
+## Reductions:
 
 State 142:
+## Known stack suffix:
+## LEFTSQU
+## LR(1) items:
 eval_config -> LEFTSQU . ID RIGHTSQU [ UNDERSCORE TYPE QID LEFTPAR ID ]
 eval_config -> LEFTSQU . ID COMMA ID RIGHTSQU [ UNDERSCORE TYPE QID LEFTPAR ID ]
+## Transitions:
 -- On ID shift to state 143
+## Reductions:
 
 State 143:
+## Known stack suffix:
+## LEFTSQU ID
+## LR(1) items:
 eval_config -> LEFTSQU ID . RIGHTSQU [ UNDERSCORE TYPE QID LEFTPAR ID ]
 eval_config -> LEFTSQU ID . COMMA ID RIGHTSQU [ UNDERSCORE TYPE QID LEFTPAR ID ]
+## Transitions:
 -- On RIGHTSQU shift to state 144
 -- On COMMA shift to state 145
+## Reductions:
 
 State 144:
+## Known stack suffix:
+## LEFTSQU ID RIGHTSQU
+## LR(1) items:
 eval_config -> LEFTSQU ID RIGHTSQU . [ UNDERSCORE TYPE QID LEFTPAR ID ]
+## Transitions:
+## Reductions:
 -- On UNDERSCORE reduce production eval_config -> LEFTSQU ID RIGHTSQU
 -- On TYPE reduce production eval_config -> LEFTSQU ID RIGHTSQU
 -- On QID reduce production eval_config -> LEFTSQU ID RIGHTSQU
@@ -1280,15 +2005,30 @@ eval_config -> LEFTSQU ID RIGHTSQU . [ UNDERSCORE TYPE QID LEFTPAR ID ]
 -- On ID reduce production eval_config -> LEFTSQU ID RIGHTSQU
 
 State 145:
+## Known stack suffix:
+## LEFTSQU ID COMMA
+## LR(1) items:
 eval_config -> LEFTSQU ID COMMA . ID RIGHTSQU [ UNDERSCORE TYPE QID LEFTPAR ID ]
+## Transitions:
 -- On ID shift to state 146
+## Reductions:
 
 State 146:
+## Known stack suffix:
+## LEFTSQU ID COMMA ID
+## LR(1) items:
 eval_config -> LEFTSQU ID COMMA ID . RIGHTSQU [ UNDERSCORE TYPE QID LEFTPAR ID ]
+## Transitions:
 -- On RIGHTSQU shift to state 147
+## Reductions:
 
 State 147:
+## Known stack suffix:
+## LEFTSQU ID COMMA ID RIGHTSQU
+## LR(1) items:
 eval_config -> LEFTSQU ID COMMA ID RIGHTSQU . [ UNDERSCORE TYPE QID LEFTPAR ID ]
+## Transitions:
+## Reductions:
 -- On UNDERSCORE reduce production eval_config -> LEFTSQU ID COMMA ID RIGHTSQU
 -- On TYPE reduce production eval_config -> LEFTSQU ID COMMA ID RIGHTSQU
 -- On QID reduce production eval_config -> LEFTSQU ID COMMA ID RIGHTSQU
@@ -1296,17 +2036,31 @@ eval_config -> LEFTSQU ID COMMA ID RIGHTSQU . [ UNDERSCORE TYPE QID LEFTPAR ID ]
 -- On ID reduce production eval_config -> LEFTSQU ID COMMA ID RIGHTSQU
 
 State 148:
+## Known stack suffix:
+## INFER term
+## LR(1) items:
 line -> INFER term . DOT [ # ]
 term -> term . ARROW term [ DOT ARROW ]
+## Transitions:
 -- On DOT shift to state 149
 -- On ARROW shift to state 24
+## Reductions:
 
 State 149:
+## Known stack suffix:
+## INFER term DOT
+## LR(1) items:
 line -> INFER term DOT . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production line -> INFER term DOT
 
 State 150:
+## Known stack suffix:
+## INFER eval_config
+## LR(1) items:
 line -> INFER eval_config . term DOT [ # ]
+## Transitions:
 -- On UNDERSCORE shift to state 11
 -- On TYPE shift to state 13
 -- On QID shift to state 14
@@ -1315,41 +2069,76 @@ line -> INFER eval_config . term DOT [ # ]
 -- On term shift to state 151
 -- On sterm shift to state 26
 -- On aterm shift to state 31
+## Reductions:
 
 State 151:
+## Known stack suffix:
+## INFER eval_config term
+## LR(1) items:
 line -> INFER eval_config term . DOT [ # ]
 term -> term . ARROW term [ DOT ARROW ]
+## Transitions:
 -- On DOT shift to state 152
 -- On ARROW shift to state 24
+## Reductions:
 
 State 152:
+## Known stack suffix:
+## INFER eval_config term DOT
+## LR(1) items:
 line -> INFER eval_config term DOT . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production line -> INFER eval_config term DOT
 
 State 153:
+## Known stack suffix:
+## ID
+## LR(1) items:
 line -> ID . list(param) COLON term DOT [ # ]
+## Transitions:
 -- On LEFTPAR shift to state 103
 -- On param shift to state 154
 -- On list(param) shift to state 156
+## Reductions:
 -- On COLON reduce production list(param) ->
 
 State 154:
+## Known stack suffix:
+## param
+## LR(1) items:
 list(param) -> param . list(param) [ COLON ]
+## Transitions:
 -- On LEFTPAR shift to state 103
 -- On param shift to state 154
 -- On list(param) shift to state 155
+## Reductions:
 -- On COLON reduce production list(param) ->
 
 State 155:
+## Known stack suffix:
+## param list(param)
+## LR(1) items:
 list(param) -> param list(param) . [ COLON ]
+## Transitions:
+## Reductions:
 -- On COLON reduce production list(param) -> param list(param)
 
 State 156:
+## Known stack suffix:
+## ID list(param)
+## LR(1) items:
 line -> ID list(param) . COLON term DOT [ # ]
+## Transitions:
 -- On COLON shift to state 157
+## Reductions:
 
 State 157:
+## Known stack suffix:
+## ID list(param) COLON
+## LR(1) items:
 line -> ID list(param) COLON . term DOT [ # ]
+## Transitions:
 -- On UNDERSCORE shift to state 11
 -- On TYPE shift to state 13
 -- On QID shift to state 14
@@ -1358,42 +2147,82 @@ line -> ID list(param) COLON . term DOT [ # ]
 -- On term shift to state 158
 -- On sterm shift to state 26
 -- On aterm shift to state 31
+## Reductions:
 
 State 158:
+## Known stack suffix:
+## ID list(param) COLON term
+## LR(1) items:
 line -> ID list(param) COLON term . DOT [ # ]
 term -> term . ARROW term [ DOT ARROW ]
+## Transitions:
 -- On DOT shift to state 159
 -- On ARROW shift to state 24
+## Reductions:
 
 State 159:
+## Known stack suffix:
+## ID list(param) COLON term DOT
+## LR(1) items:
 line -> ID list(param) COLON term DOT . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production line -> ID list(param) COLON term DOT
 
 State 160:
+## Known stack suffix:
+## GDT
+## LR(1) items:
 line -> GDT . ID DOT [ # ]
 line -> GDT . QID DOT [ # ]
+## Transitions:
 -- On QID shift to state 161
 -- On ID shift to state 163
+## Reductions:
 
 State 161:
+## Known stack suffix:
+## GDT QID
+## LR(1) items:
 line -> GDT QID . DOT [ # ]
+## Transitions:
 -- On DOT shift to state 162
+## Reductions:
 
 State 162:
+## Known stack suffix:
+## GDT QID DOT
+## LR(1) items:
 line -> GDT QID DOT . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production line -> GDT QID DOT
 
 State 163:
+## Known stack suffix:
+## GDT ID
+## LR(1) items:
 line -> GDT ID . DOT [ # ]
+## Transitions:
 -- On DOT shift to state 164
+## Reductions:
 
 State 164:
+## Known stack suffix:
+## GDT ID DOT
+## LR(1) items:
 line -> GDT ID DOT . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production line -> GDT ID DOT
 
 State 165:
+## Known stack suffix:
+## EVAL
+## LR(1) items:
 line -> EVAL . term DOT [ # ]
 line -> EVAL . eval_config term DOT [ # ]
+## Transitions:
 -- On UNDERSCORE shift to state 11
 -- On TYPE shift to state 13
 -- On QID shift to state 14
@@ -1404,19 +2233,34 @@ line -> EVAL . eval_config term DOT [ # ]
 -- On sterm shift to state 26
 -- On eval_config shift to state 168
 -- On aterm shift to state 31
+## Reductions:
 
 State 166:
+## Known stack suffix:
+## EVAL term
+## LR(1) items:
 line -> EVAL term . DOT [ # ]
 term -> term . ARROW term [ DOT ARROW ]
+## Transitions:
 -- On DOT shift to state 167
 -- On ARROW shift to state 24
+## Reductions:
 
 State 167:
+## Known stack suffix:
+## EVAL term DOT
+## LR(1) items:
 line -> EVAL term DOT . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production line -> EVAL term DOT
 
 State 168:
+## Known stack suffix:
+## EVAL eval_config
+## LR(1) items:
 line -> EVAL eval_config . term DOT [ # ]
+## Transitions:
 -- On UNDERSCORE shift to state 11
 -- On TYPE shift to state 13
 -- On QID shift to state 14
@@ -1425,24 +2269,44 @@ line -> EVAL eval_config . term DOT [ # ]
 -- On term shift to state 169
 -- On sterm shift to state 26
 -- On aterm shift to state 31
+## Reductions:
 
 State 169:
+## Known stack suffix:
+## EVAL eval_config term
+## LR(1) items:
 line -> EVAL eval_config term . DOT [ # ]
 term -> term . ARROW term [ DOT ARROW ]
+## Transitions:
 -- On DOT shift to state 170
 -- On ARROW shift to state 24
+## Reductions:
 
 State 170:
+## Known stack suffix:
+## EVAL eval_config term DOT
+## LR(1) items:
 line -> EVAL eval_config term DOT . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production line -> EVAL eval_config term DOT
 
 State 171:
+## Known stack suffix:
+## EOF
+## LR(1) items:
 line -> EOF . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production line -> EOF
 
 State 172:
+## Known stack suffix:
+## CHECKNOT
+## LR(1) items:
 line -> CHECKNOT . aterm COLON term DOT [ # ]
 line -> CHECKNOT . aterm EQUAL term DOT [ # ]
+## Transitions:
 -- On UNDERSCORE shift to state 20
 -- On TYPE shift to state 13
 -- On QID shift to state 14
@@ -1450,15 +2314,25 @@ line -> CHECKNOT . aterm EQUAL term DOT [ # ]
 -- On ID shift to state 27
 -- On sterm shift to state 26
 -- On aterm shift to state 173
+## Reductions:
 
 State 173:
+## Known stack suffix:
+## CHECKNOT aterm
+## LR(1) items:
 line -> CHECKNOT aterm . COLON term DOT [ # ]
 line -> CHECKNOT aterm . EQUAL term DOT [ # ]
+## Transitions:
 -- On EQUAL shift to state 174
 -- On COLON shift to state 177
+## Reductions:
 
 State 174:
+## Known stack suffix:
+## CHECKNOT aterm EQUAL
+## LR(1) items:
 line -> CHECKNOT aterm EQUAL . term DOT [ # ]
+## Transitions:
 -- On UNDERSCORE shift to state 11
 -- On TYPE shift to state 13
 -- On QID shift to state 14
@@ -1467,19 +2341,34 @@ line -> CHECKNOT aterm EQUAL . term DOT [ # ]
 -- On term shift to state 175
 -- On sterm shift to state 26
 -- On aterm shift to state 31
+## Reductions:
 
 State 175:
+## Known stack suffix:
+## CHECKNOT aterm EQUAL term
+## LR(1) items:
 line -> CHECKNOT aterm EQUAL term . DOT [ # ]
 term -> term . ARROW term [ DOT ARROW ]
+## Transitions:
 -- On DOT shift to state 176
 -- On ARROW shift to state 24
+## Reductions:
 
 State 176:
+## Known stack suffix:
+## CHECKNOT aterm EQUAL term DOT
+## LR(1) items:
 line -> CHECKNOT aterm EQUAL term DOT . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production line -> CHECKNOT aterm EQUAL term DOT
 
 State 177:
+## Known stack suffix:
+## CHECKNOT aterm COLON
+## LR(1) items:
 line -> CHECKNOT aterm COLON . term DOT [ # ]
+## Transitions:
 -- On UNDERSCORE shift to state 11
 -- On TYPE shift to state 13
 -- On QID shift to state 14
@@ -1488,20 +2377,35 @@ line -> CHECKNOT aterm COLON . term DOT [ # ]
 -- On term shift to state 178
 -- On sterm shift to state 26
 -- On aterm shift to state 31
+## Reductions:
 
 State 178:
+## Known stack suffix:
+## CHECKNOT aterm COLON term
+## LR(1) items:
 line -> CHECKNOT aterm COLON term . DOT [ # ]
 term -> term . ARROW term [ DOT ARROW ]
+## Transitions:
 -- On DOT shift to state 179
 -- On ARROW shift to state 24
+## Reductions:
 
 State 179:
+## Known stack suffix:
+## CHECKNOT aterm COLON term DOT
+## LR(1) items:
 line -> CHECKNOT aterm COLON term DOT . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production line -> CHECKNOT aterm COLON term DOT
 
 State 180:
+## Known stack suffix:
+## CHECK
+## LR(1) items:
 line -> CHECK . aterm COLON term DOT [ # ]
 line -> CHECK . aterm EQUAL term DOT [ # ]
+## Transitions:
 -- On UNDERSCORE shift to state 20
 -- On TYPE shift to state 13
 -- On QID shift to state 14
@@ -1509,15 +2413,25 @@ line -> CHECK . aterm EQUAL term DOT [ # ]
 -- On ID shift to state 27
 -- On sterm shift to state 26
 -- On aterm shift to state 181
+## Reductions:
 
 State 181:
+## Known stack suffix:
+## CHECK aterm
+## LR(1) items:
 line -> CHECK aterm . COLON term DOT [ # ]
 line -> CHECK aterm . EQUAL term DOT [ # ]
+## Transitions:
 -- On EQUAL shift to state 182
 -- On COLON shift to state 185
+## Reductions:
 
 State 182:
+## Known stack suffix:
+## CHECK aterm EQUAL
+## LR(1) items:
 line -> CHECK aterm EQUAL . term DOT [ # ]
+## Transitions:
 -- On UNDERSCORE shift to state 11
 -- On TYPE shift to state 13
 -- On QID shift to state 14
@@ -1526,19 +2440,34 @@ line -> CHECK aterm EQUAL . term DOT [ # ]
 -- On term shift to state 183
 -- On sterm shift to state 26
 -- On aterm shift to state 31
+## Reductions:
 
 State 183:
+## Known stack suffix:
+## CHECK aterm EQUAL term
+## LR(1) items:
 line -> CHECK aterm EQUAL term . DOT [ # ]
 term -> term . ARROW term [ DOT ARROW ]
+## Transitions:
 -- On DOT shift to state 184
 -- On ARROW shift to state 24
+## Reductions:
 
 State 184:
+## Known stack suffix:
+## CHECK aterm EQUAL term DOT
+## LR(1) items:
 line -> CHECK aterm EQUAL term DOT . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production line -> CHECK aterm EQUAL term DOT
 
 State 185:
+## Known stack suffix:
+## CHECK aterm COLON
+## LR(1) items:
 line -> CHECK aterm COLON . term DOT [ # ]
+## Transitions:
 -- On UNDERSCORE shift to state 11
 -- On TYPE shift to state 13
 -- On QID shift to state 14
@@ -1547,20 +2476,35 @@ line -> CHECK aterm COLON . term DOT [ # ]
 -- On term shift to state 186
 -- On sterm shift to state 26
 -- On aterm shift to state 31
+## Reductions:
 
 State 186:
+## Known stack suffix:
+## CHECK aterm COLON term
+## LR(1) items:
 line -> CHECK aterm COLON term . DOT [ # ]
 term -> term . ARROW term [ DOT ARROW ]
+## Transitions:
 -- On DOT shift to state 187
 -- On ARROW shift to state 24
+## Reductions:
 
 State 187:
+## Known stack suffix:
+## CHECK aterm COLON term DOT
+## LR(1) items:
 line -> CHECK aterm COLON term DOT . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production line -> CHECK aterm COLON term DOT
 
 State 188:
+## Known stack suffix:
+## ASSERTNOT
+## LR(1) items:
 line -> ASSERTNOT . aterm COLON term DOT [ # ]
 line -> ASSERTNOT . aterm EQUAL term DOT [ # ]
+## Transitions:
 -- On UNDERSCORE shift to state 20
 -- On TYPE shift to state 13
 -- On QID shift to state 14
@@ -1568,15 +2512,25 @@ line -> ASSERTNOT . aterm EQUAL term DOT [ # ]
 -- On ID shift to state 27
 -- On sterm shift to state 26
 -- On aterm shift to state 189
+## Reductions:
 
 State 189:
+## Known stack suffix:
+## ASSERTNOT aterm
+## LR(1) items:
 line -> ASSERTNOT aterm . COLON term DOT [ # ]
 line -> ASSERTNOT aterm . EQUAL term DOT [ # ]
+## Transitions:
 -- On EQUAL shift to state 190
 -- On COLON shift to state 193
+## Reductions:
 
 State 190:
+## Known stack suffix:
+## ASSERTNOT aterm EQUAL
+## LR(1) items:
 line -> ASSERTNOT aterm EQUAL . term DOT [ # ]
+## Transitions:
 -- On UNDERSCORE shift to state 11
 -- On TYPE shift to state 13
 -- On QID shift to state 14
@@ -1585,19 +2539,34 @@ line -> ASSERTNOT aterm EQUAL . term DOT [ # ]
 -- On term shift to state 191
 -- On sterm shift to state 26
 -- On aterm shift to state 31
+## Reductions:
 
 State 191:
+## Known stack suffix:
+## ASSERTNOT aterm EQUAL term
+## LR(1) items:
 line -> ASSERTNOT aterm EQUAL term . DOT [ # ]
 term -> term . ARROW term [ DOT ARROW ]
+## Transitions:
 -- On DOT shift to state 192
 -- On ARROW shift to state 24
+## Reductions:
 
 State 192:
+## Known stack suffix:
+## ASSERTNOT aterm EQUAL term DOT
+## LR(1) items:
 line -> ASSERTNOT aterm EQUAL term DOT . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production line -> ASSERTNOT aterm EQUAL term DOT
 
 State 193:
+## Known stack suffix:
+## ASSERTNOT aterm COLON
+## LR(1) items:
 line -> ASSERTNOT aterm COLON . term DOT [ # ]
+## Transitions:
 -- On UNDERSCORE shift to state 11
 -- On TYPE shift to state 13
 -- On QID shift to state 14
@@ -1606,20 +2575,35 @@ line -> ASSERTNOT aterm COLON . term DOT [ # ]
 -- On term shift to state 194
 -- On sterm shift to state 26
 -- On aterm shift to state 31
+## Reductions:
 
 State 194:
+## Known stack suffix:
+## ASSERTNOT aterm COLON term
+## LR(1) items:
 line -> ASSERTNOT aterm COLON term . DOT [ # ]
 term -> term . ARROW term [ DOT ARROW ]
+## Transitions:
 -- On DOT shift to state 195
 -- On ARROW shift to state 24
+## Reductions:
 
 State 195:
+## Known stack suffix:
+## ASSERTNOT aterm COLON term DOT
+## LR(1) items:
 line -> ASSERTNOT aterm COLON term DOT . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production line -> ASSERTNOT aterm COLON term DOT
 
 State 196:
+## Known stack suffix:
+## ASSERT
+## LR(1) items:
 line -> ASSERT . aterm COLON term DOT [ # ]
 line -> ASSERT . aterm EQUAL term DOT [ # ]
+## Transitions:
 -- On UNDERSCORE shift to state 20
 -- On TYPE shift to state 13
 -- On QID shift to state 14
@@ -1627,15 +2611,25 @@ line -> ASSERT . aterm EQUAL term DOT [ # ]
 -- On ID shift to state 27
 -- On sterm shift to state 26
 -- On aterm shift to state 197
+## Reductions:
 
 State 197:
+## Known stack suffix:
+## ASSERT aterm
+## LR(1) items:
 line -> ASSERT aterm . COLON term DOT [ # ]
 line -> ASSERT aterm . EQUAL term DOT [ # ]
+## Transitions:
 -- On EQUAL shift to state 198
 -- On COLON shift to state 201
+## Reductions:
 
 State 198:
+## Known stack suffix:
+## ASSERT aterm EQUAL
+## LR(1) items:
 line -> ASSERT aterm EQUAL . term DOT [ # ]
+## Transitions:
 -- On UNDERSCORE shift to state 11
 -- On TYPE shift to state 13
 -- On QID shift to state 14
@@ -1644,19 +2638,34 @@ line -> ASSERT aterm EQUAL . term DOT [ # ]
 -- On term shift to state 199
 -- On sterm shift to state 26
 -- On aterm shift to state 31
+## Reductions:
 
 State 199:
+## Known stack suffix:
+## ASSERT aterm EQUAL term
+## LR(1) items:
 line -> ASSERT aterm EQUAL term . DOT [ # ]
 term -> term . ARROW term [ DOT ARROW ]
+## Transitions:
 -- On DOT shift to state 200
 -- On ARROW shift to state 24
+## Reductions:
 
 State 200:
+## Known stack suffix:
+## ASSERT aterm EQUAL term DOT
+## LR(1) items:
 line -> ASSERT aterm EQUAL term DOT . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production line -> ASSERT aterm EQUAL term DOT
 
 State 201:
+## Known stack suffix:
+## ASSERT aterm COLON
+## LR(1) items:
 line -> ASSERT aterm COLON . term DOT [ # ]
+## Transitions:
 -- On UNDERSCORE shift to state 11
 -- On TYPE shift to state 13
 -- On QID shift to state 14
@@ -1665,39 +2674,75 @@ line -> ASSERT aterm COLON . term DOT [ # ]
 -- On term shift to state 202
 -- On sterm shift to state 26
 -- On aterm shift to state 31
+## Reductions:
 
 State 202:
+## Known stack suffix:
+## ASSERT aterm COLON term
+## LR(1) items:
 line -> ASSERT aterm COLON term . DOT [ # ]
 term -> term . ARROW term [ DOT ARROW ]
+## Transitions:
 -- On DOT shift to state 203
 -- On ARROW shift to state 24
+## Reductions:
 
 State 203:
+## Known stack suffix:
+## ASSERT aterm COLON term DOT
+## LR(1) items:
 line -> ASSERT aterm COLON term DOT . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production line -> ASSERT aterm COLON term DOT
 
 State 204:
+## Known stack suffix:
+## rule
+## LR(1) items:
 nonempty_list(rule) -> rule . [ DOT ]
 nonempty_list(rule) -> rule . nonempty_list(rule) [ DOT ]
+## Transitions:
 -- On LEFTSQU shift to state 8
 -- On LEFTBRA shift to state 84
 -- On rule shift to state 204
 -- On nonempty_list(rule) shift to state 205
+## Reductions:
 -- On DOT reduce production nonempty_list(rule) -> rule
 
 State 205:
+## Known stack suffix:
+## rule nonempty_list(rule)
+## LR(1) items:
 nonempty_list(rule) -> rule nonempty_list(rule) . [ DOT ]
+## Transitions:
+## Reductions:
 -- On DOT reduce production nonempty_list(rule) -> rule nonempty_list(rule)
 
 State 206:
+## Known stack suffix:
+## nonempty_list(rule)
+## LR(1) items:
 line -> nonempty_list(rule) . DOT [ # ]
+## Transitions:
 -- On DOT shift to state 207
+## Reductions:
 
 State 207:
+## Known stack suffix:
+## nonempty_list(rule) DOT
+## LR(1) items:
 line -> nonempty_list(rule) DOT . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production line -> nonempty_list(rule) DOT
 
 State 208:
+## Known stack suffix:
+## line
+## LR(1) items:
 line' -> line . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept line
 

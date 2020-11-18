@@ -1,16 +1,26 @@
 State 0:
+## Known stack suffix:
+##
+## LR(1) items:
 phrase' -> . phrase [ # ]
+## Transitions:
 -- On LPAREN shift to state 1
 -- On EOF shift to state 216
 -- On phrase shift to state 217
 -- On fundecl shift to state 218
 -- On datadecl shift to state 219
+## Reductions:
 
 State 1:
+## Known stack suffix:
+## LPAREN
+## LR(1) items:
 datadecl -> LPAREN . datalist RPAREN [ # ]
 fundecl -> LPAREN . FUNCTION STRING LPAREN params RPAREN sequence RPAREN [ # ]
+## Transitions:
 -- On FUNCTION shift to state 2
 -- On datalist shift to state 192
+## Reductions:
 -- On STRING reduce production datalist ->
 -- On SKIP reduce production datalist ->
 -- On RPAREN reduce production datalist ->
@@ -24,26 +34,50 @@ fundecl -> LPAREN . FUNCTION STRING LPAREN params RPAREN sequence RPAREN [ # ]
 -- On ADDR reduce production datalist ->
 
 State 2:
+## Known stack suffix:
+## LPAREN FUNCTION
+## LR(1) items:
 fundecl -> LPAREN FUNCTION . STRING LPAREN params RPAREN sequence RPAREN [ # ]
+## Transitions:
 -- On STRING shift to state 3
+## Reductions:
 
 State 3:
+## Known stack suffix:
+## LPAREN FUNCTION STRING
+## LR(1) items:
 fundecl -> LPAREN FUNCTION STRING . LPAREN params RPAREN sequence RPAREN [ # ]
+## Transitions:
 -- On LPAREN shift to state 4
+## Reductions:
 
 State 4:
+## Known stack suffix:
+## LPAREN FUNCTION STRING LPAREN
+## LR(1) items:
 fundecl -> LPAREN FUNCTION STRING LPAREN . params RPAREN sequence RPAREN [ # ]
+## Transitions:
 -- On IDENT shift to state 5
 -- On params shift to state 16
 -- On oneparam shift to state 190
+## Reductions:
 -- On RPAREN reduce production params ->
 
 State 5:
+## Known stack suffix:
+## IDENT
+## LR(1) items:
 oneparam -> IDENT . COLON machtype [ RPAREN IDENT ]
+## Transitions:
 -- On COLON shift to state 6
+## Reductions:
 
 State 6:
+## Known stack suffix:
+## IDENT COLON
+## LR(1) items:
 oneparam -> IDENT COLON . machtype [ RPAREN IDENT ]
+## Transitions:
 -- On UNIT shift to state 7
 -- On INT shift to state 8
 -- On FLOAT shift to state 9
@@ -51,67 +85,122 @@ oneparam -> IDENT COLON . machtype [ RPAREN IDENT ]
 -- On machtype shift to state 11
 -- On componentlist shift to state 12
 -- On component shift to state 15
+## Reductions:
 
 State 7:
+## Known stack suffix:
+## UNIT
+## LR(1) items:
 machtype -> UNIT . [ RPAREN IDENT ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production machtype -> UNIT
 -- On IDENT reduce production machtype -> UNIT
 
 State 8:
+## Known stack suffix:
+## INT
+## LR(1) items:
 component -> INT . [ STAR RPAREN IDENT ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production component -> INT
 -- On RPAREN reduce production component -> INT
 -- On IDENT reduce production component -> INT
 
 State 9:
+## Known stack suffix:
+## FLOAT
+## LR(1) items:
 component -> FLOAT . [ STAR RPAREN IDENT ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production component -> FLOAT
 -- On RPAREN reduce production component -> FLOAT
 -- On IDENT reduce production component -> FLOAT
 
 State 10:
+## Known stack suffix:
+## ADDR
+## LR(1) items:
 component -> ADDR . [ STAR RPAREN IDENT ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production component -> ADDR
 -- On RPAREN reduce production component -> ADDR
 -- On IDENT reduce production component -> ADDR
 
 State 11:
+## Known stack suffix:
+## IDENT COLON machtype
+## LR(1) items:
 oneparam -> IDENT COLON machtype . [ RPAREN IDENT ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production oneparam -> IDENT COLON machtype
 -- On IDENT reduce production oneparam -> IDENT COLON machtype
 
 State 12:
+## Known stack suffix:
+## componentlist
+## LR(1) items:
 componentlist -> componentlist . STAR component [ STAR RPAREN IDENT ]
 machtype -> componentlist . [ RPAREN IDENT ]
+## Transitions:
 -- On STAR shift to state 13
+## Reductions:
 -- On RPAREN reduce production machtype -> componentlist
 -- On IDENT reduce production machtype -> componentlist
 
 State 13:
+## Known stack suffix:
+## componentlist STAR
+## LR(1) items:
 componentlist -> componentlist STAR . component [ STAR RPAREN IDENT ]
+## Transitions:
 -- On INT shift to state 8
 -- On FLOAT shift to state 9
 -- On ADDR shift to state 10
 -- On component shift to state 14
+## Reductions:
 
 State 14:
+## Known stack suffix:
+## componentlist STAR component
+## LR(1) items:
 componentlist -> componentlist STAR component . [ STAR RPAREN IDENT ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production componentlist -> componentlist STAR component
 -- On RPAREN reduce production componentlist -> componentlist STAR component
 -- On IDENT reduce production componentlist -> componentlist STAR component
 
 State 15:
+## Known stack suffix:
+## component
+## LR(1) items:
 componentlist -> component . [ STAR RPAREN IDENT ]
+## Transitions:
+## Reductions:
 -- On STAR reduce production componentlist -> component
 -- On RPAREN reduce production componentlist -> component
 -- On IDENT reduce production componentlist -> component
 
 State 16:
+## Known stack suffix:
+## LPAREN FUNCTION STRING LPAREN params
+## LR(1) items:
 fundecl -> LPAREN FUNCTION STRING LPAREN params . RPAREN sequence RPAREN [ # ]
+## Transitions:
 -- On RPAREN shift to state 17
+## Reductions:
 
 State 17:
+## Known stack suffix:
+## LPAREN FUNCTION STRING LPAREN params RPAREN
+## LR(1) items:
 fundecl -> LPAREN FUNCTION STRING LPAREN params RPAREN . sequence RPAREN [ # ]
+## Transitions:
 -- On STRING shift to state 18
 -- On POINTER shift to state 19
 -- On LPAREN shift to state 20
@@ -122,9 +211,15 @@ fundecl -> LPAREN FUNCTION STRING LPAREN params RPAREN . sequence RPAREN [ # ]
 -- On EXIT shift to state 28
 -- On sequence shift to state 188
 -- On expr shift to state 32
+## Reductions:
 
 State 18:
+## Known stack suffix:
+## STRING
+## LR(1) items:
 expr -> STRING . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production expr -> STRING
 -- On UNIT reduce production expr -> STRING
 -- On STRING reduce production expr -> STRING
@@ -142,7 +237,12 @@ expr -> STRING . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT 
 -- On ADDR reduce production expr -> STRING
 
 State 19:
+## Known stack suffix:
+## POINTER
+## LR(1) items:
 expr -> POINTER . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production expr -> POINTER
 -- On UNIT reduce production expr -> POINTER
 -- On STRING reduce production expr -> POINTER
@@ -160,6 +260,9 @@ expr -> POINTER . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT
 -- On ADDR reduce production expr -> POINTER
 
 State 20:
+## Known stack suffix:
+## LPAREN
+## LR(1) items:
 expr -> LPAREN . LET letdef sequence RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
 expr -> LPAREN . ASSIGN IDENT expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
 expr -> LPAREN . APPLY expr exprlist machtype RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
@@ -180,6 +283,7 @@ expr -> LPAREN . FLOATAREF expr expr RPAREN [ WITH UNIT STRING RPAREN POINTER LP
 expr -> LPAREN . ADDRASET expr expr expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
 expr -> LPAREN . INTASET expr expr expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
 expr -> LPAREN . FLOATASET expr expr expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On XOR shift to state 21
 -- On WHILE shift to state 22
 -- On TRY shift to state 34
@@ -241,9 +345,15 @@ expr -> LPAREN . FLOATASET expr expr expr RPAREN [ WITH UNIT STRING RPAREN POINT
 -- On ABSF shift to state 180
 -- On unaryop shift to state 181
 -- On binaryop shift to state 184
+## Reductions:
 
 State 21:
+## Known stack suffix:
+## XOR
+## LR(1) items:
 binaryop -> XOR . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production binaryop -> XOR
 -- On POINTER reduce production binaryop -> XOR
 -- On LPAREN reduce production binaryop -> XOR
@@ -254,7 +364,11 @@ binaryop -> XOR . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXI
 -- On EXIT reduce production binaryop -> XOR
 
 State 22:
+## Known stack suffix:
+## LPAREN WHILE
+## LR(1) items:
 expr -> LPAREN WHILE . expr sequence RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On STRING shift to state 18
 -- On POINTER shift to state 19
 -- On LPAREN shift to state 20
@@ -264,13 +378,24 @@ expr -> LPAREN WHILE . expr sequence RPAREN [ WITH UNIT STRING RPAREN POINTER LP
 -- On FLOATCONST shift to state 27
 -- On EXIT shift to state 28
 -- On expr shift to state 29
+## Reductions:
 
 State 23:
+## Known stack suffix:
+## LBRACKET
+## LR(1) items:
 expr -> LBRACKET . RBRACKET [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On RBRACKET shift to state 24
+## Reductions:
 
 State 24:
+## Known stack suffix:
+## LBRACKET RBRACKET
+## LR(1) items:
 expr -> LBRACKET RBRACKET . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production expr -> LBRACKET RBRACKET
 -- On UNIT reduce production expr -> LBRACKET RBRACKET
 -- On STRING reduce production expr -> LBRACKET RBRACKET
@@ -288,7 +413,12 @@ expr -> LBRACKET RBRACKET . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET IN
 -- On ADDR reduce production expr -> LBRACKET RBRACKET
 
 State 25:
+## Known stack suffix:
+## INTCONST
+## LR(1) items:
 expr -> INTCONST . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production expr -> INTCONST
 -- On UNIT reduce production expr -> INTCONST
 -- On STRING reduce production expr -> INTCONST
@@ -306,7 +436,12 @@ expr -> INTCONST . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST IN
 -- On ADDR reduce production expr -> INTCONST
 
 State 26:
+## Known stack suffix:
+## IDENT
+## LR(1) items:
 expr -> IDENT . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production expr -> IDENT
 -- On UNIT reduce production expr -> IDENT
 -- On STRING reduce production expr -> IDENT
@@ -324,7 +459,12 @@ expr -> IDENT . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT I
 -- On ADDR reduce production expr -> IDENT
 
 State 27:
+## Known stack suffix:
+## FLOATCONST
+## LR(1) items:
 expr -> FLOATCONST . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production expr -> FLOATCONST
 -- On UNIT reduce production expr -> FLOATCONST
 -- On STRING reduce production expr -> FLOATCONST
@@ -342,7 +482,12 @@ expr -> FLOATCONST . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST 
 -- On ADDR reduce production expr -> FLOATCONST
 
 State 28:
+## Known stack suffix:
+## EXIT
+## LR(1) items:
 expr -> EXIT . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production expr -> EXIT
 -- On UNIT reduce production expr -> EXIT
 -- On STRING reduce production expr -> EXIT
@@ -360,7 +505,11 @@ expr -> EXIT . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT ID
 -- On ADDR reduce production expr -> EXIT
 
 State 29:
+## Known stack suffix:
+## LPAREN WHILE expr
+## LR(1) items:
 expr -> LPAREN WHILE expr . sequence RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On STRING shift to state 18
 -- On POINTER shift to state 19
 -- On LPAREN shift to state 20
@@ -371,13 +520,24 @@ expr -> LPAREN WHILE expr . sequence RPAREN [ WITH UNIT STRING RPAREN POINTER LP
 -- On EXIT shift to state 28
 -- On sequence shift to state 30
 -- On expr shift to state 32
+## Reductions:
 
 State 30:
+## Known stack suffix:
+## LPAREN WHILE expr sequence
+## LR(1) items:
 expr -> LPAREN WHILE expr sequence . RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On RPAREN shift to state 31
+## Reductions:
 
 State 31:
+## Known stack suffix:
+## LPAREN WHILE expr sequence RPAREN
+## LR(1) items:
 expr -> LPAREN WHILE expr sequence RPAREN . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production expr -> LPAREN WHILE expr sequence RPAREN
 -- On UNIT reduce production expr -> LPAREN WHILE expr sequence RPAREN
 -- On STRING reduce production expr -> LPAREN WHILE expr sequence RPAREN
@@ -395,8 +555,12 @@ expr -> LPAREN WHILE expr sequence RPAREN . [ WITH UNIT STRING RPAREN POINTER LP
 -- On ADDR reduce production expr -> LPAREN WHILE expr sequence RPAREN
 
 State 32:
+## Known stack suffix:
+## expr
+## LR(1) items:
 sequence -> expr . sequence [ WITH RPAREN CASE ]
 sequence -> expr . [ WITH RPAREN CASE ]
+## Transitions:
 -- On STRING shift to state 18
 -- On POINTER shift to state 19
 -- On LPAREN shift to state 20
@@ -407,18 +571,28 @@ sequence -> expr . [ WITH RPAREN CASE ]
 -- On EXIT shift to state 28
 -- On sequence shift to state 33
 -- On expr shift to state 32
+## Reductions:
 -- On WITH reduce production sequence -> expr
 -- On RPAREN reduce production sequence -> expr
 -- On CASE reduce production sequence -> expr
 
 State 33:
+## Known stack suffix:
+## expr sequence
+## LR(1) items:
 sequence -> expr sequence . [ WITH RPAREN CASE ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production sequence -> expr sequence
 -- On RPAREN reduce production sequence -> expr sequence
 -- On CASE reduce production sequence -> expr sequence
 
 State 34:
+## Known stack suffix:
+## LPAREN TRY
+## LR(1) items:
 expr -> LPAREN TRY . sequence WITH bind_ident sequence RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On STRING shift to state 18
 -- On POINTER shift to state 19
 -- On LPAREN shift to state 20
@@ -429,18 +603,34 @@ expr -> LPAREN TRY . sequence WITH bind_ident sequence RPAREN [ WITH UNIT STRING
 -- On EXIT shift to state 28
 -- On sequence shift to state 35
 -- On expr shift to state 32
+## Reductions:
 
 State 35:
+## Known stack suffix:
+## LPAREN TRY sequence
+## LR(1) items:
 expr -> LPAREN TRY sequence . WITH bind_ident sequence RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On WITH shift to state 36
+## Reductions:
 
 State 36:
+## Known stack suffix:
+## LPAREN TRY sequence WITH
+## LR(1) items:
 expr -> LPAREN TRY sequence WITH . bind_ident sequence RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On IDENT shift to state 37
 -- On bind_ident shift to state 38
+## Reductions:
 
 State 37:
+## Known stack suffix:
+## IDENT
+## LR(1) items:
 bind_ident -> IDENT . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production bind_ident -> IDENT
 -- On POINTER reduce production bind_ident -> IDENT
 -- On LPAREN reduce production bind_ident -> IDENT
@@ -451,7 +641,11 @@ bind_ident -> IDENT . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST
 -- On EXIT reduce production bind_ident -> IDENT
 
 State 38:
+## Known stack suffix:
+## LPAREN TRY sequence WITH bind_ident
+## LR(1) items:
 expr -> LPAREN TRY sequence WITH bind_ident . sequence RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On STRING shift to state 18
 -- On POINTER shift to state 19
 -- On LPAREN shift to state 20
@@ -462,13 +656,24 @@ expr -> LPAREN TRY sequence WITH bind_ident . sequence RPAREN [ WITH UNIT STRING
 -- On EXIT shift to state 28
 -- On sequence shift to state 39
 -- On expr shift to state 32
+## Reductions:
 
 State 39:
+## Known stack suffix:
+## LPAREN TRY sequence WITH bind_ident sequence
+## LR(1) items:
 expr -> LPAREN TRY sequence WITH bind_ident sequence . RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On RPAREN shift to state 40
+## Reductions:
 
 State 40:
+## Known stack suffix:
+## LPAREN TRY sequence WITH bind_ident sequence RPAREN
+## LR(1) items:
 expr -> LPAREN TRY sequence WITH bind_ident sequence RPAREN . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production expr -> LPAREN TRY sequence WITH bind_ident sequence RPAREN
 -- On UNIT reduce production expr -> LPAREN TRY sequence WITH bind_ident sequence RPAREN
 -- On STRING reduce production expr -> LPAREN TRY sequence WITH bind_ident sequence RPAREN
@@ -486,11 +691,20 @@ expr -> LPAREN TRY sequence WITH bind_ident sequence RPAREN . [ WITH UNIT STRING
 -- On ADDR reduce production expr -> LPAREN TRY sequence WITH bind_ident sequence RPAREN
 
 State 41:
+## Known stack suffix:
+## LPAREN SWITCH
+## LR(1) items:
 expr -> LPAREN SWITCH . INTCONST expr caselist RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On INTCONST shift to state 42
+## Reductions:
 
 State 42:
+## Known stack suffix:
+## LPAREN SWITCH INTCONST
+## LR(1) items:
 expr -> LPAREN SWITCH INTCONST . expr caselist RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On STRING shift to state 18
 -- On POINTER shift to state 19
 -- On LPAREN shift to state 20
@@ -500,29 +714,50 @@ expr -> LPAREN SWITCH INTCONST . expr caselist RPAREN [ WITH UNIT STRING RPAREN 
 -- On FLOATCONST shift to state 27
 -- On EXIT shift to state 28
 -- On expr shift to state 43
+## Reductions:
 
 State 43:
+## Known stack suffix:
+## LPAREN SWITCH INTCONST expr
+## LR(1) items:
 expr -> LPAREN SWITCH INTCONST expr . caselist RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On CASE shift to state 44
 -- On onecase shift to state 48
 -- On caselist shift to state 51
+## Reductions:
 -- On RPAREN reduce production caselist ->
 
 State 44:
+## Known stack suffix:
+## CASE
+## LR(1) items:
 onecase -> CASE . INTCONST COLON onecase [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
 onecase -> CASE . INTCONST COLON [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
 -- On INTCONST shift to state 45
+## Reductions:
 
 State 45:
+## Known stack suffix:
+## CASE INTCONST
+## LR(1) items:
 onecase -> CASE INTCONST . COLON onecase [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
 onecase -> CASE INTCONST . COLON [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
 -- On COLON shift to state 46
+## Reductions:
 
 State 46:
+## Known stack suffix:
+## CASE INTCONST COLON
+## LR(1) items:
 onecase -> CASE INTCONST COLON . onecase [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
 onecase -> CASE INTCONST COLON . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
 -- On CASE shift to state 44
 -- On onecase shift to state 47
+## Reductions:
 -- On STRING reduce production onecase -> CASE INTCONST COLON
 -- On POINTER reduce production onecase -> CASE INTCONST COLON
 -- On LPAREN reduce production onecase -> CASE INTCONST COLON
@@ -533,7 +768,12 @@ onecase -> CASE INTCONST COLON . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT
 -- On EXIT reduce production onecase -> CASE INTCONST COLON
 
 State 47:
+## Known stack suffix:
+## CASE INTCONST COLON onecase
+## LR(1) items:
 onecase -> CASE INTCONST COLON onecase . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production onecase -> CASE INTCONST COLON onecase
 -- On POINTER reduce production onecase -> CASE INTCONST COLON onecase
 -- On LPAREN reduce production onecase -> CASE INTCONST COLON onecase
@@ -544,7 +784,11 @@ onecase -> CASE INTCONST COLON onecase . [ STRING POINTER LPAREN LBRACKET INTCON
 -- On EXIT reduce production onecase -> CASE INTCONST COLON onecase
 
 State 48:
+## Known stack suffix:
+## onecase
+## LR(1) items:
 caselist -> onecase . sequence caselist [ RPAREN ]
+## Transitions:
 -- On STRING shift to state 18
 -- On POINTER shift to state 19
 -- On LPAREN shift to state 20
@@ -555,24 +799,45 @@ caselist -> onecase . sequence caselist [ RPAREN ]
 -- On EXIT shift to state 28
 -- On sequence shift to state 49
 -- On expr shift to state 32
+## Reductions:
 
 State 49:
+## Known stack suffix:
+## onecase sequence
+## LR(1) items:
 caselist -> onecase sequence . caselist [ RPAREN ]
+## Transitions:
 -- On CASE shift to state 44
 -- On onecase shift to state 48
 -- On caselist shift to state 50
+## Reductions:
 -- On RPAREN reduce production caselist ->
 
 State 50:
+## Known stack suffix:
+## onecase sequence caselist
+## LR(1) items:
 caselist -> onecase sequence caselist . [ RPAREN ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production caselist -> onecase sequence caselist
 
 State 51:
+## Known stack suffix:
+## LPAREN SWITCH INTCONST expr caselist
+## LR(1) items:
 expr -> LPAREN SWITCH INTCONST expr caselist . RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On RPAREN shift to state 52
+## Reductions:
 
 State 52:
+## Known stack suffix:
+## LPAREN SWITCH INTCONST expr caselist RPAREN
+## LR(1) items:
 expr -> LPAREN SWITCH INTCONST expr caselist RPAREN . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production expr -> LPAREN SWITCH INTCONST expr caselist RPAREN
 -- On UNIT reduce production expr -> LPAREN SWITCH INTCONST expr caselist RPAREN
 -- On STRING reduce production expr -> LPAREN SWITCH INTCONST expr caselist RPAREN
@@ -590,7 +855,12 @@ expr -> LPAREN SWITCH INTCONST expr caselist RPAREN . [ WITH UNIT STRING RPAREN 
 -- On ADDR reduce production expr -> LPAREN SWITCH INTCONST expr caselist RPAREN
 
 State 53:
+## Known stack suffix:
+## SUBI
+## LR(1) items:
 binaryop -> SUBI . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production binaryop -> SUBI
 -- On POINTER reduce production binaryop -> SUBI
 -- On LPAREN reduce production binaryop -> SUBI
@@ -601,8 +871,12 @@ binaryop -> SUBI . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EX
 -- On EXIT reduce production binaryop -> SUBI
 
 State 54:
+## Known stack suffix:
+## LPAREN SUBF
+## LR(1) items:
 expr -> LPAREN SUBF . expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
 expr -> LPAREN SUBF . expr expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On STRING shift to state 18
 -- On POINTER shift to state 19
 -- On LPAREN shift to state 20
@@ -612,10 +886,15 @@ expr -> LPAREN SUBF . expr expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN 
 -- On FLOATCONST shift to state 27
 -- On EXIT shift to state 28
 -- On expr shift to state 55
+## Reductions:
 
 State 55:
+## Known stack suffix:
+## LPAREN SUBF expr
+## LR(1) items:
 expr -> LPAREN SUBF expr . RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
 expr -> LPAREN SUBF expr . expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On STRING shift to state 18
 -- On RPAREN shift to state 56
 -- On POINTER shift to state 19
@@ -626,9 +905,15 @@ expr -> LPAREN SUBF expr . expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN 
 -- On FLOATCONST shift to state 27
 -- On EXIT shift to state 28
 -- On expr shift to state 57
+## Reductions:
 
 State 56:
+## Known stack suffix:
+## LPAREN SUBF expr RPAREN
+## LR(1) items:
 expr -> LPAREN SUBF expr RPAREN . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production expr -> LPAREN SUBF expr RPAREN
 -- On UNIT reduce production expr -> LPAREN SUBF expr RPAREN
 -- On STRING reduce production expr -> LPAREN SUBF expr RPAREN
@@ -646,11 +931,21 @@ expr -> LPAREN SUBF expr RPAREN . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRAC
 -- On ADDR reduce production expr -> LPAREN SUBF expr RPAREN
 
 State 57:
+## Known stack suffix:
+## LPAREN SUBF expr expr
+## LR(1) items:
 expr -> LPAREN SUBF expr expr . RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On RPAREN shift to state 58
+## Reductions:
 
 State 58:
+## Known stack suffix:
+## LPAREN SUBF expr expr RPAREN
+## LR(1) items:
 expr -> LPAREN SUBF expr expr RPAREN . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production expr -> LPAREN SUBF expr expr RPAREN
 -- On UNIT reduce production expr -> LPAREN SUBF expr expr RPAREN
 -- On STRING reduce production expr -> LPAREN SUBF expr expr RPAREN
@@ -668,7 +963,12 @@ expr -> LPAREN SUBF expr expr RPAREN . [ WITH UNIT STRING RPAREN POINTER LPAREN 
 -- On ADDR reduce production expr -> LPAREN SUBF expr expr RPAREN
 
 State 59:
+## Known stack suffix:
+## SUBA
+## LR(1) items:
 binaryop -> SUBA . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production binaryop -> SUBA
 -- On POINTER reduce production binaryop -> SUBA
 -- On LPAREN reduce production binaryop -> SUBA
@@ -679,7 +979,11 @@ binaryop -> SUBA . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EX
 -- On EXIT reduce production binaryop -> SUBA
 
 State 60:
+## Known stack suffix:
+## STORE
+## LR(1) items:
 binaryop -> STORE . chunk [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
 -- On UNSIGNED shift to state 61
 -- On SIGNED shift to state 65
 -- On INT shift to state 69
@@ -688,17 +992,28 @@ binaryop -> STORE . chunk [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATC
 -- On FLOAT shift to state 72
 -- On ADDR shift to state 73
 -- On chunk shift to state 74
+## Reductions:
 
 State 61:
+## Known stack suffix:
+## UNSIGNED
+## LR(1) items:
 chunk -> UNSIGNED . BYTE [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
 chunk -> UNSIGNED . HALF [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
 chunk -> UNSIGNED . INT32 [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
 -- On INT32 shift to state 62
 -- On HALF shift to state 63
 -- On BYTE shift to state 64
+## Reductions:
 
 State 62:
+## Known stack suffix:
+## UNSIGNED INT32
+## LR(1) items:
 chunk -> UNSIGNED INT32 . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production chunk -> UNSIGNED INT32
 -- On POINTER reduce production chunk -> UNSIGNED INT32
 -- On LPAREN reduce production chunk -> UNSIGNED INT32
@@ -709,7 +1024,12 @@ chunk -> UNSIGNED INT32 . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATC
 -- On EXIT reduce production chunk -> UNSIGNED INT32
 
 State 63:
+## Known stack suffix:
+## UNSIGNED HALF
+## LR(1) items:
 chunk -> UNSIGNED HALF . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production chunk -> UNSIGNED HALF
 -- On POINTER reduce production chunk -> UNSIGNED HALF
 -- On LPAREN reduce production chunk -> UNSIGNED HALF
@@ -720,7 +1040,12 @@ chunk -> UNSIGNED HALF . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCO
 -- On EXIT reduce production chunk -> UNSIGNED HALF
 
 State 64:
+## Known stack suffix:
+## UNSIGNED BYTE
+## LR(1) items:
 chunk -> UNSIGNED BYTE . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production chunk -> UNSIGNED BYTE
 -- On POINTER reduce production chunk -> UNSIGNED BYTE
 -- On LPAREN reduce production chunk -> UNSIGNED BYTE
@@ -731,15 +1056,25 @@ chunk -> UNSIGNED BYTE . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCO
 -- On EXIT reduce production chunk -> UNSIGNED BYTE
 
 State 65:
+## Known stack suffix:
+## SIGNED
+## LR(1) items:
 chunk -> SIGNED . BYTE [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
 chunk -> SIGNED . HALF [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
 chunk -> SIGNED . INT32 [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
 -- On INT32 shift to state 66
 -- On HALF shift to state 67
 -- On BYTE shift to state 68
+## Reductions:
 
 State 66:
+## Known stack suffix:
+## SIGNED INT32
+## LR(1) items:
 chunk -> SIGNED INT32 . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production chunk -> SIGNED INT32
 -- On POINTER reduce production chunk -> SIGNED INT32
 -- On LPAREN reduce production chunk -> SIGNED INT32
@@ -750,7 +1085,12 @@ chunk -> SIGNED INT32 . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCON
 -- On EXIT reduce production chunk -> SIGNED INT32
 
 State 67:
+## Known stack suffix:
+## SIGNED HALF
+## LR(1) items:
 chunk -> SIGNED HALF . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production chunk -> SIGNED HALF
 -- On POINTER reduce production chunk -> SIGNED HALF
 -- On LPAREN reduce production chunk -> SIGNED HALF
@@ -761,7 +1101,12 @@ chunk -> SIGNED HALF . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONS
 -- On EXIT reduce production chunk -> SIGNED HALF
 
 State 68:
+## Known stack suffix:
+## SIGNED BYTE
+## LR(1) items:
 chunk -> SIGNED BYTE . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production chunk -> SIGNED BYTE
 -- On POINTER reduce production chunk -> SIGNED BYTE
 -- On LPAREN reduce production chunk -> SIGNED BYTE
@@ -772,7 +1117,12 @@ chunk -> SIGNED BYTE . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONS
 -- On EXIT reduce production chunk -> SIGNED BYTE
 
 State 69:
+## Known stack suffix:
+## INT
+## LR(1) items:
 chunk -> INT . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production chunk -> INT
 -- On POINTER reduce production chunk -> INT
 -- On LPAREN reduce production chunk -> INT
@@ -783,7 +1133,12 @@ chunk -> INT . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
 -- On EXIT reduce production chunk -> INT
 
 State 70:
+## Known stack suffix:
+## FLOAT64
+## LR(1) items:
 chunk -> FLOAT64 . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production chunk -> FLOAT64
 -- On POINTER reduce production chunk -> FLOAT64
 -- On LPAREN reduce production chunk -> FLOAT64
@@ -794,7 +1149,12 @@ chunk -> FLOAT64 . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EX
 -- On EXIT reduce production chunk -> FLOAT64
 
 State 71:
+## Known stack suffix:
+## FLOAT32
+## LR(1) items:
 chunk -> FLOAT32 . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production chunk -> FLOAT32
 -- On POINTER reduce production chunk -> FLOAT32
 -- On LPAREN reduce production chunk -> FLOAT32
@@ -805,7 +1165,12 @@ chunk -> FLOAT32 . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EX
 -- On EXIT reduce production chunk -> FLOAT32
 
 State 72:
+## Known stack suffix:
+## FLOAT
+## LR(1) items:
 chunk -> FLOAT . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production chunk -> FLOAT
 -- On POINTER reduce production chunk -> FLOAT
 -- On LPAREN reduce production chunk -> FLOAT
@@ -816,7 +1181,12 @@ chunk -> FLOAT . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT
 -- On EXIT reduce production chunk -> FLOAT
 
 State 73:
+## Known stack suffix:
+## ADDR
+## LR(1) items:
 chunk -> ADDR . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production chunk -> ADDR
 -- On POINTER reduce production chunk -> ADDR
 -- On LPAREN reduce production chunk -> ADDR
@@ -827,7 +1197,12 @@ chunk -> ADDR . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT 
 -- On EXIT reduce production chunk -> ADDR
 
 State 74:
+## Known stack suffix:
+## STORE chunk
+## LR(1) items:
 binaryop -> STORE chunk . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production binaryop -> STORE chunk
 -- On POINTER reduce production binaryop -> STORE chunk
 -- On LPAREN reduce production binaryop -> STORE chunk
@@ -838,7 +1213,11 @@ binaryop -> STORE chunk . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATC
 -- On EXIT reduce production binaryop -> STORE chunk
 
 State 75:
+## Known stack suffix:
+## LPAREN SEQ
+## LR(1) items:
 expr -> LPAREN SEQ . sequence RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On STRING shift to state 18
 -- On POINTER shift to state 19
 -- On LPAREN shift to state 20
@@ -849,13 +1228,24 @@ expr -> LPAREN SEQ . sequence RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LB
 -- On EXIT shift to state 28
 -- On sequence shift to state 76
 -- On expr shift to state 32
+## Reductions:
 
 State 76:
+## Known stack suffix:
+## LPAREN SEQ sequence
+## LR(1) items:
 expr -> LPAREN SEQ sequence . RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On RPAREN shift to state 77
+## Reductions:
 
 State 77:
+## Known stack suffix:
+## LPAREN SEQ sequence RPAREN
+## LR(1) items:
 expr -> LPAREN SEQ sequence RPAREN . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production expr -> LPAREN SEQ sequence RPAREN
 -- On UNIT reduce production expr -> LPAREN SEQ sequence RPAREN
 -- On STRING reduce production expr -> LPAREN SEQ sequence RPAREN
@@ -873,7 +1263,12 @@ expr -> LPAREN SEQ sequence RPAREN . [ WITH UNIT STRING RPAREN POINTER LPAREN LB
 -- On ADDR reduce production expr -> LPAREN SEQ sequence RPAREN
 
 State 78:
+## Known stack suffix:
+## RAISE
+## LR(1) items:
 unaryop -> RAISE . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production unaryop -> RAISE
 -- On POINTER reduce production unaryop -> RAISE
 -- On LPAREN reduce production unaryop -> RAISE
@@ -884,7 +1279,12 @@ unaryop -> RAISE . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EX
 -- On EXIT reduce production unaryop -> RAISE
 
 State 79:
+## Known stack suffix:
+## OR
+## LR(1) items:
 binaryop -> OR . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production binaryop -> OR
 -- On POINTER reduce production binaryop -> OR
 -- On LPAREN reduce production binaryop -> OR
@@ -895,7 +1295,12 @@ binaryop -> OR . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT
 -- On EXIT reduce production binaryop -> OR
 
 State 80:
+## Known stack suffix:
+## NEI
+## LR(1) items:
 binaryop -> NEI . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production binaryop -> NEI
 -- On POINTER reduce production binaryop -> NEI
 -- On LPAREN reduce production binaryop -> NEI
@@ -906,7 +1311,12 @@ binaryop -> NEI . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXI
 -- On EXIT reduce production binaryop -> NEI
 
 State 81:
+## Known stack suffix:
+## NEF
+## LR(1) items:
 binaryop -> NEF . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production binaryop -> NEF
 -- On POINTER reduce production binaryop -> NEF
 -- On LPAREN reduce production binaryop -> NEF
@@ -917,7 +1327,12 @@ binaryop -> NEF . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXI
 -- On EXIT reduce production binaryop -> NEF
 
 State 82:
+## Known stack suffix:
+## NEA
+## LR(1) items:
 binaryop -> NEA . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production binaryop -> NEA
 -- On POINTER reduce production binaryop -> NEA
 -- On LPAREN reduce production binaryop -> NEA
@@ -928,7 +1343,12 @@ binaryop -> NEA . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXI
 -- On EXIT reduce production binaryop -> NEA
 
 State 83:
+## Known stack suffix:
+## MULI
+## LR(1) items:
 binaryop -> MULI . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production binaryop -> MULI
 -- On POINTER reduce production binaryop -> MULI
 -- On LPAREN reduce production binaryop -> MULI
@@ -939,7 +1359,12 @@ binaryop -> MULI . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EX
 -- On EXIT reduce production binaryop -> MULI
 
 State 84:
+## Known stack suffix:
+## MULF
+## LR(1) items:
 binaryop -> MULF . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production binaryop -> MULF
 -- On POINTER reduce production binaryop -> MULF
 -- On LPAREN reduce production binaryop -> MULF
@@ -950,7 +1375,12 @@ binaryop -> MULF . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EX
 -- On EXIT reduce production binaryop -> MULF
 
 State 85:
+## Known stack suffix:
+## MODI
+## LR(1) items:
 binaryop -> MODI . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production binaryop -> MODI
 -- On POINTER reduce production binaryop -> MODI
 -- On LPAREN reduce production binaryop -> MODI
@@ -961,7 +1391,12 @@ binaryop -> MODI . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EX
 -- On EXIT reduce production binaryop -> MODI
 
 State 86:
+## Known stack suffix:
+## LTI
+## LR(1) items:
 binaryop -> LTI . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production binaryop -> LTI
 -- On POINTER reduce production binaryop -> LTI
 -- On LPAREN reduce production binaryop -> LTI
@@ -972,7 +1407,12 @@ binaryop -> LTI . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXI
 -- On EXIT reduce production binaryop -> LTI
 
 State 87:
+## Known stack suffix:
+## LTF
+## LR(1) items:
 binaryop -> LTF . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production binaryop -> LTF
 -- On POINTER reduce production binaryop -> LTF
 -- On LPAREN reduce production binaryop -> LTF
@@ -983,7 +1423,12 @@ binaryop -> LTF . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXI
 -- On EXIT reduce production binaryop -> LTF
 
 State 88:
+## Known stack suffix:
+## LTA
+## LR(1) items:
 binaryop -> LTA . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production binaryop -> LTA
 -- On POINTER reduce production binaryop -> LTA
 -- On LPAREN reduce production binaryop -> LTA
@@ -994,7 +1439,12 @@ binaryop -> LTA . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXI
 -- On EXIT reduce production binaryop -> LTA
 
 State 89:
+## Known stack suffix:
+## LSR
+## LR(1) items:
 binaryop -> LSR . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production binaryop -> LSR
 -- On POINTER reduce production binaryop -> LSR
 -- On LPAREN reduce production binaryop -> LSR
@@ -1005,7 +1455,12 @@ binaryop -> LSR . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXI
 -- On EXIT reduce production binaryop -> LSR
 
 State 90:
+## Known stack suffix:
+## LSL
+## LR(1) items:
 binaryop -> LSL . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production binaryop -> LSL
 -- On POINTER reduce production binaryop -> LSL
 -- On LPAREN reduce production binaryop -> LSL
@@ -1016,7 +1471,11 @@ binaryop -> LSL . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXI
 -- On EXIT reduce production binaryop -> LSL
 
 State 91:
+## Known stack suffix:
+## LOAD
+## LR(1) items:
 unaryop -> LOAD . chunk [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
 -- On UNSIGNED shift to state 61
 -- On SIGNED shift to state 65
 -- On INT shift to state 69
@@ -1025,9 +1484,15 @@ unaryop -> LOAD . chunk [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCON
 -- On FLOAT shift to state 72
 -- On ADDR shift to state 73
 -- On chunk shift to state 92
+## Reductions:
 
 State 92:
+## Known stack suffix:
+## LOAD chunk
+## LR(1) items:
 unaryop -> LOAD chunk . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production unaryop -> LOAD chunk
 -- On POINTER reduce production unaryop -> LOAD chunk
 -- On LPAREN reduce production unaryop -> LOAD chunk
@@ -1038,21 +1503,35 @@ unaryop -> LOAD chunk . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCON
 -- On EXIT reduce production unaryop -> LOAD chunk
 
 State 93:
+## Known stack suffix:
+## LPAREN LET
+## LR(1) items:
 expr -> LPAREN LET . letdef sequence RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On LPAREN shift to state 94
 -- On IDENT shift to state 95
 -- On oneletdef shift to state 101
 -- On letdef shift to state 102
+## Reductions:
 
 State 94:
+## Known stack suffix:
+## LPAREN
+## LR(1) items:
 letdef -> LPAREN . letdefmult RPAREN [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
 -- On IDENT shift to state 95
 -- On oneletdef shift to state 97
 -- On letdefmult shift to state 99
+## Reductions:
 -- On RPAREN reduce production letdefmult ->
 
 State 95:
+## Known stack suffix:
+## IDENT
+## LR(1) items:
 oneletdef -> IDENT . expr [ STRING RPAREN POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
 -- On STRING shift to state 18
 -- On POINTER shift to state 19
 -- On LPAREN shift to state 20
@@ -1062,9 +1541,15 @@ oneletdef -> IDENT . expr [ STRING RPAREN POINTER LPAREN LBRACKET INTCONST IDENT
 -- On FLOATCONST shift to state 27
 -- On EXIT shift to state 28
 -- On expr shift to state 96
+## Reductions:
 
 State 96:
+## Known stack suffix:
+## IDENT expr
+## LR(1) items:
 oneletdef -> IDENT expr . [ STRING RPAREN POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production oneletdef -> IDENT expr
 -- On RPAREN reduce production oneletdef -> IDENT expr
 -- On POINTER reduce production oneletdef -> IDENT expr
@@ -1076,22 +1561,42 @@ oneletdef -> IDENT expr . [ STRING RPAREN POINTER LPAREN LBRACKET INTCONST IDENT
 -- On EXIT reduce production oneletdef -> IDENT expr
 
 State 97:
+## Known stack suffix:
+## oneletdef
+## LR(1) items:
 letdefmult -> oneletdef . letdefmult [ RPAREN ]
+## Transitions:
 -- On IDENT shift to state 95
 -- On oneletdef shift to state 97
 -- On letdefmult shift to state 98
+## Reductions:
 -- On RPAREN reduce production letdefmult ->
 
 State 98:
+## Known stack suffix:
+## oneletdef letdefmult
+## LR(1) items:
 letdefmult -> oneletdef letdefmult . [ RPAREN ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production letdefmult -> oneletdef letdefmult
 
 State 99:
+## Known stack suffix:
+## LPAREN letdefmult
+## LR(1) items:
 letdef -> LPAREN letdefmult . RPAREN [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
 -- On RPAREN shift to state 100
+## Reductions:
 
 State 100:
+## Known stack suffix:
+## LPAREN letdefmult RPAREN
+## LR(1) items:
 letdef -> LPAREN letdefmult RPAREN . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production letdef -> LPAREN letdefmult RPAREN
 -- On POINTER reduce production letdef -> LPAREN letdefmult RPAREN
 -- On LPAREN reduce production letdef -> LPAREN letdefmult RPAREN
@@ -1102,7 +1607,12 @@ letdef -> LPAREN letdefmult RPAREN . [ STRING POINTER LPAREN LBRACKET INTCONST I
 -- On EXIT reduce production letdef -> LPAREN letdefmult RPAREN
 
 State 101:
+## Known stack suffix:
+## oneletdef
+## LR(1) items:
 letdef -> oneletdef . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production letdef -> oneletdef
 -- On POINTER reduce production letdef -> oneletdef
 -- On LPAREN reduce production letdef -> oneletdef
@@ -1113,7 +1623,11 @@ letdef -> oneletdef . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST
 -- On EXIT reduce production letdef -> oneletdef
 
 State 102:
+## Known stack suffix:
+## LPAREN LET letdef
+## LR(1) items:
 expr -> LPAREN LET letdef . sequence RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On STRING shift to state 18
 -- On POINTER shift to state 19
 -- On LPAREN shift to state 20
@@ -1124,13 +1638,24 @@ expr -> LPAREN LET letdef . sequence RPAREN [ WITH UNIT STRING RPAREN POINTER LP
 -- On EXIT shift to state 28
 -- On sequence shift to state 103
 -- On expr shift to state 32
+## Reductions:
 
 State 103:
+## Known stack suffix:
+## LPAREN LET letdef sequence
+## LR(1) items:
 expr -> LPAREN LET letdef sequence . RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On RPAREN shift to state 104
+## Reductions:
 
 State 104:
+## Known stack suffix:
+## LPAREN LET letdef sequence RPAREN
+## LR(1) items:
 expr -> LPAREN LET letdef sequence RPAREN . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production expr -> LPAREN LET letdef sequence RPAREN
 -- On UNIT reduce production expr -> LPAREN LET letdef sequence RPAREN
 -- On STRING reduce production expr -> LPAREN LET letdef sequence RPAREN
@@ -1148,7 +1673,12 @@ expr -> LPAREN LET letdef sequence RPAREN . [ WITH UNIT STRING RPAREN POINTER LP
 -- On ADDR reduce production expr -> LPAREN LET letdef sequence RPAREN
 
 State 105:
+## Known stack suffix:
+## LEI
+## LR(1) items:
 binaryop -> LEI . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production binaryop -> LEI
 -- On POINTER reduce production binaryop -> LEI
 -- On LPAREN reduce production binaryop -> LEI
@@ -1159,7 +1689,12 @@ binaryop -> LEI . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXI
 -- On EXIT reduce production binaryop -> LEI
 
 State 106:
+## Known stack suffix:
+## LEF
+## LR(1) items:
 binaryop -> LEF . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production binaryop -> LEF
 -- On POINTER reduce production binaryop -> LEF
 -- On LPAREN reduce production binaryop -> LEF
@@ -1170,7 +1705,12 @@ binaryop -> LEF . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXI
 -- On EXIT reduce production binaryop -> LEF
 
 State 107:
+## Known stack suffix:
+## LEA
+## LR(1) items:
 binaryop -> LEA . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production binaryop -> LEA
 -- On POINTER reduce production binaryop -> LEA
 -- On LPAREN reduce production binaryop -> LEA
@@ -1181,7 +1721,12 @@ binaryop -> LEA . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXI
 -- On EXIT reduce production binaryop -> LEA
 
 State 108:
+## Known stack suffix:
+## INTOFFLOAT
+## LR(1) items:
 unaryop -> INTOFFLOAT . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production unaryop -> INTOFFLOAT
 -- On POINTER reduce production unaryop -> INTOFFLOAT
 -- On LPAREN reduce production unaryop -> INTOFFLOAT
@@ -1192,7 +1737,11 @@ unaryop -> INTOFFLOAT . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCON
 -- On EXIT reduce production unaryop -> INTOFFLOAT
 
 State 109:
+## Known stack suffix:
+## LPAREN INTASET
+## LR(1) items:
 expr -> LPAREN INTASET . expr expr expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On STRING shift to state 18
 -- On POINTER shift to state 19
 -- On LPAREN shift to state 20
@@ -1202,9 +1751,14 @@ expr -> LPAREN INTASET . expr expr expr RPAREN [ WITH UNIT STRING RPAREN POINTER
 -- On FLOATCONST shift to state 27
 -- On EXIT shift to state 28
 -- On expr shift to state 110
+## Reductions:
 
 State 110:
+## Known stack suffix:
+## LPAREN INTASET expr
+## LR(1) items:
 expr -> LPAREN INTASET expr . expr expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On STRING shift to state 18
 -- On POINTER shift to state 19
 -- On LPAREN shift to state 20
@@ -1214,9 +1768,14 @@ expr -> LPAREN INTASET expr . expr expr RPAREN [ WITH UNIT STRING RPAREN POINTER
 -- On FLOATCONST shift to state 27
 -- On EXIT shift to state 28
 -- On expr shift to state 111
+## Reductions:
 
 State 111:
+## Known stack suffix:
+## LPAREN INTASET expr expr
+## LR(1) items:
 expr -> LPAREN INTASET expr expr . expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On STRING shift to state 18
 -- On POINTER shift to state 19
 -- On LPAREN shift to state 20
@@ -1226,13 +1785,24 @@ expr -> LPAREN INTASET expr expr . expr RPAREN [ WITH UNIT STRING RPAREN POINTER
 -- On FLOATCONST shift to state 27
 -- On EXIT shift to state 28
 -- On expr shift to state 112
+## Reductions:
 
 State 112:
+## Known stack suffix:
+## LPAREN INTASET expr expr expr
+## LR(1) items:
 expr -> LPAREN INTASET expr expr expr . RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On RPAREN shift to state 113
+## Reductions:
 
 State 113:
+## Known stack suffix:
+## LPAREN INTASET expr expr expr RPAREN
+## LR(1) items:
 expr -> LPAREN INTASET expr expr expr RPAREN . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production expr -> LPAREN INTASET expr expr expr RPAREN
 -- On UNIT reduce production expr -> LPAREN INTASET expr expr expr RPAREN
 -- On STRING reduce production expr -> LPAREN INTASET expr expr expr RPAREN
@@ -1250,7 +1820,11 @@ expr -> LPAREN INTASET expr expr expr RPAREN . [ WITH UNIT STRING RPAREN POINTER
 -- On ADDR reduce production expr -> LPAREN INTASET expr expr expr RPAREN
 
 State 114:
+## Known stack suffix:
+## LPAREN INTAREF
+## LR(1) items:
 expr -> LPAREN INTAREF . expr expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On STRING shift to state 18
 -- On POINTER shift to state 19
 -- On LPAREN shift to state 20
@@ -1260,9 +1834,14 @@ expr -> LPAREN INTAREF . expr expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAR
 -- On FLOATCONST shift to state 27
 -- On EXIT shift to state 28
 -- On expr shift to state 115
+## Reductions:
 
 State 115:
+## Known stack suffix:
+## LPAREN INTAREF expr
+## LR(1) items:
 expr -> LPAREN INTAREF expr . expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On STRING shift to state 18
 -- On POINTER shift to state 19
 -- On LPAREN shift to state 20
@@ -1272,13 +1851,24 @@ expr -> LPAREN INTAREF expr . expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAR
 -- On FLOATCONST shift to state 27
 -- On EXIT shift to state 28
 -- On expr shift to state 116
+## Reductions:
 
 State 116:
+## Known stack suffix:
+## LPAREN INTAREF expr expr
+## LR(1) items:
 expr -> LPAREN INTAREF expr expr . RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On RPAREN shift to state 117
+## Reductions:
 
 State 117:
+## Known stack suffix:
+## LPAREN INTAREF expr expr RPAREN
+## LR(1) items:
 expr -> LPAREN INTAREF expr expr RPAREN . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production expr -> LPAREN INTAREF expr expr RPAREN
 -- On UNIT reduce production expr -> LPAREN INTAREF expr expr RPAREN
 -- On STRING reduce production expr -> LPAREN INTAREF expr expr RPAREN
@@ -1296,7 +1886,11 @@ expr -> LPAREN INTAREF expr expr RPAREN . [ WITH UNIT STRING RPAREN POINTER LPAR
 -- On ADDR reduce production expr -> LPAREN INTAREF expr expr RPAREN
 
 State 118:
+## Known stack suffix:
+## LPAREN IF
+## LR(1) items:
 expr -> LPAREN IF . expr expr expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On STRING shift to state 18
 -- On POINTER shift to state 19
 -- On LPAREN shift to state 20
@@ -1306,9 +1900,14 @@ expr -> LPAREN IF . expr expr expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAR
 -- On FLOATCONST shift to state 27
 -- On EXIT shift to state 28
 -- On expr shift to state 119
+## Reductions:
 
 State 119:
+## Known stack suffix:
+## LPAREN IF expr
+## LR(1) items:
 expr -> LPAREN IF expr . expr expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On STRING shift to state 18
 -- On POINTER shift to state 19
 -- On LPAREN shift to state 20
@@ -1318,9 +1917,14 @@ expr -> LPAREN IF expr . expr expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAR
 -- On FLOATCONST shift to state 27
 -- On EXIT shift to state 28
 -- On expr shift to state 120
+## Reductions:
 
 State 120:
+## Known stack suffix:
+## LPAREN IF expr expr
+## LR(1) items:
 expr -> LPAREN IF expr expr . expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On STRING shift to state 18
 -- On POINTER shift to state 19
 -- On LPAREN shift to state 20
@@ -1330,13 +1934,24 @@ expr -> LPAREN IF expr expr . expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAR
 -- On FLOATCONST shift to state 27
 -- On EXIT shift to state 28
 -- On expr shift to state 121
+## Reductions:
 
 State 121:
+## Known stack suffix:
+## LPAREN IF expr expr expr
+## LR(1) items:
 expr -> LPAREN IF expr expr expr . RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On RPAREN shift to state 122
+## Reductions:
 
 State 122:
+## Known stack suffix:
+## LPAREN IF expr expr expr RPAREN
+## LR(1) items:
 expr -> LPAREN IF expr expr expr RPAREN . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production expr -> LPAREN IF expr expr expr RPAREN
 -- On UNIT reduce production expr -> LPAREN IF expr expr expr RPAREN
 -- On STRING reduce production expr -> LPAREN IF expr expr expr RPAREN
@@ -1354,7 +1969,12 @@ expr -> LPAREN IF expr expr expr RPAREN . [ WITH UNIT STRING RPAREN POINTER LPAR
 -- On ADDR reduce production expr -> LPAREN IF expr expr expr RPAREN
 
 State 123:
+## Known stack suffix:
+## GTI
+## LR(1) items:
 binaryop -> GTI . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production binaryop -> GTI
 -- On POINTER reduce production binaryop -> GTI
 -- On LPAREN reduce production binaryop -> GTI
@@ -1365,7 +1985,12 @@ binaryop -> GTI . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXI
 -- On EXIT reduce production binaryop -> GTI
 
 State 124:
+## Known stack suffix:
+## GTF
+## LR(1) items:
 binaryop -> GTF . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production binaryop -> GTF
 -- On POINTER reduce production binaryop -> GTF
 -- On LPAREN reduce production binaryop -> GTF
@@ -1376,7 +2001,12 @@ binaryop -> GTF . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXI
 -- On EXIT reduce production binaryop -> GTF
 
 State 125:
+## Known stack suffix:
+## GTA
+## LR(1) items:
 binaryop -> GTA . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production binaryop -> GTA
 -- On POINTER reduce production binaryop -> GTA
 -- On LPAREN reduce production binaryop -> GTA
@@ -1387,7 +2017,12 @@ binaryop -> GTA . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXI
 -- On EXIT reduce production binaryop -> GTA
 
 State 126:
+## Known stack suffix:
+## GEI
+## LR(1) items:
 binaryop -> GEI . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production binaryop -> GEI
 -- On POINTER reduce production binaryop -> GEI
 -- On LPAREN reduce production binaryop -> GEI
@@ -1398,7 +2033,12 @@ binaryop -> GEI . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXI
 -- On EXIT reduce production binaryop -> GEI
 
 State 127:
+## Known stack suffix:
+## GEF
+## LR(1) items:
 binaryop -> GEF . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production binaryop -> GEF
 -- On POINTER reduce production binaryop -> GEF
 -- On LPAREN reduce production binaryop -> GEF
@@ -1409,7 +2049,12 @@ binaryop -> GEF . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXI
 -- On EXIT reduce production binaryop -> GEF
 
 State 128:
+## Known stack suffix:
+## GEA
+## LR(1) items:
 binaryop -> GEA . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production binaryop -> GEA
 -- On POINTER reduce production binaryop -> GEA
 -- On LPAREN reduce production binaryop -> GEA
@@ -1420,7 +2065,12 @@ binaryop -> GEA . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXI
 -- On EXIT reduce production binaryop -> GEA
 
 State 129:
+## Known stack suffix:
+## FLOATOFINT
+## LR(1) items:
 unaryop -> FLOATOFINT . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production unaryop -> FLOATOFINT
 -- On POINTER reduce production unaryop -> FLOATOFINT
 -- On LPAREN reduce production unaryop -> FLOATOFINT
@@ -1431,7 +2081,11 @@ unaryop -> FLOATOFINT . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCON
 -- On EXIT reduce production unaryop -> FLOATOFINT
 
 State 130:
+## Known stack suffix:
+## LPAREN FLOATASET
+## LR(1) items:
 expr -> LPAREN FLOATASET . expr expr expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On STRING shift to state 18
 -- On POINTER shift to state 19
 -- On LPAREN shift to state 20
@@ -1441,9 +2095,14 @@ expr -> LPAREN FLOATASET . expr expr expr RPAREN [ WITH UNIT STRING RPAREN POINT
 -- On FLOATCONST shift to state 27
 -- On EXIT shift to state 28
 -- On expr shift to state 131
+## Reductions:
 
 State 131:
+## Known stack suffix:
+## LPAREN FLOATASET expr
+## LR(1) items:
 expr -> LPAREN FLOATASET expr . expr expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On STRING shift to state 18
 -- On POINTER shift to state 19
 -- On LPAREN shift to state 20
@@ -1453,9 +2112,14 @@ expr -> LPAREN FLOATASET expr . expr expr RPAREN [ WITH UNIT STRING RPAREN POINT
 -- On FLOATCONST shift to state 27
 -- On EXIT shift to state 28
 -- On expr shift to state 132
+## Reductions:
 
 State 132:
+## Known stack suffix:
+## LPAREN FLOATASET expr expr
+## LR(1) items:
 expr -> LPAREN FLOATASET expr expr . expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On STRING shift to state 18
 -- On POINTER shift to state 19
 -- On LPAREN shift to state 20
@@ -1465,13 +2129,24 @@ expr -> LPAREN FLOATASET expr expr . expr RPAREN [ WITH UNIT STRING RPAREN POINT
 -- On FLOATCONST shift to state 27
 -- On EXIT shift to state 28
 -- On expr shift to state 133
+## Reductions:
 
 State 133:
+## Known stack suffix:
+## LPAREN FLOATASET expr expr expr
+## LR(1) items:
 expr -> LPAREN FLOATASET expr expr expr . RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On RPAREN shift to state 134
+## Reductions:
 
 State 134:
+## Known stack suffix:
+## LPAREN FLOATASET expr expr expr RPAREN
+## LR(1) items:
 expr -> LPAREN FLOATASET expr expr expr RPAREN . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production expr -> LPAREN FLOATASET expr expr expr RPAREN
 -- On UNIT reduce production expr -> LPAREN FLOATASET expr expr expr RPAREN
 -- On STRING reduce production expr -> LPAREN FLOATASET expr expr expr RPAREN
@@ -1489,7 +2164,11 @@ expr -> LPAREN FLOATASET expr expr expr RPAREN . [ WITH UNIT STRING RPAREN POINT
 -- On ADDR reduce production expr -> LPAREN FLOATASET expr expr expr RPAREN
 
 State 135:
+## Known stack suffix:
+## LPAREN FLOATAREF
+## LR(1) items:
 expr -> LPAREN FLOATAREF . expr expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On STRING shift to state 18
 -- On POINTER shift to state 19
 -- On LPAREN shift to state 20
@@ -1499,9 +2178,14 @@ expr -> LPAREN FLOATAREF . expr expr RPAREN [ WITH UNIT STRING RPAREN POINTER LP
 -- On FLOATCONST shift to state 27
 -- On EXIT shift to state 28
 -- On expr shift to state 136
+## Reductions:
 
 State 136:
+## Known stack suffix:
+## LPAREN FLOATAREF expr
+## LR(1) items:
 expr -> LPAREN FLOATAREF expr . expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On STRING shift to state 18
 -- On POINTER shift to state 19
 -- On LPAREN shift to state 20
@@ -1511,13 +2195,24 @@ expr -> LPAREN FLOATAREF expr . expr RPAREN [ WITH UNIT STRING RPAREN POINTER LP
 -- On FLOATCONST shift to state 27
 -- On EXIT shift to state 28
 -- On expr shift to state 137
+## Reductions:
 
 State 137:
+## Known stack suffix:
+## LPAREN FLOATAREF expr expr
+## LR(1) items:
 expr -> LPAREN FLOATAREF expr expr . RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On RPAREN shift to state 138
+## Reductions:
 
 State 138:
+## Known stack suffix:
+## LPAREN FLOATAREF expr expr RPAREN
+## LR(1) items:
 expr -> LPAREN FLOATAREF expr expr RPAREN . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production expr -> LPAREN FLOATAREF expr expr RPAREN
 -- On UNIT reduce production expr -> LPAREN FLOATAREF expr expr RPAREN
 -- On STRING reduce production expr -> LPAREN FLOATAREF expr expr RPAREN
@@ -1535,12 +2230,22 @@ expr -> LPAREN FLOATAREF expr expr RPAREN . [ WITH UNIT STRING RPAREN POINTER LP
 -- On ADDR reduce production expr -> LPAREN FLOATAREF expr expr RPAREN
 
 State 139:
+## Known stack suffix:
+## LPAREN EXTCALL
+## LR(1) items:
 expr -> LPAREN EXTCALL . STRING exprlist machtype RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On STRING shift to state 140
+## Reductions:
 
 State 140:
+## Known stack suffix:
+## LPAREN EXTCALL STRING
+## LR(1) items:
 expr -> LPAREN EXTCALL STRING . exprlist machtype RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On exprlist shift to state 141
+## Reductions:
 -- On UNIT reduce production exprlist ->
 -- On STRING reduce production exprlist ->
 -- On POINTER reduce production exprlist ->
@@ -1555,8 +2260,12 @@ expr -> LPAREN EXTCALL STRING . exprlist machtype RPAREN [ WITH UNIT STRING RPAR
 -- On ADDR reduce production exprlist ->
 
 State 141:
+## Known stack suffix:
+## LPAREN EXTCALL STRING exprlist
+## LR(1) items:
 expr -> LPAREN EXTCALL STRING exprlist . machtype RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
 exprlist -> exprlist . expr [ UNIT STRING POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT ADDR ]
+## Transitions:
 -- On UNIT shift to state 7
 -- On STRING shift to state 18
 -- On POINTER shift to state 19
@@ -1573,13 +2282,24 @@ exprlist -> exprlist . expr [ UNIT STRING POINTER LPAREN LBRACKET INTCONST INT I
 -- On expr shift to state 144
 -- On componentlist shift to state 12
 -- On component shift to state 15
+## Reductions:
 
 State 142:
+## Known stack suffix:
+## LPAREN EXTCALL STRING exprlist machtype
+## LR(1) items:
 expr -> LPAREN EXTCALL STRING exprlist machtype . RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On RPAREN shift to state 143
+## Reductions:
 
 State 143:
+## Known stack suffix:
+## LPAREN EXTCALL STRING exprlist machtype RPAREN
+## LR(1) items:
 expr -> LPAREN EXTCALL STRING exprlist machtype RPAREN . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production expr -> LPAREN EXTCALL STRING exprlist machtype RPAREN
 -- On UNIT reduce production expr -> LPAREN EXTCALL STRING exprlist machtype RPAREN
 -- On STRING reduce production expr -> LPAREN EXTCALL STRING exprlist machtype RPAREN
@@ -1597,7 +2317,12 @@ expr -> LPAREN EXTCALL STRING exprlist machtype RPAREN . [ WITH UNIT STRING RPAR
 -- On ADDR reduce production expr -> LPAREN EXTCALL STRING exprlist machtype RPAREN
 
 State 144:
+## Known stack suffix:
+## exprlist expr
+## LR(1) items:
 exprlist -> exprlist expr . [ UNIT STRING POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT ADDR ]
+## Transitions:
+## Reductions:
 -- On UNIT reduce production exprlist -> exprlist expr
 -- On STRING reduce production exprlist -> exprlist expr
 -- On POINTER reduce production exprlist -> exprlist expr
@@ -1612,7 +2337,12 @@ exprlist -> exprlist expr . [ UNIT STRING POINTER LPAREN LBRACKET INTCONST INT I
 -- On ADDR reduce production exprlist -> exprlist expr
 
 State 145:
+## Known stack suffix:
+## EQI
+## LR(1) items:
 binaryop -> EQI . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production binaryop -> EQI
 -- On POINTER reduce production binaryop -> EQI
 -- On LPAREN reduce production binaryop -> EQI
@@ -1623,7 +2353,12 @@ binaryop -> EQI . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXI
 -- On EXIT reduce production binaryop -> EQI
 
 State 146:
+## Known stack suffix:
+## EQF
+## LR(1) items:
 binaryop -> EQF . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production binaryop -> EQF
 -- On POINTER reduce production binaryop -> EQF
 -- On LPAREN reduce production binaryop -> EQF
@@ -1634,7 +2369,12 @@ binaryop -> EQF . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXI
 -- On EXIT reduce production binaryop -> EQF
 
 State 147:
+## Known stack suffix:
+## EQA
+## LR(1) items:
 binaryop -> EQA . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production binaryop -> EQA
 -- On POINTER reduce production binaryop -> EQA
 -- On LPAREN reduce production binaryop -> EQA
@@ -1645,7 +2385,12 @@ binaryop -> EQA . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXI
 -- On EXIT reduce production binaryop -> EQA
 
 State 148:
+## Known stack suffix:
+## DIVI
+## LR(1) items:
 binaryop -> DIVI . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production binaryop -> DIVI
 -- On POINTER reduce production binaryop -> DIVI
 -- On LPAREN reduce production binaryop -> DIVI
@@ -1656,7 +2401,12 @@ binaryop -> DIVI . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EX
 -- On EXIT reduce production binaryop -> DIVI
 
 State 149:
+## Known stack suffix:
+## DIVF
+## LR(1) items:
 binaryop -> DIVF . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production binaryop -> DIVF
 -- On POINTER reduce production binaryop -> DIVF
 -- On LPAREN reduce production binaryop -> DIVF
@@ -1667,7 +2417,12 @@ binaryop -> DIVF . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EX
 -- On EXIT reduce production binaryop -> DIVF
 
 State 150:
+## Known stack suffix:
+## CHECKBOUND
+## LR(1) items:
 binaryop -> CHECKBOUND . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production binaryop -> CHECKBOUND
 -- On POINTER reduce production binaryop -> CHECKBOUND
 -- On LPAREN reduce production binaryop -> CHECKBOUND
@@ -1678,7 +2433,11 @@ binaryop -> CHECKBOUND . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCO
 -- On EXIT reduce production binaryop -> CHECKBOUND
 
 State 151:
+## Known stack suffix:
+## LPAREN CATCH
+## LR(1) items:
 expr -> LPAREN CATCH . sequence WITH sequence RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On STRING shift to state 18
 -- On POINTER shift to state 19
 -- On LPAREN shift to state 20
@@ -1689,13 +2448,23 @@ expr -> LPAREN CATCH . sequence WITH sequence RPAREN [ WITH UNIT STRING RPAREN P
 -- On EXIT shift to state 28
 -- On sequence shift to state 152
 -- On expr shift to state 32
+## Reductions:
 
 State 152:
+## Known stack suffix:
+## LPAREN CATCH sequence
+## LR(1) items:
 expr -> LPAREN CATCH sequence . WITH sequence RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On WITH shift to state 153
+## Reductions:
 
 State 153:
+## Known stack suffix:
+## LPAREN CATCH sequence WITH
+## LR(1) items:
 expr -> LPAREN CATCH sequence WITH . sequence RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On STRING shift to state 18
 -- On POINTER shift to state 19
 -- On LPAREN shift to state 20
@@ -1706,13 +2475,24 @@ expr -> LPAREN CATCH sequence WITH . sequence RPAREN [ WITH UNIT STRING RPAREN P
 -- On EXIT shift to state 28
 -- On sequence shift to state 154
 -- On expr shift to state 32
+## Reductions:
 
 State 154:
+## Known stack suffix:
+## LPAREN CATCH sequence WITH sequence
+## LR(1) items:
 expr -> LPAREN CATCH sequence WITH sequence . RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On RPAREN shift to state 155
+## Reductions:
 
 State 155:
+## Known stack suffix:
+## LPAREN CATCH sequence WITH sequence RPAREN
+## LR(1) items:
 expr -> LPAREN CATCH sequence WITH sequence RPAREN . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production expr -> LPAREN CATCH sequence WITH sequence RPAREN
 -- On UNIT reduce production expr -> LPAREN CATCH sequence WITH sequence RPAREN
 -- On STRING reduce production expr -> LPAREN CATCH sequence WITH sequence RPAREN
@@ -1730,11 +2510,20 @@ expr -> LPAREN CATCH sequence WITH sequence RPAREN . [ WITH UNIT STRING RPAREN P
 -- On ADDR reduce production expr -> LPAREN CATCH sequence WITH sequence RPAREN
 
 State 156:
+## Known stack suffix:
+## LPAREN ASSIGN
+## LR(1) items:
 expr -> LPAREN ASSIGN . IDENT expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On IDENT shift to state 157
+## Reductions:
 
 State 157:
+## Known stack suffix:
+## LPAREN ASSIGN IDENT
+## LR(1) items:
 expr -> LPAREN ASSIGN IDENT . expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On STRING shift to state 18
 -- On POINTER shift to state 19
 -- On LPAREN shift to state 20
@@ -1744,13 +2533,24 @@ expr -> LPAREN ASSIGN IDENT . expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAR
 -- On FLOATCONST shift to state 27
 -- On EXIT shift to state 28
 -- On expr shift to state 158
+## Reductions:
 
 State 158:
+## Known stack suffix:
+## LPAREN ASSIGN IDENT expr
+## LR(1) items:
 expr -> LPAREN ASSIGN IDENT expr . RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On RPAREN shift to state 159
+## Reductions:
 
 State 159:
+## Known stack suffix:
+## LPAREN ASSIGN IDENT expr RPAREN
+## LR(1) items:
 expr -> LPAREN ASSIGN IDENT expr RPAREN . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production expr -> LPAREN ASSIGN IDENT expr RPAREN
 -- On UNIT reduce production expr -> LPAREN ASSIGN IDENT expr RPAREN
 -- On STRING reduce production expr -> LPAREN ASSIGN IDENT expr RPAREN
@@ -1768,7 +2568,12 @@ expr -> LPAREN ASSIGN IDENT expr RPAREN . [ WITH UNIT STRING RPAREN POINTER LPAR
 -- On ADDR reduce production expr -> LPAREN ASSIGN IDENT expr RPAREN
 
 State 160:
+## Known stack suffix:
+## ASR
+## LR(1) items:
 binaryop -> ASR . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production binaryop -> ASR
 -- On POINTER reduce production binaryop -> ASR
 -- On LPAREN reduce production binaryop -> ASR
@@ -1779,7 +2584,11 @@ binaryop -> ASR . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXI
 -- On EXIT reduce production binaryop -> ASR
 
 State 161:
+## Known stack suffix:
+## LPAREN APPLY
+## LR(1) items:
 expr -> LPAREN APPLY . expr exprlist machtype RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On STRING shift to state 18
 -- On POINTER shift to state 19
 -- On LPAREN shift to state 20
@@ -1789,10 +2598,16 @@ expr -> LPAREN APPLY . expr exprlist machtype RPAREN [ WITH UNIT STRING RPAREN P
 -- On FLOATCONST shift to state 27
 -- On EXIT shift to state 28
 -- On expr shift to state 162
+## Reductions:
 
 State 162:
+## Known stack suffix:
+## LPAREN APPLY expr
+## LR(1) items:
 expr -> LPAREN APPLY expr . exprlist machtype RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On exprlist shift to state 163
+## Reductions:
 -- On UNIT reduce production exprlist ->
 -- On STRING reduce production exprlist ->
 -- On POINTER reduce production exprlist ->
@@ -1807,8 +2622,12 @@ expr -> LPAREN APPLY expr . exprlist machtype RPAREN [ WITH UNIT STRING RPAREN P
 -- On ADDR reduce production exprlist ->
 
 State 163:
+## Known stack suffix:
+## LPAREN APPLY expr exprlist
+## LR(1) items:
 expr -> LPAREN APPLY expr exprlist . machtype RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
 exprlist -> exprlist . expr [ UNIT STRING POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT ADDR ]
+## Transitions:
 -- On UNIT shift to state 7
 -- On STRING shift to state 18
 -- On POINTER shift to state 19
@@ -1825,13 +2644,24 @@ exprlist -> exprlist . expr [ UNIT STRING POINTER LPAREN LBRACKET INTCONST INT I
 -- On expr shift to state 144
 -- On componentlist shift to state 12
 -- On component shift to state 15
+## Reductions:
 
 State 164:
+## Known stack suffix:
+## LPAREN APPLY expr exprlist machtype
+## LR(1) items:
 expr -> LPAREN APPLY expr exprlist machtype . RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On RPAREN shift to state 165
+## Reductions:
 
 State 165:
+## Known stack suffix:
+## LPAREN APPLY expr exprlist machtype RPAREN
+## LR(1) items:
 expr -> LPAREN APPLY expr exprlist machtype RPAREN . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production expr -> LPAREN APPLY expr exprlist machtype RPAREN
 -- On UNIT reduce production expr -> LPAREN APPLY expr exprlist machtype RPAREN
 -- On STRING reduce production expr -> LPAREN APPLY expr exprlist machtype RPAREN
@@ -1849,7 +2679,12 @@ expr -> LPAREN APPLY expr exprlist machtype RPAREN . [ WITH UNIT STRING RPAREN P
 -- On ADDR reduce production expr -> LPAREN APPLY expr exprlist machtype RPAREN
 
 State 166:
+## Known stack suffix:
+## AND
+## LR(1) items:
 binaryop -> AND . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production binaryop -> AND
 -- On POINTER reduce production binaryop -> AND
 -- On LPAREN reduce production binaryop -> AND
@@ -1860,7 +2695,12 @@ binaryop -> AND . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXI
 -- On EXIT reduce production binaryop -> AND
 
 State 167:
+## Known stack suffix:
+## ALLOC
+## LR(1) items:
 unaryop -> ALLOC . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production unaryop -> ALLOC
 -- On POINTER reduce production unaryop -> ALLOC
 -- On LPAREN reduce production unaryop -> ALLOC
@@ -1871,7 +2711,11 @@ unaryop -> ALLOC . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EX
 -- On EXIT reduce production unaryop -> ALLOC
 
 State 168:
+## Known stack suffix:
+## LPAREN ADDRASET
+## LR(1) items:
 expr -> LPAREN ADDRASET . expr expr expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On STRING shift to state 18
 -- On POINTER shift to state 19
 -- On LPAREN shift to state 20
@@ -1881,9 +2725,14 @@ expr -> LPAREN ADDRASET . expr expr expr RPAREN [ WITH UNIT STRING RPAREN POINTE
 -- On FLOATCONST shift to state 27
 -- On EXIT shift to state 28
 -- On expr shift to state 169
+## Reductions:
 
 State 169:
+## Known stack suffix:
+## LPAREN ADDRASET expr
+## LR(1) items:
 expr -> LPAREN ADDRASET expr . expr expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On STRING shift to state 18
 -- On POINTER shift to state 19
 -- On LPAREN shift to state 20
@@ -1893,9 +2742,14 @@ expr -> LPAREN ADDRASET expr . expr expr RPAREN [ WITH UNIT STRING RPAREN POINTE
 -- On FLOATCONST shift to state 27
 -- On EXIT shift to state 28
 -- On expr shift to state 170
+## Reductions:
 
 State 170:
+## Known stack suffix:
+## LPAREN ADDRASET expr expr
+## LR(1) items:
 expr -> LPAREN ADDRASET expr expr . expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On STRING shift to state 18
 -- On POINTER shift to state 19
 -- On LPAREN shift to state 20
@@ -1905,13 +2759,24 @@ expr -> LPAREN ADDRASET expr expr . expr RPAREN [ WITH UNIT STRING RPAREN POINTE
 -- On FLOATCONST shift to state 27
 -- On EXIT shift to state 28
 -- On expr shift to state 171
+## Reductions:
 
 State 171:
+## Known stack suffix:
+## LPAREN ADDRASET expr expr expr
+## LR(1) items:
 expr -> LPAREN ADDRASET expr expr expr . RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On RPAREN shift to state 172
+## Reductions:
 
 State 172:
+## Known stack suffix:
+## LPAREN ADDRASET expr expr expr RPAREN
+## LR(1) items:
 expr -> LPAREN ADDRASET expr expr expr RPAREN . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production expr -> LPAREN ADDRASET expr expr expr RPAREN
 -- On UNIT reduce production expr -> LPAREN ADDRASET expr expr expr RPAREN
 -- On STRING reduce production expr -> LPAREN ADDRASET expr expr expr RPAREN
@@ -1929,7 +2794,11 @@ expr -> LPAREN ADDRASET expr expr expr RPAREN . [ WITH UNIT STRING RPAREN POINTE
 -- On ADDR reduce production expr -> LPAREN ADDRASET expr expr expr RPAREN
 
 State 173:
+## Known stack suffix:
+## LPAREN ADDRAREF
+## LR(1) items:
 expr -> LPAREN ADDRAREF . expr expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On STRING shift to state 18
 -- On POINTER shift to state 19
 -- On LPAREN shift to state 20
@@ -1939,9 +2808,14 @@ expr -> LPAREN ADDRAREF . expr expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPA
 -- On FLOATCONST shift to state 27
 -- On EXIT shift to state 28
 -- On expr shift to state 174
+## Reductions:
 
 State 174:
+## Known stack suffix:
+## LPAREN ADDRAREF expr
+## LR(1) items:
 expr -> LPAREN ADDRAREF expr . expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On STRING shift to state 18
 -- On POINTER shift to state 19
 -- On LPAREN shift to state 20
@@ -1951,13 +2825,24 @@ expr -> LPAREN ADDRAREF expr . expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPA
 -- On FLOATCONST shift to state 27
 -- On EXIT shift to state 28
 -- On expr shift to state 175
+## Reductions:
 
 State 175:
+## Known stack suffix:
+## LPAREN ADDRAREF expr expr
+## LR(1) items:
 expr -> LPAREN ADDRAREF expr expr . RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On RPAREN shift to state 176
+## Reductions:
 
 State 176:
+## Known stack suffix:
+## LPAREN ADDRAREF expr expr RPAREN
+## LR(1) items:
 expr -> LPAREN ADDRAREF expr expr RPAREN . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production expr -> LPAREN ADDRAREF expr expr RPAREN
 -- On UNIT reduce production expr -> LPAREN ADDRAREF expr expr RPAREN
 -- On STRING reduce production expr -> LPAREN ADDRAREF expr expr RPAREN
@@ -1975,7 +2860,12 @@ expr -> LPAREN ADDRAREF expr expr RPAREN . [ WITH UNIT STRING RPAREN POINTER LPA
 -- On ADDR reduce production expr -> LPAREN ADDRAREF expr expr RPAREN
 
 State 177:
+## Known stack suffix:
+## ADDI
+## LR(1) items:
 binaryop -> ADDI . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production binaryop -> ADDI
 -- On POINTER reduce production binaryop -> ADDI
 -- On LPAREN reduce production binaryop -> ADDI
@@ -1986,7 +2876,12 @@ binaryop -> ADDI . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EX
 -- On EXIT reduce production binaryop -> ADDI
 
 State 178:
+## Known stack suffix:
+## ADDF
+## LR(1) items:
 binaryop -> ADDF . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production binaryop -> ADDF
 -- On POINTER reduce production binaryop -> ADDF
 -- On LPAREN reduce production binaryop -> ADDF
@@ -1997,7 +2892,12 @@ binaryop -> ADDF . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EX
 -- On EXIT reduce production binaryop -> ADDF
 
 State 179:
+## Known stack suffix:
+## ADDA
+## LR(1) items:
 binaryop -> ADDA . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production binaryop -> ADDA
 -- On POINTER reduce production binaryop -> ADDA
 -- On LPAREN reduce production binaryop -> ADDA
@@ -2008,7 +2908,12 @@ binaryop -> ADDA . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EX
 -- On EXIT reduce production binaryop -> ADDA
 
 State 180:
+## Known stack suffix:
+## ABSF
+## LR(1) items:
 unaryop -> ABSF . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production unaryop -> ABSF
 -- On POINTER reduce production unaryop -> ABSF
 -- On LPAREN reduce production unaryop -> ABSF
@@ -2019,7 +2924,11 @@ unaryop -> ABSF . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXI
 -- On EXIT reduce production unaryop -> ABSF
 
 State 181:
+## Known stack suffix:
+## LPAREN unaryop
+## LR(1) items:
 expr -> LPAREN unaryop . expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On STRING shift to state 18
 -- On POINTER shift to state 19
 -- On LPAREN shift to state 20
@@ -2029,13 +2938,24 @@ expr -> LPAREN unaryop . expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LB
 -- On FLOATCONST shift to state 27
 -- On EXIT shift to state 28
 -- On expr shift to state 182
+## Reductions:
 
 State 182:
+## Known stack suffix:
+## LPAREN unaryop expr
+## LR(1) items:
 expr -> LPAREN unaryop expr . RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On RPAREN shift to state 183
+## Reductions:
 
 State 183:
+## Known stack suffix:
+## LPAREN unaryop expr RPAREN
+## LR(1) items:
 expr -> LPAREN unaryop expr RPAREN . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production expr -> LPAREN unaryop expr RPAREN
 -- On UNIT reduce production expr -> LPAREN unaryop expr RPAREN
 -- On STRING reduce production expr -> LPAREN unaryop expr RPAREN
@@ -2053,7 +2973,11 @@ expr -> LPAREN unaryop expr RPAREN . [ WITH UNIT STRING RPAREN POINTER LPAREN LB
 -- On ADDR reduce production expr -> LPAREN unaryop expr RPAREN
 
 State 184:
+## Known stack suffix:
+## LPAREN binaryop
+## LR(1) items:
 expr -> LPAREN binaryop . expr expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On STRING shift to state 18
 -- On POINTER shift to state 19
 -- On LPAREN shift to state 20
@@ -2063,9 +2987,14 @@ expr -> LPAREN binaryop . expr expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPA
 -- On FLOATCONST shift to state 27
 -- On EXIT shift to state 28
 -- On expr shift to state 185
+## Reductions:
 
 State 185:
+## Known stack suffix:
+## LPAREN binaryop expr
+## LR(1) items:
 expr -> LPAREN binaryop expr . expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On STRING shift to state 18
 -- On POINTER shift to state 19
 -- On LPAREN shift to state 20
@@ -2075,13 +3004,24 @@ expr -> LPAREN binaryop expr . expr RPAREN [ WITH UNIT STRING RPAREN POINTER LPA
 -- On FLOATCONST shift to state 27
 -- On EXIT shift to state 28
 -- On expr shift to state 186
+## Reductions:
 
 State 186:
+## Known stack suffix:
+## LPAREN binaryop expr expr
+## LR(1) items:
 expr -> LPAREN binaryop expr expr . RPAREN [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
 -- On RPAREN shift to state 187
+## Reductions:
 
 State 187:
+## Known stack suffix:
+## LPAREN binaryop expr expr RPAREN
+## LR(1) items:
 expr -> LPAREN binaryop expr expr RPAREN . [ WITH UNIT STRING RPAREN POINTER LPAREN LBRACKET INTCONST INT IDENT FLOATCONST FLOAT EXIT CASE ADDR ]
+## Transitions:
+## Reductions:
 -- On WITH reduce production expr -> LPAREN binaryop expr expr RPAREN
 -- On UNIT reduce production expr -> LPAREN binaryop expr expr RPAREN
 -- On STRING reduce production expr -> LPAREN binaryop expr expr RPAREN
@@ -2099,27 +3039,51 @@ expr -> LPAREN binaryop expr expr RPAREN . [ WITH UNIT STRING RPAREN POINTER LPA
 -- On ADDR reduce production expr -> LPAREN binaryop expr expr RPAREN
 
 State 188:
+## Known stack suffix:
+## LPAREN FUNCTION STRING LPAREN params RPAREN sequence
+## LR(1) items:
 fundecl -> LPAREN FUNCTION STRING LPAREN params RPAREN sequence . RPAREN [ # ]
+## Transitions:
 -- On RPAREN shift to state 189
+## Reductions:
 
 State 189:
+## Known stack suffix:
+## LPAREN FUNCTION STRING LPAREN params RPAREN sequence RPAREN
+## LR(1) items:
 fundecl -> LPAREN FUNCTION STRING LPAREN params RPAREN sequence RPAREN . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production fundecl -> LPAREN FUNCTION STRING LPAREN params RPAREN sequence RPAREN
 
 State 190:
+## Known stack suffix:
+## oneparam
+## LR(1) items:
 params -> oneparam . params [ RPAREN ]
+## Transitions:
 -- On IDENT shift to state 5
 -- On params shift to state 191
 -- On oneparam shift to state 190
+## Reductions:
 -- On RPAREN reduce production params ->
 
 State 191:
+## Known stack suffix:
+## oneparam params
+## LR(1) items:
 params -> oneparam params . [ RPAREN ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production params -> oneparam params
 
 State 192:
+## Known stack suffix:
+## LPAREN datalist
+## LR(1) items:
 datadecl -> LPAREN datalist . RPAREN [ # ]
 datalist -> datalist . dataitem [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT BYTE ALIGN ADDR ]
+## Transitions:
 -- On STRING shift to state 193
 -- On SKIP shift to state 195
 -- On RPAREN shift to state 197
@@ -2132,13 +3096,24 @@ datalist -> datalist . dataitem [ STRING SKIP RPAREN KSTRING INTCONST INT HALF F
 -- On ALIGN shift to state 210
 -- On ADDR shift to state 212
 -- On dataitem shift to state 215
+## Reductions:
 
 State 193:
+## Known stack suffix:
+## STRING
+## LR(1) items:
 dataitem -> STRING . COLON [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT BYTE ALIGN ADDR ]
+## Transitions:
 -- On COLON shift to state 194
+## Reductions:
 
 State 194:
+## Known stack suffix:
+## STRING COLON
+## LR(1) items:
 dataitem -> STRING COLON . [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT BYTE ALIGN ADDR ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production dataitem -> STRING COLON
 -- On SKIP reduce production dataitem -> STRING COLON
 -- On RPAREN reduce production dataitem -> STRING COLON
@@ -2152,11 +3127,21 @@ dataitem -> STRING COLON . [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT 
 -- On ADDR reduce production dataitem -> STRING COLON
 
 State 195:
+## Known stack suffix:
+## SKIP
+## LR(1) items:
 dataitem -> SKIP . INTCONST [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT BYTE ALIGN ADDR ]
+## Transitions:
 -- On INTCONST shift to state 196
+## Reductions:
 
 State 196:
+## Known stack suffix:
+## SKIP INTCONST
+## LR(1) items:
 dataitem -> SKIP INTCONST . [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT BYTE ALIGN ADDR ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production dataitem -> SKIP INTCONST
 -- On SKIP reduce production dataitem -> SKIP INTCONST
 -- On RPAREN reduce production dataitem -> SKIP INTCONST
@@ -2170,15 +3155,30 @@ dataitem -> SKIP INTCONST . [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT
 -- On ADDR reduce production dataitem -> SKIP INTCONST
 
 State 197:
+## Known stack suffix:
+## LPAREN datalist RPAREN
+## LR(1) items:
 datadecl -> LPAREN datalist RPAREN . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production datadecl -> LPAREN datalist RPAREN
 
 State 198:
+## Known stack suffix:
+## KSTRING
+## LR(1) items:
 dataitem -> KSTRING . STRING [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT BYTE ALIGN ADDR ]
+## Transitions:
 -- On STRING shift to state 199
+## Reductions:
 
 State 199:
+## Known stack suffix:
+## KSTRING STRING
+## LR(1) items:
 dataitem -> KSTRING STRING . [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT BYTE ALIGN ADDR ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production dataitem -> KSTRING STRING
 -- On SKIP reduce production dataitem -> KSTRING STRING
 -- On RPAREN reduce production dataitem -> KSTRING STRING
@@ -2192,11 +3192,21 @@ dataitem -> KSTRING STRING . [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOA
 -- On ADDR reduce production dataitem -> KSTRING STRING
 
 State 200:
+## Known stack suffix:
+## INTCONST
+## LR(1) items:
 dataitem -> INTCONST . COLON [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT BYTE ALIGN ADDR ]
+## Transitions:
 -- On COLON shift to state 201
+## Reductions:
 
 State 201:
+## Known stack suffix:
+## INTCONST COLON
+## LR(1) items:
 dataitem -> INTCONST COLON . [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT BYTE ALIGN ADDR ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production dataitem -> INTCONST COLON
 -- On SKIP reduce production dataitem -> INTCONST COLON
 -- On RPAREN reduce production dataitem -> INTCONST COLON
@@ -2210,11 +3220,21 @@ dataitem -> INTCONST COLON . [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOA
 -- On ADDR reduce production dataitem -> INTCONST COLON
 
 State 202:
+## Known stack suffix:
+## INT
+## LR(1) items:
 dataitem -> INT . INTCONST [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT BYTE ALIGN ADDR ]
+## Transitions:
 -- On INTCONST shift to state 203
+## Reductions:
 
 State 203:
+## Known stack suffix:
+## INT INTCONST
+## LR(1) items:
 dataitem -> INT INTCONST . [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT BYTE ALIGN ADDR ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production dataitem -> INT INTCONST
 -- On SKIP reduce production dataitem -> INT INTCONST
 -- On RPAREN reduce production dataitem -> INT INTCONST
@@ -2228,11 +3248,21 @@ dataitem -> INT INTCONST . [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT 
 -- On ADDR reduce production dataitem -> INT INTCONST
 
 State 204:
+## Known stack suffix:
+## HALF
+## LR(1) items:
 dataitem -> HALF . INTCONST [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT BYTE ALIGN ADDR ]
+## Transitions:
 -- On INTCONST shift to state 205
+## Reductions:
 
 State 205:
+## Known stack suffix:
+## HALF INTCONST
+## LR(1) items:
 dataitem -> HALF INTCONST . [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT BYTE ALIGN ADDR ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production dataitem -> HALF INTCONST
 -- On SKIP reduce production dataitem -> HALF INTCONST
 -- On RPAREN reduce production dataitem -> HALF INTCONST
@@ -2246,11 +3276,21 @@ dataitem -> HALF INTCONST . [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT
 -- On ADDR reduce production dataitem -> HALF INTCONST
 
 State 206:
+## Known stack suffix:
+## FLOAT
+## LR(1) items:
 dataitem -> FLOAT . FLOATCONST [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT BYTE ALIGN ADDR ]
+## Transitions:
 -- On FLOATCONST shift to state 207
+## Reductions:
 
 State 207:
+## Known stack suffix:
+## FLOAT FLOATCONST
+## LR(1) items:
 dataitem -> FLOAT FLOATCONST . [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT BYTE ALIGN ADDR ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production dataitem -> FLOAT FLOATCONST
 -- On SKIP reduce production dataitem -> FLOAT FLOATCONST
 -- On RPAREN reduce production dataitem -> FLOAT FLOATCONST
@@ -2264,11 +3304,21 @@ dataitem -> FLOAT FLOATCONST . [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FL
 -- On ADDR reduce production dataitem -> FLOAT FLOATCONST
 
 State 208:
+## Known stack suffix:
+## BYTE
+## LR(1) items:
 dataitem -> BYTE . INTCONST [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT BYTE ALIGN ADDR ]
+## Transitions:
 -- On INTCONST shift to state 209
+## Reductions:
 
 State 209:
+## Known stack suffix:
+## BYTE INTCONST
+## LR(1) items:
 dataitem -> BYTE INTCONST . [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT BYTE ALIGN ADDR ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production dataitem -> BYTE INTCONST
 -- On SKIP reduce production dataitem -> BYTE INTCONST
 -- On RPAREN reduce production dataitem -> BYTE INTCONST
@@ -2282,11 +3332,21 @@ dataitem -> BYTE INTCONST . [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT
 -- On ADDR reduce production dataitem -> BYTE INTCONST
 
 State 210:
+## Known stack suffix:
+## ALIGN
+## LR(1) items:
 dataitem -> ALIGN . INTCONST [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT BYTE ALIGN ADDR ]
+## Transitions:
 -- On INTCONST shift to state 211
+## Reductions:
 
 State 211:
+## Known stack suffix:
+## ALIGN INTCONST
+## LR(1) items:
 dataitem -> ALIGN INTCONST . [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT BYTE ALIGN ADDR ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production dataitem -> ALIGN INTCONST
 -- On SKIP reduce production dataitem -> ALIGN INTCONST
 -- On RPAREN reduce production dataitem -> ALIGN INTCONST
@@ -2300,13 +3360,23 @@ dataitem -> ALIGN INTCONST . [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOA
 -- On ADDR reduce production dataitem -> ALIGN INTCONST
 
 State 212:
+## Known stack suffix:
+## ADDR
+## LR(1) items:
 dataitem -> ADDR . STRING [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT BYTE ALIGN ADDR ]
 dataitem -> ADDR . INTCONST [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT BYTE ALIGN ADDR ]
+## Transitions:
 -- On STRING shift to state 213
 -- On INTCONST shift to state 214
+## Reductions:
 
 State 213:
+## Known stack suffix:
+## ADDR STRING
+## LR(1) items:
 dataitem -> ADDR STRING . [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT BYTE ALIGN ADDR ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production dataitem -> ADDR STRING
 -- On SKIP reduce production dataitem -> ADDR STRING
 -- On RPAREN reduce production dataitem -> ADDR STRING
@@ -2320,7 +3390,12 @@ dataitem -> ADDR STRING . [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT B
 -- On ADDR reduce production dataitem -> ADDR STRING
 
 State 214:
+## Known stack suffix:
+## ADDR INTCONST
+## LR(1) items:
 dataitem -> ADDR INTCONST . [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT BYTE ALIGN ADDR ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production dataitem -> ADDR INTCONST
 -- On SKIP reduce production dataitem -> ADDR INTCONST
 -- On RPAREN reduce production dataitem -> ADDR INTCONST
@@ -2334,7 +3409,12 @@ dataitem -> ADDR INTCONST . [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT
 -- On ADDR reduce production dataitem -> ADDR INTCONST
 
 State 215:
+## Known stack suffix:
+## datalist dataitem
+## LR(1) items:
 datalist -> datalist dataitem . [ STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT BYTE ALIGN ADDR ]
+## Transitions:
+## Reductions:
 -- On STRING reduce production datalist -> datalist dataitem
 -- On SKIP reduce production datalist -> datalist dataitem
 -- On RPAREN reduce production datalist -> datalist dataitem
@@ -2348,18 +3428,38 @@ datalist -> datalist dataitem . [ STRING SKIP RPAREN KSTRING INTCONST INT HALF F
 -- On ADDR reduce production datalist -> datalist dataitem
 
 State 216:
+## Known stack suffix:
+## EOF
+## LR(1) items:
 phrase -> EOF . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production phrase -> EOF
 
 State 217:
+## Known stack suffix:
+## phrase
+## LR(1) items:
 phrase' -> phrase . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept phrase
 
 State 218:
+## Known stack suffix:
+## fundecl
+## LR(1) items:
 phrase -> fundecl . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production phrase -> fundecl
 
 State 219:
+## Known stack suffix:
+## datadecl
+## LR(1) items:
 phrase -> datadecl . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production phrase -> datadecl
 

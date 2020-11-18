@@ -1,24 +1,43 @@
 State 0:
+## Known stack suffix:
+##
+## LR(1) items:
 program' -> . program [ # ]
+## Transitions:
 -- On TYPE shift to state 1
 -- On type_decl shift to state 39
 -- On program shift to state 41
 -- On my_list(type_decl) shift to state 42
+## Reductions:
 -- On FSM reduce production my_list(type_decl) ->
 
 State 1:
+## Known stack suffix:
+## TYPE
+## LR(1) items:
 type_decl -> TYPE . LID EQUAL typ [ TYPE FSM ]
 type_decl -> TYPE . LID EQUAL braced(my_separated_list(COMMA,UID)) [ TYPE FSM ]
+## Transitions:
 -- On LID shift to state 2
+## Reductions:
 
 State 2:
+## Known stack suffix:
+## TYPE LID
+## LR(1) items:
 type_decl -> TYPE LID . EQUAL typ [ TYPE FSM ]
 type_decl -> TYPE LID . EQUAL braced(my_separated_list(COMMA,UID)) [ TYPE FSM ]
+## Transitions:
 -- On EQUAL shift to state 3
+## Reductions:
 
 State 3:
+## Known stack suffix:
+## TYPE LID EQUAL
+## LR(1) items:
 type_decl -> TYPE LID EQUAL . typ [ TYPE FSM ]
 type_decl -> TYPE LID EQUAL . braced(my_separated_list(COMMA,UID)) [ TYPE FSM ]
+## Transitions:
 -- On TYINT shift to state 4
 -- On TYEVENT shift to state 27
 -- On TYBOOL shift to state 28
@@ -26,12 +45,18 @@ type_decl -> TYPE LID EQUAL . braced(my_separated_list(COMMA,UID)) [ TYPE FSM ]
 -- On LBRACE shift to state 30
 -- On typ shift to state 37
 -- On braced(my_separated_list(COMMA,UID)) shift to state 38
+## Reductions:
 
 State 4:
+## Known stack suffix:
+## TYINT
+## LR(1) items:
 typ -> TYINT . option(int_range) [ TYPE SHARED SEMICOLON RPAREN OUTPUT INPUT GT FSM EQUAL COMMA ]
+## Transitions:
 -- On LT shift to state 5
 -- On option(int_range) shift to state 25
 -- On int_range shift to state 26
+## Reductions:
 -- On TYPE reduce production option(int_range) ->
 -- On SHARED reduce production option(int_range) ->
 -- On SEMICOLON reduce production option(int_range) ->
@@ -44,21 +69,36 @@ typ -> TYINT . option(int_range) [ TYPE SHARED SEMICOLON RPAREN OUTPUT INPUT GT 
 -- On COMMA reduce production option(int_range) ->
 
 State 5:
+## Known stack suffix:
+## LT
+## LR(1) items:
 int_range -> LT . type_index_expr DOTDOT type_index_expr GT [ TYPE SHARED SEMICOLON RPAREN OUTPUT INPUT GT FSM EQUAL COMMA ]
+## Transitions:
 -- On LPAREN shift to state 6
 -- On LID shift to state 7
 -- On INT shift to state 8
 -- On type_index_expr shift to state 21
+## Reductions:
 
 State 6:
+## Known stack suffix:
+## LPAREN
+## LR(1) items:
 type_index_expr -> LPAREN . type_index_expr RPAREN [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+## Transitions:
 -- On LPAREN shift to state 6
 -- On LID shift to state 7
 -- On INT shift to state 8
 -- On type_index_expr shift to state 9
+## Reductions:
 
 State 7:
+## Known stack suffix:
+## LID
+## LR(1) items:
 type_index_expr -> LID . [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+## Transitions:
+## Reductions:
 -- On TIMES reduce production type_index_expr -> LID
 -- On RPAREN reduce production type_index_expr -> LID
 -- On PLUS reduce production type_index_expr -> LID
@@ -69,7 +109,12 @@ type_index_expr -> LID . [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
 -- On DIV reduce production type_index_expr -> LID
 
 State 8:
+## Known stack suffix:
+## INT
+## LR(1) items:
 type_index_expr -> INT . [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+## Transitions:
+## Reductions:
 -- On TIMES reduce production type_index_expr -> INT
 -- On RPAREN reduce production type_index_expr -> INT
 -- On PLUS reduce production type_index_expr -> INT
@@ -80,33 +125,48 @@ type_index_expr -> INT . [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
 -- On DIV reduce production type_index_expr -> INT
 
 State 9:
+## Known stack suffix:
+## LPAREN type_index_expr
+## LR(1) items:
 type_index_expr -> LPAREN type_index_expr . RPAREN [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
 type_index_expr -> type_index_expr . PLUS type_index_expr [ TIMES RPAREN PLUS MOD MINUS DIV ]
 type_index_expr -> type_index_expr . MINUS type_index_expr [ TIMES RPAREN PLUS MOD MINUS DIV ]
 type_index_expr -> type_index_expr . TIMES type_index_expr [ TIMES RPAREN PLUS MOD MINUS DIV ]
 type_index_expr -> type_index_expr . DIV type_index_expr [ TIMES RPAREN PLUS MOD MINUS DIV ]
 type_index_expr -> type_index_expr . MOD type_index_expr [ TIMES RPAREN PLUS MOD MINUS DIV ]
+## Transitions:
 -- On TIMES shift to state 10
 -- On RPAREN shift to state 12
 -- On PLUS shift to state 13
 -- On MOD shift to state 15
 -- On MINUS shift to state 19
 -- On DIV shift to state 17
+## Reductions:
 
 State 10:
+## Known stack suffix:
+## type_index_expr TIMES
+## LR(1) items:
 type_index_expr -> type_index_expr TIMES . type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+## Transitions:
 -- On LPAREN shift to state 6
 -- On LID shift to state 7
 -- On INT shift to state 8
 -- On type_index_expr shift to state 11
+## Reductions:
 
 State 11:
+## Known stack suffix:
+## type_index_expr TIMES type_index_expr
+## LR(1) items:
 type_index_expr -> type_index_expr . PLUS type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
 type_index_expr -> type_index_expr . MINUS type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
 type_index_expr -> type_index_expr . TIMES type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
 type_index_expr -> type_index_expr TIMES type_index_expr . [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
 type_index_expr -> type_index_expr . DIV type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
 type_index_expr -> type_index_expr . MOD type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+## Transitions:
+## Reductions:
 -- On TIMES reduce production type_index_expr -> type_index_expr TIMES type_index_expr
 -- On RPAREN reduce production type_index_expr -> type_index_expr TIMES type_index_expr
 -- On PLUS reduce production type_index_expr -> type_index_expr TIMES type_index_expr
@@ -117,7 +177,12 @@ type_index_expr -> type_index_expr . MOD type_index_expr [ TIMES RPAREN PLUS MOD
 -- On DIV reduce production type_index_expr -> type_index_expr TIMES type_index_expr
 
 State 12:
+## Known stack suffix:
+## LPAREN type_index_expr RPAREN
+## LR(1) items:
 type_index_expr -> LPAREN type_index_expr RPAREN . [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+## Transitions:
+## Reductions:
 -- On TIMES reduce production type_index_expr -> LPAREN type_index_expr RPAREN
 -- On RPAREN reduce production type_index_expr -> LPAREN type_index_expr RPAREN
 -- On PLUS reduce production type_index_expr -> LPAREN type_index_expr RPAREN
@@ -128,22 +193,32 @@ type_index_expr -> LPAREN type_index_expr RPAREN . [ TIMES RPAREN PLUS MOD MINUS
 -- On DIV reduce production type_index_expr -> LPAREN type_index_expr RPAREN
 
 State 13:
+## Known stack suffix:
+## type_index_expr PLUS
+## LR(1) items:
 type_index_expr -> type_index_expr PLUS . type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+## Transitions:
 -- On LPAREN shift to state 6
 -- On LID shift to state 7
 -- On INT shift to state 8
 -- On type_index_expr shift to state 14
+## Reductions:
 
 State 14:
+## Known stack suffix:
+## type_index_expr PLUS type_index_expr
+## LR(1) items:
 type_index_expr -> type_index_expr . PLUS type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
 type_index_expr -> type_index_expr PLUS type_index_expr . [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
 type_index_expr -> type_index_expr . MINUS type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
 type_index_expr -> type_index_expr . TIMES type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
 type_index_expr -> type_index_expr . DIV type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
 type_index_expr -> type_index_expr . MOD type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+## Transitions:
 -- On TIMES shift to state 10
 -- On MOD shift to state 15
 -- On DIV shift to state 17
+## Reductions:
 -- On RPAREN reduce production type_index_expr -> type_index_expr PLUS type_index_expr
 -- On PLUS reduce production type_index_expr -> type_index_expr PLUS type_index_expr
 -- On MINUS reduce production type_index_expr -> type_index_expr PLUS type_index_expr
@@ -151,19 +226,29 @@ type_index_expr -> type_index_expr . MOD type_index_expr [ TIMES RPAREN PLUS MOD
 -- On DOTDOT reduce production type_index_expr -> type_index_expr PLUS type_index_expr
 
 State 15:
+## Known stack suffix:
+## type_index_expr MOD
+## LR(1) items:
 type_index_expr -> type_index_expr MOD . type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+## Transitions:
 -- On LPAREN shift to state 6
 -- On LID shift to state 7
 -- On INT shift to state 8
 -- On type_index_expr shift to state 16
+## Reductions:
 
 State 16:
+## Known stack suffix:
+## type_index_expr MOD type_index_expr
+## LR(1) items:
 type_index_expr -> type_index_expr . PLUS type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
 type_index_expr -> type_index_expr . MINUS type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
 type_index_expr -> type_index_expr . TIMES type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
 type_index_expr -> type_index_expr . DIV type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
 type_index_expr -> type_index_expr . MOD type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
 type_index_expr -> type_index_expr MOD type_index_expr . [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+## Transitions:
+## Reductions:
 -- On TIMES reduce production type_index_expr -> type_index_expr MOD type_index_expr
 -- On RPAREN reduce production type_index_expr -> type_index_expr MOD type_index_expr
 -- On PLUS reduce production type_index_expr -> type_index_expr MOD type_index_expr
@@ -174,19 +259,29 @@ type_index_expr -> type_index_expr MOD type_index_expr . [ TIMES RPAREN PLUS MOD
 -- On DIV reduce production type_index_expr -> type_index_expr MOD type_index_expr
 
 State 17:
+## Known stack suffix:
+## type_index_expr DIV
+## LR(1) items:
 type_index_expr -> type_index_expr DIV . type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+## Transitions:
 -- On LPAREN shift to state 6
 -- On LID shift to state 7
 -- On INT shift to state 8
 -- On type_index_expr shift to state 18
+## Reductions:
 
 State 18:
+## Known stack suffix:
+## type_index_expr DIV type_index_expr
+## LR(1) items:
 type_index_expr -> type_index_expr . PLUS type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
 type_index_expr -> type_index_expr . MINUS type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
 type_index_expr -> type_index_expr . TIMES type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
 type_index_expr -> type_index_expr . DIV type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
 type_index_expr -> type_index_expr DIV type_index_expr . [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
 type_index_expr -> type_index_expr . MOD type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+## Transitions:
+## Reductions:
 -- On TIMES reduce production type_index_expr -> type_index_expr DIV type_index_expr
 -- On RPAREN reduce production type_index_expr -> type_index_expr DIV type_index_expr
 -- On PLUS reduce production type_index_expr -> type_index_expr DIV type_index_expr
@@ -197,22 +292,32 @@ type_index_expr -> type_index_expr . MOD type_index_expr [ TIMES RPAREN PLUS MOD
 -- On DIV reduce production type_index_expr -> type_index_expr DIV type_index_expr
 
 State 19:
+## Known stack suffix:
+## type_index_expr MINUS
+## LR(1) items:
 type_index_expr -> type_index_expr MINUS . type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+## Transitions:
 -- On LPAREN shift to state 6
 -- On LID shift to state 7
 -- On INT shift to state 8
 -- On type_index_expr shift to state 20
+## Reductions:
 
 State 20:
+## Known stack suffix:
+## type_index_expr MINUS type_index_expr
+## LR(1) items:
 type_index_expr -> type_index_expr . PLUS type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
 type_index_expr -> type_index_expr . MINUS type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
 type_index_expr -> type_index_expr MINUS type_index_expr . [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
 type_index_expr -> type_index_expr . TIMES type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
 type_index_expr -> type_index_expr . DIV type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
 type_index_expr -> type_index_expr . MOD type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+## Transitions:
 -- On TIMES shift to state 10
 -- On MOD shift to state 15
 -- On DIV shift to state 17
+## Reductions:
 -- On RPAREN reduce production type_index_expr -> type_index_expr MINUS type_index_expr
 -- On PLUS reduce production type_index_expr -> type_index_expr MINUS type_index_expr
 -- On MINUS reduce production type_index_expr -> type_index_expr MINUS type_index_expr
@@ -220,42 +325,62 @@ type_index_expr -> type_index_expr . MOD type_index_expr [ TIMES RPAREN PLUS MOD
 -- On DOTDOT reduce production type_index_expr -> type_index_expr MINUS type_index_expr
 
 State 21:
+## Known stack suffix:
+## LT type_index_expr
+## LR(1) items:
 int_range -> LT type_index_expr . DOTDOT type_index_expr GT [ TYPE SHARED SEMICOLON RPAREN OUTPUT INPUT GT FSM EQUAL COMMA ]
 type_index_expr -> type_index_expr . PLUS type_index_expr [ TIMES PLUS MOD MINUS DOTDOT DIV ]
 type_index_expr -> type_index_expr . MINUS type_index_expr [ TIMES PLUS MOD MINUS DOTDOT DIV ]
 type_index_expr -> type_index_expr . TIMES type_index_expr [ TIMES PLUS MOD MINUS DOTDOT DIV ]
 type_index_expr -> type_index_expr . DIV type_index_expr [ TIMES PLUS MOD MINUS DOTDOT DIV ]
 type_index_expr -> type_index_expr . MOD type_index_expr [ TIMES PLUS MOD MINUS DOTDOT DIV ]
+## Transitions:
 -- On TIMES shift to state 10
 -- On PLUS shift to state 13
 -- On MOD shift to state 15
 -- On MINUS shift to state 19
 -- On DOTDOT shift to state 22
 -- On DIV shift to state 17
+## Reductions:
 
 State 22:
+## Known stack suffix:
+## LT type_index_expr DOTDOT
+## LR(1) items:
 int_range -> LT type_index_expr DOTDOT . type_index_expr GT [ TYPE SHARED SEMICOLON RPAREN OUTPUT INPUT GT FSM EQUAL COMMA ]
+## Transitions:
 -- On LPAREN shift to state 6
 -- On LID shift to state 7
 -- On INT shift to state 8
 -- On type_index_expr shift to state 23
+## Reductions:
 
 State 23:
+## Known stack suffix:
+## LT type_index_expr DOTDOT type_index_expr
+## LR(1) items:
 int_range -> LT type_index_expr DOTDOT type_index_expr . GT [ TYPE SHARED SEMICOLON RPAREN OUTPUT INPUT GT FSM EQUAL COMMA ]
 type_index_expr -> type_index_expr . PLUS type_index_expr [ TIMES PLUS MOD MINUS GT DIV ]
 type_index_expr -> type_index_expr . MINUS type_index_expr [ TIMES PLUS MOD MINUS GT DIV ]
 type_index_expr -> type_index_expr . TIMES type_index_expr [ TIMES PLUS MOD MINUS GT DIV ]
 type_index_expr -> type_index_expr . DIV type_index_expr [ TIMES PLUS MOD MINUS GT DIV ]
 type_index_expr -> type_index_expr . MOD type_index_expr [ TIMES PLUS MOD MINUS GT DIV ]
+## Transitions:
 -- On TIMES shift to state 10
 -- On PLUS shift to state 13
 -- On MOD shift to state 15
 -- On MINUS shift to state 19
 -- On GT shift to state 24
 -- On DIV shift to state 17
+## Reductions:
 
 State 24:
+## Known stack suffix:
+## LT type_index_expr DOTDOT type_index_expr GT
+## LR(1) items:
 int_range -> LT type_index_expr DOTDOT type_index_expr GT . [ TYPE SHARED SEMICOLON RPAREN OUTPUT INPUT GT FSM EQUAL COMMA ]
+## Transitions:
+## Reductions:
 -- On TYPE reduce production int_range -> LT type_index_expr DOTDOT type_index_expr GT
 -- On SHARED reduce production int_range -> LT type_index_expr DOTDOT type_index_expr GT
 -- On SEMICOLON reduce production int_range -> LT type_index_expr DOTDOT type_index_expr GT
@@ -268,7 +393,12 @@ int_range -> LT type_index_expr DOTDOT type_index_expr GT . [ TYPE SHARED SEMICO
 -- On COMMA reduce production int_range -> LT type_index_expr DOTDOT type_index_expr GT
 
 State 25:
+## Known stack suffix:
+## TYINT option(int_range)
+## LR(1) items:
 typ -> TYINT option(int_range) . [ TYPE SHARED SEMICOLON RPAREN OUTPUT INPUT GT FSM EQUAL COMMA ]
+## Transitions:
+## Reductions:
 -- On TYPE reduce production typ -> TYINT option(int_range)
 -- On SHARED reduce production typ -> TYINT option(int_range)
 -- On SEMICOLON reduce production typ -> TYINT option(int_range)
@@ -281,7 +411,12 @@ typ -> TYINT option(int_range) . [ TYPE SHARED SEMICOLON RPAREN OUTPUT INPUT GT 
 -- On COMMA reduce production typ -> TYINT option(int_range)
 
 State 26:
+## Known stack suffix:
+## int_range
+## LR(1) items:
 option(int_range) -> int_range . [ TYPE SHARED SEMICOLON RPAREN OUTPUT INPUT GT FSM EQUAL COMMA ]
+## Transitions:
+## Reductions:
 -- On TYPE reduce production option(int_range) -> int_range
 -- On SHARED reduce production option(int_range) -> int_range
 -- On SEMICOLON reduce production option(int_range) -> int_range
@@ -294,7 +429,12 @@ option(int_range) -> int_range . [ TYPE SHARED SEMICOLON RPAREN OUTPUT INPUT GT 
 -- On COMMA reduce production option(int_range) -> int_range
 
 State 27:
+## Known stack suffix:
+## TYEVENT
+## LR(1) items:
 typ -> TYEVENT . [ TYPE SHARED SEMICOLON RPAREN OUTPUT INPUT GT FSM EQUAL COMMA ]
+## Transitions:
+## Reductions:
 -- On TYPE reduce production typ -> TYEVENT
 -- On SHARED reduce production typ -> TYEVENT
 -- On SEMICOLON reduce production typ -> TYEVENT
@@ -307,7 +447,12 @@ typ -> TYEVENT . [ TYPE SHARED SEMICOLON RPAREN OUTPUT INPUT GT FSM EQUAL COMMA 
 -- On COMMA reduce production typ -> TYEVENT
 
 State 28:
+## Known stack suffix:
+## TYBOOL
+## LR(1) items:
 typ -> TYBOOL . [ TYPE SHARED SEMICOLON RPAREN OUTPUT INPUT GT FSM EQUAL COMMA ]
+## Transitions:
+## Reductions:
 -- On TYPE reduce production typ -> TYBOOL
 -- On SHARED reduce production typ -> TYBOOL
 -- On SEMICOLON reduce production typ -> TYBOOL
@@ -320,7 +465,12 @@ typ -> TYBOOL . [ TYPE SHARED SEMICOLON RPAREN OUTPUT INPUT GT FSM EQUAL COMMA ]
 -- On COMMA reduce production typ -> TYBOOL
 
 State 29:
+## Known stack suffix:
+## LID
+## LR(1) items:
 typ -> LID . [ TYPE SHARED SEMICOLON RPAREN OUTPUT INPUT GT FSM EQUAL COMMA ]
+## Transitions:
+## Reductions:
 -- On TYPE reduce production typ -> LID
 -- On SHARED reduce production typ -> LID
 -- On SEMICOLON reduce production typ -> LID
@@ -333,86 +483,166 @@ typ -> LID . [ TYPE SHARED SEMICOLON RPAREN OUTPUT INPUT GT FSM EQUAL COMMA ]
 -- On COMMA reduce production typ -> LID
 
 State 30:
+## Known stack suffix:
+## LBRACE
+## LR(1) items:
 braced(my_separated_list(COMMA,UID)) -> LBRACE . my_separated_list(COMMA,UID) RBRACE [ TYPE FSM ]
+## Transitions:
 -- On UID shift to state 31
 -- On my_separated_nonempty_list(COMMA,UID) shift to state 34
 -- On my_separated_list(COMMA,UID) shift to state 35
+## Reductions:
 -- On RBRACE reduce production my_separated_list(COMMA,UID) ->
 
 State 31:
+## Known stack suffix:
+## UID
+## LR(1) items:
 my_separated_nonempty_list(COMMA,UID) -> UID . [ SEMICOLON RBRACE ]
 my_separated_nonempty_list(COMMA,UID) -> UID . COMMA my_separated_nonempty_list(COMMA,UID) [ SEMICOLON RBRACE ]
+## Transitions:
 -- On COMMA shift to state 32
+## Reductions:
 -- On SEMICOLON reduce production my_separated_nonempty_list(COMMA,UID) -> UID
 -- On RBRACE reduce production my_separated_nonempty_list(COMMA,UID) -> UID
 
 State 32:
+## Known stack suffix:
+## UID COMMA
+## LR(1) items:
 my_separated_nonempty_list(COMMA,UID) -> UID COMMA . my_separated_nonempty_list(COMMA,UID) [ SEMICOLON RBRACE ]
+## Transitions:
 -- On UID shift to state 31
 -- On my_separated_nonempty_list(COMMA,UID) shift to state 33
+## Reductions:
 
 State 33:
+## Known stack suffix:
+## UID COMMA my_separated_nonempty_list(COMMA,UID)
+## LR(1) items:
 my_separated_nonempty_list(COMMA,UID) -> UID COMMA my_separated_nonempty_list(COMMA,UID) . [ SEMICOLON RBRACE ]
+## Transitions:
+## Reductions:
 -- On SEMICOLON reduce production my_separated_nonempty_list(COMMA,UID) -> UID COMMA my_separated_nonempty_list(COMMA,UID)
 -- On RBRACE reduce production my_separated_nonempty_list(COMMA,UID) -> UID COMMA my_separated_nonempty_list(COMMA,UID)
 
 State 34:
+## Known stack suffix:
+## my_separated_nonempty_list(COMMA,UID)
+## LR(1) items:
 my_separated_list(COMMA,UID) -> my_separated_nonempty_list(COMMA,UID) . [ SEMICOLON RBRACE ]
+## Transitions:
+## Reductions:
 -- On SEMICOLON reduce production my_separated_list(COMMA,UID) -> my_separated_nonempty_list(COMMA,UID)
 -- On RBRACE reduce production my_separated_list(COMMA,UID) -> my_separated_nonempty_list(COMMA,UID)
 
 State 35:
+## Known stack suffix:
+## LBRACE my_separated_list(COMMA,UID)
+## LR(1) items:
 braced(my_separated_list(COMMA,UID)) -> LBRACE my_separated_list(COMMA,UID) . RBRACE [ TYPE FSM ]
+## Transitions:
 -- On RBRACE shift to state 36
+## Reductions:
 
 State 36:
+## Known stack suffix:
+## LBRACE my_separated_list(COMMA,UID) RBRACE
+## LR(1) items:
 braced(my_separated_list(COMMA,UID)) -> LBRACE my_separated_list(COMMA,UID) RBRACE . [ TYPE FSM ]
+## Transitions:
+## Reductions:
 -- On TYPE reduce production braced(my_separated_list(COMMA,UID)) -> LBRACE my_separated_list(COMMA,UID) RBRACE
 -- On FSM reduce production braced(my_separated_list(COMMA,UID)) -> LBRACE my_separated_list(COMMA,UID) RBRACE
 
 State 37:
+## Known stack suffix:
+## TYPE LID EQUAL typ
+## LR(1) items:
 type_decl -> TYPE LID EQUAL typ . [ TYPE FSM ]
+## Transitions:
+## Reductions:
 -- On TYPE reduce production type_decl -> TYPE LID EQUAL typ
 -- On FSM reduce production type_decl -> TYPE LID EQUAL typ
 
 State 38:
+## Known stack suffix:
+## TYPE LID EQUAL braced(my_separated_list(COMMA,UID))
+## LR(1) items:
 type_decl -> TYPE LID EQUAL braced(my_separated_list(COMMA,UID)) . [ TYPE FSM ]
+## Transitions:
+## Reductions:
 -- On TYPE reduce production type_decl -> TYPE LID EQUAL braced(my_separated_list(COMMA,UID))
 -- On FSM reduce production type_decl -> TYPE LID EQUAL braced(my_separated_list(COMMA,UID))
 
 State 39:
+## Known stack suffix:
+## type_decl
+## LR(1) items:
 my_list(type_decl) -> type_decl . my_list(type_decl) [ FSM ]
+## Transitions:
 -- On TYPE shift to state 1
 -- On type_decl shift to state 39
 -- On my_list(type_decl) shift to state 40
+## Reductions:
 -- On FSM reduce production my_list(type_decl) ->
 
 State 40:
+## Known stack suffix:
+## type_decl my_list(type_decl)
+## LR(1) items:
 my_list(type_decl) -> type_decl my_list(type_decl) . [ FSM ]
+## Transitions:
+## Reductions:
 -- On FSM reduce production my_list(type_decl) -> type_decl my_list(type_decl)
 
 State 41:
+## Known stack suffix:
+## program
+## LR(1) items:
 program' -> program . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept program
 
 State 42:
+## Known stack suffix:
+## my_list(type_decl)
+## LR(1) items:
 program -> my_list(type_decl) . my_nonempty_list(fsm_model) my_nonempty_list(global) my_nonempty_list(fsm_inst) EOF [ # ]
+## Transitions:
 -- On FSM shift to state 43
 -- On my_nonempty_list(fsm_model) shift to state 182
 -- On fsm_model shift to state 252
+## Reductions:
 
 State 43:
+## Known stack suffix:
+## FSM
+## LR(1) items:
 fsm_model -> FSM . MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS COLON my_separated_list(COMMA,transition) SEMICOLON ITRANS COLON itransition SEMICOLON RBRACE [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
 -- On MODEL shift to state 44
+## Reductions:
 
 State 44:
+## Known stack suffix:
+## FSM MODEL
+## LR(1) items:
 fsm_model -> FSM MODEL . id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS COLON my_separated_list(COMMA,transition) SEMICOLON ITRANS COLON itransition SEMICOLON RBRACE [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
 -- On UID shift to state 45
 -- On LID shift to state 46
 -- On id shift to state 47
+## Reductions:
 
 State 45:
+## Known stack suffix:
+## UID
+## LR(1) items:
 id -> UID . [ RPAREN LT LPAREN EQUAL COMMA COLON ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production id -> UID
 -- On LT reduce production id -> UID
 -- On LPAREN reduce production id -> UID
@@ -421,7 +651,12 @@ id -> UID . [ RPAREN LT LPAREN EQUAL COMMA COLON ]
 -- On COLON reduce production id -> UID
 
 State 46:
+## Known stack suffix:
+## LID
+## LR(1) items:
 id -> LID . [ RPAREN LT LPAREN EQUAL COMMA COLON ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production id -> LID
 -- On LT reduce production id -> LID
 -- On LPAREN reduce production id -> LID
@@ -430,287 +665,556 @@ id -> LID . [ RPAREN LT LPAREN EQUAL COMMA COLON ]
 -- On COLON reduce production id -> LID
 
 State 47:
+## Known stack suffix:
+## FSM MODEL id
+## LR(1) items:
 fsm_model -> FSM MODEL id . optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS COLON my_separated_list(COMMA,transition) SEMICOLON ITRANS COLON itransition SEMICOLON RBRACE [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
 -- On LT shift to state 48
 -- On params shift to state 58
 -- On optional(params) shift to state 59
+## Reductions:
 -- On LPAREN reduce production optional(params) ->
 
 State 48:
+## Known stack suffix:
+## LT
+## LR(1) items:
 params -> LT . my_separated_list(COMMA,param) GT [ LPAREN ]
+## Transitions:
 -- On LID shift to state 49
 -- On param shift to state 52
 -- On my_separated_nonempty_list(COMMA,param) shift to state 55
 -- On my_separated_list(COMMA,param) shift to state 56
+## Reductions:
 -- On GT reduce production my_separated_list(COMMA,param) ->
 
 State 49:
+## Known stack suffix:
+## LID
+## LR(1) items:
 param -> LID . COLON typ [ GT COMMA ]
+## Transitions:
 -- On COLON shift to state 50
+## Reductions:
 
 State 50:
+## Known stack suffix:
+## LID COLON
+## LR(1) items:
 param -> LID COLON . typ [ GT COMMA ]
+## Transitions:
 -- On TYINT shift to state 4
 -- On TYEVENT shift to state 27
 -- On TYBOOL shift to state 28
 -- On LID shift to state 29
 -- On typ shift to state 51
+## Reductions:
 
 State 51:
+## Known stack suffix:
+## LID COLON typ
+## LR(1) items:
 param -> LID COLON typ . [ GT COMMA ]
+## Transitions:
+## Reductions:
 -- On GT reduce production param -> LID COLON typ
 -- On COMMA reduce production param -> LID COLON typ
 
 State 52:
+## Known stack suffix:
+## param
+## LR(1) items:
 my_separated_nonempty_list(COMMA,param) -> param . [ GT ]
 my_separated_nonempty_list(COMMA,param) -> param . COMMA my_separated_nonempty_list(COMMA,param) [ GT ]
+## Transitions:
 -- On COMMA shift to state 53
+## Reductions:
 -- On GT reduce production my_separated_nonempty_list(COMMA,param) -> param
 
 State 53:
+## Known stack suffix:
+## param COMMA
+## LR(1) items:
 my_separated_nonempty_list(COMMA,param) -> param COMMA . my_separated_nonempty_list(COMMA,param) [ GT ]
+## Transitions:
 -- On LID shift to state 49
 -- On param shift to state 52
 -- On my_separated_nonempty_list(COMMA,param) shift to state 54
+## Reductions:
 
 State 54:
+## Known stack suffix:
+## param COMMA my_separated_nonempty_list(COMMA,param)
+## LR(1) items:
 my_separated_nonempty_list(COMMA,param) -> param COMMA my_separated_nonempty_list(COMMA,param) . [ GT ]
+## Transitions:
+## Reductions:
 -- On GT reduce production my_separated_nonempty_list(COMMA,param) -> param COMMA my_separated_nonempty_list(COMMA,param)
 
 State 55:
+## Known stack suffix:
+## my_separated_nonempty_list(COMMA,param)
+## LR(1) items:
 my_separated_list(COMMA,param) -> my_separated_nonempty_list(COMMA,param) . [ GT ]
+## Transitions:
+## Reductions:
 -- On GT reduce production my_separated_list(COMMA,param) -> my_separated_nonempty_list(COMMA,param)
 
 State 56:
+## Known stack suffix:
+## LT my_separated_list(COMMA,param)
+## LR(1) items:
 params -> LT my_separated_list(COMMA,param) . GT [ LPAREN ]
+## Transitions:
 -- On GT shift to state 57
+## Reductions:
 
 State 57:
+## Known stack suffix:
+## LT my_separated_list(COMMA,param) GT
+## LR(1) items:
 params -> LT my_separated_list(COMMA,param) GT . [ LPAREN ]
+## Transitions:
+## Reductions:
 -- On LPAREN reduce production params -> LT my_separated_list(COMMA,param) GT
 
 State 58:
+## Known stack suffix:
+## params
+## LR(1) items:
 optional(params) -> params . [ LPAREN ]
+## Transitions:
+## Reductions:
 -- On LPAREN reduce production optional(params) -> params
 
 State 59:
+## Known stack suffix:
+## FSM MODEL id optional(params)
+## LR(1) items:
 fsm_model -> FSM MODEL id optional(params) . LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS COLON my_separated_list(COMMA,transition) SEMICOLON ITRANS COLON itransition SEMICOLON RBRACE [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
 -- On LPAREN shift to state 60
+## Reductions:
 
 State 60:
+## Known stack suffix:
+## FSM MODEL id optional(params) LPAREN
+## LR(1) items:
 fsm_model -> FSM MODEL id optional(params) LPAREN . my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS COLON my_separated_list(COMMA,transition) SEMICOLON ITRANS COLON itransition SEMICOLON RBRACE [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
 -- On OUT shift to state 61
 -- On INOUT shift to state 66
 -- On IN shift to state 68
 -- On my_separated_nonempty_list(COMMA,io) shift to state 70
 -- On my_separated_list(COMMA,io) shift to state 71
 -- On io shift to state 179
+## Reductions:
 -- On RPAREN reduce production my_separated_list(COMMA,io) ->
 
 State 61:
+## Known stack suffix:
+## OUT
+## LR(1) items:
 io -> OUT . io_desc [ RPAREN COMMA ]
+## Transitions:
 -- On LID shift to state 62
 -- On io_desc shift to state 65
+## Reductions:
 
 State 62:
+## Known stack suffix:
+## LID
+## LR(1) items:
 io_desc -> LID . COLON typ [ RPAREN COMMA ]
+## Transitions:
 -- On COLON shift to state 63
+## Reductions:
 
 State 63:
+## Known stack suffix:
+## LID COLON
+## LR(1) items:
 io_desc -> LID COLON . typ [ RPAREN COMMA ]
+## Transitions:
 -- On TYINT shift to state 4
 -- On TYEVENT shift to state 27
 -- On TYBOOL shift to state 28
 -- On LID shift to state 29
 -- On typ shift to state 64
+## Reductions:
 
 State 64:
+## Known stack suffix:
+## LID COLON typ
+## LR(1) items:
 io_desc -> LID COLON typ . [ RPAREN COMMA ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production io_desc -> LID COLON typ
 -- On COMMA reduce production io_desc -> LID COLON typ
 
 State 65:
+## Known stack suffix:
+## OUT io_desc
+## LR(1) items:
 io -> OUT io_desc . [ RPAREN COMMA ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production io -> OUT io_desc
 -- On COMMA reduce production io -> OUT io_desc
 
 State 66:
+## Known stack suffix:
+## INOUT
+## LR(1) items:
 io -> INOUT . io_desc [ RPAREN COMMA ]
+## Transitions:
 -- On LID shift to state 62
 -- On io_desc shift to state 67
+## Reductions:
 
 State 67:
+## Known stack suffix:
+## INOUT io_desc
+## LR(1) items:
 io -> INOUT io_desc . [ RPAREN COMMA ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production io -> INOUT io_desc
 -- On COMMA reduce production io -> INOUT io_desc
 
 State 68:
+## Known stack suffix:
+## IN
+## LR(1) items:
 io -> IN . io_desc [ RPAREN COMMA ]
+## Transitions:
 -- On LID shift to state 62
 -- On io_desc shift to state 69
+## Reductions:
 
 State 69:
+## Known stack suffix:
+## IN io_desc
+## LR(1) items:
 io -> IN io_desc . [ RPAREN COMMA ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production io -> IN io_desc
 -- On COMMA reduce production io -> IN io_desc
 
 State 70:
+## Known stack suffix:
+## my_separated_nonempty_list(COMMA,io)
+## LR(1) items:
 my_separated_list(COMMA,io) -> my_separated_nonempty_list(COMMA,io) . [ RPAREN ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production my_separated_list(COMMA,io) -> my_separated_nonempty_list(COMMA,io)
 
 State 71:
+## Known stack suffix:
+## FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io)
+## LR(1) items:
 fsm_model -> FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) . RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS COLON my_separated_list(COMMA,transition) SEMICOLON ITRANS COLON itransition SEMICOLON RBRACE [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
 -- On RPAREN shift to state 72
+## Reductions:
 
 State 72:
+## Known stack suffix:
+## FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN
+## LR(1) items:
 fsm_model -> FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN . LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS COLON my_separated_list(COMMA,transition) SEMICOLON ITRANS COLON itransition SEMICOLON RBRACE [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
 -- On LBRACE shift to state 73
+## Reductions:
 
 State 73:
+## Known stack suffix:
+## FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE
+## LR(1) items:
 fsm_model -> FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE . STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS COLON my_separated_list(COMMA,transition) SEMICOLON ITRANS COLON itransition SEMICOLON RBRACE [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
 -- On STATES shift to state 74
+## Reductions:
 
 State 74:
+## Known stack suffix:
+## FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES
+## LR(1) items:
 fsm_model -> FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES . COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS COLON my_separated_list(COMMA,transition) SEMICOLON ITRANS COLON itransition SEMICOLON RBRACE [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
 -- On COLON shift to state 75
+## Reductions:
 
 State 75:
+## Known stack suffix:
+## FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON
+## LR(1) items:
 fsm_model -> FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON . my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS COLON my_separated_list(COMMA,transition) SEMICOLON ITRANS COLON itransition SEMICOLON RBRACE [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
 -- On UID shift to state 31
 -- On my_separated_nonempty_list(COMMA,UID) shift to state 34
 -- On my_separated_list(COMMA,UID) shift to state 76
+## Reductions:
 -- On SEMICOLON reduce production my_separated_list(COMMA,UID) ->
 
 State 76:
+## Known stack suffix:
+## FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID)
+## LR(1) items:
 fsm_model -> FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) . SEMICOLON optional(vars) TRANS COLON my_separated_list(COMMA,transition) SEMICOLON ITRANS COLON itransition SEMICOLON RBRACE [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
 -- On SEMICOLON shift to state 77
+## Reductions:
 
 State 77:
+## Known stack suffix:
+## FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON
+## LR(1) items:
 fsm_model -> FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON . optional(vars) TRANS COLON my_separated_list(COMMA,transition) SEMICOLON ITRANS COLON itransition SEMICOLON RBRACE [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
 -- On VARS shift to state 78
 -- On vars shift to state 89
 -- On optional(vars) shift to state 90
+## Reductions:
 -- On TRANS reduce production optional(vars) ->
 
 State 78:
+## Known stack suffix:
+## VARS
+## LR(1) items:
 vars -> VARS . COLON loption(separated_nonempty_list(COMMA,var)) SEMICOLON [ TRANS ]
+## Transitions:
 -- On COLON shift to state 79
+## Reductions:
 
 State 79:
+## Known stack suffix:
+## VARS COLON
+## LR(1) items:
 vars -> VARS COLON . loption(separated_nonempty_list(COMMA,var)) SEMICOLON [ TRANS ]
+## Transitions:
 -- On LID shift to state 80
 -- On var shift to state 83
 -- On separated_nonempty_list(COMMA,var) shift to state 86
 -- On loption(separated_nonempty_list(COMMA,var)) shift to state 87
+## Reductions:
 -- On SEMICOLON reduce production loption(separated_nonempty_list(COMMA,var)) ->
 
 State 80:
+## Known stack suffix:
+## LID
+## LR(1) items:
 var -> LID . COLON typ [ SEMICOLON COMMA ]
+## Transitions:
 -- On COLON shift to state 81
+## Reductions:
 
 State 81:
+## Known stack suffix:
+## LID COLON
+## LR(1) items:
 var -> LID COLON . typ [ SEMICOLON COMMA ]
+## Transitions:
 -- On TYINT shift to state 4
 -- On TYEVENT shift to state 27
 -- On TYBOOL shift to state 28
 -- On LID shift to state 29
 -- On typ shift to state 82
+## Reductions:
 
 State 82:
+## Known stack suffix:
+## LID COLON typ
+## LR(1) items:
 var -> LID COLON typ . [ SEMICOLON COMMA ]
+## Transitions:
+## Reductions:
 -- On SEMICOLON reduce production var -> LID COLON typ
 -- On COMMA reduce production var -> LID COLON typ
 
 State 83:
+## Known stack suffix:
+## var
+## LR(1) items:
 separated_nonempty_list(COMMA,var) -> var . [ SEMICOLON ]
 separated_nonempty_list(COMMA,var) -> var . COMMA separated_nonempty_list(COMMA,var) [ SEMICOLON ]
+## Transitions:
 -- On COMMA shift to state 84
+## Reductions:
 -- On SEMICOLON reduce production separated_nonempty_list(COMMA,var) -> var
 
 State 84:
+## Known stack suffix:
+## var COMMA
+## LR(1) items:
 separated_nonempty_list(COMMA,var) -> var COMMA . separated_nonempty_list(COMMA,var) [ SEMICOLON ]
+## Transitions:
 -- On LID shift to state 80
 -- On var shift to state 83
 -- On separated_nonempty_list(COMMA,var) shift to state 85
+## Reductions:
 
 State 85:
+## Known stack suffix:
+## var COMMA separated_nonempty_list(COMMA,var)
+## LR(1) items:
 separated_nonempty_list(COMMA,var) -> var COMMA separated_nonempty_list(COMMA,var) . [ SEMICOLON ]
+## Transitions:
+## Reductions:
 -- On SEMICOLON reduce production separated_nonempty_list(COMMA,var) -> var COMMA separated_nonempty_list(COMMA,var)
 
 State 86:
+## Known stack suffix:
+## separated_nonempty_list(COMMA,var)
+## LR(1) items:
 loption(separated_nonempty_list(COMMA,var)) -> separated_nonempty_list(COMMA,var) . [ SEMICOLON ]
+## Transitions:
+## Reductions:
 -- On SEMICOLON reduce production loption(separated_nonempty_list(COMMA,var)) -> separated_nonempty_list(COMMA,var)
 
 State 87:
+## Known stack suffix:
+## VARS COLON loption(separated_nonempty_list(COMMA,var))
+## LR(1) items:
 vars -> VARS COLON loption(separated_nonempty_list(COMMA,var)) . SEMICOLON [ TRANS ]
+## Transitions:
 -- On SEMICOLON shift to state 88
+## Reductions:
 
 State 88:
+## Known stack suffix:
+## VARS COLON loption(separated_nonempty_list(COMMA,var)) SEMICOLON
+## LR(1) items:
 vars -> VARS COLON loption(separated_nonempty_list(COMMA,var)) SEMICOLON . [ TRANS ]
+## Transitions:
+## Reductions:
 -- On TRANS reduce production vars -> VARS COLON loption(separated_nonempty_list(COMMA,var)) SEMICOLON
 
 State 89:
+## Known stack suffix:
+## vars
+## LR(1) items:
 optional(vars) -> vars . [ TRANS ]
+## Transitions:
+## Reductions:
 -- On TRANS reduce production optional(vars) -> vars
 
 State 90:
+## Known stack suffix:
+## FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars)
+## LR(1) items:
 fsm_model -> FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) . TRANS COLON my_separated_list(COMMA,transition) SEMICOLON ITRANS COLON itransition SEMICOLON RBRACE [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
 -- On TRANS shift to state 91
+## Reductions:
 
 State 91:
+## Known stack suffix:
+## FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS
+## LR(1) items:
 fsm_model -> FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS . COLON my_separated_list(COMMA,transition) SEMICOLON ITRANS COLON itransition SEMICOLON RBRACE [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
 -- On COLON shift to state 92
+## Reductions:
 
 State 92:
+## Known stack suffix:
+## FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS COLON
+## LR(1) items:
 fsm_model -> FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS COLON . my_separated_list(COMMA,transition) SEMICOLON ITRANS COLON itransition SEMICOLON RBRACE [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
 -- On TIMES shift to state 93
 -- On transition shift to state 94
 -- On prio shift to state 96
 -- On my_separated_nonempty_list(COMMA,transition) shift to state 168
 -- On my_separated_list(COMMA,transition) shift to state 169
+## Reductions:
 -- On UID reduce production prio ->
 -- On SEMICOLON reduce production my_separated_list(COMMA,transition) ->
 
 State 93:
+## Known stack suffix:
+## TIMES
+## LR(1) items:
 prio -> TIMES . [ UID ]
+## Transitions:
+## Reductions:
 -- On UID reduce production prio -> TIMES
 
 State 94:
+## Known stack suffix:
+## transition
+## LR(1) items:
 my_separated_nonempty_list(COMMA,transition) -> transition . [ SEMICOLON ]
 my_separated_nonempty_list(COMMA,transition) -> transition . COMMA my_separated_nonempty_list(COMMA,transition) [ SEMICOLON ]
+## Transitions:
 -- On COMMA shift to state 95
+## Reductions:
 -- On SEMICOLON reduce production my_separated_nonempty_list(COMMA,transition) -> transition
 
 State 95:
+## Known stack suffix:
+## transition COMMA
+## LR(1) items:
 my_separated_nonempty_list(COMMA,transition) -> transition COMMA . my_separated_nonempty_list(COMMA,transition) [ SEMICOLON ]
+## Transitions:
 -- On TIMES shift to state 93
 -- On transition shift to state 94
 -- On prio shift to state 96
 -- On my_separated_nonempty_list(COMMA,transition) shift to state 167
+## Reductions:
 -- On UID reduce production prio ->
 
 State 96:
+## Known stack suffix:
+## prio
+## LR(1) items:
 transition -> prio . UID ARROW_START condition optional(actions) ARROW_END UID [ SEMICOLON COMMA ]
+## Transitions:
 -- On UID shift to state 97
+## Reductions:
 
 State 97:
+## Known stack suffix:
+## prio UID
+## LR(1) items:
 transition -> prio UID . ARROW_START condition optional(actions) ARROW_END UID [ SEMICOLON COMMA ]
+## Transitions:
 -- On ARROW_START shift to state 98
+## Reductions:
 
 State 98:
+## Known stack suffix:
+## prio UID ARROW_START
+## LR(1) items:
 transition -> prio UID ARROW_START . condition optional(actions) ARROW_END UID [ SEMICOLON COMMA ]
+## Transitions:
 -- On LID shift to state 99
 -- On condition shift to state 154
+## Reductions:
 
 State 99:
+## Known stack suffix:
+## LID
+## LR(1) items:
 condition -> LID . [ BAR ARROW_END ]
 condition -> LID . DOT separated_nonempty_list(DOT,guard) [ BAR ARROW_END ]
+## Transitions:
 -- On DOT shift to state 100
+## Reductions:
 -- On BAR reduce production condition -> LID
 -- On ARROW_END reduce production condition -> LID
 
 State 100:
+## Known stack suffix:
+## LID DOT
+## LR(1) items:
 condition -> LID DOT . separated_nonempty_list(DOT,guard) [ BAR ARROW_END ]
+## Transitions:
 -- On UID shift to state 101
 -- On TRUE shift to state 102
 -- On LPAREN shift to state 103
@@ -722,9 +1226,15 @@ condition -> LID DOT . separated_nonempty_list(DOT,guard) [ BAR ARROW_END ]
 -- On guard shift to state 138
 -- On expr shift to state 141
 -- On bool shift to state 110
+## Reductions:
 
 State 101:
+## Known stack suffix:
+## UID
+## LR(1) items:
 expr -> UID . [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+## Transitions:
+## Reductions:
 -- On TIMES reduce production expr -> UID
 -- On SEMICOLON reduce production expr -> UID
 -- On RPAREN reduce production expr -> UID
@@ -745,7 +1255,12 @@ expr -> UID . [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE 
 -- On ARROW_END reduce production expr -> UID
 
 State 102:
+## Known stack suffix:
+## TRUE
+## LR(1) items:
 bool -> TRUE . [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COMMA COLON BAR ARROW_END ]
+## Transitions:
+## Reductions:
 -- On TIMES reduce production bool -> TRUE
 -- On SEMICOLON reduce production bool -> TRUE
 -- On RPAREN reduce production bool -> TRUE
@@ -767,7 +1282,11 @@ bool -> TRUE . [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE
 -- On ARROW_END reduce production bool -> TRUE
 
 State 103:
+## Known stack suffix:
+## LPAREN
+## LR(1) items:
 expr -> LPAREN . expr RPAREN [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+## Transitions:
 -- On UID shift to state 101
 -- On TRUE shift to state 102
 -- On LPAREN shift to state 103
@@ -776,9 +1295,15 @@ expr -> LPAREN . expr RPAREN [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MI
 -- On FALSE shift to state 106
 -- On expr shift to state 107
 -- On bool shift to state 110
+## Reductions:
 
 State 104:
+## Known stack suffix:
+## LID
+## LR(1) items:
 expr -> LID . [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+## Transitions:
+## Reductions:
 -- On TIMES reduce production expr -> LID
 -- On SEMICOLON reduce production expr -> LID
 -- On RPAREN reduce production expr -> LID
@@ -799,7 +1324,12 @@ expr -> LID . [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE 
 -- On ARROW_END reduce production expr -> LID
 
 State 105:
+## Known stack suffix:
+## INT
+## LR(1) items:
 expr -> INT . [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+## Transitions:
+## Reductions:
 -- On TIMES reduce production expr -> INT
 -- On SEMICOLON reduce production expr -> INT
 -- On RPAREN reduce production expr -> INT
@@ -820,7 +1350,12 @@ expr -> INT . [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE 
 -- On ARROW_END reduce production expr -> INT
 
 State 106:
+## Known stack suffix:
+## FALSE
+## LR(1) items:
 bool -> FALSE . [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COMMA COLON BAR ARROW_END ]
+## Transitions:
+## Reductions:
 -- On TIMES reduce production bool -> FALSE
 -- On SEMICOLON reduce production bool -> FALSE
 -- On RPAREN reduce production bool -> FALSE
@@ -842,6 +1377,9 @@ bool -> FALSE . [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GT
 -- On ARROW_END reduce production bool -> FALSE
 
 State 107:
+## Known stack suffix:
+## LPAREN expr
+## LR(1) items:
 expr -> LPAREN expr . RPAREN [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
 expr -> expr . PLUS expr [ TIMES RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ]
 expr -> expr . MINUS expr [ TIMES RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ]
@@ -855,6 +1393,7 @@ expr -> expr . LT expr [ TIMES RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE G
 expr -> expr . GTE expr [ TIMES RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ]
 expr -> expr . LTE expr [ TIMES RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ]
 expr -> expr . QMARK expr COLON expr [ TIMES RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ]
+## Transitions:
 -- On TIMES shift to state 108
 -- On RPAREN shift to state 111
 -- On QMARK shift to state 112
@@ -868,9 +1407,14 @@ expr -> expr . QMARK expr COLON expr [ TIMES RPAREN QMARK PLUS NOTEQUAL MOD MINU
 -- On GT shift to state 130
 -- On EQUAL shift to state 132
 -- On DIV shift to state 118
+## Reductions:
 
 State 108:
+## Known stack suffix:
+## expr TIMES
+## LR(1) items:
 expr -> expr TIMES . expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+## Transitions:
 -- On UID shift to state 101
 -- On TRUE shift to state 102
 -- On LPAREN shift to state 103
@@ -879,8 +1423,12 @@ expr -> expr TIMES . expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS
 -- On FALSE shift to state 106
 -- On expr shift to state 109
 -- On bool shift to state 110
+## Reductions:
 
 State 109:
+## Known stack suffix:
+## expr TIMES expr
+## LR(1) items:
 expr -> expr . PLUS expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
 expr -> expr . MINUS expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
 expr -> expr . TIMES expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
@@ -894,6 +1442,8 @@ expr -> expr . LT expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LT
 expr -> expr . GTE expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
 expr -> expr . LTE expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
 expr -> expr . QMARK expr COLON expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+## Transitions:
+## Reductions:
 -- On TIMES reduce production expr -> expr TIMES expr
 -- On SEMICOLON reduce production expr -> expr TIMES expr
 -- On RPAREN reduce production expr -> expr TIMES expr
@@ -914,7 +1464,12 @@ expr -> expr . QMARK expr COLON expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUA
 -- On ARROW_END reduce production expr -> expr TIMES expr
 
 State 110:
+## Known stack suffix:
+## bool
+## LR(1) items:
 expr -> bool . [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+## Transitions:
+## Reductions:
 -- On TIMES reduce production expr -> bool
 -- On SEMICOLON reduce production expr -> bool
 -- On RPAREN reduce production expr -> bool
@@ -935,7 +1490,12 @@ expr -> bool . [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE
 -- On ARROW_END reduce production expr -> bool
 
 State 111:
+## Known stack suffix:
+## LPAREN expr RPAREN
+## LR(1) items:
 expr -> LPAREN expr RPAREN . [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+## Transitions:
+## Reductions:
 -- On TIMES reduce production expr -> LPAREN expr RPAREN
 -- On SEMICOLON reduce production expr -> LPAREN expr RPAREN
 -- On RPAREN reduce production expr -> LPAREN expr RPAREN
@@ -956,7 +1516,11 @@ expr -> LPAREN expr RPAREN . [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MI
 -- On ARROW_END reduce production expr -> LPAREN expr RPAREN
 
 State 112:
+## Known stack suffix:
+## expr QMARK
+## LR(1) items:
 expr -> expr QMARK . expr COLON expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+## Transitions:
 -- On UID shift to state 101
 -- On TRUE shift to state 102
 -- On LPAREN shift to state 103
@@ -965,8 +1529,12 @@ expr -> expr QMARK . expr COLON expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUA
 -- On FALSE shift to state 106
 -- On expr shift to state 113
 -- On bool shift to state 110
+## Reductions:
 
 State 113:
+## Known stack suffix:
+## expr QMARK expr
+## LR(1) items:
 expr -> expr . PLUS expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV COLON ]
 expr -> expr . MINUS expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV COLON ]
 expr -> expr . TIMES expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV COLON ]
@@ -980,6 +1548,7 @@ expr -> expr . GTE expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUA
 expr -> expr . LTE expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV COLON ]
 expr -> expr . QMARK expr COLON expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV COLON ]
 expr -> expr QMARK expr . COLON expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+## Transitions:
 -- On TIMES shift to state 108
 -- On QMARK shift to state 112
 -- On PLUS shift to state 114
@@ -993,9 +1562,14 @@ expr -> expr QMARK expr . COLON expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUA
 -- On EQUAL shift to state 132
 -- On DIV shift to state 118
 -- On COLON shift to state 134
+## Reductions:
 
 State 114:
+## Known stack suffix:
+## expr PLUS
+## LR(1) items:
 expr -> expr PLUS . expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+## Transitions:
 -- On UID shift to state 101
 -- On TRUE shift to state 102
 -- On LPAREN shift to state 103
@@ -1004,8 +1578,12 @@ expr -> expr PLUS . expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS 
 -- On FALSE shift to state 106
 -- On expr shift to state 115
 -- On bool shift to state 110
+## Reductions:
 
 State 115:
+## Known stack suffix:
+## expr PLUS expr
+## LR(1) items:
 expr -> expr . PLUS expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
 expr -> expr PLUS expr . [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
 expr -> expr . MINUS expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
@@ -1019,9 +1597,11 @@ expr -> expr . LT expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LT
 expr -> expr . GTE expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
 expr -> expr . LTE expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
 expr -> expr . QMARK expr COLON expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+## Transitions:
 -- On TIMES shift to state 108
 -- On MOD shift to state 116
 -- On DIV shift to state 118
+## Reductions:
 -- On SEMICOLON reduce production expr -> expr PLUS expr
 -- On RPAREN reduce production expr -> expr PLUS expr
 -- On QMARK reduce production expr -> expr PLUS expr
@@ -1039,7 +1619,11 @@ expr -> expr . QMARK expr COLON expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUA
 -- On ARROW_END reduce production expr -> expr PLUS expr
 
 State 116:
+## Known stack suffix:
+## expr MOD
+## LR(1) items:
 expr -> expr MOD . expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+## Transitions:
 -- On UID shift to state 101
 -- On TRUE shift to state 102
 -- On LPAREN shift to state 103
@@ -1048,8 +1632,12 @@ expr -> expr MOD . expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS L
 -- On FALSE shift to state 106
 -- On expr shift to state 117
 -- On bool shift to state 110
+## Reductions:
 
 State 117:
+## Known stack suffix:
+## expr MOD expr
+## LR(1) items:
 expr -> expr . PLUS expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
 expr -> expr . MINUS expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
 expr -> expr . TIMES expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
@@ -1063,6 +1651,8 @@ expr -> expr . LT expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LT
 expr -> expr . GTE expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
 expr -> expr . LTE expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
 expr -> expr . QMARK expr COLON expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+## Transitions:
+## Reductions:
 -- On TIMES reduce production expr -> expr MOD expr
 -- On SEMICOLON reduce production expr -> expr MOD expr
 -- On RPAREN reduce production expr -> expr MOD expr
@@ -1083,7 +1673,11 @@ expr -> expr . QMARK expr COLON expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUA
 -- On ARROW_END reduce production expr -> expr MOD expr
 
 State 118:
+## Known stack suffix:
+## expr DIV
+## LR(1) items:
 expr -> expr DIV . expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+## Transitions:
 -- On UID shift to state 101
 -- On TRUE shift to state 102
 -- On LPAREN shift to state 103
@@ -1092,8 +1686,12 @@ expr -> expr DIV . expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS L
 -- On FALSE shift to state 106
 -- On expr shift to state 119
 -- On bool shift to state 110
+## Reductions:
 
 State 119:
+## Known stack suffix:
+## expr DIV expr
+## LR(1) items:
 expr -> expr . PLUS expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
 expr -> expr . MINUS expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
 expr -> expr . TIMES expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
@@ -1107,6 +1705,8 @@ expr -> expr . LT expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LT
 expr -> expr . GTE expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
 expr -> expr . LTE expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
 expr -> expr . QMARK expr COLON expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+## Transitions:
+## Reductions:
 -- On TIMES reduce production expr -> expr DIV expr
 -- On SEMICOLON reduce production expr -> expr DIV expr
 -- On RPAREN reduce production expr -> expr DIV expr
@@ -1127,7 +1727,11 @@ expr -> expr . QMARK expr COLON expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUA
 -- On ARROW_END reduce production expr -> expr DIV expr
 
 State 120:
+## Known stack suffix:
+## expr NOTEQUAL
+## LR(1) items:
 expr -> expr NOTEQUAL . expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+## Transitions:
 -- On UID shift to state 101
 -- On TRUE shift to state 102
 -- On LPAREN shift to state 103
@@ -1136,8 +1740,12 @@ expr -> expr NOTEQUAL . expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MI
 -- On FALSE shift to state 106
 -- On expr shift to state 121
 -- On bool shift to state 110
+## Reductions:
 
 State 121:
+## Known stack suffix:
+## expr NOTEQUAL expr
+## LR(1) items:
 expr -> expr . PLUS expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
 expr -> expr . MINUS expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
 expr -> expr . TIMES expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
@@ -1151,11 +1759,13 @@ expr -> expr . LT expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LT
 expr -> expr . GTE expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
 expr -> expr . LTE expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
 expr -> expr . QMARK expr COLON expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+## Transitions:
 -- On TIMES shift to state 108
 -- On PLUS shift to state 114
 -- On MOD shift to state 116
 -- On MINUS shift to state 122
 -- On DIV shift to state 118
+## Reductions:
 -- On SEMICOLON reduce production expr -> expr NOTEQUAL expr
 -- On RPAREN reduce production expr -> expr NOTEQUAL expr
 -- On QMARK reduce production expr -> expr NOTEQUAL expr
@@ -1171,7 +1781,11 @@ expr -> expr . QMARK expr COLON expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUA
 -- On ARROW_END reduce production expr -> expr NOTEQUAL expr
 
 State 122:
+## Known stack suffix:
+## expr MINUS
+## LR(1) items:
 expr -> expr MINUS . expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+## Transitions:
 -- On UID shift to state 101
 -- On TRUE shift to state 102
 -- On LPAREN shift to state 103
@@ -1180,8 +1794,12 @@ expr -> expr MINUS . expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS
 -- On FALSE shift to state 106
 -- On expr shift to state 123
 -- On bool shift to state 110
+## Reductions:
 
 State 123:
+## Known stack suffix:
+## expr MINUS expr
+## LR(1) items:
 expr -> expr . PLUS expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
 expr -> expr . MINUS expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
 expr -> expr MINUS expr . [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
@@ -1195,9 +1813,11 @@ expr -> expr . LT expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LT
 expr -> expr . GTE expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
 expr -> expr . LTE expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
 expr -> expr . QMARK expr COLON expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+## Transitions:
 -- On TIMES shift to state 108
 -- On MOD shift to state 116
 -- On DIV shift to state 118
+## Reductions:
 -- On SEMICOLON reduce production expr -> expr MINUS expr
 -- On RPAREN reduce production expr -> expr MINUS expr
 -- On QMARK reduce production expr -> expr MINUS expr
@@ -1215,7 +1835,11 @@ expr -> expr . QMARK expr COLON expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUA
 -- On ARROW_END reduce production expr -> expr MINUS expr
 
 State 124:
+## Known stack suffix:
+## expr LTE
+## LR(1) items:
 expr -> expr LTE . expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+## Transitions:
 -- On UID shift to state 101
 -- On TRUE shift to state 102
 -- On LPAREN shift to state 103
@@ -1224,8 +1848,12 @@ expr -> expr LTE . expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS L
 -- On FALSE shift to state 106
 -- On expr shift to state 125
 -- On bool shift to state 110
+## Reductions:
 
 State 125:
+## Known stack suffix:
+## expr LTE expr
+## LR(1) items:
 expr -> expr . PLUS expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
 expr -> expr . MINUS expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
 expr -> expr . TIMES expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
@@ -1239,11 +1867,13 @@ expr -> expr . GTE expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS L
 expr -> expr . LTE expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
 expr -> expr LTE expr . [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
 expr -> expr . QMARK expr COLON expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+## Transitions:
 -- On TIMES shift to state 108
 -- On PLUS shift to state 114
 -- On MOD shift to state 116
 -- On MINUS shift to state 122
 -- On DIV shift to state 118
+## Reductions:
 -- On SEMICOLON reduce production expr -> expr LTE expr
 -- On RPAREN reduce production expr -> expr LTE expr
 -- On QMARK reduce production expr -> expr LTE expr
@@ -1259,7 +1889,11 @@ expr -> expr . QMARK expr COLON expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUA
 -- On ARROW_END reduce production expr -> expr LTE expr
 
 State 126:
+## Known stack suffix:
+## expr LT
+## LR(1) items:
 expr -> expr LT . expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+## Transitions:
 -- On UID shift to state 101
 -- On TRUE shift to state 102
 -- On LPAREN shift to state 103
@@ -1268,8 +1902,12 @@ expr -> expr LT . expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LT
 -- On FALSE shift to state 106
 -- On expr shift to state 127
 -- On bool shift to state 110
+## Reductions:
 
 State 127:
+## Known stack suffix:
+## expr LT expr
+## LR(1) items:
 expr -> expr . PLUS expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
 expr -> expr . MINUS expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
 expr -> expr . TIMES expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
@@ -1283,11 +1921,13 @@ expr -> expr LT expr . [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LT
 expr -> expr . GTE expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
 expr -> expr . LTE expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
 expr -> expr . QMARK expr COLON expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+## Transitions:
 -- On TIMES shift to state 108
 -- On PLUS shift to state 114
 -- On MOD shift to state 116
 -- On MINUS shift to state 122
 -- On DIV shift to state 118
+## Reductions:
 -- On SEMICOLON reduce production expr -> expr LT expr
 -- On RPAREN reduce production expr -> expr LT expr
 -- On QMARK reduce production expr -> expr LT expr
@@ -1303,7 +1943,11 @@ expr -> expr . QMARK expr COLON expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUA
 -- On ARROW_END reduce production expr -> expr LT expr
 
 State 128:
+## Known stack suffix:
+## expr GTE
+## LR(1) items:
 expr -> expr GTE . expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+## Transitions:
 -- On UID shift to state 101
 -- On TRUE shift to state 102
 -- On LPAREN shift to state 103
@@ -1312,8 +1956,12 @@ expr -> expr GTE . expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS L
 -- On FALSE shift to state 106
 -- On expr shift to state 129
 -- On bool shift to state 110
+## Reductions:
 
 State 129:
+## Known stack suffix:
+## expr GTE expr
+## LR(1) items:
 expr -> expr . PLUS expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
 expr -> expr . MINUS expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
 expr -> expr . TIMES expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
@@ -1327,11 +1975,13 @@ expr -> expr . GTE expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS L
 expr -> expr GTE expr . [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
 expr -> expr . LTE expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
 expr -> expr . QMARK expr COLON expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+## Transitions:
 -- On TIMES shift to state 108
 -- On PLUS shift to state 114
 -- On MOD shift to state 116
 -- On MINUS shift to state 122
 -- On DIV shift to state 118
+## Reductions:
 -- On SEMICOLON reduce production expr -> expr GTE expr
 -- On RPAREN reduce production expr -> expr GTE expr
 -- On QMARK reduce production expr -> expr GTE expr
@@ -1347,7 +1997,11 @@ expr -> expr . QMARK expr COLON expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUA
 -- On ARROW_END reduce production expr -> expr GTE expr
 
 State 130:
+## Known stack suffix:
+## expr GT
+## LR(1) items:
 expr -> expr GT . expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+## Transitions:
 -- On UID shift to state 101
 -- On TRUE shift to state 102
 -- On LPAREN shift to state 103
@@ -1356,8 +2010,12 @@ expr -> expr GT . expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LT
 -- On FALSE shift to state 106
 -- On expr shift to state 131
 -- On bool shift to state 110
+## Reductions:
 
 State 131:
+## Known stack suffix:
+## expr GT expr
+## LR(1) items:
 expr -> expr . PLUS expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
 expr -> expr . MINUS expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
 expr -> expr . TIMES expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
@@ -1371,11 +2029,13 @@ expr -> expr . LT expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LT
 expr -> expr . GTE expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
 expr -> expr . LTE expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
 expr -> expr . QMARK expr COLON expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+## Transitions:
 -- On TIMES shift to state 108
 -- On PLUS shift to state 114
 -- On MOD shift to state 116
 -- On MINUS shift to state 122
 -- On DIV shift to state 118
+## Reductions:
 -- On SEMICOLON reduce production expr -> expr GT expr
 -- On RPAREN reduce production expr -> expr GT expr
 -- On QMARK reduce production expr -> expr GT expr
@@ -1391,7 +2051,11 @@ expr -> expr . QMARK expr COLON expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUA
 -- On ARROW_END reduce production expr -> expr GT expr
 
 State 132:
+## Known stack suffix:
+## expr EQUAL
+## LR(1) items:
 expr -> expr EQUAL . expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+## Transitions:
 -- On UID shift to state 101
 -- On TRUE shift to state 102
 -- On LPAREN shift to state 103
@@ -1400,8 +2064,12 @@ expr -> expr EQUAL . expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS
 -- On FALSE shift to state 106
 -- On expr shift to state 133
 -- On bool shift to state 110
+## Reductions:
 
 State 133:
+## Known stack suffix:
+## expr EQUAL expr
+## LR(1) items:
 expr -> expr . PLUS expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
 expr -> expr . MINUS expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
 expr -> expr . TIMES expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
@@ -1415,11 +2083,13 @@ expr -> expr . LT expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LT
 expr -> expr . GTE expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
 expr -> expr . LTE expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
 expr -> expr . QMARK expr COLON expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+## Transitions:
 -- On TIMES shift to state 108
 -- On PLUS shift to state 114
 -- On MOD shift to state 116
 -- On MINUS shift to state 122
 -- On DIV shift to state 118
+## Reductions:
 -- On SEMICOLON reduce production expr -> expr EQUAL expr
 -- On RPAREN reduce production expr -> expr EQUAL expr
 -- On QMARK reduce production expr -> expr EQUAL expr
@@ -1435,7 +2105,11 @@ expr -> expr . QMARK expr COLON expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUA
 -- On ARROW_END reduce production expr -> expr EQUAL expr
 
 State 134:
+## Known stack suffix:
+## expr QMARK expr COLON
+## LR(1) items:
 expr -> expr QMARK expr COLON . expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+## Transitions:
 -- On UID shift to state 101
 -- On TRUE shift to state 102
 -- On LPAREN shift to state 103
@@ -1444,8 +2118,12 @@ expr -> expr QMARK expr COLON . expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUA
 -- On FALSE shift to state 106
 -- On expr shift to state 135
 -- On bool shift to state 110
+## Reductions:
 
 State 135:
+## Known stack suffix:
+## expr QMARK expr COLON expr
+## LR(1) items:
 expr -> expr . PLUS expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
 expr -> expr . MINUS expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
 expr -> expr . TIMES expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
@@ -1459,6 +2137,7 @@ expr -> expr . GTE expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS L
 expr -> expr . LTE expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
 expr -> expr . QMARK expr COLON expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
 expr -> expr QMARK expr COLON expr . [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+## Transitions:
 -- On TIMES shift to state 108
 -- On PLUS shift to state 114
 -- On NOTEQUAL shift to state 120
@@ -1470,6 +2149,7 @@ expr -> expr QMARK expr COLON expr . [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUA
 -- On GT shift to state 130
 -- On EQUAL shift to state 132
 -- On DIV shift to state 118
+## Reductions:
 -- On SEMICOLON reduce production expr -> expr QMARK expr COLON expr
 -- On RPAREN reduce production expr -> expr QMARK expr COLON expr
 -- On DOT reduce production expr -> expr QMARK expr COLON expr
@@ -1478,25 +2158,44 @@ expr -> expr QMARK expr COLON expr . [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUA
 -- On ARROW_END reduce production expr -> expr QMARK expr COLON expr
 
 State 136:
+## Known stack suffix:
+## LID DOT separated_nonempty_list(DOT,guard)
+## LR(1) items:
 condition -> LID DOT separated_nonempty_list(DOT,guard) . [ BAR ARROW_END ]
+## Transitions:
+## Reductions:
 -- On BAR reduce production condition -> LID DOT separated_nonempty_list(DOT,guard)
 -- On ARROW_END reduce production condition -> LID DOT separated_nonempty_list(DOT,guard)
 
 State 137:
+## Known stack suffix:
+## guard_expr
+## LR(1) items:
 guard -> guard_expr . [ DOT BAR ARROW_END ]
+## Transitions:
+## Reductions:
 -- On DOT reduce production guard -> guard_expr
 -- On BAR reduce production guard -> guard_expr
 -- On ARROW_END reduce production guard -> guard_expr
 
 State 138:
+## Known stack suffix:
+## guard
+## LR(1) items:
 separated_nonempty_list(DOT,guard) -> guard . [ BAR ARROW_END ]
 separated_nonempty_list(DOT,guard) -> guard . DOT separated_nonempty_list(DOT,guard) [ BAR ARROW_END ]
+## Transitions:
 -- On DOT shift to state 139
+## Reductions:
 -- On BAR reduce production separated_nonempty_list(DOT,guard) -> guard
 -- On ARROW_END reduce production separated_nonempty_list(DOT,guard) -> guard
 
 State 139:
+## Known stack suffix:
+## guard DOT
+## LR(1) items:
 separated_nonempty_list(DOT,guard) -> guard DOT . separated_nonempty_list(DOT,guard) [ BAR ARROW_END ]
+## Transitions:
 -- On UID shift to state 101
 -- On TRUE shift to state 102
 -- On LPAREN shift to state 103
@@ -1508,13 +2207,22 @@ separated_nonempty_list(DOT,guard) -> guard DOT . separated_nonempty_list(DOT,gu
 -- On guard shift to state 138
 -- On expr shift to state 141
 -- On bool shift to state 110
+## Reductions:
 
 State 140:
+## Known stack suffix:
+## guard DOT separated_nonempty_list(DOT,guard)
+## LR(1) items:
 separated_nonempty_list(DOT,guard) -> guard DOT separated_nonempty_list(DOT,guard) . [ BAR ARROW_END ]
+## Transitions:
+## Reductions:
 -- On BAR reduce production separated_nonempty_list(DOT,guard) -> guard DOT separated_nonempty_list(DOT,guard)
 -- On ARROW_END reduce production separated_nonempty_list(DOT,guard) -> guard DOT separated_nonempty_list(DOT,guard)
 
 State 141:
+## Known stack suffix:
+## expr
+## LR(1) items:
 expr -> expr . PLUS expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ]
 expr -> expr . MINUS expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ]
 expr -> expr . TIMES expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ]
@@ -1533,6 +2241,7 @@ guard_expr -> expr . GT expr [ DOT BAR ARROW_END ]
 guard_expr -> expr . LT expr [ DOT BAR ARROW_END ]
 guard_expr -> expr . GTE expr [ DOT BAR ARROW_END ]
 guard_expr -> expr . LTE expr [ DOT BAR ARROW_END ]
+## Transitions:
 -- On TIMES shift to state 108
 -- On QMARK shift to state 112
 -- On PLUS shift to state 114
@@ -1545,10 +2254,15 @@ guard_expr -> expr . LTE expr [ DOT BAR ARROW_END ]
 -- On GT shift to state 150
 -- On EQUAL shift to state 152
 -- On DIV shift to state 118
+## Reductions:
 
 State 142:
+## Known stack suffix:
+## expr NOTEQUAL
+## LR(1) items:
 expr -> expr NOTEQUAL . expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ]
 guard_expr -> expr NOTEQUAL . expr [ DOT BAR ARROW_END ]
+## Transitions:
 -- On UID shift to state 101
 -- On TRUE shift to state 102
 -- On LPAREN shift to state 103
@@ -1557,8 +2271,12 @@ guard_expr -> expr NOTEQUAL . expr [ DOT BAR ARROW_END ]
 -- On FALSE shift to state 106
 -- On expr shift to state 143
 -- On bool shift to state 110
+## Reductions:
 
 State 143:
+## Known stack suffix:
+## expr NOTEQUAL expr
+## LR(1) items:
 expr -> expr . PLUS expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
 expr -> expr . MINUS expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
 expr -> expr . TIMES expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
@@ -1573,11 +2291,13 @@ expr -> expr . GTE expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUA
 expr -> expr . LTE expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
 expr -> expr . QMARK expr COLON expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
 guard_expr -> expr NOTEQUAL expr . [ DOT BAR ARROW_END ]
+## Transitions:
 -- On TIMES shift to state 108
 -- On PLUS shift to state 114
 -- On MOD shift to state 116
 -- On MINUS shift to state 122
 -- On DIV shift to state 118
+## Reductions:
 -- On QMARK reduce production expr -> expr NOTEQUAL expr
 -- On NOTEQUAL reduce production expr -> expr NOTEQUAL expr
 -- On LTE reduce production expr -> expr NOTEQUAL expr
@@ -1590,8 +2310,12 @@ guard_expr -> expr NOTEQUAL expr . [ DOT BAR ARROW_END ]
 -- On ARROW_END reduce production guard_expr -> expr NOTEQUAL expr
 
 State 144:
+## Known stack suffix:
+## expr LTE
+## LR(1) items:
 expr -> expr LTE . expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ]
 guard_expr -> expr LTE . expr [ DOT BAR ARROW_END ]
+## Transitions:
 -- On UID shift to state 101
 -- On TRUE shift to state 102
 -- On LPAREN shift to state 103
@@ -1600,8 +2324,12 @@ guard_expr -> expr LTE . expr [ DOT BAR ARROW_END ]
 -- On FALSE shift to state 106
 -- On expr shift to state 145
 -- On bool shift to state 110
+## Reductions:
 
 State 145:
+## Known stack suffix:
+## expr LTE expr
+## LR(1) items:
 expr -> expr . PLUS expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
 expr -> expr . MINUS expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
 expr -> expr . TIMES expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
@@ -1616,11 +2344,13 @@ expr -> expr . LTE expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUA
 expr -> expr LTE expr . [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ]
 expr -> expr . QMARK expr COLON expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
 guard_expr -> expr LTE expr . [ DOT BAR ARROW_END ]
+## Transitions:
 -- On TIMES shift to state 108
 -- On PLUS shift to state 114
 -- On MOD shift to state 116
 -- On MINUS shift to state 122
 -- On DIV shift to state 118
+## Reductions:
 -- On QMARK reduce production expr -> expr LTE expr
 -- On NOTEQUAL reduce production expr -> expr LTE expr
 -- On LTE reduce production expr -> expr LTE expr
@@ -1633,8 +2363,12 @@ guard_expr -> expr LTE expr . [ DOT BAR ARROW_END ]
 -- On ARROW_END reduce production guard_expr -> expr LTE expr
 
 State 146:
+## Known stack suffix:
+## expr LT
+## LR(1) items:
 expr -> expr LT . expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ]
 guard_expr -> expr LT . expr [ DOT BAR ARROW_END ]
+## Transitions:
 -- On UID shift to state 101
 -- On TRUE shift to state 102
 -- On LPAREN shift to state 103
@@ -1643,8 +2377,12 @@ guard_expr -> expr LT . expr [ DOT BAR ARROW_END ]
 -- On FALSE shift to state 106
 -- On expr shift to state 147
 -- On bool shift to state 110
+## Reductions:
 
 State 147:
+## Known stack suffix:
+## expr LT expr
+## LR(1) items:
 expr -> expr . PLUS expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
 expr -> expr . MINUS expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
 expr -> expr . TIMES expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
@@ -1659,11 +2397,13 @@ expr -> expr . GTE expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUA
 expr -> expr . LTE expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
 expr -> expr . QMARK expr COLON expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
 guard_expr -> expr LT expr . [ DOT BAR ARROW_END ]
+## Transitions:
 -- On TIMES shift to state 108
 -- On PLUS shift to state 114
 -- On MOD shift to state 116
 -- On MINUS shift to state 122
 -- On DIV shift to state 118
+## Reductions:
 -- On QMARK reduce production expr -> expr LT expr
 -- On NOTEQUAL reduce production expr -> expr LT expr
 -- On LTE reduce production expr -> expr LT expr
@@ -1676,8 +2416,12 @@ guard_expr -> expr LT expr . [ DOT BAR ARROW_END ]
 -- On ARROW_END reduce production guard_expr -> expr LT expr
 
 State 148:
+## Known stack suffix:
+## expr GTE
+## LR(1) items:
 expr -> expr GTE . expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ]
 guard_expr -> expr GTE . expr [ DOT BAR ARROW_END ]
+## Transitions:
 -- On UID shift to state 101
 -- On TRUE shift to state 102
 -- On LPAREN shift to state 103
@@ -1686,8 +2430,12 @@ guard_expr -> expr GTE . expr [ DOT BAR ARROW_END ]
 -- On FALSE shift to state 106
 -- On expr shift to state 149
 -- On bool shift to state 110
+## Reductions:
 
 State 149:
+## Known stack suffix:
+## expr GTE expr
+## LR(1) items:
 expr -> expr . PLUS expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
 expr -> expr . MINUS expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
 expr -> expr . TIMES expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
@@ -1702,11 +2450,13 @@ expr -> expr GTE expr . [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUA
 expr -> expr . LTE expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
 expr -> expr . QMARK expr COLON expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
 guard_expr -> expr GTE expr . [ DOT BAR ARROW_END ]
+## Transitions:
 -- On TIMES shift to state 108
 -- On PLUS shift to state 114
 -- On MOD shift to state 116
 -- On MINUS shift to state 122
 -- On DIV shift to state 118
+## Reductions:
 -- On QMARK reduce production expr -> expr GTE expr
 -- On NOTEQUAL reduce production expr -> expr GTE expr
 -- On LTE reduce production expr -> expr GTE expr
@@ -1719,8 +2469,12 @@ guard_expr -> expr GTE expr . [ DOT BAR ARROW_END ]
 -- On ARROW_END reduce production guard_expr -> expr GTE expr
 
 State 150:
+## Known stack suffix:
+## expr GT
+## LR(1) items:
 expr -> expr GT . expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ]
 guard_expr -> expr GT . expr [ DOT BAR ARROW_END ]
+## Transitions:
 -- On UID shift to state 101
 -- On TRUE shift to state 102
 -- On LPAREN shift to state 103
@@ -1729,8 +2483,12 @@ guard_expr -> expr GT . expr [ DOT BAR ARROW_END ]
 -- On FALSE shift to state 106
 -- On expr shift to state 151
 -- On bool shift to state 110
+## Reductions:
 
 State 151:
+## Known stack suffix:
+## expr GT expr
+## LR(1) items:
 expr -> expr . PLUS expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
 expr -> expr . MINUS expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
 expr -> expr . TIMES expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
@@ -1745,11 +2503,13 @@ expr -> expr . GTE expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUA
 expr -> expr . LTE expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
 expr -> expr . QMARK expr COLON expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
 guard_expr -> expr GT expr . [ DOT BAR ARROW_END ]
+## Transitions:
 -- On TIMES shift to state 108
 -- On PLUS shift to state 114
 -- On MOD shift to state 116
 -- On MINUS shift to state 122
 -- On DIV shift to state 118
+## Reductions:
 -- On QMARK reduce production expr -> expr GT expr
 -- On NOTEQUAL reduce production expr -> expr GT expr
 -- On LTE reduce production expr -> expr GT expr
@@ -1762,8 +2522,12 @@ guard_expr -> expr GT expr . [ DOT BAR ARROW_END ]
 -- On ARROW_END reduce production guard_expr -> expr GT expr
 
 State 152:
+## Known stack suffix:
+## expr EQUAL
+## LR(1) items:
 expr -> expr EQUAL . expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ]
 guard_expr -> expr EQUAL . expr [ DOT BAR ARROW_END ]
+## Transitions:
 -- On UID shift to state 101
 -- On TRUE shift to state 102
 -- On LPAREN shift to state 103
@@ -1772,8 +2536,12 @@ guard_expr -> expr EQUAL . expr [ DOT BAR ARROW_END ]
 -- On FALSE shift to state 106
 -- On expr shift to state 153
 -- On bool shift to state 110
+## Reductions:
 
 State 153:
+## Known stack suffix:
+## expr EQUAL expr
+## LR(1) items:
 expr -> expr . PLUS expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
 expr -> expr . MINUS expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
 expr -> expr . TIMES expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
@@ -1788,11 +2556,13 @@ expr -> expr . GTE expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUA
 expr -> expr . LTE expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
 expr -> expr . QMARK expr COLON expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
 guard_expr -> expr EQUAL expr . [ DOT BAR ARROW_END ]
+## Transitions:
 -- On TIMES shift to state 108
 -- On PLUS shift to state 114
 -- On MOD shift to state 116
 -- On MINUS shift to state 122
 -- On DIV shift to state 118
+## Reductions:
 -- On QMARK reduce production expr -> expr EQUAL expr
 -- On NOTEQUAL reduce production expr -> expr EQUAL expr
 -- On LTE reduce production expr -> expr EQUAL expr
@@ -1805,27 +2575,46 @@ guard_expr -> expr EQUAL expr . [ DOT BAR ARROW_END ]
 -- On ARROW_END reduce production guard_expr -> expr EQUAL expr
 
 State 154:
+## Known stack suffix:
+## prio UID ARROW_START condition
+## LR(1) items:
 transition -> prio UID ARROW_START condition . optional(actions) ARROW_END UID [ SEMICOLON COMMA ]
+## Transitions:
 -- On BAR shift to state 155
 -- On optional(actions) shift to state 163
 -- On actions shift to state 166
+## Reductions:
 -- On ARROW_END reduce production optional(actions) ->
 
 State 155:
+## Known stack suffix:
+## BAR
+## LR(1) items:
 actions -> BAR . separated_nonempty_list(SEMICOLON,action) [ ARROW_END ]
+## Transitions:
 -- On LID shift to state 156
 -- On separated_nonempty_list(SEMICOLON,action) shift to state 159
 -- On action shift to state 160
+## Reductions:
 
 State 156:
+## Known stack suffix:
+## LID
+## LR(1) items:
 action -> LID . [ SEMICOLON ARROW_END ]
 action -> LID . COLEQ expr [ SEMICOLON ARROW_END ]
+## Transitions:
 -- On COLEQ shift to state 157
+## Reductions:
 -- On SEMICOLON reduce production action -> LID
 -- On ARROW_END reduce production action -> LID
 
 State 157:
+## Known stack suffix:
+## LID COLEQ
+## LR(1) items:
 action -> LID COLEQ . expr [ SEMICOLON ARROW_END ]
+## Transitions:
 -- On UID shift to state 101
 -- On TRUE shift to state 102
 -- On LPAREN shift to state 103
@@ -1834,8 +2623,12 @@ action -> LID COLEQ . expr [ SEMICOLON ARROW_END ]
 -- On FALSE shift to state 106
 -- On expr shift to state 158
 -- On bool shift to state 110
+## Reductions:
 
 State 158:
+## Known stack suffix:
+## LID COLEQ expr
+## LR(1) items:
 action -> LID COLEQ expr . [ SEMICOLON ARROW_END ]
 expr -> expr . PLUS expr [ TIMES SEMICOLON QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ARROW_END ]
 expr -> expr . MINUS expr [ TIMES SEMICOLON QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ARROW_END ]
@@ -1849,6 +2642,7 @@ expr -> expr . LT expr [ TIMES SEMICOLON QMARK PLUS NOTEQUAL MOD MINUS LTE LT GT
 expr -> expr . GTE expr [ TIMES SEMICOLON QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ARROW_END ]
 expr -> expr . LTE expr [ TIMES SEMICOLON QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ARROW_END ]
 expr -> expr . QMARK expr COLON expr [ TIMES SEMICOLON QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ARROW_END ]
+## Transitions:
 -- On TIMES shift to state 108
 -- On QMARK shift to state 112
 -- On PLUS shift to state 114
@@ -1861,519 +2655,995 @@ expr -> expr . QMARK expr COLON expr [ TIMES SEMICOLON QMARK PLUS NOTEQUAL MOD M
 -- On GT shift to state 130
 -- On EQUAL shift to state 132
 -- On DIV shift to state 118
+## Reductions:
 -- On SEMICOLON reduce production action -> LID COLEQ expr
 -- On ARROW_END reduce production action -> LID COLEQ expr
 
 State 159:
+## Known stack suffix:
+## BAR separated_nonempty_list(SEMICOLON,action)
+## LR(1) items:
 actions -> BAR separated_nonempty_list(SEMICOLON,action) . [ ARROW_END ]
+## Transitions:
+## Reductions:
 -- On ARROW_END reduce production actions -> BAR separated_nonempty_list(SEMICOLON,action)
 
 State 160:
+## Known stack suffix:
+## action
+## LR(1) items:
 separated_nonempty_list(SEMICOLON,action) -> action . [ ARROW_END ]
 separated_nonempty_list(SEMICOLON,action) -> action . SEMICOLON separated_nonempty_list(SEMICOLON,action) [ ARROW_END ]
+## Transitions:
 -- On SEMICOLON shift to state 161
+## Reductions:
 -- On ARROW_END reduce production separated_nonempty_list(SEMICOLON,action) -> action
 
 State 161:
+## Known stack suffix:
+## action SEMICOLON
+## LR(1) items:
 separated_nonempty_list(SEMICOLON,action) -> action SEMICOLON . separated_nonempty_list(SEMICOLON,action) [ ARROW_END ]
+## Transitions:
 -- On LID shift to state 156
 -- On separated_nonempty_list(SEMICOLON,action) shift to state 162
 -- On action shift to state 160
+## Reductions:
 
 State 162:
+## Known stack suffix:
+## action SEMICOLON separated_nonempty_list(SEMICOLON,action)
+## LR(1) items:
 separated_nonempty_list(SEMICOLON,action) -> action SEMICOLON separated_nonempty_list(SEMICOLON,action) . [ ARROW_END ]
+## Transitions:
+## Reductions:
 -- On ARROW_END reduce production separated_nonempty_list(SEMICOLON,action) -> action SEMICOLON separated_nonempty_list(SEMICOLON,action)
 
 State 163:
+## Known stack suffix:
+## prio UID ARROW_START condition optional(actions)
+## LR(1) items:
 transition -> prio UID ARROW_START condition optional(actions) . ARROW_END UID [ SEMICOLON COMMA ]
+## Transitions:
 -- On ARROW_END shift to state 164
+## Reductions:
 
 State 164:
+## Known stack suffix:
+## prio UID ARROW_START condition optional(actions) ARROW_END
+## LR(1) items:
 transition -> prio UID ARROW_START condition optional(actions) ARROW_END . UID [ SEMICOLON COMMA ]
+## Transitions:
 -- On UID shift to state 165
+## Reductions:
 
 State 165:
+## Known stack suffix:
+## prio UID ARROW_START condition optional(actions) ARROW_END UID
+## LR(1) items:
 transition -> prio UID ARROW_START condition optional(actions) ARROW_END UID . [ SEMICOLON COMMA ]
+## Transitions:
+## Reductions:
 -- On SEMICOLON reduce production transition -> prio UID ARROW_START condition optional(actions) ARROW_END UID
 -- On COMMA reduce production transition -> prio UID ARROW_START condition optional(actions) ARROW_END UID
 
 State 166:
+## Known stack suffix:
+## actions
+## LR(1) items:
 optional(actions) -> actions . [ ARROW_END ]
+## Transitions:
+## Reductions:
 -- On ARROW_END reduce production optional(actions) -> actions
 
 State 167:
+## Known stack suffix:
+## transition COMMA my_separated_nonempty_list(COMMA,transition)
+## LR(1) items:
 my_separated_nonempty_list(COMMA,transition) -> transition COMMA my_separated_nonempty_list(COMMA,transition) . [ SEMICOLON ]
+## Transitions:
+## Reductions:
 -- On SEMICOLON reduce production my_separated_nonempty_list(COMMA,transition) -> transition COMMA my_separated_nonempty_list(COMMA,transition)
 
 State 168:
+## Known stack suffix:
+## my_separated_nonempty_list(COMMA,transition)
+## LR(1) items:
 my_separated_list(COMMA,transition) -> my_separated_nonempty_list(COMMA,transition) . [ SEMICOLON ]
+## Transitions:
+## Reductions:
 -- On SEMICOLON reduce production my_separated_list(COMMA,transition) -> my_separated_nonempty_list(COMMA,transition)
 
 State 169:
+## Known stack suffix:
+## FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS COLON my_separated_list(COMMA,transition)
+## LR(1) items:
 fsm_model -> FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS COLON my_separated_list(COMMA,transition) . SEMICOLON ITRANS COLON itransition SEMICOLON RBRACE [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
 -- On SEMICOLON shift to state 170
+## Reductions:
 
 State 170:
+## Known stack suffix:
+## FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS COLON my_separated_list(COMMA,transition) SEMICOLON
+## LR(1) items:
 fsm_model -> FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS COLON my_separated_list(COMMA,transition) SEMICOLON . ITRANS COLON itransition SEMICOLON RBRACE [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
 -- On ITRANS shift to state 171
+## Reductions:
 
 State 171:
+## Known stack suffix:
+## FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS COLON my_separated_list(COMMA,transition) SEMICOLON ITRANS
+## LR(1) items:
 fsm_model -> FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS COLON my_separated_list(COMMA,transition) SEMICOLON ITRANS . COLON itransition SEMICOLON RBRACE [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
 -- On COLON shift to state 172
+## Reductions:
 
 State 172:
+## Known stack suffix:
+## FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS COLON my_separated_list(COMMA,transition) SEMICOLON ITRANS COLON
+## LR(1) items:
 fsm_model -> FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS COLON my_separated_list(COMMA,transition) SEMICOLON ITRANS COLON . itransition SEMICOLON RBRACE [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
 -- On BAR shift to state 155
 -- On optional(actions) shift to state 173
 -- On itransition shift to state 176
 -- On actions shift to state 166
+## Reductions:
 -- On ARROW_END reduce production optional(actions) ->
 
 State 173:
+## Known stack suffix:
+## optional(actions)
+## LR(1) items:
 itransition -> optional(actions) . ARROW_END UID [ SEMICOLON ]
+## Transitions:
 -- On ARROW_END shift to state 174
+## Reductions:
 
 State 174:
+## Known stack suffix:
+## optional(actions) ARROW_END
+## LR(1) items:
 itransition -> optional(actions) ARROW_END . UID [ SEMICOLON ]
+## Transitions:
 -- On UID shift to state 175
+## Reductions:
 
 State 175:
+## Known stack suffix:
+## optional(actions) ARROW_END UID
+## LR(1) items:
 itransition -> optional(actions) ARROW_END UID . [ SEMICOLON ]
+## Transitions:
+## Reductions:
 -- On SEMICOLON reduce production itransition -> optional(actions) ARROW_END UID
 
 State 176:
+## Known stack suffix:
+## FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS COLON my_separated_list(COMMA,transition) SEMICOLON ITRANS COLON itransition
+## LR(1) items:
 fsm_model -> FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS COLON my_separated_list(COMMA,transition) SEMICOLON ITRANS COLON itransition . SEMICOLON RBRACE [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
 -- On SEMICOLON shift to state 177
+## Reductions:
 
 State 177:
+## Known stack suffix:
+## FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS COLON my_separated_list(COMMA,transition) SEMICOLON ITRANS COLON itransition SEMICOLON
+## LR(1) items:
 fsm_model -> FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS COLON my_separated_list(COMMA,transition) SEMICOLON ITRANS COLON itransition SEMICOLON . RBRACE [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
 -- On RBRACE shift to state 178
+## Reductions:
 
 State 178:
+## Known stack suffix:
+## FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS COLON my_separated_list(COMMA,transition) SEMICOLON ITRANS COLON itransition SEMICOLON RBRACE
+## LR(1) items:
 fsm_model -> FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS COLON my_separated_list(COMMA,transition) SEMICOLON ITRANS COLON itransition SEMICOLON RBRACE . [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
+## Reductions:
 -- On SHARED reduce production fsm_model -> FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS COLON my_separated_list(COMMA,transition) SEMICOLON ITRANS COLON itransition SEMICOLON RBRACE
 -- On OUTPUT reduce production fsm_model -> FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS COLON my_separated_list(COMMA,transition) SEMICOLON ITRANS COLON itransition SEMICOLON RBRACE
 -- On INPUT reduce production fsm_model -> FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS COLON my_separated_list(COMMA,transition) SEMICOLON ITRANS COLON itransition SEMICOLON RBRACE
 -- On FSM reduce production fsm_model -> FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS COLON my_separated_list(COMMA,transition) SEMICOLON ITRANS COLON itransition SEMICOLON RBRACE
 
 State 179:
+## Known stack suffix:
+## io
+## LR(1) items:
 my_separated_nonempty_list(COMMA,io) -> io . [ RPAREN ]
 my_separated_nonempty_list(COMMA,io) -> io . COMMA my_separated_nonempty_list(COMMA,io) [ RPAREN ]
+## Transitions:
 -- On COMMA shift to state 180
+## Reductions:
 -- On RPAREN reduce production my_separated_nonempty_list(COMMA,io) -> io
 
 State 180:
+## Known stack suffix:
+## io COMMA
+## LR(1) items:
 my_separated_nonempty_list(COMMA,io) -> io COMMA . my_separated_nonempty_list(COMMA,io) [ RPAREN ]
+## Transitions:
 -- On OUT shift to state 61
 -- On INOUT shift to state 66
 -- On IN shift to state 68
 -- On my_separated_nonempty_list(COMMA,io) shift to state 181
 -- On io shift to state 179
+## Reductions:
 
 State 181:
+## Known stack suffix:
+## io COMMA my_separated_nonempty_list(COMMA,io)
+## LR(1) items:
 my_separated_nonempty_list(COMMA,io) -> io COMMA my_separated_nonempty_list(COMMA,io) . [ RPAREN ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production my_separated_nonempty_list(COMMA,io) -> io COMMA my_separated_nonempty_list(COMMA,io)
 
 State 182:
+## Known stack suffix:
+## my_list(type_decl) my_nonempty_list(fsm_model)
+## LR(1) items:
 program -> my_list(type_decl) my_nonempty_list(fsm_model) . my_nonempty_list(global) my_nonempty_list(fsm_inst) EOF [ # ]
+## Transitions:
 -- On SHARED shift to state 183
 -- On OUTPUT shift to state 187
 -- On INPUT shift to state 191
 -- On my_nonempty_list(global) shift to state 229
 -- On global shift to state 250
+## Reductions:
 
 State 183:
+## Known stack suffix:
+## SHARED
+## LR(1) items:
 global -> SHARED . id COLON typ [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
 -- On UID shift to state 45
 -- On LID shift to state 46
 -- On id shift to state 184
+## Reductions:
 
 State 184:
+## Known stack suffix:
+## SHARED id
+## LR(1) items:
 global -> SHARED id . COLON typ [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
 -- On COLON shift to state 185
+## Reductions:
 
 State 185:
+## Known stack suffix:
+## SHARED id COLON
+## LR(1) items:
 global -> SHARED id COLON . typ [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
 -- On TYINT shift to state 4
 -- On TYEVENT shift to state 27
 -- On TYBOOL shift to state 28
 -- On LID shift to state 29
 -- On typ shift to state 186
+## Reductions:
 
 State 186:
+## Known stack suffix:
+## SHARED id COLON typ
+## LR(1) items:
 global -> SHARED id COLON typ . [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
+## Reductions:
 -- On SHARED reduce production global -> SHARED id COLON typ
 -- On OUTPUT reduce production global -> SHARED id COLON typ
 -- On INPUT reduce production global -> SHARED id COLON typ
 -- On FSM reduce production global -> SHARED id COLON typ
 
 State 187:
+## Known stack suffix:
+## OUTPUT
+## LR(1) items:
 global -> OUTPUT . id COLON typ [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
 -- On UID shift to state 45
 -- On LID shift to state 46
 -- On id shift to state 188
+## Reductions:
 
 State 188:
+## Known stack suffix:
+## OUTPUT id
+## LR(1) items:
 global -> OUTPUT id . COLON typ [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
 -- On COLON shift to state 189
+## Reductions:
 
 State 189:
+## Known stack suffix:
+## OUTPUT id COLON
+## LR(1) items:
 global -> OUTPUT id COLON . typ [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
 -- On TYINT shift to state 4
 -- On TYEVENT shift to state 27
 -- On TYBOOL shift to state 28
 -- On LID shift to state 29
 -- On typ shift to state 190
+## Reductions:
 
 State 190:
+## Known stack suffix:
+## OUTPUT id COLON typ
+## LR(1) items:
 global -> OUTPUT id COLON typ . [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
+## Reductions:
 -- On SHARED reduce production global -> OUTPUT id COLON typ
 -- On OUTPUT reduce production global -> OUTPUT id COLON typ
 -- On INPUT reduce production global -> OUTPUT id COLON typ
 -- On FSM reduce production global -> OUTPUT id COLON typ
 
 State 191:
+## Known stack suffix:
+## INPUT
+## LR(1) items:
 global -> INPUT . id COLON typ EQUAL stimuli [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
 -- On UID shift to state 45
 -- On LID shift to state 46
 -- On id shift to state 192
+## Reductions:
 
 State 192:
+## Known stack suffix:
+## INPUT id
+## LR(1) items:
 global -> INPUT id . COLON typ EQUAL stimuli [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
 -- On COLON shift to state 193
+## Reductions:
 
 State 193:
+## Known stack suffix:
+## INPUT id COLON
+## LR(1) items:
 global -> INPUT id COLON . typ EQUAL stimuli [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
 -- On TYINT shift to state 4
 -- On TYEVENT shift to state 27
 -- On TYBOOL shift to state 28
 -- On LID shift to state 29
 -- On typ shift to state 194
+## Reductions:
 
 State 194:
+## Known stack suffix:
+## INPUT id COLON typ
+## LR(1) items:
 global -> INPUT id COLON typ . EQUAL stimuli [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
 -- On EQUAL shift to state 195
+## Reductions:
 
 State 195:
+## Known stack suffix:
+## INPUT id COLON typ EQUAL
+## LR(1) items:
 global -> INPUT id COLON typ EQUAL . stimuli [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
 -- On VALUE_CHANGES shift to state 196
 -- On SPORADIC shift to state 211
 -- On PERIODIC shift to state 220
 -- On stimuli shift to state 228
+## Reductions:
 
 State 196:
+## Known stack suffix:
+## VALUE_CHANGES
+## LR(1) items:
 stimuli -> VALUE_CHANGES . paren(separated_list(COMMA,value_change)) [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
 -- On LPAREN shift to state 197
 -- On paren(separated_list(COMMA,value_change)) shift to state 210
+## Reductions:
 
 State 197:
+## Known stack suffix:
+## LPAREN
+## LR(1) items:
 paren(separated_list(COMMA,value_change)) -> LPAREN . loption(separated_nonempty_list(COMMA,value_change)) RPAREN [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
 -- On INT shift to state 198
 -- On value_change shift to state 204
 -- On separated_nonempty_list(COMMA,value_change) shift to state 207
 -- On loption(separated_nonempty_list(COMMA,value_change)) shift to state 208
+## Reductions:
 -- On RPAREN reduce production loption(separated_nonempty_list(COMMA,value_change)) ->
 
 State 198:
+## Known stack suffix:
+## INT
+## LR(1) items:
 value_change -> INT . COLON const [ RPAREN COMMA ]
+## Transitions:
 -- On COLON shift to state 199
+## Reductions:
 
 State 199:
+## Known stack suffix:
+## INT COLON
+## LR(1) items:
 value_change -> INT COLON . const [ RPAREN COMMA ]
+## Transitions:
 -- On UID shift to state 200
 -- On TRUE shift to state 102
 -- On INT shift to state 201
 -- On FALSE shift to state 106
 -- On const shift to state 202
 -- On bool shift to state 203
+## Reductions:
 
 State 200:
+## Known stack suffix:
+## UID
+## LR(1) items:
 const -> UID . [ RPAREN COMMA ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production const -> UID
 -- On COMMA reduce production const -> UID
 
 State 201:
+## Known stack suffix:
+## INT
+## LR(1) items:
 const -> INT . [ RPAREN COMMA ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production const -> INT
 -- On COMMA reduce production const -> INT
 
 State 202:
+## Known stack suffix:
+## INT COLON const
+## LR(1) items:
 value_change -> INT COLON const . [ RPAREN COMMA ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production value_change -> INT COLON const
 -- On COMMA reduce production value_change -> INT COLON const
 
 State 203:
+## Known stack suffix:
+## bool
+## LR(1) items:
 const -> bool . [ RPAREN COMMA ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production const -> bool
 -- On COMMA reduce production const -> bool
 
 State 204:
+## Known stack suffix:
+## value_change
+## LR(1) items:
 separated_nonempty_list(COMMA,value_change) -> value_change . [ RPAREN ]
 separated_nonempty_list(COMMA,value_change) -> value_change . COMMA separated_nonempty_list(COMMA,value_change) [ RPAREN ]
+## Transitions:
 -- On COMMA shift to state 205
+## Reductions:
 -- On RPAREN reduce production separated_nonempty_list(COMMA,value_change) -> value_change
 
 State 205:
+## Known stack suffix:
+## value_change COMMA
+## LR(1) items:
 separated_nonempty_list(COMMA,value_change) -> value_change COMMA . separated_nonempty_list(COMMA,value_change) [ RPAREN ]
+## Transitions:
 -- On INT shift to state 198
 -- On value_change shift to state 204
 -- On separated_nonempty_list(COMMA,value_change) shift to state 206
+## Reductions:
 
 State 206:
+## Known stack suffix:
+## value_change COMMA separated_nonempty_list(COMMA,value_change)
+## LR(1) items:
 separated_nonempty_list(COMMA,value_change) -> value_change COMMA separated_nonempty_list(COMMA,value_change) . [ RPAREN ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production separated_nonempty_list(COMMA,value_change) -> value_change COMMA separated_nonempty_list(COMMA,value_change)
 
 State 207:
+## Known stack suffix:
+## separated_nonempty_list(COMMA,value_change)
+## LR(1) items:
 loption(separated_nonempty_list(COMMA,value_change)) -> separated_nonempty_list(COMMA,value_change) . [ RPAREN ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production loption(separated_nonempty_list(COMMA,value_change)) -> separated_nonempty_list(COMMA,value_change)
 
 State 208:
+## Known stack suffix:
+## LPAREN loption(separated_nonempty_list(COMMA,value_change))
+## LR(1) items:
 paren(separated_list(COMMA,value_change)) -> LPAREN loption(separated_nonempty_list(COMMA,value_change)) . RPAREN [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
 -- On RPAREN shift to state 209
+## Reductions:
 
 State 209:
+## Known stack suffix:
+## LPAREN loption(separated_nonempty_list(COMMA,value_change)) RPAREN
+## LR(1) items:
 paren(separated_list(COMMA,value_change)) -> LPAREN loption(separated_nonempty_list(COMMA,value_change)) RPAREN . [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
+## Reductions:
 -- On SHARED reduce production paren(separated_list(COMMA,value_change)) -> LPAREN loption(separated_nonempty_list(COMMA,value_change)) RPAREN
 -- On OUTPUT reduce production paren(separated_list(COMMA,value_change)) -> LPAREN loption(separated_nonempty_list(COMMA,value_change)) RPAREN
 -- On INPUT reduce production paren(separated_list(COMMA,value_change)) -> LPAREN loption(separated_nonempty_list(COMMA,value_change)) RPAREN
 -- On FSM reduce production paren(separated_list(COMMA,value_change)) -> LPAREN loption(separated_nonempty_list(COMMA,value_change)) RPAREN
 
 State 210:
+## Known stack suffix:
+## VALUE_CHANGES paren(separated_list(COMMA,value_change))
+## LR(1) items:
 stimuli -> VALUE_CHANGES paren(separated_list(COMMA,value_change)) . [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
+## Reductions:
 -- On SHARED reduce production stimuli -> VALUE_CHANGES paren(separated_list(COMMA,value_change))
 -- On OUTPUT reduce production stimuli -> VALUE_CHANGES paren(separated_list(COMMA,value_change))
 -- On INPUT reduce production stimuli -> VALUE_CHANGES paren(separated_list(COMMA,value_change))
 -- On FSM reduce production stimuli -> VALUE_CHANGES paren(separated_list(COMMA,value_change))
 
 State 211:
+## Known stack suffix:
+## SPORADIC
+## LR(1) items:
 stimuli -> SPORADIC . paren(separated_list(COMMA,INT)) [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
 -- On LPAREN shift to state 212
 -- On paren(separated_list(COMMA,INT)) shift to state 219
+## Reductions:
 
 State 212:
+## Known stack suffix:
+## LPAREN
+## LR(1) items:
 paren(separated_list(COMMA,INT)) -> LPAREN . loption(separated_nonempty_list(COMMA,INT)) RPAREN [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
 -- On INT shift to state 213
 -- On separated_nonempty_list(COMMA,INT) shift to state 216
 -- On loption(separated_nonempty_list(COMMA,INT)) shift to state 217
+## Reductions:
 -- On RPAREN reduce production loption(separated_nonempty_list(COMMA,INT)) ->
 
 State 213:
+## Known stack suffix:
+## INT
+## LR(1) items:
 separated_nonempty_list(COMMA,INT) -> INT . [ RPAREN GT ]
 separated_nonempty_list(COMMA,INT) -> INT . COMMA separated_nonempty_list(COMMA,INT) [ RPAREN GT ]
+## Transitions:
 -- On COMMA shift to state 214
+## Reductions:
 -- On RPAREN reduce production separated_nonempty_list(COMMA,INT) -> INT
 -- On GT reduce production separated_nonempty_list(COMMA,INT) -> INT
 
 State 214:
+## Known stack suffix:
+## INT COMMA
+## LR(1) items:
 separated_nonempty_list(COMMA,INT) -> INT COMMA . separated_nonempty_list(COMMA,INT) [ RPAREN GT ]
+## Transitions:
 -- On INT shift to state 213
 -- On separated_nonempty_list(COMMA,INT) shift to state 215
+## Reductions:
 
 State 215:
+## Known stack suffix:
+## INT COMMA separated_nonempty_list(COMMA,INT)
+## LR(1) items:
 separated_nonempty_list(COMMA,INT) -> INT COMMA separated_nonempty_list(COMMA,INT) . [ RPAREN GT ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production separated_nonempty_list(COMMA,INT) -> INT COMMA separated_nonempty_list(COMMA,INT)
 -- On GT reduce production separated_nonempty_list(COMMA,INT) -> INT COMMA separated_nonempty_list(COMMA,INT)
 
 State 216:
+## Known stack suffix:
+## separated_nonempty_list(COMMA,INT)
+## LR(1) items:
 loption(separated_nonempty_list(COMMA,INT)) -> separated_nonempty_list(COMMA,INT) . [ RPAREN ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production loption(separated_nonempty_list(COMMA,INT)) -> separated_nonempty_list(COMMA,INT)
 
 State 217:
+## Known stack suffix:
+## LPAREN loption(separated_nonempty_list(COMMA,INT))
+## LR(1) items:
 paren(separated_list(COMMA,INT)) -> LPAREN loption(separated_nonempty_list(COMMA,INT)) . RPAREN [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
 -- On RPAREN shift to state 218
+## Reductions:
 
 State 218:
+## Known stack suffix:
+## LPAREN loption(separated_nonempty_list(COMMA,INT)) RPAREN
+## LR(1) items:
 paren(separated_list(COMMA,INT)) -> LPAREN loption(separated_nonempty_list(COMMA,INT)) RPAREN . [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
+## Reductions:
 -- On SHARED reduce production paren(separated_list(COMMA,INT)) -> LPAREN loption(separated_nonempty_list(COMMA,INT)) RPAREN
 -- On OUTPUT reduce production paren(separated_list(COMMA,INT)) -> LPAREN loption(separated_nonempty_list(COMMA,INT)) RPAREN
 -- On INPUT reduce production paren(separated_list(COMMA,INT)) -> LPAREN loption(separated_nonempty_list(COMMA,INT)) RPAREN
 -- On FSM reduce production paren(separated_list(COMMA,INT)) -> LPAREN loption(separated_nonempty_list(COMMA,INT)) RPAREN
 
 State 219:
+## Known stack suffix:
+## SPORADIC paren(separated_list(COMMA,INT))
+## LR(1) items:
 stimuli -> SPORADIC paren(separated_list(COMMA,INT)) . [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
+## Reductions:
 -- On SHARED reduce production stimuli -> SPORADIC paren(separated_list(COMMA,INT))
 -- On OUTPUT reduce production stimuli -> SPORADIC paren(separated_list(COMMA,INT))
 -- On INPUT reduce production stimuli -> SPORADIC paren(separated_list(COMMA,INT))
 -- On FSM reduce production stimuli -> SPORADIC paren(separated_list(COMMA,INT))
 
 State 220:
+## Known stack suffix:
+## PERIODIC
+## LR(1) items:
 stimuli -> PERIODIC . LPAREN INT COMMA INT COMMA INT RPAREN [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
 -- On LPAREN shift to state 221
+## Reductions:
 
 State 221:
+## Known stack suffix:
+## PERIODIC LPAREN
+## LR(1) items:
 stimuli -> PERIODIC LPAREN . INT COMMA INT COMMA INT RPAREN [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
 -- On INT shift to state 222
+## Reductions:
 
 State 222:
+## Known stack suffix:
+## PERIODIC LPAREN INT
+## LR(1) items:
 stimuli -> PERIODIC LPAREN INT . COMMA INT COMMA INT RPAREN [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
 -- On COMMA shift to state 223
+## Reductions:
 
 State 223:
+## Known stack suffix:
+## PERIODIC LPAREN INT COMMA
+## LR(1) items:
 stimuli -> PERIODIC LPAREN INT COMMA . INT COMMA INT RPAREN [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
 -- On INT shift to state 224
+## Reductions:
 
 State 224:
+## Known stack suffix:
+## PERIODIC LPAREN INT COMMA INT
+## LR(1) items:
 stimuli -> PERIODIC LPAREN INT COMMA INT . COMMA INT RPAREN [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
 -- On COMMA shift to state 225
+## Reductions:
 
 State 225:
+## Known stack suffix:
+## PERIODIC LPAREN INT COMMA INT COMMA
+## LR(1) items:
 stimuli -> PERIODIC LPAREN INT COMMA INT COMMA . INT RPAREN [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
 -- On INT shift to state 226
+## Reductions:
 
 State 226:
+## Known stack suffix:
+## PERIODIC LPAREN INT COMMA INT COMMA INT
+## LR(1) items:
 stimuli -> PERIODIC LPAREN INT COMMA INT COMMA INT . RPAREN [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
 -- On RPAREN shift to state 227
+## Reductions:
 
 State 227:
+## Known stack suffix:
+## PERIODIC LPAREN INT COMMA INT COMMA INT RPAREN
+## LR(1) items:
 stimuli -> PERIODIC LPAREN INT COMMA INT COMMA INT RPAREN . [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
+## Reductions:
 -- On SHARED reduce production stimuli -> PERIODIC LPAREN INT COMMA INT COMMA INT RPAREN
 -- On OUTPUT reduce production stimuli -> PERIODIC LPAREN INT COMMA INT COMMA INT RPAREN
 -- On INPUT reduce production stimuli -> PERIODIC LPAREN INT COMMA INT COMMA INT RPAREN
 -- On FSM reduce production stimuli -> PERIODIC LPAREN INT COMMA INT COMMA INT RPAREN
 
 State 228:
+## Known stack suffix:
+## INPUT id COLON typ EQUAL stimuli
+## LR(1) items:
 global -> INPUT id COLON typ EQUAL stimuli . [ SHARED OUTPUT INPUT FSM ]
+## Transitions:
+## Reductions:
 -- On SHARED reduce production global -> INPUT id COLON typ EQUAL stimuli
 -- On OUTPUT reduce production global -> INPUT id COLON typ EQUAL stimuli
 -- On INPUT reduce production global -> INPUT id COLON typ EQUAL stimuli
 -- On FSM reduce production global -> INPUT id COLON typ EQUAL stimuli
 
 State 229:
+## Known stack suffix:
+## my_list(type_decl) my_nonempty_list(fsm_model) my_nonempty_list(global)
+## LR(1) items:
 program -> my_list(type_decl) my_nonempty_list(fsm_model) my_nonempty_list(global) . my_nonempty_list(fsm_inst) EOF [ # ]
+## Transitions:
 -- On FSM shift to state 230
 -- On my_nonempty_list(fsm_inst) shift to state 246
 -- On fsm_inst shift to state 248
+## Reductions:
 
 State 230:
+## Known stack suffix:
+## FSM
+## LR(1) items:
 fsm_inst -> FSM . id EQUAL id opt_inst_params paren(separated_list(COMMA,id)) [ FSM EOF ]
+## Transitions:
 -- On UID shift to state 45
 -- On LID shift to state 46
 -- On id shift to state 231
+## Reductions:
 
 State 231:
+## Known stack suffix:
+## FSM id
+## LR(1) items:
 fsm_inst -> FSM id . EQUAL id opt_inst_params paren(separated_list(COMMA,id)) [ FSM EOF ]
+## Transitions:
 -- On EQUAL shift to state 232
+## Reductions:
 
 State 232:
+## Known stack suffix:
+## FSM id EQUAL
+## LR(1) items:
 fsm_inst -> FSM id EQUAL . id opt_inst_params paren(separated_list(COMMA,id)) [ FSM EOF ]
+## Transitions:
 -- On UID shift to state 45
 -- On LID shift to state 46
 -- On id shift to state 233
+## Reductions:
 
 State 233:
+## Known stack suffix:
+## FSM id EQUAL id
+## LR(1) items:
 fsm_inst -> FSM id EQUAL id . opt_inst_params paren(separated_list(COMMA,id)) [ FSM EOF ]
+## Transitions:
 -- On LT shift to state 234
 -- On opt_inst_params shift to state 237
+## Reductions:
 -- On LPAREN reduce production opt_inst_params ->
 
 State 234:
+## Known stack suffix:
+## LT
+## LR(1) items:
 opt_inst_params -> LT . separated_nonempty_list(COMMA,INT) GT [ LPAREN ]
+## Transitions:
 -- On INT shift to state 213
 -- On separated_nonempty_list(COMMA,INT) shift to state 235
+## Reductions:
 
 State 235:
+## Known stack suffix:
+## LT separated_nonempty_list(COMMA,INT)
+## LR(1) items:
 opt_inst_params -> LT separated_nonempty_list(COMMA,INT) . GT [ LPAREN ]
+## Transitions:
 -- On GT shift to state 236
+## Reductions:
 
 State 236:
+## Known stack suffix:
+## LT separated_nonempty_list(COMMA,INT) GT
+## LR(1) items:
 opt_inst_params -> LT separated_nonempty_list(COMMA,INT) GT . [ LPAREN ]
+## Transitions:
+## Reductions:
 -- On LPAREN reduce production opt_inst_params -> LT separated_nonempty_list(COMMA,INT) GT
 
 State 237:
+## Known stack suffix:
+## FSM id EQUAL id opt_inst_params
+## LR(1) items:
 fsm_inst -> FSM id EQUAL id opt_inst_params . paren(separated_list(COMMA,id)) [ FSM EOF ]
+## Transitions:
 -- On LPAREN shift to state 238
 -- On paren(separated_list(COMMA,id)) shift to state 245
+## Reductions:
 
 State 238:
+## Known stack suffix:
+## LPAREN
+## LR(1) items:
 paren(separated_list(COMMA,id)) -> LPAREN . loption(separated_nonempty_list(COMMA,id)) RPAREN [ FSM EOF ]
+## Transitions:
 -- On UID shift to state 45
 -- On LID shift to state 46
 -- On separated_nonempty_list(COMMA,id) shift to state 239
 -- On loption(separated_nonempty_list(COMMA,id)) shift to state 240
 -- On id shift to state 242
+## Reductions:
 -- On RPAREN reduce production loption(separated_nonempty_list(COMMA,id)) ->
 
 State 239:
+## Known stack suffix:
+## separated_nonempty_list(COMMA,id)
+## LR(1) items:
 loption(separated_nonempty_list(COMMA,id)) -> separated_nonempty_list(COMMA,id) . [ RPAREN ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production loption(separated_nonempty_list(COMMA,id)) -> separated_nonempty_list(COMMA,id)
 
 State 240:
+## Known stack suffix:
+## LPAREN loption(separated_nonempty_list(COMMA,id))
+## LR(1) items:
 paren(separated_list(COMMA,id)) -> LPAREN loption(separated_nonempty_list(COMMA,id)) . RPAREN [ FSM EOF ]
+## Transitions:
 -- On RPAREN shift to state 241
+## Reductions:
 
 State 241:
+## Known stack suffix:
+## LPAREN loption(separated_nonempty_list(COMMA,id)) RPAREN
+## LR(1) items:
 paren(separated_list(COMMA,id)) -> LPAREN loption(separated_nonempty_list(COMMA,id)) RPAREN . [ FSM EOF ]
+## Transitions:
+## Reductions:
 -- On FSM reduce production paren(separated_list(COMMA,id)) -> LPAREN loption(separated_nonempty_list(COMMA,id)) RPAREN
 -- On EOF reduce production paren(separated_list(COMMA,id)) -> LPAREN loption(separated_nonempty_list(COMMA,id)) RPAREN
 
 State 242:
+## Known stack suffix:
+## id
+## LR(1) items:
 separated_nonempty_list(COMMA,id) -> id . [ RPAREN ]
 separated_nonempty_list(COMMA,id) -> id . COMMA separated_nonempty_list(COMMA,id) [ RPAREN ]
+## Transitions:
 -- On COMMA shift to state 243
+## Reductions:
 -- On RPAREN reduce production separated_nonempty_list(COMMA,id) -> id
 
 State 243:
+## Known stack suffix:
+## id COMMA
+## LR(1) items:
 separated_nonempty_list(COMMA,id) -> id COMMA . separated_nonempty_list(COMMA,id) [ RPAREN ]
+## Transitions:
 -- On UID shift to state 45
 -- On LID shift to state 46
 -- On separated_nonempty_list(COMMA,id) shift to state 244
 -- On id shift to state 242
+## Reductions:
 
 State 244:
+## Known stack suffix:
+## id COMMA separated_nonempty_list(COMMA,id)
+## LR(1) items:
 separated_nonempty_list(COMMA,id) -> id COMMA separated_nonempty_list(COMMA,id) . [ RPAREN ]
+## Transitions:
+## Reductions:
 -- On RPAREN reduce production separated_nonempty_list(COMMA,id) -> id COMMA separated_nonempty_list(COMMA,id)
 
 State 245:
+## Known stack suffix:
+## FSM id EQUAL id opt_inst_params paren(separated_list(COMMA,id))
+## LR(1) items:
 fsm_inst -> FSM id EQUAL id opt_inst_params paren(separated_list(COMMA,id)) . [ FSM EOF ]
+## Transitions:
+## Reductions:
 -- On FSM reduce production fsm_inst -> FSM id EQUAL id opt_inst_params paren(separated_list(COMMA,id))
 -- On EOF reduce production fsm_inst -> FSM id EQUAL id opt_inst_params paren(separated_list(COMMA,id))
 
 State 246:
+## Known stack suffix:
+## my_list(type_decl) my_nonempty_list(fsm_model) my_nonempty_list(global) my_nonempty_list(fsm_inst)
+## LR(1) items:
 program -> my_list(type_decl) my_nonempty_list(fsm_model) my_nonempty_list(global) my_nonempty_list(fsm_inst) . EOF [ # ]
+## Transitions:
 -- On EOF shift to state 247
+## Reductions:
 
 State 247:
+## Known stack suffix:
+## my_list(type_decl) my_nonempty_list(fsm_model) my_nonempty_list(global) my_nonempty_list(fsm_inst) EOF
+## LR(1) items:
 program -> my_list(type_decl) my_nonempty_list(fsm_model) my_nonempty_list(global) my_nonempty_list(fsm_inst) EOF . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production program -> my_list(type_decl) my_nonempty_list(fsm_model) my_nonempty_list(global) my_nonempty_list(fsm_inst) EOF
 
 State 248:
+## Known stack suffix:
+## fsm_inst
+## LR(1) items:
 my_nonempty_list(fsm_inst) -> fsm_inst . [ EOF ]
 my_nonempty_list(fsm_inst) -> fsm_inst . my_nonempty_list(fsm_inst) [ EOF ]
+## Transitions:
 -- On FSM shift to state 230
 -- On my_nonempty_list(fsm_inst) shift to state 249
 -- On fsm_inst shift to state 248
+## Reductions:
 -- On EOF reduce production my_nonempty_list(fsm_inst) -> fsm_inst
 
 State 249:
+## Known stack suffix:
+## fsm_inst my_nonempty_list(fsm_inst)
+## LR(1) items:
 my_nonempty_list(fsm_inst) -> fsm_inst my_nonempty_list(fsm_inst) . [ EOF ]
+## Transitions:
+## Reductions:
 -- On EOF reduce production my_nonempty_list(fsm_inst) -> fsm_inst my_nonempty_list(fsm_inst)
 
 State 250:
+## Known stack suffix:
+## global
+## LR(1) items:
 my_nonempty_list(global) -> global . [ FSM ]
 my_nonempty_list(global) -> global . my_nonempty_list(global) [ FSM ]
+## Transitions:
 -- On SHARED shift to state 183
 -- On OUTPUT shift to state 187
 -- On INPUT shift to state 191
 -- On my_nonempty_list(global) shift to state 251
 -- On global shift to state 250
+## Reductions:
 -- On FSM reduce production my_nonempty_list(global) -> global
 
 State 251:
+## Known stack suffix:
+## global my_nonempty_list(global)
+## LR(1) items:
 my_nonempty_list(global) -> global my_nonempty_list(global) . [ FSM ]
+## Transitions:
+## Reductions:
 -- On FSM reduce production my_nonempty_list(global) -> global my_nonempty_list(global)
 
 State 252:
+## Known stack suffix:
+## fsm_model
+## LR(1) items:
 my_nonempty_list(fsm_model) -> fsm_model . [ SHARED OUTPUT INPUT ]
 my_nonempty_list(fsm_model) -> fsm_model . my_nonempty_list(fsm_model) [ SHARED OUTPUT INPUT ]
+## Transitions:
 -- On FSM shift to state 43
 -- On my_nonempty_list(fsm_model) shift to state 253
 -- On fsm_model shift to state 252
+## Reductions:
 -- On SHARED reduce production my_nonempty_list(fsm_model) -> fsm_model
 -- On OUTPUT reduce production my_nonempty_list(fsm_model) -> fsm_model
 -- On INPUT reduce production my_nonempty_list(fsm_model) -> fsm_model
 
 State 253:
+## Known stack suffix:
+## fsm_model my_nonempty_list(fsm_model)
+## LR(1) items:
 my_nonempty_list(fsm_model) -> fsm_model my_nonempty_list(fsm_model) . [ SHARED OUTPUT INPUT ]
+## Transitions:
+## Reductions:
 -- On SHARED reduce production my_nonempty_list(fsm_model) -> fsm_model my_nonempty_list(fsm_model)
 -- On OUTPUT reduce production my_nonempty_list(fsm_model) -> fsm_model my_nonempty_list(fsm_model)
 -- On INPUT reduce production my_nonempty_list(fsm_model) -> fsm_model my_nonempty_list(fsm_model)

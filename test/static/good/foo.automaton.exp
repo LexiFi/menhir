@@ -1,10 +1,20 @@
 State 0:
+## Known stack suffix:
+##
+## LR(1) items:
 exp' -> . exp [ # ]
+## Transitions:
 -- On INT shift to state 1
 -- On exp shift to state 2
+## Reductions:
 
 State 1:
+## Known stack suffix:
+## INT
+## LR(1) items:
 exp -> INT . [ TIMES PLUS # ]
+## Transitions:
+## Reductions:
 -- On TIMES reduce production exp -> INT
 -- On PLUS reduce production exp -> INT
 -- On # reduce production exp -> INT
@@ -15,11 +25,16 @@ exp -> INT . [ TIMES PLUS # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 2:
+## Known stack suffix:
+## exp
+## LR(1) items:
 exp' -> exp . [ # ]
 exp -> exp . TIMES exp [ TIMES PLUS # ]
 exp -> exp . PLUS exp [ TIMES PLUS # ]
+## Transitions:
 -- On TIMES shift to state 3
 -- On PLUS shift to state 5
+## Reductions:
 -- On # accept exp
 ** End-of-stream conflict on TIMES PLUS
 **   There is a tension between
@@ -28,14 +43,24 @@ exp -> exp . PLUS exp [ TIMES PLUS # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 3:
+## Known stack suffix:
+## exp TIMES
+## LR(1) items:
 exp -> exp TIMES . exp [ TIMES PLUS # ]
+## Transitions:
 -- On INT shift to state 1
 -- On exp shift to state 4
+## Reductions:
 
 State 4:
+## Known stack suffix:
+## exp TIMES exp
+## LR(1) items:
 exp -> exp . TIMES exp [ TIMES PLUS # ]
 exp -> exp TIMES exp . [ TIMES PLUS # ]
 exp -> exp . PLUS exp [ TIMES PLUS # ]
+## Transitions:
+## Reductions:
 -- On TIMES reduce production exp -> exp TIMES exp
 -- On PLUS reduce production exp -> exp TIMES exp
 -- On # reduce production exp -> exp TIMES exp
@@ -46,15 +71,25 @@ exp -> exp . PLUS exp [ TIMES PLUS # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 5:
+## Known stack suffix:
+## exp PLUS
+## LR(1) items:
 exp -> exp PLUS . exp [ TIMES PLUS # ]
+## Transitions:
 -- On INT shift to state 1
 -- On exp shift to state 6
+## Reductions:
 
 State 6:
+## Known stack suffix:
+## exp PLUS exp
+## LR(1) items:
 exp -> exp . TIMES exp [ TIMES PLUS # ]
 exp -> exp . PLUS exp [ TIMES PLUS # ]
 exp -> exp PLUS exp . [ TIMES PLUS # ]
+## Transitions:
 -- On TIMES shift to state 3
+## Reductions:
 -- On PLUS reduce production exp -> exp PLUS exp
 -- On # reduce production exp -> exp PLUS exp
 ** End-of-stream conflict on TIMES PLUS

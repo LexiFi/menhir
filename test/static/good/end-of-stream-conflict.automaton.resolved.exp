@@ -1,41 +1,76 @@
 State 0:
+## Known stack suffix:
+##
+## LR(1) items:
 expr' -> . expr [ # ]
+## Transitions:
 -- On INT shift to state 1
 -- On expr shift to state 2
+## Reductions:
 
 State 1:
+## Known stack suffix:
+## INT
+## LR(1) items:
 expr -> INT . [ TIMES PLUS # ]
+## Transitions:
+## Reductions:
 -- On TIMES reduce production expr -> INT
 -- On PLUS reduce production expr -> INT
 
 State 2:
+## Known stack suffix:
+## expr
+## LR(1) items:
 expr' -> expr . [ # ]
 expr -> expr . PLUS expr [ TIMES PLUS # ]
 expr -> expr . TIMES expr [ TIMES PLUS # ]
+## Transitions:
 -- On TIMES shift to state 3
 -- On PLUS shift to state 5
+## Reductions:
 
 State 3:
+## Known stack suffix:
+## expr TIMES
+## LR(1) items:
 expr -> expr TIMES . expr [ TIMES PLUS # ]
+## Transitions:
 -- On INT shift to state 1
 -- On expr shift to state 4
+## Reductions:
 
 State 4:
+## Known stack suffix:
+## expr TIMES expr
+## LR(1) items:
 expr -> expr . PLUS expr [ TIMES PLUS # ]
 expr -> expr . TIMES expr [ TIMES PLUS # ]
 expr -> expr TIMES expr . [ TIMES PLUS # ]
+## Transitions:
+## Reductions:
 -- On TIMES reduce production expr -> expr TIMES expr
 -- On PLUS reduce production expr -> expr TIMES expr
 
 State 5:
+## Known stack suffix:
+## expr PLUS
+## LR(1) items:
 expr -> expr PLUS . expr [ TIMES PLUS # ]
+## Transitions:
 -- On INT shift to state 1
 -- On expr shift to state 6
+## Reductions:
 
 State 6:
+## Known stack suffix:
+## expr PLUS expr
+## LR(1) items:
 expr -> expr . PLUS expr [ TIMES PLUS # ]
 expr -> expr PLUS expr . [ TIMES PLUS # ]
 expr -> expr . TIMES expr [ TIMES PLUS # ]
+## Transitions:
 -- On TIMES shift to state 3
+## Reductions:
 -- On PLUS reduce production expr -> expr PLUS expr
 

@@ -1,5 +1,9 @@
 State 0:
+## Known stack suffix:
+##
+## LR(1) items:
 doc_822' -> . doc_822 [ # ]
+## Transitions:
 -- On FIELD shift to state 1
 -- On EOL shift to state 7
 -- On stanzas shift to state 9
@@ -8,6 +12,7 @@ doc_822' -> . doc_822 [ # ]
 -- On field shift to state 15
 -- On eols shift to state 17
 -- On doc_822 shift to state 19
+## Reductions:
 -- On # reduce production stanzas ->
 ** End-of-stream conflict on FIELD EOL
 **   There is a tension between
@@ -16,15 +21,25 @@ doc_822' -> . doc_822 [ # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 1:
+## Known stack suffix:
+## FIELD
+## LR(1) items:
 field -> FIELD . EOL [ FIELD EOL EOF # ]
 field -> FIELD . EOL linecont [ FIELD EOL EOF # ]
+## Transitions:
 -- On EOL shift to state 2
+## Reductions:
 
 State 2:
+## Known stack suffix:
+## FIELD EOL
+## LR(1) items:
 field -> FIELD EOL . [ FIELD EOL EOF # ]
 field -> FIELD EOL . linecont [ FIELD EOL EOF # ]
+## Transitions:
 -- On CONT shift to state 3
 -- On linecont shift to state 6
+## Reductions:
 -- On FIELD reduce production field -> FIELD EOL
 -- On EOL reduce production field -> FIELD EOL
 -- On EOF reduce production field -> FIELD EOL
@@ -36,15 +51,25 @@ field -> FIELD EOL . linecont [ FIELD EOL EOF # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 3:
+## Known stack suffix:
+## CONT
+## LR(1) items:
 linecont -> CONT . EOL [ FIELD EOL EOF # ]
 linecont -> CONT . EOL linecont [ FIELD EOL EOF # ]
+## Transitions:
 -- On EOL shift to state 4
+## Reductions:
 
 State 4:
+## Known stack suffix:
+## CONT EOL
+## LR(1) items:
 linecont -> CONT EOL . [ FIELD EOL EOF # ]
 linecont -> CONT EOL . linecont [ FIELD EOL EOF # ]
+## Transitions:
 -- On CONT shift to state 3
 -- On linecont shift to state 5
+## Reductions:
 -- On FIELD reduce production linecont -> CONT EOL
 -- On EOL reduce production linecont -> CONT EOL
 -- On EOF reduce production linecont -> CONT EOL
@@ -56,7 +81,12 @@ linecont -> CONT EOL . linecont [ FIELD EOL EOF # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 5:
+## Known stack suffix:
+## CONT EOL linecont
+## LR(1) items:
 linecont -> CONT EOL linecont . [ FIELD EOL EOF # ]
+## Transitions:
+## Reductions:
 -- On FIELD reduce production linecont -> CONT EOL linecont
 -- On EOL reduce production linecont -> CONT EOL linecont
 -- On EOF reduce production linecont -> CONT EOL linecont
@@ -68,7 +98,12 @@ linecont -> CONT EOL linecont . [ FIELD EOL EOF # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 6:
+## Known stack suffix:
+## FIELD EOL linecont
+## LR(1) items:
 field -> FIELD EOL linecont . [ FIELD EOL EOF # ]
+## Transitions:
+## Reductions:
 -- On FIELD reduce production field -> FIELD EOL linecont
 -- On EOL reduce production field -> FIELD EOL linecont
 -- On EOF reduce production field -> FIELD EOL linecont
@@ -80,10 +115,15 @@ field -> FIELD EOL linecont . [ FIELD EOL EOF # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 7:
+## Known stack suffix:
+## EOL
+## LR(1) items:
 eols -> EOL . [ FIELD EOF # ]
 eols -> EOL . eols [ FIELD EOF # ]
+## Transitions:
 -- On EOL shift to state 7
 -- On eols shift to state 8
+## Reductions:
 -- On FIELD reduce production eols -> EOL
 -- On EOF reduce production eols -> EOL
 -- On # reduce production eols -> EOL
@@ -94,7 +134,12 @@ eols -> EOL . eols [ FIELD EOF # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 8:
+## Known stack suffix:
+## EOL eols
+## LR(1) items:
 eols -> EOL eols . [ FIELD EOF # ]
+## Transitions:
+## Reductions:
 -- On FIELD reduce production eols -> EOL eols
 -- On EOF reduce production eols -> EOL eols
 -- On # reduce production eols -> EOL eols
@@ -105,27 +150,47 @@ eols -> EOL eols . [ FIELD EOF # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 9:
+## Known stack suffix:
+## stanzas
+## LR(1) items:
 doc_822 -> stanzas . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production doc_822 -> stanzas
 
 State 10:
+## Known stack suffix:
+## stanza
+## LR(1) items:
 stanzas -> stanza . EOF [ # ]
 stanzas -> stanza . eols stanzas [ # ]
+## Transitions:
 -- On EOL shift to state 7
 -- On EOF shift to state 11
 -- On eols shift to state 12
+## Reductions:
 
 State 11:
+## Known stack suffix:
+## stanza EOF
+## LR(1) items:
 stanzas -> stanza EOF . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production stanzas -> stanza EOF
 
 State 12:
+## Known stack suffix:
+## stanza eols
+## LR(1) items:
 stanzas -> stanza eols . stanzas [ # ]
+## Transitions:
 -- On FIELD shift to state 1
 -- On stanzas shift to state 13
 -- On stanza shift to state 10
 -- On fields shift to state 14
 -- On field shift to state 15
+## Reductions:
 -- On # reduce production stanzas ->
 ** End-of-stream conflict on FIELD
 **   There is a tension between
@@ -134,35 +199,60 @@ stanzas -> stanza eols . stanzas [ # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 13:
+## Known stack suffix:
+## stanza eols stanzas
+## LR(1) items:
 stanzas -> stanza eols stanzas . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production stanzas -> stanza eols stanzas
 
 State 14:
+## Known stack suffix:
+## fields
+## LR(1) items:
 stanza -> fields . [ EOL EOF ]
+## Transitions:
+## Reductions:
 -- On EOL reduce production stanza -> fields
 -- On EOF reduce production stanza -> fields
 
 State 15:
+## Known stack suffix:
+## field
+## LR(1) items:
 fields -> field . [ EOL EOF ]
 fields -> field . fields [ EOL EOF ]
+## Transitions:
 -- On FIELD shift to state 1
 -- On fields shift to state 16
 -- On field shift to state 15
+## Reductions:
 -- On EOL reduce production fields -> field
 -- On EOF reduce production fields -> field
 
 State 16:
+## Known stack suffix:
+## field fields
+## LR(1) items:
 fields -> field fields . [ EOL EOF ]
+## Transitions:
+## Reductions:
 -- On EOL reduce production fields -> field fields
 -- On EOF reduce production fields -> field fields
 
 State 17:
+## Known stack suffix:
+## eols
+## LR(1) items:
 doc_822 -> eols . stanzas [ # ]
+## Transitions:
 -- On FIELD shift to state 1
 -- On stanzas shift to state 18
 -- On stanza shift to state 10
 -- On fields shift to state 14
 -- On field shift to state 15
+## Reductions:
 -- On # reduce production stanzas ->
 ** End-of-stream conflict on FIELD
 **   There is a tension between
@@ -171,15 +261,29 @@ doc_822 -> eols . stanzas [ # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 18:
+## Known stack suffix:
+## eols stanzas
+## LR(1) items:
 doc_822 -> eols stanzas . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production doc_822 -> eols stanzas
 
 State 19:
+## Known stack suffix:
+## doc_822
+## LR(1) items:
 doc_822' -> doc_822 . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept doc_822
 
 State 20:
+## Known stack suffix:
+##
+## LR(1) items:
 stanza_822' -> . stanza_822 [ # ]
+## Transitions:
 -- On FIELD shift to state 1
 -- On EOL shift to state 7
 -- On EOF shift to state 21
@@ -188,29 +292,55 @@ stanza_822' -> . stanza_822 [ # ]
 -- On fields shift to state 24
 -- On field shift to state 25
 -- On eols shift to state 27
+## Reductions:
 
 State 21:
+## Known stack suffix:
+## EOF
+## LR(1) items:
 stanza_822 -> EOF . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production stanza_822 -> EOF
 
 State 22:
+## Known stack suffix:
+## stanza_822
+## LR(1) items:
 stanza_822' -> stanza_822 . [ # ]
+## Transitions:
+## Reductions:
 -- On # accept stanza_822
 
 State 23:
+## Known stack suffix:
+## stanza
+## LR(1) items:
 stanza_822 -> stanza . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production stanza_822 -> stanza
 
 State 24:
+## Known stack suffix:
+## fields
+## LR(1) items:
 stanza -> fields . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production stanza -> fields
 
 State 25:
+## Known stack suffix:
+## field
+## LR(1) items:
 fields -> field . [ # ]
 fields -> field . fields [ # ]
+## Transitions:
 -- On FIELD shift to state 1
 -- On fields shift to state 26
 -- On field shift to state 25
+## Reductions:
 -- On # reduce production fields -> field
 ** End-of-stream conflict on FIELD
 **   There is a tension between
@@ -219,23 +349,43 @@ fields -> field . fields [ # ]
 **   (2) testing whether the lookahead token is a member of the above set.
 
 State 26:
+## Known stack suffix:
+## field fields
+## LR(1) items:
 fields -> field fields . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production fields -> field fields
 
 State 27:
+## Known stack suffix:
+## eols
+## LR(1) items:
 stanza_822 -> eols . stanza [ # ]
 stanza_822 -> eols . EOF [ # ]
+## Transitions:
 -- On FIELD shift to state 1
 -- On EOF shift to state 28
 -- On stanza shift to state 29
 -- On fields shift to state 24
 -- On field shift to state 25
+## Reductions:
 
 State 28:
+## Known stack suffix:
+## eols EOF
+## LR(1) items:
 stanza_822 -> eols EOF . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production stanza_822 -> eols EOF
 
 State 29:
+## Known stack suffix:
+## eols stanza
+## LR(1) items:
 stanza_822 -> eols stanza . [ # ]
+## Transitions:
+## Reductions:
 -- On # reduce production stanza_822 -> eols stanza
 

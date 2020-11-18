@@ -14,20 +14,28 @@
 open Printf
 open Grammar
 
-let dump_node out node =
+let dump_node out print_stack_symbols node =
 
   (* Print the state number. *)
 
   fprintf out "State %d:\n"
     (Lr1.number node);
 
+  (* Print the known prefix of the stack. *)
+
+  fprintf out
+    "## Known stack suffix:\n\
+     ##%s\n"
+    (print_stack_symbols node);
+
   (* Print the items. *)
 
-  fprintf out "%s"
+  fprintf out "## LR(1) items:\n%s"
     (Lr0.print "" (Lr1.state node));
 
   (* Print the transitions. *)
 
+  fprintf out "## Transitions:\n";
   SymbolMap.iter (fun symbol node ->
     fprintf out "-- On %s shift to state %d\n"
       (Symbol.print symbol) (Lr1.number node)
@@ -38,6 +46,7 @@ let dump_node out node =
   (* One might wish to group all symbols that
      lead to reducing a common production. *)
 
+  fprintf out "## Reductions:\n";
   TerminalMap.iter (fun tok prods ->
     List.iter (fun prod ->
       fprintf out "-- On %s " (Terminal.print tok);
@@ -81,7 +90,8 @@ let dump_node out node =
   fprintf out "\n"
 
 let dump filename =
+  let module SS = StackSymbols.Run() in
   let out = open_out filename in
-  Lr1.iter (dump_node out);
+  Lr1.iter (dump_node out SS.print_stack_symbols);
   close_out out;
   Time.tick "Dumping the LR(1) automaton"
