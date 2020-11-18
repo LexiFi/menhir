@@ -158,9 +158,6 @@ let conflict_tokens : TerminalSet.t array =
 
 (* Information about end-of-stream conflicts in each state. *)
 
-let eos_conflicts =
-  ref 0
-
 let has_eos_conflict : (Production.index list * TerminalSet.t) option array =
   Array.make Raw.n None
 
@@ -375,8 +372,7 @@ let discover (raw_node : Raw.node) =
         (Lr0.reduction_tokens reductions)
     in
     (* Record this end-of-stream conflict. *)
-    has_eos_conflict.(i) <- Some (prods, toks);
-    incr eos_conflicts
+    has_eos_conflict.(i) <- Some (prods, toks)
   end;
 
   (* Record statistics about conflicts. *)
