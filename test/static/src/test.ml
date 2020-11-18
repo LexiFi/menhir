@@ -2,8 +2,6 @@
    would like dune to execute. It is used to produce [../good/dune.auto]
    and [../bad/dune.auto]. *)
 
-(* Note: the contents of the .conflicts and .automaton files are not tested. *)
-
 (* Note: no test in bad/ should have the same name as a test in good/. *)
 
 (* -------------------------------------------------------------------------- *)
@@ -298,11 +296,10 @@ let process_positive_test basenames : unit =
   print (phony id (diff expected output));
   (* Run menhir. *)
   let output = id ^ ".out" in
-  let expected = id ^ ".exp" in
-  let _automaton = id ^ ".automaton" in
-  let _conflicts = id ^ ".conflicts" in
-  let timings = id ^ ".out.timings" in
-  run true basenames [output;timings] (atoms [
+  let automaton = id ^ ".automaton" in
+  let conflicts = id ^ ".conflicts" in
+  let timings = id ^ ".timings" in
+  run true basenames [output;automaton;conflicts;timings] (atoms [
     "--dump";
     "--explain";
     "-lg"; "2";
@@ -311,7 +308,10 @@ let process_positive_test basenames : unit =
     "--timings-to"; timings;
   ] @ flags);
   (* Check that the output coincides with what was expected. *)
-  print (phony id (diff expected output))
+  print (phony id (diff (id ^ ".exp") output));
+  (* Check the .automaton and .conflicts files. *)
+  print (phony id (diff (id ^ ".automaton.exp") automaton));
+  print (phony id (diff (id ^ ".conflicts.exp") conflicts))
 
 (* -------------------------------------------------------------------------- *)
 

@@ -1,0 +1,90 @@
+
+** Conflict (shift/reduce) in state 30.
+** Tokens involved: UNDERSCORE STRING STAR QMARK PLUS LPAREN LBRACK IDENT EOF CHAR
+** The following explanations concentrate on token UNDERSCORE.
+** This state is reached from spec after reading:
+
+codeopt LET IDENT EQUALS regexp regexp 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+spec 
+codeopt macros RULE rules codeopt 
+        macro macros 
+        LET IDENT EQUALS regexp 
+                         (?)
+
+** In state 30, looking ahead at UNDERSCORE, shifting is permitted
+** because of the following sub-derivation:
+
+regexp regexp 
+       regexp regexp 
+              . UNDERSCORE 
+
+** In state 30, looking ahead at UNDERSCORE, reducing production
+** regexp -> regexp regexp 
+** is permitted because of the following sub-derivation:
+
+regexp regexp // lookahead token appears because regexp can begin with UNDERSCORE
+regexp regexp . 
+
+** Conflict (shift/reduce) in state 29.
+** Tokens involved: UNDERSCORE STRING STAR QMARK PLUS LPAREN LBRACK IDENT EOF CHAR
+** The following explanations concentrate on token UNDERSCORE.
+** This state is reached from spec after reading:
+
+codeopt LET IDENT EQUALS regexp BAR regexp 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+spec 
+codeopt macros RULE rules codeopt 
+        macro macros 
+        LET IDENT EQUALS regexp 
+                         (?)
+
+** In state 29, looking ahead at UNDERSCORE, shifting is permitted
+** because of the following sub-derivation:
+
+regexp BAR regexp 
+           regexp regexp 
+                  . UNDERSCORE 
+
+** In state 29, looking ahead at UNDERSCORE, reducing production
+** regexp -> regexp BAR regexp 
+** is permitted because of the following sub-derivation:
+
+regexp regexp // lookahead token appears because regexp can begin with UNDERSCORE
+regexp BAR regexp . 
+
+** Conflict (shift/reduce) in state 17.
+** Token involved: CHAR
+** This state is reached from spec after reading:
+
+codeopt LET IDENT EQUALS LBRACK charset charset 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+spec 
+codeopt macros RULE rules codeopt 
+        macro macros 
+        LET IDENT EQUALS regexp 
+                         LBRACK charset RBRACK 
+                                (?)
+
+** In state 17, looking ahead at CHAR, shifting is permitted
+** because of the following sub-derivation:
+
+charset charset 
+        charset charset 
+                . CHAR 
+
+** In state 17, looking ahead at CHAR, reducing production
+** charset -> charset charset 
+** is permitted because of the following sub-derivation:
+
+charset charset // lookahead token appears because charset can begin with CHAR
+charset charset . 

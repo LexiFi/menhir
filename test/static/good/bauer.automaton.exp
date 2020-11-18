@@ -1,0 +1,150 @@
+State 0:
+clauses' -> . clauses [ # ]
+-- On VARIABLE shift to state 1
+-- On IDENTIFIER shift to state 2
+-- On term shift to state 12
+-- On separated_nonempty_list(DOT,clause) shift to state 15
+-- On loption(separated_nonempty_list(DOT,clause)) shift to state 16
+-- On clauses shift to state 18
+-- On clause shift to state 19
+-- On EOF reduce production loption(separated_nonempty_list(DOT,clause)) -> 
+
+State 1:
+term -> VARIABLE . [ RPARENT INFERS EOF DOT COMMA ]
+-- On RPARENT reduce production term -> VARIABLE 
+-- On INFERS reduce production term -> VARIABLE 
+-- On EOF reduce production term -> VARIABLE 
+-- On DOT reduce production term -> VARIABLE 
+-- On COMMA reduce production term -> VARIABLE 
+
+State 2:
+term -> IDENTIFIER . option(params) [ RPARENT INFERS EOF DOT COMMA ]
+-- On LPARENT shift to state 3
+-- On params shift to state 10
+-- On option(params) shift to state 11
+-- On RPARENT reduce production option(params) -> 
+-- On INFERS reduce production option(params) -> 
+-- On EOF reduce production option(params) -> 
+-- On DOT reduce production option(params) -> 
+-- On COMMA reduce production option(params) -> 
+
+State 3:
+params -> LPARENT . loption(separated_nonempty_list(COMMA,term)) RPARENT [ RPARENT INFERS EOF DOT COMMA ]
+-- On VARIABLE shift to state 1
+-- On IDENTIFIER shift to state 2
+-- On term shift to state 4
+-- On separated_nonempty_list(COMMA,term) shift to state 7
+-- On loption(separated_nonempty_list(COMMA,term)) shift to state 8
+-- On RPARENT reduce production loption(separated_nonempty_list(COMMA,term)) -> 
+
+State 4:
+separated_nonempty_list(COMMA,term) -> term . [ RPARENT EOF DOT ]
+separated_nonempty_list(COMMA,term) -> term . COMMA separated_nonempty_list(COMMA,term) [ RPARENT EOF DOT ]
+-- On COMMA shift to state 5
+-- On RPARENT reduce production separated_nonempty_list(COMMA,term) -> term 
+-- On EOF reduce production separated_nonempty_list(COMMA,term) -> term 
+-- On DOT reduce production separated_nonempty_list(COMMA,term) -> term 
+
+State 5:
+separated_nonempty_list(COMMA,term) -> term COMMA . separated_nonempty_list(COMMA,term) [ RPARENT EOF DOT ]
+-- On VARIABLE shift to state 1
+-- On IDENTIFIER shift to state 2
+-- On term shift to state 4
+-- On separated_nonempty_list(COMMA,term) shift to state 6
+
+State 6:
+separated_nonempty_list(COMMA,term) -> term COMMA separated_nonempty_list(COMMA,term) . [ RPARENT EOF DOT ]
+-- On RPARENT reduce production separated_nonempty_list(COMMA,term) -> term COMMA separated_nonempty_list(COMMA,term) 
+-- On EOF reduce production separated_nonempty_list(COMMA,term) -> term COMMA separated_nonempty_list(COMMA,term) 
+-- On DOT reduce production separated_nonempty_list(COMMA,term) -> term COMMA separated_nonempty_list(COMMA,term) 
+
+State 7:
+loption(separated_nonempty_list(COMMA,term)) -> separated_nonempty_list(COMMA,term) . [ RPARENT EOF DOT ]
+-- On RPARENT reduce production loption(separated_nonempty_list(COMMA,term)) -> separated_nonempty_list(COMMA,term) 
+-- On EOF reduce production loption(separated_nonempty_list(COMMA,term)) -> separated_nonempty_list(COMMA,term) 
+-- On DOT reduce production loption(separated_nonempty_list(COMMA,term)) -> separated_nonempty_list(COMMA,term) 
+
+State 8:
+params -> LPARENT loption(separated_nonempty_list(COMMA,term)) . RPARENT [ RPARENT INFERS EOF DOT COMMA ]
+-- On RPARENT shift to state 9
+
+State 9:
+params -> LPARENT loption(separated_nonempty_list(COMMA,term)) RPARENT . [ RPARENT INFERS EOF DOT COMMA ]
+-- On RPARENT reduce production params -> LPARENT loption(separated_nonempty_list(COMMA,term)) RPARENT 
+-- On INFERS reduce production params -> LPARENT loption(separated_nonempty_list(COMMA,term)) RPARENT 
+-- On EOF reduce production params -> LPARENT loption(separated_nonempty_list(COMMA,term)) RPARENT 
+-- On DOT reduce production params -> LPARENT loption(separated_nonempty_list(COMMA,term)) RPARENT 
+-- On COMMA reduce production params -> LPARENT loption(separated_nonempty_list(COMMA,term)) RPARENT 
+
+State 10:
+option(params) -> params . [ RPARENT INFERS EOF DOT COMMA ]
+-- On RPARENT reduce production option(params) -> params 
+-- On INFERS reduce production option(params) -> params 
+-- On EOF reduce production option(params) -> params 
+-- On DOT reduce production option(params) -> params 
+-- On COMMA reduce production option(params) -> params 
+
+State 11:
+term -> IDENTIFIER option(params) . [ RPARENT INFERS EOF DOT COMMA ]
+-- On RPARENT reduce production term -> IDENTIFIER option(params) 
+-- On INFERS reduce production term -> IDENTIFIER option(params) 
+-- On EOF reduce production term -> IDENTIFIER option(params) 
+-- On DOT reduce production term -> IDENTIFIER option(params) 
+-- On COMMA reduce production term -> IDENTIFIER option(params) 
+
+State 12:
+clause -> term . INFERS loption(separated_nonempty_list(COMMA,term)) [ EOF DOT ]
+clause -> term . [ EOF DOT ]
+-- On INFERS shift to state 13
+-- On EOF reduce production clause -> term 
+-- On DOT reduce production clause -> term 
+
+State 13:
+clause -> term INFERS . loption(separated_nonempty_list(COMMA,term)) [ EOF DOT ]
+-- On VARIABLE shift to state 1
+-- On IDENTIFIER shift to state 2
+-- On term shift to state 4
+-- On separated_nonempty_list(COMMA,term) shift to state 7
+-- On loption(separated_nonempty_list(COMMA,term)) shift to state 14
+-- On EOF reduce production loption(separated_nonempty_list(COMMA,term)) -> 
+-- On DOT reduce production loption(separated_nonempty_list(COMMA,term)) -> 
+
+State 14:
+clause -> term INFERS loption(separated_nonempty_list(COMMA,term)) . [ EOF DOT ]
+-- On EOF reduce production clause -> term INFERS loption(separated_nonempty_list(COMMA,term)) 
+-- On DOT reduce production clause -> term INFERS loption(separated_nonempty_list(COMMA,term)) 
+
+State 15:
+loption(separated_nonempty_list(DOT,clause)) -> separated_nonempty_list(DOT,clause) . [ EOF ]
+-- On EOF reduce production loption(separated_nonempty_list(DOT,clause)) -> separated_nonempty_list(DOT,clause) 
+
+State 16:
+clauses -> loption(separated_nonempty_list(DOT,clause)) . EOF [ # ]
+-- On EOF shift to state 17
+
+State 17:
+clauses -> loption(separated_nonempty_list(DOT,clause)) EOF . [ # ]
+-- On # reduce production clauses -> loption(separated_nonempty_list(DOT,clause)) EOF 
+
+State 18:
+clauses' -> clauses . [ # ]
+-- On # accept clauses
+
+State 19:
+separated_nonempty_list(DOT,clause) -> clause . [ EOF ]
+separated_nonempty_list(DOT,clause) -> clause . DOT separated_nonempty_list(DOT,clause) [ EOF ]
+-- On DOT shift to state 20
+-- On EOF reduce production separated_nonempty_list(DOT,clause) -> clause 
+
+State 20:
+separated_nonempty_list(DOT,clause) -> clause DOT . separated_nonempty_list(DOT,clause) [ EOF ]
+-- On VARIABLE shift to state 1
+-- On IDENTIFIER shift to state 2
+-- On term shift to state 12
+-- On separated_nonempty_list(DOT,clause) shift to state 21
+-- On clause shift to state 19
+
+State 21:
+separated_nonempty_list(DOT,clause) -> clause DOT separated_nonempty_list(DOT,clause) . [ EOF ]
+-- On EOF reduce production separated_nonempty_list(DOT,clause) -> clause DOT separated_nonempty_list(DOT,clause) 
+

@@ -1,0 +1,382 @@
+State 0:
+signature' -> . signature [ # ]
+-- On INT shift to state 1
+-- On IDENT shift to state 2
+-- On EOF shift to state 3
+-- On signature shift to state 4
+-- On op_list shift to state 5
+-- On ident shift to state 18
+-- On decl shift to state 21
+
+State 1:
+ident -> INT . [ COMMA COLON ]
+-- On COMMA reduce production ident -> INT 
+-- On COLON reduce production ident -> INT 
+
+State 2:
+ident -> IDENT . [ COMMA COLON ]
+-- On COMMA reduce production ident -> IDENT 
+-- On COLON reduce production ident -> IDENT 
+
+State 3:
+signature -> EOF . [ # ]
+-- On # reduce production signature -> EOF 
+
+State 4:
+signature' -> signature . [ # ]
+-- On # accept signature
+
+State 5:
+decl -> op_list . COLON fix arity [ SEMICOLON # ]
+-- On COLON shift to state 6
+
+State 6:
+decl -> op_list COLON . fix arity [ SEMICOLON # ]
+-- On KW_PREFIX shift to state 7
+-- On KW_POSTFIX shift to state 8
+-- On KW_INFIX shift to state 9
+-- On fix shift to state 10
+-- On KW_UNARY reduce production fix -> 
+-- On KW_CONSTANT reduce production fix -> 
+-- On KW_C reduce production fix -> 
+-- On KW_BINARY reduce production fix -> 
+-- On KW_AC reduce production fix -> 
+-- On INT reduce production fix -> 
+
+State 7:
+fix -> KW_PREFIX . [ KW_UNARY KW_CONSTANT KW_C KW_BINARY KW_AC INT ]
+-- On KW_UNARY reduce production fix -> KW_PREFIX 
+-- On KW_CONSTANT reduce production fix -> KW_PREFIX 
+-- On KW_C reduce production fix -> KW_PREFIX 
+-- On KW_BINARY reduce production fix -> KW_PREFIX 
+-- On KW_AC reduce production fix -> KW_PREFIX 
+-- On INT reduce production fix -> KW_PREFIX 
+
+State 8:
+fix -> KW_POSTFIX . [ KW_UNARY KW_CONSTANT KW_C KW_BINARY KW_AC INT ]
+-- On KW_UNARY reduce production fix -> KW_POSTFIX 
+-- On KW_CONSTANT reduce production fix -> KW_POSTFIX 
+-- On KW_C reduce production fix -> KW_POSTFIX 
+-- On KW_BINARY reduce production fix -> KW_POSTFIX 
+-- On KW_AC reduce production fix -> KW_POSTFIX 
+-- On INT reduce production fix -> KW_POSTFIX 
+
+State 9:
+fix -> KW_INFIX . [ KW_UNARY KW_CONSTANT KW_C KW_BINARY KW_AC INT ]
+-- On KW_UNARY reduce production fix -> KW_INFIX 
+-- On KW_CONSTANT reduce production fix -> KW_INFIX 
+-- On KW_C reduce production fix -> KW_INFIX 
+-- On KW_BINARY reduce production fix -> KW_INFIX 
+-- On KW_AC reduce production fix -> KW_INFIX 
+-- On INT reduce production fix -> KW_INFIX 
+
+State 10:
+decl -> op_list COLON fix . arity [ SEMICOLON # ]
+-- On KW_UNARY shift to state 11
+-- On KW_CONSTANT shift to state 12
+-- On KW_C shift to state 13
+-- On KW_BINARY shift to state 14
+-- On KW_AC shift to state 15
+-- On INT shift to state 16
+-- On arity shift to state 17
+
+State 11:
+arity -> KW_UNARY . [ SEMICOLON AS # ]
+-- On SEMICOLON reduce production arity -> KW_UNARY 
+-- On AS reduce production arity -> KW_UNARY 
+-- On # reduce production arity -> KW_UNARY 
+
+State 12:
+arity -> KW_CONSTANT . [ SEMICOLON AS # ]
+-- On SEMICOLON reduce production arity -> KW_CONSTANT 
+-- On AS reduce production arity -> KW_CONSTANT 
+-- On # reduce production arity -> KW_CONSTANT 
+
+State 13:
+arity -> KW_C . [ SEMICOLON AS # ]
+-- On SEMICOLON reduce production arity -> KW_C 
+-- On AS reduce production arity -> KW_C 
+-- On # reduce production arity -> KW_C 
+
+State 14:
+arity -> KW_BINARY . [ SEMICOLON AS # ]
+-- On SEMICOLON reduce production arity -> KW_BINARY 
+-- On AS reduce production arity -> KW_BINARY 
+-- On # reduce production arity -> KW_BINARY 
+
+State 15:
+arity -> KW_AC . [ SEMICOLON AS # ]
+-- On SEMICOLON reduce production arity -> KW_AC 
+-- On AS reduce production arity -> KW_AC 
+-- On # reduce production arity -> KW_AC 
+
+State 16:
+arity -> INT . [ SEMICOLON AS # ]
+-- On SEMICOLON reduce production arity -> INT 
+-- On AS reduce production arity -> INT 
+-- On # reduce production arity -> INT 
+
+State 17:
+decl -> op_list COLON fix arity . [ SEMICOLON # ]
+-- On SEMICOLON reduce production decl -> op_list COLON fix arity 
+-- On # reduce production decl -> op_list COLON fix arity 
+
+State 18:
+op_list -> ident . [ COLON ]
+op_list -> ident . COMMA op_list [ COLON ]
+-- On COMMA shift to state 19
+-- On COLON reduce production op_list -> ident 
+
+State 19:
+op_list -> ident COMMA . op_list [ COLON ]
+-- On INT shift to state 1
+-- On IDENT shift to state 2
+-- On op_list shift to state 20
+-- On ident shift to state 18
+
+State 20:
+op_list -> ident COMMA op_list . [ COLON ]
+-- On COLON reduce production op_list -> ident COMMA op_list 
+
+State 21:
+signature -> decl . [ # ]
+signature -> decl . SEMICOLON signature [ # ]
+-- On SEMICOLON shift to state 22
+-- On # reduce production signature -> decl 
+
+State 22:
+signature -> decl SEMICOLON . signature [ # ]
+-- On INT shift to state 1
+-- On IDENT shift to state 2
+-- On EOF shift to state 3
+-- On signature shift to state 23
+-- On op_list shift to state 5
+-- On ident shift to state 18
+-- On decl shift to state 21
+
+State 23:
+signature -> decl SEMICOLON signature . [ # ]
+-- On # reduce production signature -> decl SEMICOLON signature 
+
+State 24:
+sorted_signature' -> . sorted_signature [ # ]
+-- On INT shift to state 1
+-- On IDENT shift to state 2
+-- On EOF shift to state 25
+-- On sorted_signature shift to state 26
+-- On sorted_decl shift to state 27
+-- On op_list shift to state 30
+-- On ident shift to state 18
+
+State 25:
+sorted_signature -> EOF . [ # ]
+-- On # reduce production sorted_signature -> EOF 
+
+State 26:
+sorted_signature' -> sorted_signature . [ # ]
+-- On # accept sorted_signature
+
+State 27:
+sorted_signature -> sorted_decl . [ # ]
+sorted_signature -> sorted_decl . SEMICOLON sorted_signature [ # ]
+-- On SEMICOLON shift to state 28
+-- On # reduce production sorted_signature -> sorted_decl 
+
+State 28:
+sorted_signature -> sorted_decl SEMICOLON . sorted_signature [ # ]
+-- On INT shift to state 1
+-- On IDENT shift to state 2
+-- On EOF shift to state 25
+-- On sorted_signature shift to state 29
+-- On sorted_decl shift to state 27
+-- On op_list shift to state 30
+-- On ident shift to state 18
+
+State 29:
+sorted_signature -> sorted_decl SEMICOLON sorted_signature . [ # ]
+-- On # reduce production sorted_signature -> sorted_decl SEMICOLON sorted_signature 
+
+State 30:
+sorted_decl -> op_list . COLON fix arity AS profile_list [ SEMICOLON # ]
+-- On COLON shift to state 31
+
+State 31:
+sorted_decl -> op_list COLON . fix arity AS profile_list [ SEMICOLON # ]
+-- On KW_PREFIX shift to state 7
+-- On KW_POSTFIX shift to state 8
+-- On KW_INFIX shift to state 9
+-- On fix shift to state 32
+-- On KW_UNARY reduce production fix -> 
+-- On KW_CONSTANT reduce production fix -> 
+-- On KW_C reduce production fix -> 
+-- On KW_BINARY reduce production fix -> 
+-- On KW_AC reduce production fix -> 
+-- On INT reduce production fix -> 
+
+State 32:
+sorted_decl -> op_list COLON fix . arity AS profile_list [ SEMICOLON # ]
+-- On KW_UNARY shift to state 11
+-- On KW_CONSTANT shift to state 12
+-- On KW_C shift to state 13
+-- On KW_BINARY shift to state 14
+-- On KW_AC shift to state 15
+-- On INT shift to state 16
+-- On arity shift to state 33
+
+State 33:
+sorted_decl -> op_list COLON fix arity . AS profile_list [ SEMICOLON # ]
+-- On AS shift to state 34
+
+State 34:
+sorted_decl -> op_list COLON fix arity AS . profile_list [ SEMICOLON # ]
+-- On IDENT shift to state 35
+-- On sort_list shift to state 36
+-- On sort shift to state 39
+-- On profile_list shift to state 41
+-- On profile shift to state 42
+-- On ARROW reduce production sort_list -> 
+
+State 35:
+sort -> IDENT . [ SEMICOLON IDENT COMMA ARROW # ]
+-- On SEMICOLON reduce production sort -> IDENT 
+-- On IDENT reduce production sort -> IDENT 
+-- On COMMA reduce production sort -> IDENT 
+-- On ARROW reduce production sort -> IDENT 
+-- On # reduce production sort -> IDENT 
+
+State 36:
+profile -> sort_list . ARROW sort [ SEMICOLON COMMA # ]
+-- On ARROW shift to state 37
+
+State 37:
+profile -> sort_list ARROW . sort [ SEMICOLON COMMA # ]
+-- On IDENT shift to state 35
+-- On sort shift to state 38
+
+State 38:
+profile -> sort_list ARROW sort . [ SEMICOLON COMMA # ]
+-- On SEMICOLON reduce production profile -> sort_list ARROW sort 
+-- On COMMA reduce production profile -> sort_list ARROW sort 
+-- On # reduce production profile -> sort_list ARROW sort 
+
+State 39:
+sort_list -> sort . sort_list [ ARROW ]
+-- On IDENT shift to state 35
+-- On sort_list shift to state 40
+-- On sort shift to state 39
+-- On ARROW reduce production sort_list -> 
+
+State 40:
+sort_list -> sort sort_list . [ ARROW ]
+-- On ARROW reduce production sort_list -> sort sort_list 
+
+State 41:
+sorted_decl -> op_list COLON fix arity AS profile_list . [ SEMICOLON # ]
+-- On SEMICOLON reduce production sorted_decl -> op_list COLON fix arity AS profile_list 
+-- On # reduce production sorted_decl -> op_list COLON fix arity AS profile_list 
+
+State 42:
+profile_list -> profile . [ SEMICOLON # ]
+profile_list -> profile . COMMA profile_list [ SEMICOLON # ]
+-- On COMMA shift to state 43
+-- On SEMICOLON reduce production profile_list -> profile 
+-- On # reduce production profile_list -> profile 
+
+State 43:
+profile_list -> profile COMMA . profile_list [ SEMICOLON # ]
+-- On IDENT shift to state 35
+-- On sort_list shift to state 36
+-- On sort shift to state 39
+-- On profile_list shift to state 44
+-- On profile shift to state 42
+-- On ARROW reduce production sort_list -> 
+
+State 44:
+profile_list -> profile COMMA profile_list . [ SEMICOLON # ]
+-- On SEMICOLON reduce production profile_list -> profile COMMA profile_list 
+-- On # reduce production profile_list -> profile COMMA profile_list 
+
+State 11 has an end-of-stream conflict. There is a tension between
+(1) reducing production arity -> KW_UNARY 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of SEMICOLON AS,
+which would require some other action.
+
+State 12 has an end-of-stream conflict. There is a tension between
+(1) reducing production arity -> KW_CONSTANT 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of SEMICOLON AS,
+which would require some other action.
+
+State 13 has an end-of-stream conflict. There is a tension between
+(1) reducing production arity -> KW_C 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of SEMICOLON AS,
+which would require some other action.
+
+State 14 has an end-of-stream conflict. There is a tension between
+(1) reducing production arity -> KW_BINARY 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of SEMICOLON AS,
+which would require some other action.
+
+State 15 has an end-of-stream conflict. There is a tension between
+(1) reducing production arity -> KW_AC 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of SEMICOLON AS,
+which would require some other action.
+
+State 16 has an end-of-stream conflict. There is a tension between
+(1) reducing production arity -> INT 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of SEMICOLON AS,
+which would require some other action.
+
+State 17 has an end-of-stream conflict. There is a tension between
+(1) reducing production decl -> op_list COLON fix arity 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is SEMICOLON,
+which would require some other action.
+
+State 21 has an end-of-stream conflict. There is a tension between
+(1) reducing production signature -> decl 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is SEMICOLON,
+which would require some other action.
+
+State 27 has an end-of-stream conflict. There is a tension between
+(1) reducing production sorted_signature -> sorted_decl 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is SEMICOLON,
+which would require some other action.
+
+State 35 has an end-of-stream conflict. There is a tension between
+(1) reducing production sort -> IDENT 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of SEMICOLON IDENT COMMA ARROW,
+which would require some other action.
+
+State 38 has an end-of-stream conflict. There is a tension between
+(1) reducing production profile -> sort_list ARROW sort 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of SEMICOLON COMMA,
+which would require some other action.
+
+State 41 has an end-of-stream conflict. There is a tension between
+(1) reducing production sorted_decl -> op_list COLON fix arity AS profile_list 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is SEMICOLON,
+which would require some other action.
+
+State 42 has an end-of-stream conflict. There is a tension between
+(1) reducing production profile_list -> profile 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of SEMICOLON COMMA,
+which would require some other action.
+
+State 44 has an end-of-stream conflict. There is a tension between
+(1) reducing production profile_list -> profile COMMA profile_list 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is SEMICOLON,
+which would require some other action.
+

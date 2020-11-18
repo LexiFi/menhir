@@ -1,0 +1,317 @@
+State 0:
+charsets' -> . charsets [ # ]
+-- On TOK shift to state 1
+-- On STAR shift to state 10
+-- On charsets shift to state 12
+-- On charset shift to state 13
+
+State 1:
+charset -> TOK . params [ EOI COMMA ]
+-- On SEMI shift to state 2
+-- On params shift to state 7
+-- On param shift to state 8
+-- On EOI reduce production params -> 
+-- On COMMA reduce production params -> 
+
+State 2:
+param -> SEMI . TOK EQUAL QS [ SEMI EOI COMMA ]
+param -> SEMI . TOK EQUAL TOK [ SEMI EOI COMMA ]
+-- On TOK shift to state 3
+
+State 3:
+param -> SEMI TOK . EQUAL QS [ SEMI EOI COMMA ]
+param -> SEMI TOK . EQUAL TOK [ SEMI EOI COMMA ]
+-- On EQUAL shift to state 4
+
+State 4:
+param -> SEMI TOK EQUAL . QS [ SEMI EOI COMMA ]
+param -> SEMI TOK EQUAL . TOK [ SEMI EOI COMMA ]
+-- On TOK shift to state 5
+-- On QS shift to state 6
+
+State 5:
+param -> SEMI TOK EQUAL TOK . [ SEMI EOI COMMA ]
+-- On SEMI reduce production param -> SEMI TOK EQUAL TOK 
+-- On EOI reduce production param -> SEMI TOK EQUAL TOK 
+-- On COMMA reduce production param -> SEMI TOK EQUAL TOK 
+
+State 6:
+param -> SEMI TOK EQUAL QS . [ SEMI EOI COMMA ]
+-- On SEMI reduce production param -> SEMI TOK EQUAL QS 
+-- On EOI reduce production param -> SEMI TOK EQUAL QS 
+-- On COMMA reduce production param -> SEMI TOK EQUAL QS 
+
+State 7:
+charset -> TOK params . [ EOI COMMA ]
+-- On EOI reduce production charset -> TOK params 
+-- On COMMA reduce production charset -> TOK params 
+
+State 8:
+params -> param . params [ EOI COMMA ]
+-- On SEMI shift to state 2
+-- On params shift to state 9
+-- On param shift to state 8
+-- On EOI reduce production params -> 
+-- On COMMA reduce production params -> 
+
+State 9:
+params -> param params . [ EOI COMMA ]
+-- On EOI reduce production params -> param params 
+-- On COMMA reduce production params -> param params 
+
+State 10:
+charset -> STAR . params [ EOI COMMA ]
+-- On SEMI shift to state 2
+-- On params shift to state 11
+-- On param shift to state 8
+-- On EOI reduce production params -> 
+-- On COMMA reduce production params -> 
+
+State 11:
+charset -> STAR params . [ EOI COMMA ]
+-- On EOI reduce production charset -> STAR params 
+-- On COMMA reduce production charset -> STAR params 
+
+State 12:
+charsets' -> charsets . [ # ]
+-- On # accept charsets
+
+State 13:
+charsets -> charset . EOI [ # ]
+charsets -> charset . COMMA charsets [ # ]
+-- On EOI shift to state 14
+-- On COMMA shift to state 15
+
+State 14:
+charsets -> charset EOI . [ # ]
+-- On # reduce production charsets -> charset EOI 
+
+State 15:
+charsets -> charset COMMA . charsets [ # ]
+-- On TOK shift to state 1
+-- On STAR shift to state 10
+-- On charsets shift to state 16
+-- On charset shift to state 13
+
+State 16:
+charsets -> charset COMMA charsets . [ # ]
+-- On # reduce production charsets -> charset COMMA charsets 
+
+State 17:
+encodings' -> . encodings [ # ]
+-- On TOK shift to state 18
+-- On STAR shift to state 20
+-- On EOI shift to state 22
+-- On encodings shift to state 23
+-- On encoding shift to state 24
+
+State 18:
+encoding -> TOK . params [ EOI COMMA ]
+-- On SEMI shift to state 2
+-- On params shift to state 19
+-- On param shift to state 8
+-- On EOI reduce production params -> 
+-- On COMMA reduce production params -> 
+
+State 19:
+encoding -> TOK params . [ EOI COMMA ]
+-- On EOI reduce production encoding -> TOK params 
+-- On COMMA reduce production encoding -> TOK params 
+
+State 20:
+encoding -> STAR . params [ EOI COMMA ]
+-- On SEMI shift to state 2
+-- On params shift to state 21
+-- On param shift to state 8
+-- On EOI reduce production params -> 
+-- On COMMA reduce production params -> 
+
+State 21:
+encoding -> STAR params . [ EOI COMMA ]
+-- On EOI reduce production encoding -> STAR params 
+-- On COMMA reduce production encoding -> STAR params 
+
+State 22:
+encodings -> EOI . [ # ]
+-- On # reduce production encodings -> EOI 
+
+State 23:
+encodings' -> encodings . [ # ]
+-- On # accept encodings
+
+State 24:
+encodings -> encoding . EOI [ # ]
+encodings -> encoding . COMMA encodings [ # ]
+-- On EOI shift to state 25
+-- On COMMA shift to state 26
+
+State 25:
+encodings -> encoding EOI . [ # ]
+-- On # reduce production encodings -> encoding EOI 
+
+State 26:
+encodings -> encoding COMMA . encodings [ # ]
+-- On TOK shift to state 18
+-- On STAR shift to state 20
+-- On EOI shift to state 22
+-- On encodings shift to state 27
+-- On encoding shift to state 24
+
+State 27:
+encodings -> encoding COMMA encodings . [ # ]
+-- On # reduce production encodings -> encoding COMMA encodings 
+
+State 28:
+languages' -> . languages [ # ]
+-- On TOK shift to state 29
+-- On STAR shift to state 31
+-- On languages shift to state 33
+-- On language shift to state 34
+
+State 29:
+language -> TOK . params [ EOI COMMA ]
+-- On SEMI shift to state 2
+-- On params shift to state 30
+-- On param shift to state 8
+-- On EOI reduce production params -> 
+-- On COMMA reduce production params -> 
+
+State 30:
+language -> TOK params . [ EOI COMMA ]
+-- On EOI reduce production language -> TOK params 
+-- On COMMA reduce production language -> TOK params 
+
+State 31:
+language -> STAR . params [ EOI COMMA ]
+-- On SEMI shift to state 2
+-- On params shift to state 32
+-- On param shift to state 8
+-- On EOI reduce production params -> 
+-- On COMMA reduce production params -> 
+
+State 32:
+language -> STAR params . [ EOI COMMA ]
+-- On EOI reduce production language -> STAR params 
+-- On COMMA reduce production language -> STAR params 
+
+State 33:
+languages' -> languages . [ # ]
+-- On # accept languages
+
+State 34:
+languages -> language . EOI [ # ]
+languages -> language . COMMA languages [ # ]
+-- On EOI shift to state 35
+-- On COMMA shift to state 36
+
+State 35:
+languages -> language EOI . [ # ]
+-- On # reduce production languages -> language EOI 
+
+State 36:
+languages -> language COMMA . languages [ # ]
+-- On TOK shift to state 29
+-- On STAR shift to state 31
+-- On languages shift to state 37
+-- On language shift to state 34
+
+State 37:
+languages -> language COMMA languages . [ # ]
+-- On # reduce production languages -> language COMMA languages 
+
+State 38:
+media_ranges' -> . media_ranges [ # ]
+-- On TOK shift to state 39
+-- On STAR shift to state 45
+-- On EOI shift to state 49
+-- On media_ranges shift to state 50
+-- On media_range shift to state 51
+
+State 39:
+media_range -> TOK . SLASH STAR params [ EOI COMMA ]
+media_range -> TOK . SLASH TOK params [ EOI COMMA ]
+-- On SLASH shift to state 40
+
+State 40:
+media_range -> TOK SLASH . STAR params [ EOI COMMA ]
+media_range -> TOK SLASH . TOK params [ EOI COMMA ]
+-- On TOK shift to state 41
+-- On STAR shift to state 43
+
+State 41:
+media_range -> TOK SLASH TOK . params [ EOI COMMA ]
+-- On SEMI shift to state 2
+-- On params shift to state 42
+-- On param shift to state 8
+-- On EOI reduce production params -> 
+-- On COMMA reduce production params -> 
+
+State 42:
+media_range -> TOK SLASH TOK params . [ EOI COMMA ]
+-- On EOI reduce production media_range -> TOK SLASH TOK params 
+-- On COMMA reduce production media_range -> TOK SLASH TOK params 
+
+State 43:
+media_range -> TOK SLASH STAR . params [ EOI COMMA ]
+-- On SEMI shift to state 2
+-- On params shift to state 44
+-- On param shift to state 8
+-- On EOI reduce production params -> 
+-- On COMMA reduce production params -> 
+
+State 44:
+media_range -> TOK SLASH STAR params . [ EOI COMMA ]
+-- On EOI reduce production media_range -> TOK SLASH STAR params 
+-- On COMMA reduce production media_range -> TOK SLASH STAR params 
+
+State 45:
+media_range -> STAR . SLASH STAR params [ EOI COMMA ]
+-- On SLASH shift to state 46
+
+State 46:
+media_range -> STAR SLASH . STAR params [ EOI COMMA ]
+-- On STAR shift to state 47
+
+State 47:
+media_range -> STAR SLASH STAR . params [ EOI COMMA ]
+-- On SEMI shift to state 2
+-- On params shift to state 48
+-- On param shift to state 8
+-- On EOI reduce production params -> 
+-- On COMMA reduce production params -> 
+
+State 48:
+media_range -> STAR SLASH STAR params . [ EOI COMMA ]
+-- On EOI reduce production media_range -> STAR SLASH STAR params 
+-- On COMMA reduce production media_range -> STAR SLASH STAR params 
+
+State 49:
+media_ranges -> EOI . [ # ]
+-- On # reduce production media_ranges -> EOI 
+
+State 50:
+media_ranges' -> media_ranges . [ # ]
+-- On # accept media_ranges
+
+State 51:
+media_ranges -> media_range . EOI [ # ]
+media_ranges -> media_range . COMMA media_ranges [ # ]
+-- On EOI shift to state 52
+-- On COMMA shift to state 53
+
+State 52:
+media_ranges -> media_range EOI . [ # ]
+-- On # reduce production media_ranges -> media_range EOI 
+
+State 53:
+media_ranges -> media_range COMMA . media_ranges [ # ]
+-- On TOK shift to state 39
+-- On STAR shift to state 45
+-- On EOI shift to state 49
+-- On media_ranges shift to state 54
+-- On media_range shift to state 51
+
+State 54:
+media_ranges -> media_range COMMA media_ranges . [ # ]
+-- On # reduce production media_ranges -> media_range COMMA media_ranges 
+

@@ -1,0 +1,262 @@
+State 0:
+parse_json' -> . parse_json [ # ]
+-- On TRUE shift to state 1
+-- On STRING shift to state 2
+-- On NULL shift to state 3
+-- On LBRACKET shift to state 4
+-- On LBRACE shift to state 6
+-- On INT shift to state 34
+-- On FLOAT shift to state 35
+-- On FALSE shift to state 36
+-- On value shift to state 37
+-- On string shift to state 38
+-- On parse_json shift to state 39
+-- On object_ shift to state 40
+-- On number shift to state 41
+-- On array shift to state 42
+
+State 1:
+value -> TRUE . [ # ]
+-- On # reduce production value -> TRUE 
+
+State 2:
+string -> STRING . [ # ]
+-- On # reduce production string -> STRING 
+
+State 3:
+value -> NULL . [ # ]
+-- On # reduce production value -> NULL 
+
+State 4:
+array -> LBRACKET . RBRACKET [ # ]
+-- On RBRACKET shift to state 5
+
+State 5:
+array -> LBRACKET RBRACKET . [ # ]
+-- On # reduce production array -> LBRACKET RBRACKET 
+
+State 6:
+object_ -> LBRACE . RBRACE [ # ]
+object_ -> LBRACE . members RBRACE [ # ]
+-- On STRING shift to state 7
+-- On RBRACE shift to state 8
+-- On members shift to state 9
+-- On id shift to state 23
+
+State 7:
+id -> STRING . [ COLON ]
+-- On COLON reduce production id -> STRING 
+
+State 8:
+object_ -> LBRACE RBRACE . [ # ]
+-- On # reduce production object_ -> LBRACE RBRACE 
+
+State 9:
+members -> members . COMMA id COLON value [ RBRACE COMMA ]
+object_ -> LBRACE members . RBRACE [ # ]
+-- On RBRACE shift to state 10
+-- On COMMA shift to state 11
+
+State 10:
+object_ -> LBRACE members RBRACE . [ # ]
+-- On # reduce production object_ -> LBRACE members RBRACE 
+
+State 11:
+members -> members COMMA . id COLON value [ RBRACE COMMA ]
+-- On STRING shift to state 7
+-- On id shift to state 12
+
+State 12:
+members -> members COMMA id . COLON value [ RBRACE COMMA ]
+-- On COLON shift to state 13
+
+State 13:
+members -> members COMMA id COLON . value [ RBRACE COMMA ]
+-- On TRUE shift to state 14
+-- On STRING shift to state 15
+-- On NULL shift to state 16
+-- On LBRACKET shift to state 17
+-- On LBRACE shift to state 19
+-- On INT shift to state 25
+-- On FLOAT shift to state 26
+-- On FALSE shift to state 27
+-- On value shift to state 33
+-- On string shift to state 29
+-- On object_ shift to state 30
+-- On number shift to state 31
+-- On array shift to state 32
+
+State 14:
+value -> TRUE . [ RBRACE COMMA ]
+-- On RBRACE reduce production value -> TRUE 
+-- On COMMA reduce production value -> TRUE 
+
+State 15:
+string -> STRING . [ RBRACE COMMA ]
+-- On RBRACE reduce production string -> STRING 
+-- On COMMA reduce production string -> STRING 
+
+State 16:
+value -> NULL . [ RBRACE COMMA ]
+-- On RBRACE reduce production value -> NULL 
+-- On COMMA reduce production value -> NULL 
+
+State 17:
+array -> LBRACKET . RBRACKET [ RBRACE COMMA ]
+-- On RBRACKET shift to state 18
+
+State 18:
+array -> LBRACKET RBRACKET . [ RBRACE COMMA ]
+-- On RBRACE reduce production array -> LBRACKET RBRACKET 
+-- On COMMA reduce production array -> LBRACKET RBRACKET 
+
+State 19:
+object_ -> LBRACE . RBRACE [ RBRACE COMMA ]
+object_ -> LBRACE . members RBRACE [ RBRACE COMMA ]
+-- On STRING shift to state 7
+-- On RBRACE shift to state 20
+-- On members shift to state 21
+-- On id shift to state 23
+
+State 20:
+object_ -> LBRACE RBRACE . [ RBRACE COMMA ]
+-- On RBRACE reduce production object_ -> LBRACE RBRACE 
+-- On COMMA reduce production object_ -> LBRACE RBRACE 
+
+State 21:
+members -> members . COMMA id COLON value [ RBRACE COMMA ]
+object_ -> LBRACE members . RBRACE [ RBRACE COMMA ]
+-- On RBRACE shift to state 22
+-- On COMMA shift to state 11
+
+State 22:
+object_ -> LBRACE members RBRACE . [ RBRACE COMMA ]
+-- On RBRACE reduce production object_ -> LBRACE members RBRACE 
+-- On COMMA reduce production object_ -> LBRACE members RBRACE 
+
+State 23:
+members -> id . COLON value [ RBRACE COMMA ]
+-- On COLON shift to state 24
+
+State 24:
+members -> id COLON . value [ RBRACE COMMA ]
+-- On TRUE shift to state 14
+-- On STRING shift to state 15
+-- On NULL shift to state 16
+-- On LBRACKET shift to state 17
+-- On LBRACE shift to state 19
+-- On INT shift to state 25
+-- On FLOAT shift to state 26
+-- On FALSE shift to state 27
+-- On value shift to state 28
+-- On string shift to state 29
+-- On object_ shift to state 30
+-- On number shift to state 31
+-- On array shift to state 32
+
+State 25:
+number -> INT . [ RBRACE COMMA ]
+-- On RBRACE reduce production number -> INT 
+-- On COMMA reduce production number -> INT 
+
+State 26:
+number -> FLOAT . [ RBRACE COMMA ]
+-- On RBRACE reduce production number -> FLOAT 
+-- On COMMA reduce production number -> FLOAT 
+
+State 27:
+value -> FALSE . [ RBRACE COMMA ]
+-- On RBRACE reduce production value -> FALSE 
+-- On COMMA reduce production value -> FALSE 
+
+State 28:
+members -> id COLON value . [ RBRACE COMMA ]
+-- On RBRACE reduce production members -> id COLON value 
+-- On COMMA reduce production members -> id COLON value 
+
+State 29:
+value -> string . [ RBRACE COMMA ]
+-- On RBRACE reduce production value -> string 
+-- On COMMA reduce production value -> string 
+
+State 30:
+value -> object_ . [ RBRACE COMMA ]
+-- On RBRACE reduce production value -> object_ 
+-- On COMMA reduce production value -> object_ 
+
+State 31:
+value -> number . [ RBRACE COMMA ]
+-- On RBRACE reduce production value -> number 
+-- On COMMA reduce production value -> number 
+
+State 32:
+value -> array . [ RBRACE COMMA ]
+-- On RBRACE reduce production value -> array 
+-- On COMMA reduce production value -> array 
+
+State 33:
+members -> members COMMA id COLON value . [ RBRACE COMMA ]
+-- On RBRACE reduce production members -> members COMMA id COLON value 
+-- On COMMA reduce production members -> members COMMA id COLON value 
+
+State 34:
+number -> INT . [ # ]
+-- On # reduce production number -> INT 
+
+State 35:
+number -> FLOAT . [ # ]
+-- On # reduce production number -> FLOAT 
+
+State 36:
+value -> FALSE . [ # ]
+-- On # reduce production value -> FALSE 
+
+State 37:
+parse_json -> value . [ # ]
+-- On # reduce production parse_json -> value 
+
+State 38:
+value -> string . [ # ]
+-- On # reduce production value -> string 
+
+State 39:
+parse_json' -> parse_json . [ # ]
+-- On # accept parse_json
+
+State 40:
+value -> object_ . [ # ]
+-- On # reduce production value -> object_ 
+
+State 41:
+value -> number . [ # ]
+-- On # reduce production value -> number 
+
+State 42:
+value -> array . [ # ]
+-- On # reduce production value -> array 
+
+State 43:
+parse_websocket_request' -> . parse_websocket_request [ # ]
+-- On LBRACE shift to state 44
+-- On parse_websocket_request shift to state 47
+
+State 44:
+parse_websocket_request -> LBRACE . members RBRACE [ # ]
+-- On STRING shift to state 7
+-- On members shift to state 45
+-- On id shift to state 23
+
+State 45:
+members -> members . COMMA id COLON value [ RBRACE COMMA ]
+parse_websocket_request -> LBRACE members . RBRACE [ # ]
+-- On RBRACE shift to state 46
+-- On COMMA shift to state 11
+
+State 46:
+parse_websocket_request -> LBRACE members RBRACE . [ # ]
+-- On # reduce production parse_websocket_request -> LBRACE members RBRACE 
+
+State 47:
+parse_websocket_request' -> parse_websocket_request . [ # ]
+-- On # accept parse_websocket_request
+

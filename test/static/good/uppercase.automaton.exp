@@ -1,0 +1,40 @@
+State 0:
+entry' -> . entry [ # ]
+-- On A shift to state 1
+-- On nonempty_list(AB) shift to state 3
+-- On entry shift to state 5
+-- On AB shift to state 6
+
+State 1:
+AB -> A . B [ EOF A ]
+-- On B shift to state 2
+
+State 2:
+AB -> A B . [ EOF A ]
+-- On EOF reduce production AB -> A B 
+-- On A reduce production AB -> A B 
+
+State 3:
+entry -> nonempty_list(AB) . EOF [ # ]
+-- On EOF shift to state 4
+
+State 4:
+entry -> nonempty_list(AB) EOF . [ # ]
+-- On # reduce production entry -> nonempty_list(AB) EOF 
+
+State 5:
+entry' -> entry . [ # ]
+-- On # accept entry
+
+State 6:
+nonempty_list(AB) -> AB . [ EOF ]
+nonempty_list(AB) -> AB . nonempty_list(AB) [ EOF ]
+-- On A shift to state 1
+-- On nonempty_list(AB) shift to state 7
+-- On AB shift to state 6
+-- On EOF reduce production nonempty_list(AB) -> AB 
+
+State 7:
+nonempty_list(AB) -> AB nonempty_list(AB) . [ EOF ]
+-- On EOF reduce production nonempty_list(AB) -> AB nonempty_list(AB) 
+

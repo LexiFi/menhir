@@ -1,0 +1,334 @@
+State 0:
+promela' -> . promela [ # ]
+-- On PROMELA_NEVER shift to state 1
+-- On promela shift to state 47
+
+State 1:
+promela -> PROMELA_NEVER . PROMELA_LBRACE states PROMELA_RBRACE EOF [ # ]
+promela -> PROMELA_NEVER . PROMELA_LBRACE states PROMELA_SEMICOLON PROMELA_RBRACE EOF [ # ]
+-- On PROMELA_LBRACE shift to state 2
+
+State 2:
+promela -> PROMELA_NEVER PROMELA_LBRACE . states PROMELA_RBRACE EOF [ # ]
+promela -> PROMELA_NEVER PROMELA_LBRACE . states PROMELA_SEMICOLON PROMELA_RBRACE EOF [ # ]
+-- On PROMELA_LABEL shift to state 3
+-- On states shift to state 5
+-- On state_labels shift to state 9
+-- On state shift to state 46
+-- On label shift to state 42
+
+State 3:
+label -> PROMELA_LABEL . PROMELA_COLON [ PROMELA_SKIP PROMELA_LABEL PROMELA_IF PROMELA_FALSE ]
+-- On PROMELA_COLON shift to state 4
+
+State 4:
+label -> PROMELA_LABEL PROMELA_COLON . [ PROMELA_SKIP PROMELA_LABEL PROMELA_IF PROMELA_FALSE ]
+-- On PROMELA_SKIP reduce production label -> PROMELA_LABEL PROMELA_COLON 
+-- On PROMELA_LABEL reduce production label -> PROMELA_LABEL PROMELA_COLON 
+-- On PROMELA_IF reduce production label -> PROMELA_LABEL PROMELA_COLON 
+-- On PROMELA_FALSE reduce production label -> PROMELA_LABEL PROMELA_COLON 
+
+State 5:
+promela -> PROMELA_NEVER PROMELA_LBRACE states . PROMELA_RBRACE EOF [ # ]
+promela -> PROMELA_NEVER PROMELA_LBRACE states . PROMELA_SEMICOLON PROMELA_RBRACE EOF [ # ]
+states -> states . PROMELA_SEMICOLON state [ PROMELA_SEMICOLON PROMELA_RBRACE ]
+-- On PROMELA_SEMICOLON shift to state 6
+-- On PROMELA_RBRACE shift to state 44
+
+State 6:
+promela -> PROMELA_NEVER PROMELA_LBRACE states PROMELA_SEMICOLON . PROMELA_RBRACE EOF [ # ]
+states -> states PROMELA_SEMICOLON . state [ PROMELA_SEMICOLON PROMELA_RBRACE ]
+-- On PROMELA_RBRACE shift to state 7
+-- On PROMELA_LABEL shift to state 3
+-- On state_labels shift to state 9
+-- On state shift to state 41
+-- On label shift to state 42
+
+State 7:
+promela -> PROMELA_NEVER PROMELA_LBRACE states PROMELA_SEMICOLON PROMELA_RBRACE . EOF [ # ]
+-- On EOF shift to state 8
+
+State 8:
+promela -> PROMELA_NEVER PROMELA_LBRACE states PROMELA_SEMICOLON PROMELA_RBRACE EOF . [ # ]
+-- On # reduce production promela -> PROMELA_NEVER PROMELA_LBRACE states PROMELA_SEMICOLON PROMELA_RBRACE EOF 
+
+State 9:
+state -> state_labels . state_body [ PROMELA_SEMICOLON PROMELA_RBRACE ]
+-- On PROMELA_SKIP shift to state 10
+-- On PROMELA_IF shift to state 11
+-- On PROMELA_FALSE shift to state 39
+-- On state_body shift to state 40
+
+State 10:
+state_body -> PROMELA_SKIP . [ PROMELA_SEMICOLON PROMELA_RBRACE ]
+-- On PROMELA_SEMICOLON reduce production state_body -> PROMELA_SKIP 
+-- On PROMELA_RBRACE reduce production state_body -> PROMELA_SKIP 
+
+State 11:
+state_body -> PROMELA_IF . transitions PROMELA_FI [ PROMELA_SEMICOLON PROMELA_RBRACE ]
+state_body -> PROMELA_IF . PROMELA_DOUBLE_COLON PROMELA_FALSE PROMELA_FI [ PROMELA_SEMICOLON PROMELA_RBRACE ]
+-- On PROMELA_DOUBLE_COLON shift to state 12
+-- On transitions shift to state 34
+-- On transition shift to state 38
+
+State 12:
+state_body -> PROMELA_IF PROMELA_DOUBLE_COLON . PROMELA_FALSE PROMELA_FI [ PROMELA_SEMICOLON PROMELA_RBRACE ]
+transition -> PROMELA_DOUBLE_COLON . guard PROMELA_RIGHT_ARROW PROMELA_GOTO PROMELA_LABEL [ PROMELA_FI PROMELA_DOUBLE_COLON ]
+-- On PROMELA_TRUE shift to state 13
+-- On PROMELA_RETURNOF shift to state 14
+-- On PROMELA_NOT shift to state 15
+-- On PROMELA_LPAREN shift to state 16
+-- On PROMELA_LABEL shift to state 17
+-- On PROMELA_FALSE shift to state 28
+-- On PROMELA_CALLORRETURNOF shift to state 19
+-- On PROMELA_CALLOF shift to state 20
+-- On guard shift to state 30
+
+State 13:
+guard -> PROMELA_TRUE . [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+-- On PROMELA_RPAREN reduce production guard -> PROMELA_TRUE 
+-- On PROMELA_RIGHT_ARROW reduce production guard -> PROMELA_TRUE 
+-- On PROMELA_OR reduce production guard -> PROMELA_TRUE 
+-- On PROMELA_AND reduce production guard -> PROMELA_TRUE 
+
+State 14:
+guard -> PROMELA_RETURNOF . [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+-- On PROMELA_RPAREN reduce production guard -> PROMELA_RETURNOF 
+-- On PROMELA_RIGHT_ARROW reduce production guard -> PROMELA_RETURNOF 
+-- On PROMELA_OR reduce production guard -> PROMELA_RETURNOF 
+-- On PROMELA_AND reduce production guard -> PROMELA_RETURNOF 
+
+State 15:
+guard -> PROMELA_NOT . guard [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+-- On PROMELA_TRUE shift to state 13
+-- On PROMELA_RETURNOF shift to state 14
+-- On PROMELA_NOT shift to state 15
+-- On PROMELA_LPAREN shift to state 16
+-- On PROMELA_LABEL shift to state 17
+-- On PROMELA_FALSE shift to state 18
+-- On PROMELA_CALLORRETURNOF shift to state 19
+-- On PROMELA_CALLOF shift to state 20
+-- On guard shift to state 27
+
+State 16:
+guard -> PROMELA_LPAREN . guard PROMELA_RPAREN [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+-- On PROMELA_TRUE shift to state 13
+-- On PROMELA_RETURNOF shift to state 14
+-- On PROMELA_NOT shift to state 15
+-- On PROMELA_LPAREN shift to state 16
+-- On PROMELA_LABEL shift to state 17
+-- On PROMELA_FALSE shift to state 18
+-- On PROMELA_CALLORRETURNOF shift to state 19
+-- On PROMELA_CALLOF shift to state 20
+-- On guard shift to state 21
+
+State 17:
+guard -> PROMELA_LABEL . [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+-- On PROMELA_RPAREN reduce production guard -> PROMELA_LABEL 
+-- On PROMELA_RIGHT_ARROW reduce production guard -> PROMELA_LABEL 
+-- On PROMELA_OR reduce production guard -> PROMELA_LABEL 
+-- On PROMELA_AND reduce production guard -> PROMELA_LABEL 
+
+State 18:
+guard -> PROMELA_FALSE . [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+-- On PROMELA_RPAREN reduce production guard -> PROMELA_FALSE 
+-- On PROMELA_RIGHT_ARROW reduce production guard -> PROMELA_FALSE 
+-- On PROMELA_OR reduce production guard -> PROMELA_FALSE 
+-- On PROMELA_AND reduce production guard -> PROMELA_FALSE 
+
+State 19:
+guard -> PROMELA_CALLORRETURNOF . [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+-- On PROMELA_RPAREN reduce production guard -> PROMELA_CALLORRETURNOF 
+-- On PROMELA_RIGHT_ARROW reduce production guard -> PROMELA_CALLORRETURNOF 
+-- On PROMELA_OR reduce production guard -> PROMELA_CALLORRETURNOF 
+-- On PROMELA_AND reduce production guard -> PROMELA_CALLORRETURNOF 
+
+State 20:
+guard -> PROMELA_CALLOF . [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+-- On PROMELA_RPAREN reduce production guard -> PROMELA_CALLOF 
+-- On PROMELA_RIGHT_ARROW reduce production guard -> PROMELA_CALLOF 
+-- On PROMELA_OR reduce production guard -> PROMELA_CALLOF 
+-- On PROMELA_AND reduce production guard -> PROMELA_CALLOF 
+
+State 21:
+guard -> guard . PROMELA_AND guard [ PROMELA_RPAREN PROMELA_OR PROMELA_AND ]
+guard -> guard . PROMELA_OR guard [ PROMELA_RPAREN PROMELA_OR PROMELA_AND ]
+guard -> PROMELA_LPAREN guard . PROMELA_RPAREN [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+-- On PROMELA_RPAREN shift to state 22
+-- On PROMELA_OR shift to state 23
+-- On PROMELA_AND shift to state 25
+
+State 22:
+guard -> PROMELA_LPAREN guard PROMELA_RPAREN . [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+-- On PROMELA_RPAREN reduce production guard -> PROMELA_LPAREN guard PROMELA_RPAREN 
+-- On PROMELA_RIGHT_ARROW reduce production guard -> PROMELA_LPAREN guard PROMELA_RPAREN 
+-- On PROMELA_OR reduce production guard -> PROMELA_LPAREN guard PROMELA_RPAREN 
+-- On PROMELA_AND reduce production guard -> PROMELA_LPAREN guard PROMELA_RPAREN 
+
+State 23:
+guard -> guard PROMELA_OR . guard [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+-- On PROMELA_TRUE shift to state 13
+-- On PROMELA_RETURNOF shift to state 14
+-- On PROMELA_NOT shift to state 15
+-- On PROMELA_LPAREN shift to state 16
+-- On PROMELA_LABEL shift to state 17
+-- On PROMELA_FALSE shift to state 18
+-- On PROMELA_CALLORRETURNOF shift to state 19
+-- On PROMELA_CALLOF shift to state 20
+-- On guard shift to state 24
+
+State 24:
+guard -> guard . PROMELA_AND guard [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+guard -> guard . PROMELA_OR guard [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+guard -> guard PROMELA_OR guard . [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+-- On PROMELA_OR shift to state 23
+-- On PROMELA_AND shift to state 25
+-- On PROMELA_RPAREN reduce production guard -> guard PROMELA_OR guard 
+-- On PROMELA_RIGHT_ARROW reduce production guard -> guard PROMELA_OR guard 
+
+State 25:
+guard -> guard PROMELA_AND . guard [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+-- On PROMELA_TRUE shift to state 13
+-- On PROMELA_RETURNOF shift to state 14
+-- On PROMELA_NOT shift to state 15
+-- On PROMELA_LPAREN shift to state 16
+-- On PROMELA_LABEL shift to state 17
+-- On PROMELA_FALSE shift to state 18
+-- On PROMELA_CALLORRETURNOF shift to state 19
+-- On PROMELA_CALLOF shift to state 20
+-- On guard shift to state 26
+
+State 26:
+guard -> guard . PROMELA_AND guard [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+guard -> guard PROMELA_AND guard . [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+guard -> guard . PROMELA_OR guard [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+-- On PROMELA_AND shift to state 25
+-- On PROMELA_RPAREN reduce production guard -> guard PROMELA_AND guard 
+-- On PROMELA_RIGHT_ARROW reduce production guard -> guard PROMELA_AND guard 
+-- On PROMELA_OR reduce production guard -> guard PROMELA_AND guard 
+
+State 27:
+guard -> PROMELA_NOT guard . [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+guard -> guard . PROMELA_AND guard [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+guard -> guard . PROMELA_OR guard [ PROMELA_RPAREN PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+-- On PROMELA_RPAREN reduce production guard -> PROMELA_NOT guard 
+-- On PROMELA_RIGHT_ARROW reduce production guard -> PROMELA_NOT guard 
+-- On PROMELA_OR reduce production guard -> PROMELA_NOT guard 
+-- On PROMELA_AND reduce production guard -> PROMELA_NOT guard 
+
+State 28:
+guard -> PROMELA_FALSE . [ PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+state_body -> PROMELA_IF PROMELA_DOUBLE_COLON PROMELA_FALSE . PROMELA_FI [ PROMELA_SEMICOLON PROMELA_RBRACE ]
+-- On PROMELA_FI shift to state 29
+-- On PROMELA_RIGHT_ARROW reduce production guard -> PROMELA_FALSE 
+-- On PROMELA_OR reduce production guard -> PROMELA_FALSE 
+-- On PROMELA_AND reduce production guard -> PROMELA_FALSE 
+
+State 29:
+state_body -> PROMELA_IF PROMELA_DOUBLE_COLON PROMELA_FALSE PROMELA_FI . [ PROMELA_SEMICOLON PROMELA_RBRACE ]
+-- On PROMELA_SEMICOLON reduce production state_body -> PROMELA_IF PROMELA_DOUBLE_COLON PROMELA_FALSE PROMELA_FI 
+-- On PROMELA_RBRACE reduce production state_body -> PROMELA_IF PROMELA_DOUBLE_COLON PROMELA_FALSE PROMELA_FI 
+
+State 30:
+guard -> guard . PROMELA_AND guard [ PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+guard -> guard . PROMELA_OR guard [ PROMELA_RIGHT_ARROW PROMELA_OR PROMELA_AND ]
+transition -> PROMELA_DOUBLE_COLON guard . PROMELA_RIGHT_ARROW PROMELA_GOTO PROMELA_LABEL [ PROMELA_FI PROMELA_DOUBLE_COLON ]
+-- On PROMELA_RIGHT_ARROW shift to state 31
+-- On PROMELA_OR shift to state 23
+-- On PROMELA_AND shift to state 25
+
+State 31:
+transition -> PROMELA_DOUBLE_COLON guard PROMELA_RIGHT_ARROW . PROMELA_GOTO PROMELA_LABEL [ PROMELA_FI PROMELA_DOUBLE_COLON ]
+-- On PROMELA_GOTO shift to state 32
+
+State 32:
+transition -> PROMELA_DOUBLE_COLON guard PROMELA_RIGHT_ARROW PROMELA_GOTO . PROMELA_LABEL [ PROMELA_FI PROMELA_DOUBLE_COLON ]
+-- On PROMELA_LABEL shift to state 33
+
+State 33:
+transition -> PROMELA_DOUBLE_COLON guard PROMELA_RIGHT_ARROW PROMELA_GOTO PROMELA_LABEL . [ PROMELA_FI PROMELA_DOUBLE_COLON ]
+-- On PROMELA_FI reduce production transition -> PROMELA_DOUBLE_COLON guard PROMELA_RIGHT_ARROW PROMELA_GOTO PROMELA_LABEL 
+-- On PROMELA_DOUBLE_COLON reduce production transition -> PROMELA_DOUBLE_COLON guard PROMELA_RIGHT_ARROW PROMELA_GOTO PROMELA_LABEL 
+
+State 34:
+state_body -> PROMELA_IF transitions . PROMELA_FI [ PROMELA_SEMICOLON PROMELA_RBRACE ]
+transitions -> transitions . transition [ PROMELA_FI PROMELA_DOUBLE_COLON ]
+-- On PROMELA_FI shift to state 35
+-- On PROMELA_DOUBLE_COLON shift to state 36
+-- On transition shift to state 37
+
+State 35:
+state_body -> PROMELA_IF transitions PROMELA_FI . [ PROMELA_SEMICOLON PROMELA_RBRACE ]
+-- On PROMELA_SEMICOLON reduce production state_body -> PROMELA_IF transitions PROMELA_FI 
+-- On PROMELA_RBRACE reduce production state_body -> PROMELA_IF transitions PROMELA_FI 
+
+State 36:
+transition -> PROMELA_DOUBLE_COLON . guard PROMELA_RIGHT_ARROW PROMELA_GOTO PROMELA_LABEL [ PROMELA_FI PROMELA_DOUBLE_COLON ]
+-- On PROMELA_TRUE shift to state 13
+-- On PROMELA_RETURNOF shift to state 14
+-- On PROMELA_NOT shift to state 15
+-- On PROMELA_LPAREN shift to state 16
+-- On PROMELA_LABEL shift to state 17
+-- On PROMELA_FALSE shift to state 18
+-- On PROMELA_CALLORRETURNOF shift to state 19
+-- On PROMELA_CALLOF shift to state 20
+-- On guard shift to state 30
+
+State 37:
+transitions -> transitions transition . [ PROMELA_FI PROMELA_DOUBLE_COLON ]
+-- On PROMELA_FI reduce production transitions -> transitions transition 
+-- On PROMELA_DOUBLE_COLON reduce production transitions -> transitions transition 
+
+State 38:
+transitions -> transition . [ PROMELA_FI PROMELA_DOUBLE_COLON ]
+-- On PROMELA_FI reduce production transitions -> transition 
+-- On PROMELA_DOUBLE_COLON reduce production transitions -> transition 
+
+State 39:
+state_body -> PROMELA_FALSE . [ PROMELA_SEMICOLON PROMELA_RBRACE ]
+-- On PROMELA_SEMICOLON reduce production state_body -> PROMELA_FALSE 
+-- On PROMELA_RBRACE reduce production state_body -> PROMELA_FALSE 
+
+State 40:
+state -> state_labels state_body . [ PROMELA_SEMICOLON PROMELA_RBRACE ]
+-- On PROMELA_SEMICOLON reduce production state -> state_labels state_body 
+-- On PROMELA_RBRACE reduce production state -> state_labels state_body 
+
+State 41:
+states -> states PROMELA_SEMICOLON state . [ PROMELA_SEMICOLON PROMELA_RBRACE ]
+-- On PROMELA_SEMICOLON reduce production states -> states PROMELA_SEMICOLON state 
+-- On PROMELA_RBRACE reduce production states -> states PROMELA_SEMICOLON state 
+
+State 42:
+state_labels -> label . state_labels [ PROMELA_SKIP PROMELA_IF PROMELA_FALSE ]
+state_labels -> label . [ PROMELA_SKIP PROMELA_IF PROMELA_FALSE ]
+-- On PROMELA_LABEL shift to state 3
+-- On state_labels shift to state 43
+-- On label shift to state 42
+-- On PROMELA_SKIP reduce production state_labels -> label 
+-- On PROMELA_IF reduce production state_labels -> label 
+-- On PROMELA_FALSE reduce production state_labels -> label 
+
+State 43:
+state_labels -> label state_labels . [ PROMELA_SKIP PROMELA_IF PROMELA_FALSE ]
+-- On PROMELA_SKIP reduce production state_labels -> label state_labels 
+-- On PROMELA_IF reduce production state_labels -> label state_labels 
+-- On PROMELA_FALSE reduce production state_labels -> label state_labels 
+
+State 44:
+promela -> PROMELA_NEVER PROMELA_LBRACE states PROMELA_RBRACE . EOF [ # ]
+-- On EOF shift to state 45
+
+State 45:
+promela -> PROMELA_NEVER PROMELA_LBRACE states PROMELA_RBRACE EOF . [ # ]
+-- On # reduce production promela -> PROMELA_NEVER PROMELA_LBRACE states PROMELA_RBRACE EOF 
+
+State 46:
+states -> state . [ PROMELA_SEMICOLON PROMELA_RBRACE ]
+-- On PROMELA_SEMICOLON reduce production states -> state 
+-- On PROMELA_RBRACE reduce production states -> state 
+
+State 47:
+promela' -> promela . [ # ]
+-- On # accept promela
+

@@ -1,0 +1,2380 @@
+State 0:
+program' -> . program [ # ]
+-- On TYPE shift to state 1
+-- On type_decl shift to state 39
+-- On program shift to state 41
+-- On my_list(type_decl) shift to state 42
+-- On FSM reduce production my_list(type_decl) -> 
+
+State 1:
+type_decl -> TYPE . LID EQUAL typ [ TYPE FSM ]
+type_decl -> TYPE . LID EQUAL braced(my_separated_list(COMMA,UID)) [ TYPE FSM ]
+-- On LID shift to state 2
+
+State 2:
+type_decl -> TYPE LID . EQUAL typ [ TYPE FSM ]
+type_decl -> TYPE LID . EQUAL braced(my_separated_list(COMMA,UID)) [ TYPE FSM ]
+-- On EQUAL shift to state 3
+
+State 3:
+type_decl -> TYPE LID EQUAL . typ [ TYPE FSM ]
+type_decl -> TYPE LID EQUAL . braced(my_separated_list(COMMA,UID)) [ TYPE FSM ]
+-- On TYINT shift to state 4
+-- On TYEVENT shift to state 27
+-- On TYBOOL shift to state 28
+-- On LID shift to state 29
+-- On LBRACE shift to state 30
+-- On typ shift to state 37
+-- On braced(my_separated_list(COMMA,UID)) shift to state 38
+
+State 4:
+typ -> TYINT . option(int_range) [ TYPE SHARED SEMICOLON RPAREN OUTPUT INPUT GT FSM EQUAL COMMA ]
+-- On LT shift to state 5
+-- On option(int_range) shift to state 25
+-- On int_range shift to state 26
+-- On TYPE reduce production option(int_range) -> 
+-- On SHARED reduce production option(int_range) -> 
+-- On SEMICOLON reduce production option(int_range) -> 
+-- On RPAREN reduce production option(int_range) -> 
+-- On OUTPUT reduce production option(int_range) -> 
+-- On INPUT reduce production option(int_range) -> 
+-- On GT reduce production option(int_range) -> 
+-- On FSM reduce production option(int_range) -> 
+-- On EQUAL reduce production option(int_range) -> 
+-- On COMMA reduce production option(int_range) -> 
+
+State 5:
+int_range -> LT . type_index_expr DOTDOT type_index_expr GT [ TYPE SHARED SEMICOLON RPAREN OUTPUT INPUT GT FSM EQUAL COMMA ]
+-- On LPAREN shift to state 6
+-- On LID shift to state 7
+-- On INT shift to state 8
+-- On type_index_expr shift to state 21
+
+State 6:
+type_index_expr -> LPAREN . type_index_expr RPAREN [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+-- On LPAREN shift to state 6
+-- On LID shift to state 7
+-- On INT shift to state 8
+-- On type_index_expr shift to state 9
+
+State 7:
+type_index_expr -> LID . [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+-- On TIMES reduce production type_index_expr -> LID 
+-- On RPAREN reduce production type_index_expr -> LID 
+-- On PLUS reduce production type_index_expr -> LID 
+-- On MOD reduce production type_index_expr -> LID 
+-- On MINUS reduce production type_index_expr -> LID 
+-- On GT reduce production type_index_expr -> LID 
+-- On DOTDOT reduce production type_index_expr -> LID 
+-- On DIV reduce production type_index_expr -> LID 
+
+State 8:
+type_index_expr -> INT . [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+-- On TIMES reduce production type_index_expr -> INT 
+-- On RPAREN reduce production type_index_expr -> INT 
+-- On PLUS reduce production type_index_expr -> INT 
+-- On MOD reduce production type_index_expr -> INT 
+-- On MINUS reduce production type_index_expr -> INT 
+-- On GT reduce production type_index_expr -> INT 
+-- On DOTDOT reduce production type_index_expr -> INT 
+-- On DIV reduce production type_index_expr -> INT 
+
+State 9:
+type_index_expr -> LPAREN type_index_expr . RPAREN [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+type_index_expr -> type_index_expr . PLUS type_index_expr [ TIMES RPAREN PLUS MOD MINUS DIV ]
+type_index_expr -> type_index_expr . MINUS type_index_expr [ TIMES RPAREN PLUS MOD MINUS DIV ]
+type_index_expr -> type_index_expr . TIMES type_index_expr [ TIMES RPAREN PLUS MOD MINUS DIV ]
+type_index_expr -> type_index_expr . DIV type_index_expr [ TIMES RPAREN PLUS MOD MINUS DIV ]
+type_index_expr -> type_index_expr . MOD type_index_expr [ TIMES RPAREN PLUS MOD MINUS DIV ]
+-- On TIMES shift to state 10
+-- On RPAREN shift to state 12
+-- On PLUS shift to state 13
+-- On MOD shift to state 15
+-- On MINUS shift to state 19
+-- On DIV shift to state 17
+
+State 10:
+type_index_expr -> type_index_expr TIMES . type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+-- On LPAREN shift to state 6
+-- On LID shift to state 7
+-- On INT shift to state 8
+-- On type_index_expr shift to state 11
+
+State 11:
+type_index_expr -> type_index_expr . PLUS type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+type_index_expr -> type_index_expr . MINUS type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+type_index_expr -> type_index_expr . TIMES type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+type_index_expr -> type_index_expr TIMES type_index_expr . [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+type_index_expr -> type_index_expr . DIV type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+type_index_expr -> type_index_expr . MOD type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+-- On TIMES reduce production type_index_expr -> type_index_expr TIMES type_index_expr 
+-- On RPAREN reduce production type_index_expr -> type_index_expr TIMES type_index_expr 
+-- On PLUS reduce production type_index_expr -> type_index_expr TIMES type_index_expr 
+-- On MOD reduce production type_index_expr -> type_index_expr TIMES type_index_expr 
+-- On MINUS reduce production type_index_expr -> type_index_expr TIMES type_index_expr 
+-- On GT reduce production type_index_expr -> type_index_expr TIMES type_index_expr 
+-- On DOTDOT reduce production type_index_expr -> type_index_expr TIMES type_index_expr 
+-- On DIV reduce production type_index_expr -> type_index_expr TIMES type_index_expr 
+
+State 12:
+type_index_expr -> LPAREN type_index_expr RPAREN . [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+-- On TIMES reduce production type_index_expr -> LPAREN type_index_expr RPAREN 
+-- On RPAREN reduce production type_index_expr -> LPAREN type_index_expr RPAREN 
+-- On PLUS reduce production type_index_expr -> LPAREN type_index_expr RPAREN 
+-- On MOD reduce production type_index_expr -> LPAREN type_index_expr RPAREN 
+-- On MINUS reduce production type_index_expr -> LPAREN type_index_expr RPAREN 
+-- On GT reduce production type_index_expr -> LPAREN type_index_expr RPAREN 
+-- On DOTDOT reduce production type_index_expr -> LPAREN type_index_expr RPAREN 
+-- On DIV reduce production type_index_expr -> LPAREN type_index_expr RPAREN 
+
+State 13:
+type_index_expr -> type_index_expr PLUS . type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+-- On LPAREN shift to state 6
+-- On LID shift to state 7
+-- On INT shift to state 8
+-- On type_index_expr shift to state 14
+
+State 14:
+type_index_expr -> type_index_expr . PLUS type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+type_index_expr -> type_index_expr PLUS type_index_expr . [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+type_index_expr -> type_index_expr . MINUS type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+type_index_expr -> type_index_expr . TIMES type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+type_index_expr -> type_index_expr . DIV type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+type_index_expr -> type_index_expr . MOD type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+-- On TIMES shift to state 10
+-- On MOD shift to state 15
+-- On DIV shift to state 17
+-- On RPAREN reduce production type_index_expr -> type_index_expr PLUS type_index_expr 
+-- On PLUS reduce production type_index_expr -> type_index_expr PLUS type_index_expr 
+-- On MINUS reduce production type_index_expr -> type_index_expr PLUS type_index_expr 
+-- On GT reduce production type_index_expr -> type_index_expr PLUS type_index_expr 
+-- On DOTDOT reduce production type_index_expr -> type_index_expr PLUS type_index_expr 
+
+State 15:
+type_index_expr -> type_index_expr MOD . type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+-- On LPAREN shift to state 6
+-- On LID shift to state 7
+-- On INT shift to state 8
+-- On type_index_expr shift to state 16
+
+State 16:
+type_index_expr -> type_index_expr . PLUS type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+type_index_expr -> type_index_expr . MINUS type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+type_index_expr -> type_index_expr . TIMES type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+type_index_expr -> type_index_expr . DIV type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+type_index_expr -> type_index_expr . MOD type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+type_index_expr -> type_index_expr MOD type_index_expr . [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+-- On TIMES reduce production type_index_expr -> type_index_expr MOD type_index_expr 
+-- On RPAREN reduce production type_index_expr -> type_index_expr MOD type_index_expr 
+-- On PLUS reduce production type_index_expr -> type_index_expr MOD type_index_expr 
+-- On MOD reduce production type_index_expr -> type_index_expr MOD type_index_expr 
+-- On MINUS reduce production type_index_expr -> type_index_expr MOD type_index_expr 
+-- On GT reduce production type_index_expr -> type_index_expr MOD type_index_expr 
+-- On DOTDOT reduce production type_index_expr -> type_index_expr MOD type_index_expr 
+-- On DIV reduce production type_index_expr -> type_index_expr MOD type_index_expr 
+
+State 17:
+type_index_expr -> type_index_expr DIV . type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+-- On LPAREN shift to state 6
+-- On LID shift to state 7
+-- On INT shift to state 8
+-- On type_index_expr shift to state 18
+
+State 18:
+type_index_expr -> type_index_expr . PLUS type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+type_index_expr -> type_index_expr . MINUS type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+type_index_expr -> type_index_expr . TIMES type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+type_index_expr -> type_index_expr . DIV type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+type_index_expr -> type_index_expr DIV type_index_expr . [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+type_index_expr -> type_index_expr . MOD type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+-- On TIMES reduce production type_index_expr -> type_index_expr DIV type_index_expr 
+-- On RPAREN reduce production type_index_expr -> type_index_expr DIV type_index_expr 
+-- On PLUS reduce production type_index_expr -> type_index_expr DIV type_index_expr 
+-- On MOD reduce production type_index_expr -> type_index_expr DIV type_index_expr 
+-- On MINUS reduce production type_index_expr -> type_index_expr DIV type_index_expr 
+-- On GT reduce production type_index_expr -> type_index_expr DIV type_index_expr 
+-- On DOTDOT reduce production type_index_expr -> type_index_expr DIV type_index_expr 
+-- On DIV reduce production type_index_expr -> type_index_expr DIV type_index_expr 
+
+State 19:
+type_index_expr -> type_index_expr MINUS . type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+-- On LPAREN shift to state 6
+-- On LID shift to state 7
+-- On INT shift to state 8
+-- On type_index_expr shift to state 20
+
+State 20:
+type_index_expr -> type_index_expr . PLUS type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+type_index_expr -> type_index_expr . MINUS type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+type_index_expr -> type_index_expr MINUS type_index_expr . [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+type_index_expr -> type_index_expr . TIMES type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+type_index_expr -> type_index_expr . DIV type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+type_index_expr -> type_index_expr . MOD type_index_expr [ TIMES RPAREN PLUS MOD MINUS GT DOTDOT DIV ]
+-- On TIMES shift to state 10
+-- On MOD shift to state 15
+-- On DIV shift to state 17
+-- On RPAREN reduce production type_index_expr -> type_index_expr MINUS type_index_expr 
+-- On PLUS reduce production type_index_expr -> type_index_expr MINUS type_index_expr 
+-- On MINUS reduce production type_index_expr -> type_index_expr MINUS type_index_expr 
+-- On GT reduce production type_index_expr -> type_index_expr MINUS type_index_expr 
+-- On DOTDOT reduce production type_index_expr -> type_index_expr MINUS type_index_expr 
+
+State 21:
+int_range -> LT type_index_expr . DOTDOT type_index_expr GT [ TYPE SHARED SEMICOLON RPAREN OUTPUT INPUT GT FSM EQUAL COMMA ]
+type_index_expr -> type_index_expr . PLUS type_index_expr [ TIMES PLUS MOD MINUS DOTDOT DIV ]
+type_index_expr -> type_index_expr . MINUS type_index_expr [ TIMES PLUS MOD MINUS DOTDOT DIV ]
+type_index_expr -> type_index_expr . TIMES type_index_expr [ TIMES PLUS MOD MINUS DOTDOT DIV ]
+type_index_expr -> type_index_expr . DIV type_index_expr [ TIMES PLUS MOD MINUS DOTDOT DIV ]
+type_index_expr -> type_index_expr . MOD type_index_expr [ TIMES PLUS MOD MINUS DOTDOT DIV ]
+-- On TIMES shift to state 10
+-- On PLUS shift to state 13
+-- On MOD shift to state 15
+-- On MINUS shift to state 19
+-- On DOTDOT shift to state 22
+-- On DIV shift to state 17
+
+State 22:
+int_range -> LT type_index_expr DOTDOT . type_index_expr GT [ TYPE SHARED SEMICOLON RPAREN OUTPUT INPUT GT FSM EQUAL COMMA ]
+-- On LPAREN shift to state 6
+-- On LID shift to state 7
+-- On INT shift to state 8
+-- On type_index_expr shift to state 23
+
+State 23:
+int_range -> LT type_index_expr DOTDOT type_index_expr . GT [ TYPE SHARED SEMICOLON RPAREN OUTPUT INPUT GT FSM EQUAL COMMA ]
+type_index_expr -> type_index_expr . PLUS type_index_expr [ TIMES PLUS MOD MINUS GT DIV ]
+type_index_expr -> type_index_expr . MINUS type_index_expr [ TIMES PLUS MOD MINUS GT DIV ]
+type_index_expr -> type_index_expr . TIMES type_index_expr [ TIMES PLUS MOD MINUS GT DIV ]
+type_index_expr -> type_index_expr . DIV type_index_expr [ TIMES PLUS MOD MINUS GT DIV ]
+type_index_expr -> type_index_expr . MOD type_index_expr [ TIMES PLUS MOD MINUS GT DIV ]
+-- On TIMES shift to state 10
+-- On PLUS shift to state 13
+-- On MOD shift to state 15
+-- On MINUS shift to state 19
+-- On GT shift to state 24
+-- On DIV shift to state 17
+
+State 24:
+int_range -> LT type_index_expr DOTDOT type_index_expr GT . [ TYPE SHARED SEMICOLON RPAREN OUTPUT INPUT GT FSM EQUAL COMMA ]
+-- On TYPE reduce production int_range -> LT type_index_expr DOTDOT type_index_expr GT 
+-- On SHARED reduce production int_range -> LT type_index_expr DOTDOT type_index_expr GT 
+-- On SEMICOLON reduce production int_range -> LT type_index_expr DOTDOT type_index_expr GT 
+-- On RPAREN reduce production int_range -> LT type_index_expr DOTDOT type_index_expr GT 
+-- On OUTPUT reduce production int_range -> LT type_index_expr DOTDOT type_index_expr GT 
+-- On INPUT reduce production int_range -> LT type_index_expr DOTDOT type_index_expr GT 
+-- On GT reduce production int_range -> LT type_index_expr DOTDOT type_index_expr GT 
+-- On FSM reduce production int_range -> LT type_index_expr DOTDOT type_index_expr GT 
+-- On EQUAL reduce production int_range -> LT type_index_expr DOTDOT type_index_expr GT 
+-- On COMMA reduce production int_range -> LT type_index_expr DOTDOT type_index_expr GT 
+
+State 25:
+typ -> TYINT option(int_range) . [ TYPE SHARED SEMICOLON RPAREN OUTPUT INPUT GT FSM EQUAL COMMA ]
+-- On TYPE reduce production typ -> TYINT option(int_range) 
+-- On SHARED reduce production typ -> TYINT option(int_range) 
+-- On SEMICOLON reduce production typ -> TYINT option(int_range) 
+-- On RPAREN reduce production typ -> TYINT option(int_range) 
+-- On OUTPUT reduce production typ -> TYINT option(int_range) 
+-- On INPUT reduce production typ -> TYINT option(int_range) 
+-- On GT reduce production typ -> TYINT option(int_range) 
+-- On FSM reduce production typ -> TYINT option(int_range) 
+-- On EQUAL reduce production typ -> TYINT option(int_range) 
+-- On COMMA reduce production typ -> TYINT option(int_range) 
+
+State 26:
+option(int_range) -> int_range . [ TYPE SHARED SEMICOLON RPAREN OUTPUT INPUT GT FSM EQUAL COMMA ]
+-- On TYPE reduce production option(int_range) -> int_range 
+-- On SHARED reduce production option(int_range) -> int_range 
+-- On SEMICOLON reduce production option(int_range) -> int_range 
+-- On RPAREN reduce production option(int_range) -> int_range 
+-- On OUTPUT reduce production option(int_range) -> int_range 
+-- On INPUT reduce production option(int_range) -> int_range 
+-- On GT reduce production option(int_range) -> int_range 
+-- On FSM reduce production option(int_range) -> int_range 
+-- On EQUAL reduce production option(int_range) -> int_range 
+-- On COMMA reduce production option(int_range) -> int_range 
+
+State 27:
+typ -> TYEVENT . [ TYPE SHARED SEMICOLON RPAREN OUTPUT INPUT GT FSM EQUAL COMMA ]
+-- On TYPE reduce production typ -> TYEVENT 
+-- On SHARED reduce production typ -> TYEVENT 
+-- On SEMICOLON reduce production typ -> TYEVENT 
+-- On RPAREN reduce production typ -> TYEVENT 
+-- On OUTPUT reduce production typ -> TYEVENT 
+-- On INPUT reduce production typ -> TYEVENT 
+-- On GT reduce production typ -> TYEVENT 
+-- On FSM reduce production typ -> TYEVENT 
+-- On EQUAL reduce production typ -> TYEVENT 
+-- On COMMA reduce production typ -> TYEVENT 
+
+State 28:
+typ -> TYBOOL . [ TYPE SHARED SEMICOLON RPAREN OUTPUT INPUT GT FSM EQUAL COMMA ]
+-- On TYPE reduce production typ -> TYBOOL 
+-- On SHARED reduce production typ -> TYBOOL 
+-- On SEMICOLON reduce production typ -> TYBOOL 
+-- On RPAREN reduce production typ -> TYBOOL 
+-- On OUTPUT reduce production typ -> TYBOOL 
+-- On INPUT reduce production typ -> TYBOOL 
+-- On GT reduce production typ -> TYBOOL 
+-- On FSM reduce production typ -> TYBOOL 
+-- On EQUAL reduce production typ -> TYBOOL 
+-- On COMMA reduce production typ -> TYBOOL 
+
+State 29:
+typ -> LID . [ TYPE SHARED SEMICOLON RPAREN OUTPUT INPUT GT FSM EQUAL COMMA ]
+-- On TYPE reduce production typ -> LID 
+-- On SHARED reduce production typ -> LID 
+-- On SEMICOLON reduce production typ -> LID 
+-- On RPAREN reduce production typ -> LID 
+-- On OUTPUT reduce production typ -> LID 
+-- On INPUT reduce production typ -> LID 
+-- On GT reduce production typ -> LID 
+-- On FSM reduce production typ -> LID 
+-- On EQUAL reduce production typ -> LID 
+-- On COMMA reduce production typ -> LID 
+
+State 30:
+braced(my_separated_list(COMMA,UID)) -> LBRACE . my_separated_list(COMMA,UID) RBRACE [ TYPE FSM ]
+-- On UID shift to state 31
+-- On my_separated_nonempty_list(COMMA,UID) shift to state 34
+-- On my_separated_list(COMMA,UID) shift to state 35
+-- On RBRACE reduce production my_separated_list(COMMA,UID) -> 
+
+State 31:
+my_separated_nonempty_list(COMMA,UID) -> UID . [ SEMICOLON RBRACE ]
+my_separated_nonempty_list(COMMA,UID) -> UID . COMMA my_separated_nonempty_list(COMMA,UID) [ SEMICOLON RBRACE ]
+-- On COMMA shift to state 32
+-- On SEMICOLON reduce production my_separated_nonempty_list(COMMA,UID) -> UID 
+-- On RBRACE reduce production my_separated_nonempty_list(COMMA,UID) -> UID 
+
+State 32:
+my_separated_nonempty_list(COMMA,UID) -> UID COMMA . my_separated_nonempty_list(COMMA,UID) [ SEMICOLON RBRACE ]
+-- On UID shift to state 31
+-- On my_separated_nonempty_list(COMMA,UID) shift to state 33
+
+State 33:
+my_separated_nonempty_list(COMMA,UID) -> UID COMMA my_separated_nonempty_list(COMMA,UID) . [ SEMICOLON RBRACE ]
+-- On SEMICOLON reduce production my_separated_nonempty_list(COMMA,UID) -> UID COMMA my_separated_nonempty_list(COMMA,UID) 
+-- On RBRACE reduce production my_separated_nonempty_list(COMMA,UID) -> UID COMMA my_separated_nonempty_list(COMMA,UID) 
+
+State 34:
+my_separated_list(COMMA,UID) -> my_separated_nonempty_list(COMMA,UID) . [ SEMICOLON RBRACE ]
+-- On SEMICOLON reduce production my_separated_list(COMMA,UID) -> my_separated_nonempty_list(COMMA,UID) 
+-- On RBRACE reduce production my_separated_list(COMMA,UID) -> my_separated_nonempty_list(COMMA,UID) 
+
+State 35:
+braced(my_separated_list(COMMA,UID)) -> LBRACE my_separated_list(COMMA,UID) . RBRACE [ TYPE FSM ]
+-- On RBRACE shift to state 36
+
+State 36:
+braced(my_separated_list(COMMA,UID)) -> LBRACE my_separated_list(COMMA,UID) RBRACE . [ TYPE FSM ]
+-- On TYPE reduce production braced(my_separated_list(COMMA,UID)) -> LBRACE my_separated_list(COMMA,UID) RBRACE 
+-- On FSM reduce production braced(my_separated_list(COMMA,UID)) -> LBRACE my_separated_list(COMMA,UID) RBRACE 
+
+State 37:
+type_decl -> TYPE LID EQUAL typ . [ TYPE FSM ]
+-- On TYPE reduce production type_decl -> TYPE LID EQUAL typ 
+-- On FSM reduce production type_decl -> TYPE LID EQUAL typ 
+
+State 38:
+type_decl -> TYPE LID EQUAL braced(my_separated_list(COMMA,UID)) . [ TYPE FSM ]
+-- On TYPE reduce production type_decl -> TYPE LID EQUAL braced(my_separated_list(COMMA,UID)) 
+-- On FSM reduce production type_decl -> TYPE LID EQUAL braced(my_separated_list(COMMA,UID)) 
+
+State 39:
+my_list(type_decl) -> type_decl . my_list(type_decl) [ FSM ]
+-- On TYPE shift to state 1
+-- On type_decl shift to state 39
+-- On my_list(type_decl) shift to state 40
+-- On FSM reduce production my_list(type_decl) -> 
+
+State 40:
+my_list(type_decl) -> type_decl my_list(type_decl) . [ FSM ]
+-- On FSM reduce production my_list(type_decl) -> type_decl my_list(type_decl) 
+
+State 41:
+program' -> program . [ # ]
+-- On # accept program
+
+State 42:
+program -> my_list(type_decl) . my_nonempty_list(fsm_model) my_nonempty_list(global) my_nonempty_list(fsm_inst) EOF [ # ]
+-- On FSM shift to state 43
+-- On my_nonempty_list(fsm_model) shift to state 182
+-- On fsm_model shift to state 252
+
+State 43:
+fsm_model -> FSM . MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS COLON my_separated_list(COMMA,transition) SEMICOLON ITRANS COLON itransition SEMICOLON RBRACE [ SHARED OUTPUT INPUT FSM ]
+-- On MODEL shift to state 44
+
+State 44:
+fsm_model -> FSM MODEL . id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS COLON my_separated_list(COMMA,transition) SEMICOLON ITRANS COLON itransition SEMICOLON RBRACE [ SHARED OUTPUT INPUT FSM ]
+-- On UID shift to state 45
+-- On LID shift to state 46
+-- On id shift to state 47
+
+State 45:
+id -> UID . [ RPAREN LT LPAREN EQUAL COMMA COLON ]
+-- On RPAREN reduce production id -> UID 
+-- On LT reduce production id -> UID 
+-- On LPAREN reduce production id -> UID 
+-- On EQUAL reduce production id -> UID 
+-- On COMMA reduce production id -> UID 
+-- On COLON reduce production id -> UID 
+
+State 46:
+id -> LID . [ RPAREN LT LPAREN EQUAL COMMA COLON ]
+-- On RPAREN reduce production id -> LID 
+-- On LT reduce production id -> LID 
+-- On LPAREN reduce production id -> LID 
+-- On EQUAL reduce production id -> LID 
+-- On COMMA reduce production id -> LID 
+-- On COLON reduce production id -> LID 
+
+State 47:
+fsm_model -> FSM MODEL id . optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS COLON my_separated_list(COMMA,transition) SEMICOLON ITRANS COLON itransition SEMICOLON RBRACE [ SHARED OUTPUT INPUT FSM ]
+-- On LT shift to state 48
+-- On params shift to state 58
+-- On optional(params) shift to state 59
+-- On LPAREN reduce production optional(params) -> 
+
+State 48:
+params -> LT . my_separated_list(COMMA,param) GT [ LPAREN ]
+-- On LID shift to state 49
+-- On param shift to state 52
+-- On my_separated_nonempty_list(COMMA,param) shift to state 55
+-- On my_separated_list(COMMA,param) shift to state 56
+-- On GT reduce production my_separated_list(COMMA,param) -> 
+
+State 49:
+param -> LID . COLON typ [ GT COMMA ]
+-- On COLON shift to state 50
+
+State 50:
+param -> LID COLON . typ [ GT COMMA ]
+-- On TYINT shift to state 4
+-- On TYEVENT shift to state 27
+-- On TYBOOL shift to state 28
+-- On LID shift to state 29
+-- On typ shift to state 51
+
+State 51:
+param -> LID COLON typ . [ GT COMMA ]
+-- On GT reduce production param -> LID COLON typ 
+-- On COMMA reduce production param -> LID COLON typ 
+
+State 52:
+my_separated_nonempty_list(COMMA,param) -> param . [ GT ]
+my_separated_nonempty_list(COMMA,param) -> param . COMMA my_separated_nonempty_list(COMMA,param) [ GT ]
+-- On COMMA shift to state 53
+-- On GT reduce production my_separated_nonempty_list(COMMA,param) -> param 
+
+State 53:
+my_separated_nonempty_list(COMMA,param) -> param COMMA . my_separated_nonempty_list(COMMA,param) [ GT ]
+-- On LID shift to state 49
+-- On param shift to state 52
+-- On my_separated_nonempty_list(COMMA,param) shift to state 54
+
+State 54:
+my_separated_nonempty_list(COMMA,param) -> param COMMA my_separated_nonempty_list(COMMA,param) . [ GT ]
+-- On GT reduce production my_separated_nonempty_list(COMMA,param) -> param COMMA my_separated_nonempty_list(COMMA,param) 
+
+State 55:
+my_separated_list(COMMA,param) -> my_separated_nonempty_list(COMMA,param) . [ GT ]
+-- On GT reduce production my_separated_list(COMMA,param) -> my_separated_nonempty_list(COMMA,param) 
+
+State 56:
+params -> LT my_separated_list(COMMA,param) . GT [ LPAREN ]
+-- On GT shift to state 57
+
+State 57:
+params -> LT my_separated_list(COMMA,param) GT . [ LPAREN ]
+-- On LPAREN reduce production params -> LT my_separated_list(COMMA,param) GT 
+
+State 58:
+optional(params) -> params . [ LPAREN ]
+-- On LPAREN reduce production optional(params) -> params 
+
+State 59:
+fsm_model -> FSM MODEL id optional(params) . LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS COLON my_separated_list(COMMA,transition) SEMICOLON ITRANS COLON itransition SEMICOLON RBRACE [ SHARED OUTPUT INPUT FSM ]
+-- On LPAREN shift to state 60
+
+State 60:
+fsm_model -> FSM MODEL id optional(params) LPAREN . my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS COLON my_separated_list(COMMA,transition) SEMICOLON ITRANS COLON itransition SEMICOLON RBRACE [ SHARED OUTPUT INPUT FSM ]
+-- On OUT shift to state 61
+-- On INOUT shift to state 66
+-- On IN shift to state 68
+-- On my_separated_nonempty_list(COMMA,io) shift to state 70
+-- On my_separated_list(COMMA,io) shift to state 71
+-- On io shift to state 179
+-- On RPAREN reduce production my_separated_list(COMMA,io) -> 
+
+State 61:
+io -> OUT . io_desc [ RPAREN COMMA ]
+-- On LID shift to state 62
+-- On io_desc shift to state 65
+
+State 62:
+io_desc -> LID . COLON typ [ RPAREN COMMA ]
+-- On COLON shift to state 63
+
+State 63:
+io_desc -> LID COLON . typ [ RPAREN COMMA ]
+-- On TYINT shift to state 4
+-- On TYEVENT shift to state 27
+-- On TYBOOL shift to state 28
+-- On LID shift to state 29
+-- On typ shift to state 64
+
+State 64:
+io_desc -> LID COLON typ . [ RPAREN COMMA ]
+-- On RPAREN reduce production io_desc -> LID COLON typ 
+-- On COMMA reduce production io_desc -> LID COLON typ 
+
+State 65:
+io -> OUT io_desc . [ RPAREN COMMA ]
+-- On RPAREN reduce production io -> OUT io_desc 
+-- On COMMA reduce production io -> OUT io_desc 
+
+State 66:
+io -> INOUT . io_desc [ RPAREN COMMA ]
+-- On LID shift to state 62
+-- On io_desc shift to state 67
+
+State 67:
+io -> INOUT io_desc . [ RPAREN COMMA ]
+-- On RPAREN reduce production io -> INOUT io_desc 
+-- On COMMA reduce production io -> INOUT io_desc 
+
+State 68:
+io -> IN . io_desc [ RPAREN COMMA ]
+-- On LID shift to state 62
+-- On io_desc shift to state 69
+
+State 69:
+io -> IN io_desc . [ RPAREN COMMA ]
+-- On RPAREN reduce production io -> IN io_desc 
+-- On COMMA reduce production io -> IN io_desc 
+
+State 70:
+my_separated_list(COMMA,io) -> my_separated_nonempty_list(COMMA,io) . [ RPAREN ]
+-- On RPAREN reduce production my_separated_list(COMMA,io) -> my_separated_nonempty_list(COMMA,io) 
+
+State 71:
+fsm_model -> FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) . RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS COLON my_separated_list(COMMA,transition) SEMICOLON ITRANS COLON itransition SEMICOLON RBRACE [ SHARED OUTPUT INPUT FSM ]
+-- On RPAREN shift to state 72
+
+State 72:
+fsm_model -> FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN . LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS COLON my_separated_list(COMMA,transition) SEMICOLON ITRANS COLON itransition SEMICOLON RBRACE [ SHARED OUTPUT INPUT FSM ]
+-- On LBRACE shift to state 73
+
+State 73:
+fsm_model -> FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE . STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS COLON my_separated_list(COMMA,transition) SEMICOLON ITRANS COLON itransition SEMICOLON RBRACE [ SHARED OUTPUT INPUT FSM ]
+-- On STATES shift to state 74
+
+State 74:
+fsm_model -> FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES . COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS COLON my_separated_list(COMMA,transition) SEMICOLON ITRANS COLON itransition SEMICOLON RBRACE [ SHARED OUTPUT INPUT FSM ]
+-- On COLON shift to state 75
+
+State 75:
+fsm_model -> FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON . my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS COLON my_separated_list(COMMA,transition) SEMICOLON ITRANS COLON itransition SEMICOLON RBRACE [ SHARED OUTPUT INPUT FSM ]
+-- On UID shift to state 31
+-- On my_separated_nonempty_list(COMMA,UID) shift to state 34
+-- On my_separated_list(COMMA,UID) shift to state 76
+-- On SEMICOLON reduce production my_separated_list(COMMA,UID) -> 
+
+State 76:
+fsm_model -> FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) . SEMICOLON optional(vars) TRANS COLON my_separated_list(COMMA,transition) SEMICOLON ITRANS COLON itransition SEMICOLON RBRACE [ SHARED OUTPUT INPUT FSM ]
+-- On SEMICOLON shift to state 77
+
+State 77:
+fsm_model -> FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON . optional(vars) TRANS COLON my_separated_list(COMMA,transition) SEMICOLON ITRANS COLON itransition SEMICOLON RBRACE [ SHARED OUTPUT INPUT FSM ]
+-- On VARS shift to state 78
+-- On vars shift to state 89
+-- On optional(vars) shift to state 90
+-- On TRANS reduce production optional(vars) -> 
+
+State 78:
+vars -> VARS . COLON loption(separated_nonempty_list(COMMA,var)) SEMICOLON [ TRANS ]
+-- On COLON shift to state 79
+
+State 79:
+vars -> VARS COLON . loption(separated_nonempty_list(COMMA,var)) SEMICOLON [ TRANS ]
+-- On LID shift to state 80
+-- On var shift to state 83
+-- On separated_nonempty_list(COMMA,var) shift to state 86
+-- On loption(separated_nonempty_list(COMMA,var)) shift to state 87
+-- On SEMICOLON reduce production loption(separated_nonempty_list(COMMA,var)) -> 
+
+State 80:
+var -> LID . COLON typ [ SEMICOLON COMMA ]
+-- On COLON shift to state 81
+
+State 81:
+var -> LID COLON . typ [ SEMICOLON COMMA ]
+-- On TYINT shift to state 4
+-- On TYEVENT shift to state 27
+-- On TYBOOL shift to state 28
+-- On LID shift to state 29
+-- On typ shift to state 82
+
+State 82:
+var -> LID COLON typ . [ SEMICOLON COMMA ]
+-- On SEMICOLON reduce production var -> LID COLON typ 
+-- On COMMA reduce production var -> LID COLON typ 
+
+State 83:
+separated_nonempty_list(COMMA,var) -> var . [ SEMICOLON ]
+separated_nonempty_list(COMMA,var) -> var . COMMA separated_nonempty_list(COMMA,var) [ SEMICOLON ]
+-- On COMMA shift to state 84
+-- On SEMICOLON reduce production separated_nonempty_list(COMMA,var) -> var 
+
+State 84:
+separated_nonempty_list(COMMA,var) -> var COMMA . separated_nonempty_list(COMMA,var) [ SEMICOLON ]
+-- On LID shift to state 80
+-- On var shift to state 83
+-- On separated_nonempty_list(COMMA,var) shift to state 85
+
+State 85:
+separated_nonempty_list(COMMA,var) -> var COMMA separated_nonempty_list(COMMA,var) . [ SEMICOLON ]
+-- On SEMICOLON reduce production separated_nonempty_list(COMMA,var) -> var COMMA separated_nonempty_list(COMMA,var) 
+
+State 86:
+loption(separated_nonempty_list(COMMA,var)) -> separated_nonempty_list(COMMA,var) . [ SEMICOLON ]
+-- On SEMICOLON reduce production loption(separated_nonempty_list(COMMA,var)) -> separated_nonempty_list(COMMA,var) 
+
+State 87:
+vars -> VARS COLON loption(separated_nonempty_list(COMMA,var)) . SEMICOLON [ TRANS ]
+-- On SEMICOLON shift to state 88
+
+State 88:
+vars -> VARS COLON loption(separated_nonempty_list(COMMA,var)) SEMICOLON . [ TRANS ]
+-- On TRANS reduce production vars -> VARS COLON loption(separated_nonempty_list(COMMA,var)) SEMICOLON 
+
+State 89:
+optional(vars) -> vars . [ TRANS ]
+-- On TRANS reduce production optional(vars) -> vars 
+
+State 90:
+fsm_model -> FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) . TRANS COLON my_separated_list(COMMA,transition) SEMICOLON ITRANS COLON itransition SEMICOLON RBRACE [ SHARED OUTPUT INPUT FSM ]
+-- On TRANS shift to state 91
+
+State 91:
+fsm_model -> FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS . COLON my_separated_list(COMMA,transition) SEMICOLON ITRANS COLON itransition SEMICOLON RBRACE [ SHARED OUTPUT INPUT FSM ]
+-- On COLON shift to state 92
+
+State 92:
+fsm_model -> FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS COLON . my_separated_list(COMMA,transition) SEMICOLON ITRANS COLON itransition SEMICOLON RBRACE [ SHARED OUTPUT INPUT FSM ]
+-- On TIMES shift to state 93
+-- On transition shift to state 94
+-- On prio shift to state 96
+-- On my_separated_nonempty_list(COMMA,transition) shift to state 168
+-- On my_separated_list(COMMA,transition) shift to state 169
+-- On UID reduce production prio -> 
+-- On SEMICOLON reduce production my_separated_list(COMMA,transition) -> 
+
+State 93:
+prio -> TIMES . [ UID ]
+-- On UID reduce production prio -> TIMES 
+
+State 94:
+my_separated_nonempty_list(COMMA,transition) -> transition . [ SEMICOLON ]
+my_separated_nonempty_list(COMMA,transition) -> transition . COMMA my_separated_nonempty_list(COMMA,transition) [ SEMICOLON ]
+-- On COMMA shift to state 95
+-- On SEMICOLON reduce production my_separated_nonempty_list(COMMA,transition) -> transition 
+
+State 95:
+my_separated_nonempty_list(COMMA,transition) -> transition COMMA . my_separated_nonempty_list(COMMA,transition) [ SEMICOLON ]
+-- On TIMES shift to state 93
+-- On transition shift to state 94
+-- On prio shift to state 96
+-- On my_separated_nonempty_list(COMMA,transition) shift to state 167
+-- On UID reduce production prio -> 
+
+State 96:
+transition -> prio . UID ARROW_START condition optional(actions) ARROW_END UID [ SEMICOLON COMMA ]
+-- On UID shift to state 97
+
+State 97:
+transition -> prio UID . ARROW_START condition optional(actions) ARROW_END UID [ SEMICOLON COMMA ]
+-- On ARROW_START shift to state 98
+
+State 98:
+transition -> prio UID ARROW_START . condition optional(actions) ARROW_END UID [ SEMICOLON COMMA ]
+-- On LID shift to state 99
+-- On condition shift to state 154
+
+State 99:
+condition -> LID . [ BAR ARROW_END ]
+condition -> LID . DOT separated_nonempty_list(DOT,guard) [ BAR ARROW_END ]
+-- On DOT shift to state 100
+-- On BAR reduce production condition -> LID 
+-- On ARROW_END reduce production condition -> LID 
+
+State 100:
+condition -> LID DOT . separated_nonempty_list(DOT,guard) [ BAR ARROW_END ]
+-- On UID shift to state 101
+-- On TRUE shift to state 102
+-- On LPAREN shift to state 103
+-- On LID shift to state 104
+-- On INT shift to state 105
+-- On FALSE shift to state 106
+-- On separated_nonempty_list(DOT,guard) shift to state 136
+-- On guard_expr shift to state 137
+-- On guard shift to state 138
+-- On expr shift to state 141
+-- On bool shift to state 110
+
+State 101:
+expr -> UID . [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+-- On TIMES reduce production expr -> UID 
+-- On SEMICOLON reduce production expr -> UID 
+-- On RPAREN reduce production expr -> UID 
+-- On QMARK reduce production expr -> UID 
+-- On PLUS reduce production expr -> UID 
+-- On NOTEQUAL reduce production expr -> UID 
+-- On MOD reduce production expr -> UID 
+-- On MINUS reduce production expr -> UID 
+-- On LTE reduce production expr -> UID 
+-- On LT reduce production expr -> UID 
+-- On GTE reduce production expr -> UID 
+-- On GT reduce production expr -> UID 
+-- On EQUAL reduce production expr -> UID 
+-- On DOT reduce production expr -> UID 
+-- On DIV reduce production expr -> UID 
+-- On COLON reduce production expr -> UID 
+-- On BAR reduce production expr -> UID 
+-- On ARROW_END reduce production expr -> UID 
+
+State 102:
+bool -> TRUE . [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COMMA COLON BAR ARROW_END ]
+-- On TIMES reduce production bool -> TRUE 
+-- On SEMICOLON reduce production bool -> TRUE 
+-- On RPAREN reduce production bool -> TRUE 
+-- On QMARK reduce production bool -> TRUE 
+-- On PLUS reduce production bool -> TRUE 
+-- On NOTEQUAL reduce production bool -> TRUE 
+-- On MOD reduce production bool -> TRUE 
+-- On MINUS reduce production bool -> TRUE 
+-- On LTE reduce production bool -> TRUE 
+-- On LT reduce production bool -> TRUE 
+-- On GTE reduce production bool -> TRUE 
+-- On GT reduce production bool -> TRUE 
+-- On EQUAL reduce production bool -> TRUE 
+-- On DOT reduce production bool -> TRUE 
+-- On DIV reduce production bool -> TRUE 
+-- On COMMA reduce production bool -> TRUE 
+-- On COLON reduce production bool -> TRUE 
+-- On BAR reduce production bool -> TRUE 
+-- On ARROW_END reduce production bool -> TRUE 
+
+State 103:
+expr -> LPAREN . expr RPAREN [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+-- On UID shift to state 101
+-- On TRUE shift to state 102
+-- On LPAREN shift to state 103
+-- On LID shift to state 104
+-- On INT shift to state 105
+-- On FALSE shift to state 106
+-- On expr shift to state 107
+-- On bool shift to state 110
+
+State 104:
+expr -> LID . [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+-- On TIMES reduce production expr -> LID 
+-- On SEMICOLON reduce production expr -> LID 
+-- On RPAREN reduce production expr -> LID 
+-- On QMARK reduce production expr -> LID 
+-- On PLUS reduce production expr -> LID 
+-- On NOTEQUAL reduce production expr -> LID 
+-- On MOD reduce production expr -> LID 
+-- On MINUS reduce production expr -> LID 
+-- On LTE reduce production expr -> LID 
+-- On LT reduce production expr -> LID 
+-- On GTE reduce production expr -> LID 
+-- On GT reduce production expr -> LID 
+-- On EQUAL reduce production expr -> LID 
+-- On DOT reduce production expr -> LID 
+-- On DIV reduce production expr -> LID 
+-- On COLON reduce production expr -> LID 
+-- On BAR reduce production expr -> LID 
+-- On ARROW_END reduce production expr -> LID 
+
+State 105:
+expr -> INT . [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+-- On TIMES reduce production expr -> INT 
+-- On SEMICOLON reduce production expr -> INT 
+-- On RPAREN reduce production expr -> INT 
+-- On QMARK reduce production expr -> INT 
+-- On PLUS reduce production expr -> INT 
+-- On NOTEQUAL reduce production expr -> INT 
+-- On MOD reduce production expr -> INT 
+-- On MINUS reduce production expr -> INT 
+-- On LTE reduce production expr -> INT 
+-- On LT reduce production expr -> INT 
+-- On GTE reduce production expr -> INT 
+-- On GT reduce production expr -> INT 
+-- On EQUAL reduce production expr -> INT 
+-- On DOT reduce production expr -> INT 
+-- On DIV reduce production expr -> INT 
+-- On COLON reduce production expr -> INT 
+-- On BAR reduce production expr -> INT 
+-- On ARROW_END reduce production expr -> INT 
+
+State 106:
+bool -> FALSE . [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COMMA COLON BAR ARROW_END ]
+-- On TIMES reduce production bool -> FALSE 
+-- On SEMICOLON reduce production bool -> FALSE 
+-- On RPAREN reduce production bool -> FALSE 
+-- On QMARK reduce production bool -> FALSE 
+-- On PLUS reduce production bool -> FALSE 
+-- On NOTEQUAL reduce production bool -> FALSE 
+-- On MOD reduce production bool -> FALSE 
+-- On MINUS reduce production bool -> FALSE 
+-- On LTE reduce production bool -> FALSE 
+-- On LT reduce production bool -> FALSE 
+-- On GTE reduce production bool -> FALSE 
+-- On GT reduce production bool -> FALSE 
+-- On EQUAL reduce production bool -> FALSE 
+-- On DOT reduce production bool -> FALSE 
+-- On DIV reduce production bool -> FALSE 
+-- On COMMA reduce production bool -> FALSE 
+-- On COLON reduce production bool -> FALSE 
+-- On BAR reduce production bool -> FALSE 
+-- On ARROW_END reduce production bool -> FALSE 
+
+State 107:
+expr -> LPAREN expr . RPAREN [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . PLUS expr [ TIMES RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ]
+expr -> expr . MINUS expr [ TIMES RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ]
+expr -> expr . TIMES expr [ TIMES RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ]
+expr -> expr . DIV expr [ TIMES RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ]
+expr -> expr . MOD expr [ TIMES RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ]
+expr -> expr . EQUAL expr [ TIMES RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ]
+expr -> expr . NOTEQUAL expr [ TIMES RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ]
+expr -> expr . GT expr [ TIMES RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ]
+expr -> expr . LT expr [ TIMES RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ]
+expr -> expr . GTE expr [ TIMES RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ]
+expr -> expr . LTE expr [ TIMES RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ]
+expr -> expr . QMARK expr COLON expr [ TIMES RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ]
+-- On TIMES shift to state 108
+-- On RPAREN shift to state 111
+-- On QMARK shift to state 112
+-- On PLUS shift to state 114
+-- On NOTEQUAL shift to state 120
+-- On MOD shift to state 116
+-- On MINUS shift to state 122
+-- On LTE shift to state 124
+-- On LT shift to state 126
+-- On GTE shift to state 128
+-- On GT shift to state 130
+-- On EQUAL shift to state 132
+-- On DIV shift to state 118
+
+State 108:
+expr -> expr TIMES . expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+-- On UID shift to state 101
+-- On TRUE shift to state 102
+-- On LPAREN shift to state 103
+-- On LID shift to state 104
+-- On INT shift to state 105
+-- On FALSE shift to state 106
+-- On expr shift to state 109
+-- On bool shift to state 110
+
+State 109:
+expr -> expr . PLUS expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . MINUS expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . TIMES expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr TIMES expr . [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . DIV expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . MOD expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . EQUAL expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . NOTEQUAL expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . GT expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . LT expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . GTE expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . LTE expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . QMARK expr COLON expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+-- On TIMES reduce production expr -> expr TIMES expr 
+-- On SEMICOLON reduce production expr -> expr TIMES expr 
+-- On RPAREN reduce production expr -> expr TIMES expr 
+-- On QMARK reduce production expr -> expr TIMES expr 
+-- On PLUS reduce production expr -> expr TIMES expr 
+-- On NOTEQUAL reduce production expr -> expr TIMES expr 
+-- On MOD reduce production expr -> expr TIMES expr 
+-- On MINUS reduce production expr -> expr TIMES expr 
+-- On LTE reduce production expr -> expr TIMES expr 
+-- On LT reduce production expr -> expr TIMES expr 
+-- On GTE reduce production expr -> expr TIMES expr 
+-- On GT reduce production expr -> expr TIMES expr 
+-- On EQUAL reduce production expr -> expr TIMES expr 
+-- On DOT reduce production expr -> expr TIMES expr 
+-- On DIV reduce production expr -> expr TIMES expr 
+-- On COLON reduce production expr -> expr TIMES expr 
+-- On BAR reduce production expr -> expr TIMES expr 
+-- On ARROW_END reduce production expr -> expr TIMES expr 
+
+State 110:
+expr -> bool . [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+-- On TIMES reduce production expr -> bool 
+-- On SEMICOLON reduce production expr -> bool 
+-- On RPAREN reduce production expr -> bool 
+-- On QMARK reduce production expr -> bool 
+-- On PLUS reduce production expr -> bool 
+-- On NOTEQUAL reduce production expr -> bool 
+-- On MOD reduce production expr -> bool 
+-- On MINUS reduce production expr -> bool 
+-- On LTE reduce production expr -> bool 
+-- On LT reduce production expr -> bool 
+-- On GTE reduce production expr -> bool 
+-- On GT reduce production expr -> bool 
+-- On EQUAL reduce production expr -> bool 
+-- On DOT reduce production expr -> bool 
+-- On DIV reduce production expr -> bool 
+-- On COLON reduce production expr -> bool 
+-- On BAR reduce production expr -> bool 
+-- On ARROW_END reduce production expr -> bool 
+
+State 111:
+expr -> LPAREN expr RPAREN . [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+-- On TIMES reduce production expr -> LPAREN expr RPAREN 
+-- On SEMICOLON reduce production expr -> LPAREN expr RPAREN 
+-- On RPAREN reduce production expr -> LPAREN expr RPAREN 
+-- On QMARK reduce production expr -> LPAREN expr RPAREN 
+-- On PLUS reduce production expr -> LPAREN expr RPAREN 
+-- On NOTEQUAL reduce production expr -> LPAREN expr RPAREN 
+-- On MOD reduce production expr -> LPAREN expr RPAREN 
+-- On MINUS reduce production expr -> LPAREN expr RPAREN 
+-- On LTE reduce production expr -> LPAREN expr RPAREN 
+-- On LT reduce production expr -> LPAREN expr RPAREN 
+-- On GTE reduce production expr -> LPAREN expr RPAREN 
+-- On GT reduce production expr -> LPAREN expr RPAREN 
+-- On EQUAL reduce production expr -> LPAREN expr RPAREN 
+-- On DOT reduce production expr -> LPAREN expr RPAREN 
+-- On DIV reduce production expr -> LPAREN expr RPAREN 
+-- On COLON reduce production expr -> LPAREN expr RPAREN 
+-- On BAR reduce production expr -> LPAREN expr RPAREN 
+-- On ARROW_END reduce production expr -> LPAREN expr RPAREN 
+
+State 112:
+expr -> expr QMARK . expr COLON expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+-- On UID shift to state 101
+-- On TRUE shift to state 102
+-- On LPAREN shift to state 103
+-- On LID shift to state 104
+-- On INT shift to state 105
+-- On FALSE shift to state 106
+-- On expr shift to state 113
+-- On bool shift to state 110
+
+State 113:
+expr -> expr . PLUS expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV COLON ]
+expr -> expr . MINUS expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV COLON ]
+expr -> expr . TIMES expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV COLON ]
+expr -> expr . DIV expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV COLON ]
+expr -> expr . MOD expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV COLON ]
+expr -> expr . EQUAL expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV COLON ]
+expr -> expr . NOTEQUAL expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV COLON ]
+expr -> expr . GT expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV COLON ]
+expr -> expr . LT expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV COLON ]
+expr -> expr . GTE expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV COLON ]
+expr -> expr . LTE expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV COLON ]
+expr -> expr . QMARK expr COLON expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV COLON ]
+expr -> expr QMARK expr . COLON expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+-- On TIMES shift to state 108
+-- On QMARK shift to state 112
+-- On PLUS shift to state 114
+-- On NOTEQUAL shift to state 120
+-- On MOD shift to state 116
+-- On MINUS shift to state 122
+-- On LTE shift to state 124
+-- On LT shift to state 126
+-- On GTE shift to state 128
+-- On GT shift to state 130
+-- On EQUAL shift to state 132
+-- On DIV shift to state 118
+-- On COLON shift to state 134
+
+State 114:
+expr -> expr PLUS . expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+-- On UID shift to state 101
+-- On TRUE shift to state 102
+-- On LPAREN shift to state 103
+-- On LID shift to state 104
+-- On INT shift to state 105
+-- On FALSE shift to state 106
+-- On expr shift to state 115
+-- On bool shift to state 110
+
+State 115:
+expr -> expr . PLUS expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr PLUS expr . [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . MINUS expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . TIMES expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . DIV expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . MOD expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . EQUAL expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . NOTEQUAL expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . GT expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . LT expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . GTE expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . LTE expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . QMARK expr COLON expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+-- On TIMES shift to state 108
+-- On MOD shift to state 116
+-- On DIV shift to state 118
+-- On SEMICOLON reduce production expr -> expr PLUS expr 
+-- On RPAREN reduce production expr -> expr PLUS expr 
+-- On QMARK reduce production expr -> expr PLUS expr 
+-- On PLUS reduce production expr -> expr PLUS expr 
+-- On NOTEQUAL reduce production expr -> expr PLUS expr 
+-- On MINUS reduce production expr -> expr PLUS expr 
+-- On LTE reduce production expr -> expr PLUS expr 
+-- On LT reduce production expr -> expr PLUS expr 
+-- On GTE reduce production expr -> expr PLUS expr 
+-- On GT reduce production expr -> expr PLUS expr 
+-- On EQUAL reduce production expr -> expr PLUS expr 
+-- On DOT reduce production expr -> expr PLUS expr 
+-- On COLON reduce production expr -> expr PLUS expr 
+-- On BAR reduce production expr -> expr PLUS expr 
+-- On ARROW_END reduce production expr -> expr PLUS expr 
+
+State 116:
+expr -> expr MOD . expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+-- On UID shift to state 101
+-- On TRUE shift to state 102
+-- On LPAREN shift to state 103
+-- On LID shift to state 104
+-- On INT shift to state 105
+-- On FALSE shift to state 106
+-- On expr shift to state 117
+-- On bool shift to state 110
+
+State 117:
+expr -> expr . PLUS expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . MINUS expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . TIMES expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . DIV expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . MOD expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr MOD expr . [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . EQUAL expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . NOTEQUAL expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . GT expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . LT expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . GTE expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . LTE expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . QMARK expr COLON expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+-- On TIMES reduce production expr -> expr MOD expr 
+-- On SEMICOLON reduce production expr -> expr MOD expr 
+-- On RPAREN reduce production expr -> expr MOD expr 
+-- On QMARK reduce production expr -> expr MOD expr 
+-- On PLUS reduce production expr -> expr MOD expr 
+-- On NOTEQUAL reduce production expr -> expr MOD expr 
+-- On MOD reduce production expr -> expr MOD expr 
+-- On MINUS reduce production expr -> expr MOD expr 
+-- On LTE reduce production expr -> expr MOD expr 
+-- On LT reduce production expr -> expr MOD expr 
+-- On GTE reduce production expr -> expr MOD expr 
+-- On GT reduce production expr -> expr MOD expr 
+-- On EQUAL reduce production expr -> expr MOD expr 
+-- On DOT reduce production expr -> expr MOD expr 
+-- On DIV reduce production expr -> expr MOD expr 
+-- On COLON reduce production expr -> expr MOD expr 
+-- On BAR reduce production expr -> expr MOD expr 
+-- On ARROW_END reduce production expr -> expr MOD expr 
+
+State 118:
+expr -> expr DIV . expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+-- On UID shift to state 101
+-- On TRUE shift to state 102
+-- On LPAREN shift to state 103
+-- On LID shift to state 104
+-- On INT shift to state 105
+-- On FALSE shift to state 106
+-- On expr shift to state 119
+-- On bool shift to state 110
+
+State 119:
+expr -> expr . PLUS expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . MINUS expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . TIMES expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . DIV expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr DIV expr . [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . MOD expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . EQUAL expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . NOTEQUAL expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . GT expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . LT expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . GTE expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . LTE expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . QMARK expr COLON expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+-- On TIMES reduce production expr -> expr DIV expr 
+-- On SEMICOLON reduce production expr -> expr DIV expr 
+-- On RPAREN reduce production expr -> expr DIV expr 
+-- On QMARK reduce production expr -> expr DIV expr 
+-- On PLUS reduce production expr -> expr DIV expr 
+-- On NOTEQUAL reduce production expr -> expr DIV expr 
+-- On MOD reduce production expr -> expr DIV expr 
+-- On MINUS reduce production expr -> expr DIV expr 
+-- On LTE reduce production expr -> expr DIV expr 
+-- On LT reduce production expr -> expr DIV expr 
+-- On GTE reduce production expr -> expr DIV expr 
+-- On GT reduce production expr -> expr DIV expr 
+-- On EQUAL reduce production expr -> expr DIV expr 
+-- On DOT reduce production expr -> expr DIV expr 
+-- On DIV reduce production expr -> expr DIV expr 
+-- On COLON reduce production expr -> expr DIV expr 
+-- On BAR reduce production expr -> expr DIV expr 
+-- On ARROW_END reduce production expr -> expr DIV expr 
+
+State 120:
+expr -> expr NOTEQUAL . expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+-- On UID shift to state 101
+-- On TRUE shift to state 102
+-- On LPAREN shift to state 103
+-- On LID shift to state 104
+-- On INT shift to state 105
+-- On FALSE shift to state 106
+-- On expr shift to state 121
+-- On bool shift to state 110
+
+State 121:
+expr -> expr . PLUS expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . MINUS expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . TIMES expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . DIV expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . MOD expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . EQUAL expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . NOTEQUAL expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr NOTEQUAL expr . [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . GT expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . LT expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . GTE expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . LTE expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . QMARK expr COLON expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+-- On TIMES shift to state 108
+-- On PLUS shift to state 114
+-- On MOD shift to state 116
+-- On MINUS shift to state 122
+-- On DIV shift to state 118
+-- On SEMICOLON reduce production expr -> expr NOTEQUAL expr 
+-- On RPAREN reduce production expr -> expr NOTEQUAL expr 
+-- On QMARK reduce production expr -> expr NOTEQUAL expr 
+-- On NOTEQUAL reduce production expr -> expr NOTEQUAL expr 
+-- On LTE reduce production expr -> expr NOTEQUAL expr 
+-- On LT reduce production expr -> expr NOTEQUAL expr 
+-- On GTE reduce production expr -> expr NOTEQUAL expr 
+-- On GT reduce production expr -> expr NOTEQUAL expr 
+-- On EQUAL reduce production expr -> expr NOTEQUAL expr 
+-- On DOT reduce production expr -> expr NOTEQUAL expr 
+-- On COLON reduce production expr -> expr NOTEQUAL expr 
+-- On BAR reduce production expr -> expr NOTEQUAL expr 
+-- On ARROW_END reduce production expr -> expr NOTEQUAL expr 
+
+State 122:
+expr -> expr MINUS . expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+-- On UID shift to state 101
+-- On TRUE shift to state 102
+-- On LPAREN shift to state 103
+-- On LID shift to state 104
+-- On INT shift to state 105
+-- On FALSE shift to state 106
+-- On expr shift to state 123
+-- On bool shift to state 110
+
+State 123:
+expr -> expr . PLUS expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . MINUS expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr MINUS expr . [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . TIMES expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . DIV expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . MOD expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . EQUAL expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . NOTEQUAL expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . GT expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . LT expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . GTE expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . LTE expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . QMARK expr COLON expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+-- On TIMES shift to state 108
+-- On MOD shift to state 116
+-- On DIV shift to state 118
+-- On SEMICOLON reduce production expr -> expr MINUS expr 
+-- On RPAREN reduce production expr -> expr MINUS expr 
+-- On QMARK reduce production expr -> expr MINUS expr 
+-- On PLUS reduce production expr -> expr MINUS expr 
+-- On NOTEQUAL reduce production expr -> expr MINUS expr 
+-- On MINUS reduce production expr -> expr MINUS expr 
+-- On LTE reduce production expr -> expr MINUS expr 
+-- On LT reduce production expr -> expr MINUS expr 
+-- On GTE reduce production expr -> expr MINUS expr 
+-- On GT reduce production expr -> expr MINUS expr 
+-- On EQUAL reduce production expr -> expr MINUS expr 
+-- On DOT reduce production expr -> expr MINUS expr 
+-- On COLON reduce production expr -> expr MINUS expr 
+-- On BAR reduce production expr -> expr MINUS expr 
+-- On ARROW_END reduce production expr -> expr MINUS expr 
+
+State 124:
+expr -> expr LTE . expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+-- On UID shift to state 101
+-- On TRUE shift to state 102
+-- On LPAREN shift to state 103
+-- On LID shift to state 104
+-- On INT shift to state 105
+-- On FALSE shift to state 106
+-- On expr shift to state 125
+-- On bool shift to state 110
+
+State 125:
+expr -> expr . PLUS expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . MINUS expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . TIMES expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . DIV expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . MOD expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . EQUAL expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . NOTEQUAL expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . GT expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . LT expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . GTE expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . LTE expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr LTE expr . [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . QMARK expr COLON expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+-- On TIMES shift to state 108
+-- On PLUS shift to state 114
+-- On MOD shift to state 116
+-- On MINUS shift to state 122
+-- On DIV shift to state 118
+-- On SEMICOLON reduce production expr -> expr LTE expr 
+-- On RPAREN reduce production expr -> expr LTE expr 
+-- On QMARK reduce production expr -> expr LTE expr 
+-- On NOTEQUAL reduce production expr -> expr LTE expr 
+-- On LTE reduce production expr -> expr LTE expr 
+-- On LT reduce production expr -> expr LTE expr 
+-- On GTE reduce production expr -> expr LTE expr 
+-- On GT reduce production expr -> expr LTE expr 
+-- On EQUAL reduce production expr -> expr LTE expr 
+-- On DOT reduce production expr -> expr LTE expr 
+-- On COLON reduce production expr -> expr LTE expr 
+-- On BAR reduce production expr -> expr LTE expr 
+-- On ARROW_END reduce production expr -> expr LTE expr 
+
+State 126:
+expr -> expr LT . expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+-- On UID shift to state 101
+-- On TRUE shift to state 102
+-- On LPAREN shift to state 103
+-- On LID shift to state 104
+-- On INT shift to state 105
+-- On FALSE shift to state 106
+-- On expr shift to state 127
+-- On bool shift to state 110
+
+State 127:
+expr -> expr . PLUS expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . MINUS expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . TIMES expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . DIV expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . MOD expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . EQUAL expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . NOTEQUAL expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . GT expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . LT expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr LT expr . [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . GTE expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . LTE expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . QMARK expr COLON expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+-- On TIMES shift to state 108
+-- On PLUS shift to state 114
+-- On MOD shift to state 116
+-- On MINUS shift to state 122
+-- On DIV shift to state 118
+-- On SEMICOLON reduce production expr -> expr LT expr 
+-- On RPAREN reduce production expr -> expr LT expr 
+-- On QMARK reduce production expr -> expr LT expr 
+-- On NOTEQUAL reduce production expr -> expr LT expr 
+-- On LTE reduce production expr -> expr LT expr 
+-- On LT reduce production expr -> expr LT expr 
+-- On GTE reduce production expr -> expr LT expr 
+-- On GT reduce production expr -> expr LT expr 
+-- On EQUAL reduce production expr -> expr LT expr 
+-- On DOT reduce production expr -> expr LT expr 
+-- On COLON reduce production expr -> expr LT expr 
+-- On BAR reduce production expr -> expr LT expr 
+-- On ARROW_END reduce production expr -> expr LT expr 
+
+State 128:
+expr -> expr GTE . expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+-- On UID shift to state 101
+-- On TRUE shift to state 102
+-- On LPAREN shift to state 103
+-- On LID shift to state 104
+-- On INT shift to state 105
+-- On FALSE shift to state 106
+-- On expr shift to state 129
+-- On bool shift to state 110
+
+State 129:
+expr -> expr . PLUS expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . MINUS expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . TIMES expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . DIV expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . MOD expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . EQUAL expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . NOTEQUAL expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . GT expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . LT expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . GTE expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr GTE expr . [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . LTE expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . QMARK expr COLON expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+-- On TIMES shift to state 108
+-- On PLUS shift to state 114
+-- On MOD shift to state 116
+-- On MINUS shift to state 122
+-- On DIV shift to state 118
+-- On SEMICOLON reduce production expr -> expr GTE expr 
+-- On RPAREN reduce production expr -> expr GTE expr 
+-- On QMARK reduce production expr -> expr GTE expr 
+-- On NOTEQUAL reduce production expr -> expr GTE expr 
+-- On LTE reduce production expr -> expr GTE expr 
+-- On LT reduce production expr -> expr GTE expr 
+-- On GTE reduce production expr -> expr GTE expr 
+-- On GT reduce production expr -> expr GTE expr 
+-- On EQUAL reduce production expr -> expr GTE expr 
+-- On DOT reduce production expr -> expr GTE expr 
+-- On COLON reduce production expr -> expr GTE expr 
+-- On BAR reduce production expr -> expr GTE expr 
+-- On ARROW_END reduce production expr -> expr GTE expr 
+
+State 130:
+expr -> expr GT . expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+-- On UID shift to state 101
+-- On TRUE shift to state 102
+-- On LPAREN shift to state 103
+-- On LID shift to state 104
+-- On INT shift to state 105
+-- On FALSE shift to state 106
+-- On expr shift to state 131
+-- On bool shift to state 110
+
+State 131:
+expr -> expr . PLUS expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . MINUS expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . TIMES expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . DIV expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . MOD expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . EQUAL expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . NOTEQUAL expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . GT expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr GT expr . [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . LT expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . GTE expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . LTE expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . QMARK expr COLON expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+-- On TIMES shift to state 108
+-- On PLUS shift to state 114
+-- On MOD shift to state 116
+-- On MINUS shift to state 122
+-- On DIV shift to state 118
+-- On SEMICOLON reduce production expr -> expr GT expr 
+-- On RPAREN reduce production expr -> expr GT expr 
+-- On QMARK reduce production expr -> expr GT expr 
+-- On NOTEQUAL reduce production expr -> expr GT expr 
+-- On LTE reduce production expr -> expr GT expr 
+-- On LT reduce production expr -> expr GT expr 
+-- On GTE reduce production expr -> expr GT expr 
+-- On GT reduce production expr -> expr GT expr 
+-- On EQUAL reduce production expr -> expr GT expr 
+-- On DOT reduce production expr -> expr GT expr 
+-- On COLON reduce production expr -> expr GT expr 
+-- On BAR reduce production expr -> expr GT expr 
+-- On ARROW_END reduce production expr -> expr GT expr 
+
+State 132:
+expr -> expr EQUAL . expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+-- On UID shift to state 101
+-- On TRUE shift to state 102
+-- On LPAREN shift to state 103
+-- On LID shift to state 104
+-- On INT shift to state 105
+-- On FALSE shift to state 106
+-- On expr shift to state 133
+-- On bool shift to state 110
+
+State 133:
+expr -> expr . PLUS expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . MINUS expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . TIMES expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . DIV expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . MOD expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . EQUAL expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr EQUAL expr . [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . NOTEQUAL expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . GT expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . LT expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . GTE expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . LTE expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . QMARK expr COLON expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+-- On TIMES shift to state 108
+-- On PLUS shift to state 114
+-- On MOD shift to state 116
+-- On MINUS shift to state 122
+-- On DIV shift to state 118
+-- On SEMICOLON reduce production expr -> expr EQUAL expr 
+-- On RPAREN reduce production expr -> expr EQUAL expr 
+-- On QMARK reduce production expr -> expr EQUAL expr 
+-- On NOTEQUAL reduce production expr -> expr EQUAL expr 
+-- On LTE reduce production expr -> expr EQUAL expr 
+-- On LT reduce production expr -> expr EQUAL expr 
+-- On GTE reduce production expr -> expr EQUAL expr 
+-- On GT reduce production expr -> expr EQUAL expr 
+-- On EQUAL reduce production expr -> expr EQUAL expr 
+-- On DOT reduce production expr -> expr EQUAL expr 
+-- On COLON reduce production expr -> expr EQUAL expr 
+-- On BAR reduce production expr -> expr EQUAL expr 
+-- On ARROW_END reduce production expr -> expr EQUAL expr 
+
+State 134:
+expr -> expr QMARK expr COLON . expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+-- On UID shift to state 101
+-- On TRUE shift to state 102
+-- On LPAREN shift to state 103
+-- On LID shift to state 104
+-- On INT shift to state 105
+-- On FALSE shift to state 106
+-- On expr shift to state 135
+-- On bool shift to state 110
+
+State 135:
+expr -> expr . PLUS expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . MINUS expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . TIMES expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . DIV expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . MOD expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . EQUAL expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . NOTEQUAL expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . GT expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . LT expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . GTE expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . LTE expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr . QMARK expr COLON expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+expr -> expr QMARK expr COLON expr . [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV COLON BAR ARROW_END ]
+-- On TIMES shift to state 108
+-- On PLUS shift to state 114
+-- On NOTEQUAL shift to state 120
+-- On MOD shift to state 116
+-- On MINUS shift to state 122
+-- On LTE shift to state 124
+-- On LT shift to state 126
+-- On GTE shift to state 128
+-- On GT shift to state 130
+-- On EQUAL shift to state 132
+-- On DIV shift to state 118
+-- On SEMICOLON reduce production expr -> expr QMARK expr COLON expr 
+-- On RPAREN reduce production expr -> expr QMARK expr COLON expr 
+-- On DOT reduce production expr -> expr QMARK expr COLON expr 
+-- On COLON reduce production expr -> expr QMARK expr COLON expr 
+-- On BAR reduce production expr -> expr QMARK expr COLON expr 
+-- On ARROW_END reduce production expr -> expr QMARK expr COLON expr 
+
+State 136:
+condition -> LID DOT separated_nonempty_list(DOT,guard) . [ BAR ARROW_END ]
+-- On BAR reduce production condition -> LID DOT separated_nonempty_list(DOT,guard) 
+-- On ARROW_END reduce production condition -> LID DOT separated_nonempty_list(DOT,guard) 
+
+State 137:
+guard -> guard_expr . [ DOT BAR ARROW_END ]
+-- On DOT reduce production guard -> guard_expr 
+-- On BAR reduce production guard -> guard_expr 
+-- On ARROW_END reduce production guard -> guard_expr 
+
+State 138:
+separated_nonempty_list(DOT,guard) -> guard . [ BAR ARROW_END ]
+separated_nonempty_list(DOT,guard) -> guard . DOT separated_nonempty_list(DOT,guard) [ BAR ARROW_END ]
+-- On DOT shift to state 139
+-- On BAR reduce production separated_nonempty_list(DOT,guard) -> guard 
+-- On ARROW_END reduce production separated_nonempty_list(DOT,guard) -> guard 
+
+State 139:
+separated_nonempty_list(DOT,guard) -> guard DOT . separated_nonempty_list(DOT,guard) [ BAR ARROW_END ]
+-- On UID shift to state 101
+-- On TRUE shift to state 102
+-- On LPAREN shift to state 103
+-- On LID shift to state 104
+-- On INT shift to state 105
+-- On FALSE shift to state 106
+-- On separated_nonempty_list(DOT,guard) shift to state 140
+-- On guard_expr shift to state 137
+-- On guard shift to state 138
+-- On expr shift to state 141
+-- On bool shift to state 110
+
+State 140:
+separated_nonempty_list(DOT,guard) -> guard DOT separated_nonempty_list(DOT,guard) . [ BAR ARROW_END ]
+-- On BAR reduce production separated_nonempty_list(DOT,guard) -> guard DOT separated_nonempty_list(DOT,guard) 
+-- On ARROW_END reduce production separated_nonempty_list(DOT,guard) -> guard DOT separated_nonempty_list(DOT,guard) 
+
+State 141:
+expr -> expr . PLUS expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ]
+expr -> expr . MINUS expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ]
+expr -> expr . TIMES expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ]
+expr -> expr . DIV expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ]
+expr -> expr . MOD expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ]
+expr -> expr . EQUAL expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ]
+expr -> expr . NOTEQUAL expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ]
+expr -> expr . GT expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ]
+expr -> expr . LT expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ]
+expr -> expr . GTE expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ]
+expr -> expr . LTE expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ]
+expr -> expr . QMARK expr COLON expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ]
+guard_expr -> expr . EQUAL expr [ DOT BAR ARROW_END ]
+guard_expr -> expr . NOTEQUAL expr [ DOT BAR ARROW_END ]
+guard_expr -> expr . GT expr [ DOT BAR ARROW_END ]
+guard_expr -> expr . LT expr [ DOT BAR ARROW_END ]
+guard_expr -> expr . GTE expr [ DOT BAR ARROW_END ]
+guard_expr -> expr . LTE expr [ DOT BAR ARROW_END ]
+-- On TIMES shift to state 108
+-- On QMARK shift to state 112
+-- On PLUS shift to state 114
+-- On NOTEQUAL shift to state 142
+-- On MOD shift to state 116
+-- On MINUS shift to state 122
+-- On LTE shift to state 144
+-- On LT shift to state 146
+-- On GTE shift to state 148
+-- On GT shift to state 150
+-- On EQUAL shift to state 152
+-- On DIV shift to state 118
+
+State 142:
+expr -> expr NOTEQUAL . expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ]
+guard_expr -> expr NOTEQUAL . expr [ DOT BAR ARROW_END ]
+-- On UID shift to state 101
+-- On TRUE shift to state 102
+-- On LPAREN shift to state 103
+-- On LID shift to state 104
+-- On INT shift to state 105
+-- On FALSE shift to state 106
+-- On expr shift to state 143
+-- On bool shift to state 110
+
+State 143:
+expr -> expr . PLUS expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . MINUS expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . TIMES expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . DIV expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . MOD expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . EQUAL expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . NOTEQUAL expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr NOTEQUAL expr . [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ]
+expr -> expr . GT expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . LT expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . GTE expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . LTE expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . QMARK expr COLON expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+guard_expr -> expr NOTEQUAL expr . [ DOT BAR ARROW_END ]
+-- On TIMES shift to state 108
+-- On PLUS shift to state 114
+-- On MOD shift to state 116
+-- On MINUS shift to state 122
+-- On DIV shift to state 118
+-- On QMARK reduce production expr -> expr NOTEQUAL expr 
+-- On NOTEQUAL reduce production expr -> expr NOTEQUAL expr 
+-- On LTE reduce production expr -> expr NOTEQUAL expr 
+-- On LT reduce production expr -> expr NOTEQUAL expr 
+-- On GTE reduce production expr -> expr NOTEQUAL expr 
+-- On GT reduce production expr -> expr NOTEQUAL expr 
+-- On EQUAL reduce production expr -> expr NOTEQUAL expr 
+-- On DOT reduce production guard_expr -> expr NOTEQUAL expr 
+-- On BAR reduce production guard_expr -> expr NOTEQUAL expr 
+-- On ARROW_END reduce production guard_expr -> expr NOTEQUAL expr 
+
+State 144:
+expr -> expr LTE . expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ]
+guard_expr -> expr LTE . expr [ DOT BAR ARROW_END ]
+-- On UID shift to state 101
+-- On TRUE shift to state 102
+-- On LPAREN shift to state 103
+-- On LID shift to state 104
+-- On INT shift to state 105
+-- On FALSE shift to state 106
+-- On expr shift to state 145
+-- On bool shift to state 110
+
+State 145:
+expr -> expr . PLUS expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . MINUS expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . TIMES expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . DIV expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . MOD expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . EQUAL expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . NOTEQUAL expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . GT expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . LT expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . GTE expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . LTE expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr LTE expr . [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ]
+expr -> expr . QMARK expr COLON expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+guard_expr -> expr LTE expr . [ DOT BAR ARROW_END ]
+-- On TIMES shift to state 108
+-- On PLUS shift to state 114
+-- On MOD shift to state 116
+-- On MINUS shift to state 122
+-- On DIV shift to state 118
+-- On QMARK reduce production expr -> expr LTE expr 
+-- On NOTEQUAL reduce production expr -> expr LTE expr 
+-- On LTE reduce production expr -> expr LTE expr 
+-- On LT reduce production expr -> expr LTE expr 
+-- On GTE reduce production expr -> expr LTE expr 
+-- On GT reduce production expr -> expr LTE expr 
+-- On EQUAL reduce production expr -> expr LTE expr 
+-- On DOT reduce production guard_expr -> expr LTE expr 
+-- On BAR reduce production guard_expr -> expr LTE expr 
+-- On ARROW_END reduce production guard_expr -> expr LTE expr 
+
+State 146:
+expr -> expr LT . expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ]
+guard_expr -> expr LT . expr [ DOT BAR ARROW_END ]
+-- On UID shift to state 101
+-- On TRUE shift to state 102
+-- On LPAREN shift to state 103
+-- On LID shift to state 104
+-- On INT shift to state 105
+-- On FALSE shift to state 106
+-- On expr shift to state 147
+-- On bool shift to state 110
+
+State 147:
+expr -> expr . PLUS expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . MINUS expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . TIMES expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . DIV expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . MOD expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . EQUAL expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . NOTEQUAL expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . GT expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . LT expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr LT expr . [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ]
+expr -> expr . GTE expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . LTE expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . QMARK expr COLON expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+guard_expr -> expr LT expr . [ DOT BAR ARROW_END ]
+-- On TIMES shift to state 108
+-- On PLUS shift to state 114
+-- On MOD shift to state 116
+-- On MINUS shift to state 122
+-- On DIV shift to state 118
+-- On QMARK reduce production expr -> expr LT expr 
+-- On NOTEQUAL reduce production expr -> expr LT expr 
+-- On LTE reduce production expr -> expr LT expr 
+-- On LT reduce production expr -> expr LT expr 
+-- On GTE reduce production expr -> expr LT expr 
+-- On GT reduce production expr -> expr LT expr 
+-- On EQUAL reduce production expr -> expr LT expr 
+-- On DOT reduce production guard_expr -> expr LT expr 
+-- On BAR reduce production guard_expr -> expr LT expr 
+-- On ARROW_END reduce production guard_expr -> expr LT expr 
+
+State 148:
+expr -> expr GTE . expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ]
+guard_expr -> expr GTE . expr [ DOT BAR ARROW_END ]
+-- On UID shift to state 101
+-- On TRUE shift to state 102
+-- On LPAREN shift to state 103
+-- On LID shift to state 104
+-- On INT shift to state 105
+-- On FALSE shift to state 106
+-- On expr shift to state 149
+-- On bool shift to state 110
+
+State 149:
+expr -> expr . PLUS expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . MINUS expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . TIMES expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . DIV expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . MOD expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . EQUAL expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . NOTEQUAL expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . GT expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . LT expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . GTE expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr GTE expr . [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ]
+expr -> expr . LTE expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . QMARK expr COLON expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+guard_expr -> expr GTE expr . [ DOT BAR ARROW_END ]
+-- On TIMES shift to state 108
+-- On PLUS shift to state 114
+-- On MOD shift to state 116
+-- On MINUS shift to state 122
+-- On DIV shift to state 118
+-- On QMARK reduce production expr -> expr GTE expr 
+-- On NOTEQUAL reduce production expr -> expr GTE expr 
+-- On LTE reduce production expr -> expr GTE expr 
+-- On LT reduce production expr -> expr GTE expr 
+-- On GTE reduce production expr -> expr GTE expr 
+-- On GT reduce production expr -> expr GTE expr 
+-- On EQUAL reduce production expr -> expr GTE expr 
+-- On DOT reduce production guard_expr -> expr GTE expr 
+-- On BAR reduce production guard_expr -> expr GTE expr 
+-- On ARROW_END reduce production guard_expr -> expr GTE expr 
+
+State 150:
+expr -> expr GT . expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ]
+guard_expr -> expr GT . expr [ DOT BAR ARROW_END ]
+-- On UID shift to state 101
+-- On TRUE shift to state 102
+-- On LPAREN shift to state 103
+-- On LID shift to state 104
+-- On INT shift to state 105
+-- On FALSE shift to state 106
+-- On expr shift to state 151
+-- On bool shift to state 110
+
+State 151:
+expr -> expr . PLUS expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . MINUS expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . TIMES expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . DIV expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . MOD expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . EQUAL expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . NOTEQUAL expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . GT expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr GT expr . [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ]
+expr -> expr . LT expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . GTE expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . LTE expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . QMARK expr COLON expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+guard_expr -> expr GT expr . [ DOT BAR ARROW_END ]
+-- On TIMES shift to state 108
+-- On PLUS shift to state 114
+-- On MOD shift to state 116
+-- On MINUS shift to state 122
+-- On DIV shift to state 118
+-- On QMARK reduce production expr -> expr GT expr 
+-- On NOTEQUAL reduce production expr -> expr GT expr 
+-- On LTE reduce production expr -> expr GT expr 
+-- On LT reduce production expr -> expr GT expr 
+-- On GTE reduce production expr -> expr GT expr 
+-- On GT reduce production expr -> expr GT expr 
+-- On EQUAL reduce production expr -> expr GT expr 
+-- On DOT reduce production guard_expr -> expr GT expr 
+-- On BAR reduce production guard_expr -> expr GT expr 
+-- On ARROW_END reduce production guard_expr -> expr GT expr 
+
+State 152:
+expr -> expr EQUAL . expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ]
+guard_expr -> expr EQUAL . expr [ DOT BAR ARROW_END ]
+-- On UID shift to state 101
+-- On TRUE shift to state 102
+-- On LPAREN shift to state 103
+-- On LID shift to state 104
+-- On INT shift to state 105
+-- On FALSE shift to state 106
+-- On expr shift to state 153
+-- On bool shift to state 110
+
+State 153:
+expr -> expr . PLUS expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . MINUS expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . TIMES expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . DIV expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . MOD expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . EQUAL expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr EQUAL expr . [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ]
+expr -> expr . NOTEQUAL expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . GT expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . LT expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . GTE expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . LTE expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+expr -> expr . QMARK expr COLON expr [ TIMES QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DOT DIV BAR ARROW_END ]
+guard_expr -> expr EQUAL expr . [ DOT BAR ARROW_END ]
+-- On TIMES shift to state 108
+-- On PLUS shift to state 114
+-- On MOD shift to state 116
+-- On MINUS shift to state 122
+-- On DIV shift to state 118
+-- On QMARK reduce production expr -> expr EQUAL expr 
+-- On NOTEQUAL reduce production expr -> expr EQUAL expr 
+-- On LTE reduce production expr -> expr EQUAL expr 
+-- On LT reduce production expr -> expr EQUAL expr 
+-- On GTE reduce production expr -> expr EQUAL expr 
+-- On GT reduce production expr -> expr EQUAL expr 
+-- On EQUAL reduce production expr -> expr EQUAL expr 
+-- On DOT reduce production guard_expr -> expr EQUAL expr 
+-- On BAR reduce production guard_expr -> expr EQUAL expr 
+-- On ARROW_END reduce production guard_expr -> expr EQUAL expr 
+
+State 154:
+transition -> prio UID ARROW_START condition . optional(actions) ARROW_END UID [ SEMICOLON COMMA ]
+-- On BAR shift to state 155
+-- On optional(actions) shift to state 163
+-- On actions shift to state 166
+-- On ARROW_END reduce production optional(actions) -> 
+
+State 155:
+actions -> BAR . separated_nonempty_list(SEMICOLON,action) [ ARROW_END ]
+-- On LID shift to state 156
+-- On separated_nonempty_list(SEMICOLON,action) shift to state 159
+-- On action shift to state 160
+
+State 156:
+action -> LID . [ SEMICOLON ARROW_END ]
+action -> LID . COLEQ expr [ SEMICOLON ARROW_END ]
+-- On COLEQ shift to state 157
+-- On SEMICOLON reduce production action -> LID 
+-- On ARROW_END reduce production action -> LID 
+
+State 157:
+action -> LID COLEQ . expr [ SEMICOLON ARROW_END ]
+-- On UID shift to state 101
+-- On TRUE shift to state 102
+-- On LPAREN shift to state 103
+-- On LID shift to state 104
+-- On INT shift to state 105
+-- On FALSE shift to state 106
+-- On expr shift to state 158
+-- On bool shift to state 110
+
+State 158:
+action -> LID COLEQ expr . [ SEMICOLON ARROW_END ]
+expr -> expr . PLUS expr [ TIMES SEMICOLON QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ARROW_END ]
+expr -> expr . MINUS expr [ TIMES SEMICOLON QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ARROW_END ]
+expr -> expr . TIMES expr [ TIMES SEMICOLON QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ARROW_END ]
+expr -> expr . DIV expr [ TIMES SEMICOLON QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ARROW_END ]
+expr -> expr . MOD expr [ TIMES SEMICOLON QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ARROW_END ]
+expr -> expr . EQUAL expr [ TIMES SEMICOLON QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ARROW_END ]
+expr -> expr . NOTEQUAL expr [ TIMES SEMICOLON QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ARROW_END ]
+expr -> expr . GT expr [ TIMES SEMICOLON QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ARROW_END ]
+expr -> expr . LT expr [ TIMES SEMICOLON QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ARROW_END ]
+expr -> expr . GTE expr [ TIMES SEMICOLON QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ARROW_END ]
+expr -> expr . LTE expr [ TIMES SEMICOLON QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ARROW_END ]
+expr -> expr . QMARK expr COLON expr [ TIMES SEMICOLON QMARK PLUS NOTEQUAL MOD MINUS LTE LT GTE GT EQUAL DIV ARROW_END ]
+-- On TIMES shift to state 108
+-- On QMARK shift to state 112
+-- On PLUS shift to state 114
+-- On NOTEQUAL shift to state 120
+-- On MOD shift to state 116
+-- On MINUS shift to state 122
+-- On LTE shift to state 124
+-- On LT shift to state 126
+-- On GTE shift to state 128
+-- On GT shift to state 130
+-- On EQUAL shift to state 132
+-- On DIV shift to state 118
+-- On SEMICOLON reduce production action -> LID COLEQ expr 
+-- On ARROW_END reduce production action -> LID COLEQ expr 
+
+State 159:
+actions -> BAR separated_nonempty_list(SEMICOLON,action) . [ ARROW_END ]
+-- On ARROW_END reduce production actions -> BAR separated_nonempty_list(SEMICOLON,action) 
+
+State 160:
+separated_nonempty_list(SEMICOLON,action) -> action . [ ARROW_END ]
+separated_nonempty_list(SEMICOLON,action) -> action . SEMICOLON separated_nonempty_list(SEMICOLON,action) [ ARROW_END ]
+-- On SEMICOLON shift to state 161
+-- On ARROW_END reduce production separated_nonempty_list(SEMICOLON,action) -> action 
+
+State 161:
+separated_nonempty_list(SEMICOLON,action) -> action SEMICOLON . separated_nonempty_list(SEMICOLON,action) [ ARROW_END ]
+-- On LID shift to state 156
+-- On separated_nonempty_list(SEMICOLON,action) shift to state 162
+-- On action shift to state 160
+
+State 162:
+separated_nonempty_list(SEMICOLON,action) -> action SEMICOLON separated_nonempty_list(SEMICOLON,action) . [ ARROW_END ]
+-- On ARROW_END reduce production separated_nonempty_list(SEMICOLON,action) -> action SEMICOLON separated_nonempty_list(SEMICOLON,action) 
+
+State 163:
+transition -> prio UID ARROW_START condition optional(actions) . ARROW_END UID [ SEMICOLON COMMA ]
+-- On ARROW_END shift to state 164
+
+State 164:
+transition -> prio UID ARROW_START condition optional(actions) ARROW_END . UID [ SEMICOLON COMMA ]
+-- On UID shift to state 165
+
+State 165:
+transition -> prio UID ARROW_START condition optional(actions) ARROW_END UID . [ SEMICOLON COMMA ]
+-- On SEMICOLON reduce production transition -> prio UID ARROW_START condition optional(actions) ARROW_END UID 
+-- On COMMA reduce production transition -> prio UID ARROW_START condition optional(actions) ARROW_END UID 
+
+State 166:
+optional(actions) -> actions . [ ARROW_END ]
+-- On ARROW_END reduce production optional(actions) -> actions 
+
+State 167:
+my_separated_nonempty_list(COMMA,transition) -> transition COMMA my_separated_nonempty_list(COMMA,transition) . [ SEMICOLON ]
+-- On SEMICOLON reduce production my_separated_nonempty_list(COMMA,transition) -> transition COMMA my_separated_nonempty_list(COMMA,transition) 
+
+State 168:
+my_separated_list(COMMA,transition) -> my_separated_nonempty_list(COMMA,transition) . [ SEMICOLON ]
+-- On SEMICOLON reduce production my_separated_list(COMMA,transition) -> my_separated_nonempty_list(COMMA,transition) 
+
+State 169:
+fsm_model -> FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS COLON my_separated_list(COMMA,transition) . SEMICOLON ITRANS COLON itransition SEMICOLON RBRACE [ SHARED OUTPUT INPUT FSM ]
+-- On SEMICOLON shift to state 170
+
+State 170:
+fsm_model -> FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS COLON my_separated_list(COMMA,transition) SEMICOLON . ITRANS COLON itransition SEMICOLON RBRACE [ SHARED OUTPUT INPUT FSM ]
+-- On ITRANS shift to state 171
+
+State 171:
+fsm_model -> FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS COLON my_separated_list(COMMA,transition) SEMICOLON ITRANS . COLON itransition SEMICOLON RBRACE [ SHARED OUTPUT INPUT FSM ]
+-- On COLON shift to state 172
+
+State 172:
+fsm_model -> FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS COLON my_separated_list(COMMA,transition) SEMICOLON ITRANS COLON . itransition SEMICOLON RBRACE [ SHARED OUTPUT INPUT FSM ]
+-- On BAR shift to state 155
+-- On optional(actions) shift to state 173
+-- On itransition shift to state 176
+-- On actions shift to state 166
+-- On ARROW_END reduce production optional(actions) -> 
+
+State 173:
+itransition -> optional(actions) . ARROW_END UID [ SEMICOLON ]
+-- On ARROW_END shift to state 174
+
+State 174:
+itransition -> optional(actions) ARROW_END . UID [ SEMICOLON ]
+-- On UID shift to state 175
+
+State 175:
+itransition -> optional(actions) ARROW_END UID . [ SEMICOLON ]
+-- On SEMICOLON reduce production itransition -> optional(actions) ARROW_END UID 
+
+State 176:
+fsm_model -> FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS COLON my_separated_list(COMMA,transition) SEMICOLON ITRANS COLON itransition . SEMICOLON RBRACE [ SHARED OUTPUT INPUT FSM ]
+-- On SEMICOLON shift to state 177
+
+State 177:
+fsm_model -> FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS COLON my_separated_list(COMMA,transition) SEMICOLON ITRANS COLON itransition SEMICOLON . RBRACE [ SHARED OUTPUT INPUT FSM ]
+-- On RBRACE shift to state 178
+
+State 178:
+fsm_model -> FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS COLON my_separated_list(COMMA,transition) SEMICOLON ITRANS COLON itransition SEMICOLON RBRACE . [ SHARED OUTPUT INPUT FSM ]
+-- On SHARED reduce production fsm_model -> FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS COLON my_separated_list(COMMA,transition) SEMICOLON ITRANS COLON itransition SEMICOLON RBRACE 
+-- On OUTPUT reduce production fsm_model -> FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS COLON my_separated_list(COMMA,transition) SEMICOLON ITRANS COLON itransition SEMICOLON RBRACE 
+-- On INPUT reduce production fsm_model -> FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS COLON my_separated_list(COMMA,transition) SEMICOLON ITRANS COLON itransition SEMICOLON RBRACE 
+-- On FSM reduce production fsm_model -> FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RPAREN LBRACE STATES COLON my_separated_list(COMMA,UID) SEMICOLON optional(vars) TRANS COLON my_separated_list(COMMA,transition) SEMICOLON ITRANS COLON itransition SEMICOLON RBRACE 
+
+State 179:
+my_separated_nonempty_list(COMMA,io) -> io . [ RPAREN ]
+my_separated_nonempty_list(COMMA,io) -> io . COMMA my_separated_nonempty_list(COMMA,io) [ RPAREN ]
+-- On COMMA shift to state 180
+-- On RPAREN reduce production my_separated_nonempty_list(COMMA,io) -> io 
+
+State 180:
+my_separated_nonempty_list(COMMA,io) -> io COMMA . my_separated_nonempty_list(COMMA,io) [ RPAREN ]
+-- On OUT shift to state 61
+-- On INOUT shift to state 66
+-- On IN shift to state 68
+-- On my_separated_nonempty_list(COMMA,io) shift to state 181
+-- On io shift to state 179
+
+State 181:
+my_separated_nonempty_list(COMMA,io) -> io COMMA my_separated_nonempty_list(COMMA,io) . [ RPAREN ]
+-- On RPAREN reduce production my_separated_nonempty_list(COMMA,io) -> io COMMA my_separated_nonempty_list(COMMA,io) 
+
+State 182:
+program -> my_list(type_decl) my_nonempty_list(fsm_model) . my_nonempty_list(global) my_nonempty_list(fsm_inst) EOF [ # ]
+-- On SHARED shift to state 183
+-- On OUTPUT shift to state 187
+-- On INPUT shift to state 191
+-- On my_nonempty_list(global) shift to state 229
+-- On global shift to state 250
+
+State 183:
+global -> SHARED . id COLON typ [ SHARED OUTPUT INPUT FSM ]
+-- On UID shift to state 45
+-- On LID shift to state 46
+-- On id shift to state 184
+
+State 184:
+global -> SHARED id . COLON typ [ SHARED OUTPUT INPUT FSM ]
+-- On COLON shift to state 185
+
+State 185:
+global -> SHARED id COLON . typ [ SHARED OUTPUT INPUT FSM ]
+-- On TYINT shift to state 4
+-- On TYEVENT shift to state 27
+-- On TYBOOL shift to state 28
+-- On LID shift to state 29
+-- On typ shift to state 186
+
+State 186:
+global -> SHARED id COLON typ . [ SHARED OUTPUT INPUT FSM ]
+-- On SHARED reduce production global -> SHARED id COLON typ 
+-- On OUTPUT reduce production global -> SHARED id COLON typ 
+-- On INPUT reduce production global -> SHARED id COLON typ 
+-- On FSM reduce production global -> SHARED id COLON typ 
+
+State 187:
+global -> OUTPUT . id COLON typ [ SHARED OUTPUT INPUT FSM ]
+-- On UID shift to state 45
+-- On LID shift to state 46
+-- On id shift to state 188
+
+State 188:
+global -> OUTPUT id . COLON typ [ SHARED OUTPUT INPUT FSM ]
+-- On COLON shift to state 189
+
+State 189:
+global -> OUTPUT id COLON . typ [ SHARED OUTPUT INPUT FSM ]
+-- On TYINT shift to state 4
+-- On TYEVENT shift to state 27
+-- On TYBOOL shift to state 28
+-- On LID shift to state 29
+-- On typ shift to state 190
+
+State 190:
+global -> OUTPUT id COLON typ . [ SHARED OUTPUT INPUT FSM ]
+-- On SHARED reduce production global -> OUTPUT id COLON typ 
+-- On OUTPUT reduce production global -> OUTPUT id COLON typ 
+-- On INPUT reduce production global -> OUTPUT id COLON typ 
+-- On FSM reduce production global -> OUTPUT id COLON typ 
+
+State 191:
+global -> INPUT . id COLON typ EQUAL stimuli [ SHARED OUTPUT INPUT FSM ]
+-- On UID shift to state 45
+-- On LID shift to state 46
+-- On id shift to state 192
+
+State 192:
+global -> INPUT id . COLON typ EQUAL stimuli [ SHARED OUTPUT INPUT FSM ]
+-- On COLON shift to state 193
+
+State 193:
+global -> INPUT id COLON . typ EQUAL stimuli [ SHARED OUTPUT INPUT FSM ]
+-- On TYINT shift to state 4
+-- On TYEVENT shift to state 27
+-- On TYBOOL shift to state 28
+-- On LID shift to state 29
+-- On typ shift to state 194
+
+State 194:
+global -> INPUT id COLON typ . EQUAL stimuli [ SHARED OUTPUT INPUT FSM ]
+-- On EQUAL shift to state 195
+
+State 195:
+global -> INPUT id COLON typ EQUAL . stimuli [ SHARED OUTPUT INPUT FSM ]
+-- On VALUE_CHANGES shift to state 196
+-- On SPORADIC shift to state 211
+-- On PERIODIC shift to state 220
+-- On stimuli shift to state 228
+
+State 196:
+stimuli -> VALUE_CHANGES . paren(separated_list(COMMA,value_change)) [ SHARED OUTPUT INPUT FSM ]
+-- On LPAREN shift to state 197
+-- On paren(separated_list(COMMA,value_change)) shift to state 210
+
+State 197:
+paren(separated_list(COMMA,value_change)) -> LPAREN . loption(separated_nonempty_list(COMMA,value_change)) RPAREN [ SHARED OUTPUT INPUT FSM ]
+-- On INT shift to state 198
+-- On value_change shift to state 204
+-- On separated_nonempty_list(COMMA,value_change) shift to state 207
+-- On loption(separated_nonempty_list(COMMA,value_change)) shift to state 208
+-- On RPAREN reduce production loption(separated_nonempty_list(COMMA,value_change)) -> 
+
+State 198:
+value_change -> INT . COLON const [ RPAREN COMMA ]
+-- On COLON shift to state 199
+
+State 199:
+value_change -> INT COLON . const [ RPAREN COMMA ]
+-- On UID shift to state 200
+-- On TRUE shift to state 102
+-- On INT shift to state 201
+-- On FALSE shift to state 106
+-- On const shift to state 202
+-- On bool shift to state 203
+
+State 200:
+const -> UID . [ RPAREN COMMA ]
+-- On RPAREN reduce production const -> UID 
+-- On COMMA reduce production const -> UID 
+
+State 201:
+const -> INT . [ RPAREN COMMA ]
+-- On RPAREN reduce production const -> INT 
+-- On COMMA reduce production const -> INT 
+
+State 202:
+value_change -> INT COLON const . [ RPAREN COMMA ]
+-- On RPAREN reduce production value_change -> INT COLON const 
+-- On COMMA reduce production value_change -> INT COLON const 
+
+State 203:
+const -> bool . [ RPAREN COMMA ]
+-- On RPAREN reduce production const -> bool 
+-- On COMMA reduce production const -> bool 
+
+State 204:
+separated_nonempty_list(COMMA,value_change) -> value_change . [ RPAREN ]
+separated_nonempty_list(COMMA,value_change) -> value_change . COMMA separated_nonempty_list(COMMA,value_change) [ RPAREN ]
+-- On COMMA shift to state 205
+-- On RPAREN reduce production separated_nonempty_list(COMMA,value_change) -> value_change 
+
+State 205:
+separated_nonempty_list(COMMA,value_change) -> value_change COMMA . separated_nonempty_list(COMMA,value_change) [ RPAREN ]
+-- On INT shift to state 198
+-- On value_change shift to state 204
+-- On separated_nonempty_list(COMMA,value_change) shift to state 206
+
+State 206:
+separated_nonempty_list(COMMA,value_change) -> value_change COMMA separated_nonempty_list(COMMA,value_change) . [ RPAREN ]
+-- On RPAREN reduce production separated_nonempty_list(COMMA,value_change) -> value_change COMMA separated_nonempty_list(COMMA,value_change) 
+
+State 207:
+loption(separated_nonempty_list(COMMA,value_change)) -> separated_nonempty_list(COMMA,value_change) . [ RPAREN ]
+-- On RPAREN reduce production loption(separated_nonempty_list(COMMA,value_change)) -> separated_nonempty_list(COMMA,value_change) 
+
+State 208:
+paren(separated_list(COMMA,value_change)) -> LPAREN loption(separated_nonempty_list(COMMA,value_change)) . RPAREN [ SHARED OUTPUT INPUT FSM ]
+-- On RPAREN shift to state 209
+
+State 209:
+paren(separated_list(COMMA,value_change)) -> LPAREN loption(separated_nonempty_list(COMMA,value_change)) RPAREN . [ SHARED OUTPUT INPUT FSM ]
+-- On SHARED reduce production paren(separated_list(COMMA,value_change)) -> LPAREN loption(separated_nonempty_list(COMMA,value_change)) RPAREN 
+-- On OUTPUT reduce production paren(separated_list(COMMA,value_change)) -> LPAREN loption(separated_nonempty_list(COMMA,value_change)) RPAREN 
+-- On INPUT reduce production paren(separated_list(COMMA,value_change)) -> LPAREN loption(separated_nonempty_list(COMMA,value_change)) RPAREN 
+-- On FSM reduce production paren(separated_list(COMMA,value_change)) -> LPAREN loption(separated_nonempty_list(COMMA,value_change)) RPAREN 
+
+State 210:
+stimuli -> VALUE_CHANGES paren(separated_list(COMMA,value_change)) . [ SHARED OUTPUT INPUT FSM ]
+-- On SHARED reduce production stimuli -> VALUE_CHANGES paren(separated_list(COMMA,value_change)) 
+-- On OUTPUT reduce production stimuli -> VALUE_CHANGES paren(separated_list(COMMA,value_change)) 
+-- On INPUT reduce production stimuli -> VALUE_CHANGES paren(separated_list(COMMA,value_change)) 
+-- On FSM reduce production stimuli -> VALUE_CHANGES paren(separated_list(COMMA,value_change)) 
+
+State 211:
+stimuli -> SPORADIC . paren(separated_list(COMMA,INT)) [ SHARED OUTPUT INPUT FSM ]
+-- On LPAREN shift to state 212
+-- On paren(separated_list(COMMA,INT)) shift to state 219
+
+State 212:
+paren(separated_list(COMMA,INT)) -> LPAREN . loption(separated_nonempty_list(COMMA,INT)) RPAREN [ SHARED OUTPUT INPUT FSM ]
+-- On INT shift to state 213
+-- On separated_nonempty_list(COMMA,INT) shift to state 216
+-- On loption(separated_nonempty_list(COMMA,INT)) shift to state 217
+-- On RPAREN reduce production loption(separated_nonempty_list(COMMA,INT)) -> 
+
+State 213:
+separated_nonempty_list(COMMA,INT) -> INT . [ RPAREN GT ]
+separated_nonempty_list(COMMA,INT) -> INT . COMMA separated_nonempty_list(COMMA,INT) [ RPAREN GT ]
+-- On COMMA shift to state 214
+-- On RPAREN reduce production separated_nonempty_list(COMMA,INT) -> INT 
+-- On GT reduce production separated_nonempty_list(COMMA,INT) -> INT 
+
+State 214:
+separated_nonempty_list(COMMA,INT) -> INT COMMA . separated_nonempty_list(COMMA,INT) [ RPAREN GT ]
+-- On INT shift to state 213
+-- On separated_nonempty_list(COMMA,INT) shift to state 215
+
+State 215:
+separated_nonempty_list(COMMA,INT) -> INT COMMA separated_nonempty_list(COMMA,INT) . [ RPAREN GT ]
+-- On RPAREN reduce production separated_nonempty_list(COMMA,INT) -> INT COMMA separated_nonempty_list(COMMA,INT) 
+-- On GT reduce production separated_nonempty_list(COMMA,INT) -> INT COMMA separated_nonempty_list(COMMA,INT) 
+
+State 216:
+loption(separated_nonempty_list(COMMA,INT)) -> separated_nonempty_list(COMMA,INT) . [ RPAREN ]
+-- On RPAREN reduce production loption(separated_nonempty_list(COMMA,INT)) -> separated_nonempty_list(COMMA,INT) 
+
+State 217:
+paren(separated_list(COMMA,INT)) -> LPAREN loption(separated_nonempty_list(COMMA,INT)) . RPAREN [ SHARED OUTPUT INPUT FSM ]
+-- On RPAREN shift to state 218
+
+State 218:
+paren(separated_list(COMMA,INT)) -> LPAREN loption(separated_nonempty_list(COMMA,INT)) RPAREN . [ SHARED OUTPUT INPUT FSM ]
+-- On SHARED reduce production paren(separated_list(COMMA,INT)) -> LPAREN loption(separated_nonempty_list(COMMA,INT)) RPAREN 
+-- On OUTPUT reduce production paren(separated_list(COMMA,INT)) -> LPAREN loption(separated_nonempty_list(COMMA,INT)) RPAREN 
+-- On INPUT reduce production paren(separated_list(COMMA,INT)) -> LPAREN loption(separated_nonempty_list(COMMA,INT)) RPAREN 
+-- On FSM reduce production paren(separated_list(COMMA,INT)) -> LPAREN loption(separated_nonempty_list(COMMA,INT)) RPAREN 
+
+State 219:
+stimuli -> SPORADIC paren(separated_list(COMMA,INT)) . [ SHARED OUTPUT INPUT FSM ]
+-- On SHARED reduce production stimuli -> SPORADIC paren(separated_list(COMMA,INT)) 
+-- On OUTPUT reduce production stimuli -> SPORADIC paren(separated_list(COMMA,INT)) 
+-- On INPUT reduce production stimuli -> SPORADIC paren(separated_list(COMMA,INT)) 
+-- On FSM reduce production stimuli -> SPORADIC paren(separated_list(COMMA,INT)) 
+
+State 220:
+stimuli -> PERIODIC . LPAREN INT COMMA INT COMMA INT RPAREN [ SHARED OUTPUT INPUT FSM ]
+-- On LPAREN shift to state 221
+
+State 221:
+stimuli -> PERIODIC LPAREN . INT COMMA INT COMMA INT RPAREN [ SHARED OUTPUT INPUT FSM ]
+-- On INT shift to state 222
+
+State 222:
+stimuli -> PERIODIC LPAREN INT . COMMA INT COMMA INT RPAREN [ SHARED OUTPUT INPUT FSM ]
+-- On COMMA shift to state 223
+
+State 223:
+stimuli -> PERIODIC LPAREN INT COMMA . INT COMMA INT RPAREN [ SHARED OUTPUT INPUT FSM ]
+-- On INT shift to state 224
+
+State 224:
+stimuli -> PERIODIC LPAREN INT COMMA INT . COMMA INT RPAREN [ SHARED OUTPUT INPUT FSM ]
+-- On COMMA shift to state 225
+
+State 225:
+stimuli -> PERIODIC LPAREN INT COMMA INT COMMA . INT RPAREN [ SHARED OUTPUT INPUT FSM ]
+-- On INT shift to state 226
+
+State 226:
+stimuli -> PERIODIC LPAREN INT COMMA INT COMMA INT . RPAREN [ SHARED OUTPUT INPUT FSM ]
+-- On RPAREN shift to state 227
+
+State 227:
+stimuli -> PERIODIC LPAREN INT COMMA INT COMMA INT RPAREN . [ SHARED OUTPUT INPUT FSM ]
+-- On SHARED reduce production stimuli -> PERIODIC LPAREN INT COMMA INT COMMA INT RPAREN 
+-- On OUTPUT reduce production stimuli -> PERIODIC LPAREN INT COMMA INT COMMA INT RPAREN 
+-- On INPUT reduce production stimuli -> PERIODIC LPAREN INT COMMA INT COMMA INT RPAREN 
+-- On FSM reduce production stimuli -> PERIODIC LPAREN INT COMMA INT COMMA INT RPAREN 
+
+State 228:
+global -> INPUT id COLON typ EQUAL stimuli . [ SHARED OUTPUT INPUT FSM ]
+-- On SHARED reduce production global -> INPUT id COLON typ EQUAL stimuli 
+-- On OUTPUT reduce production global -> INPUT id COLON typ EQUAL stimuli 
+-- On INPUT reduce production global -> INPUT id COLON typ EQUAL stimuli 
+-- On FSM reduce production global -> INPUT id COLON typ EQUAL stimuli 
+
+State 229:
+program -> my_list(type_decl) my_nonempty_list(fsm_model) my_nonempty_list(global) . my_nonempty_list(fsm_inst) EOF [ # ]
+-- On FSM shift to state 230
+-- On my_nonempty_list(fsm_inst) shift to state 246
+-- On fsm_inst shift to state 248
+
+State 230:
+fsm_inst -> FSM . id EQUAL id opt_inst_params paren(separated_list(COMMA,id)) [ FSM EOF ]
+-- On UID shift to state 45
+-- On LID shift to state 46
+-- On id shift to state 231
+
+State 231:
+fsm_inst -> FSM id . EQUAL id opt_inst_params paren(separated_list(COMMA,id)) [ FSM EOF ]
+-- On EQUAL shift to state 232
+
+State 232:
+fsm_inst -> FSM id EQUAL . id opt_inst_params paren(separated_list(COMMA,id)) [ FSM EOF ]
+-- On UID shift to state 45
+-- On LID shift to state 46
+-- On id shift to state 233
+
+State 233:
+fsm_inst -> FSM id EQUAL id . opt_inst_params paren(separated_list(COMMA,id)) [ FSM EOF ]
+-- On LT shift to state 234
+-- On opt_inst_params shift to state 237
+-- On LPAREN reduce production opt_inst_params -> 
+
+State 234:
+opt_inst_params -> LT . separated_nonempty_list(COMMA,INT) GT [ LPAREN ]
+-- On INT shift to state 213
+-- On separated_nonempty_list(COMMA,INT) shift to state 235
+
+State 235:
+opt_inst_params -> LT separated_nonempty_list(COMMA,INT) . GT [ LPAREN ]
+-- On GT shift to state 236
+
+State 236:
+opt_inst_params -> LT separated_nonempty_list(COMMA,INT) GT . [ LPAREN ]
+-- On LPAREN reduce production opt_inst_params -> LT separated_nonempty_list(COMMA,INT) GT 
+
+State 237:
+fsm_inst -> FSM id EQUAL id opt_inst_params . paren(separated_list(COMMA,id)) [ FSM EOF ]
+-- On LPAREN shift to state 238
+-- On paren(separated_list(COMMA,id)) shift to state 245
+
+State 238:
+paren(separated_list(COMMA,id)) -> LPAREN . loption(separated_nonempty_list(COMMA,id)) RPAREN [ FSM EOF ]
+-- On UID shift to state 45
+-- On LID shift to state 46
+-- On separated_nonempty_list(COMMA,id) shift to state 239
+-- On loption(separated_nonempty_list(COMMA,id)) shift to state 240
+-- On id shift to state 242
+-- On RPAREN reduce production loption(separated_nonempty_list(COMMA,id)) -> 
+
+State 239:
+loption(separated_nonempty_list(COMMA,id)) -> separated_nonempty_list(COMMA,id) . [ RPAREN ]
+-- On RPAREN reduce production loption(separated_nonempty_list(COMMA,id)) -> separated_nonempty_list(COMMA,id) 
+
+State 240:
+paren(separated_list(COMMA,id)) -> LPAREN loption(separated_nonempty_list(COMMA,id)) . RPAREN [ FSM EOF ]
+-- On RPAREN shift to state 241
+
+State 241:
+paren(separated_list(COMMA,id)) -> LPAREN loption(separated_nonempty_list(COMMA,id)) RPAREN . [ FSM EOF ]
+-- On FSM reduce production paren(separated_list(COMMA,id)) -> LPAREN loption(separated_nonempty_list(COMMA,id)) RPAREN 
+-- On EOF reduce production paren(separated_list(COMMA,id)) -> LPAREN loption(separated_nonempty_list(COMMA,id)) RPAREN 
+
+State 242:
+separated_nonempty_list(COMMA,id) -> id . [ RPAREN ]
+separated_nonempty_list(COMMA,id) -> id . COMMA separated_nonempty_list(COMMA,id) [ RPAREN ]
+-- On COMMA shift to state 243
+-- On RPAREN reduce production separated_nonempty_list(COMMA,id) -> id 
+
+State 243:
+separated_nonempty_list(COMMA,id) -> id COMMA . separated_nonempty_list(COMMA,id) [ RPAREN ]
+-- On UID shift to state 45
+-- On LID shift to state 46
+-- On separated_nonempty_list(COMMA,id) shift to state 244
+-- On id shift to state 242
+
+State 244:
+separated_nonempty_list(COMMA,id) -> id COMMA separated_nonempty_list(COMMA,id) . [ RPAREN ]
+-- On RPAREN reduce production separated_nonempty_list(COMMA,id) -> id COMMA separated_nonempty_list(COMMA,id) 
+
+State 245:
+fsm_inst -> FSM id EQUAL id opt_inst_params paren(separated_list(COMMA,id)) . [ FSM EOF ]
+-- On FSM reduce production fsm_inst -> FSM id EQUAL id opt_inst_params paren(separated_list(COMMA,id)) 
+-- On EOF reduce production fsm_inst -> FSM id EQUAL id opt_inst_params paren(separated_list(COMMA,id)) 
+
+State 246:
+program -> my_list(type_decl) my_nonempty_list(fsm_model) my_nonempty_list(global) my_nonempty_list(fsm_inst) . EOF [ # ]
+-- On EOF shift to state 247
+
+State 247:
+program -> my_list(type_decl) my_nonempty_list(fsm_model) my_nonempty_list(global) my_nonempty_list(fsm_inst) EOF . [ # ]
+-- On # reduce production program -> my_list(type_decl) my_nonempty_list(fsm_model) my_nonempty_list(global) my_nonempty_list(fsm_inst) EOF 
+
+State 248:
+my_nonempty_list(fsm_inst) -> fsm_inst . [ EOF ]
+my_nonempty_list(fsm_inst) -> fsm_inst . my_nonempty_list(fsm_inst) [ EOF ]
+-- On FSM shift to state 230
+-- On my_nonempty_list(fsm_inst) shift to state 249
+-- On fsm_inst shift to state 248
+-- On EOF reduce production my_nonempty_list(fsm_inst) -> fsm_inst 
+
+State 249:
+my_nonempty_list(fsm_inst) -> fsm_inst my_nonempty_list(fsm_inst) . [ EOF ]
+-- On EOF reduce production my_nonempty_list(fsm_inst) -> fsm_inst my_nonempty_list(fsm_inst) 
+
+State 250:
+my_nonempty_list(global) -> global . [ FSM ]
+my_nonempty_list(global) -> global . my_nonempty_list(global) [ FSM ]
+-- On SHARED shift to state 183
+-- On OUTPUT shift to state 187
+-- On INPUT shift to state 191
+-- On my_nonempty_list(global) shift to state 251
+-- On global shift to state 250
+-- On FSM reduce production my_nonempty_list(global) -> global 
+
+State 251:
+my_nonempty_list(global) -> global my_nonempty_list(global) . [ FSM ]
+-- On FSM reduce production my_nonempty_list(global) -> global my_nonempty_list(global) 
+
+State 252:
+my_nonempty_list(fsm_model) -> fsm_model . [ SHARED OUTPUT INPUT ]
+my_nonempty_list(fsm_model) -> fsm_model . my_nonempty_list(fsm_model) [ SHARED OUTPUT INPUT ]
+-- On FSM shift to state 43
+-- On my_nonempty_list(fsm_model) shift to state 253
+-- On fsm_model shift to state 252
+-- On SHARED reduce production my_nonempty_list(fsm_model) -> fsm_model 
+-- On OUTPUT reduce production my_nonempty_list(fsm_model) -> fsm_model 
+-- On INPUT reduce production my_nonempty_list(fsm_model) -> fsm_model 
+
+State 253:
+my_nonempty_list(fsm_model) -> fsm_model my_nonempty_list(fsm_model) . [ SHARED OUTPUT INPUT ]
+-- On SHARED reduce production my_nonempty_list(fsm_model) -> fsm_model my_nonempty_list(fsm_model) 
+-- On OUTPUT reduce production my_nonempty_list(fsm_model) -> fsm_model my_nonempty_list(fsm_model) 
+-- On INPUT reduce production my_nonempty_list(fsm_model) -> fsm_model my_nonempty_list(fsm_model) 
+

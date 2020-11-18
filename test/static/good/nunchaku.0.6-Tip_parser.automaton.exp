@@ -1,0 +1,2805 @@
+State 0:
+parse' -> . parse [ # ]
+-- On error shift to state 1
+-- On LEFT_PAREN shift to state 2
+-- On stmt shift to state 331
+-- On parse shift to state 333
+
+State 1:
+stmt -> error . [ EOI ]
+-- On EOI reduce production stmt -> error 
+
+State 2:
+stmt -> LEFT_PAREN . ASSERT term RIGHT_PAREN [ EOI ]
+stmt -> LEFT_PAREN . DECLARE_SORT IDENT IDENT RIGHT_PAREN [ EOI ]
+stmt -> LEFT_PAREN . DATA LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN nonempty_list(data) RIGHT_PAREN RIGHT_PAREN [ EOI ]
+stmt -> LEFT_PAREN . DECLARE_FUN fun_decl RIGHT_PAREN [ EOI ]
+stmt -> LEFT_PAREN . DECLARE_CONST IDENT ty RIGHT_PAREN [ EOI ]
+stmt -> LEFT_PAREN . DEFINE_FUN fun_rec RIGHT_PAREN [ EOI ]
+stmt -> LEFT_PAREN . DEFINE_FUN_REC fun_rec RIGHT_PAREN [ EOI ]
+stmt -> LEFT_PAREN . DEFINE_FUNS_REC LEFT_PAREN nonempty_list(funs_rec_decl) RIGHT_PAREN LEFT_PAREN nonempty_list(term) RIGHT_PAREN RIGHT_PAREN [ EOI ]
+stmt -> LEFT_PAREN . ASSERT_NOT assert_not RIGHT_PAREN [ EOI ]
+stmt -> LEFT_PAREN . CHECK_SAT RIGHT_PAREN [ EOI ]
+-- On DEFINE_FUN_REC shift to state 3
+-- On DEFINE_FUNS_REC shift to state 229
+-- On DEFINE_FUN shift to state 255
+-- On DECLARE_SORT shift to state 258
+-- On DECLARE_FUN shift to state 262
+-- On DECLARE_CONST shift to state 282
+-- On DATA shift to state 286
+-- On CHECK_SAT shift to state 313
+-- On ASSERT_NOT shift to state 315
+-- On ASSERT shift to state 328
+
+State 3:
+stmt -> LEFT_PAREN DEFINE_FUN_REC . fun_rec RIGHT_PAREN [ EOI ]
+-- On LEFT_PAREN shift to state 4
+-- On IDENT shift to state 13
+-- On fun_rec shift to state 225
+-- On fun_def_mono shift to state 227
+
+State 4:
+fun_rec -> LEFT_PAREN . PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN fun_def_mono term RIGHT_PAREN RIGHT_PAREN [ RIGHT_PAREN ]
+-- On PAR shift to state 5
+
+State 5:
+fun_rec -> LEFT_PAREN PAR . LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN fun_def_mono term RIGHT_PAREN RIGHT_PAREN [ RIGHT_PAREN ]
+-- On LEFT_PAREN shift to state 6
+
+State 6:
+fun_rec -> LEFT_PAREN PAR LEFT_PAREN . list(tyvar) RIGHT_PAREN LEFT_PAREN fun_def_mono term RIGHT_PAREN RIGHT_PAREN [ RIGHT_PAREN ]
+-- On IDENT shift to state 7
+-- On tyvar shift to state 8
+-- On list(tyvar) shift to state 10
+-- On RIGHT_PAREN reduce production list(tyvar) -> 
+
+State 7:
+tyvar -> IDENT . [ RIGHT_PAREN IDENT ]
+-- On RIGHT_PAREN reduce production tyvar -> IDENT 
+-- On IDENT reduce production tyvar -> IDENT 
+
+State 8:
+list(tyvar) -> tyvar . list(tyvar) [ RIGHT_PAREN ]
+-- On IDENT shift to state 7
+-- On tyvar shift to state 8
+-- On list(tyvar) shift to state 9
+-- On RIGHT_PAREN reduce production list(tyvar) -> 
+
+State 9:
+list(tyvar) -> tyvar list(tyvar) . [ RIGHT_PAREN ]
+-- On RIGHT_PAREN reduce production list(tyvar) -> tyvar list(tyvar) 
+
+State 10:
+fun_rec -> LEFT_PAREN PAR LEFT_PAREN list(tyvar) . RIGHT_PAREN LEFT_PAREN fun_def_mono term RIGHT_PAREN RIGHT_PAREN [ RIGHT_PAREN ]
+-- On RIGHT_PAREN shift to state 11
+
+State 11:
+fun_rec -> LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN . LEFT_PAREN fun_def_mono term RIGHT_PAREN RIGHT_PAREN [ RIGHT_PAREN ]
+-- On LEFT_PAREN shift to state 12
+
+State 12:
+fun_rec -> LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN . fun_def_mono term RIGHT_PAREN RIGHT_PAREN [ RIGHT_PAREN ]
+-- On IDENT shift to state 13
+-- On fun_def_mono shift to state 47
+
+State 13:
+fun_def_mono -> IDENT . LEFT_PAREN list(typed_var) RIGHT_PAREN ty [ error TRUE QUOTED LEFT_PAREN IDENT FALSE ]
+-- On LEFT_PAREN shift to state 14
+
+State 14:
+fun_def_mono -> IDENT LEFT_PAREN . list(typed_var) RIGHT_PAREN ty [ error TRUE QUOTED LEFT_PAREN IDENT FALSE ]
+-- On LEFT_PAREN shift to state 15
+-- On typed_var shift to state 33
+-- On list(typed_var) shift to state 35
+-- On RIGHT_PAREN reduce production list(typed_var) -> 
+
+State 15:
+typed_var -> LEFT_PAREN . IDENT ty RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+-- On IDENT shift to state 16
+
+State 16:
+typed_var -> LEFT_PAREN IDENT . ty RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+-- On LEFT_PAREN shift to state 17
+-- On IDENT shift to state 19
+-- On BOOL shift to state 20
+-- On ty shift to state 31
+
+State 17:
+ty -> LEFT_PAREN . IDENT nonempty_list(ty) RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+ty -> LEFT_PAREN . ARROW ty_arrow_args RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On IDENT shift to state 18
+-- On ARROW shift to state 25
+
+State 18:
+ty -> LEFT_PAREN IDENT . nonempty_list(ty) RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On LEFT_PAREN shift to state 17
+-- On IDENT shift to state 19
+-- On BOOL shift to state 20
+-- On ty shift to state 21
+-- On nonempty_list(ty) shift to state 23
+
+State 19:
+ty -> IDENT . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On RIGHT_PAREN reduce production ty -> IDENT 
+-- On LEFT_PAREN reduce production ty -> IDENT 
+-- On IDENT reduce production ty -> IDENT 
+-- On EOI reduce production ty -> IDENT 
+-- On BOOL reduce production ty -> IDENT 
+
+State 20:
+ty -> BOOL . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On RIGHT_PAREN reduce production ty -> BOOL 
+-- On LEFT_PAREN reduce production ty -> BOOL 
+-- On IDENT reduce production ty -> BOOL 
+-- On EOI reduce production ty -> BOOL 
+-- On BOOL reduce production ty -> BOOL 
+
+State 21:
+nonempty_list(ty) -> ty . [ RIGHT_PAREN ]
+nonempty_list(ty) -> ty . nonempty_list(ty) [ RIGHT_PAREN ]
+-- On LEFT_PAREN shift to state 17
+-- On IDENT shift to state 19
+-- On BOOL shift to state 20
+-- On ty shift to state 21
+-- On nonempty_list(ty) shift to state 22
+-- On RIGHT_PAREN reduce production nonempty_list(ty) -> ty 
+
+State 22:
+nonempty_list(ty) -> ty nonempty_list(ty) . [ RIGHT_PAREN ]
+-- On RIGHT_PAREN reduce production nonempty_list(ty) -> ty nonempty_list(ty) 
+
+State 23:
+ty -> LEFT_PAREN IDENT nonempty_list(ty) . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On RIGHT_PAREN shift to state 24
+
+State 24:
+ty -> LEFT_PAREN IDENT nonempty_list(ty) RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On RIGHT_PAREN reduce production ty -> LEFT_PAREN IDENT nonempty_list(ty) RIGHT_PAREN 
+-- On LEFT_PAREN reduce production ty -> LEFT_PAREN IDENT nonempty_list(ty) RIGHT_PAREN 
+-- On IDENT reduce production ty -> LEFT_PAREN IDENT nonempty_list(ty) RIGHT_PAREN 
+-- On EOI reduce production ty -> LEFT_PAREN IDENT nonempty_list(ty) RIGHT_PAREN 
+-- On BOOL reduce production ty -> LEFT_PAREN IDENT nonempty_list(ty) RIGHT_PAREN 
+
+State 25:
+ty -> LEFT_PAREN ARROW . ty_arrow_args RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On LEFT_PAREN shift to state 17
+-- On IDENT shift to state 19
+-- On BOOL shift to state 20
+-- On ty_arrow_args shift to state 26
+-- On ty shift to state 28
+
+State 26:
+ty -> LEFT_PAREN ARROW ty_arrow_args . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On RIGHT_PAREN shift to state 27
+
+State 27:
+ty -> LEFT_PAREN ARROW ty_arrow_args RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On RIGHT_PAREN reduce production ty -> LEFT_PAREN ARROW ty_arrow_args RIGHT_PAREN 
+-- On LEFT_PAREN reduce production ty -> LEFT_PAREN ARROW ty_arrow_args RIGHT_PAREN 
+-- On IDENT reduce production ty -> LEFT_PAREN ARROW ty_arrow_args RIGHT_PAREN 
+-- On EOI reduce production ty -> LEFT_PAREN ARROW ty_arrow_args RIGHT_PAREN 
+-- On BOOL reduce production ty -> LEFT_PAREN ARROW ty_arrow_args RIGHT_PAREN 
+
+State 28:
+ty_arrow_args -> ty . ty [ RIGHT_PAREN ]
+ty_arrow_args -> ty . ty_arrow_args [ RIGHT_PAREN ]
+-- On LEFT_PAREN shift to state 17
+-- On IDENT shift to state 19
+-- On BOOL shift to state 20
+-- On ty_arrow_args shift to state 29
+-- On ty shift to state 30
+
+State 29:
+ty_arrow_args -> ty ty_arrow_args . [ RIGHT_PAREN ]
+-- On RIGHT_PAREN reduce production ty_arrow_args -> ty ty_arrow_args 
+
+State 30:
+ty_arrow_args -> ty . ty [ RIGHT_PAREN ]
+ty_arrow_args -> ty ty . [ RIGHT_PAREN ]
+ty_arrow_args -> ty . ty_arrow_args [ RIGHT_PAREN ]
+-- On LEFT_PAREN shift to state 17
+-- On IDENT shift to state 19
+-- On BOOL shift to state 20
+-- On ty_arrow_args shift to state 29
+-- On ty shift to state 30
+-- On RIGHT_PAREN reduce production ty_arrow_args -> ty ty 
+
+State 31:
+typed_var -> LEFT_PAREN IDENT ty . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+-- On RIGHT_PAREN shift to state 32
+
+State 32:
+typed_var -> LEFT_PAREN IDENT ty RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN ]
+-- On RIGHT_PAREN reduce production typed_var -> LEFT_PAREN IDENT ty RIGHT_PAREN 
+-- On LEFT_PAREN reduce production typed_var -> LEFT_PAREN IDENT ty RIGHT_PAREN 
+
+State 33:
+list(typed_var) -> typed_var . list(typed_var) [ RIGHT_PAREN ]
+-- On LEFT_PAREN shift to state 15
+-- On typed_var shift to state 33
+-- On list(typed_var) shift to state 34
+-- On RIGHT_PAREN reduce production list(typed_var) -> 
+
+State 34:
+list(typed_var) -> typed_var list(typed_var) . [ RIGHT_PAREN ]
+-- On RIGHT_PAREN reduce production list(typed_var) -> typed_var list(typed_var) 
+
+State 35:
+fun_def_mono -> IDENT LEFT_PAREN list(typed_var) . RIGHT_PAREN ty [ error TRUE QUOTED LEFT_PAREN IDENT FALSE ]
+-- On RIGHT_PAREN shift to state 36
+
+State 36:
+fun_def_mono -> IDENT LEFT_PAREN list(typed_var) RIGHT_PAREN . ty [ error TRUE QUOTED LEFT_PAREN IDENT FALSE ]
+-- On LEFT_PAREN shift to state 37
+-- On IDENT shift to state 44
+-- On BOOL shift to state 45
+-- On ty shift to state 46
+
+State 37:
+ty -> LEFT_PAREN . IDENT nonempty_list(ty) RIGHT_PAREN [ error TRUE QUOTED LEFT_PAREN IDENT FALSE ]
+ty -> LEFT_PAREN . ARROW ty_arrow_args RIGHT_PAREN [ error TRUE QUOTED LEFT_PAREN IDENT FALSE ]
+-- On IDENT shift to state 38
+-- On ARROW shift to state 41
+
+State 38:
+ty -> LEFT_PAREN IDENT . nonempty_list(ty) RIGHT_PAREN [ error TRUE QUOTED LEFT_PAREN IDENT FALSE ]
+-- On LEFT_PAREN shift to state 17
+-- On IDENT shift to state 19
+-- On BOOL shift to state 20
+-- On ty shift to state 21
+-- On nonempty_list(ty) shift to state 39
+
+State 39:
+ty -> LEFT_PAREN IDENT nonempty_list(ty) . RIGHT_PAREN [ error TRUE QUOTED LEFT_PAREN IDENT FALSE ]
+-- On RIGHT_PAREN shift to state 40
+
+State 40:
+ty -> LEFT_PAREN IDENT nonempty_list(ty) RIGHT_PAREN . [ error TRUE QUOTED LEFT_PAREN IDENT FALSE ]
+-- On error reduce production ty -> LEFT_PAREN IDENT nonempty_list(ty) RIGHT_PAREN 
+-- On TRUE reduce production ty -> LEFT_PAREN IDENT nonempty_list(ty) RIGHT_PAREN 
+-- On QUOTED reduce production ty -> LEFT_PAREN IDENT nonempty_list(ty) RIGHT_PAREN 
+-- On LEFT_PAREN reduce production ty -> LEFT_PAREN IDENT nonempty_list(ty) RIGHT_PAREN 
+-- On IDENT reduce production ty -> LEFT_PAREN IDENT nonempty_list(ty) RIGHT_PAREN 
+-- On FALSE reduce production ty -> LEFT_PAREN IDENT nonempty_list(ty) RIGHT_PAREN 
+
+State 41:
+ty -> LEFT_PAREN ARROW . ty_arrow_args RIGHT_PAREN [ error TRUE QUOTED LEFT_PAREN IDENT FALSE ]
+-- On LEFT_PAREN shift to state 17
+-- On IDENT shift to state 19
+-- On BOOL shift to state 20
+-- On ty_arrow_args shift to state 42
+-- On ty shift to state 28
+
+State 42:
+ty -> LEFT_PAREN ARROW ty_arrow_args . RIGHT_PAREN [ error TRUE QUOTED LEFT_PAREN IDENT FALSE ]
+-- On RIGHT_PAREN shift to state 43
+
+State 43:
+ty -> LEFT_PAREN ARROW ty_arrow_args RIGHT_PAREN . [ error TRUE QUOTED LEFT_PAREN IDENT FALSE ]
+-- On error reduce production ty -> LEFT_PAREN ARROW ty_arrow_args RIGHT_PAREN 
+-- On TRUE reduce production ty -> LEFT_PAREN ARROW ty_arrow_args RIGHT_PAREN 
+-- On QUOTED reduce production ty -> LEFT_PAREN ARROW ty_arrow_args RIGHT_PAREN 
+-- On LEFT_PAREN reduce production ty -> LEFT_PAREN ARROW ty_arrow_args RIGHT_PAREN 
+-- On IDENT reduce production ty -> LEFT_PAREN ARROW ty_arrow_args RIGHT_PAREN 
+-- On FALSE reduce production ty -> LEFT_PAREN ARROW ty_arrow_args RIGHT_PAREN 
+
+State 44:
+ty -> IDENT . [ error TRUE QUOTED LEFT_PAREN IDENT FALSE ]
+-- On error reduce production ty -> IDENT 
+-- On TRUE reduce production ty -> IDENT 
+-- On QUOTED reduce production ty -> IDENT 
+-- On LEFT_PAREN reduce production ty -> IDENT 
+-- On IDENT reduce production ty -> IDENT 
+-- On FALSE reduce production ty -> IDENT 
+
+State 45:
+ty -> BOOL . [ error TRUE QUOTED LEFT_PAREN IDENT FALSE ]
+-- On error reduce production ty -> BOOL 
+-- On TRUE reduce production ty -> BOOL 
+-- On QUOTED reduce production ty -> BOOL 
+-- On LEFT_PAREN reduce production ty -> BOOL 
+-- On IDENT reduce production ty -> BOOL 
+-- On FALSE reduce production ty -> BOOL 
+
+State 46:
+fun_def_mono -> IDENT LEFT_PAREN list(typed_var) RIGHT_PAREN ty . [ error TRUE QUOTED LEFT_PAREN IDENT FALSE ]
+-- On error reduce production fun_def_mono -> IDENT LEFT_PAREN list(typed_var) RIGHT_PAREN ty 
+-- On TRUE reduce production fun_def_mono -> IDENT LEFT_PAREN list(typed_var) RIGHT_PAREN ty 
+-- On QUOTED reduce production fun_def_mono -> IDENT LEFT_PAREN list(typed_var) RIGHT_PAREN ty 
+-- On LEFT_PAREN reduce production fun_def_mono -> IDENT LEFT_PAREN list(typed_var) RIGHT_PAREN ty 
+-- On IDENT reduce production fun_def_mono -> IDENT LEFT_PAREN list(typed_var) RIGHT_PAREN ty 
+-- On FALSE reduce production fun_def_mono -> IDENT LEFT_PAREN list(typed_var) RIGHT_PAREN ty 
+
+State 47:
+fun_rec -> LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN fun_def_mono . term RIGHT_PAREN RIGHT_PAREN [ RIGHT_PAREN ]
+-- On error shift to state 48
+-- On TRUE shift to state 49
+-- On QUOTED shift to state 50
+-- On LEFT_PAREN shift to state 51
+-- On IDENT shift to state 65
+-- On FALSE shift to state 66
+-- On term shift to state 222
+
+State 48:
+term -> error . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On RIGHT_PAREN reduce production term -> error 
+-- On LEFT_PAREN reduce production term -> error 
+-- On IDENT reduce production term -> error 
+-- On EOI reduce production term -> error 
+-- On BOOL reduce production term -> error 
+
+State 49:
+term -> TRUE . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On RIGHT_PAREN reduce production term -> TRUE 
+-- On LEFT_PAREN reduce production term -> TRUE 
+-- On IDENT reduce production term -> TRUE 
+-- On EOI reduce production term -> TRUE 
+-- On BOOL reduce production term -> TRUE 
+
+State 50:
+term -> QUOTED . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On RIGHT_PAREN reduce production term -> QUOTED 
+-- On LEFT_PAREN reduce production term -> QUOTED 
+-- On IDENT reduce production term -> QUOTED 
+-- On EOI reduce production term -> QUOTED 
+-- On BOOL reduce production term -> QUOTED 
+
+State 51:
+term -> LEFT_PAREN . term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+term -> LEFT_PAREN . IF term term term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+term -> LEFT_PAREN . OR nonempty_list(term) RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+term -> LEFT_PAREN . AND nonempty_list(term) RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+term -> LEFT_PAREN . NOT term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+term -> LEFT_PAREN . DISTINCT nonempty_list(term) RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+term -> LEFT_PAREN . EQ term term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+term -> LEFT_PAREN . ARROW term term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+term -> LEFT_PAREN . IDENT nonempty_list(term) RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+term -> LEFT_PAREN . AT term term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+term -> LEFT_PAREN . MATCH term nonempty_list(case) RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+term -> LEFT_PAREN . FUN LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+term -> LEFT_PAREN . LET LEFT_PAREN nonempty_list(binding) RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+term -> LEFT_PAREN . AS term ty RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+term -> LEFT_PAREN . FORALL LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+term -> LEFT_PAREN . EXISTS LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On error shift to state 48
+-- On TRUE shift to state 49
+-- On QUOTED shift to state 50
+-- On OR shift to state 52
+-- On NOT shift to state 159
+-- On MATCH shift to state 162
+-- On LET shift to state 166
+-- On LEFT_PAREN shift to state 51
+-- On IF shift to state 172
+-- On IDENT shift to state 177
+-- On FUN shift to state 180
+-- On FORALL shift to state 186
+-- On FALSE shift to state 66
+-- On EXISTS shift to state 192
+-- On EQ shift to state 198
+-- On DISTINCT shift to state 202
+-- On AT shift to state 205
+-- On AS shift to state 209
+-- On ARROW shift to state 213
+-- On AND shift to state 217
+-- On term shift to state 220
+
+State 52:
+term -> LEFT_PAREN OR . nonempty_list(term) RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On error shift to state 53
+-- On TRUE shift to state 54
+-- On QUOTED shift to state 55
+-- On LEFT_PAREN shift to state 56
+-- On IDENT shift to state 58
+-- On FALSE shift to state 59
+-- On term shift to state 60
+-- On nonempty_list(term) shift to state 157
+
+State 53:
+term -> error . [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On error reduce production term -> error 
+-- On TRUE reduce production term -> error 
+-- On RIGHT_PAREN reduce production term -> error 
+-- On QUOTED reduce production term -> error 
+-- On LEFT_PAREN reduce production term -> error 
+-- On IDENT reduce production term -> error 
+-- On FALSE reduce production term -> error 
+
+State 54:
+term -> TRUE . [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On error reduce production term -> TRUE 
+-- On TRUE reduce production term -> TRUE 
+-- On RIGHT_PAREN reduce production term -> TRUE 
+-- On QUOTED reduce production term -> TRUE 
+-- On LEFT_PAREN reduce production term -> TRUE 
+-- On IDENT reduce production term -> TRUE 
+-- On FALSE reduce production term -> TRUE 
+
+State 55:
+term -> QUOTED . [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On error reduce production term -> QUOTED 
+-- On TRUE reduce production term -> QUOTED 
+-- On RIGHT_PAREN reduce production term -> QUOTED 
+-- On QUOTED reduce production term -> QUOTED 
+-- On LEFT_PAREN reduce production term -> QUOTED 
+-- On IDENT reduce production term -> QUOTED 
+-- On FALSE reduce production term -> QUOTED 
+
+State 56:
+term -> LEFT_PAREN . term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+term -> LEFT_PAREN . IF term term term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+term -> LEFT_PAREN . OR nonempty_list(term) RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+term -> LEFT_PAREN . AND nonempty_list(term) RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+term -> LEFT_PAREN . NOT term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+term -> LEFT_PAREN . DISTINCT nonempty_list(term) RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+term -> LEFT_PAREN . EQ term term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+term -> LEFT_PAREN . ARROW term term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+term -> LEFT_PAREN . IDENT nonempty_list(term) RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+term -> LEFT_PAREN . AT term term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+term -> LEFT_PAREN . MATCH term nonempty_list(case) RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+term -> LEFT_PAREN . FUN LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+term -> LEFT_PAREN . LET LEFT_PAREN nonempty_list(binding) RIGHT_PAREN term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+term -> LEFT_PAREN . AS term ty RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+term -> LEFT_PAREN . FORALL LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+term -> LEFT_PAREN . EXISTS LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On error shift to state 48
+-- On TRUE shift to state 49
+-- On QUOTED shift to state 50
+-- On OR shift to state 57
+-- On NOT shift to state 64
+-- On MATCH shift to state 69
+-- On LET shift to state 92
+-- On LEFT_PAREN shift to state 51
+-- On IF shift to state 105
+-- On IDENT shift to state 110
+-- On FUN shift to state 113
+-- On FORALL shift to state 121
+-- On FALSE shift to state 66
+-- On EXISTS shift to state 127
+-- On EQ shift to state 133
+-- On DISTINCT shift to state 137
+-- On AT shift to state 140
+-- On AS shift to state 144
+-- On ARROW shift to state 148
+-- On AND shift to state 152
+-- On term shift to state 155
+
+State 57:
+term -> LEFT_PAREN OR . nonempty_list(term) RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On error shift to state 53
+-- On TRUE shift to state 54
+-- On QUOTED shift to state 55
+-- On LEFT_PAREN shift to state 56
+-- On IDENT shift to state 58
+-- On FALSE shift to state 59
+-- On term shift to state 60
+-- On nonempty_list(term) shift to state 62
+
+State 58:
+term -> IDENT . [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On error reduce production term -> IDENT 
+-- On TRUE reduce production term -> IDENT 
+-- On RIGHT_PAREN reduce production term -> IDENT 
+-- On QUOTED reduce production term -> IDENT 
+-- On LEFT_PAREN reduce production term -> IDENT 
+-- On IDENT reduce production term -> IDENT 
+-- On FALSE reduce production term -> IDENT 
+
+State 59:
+term -> FALSE . [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On error reduce production term -> FALSE 
+-- On TRUE reduce production term -> FALSE 
+-- On RIGHT_PAREN reduce production term -> FALSE 
+-- On QUOTED reduce production term -> FALSE 
+-- On LEFT_PAREN reduce production term -> FALSE 
+-- On IDENT reduce production term -> FALSE 
+-- On FALSE reduce production term -> FALSE 
+
+State 60:
+nonempty_list(term) -> term . [ RIGHT_PAREN ]
+nonempty_list(term) -> term . nonempty_list(term) [ RIGHT_PAREN ]
+-- On error shift to state 53
+-- On TRUE shift to state 54
+-- On QUOTED shift to state 55
+-- On LEFT_PAREN shift to state 56
+-- On IDENT shift to state 58
+-- On FALSE shift to state 59
+-- On term shift to state 60
+-- On nonempty_list(term) shift to state 61
+-- On RIGHT_PAREN reduce production nonempty_list(term) -> term 
+
+State 61:
+nonempty_list(term) -> term nonempty_list(term) . [ RIGHT_PAREN ]
+-- On RIGHT_PAREN reduce production nonempty_list(term) -> term nonempty_list(term) 
+
+State 62:
+term -> LEFT_PAREN OR nonempty_list(term) . RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On RIGHT_PAREN shift to state 63
+
+State 63:
+term -> LEFT_PAREN OR nonempty_list(term) RIGHT_PAREN . [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On error reduce production term -> LEFT_PAREN OR nonempty_list(term) RIGHT_PAREN 
+-- On TRUE reduce production term -> LEFT_PAREN OR nonempty_list(term) RIGHT_PAREN 
+-- On RIGHT_PAREN reduce production term -> LEFT_PAREN OR nonempty_list(term) RIGHT_PAREN 
+-- On QUOTED reduce production term -> LEFT_PAREN OR nonempty_list(term) RIGHT_PAREN 
+-- On LEFT_PAREN reduce production term -> LEFT_PAREN OR nonempty_list(term) RIGHT_PAREN 
+-- On IDENT reduce production term -> LEFT_PAREN OR nonempty_list(term) RIGHT_PAREN 
+-- On FALSE reduce production term -> LEFT_PAREN OR nonempty_list(term) RIGHT_PAREN 
+
+State 64:
+term -> LEFT_PAREN NOT . term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On error shift to state 48
+-- On TRUE shift to state 49
+-- On QUOTED shift to state 50
+-- On LEFT_PAREN shift to state 51
+-- On IDENT shift to state 65
+-- On FALSE shift to state 66
+-- On term shift to state 67
+
+State 65:
+term -> IDENT . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On RIGHT_PAREN reduce production term -> IDENT 
+-- On LEFT_PAREN reduce production term -> IDENT 
+-- On IDENT reduce production term -> IDENT 
+-- On EOI reduce production term -> IDENT 
+-- On BOOL reduce production term -> IDENT 
+
+State 66:
+term -> FALSE . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On RIGHT_PAREN reduce production term -> FALSE 
+-- On LEFT_PAREN reduce production term -> FALSE 
+-- On IDENT reduce production term -> FALSE 
+-- On EOI reduce production term -> FALSE 
+-- On BOOL reduce production term -> FALSE 
+
+State 67:
+term -> LEFT_PAREN NOT term . RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On RIGHT_PAREN shift to state 68
+
+State 68:
+term -> LEFT_PAREN NOT term RIGHT_PAREN . [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On error reduce production term -> LEFT_PAREN NOT term RIGHT_PAREN 
+-- On TRUE reduce production term -> LEFT_PAREN NOT term RIGHT_PAREN 
+-- On RIGHT_PAREN reduce production term -> LEFT_PAREN NOT term RIGHT_PAREN 
+-- On QUOTED reduce production term -> LEFT_PAREN NOT term RIGHT_PAREN 
+-- On LEFT_PAREN reduce production term -> LEFT_PAREN NOT term RIGHT_PAREN 
+-- On IDENT reduce production term -> LEFT_PAREN NOT term RIGHT_PAREN 
+-- On FALSE reduce production term -> LEFT_PAREN NOT term RIGHT_PAREN 
+
+State 69:
+term -> LEFT_PAREN MATCH . term nonempty_list(case) RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On error shift to state 48
+-- On TRUE shift to state 49
+-- On QUOTED shift to state 50
+-- On LEFT_PAREN shift to state 51
+-- On IDENT shift to state 65
+-- On FALSE shift to state 66
+-- On term shift to state 70
+
+State 70:
+term -> LEFT_PAREN MATCH term . nonempty_list(case) RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On LEFT_PAREN shift to state 71
+-- On nonempty_list(case) shift to state 88
+-- On case shift to state 90
+
+State 71:
+case -> LEFT_PAREN . CASE IDENT term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+case -> LEFT_PAREN . CASE LEFT_PAREN IDENT nonempty_list(var) RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+case -> LEFT_PAREN . CASE DEFAULT term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+-- On CASE shift to state 72
+
+State 72:
+case -> LEFT_PAREN CASE . IDENT term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+case -> LEFT_PAREN CASE . LEFT_PAREN IDENT nonempty_list(var) RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+case -> LEFT_PAREN CASE . DEFAULT term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+-- On LEFT_PAREN shift to state 73
+-- On IDENT shift to state 82
+-- On DEFAULT shift to state 85
+
+State 73:
+case -> LEFT_PAREN CASE LEFT_PAREN . IDENT nonempty_list(var) RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+-- On IDENT shift to state 74
+
+State 74:
+case -> LEFT_PAREN CASE LEFT_PAREN IDENT . nonempty_list(var) RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+-- On IDENT shift to state 75
+-- On var shift to state 76
+-- On nonempty_list(var) shift to state 78
+
+State 75:
+var -> IDENT . [ RIGHT_PAREN IDENT ]
+-- On RIGHT_PAREN reduce production var -> IDENT 
+-- On IDENT reduce production var -> IDENT 
+
+State 76:
+nonempty_list(var) -> var . [ RIGHT_PAREN ]
+nonempty_list(var) -> var . nonempty_list(var) [ RIGHT_PAREN ]
+-- On IDENT shift to state 75
+-- On var shift to state 76
+-- On nonempty_list(var) shift to state 77
+-- On RIGHT_PAREN reduce production nonempty_list(var) -> var 
+
+State 77:
+nonempty_list(var) -> var nonempty_list(var) . [ RIGHT_PAREN ]
+-- On RIGHT_PAREN reduce production nonempty_list(var) -> var nonempty_list(var) 
+
+State 78:
+case -> LEFT_PAREN CASE LEFT_PAREN IDENT nonempty_list(var) . RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+-- On RIGHT_PAREN shift to state 79
+
+State 79:
+case -> LEFT_PAREN CASE LEFT_PAREN IDENT nonempty_list(var) RIGHT_PAREN . term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+-- On error shift to state 48
+-- On TRUE shift to state 49
+-- On QUOTED shift to state 50
+-- On LEFT_PAREN shift to state 51
+-- On IDENT shift to state 65
+-- On FALSE shift to state 66
+-- On term shift to state 80
+
+State 80:
+case -> LEFT_PAREN CASE LEFT_PAREN IDENT nonempty_list(var) RIGHT_PAREN term . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+-- On RIGHT_PAREN shift to state 81
+
+State 81:
+case -> LEFT_PAREN CASE LEFT_PAREN IDENT nonempty_list(var) RIGHT_PAREN term RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN ]
+-- On RIGHT_PAREN reduce production case -> LEFT_PAREN CASE LEFT_PAREN IDENT nonempty_list(var) RIGHT_PAREN term RIGHT_PAREN 
+-- On LEFT_PAREN reduce production case -> LEFT_PAREN CASE LEFT_PAREN IDENT nonempty_list(var) RIGHT_PAREN term RIGHT_PAREN 
+
+State 82:
+case -> LEFT_PAREN CASE IDENT . term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+-- On error shift to state 48
+-- On TRUE shift to state 49
+-- On QUOTED shift to state 50
+-- On LEFT_PAREN shift to state 51
+-- On IDENT shift to state 65
+-- On FALSE shift to state 66
+-- On term shift to state 83
+
+State 83:
+case -> LEFT_PAREN CASE IDENT term . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+-- On RIGHT_PAREN shift to state 84
+
+State 84:
+case -> LEFT_PAREN CASE IDENT term RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN ]
+-- On RIGHT_PAREN reduce production case -> LEFT_PAREN CASE IDENT term RIGHT_PAREN 
+-- On LEFT_PAREN reduce production case -> LEFT_PAREN CASE IDENT term RIGHT_PAREN 
+
+State 85:
+case -> LEFT_PAREN CASE DEFAULT . term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+-- On error shift to state 48
+-- On TRUE shift to state 49
+-- On QUOTED shift to state 50
+-- On LEFT_PAREN shift to state 51
+-- On IDENT shift to state 65
+-- On FALSE shift to state 66
+-- On term shift to state 86
+
+State 86:
+case -> LEFT_PAREN CASE DEFAULT term . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+-- On RIGHT_PAREN shift to state 87
+
+State 87:
+case -> LEFT_PAREN CASE DEFAULT term RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN ]
+-- On RIGHT_PAREN reduce production case -> LEFT_PAREN CASE DEFAULT term RIGHT_PAREN 
+-- On LEFT_PAREN reduce production case -> LEFT_PAREN CASE DEFAULT term RIGHT_PAREN 
+
+State 88:
+term -> LEFT_PAREN MATCH term nonempty_list(case) . RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On RIGHT_PAREN shift to state 89
+
+State 89:
+term -> LEFT_PAREN MATCH term nonempty_list(case) RIGHT_PAREN . [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On error reduce production term -> LEFT_PAREN MATCH term nonempty_list(case) RIGHT_PAREN 
+-- On TRUE reduce production term -> LEFT_PAREN MATCH term nonempty_list(case) RIGHT_PAREN 
+-- On RIGHT_PAREN reduce production term -> LEFT_PAREN MATCH term nonempty_list(case) RIGHT_PAREN 
+-- On QUOTED reduce production term -> LEFT_PAREN MATCH term nonempty_list(case) RIGHT_PAREN 
+-- On LEFT_PAREN reduce production term -> LEFT_PAREN MATCH term nonempty_list(case) RIGHT_PAREN 
+-- On IDENT reduce production term -> LEFT_PAREN MATCH term nonempty_list(case) RIGHT_PAREN 
+-- On FALSE reduce production term -> LEFT_PAREN MATCH term nonempty_list(case) RIGHT_PAREN 
+
+State 90:
+nonempty_list(case) -> case . [ RIGHT_PAREN ]
+nonempty_list(case) -> case . nonempty_list(case) [ RIGHT_PAREN ]
+-- On LEFT_PAREN shift to state 71
+-- On nonempty_list(case) shift to state 91
+-- On case shift to state 90
+-- On RIGHT_PAREN reduce production nonempty_list(case) -> case 
+
+State 91:
+nonempty_list(case) -> case nonempty_list(case) . [ RIGHT_PAREN ]
+-- On RIGHT_PAREN reduce production nonempty_list(case) -> case nonempty_list(case) 
+
+State 92:
+term -> LEFT_PAREN LET . LEFT_PAREN nonempty_list(binding) RIGHT_PAREN term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On LEFT_PAREN shift to state 93
+
+State 93:
+term -> LEFT_PAREN LET LEFT_PAREN . nonempty_list(binding) RIGHT_PAREN term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On LEFT_PAREN shift to state 94
+-- On nonempty_list(binding) shift to state 99
+-- On binding shift to state 103
+
+State 94:
+binding -> LEFT_PAREN . var term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+-- On IDENT shift to state 95
+-- On var shift to state 96
+
+State 95:
+var -> IDENT . [ error TRUE QUOTED LEFT_PAREN IDENT FALSE ]
+-- On error reduce production var -> IDENT 
+-- On TRUE reduce production var -> IDENT 
+-- On QUOTED reduce production var -> IDENT 
+-- On LEFT_PAREN reduce production var -> IDENT 
+-- On IDENT reduce production var -> IDENT 
+-- On FALSE reduce production var -> IDENT 
+
+State 96:
+binding -> LEFT_PAREN var . term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+-- On error shift to state 48
+-- On TRUE shift to state 49
+-- On QUOTED shift to state 50
+-- On LEFT_PAREN shift to state 51
+-- On IDENT shift to state 65
+-- On FALSE shift to state 66
+-- On term shift to state 97
+
+State 97:
+binding -> LEFT_PAREN var term . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+-- On RIGHT_PAREN shift to state 98
+
+State 98:
+binding -> LEFT_PAREN var term RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN ]
+-- On RIGHT_PAREN reduce production binding -> LEFT_PAREN var term RIGHT_PAREN 
+-- On LEFT_PAREN reduce production binding -> LEFT_PAREN var term RIGHT_PAREN 
+
+State 99:
+term -> LEFT_PAREN LET LEFT_PAREN nonempty_list(binding) . RIGHT_PAREN term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On RIGHT_PAREN shift to state 100
+
+State 100:
+term -> LEFT_PAREN LET LEFT_PAREN nonempty_list(binding) RIGHT_PAREN . term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On error shift to state 48
+-- On TRUE shift to state 49
+-- On QUOTED shift to state 50
+-- On LEFT_PAREN shift to state 51
+-- On IDENT shift to state 65
+-- On FALSE shift to state 66
+-- On term shift to state 101
+
+State 101:
+term -> LEFT_PAREN LET LEFT_PAREN nonempty_list(binding) RIGHT_PAREN term . RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On RIGHT_PAREN shift to state 102
+
+State 102:
+term -> LEFT_PAREN LET LEFT_PAREN nonempty_list(binding) RIGHT_PAREN term RIGHT_PAREN . [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On error reduce production term -> LEFT_PAREN LET LEFT_PAREN nonempty_list(binding) RIGHT_PAREN term RIGHT_PAREN 
+-- On TRUE reduce production term -> LEFT_PAREN LET LEFT_PAREN nonempty_list(binding) RIGHT_PAREN term RIGHT_PAREN 
+-- On RIGHT_PAREN reduce production term -> LEFT_PAREN LET LEFT_PAREN nonempty_list(binding) RIGHT_PAREN term RIGHT_PAREN 
+-- On QUOTED reduce production term -> LEFT_PAREN LET LEFT_PAREN nonempty_list(binding) RIGHT_PAREN term RIGHT_PAREN 
+-- On LEFT_PAREN reduce production term -> LEFT_PAREN LET LEFT_PAREN nonempty_list(binding) RIGHT_PAREN term RIGHT_PAREN 
+-- On IDENT reduce production term -> LEFT_PAREN LET LEFT_PAREN nonempty_list(binding) RIGHT_PAREN term RIGHT_PAREN 
+-- On FALSE reduce production term -> LEFT_PAREN LET LEFT_PAREN nonempty_list(binding) RIGHT_PAREN term RIGHT_PAREN 
+
+State 103:
+nonempty_list(binding) -> binding . [ RIGHT_PAREN ]
+nonempty_list(binding) -> binding . nonempty_list(binding) [ RIGHT_PAREN ]
+-- On LEFT_PAREN shift to state 94
+-- On nonempty_list(binding) shift to state 104
+-- On binding shift to state 103
+-- On RIGHT_PAREN reduce production nonempty_list(binding) -> binding 
+
+State 104:
+nonempty_list(binding) -> binding nonempty_list(binding) . [ RIGHT_PAREN ]
+-- On RIGHT_PAREN reduce production nonempty_list(binding) -> binding nonempty_list(binding) 
+
+State 105:
+term -> LEFT_PAREN IF . term term term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On error shift to state 53
+-- On TRUE shift to state 54
+-- On QUOTED shift to state 55
+-- On LEFT_PAREN shift to state 56
+-- On IDENT shift to state 58
+-- On FALSE shift to state 59
+-- On term shift to state 106
+
+State 106:
+term -> LEFT_PAREN IF term . term term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On error shift to state 53
+-- On TRUE shift to state 54
+-- On QUOTED shift to state 55
+-- On LEFT_PAREN shift to state 56
+-- On IDENT shift to state 58
+-- On FALSE shift to state 59
+-- On term shift to state 107
+
+State 107:
+term -> LEFT_PAREN IF term term . term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On error shift to state 48
+-- On TRUE shift to state 49
+-- On QUOTED shift to state 50
+-- On LEFT_PAREN shift to state 51
+-- On IDENT shift to state 65
+-- On FALSE shift to state 66
+-- On term shift to state 108
+
+State 108:
+term -> LEFT_PAREN IF term term term . RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On RIGHT_PAREN shift to state 109
+
+State 109:
+term -> LEFT_PAREN IF term term term RIGHT_PAREN . [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On error reduce production term -> LEFT_PAREN IF term term term RIGHT_PAREN 
+-- On TRUE reduce production term -> LEFT_PAREN IF term term term RIGHT_PAREN 
+-- On RIGHT_PAREN reduce production term -> LEFT_PAREN IF term term term RIGHT_PAREN 
+-- On QUOTED reduce production term -> LEFT_PAREN IF term term term RIGHT_PAREN 
+-- On LEFT_PAREN reduce production term -> LEFT_PAREN IF term term term RIGHT_PAREN 
+-- On IDENT reduce production term -> LEFT_PAREN IF term term term RIGHT_PAREN 
+-- On FALSE reduce production term -> LEFT_PAREN IF term term term RIGHT_PAREN 
+
+State 110:
+term -> IDENT . [ RIGHT_PAREN ]
+term -> LEFT_PAREN IDENT . nonempty_list(term) RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On error shift to state 53
+-- On TRUE shift to state 54
+-- On QUOTED shift to state 55
+-- On LEFT_PAREN shift to state 56
+-- On IDENT shift to state 58
+-- On FALSE shift to state 59
+-- On term shift to state 60
+-- On nonempty_list(term) shift to state 111
+-- On RIGHT_PAREN reduce production term -> IDENT 
+
+State 111:
+term -> LEFT_PAREN IDENT nonempty_list(term) . RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On RIGHT_PAREN shift to state 112
+
+State 112:
+term -> LEFT_PAREN IDENT nonempty_list(term) RIGHT_PAREN . [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On error reduce production term -> LEFT_PAREN IDENT nonempty_list(term) RIGHT_PAREN 
+-- On TRUE reduce production term -> LEFT_PAREN IDENT nonempty_list(term) RIGHT_PAREN 
+-- On RIGHT_PAREN reduce production term -> LEFT_PAREN IDENT nonempty_list(term) RIGHT_PAREN 
+-- On QUOTED reduce production term -> LEFT_PAREN IDENT nonempty_list(term) RIGHT_PAREN 
+-- On LEFT_PAREN reduce production term -> LEFT_PAREN IDENT nonempty_list(term) RIGHT_PAREN 
+-- On IDENT reduce production term -> LEFT_PAREN IDENT nonempty_list(term) RIGHT_PAREN 
+-- On FALSE reduce production term -> LEFT_PAREN IDENT nonempty_list(term) RIGHT_PAREN 
+
+State 113:
+term -> LEFT_PAREN FUN . LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On LEFT_PAREN shift to state 114
+
+State 114:
+term -> LEFT_PAREN FUN LEFT_PAREN . nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On LEFT_PAREN shift to state 15
+-- On typed_var shift to state 115
+-- On nonempty_list(typed_var) shift to state 117
+
+State 115:
+nonempty_list(typed_var) -> typed_var . [ RIGHT_PAREN ]
+nonempty_list(typed_var) -> typed_var . nonempty_list(typed_var) [ RIGHT_PAREN ]
+-- On LEFT_PAREN shift to state 15
+-- On typed_var shift to state 115
+-- On nonempty_list(typed_var) shift to state 116
+-- On RIGHT_PAREN reduce production nonempty_list(typed_var) -> typed_var 
+
+State 116:
+nonempty_list(typed_var) -> typed_var nonempty_list(typed_var) . [ RIGHT_PAREN ]
+-- On RIGHT_PAREN reduce production nonempty_list(typed_var) -> typed_var nonempty_list(typed_var) 
+
+State 117:
+term -> LEFT_PAREN FUN LEFT_PAREN nonempty_list(typed_var) . RIGHT_PAREN term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On RIGHT_PAREN shift to state 118
+
+State 118:
+term -> LEFT_PAREN FUN LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN . term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On error shift to state 48
+-- On TRUE shift to state 49
+-- On QUOTED shift to state 50
+-- On LEFT_PAREN shift to state 51
+-- On IDENT shift to state 65
+-- On FALSE shift to state 66
+-- On term shift to state 119
+
+State 119:
+term -> LEFT_PAREN FUN LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term . RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On RIGHT_PAREN shift to state 120
+
+State 120:
+term -> LEFT_PAREN FUN LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN . [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On error reduce production term -> LEFT_PAREN FUN LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN 
+-- On TRUE reduce production term -> LEFT_PAREN FUN LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN 
+-- On RIGHT_PAREN reduce production term -> LEFT_PAREN FUN LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN 
+-- On QUOTED reduce production term -> LEFT_PAREN FUN LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN 
+-- On LEFT_PAREN reduce production term -> LEFT_PAREN FUN LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN 
+-- On IDENT reduce production term -> LEFT_PAREN FUN LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN 
+-- On FALSE reduce production term -> LEFT_PAREN FUN LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN 
+
+State 121:
+term -> LEFT_PAREN FORALL . LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On LEFT_PAREN shift to state 122
+
+State 122:
+term -> LEFT_PAREN FORALL LEFT_PAREN . nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On LEFT_PAREN shift to state 15
+-- On typed_var shift to state 115
+-- On nonempty_list(typed_var) shift to state 123
+
+State 123:
+term -> LEFT_PAREN FORALL LEFT_PAREN nonempty_list(typed_var) . RIGHT_PAREN term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On RIGHT_PAREN shift to state 124
+
+State 124:
+term -> LEFT_PAREN FORALL LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN . term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On error shift to state 48
+-- On TRUE shift to state 49
+-- On QUOTED shift to state 50
+-- On LEFT_PAREN shift to state 51
+-- On IDENT shift to state 65
+-- On FALSE shift to state 66
+-- On term shift to state 125
+
+State 125:
+term -> LEFT_PAREN FORALL LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term . RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On RIGHT_PAREN shift to state 126
+
+State 126:
+term -> LEFT_PAREN FORALL LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN . [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On error reduce production term -> LEFT_PAREN FORALL LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN 
+-- On TRUE reduce production term -> LEFT_PAREN FORALL LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN 
+-- On RIGHT_PAREN reduce production term -> LEFT_PAREN FORALL LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN 
+-- On QUOTED reduce production term -> LEFT_PAREN FORALL LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN 
+-- On LEFT_PAREN reduce production term -> LEFT_PAREN FORALL LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN 
+-- On IDENT reduce production term -> LEFT_PAREN FORALL LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN 
+-- On FALSE reduce production term -> LEFT_PAREN FORALL LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN 
+
+State 127:
+term -> LEFT_PAREN EXISTS . LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On LEFT_PAREN shift to state 128
+
+State 128:
+term -> LEFT_PAREN EXISTS LEFT_PAREN . nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On LEFT_PAREN shift to state 15
+-- On typed_var shift to state 115
+-- On nonempty_list(typed_var) shift to state 129
+
+State 129:
+term -> LEFT_PAREN EXISTS LEFT_PAREN nonempty_list(typed_var) . RIGHT_PAREN term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On RIGHT_PAREN shift to state 130
+
+State 130:
+term -> LEFT_PAREN EXISTS LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN . term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On error shift to state 48
+-- On TRUE shift to state 49
+-- On QUOTED shift to state 50
+-- On LEFT_PAREN shift to state 51
+-- On IDENT shift to state 65
+-- On FALSE shift to state 66
+-- On term shift to state 131
+
+State 131:
+term -> LEFT_PAREN EXISTS LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term . RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On RIGHT_PAREN shift to state 132
+
+State 132:
+term -> LEFT_PAREN EXISTS LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN . [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On error reduce production term -> LEFT_PAREN EXISTS LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN 
+-- On TRUE reduce production term -> LEFT_PAREN EXISTS LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN 
+-- On RIGHT_PAREN reduce production term -> LEFT_PAREN EXISTS LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN 
+-- On QUOTED reduce production term -> LEFT_PAREN EXISTS LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN 
+-- On LEFT_PAREN reduce production term -> LEFT_PAREN EXISTS LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN 
+-- On IDENT reduce production term -> LEFT_PAREN EXISTS LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN 
+-- On FALSE reduce production term -> LEFT_PAREN EXISTS LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN 
+
+State 133:
+term -> LEFT_PAREN EQ . term term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On error shift to state 53
+-- On TRUE shift to state 54
+-- On QUOTED shift to state 55
+-- On LEFT_PAREN shift to state 56
+-- On IDENT shift to state 58
+-- On FALSE shift to state 59
+-- On term shift to state 134
+
+State 134:
+term -> LEFT_PAREN EQ term . term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On error shift to state 48
+-- On TRUE shift to state 49
+-- On QUOTED shift to state 50
+-- On LEFT_PAREN shift to state 51
+-- On IDENT shift to state 65
+-- On FALSE shift to state 66
+-- On term shift to state 135
+
+State 135:
+term -> LEFT_PAREN EQ term term . RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On RIGHT_PAREN shift to state 136
+
+State 136:
+term -> LEFT_PAREN EQ term term RIGHT_PAREN . [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On error reduce production term -> LEFT_PAREN EQ term term RIGHT_PAREN 
+-- On TRUE reduce production term -> LEFT_PAREN EQ term term RIGHT_PAREN 
+-- On RIGHT_PAREN reduce production term -> LEFT_PAREN EQ term term RIGHT_PAREN 
+-- On QUOTED reduce production term -> LEFT_PAREN EQ term term RIGHT_PAREN 
+-- On LEFT_PAREN reduce production term -> LEFT_PAREN EQ term term RIGHT_PAREN 
+-- On IDENT reduce production term -> LEFT_PAREN EQ term term RIGHT_PAREN 
+-- On FALSE reduce production term -> LEFT_PAREN EQ term term RIGHT_PAREN 
+
+State 137:
+term -> LEFT_PAREN DISTINCT . nonempty_list(term) RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On error shift to state 53
+-- On TRUE shift to state 54
+-- On QUOTED shift to state 55
+-- On LEFT_PAREN shift to state 56
+-- On IDENT shift to state 58
+-- On FALSE shift to state 59
+-- On term shift to state 60
+-- On nonempty_list(term) shift to state 138
+
+State 138:
+term -> LEFT_PAREN DISTINCT nonempty_list(term) . RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On RIGHT_PAREN shift to state 139
+
+State 139:
+term -> LEFT_PAREN DISTINCT nonempty_list(term) RIGHT_PAREN . [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On error reduce production term -> LEFT_PAREN DISTINCT nonempty_list(term) RIGHT_PAREN 
+-- On TRUE reduce production term -> LEFT_PAREN DISTINCT nonempty_list(term) RIGHT_PAREN 
+-- On RIGHT_PAREN reduce production term -> LEFT_PAREN DISTINCT nonempty_list(term) RIGHT_PAREN 
+-- On QUOTED reduce production term -> LEFT_PAREN DISTINCT nonempty_list(term) RIGHT_PAREN 
+-- On LEFT_PAREN reduce production term -> LEFT_PAREN DISTINCT nonempty_list(term) RIGHT_PAREN 
+-- On IDENT reduce production term -> LEFT_PAREN DISTINCT nonempty_list(term) RIGHT_PAREN 
+-- On FALSE reduce production term -> LEFT_PAREN DISTINCT nonempty_list(term) RIGHT_PAREN 
+
+State 140:
+term -> LEFT_PAREN AT . term term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On error shift to state 53
+-- On TRUE shift to state 54
+-- On QUOTED shift to state 55
+-- On LEFT_PAREN shift to state 56
+-- On IDENT shift to state 58
+-- On FALSE shift to state 59
+-- On term shift to state 141
+
+State 141:
+term -> LEFT_PAREN AT term . term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On error shift to state 48
+-- On TRUE shift to state 49
+-- On QUOTED shift to state 50
+-- On LEFT_PAREN shift to state 51
+-- On IDENT shift to state 65
+-- On FALSE shift to state 66
+-- On term shift to state 142
+
+State 142:
+term -> LEFT_PAREN AT term term . RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On RIGHT_PAREN shift to state 143
+
+State 143:
+term -> LEFT_PAREN AT term term RIGHT_PAREN . [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On error reduce production term -> LEFT_PAREN AT term term RIGHT_PAREN 
+-- On TRUE reduce production term -> LEFT_PAREN AT term term RIGHT_PAREN 
+-- On RIGHT_PAREN reduce production term -> LEFT_PAREN AT term term RIGHT_PAREN 
+-- On QUOTED reduce production term -> LEFT_PAREN AT term term RIGHT_PAREN 
+-- On LEFT_PAREN reduce production term -> LEFT_PAREN AT term term RIGHT_PAREN 
+-- On IDENT reduce production term -> LEFT_PAREN AT term term RIGHT_PAREN 
+-- On FALSE reduce production term -> LEFT_PAREN AT term term RIGHT_PAREN 
+
+State 144:
+term -> LEFT_PAREN AS . term ty RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On error shift to state 48
+-- On TRUE shift to state 49
+-- On QUOTED shift to state 50
+-- On LEFT_PAREN shift to state 51
+-- On IDENT shift to state 65
+-- On FALSE shift to state 66
+-- On term shift to state 145
+
+State 145:
+term -> LEFT_PAREN AS term . ty RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On LEFT_PAREN shift to state 17
+-- On IDENT shift to state 19
+-- On BOOL shift to state 20
+-- On ty shift to state 146
+
+State 146:
+term -> LEFT_PAREN AS term ty . RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On RIGHT_PAREN shift to state 147
+
+State 147:
+term -> LEFT_PAREN AS term ty RIGHT_PAREN . [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On error reduce production term -> LEFT_PAREN AS term ty RIGHT_PAREN 
+-- On TRUE reduce production term -> LEFT_PAREN AS term ty RIGHT_PAREN 
+-- On RIGHT_PAREN reduce production term -> LEFT_PAREN AS term ty RIGHT_PAREN 
+-- On QUOTED reduce production term -> LEFT_PAREN AS term ty RIGHT_PAREN 
+-- On LEFT_PAREN reduce production term -> LEFT_PAREN AS term ty RIGHT_PAREN 
+-- On IDENT reduce production term -> LEFT_PAREN AS term ty RIGHT_PAREN 
+-- On FALSE reduce production term -> LEFT_PAREN AS term ty RIGHT_PAREN 
+
+State 148:
+term -> LEFT_PAREN ARROW . term term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On error shift to state 53
+-- On TRUE shift to state 54
+-- On QUOTED shift to state 55
+-- On LEFT_PAREN shift to state 56
+-- On IDENT shift to state 58
+-- On FALSE shift to state 59
+-- On term shift to state 149
+
+State 149:
+term -> LEFT_PAREN ARROW term . term RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On error shift to state 48
+-- On TRUE shift to state 49
+-- On QUOTED shift to state 50
+-- On LEFT_PAREN shift to state 51
+-- On IDENT shift to state 65
+-- On FALSE shift to state 66
+-- On term shift to state 150
+
+State 150:
+term -> LEFT_PAREN ARROW term term . RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On RIGHT_PAREN shift to state 151
+
+State 151:
+term -> LEFT_PAREN ARROW term term RIGHT_PAREN . [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On error reduce production term -> LEFT_PAREN ARROW term term RIGHT_PAREN 
+-- On TRUE reduce production term -> LEFT_PAREN ARROW term term RIGHT_PAREN 
+-- On RIGHT_PAREN reduce production term -> LEFT_PAREN ARROW term term RIGHT_PAREN 
+-- On QUOTED reduce production term -> LEFT_PAREN ARROW term term RIGHT_PAREN 
+-- On LEFT_PAREN reduce production term -> LEFT_PAREN ARROW term term RIGHT_PAREN 
+-- On IDENT reduce production term -> LEFT_PAREN ARROW term term RIGHT_PAREN 
+-- On FALSE reduce production term -> LEFT_PAREN ARROW term term RIGHT_PAREN 
+
+State 152:
+term -> LEFT_PAREN AND . nonempty_list(term) RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On error shift to state 53
+-- On TRUE shift to state 54
+-- On QUOTED shift to state 55
+-- On LEFT_PAREN shift to state 56
+-- On IDENT shift to state 58
+-- On FALSE shift to state 59
+-- On term shift to state 60
+-- On nonempty_list(term) shift to state 153
+
+State 153:
+term -> LEFT_PAREN AND nonempty_list(term) . RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On RIGHT_PAREN shift to state 154
+
+State 154:
+term -> LEFT_PAREN AND nonempty_list(term) RIGHT_PAREN . [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On error reduce production term -> LEFT_PAREN AND nonempty_list(term) RIGHT_PAREN 
+-- On TRUE reduce production term -> LEFT_PAREN AND nonempty_list(term) RIGHT_PAREN 
+-- On RIGHT_PAREN reduce production term -> LEFT_PAREN AND nonempty_list(term) RIGHT_PAREN 
+-- On QUOTED reduce production term -> LEFT_PAREN AND nonempty_list(term) RIGHT_PAREN 
+-- On LEFT_PAREN reduce production term -> LEFT_PAREN AND nonempty_list(term) RIGHT_PAREN 
+-- On IDENT reduce production term -> LEFT_PAREN AND nonempty_list(term) RIGHT_PAREN 
+-- On FALSE reduce production term -> LEFT_PAREN AND nonempty_list(term) RIGHT_PAREN 
+
+State 155:
+term -> LEFT_PAREN term . RIGHT_PAREN [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On RIGHT_PAREN shift to state 156
+
+State 156:
+term -> LEFT_PAREN term RIGHT_PAREN . [ error TRUE RIGHT_PAREN QUOTED LEFT_PAREN IDENT FALSE ]
+-- On error reduce production term -> LEFT_PAREN term RIGHT_PAREN 
+-- On TRUE reduce production term -> LEFT_PAREN term RIGHT_PAREN 
+-- On RIGHT_PAREN reduce production term -> LEFT_PAREN term RIGHT_PAREN 
+-- On QUOTED reduce production term -> LEFT_PAREN term RIGHT_PAREN 
+-- On LEFT_PAREN reduce production term -> LEFT_PAREN term RIGHT_PAREN 
+-- On IDENT reduce production term -> LEFT_PAREN term RIGHT_PAREN 
+-- On FALSE reduce production term -> LEFT_PAREN term RIGHT_PAREN 
+
+State 157:
+term -> LEFT_PAREN OR nonempty_list(term) . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On RIGHT_PAREN shift to state 158
+
+State 158:
+term -> LEFT_PAREN OR nonempty_list(term) RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On RIGHT_PAREN reduce production term -> LEFT_PAREN OR nonempty_list(term) RIGHT_PAREN 
+-- On LEFT_PAREN reduce production term -> LEFT_PAREN OR nonempty_list(term) RIGHT_PAREN 
+-- On IDENT reduce production term -> LEFT_PAREN OR nonempty_list(term) RIGHT_PAREN 
+-- On EOI reduce production term -> LEFT_PAREN OR nonempty_list(term) RIGHT_PAREN 
+-- On BOOL reduce production term -> LEFT_PAREN OR nonempty_list(term) RIGHT_PAREN 
+
+State 159:
+term -> LEFT_PAREN NOT . term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On error shift to state 48
+-- On TRUE shift to state 49
+-- On QUOTED shift to state 50
+-- On LEFT_PAREN shift to state 51
+-- On IDENT shift to state 65
+-- On FALSE shift to state 66
+-- On term shift to state 160
+
+State 160:
+term -> LEFT_PAREN NOT term . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On RIGHT_PAREN shift to state 161
+
+State 161:
+term -> LEFT_PAREN NOT term RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On RIGHT_PAREN reduce production term -> LEFT_PAREN NOT term RIGHT_PAREN 
+-- On LEFT_PAREN reduce production term -> LEFT_PAREN NOT term RIGHT_PAREN 
+-- On IDENT reduce production term -> LEFT_PAREN NOT term RIGHT_PAREN 
+-- On EOI reduce production term -> LEFT_PAREN NOT term RIGHT_PAREN 
+-- On BOOL reduce production term -> LEFT_PAREN NOT term RIGHT_PAREN 
+
+State 162:
+term -> LEFT_PAREN MATCH . term nonempty_list(case) RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On error shift to state 48
+-- On TRUE shift to state 49
+-- On QUOTED shift to state 50
+-- On LEFT_PAREN shift to state 51
+-- On IDENT shift to state 65
+-- On FALSE shift to state 66
+-- On term shift to state 163
+
+State 163:
+term -> LEFT_PAREN MATCH term . nonempty_list(case) RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On LEFT_PAREN shift to state 71
+-- On nonempty_list(case) shift to state 164
+-- On case shift to state 90
+
+State 164:
+term -> LEFT_PAREN MATCH term nonempty_list(case) . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On RIGHT_PAREN shift to state 165
+
+State 165:
+term -> LEFT_PAREN MATCH term nonempty_list(case) RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On RIGHT_PAREN reduce production term -> LEFT_PAREN MATCH term nonempty_list(case) RIGHT_PAREN 
+-- On LEFT_PAREN reduce production term -> LEFT_PAREN MATCH term nonempty_list(case) RIGHT_PAREN 
+-- On IDENT reduce production term -> LEFT_PAREN MATCH term nonempty_list(case) RIGHT_PAREN 
+-- On EOI reduce production term -> LEFT_PAREN MATCH term nonempty_list(case) RIGHT_PAREN 
+-- On BOOL reduce production term -> LEFT_PAREN MATCH term nonempty_list(case) RIGHT_PAREN 
+
+State 166:
+term -> LEFT_PAREN LET . LEFT_PAREN nonempty_list(binding) RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On LEFT_PAREN shift to state 167
+
+State 167:
+term -> LEFT_PAREN LET LEFT_PAREN . nonempty_list(binding) RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On LEFT_PAREN shift to state 94
+-- On nonempty_list(binding) shift to state 168
+-- On binding shift to state 103
+
+State 168:
+term -> LEFT_PAREN LET LEFT_PAREN nonempty_list(binding) . RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On RIGHT_PAREN shift to state 169
+
+State 169:
+term -> LEFT_PAREN LET LEFT_PAREN nonempty_list(binding) RIGHT_PAREN . term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On error shift to state 48
+-- On TRUE shift to state 49
+-- On QUOTED shift to state 50
+-- On LEFT_PAREN shift to state 51
+-- On IDENT shift to state 65
+-- On FALSE shift to state 66
+-- On term shift to state 170
+
+State 170:
+term -> LEFT_PAREN LET LEFT_PAREN nonempty_list(binding) RIGHT_PAREN term . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On RIGHT_PAREN shift to state 171
+
+State 171:
+term -> LEFT_PAREN LET LEFT_PAREN nonempty_list(binding) RIGHT_PAREN term RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On RIGHT_PAREN reduce production term -> LEFT_PAREN LET LEFT_PAREN nonempty_list(binding) RIGHT_PAREN term RIGHT_PAREN 
+-- On LEFT_PAREN reduce production term -> LEFT_PAREN LET LEFT_PAREN nonempty_list(binding) RIGHT_PAREN term RIGHT_PAREN 
+-- On IDENT reduce production term -> LEFT_PAREN LET LEFT_PAREN nonempty_list(binding) RIGHT_PAREN term RIGHT_PAREN 
+-- On EOI reduce production term -> LEFT_PAREN LET LEFT_PAREN nonempty_list(binding) RIGHT_PAREN term RIGHT_PAREN 
+-- On BOOL reduce production term -> LEFT_PAREN LET LEFT_PAREN nonempty_list(binding) RIGHT_PAREN term RIGHT_PAREN 
+
+State 172:
+term -> LEFT_PAREN IF . term term term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On error shift to state 53
+-- On TRUE shift to state 54
+-- On QUOTED shift to state 55
+-- On LEFT_PAREN shift to state 56
+-- On IDENT shift to state 58
+-- On FALSE shift to state 59
+-- On term shift to state 173
+
+State 173:
+term -> LEFT_PAREN IF term . term term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On error shift to state 53
+-- On TRUE shift to state 54
+-- On QUOTED shift to state 55
+-- On LEFT_PAREN shift to state 56
+-- On IDENT shift to state 58
+-- On FALSE shift to state 59
+-- On term shift to state 174
+
+State 174:
+term -> LEFT_PAREN IF term term . term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On error shift to state 48
+-- On TRUE shift to state 49
+-- On QUOTED shift to state 50
+-- On LEFT_PAREN shift to state 51
+-- On IDENT shift to state 65
+-- On FALSE shift to state 66
+-- On term shift to state 175
+
+State 175:
+term -> LEFT_PAREN IF term term term . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On RIGHT_PAREN shift to state 176
+
+State 176:
+term -> LEFT_PAREN IF term term term RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On RIGHT_PAREN reduce production term -> LEFT_PAREN IF term term term RIGHT_PAREN 
+-- On LEFT_PAREN reduce production term -> LEFT_PAREN IF term term term RIGHT_PAREN 
+-- On IDENT reduce production term -> LEFT_PAREN IF term term term RIGHT_PAREN 
+-- On EOI reduce production term -> LEFT_PAREN IF term term term RIGHT_PAREN 
+-- On BOOL reduce production term -> LEFT_PAREN IF term term term RIGHT_PAREN 
+
+State 177:
+term -> IDENT . [ RIGHT_PAREN ]
+term -> LEFT_PAREN IDENT . nonempty_list(term) RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On error shift to state 53
+-- On TRUE shift to state 54
+-- On QUOTED shift to state 55
+-- On LEFT_PAREN shift to state 56
+-- On IDENT shift to state 58
+-- On FALSE shift to state 59
+-- On term shift to state 60
+-- On nonempty_list(term) shift to state 178
+-- On RIGHT_PAREN reduce production term -> IDENT 
+
+State 178:
+term -> LEFT_PAREN IDENT nonempty_list(term) . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On RIGHT_PAREN shift to state 179
+
+State 179:
+term -> LEFT_PAREN IDENT nonempty_list(term) RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On RIGHT_PAREN reduce production term -> LEFT_PAREN IDENT nonempty_list(term) RIGHT_PAREN 
+-- On LEFT_PAREN reduce production term -> LEFT_PAREN IDENT nonempty_list(term) RIGHT_PAREN 
+-- On IDENT reduce production term -> LEFT_PAREN IDENT nonempty_list(term) RIGHT_PAREN 
+-- On EOI reduce production term -> LEFT_PAREN IDENT nonempty_list(term) RIGHT_PAREN 
+-- On BOOL reduce production term -> LEFT_PAREN IDENT nonempty_list(term) RIGHT_PAREN 
+
+State 180:
+term -> LEFT_PAREN FUN . LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On LEFT_PAREN shift to state 181
+
+State 181:
+term -> LEFT_PAREN FUN LEFT_PAREN . nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On LEFT_PAREN shift to state 15
+-- On typed_var shift to state 115
+-- On nonempty_list(typed_var) shift to state 182
+
+State 182:
+term -> LEFT_PAREN FUN LEFT_PAREN nonempty_list(typed_var) . RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On RIGHT_PAREN shift to state 183
+
+State 183:
+term -> LEFT_PAREN FUN LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN . term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On error shift to state 48
+-- On TRUE shift to state 49
+-- On QUOTED shift to state 50
+-- On LEFT_PAREN shift to state 51
+-- On IDENT shift to state 65
+-- On FALSE shift to state 66
+-- On term shift to state 184
+
+State 184:
+term -> LEFT_PAREN FUN LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On RIGHT_PAREN shift to state 185
+
+State 185:
+term -> LEFT_PAREN FUN LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On RIGHT_PAREN reduce production term -> LEFT_PAREN FUN LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN 
+-- On LEFT_PAREN reduce production term -> LEFT_PAREN FUN LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN 
+-- On IDENT reduce production term -> LEFT_PAREN FUN LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN 
+-- On EOI reduce production term -> LEFT_PAREN FUN LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN 
+-- On BOOL reduce production term -> LEFT_PAREN FUN LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN 
+
+State 186:
+term -> LEFT_PAREN FORALL . LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On LEFT_PAREN shift to state 187
+
+State 187:
+term -> LEFT_PAREN FORALL LEFT_PAREN . nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On LEFT_PAREN shift to state 15
+-- On typed_var shift to state 115
+-- On nonempty_list(typed_var) shift to state 188
+
+State 188:
+term -> LEFT_PAREN FORALL LEFT_PAREN nonempty_list(typed_var) . RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On RIGHT_PAREN shift to state 189
+
+State 189:
+term -> LEFT_PAREN FORALL LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN . term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On error shift to state 48
+-- On TRUE shift to state 49
+-- On QUOTED shift to state 50
+-- On LEFT_PAREN shift to state 51
+-- On IDENT shift to state 65
+-- On FALSE shift to state 66
+-- On term shift to state 190
+
+State 190:
+term -> LEFT_PAREN FORALL LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On RIGHT_PAREN shift to state 191
+
+State 191:
+term -> LEFT_PAREN FORALL LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On RIGHT_PAREN reduce production term -> LEFT_PAREN FORALL LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN 
+-- On LEFT_PAREN reduce production term -> LEFT_PAREN FORALL LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN 
+-- On IDENT reduce production term -> LEFT_PAREN FORALL LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN 
+-- On EOI reduce production term -> LEFT_PAREN FORALL LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN 
+-- On BOOL reduce production term -> LEFT_PAREN FORALL LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN 
+
+State 192:
+term -> LEFT_PAREN EXISTS . LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On LEFT_PAREN shift to state 193
+
+State 193:
+term -> LEFT_PAREN EXISTS LEFT_PAREN . nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On LEFT_PAREN shift to state 15
+-- On typed_var shift to state 115
+-- On nonempty_list(typed_var) shift to state 194
+
+State 194:
+term -> LEFT_PAREN EXISTS LEFT_PAREN nonempty_list(typed_var) . RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On RIGHT_PAREN shift to state 195
+
+State 195:
+term -> LEFT_PAREN EXISTS LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN . term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On error shift to state 48
+-- On TRUE shift to state 49
+-- On QUOTED shift to state 50
+-- On LEFT_PAREN shift to state 51
+-- On IDENT shift to state 65
+-- On FALSE shift to state 66
+-- On term shift to state 196
+
+State 196:
+term -> LEFT_PAREN EXISTS LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On RIGHT_PAREN shift to state 197
+
+State 197:
+term -> LEFT_PAREN EXISTS LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On RIGHT_PAREN reduce production term -> LEFT_PAREN EXISTS LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN 
+-- On LEFT_PAREN reduce production term -> LEFT_PAREN EXISTS LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN 
+-- On IDENT reduce production term -> LEFT_PAREN EXISTS LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN 
+-- On EOI reduce production term -> LEFT_PAREN EXISTS LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN 
+-- On BOOL reduce production term -> LEFT_PAREN EXISTS LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN 
+
+State 198:
+term -> LEFT_PAREN EQ . term term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On error shift to state 53
+-- On TRUE shift to state 54
+-- On QUOTED shift to state 55
+-- On LEFT_PAREN shift to state 56
+-- On IDENT shift to state 58
+-- On FALSE shift to state 59
+-- On term shift to state 199
+
+State 199:
+term -> LEFT_PAREN EQ term . term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On error shift to state 48
+-- On TRUE shift to state 49
+-- On QUOTED shift to state 50
+-- On LEFT_PAREN shift to state 51
+-- On IDENT shift to state 65
+-- On FALSE shift to state 66
+-- On term shift to state 200
+
+State 200:
+term -> LEFT_PAREN EQ term term . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On RIGHT_PAREN shift to state 201
+
+State 201:
+term -> LEFT_PAREN EQ term term RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On RIGHT_PAREN reduce production term -> LEFT_PAREN EQ term term RIGHT_PAREN 
+-- On LEFT_PAREN reduce production term -> LEFT_PAREN EQ term term RIGHT_PAREN 
+-- On IDENT reduce production term -> LEFT_PAREN EQ term term RIGHT_PAREN 
+-- On EOI reduce production term -> LEFT_PAREN EQ term term RIGHT_PAREN 
+-- On BOOL reduce production term -> LEFT_PAREN EQ term term RIGHT_PAREN 
+
+State 202:
+term -> LEFT_PAREN DISTINCT . nonempty_list(term) RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On error shift to state 53
+-- On TRUE shift to state 54
+-- On QUOTED shift to state 55
+-- On LEFT_PAREN shift to state 56
+-- On IDENT shift to state 58
+-- On FALSE shift to state 59
+-- On term shift to state 60
+-- On nonempty_list(term) shift to state 203
+
+State 203:
+term -> LEFT_PAREN DISTINCT nonempty_list(term) . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On RIGHT_PAREN shift to state 204
+
+State 204:
+term -> LEFT_PAREN DISTINCT nonempty_list(term) RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On RIGHT_PAREN reduce production term -> LEFT_PAREN DISTINCT nonempty_list(term) RIGHT_PAREN 
+-- On LEFT_PAREN reduce production term -> LEFT_PAREN DISTINCT nonempty_list(term) RIGHT_PAREN 
+-- On IDENT reduce production term -> LEFT_PAREN DISTINCT nonempty_list(term) RIGHT_PAREN 
+-- On EOI reduce production term -> LEFT_PAREN DISTINCT nonempty_list(term) RIGHT_PAREN 
+-- On BOOL reduce production term -> LEFT_PAREN DISTINCT nonempty_list(term) RIGHT_PAREN 
+
+State 205:
+term -> LEFT_PAREN AT . term term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On error shift to state 53
+-- On TRUE shift to state 54
+-- On QUOTED shift to state 55
+-- On LEFT_PAREN shift to state 56
+-- On IDENT shift to state 58
+-- On FALSE shift to state 59
+-- On term shift to state 206
+
+State 206:
+term -> LEFT_PAREN AT term . term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On error shift to state 48
+-- On TRUE shift to state 49
+-- On QUOTED shift to state 50
+-- On LEFT_PAREN shift to state 51
+-- On IDENT shift to state 65
+-- On FALSE shift to state 66
+-- On term shift to state 207
+
+State 207:
+term -> LEFT_PAREN AT term term . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On RIGHT_PAREN shift to state 208
+
+State 208:
+term -> LEFT_PAREN AT term term RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On RIGHT_PAREN reduce production term -> LEFT_PAREN AT term term RIGHT_PAREN 
+-- On LEFT_PAREN reduce production term -> LEFT_PAREN AT term term RIGHT_PAREN 
+-- On IDENT reduce production term -> LEFT_PAREN AT term term RIGHT_PAREN 
+-- On EOI reduce production term -> LEFT_PAREN AT term term RIGHT_PAREN 
+-- On BOOL reduce production term -> LEFT_PAREN AT term term RIGHT_PAREN 
+
+State 209:
+term -> LEFT_PAREN AS . term ty RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On error shift to state 48
+-- On TRUE shift to state 49
+-- On QUOTED shift to state 50
+-- On LEFT_PAREN shift to state 51
+-- On IDENT shift to state 65
+-- On FALSE shift to state 66
+-- On term shift to state 210
+
+State 210:
+term -> LEFT_PAREN AS term . ty RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On LEFT_PAREN shift to state 17
+-- On IDENT shift to state 19
+-- On BOOL shift to state 20
+-- On ty shift to state 211
+
+State 211:
+term -> LEFT_PAREN AS term ty . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On RIGHT_PAREN shift to state 212
+
+State 212:
+term -> LEFT_PAREN AS term ty RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On RIGHT_PAREN reduce production term -> LEFT_PAREN AS term ty RIGHT_PAREN 
+-- On LEFT_PAREN reduce production term -> LEFT_PAREN AS term ty RIGHT_PAREN 
+-- On IDENT reduce production term -> LEFT_PAREN AS term ty RIGHT_PAREN 
+-- On EOI reduce production term -> LEFT_PAREN AS term ty RIGHT_PAREN 
+-- On BOOL reduce production term -> LEFT_PAREN AS term ty RIGHT_PAREN 
+
+State 213:
+term -> LEFT_PAREN ARROW . term term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On error shift to state 53
+-- On TRUE shift to state 54
+-- On QUOTED shift to state 55
+-- On LEFT_PAREN shift to state 56
+-- On IDENT shift to state 58
+-- On FALSE shift to state 59
+-- On term shift to state 214
+
+State 214:
+term -> LEFT_PAREN ARROW term . term RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On error shift to state 48
+-- On TRUE shift to state 49
+-- On QUOTED shift to state 50
+-- On LEFT_PAREN shift to state 51
+-- On IDENT shift to state 65
+-- On FALSE shift to state 66
+-- On term shift to state 215
+
+State 215:
+term -> LEFT_PAREN ARROW term term . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On RIGHT_PAREN shift to state 216
+
+State 216:
+term -> LEFT_PAREN ARROW term term RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On RIGHT_PAREN reduce production term -> LEFT_PAREN ARROW term term RIGHT_PAREN 
+-- On LEFT_PAREN reduce production term -> LEFT_PAREN ARROW term term RIGHT_PAREN 
+-- On IDENT reduce production term -> LEFT_PAREN ARROW term term RIGHT_PAREN 
+-- On EOI reduce production term -> LEFT_PAREN ARROW term term RIGHT_PAREN 
+-- On BOOL reduce production term -> LEFT_PAREN ARROW term term RIGHT_PAREN 
+
+State 217:
+term -> LEFT_PAREN AND . nonempty_list(term) RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On error shift to state 53
+-- On TRUE shift to state 54
+-- On QUOTED shift to state 55
+-- On LEFT_PAREN shift to state 56
+-- On IDENT shift to state 58
+-- On FALSE shift to state 59
+-- On term shift to state 60
+-- On nonempty_list(term) shift to state 218
+
+State 218:
+term -> LEFT_PAREN AND nonempty_list(term) . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On RIGHT_PAREN shift to state 219
+
+State 219:
+term -> LEFT_PAREN AND nonempty_list(term) RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On RIGHT_PAREN reduce production term -> LEFT_PAREN AND nonempty_list(term) RIGHT_PAREN 
+-- On LEFT_PAREN reduce production term -> LEFT_PAREN AND nonempty_list(term) RIGHT_PAREN 
+-- On IDENT reduce production term -> LEFT_PAREN AND nonempty_list(term) RIGHT_PAREN 
+-- On EOI reduce production term -> LEFT_PAREN AND nonempty_list(term) RIGHT_PAREN 
+-- On BOOL reduce production term -> LEFT_PAREN AND nonempty_list(term) RIGHT_PAREN 
+
+State 220:
+term -> LEFT_PAREN term . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On RIGHT_PAREN shift to state 221
+
+State 221:
+term -> LEFT_PAREN term RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN IDENT EOI BOOL ]
+-- On RIGHT_PAREN reduce production term -> LEFT_PAREN term RIGHT_PAREN 
+-- On LEFT_PAREN reduce production term -> LEFT_PAREN term RIGHT_PAREN 
+-- On IDENT reduce production term -> LEFT_PAREN term RIGHT_PAREN 
+-- On EOI reduce production term -> LEFT_PAREN term RIGHT_PAREN 
+-- On BOOL reduce production term -> LEFT_PAREN term RIGHT_PAREN 
+
+State 222:
+fun_rec -> LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN fun_def_mono term . RIGHT_PAREN RIGHT_PAREN [ RIGHT_PAREN ]
+-- On RIGHT_PAREN shift to state 223
+
+State 223:
+fun_rec -> LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN fun_def_mono term RIGHT_PAREN . RIGHT_PAREN [ RIGHT_PAREN ]
+-- On RIGHT_PAREN shift to state 224
+
+State 224:
+fun_rec -> LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN fun_def_mono term RIGHT_PAREN RIGHT_PAREN . [ RIGHT_PAREN ]
+-- On RIGHT_PAREN reduce production fun_rec -> LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN fun_def_mono term RIGHT_PAREN RIGHT_PAREN 
+
+State 225:
+stmt -> LEFT_PAREN DEFINE_FUN_REC fun_rec . RIGHT_PAREN [ EOI ]
+-- On RIGHT_PAREN shift to state 226
+
+State 226:
+stmt -> LEFT_PAREN DEFINE_FUN_REC fun_rec RIGHT_PAREN . [ EOI ]
+-- On EOI reduce production stmt -> LEFT_PAREN DEFINE_FUN_REC fun_rec RIGHT_PAREN 
+
+State 227:
+fun_rec -> fun_def_mono . term [ RIGHT_PAREN ]
+-- On error shift to state 48
+-- On TRUE shift to state 49
+-- On QUOTED shift to state 50
+-- On LEFT_PAREN shift to state 51
+-- On IDENT shift to state 65
+-- On FALSE shift to state 66
+-- On term shift to state 228
+
+State 228:
+fun_rec -> fun_def_mono term . [ RIGHT_PAREN ]
+-- On RIGHT_PAREN reduce production fun_rec -> fun_def_mono term 
+
+State 229:
+stmt -> LEFT_PAREN DEFINE_FUNS_REC . LEFT_PAREN nonempty_list(funs_rec_decl) RIGHT_PAREN LEFT_PAREN nonempty_list(term) RIGHT_PAREN RIGHT_PAREN [ EOI ]
+-- On LEFT_PAREN shift to state 230
+
+State 230:
+stmt -> LEFT_PAREN DEFINE_FUNS_REC LEFT_PAREN . nonempty_list(funs_rec_decl) RIGHT_PAREN LEFT_PAREN nonempty_list(term) RIGHT_PAREN RIGHT_PAREN [ EOI ]
+-- On LEFT_PAREN shift to state 231
+-- On nonempty_list(funs_rec_decl) shift to state 247
+-- On funs_rec_decl shift to state 253
+
+State 231:
+funs_rec_decl -> LEFT_PAREN . fun_def_mono RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+funs_rec_decl -> LEFT_PAREN . PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN fun_def_mono RIGHT_PAREN RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+-- On PAR shift to state 232
+-- On IDENT shift to state 237
+-- On fun_def_mono shift to state 245
+
+State 232:
+funs_rec_decl -> LEFT_PAREN PAR . LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN fun_def_mono RIGHT_PAREN RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+-- On LEFT_PAREN shift to state 233
+
+State 233:
+funs_rec_decl -> LEFT_PAREN PAR LEFT_PAREN . list(tyvar) RIGHT_PAREN LEFT_PAREN fun_def_mono RIGHT_PAREN RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+-- On IDENT shift to state 7
+-- On tyvar shift to state 8
+-- On list(tyvar) shift to state 234
+-- On RIGHT_PAREN reduce production list(tyvar) -> 
+
+State 234:
+funs_rec_decl -> LEFT_PAREN PAR LEFT_PAREN list(tyvar) . RIGHT_PAREN LEFT_PAREN fun_def_mono RIGHT_PAREN RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+-- On RIGHT_PAREN shift to state 235
+
+State 235:
+funs_rec_decl -> LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN . LEFT_PAREN fun_def_mono RIGHT_PAREN RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+-- On LEFT_PAREN shift to state 236
+
+State 236:
+funs_rec_decl -> LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN . fun_def_mono RIGHT_PAREN RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+-- On IDENT shift to state 237
+-- On fun_def_mono shift to state 242
+
+State 237:
+fun_def_mono -> IDENT . LEFT_PAREN list(typed_var) RIGHT_PAREN ty [ RIGHT_PAREN ]
+-- On LEFT_PAREN shift to state 238
+
+State 238:
+fun_def_mono -> IDENT LEFT_PAREN . list(typed_var) RIGHT_PAREN ty [ RIGHT_PAREN ]
+-- On LEFT_PAREN shift to state 15
+-- On typed_var shift to state 33
+-- On list(typed_var) shift to state 239
+-- On RIGHT_PAREN reduce production list(typed_var) -> 
+
+State 239:
+fun_def_mono -> IDENT LEFT_PAREN list(typed_var) . RIGHT_PAREN ty [ RIGHT_PAREN ]
+-- On RIGHT_PAREN shift to state 240
+
+State 240:
+fun_def_mono -> IDENT LEFT_PAREN list(typed_var) RIGHT_PAREN . ty [ RIGHT_PAREN ]
+-- On LEFT_PAREN shift to state 17
+-- On IDENT shift to state 19
+-- On BOOL shift to state 20
+-- On ty shift to state 241
+
+State 241:
+fun_def_mono -> IDENT LEFT_PAREN list(typed_var) RIGHT_PAREN ty . [ RIGHT_PAREN ]
+-- On RIGHT_PAREN reduce production fun_def_mono -> IDENT LEFT_PAREN list(typed_var) RIGHT_PAREN ty 
+
+State 242:
+funs_rec_decl -> LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN fun_def_mono . RIGHT_PAREN RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+-- On RIGHT_PAREN shift to state 243
+
+State 243:
+funs_rec_decl -> LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN fun_def_mono RIGHT_PAREN . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+-- On RIGHT_PAREN shift to state 244
+
+State 244:
+funs_rec_decl -> LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN fun_def_mono RIGHT_PAREN RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN ]
+-- On RIGHT_PAREN reduce production funs_rec_decl -> LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN fun_def_mono RIGHT_PAREN RIGHT_PAREN 
+-- On LEFT_PAREN reduce production funs_rec_decl -> LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN fun_def_mono RIGHT_PAREN RIGHT_PAREN 
+
+State 245:
+funs_rec_decl -> LEFT_PAREN fun_def_mono . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+-- On RIGHT_PAREN shift to state 246
+
+State 246:
+funs_rec_decl -> LEFT_PAREN fun_def_mono RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN ]
+-- On RIGHT_PAREN reduce production funs_rec_decl -> LEFT_PAREN fun_def_mono RIGHT_PAREN 
+-- On LEFT_PAREN reduce production funs_rec_decl -> LEFT_PAREN fun_def_mono RIGHT_PAREN 
+
+State 247:
+stmt -> LEFT_PAREN DEFINE_FUNS_REC LEFT_PAREN nonempty_list(funs_rec_decl) . RIGHT_PAREN LEFT_PAREN nonempty_list(term) RIGHT_PAREN RIGHT_PAREN [ EOI ]
+-- On RIGHT_PAREN shift to state 248
+
+State 248:
+stmt -> LEFT_PAREN DEFINE_FUNS_REC LEFT_PAREN nonempty_list(funs_rec_decl) RIGHT_PAREN . LEFT_PAREN nonempty_list(term) RIGHT_PAREN RIGHT_PAREN [ EOI ]
+-- On LEFT_PAREN shift to state 249
+
+State 249:
+stmt -> LEFT_PAREN DEFINE_FUNS_REC LEFT_PAREN nonempty_list(funs_rec_decl) RIGHT_PAREN LEFT_PAREN . nonempty_list(term) RIGHT_PAREN RIGHT_PAREN [ EOI ]
+-- On error shift to state 53
+-- On TRUE shift to state 54
+-- On QUOTED shift to state 55
+-- On LEFT_PAREN shift to state 56
+-- On IDENT shift to state 58
+-- On FALSE shift to state 59
+-- On term shift to state 60
+-- On nonempty_list(term) shift to state 250
+
+State 250:
+stmt -> LEFT_PAREN DEFINE_FUNS_REC LEFT_PAREN nonempty_list(funs_rec_decl) RIGHT_PAREN LEFT_PAREN nonempty_list(term) . RIGHT_PAREN RIGHT_PAREN [ EOI ]
+-- On RIGHT_PAREN shift to state 251
+
+State 251:
+stmt -> LEFT_PAREN DEFINE_FUNS_REC LEFT_PAREN nonempty_list(funs_rec_decl) RIGHT_PAREN LEFT_PAREN nonempty_list(term) RIGHT_PAREN . RIGHT_PAREN [ EOI ]
+-- On RIGHT_PAREN shift to state 252
+
+State 252:
+stmt -> LEFT_PAREN DEFINE_FUNS_REC LEFT_PAREN nonempty_list(funs_rec_decl) RIGHT_PAREN LEFT_PAREN nonempty_list(term) RIGHT_PAREN RIGHT_PAREN . [ EOI ]
+-- On EOI reduce production stmt -> LEFT_PAREN DEFINE_FUNS_REC LEFT_PAREN nonempty_list(funs_rec_decl) RIGHT_PAREN LEFT_PAREN nonempty_list(term) RIGHT_PAREN RIGHT_PAREN 
+
+State 253:
+nonempty_list(funs_rec_decl) -> funs_rec_decl . [ RIGHT_PAREN ]
+nonempty_list(funs_rec_decl) -> funs_rec_decl . nonempty_list(funs_rec_decl) [ RIGHT_PAREN ]
+-- On LEFT_PAREN shift to state 231
+-- On nonempty_list(funs_rec_decl) shift to state 254
+-- On funs_rec_decl shift to state 253
+-- On RIGHT_PAREN reduce production nonempty_list(funs_rec_decl) -> funs_rec_decl 
+
+State 254:
+nonempty_list(funs_rec_decl) -> funs_rec_decl nonempty_list(funs_rec_decl) . [ RIGHT_PAREN ]
+-- On RIGHT_PAREN reduce production nonempty_list(funs_rec_decl) -> funs_rec_decl nonempty_list(funs_rec_decl) 
+
+State 255:
+stmt -> LEFT_PAREN DEFINE_FUN . fun_rec RIGHT_PAREN [ EOI ]
+-- On LEFT_PAREN shift to state 4
+-- On IDENT shift to state 13
+-- On fun_rec shift to state 256
+-- On fun_def_mono shift to state 227
+
+State 256:
+stmt -> LEFT_PAREN DEFINE_FUN fun_rec . RIGHT_PAREN [ EOI ]
+-- On RIGHT_PAREN shift to state 257
+
+State 257:
+stmt -> LEFT_PAREN DEFINE_FUN fun_rec RIGHT_PAREN . [ EOI ]
+-- On EOI reduce production stmt -> LEFT_PAREN DEFINE_FUN fun_rec RIGHT_PAREN 
+
+State 258:
+stmt -> LEFT_PAREN DECLARE_SORT . IDENT IDENT RIGHT_PAREN [ EOI ]
+-- On IDENT shift to state 259
+
+State 259:
+stmt -> LEFT_PAREN DECLARE_SORT IDENT . IDENT RIGHT_PAREN [ EOI ]
+-- On IDENT shift to state 260
+
+State 260:
+stmt -> LEFT_PAREN DECLARE_SORT IDENT IDENT . RIGHT_PAREN [ EOI ]
+-- On RIGHT_PAREN shift to state 261
+
+State 261:
+stmt -> LEFT_PAREN DECLARE_SORT IDENT IDENT RIGHT_PAREN . [ EOI ]
+-- On EOI reduce production stmt -> LEFT_PAREN DECLARE_SORT IDENT IDENT RIGHT_PAREN 
+
+State 262:
+stmt -> LEFT_PAREN DECLARE_FUN . fun_decl RIGHT_PAREN [ EOI ]
+-- On LEFT_PAREN shift to state 263
+-- On IDENT shift to state 269
+-- On fun_decl_mono shift to state 279
+-- On fun_decl shift to state 280
+
+State 263:
+fun_decl -> LEFT_PAREN . PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN fun_decl_mono RIGHT_PAREN RIGHT_PAREN [ RIGHT_PAREN ]
+-- On PAR shift to state 264
+
+State 264:
+fun_decl -> LEFT_PAREN PAR . LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN fun_decl_mono RIGHT_PAREN RIGHT_PAREN [ RIGHT_PAREN ]
+-- On LEFT_PAREN shift to state 265
+
+State 265:
+fun_decl -> LEFT_PAREN PAR LEFT_PAREN . list(tyvar) RIGHT_PAREN LEFT_PAREN fun_decl_mono RIGHT_PAREN RIGHT_PAREN [ RIGHT_PAREN ]
+-- On IDENT shift to state 7
+-- On tyvar shift to state 8
+-- On list(tyvar) shift to state 266
+-- On RIGHT_PAREN reduce production list(tyvar) -> 
+
+State 266:
+fun_decl -> LEFT_PAREN PAR LEFT_PAREN list(tyvar) . RIGHT_PAREN LEFT_PAREN fun_decl_mono RIGHT_PAREN RIGHT_PAREN [ RIGHT_PAREN ]
+-- On RIGHT_PAREN shift to state 267
+
+State 267:
+fun_decl -> LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN . LEFT_PAREN fun_decl_mono RIGHT_PAREN RIGHT_PAREN [ RIGHT_PAREN ]
+-- On LEFT_PAREN shift to state 268
+
+State 268:
+fun_decl -> LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN . fun_decl_mono RIGHT_PAREN RIGHT_PAREN [ RIGHT_PAREN ]
+-- On IDENT shift to state 269
+-- On fun_decl_mono shift to state 276
+
+State 269:
+fun_decl_mono -> IDENT . LEFT_PAREN list(ty) RIGHT_PAREN ty [ RIGHT_PAREN ]
+-- On LEFT_PAREN shift to state 270
+
+State 270:
+fun_decl_mono -> IDENT LEFT_PAREN . list(ty) RIGHT_PAREN ty [ RIGHT_PAREN ]
+-- On LEFT_PAREN shift to state 17
+-- On IDENT shift to state 19
+-- On BOOL shift to state 20
+-- On ty shift to state 271
+-- On list(ty) shift to state 273
+-- On RIGHT_PAREN reduce production list(ty) -> 
+
+State 271:
+list(ty) -> ty . list(ty) [ RIGHT_PAREN ]
+-- On LEFT_PAREN shift to state 17
+-- On IDENT shift to state 19
+-- On BOOL shift to state 20
+-- On ty shift to state 271
+-- On list(ty) shift to state 272
+-- On RIGHT_PAREN reduce production list(ty) -> 
+
+State 272:
+list(ty) -> ty list(ty) . [ RIGHT_PAREN ]
+-- On RIGHT_PAREN reduce production list(ty) -> ty list(ty) 
+
+State 273:
+fun_decl_mono -> IDENT LEFT_PAREN list(ty) . RIGHT_PAREN ty [ RIGHT_PAREN ]
+-- On RIGHT_PAREN shift to state 274
+
+State 274:
+fun_decl_mono -> IDENT LEFT_PAREN list(ty) RIGHT_PAREN . ty [ RIGHT_PAREN ]
+-- On LEFT_PAREN shift to state 17
+-- On IDENT shift to state 19
+-- On BOOL shift to state 20
+-- On ty shift to state 275
+
+State 275:
+fun_decl_mono -> IDENT LEFT_PAREN list(ty) RIGHT_PAREN ty . [ RIGHT_PAREN ]
+-- On RIGHT_PAREN reduce production fun_decl_mono -> IDENT LEFT_PAREN list(ty) RIGHT_PAREN ty 
+
+State 276:
+fun_decl -> LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN fun_decl_mono . RIGHT_PAREN RIGHT_PAREN [ RIGHT_PAREN ]
+-- On RIGHT_PAREN shift to state 277
+
+State 277:
+fun_decl -> LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN fun_decl_mono RIGHT_PAREN . RIGHT_PAREN [ RIGHT_PAREN ]
+-- On RIGHT_PAREN shift to state 278
+
+State 278:
+fun_decl -> LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN fun_decl_mono RIGHT_PAREN RIGHT_PAREN . [ RIGHT_PAREN ]
+-- On RIGHT_PAREN reduce production fun_decl -> LEFT_PAREN PAR LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN fun_decl_mono RIGHT_PAREN RIGHT_PAREN 
+
+State 279:
+fun_decl -> fun_decl_mono . [ RIGHT_PAREN ]
+-- On RIGHT_PAREN reduce production fun_decl -> fun_decl_mono 
+
+State 280:
+stmt -> LEFT_PAREN DECLARE_FUN fun_decl . RIGHT_PAREN [ EOI ]
+-- On RIGHT_PAREN shift to state 281
+
+State 281:
+stmt -> LEFT_PAREN DECLARE_FUN fun_decl RIGHT_PAREN . [ EOI ]
+-- On EOI reduce production stmt -> LEFT_PAREN DECLARE_FUN fun_decl RIGHT_PAREN 
+
+State 282:
+stmt -> LEFT_PAREN DECLARE_CONST . IDENT ty RIGHT_PAREN [ EOI ]
+-- On IDENT shift to state 283
+
+State 283:
+stmt -> LEFT_PAREN DECLARE_CONST IDENT . ty RIGHT_PAREN [ EOI ]
+-- On LEFT_PAREN shift to state 17
+-- On IDENT shift to state 19
+-- On BOOL shift to state 20
+-- On ty shift to state 284
+
+State 284:
+stmt -> LEFT_PAREN DECLARE_CONST IDENT ty . RIGHT_PAREN [ EOI ]
+-- On RIGHT_PAREN shift to state 285
+
+State 285:
+stmt -> LEFT_PAREN DECLARE_CONST IDENT ty RIGHT_PAREN . [ EOI ]
+-- On EOI reduce production stmt -> LEFT_PAREN DECLARE_CONST IDENT ty RIGHT_PAREN 
+
+State 286:
+stmt -> LEFT_PAREN DATA . LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN nonempty_list(data) RIGHT_PAREN RIGHT_PAREN [ EOI ]
+-- On LEFT_PAREN shift to state 287
+
+State 287:
+stmt -> LEFT_PAREN DATA LEFT_PAREN . list(tyvar) RIGHT_PAREN LEFT_PAREN nonempty_list(data) RIGHT_PAREN RIGHT_PAREN [ EOI ]
+-- On IDENT shift to state 7
+-- On tyvar shift to state 8
+-- On list(tyvar) shift to state 288
+-- On RIGHT_PAREN reduce production list(tyvar) -> 
+
+State 288:
+stmt -> LEFT_PAREN DATA LEFT_PAREN list(tyvar) . RIGHT_PAREN LEFT_PAREN nonempty_list(data) RIGHT_PAREN RIGHT_PAREN [ EOI ]
+-- On RIGHT_PAREN shift to state 289
+
+State 289:
+stmt -> LEFT_PAREN DATA LEFT_PAREN list(tyvar) RIGHT_PAREN . LEFT_PAREN nonempty_list(data) RIGHT_PAREN RIGHT_PAREN [ EOI ]
+-- On LEFT_PAREN shift to state 290
+
+State 290:
+stmt -> LEFT_PAREN DATA LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN . nonempty_list(data) RIGHT_PAREN RIGHT_PAREN [ EOI ]
+-- On LEFT_PAREN shift to state 291
+-- On nonempty_list(data) shift to state 308
+-- On data shift to state 311
+
+State 291:
+data -> LEFT_PAREN . IDENT nonempty_list(cstor) RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+-- On IDENT shift to state 292
+
+State 292:
+data -> LEFT_PAREN IDENT . nonempty_list(cstor) RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+-- On LEFT_PAREN shift to state 293
+-- On nonempty_list(cstor) shift to state 304
+-- On cstor shift to state 306
+
+State 293:
+cstor -> LEFT_PAREN . IDENT RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+cstor -> LEFT_PAREN . IDENT nonempty_list(cstor_arg) RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+-- On IDENT shift to state 294
+
+State 294:
+cstor -> LEFT_PAREN IDENT . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+cstor -> LEFT_PAREN IDENT . nonempty_list(cstor_arg) RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+-- On RIGHT_PAREN shift to state 295
+-- On LEFT_PAREN shift to state 296
+-- On nonempty_list(cstor_arg) shift to state 300
+-- On cstor_arg shift to state 302
+
+State 295:
+cstor -> LEFT_PAREN IDENT RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN ]
+-- On RIGHT_PAREN reduce production cstor -> LEFT_PAREN IDENT RIGHT_PAREN 
+-- On LEFT_PAREN reduce production cstor -> LEFT_PAREN IDENT RIGHT_PAREN 
+
+State 296:
+cstor_arg -> LEFT_PAREN . IDENT ty RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+-- On IDENT shift to state 297
+
+State 297:
+cstor_arg -> LEFT_PAREN IDENT . ty RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+-- On LEFT_PAREN shift to state 17
+-- On IDENT shift to state 19
+-- On BOOL shift to state 20
+-- On ty shift to state 298
+
+State 298:
+cstor_arg -> LEFT_PAREN IDENT ty . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+-- On RIGHT_PAREN shift to state 299
+
+State 299:
+cstor_arg -> LEFT_PAREN IDENT ty RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN ]
+-- On RIGHT_PAREN reduce production cstor_arg -> LEFT_PAREN IDENT ty RIGHT_PAREN 
+-- On LEFT_PAREN reduce production cstor_arg -> LEFT_PAREN IDENT ty RIGHT_PAREN 
+
+State 300:
+cstor -> LEFT_PAREN IDENT nonempty_list(cstor_arg) . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+-- On RIGHT_PAREN shift to state 301
+
+State 301:
+cstor -> LEFT_PAREN IDENT nonempty_list(cstor_arg) RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN ]
+-- On RIGHT_PAREN reduce production cstor -> LEFT_PAREN IDENT nonempty_list(cstor_arg) RIGHT_PAREN 
+-- On LEFT_PAREN reduce production cstor -> LEFT_PAREN IDENT nonempty_list(cstor_arg) RIGHT_PAREN 
+
+State 302:
+nonempty_list(cstor_arg) -> cstor_arg . [ RIGHT_PAREN ]
+nonempty_list(cstor_arg) -> cstor_arg . nonempty_list(cstor_arg) [ RIGHT_PAREN ]
+-- On LEFT_PAREN shift to state 296
+-- On nonempty_list(cstor_arg) shift to state 303
+-- On cstor_arg shift to state 302
+-- On RIGHT_PAREN reduce production nonempty_list(cstor_arg) -> cstor_arg 
+
+State 303:
+nonempty_list(cstor_arg) -> cstor_arg nonempty_list(cstor_arg) . [ RIGHT_PAREN ]
+-- On RIGHT_PAREN reduce production nonempty_list(cstor_arg) -> cstor_arg nonempty_list(cstor_arg) 
+
+State 304:
+data -> LEFT_PAREN IDENT nonempty_list(cstor) . RIGHT_PAREN [ RIGHT_PAREN LEFT_PAREN ]
+-- On RIGHT_PAREN shift to state 305
+
+State 305:
+data -> LEFT_PAREN IDENT nonempty_list(cstor) RIGHT_PAREN . [ RIGHT_PAREN LEFT_PAREN ]
+-- On RIGHT_PAREN reduce production data -> LEFT_PAREN IDENT nonempty_list(cstor) RIGHT_PAREN 
+-- On LEFT_PAREN reduce production data -> LEFT_PAREN IDENT nonempty_list(cstor) RIGHT_PAREN 
+
+State 306:
+nonempty_list(cstor) -> cstor . [ RIGHT_PAREN ]
+nonempty_list(cstor) -> cstor . nonempty_list(cstor) [ RIGHT_PAREN ]
+-- On LEFT_PAREN shift to state 293
+-- On nonempty_list(cstor) shift to state 307
+-- On cstor shift to state 306
+-- On RIGHT_PAREN reduce production nonempty_list(cstor) -> cstor 
+
+State 307:
+nonempty_list(cstor) -> cstor nonempty_list(cstor) . [ RIGHT_PAREN ]
+-- On RIGHT_PAREN reduce production nonempty_list(cstor) -> cstor nonempty_list(cstor) 
+
+State 308:
+stmt -> LEFT_PAREN DATA LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN nonempty_list(data) . RIGHT_PAREN RIGHT_PAREN [ EOI ]
+-- On RIGHT_PAREN shift to state 309
+
+State 309:
+stmt -> LEFT_PAREN DATA LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN nonempty_list(data) RIGHT_PAREN . RIGHT_PAREN [ EOI ]
+-- On RIGHT_PAREN shift to state 310
+
+State 310:
+stmt -> LEFT_PAREN DATA LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN nonempty_list(data) RIGHT_PAREN RIGHT_PAREN . [ EOI ]
+-- On EOI reduce production stmt -> LEFT_PAREN DATA LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN nonempty_list(data) RIGHT_PAREN RIGHT_PAREN 
+
+State 311:
+nonempty_list(data) -> data . [ RIGHT_PAREN ]
+nonempty_list(data) -> data . nonempty_list(data) [ RIGHT_PAREN ]
+-- On LEFT_PAREN shift to state 291
+-- On nonempty_list(data) shift to state 312
+-- On data shift to state 311
+-- On RIGHT_PAREN reduce production nonempty_list(data) -> data 
+
+State 312:
+nonempty_list(data) -> data nonempty_list(data) . [ RIGHT_PAREN ]
+-- On RIGHT_PAREN reduce production nonempty_list(data) -> data nonempty_list(data) 
+
+State 313:
+stmt -> LEFT_PAREN CHECK_SAT . RIGHT_PAREN [ EOI ]
+-- On RIGHT_PAREN shift to state 314
+
+State 314:
+stmt -> LEFT_PAREN CHECK_SAT RIGHT_PAREN . [ EOI ]
+-- On EOI reduce production stmt -> LEFT_PAREN CHECK_SAT RIGHT_PAREN 
+
+State 315:
+stmt -> LEFT_PAREN ASSERT_NOT . assert_not RIGHT_PAREN [ EOI ]
+-- On error shift to state 48
+-- On TRUE shift to state 49
+-- On QUOTED shift to state 50
+-- On LEFT_PAREN shift to state 316
+-- On IDENT shift to state 65
+-- On FALSE shift to state 66
+-- On term shift to state 325
+-- On assert_not shift to state 326
+
+State 316:
+assert_not -> LEFT_PAREN . PAR LEFT_PAREN nonempty_list(tyvar) RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN ]
+term -> LEFT_PAREN . term RIGHT_PAREN [ RIGHT_PAREN ]
+term -> LEFT_PAREN . IF term term term RIGHT_PAREN [ RIGHT_PAREN ]
+term -> LEFT_PAREN . OR nonempty_list(term) RIGHT_PAREN [ RIGHT_PAREN ]
+term -> LEFT_PAREN . AND nonempty_list(term) RIGHT_PAREN [ RIGHT_PAREN ]
+term -> LEFT_PAREN . NOT term RIGHT_PAREN [ RIGHT_PAREN ]
+term -> LEFT_PAREN . DISTINCT nonempty_list(term) RIGHT_PAREN [ RIGHT_PAREN ]
+term -> LEFT_PAREN . EQ term term RIGHT_PAREN [ RIGHT_PAREN ]
+term -> LEFT_PAREN . ARROW term term RIGHT_PAREN [ RIGHT_PAREN ]
+term -> LEFT_PAREN . IDENT nonempty_list(term) RIGHT_PAREN [ RIGHT_PAREN ]
+term -> LEFT_PAREN . AT term term RIGHT_PAREN [ RIGHT_PAREN ]
+term -> LEFT_PAREN . MATCH term nonempty_list(case) RIGHT_PAREN [ RIGHT_PAREN ]
+term -> LEFT_PAREN . FUN LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN ]
+term -> LEFT_PAREN . LET LEFT_PAREN nonempty_list(binding) RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN ]
+term -> LEFT_PAREN . AS term ty RIGHT_PAREN [ RIGHT_PAREN ]
+term -> LEFT_PAREN . FORALL LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN ]
+term -> LEFT_PAREN . EXISTS LEFT_PAREN nonempty_list(typed_var) RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN ]
+-- On error shift to state 48
+-- On TRUE shift to state 49
+-- On QUOTED shift to state 50
+-- On PAR shift to state 317
+-- On OR shift to state 52
+-- On NOT shift to state 159
+-- On MATCH shift to state 162
+-- On LET shift to state 166
+-- On LEFT_PAREN shift to state 51
+-- On IF shift to state 172
+-- On IDENT shift to state 177
+-- On FUN shift to state 180
+-- On FORALL shift to state 186
+-- On FALSE shift to state 66
+-- On EXISTS shift to state 192
+-- On EQ shift to state 198
+-- On DISTINCT shift to state 202
+-- On AT shift to state 205
+-- On AS shift to state 209
+-- On ARROW shift to state 213
+-- On AND shift to state 217
+-- On term shift to state 220
+
+State 317:
+assert_not -> LEFT_PAREN PAR . LEFT_PAREN nonempty_list(tyvar) RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN ]
+-- On LEFT_PAREN shift to state 318
+
+State 318:
+assert_not -> LEFT_PAREN PAR LEFT_PAREN . nonempty_list(tyvar) RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN ]
+-- On IDENT shift to state 7
+-- On tyvar shift to state 319
+-- On nonempty_list(tyvar) shift to state 321
+
+State 319:
+nonempty_list(tyvar) -> tyvar . [ RIGHT_PAREN ]
+nonempty_list(tyvar) -> tyvar . nonempty_list(tyvar) [ RIGHT_PAREN ]
+-- On IDENT shift to state 7
+-- On tyvar shift to state 319
+-- On nonempty_list(tyvar) shift to state 320
+-- On RIGHT_PAREN reduce production nonempty_list(tyvar) -> tyvar 
+
+State 320:
+nonempty_list(tyvar) -> tyvar nonempty_list(tyvar) . [ RIGHT_PAREN ]
+-- On RIGHT_PAREN reduce production nonempty_list(tyvar) -> tyvar nonempty_list(tyvar) 
+
+State 321:
+assert_not -> LEFT_PAREN PAR LEFT_PAREN nonempty_list(tyvar) . RIGHT_PAREN term RIGHT_PAREN [ RIGHT_PAREN ]
+-- On RIGHT_PAREN shift to state 322
+
+State 322:
+assert_not -> LEFT_PAREN PAR LEFT_PAREN nonempty_list(tyvar) RIGHT_PAREN . term RIGHT_PAREN [ RIGHT_PAREN ]
+-- On error shift to state 48
+-- On TRUE shift to state 49
+-- On QUOTED shift to state 50
+-- On LEFT_PAREN shift to state 51
+-- On IDENT shift to state 65
+-- On FALSE shift to state 66
+-- On term shift to state 323
+
+State 323:
+assert_not -> LEFT_PAREN PAR LEFT_PAREN nonempty_list(tyvar) RIGHT_PAREN term . RIGHT_PAREN [ RIGHT_PAREN ]
+-- On RIGHT_PAREN shift to state 324
+
+State 324:
+assert_not -> LEFT_PAREN PAR LEFT_PAREN nonempty_list(tyvar) RIGHT_PAREN term RIGHT_PAREN . [ RIGHT_PAREN ]
+-- On RIGHT_PAREN reduce production assert_not -> LEFT_PAREN PAR LEFT_PAREN nonempty_list(tyvar) RIGHT_PAREN term RIGHT_PAREN 
+
+State 325:
+assert_not -> term . [ RIGHT_PAREN ]
+-- On RIGHT_PAREN reduce production assert_not -> term 
+
+State 326:
+stmt -> LEFT_PAREN ASSERT_NOT assert_not . RIGHT_PAREN [ EOI ]
+-- On RIGHT_PAREN shift to state 327
+
+State 327:
+stmt -> LEFT_PAREN ASSERT_NOT assert_not RIGHT_PAREN . [ EOI ]
+-- On EOI reduce production stmt -> LEFT_PAREN ASSERT_NOT assert_not RIGHT_PAREN 
+
+State 328:
+stmt -> LEFT_PAREN ASSERT . term RIGHT_PAREN [ EOI ]
+-- On error shift to state 48
+-- On TRUE shift to state 49
+-- On QUOTED shift to state 50
+-- On LEFT_PAREN shift to state 51
+-- On IDENT shift to state 65
+-- On FALSE shift to state 66
+-- On term shift to state 329
+
+State 329:
+stmt -> LEFT_PAREN ASSERT term . RIGHT_PAREN [ EOI ]
+-- On RIGHT_PAREN shift to state 330
+
+State 330:
+stmt -> LEFT_PAREN ASSERT term RIGHT_PAREN . [ EOI ]
+-- On EOI reduce production stmt -> LEFT_PAREN ASSERT term RIGHT_PAREN 
+
+State 331:
+parse -> stmt . EOI [ # ]
+-- On EOI shift to state 332
+
+State 332:
+parse -> stmt EOI . [ # ]
+-- On # reduce production parse -> stmt EOI 
+
+State 333:
+parse' -> parse . [ # ]
+-- On # accept parse
+
+State 334:
+parse_list' -> . parse_list [ # ]
+-- On error shift to state 335
+-- On LEFT_PAREN shift to state 336
+-- On stmt shift to state 378
+-- On parse_list shift to state 380
+-- On list(stmt) shift to state 381
+-- On EOI reduce production list(stmt) -> 
+
+State 335:
+stmt -> error . [ error LEFT_PAREN EOI ]
+-- On error reduce production stmt -> error 
+-- On LEFT_PAREN reduce production stmt -> error 
+-- On EOI reduce production stmt -> error 
+
+State 336:
+stmt -> LEFT_PAREN . ASSERT term RIGHT_PAREN [ error LEFT_PAREN EOI ]
+stmt -> LEFT_PAREN . DECLARE_SORT IDENT IDENT RIGHT_PAREN [ error LEFT_PAREN EOI ]
+stmt -> LEFT_PAREN . DATA LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN nonempty_list(data) RIGHT_PAREN RIGHT_PAREN [ error LEFT_PAREN EOI ]
+stmt -> LEFT_PAREN . DECLARE_FUN fun_decl RIGHT_PAREN [ error LEFT_PAREN EOI ]
+stmt -> LEFT_PAREN . DECLARE_CONST IDENT ty RIGHT_PAREN [ error LEFT_PAREN EOI ]
+stmt -> LEFT_PAREN . DEFINE_FUN fun_rec RIGHT_PAREN [ error LEFT_PAREN EOI ]
+stmt -> LEFT_PAREN . DEFINE_FUN_REC fun_rec RIGHT_PAREN [ error LEFT_PAREN EOI ]
+stmt -> LEFT_PAREN . DEFINE_FUNS_REC LEFT_PAREN nonempty_list(funs_rec_decl) RIGHT_PAREN LEFT_PAREN nonempty_list(term) RIGHT_PAREN RIGHT_PAREN [ error LEFT_PAREN EOI ]
+stmt -> LEFT_PAREN . ASSERT_NOT assert_not RIGHT_PAREN [ error LEFT_PAREN EOI ]
+stmt -> LEFT_PAREN . CHECK_SAT RIGHT_PAREN [ error LEFT_PAREN EOI ]
+-- On DEFINE_FUN_REC shift to state 337
+-- On DEFINE_FUNS_REC shift to state 340
+-- On DEFINE_FUN shift to state 348
+-- On DECLARE_SORT shift to state 351
+-- On DECLARE_FUN shift to state 355
+-- On DECLARE_CONST shift to state 358
+-- On DATA shift to state 362
+-- On CHECK_SAT shift to state 370
+-- On ASSERT_NOT shift to state 372
+-- On ASSERT shift to state 375
+
+State 337:
+stmt -> LEFT_PAREN DEFINE_FUN_REC . fun_rec RIGHT_PAREN [ error LEFT_PAREN EOI ]
+-- On LEFT_PAREN shift to state 4
+-- On IDENT shift to state 13
+-- On fun_rec shift to state 338
+-- On fun_def_mono shift to state 227
+
+State 338:
+stmt -> LEFT_PAREN DEFINE_FUN_REC fun_rec . RIGHT_PAREN [ error LEFT_PAREN EOI ]
+-- On RIGHT_PAREN shift to state 339
+
+State 339:
+stmt -> LEFT_PAREN DEFINE_FUN_REC fun_rec RIGHT_PAREN . [ error LEFT_PAREN EOI ]
+-- On error reduce production stmt -> LEFT_PAREN DEFINE_FUN_REC fun_rec RIGHT_PAREN 
+-- On LEFT_PAREN reduce production stmt -> LEFT_PAREN DEFINE_FUN_REC fun_rec RIGHT_PAREN 
+-- On EOI reduce production stmt -> LEFT_PAREN DEFINE_FUN_REC fun_rec RIGHT_PAREN 
+
+State 340:
+stmt -> LEFT_PAREN DEFINE_FUNS_REC . LEFT_PAREN nonempty_list(funs_rec_decl) RIGHT_PAREN LEFT_PAREN nonempty_list(term) RIGHT_PAREN RIGHT_PAREN [ error LEFT_PAREN EOI ]
+-- On LEFT_PAREN shift to state 341
+
+State 341:
+stmt -> LEFT_PAREN DEFINE_FUNS_REC LEFT_PAREN . nonempty_list(funs_rec_decl) RIGHT_PAREN LEFT_PAREN nonempty_list(term) RIGHT_PAREN RIGHT_PAREN [ error LEFT_PAREN EOI ]
+-- On LEFT_PAREN shift to state 231
+-- On nonempty_list(funs_rec_decl) shift to state 342
+-- On funs_rec_decl shift to state 253
+
+State 342:
+stmt -> LEFT_PAREN DEFINE_FUNS_REC LEFT_PAREN nonempty_list(funs_rec_decl) . RIGHT_PAREN LEFT_PAREN nonempty_list(term) RIGHT_PAREN RIGHT_PAREN [ error LEFT_PAREN EOI ]
+-- On RIGHT_PAREN shift to state 343
+
+State 343:
+stmt -> LEFT_PAREN DEFINE_FUNS_REC LEFT_PAREN nonempty_list(funs_rec_decl) RIGHT_PAREN . LEFT_PAREN nonempty_list(term) RIGHT_PAREN RIGHT_PAREN [ error LEFT_PAREN EOI ]
+-- On LEFT_PAREN shift to state 344
+
+State 344:
+stmt -> LEFT_PAREN DEFINE_FUNS_REC LEFT_PAREN nonempty_list(funs_rec_decl) RIGHT_PAREN LEFT_PAREN . nonempty_list(term) RIGHT_PAREN RIGHT_PAREN [ error LEFT_PAREN EOI ]
+-- On error shift to state 53
+-- On TRUE shift to state 54
+-- On QUOTED shift to state 55
+-- On LEFT_PAREN shift to state 56
+-- On IDENT shift to state 58
+-- On FALSE shift to state 59
+-- On term shift to state 60
+-- On nonempty_list(term) shift to state 345
+
+State 345:
+stmt -> LEFT_PAREN DEFINE_FUNS_REC LEFT_PAREN nonempty_list(funs_rec_decl) RIGHT_PAREN LEFT_PAREN nonempty_list(term) . RIGHT_PAREN RIGHT_PAREN [ error LEFT_PAREN EOI ]
+-- On RIGHT_PAREN shift to state 346
+
+State 346:
+stmt -> LEFT_PAREN DEFINE_FUNS_REC LEFT_PAREN nonempty_list(funs_rec_decl) RIGHT_PAREN LEFT_PAREN nonempty_list(term) RIGHT_PAREN . RIGHT_PAREN [ error LEFT_PAREN EOI ]
+-- On RIGHT_PAREN shift to state 347
+
+State 347:
+stmt -> LEFT_PAREN DEFINE_FUNS_REC LEFT_PAREN nonempty_list(funs_rec_decl) RIGHT_PAREN LEFT_PAREN nonempty_list(term) RIGHT_PAREN RIGHT_PAREN . [ error LEFT_PAREN EOI ]
+-- On error reduce production stmt -> LEFT_PAREN DEFINE_FUNS_REC LEFT_PAREN nonempty_list(funs_rec_decl) RIGHT_PAREN LEFT_PAREN nonempty_list(term) RIGHT_PAREN RIGHT_PAREN 
+-- On LEFT_PAREN reduce production stmt -> LEFT_PAREN DEFINE_FUNS_REC LEFT_PAREN nonempty_list(funs_rec_decl) RIGHT_PAREN LEFT_PAREN nonempty_list(term) RIGHT_PAREN RIGHT_PAREN 
+-- On EOI reduce production stmt -> LEFT_PAREN DEFINE_FUNS_REC LEFT_PAREN nonempty_list(funs_rec_decl) RIGHT_PAREN LEFT_PAREN nonempty_list(term) RIGHT_PAREN RIGHT_PAREN 
+
+State 348:
+stmt -> LEFT_PAREN DEFINE_FUN . fun_rec RIGHT_PAREN [ error LEFT_PAREN EOI ]
+-- On LEFT_PAREN shift to state 4
+-- On IDENT shift to state 13
+-- On fun_rec shift to state 349
+-- On fun_def_mono shift to state 227
+
+State 349:
+stmt -> LEFT_PAREN DEFINE_FUN fun_rec . RIGHT_PAREN [ error LEFT_PAREN EOI ]
+-- On RIGHT_PAREN shift to state 350
+
+State 350:
+stmt -> LEFT_PAREN DEFINE_FUN fun_rec RIGHT_PAREN . [ error LEFT_PAREN EOI ]
+-- On error reduce production stmt -> LEFT_PAREN DEFINE_FUN fun_rec RIGHT_PAREN 
+-- On LEFT_PAREN reduce production stmt -> LEFT_PAREN DEFINE_FUN fun_rec RIGHT_PAREN 
+-- On EOI reduce production stmt -> LEFT_PAREN DEFINE_FUN fun_rec RIGHT_PAREN 
+
+State 351:
+stmt -> LEFT_PAREN DECLARE_SORT . IDENT IDENT RIGHT_PAREN [ error LEFT_PAREN EOI ]
+-- On IDENT shift to state 352
+
+State 352:
+stmt -> LEFT_PAREN DECLARE_SORT IDENT . IDENT RIGHT_PAREN [ error LEFT_PAREN EOI ]
+-- On IDENT shift to state 353
+
+State 353:
+stmt -> LEFT_PAREN DECLARE_SORT IDENT IDENT . RIGHT_PAREN [ error LEFT_PAREN EOI ]
+-- On RIGHT_PAREN shift to state 354
+
+State 354:
+stmt -> LEFT_PAREN DECLARE_SORT IDENT IDENT RIGHT_PAREN . [ error LEFT_PAREN EOI ]
+-- On error reduce production stmt -> LEFT_PAREN DECLARE_SORT IDENT IDENT RIGHT_PAREN 
+-- On LEFT_PAREN reduce production stmt -> LEFT_PAREN DECLARE_SORT IDENT IDENT RIGHT_PAREN 
+-- On EOI reduce production stmt -> LEFT_PAREN DECLARE_SORT IDENT IDENT RIGHT_PAREN 
+
+State 355:
+stmt -> LEFT_PAREN DECLARE_FUN . fun_decl RIGHT_PAREN [ error LEFT_PAREN EOI ]
+-- On LEFT_PAREN shift to state 263
+-- On IDENT shift to state 269
+-- On fun_decl_mono shift to state 279
+-- On fun_decl shift to state 356
+
+State 356:
+stmt -> LEFT_PAREN DECLARE_FUN fun_decl . RIGHT_PAREN [ error LEFT_PAREN EOI ]
+-- On RIGHT_PAREN shift to state 357
+
+State 357:
+stmt -> LEFT_PAREN DECLARE_FUN fun_decl RIGHT_PAREN . [ error LEFT_PAREN EOI ]
+-- On error reduce production stmt -> LEFT_PAREN DECLARE_FUN fun_decl RIGHT_PAREN 
+-- On LEFT_PAREN reduce production stmt -> LEFT_PAREN DECLARE_FUN fun_decl RIGHT_PAREN 
+-- On EOI reduce production stmt -> LEFT_PAREN DECLARE_FUN fun_decl RIGHT_PAREN 
+
+State 358:
+stmt -> LEFT_PAREN DECLARE_CONST . IDENT ty RIGHT_PAREN [ error LEFT_PAREN EOI ]
+-- On IDENT shift to state 359
+
+State 359:
+stmt -> LEFT_PAREN DECLARE_CONST IDENT . ty RIGHT_PAREN [ error LEFT_PAREN EOI ]
+-- On LEFT_PAREN shift to state 17
+-- On IDENT shift to state 19
+-- On BOOL shift to state 20
+-- On ty shift to state 360
+
+State 360:
+stmt -> LEFT_PAREN DECLARE_CONST IDENT ty . RIGHT_PAREN [ error LEFT_PAREN EOI ]
+-- On RIGHT_PAREN shift to state 361
+
+State 361:
+stmt -> LEFT_PAREN DECLARE_CONST IDENT ty RIGHT_PAREN . [ error LEFT_PAREN EOI ]
+-- On error reduce production stmt -> LEFT_PAREN DECLARE_CONST IDENT ty RIGHT_PAREN 
+-- On LEFT_PAREN reduce production stmt -> LEFT_PAREN DECLARE_CONST IDENT ty RIGHT_PAREN 
+-- On EOI reduce production stmt -> LEFT_PAREN DECLARE_CONST IDENT ty RIGHT_PAREN 
+
+State 362:
+stmt -> LEFT_PAREN DATA . LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN nonempty_list(data) RIGHT_PAREN RIGHT_PAREN [ error LEFT_PAREN EOI ]
+-- On LEFT_PAREN shift to state 363
+
+State 363:
+stmt -> LEFT_PAREN DATA LEFT_PAREN . list(tyvar) RIGHT_PAREN LEFT_PAREN nonempty_list(data) RIGHT_PAREN RIGHT_PAREN [ error LEFT_PAREN EOI ]
+-- On IDENT shift to state 7
+-- On tyvar shift to state 8
+-- On list(tyvar) shift to state 364
+-- On RIGHT_PAREN reduce production list(tyvar) -> 
+
+State 364:
+stmt -> LEFT_PAREN DATA LEFT_PAREN list(tyvar) . RIGHT_PAREN LEFT_PAREN nonempty_list(data) RIGHT_PAREN RIGHT_PAREN [ error LEFT_PAREN EOI ]
+-- On RIGHT_PAREN shift to state 365
+
+State 365:
+stmt -> LEFT_PAREN DATA LEFT_PAREN list(tyvar) RIGHT_PAREN . LEFT_PAREN nonempty_list(data) RIGHT_PAREN RIGHT_PAREN [ error LEFT_PAREN EOI ]
+-- On LEFT_PAREN shift to state 366
+
+State 366:
+stmt -> LEFT_PAREN DATA LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN . nonempty_list(data) RIGHT_PAREN RIGHT_PAREN [ error LEFT_PAREN EOI ]
+-- On LEFT_PAREN shift to state 291
+-- On nonempty_list(data) shift to state 367
+-- On data shift to state 311
+
+State 367:
+stmt -> LEFT_PAREN DATA LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN nonempty_list(data) . RIGHT_PAREN RIGHT_PAREN [ error LEFT_PAREN EOI ]
+-- On RIGHT_PAREN shift to state 368
+
+State 368:
+stmt -> LEFT_PAREN DATA LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN nonempty_list(data) RIGHT_PAREN . RIGHT_PAREN [ error LEFT_PAREN EOI ]
+-- On RIGHT_PAREN shift to state 369
+
+State 369:
+stmt -> LEFT_PAREN DATA LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN nonempty_list(data) RIGHT_PAREN RIGHT_PAREN . [ error LEFT_PAREN EOI ]
+-- On error reduce production stmt -> LEFT_PAREN DATA LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN nonempty_list(data) RIGHT_PAREN RIGHT_PAREN 
+-- On LEFT_PAREN reduce production stmt -> LEFT_PAREN DATA LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN nonempty_list(data) RIGHT_PAREN RIGHT_PAREN 
+-- On EOI reduce production stmt -> LEFT_PAREN DATA LEFT_PAREN list(tyvar) RIGHT_PAREN LEFT_PAREN nonempty_list(data) RIGHT_PAREN RIGHT_PAREN 
+
+State 370:
+stmt -> LEFT_PAREN CHECK_SAT . RIGHT_PAREN [ error LEFT_PAREN EOI ]
+-- On RIGHT_PAREN shift to state 371
+
+State 371:
+stmt -> LEFT_PAREN CHECK_SAT RIGHT_PAREN . [ error LEFT_PAREN EOI ]
+-- On error reduce production stmt -> LEFT_PAREN CHECK_SAT RIGHT_PAREN 
+-- On LEFT_PAREN reduce production stmt -> LEFT_PAREN CHECK_SAT RIGHT_PAREN 
+-- On EOI reduce production stmt -> LEFT_PAREN CHECK_SAT RIGHT_PAREN 
+
+State 372:
+stmt -> LEFT_PAREN ASSERT_NOT . assert_not RIGHT_PAREN [ error LEFT_PAREN EOI ]
+-- On error shift to state 48
+-- On TRUE shift to state 49
+-- On QUOTED shift to state 50
+-- On LEFT_PAREN shift to state 316
+-- On IDENT shift to state 65
+-- On FALSE shift to state 66
+-- On term shift to state 325
+-- On assert_not shift to state 373
+
+State 373:
+stmt -> LEFT_PAREN ASSERT_NOT assert_not . RIGHT_PAREN [ error LEFT_PAREN EOI ]
+-- On RIGHT_PAREN shift to state 374
+
+State 374:
+stmt -> LEFT_PAREN ASSERT_NOT assert_not RIGHT_PAREN . [ error LEFT_PAREN EOI ]
+-- On error reduce production stmt -> LEFT_PAREN ASSERT_NOT assert_not RIGHT_PAREN 
+-- On LEFT_PAREN reduce production stmt -> LEFT_PAREN ASSERT_NOT assert_not RIGHT_PAREN 
+-- On EOI reduce production stmt -> LEFT_PAREN ASSERT_NOT assert_not RIGHT_PAREN 
+
+State 375:
+stmt -> LEFT_PAREN ASSERT . term RIGHT_PAREN [ error LEFT_PAREN EOI ]
+-- On error shift to state 48
+-- On TRUE shift to state 49
+-- On QUOTED shift to state 50
+-- On LEFT_PAREN shift to state 51
+-- On IDENT shift to state 65
+-- On FALSE shift to state 66
+-- On term shift to state 376
+
+State 376:
+stmt -> LEFT_PAREN ASSERT term . RIGHT_PAREN [ error LEFT_PAREN EOI ]
+-- On RIGHT_PAREN shift to state 377
+
+State 377:
+stmt -> LEFT_PAREN ASSERT term RIGHT_PAREN . [ error LEFT_PAREN EOI ]
+-- On error reduce production stmt -> LEFT_PAREN ASSERT term RIGHT_PAREN 
+-- On LEFT_PAREN reduce production stmt -> LEFT_PAREN ASSERT term RIGHT_PAREN 
+-- On EOI reduce production stmt -> LEFT_PAREN ASSERT term RIGHT_PAREN 
+
+State 378:
+list(stmt) -> stmt . list(stmt) [ EOI ]
+-- On error shift to state 335
+-- On LEFT_PAREN shift to state 336
+-- On stmt shift to state 378
+-- On list(stmt) shift to state 379
+-- On EOI reduce production list(stmt) -> 
+
+State 379:
+list(stmt) -> stmt list(stmt) . [ EOI ]
+-- On EOI reduce production list(stmt) -> stmt list(stmt) 
+
+State 380:
+parse_list' -> parse_list . [ # ]
+-- On # accept parse_list
+
+State 381:
+parse_list -> list(stmt) . EOI [ # ]
+-- On EOI shift to state 382
+
+State 382:
+parse_list -> list(stmt) EOI . [ # ]
+-- On # reduce production parse_list -> list(stmt) EOI 
+
+State 383:
+parse_smbc_res' -> . parse_smbc_res [ # ]
+-- On error shift to state 384
+-- On LEFT_PAREN shift to state 385
+-- On smbc_res shift to state 423
+-- On parse_smbc_res shift to state 425
+
+State 384:
+smbc_res -> error . [ EOI ]
+-- On EOI reduce production smbc_res -> error 
+
+State 385:
+smbc_res -> LEFT_PAREN . RESULT_RESULT RESULT_UNSAT RIGHT_PAREN [ EOI ]
+smbc_res -> LEFT_PAREN . option(RESULT_RESULT) RESULT_TIMEOUT RIGHT_PAREN [ EOI ]
+smbc_res -> LEFT_PAREN . RESULT_RESULT RESULT_SAT option(RESULT_ATOM_MODEL) smbc_model RIGHT_PAREN [ EOI ]
+smbc_res -> LEFT_PAREN . RESULT_RESULT RESULT_UNKNOWN smbc_unknown_reason RIGHT_PAREN [ EOI ]
+-- On RESULT_RESULT shift to state 386
+-- On option(RESULT_RESULT) shift to state 420
+-- On RESULT_TIMEOUT reduce production option(RESULT_RESULT) -> 
+
+State 386:
+option(RESULT_RESULT) -> RESULT_RESULT . [ RESULT_TIMEOUT ]
+smbc_res -> LEFT_PAREN RESULT_RESULT . RESULT_UNSAT RIGHT_PAREN [ EOI ]
+smbc_res -> LEFT_PAREN RESULT_RESULT . RESULT_SAT option(RESULT_ATOM_MODEL) smbc_model RIGHT_PAREN [ EOI ]
+smbc_res -> LEFT_PAREN RESULT_RESULT . RESULT_UNKNOWN smbc_unknown_reason RIGHT_PAREN [ EOI ]
+-- On RESULT_UNSAT shift to state 387
+-- On RESULT_UNKNOWN shift to state 389
+-- On RESULT_SAT shift to state 395
+-- On RESULT_TIMEOUT reduce production option(RESULT_RESULT) -> RESULT_RESULT 
+
+State 387:
+smbc_res -> LEFT_PAREN RESULT_RESULT RESULT_UNSAT . RIGHT_PAREN [ EOI ]
+-- On RIGHT_PAREN shift to state 388
+
+State 388:
+smbc_res -> LEFT_PAREN RESULT_RESULT RESULT_UNSAT RIGHT_PAREN . [ EOI ]
+-- On EOI reduce production smbc_res -> LEFT_PAREN RESULT_RESULT RESULT_UNSAT RIGHT_PAREN 
+
+State 389:
+smbc_res -> LEFT_PAREN RESULT_RESULT RESULT_UNKNOWN . smbc_unknown_reason RIGHT_PAREN [ EOI ]
+-- On RESULT_ATOM_REASON shift to state 390
+-- On smbc_unknown_reason shift to state 393
+-- On RIGHT_PAREN reduce production smbc_unknown_reason -> 
+
+State 390:
+smbc_unknown_reason -> RESULT_ATOM_REASON . IDENT [ RIGHT_PAREN ]
+smbc_unknown_reason -> RESULT_ATOM_REASON . QUOTED [ RIGHT_PAREN ]
+-- On QUOTED shift to state 391
+-- On IDENT shift to state 392
+
+State 391:
+smbc_unknown_reason -> RESULT_ATOM_REASON QUOTED . [ RIGHT_PAREN ]
+-- On RIGHT_PAREN reduce production smbc_unknown_reason -> RESULT_ATOM_REASON QUOTED 
+
+State 392:
+smbc_unknown_reason -> RESULT_ATOM_REASON IDENT . [ RIGHT_PAREN ]
+-- On RIGHT_PAREN reduce production smbc_unknown_reason -> RESULT_ATOM_REASON IDENT 
+
+State 393:
+smbc_res -> LEFT_PAREN RESULT_RESULT RESULT_UNKNOWN smbc_unknown_reason . RIGHT_PAREN [ EOI ]
+-- On RIGHT_PAREN shift to state 394
+
+State 394:
+smbc_res -> LEFT_PAREN RESULT_RESULT RESULT_UNKNOWN smbc_unknown_reason RIGHT_PAREN . [ EOI ]
+-- On EOI reduce production smbc_res -> LEFT_PAREN RESULT_RESULT RESULT_UNKNOWN smbc_unknown_reason RIGHT_PAREN 
+
+State 395:
+smbc_res -> LEFT_PAREN RESULT_RESULT RESULT_SAT . option(RESULT_ATOM_MODEL) smbc_model RIGHT_PAREN [ EOI ]
+-- On RESULT_ATOM_MODEL shift to state 396
+-- On option(RESULT_ATOM_MODEL) shift to state 397
+-- On error reduce production option(RESULT_ATOM_MODEL) -> 
+-- On LEFT_PAREN reduce production option(RESULT_ATOM_MODEL) -> 
+
+State 396:
+option(RESULT_ATOM_MODEL) -> RESULT_ATOM_MODEL . [ error LEFT_PAREN ]
+-- On error reduce production option(RESULT_ATOM_MODEL) -> RESULT_ATOM_MODEL 
+-- On LEFT_PAREN reduce production option(RESULT_ATOM_MODEL) -> RESULT_ATOM_MODEL 
+
+State 397:
+smbc_res -> LEFT_PAREN RESULT_RESULT RESULT_SAT option(RESULT_ATOM_MODEL) . smbc_model RIGHT_PAREN [ EOI ]
+-- On error shift to state 398
+-- On LEFT_PAREN shift to state 399
+-- On smbc_model shift to state 418
+
+State 398:
+smbc_model -> error . [ RIGHT_PAREN ]
+-- On RIGHT_PAREN reduce production smbc_model -> error 
+
+State 399:
+smbc_model -> LEFT_PAREN . list(smbc_model_entry) RIGHT_PAREN [ RIGHT_PAREN ]
+-- On error shift to state 400
+-- On LEFT_PAREN shift to state 401
+-- On smbc_model_entry shift to state 414
+-- On list(smbc_model_entry) shift to state 416
+-- On RIGHT_PAREN reduce production list(smbc_model_entry) -> 
+
+State 400:
+smbc_model_entry -> error . [ error RIGHT_PAREN LEFT_PAREN ]
+-- On error reduce production smbc_model_entry -> error 
+-- On RIGHT_PAREN reduce production smbc_model_entry -> error 
+-- On LEFT_PAREN reduce production smbc_model_entry -> error 
+
+State 401:
+smbc_model_entry -> LEFT_PAREN . RESULT_VAL term term RIGHT_PAREN [ error RIGHT_PAREN LEFT_PAREN ]
+smbc_model_entry -> LEFT_PAREN . RESULT_TYPE ty LEFT_PAREN list(var) RIGHT_PAREN RIGHT_PAREN [ error RIGHT_PAREN LEFT_PAREN ]
+-- On RESULT_VAL shift to state 402
+-- On RESULT_TYPE shift to state 406
+
+State 402:
+smbc_model_entry -> LEFT_PAREN RESULT_VAL . term term RIGHT_PAREN [ error RIGHT_PAREN LEFT_PAREN ]
+-- On error shift to state 53
+-- On TRUE shift to state 54
+-- On QUOTED shift to state 55
+-- On LEFT_PAREN shift to state 56
+-- On IDENT shift to state 58
+-- On FALSE shift to state 59
+-- On term shift to state 403
+
+State 403:
+smbc_model_entry -> LEFT_PAREN RESULT_VAL term . term RIGHT_PAREN [ error RIGHT_PAREN LEFT_PAREN ]
+-- On error shift to state 48
+-- On TRUE shift to state 49
+-- On QUOTED shift to state 50
+-- On LEFT_PAREN shift to state 51
+-- On IDENT shift to state 65
+-- On FALSE shift to state 66
+-- On term shift to state 404
+
+State 404:
+smbc_model_entry -> LEFT_PAREN RESULT_VAL term term . RIGHT_PAREN [ error RIGHT_PAREN LEFT_PAREN ]
+-- On RIGHT_PAREN shift to state 405
+
+State 405:
+smbc_model_entry -> LEFT_PAREN RESULT_VAL term term RIGHT_PAREN . [ error RIGHT_PAREN LEFT_PAREN ]
+-- On error reduce production smbc_model_entry -> LEFT_PAREN RESULT_VAL term term RIGHT_PAREN 
+-- On RIGHT_PAREN reduce production smbc_model_entry -> LEFT_PAREN RESULT_VAL term term RIGHT_PAREN 
+-- On LEFT_PAREN reduce production smbc_model_entry -> LEFT_PAREN RESULT_VAL term term RIGHT_PAREN 
+
+State 406:
+smbc_model_entry -> LEFT_PAREN RESULT_TYPE . ty LEFT_PAREN list(var) RIGHT_PAREN RIGHT_PAREN [ error RIGHT_PAREN LEFT_PAREN ]
+-- On LEFT_PAREN shift to state 17
+-- On IDENT shift to state 19
+-- On BOOL shift to state 20
+-- On ty shift to state 407
+
+State 407:
+smbc_model_entry -> LEFT_PAREN RESULT_TYPE ty . LEFT_PAREN list(var) RIGHT_PAREN RIGHT_PAREN [ error RIGHT_PAREN LEFT_PAREN ]
+-- On LEFT_PAREN shift to state 408
+
+State 408:
+smbc_model_entry -> LEFT_PAREN RESULT_TYPE ty LEFT_PAREN . list(var) RIGHT_PAREN RIGHT_PAREN [ error RIGHT_PAREN LEFT_PAREN ]
+-- On IDENT shift to state 75
+-- On var shift to state 409
+-- On list(var) shift to state 411
+-- On RIGHT_PAREN reduce production list(var) -> 
+
+State 409:
+list(var) -> var . list(var) [ RIGHT_PAREN ]
+-- On IDENT shift to state 75
+-- On var shift to state 409
+-- On list(var) shift to state 410
+-- On RIGHT_PAREN reduce production list(var) -> 
+
+State 410:
+list(var) -> var list(var) . [ RIGHT_PAREN ]
+-- On RIGHT_PAREN reduce production list(var) -> var list(var) 
+
+State 411:
+smbc_model_entry -> LEFT_PAREN RESULT_TYPE ty LEFT_PAREN list(var) . RIGHT_PAREN RIGHT_PAREN [ error RIGHT_PAREN LEFT_PAREN ]
+-- On RIGHT_PAREN shift to state 412
+
+State 412:
+smbc_model_entry -> LEFT_PAREN RESULT_TYPE ty LEFT_PAREN list(var) RIGHT_PAREN . RIGHT_PAREN [ error RIGHT_PAREN LEFT_PAREN ]
+-- On RIGHT_PAREN shift to state 413
+
+State 413:
+smbc_model_entry -> LEFT_PAREN RESULT_TYPE ty LEFT_PAREN list(var) RIGHT_PAREN RIGHT_PAREN . [ error RIGHT_PAREN LEFT_PAREN ]
+-- On error reduce production smbc_model_entry -> LEFT_PAREN RESULT_TYPE ty LEFT_PAREN list(var) RIGHT_PAREN RIGHT_PAREN 
+-- On RIGHT_PAREN reduce production smbc_model_entry -> LEFT_PAREN RESULT_TYPE ty LEFT_PAREN list(var) RIGHT_PAREN RIGHT_PAREN 
+-- On LEFT_PAREN reduce production smbc_model_entry -> LEFT_PAREN RESULT_TYPE ty LEFT_PAREN list(var) RIGHT_PAREN RIGHT_PAREN 
+
+State 414:
+list(smbc_model_entry) -> smbc_model_entry . list(smbc_model_entry) [ RIGHT_PAREN ]
+-- On error shift to state 400
+-- On LEFT_PAREN shift to state 401
+-- On smbc_model_entry shift to state 414
+-- On list(smbc_model_entry) shift to state 415
+-- On RIGHT_PAREN reduce production list(smbc_model_entry) -> 
+
+State 415:
+list(smbc_model_entry) -> smbc_model_entry list(smbc_model_entry) . [ RIGHT_PAREN ]
+-- On RIGHT_PAREN reduce production list(smbc_model_entry) -> smbc_model_entry list(smbc_model_entry) 
+
+State 416:
+smbc_model -> LEFT_PAREN list(smbc_model_entry) . RIGHT_PAREN [ RIGHT_PAREN ]
+-- On RIGHT_PAREN shift to state 417
+
+State 417:
+smbc_model -> LEFT_PAREN list(smbc_model_entry) RIGHT_PAREN . [ RIGHT_PAREN ]
+-- On RIGHT_PAREN reduce production smbc_model -> LEFT_PAREN list(smbc_model_entry) RIGHT_PAREN 
+
+State 418:
+smbc_res -> LEFT_PAREN RESULT_RESULT RESULT_SAT option(RESULT_ATOM_MODEL) smbc_model . RIGHT_PAREN [ EOI ]
+-- On RIGHT_PAREN shift to state 419
+
+State 419:
+smbc_res -> LEFT_PAREN RESULT_RESULT RESULT_SAT option(RESULT_ATOM_MODEL) smbc_model RIGHT_PAREN . [ EOI ]
+-- On EOI reduce production smbc_res -> LEFT_PAREN RESULT_RESULT RESULT_SAT option(RESULT_ATOM_MODEL) smbc_model RIGHT_PAREN 
+
+State 420:
+smbc_res -> LEFT_PAREN option(RESULT_RESULT) . RESULT_TIMEOUT RIGHT_PAREN [ EOI ]
+-- On RESULT_TIMEOUT shift to state 421
+
+State 421:
+smbc_res -> LEFT_PAREN option(RESULT_RESULT) RESULT_TIMEOUT . RIGHT_PAREN [ EOI ]
+-- On RIGHT_PAREN shift to state 422
+
+State 422:
+smbc_res -> LEFT_PAREN option(RESULT_RESULT) RESULT_TIMEOUT RIGHT_PAREN . [ EOI ]
+-- On EOI reduce production smbc_res -> LEFT_PAREN option(RESULT_RESULT) RESULT_TIMEOUT RIGHT_PAREN 
+
+State 423:
+parse_smbc_res -> smbc_res . EOI [ # ]
+-- On EOI shift to state 424
+
+State 424:
+parse_smbc_res -> smbc_res EOI . [ # ]
+-- On # reduce production parse_smbc_res -> smbc_res EOI 
+
+State 425:
+parse_smbc_res' -> parse_smbc_res . [ # ]
+-- On # accept parse_smbc_res
+
+State 426:
+parse_term' -> . parse_term [ # ]
+-- On error shift to state 48
+-- On TRUE shift to state 49
+-- On QUOTED shift to state 50
+-- On LEFT_PAREN shift to state 51
+-- On IDENT shift to state 65
+-- On FALSE shift to state 66
+-- On term shift to state 427
+-- On parse_term shift to state 429
+
+State 427:
+parse_term -> term . EOI [ # ]
+-- On EOI shift to state 428
+
+State 428:
+parse_term -> term EOI . [ # ]
+-- On # reduce production parse_term -> term EOI 
+
+State 429:
+parse_term' -> parse_term . [ # ]
+-- On # accept parse_term
+
+State 430:
+parse_ty' -> . parse_ty [ # ]
+-- On LEFT_PAREN shift to state 17
+-- On IDENT shift to state 19
+-- On BOOL shift to state 20
+-- On ty shift to state 431
+-- On parse_ty shift to state 433
+
+State 431:
+parse_ty -> ty . EOI [ # ]
+-- On EOI shift to state 432
+
+State 432:
+parse_ty -> ty EOI . [ # ]
+-- On # reduce production parse_ty -> ty EOI 
+
+State 433:
+parse_ty' -> parse_ty . [ # ]
+-- On # accept parse_ty
+

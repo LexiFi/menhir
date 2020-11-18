@@ -1,0 +1,121 @@
+State 0:
+parse_filename' -> . parse_filename [ # ]
+-- On TILDE shift to state 1
+-- On SEP shift to state 2
+-- On IDENT shift to state 3
+-- On EOF shift to state 4
+-- On parse_filename shift to state 8
+
+State 1:
+parse_filename -> TILDE . parse_filename [ # ]
+-- On TILDE shift to state 1
+-- On SEP shift to state 2
+-- On IDENT shift to state 3
+-- On EOF shift to state 4
+-- On parse_filename shift to state 7
+
+State 2:
+parse_filename -> SEP . parse_filename [ # ]
+-- On TILDE shift to state 1
+-- On SEP shift to state 2
+-- On IDENT shift to state 3
+-- On EOF shift to state 4
+-- On parse_filename shift to state 6
+
+State 3:
+parse_filename -> IDENT . parse_filename [ # ]
+-- On TILDE shift to state 1
+-- On SEP shift to state 2
+-- On IDENT shift to state 3
+-- On EOF shift to state 4
+-- On parse_filename shift to state 5
+
+State 4:
+parse_filename -> EOF . [ # ]
+-- On # reduce production parse_filename -> EOF 
+
+State 5:
+parse_filename -> IDENT parse_filename . [ # ]
+-- On # reduce production parse_filename -> IDENT parse_filename 
+
+State 6:
+parse_filename -> SEP parse_filename . [ # ]
+-- On # reduce production parse_filename -> SEP parse_filename 
+
+State 7:
+parse_filename -> TILDE parse_filename . [ # ]
+-- On # reduce production parse_filename -> TILDE parse_filename 
+
+State 8:
+parse_filename' -> parse_filename . [ # ]
+-- On # accept parse_filename
+
+State 9:
+parse_passwd' -> . parse_passwd [ # ]
+-- On SEP shift to state 10
+-- On IDENT shift to state 11
+-- On passwd_line shift to state 15
+-- On parse_passwd shift to state 19
+-- On EOL reduce production passwd_line -> 
+-- On EOF reduce production passwd_line -> 
+
+State 10:
+passwd_line -> SEP . passwd_line [ EOL EOF ]
+-- On SEP shift to state 10
+-- On IDENT shift to state 11
+-- On passwd_line shift to state 14
+-- On EOL reduce production passwd_line -> 
+-- On EOF reduce production passwd_line -> 
+
+State 11:
+passwd_line -> IDENT . SEP passwd_line [ EOL EOF ]
+passwd_line -> IDENT . [ EOL EOF ]
+-- On SEP shift to state 12
+-- On EOL reduce production passwd_line -> IDENT 
+-- On EOF reduce production passwd_line -> IDENT 
+
+State 12:
+passwd_line -> IDENT SEP . passwd_line [ EOL EOF ]
+-- On SEP shift to state 10
+-- On IDENT shift to state 11
+-- On passwd_line shift to state 13
+-- On EOL reduce production passwd_line -> 
+-- On EOF reduce production passwd_line -> 
+
+State 13:
+passwd_line -> IDENT SEP passwd_line . [ EOL EOF ]
+-- On EOL reduce production passwd_line -> IDENT SEP passwd_line 
+-- On EOF reduce production passwd_line -> IDENT SEP passwd_line 
+
+State 14:
+passwd_line -> SEP passwd_line . [ EOL EOF ]
+-- On EOL reduce production passwd_line -> SEP passwd_line 
+-- On EOF reduce production passwd_line -> SEP passwd_line 
+
+State 15:
+parse_passwd -> passwd_line . EOL parse_passwd [ # ]
+parse_passwd -> passwd_line . EOF [ # ]
+-- On EOL shift to state 16
+-- On EOF shift to state 18
+
+State 16:
+parse_passwd -> passwd_line EOL . parse_passwd [ # ]
+-- On SEP shift to state 10
+-- On IDENT shift to state 11
+-- On passwd_line shift to state 15
+-- On parse_passwd shift to state 17
+-- On EOL reduce production passwd_line -> 
+-- On EOF reduce production passwd_line -> 
+
+State 17:
+parse_passwd -> passwd_line EOL parse_passwd . [ # ]
+-- On # reduce production parse_passwd -> passwd_line EOL parse_passwd 
+
+State 18:
+parse_passwd -> passwd_line EOF . [ # ]
+-- On # reduce production parse_passwd -> passwd_line EOF 
+
+State 19:
+parse_passwd' -> parse_passwd . [ # ]
+-- On # accept parse_passwd
+

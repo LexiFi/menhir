@@ -1,0 +1,1376 @@
+State 0:
+idl_file' -> . idl_file [ # ]
+-- On STATIC shift to state 1
+-- On PACKAGE shift to state 2
+-- On LBRACKET shift to state 6
+-- On INTERFACE shift to state 17
+-- On FINAL shift to state 55
+-- On CLASS shift to state 91
+-- On ABSTRACT shift to state 56
+-- On modifiers shift to state 104
+-- On modifier shift to state 64
+-- On idl_file_list shift to state 152
+-- On idl_file shift to state 154
+-- On defs shift to state 155
+-- On def shift to state 118
+-- On annotations shift to state 120
+
+State 1:
+modifier -> STATIC . [ VOID TOP STRING STATIC SHORT LONG INT IDENT FLOAT FINAL DOUBLE CLASS CHAR BYTE BOOLEAN ABSTRACT ]
+-- On VOID reduce production modifier -> STATIC 
+-- On TOP reduce production modifier -> STATIC 
+-- On STRING reduce production modifier -> STATIC 
+-- On STATIC reduce production modifier -> STATIC 
+-- On SHORT reduce production modifier -> STATIC 
+-- On LONG reduce production modifier -> STATIC 
+-- On INT reduce production modifier -> STATIC 
+-- On IDENT reduce production modifier -> STATIC 
+-- On FLOAT reduce production modifier -> STATIC 
+-- On FINAL reduce production modifier -> STATIC 
+-- On DOUBLE reduce production modifier -> STATIC 
+-- On CLASS reduce production modifier -> STATIC 
+-- On CHAR reduce production modifier -> STATIC 
+-- On BYTE reduce production modifier -> STATIC 
+-- On BOOLEAN reduce production modifier -> STATIC 
+-- On ABSTRACT reduce production modifier -> STATIC 
+
+State 2:
+idl_file_list -> PACKAGE . ident_list SEMI defs [ EOF ]
+idl_file_list -> PACKAGE . ident_list SEMI defs idl_file_list [ EOF ]
+-- On IDENT shift to state 3
+-- On ident_list shift to state 4
+
+State 3:
+ident_list -> IDENT . [ SEMI DOT ]
+-- On SEMI reduce production ident_list -> IDENT 
+-- On DOT reduce production ident_list -> IDENT 
+
+State 4:
+ident_list -> ident_list . DOT IDENT [ SEMI DOT ]
+idl_file_list -> PACKAGE ident_list . SEMI defs [ EOF ]
+idl_file_list -> PACKAGE ident_list . SEMI defs idl_file_list [ EOF ]
+-- On SEMI shift to state 5
+-- On DOT shift to state 150
+
+State 5:
+idl_file_list -> PACKAGE ident_list SEMI . defs [ EOF ]
+idl_file_list -> PACKAGE ident_list SEMI . defs idl_file_list [ EOF ]
+-- On STATIC shift to state 1
+-- On LBRACKET shift to state 6
+-- On INTERFACE shift to state 17
+-- On FINAL shift to state 55
+-- On CLASS shift to state 91
+-- On ABSTRACT shift to state 56
+-- On modifiers shift to state 104
+-- On modifier shift to state 64
+-- On defs shift to state 116
+-- On def shift to state 118
+-- On annotations shift to state 120
+
+State 6:
+annotations -> LBRACKET . ann_list RBRACKET [ VOID TOP STRING STATIC SHORT LONG INTERFACE INT INIT IDENT FLOAT FINAL DOUBLE CLASS CHAR BYTE BOOLEAN ABSTRACT ]
+-- On NAME shift to state 7
+-- On CALLBACK shift to state 10
+-- On ARRAY shift to state 11
+-- On ann_list shift to state 12
+-- On ann shift to state 14
+
+State 7:
+ann -> NAME . ident [ RBRACKET COMMA ]
+-- On IDENT shift to state 8
+-- On ident shift to state 9
+
+State 8:
+ident -> IDENT . [ SEMI RPAREN RBRACKET LPAREN LBRACE IMPLEMENTS EXTENDS COMMA ]
+-- On SEMI reduce production ident -> IDENT 
+-- On RPAREN reduce production ident -> IDENT 
+-- On RBRACKET reduce production ident -> IDENT 
+-- On LPAREN reduce production ident -> IDENT 
+-- On LBRACE reduce production ident -> IDENT 
+-- On IMPLEMENTS reduce production ident -> IDENT 
+-- On EXTENDS reduce production ident -> IDENT 
+-- On COMMA reduce production ident -> IDENT 
+
+State 9:
+ann -> NAME ident . [ RBRACKET COMMA ]
+-- On RBRACKET reduce production ann -> NAME ident 
+-- On COMMA reduce production ann -> NAME ident 
+
+State 10:
+ann -> CALLBACK . [ RBRACKET COMMA ]
+-- On RBRACKET reduce production ann -> CALLBACK 
+-- On COMMA reduce production ann -> CALLBACK 
+
+State 11:
+ann -> ARRAY . [ RBRACKET COMMA ]
+-- On RBRACKET reduce production ann -> ARRAY 
+-- On COMMA reduce production ann -> ARRAY 
+
+State 12:
+annotations -> LBRACKET ann_list . RBRACKET [ VOID TOP STRING STATIC SHORT LONG INTERFACE INT INIT IDENT FLOAT FINAL DOUBLE CLASS CHAR BYTE BOOLEAN ABSTRACT ]
+-- On RBRACKET shift to state 13
+
+State 13:
+annotations -> LBRACKET ann_list RBRACKET . [ VOID TOP STRING STATIC SHORT LONG INTERFACE INT INIT IDENT FLOAT FINAL DOUBLE CLASS CHAR BYTE BOOLEAN ABSTRACT ]
+-- On VOID reduce production annotations -> LBRACKET ann_list RBRACKET 
+-- On TOP reduce production annotations -> LBRACKET ann_list RBRACKET 
+-- On STRING reduce production annotations -> LBRACKET ann_list RBRACKET 
+-- On STATIC reduce production annotations -> LBRACKET ann_list RBRACKET 
+-- On SHORT reduce production annotations -> LBRACKET ann_list RBRACKET 
+-- On LONG reduce production annotations -> LBRACKET ann_list RBRACKET 
+-- On INTERFACE reduce production annotations -> LBRACKET ann_list RBRACKET 
+-- On INT reduce production annotations -> LBRACKET ann_list RBRACKET 
+-- On INIT reduce production annotations -> LBRACKET ann_list RBRACKET 
+-- On IDENT reduce production annotations -> LBRACKET ann_list RBRACKET 
+-- On FLOAT reduce production annotations -> LBRACKET ann_list RBRACKET 
+-- On FINAL reduce production annotations -> LBRACKET ann_list RBRACKET 
+-- On DOUBLE reduce production annotations -> LBRACKET ann_list RBRACKET 
+-- On CLASS reduce production annotations -> LBRACKET ann_list RBRACKET 
+-- On CHAR reduce production annotations -> LBRACKET ann_list RBRACKET 
+-- On BYTE reduce production annotations -> LBRACKET ann_list RBRACKET 
+-- On BOOLEAN reduce production annotations -> LBRACKET ann_list RBRACKET 
+-- On ABSTRACT reduce production annotations -> LBRACKET ann_list RBRACKET 
+
+State 14:
+ann_list -> ann . [ RBRACKET ]
+ann_list -> ann . COMMA ann_list [ RBRACKET ]
+-- On COMMA shift to state 15
+-- On RBRACKET reduce production ann_list -> ann 
+
+State 15:
+ann_list -> ann COMMA . ann_list [ RBRACKET ]
+-- On NAME shift to state 7
+-- On CALLBACK shift to state 10
+-- On ARRAY shift to state 11
+-- On ann_list shift to state 16
+-- On ann shift to state 14
+
+State 16:
+ann_list -> ann COMMA ann_list . [ RBRACKET ]
+-- On RBRACKET reduce production ann_list -> ann COMMA ann_list 
+
+State 17:
+def -> INTERFACE . ident def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+def -> INTERFACE . ident IMPLEMENTS interface_list def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On IDENT shift to state 8
+-- On ident shift to state 18
+
+State 18:
+def -> INTERFACE ident . def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+def -> INTERFACE ident . IMPLEMENTS interface_list def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On LBRACE shift to state 19
+-- On IMPLEMENTS shift to state 84
+-- On def_body shift to state 90
+
+State 19:
+def_body -> LBRACE . decls RBRACE [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+def_body -> LBRACE . RBRACE [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On VOID shift to state 20
+-- On TOP shift to state 21
+-- On STRING shift to state 22
+-- On STATIC shift to state 1
+-- On SHORT shift to state 23
+-- On RBRACE shift to state 24
+-- On LONG shift to state 25
+-- On LBRACKET shift to state 6
+-- On INT shift to state 26
+-- On INIT shift to state 27
+-- On IDENT shift to state 30
+-- On FLOAT shift to state 31
+-- On FINAL shift to state 55
+-- On DOUBLE shift to state 32
+-- On CHAR shift to state 33
+-- On BYTE shift to state 34
+-- On BOOLEAN shift to state 35
+-- On ABSTRACT shift to state 56
+-- On typ shift to state 57
+-- On qident shift to state 40
+-- On modifiers shift to state 60
+-- On modifier shift to state 64
+-- On methods shift to state 66
+-- On inits shift to state 67
+-- On ident_list shift to state 41
+-- On ident shift to state 45
+-- On fields shift to state 68
+-- On decls shift to state 69
+-- On decl shift to state 71
+-- On annotations shift to state 74
+
+State 20:
+typ -> VOID . [ RPAREN LBRACKET IDENT COMMA ]
+-- On RPAREN reduce production typ -> VOID 
+-- On LBRACKET reduce production typ -> VOID 
+-- On IDENT reduce production typ -> VOID 
+-- On COMMA reduce production typ -> VOID 
+
+State 21:
+typ -> TOP . [ RPAREN LBRACKET IDENT COMMA ]
+-- On RPAREN reduce production typ -> TOP 
+-- On LBRACKET reduce production typ -> TOP 
+-- On IDENT reduce production typ -> TOP 
+-- On COMMA reduce production typ -> TOP 
+
+State 22:
+typ -> STRING . [ RPAREN LBRACKET IDENT COMMA ]
+-- On RPAREN reduce production typ -> STRING 
+-- On LBRACKET reduce production typ -> STRING 
+-- On IDENT reduce production typ -> STRING 
+-- On COMMA reduce production typ -> STRING 
+
+State 23:
+typ -> SHORT . [ RPAREN LBRACKET IDENT COMMA ]
+-- On RPAREN reduce production typ -> SHORT 
+-- On LBRACKET reduce production typ -> SHORT 
+-- On IDENT reduce production typ -> SHORT 
+-- On COMMA reduce production typ -> SHORT 
+
+State 24:
+def_body -> LBRACE RBRACE . [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On STATIC reduce production def_body -> LBRACE RBRACE 
+-- On PACKAGE reduce production def_body -> LBRACE RBRACE 
+-- On LBRACKET reduce production def_body -> LBRACE RBRACE 
+-- On INTERFACE reduce production def_body -> LBRACE RBRACE 
+-- On FINAL reduce production def_body -> LBRACE RBRACE 
+-- On EOF reduce production def_body -> LBRACE RBRACE 
+-- On CLASS reduce production def_body -> LBRACE RBRACE 
+-- On ABSTRACT reduce production def_body -> LBRACE RBRACE 
+
+State 25:
+typ -> LONG . [ RPAREN LBRACKET IDENT COMMA ]
+-- On RPAREN reduce production typ -> LONG 
+-- On LBRACKET reduce production typ -> LONG 
+-- On IDENT reduce production typ -> LONG 
+-- On COMMA reduce production typ -> LONG 
+
+State 26:
+typ -> INT . [ RPAREN LBRACKET IDENT COMMA ]
+-- On RPAREN reduce production typ -> INT 
+-- On LBRACKET reduce production typ -> INT 
+-- On IDENT reduce production typ -> INT 
+-- On COMMA reduce production typ -> INT 
+
+State 27:
+inits -> INIT . args [ SEMI ]
+-- On LPAREN shift to state 28
+-- On args shift to state 54
+
+State 28:
+args -> LPAREN . RPAREN [ SEMI ]
+args -> LPAREN . arg_list RPAREN [ SEMI ]
+-- On VOID shift to state 20
+-- On TOP shift to state 21
+-- On STRING shift to state 22
+-- On SHORT shift to state 23
+-- On RPAREN shift to state 29
+-- On LONG shift to state 25
+-- On LBRACKET shift to state 6
+-- On INT shift to state 26
+-- On IDENT shift to state 30
+-- On FLOAT shift to state 31
+-- On DOUBLE shift to state 32
+-- On CHAR shift to state 33
+-- On BYTE shift to state 34
+-- On BOOLEAN shift to state 35
+-- On typ shift to state 36
+-- On qident shift to state 40
+-- On ident_list shift to state 41
+-- On ident shift to state 45
+-- On arg_list shift to state 46
+-- On arg shift to state 48
+-- On annotations shift to state 51
+
+State 29:
+args -> LPAREN RPAREN . [ SEMI ]
+-- On SEMI reduce production args -> LPAREN RPAREN 
+
+State 30:
+ident -> IDENT . [ RPAREN LBRACKET LBRACE IMPLEMENTS IDENT COMMA ]
+ident_list -> IDENT . [ DOT ]
+-- On RPAREN reduce production ident -> IDENT 
+-- On LBRACKET reduce production ident -> IDENT 
+-- On LBRACE reduce production ident -> IDENT 
+-- On IMPLEMENTS reduce production ident -> IDENT 
+-- On IDENT reduce production ident -> IDENT 
+-- On DOT reduce production ident_list -> IDENT 
+-- On COMMA reduce production ident -> IDENT 
+
+State 31:
+typ -> FLOAT . [ RPAREN LBRACKET IDENT COMMA ]
+-- On RPAREN reduce production typ -> FLOAT 
+-- On LBRACKET reduce production typ -> FLOAT 
+-- On IDENT reduce production typ -> FLOAT 
+-- On COMMA reduce production typ -> FLOAT 
+
+State 32:
+typ -> DOUBLE . [ RPAREN LBRACKET IDENT COMMA ]
+-- On RPAREN reduce production typ -> DOUBLE 
+-- On LBRACKET reduce production typ -> DOUBLE 
+-- On IDENT reduce production typ -> DOUBLE 
+-- On COMMA reduce production typ -> DOUBLE 
+
+State 33:
+typ -> CHAR . [ RPAREN LBRACKET IDENT COMMA ]
+-- On RPAREN reduce production typ -> CHAR 
+-- On LBRACKET reduce production typ -> CHAR 
+-- On IDENT reduce production typ -> CHAR 
+-- On COMMA reduce production typ -> CHAR 
+
+State 34:
+typ -> BYTE . [ RPAREN LBRACKET IDENT COMMA ]
+-- On RPAREN reduce production typ -> BYTE 
+-- On LBRACKET reduce production typ -> BYTE 
+-- On IDENT reduce production typ -> BYTE 
+-- On COMMA reduce production typ -> BYTE 
+
+State 35:
+typ -> BOOLEAN . [ RPAREN LBRACKET IDENT COMMA ]
+-- On RPAREN reduce production typ -> BOOLEAN 
+-- On LBRACKET reduce production typ -> BOOLEAN 
+-- On IDENT reduce production typ -> BOOLEAN 
+-- On COMMA reduce production typ -> BOOLEAN 
+
+State 36:
+arg -> typ . [ RPAREN COMMA ]
+arg -> typ . ident [ RPAREN COMMA ]
+typ -> typ . LBRACKET RBRACKET [ RPAREN LBRACKET IDENT COMMA ]
+-- On LBRACKET shift to state 37
+-- On IDENT shift to state 8
+-- On ident shift to state 39
+-- On RPAREN reduce production arg -> typ 
+-- On COMMA reduce production arg -> typ 
+
+State 37:
+typ -> typ LBRACKET . RBRACKET [ RPAREN LBRACKET IDENT COMMA ]
+-- On RBRACKET shift to state 38
+
+State 38:
+typ -> typ LBRACKET RBRACKET . [ RPAREN LBRACKET IDENT COMMA ]
+-- On RPAREN reduce production typ -> typ LBRACKET RBRACKET 
+-- On LBRACKET reduce production typ -> typ LBRACKET RBRACKET 
+-- On IDENT reduce production typ -> typ LBRACKET RBRACKET 
+-- On COMMA reduce production typ -> typ LBRACKET RBRACKET 
+
+State 39:
+arg -> typ ident . [ RPAREN COMMA ]
+-- On RPAREN reduce production arg -> typ ident 
+-- On COMMA reduce production arg -> typ ident 
+
+State 40:
+typ -> qident . [ RPAREN LBRACKET IDENT COMMA ]
+-- On RPAREN reduce production typ -> qident 
+-- On LBRACKET reduce production typ -> qident 
+-- On IDENT reduce production typ -> qident 
+-- On COMMA reduce production typ -> qident 
+
+State 41:
+ident_list -> ident_list . DOT IDENT [ DOT ]
+qident -> ident_list . DOT ident [ RPAREN LBRACKET LBRACE IMPLEMENTS IDENT COMMA ]
+-- On DOT shift to state 42
+
+State 42:
+ident_list -> ident_list DOT . IDENT [ DOT ]
+qident -> ident_list DOT . ident [ RPAREN LBRACKET LBRACE IMPLEMENTS IDENT COMMA ]
+-- On IDENT shift to state 43
+-- On ident shift to state 44
+
+State 43:
+ident -> IDENT . [ RPAREN LBRACKET LBRACE IMPLEMENTS IDENT COMMA ]
+ident_list -> ident_list DOT IDENT . [ DOT ]
+-- On RPAREN reduce production ident -> IDENT 
+-- On LBRACKET reduce production ident -> IDENT 
+-- On LBRACE reduce production ident -> IDENT 
+-- On IMPLEMENTS reduce production ident -> IDENT 
+-- On IDENT reduce production ident -> IDENT 
+-- On DOT reduce production ident_list -> ident_list DOT IDENT 
+-- On COMMA reduce production ident -> IDENT 
+
+State 44:
+qident -> ident_list DOT ident . [ RPAREN LBRACKET LBRACE IMPLEMENTS IDENT COMMA ]
+-- On RPAREN reduce production qident -> ident_list DOT ident 
+-- On LBRACKET reduce production qident -> ident_list DOT ident 
+-- On LBRACE reduce production qident -> ident_list DOT ident 
+-- On IMPLEMENTS reduce production qident -> ident_list DOT ident 
+-- On IDENT reduce production qident -> ident_list DOT ident 
+-- On COMMA reduce production qident -> ident_list DOT ident 
+
+State 45:
+qident -> ident . [ RPAREN LBRACKET LBRACE IMPLEMENTS IDENT COMMA ]
+-- On RPAREN reduce production qident -> ident 
+-- On LBRACKET reduce production qident -> ident 
+-- On LBRACE reduce production qident -> ident 
+-- On IMPLEMENTS reduce production qident -> ident 
+-- On IDENT reduce production qident -> ident 
+-- On COMMA reduce production qident -> ident 
+
+State 46:
+args -> LPAREN arg_list . RPAREN [ SEMI ]
+-- On RPAREN shift to state 47
+
+State 47:
+args -> LPAREN arg_list RPAREN . [ SEMI ]
+-- On SEMI reduce production args -> LPAREN arg_list RPAREN 
+
+State 48:
+arg_list -> arg . [ RPAREN ]
+arg_list -> arg . COMMA arg_list [ RPAREN ]
+-- On COMMA shift to state 49
+-- On RPAREN reduce production arg_list -> arg 
+
+State 49:
+arg_list -> arg COMMA . arg_list [ RPAREN ]
+-- On VOID shift to state 20
+-- On TOP shift to state 21
+-- On STRING shift to state 22
+-- On SHORT shift to state 23
+-- On LONG shift to state 25
+-- On LBRACKET shift to state 6
+-- On INT shift to state 26
+-- On IDENT shift to state 30
+-- On FLOAT shift to state 31
+-- On DOUBLE shift to state 32
+-- On CHAR shift to state 33
+-- On BYTE shift to state 34
+-- On BOOLEAN shift to state 35
+-- On typ shift to state 36
+-- On qident shift to state 40
+-- On ident_list shift to state 41
+-- On ident shift to state 45
+-- On arg_list shift to state 50
+-- On arg shift to state 48
+-- On annotations shift to state 51
+
+State 50:
+arg_list -> arg COMMA arg_list . [ RPAREN ]
+-- On RPAREN reduce production arg_list -> arg COMMA arg_list 
+
+State 51:
+arg -> annotations . typ [ RPAREN COMMA ]
+arg -> annotations . typ ident [ RPAREN COMMA ]
+-- On VOID shift to state 20
+-- On TOP shift to state 21
+-- On STRING shift to state 22
+-- On SHORT shift to state 23
+-- On LONG shift to state 25
+-- On INT shift to state 26
+-- On IDENT shift to state 30
+-- On FLOAT shift to state 31
+-- On DOUBLE shift to state 32
+-- On CHAR shift to state 33
+-- On BYTE shift to state 34
+-- On BOOLEAN shift to state 35
+-- On typ shift to state 52
+-- On qident shift to state 40
+-- On ident_list shift to state 41
+-- On ident shift to state 45
+
+State 52:
+arg -> annotations typ . [ RPAREN COMMA ]
+arg -> annotations typ . ident [ RPAREN COMMA ]
+typ -> typ . LBRACKET RBRACKET [ RPAREN LBRACKET IDENT COMMA ]
+-- On LBRACKET shift to state 37
+-- On IDENT shift to state 8
+-- On ident shift to state 53
+-- On RPAREN reduce production arg -> annotations typ 
+-- On COMMA reduce production arg -> annotations typ 
+
+State 53:
+arg -> annotations typ ident . [ RPAREN COMMA ]
+-- On RPAREN reduce production arg -> annotations typ ident 
+-- On COMMA reduce production arg -> annotations typ ident 
+
+State 54:
+inits -> INIT args . [ SEMI ]
+-- On SEMI reduce production inits -> INIT args 
+
+State 55:
+modifier -> FINAL . [ VOID TOP STRING STATIC SHORT LONG INT IDENT FLOAT FINAL DOUBLE CLASS CHAR BYTE BOOLEAN ABSTRACT ]
+-- On VOID reduce production modifier -> FINAL 
+-- On TOP reduce production modifier -> FINAL 
+-- On STRING reduce production modifier -> FINAL 
+-- On STATIC reduce production modifier -> FINAL 
+-- On SHORT reduce production modifier -> FINAL 
+-- On LONG reduce production modifier -> FINAL 
+-- On INT reduce production modifier -> FINAL 
+-- On IDENT reduce production modifier -> FINAL 
+-- On FLOAT reduce production modifier -> FINAL 
+-- On FINAL reduce production modifier -> FINAL 
+-- On DOUBLE reduce production modifier -> FINAL 
+-- On CLASS reduce production modifier -> FINAL 
+-- On CHAR reduce production modifier -> FINAL 
+-- On BYTE reduce production modifier -> FINAL 
+-- On BOOLEAN reduce production modifier -> FINAL 
+-- On ABSTRACT reduce production modifier -> FINAL 
+
+State 56:
+modifier -> ABSTRACT . [ VOID TOP STRING STATIC SHORT LONG INT IDENT FLOAT FINAL DOUBLE CLASS CHAR BYTE BOOLEAN ABSTRACT ]
+-- On VOID reduce production modifier -> ABSTRACT 
+-- On TOP reduce production modifier -> ABSTRACT 
+-- On STRING reduce production modifier -> ABSTRACT 
+-- On STATIC reduce production modifier -> ABSTRACT 
+-- On SHORT reduce production modifier -> ABSTRACT 
+-- On LONG reduce production modifier -> ABSTRACT 
+-- On INT reduce production modifier -> ABSTRACT 
+-- On IDENT reduce production modifier -> ABSTRACT 
+-- On FLOAT reduce production modifier -> ABSTRACT 
+-- On FINAL reduce production modifier -> ABSTRACT 
+-- On DOUBLE reduce production modifier -> ABSTRACT 
+-- On CLASS reduce production modifier -> ABSTRACT 
+-- On CHAR reduce production modifier -> ABSTRACT 
+-- On BYTE reduce production modifier -> ABSTRACT 
+-- On BOOLEAN reduce production modifier -> ABSTRACT 
+-- On ABSTRACT reduce production modifier -> ABSTRACT 
+
+State 57:
+fields -> typ . ident [ SEMI ]
+methods -> typ . ident args [ SEMI ]
+typ -> typ . LBRACKET RBRACKET [ LBRACKET IDENT ]
+-- On LBRACKET shift to state 37
+-- On IDENT shift to state 8
+-- On ident shift to state 58
+
+State 58:
+fields -> typ ident . [ SEMI ]
+methods -> typ ident . args [ SEMI ]
+-- On LPAREN shift to state 28
+-- On args shift to state 59
+-- On SEMI reduce production fields -> typ ident 
+
+State 59:
+methods -> typ ident args . [ SEMI ]
+-- On SEMI reduce production methods -> typ ident args 
+
+State 60:
+fields -> modifiers . typ ident [ SEMI ]
+methods -> modifiers . typ ident args [ SEMI ]
+-- On VOID shift to state 20
+-- On TOP shift to state 21
+-- On STRING shift to state 22
+-- On SHORT shift to state 23
+-- On LONG shift to state 25
+-- On INT shift to state 26
+-- On IDENT shift to state 30
+-- On FLOAT shift to state 31
+-- On DOUBLE shift to state 32
+-- On CHAR shift to state 33
+-- On BYTE shift to state 34
+-- On BOOLEAN shift to state 35
+-- On typ shift to state 61
+-- On qident shift to state 40
+-- On ident_list shift to state 41
+-- On ident shift to state 45
+
+State 61:
+fields -> modifiers typ . ident [ SEMI ]
+methods -> modifiers typ . ident args [ SEMI ]
+typ -> typ . LBRACKET RBRACKET [ LBRACKET IDENT ]
+-- On LBRACKET shift to state 37
+-- On IDENT shift to state 8
+-- On ident shift to state 62
+
+State 62:
+fields -> modifiers typ ident . [ SEMI ]
+methods -> modifiers typ ident . args [ SEMI ]
+-- On LPAREN shift to state 28
+-- On args shift to state 63
+-- On SEMI reduce production fields -> modifiers typ ident 
+
+State 63:
+methods -> modifiers typ ident args . [ SEMI ]
+-- On SEMI reduce production methods -> modifiers typ ident args 
+
+State 64:
+modifiers -> modifier . [ VOID TOP STRING SHORT LONG INT IDENT FLOAT DOUBLE CLASS CHAR BYTE BOOLEAN ]
+modifiers -> modifier . modifiers [ VOID TOP STRING SHORT LONG INT IDENT FLOAT DOUBLE CLASS CHAR BYTE BOOLEAN ]
+-- On STATIC shift to state 1
+-- On FINAL shift to state 55
+-- On ABSTRACT shift to state 56
+-- On modifiers shift to state 65
+-- On modifier shift to state 64
+-- On VOID reduce production modifiers -> modifier 
+-- On TOP reduce production modifiers -> modifier 
+-- On STRING reduce production modifiers -> modifier 
+-- On SHORT reduce production modifiers -> modifier 
+-- On LONG reduce production modifiers -> modifier 
+-- On INT reduce production modifiers -> modifier 
+-- On IDENT reduce production modifiers -> modifier 
+-- On FLOAT reduce production modifiers -> modifier 
+-- On DOUBLE reduce production modifiers -> modifier 
+-- On CLASS reduce production modifiers -> modifier 
+-- On CHAR reduce production modifiers -> modifier 
+-- On BYTE reduce production modifiers -> modifier 
+-- On BOOLEAN reduce production modifiers -> modifier 
+
+State 65:
+modifiers -> modifier modifiers . [ VOID TOP STRING SHORT LONG INT IDENT FLOAT DOUBLE CLASS CHAR BYTE BOOLEAN ]
+-- On VOID reduce production modifiers -> modifier modifiers 
+-- On TOP reduce production modifiers -> modifier modifiers 
+-- On STRING reduce production modifiers -> modifier modifiers 
+-- On SHORT reduce production modifiers -> modifier modifiers 
+-- On LONG reduce production modifiers -> modifier modifiers 
+-- On INT reduce production modifiers -> modifier modifiers 
+-- On IDENT reduce production modifiers -> modifier modifiers 
+-- On FLOAT reduce production modifiers -> modifier modifiers 
+-- On DOUBLE reduce production modifiers -> modifier modifiers 
+-- On CLASS reduce production modifiers -> modifier modifiers 
+-- On CHAR reduce production modifiers -> modifier modifiers 
+-- On BYTE reduce production modifiers -> modifier modifiers 
+-- On BOOLEAN reduce production modifiers -> modifier modifiers 
+
+State 66:
+decl -> methods . [ SEMI ]
+-- On SEMI reduce production decl -> methods 
+
+State 67:
+decl -> inits . [ SEMI ]
+-- On SEMI reduce production decl -> inits 
+
+State 68:
+decl -> fields . [ SEMI ]
+-- On SEMI reduce production decl -> fields 
+
+State 69:
+def_body -> LBRACE decls . RBRACE [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On RBRACE shift to state 70
+
+State 70:
+def_body -> LBRACE decls RBRACE . [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On STATIC reduce production def_body -> LBRACE decls RBRACE 
+-- On PACKAGE reduce production def_body -> LBRACE decls RBRACE 
+-- On LBRACKET reduce production def_body -> LBRACE decls RBRACE 
+-- On INTERFACE reduce production def_body -> LBRACE decls RBRACE 
+-- On FINAL reduce production def_body -> LBRACE decls RBRACE 
+-- On EOF reduce production def_body -> LBRACE decls RBRACE 
+-- On CLASS reduce production def_body -> LBRACE decls RBRACE 
+-- On ABSTRACT reduce production def_body -> LBRACE decls RBRACE 
+
+State 71:
+decls -> decl . SEMI [ RBRACE ]
+decls -> decl . SEMI decls [ RBRACE ]
+-- On SEMI shift to state 72
+
+State 72:
+decls -> decl SEMI . [ RBRACE ]
+decls -> decl SEMI . decls [ RBRACE ]
+-- On VOID shift to state 20
+-- On TOP shift to state 21
+-- On STRING shift to state 22
+-- On STATIC shift to state 1
+-- On SHORT shift to state 23
+-- On LONG shift to state 25
+-- On LBRACKET shift to state 6
+-- On INT shift to state 26
+-- On INIT shift to state 27
+-- On IDENT shift to state 30
+-- On FLOAT shift to state 31
+-- On FINAL shift to state 55
+-- On DOUBLE shift to state 32
+-- On CHAR shift to state 33
+-- On BYTE shift to state 34
+-- On BOOLEAN shift to state 35
+-- On ABSTRACT shift to state 56
+-- On typ shift to state 57
+-- On qident shift to state 40
+-- On modifiers shift to state 60
+-- On modifier shift to state 64
+-- On methods shift to state 66
+-- On inits shift to state 67
+-- On ident_list shift to state 41
+-- On ident shift to state 45
+-- On fields shift to state 68
+-- On decls shift to state 73
+-- On decl shift to state 71
+-- On annotations shift to state 74
+-- On RBRACE reduce production decls -> decl SEMI 
+
+State 73:
+decls -> decl SEMI decls . [ RBRACE ]
+-- On RBRACE reduce production decls -> decl SEMI decls 
+
+State 74:
+fields -> annotations . typ ident [ SEMI ]
+fields -> annotations . modifiers typ ident [ SEMI ]
+inits -> annotations . INIT args [ SEMI ]
+methods -> annotations . typ ident args [ SEMI ]
+methods -> annotations . modifiers typ ident args [ SEMI ]
+-- On VOID shift to state 20
+-- On TOP shift to state 21
+-- On STRING shift to state 22
+-- On STATIC shift to state 1
+-- On SHORT shift to state 23
+-- On LONG shift to state 25
+-- On INT shift to state 26
+-- On INIT shift to state 75
+-- On IDENT shift to state 30
+-- On FLOAT shift to state 31
+-- On FINAL shift to state 55
+-- On DOUBLE shift to state 32
+-- On CHAR shift to state 33
+-- On BYTE shift to state 34
+-- On BOOLEAN shift to state 35
+-- On ABSTRACT shift to state 56
+-- On typ shift to state 77
+-- On qident shift to state 40
+-- On modifiers shift to state 80
+-- On modifier shift to state 64
+-- On ident_list shift to state 41
+-- On ident shift to state 45
+
+State 75:
+inits -> annotations INIT . args [ SEMI ]
+-- On LPAREN shift to state 28
+-- On args shift to state 76
+
+State 76:
+inits -> annotations INIT args . [ SEMI ]
+-- On SEMI reduce production inits -> annotations INIT args 
+
+State 77:
+fields -> annotations typ . ident [ SEMI ]
+methods -> annotations typ . ident args [ SEMI ]
+typ -> typ . LBRACKET RBRACKET [ LBRACKET IDENT ]
+-- On LBRACKET shift to state 37
+-- On IDENT shift to state 8
+-- On ident shift to state 78
+
+State 78:
+fields -> annotations typ ident . [ SEMI ]
+methods -> annotations typ ident . args [ SEMI ]
+-- On LPAREN shift to state 28
+-- On args shift to state 79
+-- On SEMI reduce production fields -> annotations typ ident 
+
+State 79:
+methods -> annotations typ ident args . [ SEMI ]
+-- On SEMI reduce production methods -> annotations typ ident args 
+
+State 80:
+fields -> annotations modifiers . typ ident [ SEMI ]
+methods -> annotations modifiers . typ ident args [ SEMI ]
+-- On VOID shift to state 20
+-- On TOP shift to state 21
+-- On STRING shift to state 22
+-- On SHORT shift to state 23
+-- On LONG shift to state 25
+-- On INT shift to state 26
+-- On IDENT shift to state 30
+-- On FLOAT shift to state 31
+-- On DOUBLE shift to state 32
+-- On CHAR shift to state 33
+-- On BYTE shift to state 34
+-- On BOOLEAN shift to state 35
+-- On typ shift to state 81
+-- On qident shift to state 40
+-- On ident_list shift to state 41
+-- On ident shift to state 45
+
+State 81:
+fields -> annotations modifiers typ . ident [ SEMI ]
+methods -> annotations modifiers typ . ident args [ SEMI ]
+typ -> typ . LBRACKET RBRACKET [ LBRACKET IDENT ]
+-- On LBRACKET shift to state 37
+-- On IDENT shift to state 8
+-- On ident shift to state 82
+
+State 82:
+fields -> annotations modifiers typ ident . [ SEMI ]
+methods -> annotations modifiers typ ident . args [ SEMI ]
+-- On LPAREN shift to state 28
+-- On args shift to state 83
+-- On SEMI reduce production fields -> annotations modifiers typ ident 
+
+State 83:
+methods -> annotations modifiers typ ident args . [ SEMI ]
+-- On SEMI reduce production methods -> annotations modifiers typ ident args 
+
+State 84:
+def -> INTERFACE ident IMPLEMENTS . interface_list def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On IDENT shift to state 30
+-- On qident shift to state 85
+-- On interface_list shift to state 88
+-- On ident_list shift to state 41
+-- On ident shift to state 45
+
+State 85:
+interface_list -> qident . [ LBRACE ]
+interface_list -> qident . COMMA interface_list [ LBRACE ]
+-- On COMMA shift to state 86
+-- On LBRACE reduce production interface_list -> qident 
+
+State 86:
+interface_list -> qident COMMA . interface_list [ LBRACE ]
+-- On IDENT shift to state 30
+-- On qident shift to state 85
+-- On interface_list shift to state 87
+-- On ident_list shift to state 41
+-- On ident shift to state 45
+
+State 87:
+interface_list -> qident COMMA interface_list . [ LBRACE ]
+-- On LBRACE reduce production interface_list -> qident COMMA interface_list 
+
+State 88:
+def -> INTERFACE ident IMPLEMENTS interface_list . def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On LBRACE shift to state 19
+-- On def_body shift to state 89
+
+State 89:
+def -> INTERFACE ident IMPLEMENTS interface_list def_body . [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On STATIC reduce production def -> INTERFACE ident IMPLEMENTS interface_list def_body 
+-- On PACKAGE reduce production def -> INTERFACE ident IMPLEMENTS interface_list def_body 
+-- On LBRACKET reduce production def -> INTERFACE ident IMPLEMENTS interface_list def_body 
+-- On INTERFACE reduce production def -> INTERFACE ident IMPLEMENTS interface_list def_body 
+-- On FINAL reduce production def -> INTERFACE ident IMPLEMENTS interface_list def_body 
+-- On EOF reduce production def -> INTERFACE ident IMPLEMENTS interface_list def_body 
+-- On CLASS reduce production def -> INTERFACE ident IMPLEMENTS interface_list def_body 
+-- On ABSTRACT reduce production def -> INTERFACE ident IMPLEMENTS interface_list def_body 
+
+State 90:
+def -> INTERFACE ident def_body . [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On STATIC reduce production def -> INTERFACE ident def_body 
+-- On PACKAGE reduce production def -> INTERFACE ident def_body 
+-- On LBRACKET reduce production def -> INTERFACE ident def_body 
+-- On INTERFACE reduce production def -> INTERFACE ident def_body 
+-- On FINAL reduce production def -> INTERFACE ident def_body 
+-- On EOF reduce production def -> INTERFACE ident def_body 
+-- On CLASS reduce production def -> INTERFACE ident def_body 
+-- On ABSTRACT reduce production def -> INTERFACE ident def_body 
+
+State 91:
+def -> CLASS . ident def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+def -> CLASS . ident super def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+def -> CLASS . ident IMPLEMENTS interface_list def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+def -> CLASS . ident super IMPLEMENTS interface_list def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On IDENT shift to state 8
+-- On ident shift to state 92
+
+State 92:
+def -> CLASS ident . def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+def -> CLASS ident . super def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+def -> CLASS ident . IMPLEMENTS interface_list def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+def -> CLASS ident . super IMPLEMENTS interface_list def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On LBRACE shift to state 19
+-- On IMPLEMENTS shift to state 93
+-- On EXTENDS shift to state 96
+-- On super shift to state 98
+-- On def_body shift to state 103
+
+State 93:
+def -> CLASS ident IMPLEMENTS . interface_list def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On IDENT shift to state 30
+-- On qident shift to state 85
+-- On interface_list shift to state 94
+-- On ident_list shift to state 41
+-- On ident shift to state 45
+
+State 94:
+def -> CLASS ident IMPLEMENTS interface_list . def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On LBRACE shift to state 19
+-- On def_body shift to state 95
+
+State 95:
+def -> CLASS ident IMPLEMENTS interface_list def_body . [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On STATIC reduce production def -> CLASS ident IMPLEMENTS interface_list def_body 
+-- On PACKAGE reduce production def -> CLASS ident IMPLEMENTS interface_list def_body 
+-- On LBRACKET reduce production def -> CLASS ident IMPLEMENTS interface_list def_body 
+-- On INTERFACE reduce production def -> CLASS ident IMPLEMENTS interface_list def_body 
+-- On FINAL reduce production def -> CLASS ident IMPLEMENTS interface_list def_body 
+-- On EOF reduce production def -> CLASS ident IMPLEMENTS interface_list def_body 
+-- On CLASS reduce production def -> CLASS ident IMPLEMENTS interface_list def_body 
+-- On ABSTRACT reduce production def -> CLASS ident IMPLEMENTS interface_list def_body 
+
+State 96:
+super -> EXTENDS . qident [ LBRACE IMPLEMENTS ]
+-- On IDENT shift to state 30
+-- On qident shift to state 97
+-- On ident_list shift to state 41
+-- On ident shift to state 45
+
+State 97:
+super -> EXTENDS qident . [ LBRACE IMPLEMENTS ]
+-- On LBRACE reduce production super -> EXTENDS qident 
+-- On IMPLEMENTS reduce production super -> EXTENDS qident 
+
+State 98:
+def -> CLASS ident super . def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+def -> CLASS ident super . IMPLEMENTS interface_list def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On LBRACE shift to state 19
+-- On IMPLEMENTS shift to state 99
+-- On def_body shift to state 102
+
+State 99:
+def -> CLASS ident super IMPLEMENTS . interface_list def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On IDENT shift to state 30
+-- On qident shift to state 85
+-- On interface_list shift to state 100
+-- On ident_list shift to state 41
+-- On ident shift to state 45
+
+State 100:
+def -> CLASS ident super IMPLEMENTS interface_list . def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On LBRACE shift to state 19
+-- On def_body shift to state 101
+
+State 101:
+def -> CLASS ident super IMPLEMENTS interface_list def_body . [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On STATIC reduce production def -> CLASS ident super IMPLEMENTS interface_list def_body 
+-- On PACKAGE reduce production def -> CLASS ident super IMPLEMENTS interface_list def_body 
+-- On LBRACKET reduce production def -> CLASS ident super IMPLEMENTS interface_list def_body 
+-- On INTERFACE reduce production def -> CLASS ident super IMPLEMENTS interface_list def_body 
+-- On FINAL reduce production def -> CLASS ident super IMPLEMENTS interface_list def_body 
+-- On EOF reduce production def -> CLASS ident super IMPLEMENTS interface_list def_body 
+-- On CLASS reduce production def -> CLASS ident super IMPLEMENTS interface_list def_body 
+-- On ABSTRACT reduce production def -> CLASS ident super IMPLEMENTS interface_list def_body 
+
+State 102:
+def -> CLASS ident super def_body . [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On STATIC reduce production def -> CLASS ident super def_body 
+-- On PACKAGE reduce production def -> CLASS ident super def_body 
+-- On LBRACKET reduce production def -> CLASS ident super def_body 
+-- On INTERFACE reduce production def -> CLASS ident super def_body 
+-- On FINAL reduce production def -> CLASS ident super def_body 
+-- On EOF reduce production def -> CLASS ident super def_body 
+-- On CLASS reduce production def -> CLASS ident super def_body 
+-- On ABSTRACT reduce production def -> CLASS ident super def_body 
+
+State 103:
+def -> CLASS ident def_body . [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On STATIC reduce production def -> CLASS ident def_body 
+-- On PACKAGE reduce production def -> CLASS ident def_body 
+-- On LBRACKET reduce production def -> CLASS ident def_body 
+-- On INTERFACE reduce production def -> CLASS ident def_body 
+-- On FINAL reduce production def -> CLASS ident def_body 
+-- On EOF reduce production def -> CLASS ident def_body 
+-- On CLASS reduce production def -> CLASS ident def_body 
+-- On ABSTRACT reduce production def -> CLASS ident def_body 
+
+State 104:
+def -> modifiers . CLASS ident def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+def -> modifiers . CLASS ident super def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+def -> modifiers . CLASS ident IMPLEMENTS interface_list def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+def -> modifiers . CLASS ident super IMPLEMENTS interface_list def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On CLASS shift to state 105
+
+State 105:
+def -> modifiers CLASS . ident def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+def -> modifiers CLASS . ident super def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+def -> modifiers CLASS . ident IMPLEMENTS interface_list def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+def -> modifiers CLASS . ident super IMPLEMENTS interface_list def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On IDENT shift to state 8
+-- On ident shift to state 106
+
+State 106:
+def -> modifiers CLASS ident . def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+def -> modifiers CLASS ident . super def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+def -> modifiers CLASS ident . IMPLEMENTS interface_list def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+def -> modifiers CLASS ident . super IMPLEMENTS interface_list def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On LBRACE shift to state 19
+-- On IMPLEMENTS shift to state 107
+-- On EXTENDS shift to state 96
+-- On super shift to state 110
+-- On def_body shift to state 115
+
+State 107:
+def -> modifiers CLASS ident IMPLEMENTS . interface_list def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On IDENT shift to state 30
+-- On qident shift to state 85
+-- On interface_list shift to state 108
+-- On ident_list shift to state 41
+-- On ident shift to state 45
+
+State 108:
+def -> modifiers CLASS ident IMPLEMENTS interface_list . def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On LBRACE shift to state 19
+-- On def_body shift to state 109
+
+State 109:
+def -> modifiers CLASS ident IMPLEMENTS interface_list def_body . [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On STATIC reduce production def -> modifiers CLASS ident IMPLEMENTS interface_list def_body 
+-- On PACKAGE reduce production def -> modifiers CLASS ident IMPLEMENTS interface_list def_body 
+-- On LBRACKET reduce production def -> modifiers CLASS ident IMPLEMENTS interface_list def_body 
+-- On INTERFACE reduce production def -> modifiers CLASS ident IMPLEMENTS interface_list def_body 
+-- On FINAL reduce production def -> modifiers CLASS ident IMPLEMENTS interface_list def_body 
+-- On EOF reduce production def -> modifiers CLASS ident IMPLEMENTS interface_list def_body 
+-- On CLASS reduce production def -> modifiers CLASS ident IMPLEMENTS interface_list def_body 
+-- On ABSTRACT reduce production def -> modifiers CLASS ident IMPLEMENTS interface_list def_body 
+
+State 110:
+def -> modifiers CLASS ident super . def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+def -> modifiers CLASS ident super . IMPLEMENTS interface_list def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On LBRACE shift to state 19
+-- On IMPLEMENTS shift to state 111
+-- On def_body shift to state 114
+
+State 111:
+def -> modifiers CLASS ident super IMPLEMENTS . interface_list def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On IDENT shift to state 30
+-- On qident shift to state 85
+-- On interface_list shift to state 112
+-- On ident_list shift to state 41
+-- On ident shift to state 45
+
+State 112:
+def -> modifiers CLASS ident super IMPLEMENTS interface_list . def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On LBRACE shift to state 19
+-- On def_body shift to state 113
+
+State 113:
+def -> modifiers CLASS ident super IMPLEMENTS interface_list def_body . [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On STATIC reduce production def -> modifiers CLASS ident super IMPLEMENTS interface_list def_body 
+-- On PACKAGE reduce production def -> modifiers CLASS ident super IMPLEMENTS interface_list def_body 
+-- On LBRACKET reduce production def -> modifiers CLASS ident super IMPLEMENTS interface_list def_body 
+-- On INTERFACE reduce production def -> modifiers CLASS ident super IMPLEMENTS interface_list def_body 
+-- On FINAL reduce production def -> modifiers CLASS ident super IMPLEMENTS interface_list def_body 
+-- On EOF reduce production def -> modifiers CLASS ident super IMPLEMENTS interface_list def_body 
+-- On CLASS reduce production def -> modifiers CLASS ident super IMPLEMENTS interface_list def_body 
+-- On ABSTRACT reduce production def -> modifiers CLASS ident super IMPLEMENTS interface_list def_body 
+
+State 114:
+def -> modifiers CLASS ident super def_body . [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On STATIC reduce production def -> modifiers CLASS ident super def_body 
+-- On PACKAGE reduce production def -> modifiers CLASS ident super def_body 
+-- On LBRACKET reduce production def -> modifiers CLASS ident super def_body 
+-- On INTERFACE reduce production def -> modifiers CLASS ident super def_body 
+-- On FINAL reduce production def -> modifiers CLASS ident super def_body 
+-- On EOF reduce production def -> modifiers CLASS ident super def_body 
+-- On CLASS reduce production def -> modifiers CLASS ident super def_body 
+-- On ABSTRACT reduce production def -> modifiers CLASS ident super def_body 
+
+State 115:
+def -> modifiers CLASS ident def_body . [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On STATIC reduce production def -> modifiers CLASS ident def_body 
+-- On PACKAGE reduce production def -> modifiers CLASS ident def_body 
+-- On LBRACKET reduce production def -> modifiers CLASS ident def_body 
+-- On INTERFACE reduce production def -> modifiers CLASS ident def_body 
+-- On FINAL reduce production def -> modifiers CLASS ident def_body 
+-- On EOF reduce production def -> modifiers CLASS ident def_body 
+-- On CLASS reduce production def -> modifiers CLASS ident def_body 
+-- On ABSTRACT reduce production def -> modifiers CLASS ident def_body 
+
+State 116:
+idl_file_list -> PACKAGE ident_list SEMI defs . [ EOF ]
+idl_file_list -> PACKAGE ident_list SEMI defs . idl_file_list [ EOF ]
+-- On PACKAGE shift to state 2
+-- On idl_file_list shift to state 117
+-- On EOF reduce production idl_file_list -> PACKAGE ident_list SEMI defs 
+
+State 117:
+idl_file_list -> PACKAGE ident_list SEMI defs idl_file_list . [ EOF ]
+-- On EOF reduce production idl_file_list -> PACKAGE ident_list SEMI defs idl_file_list 
+
+State 118:
+defs -> def . [ PACKAGE EOF ]
+defs -> def . defs [ PACKAGE EOF ]
+-- On STATIC shift to state 1
+-- On LBRACKET shift to state 6
+-- On INTERFACE shift to state 17
+-- On FINAL shift to state 55
+-- On CLASS shift to state 91
+-- On ABSTRACT shift to state 56
+-- On modifiers shift to state 104
+-- On modifier shift to state 64
+-- On defs shift to state 119
+-- On def shift to state 118
+-- On annotations shift to state 120
+-- On PACKAGE reduce production defs -> def 
+-- On EOF reduce production defs -> def 
+
+State 119:
+defs -> def defs . [ PACKAGE EOF ]
+-- On PACKAGE reduce production defs -> def defs 
+-- On EOF reduce production defs -> def defs 
+
+State 120:
+def -> annotations . CLASS ident def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+def -> annotations . modifiers CLASS ident def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+def -> annotations . CLASS ident super def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+def -> annotations . modifiers CLASS ident super def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+def -> annotations . CLASS ident IMPLEMENTS interface_list def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+def -> annotations . modifiers CLASS ident IMPLEMENTS interface_list def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+def -> annotations . CLASS ident super IMPLEMENTS interface_list def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+def -> annotations . modifiers CLASS ident super IMPLEMENTS interface_list def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+def -> annotations . INTERFACE ident def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+def -> annotations . INTERFACE ident IMPLEMENTS interface_list def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On STATIC shift to state 1
+-- On INTERFACE shift to state 121
+-- On FINAL shift to state 55
+-- On CLASS shift to state 127
+-- On ABSTRACT shift to state 56
+-- On modifiers shift to state 138
+-- On modifier shift to state 64
+
+State 121:
+def -> annotations INTERFACE . ident def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+def -> annotations INTERFACE . ident IMPLEMENTS interface_list def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On IDENT shift to state 8
+-- On ident shift to state 122
+
+State 122:
+def -> annotations INTERFACE ident . def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+def -> annotations INTERFACE ident . IMPLEMENTS interface_list def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On LBRACE shift to state 19
+-- On IMPLEMENTS shift to state 123
+-- On def_body shift to state 126
+
+State 123:
+def -> annotations INTERFACE ident IMPLEMENTS . interface_list def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On IDENT shift to state 30
+-- On qident shift to state 85
+-- On interface_list shift to state 124
+-- On ident_list shift to state 41
+-- On ident shift to state 45
+
+State 124:
+def -> annotations INTERFACE ident IMPLEMENTS interface_list . def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On LBRACE shift to state 19
+-- On def_body shift to state 125
+
+State 125:
+def -> annotations INTERFACE ident IMPLEMENTS interface_list def_body . [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On STATIC reduce production def -> annotations INTERFACE ident IMPLEMENTS interface_list def_body 
+-- On PACKAGE reduce production def -> annotations INTERFACE ident IMPLEMENTS interface_list def_body 
+-- On LBRACKET reduce production def -> annotations INTERFACE ident IMPLEMENTS interface_list def_body 
+-- On INTERFACE reduce production def -> annotations INTERFACE ident IMPLEMENTS interface_list def_body 
+-- On FINAL reduce production def -> annotations INTERFACE ident IMPLEMENTS interface_list def_body 
+-- On EOF reduce production def -> annotations INTERFACE ident IMPLEMENTS interface_list def_body 
+-- On CLASS reduce production def -> annotations INTERFACE ident IMPLEMENTS interface_list def_body 
+-- On ABSTRACT reduce production def -> annotations INTERFACE ident IMPLEMENTS interface_list def_body 
+
+State 126:
+def -> annotations INTERFACE ident def_body . [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On STATIC reduce production def -> annotations INTERFACE ident def_body 
+-- On PACKAGE reduce production def -> annotations INTERFACE ident def_body 
+-- On LBRACKET reduce production def -> annotations INTERFACE ident def_body 
+-- On INTERFACE reduce production def -> annotations INTERFACE ident def_body 
+-- On FINAL reduce production def -> annotations INTERFACE ident def_body 
+-- On EOF reduce production def -> annotations INTERFACE ident def_body 
+-- On CLASS reduce production def -> annotations INTERFACE ident def_body 
+-- On ABSTRACT reduce production def -> annotations INTERFACE ident def_body 
+
+State 127:
+def -> annotations CLASS . ident def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+def -> annotations CLASS . ident super def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+def -> annotations CLASS . ident IMPLEMENTS interface_list def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+def -> annotations CLASS . ident super IMPLEMENTS interface_list def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On IDENT shift to state 8
+-- On ident shift to state 128
+
+State 128:
+def -> annotations CLASS ident . def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+def -> annotations CLASS ident . super def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+def -> annotations CLASS ident . IMPLEMENTS interface_list def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+def -> annotations CLASS ident . super IMPLEMENTS interface_list def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On LBRACE shift to state 19
+-- On IMPLEMENTS shift to state 129
+-- On EXTENDS shift to state 96
+-- On super shift to state 132
+-- On def_body shift to state 137
+
+State 129:
+def -> annotations CLASS ident IMPLEMENTS . interface_list def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On IDENT shift to state 30
+-- On qident shift to state 85
+-- On interface_list shift to state 130
+-- On ident_list shift to state 41
+-- On ident shift to state 45
+
+State 130:
+def -> annotations CLASS ident IMPLEMENTS interface_list . def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On LBRACE shift to state 19
+-- On def_body shift to state 131
+
+State 131:
+def -> annotations CLASS ident IMPLEMENTS interface_list def_body . [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On STATIC reduce production def -> annotations CLASS ident IMPLEMENTS interface_list def_body 
+-- On PACKAGE reduce production def -> annotations CLASS ident IMPLEMENTS interface_list def_body 
+-- On LBRACKET reduce production def -> annotations CLASS ident IMPLEMENTS interface_list def_body 
+-- On INTERFACE reduce production def -> annotations CLASS ident IMPLEMENTS interface_list def_body 
+-- On FINAL reduce production def -> annotations CLASS ident IMPLEMENTS interface_list def_body 
+-- On EOF reduce production def -> annotations CLASS ident IMPLEMENTS interface_list def_body 
+-- On CLASS reduce production def -> annotations CLASS ident IMPLEMENTS interface_list def_body 
+-- On ABSTRACT reduce production def -> annotations CLASS ident IMPLEMENTS interface_list def_body 
+
+State 132:
+def -> annotations CLASS ident super . def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+def -> annotations CLASS ident super . IMPLEMENTS interface_list def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On LBRACE shift to state 19
+-- On IMPLEMENTS shift to state 133
+-- On def_body shift to state 136
+
+State 133:
+def -> annotations CLASS ident super IMPLEMENTS . interface_list def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On IDENT shift to state 30
+-- On qident shift to state 85
+-- On interface_list shift to state 134
+-- On ident_list shift to state 41
+-- On ident shift to state 45
+
+State 134:
+def -> annotations CLASS ident super IMPLEMENTS interface_list . def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On LBRACE shift to state 19
+-- On def_body shift to state 135
+
+State 135:
+def -> annotations CLASS ident super IMPLEMENTS interface_list def_body . [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On STATIC reduce production def -> annotations CLASS ident super IMPLEMENTS interface_list def_body 
+-- On PACKAGE reduce production def -> annotations CLASS ident super IMPLEMENTS interface_list def_body 
+-- On LBRACKET reduce production def -> annotations CLASS ident super IMPLEMENTS interface_list def_body 
+-- On INTERFACE reduce production def -> annotations CLASS ident super IMPLEMENTS interface_list def_body 
+-- On FINAL reduce production def -> annotations CLASS ident super IMPLEMENTS interface_list def_body 
+-- On EOF reduce production def -> annotations CLASS ident super IMPLEMENTS interface_list def_body 
+-- On CLASS reduce production def -> annotations CLASS ident super IMPLEMENTS interface_list def_body 
+-- On ABSTRACT reduce production def -> annotations CLASS ident super IMPLEMENTS interface_list def_body 
+
+State 136:
+def -> annotations CLASS ident super def_body . [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On STATIC reduce production def -> annotations CLASS ident super def_body 
+-- On PACKAGE reduce production def -> annotations CLASS ident super def_body 
+-- On LBRACKET reduce production def -> annotations CLASS ident super def_body 
+-- On INTERFACE reduce production def -> annotations CLASS ident super def_body 
+-- On FINAL reduce production def -> annotations CLASS ident super def_body 
+-- On EOF reduce production def -> annotations CLASS ident super def_body 
+-- On CLASS reduce production def -> annotations CLASS ident super def_body 
+-- On ABSTRACT reduce production def -> annotations CLASS ident super def_body 
+
+State 137:
+def -> annotations CLASS ident def_body . [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On STATIC reduce production def -> annotations CLASS ident def_body 
+-- On PACKAGE reduce production def -> annotations CLASS ident def_body 
+-- On LBRACKET reduce production def -> annotations CLASS ident def_body 
+-- On INTERFACE reduce production def -> annotations CLASS ident def_body 
+-- On FINAL reduce production def -> annotations CLASS ident def_body 
+-- On EOF reduce production def -> annotations CLASS ident def_body 
+-- On CLASS reduce production def -> annotations CLASS ident def_body 
+-- On ABSTRACT reduce production def -> annotations CLASS ident def_body 
+
+State 138:
+def -> annotations modifiers . CLASS ident def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+def -> annotations modifiers . CLASS ident super def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+def -> annotations modifiers . CLASS ident IMPLEMENTS interface_list def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+def -> annotations modifiers . CLASS ident super IMPLEMENTS interface_list def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On CLASS shift to state 139
+
+State 139:
+def -> annotations modifiers CLASS . ident def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+def -> annotations modifiers CLASS . ident super def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+def -> annotations modifiers CLASS . ident IMPLEMENTS interface_list def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+def -> annotations modifiers CLASS . ident super IMPLEMENTS interface_list def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On IDENT shift to state 8
+-- On ident shift to state 140
+
+State 140:
+def -> annotations modifiers CLASS ident . def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+def -> annotations modifiers CLASS ident . super def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+def -> annotations modifiers CLASS ident . IMPLEMENTS interface_list def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+def -> annotations modifiers CLASS ident . super IMPLEMENTS interface_list def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On LBRACE shift to state 19
+-- On IMPLEMENTS shift to state 141
+-- On EXTENDS shift to state 96
+-- On super shift to state 144
+-- On def_body shift to state 149
+
+State 141:
+def -> annotations modifiers CLASS ident IMPLEMENTS . interface_list def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On IDENT shift to state 30
+-- On qident shift to state 85
+-- On interface_list shift to state 142
+-- On ident_list shift to state 41
+-- On ident shift to state 45
+
+State 142:
+def -> annotations modifiers CLASS ident IMPLEMENTS interface_list . def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On LBRACE shift to state 19
+-- On def_body shift to state 143
+
+State 143:
+def -> annotations modifiers CLASS ident IMPLEMENTS interface_list def_body . [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On STATIC reduce production def -> annotations modifiers CLASS ident IMPLEMENTS interface_list def_body 
+-- On PACKAGE reduce production def -> annotations modifiers CLASS ident IMPLEMENTS interface_list def_body 
+-- On LBRACKET reduce production def -> annotations modifiers CLASS ident IMPLEMENTS interface_list def_body 
+-- On INTERFACE reduce production def -> annotations modifiers CLASS ident IMPLEMENTS interface_list def_body 
+-- On FINAL reduce production def -> annotations modifiers CLASS ident IMPLEMENTS interface_list def_body 
+-- On EOF reduce production def -> annotations modifiers CLASS ident IMPLEMENTS interface_list def_body 
+-- On CLASS reduce production def -> annotations modifiers CLASS ident IMPLEMENTS interface_list def_body 
+-- On ABSTRACT reduce production def -> annotations modifiers CLASS ident IMPLEMENTS interface_list def_body 
+
+State 144:
+def -> annotations modifiers CLASS ident super . def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+def -> annotations modifiers CLASS ident super . IMPLEMENTS interface_list def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On LBRACE shift to state 19
+-- On IMPLEMENTS shift to state 145
+-- On def_body shift to state 148
+
+State 145:
+def -> annotations modifiers CLASS ident super IMPLEMENTS . interface_list def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On IDENT shift to state 30
+-- On qident shift to state 85
+-- On interface_list shift to state 146
+-- On ident_list shift to state 41
+-- On ident shift to state 45
+
+State 146:
+def -> annotations modifiers CLASS ident super IMPLEMENTS interface_list . def_body [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On LBRACE shift to state 19
+-- On def_body shift to state 147
+
+State 147:
+def -> annotations modifiers CLASS ident super IMPLEMENTS interface_list def_body . [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On STATIC reduce production def -> annotations modifiers CLASS ident super IMPLEMENTS interface_list def_body 
+-- On PACKAGE reduce production def -> annotations modifiers CLASS ident super IMPLEMENTS interface_list def_body 
+-- On LBRACKET reduce production def -> annotations modifiers CLASS ident super IMPLEMENTS interface_list def_body 
+-- On INTERFACE reduce production def -> annotations modifiers CLASS ident super IMPLEMENTS interface_list def_body 
+-- On FINAL reduce production def -> annotations modifiers CLASS ident super IMPLEMENTS interface_list def_body 
+-- On EOF reduce production def -> annotations modifiers CLASS ident super IMPLEMENTS interface_list def_body 
+-- On CLASS reduce production def -> annotations modifiers CLASS ident super IMPLEMENTS interface_list def_body 
+-- On ABSTRACT reduce production def -> annotations modifiers CLASS ident super IMPLEMENTS interface_list def_body 
+
+State 148:
+def -> annotations modifiers CLASS ident super def_body . [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On STATIC reduce production def -> annotations modifiers CLASS ident super def_body 
+-- On PACKAGE reduce production def -> annotations modifiers CLASS ident super def_body 
+-- On LBRACKET reduce production def -> annotations modifiers CLASS ident super def_body 
+-- On INTERFACE reduce production def -> annotations modifiers CLASS ident super def_body 
+-- On FINAL reduce production def -> annotations modifiers CLASS ident super def_body 
+-- On EOF reduce production def -> annotations modifiers CLASS ident super def_body 
+-- On CLASS reduce production def -> annotations modifiers CLASS ident super def_body 
+-- On ABSTRACT reduce production def -> annotations modifiers CLASS ident super def_body 
+
+State 149:
+def -> annotations modifiers CLASS ident def_body . [ STATIC PACKAGE LBRACKET INTERFACE FINAL EOF CLASS ABSTRACT ]
+-- On STATIC reduce production def -> annotations modifiers CLASS ident def_body 
+-- On PACKAGE reduce production def -> annotations modifiers CLASS ident def_body 
+-- On LBRACKET reduce production def -> annotations modifiers CLASS ident def_body 
+-- On INTERFACE reduce production def -> annotations modifiers CLASS ident def_body 
+-- On FINAL reduce production def -> annotations modifiers CLASS ident def_body 
+-- On EOF reduce production def -> annotations modifiers CLASS ident def_body 
+-- On CLASS reduce production def -> annotations modifiers CLASS ident def_body 
+-- On ABSTRACT reduce production def -> annotations modifiers CLASS ident def_body 
+
+State 150:
+ident_list -> ident_list DOT . IDENT [ SEMI DOT ]
+-- On IDENT shift to state 151
+
+State 151:
+ident_list -> ident_list DOT IDENT . [ SEMI DOT ]
+-- On SEMI reduce production ident_list -> ident_list DOT IDENT 
+-- On DOT reduce production ident_list -> ident_list DOT IDENT 
+
+State 152:
+idl_file -> idl_file_list . EOF [ # ]
+-- On EOF shift to state 153
+
+State 153:
+idl_file -> idl_file_list EOF . [ # ]
+-- On # reduce production idl_file -> idl_file_list EOF 
+
+State 154:
+idl_file' -> idl_file . [ # ]
+-- On # accept idl_file
+
+State 155:
+idl_file -> defs . EOF [ # ]
+-- On EOF shift to state 156
+
+State 156:
+idl_file -> defs EOF . [ # ]
+-- On # reduce production idl_file -> defs EOF 
+

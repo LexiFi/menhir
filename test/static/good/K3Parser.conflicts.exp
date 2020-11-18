@@ -1,0 +1,3547 @@
+
+** Conflict (shift/reduce) in state 1436.
+** Tokens involved: TRIGGER SOURCE SINK CONSUME BINDFLOW BIND
+** The following explanations concentrate on token TRIGGER.
+** This state is reached from program_test after reading:
+
+flow_statement 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+program_test 
+program EXPECTED named_expr_list 
+(?)
+
+** In state 1436, looking ahead at TRIGGER, reducing production
+** flow_program -> flow_statement 
+** is permitted because of the following sub-derivation:
+
+declaration program // lookahead token appears because program can begin with TRIGGER
+flow_program // lookahead token is inherited
+flow_statement . 
+
+** In state 1436, looking ahead at TRIGGER, shifting is permitted
+** because of the following sub-derivation:
+
+declaration 
+flow_program 
+flow_statement flow_program 
+               flow_statement 
+               . TRIGGER IDENTIFIER arg LBRACE RBRACE GETS anno_expr 
+
+** Conflict (shift/reduce) in state 1330.
+** Tokens involved: TIMES QUESTION OR LPAREN IDENTIFIER
+** The following explanations concentrate on token TIMES.
+** This state is reached from program_test after reading:
+
+SOURCE PATTERN IDENTIFIER GETS resource_pattern resource_pattern 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+program_test 
+program EXPECTED named_expr_list 
+declaration 
+flow_program 
+flow_statement 
+resource 
+SOURCE PATTERN IDENTIFIER GETS resource_pattern 
+                               (?)
+
+** In state 1330, looking ahead at TIMES, shifting is permitted
+** because of the following sub-derivation:
+
+resource_pattern resource_pattern 
+                 resource_pattern . TIMES 
+
+** In state 1330, looking ahead at TIMES, reducing production
+** resource_pattern -> resource_pattern resource_pattern 
+** is permitted because of the following sub-derivation:
+
+resource_pattern TIMES // lookahead token appears
+resource_pattern resource_pattern . 
+
+** Conflict (shift/reduce) in state 1329.
+** Tokens involved: QUESTION LPAREN IDENTIFIER
+** The following explanations concentrate on token QUESTION.
+** This state is reached from program_test after reading:
+
+SOURCE PATTERN IDENTIFIER GETS resource_pattern OR resource_pattern 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+program_test 
+program EXPECTED named_expr_list 
+declaration 
+flow_program 
+flow_statement 
+resource 
+SOURCE PATTERN IDENTIFIER GETS resource_pattern 
+                               (?)
+
+** In state 1329, looking ahead at QUESTION, shifting is permitted
+** because of the following sub-derivation:
+
+resource_pattern OR resource_pattern 
+                    resource_pattern . QUESTION 
+
+** In state 1329, looking ahead at QUESTION, reducing production
+** resource_pattern -> resource_pattern OR resource_pattern 
+** is permitted because of the following sub-derivation:
+
+resource_pattern QUESTION // lookahead token appears
+resource_pattern OR resource_pattern . 
+
+** Conflict (shift/reduce) in state 1290.
+** Token involved: BIND
+** This state is reached from expression_test after reading:
+
+declaration 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expression_test 
+expression_test_list 
+(?)
+
+** In state 1290, looking ahead at BIND, shifting is permitted
+** because of the following sub-derivation:
+
+program anno_expr EXPECTED check_expr 
+declaration program 
+            declaration 
+            flow_program 
+            flow_statement 
+            . BIND IDENTIFIER RARROW error 
+
+** In state 1290, looking ahead at BIND, reducing production
+** program -> declaration 
+** is permitted because of the following sub-derivation:
+
+program anno_expr EXPECTED check_expr // lookahead token appears because anno_expr can begin with BIND
+declaration . 
+
+** Conflict (shift/reduce) in state 1289.
+** Token involved: SEMICOLON
+** This state is reached from expression_test after reading:
+
+expression_test_list SEMICOLON expression_test_list 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expression_test 
+expression_test_list 
+(?)
+
+** In state 1289, looking ahead at SEMICOLON, shifting is permitted
+** because of the following sub-derivation:
+
+expression_test_list SEMICOLON expression_test_list 
+                               expression_test_list . SEMICOLON expression_test_list 
+
+** In state 1289, looking ahead at SEMICOLON, reducing production
+** expression_test_list -> expression_test_list SEMICOLON expression_test_list 
+** is permitted because of the following sub-derivation:
+
+expression_test_list SEMICOLON expression_test_list // lookahead token appears
+expression_test_list SEMICOLON expression_test_list . 
+
+** Conflict (reduce/reduce) in state 1277.
+** Tokens involved: NEG LPAREN LBRACKETLT LBRACKET
+** The following explanations concentrate on token NEG.
+** This state is reached from expression_test after reading:
+
+BIND error 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expression_test 
+expression_test_list 
+(?)
+
+** In state 1277, looking ahead at NEG, reducing production
+** bind -> BIND error 
+** is permitted because of the following sub-derivation:
+
+anno_expr EXPECTED check_expr 
+expr ANNOTATE LBRACE annotations RBRACE 
+arithmetic 
+anno_expr NEG anno_expr // lookahead token appears
+expr // lookahead token is inherited
+bind // lookahead token is inherited
+BIND error . 
+
+** In state 1277, looking ahead at NEG, reducing production
+** flow_statement -> BIND error 
+** is permitted because of the following sub-derivation:
+
+program anno_expr EXPECTED check_expr // lookahead token appears because anno_expr can begin with NEG
+declaration // lookahead token is inherited
+flow_program // lookahead token is inherited
+flow_statement // lookahead token is inherited
+BIND error . 
+
+** Conflict (shift/reduce) in state 1275.
+** Tokens involved: NEG LPAREN LBRACKETLT LBRACKET
+** The following explanations concentrate on token NEG.
+** This state is reached from expression_test after reading:
+
+DECLARE IDENTIFIER COLON type_expr GETS anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expression_test 
+expression_test_list 
+(?)
+
+** In state 1275, looking ahead at NEG, shifting is permitted
+** because of the following sub-derivation:
+
+program anno_expr EXPECTED check_expr 
+declaration 
+DECLARE IDENTIFIER COLON type_expr GETS anno_expr 
+                                        expr ANNOTATE LBRACE annotations RBRACE 
+                                        arithmetic 
+                                        anno_expr . NEG anno_expr 
+
+** In state 1275, looking ahead at NEG, reducing production
+** declaration -> DECLARE IDENTIFIER COLON type_expr GETS anno_expr 
+** is permitted because of the following sub-derivation:
+
+program anno_expr EXPECTED check_expr // lookahead token appears because anno_expr can begin with NEG
+declaration // lookahead token is inherited
+DECLARE IDENTIFIER COLON type_expr GETS anno_expr . 
+
+** Conflict (shift/reduce) in state 1253.
+** Tokens involved: TRIGGER SOURCE SINK CONSUME BINDFLOW BIND
+** The following explanations concentrate on token TRIGGER.
+** This state is reached from expression_test after reading:
+
+flow_statement 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expression_test 
+expression_test_list 
+program anno_expr EXPECTED check_expr 
+(?)
+
+** In state 1253, looking ahead at TRIGGER, reducing production
+** flow_program -> flow_statement 
+** is permitted because of the following sub-derivation:
+
+declaration program // lookahead token appears because program can begin with TRIGGER
+flow_program // lookahead token is inherited
+flow_statement . 
+
+** In state 1253, looking ahead at TRIGGER, shifting is permitted
+** because of the following sub-derivation:
+
+declaration 
+flow_program 
+flow_statement flow_program 
+               flow_statement 
+               . TRIGGER IDENTIFIER arg LBRACE RBRACE GETS anno_expr 
+
+** Conflict (shift/reduce) in state 1217.
+** Tokens involved: LPAREN IDENTIFIER
+** The following explanations concentrate on token LPAREN.
+** This state is reached from expression_test after reading:
+
+SINK PATTERN IDENTIFIER GETS resource_pattern 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expression_test 
+expression_test_list 
+(?)
+
+** In state 1217, looking ahead at LPAREN, reducing production
+** resource -> SINK PATTERN IDENTIFIER GETS resource_pattern 
+** is permitted because of the following sub-derivation:
+
+program anno_expr EXPECTED check_expr // lookahead token appears because anno_expr can begin with LPAREN
+declaration // lookahead token is inherited
+flow_program // lookahead token is inherited
+flow_statement // lookahead token is inherited
+resource // lookahead token is inherited
+SINK PATTERN IDENTIFIER GETS resource_pattern . 
+
+** In state 1217, looking ahead at LPAREN, shifting is permitted
+** because of the following sub-derivation:
+
+program anno_expr EXPECTED check_expr 
+declaration 
+flow_program 
+flow_statement 
+resource 
+SINK PATTERN IDENTIFIER GETS resource_pattern 
+                             resource_pattern resource_pattern 
+                                              . LPAREN resource_pattern RPAREN 
+
+** Conflict (shift/reduce) in state 1184.
+** Tokens involved: LPAREN IDENTIFIER
+** The following explanations concentrate on token LPAREN.
+** This state is reached from expression_test after reading:
+
+SOURCE PATTERN IDENTIFIER GETS resource_pattern 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expression_test 
+expression_test_list 
+(?)
+
+** In state 1184, looking ahead at LPAREN, reducing production
+** resource -> SOURCE PATTERN IDENTIFIER GETS resource_pattern 
+** is permitted because of the following sub-derivation:
+
+program anno_expr EXPECTED check_expr // lookahead token appears because anno_expr can begin with LPAREN
+declaration // lookahead token is inherited
+flow_program // lookahead token is inherited
+flow_statement // lookahead token is inherited
+resource // lookahead token is inherited
+SOURCE PATTERN IDENTIFIER GETS resource_pattern . 
+
+** In state 1184, looking ahead at LPAREN, shifting is permitted
+** because of the following sub-derivation:
+
+program anno_expr EXPECTED check_expr 
+declaration 
+flow_program 
+flow_statement 
+resource 
+SOURCE PATTERN IDENTIFIER GETS resource_pattern 
+                               resource_pattern resource_pattern 
+                                                . LPAREN resource_pattern RPAREN 
+
+** Conflict (shift/reduce) in state 1183.
+** Tokens involved: TIMES QUESTION OR LPAREN IDENTIFIER
+** The following explanations concentrate on token TIMES.
+** This state is reached from expression_test after reading:
+
+SOURCE PATTERN IDENTIFIER GETS resource_pattern resource_pattern 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expression_test 
+expression_test_list 
+program anno_expr EXPECTED check_expr 
+declaration 
+flow_program 
+flow_statement 
+resource 
+SOURCE PATTERN IDENTIFIER GETS resource_pattern 
+                               (?)
+
+** In state 1183, looking ahead at TIMES, shifting is permitted
+** because of the following sub-derivation:
+
+resource_pattern resource_pattern 
+                 resource_pattern . TIMES 
+
+** In state 1183, looking ahead at TIMES, reducing production
+** resource_pattern -> resource_pattern resource_pattern 
+** is permitted because of the following sub-derivation:
+
+resource_pattern TIMES // lookahead token appears
+resource_pattern resource_pattern . 
+
+** Conflict (shift/reduce) in state 1182.
+** Tokens involved: QUESTION LPAREN IDENTIFIER
+** The following explanations concentrate on token QUESTION.
+** This state is reached from expression_test after reading:
+
+SOURCE PATTERN IDENTIFIER GETS resource_pattern OR resource_pattern 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expression_test 
+expression_test_list 
+program anno_expr EXPECTED check_expr 
+declaration 
+flow_program 
+flow_statement 
+resource 
+SOURCE PATTERN IDENTIFIER GETS resource_pattern 
+                               (?)
+
+** In state 1182, looking ahead at QUESTION, shifting is permitted
+** because of the following sub-derivation:
+
+resource_pattern OR resource_pattern 
+                    resource_pattern . QUESTION 
+
+** In state 1182, looking ahead at QUESTION, reducing production
+** resource_pattern -> resource_pattern OR resource_pattern 
+** is permitted because of the following sub-derivation:
+
+resource_pattern QUESTION // lookahead token appears
+resource_pattern OR resource_pattern . 
+
+** Conflict (shift/reduce) in state 1167.
+** Tokens involved: NEG LPAREN LBRACKETLT LBRACKET
+** The following explanations concentrate on token NEG.
+** This state is reached from expression_test after reading:
+
+TRIGGER IDENTIFIER arg LBRACE value_typed_identifier_list RBRACE GETS anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expression_test 
+expression_test_list 
+(?)
+
+** In state 1167, looking ahead at NEG, shifting is permitted
+** because of the following sub-derivation:
+
+program anno_expr EXPECTED check_expr 
+declaration 
+flow_program 
+flow_statement 
+TRIGGER IDENTIFIER arg LBRACE value_typed_identifier_list RBRACE GETS anno_expr 
+                                                                      expr ANNOTATE LBRACE annotations RBRACE 
+                                                                      arithmetic 
+                                                                      anno_expr . NEG anno_expr 
+
+** In state 1167, looking ahead at NEG, reducing production
+** flow_statement -> TRIGGER IDENTIFIER arg LBRACE value_typed_identifier_list RBRACE GETS anno_expr 
+** is permitted because of the following sub-derivation:
+
+program anno_expr EXPECTED check_expr // lookahead token appears because anno_expr can begin with NEG
+declaration // lookahead token is inherited
+flow_program // lookahead token is inherited
+flow_statement // lookahead token is inherited
+TRIGGER IDENTIFIER arg LBRACE value_typed_identifier_list RBRACE GETS anno_expr . 
+
+** Conflict (shift/reduce) in state 1162.
+** Tokens involved: NEG LPAREN LBRACKETLT LBRACKET
+** The following explanations concentrate on token NEG.
+** This state is reached from expression_test after reading:
+
+TRIGGER IDENTIFIER arg LBRACE RBRACE GETS anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expression_test 
+expression_test_list 
+(?)
+
+** In state 1162, looking ahead at NEG, shifting is permitted
+** because of the following sub-derivation:
+
+program anno_expr EXPECTED check_expr 
+declaration 
+flow_program 
+flow_statement 
+TRIGGER IDENTIFIER arg LBRACE RBRACE GETS anno_expr 
+                                          expr ANNOTATE LBRACE annotations RBRACE 
+                                          arithmetic 
+                                          anno_expr . NEG anno_expr 
+
+** In state 1162, looking ahead at NEG, reducing production
+** flow_statement -> TRIGGER IDENTIFIER arg LBRACE RBRACE GETS anno_expr 
+** is permitted because of the following sub-derivation:
+
+program anno_expr EXPECTED check_expr // lookahead token appears because anno_expr can begin with NEG
+declaration // lookahead token is inherited
+flow_program // lookahead token is inherited
+flow_statement // lookahead token is inherited
+TRIGGER IDENTIFIER arg LBRACE RBRACE GETS anno_expr . 
+
+** Conflict (shift/reduce) in state 1139.
+** Token involved: COMMA
+** This state is reached from expr after reading:
+
+UPSERT_WITH_BEFORE LPAREN variable COMMA LPAREN tuple RPAREN 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+mutation 
+(?)
+
+** In state 1139, looking ahead at COMMA, reducing production
+** expr -> LPAREN tuple RPAREN 
+** is permitted because of the following sub-derivation:
+
+UPSERT_WITH_BEFORE LPAREN variable COMMA tuple COMMA anno_expr COMMA error // lookahead token appears
+                                         expr_list // lookahead token is inherited
+                                         anno_expr // lookahead token is inherited
+                                         expr // lookahead token is inherited
+                                         LPAREN tuple RPAREN . 
+
+** In state 1139, looking ahead at COMMA, shifting is permitted
+** because of the following sub-derivation:
+
+UPSERT_WITH_BEFORE LPAREN variable COMMA LPAREN tuple RPAREN . COMMA anno_expr COMMA anno_expr RPAREN 
+
+** Conflict (shift/reduce) in state 1118.
+** Token involved: LARROW
+** This state is reached from expr after reading:
+
+UPDATE LPAREN variable 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+mutation 
+UPDATE LPAREN anno_expr error 
+              expr ANNOTATE LBRACE annotations RBRACE 
+              mutation 
+              (?)
+
+** In state 1118, looking ahead at LARROW, reducing production
+** expr -> variable 
+** is permitted because of the following sub-derivation:
+
+anno_expr LARROW error // lookahead token appears
+expr // lookahead token is inherited
+variable . 
+
+** In state 1118, looking ahead at LARROW, shifting is permitted
+** because of the following sub-derivation:
+
+variable . LARROW anno_expr 
+
+** Conflict (shift/reduce) in state 1106.
+** Token involved: COMMA
+** This state is reached from expr after reading:
+
+BIND UPSERT_WITH_BEFORE LPAREN variable COMMA LPAREN tuple RPAREN 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+bind 
+BIND anno_expr AS IDENTIFIER IN anno_expr 
+     expr ANNOTATE LBRACE annotations RBRACE 
+     mutation 
+     (?)
+
+** In state 1106, looking ahead at COMMA, reducing production
+** expr -> LPAREN tuple RPAREN 
+** is permitted because of the following sub-derivation:
+
+UPSERT_WITH_BEFORE LPAREN variable COMMA tuple COMMA anno_expr COMMA error // lookahead token appears
+                                         expr_list // lookahead token is inherited
+                                         anno_expr // lookahead token is inherited
+                                         expr // lookahead token is inherited
+                                         LPAREN tuple RPAREN . 
+
+** In state 1106, looking ahead at COMMA, shifting is permitted
+** because of the following sub-derivation:
+
+UPSERT_WITH_BEFORE LPAREN variable COMMA LPAREN tuple RPAREN . COMMA anno_expr COMMA anno_expr RPAREN 
+
+** Conflict (shift/reduce) in state 1085.
+** Token involved: LARROW
+** This state is reached from expr after reading:
+
+SEND LPAREN IDENTIFIER COMMA variable 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+SEND LPAREN IDENTIFIER COMMA access COMMA tuple RPAREN 
+                             anno_expr LBRACKET tuple RBRACKET 
+                             expr ANNOTATE LBRACE annotations RBRACE 
+                             mutation 
+                             (?)
+
+** In state 1085, looking ahead at LARROW, reducing production
+** expr -> variable 
+** is permitted because of the following sub-derivation:
+
+anno_expr LARROW error // lookahead token appears
+expr // lookahead token is inherited
+variable . 
+
+** In state 1085, looking ahead at LARROW, shifting is permitted
+** because of the following sub-derivation:
+
+variable . LARROW anno_expr 
+
+** Conflict (shift/reduce) in state 1076.
+** Tokens involved: PERIOD LPAREN LBRACKETLT LBRACKETGEQ LBRACKET LARROW
+** The following explanations concentrate on token PERIOD.
+** This state is reached from expr after reading:
+
+NOT anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+(?)
+
+** In state 1076, looking ahead at PERIOD, reducing production
+** predicate -> NOT anno_expr 
+** is permitted because of the following sub-derivation:
+
+tuple_index 
+anno_expr PERIOD LBRACKET INTEGER RBRACKET // lookahead token appears
+expr // lookahead token is inherited
+predicate // lookahead token is inherited
+NOT anno_expr . 
+
+** In state 1076, looking ahead at PERIOD, shifting is permitted
+** because of the following sub-derivation:
+
+predicate 
+NOT anno_expr 
+    expr ANNOTATE LBRACE annotations RBRACE 
+    tuple_index 
+    anno_expr . PERIOD LBRACKET INTEGER RBRACKET 
+
+** Conflict (shift/reduce) in state 1075.
+** Tokens involved: PERIOD LPAREN LBRACKETLT LBRACKETGEQ LBRACKET LARROW
+** The following explanations concentrate on token PERIOD.
+** This state is reached from expr after reading:
+
+NEG anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+(?)
+
+** In state 1075, looking ahead at PERIOD, reducing production
+** arithmetic -> NEG anno_expr 
+** is permitted because of the following sub-derivation:
+
+tuple_index 
+anno_expr PERIOD LBRACKET INTEGER RBRACKET // lookahead token appears
+expr // lookahead token is inherited
+arithmetic // lookahead token is inherited
+NEG anno_expr . 
+
+** In state 1075, looking ahead at PERIOD, shifting is permitted
+** because of the following sub-derivation:
+
+arithmetic 
+NEG anno_expr 
+    expr ANNOTATE LBRACE annotations RBRACE 
+    tuple_index 
+    anno_expr . PERIOD LBRACKET INTEGER RBRACKET 
+
+** Conflict (shift/reduce) in state 1054.
+** Tokens involved: TIMES PLUS PERIOD OR NEQ NEG MODULO LT LPAREN LEQ LBRACKETLT LBRACKETGEQ LBRACKET LARROW GT GEQ EQ DIVIDE CONCAT AND
+** The following explanations concentrate on token TIMES.
+** This state is reached from expr after reading:
+
+LET IDENTIFIER GETS anno_expr IN anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+(?)
+
+** In state 1054, looking ahead at TIMES, shifting is permitted
+** because of the following sub-derivation:
+
+letin 
+LET IDENTIFIER GETS anno_expr IN anno_expr 
+                                 expr ANNOTATE LBRACE annotations RBRACE 
+                                 arithmetic 
+                                 anno_expr . TIMES anno_expr 
+
+** In state 1054, looking ahead at TIMES, reducing production
+** letin -> LET IDENTIFIER GETS anno_expr IN anno_expr 
+** is permitted because of the following sub-derivation:
+
+arithmetic 
+anno_expr TIMES anno_expr // lookahead token appears
+expr // lookahead token is inherited
+letin // lookahead token is inherited
+LET IDENTIFIER GETS anno_expr IN anno_expr . 
+
+** Conflict (shift/reduce) in state 1047.
+** Tokens involved: TIMES PLUS PERIOD OR NEQ NEG MODULO LT LPAREN LEQ LBRACKETLT LBRACKETGEQ LBRACKET LARROW GT GEQ EQ DIVIDE CONCAT AND
+** The following explanations concentrate on token TIMES.
+** This state is reached from expr after reading:
+
+LET LPAREN id_list RPAREN GETS anno_expr IN anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+(?)
+
+** In state 1047, looking ahead at TIMES, shifting is permitted
+** because of the following sub-derivation:
+
+letin 
+LET LPAREN id_list RPAREN GETS anno_expr IN anno_expr 
+                                            expr ANNOTATE LBRACE annotations RBRACE 
+                                            arithmetic 
+                                            anno_expr . TIMES anno_expr 
+
+** In state 1047, looking ahead at TIMES, reducing production
+** letin -> LET LPAREN id_list RPAREN GETS anno_expr IN anno_expr 
+** is permitted because of the following sub-derivation:
+
+arithmetic 
+anno_expr TIMES anno_expr // lookahead token appears
+expr // lookahead token is inherited
+letin // lookahead token is inherited
+LET LPAREN id_list RPAREN GETS anno_expr IN anno_expr . 
+
+** Conflict (shift/reduce) in state 992.
+** Tokens involved: TIMES PLUS PERIOD OR NEQ NEG MODULO LT LPAREN LEQ LBRACKETLT LBRACKETGEQ LBRACKET LARROW GT GEQ EQ DIVIDE CONCAT AND
+** The following explanations concentrate on token TIMES.
+** This state is reached from expr after reading:
+
+JUST anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+(?)
+
+** In state 992, looking ahead at TIMES, shifting is permitted
+** because of the following sub-derivation:
+
+JUST anno_expr 
+     expr ANNOTATE LBRACE annotations RBRACE 
+     arithmetic 
+     anno_expr . TIMES anno_expr 
+
+** In state 992, looking ahead at TIMES, reducing production
+** expr -> JUST anno_expr 
+** is permitted because of the following sub-derivation:
+
+arithmetic 
+anno_expr TIMES anno_expr // lookahead token appears
+expr // lookahead token is inherited
+JUST anno_expr . 
+
+** Conflict (shift/reduce) in state 977.
+** Token involved: LARROW
+** This state is reached from expr after reading:
+
+INSERT LPAREN variable 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+mutation 
+INSERT LPAREN anno_expr error 
+              expr ANNOTATE LBRACE annotations RBRACE 
+              mutation 
+              (?)
+
+** In state 977, looking ahead at LARROW, reducing production
+** expr -> variable 
+** is permitted because of the following sub-derivation:
+
+anno_expr LARROW error // lookahead token appears
+expr // lookahead token is inherited
+variable . 
+
+** In state 977, looking ahead at LARROW, shifting is permitted
+** because of the following sub-derivation:
+
+variable . LARROW anno_expr 
+
+** Conflict (shift/reduce) in state 969.
+** Token involved: LARROW
+** This state is reached from expr after reading:
+
+BIND UPDATE LPAREN variable 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+bind 
+BIND anno_expr AS IDENTIFIER IN anno_expr 
+     expr ANNOTATE LBRACE annotations RBRACE 
+     mutation 
+     UPDATE LPAREN anno_expr error 
+                   expr ANNOTATE LBRACE annotations RBRACE 
+                   mutation 
+                   (?)
+
+** In state 969, looking ahead at LARROW, reducing production
+** expr -> variable 
+** is permitted because of the following sub-derivation:
+
+anno_expr LARROW error // lookahead token appears
+expr // lookahead token is inherited
+variable . 
+
+** In state 969, looking ahead at LARROW, shifting is permitted
+** because of the following sub-derivation:
+
+variable . LARROW anno_expr 
+
+** Conflict (shift/reduce) in state 964.
+** Tokens involved: TIMES PLUS PERIOD OR NEQ NEG MODULO LT LPAREN LEQ LBRACKETLT LBRACKETGEQ LBRACKET LARROW GT GEQ EQ DIVIDE CONCAT AND
+** The following explanations concentrate on token TIMES.
+** This state is reached from expr after reading:
+
+INDIRECT anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+(?)
+
+** In state 964, looking ahead at TIMES, shifting is permitted
+** because of the following sub-derivation:
+
+INDIRECT anno_expr 
+         expr ANNOTATE LBRACE annotations RBRACE 
+         arithmetic 
+         anno_expr . TIMES anno_expr 
+
+** In state 964, looking ahead at TIMES, reducing production
+** expr -> INDIRECT anno_expr 
+** is permitted because of the following sub-derivation:
+
+arithmetic 
+anno_expr TIMES anno_expr // lookahead token appears
+expr // lookahead token is inherited
+INDIRECT anno_expr . 
+
+** Conflict (shift/reduce) in state 961.
+** Tokens involved: PERIOD LPAREN LBRACKETLT LBRACKETGEQ LBRACKET LARROW
+** The following explanations concentrate on token PERIOD.
+** This state is reached from expr after reading:
+
+IF anno_expr THEN anno_expr ELSE anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+(?)
+
+** In state 961, looking ahead at PERIOD, reducing production
+** conditional -> IF anno_expr THEN anno_expr ELSE anno_expr 
+** is permitted because of the following sub-derivation:
+
+tuple_index 
+anno_expr PERIOD LBRACKET INTEGER RBRACKET // lookahead token appears
+expr // lookahead token is inherited
+conditional // lookahead token is inherited
+IF anno_expr THEN anno_expr ELSE anno_expr . 
+
+** In state 961, looking ahead at PERIOD, shifting is permitted
+** because of the following sub-derivation:
+
+conditional 
+IF anno_expr THEN anno_expr ELSE anno_expr 
+                                 expr ANNOTATE LBRACE annotations RBRACE 
+                                 tuple_index 
+                                 anno_expr . PERIOD LBRACKET INTEGER RBRACKET 
+
+** Conflict (shift/reduce) in state 917.
+** Token involved: LARROW
+** This state is reached from expr after reading:
+
+BIND SEND LPAREN IDENTIFIER COMMA variable 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+bind 
+BIND anno_expr AS IDENTIFIER IN anno_expr 
+     expr ANNOTATE LBRACE annotations RBRACE 
+     SEND LPAREN IDENTIFIER COMMA access COMMA tuple RPAREN 
+                                  anno_expr LBRACKET tuple RBRACKET 
+                                  expr ANNOTATE LBRACE annotations RBRACE 
+                                  mutation 
+                                  (?)
+
+** In state 917, looking ahead at LARROW, reducing production
+** expr -> variable 
+** is permitted because of the following sub-derivation:
+
+anno_expr LARROW error // lookahead token appears
+expr // lookahead token is inherited
+variable . 
+
+** In state 917, looking ahead at LARROW, shifting is permitted
+** because of the following sub-derivation:
+
+variable . LARROW anno_expr 
+
+** Conflict (shift/reduce) in state 907.
+** Token involved: LARROW
+** This state is reached from expr after reading:
+
+DELETE LPAREN variable 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+mutation 
+DELETE LPAREN anno_expr error 
+              expr ANNOTATE LBRACE annotations RBRACE 
+              mutation 
+              (?)
+
+** In state 907, looking ahead at LARROW, reducing production
+** expr -> variable 
+** is permitted because of the following sub-derivation:
+
+anno_expr LARROW error // lookahead token appears
+expr // lookahead token is inherited
+variable . 
+
+** In state 907, looking ahead at LARROW, shifting is permitted
+** because of the following sub-derivation:
+
+variable . LARROW anno_expr 
+
+** Conflict (shift/reduce) in state 894.
+** Tokens involved: RBRACE PERIOD LPAREN LBRACKETLT LBRACKETGEQ LBRACKET LARROW
+** The following explanations concentrate on token PERIOD.
+** This state is reached from expr after reading:
+
+CASE anno_expr OF LBRACE JUST id_unknown RARROW anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+(?)
+
+** In state 894, looking ahead at PERIOD, reducing production
+** case -> CASE anno_expr OF LBRACE JUST id_unknown RARROW anno_expr 
+** is permitted because of the following sub-derivation:
+
+tuple_index 
+anno_expr PERIOD LBRACKET INTEGER RBRACKET // lookahead token appears
+expr // lookahead token is inherited
+case // lookahead token is inherited
+CASE anno_expr OF LBRACE JUST id_unknown RARROW anno_expr . 
+
+** In state 894, looking ahead at PERIOD, shifting is permitted
+** because of the following sub-derivation:
+
+case 
+CASE anno_expr OF LBRACE JUST id_unknown RARROW anno_expr RBRACE LBRACE NOTHING RARROW anno_expr RBRACE 
+                                                expr ANNOTATE LBRACE annotations RBRACE 
+                                                tuple_index 
+                                                anno_expr . PERIOD LBRACKET INTEGER RBRACKET 
+
+** Conflict (shift/reduce) in state 883.
+** Tokens involved: RBRACE PERIOD LPAREN LBRACKETLT LBRACKETGEQ LBRACKET LARROW
+** The following explanations concentrate on token PERIOD.
+** This state is reached from expr after reading:
+
+CASE anno_expr OF LBRACE NOTHING RARROW anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+(?)
+
+** In state 883, looking ahead at PERIOD, reducing production
+** case -> CASE anno_expr OF LBRACE NOTHING RARROW anno_expr 
+** is permitted because of the following sub-derivation:
+
+tuple_index 
+anno_expr PERIOD LBRACKET INTEGER RBRACKET // lookahead token appears
+expr // lookahead token is inherited
+case // lookahead token is inherited
+CASE anno_expr OF LBRACE NOTHING RARROW anno_expr . 
+
+** In state 883, looking ahead at PERIOD, shifting is permitted
+** because of the following sub-derivation:
+
+case 
+CASE anno_expr OF LBRACE NOTHING RARROW anno_expr RBRACE LBRACE JUST id_unknown RARROW anno_expr RBRACE 
+                                        expr ANNOTATE LBRACE annotations RBRACE 
+                                        tuple_index 
+                                        anno_expr . PERIOD LBRACKET INTEGER RBRACKET 
+
+** Conflict (shift/reduce) in state 876.
+** Tokens involved: TIMES PLUS PERIOD OR NEQ NEG MODULO LT LPAREN LEQ LBRACKETLT LBRACKETGEQ LBRACKET LARROW GT GEQ EQ DIVIDE CONCAT AND
+** The following explanations concentrate on token TIMES.
+** This state is reached from expr after reading:
+
+BIND anno_expr AS IDENTIFIER IN anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+(?)
+
+** In state 876, looking ahead at TIMES, shifting is permitted
+** because of the following sub-derivation:
+
+bind 
+BIND anno_expr AS IDENTIFIER IN anno_expr 
+                                expr ANNOTATE LBRACE annotations RBRACE 
+                                arithmetic 
+                                anno_expr . TIMES anno_expr 
+
+** In state 876, looking ahead at TIMES, reducing production
+** bind -> BIND anno_expr AS IDENTIFIER IN anno_expr 
+** is permitted because of the following sub-derivation:
+
+arithmetic 
+anno_expr TIMES anno_expr // lookahead token appears
+expr // lookahead token is inherited
+bind // lookahead token is inherited
+BIND anno_expr AS IDENTIFIER IN anno_expr . 
+
+** Conflict (shift/reduce) in state 865.
+** Tokens involved: PERIOD LPAREN LBRACKETLT LBRACKETGEQ LBRACKET LARROW
+** The following explanations concentrate on token PERIOD.
+** This state is reached from expr after reading:
+
+BACKSLASH arg RARROW anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+(?)
+
+** In state 865, looking ahead at PERIOD, reducing production
+** lambda -> BACKSLASH arg RARROW anno_expr 
+** is permitted because of the following sub-derivation:
+
+tuple_index 
+anno_expr PERIOD LBRACKET INTEGER RBRACKET // lookahead token appears
+expr // lookahead token is inherited
+lambda // lookahead token is inherited
+BACKSLASH arg RARROW anno_expr . 
+
+** In state 865, looking ahead at PERIOD, shifting is permitted
+** because of the following sub-derivation:
+
+lambda 
+BACKSLASH arg RARROW anno_expr 
+                     expr ANNOTATE LBRACE annotations RBRACE 
+                     tuple_index 
+                     anno_expr . PERIOD LBRACKET INTEGER RBRACKET 
+
+** Conflict (shift/reduce) in state 842.
+** Tokens involved: PERIOD LPAREN LBRACKETLT LBRACKETGEQ LBRACKET LARROW
+** The following explanations concentrate on token PERIOD.
+** This state is reached from expr after reading:
+
+BIND NOT anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+bind 
+BIND anno_expr AS IDENTIFIER IN anno_expr 
+     expr ANNOTATE LBRACE annotations RBRACE 
+     (?)
+
+** In state 842, looking ahead at PERIOD, reducing production
+** predicate -> NOT anno_expr 
+** is permitted because of the following sub-derivation:
+
+tuple_index 
+anno_expr PERIOD LBRACKET INTEGER RBRACKET // lookahead token appears
+expr // lookahead token is inherited
+predicate // lookahead token is inherited
+NOT anno_expr . 
+
+** In state 842, looking ahead at PERIOD, shifting is permitted
+** because of the following sub-derivation:
+
+predicate 
+NOT anno_expr 
+    expr ANNOTATE LBRACE annotations RBRACE 
+    tuple_index 
+    anno_expr . PERIOD LBRACKET INTEGER RBRACKET 
+
+** Conflict (shift/reduce) in state 841.
+** Tokens involved: PERIOD LPAREN LBRACKETLT LBRACKETGEQ LBRACKET LARROW
+** The following explanations concentrate on token PERIOD.
+** This state is reached from expr after reading:
+
+BIND NEG anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+bind 
+BIND anno_expr AS IDENTIFIER IN anno_expr 
+     expr ANNOTATE LBRACE annotations RBRACE 
+     (?)
+
+** In state 841, looking ahead at PERIOD, reducing production
+** arithmetic -> NEG anno_expr 
+** is permitted because of the following sub-derivation:
+
+tuple_index 
+anno_expr PERIOD LBRACKET INTEGER RBRACKET // lookahead token appears
+expr // lookahead token is inherited
+arithmetic // lookahead token is inherited
+NEG anno_expr . 
+
+** In state 841, looking ahead at PERIOD, shifting is permitted
+** because of the following sub-derivation:
+
+arithmetic 
+NEG anno_expr 
+    expr ANNOTATE LBRACE annotations RBRACE 
+    tuple_index 
+    anno_expr . PERIOD LBRACKET INTEGER RBRACKET 
+
+** Conflict (shift/reduce) in state 835.
+** Tokens involved: TIMES PLUS PERIOD OR NEQ NEG MODULO LT LPAREN LEQ LBRACKETLT LBRACKETGEQ LBRACKET LARROW GT GEQ EQ DIVIDE CONCAT AND
+** The following explanations concentrate on token TIMES.
+** This state is reached from expr after reading:
+
+BIND LET IDENTIFIER GETS anno_expr IN anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+bind 
+BIND anno_expr AS IDENTIFIER IN anno_expr 
+     expr ANNOTATE LBRACE annotations RBRACE 
+     (?)
+
+** In state 835, looking ahead at TIMES, shifting is permitted
+** because of the following sub-derivation:
+
+letin 
+LET IDENTIFIER GETS anno_expr IN anno_expr 
+                                 expr ANNOTATE LBRACE annotations RBRACE 
+                                 arithmetic 
+                                 anno_expr . TIMES anno_expr 
+
+** In state 835, looking ahead at TIMES, reducing production
+** letin -> LET IDENTIFIER GETS anno_expr IN anno_expr 
+** is permitted because of the following sub-derivation:
+
+arithmetic 
+anno_expr TIMES anno_expr // lookahead token appears
+expr // lookahead token is inherited
+letin // lookahead token is inherited
+LET IDENTIFIER GETS anno_expr IN anno_expr . 
+
+** Conflict (shift/reduce) in state 828.
+** Tokens involved: TIMES PLUS PERIOD OR NEQ NEG MODULO LT LPAREN LEQ LBRACKETLT LBRACKETGEQ LBRACKET LARROW GT GEQ EQ DIVIDE CONCAT AND
+** The following explanations concentrate on token TIMES.
+** This state is reached from expr after reading:
+
+BIND LET LPAREN id_list RPAREN GETS anno_expr IN anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+bind 
+BIND anno_expr AS IDENTIFIER IN anno_expr 
+     expr ANNOTATE LBRACE annotations RBRACE 
+     (?)
+
+** In state 828, looking ahead at TIMES, shifting is permitted
+** because of the following sub-derivation:
+
+letin 
+LET LPAREN id_list RPAREN GETS anno_expr IN anno_expr 
+                                            expr ANNOTATE LBRACE annotations RBRACE 
+                                            arithmetic 
+                                            anno_expr . TIMES anno_expr 
+
+** In state 828, looking ahead at TIMES, reducing production
+** letin -> LET LPAREN id_list RPAREN GETS anno_expr IN anno_expr 
+** is permitted because of the following sub-derivation:
+
+arithmetic 
+anno_expr TIMES anno_expr // lookahead token appears
+expr // lookahead token is inherited
+letin // lookahead token is inherited
+LET LPAREN id_list RPAREN GETS anno_expr IN anno_expr . 
+
+** Conflict (shift/reduce) in state 827.
+** Tokens involved: TIMES PLUS PERIOD OR NEQ NEG MODULO LT LPAREN LEQ LBRACKETLT LBRACKETGEQ LBRACKET LARROW GT GEQ EQ DIVIDE CONCAT AND
+** The following explanations concentrate on token TIMES.
+** This state is reached from expr after reading:
+
+BIND JUST anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+bind 
+BIND anno_expr AS IDENTIFIER IN anno_expr 
+     expr ANNOTATE LBRACE annotations RBRACE 
+     (?)
+
+** In state 827, looking ahead at TIMES, shifting is permitted
+** because of the following sub-derivation:
+
+JUST anno_expr 
+     expr ANNOTATE LBRACE annotations RBRACE 
+     arithmetic 
+     anno_expr . TIMES anno_expr 
+
+** In state 827, looking ahead at TIMES, reducing production
+** expr -> JUST anno_expr 
+** is permitted because of the following sub-derivation:
+
+arithmetic 
+anno_expr TIMES anno_expr // lookahead token appears
+expr // lookahead token is inherited
+JUST anno_expr . 
+
+** Conflict (shift/reduce) in state 816.
+** Token involved: LARROW
+** This state is reached from expr after reading:
+
+BIND INSERT LPAREN variable 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+bind 
+BIND anno_expr AS IDENTIFIER IN anno_expr 
+     expr ANNOTATE LBRACE annotations RBRACE 
+     mutation 
+     INSERT LPAREN anno_expr error 
+                   expr ANNOTATE LBRACE annotations RBRACE 
+                   mutation 
+                   (?)
+
+** In state 816, looking ahead at LARROW, reducing production
+** expr -> variable 
+** is permitted because of the following sub-derivation:
+
+anno_expr LARROW error // lookahead token appears
+expr // lookahead token is inherited
+variable . 
+
+** In state 816, looking ahead at LARROW, shifting is permitted
+** because of the following sub-derivation:
+
+variable . LARROW anno_expr 
+
+** Conflict (shift/reduce) in state 815.
+** Tokens involved: TIMES PLUS PERIOD OR NEQ NEG MODULO LT LPAREN LEQ LBRACKETLT LBRACKETGEQ LBRACKET LARROW GT GEQ EQ DIVIDE CONCAT AND
+** The following explanations concentrate on token TIMES.
+** This state is reached from expr after reading:
+
+BIND INDIRECT anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+bind 
+BIND anno_expr AS IDENTIFIER IN anno_expr 
+     expr ANNOTATE LBRACE annotations RBRACE 
+     (?)
+
+** In state 815, looking ahead at TIMES, shifting is permitted
+** because of the following sub-derivation:
+
+INDIRECT anno_expr 
+         expr ANNOTATE LBRACE annotations RBRACE 
+         arithmetic 
+         anno_expr . TIMES anno_expr 
+
+** In state 815, looking ahead at TIMES, reducing production
+** expr -> INDIRECT anno_expr 
+** is permitted because of the following sub-derivation:
+
+arithmetic 
+anno_expr TIMES anno_expr // lookahead token appears
+expr // lookahead token is inherited
+INDIRECT anno_expr . 
+
+** Conflict (shift/reduce) in state 814.
+** Tokens involved: PERIOD LPAREN LBRACKETLT LBRACKETGEQ LBRACKET LARROW
+** The following explanations concentrate on token PERIOD.
+** This state is reached from expr after reading:
+
+BIND IF anno_expr THEN anno_expr ELSE anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+bind 
+BIND anno_expr AS IDENTIFIER IN anno_expr 
+     expr ANNOTATE LBRACE annotations RBRACE 
+     (?)
+
+** In state 814, looking ahead at PERIOD, reducing production
+** conditional -> IF anno_expr THEN anno_expr ELSE anno_expr 
+** is permitted because of the following sub-derivation:
+
+tuple_index 
+anno_expr PERIOD LBRACKET INTEGER RBRACKET // lookahead token appears
+expr // lookahead token is inherited
+conditional // lookahead token is inherited
+IF anno_expr THEN anno_expr ELSE anno_expr . 
+
+** In state 814, looking ahead at PERIOD, shifting is permitted
+** because of the following sub-derivation:
+
+conditional 
+IF anno_expr THEN anno_expr ELSE anno_expr 
+                                 expr ANNOTATE LBRACE annotations RBRACE 
+                                 tuple_index 
+                                 anno_expr . PERIOD LBRACKET INTEGER RBRACKET 
+
+** Conflict (shift/reduce) in state 792.
+** Token involved: LARROW
+** This state is reached from expr after reading:
+
+BIND DELETE LPAREN variable 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+bind 
+BIND anno_expr AS IDENTIFIER IN anno_expr 
+     expr ANNOTATE LBRACE annotations RBRACE 
+     mutation 
+     DELETE LPAREN anno_expr error 
+                   expr ANNOTATE LBRACE annotations RBRACE 
+                   mutation 
+                   (?)
+
+** In state 792, looking ahead at LARROW, reducing production
+** expr -> variable 
+** is permitted because of the following sub-derivation:
+
+anno_expr LARROW error // lookahead token appears
+expr // lookahead token is inherited
+variable . 
+
+** In state 792, looking ahead at LARROW, shifting is permitted
+** because of the following sub-derivation:
+
+variable . LARROW anno_expr 
+
+** Conflict (shift/reduce) in state 785.
+** Tokens involved: RBRACE PERIOD LPAREN LBRACKETLT LBRACKETGEQ LBRACKET LARROW
+** The following explanations concentrate on token PERIOD.
+** This state is reached from expr after reading:
+
+BIND CASE anno_expr OF LBRACE JUST id_unknown RARROW anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+bind 
+BIND anno_expr AS IDENTIFIER IN anno_expr 
+     expr ANNOTATE LBRACE annotations RBRACE 
+     (?)
+
+** In state 785, looking ahead at PERIOD, reducing production
+** case -> CASE anno_expr OF LBRACE JUST id_unknown RARROW anno_expr 
+** is permitted because of the following sub-derivation:
+
+tuple_index 
+anno_expr PERIOD LBRACKET INTEGER RBRACKET // lookahead token appears
+expr // lookahead token is inherited
+case // lookahead token is inherited
+CASE anno_expr OF LBRACE JUST id_unknown RARROW anno_expr . 
+
+** In state 785, looking ahead at PERIOD, shifting is permitted
+** because of the following sub-derivation:
+
+case 
+CASE anno_expr OF LBRACE JUST id_unknown RARROW anno_expr RBRACE LBRACE NOTHING RARROW anno_expr RBRACE 
+                                                expr ANNOTATE LBRACE annotations RBRACE 
+                                                tuple_index 
+                                                anno_expr . PERIOD LBRACKET INTEGER RBRACKET 
+
+** Conflict (shift/reduce) in state 774.
+** Tokens involved: RBRACE PERIOD LPAREN LBRACKETLT LBRACKETGEQ LBRACKET LARROW
+** The following explanations concentrate on token PERIOD.
+** This state is reached from expr after reading:
+
+BIND CASE anno_expr OF LBRACE NOTHING RARROW anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+bind 
+BIND anno_expr AS IDENTIFIER IN anno_expr 
+     expr ANNOTATE LBRACE annotations RBRACE 
+     (?)
+
+** In state 774, looking ahead at PERIOD, reducing production
+** case -> CASE anno_expr OF LBRACE NOTHING RARROW anno_expr 
+** is permitted because of the following sub-derivation:
+
+tuple_index 
+anno_expr PERIOD LBRACKET INTEGER RBRACKET // lookahead token appears
+expr // lookahead token is inherited
+case // lookahead token is inherited
+CASE anno_expr OF LBRACE NOTHING RARROW anno_expr . 
+
+** In state 774, looking ahead at PERIOD, shifting is permitted
+** because of the following sub-derivation:
+
+case 
+CASE anno_expr OF LBRACE NOTHING RARROW anno_expr RBRACE LBRACE JUST id_unknown RARROW anno_expr RBRACE 
+                                        expr ANNOTATE LBRACE annotations RBRACE 
+                                        tuple_index 
+                                        anno_expr . PERIOD LBRACKET INTEGER RBRACKET 
+
+** Conflict (shift/reduce) in state 773.
+** Tokens involved: TIMES PLUS PERIOD OR NEQ NEG MODULO LT LPAREN LEQ LBRACKETLT LBRACKETGEQ LBRACKET LARROW GT GEQ EQ DIVIDE CONCAT AND
+** The following explanations concentrate on token TIMES.
+** This state is reached from expr after reading:
+
+BIND BIND anno_expr AS IDENTIFIER IN anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+bind 
+BIND anno_expr AS IDENTIFIER IN anno_expr 
+     expr ANNOTATE LBRACE annotations RBRACE 
+     (?)
+
+** In state 773, looking ahead at TIMES, shifting is permitted
+** because of the following sub-derivation:
+
+bind 
+BIND anno_expr AS IDENTIFIER IN anno_expr 
+                                expr ANNOTATE LBRACE annotations RBRACE 
+                                arithmetic 
+                                anno_expr . TIMES anno_expr 
+
+** In state 773, looking ahead at TIMES, reducing production
+** bind -> BIND anno_expr AS IDENTIFIER IN anno_expr 
+** is permitted because of the following sub-derivation:
+
+arithmetic 
+anno_expr TIMES anno_expr // lookahead token appears
+expr // lookahead token is inherited
+bind // lookahead token is inherited
+BIND anno_expr AS IDENTIFIER IN anno_expr . 
+
+** Conflict (shift/reduce) in state 764.
+** Tokens involved: PERIOD LPAREN LBRACKETLT LBRACKETGEQ LBRACKET LARROW
+** The following explanations concentrate on token PERIOD.
+** This state is reached from expr after reading:
+
+BIND BACKSLASH arg RARROW anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+bind 
+BIND anno_expr AS IDENTIFIER IN anno_expr 
+     expr ANNOTATE LBRACE annotations RBRACE 
+     (?)
+
+** In state 764, looking ahead at PERIOD, reducing production
+** lambda -> BACKSLASH arg RARROW anno_expr 
+** is permitted because of the following sub-derivation:
+
+tuple_index 
+anno_expr PERIOD LBRACKET INTEGER RBRACKET // lookahead token appears
+expr // lookahead token is inherited
+lambda // lookahead token is inherited
+BACKSLASH arg RARROW anno_expr . 
+
+** In state 764, looking ahead at PERIOD, shifting is permitted
+** because of the following sub-derivation:
+
+lambda 
+BACKSLASH arg RARROW anno_expr 
+                     expr ANNOTATE LBRACE annotations RBRACE 
+                     tuple_index 
+                     anno_expr . PERIOD LBRACKET INTEGER RBRACKET 
+
+** Conflict (shift/reduce) in state 755.
+** Tokens involved: PERIOD LPAREN LBRACKETLT LBRACKETGEQ LBRACKET LARROW
+** The following explanations concentrate on token PERIOD.
+** This state is reached from expr after reading:
+
+BIND anno_expr CONCAT anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+bind 
+BIND anno_expr AS IDENTIFIER IN anno_expr 
+     expr ANNOTATE LBRACE annotations RBRACE 
+     (?)
+
+** In state 755, looking ahead at PERIOD, reducing production
+** transformers -> anno_expr CONCAT anno_expr 
+** is permitted because of the following sub-derivation:
+
+tuple_index 
+anno_expr PERIOD LBRACKET INTEGER RBRACKET // lookahead token appears
+expr // lookahead token is inherited
+transformers // lookahead token is inherited
+anno_expr CONCAT anno_expr . 
+
+** In state 755, looking ahead at PERIOD, shifting is permitted
+** because of the following sub-derivation:
+
+transformers 
+anno_expr CONCAT anno_expr 
+                 expr ANNOTATE LBRACE annotations RBRACE 
+                 tuple_index 
+                 anno_expr . PERIOD LBRACKET INTEGER RBRACKET 
+
+** Conflict (shift/reduce) in state 752.
+** Tokens involved: PERIOD LPAREN LBRACKETLT LBRACKETGEQ LBRACKET LARROW
+** The following explanations concentrate on token PERIOD.
+** This state is reached from expr after reading:
+
+BIND anno_expr AND anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+bind 
+BIND anno_expr AS IDENTIFIER IN anno_expr 
+     expr ANNOTATE LBRACE annotations RBRACE 
+     (?)
+
+** In state 752, looking ahead at PERIOD, reducing production
+** predicate -> anno_expr AND anno_expr 
+** is permitted because of the following sub-derivation:
+
+tuple_index 
+anno_expr PERIOD LBRACKET INTEGER RBRACKET // lookahead token appears
+expr // lookahead token is inherited
+predicate // lookahead token is inherited
+anno_expr AND anno_expr . 
+
+** In state 752, looking ahead at PERIOD, shifting is permitted
+** because of the following sub-derivation:
+
+predicate 
+anno_expr AND anno_expr 
+              expr ANNOTATE LBRACE annotations RBRACE 
+              tuple_index 
+              anno_expr . PERIOD LBRACKET INTEGER RBRACKET 
+
+** Conflict (shift/reduce) in state 750.
+** Tokens involved: PERIOD LPAREN LBRACKETLT LBRACKETGEQ LBRACKET LARROW
+** The following explanations concentrate on token PERIOD.
+** This state is reached from expr after reading:
+
+BIND anno_expr EQ anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+bind 
+BIND anno_expr AS IDENTIFIER IN anno_expr 
+     expr ANNOTATE LBRACE annotations RBRACE 
+     (?)
+
+** In state 750, looking ahead at PERIOD, reducing production
+** predicate -> anno_expr EQ anno_expr 
+** is permitted because of the following sub-derivation:
+
+tuple_index 
+anno_expr PERIOD LBRACKET INTEGER RBRACKET // lookahead token appears
+expr // lookahead token is inherited
+predicate // lookahead token is inherited
+anno_expr EQ anno_expr . 
+
+** In state 750, looking ahead at PERIOD, shifting is permitted
+** because of the following sub-derivation:
+
+predicate 
+anno_expr EQ anno_expr 
+             expr ANNOTATE LBRACE annotations RBRACE 
+             tuple_index 
+             anno_expr . PERIOD LBRACKET INTEGER RBRACKET 
+
+** Conflict (shift/reduce) in state 747.
+** Tokens involved: PERIOD LPAREN LBRACKETLT LBRACKETGEQ LBRACKET LARROW
+** The following explanations concentrate on token PERIOD.
+** This state is reached from expr after reading:
+
+BIND anno_expr GEQ anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+bind 
+BIND anno_expr AS IDENTIFIER IN anno_expr 
+     expr ANNOTATE LBRACE annotations RBRACE 
+     (?)
+
+** In state 747, looking ahead at PERIOD, reducing production
+** predicate -> anno_expr GEQ anno_expr 
+** is permitted because of the following sub-derivation:
+
+tuple_index 
+anno_expr PERIOD LBRACKET INTEGER RBRACKET // lookahead token appears
+expr // lookahead token is inherited
+predicate // lookahead token is inherited
+anno_expr GEQ anno_expr . 
+
+** In state 747, looking ahead at PERIOD, shifting is permitted
+** because of the following sub-derivation:
+
+predicate 
+anno_expr GEQ anno_expr 
+              expr ANNOTATE LBRACE annotations RBRACE 
+              tuple_index 
+              anno_expr . PERIOD LBRACKET INTEGER RBRACKET 
+
+** Conflict (shift/reduce) in state 744.
+** Tokens involved: PERIOD LPAREN LBRACKETLT LBRACKETGEQ LBRACKET LARROW
+** The following explanations concentrate on token PERIOD.
+** This state is reached from expr after reading:
+
+BIND anno_expr GT anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+bind 
+BIND anno_expr AS IDENTIFIER IN anno_expr 
+     expr ANNOTATE LBRACE annotations RBRACE 
+     (?)
+
+** In state 744, looking ahead at PERIOD, reducing production
+** predicate -> anno_expr GT anno_expr 
+** is permitted because of the following sub-derivation:
+
+tuple_index 
+anno_expr PERIOD LBRACKET INTEGER RBRACKET // lookahead token appears
+expr // lookahead token is inherited
+predicate // lookahead token is inherited
+anno_expr GT anno_expr . 
+
+** In state 744, looking ahead at PERIOD, shifting is permitted
+** because of the following sub-derivation:
+
+predicate 
+anno_expr GT anno_expr 
+             expr ANNOTATE LBRACE annotations RBRACE 
+             tuple_index 
+             anno_expr . PERIOD LBRACKET INTEGER RBRACKET 
+
+** Conflict (shift/reduce) in state 741.
+** Tokens involved: PERIOD LPAREN LBRACKETLT LBRACKETGEQ LBRACKET LARROW
+** The following explanations concentrate on token PERIOD.
+** This state is reached from expr after reading:
+
+BIND anno_expr LEQ anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+bind 
+BIND anno_expr AS IDENTIFIER IN anno_expr 
+     expr ANNOTATE LBRACE annotations RBRACE 
+     (?)
+
+** In state 741, looking ahead at PERIOD, reducing production
+** predicate -> anno_expr LEQ anno_expr 
+** is permitted because of the following sub-derivation:
+
+tuple_index 
+anno_expr PERIOD LBRACKET INTEGER RBRACKET // lookahead token appears
+expr // lookahead token is inherited
+predicate // lookahead token is inherited
+anno_expr LEQ anno_expr . 
+
+** In state 741, looking ahead at PERIOD, shifting is permitted
+** because of the following sub-derivation:
+
+predicate 
+anno_expr LEQ anno_expr 
+              expr ANNOTATE LBRACE annotations RBRACE 
+              tuple_index 
+              anno_expr . PERIOD LBRACKET INTEGER RBRACKET 
+
+** Conflict (shift/reduce) in state 738.
+** Tokens involved: PERIOD LPAREN LBRACKETLT LBRACKETGEQ LBRACKET LARROW
+** The following explanations concentrate on token PERIOD.
+** This state is reached from expr after reading:
+
+BIND anno_expr LT anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+bind 
+BIND anno_expr AS IDENTIFIER IN anno_expr 
+     expr ANNOTATE LBRACE annotations RBRACE 
+     (?)
+
+** In state 738, looking ahead at PERIOD, reducing production
+** predicate -> anno_expr LT anno_expr 
+** is permitted because of the following sub-derivation:
+
+tuple_index 
+anno_expr PERIOD LBRACKET INTEGER RBRACKET // lookahead token appears
+expr // lookahead token is inherited
+predicate // lookahead token is inherited
+anno_expr LT anno_expr . 
+
+** In state 738, looking ahead at PERIOD, shifting is permitted
+** because of the following sub-derivation:
+
+predicate 
+anno_expr LT anno_expr 
+             expr ANNOTATE LBRACE annotations RBRACE 
+             tuple_index 
+             anno_expr . PERIOD LBRACKET INTEGER RBRACKET 
+
+** Conflict (shift/reduce) in state 735.
+** Tokens involved: PERIOD LPAREN LBRACKETLT LBRACKETGEQ LBRACKET LARROW
+** The following explanations concentrate on token PERIOD.
+** This state is reached from expr after reading:
+
+BIND anno_expr NEQ anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+bind 
+BIND anno_expr AS IDENTIFIER IN anno_expr 
+     expr ANNOTATE LBRACE annotations RBRACE 
+     (?)
+
+** In state 735, looking ahead at PERIOD, reducing production
+** predicate -> anno_expr NEQ anno_expr 
+** is permitted because of the following sub-derivation:
+
+tuple_index 
+anno_expr PERIOD LBRACKET INTEGER RBRACKET // lookahead token appears
+expr // lookahead token is inherited
+predicate // lookahead token is inherited
+anno_expr NEQ anno_expr . 
+
+** In state 735, looking ahead at PERIOD, shifting is permitted
+** because of the following sub-derivation:
+
+predicate 
+anno_expr NEQ anno_expr 
+              expr ANNOTATE LBRACE annotations RBRACE 
+              tuple_index 
+              anno_expr . PERIOD LBRACKET INTEGER RBRACKET 
+
+** Conflict (shift/reduce) in state 732.
+** Tokens involved: PERIOD LPAREN LBRACKETLT LBRACKETGEQ LBRACKET LARROW
+** The following explanations concentrate on token PERIOD.
+** This state is reached from expr after reading:
+
+BIND anno_expr OR anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+bind 
+BIND anno_expr AS IDENTIFIER IN anno_expr 
+     expr ANNOTATE LBRACE annotations RBRACE 
+     (?)
+
+** In state 732, looking ahead at PERIOD, reducing production
+** predicate -> anno_expr OR anno_expr 
+** is permitted because of the following sub-derivation:
+
+tuple_index 
+anno_expr PERIOD LBRACKET INTEGER RBRACKET // lookahead token appears
+expr // lookahead token is inherited
+predicate // lookahead token is inherited
+anno_expr OR anno_expr . 
+
+** In state 732, looking ahead at PERIOD, shifting is permitted
+** because of the following sub-derivation:
+
+predicate 
+anno_expr OR anno_expr 
+             expr ANNOTATE LBRACE annotations RBRACE 
+             tuple_index 
+             anno_expr . PERIOD LBRACKET INTEGER RBRACKET 
+
+** Conflict (shift/reduce) in state 730.
+** Tokens involved: PERIOD LPAREN LBRACKETLT LBRACKETGEQ LBRACKET LARROW
+** The following explanations concentrate on token PERIOD.
+** This state is reached from expr after reading:
+
+BIND anno_expr PLUS anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+bind 
+BIND anno_expr AS IDENTIFIER IN anno_expr 
+     expr ANNOTATE LBRACE annotations RBRACE 
+     (?)
+
+** In state 730, looking ahead at PERIOD, reducing production
+** arithmetic -> anno_expr PLUS anno_expr 
+** is permitted because of the following sub-derivation:
+
+tuple_index 
+anno_expr PERIOD LBRACKET INTEGER RBRACKET // lookahead token appears
+expr // lookahead token is inherited
+arithmetic // lookahead token is inherited
+anno_expr PLUS anno_expr . 
+
+** In state 730, looking ahead at PERIOD, shifting is permitted
+** because of the following sub-derivation:
+
+arithmetic 
+anno_expr PLUS anno_expr 
+               expr ANNOTATE LBRACE annotations RBRACE 
+               tuple_index 
+               anno_expr . PERIOD LBRACKET INTEGER RBRACKET 
+
+** Conflict (shift/reduce) in state 727.
+** Tokens involved: PERIOD LPAREN LBRACKETLT LBRACKETGEQ LBRACKET LARROW
+** The following explanations concentrate on token PERIOD.
+** This state is reached from expr after reading:
+
+BIND anno_expr DIVIDE anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+bind 
+BIND anno_expr AS IDENTIFIER IN anno_expr 
+     expr ANNOTATE LBRACE annotations RBRACE 
+     (?)
+
+** In state 727, looking ahead at PERIOD, reducing production
+** arithmetic -> anno_expr DIVIDE anno_expr 
+** is permitted because of the following sub-derivation:
+
+tuple_index 
+anno_expr PERIOD LBRACKET INTEGER RBRACKET // lookahead token appears
+expr // lookahead token is inherited
+arithmetic // lookahead token is inherited
+anno_expr DIVIDE anno_expr . 
+
+** In state 727, looking ahead at PERIOD, shifting is permitted
+** because of the following sub-derivation:
+
+arithmetic 
+anno_expr DIVIDE anno_expr 
+                 expr ANNOTATE LBRACE annotations RBRACE 
+                 tuple_index 
+                 anno_expr . PERIOD LBRACKET INTEGER RBRACKET 
+
+** Conflict (shift/reduce) in state 707.
+** Tokens involved: PERIOD LPAREN LBRACKETLT LBRACKETGEQ LBRACKET LARROW
+** The following explanations concentrate on token PERIOD.
+** This state is reached from expr after reading:
+
+BIND anno_expr MODULO anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+bind 
+BIND anno_expr AS IDENTIFIER IN anno_expr 
+     expr ANNOTATE LBRACE annotations RBRACE 
+     (?)
+
+** In state 707, looking ahead at PERIOD, reducing production
+** arithmetic -> anno_expr MODULO anno_expr 
+** is permitted because of the following sub-derivation:
+
+tuple_index 
+anno_expr PERIOD LBRACKET INTEGER RBRACKET // lookahead token appears
+expr // lookahead token is inherited
+arithmetic // lookahead token is inherited
+anno_expr MODULO anno_expr . 
+
+** In state 707, looking ahead at PERIOD, shifting is permitted
+** because of the following sub-derivation:
+
+arithmetic 
+anno_expr MODULO anno_expr 
+                 expr ANNOTATE LBRACE annotations RBRACE 
+                 tuple_index 
+                 anno_expr . PERIOD LBRACKET INTEGER RBRACKET 
+
+** Conflict (shift/reduce) in state 704.
+** Tokens involved: PERIOD LPAREN LBRACKETLT LBRACKETGEQ LBRACKET LARROW
+** The following explanations concentrate on token PERIOD.
+** This state is reached from expr after reading:
+
+BIND anno_expr NEG anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+bind 
+BIND anno_expr AS IDENTIFIER IN anno_expr 
+     expr ANNOTATE LBRACE annotations RBRACE 
+     (?)
+
+** In state 704, looking ahead at PERIOD, reducing production
+** arithmetic -> anno_expr NEG anno_expr 
+** is permitted because of the following sub-derivation:
+
+tuple_index 
+anno_expr PERIOD LBRACKET INTEGER RBRACKET // lookahead token appears
+expr // lookahead token is inherited
+arithmetic // lookahead token is inherited
+anno_expr NEG anno_expr . 
+
+** In state 704, looking ahead at PERIOD, shifting is permitted
+** because of the following sub-derivation:
+
+arithmetic 
+anno_expr NEG anno_expr 
+              expr ANNOTATE LBRACE annotations RBRACE 
+              tuple_index 
+              anno_expr . PERIOD LBRACKET INTEGER RBRACKET 
+
+** Conflict (shift/reduce) in state 698.
+** Tokens involved: PERIOD LPAREN LBRACKETLT LBRACKETGEQ LBRACKET LARROW
+** The following explanations concentrate on token PERIOD.
+** This state is reached from expr after reading:
+
+BIND anno_expr TIMES anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+bind 
+BIND anno_expr AS IDENTIFIER IN anno_expr 
+     expr ANNOTATE LBRACE annotations RBRACE 
+     (?)
+
+** In state 698, looking ahead at PERIOD, reducing production
+** arithmetic -> anno_expr TIMES anno_expr 
+** is permitted because of the following sub-derivation:
+
+tuple_index 
+anno_expr PERIOD LBRACKET INTEGER RBRACKET // lookahead token appears
+expr // lookahead token is inherited
+arithmetic // lookahead token is inherited
+anno_expr TIMES anno_expr . 
+
+** In state 698, looking ahead at PERIOD, shifting is permitted
+** because of the following sub-derivation:
+
+arithmetic 
+anno_expr TIMES anno_expr 
+                expr ANNOTATE LBRACE annotations RBRACE 
+                tuple_index 
+                anno_expr . PERIOD LBRACKET INTEGER RBRACKET 
+
+** Conflict (shift/reduce) in state 695.
+** Tokens involved: TIMES PLUS PERIOD OR NEQ NEG MODULO LT LPAREN LEQ LBRACKETLT LBRACKETGEQ LBRACKET LARROW GT GEQ EQ DIVIDE CONCAT AND
+** The following explanations concentrate on token TIMES.
+** This state is reached from expr after reading:
+
+BIND variable LARROW anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+bind 
+BIND anno_expr AS IDENTIFIER IN anno_expr 
+     expr ANNOTATE LBRACE annotations RBRACE 
+     (?)
+
+** In state 695, looking ahead at TIMES, shifting is permitted
+** because of the following sub-derivation:
+
+mutation 
+variable LARROW anno_expr 
+                expr ANNOTATE LBRACE annotations RBRACE 
+                arithmetic 
+                anno_expr . TIMES anno_expr 
+
+** In state 695, looking ahead at TIMES, reducing production
+** mutation -> variable LARROW anno_expr 
+** is permitted because of the following sub-derivation:
+
+arithmetic 
+anno_expr TIMES anno_expr // lookahead token appears
+expr // lookahead token is inherited
+mutation // lookahead token is inherited
+variable LARROW anno_expr . 
+
+** Conflict (shift/reduce) in state 683.
+** Token involved: ANNOTATE
+** This state is reached from expr after reading:
+
+BIND NOT expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+bind 
+BIND anno_expr AS IDENTIFIER IN anno_expr 
+     (?)
+
+** In state 683, looking ahead at ANNOTATE, shifting is permitted
+** because of the following sub-derivation:
+
+expr ANNOTATE LBRACE annotations RBRACE 
+predicate 
+NOT anno_expr 
+    expr . ANNOTATE LBRACE annotations RBRACE 
+
+** In state 683, looking ahead at ANNOTATE, reducing production
+** anno_expr -> expr 
+** is permitted because of the following sub-derivation:
+
+expr ANNOTATE LBRACE annotations RBRACE // lookahead token appears
+predicate // lookahead token is inherited
+NOT anno_expr // lookahead token is inherited
+    expr . 
+
+** Conflict (shift/reduce) in state 674.
+** Token involved: LARROW
+** This state is reached from expr after reading:
+
+BIND variable 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+bind 
+BIND anno_expr AS IDENTIFIER IN anno_expr 
+     expr ANNOTATE LBRACE annotations RBRACE 
+     mutation 
+     (?)
+
+** In state 674, looking ahead at LARROW, reducing production
+** expr -> variable 
+** is permitted because of the following sub-derivation:
+
+anno_expr LARROW error // lookahead token appears
+expr // lookahead token is inherited
+variable . 
+
+** In state 674, looking ahead at LARROW, shifting is permitted
+** because of the following sub-derivation:
+
+variable . LARROW anno_expr 
+
+** Conflict (shift/reduce) in state 456.
+** Tokens involved: PERIOD LPAREN LBRACKETLT LBRACKETGEQ LBRACKET LARROW
+** The following explanations concentrate on token PERIOD.
+** This state is reached from expr after reading:
+
+anno_expr CONCAT anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+(?)
+
+** In state 456, looking ahead at PERIOD, reducing production
+** transformers -> anno_expr CONCAT anno_expr 
+** is permitted because of the following sub-derivation:
+
+tuple_index 
+anno_expr PERIOD LBRACKET INTEGER RBRACKET // lookahead token appears
+expr // lookahead token is inherited
+transformers // lookahead token is inherited
+anno_expr CONCAT anno_expr . 
+
+** In state 456, looking ahead at PERIOD, shifting is permitted
+** because of the following sub-derivation:
+
+transformers 
+anno_expr CONCAT anno_expr 
+                 expr ANNOTATE LBRACE annotations RBRACE 
+                 tuple_index 
+                 anno_expr . PERIOD LBRACKET INTEGER RBRACKET 
+
+** Conflict (shift/reduce) in state 453.
+** Tokens involved: PERIOD LPAREN LBRACKETLT LBRACKETGEQ LBRACKET LARROW
+** The following explanations concentrate on token PERIOD.
+** This state is reached from expr after reading:
+
+anno_expr AND anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+(?)
+
+** In state 453, looking ahead at PERIOD, reducing production
+** predicate -> anno_expr AND anno_expr 
+** is permitted because of the following sub-derivation:
+
+tuple_index 
+anno_expr PERIOD LBRACKET INTEGER RBRACKET // lookahead token appears
+expr // lookahead token is inherited
+predicate // lookahead token is inherited
+anno_expr AND anno_expr . 
+
+** In state 453, looking ahead at PERIOD, shifting is permitted
+** because of the following sub-derivation:
+
+predicate 
+anno_expr AND anno_expr 
+              expr ANNOTATE LBRACE annotations RBRACE 
+              tuple_index 
+              anno_expr . PERIOD LBRACKET INTEGER RBRACKET 
+
+** Conflict (shift/reduce) in state 451.
+** Tokens involved: PERIOD LPAREN LBRACKETLT LBRACKETGEQ LBRACKET LARROW
+** The following explanations concentrate on token PERIOD.
+** This state is reached from expr after reading:
+
+anno_expr EQ anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+(?)
+
+** In state 451, looking ahead at PERIOD, reducing production
+** predicate -> anno_expr EQ anno_expr 
+** is permitted because of the following sub-derivation:
+
+tuple_index 
+anno_expr PERIOD LBRACKET INTEGER RBRACKET // lookahead token appears
+expr // lookahead token is inherited
+predicate // lookahead token is inherited
+anno_expr EQ anno_expr . 
+
+** In state 451, looking ahead at PERIOD, shifting is permitted
+** because of the following sub-derivation:
+
+predicate 
+anno_expr EQ anno_expr 
+             expr ANNOTATE LBRACE annotations RBRACE 
+             tuple_index 
+             anno_expr . PERIOD LBRACKET INTEGER RBRACKET 
+
+** Conflict (shift/reduce) in state 448.
+** Tokens involved: PERIOD LPAREN LBRACKETLT LBRACKETGEQ LBRACKET LARROW
+** The following explanations concentrate on token PERIOD.
+** This state is reached from expr after reading:
+
+anno_expr GEQ anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+(?)
+
+** In state 448, looking ahead at PERIOD, reducing production
+** predicate -> anno_expr GEQ anno_expr 
+** is permitted because of the following sub-derivation:
+
+tuple_index 
+anno_expr PERIOD LBRACKET INTEGER RBRACKET // lookahead token appears
+expr // lookahead token is inherited
+predicate // lookahead token is inherited
+anno_expr GEQ anno_expr . 
+
+** In state 448, looking ahead at PERIOD, shifting is permitted
+** because of the following sub-derivation:
+
+predicate 
+anno_expr GEQ anno_expr 
+              expr ANNOTATE LBRACE annotations RBRACE 
+              tuple_index 
+              anno_expr . PERIOD LBRACKET INTEGER RBRACKET 
+
+** Conflict (shift/reduce) in state 445.
+** Tokens involved: PERIOD LPAREN LBRACKETLT LBRACKETGEQ LBRACKET LARROW
+** The following explanations concentrate on token PERIOD.
+** This state is reached from expr after reading:
+
+anno_expr GT anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+(?)
+
+** In state 445, looking ahead at PERIOD, reducing production
+** predicate -> anno_expr GT anno_expr 
+** is permitted because of the following sub-derivation:
+
+tuple_index 
+anno_expr PERIOD LBRACKET INTEGER RBRACKET // lookahead token appears
+expr // lookahead token is inherited
+predicate // lookahead token is inherited
+anno_expr GT anno_expr . 
+
+** In state 445, looking ahead at PERIOD, shifting is permitted
+** because of the following sub-derivation:
+
+predicate 
+anno_expr GT anno_expr 
+             expr ANNOTATE LBRACE annotations RBRACE 
+             tuple_index 
+             anno_expr . PERIOD LBRACKET INTEGER RBRACKET 
+
+** Conflict (shift/reduce) in state 442.
+** Tokens involved: PERIOD LPAREN LBRACKETLT LBRACKETGEQ LBRACKET LARROW
+** The following explanations concentrate on token PERIOD.
+** This state is reached from expr after reading:
+
+anno_expr LEQ anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+(?)
+
+** In state 442, looking ahead at PERIOD, reducing production
+** predicate -> anno_expr LEQ anno_expr 
+** is permitted because of the following sub-derivation:
+
+tuple_index 
+anno_expr PERIOD LBRACKET INTEGER RBRACKET // lookahead token appears
+expr // lookahead token is inherited
+predicate // lookahead token is inherited
+anno_expr LEQ anno_expr . 
+
+** In state 442, looking ahead at PERIOD, shifting is permitted
+** because of the following sub-derivation:
+
+predicate 
+anno_expr LEQ anno_expr 
+              expr ANNOTATE LBRACE annotations RBRACE 
+              tuple_index 
+              anno_expr . PERIOD LBRACKET INTEGER RBRACKET 
+
+** Conflict (shift/reduce) in state 439.
+** Tokens involved: PERIOD LPAREN LBRACKETLT LBRACKETGEQ LBRACKET LARROW
+** The following explanations concentrate on token PERIOD.
+** This state is reached from expr after reading:
+
+anno_expr LT anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+(?)
+
+** In state 439, looking ahead at PERIOD, reducing production
+** predicate -> anno_expr LT anno_expr 
+** is permitted because of the following sub-derivation:
+
+tuple_index 
+anno_expr PERIOD LBRACKET INTEGER RBRACKET // lookahead token appears
+expr // lookahead token is inherited
+predicate // lookahead token is inherited
+anno_expr LT anno_expr . 
+
+** In state 439, looking ahead at PERIOD, shifting is permitted
+** because of the following sub-derivation:
+
+predicate 
+anno_expr LT anno_expr 
+             expr ANNOTATE LBRACE annotations RBRACE 
+             tuple_index 
+             anno_expr . PERIOD LBRACKET INTEGER RBRACKET 
+
+** Conflict (shift/reduce) in state 436.
+** Tokens involved: PERIOD LPAREN LBRACKETLT LBRACKETGEQ LBRACKET LARROW
+** The following explanations concentrate on token PERIOD.
+** This state is reached from expr after reading:
+
+anno_expr NEQ anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+(?)
+
+** In state 436, looking ahead at PERIOD, reducing production
+** predicate -> anno_expr NEQ anno_expr 
+** is permitted because of the following sub-derivation:
+
+tuple_index 
+anno_expr PERIOD LBRACKET INTEGER RBRACKET // lookahead token appears
+expr // lookahead token is inherited
+predicate // lookahead token is inherited
+anno_expr NEQ anno_expr . 
+
+** In state 436, looking ahead at PERIOD, shifting is permitted
+** because of the following sub-derivation:
+
+predicate 
+anno_expr NEQ anno_expr 
+              expr ANNOTATE LBRACE annotations RBRACE 
+              tuple_index 
+              anno_expr . PERIOD LBRACKET INTEGER RBRACKET 
+
+** Conflict (shift/reduce) in state 433.
+** Tokens involved: PERIOD LPAREN LBRACKETLT LBRACKETGEQ LBRACKET LARROW
+** The following explanations concentrate on token PERIOD.
+** This state is reached from expr after reading:
+
+anno_expr OR anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+(?)
+
+** In state 433, looking ahead at PERIOD, reducing production
+** predicate -> anno_expr OR anno_expr 
+** is permitted because of the following sub-derivation:
+
+tuple_index 
+anno_expr PERIOD LBRACKET INTEGER RBRACKET // lookahead token appears
+expr // lookahead token is inherited
+predicate // lookahead token is inherited
+anno_expr OR anno_expr . 
+
+** In state 433, looking ahead at PERIOD, shifting is permitted
+** because of the following sub-derivation:
+
+predicate 
+anno_expr OR anno_expr 
+             expr ANNOTATE LBRACE annotations RBRACE 
+             tuple_index 
+             anno_expr . PERIOD LBRACKET INTEGER RBRACKET 
+
+** Conflict (shift/reduce) in state 431.
+** Tokens involved: PERIOD LPAREN LBRACKETLT LBRACKETGEQ LBRACKET LARROW
+** The following explanations concentrate on token PERIOD.
+** This state is reached from expr after reading:
+
+anno_expr DIVIDE anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+(?)
+
+** In state 431, looking ahead at PERIOD, reducing production
+** arithmetic -> anno_expr DIVIDE anno_expr 
+** is permitted because of the following sub-derivation:
+
+tuple_index 
+anno_expr PERIOD LBRACKET INTEGER RBRACKET // lookahead token appears
+expr // lookahead token is inherited
+arithmetic // lookahead token is inherited
+anno_expr DIVIDE anno_expr . 
+
+** In state 431, looking ahead at PERIOD, shifting is permitted
+** because of the following sub-derivation:
+
+arithmetic 
+anno_expr DIVIDE anno_expr 
+                 expr ANNOTATE LBRACE annotations RBRACE 
+                 tuple_index 
+                 anno_expr . PERIOD LBRACKET INTEGER RBRACKET 
+
+** Conflict (shift/reduce) in state 414.
+** Tokens involved: PERIOD LPAREN LBRACKETLT LBRACKETGEQ LBRACKET LARROW
+** The following explanations concentrate on token PERIOD.
+** This state is reached from expr after reading:
+
+anno_expr PLUS anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+(?)
+
+** In state 414, looking ahead at PERIOD, reducing production
+** arithmetic -> anno_expr PLUS anno_expr 
+** is permitted because of the following sub-derivation:
+
+tuple_index 
+anno_expr PERIOD LBRACKET INTEGER RBRACKET // lookahead token appears
+expr // lookahead token is inherited
+arithmetic // lookahead token is inherited
+anno_expr PLUS anno_expr . 
+
+** In state 414, looking ahead at PERIOD, shifting is permitted
+** because of the following sub-derivation:
+
+arithmetic 
+anno_expr PLUS anno_expr 
+               expr ANNOTATE LBRACE annotations RBRACE 
+               tuple_index 
+               anno_expr . PERIOD LBRACKET INTEGER RBRACKET 
+
+** Conflict (shift/reduce) in state 411.
+** Token involved: COMMA
+** This state is reached from expr after reading:
+
+UPSERT_WITH_BEFORE LPAREN variable COMMA anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+mutation 
+(?)
+
+** In state 411, looking ahead at COMMA, reducing production
+** expr_list -> anno_expr 
+** is permitted because of the following sub-derivation:
+
+UPSERT_WITH_BEFORE LPAREN variable COMMA tuple COMMA anno_expr COMMA error // lookahead token appears
+                                         expr_list // lookahead token is inherited
+                                         anno_expr . 
+
+** In state 411, looking ahead at COMMA, shifting is permitted
+** because of the following sub-derivation:
+
+UPSERT_WITH_BEFORE LPAREN variable COMMA tuple COMMA anno_expr COMMA error 
+                                         expr_list 
+                                         anno_expr . COMMA expr_list 
+
+** Conflict (shift/reduce) in state 406.
+** Tokens involved: PERIOD LPAREN LBRACKETLT LBRACKETGEQ LBRACKET LARROW
+** The following explanations concentrate on token PERIOD.
+** This state is reached from expr after reading:
+
+anno_expr MODULO anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+(?)
+
+** In state 406, looking ahead at PERIOD, reducing production
+** arithmetic -> anno_expr MODULO anno_expr 
+** is permitted because of the following sub-derivation:
+
+tuple_index 
+anno_expr PERIOD LBRACKET INTEGER RBRACKET // lookahead token appears
+expr // lookahead token is inherited
+arithmetic // lookahead token is inherited
+anno_expr MODULO anno_expr . 
+
+** In state 406, looking ahead at PERIOD, shifting is permitted
+** because of the following sub-derivation:
+
+arithmetic 
+anno_expr MODULO anno_expr 
+                 expr ANNOTATE LBRACE annotations RBRACE 
+                 tuple_index 
+                 anno_expr . PERIOD LBRACKET INTEGER RBRACKET 
+
+** Conflict (shift/reduce) in state 403.
+** Tokens involved: PERIOD LPAREN LBRACKETLT LBRACKETGEQ LBRACKET LARROW
+** The following explanations concentrate on token PERIOD.
+** This state is reached from expr after reading:
+
+anno_expr NEG anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+(?)
+
+** In state 403, looking ahead at PERIOD, reducing production
+** arithmetic -> anno_expr NEG anno_expr 
+** is permitted because of the following sub-derivation:
+
+tuple_index 
+anno_expr PERIOD LBRACKET INTEGER RBRACKET // lookahead token appears
+expr // lookahead token is inherited
+arithmetic // lookahead token is inherited
+anno_expr NEG anno_expr . 
+
+** In state 403, looking ahead at PERIOD, shifting is permitted
+** because of the following sub-derivation:
+
+arithmetic 
+anno_expr NEG anno_expr 
+              expr ANNOTATE LBRACE annotations RBRACE 
+              tuple_index 
+              anno_expr . PERIOD LBRACKET INTEGER RBRACKET 
+
+** Conflict (shift/reduce) in state 397.
+** Tokens involved: PERIOD LPAREN LBRACKETLT LBRACKETGEQ LBRACKET LARROW
+** The following explanations concentrate on token PERIOD.
+** This state is reached from expr after reading:
+
+anno_expr TIMES anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+(?)
+
+** In state 397, looking ahead at PERIOD, reducing production
+** arithmetic -> anno_expr TIMES anno_expr 
+** is permitted because of the following sub-derivation:
+
+tuple_index 
+anno_expr PERIOD LBRACKET INTEGER RBRACKET // lookahead token appears
+expr // lookahead token is inherited
+arithmetic // lookahead token is inherited
+anno_expr TIMES anno_expr . 
+
+** In state 397, looking ahead at PERIOD, shifting is permitted
+** because of the following sub-derivation:
+
+arithmetic 
+anno_expr TIMES anno_expr 
+                expr ANNOTATE LBRACE annotations RBRACE 
+                tuple_index 
+                anno_expr . PERIOD LBRACKET INTEGER RBRACKET 
+
+** Conflict (shift/reduce) in state 394.
+** Tokens involved: TIMES PLUS PERIOD OR NEQ NEG MODULO LT LPAREN LEQ LBRACKETLT LBRACKETGEQ LBRACKET LARROW GT GEQ EQ DIVIDE CONCAT AND
+** The following explanations concentrate on token TIMES.
+** This state is reached from expr after reading:
+
+variable LARROW anno_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+(?)
+
+** In state 394, looking ahead at TIMES, shifting is permitted
+** because of the following sub-derivation:
+
+mutation 
+variable LARROW anno_expr 
+                expr ANNOTATE LBRACE annotations RBRACE 
+                arithmetic 
+                anno_expr . TIMES anno_expr 
+
+** In state 394, looking ahead at TIMES, reducing production
+** mutation -> variable LARROW anno_expr 
+** is permitted because of the following sub-derivation:
+
+arithmetic 
+anno_expr TIMES anno_expr // lookahead token appears
+expr // lookahead token is inherited
+mutation // lookahead token is inherited
+variable LARROW anno_expr . 
+
+** Conflict (shift/reduce) in state 382.
+** Token involved: ANNOTATE
+** This state is reached from expr after reading:
+
+NOT expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+(?)
+
+** In state 382, looking ahead at ANNOTATE, shifting is permitted
+** because of the following sub-derivation:
+
+predicate 
+NOT anno_expr 
+    expr . ANNOTATE LBRACE annotations RBRACE 
+
+** In state 382, looking ahead at ANNOTATE, reducing production
+** anno_expr -> expr 
+** is permitted because of the following sub-derivation:
+
+anno_expr LPAREN expr_list RPAREN 
+expr ANNOTATE LBRACE annotations RBRACE // lookahead token appears
+predicate // lookahead token is inherited
+NOT anno_expr // lookahead token is inherited
+    expr . 
+
+** Conflict (shift/reduce) in state 373.
+** Token involved: LARROW
+** This state is reached from expr after reading:
+
+variable 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+mutation 
+(?)
+
+** In state 373, looking ahead at LARROW, reducing production
+** expr -> variable 
+** is permitted because of the following sub-derivation:
+
+anno_expr LARROW error // lookahead token appears
+expr // lookahead token is inherited
+variable . 
+
+** In state 373, looking ahead at LARROW, shifting is permitted
+** because of the following sub-derivation:
+
+variable . LARROW anno_expr 
+
+** Conflict (shift/reduce) in state 366.
+** Token involved: RARROW
+** This state is reached from expr after reading:
+
+BIND NOTHING COLON MUT type_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+bind 
+BIND anno_expr AS IDENTIFIER IN anno_expr 
+     expr ANNOTATE LBRACE annotations RBRACE 
+     NOTHING COLON type_expr 
+                   (?)
+
+** In state 366, looking ahead at RARROW, shifting is permitted
+** because of the following sub-derivation:
+
+MUT type_expr 
+    type_expr . RARROW fn_type_expr_list 
+
+** In state 366, looking ahead at RARROW, reducing production
+** type_expr -> MUT type_expr 
+** is permitted because of the following sub-derivation:
+
+type_expr RARROW fn_type_expr_list // lookahead token appears
+MUT type_expr . 
+
+** Conflict (shift/reduce) in state 365.
+** Token involved: RARROW
+** This state is reached from expr after reading:
+
+BIND NOTHING COLON MAYBE type_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+bind 
+BIND anno_expr AS IDENTIFIER IN anno_expr 
+     expr ANNOTATE LBRACE annotations RBRACE 
+     NOTHING COLON type_expr 
+                   (?)
+
+** In state 365, looking ahead at RARROW, shifting is permitted
+** because of the following sub-derivation:
+
+MAYBE type_expr 
+      type_expr . RARROW fn_type_expr_list 
+
+** In state 365, looking ahead at RARROW, reducing production
+** type_expr -> MAYBE type_expr 
+** is permitted because of the following sub-derivation:
+
+type_expr RARROW fn_type_expr_list // lookahead token appears
+MAYBE type_expr . 
+
+** Conflict (shift/reduce) in state 358.
+** Token involved: ANNOTATE
+** This state is reached from expr after reading:
+
+BIND NOTHING COLON collection_type 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+bind 
+BIND anno_expr AS IDENTIFIER IN anno_expr 
+     (?)
+
+** In state 358, looking ahead at ANNOTATE, reducing production
+** annotated_collection_type -> collection_type 
+** is permitted because of the following sub-derivation:
+
+expr ANNOTATE LBRACE annotations RBRACE // lookahead token appears
+NOTHING COLON type_expr // lookahead token is inherited
+              annotated_collection_type // lookahead token is inherited
+              collection_type . 
+
+** In state 358, looking ahead at ANNOTATE, shifting is permitted
+** because of the following sub-derivation:
+
+expr ANNOTATE LBRACE annotations RBRACE 
+NOTHING COLON type_expr 
+              annotated_collection_type 
+              collection_type . ANNOTATE LBRACE annotations RBRACE 
+
+** Conflict (reduce/reduce) in state 357.
+** Tokens involved: error TRIGGER TIMES SOURCE SINK ROLE RBRACE RARROW PLUS PERIOD OR NETWORK NEQ NEG MODULO LT LPAREN LEQ LBRACKETLT LBRACKETGEQ LBRACKET LARROW GT GETS GEQ FOREIGN EXPECTED EQ DIVIDE DEFAULT DECLARE CONSUME CONCAT COMMA BINDFLOW BIND AS ANNOTATE AND
+** The following explanations concentrate on token error.
+** This state is reached from expr after reading:
+
+BIND NOTHING COLON type_expr RARROW type_expr RARROW fn_type_expr_list 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+bind 
+BIND anno_expr error // lookahead token appears
+     expr // lookahead token is inherited
+     NOTHING COLON type_expr // lookahead token is inherited
+                   type_expr RARROW fn_type_expr_list // lookahead token is inherited
+                                    (?)
+
+** In state 357, looking ahead at error, reducing production
+** fn_type_expr_list -> type_expr RARROW fn_type_expr_list 
+** is permitted because of the following sub-derivation:
+
+type_expr RARROW fn_type_expr_list . 
+
+** In state 357, looking ahead at error, reducing production
+** type_expr -> type_expr RARROW fn_type_expr_list 
+** is permitted because of the following sub-derivation:
+
+type_expr // lookahead token is inherited
+type_expr RARROW fn_type_expr_list . 
+
+** Conflict (shift/reduce) in state 355.
+** Token involved: RARROW
+** This state is reached from expr after reading:
+
+BIND NOTHING COLON type_expr RARROW type_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+bind 
+BIND anno_expr AS IDENTIFIER IN anno_expr 
+     expr ANNOTATE LBRACE annotations RBRACE 
+     NOTHING COLON type_expr 
+                   (?)
+
+** In state 355, looking ahead at RARROW, shifting is permitted
+** because of the following sub-derivation:
+
+type_expr RARROW fn_type_expr_list 
+                 type_expr . RARROW fn_type_expr_list 
+
+** In state 355, looking ahead at RARROW, reducing production
+** fn_type_expr_list -> type_expr 
+** is permitted because of the following sub-derivation:
+
+type_expr RARROW fn_type_expr_list // lookahead token appears
+type_expr RARROW fn_type_expr_list // lookahead token is inherited
+                 type_expr . 
+
+** Conflict (shift/reduce) in state 353.
+** Token involved: RARROW
+** This state is reached from expr after reading:
+
+BIND NOTHING COLON INDIRECT type_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+bind 
+BIND anno_expr AS IDENTIFIER IN anno_expr 
+     expr ANNOTATE LBRACE annotations RBRACE 
+     NOTHING COLON type_expr 
+                   (?)
+
+** In state 353, looking ahead at RARROW, shifting is permitted
+** because of the following sub-derivation:
+
+INDIRECT type_expr 
+         type_expr . RARROW fn_type_expr_list 
+
+** In state 353, looking ahead at RARROW, reducing production
+** type_expr -> INDIRECT type_expr 
+** is permitted because of the following sub-derivation:
+
+type_expr RARROW fn_type_expr_list // lookahead token appears
+INDIRECT type_expr . 
+
+** Conflict (shift/reduce) in state 350.
+** Token involved: RBRACE
+** This state is reached from expr after reading:
+
+BIND NOTHING COLON LBRACE type_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+bind 
+BIND anno_expr AS IDENTIFIER IN anno_expr 
+     expr ANNOTATE LBRACE annotations RBRACE 
+     NOTHING COLON type_expr 
+                   annotated_collection_type 
+                   collection_type 
+                   (?)
+
+** In state 350, looking ahead at RBRACE, shifting is permitted
+** because of the following sub-derivation:
+
+LBRACE type_expr . RBRACE 
+
+** In state 350, looking ahead at RBRACE, reducing production
+** type_expr_list -> type_expr 
+** is permitted because of the following sub-derivation:
+
+LBRACE type_expr_tuple RBRACE // lookahead token appears
+       type_expr_list // lookahead token is inherited
+       type_expr . 
+
+** Conflict (shift/reduce) in state 345.
+** Token involved: RBRACEBAR
+** This state is reached from expr after reading:
+
+BIND NOTHING COLON LBRACEBAR type_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+bind 
+BIND anno_expr AS IDENTIFIER IN anno_expr 
+     expr ANNOTATE LBRACE annotations RBRACE 
+     NOTHING COLON type_expr 
+                   annotated_collection_type 
+                   collection_type 
+                   (?)
+
+** In state 345, looking ahead at RBRACEBAR, shifting is permitted
+** because of the following sub-derivation:
+
+LBRACEBAR type_expr . RBRACEBAR 
+
+** In state 345, looking ahead at RBRACEBAR, reducing production
+** type_expr_list -> type_expr 
+** is permitted because of the following sub-derivation:
+
+LBRACEBAR type_expr_tuple RBRACEBAR // lookahead token appears
+          type_expr_list // lookahead token is inherited
+          type_expr . 
+
+** Conflict (shift/reduce) in state 340.
+** Token involved: RBRACECOLON
+** This state is reached from expr after reading:
+
+BIND NOTHING COLON LBRACECOLON type_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+bind 
+BIND anno_expr AS IDENTIFIER IN anno_expr 
+     expr ANNOTATE LBRACE annotations RBRACE 
+     NOTHING COLON type_expr 
+                   annotated_collection_type 
+                   collection_type 
+                   (?)
+
+** In state 340, looking ahead at RBRACECOLON, shifting is permitted
+** because of the following sub-derivation:
+
+LBRACECOLON type_expr . RBRACECOLON 
+
+** In state 340, looking ahead at RBRACECOLON, reducing production
+** type_expr_list -> type_expr 
+** is permitted because of the following sub-derivation:
+
+LBRACECOLON type_expr_tuple RBRACECOLON // lookahead token appears
+            type_expr_list // lookahead token is inherited
+            type_expr . 
+
+** Conflict (shift/reduce) in state 335.
+** Token involved: RBRACELT
+** This state is reached from expr after reading:
+
+BIND NOTHING COLON LBRACELT type_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+bind 
+BIND anno_expr AS IDENTIFIER IN anno_expr 
+     expr ANNOTATE LBRACE annotations RBRACE 
+     NOTHING COLON type_expr 
+                   annotated_collection_type 
+                   collection_type 
+                   (?)
+
+** In state 335, looking ahead at RBRACELT, shifting is permitted
+** because of the following sub-derivation:
+
+LBRACELT type_expr . RBRACELT 
+
+** In state 335, looking ahead at RBRACELT, reducing production
+** type_expr_list -> type_expr 
+** is permitted because of the following sub-derivation:
+
+LBRACELT type_expr_tuple RBRACELT // lookahead token appears
+         type_expr_list // lookahead token is inherited
+         type_expr . 
+
+** Conflict (shift/reduce) in state 330.
+** Token involved: RBRACKET
+** This state is reached from expr after reading:
+
+BIND NOTHING COLON LBRACKET type_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+bind 
+BIND anno_expr AS IDENTIFIER IN anno_expr 
+     expr ANNOTATE LBRACE annotations RBRACE 
+     NOTHING COLON type_expr 
+                   annotated_collection_type 
+                   collection_type 
+                   (?)
+
+** In state 330, looking ahead at RBRACKET, shifting is permitted
+** because of the following sub-derivation:
+
+LBRACKET type_expr . RBRACKET 
+
+** In state 330, looking ahead at RBRACKET, reducing production
+** type_expr_list -> type_expr 
+** is permitted because of the following sub-derivation:
+
+LBRACKET type_expr_tuple RBRACKET // lookahead token appears
+         type_expr_list // lookahead token is inherited
+         type_expr . 
+
+** Conflict (shift/reduce) in state 325.
+** Token involved: RBRACKETCOLON
+** This state is reached from expr after reading:
+
+BIND NOTHING COLON LBRACKETCOLON type_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+bind 
+BIND anno_expr AS IDENTIFIER IN anno_expr 
+     expr ANNOTATE LBRACE annotations RBRACE 
+     NOTHING COLON type_expr 
+                   annotated_collection_type 
+                   collection_type 
+                   (?)
+
+** In state 325, looking ahead at RBRACKETCOLON, shifting is permitted
+** because of the following sub-derivation:
+
+LBRACKETCOLON type_expr . RBRACKETCOLON 
+
+** In state 325, looking ahead at RBRACKETCOLON, reducing production
+** type_expr_list -> type_expr 
+** is permitted because of the following sub-derivation:
+
+LBRACKETCOLON type_expr_tuple RBRACKETCOLON // lookahead token appears
+              type_expr_list // lookahead token is inherited
+              type_expr . 
+
+** Conflict (shift/reduce) in state 320.
+** Token involved: RBRACKETHASH
+** This state is reached from expr after reading:
+
+BIND NOTHING COLON LBRACKETHASH type_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+bind 
+BIND anno_expr AS IDENTIFIER IN anno_expr 
+     expr ANNOTATE LBRACE annotations RBRACE 
+     NOTHING COLON type_expr 
+                   annotated_collection_type 
+                   collection_type 
+                   (?)
+
+** In state 320, looking ahead at RBRACKETHASH, shifting is permitted
+** because of the following sub-derivation:
+
+LBRACKETHASH type_expr . RBRACKETHASH 
+
+** In state 320, looking ahead at RBRACKETHASH, reducing production
+** type_expr_list -> type_expr 
+** is permitted because of the following sub-derivation:
+
+LBRACKETHASH type_expr_tuple RBRACKETHASH // lookahead token appears
+             type_expr_list // lookahead token is inherited
+             type_expr . 
+
+** Conflict (shift/reduce) in state 312.
+** Tokens involved: RBRACKETLT BAR
+** The following explanations concentrate on token RBRACKETLT.
+** This state is reached from expr after reading:
+
+BIND NOTHING COLON LBRACKETLT type_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+bind 
+BIND anno_expr AS IDENTIFIER IN anno_expr 
+     expr ANNOTATE LBRACE annotations RBRACE 
+     NOTHING COLON type_expr 
+                   annotated_collection_type 
+                   collection_type 
+                   (?)
+
+** In state 312, looking ahead at RBRACKETLT, shifting is permitted
+** because of the following sub-derivation:
+
+LBRACKETLT type_expr . RBRACKETLT 
+
+** In state 312, looking ahead at RBRACKETLT, reducing production
+** type_expr_list -> type_expr 
+** is permitted because of the following sub-derivation:
+
+LBRACKETLT type_expr_tuple RBRACKETLT // lookahead token appears
+           type_expr_list // lookahead token is inherited
+           type_expr . 
+
+** Conflict (shift/reduce) in state 304.
+** Token involved: RPAREN
+** This state is reached from expr after reading:
+
+BIND NOTHING COLON LPAREN type_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+bind 
+BIND anno_expr AS IDENTIFIER IN anno_expr 
+     expr ANNOTATE LBRACE annotations RBRACE 
+     NOTHING COLON type_expr 
+                   (?)
+
+** In state 304, looking ahead at RPAREN, shifting is permitted
+** because of the following sub-derivation:
+
+LPAREN type_expr . RPAREN 
+
+** In state 304, looking ahead at RPAREN, reducing production
+** type_expr_list -> type_expr 
+** is permitted because of the following sub-derivation:
+
+LPAREN type_expr_tuple RPAREN // lookahead token appears
+       type_expr_list // lookahead token is inherited
+       type_expr . 
+
+** Conflict (shift/reduce) in state 227.
+** Token involved: COLON
+** This state is reached from expr after reading:
+
+LBRACKETHASH IDENTIFIER 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+range 
+(?)
+
+** In state 227, looking ahead at COLON, shifting is permitted
+** because of the following sub-derivation:
+
+LBRACKETHASH anno_expr COLON COLON anno_expr COLON COLON anno_expr RBRACKETHASH 
+             expr ANNOTATE LBRACE annotations RBRACE 
+             constant 
+             address 
+             IDENTIFIER . COLON INTEGER 
+
+** In state 227, looking ahead at COLON, reducing production
+** variable -> IDENTIFIER 
+** is permitted because of the following sub-derivation:
+
+LBRACKETHASH anno_expr COLON COLON anno_expr COLON COLON anno_expr RBRACKETHASH // lookahead token appears
+             expr // lookahead token is inherited
+             variable // lookahead token is inherited
+             IDENTIFIER . 
+
+** Conflict (shift/reduce) in state 130.
+** Token involved: RARROW
+** This state is reached from expr after reading:
+
+NOTHING COLON MUT type_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+NOTHING COLON type_expr 
+              (?)
+
+** In state 130, looking ahead at RARROW, shifting is permitted
+** because of the following sub-derivation:
+
+MUT type_expr 
+    type_expr . RARROW fn_type_expr_list 
+
+** In state 130, looking ahead at RARROW, reducing production
+** type_expr -> MUT type_expr 
+** is permitted because of the following sub-derivation:
+
+type_expr RARROW fn_type_expr_list // lookahead token appears
+MUT type_expr . 
+
+** Conflict (shift/reduce) in state 129.
+** Token involved: RARROW
+** This state is reached from expr after reading:
+
+NOTHING COLON MAYBE type_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+NOTHING COLON type_expr 
+              (?)
+
+** In state 129, looking ahead at RARROW, shifting is permitted
+** because of the following sub-derivation:
+
+MAYBE type_expr 
+      type_expr . RARROW fn_type_expr_list 
+
+** In state 129, looking ahead at RARROW, reducing production
+** type_expr -> MAYBE type_expr 
+** is permitted because of the following sub-derivation:
+
+type_expr RARROW fn_type_expr_list // lookahead token appears
+MAYBE type_expr . 
+
+** Conflict (shift/reduce) in state 127.
+** Token involved: RPAREN
+** This state is reached from expr after reading:
+
+NOTHING COLON LPAREN type_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+NOTHING COLON type_expr 
+              (?)
+
+** In state 127, looking ahead at RPAREN, shifting is permitted
+** because of the following sub-derivation:
+
+LPAREN type_expr . RPAREN 
+
+** In state 127, looking ahead at RPAREN, reducing production
+** type_expr_list -> type_expr 
+** is permitted because of the following sub-derivation:
+
+LPAREN type_expr_tuple RPAREN // lookahead token appears
+       type_expr_list // lookahead token is inherited
+       type_expr . 
+
+** Conflict (shift/reduce) in state 120.
+** Tokens involved: RBRACKETLT BAR
+** The following explanations concentrate on token RBRACKETLT.
+** This state is reached from expr after reading:
+
+NOTHING COLON LBRACKETLT type_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+NOTHING COLON type_expr 
+              annotated_collection_type 
+              collection_type 
+              (?)
+
+** In state 120, looking ahead at RBRACKETLT, shifting is permitted
+** because of the following sub-derivation:
+
+LBRACKETLT type_expr . RBRACKETLT 
+
+** In state 120, looking ahead at RBRACKETLT, reducing production
+** type_expr_list -> type_expr 
+** is permitted because of the following sub-derivation:
+
+LBRACKETLT type_expr_tuple RBRACKETLT // lookahead token appears
+           type_expr_list // lookahead token is inherited
+           type_expr . 
+
+** Conflict (shift/reduce) in state 107.
+** Token involved: RBRACKETHASH
+** This state is reached from expr after reading:
+
+NOTHING COLON LBRACKETHASH type_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+NOTHING COLON type_expr 
+              annotated_collection_type 
+              collection_type 
+              (?)
+
+** In state 107, looking ahead at RBRACKETHASH, shifting is permitted
+** because of the following sub-derivation:
+
+LBRACKETHASH type_expr . RBRACKETHASH 
+
+** In state 107, looking ahead at RBRACKETHASH, reducing production
+** type_expr_list -> type_expr 
+** is permitted because of the following sub-derivation:
+
+LBRACKETHASH type_expr_tuple RBRACKETHASH // lookahead token appears
+             type_expr_list // lookahead token is inherited
+             type_expr . 
+
+** Conflict (shift/reduce) in state 103.
+** Token involved: RBRACKETCOLON
+** This state is reached from expr after reading:
+
+NOTHING COLON LBRACKETCOLON type_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+NOTHING COLON type_expr 
+              annotated_collection_type 
+              collection_type 
+              (?)
+
+** In state 103, looking ahead at RBRACKETCOLON, shifting is permitted
+** because of the following sub-derivation:
+
+LBRACKETCOLON type_expr . RBRACKETCOLON 
+
+** In state 103, looking ahead at RBRACKETCOLON, reducing production
+** type_expr_list -> type_expr 
+** is permitted because of the following sub-derivation:
+
+LBRACKETCOLON type_expr_tuple RBRACKETCOLON // lookahead token appears
+              type_expr_list // lookahead token is inherited
+              type_expr . 
+
+** Conflict (shift/reduce) in state 99.
+** Token involved: RBRACKET
+** This state is reached from expr after reading:
+
+NOTHING COLON LBRACKET type_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+NOTHING COLON type_expr 
+              annotated_collection_type 
+              collection_type 
+              (?)
+
+** In state 99, looking ahead at RBRACKET, shifting is permitted
+** because of the following sub-derivation:
+
+LBRACKET type_expr . RBRACKET 
+
+** In state 99, looking ahead at RBRACKET, reducing production
+** type_expr_list -> type_expr 
+** is permitted because of the following sub-derivation:
+
+LBRACKET type_expr_tuple RBRACKET // lookahead token appears
+         type_expr_list // lookahead token is inherited
+         type_expr . 
+
+** Conflict (shift/reduce) in state 95.
+** Token involved: RBRACELT
+** This state is reached from expr after reading:
+
+NOTHING COLON LBRACELT type_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+NOTHING COLON type_expr 
+              annotated_collection_type 
+              collection_type 
+              (?)
+
+** In state 95, looking ahead at RBRACELT, shifting is permitted
+** because of the following sub-derivation:
+
+LBRACELT type_expr . RBRACELT 
+
+** In state 95, looking ahead at RBRACELT, reducing production
+** type_expr_list -> type_expr 
+** is permitted because of the following sub-derivation:
+
+LBRACELT type_expr_tuple RBRACELT // lookahead token appears
+         type_expr_list // lookahead token is inherited
+         type_expr . 
+
+** Conflict (shift/reduce) in state 91.
+** Token involved: RBRACECOLON
+** This state is reached from expr after reading:
+
+NOTHING COLON LBRACECOLON type_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+NOTHING COLON type_expr 
+              annotated_collection_type 
+              collection_type 
+              (?)
+
+** In state 91, looking ahead at RBRACECOLON, shifting is permitted
+** because of the following sub-derivation:
+
+LBRACECOLON type_expr . RBRACECOLON 
+
+** In state 91, looking ahead at RBRACECOLON, reducing production
+** type_expr_list -> type_expr 
+** is permitted because of the following sub-derivation:
+
+LBRACECOLON type_expr_tuple RBRACECOLON // lookahead token appears
+            type_expr_list // lookahead token is inherited
+            type_expr . 
+
+** Conflict (shift/reduce) in state 87.
+** Token involved: RBRACEBAR
+** This state is reached from expr after reading:
+
+NOTHING COLON LBRACEBAR type_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+NOTHING COLON type_expr 
+              annotated_collection_type 
+              collection_type 
+              (?)
+
+** In state 87, looking ahead at RBRACEBAR, shifting is permitted
+** because of the following sub-derivation:
+
+LBRACEBAR type_expr . RBRACEBAR 
+
+** In state 87, looking ahead at RBRACEBAR, reducing production
+** type_expr_list -> type_expr 
+** is permitted because of the following sub-derivation:
+
+LBRACEBAR type_expr_tuple RBRACEBAR // lookahead token appears
+          type_expr_list // lookahead token is inherited
+          type_expr . 
+
+** Conflict (shift/reduce) in state 80.
+** Token involved: RBRACE
+** This state is reached from expr after reading:
+
+NOTHING COLON LBRACE type_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+NOTHING COLON type_expr 
+              annotated_collection_type 
+              collection_type 
+              (?)
+
+** In state 80, looking ahead at RBRACE, shifting is permitted
+** because of the following sub-derivation:
+
+LBRACE type_expr . RBRACE 
+
+** In state 80, looking ahead at RBRACE, reducing production
+** type_expr_list -> type_expr 
+** is permitted because of the following sub-derivation:
+
+LBRACE type_expr_tuple RBRACE // lookahead token appears
+       type_expr_list // lookahead token is inherited
+       type_expr . 
+
+** Conflict (shift/reduce) in state 64.
+** Token involved: ANNOTATE
+** This state is reached from expr after reading:
+
+NOTHING COLON collection_type 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+(?)
+
+** In state 64, looking ahead at ANNOTATE, reducing production
+** annotated_collection_type -> collection_type 
+** is permitted because of the following sub-derivation:
+
+anno_expr LPAREN expr_list RPAREN 
+expr ANNOTATE LBRACE annotations RBRACE // lookahead token appears
+NOTHING COLON type_expr // lookahead token is inherited
+              annotated_collection_type // lookahead token is inherited
+              collection_type . 
+
+** In state 64, looking ahead at ANNOTATE, shifting is permitted
+** because of the following sub-derivation:
+
+NOTHING COLON type_expr 
+              annotated_collection_type 
+              collection_type . ANNOTATE LBRACE annotations RBRACE 
+
+** Conflict (reduce/reduce) in state 63.
+** Tokens involved: UPSERT_WITH_BEFORE UPSERT_WITH UPDATE_SUFFIX UPDATE UNKNOWN UNIT TRIGGER TIMES THEN STRING SOURCE SORT SIZE SINK SEND SEMICOLON RPAREN ROLE RBRACKETLT RBRACKETHASH RBRACKETCOLON RBRACKET RBRACELT RBRACECOLON RBRACEBAR RBRACE RARROW PLUS PERIOD PEEK_WITH_VID PEEK OR OF NOTHING NOT NEQ NEG MODULO MIN_WITH MAP LT LPAREN LET LEQ LBRACKETLT LBRACKETHASH LBRACKETGEQ LBRACKETCOLON LBRACKETBAR LBRACKET LBRACELT LBRACECOLON LBRACEBAR LBRACE LARROW JUST ITERATE IP INTEGER INSERT INDIRECT IN IGNORE IF IDENTIFIER GT GROUPBYAGGREGATE GETS GEQ FOREIGN FLOAT FLATTEN FILTERGEQ FILTER EXPECTED EQ ELSE DO DIVIDE DELETE_PREFIX DELETE DEFAULT DECLARE CONSUME CONCAT COMMA COLON CASE BOOL BINDFLOW BIND BAR BACKSLASH AT_WITH ANNOTATE AND AGGREGATEV AGGREGATE #
+** The following explanations concentrate on token TIMES.
+** This state is reached from expr after reading:
+
+NOTHING COLON type_expr RARROW type_expr RARROW fn_type_expr_list 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+arithmetic 
+anno_expr TIMES anno_expr // lookahead token appears
+expr // lookahead token is inherited
+NOTHING COLON type_expr // lookahead token is inherited
+              type_expr RARROW fn_type_expr_list // lookahead token is inherited
+                               (?)
+
+** In state 63, looking ahead at TIMES, reducing production
+** fn_type_expr_list -> type_expr RARROW fn_type_expr_list 
+** is permitted because of the following sub-derivation:
+
+type_expr RARROW fn_type_expr_list . 
+
+** In state 63, looking ahead at TIMES, reducing production
+** type_expr -> type_expr RARROW fn_type_expr_list 
+** is permitted because of the following sub-derivation:
+
+type_expr // lookahead token is inherited
+type_expr RARROW fn_type_expr_list . 
+
+** Conflict (shift/reduce) in state 61.
+** Token involved: RARROW
+** This state is reached from expr after reading:
+
+NOTHING COLON type_expr RARROW type_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+NOTHING COLON type_expr 
+              (?)
+
+** In state 61, looking ahead at RARROW, shifting is permitted
+** because of the following sub-derivation:
+
+type_expr RARROW fn_type_expr_list 
+                 type_expr . RARROW fn_type_expr_list 
+
+** In state 61, looking ahead at RARROW, reducing production
+** fn_type_expr_list -> type_expr 
+** is permitted because of the following sub-derivation:
+
+type_expr RARROW fn_type_expr_list // lookahead token appears
+type_expr RARROW fn_type_expr_list // lookahead token is inherited
+                 type_expr . 
+
+** Conflict (shift/reduce) in state 59.
+** Token involved: RARROW
+** This state is reached from expr after reading:
+
+NOTHING COLON INDIRECT type_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+NOTHING COLON type_expr 
+              (?)
+
+** In state 59, looking ahead at RARROW, shifting is permitted
+** because of the following sub-derivation:
+
+INDIRECT type_expr 
+         type_expr . RARROW fn_type_expr_list 
+
+** In state 59, looking ahead at RARROW, reducing production
+** type_expr -> INDIRECT type_expr 
+** is permitted because of the following sub-derivation:
+
+type_expr RARROW fn_type_expr_list // lookahead token appears
+INDIRECT type_expr . 

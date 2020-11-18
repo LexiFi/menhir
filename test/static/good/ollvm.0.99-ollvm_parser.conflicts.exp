@@ -1,0 +1,34 @@
+
+** Conflict (shift/reduce) in state 485.
+** Tokens involved: STRING KW_UWTABLE KW_SSPSTRONG KW_SSPREQ KW_SSP KW_SANITIZE_THREAD KW_SANITIZE_MEMORY KW_SANITIZE_ADDRESS KW_RETURNS_TWICE KW_READONLY KW_READNONE KW_OPTSIZE KW_OPTNONE KW_NOUNWIND KW_NORETURN KW_NOREDZONE KW_NONLAZYBIND KW_NOINLINE KW_NOIMPLICITFLOAT KW_NODUPLICATE KW_NOBUILTIN KW_NAKED KW_MINSIZE KW_JUMPTABLE KW_INLINEHINT KW_COLD KW_BUILTIN KW_ALWAYSINLINE KW_ALIGNSTACK ATTR_GRP_ID
+** The following explanations concentrate on token STRING.
+** This state is reached from toplevelentries after reading:
+
+list(EOL) KW_DEFINE list(df_pre_attr) list(param_attr) typ GLOBAL LPAREN loption(separated_nonempty_list(COMMA,df_arg)) RPAREN fn_attr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+toplevelentries 
+list(EOL) list(terminated(toplevelentry,nonempty_list(EOL))) EOF 
+          toplevelentry nonempty_list(EOL) list(terminated(toplevelentry,nonempty_list(EOL))) 
+          definition 
+          KW_DEFINE list(df_pre_attr) list(param_attr) typ GLOBAL LPAREN loption(separated_nonempty_list(COMMA,df_arg)) RPAREN list(df_post_attr) list(EOL) LCURLY list(EOL) df_blocks RCURLY 
+                                                                                                                               (?)
+
+** In state 485, looking ahead at STRING, shifting is permitted
+** because of the following sub-derivation:
+
+df_post_attr list(df_post_attr) 
+nonempty_list(fn_attr) 
+fn_attr nonempty_list(fn_attr) 
+        fn_attr 
+        . STRING 
+
+** In state 485, looking ahead at STRING, reducing production
+** nonempty_list(fn_attr) -> fn_attr 
+** is permitted because of the following sub-derivation:
+
+df_post_attr list(df_post_attr) // lookahead token appears because list(df_post_attr) can begin with STRING
+nonempty_list(fn_attr) // lookahead token is inherited
+fn_attr . 

@@ -1,0 +1,119 @@
+
+** Conflict (shift/reduce) in state 11.
+** Token involved: PLUS
+** This state is reached from expr after reading:
+
+expr PLUS expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+plus 
+(?)
+
+** In state 11, looking ahead at PLUS, shifting is permitted
+** because of the following sub-derivation:
+
+expr PLUS expr 
+          plus 
+          expr . PLUS expr 
+
+** In state 11, looking ahead at PLUS, reducing production
+** plus -> expr PLUS expr 
+** is permitted because of the following sub-derivation:
+
+expr PLUS expr // lookahead token appears
+plus // lookahead token is inherited
+expr PLUS expr . 
+
+** Conflict (shift/reduce) in state 8.
+** Token involved: MINUS
+** This state is reached from expr after reading:
+
+expr PLUS indir MINUS indir 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+(?)
+
+** In state 8, looking ahead at MINUS, shifting is permitted
+** because of the following sub-derivation:
+
+plus 
+expr PLUS expr 
+          indir MINUS indir 
+                      plus 
+                      expr PLUS expr 
+                      indir . MINUS indir 
+
+** In state 8, looking ahead at MINUS, reducing production
+** expr -> indir MINUS indir 
+** is permitted because of the following sub-derivation:
+
+indir MINUS indir // lookahead token appears
+plus // lookahead token is inherited
+expr PLUS expr // lookahead token is inherited
+          indir MINUS indir . 
+
+** Conflict (reduce/reduce) in state 7.
+** Token involved: PLUS
+** This state is reached from expr after reading:
+
+indir MINUS plus 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+(?)
+
+** In state 7, looking ahead at PLUS, reducing production
+** expr -> plus 
+** is permitted because of the following sub-derivation:
+
+indir MINUS indir 
+            plus 
+            expr PLUS expr // lookahead token appears
+            plus . 
+
+** In state 7, looking ahead at PLUS, reducing production
+** indir -> plus 
+** is permitted because of the following sub-derivation:
+
+plus 
+expr PLUS expr // lookahead token appears
+indir MINUS indir // lookahead token is inherited
+            plus . 
+
+** Conflict (reduce/reduce) in state 4.
+** Token involved: MINUS
+** This state is reached from expr after reading:
+
+expr PLUS plus 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+expr 
+(?)
+
+** In state 4, looking ahead at MINUS, reducing production
+** expr -> plus 
+** is permitted because of the following sub-derivation:
+
+indir MINUS indir // lookahead token appears
+plus // lookahead token is inherited
+expr PLUS expr // lookahead token is inherited
+          plus . 
+
+** In state 4, looking ahead at MINUS, reducing production
+** indir -> plus 
+** is permitted because of the following sub-derivation:
+
+plus 
+expr PLUS expr 
+          indir MINUS indir // lookahead token appears
+          plus . 

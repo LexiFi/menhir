@@ -1,0 +1,81 @@
+
+** Conflict (reduce/reduce) in state 213.
+** Tokens involved: RPAREN COMMA
+** The following explanations concentrate on token RPAREN.
+** This state is reached from just_datatype after reading:
+
+LPAREN CONSTRUCTOR 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+just_datatype 
+datatype END 
+(?)
+
+** In state 213, looking ahead at RPAREN, reducing production
+** field_label -> CONSTRUCTOR 
+** is permitted because of the following sub-derivation:
+
+mu_datatype 
+forall_datatype 
+primary_datatype 
+LPAREN rfields RPAREN // lookahead token appears
+       rfield // lookahead token is inherited
+       record_label // lookahead token is inherited
+       field_label // lookahead token is inherited
+       CONSTRUCTOR . 
+
+** In state 213, looking ahead at RPAREN, reducing production
+** primary_datatype -> CONSTRUCTOR 
+** is permitted because of the following sub-derivation:
+
+straight_arrow 
+parenthesized_datatypes straight_arrow_prefix RARROW datatype 
+LPAREN datatypes RPAREN // lookahead token appears
+       datatype // lookahead token is inherited
+       mu_datatype // lookahead token is inherited
+       forall_datatype // lookahead token is inherited
+       primary_datatype // lookahead token is inherited
+       CONSTRUCTOR . 
+
+** Conflict (reduce/reduce) in state 211.
+** Tokens involved: RPAREN COMMA
+** The following explanations concentrate on token RPAREN.
+** This state is reached from just_datatype after reading:
+
+LPAREN VARIABLE 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+just_datatype 
+datatype END 
+(?)
+
+** In state 211, looking ahead at RPAREN, reducing production
+** field_label -> VARIABLE 
+** is permitted because of the following sub-derivation:
+
+mu_datatype 
+forall_datatype 
+primary_datatype 
+LPAREN rfields RPAREN // lookahead token appears
+       rfield // lookahead token is inherited
+       record_label // lookahead token is inherited
+       field_label // lookahead token is inherited
+       VARIABLE . 
+
+** In state 211, looking ahead at RPAREN, reducing production
+** type_var -> VARIABLE 
+** is permitted because of the following sub-derivation:
+
+straight_arrow 
+parenthesized_datatypes straight_arrow_prefix RARROW datatype 
+LPAREN datatypes RPAREN // lookahead token appears
+       datatype // lookahead token is inherited
+       mu_datatype // lookahead token is inherited
+       forall_datatype // lookahead token is inherited
+       primary_datatype // lookahead token is inherited
+       type_var // lookahead token is inherited
+       VARIABLE . 

@@ -1,0 +1,81 @@
+
+** Conflict (shift/reduce) in state 654.
+** Token involved: T_COMMA
+** This state is reached from main after reading:
+
+T_THROW T_LPAREN identifier 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+main 
+program EOF 
+statement_list 
+source_element 
+statement 
+throw_statement 
+T_THROW expression semicolon 
+        assignment_expression 
+        arrow_function 
+        (?)
+
+** In state 654, looking ahead at T_COMMA, shifting is permitted
+** because of the following sub-derivation:
+
+T_LPAREN identifier . T_COMMA formal_parameter_list T_RPAREN annotation_opt T_ARROW arrow_body 
+
+** In state 654, looking ahead at T_COMMA, reducing production
+** primary_expression_no_statement -> identifier 
+** is permitted because of the following sub-derivation:
+
+T_LPAREN expression T_RPAREN T_ARROW arrow_body 
+         expression T_COMMA assignment_expression // lookahead token appears
+         assignment_expression // lookahead token is inherited
+         conditional_expression // lookahead token is inherited
+         post_in_expression // lookahead token is inherited
+         pre_in_expression // lookahead token is inherited
+         left_hand_side_expression // lookahead token is inherited
+         new_expression // lookahead token is inherited
+         member_expression // lookahead token is inherited
+         primary_expression // lookahead token is inherited
+         primary_expression_no_statement // lookahead token is inherited
+         identifier . 
+
+** Conflict (shift/reduce) in state 644.
+** Token involved: T_COMMA
+** This state is reached from main after reading:
+
+T_LBRACKET element_list_rev 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+main 
+program EOF 
+statement_list 
+source_element 
+statement 
+expression_statement 
+expression_no_statement semicolon 
+assignment_expression_no_statement 
+left_hand_side_expression_no_statement assignment_operator assignment_expression 
+new_expression_no_statement 
+member_expression_no_statement 
+primary_expression_no_statement 
+array_literal 
+(?)
+
+** In state 644, looking ahead at T_COMMA, reducing production
+** element_list -> element_list_rev 
+** is permitted because of the following sub-derivation:
+
+T_LBRACKET element_list elison T_RBRACKET // lookahead token appears because elison can begin with T_COMMA
+           element_list_rev . 
+
+** In state 644, looking ahead at T_COMMA, shifting is permitted
+** because of the following sub-derivation:
+
+T_LBRACKET element_list T_RBRACKET 
+           element_list_rev 
+           element_list_rev elison assignment_expression 
+                            . T_COMMA 

@@ -1,0 +1,2691 @@
+State 0:
+prog' -> . prog [ # ]
+-- On TokTrivial shift to state 1
+-- On TokTrans shift to state 3
+-- On TokRegisters shift to state 124
+-- On TokOpen shift to state 134
+-- On TokName shift to state 136
+-- On TokInsts shift to state 138
+-- On TokInput shift to state 162
+-- On TokEof shift to state 238
+-- On trivial_statement shift to state 239
+-- On transform_statement shift to state 240
+-- On register_statement shift to state 241
+-- On prog shift to state 242
+-- On open_statement shift to state 243
+-- On name_statement shift to state 244
+-- On io_input_list shift to state 245
+-- On io_input shift to state 277
+-- On instruction_statement shift to state 279
+-- On input_output_statement shift to state 280
+-- On expr shift to state 281
+
+State 1:
+trivial_statement -> TokTrivial . TokIdent [ TokTrivial TokTrans TokRegisters TokOpen TokName TokInsts TokInput TokEof ]
+-- On TokIdent shift to state 2
+
+State 2:
+trivial_statement -> TokTrivial TokIdent . [ TokTrivial TokTrans TokRegisters TokOpen TokName TokInsts TokInput TokEof ]
+-- On TokTrivial reduce production trivial_statement -> TokTrivial TokIdent 
+-- On TokTrans reduce production trivial_statement -> TokTrivial TokIdent 
+-- On TokRegisters reduce production trivial_statement -> TokTrivial TokIdent 
+-- On TokOpen reduce production trivial_statement -> TokTrivial TokIdent 
+-- On TokName reduce production trivial_statement -> TokTrivial TokIdent 
+-- On TokInsts reduce production trivial_statement -> TokTrivial TokIdent 
+-- On TokInput reduce production trivial_statement -> TokTrivial TokIdent 
+-- On TokEof reduce production trivial_statement -> TokTrivial TokIdent 
+
+State 3:
+transform_statement -> TokTrans . TokIdent symbol_list_opt TokColon transform_list [ TokTrivial TokTrans TokRegisters TokOpen TokName TokInsts TokInput TokEof ]
+-- On TokIdent shift to state 4
+
+State 4:
+transform_statement -> TokTrans TokIdent . symbol_list_opt TokColon transform_list [ TokTrivial TokTrans TokRegisters TokOpen TokName TokInsts TokInput TokEof ]
+-- On TokIdent shift to state 5
+-- On symbol_list_opt shift to state 8
+-- On symbol_list shift to state 123
+-- On TokColon reduce production symbol_list_opt -> 
+
+State 5:
+symbol_list -> TokIdent . TokComma symbol_list [ TokColon ]
+symbol_list -> TokIdent . [ TokColon ]
+-- On TokComma shift to state 6
+-- On TokColon reduce production symbol_list -> TokIdent 
+
+State 6:
+symbol_list -> TokIdent TokComma . symbol_list [ TokColon ]
+-- On TokIdent shift to state 5
+-- On symbol_list shift to state 7
+
+State 7:
+symbol_list -> TokIdent TokComma symbol_list . [ TokColon ]
+-- On TokColon reduce production symbol_list -> TokIdent TokComma symbol_list 
+
+State 8:
+transform_statement -> TokTrans TokIdent symbol_list_opt . TokColon transform_list [ TokTrivial TokTrans TokRegisters TokOpen TokName TokInsts TokInput TokEof ]
+-- On TokColon shift to state 9
+
+State 9:
+transform_statement -> TokTrans TokIdent symbol_list_opt TokColon . transform_list [ TokTrivial TokTrans TokRegisters TokOpen TokName TokInsts TokInput TokEof ]
+-- On TokIdent shift to state 10
+-- On transform_list shift to state 119
+-- On transform shift to state 120
+
+State 10:
+transform -> TokIdent . in_operand_list_opt TokArrow TokIdent out_operand_list_opt [ TokSemi ]
+-- On TokUnder shift to state 11
+-- On TokStar shift to state 12
+-- On TokPercent shift to state 40
+-- On TokIdent shift to state 14
+-- On TokDollar shift to state 43
+-- On TokCapIdent shift to state 45
+-- On TokAt shift to state 46
+-- On in_operand_name shift to state 54
+-- On in_operand_list_opt shift to state 56
+-- On in_operand_list shift to state 115
+-- On in_operand shift to state 116
+-- On TokArrow reduce production in_operand_list_opt -> 
+
+State 11:
+in_operand_name -> TokUnder . [ TokSmall TokSemi TokRParen TokComma TokColon TokBang TokArrow ]
+-- On TokSmall reduce production in_operand_name -> TokUnder 
+-- On TokSemi reduce production in_operand_name -> TokUnder 
+-- On TokRParen reduce production in_operand_name -> TokUnder 
+-- On TokComma reduce production in_operand_name -> TokUnder 
+-- On TokColon reduce production in_operand_name -> TokUnder 
+-- On TokBang reduce production in_operand_name -> TokUnder 
+-- On TokArrow reduce production in_operand_name -> TokUnder 
+
+State 12:
+in_operand -> TokStar . TokLParen in_operand_name TokComma in_operand_name TokComma value_reg TokComma value_reg TokRParen operand_modifier_list_opt [ TokSemi TokRParen TokComma TokColon TokArrow ]
+in_operand -> TokStar . TokLParen in_operand_name TokComma value_reg TokRParen operand_modifier_list_opt [ TokSemi TokRParen TokComma TokColon TokArrow ]
+in_operand -> TokStar . TokLParen in_operand_name TokRParen operand_modifier_list_opt [ TokSemi TokRParen TokComma TokColon TokArrow ]
+in_operand -> TokStar . in_operand_name operand_modifier_list_opt [ TokSemi TokRParen TokComma TokColon TokArrow ]
+-- On TokUnder shift to state 11
+-- On TokLParen shift to state 13
+-- On TokIdent shift to state 14
+-- On in_operand_name shift to state 38
+
+State 13:
+in_operand -> TokStar TokLParen . in_operand_name TokComma in_operand_name TokComma value_reg TokComma value_reg TokRParen operand_modifier_list_opt [ TokSemi TokRParen TokComma TokColon TokArrow ]
+in_operand -> TokStar TokLParen . in_operand_name TokComma value_reg TokRParen operand_modifier_list_opt [ TokSemi TokRParen TokComma TokColon TokArrow ]
+in_operand -> TokStar TokLParen . in_operand_name TokRParen operand_modifier_list_opt [ TokSemi TokRParen TokComma TokColon TokArrow ]
+-- On TokUnder shift to state 11
+-- On TokIdent shift to state 14
+-- On in_operand_name shift to state 15
+
+State 14:
+in_operand_name -> TokIdent . [ TokSmall TokSemi TokRParen TokComma TokColon TokBang TokArrow ]
+-- On TokSmall reduce production in_operand_name -> TokIdent 
+-- On TokSemi reduce production in_operand_name -> TokIdent 
+-- On TokRParen reduce production in_operand_name -> TokIdent 
+-- On TokComma reduce production in_operand_name -> TokIdent 
+-- On TokColon reduce production in_operand_name -> TokIdent 
+-- On TokBang reduce production in_operand_name -> TokIdent 
+-- On TokArrow reduce production in_operand_name -> TokIdent 
+
+State 15:
+in_operand -> TokStar TokLParen in_operand_name . TokComma in_operand_name TokComma value_reg TokComma value_reg TokRParen operand_modifier_list_opt [ TokSemi TokRParen TokComma TokColon TokArrow ]
+in_operand -> TokStar TokLParen in_operand_name . TokComma value_reg TokRParen operand_modifier_list_opt [ TokSemi TokRParen TokComma TokColon TokArrow ]
+in_operand -> TokStar TokLParen in_operand_name . TokRParen operand_modifier_list_opt [ TokSemi TokRParen TokComma TokColon TokArrow ]
+-- On TokRParen shift to state 16
+-- On TokComma shift to state 25
+
+State 16:
+in_operand -> TokStar TokLParen in_operand_name TokRParen . operand_modifier_list_opt [ TokSemi TokRParen TokComma TokColon TokArrow ]
+-- On TokSmall shift to state 17
+-- On TokBang shift to state 18
+-- On operand_modifier_list_opt shift to state 21
+-- On operand_modifier_list shift to state 22
+-- On operand_modifier shift to state 23
+-- On TokSemi reduce production operand_modifier_list_opt -> 
+-- On TokRParen reduce production operand_modifier_list_opt -> 
+-- On TokComma reduce production operand_modifier_list_opt -> 
+-- On TokColon reduce production operand_modifier_list_opt -> 
+-- On TokArrow reduce production operand_modifier_list_opt -> 
+
+State 17:
+operand_modifier -> TokSmall . [ TokSmall TokSemi TokRParen TokComma TokColon TokBang TokArrow ]
+-- On TokSmall reduce production operand_modifier -> TokSmall 
+-- On TokSemi reduce production operand_modifier -> TokSmall 
+-- On TokRParen reduce production operand_modifier -> TokSmall 
+-- On TokComma reduce production operand_modifier -> TokSmall 
+-- On TokColon reduce production operand_modifier -> TokSmall 
+-- On TokBang reduce production operand_modifier -> TokSmall 
+-- On TokArrow reduce production operand_modifier -> TokSmall 
+
+State 18:
+operand_modifier -> TokBang . TokIdent [ TokSmall TokSemi TokRParen TokComma TokColon TokBang TokArrow ]
+operand_modifier -> TokBang . TokStack [ TokSmall TokSemi TokRParen TokComma TokColon TokBang TokArrow ]
+-- On TokStack shift to state 19
+-- On TokIdent shift to state 20
+
+State 19:
+operand_modifier -> TokBang TokStack . [ TokSmall TokSemi TokRParen TokComma TokColon TokBang TokArrow ]
+-- On TokSmall reduce production operand_modifier -> TokBang TokStack 
+-- On TokSemi reduce production operand_modifier -> TokBang TokStack 
+-- On TokRParen reduce production operand_modifier -> TokBang TokStack 
+-- On TokComma reduce production operand_modifier -> TokBang TokStack 
+-- On TokColon reduce production operand_modifier -> TokBang TokStack 
+-- On TokBang reduce production operand_modifier -> TokBang TokStack 
+-- On TokArrow reduce production operand_modifier -> TokBang TokStack 
+
+State 20:
+operand_modifier -> TokBang TokIdent . [ TokSmall TokSemi TokRParen TokComma TokColon TokBang TokArrow ]
+-- On TokSmall reduce production operand_modifier -> TokBang TokIdent 
+-- On TokSemi reduce production operand_modifier -> TokBang TokIdent 
+-- On TokRParen reduce production operand_modifier -> TokBang TokIdent 
+-- On TokComma reduce production operand_modifier -> TokBang TokIdent 
+-- On TokColon reduce production operand_modifier -> TokBang TokIdent 
+-- On TokBang reduce production operand_modifier -> TokBang TokIdent 
+-- On TokArrow reduce production operand_modifier -> TokBang TokIdent 
+
+State 21:
+in_operand -> TokStar TokLParen in_operand_name TokRParen operand_modifier_list_opt . [ TokSemi TokRParen TokComma TokColon TokArrow ]
+-- On TokSemi reduce production in_operand -> TokStar TokLParen in_operand_name TokRParen operand_modifier_list_opt 
+-- On TokRParen reduce production in_operand -> TokStar TokLParen in_operand_name TokRParen operand_modifier_list_opt 
+-- On TokComma reduce production in_operand -> TokStar TokLParen in_operand_name TokRParen operand_modifier_list_opt 
+-- On TokColon reduce production in_operand -> TokStar TokLParen in_operand_name TokRParen operand_modifier_list_opt 
+-- On TokArrow reduce production in_operand -> TokStar TokLParen in_operand_name TokRParen operand_modifier_list_opt 
+
+State 22:
+operand_modifier_list_opt -> operand_modifier_list . [ TokSemi TokRParen TokComma TokColon TokArrow ]
+-- On TokSemi reduce production operand_modifier_list_opt -> operand_modifier_list 
+-- On TokRParen reduce production operand_modifier_list_opt -> operand_modifier_list 
+-- On TokComma reduce production operand_modifier_list_opt -> operand_modifier_list 
+-- On TokColon reduce production operand_modifier_list_opt -> operand_modifier_list 
+-- On TokArrow reduce production operand_modifier_list_opt -> operand_modifier_list 
+
+State 23:
+operand_modifier_list -> operand_modifier . operand_modifier_list [ TokSemi TokRParen TokComma TokColon TokArrow ]
+operand_modifier_list -> operand_modifier . [ TokSemi TokRParen TokComma TokColon TokArrow ]
+-- On TokSmall shift to state 17
+-- On TokBang shift to state 18
+-- On operand_modifier_list shift to state 24
+-- On operand_modifier shift to state 23
+-- On TokSemi reduce production operand_modifier_list -> operand_modifier 
+-- On TokRParen reduce production operand_modifier_list -> operand_modifier 
+-- On TokComma reduce production operand_modifier_list -> operand_modifier 
+-- On TokColon reduce production operand_modifier_list -> operand_modifier 
+-- On TokArrow reduce production operand_modifier_list -> operand_modifier 
+
+State 24:
+operand_modifier_list -> operand_modifier operand_modifier_list . [ TokSemi TokRParen TokComma TokColon TokArrow ]
+-- On TokSemi reduce production operand_modifier_list -> operand_modifier operand_modifier_list 
+-- On TokRParen reduce production operand_modifier_list -> operand_modifier operand_modifier_list 
+-- On TokComma reduce production operand_modifier_list -> operand_modifier operand_modifier_list 
+-- On TokColon reduce production operand_modifier_list -> operand_modifier operand_modifier_list 
+-- On TokArrow reduce production operand_modifier_list -> operand_modifier operand_modifier_list 
+
+State 25:
+in_operand -> TokStar TokLParen in_operand_name TokComma . in_operand_name TokComma value_reg TokComma value_reg TokRParen operand_modifier_list_opt [ TokSemi TokRParen TokComma TokColon TokArrow ]
+in_operand -> TokStar TokLParen in_operand_name TokComma . value_reg TokRParen operand_modifier_list_opt [ TokSemi TokRParen TokComma TokColon TokArrow ]
+-- On TokUnder shift to state 11
+-- On TokInt shift to state 26
+-- On TokIdent shift to state 14
+-- On value_reg shift to state 27
+-- On in_operand_name shift to state 30
+
+State 26:
+value_reg -> TokInt . [ TokSemi TokRParen TokComma TokColon TokArrow ]
+-- On TokSemi reduce production value_reg -> TokInt 
+-- On TokRParen reduce production value_reg -> TokInt 
+-- On TokComma reduce production value_reg -> TokInt 
+-- On TokColon reduce production value_reg -> TokInt 
+-- On TokArrow reduce production value_reg -> TokInt 
+
+State 27:
+in_operand -> TokStar TokLParen in_operand_name TokComma value_reg . TokRParen operand_modifier_list_opt [ TokSemi TokRParen TokComma TokColon TokArrow ]
+-- On TokRParen shift to state 28
+
+State 28:
+in_operand -> TokStar TokLParen in_operand_name TokComma value_reg TokRParen . operand_modifier_list_opt [ TokSemi TokRParen TokComma TokColon TokArrow ]
+-- On TokSmall shift to state 17
+-- On TokBang shift to state 18
+-- On operand_modifier_list_opt shift to state 29
+-- On operand_modifier_list shift to state 22
+-- On operand_modifier shift to state 23
+-- On TokSemi reduce production operand_modifier_list_opt -> 
+-- On TokRParen reduce production operand_modifier_list_opt -> 
+-- On TokComma reduce production operand_modifier_list_opt -> 
+-- On TokColon reduce production operand_modifier_list_opt -> 
+-- On TokArrow reduce production operand_modifier_list_opt -> 
+
+State 29:
+in_operand -> TokStar TokLParen in_operand_name TokComma value_reg TokRParen operand_modifier_list_opt . [ TokSemi TokRParen TokComma TokColon TokArrow ]
+-- On TokSemi reduce production in_operand -> TokStar TokLParen in_operand_name TokComma value_reg TokRParen operand_modifier_list_opt 
+-- On TokRParen reduce production in_operand -> TokStar TokLParen in_operand_name TokComma value_reg TokRParen operand_modifier_list_opt 
+-- On TokComma reduce production in_operand -> TokStar TokLParen in_operand_name TokComma value_reg TokRParen operand_modifier_list_opt 
+-- On TokColon reduce production in_operand -> TokStar TokLParen in_operand_name TokComma value_reg TokRParen operand_modifier_list_opt 
+-- On TokArrow reduce production in_operand -> TokStar TokLParen in_operand_name TokComma value_reg TokRParen operand_modifier_list_opt 
+
+State 30:
+in_operand -> TokStar TokLParen in_operand_name TokComma in_operand_name . TokComma value_reg TokComma value_reg TokRParen operand_modifier_list_opt [ TokSemi TokRParen TokComma TokColon TokArrow ]
+value_reg -> in_operand_name . [ TokRParen ]
+-- On TokComma shift to state 31
+-- On TokRParen reduce production value_reg -> in_operand_name 
+
+State 31:
+in_operand -> TokStar TokLParen in_operand_name TokComma in_operand_name TokComma . value_reg TokComma value_reg TokRParen operand_modifier_list_opt [ TokSemi TokRParen TokComma TokColon TokArrow ]
+-- On TokUnder shift to state 11
+-- On TokInt shift to state 26
+-- On TokIdent shift to state 14
+-- On value_reg shift to state 32
+-- On in_operand_name shift to state 37
+
+State 32:
+in_operand -> TokStar TokLParen in_operand_name TokComma in_operand_name TokComma value_reg . TokComma value_reg TokRParen operand_modifier_list_opt [ TokSemi TokRParen TokComma TokColon TokArrow ]
+-- On TokComma shift to state 33
+
+State 33:
+in_operand -> TokStar TokLParen in_operand_name TokComma in_operand_name TokComma value_reg TokComma . value_reg TokRParen operand_modifier_list_opt [ TokSemi TokRParen TokComma TokColon TokArrow ]
+-- On TokUnder shift to state 11
+-- On TokInt shift to state 26
+-- On TokIdent shift to state 14
+-- On value_reg shift to state 34
+-- On in_operand_name shift to state 37
+
+State 34:
+in_operand -> TokStar TokLParen in_operand_name TokComma in_operand_name TokComma value_reg TokComma value_reg . TokRParen operand_modifier_list_opt [ TokSemi TokRParen TokComma TokColon TokArrow ]
+-- On TokRParen shift to state 35
+
+State 35:
+in_operand -> TokStar TokLParen in_operand_name TokComma in_operand_name TokComma value_reg TokComma value_reg TokRParen . operand_modifier_list_opt [ TokSemi TokRParen TokComma TokColon TokArrow ]
+-- On TokSmall shift to state 17
+-- On TokBang shift to state 18
+-- On operand_modifier_list_opt shift to state 36
+-- On operand_modifier_list shift to state 22
+-- On operand_modifier shift to state 23
+-- On TokSemi reduce production operand_modifier_list_opt -> 
+-- On TokRParen reduce production operand_modifier_list_opt -> 
+-- On TokComma reduce production operand_modifier_list_opt -> 
+-- On TokColon reduce production operand_modifier_list_opt -> 
+-- On TokArrow reduce production operand_modifier_list_opt -> 
+
+State 36:
+in_operand -> TokStar TokLParen in_operand_name TokComma in_operand_name TokComma value_reg TokComma value_reg TokRParen operand_modifier_list_opt . [ TokSemi TokRParen TokComma TokColon TokArrow ]
+-- On TokSemi reduce production in_operand -> TokStar TokLParen in_operand_name TokComma in_operand_name TokComma value_reg TokComma value_reg TokRParen operand_modifier_list_opt 
+-- On TokRParen reduce production in_operand -> TokStar TokLParen in_operand_name TokComma in_operand_name TokComma value_reg TokComma value_reg TokRParen operand_modifier_list_opt 
+-- On TokComma reduce production in_operand -> TokStar TokLParen in_operand_name TokComma in_operand_name TokComma value_reg TokComma value_reg TokRParen operand_modifier_list_opt 
+-- On TokColon reduce production in_operand -> TokStar TokLParen in_operand_name TokComma in_operand_name TokComma value_reg TokComma value_reg TokRParen operand_modifier_list_opt 
+-- On TokArrow reduce production in_operand -> TokStar TokLParen in_operand_name TokComma in_operand_name TokComma value_reg TokComma value_reg TokRParen operand_modifier_list_opt 
+
+State 37:
+value_reg -> in_operand_name . [ TokSemi TokRParen TokComma TokColon TokArrow ]
+-- On TokSemi reduce production value_reg -> in_operand_name 
+-- On TokRParen reduce production value_reg -> in_operand_name 
+-- On TokComma reduce production value_reg -> in_operand_name 
+-- On TokColon reduce production value_reg -> in_operand_name 
+-- On TokArrow reduce production value_reg -> in_operand_name 
+
+State 38:
+in_operand -> TokStar in_operand_name . operand_modifier_list_opt [ TokSemi TokRParen TokComma TokColon TokArrow ]
+-- On TokSmall shift to state 17
+-- On TokBang shift to state 18
+-- On operand_modifier_list_opt shift to state 39
+-- On operand_modifier_list shift to state 22
+-- On operand_modifier shift to state 23
+-- On TokSemi reduce production operand_modifier_list_opt -> 
+-- On TokRParen reduce production operand_modifier_list_opt -> 
+-- On TokComma reduce production operand_modifier_list_opt -> 
+-- On TokColon reduce production operand_modifier_list_opt -> 
+-- On TokArrow reduce production operand_modifier_list_opt -> 
+
+State 39:
+in_operand -> TokStar in_operand_name operand_modifier_list_opt . [ TokSemi TokRParen TokComma TokColon TokArrow ]
+-- On TokSemi reduce production in_operand -> TokStar in_operand_name operand_modifier_list_opt 
+-- On TokRParen reduce production in_operand -> TokStar in_operand_name operand_modifier_list_opt 
+-- On TokComma reduce production in_operand -> TokStar in_operand_name operand_modifier_list_opt 
+-- On TokColon reduce production in_operand -> TokStar in_operand_name operand_modifier_list_opt 
+-- On TokArrow reduce production in_operand -> TokStar in_operand_name operand_modifier_list_opt 
+
+State 40:
+in_operand -> TokPercent . in_operand_name operand_modifier_list_opt [ TokSemi TokRParen TokComma TokColon TokArrow ]
+-- On TokUnder shift to state 11
+-- On TokIdent shift to state 14
+-- On in_operand_name shift to state 41
+
+State 41:
+in_operand -> TokPercent in_operand_name . operand_modifier_list_opt [ TokSemi TokRParen TokComma TokColon TokArrow ]
+-- On TokSmall shift to state 17
+-- On TokBang shift to state 18
+-- On operand_modifier_list_opt shift to state 42
+-- On operand_modifier_list shift to state 22
+-- On operand_modifier shift to state 23
+-- On TokSemi reduce production operand_modifier_list_opt -> 
+-- On TokRParen reduce production operand_modifier_list_opt -> 
+-- On TokComma reduce production operand_modifier_list_opt -> 
+-- On TokColon reduce production operand_modifier_list_opt -> 
+-- On TokArrow reduce production operand_modifier_list_opt -> 
+
+State 42:
+in_operand -> TokPercent in_operand_name operand_modifier_list_opt . [ TokSemi TokRParen TokComma TokColon TokArrow ]
+-- On TokSemi reduce production in_operand -> TokPercent in_operand_name operand_modifier_list_opt 
+-- On TokRParen reduce production in_operand -> TokPercent in_operand_name operand_modifier_list_opt 
+-- On TokComma reduce production in_operand -> TokPercent in_operand_name operand_modifier_list_opt 
+-- On TokColon reduce production in_operand -> TokPercent in_operand_name operand_modifier_list_opt 
+-- On TokArrow reduce production in_operand -> TokPercent in_operand_name operand_modifier_list_opt 
+
+State 43:
+in_operand -> TokDollar . value_reg [ TokSemi TokRParen TokComma TokColon TokArrow ]
+-- On TokUnder shift to state 11
+-- On TokInt shift to state 26
+-- On TokIdent shift to state 14
+-- On value_reg shift to state 44
+-- On in_operand_name shift to state 37
+
+State 44:
+in_operand -> TokDollar value_reg . [ TokSemi TokRParen TokComma TokColon TokArrow ]
+-- On TokSemi reduce production in_operand -> TokDollar value_reg 
+-- On TokRParen reduce production in_operand -> TokDollar value_reg 
+-- On TokComma reduce production in_operand -> TokDollar value_reg 
+-- On TokColon reduce production in_operand -> TokDollar value_reg 
+-- On TokArrow reduce production in_operand -> TokDollar value_reg 
+
+State 45:
+in_operand -> TokCapIdent . [ TokSemi TokRParen TokComma TokColon TokArrow ]
+-- On TokSemi reduce production in_operand -> TokCapIdent 
+-- On TokRParen reduce production in_operand -> TokCapIdent 
+-- On TokComma reduce production in_operand -> TokCapIdent 
+-- On TokColon reduce production in_operand -> TokCapIdent 
+-- On TokArrow reduce production in_operand -> TokCapIdent 
+
+State 46:
+in_operand -> TokAt . in_operand_name operand_modifier_list_opt [ TokSemi TokRParen TokComma TokColon TokArrow ]
+in_operand -> TokAt . TokStack in_operand_stack_index [ TokSemi TokRParen TokComma TokColon TokArrow ]
+-- On TokUnder shift to state 11
+-- On TokStack shift to state 47
+-- On TokIdent shift to state 14
+-- On in_operand_name shift to state 52
+
+State 47:
+in_operand -> TokAt TokStack . in_operand_stack_index [ TokSemi TokRParen TokComma TokColon TokArrow ]
+-- On TokLParen shift to state 48
+-- On in_operand_stack_index shift to state 51
+-- On TokSemi reduce production in_operand_stack_index -> 
+-- On TokRParen reduce production in_operand_stack_index -> 
+-- On TokComma reduce production in_operand_stack_index -> 
+-- On TokColon reduce production in_operand_stack_index -> 
+-- On TokArrow reduce production in_operand_stack_index -> 
+
+State 48:
+in_operand_stack_index -> TokLParen . value_reg TokRParen [ TokSemi TokRParen TokComma TokColon TokArrow ]
+-- On TokUnder shift to state 11
+-- On TokInt shift to state 26
+-- On TokIdent shift to state 14
+-- On value_reg shift to state 49
+-- On in_operand_name shift to state 37
+
+State 49:
+in_operand_stack_index -> TokLParen value_reg . TokRParen [ TokSemi TokRParen TokComma TokColon TokArrow ]
+-- On TokRParen shift to state 50
+
+State 50:
+in_operand_stack_index -> TokLParen value_reg TokRParen . [ TokSemi TokRParen TokComma TokColon TokArrow ]
+-- On TokSemi reduce production in_operand_stack_index -> TokLParen value_reg TokRParen 
+-- On TokRParen reduce production in_operand_stack_index -> TokLParen value_reg TokRParen 
+-- On TokComma reduce production in_operand_stack_index -> TokLParen value_reg TokRParen 
+-- On TokColon reduce production in_operand_stack_index -> TokLParen value_reg TokRParen 
+-- On TokArrow reduce production in_operand_stack_index -> TokLParen value_reg TokRParen 
+
+State 51:
+in_operand -> TokAt TokStack in_operand_stack_index . [ TokSemi TokRParen TokComma TokColon TokArrow ]
+-- On TokSemi reduce production in_operand -> TokAt TokStack in_operand_stack_index 
+-- On TokRParen reduce production in_operand -> TokAt TokStack in_operand_stack_index 
+-- On TokComma reduce production in_operand -> TokAt TokStack in_operand_stack_index 
+-- On TokColon reduce production in_operand -> TokAt TokStack in_operand_stack_index 
+-- On TokArrow reduce production in_operand -> TokAt TokStack in_operand_stack_index 
+
+State 52:
+in_operand -> TokAt in_operand_name . operand_modifier_list_opt [ TokSemi TokRParen TokComma TokColon TokArrow ]
+-- On TokSmall shift to state 17
+-- On TokBang shift to state 18
+-- On operand_modifier_list_opt shift to state 53
+-- On operand_modifier_list shift to state 22
+-- On operand_modifier shift to state 23
+-- On TokSemi reduce production operand_modifier_list_opt -> 
+-- On TokRParen reduce production operand_modifier_list_opt -> 
+-- On TokComma reduce production operand_modifier_list_opt -> 
+-- On TokColon reduce production operand_modifier_list_opt -> 
+-- On TokArrow reduce production operand_modifier_list_opt -> 
+
+State 53:
+in_operand -> TokAt in_operand_name operand_modifier_list_opt . [ TokSemi TokRParen TokComma TokColon TokArrow ]
+-- On TokSemi reduce production in_operand -> TokAt in_operand_name operand_modifier_list_opt 
+-- On TokRParen reduce production in_operand -> TokAt in_operand_name operand_modifier_list_opt 
+-- On TokComma reduce production in_operand -> TokAt in_operand_name operand_modifier_list_opt 
+-- On TokColon reduce production in_operand -> TokAt in_operand_name operand_modifier_list_opt 
+-- On TokArrow reduce production in_operand -> TokAt in_operand_name operand_modifier_list_opt 
+
+State 54:
+in_operand -> in_operand_name . operand_modifier_list_opt [ TokSemi TokRParen TokComma TokColon TokArrow ]
+-- On TokSmall shift to state 17
+-- On TokBang shift to state 18
+-- On operand_modifier_list_opt shift to state 55
+-- On operand_modifier_list shift to state 22
+-- On operand_modifier shift to state 23
+-- On TokSemi reduce production operand_modifier_list_opt -> 
+-- On TokRParen reduce production operand_modifier_list_opt -> 
+-- On TokComma reduce production operand_modifier_list_opt -> 
+-- On TokColon reduce production operand_modifier_list_opt -> 
+-- On TokArrow reduce production operand_modifier_list_opt -> 
+
+State 55:
+in_operand -> in_operand_name operand_modifier_list_opt . [ TokSemi TokRParen TokComma TokColon TokArrow ]
+-- On TokSemi reduce production in_operand -> in_operand_name operand_modifier_list_opt 
+-- On TokRParen reduce production in_operand -> in_operand_name operand_modifier_list_opt 
+-- On TokComma reduce production in_operand -> in_operand_name operand_modifier_list_opt 
+-- On TokColon reduce production in_operand -> in_operand_name operand_modifier_list_opt 
+-- On TokArrow reduce production in_operand -> in_operand_name operand_modifier_list_opt 
+
+State 56:
+transform -> TokIdent in_operand_list_opt . TokArrow TokIdent out_operand_list_opt [ TokSemi ]
+-- On TokArrow shift to state 57
+
+State 57:
+transform -> TokIdent in_operand_list_opt TokArrow . TokIdent out_operand_list_opt [ TokSemi ]
+-- On TokIdent shift to state 58
+
+State 58:
+transform -> TokIdent in_operand_list_opt TokArrow TokIdent . out_operand_list_opt [ TokSemi ]
+-- On TokStar shift to state 59
+-- On TokPercent shift to state 97
+-- On TokIdent shift to state 99
+-- On TokDollar shift to state 100
+-- On TokCapIdent shift to state 102
+-- On TokAt shift to state 103
+-- On out_operand_list_opt shift to state 110
+-- On out_operand_list shift to state 111
+-- On out_operand shift to state 112
+-- On TokSemi reduce production out_operand_list_opt -> 
+
+State 59:
+out_operand -> TokStar . TokLParen TokIdent TokComma TokIdent TokComma arith_expr TokComma arith_expr TokRParen [ TokSemi TokComma ]
+out_operand -> TokStar . TokLParen TokIdent TokComma arith_expr TokRParen [ TokSemi TokComma ]
+out_operand -> TokStar . TokLParen TokIdent TokRParen [ TokSemi TokComma ]
+-- On TokLParen shift to state 60
+
+State 60:
+out_operand -> TokStar TokLParen . TokIdent TokComma TokIdent TokComma arith_expr TokComma arith_expr TokRParen [ TokSemi TokComma ]
+out_operand -> TokStar TokLParen . TokIdent TokComma arith_expr TokRParen [ TokSemi TokComma ]
+out_operand -> TokStar TokLParen . TokIdent TokRParen [ TokSemi TokComma ]
+-- On TokIdent shift to state 61
+
+State 61:
+out_operand -> TokStar TokLParen TokIdent . TokComma TokIdent TokComma arith_expr TokComma arith_expr TokRParen [ TokSemi TokComma ]
+out_operand -> TokStar TokLParen TokIdent . TokComma arith_expr TokRParen [ TokSemi TokComma ]
+out_operand -> TokStar TokLParen TokIdent . TokRParen [ TokSemi TokComma ]
+-- On TokRParen shift to state 62
+-- On TokComma shift to state 63
+
+State 62:
+out_operand -> TokStar TokLParen TokIdent TokRParen . [ TokSemi TokComma ]
+-- On TokSemi reduce production out_operand -> TokStar TokLParen TokIdent TokRParen 
+-- On TokComma reduce production out_operand -> TokStar TokLParen TokIdent TokRParen 
+
+State 63:
+out_operand -> TokStar TokLParen TokIdent TokComma . TokIdent TokComma arith_expr TokComma arith_expr TokRParen [ TokSemi TokComma ]
+out_operand -> TokStar TokLParen TokIdent TokComma . arith_expr TokRParen [ TokSemi TokComma ]
+-- On TokTilde shift to state 64
+-- On TokPow2 shift to state 65
+-- On TokMinus shift to state 66
+-- On TokLog2 shift to state 67
+-- On TokLParen shift to state 68
+-- On TokInt shift to state 69
+-- On TokIdent shift to state 89
+-- On TokAbs shift to state 71
+-- On unary_op shift to state 72
+-- On arith_expr shift to state 95
+
+State 64:
+unary_op -> TokTilde . [ TokTilde TokPow2 TokMinus TokLog2 TokLParen TokInt TokIdent TokAbs ]
+-- On TokTilde reduce production unary_op -> TokTilde 
+-- On TokPow2 reduce production unary_op -> TokTilde 
+-- On TokMinus reduce production unary_op -> TokTilde 
+-- On TokLog2 reduce production unary_op -> TokTilde 
+-- On TokLParen reduce production unary_op -> TokTilde 
+-- On TokInt reduce production unary_op -> TokTilde 
+-- On TokIdent reduce production unary_op -> TokTilde 
+-- On TokAbs reduce production unary_op -> TokTilde 
+
+State 65:
+unary_op -> TokPow2 . [ TokTilde TokPow2 TokMinus TokLog2 TokLParen TokInt TokIdent TokAbs ]
+-- On TokTilde reduce production unary_op -> TokPow2 
+-- On TokPow2 reduce production unary_op -> TokPow2 
+-- On TokMinus reduce production unary_op -> TokPow2 
+-- On TokLog2 reduce production unary_op -> TokPow2 
+-- On TokLParen reduce production unary_op -> TokPow2 
+-- On TokInt reduce production unary_op -> TokPow2 
+-- On TokIdent reduce production unary_op -> TokPow2 
+-- On TokAbs reduce production unary_op -> TokPow2 
+
+State 66:
+unary_op -> TokMinus . [ TokTilde TokPow2 TokMinus TokLog2 TokLParen TokInt TokIdent TokAbs ]
+-- On TokTilde reduce production unary_op -> TokMinus 
+-- On TokPow2 reduce production unary_op -> TokMinus 
+-- On TokMinus reduce production unary_op -> TokMinus 
+-- On TokLog2 reduce production unary_op -> TokMinus 
+-- On TokLParen reduce production unary_op -> TokMinus 
+-- On TokInt reduce production unary_op -> TokMinus 
+-- On TokIdent reduce production unary_op -> TokMinus 
+-- On TokAbs reduce production unary_op -> TokMinus 
+
+State 67:
+unary_op -> TokLog2 . [ TokTilde TokPow2 TokMinus TokLog2 TokLParen TokInt TokIdent TokAbs ]
+-- On TokTilde reduce production unary_op -> TokLog2 
+-- On TokPow2 reduce production unary_op -> TokLog2 
+-- On TokMinus reduce production unary_op -> TokLog2 
+-- On TokLog2 reduce production unary_op -> TokLog2 
+-- On TokLParen reduce production unary_op -> TokLog2 
+-- On TokInt reduce production unary_op -> TokLog2 
+-- On TokIdent reduce production unary_op -> TokLog2 
+-- On TokAbs reduce production unary_op -> TokLog2 
+
+State 68:
+arith_expr -> TokLParen . arith_expr TokRParen [ TokShr TokShl TokSemi TokSar TokRParen TokPlus TokPipePipe TokPipe TokOutput TokNotEqual TokMinus TokLessThan TokLessEqual TokInput TokGreaterThan TokGreaterEqual TokEqual TokComma TokColon TokAmpAmp TokAmp ]
+-- On TokTilde shift to state 64
+-- On TokPow2 shift to state 65
+-- On TokMinus shift to state 66
+-- On TokLog2 shift to state 67
+-- On TokLParen shift to state 68
+-- On TokInt shift to state 69
+-- On TokIdent shift to state 70
+-- On TokAbs shift to state 71
+-- On unary_op shift to state 72
+-- On arith_expr shift to state 84
+
+State 69:
+arith_expr -> TokInt . [ TokShr TokShl TokSemi TokSar TokRParen TokPlus TokPipePipe TokPipe TokOutput TokNotEqual TokMinus TokLessThan TokLessEqual TokInput TokGreaterThan TokGreaterEqual TokEqual TokComma TokColon TokAmpAmp TokAmp ]
+-- On TokShr reduce production arith_expr -> TokInt 
+-- On TokShl reduce production arith_expr -> TokInt 
+-- On TokSemi reduce production arith_expr -> TokInt 
+-- On TokSar reduce production arith_expr -> TokInt 
+-- On TokRParen reduce production arith_expr -> TokInt 
+-- On TokPlus reduce production arith_expr -> TokInt 
+-- On TokPipePipe reduce production arith_expr -> TokInt 
+-- On TokPipe reduce production arith_expr -> TokInt 
+-- On TokOutput reduce production arith_expr -> TokInt 
+-- On TokNotEqual reduce production arith_expr -> TokInt 
+-- On TokMinus reduce production arith_expr -> TokInt 
+-- On TokLessThan reduce production arith_expr -> TokInt 
+-- On TokLessEqual reduce production arith_expr -> TokInt 
+-- On TokInput reduce production arith_expr -> TokInt 
+-- On TokGreaterThan reduce production arith_expr -> TokInt 
+-- On TokGreaterEqual reduce production arith_expr -> TokInt 
+-- On TokEqual reduce production arith_expr -> TokInt 
+-- On TokComma reduce production arith_expr -> TokInt 
+-- On TokColon reduce production arith_expr -> TokInt 
+-- On TokAmpAmp reduce production arith_expr -> TokInt 
+-- On TokAmp reduce production arith_expr -> TokInt 
+
+State 70:
+arith_expr -> TokIdent . [ TokShr TokShl TokSemi TokSar TokRParen TokPlus TokPipePipe TokPipe TokOutput TokNotEqual TokMinus TokLessThan TokLessEqual TokInput TokGreaterThan TokGreaterEqual TokEqual TokComma TokColon TokAmpAmp TokAmp ]
+-- On TokShr reduce production arith_expr -> TokIdent 
+-- On TokShl reduce production arith_expr -> TokIdent 
+-- On TokSemi reduce production arith_expr -> TokIdent 
+-- On TokSar reduce production arith_expr -> TokIdent 
+-- On TokRParen reduce production arith_expr -> TokIdent 
+-- On TokPlus reduce production arith_expr -> TokIdent 
+-- On TokPipePipe reduce production arith_expr -> TokIdent 
+-- On TokPipe reduce production arith_expr -> TokIdent 
+-- On TokOutput reduce production arith_expr -> TokIdent 
+-- On TokNotEqual reduce production arith_expr -> TokIdent 
+-- On TokMinus reduce production arith_expr -> TokIdent 
+-- On TokLessThan reduce production arith_expr -> TokIdent 
+-- On TokLessEqual reduce production arith_expr -> TokIdent 
+-- On TokInput reduce production arith_expr -> TokIdent 
+-- On TokGreaterThan reduce production arith_expr -> TokIdent 
+-- On TokGreaterEqual reduce production arith_expr -> TokIdent 
+-- On TokEqual reduce production arith_expr -> TokIdent 
+-- On TokComma reduce production arith_expr -> TokIdent 
+-- On TokColon reduce production arith_expr -> TokIdent 
+-- On TokAmpAmp reduce production arith_expr -> TokIdent 
+-- On TokAmp reduce production arith_expr -> TokIdent 
+
+State 71:
+unary_op -> TokAbs . [ TokTilde TokPow2 TokMinus TokLog2 TokLParen TokInt TokIdent TokAbs ]
+-- On TokTilde reduce production unary_op -> TokAbs 
+-- On TokPow2 reduce production unary_op -> TokAbs 
+-- On TokMinus reduce production unary_op -> TokAbs 
+-- On TokLog2 reduce production unary_op -> TokAbs 
+-- On TokLParen reduce production unary_op -> TokAbs 
+-- On TokInt reduce production unary_op -> TokAbs 
+-- On TokIdent reduce production unary_op -> TokAbs 
+-- On TokAbs reduce production unary_op -> TokAbs 
+
+State 72:
+arith_expr -> unary_op . arith_expr [ TokShr TokShl TokSemi TokSar TokRParen TokPlus TokPipePipe TokPipe TokOutput TokNotEqual TokMinus TokLessThan TokLessEqual TokInput TokGreaterThan TokGreaterEqual TokEqual TokComma TokColon TokAmpAmp TokAmp ]
+-- On TokTilde shift to state 64
+-- On TokPow2 shift to state 65
+-- On TokMinus shift to state 66
+-- On TokLog2 shift to state 67
+-- On TokLParen shift to state 68
+-- On TokInt shift to state 69
+-- On TokIdent shift to state 70
+-- On TokAbs shift to state 71
+-- On unary_op shift to state 72
+-- On arith_expr shift to state 73
+
+State 73:
+arith_expr -> arith_expr . plus_minus_op arith_expr [ TokShr TokShl TokSemi TokSar TokRParen TokPlus TokPipePipe TokPipe TokOutput TokNotEqual TokMinus TokLessThan TokLessEqual TokInput TokGreaterThan TokGreaterEqual TokEqual TokComma TokColon TokAmpAmp TokAmp ]
+arith_expr -> arith_expr . logical_op arith_expr [ TokShr TokShl TokSemi TokSar TokRParen TokPlus TokPipePipe TokPipe TokOutput TokNotEqual TokMinus TokLessThan TokLessEqual TokInput TokGreaterThan TokGreaterEqual TokEqual TokComma TokColon TokAmpAmp TokAmp ]
+arith_expr -> arith_expr . shift_op arith_expr [ TokShr TokShl TokSemi TokSar TokRParen TokPlus TokPipePipe TokPipe TokOutput TokNotEqual TokMinus TokLessThan TokLessEqual TokInput TokGreaterThan TokGreaterEqual TokEqual TokComma TokColon TokAmpAmp TokAmp ]
+arith_expr -> unary_op arith_expr . [ TokShr TokShl TokSemi TokSar TokRParen TokPlus TokPipePipe TokPipe TokOutput TokNotEqual TokMinus TokLessThan TokLessEqual TokInput TokGreaterThan TokGreaterEqual TokEqual TokComma TokColon TokAmpAmp TokAmp ]
+-- On shift_op shift to state 74
+-- On plus_minus_op shift to state 80
+-- On logical_op shift to state 82
+-- On TokShr reduce production arith_expr -> unary_op arith_expr 
+-- On TokShl reduce production arith_expr -> unary_op arith_expr 
+-- On TokSemi reduce production arith_expr -> unary_op arith_expr 
+-- On TokSar reduce production arith_expr -> unary_op arith_expr 
+-- On TokRParen reduce production arith_expr -> unary_op arith_expr 
+-- On TokPlus reduce production arith_expr -> unary_op arith_expr 
+-- On TokPipePipe reduce production arith_expr -> unary_op arith_expr 
+-- On TokPipe reduce production arith_expr -> unary_op arith_expr 
+-- On TokOutput reduce production arith_expr -> unary_op arith_expr 
+-- On TokNotEqual reduce production arith_expr -> unary_op arith_expr 
+-- On TokMinus reduce production arith_expr -> unary_op arith_expr 
+-- On TokLessThan reduce production arith_expr -> unary_op arith_expr 
+-- On TokLessEqual reduce production arith_expr -> unary_op arith_expr 
+-- On TokInput reduce production arith_expr -> unary_op arith_expr 
+-- On TokGreaterThan reduce production arith_expr -> unary_op arith_expr 
+-- On TokGreaterEqual reduce production arith_expr -> unary_op arith_expr 
+-- On TokEqual reduce production arith_expr -> unary_op arith_expr 
+-- On TokComma reduce production arith_expr -> unary_op arith_expr 
+-- On TokColon reduce production arith_expr -> unary_op arith_expr 
+-- On TokAmpAmp reduce production arith_expr -> unary_op arith_expr 
+-- On TokAmp reduce production arith_expr -> unary_op arith_expr 
+
+State 74:
+arith_expr -> arith_expr shift_op . arith_expr [ TokShr TokShl TokSemi TokSar TokRParen TokPlus TokPipePipe TokPipe TokOutput TokNotEqual TokMinus TokLessThan TokLessEqual TokInput TokGreaterThan TokGreaterEqual TokEqual TokComma TokColon TokAmpAmp TokAmp ]
+-- On TokTilde shift to state 64
+-- On TokPow2 shift to state 65
+-- On TokMinus shift to state 66
+-- On TokLog2 shift to state 67
+-- On TokLParen shift to state 68
+-- On TokInt shift to state 69
+-- On TokIdent shift to state 70
+-- On TokAbs shift to state 71
+-- On unary_op shift to state 72
+-- On arith_expr shift to state 75
+
+State 75:
+arith_expr -> arith_expr . plus_minus_op arith_expr [ TokShr TokShl TokSemi TokSar TokRParen TokPlus TokPipePipe TokPipe TokOutput TokNotEqual TokMinus TokLessThan TokLessEqual TokInput TokGreaterThan TokGreaterEqual TokEqual TokComma TokColon TokAmpAmp TokAmp ]
+arith_expr -> arith_expr . logical_op arith_expr [ TokShr TokShl TokSemi TokSar TokRParen TokPlus TokPipePipe TokPipe TokOutput TokNotEqual TokMinus TokLessThan TokLessEqual TokInput TokGreaterThan TokGreaterEqual TokEqual TokComma TokColon TokAmpAmp TokAmp ]
+arith_expr -> arith_expr . shift_op arith_expr [ TokShr TokShl TokSemi TokSar TokRParen TokPlus TokPipePipe TokPipe TokOutput TokNotEqual TokMinus TokLessThan TokLessEqual TokInput TokGreaterThan TokGreaterEqual TokEqual TokComma TokColon TokAmpAmp TokAmp ]
+arith_expr -> arith_expr shift_op arith_expr . [ TokShr TokShl TokSemi TokSar TokRParen TokPlus TokPipePipe TokPipe TokOutput TokNotEqual TokMinus TokLessThan TokLessEqual TokInput TokGreaterThan TokGreaterEqual TokEqual TokComma TokColon TokAmpAmp TokAmp ]
+-- On TokPlus shift to state 76
+-- On TokPipe shift to state 77
+-- On TokMinus shift to state 78
+-- On TokAmp shift to state 79
+-- On shift_op shift to state 74
+-- On plus_minus_op shift to state 80
+-- On logical_op shift to state 82
+-- On TokShr reduce production arith_expr -> arith_expr shift_op arith_expr 
+-- On TokShl reduce production arith_expr -> arith_expr shift_op arith_expr 
+-- On TokSemi reduce production arith_expr -> arith_expr shift_op arith_expr 
+-- On TokSar reduce production arith_expr -> arith_expr shift_op arith_expr 
+-- On TokRParen reduce production arith_expr -> arith_expr shift_op arith_expr 
+-- On TokPipePipe reduce production arith_expr -> arith_expr shift_op arith_expr 
+-- On TokOutput reduce production arith_expr -> arith_expr shift_op arith_expr 
+-- On TokNotEqual reduce production arith_expr -> arith_expr shift_op arith_expr 
+-- On TokLessThan reduce production arith_expr -> arith_expr shift_op arith_expr 
+-- On TokLessEqual reduce production arith_expr -> arith_expr shift_op arith_expr 
+-- On TokInput reduce production arith_expr -> arith_expr shift_op arith_expr 
+-- On TokGreaterThan reduce production arith_expr -> arith_expr shift_op arith_expr 
+-- On TokGreaterEqual reduce production arith_expr -> arith_expr shift_op arith_expr 
+-- On TokEqual reduce production arith_expr -> arith_expr shift_op arith_expr 
+-- On TokComma reduce production arith_expr -> arith_expr shift_op arith_expr 
+-- On TokColon reduce production arith_expr -> arith_expr shift_op arith_expr 
+-- On TokAmpAmp reduce production arith_expr -> arith_expr shift_op arith_expr 
+
+State 76:
+plus_minus_op -> TokPlus . [ TokTilde TokPow2 TokMinus TokLog2 TokLParen TokInt TokIdent TokAbs ]
+-- On TokTilde reduce production plus_minus_op -> TokPlus 
+-- On TokPow2 reduce production plus_minus_op -> TokPlus 
+-- On TokMinus reduce production plus_minus_op -> TokPlus 
+-- On TokLog2 reduce production plus_minus_op -> TokPlus 
+-- On TokLParen reduce production plus_minus_op -> TokPlus 
+-- On TokInt reduce production plus_minus_op -> TokPlus 
+-- On TokIdent reduce production plus_minus_op -> TokPlus 
+-- On TokAbs reduce production plus_minus_op -> TokPlus 
+
+State 77:
+logical_op -> TokPipe . [ TokTilde TokPow2 TokMinus TokLog2 TokLParen TokInt TokIdent TokAbs ]
+-- On TokTilde reduce production logical_op -> TokPipe 
+-- On TokPow2 reduce production logical_op -> TokPipe 
+-- On TokMinus reduce production logical_op -> TokPipe 
+-- On TokLog2 reduce production logical_op -> TokPipe 
+-- On TokLParen reduce production logical_op -> TokPipe 
+-- On TokInt reduce production logical_op -> TokPipe 
+-- On TokIdent reduce production logical_op -> TokPipe 
+-- On TokAbs reduce production logical_op -> TokPipe 
+
+State 78:
+plus_minus_op -> TokMinus . [ TokTilde TokPow2 TokMinus TokLog2 TokLParen TokInt TokIdent TokAbs ]
+-- On TokTilde reduce production plus_minus_op -> TokMinus 
+-- On TokPow2 reduce production plus_minus_op -> TokMinus 
+-- On TokMinus reduce production plus_minus_op -> TokMinus 
+-- On TokLog2 reduce production plus_minus_op -> TokMinus 
+-- On TokLParen reduce production plus_minus_op -> TokMinus 
+-- On TokInt reduce production plus_minus_op -> TokMinus 
+-- On TokIdent reduce production plus_minus_op -> TokMinus 
+-- On TokAbs reduce production plus_minus_op -> TokMinus 
+
+State 79:
+logical_op -> TokAmp . [ TokTilde TokPow2 TokMinus TokLog2 TokLParen TokInt TokIdent TokAbs ]
+-- On TokTilde reduce production logical_op -> TokAmp 
+-- On TokPow2 reduce production logical_op -> TokAmp 
+-- On TokMinus reduce production logical_op -> TokAmp 
+-- On TokLog2 reduce production logical_op -> TokAmp 
+-- On TokLParen reduce production logical_op -> TokAmp 
+-- On TokInt reduce production logical_op -> TokAmp 
+-- On TokIdent reduce production logical_op -> TokAmp 
+-- On TokAbs reduce production logical_op -> TokAmp 
+
+State 80:
+arith_expr -> arith_expr plus_minus_op . arith_expr [ TokShr TokShl TokSemi TokSar TokRParen TokPlus TokPipePipe TokPipe TokOutput TokNotEqual TokMinus TokLessThan TokLessEqual TokInput TokGreaterThan TokGreaterEqual TokEqual TokComma TokColon TokAmpAmp TokAmp ]
+-- On TokTilde shift to state 64
+-- On TokPow2 shift to state 65
+-- On TokMinus shift to state 66
+-- On TokLog2 shift to state 67
+-- On TokLParen shift to state 68
+-- On TokInt shift to state 69
+-- On TokIdent shift to state 70
+-- On TokAbs shift to state 71
+-- On unary_op shift to state 72
+-- On arith_expr shift to state 81
+
+State 81:
+arith_expr -> arith_expr . plus_minus_op arith_expr [ TokShr TokShl TokSemi TokSar TokRParen TokPlus TokPipePipe TokPipe TokOutput TokNotEqual TokMinus TokLessThan TokLessEqual TokInput TokGreaterThan TokGreaterEqual TokEqual TokComma TokColon TokAmpAmp TokAmp ]
+arith_expr -> arith_expr plus_minus_op arith_expr . [ TokShr TokShl TokSemi TokSar TokRParen TokPlus TokPipePipe TokPipe TokOutput TokNotEqual TokMinus TokLessThan TokLessEqual TokInput TokGreaterThan TokGreaterEqual TokEqual TokComma TokColon TokAmpAmp TokAmp ]
+arith_expr -> arith_expr . logical_op arith_expr [ TokShr TokShl TokSemi TokSar TokRParen TokPlus TokPipePipe TokPipe TokOutput TokNotEqual TokMinus TokLessThan TokLessEqual TokInput TokGreaterThan TokGreaterEqual TokEqual TokComma TokColon TokAmpAmp TokAmp ]
+arith_expr -> arith_expr . shift_op arith_expr [ TokShr TokShl TokSemi TokSar TokRParen TokPlus TokPipePipe TokPipe TokOutput TokNotEqual TokMinus TokLessThan TokLessEqual TokInput TokGreaterThan TokGreaterEqual TokEqual TokComma TokColon TokAmpAmp TokAmp ]
+-- On shift_op shift to state 74
+-- On plus_minus_op shift to state 80
+-- On logical_op shift to state 82
+-- On TokShr reduce production arith_expr -> arith_expr plus_minus_op arith_expr 
+-- On TokShl reduce production arith_expr -> arith_expr plus_minus_op arith_expr 
+-- On TokSemi reduce production arith_expr -> arith_expr plus_minus_op arith_expr 
+-- On TokSar reduce production arith_expr -> arith_expr plus_minus_op arith_expr 
+-- On TokRParen reduce production arith_expr -> arith_expr plus_minus_op arith_expr 
+-- On TokPlus reduce production arith_expr -> arith_expr plus_minus_op arith_expr 
+-- On TokPipePipe reduce production arith_expr -> arith_expr plus_minus_op arith_expr 
+-- On TokPipe reduce production arith_expr -> arith_expr plus_minus_op arith_expr 
+-- On TokOutput reduce production arith_expr -> arith_expr plus_minus_op arith_expr 
+-- On TokNotEqual reduce production arith_expr -> arith_expr plus_minus_op arith_expr 
+-- On TokMinus reduce production arith_expr -> arith_expr plus_minus_op arith_expr 
+-- On TokLessThan reduce production arith_expr -> arith_expr plus_minus_op arith_expr 
+-- On TokLessEqual reduce production arith_expr -> arith_expr plus_minus_op arith_expr 
+-- On TokInput reduce production arith_expr -> arith_expr plus_minus_op arith_expr 
+-- On TokGreaterThan reduce production arith_expr -> arith_expr plus_minus_op arith_expr 
+-- On TokGreaterEqual reduce production arith_expr -> arith_expr plus_minus_op arith_expr 
+-- On TokEqual reduce production arith_expr -> arith_expr plus_minus_op arith_expr 
+-- On TokComma reduce production arith_expr -> arith_expr plus_minus_op arith_expr 
+-- On TokColon reduce production arith_expr -> arith_expr plus_minus_op arith_expr 
+-- On TokAmpAmp reduce production arith_expr -> arith_expr plus_minus_op arith_expr 
+-- On TokAmp reduce production arith_expr -> arith_expr plus_minus_op arith_expr 
+
+State 82:
+arith_expr -> arith_expr logical_op . arith_expr [ TokShr TokShl TokSemi TokSar TokRParen TokPlus TokPipePipe TokPipe TokOutput TokNotEqual TokMinus TokLessThan TokLessEqual TokInput TokGreaterThan TokGreaterEqual TokEqual TokComma TokColon TokAmpAmp TokAmp ]
+-- On TokTilde shift to state 64
+-- On TokPow2 shift to state 65
+-- On TokMinus shift to state 66
+-- On TokLog2 shift to state 67
+-- On TokLParen shift to state 68
+-- On TokInt shift to state 69
+-- On TokIdent shift to state 70
+-- On TokAbs shift to state 71
+-- On unary_op shift to state 72
+-- On arith_expr shift to state 83
+
+State 83:
+arith_expr -> arith_expr . plus_minus_op arith_expr [ TokShr TokShl TokSemi TokSar TokRParen TokPlus TokPipePipe TokPipe TokOutput TokNotEqual TokMinus TokLessThan TokLessEqual TokInput TokGreaterThan TokGreaterEqual TokEqual TokComma TokColon TokAmpAmp TokAmp ]
+arith_expr -> arith_expr . logical_op arith_expr [ TokShr TokShl TokSemi TokSar TokRParen TokPlus TokPipePipe TokPipe TokOutput TokNotEqual TokMinus TokLessThan TokLessEqual TokInput TokGreaterThan TokGreaterEqual TokEqual TokComma TokColon TokAmpAmp TokAmp ]
+arith_expr -> arith_expr logical_op arith_expr . [ TokShr TokShl TokSemi TokSar TokRParen TokPlus TokPipePipe TokPipe TokOutput TokNotEqual TokMinus TokLessThan TokLessEqual TokInput TokGreaterThan TokGreaterEqual TokEqual TokComma TokColon TokAmpAmp TokAmp ]
+arith_expr -> arith_expr . shift_op arith_expr [ TokShr TokShl TokSemi TokSar TokRParen TokPlus TokPipePipe TokPipe TokOutput TokNotEqual TokMinus TokLessThan TokLessEqual TokInput TokGreaterThan TokGreaterEqual TokEqual TokComma TokColon TokAmpAmp TokAmp ]
+-- On TokPlus shift to state 76
+-- On TokMinus shift to state 78
+-- On shift_op shift to state 74
+-- On plus_minus_op shift to state 80
+-- On logical_op shift to state 82
+-- On TokShr reduce production arith_expr -> arith_expr logical_op arith_expr 
+-- On TokShl reduce production arith_expr -> arith_expr logical_op arith_expr 
+-- On TokSemi reduce production arith_expr -> arith_expr logical_op arith_expr 
+-- On TokSar reduce production arith_expr -> arith_expr logical_op arith_expr 
+-- On TokRParen reduce production arith_expr -> arith_expr logical_op arith_expr 
+-- On TokPipePipe reduce production arith_expr -> arith_expr logical_op arith_expr 
+-- On TokPipe reduce production arith_expr -> arith_expr logical_op arith_expr 
+-- On TokOutput reduce production arith_expr -> arith_expr logical_op arith_expr 
+-- On TokNotEqual reduce production arith_expr -> arith_expr logical_op arith_expr 
+-- On TokLessThan reduce production arith_expr -> arith_expr logical_op arith_expr 
+-- On TokLessEqual reduce production arith_expr -> arith_expr logical_op arith_expr 
+-- On TokInput reduce production arith_expr -> arith_expr logical_op arith_expr 
+-- On TokGreaterThan reduce production arith_expr -> arith_expr logical_op arith_expr 
+-- On TokGreaterEqual reduce production arith_expr -> arith_expr logical_op arith_expr 
+-- On TokEqual reduce production arith_expr -> arith_expr logical_op arith_expr 
+-- On TokComma reduce production arith_expr -> arith_expr logical_op arith_expr 
+-- On TokColon reduce production arith_expr -> arith_expr logical_op arith_expr 
+-- On TokAmpAmp reduce production arith_expr -> arith_expr logical_op arith_expr 
+-- On TokAmp reduce production arith_expr -> arith_expr logical_op arith_expr 
+
+State 84:
+arith_expr -> TokLParen arith_expr . TokRParen [ TokShr TokShl TokSemi TokSar TokRParen TokPlus TokPipePipe TokPipe TokOutput TokNotEqual TokMinus TokLessThan TokLessEqual TokInput TokGreaterThan TokGreaterEqual TokEqual TokComma TokColon TokAmpAmp TokAmp ]
+arith_expr -> arith_expr . plus_minus_op arith_expr [ TokShr TokShl TokSar TokRParen TokPlus TokPipe TokMinus TokAmp ]
+arith_expr -> arith_expr . logical_op arith_expr [ TokShr TokShl TokSar TokRParen TokPlus TokPipe TokMinus TokAmp ]
+arith_expr -> arith_expr . shift_op arith_expr [ TokShr TokShl TokSar TokRParen TokPlus TokPipe TokMinus TokAmp ]
+-- On TokShr shift to state 85
+-- On TokShl shift to state 86
+-- On TokSar shift to state 87
+-- On TokRParen shift to state 88
+-- On TokPlus shift to state 76
+-- On TokPipe shift to state 77
+-- On TokMinus shift to state 78
+-- On TokAmp shift to state 79
+-- On shift_op shift to state 74
+-- On plus_minus_op shift to state 80
+-- On logical_op shift to state 82
+
+State 85:
+shift_op -> TokShr . [ TokTilde TokPow2 TokMinus TokLog2 TokLParen TokInt TokIdent TokAbs ]
+-- On TokTilde reduce production shift_op -> TokShr 
+-- On TokPow2 reduce production shift_op -> TokShr 
+-- On TokMinus reduce production shift_op -> TokShr 
+-- On TokLog2 reduce production shift_op -> TokShr 
+-- On TokLParen reduce production shift_op -> TokShr 
+-- On TokInt reduce production shift_op -> TokShr 
+-- On TokIdent reduce production shift_op -> TokShr 
+-- On TokAbs reduce production shift_op -> TokShr 
+
+State 86:
+shift_op -> TokShl . [ TokTilde TokPow2 TokMinus TokLog2 TokLParen TokInt TokIdent TokAbs ]
+-- On TokTilde reduce production shift_op -> TokShl 
+-- On TokPow2 reduce production shift_op -> TokShl 
+-- On TokMinus reduce production shift_op -> TokShl 
+-- On TokLog2 reduce production shift_op -> TokShl 
+-- On TokLParen reduce production shift_op -> TokShl 
+-- On TokInt reduce production shift_op -> TokShl 
+-- On TokIdent reduce production shift_op -> TokShl 
+-- On TokAbs reduce production shift_op -> TokShl 
+
+State 87:
+shift_op -> TokSar . [ TokTilde TokPow2 TokMinus TokLog2 TokLParen TokInt TokIdent TokAbs ]
+-- On TokTilde reduce production shift_op -> TokSar 
+-- On TokPow2 reduce production shift_op -> TokSar 
+-- On TokMinus reduce production shift_op -> TokSar 
+-- On TokLog2 reduce production shift_op -> TokSar 
+-- On TokLParen reduce production shift_op -> TokSar 
+-- On TokInt reduce production shift_op -> TokSar 
+-- On TokIdent reduce production shift_op -> TokSar 
+-- On TokAbs reduce production shift_op -> TokSar 
+
+State 88:
+arith_expr -> TokLParen arith_expr TokRParen . [ TokShr TokShl TokSemi TokSar TokRParen TokPlus TokPipePipe TokPipe TokOutput TokNotEqual TokMinus TokLessThan TokLessEqual TokInput TokGreaterThan TokGreaterEqual TokEqual TokComma TokColon TokAmpAmp TokAmp ]
+-- On TokShr reduce production arith_expr -> TokLParen arith_expr TokRParen 
+-- On TokShl reduce production arith_expr -> TokLParen arith_expr TokRParen 
+-- On TokSemi reduce production arith_expr -> TokLParen arith_expr TokRParen 
+-- On TokSar reduce production arith_expr -> TokLParen arith_expr TokRParen 
+-- On TokRParen reduce production arith_expr -> TokLParen arith_expr TokRParen 
+-- On TokPlus reduce production arith_expr -> TokLParen arith_expr TokRParen 
+-- On TokPipePipe reduce production arith_expr -> TokLParen arith_expr TokRParen 
+-- On TokPipe reduce production arith_expr -> TokLParen arith_expr TokRParen 
+-- On TokOutput reduce production arith_expr -> TokLParen arith_expr TokRParen 
+-- On TokNotEqual reduce production arith_expr -> TokLParen arith_expr TokRParen 
+-- On TokMinus reduce production arith_expr -> TokLParen arith_expr TokRParen 
+-- On TokLessThan reduce production arith_expr -> TokLParen arith_expr TokRParen 
+-- On TokLessEqual reduce production arith_expr -> TokLParen arith_expr TokRParen 
+-- On TokInput reduce production arith_expr -> TokLParen arith_expr TokRParen 
+-- On TokGreaterThan reduce production arith_expr -> TokLParen arith_expr TokRParen 
+-- On TokGreaterEqual reduce production arith_expr -> TokLParen arith_expr TokRParen 
+-- On TokEqual reduce production arith_expr -> TokLParen arith_expr TokRParen 
+-- On TokComma reduce production arith_expr -> TokLParen arith_expr TokRParen 
+-- On TokColon reduce production arith_expr -> TokLParen arith_expr TokRParen 
+-- On TokAmpAmp reduce production arith_expr -> TokLParen arith_expr TokRParen 
+-- On TokAmp reduce production arith_expr -> TokLParen arith_expr TokRParen 
+
+State 89:
+arith_expr -> TokIdent . [ TokShr TokShl TokSar TokRParen TokPlus TokPipe TokMinus TokAmp ]
+out_operand -> TokStar TokLParen TokIdent TokComma TokIdent . TokComma arith_expr TokComma arith_expr TokRParen [ TokSemi TokComma ]
+-- On TokComma shift to state 90
+-- On TokShr reduce production arith_expr -> TokIdent 
+-- On TokShl reduce production arith_expr -> TokIdent 
+-- On TokSar reduce production arith_expr -> TokIdent 
+-- On TokRParen reduce production arith_expr -> TokIdent 
+-- On TokPlus reduce production arith_expr -> TokIdent 
+-- On TokPipe reduce production arith_expr -> TokIdent 
+-- On TokMinus reduce production arith_expr -> TokIdent 
+-- On TokAmp reduce production arith_expr -> TokIdent 
+
+State 90:
+out_operand -> TokStar TokLParen TokIdent TokComma TokIdent TokComma . arith_expr TokComma arith_expr TokRParen [ TokSemi TokComma ]
+-- On TokTilde shift to state 64
+-- On TokPow2 shift to state 65
+-- On TokMinus shift to state 66
+-- On TokLog2 shift to state 67
+-- On TokLParen shift to state 68
+-- On TokInt shift to state 69
+-- On TokIdent shift to state 70
+-- On TokAbs shift to state 71
+-- On unary_op shift to state 72
+-- On arith_expr shift to state 91
+
+State 91:
+arith_expr -> arith_expr . plus_minus_op arith_expr [ TokShr TokShl TokSar TokPlus TokPipe TokMinus TokComma TokAmp ]
+arith_expr -> arith_expr . logical_op arith_expr [ TokShr TokShl TokSar TokPlus TokPipe TokMinus TokComma TokAmp ]
+arith_expr -> arith_expr . shift_op arith_expr [ TokShr TokShl TokSar TokPlus TokPipe TokMinus TokComma TokAmp ]
+out_operand -> TokStar TokLParen TokIdent TokComma TokIdent TokComma arith_expr . TokComma arith_expr TokRParen [ TokSemi TokComma ]
+-- On TokShr shift to state 85
+-- On TokShl shift to state 86
+-- On TokSar shift to state 87
+-- On TokPlus shift to state 76
+-- On TokPipe shift to state 77
+-- On TokMinus shift to state 78
+-- On TokComma shift to state 92
+-- On TokAmp shift to state 79
+-- On shift_op shift to state 74
+-- On plus_minus_op shift to state 80
+-- On logical_op shift to state 82
+
+State 92:
+out_operand -> TokStar TokLParen TokIdent TokComma TokIdent TokComma arith_expr TokComma . arith_expr TokRParen [ TokSemi TokComma ]
+-- On TokTilde shift to state 64
+-- On TokPow2 shift to state 65
+-- On TokMinus shift to state 66
+-- On TokLog2 shift to state 67
+-- On TokLParen shift to state 68
+-- On TokInt shift to state 69
+-- On TokIdent shift to state 70
+-- On TokAbs shift to state 71
+-- On unary_op shift to state 72
+-- On arith_expr shift to state 93
+
+State 93:
+arith_expr -> arith_expr . plus_minus_op arith_expr [ TokShr TokShl TokSar TokRParen TokPlus TokPipe TokMinus TokAmp ]
+arith_expr -> arith_expr . logical_op arith_expr [ TokShr TokShl TokSar TokRParen TokPlus TokPipe TokMinus TokAmp ]
+arith_expr -> arith_expr . shift_op arith_expr [ TokShr TokShl TokSar TokRParen TokPlus TokPipe TokMinus TokAmp ]
+out_operand -> TokStar TokLParen TokIdent TokComma TokIdent TokComma arith_expr TokComma arith_expr . TokRParen [ TokSemi TokComma ]
+-- On TokShr shift to state 85
+-- On TokShl shift to state 86
+-- On TokSar shift to state 87
+-- On TokRParen shift to state 94
+-- On TokPlus shift to state 76
+-- On TokPipe shift to state 77
+-- On TokMinus shift to state 78
+-- On TokAmp shift to state 79
+-- On shift_op shift to state 74
+-- On plus_minus_op shift to state 80
+-- On logical_op shift to state 82
+
+State 94:
+out_operand -> TokStar TokLParen TokIdent TokComma TokIdent TokComma arith_expr TokComma arith_expr TokRParen . [ TokSemi TokComma ]
+-- On TokSemi reduce production out_operand -> TokStar TokLParen TokIdent TokComma TokIdent TokComma arith_expr TokComma arith_expr TokRParen 
+-- On TokComma reduce production out_operand -> TokStar TokLParen TokIdent TokComma TokIdent TokComma arith_expr TokComma arith_expr TokRParen 
+
+State 95:
+arith_expr -> arith_expr . plus_minus_op arith_expr [ TokShr TokShl TokSar TokRParen TokPlus TokPipe TokMinus TokAmp ]
+arith_expr -> arith_expr . logical_op arith_expr [ TokShr TokShl TokSar TokRParen TokPlus TokPipe TokMinus TokAmp ]
+arith_expr -> arith_expr . shift_op arith_expr [ TokShr TokShl TokSar TokRParen TokPlus TokPipe TokMinus TokAmp ]
+out_operand -> TokStar TokLParen TokIdent TokComma arith_expr . TokRParen [ TokSemi TokComma ]
+-- On TokShr shift to state 85
+-- On TokShl shift to state 86
+-- On TokSar shift to state 87
+-- On TokRParen shift to state 96
+-- On TokPlus shift to state 76
+-- On TokPipe shift to state 77
+-- On TokMinus shift to state 78
+-- On TokAmp shift to state 79
+-- On shift_op shift to state 74
+-- On plus_minus_op shift to state 80
+-- On logical_op shift to state 82
+
+State 96:
+out_operand -> TokStar TokLParen TokIdent TokComma arith_expr TokRParen . [ TokSemi TokComma ]
+-- On TokSemi reduce production out_operand -> TokStar TokLParen TokIdent TokComma arith_expr TokRParen 
+-- On TokComma reduce production out_operand -> TokStar TokLParen TokIdent TokComma arith_expr TokRParen 
+
+State 97:
+out_operand -> TokPercent . TokIdent [ TokSemi TokComma ]
+-- On TokIdent shift to state 98
+
+State 98:
+out_operand -> TokPercent TokIdent . [ TokSemi TokComma ]
+-- On TokSemi reduce production out_operand -> TokPercent TokIdent 
+-- On TokComma reduce production out_operand -> TokPercent TokIdent 
+
+State 99:
+out_operand -> TokIdent . [ TokSemi TokComma ]
+-- On TokSemi reduce production out_operand -> TokIdent 
+-- On TokComma reduce production out_operand -> TokIdent 
+
+State 100:
+out_operand -> TokDollar . arith_expr [ TokSemi TokComma ]
+-- On TokTilde shift to state 64
+-- On TokPow2 shift to state 65
+-- On TokMinus shift to state 66
+-- On TokLog2 shift to state 67
+-- On TokLParen shift to state 68
+-- On TokInt shift to state 69
+-- On TokIdent shift to state 70
+-- On TokAbs shift to state 71
+-- On unary_op shift to state 72
+-- On arith_expr shift to state 101
+
+State 101:
+arith_expr -> arith_expr . plus_minus_op arith_expr [ TokShr TokShl TokSemi TokSar TokPlus TokPipe TokMinus TokComma TokAmp ]
+arith_expr -> arith_expr . logical_op arith_expr [ TokShr TokShl TokSemi TokSar TokPlus TokPipe TokMinus TokComma TokAmp ]
+arith_expr -> arith_expr . shift_op arith_expr [ TokShr TokShl TokSemi TokSar TokPlus TokPipe TokMinus TokComma TokAmp ]
+out_operand -> TokDollar arith_expr . [ TokSemi TokComma ]
+-- On TokShr shift to state 85
+-- On TokShl shift to state 86
+-- On TokSar shift to state 87
+-- On TokPlus shift to state 76
+-- On TokPipe shift to state 77
+-- On TokMinus shift to state 78
+-- On TokAmp shift to state 79
+-- On shift_op shift to state 74
+-- On plus_minus_op shift to state 80
+-- On logical_op shift to state 82
+-- On TokSemi reduce production out_operand -> TokDollar arith_expr 
+-- On TokComma reduce production out_operand -> TokDollar arith_expr 
+
+State 102:
+out_operand -> TokCapIdent . [ TokSemi TokComma ]
+-- On TokSemi reduce production out_operand -> TokCapIdent 
+-- On TokComma reduce production out_operand -> TokCapIdent 
+
+State 103:
+out_operand -> TokAt . TokIdent [ TokSemi TokComma ]
+out_operand -> TokAt . TokStack out_operand_stack_index [ TokSemi TokComma ]
+-- On TokStack shift to state 104
+-- On TokIdent shift to state 109
+
+State 104:
+out_operand -> TokAt TokStack . out_operand_stack_index [ TokSemi TokComma ]
+-- On TokLParen shift to state 105
+-- On out_operand_stack_index shift to state 108
+-- On TokSemi reduce production out_operand_stack_index -> 
+-- On TokComma reduce production out_operand_stack_index -> 
+
+State 105:
+out_operand_stack_index -> TokLParen . arith_expr TokRParen [ TokSemi TokComma ]
+-- On TokTilde shift to state 64
+-- On TokPow2 shift to state 65
+-- On TokMinus shift to state 66
+-- On TokLog2 shift to state 67
+-- On TokLParen shift to state 68
+-- On TokInt shift to state 69
+-- On TokIdent shift to state 70
+-- On TokAbs shift to state 71
+-- On unary_op shift to state 72
+-- On arith_expr shift to state 106
+
+State 106:
+arith_expr -> arith_expr . plus_minus_op arith_expr [ TokShr TokShl TokSar TokRParen TokPlus TokPipe TokMinus TokAmp ]
+arith_expr -> arith_expr . logical_op arith_expr [ TokShr TokShl TokSar TokRParen TokPlus TokPipe TokMinus TokAmp ]
+arith_expr -> arith_expr . shift_op arith_expr [ TokShr TokShl TokSar TokRParen TokPlus TokPipe TokMinus TokAmp ]
+out_operand_stack_index -> TokLParen arith_expr . TokRParen [ TokSemi TokComma ]
+-- On TokShr shift to state 85
+-- On TokShl shift to state 86
+-- On TokSar shift to state 87
+-- On TokRParen shift to state 107
+-- On TokPlus shift to state 76
+-- On TokPipe shift to state 77
+-- On TokMinus shift to state 78
+-- On TokAmp shift to state 79
+-- On shift_op shift to state 74
+-- On plus_minus_op shift to state 80
+-- On logical_op shift to state 82
+
+State 107:
+out_operand_stack_index -> TokLParen arith_expr TokRParen . [ TokSemi TokComma ]
+-- On TokSemi reduce production out_operand_stack_index -> TokLParen arith_expr TokRParen 
+-- On TokComma reduce production out_operand_stack_index -> TokLParen arith_expr TokRParen 
+
+State 108:
+out_operand -> TokAt TokStack out_operand_stack_index . [ TokSemi TokComma ]
+-- On TokSemi reduce production out_operand -> TokAt TokStack out_operand_stack_index 
+-- On TokComma reduce production out_operand -> TokAt TokStack out_operand_stack_index 
+
+State 109:
+out_operand -> TokAt TokIdent . [ TokSemi TokComma ]
+-- On TokSemi reduce production out_operand -> TokAt TokIdent 
+-- On TokComma reduce production out_operand -> TokAt TokIdent 
+
+State 110:
+transform -> TokIdent in_operand_list_opt TokArrow TokIdent out_operand_list_opt . [ TokSemi ]
+-- On TokSemi reduce production transform -> TokIdent in_operand_list_opt TokArrow TokIdent out_operand_list_opt 
+
+State 111:
+out_operand_list_opt -> out_operand_list . [ TokSemi ]
+-- On TokSemi reduce production out_operand_list_opt -> out_operand_list 
+
+State 112:
+out_operand_list -> out_operand . TokComma out_operand_list [ TokSemi ]
+out_operand_list -> out_operand . [ TokSemi ]
+-- On TokComma shift to state 113
+-- On TokSemi reduce production out_operand_list -> out_operand 
+
+State 113:
+out_operand_list -> out_operand TokComma . out_operand_list [ TokSemi ]
+-- On TokStar shift to state 59
+-- On TokPercent shift to state 97
+-- On TokIdent shift to state 99
+-- On TokDollar shift to state 100
+-- On TokCapIdent shift to state 102
+-- On TokAt shift to state 103
+-- On out_operand_list shift to state 114
+-- On out_operand shift to state 112
+
+State 114:
+out_operand_list -> out_operand TokComma out_operand_list . [ TokSemi ]
+-- On TokSemi reduce production out_operand_list -> out_operand TokComma out_operand_list 
+
+State 115:
+in_operand_list_opt -> in_operand_list . [ TokSemi TokColon TokArrow ]
+-- On TokSemi reduce production in_operand_list_opt -> in_operand_list 
+-- On TokColon reduce production in_operand_list_opt -> in_operand_list 
+-- On TokArrow reduce production in_operand_list_opt -> in_operand_list 
+
+State 116:
+in_operand_list -> in_operand . TokComma in_operand_list [ TokSemi TokRParen TokColon TokArrow ]
+in_operand_list -> in_operand . [ TokSemi TokRParen TokColon TokArrow ]
+-- On TokComma shift to state 117
+-- On TokSemi reduce production in_operand_list -> in_operand 
+-- On TokRParen reduce production in_operand_list -> in_operand 
+-- On TokColon reduce production in_operand_list -> in_operand 
+-- On TokArrow reduce production in_operand_list -> in_operand 
+
+State 117:
+in_operand_list -> in_operand TokComma . in_operand_list [ TokSemi TokRParen TokColon TokArrow ]
+-- On TokUnder shift to state 11
+-- On TokStar shift to state 12
+-- On TokPercent shift to state 40
+-- On TokIdent shift to state 14
+-- On TokDollar shift to state 43
+-- On TokCapIdent shift to state 45
+-- On TokAt shift to state 46
+-- On in_operand_name shift to state 54
+-- On in_operand_list shift to state 118
+-- On in_operand shift to state 116
+
+State 118:
+in_operand_list -> in_operand TokComma in_operand_list . [ TokSemi TokRParen TokColon TokArrow ]
+-- On TokSemi reduce production in_operand_list -> in_operand TokComma in_operand_list 
+-- On TokRParen reduce production in_operand_list -> in_operand TokComma in_operand_list 
+-- On TokColon reduce production in_operand_list -> in_operand TokComma in_operand_list 
+-- On TokArrow reduce production in_operand_list -> in_operand TokComma in_operand_list 
+
+State 119:
+transform_statement -> TokTrans TokIdent symbol_list_opt TokColon transform_list . [ TokTrivial TokTrans TokRegisters TokOpen TokName TokInsts TokInput TokEof ]
+-- On TokTrivial reduce production transform_statement -> TokTrans TokIdent symbol_list_opt TokColon transform_list 
+-- On TokTrans reduce production transform_statement -> TokTrans TokIdent symbol_list_opt TokColon transform_list 
+-- On TokRegisters reduce production transform_statement -> TokTrans TokIdent symbol_list_opt TokColon transform_list 
+-- On TokOpen reduce production transform_statement -> TokTrans TokIdent symbol_list_opt TokColon transform_list 
+-- On TokName reduce production transform_statement -> TokTrans TokIdent symbol_list_opt TokColon transform_list 
+-- On TokInsts reduce production transform_statement -> TokTrans TokIdent symbol_list_opt TokColon transform_list 
+-- On TokInput reduce production transform_statement -> TokTrans TokIdent symbol_list_opt TokColon transform_list 
+-- On TokEof reduce production transform_statement -> TokTrans TokIdent symbol_list_opt TokColon transform_list 
+
+State 120:
+transform_list -> transform . TokSemi transform_list [ TokTrivial TokTrans TokRegisters TokOpen TokName TokInsts TokInput TokEof ]
+transform_list -> transform . TokSemi [ TokTrivial TokTrans TokRegisters TokOpen TokName TokInsts TokInput TokEof ]
+-- On TokSemi shift to state 121
+
+State 121:
+transform_list -> transform TokSemi . transform_list [ TokTrivial TokTrans TokRegisters TokOpen TokName TokInsts TokInput TokEof ]
+transform_list -> transform TokSemi . [ TokTrivial TokTrans TokRegisters TokOpen TokName TokInsts TokInput TokEof ]
+-- On TokIdent shift to state 10
+-- On transform_list shift to state 122
+-- On transform shift to state 120
+-- On TokTrivial reduce production transform_list -> transform TokSemi 
+-- On TokTrans reduce production transform_list -> transform TokSemi 
+-- On TokRegisters reduce production transform_list -> transform TokSemi 
+-- On TokOpen reduce production transform_list -> transform TokSemi 
+-- On TokName reduce production transform_list -> transform TokSemi 
+-- On TokInsts reduce production transform_list -> transform TokSemi 
+-- On TokInput reduce production transform_list -> transform TokSemi 
+-- On TokEof reduce production transform_list -> transform TokSemi 
+
+State 122:
+transform_list -> transform TokSemi transform_list . [ TokTrivial TokTrans TokRegisters TokOpen TokName TokInsts TokInput TokEof ]
+-- On TokTrivial reduce production transform_list -> transform TokSemi transform_list 
+-- On TokTrans reduce production transform_list -> transform TokSemi transform_list 
+-- On TokRegisters reduce production transform_list -> transform TokSemi transform_list 
+-- On TokOpen reduce production transform_list -> transform TokSemi transform_list 
+-- On TokName reduce production transform_list -> transform TokSemi transform_list 
+-- On TokInsts reduce production transform_list -> transform TokSemi transform_list 
+-- On TokInput reduce production transform_list -> transform TokSemi transform_list 
+-- On TokEof reduce production transform_list -> transform TokSemi transform_list 
+
+State 123:
+symbol_list_opt -> symbol_list . [ TokColon ]
+-- On TokColon reduce production symbol_list_opt -> symbol_list 
+
+State 124:
+register_statement -> TokRegisters . TokColon register_list [ TokTrivial TokTrans TokRegisters TokOpen TokName TokInsts TokInput TokEof ]
+-- On TokColon shift to state 125
+
+State 125:
+register_statement -> TokRegisters TokColon . register_list [ TokTrivial TokTrans TokRegisters TokOpen TokName TokInsts TokInput TokEof ]
+-- On TokPercent shift to state 126
+-- On TokAt shift to state 128
+-- On register_list shift to state 130
+-- On register shift to state 131
+
+State 126:
+register -> TokPercent . TokIdent [ TokSemi ]
+-- On TokIdent shift to state 127
+
+State 127:
+register -> TokPercent TokIdent . [ TokSemi ]
+-- On TokSemi reduce production register -> TokPercent TokIdent 
+
+State 128:
+register -> TokAt . TokIdent [ TokSemi ]
+-- On TokIdent shift to state 129
+
+State 129:
+register -> TokAt TokIdent . [ TokSemi ]
+-- On TokSemi reduce production register -> TokAt TokIdent 
+
+State 130:
+register_statement -> TokRegisters TokColon register_list . [ TokTrivial TokTrans TokRegisters TokOpen TokName TokInsts TokInput TokEof ]
+-- On TokTrivial reduce production register_statement -> TokRegisters TokColon register_list 
+-- On TokTrans reduce production register_statement -> TokRegisters TokColon register_list 
+-- On TokRegisters reduce production register_statement -> TokRegisters TokColon register_list 
+-- On TokOpen reduce production register_statement -> TokRegisters TokColon register_list 
+-- On TokName reduce production register_statement -> TokRegisters TokColon register_list 
+-- On TokInsts reduce production register_statement -> TokRegisters TokColon register_list 
+-- On TokInput reduce production register_statement -> TokRegisters TokColon register_list 
+-- On TokEof reduce production register_statement -> TokRegisters TokColon register_list 
+
+State 131:
+register_list -> register . TokSemi register_list [ TokTrivial TokTrans TokRegisters TokOpen TokName TokInsts TokInput TokEof ]
+register_list -> register . TokSemi [ TokTrivial TokTrans TokRegisters TokOpen TokName TokInsts TokInput TokEof ]
+-- On TokSemi shift to state 132
+
+State 132:
+register_list -> register TokSemi . register_list [ TokTrivial TokTrans TokRegisters TokOpen TokName TokInsts TokInput TokEof ]
+register_list -> register TokSemi . [ TokTrivial TokTrans TokRegisters TokOpen TokName TokInsts TokInput TokEof ]
+-- On TokPercent shift to state 126
+-- On TokAt shift to state 128
+-- On register_list shift to state 133
+-- On register shift to state 131
+-- On TokTrivial reduce production register_list -> register TokSemi 
+-- On TokTrans reduce production register_list -> register TokSemi 
+-- On TokRegisters reduce production register_list -> register TokSemi 
+-- On TokOpen reduce production register_list -> register TokSemi 
+-- On TokName reduce production register_list -> register TokSemi 
+-- On TokInsts reduce production register_list -> register TokSemi 
+-- On TokInput reduce production register_list -> register TokSemi 
+-- On TokEof reduce production register_list -> register TokSemi 
+
+State 133:
+register_list -> register TokSemi register_list . [ TokTrivial TokTrans TokRegisters TokOpen TokName TokInsts TokInput TokEof ]
+-- On TokTrivial reduce production register_list -> register TokSemi register_list 
+-- On TokTrans reduce production register_list -> register TokSemi register_list 
+-- On TokRegisters reduce production register_list -> register TokSemi register_list 
+-- On TokOpen reduce production register_list -> register TokSemi register_list 
+-- On TokName reduce production register_list -> register TokSemi register_list 
+-- On TokInsts reduce production register_list -> register TokSemi register_list 
+-- On TokInput reduce production register_list -> register TokSemi register_list 
+-- On TokEof reduce production register_list -> register TokSemi register_list 
+
+State 134:
+open_statement -> TokOpen . TokCapIdent [ TokTrivial TokTrans TokRegisters TokOpen TokName TokInsts TokInput TokEof ]
+-- On TokCapIdent shift to state 135
+
+State 135:
+open_statement -> TokOpen TokCapIdent . [ TokTrivial TokTrans TokRegisters TokOpen TokName TokInsts TokInput TokEof ]
+-- On TokTrivial reduce production open_statement -> TokOpen TokCapIdent 
+-- On TokTrans reduce production open_statement -> TokOpen TokCapIdent 
+-- On TokRegisters reduce production open_statement -> TokOpen TokCapIdent 
+-- On TokOpen reduce production open_statement -> TokOpen TokCapIdent 
+-- On TokName reduce production open_statement -> TokOpen TokCapIdent 
+-- On TokInsts reduce production open_statement -> TokOpen TokCapIdent 
+-- On TokInput reduce production open_statement -> TokOpen TokCapIdent 
+-- On TokEof reduce production open_statement -> TokOpen TokCapIdent 
+
+State 136:
+name_statement -> TokName . TokString [ TokTrivial TokTrans TokRegisters TokOpen TokName TokInsts TokInput TokEof ]
+-- On TokString shift to state 137
+
+State 137:
+name_statement -> TokName TokString . [ TokTrivial TokTrans TokRegisters TokOpen TokName TokInsts TokInput TokEof ]
+-- On TokTrivial reduce production name_statement -> TokName TokString 
+-- On TokTrans reduce production name_statement -> TokName TokString 
+-- On TokRegisters reduce production name_statement -> TokName TokString 
+-- On TokOpen reduce production name_statement -> TokName TokString 
+-- On TokName reduce production name_statement -> TokName TokString 
+-- On TokInsts reduce production name_statement -> TokName TokString 
+-- On TokInput reduce production name_statement -> TokName TokString 
+-- On TokEof reduce production name_statement -> TokName TokString 
+
+State 138:
+instruction_statement -> TokInsts . instruction_tags TokColon instruction_list [ TokTrivial TokTrans TokRegisters TokOpen TokName TokInsts TokInput TokEof ]
+-- On TokIdent shift to state 139
+-- On instruction_tags shift to state 141
+-- On TokColon reduce production instruction_tags -> 
+
+State 139:
+instruction_tags -> TokIdent . instruction_tags [ TokColon ]
+-- On TokIdent shift to state 139
+-- On instruction_tags shift to state 140
+-- On TokColon reduce production instruction_tags -> 
+
+State 140:
+instruction_tags -> TokIdent instruction_tags . [ TokColon ]
+-- On TokColon reduce production instruction_tags -> TokIdent instruction_tags 
+
+State 141:
+instruction_statement -> TokInsts instruction_tags . TokColon instruction_list [ TokTrivial TokTrans TokRegisters TokOpen TokName TokInsts TokInput TokEof ]
+-- On TokColon shift to state 142
+
+State 142:
+instruction_statement -> TokInsts instruction_tags TokColon . instruction_list [ TokTrivial TokTrans TokRegisters TokOpen TokName TokInsts TokInput TokEof ]
+-- On TokIdent shift to state 143
+-- On instruction_list shift to state 153
+-- On instruction_data shift to state 154
+-- On instruction shift to state 159
+
+State 143:
+instruction_data -> TokIdent . TokArrow TokCapIdent [ TokSemi TokColon ]
+instruction_data -> TokIdent . in_operand_list TokArrow TokCapIdent in_operand [ TokSemi TokColon ]
+instruction_data -> TokIdent . in_operand_list TokArrow TokCapIdent TokLParen in_operand_list TokRParen [ TokSemi TokColon ]
+-- On TokUnder shift to state 11
+-- On TokStar shift to state 12
+-- On TokPercent shift to state 40
+-- On TokIdent shift to state 14
+-- On TokDollar shift to state 43
+-- On TokCapIdent shift to state 45
+-- On TokAt shift to state 46
+-- On TokArrow shift to state 144
+-- On in_operand_name shift to state 54
+-- On in_operand_list shift to state 146
+-- On in_operand shift to state 116
+
+State 144:
+instruction_data -> TokIdent TokArrow . TokCapIdent [ TokSemi TokColon ]
+-- On TokCapIdent shift to state 145
+
+State 145:
+instruction_data -> TokIdent TokArrow TokCapIdent . [ TokSemi TokColon ]
+-- On TokSemi reduce production instruction_data -> TokIdent TokArrow TokCapIdent 
+-- On TokColon reduce production instruction_data -> TokIdent TokArrow TokCapIdent 
+
+State 146:
+instruction_data -> TokIdent in_operand_list . TokArrow TokCapIdent in_operand [ TokSemi TokColon ]
+instruction_data -> TokIdent in_operand_list . TokArrow TokCapIdent TokLParen in_operand_list TokRParen [ TokSemi TokColon ]
+-- On TokArrow shift to state 147
+
+State 147:
+instruction_data -> TokIdent in_operand_list TokArrow . TokCapIdent in_operand [ TokSemi TokColon ]
+instruction_data -> TokIdent in_operand_list TokArrow . TokCapIdent TokLParen in_operand_list TokRParen [ TokSemi TokColon ]
+-- On TokCapIdent shift to state 148
+
+State 148:
+instruction_data -> TokIdent in_operand_list TokArrow TokCapIdent . in_operand [ TokSemi TokColon ]
+instruction_data -> TokIdent in_operand_list TokArrow TokCapIdent . TokLParen in_operand_list TokRParen [ TokSemi TokColon ]
+-- On TokUnder shift to state 11
+-- On TokStar shift to state 12
+-- On TokPercent shift to state 40
+-- On TokLParen shift to state 149
+-- On TokIdent shift to state 14
+-- On TokDollar shift to state 43
+-- On TokCapIdent shift to state 45
+-- On TokAt shift to state 46
+-- On in_operand_name shift to state 54
+-- On in_operand shift to state 152
+
+State 149:
+instruction_data -> TokIdent in_operand_list TokArrow TokCapIdent TokLParen . in_operand_list TokRParen [ TokSemi TokColon ]
+-- On TokUnder shift to state 11
+-- On TokStar shift to state 12
+-- On TokPercent shift to state 40
+-- On TokIdent shift to state 14
+-- On TokDollar shift to state 43
+-- On TokCapIdent shift to state 45
+-- On TokAt shift to state 46
+-- On in_operand_name shift to state 54
+-- On in_operand_list shift to state 150
+-- On in_operand shift to state 116
+
+State 150:
+instruction_data -> TokIdent in_operand_list TokArrow TokCapIdent TokLParen in_operand_list . TokRParen [ TokSemi TokColon ]
+-- On TokRParen shift to state 151
+
+State 151:
+instruction_data -> TokIdent in_operand_list TokArrow TokCapIdent TokLParen in_operand_list TokRParen . [ TokSemi TokColon ]
+-- On TokSemi reduce production instruction_data -> TokIdent in_operand_list TokArrow TokCapIdent TokLParen in_operand_list TokRParen 
+-- On TokColon reduce production instruction_data -> TokIdent in_operand_list TokArrow TokCapIdent TokLParen in_operand_list TokRParen 
+
+State 152:
+instruction_data -> TokIdent in_operand_list TokArrow TokCapIdent in_operand . [ TokSemi TokColon ]
+-- On TokSemi reduce production instruction_data -> TokIdent in_operand_list TokArrow TokCapIdent in_operand 
+-- On TokColon reduce production instruction_data -> TokIdent in_operand_list TokArrow TokCapIdent in_operand 
+
+State 153:
+instruction_statement -> TokInsts instruction_tags TokColon instruction_list . [ TokTrivial TokTrans TokRegisters TokOpen TokName TokInsts TokInput TokEof ]
+-- On TokTrivial reduce production instruction_statement -> TokInsts instruction_tags TokColon instruction_list 
+-- On TokTrans reduce production instruction_statement -> TokInsts instruction_tags TokColon instruction_list 
+-- On TokRegisters reduce production instruction_statement -> TokInsts instruction_tags TokColon instruction_list 
+-- On TokOpen reduce production instruction_statement -> TokInsts instruction_tags TokColon instruction_list 
+-- On TokName reduce production instruction_statement -> TokInsts instruction_tags TokColon instruction_list 
+-- On TokInsts reduce production instruction_statement -> TokInsts instruction_tags TokColon instruction_list 
+-- On TokInput reduce production instruction_statement -> TokInsts instruction_tags TokColon instruction_list 
+-- On TokEof reduce production instruction_statement -> TokInsts instruction_tags TokColon instruction_list 
+
+State 154:
+instruction -> instruction_data . TokColon instruction_tag_list [ TokSemi ]
+instruction -> instruction_data . [ TokSemi ]
+-- On TokColon shift to state 155
+-- On TokSemi reduce production instruction -> instruction_data 
+
+State 155:
+instruction -> instruction_data TokColon . instruction_tag_list [ TokSemi ]
+-- On TokIdent shift to state 156
+-- On instruction_tag_list shift to state 158
+
+State 156:
+instruction_tag_list -> TokIdent . instruction_tag_list [ TokSemi ]
+instruction_tag_list -> TokIdent . [ TokSemi ]
+-- On TokIdent shift to state 156
+-- On instruction_tag_list shift to state 157
+-- On TokSemi reduce production instruction_tag_list -> TokIdent 
+
+State 157:
+instruction_tag_list -> TokIdent instruction_tag_list . [ TokSemi ]
+-- On TokSemi reduce production instruction_tag_list -> TokIdent instruction_tag_list 
+
+State 158:
+instruction -> instruction_data TokColon instruction_tag_list . [ TokSemi ]
+-- On TokSemi reduce production instruction -> instruction_data TokColon instruction_tag_list 
+
+State 159:
+instruction_list -> instruction . TokSemi instruction_list [ TokTrivial TokTrans TokRegisters TokOpen TokName TokInsts TokInput TokEof ]
+instruction_list -> instruction . TokSemi [ TokTrivial TokTrans TokRegisters TokOpen TokName TokInsts TokInput TokEof ]
+-- On TokSemi shift to state 160
+
+State 160:
+instruction_list -> instruction TokSemi . instruction_list [ TokTrivial TokTrans TokRegisters TokOpen TokName TokInsts TokInput TokEof ]
+instruction_list -> instruction TokSemi . [ TokTrivial TokTrans TokRegisters TokOpen TokName TokInsts TokInput TokEof ]
+-- On TokIdent shift to state 143
+-- On instruction_list shift to state 161
+-- On instruction_data shift to state 154
+-- On instruction shift to state 159
+-- On TokTrivial reduce production instruction_list -> instruction TokSemi 
+-- On TokTrans reduce production instruction_list -> instruction TokSemi 
+-- On TokRegisters reduce production instruction_list -> instruction TokSemi 
+-- On TokOpen reduce production instruction_list -> instruction TokSemi 
+-- On TokName reduce production instruction_list -> instruction TokSemi 
+-- On TokInsts reduce production instruction_list -> instruction TokSemi 
+-- On TokInput reduce production instruction_list -> instruction TokSemi 
+-- On TokEof reduce production instruction_list -> instruction TokSemi 
+
+State 161:
+instruction_list -> instruction TokSemi instruction_list . [ TokTrivial TokTrans TokRegisters TokOpen TokName TokInsts TokInput TokEof ]
+-- On TokTrivial reduce production instruction_list -> instruction TokSemi instruction_list 
+-- On TokTrans reduce production instruction_list -> instruction TokSemi instruction_list 
+-- On TokRegisters reduce production instruction_list -> instruction TokSemi instruction_list 
+-- On TokOpen reduce production instruction_list -> instruction TokSemi instruction_list 
+-- On TokName reduce production instruction_list -> instruction TokSemi instruction_list 
+-- On TokInsts reduce production instruction_list -> instruction TokSemi instruction_list 
+-- On TokInput reduce production instruction_list -> instruction TokSemi instruction_list 
+-- On TokEof reduce production instruction_list -> instruction TokSemi instruction_list 
+
+State 162:
+io_input -> TokInput . io_name TokColon in_pattern_list TokWhen clause_expr [ TokOutput TokInput ]
+io_input -> TokInput . io_name TokColon in_pattern_list [ TokOutput TokInput ]
+-- On TokString shift to state 163
+-- On io_name shift to state 164
+-- On TokColon reduce production io_name -> 
+
+State 163:
+io_name -> TokString . [ TokColon ]
+-- On TokColon reduce production io_name -> TokString 
+
+State 164:
+io_input -> TokInput io_name . TokColon in_pattern_list TokWhen clause_expr [ TokOutput TokInput ]
+io_input -> TokInput io_name . TokColon in_pattern_list [ TokOutput TokInput ]
+-- On TokColon shift to state 165
+
+State 165:
+io_input -> TokInput io_name TokColon . in_pattern_list TokWhen clause_expr [ TokOutput TokInput ]
+io_input -> TokInput io_name TokColon . in_pattern_list [ TokOutput TokInput ]
+-- On TokUnder shift to state 166
+-- On TokStar shift to state 205
+-- On TokIdent shift to state 207
+-- On TokCapIdent shift to state 208
+-- On opcode_name shift to state 209
+-- On in_pattern_list shift to state 212
+-- On in_pattern_expr shift to state 235
+
+State 166:
+in_pattern_expr -> TokUnder . inst_modifier_list_opt [ TokSemi ]
+-- On TokColon shift to state 167
+-- On inst_modifier_list_opt shift to state 204
+-- On TokSemi reduce production inst_modifier_list_opt -> 
+
+State 167:
+inst_modifier_list_opt -> TokColon . inst_modifier_list [ TokSemi ]
+-- On TokPreserves shift to state 168
+-- On TokIrrelevant shift to state 178
+-- On TokIgnores shift to state 179
+-- On TokIdent shift to state 189
+-- On TokEndscope shift to state 190
+-- On TokDead shift to state 192
+-- On inst_modifier_list shift to state 201
+-- On inst_modifier shift to state 202
+
+State 168:
+inst_modifier -> TokPreserves . preserves_item [ TokSemi TokPreserves TokIrrelevant TokIgnores TokIdent TokEndscope TokDead ]
+inst_modifier -> TokPreserves . TokLBrack preserves_list TokRBrack [ TokSemi TokPreserves TokIrrelevant TokIgnores TokIdent TokEndscope TokDead ]
+-- On TokMemory shift to state 169
+-- On TokLBrack shift to state 170
+-- On TokIdent shift to state 171
+-- On preserves_item shift to state 177
+
+State 169:
+preserves_item -> TokMemory . [ TokSemi TokRBrack TokPreserves TokIrrelevant TokIgnores TokIdent TokEndscope TokDead ]
+-- On TokSemi reduce production preserves_item -> TokMemory 
+-- On TokRBrack reduce production preserves_item -> TokMemory 
+-- On TokPreserves reduce production preserves_item -> TokMemory 
+-- On TokIrrelevant reduce production preserves_item -> TokMemory 
+-- On TokIgnores reduce production preserves_item -> TokMemory 
+-- On TokIdent reduce production preserves_item -> TokMemory 
+-- On TokEndscope reduce production preserves_item -> TokMemory 
+-- On TokDead reduce production preserves_item -> TokMemory 
+
+State 170:
+inst_modifier -> TokPreserves TokLBrack . preserves_list TokRBrack [ TokSemi TokPreserves TokIrrelevant TokIgnores TokIdent TokEndscope TokDead ]
+-- On TokMemory shift to state 169
+-- On TokIdent shift to state 171
+-- On preserves_list shift to state 172
+-- On preserves_item shift to state 174
+
+State 171:
+preserves_item -> TokIdent . [ TokSemi TokRBrack TokPreserves TokIrrelevant TokIgnores TokIdent TokEndscope TokDead ]
+-- On TokSemi reduce production preserves_item -> TokIdent 
+-- On TokRBrack reduce production preserves_item -> TokIdent 
+-- On TokPreserves reduce production preserves_item -> TokIdent 
+-- On TokIrrelevant reduce production preserves_item -> TokIdent 
+-- On TokIgnores reduce production preserves_item -> TokIdent 
+-- On TokIdent reduce production preserves_item -> TokIdent 
+-- On TokEndscope reduce production preserves_item -> TokIdent 
+-- On TokDead reduce production preserves_item -> TokIdent 
+
+State 172:
+inst_modifier -> TokPreserves TokLBrack preserves_list . TokRBrack [ TokSemi TokPreserves TokIrrelevant TokIgnores TokIdent TokEndscope TokDead ]
+-- On TokRBrack shift to state 173
+
+State 173:
+inst_modifier -> TokPreserves TokLBrack preserves_list TokRBrack . [ TokSemi TokPreserves TokIrrelevant TokIgnores TokIdent TokEndscope TokDead ]
+-- On TokSemi reduce production inst_modifier -> TokPreserves TokLBrack preserves_list TokRBrack 
+-- On TokPreserves reduce production inst_modifier -> TokPreserves TokLBrack preserves_list TokRBrack 
+-- On TokIrrelevant reduce production inst_modifier -> TokPreserves TokLBrack preserves_list TokRBrack 
+-- On TokIgnores reduce production inst_modifier -> TokPreserves TokLBrack preserves_list TokRBrack 
+-- On TokIdent reduce production inst_modifier -> TokPreserves TokLBrack preserves_list TokRBrack 
+-- On TokEndscope reduce production inst_modifier -> TokPreserves TokLBrack preserves_list TokRBrack 
+-- On TokDead reduce production inst_modifier -> TokPreserves TokLBrack preserves_list TokRBrack 
+
+State 174:
+preserves_list -> preserves_item . TokSemi preserves_list [ TokRBrack ]
+preserves_list -> preserves_item . [ TokRBrack ]
+-- On TokSemi shift to state 175
+-- On TokRBrack reduce production preserves_list -> preserves_item 
+
+State 175:
+preserves_list -> preserves_item TokSemi . preserves_list [ TokRBrack ]
+-- On TokMemory shift to state 169
+-- On TokIdent shift to state 171
+-- On preserves_list shift to state 176
+-- On preserves_item shift to state 174
+
+State 176:
+preserves_list -> preserves_item TokSemi preserves_list . [ TokRBrack ]
+-- On TokRBrack reduce production preserves_list -> preserves_item TokSemi preserves_list 
+
+State 177:
+inst_modifier -> TokPreserves preserves_item . [ TokSemi TokPreserves TokIrrelevant TokIgnores TokIdent TokEndscope TokDead ]
+-- On TokSemi reduce production inst_modifier -> TokPreserves preserves_item 
+-- On TokPreserves reduce production inst_modifier -> TokPreserves preserves_item 
+-- On TokIrrelevant reduce production inst_modifier -> TokPreserves preserves_item 
+-- On TokIgnores reduce production inst_modifier -> TokPreserves preserves_item 
+-- On TokIdent reduce production inst_modifier -> TokPreserves preserves_item 
+-- On TokEndscope reduce production inst_modifier -> TokPreserves preserves_item 
+-- On TokDead reduce production inst_modifier -> TokPreserves preserves_item 
+
+State 178:
+inst_modifier -> TokIrrelevant . [ TokSemi TokPreserves TokIrrelevant TokIgnores TokIdent TokEndscope TokDead ]
+-- On TokSemi reduce production inst_modifier -> TokIrrelevant 
+-- On TokPreserves reduce production inst_modifier -> TokIrrelevant 
+-- On TokIrrelevant reduce production inst_modifier -> TokIrrelevant 
+-- On TokIgnores reduce production inst_modifier -> TokIrrelevant 
+-- On TokIdent reduce production inst_modifier -> TokIrrelevant 
+-- On TokEndscope reduce production inst_modifier -> TokIrrelevant 
+-- On TokDead reduce production inst_modifier -> TokIrrelevant 
+
+State 179:
+inst_modifier -> TokIgnores . ignores_item [ TokSemi TokPreserves TokIrrelevant TokIgnores TokIdent TokEndscope TokDead ]
+inst_modifier -> TokIgnores . TokLBrack ignores_list TokRBrack [ TokSemi TokPreserves TokIrrelevant TokIgnores TokIdent TokEndscope TokDead ]
+-- On TokMemory shift to state 180
+-- On TokLBrack shift to state 181
+-- On TokIdent shift to state 182
+-- On ignores_item shift to state 188
+
+State 180:
+ignores_item -> TokMemory . [ TokSemi TokRBrack TokPreserves TokIrrelevant TokIgnores TokIdent TokEndscope TokDead ]
+-- On TokSemi reduce production ignores_item -> TokMemory 
+-- On TokRBrack reduce production ignores_item -> TokMemory 
+-- On TokPreserves reduce production ignores_item -> TokMemory 
+-- On TokIrrelevant reduce production ignores_item -> TokMemory 
+-- On TokIgnores reduce production ignores_item -> TokMemory 
+-- On TokIdent reduce production ignores_item -> TokMemory 
+-- On TokEndscope reduce production ignores_item -> TokMemory 
+-- On TokDead reduce production ignores_item -> TokMemory 
+
+State 181:
+inst_modifier -> TokIgnores TokLBrack . ignores_list TokRBrack [ TokSemi TokPreserves TokIrrelevant TokIgnores TokIdent TokEndscope TokDead ]
+-- On TokMemory shift to state 180
+-- On TokIdent shift to state 182
+-- On ignores_list shift to state 183
+-- On ignores_item shift to state 185
+
+State 182:
+ignores_item -> TokIdent . [ TokSemi TokRBrack TokPreserves TokIrrelevant TokIgnores TokIdent TokEndscope TokDead ]
+-- On TokSemi reduce production ignores_item -> TokIdent 
+-- On TokRBrack reduce production ignores_item -> TokIdent 
+-- On TokPreserves reduce production ignores_item -> TokIdent 
+-- On TokIrrelevant reduce production ignores_item -> TokIdent 
+-- On TokIgnores reduce production ignores_item -> TokIdent 
+-- On TokIdent reduce production ignores_item -> TokIdent 
+-- On TokEndscope reduce production ignores_item -> TokIdent 
+-- On TokDead reduce production ignores_item -> TokIdent 
+
+State 183:
+inst_modifier -> TokIgnores TokLBrack ignores_list . TokRBrack [ TokSemi TokPreserves TokIrrelevant TokIgnores TokIdent TokEndscope TokDead ]
+-- On TokRBrack shift to state 184
+
+State 184:
+inst_modifier -> TokIgnores TokLBrack ignores_list TokRBrack . [ TokSemi TokPreserves TokIrrelevant TokIgnores TokIdent TokEndscope TokDead ]
+-- On TokSemi reduce production inst_modifier -> TokIgnores TokLBrack ignores_list TokRBrack 
+-- On TokPreserves reduce production inst_modifier -> TokIgnores TokLBrack ignores_list TokRBrack 
+-- On TokIrrelevant reduce production inst_modifier -> TokIgnores TokLBrack ignores_list TokRBrack 
+-- On TokIgnores reduce production inst_modifier -> TokIgnores TokLBrack ignores_list TokRBrack 
+-- On TokIdent reduce production inst_modifier -> TokIgnores TokLBrack ignores_list TokRBrack 
+-- On TokEndscope reduce production inst_modifier -> TokIgnores TokLBrack ignores_list TokRBrack 
+-- On TokDead reduce production inst_modifier -> TokIgnores TokLBrack ignores_list TokRBrack 
+
+State 185:
+ignores_list -> ignores_item . TokSemi ignores_list [ TokRBrack ]
+ignores_list -> ignores_item . [ TokRBrack ]
+-- On TokSemi shift to state 186
+-- On TokRBrack reduce production ignores_list -> ignores_item 
+
+State 186:
+ignores_list -> ignores_item TokSemi . ignores_list [ TokRBrack ]
+-- On TokMemory shift to state 180
+-- On TokIdent shift to state 182
+-- On ignores_list shift to state 187
+-- On ignores_item shift to state 185
+
+State 187:
+ignores_list -> ignores_item TokSemi ignores_list . [ TokRBrack ]
+-- On TokRBrack reduce production ignores_list -> ignores_item TokSemi ignores_list 
+
+State 188:
+inst_modifier -> TokIgnores ignores_item . [ TokSemi TokPreserves TokIrrelevant TokIgnores TokIdent TokEndscope TokDead ]
+-- On TokSemi reduce production inst_modifier -> TokIgnores ignores_item 
+-- On TokPreserves reduce production inst_modifier -> TokIgnores ignores_item 
+-- On TokIrrelevant reduce production inst_modifier -> TokIgnores ignores_item 
+-- On TokIgnores reduce production inst_modifier -> TokIgnores ignores_item 
+-- On TokIdent reduce production inst_modifier -> TokIgnores ignores_item 
+-- On TokEndscope reduce production inst_modifier -> TokIgnores ignores_item 
+-- On TokDead reduce production inst_modifier -> TokIgnores ignores_item 
+
+State 189:
+inst_modifier -> TokIdent . [ TokSemi TokPreserves TokIrrelevant TokIgnores TokIdent TokEndscope TokDead ]
+-- On TokSemi reduce production inst_modifier -> TokIdent 
+-- On TokPreserves reduce production inst_modifier -> TokIdent 
+-- On TokIrrelevant reduce production inst_modifier -> TokIdent 
+-- On TokIgnores reduce production inst_modifier -> TokIdent 
+-- On TokIdent reduce production inst_modifier -> TokIdent 
+-- On TokEndscope reduce production inst_modifier -> TokIdent 
+-- On TokDead reduce production inst_modifier -> TokIdent 
+
+State 190:
+inst_modifier -> TokEndscope . TokIdent [ TokSemi TokPreserves TokIrrelevant TokIgnores TokIdent TokEndscope TokDead ]
+-- On TokIdent shift to state 191
+
+State 191:
+inst_modifier -> TokEndscope TokIdent . [ TokSemi TokPreserves TokIrrelevant TokIgnores TokIdent TokEndscope TokDead ]
+-- On TokSemi reduce production inst_modifier -> TokEndscope TokIdent 
+-- On TokPreserves reduce production inst_modifier -> TokEndscope TokIdent 
+-- On TokIrrelevant reduce production inst_modifier -> TokEndscope TokIdent 
+-- On TokIgnores reduce production inst_modifier -> TokEndscope TokIdent 
+-- On TokIdent reduce production inst_modifier -> TokEndscope TokIdent 
+-- On TokEndscope reduce production inst_modifier -> TokEndscope TokIdent 
+-- On TokDead reduce production inst_modifier -> TokEndscope TokIdent 
+
+State 192:
+inst_modifier -> TokDead . dead_item [ TokSemi TokPreserves TokIrrelevant TokIgnores TokIdent TokEndscope TokDead ]
+inst_modifier -> TokDead . TokLBrack dead_list TokRBrack [ TokSemi TokPreserves TokIrrelevant TokIgnores TokIdent TokEndscope TokDead ]
+-- On TokLBrack shift to state 193
+-- On TokIdent shift to state 194
+-- On dead_item shift to state 200
+
+State 193:
+inst_modifier -> TokDead TokLBrack . dead_list TokRBrack [ TokSemi TokPreserves TokIrrelevant TokIgnores TokIdent TokEndscope TokDead ]
+-- On TokIdent shift to state 194
+-- On dead_list shift to state 195
+-- On dead_item shift to state 197
+
+State 194:
+dead_item -> TokIdent . [ TokSemi TokRBrack TokPreserves TokIrrelevant TokIgnores TokIdent TokEndscope TokDead ]
+-- On TokSemi reduce production dead_item -> TokIdent 
+-- On TokRBrack reduce production dead_item -> TokIdent 
+-- On TokPreserves reduce production dead_item -> TokIdent 
+-- On TokIrrelevant reduce production dead_item -> TokIdent 
+-- On TokIgnores reduce production dead_item -> TokIdent 
+-- On TokIdent reduce production dead_item -> TokIdent 
+-- On TokEndscope reduce production dead_item -> TokIdent 
+-- On TokDead reduce production dead_item -> TokIdent 
+
+State 195:
+inst_modifier -> TokDead TokLBrack dead_list . TokRBrack [ TokSemi TokPreserves TokIrrelevant TokIgnores TokIdent TokEndscope TokDead ]
+-- On TokRBrack shift to state 196
+
+State 196:
+inst_modifier -> TokDead TokLBrack dead_list TokRBrack . [ TokSemi TokPreserves TokIrrelevant TokIgnores TokIdent TokEndscope TokDead ]
+-- On TokSemi reduce production inst_modifier -> TokDead TokLBrack dead_list TokRBrack 
+-- On TokPreserves reduce production inst_modifier -> TokDead TokLBrack dead_list TokRBrack 
+-- On TokIrrelevant reduce production inst_modifier -> TokDead TokLBrack dead_list TokRBrack 
+-- On TokIgnores reduce production inst_modifier -> TokDead TokLBrack dead_list TokRBrack 
+-- On TokIdent reduce production inst_modifier -> TokDead TokLBrack dead_list TokRBrack 
+-- On TokEndscope reduce production inst_modifier -> TokDead TokLBrack dead_list TokRBrack 
+-- On TokDead reduce production inst_modifier -> TokDead TokLBrack dead_list TokRBrack 
+
+State 197:
+dead_list -> dead_item . TokSemi dead_list [ TokRBrack ]
+dead_list -> dead_item . [ TokRBrack ]
+-- On TokSemi shift to state 198
+-- On TokRBrack reduce production dead_list -> dead_item 
+
+State 198:
+dead_list -> dead_item TokSemi . dead_list [ TokRBrack ]
+-- On TokIdent shift to state 194
+-- On dead_list shift to state 199
+-- On dead_item shift to state 197
+
+State 199:
+dead_list -> dead_item TokSemi dead_list . [ TokRBrack ]
+-- On TokRBrack reduce production dead_list -> dead_item TokSemi dead_list 
+
+State 200:
+inst_modifier -> TokDead dead_item . [ TokSemi TokPreserves TokIrrelevant TokIgnores TokIdent TokEndscope TokDead ]
+-- On TokSemi reduce production inst_modifier -> TokDead dead_item 
+-- On TokPreserves reduce production inst_modifier -> TokDead dead_item 
+-- On TokIrrelevant reduce production inst_modifier -> TokDead dead_item 
+-- On TokIgnores reduce production inst_modifier -> TokDead dead_item 
+-- On TokIdent reduce production inst_modifier -> TokDead dead_item 
+-- On TokEndscope reduce production inst_modifier -> TokDead dead_item 
+-- On TokDead reduce production inst_modifier -> TokDead dead_item 
+
+State 201:
+inst_modifier_list_opt -> TokColon inst_modifier_list . [ TokSemi ]
+-- On TokSemi reduce production inst_modifier_list_opt -> TokColon inst_modifier_list 
+
+State 202:
+inst_modifier_list -> inst_modifier . inst_modifier_list [ TokSemi ]
+inst_modifier_list -> inst_modifier . [ TokSemi ]
+-- On TokPreserves shift to state 168
+-- On TokIrrelevant shift to state 178
+-- On TokIgnores shift to state 179
+-- On TokIdent shift to state 189
+-- On TokEndscope shift to state 190
+-- On TokDead shift to state 192
+-- On inst_modifier_list shift to state 203
+-- On inst_modifier shift to state 202
+-- On TokSemi reduce production inst_modifier_list -> inst_modifier 
+
+State 203:
+inst_modifier_list -> inst_modifier inst_modifier_list . [ TokSemi ]
+-- On TokSemi reduce production inst_modifier_list -> inst_modifier inst_modifier_list 
+
+State 204:
+in_pattern_expr -> TokUnder inst_modifier_list_opt . [ TokSemi ]
+-- On TokSemi reduce production in_pattern_expr -> TokUnder inst_modifier_list_opt 
+
+State 205:
+in_pattern_expr -> TokStar . inst_modifier_list_opt [ TokSemi ]
+-- On TokColon shift to state 167
+-- On inst_modifier_list_opt shift to state 206
+-- On TokSemi reduce production inst_modifier_list_opt -> 
+
+State 206:
+in_pattern_expr -> TokStar inst_modifier_list_opt . [ TokSemi ]
+-- On TokSemi reduce production in_pattern_expr -> TokStar inst_modifier_list_opt 
+
+State 207:
+opcode_name -> TokIdent . [ TokUnder TokStar TokSemi TokPercent TokIdent TokDollar TokColon TokCapIdent TokAt ]
+-- On TokUnder reduce production opcode_name -> TokIdent 
+-- On TokStar reduce production opcode_name -> TokIdent 
+-- On TokSemi reduce production opcode_name -> TokIdent 
+-- On TokPercent reduce production opcode_name -> TokIdent 
+-- On TokIdent reduce production opcode_name -> TokIdent 
+-- On TokDollar reduce production opcode_name -> TokIdent 
+-- On TokColon reduce production opcode_name -> TokIdent 
+-- On TokCapIdent reduce production opcode_name -> TokIdent 
+-- On TokAt reduce production opcode_name -> TokIdent 
+
+State 208:
+opcode_name -> TokCapIdent . [ TokUnder TokStar TokSemi TokPercent TokIdent TokDollar TokColon TokCapIdent TokAt ]
+-- On TokUnder reduce production opcode_name -> TokCapIdent 
+-- On TokStar reduce production opcode_name -> TokCapIdent 
+-- On TokSemi reduce production opcode_name -> TokCapIdent 
+-- On TokPercent reduce production opcode_name -> TokCapIdent 
+-- On TokIdent reduce production opcode_name -> TokCapIdent 
+-- On TokDollar reduce production opcode_name -> TokCapIdent 
+-- On TokColon reduce production opcode_name -> TokCapIdent 
+-- On TokCapIdent reduce production opcode_name -> TokCapIdent 
+-- On TokAt reduce production opcode_name -> TokCapIdent 
+
+State 209:
+in_pattern_expr -> opcode_name . in_operand_list_opt inst_modifier_list_opt [ TokSemi ]
+-- On TokUnder shift to state 11
+-- On TokStar shift to state 12
+-- On TokPercent shift to state 40
+-- On TokIdent shift to state 14
+-- On TokDollar shift to state 43
+-- On TokCapIdent shift to state 45
+-- On TokAt shift to state 46
+-- On in_operand_name shift to state 54
+-- On in_operand_list_opt shift to state 210
+-- On in_operand_list shift to state 115
+-- On in_operand shift to state 116
+-- On TokSemi reduce production in_operand_list_opt -> 
+-- On TokColon reduce production in_operand_list_opt -> 
+
+State 210:
+in_pattern_expr -> opcode_name in_operand_list_opt . inst_modifier_list_opt [ TokSemi ]
+-- On TokColon shift to state 167
+-- On inst_modifier_list_opt shift to state 211
+-- On TokSemi reduce production inst_modifier_list_opt -> 
+
+State 211:
+in_pattern_expr -> opcode_name in_operand_list_opt inst_modifier_list_opt . [ TokSemi ]
+-- On TokSemi reduce production in_pattern_expr -> opcode_name in_operand_list_opt inst_modifier_list_opt 
+
+State 212:
+io_input -> TokInput io_name TokColon in_pattern_list . TokWhen clause_expr [ TokOutput TokInput ]
+io_input -> TokInput io_name TokColon in_pattern_list . [ TokOutput TokInput ]
+-- On TokWhen shift to state 213
+-- On TokOutput reduce production io_input -> TokInput io_name TokColon in_pattern_list 
+-- On TokInput reduce production io_input -> TokInput io_name TokColon in_pattern_list 
+
+State 213:
+io_input -> TokInput io_name TokColon in_pattern_list TokWhen . clause_expr [ TokOutput TokInput ]
+-- On TokTilde shift to state 64
+-- On TokPow2 shift to state 65
+-- On TokOCaml shift to state 214
+-- On TokMinus shift to state 66
+-- On TokLog2 shift to state 67
+-- On TokLParen shift to state 215
+-- On TokIspower2 shift to state 216
+-- On TokInt shift to state 69
+-- On TokIdent shift to state 70
+-- On TokAbs shift to state 71
+-- On unary_op shift to state 72
+-- On clause_expr shift to state 234
+-- On arith_expr shift to state 224
+
+State 214:
+clause_expr -> TokOCaml . [ TokRParen TokPipePipe TokOutput TokInput TokColon TokAmpAmp ]
+-- On TokRParen reduce production clause_expr -> TokOCaml 
+-- On TokPipePipe reduce production clause_expr -> TokOCaml 
+-- On TokOutput reduce production clause_expr -> TokOCaml 
+-- On TokInput reduce production clause_expr -> TokOCaml 
+-- On TokColon reduce production clause_expr -> TokOCaml 
+-- On TokAmpAmp reduce production clause_expr -> TokOCaml 
+
+State 215:
+arith_expr -> TokLParen . arith_expr TokRParen [ TokShr TokShl TokSar TokRParen TokPlus TokPipe TokNotEqual TokMinus TokLessThan TokLessEqual TokGreaterThan TokGreaterEqual TokEqual TokAmp ]
+clause_expr -> TokLParen . clause_expr TokRParen [ TokRParen TokPipePipe TokOutput TokInput TokColon TokAmpAmp ]
+-- On TokTilde shift to state 64
+-- On TokPow2 shift to state 65
+-- On TokOCaml shift to state 214
+-- On TokMinus shift to state 66
+-- On TokLog2 shift to state 67
+-- On TokLParen shift to state 215
+-- On TokIspower2 shift to state 216
+-- On TokInt shift to state 69
+-- On TokIdent shift to state 70
+-- On TokAbs shift to state 71
+-- On unary_op shift to state 72
+-- On clause_expr shift to state 218
+-- On arith_expr shift to state 233
+
+State 216:
+clause_expr -> TokIspower2 . arith_expr [ TokRParen TokPipePipe TokOutput TokInput TokColon TokAmpAmp ]
+-- On TokTilde shift to state 64
+-- On TokPow2 shift to state 65
+-- On TokMinus shift to state 66
+-- On TokLog2 shift to state 67
+-- On TokLParen shift to state 68
+-- On TokInt shift to state 69
+-- On TokIdent shift to state 70
+-- On TokAbs shift to state 71
+-- On unary_op shift to state 72
+-- On arith_expr shift to state 217
+
+State 217:
+arith_expr -> arith_expr . plus_minus_op arith_expr [ TokShr TokShl TokSar TokRParen TokPlus TokPipePipe TokPipe TokOutput TokMinus TokInput TokColon TokAmpAmp TokAmp ]
+arith_expr -> arith_expr . logical_op arith_expr [ TokShr TokShl TokSar TokRParen TokPlus TokPipePipe TokPipe TokOutput TokMinus TokInput TokColon TokAmpAmp TokAmp ]
+arith_expr -> arith_expr . shift_op arith_expr [ TokShr TokShl TokSar TokRParen TokPlus TokPipePipe TokPipe TokOutput TokMinus TokInput TokColon TokAmpAmp TokAmp ]
+clause_expr -> TokIspower2 arith_expr . [ TokRParen TokPipePipe TokOutput TokInput TokColon TokAmpAmp ]
+-- On TokShr shift to state 85
+-- On TokShl shift to state 86
+-- On TokSar shift to state 87
+-- On TokPlus shift to state 76
+-- On TokPipe shift to state 77
+-- On TokMinus shift to state 78
+-- On TokAmp shift to state 79
+-- On shift_op shift to state 74
+-- On plus_minus_op shift to state 80
+-- On logical_op shift to state 82
+-- On TokRParen reduce production clause_expr -> TokIspower2 arith_expr 
+-- On TokPipePipe reduce production clause_expr -> TokIspower2 arith_expr 
+-- On TokOutput reduce production clause_expr -> TokIspower2 arith_expr 
+-- On TokInput reduce production clause_expr -> TokIspower2 arith_expr 
+-- On TokColon reduce production clause_expr -> TokIspower2 arith_expr 
+-- On TokAmpAmp reduce production clause_expr -> TokIspower2 arith_expr 
+
+State 218:
+clause_expr -> TokLParen clause_expr . TokRParen [ TokRParen TokPipePipe TokOutput TokInput TokColon TokAmpAmp ]
+clause_expr -> clause_expr . bool_op clause_expr [ TokRParen TokPipePipe TokAmpAmp ]
+-- On TokRParen shift to state 219
+-- On TokPipePipe shift to state 220
+-- On TokAmpAmp shift to state 221
+-- On bool_op shift to state 222
+
+State 219:
+clause_expr -> TokLParen clause_expr TokRParen . [ TokRParen TokPipePipe TokOutput TokInput TokColon TokAmpAmp ]
+-- On TokRParen reduce production clause_expr -> TokLParen clause_expr TokRParen 
+-- On TokPipePipe reduce production clause_expr -> TokLParen clause_expr TokRParen 
+-- On TokOutput reduce production clause_expr -> TokLParen clause_expr TokRParen 
+-- On TokInput reduce production clause_expr -> TokLParen clause_expr TokRParen 
+-- On TokColon reduce production clause_expr -> TokLParen clause_expr TokRParen 
+-- On TokAmpAmp reduce production clause_expr -> TokLParen clause_expr TokRParen 
+
+State 220:
+bool_op -> TokPipePipe . [ TokTilde TokPow2 TokOCaml TokMinus TokLog2 TokLParen TokIspower2 TokInt TokIdent TokAbs ]
+-- On TokTilde reduce production bool_op -> TokPipePipe 
+-- On TokPow2 reduce production bool_op -> TokPipePipe 
+-- On TokOCaml reduce production bool_op -> TokPipePipe 
+-- On TokMinus reduce production bool_op -> TokPipePipe 
+-- On TokLog2 reduce production bool_op -> TokPipePipe 
+-- On TokLParen reduce production bool_op -> TokPipePipe 
+-- On TokIspower2 reduce production bool_op -> TokPipePipe 
+-- On TokInt reduce production bool_op -> TokPipePipe 
+-- On TokIdent reduce production bool_op -> TokPipePipe 
+-- On TokAbs reduce production bool_op -> TokPipePipe 
+
+State 221:
+bool_op -> TokAmpAmp . [ TokTilde TokPow2 TokOCaml TokMinus TokLog2 TokLParen TokIspower2 TokInt TokIdent TokAbs ]
+-- On TokTilde reduce production bool_op -> TokAmpAmp 
+-- On TokPow2 reduce production bool_op -> TokAmpAmp 
+-- On TokOCaml reduce production bool_op -> TokAmpAmp 
+-- On TokMinus reduce production bool_op -> TokAmpAmp 
+-- On TokLog2 reduce production bool_op -> TokAmpAmp 
+-- On TokLParen reduce production bool_op -> TokAmpAmp 
+-- On TokIspower2 reduce production bool_op -> TokAmpAmp 
+-- On TokInt reduce production bool_op -> TokAmpAmp 
+-- On TokIdent reduce production bool_op -> TokAmpAmp 
+-- On TokAbs reduce production bool_op -> TokAmpAmp 
+
+State 222:
+clause_expr -> clause_expr bool_op . clause_expr [ TokRParen TokPipePipe TokOutput TokInput TokColon TokAmpAmp ]
+-- On TokTilde shift to state 64
+-- On TokPow2 shift to state 65
+-- On TokOCaml shift to state 214
+-- On TokMinus shift to state 66
+-- On TokLog2 shift to state 67
+-- On TokLParen shift to state 215
+-- On TokIspower2 shift to state 216
+-- On TokInt shift to state 69
+-- On TokIdent shift to state 70
+-- On TokAbs shift to state 71
+-- On unary_op shift to state 72
+-- On clause_expr shift to state 223
+-- On arith_expr shift to state 224
+
+State 223:
+clause_expr -> clause_expr . bool_op clause_expr [ TokRParen TokPipePipe TokOutput TokInput TokColon TokAmpAmp ]
+clause_expr -> clause_expr bool_op clause_expr . [ TokRParen TokPipePipe TokOutput TokInput TokColon TokAmpAmp ]
+-- On bool_op shift to state 222
+-- On TokRParen reduce production clause_expr -> clause_expr bool_op clause_expr 
+-- On TokPipePipe reduce production clause_expr -> clause_expr bool_op clause_expr 
+-- On TokOutput reduce production clause_expr -> clause_expr bool_op clause_expr 
+-- On TokInput reduce production clause_expr -> clause_expr bool_op clause_expr 
+-- On TokColon reduce production clause_expr -> clause_expr bool_op clause_expr 
+-- On TokAmpAmp reduce production clause_expr -> clause_expr bool_op clause_expr 
+
+State 224:
+arith_expr -> arith_expr . plus_minus_op arith_expr [ TokShr TokShl TokSar TokPlus TokPipe TokNotEqual TokMinus TokLessThan TokLessEqual TokGreaterThan TokGreaterEqual TokEqual TokAmp ]
+arith_expr -> arith_expr . logical_op arith_expr [ TokShr TokShl TokSar TokPlus TokPipe TokNotEqual TokMinus TokLessThan TokLessEqual TokGreaterThan TokGreaterEqual TokEqual TokAmp ]
+arith_expr -> arith_expr . shift_op arith_expr [ TokShr TokShl TokSar TokPlus TokPipe TokNotEqual TokMinus TokLessThan TokLessEqual TokGreaterThan TokGreaterEqual TokEqual TokAmp ]
+clause_expr -> arith_expr . relop arith_expr [ TokRParen TokPipePipe TokOutput TokInput TokColon TokAmpAmp ]
+-- On TokShr shift to state 85
+-- On TokShl shift to state 86
+-- On TokSar shift to state 87
+-- On TokPlus shift to state 76
+-- On TokPipe shift to state 77
+-- On TokNotEqual shift to state 225
+-- On TokMinus shift to state 78
+-- On TokLessThan shift to state 226
+-- On TokLessEqual shift to state 227
+-- On TokGreaterThan shift to state 228
+-- On TokGreaterEqual shift to state 229
+-- On TokEqual shift to state 230
+-- On TokAmp shift to state 79
+-- On shift_op shift to state 74
+-- On relop shift to state 231
+-- On plus_minus_op shift to state 80
+-- On logical_op shift to state 82
+
+State 225:
+relop -> TokNotEqual . [ TokTilde TokPow2 TokMinus TokLog2 TokLParen TokInt TokIdent TokAbs ]
+-- On TokTilde reduce production relop -> TokNotEqual 
+-- On TokPow2 reduce production relop -> TokNotEqual 
+-- On TokMinus reduce production relop -> TokNotEqual 
+-- On TokLog2 reduce production relop -> TokNotEqual 
+-- On TokLParen reduce production relop -> TokNotEqual 
+-- On TokInt reduce production relop -> TokNotEqual 
+-- On TokIdent reduce production relop -> TokNotEqual 
+-- On TokAbs reduce production relop -> TokNotEqual 
+
+State 226:
+relop -> TokLessThan . [ TokTilde TokPow2 TokMinus TokLog2 TokLParen TokInt TokIdent TokAbs ]
+-- On TokTilde reduce production relop -> TokLessThan 
+-- On TokPow2 reduce production relop -> TokLessThan 
+-- On TokMinus reduce production relop -> TokLessThan 
+-- On TokLog2 reduce production relop -> TokLessThan 
+-- On TokLParen reduce production relop -> TokLessThan 
+-- On TokInt reduce production relop -> TokLessThan 
+-- On TokIdent reduce production relop -> TokLessThan 
+-- On TokAbs reduce production relop -> TokLessThan 
+
+State 227:
+relop -> TokLessEqual . [ TokTilde TokPow2 TokMinus TokLog2 TokLParen TokInt TokIdent TokAbs ]
+-- On TokTilde reduce production relop -> TokLessEqual 
+-- On TokPow2 reduce production relop -> TokLessEqual 
+-- On TokMinus reduce production relop -> TokLessEqual 
+-- On TokLog2 reduce production relop -> TokLessEqual 
+-- On TokLParen reduce production relop -> TokLessEqual 
+-- On TokInt reduce production relop -> TokLessEqual 
+-- On TokIdent reduce production relop -> TokLessEqual 
+-- On TokAbs reduce production relop -> TokLessEqual 
+
+State 228:
+relop -> TokGreaterThan . [ TokTilde TokPow2 TokMinus TokLog2 TokLParen TokInt TokIdent TokAbs ]
+-- On TokTilde reduce production relop -> TokGreaterThan 
+-- On TokPow2 reduce production relop -> TokGreaterThan 
+-- On TokMinus reduce production relop -> TokGreaterThan 
+-- On TokLog2 reduce production relop -> TokGreaterThan 
+-- On TokLParen reduce production relop -> TokGreaterThan 
+-- On TokInt reduce production relop -> TokGreaterThan 
+-- On TokIdent reduce production relop -> TokGreaterThan 
+-- On TokAbs reduce production relop -> TokGreaterThan 
+
+State 229:
+relop -> TokGreaterEqual . [ TokTilde TokPow2 TokMinus TokLog2 TokLParen TokInt TokIdent TokAbs ]
+-- On TokTilde reduce production relop -> TokGreaterEqual 
+-- On TokPow2 reduce production relop -> TokGreaterEqual 
+-- On TokMinus reduce production relop -> TokGreaterEqual 
+-- On TokLog2 reduce production relop -> TokGreaterEqual 
+-- On TokLParen reduce production relop -> TokGreaterEqual 
+-- On TokInt reduce production relop -> TokGreaterEqual 
+-- On TokIdent reduce production relop -> TokGreaterEqual 
+-- On TokAbs reduce production relop -> TokGreaterEqual 
+
+State 230:
+relop -> TokEqual . [ TokTilde TokPow2 TokMinus TokLog2 TokLParen TokInt TokIdent TokAbs ]
+-- On TokTilde reduce production relop -> TokEqual 
+-- On TokPow2 reduce production relop -> TokEqual 
+-- On TokMinus reduce production relop -> TokEqual 
+-- On TokLog2 reduce production relop -> TokEqual 
+-- On TokLParen reduce production relop -> TokEqual 
+-- On TokInt reduce production relop -> TokEqual 
+-- On TokIdent reduce production relop -> TokEqual 
+-- On TokAbs reduce production relop -> TokEqual 
+
+State 231:
+clause_expr -> arith_expr relop . arith_expr [ TokRParen TokPipePipe TokOutput TokInput TokColon TokAmpAmp ]
+-- On TokTilde shift to state 64
+-- On TokPow2 shift to state 65
+-- On TokMinus shift to state 66
+-- On TokLog2 shift to state 67
+-- On TokLParen shift to state 68
+-- On TokInt shift to state 69
+-- On TokIdent shift to state 70
+-- On TokAbs shift to state 71
+-- On unary_op shift to state 72
+-- On arith_expr shift to state 232
+
+State 232:
+arith_expr -> arith_expr . plus_minus_op arith_expr [ TokShr TokShl TokSar TokRParen TokPlus TokPipePipe TokPipe TokOutput TokMinus TokInput TokColon TokAmpAmp TokAmp ]
+arith_expr -> arith_expr . logical_op arith_expr [ TokShr TokShl TokSar TokRParen TokPlus TokPipePipe TokPipe TokOutput TokMinus TokInput TokColon TokAmpAmp TokAmp ]
+arith_expr -> arith_expr . shift_op arith_expr [ TokShr TokShl TokSar TokRParen TokPlus TokPipePipe TokPipe TokOutput TokMinus TokInput TokColon TokAmpAmp TokAmp ]
+clause_expr -> arith_expr relop arith_expr . [ TokRParen TokPipePipe TokOutput TokInput TokColon TokAmpAmp ]
+-- On TokShr shift to state 85
+-- On TokShl shift to state 86
+-- On TokSar shift to state 87
+-- On TokPlus shift to state 76
+-- On TokPipe shift to state 77
+-- On TokMinus shift to state 78
+-- On TokAmp shift to state 79
+-- On shift_op shift to state 74
+-- On plus_minus_op shift to state 80
+-- On logical_op shift to state 82
+-- On TokRParen reduce production clause_expr -> arith_expr relop arith_expr 
+-- On TokPipePipe reduce production clause_expr -> arith_expr relop arith_expr 
+-- On TokOutput reduce production clause_expr -> arith_expr relop arith_expr 
+-- On TokInput reduce production clause_expr -> arith_expr relop arith_expr 
+-- On TokColon reduce production clause_expr -> arith_expr relop arith_expr 
+-- On TokAmpAmp reduce production clause_expr -> arith_expr relop arith_expr 
+
+State 233:
+arith_expr -> TokLParen arith_expr . TokRParen [ TokShr TokShl TokSar TokRParen TokPlus TokPipe TokNotEqual TokMinus TokLessThan TokLessEqual TokGreaterThan TokGreaterEqual TokEqual TokAmp ]
+arith_expr -> arith_expr . plus_minus_op arith_expr [ TokShr TokShl TokSar TokRParen TokPlus TokPipe TokNotEqual TokMinus TokLessThan TokLessEqual TokGreaterThan TokGreaterEqual TokEqual TokAmp ]
+arith_expr -> arith_expr . logical_op arith_expr [ TokShr TokShl TokSar TokRParen TokPlus TokPipe TokNotEqual TokMinus TokLessThan TokLessEqual TokGreaterThan TokGreaterEqual TokEqual TokAmp ]
+arith_expr -> arith_expr . shift_op arith_expr [ TokShr TokShl TokSar TokRParen TokPlus TokPipe TokNotEqual TokMinus TokLessThan TokLessEqual TokGreaterThan TokGreaterEqual TokEqual TokAmp ]
+clause_expr -> arith_expr . relop arith_expr [ TokRParen TokPipePipe TokAmpAmp ]
+-- On TokShr shift to state 85
+-- On TokShl shift to state 86
+-- On TokSar shift to state 87
+-- On TokRParen shift to state 88
+-- On TokPlus shift to state 76
+-- On TokPipe shift to state 77
+-- On TokNotEqual shift to state 225
+-- On TokMinus shift to state 78
+-- On TokLessThan shift to state 226
+-- On TokLessEqual shift to state 227
+-- On TokGreaterThan shift to state 228
+-- On TokGreaterEqual shift to state 229
+-- On TokEqual shift to state 230
+-- On TokAmp shift to state 79
+-- On shift_op shift to state 74
+-- On relop shift to state 231
+-- On plus_minus_op shift to state 80
+-- On logical_op shift to state 82
+
+State 234:
+clause_expr -> clause_expr . bool_op clause_expr [ TokPipePipe TokOutput TokInput TokAmpAmp ]
+io_input -> TokInput io_name TokColon in_pattern_list TokWhen clause_expr . [ TokOutput TokInput ]
+-- On TokPipePipe shift to state 220
+-- On TokAmpAmp shift to state 221
+-- On bool_op shift to state 222
+-- On TokOutput reduce production io_input -> TokInput io_name TokColon in_pattern_list TokWhen clause_expr 
+-- On TokInput reduce production io_input -> TokInput io_name TokColon in_pattern_list TokWhen clause_expr 
+
+State 235:
+in_pattern_list -> in_pattern_expr . TokSemi in_pattern_list [ TokWhen TokOutput TokInput ]
+in_pattern_list -> in_pattern_expr . TokSemi [ TokWhen TokOutput TokInput ]
+-- On TokSemi shift to state 236
+
+State 236:
+in_pattern_list -> in_pattern_expr TokSemi . in_pattern_list [ TokWhen TokOutput TokInput ]
+in_pattern_list -> in_pattern_expr TokSemi . [ TokWhen TokOutput TokInput ]
+-- On TokUnder shift to state 166
+-- On TokStar shift to state 205
+-- On TokIdent shift to state 207
+-- On TokCapIdent shift to state 208
+-- On opcode_name shift to state 209
+-- On in_pattern_list shift to state 237
+-- On in_pattern_expr shift to state 235
+-- On TokWhen reduce production in_pattern_list -> in_pattern_expr TokSemi 
+-- On TokOutput reduce production in_pattern_list -> in_pattern_expr TokSemi 
+-- On TokInput reduce production in_pattern_list -> in_pattern_expr TokSemi 
+
+State 237:
+in_pattern_list -> in_pattern_expr TokSemi in_pattern_list . [ TokWhen TokOutput TokInput ]
+-- On TokWhen reduce production in_pattern_list -> in_pattern_expr TokSemi in_pattern_list 
+-- On TokOutput reduce production in_pattern_list -> in_pattern_expr TokSemi in_pattern_list 
+-- On TokInput reduce production in_pattern_list -> in_pattern_expr TokSemi in_pattern_list 
+
+State 238:
+prog -> TokEof . [ # ]
+-- On # reduce production prog -> TokEof 
+
+State 239:
+expr -> trivial_statement . [ TokTrivial TokTrans TokRegisters TokOpen TokName TokInsts TokInput TokEof ]
+-- On TokTrivial reduce production expr -> trivial_statement 
+-- On TokTrans reduce production expr -> trivial_statement 
+-- On TokRegisters reduce production expr -> trivial_statement 
+-- On TokOpen reduce production expr -> trivial_statement 
+-- On TokName reduce production expr -> trivial_statement 
+-- On TokInsts reduce production expr -> trivial_statement 
+-- On TokInput reduce production expr -> trivial_statement 
+-- On TokEof reduce production expr -> trivial_statement 
+
+State 240:
+expr -> transform_statement . [ TokTrivial TokTrans TokRegisters TokOpen TokName TokInsts TokInput TokEof ]
+-- On TokTrivial reduce production expr -> transform_statement 
+-- On TokTrans reduce production expr -> transform_statement 
+-- On TokRegisters reduce production expr -> transform_statement 
+-- On TokOpen reduce production expr -> transform_statement 
+-- On TokName reduce production expr -> transform_statement 
+-- On TokInsts reduce production expr -> transform_statement 
+-- On TokInput reduce production expr -> transform_statement 
+-- On TokEof reduce production expr -> transform_statement 
+
+State 241:
+expr -> register_statement . [ TokTrivial TokTrans TokRegisters TokOpen TokName TokInsts TokInput TokEof ]
+-- On TokTrivial reduce production expr -> register_statement 
+-- On TokTrans reduce production expr -> register_statement 
+-- On TokRegisters reduce production expr -> register_statement 
+-- On TokOpen reduce production expr -> register_statement 
+-- On TokName reduce production expr -> register_statement 
+-- On TokInsts reduce production expr -> register_statement 
+-- On TokInput reduce production expr -> register_statement 
+-- On TokEof reduce production expr -> register_statement 
+
+State 242:
+prog' -> prog . [ # ]
+-- On # accept prog
+
+State 243:
+expr -> open_statement . [ TokTrivial TokTrans TokRegisters TokOpen TokName TokInsts TokInput TokEof ]
+-- On TokTrivial reduce production expr -> open_statement 
+-- On TokTrans reduce production expr -> open_statement 
+-- On TokRegisters reduce production expr -> open_statement 
+-- On TokOpen reduce production expr -> open_statement 
+-- On TokName reduce production expr -> open_statement 
+-- On TokInsts reduce production expr -> open_statement 
+-- On TokInput reduce production expr -> open_statement 
+-- On TokEof reduce production expr -> open_statement 
+
+State 244:
+expr -> name_statement . [ TokTrivial TokTrans TokRegisters TokOpen TokName TokInsts TokInput TokEof ]
+-- On TokTrivial reduce production expr -> name_statement 
+-- On TokTrans reduce production expr -> name_statement 
+-- On TokRegisters reduce production expr -> name_statement 
+-- On TokOpen reduce production expr -> name_statement 
+-- On TokName reduce production expr -> name_statement 
+-- On TokInsts reduce production expr -> name_statement 
+-- On TokInput reduce production expr -> name_statement 
+-- On TokEof reduce production expr -> name_statement 
+
+State 245:
+input_output_statement -> io_input_list . io_output_list [ TokTrivial TokTrans TokRegisters TokOpen TokName TokInsts TokInput TokEof ]
+-- On TokOutput shift to state 246
+-- On io_output_list shift to state 274
+-- On io_output shift to state 275
+
+State 246:
+io_output -> TokOutput . TokWhen clause_expr TokColon out_pattern_list_opt [ TokTrivial TokTrans TokRegisters TokOutput TokOpen TokName TokInsts TokInput TokEof ]
+io_output -> TokOutput . TokColon out_pattern_list_opt [ TokTrivial TokTrans TokRegisters TokOutput TokOpen TokName TokInsts TokInput TokEof ]
+-- On TokWhen shift to state 247
+-- On TokColon shift to state 272
+
+State 247:
+io_output -> TokOutput TokWhen . clause_expr TokColon out_pattern_list_opt [ TokTrivial TokTrans TokRegisters TokOutput TokOpen TokName TokInsts TokInput TokEof ]
+-- On TokTilde shift to state 64
+-- On TokPow2 shift to state 65
+-- On TokOCaml shift to state 214
+-- On TokMinus shift to state 66
+-- On TokLog2 shift to state 67
+-- On TokLParen shift to state 215
+-- On TokIspower2 shift to state 216
+-- On TokInt shift to state 69
+-- On TokIdent shift to state 70
+-- On TokAbs shift to state 71
+-- On unary_op shift to state 72
+-- On clause_expr shift to state 248
+-- On arith_expr shift to state 224
+
+State 248:
+clause_expr -> clause_expr . bool_op clause_expr [ TokPipePipe TokColon TokAmpAmp ]
+io_output -> TokOutput TokWhen clause_expr . TokColon out_pattern_list_opt [ TokTrivial TokTrans TokRegisters TokOutput TokOpen TokName TokInsts TokInput TokEof ]
+-- On TokPipePipe shift to state 220
+-- On TokColon shift to state 249
+-- On TokAmpAmp shift to state 221
+-- On bool_op shift to state 222
+
+State 249:
+io_output -> TokOutput TokWhen clause_expr TokColon . out_pattern_list_opt [ TokTrivial TokTrans TokRegisters TokOutput TokOpen TokName TokInsts TokInput TokEof ]
+-- On TokNew shift to state 250
+-- On TokIdent shift to state 253
+-- On TokCopy shift to state 260
+-- On TokCapIdent shift to state 208
+-- On out_pattern_list_opt shift to state 265
+-- On out_pattern_list shift to state 266
+-- On out_pattern_expr shift to state 267
+-- On opcode_name shift to state 270
+-- On TokTrivial reduce production out_pattern_list_opt -> 
+-- On TokTrans reduce production out_pattern_list_opt -> 
+-- On TokRegisters reduce production out_pattern_list_opt -> 
+-- On TokOutput reduce production out_pattern_list_opt -> 
+-- On TokOpen reduce production out_pattern_list_opt -> 
+-- On TokName reduce production out_pattern_list_opt -> 
+-- On TokInsts reduce production out_pattern_list_opt -> 
+-- On TokInput reduce production out_pattern_list_opt -> 
+-- On TokEof reduce production out_pattern_list_opt -> 
+
+State 250:
+out_pattern_expr -> TokNew . TokPercent TokIdent [ TokSemi ]
+-- On TokPercent shift to state 251
+
+State 251:
+out_pattern_expr -> TokNew TokPercent . TokIdent [ TokSemi ]
+-- On TokIdent shift to state 252
+
+State 252:
+out_pattern_expr -> TokNew TokPercent TokIdent . [ TokSemi ]
+-- On TokSemi reduce production out_pattern_expr -> TokNew TokPercent TokIdent 
+
+State 253:
+opcode_name -> TokIdent . [ TokStar TokSemi TokPercent TokIdent TokDollar TokCapIdent TokAt ]
+out_pattern_expr -> TokIdent . TokInt TokComma arith_expr_list [ TokSemi ]
+out_pattern_expr -> TokIdent . TokInt [ TokSemi ]
+-- On TokInt shift to state 254
+-- On TokStar reduce production opcode_name -> TokIdent 
+-- On TokSemi reduce production opcode_name -> TokIdent 
+-- On TokPercent reduce production opcode_name -> TokIdent 
+-- On TokIdent reduce production opcode_name -> TokIdent 
+-- On TokDollar reduce production opcode_name -> TokIdent 
+-- On TokCapIdent reduce production opcode_name -> TokIdent 
+-- On TokAt reduce production opcode_name -> TokIdent 
+
+State 254:
+out_pattern_expr -> TokIdent TokInt . TokComma arith_expr_list [ TokSemi ]
+out_pattern_expr -> TokIdent TokInt . [ TokSemi ]
+-- On TokComma shift to state 255
+-- On TokSemi reduce production out_pattern_expr -> TokIdent TokInt 
+
+State 255:
+out_pattern_expr -> TokIdent TokInt TokComma . arith_expr_list [ TokSemi ]
+-- On TokTilde shift to state 64
+-- On TokPow2 shift to state 65
+-- On TokMinus shift to state 66
+-- On TokLog2 shift to state 67
+-- On TokLParen shift to state 68
+-- On TokInt shift to state 69
+-- On TokIdent shift to state 70
+-- On TokAbs shift to state 71
+-- On unary_op shift to state 72
+-- On arith_expr_list shift to state 256
+-- On arith_expr shift to state 257
+
+State 256:
+out_pattern_expr -> TokIdent TokInt TokComma arith_expr_list . [ TokSemi ]
+-- On TokSemi reduce production out_pattern_expr -> TokIdent TokInt TokComma arith_expr_list 
+
+State 257:
+arith_expr -> arith_expr . plus_minus_op arith_expr [ TokShr TokShl TokSemi TokSar TokPlus TokPipe TokMinus TokComma TokAmp ]
+arith_expr -> arith_expr . logical_op arith_expr [ TokShr TokShl TokSemi TokSar TokPlus TokPipe TokMinus TokComma TokAmp ]
+arith_expr -> arith_expr . shift_op arith_expr [ TokShr TokShl TokSemi TokSar TokPlus TokPipe TokMinus TokComma TokAmp ]
+arith_expr_list -> arith_expr . TokComma arith_expr_list [ TokSemi ]
+arith_expr_list -> arith_expr . [ TokSemi ]
+-- On TokShr shift to state 85
+-- On TokShl shift to state 86
+-- On TokSar shift to state 87
+-- On TokPlus shift to state 76
+-- On TokPipe shift to state 77
+-- On TokMinus shift to state 78
+-- On TokComma shift to state 258
+-- On TokAmp shift to state 79
+-- On shift_op shift to state 74
+-- On plus_minus_op shift to state 80
+-- On logical_op shift to state 82
+-- On TokSemi reduce production arith_expr_list -> arith_expr 
+
+State 258:
+arith_expr_list -> arith_expr TokComma . arith_expr_list [ TokSemi ]
+-- On TokTilde shift to state 64
+-- On TokPow2 shift to state 65
+-- On TokMinus shift to state 66
+-- On TokLog2 shift to state 67
+-- On TokLParen shift to state 68
+-- On TokInt shift to state 69
+-- On TokIdent shift to state 70
+-- On TokAbs shift to state 71
+-- On unary_op shift to state 72
+-- On arith_expr_list shift to state 259
+-- On arith_expr shift to state 257
+
+State 259:
+arith_expr_list -> arith_expr TokComma arith_expr_list . [ TokSemi ]
+-- On TokSemi reduce production arith_expr_list -> arith_expr TokComma arith_expr_list 
+
+State 260:
+out_pattern_expr -> TokCopy . out_integer_list [ TokSemi ]
+-- On TokInt shift to state 261
+-- On out_integer_list shift to state 264
+
+State 261:
+out_integer_list -> TokInt . TokComma out_integer_list [ TokSemi ]
+out_integer_list -> TokInt . [ TokSemi ]
+-- On TokComma shift to state 262
+-- On TokSemi reduce production out_integer_list -> TokInt 
+
+State 262:
+out_integer_list -> TokInt TokComma . out_integer_list [ TokSemi ]
+-- On TokInt shift to state 261
+-- On out_integer_list shift to state 263
+
+State 263:
+out_integer_list -> TokInt TokComma out_integer_list . [ TokSemi ]
+-- On TokSemi reduce production out_integer_list -> TokInt TokComma out_integer_list 
+
+State 264:
+out_pattern_expr -> TokCopy out_integer_list . [ TokSemi ]
+-- On TokSemi reduce production out_pattern_expr -> TokCopy out_integer_list 
+
+State 265:
+io_output -> TokOutput TokWhen clause_expr TokColon out_pattern_list_opt . [ TokTrivial TokTrans TokRegisters TokOutput TokOpen TokName TokInsts TokInput TokEof ]
+-- On TokTrivial reduce production io_output -> TokOutput TokWhen clause_expr TokColon out_pattern_list_opt 
+-- On TokTrans reduce production io_output -> TokOutput TokWhen clause_expr TokColon out_pattern_list_opt 
+-- On TokRegisters reduce production io_output -> TokOutput TokWhen clause_expr TokColon out_pattern_list_opt 
+-- On TokOutput reduce production io_output -> TokOutput TokWhen clause_expr TokColon out_pattern_list_opt 
+-- On TokOpen reduce production io_output -> TokOutput TokWhen clause_expr TokColon out_pattern_list_opt 
+-- On TokName reduce production io_output -> TokOutput TokWhen clause_expr TokColon out_pattern_list_opt 
+-- On TokInsts reduce production io_output -> TokOutput TokWhen clause_expr TokColon out_pattern_list_opt 
+-- On TokInput reduce production io_output -> TokOutput TokWhen clause_expr TokColon out_pattern_list_opt 
+-- On TokEof reduce production io_output -> TokOutput TokWhen clause_expr TokColon out_pattern_list_opt 
+
+State 266:
+out_pattern_list_opt -> out_pattern_list . [ TokTrivial TokTrans TokRegisters TokOutput TokOpen TokName TokInsts TokInput TokEof ]
+-- On TokTrivial reduce production out_pattern_list_opt -> out_pattern_list 
+-- On TokTrans reduce production out_pattern_list_opt -> out_pattern_list 
+-- On TokRegisters reduce production out_pattern_list_opt -> out_pattern_list 
+-- On TokOutput reduce production out_pattern_list_opt -> out_pattern_list 
+-- On TokOpen reduce production out_pattern_list_opt -> out_pattern_list 
+-- On TokName reduce production out_pattern_list_opt -> out_pattern_list 
+-- On TokInsts reduce production out_pattern_list_opt -> out_pattern_list 
+-- On TokInput reduce production out_pattern_list_opt -> out_pattern_list 
+-- On TokEof reduce production out_pattern_list_opt -> out_pattern_list 
+
+State 267:
+out_pattern_list -> out_pattern_expr . TokSemi out_pattern_list [ TokTrivial TokTrans TokRegisters TokOutput TokOpen TokName TokInsts TokInput TokEof ]
+out_pattern_list -> out_pattern_expr . TokSemi [ TokTrivial TokTrans TokRegisters TokOutput TokOpen TokName TokInsts TokInput TokEof ]
+-- On TokSemi shift to state 268
+
+State 268:
+out_pattern_list -> out_pattern_expr TokSemi . out_pattern_list [ TokTrivial TokTrans TokRegisters TokOutput TokOpen TokName TokInsts TokInput TokEof ]
+out_pattern_list -> out_pattern_expr TokSemi . [ TokTrivial TokTrans TokRegisters TokOutput TokOpen TokName TokInsts TokInput TokEof ]
+-- On TokNew shift to state 250
+-- On TokIdent shift to state 253
+-- On TokCopy shift to state 260
+-- On TokCapIdent shift to state 208
+-- On out_pattern_list shift to state 269
+-- On out_pattern_expr shift to state 267
+-- On opcode_name shift to state 270
+-- On TokTrivial reduce production out_pattern_list -> out_pattern_expr TokSemi 
+-- On TokTrans reduce production out_pattern_list -> out_pattern_expr TokSemi 
+-- On TokRegisters reduce production out_pattern_list -> out_pattern_expr TokSemi 
+-- On TokOutput reduce production out_pattern_list -> out_pattern_expr TokSemi 
+-- On TokOpen reduce production out_pattern_list -> out_pattern_expr TokSemi 
+-- On TokName reduce production out_pattern_list -> out_pattern_expr TokSemi 
+-- On TokInsts reduce production out_pattern_list -> out_pattern_expr TokSemi 
+-- On TokInput reduce production out_pattern_list -> out_pattern_expr TokSemi 
+-- On TokEof reduce production out_pattern_list -> out_pattern_expr TokSemi 
+
+State 269:
+out_pattern_list -> out_pattern_expr TokSemi out_pattern_list . [ TokTrivial TokTrans TokRegisters TokOutput TokOpen TokName TokInsts TokInput TokEof ]
+-- On TokTrivial reduce production out_pattern_list -> out_pattern_expr TokSemi out_pattern_list 
+-- On TokTrans reduce production out_pattern_list -> out_pattern_expr TokSemi out_pattern_list 
+-- On TokRegisters reduce production out_pattern_list -> out_pattern_expr TokSemi out_pattern_list 
+-- On TokOutput reduce production out_pattern_list -> out_pattern_expr TokSemi out_pattern_list 
+-- On TokOpen reduce production out_pattern_list -> out_pattern_expr TokSemi out_pattern_list 
+-- On TokName reduce production out_pattern_list -> out_pattern_expr TokSemi out_pattern_list 
+-- On TokInsts reduce production out_pattern_list -> out_pattern_expr TokSemi out_pattern_list 
+-- On TokInput reduce production out_pattern_list -> out_pattern_expr TokSemi out_pattern_list 
+-- On TokEof reduce production out_pattern_list -> out_pattern_expr TokSemi out_pattern_list 
+
+State 270:
+out_pattern_expr -> opcode_name . out_operand_list_opt [ TokSemi ]
+-- On TokStar shift to state 59
+-- On TokPercent shift to state 97
+-- On TokIdent shift to state 99
+-- On TokDollar shift to state 100
+-- On TokCapIdent shift to state 102
+-- On TokAt shift to state 103
+-- On out_operand_list_opt shift to state 271
+-- On out_operand_list shift to state 111
+-- On out_operand shift to state 112
+-- On TokSemi reduce production out_operand_list_opt -> 
+
+State 271:
+out_pattern_expr -> opcode_name out_operand_list_opt . [ TokSemi ]
+-- On TokSemi reduce production out_pattern_expr -> opcode_name out_operand_list_opt 
+
+State 272:
+io_output -> TokOutput TokColon . out_pattern_list_opt [ TokTrivial TokTrans TokRegisters TokOutput TokOpen TokName TokInsts TokInput TokEof ]
+-- On TokNew shift to state 250
+-- On TokIdent shift to state 253
+-- On TokCopy shift to state 260
+-- On TokCapIdent shift to state 208
+-- On out_pattern_list_opt shift to state 273
+-- On out_pattern_list shift to state 266
+-- On out_pattern_expr shift to state 267
+-- On opcode_name shift to state 270
+-- On TokTrivial reduce production out_pattern_list_opt -> 
+-- On TokTrans reduce production out_pattern_list_opt -> 
+-- On TokRegisters reduce production out_pattern_list_opt -> 
+-- On TokOutput reduce production out_pattern_list_opt -> 
+-- On TokOpen reduce production out_pattern_list_opt -> 
+-- On TokName reduce production out_pattern_list_opt -> 
+-- On TokInsts reduce production out_pattern_list_opt -> 
+-- On TokInput reduce production out_pattern_list_opt -> 
+-- On TokEof reduce production out_pattern_list_opt -> 
+
+State 273:
+io_output -> TokOutput TokColon out_pattern_list_opt . [ TokTrivial TokTrans TokRegisters TokOutput TokOpen TokName TokInsts TokInput TokEof ]
+-- On TokTrivial reduce production io_output -> TokOutput TokColon out_pattern_list_opt 
+-- On TokTrans reduce production io_output -> TokOutput TokColon out_pattern_list_opt 
+-- On TokRegisters reduce production io_output -> TokOutput TokColon out_pattern_list_opt 
+-- On TokOutput reduce production io_output -> TokOutput TokColon out_pattern_list_opt 
+-- On TokOpen reduce production io_output -> TokOutput TokColon out_pattern_list_opt 
+-- On TokName reduce production io_output -> TokOutput TokColon out_pattern_list_opt 
+-- On TokInsts reduce production io_output -> TokOutput TokColon out_pattern_list_opt 
+-- On TokInput reduce production io_output -> TokOutput TokColon out_pattern_list_opt 
+-- On TokEof reduce production io_output -> TokOutput TokColon out_pattern_list_opt 
+
+State 274:
+input_output_statement -> io_input_list io_output_list . [ TokTrivial TokTrans TokRegisters TokOpen TokName TokInsts TokInput TokEof ]
+-- On TokTrivial reduce production input_output_statement -> io_input_list io_output_list 
+-- On TokTrans reduce production input_output_statement -> io_input_list io_output_list 
+-- On TokRegisters reduce production input_output_statement -> io_input_list io_output_list 
+-- On TokOpen reduce production input_output_statement -> io_input_list io_output_list 
+-- On TokName reduce production input_output_statement -> io_input_list io_output_list 
+-- On TokInsts reduce production input_output_statement -> io_input_list io_output_list 
+-- On TokInput reduce production input_output_statement -> io_input_list io_output_list 
+-- On TokEof reduce production input_output_statement -> io_input_list io_output_list 
+
+State 275:
+io_output_list -> io_output . io_output_list [ TokTrivial TokTrans TokRegisters TokOpen TokName TokInsts TokInput TokEof ]
+io_output_list -> io_output . [ TokTrivial TokTrans TokRegisters TokOpen TokName TokInsts TokInput TokEof ]
+-- On TokOutput shift to state 246
+-- On io_output_list shift to state 276
+-- On io_output shift to state 275
+-- On TokTrivial reduce production io_output_list -> io_output 
+-- On TokTrans reduce production io_output_list -> io_output 
+-- On TokRegisters reduce production io_output_list -> io_output 
+-- On TokOpen reduce production io_output_list -> io_output 
+-- On TokName reduce production io_output_list -> io_output 
+-- On TokInsts reduce production io_output_list -> io_output 
+-- On TokInput reduce production io_output_list -> io_output 
+-- On TokEof reduce production io_output_list -> io_output 
+
+State 276:
+io_output_list -> io_output io_output_list . [ TokTrivial TokTrans TokRegisters TokOpen TokName TokInsts TokInput TokEof ]
+-- On TokTrivial reduce production io_output_list -> io_output io_output_list 
+-- On TokTrans reduce production io_output_list -> io_output io_output_list 
+-- On TokRegisters reduce production io_output_list -> io_output io_output_list 
+-- On TokOpen reduce production io_output_list -> io_output io_output_list 
+-- On TokName reduce production io_output_list -> io_output io_output_list 
+-- On TokInsts reduce production io_output_list -> io_output io_output_list 
+-- On TokInput reduce production io_output_list -> io_output io_output_list 
+-- On TokEof reduce production io_output_list -> io_output io_output_list 
+
+State 277:
+io_input_list -> io_input . io_input_list [ TokOutput ]
+io_input_list -> io_input . [ TokOutput ]
+-- On TokInput shift to state 162
+-- On io_input_list shift to state 278
+-- On io_input shift to state 277
+-- On TokOutput reduce production io_input_list -> io_input 
+
+State 278:
+io_input_list -> io_input io_input_list . [ TokOutput ]
+-- On TokOutput reduce production io_input_list -> io_input io_input_list 
+
+State 279:
+expr -> instruction_statement . [ TokTrivial TokTrans TokRegisters TokOpen TokName TokInsts TokInput TokEof ]
+-- On TokTrivial reduce production expr -> instruction_statement 
+-- On TokTrans reduce production expr -> instruction_statement 
+-- On TokRegisters reduce production expr -> instruction_statement 
+-- On TokOpen reduce production expr -> instruction_statement 
+-- On TokName reduce production expr -> instruction_statement 
+-- On TokInsts reduce production expr -> instruction_statement 
+-- On TokInput reduce production expr -> instruction_statement 
+-- On TokEof reduce production expr -> instruction_statement 
+
+State 280:
+expr -> input_output_statement . [ TokTrivial TokTrans TokRegisters TokOpen TokName TokInsts TokInput TokEof ]
+-- On TokTrivial reduce production expr -> input_output_statement 
+-- On TokTrans reduce production expr -> input_output_statement 
+-- On TokRegisters reduce production expr -> input_output_statement 
+-- On TokOpen reduce production expr -> input_output_statement 
+-- On TokName reduce production expr -> input_output_statement 
+-- On TokInsts reduce production expr -> input_output_statement 
+-- On TokInput reduce production expr -> input_output_statement 
+-- On TokEof reduce production expr -> input_output_statement 
+
+State 281:
+prog -> expr . prog [ # ]
+-- On TokTrivial shift to state 1
+-- On TokTrans shift to state 3
+-- On TokRegisters shift to state 124
+-- On TokOpen shift to state 134
+-- On TokName shift to state 136
+-- On TokInsts shift to state 138
+-- On TokInput shift to state 162
+-- On TokEof shift to state 238
+-- On trivial_statement shift to state 239
+-- On transform_statement shift to state 240
+-- On register_statement shift to state 241
+-- On prog shift to state 282
+-- On open_statement shift to state 243
+-- On name_statement shift to state 244
+-- On io_input_list shift to state 245
+-- On io_input shift to state 277
+-- On instruction_statement shift to state 279
+-- On input_output_statement shift to state 280
+-- On expr shift to state 281
+
+State 282:
+prog -> expr prog . [ # ]
+-- On # reduce production prog -> expr prog 
+

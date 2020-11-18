@@ -1,0 +1,274 @@
+State 0:
+command' -> . command [ # ]
+-- On Tpreamble shift to state 1
+-- On Tentry shift to state 9
+-- On Tcomment shift to state 10
+-- On Tabbrev shift to state 11
+-- On entry shift to state 16
+-- On command shift to state 28
+
+State 1:
+command -> Tpreamble . sharp_string_list Trbrace [ # ]
+-- On Tstring shift to state 2
+-- On Tident shift to state 3
+-- On sharp_string_list shift to state 4
+-- On atom shift to state 6
+
+State 2:
+atom -> Tstring . [ Tsharp Trbrace Tcomma ]
+-- On Tsharp reduce production atom -> Tstring 
+-- On Trbrace reduce production atom -> Tstring 
+-- On Tcomma reduce production atom -> Tstring 
+
+State 3:
+atom -> Tident . [ Tsharp Trbrace Tcomma ]
+-- On Tsharp reduce production atom -> Tident 
+-- On Trbrace reduce production atom -> Tident 
+-- On Tcomma reduce production atom -> Tident 
+
+State 4:
+command -> Tpreamble sharp_string_list . Trbrace [ # ]
+-- On Trbrace shift to state 5
+
+State 5:
+command -> Tpreamble sharp_string_list Trbrace . [ # ]
+-- On # reduce production command -> Tpreamble sharp_string_list Trbrace 
+
+State 6:
+sharp_string_list -> atom . Tsharp sharp_string_list [ Trbrace Tcomma ]
+sharp_string_list -> atom . [ Trbrace Tcomma ]
+-- On Tsharp shift to state 7
+-- On Trbrace reduce production sharp_string_list -> atom 
+-- On Tcomma reduce production sharp_string_list -> atom 
+
+State 7:
+sharp_string_list -> atom Tsharp . sharp_string_list [ Trbrace Tcomma ]
+-- On Tstring shift to state 2
+-- On Tident shift to state 3
+-- On sharp_string_list shift to state 8
+-- On atom shift to state 6
+
+State 8:
+sharp_string_list -> atom Tsharp sharp_string_list . [ Trbrace Tcomma ]
+-- On Trbrace reduce production sharp_string_list -> atom Tsharp sharp_string_list 
+-- On Tcomma reduce production sharp_string_list -> atom Tsharp sharp_string_list 
+
+State 9:
+entry -> Tentry . [ Tcomma ]
+-- On Tcomma reduce production entry -> Tentry 
+
+State 10:
+command -> Tcomment . [ # ]
+-- On # reduce production command -> Tcomment 
+
+State 11:
+command -> Tabbrev . Tident Tequal sharp_string_list Trbrace [ # ]
+-- On Tident shift to state 12
+
+State 12:
+command -> Tabbrev Tident . Tequal sharp_string_list Trbrace [ # ]
+-- On Tequal shift to state 13
+
+State 13:
+command -> Tabbrev Tident Tequal . sharp_string_list Trbrace [ # ]
+-- On Tstring shift to state 2
+-- On Tident shift to state 3
+-- On sharp_string_list shift to state 14
+-- On atom shift to state 6
+
+State 14:
+command -> Tabbrev Tident Tequal sharp_string_list . Trbrace [ # ]
+-- On Trbrace shift to state 15
+
+State 15:
+command -> Tabbrev Tident Tequal sharp_string_list Trbrace . [ # ]
+-- On # reduce production command -> Tabbrev Tident Tequal sharp_string_list Trbrace 
+
+State 16:
+command -> entry . Tcomma comma_field_list Trbrace [ # ]
+-- On Tcomma shift to state 17
+
+State 17:
+command -> entry Tcomma . comma_field_list Trbrace [ # ]
+-- On Tident shift to state 18
+-- On Tcomment shift to state 19
+-- On field_name shift to state 20
+-- On field shift to state 23
+-- On comma_field_list shift to state 26
+
+State 18:
+field_name -> Tident . [ Tequal ]
+-- On Tequal reduce production field_name -> Tident 
+
+State 19:
+field_name -> Tcomment . [ Tequal ]
+-- On Tequal reduce production field_name -> Tcomment 
+
+State 20:
+field -> field_name . Tequal sharp_string_list [ Trbrace Tcomma ]
+field -> field_name . Tequal [ Trbrace Tcomma ]
+-- On Tequal shift to state 21
+
+State 21:
+field -> field_name Tequal . sharp_string_list [ Trbrace Tcomma ]
+field -> field_name Tequal . [ Trbrace Tcomma ]
+-- On Tstring shift to state 2
+-- On Tident shift to state 3
+-- On sharp_string_list shift to state 22
+-- On atom shift to state 6
+-- On Trbrace reduce production field -> field_name Tequal 
+-- On Tcomma reduce production field -> field_name Tequal 
+
+State 22:
+field -> field_name Tequal sharp_string_list . [ Trbrace Tcomma ]
+-- On Trbrace reduce production field -> field_name Tequal sharp_string_list 
+-- On Tcomma reduce production field -> field_name Tequal sharp_string_list 
+
+State 23:
+comma_field_list -> field . Tcomma comma_field_list [ Trbrace ]
+comma_field_list -> field . [ Trbrace ]
+comma_field_list -> field . Tcomma [ Trbrace ]
+-- On Tcomma shift to state 24
+-- On Trbrace reduce production comma_field_list -> field 
+
+State 24:
+comma_field_list -> field Tcomma . comma_field_list [ Trbrace ]
+comma_field_list -> field Tcomma . [ Trbrace ]
+-- On Tident shift to state 18
+-- On Tcomment shift to state 19
+-- On field_name shift to state 20
+-- On field shift to state 23
+-- On comma_field_list shift to state 25
+-- On Trbrace reduce production comma_field_list -> field Tcomma 
+
+State 25:
+comma_field_list -> field Tcomma comma_field_list . [ Trbrace ]
+-- On Trbrace reduce production comma_field_list -> field Tcomma comma_field_list 
+
+State 26:
+command -> entry Tcomma comma_field_list . Trbrace [ # ]
+-- On Trbrace shift to state 27
+
+State 27:
+command -> entry Tcomma comma_field_list Trbrace . [ # ]
+-- On # reduce production command -> entry Tcomma comma_field_list Trbrace 
+
+State 28:
+command' -> command . [ # ]
+-- On # accept command
+
+State 29:
+command_list' -> . command_list [ # ]
+-- On commands shift to state 30
+-- On command_list shift to state 46
+-- On Tpreamble reduce production commands -> 
+-- On Tentry reduce production commands -> 
+-- On Tcomment reduce production commands -> 
+-- On Tabbrev reduce production commands -> 
+-- On EOF reduce production commands -> 
+
+State 30:
+command_list -> commands . EOF [ # ]
+commands -> commands . command [ Tpreamble Tentry Tcomment Tabbrev EOF ]
+-- On Tpreamble shift to state 31
+-- On Tentry shift to state 9
+-- On Tcomment shift to state 34
+-- On Tabbrev shift to state 35
+-- On EOF shift to state 40
+-- On entry shift to state 41
+-- On command shift to state 45
+
+State 31:
+command -> Tpreamble . sharp_string_list Trbrace [ Tpreamble Tentry Tcomment Tabbrev EOF ]
+-- On Tstring shift to state 2
+-- On Tident shift to state 3
+-- On sharp_string_list shift to state 32
+-- On atom shift to state 6
+
+State 32:
+command -> Tpreamble sharp_string_list . Trbrace [ Tpreamble Tentry Tcomment Tabbrev EOF ]
+-- On Trbrace shift to state 33
+
+State 33:
+command -> Tpreamble sharp_string_list Trbrace . [ Tpreamble Tentry Tcomment Tabbrev EOF ]
+-- On Tpreamble reduce production command -> Tpreamble sharp_string_list Trbrace 
+-- On Tentry reduce production command -> Tpreamble sharp_string_list Trbrace 
+-- On Tcomment reduce production command -> Tpreamble sharp_string_list Trbrace 
+-- On Tabbrev reduce production command -> Tpreamble sharp_string_list Trbrace 
+-- On EOF reduce production command -> Tpreamble sharp_string_list Trbrace 
+
+State 34:
+command -> Tcomment . [ Tpreamble Tentry Tcomment Tabbrev EOF ]
+-- On Tpreamble reduce production command -> Tcomment 
+-- On Tentry reduce production command -> Tcomment 
+-- On Tcomment reduce production command -> Tcomment 
+-- On Tabbrev reduce production command -> Tcomment 
+-- On EOF reduce production command -> Tcomment 
+
+State 35:
+command -> Tabbrev . Tident Tequal sharp_string_list Trbrace [ Tpreamble Tentry Tcomment Tabbrev EOF ]
+-- On Tident shift to state 36
+
+State 36:
+command -> Tabbrev Tident . Tequal sharp_string_list Trbrace [ Tpreamble Tentry Tcomment Tabbrev EOF ]
+-- On Tequal shift to state 37
+
+State 37:
+command -> Tabbrev Tident Tequal . sharp_string_list Trbrace [ Tpreamble Tentry Tcomment Tabbrev EOF ]
+-- On Tstring shift to state 2
+-- On Tident shift to state 3
+-- On sharp_string_list shift to state 38
+-- On atom shift to state 6
+
+State 38:
+command -> Tabbrev Tident Tequal sharp_string_list . Trbrace [ Tpreamble Tentry Tcomment Tabbrev EOF ]
+-- On Trbrace shift to state 39
+
+State 39:
+command -> Tabbrev Tident Tequal sharp_string_list Trbrace . [ Tpreamble Tentry Tcomment Tabbrev EOF ]
+-- On Tpreamble reduce production command -> Tabbrev Tident Tequal sharp_string_list Trbrace 
+-- On Tentry reduce production command -> Tabbrev Tident Tequal sharp_string_list Trbrace 
+-- On Tcomment reduce production command -> Tabbrev Tident Tequal sharp_string_list Trbrace 
+-- On Tabbrev reduce production command -> Tabbrev Tident Tequal sharp_string_list Trbrace 
+-- On EOF reduce production command -> Tabbrev Tident Tequal sharp_string_list Trbrace 
+
+State 40:
+command_list -> commands EOF . [ # ]
+-- On # reduce production command_list -> commands EOF 
+
+State 41:
+command -> entry . Tcomma comma_field_list Trbrace [ Tpreamble Tentry Tcomment Tabbrev EOF ]
+-- On Tcomma shift to state 42
+
+State 42:
+command -> entry Tcomma . comma_field_list Trbrace [ Tpreamble Tentry Tcomment Tabbrev EOF ]
+-- On Tident shift to state 18
+-- On Tcomment shift to state 19
+-- On field_name shift to state 20
+-- On field shift to state 23
+-- On comma_field_list shift to state 43
+
+State 43:
+command -> entry Tcomma comma_field_list . Trbrace [ Tpreamble Tentry Tcomment Tabbrev EOF ]
+-- On Trbrace shift to state 44
+
+State 44:
+command -> entry Tcomma comma_field_list Trbrace . [ Tpreamble Tentry Tcomment Tabbrev EOF ]
+-- On Tpreamble reduce production command -> entry Tcomma comma_field_list Trbrace 
+-- On Tentry reduce production command -> entry Tcomma comma_field_list Trbrace 
+-- On Tcomment reduce production command -> entry Tcomma comma_field_list Trbrace 
+-- On Tabbrev reduce production command -> entry Tcomma comma_field_list Trbrace 
+-- On EOF reduce production command -> entry Tcomma comma_field_list Trbrace 
+
+State 45:
+commands -> commands command . [ Tpreamble Tentry Tcomment Tabbrev EOF ]
+-- On Tpreamble reduce production commands -> commands command 
+-- On Tentry reduce production commands -> commands command 
+-- On Tcomment reduce production commands -> commands command 
+-- On Tabbrev reduce production commands -> commands command 
+-- On EOF reduce production commands -> commands command 
+
+State 46:
+command_list' -> command_list . [ # ]
+-- On # accept command_list
+

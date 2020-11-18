@@ -1,0 +1,273 @@
+State 0:
+entry' -> . entry [ # ]
+-- On PRINT shift to state 1
+-- On LPAREN shift to state 2
+-- On LET shift to state 3
+-- On INTLITERAL shift to state 8
+-- On IDENT shift to state 9
+-- On FUN shift to state 10
+-- On left_associative_level(multiplicative_term_,ADDOP,mkbinop) shift to state 13
+-- On left_associative_level(application_term_,MULOP,mkbinop) shift to state 21
+-- On entry shift to state 29
+-- On atomic_term_ shift to state 17
+-- On application_term_ shift to state 20
+-- On any_term_ shift to state 30
+
+State 1:
+application_term_ -> PRINT . atomic_term_ [ RPAREN MULOP LPAREN INTLITERAL IN IDENT EOF ADDOP ]
+-- On LPAREN shift to state 2
+-- On INTLITERAL shift to state 8
+-- On IDENT shift to state 9
+-- On atomic_term_ shift to state 28
+
+State 2:
+atomic_term_ -> LPAREN . any_term_ RPAREN [ RPAREN MULOP LPAREN INTLITERAL IN IDENT EOF ADDOP ]
+-- On PRINT shift to state 1
+-- On LPAREN shift to state 2
+-- On LET shift to state 3
+-- On INTLITERAL shift to state 8
+-- On IDENT shift to state 9
+-- On FUN shift to state 10
+-- On left_associative_level(multiplicative_term_,ADDOP,mkbinop) shift to state 13
+-- On left_associative_level(application_term_,MULOP,mkbinop) shift to state 21
+-- On atomic_term_ shift to state 17
+-- On application_term_ shift to state 20
+-- On any_term_ shift to state 26
+
+State 3:
+any_term_ -> LET . recursive IDENT EQ any_term_ IN any_term_ [ RPAREN IN EOF ]
+-- On REC shift to state 4
+-- On recursive shift to state 5
+-- On IDENT reduce production recursive -> 
+
+State 4:
+recursive -> REC . [ IDENT ]
+-- On IDENT reduce production recursive -> REC 
+
+State 5:
+any_term_ -> LET recursive . IDENT EQ any_term_ IN any_term_ [ RPAREN IN EOF ]
+-- On IDENT shift to state 6
+
+State 6:
+any_term_ -> LET recursive IDENT . EQ any_term_ IN any_term_ [ RPAREN IN EOF ]
+-- On EQ shift to state 7
+
+State 7:
+any_term_ -> LET recursive IDENT EQ . any_term_ IN any_term_ [ RPAREN IN EOF ]
+-- On PRINT shift to state 1
+-- On LPAREN shift to state 2
+-- On LET shift to state 3
+-- On INTLITERAL shift to state 8
+-- On IDENT shift to state 9
+-- On FUN shift to state 10
+-- On left_associative_level(multiplicative_term_,ADDOP,mkbinop) shift to state 13
+-- On left_associative_level(application_term_,MULOP,mkbinop) shift to state 21
+-- On atomic_term_ shift to state 17
+-- On application_term_ shift to state 20
+-- On any_term_ shift to state 23
+
+State 8:
+atomic_term_ -> INTLITERAL . [ RPAREN MULOP LPAREN INTLITERAL IN IDENT EOF ADDOP ]
+-- On RPAREN reduce production atomic_term_ -> INTLITERAL 
+-- On MULOP reduce production atomic_term_ -> INTLITERAL 
+-- On LPAREN reduce production atomic_term_ -> INTLITERAL 
+-- On INTLITERAL reduce production atomic_term_ -> INTLITERAL 
+-- On IN reduce production atomic_term_ -> INTLITERAL 
+-- On IDENT reduce production atomic_term_ -> INTLITERAL 
+-- On EOF reduce production atomic_term_ -> INTLITERAL 
+-- On ADDOP reduce production atomic_term_ -> INTLITERAL 
+
+State 9:
+atomic_term_ -> IDENT . [ RPAREN MULOP LPAREN INTLITERAL IN IDENT EOF ADDOP ]
+-- On RPAREN reduce production atomic_term_ -> IDENT 
+-- On MULOP reduce production atomic_term_ -> IDENT 
+-- On LPAREN reduce production atomic_term_ -> IDENT 
+-- On INTLITERAL reduce production atomic_term_ -> IDENT 
+-- On IN reduce production atomic_term_ -> IDENT 
+-- On IDENT reduce production atomic_term_ -> IDENT 
+-- On EOF reduce production atomic_term_ -> IDENT 
+-- On ADDOP reduce production atomic_term_ -> IDENT 
+
+State 10:
+any_term_ -> FUN . IDENT ARROW any_term_ [ RPAREN IN EOF ]
+-- On IDENT shift to state 11
+
+State 11:
+any_term_ -> FUN IDENT . ARROW any_term_ [ RPAREN IN EOF ]
+-- On ARROW shift to state 12
+
+State 12:
+any_term_ -> FUN IDENT ARROW . any_term_ [ RPAREN IN EOF ]
+-- On PRINT shift to state 1
+-- On LPAREN shift to state 2
+-- On LET shift to state 3
+-- On INTLITERAL shift to state 8
+-- On IDENT shift to state 9
+-- On FUN shift to state 10
+-- On left_associative_level(multiplicative_term_,ADDOP,mkbinop) shift to state 13
+-- On left_associative_level(application_term_,MULOP,mkbinop) shift to state 21
+-- On atomic_term_ shift to state 17
+-- On application_term_ shift to state 20
+-- On any_term_ shift to state 22
+
+State 13:
+any_term_ -> left_associative_level(multiplicative_term_,ADDOP,mkbinop) . [ RPAREN IN EOF ]
+left_associative_level(multiplicative_term_,ADDOP,mkbinop) -> left_associative_level(multiplicative_term_,ADDOP,mkbinop) . ADDOP left_associative_level(application_term_,MULOP,mkbinop) [ RPAREN IN EOF ADDOP ]
+-- On ADDOP shift to state 14
+-- On RPAREN reduce production any_term_ -> left_associative_level(multiplicative_term_,ADDOP,mkbinop) 
+-- On IN reduce production any_term_ -> left_associative_level(multiplicative_term_,ADDOP,mkbinop) 
+-- On EOF reduce production any_term_ -> left_associative_level(multiplicative_term_,ADDOP,mkbinop) 
+
+State 14:
+left_associative_level(multiplicative_term_,ADDOP,mkbinop) -> left_associative_level(multiplicative_term_,ADDOP,mkbinop) ADDOP . left_associative_level(application_term_,MULOP,mkbinop) [ RPAREN IN EOF ADDOP ]
+-- On PRINT shift to state 1
+-- On LPAREN shift to state 2
+-- On INTLITERAL shift to state 8
+-- On IDENT shift to state 9
+-- On left_associative_level(application_term_,MULOP,mkbinop) shift to state 15
+-- On atomic_term_ shift to state 17
+-- On application_term_ shift to state 20
+
+State 15:
+left_associative_level(application_term_,MULOP,mkbinop) -> left_associative_level(application_term_,MULOP,mkbinop) . MULOP application_term_ [ RPAREN MULOP IN EOF ADDOP ]
+left_associative_level(multiplicative_term_,ADDOP,mkbinop) -> left_associative_level(multiplicative_term_,ADDOP,mkbinop) ADDOP left_associative_level(application_term_,MULOP,mkbinop) . [ RPAREN IN EOF ADDOP ]
+-- On MULOP shift to state 16
+-- On RPAREN reduce production left_associative_level(multiplicative_term_,ADDOP,mkbinop) -> left_associative_level(multiplicative_term_,ADDOP,mkbinop) ADDOP left_associative_level(application_term_,MULOP,mkbinop) 
+-- On IN reduce production left_associative_level(multiplicative_term_,ADDOP,mkbinop) -> left_associative_level(multiplicative_term_,ADDOP,mkbinop) ADDOP left_associative_level(application_term_,MULOP,mkbinop) 
+-- On EOF reduce production left_associative_level(multiplicative_term_,ADDOP,mkbinop) -> left_associative_level(multiplicative_term_,ADDOP,mkbinop) ADDOP left_associative_level(application_term_,MULOP,mkbinop) 
+-- On ADDOP reduce production left_associative_level(multiplicative_term_,ADDOP,mkbinop) -> left_associative_level(multiplicative_term_,ADDOP,mkbinop) ADDOP left_associative_level(application_term_,MULOP,mkbinop) 
+
+State 16:
+left_associative_level(application_term_,MULOP,mkbinop) -> left_associative_level(application_term_,MULOP,mkbinop) MULOP . application_term_ [ RPAREN MULOP IN EOF ADDOP ]
+-- On PRINT shift to state 1
+-- On LPAREN shift to state 2
+-- On INTLITERAL shift to state 8
+-- On IDENT shift to state 9
+-- On atomic_term_ shift to state 17
+-- On application_term_ shift to state 18
+
+State 17:
+application_term_ -> atomic_term_ . [ RPAREN MULOP LPAREN INTLITERAL IN IDENT EOF ADDOP ]
+-- On RPAREN reduce production application_term_ -> atomic_term_ 
+-- On MULOP reduce production application_term_ -> atomic_term_ 
+-- On LPAREN reduce production application_term_ -> atomic_term_ 
+-- On INTLITERAL reduce production application_term_ -> atomic_term_ 
+-- On IN reduce production application_term_ -> atomic_term_ 
+-- On IDENT reduce production application_term_ -> atomic_term_ 
+-- On EOF reduce production application_term_ -> atomic_term_ 
+-- On ADDOP reduce production application_term_ -> atomic_term_ 
+
+State 18:
+application_term_ -> application_term_ . atomic_term_ [ RPAREN MULOP LPAREN INTLITERAL IN IDENT EOF ADDOP ]
+left_associative_level(application_term_,MULOP,mkbinop) -> left_associative_level(application_term_,MULOP,mkbinop) MULOP application_term_ . [ RPAREN MULOP IN EOF ADDOP ]
+-- On LPAREN shift to state 2
+-- On INTLITERAL shift to state 8
+-- On IDENT shift to state 9
+-- On atomic_term_ shift to state 19
+-- On RPAREN reduce production left_associative_level(application_term_,MULOP,mkbinop) -> left_associative_level(application_term_,MULOP,mkbinop) MULOP application_term_ 
+-- On MULOP reduce production left_associative_level(application_term_,MULOP,mkbinop) -> left_associative_level(application_term_,MULOP,mkbinop) MULOP application_term_ 
+-- On IN reduce production left_associative_level(application_term_,MULOP,mkbinop) -> left_associative_level(application_term_,MULOP,mkbinop) MULOP application_term_ 
+-- On EOF reduce production left_associative_level(application_term_,MULOP,mkbinop) -> left_associative_level(application_term_,MULOP,mkbinop) MULOP application_term_ 
+-- On ADDOP reduce production left_associative_level(application_term_,MULOP,mkbinop) -> left_associative_level(application_term_,MULOP,mkbinop) MULOP application_term_ 
+
+State 19:
+application_term_ -> application_term_ atomic_term_ . [ RPAREN MULOP LPAREN INTLITERAL IN IDENT EOF ADDOP ]
+-- On RPAREN reduce production application_term_ -> application_term_ atomic_term_ 
+-- On MULOP reduce production application_term_ -> application_term_ atomic_term_ 
+-- On LPAREN reduce production application_term_ -> application_term_ atomic_term_ 
+-- On INTLITERAL reduce production application_term_ -> application_term_ atomic_term_ 
+-- On IN reduce production application_term_ -> application_term_ atomic_term_ 
+-- On IDENT reduce production application_term_ -> application_term_ atomic_term_ 
+-- On EOF reduce production application_term_ -> application_term_ atomic_term_ 
+-- On ADDOP reduce production application_term_ -> application_term_ atomic_term_ 
+
+State 20:
+application_term_ -> application_term_ . atomic_term_ [ RPAREN MULOP LPAREN INTLITERAL IN IDENT EOF ADDOP ]
+left_associative_level(application_term_,MULOP,mkbinop) -> application_term_ . [ RPAREN MULOP IN EOF ADDOP ]
+-- On LPAREN shift to state 2
+-- On INTLITERAL shift to state 8
+-- On IDENT shift to state 9
+-- On atomic_term_ shift to state 19
+-- On RPAREN reduce production left_associative_level(application_term_,MULOP,mkbinop) -> application_term_ 
+-- On MULOP reduce production left_associative_level(application_term_,MULOP,mkbinop) -> application_term_ 
+-- On IN reduce production left_associative_level(application_term_,MULOP,mkbinop) -> application_term_ 
+-- On EOF reduce production left_associative_level(application_term_,MULOP,mkbinop) -> application_term_ 
+-- On ADDOP reduce production left_associative_level(application_term_,MULOP,mkbinop) -> application_term_ 
+
+State 21:
+left_associative_level(application_term_,MULOP,mkbinop) -> left_associative_level(application_term_,MULOP,mkbinop) . MULOP application_term_ [ RPAREN MULOP IN EOF ADDOP ]
+left_associative_level(multiplicative_term_,ADDOP,mkbinop) -> left_associative_level(application_term_,MULOP,mkbinop) . [ RPAREN IN EOF ADDOP ]
+-- On MULOP shift to state 16
+-- On RPAREN reduce production left_associative_level(multiplicative_term_,ADDOP,mkbinop) -> left_associative_level(application_term_,MULOP,mkbinop) 
+-- On IN reduce production left_associative_level(multiplicative_term_,ADDOP,mkbinop) -> left_associative_level(application_term_,MULOP,mkbinop) 
+-- On EOF reduce production left_associative_level(multiplicative_term_,ADDOP,mkbinop) -> left_associative_level(application_term_,MULOP,mkbinop) 
+-- On ADDOP reduce production left_associative_level(multiplicative_term_,ADDOP,mkbinop) -> left_associative_level(application_term_,MULOP,mkbinop) 
+
+State 22:
+any_term_ -> FUN IDENT ARROW any_term_ . [ RPAREN IN EOF ]
+-- On RPAREN reduce production any_term_ -> FUN IDENT ARROW any_term_ 
+-- On IN reduce production any_term_ -> FUN IDENT ARROW any_term_ 
+-- On EOF reduce production any_term_ -> FUN IDENT ARROW any_term_ 
+
+State 23:
+any_term_ -> LET recursive IDENT EQ any_term_ . IN any_term_ [ RPAREN IN EOF ]
+-- On IN shift to state 24
+
+State 24:
+any_term_ -> LET recursive IDENT EQ any_term_ IN . any_term_ [ RPAREN IN EOF ]
+-- On PRINT shift to state 1
+-- On LPAREN shift to state 2
+-- On LET shift to state 3
+-- On INTLITERAL shift to state 8
+-- On IDENT shift to state 9
+-- On FUN shift to state 10
+-- On left_associative_level(multiplicative_term_,ADDOP,mkbinop) shift to state 13
+-- On left_associative_level(application_term_,MULOP,mkbinop) shift to state 21
+-- On atomic_term_ shift to state 17
+-- On application_term_ shift to state 20
+-- On any_term_ shift to state 25
+
+State 25:
+any_term_ -> LET recursive IDENT EQ any_term_ IN any_term_ . [ RPAREN IN EOF ]
+-- On RPAREN reduce production any_term_ -> LET recursive IDENT EQ any_term_ IN any_term_ 
+-- On IN reduce production any_term_ -> LET recursive IDENT EQ any_term_ IN any_term_ 
+-- On EOF reduce production any_term_ -> LET recursive IDENT EQ any_term_ IN any_term_ 
+
+State 26:
+atomic_term_ -> LPAREN any_term_ . RPAREN [ RPAREN MULOP LPAREN INTLITERAL IN IDENT EOF ADDOP ]
+-- On RPAREN shift to state 27
+
+State 27:
+atomic_term_ -> LPAREN any_term_ RPAREN . [ RPAREN MULOP LPAREN INTLITERAL IN IDENT EOF ADDOP ]
+-- On RPAREN reduce production atomic_term_ -> LPAREN any_term_ RPAREN 
+-- On MULOP reduce production atomic_term_ -> LPAREN any_term_ RPAREN 
+-- On LPAREN reduce production atomic_term_ -> LPAREN any_term_ RPAREN 
+-- On INTLITERAL reduce production atomic_term_ -> LPAREN any_term_ RPAREN 
+-- On IN reduce production atomic_term_ -> LPAREN any_term_ RPAREN 
+-- On IDENT reduce production atomic_term_ -> LPAREN any_term_ RPAREN 
+-- On EOF reduce production atomic_term_ -> LPAREN any_term_ RPAREN 
+-- On ADDOP reduce production atomic_term_ -> LPAREN any_term_ RPAREN 
+
+State 28:
+application_term_ -> PRINT atomic_term_ . [ RPAREN MULOP LPAREN INTLITERAL IN IDENT EOF ADDOP ]
+-- On RPAREN reduce production application_term_ -> PRINT atomic_term_ 
+-- On MULOP reduce production application_term_ -> PRINT atomic_term_ 
+-- On LPAREN reduce production application_term_ -> PRINT atomic_term_ 
+-- On INTLITERAL reduce production application_term_ -> PRINT atomic_term_ 
+-- On IN reduce production application_term_ -> PRINT atomic_term_ 
+-- On IDENT reduce production application_term_ -> PRINT atomic_term_ 
+-- On EOF reduce production application_term_ -> PRINT atomic_term_ 
+-- On ADDOP reduce production application_term_ -> PRINT atomic_term_ 
+
+State 29:
+entry' -> entry . [ # ]
+-- On # accept entry
+
+State 30:
+entry -> any_term_ . EOF [ # ]
+-- On EOF shift to state 31
+
+State 31:
+entry -> any_term_ EOF . [ # ]
+-- On # reduce production entry -> any_term_ EOF 
+

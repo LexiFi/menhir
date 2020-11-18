@@ -1,0 +1,40 @@
+
+** Conflict (reduce/reduce) in state 108.
+** Token involved: SP
+** This state is reached from request after reading:
+
+tag_ SP SEARCH SP charset_sp MODSEQ SP ATOM_CHARS 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+request 
+command 
+tag_ SP commands CRLF 
+        command_select 
+        c_search 
+        SEARCH SP charset_sp search_keys 
+                             loption(separated_nonempty_list(SP,op_search_keys)) 
+                             separated_nonempty_list(SP,op_search_keys) 
+                             (?)
+
+** In state 108, looking ahead at SP, reducing production
+** astring -> ATOM_CHARS 
+** is permitted because of the following sub-derivation:
+
+op_search_keys 
+op_search_key 
+search_key 
+modseq 
+MODSEQ SP astring SP modseq_entry_type SP ATOM_CHARS // lookahead token appears
+          ATOM_CHARS . 
+
+** In state 108, looking ahead at SP, reducing production
+** modseq -> MODSEQ SP ATOM_CHARS 
+** is permitted because of the following sub-derivation:
+
+op_search_keys SP separated_nonempty_list(SP,op_search_keys) // lookahead token appears
+op_search_key // lookahead token is inherited
+search_key // lookahead token is inherited
+modseq // lookahead token is inherited
+MODSEQ SP ATOM_CHARS . 

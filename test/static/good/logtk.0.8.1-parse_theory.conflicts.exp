@@ -1,0 +1,76 @@
+
+** Conflict (reduce/reduce) in state 91.
+** Tokens involved: XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY IF EQUIV EQUAL DOT COMMA AND_ALSO AND
+** The following explanations concentrate on token XOR.
+** This state is reached from parse_statement after reading:
+
+LEMMA atomic_defined_word 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+parse_statement 
+statement EOI 
+lemma 
+LEMMA fof_formula IF premises DOT 
+      fof_logic_formula 
+      fof_logic_formula XOR fof_logic_formula // lookahead token appears
+      fof_unitary_formula // lookahead token is inherited
+      atomic_formula // lookahead token is inherited
+      function_term // lookahead token is inherited
+      (?)
+
+** In state 91, looking ahead at XOR, reducing production
+** constant -> atomic_defined_word 
+** is permitted because of the following sub-derivation:
+
+plain_term // lookahead token is inherited
+constant // lookahead token is inherited
+atomic_defined_word . 
+
+** In state 91, looking ahead at XOR, reducing production
+** defined_functor -> atomic_defined_word 
+** is permitted because of the following sub-derivation:
+
+defined_term // lookahead token is inherited
+defined_atomic_term // lookahead token is inherited
+defined_plain_term // lookahead token is inherited
+defined_constant // lookahead token is inherited
+defined_functor // lookahead token is inherited
+atomic_defined_word . 
+
+** Conflict (reduce/reduce) in state 38.
+** Token involved: RIGHT_PAREN
+** This state is reached from parse_statement after reading:
+
+LEMMA UPPER_WORD COLUMN LEFT_PAREN tff_atom_type 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+parse_statement 
+statement EOI 
+lemma 
+LEMMA fof_formula IF premises DOT 
+      fof_logic_formula 
+      fof_unitary_formula 
+      atomic_formula 
+      term EQUAL term 
+      variable 
+      UPPER_WORD COLUMN tff_type 
+                        (?)
+
+** In state 38, looking ahead at RIGHT_PAREN, reducing production
+** tff_ty_args -> tff_atom_type 
+** is permitted because of the following sub-derivation:
+
+LEFT_PAREN tff_ty_args RIGHT_PAREN ARROW tff_atom_type // lookahead token appears
+           tff_atom_type . 
+
+** In state 38, looking ahead at RIGHT_PAREN, reducing production
+** tff_type -> tff_atom_type 
+** is permitted because of the following sub-derivation:
+
+tff_atom_type 
+LEFT_PAREN tff_type RIGHT_PAREN // lookahead token appears
+           tff_atom_type . 

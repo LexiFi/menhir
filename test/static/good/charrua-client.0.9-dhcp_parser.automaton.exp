@@ -1,0 +1,356 @@
+State 0:
+main' -> . main [ # ]
+-- On RANGE shift to state 1
+-- On OPTION shift to state 5
+-- On MAXLEASETIME shift to state 18
+-- On HARDWARE shift to state 21
+-- On FIXEDADDRESS shift to state 25
+-- On DEFAULTLEASETIME shift to state 28
+-- On statement shift to state 31
+-- On main shift to state 55
+
+State 1:
+statement -> RANGE . IP IP SCOLON [ SUBNET RBRACKET RANGE OPTION MAXLEASETIME HOST HARDWARE FIXEDADDRESS DEFAULTLEASETIME ]
+-- On IP shift to state 2
+
+State 2:
+statement -> RANGE IP . IP SCOLON [ SUBNET RBRACKET RANGE OPTION MAXLEASETIME HOST HARDWARE FIXEDADDRESS DEFAULTLEASETIME ]
+-- On IP shift to state 3
+
+State 3:
+statement -> RANGE IP IP . SCOLON [ SUBNET RBRACKET RANGE OPTION MAXLEASETIME HOST HARDWARE FIXEDADDRESS DEFAULTLEASETIME ]
+-- On SCOLON shift to state 4
+
+State 4:
+statement -> RANGE IP IP SCOLON . [ SUBNET RBRACKET RANGE OPTION MAXLEASETIME HOST HARDWARE FIXEDADDRESS DEFAULTLEASETIME ]
+-- On SUBNET reduce production statement -> RANGE IP IP SCOLON 
+-- On RBRACKET reduce production statement -> RANGE IP IP SCOLON 
+-- On RANGE reduce production statement -> RANGE IP IP SCOLON 
+-- On OPTION reduce production statement -> RANGE IP IP SCOLON 
+-- On MAXLEASETIME reduce production statement -> RANGE IP IP SCOLON 
+-- On HOST reduce production statement -> RANGE IP IP SCOLON 
+-- On HARDWARE reduce production statement -> RANGE IP IP SCOLON 
+-- On FIXEDADDRESS reduce production statement -> RANGE IP IP SCOLON 
+-- On DEFAULTLEASETIME reduce production statement -> RANGE IP IP SCOLON 
+
+State 5:
+statement -> OPTION . DOMAINNAME STRING SCOLON [ SUBNET RBRACKET RANGE OPTION MAXLEASETIME HOST HARDWARE FIXEDADDRESS DEFAULTLEASETIME ]
+statement -> OPTION . DOMAINNAMESERVERS ips SCOLON [ SUBNET RBRACKET RANGE OPTION MAXLEASETIME HOST HARDWARE FIXEDADDRESS DEFAULTLEASETIME ]
+statement -> OPTION . ROUTERS ips SCOLON [ SUBNET RBRACKET RANGE OPTION MAXLEASETIME HOST HARDWARE FIXEDADDRESS DEFAULTLEASETIME ]
+-- On ROUTERS shift to state 6
+-- On DOMAINNAMESERVERS shift to state 12
+-- On DOMAINNAME shift to state 15
+
+State 6:
+statement -> OPTION ROUTERS . ips SCOLON [ SUBNET RBRACKET RANGE OPTION MAXLEASETIME HOST HARDWARE FIXEDADDRESS DEFAULTLEASETIME ]
+-- On IP shift to state 7
+-- On ips shift to state 10
+
+State 7:
+ips -> IP . [ SCOLON ]
+ips -> IP . COMMA ips [ SCOLON ]
+-- On COMMA shift to state 8
+-- On SCOLON reduce production ips -> IP 
+
+State 8:
+ips -> IP COMMA . ips [ SCOLON ]
+-- On IP shift to state 7
+-- On ips shift to state 9
+
+State 9:
+ips -> IP COMMA ips . [ SCOLON ]
+-- On SCOLON reduce production ips -> IP COMMA ips 
+
+State 10:
+statement -> OPTION ROUTERS ips . SCOLON [ SUBNET RBRACKET RANGE OPTION MAXLEASETIME HOST HARDWARE FIXEDADDRESS DEFAULTLEASETIME ]
+-- On SCOLON shift to state 11
+
+State 11:
+statement -> OPTION ROUTERS ips SCOLON . [ SUBNET RBRACKET RANGE OPTION MAXLEASETIME HOST HARDWARE FIXEDADDRESS DEFAULTLEASETIME ]
+-- On SUBNET reduce production statement -> OPTION ROUTERS ips SCOLON 
+-- On RBRACKET reduce production statement -> OPTION ROUTERS ips SCOLON 
+-- On RANGE reduce production statement -> OPTION ROUTERS ips SCOLON 
+-- On OPTION reduce production statement -> OPTION ROUTERS ips SCOLON 
+-- On MAXLEASETIME reduce production statement -> OPTION ROUTERS ips SCOLON 
+-- On HOST reduce production statement -> OPTION ROUTERS ips SCOLON 
+-- On HARDWARE reduce production statement -> OPTION ROUTERS ips SCOLON 
+-- On FIXEDADDRESS reduce production statement -> OPTION ROUTERS ips SCOLON 
+-- On DEFAULTLEASETIME reduce production statement -> OPTION ROUTERS ips SCOLON 
+
+State 12:
+statement -> OPTION DOMAINNAMESERVERS . ips SCOLON [ SUBNET RBRACKET RANGE OPTION MAXLEASETIME HOST HARDWARE FIXEDADDRESS DEFAULTLEASETIME ]
+-- On IP shift to state 7
+-- On ips shift to state 13
+
+State 13:
+statement -> OPTION DOMAINNAMESERVERS ips . SCOLON [ SUBNET RBRACKET RANGE OPTION MAXLEASETIME HOST HARDWARE FIXEDADDRESS DEFAULTLEASETIME ]
+-- On SCOLON shift to state 14
+
+State 14:
+statement -> OPTION DOMAINNAMESERVERS ips SCOLON . [ SUBNET RBRACKET RANGE OPTION MAXLEASETIME HOST HARDWARE FIXEDADDRESS DEFAULTLEASETIME ]
+-- On SUBNET reduce production statement -> OPTION DOMAINNAMESERVERS ips SCOLON 
+-- On RBRACKET reduce production statement -> OPTION DOMAINNAMESERVERS ips SCOLON 
+-- On RANGE reduce production statement -> OPTION DOMAINNAMESERVERS ips SCOLON 
+-- On OPTION reduce production statement -> OPTION DOMAINNAMESERVERS ips SCOLON 
+-- On MAXLEASETIME reduce production statement -> OPTION DOMAINNAMESERVERS ips SCOLON 
+-- On HOST reduce production statement -> OPTION DOMAINNAMESERVERS ips SCOLON 
+-- On HARDWARE reduce production statement -> OPTION DOMAINNAMESERVERS ips SCOLON 
+-- On FIXEDADDRESS reduce production statement -> OPTION DOMAINNAMESERVERS ips SCOLON 
+-- On DEFAULTLEASETIME reduce production statement -> OPTION DOMAINNAMESERVERS ips SCOLON 
+
+State 15:
+statement -> OPTION DOMAINNAME . STRING SCOLON [ SUBNET RBRACKET RANGE OPTION MAXLEASETIME HOST HARDWARE FIXEDADDRESS DEFAULTLEASETIME ]
+-- On STRING shift to state 16
+
+State 16:
+statement -> OPTION DOMAINNAME STRING . SCOLON [ SUBNET RBRACKET RANGE OPTION MAXLEASETIME HOST HARDWARE FIXEDADDRESS DEFAULTLEASETIME ]
+-- On SCOLON shift to state 17
+
+State 17:
+statement -> OPTION DOMAINNAME STRING SCOLON . [ SUBNET RBRACKET RANGE OPTION MAXLEASETIME HOST HARDWARE FIXEDADDRESS DEFAULTLEASETIME ]
+-- On SUBNET reduce production statement -> OPTION DOMAINNAME STRING SCOLON 
+-- On RBRACKET reduce production statement -> OPTION DOMAINNAME STRING SCOLON 
+-- On RANGE reduce production statement -> OPTION DOMAINNAME STRING SCOLON 
+-- On OPTION reduce production statement -> OPTION DOMAINNAME STRING SCOLON 
+-- On MAXLEASETIME reduce production statement -> OPTION DOMAINNAME STRING SCOLON 
+-- On HOST reduce production statement -> OPTION DOMAINNAME STRING SCOLON 
+-- On HARDWARE reduce production statement -> OPTION DOMAINNAME STRING SCOLON 
+-- On FIXEDADDRESS reduce production statement -> OPTION DOMAINNAME STRING SCOLON 
+-- On DEFAULTLEASETIME reduce production statement -> OPTION DOMAINNAME STRING SCOLON 
+
+State 18:
+statement -> MAXLEASETIME . INTEGER SCOLON [ SUBNET RBRACKET RANGE OPTION MAXLEASETIME HOST HARDWARE FIXEDADDRESS DEFAULTLEASETIME ]
+-- On INTEGER shift to state 19
+
+State 19:
+statement -> MAXLEASETIME INTEGER . SCOLON [ SUBNET RBRACKET RANGE OPTION MAXLEASETIME HOST HARDWARE FIXEDADDRESS DEFAULTLEASETIME ]
+-- On SCOLON shift to state 20
+
+State 20:
+statement -> MAXLEASETIME INTEGER SCOLON . [ SUBNET RBRACKET RANGE OPTION MAXLEASETIME HOST HARDWARE FIXEDADDRESS DEFAULTLEASETIME ]
+-- On SUBNET reduce production statement -> MAXLEASETIME INTEGER SCOLON 
+-- On RBRACKET reduce production statement -> MAXLEASETIME INTEGER SCOLON 
+-- On RANGE reduce production statement -> MAXLEASETIME INTEGER SCOLON 
+-- On OPTION reduce production statement -> MAXLEASETIME INTEGER SCOLON 
+-- On MAXLEASETIME reduce production statement -> MAXLEASETIME INTEGER SCOLON 
+-- On HOST reduce production statement -> MAXLEASETIME INTEGER SCOLON 
+-- On HARDWARE reduce production statement -> MAXLEASETIME INTEGER SCOLON 
+-- On FIXEDADDRESS reduce production statement -> MAXLEASETIME INTEGER SCOLON 
+-- On DEFAULTLEASETIME reduce production statement -> MAXLEASETIME INTEGER SCOLON 
+
+State 21:
+statement -> HARDWARE . ETHERNET MACADDR SCOLON [ SUBNET RBRACKET RANGE OPTION MAXLEASETIME HOST HARDWARE FIXEDADDRESS DEFAULTLEASETIME ]
+-- On ETHERNET shift to state 22
+
+State 22:
+statement -> HARDWARE ETHERNET . MACADDR SCOLON [ SUBNET RBRACKET RANGE OPTION MAXLEASETIME HOST HARDWARE FIXEDADDRESS DEFAULTLEASETIME ]
+-- On MACADDR shift to state 23
+
+State 23:
+statement -> HARDWARE ETHERNET MACADDR . SCOLON [ SUBNET RBRACKET RANGE OPTION MAXLEASETIME HOST HARDWARE FIXEDADDRESS DEFAULTLEASETIME ]
+-- On SCOLON shift to state 24
+
+State 24:
+statement -> HARDWARE ETHERNET MACADDR SCOLON . [ SUBNET RBRACKET RANGE OPTION MAXLEASETIME HOST HARDWARE FIXEDADDRESS DEFAULTLEASETIME ]
+-- On SUBNET reduce production statement -> HARDWARE ETHERNET MACADDR SCOLON 
+-- On RBRACKET reduce production statement -> HARDWARE ETHERNET MACADDR SCOLON 
+-- On RANGE reduce production statement -> HARDWARE ETHERNET MACADDR SCOLON 
+-- On OPTION reduce production statement -> HARDWARE ETHERNET MACADDR SCOLON 
+-- On MAXLEASETIME reduce production statement -> HARDWARE ETHERNET MACADDR SCOLON 
+-- On HOST reduce production statement -> HARDWARE ETHERNET MACADDR SCOLON 
+-- On HARDWARE reduce production statement -> HARDWARE ETHERNET MACADDR SCOLON 
+-- On FIXEDADDRESS reduce production statement -> HARDWARE ETHERNET MACADDR SCOLON 
+-- On DEFAULTLEASETIME reduce production statement -> HARDWARE ETHERNET MACADDR SCOLON 
+
+State 25:
+statement -> FIXEDADDRESS . IP SCOLON [ SUBNET RBRACKET RANGE OPTION MAXLEASETIME HOST HARDWARE FIXEDADDRESS DEFAULTLEASETIME ]
+-- On IP shift to state 26
+
+State 26:
+statement -> FIXEDADDRESS IP . SCOLON [ SUBNET RBRACKET RANGE OPTION MAXLEASETIME HOST HARDWARE FIXEDADDRESS DEFAULTLEASETIME ]
+-- On SCOLON shift to state 27
+
+State 27:
+statement -> FIXEDADDRESS IP SCOLON . [ SUBNET RBRACKET RANGE OPTION MAXLEASETIME HOST HARDWARE FIXEDADDRESS DEFAULTLEASETIME ]
+-- On SUBNET reduce production statement -> FIXEDADDRESS IP SCOLON 
+-- On RBRACKET reduce production statement -> FIXEDADDRESS IP SCOLON 
+-- On RANGE reduce production statement -> FIXEDADDRESS IP SCOLON 
+-- On OPTION reduce production statement -> FIXEDADDRESS IP SCOLON 
+-- On MAXLEASETIME reduce production statement -> FIXEDADDRESS IP SCOLON 
+-- On HOST reduce production statement -> FIXEDADDRESS IP SCOLON 
+-- On HARDWARE reduce production statement -> FIXEDADDRESS IP SCOLON 
+-- On FIXEDADDRESS reduce production statement -> FIXEDADDRESS IP SCOLON 
+-- On DEFAULTLEASETIME reduce production statement -> FIXEDADDRESS IP SCOLON 
+
+State 28:
+statement -> DEFAULTLEASETIME . INTEGER SCOLON [ SUBNET RBRACKET RANGE OPTION MAXLEASETIME HOST HARDWARE FIXEDADDRESS DEFAULTLEASETIME ]
+-- On INTEGER shift to state 29
+
+State 29:
+statement -> DEFAULTLEASETIME INTEGER . SCOLON [ SUBNET RBRACKET RANGE OPTION MAXLEASETIME HOST HARDWARE FIXEDADDRESS DEFAULTLEASETIME ]
+-- On SCOLON shift to state 30
+
+State 30:
+statement -> DEFAULTLEASETIME INTEGER SCOLON . [ SUBNET RBRACKET RANGE OPTION MAXLEASETIME HOST HARDWARE FIXEDADDRESS DEFAULTLEASETIME ]
+-- On SUBNET reduce production statement -> DEFAULTLEASETIME INTEGER SCOLON 
+-- On RBRACKET reduce production statement -> DEFAULTLEASETIME INTEGER SCOLON 
+-- On RANGE reduce production statement -> DEFAULTLEASETIME INTEGER SCOLON 
+-- On OPTION reduce production statement -> DEFAULTLEASETIME INTEGER SCOLON 
+-- On MAXLEASETIME reduce production statement -> DEFAULTLEASETIME INTEGER SCOLON 
+-- On HOST reduce production statement -> DEFAULTLEASETIME INTEGER SCOLON 
+-- On HARDWARE reduce production statement -> DEFAULTLEASETIME INTEGER SCOLON 
+-- On FIXEDADDRESS reduce production statement -> DEFAULTLEASETIME INTEGER SCOLON 
+-- On DEFAULTLEASETIME reduce production statement -> DEFAULTLEASETIME INTEGER SCOLON 
+
+State 31:
+main -> statement . statements subnet subnets EOF [ # ]
+-- On RANGE shift to state 1
+-- On OPTION shift to state 5
+-- On MAXLEASETIME shift to state 18
+-- On HARDWARE shift to state 21
+-- On FIXEDADDRESS shift to state 25
+-- On DEFAULTLEASETIME shift to state 28
+-- On statements shift to state 32
+-- On statement shift to state 44
+-- On SUBNET reduce production statements -> 
+
+State 32:
+main -> statement statements . subnet subnets EOF [ # ]
+-- On SUBNET shift to state 33
+-- On subnet shift to state 50
+
+State 33:
+subnet -> SUBNET . IP NETMASK IP LBRACKET statements hosts RBRACKET [ SUBNET EOF ]
+-- On IP shift to state 34
+
+State 34:
+subnet -> SUBNET IP . NETMASK IP LBRACKET statements hosts RBRACKET [ SUBNET EOF ]
+-- On NETMASK shift to state 35
+
+State 35:
+subnet -> SUBNET IP NETMASK . IP LBRACKET statements hosts RBRACKET [ SUBNET EOF ]
+-- On IP shift to state 36
+
+State 36:
+subnet -> SUBNET IP NETMASK IP . LBRACKET statements hosts RBRACKET [ SUBNET EOF ]
+-- On LBRACKET shift to state 37
+
+State 37:
+subnet -> SUBNET IP NETMASK IP LBRACKET . statements hosts RBRACKET [ SUBNET EOF ]
+-- On RANGE shift to state 1
+-- On OPTION shift to state 5
+-- On MAXLEASETIME shift to state 18
+-- On HARDWARE shift to state 21
+-- On FIXEDADDRESS shift to state 25
+-- On DEFAULTLEASETIME shift to state 28
+-- On statements shift to state 38
+-- On statement shift to state 44
+-- On RBRACKET reduce production statements -> 
+-- On HOST reduce production statements -> 
+
+State 38:
+subnet -> SUBNET IP NETMASK IP LBRACKET statements . hosts RBRACKET [ SUBNET EOF ]
+-- On HOST shift to state 39
+-- On hosts shift to state 46
+-- On host shift to state 48
+-- On RBRACKET reduce production hosts -> 
+
+State 39:
+host -> HOST . WORD LBRACKET statements RBRACKET [ RBRACKET HOST ]
+-- On WORD shift to state 40
+
+State 40:
+host -> HOST WORD . LBRACKET statements RBRACKET [ RBRACKET HOST ]
+-- On LBRACKET shift to state 41
+
+State 41:
+host -> HOST WORD LBRACKET . statements RBRACKET [ RBRACKET HOST ]
+-- On RANGE shift to state 1
+-- On OPTION shift to state 5
+-- On MAXLEASETIME shift to state 18
+-- On HARDWARE shift to state 21
+-- On FIXEDADDRESS shift to state 25
+-- On DEFAULTLEASETIME shift to state 28
+-- On statements shift to state 42
+-- On statement shift to state 44
+-- On RBRACKET reduce production statements -> 
+
+State 42:
+host -> HOST WORD LBRACKET statements . RBRACKET [ RBRACKET HOST ]
+-- On RBRACKET shift to state 43
+
+State 43:
+host -> HOST WORD LBRACKET statements RBRACKET . [ RBRACKET HOST ]
+-- On RBRACKET reduce production host -> HOST WORD LBRACKET statements RBRACKET 
+-- On HOST reduce production host -> HOST WORD LBRACKET statements RBRACKET 
+
+State 44:
+statements -> statement . statements [ SUBNET RBRACKET HOST ]
+-- On RANGE shift to state 1
+-- On OPTION shift to state 5
+-- On MAXLEASETIME shift to state 18
+-- On HARDWARE shift to state 21
+-- On FIXEDADDRESS shift to state 25
+-- On DEFAULTLEASETIME shift to state 28
+-- On statements shift to state 45
+-- On statement shift to state 44
+-- On SUBNET reduce production statements -> 
+-- On RBRACKET reduce production statements -> 
+-- On HOST reduce production statements -> 
+
+State 45:
+statements -> statement statements . [ SUBNET RBRACKET HOST ]
+-- On SUBNET reduce production statements -> statement statements 
+-- On RBRACKET reduce production statements -> statement statements 
+-- On HOST reduce production statements -> statement statements 
+
+State 46:
+subnet -> SUBNET IP NETMASK IP LBRACKET statements hosts . RBRACKET [ SUBNET EOF ]
+-- On RBRACKET shift to state 47
+
+State 47:
+subnet -> SUBNET IP NETMASK IP LBRACKET statements hosts RBRACKET . [ SUBNET EOF ]
+-- On SUBNET reduce production subnet -> SUBNET IP NETMASK IP LBRACKET statements hosts RBRACKET 
+-- On EOF reduce production subnet -> SUBNET IP NETMASK IP LBRACKET statements hosts RBRACKET 
+
+State 48:
+hosts -> host . hosts [ RBRACKET ]
+-- On HOST shift to state 39
+-- On hosts shift to state 49
+-- On host shift to state 48
+-- On RBRACKET reduce production hosts -> 
+
+State 49:
+hosts -> host hosts . [ RBRACKET ]
+-- On RBRACKET reduce production hosts -> host hosts 
+
+State 50:
+main -> statement statements subnet . subnets EOF [ # ]
+-- On SUBNET shift to state 33
+-- On subnets shift to state 51
+-- On subnet shift to state 53
+-- On EOF reduce production subnets -> 
+
+State 51:
+main -> statement statements subnet subnets . EOF [ # ]
+-- On EOF shift to state 52
+
+State 52:
+main -> statement statements subnet subnets EOF . [ # ]
+-- On # reduce production main -> statement statements subnet subnets EOF 
+
+State 53:
+subnets -> subnet . subnets [ EOF ]
+-- On SUBNET shift to state 33
+-- On subnets shift to state 54
+-- On subnet shift to state 53
+-- On EOF reduce production subnets -> 
+
+State 54:
+subnets -> subnet subnets . [ EOF ]
+-- On EOF reduce production subnets -> subnet subnets 
+
+State 55:
+main' -> main . [ # ]
+-- On # accept main
+

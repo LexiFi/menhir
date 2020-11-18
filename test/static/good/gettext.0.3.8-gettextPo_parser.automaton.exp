@@ -1,0 +1,459 @@
+State 0:
+msgfmt' -> . msgfmt [ # ]
+-- On MSGID shift to state 1
+-- On EOF shift to state 18
+-- On DOMAIN shift to state 19
+-- On COMMENT_SPECIAL shift to state 21
+-- On COMMENT_FILEPOS shift to state 22
+-- On msgfmt shift to state 35
+-- On message_list shift to state 38
+-- On message shift to state 34
+-- On domain shift to state 39
+-- On comment_list shift to state 25
+-- On comment shift to state 33
+
+State 1:
+message -> MSGID . string_list MSGSTR string_list [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+message -> MSGID . string_list msgid_pluralform pluralform_list [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+-- On STRING shift to state 2
+-- On string_list shift to state 3
+
+State 2:
+string_list -> STRING . [ STRING MSGSTR MSGID_PLURAL MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+-- On STRING reduce production string_list -> STRING 
+-- On MSGSTR reduce production string_list -> STRING 
+-- On MSGID_PLURAL reduce production string_list -> STRING 
+-- On MSGID reduce production string_list -> STRING 
+-- On DOMAIN reduce production string_list -> STRING 
+-- On COMMENT_SPECIAL reduce production string_list -> STRING 
+-- On COMMENT_FILEPOS reduce production string_list -> STRING 
+-- On # reduce production string_list -> STRING 
+
+State 3:
+message -> MSGID string_list . MSGSTR string_list [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+message -> MSGID string_list . msgid_pluralform pluralform_list [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+string_list -> string_list . STRING [ STRING MSGSTR MSGID_PLURAL ]
+-- On STRING shift to state 4
+-- On MSGSTR shift to state 5
+-- On MSGID_PLURAL shift to state 7
+-- On msgid_pluralform shift to state 9
+
+State 4:
+string_list -> string_list STRING . [ STRING MSGSTR MSGID_PLURAL MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+-- On STRING reduce production string_list -> string_list STRING 
+-- On MSGSTR reduce production string_list -> string_list STRING 
+-- On MSGID_PLURAL reduce production string_list -> string_list STRING 
+-- On MSGID reduce production string_list -> string_list STRING 
+-- On DOMAIN reduce production string_list -> string_list STRING 
+-- On COMMENT_SPECIAL reduce production string_list -> string_list STRING 
+-- On COMMENT_FILEPOS reduce production string_list -> string_list STRING 
+-- On # reduce production string_list -> string_list STRING 
+
+State 5:
+message -> MSGID string_list MSGSTR . string_list [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+-- On STRING shift to state 2
+-- On string_list shift to state 6
+
+State 6:
+message -> MSGID string_list MSGSTR string_list . [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+string_list -> string_list . STRING [ STRING MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+-- On STRING shift to state 4
+-- On MSGID reduce production message -> MSGID string_list MSGSTR string_list 
+-- On DOMAIN reduce production message -> MSGID string_list MSGSTR string_list 
+-- On COMMENT_SPECIAL reduce production message -> MSGID string_list MSGSTR string_list 
+-- On COMMENT_FILEPOS reduce production message -> MSGID string_list MSGSTR string_list 
+-- On # reduce production message -> MSGID string_list MSGSTR string_list 
+
+State 7:
+msgid_pluralform -> MSGID_PLURAL . string_list [ MSGSTR ]
+-- On STRING shift to state 2
+-- On string_list shift to state 8
+
+State 8:
+msgid_pluralform -> MSGID_PLURAL string_list . [ MSGSTR ]
+string_list -> string_list . STRING [ STRING MSGSTR ]
+-- On STRING shift to state 4
+-- On MSGSTR reduce production msgid_pluralform -> MSGID_PLURAL string_list 
+
+State 9:
+message -> MSGID string_list msgid_pluralform . pluralform_list [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+-- On MSGSTR shift to state 10
+-- On pluralform_list shift to state 15
+-- On pluralform shift to state 17
+
+State 10:
+pluralform -> MSGSTR . LBRACKET NUMBER RBRACKET string_list [ MSGSTR MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+-- On LBRACKET shift to state 11
+
+State 11:
+pluralform -> MSGSTR LBRACKET . NUMBER RBRACKET string_list [ MSGSTR MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+-- On NUMBER shift to state 12
+
+State 12:
+pluralform -> MSGSTR LBRACKET NUMBER . RBRACKET string_list [ MSGSTR MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+-- On RBRACKET shift to state 13
+
+State 13:
+pluralform -> MSGSTR LBRACKET NUMBER RBRACKET . string_list [ MSGSTR MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+-- On STRING shift to state 2
+-- On string_list shift to state 14
+
+State 14:
+pluralform -> MSGSTR LBRACKET NUMBER RBRACKET string_list . [ MSGSTR MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+string_list -> string_list . STRING [ STRING MSGSTR MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+-- On STRING shift to state 4
+-- On MSGSTR reduce production pluralform -> MSGSTR LBRACKET NUMBER RBRACKET string_list 
+-- On MSGID reduce production pluralform -> MSGSTR LBRACKET NUMBER RBRACKET string_list 
+-- On DOMAIN reduce production pluralform -> MSGSTR LBRACKET NUMBER RBRACKET string_list 
+-- On COMMENT_SPECIAL reduce production pluralform -> MSGSTR LBRACKET NUMBER RBRACKET string_list 
+-- On COMMENT_FILEPOS reduce production pluralform -> MSGSTR LBRACKET NUMBER RBRACKET string_list 
+-- On # reduce production pluralform -> MSGSTR LBRACKET NUMBER RBRACKET string_list 
+
+State 15:
+message -> MSGID string_list msgid_pluralform pluralform_list . [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+pluralform_list -> pluralform_list . pluralform [ MSGSTR MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+-- On MSGSTR shift to state 10
+-- On pluralform shift to state 16
+-- On MSGID reduce production message -> MSGID string_list msgid_pluralform pluralform_list 
+-- On DOMAIN reduce production message -> MSGID string_list msgid_pluralform pluralform_list 
+-- On COMMENT_SPECIAL reduce production message -> MSGID string_list msgid_pluralform pluralform_list 
+-- On COMMENT_FILEPOS reduce production message -> MSGID string_list msgid_pluralform pluralform_list 
+-- On # reduce production message -> MSGID string_list msgid_pluralform pluralform_list 
+
+State 16:
+pluralform_list -> pluralform_list pluralform . [ MSGSTR MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+-- On MSGSTR reduce production pluralform_list -> pluralform_list pluralform 
+-- On MSGID reduce production pluralform_list -> pluralform_list pluralform 
+-- On DOMAIN reduce production pluralform_list -> pluralform_list pluralform 
+-- On COMMENT_SPECIAL reduce production pluralform_list -> pluralform_list pluralform 
+-- On COMMENT_FILEPOS reduce production pluralform_list -> pluralform_list pluralform 
+-- On # reduce production pluralform_list -> pluralform_list pluralform 
+
+State 17:
+pluralform_list -> pluralform . [ MSGSTR MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+-- On MSGSTR reduce production pluralform_list -> pluralform 
+-- On MSGID reduce production pluralform_list -> pluralform 
+-- On DOMAIN reduce production pluralform_list -> pluralform 
+-- On COMMENT_SPECIAL reduce production pluralform_list -> pluralform 
+-- On COMMENT_FILEPOS reduce production pluralform_list -> pluralform 
+-- On # reduce production pluralform_list -> pluralform 
+
+State 18:
+msgfmt -> EOF . [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+-- On MSGID reduce production msgfmt -> EOF 
+-- On DOMAIN reduce production msgfmt -> EOF 
+-- On COMMENT_SPECIAL reduce production msgfmt -> EOF 
+-- On COMMENT_FILEPOS reduce production msgfmt -> EOF 
+-- On # reduce production msgfmt -> EOF 
+
+State 19:
+domain -> DOMAIN . STRING message_list [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+domain -> DOMAIN . STRING [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+-- On STRING shift to state 20
+
+State 20:
+domain -> DOMAIN STRING . message_list [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+domain -> DOMAIN STRING . [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+-- On MSGID shift to state 1
+-- On COMMENT_SPECIAL shift to state 21
+-- On COMMENT_FILEPOS shift to state 22
+-- On message_list shift to state 23
+-- On message shift to state 34
+-- On comment_list shift to state 25
+-- On comment shift to state 33
+-- On MSGID reduce production domain -> DOMAIN STRING 
+-- On DOMAIN reduce production domain -> DOMAIN STRING 
+-- On COMMENT_SPECIAL reduce production domain -> DOMAIN STRING 
+-- On COMMENT_FILEPOS reduce production domain -> DOMAIN STRING 
+-- On # reduce production domain -> DOMAIN STRING 
+** Conflict on MSGID COMMENT_SPECIAL COMMENT_FILEPOS
+
+State 21:
+comment -> COMMENT_SPECIAL . [ MSGID COMMENT_SPECIAL COMMENT_FILEPOS ]
+-- On MSGID reduce production comment -> COMMENT_SPECIAL 
+-- On COMMENT_SPECIAL reduce production comment -> COMMENT_SPECIAL 
+-- On COMMENT_FILEPOS reduce production comment -> COMMENT_SPECIAL 
+
+State 22:
+comment -> COMMENT_FILEPOS . [ MSGID COMMENT_SPECIAL COMMENT_FILEPOS ]
+-- On MSGID reduce production comment -> COMMENT_FILEPOS 
+-- On COMMENT_SPECIAL reduce production comment -> COMMENT_FILEPOS 
+-- On COMMENT_FILEPOS reduce production comment -> COMMENT_FILEPOS 
+
+State 23:
+domain -> DOMAIN STRING message_list . [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+message_list -> message_list . message [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+-- On MSGID shift to state 1
+-- On COMMENT_SPECIAL shift to state 21
+-- On COMMENT_FILEPOS shift to state 22
+-- On message shift to state 24
+-- On comment_list shift to state 25
+-- On comment shift to state 33
+-- On MSGID reduce production domain -> DOMAIN STRING message_list 
+-- On DOMAIN reduce production domain -> DOMAIN STRING message_list 
+-- On COMMENT_SPECIAL reduce production domain -> DOMAIN STRING message_list 
+-- On COMMENT_FILEPOS reduce production domain -> DOMAIN STRING message_list 
+-- On # reduce production domain -> DOMAIN STRING message_list 
+** Conflict on MSGID COMMENT_SPECIAL COMMENT_FILEPOS
+
+State 24:
+message_list -> message_list message . [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+-- On MSGID reduce production message_list -> message_list message 
+-- On DOMAIN reduce production message_list -> message_list message 
+-- On COMMENT_SPECIAL reduce production message_list -> message_list message 
+-- On COMMENT_FILEPOS reduce production message_list -> message_list message 
+-- On # reduce production message_list -> message_list message 
+
+State 25:
+comment_list -> comment_list . comment [ MSGID COMMENT_SPECIAL COMMENT_FILEPOS ]
+message -> comment_list . MSGID string_list MSGSTR string_list [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+message -> comment_list . MSGID string_list msgid_pluralform pluralform_list [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+-- On MSGID shift to state 26
+-- On COMMENT_SPECIAL shift to state 21
+-- On COMMENT_FILEPOS shift to state 22
+-- On comment shift to state 32
+
+State 26:
+message -> comment_list MSGID . string_list MSGSTR string_list [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+message -> comment_list MSGID . string_list msgid_pluralform pluralform_list [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+-- On STRING shift to state 2
+-- On string_list shift to state 27
+
+State 27:
+message -> comment_list MSGID string_list . MSGSTR string_list [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+message -> comment_list MSGID string_list . msgid_pluralform pluralform_list [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+string_list -> string_list . STRING [ STRING MSGSTR MSGID_PLURAL ]
+-- On STRING shift to state 4
+-- On MSGSTR shift to state 28
+-- On MSGID_PLURAL shift to state 7
+-- On msgid_pluralform shift to state 30
+
+State 28:
+message -> comment_list MSGID string_list MSGSTR . string_list [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+-- On STRING shift to state 2
+-- On string_list shift to state 29
+
+State 29:
+message -> comment_list MSGID string_list MSGSTR string_list . [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+string_list -> string_list . STRING [ STRING MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+-- On STRING shift to state 4
+-- On MSGID reduce production message -> comment_list MSGID string_list MSGSTR string_list 
+-- On DOMAIN reduce production message -> comment_list MSGID string_list MSGSTR string_list 
+-- On COMMENT_SPECIAL reduce production message -> comment_list MSGID string_list MSGSTR string_list 
+-- On COMMENT_FILEPOS reduce production message -> comment_list MSGID string_list MSGSTR string_list 
+-- On # reduce production message -> comment_list MSGID string_list MSGSTR string_list 
+
+State 30:
+message -> comment_list MSGID string_list msgid_pluralform . pluralform_list [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+-- On MSGSTR shift to state 10
+-- On pluralform_list shift to state 31
+-- On pluralform shift to state 17
+
+State 31:
+message -> comment_list MSGID string_list msgid_pluralform pluralform_list . [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+pluralform_list -> pluralform_list . pluralform [ MSGSTR MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+-- On MSGSTR shift to state 10
+-- On pluralform shift to state 16
+-- On MSGID reduce production message -> comment_list MSGID string_list msgid_pluralform pluralform_list 
+-- On DOMAIN reduce production message -> comment_list MSGID string_list msgid_pluralform pluralform_list 
+-- On COMMENT_SPECIAL reduce production message -> comment_list MSGID string_list msgid_pluralform pluralform_list 
+-- On COMMENT_FILEPOS reduce production message -> comment_list MSGID string_list msgid_pluralform pluralform_list 
+-- On # reduce production message -> comment_list MSGID string_list msgid_pluralform pluralform_list 
+
+State 32:
+comment_list -> comment_list comment . [ MSGID COMMENT_SPECIAL COMMENT_FILEPOS ]
+-- On MSGID reduce production comment_list -> comment_list comment 
+-- On COMMENT_SPECIAL reduce production comment_list -> comment_list comment 
+-- On COMMENT_FILEPOS reduce production comment_list -> comment_list comment 
+
+State 33:
+comment_list -> comment . [ MSGID COMMENT_SPECIAL COMMENT_FILEPOS ]
+-- On MSGID reduce production comment_list -> comment 
+-- On COMMENT_SPECIAL reduce production comment_list -> comment 
+-- On COMMENT_FILEPOS reduce production comment_list -> comment 
+
+State 34:
+message_list -> message . [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+-- On MSGID reduce production message_list -> message 
+-- On DOMAIN reduce production message_list -> message 
+-- On COMMENT_SPECIAL reduce production message_list -> message 
+-- On COMMENT_FILEPOS reduce production message_list -> message 
+-- On # reduce production message_list -> message 
+
+State 35:
+msgfmt' -> msgfmt . [ # ]
+msgfmt -> msgfmt . domain [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+msgfmt -> msgfmt . message_list [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+-- On MSGID shift to state 1
+-- On DOMAIN shift to state 19
+-- On COMMENT_SPECIAL shift to state 21
+-- On COMMENT_FILEPOS shift to state 22
+-- On message_list shift to state 36
+-- On message shift to state 34
+-- On domain shift to state 37
+-- On comment_list shift to state 25
+-- On comment shift to state 33
+-- On # accept msgfmt
+
+State 36:
+message_list -> message_list . message [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+msgfmt -> msgfmt message_list . [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+-- On MSGID shift to state 1
+-- On COMMENT_SPECIAL shift to state 21
+-- On COMMENT_FILEPOS shift to state 22
+-- On message shift to state 24
+-- On comment_list shift to state 25
+-- On comment shift to state 33
+-- On MSGID reduce production msgfmt -> msgfmt message_list 
+-- On DOMAIN reduce production msgfmt -> msgfmt message_list 
+-- On COMMENT_SPECIAL reduce production msgfmt -> msgfmt message_list 
+-- On COMMENT_FILEPOS reduce production msgfmt -> msgfmt message_list 
+-- On # reduce production msgfmt -> msgfmt message_list 
+** Conflict on MSGID COMMENT_SPECIAL COMMENT_FILEPOS
+
+State 37:
+msgfmt -> msgfmt domain . [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+-- On MSGID reduce production msgfmt -> msgfmt domain 
+-- On DOMAIN reduce production msgfmt -> msgfmt domain 
+-- On COMMENT_SPECIAL reduce production msgfmt -> msgfmt domain 
+-- On COMMENT_FILEPOS reduce production msgfmt -> msgfmt domain 
+-- On # reduce production msgfmt -> msgfmt domain 
+
+State 38:
+message_list -> message_list . message [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+msgfmt -> message_list . [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+-- On MSGID shift to state 1
+-- On COMMENT_SPECIAL shift to state 21
+-- On COMMENT_FILEPOS shift to state 22
+-- On message shift to state 24
+-- On comment_list shift to state 25
+-- On comment shift to state 33
+-- On MSGID reduce production msgfmt -> message_list 
+-- On DOMAIN reduce production msgfmt -> message_list 
+-- On COMMENT_SPECIAL reduce production msgfmt -> message_list 
+-- On COMMENT_FILEPOS reduce production msgfmt -> message_list 
+-- On # reduce production msgfmt -> message_list 
+** Conflict on MSGID COMMENT_SPECIAL COMMENT_FILEPOS
+
+State 39:
+msgfmt -> domain . [ MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS # ]
+-- On MSGID reduce production msgfmt -> domain 
+-- On DOMAIN reduce production msgfmt -> domain 
+-- On COMMENT_SPECIAL reduce production msgfmt -> domain 
+-- On COMMENT_FILEPOS reduce production msgfmt -> domain 
+-- On # reduce production msgfmt -> domain 
+
+State 2 has an end-of-stream conflict. There is a tension between
+(1) reducing production string_list -> STRING 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of STRING MSGSTR MSGID_PLURAL MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS,
+which would require some other action.
+
+State 4 has an end-of-stream conflict. There is a tension between
+(1) reducing production string_list -> string_list STRING 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of STRING MSGSTR MSGID_PLURAL MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS,
+which would require some other action.
+
+State 6 has an end-of-stream conflict. There is a tension between
+(1) reducing production message -> MSGID string_list MSGSTR string_list 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of STRING MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS,
+which would require some other action.
+
+State 14 has an end-of-stream conflict. There is a tension between
+(1) reducing production pluralform -> MSGSTR LBRACKET NUMBER RBRACKET string_list 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of STRING MSGSTR MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS,
+which would require some other action.
+
+State 15 has an end-of-stream conflict. There is a tension between
+(1) reducing production message -> MSGID string_list msgid_pluralform pluralform_list 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of MSGSTR MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS,
+which would require some other action.
+
+State 16 has an end-of-stream conflict. There is a tension between
+(1) reducing production pluralform_list -> pluralform_list pluralform 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of MSGSTR MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS,
+which would require some other action.
+
+State 17 has an end-of-stream conflict. There is a tension between
+(1) reducing production pluralform_list -> pluralform 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of MSGSTR MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS,
+which would require some other action.
+
+State 18 has an end-of-stream conflict. There is a tension between
+(1) reducing production msgfmt -> EOF 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS,
+which would require some other action.
+
+State 20 has an end-of-stream conflict. There is a tension between
+(1) reducing production domain -> DOMAIN STRING 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS,
+which would require some other action.
+
+State 23 has an end-of-stream conflict. There is a tension between
+(1) reducing production domain -> DOMAIN STRING message_list 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS,
+which would require some other action.
+
+State 24 has an end-of-stream conflict. There is a tension between
+(1) reducing production message_list -> message_list message 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS,
+which would require some other action.
+
+State 29 has an end-of-stream conflict. There is a tension between
+(1) reducing production message -> comment_list MSGID string_list MSGSTR string_list 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of STRING MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS,
+which would require some other action.
+
+State 31 has an end-of-stream conflict. There is a tension between
+(1) reducing production message -> comment_list MSGID string_list msgid_pluralform pluralform_list 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of MSGSTR MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS,
+which would require some other action.
+
+State 34 has an end-of-stream conflict. There is a tension between
+(1) reducing production message_list -> message 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS,
+which would require some other action.
+
+State 35 has an end-of-stream conflict. There is a tension between
+(1) accepting msgfmt
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS,
+which would require some other action.
+
+State 36 has an end-of-stream conflict. There is a tension between
+(1) reducing production msgfmt -> msgfmt message_list 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS,
+which would require some other action.
+
+State 37 has an end-of-stream conflict. There is a tension between
+(1) reducing production msgfmt -> msgfmt domain 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS,
+which would require some other action.
+
+State 38 has an end-of-stream conflict. There is a tension between
+(1) reducing production msgfmt -> message_list 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS,
+which would require some other action.
+
+State 39 has an end-of-stream conflict. There is a tension between
+(1) reducing production msgfmt -> domain 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of MSGID DOMAIN COMMENT_SPECIAL COMMENT_FILEPOS,
+which would require some other action.
+

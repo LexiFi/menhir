@@ -1,0 +1,60 @@
+
+** Conflict (shift/reduce) in state 7.
+** Token involved: SIZE
+** This state is reached from desc after reading:
+
+exprl ARROW LOG 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+desc 
+exprl ARROW expr EOF 
+            (?)
+
+** In state 7, looking ahead at SIZE, shifting is permitted
+** because of the following sub-derivation:
+
+LOG exprl 
+    . SIZE exprl 
+
+** In state 7, looking ahead at SIZE, reducing production
+** exprl -> 
+** is permitted because of the following sub-derivation:
+
+expr SIZE // lookahead token appears
+LOG exprl // lookahead token is inherited
+    . 
+
+** Conflict (unexplainable) in state 3.
+** Token involved: SIZE
+** Please send your grammar to Menhir's developers.
+
+** Conflict (shift/reduce) in state 1.
+** Token involved: SIZE
+** This state is reached from desc after reading:
+
+exprl ARROW LOG SIZE 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+desc 
+exprl ARROW expr EOF 
+            (?)
+
+** In state 1, looking ahead at SIZE, shifting is permitted
+** because of the following sub-derivation:
+
+LOG exprl 
+    SIZE exprl 
+         . SIZE exprl 
+
+** In state 1, looking ahead at SIZE, reducing production
+** exprl -> 
+** is permitted because of the following sub-derivation:
+
+expr SIZE // lookahead token appears
+LOG exprl // lookahead token is inherited
+    SIZE exprl // lookahead token is inherited
+         . 

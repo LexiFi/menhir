@@ -1,0 +1,643 @@
+State 0:
+main' -> . main [ # ]
+-- On SEMI shift to state 1
+-- On semi_opt shift to state 2
+-- On main shift to state 104
+-- On PROC reduce production semi_opt -> 
+
+State 1:
+semi_opt -> SEMI . [ PROC ]
+-- On PROC reduce production semi_opt -> SEMI 
+
+State 2:
+main -> semi_opt . proc_list iol_list EOF [ # ]
+-- On PROC shift to state 3
+-- On proc_list shift to state 7
+
+State 3:
+proc_list -> PROC . SEMI [ STORE SEMI SC PIPE OPW OPIW OPI OP NAME LR LOAD LI J FENCETSO FENCEI FENCE BCC AMO ]
+proc_list -> PROC . PIPE proc_list [ STORE SEMI SC PIPE OPW OPIW OPI OP NAME LR LOAD LI J FENCETSO FENCEI FENCE BCC AMO ]
+-- On SEMI shift to state 4
+-- On PIPE shift to state 5
+
+State 4:
+proc_list -> PROC SEMI . [ STORE SEMI SC PIPE OPW OPIW OPI OP NAME LR LOAD LI J FENCETSO FENCEI FENCE BCC AMO ]
+-- On STORE reduce production proc_list -> PROC SEMI 
+-- On SEMI reduce production proc_list -> PROC SEMI 
+-- On SC reduce production proc_list -> PROC SEMI 
+-- On PIPE reduce production proc_list -> PROC SEMI 
+-- On OPW reduce production proc_list -> PROC SEMI 
+-- On OPIW reduce production proc_list -> PROC SEMI 
+-- On OPI reduce production proc_list -> PROC SEMI 
+-- On OP reduce production proc_list -> PROC SEMI 
+-- On NAME reduce production proc_list -> PROC SEMI 
+-- On LR reduce production proc_list -> PROC SEMI 
+-- On LOAD reduce production proc_list -> PROC SEMI 
+-- On LI reduce production proc_list -> PROC SEMI 
+-- On J reduce production proc_list -> PROC SEMI 
+-- On FENCETSO reduce production proc_list -> PROC SEMI 
+-- On FENCEI reduce production proc_list -> PROC SEMI 
+-- On FENCE reduce production proc_list -> PROC SEMI 
+-- On BCC reduce production proc_list -> PROC SEMI 
+-- On AMO reduce production proc_list -> PROC SEMI 
+
+State 5:
+proc_list -> PROC PIPE . proc_list [ STORE SEMI SC PIPE OPW OPIW OPI OP NAME LR LOAD LI J FENCETSO FENCEI FENCE BCC AMO ]
+-- On PROC shift to state 3
+-- On proc_list shift to state 6
+
+State 6:
+proc_list -> PROC PIPE proc_list . [ STORE SEMI SC PIPE OPW OPIW OPI OP NAME LR LOAD LI J FENCETSO FENCEI FENCE BCC AMO ]
+-- On STORE reduce production proc_list -> PROC PIPE proc_list 
+-- On SEMI reduce production proc_list -> PROC PIPE proc_list 
+-- On SC reduce production proc_list -> PROC PIPE proc_list 
+-- On PIPE reduce production proc_list -> PROC PIPE proc_list 
+-- On OPW reduce production proc_list -> PROC PIPE proc_list 
+-- On OPIW reduce production proc_list -> PROC PIPE proc_list 
+-- On OPI reduce production proc_list -> PROC PIPE proc_list 
+-- On OP reduce production proc_list -> PROC PIPE proc_list 
+-- On NAME reduce production proc_list -> PROC PIPE proc_list 
+-- On LR reduce production proc_list -> PROC PIPE proc_list 
+-- On LOAD reduce production proc_list -> PROC PIPE proc_list 
+-- On LI reduce production proc_list -> PROC PIPE proc_list 
+-- On J reduce production proc_list -> PROC PIPE proc_list 
+-- On FENCETSO reduce production proc_list -> PROC PIPE proc_list 
+-- On FENCEI reduce production proc_list -> PROC PIPE proc_list 
+-- On FENCE reduce production proc_list -> PROC PIPE proc_list 
+-- On BCC reduce production proc_list -> PROC PIPE proc_list 
+-- On AMO reduce production proc_list -> PROC PIPE proc_list 
+
+State 7:
+main -> semi_opt proc_list . iol_list EOF [ # ]
+-- On STORE shift to state 8
+-- On SC shift to state 21
+-- On OPW shift to state 34
+-- On OPIW shift to state 40
+-- On OPI shift to state 48
+-- On OP shift to state 54
+-- On NAME shift to state 60
+-- On LR shift to state 62
+-- On LOAD shift to state 66
+-- On LI shift to state 70
+-- On J shift to state 74
+-- On FENCETSO shift to state 76
+-- On FENCEI shift to state 77
+-- On FENCE shift to state 78
+-- On BCC shift to state 82
+-- On AMO shift to state 88
+-- On iol_list shift to state 96
+-- On instr_option_list shift to state 98
+-- On instr_option shift to state 101
+-- On instr shift to state 95
+-- On SEMI reduce production instr_option -> 
+-- On PIPE reduce production instr_option -> 
+
+State 8:
+instr -> STORE . reg COMMA addr [ SEMI PIPE ]
+-- On SYMB_REG shift to state 9
+-- On ARCH_REG shift to state 10
+-- On reg shift to state 11
+
+State 9:
+reg -> SYMB_REG . [ SEMI RPAR PIPE COMMA ]
+-- On SEMI reduce production reg -> SYMB_REG 
+-- On RPAR reduce production reg -> SYMB_REG 
+-- On PIPE reduce production reg -> SYMB_REG 
+-- On COMMA reduce production reg -> SYMB_REG 
+
+State 10:
+reg -> ARCH_REG . [ SEMI RPAR PIPE COMMA ]
+-- On SEMI reduce production reg -> ARCH_REG 
+-- On RPAR reduce production reg -> ARCH_REG 
+-- On PIPE reduce production reg -> ARCH_REG 
+-- On COMMA reduce production reg -> ARCH_REG 
+
+State 11:
+instr -> STORE reg . COMMA addr [ SEMI PIPE ]
+-- On COMMA shift to state 12
+
+State 12:
+instr -> STORE reg COMMA . addr [ SEMI PIPE ]
+-- On NUM shift to state 13
+-- On LPAR shift to state 17
+-- On addr shift to state 20
+
+State 13:
+addr -> NUM . LPAR reg RPAR [ SEMI PIPE ]
+-- On LPAR shift to state 14
+
+State 14:
+addr -> NUM LPAR . reg RPAR [ SEMI PIPE ]
+-- On SYMB_REG shift to state 9
+-- On ARCH_REG shift to state 10
+-- On reg shift to state 15
+
+State 15:
+addr -> NUM LPAR reg . RPAR [ SEMI PIPE ]
+-- On RPAR shift to state 16
+
+State 16:
+addr -> NUM LPAR reg RPAR . [ SEMI PIPE ]
+-- On SEMI reduce production addr -> NUM LPAR reg RPAR 
+-- On PIPE reduce production addr -> NUM LPAR reg RPAR 
+
+State 17:
+addr -> LPAR . reg RPAR [ SEMI PIPE ]
+-- On SYMB_REG shift to state 9
+-- On ARCH_REG shift to state 10
+-- On reg shift to state 18
+
+State 18:
+addr -> LPAR reg . RPAR [ SEMI PIPE ]
+-- On RPAR shift to state 19
+
+State 19:
+addr -> LPAR reg RPAR . [ SEMI PIPE ]
+-- On SEMI reduce production addr -> LPAR reg RPAR 
+-- On PIPE reduce production addr -> LPAR reg RPAR 
+
+State 20:
+instr -> STORE reg COMMA addr . [ SEMI PIPE ]
+-- On SEMI reduce production instr -> STORE reg COMMA addr 
+-- On PIPE reduce production instr -> STORE reg COMMA addr 
+
+State 21:
+instr -> SC . reg COMMA reg COMMA addr0 [ SEMI PIPE ]
+-- On SYMB_REG shift to state 9
+-- On ARCH_REG shift to state 10
+-- On reg shift to state 22
+
+State 22:
+instr -> SC reg . COMMA reg COMMA addr0 [ SEMI PIPE ]
+-- On COMMA shift to state 23
+
+State 23:
+instr -> SC reg COMMA . reg COMMA addr0 [ SEMI PIPE ]
+-- On SYMB_REG shift to state 9
+-- On ARCH_REG shift to state 10
+-- On reg shift to state 24
+
+State 24:
+instr -> SC reg COMMA reg . COMMA addr0 [ SEMI PIPE ]
+-- On COMMA shift to state 25
+
+State 25:
+instr -> SC reg COMMA reg COMMA . addr0 [ SEMI PIPE ]
+-- On NUM shift to state 26
+-- On LPAR shift to state 30
+-- On addr0 shift to state 33
+
+State 26:
+addr0 -> NUM . LPAR reg RPAR [ SEMI PIPE ]
+-- On LPAR shift to state 27
+
+State 27:
+addr0 -> NUM LPAR . reg RPAR [ SEMI PIPE ]
+-- On SYMB_REG shift to state 9
+-- On ARCH_REG shift to state 10
+-- On reg shift to state 28
+
+State 28:
+addr0 -> NUM LPAR reg . RPAR [ SEMI PIPE ]
+-- On RPAR shift to state 29
+
+State 29:
+addr0 -> NUM LPAR reg RPAR . [ SEMI PIPE ]
+-- On SEMI reduce production addr0 -> NUM LPAR reg RPAR 
+-- On PIPE reduce production addr0 -> NUM LPAR reg RPAR 
+
+State 30:
+addr0 -> LPAR . reg RPAR [ SEMI PIPE ]
+-- On SYMB_REG shift to state 9
+-- On ARCH_REG shift to state 10
+-- On reg shift to state 31
+
+State 31:
+addr0 -> LPAR reg . RPAR [ SEMI PIPE ]
+-- On RPAR shift to state 32
+
+State 32:
+addr0 -> LPAR reg RPAR . [ SEMI PIPE ]
+-- On SEMI reduce production addr0 -> LPAR reg RPAR 
+-- On PIPE reduce production addr0 -> LPAR reg RPAR 
+
+State 33:
+instr -> SC reg COMMA reg COMMA addr0 . [ SEMI PIPE ]
+-- On SEMI reduce production instr -> SC reg COMMA reg COMMA addr0 
+-- On PIPE reduce production instr -> SC reg COMMA reg COMMA addr0 
+
+State 34:
+instr -> OPW . reg COMMA reg COMMA reg [ SEMI PIPE ]
+-- On SYMB_REG shift to state 9
+-- On ARCH_REG shift to state 10
+-- On reg shift to state 35
+
+State 35:
+instr -> OPW reg . COMMA reg COMMA reg [ SEMI PIPE ]
+-- On COMMA shift to state 36
+
+State 36:
+instr -> OPW reg COMMA . reg COMMA reg [ SEMI PIPE ]
+-- On SYMB_REG shift to state 9
+-- On ARCH_REG shift to state 10
+-- On reg shift to state 37
+
+State 37:
+instr -> OPW reg COMMA reg . COMMA reg [ SEMI PIPE ]
+-- On COMMA shift to state 38
+
+State 38:
+instr -> OPW reg COMMA reg COMMA . reg [ SEMI PIPE ]
+-- On SYMB_REG shift to state 9
+-- On ARCH_REG shift to state 10
+-- On reg shift to state 39
+
+State 39:
+instr -> OPW reg COMMA reg COMMA reg . [ SEMI PIPE ]
+-- On SEMI reduce production instr -> OPW reg COMMA reg COMMA reg 
+-- On PIPE reduce production instr -> OPW reg COMMA reg COMMA reg 
+
+State 40:
+instr -> OPIW . reg COMMA reg COMMA k [ SEMI PIPE ]
+-- On SYMB_REG shift to state 9
+-- On ARCH_REG shift to state 10
+-- On reg shift to state 41
+
+State 41:
+instr -> OPIW reg . COMMA reg COMMA k [ SEMI PIPE ]
+-- On COMMA shift to state 42
+
+State 42:
+instr -> OPIW reg COMMA . reg COMMA k [ SEMI PIPE ]
+-- On SYMB_REG shift to state 9
+-- On ARCH_REG shift to state 10
+-- On reg shift to state 43
+
+State 43:
+instr -> OPIW reg COMMA reg . COMMA k [ SEMI PIPE ]
+-- On COMMA shift to state 44
+
+State 44:
+instr -> OPIW reg COMMA reg COMMA . k [ SEMI PIPE ]
+-- On NUM shift to state 45
+-- On META shift to state 46
+-- On k shift to state 47
+
+State 45:
+k -> NUM . [ SEMI PIPE ]
+-- On SEMI reduce production k -> NUM 
+-- On PIPE reduce production k -> NUM 
+
+State 46:
+k -> META . [ SEMI PIPE ]
+-- On SEMI reduce production k -> META 
+-- On PIPE reduce production k -> META 
+
+State 47:
+instr -> OPIW reg COMMA reg COMMA k . [ SEMI PIPE ]
+-- On SEMI reduce production instr -> OPIW reg COMMA reg COMMA k 
+-- On PIPE reduce production instr -> OPIW reg COMMA reg COMMA k 
+
+State 48:
+instr -> OPI . reg COMMA reg COMMA k [ SEMI PIPE ]
+-- On SYMB_REG shift to state 9
+-- On ARCH_REG shift to state 10
+-- On reg shift to state 49
+
+State 49:
+instr -> OPI reg . COMMA reg COMMA k [ SEMI PIPE ]
+-- On COMMA shift to state 50
+
+State 50:
+instr -> OPI reg COMMA . reg COMMA k [ SEMI PIPE ]
+-- On SYMB_REG shift to state 9
+-- On ARCH_REG shift to state 10
+-- On reg shift to state 51
+
+State 51:
+instr -> OPI reg COMMA reg . COMMA k [ SEMI PIPE ]
+-- On COMMA shift to state 52
+
+State 52:
+instr -> OPI reg COMMA reg COMMA . k [ SEMI PIPE ]
+-- On NUM shift to state 45
+-- On META shift to state 46
+-- On k shift to state 53
+
+State 53:
+instr -> OPI reg COMMA reg COMMA k . [ SEMI PIPE ]
+-- On SEMI reduce production instr -> OPI reg COMMA reg COMMA k 
+-- On PIPE reduce production instr -> OPI reg COMMA reg COMMA k 
+
+State 54:
+instr -> OP . reg COMMA reg COMMA reg [ SEMI PIPE ]
+-- On SYMB_REG shift to state 9
+-- On ARCH_REG shift to state 10
+-- On reg shift to state 55
+
+State 55:
+instr -> OP reg . COMMA reg COMMA reg [ SEMI PIPE ]
+-- On COMMA shift to state 56
+
+State 56:
+instr -> OP reg COMMA . reg COMMA reg [ SEMI PIPE ]
+-- On SYMB_REG shift to state 9
+-- On ARCH_REG shift to state 10
+-- On reg shift to state 57
+
+State 57:
+instr -> OP reg COMMA reg . COMMA reg [ SEMI PIPE ]
+-- On COMMA shift to state 58
+
+State 58:
+instr -> OP reg COMMA reg COMMA . reg [ SEMI PIPE ]
+-- On SYMB_REG shift to state 9
+-- On ARCH_REG shift to state 10
+-- On reg shift to state 59
+
+State 59:
+instr -> OP reg COMMA reg COMMA reg . [ SEMI PIPE ]
+-- On SEMI reduce production instr -> OP reg COMMA reg COMMA reg 
+-- On PIPE reduce production instr -> OP reg COMMA reg COMMA reg 
+
+State 60:
+instr_option -> NAME . COLON instr_option [ SEMI PIPE ]
+-- On COLON shift to state 61
+
+State 61:
+instr_option -> NAME COLON . instr_option [ SEMI PIPE ]
+-- On STORE shift to state 8
+-- On SC shift to state 21
+-- On OPW shift to state 34
+-- On OPIW shift to state 40
+-- On OPI shift to state 48
+-- On OP shift to state 54
+-- On NAME shift to state 60
+-- On LR shift to state 62
+-- On LOAD shift to state 66
+-- On LI shift to state 70
+-- On J shift to state 74
+-- On FENCETSO shift to state 76
+-- On FENCEI shift to state 77
+-- On FENCE shift to state 78
+-- On BCC shift to state 82
+-- On AMO shift to state 88
+-- On instr_option shift to state 94
+-- On instr shift to state 95
+-- On SEMI reduce production instr_option -> 
+-- On PIPE reduce production instr_option -> 
+
+State 62:
+instr -> LR . reg COMMA addr0 [ SEMI PIPE ]
+-- On SYMB_REG shift to state 9
+-- On ARCH_REG shift to state 10
+-- On reg shift to state 63
+
+State 63:
+instr -> LR reg . COMMA addr0 [ SEMI PIPE ]
+-- On COMMA shift to state 64
+
+State 64:
+instr -> LR reg COMMA . addr0 [ SEMI PIPE ]
+-- On NUM shift to state 26
+-- On LPAR shift to state 30
+-- On addr0 shift to state 65
+
+State 65:
+instr -> LR reg COMMA addr0 . [ SEMI PIPE ]
+-- On SEMI reduce production instr -> LR reg COMMA addr0 
+-- On PIPE reduce production instr -> LR reg COMMA addr0 
+
+State 66:
+instr -> LOAD . reg COMMA addr [ SEMI PIPE ]
+-- On SYMB_REG shift to state 9
+-- On ARCH_REG shift to state 10
+-- On reg shift to state 67
+
+State 67:
+instr -> LOAD reg . COMMA addr [ SEMI PIPE ]
+-- On COMMA shift to state 68
+
+State 68:
+instr -> LOAD reg COMMA . addr [ SEMI PIPE ]
+-- On NUM shift to state 13
+-- On LPAR shift to state 17
+-- On addr shift to state 69
+
+State 69:
+instr -> LOAD reg COMMA addr . [ SEMI PIPE ]
+-- On SEMI reduce production instr -> LOAD reg COMMA addr 
+-- On PIPE reduce production instr -> LOAD reg COMMA addr 
+
+State 70:
+instr -> LI . reg COMMA k [ SEMI PIPE ]
+-- On SYMB_REG shift to state 9
+-- On ARCH_REG shift to state 10
+-- On reg shift to state 71
+
+State 71:
+instr -> LI reg . COMMA k [ SEMI PIPE ]
+-- On COMMA shift to state 72
+
+State 72:
+instr -> LI reg COMMA . k [ SEMI PIPE ]
+-- On NUM shift to state 45
+-- On META shift to state 46
+-- On k shift to state 73
+
+State 73:
+instr -> LI reg COMMA k . [ SEMI PIPE ]
+-- On SEMI reduce production instr -> LI reg COMMA k 
+-- On PIPE reduce production instr -> LI reg COMMA k 
+
+State 74:
+instr -> J . NAME [ SEMI PIPE ]
+-- On NAME shift to state 75
+
+State 75:
+instr -> J NAME . [ SEMI PIPE ]
+-- On SEMI reduce production instr -> J NAME 
+-- On PIPE reduce production instr -> J NAME 
+
+State 76:
+instr -> FENCETSO . [ SEMI PIPE ]
+-- On SEMI reduce production instr -> FENCETSO 
+-- On PIPE reduce production instr -> FENCETSO 
+
+State 77:
+instr -> FENCEI . [ SEMI PIPE ]
+-- On SEMI reduce production instr -> FENCEI 
+-- On PIPE reduce production instr -> FENCEI 
+
+State 78:
+instr -> FENCE . [ SEMI PIPE ]
+instr -> FENCE . NAME COMMA NAME [ SEMI PIPE ]
+-- On NAME shift to state 79
+-- On SEMI reduce production instr -> FENCE 
+-- On PIPE reduce production instr -> FENCE 
+
+State 79:
+instr -> FENCE NAME . COMMA NAME [ SEMI PIPE ]
+-- On COMMA shift to state 80
+
+State 80:
+instr -> FENCE NAME COMMA . NAME [ SEMI PIPE ]
+-- On NAME shift to state 81
+
+State 81:
+instr -> FENCE NAME COMMA NAME . [ SEMI PIPE ]
+-- On SEMI reduce production instr -> FENCE NAME COMMA NAME 
+-- On PIPE reduce production instr -> FENCE NAME COMMA NAME 
+
+State 82:
+instr -> BCC . reg COMMA reg COMMA NAME [ SEMI PIPE ]
+-- On SYMB_REG shift to state 9
+-- On ARCH_REG shift to state 10
+-- On reg shift to state 83
+
+State 83:
+instr -> BCC reg . COMMA reg COMMA NAME [ SEMI PIPE ]
+-- On COMMA shift to state 84
+
+State 84:
+instr -> BCC reg COMMA . reg COMMA NAME [ SEMI PIPE ]
+-- On SYMB_REG shift to state 9
+-- On ARCH_REG shift to state 10
+-- On reg shift to state 85
+
+State 85:
+instr -> BCC reg COMMA reg . COMMA NAME [ SEMI PIPE ]
+-- On COMMA shift to state 86
+
+State 86:
+instr -> BCC reg COMMA reg COMMA . NAME [ SEMI PIPE ]
+-- On NAME shift to state 87
+
+State 87:
+instr -> BCC reg COMMA reg COMMA NAME . [ SEMI PIPE ]
+-- On SEMI reduce production instr -> BCC reg COMMA reg COMMA NAME 
+-- On PIPE reduce production instr -> BCC reg COMMA reg COMMA NAME 
+
+State 88:
+instr -> AMO . reg COMMA reg COMMA addr0 [ SEMI PIPE ]
+-- On SYMB_REG shift to state 9
+-- On ARCH_REG shift to state 10
+-- On reg shift to state 89
+
+State 89:
+instr -> AMO reg . COMMA reg COMMA addr0 [ SEMI PIPE ]
+-- On COMMA shift to state 90
+
+State 90:
+instr -> AMO reg COMMA . reg COMMA addr0 [ SEMI PIPE ]
+-- On SYMB_REG shift to state 9
+-- On ARCH_REG shift to state 10
+-- On reg shift to state 91
+
+State 91:
+instr -> AMO reg COMMA reg . COMMA addr0 [ SEMI PIPE ]
+-- On COMMA shift to state 92
+
+State 92:
+instr -> AMO reg COMMA reg COMMA . addr0 [ SEMI PIPE ]
+-- On NUM shift to state 26
+-- On LPAR shift to state 30
+-- On addr0 shift to state 93
+
+State 93:
+instr -> AMO reg COMMA reg COMMA addr0 . [ SEMI PIPE ]
+-- On SEMI reduce production instr -> AMO reg COMMA reg COMMA addr0 
+-- On PIPE reduce production instr -> AMO reg COMMA reg COMMA addr0 
+
+State 94:
+instr_option -> NAME COLON instr_option . [ SEMI PIPE ]
+-- On SEMI reduce production instr_option -> NAME COLON instr_option 
+-- On PIPE reduce production instr_option -> NAME COLON instr_option 
+
+State 95:
+instr_option -> instr . [ SEMI PIPE ]
+-- On SEMI reduce production instr_option -> instr 
+-- On PIPE reduce production instr_option -> instr 
+
+State 96:
+main -> semi_opt proc_list iol_list . EOF [ # ]
+-- On EOF shift to state 97
+
+State 97:
+main -> semi_opt proc_list iol_list EOF . [ # ]
+-- On # reduce production main -> semi_opt proc_list iol_list EOF 
+
+State 98:
+iol_list -> instr_option_list . SEMI [ EOF ]
+iol_list -> instr_option_list . SEMI iol_list [ EOF ]
+-- On SEMI shift to state 99
+
+State 99:
+iol_list -> instr_option_list SEMI . [ EOF ]
+iol_list -> instr_option_list SEMI . iol_list [ EOF ]
+-- On STORE shift to state 8
+-- On SC shift to state 21
+-- On OPW shift to state 34
+-- On OPIW shift to state 40
+-- On OPI shift to state 48
+-- On OP shift to state 54
+-- On NAME shift to state 60
+-- On LR shift to state 62
+-- On LOAD shift to state 66
+-- On LI shift to state 70
+-- On J shift to state 74
+-- On FENCETSO shift to state 76
+-- On FENCEI shift to state 77
+-- On FENCE shift to state 78
+-- On BCC shift to state 82
+-- On AMO shift to state 88
+-- On iol_list shift to state 100
+-- On instr_option_list shift to state 98
+-- On instr_option shift to state 101
+-- On instr shift to state 95
+-- On SEMI reduce production instr_option -> 
+-- On PIPE reduce production instr_option -> 
+-- On EOF reduce production iol_list -> instr_option_list SEMI 
+
+State 100:
+iol_list -> instr_option_list SEMI iol_list . [ EOF ]
+-- On EOF reduce production iol_list -> instr_option_list SEMI iol_list 
+
+State 101:
+instr_option_list -> instr_option . [ SEMI ]
+instr_option_list -> instr_option . PIPE instr_option_list [ SEMI ]
+-- On PIPE shift to state 102
+-- On SEMI reduce production instr_option_list -> instr_option 
+
+State 102:
+instr_option_list -> instr_option PIPE . instr_option_list [ SEMI ]
+-- On STORE shift to state 8
+-- On SC shift to state 21
+-- On OPW shift to state 34
+-- On OPIW shift to state 40
+-- On OPI shift to state 48
+-- On OP shift to state 54
+-- On NAME shift to state 60
+-- On LR shift to state 62
+-- On LOAD shift to state 66
+-- On LI shift to state 70
+-- On J shift to state 74
+-- On FENCETSO shift to state 76
+-- On FENCEI shift to state 77
+-- On FENCE shift to state 78
+-- On BCC shift to state 82
+-- On AMO shift to state 88
+-- On instr_option_list shift to state 103
+-- On instr_option shift to state 101
+-- On instr shift to state 95
+-- On SEMI reduce production instr_option -> 
+-- On PIPE reduce production instr_option -> 
+
+State 103:
+instr_option_list -> instr_option PIPE instr_option_list . [ SEMI ]
+-- On SEMI reduce production instr_option_list -> instr_option PIPE instr_option_list 
+
+State 104:
+main' -> main . [ # ]
+-- On # accept main
+

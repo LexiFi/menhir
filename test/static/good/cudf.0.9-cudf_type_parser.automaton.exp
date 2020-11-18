@@ -1,0 +1,623 @@
+State 0:
+ident_top' -> . ident_top [ # ]
+-- On IDENT shift to state 1
+-- On ident_top shift to state 2
+-- On ident shift to state 3
+
+State 1:
+ident -> IDENT . [ RBRACKET LBRACKET EQ EOL COMMA COLON ]
+-- On RBRACKET reduce production ident -> IDENT 
+-- On LBRACKET reduce production ident -> IDENT 
+-- On EQ reduce production ident -> IDENT 
+-- On EOL reduce production ident -> IDENT 
+-- On COMMA reduce production ident -> IDENT 
+-- On COLON reduce production ident -> IDENT 
+
+State 2:
+ident_top' -> ident_top . [ # ]
+-- On # accept ident_top
+
+State 3:
+ident_top -> ident . EOL [ # ]
+-- On EOL shift to state 4
+
+State 4:
+ident_top -> ident EOL . [ # ]
+-- On # reduce production ident_top -> ident EOL 
+
+State 5:
+int_top' -> . int_top [ # ]
+-- On POSINT shift to state 6
+-- On NEGINT shift to state 7
+-- On int_top shift to state 8
+-- On int shift to state 9
+
+State 6:
+int -> POSINT . [ EOL ]
+-- On EOL reduce production int -> POSINT 
+
+State 7:
+int -> NEGINT . [ EOL ]
+-- On EOL reduce production int -> NEGINT 
+
+State 8:
+int_top' -> int_top . [ # ]
+-- On # accept int_top
+
+State 9:
+int_top -> int . EOL [ # ]
+-- On EOL shift to state 10
+
+State 10:
+int_top -> int EOL . [ # ]
+-- On # reduce production int_top -> int EOL 
+
+State 11:
+pkgname_top' -> . pkgname_top [ # ]
+-- On POSINT shift to state 12
+-- On PKGNAME shift to state 13
+-- On NEGINT shift to state 14
+-- On IDENT shift to state 15
+-- On pkgname_top shift to state 16
+-- On pkgname shift to state 17
+
+State 12:
+pkgname -> POSINT . [ RELOP RBRACKET PIPE EQ EOL COMMA ]
+-- On RELOP reduce production pkgname -> POSINT 
+-- On RBRACKET reduce production pkgname -> POSINT 
+-- On PIPE reduce production pkgname -> POSINT 
+-- On EQ reduce production pkgname -> POSINT 
+-- On EOL reduce production pkgname -> POSINT 
+-- On COMMA reduce production pkgname -> POSINT 
+
+State 13:
+pkgname -> PKGNAME . [ RELOP RBRACKET PIPE EQ EOL COMMA ]
+-- On RELOP reduce production pkgname -> PKGNAME 
+-- On RBRACKET reduce production pkgname -> PKGNAME 
+-- On PIPE reduce production pkgname -> PKGNAME 
+-- On EQ reduce production pkgname -> PKGNAME 
+-- On EOL reduce production pkgname -> PKGNAME 
+-- On COMMA reduce production pkgname -> PKGNAME 
+
+State 14:
+pkgname -> NEGINT . [ RELOP RBRACKET PIPE EQ EOL COMMA ]
+-- On RELOP reduce production pkgname -> NEGINT 
+-- On RBRACKET reduce production pkgname -> NEGINT 
+-- On PIPE reduce production pkgname -> NEGINT 
+-- On EQ reduce production pkgname -> NEGINT 
+-- On EOL reduce production pkgname -> NEGINT 
+-- On COMMA reduce production pkgname -> NEGINT 
+
+State 15:
+pkgname -> IDENT . [ RELOP RBRACKET PIPE EQ EOL COMMA ]
+-- On RELOP reduce production pkgname -> IDENT 
+-- On RBRACKET reduce production pkgname -> IDENT 
+-- On PIPE reduce production pkgname -> IDENT 
+-- On EQ reduce production pkgname -> IDENT 
+-- On EOL reduce production pkgname -> IDENT 
+-- On COMMA reduce production pkgname -> IDENT 
+
+State 16:
+pkgname_top' -> pkgname_top . [ # ]
+-- On # accept pkgname_top
+
+State 17:
+pkgname_top -> pkgname . EOL [ # ]
+-- On EOL shift to state 18
+
+State 18:
+pkgname_top -> pkgname EOL . [ # ]
+-- On # reduce production pkgname_top -> pkgname EOL 
+
+State 19:
+qstring_top' -> . qstring_top [ # ]
+-- On QSTRING shift to state 20
+-- On qstring_top shift to state 21
+-- On qstring shift to state 22
+
+State 20:
+qstring -> QSTRING . [ RBRACKET EOL ]
+-- On RBRACKET reduce production qstring -> QSTRING 
+-- On EOL reduce production qstring -> QSTRING 
+
+State 21:
+qstring_top' -> qstring_top . [ # ]
+-- On # accept qstring_top
+
+State 22:
+qstring_top -> qstring . EOL [ # ]
+-- On EOL shift to state 23
+
+State 23:
+qstring_top -> qstring EOL . [ # ]
+-- On # reduce production qstring_top -> qstring EOL 
+
+State 24:
+type_top' -> . type_top [ # ]
+-- On IDENT shift to state 1
+-- On type_top shift to state 25
+-- On type_ shift to state 26
+-- On ident shift to state 28
+
+State 25:
+type_top' -> type_top . [ # ]
+-- On # accept type_top
+
+State 26:
+type_top -> type_ . EOL [ # ]
+-- On EOL shift to state 27
+
+State 27:
+type_top -> type_ EOL . [ # ]
+-- On # reduce production type_top -> type_ EOL 
+
+State 28:
+type_ -> ident . [ EQ EOL COMMA ]
+type_ -> ident . LBRACKET enums RBRACKET [ EQ EOL COMMA ]
+-- On LBRACKET shift to state 29
+-- On EQ reduce production type_ -> ident 
+-- On EOL reduce production type_ -> ident 
+-- On COMMA reduce production type_ -> ident 
+
+State 29:
+type_ -> ident LBRACKET . enums RBRACKET [ EQ EOL COMMA ]
+-- On IDENT shift to state 1
+-- On ident shift to state 30
+-- On enums shift to state 33
+
+State 30:
+enums -> ident . [ RBRACKET ]
+enums -> ident . COMMA enums [ RBRACKET ]
+-- On COMMA shift to state 31
+-- On RBRACKET reduce production enums -> ident 
+
+State 31:
+enums -> ident COMMA . enums [ RBRACKET ]
+-- On IDENT shift to state 1
+-- On ident shift to state 30
+-- On enums shift to state 32
+
+State 32:
+enums -> ident COMMA enums . [ RBRACKET ]
+-- On RBRACKET reduce production enums -> ident COMMA enums 
+
+State 33:
+type_ -> ident LBRACKET enums . RBRACKET [ EQ EOL COMMA ]
+-- On RBRACKET shift to state 34
+
+State 34:
+type_ -> ident LBRACKET enums RBRACKET . [ EQ EOL COMMA ]
+-- On EQ reduce production type_ -> ident LBRACKET enums RBRACKET 
+-- On EOL reduce production type_ -> ident LBRACKET enums RBRACKET 
+-- On COMMA reduce production type_ -> ident LBRACKET enums RBRACKET 
+
+State 35:
+typedecl_top' -> . typedecl_top [ # ]
+-- On IDENT shift to state 1
+-- On typedecl_top shift to state 36
+-- On typedecl_ne shift to state 37
+-- On typedecl_ shift to state 38
+-- On typedecl shift to state 82
+-- On ident shift to state 41
+-- On EOL reduce production typedecl -> 
+
+State 36:
+typedecl_top' -> typedecl_top . [ # ]
+-- On # accept typedecl_top
+
+State 37:
+typedecl -> typedecl_ne . [ EOL ]
+-- On EOL reduce production typedecl -> typedecl_ne 
+
+State 38:
+typedecl_ne -> typedecl_ . [ EOL ]
+typedecl_ne -> typedecl_ . COMMA typedecl_ne [ EOL ]
+-- On COMMA shift to state 39
+-- On EOL reduce production typedecl_ne -> typedecl_ 
+
+State 39:
+typedecl_ne -> typedecl_ COMMA . typedecl_ne [ EOL ]
+-- On IDENT shift to state 1
+-- On typedecl_ne shift to state 40
+-- On typedecl_ shift to state 38
+-- On ident shift to state 41
+
+State 40:
+typedecl_ne -> typedecl_ COMMA typedecl_ne . [ EOL ]
+-- On EOL reduce production typedecl_ne -> typedecl_ COMMA typedecl_ne 
+
+State 41:
+typedecl_ -> ident . COLON type_ [ EOL COMMA ]
+typedecl_ -> ident . COLON type_ EQ LBRACKET typed_value RBRACKET [ EOL COMMA ]
+-- On COLON shift to state 42
+
+State 42:
+typedecl_ -> ident COLON . type_ [ EOL COMMA ]
+typedecl_ -> ident COLON . type_ EQ LBRACKET typed_value RBRACKET [ EOL COMMA ]
+-- On IDENT shift to state 1
+-- On type_ shift to state 43
+-- On ident shift to state 28
+
+State 43:
+typedecl_ -> ident COLON type_ . [ EOL COMMA ]
+typedecl_ -> ident COLON type_ . EQ LBRACKET typed_value RBRACKET [ EOL COMMA ]
+-- On EQ shift to state 44
+-- On EOL reduce production typedecl_ -> ident COLON type_ 
+-- On COMMA reduce production typedecl_ -> ident COLON type_ 
+
+State 44:
+typedecl_ -> ident COLON type_ EQ . LBRACKET typed_value RBRACKET [ EOL COMMA ]
+-- On LBRACKET shift to state 45
+
+State 45:
+typedecl_ -> ident COLON type_ EQ LBRACKET . typed_value RBRACKET [ EOL COMMA ]
+-- On VPKGTRUE shift to state 46
+-- On VPKGFALSE shift to state 47
+-- On QSTRING shift to state 20
+-- On POSINT shift to state 48
+-- On PKGNAME shift to state 49
+-- On NEGINT shift to state 50
+-- On IDENT shift to state 51
+-- On vpkgformula_ntriv shift to state 52
+-- On vpkg_ntriv shift to state 53
+-- On vpkg shift to state 54
+-- On typed_value shift to state 66
+-- On qstring shift to state 68
+-- On pkgname shift to state 69
+-- On or_formula_ntriv shift to state 72
+-- On or_formula shift to state 73
+-- On int shift to state 79
+-- On ident shift to state 80
+-- On and_formula_ntriv shift to state 81
+-- On RBRACKET reduce production typed_value -> 
+
+State 46:
+vpkgformula_ntriv -> VPKGTRUE . [ RBRACKET ]
+-- On RBRACKET reduce production vpkgformula_ntriv -> VPKGTRUE 
+
+State 47:
+vpkgformula_ntriv -> VPKGFALSE . [ RBRACKET ]
+-- On RBRACKET reduce production vpkgformula_ntriv -> VPKGFALSE 
+
+State 48:
+int -> POSINT . [ RBRACKET ]
+pkgname -> POSINT . [ RELOP PIPE EQ COMMA ]
+-- On RELOP reduce production pkgname -> POSINT 
+-- On RBRACKET reduce production int -> POSINT 
+-- On PIPE reduce production pkgname -> POSINT 
+-- On EQ reduce production pkgname -> POSINT 
+-- On COMMA reduce production pkgname -> POSINT 
+
+State 49:
+pkgname -> PKGNAME . [ RELOP PIPE EQ COMMA ]
+vpkg_ntriv -> PKGNAME . [ RBRACKET ]
+-- On RELOP reduce production pkgname -> PKGNAME 
+-- On RBRACKET reduce production vpkg_ntriv -> PKGNAME 
+-- On PIPE reduce production pkgname -> PKGNAME 
+-- On EQ reduce production pkgname -> PKGNAME 
+-- On COMMA reduce production pkgname -> PKGNAME 
+
+State 50:
+int -> NEGINT . [ RBRACKET ]
+pkgname -> NEGINT . [ RELOP PIPE EQ COMMA ]
+-- On RELOP reduce production pkgname -> NEGINT 
+-- On RBRACKET reduce production int -> NEGINT 
+-- On PIPE reduce production pkgname -> NEGINT 
+-- On EQ reduce production pkgname -> NEGINT 
+-- On COMMA reduce production pkgname -> NEGINT 
+
+State 51:
+ident -> IDENT . [ RBRACKET ]
+pkgname -> IDENT . [ RELOP PIPE EQ COMMA ]
+-- On RELOP reduce production pkgname -> IDENT 
+-- On RBRACKET reduce production ident -> IDENT 
+-- On PIPE reduce production pkgname -> IDENT 
+-- On EQ reduce production pkgname -> IDENT 
+-- On COMMA reduce production pkgname -> IDENT 
+
+State 52:
+typed_value -> vpkgformula_ntriv . [ RBRACKET ]
+-- On RBRACKET reduce production typed_value -> vpkgformula_ntriv 
+
+State 53:
+or_formula_ntriv -> vpkg_ntriv . [ RBRACKET ]
+-- On RBRACKET reduce production or_formula_ntriv -> vpkg_ntriv 
+
+State 54:
+or_formula -> vpkg . [ COMMA ]
+or_formula -> vpkg . PIPE or_formula [ COMMA ]
+or_formula_ntriv -> vpkg . PIPE or_formula [ RBRACKET ]
+-- On PIPE shift to state 55
+-- On COMMA reduce production or_formula -> vpkg 
+
+State 55:
+or_formula -> vpkg PIPE . or_formula [ COMMA ]
+or_formula_ntriv -> vpkg PIPE . or_formula [ RBRACKET ]
+-- On POSINT shift to state 12
+-- On PKGNAME shift to state 13
+-- On NEGINT shift to state 14
+-- On IDENT shift to state 15
+-- On vpkg shift to state 56
+-- On pkgname shift to state 58
+-- On or_formula shift to state 65
+
+State 56:
+or_formula -> vpkg . [ RBRACKET EOL COMMA ]
+or_formula -> vpkg . PIPE or_formula [ RBRACKET EOL COMMA ]
+-- On PIPE shift to state 57
+-- On RBRACKET reduce production or_formula -> vpkg 
+-- On EOL reduce production or_formula -> vpkg 
+-- On COMMA reduce production or_formula -> vpkg 
+
+State 57:
+or_formula -> vpkg PIPE . or_formula [ RBRACKET EOL COMMA ]
+-- On POSINT shift to state 12
+-- On PKGNAME shift to state 13
+-- On NEGINT shift to state 14
+-- On IDENT shift to state 15
+-- On vpkg shift to state 56
+-- On pkgname shift to state 58
+-- On or_formula shift to state 64
+
+State 58:
+vpkg -> pkgname . [ RBRACKET PIPE EOL COMMA ]
+vpkg -> pkgname . relop version [ RBRACKET PIPE EOL COMMA ]
+-- On RELOP shift to state 59
+-- On EQ shift to state 60
+-- On relop shift to state 61
+-- On RBRACKET reduce production vpkg -> pkgname 
+-- On PIPE reduce production vpkg -> pkgname 
+-- On EOL reduce production vpkg -> pkgname 
+-- On COMMA reduce production vpkg -> pkgname 
+
+State 59:
+relop -> RELOP . [ POSINT ]
+-- On POSINT reduce production relop -> RELOP 
+
+State 60:
+relop -> EQ . [ POSINT ]
+-- On POSINT reduce production relop -> EQ 
+
+State 61:
+vpkg -> pkgname relop . version [ RBRACKET PIPE EOL COMMA ]
+-- On POSINT shift to state 62
+-- On version shift to state 63
+
+State 62:
+version -> POSINT . [ RBRACKET PIPE EOL COMMA ]
+-- On RBRACKET reduce production version -> POSINT 
+-- On PIPE reduce production version -> POSINT 
+-- On EOL reduce production version -> POSINT 
+-- On COMMA reduce production version -> POSINT 
+
+State 63:
+vpkg -> pkgname relop version . [ RBRACKET PIPE EOL COMMA ]
+-- On RBRACKET reduce production vpkg -> pkgname relop version 
+-- On PIPE reduce production vpkg -> pkgname relop version 
+-- On EOL reduce production vpkg -> pkgname relop version 
+-- On COMMA reduce production vpkg -> pkgname relop version 
+
+State 64:
+or_formula -> vpkg PIPE or_formula . [ RBRACKET EOL COMMA ]
+-- On RBRACKET reduce production or_formula -> vpkg PIPE or_formula 
+-- On EOL reduce production or_formula -> vpkg PIPE or_formula 
+-- On COMMA reduce production or_formula -> vpkg PIPE or_formula 
+
+State 65:
+or_formula -> vpkg PIPE or_formula . [ COMMA ]
+or_formula_ntriv -> vpkg PIPE or_formula . [ RBRACKET ]
+-- On RBRACKET reduce production or_formula_ntriv -> vpkg PIPE or_formula 
+-- On COMMA reduce production or_formula -> vpkg PIPE or_formula 
+
+State 66:
+typedecl_ -> ident COLON type_ EQ LBRACKET typed_value . RBRACKET [ EOL COMMA ]
+-- On RBRACKET shift to state 67
+
+State 67:
+typedecl_ -> ident COLON type_ EQ LBRACKET typed_value RBRACKET . [ EOL COMMA ]
+-- On EOL reduce production typedecl_ -> ident COLON type_ EQ LBRACKET typed_value RBRACKET 
+-- On COMMA reduce production typedecl_ -> ident COLON type_ EQ LBRACKET typed_value RBRACKET 
+
+State 68:
+typed_value -> qstring . [ RBRACKET ]
+-- On RBRACKET reduce production typed_value -> qstring 
+
+State 69:
+vpkg -> pkgname . [ PIPE COMMA ]
+vpkg -> pkgname . relop version [ PIPE COMMA ]
+vpkg_ntriv -> pkgname . relop version [ RBRACKET ]
+-- On RELOP shift to state 59
+-- On EQ shift to state 60
+-- On relop shift to state 70
+-- On PIPE reduce production vpkg -> pkgname 
+-- On COMMA reduce production vpkg -> pkgname 
+
+State 70:
+vpkg -> pkgname relop . version [ PIPE COMMA ]
+vpkg_ntriv -> pkgname relop . version [ RBRACKET ]
+-- On POSINT shift to state 62
+-- On version shift to state 71
+
+State 71:
+vpkg -> pkgname relop version . [ PIPE COMMA ]
+vpkg_ntriv -> pkgname relop version . [ RBRACKET ]
+-- On RBRACKET reduce production vpkg_ntriv -> pkgname relop version 
+-- On PIPE reduce production vpkg -> pkgname relop version 
+-- On COMMA reduce production vpkg -> pkgname relop version 
+
+State 72:
+and_formula_ntriv -> or_formula_ntriv . [ RBRACKET ]
+-- On RBRACKET reduce production and_formula_ntriv -> or_formula_ntriv 
+
+State 73:
+and_formula_ntriv -> or_formula . COMMA and_formula [ RBRACKET ]
+-- On COMMA shift to state 74
+
+State 74:
+and_formula_ntriv -> or_formula COMMA . and_formula [ RBRACKET ]
+-- On POSINT shift to state 12
+-- On PKGNAME shift to state 13
+-- On NEGINT shift to state 14
+-- On IDENT shift to state 15
+-- On vpkg shift to state 56
+-- On pkgname shift to state 58
+-- On or_formula shift to state 75
+-- On and_formula shift to state 78
+
+State 75:
+and_formula -> or_formula . [ RBRACKET EOL ]
+and_formula -> or_formula . COMMA and_formula [ RBRACKET EOL ]
+-- On COMMA shift to state 76
+-- On RBRACKET reduce production and_formula -> or_formula 
+-- On EOL reduce production and_formula -> or_formula 
+
+State 76:
+and_formula -> or_formula COMMA . and_formula [ RBRACKET EOL ]
+-- On POSINT shift to state 12
+-- On PKGNAME shift to state 13
+-- On NEGINT shift to state 14
+-- On IDENT shift to state 15
+-- On vpkg shift to state 56
+-- On pkgname shift to state 58
+-- On or_formula shift to state 75
+-- On and_formula shift to state 77
+
+State 77:
+and_formula -> or_formula COMMA and_formula . [ RBRACKET EOL ]
+-- On RBRACKET reduce production and_formula -> or_formula COMMA and_formula 
+-- On EOL reduce production and_formula -> or_formula COMMA and_formula 
+
+State 78:
+and_formula_ntriv -> or_formula COMMA and_formula . [ RBRACKET ]
+-- On RBRACKET reduce production and_formula_ntriv -> or_formula COMMA and_formula 
+
+State 79:
+typed_value -> int . [ RBRACKET ]
+-- On RBRACKET reduce production typed_value -> int 
+
+State 80:
+typed_value -> ident . [ RBRACKET ]
+-- On RBRACKET reduce production typed_value -> ident 
+
+State 81:
+vpkgformula_ntriv -> and_formula_ntriv . [ RBRACKET ]
+-- On RBRACKET reduce production vpkgformula_ntriv -> and_formula_ntriv 
+
+State 82:
+typedecl_top -> typedecl . EOL [ # ]
+-- On EOL shift to state 83
+
+State 83:
+typedecl_top -> typedecl EOL . [ # ]
+-- On # reduce production typedecl_top -> typedecl EOL 
+
+State 84:
+vpkg_top' -> . vpkg_top [ # ]
+-- On POSINT shift to state 12
+-- On PKGNAME shift to state 13
+-- On NEGINT shift to state 14
+-- On IDENT shift to state 15
+-- On vpkg_top shift to state 85
+-- On vpkg shift to state 86
+-- On pkgname shift to state 58
+
+State 85:
+vpkg_top' -> vpkg_top . [ # ]
+-- On # accept vpkg_top
+
+State 86:
+vpkg_top -> vpkg . EOL [ # ]
+-- On EOL shift to state 87
+
+State 87:
+vpkg_top -> vpkg EOL . [ # ]
+-- On # reduce production vpkg_top -> vpkg EOL 
+
+State 88:
+vpkgformula_top' -> . vpkgformula_top [ # ]
+-- On VPKGTRUE shift to state 89
+-- On VPKGFALSE shift to state 90
+-- On POSINT shift to state 12
+-- On PKGNAME shift to state 13
+-- On NEGINT shift to state 14
+-- On IDENT shift to state 15
+-- On vpkgformula_top shift to state 91
+-- On vpkgformula shift to state 92
+-- On vpkg shift to state 56
+-- On pkgname shift to state 58
+-- On or_formula shift to state 75
+-- On and_formula shift to state 94
+
+State 89:
+vpkgformula -> VPKGTRUE . [ EOL ]
+-- On EOL reduce production vpkgformula -> VPKGTRUE 
+
+State 90:
+vpkgformula -> VPKGFALSE . [ EOL ]
+-- On EOL reduce production vpkgformula -> VPKGFALSE 
+
+State 91:
+vpkgformula_top' -> vpkgformula_top . [ # ]
+-- On # accept vpkgformula_top
+
+State 92:
+vpkgformula_top -> vpkgformula . EOL [ # ]
+-- On EOL shift to state 93
+
+State 93:
+vpkgformula_top -> vpkgformula EOL . [ # ]
+-- On # reduce production vpkgformula_top -> vpkgformula EOL 
+
+State 94:
+vpkgformula -> and_formula . [ EOL ]
+-- On EOL reduce production vpkgformula -> and_formula 
+
+State 95:
+vpkglist_top' -> . vpkglist_top [ # ]
+-- On POSINT shift to state 12
+-- On PKGNAME shift to state 13
+-- On NEGINT shift to state 14
+-- On IDENT shift to state 15
+-- On vpkglist_top shift to state 96
+-- On vpkglist_ne shift to state 97
+-- On vpkglist shift to state 98
+-- On vpkg shift to state 100
+-- On pkgname shift to state 58
+-- On EOL reduce production vpkglist -> 
+
+State 96:
+vpkglist_top' -> vpkglist_top . [ # ]
+-- On # accept vpkglist_top
+
+State 97:
+vpkglist -> vpkglist_ne . [ EOL ]
+-- On EOL reduce production vpkglist -> vpkglist_ne 
+
+State 98:
+vpkglist_top -> vpkglist . EOL [ # ]
+-- On EOL shift to state 99
+
+State 99:
+vpkglist_top -> vpkglist EOL . [ # ]
+-- On # reduce production vpkglist_top -> vpkglist EOL 
+
+State 100:
+vpkglist_ne -> vpkg . [ EOL ]
+vpkglist_ne -> vpkg . COMMA vpkglist_ne [ EOL ]
+-- On COMMA shift to state 101
+-- On EOL reduce production vpkglist_ne -> vpkg 
+
+State 101:
+vpkglist_ne -> vpkg COMMA . vpkglist_ne [ EOL ]
+-- On POSINT shift to state 12
+-- On PKGNAME shift to state 13
+-- On NEGINT shift to state 14
+-- On IDENT shift to state 15
+-- On vpkglist_ne shift to state 102
+-- On vpkg shift to state 100
+-- On pkgname shift to state 58
+
+State 102:
+vpkglist_ne -> vpkg COMMA vpkglist_ne . [ EOL ]
+-- On EOL reduce production vpkglist_ne -> vpkg COMMA vpkglist_ne 
+

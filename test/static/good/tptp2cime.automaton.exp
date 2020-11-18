@@ -1,0 +1,282 @@
+State 0:
+donnees' -> . donnees [ # ]
+-- On TOKEN_INPUT_CLAUSE shift to state 1
+-- On TOKEN_INCLUDE shift to state 2
+-- On FIN shift to state 3
+-- On keyword_input_clause shift to state 4
+-- On keyword_include shift to state 41
+-- On donnees shift to state 47
+-- On declaration shift to state 48
+
+State 1:
+keyword_input_clause -> TOKEN_INPUT_CLAUSE . [ PARGAUCHE ]
+-- On PARGAUCHE reduce production keyword_input_clause -> TOKEN_INPUT_CLAUSE 
+
+State 2:
+keyword_include -> TOKEN_INCLUDE . [ PARGAUCHE ]
+-- On PARGAUCHE reduce production keyword_include -> TOKEN_INCLUDE 
+
+State 3:
+donnees -> FIN . [ # ]
+-- On # reduce production donnees -> FIN 
+
+State 4:
+declaration -> keyword_input_clause . PARGAUCHE ident VIRGULE ident VIRGULE clause PARDROITE POINT [ TOKEN_INPUT_CLAUSE TOKEN_INCLUDE FIN ]
+-- On PARGAUCHE shift to state 5
+
+State 5:
+declaration -> keyword_input_clause PARGAUCHE . ident VIRGULE ident VIRGULE clause PARDROITE POINT [ TOKEN_INPUT_CLAUSE TOKEN_INCLUDE FIN ]
+-- On IDENT shift to state 6
+-- On ident shift to state 7
+
+State 6:
+ident -> IDENT . [ VIRGULE ]
+-- On VIRGULE reduce production ident -> IDENT 
+
+State 7:
+declaration -> keyword_input_clause PARGAUCHE ident . VIRGULE ident VIRGULE clause PARDROITE POINT [ TOKEN_INPUT_CLAUSE TOKEN_INCLUDE FIN ]
+-- On VIRGULE shift to state 8
+
+State 8:
+declaration -> keyword_input_clause PARGAUCHE ident VIRGULE . ident VIRGULE clause PARDROITE POINT [ TOKEN_INPUT_CLAUSE TOKEN_INCLUDE FIN ]
+-- On IDENT shift to state 6
+-- On ident shift to state 9
+
+State 9:
+declaration -> keyword_input_clause PARGAUCHE ident VIRGULE ident . VIRGULE clause PARDROITE POINT [ TOKEN_INPUT_CLAUSE TOKEN_INCLUDE FIN ]
+-- On VIRGULE shift to state 10
+
+State 10:
+declaration -> keyword_input_clause PARGAUCHE ident VIRGULE ident VIRGULE . clause PARDROITE POINT [ TOKEN_INPUT_CLAUSE TOKEN_INCLUDE FIN ]
+-- On CROGAUCHE shift to state 11
+-- On clause shift to state 38
+
+State 11:
+clause -> CROGAUCHE . literal_list CRODROIT [ PARDROITE ]
+-- On PLUS shift to state 12
+-- On MOINS shift to state 31
+-- On literal_list shift to state 33
+-- On literal shift to state 35
+
+State 12:
+literal -> PLUS . atom [ VIRGULE CRODROIT ]
+-- On EGAL shift to state 13
+-- On atom shift to state 30
+
+State 13:
+atom -> EGAL . PARGAUCHE term VIRGULE term PARDROITE [ VIRGULE CRODROIT ]
+-- On PARGAUCHE shift to state 14
+
+State 14:
+atom -> EGAL PARGAUCHE . term VIRGULE term PARDROITE [ VIRGULE CRODROIT ]
+-- On VRB shift to state 15
+-- On PARGAUCHE shift to state 16
+-- On IDENT shift to state 17
+-- On term shift to state 26
+
+State 15:
+term -> VRB . [ VIRGULE POINT_VIRGULE PARDROITE ]
+-- On VIRGULE reduce production term -> VRB 
+-- On POINT_VIRGULE reduce production term -> VRB 
+-- On PARDROITE reduce production term -> VRB 
+
+State 16:
+term -> PARGAUCHE . term PARDROITE [ VIRGULE POINT_VIRGULE PARDROITE ]
+-- On VRB shift to state 15
+-- On PARGAUCHE shift to state 16
+-- On IDENT shift to state 17
+-- On term shift to state 24
+
+State 17:
+term -> IDENT . [ VIRGULE POINT_VIRGULE PARDROITE ]
+term -> IDENT . PARGAUCHE term_list PARDROITE [ VIRGULE POINT_VIRGULE PARDROITE ]
+-- On PARGAUCHE shift to state 18
+-- On VIRGULE reduce production term -> IDENT 
+-- On POINT_VIRGULE reduce production term -> IDENT 
+-- On PARDROITE reduce production term -> IDENT 
+
+State 18:
+term -> IDENT PARGAUCHE . term_list PARDROITE [ VIRGULE POINT_VIRGULE PARDROITE ]
+-- On VRB shift to state 15
+-- On PARGAUCHE shift to state 16
+-- On IDENT shift to state 17
+-- On term_list shift to state 19
+-- On term shift to state 21
+
+State 19:
+term -> IDENT PARGAUCHE term_list . PARDROITE [ VIRGULE POINT_VIRGULE PARDROITE ]
+-- On PARDROITE shift to state 20
+
+State 20:
+term -> IDENT PARGAUCHE term_list PARDROITE . [ VIRGULE POINT_VIRGULE PARDROITE ]
+-- On VIRGULE reduce production term -> IDENT PARGAUCHE term_list PARDROITE 
+-- On POINT_VIRGULE reduce production term -> IDENT PARGAUCHE term_list PARDROITE 
+-- On PARDROITE reduce production term -> IDENT PARGAUCHE term_list PARDROITE 
+
+State 21:
+term_list -> term . [ PARDROITE ]
+term_list -> term . VIRGULE term_list [ PARDROITE ]
+-- On VIRGULE shift to state 22
+-- On PARDROITE reduce production term_list -> term 
+
+State 22:
+term_list -> term VIRGULE . term_list [ PARDROITE ]
+-- On VRB shift to state 15
+-- On PARGAUCHE shift to state 16
+-- On IDENT shift to state 17
+-- On term_list shift to state 23
+-- On term shift to state 21
+
+State 23:
+term_list -> term VIRGULE term_list . [ PARDROITE ]
+-- On PARDROITE reduce production term_list -> term VIRGULE term_list 
+
+State 24:
+term -> PARGAUCHE term . PARDROITE [ VIRGULE POINT_VIRGULE PARDROITE ]
+-- On PARDROITE shift to state 25
+
+State 25:
+term -> PARGAUCHE term PARDROITE . [ VIRGULE POINT_VIRGULE PARDROITE ]
+-- On VIRGULE reduce production term -> PARGAUCHE term PARDROITE 
+-- On POINT_VIRGULE reduce production term -> PARGAUCHE term PARDROITE 
+-- On PARDROITE reduce production term -> PARGAUCHE term PARDROITE 
+
+State 26:
+atom -> EGAL PARGAUCHE term . VIRGULE term PARDROITE [ VIRGULE CRODROIT ]
+-- On VIRGULE shift to state 27
+
+State 27:
+atom -> EGAL PARGAUCHE term VIRGULE . term PARDROITE [ VIRGULE CRODROIT ]
+-- On VRB shift to state 15
+-- On PARGAUCHE shift to state 16
+-- On IDENT shift to state 17
+-- On term shift to state 28
+
+State 28:
+atom -> EGAL PARGAUCHE term VIRGULE term . PARDROITE [ VIRGULE CRODROIT ]
+-- On PARDROITE shift to state 29
+
+State 29:
+atom -> EGAL PARGAUCHE term VIRGULE term PARDROITE . [ VIRGULE CRODROIT ]
+-- On VIRGULE reduce production atom -> EGAL PARGAUCHE term VIRGULE term PARDROITE 
+-- On CRODROIT reduce production atom -> EGAL PARGAUCHE term VIRGULE term PARDROITE 
+
+State 30:
+literal -> PLUS atom . [ VIRGULE CRODROIT ]
+-- On VIRGULE reduce production literal -> PLUS atom 
+-- On CRODROIT reduce production literal -> PLUS atom 
+
+State 31:
+literal -> MOINS . atom [ VIRGULE CRODROIT ]
+-- On EGAL shift to state 13
+-- On atom shift to state 32
+
+State 32:
+literal -> MOINS atom . [ VIRGULE CRODROIT ]
+-- On VIRGULE reduce production literal -> MOINS atom 
+-- On CRODROIT reduce production literal -> MOINS atom 
+
+State 33:
+clause -> CROGAUCHE literal_list . CRODROIT [ PARDROITE ]
+-- On CRODROIT shift to state 34
+
+State 34:
+clause -> CROGAUCHE literal_list CRODROIT . [ PARDROITE ]
+-- On PARDROITE reduce production clause -> CROGAUCHE literal_list CRODROIT 
+
+State 35:
+literal_list -> literal . [ CRODROIT ]
+literal_list -> literal . VIRGULE literal_list [ CRODROIT ]
+-- On VIRGULE shift to state 36
+-- On CRODROIT reduce production literal_list -> literal 
+
+State 36:
+literal_list -> literal VIRGULE . literal_list [ CRODROIT ]
+-- On PLUS shift to state 12
+-- On MOINS shift to state 31
+-- On literal_list shift to state 37
+-- On literal shift to state 35
+
+State 37:
+literal_list -> literal VIRGULE literal_list . [ CRODROIT ]
+-- On CRODROIT reduce production literal_list -> literal VIRGULE literal_list 
+
+State 38:
+declaration -> keyword_input_clause PARGAUCHE ident VIRGULE ident VIRGULE clause . PARDROITE POINT [ TOKEN_INPUT_CLAUSE TOKEN_INCLUDE FIN ]
+-- On PARDROITE shift to state 39
+
+State 39:
+declaration -> keyword_input_clause PARGAUCHE ident VIRGULE ident VIRGULE clause PARDROITE . POINT [ TOKEN_INPUT_CLAUSE TOKEN_INCLUDE FIN ]
+-- On POINT shift to state 40
+
+State 40:
+declaration -> keyword_input_clause PARGAUCHE ident VIRGULE ident VIRGULE clause PARDROITE POINT . [ TOKEN_INPUT_CLAUSE TOKEN_INCLUDE FIN ]
+-- On TOKEN_INPUT_CLAUSE reduce production declaration -> keyword_input_clause PARGAUCHE ident VIRGULE ident VIRGULE clause PARDROITE POINT 
+-- On TOKEN_INCLUDE reduce production declaration -> keyword_input_clause PARGAUCHE ident VIRGULE ident VIRGULE clause PARDROITE POINT 
+-- On FIN reduce production declaration -> keyword_input_clause PARGAUCHE ident VIRGULE ident VIRGULE clause PARDROITE POINT 
+
+State 41:
+declaration -> keyword_include . PARGAUCHE f_name PARDROITE POINT [ TOKEN_INPUT_CLAUSE TOKEN_INCLUDE FIN ]
+-- On PARGAUCHE shift to state 42
+
+State 42:
+declaration -> keyword_include PARGAUCHE . f_name PARDROITE POINT [ TOKEN_INPUT_CLAUSE TOKEN_INCLUDE FIN ]
+-- On FILE_NAME shift to state 43
+-- On f_name shift to state 44
+
+State 43:
+f_name -> FILE_NAME . [ PARDROITE ]
+-- On PARDROITE reduce production f_name -> FILE_NAME 
+
+State 44:
+declaration -> keyword_include PARGAUCHE f_name . PARDROITE POINT [ TOKEN_INPUT_CLAUSE TOKEN_INCLUDE FIN ]
+-- On PARDROITE shift to state 45
+
+State 45:
+declaration -> keyword_include PARGAUCHE f_name PARDROITE . POINT [ TOKEN_INPUT_CLAUSE TOKEN_INCLUDE FIN ]
+-- On POINT shift to state 46
+
+State 46:
+declaration -> keyword_include PARGAUCHE f_name PARDROITE POINT . [ TOKEN_INPUT_CLAUSE TOKEN_INCLUDE FIN ]
+-- On TOKEN_INPUT_CLAUSE reduce production declaration -> keyword_include PARGAUCHE f_name PARDROITE POINT 
+-- On TOKEN_INCLUDE reduce production declaration -> keyword_include PARGAUCHE f_name PARDROITE POINT 
+-- On FIN reduce production declaration -> keyword_include PARGAUCHE f_name PARDROITE POINT 
+
+State 47:
+donnees' -> donnees . [ # ]
+-- On # accept donnees
+
+State 48:
+donnees -> declaration . donnees [ # ]
+-- On TOKEN_INPUT_CLAUSE shift to state 1
+-- On TOKEN_INCLUDE shift to state 2
+-- On FIN shift to state 3
+-- On keyword_input_clause shift to state 4
+-- On keyword_include shift to state 41
+-- On donnees shift to state 49
+-- On declaration shift to state 48
+
+State 49:
+donnees -> declaration donnees . [ # ]
+-- On # reduce production donnees -> declaration donnees 
+
+State 50:
+term_line' -> . term_line [ # ]
+-- On VRB shift to state 15
+-- On PARGAUCHE shift to state 16
+-- On IDENT shift to state 17
+-- On term_line shift to state 51
+-- On term shift to state 52
+
+State 51:
+term_line' -> term_line . [ # ]
+-- On # accept term_line
+
+State 52:
+term_line -> term . POINT_VIRGULE [ # ]
+-- On POINT_VIRGULE shift to state 53
+
+State 53:
+term_line -> term POINT_VIRGULE . [ # ]
+-- On # reduce production term_line -> term POINT_VIRGULE 
+

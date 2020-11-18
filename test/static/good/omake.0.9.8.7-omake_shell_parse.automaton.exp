@@ -1,0 +1,436 @@
+State 0:
+prog' -> . prog [ # ]
+-- On TokValues shift to state 1
+-- On TokLeftParen shift to state 2
+-- On TokEof shift to state 30
+-- On word shift to state 3
+-- On rev_command shift to state 4
+-- On prog shift to state 31
+-- On pipe shift to state 32
+-- On command shift to state 26
+
+State 1:
+word -> TokValues . [ TokValues TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+-- On TokValues reduce production word -> TokValues 
+-- On TokSemiColon reduce production word -> TokValues 
+-- On TokRightParen reduce production word -> TokValues 
+-- On TokPipe reduce production word -> TokValues 
+-- On TokOr reduce production word -> TokValues 
+-- On TokLessThan reduce production word -> TokValues 
+-- On TokGreaterThan reduce production word -> TokValues 
+-- On TokGreaterGreaterThan reduce production word -> TokValues 
+-- On TokEof reduce production word -> TokValues 
+-- On TokAnd reduce production word -> TokValues 
+-- On TokAmp reduce production word -> TokValues 
+
+State 2:
+pipe -> TokLeftParen . pipe TokRightParen [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+-- On TokValues shift to state 1
+-- On TokLeftParen shift to state 2
+-- On word shift to state 3
+-- On rev_command shift to state 4
+-- On pipe shift to state 6
+-- On command shift to state 26
+
+State 3:
+rev_command -> word . [ TokValues TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+-- On TokValues reduce production rev_command -> word 
+-- On TokSemiColon reduce production rev_command -> word 
+-- On TokRightParen reduce production rev_command -> word 
+-- On TokPipe reduce production rev_command -> word 
+-- On TokOr reduce production rev_command -> word 
+-- On TokLessThan reduce production rev_command -> word 
+-- On TokGreaterThan reduce production rev_command -> word 
+-- On TokGreaterGreaterThan reduce production rev_command -> word 
+-- On TokEof reduce production rev_command -> word 
+-- On TokAnd reduce production rev_command -> word 
+-- On TokAmp reduce production rev_command -> word 
+
+State 4:
+command -> rev_command . [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+rev_command -> rev_command . word [ TokValues TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+-- On TokValues shift to state 1
+-- On word shift to state 5
+-- On TokSemiColon reduce production command -> rev_command 
+-- On TokRightParen reduce production command -> rev_command 
+-- On TokPipe reduce production command -> rev_command 
+-- On TokOr reduce production command -> rev_command 
+-- On TokLessThan reduce production command -> rev_command 
+-- On TokGreaterThan reduce production command -> rev_command 
+-- On TokGreaterGreaterThan reduce production command -> rev_command 
+-- On TokEof reduce production command -> rev_command 
+-- On TokAnd reduce production command -> rev_command 
+-- On TokAmp reduce production command -> rev_command 
+
+State 5:
+rev_command -> rev_command word . [ TokValues TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+-- On TokValues reduce production rev_command -> rev_command word 
+-- On TokSemiColon reduce production rev_command -> rev_command word 
+-- On TokRightParen reduce production rev_command -> rev_command word 
+-- On TokPipe reduce production rev_command -> rev_command word 
+-- On TokOr reduce production rev_command -> rev_command word 
+-- On TokLessThan reduce production rev_command -> rev_command word 
+-- On TokGreaterThan reduce production rev_command -> rev_command word 
+-- On TokGreaterGreaterThan reduce production rev_command -> rev_command word 
+-- On TokEof reduce production rev_command -> rev_command word 
+-- On TokAnd reduce production rev_command -> rev_command word 
+-- On TokAmp reduce production rev_command -> rev_command word 
+
+State 6:
+pipe -> pipe . TokSemiColon pipe [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokAnd TokAmp ]
+pipe -> pipe . TokAnd pipe [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokAnd TokAmp ]
+pipe -> pipe . TokOr pipe [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokAnd TokAmp ]
+pipe -> pipe . TokPipe pipe [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokAnd TokAmp ]
+pipe -> pipe . TokPipe TokAmp pipe [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokAnd TokAmp ]
+pipe -> pipe . TokAmp [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokAnd TokAmp ]
+pipe -> TokLeftParen pipe . TokRightParen [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokLessThan word [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokAnd TokAmp ]
+pipe -> pipe . TokGreaterThan word [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokAnd TokAmp ]
+pipe -> pipe . TokGreaterGreaterThan word [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokAnd TokAmp ]
+pipe -> pipe . TokGreaterThan TokAmp word [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokAnd TokAmp ]
+pipe -> pipe . TokGreaterGreaterThan TokAmp word [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokAnd TokAmp ]
+-- On TokSemiColon shift to state 7
+-- On TokRightParen shift to state 28
+-- On TokPipe shift to state 9
+-- On TokOr shift to state 12
+-- On TokLessThan shift to state 14
+-- On TokGreaterThan shift to state 16
+-- On TokGreaterGreaterThan shift to state 20
+-- On TokAnd shift to state 24
+-- On TokAmp shift to state 29
+
+State 7:
+pipe -> pipe TokSemiColon . pipe [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+-- On TokValues shift to state 1
+-- On TokLeftParen shift to state 2
+-- On word shift to state 3
+-- On rev_command shift to state 4
+-- On pipe shift to state 8
+-- On command shift to state 26
+
+State 8:
+pipe -> pipe . TokSemiColon pipe [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe TokSemiColon pipe . [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokAnd pipe [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokOr pipe [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokPipe pipe [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokPipe TokAmp pipe [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokAmp [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokLessThan word [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokGreaterThan word [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokGreaterGreaterThan word [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokGreaterThan TokAmp word [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokGreaterGreaterThan TokAmp word [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+-- On TokSemiColon shift to state 7
+-- On TokPipe shift to state 9
+-- On TokOr shift to state 12
+-- On TokLessThan shift to state 14
+-- On TokGreaterThan shift to state 16
+-- On TokGreaterGreaterThan shift to state 20
+-- On TokAnd shift to state 24
+-- On TokRightParen reduce production pipe -> pipe TokSemiColon pipe 
+-- On TokEof reduce production pipe -> pipe TokSemiColon pipe 
+-- On TokAmp reduce production pipe -> pipe TokSemiColon pipe 
+
+State 9:
+pipe -> pipe TokPipe . pipe [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe TokPipe . TokAmp pipe [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+-- On TokValues shift to state 1
+-- On TokLeftParen shift to state 2
+-- On TokAmp shift to state 10
+-- On word shift to state 3
+-- On rev_command shift to state 4
+-- On pipe shift to state 27
+-- On command shift to state 26
+
+State 10:
+pipe -> pipe TokPipe TokAmp . pipe [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+-- On TokValues shift to state 1
+-- On TokLeftParen shift to state 2
+-- On word shift to state 3
+-- On rev_command shift to state 4
+-- On pipe shift to state 11
+-- On command shift to state 26
+
+State 11:
+pipe -> pipe . TokSemiColon pipe [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokAnd pipe [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokOr pipe [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokPipe pipe [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokPipe TokAmp pipe [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe TokPipe TokAmp pipe . [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokAmp [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokLessThan word [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokGreaterThan word [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokGreaterGreaterThan word [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokGreaterThan TokAmp word [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokGreaterGreaterThan TokAmp word [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+-- On TokPipe shift to state 9
+-- On TokOr shift to state 12
+-- On TokLessThan shift to state 14
+-- On TokGreaterThan shift to state 16
+-- On TokGreaterGreaterThan shift to state 20
+-- On TokAnd shift to state 24
+-- On TokSemiColon reduce production pipe -> pipe TokPipe TokAmp pipe 
+-- On TokRightParen reduce production pipe -> pipe TokPipe TokAmp pipe 
+-- On TokEof reduce production pipe -> pipe TokPipe TokAmp pipe 
+-- On TokAmp reduce production pipe -> pipe TokPipe TokAmp pipe 
+
+State 12:
+pipe -> pipe TokOr . pipe [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+-- On TokValues shift to state 1
+-- On TokLeftParen shift to state 2
+-- On word shift to state 3
+-- On rev_command shift to state 4
+-- On pipe shift to state 13
+-- On command shift to state 26
+
+State 13:
+pipe -> pipe . TokSemiColon pipe [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokAnd pipe [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokOr pipe [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe TokOr pipe . [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokPipe pipe [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokPipe TokAmp pipe [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokAmp [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokLessThan word [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokGreaterThan word [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokGreaterGreaterThan word [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokGreaterThan TokAmp word [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokGreaterGreaterThan TokAmp word [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+-- On TokOr shift to state 12
+-- On TokLessThan shift to state 14
+-- On TokGreaterThan shift to state 16
+-- On TokGreaterGreaterThan shift to state 20
+-- On TokAnd shift to state 24
+-- On TokSemiColon reduce production pipe -> pipe TokOr pipe 
+-- On TokRightParen reduce production pipe -> pipe TokOr pipe 
+-- On TokPipe reduce production pipe -> pipe TokOr pipe 
+-- On TokEof reduce production pipe -> pipe TokOr pipe 
+-- On TokAmp reduce production pipe -> pipe TokOr pipe 
+
+State 14:
+pipe -> pipe TokLessThan . word [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+-- On TokValues shift to state 1
+-- On word shift to state 15
+
+State 15:
+pipe -> pipe TokLessThan word . [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+-- On TokSemiColon reduce production pipe -> pipe TokLessThan word 
+-- On TokRightParen reduce production pipe -> pipe TokLessThan word 
+-- On TokPipe reduce production pipe -> pipe TokLessThan word 
+-- On TokOr reduce production pipe -> pipe TokLessThan word 
+-- On TokLessThan reduce production pipe -> pipe TokLessThan word 
+-- On TokGreaterThan reduce production pipe -> pipe TokLessThan word 
+-- On TokGreaterGreaterThan reduce production pipe -> pipe TokLessThan word 
+-- On TokEof reduce production pipe -> pipe TokLessThan word 
+-- On TokAnd reduce production pipe -> pipe TokLessThan word 
+-- On TokAmp reduce production pipe -> pipe TokLessThan word 
+
+State 16:
+pipe -> pipe TokGreaterThan . word [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe TokGreaterThan . TokAmp word [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+-- On TokValues shift to state 1
+-- On TokAmp shift to state 17
+-- On word shift to state 19
+
+State 17:
+pipe -> pipe TokGreaterThan TokAmp . word [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+-- On TokValues shift to state 1
+-- On word shift to state 18
+
+State 18:
+pipe -> pipe TokGreaterThan TokAmp word . [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+-- On TokSemiColon reduce production pipe -> pipe TokGreaterThan TokAmp word 
+-- On TokRightParen reduce production pipe -> pipe TokGreaterThan TokAmp word 
+-- On TokPipe reduce production pipe -> pipe TokGreaterThan TokAmp word 
+-- On TokOr reduce production pipe -> pipe TokGreaterThan TokAmp word 
+-- On TokLessThan reduce production pipe -> pipe TokGreaterThan TokAmp word 
+-- On TokGreaterThan reduce production pipe -> pipe TokGreaterThan TokAmp word 
+-- On TokGreaterGreaterThan reduce production pipe -> pipe TokGreaterThan TokAmp word 
+-- On TokEof reduce production pipe -> pipe TokGreaterThan TokAmp word 
+-- On TokAnd reduce production pipe -> pipe TokGreaterThan TokAmp word 
+-- On TokAmp reduce production pipe -> pipe TokGreaterThan TokAmp word 
+
+State 19:
+pipe -> pipe TokGreaterThan word . [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+-- On TokSemiColon reduce production pipe -> pipe TokGreaterThan word 
+-- On TokRightParen reduce production pipe -> pipe TokGreaterThan word 
+-- On TokPipe reduce production pipe -> pipe TokGreaterThan word 
+-- On TokOr reduce production pipe -> pipe TokGreaterThan word 
+-- On TokLessThan reduce production pipe -> pipe TokGreaterThan word 
+-- On TokGreaterThan reduce production pipe -> pipe TokGreaterThan word 
+-- On TokGreaterGreaterThan reduce production pipe -> pipe TokGreaterThan word 
+-- On TokEof reduce production pipe -> pipe TokGreaterThan word 
+-- On TokAnd reduce production pipe -> pipe TokGreaterThan word 
+-- On TokAmp reduce production pipe -> pipe TokGreaterThan word 
+
+State 20:
+pipe -> pipe TokGreaterGreaterThan . word [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe TokGreaterGreaterThan . TokAmp word [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+-- On TokValues shift to state 1
+-- On TokAmp shift to state 21
+-- On word shift to state 23
+
+State 21:
+pipe -> pipe TokGreaterGreaterThan TokAmp . word [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+-- On TokValues shift to state 1
+-- On word shift to state 22
+
+State 22:
+pipe -> pipe TokGreaterGreaterThan TokAmp word . [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+-- On TokSemiColon reduce production pipe -> pipe TokGreaterGreaterThan TokAmp word 
+-- On TokRightParen reduce production pipe -> pipe TokGreaterGreaterThan TokAmp word 
+-- On TokPipe reduce production pipe -> pipe TokGreaterGreaterThan TokAmp word 
+-- On TokOr reduce production pipe -> pipe TokGreaterGreaterThan TokAmp word 
+-- On TokLessThan reduce production pipe -> pipe TokGreaterGreaterThan TokAmp word 
+-- On TokGreaterThan reduce production pipe -> pipe TokGreaterGreaterThan TokAmp word 
+-- On TokGreaterGreaterThan reduce production pipe -> pipe TokGreaterGreaterThan TokAmp word 
+-- On TokEof reduce production pipe -> pipe TokGreaterGreaterThan TokAmp word 
+-- On TokAnd reduce production pipe -> pipe TokGreaterGreaterThan TokAmp word 
+-- On TokAmp reduce production pipe -> pipe TokGreaterGreaterThan TokAmp word 
+
+State 23:
+pipe -> pipe TokGreaterGreaterThan word . [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+-- On TokSemiColon reduce production pipe -> pipe TokGreaterGreaterThan word 
+-- On TokRightParen reduce production pipe -> pipe TokGreaterGreaterThan word 
+-- On TokPipe reduce production pipe -> pipe TokGreaterGreaterThan word 
+-- On TokOr reduce production pipe -> pipe TokGreaterGreaterThan word 
+-- On TokLessThan reduce production pipe -> pipe TokGreaterGreaterThan word 
+-- On TokGreaterThan reduce production pipe -> pipe TokGreaterGreaterThan word 
+-- On TokGreaterGreaterThan reduce production pipe -> pipe TokGreaterGreaterThan word 
+-- On TokEof reduce production pipe -> pipe TokGreaterGreaterThan word 
+-- On TokAnd reduce production pipe -> pipe TokGreaterGreaterThan word 
+-- On TokAmp reduce production pipe -> pipe TokGreaterGreaterThan word 
+
+State 24:
+pipe -> pipe TokAnd . pipe [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+-- On TokValues shift to state 1
+-- On TokLeftParen shift to state 2
+-- On word shift to state 3
+-- On rev_command shift to state 4
+-- On pipe shift to state 25
+-- On command shift to state 26
+
+State 25:
+pipe -> pipe . TokSemiColon pipe [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokAnd pipe [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe TokAnd pipe . [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokOr pipe [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokPipe pipe [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokPipe TokAmp pipe [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokAmp [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokLessThan word [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokGreaterThan word [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokGreaterGreaterThan word [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokGreaterThan TokAmp word [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokGreaterGreaterThan TokAmp word [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+-- On TokLessThan shift to state 14
+-- On TokGreaterThan shift to state 16
+-- On TokGreaterGreaterThan shift to state 20
+-- On TokAnd shift to state 24
+-- On TokSemiColon reduce production pipe -> pipe TokAnd pipe 
+-- On TokRightParen reduce production pipe -> pipe TokAnd pipe 
+-- On TokPipe reduce production pipe -> pipe TokAnd pipe 
+-- On TokOr reduce production pipe -> pipe TokAnd pipe 
+-- On TokEof reduce production pipe -> pipe TokAnd pipe 
+-- On TokAmp reduce production pipe -> pipe TokAnd pipe 
+
+State 26:
+pipe -> command . [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+-- On TokSemiColon reduce production pipe -> command 
+-- On TokRightParen reduce production pipe -> command 
+-- On TokPipe reduce production pipe -> command 
+-- On TokOr reduce production pipe -> command 
+-- On TokLessThan reduce production pipe -> command 
+-- On TokGreaterThan reduce production pipe -> command 
+-- On TokGreaterGreaterThan reduce production pipe -> command 
+-- On TokEof reduce production pipe -> command 
+-- On TokAnd reduce production pipe -> command 
+-- On TokAmp reduce production pipe -> command 
+
+State 27:
+pipe -> pipe . TokSemiColon pipe [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokAnd pipe [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokOr pipe [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokPipe pipe [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe TokPipe pipe . [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokPipe TokAmp pipe [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokAmp [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokLessThan word [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokGreaterThan word [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokGreaterGreaterThan word [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokGreaterThan TokAmp word [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokGreaterGreaterThan TokAmp word [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+-- On TokPipe shift to state 9
+-- On TokOr shift to state 12
+-- On TokLessThan shift to state 14
+-- On TokGreaterThan shift to state 16
+-- On TokGreaterGreaterThan shift to state 20
+-- On TokAnd shift to state 24
+-- On TokSemiColon reduce production pipe -> pipe TokPipe pipe 
+-- On TokRightParen reduce production pipe -> pipe TokPipe pipe 
+-- On TokEof reduce production pipe -> pipe TokPipe pipe 
+-- On TokAmp reduce production pipe -> pipe TokPipe pipe 
+
+State 28:
+pipe -> TokLeftParen pipe TokRightParen . [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+-- On TokSemiColon reduce production pipe -> TokLeftParen pipe TokRightParen 
+-- On TokRightParen reduce production pipe -> TokLeftParen pipe TokRightParen 
+-- On TokPipe reduce production pipe -> TokLeftParen pipe TokRightParen 
+-- On TokOr reduce production pipe -> TokLeftParen pipe TokRightParen 
+-- On TokLessThan reduce production pipe -> TokLeftParen pipe TokRightParen 
+-- On TokGreaterThan reduce production pipe -> TokLeftParen pipe TokRightParen 
+-- On TokGreaterGreaterThan reduce production pipe -> TokLeftParen pipe TokRightParen 
+-- On TokEof reduce production pipe -> TokLeftParen pipe TokRightParen 
+-- On TokAnd reduce production pipe -> TokLeftParen pipe TokRightParen 
+-- On TokAmp reduce production pipe -> TokLeftParen pipe TokRightParen 
+
+State 29:
+pipe -> pipe TokAmp . [ TokSemiColon TokRightParen TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+-- On TokSemiColon reduce production pipe -> pipe TokAmp 
+-- On TokRightParen reduce production pipe -> pipe TokAmp 
+-- On TokPipe reduce production pipe -> pipe TokAmp 
+-- On TokOr reduce production pipe -> pipe TokAmp 
+-- On TokLessThan reduce production pipe -> pipe TokAmp 
+-- On TokGreaterThan reduce production pipe -> pipe TokAmp 
+-- On TokGreaterGreaterThan reduce production pipe -> pipe TokAmp 
+-- On TokEof reduce production pipe -> pipe TokAmp 
+-- On TokAnd reduce production pipe -> pipe TokAmp 
+-- On TokAmp reduce production pipe -> pipe TokAmp 
+
+State 30:
+prog -> TokEof . [ # ]
+-- On # reduce production prog -> TokEof 
+
+State 31:
+prog' -> prog . [ # ]
+-- On # accept prog
+
+State 32:
+pipe -> pipe . TokSemiColon pipe [ TokSemiColon TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokAnd pipe [ TokSemiColon TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokOr pipe [ TokSemiColon TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokPipe pipe [ TokSemiColon TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokPipe TokAmp pipe [ TokSemiColon TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokAmp [ TokSemiColon TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokLessThan word [ TokSemiColon TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokGreaterThan word [ TokSemiColon TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokGreaterGreaterThan word [ TokSemiColon TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokGreaterThan TokAmp word [ TokSemiColon TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+pipe -> pipe . TokGreaterGreaterThan TokAmp word [ TokSemiColon TokPipe TokOr TokLessThan TokGreaterThan TokGreaterGreaterThan TokEof TokAnd TokAmp ]
+prog -> pipe . TokEof [ # ]
+-- On TokSemiColon shift to state 7
+-- On TokPipe shift to state 9
+-- On TokOr shift to state 12
+-- On TokLessThan shift to state 14
+-- On TokGreaterThan shift to state 16
+-- On TokGreaterGreaterThan shift to state 20
+-- On TokEof shift to state 33
+-- On TokAnd shift to state 24
+-- On TokAmp shift to state 29
+
+State 33:
+prog -> pipe TokEof . [ # ]
+-- On # reduce production prog -> pipe TokEof 
+

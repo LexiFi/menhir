@@ -1,0 +1,1555 @@
+State 0:
+instr_option_seq' -> . instr_option_seq [ # ]
+-- On WRITE shift to state 1
+-- On RMW shift to state 28
+-- On READ shift to state 57
+-- On NAME shift to state 61
+-- On MOV shift to state 63
+-- On FENCE shift to state 66
+-- On CODEVAR shift to state 76
+-- On CALL shift to state 77
+-- On BRANCH shift to state 81
+-- On instr_option_seq shift to state 88
+-- On instr_option shift to state 89
+-- On instr shift to state 87
+-- On SEMI reduce production instr_option -> 
+-- On # reduce production instr_option -> 
+
+State 1:
+instr -> WRITE . annot_list_option addr_op reg_or_imm [ SEMI PIPE # ]
+-- On LBRAC shift to state 2
+-- On annot_list_option shift to state 14
+-- On WRITE reduce production annot_list_option -> 
+-- On SYMB_REG reduce production annot_list_option -> 
+-- On REG reduce production annot_list_option -> 
+-- On READ reduce production annot_list_option -> 
+-- On NAME reduce production annot_list_option -> 
+-- On FENCE reduce production annot_list_option -> 
+-- On BRANCH reduce production annot_list_option -> 
+
+State 2:
+annot_list_option -> LBRAC . name_list RBRAC [ WRITE SYMB_REG SEMI REG READ PIPE NAME LBRACE FENCE BRANCH # ]
+-- On WRITE shift to state 3
+-- On READ shift to state 4
+-- On NAME shift to state 5
+-- On FENCE shift to state 6
+-- On BRANCH shift to state 7
+-- On name_list_ne shift to state 8
+-- On name_list shift to state 9
+-- On name shift to state 11
+-- On RBRAC reduce production name_list -> 
+
+State 3:
+name -> WRITE . [ WRITE SYMB_REG SEMI RPAR REG READ RBRACE RBRAC PLUS PIPE NUM NAME META FENCE COMMA BRANCH # ]
+-- On WRITE reduce production name -> WRITE 
+-- On SYMB_REG reduce production name -> WRITE 
+-- On SEMI reduce production name -> WRITE 
+-- On RPAR reduce production name -> WRITE 
+-- On REG reduce production name -> WRITE 
+-- On READ reduce production name -> WRITE 
+-- On RBRACE reduce production name -> WRITE 
+-- On RBRAC reduce production name -> WRITE 
+-- On PLUS reduce production name -> WRITE 
+-- On PIPE reduce production name -> WRITE 
+-- On NUM reduce production name -> WRITE 
+-- On NAME reduce production name -> WRITE 
+-- On META reduce production name -> WRITE 
+-- On FENCE reduce production name -> WRITE 
+-- On COMMA reduce production name -> WRITE 
+-- On BRANCH reduce production name -> WRITE 
+-- On # reduce production name -> WRITE 
+
+State 4:
+name -> READ . [ WRITE SYMB_REG SEMI RPAR REG READ RBRACE RBRAC PLUS PIPE NUM NAME META FENCE COMMA BRANCH # ]
+-- On WRITE reduce production name -> READ 
+-- On SYMB_REG reduce production name -> READ 
+-- On SEMI reduce production name -> READ 
+-- On RPAR reduce production name -> READ 
+-- On REG reduce production name -> READ 
+-- On READ reduce production name -> READ 
+-- On RBRACE reduce production name -> READ 
+-- On RBRAC reduce production name -> READ 
+-- On PLUS reduce production name -> READ 
+-- On PIPE reduce production name -> READ 
+-- On NUM reduce production name -> READ 
+-- On NAME reduce production name -> READ 
+-- On META reduce production name -> READ 
+-- On FENCE reduce production name -> READ 
+-- On COMMA reduce production name -> READ 
+-- On BRANCH reduce production name -> READ 
+-- On # reduce production name -> READ 
+
+State 5:
+name -> NAME . [ WRITE SYMB_REG SEMI RPAR REG READ RBRACE RBRAC PLUS PIPE NUM NAME META FENCE COMMA BRANCH # ]
+-- On WRITE reduce production name -> NAME 
+-- On SYMB_REG reduce production name -> NAME 
+-- On SEMI reduce production name -> NAME 
+-- On RPAR reduce production name -> NAME 
+-- On REG reduce production name -> NAME 
+-- On READ reduce production name -> NAME 
+-- On RBRACE reduce production name -> NAME 
+-- On RBRAC reduce production name -> NAME 
+-- On PLUS reduce production name -> NAME 
+-- On PIPE reduce production name -> NAME 
+-- On NUM reduce production name -> NAME 
+-- On NAME reduce production name -> NAME 
+-- On META reduce production name -> NAME 
+-- On FENCE reduce production name -> NAME 
+-- On COMMA reduce production name -> NAME 
+-- On BRANCH reduce production name -> NAME 
+-- On # reduce production name -> NAME 
+
+State 6:
+name -> FENCE . [ WRITE SYMB_REG SEMI RPAR REG READ RBRACE RBRAC PLUS PIPE NUM NAME META FENCE COMMA BRANCH # ]
+-- On WRITE reduce production name -> FENCE 
+-- On SYMB_REG reduce production name -> FENCE 
+-- On SEMI reduce production name -> FENCE 
+-- On RPAR reduce production name -> FENCE 
+-- On REG reduce production name -> FENCE 
+-- On READ reduce production name -> FENCE 
+-- On RBRACE reduce production name -> FENCE 
+-- On RBRAC reduce production name -> FENCE 
+-- On PLUS reduce production name -> FENCE 
+-- On PIPE reduce production name -> FENCE 
+-- On NUM reduce production name -> FENCE 
+-- On NAME reduce production name -> FENCE 
+-- On META reduce production name -> FENCE 
+-- On FENCE reduce production name -> FENCE 
+-- On COMMA reduce production name -> FENCE 
+-- On BRANCH reduce production name -> FENCE 
+-- On # reduce production name -> FENCE 
+
+State 7:
+name -> BRANCH . [ WRITE SYMB_REG SEMI RPAR REG READ RBRACE RBRAC PLUS PIPE NUM NAME META FENCE COMMA BRANCH # ]
+-- On WRITE reduce production name -> BRANCH 
+-- On SYMB_REG reduce production name -> BRANCH 
+-- On SEMI reduce production name -> BRANCH 
+-- On RPAR reduce production name -> BRANCH 
+-- On REG reduce production name -> BRANCH 
+-- On READ reduce production name -> BRANCH 
+-- On RBRACE reduce production name -> BRANCH 
+-- On RBRAC reduce production name -> BRANCH 
+-- On PLUS reduce production name -> BRANCH 
+-- On PIPE reduce production name -> BRANCH 
+-- On NUM reduce production name -> BRANCH 
+-- On NAME reduce production name -> BRANCH 
+-- On META reduce production name -> BRANCH 
+-- On FENCE reduce production name -> BRANCH 
+-- On COMMA reduce production name -> BRANCH 
+-- On BRANCH reduce production name -> BRANCH 
+-- On # reduce production name -> BRANCH 
+
+State 8:
+name_list -> name_list_ne . [ RBRACE RBRAC ]
+-- On RBRACE reduce production name_list -> name_list_ne 
+-- On RBRAC reduce production name_list -> name_list_ne 
+
+State 9:
+annot_list_option -> LBRAC name_list . RBRAC [ WRITE SYMB_REG SEMI REG READ PIPE NAME LBRACE FENCE BRANCH # ]
+-- On RBRAC shift to state 10
+
+State 10:
+annot_list_option -> LBRAC name_list RBRAC . [ WRITE SYMB_REG SEMI REG READ PIPE NAME LBRACE FENCE BRANCH # ]
+-- On WRITE reduce production annot_list_option -> LBRAC name_list RBRAC 
+-- On SYMB_REG reduce production annot_list_option -> LBRAC name_list RBRAC 
+-- On SEMI reduce production annot_list_option -> LBRAC name_list RBRAC 
+-- On REG reduce production annot_list_option -> LBRAC name_list RBRAC 
+-- On READ reduce production annot_list_option -> LBRAC name_list RBRAC 
+-- On PIPE reduce production annot_list_option -> LBRAC name_list RBRAC 
+-- On NAME reduce production annot_list_option -> LBRAC name_list RBRAC 
+-- On LBRACE reduce production annot_list_option -> LBRAC name_list RBRAC 
+-- On FENCE reduce production annot_list_option -> LBRAC name_list RBRAC 
+-- On BRANCH reduce production annot_list_option -> LBRAC name_list RBRAC 
+-- On # reduce production annot_list_option -> LBRAC name_list RBRAC 
+
+State 11:
+name_list_ne -> name . COMMA name_list_ne [ RBRACE RBRAC ]
+name_list_ne -> name . [ RBRACE RBRAC ]
+-- On COMMA shift to state 12
+-- On RBRACE reduce production name_list_ne -> name 
+-- On RBRAC reduce production name_list_ne -> name 
+
+State 12:
+name_list_ne -> name COMMA . name_list_ne [ RBRACE RBRAC ]
+-- On WRITE shift to state 3
+-- On READ shift to state 4
+-- On NAME shift to state 5
+-- On FENCE shift to state 6
+-- On BRANCH shift to state 7
+-- On name_list_ne shift to state 13
+-- On name shift to state 11
+
+State 13:
+name_list_ne -> name COMMA name_list_ne . [ RBRACE RBRAC ]
+-- On RBRACE reduce production name_list_ne -> name COMMA name_list_ne 
+-- On RBRAC reduce production name_list_ne -> name COMMA name_list_ne 
+
+State 14:
+instr -> WRITE annot_list_option . addr_op reg_or_imm [ SEMI PIPE # ]
+-- On WRITE shift to state 3
+-- On SYMB_REG shift to state 15
+-- On REG shift to state 16
+-- On READ shift to state 4
+-- On NAME shift to state 5
+-- On FENCE shift to state 6
+-- On BRANCH shift to state 7
+-- On reg_or_addr shift to state 17
+-- On reg shift to state 24
+-- On name shift to state 25
+-- On addr_op shift to state 26
+
+State 15:
+reg -> SYMB_REG . [ WRITE SYMB_REG SEMI RPAR REG READ PLUS PIPE NUM NAME META LPAR FENCE BRANCH # ]
+-- On WRITE reduce production reg -> SYMB_REG 
+-- On SYMB_REG reduce production reg -> SYMB_REG 
+-- On SEMI reduce production reg -> SYMB_REG 
+-- On RPAR reduce production reg -> SYMB_REG 
+-- On REG reduce production reg -> SYMB_REG 
+-- On READ reduce production reg -> SYMB_REG 
+-- On PLUS reduce production reg -> SYMB_REG 
+-- On PIPE reduce production reg -> SYMB_REG 
+-- On NUM reduce production reg -> SYMB_REG 
+-- On NAME reduce production reg -> SYMB_REG 
+-- On META reduce production reg -> SYMB_REG 
+-- On LPAR reduce production reg -> SYMB_REG 
+-- On FENCE reduce production reg -> SYMB_REG 
+-- On BRANCH reduce production reg -> SYMB_REG 
+-- On # reduce production reg -> SYMB_REG 
+
+State 16:
+reg -> REG . [ WRITE SYMB_REG SEMI RPAR REG READ PLUS PIPE NUM NAME META LPAR FENCE BRANCH # ]
+-- On WRITE reduce production reg -> REG 
+-- On SYMB_REG reduce production reg -> REG 
+-- On SEMI reduce production reg -> REG 
+-- On RPAR reduce production reg -> REG 
+-- On REG reduce production reg -> REG 
+-- On READ reduce production reg -> REG 
+-- On PLUS reduce production reg -> REG 
+-- On PIPE reduce production reg -> REG 
+-- On NUM reduce production reg -> REG 
+-- On NAME reduce production reg -> REG 
+-- On META reduce production reg -> REG 
+-- On LPAR reduce production reg -> REG 
+-- On FENCE reduce production reg -> REG 
+-- On BRANCH reduce production reg -> REG 
+-- On # reduce production reg -> REG 
+
+State 17:
+addr_op -> reg_or_addr . [ SYMB_REG SEMI REG PIPE NUM META # ]
+addr_op -> reg_or_addr . PLUS reg_or_imm [ SYMB_REG SEMI REG PIPE NUM META # ]
+-- On PLUS shift to state 18
+-- On SYMB_REG reduce production addr_op -> reg_or_addr 
+-- On SEMI reduce production addr_op -> reg_or_addr 
+-- On REG reduce production addr_op -> reg_or_addr 
+-- On PIPE reduce production addr_op -> reg_or_addr 
+-- On NUM reduce production addr_op -> reg_or_addr 
+-- On META reduce production addr_op -> reg_or_addr 
+-- On # reduce production addr_op -> reg_or_addr 
+
+State 18:
+addr_op -> reg_or_addr PLUS . reg_or_imm [ SYMB_REG SEMI REG PIPE NUM META # ]
+-- On SYMB_REG shift to state 15
+-- On REG shift to state 16
+-- On NUM shift to state 19
+-- On META shift to state 20
+-- On reg_or_imm shift to state 21
+-- On reg shift to state 22
+-- On k shift to state 23
+
+State 19:
+k -> NUM . [ WRITE SYMB_REG SEMI RPAR REG READ PIPE NUM NAME META FENCE BRANCH # ]
+-- On WRITE reduce production k -> NUM 
+-- On SYMB_REG reduce production k -> NUM 
+-- On SEMI reduce production k -> NUM 
+-- On RPAR reduce production k -> NUM 
+-- On REG reduce production k -> NUM 
+-- On READ reduce production k -> NUM 
+-- On PIPE reduce production k -> NUM 
+-- On NUM reduce production k -> NUM 
+-- On NAME reduce production k -> NUM 
+-- On META reduce production k -> NUM 
+-- On FENCE reduce production k -> NUM 
+-- On BRANCH reduce production k -> NUM 
+-- On # reduce production k -> NUM 
+
+State 20:
+k -> META . [ WRITE SYMB_REG SEMI RPAR REG READ PIPE NUM NAME META FENCE BRANCH # ]
+-- On WRITE reduce production k -> META 
+-- On SYMB_REG reduce production k -> META 
+-- On SEMI reduce production k -> META 
+-- On RPAR reduce production k -> META 
+-- On REG reduce production k -> META 
+-- On READ reduce production k -> META 
+-- On PIPE reduce production k -> META 
+-- On NUM reduce production k -> META 
+-- On NAME reduce production k -> META 
+-- On META reduce production k -> META 
+-- On FENCE reduce production k -> META 
+-- On BRANCH reduce production k -> META 
+-- On # reduce production k -> META 
+
+State 21:
+addr_op -> reg_or_addr PLUS reg_or_imm . [ SYMB_REG SEMI REG PIPE NUM META # ]
+-- On SYMB_REG reduce production addr_op -> reg_or_addr PLUS reg_or_imm 
+-- On SEMI reduce production addr_op -> reg_or_addr PLUS reg_or_imm 
+-- On REG reduce production addr_op -> reg_or_addr PLUS reg_or_imm 
+-- On PIPE reduce production addr_op -> reg_or_addr PLUS reg_or_imm 
+-- On NUM reduce production addr_op -> reg_or_addr PLUS reg_or_imm 
+-- On META reduce production addr_op -> reg_or_addr PLUS reg_or_imm 
+-- On # reduce production addr_op -> reg_or_addr PLUS reg_or_imm 
+
+State 22:
+reg_or_imm -> reg . [ SYMB_REG SEMI REG PIPE NUM META # ]
+-- On SYMB_REG reduce production reg_or_imm -> reg 
+-- On SEMI reduce production reg_or_imm -> reg 
+-- On REG reduce production reg_or_imm -> reg 
+-- On PIPE reduce production reg_or_imm -> reg 
+-- On NUM reduce production reg_or_imm -> reg 
+-- On META reduce production reg_or_imm -> reg 
+-- On # reduce production reg_or_imm -> reg 
+
+State 23:
+reg_or_imm -> k . [ SYMB_REG SEMI REG PIPE NUM META # ]
+-- On SYMB_REG reduce production reg_or_imm -> k 
+-- On SEMI reduce production reg_or_imm -> k 
+-- On REG reduce production reg_or_imm -> k 
+-- On PIPE reduce production reg_or_imm -> k 
+-- On NUM reduce production reg_or_imm -> k 
+-- On META reduce production reg_or_imm -> k 
+-- On # reduce production reg_or_imm -> k 
+
+State 24:
+reg_or_addr -> reg . [ WRITE SYMB_REG SEMI RPAR REG READ PLUS PIPE NUM NAME META FENCE BRANCH # ]
+-- On WRITE reduce production reg_or_addr -> reg 
+-- On SYMB_REG reduce production reg_or_addr -> reg 
+-- On SEMI reduce production reg_or_addr -> reg 
+-- On RPAR reduce production reg_or_addr -> reg 
+-- On REG reduce production reg_or_addr -> reg 
+-- On READ reduce production reg_or_addr -> reg 
+-- On PLUS reduce production reg_or_addr -> reg 
+-- On PIPE reduce production reg_or_addr -> reg 
+-- On NUM reduce production reg_or_addr -> reg 
+-- On NAME reduce production reg_or_addr -> reg 
+-- On META reduce production reg_or_addr -> reg 
+-- On FENCE reduce production reg_or_addr -> reg 
+-- On BRANCH reduce production reg_or_addr -> reg 
+-- On # reduce production reg_or_addr -> reg 
+
+State 25:
+reg_or_addr -> name . [ WRITE SYMB_REG SEMI RPAR REG READ PLUS PIPE NUM NAME META FENCE BRANCH # ]
+-- On WRITE reduce production reg_or_addr -> name 
+-- On SYMB_REG reduce production reg_or_addr -> name 
+-- On SEMI reduce production reg_or_addr -> name 
+-- On RPAR reduce production reg_or_addr -> name 
+-- On REG reduce production reg_or_addr -> name 
+-- On READ reduce production reg_or_addr -> name 
+-- On PLUS reduce production reg_or_addr -> name 
+-- On PIPE reduce production reg_or_addr -> name 
+-- On NUM reduce production reg_or_addr -> name 
+-- On NAME reduce production reg_or_addr -> name 
+-- On META reduce production reg_or_addr -> name 
+-- On FENCE reduce production reg_or_addr -> name 
+-- On BRANCH reduce production reg_or_addr -> name 
+-- On # reduce production reg_or_addr -> name 
+
+State 26:
+instr -> WRITE annot_list_option addr_op . reg_or_imm [ SEMI PIPE # ]
+-- On SYMB_REG shift to state 15
+-- On REG shift to state 16
+-- On NUM shift to state 19
+-- On META shift to state 20
+-- On reg_or_imm shift to state 27
+-- On reg shift to state 22
+-- On k shift to state 23
+
+State 27:
+instr -> WRITE annot_list_option addr_op reg_or_imm . [ SEMI PIPE # ]
+-- On SEMI reduce production instr -> WRITE annot_list_option addr_op reg_or_imm 
+-- On PIPE reduce production instr -> WRITE annot_list_option addr_op reg_or_imm 
+-- On # reduce production instr -> WRITE annot_list_option addr_op reg_or_imm 
+
+State 28:
+instr -> RMW . annot_list_option reg operation addr_op [ SEMI PIPE # ]
+-- On LBRAC shift to state 2
+-- On annot_list_option shift to state 29
+-- On SYMB_REG reduce production annot_list_option -> 
+-- On REG reduce production annot_list_option -> 
+
+State 29:
+instr -> RMW annot_list_option . reg operation addr_op [ SEMI PIPE # ]
+-- On SYMB_REG shift to state 15
+-- On REG shift to state 16
+-- On reg shift to state 30
+
+State 30:
+instr -> RMW annot_list_option reg . operation addr_op [ SEMI PIPE # ]
+-- On WRITE shift to state 3
+-- On SYMB_REG shift to state 15
+-- On REG shift to state 16
+-- On READ shift to state 4
+-- On NUM shift to state 19
+-- On NAME shift to state 5
+-- On META shift to state 20
+-- On LPAR shift to state 31
+-- On FENCE shift to state 6
+-- On BRANCH shift to state 7
+-- On reg_or_addr shift to state 33
+-- On reg shift to state 24
+-- On operation shift to state 54
+-- On name shift to state 25
+-- On k shift to state 34
+-- On any_value shift to state 56
+
+State 31:
+operation -> LPAR . ADD any_value any_value RPAR [ WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH # ]
+operation -> LPAR . XOR any_value any_value RPAR [ WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH # ]
+operation -> LPAR . AND any_value any_value RPAR [ WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH # ]
+operation -> LPAR . EQ any_value any_value RPAR [ WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH # ]
+operation -> LPAR . NEQ any_value any_value RPAR [ WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH # ]
+-- On XOR shift to state 32
+-- On NEQ shift to state 38
+-- On EQ shift to state 42
+-- On AND shift to state 46
+-- On ADD shift to state 50
+
+State 32:
+operation -> LPAR XOR . any_value any_value RPAR [ WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH # ]
+-- On WRITE shift to state 3
+-- On SYMB_REG shift to state 15
+-- On REG shift to state 16
+-- On READ shift to state 4
+-- On NUM shift to state 19
+-- On NAME shift to state 5
+-- On META shift to state 20
+-- On FENCE shift to state 6
+-- On BRANCH shift to state 7
+-- On reg_or_addr shift to state 33
+-- On reg shift to state 24
+-- On name shift to state 25
+-- On k shift to state 34
+-- On any_value shift to state 35
+
+State 33:
+any_value -> reg_or_addr . [ WRITE SYMB_REG SEMI RPAR REG READ PIPE NUM NAME META FENCE BRANCH # ]
+-- On WRITE reduce production any_value -> reg_or_addr 
+-- On SYMB_REG reduce production any_value -> reg_or_addr 
+-- On SEMI reduce production any_value -> reg_or_addr 
+-- On RPAR reduce production any_value -> reg_or_addr 
+-- On REG reduce production any_value -> reg_or_addr 
+-- On READ reduce production any_value -> reg_or_addr 
+-- On PIPE reduce production any_value -> reg_or_addr 
+-- On NUM reduce production any_value -> reg_or_addr 
+-- On NAME reduce production any_value -> reg_or_addr 
+-- On META reduce production any_value -> reg_or_addr 
+-- On FENCE reduce production any_value -> reg_or_addr 
+-- On BRANCH reduce production any_value -> reg_or_addr 
+-- On # reduce production any_value -> reg_or_addr 
+
+State 34:
+any_value -> k . [ WRITE SYMB_REG SEMI RPAR REG READ PIPE NUM NAME META FENCE BRANCH # ]
+-- On WRITE reduce production any_value -> k 
+-- On SYMB_REG reduce production any_value -> k 
+-- On SEMI reduce production any_value -> k 
+-- On RPAR reduce production any_value -> k 
+-- On REG reduce production any_value -> k 
+-- On READ reduce production any_value -> k 
+-- On PIPE reduce production any_value -> k 
+-- On NUM reduce production any_value -> k 
+-- On NAME reduce production any_value -> k 
+-- On META reduce production any_value -> k 
+-- On FENCE reduce production any_value -> k 
+-- On BRANCH reduce production any_value -> k 
+-- On # reduce production any_value -> k 
+
+State 35:
+operation -> LPAR XOR any_value . any_value RPAR [ WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH # ]
+-- On WRITE shift to state 3
+-- On SYMB_REG shift to state 15
+-- On REG shift to state 16
+-- On READ shift to state 4
+-- On NUM shift to state 19
+-- On NAME shift to state 5
+-- On META shift to state 20
+-- On FENCE shift to state 6
+-- On BRANCH shift to state 7
+-- On reg_or_addr shift to state 33
+-- On reg shift to state 24
+-- On name shift to state 25
+-- On k shift to state 34
+-- On any_value shift to state 36
+
+State 36:
+operation -> LPAR XOR any_value any_value . RPAR [ WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH # ]
+-- On RPAR shift to state 37
+
+State 37:
+operation -> LPAR XOR any_value any_value RPAR . [ WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH # ]
+-- On WRITE reduce production operation -> LPAR XOR any_value any_value RPAR 
+-- On SYMB_REG reduce production operation -> LPAR XOR any_value any_value RPAR 
+-- On SEMI reduce production operation -> LPAR XOR any_value any_value RPAR 
+-- On REG reduce production operation -> LPAR XOR any_value any_value RPAR 
+-- On READ reduce production operation -> LPAR XOR any_value any_value RPAR 
+-- On PIPE reduce production operation -> LPAR XOR any_value any_value RPAR 
+-- On NAME reduce production operation -> LPAR XOR any_value any_value RPAR 
+-- On FENCE reduce production operation -> LPAR XOR any_value any_value RPAR 
+-- On BRANCH reduce production operation -> LPAR XOR any_value any_value RPAR 
+-- On # reduce production operation -> LPAR XOR any_value any_value RPAR 
+
+State 38:
+operation -> LPAR NEQ . any_value any_value RPAR [ WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH # ]
+-- On WRITE shift to state 3
+-- On SYMB_REG shift to state 15
+-- On REG shift to state 16
+-- On READ shift to state 4
+-- On NUM shift to state 19
+-- On NAME shift to state 5
+-- On META shift to state 20
+-- On FENCE shift to state 6
+-- On BRANCH shift to state 7
+-- On reg_or_addr shift to state 33
+-- On reg shift to state 24
+-- On name shift to state 25
+-- On k shift to state 34
+-- On any_value shift to state 39
+
+State 39:
+operation -> LPAR NEQ any_value . any_value RPAR [ WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH # ]
+-- On WRITE shift to state 3
+-- On SYMB_REG shift to state 15
+-- On REG shift to state 16
+-- On READ shift to state 4
+-- On NUM shift to state 19
+-- On NAME shift to state 5
+-- On META shift to state 20
+-- On FENCE shift to state 6
+-- On BRANCH shift to state 7
+-- On reg_or_addr shift to state 33
+-- On reg shift to state 24
+-- On name shift to state 25
+-- On k shift to state 34
+-- On any_value shift to state 40
+
+State 40:
+operation -> LPAR NEQ any_value any_value . RPAR [ WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH # ]
+-- On RPAR shift to state 41
+
+State 41:
+operation -> LPAR NEQ any_value any_value RPAR . [ WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH # ]
+-- On WRITE reduce production operation -> LPAR NEQ any_value any_value RPAR 
+-- On SYMB_REG reduce production operation -> LPAR NEQ any_value any_value RPAR 
+-- On SEMI reduce production operation -> LPAR NEQ any_value any_value RPAR 
+-- On REG reduce production operation -> LPAR NEQ any_value any_value RPAR 
+-- On READ reduce production operation -> LPAR NEQ any_value any_value RPAR 
+-- On PIPE reduce production operation -> LPAR NEQ any_value any_value RPAR 
+-- On NAME reduce production operation -> LPAR NEQ any_value any_value RPAR 
+-- On FENCE reduce production operation -> LPAR NEQ any_value any_value RPAR 
+-- On BRANCH reduce production operation -> LPAR NEQ any_value any_value RPAR 
+-- On # reduce production operation -> LPAR NEQ any_value any_value RPAR 
+
+State 42:
+operation -> LPAR EQ . any_value any_value RPAR [ WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH # ]
+-- On WRITE shift to state 3
+-- On SYMB_REG shift to state 15
+-- On REG shift to state 16
+-- On READ shift to state 4
+-- On NUM shift to state 19
+-- On NAME shift to state 5
+-- On META shift to state 20
+-- On FENCE shift to state 6
+-- On BRANCH shift to state 7
+-- On reg_or_addr shift to state 33
+-- On reg shift to state 24
+-- On name shift to state 25
+-- On k shift to state 34
+-- On any_value shift to state 43
+
+State 43:
+operation -> LPAR EQ any_value . any_value RPAR [ WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH # ]
+-- On WRITE shift to state 3
+-- On SYMB_REG shift to state 15
+-- On REG shift to state 16
+-- On READ shift to state 4
+-- On NUM shift to state 19
+-- On NAME shift to state 5
+-- On META shift to state 20
+-- On FENCE shift to state 6
+-- On BRANCH shift to state 7
+-- On reg_or_addr shift to state 33
+-- On reg shift to state 24
+-- On name shift to state 25
+-- On k shift to state 34
+-- On any_value shift to state 44
+
+State 44:
+operation -> LPAR EQ any_value any_value . RPAR [ WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH # ]
+-- On RPAR shift to state 45
+
+State 45:
+operation -> LPAR EQ any_value any_value RPAR . [ WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH # ]
+-- On WRITE reduce production operation -> LPAR EQ any_value any_value RPAR 
+-- On SYMB_REG reduce production operation -> LPAR EQ any_value any_value RPAR 
+-- On SEMI reduce production operation -> LPAR EQ any_value any_value RPAR 
+-- On REG reduce production operation -> LPAR EQ any_value any_value RPAR 
+-- On READ reduce production operation -> LPAR EQ any_value any_value RPAR 
+-- On PIPE reduce production operation -> LPAR EQ any_value any_value RPAR 
+-- On NAME reduce production operation -> LPAR EQ any_value any_value RPAR 
+-- On FENCE reduce production operation -> LPAR EQ any_value any_value RPAR 
+-- On BRANCH reduce production operation -> LPAR EQ any_value any_value RPAR 
+-- On # reduce production operation -> LPAR EQ any_value any_value RPAR 
+
+State 46:
+operation -> LPAR AND . any_value any_value RPAR [ WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH # ]
+-- On WRITE shift to state 3
+-- On SYMB_REG shift to state 15
+-- On REG shift to state 16
+-- On READ shift to state 4
+-- On NUM shift to state 19
+-- On NAME shift to state 5
+-- On META shift to state 20
+-- On FENCE shift to state 6
+-- On BRANCH shift to state 7
+-- On reg_or_addr shift to state 33
+-- On reg shift to state 24
+-- On name shift to state 25
+-- On k shift to state 34
+-- On any_value shift to state 47
+
+State 47:
+operation -> LPAR AND any_value . any_value RPAR [ WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH # ]
+-- On WRITE shift to state 3
+-- On SYMB_REG shift to state 15
+-- On REG shift to state 16
+-- On READ shift to state 4
+-- On NUM shift to state 19
+-- On NAME shift to state 5
+-- On META shift to state 20
+-- On FENCE shift to state 6
+-- On BRANCH shift to state 7
+-- On reg_or_addr shift to state 33
+-- On reg shift to state 24
+-- On name shift to state 25
+-- On k shift to state 34
+-- On any_value shift to state 48
+
+State 48:
+operation -> LPAR AND any_value any_value . RPAR [ WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH # ]
+-- On RPAR shift to state 49
+
+State 49:
+operation -> LPAR AND any_value any_value RPAR . [ WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH # ]
+-- On WRITE reduce production operation -> LPAR AND any_value any_value RPAR 
+-- On SYMB_REG reduce production operation -> LPAR AND any_value any_value RPAR 
+-- On SEMI reduce production operation -> LPAR AND any_value any_value RPAR 
+-- On REG reduce production operation -> LPAR AND any_value any_value RPAR 
+-- On READ reduce production operation -> LPAR AND any_value any_value RPAR 
+-- On PIPE reduce production operation -> LPAR AND any_value any_value RPAR 
+-- On NAME reduce production operation -> LPAR AND any_value any_value RPAR 
+-- On FENCE reduce production operation -> LPAR AND any_value any_value RPAR 
+-- On BRANCH reduce production operation -> LPAR AND any_value any_value RPAR 
+-- On # reduce production operation -> LPAR AND any_value any_value RPAR 
+
+State 50:
+operation -> LPAR ADD . any_value any_value RPAR [ WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH # ]
+-- On WRITE shift to state 3
+-- On SYMB_REG shift to state 15
+-- On REG shift to state 16
+-- On READ shift to state 4
+-- On NUM shift to state 19
+-- On NAME shift to state 5
+-- On META shift to state 20
+-- On FENCE shift to state 6
+-- On BRANCH shift to state 7
+-- On reg_or_addr shift to state 33
+-- On reg shift to state 24
+-- On name shift to state 25
+-- On k shift to state 34
+-- On any_value shift to state 51
+
+State 51:
+operation -> LPAR ADD any_value . any_value RPAR [ WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH # ]
+-- On WRITE shift to state 3
+-- On SYMB_REG shift to state 15
+-- On REG shift to state 16
+-- On READ shift to state 4
+-- On NUM shift to state 19
+-- On NAME shift to state 5
+-- On META shift to state 20
+-- On FENCE shift to state 6
+-- On BRANCH shift to state 7
+-- On reg_or_addr shift to state 33
+-- On reg shift to state 24
+-- On name shift to state 25
+-- On k shift to state 34
+-- On any_value shift to state 52
+
+State 52:
+operation -> LPAR ADD any_value any_value . RPAR [ WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH # ]
+-- On RPAR shift to state 53
+
+State 53:
+operation -> LPAR ADD any_value any_value RPAR . [ WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH # ]
+-- On WRITE reduce production operation -> LPAR ADD any_value any_value RPAR 
+-- On SYMB_REG reduce production operation -> LPAR ADD any_value any_value RPAR 
+-- On SEMI reduce production operation -> LPAR ADD any_value any_value RPAR 
+-- On REG reduce production operation -> LPAR ADD any_value any_value RPAR 
+-- On READ reduce production operation -> LPAR ADD any_value any_value RPAR 
+-- On PIPE reduce production operation -> LPAR ADD any_value any_value RPAR 
+-- On NAME reduce production operation -> LPAR ADD any_value any_value RPAR 
+-- On FENCE reduce production operation -> LPAR ADD any_value any_value RPAR 
+-- On BRANCH reduce production operation -> LPAR ADD any_value any_value RPAR 
+-- On # reduce production operation -> LPAR ADD any_value any_value RPAR 
+
+State 54:
+instr -> RMW annot_list_option reg operation . addr_op [ SEMI PIPE # ]
+-- On WRITE shift to state 3
+-- On SYMB_REG shift to state 15
+-- On REG shift to state 16
+-- On READ shift to state 4
+-- On NAME shift to state 5
+-- On FENCE shift to state 6
+-- On BRANCH shift to state 7
+-- On reg_or_addr shift to state 17
+-- On reg shift to state 24
+-- On name shift to state 25
+-- On addr_op shift to state 55
+
+State 55:
+instr -> RMW annot_list_option reg operation addr_op . [ SEMI PIPE # ]
+-- On SEMI reduce production instr -> RMW annot_list_option reg operation addr_op 
+-- On PIPE reduce production instr -> RMW annot_list_option reg operation addr_op 
+-- On # reduce production instr -> RMW annot_list_option reg operation addr_op 
+
+State 56:
+operation -> any_value . [ WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH # ]
+-- On WRITE reduce production operation -> any_value 
+-- On SYMB_REG reduce production operation -> any_value 
+-- On SEMI reduce production operation -> any_value 
+-- On REG reduce production operation -> any_value 
+-- On READ reduce production operation -> any_value 
+-- On PIPE reduce production operation -> any_value 
+-- On NAME reduce production operation -> any_value 
+-- On FENCE reduce production operation -> any_value 
+-- On BRANCH reduce production operation -> any_value 
+-- On # reduce production operation -> any_value 
+
+State 57:
+instr -> READ . annot_list_option reg addr_op [ SEMI PIPE # ]
+-- On LBRAC shift to state 2
+-- On annot_list_option shift to state 58
+-- On SYMB_REG reduce production annot_list_option -> 
+-- On REG reduce production annot_list_option -> 
+
+State 58:
+instr -> READ annot_list_option . reg addr_op [ SEMI PIPE # ]
+-- On SYMB_REG shift to state 15
+-- On REG shift to state 16
+-- On reg shift to state 59
+
+State 59:
+instr -> READ annot_list_option reg . addr_op [ SEMI PIPE # ]
+-- On WRITE shift to state 3
+-- On SYMB_REG shift to state 15
+-- On REG shift to state 16
+-- On READ shift to state 4
+-- On NAME shift to state 5
+-- On FENCE shift to state 6
+-- On BRANCH shift to state 7
+-- On reg_or_addr shift to state 17
+-- On reg shift to state 24
+-- On name shift to state 25
+-- On addr_op shift to state 60
+
+State 60:
+instr -> READ annot_list_option reg addr_op . [ SEMI PIPE # ]
+-- On SEMI reduce production instr -> READ annot_list_option reg addr_op 
+-- On PIPE reduce production instr -> READ annot_list_option reg addr_op 
+-- On # reduce production instr -> READ annot_list_option reg addr_op 
+
+State 61:
+instr_option -> NAME . COLON instr_option [ SEMI PIPE # ]
+-- On COLON shift to state 62
+
+State 62:
+instr_option -> NAME COLON . instr_option [ SEMI PIPE # ]
+-- On WRITE shift to state 1
+-- On RMW shift to state 28
+-- On READ shift to state 57
+-- On NAME shift to state 61
+-- On MOV shift to state 63
+-- On FENCE shift to state 66
+-- On CODEVAR shift to state 76
+-- On CALL shift to state 77
+-- On BRANCH shift to state 81
+-- On instr_option shift to state 86
+-- On instr shift to state 87
+-- On SEMI reduce production instr_option -> 
+-- On PIPE reduce production instr_option -> 
+-- On # reduce production instr_option -> 
+
+State 63:
+instr -> MOV . reg operation [ SEMI PIPE # ]
+-- On SYMB_REG shift to state 15
+-- On REG shift to state 16
+-- On reg shift to state 64
+
+State 64:
+instr -> MOV reg . operation [ SEMI PIPE # ]
+-- On WRITE shift to state 3
+-- On SYMB_REG shift to state 15
+-- On REG shift to state 16
+-- On READ shift to state 4
+-- On NUM shift to state 19
+-- On NAME shift to state 5
+-- On META shift to state 20
+-- On LPAR shift to state 31
+-- On FENCE shift to state 6
+-- On BRANCH shift to state 7
+-- On reg_or_addr shift to state 33
+-- On reg shift to state 24
+-- On operation shift to state 65
+-- On name shift to state 25
+-- On k shift to state 34
+-- On any_value shift to state 56
+
+State 65:
+instr -> MOV reg operation . [ SEMI PIPE # ]
+-- On SEMI reduce production instr -> MOV reg operation 
+-- On PIPE reduce production instr -> MOV reg operation 
+-- On # reduce production instr -> MOV reg operation 
+
+State 66:
+instr -> FENCE . annot_list_option fence_labels_option [ SEMI PIPE # ]
+-- On LBRAC shift to state 2
+-- On annot_list_option shift to state 67
+-- On SEMI reduce production annot_list_option -> 
+-- On PIPE reduce production annot_list_option -> 
+-- On LBRACE reduce production annot_list_option -> 
+-- On # reduce production annot_list_option -> 
+
+State 67:
+instr -> FENCE annot_list_option . fence_labels_option [ SEMI PIPE # ]
+-- On LBRACE shift to state 68
+-- On fence_labels_option shift to state 75
+-- On SEMI reduce production fence_labels_option -> 
+-- On PIPE reduce production fence_labels_option -> 
+-- On # reduce production fence_labels_option -> 
+
+State 68:
+fence_labels_option -> LBRACE . name_set RBRACE LBRACE name_set RBRACE [ SEMI PIPE # ]
+-- On WRITE shift to state 3
+-- On READ shift to state 4
+-- On NAME shift to state 5
+-- On FENCE shift to state 6
+-- On BRANCH shift to state 7
+-- On name_set shift to state 69
+-- On name_list_ne shift to state 8
+-- On name_list shift to state 74
+-- On name shift to state 11
+-- On RBRACE reduce production name_list -> 
+
+State 69:
+fence_labels_option -> LBRACE name_set . RBRACE LBRACE name_set RBRACE [ SEMI PIPE # ]
+-- On RBRACE shift to state 70
+
+State 70:
+fence_labels_option -> LBRACE name_set RBRACE . LBRACE name_set RBRACE [ SEMI PIPE # ]
+-- On LBRACE shift to state 71
+
+State 71:
+fence_labels_option -> LBRACE name_set RBRACE LBRACE . name_set RBRACE [ SEMI PIPE # ]
+-- On WRITE shift to state 3
+-- On READ shift to state 4
+-- On NAME shift to state 5
+-- On FENCE shift to state 6
+-- On BRANCH shift to state 7
+-- On name_set shift to state 72
+-- On name_list_ne shift to state 8
+-- On name_list shift to state 74
+-- On name shift to state 11
+-- On RBRACE reduce production name_list -> 
+
+State 72:
+fence_labels_option -> LBRACE name_set RBRACE LBRACE name_set . RBRACE [ SEMI PIPE # ]
+-- On RBRACE shift to state 73
+
+State 73:
+fence_labels_option -> LBRACE name_set RBRACE LBRACE name_set RBRACE . [ SEMI PIPE # ]
+-- On SEMI reduce production fence_labels_option -> LBRACE name_set RBRACE LBRACE name_set RBRACE 
+-- On PIPE reduce production fence_labels_option -> LBRACE name_set RBRACE LBRACE name_set RBRACE 
+-- On # reduce production fence_labels_option -> LBRACE name_set RBRACE LBRACE name_set RBRACE 
+
+State 74:
+name_set -> name_list . [ RBRACE ]
+-- On RBRACE reduce production name_set -> name_list 
+
+State 75:
+instr -> FENCE annot_list_option fence_labels_option . [ SEMI PIPE # ]
+-- On SEMI reduce production instr -> FENCE annot_list_option fence_labels_option 
+-- On PIPE reduce production instr -> FENCE annot_list_option fence_labels_option 
+-- On # reduce production instr -> FENCE annot_list_option fence_labels_option 
+
+State 76:
+instr_option -> CODEVAR . [ SEMI PIPE # ]
+-- On SEMI reduce production instr_option -> CODEVAR 
+-- On PIPE reduce production instr_option -> CODEVAR 
+-- On # reduce production instr_option -> CODEVAR 
+
+State 77:
+instr -> CALL . LBRAC name RBRAC [ SEMI PIPE # ]
+-- On LBRAC shift to state 78
+
+State 78:
+instr -> CALL LBRAC . name RBRAC [ SEMI PIPE # ]
+-- On WRITE shift to state 3
+-- On READ shift to state 4
+-- On NAME shift to state 5
+-- On FENCE shift to state 6
+-- On BRANCH shift to state 7
+-- On name shift to state 79
+
+State 79:
+instr -> CALL LBRAC name . RBRAC [ SEMI PIPE # ]
+-- On RBRAC shift to state 80
+
+State 80:
+instr -> CALL LBRAC name RBRAC . [ SEMI PIPE # ]
+-- On SEMI reduce production instr -> CALL LBRAC name RBRAC 
+-- On PIPE reduce production instr -> CALL LBRAC name RBRAC 
+-- On # reduce production instr -> CALL LBRAC name RBRAC 
+
+State 81:
+instr -> BRANCH . annot_list_option reg NAME [ SEMI PIPE # ]
+instr -> BRANCH . annot_list_option NAME [ SEMI PIPE # ]
+-- On LBRAC shift to state 2
+-- On annot_list_option shift to state 82
+-- On SYMB_REG reduce production annot_list_option -> 
+-- On REG reduce production annot_list_option -> 
+-- On NAME reduce production annot_list_option -> 
+
+State 82:
+instr -> BRANCH annot_list_option . reg NAME [ SEMI PIPE # ]
+instr -> BRANCH annot_list_option . NAME [ SEMI PIPE # ]
+-- On SYMB_REG shift to state 15
+-- On REG shift to state 16
+-- On NAME shift to state 83
+-- On reg shift to state 84
+
+State 83:
+instr -> BRANCH annot_list_option NAME . [ SEMI PIPE # ]
+-- On SEMI reduce production instr -> BRANCH annot_list_option NAME 
+-- On PIPE reduce production instr -> BRANCH annot_list_option NAME 
+-- On # reduce production instr -> BRANCH annot_list_option NAME 
+
+State 84:
+instr -> BRANCH annot_list_option reg . NAME [ SEMI PIPE # ]
+-- On NAME shift to state 85
+
+State 85:
+instr -> BRANCH annot_list_option reg NAME . [ SEMI PIPE # ]
+-- On SEMI reduce production instr -> BRANCH annot_list_option reg NAME 
+-- On PIPE reduce production instr -> BRANCH annot_list_option reg NAME 
+-- On # reduce production instr -> BRANCH annot_list_option reg NAME 
+
+State 86:
+instr_option -> NAME COLON instr_option . [ SEMI PIPE # ]
+-- On SEMI reduce production instr_option -> NAME COLON instr_option 
+-- On PIPE reduce production instr_option -> NAME COLON instr_option 
+-- On # reduce production instr_option -> NAME COLON instr_option 
+
+State 87:
+instr_option -> instr . [ SEMI PIPE # ]
+-- On SEMI reduce production instr_option -> instr 
+-- On PIPE reduce production instr_option -> instr 
+-- On # reduce production instr_option -> instr 
+
+State 88:
+instr_option_seq' -> instr_option_seq . [ # ]
+-- On # accept instr_option_seq
+
+State 89:
+instr_option_seq -> instr_option . [ # ]
+instr_option_seq -> instr_option . SEMI instr_option_seq [ # ]
+-- On SEMI shift to state 90
+-- On # reduce production instr_option_seq -> instr_option 
+
+State 90:
+instr_option_seq -> instr_option SEMI . instr_option_seq [ # ]
+-- On WRITE shift to state 1
+-- On RMW shift to state 28
+-- On READ shift to state 57
+-- On NAME shift to state 61
+-- On MOV shift to state 63
+-- On FENCE shift to state 66
+-- On CODEVAR shift to state 76
+-- On CALL shift to state 77
+-- On BRANCH shift to state 81
+-- On instr_option_seq shift to state 91
+-- On instr_option shift to state 89
+-- On instr shift to state 87
+-- On SEMI reduce production instr_option -> 
+-- On # reduce production instr_option -> 
+
+State 91:
+instr_option_seq -> instr_option SEMI instr_option_seq . [ # ]
+-- On # reduce production instr_option_seq -> instr_option SEMI instr_option_seq 
+
+State 92:
+main' -> . main [ # ]
+-- On SEMI shift to state 93
+-- On semi_opt shift to state 94
+-- On main shift to state 136
+-- On PROC reduce production semi_opt -> 
+
+State 93:
+semi_opt -> SEMI . [ PROC ]
+-- On PROC reduce production semi_opt -> SEMI 
+
+State 94:
+main -> semi_opt . proc_list iol_list scopes_and_memory_map EOF [ # ]
+-- On PROC shift to state 95
+-- On proc_list shift to state 99
+
+State 95:
+proc_list -> PROC . SEMI [ WRITE SEMI RMW READ PIPE NAME MOV FENCE CODEVAR CALL BRANCH ]
+proc_list -> PROC . PIPE proc_list [ WRITE SEMI RMW READ PIPE NAME MOV FENCE CODEVAR CALL BRANCH ]
+-- On SEMI shift to state 96
+-- On PIPE shift to state 97
+
+State 96:
+proc_list -> PROC SEMI . [ WRITE SEMI RMW READ PIPE NAME MOV FENCE CODEVAR CALL BRANCH ]
+-- On WRITE reduce production proc_list -> PROC SEMI 
+-- On SEMI reduce production proc_list -> PROC SEMI 
+-- On RMW reduce production proc_list -> PROC SEMI 
+-- On READ reduce production proc_list -> PROC SEMI 
+-- On PIPE reduce production proc_list -> PROC SEMI 
+-- On NAME reduce production proc_list -> PROC SEMI 
+-- On MOV reduce production proc_list -> PROC SEMI 
+-- On FENCE reduce production proc_list -> PROC SEMI 
+-- On CODEVAR reduce production proc_list -> PROC SEMI 
+-- On CALL reduce production proc_list -> PROC SEMI 
+-- On BRANCH reduce production proc_list -> PROC SEMI 
+
+State 97:
+proc_list -> PROC PIPE . proc_list [ WRITE SEMI RMW READ PIPE NAME MOV FENCE CODEVAR CALL BRANCH ]
+-- On PROC shift to state 95
+-- On proc_list shift to state 98
+
+State 98:
+proc_list -> PROC PIPE proc_list . [ WRITE SEMI RMW READ PIPE NAME MOV FENCE CODEVAR CALL BRANCH ]
+-- On WRITE reduce production proc_list -> PROC PIPE proc_list 
+-- On SEMI reduce production proc_list -> PROC PIPE proc_list 
+-- On RMW reduce production proc_list -> PROC PIPE proc_list 
+-- On READ reduce production proc_list -> PROC PIPE proc_list 
+-- On PIPE reduce production proc_list -> PROC PIPE proc_list 
+-- On NAME reduce production proc_list -> PROC PIPE proc_list 
+-- On MOV reduce production proc_list -> PROC PIPE proc_list 
+-- On FENCE reduce production proc_list -> PROC PIPE proc_list 
+-- On CODEVAR reduce production proc_list -> PROC PIPE proc_list 
+-- On CALL reduce production proc_list -> PROC PIPE proc_list 
+-- On BRANCH reduce production proc_list -> PROC PIPE proc_list 
+
+State 99:
+main -> semi_opt proc_list . iol_list scopes_and_memory_map EOF [ # ]
+-- On WRITE shift to state 1
+-- On RMW shift to state 28
+-- On READ shift to state 57
+-- On NAME shift to state 61
+-- On MOV shift to state 63
+-- On FENCE shift to state 66
+-- On CODEVAR shift to state 76
+-- On CALL shift to state 77
+-- On BRANCH shift to state 81
+-- On iol_list shift to state 100
+-- On instr_option_list shift to state 130
+-- On instr_option shift to state 133
+-- On instr shift to state 87
+-- On SEMI reduce production instr_option -> 
+-- On PIPE reduce production instr_option -> 
+
+State 100:
+main -> semi_opt proc_list iol_list . scopes_and_memory_map EOF [ # ]
+-- On SCOPES shift to state 101
+-- On scopes_and_memory_map shift to state 117
+-- On scope_option shift to state 119
+-- On REGIONS reduce production scope_option -> 
+-- On EOF reduce production scope_option -> 
+
+State 101:
+scope_option -> SCOPES . COLON top_scope_tree [ REGIONS EOF ]
+-- On COLON shift to state 102
+
+State 102:
+scope_option -> SCOPES COLON . top_scope_tree [ REGIONS EOF ]
+-- On LPAR shift to state 103
+-- On top_scope_tree shift to state 115
+-- On scope_tree_list shift to state 116
+-- On scope_tree shift to state 109
+
+State 103:
+scope_tree -> LPAR . NAME scope_tree_list RPAR [ RPAR REGIONS LPAR EOF ]
+scope_tree -> LPAR . NAME proc_list_sc RPAR [ RPAR REGIONS LPAR EOF ]
+-- On NAME shift to state 104
+
+State 104:
+scope_tree -> LPAR NAME . scope_tree_list RPAR [ RPAR REGIONS LPAR EOF ]
+scope_tree -> LPAR NAME . proc_list_sc RPAR [ RPAR REGIONS LPAR EOF ]
+-- On PROC shift to state 105
+-- On NUM shift to state 106
+-- On LPAR shift to state 103
+-- On scope_tree_list shift to state 107
+-- On scope_tree shift to state 109
+-- On proc_list_sc shift to state 111
+-- On proc shift to state 113
+-- On RPAR reduce production proc_list_sc -> 
+
+State 105:
+proc -> PROC . [ RPAR PROC NUM ]
+-- On RPAR reduce production proc -> PROC 
+-- On PROC reduce production proc -> PROC 
+-- On NUM reduce production proc -> PROC 
+
+State 106:
+proc -> NUM . [ RPAR PROC NUM ]
+-- On RPAR reduce production proc -> NUM 
+-- On PROC reduce production proc -> NUM 
+-- On NUM reduce production proc -> NUM 
+
+State 107:
+scope_tree -> LPAR NAME scope_tree_list . RPAR [ RPAR REGIONS LPAR EOF ]
+-- On RPAR shift to state 108
+
+State 108:
+scope_tree -> LPAR NAME scope_tree_list RPAR . [ RPAR REGIONS LPAR EOF ]
+-- On RPAR reduce production scope_tree -> LPAR NAME scope_tree_list RPAR 
+-- On REGIONS reduce production scope_tree -> LPAR NAME scope_tree_list RPAR 
+-- On LPAR reduce production scope_tree -> LPAR NAME scope_tree_list RPAR 
+-- On EOF reduce production scope_tree -> LPAR NAME scope_tree_list RPAR 
+
+State 109:
+scope_tree_list -> scope_tree . [ RPAR REGIONS EOF ]
+scope_tree_list -> scope_tree . scope_tree_list [ RPAR REGIONS EOF ]
+-- On LPAR shift to state 103
+-- On scope_tree_list shift to state 110
+-- On scope_tree shift to state 109
+-- On RPAR reduce production scope_tree_list -> scope_tree 
+-- On REGIONS reduce production scope_tree_list -> scope_tree 
+-- On EOF reduce production scope_tree_list -> scope_tree 
+
+State 110:
+scope_tree_list -> scope_tree scope_tree_list . [ RPAR REGIONS EOF ]
+-- On RPAR reduce production scope_tree_list -> scope_tree scope_tree_list 
+-- On REGIONS reduce production scope_tree_list -> scope_tree scope_tree_list 
+-- On EOF reduce production scope_tree_list -> scope_tree scope_tree_list 
+
+State 111:
+scope_tree -> LPAR NAME proc_list_sc . RPAR [ RPAR REGIONS LPAR EOF ]
+-- On RPAR shift to state 112
+
+State 112:
+scope_tree -> LPAR NAME proc_list_sc RPAR . [ RPAR REGIONS LPAR EOF ]
+-- On RPAR reduce production scope_tree -> LPAR NAME proc_list_sc RPAR 
+-- On REGIONS reduce production scope_tree -> LPAR NAME proc_list_sc RPAR 
+-- On LPAR reduce production scope_tree -> LPAR NAME proc_list_sc RPAR 
+-- On EOF reduce production scope_tree -> LPAR NAME proc_list_sc RPAR 
+
+State 113:
+proc_list_sc -> proc . proc_list_sc [ RPAR ]
+-- On PROC shift to state 105
+-- On NUM shift to state 106
+-- On proc_list_sc shift to state 114
+-- On proc shift to state 113
+-- On RPAR reduce production proc_list_sc -> 
+
+State 114:
+proc_list_sc -> proc proc_list_sc . [ RPAR ]
+-- On RPAR reduce production proc_list_sc -> proc proc_list_sc 
+
+State 115:
+scope_option -> SCOPES COLON top_scope_tree . [ REGIONS EOF ]
+-- On REGIONS reduce production scope_option -> SCOPES COLON top_scope_tree 
+-- On EOF reduce production scope_option -> SCOPES COLON top_scope_tree 
+
+State 116:
+top_scope_tree -> scope_tree_list . [ REGIONS EOF ]
+-- On REGIONS reduce production top_scope_tree -> scope_tree_list 
+-- On EOF reduce production top_scope_tree -> scope_tree_list 
+
+State 117:
+main -> semi_opt proc_list iol_list scopes_and_memory_map . EOF [ # ]
+-- On EOF shift to state 118
+
+State 118:
+main -> semi_opt proc_list iol_list scopes_and_memory_map EOF . [ # ]
+-- On # reduce production main -> semi_opt proc_list iol_list scopes_and_memory_map EOF 
+
+State 119:
+scopes_and_memory_map -> scope_option . memory_map_option [ EOF ]
+-- On REGIONS shift to state 120
+-- On memory_map_option shift to state 129
+-- On EOF reduce production memory_map_option -> 
+
+State 120:
+memory_map_option -> REGIONS . COLON memory_map [ EOF ]
+-- On COLON shift to state 121
+
+State 121:
+memory_map_option -> REGIONS COLON . memory_map [ EOF ]
+-- On NAME shift to state 122
+-- On memory_map_atom shift to state 125
+-- On memory_map shift to state 128
+-- On EOF reduce production memory_map -> 
+
+State 122:
+memory_map_atom -> NAME . COLON NAME [ EOF COMMA ]
+-- On COLON shift to state 123
+
+State 123:
+memory_map_atom -> NAME COLON . NAME [ EOF COMMA ]
+-- On NAME shift to state 124
+
+State 124:
+memory_map_atom -> NAME COLON NAME . [ EOF COMMA ]
+-- On EOF reduce production memory_map_atom -> NAME COLON NAME 
+-- On COMMA reduce production memory_map_atom -> NAME COLON NAME 
+
+State 125:
+memory_map -> memory_map_atom . COMMA memory_map [ EOF ]
+memory_map -> memory_map_atom . [ EOF ]
+-- On COMMA shift to state 126
+-- On EOF reduce production memory_map -> memory_map_atom 
+
+State 126:
+memory_map -> memory_map_atom COMMA . memory_map [ EOF ]
+-- On NAME shift to state 122
+-- On memory_map_atom shift to state 125
+-- On memory_map shift to state 127
+-- On EOF reduce production memory_map -> 
+
+State 127:
+memory_map -> memory_map_atom COMMA memory_map . [ EOF ]
+-- On EOF reduce production memory_map -> memory_map_atom COMMA memory_map 
+
+State 128:
+memory_map_option -> REGIONS COLON memory_map . [ EOF ]
+-- On EOF reduce production memory_map_option -> REGIONS COLON memory_map 
+
+State 129:
+scopes_and_memory_map -> scope_option memory_map_option . [ EOF ]
+-- On EOF reduce production scopes_and_memory_map -> scope_option memory_map_option 
+
+State 130:
+iol_list -> instr_option_list . SEMI [ SCOPES REGIONS EOF ]
+iol_list -> instr_option_list . SEMI iol_list [ SCOPES REGIONS EOF ]
+-- On SEMI shift to state 131
+
+State 131:
+iol_list -> instr_option_list SEMI . [ SCOPES REGIONS EOF ]
+iol_list -> instr_option_list SEMI . iol_list [ SCOPES REGIONS EOF ]
+-- On WRITE shift to state 1
+-- On RMW shift to state 28
+-- On READ shift to state 57
+-- On NAME shift to state 61
+-- On MOV shift to state 63
+-- On FENCE shift to state 66
+-- On CODEVAR shift to state 76
+-- On CALL shift to state 77
+-- On BRANCH shift to state 81
+-- On iol_list shift to state 132
+-- On instr_option_list shift to state 130
+-- On instr_option shift to state 133
+-- On instr shift to state 87
+-- On SEMI reduce production instr_option -> 
+-- On SCOPES reduce production iol_list -> instr_option_list SEMI 
+-- On REGIONS reduce production iol_list -> instr_option_list SEMI 
+-- On PIPE reduce production instr_option -> 
+-- On EOF reduce production iol_list -> instr_option_list SEMI 
+
+State 132:
+iol_list -> instr_option_list SEMI iol_list . [ SCOPES REGIONS EOF ]
+-- On SCOPES reduce production iol_list -> instr_option_list SEMI iol_list 
+-- On REGIONS reduce production iol_list -> instr_option_list SEMI iol_list 
+-- On EOF reduce production iol_list -> instr_option_list SEMI iol_list 
+
+State 133:
+instr_option_list -> instr_option . [ SEMI ]
+instr_option_list -> instr_option . PIPE instr_option_list [ SEMI ]
+-- On PIPE shift to state 134
+-- On SEMI reduce production instr_option_list -> instr_option 
+
+State 134:
+instr_option_list -> instr_option PIPE . instr_option_list [ SEMI ]
+-- On WRITE shift to state 1
+-- On RMW shift to state 28
+-- On READ shift to state 57
+-- On NAME shift to state 61
+-- On MOV shift to state 63
+-- On FENCE shift to state 66
+-- On CODEVAR shift to state 76
+-- On CALL shift to state 77
+-- On BRANCH shift to state 81
+-- On instr_option_list shift to state 135
+-- On instr_option shift to state 133
+-- On instr shift to state 87
+-- On SEMI reduce production instr_option -> 
+-- On PIPE reduce production instr_option -> 
+
+State 135:
+instr_option_list -> instr_option PIPE instr_option_list . [ SEMI ]
+-- On SEMI reduce production instr_option_list -> instr_option PIPE instr_option_list 
+
+State 136:
+main' -> main . [ # ]
+-- On # accept main
+
+State 0 has an end-of-stream conflict. There is a tension between
+(1) reducing production instr_option -> 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of WRITE SEMI RMW READ NAME MOV FENCE CODEVAR CALL BRANCH,
+which would require some other action.
+
+State 3 has an end-of-stream conflict. There is a tension between
+(1) reducing production name -> WRITE 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of WRITE SYMB_REG SEMI RPAR REG READ RBRACE RBRAC PLUS PIPE NUM NAME META FENCE COMMA BRANCH,
+which would require some other action.
+
+State 4 has an end-of-stream conflict. There is a tension between
+(1) reducing production name -> READ 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of WRITE SYMB_REG SEMI RPAR REG READ RBRACE RBRAC PLUS PIPE NUM NAME META FENCE COMMA BRANCH,
+which would require some other action.
+
+State 5 has an end-of-stream conflict. There is a tension between
+(1) reducing production name -> NAME 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of WRITE SYMB_REG SEMI RPAR REG READ RBRACE RBRAC PLUS PIPE NUM NAME META FENCE COMMA BRANCH,
+which would require some other action.
+
+State 6 has an end-of-stream conflict. There is a tension between
+(1) reducing production name -> FENCE 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of WRITE SYMB_REG SEMI RPAR REG READ RBRACE RBRAC PLUS PIPE NUM NAME META FENCE COMMA BRANCH,
+which would require some other action.
+
+State 7 has an end-of-stream conflict. There is a tension between
+(1) reducing production name -> BRANCH 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of WRITE SYMB_REG SEMI RPAR REG READ RBRACE RBRAC PLUS PIPE NUM NAME META FENCE COMMA BRANCH,
+which would require some other action.
+
+State 10 has an end-of-stream conflict. There is a tension between
+(1) reducing production annot_list_option -> LBRAC name_list RBRAC 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of WRITE SYMB_REG SEMI REG READ PIPE NAME LBRACE FENCE BRANCH,
+which would require some other action.
+
+State 15 has an end-of-stream conflict. There is a tension between
+(1) reducing production reg -> SYMB_REG 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of WRITE SYMB_REG SEMI RPAR REG READ PLUS PIPE NUM NAME META LPAR FENCE BRANCH,
+which would require some other action.
+
+State 16 has an end-of-stream conflict. There is a tension between
+(1) reducing production reg -> REG 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of WRITE SYMB_REG SEMI RPAR REG READ PLUS PIPE NUM NAME META LPAR FENCE BRANCH,
+which would require some other action.
+
+State 17 has an end-of-stream conflict. There is a tension between
+(1) reducing production addr_op -> reg_or_addr 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of SYMB_REG SEMI REG PLUS PIPE NUM META,
+which would require some other action.
+
+State 19 has an end-of-stream conflict. There is a tension between
+(1) reducing production k -> NUM 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of WRITE SYMB_REG SEMI RPAR REG READ PIPE NUM NAME META FENCE BRANCH,
+which would require some other action.
+
+State 20 has an end-of-stream conflict. There is a tension between
+(1) reducing production k -> META 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of WRITE SYMB_REG SEMI RPAR REG READ PIPE NUM NAME META FENCE BRANCH,
+which would require some other action.
+
+State 21 has an end-of-stream conflict. There is a tension between
+(1) reducing production addr_op -> reg_or_addr PLUS reg_or_imm 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of SYMB_REG SEMI REG PIPE NUM META,
+which would require some other action.
+
+State 22 has an end-of-stream conflict. There is a tension between
+(1) reducing production reg_or_imm -> reg 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of SYMB_REG SEMI REG PIPE NUM META,
+which would require some other action.
+
+State 23 has an end-of-stream conflict. There is a tension between
+(1) reducing production reg_or_imm -> k 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of SYMB_REG SEMI REG PIPE NUM META,
+which would require some other action.
+
+State 24 has an end-of-stream conflict. There is a tension between
+(1) reducing production reg_or_addr -> reg 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of WRITE SYMB_REG SEMI RPAR REG READ PLUS PIPE NUM NAME META FENCE BRANCH,
+which would require some other action.
+
+State 25 has an end-of-stream conflict. There is a tension between
+(1) reducing production reg_or_addr -> name 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of WRITE SYMB_REG SEMI RPAR REG READ PLUS PIPE NUM NAME META FENCE BRANCH,
+which would require some other action.
+
+State 27 has an end-of-stream conflict. There is a tension between
+(1) reducing production instr -> WRITE annot_list_option addr_op reg_or_imm 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of SEMI PIPE,
+which would require some other action.
+
+State 33 has an end-of-stream conflict. There is a tension between
+(1) reducing production any_value -> reg_or_addr 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of WRITE SYMB_REG SEMI RPAR REG READ PIPE NUM NAME META FENCE BRANCH,
+which would require some other action.
+
+State 34 has an end-of-stream conflict. There is a tension between
+(1) reducing production any_value -> k 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of WRITE SYMB_REG SEMI RPAR REG READ PIPE NUM NAME META FENCE BRANCH,
+which would require some other action.
+
+State 37 has an end-of-stream conflict. There is a tension between
+(1) reducing production operation -> LPAR XOR any_value any_value RPAR 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH,
+which would require some other action.
+
+State 41 has an end-of-stream conflict. There is a tension between
+(1) reducing production operation -> LPAR NEQ any_value any_value RPAR 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH,
+which would require some other action.
+
+State 45 has an end-of-stream conflict. There is a tension between
+(1) reducing production operation -> LPAR EQ any_value any_value RPAR 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH,
+which would require some other action.
+
+State 49 has an end-of-stream conflict. There is a tension between
+(1) reducing production operation -> LPAR AND any_value any_value RPAR 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH,
+which would require some other action.
+
+State 53 has an end-of-stream conflict. There is a tension between
+(1) reducing production operation -> LPAR ADD any_value any_value RPAR 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH,
+which would require some other action.
+
+State 55 has an end-of-stream conflict. There is a tension between
+(1) reducing production instr -> RMW annot_list_option reg operation addr_op 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of SEMI PIPE,
+which would require some other action.
+
+State 56 has an end-of-stream conflict. There is a tension between
+(1) reducing production operation -> any_value 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH,
+which would require some other action.
+
+State 60 has an end-of-stream conflict. There is a tension between
+(1) reducing production instr -> READ annot_list_option reg addr_op 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of SEMI PIPE,
+which would require some other action.
+
+State 62 has an end-of-stream conflict. There is a tension between
+(1) reducing production instr_option -> 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of WRITE SEMI RMW READ PIPE NAME MOV FENCE CODEVAR CALL BRANCH,
+which would require some other action.
+
+State 65 has an end-of-stream conflict. There is a tension between
+(1) reducing production instr -> MOV reg operation 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of SEMI PIPE,
+which would require some other action.
+
+State 66 has an end-of-stream conflict. There is a tension between
+(1) reducing production annot_list_option -> 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of SEMI PIPE LBRACE LBRAC,
+which would require some other action.
+
+State 67 has an end-of-stream conflict. There is a tension between
+(1) reducing production fence_labels_option -> 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of SEMI PIPE LBRACE,
+which would require some other action.
+
+State 73 has an end-of-stream conflict. There is a tension between
+(1) reducing production fence_labels_option -> LBRACE name_set RBRACE LBRACE name_set RBRACE 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of SEMI PIPE,
+which would require some other action.
+
+State 75 has an end-of-stream conflict. There is a tension between
+(1) reducing production instr -> FENCE annot_list_option fence_labels_option 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of SEMI PIPE,
+which would require some other action.
+
+State 76 has an end-of-stream conflict. There is a tension between
+(1) reducing production instr_option -> CODEVAR 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of SEMI PIPE,
+which would require some other action.
+
+State 80 has an end-of-stream conflict. There is a tension between
+(1) reducing production instr -> CALL LBRAC name RBRAC 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of SEMI PIPE,
+which would require some other action.
+
+State 83 has an end-of-stream conflict. There is a tension between
+(1) reducing production instr -> BRANCH annot_list_option NAME 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of SEMI PIPE,
+which would require some other action.
+
+State 85 has an end-of-stream conflict. There is a tension between
+(1) reducing production instr -> BRANCH annot_list_option reg NAME 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of SEMI PIPE,
+which would require some other action.
+
+State 86 has an end-of-stream conflict. There is a tension between
+(1) reducing production instr_option -> NAME COLON instr_option 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of SEMI PIPE,
+which would require some other action.
+
+State 87 has an end-of-stream conflict. There is a tension between
+(1) reducing production instr_option -> instr 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of SEMI PIPE,
+which would require some other action.
+
+State 89 has an end-of-stream conflict. There is a tension between
+(1) reducing production instr_option_seq -> instr_option 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is SEMI,
+which would require some other action.
+
+State 90 has an end-of-stream conflict. There is a tension between
+(1) reducing production instr_option -> 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of WRITE SEMI RMW READ NAME MOV FENCE CODEVAR CALL BRANCH,
+which would require some other action.
+

@@ -1,0 +1,642 @@
+State 0:
+spec' -> . spec [ # ]
+-- On CODE shift to state 1
+-- On spec shift to state 2
+-- On codeopt shift to state 3
+-- On RULE reduce production codeopt -> 
+-- On LET reduce production codeopt -> 
+
+State 1:
+codeopt -> CODE . [ RULE LET ]
+-- On RULE reduce production codeopt -> CODE 
+-- On LET reduce production codeopt -> CODE 
+
+State 2:
+spec' -> spec . [ # ]
+-- On # accept spec
+
+State 3:
+spec -> codeopt . macros RULE rules codeopt [ # ]
+-- On LET shift to state 4
+-- On macros shift to state 32
+-- On macro shift to state 54
+-- On RULE reduce production macros -> 
+
+State 4:
+macro -> LET . IDENT EQUALS regexp [ RULE LET ]
+-- On IDENT shift to state 5
+
+State 5:
+macro -> LET IDENT . EQUALS regexp [ RULE LET ]
+-- On EQUALS shift to state 6
+
+State 6:
+macro -> LET IDENT EQUALS . regexp [ RULE LET ]
+-- On UNDERSCORE shift to state 7
+-- On STRING shift to state 8
+-- On LPAREN shift to state 9
+-- On LBRACK shift to state 10
+-- On IDENT shift to state 20
+-- On EOF shift to state 21
+-- On CHAR shift to state 22
+-- On regexp shift to state 31
+
+State 7:
+regexp -> UNDERSCORE . [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
+-- On UNDERSCORE reduce production regexp -> UNDERSCORE 
+-- On STRING reduce production regexp -> UNDERSCORE 
+-- On STAR reduce production regexp -> UNDERSCORE 
+-- On RULE reduce production regexp -> UNDERSCORE 
+-- On RPAREN reduce production regexp -> UNDERSCORE 
+-- On QMARK reduce production regexp -> UNDERSCORE 
+-- On PLUS reduce production regexp -> UNDERSCORE 
+-- On LPAREN reduce production regexp -> UNDERSCORE 
+-- On LET reduce production regexp -> UNDERSCORE 
+-- On LBRACK reduce production regexp -> UNDERSCORE 
+-- On IDENT reduce production regexp -> UNDERSCORE 
+-- On EOF reduce production regexp -> UNDERSCORE 
+-- On CODE reduce production regexp -> UNDERSCORE 
+-- On CHAR reduce production regexp -> UNDERSCORE 
+-- On BAR reduce production regexp -> UNDERSCORE 
+
+State 8:
+regexp -> STRING . [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
+-- On UNDERSCORE reduce production regexp -> STRING 
+-- On STRING reduce production regexp -> STRING 
+-- On STAR reduce production regexp -> STRING 
+-- On RULE reduce production regexp -> STRING 
+-- On RPAREN reduce production regexp -> STRING 
+-- On QMARK reduce production regexp -> STRING 
+-- On PLUS reduce production regexp -> STRING 
+-- On LPAREN reduce production regexp -> STRING 
+-- On LET reduce production regexp -> STRING 
+-- On LBRACK reduce production regexp -> STRING 
+-- On IDENT reduce production regexp -> STRING 
+-- On EOF reduce production regexp -> STRING 
+-- On CODE reduce production regexp -> STRING 
+-- On CHAR reduce production regexp -> STRING 
+-- On BAR reduce production regexp -> STRING 
+
+State 9:
+regexp -> LPAREN . regexp RPAREN [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
+-- On UNDERSCORE shift to state 7
+-- On STRING shift to state 8
+-- On LPAREN shift to state 9
+-- On LBRACK shift to state 10
+-- On IDENT shift to state 20
+-- On EOF shift to state 21
+-- On CHAR shift to state 22
+-- On regexp shift to state 23
+
+State 10:
+regexp -> LBRACK . charset RBRACK [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
+regexp -> LBRACK . HAT charset RBRACK [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
+-- On HAT shift to state 11
+-- On CHAR shift to state 12
+-- On charset shift to state 18
+
+State 11:
+regexp -> LBRACK HAT . charset RBRACK [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
+-- On CHAR shift to state 12
+-- On charset shift to state 15
+
+State 12:
+charset -> CHAR . [ RBRACK CHAR ]
+charset -> CHAR . DASH CHAR [ RBRACK CHAR ]
+-- On DASH shift to state 13
+-- On RBRACK reduce production charset -> CHAR 
+-- On CHAR reduce production charset -> CHAR 
+
+State 13:
+charset -> CHAR DASH . CHAR [ RBRACK CHAR ]
+-- On CHAR shift to state 14
+
+State 14:
+charset -> CHAR DASH CHAR . [ RBRACK CHAR ]
+-- On RBRACK reduce production charset -> CHAR DASH CHAR 
+-- On CHAR reduce production charset -> CHAR DASH CHAR 
+
+State 15:
+charset -> charset . charset [ RBRACK CHAR ]
+regexp -> LBRACK HAT charset . RBRACK [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
+-- On RBRACK shift to state 16
+-- On CHAR shift to state 12
+-- On charset shift to state 17
+
+State 16:
+regexp -> LBRACK HAT charset RBRACK . [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
+-- On UNDERSCORE reduce production regexp -> LBRACK HAT charset RBRACK 
+-- On STRING reduce production regexp -> LBRACK HAT charset RBRACK 
+-- On STAR reduce production regexp -> LBRACK HAT charset RBRACK 
+-- On RULE reduce production regexp -> LBRACK HAT charset RBRACK 
+-- On RPAREN reduce production regexp -> LBRACK HAT charset RBRACK 
+-- On QMARK reduce production regexp -> LBRACK HAT charset RBRACK 
+-- On PLUS reduce production regexp -> LBRACK HAT charset RBRACK 
+-- On LPAREN reduce production regexp -> LBRACK HAT charset RBRACK 
+-- On LET reduce production regexp -> LBRACK HAT charset RBRACK 
+-- On LBRACK reduce production regexp -> LBRACK HAT charset RBRACK 
+-- On IDENT reduce production regexp -> LBRACK HAT charset RBRACK 
+-- On EOF reduce production regexp -> LBRACK HAT charset RBRACK 
+-- On CODE reduce production regexp -> LBRACK HAT charset RBRACK 
+-- On CHAR reduce production regexp -> LBRACK HAT charset RBRACK 
+-- On BAR reduce production regexp -> LBRACK HAT charset RBRACK 
+
+State 17:
+charset -> charset . charset [ RBRACK CHAR ]
+charset -> charset charset . [ RBRACK CHAR ]
+-- On CHAR shift to state 12
+-- On charset shift to state 17
+-- On RBRACK reduce production charset -> charset charset 
+-- On CHAR reduce production charset -> charset charset 
+** Conflict on CHAR
+
+State 18:
+charset -> charset . charset [ RBRACK CHAR ]
+regexp -> LBRACK charset . RBRACK [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
+-- On RBRACK shift to state 19
+-- On CHAR shift to state 12
+-- On charset shift to state 17
+
+State 19:
+regexp -> LBRACK charset RBRACK . [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
+-- On UNDERSCORE reduce production regexp -> LBRACK charset RBRACK 
+-- On STRING reduce production regexp -> LBRACK charset RBRACK 
+-- On STAR reduce production regexp -> LBRACK charset RBRACK 
+-- On RULE reduce production regexp -> LBRACK charset RBRACK 
+-- On RPAREN reduce production regexp -> LBRACK charset RBRACK 
+-- On QMARK reduce production regexp -> LBRACK charset RBRACK 
+-- On PLUS reduce production regexp -> LBRACK charset RBRACK 
+-- On LPAREN reduce production regexp -> LBRACK charset RBRACK 
+-- On LET reduce production regexp -> LBRACK charset RBRACK 
+-- On LBRACK reduce production regexp -> LBRACK charset RBRACK 
+-- On IDENT reduce production regexp -> LBRACK charset RBRACK 
+-- On EOF reduce production regexp -> LBRACK charset RBRACK 
+-- On CODE reduce production regexp -> LBRACK charset RBRACK 
+-- On CHAR reduce production regexp -> LBRACK charset RBRACK 
+-- On BAR reduce production regexp -> LBRACK charset RBRACK 
+
+State 20:
+regexp -> IDENT . [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
+-- On UNDERSCORE reduce production regexp -> IDENT 
+-- On STRING reduce production regexp -> IDENT 
+-- On STAR reduce production regexp -> IDENT 
+-- On RULE reduce production regexp -> IDENT 
+-- On RPAREN reduce production regexp -> IDENT 
+-- On QMARK reduce production regexp -> IDENT 
+-- On PLUS reduce production regexp -> IDENT 
+-- On LPAREN reduce production regexp -> IDENT 
+-- On LET reduce production regexp -> IDENT 
+-- On LBRACK reduce production regexp -> IDENT 
+-- On IDENT reduce production regexp -> IDENT 
+-- On EOF reduce production regexp -> IDENT 
+-- On CODE reduce production regexp -> IDENT 
+-- On CHAR reduce production regexp -> IDENT 
+-- On BAR reduce production regexp -> IDENT 
+
+State 21:
+regexp -> EOF . [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
+-- On UNDERSCORE reduce production regexp -> EOF 
+-- On STRING reduce production regexp -> EOF 
+-- On STAR reduce production regexp -> EOF 
+-- On RULE reduce production regexp -> EOF 
+-- On RPAREN reduce production regexp -> EOF 
+-- On QMARK reduce production regexp -> EOF 
+-- On PLUS reduce production regexp -> EOF 
+-- On LPAREN reduce production regexp -> EOF 
+-- On LET reduce production regexp -> EOF 
+-- On LBRACK reduce production regexp -> EOF 
+-- On IDENT reduce production regexp -> EOF 
+-- On EOF reduce production regexp -> EOF 
+-- On CODE reduce production regexp -> EOF 
+-- On CHAR reduce production regexp -> EOF 
+-- On BAR reduce production regexp -> EOF 
+
+State 22:
+regexp -> CHAR . [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
+-- On UNDERSCORE reduce production regexp -> CHAR 
+-- On STRING reduce production regexp -> CHAR 
+-- On STAR reduce production regexp -> CHAR 
+-- On RULE reduce production regexp -> CHAR 
+-- On RPAREN reduce production regexp -> CHAR 
+-- On QMARK reduce production regexp -> CHAR 
+-- On PLUS reduce production regexp -> CHAR 
+-- On LPAREN reduce production regexp -> CHAR 
+-- On LET reduce production regexp -> CHAR 
+-- On LBRACK reduce production regexp -> CHAR 
+-- On IDENT reduce production regexp -> CHAR 
+-- On EOF reduce production regexp -> CHAR 
+-- On CODE reduce production regexp -> CHAR 
+-- On CHAR reduce production regexp -> CHAR 
+-- On BAR reduce production regexp -> CHAR 
+
+State 23:
+regexp -> regexp . regexp [ UNDERSCORE STRING STAR RPAREN QMARK PLUS LPAREN LBRACK IDENT EOF CHAR BAR ]
+regexp -> regexp . PLUS [ UNDERSCORE STRING STAR RPAREN QMARK PLUS LPAREN LBRACK IDENT EOF CHAR BAR ]
+regexp -> regexp . STAR [ UNDERSCORE STRING STAR RPAREN QMARK PLUS LPAREN LBRACK IDENT EOF CHAR BAR ]
+regexp -> regexp . QMARK [ UNDERSCORE STRING STAR RPAREN QMARK PLUS LPAREN LBRACK IDENT EOF CHAR BAR ]
+regexp -> regexp . BAR regexp [ UNDERSCORE STRING STAR RPAREN QMARK PLUS LPAREN LBRACK IDENT EOF CHAR BAR ]
+regexp -> LPAREN regexp . RPAREN [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
+-- On UNDERSCORE shift to state 7
+-- On STRING shift to state 8
+-- On STAR shift to state 24
+-- On RPAREN shift to state 25
+-- On QMARK shift to state 26
+-- On PLUS shift to state 27
+-- On LPAREN shift to state 9
+-- On LBRACK shift to state 10
+-- On IDENT shift to state 20
+-- On EOF shift to state 21
+-- On CHAR shift to state 22
+-- On BAR shift to state 28
+-- On regexp shift to state 30
+
+State 24:
+regexp -> regexp STAR . [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
+-- On UNDERSCORE reduce production regexp -> regexp STAR 
+-- On STRING reduce production regexp -> regexp STAR 
+-- On STAR reduce production regexp -> regexp STAR 
+-- On RULE reduce production regexp -> regexp STAR 
+-- On RPAREN reduce production regexp -> regexp STAR 
+-- On QMARK reduce production regexp -> regexp STAR 
+-- On PLUS reduce production regexp -> regexp STAR 
+-- On LPAREN reduce production regexp -> regexp STAR 
+-- On LET reduce production regexp -> regexp STAR 
+-- On LBRACK reduce production regexp -> regexp STAR 
+-- On IDENT reduce production regexp -> regexp STAR 
+-- On EOF reduce production regexp -> regexp STAR 
+-- On CODE reduce production regexp -> regexp STAR 
+-- On CHAR reduce production regexp -> regexp STAR 
+-- On BAR reduce production regexp -> regexp STAR 
+
+State 25:
+regexp -> LPAREN regexp RPAREN . [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
+-- On UNDERSCORE reduce production regexp -> LPAREN regexp RPAREN 
+-- On STRING reduce production regexp -> LPAREN regexp RPAREN 
+-- On STAR reduce production regexp -> LPAREN regexp RPAREN 
+-- On RULE reduce production regexp -> LPAREN regexp RPAREN 
+-- On RPAREN reduce production regexp -> LPAREN regexp RPAREN 
+-- On QMARK reduce production regexp -> LPAREN regexp RPAREN 
+-- On PLUS reduce production regexp -> LPAREN regexp RPAREN 
+-- On LPAREN reduce production regexp -> LPAREN regexp RPAREN 
+-- On LET reduce production regexp -> LPAREN regexp RPAREN 
+-- On LBRACK reduce production regexp -> LPAREN regexp RPAREN 
+-- On IDENT reduce production regexp -> LPAREN regexp RPAREN 
+-- On EOF reduce production regexp -> LPAREN regexp RPAREN 
+-- On CODE reduce production regexp -> LPAREN regexp RPAREN 
+-- On CHAR reduce production regexp -> LPAREN regexp RPAREN 
+-- On BAR reduce production regexp -> LPAREN regexp RPAREN 
+
+State 26:
+regexp -> regexp QMARK . [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
+-- On UNDERSCORE reduce production regexp -> regexp QMARK 
+-- On STRING reduce production regexp -> regexp QMARK 
+-- On STAR reduce production regexp -> regexp QMARK 
+-- On RULE reduce production regexp -> regexp QMARK 
+-- On RPAREN reduce production regexp -> regexp QMARK 
+-- On QMARK reduce production regexp -> regexp QMARK 
+-- On PLUS reduce production regexp -> regexp QMARK 
+-- On LPAREN reduce production regexp -> regexp QMARK 
+-- On LET reduce production regexp -> regexp QMARK 
+-- On LBRACK reduce production regexp -> regexp QMARK 
+-- On IDENT reduce production regexp -> regexp QMARK 
+-- On EOF reduce production regexp -> regexp QMARK 
+-- On CODE reduce production regexp -> regexp QMARK 
+-- On CHAR reduce production regexp -> regexp QMARK 
+-- On BAR reduce production regexp -> regexp QMARK 
+
+State 27:
+regexp -> regexp PLUS . [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
+-- On UNDERSCORE reduce production regexp -> regexp PLUS 
+-- On STRING reduce production regexp -> regexp PLUS 
+-- On STAR reduce production regexp -> regexp PLUS 
+-- On RULE reduce production regexp -> regexp PLUS 
+-- On RPAREN reduce production regexp -> regexp PLUS 
+-- On QMARK reduce production regexp -> regexp PLUS 
+-- On PLUS reduce production regexp -> regexp PLUS 
+-- On LPAREN reduce production regexp -> regexp PLUS 
+-- On LET reduce production regexp -> regexp PLUS 
+-- On LBRACK reduce production regexp -> regexp PLUS 
+-- On IDENT reduce production regexp -> regexp PLUS 
+-- On EOF reduce production regexp -> regexp PLUS 
+-- On CODE reduce production regexp -> regexp PLUS 
+-- On CHAR reduce production regexp -> regexp PLUS 
+-- On BAR reduce production regexp -> regexp PLUS 
+
+State 28:
+regexp -> regexp BAR . regexp [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
+-- On UNDERSCORE shift to state 7
+-- On STRING shift to state 8
+-- On LPAREN shift to state 9
+-- On LBRACK shift to state 10
+-- On IDENT shift to state 20
+-- On EOF shift to state 21
+-- On CHAR shift to state 22
+-- On regexp shift to state 29
+
+State 29:
+regexp -> regexp . regexp [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
+regexp -> regexp . PLUS [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
+regexp -> regexp . STAR [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
+regexp -> regexp . QMARK [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
+regexp -> regexp . BAR regexp [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
+regexp -> regexp BAR regexp . [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
+-- On UNDERSCORE shift to state 7
+-- On STRING shift to state 8
+-- On STAR shift to state 24
+-- On QMARK shift to state 26
+-- On PLUS shift to state 27
+-- On LPAREN shift to state 9
+-- On LBRACK shift to state 10
+-- On IDENT shift to state 20
+-- On EOF shift to state 21
+-- On CHAR shift to state 22
+-- On regexp shift to state 30
+-- On UNDERSCORE reduce production regexp -> regexp BAR regexp 
+-- On STRING reduce production regexp -> regexp BAR regexp 
+-- On STAR reduce production regexp -> regexp BAR regexp 
+-- On RULE reduce production regexp -> regexp BAR regexp 
+-- On RPAREN reduce production regexp -> regexp BAR regexp 
+-- On QMARK reduce production regexp -> regexp BAR regexp 
+-- On PLUS reduce production regexp -> regexp BAR regexp 
+-- On LPAREN reduce production regexp -> regexp BAR regexp 
+-- On LET reduce production regexp -> regexp BAR regexp 
+-- On LBRACK reduce production regexp -> regexp BAR regexp 
+-- On IDENT reduce production regexp -> regexp BAR regexp 
+-- On EOF reduce production regexp -> regexp BAR regexp 
+-- On CODE reduce production regexp -> regexp BAR regexp 
+-- On CHAR reduce production regexp -> regexp BAR regexp 
+-- On BAR reduce production regexp -> regexp BAR regexp 
+** Conflict on UNDERSCORE STRING STAR QMARK PLUS LPAREN LBRACK IDENT EOF CHAR
+
+State 30:
+regexp -> regexp . regexp [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
+regexp -> regexp regexp . [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
+regexp -> regexp . PLUS [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
+regexp -> regexp . STAR [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
+regexp -> regexp . QMARK [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
+regexp -> regexp . BAR regexp [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LPAREN LET LBRACK IDENT EOF CODE CHAR BAR ]
+-- On UNDERSCORE shift to state 7
+-- On STRING shift to state 8
+-- On STAR shift to state 24
+-- On QMARK shift to state 26
+-- On PLUS shift to state 27
+-- On LPAREN shift to state 9
+-- On LBRACK shift to state 10
+-- On IDENT shift to state 20
+-- On EOF shift to state 21
+-- On CHAR shift to state 22
+-- On regexp shift to state 30
+-- On UNDERSCORE reduce production regexp -> regexp regexp 
+-- On STRING reduce production regexp -> regexp regexp 
+-- On STAR reduce production regexp -> regexp regexp 
+-- On RULE reduce production regexp -> regexp regexp 
+-- On RPAREN reduce production regexp -> regexp regexp 
+-- On QMARK reduce production regexp -> regexp regexp 
+-- On PLUS reduce production regexp -> regexp regexp 
+-- On LPAREN reduce production regexp -> regexp regexp 
+-- On LET reduce production regexp -> regexp regexp 
+-- On LBRACK reduce production regexp -> regexp regexp 
+-- On IDENT reduce production regexp -> regexp regexp 
+-- On EOF reduce production regexp -> regexp regexp 
+-- On CODE reduce production regexp -> regexp regexp 
+-- On CHAR reduce production regexp -> regexp regexp 
+-- On BAR reduce production regexp -> regexp regexp 
+** Conflict on UNDERSCORE STRING STAR QMARK PLUS LPAREN LBRACK IDENT EOF CHAR
+
+State 31:
+macro -> LET IDENT EQUALS regexp . [ RULE LET ]
+regexp -> regexp . regexp [ UNDERSCORE STRING STAR RULE QMARK PLUS LPAREN LET LBRACK IDENT EOF CHAR BAR ]
+regexp -> regexp . PLUS [ UNDERSCORE STRING STAR RULE QMARK PLUS LPAREN LET LBRACK IDENT EOF CHAR BAR ]
+regexp -> regexp . STAR [ UNDERSCORE STRING STAR RULE QMARK PLUS LPAREN LET LBRACK IDENT EOF CHAR BAR ]
+regexp -> regexp . QMARK [ UNDERSCORE STRING STAR RULE QMARK PLUS LPAREN LET LBRACK IDENT EOF CHAR BAR ]
+regexp -> regexp . BAR regexp [ UNDERSCORE STRING STAR RULE QMARK PLUS LPAREN LET LBRACK IDENT EOF CHAR BAR ]
+-- On UNDERSCORE shift to state 7
+-- On STRING shift to state 8
+-- On STAR shift to state 24
+-- On QMARK shift to state 26
+-- On PLUS shift to state 27
+-- On LPAREN shift to state 9
+-- On LBRACK shift to state 10
+-- On IDENT shift to state 20
+-- On EOF shift to state 21
+-- On CHAR shift to state 22
+-- On BAR shift to state 28
+-- On regexp shift to state 30
+-- On RULE reduce production macro -> LET IDENT EQUALS regexp 
+-- On LET reduce production macro -> LET IDENT EQUALS regexp 
+
+State 32:
+spec -> codeopt macros . RULE rules codeopt [ # ]
+-- On RULE shift to state 33
+
+State 33:
+spec -> codeopt macros RULE . rules codeopt [ # ]
+-- On IDENT shift to state 34
+-- On rules shift to state 48
+-- On rule shift to state 51
+
+State 34:
+rule -> IDENT . args EQUALS PARSE optbar clauses [ CODE AND # ]
+-- On IDENT shift to state 35
+-- On args shift to state 37
+-- On EQUALS reduce production args -> 
+
+State 35:
+args -> IDENT . args [ EQUALS ]
+-- On IDENT shift to state 35
+-- On args shift to state 36
+-- On EQUALS reduce production args -> 
+
+State 36:
+args -> IDENT args . [ EQUALS ]
+-- On EQUALS reduce production args -> IDENT args 
+
+State 37:
+rule -> IDENT args . EQUALS PARSE optbar clauses [ CODE AND # ]
+-- On EQUALS shift to state 38
+
+State 38:
+rule -> IDENT args EQUALS . PARSE optbar clauses [ CODE AND # ]
+-- On PARSE shift to state 39
+
+State 39:
+rule -> IDENT args EQUALS PARSE . optbar clauses [ CODE AND # ]
+-- On BAR shift to state 40
+-- On optbar shift to state 41
+-- On UNDERSCORE reduce production optbar -> 
+-- On STRING reduce production optbar -> 
+-- On LPAREN reduce production optbar -> 
+-- On LBRACK reduce production optbar -> 
+-- On IDENT reduce production optbar -> 
+-- On EOF reduce production optbar -> 
+-- On CHAR reduce production optbar -> 
+
+State 40:
+optbar -> BAR . [ UNDERSCORE STRING LPAREN LBRACK IDENT EOF CHAR ]
+-- On UNDERSCORE reduce production optbar -> BAR 
+-- On STRING reduce production optbar -> BAR 
+-- On LPAREN reduce production optbar -> BAR 
+-- On LBRACK reduce production optbar -> BAR 
+-- On IDENT reduce production optbar -> BAR 
+-- On EOF reduce production optbar -> BAR 
+-- On CHAR reduce production optbar -> BAR 
+
+State 41:
+rule -> IDENT args EQUALS PARSE optbar . clauses [ CODE AND # ]
+-- On UNDERSCORE shift to state 7
+-- On STRING shift to state 8
+-- On LPAREN shift to state 9
+-- On LBRACK shift to state 10
+-- On IDENT shift to state 20
+-- On EOF shift to state 21
+-- On CHAR shift to state 22
+-- On regexp shift to state 42
+-- On clauses shift to state 44
+-- On clause shift to state 45
+
+State 42:
+clause -> regexp . CODE [ CODE BAR AND # ]
+regexp -> regexp . regexp [ UNDERSCORE STRING STAR QMARK PLUS LPAREN LBRACK IDENT EOF CODE CHAR BAR ]
+regexp -> regexp . PLUS [ UNDERSCORE STRING STAR QMARK PLUS LPAREN LBRACK IDENT EOF CODE CHAR BAR ]
+regexp -> regexp . STAR [ UNDERSCORE STRING STAR QMARK PLUS LPAREN LBRACK IDENT EOF CODE CHAR BAR ]
+regexp -> regexp . QMARK [ UNDERSCORE STRING STAR QMARK PLUS LPAREN LBRACK IDENT EOF CODE CHAR BAR ]
+regexp -> regexp . BAR regexp [ UNDERSCORE STRING STAR QMARK PLUS LPAREN LBRACK IDENT EOF CODE CHAR BAR ]
+-- On UNDERSCORE shift to state 7
+-- On STRING shift to state 8
+-- On STAR shift to state 24
+-- On QMARK shift to state 26
+-- On PLUS shift to state 27
+-- On LPAREN shift to state 9
+-- On LBRACK shift to state 10
+-- On IDENT shift to state 20
+-- On EOF shift to state 21
+-- On CODE shift to state 43
+-- On CHAR shift to state 22
+-- On BAR shift to state 28
+-- On regexp shift to state 30
+
+State 43:
+clause -> regexp CODE . [ CODE BAR AND # ]
+-- On CODE reduce production clause -> regexp CODE 
+-- On BAR reduce production clause -> regexp CODE 
+-- On AND reduce production clause -> regexp CODE 
+-- On # reduce production clause -> regexp CODE 
+
+State 44:
+rule -> IDENT args EQUALS PARSE optbar clauses . [ CODE AND # ]
+-- On CODE reduce production rule -> IDENT args EQUALS PARSE optbar clauses 
+-- On AND reduce production rule -> IDENT args EQUALS PARSE optbar clauses 
+-- On # reduce production rule -> IDENT args EQUALS PARSE optbar clauses 
+
+State 45:
+clauses -> clause . BAR clauses [ CODE AND # ]
+clauses -> clause . [ CODE AND # ]
+-- On BAR shift to state 46
+-- On CODE reduce production clauses -> clause 
+-- On AND reduce production clauses -> clause 
+-- On # reduce production clauses -> clause 
+
+State 46:
+clauses -> clause BAR . clauses [ CODE AND # ]
+-- On UNDERSCORE shift to state 7
+-- On STRING shift to state 8
+-- On LPAREN shift to state 9
+-- On LBRACK shift to state 10
+-- On IDENT shift to state 20
+-- On EOF shift to state 21
+-- On CHAR shift to state 22
+-- On regexp shift to state 42
+-- On clauses shift to state 47
+-- On clause shift to state 45
+
+State 47:
+clauses -> clause BAR clauses . [ CODE AND # ]
+-- On CODE reduce production clauses -> clause BAR clauses 
+-- On AND reduce production clauses -> clause BAR clauses 
+-- On # reduce production clauses -> clause BAR clauses 
+
+State 48:
+spec -> codeopt macros RULE rules . codeopt [ # ]
+-- On CODE shift to state 49
+-- On codeopt shift to state 50
+-- On # reduce production codeopt -> 
+
+State 49:
+codeopt -> CODE . [ # ]
+-- On # reduce production codeopt -> CODE 
+
+State 50:
+spec -> codeopt macros RULE rules codeopt . [ # ]
+-- On # reduce production spec -> codeopt macros RULE rules codeopt 
+
+State 51:
+rules -> rule . AND rules [ CODE # ]
+rules -> rule . [ CODE # ]
+-- On AND shift to state 52
+-- On CODE reduce production rules -> rule 
+-- On # reduce production rules -> rule 
+
+State 52:
+rules -> rule AND . rules [ CODE # ]
+-- On IDENT shift to state 34
+-- On rules shift to state 53
+-- On rule shift to state 51
+
+State 53:
+rules -> rule AND rules . [ CODE # ]
+-- On CODE reduce production rules -> rule AND rules 
+-- On # reduce production rules -> rule AND rules 
+
+State 54:
+macros -> macro . macros [ RULE ]
+-- On LET shift to state 4
+-- On macros shift to state 55
+-- On macro shift to state 54
+-- On RULE reduce production macros -> 
+
+State 55:
+macros -> macro macros . [ RULE ]
+-- On RULE reduce production macros -> macro macros 
+
+State 43 has an end-of-stream conflict. There is a tension between
+(1) reducing production clause -> regexp CODE 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of CODE BAR AND,
+which would require some other action.
+
+State 44 has an end-of-stream conflict. There is a tension between
+(1) reducing production rule -> IDENT args EQUALS PARSE optbar clauses 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of CODE AND,
+which would require some other action.
+
+State 45 has an end-of-stream conflict. There is a tension between
+(1) reducing production clauses -> clause 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of CODE BAR AND,
+which would require some other action.
+
+State 47 has an end-of-stream conflict. There is a tension between
+(1) reducing production clauses -> clause BAR clauses 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of CODE AND,
+which would require some other action.
+
+State 48 has an end-of-stream conflict. There is a tension between
+(1) reducing production codeopt -> 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is CODE,
+which would require some other action.
+
+State 51 has an end-of-stream conflict. There is a tension between
+(1) reducing production rules -> rule 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of CODE AND,
+which would require some other action.
+
+State 53 has an end-of-stream conflict. There is a tension between
+(1) reducing production rules -> rule AND rules 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is CODE,
+which would require some other action.
+

@@ -1,0 +1,457 @@
+
+** Conflict (shift/reduce) in state 1246.
+** Tokens involved: DOTTILDE DOTPOND DOTLESS DOTBANGF DOTBANGC DOTBANG BANGLBRACE
+** The following explanations concentrate on token DOTTILDE.
+** This state is reached from implementation after reading:
+
+DOTBANGF FUN labeled_simple_pattern MINUSGREATER expr SEMI 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+implementation 
+structure EOF 
+seq_expr structure_tail 
+expr 
+(?)
+
+** In state 1246, looking ahead at DOTTILDE, reducing production
+** seq_expr -> expr SEMI 
+** is permitted because of the following sub-derivation:
+
+simple_expr simple_labeled_expr_list // lookahead token appears because simple_labeled_expr_list can begin with DOTTILDE
+DOTBANGF expr // lookahead token is inherited
+         FUN labeled_simple_pattern fun_def // lookahead token is inherited
+                                    match_action // lookahead token is inherited
+                                    MINUSGREATER seq_expr // lookahead token is inherited
+                                                 expr SEMI . 
+
+** In state 1246, looking ahead at DOTTILDE, shifting is permitted
+** because of the following sub-derivation:
+
+simple_expr 
+DOTBANGF expr 
+         FUN labeled_simple_pattern fun_def 
+                                    match_action 
+                                    MINUSGREATER seq_expr 
+                                                 expr SEMI seq_expr 
+                                                           expr 
+                                                           simple_expr 
+                                                           . DOTTILDE simple_expr 
+
+** Conflict (shift/reduce) in state 1220.
+** Tokens involved: UIDENT TRUE TILDE STRING QUESTION PREFIXOP OPTLABEL NEW NATIVEINT LPAREN LIDENT LBRACKETBAR LBRACKET LBRACELESS LBRACE LABEL INT64 INT32 INT FLOAT FALSE EUIDENT DOTTILDE DOTPOND DOTLESS DOTBANGF DOTBANGC DOTBANG CHAR BEGIN BANGLBRACE BACKQUOTE
+** The following explanations concentrate on token UIDENT.
+** This state is reached from implementation after reading:
+
+DOTBANGF simple_expr simple_labeled_expr_list 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+implementation 
+structure EOF 
+seq_expr structure_tail 
+expr 
+(?)
+
+** In state 1220, looking ahead at UIDENT, reducing production
+** expr -> simple_expr simple_labeled_expr_list 
+** is permitted because of the following sub-derivation:
+
+simple_expr simple_labeled_expr_list // lookahead token appears because simple_labeled_expr_list can begin with UIDENT
+DOTBANGF expr // lookahead token is inherited
+         simple_expr simple_labeled_expr_list . 
+
+** In state 1220, looking ahead at UIDENT, shifting is permitted
+** because of the following sub-derivation:
+
+simple_expr 
+DOTBANGF expr 
+         simple_expr simple_labeled_expr_list 
+                     simple_labeled_expr_list labeled_simple_expr 
+                                              simple_expr 
+                                              val_longident 
+                                              mod_longident DOT val_ident 
+                                              . UIDENT 
+
+** Conflict (reduce/reduce) in state 1192.
+** Tokens involved: error RBRACE
+** The following explanations concentrate on token error.
+** This state is reached from implementation after reading:
+
+BANGLBRACE lbl_expr_list opt_semi 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+implementation 
+structure EOF 
+seq_expr structure_tail 
+expr 
+simple_expr 
+(?)
+
+** In state 1192, looking ahead at error, reducing production
+** record_expr -> lbl_expr_list opt_semi 
+** is permitted because of the following sub-derivation:
+
+BANGLBRACE record_expr error // lookahead token appears
+           lbl_expr_list opt_semi . 
+
+** In state 1192, looking ahead at error, reducing production
+** record_expr_f90 -> lbl_expr_list opt_semi 
+** is permitted because of the following sub-derivation:
+
+BANGLBRACE record_expr_f90 error // lookahead token appears
+           lbl_expr_list opt_semi . 
+
+** In state 1192, looking ahead at error, reducing production
+** record_expr_gcc -> lbl_expr_list opt_semi 
+** is permitted because of the following sub-derivation:
+
+BANGLBRACE record_expr_gcc error // lookahead token appears
+           lbl_expr_list opt_semi . 
+
+** In state 1192, looking ahead at error, reducing production
+** record_expr_icc -> lbl_expr_list opt_semi 
+** is permitted because of the following sub-derivation:
+
+BANGLBRACE record_expr_icc error // lookahead token appears
+           lbl_expr_list opt_semi . 
+
+** Conflict (shift/reduce) in state 1148.
+** Tokens involved: UIDENT TRUE TILDE STRING QUESTION PREFIXOP OPTLABEL NEW NATIVEINT LPAREN LIDENT LBRACKETBAR LBRACKET LBRACELESS LBRACE LABEL INT64 INT32 INT FLOAT FALSE EUIDENT DOTTILDE DOTPOND DOTLESS DOTBANGF DOTBANGC DOTBANG CHAR BEGIN BANGLBRACE BACKQUOTE
+** The following explanations concentrate on token UIDENT.
+** This state is reached from implementation after reading:
+
+LPAREN DOTBANGF simple_expr simple_labeled_expr_list 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+implementation 
+structure EOF 
+seq_expr structure_tail 
+expr 
+simple_expr 
+LPAREN seq_expr RPAREN 
+       expr 
+       (?)
+
+** In state 1148, looking ahead at UIDENT, reducing production
+** expr -> simple_expr simple_labeled_expr_list 
+** is permitted because of the following sub-derivation:
+
+simple_expr simple_labeled_expr_list // lookahead token appears because simple_labeled_expr_list can begin with UIDENT
+DOTBANGF expr // lookahead token is inherited
+         simple_expr simple_labeled_expr_list . 
+
+** In state 1148, looking ahead at UIDENT, shifting is permitted
+** because of the following sub-derivation:
+
+simple_expr 
+DOTBANGF expr 
+         simple_expr simple_labeled_expr_list 
+                     simple_labeled_expr_list labeled_simple_expr 
+                                              simple_expr 
+                                              val_longident 
+                                              mod_longident DOT val_ident 
+                                              . UIDENT 
+
+** Conflict (shift/reduce) in state 1099.
+** Tokens involved: DOTTILDE DOTPOND DOTLESS DOTBANGF DOTBANGC DOTBANG BANGLBRACE
+** The following explanations concentrate on token DOTTILDE.
+** This state is reached from implementation after reading:
+
+constr_longident 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+implementation 
+structure EOF 
+seq_expr structure_tail 
+expr 
+(?)
+
+** In state 1099, looking ahead at DOTTILDE, reducing production
+** simple_expr -> constr_longident 
+** is permitted because of the following sub-derivation:
+
+simple_expr simple_labeled_expr_list // lookahead token appears because simple_labeled_expr_list can begin with DOTTILDE
+constr_longident . 
+
+** In state 1099, looking ahead at DOTTILDE, shifting is permitted
+** because of the following sub-derivation:
+
+constr_longident simple_expr 
+                 . DOTTILDE simple_expr 
+
+** Conflict (shift/reduce) in state 1095.
+** Tokens involved: DOTTILDE DOTPOND DOTLESS DOTBANGF DOTBANGC DOTBANG BANGLBRACE
+** The following explanations concentrate on token DOTTILDE.
+** This state is reached from implementation after reading:
+
+econstr_longident 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+implementation 
+structure EOF 
+seq_expr structure_tail 
+expr 
+(?)
+
+** In state 1095, looking ahead at DOTTILDE, reducing production
+** simple_expr -> econstr_longident 
+** is permitted because of the following sub-derivation:
+
+simple_expr simple_labeled_expr_list // lookahead token appears because simple_labeled_expr_list can begin with DOTTILDE
+econstr_longident . 
+
+** In state 1095, looking ahead at DOTTILDE, shifting is permitted
+** because of the following sub-derivation:
+
+econstr_longident simple_expr 
+                  . DOTTILDE simple_expr 
+
+** Conflict (shift/reduce) in state 1080.
+** Tokens involved: DOTTILDE DOTPOND DOTLESS DOTBANGF DOTBANGC DOTBANG BANGLBRACE
+** The following explanations concentrate on token DOTTILDE.
+** This state is reached from implementation after reading:
+
+name_tag 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+implementation 
+structure EOF 
+seq_expr structure_tail 
+expr 
+(?)
+
+** In state 1080, looking ahead at DOTTILDE, reducing production
+** simple_expr -> name_tag 
+** is permitted because of the following sub-derivation:
+
+simple_expr simple_labeled_expr_list // lookahead token appears because simple_labeled_expr_list can begin with DOTTILDE
+name_tag . 
+
+** In state 1080, looking ahead at DOTTILDE, shifting is permitted
+** because of the following sub-derivation:
+
+name_tag simple_expr 
+         . DOTTILDE simple_expr 
+
+** Conflict (shift/reduce) in state 1070.
+** Tokens involved: DOTTILDE DOTPOND DOTLESS DOTBANGF DOTBANGC DOTBANG BANGLBRACE
+** The following explanations concentrate on token DOTTILDE.
+** This state is reached from implementation after reading:
+
+LPAREN DOTBANGF FUN labeled_simple_pattern MINUSGREATER expr SEMI 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+implementation 
+structure EOF 
+seq_expr structure_tail 
+expr 
+simple_expr 
+LPAREN seq_expr RPAREN 
+       expr 
+       (?)
+
+** In state 1070, looking ahead at DOTTILDE, reducing production
+** seq_expr -> expr SEMI 
+** is permitted because of the following sub-derivation:
+
+simple_expr simple_labeled_expr_list // lookahead token appears because simple_labeled_expr_list can begin with DOTTILDE
+DOTBANGF expr // lookahead token is inherited
+         FUN labeled_simple_pattern fun_def // lookahead token is inherited
+                                    match_action // lookahead token is inherited
+                                    MINUSGREATER seq_expr // lookahead token is inherited
+                                                 expr SEMI . 
+
+** In state 1070, looking ahead at DOTTILDE, shifting is permitted
+** because of the following sub-derivation:
+
+simple_expr 
+DOTBANGF expr 
+         FUN labeled_simple_pattern fun_def 
+                                    match_action 
+                                    MINUSGREATER seq_expr 
+                                                 expr SEMI seq_expr 
+                                                           expr 
+                                                           simple_expr 
+                                                           . DOTTILDE simple_expr 
+
+** Conflict (shift/reduce) in state 1031.
+** Tokens involved: DOTTILDE DOTPOND DOTLESS DOTBANGF DOTBANGC DOTBANG BANGLBRACE
+** The following explanations concentrate on token DOTTILDE.
+** This state is reached from implementation after reading:
+
+LPAREN constr_longident 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+implementation 
+structure EOF 
+seq_expr structure_tail 
+expr 
+simple_expr 
+LPAREN seq_expr RPAREN 
+       expr 
+       (?)
+
+** In state 1031, looking ahead at DOTTILDE, reducing production
+** simple_expr -> constr_longident 
+** is permitted because of the following sub-derivation:
+
+simple_expr simple_labeled_expr_list // lookahead token appears because simple_labeled_expr_list can begin with DOTTILDE
+constr_longident . 
+
+** In state 1031, looking ahead at DOTTILDE, shifting is permitted
+** because of the following sub-derivation:
+
+constr_longident simple_expr 
+                 . DOTTILDE simple_expr 
+
+** Conflict (shift/reduce) in state 1027.
+** Tokens involved: DOTTILDE DOTPOND DOTLESS DOTBANGF DOTBANGC DOTBANG BANGLBRACE
+** The following explanations concentrate on token DOTTILDE.
+** This state is reached from implementation after reading:
+
+LPAREN econstr_longident 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+implementation 
+structure EOF 
+seq_expr structure_tail 
+expr 
+simple_expr 
+LPAREN seq_expr RPAREN 
+       expr 
+       (?)
+
+** In state 1027, looking ahead at DOTTILDE, reducing production
+** simple_expr -> econstr_longident 
+** is permitted because of the following sub-derivation:
+
+simple_expr simple_labeled_expr_list // lookahead token appears because simple_labeled_expr_list can begin with DOTTILDE
+econstr_longident . 
+
+** In state 1027, looking ahead at DOTTILDE, shifting is permitted
+** because of the following sub-derivation:
+
+econstr_longident simple_expr 
+                  . DOTTILDE simple_expr 
+
+** Conflict (shift/reduce) in state 1010.
+** Tokens involved: DOTTILDE DOTPOND DOTLESS DOTBANGF DOTBANGC DOTBANG BANGLBRACE
+** The following explanations concentrate on token DOTTILDE.
+** This state is reached from implementation after reading:
+
+LPAREN name_tag 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+implementation 
+structure EOF 
+seq_expr structure_tail 
+expr 
+simple_expr 
+LPAREN seq_expr RPAREN 
+       expr 
+       (?)
+
+** In state 1010, looking ahead at DOTTILDE, reducing production
+** simple_expr -> name_tag 
+** is permitted because of the following sub-derivation:
+
+simple_expr simple_labeled_expr_list // lookahead token appears because simple_labeled_expr_list can begin with DOTTILDE
+name_tag . 
+
+** In state 1010, looking ahead at DOTTILDE, shifting is permitted
+** because of the following sub-derivation:
+
+name_tag simple_expr 
+         . DOTTILDE simple_expr 
+
+** Conflict (shift/reduce) in state 985.
+** Tokens involved: TILDE QUESTION OPTLABEL LABEL DOTTILDE DOTPOND DOTLESS DOTBANGF DOTBANGC DOTBANG BANGLBRACE
+** The following explanations concentrate on token TILDE.
+** This state is reached from implementation after reading:
+
+LPAREN DOTBANGF simple_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+implementation 
+structure EOF 
+seq_expr structure_tail 
+expr 
+simple_expr 
+LPAREN seq_expr RPAREN 
+       expr 
+       (?)
+
+** In state 985, looking ahead at TILDE, reducing production
+** expr -> simple_expr 
+** is permitted because of the following sub-derivation:
+
+simple_expr simple_labeled_expr_list // lookahead token appears because simple_labeled_expr_list can begin with TILDE
+DOTBANGF expr // lookahead token is inherited
+         simple_expr . 
+
+** In state 985, looking ahead at TILDE, shifting is permitted
+** because of the following sub-derivation:
+
+simple_expr 
+DOTBANGF expr 
+         simple_expr simple_labeled_expr_list 
+                     labeled_simple_expr 
+                     label_expr 
+                     . TILDE label_ident 
+
+** Conflict (shift/reduce) in state 941.
+** Tokens involved: TILDE QUESTION OPTLABEL LABEL DOTTILDE DOTPOND DOTLESS DOTBANGF DOTBANGC DOTBANG BANGLBRACE
+** The following explanations concentrate on token TILDE.
+** This state is reached from implementation after reading:
+
+DOTBANGF simple_expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+implementation 
+structure EOF 
+seq_expr structure_tail 
+expr 
+(?)
+
+** In state 941, looking ahead at TILDE, reducing production
+** expr -> simple_expr 
+** is permitted because of the following sub-derivation:
+
+simple_expr simple_labeled_expr_list // lookahead token appears because simple_labeled_expr_list can begin with TILDE
+DOTBANGF expr // lookahead token is inherited
+         simple_expr . 
+
+** In state 941, looking ahead at TILDE, shifting is permitted
+** because of the following sub-derivation:
+
+simple_expr 
+DOTBANGF expr 
+         simple_expr simple_labeled_expr_list 
+                     labeled_simple_expr 
+                     label_expr 
+                     . TILDE label_ident 

@@ -1,0 +1,80 @@
+State 0:
+phrase' -> . phrase [ # ]
+-- On C shift to state 1
+-- On A shift to state 3
+-- On phrase shift to state 5
+-- On foo shift to state 6
+-- On bar shift to state 11
+
+State 1:
+bar -> C . D [ EOF C A ]
+-- On D shift to state 2
+
+State 2:
+bar -> C D . [ EOF C A ]
+-- On EOF reduce production bar -> C D 
+-- On C reduce production bar -> C D 
+-- On A reduce production bar -> C D 
+
+State 3:
+foo -> A . B [ EOF C A ]
+-- On B shift to state 4
+
+State 4:
+foo -> A B . [ EOF C A ]
+-- On EOF reduce production foo -> A B 
+-- On C reduce production foo -> A B 
+-- On A reduce production foo -> A B 
+
+State 5:
+phrase' -> phrase . [ # ]
+-- On # accept phrase
+
+State 6:
+phrase -> foo . foo EOF [ # ]
+phrase -> foo . bar EOF [ # ]
+-- On C shift to state 1
+-- On A shift to state 3
+-- On foo shift to state 7
+-- On bar shift to state 9
+
+State 7:
+phrase -> foo foo . EOF [ # ]
+-- On EOF shift to state 8
+
+State 8:
+phrase -> foo foo EOF . [ # ]
+-- On # reduce production phrase -> foo foo EOF 
+
+State 9:
+phrase -> foo bar . EOF [ # ]
+-- On EOF shift to state 10
+
+State 10:
+phrase -> foo bar EOF . [ # ]
+-- On # reduce production phrase -> foo bar EOF 
+
+State 11:
+phrase -> bar . foo EOF [ # ]
+phrase -> bar . bar EOF [ # ]
+-- On C shift to state 1
+-- On A shift to state 3
+-- On foo shift to state 12
+-- On bar shift to state 14
+
+State 12:
+phrase -> bar foo . EOF [ # ]
+-- On EOF shift to state 13
+
+State 13:
+phrase -> bar foo EOF . [ # ]
+-- On # reduce production phrase -> bar foo EOF 
+
+State 14:
+phrase -> bar bar . EOF [ # ]
+-- On EOF shift to state 15
+
+State 15:
+phrase -> bar bar EOF . [ # ]
+-- On # reduce production phrase -> bar bar EOF 
+

@@ -1,0 +1,115 @@
+State 0:
+file' -> . file [ # ]
+-- On TERMINATE shift to state 1
+-- On OPEN shift to state 2
+-- On EOF shift to state 11
+-- On file shift to state 14
+
+State 1:
+file -> TERMINATE . file [ # ]
+-- On TERMINATE shift to state 1
+-- On OPEN shift to state 2
+-- On EOF shift to state 11
+-- On file shift to state 13
+
+State 2:
+file -> OPEN . ftext CLOSE file [ # ]
+-- On ftext shift to state 3
+-- On VERB reduce production ftext -> 
+-- On TEXT reduce production ftext -> 
+-- On LBRACE reduce production ftext -> 
+-- On DIRECTIVE reduce production ftext -> 
+-- On CLOSE reduce production ftext -> 
+
+State 3:
+file -> OPEN ftext . CLOSE file [ # ]
+ftext -> ftext . DIRECTIVE [ VERB TEXT LBRACE DIRECTIVE CLOSE ]
+ftext -> ftext . TEXT [ VERB TEXT LBRACE DIRECTIVE CLOSE ]
+ftext -> ftext . LBRACE ftext RBRACE [ VERB TEXT LBRACE DIRECTIVE CLOSE ]
+ftext -> ftext . VERB [ VERB TEXT LBRACE DIRECTIVE CLOSE ]
+-- On VERB shift to state 4
+-- On TEXT shift to state 5
+-- On LBRACE shift to state 6
+-- On DIRECTIVE shift to state 9
+-- On CLOSE shift to state 10
+
+State 4:
+ftext -> ftext VERB . [ VERB TEXT RBRACE LBRACE DIRECTIVE CLOSE ]
+-- On VERB reduce production ftext -> ftext VERB 
+-- On TEXT reduce production ftext -> ftext VERB 
+-- On RBRACE reduce production ftext -> ftext VERB 
+-- On LBRACE reduce production ftext -> ftext VERB 
+-- On DIRECTIVE reduce production ftext -> ftext VERB 
+-- On CLOSE reduce production ftext -> ftext VERB 
+
+State 5:
+ftext -> ftext TEXT . [ VERB TEXT RBRACE LBRACE DIRECTIVE CLOSE ]
+-- On VERB reduce production ftext -> ftext TEXT 
+-- On TEXT reduce production ftext -> ftext TEXT 
+-- On RBRACE reduce production ftext -> ftext TEXT 
+-- On LBRACE reduce production ftext -> ftext TEXT 
+-- On DIRECTIVE reduce production ftext -> ftext TEXT 
+-- On CLOSE reduce production ftext -> ftext TEXT 
+
+State 6:
+ftext -> ftext LBRACE . ftext RBRACE [ VERB TEXT RBRACE LBRACE DIRECTIVE CLOSE ]
+-- On ftext shift to state 7
+-- On VERB reduce production ftext -> 
+-- On TEXT reduce production ftext -> 
+-- On RBRACE reduce production ftext -> 
+-- On LBRACE reduce production ftext -> 
+-- On DIRECTIVE reduce production ftext -> 
+
+State 7:
+ftext -> ftext . DIRECTIVE [ VERB TEXT RBRACE LBRACE DIRECTIVE ]
+ftext -> ftext . TEXT [ VERB TEXT RBRACE LBRACE DIRECTIVE ]
+ftext -> ftext . LBRACE ftext RBRACE [ VERB TEXT RBRACE LBRACE DIRECTIVE ]
+ftext -> ftext LBRACE ftext . RBRACE [ VERB TEXT RBRACE LBRACE DIRECTIVE CLOSE ]
+ftext -> ftext . VERB [ VERB TEXT RBRACE LBRACE DIRECTIVE ]
+-- On VERB shift to state 4
+-- On TEXT shift to state 5
+-- On RBRACE shift to state 8
+-- On LBRACE shift to state 6
+-- On DIRECTIVE shift to state 9
+
+State 8:
+ftext -> ftext LBRACE ftext RBRACE . [ VERB TEXT RBRACE LBRACE DIRECTIVE CLOSE ]
+-- On VERB reduce production ftext -> ftext LBRACE ftext RBRACE 
+-- On TEXT reduce production ftext -> ftext LBRACE ftext RBRACE 
+-- On RBRACE reduce production ftext -> ftext LBRACE ftext RBRACE 
+-- On LBRACE reduce production ftext -> ftext LBRACE ftext RBRACE 
+-- On DIRECTIVE reduce production ftext -> ftext LBRACE ftext RBRACE 
+-- On CLOSE reduce production ftext -> ftext LBRACE ftext RBRACE 
+
+State 9:
+ftext -> ftext DIRECTIVE . [ VERB TEXT RBRACE LBRACE DIRECTIVE CLOSE ]
+-- On VERB reduce production ftext -> ftext DIRECTIVE 
+-- On TEXT reduce production ftext -> ftext DIRECTIVE 
+-- On RBRACE reduce production ftext -> ftext DIRECTIVE 
+-- On LBRACE reduce production ftext -> ftext DIRECTIVE 
+-- On DIRECTIVE reduce production ftext -> ftext DIRECTIVE 
+-- On CLOSE reduce production ftext -> ftext DIRECTIVE 
+
+State 10:
+file -> OPEN ftext CLOSE . file [ # ]
+-- On TERMINATE shift to state 1
+-- On OPEN shift to state 2
+-- On EOF shift to state 11
+-- On file shift to state 12
+
+State 11:
+file -> EOF . [ # ]
+-- On # reduce production file -> EOF 
+
+State 12:
+file -> OPEN ftext CLOSE file . [ # ]
+-- On # reduce production file -> OPEN ftext CLOSE file 
+
+State 13:
+file -> TERMINATE file . [ # ]
+-- On # reduce production file -> TERMINATE file 
+
+State 14:
+file' -> file . [ # ]
+-- On # accept file
+

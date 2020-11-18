@@ -1,0 +1,201 @@
+State 0:
+file' -> . file [ # ]
+-- On NEWLINE shift to state 1
+-- On list(NEWLINE) shift to state 3
+-- On file shift to state 22
+-- On P reduce production list(NEWLINE) -> 
+
+State 1:
+list(NEWLINE) -> NEWLINE . list(NEWLINE) [ P ]
+-- On NEWLINE shift to state 1
+-- On list(NEWLINE) shift to state 2
+-- On P reduce production list(NEWLINE) -> 
+
+State 2:
+list(NEWLINE) -> NEWLINE list(NEWLINE) . [ P ]
+-- On P reduce production list(NEWLINE) -> NEWLINE list(NEWLINE) 
+
+State 3:
+file -> list(NEWLINE) . start cnf [ # ]
+-- On P shift to state 4
+-- On start shift to state 9
+
+State 4:
+start -> P . CNF INT INT NEWLINE [ NEWLINE INT EOF ]
+-- On CNF shift to state 5
+
+State 5:
+start -> P CNF . INT INT NEWLINE [ NEWLINE INT EOF ]
+-- On INT shift to state 6
+
+State 6:
+start -> P CNF INT . INT NEWLINE [ NEWLINE INT EOF ]
+-- On INT shift to state 7
+
+State 7:
+start -> P CNF INT INT . NEWLINE [ NEWLINE INT EOF ]
+-- On NEWLINE shift to state 8
+
+State 8:
+start -> P CNF INT INT NEWLINE . [ NEWLINE INT EOF ]
+-- On NEWLINE reduce production start -> P CNF INT INT NEWLINE 
+-- On INT reduce production start -> P CNF INT INT NEWLINE 
+-- On EOF reduce production start -> P CNF INT INT NEWLINE 
+
+State 9:
+file -> list(NEWLINE) start . cnf [ # ]
+-- On NEWLINE shift to state 10
+-- On INT shift to state 11
+-- On EOF shift to state 12
+-- On nonempty_list(atom) shift to state 13
+-- On cnf shift to state 21
+-- On clause shift to state 17
+-- On atom shift to state 19
+
+State 10:
+cnf -> NEWLINE . cnf [ # ]
+-- On NEWLINE shift to state 10
+-- On INT shift to state 11
+-- On EOF shift to state 12
+-- On nonempty_list(atom) shift to state 13
+-- On cnf shift to state 16
+-- On clause shift to state 17
+-- On atom shift to state 19
+
+State 11:
+atom -> INT . [ ZERO INT ]
+-- On ZERO reduce production atom -> INT 
+-- On INT reduce production atom -> INT 
+
+State 12:
+cnf -> EOF . [ # ]
+-- On # reduce production cnf -> EOF 
+
+State 13:
+clause -> nonempty_list(atom) . ZERO NEWLINE [ NEWLINE INT EOF ]
+-- On ZERO shift to state 14
+
+State 14:
+clause -> nonempty_list(atom) ZERO . NEWLINE [ NEWLINE INT EOF ]
+-- On NEWLINE shift to state 15
+
+State 15:
+clause -> nonempty_list(atom) ZERO NEWLINE . [ NEWLINE INT EOF ]
+-- On NEWLINE reduce production clause -> nonempty_list(atom) ZERO NEWLINE 
+-- On INT reduce production clause -> nonempty_list(atom) ZERO NEWLINE 
+-- On EOF reduce production clause -> nonempty_list(atom) ZERO NEWLINE 
+
+State 16:
+cnf -> NEWLINE cnf . [ # ]
+-- On # reduce production cnf -> NEWLINE cnf 
+
+State 17:
+cnf -> clause . cnf [ # ]
+-- On NEWLINE shift to state 10
+-- On INT shift to state 11
+-- On EOF shift to state 12
+-- On nonempty_list(atom) shift to state 13
+-- On cnf shift to state 18
+-- On clause shift to state 17
+-- On atom shift to state 19
+
+State 18:
+cnf -> clause cnf . [ # ]
+-- On # reduce production cnf -> clause cnf 
+
+State 19:
+nonempty_list(atom) -> atom . [ ZERO ]
+nonempty_list(atom) -> atom . nonempty_list(atom) [ ZERO ]
+-- On INT shift to state 11
+-- On nonempty_list(atom) shift to state 20
+-- On atom shift to state 19
+-- On ZERO reduce production nonempty_list(atom) -> atom 
+
+State 20:
+nonempty_list(atom) -> atom nonempty_list(atom) . [ ZERO ]
+-- On ZERO reduce production nonempty_list(atom) -> atom nonempty_list(atom) 
+
+State 21:
+file -> list(NEWLINE) start cnf . [ # ]
+-- On # reduce production file -> list(NEWLINE) start cnf 
+
+State 22:
+file' -> file . [ # ]
+-- On # accept file
+
+State 23:
+input' -> . input [ # ]
+-- On P shift to state 24
+-- On NEWLINE shift to state 29
+-- On INT shift to state 11
+-- On EOF shift to state 30
+-- On start shift to state 31
+-- On nonempty_list(atom) shift to state 32
+-- On input shift to state 37
+-- On clause shift to state 36
+-- On atom shift to state 19
+
+State 24:
+start -> P . CNF INT INT NEWLINE [ # ]
+-- On CNF shift to state 25
+
+State 25:
+start -> P CNF . INT INT NEWLINE [ # ]
+-- On INT shift to state 26
+
+State 26:
+start -> P CNF INT . INT NEWLINE [ # ]
+-- On INT shift to state 27
+
+State 27:
+start -> P CNF INT INT . NEWLINE [ # ]
+-- On NEWLINE shift to state 28
+
+State 28:
+start -> P CNF INT INT NEWLINE . [ # ]
+-- On # reduce production start -> P CNF INT INT NEWLINE 
+
+State 29:
+input -> NEWLINE . input [ # ]
+-- On P shift to state 24
+-- On NEWLINE shift to state 29
+-- On INT shift to state 11
+-- On EOF shift to state 30
+-- On start shift to state 31
+-- On nonempty_list(atom) shift to state 32
+-- On input shift to state 35
+-- On clause shift to state 36
+-- On atom shift to state 19
+
+State 30:
+input -> EOF . [ # ]
+-- On # reduce production input -> EOF 
+
+State 31:
+input -> start . [ # ]
+-- On # reduce production input -> start 
+
+State 32:
+clause -> nonempty_list(atom) . ZERO NEWLINE [ # ]
+-- On ZERO shift to state 33
+
+State 33:
+clause -> nonempty_list(atom) ZERO . NEWLINE [ # ]
+-- On NEWLINE shift to state 34
+
+State 34:
+clause -> nonempty_list(atom) ZERO NEWLINE . [ # ]
+-- On # reduce production clause -> nonempty_list(atom) ZERO NEWLINE 
+
+State 35:
+input -> NEWLINE input . [ # ]
+-- On # reduce production input -> NEWLINE input 
+
+State 36:
+input -> clause . [ # ]
+-- On # reduce production input -> clause 
+
+State 37:
+input' -> input . [ # ]
+-- On # accept input
+

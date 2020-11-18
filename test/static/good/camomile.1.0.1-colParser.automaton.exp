@@ -1,0 +1,307 @@
+State 0:
+main' -> . main [ # ]
+-- On UCHAR shift to state 1
+-- On RESET shift to state 2
+-- On OPTION shift to state 10
+-- On EOF shift to state 11
+-- On rules shift to state 12
+-- On rule shift to state 14
+-- On main shift to state 30
+-- On header_option shift to state 31
+-- On header shift to state 33
+
+State 1:
+header_option -> UCHAR . [ UCHAR RESET OPTION EOF ]
+-- On UCHAR reduce production header_option -> UCHAR 
+-- On RESET reduce production header_option -> UCHAR 
+-- On OPTION reduce production header_option -> UCHAR 
+-- On EOF reduce production header_option -> UCHAR 
+
+State 2:
+rule -> RESET . init [ TERTIARY SECONDARY RESET PRIMARY EQ EOF ]
+rule -> RESET . OPTION init [ TERTIARY SECONDARY RESET PRIMARY EQ EOF ]
+-- On UCHAR shift to state 3
+-- On OPTION shift to state 5
+-- On ulist shift to state 7
+-- On init shift to state 9
+
+State 3:
+ulist -> UCHAR . [ TERTIARY SECONDARY RESET PRIMARY PREFIX EXPAND EQ EOF ]
+ulist -> UCHAR . ulist [ TERTIARY SECONDARY RESET PRIMARY PREFIX EXPAND EQ EOF ]
+-- On UCHAR shift to state 3
+-- On ulist shift to state 4
+-- On TERTIARY reduce production ulist -> UCHAR 
+-- On SECONDARY reduce production ulist -> UCHAR 
+-- On RESET reduce production ulist -> UCHAR 
+-- On PRIMARY reduce production ulist -> UCHAR 
+-- On PREFIX reduce production ulist -> UCHAR 
+-- On EXPAND reduce production ulist -> UCHAR 
+-- On EQ reduce production ulist -> UCHAR 
+-- On EOF reduce production ulist -> UCHAR 
+
+State 4:
+ulist -> UCHAR ulist . [ TERTIARY SECONDARY RESET PRIMARY PREFIX EXPAND EQ EOF ]
+-- On TERTIARY reduce production ulist -> UCHAR ulist 
+-- On SECONDARY reduce production ulist -> UCHAR ulist 
+-- On RESET reduce production ulist -> UCHAR ulist 
+-- On PRIMARY reduce production ulist -> UCHAR ulist 
+-- On PREFIX reduce production ulist -> UCHAR ulist 
+-- On EXPAND reduce production ulist -> UCHAR ulist 
+-- On EQ reduce production ulist -> UCHAR ulist 
+-- On EOF reduce production ulist -> UCHAR ulist 
+
+State 5:
+init -> OPTION . [ TERTIARY SECONDARY RESET PRIMARY EQ EOF ]
+rule -> RESET OPTION . init [ TERTIARY SECONDARY RESET PRIMARY EQ EOF ]
+-- On UCHAR shift to state 3
+-- On OPTION shift to state 6
+-- On ulist shift to state 7
+-- On init shift to state 8
+-- On TERTIARY reduce production init -> OPTION 
+-- On SECONDARY reduce production init -> OPTION 
+-- On RESET reduce production init -> OPTION 
+-- On PRIMARY reduce production init -> OPTION 
+-- On EQ reduce production init -> OPTION 
+-- On EOF reduce production init -> OPTION 
+
+State 6:
+init -> OPTION . [ TERTIARY SECONDARY RESET PRIMARY EQ EOF ]
+-- On TERTIARY reduce production init -> OPTION 
+-- On SECONDARY reduce production init -> OPTION 
+-- On RESET reduce production init -> OPTION 
+-- On PRIMARY reduce production init -> OPTION 
+-- On EQ reduce production init -> OPTION 
+-- On EOF reduce production init -> OPTION 
+
+State 7:
+init -> ulist . [ TERTIARY SECONDARY RESET PRIMARY EQ EOF ]
+-- On TERTIARY reduce production init -> ulist 
+-- On SECONDARY reduce production init -> ulist 
+-- On RESET reduce production init -> ulist 
+-- On PRIMARY reduce production init -> ulist 
+-- On EQ reduce production init -> ulist 
+-- On EOF reduce production init -> ulist 
+
+State 8:
+rule -> RESET OPTION init . [ TERTIARY SECONDARY RESET PRIMARY EQ EOF ]
+-- On TERTIARY reduce production rule -> RESET OPTION init 
+-- On SECONDARY reduce production rule -> RESET OPTION init 
+-- On RESET reduce production rule -> RESET OPTION init 
+-- On PRIMARY reduce production rule -> RESET OPTION init 
+-- On EQ reduce production rule -> RESET OPTION init 
+-- On EOF reduce production rule -> RESET OPTION init 
+
+State 9:
+rule -> RESET init . [ TERTIARY SECONDARY RESET PRIMARY EQ EOF ]
+-- On TERTIARY reduce production rule -> RESET init 
+-- On SECONDARY reduce production rule -> RESET init 
+-- On RESET reduce production rule -> RESET init 
+-- On PRIMARY reduce production rule -> RESET init 
+-- On EQ reduce production rule -> RESET init 
+-- On EOF reduce production rule -> RESET init 
+
+State 10:
+header_option -> OPTION . [ UCHAR RESET OPTION EOF ]
+-- On UCHAR reduce production header_option -> OPTION 
+-- On RESET reduce production header_option -> OPTION 
+-- On OPTION reduce production header_option -> OPTION 
+-- On EOF reduce production header_option -> OPTION 
+
+State 11:
+main -> EOF . [ # ]
+-- On # reduce production main -> EOF 
+
+State 12:
+main -> rules . EOF [ # ]
+-- On EOF shift to state 13
+
+State 13:
+main -> rules EOF . [ # ]
+-- On # reduce production main -> rules EOF 
+
+State 14:
+rule -> rule . PRIMARY elem [ TERTIARY SECONDARY RESET PRIMARY EQ EOF ]
+rule -> rule . SECONDARY elem [ TERTIARY SECONDARY RESET PRIMARY EQ EOF ]
+rule -> rule . TERTIARY elem [ TERTIARY SECONDARY RESET PRIMARY EQ EOF ]
+rule -> rule . EQ elem [ TERTIARY SECONDARY RESET PRIMARY EQ EOF ]
+rules -> rule . rules [ EOF ]
+rules -> rule . [ EOF ]
+-- On TERTIARY shift to state 15
+-- On SECONDARY shift to state 23
+-- On RESET shift to state 2
+-- On PRIMARY shift to state 25
+-- On EQ shift to state 27
+-- On rules shift to state 29
+-- On rule shift to state 14
+-- On EOF reduce production rules -> rule 
+
+State 15:
+rule -> rule TERTIARY . elem [ TERTIARY SECONDARY RESET PRIMARY EQ EOF ]
+-- On UCHAR shift to state 3
+-- On OPTION shift to state 16
+-- On ulist shift to state 17
+-- On elem shift to state 20
+
+State 16:
+elem -> OPTION . [ TERTIARY SECONDARY RESET PRIMARY EXPAND EQ EOF ]
+-- On TERTIARY reduce production elem -> OPTION 
+-- On SECONDARY reduce production elem -> OPTION 
+-- On RESET reduce production elem -> OPTION 
+-- On PRIMARY reduce production elem -> OPTION 
+-- On EXPAND reduce production elem -> OPTION 
+-- On EQ reduce production elem -> OPTION 
+-- On EOF reduce production elem -> OPTION 
+
+State 17:
+elem -> ulist . [ TERTIARY SECONDARY RESET PRIMARY EXPAND EQ EOF ]
+elem -> ulist . PREFIX elem [ TERTIARY SECONDARY RESET PRIMARY EXPAND EQ EOF ]
+-- On PREFIX shift to state 18
+-- On TERTIARY reduce production elem -> ulist 
+-- On SECONDARY reduce production elem -> ulist 
+-- On RESET reduce production elem -> ulist 
+-- On PRIMARY reduce production elem -> ulist 
+-- On EXPAND reduce production elem -> ulist 
+-- On EQ reduce production elem -> ulist 
+-- On EOF reduce production elem -> ulist 
+
+State 18:
+elem -> ulist PREFIX . elem [ TERTIARY SECONDARY RESET PRIMARY EXPAND EQ EOF ]
+-- On UCHAR shift to state 3
+-- On OPTION shift to state 16
+-- On ulist shift to state 17
+-- On elem shift to state 19
+
+State 19:
+elem -> elem . EXPAND ulist [ TERTIARY SECONDARY RESET PRIMARY EXPAND EQ EOF ]
+elem -> ulist PREFIX elem . [ TERTIARY SECONDARY RESET PRIMARY EXPAND EQ EOF ]
+-- On TERTIARY reduce production elem -> ulist PREFIX elem 
+-- On SECONDARY reduce production elem -> ulist PREFIX elem 
+-- On RESET reduce production elem -> ulist PREFIX elem 
+-- On PRIMARY reduce production elem -> ulist PREFIX elem 
+-- On EXPAND reduce production elem -> ulist PREFIX elem 
+-- On EQ reduce production elem -> ulist PREFIX elem 
+-- On EOF reduce production elem -> ulist PREFIX elem 
+
+State 20:
+elem -> elem . EXPAND ulist [ TERTIARY SECONDARY RESET PRIMARY EXPAND EQ EOF ]
+rule -> rule TERTIARY elem . [ TERTIARY SECONDARY RESET PRIMARY EQ EOF ]
+-- On EXPAND shift to state 21
+-- On TERTIARY reduce production rule -> rule TERTIARY elem 
+-- On SECONDARY reduce production rule -> rule TERTIARY elem 
+-- On RESET reduce production rule -> rule TERTIARY elem 
+-- On PRIMARY reduce production rule -> rule TERTIARY elem 
+-- On EQ reduce production rule -> rule TERTIARY elem 
+-- On EOF reduce production rule -> rule TERTIARY elem 
+
+State 21:
+elem -> elem EXPAND . ulist [ TERTIARY SECONDARY RESET PRIMARY EXPAND EQ EOF ]
+-- On UCHAR shift to state 3
+-- On ulist shift to state 22
+
+State 22:
+elem -> elem EXPAND ulist . [ TERTIARY SECONDARY RESET PRIMARY EXPAND EQ EOF ]
+-- On TERTIARY reduce production elem -> elem EXPAND ulist 
+-- On SECONDARY reduce production elem -> elem EXPAND ulist 
+-- On RESET reduce production elem -> elem EXPAND ulist 
+-- On PRIMARY reduce production elem -> elem EXPAND ulist 
+-- On EXPAND reduce production elem -> elem EXPAND ulist 
+-- On EQ reduce production elem -> elem EXPAND ulist 
+-- On EOF reduce production elem -> elem EXPAND ulist 
+
+State 23:
+rule -> rule SECONDARY . elem [ TERTIARY SECONDARY RESET PRIMARY EQ EOF ]
+-- On UCHAR shift to state 3
+-- On OPTION shift to state 16
+-- On ulist shift to state 17
+-- On elem shift to state 24
+
+State 24:
+elem -> elem . EXPAND ulist [ TERTIARY SECONDARY RESET PRIMARY EXPAND EQ EOF ]
+rule -> rule SECONDARY elem . [ TERTIARY SECONDARY RESET PRIMARY EQ EOF ]
+-- On EXPAND shift to state 21
+-- On TERTIARY reduce production rule -> rule SECONDARY elem 
+-- On SECONDARY reduce production rule -> rule SECONDARY elem 
+-- On RESET reduce production rule -> rule SECONDARY elem 
+-- On PRIMARY reduce production rule -> rule SECONDARY elem 
+-- On EQ reduce production rule -> rule SECONDARY elem 
+-- On EOF reduce production rule -> rule SECONDARY elem 
+
+State 25:
+rule -> rule PRIMARY . elem [ TERTIARY SECONDARY RESET PRIMARY EQ EOF ]
+-- On UCHAR shift to state 3
+-- On OPTION shift to state 16
+-- On ulist shift to state 17
+-- On elem shift to state 26
+
+State 26:
+elem -> elem . EXPAND ulist [ TERTIARY SECONDARY RESET PRIMARY EXPAND EQ EOF ]
+rule -> rule PRIMARY elem . [ TERTIARY SECONDARY RESET PRIMARY EQ EOF ]
+-- On EXPAND shift to state 21
+-- On TERTIARY reduce production rule -> rule PRIMARY elem 
+-- On SECONDARY reduce production rule -> rule PRIMARY elem 
+-- On RESET reduce production rule -> rule PRIMARY elem 
+-- On PRIMARY reduce production rule -> rule PRIMARY elem 
+-- On EQ reduce production rule -> rule PRIMARY elem 
+-- On EOF reduce production rule -> rule PRIMARY elem 
+
+State 27:
+rule -> rule EQ . elem [ TERTIARY SECONDARY RESET PRIMARY EQ EOF ]
+-- On UCHAR shift to state 3
+-- On OPTION shift to state 16
+-- On ulist shift to state 17
+-- On elem shift to state 28
+
+State 28:
+elem -> elem . EXPAND ulist [ TERTIARY SECONDARY RESET PRIMARY EXPAND EQ EOF ]
+rule -> rule EQ elem . [ TERTIARY SECONDARY RESET PRIMARY EQ EOF ]
+-- On EXPAND shift to state 21
+-- On TERTIARY reduce production rule -> rule EQ elem 
+-- On SECONDARY reduce production rule -> rule EQ elem 
+-- On RESET reduce production rule -> rule EQ elem 
+-- On PRIMARY reduce production rule -> rule EQ elem 
+-- On EQ reduce production rule -> rule EQ elem 
+-- On EOF reduce production rule -> rule EQ elem 
+
+State 29:
+rules -> rule rules . [ EOF ]
+-- On EOF reduce production rules -> rule rules 
+
+State 30:
+main' -> main . [ # ]
+-- On # accept main
+
+State 31:
+header -> header_option . header [ RESET EOF ]
+header -> header_option . [ RESET EOF ]
+-- On UCHAR shift to state 1
+-- On OPTION shift to state 10
+-- On header_option shift to state 31
+-- On header shift to state 32
+-- On RESET reduce production header -> header_option 
+-- On EOF reduce production header -> header_option 
+
+State 32:
+header -> header_option header . [ RESET EOF ]
+-- On RESET reduce production header -> header_option header 
+-- On EOF reduce production header -> header_option header 
+
+State 33:
+main -> header . rules EOF [ # ]
+main -> header . EOF [ # ]
+-- On RESET shift to state 2
+-- On EOF shift to state 34
+-- On rules shift to state 35
+-- On rule shift to state 14
+
+State 34:
+main -> header EOF . [ # ]
+-- On # reduce production main -> header EOF 
+
+State 35:
+main -> header rules . EOF [ # ]
+-- On EOF shift to state 36
+
+State 36:
+main -> header rules EOF . [ # ]
+-- On # reduce production main -> header rules EOF 
+

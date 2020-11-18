@@ -1,0 +1,69 @@
+
+** Conflict (shift/reduce) in state 325.
+** Token involved: ELSE
+** This state is reached from file after reading:
+
+function_prototype compound_statement_LBRACE IF LPAR expression RPAR IF LPAR expression RPAR statement 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+file 
+translation_unit EOF 
+external_declaration 
+function_definition 
+function_prototype compound_statement 
+                   compound_statement_LBRACE statement_list RBRACE 
+                                             statement 
+                                             selection_statement 
+                                             (?)
+
+** In state 325, looking ahead at ELSE, reducing production
+** selection_statement -> IF LPAR expression RPAR statement 
+** is permitted because of the following sub-derivation:
+
+IF LPAR expression RPAR statement ELSE statement // lookahead token appears
+                        selection_statement // lookahead token is inherited
+                        IF LPAR expression RPAR statement . 
+
+** In state 325, looking ahead at ELSE, shifting is permitted
+** because of the following sub-derivation:
+
+IF LPAR expression RPAR statement 
+                        selection_statement 
+                        IF LPAR expression RPAR statement . ELSE statement 
+
+** Conflict (reduce/reduce) in state 5.
+** Tokens involved: VOLATILE VOID UNSIGNED UNION TYPE_NAME TYPEDEF STRUCT STATIC SIGNED SHORT RPAR RESTRICT REGISTER LSQUARE LPAR LONG INT FLOAT EXTERN ENUM DOUBLE CONST CHAR AUTO
+** The following explanations concentrate on token VOLATILE.
+** This state is reached from file after reading:
+
+TYPE_NAME 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+file 
+translation_unit EOF 
+external_declaration 
+(?)
+
+** In state 5, looking ahead at VOLATILE, reducing production
+** identifier -> TYPE_NAME 
+** is permitted because of the following sub-derivation:
+
+function_definition 
+function_prototype compound_statement 
+declarator declaration_list // lookahead token appears because declaration_list can begin with VOLATILE
+direct_declarator // lookahead token is inherited
+identifier // lookahead token is inherited
+TYPE_NAME . 
+
+** In state 5, looking ahead at VOLATILE, reducing production
+** type_specifier -> TYPE_NAME 
+** is permitted because of the following sub-derivation:
+
+declaration 
+declaration_specifiers SEMICOLON 
+type_specifier declaration_specifiers_no_name // lookahead token appears because declaration_specifiers_no_name can begin with VOLATILE
+TYPE_NAME . 

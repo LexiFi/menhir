@@ -1,0 +1,33 @@
+
+** Conflict (shift/reduce) in state 305.
+** Token involved: ELSE
+** This state is reached from translation_unit after reading:
+
+declarator LBRACE IF LPAREN expression RPAREN IF LPAREN expression RPAREN statement 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+translation_unit 
+external_declaration 
+function_definition 
+declarator compound_statement 
+           LBRACE statement_list RBRACE 
+                  statement 
+                  selection_statement 
+                  (?)
+
+** In state 305, looking ahead at ELSE, reducing production
+** selection_statement -> IF LPAREN expression RPAREN statement 
+** is permitted because of the following sub-derivation:
+
+IF LPAREN expression RPAREN statement ELSE statement // lookahead token appears
+                            selection_statement // lookahead token is inherited
+                            IF LPAREN expression RPAREN statement . 
+
+** In state 305, looking ahead at ELSE, shifting is permitted
+** because of the following sub-derivation:
+
+IF LPAREN expression RPAREN statement 
+                            selection_statement 
+                            IF LPAREN expression RPAREN statement . ELSE statement 

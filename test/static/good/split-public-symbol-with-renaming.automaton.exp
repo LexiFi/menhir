@@ -1,0 +1,37 @@
+State 0:
+main' -> . main [ # ]
+-- On A shift to state 1
+-- On main shift to state 4
+-- On liste(A) shift to state 5
+-- On B reduce production liste(A) -> 
+
+State 1:
+liste(A) -> A . A liste(A) [ B ]
+-- On A shift to state 2
+
+State 2:
+liste(A) -> A A . liste(A) [ B ]
+-- On A shift to state 1
+-- On liste(A) shift to state 3
+-- On B reduce production liste(A) -> 
+
+State 3:
+liste(A) -> A A liste(A) . [ B ]
+-- On B reduce production liste(A) -> A A liste(A) 
+
+State 4:
+main' -> main . [ # ]
+-- On # accept main
+
+State 5:
+main -> liste(A) . B EOF [ # ]
+-- On B shift to state 6
+
+State 6:
+main -> liste(A) B . EOF [ # ]
+-- On EOF shift to state 7
+
+State 7:
+main -> liste(A) B EOF . [ # ]
+-- On # reduce production main -> liste(A) B EOF 
+

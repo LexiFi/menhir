@@ -1,0 +1,2505 @@
+State 0:
+request' -> . request [ # ]
+-- On TAG shift to state 1
+-- On EOF shift to state 2
+-- On DONE shift to state 3
+-- On tag_ shift to state 4
+-- On request shift to state 378
+-- On command shift to state 379
+-- On c_done shift to state 380
+
+State 1:
+tag_ -> TAG . [ SP ]
+-- On SP reduce production tag_ -> TAG 
+
+State 2:
+request -> EOF . [ # ]
+-- On # reduce production request -> EOF 
+
+State 3:
+c_done -> DONE . [ # ]
+-- On # reduce production c_done -> DONE 
+
+State 4:
+command -> tag_ . SP commands CRLF [ # ]
+-- On SP shift to state 5
+
+State 5:
+command -> tag_ SP . commands CRLF [ # ]
+-- On UNSUBSCRIBE shift to state 6
+-- On UID shift to state 13
+-- On SUBSCRIBE shift to state 214
+-- On STORE shift to state 217
+-- On STATUS shift to state 225
+-- On STARTTLS shift to state 243
+-- On SELECT shift to state 244
+-- On SEARCH shift to state 252
+-- On RENAME shift to state 256
+-- On NOOP shift to state 261
+-- On LSUB shift to state 262
+-- On LOGOUT shift to state 267
+-- On LOGIN shift to state 268
+-- On LIST shift to state 276
+-- On LAPPEND shift to state 281
+-- On IDLE shift to state 290
+-- On ID shift to state 291
+-- On FETCH shift to state 301
+-- On EXPUNGE shift to state 307
+-- On EXAMINE shift to state 308
+-- On ENABLE shift to state 312
+-- On DELETE shift to state 315
+-- On CREATE shift to state 318
+-- On COPY shift to state 321
+-- On CLOSE shift to state 326
+-- On CHECK shift to state 327
+-- On CAPABILITY shift to state 328
+-- On AUTHENTICATE shift to state 329
+-- On APPEND shift to state 339
+-- On login shift to state 342
+-- On id shift to state 343
+-- On commands shift to state 344
+-- On command_select shift to state 346
+-- On command_notauth shift to state 347
+-- On command_auth shift to state 348
+-- On command_any shift to state 349
+-- On c_unsubscribe shift to state 350
+-- On c_subscribe shift to state 351
+-- On c_store shift to state 352
+-- On c_status shift to state 353
+-- On c_select shift to state 354
+-- On c_search shift to state 355
+-- On c_rename shift to state 356
+-- On c_lsub shift to state 357
+-- On c_list shift to state 358
+-- On c_lappend shift to state 359
+-- On c_idle shift to state 360
+-- On c_fetch shift to state 361
+-- On c_examine shift to state 362
+-- On c_delete shift to state 363
+-- On c_create shift to state 364
+-- On c_copy shift to state 365
+-- On c_append shift to state 366
+-- On authenticate shift to state 367
+-- On append_cmd shift to state 368
+
+State 6:
+c_unsubscribe -> UNSUBSCRIBE . SP mailbox [ CRLF ]
+-- On SP shift to state 7
+
+State 7:
+c_unsubscribe -> UNSUBSCRIBE SP . mailbox [ CRLF ]
+-- On QUOTED_STRING shift to state 8
+-- On INBOX shift to state 9
+-- On ATOM_CHARS shift to state 10
+-- On quoted shift to state 11
+-- On mailbox shift to state 12
+
+State 8:
+quoted -> QUOTED_STRING . [ SP RP CRLF ]
+-- On SP reduce production quoted -> QUOTED_STRING 
+-- On RP reduce production quoted -> QUOTED_STRING 
+-- On CRLF reduce production quoted -> QUOTED_STRING 
+
+State 9:
+mailbox -> INBOX . [ SP CRLF ]
+-- On SP reduce production mailbox -> INBOX 
+-- On CRLF reduce production mailbox -> INBOX 
+
+State 10:
+mailbox -> ATOM_CHARS . [ SP CRLF ]
+-- On SP reduce production mailbox -> ATOM_CHARS 
+-- On CRLF reduce production mailbox -> ATOM_CHARS 
+
+State 11:
+mailbox -> quoted . [ SP CRLF ]
+-- On SP reduce production mailbox -> quoted 
+-- On CRLF reduce production mailbox -> quoted 
+
+State 12:
+c_unsubscribe -> UNSUBSCRIBE SP mailbox . [ CRLF ]
+-- On CRLF reduce production c_unsubscribe -> UNSUBSCRIBE SP mailbox 
+
+State 13:
+c_copy -> UID . SP COPY SP ATOM_CHARS SP mailbox [ CRLF ]
+c_fetch -> UID . SP FETCH SP ATOM_CHARS SP fetch_args changedsince_sp [ CRLF ]
+c_search -> UID . SP SEARCH SP charset_sp search_keys [ CRLF ]
+c_store -> UID . SP STORE SP ATOM_CHARS SP unchangedsince_sp s_flags SP s_flags_value [ CRLF ]
+-- On SP shift to state 14
+
+State 14:
+c_copy -> UID SP . COPY SP ATOM_CHARS SP mailbox [ CRLF ]
+c_fetch -> UID SP . FETCH SP ATOM_CHARS SP fetch_args changedsince_sp [ CRLF ]
+c_search -> UID SP . SEARCH SP charset_sp search_keys [ CRLF ]
+c_store -> UID SP . STORE SP ATOM_CHARS SP unchangedsince_sp s_flags SP s_flags_value [ CRLF ]
+-- On STORE shift to state 15
+-- On SEARCH shift to state 52
+-- On FETCH shift to state 171
+-- On COPY shift to state 209
+
+State 15:
+c_store -> UID SP STORE . SP ATOM_CHARS SP unchangedsince_sp s_flags SP s_flags_value [ CRLF ]
+-- On SP shift to state 16
+
+State 16:
+c_store -> UID SP STORE SP . ATOM_CHARS SP unchangedsince_sp s_flags SP s_flags_value [ CRLF ]
+-- On ATOM_CHARS shift to state 17
+
+State 17:
+c_store -> UID SP STORE SP ATOM_CHARS . SP unchangedsince_sp s_flags SP s_flags_value [ CRLF ]
+-- On SP shift to state 18
+
+State 18:
+c_store -> UID SP STORE SP ATOM_CHARS SP . unchangedsince_sp s_flags SP s_flags_value [ CRLF ]
+-- On LP shift to state 19
+-- On unchangedsince_sp shift to state 25
+-- On FLAGSSILENTPL reduce production unchangedsince_sp -> 
+-- On FLAGSSILENTMIN reduce production unchangedsince_sp -> 
+-- On FLAGSSILENT reduce production unchangedsince_sp -> 
+-- On FLAGSPL reduce production unchangedsince_sp -> 
+-- On FLAGSMIN reduce production unchangedsince_sp -> 
+-- On FLAGS reduce production unchangedsince_sp -> 
+
+State 19:
+unchangedsince_sp -> LP . UNCHANGEDSINCE SP ATOM_CHARS RP SP [ FLAGSSILENTPL FLAGSSILENTMIN FLAGSSILENT FLAGSPL FLAGSMIN FLAGS ]
+-- On UNCHANGEDSINCE shift to state 20
+
+State 20:
+unchangedsince_sp -> LP UNCHANGEDSINCE . SP ATOM_CHARS RP SP [ FLAGSSILENTPL FLAGSSILENTMIN FLAGSSILENT FLAGSPL FLAGSMIN FLAGS ]
+-- On SP shift to state 21
+
+State 21:
+unchangedsince_sp -> LP UNCHANGEDSINCE SP . ATOM_CHARS RP SP [ FLAGSSILENTPL FLAGSSILENTMIN FLAGSSILENT FLAGSPL FLAGSMIN FLAGS ]
+-- On ATOM_CHARS shift to state 22
+
+State 22:
+unchangedsince_sp -> LP UNCHANGEDSINCE SP ATOM_CHARS . RP SP [ FLAGSSILENTPL FLAGSSILENTMIN FLAGSSILENT FLAGSPL FLAGSMIN FLAGS ]
+-- On RP shift to state 23
+
+State 23:
+unchangedsince_sp -> LP UNCHANGEDSINCE SP ATOM_CHARS RP . SP [ FLAGSSILENTPL FLAGSSILENTMIN FLAGSSILENT FLAGSPL FLAGSMIN FLAGS ]
+-- On SP shift to state 24
+
+State 24:
+unchangedsince_sp -> LP UNCHANGEDSINCE SP ATOM_CHARS RP SP . [ FLAGSSILENTPL FLAGSSILENTMIN FLAGSSILENT FLAGSPL FLAGSMIN FLAGS ]
+-- On FLAGSSILENTPL reduce production unchangedsince_sp -> LP UNCHANGEDSINCE SP ATOM_CHARS RP SP 
+-- On FLAGSSILENTMIN reduce production unchangedsince_sp -> LP UNCHANGEDSINCE SP ATOM_CHARS RP SP 
+-- On FLAGSSILENT reduce production unchangedsince_sp -> LP UNCHANGEDSINCE SP ATOM_CHARS RP SP 
+-- On FLAGSPL reduce production unchangedsince_sp -> LP UNCHANGEDSINCE SP ATOM_CHARS RP SP 
+-- On FLAGSMIN reduce production unchangedsince_sp -> LP UNCHANGEDSINCE SP ATOM_CHARS RP SP 
+-- On FLAGS reduce production unchangedsince_sp -> LP UNCHANGEDSINCE SP ATOM_CHARS RP SP 
+
+State 25:
+c_store -> UID SP STORE SP ATOM_CHARS SP unchangedsince_sp . s_flags SP s_flags_value [ CRLF ]
+-- On FLAGSSILENTPL shift to state 26
+-- On FLAGSSILENTMIN shift to state 27
+-- On FLAGSSILENT shift to state 28
+-- On FLAGSPL shift to state 29
+-- On FLAGSMIN shift to state 30
+-- On FLAGS shift to state 31
+-- On s_flags shift to state 32
+
+State 26:
+s_flags -> FLAGSSILENTPL . [ SP ]
+-- On SP reduce production s_flags -> FLAGSSILENTPL 
+
+State 27:
+s_flags -> FLAGSSILENTMIN . [ SP ]
+-- On SP reduce production s_flags -> FLAGSSILENTMIN 
+
+State 28:
+s_flags -> FLAGSSILENT . [ SP ]
+-- On SP reduce production s_flags -> FLAGSSILENT 
+
+State 29:
+s_flags -> FLAGSPL . [ SP ]
+-- On SP reduce production s_flags -> FLAGSPL 
+
+State 30:
+s_flags -> FLAGSMIN . [ SP ]
+-- On SP reduce production s_flags -> FLAGSMIN 
+
+State 31:
+s_flags -> FLAGS . [ SP ]
+-- On SP reduce production s_flags -> FLAGS 
+
+State 32:
+c_store -> UID SP STORE SP ATOM_CHARS SP unchangedsince_sp s_flags . SP s_flags_value [ CRLF ]
+-- On SP shift to state 33
+
+State 33:
+c_store -> UID SP STORE SP ATOM_CHARS SP unchangedsince_sp s_flags SP . s_flags_value [ CRLF ]
+-- On LP shift to state 34
+-- On FLSEEN shift to state 35
+-- On FLFLAGGED shift to state 36
+-- On FLEXTENSION shift to state 37
+-- On FLDRAFT shift to state 38
+-- On FLDELETED shift to state 39
+-- On FLANSWERED shift to state 40
+-- On ATOM_CHARS shift to state 41
+-- On separated_nonempty_list(SP,flag) shift to state 42
+-- On s_flags_value shift to state 49
+-- On loption(separated_nonempty_list(SP,flag)) shift to state 43
+-- On flag_sp_list shift to state 50
+-- On flag_list shift to state 51
+-- On flag shift to state 46
+-- On CRLF reduce production loption(separated_nonempty_list(SP,flag)) -> 
+
+State 34:
+flag_list -> LP . flag_sp_list RP [ SP CRLF ]
+-- On FLSEEN shift to state 35
+-- On FLFLAGGED shift to state 36
+-- On FLEXTENSION shift to state 37
+-- On FLDRAFT shift to state 38
+-- On FLDELETED shift to state 39
+-- On FLANSWERED shift to state 40
+-- On ATOM_CHARS shift to state 41
+-- On separated_nonempty_list(SP,flag) shift to state 42
+-- On loption(separated_nonempty_list(SP,flag)) shift to state 43
+-- On flag_sp_list shift to state 44
+-- On flag shift to state 46
+-- On RP reduce production loption(separated_nonempty_list(SP,flag)) -> 
+
+State 35:
+flag -> FLSEEN . [ SP RP CRLF ]
+-- On SP reduce production flag -> FLSEEN 
+-- On RP reduce production flag -> FLSEEN 
+-- On CRLF reduce production flag -> FLSEEN 
+
+State 36:
+flag -> FLFLAGGED . [ SP RP CRLF ]
+-- On SP reduce production flag -> FLFLAGGED 
+-- On RP reduce production flag -> FLFLAGGED 
+-- On CRLF reduce production flag -> FLFLAGGED 
+
+State 37:
+flag -> FLEXTENSION . [ SP RP CRLF ]
+-- On SP reduce production flag -> FLEXTENSION 
+-- On RP reduce production flag -> FLEXTENSION 
+-- On CRLF reduce production flag -> FLEXTENSION 
+
+State 38:
+flag -> FLDRAFT . [ SP RP CRLF ]
+-- On SP reduce production flag -> FLDRAFT 
+-- On RP reduce production flag -> FLDRAFT 
+-- On CRLF reduce production flag -> FLDRAFT 
+
+State 39:
+flag -> FLDELETED . [ SP RP CRLF ]
+-- On SP reduce production flag -> FLDELETED 
+-- On RP reduce production flag -> FLDELETED 
+-- On CRLF reduce production flag -> FLDELETED 
+
+State 40:
+flag -> FLANSWERED . [ SP RP CRLF ]
+-- On SP reduce production flag -> FLANSWERED 
+-- On RP reduce production flag -> FLANSWERED 
+-- On CRLF reduce production flag -> FLANSWERED 
+
+State 41:
+flag -> ATOM_CHARS . [ SP RP CRLF ]
+-- On SP reduce production flag -> ATOM_CHARS 
+-- On RP reduce production flag -> ATOM_CHARS 
+-- On CRLF reduce production flag -> ATOM_CHARS 
+
+State 42:
+loption(separated_nonempty_list(SP,flag)) -> separated_nonempty_list(SP,flag) . [ RP CRLF ]
+-- On RP reduce production loption(separated_nonempty_list(SP,flag)) -> separated_nonempty_list(SP,flag) 
+-- On CRLF reduce production loption(separated_nonempty_list(SP,flag)) -> separated_nonempty_list(SP,flag) 
+
+State 43:
+flag_sp_list -> loption(separated_nonempty_list(SP,flag)) . [ RP CRLF ]
+-- On RP reduce production flag_sp_list -> loption(separated_nonempty_list(SP,flag)) 
+-- On CRLF reduce production flag_sp_list -> loption(separated_nonempty_list(SP,flag)) 
+
+State 44:
+flag_list -> LP flag_sp_list . RP [ SP CRLF ]
+-- On RP shift to state 45
+
+State 45:
+flag_list -> LP flag_sp_list RP . [ SP CRLF ]
+-- On SP reduce production flag_list -> LP flag_sp_list RP 
+-- On CRLF reduce production flag_list -> LP flag_sp_list RP 
+
+State 46:
+separated_nonempty_list(SP,flag) -> flag . [ RP CRLF ]
+separated_nonempty_list(SP,flag) -> flag . SP separated_nonempty_list(SP,flag) [ RP CRLF ]
+-- On SP shift to state 47
+-- On RP reduce production separated_nonempty_list(SP,flag) -> flag 
+-- On CRLF reduce production separated_nonempty_list(SP,flag) -> flag 
+
+State 47:
+separated_nonempty_list(SP,flag) -> flag SP . separated_nonempty_list(SP,flag) [ RP CRLF ]
+-- On FLSEEN shift to state 35
+-- On FLFLAGGED shift to state 36
+-- On FLEXTENSION shift to state 37
+-- On FLDRAFT shift to state 38
+-- On FLDELETED shift to state 39
+-- On FLANSWERED shift to state 40
+-- On ATOM_CHARS shift to state 41
+-- On separated_nonempty_list(SP,flag) shift to state 48
+-- On flag shift to state 46
+
+State 48:
+separated_nonempty_list(SP,flag) -> flag SP separated_nonempty_list(SP,flag) . [ RP CRLF ]
+-- On RP reduce production separated_nonempty_list(SP,flag) -> flag SP separated_nonempty_list(SP,flag) 
+-- On CRLF reduce production separated_nonempty_list(SP,flag) -> flag SP separated_nonempty_list(SP,flag) 
+
+State 49:
+c_store -> UID SP STORE SP ATOM_CHARS SP unchangedsince_sp s_flags SP s_flags_value . [ CRLF ]
+-- On CRLF reduce production c_store -> UID SP STORE SP ATOM_CHARS SP unchangedsince_sp s_flags SP s_flags_value 
+
+State 50:
+s_flags_value -> flag_sp_list . [ CRLF ]
+-- On CRLF reduce production s_flags_value -> flag_sp_list 
+
+State 51:
+s_flags_value -> flag_list . [ CRLF ]
+-- On CRLF reduce production s_flags_value -> flag_list 
+
+State 52:
+c_search -> UID SP SEARCH . SP charset_sp search_keys [ CRLF ]
+-- On SP shift to state 53
+
+State 53:
+c_search -> UID SP SEARCH SP . charset_sp search_keys [ CRLF ]
+-- On CHARSET shift to state 54
+-- On charset_sp shift to state 57
+-- On charset shift to state 169
+-- On UNSEEN reduce production charset_sp -> 
+-- On UNKEYWORD reduce production charset_sp -> 
+-- On UNFLAGGED reduce production charset_sp -> 
+-- On UNDRAFT reduce production charset_sp -> 
+-- On UNDELETED reduce production charset_sp -> 
+-- On UNANSWERED reduce production charset_sp -> 
+-- On UID reduce production charset_sp -> 
+-- On TO reduce production charset_sp -> 
+-- On TEXT reduce production charset_sp -> 
+-- On SUBJECT reduce production charset_sp -> 
+-- On SMALLER reduce production charset_sp -> 
+-- On SINCE reduce production charset_sp -> 
+-- On SENTSINCE reduce production charset_sp -> 
+-- On SENTON reduce production charset_sp -> 
+-- On SENTBEFORE reduce production charset_sp -> 
+-- On SEEN reduce production charset_sp -> 
+-- On RECENT reduce production charset_sp -> 
+-- On OR reduce production charset_sp -> 
+-- On ON reduce production charset_sp -> 
+-- On OLD reduce production charset_sp -> 
+-- On NOT reduce production charset_sp -> 
+-- On NEW reduce production charset_sp -> 
+-- On MODSEQ reduce production charset_sp -> 
+-- On LP reduce production charset_sp -> 
+-- On LARGER reduce production charset_sp -> 
+-- On KEYWORD reduce production charset_sp -> 
+-- On HEADER reduce production charset_sp -> 
+-- On FROM reduce production charset_sp -> 
+-- On FLAGGED reduce production charset_sp -> 
+-- On DRAFT reduce production charset_sp -> 
+-- On DELETED reduce production charset_sp -> 
+-- On CRLF reduce production charset_sp -> 
+-- On CC reduce production charset_sp -> 
+-- On BODY reduce production charset_sp -> 
+-- On BEFORE reduce production charset_sp -> 
+-- On BCC reduce production charset_sp -> 
+-- On ATOM_CHARS reduce production charset_sp -> 
+-- On ANSWERED reduce production charset_sp -> 
+-- On ALL reduce production charset_sp -> 
+
+State 54:
+charset -> CHARSET . SP ATOM_CHARS [ SP ]
+-- On SP shift to state 55
+
+State 55:
+charset -> CHARSET SP . ATOM_CHARS [ SP ]
+-- On ATOM_CHARS shift to state 56
+
+State 56:
+charset -> CHARSET SP ATOM_CHARS . [ SP ]
+-- On SP reduce production charset -> CHARSET SP ATOM_CHARS 
+
+State 57:
+c_search -> UID SP SEARCH SP charset_sp . search_keys [ CRLF ]
+-- On UNSEEN shift to state 58
+-- On UNKEYWORD shift to state 59
+-- On UNFLAGGED shift to state 62
+-- On UNDRAFT shift to state 63
+-- On UNDELETED shift to state 64
+-- On UNANSWERED shift to state 65
+-- On UID shift to state 66
+-- On TO shift to state 69
+-- On TEXT shift to state 72
+-- On SUBJECT shift to state 75
+-- On SMALLER shift to state 78
+-- On SINCE shift to state 81
+-- On SENTSINCE shift to state 86
+-- On SENTON shift to state 89
+-- On SENTBEFORE shift to state 92
+-- On SEEN shift to state 95
+-- On RECENT shift to state 96
+-- On OR shift to state 97
+-- On ON shift to state 99
+-- On OLD shift to state 102
+-- On NOT shift to state 103
+-- On NEW shift to state 105
+-- On MODSEQ shift to state 106
+-- On LP shift to state 118
+-- On LARGER shift to state 119
+-- On KEYWORD shift to state 122
+-- On HEADER shift to state 124
+-- On FROM shift to state 132
+-- On FLAGGED shift to state 135
+-- On DRAFT shift to state 136
+-- On DELETED shift to state 137
+-- On CC shift to state 138
+-- On BODY shift to state 141
+-- On BEFORE shift to state 144
+-- On BCC shift to state 147
+-- On ATOM_CHARS shift to state 150
+-- On ANSWERED shift to state 151
+-- On ALL shift to state 152
+-- On separated_nonempty_list(SP,op_search_keys) shift to state 153
+-- On search_keys shift to state 167
+-- On search_key shift to state 154
+-- On s_header shift to state 155
+-- On op_search_keys shift to state 156
+-- On op_search_key shift to state 159
+-- On modseq shift to state 160
+-- On loption(separated_nonempty_list(SP,op_search_keys)) shift to state 168
+-- On CRLF reduce production loption(separated_nonempty_list(SP,op_search_keys)) -> 
+
+State 58:
+search_key -> UNSEEN . [ SP RP CRLF ]
+-- On SP reduce production search_key -> UNSEEN 
+-- On RP reduce production search_key -> UNSEEN 
+-- On CRLF reduce production search_key -> UNSEEN 
+
+State 59:
+search_key -> UNKEYWORD . SP ATOM_CHARS [ SP RP CRLF ]
+-- On SP shift to state 60
+
+State 60:
+search_key -> UNKEYWORD SP . ATOM_CHARS [ SP RP CRLF ]
+-- On ATOM_CHARS shift to state 61
+
+State 61:
+search_key -> UNKEYWORD SP ATOM_CHARS . [ SP RP CRLF ]
+-- On SP reduce production search_key -> UNKEYWORD SP ATOM_CHARS 
+-- On RP reduce production search_key -> UNKEYWORD SP ATOM_CHARS 
+-- On CRLF reduce production search_key -> UNKEYWORD SP ATOM_CHARS 
+
+State 62:
+search_key -> UNFLAGGED . [ SP RP CRLF ]
+-- On SP reduce production search_key -> UNFLAGGED 
+-- On RP reduce production search_key -> UNFLAGGED 
+-- On CRLF reduce production search_key -> UNFLAGGED 
+
+State 63:
+search_key -> UNDRAFT . [ SP RP CRLF ]
+-- On SP reduce production search_key -> UNDRAFT 
+-- On RP reduce production search_key -> UNDRAFT 
+-- On CRLF reduce production search_key -> UNDRAFT 
+
+State 64:
+search_key -> UNDELETED . [ SP RP CRLF ]
+-- On SP reduce production search_key -> UNDELETED 
+-- On RP reduce production search_key -> UNDELETED 
+-- On CRLF reduce production search_key -> UNDELETED 
+
+State 65:
+search_key -> UNANSWERED . [ SP RP CRLF ]
+-- On SP reduce production search_key -> UNANSWERED 
+-- On RP reduce production search_key -> UNANSWERED 
+-- On CRLF reduce production search_key -> UNANSWERED 
+
+State 66:
+search_key -> UID . SP ATOM_CHARS [ SP RP CRLF ]
+-- On SP shift to state 67
+
+State 67:
+search_key -> UID SP . ATOM_CHARS [ SP RP CRLF ]
+-- On ATOM_CHARS shift to state 68
+
+State 68:
+search_key -> UID SP ATOM_CHARS . [ SP RP CRLF ]
+-- On SP reduce production search_key -> UID SP ATOM_CHARS 
+-- On RP reduce production search_key -> UID SP ATOM_CHARS 
+-- On CRLF reduce production search_key -> UID SP ATOM_CHARS 
+
+State 69:
+search_key -> TO . SP ATOM_CHARS [ SP RP CRLF ]
+-- On SP shift to state 70
+
+State 70:
+search_key -> TO SP . ATOM_CHARS [ SP RP CRLF ]
+-- On ATOM_CHARS shift to state 71
+
+State 71:
+search_key -> TO SP ATOM_CHARS . [ SP RP CRLF ]
+-- On SP reduce production search_key -> TO SP ATOM_CHARS 
+-- On RP reduce production search_key -> TO SP ATOM_CHARS 
+-- On CRLF reduce production search_key -> TO SP ATOM_CHARS 
+
+State 72:
+search_key -> TEXT . SP ATOM_CHARS [ SP RP CRLF ]
+-- On SP shift to state 73
+
+State 73:
+search_key -> TEXT SP . ATOM_CHARS [ SP RP CRLF ]
+-- On ATOM_CHARS shift to state 74
+
+State 74:
+search_key -> TEXT SP ATOM_CHARS . [ SP RP CRLF ]
+-- On SP reduce production search_key -> TEXT SP ATOM_CHARS 
+-- On RP reduce production search_key -> TEXT SP ATOM_CHARS 
+-- On CRLF reduce production search_key -> TEXT SP ATOM_CHARS 
+
+State 75:
+search_key -> SUBJECT . SP ATOM_CHARS [ SP RP CRLF ]
+-- On SP shift to state 76
+
+State 76:
+search_key -> SUBJECT SP . ATOM_CHARS [ SP RP CRLF ]
+-- On ATOM_CHARS shift to state 77
+
+State 77:
+search_key -> SUBJECT SP ATOM_CHARS . [ SP RP CRLF ]
+-- On SP reduce production search_key -> SUBJECT SP ATOM_CHARS 
+-- On RP reduce production search_key -> SUBJECT SP ATOM_CHARS 
+-- On CRLF reduce production search_key -> SUBJECT SP ATOM_CHARS 
+
+State 78:
+search_key -> SMALLER . SP ATOM_CHARS [ SP RP CRLF ]
+-- On SP shift to state 79
+
+State 79:
+search_key -> SMALLER SP . ATOM_CHARS [ SP RP CRLF ]
+-- On ATOM_CHARS shift to state 80
+
+State 80:
+search_key -> SMALLER SP ATOM_CHARS . [ SP RP CRLF ]
+-- On SP reduce production search_key -> SMALLER SP ATOM_CHARS 
+-- On RP reduce production search_key -> SMALLER SP ATOM_CHARS 
+-- On CRLF reduce production search_key -> SMALLER SP ATOM_CHARS 
+
+State 81:
+search_key -> SINCE . SP s_date [ SP RP CRLF ]
+-- On SP shift to state 82
+
+State 82:
+search_key -> SINCE SP . s_date [ SP RP CRLF ]
+-- On QUOTED_STRING shift to state 8
+-- On ATOM_CHARS shift to state 83
+-- On s_date shift to state 84
+-- On quoted shift to state 85
+
+State 83:
+s_date -> ATOM_CHARS . [ SP RP CRLF ]
+-- On SP reduce production s_date -> ATOM_CHARS 
+-- On RP reduce production s_date -> ATOM_CHARS 
+-- On CRLF reduce production s_date -> ATOM_CHARS 
+
+State 84:
+search_key -> SINCE SP s_date . [ SP RP CRLF ]
+-- On SP reduce production search_key -> SINCE SP s_date 
+-- On RP reduce production search_key -> SINCE SP s_date 
+-- On CRLF reduce production search_key -> SINCE SP s_date 
+
+State 85:
+s_date -> quoted . [ SP RP CRLF ]
+-- On SP reduce production s_date -> quoted 
+-- On RP reduce production s_date -> quoted 
+-- On CRLF reduce production s_date -> quoted 
+
+State 86:
+search_key -> SENTSINCE . SP s_date [ SP RP CRLF ]
+-- On SP shift to state 87
+
+State 87:
+search_key -> SENTSINCE SP . s_date [ SP RP CRLF ]
+-- On QUOTED_STRING shift to state 8
+-- On ATOM_CHARS shift to state 83
+-- On s_date shift to state 88
+-- On quoted shift to state 85
+
+State 88:
+search_key -> SENTSINCE SP s_date . [ SP RP CRLF ]
+-- On SP reduce production search_key -> SENTSINCE SP s_date 
+-- On RP reduce production search_key -> SENTSINCE SP s_date 
+-- On CRLF reduce production search_key -> SENTSINCE SP s_date 
+
+State 89:
+search_key -> SENTON . SP s_date [ SP RP CRLF ]
+-- On SP shift to state 90
+
+State 90:
+search_key -> SENTON SP . s_date [ SP RP CRLF ]
+-- On QUOTED_STRING shift to state 8
+-- On ATOM_CHARS shift to state 83
+-- On s_date shift to state 91
+-- On quoted shift to state 85
+
+State 91:
+search_key -> SENTON SP s_date . [ SP RP CRLF ]
+-- On SP reduce production search_key -> SENTON SP s_date 
+-- On RP reduce production search_key -> SENTON SP s_date 
+-- On CRLF reduce production search_key -> SENTON SP s_date 
+
+State 92:
+search_key -> SENTBEFORE . SP s_date [ SP RP CRLF ]
+-- On SP shift to state 93
+
+State 93:
+search_key -> SENTBEFORE SP . s_date [ SP RP CRLF ]
+-- On QUOTED_STRING shift to state 8
+-- On ATOM_CHARS shift to state 83
+-- On s_date shift to state 94
+-- On quoted shift to state 85
+
+State 94:
+search_key -> SENTBEFORE SP s_date . [ SP RP CRLF ]
+-- On SP reduce production search_key -> SENTBEFORE SP s_date 
+-- On RP reduce production search_key -> SENTBEFORE SP s_date 
+-- On CRLF reduce production search_key -> SENTBEFORE SP s_date 
+
+State 95:
+search_key -> SEEN . [ SP RP CRLF ]
+-- On SP reduce production search_key -> SEEN 
+-- On RP reduce production search_key -> SEEN 
+-- On CRLF reduce production search_key -> SEEN 
+
+State 96:
+search_key -> RECENT . [ SP RP CRLF ]
+-- On SP reduce production search_key -> RECENT 
+-- On RP reduce production search_key -> RECENT 
+-- On CRLF reduce production search_key -> RECENT 
+
+State 97:
+op_search_keys -> OR . SP op_search_keys SP op_search_keys [ SP RP CRLF ]
+-- On SP shift to state 98
+
+State 98:
+op_search_keys -> OR SP . op_search_keys SP op_search_keys [ SP RP CRLF ]
+-- On UNSEEN shift to state 58
+-- On UNKEYWORD shift to state 59
+-- On UNFLAGGED shift to state 62
+-- On UNDRAFT shift to state 63
+-- On UNDELETED shift to state 64
+-- On UNANSWERED shift to state 65
+-- On UID shift to state 66
+-- On TO shift to state 69
+-- On TEXT shift to state 72
+-- On SUBJECT shift to state 75
+-- On SMALLER shift to state 78
+-- On SINCE shift to state 81
+-- On SENTSINCE shift to state 86
+-- On SENTON shift to state 89
+-- On SENTBEFORE shift to state 92
+-- On SEEN shift to state 95
+-- On RECENT shift to state 96
+-- On OR shift to state 97
+-- On ON shift to state 99
+-- On OLD shift to state 102
+-- On NOT shift to state 103
+-- On NEW shift to state 105
+-- On MODSEQ shift to state 106
+-- On LP shift to state 118
+-- On LARGER shift to state 119
+-- On KEYWORD shift to state 122
+-- On HEADER shift to state 124
+-- On FROM shift to state 132
+-- On FLAGGED shift to state 135
+-- On DRAFT shift to state 136
+-- On DELETED shift to state 137
+-- On CC shift to state 138
+-- On BODY shift to state 141
+-- On BEFORE shift to state 144
+-- On BCC shift to state 147
+-- On ATOM_CHARS shift to state 150
+-- On ANSWERED shift to state 151
+-- On ALL shift to state 152
+-- On search_key shift to state 154
+-- On s_header shift to state 155
+-- On op_search_keys shift to state 164
+-- On op_search_key shift to state 159
+-- On modseq shift to state 160
+
+State 99:
+search_key -> ON . SP s_date [ SP RP CRLF ]
+-- On SP shift to state 100
+
+State 100:
+search_key -> ON SP . s_date [ SP RP CRLF ]
+-- On QUOTED_STRING shift to state 8
+-- On ATOM_CHARS shift to state 83
+-- On s_date shift to state 101
+-- On quoted shift to state 85
+
+State 101:
+search_key -> ON SP s_date . [ SP RP CRLF ]
+-- On SP reduce production search_key -> ON SP s_date 
+-- On RP reduce production search_key -> ON SP s_date 
+-- On CRLF reduce production search_key -> ON SP s_date 
+
+State 102:
+search_key -> OLD . [ SP RP CRLF ]
+-- On SP reduce production search_key -> OLD 
+-- On RP reduce production search_key -> OLD 
+-- On CRLF reduce production search_key -> OLD 
+
+State 103:
+op_search_keys -> NOT . SP op_search_keys [ SP RP CRLF ]
+-- On SP shift to state 104
+
+State 104:
+op_search_keys -> NOT SP . op_search_keys [ SP RP CRLF ]
+-- On UNSEEN shift to state 58
+-- On UNKEYWORD shift to state 59
+-- On UNFLAGGED shift to state 62
+-- On UNDRAFT shift to state 63
+-- On UNDELETED shift to state 64
+-- On UNANSWERED shift to state 65
+-- On UID shift to state 66
+-- On TO shift to state 69
+-- On TEXT shift to state 72
+-- On SUBJECT shift to state 75
+-- On SMALLER shift to state 78
+-- On SINCE shift to state 81
+-- On SENTSINCE shift to state 86
+-- On SENTON shift to state 89
+-- On SENTBEFORE shift to state 92
+-- On SEEN shift to state 95
+-- On RECENT shift to state 96
+-- On OR shift to state 97
+-- On ON shift to state 99
+-- On OLD shift to state 102
+-- On NOT shift to state 103
+-- On NEW shift to state 105
+-- On MODSEQ shift to state 106
+-- On LP shift to state 118
+-- On LARGER shift to state 119
+-- On KEYWORD shift to state 122
+-- On HEADER shift to state 124
+-- On FROM shift to state 132
+-- On FLAGGED shift to state 135
+-- On DRAFT shift to state 136
+-- On DELETED shift to state 137
+-- On CC shift to state 138
+-- On BODY shift to state 141
+-- On BEFORE shift to state 144
+-- On BCC shift to state 147
+-- On ATOM_CHARS shift to state 150
+-- On ANSWERED shift to state 151
+-- On ALL shift to state 152
+-- On search_key shift to state 154
+-- On s_header shift to state 155
+-- On op_search_keys shift to state 163
+-- On op_search_key shift to state 159
+-- On modseq shift to state 160
+
+State 105:
+search_key -> NEW . [ SP RP CRLF ]
+-- On SP reduce production search_key -> NEW 
+-- On RP reduce production search_key -> NEW 
+-- On CRLF reduce production search_key -> NEW 
+
+State 106:
+modseq -> MODSEQ . SP ATOM_CHARS [ SP RP CRLF ]
+modseq -> MODSEQ . SP astring SP modseq_entry_type SP ATOM_CHARS [ SP RP CRLF ]
+-- On SP shift to state 107
+
+State 107:
+modseq -> MODSEQ SP . ATOM_CHARS [ SP RP CRLF ]
+modseq -> MODSEQ SP . astring SP modseq_entry_type SP ATOM_CHARS [ SP RP CRLF ]
+-- On QUOTED_STRING shift to state 8
+-- On ATOM_CHARS shift to state 108
+-- On quoted shift to state 109
+-- On astring shift to state 110
+
+State 108:
+astring -> ATOM_CHARS . [ SP ]
+modseq -> MODSEQ SP ATOM_CHARS . [ SP RP CRLF ]
+-- On SP reduce production astring -> ATOM_CHARS 
+-- On SP reduce production modseq -> MODSEQ SP ATOM_CHARS 
+-- On RP reduce production modseq -> MODSEQ SP ATOM_CHARS 
+-- On CRLF reduce production modseq -> MODSEQ SP ATOM_CHARS 
+** Conflict on SP
+
+State 109:
+astring -> quoted . [ SP CRLF ]
+-- On SP reduce production astring -> quoted 
+-- On CRLF reduce production astring -> quoted 
+
+State 110:
+modseq -> MODSEQ SP astring . SP modseq_entry_type SP ATOM_CHARS [ SP RP CRLF ]
+-- On SP shift to state 111
+
+State 111:
+modseq -> MODSEQ SP astring SP . modseq_entry_type SP ATOM_CHARS [ SP RP CRLF ]
+-- On SHARED shift to state 112
+-- On PRIV shift to state 113
+-- On ALL shift to state 114
+-- On modseq_entry_type shift to state 115
+
+State 112:
+modseq_entry_type -> SHARED . [ SP ]
+-- On SP reduce production modseq_entry_type -> SHARED 
+
+State 113:
+modseq_entry_type -> PRIV . [ SP ]
+-- On SP reduce production modseq_entry_type -> PRIV 
+
+State 114:
+modseq_entry_type -> ALL . [ SP ]
+-- On SP reduce production modseq_entry_type -> ALL 
+
+State 115:
+modseq -> MODSEQ SP astring SP modseq_entry_type . SP ATOM_CHARS [ SP RP CRLF ]
+-- On SP shift to state 116
+
+State 116:
+modseq -> MODSEQ SP astring SP modseq_entry_type SP . ATOM_CHARS [ SP RP CRLF ]
+-- On ATOM_CHARS shift to state 117
+
+State 117:
+modseq -> MODSEQ SP astring SP modseq_entry_type SP ATOM_CHARS . [ SP RP CRLF ]
+-- On SP reduce production modseq -> MODSEQ SP astring SP modseq_entry_type SP ATOM_CHARS 
+-- On RP reduce production modseq -> MODSEQ SP astring SP modseq_entry_type SP ATOM_CHARS 
+-- On CRLF reduce production modseq -> MODSEQ SP astring SP modseq_entry_type SP ATOM_CHARS 
+
+State 118:
+op_search_keys -> LP . loption(separated_nonempty_list(SP,op_search_keys)) RP [ SP RP CRLF ]
+-- On UNSEEN shift to state 58
+-- On UNKEYWORD shift to state 59
+-- On UNFLAGGED shift to state 62
+-- On UNDRAFT shift to state 63
+-- On UNDELETED shift to state 64
+-- On UNANSWERED shift to state 65
+-- On UID shift to state 66
+-- On TO shift to state 69
+-- On TEXT shift to state 72
+-- On SUBJECT shift to state 75
+-- On SMALLER shift to state 78
+-- On SINCE shift to state 81
+-- On SENTSINCE shift to state 86
+-- On SENTON shift to state 89
+-- On SENTBEFORE shift to state 92
+-- On SEEN shift to state 95
+-- On RECENT shift to state 96
+-- On OR shift to state 97
+-- On ON shift to state 99
+-- On OLD shift to state 102
+-- On NOT shift to state 103
+-- On NEW shift to state 105
+-- On MODSEQ shift to state 106
+-- On LP shift to state 118
+-- On LARGER shift to state 119
+-- On KEYWORD shift to state 122
+-- On HEADER shift to state 124
+-- On FROM shift to state 132
+-- On FLAGGED shift to state 135
+-- On DRAFT shift to state 136
+-- On DELETED shift to state 137
+-- On CC shift to state 138
+-- On BODY shift to state 141
+-- On BEFORE shift to state 144
+-- On BCC shift to state 147
+-- On ATOM_CHARS shift to state 150
+-- On ANSWERED shift to state 151
+-- On ALL shift to state 152
+-- On separated_nonempty_list(SP,op_search_keys) shift to state 153
+-- On search_key shift to state 154
+-- On s_header shift to state 155
+-- On op_search_keys shift to state 156
+-- On op_search_key shift to state 159
+-- On modseq shift to state 160
+-- On loption(separated_nonempty_list(SP,op_search_keys)) shift to state 161
+-- On RP reduce production loption(separated_nonempty_list(SP,op_search_keys)) -> 
+
+State 119:
+search_key -> LARGER . SP ATOM_CHARS [ SP RP CRLF ]
+-- On SP shift to state 120
+
+State 120:
+search_key -> LARGER SP . ATOM_CHARS [ SP RP CRLF ]
+-- On ATOM_CHARS shift to state 121
+
+State 121:
+search_key -> LARGER SP ATOM_CHARS . [ SP RP CRLF ]
+-- On SP reduce production search_key -> LARGER SP ATOM_CHARS 
+-- On RP reduce production search_key -> LARGER SP ATOM_CHARS 
+-- On CRLF reduce production search_key -> LARGER SP ATOM_CHARS 
+
+State 122:
+search_key -> KEYWORD . ATOM_CHARS [ SP RP CRLF ]
+-- On ATOM_CHARS shift to state 123
+
+State 123:
+search_key -> KEYWORD ATOM_CHARS . [ SP RP CRLF ]
+-- On SP reduce production search_key -> KEYWORD ATOM_CHARS 
+-- On RP reduce production search_key -> KEYWORD ATOM_CHARS 
+-- On CRLF reduce production search_key -> KEYWORD ATOM_CHARS 
+
+State 124:
+s_header -> HEADER . SP SUBJECT SP ATOM_CHARS [ SP RP CRLF ]
+s_header -> HEADER . SP ATOM_CHARS SP ATOM_CHARS [ SP RP CRLF ]
+-- On SP shift to state 125
+
+State 125:
+s_header -> HEADER SP . SUBJECT SP ATOM_CHARS [ SP RP CRLF ]
+s_header -> HEADER SP . ATOM_CHARS SP ATOM_CHARS [ SP RP CRLF ]
+-- On SUBJECT shift to state 126
+-- On ATOM_CHARS shift to state 129
+
+State 126:
+s_header -> HEADER SP SUBJECT . SP ATOM_CHARS [ SP RP CRLF ]
+-- On SP shift to state 127
+
+State 127:
+s_header -> HEADER SP SUBJECT SP . ATOM_CHARS [ SP RP CRLF ]
+-- On ATOM_CHARS shift to state 128
+
+State 128:
+s_header -> HEADER SP SUBJECT SP ATOM_CHARS . [ SP RP CRLF ]
+-- On SP reduce production s_header -> HEADER SP SUBJECT SP ATOM_CHARS 
+-- On RP reduce production s_header -> HEADER SP SUBJECT SP ATOM_CHARS 
+-- On CRLF reduce production s_header -> HEADER SP SUBJECT SP ATOM_CHARS 
+
+State 129:
+s_header -> HEADER SP ATOM_CHARS . SP ATOM_CHARS [ SP RP CRLF ]
+-- On SP shift to state 130
+
+State 130:
+s_header -> HEADER SP ATOM_CHARS SP . ATOM_CHARS [ SP RP CRLF ]
+-- On ATOM_CHARS shift to state 131
+
+State 131:
+s_header -> HEADER SP ATOM_CHARS SP ATOM_CHARS . [ SP RP CRLF ]
+-- On SP reduce production s_header -> HEADER SP ATOM_CHARS SP ATOM_CHARS 
+-- On RP reduce production s_header -> HEADER SP ATOM_CHARS SP ATOM_CHARS 
+-- On CRLF reduce production s_header -> HEADER SP ATOM_CHARS SP ATOM_CHARS 
+
+State 132:
+search_key -> FROM . SP ATOM_CHARS [ SP RP CRLF ]
+-- On SP shift to state 133
+
+State 133:
+search_key -> FROM SP . ATOM_CHARS [ SP RP CRLF ]
+-- On ATOM_CHARS shift to state 134
+
+State 134:
+search_key -> FROM SP ATOM_CHARS . [ SP RP CRLF ]
+-- On SP reduce production search_key -> FROM SP ATOM_CHARS 
+-- On RP reduce production search_key -> FROM SP ATOM_CHARS 
+-- On CRLF reduce production search_key -> FROM SP ATOM_CHARS 
+
+State 135:
+search_key -> FLAGGED . [ SP RP CRLF ]
+-- On SP reduce production search_key -> FLAGGED 
+-- On RP reduce production search_key -> FLAGGED 
+-- On CRLF reduce production search_key -> FLAGGED 
+
+State 136:
+search_key -> DRAFT . [ SP RP CRLF ]
+-- On SP reduce production search_key -> DRAFT 
+-- On RP reduce production search_key -> DRAFT 
+-- On CRLF reduce production search_key -> DRAFT 
+
+State 137:
+search_key -> DELETED . [ SP RP CRLF ]
+-- On SP reduce production search_key -> DELETED 
+-- On RP reduce production search_key -> DELETED 
+-- On CRLF reduce production search_key -> DELETED 
+
+State 138:
+search_key -> CC . SP ATOM_CHARS [ SP RP CRLF ]
+-- On SP shift to state 139
+
+State 139:
+search_key -> CC SP . ATOM_CHARS [ SP RP CRLF ]
+-- On ATOM_CHARS shift to state 140
+
+State 140:
+search_key -> CC SP ATOM_CHARS . [ SP RP CRLF ]
+-- On SP reduce production search_key -> CC SP ATOM_CHARS 
+-- On RP reduce production search_key -> CC SP ATOM_CHARS 
+-- On CRLF reduce production search_key -> CC SP ATOM_CHARS 
+
+State 141:
+search_key -> BODY . SP ATOM_CHARS [ SP RP CRLF ]
+-- On SP shift to state 142
+
+State 142:
+search_key -> BODY SP . ATOM_CHARS [ SP RP CRLF ]
+-- On ATOM_CHARS shift to state 143
+
+State 143:
+search_key -> BODY SP ATOM_CHARS . [ SP RP CRLF ]
+-- On SP reduce production search_key -> BODY SP ATOM_CHARS 
+-- On RP reduce production search_key -> BODY SP ATOM_CHARS 
+-- On CRLF reduce production search_key -> BODY SP ATOM_CHARS 
+
+State 144:
+search_key -> BEFORE . SP s_date [ SP RP CRLF ]
+-- On SP shift to state 145
+
+State 145:
+search_key -> BEFORE SP . s_date [ SP RP CRLF ]
+-- On QUOTED_STRING shift to state 8
+-- On ATOM_CHARS shift to state 83
+-- On s_date shift to state 146
+-- On quoted shift to state 85
+
+State 146:
+search_key -> BEFORE SP s_date . [ SP RP CRLF ]
+-- On SP reduce production search_key -> BEFORE SP s_date 
+-- On RP reduce production search_key -> BEFORE SP s_date 
+-- On CRLF reduce production search_key -> BEFORE SP s_date 
+
+State 147:
+search_key -> BCC . SP ATOM_CHARS [ SP RP CRLF ]
+-- On SP shift to state 148
+
+State 148:
+search_key -> BCC SP . ATOM_CHARS [ SP RP CRLF ]
+-- On ATOM_CHARS shift to state 149
+
+State 149:
+search_key -> BCC SP ATOM_CHARS . [ SP RP CRLF ]
+-- On SP reduce production search_key -> BCC SP ATOM_CHARS 
+-- On RP reduce production search_key -> BCC SP ATOM_CHARS 
+-- On CRLF reduce production search_key -> BCC SP ATOM_CHARS 
+
+State 150:
+search_key -> ATOM_CHARS . [ SP RP CRLF ]
+-- On SP reduce production search_key -> ATOM_CHARS 
+-- On RP reduce production search_key -> ATOM_CHARS 
+-- On CRLF reduce production search_key -> ATOM_CHARS 
+
+State 151:
+search_key -> ANSWERED . [ SP RP CRLF ]
+-- On SP reduce production search_key -> ANSWERED 
+-- On RP reduce production search_key -> ANSWERED 
+-- On CRLF reduce production search_key -> ANSWERED 
+
+State 152:
+search_key -> ALL . [ SP RP CRLF ]
+-- On SP reduce production search_key -> ALL 
+-- On RP reduce production search_key -> ALL 
+-- On CRLF reduce production search_key -> ALL 
+
+State 153:
+loption(separated_nonempty_list(SP,op_search_keys)) -> separated_nonempty_list(SP,op_search_keys) . [ RP CRLF ]
+-- On RP reduce production loption(separated_nonempty_list(SP,op_search_keys)) -> separated_nonempty_list(SP,op_search_keys) 
+-- On CRLF reduce production loption(separated_nonempty_list(SP,op_search_keys)) -> separated_nonempty_list(SP,op_search_keys) 
+
+State 154:
+op_search_key -> search_key . [ SP RP CRLF ]
+-- On SP reduce production op_search_key -> search_key 
+-- On RP reduce production op_search_key -> search_key 
+-- On CRLF reduce production op_search_key -> search_key 
+
+State 155:
+search_key -> s_header . [ SP RP CRLF ]
+-- On SP reduce production search_key -> s_header 
+-- On RP reduce production search_key -> s_header 
+-- On CRLF reduce production search_key -> s_header 
+
+State 156:
+separated_nonempty_list(SP,op_search_keys) -> op_search_keys . [ RP CRLF ]
+separated_nonempty_list(SP,op_search_keys) -> op_search_keys . SP separated_nonempty_list(SP,op_search_keys) [ RP CRLF ]
+-- On SP shift to state 157
+-- On RP reduce production separated_nonempty_list(SP,op_search_keys) -> op_search_keys 
+-- On CRLF reduce production separated_nonempty_list(SP,op_search_keys) -> op_search_keys 
+
+State 157:
+separated_nonempty_list(SP,op_search_keys) -> op_search_keys SP . separated_nonempty_list(SP,op_search_keys) [ RP CRLF ]
+-- On UNSEEN shift to state 58
+-- On UNKEYWORD shift to state 59
+-- On UNFLAGGED shift to state 62
+-- On UNDRAFT shift to state 63
+-- On UNDELETED shift to state 64
+-- On UNANSWERED shift to state 65
+-- On UID shift to state 66
+-- On TO shift to state 69
+-- On TEXT shift to state 72
+-- On SUBJECT shift to state 75
+-- On SMALLER shift to state 78
+-- On SINCE shift to state 81
+-- On SENTSINCE shift to state 86
+-- On SENTON shift to state 89
+-- On SENTBEFORE shift to state 92
+-- On SEEN shift to state 95
+-- On RECENT shift to state 96
+-- On OR shift to state 97
+-- On ON shift to state 99
+-- On OLD shift to state 102
+-- On NOT shift to state 103
+-- On NEW shift to state 105
+-- On MODSEQ shift to state 106
+-- On LP shift to state 118
+-- On LARGER shift to state 119
+-- On KEYWORD shift to state 122
+-- On HEADER shift to state 124
+-- On FROM shift to state 132
+-- On FLAGGED shift to state 135
+-- On DRAFT shift to state 136
+-- On DELETED shift to state 137
+-- On CC shift to state 138
+-- On BODY shift to state 141
+-- On BEFORE shift to state 144
+-- On BCC shift to state 147
+-- On ATOM_CHARS shift to state 150
+-- On ANSWERED shift to state 151
+-- On ALL shift to state 152
+-- On separated_nonempty_list(SP,op_search_keys) shift to state 158
+-- On search_key shift to state 154
+-- On s_header shift to state 155
+-- On op_search_keys shift to state 156
+-- On op_search_key shift to state 159
+-- On modseq shift to state 160
+
+State 158:
+separated_nonempty_list(SP,op_search_keys) -> op_search_keys SP separated_nonempty_list(SP,op_search_keys) . [ RP CRLF ]
+-- On RP reduce production separated_nonempty_list(SP,op_search_keys) -> op_search_keys SP separated_nonempty_list(SP,op_search_keys) 
+-- On CRLF reduce production separated_nonempty_list(SP,op_search_keys) -> op_search_keys SP separated_nonempty_list(SP,op_search_keys) 
+
+State 159:
+op_search_keys -> op_search_key . [ SP RP CRLF ]
+-- On SP reduce production op_search_keys -> op_search_key 
+-- On RP reduce production op_search_keys -> op_search_key 
+-- On CRLF reduce production op_search_keys -> op_search_key 
+
+State 160:
+search_key -> modseq . [ SP RP CRLF ]
+-- On SP reduce production search_key -> modseq 
+-- On RP reduce production search_key -> modseq 
+-- On CRLF reduce production search_key -> modseq 
+
+State 161:
+op_search_keys -> LP loption(separated_nonempty_list(SP,op_search_keys)) . RP [ SP RP CRLF ]
+-- On RP shift to state 162
+
+State 162:
+op_search_keys -> LP loption(separated_nonempty_list(SP,op_search_keys)) RP . [ SP RP CRLF ]
+-- On SP reduce production op_search_keys -> LP loption(separated_nonempty_list(SP,op_search_keys)) RP 
+-- On RP reduce production op_search_keys -> LP loption(separated_nonempty_list(SP,op_search_keys)) RP 
+-- On CRLF reduce production op_search_keys -> LP loption(separated_nonempty_list(SP,op_search_keys)) RP 
+
+State 163:
+op_search_keys -> NOT SP op_search_keys . [ SP RP CRLF ]
+-- On SP reduce production op_search_keys -> NOT SP op_search_keys 
+-- On RP reduce production op_search_keys -> NOT SP op_search_keys 
+-- On CRLF reduce production op_search_keys -> NOT SP op_search_keys 
+
+State 164:
+op_search_keys -> OR SP op_search_keys . SP op_search_keys [ SP RP CRLF ]
+-- On SP shift to state 165
+
+State 165:
+op_search_keys -> OR SP op_search_keys SP . op_search_keys [ SP RP CRLF ]
+-- On UNSEEN shift to state 58
+-- On UNKEYWORD shift to state 59
+-- On UNFLAGGED shift to state 62
+-- On UNDRAFT shift to state 63
+-- On UNDELETED shift to state 64
+-- On UNANSWERED shift to state 65
+-- On UID shift to state 66
+-- On TO shift to state 69
+-- On TEXT shift to state 72
+-- On SUBJECT shift to state 75
+-- On SMALLER shift to state 78
+-- On SINCE shift to state 81
+-- On SENTSINCE shift to state 86
+-- On SENTON shift to state 89
+-- On SENTBEFORE shift to state 92
+-- On SEEN shift to state 95
+-- On RECENT shift to state 96
+-- On OR shift to state 97
+-- On ON shift to state 99
+-- On OLD shift to state 102
+-- On NOT shift to state 103
+-- On NEW shift to state 105
+-- On MODSEQ shift to state 106
+-- On LP shift to state 118
+-- On LARGER shift to state 119
+-- On KEYWORD shift to state 122
+-- On HEADER shift to state 124
+-- On FROM shift to state 132
+-- On FLAGGED shift to state 135
+-- On DRAFT shift to state 136
+-- On DELETED shift to state 137
+-- On CC shift to state 138
+-- On BODY shift to state 141
+-- On BEFORE shift to state 144
+-- On BCC shift to state 147
+-- On ATOM_CHARS shift to state 150
+-- On ANSWERED shift to state 151
+-- On ALL shift to state 152
+-- On search_key shift to state 154
+-- On s_header shift to state 155
+-- On op_search_keys shift to state 166
+-- On op_search_key shift to state 159
+-- On modseq shift to state 160
+
+State 166:
+op_search_keys -> OR SP op_search_keys SP op_search_keys . [ SP RP CRLF ]
+-- On SP reduce production op_search_keys -> OR SP op_search_keys SP op_search_keys 
+-- On RP reduce production op_search_keys -> OR SP op_search_keys SP op_search_keys 
+-- On CRLF reduce production op_search_keys -> OR SP op_search_keys SP op_search_keys 
+
+State 167:
+c_search -> UID SP SEARCH SP charset_sp search_keys . [ CRLF ]
+-- On CRLF reduce production c_search -> UID SP SEARCH SP charset_sp search_keys 
+
+State 168:
+search_keys -> loption(separated_nonempty_list(SP,op_search_keys)) . [ CRLF ]
+-- On CRLF reduce production search_keys -> loption(separated_nonempty_list(SP,op_search_keys)) 
+
+State 169:
+charset_sp -> charset . SP [ UNSEEN UNKEYWORD UNFLAGGED UNDRAFT UNDELETED UNANSWERED UID TO TEXT SUBJECT SMALLER SINCE SENTSINCE SENTON SENTBEFORE SEEN RECENT OR ON OLD NOT NEW MODSEQ LP LARGER KEYWORD HEADER FROM FLAGGED DRAFT DELETED CRLF CC BODY BEFORE BCC ATOM_CHARS ANSWERED ALL ]
+-- On SP shift to state 170
+
+State 170:
+charset_sp -> charset SP . [ UNSEEN UNKEYWORD UNFLAGGED UNDRAFT UNDELETED UNANSWERED UID TO TEXT SUBJECT SMALLER SINCE SENTSINCE SENTON SENTBEFORE SEEN RECENT OR ON OLD NOT NEW MODSEQ LP LARGER KEYWORD HEADER FROM FLAGGED DRAFT DELETED CRLF CC BODY BEFORE BCC ATOM_CHARS ANSWERED ALL ]
+-- On UNSEEN reduce production charset_sp -> charset SP 
+-- On UNKEYWORD reduce production charset_sp -> charset SP 
+-- On UNFLAGGED reduce production charset_sp -> charset SP 
+-- On UNDRAFT reduce production charset_sp -> charset SP 
+-- On UNDELETED reduce production charset_sp -> charset SP 
+-- On UNANSWERED reduce production charset_sp -> charset SP 
+-- On UID reduce production charset_sp -> charset SP 
+-- On TO reduce production charset_sp -> charset SP 
+-- On TEXT reduce production charset_sp -> charset SP 
+-- On SUBJECT reduce production charset_sp -> charset SP 
+-- On SMALLER reduce production charset_sp -> charset SP 
+-- On SINCE reduce production charset_sp -> charset SP 
+-- On SENTSINCE reduce production charset_sp -> charset SP 
+-- On SENTON reduce production charset_sp -> charset SP 
+-- On SENTBEFORE reduce production charset_sp -> charset SP 
+-- On SEEN reduce production charset_sp -> charset SP 
+-- On RECENT reduce production charset_sp -> charset SP 
+-- On OR reduce production charset_sp -> charset SP 
+-- On ON reduce production charset_sp -> charset SP 
+-- On OLD reduce production charset_sp -> charset SP 
+-- On NOT reduce production charset_sp -> charset SP 
+-- On NEW reduce production charset_sp -> charset SP 
+-- On MODSEQ reduce production charset_sp -> charset SP 
+-- On LP reduce production charset_sp -> charset SP 
+-- On LARGER reduce production charset_sp -> charset SP 
+-- On KEYWORD reduce production charset_sp -> charset SP 
+-- On HEADER reduce production charset_sp -> charset SP 
+-- On FROM reduce production charset_sp -> charset SP 
+-- On FLAGGED reduce production charset_sp -> charset SP 
+-- On DRAFT reduce production charset_sp -> charset SP 
+-- On DELETED reduce production charset_sp -> charset SP 
+-- On CRLF reduce production charset_sp -> charset SP 
+-- On CC reduce production charset_sp -> charset SP 
+-- On BODY reduce production charset_sp -> charset SP 
+-- On BEFORE reduce production charset_sp -> charset SP 
+-- On BCC reduce production charset_sp -> charset SP 
+-- On ATOM_CHARS reduce production charset_sp -> charset SP 
+-- On ANSWERED reduce production charset_sp -> charset SP 
+-- On ALL reduce production charset_sp -> charset SP 
+
+State 171:
+c_fetch -> UID SP FETCH . SP ATOM_CHARS SP fetch_args changedsince_sp [ CRLF ]
+-- On SP shift to state 172
+
+State 172:
+c_fetch -> UID SP FETCH SP . ATOM_CHARS SP fetch_args changedsince_sp [ CRLF ]
+-- On ATOM_CHARS shift to state 173
+
+State 173:
+c_fetch -> UID SP FETCH SP ATOM_CHARS . SP fetch_args changedsince_sp [ CRLF ]
+-- On SP shift to state 174
+
+State 174:
+c_fetch -> UID SP FETCH SP ATOM_CHARS SP . fetch_args changedsince_sp [ CRLF ]
+-- On UID shift to state 175
+-- On RFC822TEXT shift to state 176
+-- On RFC822SIZE shift to state 177
+-- On RFC822HEADER shift to state 178
+-- On RFC822 shift to state 179
+-- On MODSEQ shift to state 180
+-- On LP shift to state 181
+-- On INTERNALDATE shift to state 182
+-- On FULL shift to state 195
+-- On FLAGS shift to state 183
+-- On FAST shift to state 196
+-- On ENVELOPE shift to state 184
+-- On BODYSTRUCTURE shift to state 185
+-- On BODYPEEK shift to state 186
+-- On BODYFETCH shift to state 187
+-- On BODY shift to state 188
+-- On ALL shift to state 197
+-- On fetch_macro shift to state 198
+-- On fetch_att_list shift to state 199
+-- On fetch_att shift to state 200
+-- On fetch_args shift to state 201
+
+State 175:
+fetch_att -> UID . [ SP RP CRLF ]
+-- On SP reduce production fetch_att -> UID 
+-- On RP reduce production fetch_att -> UID 
+-- On CRLF reduce production fetch_att -> UID 
+
+State 176:
+fetch_att -> RFC822TEXT . [ SP RP CRLF ]
+-- On SP reduce production fetch_att -> RFC822TEXT 
+-- On RP reduce production fetch_att -> RFC822TEXT 
+-- On CRLF reduce production fetch_att -> RFC822TEXT 
+
+State 177:
+fetch_att -> RFC822SIZE . [ SP RP CRLF ]
+-- On SP reduce production fetch_att -> RFC822SIZE 
+-- On RP reduce production fetch_att -> RFC822SIZE 
+-- On CRLF reduce production fetch_att -> RFC822SIZE 
+
+State 178:
+fetch_att -> RFC822HEADER . [ SP RP CRLF ]
+-- On SP reduce production fetch_att -> RFC822HEADER 
+-- On RP reduce production fetch_att -> RFC822HEADER 
+-- On CRLF reduce production fetch_att -> RFC822HEADER 
+
+State 179:
+fetch_att -> RFC822 . [ SP RP CRLF ]
+-- On SP reduce production fetch_att -> RFC822 
+-- On RP reduce production fetch_att -> RFC822 
+-- On CRLF reduce production fetch_att -> RFC822 
+
+State 180:
+fetch_att -> MODSEQ . [ SP RP CRLF ]
+-- On SP reduce production fetch_att -> MODSEQ 
+-- On RP reduce production fetch_att -> MODSEQ 
+-- On CRLF reduce production fetch_att -> MODSEQ 
+
+State 181:
+fetch_att_list -> LP . loption(separated_nonempty_list(SP,fetch_att)) RP [ SP CRLF ]
+-- On UID shift to state 175
+-- On RFC822TEXT shift to state 176
+-- On RFC822SIZE shift to state 177
+-- On RFC822HEADER shift to state 178
+-- On RFC822 shift to state 179
+-- On MODSEQ shift to state 180
+-- On INTERNALDATE shift to state 182
+-- On FLAGS shift to state 183
+-- On ENVELOPE shift to state 184
+-- On BODYSTRUCTURE shift to state 185
+-- On BODYPEEK shift to state 186
+-- On BODYFETCH shift to state 187
+-- On BODY shift to state 188
+-- On separated_nonempty_list(SP,fetch_att) shift to state 189
+-- On loption(separated_nonempty_list(SP,fetch_att)) shift to state 190
+-- On fetch_att shift to state 192
+-- On RP reduce production loption(separated_nonempty_list(SP,fetch_att)) -> 
+
+State 182:
+fetch_att -> INTERNALDATE . [ SP RP CRLF ]
+-- On SP reduce production fetch_att -> INTERNALDATE 
+-- On RP reduce production fetch_att -> INTERNALDATE 
+-- On CRLF reduce production fetch_att -> INTERNALDATE 
+
+State 183:
+fetch_att -> FLAGS . [ SP RP CRLF ]
+-- On SP reduce production fetch_att -> FLAGS 
+-- On RP reduce production fetch_att -> FLAGS 
+-- On CRLF reduce production fetch_att -> FLAGS 
+
+State 184:
+fetch_att -> ENVELOPE . [ SP RP CRLF ]
+-- On SP reduce production fetch_att -> ENVELOPE 
+-- On RP reduce production fetch_att -> ENVELOPE 
+-- On CRLF reduce production fetch_att -> ENVELOPE 
+
+State 185:
+fetch_att -> BODYSTRUCTURE . [ SP RP CRLF ]
+-- On SP reduce production fetch_att -> BODYSTRUCTURE 
+-- On RP reduce production fetch_att -> BODYSTRUCTURE 
+-- On CRLF reduce production fetch_att -> BODYSTRUCTURE 
+
+State 186:
+fetch_att -> BODYPEEK . [ SP RP CRLF ]
+-- On SP reduce production fetch_att -> BODYPEEK 
+-- On RP reduce production fetch_att -> BODYPEEK 
+-- On CRLF reduce production fetch_att -> BODYPEEK 
+
+State 187:
+fetch_att -> BODYFETCH . [ SP RP CRLF ]
+-- On SP reduce production fetch_att -> BODYFETCH 
+-- On RP reduce production fetch_att -> BODYFETCH 
+-- On CRLF reduce production fetch_att -> BODYFETCH 
+
+State 188:
+fetch_att -> BODY . [ SP RP CRLF ]
+-- On SP reduce production fetch_att -> BODY 
+-- On RP reduce production fetch_att -> BODY 
+-- On CRLF reduce production fetch_att -> BODY 
+
+State 189:
+loption(separated_nonempty_list(SP,fetch_att)) -> separated_nonempty_list(SP,fetch_att) . [ RP ]
+-- On RP reduce production loption(separated_nonempty_list(SP,fetch_att)) -> separated_nonempty_list(SP,fetch_att) 
+
+State 190:
+fetch_att_list -> LP loption(separated_nonempty_list(SP,fetch_att)) . RP [ SP CRLF ]
+-- On RP shift to state 191
+
+State 191:
+fetch_att_list -> LP loption(separated_nonempty_list(SP,fetch_att)) RP . [ SP CRLF ]
+-- On SP reduce production fetch_att_list -> LP loption(separated_nonempty_list(SP,fetch_att)) RP 
+-- On CRLF reduce production fetch_att_list -> LP loption(separated_nonempty_list(SP,fetch_att)) RP 
+
+State 192:
+separated_nonempty_list(SP,fetch_att) -> fetch_att . [ RP ]
+separated_nonempty_list(SP,fetch_att) -> fetch_att . SP separated_nonempty_list(SP,fetch_att) [ RP ]
+-- On SP shift to state 193
+-- On RP reduce production separated_nonempty_list(SP,fetch_att) -> fetch_att 
+
+State 193:
+separated_nonempty_list(SP,fetch_att) -> fetch_att SP . separated_nonempty_list(SP,fetch_att) [ RP ]
+-- On UID shift to state 175
+-- On RFC822TEXT shift to state 176
+-- On RFC822SIZE shift to state 177
+-- On RFC822HEADER shift to state 178
+-- On RFC822 shift to state 179
+-- On MODSEQ shift to state 180
+-- On INTERNALDATE shift to state 182
+-- On FLAGS shift to state 183
+-- On ENVELOPE shift to state 184
+-- On BODYSTRUCTURE shift to state 185
+-- On BODYPEEK shift to state 186
+-- On BODYFETCH shift to state 187
+-- On BODY shift to state 188
+-- On separated_nonempty_list(SP,fetch_att) shift to state 194
+-- On fetch_att shift to state 192
+
+State 194:
+separated_nonempty_list(SP,fetch_att) -> fetch_att SP separated_nonempty_list(SP,fetch_att) . [ RP ]
+-- On RP reduce production separated_nonempty_list(SP,fetch_att) -> fetch_att SP separated_nonempty_list(SP,fetch_att) 
+
+State 195:
+fetch_macro -> FULL . [ SP CRLF ]
+-- On SP reduce production fetch_macro -> FULL 
+-- On CRLF reduce production fetch_macro -> FULL 
+
+State 196:
+fetch_macro -> FAST . [ SP CRLF ]
+-- On SP reduce production fetch_macro -> FAST 
+-- On CRLF reduce production fetch_macro -> FAST 
+
+State 197:
+fetch_macro -> ALL . [ SP CRLF ]
+-- On SP reduce production fetch_macro -> ALL 
+-- On CRLF reduce production fetch_macro -> ALL 
+
+State 198:
+fetch_args -> fetch_macro . [ SP CRLF ]
+-- On SP reduce production fetch_args -> fetch_macro 
+-- On CRLF reduce production fetch_args -> fetch_macro 
+
+State 199:
+fetch_args -> fetch_att_list . [ SP CRLF ]
+-- On SP reduce production fetch_args -> fetch_att_list 
+-- On CRLF reduce production fetch_args -> fetch_att_list 
+
+State 200:
+fetch_att_list -> fetch_att . [ SP CRLF ]
+-- On SP reduce production fetch_att_list -> fetch_att 
+-- On CRLF reduce production fetch_att_list -> fetch_att 
+
+State 201:
+c_fetch -> UID SP FETCH SP ATOM_CHARS SP fetch_args . changedsince_sp [ CRLF ]
+-- On SP shift to state 202
+-- On changedsince_sp shift to state 208
+-- On CRLF reduce production changedsince_sp -> 
+
+State 202:
+changedsince_sp -> SP . LP CHANGEDSINCE SP ATOM_CHARS RP [ CRLF ]
+-- On LP shift to state 203
+
+State 203:
+changedsince_sp -> SP LP . CHANGEDSINCE SP ATOM_CHARS RP [ CRLF ]
+-- On CHANGEDSINCE shift to state 204
+
+State 204:
+changedsince_sp -> SP LP CHANGEDSINCE . SP ATOM_CHARS RP [ CRLF ]
+-- On SP shift to state 205
+
+State 205:
+changedsince_sp -> SP LP CHANGEDSINCE SP . ATOM_CHARS RP [ CRLF ]
+-- On ATOM_CHARS shift to state 206
+
+State 206:
+changedsince_sp -> SP LP CHANGEDSINCE SP ATOM_CHARS . RP [ CRLF ]
+-- On RP shift to state 207
+
+State 207:
+changedsince_sp -> SP LP CHANGEDSINCE SP ATOM_CHARS RP . [ CRLF ]
+-- On CRLF reduce production changedsince_sp -> SP LP CHANGEDSINCE SP ATOM_CHARS RP 
+
+State 208:
+c_fetch -> UID SP FETCH SP ATOM_CHARS SP fetch_args changedsince_sp . [ CRLF ]
+-- On CRLF reduce production c_fetch -> UID SP FETCH SP ATOM_CHARS SP fetch_args changedsince_sp 
+
+State 209:
+c_copy -> UID SP COPY . SP ATOM_CHARS SP mailbox [ CRLF ]
+-- On SP shift to state 210
+
+State 210:
+c_copy -> UID SP COPY SP . ATOM_CHARS SP mailbox [ CRLF ]
+-- On ATOM_CHARS shift to state 211
+
+State 211:
+c_copy -> UID SP COPY SP ATOM_CHARS . SP mailbox [ CRLF ]
+-- On SP shift to state 212
+
+State 212:
+c_copy -> UID SP COPY SP ATOM_CHARS SP . mailbox [ CRLF ]
+-- On QUOTED_STRING shift to state 8
+-- On INBOX shift to state 9
+-- On ATOM_CHARS shift to state 10
+-- On quoted shift to state 11
+-- On mailbox shift to state 213
+
+State 213:
+c_copy -> UID SP COPY SP ATOM_CHARS SP mailbox . [ CRLF ]
+-- On CRLF reduce production c_copy -> UID SP COPY SP ATOM_CHARS SP mailbox 
+
+State 214:
+c_subscribe -> SUBSCRIBE . SP mailbox [ CRLF ]
+-- On SP shift to state 215
+
+State 215:
+c_subscribe -> SUBSCRIBE SP . mailbox [ CRLF ]
+-- On QUOTED_STRING shift to state 8
+-- On INBOX shift to state 9
+-- On ATOM_CHARS shift to state 10
+-- On quoted shift to state 11
+-- On mailbox shift to state 216
+
+State 216:
+c_subscribe -> SUBSCRIBE SP mailbox . [ CRLF ]
+-- On CRLF reduce production c_subscribe -> SUBSCRIBE SP mailbox 
+
+State 217:
+c_store -> STORE . SP ATOM_CHARS SP unchangedsince_sp s_flags SP s_flags_value [ CRLF ]
+-- On SP shift to state 218
+
+State 218:
+c_store -> STORE SP . ATOM_CHARS SP unchangedsince_sp s_flags SP s_flags_value [ CRLF ]
+-- On ATOM_CHARS shift to state 219
+
+State 219:
+c_store -> STORE SP ATOM_CHARS . SP unchangedsince_sp s_flags SP s_flags_value [ CRLF ]
+-- On SP shift to state 220
+
+State 220:
+c_store -> STORE SP ATOM_CHARS SP . unchangedsince_sp s_flags SP s_flags_value [ CRLF ]
+-- On LP shift to state 19
+-- On unchangedsince_sp shift to state 221
+-- On FLAGSSILENTPL reduce production unchangedsince_sp -> 
+-- On FLAGSSILENTMIN reduce production unchangedsince_sp -> 
+-- On FLAGSSILENT reduce production unchangedsince_sp -> 
+-- On FLAGSPL reduce production unchangedsince_sp -> 
+-- On FLAGSMIN reduce production unchangedsince_sp -> 
+-- On FLAGS reduce production unchangedsince_sp -> 
+
+State 221:
+c_store -> STORE SP ATOM_CHARS SP unchangedsince_sp . s_flags SP s_flags_value [ CRLF ]
+-- On FLAGSSILENTPL shift to state 26
+-- On FLAGSSILENTMIN shift to state 27
+-- On FLAGSSILENT shift to state 28
+-- On FLAGSPL shift to state 29
+-- On FLAGSMIN shift to state 30
+-- On FLAGS shift to state 31
+-- On s_flags shift to state 222
+
+State 222:
+c_store -> STORE SP ATOM_CHARS SP unchangedsince_sp s_flags . SP s_flags_value [ CRLF ]
+-- On SP shift to state 223
+
+State 223:
+c_store -> STORE SP ATOM_CHARS SP unchangedsince_sp s_flags SP . s_flags_value [ CRLF ]
+-- On LP shift to state 34
+-- On FLSEEN shift to state 35
+-- On FLFLAGGED shift to state 36
+-- On FLEXTENSION shift to state 37
+-- On FLDRAFT shift to state 38
+-- On FLDELETED shift to state 39
+-- On FLANSWERED shift to state 40
+-- On ATOM_CHARS shift to state 41
+-- On separated_nonempty_list(SP,flag) shift to state 42
+-- On s_flags_value shift to state 224
+-- On loption(separated_nonempty_list(SP,flag)) shift to state 43
+-- On flag_sp_list shift to state 50
+-- On flag_list shift to state 51
+-- On flag shift to state 46
+-- On CRLF reduce production loption(separated_nonempty_list(SP,flag)) -> 
+
+State 224:
+c_store -> STORE SP ATOM_CHARS SP unchangedsince_sp s_flags SP s_flags_value . [ CRLF ]
+-- On CRLF reduce production c_store -> STORE SP ATOM_CHARS SP unchangedsince_sp s_flags SP s_flags_value 
+
+State 225:
+c_status -> STATUS . SP mailbox SP status_list [ CRLF ]
+-- On SP shift to state 226
+
+State 226:
+c_status -> STATUS SP . mailbox SP status_list [ CRLF ]
+-- On QUOTED_STRING shift to state 8
+-- On INBOX shift to state 9
+-- On ATOM_CHARS shift to state 10
+-- On quoted shift to state 11
+-- On mailbox shift to state 227
+
+State 227:
+c_status -> STATUS SP mailbox . SP status_list [ CRLF ]
+-- On SP shift to state 228
+
+State 228:
+c_status -> STATUS SP mailbox SP . status_list [ CRLF ]
+-- On LP shift to state 229
+-- On status_list shift to state 242
+
+State 229:
+status_list -> LP . loption(separated_nonempty_list(SP,status_att)) RP [ CRLF ]
+-- On UNSEEN shift to state 230
+-- On UIDVALIDITY shift to state 231
+-- On UIDNEXT shift to state 232
+-- On RECENT shift to state 233
+-- On MESSAGES shift to state 234
+-- On HIGHESTMODSEQ shift to state 235
+-- On status_att shift to state 236
+-- On separated_nonempty_list(SP,status_att) shift to state 239
+-- On loption(separated_nonempty_list(SP,status_att)) shift to state 240
+-- On RP reduce production loption(separated_nonempty_list(SP,status_att)) -> 
+
+State 230:
+status_att -> UNSEEN . [ SP RP ]
+-- On SP reduce production status_att -> UNSEEN 
+-- On RP reduce production status_att -> UNSEEN 
+
+State 231:
+status_att -> UIDVALIDITY . [ SP RP ]
+-- On SP reduce production status_att -> UIDVALIDITY 
+-- On RP reduce production status_att -> UIDVALIDITY 
+
+State 232:
+status_att -> UIDNEXT . [ SP RP ]
+-- On SP reduce production status_att -> UIDNEXT 
+-- On RP reduce production status_att -> UIDNEXT 
+
+State 233:
+status_att -> RECENT . [ SP RP ]
+-- On SP reduce production status_att -> RECENT 
+-- On RP reduce production status_att -> RECENT 
+
+State 234:
+status_att -> MESSAGES . [ SP RP ]
+-- On SP reduce production status_att -> MESSAGES 
+-- On RP reduce production status_att -> MESSAGES 
+
+State 235:
+status_att -> HIGHESTMODSEQ . [ SP RP ]
+-- On SP reduce production status_att -> HIGHESTMODSEQ 
+-- On RP reduce production status_att -> HIGHESTMODSEQ 
+
+State 236:
+separated_nonempty_list(SP,status_att) -> status_att . [ RP ]
+separated_nonempty_list(SP,status_att) -> status_att . SP separated_nonempty_list(SP,status_att) [ RP ]
+-- On SP shift to state 237
+-- On RP reduce production separated_nonempty_list(SP,status_att) -> status_att 
+
+State 237:
+separated_nonempty_list(SP,status_att) -> status_att SP . separated_nonempty_list(SP,status_att) [ RP ]
+-- On UNSEEN shift to state 230
+-- On UIDVALIDITY shift to state 231
+-- On UIDNEXT shift to state 232
+-- On RECENT shift to state 233
+-- On MESSAGES shift to state 234
+-- On HIGHESTMODSEQ shift to state 235
+-- On status_att shift to state 236
+-- On separated_nonempty_list(SP,status_att) shift to state 238
+
+State 238:
+separated_nonempty_list(SP,status_att) -> status_att SP separated_nonempty_list(SP,status_att) . [ RP ]
+-- On RP reduce production separated_nonempty_list(SP,status_att) -> status_att SP separated_nonempty_list(SP,status_att) 
+
+State 239:
+loption(separated_nonempty_list(SP,status_att)) -> separated_nonempty_list(SP,status_att) . [ RP ]
+-- On RP reduce production loption(separated_nonempty_list(SP,status_att)) -> separated_nonempty_list(SP,status_att) 
+
+State 240:
+status_list -> LP loption(separated_nonempty_list(SP,status_att)) . RP [ CRLF ]
+-- On RP shift to state 241
+
+State 241:
+status_list -> LP loption(separated_nonempty_list(SP,status_att)) RP . [ CRLF ]
+-- On CRLF reduce production status_list -> LP loption(separated_nonempty_list(SP,status_att)) RP 
+
+State 242:
+c_status -> STATUS SP mailbox SP status_list . [ CRLF ]
+-- On CRLF reduce production c_status -> STATUS SP mailbox SP status_list 
+
+State 243:
+command_notauth -> STARTTLS . [ CRLF ]
+-- On CRLF reduce production command_notauth -> STARTTLS 
+
+State 244:
+c_select -> SELECT . SP mailbox e_condstore [ CRLF ]
+-- On SP shift to state 245
+
+State 245:
+c_select -> SELECT SP . mailbox e_condstore [ CRLF ]
+-- On QUOTED_STRING shift to state 8
+-- On INBOX shift to state 9
+-- On ATOM_CHARS shift to state 10
+-- On quoted shift to state 11
+-- On mailbox shift to state 246
+
+State 246:
+c_select -> SELECT SP mailbox . e_condstore [ CRLF ]
+-- On SP shift to state 247
+-- On e_condstore shift to state 251
+-- On CRLF reduce production e_condstore -> 
+
+State 247:
+e_condstore -> SP . LP CONDSTORE RP [ CRLF ]
+-- On LP shift to state 248
+
+State 248:
+e_condstore -> SP LP . CONDSTORE RP [ CRLF ]
+-- On CONDSTORE shift to state 249
+
+State 249:
+e_condstore -> SP LP CONDSTORE . RP [ CRLF ]
+-- On RP shift to state 250
+
+State 250:
+e_condstore -> SP LP CONDSTORE RP . [ CRLF ]
+-- On CRLF reduce production e_condstore -> SP LP CONDSTORE RP 
+
+State 251:
+c_select -> SELECT SP mailbox e_condstore . [ CRLF ]
+-- On CRLF reduce production c_select -> SELECT SP mailbox e_condstore 
+
+State 252:
+c_search -> SEARCH . SP charset_sp search_keys [ CRLF ]
+-- On SP shift to state 253
+
+State 253:
+c_search -> SEARCH SP . charset_sp search_keys [ CRLF ]
+-- On CHARSET shift to state 54
+-- On charset_sp shift to state 254
+-- On charset shift to state 169
+-- On UNSEEN reduce production charset_sp -> 
+-- On UNKEYWORD reduce production charset_sp -> 
+-- On UNFLAGGED reduce production charset_sp -> 
+-- On UNDRAFT reduce production charset_sp -> 
+-- On UNDELETED reduce production charset_sp -> 
+-- On UNANSWERED reduce production charset_sp -> 
+-- On UID reduce production charset_sp -> 
+-- On TO reduce production charset_sp -> 
+-- On TEXT reduce production charset_sp -> 
+-- On SUBJECT reduce production charset_sp -> 
+-- On SMALLER reduce production charset_sp -> 
+-- On SINCE reduce production charset_sp -> 
+-- On SENTSINCE reduce production charset_sp -> 
+-- On SENTON reduce production charset_sp -> 
+-- On SENTBEFORE reduce production charset_sp -> 
+-- On SEEN reduce production charset_sp -> 
+-- On RECENT reduce production charset_sp -> 
+-- On OR reduce production charset_sp -> 
+-- On ON reduce production charset_sp -> 
+-- On OLD reduce production charset_sp -> 
+-- On NOT reduce production charset_sp -> 
+-- On NEW reduce production charset_sp -> 
+-- On MODSEQ reduce production charset_sp -> 
+-- On LP reduce production charset_sp -> 
+-- On LARGER reduce production charset_sp -> 
+-- On KEYWORD reduce production charset_sp -> 
+-- On HEADER reduce production charset_sp -> 
+-- On FROM reduce production charset_sp -> 
+-- On FLAGGED reduce production charset_sp -> 
+-- On DRAFT reduce production charset_sp -> 
+-- On DELETED reduce production charset_sp -> 
+-- On CRLF reduce production charset_sp -> 
+-- On CC reduce production charset_sp -> 
+-- On BODY reduce production charset_sp -> 
+-- On BEFORE reduce production charset_sp -> 
+-- On BCC reduce production charset_sp -> 
+-- On ATOM_CHARS reduce production charset_sp -> 
+-- On ANSWERED reduce production charset_sp -> 
+-- On ALL reduce production charset_sp -> 
+
+State 254:
+c_search -> SEARCH SP charset_sp . search_keys [ CRLF ]
+-- On UNSEEN shift to state 58
+-- On UNKEYWORD shift to state 59
+-- On UNFLAGGED shift to state 62
+-- On UNDRAFT shift to state 63
+-- On UNDELETED shift to state 64
+-- On UNANSWERED shift to state 65
+-- On UID shift to state 66
+-- On TO shift to state 69
+-- On TEXT shift to state 72
+-- On SUBJECT shift to state 75
+-- On SMALLER shift to state 78
+-- On SINCE shift to state 81
+-- On SENTSINCE shift to state 86
+-- On SENTON shift to state 89
+-- On SENTBEFORE shift to state 92
+-- On SEEN shift to state 95
+-- On RECENT shift to state 96
+-- On OR shift to state 97
+-- On ON shift to state 99
+-- On OLD shift to state 102
+-- On NOT shift to state 103
+-- On NEW shift to state 105
+-- On MODSEQ shift to state 106
+-- On LP shift to state 118
+-- On LARGER shift to state 119
+-- On KEYWORD shift to state 122
+-- On HEADER shift to state 124
+-- On FROM shift to state 132
+-- On FLAGGED shift to state 135
+-- On DRAFT shift to state 136
+-- On DELETED shift to state 137
+-- On CC shift to state 138
+-- On BODY shift to state 141
+-- On BEFORE shift to state 144
+-- On BCC shift to state 147
+-- On ATOM_CHARS shift to state 150
+-- On ANSWERED shift to state 151
+-- On ALL shift to state 152
+-- On separated_nonempty_list(SP,op_search_keys) shift to state 153
+-- On search_keys shift to state 255
+-- On search_key shift to state 154
+-- On s_header shift to state 155
+-- On op_search_keys shift to state 156
+-- On op_search_key shift to state 159
+-- On modseq shift to state 160
+-- On loption(separated_nonempty_list(SP,op_search_keys)) shift to state 168
+-- On CRLF reduce production loption(separated_nonempty_list(SP,op_search_keys)) -> 
+
+State 255:
+c_search -> SEARCH SP charset_sp search_keys . [ CRLF ]
+-- On CRLF reduce production c_search -> SEARCH SP charset_sp search_keys 
+
+State 256:
+c_rename -> RENAME . SP mailbox SP mailbox [ CRLF ]
+-- On SP shift to state 257
+
+State 257:
+c_rename -> RENAME SP . mailbox SP mailbox [ CRLF ]
+-- On QUOTED_STRING shift to state 8
+-- On INBOX shift to state 9
+-- On ATOM_CHARS shift to state 10
+-- On quoted shift to state 11
+-- On mailbox shift to state 258
+
+State 258:
+c_rename -> RENAME SP mailbox . SP mailbox [ CRLF ]
+-- On SP shift to state 259
+
+State 259:
+c_rename -> RENAME SP mailbox SP . mailbox [ CRLF ]
+-- On QUOTED_STRING shift to state 8
+-- On INBOX shift to state 9
+-- On ATOM_CHARS shift to state 10
+-- On quoted shift to state 11
+-- On mailbox shift to state 260
+
+State 260:
+c_rename -> RENAME SP mailbox SP mailbox . [ CRLF ]
+-- On CRLF reduce production c_rename -> RENAME SP mailbox SP mailbox 
+
+State 261:
+command_any -> NOOP . [ CRLF ]
+-- On CRLF reduce production command_any -> NOOP 
+
+State 262:
+c_lsub -> LSUB . SP mailbox SP mailbox [ CRLF ]
+-- On SP shift to state 263
+
+State 263:
+c_lsub -> LSUB SP . mailbox SP mailbox [ CRLF ]
+-- On QUOTED_STRING shift to state 8
+-- On INBOX shift to state 9
+-- On ATOM_CHARS shift to state 10
+-- On quoted shift to state 11
+-- On mailbox shift to state 264
+
+State 264:
+c_lsub -> LSUB SP mailbox . SP mailbox [ CRLF ]
+-- On SP shift to state 265
+
+State 265:
+c_lsub -> LSUB SP mailbox SP . mailbox [ CRLF ]
+-- On QUOTED_STRING shift to state 8
+-- On INBOX shift to state 9
+-- On ATOM_CHARS shift to state 10
+-- On quoted shift to state 11
+-- On mailbox shift to state 266
+
+State 266:
+c_lsub -> LSUB SP mailbox SP mailbox . [ CRLF ]
+-- On CRLF reduce production c_lsub -> LSUB SP mailbox SP mailbox 
+
+State 267:
+command_any -> LOGOUT . [ CRLF ]
+-- On CRLF reduce production command_any -> LOGOUT 
+
+State 268:
+login -> LOGIN . SP user SP password [ CRLF ]
+-- On SP shift to state 269
+
+State 269:
+login -> LOGIN SP . user SP password [ CRLF ]
+-- On QUOTED_STRING shift to state 8
+-- On ATOM_CHARS shift to state 270
+-- On user shift to state 271
+-- On quoted shift to state 109
+-- On astring shift to state 275
+
+State 270:
+astring -> ATOM_CHARS . [ SP CRLF ]
+-- On SP reduce production astring -> ATOM_CHARS 
+-- On CRLF reduce production astring -> ATOM_CHARS 
+
+State 271:
+login -> LOGIN SP user . SP password [ CRLF ]
+-- On SP shift to state 272
+
+State 272:
+login -> LOGIN SP user SP . password [ CRLF ]
+-- On QUOTED_STRING shift to state 8
+-- On ATOM_CHARS shift to state 270
+-- On quoted shift to state 109
+-- On password shift to state 273
+-- On astring shift to state 274
+
+State 273:
+login -> LOGIN SP user SP password . [ CRLF ]
+-- On CRLF reduce production login -> LOGIN SP user SP password 
+
+State 274:
+password -> astring . [ CRLF ]
+-- On CRLF reduce production password -> astring 
+
+State 275:
+user -> astring . [ SP ]
+-- On SP reduce production user -> astring 
+
+State 276:
+c_list -> LIST . SP mailbox SP mailbox [ CRLF ]
+-- On SP shift to state 277
+
+State 277:
+c_list -> LIST SP . mailbox SP mailbox [ CRLF ]
+-- On QUOTED_STRING shift to state 8
+-- On INBOX shift to state 9
+-- On ATOM_CHARS shift to state 10
+-- On quoted shift to state 11
+-- On mailbox shift to state 278
+
+State 278:
+c_list -> LIST SP mailbox . SP mailbox [ CRLF ]
+-- On SP shift to state 279
+
+State 279:
+c_list -> LIST SP mailbox SP . mailbox [ CRLF ]
+-- On QUOTED_STRING shift to state 8
+-- On INBOX shift to state 9
+-- On ATOM_CHARS shift to state 10
+-- On quoted shift to state 11
+-- On mailbox shift to state 280
+
+State 280:
+c_list -> LIST SP mailbox SP mailbox . [ CRLF ]
+-- On CRLF reduce production c_list -> LIST SP mailbox SP mailbox 
+
+State 281:
+c_lappend -> LAPPEND . SP user SP mailbox SP literal [ CRLF ]
+-- On SP shift to state 282
+
+State 282:
+c_lappend -> LAPPEND SP . user SP mailbox SP literal [ CRLF ]
+-- On QUOTED_STRING shift to state 8
+-- On ATOM_CHARS shift to state 270
+-- On user shift to state 283
+-- On quoted shift to state 109
+-- On astring shift to state 275
+
+State 283:
+c_lappend -> LAPPEND SP user . SP mailbox SP literal [ CRLF ]
+-- On SP shift to state 284
+
+State 284:
+c_lappend -> LAPPEND SP user SP . mailbox SP literal [ CRLF ]
+-- On QUOTED_STRING shift to state 8
+-- On INBOX shift to state 9
+-- On ATOM_CHARS shift to state 10
+-- On quoted shift to state 11
+-- On mailbox shift to state 285
+
+State 285:
+c_lappend -> LAPPEND SP user SP mailbox . SP literal [ CRLF ]
+-- On SP shift to state 286
+
+State 286:
+c_lappend -> LAPPEND SP user SP mailbox SP . literal [ CRLF ]
+-- On LITERALPL shift to state 287
+-- On LITERAL shift to state 288
+-- On literal shift to state 289
+
+State 287:
+literal -> LITERALPL . [ CRLF ]
+-- On CRLF reduce production literal -> LITERALPL 
+
+State 288:
+literal -> LITERAL . [ CRLF ]
+-- On CRLF reduce production literal -> LITERAL 
+
+State 289:
+c_lappend -> LAPPEND SP user SP mailbox SP literal . [ CRLF ]
+-- On CRLF reduce production c_lappend -> LAPPEND SP user SP mailbox SP literal 
+
+State 290:
+c_idle -> IDLE . [ CRLF ]
+-- On CRLF reduce production c_idle -> IDLE 
+
+State 291:
+id -> ID . SP LP list_of_quoted_string RP [ CRLF ]
+-- On SP shift to state 292
+
+State 292:
+id -> ID SP . LP list_of_quoted_string RP [ CRLF ]
+-- On LP shift to state 293
+
+State 293:
+id -> ID SP LP . list_of_quoted_string RP [ CRLF ]
+-- On QUOTED_STRING shift to state 8
+-- On separated_nonempty_list(SP,quoted) shift to state 294
+-- On quoted shift to state 295
+-- On loption(separated_nonempty_list(SP,quoted)) shift to state 298
+-- On list_of_quoted_string shift to state 299
+-- On RP reduce production loption(separated_nonempty_list(SP,quoted)) -> 
+
+State 294:
+loption(separated_nonempty_list(SP,quoted)) -> separated_nonempty_list(SP,quoted) . [ RP ]
+-- On RP reduce production loption(separated_nonempty_list(SP,quoted)) -> separated_nonempty_list(SP,quoted) 
+
+State 295:
+separated_nonempty_list(SP,quoted) -> quoted . [ RP ]
+separated_nonempty_list(SP,quoted) -> quoted . SP separated_nonempty_list(SP,quoted) [ RP ]
+-- On SP shift to state 296
+-- On RP reduce production separated_nonempty_list(SP,quoted) -> quoted 
+
+State 296:
+separated_nonempty_list(SP,quoted) -> quoted SP . separated_nonempty_list(SP,quoted) [ RP ]
+-- On QUOTED_STRING shift to state 8
+-- On separated_nonempty_list(SP,quoted) shift to state 297
+-- On quoted shift to state 295
+
+State 297:
+separated_nonempty_list(SP,quoted) -> quoted SP separated_nonempty_list(SP,quoted) . [ RP ]
+-- On RP reduce production separated_nonempty_list(SP,quoted) -> quoted SP separated_nonempty_list(SP,quoted) 
+
+State 298:
+list_of_quoted_string -> loption(separated_nonempty_list(SP,quoted)) . [ RP ]
+-- On RP reduce production list_of_quoted_string -> loption(separated_nonempty_list(SP,quoted)) 
+
+State 299:
+id -> ID SP LP list_of_quoted_string . RP [ CRLF ]
+-- On RP shift to state 300
+
+State 300:
+id -> ID SP LP list_of_quoted_string RP . [ CRLF ]
+-- On CRLF reduce production id -> ID SP LP list_of_quoted_string RP 
+
+State 301:
+c_fetch -> FETCH . SP ATOM_CHARS SP fetch_args changedsince_sp [ CRLF ]
+-- On SP shift to state 302
+
+State 302:
+c_fetch -> FETCH SP . ATOM_CHARS SP fetch_args changedsince_sp [ CRLF ]
+-- On ATOM_CHARS shift to state 303
+
+State 303:
+c_fetch -> FETCH SP ATOM_CHARS . SP fetch_args changedsince_sp [ CRLF ]
+-- On SP shift to state 304
+
+State 304:
+c_fetch -> FETCH SP ATOM_CHARS SP . fetch_args changedsince_sp [ CRLF ]
+-- On UID shift to state 175
+-- On RFC822TEXT shift to state 176
+-- On RFC822SIZE shift to state 177
+-- On RFC822HEADER shift to state 178
+-- On RFC822 shift to state 179
+-- On MODSEQ shift to state 180
+-- On LP shift to state 181
+-- On INTERNALDATE shift to state 182
+-- On FULL shift to state 195
+-- On FLAGS shift to state 183
+-- On FAST shift to state 196
+-- On ENVELOPE shift to state 184
+-- On BODYSTRUCTURE shift to state 185
+-- On BODYPEEK shift to state 186
+-- On BODYFETCH shift to state 187
+-- On BODY shift to state 188
+-- On ALL shift to state 197
+-- On fetch_macro shift to state 198
+-- On fetch_att_list shift to state 199
+-- On fetch_att shift to state 200
+-- On fetch_args shift to state 305
+
+State 305:
+c_fetch -> FETCH SP ATOM_CHARS SP fetch_args . changedsince_sp [ CRLF ]
+-- On SP shift to state 202
+-- On changedsince_sp shift to state 306
+-- On CRLF reduce production changedsince_sp -> 
+
+State 306:
+c_fetch -> FETCH SP ATOM_CHARS SP fetch_args changedsince_sp . [ CRLF ]
+-- On CRLF reduce production c_fetch -> FETCH SP ATOM_CHARS SP fetch_args changedsince_sp 
+
+State 307:
+command_select -> EXPUNGE . [ CRLF ]
+-- On CRLF reduce production command_select -> EXPUNGE 
+
+State 308:
+c_examine -> EXAMINE . SP mailbox e_condstore [ CRLF ]
+-- On SP shift to state 309
+
+State 309:
+c_examine -> EXAMINE SP . mailbox e_condstore [ CRLF ]
+-- On QUOTED_STRING shift to state 8
+-- On INBOX shift to state 9
+-- On ATOM_CHARS shift to state 10
+-- On quoted shift to state 11
+-- On mailbox shift to state 310
+
+State 310:
+c_examine -> EXAMINE SP mailbox . e_condstore [ CRLF ]
+-- On SP shift to state 247
+-- On e_condstore shift to state 311
+-- On CRLF reduce production e_condstore -> 
+
+State 311:
+c_examine -> EXAMINE SP mailbox e_condstore . [ CRLF ]
+-- On CRLF reduce production c_examine -> EXAMINE SP mailbox e_condstore 
+
+State 312:
+command_any -> ENABLE . SP astring [ CRLF ]
+-- On SP shift to state 313
+
+State 313:
+command_any -> ENABLE SP . astring [ CRLF ]
+-- On QUOTED_STRING shift to state 8
+-- On ATOM_CHARS shift to state 270
+-- On quoted shift to state 109
+-- On astring shift to state 314
+
+State 314:
+command_any -> ENABLE SP astring . [ CRLF ]
+-- On CRLF reduce production command_any -> ENABLE SP astring 
+
+State 315:
+c_delete -> DELETE . SP mailbox [ CRLF ]
+-- On SP shift to state 316
+
+State 316:
+c_delete -> DELETE SP . mailbox [ CRLF ]
+-- On QUOTED_STRING shift to state 8
+-- On INBOX shift to state 9
+-- On ATOM_CHARS shift to state 10
+-- On quoted shift to state 11
+-- On mailbox shift to state 317
+
+State 317:
+c_delete -> DELETE SP mailbox . [ CRLF ]
+-- On CRLF reduce production c_delete -> DELETE SP mailbox 
+
+State 318:
+c_create -> CREATE . SP mailbox [ CRLF ]
+-- On SP shift to state 319
+
+State 319:
+c_create -> CREATE SP . mailbox [ CRLF ]
+-- On QUOTED_STRING shift to state 8
+-- On INBOX shift to state 9
+-- On ATOM_CHARS shift to state 10
+-- On quoted shift to state 11
+-- On mailbox shift to state 320
+
+State 320:
+c_create -> CREATE SP mailbox . [ CRLF ]
+-- On CRLF reduce production c_create -> CREATE SP mailbox 
+
+State 321:
+c_copy -> COPY . SP ATOM_CHARS SP mailbox [ CRLF ]
+-- On SP shift to state 322
+
+State 322:
+c_copy -> COPY SP . ATOM_CHARS SP mailbox [ CRLF ]
+-- On ATOM_CHARS shift to state 323
+
+State 323:
+c_copy -> COPY SP ATOM_CHARS . SP mailbox [ CRLF ]
+-- On SP shift to state 324
+
+State 324:
+c_copy -> COPY SP ATOM_CHARS SP . mailbox [ CRLF ]
+-- On QUOTED_STRING shift to state 8
+-- On INBOX shift to state 9
+-- On ATOM_CHARS shift to state 10
+-- On quoted shift to state 11
+-- On mailbox shift to state 325
+
+State 325:
+c_copy -> COPY SP ATOM_CHARS SP mailbox . [ CRLF ]
+-- On CRLF reduce production c_copy -> COPY SP ATOM_CHARS SP mailbox 
+
+State 326:
+command_select -> CLOSE . [ CRLF ]
+-- On CRLF reduce production command_select -> CLOSE 
+
+State 327:
+command_select -> CHECK . [ CRLF ]
+-- On CRLF reduce production command_select -> CHECK 
+
+State 328:
+command_any -> CAPABILITY . [ CRLF ]
+-- On CRLF reduce production command_any -> CAPABILITY 
+
+State 329:
+authenticate -> AUTHENTICATE . SP auth_type SP ATOM_CHARS [ CRLF ]
+-- On SP shift to state 330
+
+State 330:
+authenticate -> AUTHENTICATE SP . auth_type SP ATOM_CHARS [ CRLF ]
+-- On SKEY shift to state 331
+-- On PLAIN shift to state 332
+-- On KERBEROS_V4 shift to state 333
+-- On GSSAPI shift to state 334
+-- On EXTERNAL shift to state 335
+-- On auth_type shift to state 336
+
+State 331:
+auth_type -> SKEY . [ SP ]
+-- On SP reduce production auth_type -> SKEY 
+
+State 332:
+auth_type -> PLAIN . [ SP ]
+-- On SP reduce production auth_type -> PLAIN 
+
+State 333:
+auth_type -> KERBEROS_V4 . [ SP ]
+-- On SP reduce production auth_type -> KERBEROS_V4 
+
+State 334:
+auth_type -> GSSAPI . [ SP ]
+-- On SP reduce production auth_type -> GSSAPI 
+
+State 335:
+auth_type -> EXTERNAL . [ SP ]
+-- On SP reduce production auth_type -> EXTERNAL 
+
+State 336:
+authenticate -> AUTHENTICATE SP auth_type . SP ATOM_CHARS [ CRLF ]
+-- On SP shift to state 337
+
+State 337:
+authenticate -> AUTHENTICATE SP auth_type SP . ATOM_CHARS [ CRLF ]
+-- On ATOM_CHARS shift to state 338
+
+State 338:
+authenticate -> AUTHENTICATE SP auth_type SP ATOM_CHARS . [ CRLF ]
+-- On CRLF reduce production authenticate -> AUTHENTICATE SP auth_type SP ATOM_CHARS 
+
+State 339:
+append_cmd -> APPEND . SP mailbox [ SP ]
+-- On SP shift to state 340
+
+State 340:
+append_cmd -> APPEND SP . mailbox [ SP ]
+-- On QUOTED_STRING shift to state 8
+-- On INBOX shift to state 9
+-- On ATOM_CHARS shift to state 10
+-- On quoted shift to state 11
+-- On mailbox shift to state 341
+
+State 341:
+append_cmd -> APPEND SP mailbox . [ SP ]
+-- On SP reduce production append_cmd -> APPEND SP mailbox 
+
+State 342:
+command_notauth -> login . [ CRLF ]
+-- On CRLF reduce production command_notauth -> login 
+
+State 343:
+command_any -> id . [ CRLF ]
+-- On CRLF reduce production command_any -> id 
+
+State 344:
+command -> tag_ SP commands . CRLF [ # ]
+-- On CRLF shift to state 345
+
+State 345:
+command -> tag_ SP commands CRLF . [ # ]
+-- On # reduce production command -> tag_ SP commands CRLF 
+
+State 346:
+commands -> command_select . [ CRLF ]
+-- On CRLF reduce production commands -> command_select 
+
+State 347:
+commands -> command_notauth . [ CRLF ]
+-- On CRLF reduce production commands -> command_notauth 
+
+State 348:
+commands -> command_auth . [ CRLF ]
+-- On CRLF reduce production commands -> command_auth 
+
+State 349:
+commands -> command_any . [ CRLF ]
+-- On CRLF reduce production commands -> command_any 
+
+State 350:
+command_auth -> c_unsubscribe . [ CRLF ]
+-- On CRLF reduce production command_auth -> c_unsubscribe 
+
+State 351:
+command_auth -> c_subscribe . [ CRLF ]
+-- On CRLF reduce production command_auth -> c_subscribe 
+
+State 352:
+command_select -> c_store . [ CRLF ]
+-- On CRLF reduce production command_select -> c_store 
+
+State 353:
+command_auth -> c_status . [ CRLF ]
+-- On CRLF reduce production command_auth -> c_status 
+
+State 354:
+command_auth -> c_select . [ CRLF ]
+-- On CRLF reduce production command_auth -> c_select 
+
+State 355:
+command_select -> c_search . [ CRLF ]
+-- On CRLF reduce production command_select -> c_search 
+
+State 356:
+command_auth -> c_rename . [ CRLF ]
+-- On CRLF reduce production command_auth -> c_rename 
+
+State 357:
+command_auth -> c_lsub . [ CRLF ]
+-- On CRLF reduce production command_auth -> c_lsub 
+
+State 358:
+command_auth -> c_list . [ CRLF ]
+-- On CRLF reduce production command_auth -> c_list 
+
+State 359:
+command_notauth -> c_lappend . [ CRLF ]
+-- On CRLF reduce production command_notauth -> c_lappend 
+
+State 360:
+command_auth -> c_idle . [ CRLF ]
+-- On CRLF reduce production command_auth -> c_idle 
+
+State 361:
+command_select -> c_fetch . [ CRLF ]
+-- On CRLF reduce production command_select -> c_fetch 
+
+State 362:
+command_auth -> c_examine . [ CRLF ]
+-- On CRLF reduce production command_auth -> c_examine 
+
+State 363:
+command_auth -> c_delete . [ CRLF ]
+-- On CRLF reduce production command_auth -> c_delete 
+
+State 364:
+command_auth -> c_create . [ CRLF ]
+-- On CRLF reduce production command_auth -> c_create 
+
+State 365:
+command_select -> c_copy . [ CRLF ]
+-- On CRLF reduce production command_select -> c_copy 
+
+State 366:
+command_auth -> c_append . [ CRLF ]
+-- On CRLF reduce production command_auth -> c_append 
+
+State 367:
+command_notauth -> authenticate . [ CRLF ]
+-- On CRLF reduce production command_notauth -> authenticate 
+
+State 368:
+c_append -> append_cmd . SP flag_list_sp date_sp literal [ CRLF ]
+-- On SP shift to state 369
+
+State 369:
+c_append -> append_cmd SP . flag_list_sp date_sp literal [ CRLF ]
+-- On LP shift to state 34
+-- On flag_list_sp shift to state 370
+-- On flag_list shift to state 376
+-- On LITERALPL reduce production flag_list_sp -> 
+-- On LITERAL reduce production flag_list_sp -> 
+-- On DATE reduce production flag_list_sp -> 
+
+State 370:
+c_append -> append_cmd SP flag_list_sp . date_sp literal [ CRLF ]
+-- On DATE shift to state 371
+-- On date_sp shift to state 372
+-- On date shift to state 374
+-- On LITERALPL reduce production date_sp -> 
+-- On LITERAL reduce production date_sp -> 
+
+State 371:
+date -> DATE . [ SP ]
+-- On SP reduce production date -> DATE 
+
+State 372:
+c_append -> append_cmd SP flag_list_sp date_sp . literal [ CRLF ]
+-- On LITERALPL shift to state 287
+-- On LITERAL shift to state 288
+-- On literal shift to state 373
+
+State 373:
+c_append -> append_cmd SP flag_list_sp date_sp literal . [ CRLF ]
+-- On CRLF reduce production c_append -> append_cmd SP flag_list_sp date_sp literal 
+
+State 374:
+date_sp -> date . SP [ LITERALPL LITERAL ]
+-- On SP shift to state 375
+
+State 375:
+date_sp -> date SP . [ LITERALPL LITERAL ]
+-- On LITERALPL reduce production date_sp -> date SP 
+-- On LITERAL reduce production date_sp -> date SP 
+
+State 376:
+flag_list_sp -> flag_list . SP [ LITERALPL LITERAL DATE ]
+-- On SP shift to state 377
+
+State 377:
+flag_list_sp -> flag_list SP . [ LITERALPL LITERAL DATE ]
+-- On LITERALPL reduce production flag_list_sp -> flag_list SP 
+-- On LITERAL reduce production flag_list_sp -> flag_list SP 
+-- On DATE reduce production flag_list_sp -> flag_list SP 
+
+State 378:
+request' -> request . [ # ]
+-- On # accept request
+
+State 379:
+request -> command . [ # ]
+-- On # reduce production request -> command 
+
+State 380:
+command -> c_done . [ # ]
+-- On # reduce production command -> c_done 
+

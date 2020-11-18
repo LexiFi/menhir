@@ -1,0 +1,112 @@
+
+** Conflict (shift/reduce) in state 38.
+** Tokens involved: MSGID COMMENT_SPECIAL COMMENT_FILEPOS
+** The following explanations concentrate on token MSGID.
+** This state is reached from msgfmt after reading:
+
+message_list 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+msgfmt 
+(?)
+
+** In state 38, looking ahead at MSGID, shifting is permitted
+** because of the following sub-derivation:
+
+message_list 
+message_list message 
+             . MSGID string_list MSGSTR string_list 
+
+** In state 38, looking ahead at MSGID, reducing production
+** msgfmt -> message_list 
+** is permitted because of the following sub-derivation:
+
+msgfmt message_list // lookahead token appears because message_list can begin with MSGID
+message_list . 
+
+** Conflict (shift/reduce) in state 36.
+** Tokens involved: MSGID COMMENT_SPECIAL COMMENT_FILEPOS
+** The following explanations concentrate on token MSGID.
+** This state is reached from msgfmt after reading:
+
+msgfmt message_list 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+msgfmt 
+(?)
+
+** In state 36, looking ahead at MSGID, shifting is permitted
+** because of the following sub-derivation:
+
+msgfmt message_list 
+       message_list message 
+                    . MSGID string_list MSGSTR string_list 
+
+** In state 36, looking ahead at MSGID, reducing production
+** msgfmt -> msgfmt message_list 
+** is permitted because of the following sub-derivation:
+
+msgfmt message_list // lookahead token appears because message_list can begin with MSGID
+msgfmt message_list . 
+
+** Conflict (shift/reduce) in state 23.
+** Tokens involved: MSGID COMMENT_SPECIAL COMMENT_FILEPOS
+** The following explanations concentrate on token MSGID.
+** This state is reached from msgfmt after reading:
+
+DOMAIN STRING message_list 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+msgfmt 
+(?)
+
+** In state 23, looking ahead at MSGID, reducing production
+** domain -> DOMAIN STRING message_list 
+** is permitted because of the following sub-derivation:
+
+msgfmt message_list // lookahead token appears because message_list can begin with MSGID
+domain // lookahead token is inherited
+DOMAIN STRING message_list . 
+
+** In state 23, looking ahead at MSGID, shifting is permitted
+** because of the following sub-derivation:
+
+domain 
+DOMAIN STRING message_list 
+              message_list message 
+                           . MSGID string_list MSGSTR string_list 
+
+** Conflict (shift/reduce) in state 20.
+** Tokens involved: MSGID COMMENT_SPECIAL COMMENT_FILEPOS
+** The following explanations concentrate on token MSGID.
+** This state is reached from msgfmt after reading:
+
+DOMAIN STRING 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+msgfmt 
+(?)
+
+** In state 20, looking ahead at MSGID, reducing production
+** domain -> DOMAIN STRING 
+** is permitted because of the following sub-derivation:
+
+msgfmt message_list // lookahead token appears because message_list can begin with MSGID
+domain // lookahead token is inherited
+DOMAIN STRING . 
+
+** In state 20, looking ahead at MSGID, shifting is permitted
+** because of the following sub-derivation:
+
+domain 
+DOMAIN STRING message_list 
+              message 
+              . MSGID string_list MSGSTR string_list 

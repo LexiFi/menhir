@@ -1,0 +1,201 @@
+State 0:
+rule_set_eof' -> . rule_set_eof [ # ]
+-- On PREFIX_IDENT shift to state 1
+-- On OPENPAR shift to state 3
+-- On term shift to state 17
+-- On rule_set_eof shift to state 20
+-- On rule_set shift to state 21
+-- On rule shift to state 23
+
+State 1:
+term -> PREFIX_IDENT . [ SEMICOLON INFIX_IDENT EOF COMMA CLOSEPAR ARROW ]
+term -> PREFIX_IDENT . OPENPAR term_list CLOSEPAR [ SEMICOLON INFIX_IDENT EOF COMMA CLOSEPAR ARROW ]
+-- On OPENPAR shift to state 2
+-- On SEMICOLON reduce production term -> PREFIX_IDENT 
+-- On INFIX_IDENT reduce production term -> PREFIX_IDENT 
+-- On EOF reduce production term -> PREFIX_IDENT 
+-- On COMMA reduce production term -> PREFIX_IDENT 
+-- On CLOSEPAR reduce production term -> PREFIX_IDENT 
+-- On ARROW reduce production term -> PREFIX_IDENT 
+
+State 2:
+term -> PREFIX_IDENT OPENPAR . term_list CLOSEPAR [ SEMICOLON INFIX_IDENT EOF COMMA CLOSEPAR ARROW ]
+-- On PREFIX_IDENT shift to state 1
+-- On OPENPAR shift to state 3
+-- On term_list shift to state 15
+-- On term shift to state 12
+
+State 3:
+term -> OPENPAR . term CLOSEPAR [ SEMICOLON INFIX_IDENT EOF COMMA CLOSEPAR ARROW ]
+term -> OPENPAR . term CLOSEPAR POSTFIX_IDENT [ SEMICOLON INFIX_IDENT EOF COMMA CLOSEPAR ARROW ]
+term -> OPENPAR . term_list CLOSEPAR POSTFIX_IDENT [ SEMICOLON INFIX_IDENT EOF COMMA CLOSEPAR ARROW ]
+-- On PREFIX_IDENT shift to state 1
+-- On OPENPAR shift to state 3
+-- On term_list shift to state 4
+-- On term shift to state 7
+
+State 4:
+term -> OPENPAR term_list . CLOSEPAR POSTFIX_IDENT [ SEMICOLON INFIX_IDENT EOF COMMA CLOSEPAR ARROW ]
+-- On CLOSEPAR shift to state 5
+
+State 5:
+term -> OPENPAR term_list CLOSEPAR . POSTFIX_IDENT [ SEMICOLON INFIX_IDENT EOF COMMA CLOSEPAR ARROW ]
+-- On POSTFIX_IDENT shift to state 6
+
+State 6:
+term -> OPENPAR term_list CLOSEPAR POSTFIX_IDENT . [ SEMICOLON INFIX_IDENT EOF COMMA CLOSEPAR ARROW ]
+-- On SEMICOLON reduce production term -> OPENPAR term_list CLOSEPAR POSTFIX_IDENT 
+-- On INFIX_IDENT reduce production term -> OPENPAR term_list CLOSEPAR POSTFIX_IDENT 
+-- On EOF reduce production term -> OPENPAR term_list CLOSEPAR POSTFIX_IDENT 
+-- On COMMA reduce production term -> OPENPAR term_list CLOSEPAR POSTFIX_IDENT 
+-- On CLOSEPAR reduce production term -> OPENPAR term_list CLOSEPAR POSTFIX_IDENT 
+-- On ARROW reduce production term -> OPENPAR term_list CLOSEPAR POSTFIX_IDENT 
+
+State 7:
+term -> OPENPAR term . CLOSEPAR [ SEMICOLON INFIX_IDENT EOF COMMA CLOSEPAR ARROW ]
+term -> OPENPAR term . CLOSEPAR POSTFIX_IDENT [ SEMICOLON INFIX_IDENT EOF COMMA CLOSEPAR ARROW ]
+term -> term . INFIX_IDENT term [ INFIX_IDENT COMMA CLOSEPAR ]
+term_list -> term . [ CLOSEPAR ]
+term_list -> term . COMMA term_list [ CLOSEPAR ]
+-- On INFIX_IDENT shift to state 8
+-- On COMMA shift to state 10
+-- On CLOSEPAR shift to state 13
+
+State 8:
+term -> term INFIX_IDENT . term [ SEMICOLON INFIX_IDENT EOF COMMA CLOSEPAR ARROW ]
+-- On PREFIX_IDENT shift to state 1
+-- On OPENPAR shift to state 3
+-- On term shift to state 9
+
+State 9:
+term -> term . INFIX_IDENT term [ SEMICOLON INFIX_IDENT EOF COMMA CLOSEPAR ARROW ]
+term -> term INFIX_IDENT term . [ SEMICOLON INFIX_IDENT EOF COMMA CLOSEPAR ARROW ]
+-- On SEMICOLON reduce production term -> term INFIX_IDENT term 
+-- On INFIX_IDENT reduce production term -> term INFIX_IDENT term 
+-- On EOF reduce production term -> term INFIX_IDENT term 
+-- On COMMA reduce production term -> term INFIX_IDENT term 
+-- On CLOSEPAR reduce production term -> term INFIX_IDENT term 
+-- On ARROW reduce production term -> term INFIX_IDENT term 
+
+State 10:
+term_list -> term COMMA . term_list [ CLOSEPAR ]
+-- On PREFIX_IDENT shift to state 1
+-- On OPENPAR shift to state 3
+-- On term_list shift to state 11
+-- On term shift to state 12
+
+State 11:
+term_list -> term COMMA term_list . [ CLOSEPAR ]
+-- On CLOSEPAR reduce production term_list -> term COMMA term_list 
+
+State 12:
+term -> term . INFIX_IDENT term [ INFIX_IDENT COMMA CLOSEPAR ]
+term_list -> term . [ CLOSEPAR ]
+term_list -> term . COMMA term_list [ CLOSEPAR ]
+-- On INFIX_IDENT shift to state 8
+-- On COMMA shift to state 10
+-- On CLOSEPAR reduce production term_list -> term 
+
+State 13:
+term -> OPENPAR term CLOSEPAR . [ SEMICOLON INFIX_IDENT EOF COMMA CLOSEPAR ARROW ]
+term -> OPENPAR term CLOSEPAR . POSTFIX_IDENT [ SEMICOLON INFIX_IDENT EOF COMMA CLOSEPAR ARROW ]
+-- On POSTFIX_IDENT shift to state 14
+-- On SEMICOLON reduce production term -> OPENPAR term CLOSEPAR 
+-- On INFIX_IDENT reduce production term -> OPENPAR term CLOSEPAR 
+-- On EOF reduce production term -> OPENPAR term CLOSEPAR 
+-- On COMMA reduce production term -> OPENPAR term CLOSEPAR 
+-- On CLOSEPAR reduce production term -> OPENPAR term CLOSEPAR 
+-- On ARROW reduce production term -> OPENPAR term CLOSEPAR 
+
+State 14:
+term -> OPENPAR term CLOSEPAR POSTFIX_IDENT . [ SEMICOLON INFIX_IDENT EOF COMMA CLOSEPAR ARROW ]
+-- On SEMICOLON reduce production term -> OPENPAR term CLOSEPAR POSTFIX_IDENT 
+-- On INFIX_IDENT reduce production term -> OPENPAR term CLOSEPAR POSTFIX_IDENT 
+-- On EOF reduce production term -> OPENPAR term CLOSEPAR POSTFIX_IDENT 
+-- On COMMA reduce production term -> OPENPAR term CLOSEPAR POSTFIX_IDENT 
+-- On CLOSEPAR reduce production term -> OPENPAR term CLOSEPAR POSTFIX_IDENT 
+-- On ARROW reduce production term -> OPENPAR term CLOSEPAR POSTFIX_IDENT 
+
+State 15:
+term -> PREFIX_IDENT OPENPAR term_list . CLOSEPAR [ SEMICOLON INFIX_IDENT EOF COMMA CLOSEPAR ARROW ]
+-- On CLOSEPAR shift to state 16
+
+State 16:
+term -> PREFIX_IDENT OPENPAR term_list CLOSEPAR . [ SEMICOLON INFIX_IDENT EOF COMMA CLOSEPAR ARROW ]
+-- On SEMICOLON reduce production term -> PREFIX_IDENT OPENPAR term_list CLOSEPAR 
+-- On INFIX_IDENT reduce production term -> PREFIX_IDENT OPENPAR term_list CLOSEPAR 
+-- On EOF reduce production term -> PREFIX_IDENT OPENPAR term_list CLOSEPAR 
+-- On COMMA reduce production term -> PREFIX_IDENT OPENPAR term_list CLOSEPAR 
+-- On CLOSEPAR reduce production term -> PREFIX_IDENT OPENPAR term_list CLOSEPAR 
+-- On ARROW reduce production term -> PREFIX_IDENT OPENPAR term_list CLOSEPAR 
+
+State 17:
+rule -> term . ARROW term [ SEMICOLON EOF ]
+term -> term . INFIX_IDENT term [ INFIX_IDENT ARROW ]
+-- On INFIX_IDENT shift to state 8
+-- On ARROW shift to state 18
+
+State 18:
+rule -> term ARROW . term [ SEMICOLON EOF ]
+-- On PREFIX_IDENT shift to state 1
+-- On OPENPAR shift to state 3
+-- On term shift to state 19
+
+State 19:
+rule -> term ARROW term . [ SEMICOLON EOF ]
+term -> term . INFIX_IDENT term [ SEMICOLON INFIX_IDENT EOF ]
+-- On INFIX_IDENT shift to state 8
+-- On SEMICOLON reduce production rule -> term ARROW term 
+-- On EOF reduce production rule -> term ARROW term 
+
+State 20:
+rule_set_eof' -> rule_set_eof . [ # ]
+-- On # accept rule_set_eof
+
+State 21:
+rule_set_eof -> rule_set . EOF [ # ]
+-- On EOF shift to state 22
+
+State 22:
+rule_set_eof -> rule_set EOF . [ # ]
+-- On # reduce production rule_set_eof -> rule_set EOF 
+
+State 23:
+rule_set -> rule . [ EOF ]
+rule_set -> rule . SEMICOLON rule_set [ EOF ]
+-- On SEMICOLON shift to state 24
+-- On EOF reduce production rule_set -> rule 
+
+State 24:
+rule_set -> rule SEMICOLON . rule_set [ EOF ]
+-- On PREFIX_IDENT shift to state 1
+-- On OPENPAR shift to state 3
+-- On term shift to state 17
+-- On rule_set shift to state 25
+-- On rule shift to state 23
+
+State 25:
+rule_set -> rule SEMICOLON rule_set . [ EOF ]
+-- On EOF reduce production rule_set -> rule SEMICOLON rule_set 
+
+State 26:
+term_eof' -> . term_eof [ # ]
+-- On PREFIX_IDENT shift to state 1
+-- On OPENPAR shift to state 3
+-- On term_eof shift to state 27
+-- On term shift to state 28
+
+State 27:
+term_eof' -> term_eof . [ # ]
+-- On # accept term_eof
+
+State 28:
+term -> term . INFIX_IDENT term [ INFIX_IDENT EOF ]
+term_eof -> term . EOF [ # ]
+-- On INFIX_IDENT shift to state 8
+-- On EOF shift to state 29
+
+State 29:
+term_eof -> term EOF . [ # ]
+-- On # reduce production term_eof -> term EOF 
+

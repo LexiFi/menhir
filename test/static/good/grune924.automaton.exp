@@ -1,0 +1,91 @@
+State 0:
+s' -> . s [ # ]
+-- On N shift to state 1
+-- On LPAR shift to state 2
+-- On t shift to state 3
+-- On s shift to state 8
+-- On e shift to state 9
+
+State 1:
+t -> N . [ RPAR MINUS # ]
+-- On RPAR reduce production t -> N 
+-- On MINUS reduce production t -> N 
+-- On # reduce production t -> N 
+
+State 2:
+t -> LPAR . e RPAR [ RPAR MINUS # ]
+-- On N shift to state 1
+-- On LPAR shift to state 2
+-- On t shift to state 3
+-- On e shift to state 4
+
+State 3:
+e -> t . [ RPAR MINUS # ]
+-- On RPAR reduce production e -> t 
+-- On MINUS reduce production e -> t 
+-- On # reduce production e -> t 
+
+State 4:
+e -> e . MINUS t [ RPAR MINUS ]
+t -> LPAR e . RPAR [ RPAR MINUS # ]
+-- On RPAR shift to state 5
+-- On MINUS shift to state 6
+
+State 5:
+t -> LPAR e RPAR . [ RPAR MINUS # ]
+-- On RPAR reduce production t -> LPAR e RPAR 
+-- On MINUS reduce production t -> LPAR e RPAR 
+-- On # reduce production t -> LPAR e RPAR 
+
+State 6:
+e -> e MINUS . t [ RPAR MINUS # ]
+-- On N shift to state 1
+-- On LPAR shift to state 2
+-- On t shift to state 7
+
+State 7:
+e -> e MINUS t . [ RPAR MINUS # ]
+-- On RPAR reduce production e -> e MINUS t 
+-- On MINUS reduce production e -> e MINUS t 
+-- On # reduce production e -> e MINUS t 
+
+State 8:
+s' -> s . [ # ]
+-- On # accept s
+
+State 9:
+e -> e . MINUS t [ MINUS # ]
+s -> e . [ # ]
+-- On MINUS shift to state 6
+-- On # reduce production s -> e 
+
+State 1 has an end-of-stream conflict. There is a tension between
+(1) reducing production t -> N 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of RPAR MINUS,
+which would require some other action.
+
+State 3 has an end-of-stream conflict. There is a tension between
+(1) reducing production e -> t 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of RPAR MINUS,
+which would require some other action.
+
+State 5 has an end-of-stream conflict. There is a tension between
+(1) reducing production t -> LPAR e RPAR 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of RPAR MINUS,
+which would require some other action.
+
+State 7 has an end-of-stream conflict. There is a tension between
+(1) reducing production e -> e MINUS t 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of RPAR MINUS,
+which would require some other action.
+
+State 9 has an end-of-stream conflict. There is a tension between
+(1) reducing production s -> e 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is MINUS,
+which would require some other action.
+

@@ -1,0 +1,48 @@
+State 0:
+s' -> . s [ # ]
+-- On EOF shift to state 1
+-- On A shift to state 2
+-- On s shift to state 10
+
+State 1:
+s -> EOF . [ # ]
+-- On # reduce production s -> EOF 
+
+State 2:
+s -> A . B A EOF [ # ]
+s -> A . A B A EOF [ # ]
+-- On B shift to state 3
+-- On A shift to state 6
+
+State 3:
+s -> A B . A EOF [ # ]
+-- On A shift to state 4
+
+State 4:
+s -> A B A . EOF [ # ]
+-- On EOF shift to state 5
+
+State 5:
+s -> A B A EOF . [ # ]
+-- On # reduce production s -> A B A EOF 
+
+State 6:
+s -> A A . B A EOF [ # ]
+-- On B shift to state 7
+
+State 7:
+s -> A A B . A EOF [ # ]
+-- On A shift to state 8
+
+State 8:
+s -> A A B A . EOF [ # ]
+-- On EOF shift to state 9
+
+State 9:
+s -> A A B A EOF . [ # ]
+-- On # reduce production s -> A A B A EOF 
+
+State 10:
+s' -> s . [ # ]
+-- On # accept s
+

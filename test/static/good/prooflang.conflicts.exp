@@ -1,0 +1,62 @@
+
+** Conflict (shift/reduce) in state 119.
+** Token involved: KOMMA
+** This state is reached from main after reading:
+
+CASES formulalist DOPPELPUNKT caseends KOMMA caseends 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+main 
+step EOF 
+CASES formulalist DOPPELPUNKT caseends TOOBTAIN nafo SEMIKOLON step 
+                              (?)
+
+** In state 119, looking ahead at KOMMA, shifting is permitted
+** because of the following sub-derivation:
+
+caseends KOMMA caseends 
+               caseends . KOMMA caseends 
+
+** In state 119, looking ahead at KOMMA, reducing production
+** caseends -> caseends KOMMA caseends 
+** is permitted because of the following sub-derivation:
+
+caseends KOMMA caseends // lookahead token appears
+caseends KOMMA caseends . 
+
+** Conflict (shift/reduce/reduce) in state 70.
+** Token involved: DOPPELPUNKT
+** This state is reached from main after reading:
+
+ASSUME name 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+main 
+step EOF 
+ASSUME hyps PROVE nafo IN step TOOBTAIN nafo BY reflist SEMIKOLON step 
+       hyp 
+       (?)
+
+** In state 70, looking ahead at DOPPELPUNKT, reducing production
+** const -> name 
+** is permitted because of the following sub-derivation:
+
+const DOPPELPUNKT hyptyp // lookahead token appears
+name . 
+
+** In state 70, looking ahead at DOPPELPUNKT, shifting is permitted
+** because of the following sub-derivation:
+
+nafo 
+name . DOPPELPUNKT formula 
+
+** In state 70, looking ahead at DOPPELPUNKT, reducing production
+** var -> name 
+** is permitted because of the following sub-derivation:
+
+var DOPPELPUNKT hyptyp // lookahead token appears
+name . 

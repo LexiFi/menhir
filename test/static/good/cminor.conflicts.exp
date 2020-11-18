@@ -1,0 +1,97 @@
+
+** Conflict (shift/reduce) in state 207.
+** Token involved: CASE
+** This state is reached from prog after reading:
+
+global_declarations proc_list STRINGLIT LPAREN parameters RPAREN opt_type LBRACE stack_declaration var_declarations stmt_list SWITCH expr LBRACE switch_cases case_list 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+prog 
+global_declarations proc_list EOF 
+                    proc_list proc 
+                              STRINGLIT LPAREN parameters RPAREN opt_type LBRACE stack_declaration var_declarations stmt_list RBRACE 
+                                                                                                                    stmt_list stmt 
+                                                                                                                              SWITCH expr LBRACE switch_cases RBRACE 
+                                                                                                                                                 (?)
+
+** In state 207, looking ahead at CASE, shifting is permitted
+** because of the following sub-derivation:
+
+switch_cases switch_case 
+             case_list stmt_list 
+             case_list case 
+                       . CASE INTLIT COLON 
+
+** In state 207, looking ahead at CASE, reducing production
+** stmt_list -> 
+** is permitted because of the following sub-derivation:
+
+switch_cases switch_case // lookahead token appears because switch_case can begin with CASE
+switch_cases switch_case // lookahead token is inherited
+             case_list stmt_list // lookahead token is inherited
+                       . 
+
+** Conflict (shift/reduce) in state 194.
+** Token involved: ELSE
+** This state is reached from prog after reading:
+
+global_declarations proc_list STRINGLIT LPAREN parameters RPAREN opt_type LBRACE stack_declaration var_declarations stmt_list IF LPAREN expr RPAREN IF LPAREN expr RPAREN stmts 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+prog 
+global_declarations proc_list EOF 
+                    proc_list proc 
+                              STRINGLIT LPAREN parameters RPAREN opt_type LBRACE stack_declaration var_declarations stmt_list RBRACE 
+                                                                                                                    stmt_list stmt 
+                                                                                                                              (?)
+
+** In state 194, looking ahead at ELSE, shifting is permitted
+** because of the following sub-derivation:
+
+IF LPAREN expr RPAREN stmts ELSE stmts 
+                      stmt 
+                      IF LPAREN expr RPAREN stmts . ELSE stmts 
+
+** In state 194, looking ahead at ELSE, reducing production
+** stmt -> IF LPAREN expr RPAREN stmts 
+** is permitted because of the following sub-derivation:
+
+IF LPAREN expr RPAREN stmts ELSE stmts // lookahead token appears
+                      stmt // lookahead token is inherited
+                      IF LPAREN expr RPAREN stmts . 
+
+** Conflict (shift/reduce) in state 147.
+** Token involved: COLON
+** This state is reached from prog after reading:
+
+global_declarations proc_list STRINGLIT LPAREN parameters RPAREN opt_type LBRACE stack_declaration var_declarations stmt_list expr QUESTION expr LPAREN expr_list RPAREN 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+prog 
+global_declarations proc_list EOF 
+                    proc_list proc 
+                              STRINGLIT LPAREN parameters RPAREN opt_type LBRACE stack_declaration var_declarations stmt_list RBRACE 
+                                                                                                                    stmt_list stmt 
+                                                                                                                              expr SEMICOLON 
+                                                                                                                              (?)
+
+** In state 147, looking ahead at COLON, reducing production
+** opt_type -> 
+** is permitted because of the following sub-derivation:
+
+expr QUESTION expr COLON expr // lookahead token appears
+              expr LPAREN expr_list RPAREN opt_type // lookahead token is inherited
+                                           . 
+
+** In state 147, looking ahead at COLON, shifting is permitted
+** because of the following sub-derivation:
+
+expr QUESTION expr COLON expr 
+              expr LPAREN expr_list RPAREN opt_type 
+                                           . COLON type_ 

@@ -1,0 +1,2251 @@
+State 0:
+program' -> . program [ # ]
+-- On TYPE shift to state 1
+-- On FUN shift to state 85
+-- On program shift to state 193
+-- On list(definition) shift to state 194
+-- On definition shift to state 196
+-- On EOF reduce production list(definition) -> 
+
+State 1:
+definition -> TYPE . ID kind DEFEQ list(data_constructor_declaration) [ TYPE FUN EOF ]
+-- On ID shift to state 2
+
+State 2:
+definition -> TYPE ID . kind DEFEQ list(data_constructor_declaration) [ TYPE FUN EOF ]
+-- On BINDS shift to state 3
+-- On kind shift to state 4
+-- On DEFEQ reduce production kind -> 
+
+State 3:
+kind -> BINDS . [ DEFEQ ]
+-- On DEFEQ reduce production kind -> BINDS 
+
+State 4:
+definition -> TYPE ID kind . DEFEQ list(data_constructor_declaration) [ TYPE FUN EOF ]
+-- On DEFEQ shift to state 5
+
+State 5:
+definition -> TYPE ID kind DEFEQ . list(data_constructor_declaration) [ TYPE FUN EOF ]
+-- On BAR shift to state 6
+-- On list(data_constructor_declaration) shift to state 82
+-- On data_constructor_declaration shift to state 83
+-- On TYPE reduce production list(data_constructor_declaration) -> 
+-- On FUN reduce production list(data_constructor_declaration) -> 
+-- On EOF reduce production list(data_constructor_declaration) -> 
+
+State 6:
+data_constructor_declaration -> BAR . TAG located(optional_layout) contraintes [ TYPE FUN EOF BAR ]
+-- On TAG shift to state 7
+
+State 7:
+data_constructor_declaration -> BAR TAG . located(optional_layout) contraintes [ TYPE FUN EOF BAR ]
+-- On OF shift to state 8
+-- On optional_layout shift to state 34
+-- On located(optional_layout) shift to state 35
+-- On WHERE reduce production optional_layout -> 
+-- On TYPE reduce production optional_layout -> 
+-- On FUN reduce production optional_layout -> 
+-- On EOF reduce production optional_layout -> 
+-- On BAR reduce production optional_layout -> 
+
+State 8:
+optional_layout -> OF . layout [ WHERE TYPE FUN EOF BAR ]
+-- On OUTER shift to state 9
+-- On LANGLE shift to state 10
+-- On INNER shift to state 11
+-- On ID shift to state 12
+-- On BOOL shift to state 15
+-- On ATOMSET shift to state 16
+-- On ATOM shift to state 17
+-- On typ shift to state 19
+-- On located(atomic_layout) shift to state 24
+-- On layout shift to state 33
+-- On atomic_layout shift to state 31
+
+State 9:
+atomic_layout -> OUTER . located(atomic_layout) [ WHERE TYPE STAR RANGLE FUN EOF BAR ]
+-- On OUTER shift to state 9
+-- On LANGLE shift to state 10
+-- On INNER shift to state 11
+-- On ID shift to state 12
+-- On BOOL shift to state 15
+-- On ATOMSET shift to state 16
+-- On ATOM shift to state 17
+-- On typ shift to state 19
+-- On located(atomic_layout) shift to state 32
+-- On atomic_layout shift to state 21
+
+State 10:
+atomic_layout -> LANGLE . located(layout) RANGLE [ WHERE TYPE STAR RANGLE FUN EOF BAR ]
+-- On OUTER shift to state 9
+-- On LANGLE shift to state 10
+-- On INNER shift to state 11
+-- On ID shift to state 12
+-- On BOOL shift to state 15
+-- On ATOMSET shift to state 16
+-- On ATOM shift to state 17
+-- On typ shift to state 19
+-- On located(layout) shift to state 22
+-- On located(atomic_layout) shift to state 24
+-- On layout shift to state 30
+-- On atomic_layout shift to state 31
+
+State 11:
+atomic_layout -> INNER . located(atomic_layout) [ WHERE TYPE STAR RANGLE FUN EOF BAR ]
+-- On OUTER shift to state 9
+-- On LANGLE shift to state 10
+-- On INNER shift to state 11
+-- On ID shift to state 12
+-- On BOOL shift to state 15
+-- On ATOMSET shift to state 16
+-- On ATOM shift to state 17
+-- On typ shift to state 19
+-- On located(atomic_layout) shift to state 20
+-- On atomic_layout shift to state 21
+
+State 12:
+atomic_layout -> ID . COLON typ [ WHERE TYPE STAR RANGLE FUN EOF BAR ]
+typ -> ID . [ WHERE TYPE STAR RANGLE FUN EOF BAR ]
+-- On COLON shift to state 13
+-- On WHERE reduce production typ -> ID 
+-- On TYPE reduce production typ -> ID 
+-- On STAR reduce production typ -> ID 
+-- On RANGLE reduce production typ -> ID 
+-- On FUN reduce production typ -> ID 
+-- On EOF reduce production typ -> ID 
+-- On BAR reduce production typ -> ID 
+
+State 13:
+atomic_layout -> ID COLON . typ [ WHERE TYPE STAR RANGLE FUN EOF BAR ]
+-- On ID shift to state 14
+-- On BOOL shift to state 15
+-- On ATOMSET shift to state 16
+-- On ATOM shift to state 17
+-- On typ shift to state 18
+
+State 14:
+typ -> ID . [ WHERE TYPE STAR RANGLE FUN EOF BAR ]
+-- On WHERE reduce production typ -> ID 
+-- On TYPE reduce production typ -> ID 
+-- On STAR reduce production typ -> ID 
+-- On RANGLE reduce production typ -> ID 
+-- On FUN reduce production typ -> ID 
+-- On EOF reduce production typ -> ID 
+-- On BAR reduce production typ -> ID 
+
+State 15:
+typ -> BOOL . [ WHERE TYPE STAR RANGLE FUN EOF BAR ]
+-- On WHERE reduce production typ -> BOOL 
+-- On TYPE reduce production typ -> BOOL 
+-- On STAR reduce production typ -> BOOL 
+-- On RANGLE reduce production typ -> BOOL 
+-- On FUN reduce production typ -> BOOL 
+-- On EOF reduce production typ -> BOOL 
+-- On BAR reduce production typ -> BOOL 
+
+State 16:
+typ -> ATOMSET . [ WHERE TYPE STAR RANGLE FUN EOF BAR ]
+-- On WHERE reduce production typ -> ATOMSET 
+-- On TYPE reduce production typ -> ATOMSET 
+-- On STAR reduce production typ -> ATOMSET 
+-- On RANGLE reduce production typ -> ATOMSET 
+-- On FUN reduce production typ -> ATOMSET 
+-- On EOF reduce production typ -> ATOMSET 
+-- On BAR reduce production typ -> ATOMSET 
+
+State 17:
+typ -> ATOM . [ WHERE TYPE STAR RANGLE FUN EOF BAR ]
+-- On WHERE reduce production typ -> ATOM 
+-- On TYPE reduce production typ -> ATOM 
+-- On STAR reduce production typ -> ATOM 
+-- On RANGLE reduce production typ -> ATOM 
+-- On FUN reduce production typ -> ATOM 
+-- On EOF reduce production typ -> ATOM 
+-- On BAR reduce production typ -> ATOM 
+
+State 18:
+atomic_layout -> ID COLON typ . [ WHERE TYPE STAR RANGLE FUN EOF BAR ]
+-- On WHERE reduce production atomic_layout -> ID COLON typ 
+-- On TYPE reduce production atomic_layout -> ID COLON typ 
+-- On STAR reduce production atomic_layout -> ID COLON typ 
+-- On RANGLE reduce production atomic_layout -> ID COLON typ 
+-- On FUN reduce production atomic_layout -> ID COLON typ 
+-- On EOF reduce production atomic_layout -> ID COLON typ 
+-- On BAR reduce production atomic_layout -> ID COLON typ 
+
+State 19:
+atomic_layout -> typ . [ WHERE TYPE STAR RANGLE FUN EOF BAR ]
+-- On WHERE reduce production atomic_layout -> typ 
+-- On TYPE reduce production atomic_layout -> typ 
+-- On STAR reduce production atomic_layout -> typ 
+-- On RANGLE reduce production atomic_layout -> typ 
+-- On FUN reduce production atomic_layout -> typ 
+-- On EOF reduce production atomic_layout -> typ 
+-- On BAR reduce production atomic_layout -> typ 
+
+State 20:
+atomic_layout -> INNER located(atomic_layout) . [ WHERE TYPE STAR RANGLE FUN EOF BAR ]
+-- On WHERE reduce production atomic_layout -> INNER located(atomic_layout) 
+-- On TYPE reduce production atomic_layout -> INNER located(atomic_layout) 
+-- On STAR reduce production atomic_layout -> INNER located(atomic_layout) 
+-- On RANGLE reduce production atomic_layout -> INNER located(atomic_layout) 
+-- On FUN reduce production atomic_layout -> INNER located(atomic_layout) 
+-- On EOF reduce production atomic_layout -> INNER located(atomic_layout) 
+-- On BAR reduce production atomic_layout -> INNER located(atomic_layout) 
+
+State 21:
+located(atomic_layout) -> atomic_layout . [ WHERE TYPE STAR RANGLE FUN EOF BAR ]
+-- On WHERE reduce production located(atomic_layout) -> atomic_layout 
+-- On TYPE reduce production located(atomic_layout) -> atomic_layout 
+-- On STAR reduce production located(atomic_layout) -> atomic_layout 
+-- On RANGLE reduce production located(atomic_layout) -> atomic_layout 
+-- On FUN reduce production located(atomic_layout) -> atomic_layout 
+-- On EOF reduce production located(atomic_layout) -> atomic_layout 
+-- On BAR reduce production located(atomic_layout) -> atomic_layout 
+
+State 22:
+atomic_layout -> LANGLE located(layout) . RANGLE [ WHERE TYPE STAR RANGLE FUN EOF BAR ]
+-- On RANGLE shift to state 23
+
+State 23:
+atomic_layout -> LANGLE located(layout) RANGLE . [ WHERE TYPE STAR RANGLE FUN EOF BAR ]
+-- On WHERE reduce production atomic_layout -> LANGLE located(layout) RANGLE 
+-- On TYPE reduce production atomic_layout -> LANGLE located(layout) RANGLE 
+-- On STAR reduce production atomic_layout -> LANGLE located(layout) RANGLE 
+-- On RANGLE reduce production atomic_layout -> LANGLE located(layout) RANGLE 
+-- On FUN reduce production atomic_layout -> LANGLE located(layout) RANGLE 
+-- On EOF reduce production atomic_layout -> LANGLE located(layout) RANGLE 
+-- On BAR reduce production atomic_layout -> LANGLE located(layout) RANGLE 
+
+State 24:
+layout -> located(atomic_layout) . STAR separated_nonempty_list(STAR,located(atomic_layout)) [ WHERE TYPE RANGLE FUN EOF BAR ]
+-- On STAR shift to state 25
+
+State 25:
+layout -> located(atomic_layout) STAR . separated_nonempty_list(STAR,located(atomic_layout)) [ WHERE TYPE RANGLE FUN EOF BAR ]
+-- On OUTER shift to state 9
+-- On LANGLE shift to state 10
+-- On INNER shift to state 11
+-- On ID shift to state 12
+-- On BOOL shift to state 15
+-- On ATOMSET shift to state 16
+-- On ATOM shift to state 17
+-- On typ shift to state 19
+-- On separated_nonempty_list(STAR,located(atomic_layout)) shift to state 26
+-- On located(atomic_layout) shift to state 27
+-- On atomic_layout shift to state 21
+
+State 26:
+layout -> located(atomic_layout) STAR separated_nonempty_list(STAR,located(atomic_layout)) . [ WHERE TYPE RANGLE FUN EOF BAR ]
+-- On WHERE reduce production layout -> located(atomic_layout) STAR separated_nonempty_list(STAR,located(atomic_layout)) 
+-- On TYPE reduce production layout -> located(atomic_layout) STAR separated_nonempty_list(STAR,located(atomic_layout)) 
+-- On RANGLE reduce production layout -> located(atomic_layout) STAR separated_nonempty_list(STAR,located(atomic_layout)) 
+-- On FUN reduce production layout -> located(atomic_layout) STAR separated_nonempty_list(STAR,located(atomic_layout)) 
+-- On EOF reduce production layout -> located(atomic_layout) STAR separated_nonempty_list(STAR,located(atomic_layout)) 
+-- On BAR reduce production layout -> located(atomic_layout) STAR separated_nonempty_list(STAR,located(atomic_layout)) 
+
+State 27:
+separated_nonempty_list(STAR,located(atomic_layout)) -> located(atomic_layout) . [ WHERE TYPE RANGLE FUN EOF BAR ]
+separated_nonempty_list(STAR,located(atomic_layout)) -> located(atomic_layout) . STAR separated_nonempty_list(STAR,located(atomic_layout)) [ WHERE TYPE RANGLE FUN EOF BAR ]
+-- On STAR shift to state 28
+-- On WHERE reduce production separated_nonempty_list(STAR,located(atomic_layout)) -> located(atomic_layout) 
+-- On TYPE reduce production separated_nonempty_list(STAR,located(atomic_layout)) -> located(atomic_layout) 
+-- On RANGLE reduce production separated_nonempty_list(STAR,located(atomic_layout)) -> located(atomic_layout) 
+-- On FUN reduce production separated_nonempty_list(STAR,located(atomic_layout)) -> located(atomic_layout) 
+-- On EOF reduce production separated_nonempty_list(STAR,located(atomic_layout)) -> located(atomic_layout) 
+-- On BAR reduce production separated_nonempty_list(STAR,located(atomic_layout)) -> located(atomic_layout) 
+
+State 28:
+separated_nonempty_list(STAR,located(atomic_layout)) -> located(atomic_layout) STAR . separated_nonempty_list(STAR,located(atomic_layout)) [ WHERE TYPE RANGLE FUN EOF BAR ]
+-- On OUTER shift to state 9
+-- On LANGLE shift to state 10
+-- On INNER shift to state 11
+-- On ID shift to state 12
+-- On BOOL shift to state 15
+-- On ATOMSET shift to state 16
+-- On ATOM shift to state 17
+-- On typ shift to state 19
+-- On separated_nonempty_list(STAR,located(atomic_layout)) shift to state 29
+-- On located(atomic_layout) shift to state 27
+-- On atomic_layout shift to state 21
+
+State 29:
+separated_nonempty_list(STAR,located(atomic_layout)) -> located(atomic_layout) STAR separated_nonempty_list(STAR,located(atomic_layout)) . [ WHERE TYPE RANGLE FUN EOF BAR ]
+-- On WHERE reduce production separated_nonempty_list(STAR,located(atomic_layout)) -> located(atomic_layout) STAR separated_nonempty_list(STAR,located(atomic_layout)) 
+-- On TYPE reduce production separated_nonempty_list(STAR,located(atomic_layout)) -> located(atomic_layout) STAR separated_nonempty_list(STAR,located(atomic_layout)) 
+-- On RANGLE reduce production separated_nonempty_list(STAR,located(atomic_layout)) -> located(atomic_layout) STAR separated_nonempty_list(STAR,located(atomic_layout)) 
+-- On FUN reduce production separated_nonempty_list(STAR,located(atomic_layout)) -> located(atomic_layout) STAR separated_nonempty_list(STAR,located(atomic_layout)) 
+-- On EOF reduce production separated_nonempty_list(STAR,located(atomic_layout)) -> located(atomic_layout) STAR separated_nonempty_list(STAR,located(atomic_layout)) 
+-- On BAR reduce production separated_nonempty_list(STAR,located(atomic_layout)) -> located(atomic_layout) STAR separated_nonempty_list(STAR,located(atomic_layout)) 
+
+State 30:
+located(layout) -> layout . [ RANGLE ]
+-- On RANGLE reduce production located(layout) -> layout 
+
+State 31:
+layout -> atomic_layout . [ WHERE TYPE RANGLE FUN EOF BAR ]
+located(atomic_layout) -> atomic_layout . [ STAR ]
+-- On WHERE reduce production layout -> atomic_layout 
+-- On TYPE reduce production layout -> atomic_layout 
+-- On STAR reduce production located(atomic_layout) -> atomic_layout 
+-- On RANGLE reduce production layout -> atomic_layout 
+-- On FUN reduce production layout -> atomic_layout 
+-- On EOF reduce production layout -> atomic_layout 
+-- On BAR reduce production layout -> atomic_layout 
+
+State 32:
+atomic_layout -> OUTER located(atomic_layout) . [ WHERE TYPE STAR RANGLE FUN EOF BAR ]
+-- On WHERE reduce production atomic_layout -> OUTER located(atomic_layout) 
+-- On TYPE reduce production atomic_layout -> OUTER located(atomic_layout) 
+-- On STAR reduce production atomic_layout -> OUTER located(atomic_layout) 
+-- On RANGLE reduce production atomic_layout -> OUTER located(atomic_layout) 
+-- On FUN reduce production atomic_layout -> OUTER located(atomic_layout) 
+-- On EOF reduce production atomic_layout -> OUTER located(atomic_layout) 
+-- On BAR reduce production atomic_layout -> OUTER located(atomic_layout) 
+
+State 33:
+optional_layout -> OF layout . [ WHERE TYPE FUN EOF BAR ]
+-- On WHERE reduce production optional_layout -> OF layout 
+-- On TYPE reduce production optional_layout -> OF layout 
+-- On FUN reduce production optional_layout -> OF layout 
+-- On EOF reduce production optional_layout -> OF layout 
+-- On BAR reduce production optional_layout -> OF layout 
+
+State 34:
+located(optional_layout) -> optional_layout . [ WHERE TYPE FUN EOF BAR ]
+-- On WHERE reduce production located(optional_layout) -> optional_layout 
+-- On TYPE reduce production located(optional_layout) -> optional_layout 
+-- On FUN reduce production located(optional_layout) -> optional_layout 
+-- On EOF reduce production located(optional_layout) -> optional_layout 
+-- On BAR reduce production located(optional_layout) -> optional_layout 
+
+State 35:
+data_constructor_declaration -> BAR TAG located(optional_layout) . contraintes [ TYPE FUN EOF BAR ]
+-- On WHERE shift to state 36
+-- On list(preceded(WHERE,contrainte)) shift to state 80
+-- On contraintes shift to state 81
+-- On TYPE reduce production list(preceded(WHERE,contrainte)) -> 
+-- On FUN reduce production list(preceded(WHERE,contrainte)) -> 
+-- On EOF reduce production list(preceded(WHERE,contrainte)) -> 
+-- On BAR reduce production list(preceded(WHERE,contrainte)) -> 
+
+State 36:
+list(preceded(WHERE,contrainte)) -> WHERE . contrainte list(preceded(WHERE,contrainte)) [ TYPE PRODUCES FUN EOF DEFEQ BAR ]
+-- On TRUE shift to state 37
+-- On SUPPORT shift to state 38
+-- On OUTER shift to state 39
+-- On LPAR shift to state 40
+-- On INNER shift to state 41
+-- On ID shift to state 42
+-- On FALSE shift to state 43
+-- On EMPTYSET shift to state 44
+-- On BOUND shift to state 45
+-- On BNOT shift to state 46
+-- On set_function shift to state 57
+-- On set_expression shift to state 68
+-- On set_constraint shift to state 74
+-- On contrainte shift to state 75
+-- On boolean_expression shift to state 77
+
+State 37:
+boolean_expression -> TRUE . [ WHERE TYPE RPAR PRODUCES FUN EOF DEFEQ CMPEQ BOR BAR BAND ARROW ]
+-- On WHERE reduce production boolean_expression -> TRUE 
+-- On TYPE reduce production boolean_expression -> TRUE 
+-- On RPAR reduce production boolean_expression -> TRUE 
+-- On PRODUCES reduce production boolean_expression -> TRUE 
+-- On FUN reduce production boolean_expression -> TRUE 
+-- On EOF reduce production boolean_expression -> TRUE 
+-- On DEFEQ reduce production boolean_expression -> TRUE 
+-- On CMPEQ reduce production boolean_expression -> TRUE 
+-- On BOR reduce production boolean_expression -> TRUE 
+-- On BAR reduce production boolean_expression -> TRUE 
+-- On BAND reduce production boolean_expression -> TRUE 
+-- On ARROW reduce production boolean_expression -> TRUE 
+
+State 38:
+set_function -> SUPPORT . [ LPAR ]
+-- On LPAR reduce production set_function -> SUPPORT 
+
+State 39:
+set_function -> OUTER . [ LPAR ]
+-- On LPAR reduce production set_function -> OUTER 
+
+State 40:
+boolean_expression -> LPAR . boolean_expression RPAR [ WHERE TYPE RPAR PRODUCES FUN EOF DEFEQ CMPEQ BOR BAR BAND ARROW ]
+set_expression -> LPAR . set_expression RPAR [ SUBSET SETUNION SETMINUS RPAR DISJOINT CMPEQ ]
+-- On TRUE shift to state 37
+-- On SUPPORT shift to state 38
+-- On OUTER shift to state 39
+-- On LPAR shift to state 40
+-- On INNER shift to state 41
+-- On ID shift to state 42
+-- On FALSE shift to state 43
+-- On EMPTYSET shift to state 44
+-- On BOUND shift to state 45
+-- On BNOT shift to state 46
+-- On set_function shift to state 57
+-- On set_expression shift to state 61
+-- On boolean_expression shift to state 48
+
+State 41:
+set_function -> INNER . [ LPAR ]
+-- On LPAR reduce production set_function -> INNER 
+
+State 42:
+boolean_expression -> ID . [ WHERE TYPE RPAR PRODUCES FUN EOF DEFEQ CMPEQ BOR BAR BAND ARROW ]
+-- On WHERE reduce production boolean_expression -> ID 
+-- On TYPE reduce production boolean_expression -> ID 
+-- On RPAR reduce production boolean_expression -> ID 
+-- On PRODUCES reduce production boolean_expression -> ID 
+-- On FUN reduce production boolean_expression -> ID 
+-- On EOF reduce production boolean_expression -> ID 
+-- On DEFEQ reduce production boolean_expression -> ID 
+-- On CMPEQ reduce production boolean_expression -> ID 
+-- On BOR reduce production boolean_expression -> ID 
+-- On BAR reduce production boolean_expression -> ID 
+-- On BAND reduce production boolean_expression -> ID 
+-- On ARROW reduce production boolean_expression -> ID 
+
+State 43:
+boolean_expression -> FALSE . [ WHERE TYPE RPAR PRODUCES FUN EOF DEFEQ CMPEQ BOR BAR BAND ARROW ]
+-- On WHERE reduce production boolean_expression -> FALSE 
+-- On TYPE reduce production boolean_expression -> FALSE 
+-- On RPAR reduce production boolean_expression -> FALSE 
+-- On PRODUCES reduce production boolean_expression -> FALSE 
+-- On FUN reduce production boolean_expression -> FALSE 
+-- On EOF reduce production boolean_expression -> FALSE 
+-- On DEFEQ reduce production boolean_expression -> FALSE 
+-- On CMPEQ reduce production boolean_expression -> FALSE 
+-- On BOR reduce production boolean_expression -> FALSE 
+-- On BAR reduce production boolean_expression -> FALSE 
+-- On BAND reduce production boolean_expression -> FALSE 
+-- On ARROW reduce production boolean_expression -> FALSE 
+
+State 44:
+set_expression -> EMPTYSET . [ WHERE TYPE SUBSET SETUNION SETMINUS RPAR PRODUCES FUN EOF DISJOINT DEFEQ CMPEQ BAR ]
+-- On WHERE reduce production set_expression -> EMPTYSET 
+-- On TYPE reduce production set_expression -> EMPTYSET 
+-- On SUBSET reduce production set_expression -> EMPTYSET 
+-- On SETUNION reduce production set_expression -> EMPTYSET 
+-- On SETMINUS reduce production set_expression -> EMPTYSET 
+-- On RPAR reduce production set_expression -> EMPTYSET 
+-- On PRODUCES reduce production set_expression -> EMPTYSET 
+-- On FUN reduce production set_expression -> EMPTYSET 
+-- On EOF reduce production set_expression -> EMPTYSET 
+-- On DISJOINT reduce production set_expression -> EMPTYSET 
+-- On DEFEQ reduce production set_expression -> EMPTYSET 
+-- On CMPEQ reduce production set_expression -> EMPTYSET 
+-- On BAR reduce production set_expression -> EMPTYSET 
+
+State 45:
+set_function -> BOUND . [ LPAR ]
+-- On LPAR reduce production set_function -> BOUND 
+
+State 46:
+boolean_expression -> BNOT . boolean_expression [ WHERE TYPE RPAR PRODUCES FUN EOF DEFEQ CMPEQ BOR BAR BAND ARROW ]
+-- On TRUE shift to state 37
+-- On LPAR shift to state 47
+-- On ID shift to state 42
+-- On FALSE shift to state 43
+-- On BNOT shift to state 46
+-- On boolean_expression shift to state 56
+
+State 47:
+boolean_expression -> LPAR . boolean_expression RPAR [ WHERE TYPE RPAR PRODUCES FUN EOF DEFEQ CMPEQ BOR BAR BAND ARROW ]
+-- On TRUE shift to state 37
+-- On LPAR shift to state 47
+-- On ID shift to state 42
+-- On FALSE shift to state 43
+-- On BNOT shift to state 46
+-- On boolean_expression shift to state 48
+
+State 48:
+boolean_expression -> boolean_expression . BAND boolean_expression [ RPAR CMPEQ BOR BAND ]
+boolean_expression -> boolean_expression . CMPEQ boolean_expression [ RPAR CMPEQ BOR BAND ]
+boolean_expression -> boolean_expression . BOR boolean_expression [ RPAR CMPEQ BOR BAND ]
+boolean_expression -> LPAR boolean_expression . RPAR [ WHERE TYPE RPAR PRODUCES FUN EOF DEFEQ CMPEQ BOR BAR BAND ARROW ]
+-- On RPAR shift to state 49
+-- On CMPEQ shift to state 50
+-- On BOR shift to state 52
+-- On BAND shift to state 54
+
+State 49:
+boolean_expression -> LPAR boolean_expression RPAR . [ WHERE TYPE RPAR PRODUCES FUN EOF DEFEQ CMPEQ BOR BAR BAND ARROW ]
+-- On WHERE reduce production boolean_expression -> LPAR boolean_expression RPAR 
+-- On TYPE reduce production boolean_expression -> LPAR boolean_expression RPAR 
+-- On RPAR reduce production boolean_expression -> LPAR boolean_expression RPAR 
+-- On PRODUCES reduce production boolean_expression -> LPAR boolean_expression RPAR 
+-- On FUN reduce production boolean_expression -> LPAR boolean_expression RPAR 
+-- On EOF reduce production boolean_expression -> LPAR boolean_expression RPAR 
+-- On DEFEQ reduce production boolean_expression -> LPAR boolean_expression RPAR 
+-- On CMPEQ reduce production boolean_expression -> LPAR boolean_expression RPAR 
+-- On BOR reduce production boolean_expression -> LPAR boolean_expression RPAR 
+-- On BAR reduce production boolean_expression -> LPAR boolean_expression RPAR 
+-- On BAND reduce production boolean_expression -> LPAR boolean_expression RPAR 
+-- On ARROW reduce production boolean_expression -> LPAR boolean_expression RPAR 
+
+State 50:
+boolean_expression -> boolean_expression CMPEQ . boolean_expression [ WHERE TYPE RPAR PRODUCES FUN EOF DEFEQ CMPEQ BOR BAR BAND ARROW ]
+-- On TRUE shift to state 37
+-- On LPAR shift to state 47
+-- On ID shift to state 42
+-- On FALSE shift to state 43
+-- On BNOT shift to state 46
+-- On boolean_expression shift to state 51
+
+State 51:
+boolean_expression -> boolean_expression . BAND boolean_expression [ WHERE TYPE RPAR PRODUCES FUN EOF DEFEQ CMPEQ BOR BAR BAND ARROW ]
+boolean_expression -> boolean_expression . CMPEQ boolean_expression [ WHERE TYPE RPAR PRODUCES FUN EOF DEFEQ CMPEQ BOR BAR BAND ARROW ]
+boolean_expression -> boolean_expression CMPEQ boolean_expression . [ WHERE TYPE RPAR PRODUCES FUN EOF DEFEQ CMPEQ BOR BAR BAND ARROW ]
+boolean_expression -> boolean_expression . BOR boolean_expression [ WHERE TYPE RPAR PRODUCES FUN EOF DEFEQ CMPEQ BOR BAR BAND ARROW ]
+-- On WHERE reduce production boolean_expression -> boolean_expression CMPEQ boolean_expression 
+-- On TYPE reduce production boolean_expression -> boolean_expression CMPEQ boolean_expression 
+-- On RPAR reduce production boolean_expression -> boolean_expression CMPEQ boolean_expression 
+-- On PRODUCES reduce production boolean_expression -> boolean_expression CMPEQ boolean_expression 
+-- On FUN reduce production boolean_expression -> boolean_expression CMPEQ boolean_expression 
+-- On EOF reduce production boolean_expression -> boolean_expression CMPEQ boolean_expression 
+-- On DEFEQ reduce production boolean_expression -> boolean_expression CMPEQ boolean_expression 
+-- On BOR reduce production boolean_expression -> boolean_expression CMPEQ boolean_expression 
+-- On BAR reduce production boolean_expression -> boolean_expression CMPEQ boolean_expression 
+-- On BAND reduce production boolean_expression -> boolean_expression CMPEQ boolean_expression 
+-- On ARROW reduce production boolean_expression -> boolean_expression CMPEQ boolean_expression 
+
+State 52:
+boolean_expression -> boolean_expression BOR . boolean_expression [ WHERE TYPE RPAR PRODUCES FUN EOF DEFEQ CMPEQ BOR BAR BAND ARROW ]
+-- On TRUE shift to state 37
+-- On LPAR shift to state 47
+-- On ID shift to state 42
+-- On FALSE shift to state 43
+-- On BNOT shift to state 46
+-- On boolean_expression shift to state 53
+
+State 53:
+boolean_expression -> boolean_expression . BAND boolean_expression [ WHERE TYPE RPAR PRODUCES FUN EOF DEFEQ CMPEQ BOR BAR BAND ARROW ]
+boolean_expression -> boolean_expression . CMPEQ boolean_expression [ WHERE TYPE RPAR PRODUCES FUN EOF DEFEQ CMPEQ BOR BAR BAND ARROW ]
+boolean_expression -> boolean_expression . BOR boolean_expression [ WHERE TYPE RPAR PRODUCES FUN EOF DEFEQ CMPEQ BOR BAR BAND ARROW ]
+boolean_expression -> boolean_expression BOR boolean_expression . [ WHERE TYPE RPAR PRODUCES FUN EOF DEFEQ CMPEQ BOR BAR BAND ARROW ]
+-- On CMPEQ shift to state 50
+-- On BAND shift to state 54
+-- On WHERE reduce production boolean_expression -> boolean_expression BOR boolean_expression 
+-- On TYPE reduce production boolean_expression -> boolean_expression BOR boolean_expression 
+-- On RPAR reduce production boolean_expression -> boolean_expression BOR boolean_expression 
+-- On PRODUCES reduce production boolean_expression -> boolean_expression BOR boolean_expression 
+-- On FUN reduce production boolean_expression -> boolean_expression BOR boolean_expression 
+-- On EOF reduce production boolean_expression -> boolean_expression BOR boolean_expression 
+-- On DEFEQ reduce production boolean_expression -> boolean_expression BOR boolean_expression 
+-- On BOR reduce production boolean_expression -> boolean_expression BOR boolean_expression 
+-- On BAR reduce production boolean_expression -> boolean_expression BOR boolean_expression 
+-- On ARROW reduce production boolean_expression -> boolean_expression BOR boolean_expression 
+
+State 54:
+boolean_expression -> boolean_expression BAND . boolean_expression [ WHERE TYPE RPAR PRODUCES FUN EOF DEFEQ CMPEQ BOR BAR BAND ARROW ]
+-- On TRUE shift to state 37
+-- On LPAR shift to state 47
+-- On ID shift to state 42
+-- On FALSE shift to state 43
+-- On BNOT shift to state 46
+-- On boolean_expression shift to state 55
+
+State 55:
+boolean_expression -> boolean_expression . BAND boolean_expression [ WHERE TYPE RPAR PRODUCES FUN EOF DEFEQ CMPEQ BOR BAR BAND ARROW ]
+boolean_expression -> boolean_expression BAND boolean_expression . [ WHERE TYPE RPAR PRODUCES FUN EOF DEFEQ CMPEQ BOR BAR BAND ARROW ]
+boolean_expression -> boolean_expression . CMPEQ boolean_expression [ WHERE TYPE RPAR PRODUCES FUN EOF DEFEQ CMPEQ BOR BAR BAND ARROW ]
+boolean_expression -> boolean_expression . BOR boolean_expression [ WHERE TYPE RPAR PRODUCES FUN EOF DEFEQ CMPEQ BOR BAR BAND ARROW ]
+-- On CMPEQ shift to state 50
+-- On WHERE reduce production boolean_expression -> boolean_expression BAND boolean_expression 
+-- On TYPE reduce production boolean_expression -> boolean_expression BAND boolean_expression 
+-- On RPAR reduce production boolean_expression -> boolean_expression BAND boolean_expression 
+-- On PRODUCES reduce production boolean_expression -> boolean_expression BAND boolean_expression 
+-- On FUN reduce production boolean_expression -> boolean_expression BAND boolean_expression 
+-- On EOF reduce production boolean_expression -> boolean_expression BAND boolean_expression 
+-- On DEFEQ reduce production boolean_expression -> boolean_expression BAND boolean_expression 
+-- On BOR reduce production boolean_expression -> boolean_expression BAND boolean_expression 
+-- On BAR reduce production boolean_expression -> boolean_expression BAND boolean_expression 
+-- On BAND reduce production boolean_expression -> boolean_expression BAND boolean_expression 
+-- On ARROW reduce production boolean_expression -> boolean_expression BAND boolean_expression 
+
+State 56:
+boolean_expression -> boolean_expression . BAND boolean_expression [ WHERE TYPE RPAR PRODUCES FUN EOF DEFEQ CMPEQ BOR BAR BAND ARROW ]
+boolean_expression -> boolean_expression . CMPEQ boolean_expression [ WHERE TYPE RPAR PRODUCES FUN EOF DEFEQ CMPEQ BOR BAR BAND ARROW ]
+boolean_expression -> boolean_expression . BOR boolean_expression [ WHERE TYPE RPAR PRODUCES FUN EOF DEFEQ CMPEQ BOR BAR BAND ARROW ]
+boolean_expression -> BNOT boolean_expression . [ WHERE TYPE RPAR PRODUCES FUN EOF DEFEQ CMPEQ BOR BAR BAND ARROW ]
+-- On CMPEQ shift to state 50
+-- On WHERE reduce production boolean_expression -> BNOT boolean_expression 
+-- On TYPE reduce production boolean_expression -> BNOT boolean_expression 
+-- On RPAR reduce production boolean_expression -> BNOT boolean_expression 
+-- On PRODUCES reduce production boolean_expression -> BNOT boolean_expression 
+-- On FUN reduce production boolean_expression -> BNOT boolean_expression 
+-- On EOF reduce production boolean_expression -> BNOT boolean_expression 
+-- On DEFEQ reduce production boolean_expression -> BNOT boolean_expression 
+-- On BOR reduce production boolean_expression -> BNOT boolean_expression 
+-- On BAR reduce production boolean_expression -> BNOT boolean_expression 
+-- On BAND reduce production boolean_expression -> BNOT boolean_expression 
+-- On ARROW reduce production boolean_expression -> BNOT boolean_expression 
+
+State 57:
+set_expression -> set_function . LPAR ID RPAR [ WHERE TYPE SUBSET SETUNION SETMINUS RPAR PRODUCES FUN EOF DISJOINT DEFEQ CMPEQ BAR ]
+-- On LPAR shift to state 58
+
+State 58:
+set_expression -> set_function LPAR . ID RPAR [ WHERE TYPE SUBSET SETUNION SETMINUS RPAR PRODUCES FUN EOF DISJOINT DEFEQ CMPEQ BAR ]
+-- On ID shift to state 59
+
+State 59:
+set_expression -> set_function LPAR ID . RPAR [ WHERE TYPE SUBSET SETUNION SETMINUS RPAR PRODUCES FUN EOF DISJOINT DEFEQ CMPEQ BAR ]
+-- On RPAR shift to state 60
+
+State 60:
+set_expression -> set_function LPAR ID RPAR . [ WHERE TYPE SUBSET SETUNION SETMINUS RPAR PRODUCES FUN EOF DISJOINT DEFEQ CMPEQ BAR ]
+-- On WHERE reduce production set_expression -> set_function LPAR ID RPAR 
+-- On TYPE reduce production set_expression -> set_function LPAR ID RPAR 
+-- On SUBSET reduce production set_expression -> set_function LPAR ID RPAR 
+-- On SETUNION reduce production set_expression -> set_function LPAR ID RPAR 
+-- On SETMINUS reduce production set_expression -> set_function LPAR ID RPAR 
+-- On RPAR reduce production set_expression -> set_function LPAR ID RPAR 
+-- On PRODUCES reduce production set_expression -> set_function LPAR ID RPAR 
+-- On FUN reduce production set_expression -> set_function LPAR ID RPAR 
+-- On EOF reduce production set_expression -> set_function LPAR ID RPAR 
+-- On DISJOINT reduce production set_expression -> set_function LPAR ID RPAR 
+-- On DEFEQ reduce production set_expression -> set_function LPAR ID RPAR 
+-- On CMPEQ reduce production set_expression -> set_function LPAR ID RPAR 
+-- On BAR reduce production set_expression -> set_function LPAR ID RPAR 
+
+State 61:
+set_expression -> set_expression . SETUNION set_expression [ SETUNION SETMINUS RPAR ]
+set_expression -> set_expression . SETMINUS set_expression [ SETUNION SETMINUS RPAR ]
+set_expression -> LPAR set_expression . RPAR [ WHERE TYPE SUBSET SETUNION SETMINUS RPAR PRODUCES FUN EOF DISJOINT DEFEQ CMPEQ BAR ]
+-- On SETUNION shift to state 62
+-- On SETMINUS shift to state 65
+-- On RPAR shift to state 67
+
+State 62:
+set_expression -> set_expression SETUNION . set_expression [ WHERE TYPE SUBSET SETUNION SETMINUS RPAR PRODUCES FUN EOF DISJOINT DEFEQ CMPEQ BAR ]
+-- On SUPPORT shift to state 38
+-- On OUTER shift to state 39
+-- On LPAR shift to state 63
+-- On INNER shift to state 41
+-- On EMPTYSET shift to state 44
+-- On BOUND shift to state 45
+-- On set_function shift to state 57
+-- On set_expression shift to state 64
+
+State 63:
+set_expression -> LPAR . set_expression RPAR [ WHERE TYPE SUBSET SETUNION SETMINUS RPAR PRODUCES FUN EOF DISJOINT DEFEQ CMPEQ BAR ]
+-- On SUPPORT shift to state 38
+-- On OUTER shift to state 39
+-- On LPAR shift to state 63
+-- On INNER shift to state 41
+-- On EMPTYSET shift to state 44
+-- On BOUND shift to state 45
+-- On set_function shift to state 57
+-- On set_expression shift to state 61
+
+State 64:
+set_expression -> set_expression . SETUNION set_expression [ WHERE TYPE SUBSET SETUNION SETMINUS RPAR PRODUCES FUN EOF DISJOINT DEFEQ CMPEQ BAR ]
+set_expression -> set_expression SETUNION set_expression . [ WHERE TYPE SUBSET SETUNION SETMINUS RPAR PRODUCES FUN EOF DISJOINT DEFEQ CMPEQ BAR ]
+set_expression -> set_expression . SETMINUS set_expression [ WHERE TYPE SUBSET SETUNION SETMINUS RPAR PRODUCES FUN EOF DISJOINT DEFEQ CMPEQ BAR ]
+-- On SETMINUS shift to state 65
+-- On WHERE reduce production set_expression -> set_expression SETUNION set_expression 
+-- On TYPE reduce production set_expression -> set_expression SETUNION set_expression 
+-- On SUBSET reduce production set_expression -> set_expression SETUNION set_expression 
+-- On SETUNION reduce production set_expression -> set_expression SETUNION set_expression 
+-- On RPAR reduce production set_expression -> set_expression SETUNION set_expression 
+-- On PRODUCES reduce production set_expression -> set_expression SETUNION set_expression 
+-- On FUN reduce production set_expression -> set_expression SETUNION set_expression 
+-- On EOF reduce production set_expression -> set_expression SETUNION set_expression 
+-- On DISJOINT reduce production set_expression -> set_expression SETUNION set_expression 
+-- On DEFEQ reduce production set_expression -> set_expression SETUNION set_expression 
+-- On CMPEQ reduce production set_expression -> set_expression SETUNION set_expression 
+-- On BAR reduce production set_expression -> set_expression SETUNION set_expression 
+
+State 65:
+set_expression -> set_expression SETMINUS . set_expression [ WHERE TYPE SUBSET SETUNION SETMINUS RPAR PRODUCES FUN EOF DISJOINT DEFEQ CMPEQ BAR ]
+-- On SUPPORT shift to state 38
+-- On OUTER shift to state 39
+-- On LPAR shift to state 63
+-- On INNER shift to state 41
+-- On EMPTYSET shift to state 44
+-- On BOUND shift to state 45
+-- On set_function shift to state 57
+-- On set_expression shift to state 66
+
+State 66:
+set_expression -> set_expression . SETUNION set_expression [ WHERE TYPE SUBSET SETUNION SETMINUS RPAR PRODUCES FUN EOF DISJOINT DEFEQ CMPEQ BAR ]
+set_expression -> set_expression . SETMINUS set_expression [ WHERE TYPE SUBSET SETUNION SETMINUS RPAR PRODUCES FUN EOF DISJOINT DEFEQ CMPEQ BAR ]
+set_expression -> set_expression SETMINUS set_expression . [ WHERE TYPE SUBSET SETUNION SETMINUS RPAR PRODUCES FUN EOF DISJOINT DEFEQ CMPEQ BAR ]
+-- On WHERE reduce production set_expression -> set_expression SETMINUS set_expression 
+-- On TYPE reduce production set_expression -> set_expression SETMINUS set_expression 
+-- On SUBSET reduce production set_expression -> set_expression SETMINUS set_expression 
+-- On SETUNION reduce production set_expression -> set_expression SETMINUS set_expression 
+-- On RPAR reduce production set_expression -> set_expression SETMINUS set_expression 
+-- On PRODUCES reduce production set_expression -> set_expression SETMINUS set_expression 
+-- On FUN reduce production set_expression -> set_expression SETMINUS set_expression 
+-- On EOF reduce production set_expression -> set_expression SETMINUS set_expression 
+-- On DISJOINT reduce production set_expression -> set_expression SETMINUS set_expression 
+-- On DEFEQ reduce production set_expression -> set_expression SETMINUS set_expression 
+-- On CMPEQ reduce production set_expression -> set_expression SETMINUS set_expression 
+-- On BAR reduce production set_expression -> set_expression SETMINUS set_expression 
+
+State 67:
+set_expression -> LPAR set_expression RPAR . [ WHERE TYPE SUBSET SETUNION SETMINUS RPAR PRODUCES FUN EOF DISJOINT DEFEQ CMPEQ BAR ]
+-- On WHERE reduce production set_expression -> LPAR set_expression RPAR 
+-- On TYPE reduce production set_expression -> LPAR set_expression RPAR 
+-- On SUBSET reduce production set_expression -> LPAR set_expression RPAR 
+-- On SETUNION reduce production set_expression -> LPAR set_expression RPAR 
+-- On SETMINUS reduce production set_expression -> LPAR set_expression RPAR 
+-- On RPAR reduce production set_expression -> LPAR set_expression RPAR 
+-- On PRODUCES reduce production set_expression -> LPAR set_expression RPAR 
+-- On FUN reduce production set_expression -> LPAR set_expression RPAR 
+-- On EOF reduce production set_expression -> LPAR set_expression RPAR 
+-- On DISJOINT reduce production set_expression -> LPAR set_expression RPAR 
+-- On DEFEQ reduce production set_expression -> LPAR set_expression RPAR 
+-- On CMPEQ reduce production set_expression -> LPAR set_expression RPAR 
+-- On BAR reduce production set_expression -> LPAR set_expression RPAR 
+
+State 68:
+set_constraint -> set_expression . set_operator set_expression [ WHERE TYPE PRODUCES FUN EOF DEFEQ BAR ]
+set_expression -> set_expression . SETUNION set_expression [ SUBSET SETUNION SETMINUS DISJOINT CMPEQ ]
+set_expression -> set_expression . SETMINUS set_expression [ SUBSET SETUNION SETMINUS DISJOINT CMPEQ ]
+-- On SUBSET shift to state 69
+-- On SETUNION shift to state 62
+-- On SETMINUS shift to state 65
+-- On DISJOINT shift to state 70
+-- On CMPEQ shift to state 71
+-- On set_operator shift to state 72
+
+State 69:
+set_operator -> SUBSET . [ SUPPORT OUTER LPAR INNER EMPTYSET BOUND ]
+-- On SUPPORT reduce production set_operator -> SUBSET 
+-- On OUTER reduce production set_operator -> SUBSET 
+-- On LPAR reduce production set_operator -> SUBSET 
+-- On INNER reduce production set_operator -> SUBSET 
+-- On EMPTYSET reduce production set_operator -> SUBSET 
+-- On BOUND reduce production set_operator -> SUBSET 
+
+State 70:
+set_operator -> DISJOINT . [ SUPPORT OUTER LPAR INNER EMPTYSET BOUND ]
+-- On SUPPORT reduce production set_operator -> DISJOINT 
+-- On OUTER reduce production set_operator -> DISJOINT 
+-- On LPAR reduce production set_operator -> DISJOINT 
+-- On INNER reduce production set_operator -> DISJOINT 
+-- On EMPTYSET reduce production set_operator -> DISJOINT 
+-- On BOUND reduce production set_operator -> DISJOINT 
+
+State 71:
+set_operator -> CMPEQ . [ SUPPORT OUTER LPAR INNER EMPTYSET BOUND ]
+-- On SUPPORT reduce production set_operator -> CMPEQ 
+-- On OUTER reduce production set_operator -> CMPEQ 
+-- On LPAR reduce production set_operator -> CMPEQ 
+-- On INNER reduce production set_operator -> CMPEQ 
+-- On EMPTYSET reduce production set_operator -> CMPEQ 
+-- On BOUND reduce production set_operator -> CMPEQ 
+
+State 72:
+set_constraint -> set_expression set_operator . set_expression [ WHERE TYPE PRODUCES FUN EOF DEFEQ BAR ]
+-- On SUPPORT shift to state 38
+-- On OUTER shift to state 39
+-- On LPAR shift to state 63
+-- On INNER shift to state 41
+-- On EMPTYSET shift to state 44
+-- On BOUND shift to state 45
+-- On set_function shift to state 57
+-- On set_expression shift to state 73
+
+State 73:
+set_constraint -> set_expression set_operator set_expression . [ WHERE TYPE PRODUCES FUN EOF DEFEQ BAR ]
+set_expression -> set_expression . SETUNION set_expression [ WHERE TYPE SETUNION SETMINUS PRODUCES FUN EOF DEFEQ BAR ]
+set_expression -> set_expression . SETMINUS set_expression [ WHERE TYPE SETUNION SETMINUS PRODUCES FUN EOF DEFEQ BAR ]
+-- On SETUNION shift to state 62
+-- On SETMINUS shift to state 65
+-- On WHERE reduce production set_constraint -> set_expression set_operator set_expression 
+-- On TYPE reduce production set_constraint -> set_expression set_operator set_expression 
+-- On PRODUCES reduce production set_constraint -> set_expression set_operator set_expression 
+-- On FUN reduce production set_constraint -> set_expression set_operator set_expression 
+-- On EOF reduce production set_constraint -> set_expression set_operator set_expression 
+-- On DEFEQ reduce production set_constraint -> set_expression set_operator set_expression 
+-- On BAR reduce production set_constraint -> set_expression set_operator set_expression 
+
+State 74:
+contrainte -> set_constraint . [ WHERE TYPE PRODUCES FUN EOF DEFEQ BAR ]
+-- On WHERE reduce production contrainte -> set_constraint 
+-- On TYPE reduce production contrainte -> set_constraint 
+-- On PRODUCES reduce production contrainte -> set_constraint 
+-- On FUN reduce production contrainte -> set_constraint 
+-- On EOF reduce production contrainte -> set_constraint 
+-- On DEFEQ reduce production contrainte -> set_constraint 
+-- On BAR reduce production contrainte -> set_constraint 
+
+State 75:
+list(preceded(WHERE,contrainte)) -> WHERE contrainte . list(preceded(WHERE,contrainte)) [ TYPE PRODUCES FUN EOF DEFEQ BAR ]
+-- On WHERE shift to state 36
+-- On list(preceded(WHERE,contrainte)) shift to state 76
+-- On TYPE reduce production list(preceded(WHERE,contrainte)) -> 
+-- On PRODUCES reduce production list(preceded(WHERE,contrainte)) -> 
+-- On FUN reduce production list(preceded(WHERE,contrainte)) -> 
+-- On EOF reduce production list(preceded(WHERE,contrainte)) -> 
+-- On DEFEQ reduce production list(preceded(WHERE,contrainte)) -> 
+-- On BAR reduce production list(preceded(WHERE,contrainte)) -> 
+
+State 76:
+list(preceded(WHERE,contrainte)) -> WHERE contrainte list(preceded(WHERE,contrainte)) . [ TYPE PRODUCES FUN EOF DEFEQ BAR ]
+-- On TYPE reduce production list(preceded(WHERE,contrainte)) -> WHERE contrainte list(preceded(WHERE,contrainte)) 
+-- On PRODUCES reduce production list(preceded(WHERE,contrainte)) -> WHERE contrainte list(preceded(WHERE,contrainte)) 
+-- On FUN reduce production list(preceded(WHERE,contrainte)) -> WHERE contrainte list(preceded(WHERE,contrainte)) 
+-- On EOF reduce production list(preceded(WHERE,contrainte)) -> WHERE contrainte list(preceded(WHERE,contrainte)) 
+-- On DEFEQ reduce production list(preceded(WHERE,contrainte)) -> WHERE contrainte list(preceded(WHERE,contrainte)) 
+-- On BAR reduce production list(preceded(WHERE,contrainte)) -> WHERE contrainte list(preceded(WHERE,contrainte)) 
+
+State 77:
+boolean_expression -> boolean_expression . BAND boolean_expression [ WHERE TYPE PRODUCES FUN EOF DEFEQ CMPEQ BOR BAR BAND ARROW ]
+boolean_expression -> boolean_expression . CMPEQ boolean_expression [ WHERE TYPE PRODUCES FUN EOF DEFEQ CMPEQ BOR BAR BAND ARROW ]
+boolean_expression -> boolean_expression . BOR boolean_expression [ WHERE TYPE PRODUCES FUN EOF DEFEQ CMPEQ BOR BAR BAND ARROW ]
+contrainte -> boolean_expression . [ WHERE TYPE PRODUCES FUN EOF DEFEQ BAR ]
+contrainte -> boolean_expression . ARROW set_constraint [ WHERE TYPE PRODUCES FUN EOF DEFEQ BAR ]
+-- On CMPEQ shift to state 50
+-- On BOR shift to state 52
+-- On BAND shift to state 54
+-- On ARROW shift to state 78
+-- On WHERE reduce production contrainte -> boolean_expression 
+-- On TYPE reduce production contrainte -> boolean_expression 
+-- On PRODUCES reduce production contrainte -> boolean_expression 
+-- On FUN reduce production contrainte -> boolean_expression 
+-- On EOF reduce production contrainte -> boolean_expression 
+-- On DEFEQ reduce production contrainte -> boolean_expression 
+-- On BAR reduce production contrainte -> boolean_expression 
+
+State 78:
+contrainte -> boolean_expression ARROW . set_constraint [ WHERE TYPE PRODUCES FUN EOF DEFEQ BAR ]
+-- On SUPPORT shift to state 38
+-- On OUTER shift to state 39
+-- On LPAR shift to state 63
+-- On INNER shift to state 41
+-- On EMPTYSET shift to state 44
+-- On BOUND shift to state 45
+-- On set_function shift to state 57
+-- On set_expression shift to state 68
+-- On set_constraint shift to state 79
+
+State 79:
+contrainte -> boolean_expression ARROW set_constraint . [ WHERE TYPE PRODUCES FUN EOF DEFEQ BAR ]
+-- On WHERE reduce production contrainte -> boolean_expression ARROW set_constraint 
+-- On TYPE reduce production contrainte -> boolean_expression ARROW set_constraint 
+-- On PRODUCES reduce production contrainte -> boolean_expression ARROW set_constraint 
+-- On FUN reduce production contrainte -> boolean_expression ARROW set_constraint 
+-- On EOF reduce production contrainte -> boolean_expression ARROW set_constraint 
+-- On DEFEQ reduce production contrainte -> boolean_expression ARROW set_constraint 
+-- On BAR reduce production contrainte -> boolean_expression ARROW set_constraint 
+
+State 80:
+contraintes -> list(preceded(WHERE,contrainte)) . [ TYPE PRODUCES FUN EOF DEFEQ BAR ]
+-- On TYPE reduce production contraintes -> list(preceded(WHERE,contrainte)) 
+-- On PRODUCES reduce production contraintes -> list(preceded(WHERE,contrainte)) 
+-- On FUN reduce production contraintes -> list(preceded(WHERE,contrainte)) 
+-- On EOF reduce production contraintes -> list(preceded(WHERE,contrainte)) 
+-- On DEFEQ reduce production contraintes -> list(preceded(WHERE,contrainte)) 
+-- On BAR reduce production contraintes -> list(preceded(WHERE,contrainte)) 
+
+State 81:
+data_constructor_declaration -> BAR TAG located(optional_layout) contraintes . [ TYPE FUN EOF BAR ]
+-- On TYPE reduce production data_constructor_declaration -> BAR TAG located(optional_layout) contraintes 
+-- On FUN reduce production data_constructor_declaration -> BAR TAG located(optional_layout) contraintes 
+-- On EOF reduce production data_constructor_declaration -> BAR TAG located(optional_layout) contraintes 
+-- On BAR reduce production data_constructor_declaration -> BAR TAG located(optional_layout) contraintes 
+
+State 82:
+definition -> TYPE ID kind DEFEQ list(data_constructor_declaration) . [ TYPE FUN EOF ]
+-- On TYPE reduce production definition -> TYPE ID kind DEFEQ list(data_constructor_declaration) 
+-- On FUN reduce production definition -> TYPE ID kind DEFEQ list(data_constructor_declaration) 
+-- On EOF reduce production definition -> TYPE ID kind DEFEQ list(data_constructor_declaration) 
+
+State 83:
+list(data_constructor_declaration) -> data_constructor_declaration . list(data_constructor_declaration) [ TYPE FUN EOF ]
+-- On BAR shift to state 6
+-- On list(data_constructor_declaration) shift to state 84
+-- On data_constructor_declaration shift to state 83
+-- On TYPE reduce production list(data_constructor_declaration) -> 
+-- On FUN reduce production list(data_constructor_declaration) -> 
+-- On EOF reduce production list(data_constructor_declaration) -> 
+
+State 84:
+list(data_constructor_declaration) -> data_constructor_declaration list(data_constructor_declaration) . [ TYPE FUN EOF ]
+-- On TYPE reduce production list(data_constructor_declaration) -> data_constructor_declaration list(data_constructor_declaration) 
+-- On FUN reduce production list(data_constructor_declaration) -> data_constructor_declaration list(data_constructor_declaration) 
+-- On EOF reduce production list(data_constructor_declaration) -> data_constructor_declaration list(data_constructor_declaration) 
+
+State 85:
+definition -> FUN . ID specification DEFEQ expression [ TYPE FUN EOF ]
+-- On ID shift to state 86
+
+State 86:
+definition -> FUN ID . specification DEFEQ expression [ TYPE FUN EOF ]
+-- On ACCEPTS shift to state 87
+-- On specification shift to state 98
+
+State 87:
+specification -> ACCEPTS . variables contraintes PRODUCES variables contraintes [ EOF DEFEQ ]
+-- On NOTHING shift to state 88
+-- On ID shift to state 89
+-- On variables shift to state 92
+-- On separated_nonempty_list(COMMA,ID) shift to state 97
+
+State 88:
+variables -> NOTHING . [ WHERE PRODUCES IN EOF DEFEQ ]
+-- On WHERE reduce production variables -> NOTHING 
+-- On PRODUCES reduce production variables -> NOTHING 
+-- On IN reduce production variables -> NOTHING 
+-- On EOF reduce production variables -> NOTHING 
+-- On DEFEQ reduce production variables -> NOTHING 
+
+State 89:
+separated_nonempty_list(COMMA,ID) -> ID . [ WHERE PRODUCES IN EOF DEFEQ ]
+separated_nonempty_list(COMMA,ID) -> ID . COMMA separated_nonempty_list(COMMA,ID) [ WHERE PRODUCES IN EOF DEFEQ ]
+-- On COMMA shift to state 90
+-- On WHERE reduce production separated_nonempty_list(COMMA,ID) -> ID 
+-- On PRODUCES reduce production separated_nonempty_list(COMMA,ID) -> ID 
+-- On IN reduce production separated_nonempty_list(COMMA,ID) -> ID 
+-- On EOF reduce production separated_nonempty_list(COMMA,ID) -> ID 
+-- On DEFEQ reduce production separated_nonempty_list(COMMA,ID) -> ID 
+
+State 90:
+separated_nonempty_list(COMMA,ID) -> ID COMMA . separated_nonempty_list(COMMA,ID) [ WHERE PRODUCES IN EOF DEFEQ ]
+-- On ID shift to state 89
+-- On separated_nonempty_list(COMMA,ID) shift to state 91
+
+State 91:
+separated_nonempty_list(COMMA,ID) -> ID COMMA separated_nonempty_list(COMMA,ID) . [ WHERE PRODUCES IN EOF DEFEQ ]
+-- On WHERE reduce production separated_nonempty_list(COMMA,ID) -> ID COMMA separated_nonempty_list(COMMA,ID) 
+-- On PRODUCES reduce production separated_nonempty_list(COMMA,ID) -> ID COMMA separated_nonempty_list(COMMA,ID) 
+-- On IN reduce production separated_nonempty_list(COMMA,ID) -> ID COMMA separated_nonempty_list(COMMA,ID) 
+-- On EOF reduce production separated_nonempty_list(COMMA,ID) -> ID COMMA separated_nonempty_list(COMMA,ID) 
+-- On DEFEQ reduce production separated_nonempty_list(COMMA,ID) -> ID COMMA separated_nonempty_list(COMMA,ID) 
+
+State 92:
+specification -> ACCEPTS variables . contraintes PRODUCES variables contraintes [ EOF DEFEQ ]
+-- On WHERE shift to state 36
+-- On list(preceded(WHERE,contrainte)) shift to state 80
+-- On contraintes shift to state 93
+-- On PRODUCES reduce production list(preceded(WHERE,contrainte)) -> 
+
+State 93:
+specification -> ACCEPTS variables contraintes . PRODUCES variables contraintes [ EOF DEFEQ ]
+-- On PRODUCES shift to state 94
+
+State 94:
+specification -> ACCEPTS variables contraintes PRODUCES . variables contraintes [ EOF DEFEQ ]
+-- On NOTHING shift to state 88
+-- On ID shift to state 89
+-- On variables shift to state 95
+-- On separated_nonempty_list(COMMA,ID) shift to state 97
+
+State 95:
+specification -> ACCEPTS variables contraintes PRODUCES variables . contraintes [ EOF DEFEQ ]
+-- On WHERE shift to state 36
+-- On list(preceded(WHERE,contrainte)) shift to state 80
+-- On contraintes shift to state 96
+-- On EOF reduce production list(preceded(WHERE,contrainte)) -> 
+-- On DEFEQ reduce production list(preceded(WHERE,contrainte)) -> 
+
+State 96:
+specification -> ACCEPTS variables contraintes PRODUCES variables contraintes . [ EOF DEFEQ ]
+-- On EOF reduce production specification -> ACCEPTS variables contraintes PRODUCES variables contraintes 
+-- On DEFEQ reduce production specification -> ACCEPTS variables contraintes PRODUCES variables contraintes 
+
+State 97:
+variables -> separated_nonempty_list(COMMA,ID) . [ WHERE PRODUCES IN EOF DEFEQ ]
+-- On WHERE reduce production variables -> separated_nonempty_list(COMMA,ID) 
+-- On PRODUCES reduce production variables -> separated_nonempty_list(COMMA,ID) 
+-- On IN reduce production variables -> separated_nonempty_list(COMMA,ID) 
+-- On EOF reduce production variables -> separated_nonempty_list(COMMA,ID) 
+-- On DEFEQ reduce production variables -> separated_nonempty_list(COMMA,ID) 
+
+State 98:
+definition -> FUN ID specification . DEFEQ expression [ TYPE FUN EOF ]
+-- On DEFEQ shift to state 99
+
+State 99:
+definition -> FUN ID specification DEFEQ . expression [ TYPE FUN EOF ]
+-- On TRUE shift to state 100
+-- On TAG shift to state 101
+-- On SUPPORT shift to state 103
+-- On OUTER shift to state 104
+-- On NOTHING shift to state 109
+-- On NEXT shift to state 105
+-- On MEMBER shift to state 107
+-- On LPAR shift to state 108
+-- On LET shift to state 110
+-- On INNER shift to state 128
+-- On IF shift to state 129
+-- On ID shift to state 130
+-- On FRESH shift to state 131
+-- On FALSE shift to state 134
+-- On FAIL shift to state 135
+-- On CASE shift to state 136
+-- On BOUND shift to state 137
+-- On BNOT shift to state 138
+-- On ABSURD shift to state 142
+-- On raw_expression shift to state 143
+-- On raw_atomic_expression shift to state 144
+-- On prefix_callee shift to state 140
+-- On located(raw_expression) shift to state 145
+-- On located(raw_atomic_expression) shift to state 146
+-- On expression shift to state 192
+-- On atomic_expression shift to state 149
+
+State 100:
+raw_atomic_expression -> TRUE . [ TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND ]
+-- On TYPE reduce production raw_atomic_expression -> TRUE 
+-- On THEN reduce production raw_atomic_expression -> TRUE 
+-- On RPAR reduce production raw_atomic_expression -> TRUE 
+-- On OF reduce production raw_atomic_expression -> TRUE 
+-- On IN reduce production raw_atomic_expression -> TRUE 
+-- On FUN reduce production raw_atomic_expression -> TRUE 
+-- On EOF reduce production raw_atomic_expression -> TRUE 
+-- On END reduce production raw_atomic_expression -> TRUE 
+-- On ELSE reduce production raw_atomic_expression -> TRUE 
+-- On COMMA reduce production raw_atomic_expression -> TRUE 
+-- On CMPEQ reduce production raw_atomic_expression -> TRUE 
+-- On BOR reduce production raw_atomic_expression -> TRUE 
+-- On BAR reduce production raw_atomic_expression -> TRUE 
+-- On BAND reduce production raw_atomic_expression -> TRUE 
+
+State 101:
+raw_atomic_expression -> TAG . lenient_parenthesized_tuple(atomic_expression) [ TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND ]
+-- On LPAR shift to state 102
+-- On lenient_parenthesized_tuple(atomic_expression) shift to state 191
+-- On TYPE reduce production lenient_parenthesized_tuple(atomic_expression) -> 
+-- On THEN reduce production lenient_parenthesized_tuple(atomic_expression) -> 
+-- On RPAR reduce production lenient_parenthesized_tuple(atomic_expression) -> 
+-- On OF reduce production lenient_parenthesized_tuple(atomic_expression) -> 
+-- On IN reduce production lenient_parenthesized_tuple(atomic_expression) -> 
+-- On FUN reduce production lenient_parenthesized_tuple(atomic_expression) -> 
+-- On EOF reduce production lenient_parenthesized_tuple(atomic_expression) -> 
+-- On END reduce production lenient_parenthesized_tuple(atomic_expression) -> 
+-- On ELSE reduce production lenient_parenthesized_tuple(atomic_expression) -> 
+-- On COMMA reduce production lenient_parenthesized_tuple(atomic_expression) -> 
+-- On CMPEQ reduce production lenient_parenthesized_tuple(atomic_expression) -> 
+-- On BOR reduce production lenient_parenthesized_tuple(atomic_expression) -> 
+-- On BAR reduce production lenient_parenthesized_tuple(atomic_expression) -> 
+-- On BAND reduce production lenient_parenthesized_tuple(atomic_expression) -> 
+
+State 102:
+lenient_parenthesized_tuple(atomic_expression) -> LPAR . separated_nonempty_list(COMMA,atomic_expression) RPAR [ TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND ]
+-- On TRUE shift to state 100
+-- On TAG shift to state 101
+-- On SUPPORT shift to state 103
+-- On OUTER shift to state 104
+-- On NEXT shift to state 105
+-- On MEMBER shift to state 107
+-- On LPAR shift to state 108
+-- On INNER shift to state 128
+-- On ID shift to state 130
+-- On FALSE shift to state 134
+-- On CASE shift to state 136
+-- On BOUND shift to state 137
+-- On BNOT shift to state 138
+-- On separated_nonempty_list(COMMA,atomic_expression) shift to state 189
+-- On raw_atomic_expression shift to state 139
+-- On prefix_callee shift to state 140
+-- On located(raw_atomic_expression) shift to state 146
+-- On atomic_expression shift to state 152
+
+State 103:
+prefix_callee -> SUPPORT . [ LPAR ]
+-- On LPAR reduce production prefix_callee -> SUPPORT 
+
+State 104:
+prefix_callee -> OUTER . [ LPAR ]
+-- On LPAR reduce production prefix_callee -> OUTER 
+
+State 105:
+raw_atomic_expression -> NEXT . CASE [ TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND ]
+-- On CASE shift to state 106
+
+State 106:
+raw_atomic_expression -> NEXT CASE . [ TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND ]
+-- On TYPE reduce production raw_atomic_expression -> NEXT CASE 
+-- On THEN reduce production raw_atomic_expression -> NEXT CASE 
+-- On RPAR reduce production raw_atomic_expression -> NEXT CASE 
+-- On OF reduce production raw_atomic_expression -> NEXT CASE 
+-- On IN reduce production raw_atomic_expression -> NEXT CASE 
+-- On FUN reduce production raw_atomic_expression -> NEXT CASE 
+-- On EOF reduce production raw_atomic_expression -> NEXT CASE 
+-- On END reduce production raw_atomic_expression -> NEXT CASE 
+-- On ELSE reduce production raw_atomic_expression -> NEXT CASE 
+-- On COMMA reduce production raw_atomic_expression -> NEXT CASE 
+-- On CMPEQ reduce production raw_atomic_expression -> NEXT CASE 
+-- On BOR reduce production raw_atomic_expression -> NEXT CASE 
+-- On BAR reduce production raw_atomic_expression -> NEXT CASE 
+-- On BAND reduce production raw_atomic_expression -> NEXT CASE 
+
+State 107:
+prefix_callee -> MEMBER . [ LPAR ]
+-- On LPAR reduce production prefix_callee -> MEMBER 
+
+State 108:
+raw_atomic_expression -> LPAR . raw_expression RPAR [ TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND ]
+-- On TRUE shift to state 100
+-- On TAG shift to state 101
+-- On SUPPORT shift to state 103
+-- On OUTER shift to state 104
+-- On NOTHING shift to state 109
+-- On NEXT shift to state 105
+-- On MEMBER shift to state 107
+-- On LPAR shift to state 108
+-- On LET shift to state 110
+-- On INNER shift to state 128
+-- On IF shift to state 129
+-- On ID shift to state 130
+-- On FRESH shift to state 131
+-- On FALSE shift to state 134
+-- On FAIL shift to state 135
+-- On CASE shift to state 136
+-- On BOUND shift to state 137
+-- On BNOT shift to state 138
+-- On ABSURD shift to state 142
+-- On raw_expression shift to state 187
+-- On raw_atomic_expression shift to state 144
+-- On prefix_callee shift to state 140
+-- On located(raw_atomic_expression) shift to state 146
+-- On atomic_expression shift to state 149
+
+State 109:
+raw_expression -> NOTHING . [ TYPE THEN RPAR OF IN FUN EOF END ELSE BAR ]
+-- On TYPE reduce production raw_expression -> NOTHING 
+-- On THEN reduce production raw_expression -> NOTHING 
+-- On RPAR reduce production raw_expression -> NOTHING 
+-- On OF reduce production raw_expression -> NOTHING 
+-- On IN reduce production raw_expression -> NOTHING 
+-- On FUN reduce production raw_expression -> NOTHING 
+-- On EOF reduce production raw_expression -> NOTHING 
+-- On END reduce production raw_expression -> NOTHING 
+-- On ELSE reduce production raw_expression -> NOTHING 
+-- On BAR reduce production raw_expression -> NOTHING 
+
+State 110:
+raw_expression -> LET . variables contraintes DEFEQ expression IN expression [ TYPE THEN RPAR OF IN FUN EOF END ELSE BAR ]
+raw_expression -> LET . TAG lenient_parenthesized_tuple(pattern) DEFEQ expression IN expression [ TYPE THEN RPAR OF IN FUN EOF END ELSE BAR ]
+-- On TAG shift to state 111
+-- On NOTHING shift to state 88
+-- On ID shift to state 89
+-- On variables shift to state 181
+-- On separated_nonempty_list(COMMA,ID) shift to state 97
+
+State 111:
+raw_expression -> LET TAG . lenient_parenthesized_tuple(pattern) DEFEQ expression IN expression [ TYPE THEN RPAR OF IN FUN EOF END ELSE BAR ]
+-- On LPAR shift to state 112
+-- On lenient_parenthesized_tuple(pattern) shift to state 126
+-- On DEFEQ reduce production lenient_parenthesized_tuple(pattern) -> 
+
+State 112:
+lenient_parenthesized_tuple(pattern) -> LPAR . separated_nonempty_list(COMMA,pattern) RPAR [ RPAR DEFEQ COMMA ARROW ]
+-- On WILD shift to state 113
+-- On TRUE shift to state 114
+-- On TAG shift to state 115
+-- On ID shift to state 117
+-- On FALSE shift to state 118
+-- On separated_nonempty_list(COMMA,pattern) shift to state 119
+-- On raw_pattern shift to state 121
+-- On pattern shift to state 122
+-- On located(raw_pattern) shift to state 125
+
+State 113:
+raw_pattern -> WILD . [ RPAR COMMA ARROW ]
+-- On RPAR reduce production raw_pattern -> WILD 
+-- On COMMA reduce production raw_pattern -> WILD 
+-- On ARROW reduce production raw_pattern -> WILD 
+
+State 114:
+raw_pattern -> TRUE . [ RPAR COMMA ARROW ]
+-- On RPAR reduce production raw_pattern -> TRUE 
+-- On COMMA reduce production raw_pattern -> TRUE 
+-- On ARROW reduce production raw_pattern -> TRUE 
+
+State 115:
+raw_pattern -> TAG . lenient_parenthesized_tuple(pattern) [ RPAR COMMA ARROW ]
+-- On LPAR shift to state 112
+-- On lenient_parenthesized_tuple(pattern) shift to state 116
+-- On RPAR reduce production lenient_parenthesized_tuple(pattern) -> 
+-- On COMMA reduce production lenient_parenthesized_tuple(pattern) -> 
+-- On ARROW reduce production lenient_parenthesized_tuple(pattern) -> 
+
+State 116:
+raw_pattern -> TAG lenient_parenthesized_tuple(pattern) . [ RPAR COMMA ARROW ]
+-- On RPAR reduce production raw_pattern -> TAG lenient_parenthesized_tuple(pattern) 
+-- On COMMA reduce production raw_pattern -> TAG lenient_parenthesized_tuple(pattern) 
+-- On ARROW reduce production raw_pattern -> TAG lenient_parenthesized_tuple(pattern) 
+
+State 117:
+raw_pattern -> ID . [ RPAR COMMA ARROW ]
+-- On RPAR reduce production raw_pattern -> ID 
+-- On COMMA reduce production raw_pattern -> ID 
+-- On ARROW reduce production raw_pattern -> ID 
+
+State 118:
+raw_pattern -> FALSE . [ RPAR COMMA ARROW ]
+-- On RPAR reduce production raw_pattern -> FALSE 
+-- On COMMA reduce production raw_pattern -> FALSE 
+-- On ARROW reduce production raw_pattern -> FALSE 
+
+State 119:
+lenient_parenthesized_tuple(pattern) -> LPAR separated_nonempty_list(COMMA,pattern) . RPAR [ RPAR DEFEQ COMMA ARROW ]
+-- On RPAR shift to state 120
+
+State 120:
+lenient_parenthesized_tuple(pattern) -> LPAR separated_nonempty_list(COMMA,pattern) RPAR . [ RPAR DEFEQ COMMA ARROW ]
+-- On RPAR reduce production lenient_parenthesized_tuple(pattern) -> LPAR separated_nonempty_list(COMMA,pattern) RPAR 
+-- On DEFEQ reduce production lenient_parenthesized_tuple(pattern) -> LPAR separated_nonempty_list(COMMA,pattern) RPAR 
+-- On COMMA reduce production lenient_parenthesized_tuple(pattern) -> LPAR separated_nonempty_list(COMMA,pattern) RPAR 
+-- On ARROW reduce production lenient_parenthesized_tuple(pattern) -> LPAR separated_nonempty_list(COMMA,pattern) RPAR 
+
+State 121:
+located(raw_pattern) -> raw_pattern . [ RPAR COMMA ARROW ]
+-- On RPAR reduce production located(raw_pattern) -> raw_pattern 
+-- On COMMA reduce production located(raw_pattern) -> raw_pattern 
+-- On ARROW reduce production located(raw_pattern) -> raw_pattern 
+
+State 122:
+separated_nonempty_list(COMMA,pattern) -> pattern . [ RPAR ARROW ]
+separated_nonempty_list(COMMA,pattern) -> pattern . COMMA separated_nonempty_list(COMMA,pattern) [ RPAR ARROW ]
+-- On COMMA shift to state 123
+-- On RPAR reduce production separated_nonempty_list(COMMA,pattern) -> pattern 
+-- On ARROW reduce production separated_nonempty_list(COMMA,pattern) -> pattern 
+
+State 123:
+separated_nonempty_list(COMMA,pattern) -> pattern COMMA . separated_nonempty_list(COMMA,pattern) [ RPAR ARROW ]
+-- On WILD shift to state 113
+-- On TRUE shift to state 114
+-- On TAG shift to state 115
+-- On ID shift to state 117
+-- On FALSE shift to state 118
+-- On separated_nonempty_list(COMMA,pattern) shift to state 124
+-- On raw_pattern shift to state 121
+-- On pattern shift to state 122
+-- On located(raw_pattern) shift to state 125
+
+State 124:
+separated_nonempty_list(COMMA,pattern) -> pattern COMMA separated_nonempty_list(COMMA,pattern) . [ RPAR ARROW ]
+-- On RPAR reduce production separated_nonempty_list(COMMA,pattern) -> pattern COMMA separated_nonempty_list(COMMA,pattern) 
+-- On ARROW reduce production separated_nonempty_list(COMMA,pattern) -> pattern COMMA separated_nonempty_list(COMMA,pattern) 
+
+State 125:
+pattern -> located(raw_pattern) . [ RPAR COMMA ARROW ]
+-- On RPAR reduce production pattern -> located(raw_pattern) 
+-- On COMMA reduce production pattern -> located(raw_pattern) 
+-- On ARROW reduce production pattern -> located(raw_pattern) 
+
+State 126:
+raw_expression -> LET TAG lenient_parenthesized_tuple(pattern) . DEFEQ expression IN expression [ TYPE THEN RPAR OF IN FUN EOF END ELSE BAR ]
+-- On DEFEQ shift to state 127
+
+State 127:
+raw_expression -> LET TAG lenient_parenthesized_tuple(pattern) DEFEQ . expression IN expression [ TYPE THEN RPAR OF IN FUN EOF END ELSE BAR ]
+-- On TRUE shift to state 100
+-- On TAG shift to state 101
+-- On SUPPORT shift to state 103
+-- On OUTER shift to state 104
+-- On NOTHING shift to state 109
+-- On NEXT shift to state 105
+-- On MEMBER shift to state 107
+-- On LPAR shift to state 108
+-- On LET shift to state 110
+-- On INNER shift to state 128
+-- On IF shift to state 129
+-- On ID shift to state 130
+-- On FRESH shift to state 131
+-- On FALSE shift to state 134
+-- On FAIL shift to state 135
+-- On CASE shift to state 136
+-- On BOUND shift to state 137
+-- On BNOT shift to state 138
+-- On ABSURD shift to state 142
+-- On raw_expression shift to state 143
+-- On raw_atomic_expression shift to state 144
+-- On prefix_callee shift to state 140
+-- On located(raw_expression) shift to state 145
+-- On located(raw_atomic_expression) shift to state 146
+-- On expression shift to state 178
+-- On atomic_expression shift to state 149
+
+State 128:
+prefix_callee -> INNER . [ LPAR ]
+-- On LPAR reduce production prefix_callee -> INNER 
+
+State 129:
+raw_expression -> IF . expression THEN expression ELSE expression [ TYPE THEN RPAR OF IN FUN EOF END ELSE BAR ]
+-- On TRUE shift to state 100
+-- On TAG shift to state 101
+-- On SUPPORT shift to state 103
+-- On OUTER shift to state 104
+-- On NOTHING shift to state 109
+-- On NEXT shift to state 105
+-- On MEMBER shift to state 107
+-- On LPAR shift to state 108
+-- On LET shift to state 110
+-- On INNER shift to state 128
+-- On IF shift to state 129
+-- On ID shift to state 130
+-- On FRESH shift to state 131
+-- On FALSE shift to state 134
+-- On FAIL shift to state 135
+-- On CASE shift to state 136
+-- On BOUND shift to state 137
+-- On BNOT shift to state 138
+-- On ABSURD shift to state 142
+-- On raw_expression shift to state 143
+-- On raw_atomic_expression shift to state 144
+-- On prefix_callee shift to state 140
+-- On located(raw_expression) shift to state 145
+-- On located(raw_atomic_expression) shift to state 146
+-- On expression shift to state 173
+-- On atomic_expression shift to state 149
+
+State 130:
+prefix_callee -> ID . [ LPAR ]
+raw_atomic_expression -> ID . [ TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND ]
+-- On TYPE reduce production raw_atomic_expression -> ID 
+-- On THEN reduce production raw_atomic_expression -> ID 
+-- On RPAR reduce production raw_atomic_expression -> ID 
+-- On OF reduce production raw_atomic_expression -> ID 
+-- On LPAR reduce production prefix_callee -> ID 
+-- On IN reduce production raw_atomic_expression -> ID 
+-- On FUN reduce production raw_atomic_expression -> ID 
+-- On EOF reduce production raw_atomic_expression -> ID 
+-- On END reduce production raw_atomic_expression -> ID 
+-- On ELSE reduce production raw_atomic_expression -> ID 
+-- On COMMA reduce production raw_atomic_expression -> ID 
+-- On CMPEQ reduce production raw_atomic_expression -> ID 
+-- On BOR reduce production raw_atomic_expression -> ID 
+-- On BAR reduce production raw_atomic_expression -> ID 
+-- On BAND reduce production raw_atomic_expression -> ID 
+
+State 131:
+raw_expression -> FRESH . variables IN expression [ TYPE THEN RPAR OF IN FUN EOF END ELSE BAR ]
+-- On NOTHING shift to state 88
+-- On ID shift to state 89
+-- On variables shift to state 132
+-- On separated_nonempty_list(COMMA,ID) shift to state 97
+
+State 132:
+raw_expression -> FRESH variables . IN expression [ TYPE THEN RPAR OF IN FUN EOF END ELSE BAR ]
+-- On IN shift to state 133
+
+State 133:
+raw_expression -> FRESH variables IN . expression [ TYPE THEN RPAR OF IN FUN EOF END ELSE BAR ]
+-- On TRUE shift to state 100
+-- On TAG shift to state 101
+-- On SUPPORT shift to state 103
+-- On OUTER shift to state 104
+-- On NOTHING shift to state 109
+-- On NEXT shift to state 105
+-- On MEMBER shift to state 107
+-- On LPAR shift to state 108
+-- On LET shift to state 110
+-- On INNER shift to state 128
+-- On IF shift to state 129
+-- On ID shift to state 130
+-- On FRESH shift to state 131
+-- On FALSE shift to state 134
+-- On FAIL shift to state 135
+-- On CASE shift to state 136
+-- On BOUND shift to state 137
+-- On BNOT shift to state 138
+-- On ABSURD shift to state 142
+-- On raw_expression shift to state 143
+-- On raw_atomic_expression shift to state 144
+-- On prefix_callee shift to state 140
+-- On located(raw_expression) shift to state 145
+-- On located(raw_atomic_expression) shift to state 146
+-- On expression shift to state 172
+-- On atomic_expression shift to state 149
+
+State 134:
+raw_atomic_expression -> FALSE . [ TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND ]
+-- On TYPE reduce production raw_atomic_expression -> FALSE 
+-- On THEN reduce production raw_atomic_expression -> FALSE 
+-- On RPAR reduce production raw_atomic_expression -> FALSE 
+-- On OF reduce production raw_atomic_expression -> FALSE 
+-- On IN reduce production raw_atomic_expression -> FALSE 
+-- On FUN reduce production raw_atomic_expression -> FALSE 
+-- On EOF reduce production raw_atomic_expression -> FALSE 
+-- On END reduce production raw_atomic_expression -> FALSE 
+-- On ELSE reduce production raw_atomic_expression -> FALSE 
+-- On COMMA reduce production raw_atomic_expression -> FALSE 
+-- On CMPEQ reduce production raw_atomic_expression -> FALSE 
+-- On BOR reduce production raw_atomic_expression -> FALSE 
+-- On BAR reduce production raw_atomic_expression -> FALSE 
+-- On BAND reduce production raw_atomic_expression -> FALSE 
+
+State 135:
+raw_expression -> FAIL . [ TYPE THEN RPAR OF IN FUN EOF END ELSE BAR ]
+-- On TYPE reduce production raw_expression -> FAIL 
+-- On THEN reduce production raw_expression -> FAIL 
+-- On RPAR reduce production raw_expression -> FAIL 
+-- On OF reduce production raw_expression -> FAIL 
+-- On IN reduce production raw_expression -> FAIL 
+-- On FUN reduce production raw_expression -> FAIL 
+-- On EOF reduce production raw_expression -> FAIL 
+-- On END reduce production raw_expression -> FAIL 
+-- On ELSE reduce production raw_expression -> FAIL 
+-- On BAR reduce production raw_expression -> FAIL 
+
+State 136:
+raw_atomic_expression -> CASE . expression OF nonempty_list(branch) END [ TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND ]
+-- On TRUE shift to state 100
+-- On TAG shift to state 101
+-- On SUPPORT shift to state 103
+-- On OUTER shift to state 104
+-- On NOTHING shift to state 109
+-- On NEXT shift to state 105
+-- On MEMBER shift to state 107
+-- On LPAR shift to state 108
+-- On LET shift to state 110
+-- On INNER shift to state 128
+-- On IF shift to state 129
+-- On ID shift to state 130
+-- On FRESH shift to state 131
+-- On FALSE shift to state 134
+-- On FAIL shift to state 135
+-- On CASE shift to state 136
+-- On BOUND shift to state 137
+-- On BNOT shift to state 138
+-- On ABSURD shift to state 142
+-- On raw_expression shift to state 143
+-- On raw_atomic_expression shift to state 144
+-- On prefix_callee shift to state 140
+-- On located(raw_expression) shift to state 145
+-- On located(raw_atomic_expression) shift to state 146
+-- On expression shift to state 162
+-- On atomic_expression shift to state 149
+
+State 137:
+prefix_callee -> BOUND . [ LPAR ]
+-- On LPAR reduce production prefix_callee -> BOUND 
+
+State 138:
+raw_atomic_expression -> BNOT . atomic_expression [ TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND ]
+-- On TRUE shift to state 100
+-- On TAG shift to state 101
+-- On SUPPORT shift to state 103
+-- On OUTER shift to state 104
+-- On NEXT shift to state 105
+-- On MEMBER shift to state 107
+-- On LPAR shift to state 108
+-- On INNER shift to state 128
+-- On ID shift to state 130
+-- On FALSE shift to state 134
+-- On CASE shift to state 136
+-- On BOUND shift to state 137
+-- On BNOT shift to state 138
+-- On raw_atomic_expression shift to state 139
+-- On prefix_callee shift to state 140
+-- On located(raw_atomic_expression) shift to state 146
+-- On atomic_expression shift to state 161
+
+State 139:
+located(raw_atomic_expression) -> raw_atomic_expression . [ TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND ]
+-- On TYPE reduce production located(raw_atomic_expression) -> raw_atomic_expression 
+-- On THEN reduce production located(raw_atomic_expression) -> raw_atomic_expression 
+-- On RPAR reduce production located(raw_atomic_expression) -> raw_atomic_expression 
+-- On OF reduce production located(raw_atomic_expression) -> raw_atomic_expression 
+-- On IN reduce production located(raw_atomic_expression) -> raw_atomic_expression 
+-- On FUN reduce production located(raw_atomic_expression) -> raw_atomic_expression 
+-- On EOF reduce production located(raw_atomic_expression) -> raw_atomic_expression 
+-- On END reduce production located(raw_atomic_expression) -> raw_atomic_expression 
+-- On ELSE reduce production located(raw_atomic_expression) -> raw_atomic_expression 
+-- On COMMA reduce production located(raw_atomic_expression) -> raw_atomic_expression 
+-- On CMPEQ reduce production located(raw_atomic_expression) -> raw_atomic_expression 
+-- On BOR reduce production located(raw_atomic_expression) -> raw_atomic_expression 
+-- On BAR reduce production located(raw_atomic_expression) -> raw_atomic_expression 
+-- On BAND reduce production located(raw_atomic_expression) -> raw_atomic_expression 
+
+State 140:
+raw_atomic_expression -> prefix_callee . LPAR expression RPAR [ TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND ]
+-- On LPAR shift to state 141
+
+State 141:
+raw_atomic_expression -> prefix_callee LPAR . expression RPAR [ TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND ]
+-- On TRUE shift to state 100
+-- On TAG shift to state 101
+-- On SUPPORT shift to state 103
+-- On OUTER shift to state 104
+-- On NOTHING shift to state 109
+-- On NEXT shift to state 105
+-- On MEMBER shift to state 107
+-- On LPAR shift to state 108
+-- On LET shift to state 110
+-- On INNER shift to state 128
+-- On IF shift to state 129
+-- On ID shift to state 130
+-- On FRESH shift to state 131
+-- On FALSE shift to state 134
+-- On FAIL shift to state 135
+-- On CASE shift to state 136
+-- On BOUND shift to state 137
+-- On BNOT shift to state 138
+-- On ABSURD shift to state 142
+-- On raw_expression shift to state 143
+-- On raw_atomic_expression shift to state 144
+-- On prefix_callee shift to state 140
+-- On located(raw_expression) shift to state 145
+-- On located(raw_atomic_expression) shift to state 146
+-- On expression shift to state 147
+-- On atomic_expression shift to state 149
+
+State 142:
+raw_expression -> ABSURD . [ TYPE THEN RPAR OF IN FUN EOF END ELSE BAR ]
+-- On TYPE reduce production raw_expression -> ABSURD 
+-- On THEN reduce production raw_expression -> ABSURD 
+-- On RPAR reduce production raw_expression -> ABSURD 
+-- On OF reduce production raw_expression -> ABSURD 
+-- On IN reduce production raw_expression -> ABSURD 
+-- On FUN reduce production raw_expression -> ABSURD 
+-- On EOF reduce production raw_expression -> ABSURD 
+-- On END reduce production raw_expression -> ABSURD 
+-- On ELSE reduce production raw_expression -> ABSURD 
+-- On BAR reduce production raw_expression -> ABSURD 
+
+State 143:
+located(raw_expression) -> raw_expression . [ TYPE THEN RPAR OF IN FUN EOF END ELSE BAR ]
+-- On TYPE reduce production located(raw_expression) -> raw_expression 
+-- On THEN reduce production located(raw_expression) -> raw_expression 
+-- On RPAR reduce production located(raw_expression) -> raw_expression 
+-- On OF reduce production located(raw_expression) -> raw_expression 
+-- On IN reduce production located(raw_expression) -> raw_expression 
+-- On FUN reduce production located(raw_expression) -> raw_expression 
+-- On EOF reduce production located(raw_expression) -> raw_expression 
+-- On END reduce production located(raw_expression) -> raw_expression 
+-- On ELSE reduce production located(raw_expression) -> raw_expression 
+-- On BAR reduce production located(raw_expression) -> raw_expression 
+
+State 144:
+located(raw_atomic_expression) -> raw_atomic_expression . [ COMMA CMPEQ BOR BAND ]
+raw_expression -> raw_atomic_expression . [ TYPE THEN RPAR OF IN FUN EOF END ELSE BAR ]
+-- On TYPE reduce production raw_expression -> raw_atomic_expression 
+-- On THEN reduce production raw_expression -> raw_atomic_expression 
+-- On RPAR reduce production raw_expression -> raw_atomic_expression 
+-- On OF reduce production raw_expression -> raw_atomic_expression 
+-- On IN reduce production raw_expression -> raw_atomic_expression 
+-- On FUN reduce production raw_expression -> raw_atomic_expression 
+-- On EOF reduce production raw_expression -> raw_atomic_expression 
+-- On END reduce production raw_expression -> raw_atomic_expression 
+-- On ELSE reduce production raw_expression -> raw_atomic_expression 
+-- On COMMA reduce production located(raw_atomic_expression) -> raw_atomic_expression 
+-- On CMPEQ reduce production located(raw_atomic_expression) -> raw_atomic_expression 
+-- On BOR reduce production located(raw_atomic_expression) -> raw_atomic_expression 
+-- On BAR reduce production raw_expression -> raw_atomic_expression 
+-- On BAND reduce production located(raw_atomic_expression) -> raw_atomic_expression 
+
+State 145:
+expression -> located(raw_expression) . [ TYPE THEN RPAR OF IN FUN EOF END ELSE BAR ]
+-- On TYPE reduce production expression -> located(raw_expression) 
+-- On THEN reduce production expression -> located(raw_expression) 
+-- On RPAR reduce production expression -> located(raw_expression) 
+-- On OF reduce production expression -> located(raw_expression) 
+-- On IN reduce production expression -> located(raw_expression) 
+-- On FUN reduce production expression -> located(raw_expression) 
+-- On EOF reduce production expression -> located(raw_expression) 
+-- On END reduce production expression -> located(raw_expression) 
+-- On ELSE reduce production expression -> located(raw_expression) 
+-- On BAR reduce production expression -> located(raw_expression) 
+
+State 146:
+atomic_expression -> located(raw_atomic_expression) . [ TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND ]
+-- On TYPE reduce production atomic_expression -> located(raw_atomic_expression) 
+-- On THEN reduce production atomic_expression -> located(raw_atomic_expression) 
+-- On RPAR reduce production atomic_expression -> located(raw_atomic_expression) 
+-- On OF reduce production atomic_expression -> located(raw_atomic_expression) 
+-- On IN reduce production atomic_expression -> located(raw_atomic_expression) 
+-- On FUN reduce production atomic_expression -> located(raw_atomic_expression) 
+-- On EOF reduce production atomic_expression -> located(raw_atomic_expression) 
+-- On END reduce production atomic_expression -> located(raw_atomic_expression) 
+-- On ELSE reduce production atomic_expression -> located(raw_atomic_expression) 
+-- On COMMA reduce production atomic_expression -> located(raw_atomic_expression) 
+-- On CMPEQ reduce production atomic_expression -> located(raw_atomic_expression) 
+-- On BOR reduce production atomic_expression -> located(raw_atomic_expression) 
+-- On BAR reduce production atomic_expression -> located(raw_atomic_expression) 
+-- On BAND reduce production atomic_expression -> located(raw_atomic_expression) 
+
+State 147:
+raw_atomic_expression -> prefix_callee LPAR expression . RPAR [ TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND ]
+-- On RPAR shift to state 148
+
+State 148:
+raw_atomic_expression -> prefix_callee LPAR expression RPAR . [ TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND ]
+-- On TYPE reduce production raw_atomic_expression -> prefix_callee LPAR expression RPAR 
+-- On THEN reduce production raw_atomic_expression -> prefix_callee LPAR expression RPAR 
+-- On RPAR reduce production raw_atomic_expression -> prefix_callee LPAR expression RPAR 
+-- On OF reduce production raw_atomic_expression -> prefix_callee LPAR expression RPAR 
+-- On IN reduce production raw_atomic_expression -> prefix_callee LPAR expression RPAR 
+-- On FUN reduce production raw_atomic_expression -> prefix_callee LPAR expression RPAR 
+-- On EOF reduce production raw_atomic_expression -> prefix_callee LPAR expression RPAR 
+-- On END reduce production raw_atomic_expression -> prefix_callee LPAR expression RPAR 
+-- On ELSE reduce production raw_atomic_expression -> prefix_callee LPAR expression RPAR 
+-- On COMMA reduce production raw_atomic_expression -> prefix_callee LPAR expression RPAR 
+-- On CMPEQ reduce production raw_atomic_expression -> prefix_callee LPAR expression RPAR 
+-- On BOR reduce production raw_atomic_expression -> prefix_callee LPAR expression RPAR 
+-- On BAR reduce production raw_atomic_expression -> prefix_callee LPAR expression RPAR 
+-- On BAND reduce production raw_atomic_expression -> prefix_callee LPAR expression RPAR 
+
+State 149:
+raw_atomic_expression -> atomic_expression . CMPEQ atomic_expression [ TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND ]
+raw_atomic_expression -> atomic_expression . BAND atomic_expression [ TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND ]
+raw_atomic_expression -> atomic_expression . BOR atomic_expression [ TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND ]
+raw_expression -> atomic_expression . COMMA separated_nonempty_list(COMMA,atomic_expression) [ TYPE THEN RPAR OF IN FUN EOF END ELSE BAR ]
+-- On COMMA shift to state 150
+-- On CMPEQ shift to state 155
+-- On BOR shift to state 157
+-- On BAND shift to state 159
+
+State 150:
+raw_expression -> atomic_expression COMMA . separated_nonempty_list(COMMA,atomic_expression) [ TYPE THEN RPAR OF IN FUN EOF END ELSE BAR ]
+-- On TRUE shift to state 100
+-- On TAG shift to state 101
+-- On SUPPORT shift to state 103
+-- On OUTER shift to state 104
+-- On NEXT shift to state 105
+-- On MEMBER shift to state 107
+-- On LPAR shift to state 108
+-- On INNER shift to state 128
+-- On ID shift to state 130
+-- On FALSE shift to state 134
+-- On CASE shift to state 136
+-- On BOUND shift to state 137
+-- On BNOT shift to state 138
+-- On separated_nonempty_list(COMMA,atomic_expression) shift to state 151
+-- On raw_atomic_expression shift to state 139
+-- On prefix_callee shift to state 140
+-- On located(raw_atomic_expression) shift to state 146
+-- On atomic_expression shift to state 152
+
+State 151:
+raw_expression -> atomic_expression COMMA separated_nonempty_list(COMMA,atomic_expression) . [ TYPE THEN RPAR OF IN FUN EOF END ELSE BAR ]
+-- On TYPE reduce production raw_expression -> atomic_expression COMMA separated_nonempty_list(COMMA,atomic_expression) 
+-- On THEN reduce production raw_expression -> atomic_expression COMMA separated_nonempty_list(COMMA,atomic_expression) 
+-- On RPAR reduce production raw_expression -> atomic_expression COMMA separated_nonempty_list(COMMA,atomic_expression) 
+-- On OF reduce production raw_expression -> atomic_expression COMMA separated_nonempty_list(COMMA,atomic_expression) 
+-- On IN reduce production raw_expression -> atomic_expression COMMA separated_nonempty_list(COMMA,atomic_expression) 
+-- On FUN reduce production raw_expression -> atomic_expression COMMA separated_nonempty_list(COMMA,atomic_expression) 
+-- On EOF reduce production raw_expression -> atomic_expression COMMA separated_nonempty_list(COMMA,atomic_expression) 
+-- On END reduce production raw_expression -> atomic_expression COMMA separated_nonempty_list(COMMA,atomic_expression) 
+-- On ELSE reduce production raw_expression -> atomic_expression COMMA separated_nonempty_list(COMMA,atomic_expression) 
+-- On BAR reduce production raw_expression -> atomic_expression COMMA separated_nonempty_list(COMMA,atomic_expression) 
+
+State 152:
+raw_atomic_expression -> atomic_expression . CMPEQ atomic_expression [ TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND ]
+raw_atomic_expression -> atomic_expression . BAND atomic_expression [ TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND ]
+raw_atomic_expression -> atomic_expression . BOR atomic_expression [ TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND ]
+separated_nonempty_list(COMMA,atomic_expression) -> atomic_expression . [ TYPE THEN RPAR OF IN FUN EOF END ELSE BAR ]
+separated_nonempty_list(COMMA,atomic_expression) -> atomic_expression . COMMA separated_nonempty_list(COMMA,atomic_expression) [ TYPE THEN RPAR OF IN FUN EOF END ELSE BAR ]
+-- On COMMA shift to state 153
+-- On CMPEQ shift to state 155
+-- On BOR shift to state 157
+-- On BAND shift to state 159
+-- On TYPE reduce production separated_nonempty_list(COMMA,atomic_expression) -> atomic_expression 
+-- On THEN reduce production separated_nonempty_list(COMMA,atomic_expression) -> atomic_expression 
+-- On RPAR reduce production separated_nonempty_list(COMMA,atomic_expression) -> atomic_expression 
+-- On OF reduce production separated_nonempty_list(COMMA,atomic_expression) -> atomic_expression 
+-- On IN reduce production separated_nonempty_list(COMMA,atomic_expression) -> atomic_expression 
+-- On FUN reduce production separated_nonempty_list(COMMA,atomic_expression) -> atomic_expression 
+-- On EOF reduce production separated_nonempty_list(COMMA,atomic_expression) -> atomic_expression 
+-- On END reduce production separated_nonempty_list(COMMA,atomic_expression) -> atomic_expression 
+-- On ELSE reduce production separated_nonempty_list(COMMA,atomic_expression) -> atomic_expression 
+-- On BAR reduce production separated_nonempty_list(COMMA,atomic_expression) -> atomic_expression 
+
+State 153:
+separated_nonempty_list(COMMA,atomic_expression) -> atomic_expression COMMA . separated_nonempty_list(COMMA,atomic_expression) [ TYPE THEN RPAR OF IN FUN EOF END ELSE BAR ]
+-- On TRUE shift to state 100
+-- On TAG shift to state 101
+-- On SUPPORT shift to state 103
+-- On OUTER shift to state 104
+-- On NEXT shift to state 105
+-- On MEMBER shift to state 107
+-- On LPAR shift to state 108
+-- On INNER shift to state 128
+-- On ID shift to state 130
+-- On FALSE shift to state 134
+-- On CASE shift to state 136
+-- On BOUND shift to state 137
+-- On BNOT shift to state 138
+-- On separated_nonempty_list(COMMA,atomic_expression) shift to state 154
+-- On raw_atomic_expression shift to state 139
+-- On prefix_callee shift to state 140
+-- On located(raw_atomic_expression) shift to state 146
+-- On atomic_expression shift to state 152
+
+State 154:
+separated_nonempty_list(COMMA,atomic_expression) -> atomic_expression COMMA separated_nonempty_list(COMMA,atomic_expression) . [ TYPE THEN RPAR OF IN FUN EOF END ELSE BAR ]
+-- On TYPE reduce production separated_nonempty_list(COMMA,atomic_expression) -> atomic_expression COMMA separated_nonempty_list(COMMA,atomic_expression) 
+-- On THEN reduce production separated_nonempty_list(COMMA,atomic_expression) -> atomic_expression COMMA separated_nonempty_list(COMMA,atomic_expression) 
+-- On RPAR reduce production separated_nonempty_list(COMMA,atomic_expression) -> atomic_expression COMMA separated_nonempty_list(COMMA,atomic_expression) 
+-- On OF reduce production separated_nonempty_list(COMMA,atomic_expression) -> atomic_expression COMMA separated_nonempty_list(COMMA,atomic_expression) 
+-- On IN reduce production separated_nonempty_list(COMMA,atomic_expression) -> atomic_expression COMMA separated_nonempty_list(COMMA,atomic_expression) 
+-- On FUN reduce production separated_nonempty_list(COMMA,atomic_expression) -> atomic_expression COMMA separated_nonempty_list(COMMA,atomic_expression) 
+-- On EOF reduce production separated_nonempty_list(COMMA,atomic_expression) -> atomic_expression COMMA separated_nonempty_list(COMMA,atomic_expression) 
+-- On END reduce production separated_nonempty_list(COMMA,atomic_expression) -> atomic_expression COMMA separated_nonempty_list(COMMA,atomic_expression) 
+-- On ELSE reduce production separated_nonempty_list(COMMA,atomic_expression) -> atomic_expression COMMA separated_nonempty_list(COMMA,atomic_expression) 
+-- On BAR reduce production separated_nonempty_list(COMMA,atomic_expression) -> atomic_expression COMMA separated_nonempty_list(COMMA,atomic_expression) 
+
+State 155:
+raw_atomic_expression -> atomic_expression CMPEQ . atomic_expression [ TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND ]
+-- On TRUE shift to state 100
+-- On TAG shift to state 101
+-- On SUPPORT shift to state 103
+-- On OUTER shift to state 104
+-- On NEXT shift to state 105
+-- On MEMBER shift to state 107
+-- On LPAR shift to state 108
+-- On INNER shift to state 128
+-- On ID shift to state 130
+-- On FALSE shift to state 134
+-- On CASE shift to state 136
+-- On BOUND shift to state 137
+-- On BNOT shift to state 138
+-- On raw_atomic_expression shift to state 139
+-- On prefix_callee shift to state 140
+-- On located(raw_atomic_expression) shift to state 146
+-- On atomic_expression shift to state 156
+
+State 156:
+raw_atomic_expression -> atomic_expression . CMPEQ atomic_expression [ TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND ]
+raw_atomic_expression -> atomic_expression CMPEQ atomic_expression . [ TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND ]
+raw_atomic_expression -> atomic_expression . BAND atomic_expression [ TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND ]
+raw_atomic_expression -> atomic_expression . BOR atomic_expression [ TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND ]
+-- On TYPE reduce production raw_atomic_expression -> atomic_expression CMPEQ atomic_expression 
+-- On THEN reduce production raw_atomic_expression -> atomic_expression CMPEQ atomic_expression 
+-- On RPAR reduce production raw_atomic_expression -> atomic_expression CMPEQ atomic_expression 
+-- On OF reduce production raw_atomic_expression -> atomic_expression CMPEQ atomic_expression 
+-- On IN reduce production raw_atomic_expression -> atomic_expression CMPEQ atomic_expression 
+-- On FUN reduce production raw_atomic_expression -> atomic_expression CMPEQ atomic_expression 
+-- On EOF reduce production raw_atomic_expression -> atomic_expression CMPEQ atomic_expression 
+-- On END reduce production raw_atomic_expression -> atomic_expression CMPEQ atomic_expression 
+-- On ELSE reduce production raw_atomic_expression -> atomic_expression CMPEQ atomic_expression 
+-- On COMMA reduce production raw_atomic_expression -> atomic_expression CMPEQ atomic_expression 
+-- On BOR reduce production raw_atomic_expression -> atomic_expression CMPEQ atomic_expression 
+-- On BAR reduce production raw_atomic_expression -> atomic_expression CMPEQ atomic_expression 
+-- On BAND reduce production raw_atomic_expression -> atomic_expression CMPEQ atomic_expression 
+
+State 157:
+raw_atomic_expression -> atomic_expression BOR . atomic_expression [ TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND ]
+-- On TRUE shift to state 100
+-- On TAG shift to state 101
+-- On SUPPORT shift to state 103
+-- On OUTER shift to state 104
+-- On NEXT shift to state 105
+-- On MEMBER shift to state 107
+-- On LPAR shift to state 108
+-- On INNER shift to state 128
+-- On ID shift to state 130
+-- On FALSE shift to state 134
+-- On CASE shift to state 136
+-- On BOUND shift to state 137
+-- On BNOT shift to state 138
+-- On raw_atomic_expression shift to state 139
+-- On prefix_callee shift to state 140
+-- On located(raw_atomic_expression) shift to state 146
+-- On atomic_expression shift to state 158
+
+State 158:
+raw_atomic_expression -> atomic_expression . CMPEQ atomic_expression [ TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND ]
+raw_atomic_expression -> atomic_expression . BAND atomic_expression [ TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND ]
+raw_atomic_expression -> atomic_expression . BOR atomic_expression [ TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND ]
+raw_atomic_expression -> atomic_expression BOR atomic_expression . [ TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND ]
+-- On CMPEQ shift to state 155
+-- On BAND shift to state 159
+-- On TYPE reduce production raw_atomic_expression -> atomic_expression BOR atomic_expression 
+-- On THEN reduce production raw_atomic_expression -> atomic_expression BOR atomic_expression 
+-- On RPAR reduce production raw_atomic_expression -> atomic_expression BOR atomic_expression 
+-- On OF reduce production raw_atomic_expression -> atomic_expression BOR atomic_expression 
+-- On IN reduce production raw_atomic_expression -> atomic_expression BOR atomic_expression 
+-- On FUN reduce production raw_atomic_expression -> atomic_expression BOR atomic_expression 
+-- On EOF reduce production raw_atomic_expression -> atomic_expression BOR atomic_expression 
+-- On END reduce production raw_atomic_expression -> atomic_expression BOR atomic_expression 
+-- On ELSE reduce production raw_atomic_expression -> atomic_expression BOR atomic_expression 
+-- On COMMA reduce production raw_atomic_expression -> atomic_expression BOR atomic_expression 
+-- On BOR reduce production raw_atomic_expression -> atomic_expression BOR atomic_expression 
+-- On BAR reduce production raw_atomic_expression -> atomic_expression BOR atomic_expression 
+
+State 159:
+raw_atomic_expression -> atomic_expression BAND . atomic_expression [ TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND ]
+-- On TRUE shift to state 100
+-- On TAG shift to state 101
+-- On SUPPORT shift to state 103
+-- On OUTER shift to state 104
+-- On NEXT shift to state 105
+-- On MEMBER shift to state 107
+-- On LPAR shift to state 108
+-- On INNER shift to state 128
+-- On ID shift to state 130
+-- On FALSE shift to state 134
+-- On CASE shift to state 136
+-- On BOUND shift to state 137
+-- On BNOT shift to state 138
+-- On raw_atomic_expression shift to state 139
+-- On prefix_callee shift to state 140
+-- On located(raw_atomic_expression) shift to state 146
+-- On atomic_expression shift to state 160
+
+State 160:
+raw_atomic_expression -> atomic_expression . CMPEQ atomic_expression [ TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND ]
+raw_atomic_expression -> atomic_expression . BAND atomic_expression [ TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND ]
+raw_atomic_expression -> atomic_expression BAND atomic_expression . [ TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND ]
+raw_atomic_expression -> atomic_expression . BOR atomic_expression [ TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND ]
+-- On CMPEQ shift to state 155
+-- On TYPE reduce production raw_atomic_expression -> atomic_expression BAND atomic_expression 
+-- On THEN reduce production raw_atomic_expression -> atomic_expression BAND atomic_expression 
+-- On RPAR reduce production raw_atomic_expression -> atomic_expression BAND atomic_expression 
+-- On OF reduce production raw_atomic_expression -> atomic_expression BAND atomic_expression 
+-- On IN reduce production raw_atomic_expression -> atomic_expression BAND atomic_expression 
+-- On FUN reduce production raw_atomic_expression -> atomic_expression BAND atomic_expression 
+-- On EOF reduce production raw_atomic_expression -> atomic_expression BAND atomic_expression 
+-- On END reduce production raw_atomic_expression -> atomic_expression BAND atomic_expression 
+-- On ELSE reduce production raw_atomic_expression -> atomic_expression BAND atomic_expression 
+-- On COMMA reduce production raw_atomic_expression -> atomic_expression BAND atomic_expression 
+-- On BOR reduce production raw_atomic_expression -> atomic_expression BAND atomic_expression 
+-- On BAR reduce production raw_atomic_expression -> atomic_expression BAND atomic_expression 
+-- On BAND reduce production raw_atomic_expression -> atomic_expression BAND atomic_expression 
+
+State 161:
+raw_atomic_expression -> BNOT atomic_expression . [ TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND ]
+raw_atomic_expression -> atomic_expression . CMPEQ atomic_expression [ TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND ]
+raw_atomic_expression -> atomic_expression . BAND atomic_expression [ TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND ]
+raw_atomic_expression -> atomic_expression . BOR atomic_expression [ TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND ]
+-- On CMPEQ shift to state 155
+-- On TYPE reduce production raw_atomic_expression -> BNOT atomic_expression 
+-- On THEN reduce production raw_atomic_expression -> BNOT atomic_expression 
+-- On RPAR reduce production raw_atomic_expression -> BNOT atomic_expression 
+-- On OF reduce production raw_atomic_expression -> BNOT atomic_expression 
+-- On IN reduce production raw_atomic_expression -> BNOT atomic_expression 
+-- On FUN reduce production raw_atomic_expression -> BNOT atomic_expression 
+-- On EOF reduce production raw_atomic_expression -> BNOT atomic_expression 
+-- On END reduce production raw_atomic_expression -> BNOT atomic_expression 
+-- On ELSE reduce production raw_atomic_expression -> BNOT atomic_expression 
+-- On COMMA reduce production raw_atomic_expression -> BNOT atomic_expression 
+-- On BOR reduce production raw_atomic_expression -> BNOT atomic_expression 
+-- On BAR reduce production raw_atomic_expression -> BNOT atomic_expression 
+-- On BAND reduce production raw_atomic_expression -> BNOT atomic_expression 
+
+State 162:
+raw_atomic_expression -> CASE expression . OF nonempty_list(branch) END [ TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND ]
+-- On OF shift to state 163
+
+State 163:
+raw_atomic_expression -> CASE expression OF . nonempty_list(branch) END [ TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND ]
+-- On BAR shift to state 164
+-- On nonempty_list(branch) shift to state 168
+-- On branch shift to state 170
+
+State 164:
+branch -> BAR . separated_nonempty_list(COMMA,pattern) ARROW expression [ END BAR ]
+-- On WILD shift to state 113
+-- On TRUE shift to state 114
+-- On TAG shift to state 115
+-- On ID shift to state 117
+-- On FALSE shift to state 118
+-- On separated_nonempty_list(COMMA,pattern) shift to state 165
+-- On raw_pattern shift to state 121
+-- On pattern shift to state 122
+-- On located(raw_pattern) shift to state 125
+
+State 165:
+branch -> BAR separated_nonempty_list(COMMA,pattern) . ARROW expression [ END BAR ]
+-- On ARROW shift to state 166
+
+State 166:
+branch -> BAR separated_nonempty_list(COMMA,pattern) ARROW . expression [ END BAR ]
+-- On TRUE shift to state 100
+-- On TAG shift to state 101
+-- On SUPPORT shift to state 103
+-- On OUTER shift to state 104
+-- On NOTHING shift to state 109
+-- On NEXT shift to state 105
+-- On MEMBER shift to state 107
+-- On LPAR shift to state 108
+-- On LET shift to state 110
+-- On INNER shift to state 128
+-- On IF shift to state 129
+-- On ID shift to state 130
+-- On FRESH shift to state 131
+-- On FALSE shift to state 134
+-- On FAIL shift to state 135
+-- On CASE shift to state 136
+-- On BOUND shift to state 137
+-- On BNOT shift to state 138
+-- On ABSURD shift to state 142
+-- On raw_expression shift to state 143
+-- On raw_atomic_expression shift to state 144
+-- On prefix_callee shift to state 140
+-- On located(raw_expression) shift to state 145
+-- On located(raw_atomic_expression) shift to state 146
+-- On expression shift to state 167
+-- On atomic_expression shift to state 149
+
+State 167:
+branch -> BAR separated_nonempty_list(COMMA,pattern) ARROW expression . [ END BAR ]
+-- On END reduce production branch -> BAR separated_nonempty_list(COMMA,pattern) ARROW expression 
+-- On BAR reduce production branch -> BAR separated_nonempty_list(COMMA,pattern) ARROW expression 
+
+State 168:
+raw_atomic_expression -> CASE expression OF nonempty_list(branch) . END [ TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND ]
+-- On END shift to state 169
+
+State 169:
+raw_atomic_expression -> CASE expression OF nonempty_list(branch) END . [ TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND ]
+-- On TYPE reduce production raw_atomic_expression -> CASE expression OF nonempty_list(branch) END 
+-- On THEN reduce production raw_atomic_expression -> CASE expression OF nonempty_list(branch) END 
+-- On RPAR reduce production raw_atomic_expression -> CASE expression OF nonempty_list(branch) END 
+-- On OF reduce production raw_atomic_expression -> CASE expression OF nonempty_list(branch) END 
+-- On IN reduce production raw_atomic_expression -> CASE expression OF nonempty_list(branch) END 
+-- On FUN reduce production raw_atomic_expression -> CASE expression OF nonempty_list(branch) END 
+-- On EOF reduce production raw_atomic_expression -> CASE expression OF nonempty_list(branch) END 
+-- On END reduce production raw_atomic_expression -> CASE expression OF nonempty_list(branch) END 
+-- On ELSE reduce production raw_atomic_expression -> CASE expression OF nonempty_list(branch) END 
+-- On COMMA reduce production raw_atomic_expression -> CASE expression OF nonempty_list(branch) END 
+-- On CMPEQ reduce production raw_atomic_expression -> CASE expression OF nonempty_list(branch) END 
+-- On BOR reduce production raw_atomic_expression -> CASE expression OF nonempty_list(branch) END 
+-- On BAR reduce production raw_atomic_expression -> CASE expression OF nonempty_list(branch) END 
+-- On BAND reduce production raw_atomic_expression -> CASE expression OF nonempty_list(branch) END 
+
+State 170:
+nonempty_list(branch) -> branch . [ END ]
+nonempty_list(branch) -> branch . nonempty_list(branch) [ END ]
+-- On BAR shift to state 164
+-- On nonempty_list(branch) shift to state 171
+-- On branch shift to state 170
+-- On END reduce production nonempty_list(branch) -> branch 
+
+State 171:
+nonempty_list(branch) -> branch nonempty_list(branch) . [ END ]
+-- On END reduce production nonempty_list(branch) -> branch nonempty_list(branch) 
+
+State 172:
+raw_expression -> FRESH variables IN expression . [ TYPE THEN RPAR OF IN FUN EOF END ELSE BAR ]
+-- On TYPE reduce production raw_expression -> FRESH variables IN expression 
+-- On THEN reduce production raw_expression -> FRESH variables IN expression 
+-- On RPAR reduce production raw_expression -> FRESH variables IN expression 
+-- On OF reduce production raw_expression -> FRESH variables IN expression 
+-- On IN reduce production raw_expression -> FRESH variables IN expression 
+-- On FUN reduce production raw_expression -> FRESH variables IN expression 
+-- On EOF reduce production raw_expression -> FRESH variables IN expression 
+-- On END reduce production raw_expression -> FRESH variables IN expression 
+-- On ELSE reduce production raw_expression -> FRESH variables IN expression 
+-- On BAR reduce production raw_expression -> FRESH variables IN expression 
+
+State 173:
+raw_expression -> IF expression . THEN expression ELSE expression [ TYPE THEN RPAR OF IN FUN EOF END ELSE BAR ]
+-- On THEN shift to state 174
+
+State 174:
+raw_expression -> IF expression THEN . expression ELSE expression [ TYPE THEN RPAR OF IN FUN EOF END ELSE BAR ]
+-- On TRUE shift to state 100
+-- On TAG shift to state 101
+-- On SUPPORT shift to state 103
+-- On OUTER shift to state 104
+-- On NOTHING shift to state 109
+-- On NEXT shift to state 105
+-- On MEMBER shift to state 107
+-- On LPAR shift to state 108
+-- On LET shift to state 110
+-- On INNER shift to state 128
+-- On IF shift to state 129
+-- On ID shift to state 130
+-- On FRESH shift to state 131
+-- On FALSE shift to state 134
+-- On FAIL shift to state 135
+-- On CASE shift to state 136
+-- On BOUND shift to state 137
+-- On BNOT shift to state 138
+-- On ABSURD shift to state 142
+-- On raw_expression shift to state 143
+-- On raw_atomic_expression shift to state 144
+-- On prefix_callee shift to state 140
+-- On located(raw_expression) shift to state 145
+-- On located(raw_atomic_expression) shift to state 146
+-- On expression shift to state 175
+-- On atomic_expression shift to state 149
+
+State 175:
+raw_expression -> IF expression THEN expression . ELSE expression [ TYPE THEN RPAR OF IN FUN EOF END ELSE BAR ]
+-- On ELSE shift to state 176
+
+State 176:
+raw_expression -> IF expression THEN expression ELSE . expression [ TYPE THEN RPAR OF IN FUN EOF END ELSE BAR ]
+-- On TRUE shift to state 100
+-- On TAG shift to state 101
+-- On SUPPORT shift to state 103
+-- On OUTER shift to state 104
+-- On NOTHING shift to state 109
+-- On NEXT shift to state 105
+-- On MEMBER shift to state 107
+-- On LPAR shift to state 108
+-- On LET shift to state 110
+-- On INNER shift to state 128
+-- On IF shift to state 129
+-- On ID shift to state 130
+-- On FRESH shift to state 131
+-- On FALSE shift to state 134
+-- On FAIL shift to state 135
+-- On CASE shift to state 136
+-- On BOUND shift to state 137
+-- On BNOT shift to state 138
+-- On ABSURD shift to state 142
+-- On raw_expression shift to state 143
+-- On raw_atomic_expression shift to state 144
+-- On prefix_callee shift to state 140
+-- On located(raw_expression) shift to state 145
+-- On located(raw_atomic_expression) shift to state 146
+-- On expression shift to state 177
+-- On atomic_expression shift to state 149
+
+State 177:
+raw_expression -> IF expression THEN expression ELSE expression . [ TYPE THEN RPAR OF IN FUN EOF END ELSE BAR ]
+-- On TYPE reduce production raw_expression -> IF expression THEN expression ELSE expression 
+-- On THEN reduce production raw_expression -> IF expression THEN expression ELSE expression 
+-- On RPAR reduce production raw_expression -> IF expression THEN expression ELSE expression 
+-- On OF reduce production raw_expression -> IF expression THEN expression ELSE expression 
+-- On IN reduce production raw_expression -> IF expression THEN expression ELSE expression 
+-- On FUN reduce production raw_expression -> IF expression THEN expression ELSE expression 
+-- On EOF reduce production raw_expression -> IF expression THEN expression ELSE expression 
+-- On END reduce production raw_expression -> IF expression THEN expression ELSE expression 
+-- On ELSE reduce production raw_expression -> IF expression THEN expression ELSE expression 
+-- On BAR reduce production raw_expression -> IF expression THEN expression ELSE expression 
+
+State 178:
+raw_expression -> LET TAG lenient_parenthesized_tuple(pattern) DEFEQ expression . IN expression [ TYPE THEN RPAR OF IN FUN EOF END ELSE BAR ]
+-- On IN shift to state 179
+
+State 179:
+raw_expression -> LET TAG lenient_parenthesized_tuple(pattern) DEFEQ expression IN . expression [ TYPE THEN RPAR OF IN FUN EOF END ELSE BAR ]
+-- On TRUE shift to state 100
+-- On TAG shift to state 101
+-- On SUPPORT shift to state 103
+-- On OUTER shift to state 104
+-- On NOTHING shift to state 109
+-- On NEXT shift to state 105
+-- On MEMBER shift to state 107
+-- On LPAR shift to state 108
+-- On LET shift to state 110
+-- On INNER shift to state 128
+-- On IF shift to state 129
+-- On ID shift to state 130
+-- On FRESH shift to state 131
+-- On FALSE shift to state 134
+-- On FAIL shift to state 135
+-- On CASE shift to state 136
+-- On BOUND shift to state 137
+-- On BNOT shift to state 138
+-- On ABSURD shift to state 142
+-- On raw_expression shift to state 143
+-- On raw_atomic_expression shift to state 144
+-- On prefix_callee shift to state 140
+-- On located(raw_expression) shift to state 145
+-- On located(raw_atomic_expression) shift to state 146
+-- On expression shift to state 180
+-- On atomic_expression shift to state 149
+
+State 180:
+raw_expression -> LET TAG lenient_parenthesized_tuple(pattern) DEFEQ expression IN expression . [ TYPE THEN RPAR OF IN FUN EOF END ELSE BAR ]
+-- On TYPE reduce production raw_expression -> LET TAG lenient_parenthesized_tuple(pattern) DEFEQ expression IN expression 
+-- On THEN reduce production raw_expression -> LET TAG lenient_parenthesized_tuple(pattern) DEFEQ expression IN expression 
+-- On RPAR reduce production raw_expression -> LET TAG lenient_parenthesized_tuple(pattern) DEFEQ expression IN expression 
+-- On OF reduce production raw_expression -> LET TAG lenient_parenthesized_tuple(pattern) DEFEQ expression IN expression 
+-- On IN reduce production raw_expression -> LET TAG lenient_parenthesized_tuple(pattern) DEFEQ expression IN expression 
+-- On FUN reduce production raw_expression -> LET TAG lenient_parenthesized_tuple(pattern) DEFEQ expression IN expression 
+-- On EOF reduce production raw_expression -> LET TAG lenient_parenthesized_tuple(pattern) DEFEQ expression IN expression 
+-- On END reduce production raw_expression -> LET TAG lenient_parenthesized_tuple(pattern) DEFEQ expression IN expression 
+-- On ELSE reduce production raw_expression -> LET TAG lenient_parenthesized_tuple(pattern) DEFEQ expression IN expression 
+-- On BAR reduce production raw_expression -> LET TAG lenient_parenthesized_tuple(pattern) DEFEQ expression IN expression 
+
+State 181:
+raw_expression -> LET variables . contraintes DEFEQ expression IN expression [ TYPE THEN RPAR OF IN FUN EOF END ELSE BAR ]
+-- On WHERE shift to state 36
+-- On list(preceded(WHERE,contrainte)) shift to state 80
+-- On contraintes shift to state 182
+-- On DEFEQ reduce production list(preceded(WHERE,contrainte)) -> 
+
+State 182:
+raw_expression -> LET variables contraintes . DEFEQ expression IN expression [ TYPE THEN RPAR OF IN FUN EOF END ELSE BAR ]
+-- On DEFEQ shift to state 183
+
+State 183:
+raw_expression -> LET variables contraintes DEFEQ . expression IN expression [ TYPE THEN RPAR OF IN FUN EOF END ELSE BAR ]
+-- On TRUE shift to state 100
+-- On TAG shift to state 101
+-- On SUPPORT shift to state 103
+-- On OUTER shift to state 104
+-- On NOTHING shift to state 109
+-- On NEXT shift to state 105
+-- On MEMBER shift to state 107
+-- On LPAR shift to state 108
+-- On LET shift to state 110
+-- On INNER shift to state 128
+-- On IF shift to state 129
+-- On ID shift to state 130
+-- On FRESH shift to state 131
+-- On FALSE shift to state 134
+-- On FAIL shift to state 135
+-- On CASE shift to state 136
+-- On BOUND shift to state 137
+-- On BNOT shift to state 138
+-- On ABSURD shift to state 142
+-- On raw_expression shift to state 143
+-- On raw_atomic_expression shift to state 144
+-- On prefix_callee shift to state 140
+-- On located(raw_expression) shift to state 145
+-- On located(raw_atomic_expression) shift to state 146
+-- On expression shift to state 184
+-- On atomic_expression shift to state 149
+
+State 184:
+raw_expression -> LET variables contraintes DEFEQ expression . IN expression [ TYPE THEN RPAR OF IN FUN EOF END ELSE BAR ]
+-- On IN shift to state 185
+
+State 185:
+raw_expression -> LET variables contraintes DEFEQ expression IN . expression [ TYPE THEN RPAR OF IN FUN EOF END ELSE BAR ]
+-- On TRUE shift to state 100
+-- On TAG shift to state 101
+-- On SUPPORT shift to state 103
+-- On OUTER shift to state 104
+-- On NOTHING shift to state 109
+-- On NEXT shift to state 105
+-- On MEMBER shift to state 107
+-- On LPAR shift to state 108
+-- On LET shift to state 110
+-- On INNER shift to state 128
+-- On IF shift to state 129
+-- On ID shift to state 130
+-- On FRESH shift to state 131
+-- On FALSE shift to state 134
+-- On FAIL shift to state 135
+-- On CASE shift to state 136
+-- On BOUND shift to state 137
+-- On BNOT shift to state 138
+-- On ABSURD shift to state 142
+-- On raw_expression shift to state 143
+-- On raw_atomic_expression shift to state 144
+-- On prefix_callee shift to state 140
+-- On located(raw_expression) shift to state 145
+-- On located(raw_atomic_expression) shift to state 146
+-- On expression shift to state 186
+-- On atomic_expression shift to state 149
+
+State 186:
+raw_expression -> LET variables contraintes DEFEQ expression IN expression . [ TYPE THEN RPAR OF IN FUN EOF END ELSE BAR ]
+-- On TYPE reduce production raw_expression -> LET variables contraintes DEFEQ expression IN expression 
+-- On THEN reduce production raw_expression -> LET variables contraintes DEFEQ expression IN expression 
+-- On RPAR reduce production raw_expression -> LET variables contraintes DEFEQ expression IN expression 
+-- On OF reduce production raw_expression -> LET variables contraintes DEFEQ expression IN expression 
+-- On IN reduce production raw_expression -> LET variables contraintes DEFEQ expression IN expression 
+-- On FUN reduce production raw_expression -> LET variables contraintes DEFEQ expression IN expression 
+-- On EOF reduce production raw_expression -> LET variables contraintes DEFEQ expression IN expression 
+-- On END reduce production raw_expression -> LET variables contraintes DEFEQ expression IN expression 
+-- On ELSE reduce production raw_expression -> LET variables contraintes DEFEQ expression IN expression 
+-- On BAR reduce production raw_expression -> LET variables contraintes DEFEQ expression IN expression 
+
+State 187:
+raw_atomic_expression -> LPAR raw_expression . RPAR [ TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND ]
+-- On RPAR shift to state 188
+
+State 188:
+raw_atomic_expression -> LPAR raw_expression RPAR . [ TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND ]
+-- On TYPE reduce production raw_atomic_expression -> LPAR raw_expression RPAR 
+-- On THEN reduce production raw_atomic_expression -> LPAR raw_expression RPAR 
+-- On RPAR reduce production raw_atomic_expression -> LPAR raw_expression RPAR 
+-- On OF reduce production raw_atomic_expression -> LPAR raw_expression RPAR 
+-- On IN reduce production raw_atomic_expression -> LPAR raw_expression RPAR 
+-- On FUN reduce production raw_atomic_expression -> LPAR raw_expression RPAR 
+-- On EOF reduce production raw_atomic_expression -> LPAR raw_expression RPAR 
+-- On END reduce production raw_atomic_expression -> LPAR raw_expression RPAR 
+-- On ELSE reduce production raw_atomic_expression -> LPAR raw_expression RPAR 
+-- On COMMA reduce production raw_atomic_expression -> LPAR raw_expression RPAR 
+-- On CMPEQ reduce production raw_atomic_expression -> LPAR raw_expression RPAR 
+-- On BOR reduce production raw_atomic_expression -> LPAR raw_expression RPAR 
+-- On BAR reduce production raw_atomic_expression -> LPAR raw_expression RPAR 
+-- On BAND reduce production raw_atomic_expression -> LPAR raw_expression RPAR 
+
+State 189:
+lenient_parenthesized_tuple(atomic_expression) -> LPAR separated_nonempty_list(COMMA,atomic_expression) . RPAR [ TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND ]
+-- On RPAR shift to state 190
+
+State 190:
+lenient_parenthesized_tuple(atomic_expression) -> LPAR separated_nonempty_list(COMMA,atomic_expression) RPAR . [ TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND ]
+-- On TYPE reduce production lenient_parenthesized_tuple(atomic_expression) -> LPAR separated_nonempty_list(COMMA,atomic_expression) RPAR 
+-- On THEN reduce production lenient_parenthesized_tuple(atomic_expression) -> LPAR separated_nonempty_list(COMMA,atomic_expression) RPAR 
+-- On RPAR reduce production lenient_parenthesized_tuple(atomic_expression) -> LPAR separated_nonempty_list(COMMA,atomic_expression) RPAR 
+-- On OF reduce production lenient_parenthesized_tuple(atomic_expression) -> LPAR separated_nonempty_list(COMMA,atomic_expression) RPAR 
+-- On IN reduce production lenient_parenthesized_tuple(atomic_expression) -> LPAR separated_nonempty_list(COMMA,atomic_expression) RPAR 
+-- On FUN reduce production lenient_parenthesized_tuple(atomic_expression) -> LPAR separated_nonempty_list(COMMA,atomic_expression) RPAR 
+-- On EOF reduce production lenient_parenthesized_tuple(atomic_expression) -> LPAR separated_nonempty_list(COMMA,atomic_expression) RPAR 
+-- On END reduce production lenient_parenthesized_tuple(atomic_expression) -> LPAR separated_nonempty_list(COMMA,atomic_expression) RPAR 
+-- On ELSE reduce production lenient_parenthesized_tuple(atomic_expression) -> LPAR separated_nonempty_list(COMMA,atomic_expression) RPAR 
+-- On COMMA reduce production lenient_parenthesized_tuple(atomic_expression) -> LPAR separated_nonempty_list(COMMA,atomic_expression) RPAR 
+-- On CMPEQ reduce production lenient_parenthesized_tuple(atomic_expression) -> LPAR separated_nonempty_list(COMMA,atomic_expression) RPAR 
+-- On BOR reduce production lenient_parenthesized_tuple(atomic_expression) -> LPAR separated_nonempty_list(COMMA,atomic_expression) RPAR 
+-- On BAR reduce production lenient_parenthesized_tuple(atomic_expression) -> LPAR separated_nonempty_list(COMMA,atomic_expression) RPAR 
+-- On BAND reduce production lenient_parenthesized_tuple(atomic_expression) -> LPAR separated_nonempty_list(COMMA,atomic_expression) RPAR 
+
+State 191:
+raw_atomic_expression -> TAG lenient_parenthesized_tuple(atomic_expression) . [ TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND ]
+-- On TYPE reduce production raw_atomic_expression -> TAG lenient_parenthesized_tuple(atomic_expression) 
+-- On THEN reduce production raw_atomic_expression -> TAG lenient_parenthesized_tuple(atomic_expression) 
+-- On RPAR reduce production raw_atomic_expression -> TAG lenient_parenthesized_tuple(atomic_expression) 
+-- On OF reduce production raw_atomic_expression -> TAG lenient_parenthesized_tuple(atomic_expression) 
+-- On IN reduce production raw_atomic_expression -> TAG lenient_parenthesized_tuple(atomic_expression) 
+-- On FUN reduce production raw_atomic_expression -> TAG lenient_parenthesized_tuple(atomic_expression) 
+-- On EOF reduce production raw_atomic_expression -> TAG lenient_parenthesized_tuple(atomic_expression) 
+-- On END reduce production raw_atomic_expression -> TAG lenient_parenthesized_tuple(atomic_expression) 
+-- On ELSE reduce production raw_atomic_expression -> TAG lenient_parenthesized_tuple(atomic_expression) 
+-- On COMMA reduce production raw_atomic_expression -> TAG lenient_parenthesized_tuple(atomic_expression) 
+-- On CMPEQ reduce production raw_atomic_expression -> TAG lenient_parenthesized_tuple(atomic_expression) 
+-- On BOR reduce production raw_atomic_expression -> TAG lenient_parenthesized_tuple(atomic_expression) 
+-- On BAR reduce production raw_atomic_expression -> TAG lenient_parenthesized_tuple(atomic_expression) 
+-- On BAND reduce production raw_atomic_expression -> TAG lenient_parenthesized_tuple(atomic_expression) 
+
+State 192:
+definition -> FUN ID specification DEFEQ expression . [ TYPE FUN EOF ]
+-- On TYPE reduce production definition -> FUN ID specification DEFEQ expression 
+-- On FUN reduce production definition -> FUN ID specification DEFEQ expression 
+-- On EOF reduce production definition -> FUN ID specification DEFEQ expression 
+
+State 193:
+program' -> program . [ # ]
+-- On # accept program
+
+State 194:
+program -> list(definition) . EOF [ # ]
+-- On EOF shift to state 195
+
+State 195:
+program -> list(definition) EOF . [ # ]
+-- On # reduce production program -> list(definition) EOF 
+
+State 196:
+list(definition) -> definition . list(definition) [ EOF ]
+-- On TYPE shift to state 1
+-- On FUN shift to state 85
+-- On list(definition) shift to state 197
+-- On definition shift to state 196
+-- On EOF reduce production list(definition) -> 
+
+State 197:
+list(definition) -> definition list(definition) . [ EOF ]
+-- On EOF reduce production list(definition) -> definition list(definition) 
+
+State 198:
+specification_alone' -> . specification_alone [ # ]
+-- On ACCEPTS shift to state 87
+-- On specification_alone shift to state 199
+-- On specification shift to state 200
+
+State 199:
+specification_alone' -> specification_alone . [ # ]
+-- On # accept specification_alone
+
+State 200:
+specification_alone -> specification . EOF [ # ]
+-- On EOF shift to state 201
+
+State 201:
+specification_alone -> specification EOF . [ # ]
+-- On # reduce production specification_alone -> specification EOF 
+

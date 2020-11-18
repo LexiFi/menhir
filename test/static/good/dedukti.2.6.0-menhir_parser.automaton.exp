@@ -1,0 +1,1703 @@
+State 0:
+line' -> . line [ # ]
+-- On REQUIRE shift to state 1
+-- On PRINT shift to state 3
+-- On NAME shift to state 6
+-- On LEFTSQU shift to state 8
+-- On LEFTBRA shift to state 84
+-- On KW_THM shift to state 101
+-- On KW_DEF shift to state 121
+-- On INFER shift to state 141
+-- On ID shift to state 153
+-- On GDT shift to state 160
+-- On EVAL shift to state 165
+-- On EOF shift to state 171
+-- On CHECKNOT shift to state 172
+-- On CHECK shift to state 180
+-- On ASSERTNOT shift to state 188
+-- On ASSERT shift to state 196
+-- On rule shift to state 204
+-- On nonempty_list(rule) shift to state 206
+-- On line shift to state 208
+
+State 1:
+line -> REQUIRE . DOT [ # ]
+-- On DOT shift to state 2
+
+State 2:
+line -> REQUIRE DOT . [ # ]
+-- On # reduce production line -> REQUIRE DOT 
+
+State 3:
+line -> PRINT . STRING DOT [ # ]
+-- On STRING shift to state 4
+
+State 4:
+line -> PRINT STRING . DOT [ # ]
+-- On DOT shift to state 5
+
+State 5:
+line -> PRINT STRING DOT . [ # ]
+-- On # reduce production line -> PRINT STRING DOT 
+
+State 6:
+line -> NAME . DOT [ # ]
+-- On DOT shift to state 7
+
+State 7:
+line -> NAME DOT . [ # ]
+-- On # reduce production line -> NAME DOT 
+
+State 8:
+rule -> LEFTSQU . context RIGHTSQU top_pattern LONGARROW term [ LEFTSQU LEFTBRA DOT ]
+-- On ID shift to state 9
+-- On separated_nonempty_list(COMMA,decl) shift to state 51
+-- On decl shift to state 52
+-- On context shift to state 55
+-- On RIGHTSQU reduce production context -> 
+
+State 9:
+decl -> ID . COLON term [ RIGHTSQU COMMA ]
+decl -> ID . [ RIGHTSQU COMMA ]
+-- On COLON shift to state 10
+-- On RIGHTSQU reduce production decl -> ID 
+-- On COMMA reduce production decl -> ID 
+
+State 10:
+decl -> ID COLON . term [ RIGHTSQU COMMA ]
+-- On UNDERSCORE shift to state 11
+-- On TYPE shift to state 13
+-- On QID shift to state 14
+-- On LEFTPAR shift to state 15
+-- On ID shift to state 18
+-- On term shift to state 50
+-- On sterm shift to state 26
+-- On aterm shift to state 31
+
+State 11:
+sterm -> UNDERSCORE . [ UNDERSCORE TYPE RIGHTSQU RIGHTPAR RIGHTBRA QID LEFTSQU LEFTPAR LEFTBRA ID DOT DEF COMMA ARROW ]
+term -> UNDERSCORE . COLON aterm ARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+term -> UNDERSCORE . FATARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+term -> UNDERSCORE . COLON aterm FATARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+-- On FATARROW shift to state 12
+-- On COLON shift to state 44
+-- On UNDERSCORE reduce production sterm -> UNDERSCORE 
+-- On TYPE reduce production sterm -> UNDERSCORE 
+-- On RIGHTSQU reduce production sterm -> UNDERSCORE 
+-- On RIGHTPAR reduce production sterm -> UNDERSCORE 
+-- On RIGHTBRA reduce production sterm -> UNDERSCORE 
+-- On QID reduce production sterm -> UNDERSCORE 
+-- On LEFTSQU reduce production sterm -> UNDERSCORE 
+-- On LEFTPAR reduce production sterm -> UNDERSCORE 
+-- On LEFTBRA reduce production sterm -> UNDERSCORE 
+-- On ID reduce production sterm -> UNDERSCORE 
+-- On DOT reduce production sterm -> UNDERSCORE 
+-- On DEF reduce production sterm -> UNDERSCORE 
+-- On COMMA reduce production sterm -> UNDERSCORE 
+-- On ARROW reduce production sterm -> UNDERSCORE 
+
+State 12:
+term -> UNDERSCORE FATARROW . term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+-- On UNDERSCORE shift to state 11
+-- On TYPE shift to state 13
+-- On QID shift to state 14
+-- On LEFTPAR shift to state 15
+-- On ID shift to state 18
+-- On term shift to state 43
+-- On sterm shift to state 26
+-- On aterm shift to state 31
+
+State 13:
+sterm -> TYPE . [ UNDERSCORE TYPE RIGHTSQU RIGHTPAR RIGHTBRA QID LEFTSQU LEFTPAR LEFTBRA ID FATARROW EQUAL DOT DEF COMMA COLON ARROW ]
+-- On UNDERSCORE reduce production sterm -> TYPE 
+-- On TYPE reduce production sterm -> TYPE 
+-- On RIGHTSQU reduce production sterm -> TYPE 
+-- On RIGHTPAR reduce production sterm -> TYPE 
+-- On RIGHTBRA reduce production sterm -> TYPE 
+-- On QID reduce production sterm -> TYPE 
+-- On LEFTSQU reduce production sterm -> TYPE 
+-- On LEFTPAR reduce production sterm -> TYPE 
+-- On LEFTBRA reduce production sterm -> TYPE 
+-- On ID reduce production sterm -> TYPE 
+-- On FATARROW reduce production sterm -> TYPE 
+-- On EQUAL reduce production sterm -> TYPE 
+-- On DOT reduce production sterm -> TYPE 
+-- On DEF reduce production sterm -> TYPE 
+-- On COMMA reduce production sterm -> TYPE 
+-- On COLON reduce production sterm -> TYPE 
+-- On ARROW reduce production sterm -> TYPE 
+
+State 14:
+sterm -> QID . [ UNDERSCORE TYPE RIGHTSQU RIGHTPAR RIGHTBRA QID LEFTSQU LEFTPAR LEFTBRA ID FATARROW EQUAL DOT DEF COMMA COLON ARROW ]
+-- On UNDERSCORE reduce production sterm -> QID 
+-- On TYPE reduce production sterm -> QID 
+-- On RIGHTSQU reduce production sterm -> QID 
+-- On RIGHTPAR reduce production sterm -> QID 
+-- On RIGHTBRA reduce production sterm -> QID 
+-- On QID reduce production sterm -> QID 
+-- On LEFTSQU reduce production sterm -> QID 
+-- On LEFTPAR reduce production sterm -> QID 
+-- On LEFTBRA reduce production sterm -> QID 
+-- On ID reduce production sterm -> QID 
+-- On FATARROW reduce production sterm -> QID 
+-- On EQUAL reduce production sterm -> QID 
+-- On DOT reduce production sterm -> QID 
+-- On DEF reduce production sterm -> QID 
+-- On COMMA reduce production sterm -> QID 
+-- On COLON reduce production sterm -> QID 
+-- On ARROW reduce production sterm -> QID 
+
+State 15:
+sterm -> LEFTPAR . term RIGHTPAR [ UNDERSCORE TYPE RIGHTSQU RIGHTPAR RIGHTBRA QID LEFTSQU LEFTPAR LEFTBRA ID DOT DEF COMMA ARROW ]
+term -> LEFTPAR . ID COLON aterm RIGHTPAR ARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+-- On UNDERSCORE shift to state 11
+-- On TYPE shift to state 13
+-- On QID shift to state 14
+-- On LEFTPAR shift to state 15
+-- On ID shift to state 16
+-- On term shift to state 22
+-- On sterm shift to state 26
+-- On aterm shift to state 31
+
+State 16:
+sterm -> ID . [ UNDERSCORE TYPE RIGHTPAR QID LEFTPAR ID ARROW ]
+term -> ID . COLON aterm ARROW term [ RIGHTPAR ARROW ]
+term -> LEFTPAR ID . COLON aterm RIGHTPAR ARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+term -> ID . FATARROW term [ RIGHTPAR ARROW ]
+term -> ID . COLON aterm FATARROW term [ RIGHTPAR ARROW ]
+-- On FATARROW shift to state 17
+-- On COLON shift to state 38
+-- On UNDERSCORE reduce production sterm -> ID 
+-- On TYPE reduce production sterm -> ID 
+-- On RIGHTPAR reduce production sterm -> ID 
+-- On QID reduce production sterm -> ID 
+-- On LEFTPAR reduce production sterm -> ID 
+-- On ID reduce production sterm -> ID 
+-- On ARROW reduce production sterm -> ID 
+
+State 17:
+term -> ID FATARROW . term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+-- On UNDERSCORE shift to state 11
+-- On TYPE shift to state 13
+-- On QID shift to state 14
+-- On LEFTPAR shift to state 15
+-- On ID shift to state 18
+-- On term shift to state 37
+-- On sterm shift to state 26
+-- On aterm shift to state 31
+
+State 18:
+sterm -> ID . [ UNDERSCORE TYPE RIGHTSQU RIGHTPAR RIGHTBRA QID LEFTSQU LEFTPAR LEFTBRA ID DOT DEF COMMA ARROW ]
+term -> ID . COLON aterm ARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+term -> ID . FATARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+term -> ID . COLON aterm FATARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+-- On FATARROW shift to state 17
+-- On COLON shift to state 19
+-- On UNDERSCORE reduce production sterm -> ID 
+-- On TYPE reduce production sterm -> ID 
+-- On RIGHTSQU reduce production sterm -> ID 
+-- On RIGHTPAR reduce production sterm -> ID 
+-- On RIGHTBRA reduce production sterm -> ID 
+-- On QID reduce production sterm -> ID 
+-- On LEFTSQU reduce production sterm -> ID 
+-- On LEFTPAR reduce production sterm -> ID 
+-- On LEFTBRA reduce production sterm -> ID 
+-- On ID reduce production sterm -> ID 
+-- On DOT reduce production sterm -> ID 
+-- On DEF reduce production sterm -> ID 
+-- On COMMA reduce production sterm -> ID 
+-- On ARROW reduce production sterm -> ID 
+
+State 19:
+term -> ID COLON . aterm ARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+term -> ID COLON . aterm FATARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+-- On UNDERSCORE shift to state 20
+-- On TYPE shift to state 13
+-- On QID shift to state 14
+-- On LEFTPAR shift to state 21
+-- On ID shift to state 27
+-- On sterm shift to state 26
+-- On aterm shift to state 32
+
+State 20:
+sterm -> UNDERSCORE . [ UNDERSCORE TYPE RIGHTSQU RIGHTPAR RIGHTBRA QID LEFTSQU LEFTPAR LEFTBRA ID FATARROW EQUAL DOT DEF COMMA COLON ARROW ]
+-- On UNDERSCORE reduce production sterm -> UNDERSCORE 
+-- On TYPE reduce production sterm -> UNDERSCORE 
+-- On RIGHTSQU reduce production sterm -> UNDERSCORE 
+-- On RIGHTPAR reduce production sterm -> UNDERSCORE 
+-- On RIGHTBRA reduce production sterm -> UNDERSCORE 
+-- On QID reduce production sterm -> UNDERSCORE 
+-- On LEFTSQU reduce production sterm -> UNDERSCORE 
+-- On LEFTPAR reduce production sterm -> UNDERSCORE 
+-- On LEFTBRA reduce production sterm -> UNDERSCORE 
+-- On ID reduce production sterm -> UNDERSCORE 
+-- On FATARROW reduce production sterm -> UNDERSCORE 
+-- On EQUAL reduce production sterm -> UNDERSCORE 
+-- On DOT reduce production sterm -> UNDERSCORE 
+-- On DEF reduce production sterm -> UNDERSCORE 
+-- On COMMA reduce production sterm -> UNDERSCORE 
+-- On COLON reduce production sterm -> UNDERSCORE 
+-- On ARROW reduce production sterm -> UNDERSCORE 
+
+State 21:
+sterm -> LEFTPAR . term RIGHTPAR [ UNDERSCORE TYPE RIGHTSQU RIGHTPAR RIGHTBRA QID LEFTSQU LEFTPAR LEFTBRA ID FATARROW EQUAL DOT DEF COMMA COLON ARROW ]
+-- On UNDERSCORE shift to state 11
+-- On TYPE shift to state 13
+-- On QID shift to state 14
+-- On LEFTPAR shift to state 15
+-- On ID shift to state 18
+-- On term shift to state 22
+-- On sterm shift to state 26
+-- On aterm shift to state 31
+
+State 22:
+sterm -> LEFTPAR term . RIGHTPAR [ UNDERSCORE TYPE RIGHTSQU RIGHTPAR RIGHTBRA QID LEFTSQU LEFTPAR LEFTBRA ID FATARROW EQUAL DOT DEF COMMA COLON ARROW ]
+term -> term . ARROW term [ RIGHTPAR ARROW ]
+-- On RIGHTPAR shift to state 23
+-- On ARROW shift to state 24
+
+State 23:
+sterm -> LEFTPAR term RIGHTPAR . [ UNDERSCORE TYPE RIGHTSQU RIGHTPAR RIGHTBRA QID LEFTSQU LEFTPAR LEFTBRA ID FATARROW EQUAL DOT DEF COMMA COLON ARROW ]
+-- On UNDERSCORE reduce production sterm -> LEFTPAR term RIGHTPAR 
+-- On TYPE reduce production sterm -> LEFTPAR term RIGHTPAR 
+-- On RIGHTSQU reduce production sterm -> LEFTPAR term RIGHTPAR 
+-- On RIGHTPAR reduce production sterm -> LEFTPAR term RIGHTPAR 
+-- On RIGHTBRA reduce production sterm -> LEFTPAR term RIGHTPAR 
+-- On QID reduce production sterm -> LEFTPAR term RIGHTPAR 
+-- On LEFTSQU reduce production sterm -> LEFTPAR term RIGHTPAR 
+-- On LEFTPAR reduce production sterm -> LEFTPAR term RIGHTPAR 
+-- On LEFTBRA reduce production sterm -> LEFTPAR term RIGHTPAR 
+-- On ID reduce production sterm -> LEFTPAR term RIGHTPAR 
+-- On FATARROW reduce production sterm -> LEFTPAR term RIGHTPAR 
+-- On EQUAL reduce production sterm -> LEFTPAR term RIGHTPAR 
+-- On DOT reduce production sterm -> LEFTPAR term RIGHTPAR 
+-- On DEF reduce production sterm -> LEFTPAR term RIGHTPAR 
+-- On COMMA reduce production sterm -> LEFTPAR term RIGHTPAR 
+-- On COLON reduce production sterm -> LEFTPAR term RIGHTPAR 
+-- On ARROW reduce production sterm -> LEFTPAR term RIGHTPAR 
+
+State 24:
+term -> term ARROW . term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+-- On UNDERSCORE shift to state 11
+-- On TYPE shift to state 13
+-- On QID shift to state 14
+-- On LEFTPAR shift to state 15
+-- On ID shift to state 18
+-- On term shift to state 25
+-- On sterm shift to state 26
+-- On aterm shift to state 31
+
+State 25:
+term -> term . ARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+term -> term ARROW term . [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+-- On ARROW shift to state 24
+-- On RIGHTSQU reduce production term -> term ARROW term 
+-- On RIGHTPAR reduce production term -> term ARROW term 
+-- On RIGHTBRA reduce production term -> term ARROW term 
+-- On LEFTSQU reduce production term -> term ARROW term 
+-- On LEFTBRA reduce production term -> term ARROW term 
+-- On DOT reduce production term -> term ARROW term 
+-- On DEF reduce production term -> term ARROW term 
+-- On COMMA reduce production term -> term ARROW term 
+
+State 26:
+aterm -> sterm . list(sterm) [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA FATARROW EQUAL DOT DEF COMMA COLON ARROW ]
+-- On UNDERSCORE shift to state 20
+-- On TYPE shift to state 13
+-- On QID shift to state 14
+-- On LEFTPAR shift to state 21
+-- On ID shift to state 27
+-- On sterm shift to state 28
+-- On list(sterm) shift to state 30
+-- On RIGHTSQU reduce production list(sterm) -> 
+-- On RIGHTPAR reduce production list(sterm) -> 
+-- On RIGHTBRA reduce production list(sterm) -> 
+-- On LEFTSQU reduce production list(sterm) -> 
+-- On LEFTBRA reduce production list(sterm) -> 
+-- On FATARROW reduce production list(sterm) -> 
+-- On EQUAL reduce production list(sterm) -> 
+-- On DOT reduce production list(sterm) -> 
+-- On DEF reduce production list(sterm) -> 
+-- On COMMA reduce production list(sterm) -> 
+-- On COLON reduce production list(sterm) -> 
+-- On ARROW reduce production list(sterm) -> 
+
+State 27:
+sterm -> ID . [ UNDERSCORE TYPE RIGHTSQU RIGHTPAR RIGHTBRA QID LEFTSQU LEFTPAR LEFTBRA ID FATARROW EQUAL DOT DEF COMMA COLON ARROW ]
+-- On UNDERSCORE reduce production sterm -> ID 
+-- On TYPE reduce production sterm -> ID 
+-- On RIGHTSQU reduce production sterm -> ID 
+-- On RIGHTPAR reduce production sterm -> ID 
+-- On RIGHTBRA reduce production sterm -> ID 
+-- On QID reduce production sterm -> ID 
+-- On LEFTSQU reduce production sterm -> ID 
+-- On LEFTPAR reduce production sterm -> ID 
+-- On LEFTBRA reduce production sterm -> ID 
+-- On ID reduce production sterm -> ID 
+-- On FATARROW reduce production sterm -> ID 
+-- On EQUAL reduce production sterm -> ID 
+-- On DOT reduce production sterm -> ID 
+-- On DEF reduce production sterm -> ID 
+-- On COMMA reduce production sterm -> ID 
+-- On COLON reduce production sterm -> ID 
+-- On ARROW reduce production sterm -> ID 
+
+State 28:
+list(sterm) -> sterm . list(sterm) [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA FATARROW EQUAL DOT DEF COMMA COLON ARROW ]
+-- On UNDERSCORE shift to state 20
+-- On TYPE shift to state 13
+-- On QID shift to state 14
+-- On LEFTPAR shift to state 21
+-- On ID shift to state 27
+-- On sterm shift to state 28
+-- On list(sterm) shift to state 29
+-- On RIGHTSQU reduce production list(sterm) -> 
+-- On RIGHTPAR reduce production list(sterm) -> 
+-- On RIGHTBRA reduce production list(sterm) -> 
+-- On LEFTSQU reduce production list(sterm) -> 
+-- On LEFTBRA reduce production list(sterm) -> 
+-- On FATARROW reduce production list(sterm) -> 
+-- On EQUAL reduce production list(sterm) -> 
+-- On DOT reduce production list(sterm) -> 
+-- On DEF reduce production list(sterm) -> 
+-- On COMMA reduce production list(sterm) -> 
+-- On COLON reduce production list(sterm) -> 
+-- On ARROW reduce production list(sterm) -> 
+
+State 29:
+list(sterm) -> sterm list(sterm) . [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA FATARROW EQUAL DOT DEF COMMA COLON ARROW ]
+-- On RIGHTSQU reduce production list(sterm) -> sterm list(sterm) 
+-- On RIGHTPAR reduce production list(sterm) -> sterm list(sterm) 
+-- On RIGHTBRA reduce production list(sterm) -> sterm list(sterm) 
+-- On LEFTSQU reduce production list(sterm) -> sterm list(sterm) 
+-- On LEFTBRA reduce production list(sterm) -> sterm list(sterm) 
+-- On FATARROW reduce production list(sterm) -> sterm list(sterm) 
+-- On EQUAL reduce production list(sterm) -> sterm list(sterm) 
+-- On DOT reduce production list(sterm) -> sterm list(sterm) 
+-- On DEF reduce production list(sterm) -> sterm list(sterm) 
+-- On COMMA reduce production list(sterm) -> sterm list(sterm) 
+-- On COLON reduce production list(sterm) -> sterm list(sterm) 
+-- On ARROW reduce production list(sterm) -> sterm list(sterm) 
+
+State 30:
+aterm -> sterm list(sterm) . [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA FATARROW EQUAL DOT DEF COMMA COLON ARROW ]
+-- On RIGHTSQU reduce production aterm -> sterm list(sterm) 
+-- On RIGHTPAR reduce production aterm -> sterm list(sterm) 
+-- On RIGHTBRA reduce production aterm -> sterm list(sterm) 
+-- On LEFTSQU reduce production aterm -> sterm list(sterm) 
+-- On LEFTBRA reduce production aterm -> sterm list(sterm) 
+-- On FATARROW reduce production aterm -> sterm list(sterm) 
+-- On EQUAL reduce production aterm -> sterm list(sterm) 
+-- On DOT reduce production aterm -> sterm list(sterm) 
+-- On DEF reduce production aterm -> sterm list(sterm) 
+-- On COMMA reduce production aterm -> sterm list(sterm) 
+-- On COLON reduce production aterm -> sterm list(sterm) 
+-- On ARROW reduce production aterm -> sterm list(sterm) 
+
+State 31:
+term -> aterm . [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+-- On RIGHTSQU reduce production term -> aterm 
+-- On RIGHTPAR reduce production term -> aterm 
+-- On RIGHTBRA reduce production term -> aterm 
+-- On LEFTSQU reduce production term -> aterm 
+-- On LEFTBRA reduce production term -> aterm 
+-- On DOT reduce production term -> aterm 
+-- On DEF reduce production term -> aterm 
+-- On COMMA reduce production term -> aterm 
+-- On ARROW reduce production term -> aterm 
+
+State 32:
+term -> ID COLON aterm . ARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+term -> ID COLON aterm . FATARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+-- On FATARROW shift to state 33
+-- On ARROW shift to state 35
+
+State 33:
+term -> ID COLON aterm FATARROW . term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+-- On UNDERSCORE shift to state 11
+-- On TYPE shift to state 13
+-- On QID shift to state 14
+-- On LEFTPAR shift to state 15
+-- On ID shift to state 18
+-- On term shift to state 34
+-- On sterm shift to state 26
+-- On aterm shift to state 31
+
+State 34:
+term -> term . ARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+term -> ID COLON aterm FATARROW term . [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+-- On ARROW shift to state 24
+-- On RIGHTSQU reduce production term -> ID COLON aterm FATARROW term 
+-- On RIGHTPAR reduce production term -> ID COLON aterm FATARROW term 
+-- On RIGHTBRA reduce production term -> ID COLON aterm FATARROW term 
+-- On LEFTSQU reduce production term -> ID COLON aterm FATARROW term 
+-- On LEFTBRA reduce production term -> ID COLON aterm FATARROW term 
+-- On DOT reduce production term -> ID COLON aterm FATARROW term 
+-- On DEF reduce production term -> ID COLON aterm FATARROW term 
+-- On COMMA reduce production term -> ID COLON aterm FATARROW term 
+
+State 35:
+term -> ID COLON aterm ARROW . term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+-- On UNDERSCORE shift to state 11
+-- On TYPE shift to state 13
+-- On QID shift to state 14
+-- On LEFTPAR shift to state 15
+-- On ID shift to state 18
+-- On term shift to state 36
+-- On sterm shift to state 26
+-- On aterm shift to state 31
+
+State 36:
+term -> ID COLON aterm ARROW term . [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+term -> term . ARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+-- On ARROW shift to state 24
+-- On RIGHTSQU reduce production term -> ID COLON aterm ARROW term 
+-- On RIGHTPAR reduce production term -> ID COLON aterm ARROW term 
+-- On RIGHTBRA reduce production term -> ID COLON aterm ARROW term 
+-- On LEFTSQU reduce production term -> ID COLON aterm ARROW term 
+-- On LEFTBRA reduce production term -> ID COLON aterm ARROW term 
+-- On DOT reduce production term -> ID COLON aterm ARROW term 
+-- On DEF reduce production term -> ID COLON aterm ARROW term 
+-- On COMMA reduce production term -> ID COLON aterm ARROW term 
+
+State 37:
+term -> term . ARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+term -> ID FATARROW term . [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+-- On ARROW shift to state 24
+-- On RIGHTSQU reduce production term -> ID FATARROW term 
+-- On RIGHTPAR reduce production term -> ID FATARROW term 
+-- On RIGHTBRA reduce production term -> ID FATARROW term 
+-- On LEFTSQU reduce production term -> ID FATARROW term 
+-- On LEFTBRA reduce production term -> ID FATARROW term 
+-- On DOT reduce production term -> ID FATARROW term 
+-- On DEF reduce production term -> ID FATARROW term 
+-- On COMMA reduce production term -> ID FATARROW term 
+
+State 38:
+term -> ID COLON . aterm ARROW term [ RIGHTPAR ARROW ]
+term -> LEFTPAR ID COLON . aterm RIGHTPAR ARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+term -> ID COLON . aterm FATARROW term [ RIGHTPAR ARROW ]
+-- On UNDERSCORE shift to state 20
+-- On TYPE shift to state 13
+-- On QID shift to state 14
+-- On LEFTPAR shift to state 21
+-- On ID shift to state 27
+-- On sterm shift to state 26
+-- On aterm shift to state 39
+
+State 39:
+term -> ID COLON aterm . ARROW term [ RIGHTPAR ARROW ]
+term -> LEFTPAR ID COLON aterm . RIGHTPAR ARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+term -> ID COLON aterm . FATARROW term [ RIGHTPAR ARROW ]
+-- On RIGHTPAR shift to state 40
+-- On FATARROW shift to state 33
+-- On ARROW shift to state 35
+
+State 40:
+term -> LEFTPAR ID COLON aterm RIGHTPAR . ARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+-- On ARROW shift to state 41
+
+State 41:
+term -> LEFTPAR ID COLON aterm RIGHTPAR ARROW . term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+-- On UNDERSCORE shift to state 11
+-- On TYPE shift to state 13
+-- On QID shift to state 14
+-- On LEFTPAR shift to state 15
+-- On ID shift to state 18
+-- On term shift to state 42
+-- On sterm shift to state 26
+-- On aterm shift to state 31
+
+State 42:
+term -> LEFTPAR ID COLON aterm RIGHTPAR ARROW term . [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+term -> term . ARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+-- On ARROW shift to state 24
+-- On RIGHTSQU reduce production term -> LEFTPAR ID COLON aterm RIGHTPAR ARROW term 
+-- On RIGHTPAR reduce production term -> LEFTPAR ID COLON aterm RIGHTPAR ARROW term 
+-- On RIGHTBRA reduce production term -> LEFTPAR ID COLON aterm RIGHTPAR ARROW term 
+-- On LEFTSQU reduce production term -> LEFTPAR ID COLON aterm RIGHTPAR ARROW term 
+-- On LEFTBRA reduce production term -> LEFTPAR ID COLON aterm RIGHTPAR ARROW term 
+-- On DOT reduce production term -> LEFTPAR ID COLON aterm RIGHTPAR ARROW term 
+-- On DEF reduce production term -> LEFTPAR ID COLON aterm RIGHTPAR ARROW term 
+-- On COMMA reduce production term -> LEFTPAR ID COLON aterm RIGHTPAR ARROW term 
+
+State 43:
+term -> term . ARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+term -> UNDERSCORE FATARROW term . [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+-- On ARROW shift to state 24
+-- On RIGHTSQU reduce production term -> UNDERSCORE FATARROW term 
+-- On RIGHTPAR reduce production term -> UNDERSCORE FATARROW term 
+-- On RIGHTBRA reduce production term -> UNDERSCORE FATARROW term 
+-- On LEFTSQU reduce production term -> UNDERSCORE FATARROW term 
+-- On LEFTBRA reduce production term -> UNDERSCORE FATARROW term 
+-- On DOT reduce production term -> UNDERSCORE FATARROW term 
+-- On DEF reduce production term -> UNDERSCORE FATARROW term 
+-- On COMMA reduce production term -> UNDERSCORE FATARROW term 
+
+State 44:
+term -> UNDERSCORE COLON . aterm ARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+term -> UNDERSCORE COLON . aterm FATARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+-- On UNDERSCORE shift to state 20
+-- On TYPE shift to state 13
+-- On QID shift to state 14
+-- On LEFTPAR shift to state 21
+-- On ID shift to state 27
+-- On sterm shift to state 26
+-- On aterm shift to state 45
+
+State 45:
+term -> UNDERSCORE COLON aterm . ARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+term -> UNDERSCORE COLON aterm . FATARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+-- On FATARROW shift to state 46
+-- On ARROW shift to state 48
+
+State 46:
+term -> UNDERSCORE COLON aterm FATARROW . term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+-- On UNDERSCORE shift to state 11
+-- On TYPE shift to state 13
+-- On QID shift to state 14
+-- On LEFTPAR shift to state 15
+-- On ID shift to state 18
+-- On term shift to state 47
+-- On sterm shift to state 26
+-- On aterm shift to state 31
+
+State 47:
+term -> term . ARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+term -> UNDERSCORE COLON aterm FATARROW term . [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+-- On ARROW shift to state 24
+-- On RIGHTSQU reduce production term -> UNDERSCORE COLON aterm FATARROW term 
+-- On RIGHTPAR reduce production term -> UNDERSCORE COLON aterm FATARROW term 
+-- On RIGHTBRA reduce production term -> UNDERSCORE COLON aterm FATARROW term 
+-- On LEFTSQU reduce production term -> UNDERSCORE COLON aterm FATARROW term 
+-- On LEFTBRA reduce production term -> UNDERSCORE COLON aterm FATARROW term 
+-- On DOT reduce production term -> UNDERSCORE COLON aterm FATARROW term 
+-- On DEF reduce production term -> UNDERSCORE COLON aterm FATARROW term 
+-- On COMMA reduce production term -> UNDERSCORE COLON aterm FATARROW term 
+
+State 48:
+term -> UNDERSCORE COLON aterm ARROW . term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+-- On UNDERSCORE shift to state 11
+-- On TYPE shift to state 13
+-- On QID shift to state 14
+-- On LEFTPAR shift to state 15
+-- On ID shift to state 18
+-- On term shift to state 49
+-- On sterm shift to state 26
+-- On aterm shift to state 31
+
+State 49:
+term -> UNDERSCORE COLON aterm ARROW term . [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+term -> term . ARROW term [ RIGHTSQU RIGHTPAR RIGHTBRA LEFTSQU LEFTBRA DOT DEF COMMA ARROW ]
+-- On ARROW shift to state 24
+-- On RIGHTSQU reduce production term -> UNDERSCORE COLON aterm ARROW term 
+-- On RIGHTPAR reduce production term -> UNDERSCORE COLON aterm ARROW term 
+-- On RIGHTBRA reduce production term -> UNDERSCORE COLON aterm ARROW term 
+-- On LEFTSQU reduce production term -> UNDERSCORE COLON aterm ARROW term 
+-- On LEFTBRA reduce production term -> UNDERSCORE COLON aterm ARROW term 
+-- On DOT reduce production term -> UNDERSCORE COLON aterm ARROW term 
+-- On DEF reduce production term -> UNDERSCORE COLON aterm ARROW term 
+-- On COMMA reduce production term -> UNDERSCORE COLON aterm ARROW term 
+
+State 50:
+decl -> ID COLON term . [ RIGHTSQU COMMA ]
+term -> term . ARROW term [ RIGHTSQU COMMA ARROW ]
+-- On ARROW shift to state 24
+-- On RIGHTSQU reduce production decl -> ID COLON term 
+-- On COMMA reduce production decl -> ID COLON term 
+
+State 51:
+context -> separated_nonempty_list(COMMA,decl) . [ RIGHTSQU ]
+-- On RIGHTSQU reduce production context -> separated_nonempty_list(COMMA,decl) 
+
+State 52:
+separated_nonempty_list(COMMA,decl) -> decl . [ RIGHTSQU ]
+separated_nonempty_list(COMMA,decl) -> decl . COMMA separated_nonempty_list(COMMA,decl) [ RIGHTSQU ]
+-- On COMMA shift to state 53
+-- On RIGHTSQU reduce production separated_nonempty_list(COMMA,decl) -> decl 
+
+State 53:
+separated_nonempty_list(COMMA,decl) -> decl COMMA . separated_nonempty_list(COMMA,decl) [ RIGHTSQU ]
+-- On ID shift to state 9
+-- On separated_nonempty_list(COMMA,decl) shift to state 54
+-- On decl shift to state 52
+
+State 54:
+separated_nonempty_list(COMMA,decl) -> decl COMMA separated_nonempty_list(COMMA,decl) . [ RIGHTSQU ]
+-- On RIGHTSQU reduce production separated_nonempty_list(COMMA,decl) -> decl COMMA separated_nonempty_list(COMMA,decl) 
+
+State 55:
+rule -> LEFTSQU context . RIGHTSQU top_pattern LONGARROW term [ LEFTSQU LEFTBRA DOT ]
+-- On RIGHTSQU shift to state 56
+
+State 56:
+rule -> LEFTSQU context RIGHTSQU . top_pattern LONGARROW term [ LEFTSQU LEFTBRA DOT ]
+-- On QID shift to state 57
+-- On ID shift to state 79
+-- On top_pattern shift to state 81
+
+State 57:
+top_pattern -> QID . list(pattern_wp) [ LONGARROW ]
+-- On UNDERSCORE shift to state 58
+-- On QID shift to state 59
+-- On LEFTPAR shift to state 60
+-- On LEFTBRA shift to state 62
+-- On ID shift to state 65
+-- On pattern_wp shift to state 76
+-- On list(pattern_wp) shift to state 78
+-- On LONGARROW reduce production list(pattern_wp) -> 
+
+State 58:
+pattern_wp -> UNDERSCORE . [ UNDERSCORE RIGHTPAR QID LONGARROW LEFTPAR LEFTBRA ID ]
+-- On UNDERSCORE reduce production pattern_wp -> UNDERSCORE 
+-- On RIGHTPAR reduce production pattern_wp -> UNDERSCORE 
+-- On QID reduce production pattern_wp -> UNDERSCORE 
+-- On LONGARROW reduce production pattern_wp -> UNDERSCORE 
+-- On LEFTPAR reduce production pattern_wp -> UNDERSCORE 
+-- On LEFTBRA reduce production pattern_wp -> UNDERSCORE 
+-- On ID reduce production pattern_wp -> UNDERSCORE 
+
+State 59:
+pattern_wp -> QID . [ UNDERSCORE RIGHTPAR QID LONGARROW LEFTPAR LEFTBRA ID ]
+-- On UNDERSCORE reduce production pattern_wp -> QID 
+-- On RIGHTPAR reduce production pattern_wp -> QID 
+-- On QID reduce production pattern_wp -> QID 
+-- On LONGARROW reduce production pattern_wp -> QID 
+-- On LEFTPAR reduce production pattern_wp -> QID 
+-- On LEFTBRA reduce production pattern_wp -> QID 
+-- On ID reduce production pattern_wp -> QID 
+
+State 60:
+pattern_wp -> LEFTPAR . pattern RIGHTPAR [ UNDERSCORE RIGHTPAR QID LONGARROW LEFTPAR LEFTBRA ID ]
+-- On UNDERSCORE shift to state 58
+-- On QID shift to state 61
+-- On LEFTPAR shift to state 60
+-- On LEFTBRA shift to state 62
+-- On ID shift to state 69
+-- On pattern_wp shift to state 71
+-- On pattern shift to state 74
+
+State 61:
+pattern -> QID . nonempty_list(pattern_wp) [ RIGHTPAR ]
+pattern_wp -> QID . [ RIGHTPAR ]
+-- On UNDERSCORE shift to state 58
+-- On QID shift to state 59
+-- On LEFTPAR shift to state 60
+-- On LEFTBRA shift to state 62
+-- On ID shift to state 65
+-- On pattern_wp shift to state 66
+-- On nonempty_list(pattern_wp) shift to state 68
+-- On RIGHTPAR reduce production pattern_wp -> QID 
+
+State 62:
+pattern_wp -> LEFTBRA . term RIGHTBRA [ UNDERSCORE RIGHTPAR QID LONGARROW LEFTPAR LEFTBRA ID ]
+-- On UNDERSCORE shift to state 11
+-- On TYPE shift to state 13
+-- On QID shift to state 14
+-- On LEFTPAR shift to state 15
+-- On ID shift to state 18
+-- On term shift to state 63
+-- On sterm shift to state 26
+-- On aterm shift to state 31
+
+State 63:
+pattern_wp -> LEFTBRA term . RIGHTBRA [ UNDERSCORE RIGHTPAR QID LONGARROW LEFTPAR LEFTBRA ID ]
+term -> term . ARROW term [ RIGHTBRA ARROW ]
+-- On RIGHTBRA shift to state 64
+-- On ARROW shift to state 24
+
+State 64:
+pattern_wp -> LEFTBRA term RIGHTBRA . [ UNDERSCORE RIGHTPAR QID LONGARROW LEFTPAR LEFTBRA ID ]
+-- On UNDERSCORE reduce production pattern_wp -> LEFTBRA term RIGHTBRA 
+-- On RIGHTPAR reduce production pattern_wp -> LEFTBRA term RIGHTBRA 
+-- On QID reduce production pattern_wp -> LEFTBRA term RIGHTBRA 
+-- On LONGARROW reduce production pattern_wp -> LEFTBRA term RIGHTBRA 
+-- On LEFTPAR reduce production pattern_wp -> LEFTBRA term RIGHTBRA 
+-- On LEFTBRA reduce production pattern_wp -> LEFTBRA term RIGHTBRA 
+-- On ID reduce production pattern_wp -> LEFTBRA term RIGHTBRA 
+
+State 65:
+pattern_wp -> ID . [ UNDERSCORE RIGHTPAR QID LONGARROW LEFTPAR LEFTBRA ID ]
+-- On UNDERSCORE reduce production pattern_wp -> ID 
+-- On RIGHTPAR reduce production pattern_wp -> ID 
+-- On QID reduce production pattern_wp -> ID 
+-- On LONGARROW reduce production pattern_wp -> ID 
+-- On LEFTPAR reduce production pattern_wp -> ID 
+-- On LEFTBRA reduce production pattern_wp -> ID 
+-- On ID reduce production pattern_wp -> ID 
+
+State 66:
+nonempty_list(pattern_wp) -> pattern_wp . [ RIGHTPAR ]
+nonempty_list(pattern_wp) -> pattern_wp . nonempty_list(pattern_wp) [ RIGHTPAR ]
+-- On UNDERSCORE shift to state 58
+-- On QID shift to state 59
+-- On LEFTPAR shift to state 60
+-- On LEFTBRA shift to state 62
+-- On ID shift to state 65
+-- On pattern_wp shift to state 66
+-- On nonempty_list(pattern_wp) shift to state 67
+-- On RIGHTPAR reduce production nonempty_list(pattern_wp) -> pattern_wp 
+
+State 67:
+nonempty_list(pattern_wp) -> pattern_wp nonempty_list(pattern_wp) . [ RIGHTPAR ]
+-- On RIGHTPAR reduce production nonempty_list(pattern_wp) -> pattern_wp nonempty_list(pattern_wp) 
+
+State 68:
+pattern -> QID nonempty_list(pattern_wp) . [ RIGHTPAR ]
+-- On RIGHTPAR reduce production pattern -> QID nonempty_list(pattern_wp) 
+
+State 69:
+pattern -> ID . nonempty_list(pattern_wp) [ RIGHTPAR ]
+pattern -> ID . FATARROW pattern [ RIGHTPAR ]
+pattern_wp -> ID . [ RIGHTPAR ]
+-- On UNDERSCORE shift to state 58
+-- On QID shift to state 59
+-- On LEFTPAR shift to state 60
+-- On LEFTBRA shift to state 62
+-- On ID shift to state 65
+-- On FATARROW shift to state 70
+-- On pattern_wp shift to state 66
+-- On nonempty_list(pattern_wp) shift to state 73
+-- On RIGHTPAR reduce production pattern_wp -> ID 
+
+State 70:
+pattern -> ID FATARROW . pattern [ RIGHTPAR ]
+-- On UNDERSCORE shift to state 58
+-- On QID shift to state 61
+-- On LEFTPAR shift to state 60
+-- On LEFTBRA shift to state 62
+-- On ID shift to state 69
+-- On pattern_wp shift to state 71
+-- On pattern shift to state 72
+
+State 71:
+pattern -> pattern_wp . [ RIGHTPAR ]
+-- On RIGHTPAR reduce production pattern -> pattern_wp 
+
+State 72:
+pattern -> ID FATARROW pattern . [ RIGHTPAR ]
+-- On RIGHTPAR reduce production pattern -> ID FATARROW pattern 
+
+State 73:
+pattern -> ID nonempty_list(pattern_wp) . [ RIGHTPAR ]
+-- On RIGHTPAR reduce production pattern -> ID nonempty_list(pattern_wp) 
+
+State 74:
+pattern_wp -> LEFTPAR pattern . RIGHTPAR [ UNDERSCORE RIGHTPAR QID LONGARROW LEFTPAR LEFTBRA ID ]
+-- On RIGHTPAR shift to state 75
+
+State 75:
+pattern_wp -> LEFTPAR pattern RIGHTPAR . [ UNDERSCORE RIGHTPAR QID LONGARROW LEFTPAR LEFTBRA ID ]
+-- On UNDERSCORE reduce production pattern_wp -> LEFTPAR pattern RIGHTPAR 
+-- On RIGHTPAR reduce production pattern_wp -> LEFTPAR pattern RIGHTPAR 
+-- On QID reduce production pattern_wp -> LEFTPAR pattern RIGHTPAR 
+-- On LONGARROW reduce production pattern_wp -> LEFTPAR pattern RIGHTPAR 
+-- On LEFTPAR reduce production pattern_wp -> LEFTPAR pattern RIGHTPAR 
+-- On LEFTBRA reduce production pattern_wp -> LEFTPAR pattern RIGHTPAR 
+-- On ID reduce production pattern_wp -> LEFTPAR pattern RIGHTPAR 
+
+State 76:
+list(pattern_wp) -> pattern_wp . list(pattern_wp) [ LONGARROW ]
+-- On UNDERSCORE shift to state 58
+-- On QID shift to state 59
+-- On LEFTPAR shift to state 60
+-- On LEFTBRA shift to state 62
+-- On ID shift to state 65
+-- On pattern_wp shift to state 76
+-- On list(pattern_wp) shift to state 77
+-- On LONGARROW reduce production list(pattern_wp) -> 
+
+State 77:
+list(pattern_wp) -> pattern_wp list(pattern_wp) . [ LONGARROW ]
+-- On LONGARROW reduce production list(pattern_wp) -> pattern_wp list(pattern_wp) 
+
+State 78:
+top_pattern -> QID list(pattern_wp) . [ LONGARROW ]
+-- On LONGARROW reduce production top_pattern -> QID list(pattern_wp) 
+
+State 79:
+top_pattern -> ID . list(pattern_wp) [ LONGARROW ]
+-- On UNDERSCORE shift to state 58
+-- On QID shift to state 59
+-- On LEFTPAR shift to state 60
+-- On LEFTBRA shift to state 62
+-- On ID shift to state 65
+-- On pattern_wp shift to state 76
+-- On list(pattern_wp) shift to state 80
+-- On LONGARROW reduce production list(pattern_wp) -> 
+
+State 80:
+top_pattern -> ID list(pattern_wp) . [ LONGARROW ]
+-- On LONGARROW reduce production top_pattern -> ID list(pattern_wp) 
+
+State 81:
+rule -> LEFTSQU context RIGHTSQU top_pattern . LONGARROW term [ LEFTSQU LEFTBRA DOT ]
+-- On LONGARROW shift to state 82
+
+State 82:
+rule -> LEFTSQU context RIGHTSQU top_pattern LONGARROW . term [ LEFTSQU LEFTBRA DOT ]
+-- On UNDERSCORE shift to state 11
+-- On TYPE shift to state 13
+-- On QID shift to state 14
+-- On LEFTPAR shift to state 15
+-- On ID shift to state 18
+-- On term shift to state 83
+-- On sterm shift to state 26
+-- On aterm shift to state 31
+
+State 83:
+rule -> LEFTSQU context RIGHTSQU top_pattern LONGARROW term . [ LEFTSQU LEFTBRA DOT ]
+term -> term . ARROW term [ LEFTSQU LEFTBRA DOT ARROW ]
+-- On ARROW shift to state 24
+-- On LEFTSQU reduce production rule -> LEFTSQU context RIGHTSQU top_pattern LONGARROW term 
+-- On LEFTBRA reduce production rule -> LEFTSQU context RIGHTSQU top_pattern LONGARROW term 
+-- On DOT reduce production rule -> LEFTSQU context RIGHTSQU top_pattern LONGARROW term 
+
+State 84:
+rule -> LEFTBRA . ID RIGHTBRA LEFTSQU context RIGHTSQU top_pattern LONGARROW term [ LEFTSQU LEFTBRA DOT ]
+rule -> LEFTBRA . QID RIGHTBRA LEFTSQU context RIGHTSQU top_pattern LONGARROW term [ LEFTSQU LEFTBRA DOT ]
+-- On QID shift to state 85
+-- On ID shift to state 93
+
+State 85:
+rule -> LEFTBRA QID . RIGHTBRA LEFTSQU context RIGHTSQU top_pattern LONGARROW term [ LEFTSQU LEFTBRA DOT ]
+-- On RIGHTBRA shift to state 86
+
+State 86:
+rule -> LEFTBRA QID RIGHTBRA . LEFTSQU context RIGHTSQU top_pattern LONGARROW term [ LEFTSQU LEFTBRA DOT ]
+-- On LEFTSQU shift to state 87
+
+State 87:
+rule -> LEFTBRA QID RIGHTBRA LEFTSQU . context RIGHTSQU top_pattern LONGARROW term [ LEFTSQU LEFTBRA DOT ]
+-- On ID shift to state 9
+-- On separated_nonempty_list(COMMA,decl) shift to state 51
+-- On decl shift to state 52
+-- On context shift to state 88
+-- On RIGHTSQU reduce production context -> 
+
+State 88:
+rule -> LEFTBRA QID RIGHTBRA LEFTSQU context . RIGHTSQU top_pattern LONGARROW term [ LEFTSQU LEFTBRA DOT ]
+-- On RIGHTSQU shift to state 89
+
+State 89:
+rule -> LEFTBRA QID RIGHTBRA LEFTSQU context RIGHTSQU . top_pattern LONGARROW term [ LEFTSQU LEFTBRA DOT ]
+-- On QID shift to state 57
+-- On ID shift to state 79
+-- On top_pattern shift to state 90
+
+State 90:
+rule -> LEFTBRA QID RIGHTBRA LEFTSQU context RIGHTSQU top_pattern . LONGARROW term [ LEFTSQU LEFTBRA DOT ]
+-- On LONGARROW shift to state 91
+
+State 91:
+rule -> LEFTBRA QID RIGHTBRA LEFTSQU context RIGHTSQU top_pattern LONGARROW . term [ LEFTSQU LEFTBRA DOT ]
+-- On UNDERSCORE shift to state 11
+-- On TYPE shift to state 13
+-- On QID shift to state 14
+-- On LEFTPAR shift to state 15
+-- On ID shift to state 18
+-- On term shift to state 92
+-- On sterm shift to state 26
+-- On aterm shift to state 31
+
+State 92:
+rule -> LEFTBRA QID RIGHTBRA LEFTSQU context RIGHTSQU top_pattern LONGARROW term . [ LEFTSQU LEFTBRA DOT ]
+term -> term . ARROW term [ LEFTSQU LEFTBRA DOT ARROW ]
+-- On ARROW shift to state 24
+-- On LEFTSQU reduce production rule -> LEFTBRA QID RIGHTBRA LEFTSQU context RIGHTSQU top_pattern LONGARROW term 
+-- On LEFTBRA reduce production rule -> LEFTBRA QID RIGHTBRA LEFTSQU context RIGHTSQU top_pattern LONGARROW term 
+-- On DOT reduce production rule -> LEFTBRA QID RIGHTBRA LEFTSQU context RIGHTSQU top_pattern LONGARROW term 
+
+State 93:
+rule -> LEFTBRA ID . RIGHTBRA LEFTSQU context RIGHTSQU top_pattern LONGARROW term [ LEFTSQU LEFTBRA DOT ]
+-- On RIGHTBRA shift to state 94
+
+State 94:
+rule -> LEFTBRA ID RIGHTBRA . LEFTSQU context RIGHTSQU top_pattern LONGARROW term [ LEFTSQU LEFTBRA DOT ]
+-- On LEFTSQU shift to state 95
+
+State 95:
+rule -> LEFTBRA ID RIGHTBRA LEFTSQU . context RIGHTSQU top_pattern LONGARROW term [ LEFTSQU LEFTBRA DOT ]
+-- On ID shift to state 9
+-- On separated_nonempty_list(COMMA,decl) shift to state 51
+-- On decl shift to state 52
+-- On context shift to state 96
+-- On RIGHTSQU reduce production context -> 
+
+State 96:
+rule -> LEFTBRA ID RIGHTBRA LEFTSQU context . RIGHTSQU top_pattern LONGARROW term [ LEFTSQU LEFTBRA DOT ]
+-- On RIGHTSQU shift to state 97
+
+State 97:
+rule -> LEFTBRA ID RIGHTBRA LEFTSQU context RIGHTSQU . top_pattern LONGARROW term [ LEFTSQU LEFTBRA DOT ]
+-- On QID shift to state 57
+-- On ID shift to state 79
+-- On top_pattern shift to state 98
+
+State 98:
+rule -> LEFTBRA ID RIGHTBRA LEFTSQU context RIGHTSQU top_pattern . LONGARROW term [ LEFTSQU LEFTBRA DOT ]
+-- On LONGARROW shift to state 99
+
+State 99:
+rule -> LEFTBRA ID RIGHTBRA LEFTSQU context RIGHTSQU top_pattern LONGARROW . term [ LEFTSQU LEFTBRA DOT ]
+-- On UNDERSCORE shift to state 11
+-- On TYPE shift to state 13
+-- On QID shift to state 14
+-- On LEFTPAR shift to state 15
+-- On ID shift to state 18
+-- On term shift to state 100
+-- On sterm shift to state 26
+-- On aterm shift to state 31
+
+State 100:
+rule -> LEFTBRA ID RIGHTBRA LEFTSQU context RIGHTSQU top_pattern LONGARROW term . [ LEFTSQU LEFTBRA DOT ]
+term -> term . ARROW term [ LEFTSQU LEFTBRA DOT ARROW ]
+-- On ARROW shift to state 24
+-- On LEFTSQU reduce production rule -> LEFTBRA ID RIGHTBRA LEFTSQU context RIGHTSQU top_pattern LONGARROW term 
+-- On LEFTBRA reduce production rule -> LEFTBRA ID RIGHTBRA LEFTSQU context RIGHTSQU top_pattern LONGARROW term 
+-- On DOT reduce production rule -> LEFTBRA ID RIGHTBRA LEFTSQU context RIGHTSQU top_pattern LONGARROW term 
+
+State 101:
+line -> KW_THM . ID COLON term DEF term DOT [ # ]
+line -> KW_THM . ID nonempty_list(param) COLON term DEF term DOT [ # ]
+-- On ID shift to state 102
+
+State 102:
+line -> KW_THM ID . COLON term DEF term DOT [ # ]
+line -> KW_THM ID . nonempty_list(param) COLON term DEF term DOT [ # ]
+-- On LEFTPAR shift to state 103
+-- On COLON shift to state 108
+-- On param shift to state 113
+-- On nonempty_list(param) shift to state 115
+
+State 103:
+param -> LEFTPAR . ID COLON term RIGHTPAR [ LEFTPAR DEF COLON ]
+-- On ID shift to state 104
+
+State 104:
+param -> LEFTPAR ID . COLON term RIGHTPAR [ LEFTPAR DEF COLON ]
+-- On COLON shift to state 105
+
+State 105:
+param -> LEFTPAR ID COLON . term RIGHTPAR [ LEFTPAR DEF COLON ]
+-- On UNDERSCORE shift to state 11
+-- On TYPE shift to state 13
+-- On QID shift to state 14
+-- On LEFTPAR shift to state 15
+-- On ID shift to state 18
+-- On term shift to state 106
+-- On sterm shift to state 26
+-- On aterm shift to state 31
+
+State 106:
+param -> LEFTPAR ID COLON term . RIGHTPAR [ LEFTPAR DEF COLON ]
+term -> term . ARROW term [ RIGHTPAR ARROW ]
+-- On RIGHTPAR shift to state 107
+-- On ARROW shift to state 24
+
+State 107:
+param -> LEFTPAR ID COLON term RIGHTPAR . [ LEFTPAR DEF COLON ]
+-- On LEFTPAR reduce production param -> LEFTPAR ID COLON term RIGHTPAR 
+-- On DEF reduce production param -> LEFTPAR ID COLON term RIGHTPAR 
+-- On COLON reduce production param -> LEFTPAR ID COLON term RIGHTPAR 
+
+State 108:
+line -> KW_THM ID COLON . term DEF term DOT [ # ]
+-- On UNDERSCORE shift to state 11
+-- On TYPE shift to state 13
+-- On QID shift to state 14
+-- On LEFTPAR shift to state 15
+-- On ID shift to state 18
+-- On term shift to state 109
+-- On sterm shift to state 26
+-- On aterm shift to state 31
+
+State 109:
+line -> KW_THM ID COLON term . DEF term DOT [ # ]
+term -> term . ARROW term [ DEF ARROW ]
+-- On DEF shift to state 110
+-- On ARROW shift to state 24
+
+State 110:
+line -> KW_THM ID COLON term DEF . term DOT [ # ]
+-- On UNDERSCORE shift to state 11
+-- On TYPE shift to state 13
+-- On QID shift to state 14
+-- On LEFTPAR shift to state 15
+-- On ID shift to state 18
+-- On term shift to state 111
+-- On sterm shift to state 26
+-- On aterm shift to state 31
+
+State 111:
+line -> KW_THM ID COLON term DEF term . DOT [ # ]
+term -> term . ARROW term [ DOT ARROW ]
+-- On DOT shift to state 112
+-- On ARROW shift to state 24
+
+State 112:
+line -> KW_THM ID COLON term DEF term DOT . [ # ]
+-- On # reduce production line -> KW_THM ID COLON term DEF term DOT 
+
+State 113:
+nonempty_list(param) -> param . [ DEF COLON ]
+nonempty_list(param) -> param . nonempty_list(param) [ DEF COLON ]
+-- On LEFTPAR shift to state 103
+-- On param shift to state 113
+-- On nonempty_list(param) shift to state 114
+-- On DEF reduce production nonempty_list(param) -> param 
+-- On COLON reduce production nonempty_list(param) -> param 
+
+State 114:
+nonempty_list(param) -> param nonempty_list(param) . [ DEF COLON ]
+-- On DEF reduce production nonempty_list(param) -> param nonempty_list(param) 
+-- On COLON reduce production nonempty_list(param) -> param nonempty_list(param) 
+
+State 115:
+line -> KW_THM ID nonempty_list(param) . COLON term DEF term DOT [ # ]
+-- On COLON shift to state 116
+
+State 116:
+line -> KW_THM ID nonempty_list(param) COLON . term DEF term DOT [ # ]
+-- On UNDERSCORE shift to state 11
+-- On TYPE shift to state 13
+-- On QID shift to state 14
+-- On LEFTPAR shift to state 15
+-- On ID shift to state 18
+-- On term shift to state 117
+-- On sterm shift to state 26
+-- On aterm shift to state 31
+
+State 117:
+line -> KW_THM ID nonempty_list(param) COLON term . DEF term DOT [ # ]
+term -> term . ARROW term [ DEF ARROW ]
+-- On DEF shift to state 118
+-- On ARROW shift to state 24
+
+State 118:
+line -> KW_THM ID nonempty_list(param) COLON term DEF . term DOT [ # ]
+-- On UNDERSCORE shift to state 11
+-- On TYPE shift to state 13
+-- On QID shift to state 14
+-- On LEFTPAR shift to state 15
+-- On ID shift to state 18
+-- On term shift to state 119
+-- On sterm shift to state 26
+-- On aterm shift to state 31
+
+State 119:
+line -> KW_THM ID nonempty_list(param) COLON term DEF term . DOT [ # ]
+term -> term . ARROW term [ DOT ARROW ]
+-- On DOT shift to state 120
+-- On ARROW shift to state 24
+
+State 120:
+line -> KW_THM ID nonempty_list(param) COLON term DEF term DOT . [ # ]
+-- On # reduce production line -> KW_THM ID nonempty_list(param) COLON term DEF term DOT 
+
+State 121:
+line -> KW_DEF . ID COLON term DOT [ # ]
+line -> KW_DEF . ID COLON term DEF term DOT [ # ]
+line -> KW_DEF . ID DEF term DOT [ # ]
+line -> KW_DEF . ID nonempty_list(param) COLON term DEF term DOT [ # ]
+line -> KW_DEF . ID nonempty_list(param) DEF term DOT [ # ]
+-- On ID shift to state 122
+
+State 122:
+line -> KW_DEF ID . COLON term DOT [ # ]
+line -> KW_DEF ID . COLON term DEF term DOT [ # ]
+line -> KW_DEF ID . DEF term DOT [ # ]
+line -> KW_DEF ID . nonempty_list(param) COLON term DEF term DOT [ # ]
+line -> KW_DEF ID . nonempty_list(param) DEF term DOT [ # ]
+-- On LEFTPAR shift to state 103
+-- On DEF shift to state 123
+-- On COLON shift to state 126
+-- On param shift to state 113
+-- On nonempty_list(param) shift to state 132
+
+State 123:
+line -> KW_DEF ID DEF . term DOT [ # ]
+-- On UNDERSCORE shift to state 11
+-- On TYPE shift to state 13
+-- On QID shift to state 14
+-- On LEFTPAR shift to state 15
+-- On ID shift to state 18
+-- On term shift to state 124
+-- On sterm shift to state 26
+-- On aterm shift to state 31
+
+State 124:
+line -> KW_DEF ID DEF term . DOT [ # ]
+term -> term . ARROW term [ DOT ARROW ]
+-- On DOT shift to state 125
+-- On ARROW shift to state 24
+
+State 125:
+line -> KW_DEF ID DEF term DOT . [ # ]
+-- On # reduce production line -> KW_DEF ID DEF term DOT 
+
+State 126:
+line -> KW_DEF ID COLON . term DOT [ # ]
+line -> KW_DEF ID COLON . term DEF term DOT [ # ]
+-- On UNDERSCORE shift to state 11
+-- On TYPE shift to state 13
+-- On QID shift to state 14
+-- On LEFTPAR shift to state 15
+-- On ID shift to state 18
+-- On term shift to state 127
+-- On sterm shift to state 26
+-- On aterm shift to state 31
+
+State 127:
+line -> KW_DEF ID COLON term . DOT [ # ]
+line -> KW_DEF ID COLON term . DEF term DOT [ # ]
+term -> term . ARROW term [ DOT DEF ARROW ]
+-- On DOT shift to state 128
+-- On DEF shift to state 129
+-- On ARROW shift to state 24
+
+State 128:
+line -> KW_DEF ID COLON term DOT . [ # ]
+-- On # reduce production line -> KW_DEF ID COLON term DOT 
+
+State 129:
+line -> KW_DEF ID COLON term DEF . term DOT [ # ]
+-- On UNDERSCORE shift to state 11
+-- On TYPE shift to state 13
+-- On QID shift to state 14
+-- On LEFTPAR shift to state 15
+-- On ID shift to state 18
+-- On term shift to state 130
+-- On sterm shift to state 26
+-- On aterm shift to state 31
+
+State 130:
+line -> KW_DEF ID COLON term DEF term . DOT [ # ]
+term -> term . ARROW term [ DOT ARROW ]
+-- On DOT shift to state 131
+-- On ARROW shift to state 24
+
+State 131:
+line -> KW_DEF ID COLON term DEF term DOT . [ # ]
+-- On # reduce production line -> KW_DEF ID COLON term DEF term DOT 
+
+State 132:
+line -> KW_DEF ID nonempty_list(param) . COLON term DEF term DOT [ # ]
+line -> KW_DEF ID nonempty_list(param) . DEF term DOT [ # ]
+-- On DEF shift to state 133
+-- On COLON shift to state 136
+
+State 133:
+line -> KW_DEF ID nonempty_list(param) DEF . term DOT [ # ]
+-- On UNDERSCORE shift to state 11
+-- On TYPE shift to state 13
+-- On QID shift to state 14
+-- On LEFTPAR shift to state 15
+-- On ID shift to state 18
+-- On term shift to state 134
+-- On sterm shift to state 26
+-- On aterm shift to state 31
+
+State 134:
+line -> KW_DEF ID nonempty_list(param) DEF term . DOT [ # ]
+term -> term . ARROW term [ DOT ARROW ]
+-- On DOT shift to state 135
+-- On ARROW shift to state 24
+
+State 135:
+line -> KW_DEF ID nonempty_list(param) DEF term DOT . [ # ]
+-- On # reduce production line -> KW_DEF ID nonempty_list(param) DEF term DOT 
+
+State 136:
+line -> KW_DEF ID nonempty_list(param) COLON . term DEF term DOT [ # ]
+-- On UNDERSCORE shift to state 11
+-- On TYPE shift to state 13
+-- On QID shift to state 14
+-- On LEFTPAR shift to state 15
+-- On ID shift to state 18
+-- On term shift to state 137
+-- On sterm shift to state 26
+-- On aterm shift to state 31
+
+State 137:
+line -> KW_DEF ID nonempty_list(param) COLON term . DEF term DOT [ # ]
+term -> term . ARROW term [ DEF ARROW ]
+-- On DEF shift to state 138
+-- On ARROW shift to state 24
+
+State 138:
+line -> KW_DEF ID nonempty_list(param) COLON term DEF . term DOT [ # ]
+-- On UNDERSCORE shift to state 11
+-- On TYPE shift to state 13
+-- On QID shift to state 14
+-- On LEFTPAR shift to state 15
+-- On ID shift to state 18
+-- On term shift to state 139
+-- On sterm shift to state 26
+-- On aterm shift to state 31
+
+State 139:
+line -> KW_DEF ID nonempty_list(param) COLON term DEF term . DOT [ # ]
+term -> term . ARROW term [ DOT ARROW ]
+-- On DOT shift to state 140
+-- On ARROW shift to state 24
+
+State 140:
+line -> KW_DEF ID nonempty_list(param) COLON term DEF term DOT . [ # ]
+-- On # reduce production line -> KW_DEF ID nonempty_list(param) COLON term DEF term DOT 
+
+State 141:
+line -> INFER . term DOT [ # ]
+line -> INFER . eval_config term DOT [ # ]
+-- On UNDERSCORE shift to state 11
+-- On TYPE shift to state 13
+-- On QID shift to state 14
+-- On LEFTSQU shift to state 142
+-- On LEFTPAR shift to state 15
+-- On ID shift to state 18
+-- On term shift to state 148
+-- On sterm shift to state 26
+-- On eval_config shift to state 150
+-- On aterm shift to state 31
+
+State 142:
+eval_config -> LEFTSQU . ID RIGHTSQU [ UNDERSCORE TYPE QID LEFTPAR ID ]
+eval_config -> LEFTSQU . ID COMMA ID RIGHTSQU [ UNDERSCORE TYPE QID LEFTPAR ID ]
+-- On ID shift to state 143
+
+State 143:
+eval_config -> LEFTSQU ID . RIGHTSQU [ UNDERSCORE TYPE QID LEFTPAR ID ]
+eval_config -> LEFTSQU ID . COMMA ID RIGHTSQU [ UNDERSCORE TYPE QID LEFTPAR ID ]
+-- On RIGHTSQU shift to state 144
+-- On COMMA shift to state 145
+
+State 144:
+eval_config -> LEFTSQU ID RIGHTSQU . [ UNDERSCORE TYPE QID LEFTPAR ID ]
+-- On UNDERSCORE reduce production eval_config -> LEFTSQU ID RIGHTSQU 
+-- On TYPE reduce production eval_config -> LEFTSQU ID RIGHTSQU 
+-- On QID reduce production eval_config -> LEFTSQU ID RIGHTSQU 
+-- On LEFTPAR reduce production eval_config -> LEFTSQU ID RIGHTSQU 
+-- On ID reduce production eval_config -> LEFTSQU ID RIGHTSQU 
+
+State 145:
+eval_config -> LEFTSQU ID COMMA . ID RIGHTSQU [ UNDERSCORE TYPE QID LEFTPAR ID ]
+-- On ID shift to state 146
+
+State 146:
+eval_config -> LEFTSQU ID COMMA ID . RIGHTSQU [ UNDERSCORE TYPE QID LEFTPAR ID ]
+-- On RIGHTSQU shift to state 147
+
+State 147:
+eval_config -> LEFTSQU ID COMMA ID RIGHTSQU . [ UNDERSCORE TYPE QID LEFTPAR ID ]
+-- On UNDERSCORE reduce production eval_config -> LEFTSQU ID COMMA ID RIGHTSQU 
+-- On TYPE reduce production eval_config -> LEFTSQU ID COMMA ID RIGHTSQU 
+-- On QID reduce production eval_config -> LEFTSQU ID COMMA ID RIGHTSQU 
+-- On LEFTPAR reduce production eval_config -> LEFTSQU ID COMMA ID RIGHTSQU 
+-- On ID reduce production eval_config -> LEFTSQU ID COMMA ID RIGHTSQU 
+
+State 148:
+line -> INFER term . DOT [ # ]
+term -> term . ARROW term [ DOT ARROW ]
+-- On DOT shift to state 149
+-- On ARROW shift to state 24
+
+State 149:
+line -> INFER term DOT . [ # ]
+-- On # reduce production line -> INFER term DOT 
+
+State 150:
+line -> INFER eval_config . term DOT [ # ]
+-- On UNDERSCORE shift to state 11
+-- On TYPE shift to state 13
+-- On QID shift to state 14
+-- On LEFTPAR shift to state 15
+-- On ID shift to state 18
+-- On term shift to state 151
+-- On sterm shift to state 26
+-- On aterm shift to state 31
+
+State 151:
+line -> INFER eval_config term . DOT [ # ]
+term -> term . ARROW term [ DOT ARROW ]
+-- On DOT shift to state 152
+-- On ARROW shift to state 24
+
+State 152:
+line -> INFER eval_config term DOT . [ # ]
+-- On # reduce production line -> INFER eval_config term DOT 
+
+State 153:
+line -> ID . list(param) COLON term DOT [ # ]
+-- On LEFTPAR shift to state 103
+-- On param shift to state 154
+-- On list(param) shift to state 156
+-- On COLON reduce production list(param) -> 
+
+State 154:
+list(param) -> param . list(param) [ COLON ]
+-- On LEFTPAR shift to state 103
+-- On param shift to state 154
+-- On list(param) shift to state 155
+-- On COLON reduce production list(param) -> 
+
+State 155:
+list(param) -> param list(param) . [ COLON ]
+-- On COLON reduce production list(param) -> param list(param) 
+
+State 156:
+line -> ID list(param) . COLON term DOT [ # ]
+-- On COLON shift to state 157
+
+State 157:
+line -> ID list(param) COLON . term DOT [ # ]
+-- On UNDERSCORE shift to state 11
+-- On TYPE shift to state 13
+-- On QID shift to state 14
+-- On LEFTPAR shift to state 15
+-- On ID shift to state 18
+-- On term shift to state 158
+-- On sterm shift to state 26
+-- On aterm shift to state 31
+
+State 158:
+line -> ID list(param) COLON term . DOT [ # ]
+term -> term . ARROW term [ DOT ARROW ]
+-- On DOT shift to state 159
+-- On ARROW shift to state 24
+
+State 159:
+line -> ID list(param) COLON term DOT . [ # ]
+-- On # reduce production line -> ID list(param) COLON term DOT 
+
+State 160:
+line -> GDT . ID DOT [ # ]
+line -> GDT . QID DOT [ # ]
+-- On QID shift to state 161
+-- On ID shift to state 163
+
+State 161:
+line -> GDT QID . DOT [ # ]
+-- On DOT shift to state 162
+
+State 162:
+line -> GDT QID DOT . [ # ]
+-- On # reduce production line -> GDT QID DOT 
+
+State 163:
+line -> GDT ID . DOT [ # ]
+-- On DOT shift to state 164
+
+State 164:
+line -> GDT ID DOT . [ # ]
+-- On # reduce production line -> GDT ID DOT 
+
+State 165:
+line -> EVAL . term DOT [ # ]
+line -> EVAL . eval_config term DOT [ # ]
+-- On UNDERSCORE shift to state 11
+-- On TYPE shift to state 13
+-- On QID shift to state 14
+-- On LEFTSQU shift to state 142
+-- On LEFTPAR shift to state 15
+-- On ID shift to state 18
+-- On term shift to state 166
+-- On sterm shift to state 26
+-- On eval_config shift to state 168
+-- On aterm shift to state 31
+
+State 166:
+line -> EVAL term . DOT [ # ]
+term -> term . ARROW term [ DOT ARROW ]
+-- On DOT shift to state 167
+-- On ARROW shift to state 24
+
+State 167:
+line -> EVAL term DOT . [ # ]
+-- On # reduce production line -> EVAL term DOT 
+
+State 168:
+line -> EVAL eval_config . term DOT [ # ]
+-- On UNDERSCORE shift to state 11
+-- On TYPE shift to state 13
+-- On QID shift to state 14
+-- On LEFTPAR shift to state 15
+-- On ID shift to state 18
+-- On term shift to state 169
+-- On sterm shift to state 26
+-- On aterm shift to state 31
+
+State 169:
+line -> EVAL eval_config term . DOT [ # ]
+term -> term . ARROW term [ DOT ARROW ]
+-- On DOT shift to state 170
+-- On ARROW shift to state 24
+
+State 170:
+line -> EVAL eval_config term DOT . [ # ]
+-- On # reduce production line -> EVAL eval_config term DOT 
+
+State 171:
+line -> EOF . [ # ]
+-- On # reduce production line -> EOF 
+
+State 172:
+line -> CHECKNOT . aterm COLON term DOT [ # ]
+line -> CHECKNOT . aterm EQUAL term DOT [ # ]
+-- On UNDERSCORE shift to state 20
+-- On TYPE shift to state 13
+-- On QID shift to state 14
+-- On LEFTPAR shift to state 21
+-- On ID shift to state 27
+-- On sterm shift to state 26
+-- On aterm shift to state 173
+
+State 173:
+line -> CHECKNOT aterm . COLON term DOT [ # ]
+line -> CHECKNOT aterm . EQUAL term DOT [ # ]
+-- On EQUAL shift to state 174
+-- On COLON shift to state 177
+
+State 174:
+line -> CHECKNOT aterm EQUAL . term DOT [ # ]
+-- On UNDERSCORE shift to state 11
+-- On TYPE shift to state 13
+-- On QID shift to state 14
+-- On LEFTPAR shift to state 15
+-- On ID shift to state 18
+-- On term shift to state 175
+-- On sterm shift to state 26
+-- On aterm shift to state 31
+
+State 175:
+line -> CHECKNOT aterm EQUAL term . DOT [ # ]
+term -> term . ARROW term [ DOT ARROW ]
+-- On DOT shift to state 176
+-- On ARROW shift to state 24
+
+State 176:
+line -> CHECKNOT aterm EQUAL term DOT . [ # ]
+-- On # reduce production line -> CHECKNOT aterm EQUAL term DOT 
+
+State 177:
+line -> CHECKNOT aterm COLON . term DOT [ # ]
+-- On UNDERSCORE shift to state 11
+-- On TYPE shift to state 13
+-- On QID shift to state 14
+-- On LEFTPAR shift to state 15
+-- On ID shift to state 18
+-- On term shift to state 178
+-- On sterm shift to state 26
+-- On aterm shift to state 31
+
+State 178:
+line -> CHECKNOT aterm COLON term . DOT [ # ]
+term -> term . ARROW term [ DOT ARROW ]
+-- On DOT shift to state 179
+-- On ARROW shift to state 24
+
+State 179:
+line -> CHECKNOT aterm COLON term DOT . [ # ]
+-- On # reduce production line -> CHECKNOT aterm COLON term DOT 
+
+State 180:
+line -> CHECK . aterm COLON term DOT [ # ]
+line -> CHECK . aterm EQUAL term DOT [ # ]
+-- On UNDERSCORE shift to state 20
+-- On TYPE shift to state 13
+-- On QID shift to state 14
+-- On LEFTPAR shift to state 21
+-- On ID shift to state 27
+-- On sterm shift to state 26
+-- On aterm shift to state 181
+
+State 181:
+line -> CHECK aterm . COLON term DOT [ # ]
+line -> CHECK aterm . EQUAL term DOT [ # ]
+-- On EQUAL shift to state 182
+-- On COLON shift to state 185
+
+State 182:
+line -> CHECK aterm EQUAL . term DOT [ # ]
+-- On UNDERSCORE shift to state 11
+-- On TYPE shift to state 13
+-- On QID shift to state 14
+-- On LEFTPAR shift to state 15
+-- On ID shift to state 18
+-- On term shift to state 183
+-- On sterm shift to state 26
+-- On aterm shift to state 31
+
+State 183:
+line -> CHECK aterm EQUAL term . DOT [ # ]
+term -> term . ARROW term [ DOT ARROW ]
+-- On DOT shift to state 184
+-- On ARROW shift to state 24
+
+State 184:
+line -> CHECK aterm EQUAL term DOT . [ # ]
+-- On # reduce production line -> CHECK aterm EQUAL term DOT 
+
+State 185:
+line -> CHECK aterm COLON . term DOT [ # ]
+-- On UNDERSCORE shift to state 11
+-- On TYPE shift to state 13
+-- On QID shift to state 14
+-- On LEFTPAR shift to state 15
+-- On ID shift to state 18
+-- On term shift to state 186
+-- On sterm shift to state 26
+-- On aterm shift to state 31
+
+State 186:
+line -> CHECK aterm COLON term . DOT [ # ]
+term -> term . ARROW term [ DOT ARROW ]
+-- On DOT shift to state 187
+-- On ARROW shift to state 24
+
+State 187:
+line -> CHECK aterm COLON term DOT . [ # ]
+-- On # reduce production line -> CHECK aterm COLON term DOT 
+
+State 188:
+line -> ASSERTNOT . aterm COLON term DOT [ # ]
+line -> ASSERTNOT . aterm EQUAL term DOT [ # ]
+-- On UNDERSCORE shift to state 20
+-- On TYPE shift to state 13
+-- On QID shift to state 14
+-- On LEFTPAR shift to state 21
+-- On ID shift to state 27
+-- On sterm shift to state 26
+-- On aterm shift to state 189
+
+State 189:
+line -> ASSERTNOT aterm . COLON term DOT [ # ]
+line -> ASSERTNOT aterm . EQUAL term DOT [ # ]
+-- On EQUAL shift to state 190
+-- On COLON shift to state 193
+
+State 190:
+line -> ASSERTNOT aterm EQUAL . term DOT [ # ]
+-- On UNDERSCORE shift to state 11
+-- On TYPE shift to state 13
+-- On QID shift to state 14
+-- On LEFTPAR shift to state 15
+-- On ID shift to state 18
+-- On term shift to state 191
+-- On sterm shift to state 26
+-- On aterm shift to state 31
+
+State 191:
+line -> ASSERTNOT aterm EQUAL term . DOT [ # ]
+term -> term . ARROW term [ DOT ARROW ]
+-- On DOT shift to state 192
+-- On ARROW shift to state 24
+
+State 192:
+line -> ASSERTNOT aterm EQUAL term DOT . [ # ]
+-- On # reduce production line -> ASSERTNOT aterm EQUAL term DOT 
+
+State 193:
+line -> ASSERTNOT aterm COLON . term DOT [ # ]
+-- On UNDERSCORE shift to state 11
+-- On TYPE shift to state 13
+-- On QID shift to state 14
+-- On LEFTPAR shift to state 15
+-- On ID shift to state 18
+-- On term shift to state 194
+-- On sterm shift to state 26
+-- On aterm shift to state 31
+
+State 194:
+line -> ASSERTNOT aterm COLON term . DOT [ # ]
+term -> term . ARROW term [ DOT ARROW ]
+-- On DOT shift to state 195
+-- On ARROW shift to state 24
+
+State 195:
+line -> ASSERTNOT aterm COLON term DOT . [ # ]
+-- On # reduce production line -> ASSERTNOT aterm COLON term DOT 
+
+State 196:
+line -> ASSERT . aterm COLON term DOT [ # ]
+line -> ASSERT . aterm EQUAL term DOT [ # ]
+-- On UNDERSCORE shift to state 20
+-- On TYPE shift to state 13
+-- On QID shift to state 14
+-- On LEFTPAR shift to state 21
+-- On ID shift to state 27
+-- On sterm shift to state 26
+-- On aterm shift to state 197
+
+State 197:
+line -> ASSERT aterm . COLON term DOT [ # ]
+line -> ASSERT aterm . EQUAL term DOT [ # ]
+-- On EQUAL shift to state 198
+-- On COLON shift to state 201
+
+State 198:
+line -> ASSERT aterm EQUAL . term DOT [ # ]
+-- On UNDERSCORE shift to state 11
+-- On TYPE shift to state 13
+-- On QID shift to state 14
+-- On LEFTPAR shift to state 15
+-- On ID shift to state 18
+-- On term shift to state 199
+-- On sterm shift to state 26
+-- On aterm shift to state 31
+
+State 199:
+line -> ASSERT aterm EQUAL term . DOT [ # ]
+term -> term . ARROW term [ DOT ARROW ]
+-- On DOT shift to state 200
+-- On ARROW shift to state 24
+
+State 200:
+line -> ASSERT aterm EQUAL term DOT . [ # ]
+-- On # reduce production line -> ASSERT aterm EQUAL term DOT 
+
+State 201:
+line -> ASSERT aterm COLON . term DOT [ # ]
+-- On UNDERSCORE shift to state 11
+-- On TYPE shift to state 13
+-- On QID shift to state 14
+-- On LEFTPAR shift to state 15
+-- On ID shift to state 18
+-- On term shift to state 202
+-- On sterm shift to state 26
+-- On aterm shift to state 31
+
+State 202:
+line -> ASSERT aterm COLON term . DOT [ # ]
+term -> term . ARROW term [ DOT ARROW ]
+-- On DOT shift to state 203
+-- On ARROW shift to state 24
+
+State 203:
+line -> ASSERT aterm COLON term DOT . [ # ]
+-- On # reduce production line -> ASSERT aterm COLON term DOT 
+
+State 204:
+nonempty_list(rule) -> rule . [ DOT ]
+nonempty_list(rule) -> rule . nonempty_list(rule) [ DOT ]
+-- On LEFTSQU shift to state 8
+-- On LEFTBRA shift to state 84
+-- On rule shift to state 204
+-- On nonempty_list(rule) shift to state 205
+-- On DOT reduce production nonempty_list(rule) -> rule 
+
+State 205:
+nonempty_list(rule) -> rule nonempty_list(rule) . [ DOT ]
+-- On DOT reduce production nonempty_list(rule) -> rule nonempty_list(rule) 
+
+State 206:
+line -> nonempty_list(rule) . DOT [ # ]
+-- On DOT shift to state 207
+
+State 207:
+line -> nonempty_list(rule) DOT . [ # ]
+-- On # reduce production line -> nonempty_list(rule) DOT 
+
+State 208:
+line' -> line . [ # ]
+-- On # accept line
+

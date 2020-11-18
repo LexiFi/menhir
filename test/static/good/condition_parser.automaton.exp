@@ -1,0 +1,225 @@
+State 0:
+condition_start' -> . condition_start [ # ]
+-- On STRING shift to state 1
+-- On NOT shift to state 2
+-- On LPAR shift to state 3
+-- On INT shift to state 4
+-- On IDENT shift to state 5
+-- On EXISTS shift to state 6
+-- On DOLLAR_TYPE shift to state 8
+-- On DOLLAR_KEY shift to state 9
+-- On cte shift to state 10
+-- On condition_start shift to state 23
+-- On condition shift to state 24
+-- On atom shift to state 21
+
+State 1:
+cte -> STRING . [ RPAR OR EOF COMP COLON AND ]
+-- On RPAR reduce production cte -> STRING 
+-- On OR reduce production cte -> STRING 
+-- On EOF reduce production cte -> STRING 
+-- On COMP reduce production cte -> STRING 
+-- On COLON reduce production cte -> STRING 
+-- On AND reduce production cte -> STRING 
+
+State 2:
+condition -> NOT . condition [ RPAR OR EOF AND ]
+-- On STRING shift to state 1
+-- On NOT shift to state 2
+-- On LPAR shift to state 3
+-- On INT shift to state 4
+-- On IDENT shift to state 5
+-- On EXISTS shift to state 6
+-- On DOLLAR_TYPE shift to state 8
+-- On DOLLAR_KEY shift to state 9
+-- On cte shift to state 10
+-- On condition shift to state 22
+-- On atom shift to state 21
+
+State 3:
+condition -> LPAR . condition RPAR [ RPAR OR EOF AND ]
+-- On STRING shift to state 1
+-- On NOT shift to state 2
+-- On LPAR shift to state 3
+-- On INT shift to state 4
+-- On IDENT shift to state 5
+-- On EXISTS shift to state 6
+-- On DOLLAR_TYPE shift to state 8
+-- On DOLLAR_KEY shift to state 9
+-- On cte shift to state 10
+-- On condition shift to state 15
+-- On atom shift to state 21
+
+State 4:
+cte -> INT . [ RPAR OR EOF COMP COLON AND ]
+-- On RPAR reduce production cte -> INT 
+-- On OR reduce production cte -> INT 
+-- On EOF reduce production cte -> INT 
+-- On COMP reduce production cte -> INT 
+-- On COLON reduce production cte -> INT 
+-- On AND reduce production cte -> INT 
+
+State 5:
+cte -> IDENT . [ RPAR OR EOF COMP COLON AND ]
+-- On RPAR reduce production cte -> IDENT 
+-- On OR reduce production cte -> IDENT 
+-- On EOF reduce production cte -> IDENT 
+-- On COMP reduce production cte -> IDENT 
+-- On COLON reduce production cte -> IDENT 
+-- On AND reduce production cte -> IDENT 
+
+State 6:
+atom -> EXISTS . IDENT [ RPAR OR EOF AND ]
+-- On IDENT shift to state 7
+
+State 7:
+atom -> EXISTS IDENT . [ RPAR OR EOF AND ]
+-- On RPAR reduce production atom -> EXISTS IDENT 
+-- On OR reduce production atom -> EXISTS IDENT 
+-- On EOF reduce production atom -> EXISTS IDENT 
+-- On AND reduce production atom -> EXISTS IDENT 
+
+State 8:
+cte -> DOLLAR_TYPE . [ RPAR OR EOF COMP COLON AND ]
+-- On RPAR reduce production cte -> DOLLAR_TYPE 
+-- On OR reduce production cte -> DOLLAR_TYPE 
+-- On EOF reduce production cte -> DOLLAR_TYPE 
+-- On COMP reduce production cte -> DOLLAR_TYPE 
+-- On COLON reduce production cte -> DOLLAR_TYPE 
+-- On AND reduce production cte -> DOLLAR_TYPE 
+
+State 9:
+cte -> DOLLAR_KEY . [ RPAR OR EOF COMP COLON AND ]
+-- On RPAR reduce production cte -> DOLLAR_KEY 
+-- On OR reduce production cte -> DOLLAR_KEY 
+-- On EOF reduce production cte -> DOLLAR_KEY 
+-- On COMP reduce production cte -> DOLLAR_KEY 
+-- On COLON reduce production cte -> DOLLAR_KEY 
+-- On AND reduce production cte -> DOLLAR_KEY 
+
+State 10:
+atom -> cte . COLON STRING [ RPAR OR EOF AND ]
+atom -> cte . COMP cte [ RPAR OR EOF AND ]
+-- On COMP shift to state 11
+-- On COLON shift to state 13
+
+State 11:
+atom -> cte COMP . cte [ RPAR OR EOF AND ]
+-- On STRING shift to state 1
+-- On INT shift to state 4
+-- On IDENT shift to state 5
+-- On DOLLAR_TYPE shift to state 8
+-- On DOLLAR_KEY shift to state 9
+-- On cte shift to state 12
+
+State 12:
+atom -> cte COMP cte . [ RPAR OR EOF AND ]
+-- On RPAR reduce production atom -> cte COMP cte 
+-- On OR reduce production atom -> cte COMP cte 
+-- On EOF reduce production atom -> cte COMP cte 
+-- On AND reduce production atom -> cte COMP cte 
+
+State 13:
+atom -> cte COLON . STRING [ RPAR OR EOF AND ]
+-- On STRING shift to state 14
+
+State 14:
+atom -> cte COLON STRING . [ RPAR OR EOF AND ]
+-- On RPAR reduce production atom -> cte COLON STRING 
+-- On OR reduce production atom -> cte COLON STRING 
+-- On EOF reduce production atom -> cte COLON STRING 
+-- On AND reduce production atom -> cte COLON STRING 
+
+State 15:
+condition -> condition . OR condition [ RPAR OR AND ]
+condition -> condition . AND condition [ RPAR OR AND ]
+condition -> LPAR condition . RPAR [ RPAR OR EOF AND ]
+-- On RPAR shift to state 16
+-- On OR shift to state 17
+-- On AND shift to state 19
+
+State 16:
+condition -> LPAR condition RPAR . [ RPAR OR EOF AND ]
+-- On RPAR reduce production condition -> LPAR condition RPAR 
+-- On OR reduce production condition -> LPAR condition RPAR 
+-- On EOF reduce production condition -> LPAR condition RPAR 
+-- On AND reduce production condition -> LPAR condition RPAR 
+
+State 17:
+condition -> condition OR . condition [ RPAR OR EOF AND ]
+-- On STRING shift to state 1
+-- On NOT shift to state 2
+-- On LPAR shift to state 3
+-- On INT shift to state 4
+-- On IDENT shift to state 5
+-- On EXISTS shift to state 6
+-- On DOLLAR_TYPE shift to state 8
+-- On DOLLAR_KEY shift to state 9
+-- On cte shift to state 10
+-- On condition shift to state 18
+-- On atom shift to state 21
+
+State 18:
+condition -> condition . OR condition [ RPAR OR EOF AND ]
+condition -> condition OR condition . [ RPAR OR EOF AND ]
+condition -> condition . AND condition [ RPAR OR EOF AND ]
+-- On AND shift to state 19
+-- On RPAR reduce production condition -> condition OR condition 
+-- On OR reduce production condition -> condition OR condition 
+-- On EOF reduce production condition -> condition OR condition 
+
+State 19:
+condition -> condition AND . condition [ RPAR OR EOF AND ]
+-- On STRING shift to state 1
+-- On NOT shift to state 2
+-- On LPAR shift to state 3
+-- On INT shift to state 4
+-- On IDENT shift to state 5
+-- On EXISTS shift to state 6
+-- On DOLLAR_TYPE shift to state 8
+-- On DOLLAR_KEY shift to state 9
+-- On cte shift to state 10
+-- On condition shift to state 20
+-- On atom shift to state 21
+
+State 20:
+condition -> condition . OR condition [ RPAR OR EOF AND ]
+condition -> condition . AND condition [ RPAR OR EOF AND ]
+condition -> condition AND condition . [ RPAR OR EOF AND ]
+-- On RPAR reduce production condition -> condition AND condition 
+-- On OR reduce production condition -> condition AND condition 
+-- On EOF reduce production condition -> condition AND condition 
+-- On AND reduce production condition -> condition AND condition 
+
+State 21:
+condition -> atom . [ RPAR OR EOF AND ]
+-- On RPAR reduce production condition -> atom 
+-- On OR reduce production condition -> atom 
+-- On EOF reduce production condition -> atom 
+-- On AND reduce production condition -> atom 
+
+State 22:
+condition -> condition . OR condition [ RPAR OR EOF AND ]
+condition -> condition . AND condition [ RPAR OR EOF AND ]
+condition -> NOT condition . [ RPAR OR EOF AND ]
+-- On RPAR reduce production condition -> NOT condition 
+-- On OR reduce production condition -> NOT condition 
+-- On EOF reduce production condition -> NOT condition 
+-- On AND reduce production condition -> NOT condition 
+
+State 23:
+condition_start' -> condition_start . [ # ]
+-- On # accept condition_start
+
+State 24:
+condition -> condition . OR condition [ OR EOF AND ]
+condition -> condition . AND condition [ OR EOF AND ]
+condition_start -> condition . EOF [ # ]
+-- On OR shift to state 17
+-- On EOF shift to state 25
+-- On AND shift to state 19
+
+State 25:
+condition_start -> condition EOF . [ # ]
+-- On # reduce production condition_start -> condition EOF 
+

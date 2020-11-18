@@ -1,0 +1,23 @@
+State 0:
+start' -> . start [ # ]
+-- On A shift to state 1
+-- On wrap(seq(wrap(A))) shift to state 2
+-- On start shift to state 3
+-- On seq(A) shift to state 4
+
+State 1:
+wrap(seq(wrap(A))) -> A . [ # ]
+-- On # reduce production wrap(seq(wrap(A))) -> A 
+
+State 2:
+seq(A) -> wrap(seq(wrap(A))) . [ # ]
+-- On # reduce production seq(A) -> wrap(seq(wrap(A))) 
+
+State 3:
+start' -> start . [ # ]
+-- On # accept start
+
+State 4:
+start -> seq(A) . [ # ]
+-- On # reduce production start -> seq(A) 
+

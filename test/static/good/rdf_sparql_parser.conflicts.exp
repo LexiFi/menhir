@@ -1,0 +1,1002 @@
+
+** Conflict (shift/reduce) in state 573.
+** Tokens involved: Integer_positive Integer_negative Double_positive Double_negative Decimal_positive Decimal_negative
+** The following explanations concentrate on token Integer_positive.
+** This state is reached from query after reading:
+
+prologue SELECT option(select_flag) LPAR PLUS expression 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+query 
+prologue query_kind values_clause EOF 
+         select_clause list(dataset_clause) where_clause solution_modifier 
+         SELECT option(select_flag) select_vars 
+                                    nonempty_list(select_var) 
+                                    select_var 
+                                    LPAR expression AS var RPAR 
+                                         value_logical 
+                                         relational_expression 
+                                         numexp EQUAL numexp 
+                                         (?)
+
+** In state 573, looking ahead at Integer_positive, shifting is permitted
+** because of the following sub-derivation:
+
+PLUS expression 
+     value_logical 
+     relational_expression 
+     numexp EQUAL numexp 
+     expression numeric_literal_positive 
+                . Integer_positive 
+
+** In state 573, looking ahead at Integer_positive, reducing production
+** numexp -> PLUS expression 
+** is permitted because of the following sub-derivation:
+
+expression numeric_literal_positive // lookahead token appears because numeric_literal_positive can begin with Integer_positive
+value_logical // lookahead token is inherited
+relational_expression // lookahead token is inherited
+numexp // lookahead token is inherited
+PLUS expression . 
+
+** Conflict (reduce/reduce) in state 452.
+** Tokens involved: YEAR Var2 Var1 VALUES UUID URI UCASE TZ TIMEZONE String_literal SUM SUBSTR STRUUID STRSTARTS STRLEN STRLANG STRENDS STRDT STRBEFORE STRAFTER STR SHA512 SHA384 SHA256 SHA1 SECONDS SAMPLE SAMETERM ROUND REPLACE REGEX RBRACE RAND Pname_ns Pname_ln PLUS ORDER OFFSET NOW NOT MONTH MINUTES MINUS MIN MD5 MAX LPAR LIMIT LCASE LANGMATCHES LANG Iriref_ Integer_positive Integer_negative Integer ISURI ISNUMERIC ISLITERAL ISIRI ISBLANK IRI IF HOURS HAVING GROUP_CONCAT FLOOR EXISTS EOF ENCODE_FOR_URI Double_positive Double_negative Double Decimal_positive Decimal_negative Decimal DAY DATATYPE COUNT CONTAINS CONCAT COALESCE CEIL Boolean BOUND BNODE BANG AVG ABS
+** The following explanations concentrate on token YEAR.
+** This state is reached from query after reading:
+
+prologue ASK list(dataset_clause) where_clause GROUP BY built_in_call 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+query 
+prologue query_kind values_clause EOF 
+         ASK list(dataset_clause) where_clause solution_modifier 
+                                               option(group_clause) option(having_clause) option(order_clause) option(limit_offset_clause) 
+                                               group_clause 
+                                               GROUP BY nonempty_list(group_condition) 
+                                                        group_condition nonempty_list(group_condition) // lookahead token appears because nonempty_list(group_condition) can begin with YEAR
+                                                        (?)
+
+** In state 452, looking ahead at YEAR, reducing production
+** group_condition -> built_in_call 
+** is permitted because of the following sub-derivation:
+
+built_in_call . 
+
+** In state 452, looking ahead at YEAR, reducing production
+** primary_expression -> built_in_call 
+** is permitted because of the following sub-derivation:
+
+group_var // lookahead token is inherited
+expression // lookahead token is inherited
+value_logical // lookahead token is inherited
+relational_expression // lookahead token is inherited
+numexp // lookahead token is inherited
+primary_expression // lookahead token is inherited
+built_in_call . 
+
+** Conflict (shift/reduce) in state 449.
+** Tokens involved: PLUS MINUS Integer_positive Integer_negative Double_positive Double_negative Decimal_positive Decimal_negative
+** The following explanations concentrate on token PLUS.
+** This state is reached from query after reading:
+
+prologue ASK list(dataset_clause) where_clause GROUP BY expression 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+query 
+prologue query_kind values_clause EOF 
+         ASK list(dataset_clause) where_clause solution_modifier 
+                                               option(group_clause) option(having_clause) option(order_clause) option(limit_offset_clause) 
+                                               group_clause 
+                                               GROUP BY nonempty_list(group_condition) 
+                                                        (?)
+
+** In state 449, looking ahead at PLUS, reducing production
+** group_var -> expression 
+** is permitted because of the following sub-derivation:
+
+group_condition nonempty_list(group_condition) // lookahead token appears because nonempty_list(group_condition) can begin with PLUS
+group_var // lookahead token is inherited
+expression . 
+
+** In state 449, looking ahead at PLUS, shifting is permitted
+** because of the following sub-derivation:
+
+group_condition 
+group_var 
+expression AS var 
+value_logical 
+relational_expression 
+numexp EQUAL numexp 
+expression . PLUS expression 
+
+** Conflict (reduce/reduce) in state 448.
+** Tokens involved: YEAR Var2 Var1 VALUES UUID URI UCASE TZ TIMEZONE String_literal SUM SUBSTR STRUUID STRSTARTS STRLEN STRLANG STRENDS STRDT STRBEFORE STRAFTER STR SHA512 SHA384 SHA256 SHA1 SECONDS SAMPLE SAMETERM ROUND REPLACE REGEX RBRACE RAND Pname_ns Pname_ln PLUS ORDER OFFSET NOW NOT MONTH MINUTES MINUS MIN MD5 MAX LPAR LIMIT LCASE LANGMATCHES LANG Iriref_ Integer_positive Integer_negative Integer ISURI ISNUMERIC ISLITERAL ISIRI ISBLANK IRI IF HOURS HAVING GROUP_CONCAT FLOOR EXISTS EOF ENCODE_FOR_URI Double_positive Double_negative Double Decimal_positive Decimal_negative Decimal DAY DATATYPE COUNT CONTAINS CONCAT COALESCE CEIL Boolean BOUND BNODE BANG AVG ABS
+** The following explanations concentrate on token YEAR.
+** This state is reached from query after reading:
+
+prologue ASK list(dataset_clause) where_clause GROUP BY function_call 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+query 
+prologue query_kind values_clause EOF 
+         ASK list(dataset_clause) where_clause solution_modifier 
+                                               option(group_clause) option(having_clause) option(order_clause) option(limit_offset_clause) 
+                                               group_clause 
+                                               GROUP BY nonempty_list(group_condition) 
+                                                        group_condition nonempty_list(group_condition) // lookahead token appears because nonempty_list(group_condition) can begin with YEAR
+                                                        (?)
+
+** In state 448, looking ahead at YEAR, reducing production
+** group_condition -> function_call 
+** is permitted because of the following sub-derivation:
+
+function_call . 
+
+** In state 448, looking ahead at YEAR, reducing production
+** iri_or_function -> function_call 
+** is permitted because of the following sub-derivation:
+
+group_var // lookahead token is inherited
+expression // lookahead token is inherited
+value_logical // lookahead token is inherited
+relational_expression // lookahead token is inherited
+numexp // lookahead token is inherited
+primary_expression // lookahead token is inherited
+iri_or_function // lookahead token is inherited
+function_call . 
+
+** Conflict (reduce/reduce) in state 443.
+** Tokens involved: YEAR Var2 Var1 VALUES UUID URI UCASE TZ TIMEZONE String_literal SUM SUBSTR STRUUID STRSTARTS STRLEN STRLANG STRENDS STRDT STRBEFORE STRAFTER STR SHA512 SHA384 SHA256 SHA1 SECONDS SAMPLE SAMETERM ROUND REPLACE REGEX RBRACE RAND Pname_ns Pname_ln PLUS ORDER OFFSET NOW NOT MONTH MINUTES MINUS MIN MD5 MAX LPAR LIMIT LCASE LANGMATCHES LANG Iriref_ Integer_positive Integer_negative Integer ISURI ISNUMERIC ISLITERAL ISIRI ISBLANK IRI IF HOURS HAVING GROUP_CONCAT FLOOR EXISTS EOF ENCODE_FOR_URI Double_positive Double_negative Double Decimal_positive Decimal_negative Decimal DAY DATATYPE COUNT CONTAINS CONCAT COALESCE CEIL Boolean BOUND BNODE BANG AVG ABS
+** The following explanations concentrate on token YEAR.
+** This state is reached from query after reading:
+
+prologue ASK list(dataset_clause) where_clause GROUP BY var 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+query 
+prologue query_kind values_clause EOF 
+         ASK list(dataset_clause) where_clause solution_modifier 
+                                               option(group_clause) option(having_clause) option(order_clause) option(limit_offset_clause) 
+                                               group_clause 
+                                               GROUP BY nonempty_list(group_condition) 
+                                                        group_condition nonempty_list(group_condition) // lookahead token appears because nonempty_list(group_condition) can begin with YEAR
+                                                        group_var // lookahead token is inherited
+                                                        (?)
+
+** In state 443, looking ahead at YEAR, reducing production
+** group_var -> var 
+** is permitted because of the following sub-derivation:
+
+var . 
+
+** In state 443, looking ahead at YEAR, reducing production
+** primary_expression -> var 
+** is permitted because of the following sub-derivation:
+
+expression // lookahead token is inherited
+value_logical // lookahead token is inherited
+relational_expression // lookahead token is inherited
+numexp // lookahead token is inherited
+primary_expression // lookahead token is inherited
+var . 
+
+** Conflict (shift/reduce) in state 438.
+** Tokens involved: Integer_positive Integer_negative Double_positive Double_negative Decimal_positive Decimal_negative
+** The following explanations concentrate on token Integer_positive.
+** This state is reached from query after reading:
+
+prologue SELECT option(select_flag) LPAR MINUS expression 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+query 
+prologue query_kind values_clause EOF 
+         select_clause list(dataset_clause) where_clause solution_modifier 
+         SELECT option(select_flag) select_vars 
+                                    nonempty_list(select_var) 
+                                    select_var 
+                                    LPAR expression AS var RPAR 
+                                         value_logical 
+                                         relational_expression 
+                                         numexp EQUAL numexp 
+                                         (?)
+
+** In state 438, looking ahead at Integer_positive, shifting is permitted
+** because of the following sub-derivation:
+
+MINUS expression 
+      value_logical 
+      relational_expression 
+      numexp EQUAL numexp 
+      expression numeric_literal_positive 
+                 . Integer_positive 
+
+** In state 438, looking ahead at Integer_positive, reducing production
+** numexp -> MINUS expression 
+** is permitted because of the following sub-derivation:
+
+expression numeric_literal_positive // lookahead token appears because numeric_literal_positive can begin with Integer_positive
+value_logical // lookahead token is inherited
+relational_expression // lookahead token is inherited
+numexp // lookahead token is inherited
+MINUS expression . 
+
+** Conflict (shift/reduce) in state 373.
+** Tokens involved: Integer_positive Integer_negative Double_positive Double_negative Decimal_positive Decimal_negative
+** The following explanations concentrate on token Integer_positive.
+** This state is reached from query after reading:
+
+prologue SELECT option(select_flag) LPAR BANG expression 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+query 
+prologue query_kind values_clause EOF 
+         select_clause list(dataset_clause) where_clause solution_modifier 
+         SELECT option(select_flag) select_vars 
+                                    nonempty_list(select_var) 
+                                    select_var 
+                                    LPAR expression AS var RPAR 
+                                         value_logical 
+                                         relational_expression 
+                                         numexp EQUAL numexp 
+                                         (?)
+
+** In state 373, looking ahead at Integer_positive, shifting is permitted
+** because of the following sub-derivation:
+
+BANG expression 
+     value_logical 
+     relational_expression 
+     numexp EQUAL numexp 
+     expression numeric_literal_positive 
+                . Integer_positive 
+
+** In state 373, looking ahead at Integer_positive, reducing production
+** numexp -> BANG expression 
+** is permitted because of the following sub-derivation:
+
+expression numeric_literal_positive // lookahead token appears because numeric_literal_positive can begin with Integer_positive
+value_logical // lookahead token is inherited
+relational_expression // lookahead token is inherited
+numexp // lookahead token is inherited
+BANG expression . 
+
+** Conflict (reduce/reduce) in state 368.
+** Tokens involved: STAR SLASH PLUS MINUS Integer_positive Integer_negative Double_positive Double_negative Decimal_positive Decimal_negative
+** The following explanations concentrate on token STAR.
+** This state is reached from query after reading:
+
+prologue SELECT option(select_flag) LPAR value_logical AMPAMP value_logical 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+query 
+prologue query_kind values_clause EOF 
+         select_clause list(dataset_clause) where_clause solution_modifier 
+         SELECT option(select_flag) select_vars 
+                                    nonempty_list(select_var) 
+                                    select_var 
+                                    LPAR expression AS var RPAR 
+                                         value_logical 
+                                         (?)
+
+** In state 368, looking ahead at STAR, reducing production
+** expression -> value_logical 
+** is permitted because of the following sub-derivation:
+
+value_logical AMPAMP value_logical 
+                     relational_expression 
+                     numexp EQUAL numexp 
+                     expression STAR expression // lookahead token appears
+                     value_logical . 
+
+** In state 368, looking ahead at STAR, reducing production
+** value_logical -> value_logical AMPAMP value_logical 
+** is permitted because of the following sub-derivation:
+
+relational_expression 
+numexp EQUAL numexp 
+expression STAR expression // lookahead token appears
+value_logical // lookahead token is inherited
+value_logical AMPAMP value_logical . 
+
+** Conflict (reduce/reduce) in state 366.
+** Tokens involved: STAR SLASH PLUS PIPEPIPE MINUS Integer_positive Integer_negative Double_positive Double_negative Decimal_positive Decimal_negative AMPAMP
+** The following explanations concentrate on token STAR.
+** This state is reached from query after reading:
+
+prologue SELECT option(select_flag) LPAR numexp EQUAL numexp 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+query 
+prologue query_kind values_clause EOF 
+         select_clause list(dataset_clause) where_clause solution_modifier 
+         SELECT option(select_flag) select_vars 
+                                    nonempty_list(select_var) 
+                                    select_var 
+                                    LPAR expression AS var RPAR 
+                                         value_logical 
+                                         relational_expression 
+                                         (?)
+
+** In state 366, looking ahead at STAR, reducing production
+** relational_expression -> numexp EQUAL numexp 
+** is permitted because of the following sub-derivation:
+
+numexp EQUAL numexp 
+expression STAR expression // lookahead token appears
+value_logical // lookahead token is inherited
+relational_expression // lookahead token is inherited
+numexp EQUAL numexp . 
+
+** In state 366, looking ahead at STAR, reducing production
+** relational_expression -> numexp 
+** is permitted because of the following sub-derivation:
+
+numexp EQUAL numexp 
+             expression STAR expression // lookahead token appears
+             value_logical // lookahead token is inherited
+             relational_expression // lookahead token is inherited
+             numexp . 
+
+** Conflict (reduce/reduce) in state 364.
+** Tokens involved: STAR SLASH PLUS PIPEPIPE MINUS Integer_positive Integer_negative Double_positive Double_negative Decimal_positive Decimal_negative AMPAMP
+** The following explanations concentrate on token STAR.
+** This state is reached from query after reading:
+
+prologue SELECT option(select_flag) LPAR numexp GT numexp 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+query 
+prologue query_kind values_clause EOF 
+         select_clause list(dataset_clause) where_clause solution_modifier 
+         SELECT option(select_flag) select_vars 
+                                    nonempty_list(select_var) 
+                                    select_var 
+                                    LPAR expression AS var RPAR 
+                                         value_logical 
+                                         relational_expression 
+                                         (?)
+
+** In state 364, looking ahead at STAR, reducing production
+** relational_expression -> numexp GT numexp 
+** is permitted because of the following sub-derivation:
+
+numexp EQUAL numexp 
+expression STAR expression // lookahead token appears
+value_logical // lookahead token is inherited
+relational_expression // lookahead token is inherited
+numexp GT numexp . 
+
+** In state 364, looking ahead at STAR, reducing production
+** relational_expression -> numexp 
+** is permitted because of the following sub-derivation:
+
+numexp GT numexp 
+          expression STAR expression // lookahead token appears
+          value_logical // lookahead token is inherited
+          relational_expression // lookahead token is inherited
+          numexp . 
+
+** Conflict (reduce/reduce) in state 362.
+** Tokens involved: STAR SLASH PLUS PIPEPIPE MINUS Integer_positive Integer_negative Double_positive Double_negative Decimal_positive Decimal_negative AMPAMP
+** The following explanations concentrate on token STAR.
+** This state is reached from query after reading:
+
+prologue SELECT option(select_flag) LPAR numexp GTE numexp 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+query 
+prologue query_kind values_clause EOF 
+         select_clause list(dataset_clause) where_clause solution_modifier 
+         SELECT option(select_flag) select_vars 
+                                    nonempty_list(select_var) 
+                                    select_var 
+                                    LPAR expression AS var RPAR 
+                                         value_logical 
+                                         relational_expression 
+                                         (?)
+
+** In state 362, looking ahead at STAR, reducing production
+** relational_expression -> numexp GTE numexp 
+** is permitted because of the following sub-derivation:
+
+numexp EQUAL numexp 
+expression STAR expression // lookahead token appears
+value_logical // lookahead token is inherited
+relational_expression // lookahead token is inherited
+numexp GTE numexp . 
+
+** In state 362, looking ahead at STAR, reducing production
+** relational_expression -> numexp 
+** is permitted because of the following sub-derivation:
+
+numexp GTE numexp 
+           expression STAR expression // lookahead token appears
+           value_logical // lookahead token is inherited
+           relational_expression // lookahead token is inherited
+           numexp . 
+
+** Conflict (reduce/reduce) in state 358.
+** Tokens involved: STAR SLASH PLUS PIPEPIPE MINUS Integer_positive Integer_negative Double_positive Double_negative Decimal_positive Decimal_negative AMPAMP
+** The following explanations concentrate on token STAR.
+** This state is reached from query after reading:
+
+prologue SELECT option(select_flag) LPAR numexp LT numexp 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+query 
+prologue query_kind values_clause EOF 
+         select_clause list(dataset_clause) where_clause solution_modifier 
+         SELECT option(select_flag) select_vars 
+                                    nonempty_list(select_var) 
+                                    select_var 
+                                    LPAR expression AS var RPAR 
+                                         value_logical 
+                                         relational_expression 
+                                         (?)
+
+** In state 358, looking ahead at STAR, reducing production
+** relational_expression -> numexp LT numexp 
+** is permitted because of the following sub-derivation:
+
+numexp EQUAL numexp 
+expression STAR expression // lookahead token appears
+value_logical // lookahead token is inherited
+relational_expression // lookahead token is inherited
+numexp LT numexp . 
+
+** In state 358, looking ahead at STAR, reducing production
+** relational_expression -> numexp 
+** is permitted because of the following sub-derivation:
+
+numexp LT numexp 
+          expression STAR expression // lookahead token appears
+          value_logical // lookahead token is inherited
+          relational_expression // lookahead token is inherited
+          numexp . 
+
+** Conflict (reduce/reduce) in state 356.
+** Tokens involved: STAR SLASH PLUS PIPEPIPE MINUS Integer_positive Integer_negative Double_positive Double_negative Decimal_positive Decimal_negative AMPAMP
+** The following explanations concentrate on token STAR.
+** This state is reached from query after reading:
+
+prologue SELECT option(select_flag) LPAR numexp LTE numexp 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+query 
+prologue query_kind values_clause EOF 
+         select_clause list(dataset_clause) where_clause solution_modifier 
+         SELECT option(select_flag) select_vars 
+                                    nonempty_list(select_var) 
+                                    select_var 
+                                    LPAR expression AS var RPAR 
+                                         value_logical 
+                                         relational_expression 
+                                         (?)
+
+** In state 356, looking ahead at STAR, reducing production
+** relational_expression -> numexp LTE numexp 
+** is permitted because of the following sub-derivation:
+
+numexp EQUAL numexp 
+expression STAR expression // lookahead token appears
+value_logical // lookahead token is inherited
+relational_expression // lookahead token is inherited
+numexp LTE numexp . 
+
+** In state 356, looking ahead at STAR, reducing production
+** relational_expression -> numexp 
+** is permitted because of the following sub-derivation:
+
+numexp LTE numexp 
+           expression STAR expression // lookahead token appears
+           value_logical // lookahead token is inherited
+           relational_expression // lookahead token is inherited
+           numexp . 
+
+** Conflict (shift/reduce) in state 347.
+** Tokens involved: Integer_positive Integer_negative Double_positive Double_negative Decimal_positive Decimal_negative
+** The following explanations concentrate on token Integer_positive.
+** This state is reached from query after reading:
+
+prologue SELECT option(select_flag) LPAR expression MINUS expression 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+query 
+prologue query_kind values_clause EOF 
+         select_clause list(dataset_clause) where_clause solution_modifier 
+         SELECT option(select_flag) select_vars 
+                                    nonempty_list(select_var) 
+                                    select_var 
+                                    LPAR expression AS var RPAR 
+                                         value_logical 
+                                         relational_expression 
+                                         numexp EQUAL numexp 
+                                         (?)
+
+** In state 347, looking ahead at Integer_positive, shifting is permitted
+** because of the following sub-derivation:
+
+expression MINUS expression 
+                 value_logical 
+                 relational_expression 
+                 numexp EQUAL numexp 
+                 expression numeric_literal_positive 
+                            . Integer_positive 
+
+** In state 347, looking ahead at Integer_positive, reducing production
+** numexp -> expression MINUS expression 
+** is permitted because of the following sub-derivation:
+
+expression numeric_literal_positive // lookahead token appears because numeric_literal_positive can begin with Integer_positive
+value_logical // lookahead token is inherited
+relational_expression // lookahead token is inherited
+numexp // lookahead token is inherited
+expression MINUS expression . 
+
+** Conflict (shift/reduce) in state 345.
+** Tokens involved: Integer_positive Integer_negative Double_positive Double_negative Decimal_positive Decimal_negative
+** The following explanations concentrate on token Integer_positive.
+** This state is reached from query after reading:
+
+prologue SELECT option(select_flag) LPAR expression PLUS expression 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+query 
+prologue query_kind values_clause EOF 
+         select_clause list(dataset_clause) where_clause solution_modifier 
+         SELECT option(select_flag) select_vars 
+                                    nonempty_list(select_var) 
+                                    select_var 
+                                    LPAR expression AS var RPAR 
+                                         value_logical 
+                                         relational_expression 
+                                         numexp EQUAL numexp 
+                                         (?)
+
+** In state 345, looking ahead at Integer_positive, shifting is permitted
+** because of the following sub-derivation:
+
+expression PLUS expression 
+                value_logical 
+                relational_expression 
+                numexp EQUAL numexp 
+                expression numeric_literal_positive 
+                           . Integer_positive 
+
+** In state 345, looking ahead at Integer_positive, reducing production
+** numexp -> expression PLUS expression 
+** is permitted because of the following sub-derivation:
+
+expression numeric_literal_positive // lookahead token appears because numeric_literal_positive can begin with Integer_positive
+value_logical // lookahead token is inherited
+relational_expression // lookahead token is inherited
+numexp // lookahead token is inherited
+expression PLUS expression . 
+
+** Conflict (shift/reduce) in state 343.
+** Tokens involved: Integer_positive Integer_negative Double_positive Double_negative Decimal_positive Decimal_negative
+** The following explanations concentrate on token Integer_positive.
+** This state is reached from query after reading:
+
+prologue SELECT option(select_flag) LPAR expression SLASH expression 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+query 
+prologue query_kind values_clause EOF 
+         select_clause list(dataset_clause) where_clause solution_modifier 
+         SELECT option(select_flag) select_vars 
+                                    nonempty_list(select_var) 
+                                    select_var 
+                                    LPAR expression AS var RPAR 
+                                         value_logical 
+                                         relational_expression 
+                                         numexp EQUAL numexp 
+                                         (?)
+
+** In state 343, looking ahead at Integer_positive, shifting is permitted
+** because of the following sub-derivation:
+
+expression SLASH expression 
+                 value_logical 
+                 relational_expression 
+                 numexp EQUAL numexp 
+                 expression numeric_literal_positive 
+                            . Integer_positive 
+
+** In state 343, looking ahead at Integer_positive, reducing production
+** numexp -> expression SLASH expression 
+** is permitted because of the following sub-derivation:
+
+expression numeric_literal_positive // lookahead token appears because numeric_literal_positive can begin with Integer_positive
+value_logical // lookahead token is inherited
+relational_expression // lookahead token is inherited
+numexp // lookahead token is inherited
+expression SLASH expression . 
+
+** Conflict (shift/reduce) in state 335.
+** Tokens involved: Integer_positive Integer_negative Double_positive Double_negative Decimal_positive Decimal_negative
+** The following explanations concentrate on token Integer_positive.
+** This state is reached from query after reading:
+
+prologue SELECT option(select_flag) LPAR expression STAR expression 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+query 
+prologue query_kind values_clause EOF 
+         select_clause list(dataset_clause) where_clause solution_modifier 
+         SELECT option(select_flag) select_vars 
+                                    nonempty_list(select_var) 
+                                    select_var 
+                                    LPAR expression AS var RPAR 
+                                         value_logical 
+                                         relational_expression 
+                                         numexp EQUAL numexp 
+                                         (?)
+
+** In state 335, looking ahead at Integer_positive, shifting is permitted
+** because of the following sub-derivation:
+
+expression STAR expression 
+                value_logical 
+                relational_expression 
+                numexp EQUAL numexp 
+                expression numeric_literal_positive 
+                           . Integer_positive 
+
+** In state 335, looking ahead at Integer_positive, reducing production
+** numexp -> expression STAR expression 
+** is permitted because of the following sub-derivation:
+
+expression numeric_literal_positive // lookahead token appears because numeric_literal_positive can begin with Integer_positive
+value_logical // lookahead token is inherited
+relational_expression // lookahead token is inherited
+numexp // lookahead token is inherited
+expression STAR expression . 
+
+** Conflict (shift/reduce) in state 326.
+** Token involved: LPAR
+** This state is reached from query after reading:
+
+prologue ASK list(dataset_clause) where_clause GROUP BY iri 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+query 
+prologue query_kind values_clause EOF 
+         ASK list(dataset_clause) where_clause solution_modifier 
+                                               option(group_clause) option(having_clause) option(order_clause) option(limit_offset_clause) 
+                                               group_clause 
+                                               GROUP BY nonempty_list(group_condition) 
+                                                        (?)
+
+** In state 326, looking ahead at LPAR, shifting is permitted
+** because of the following sub-derivation:
+
+group_condition 
+function_call 
+iri arg_list 
+    . LPAR option(DISTINCT) separated_nonempty_list(COMMA,expression) RPAR 
+
+** In state 326, looking ahead at LPAR, reducing production
+** iri_or_function -> iri 
+** is permitted because of the following sub-derivation:
+
+group_condition nonempty_list(group_condition) // lookahead token appears because nonempty_list(group_condition) can begin with LPAR
+group_var // lookahead token is inherited
+expression // lookahead token is inherited
+value_logical // lookahead token is inherited
+relational_expression // lookahead token is inherited
+numexp // lookahead token is inherited
+primary_expression // lookahead token is inherited
+iri_or_function // lookahead token is inherited
+iri . 
+
+** Conflict (reduce/reduce) in state 323.
+** Tokens involved: STAR SLASH PLUS PIPEPIPE MINUS Integer_positive Integer_negative Double_positive Double_negative Decimal_positive Decimal_negative AMPAMP
+** The following explanations concentrate on token STAR.
+** This state is reached from query after reading:
+
+prologue SELECT option(select_flag) LPAR numexp NOTEQUAL numexp 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+query 
+prologue query_kind values_clause EOF 
+         select_clause list(dataset_clause) where_clause solution_modifier 
+         SELECT option(select_flag) select_vars 
+                                    nonempty_list(select_var) 
+                                    select_var 
+                                    LPAR expression AS var RPAR 
+                                         value_logical 
+                                         relational_expression 
+                                         (?)
+
+** In state 323, looking ahead at STAR, reducing production
+** relational_expression -> numexp NOTEQUAL numexp 
+** is permitted because of the following sub-derivation:
+
+numexp EQUAL numexp 
+expression STAR expression // lookahead token appears
+value_logical // lookahead token is inherited
+relational_expression // lookahead token is inherited
+numexp NOTEQUAL numexp . 
+
+** In state 323, looking ahead at STAR, reducing production
+** relational_expression -> numexp 
+** is permitted because of the following sub-derivation:
+
+numexp NOTEQUAL numexp 
+                expression STAR expression // lookahead token appears
+                value_logical // lookahead token is inherited
+                relational_expression // lookahead token is inherited
+                numexp . 
+
+** Conflict (shift/reduce) in state 321.
+** Tokens involved: NOTEQUAL NOT LTE LT IN GTE GT EQUAL
+** The following explanations concentrate on token NOTEQUAL.
+** This state is reached from query after reading:
+
+prologue SELECT option(select_flag) LPAR PLUS numexp 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+query 
+prologue query_kind values_clause EOF 
+         select_clause list(dataset_clause) where_clause solution_modifier 
+         SELECT option(select_flag) select_vars 
+                                    nonempty_list(select_var) 
+                                    select_var 
+                                    LPAR expression AS var RPAR 
+                                         value_logical 
+                                         relational_expression 
+                                         (?)
+
+** In state 321, looking ahead at NOTEQUAL, shifting is permitted
+** because of the following sub-derivation:
+
+numexp EQUAL numexp 
+PLUS expression 
+     value_logical 
+     relational_expression 
+     numexp . NOTEQUAL numexp 
+
+** In state 321, looking ahead at NOTEQUAL, reducing production
+** relational_expression -> numexp 
+** is permitted because of the following sub-derivation:
+
+numexp NOTEQUAL numexp // lookahead token appears
+PLUS expression // lookahead token is inherited
+     value_logical // lookahead token is inherited
+     relational_expression // lookahead token is inherited
+     numexp . 
+
+** Conflict (reduce/reduce) in state 314.
+** Tokens involved: STAR SLASH PLUS MINUS Integer_positive Integer_negative Double_positive Double_negative Decimal_positive Decimal_negative
+** The following explanations concentrate on token STAR.
+** This state is reached from query after reading:
+
+prologue SELECT option(select_flag) LPAR value_logical PIPEPIPE value_logical 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+query 
+prologue query_kind values_clause EOF 
+         select_clause list(dataset_clause) where_clause solution_modifier 
+         SELECT option(select_flag) select_vars 
+                                    nonempty_list(select_var) 
+                                    select_var 
+                                    LPAR expression AS var RPAR 
+                                         value_logical 
+                                         (?)
+
+** In state 314, looking ahead at STAR, reducing production
+** expression -> value_logical 
+** is permitted because of the following sub-derivation:
+
+value_logical PIPEPIPE value_logical 
+                       relational_expression 
+                       numexp EQUAL numexp 
+                       expression STAR expression // lookahead token appears
+                       value_logical . 
+
+** In state 314, looking ahead at STAR, reducing production
+** value_logical -> value_logical PIPEPIPE value_logical 
+** is permitted because of the following sub-derivation:
+
+relational_expression 
+numexp EQUAL numexp 
+expression STAR expression // lookahead token appears
+value_logical // lookahead token is inherited
+value_logical PIPEPIPE value_logical . 
+
+** Conflict (shift/reduce) in state 312.
+** Tokens involved: PIPEPIPE AMPAMP
+** The following explanations concentrate on token PIPEPIPE.
+** This state is reached from query after reading:
+
+prologue SELECT option(select_flag) LPAR PLUS value_logical 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+query 
+prologue query_kind values_clause EOF 
+         select_clause list(dataset_clause) where_clause solution_modifier 
+         SELECT option(select_flag) select_vars 
+                                    nonempty_list(select_var) 
+                                    select_var 
+                                    LPAR expression AS var RPAR 
+                                         value_logical 
+                                         (?)
+
+** In state 312, looking ahead at PIPEPIPE, reducing production
+** expression -> value_logical 
+** is permitted because of the following sub-derivation:
+
+value_logical PIPEPIPE value_logical // lookahead token appears
+relational_expression // lookahead token is inherited
+numexp // lookahead token is inherited
+PLUS expression // lookahead token is inherited
+     value_logical . 
+
+** In state 312, looking ahead at PIPEPIPE, shifting is permitted
+** because of the following sub-derivation:
+
+relational_expression 
+numexp EQUAL numexp 
+PLUS expression 
+     value_logical 
+     value_logical . PIPEPIPE value_logical 
+
+** Conflict (shift/reduce) in state 101.
+** Token involved: PIPE
+** This state is reached from query after reading:
+
+prologue ASK list(dataset_clause) option(WHERE) LBRACE LBRACKET BANG LPAR path_one_in_property_set 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+query 
+prologue query_kind values_clause EOF 
+         ASK list(dataset_clause) where_clause solution_modifier 
+                                  option(WHERE) group_graph_pattern 
+                                                LBRACE group_graph_pattern_sub RBRACE 
+                                                       option(triples_block) list(gp_triples) 
+                                                       triples_block 
+                                                       triples_block_details 
+                                                       triples_same_subject_path option(triples_block_details2) 
+                                                       triples_node_path property_list_path 
+                                                       blank_node_property_list_path 
+                                                       LBRACKET property_list_path_not_empty RBRACKET 
+                                                                verb_path_or_simple object_list_path list(verbp_object_list_l) 
+                                                                path 
+                                                                path_alternative 
+                                                                separated_nonempty_list(PIPE,path_sequence) 
+                                                                (?)
+
+** In state 101, looking ahead at PIPE, reducing production
+** separated_nonempty_list(PIPE,path_one_in_property_set) -> path_one_in_property_set 
+** is permitted because of the following sub-derivation:
+
+path_sequence PIPE separated_nonempty_list(PIPE,path_sequence) // lookahead token appears
+separated_nonempty_list(SLASH,path_elt_or_inverse) // lookahead token is inherited
+path_elt_or_inverse // lookahead token is inherited
+path_elt // lookahead token is inherited
+path_primary option(path_mod) // lookahead token is inherited because option(path_mod) can vanish
+BANG path_negated_property_list // lookahead token is inherited
+     LPAR loption(separated_nonempty_list(PIPE,path_one_in_property_set)) // lookahead token is inherited
+          separated_nonempty_list(PIPE,path_one_in_property_set) // lookahead token is inherited
+          path_one_in_property_set . 
+
+** In state 101, looking ahead at PIPE, shifting is permitted
+** because of the following sub-derivation:
+
+path_sequence 
+separated_nonempty_list(SLASH,path_elt_or_inverse) 
+path_elt_or_inverse 
+path_elt 
+path_primary option(path_mod) 
+BANG path_negated_property_list 
+     LPAR loption(separated_nonempty_list(PIPE,path_one_in_property_set)) 
+          separated_nonempty_list(PIPE,path_one_in_property_set) 
+          path_one_in_property_set . PIPE separated_nonempty_list(PIPE,path_one_in_property_set) 
+
+** Conflict (shift/reduce) in state 94.
+** Tokens involved: Pname_ns Pname_ln Iriref_
+** The following explanations concentrate on token Pname_ns.
+** This state is reached from query after reading:
+
+prologue ASK list(dataset_clause) option(WHERE) LBRACE LBRACKET BANG LPAR 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+query 
+prologue query_kind values_clause EOF 
+         ASK list(dataset_clause) where_clause solution_modifier 
+                                  option(WHERE) group_graph_pattern 
+                                                LBRACE group_graph_pattern_sub RBRACE 
+                                                       option(triples_block) list(gp_triples) 
+                                                       triples_block 
+                                                       triples_block_details 
+                                                       triples_same_subject_path option(triples_block_details2) 
+                                                       triples_node_path property_list_path 
+                                                       blank_node_property_list_path 
+                                                       LBRACKET property_list_path_not_empty RBRACKET 
+                                                                (?)
+
+** In state 94, looking ahead at Pname_ns, reducing production
+** loption(separated_nonempty_list(PIPE,path_one_in_property_set)) -> 
+** is permitted because of the following sub-derivation:
+
+verb_path_or_simple object_list_path list(verbp_object_list_l) // lookahead token appears because object_list_path can begin with Pname_ns
+path // lookahead token is inherited
+path_alternative // lookahead token is inherited
+separated_nonempty_list(PIPE,path_sequence) // lookahead token is inherited
+path_sequence // lookahead token is inherited
+separated_nonempty_list(SLASH,path_elt_or_inverse) // lookahead token is inherited
+path_elt_or_inverse // lookahead token is inherited
+path_elt // lookahead token is inherited
+path_primary option(path_mod) // lookahead token is inherited because option(path_mod) can vanish
+BANG path_negated_property_list // lookahead token is inherited
+     LPAR loption(separated_nonempty_list(PIPE,path_one_in_property_set)) // lookahead token is inherited
+          . 
+
+** In state 94, looking ahead at Pname_ns, shifting is permitted
+** because of the following sub-derivation:
+
+verb_path_or_simple object_list_path list(verbp_object_list_l) 
+path 
+path_alternative 
+separated_nonempty_list(PIPE,path_sequence) 
+path_sequence 
+separated_nonempty_list(SLASH,path_elt_or_inverse) 
+path_elt_or_inverse 
+path_elt 
+path_primary option(path_mod) 
+BANG path_negated_property_list 
+     LPAR loption(separated_nonempty_list(PIPE,path_one_in_property_set)) 
+          separated_nonempty_list(PIPE,path_one_in_property_set) 
+          path_one_in_property_set 
+          iri 
+          prefixed_name 
+          . Pname_ns 

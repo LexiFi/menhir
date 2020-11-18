@@ -1,0 +1,274 @@
+State 0:
+poly_interp_entry' -> . poly_interp_entry [ # ]
+-- On INTERP shift to state 1
+-- On symbol_interp shift to state 8
+-- On poly_interp_entry shift to state 28
+-- On interp shift to state 29
+-- On EOF reduce production interp -> 
+
+State 1:
+symbol_interp -> INTERP . [ EQUAL ]
+symbol_interp -> INTERP . LEFT_PAR vars [ EQUAL ]
+-- On LEFT_PAR shift to state 2
+-- On EQUAL reduce production symbol_interp -> INTERP 
+
+State 2:
+symbol_interp -> INTERP LEFT_PAR . vars [ EQUAL ]
+-- On VAR shift to state 3
+-- On vars shift to state 7
+
+State 3:
+vars -> VAR . RIGHT_PAR [ EQUAL ]
+vars -> VAR . COMMA vars [ EQUAL ]
+-- On RIGHT_PAR shift to state 4
+-- On COMMA shift to state 5
+
+State 4:
+vars -> VAR RIGHT_PAR . [ EQUAL ]
+-- On EQUAL reduce production vars -> VAR RIGHT_PAR 
+
+State 5:
+vars -> VAR COMMA . vars [ EQUAL ]
+-- On VAR shift to state 3
+-- On vars shift to state 6
+
+State 6:
+vars -> VAR COMMA vars . [ EQUAL ]
+-- On EQUAL reduce production vars -> VAR COMMA vars 
+
+State 7:
+symbol_interp -> INTERP LEFT_PAR vars . [ EQUAL ]
+-- On EQUAL reduce production symbol_interp -> INTERP LEFT_PAR vars 
+
+State 8:
+interp -> symbol_interp . EQUAL poly SEMICOLON interp [ EOF ]
+-- On EQUAL shift to state 9
+
+State 9:
+interp -> symbol_interp EQUAL . poly SEMICOLON interp [ EOF ]
+-- On VAR shift to state 10
+-- On MINUS shift to state 11
+-- On LEFT_PAR shift to state 12
+-- On INT shift to state 13
+-- On poly shift to state 25
+
+State 10:
+poly -> VAR . [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
+-- On SEMICOLON reduce production poly -> VAR 
+-- On RIGHT_PAR reduce production poly -> VAR 
+-- On PLUS reduce production poly -> VAR 
+-- On MULT reduce production poly -> VAR 
+-- On MINUS reduce production poly -> VAR 
+-- On EXP reduce production poly -> VAR 
+
+State 11:
+poly -> MINUS . poly [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
+-- On VAR shift to state 10
+-- On MINUS shift to state 11
+-- On LEFT_PAR shift to state 12
+-- On INT shift to state 13
+-- On poly shift to state 24
+
+State 12:
+poly -> LEFT_PAR . poly RIGHT_PAR [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
+-- On VAR shift to state 10
+-- On MINUS shift to state 11
+-- On LEFT_PAR shift to state 12
+-- On INT shift to state 13
+-- On poly shift to state 14
+
+State 13:
+poly -> INT . [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
+-- On SEMICOLON reduce production poly -> INT 
+-- On RIGHT_PAR reduce production poly -> INT 
+-- On PLUS reduce production poly -> INT 
+-- On MULT reduce production poly -> INT 
+-- On MINUS reduce production poly -> INT 
+-- On EXP reduce production poly -> INT 
+
+State 14:
+poly -> LEFT_PAR poly . RIGHT_PAR [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
+poly -> poly . PLUS poly [ RIGHT_PAR PLUS MULT MINUS EXP ]
+poly -> poly . MINUS poly [ RIGHT_PAR PLUS MULT MINUS EXP ]
+poly -> poly . MULT poly [ RIGHT_PAR PLUS MULT MINUS EXP ]
+poly -> poly . EXP INT [ RIGHT_PAR PLUS MULT MINUS EXP ]
+-- On RIGHT_PAR shift to state 15
+-- On PLUS shift to state 16
+-- On MULT shift to state 18
+-- On MINUS shift to state 22
+-- On EXP shift to state 20
+
+State 15:
+poly -> LEFT_PAR poly RIGHT_PAR . [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
+-- On SEMICOLON reduce production poly -> LEFT_PAR poly RIGHT_PAR 
+-- On RIGHT_PAR reduce production poly -> LEFT_PAR poly RIGHT_PAR 
+-- On PLUS reduce production poly -> LEFT_PAR poly RIGHT_PAR 
+-- On MULT reduce production poly -> LEFT_PAR poly RIGHT_PAR 
+-- On MINUS reduce production poly -> LEFT_PAR poly RIGHT_PAR 
+-- On EXP reduce production poly -> LEFT_PAR poly RIGHT_PAR 
+
+State 16:
+poly -> poly PLUS . poly [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
+-- On VAR shift to state 10
+-- On MINUS shift to state 11
+-- On LEFT_PAR shift to state 12
+-- On INT shift to state 13
+-- On poly shift to state 17
+
+State 17:
+poly -> poly . PLUS poly [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
+poly -> poly PLUS poly . [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
+poly -> poly . MINUS poly [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
+poly -> poly . MULT poly [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
+poly -> poly . EXP INT [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
+-- On MULT shift to state 18
+-- On EXP shift to state 20
+-- On SEMICOLON reduce production poly -> poly PLUS poly 
+-- On RIGHT_PAR reduce production poly -> poly PLUS poly 
+-- On PLUS reduce production poly -> poly PLUS poly 
+-- On MINUS reduce production poly -> poly PLUS poly 
+
+State 18:
+poly -> poly MULT . poly [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
+-- On VAR shift to state 10
+-- On MINUS shift to state 11
+-- On LEFT_PAR shift to state 12
+-- On INT shift to state 13
+-- On poly shift to state 19
+
+State 19:
+poly -> poly . PLUS poly [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
+poly -> poly . MINUS poly [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
+poly -> poly . MULT poly [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
+poly -> poly MULT poly . [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
+poly -> poly . EXP INT [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
+-- On EXP shift to state 20
+-- On SEMICOLON reduce production poly -> poly MULT poly 
+-- On RIGHT_PAR reduce production poly -> poly MULT poly 
+-- On PLUS reduce production poly -> poly MULT poly 
+-- On MULT reduce production poly -> poly MULT poly 
+-- On MINUS reduce production poly -> poly MULT poly 
+
+State 20:
+poly -> poly EXP . INT [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
+-- On INT shift to state 21
+
+State 21:
+poly -> poly EXP INT . [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
+-- On SEMICOLON reduce production poly -> poly EXP INT 
+-- On RIGHT_PAR reduce production poly -> poly EXP INT 
+-- On PLUS reduce production poly -> poly EXP INT 
+-- On MULT reduce production poly -> poly EXP INT 
+-- On MINUS reduce production poly -> poly EXP INT 
+-- On EXP reduce production poly -> poly EXP INT 
+
+State 22:
+poly -> poly MINUS . poly [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
+-- On VAR shift to state 10
+-- On MINUS shift to state 11
+-- On LEFT_PAR shift to state 12
+-- On INT shift to state 13
+-- On poly shift to state 23
+
+State 23:
+poly -> poly . PLUS poly [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
+poly -> poly . MINUS poly [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
+poly -> poly MINUS poly . [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
+poly -> poly . MULT poly [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
+poly -> poly . EXP INT [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
+-- On MULT shift to state 18
+-- On EXP shift to state 20
+-- On SEMICOLON reduce production poly -> poly MINUS poly 
+-- On RIGHT_PAR reduce production poly -> poly MINUS poly 
+-- On PLUS reduce production poly -> poly MINUS poly 
+-- On MINUS reduce production poly -> poly MINUS poly 
+
+State 24:
+poly -> poly . PLUS poly [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
+poly -> poly . MINUS poly [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
+poly -> MINUS poly . [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
+poly -> poly . MULT poly [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
+poly -> poly . EXP INT [ SEMICOLON RIGHT_PAR PLUS MULT MINUS EXP ]
+-- On EXP shift to state 20
+-- On SEMICOLON reduce production poly -> MINUS poly 
+-- On RIGHT_PAR reduce production poly -> MINUS poly 
+-- On PLUS reduce production poly -> MINUS poly 
+-- On MULT reduce production poly -> MINUS poly 
+-- On MINUS reduce production poly -> MINUS poly 
+
+State 25:
+interp -> symbol_interp EQUAL poly . SEMICOLON interp [ EOF ]
+poly -> poly . PLUS poly [ SEMICOLON PLUS MULT MINUS EXP ]
+poly -> poly . MINUS poly [ SEMICOLON PLUS MULT MINUS EXP ]
+poly -> poly . MULT poly [ SEMICOLON PLUS MULT MINUS EXP ]
+poly -> poly . EXP INT [ SEMICOLON PLUS MULT MINUS EXP ]
+-- On SEMICOLON shift to state 26
+-- On PLUS shift to state 16
+-- On MULT shift to state 18
+-- On MINUS shift to state 22
+-- On EXP shift to state 20
+
+State 26:
+interp -> symbol_interp EQUAL poly SEMICOLON . interp [ EOF ]
+-- On INTERP shift to state 1
+-- On symbol_interp shift to state 8
+-- On interp shift to state 27
+-- On EOF reduce production interp -> 
+
+State 27:
+interp -> symbol_interp EQUAL poly SEMICOLON interp . [ EOF ]
+-- On EOF reduce production interp -> symbol_interp EQUAL poly SEMICOLON interp 
+
+State 28:
+poly_interp_entry' -> poly_interp_entry . [ # ]
+-- On # accept poly_interp_entry
+
+State 29:
+poly_interp_entry -> interp . EOF [ # ]
+-- On EOF shift to state 30
+
+State 30:
+poly_interp_entry -> interp EOF . [ # ]
+-- On # reduce production poly_interp_entry -> interp EOF 
+
+State 31:
+weight_entry' -> . weight_entry [ # ]
+-- On INTERP shift to state 32
+-- On weight_entry shift to state 37
+-- On weight shift to state 38
+-- On EOF reduce production weight -> 
+
+State 32:
+weight -> INTERP . EQUAL INT SEMICOLON weight [ EOF ]
+-- On EQUAL shift to state 33
+
+State 33:
+weight -> INTERP EQUAL . INT SEMICOLON weight [ EOF ]
+-- On INT shift to state 34
+
+State 34:
+weight -> INTERP EQUAL INT . SEMICOLON weight [ EOF ]
+-- On SEMICOLON shift to state 35
+
+State 35:
+weight -> INTERP EQUAL INT SEMICOLON . weight [ EOF ]
+-- On INTERP shift to state 32
+-- On weight shift to state 36
+-- On EOF reduce production weight -> 
+
+State 36:
+weight -> INTERP EQUAL INT SEMICOLON weight . [ EOF ]
+-- On EOF reduce production weight -> INTERP EQUAL INT SEMICOLON weight 
+
+State 37:
+weight_entry' -> weight_entry . [ # ]
+-- On # accept weight_entry
+
+State 38:
+weight_entry -> weight . EOF [ # ]
+-- On EOF shift to state 39
+
+State 39:
+weight_entry -> weight EOF . [ # ]
+-- On # reduce production weight_entry -> weight EOF 
+

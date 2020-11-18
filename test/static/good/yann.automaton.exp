@@ -1,0 +1,270 @@
+State 0:
+exp' -> . exp [ # ]
+-- On LPAREN shift to state 1
+-- On INT shift to state 2
+-- On term shift to state 23
+-- On product shift to state 7
+-- On fa1 shift to state 10
+-- On exp shift to state 24
+
+State 1:
+fa1 -> LPAREN . exp RPAREN [ TIMES RPAREN PLUS # ]
+-- On LPAREN shift to state 1
+-- On INT shift to state 2
+-- On term shift to state 3
+-- On product shift to state 7
+-- On fa1 shift to state 10
+-- On exp shift to state 21
+
+State 2:
+fa1 -> INT . [ TIMES RPAREN PLUS # ]
+-- On TIMES reduce production fa1 -> INT 
+-- On RPAREN reduce production fa1 -> INT 
+-- On PLUS reduce production fa1 -> INT 
+-- On # reduce production fa1 -> INT 
+
+State 3:
+exp -> term . [ RPAREN ]
+term -> term . PLUS product [ RPAREN PLUS ]
+term -> term . PLUS tensorproduct [ RPAREN PLUS ]
+term -> term . PLUS tensorproduct [ RPAREN PLUS ]
+-- On PLUS shift to state 4
+-- On RPAREN reduce production exp -> term 
+
+State 4:
+term -> term PLUS . product [ RPAREN PLUS # ]
+term -> term PLUS . tensorproduct [ RPAREN PLUS # ]
+term -> term PLUS . tensorproduct [ RPAREN PLUS # ]
+-- On MATRIX shift to state 5
+-- On LPAREN shift to state 6
+-- On INT shift to state 2
+-- On tensorproduct shift to state 13
+-- On product shift to state 19
+-- On fa4 shift to state 20
+-- On fa1 shift to state 10
+
+State 5:
+fa4 -> MATRIX . [ TENSOR RPAREN PLUS # ]
+-- On TENSOR reduce production fa4 -> MATRIX 
+-- On RPAREN reduce production fa4 -> MATRIX 
+-- On PLUS reduce production fa4 -> MATRIX 
+-- On # reduce production fa4 -> MATRIX 
+
+State 6:
+fa1 -> LPAREN . exp RPAREN [ TIMES RPAREN PLUS # ]
+fa4 -> LPAREN . exp RPAREN [ TENSOR RPAREN PLUS # ]
+-- On LPAREN shift to state 1
+-- On INT shift to state 2
+-- On term shift to state 3
+-- On product shift to state 7
+-- On fa1 shift to state 10
+-- On exp shift to state 11
+
+State 7:
+product -> product . TIMES fa1 [ TIMES RPAREN PLUS # ]
+term -> product . [ RPAREN PLUS # ]
+-- On TIMES shift to state 8
+-- On RPAREN reduce production term -> product 
+-- On PLUS reduce production term -> product 
+-- On # reduce production term -> product 
+
+State 8:
+product -> product TIMES . fa1 [ TIMES RPAREN PLUS # ]
+-- On LPAREN shift to state 1
+-- On INT shift to state 2
+-- On fa1 shift to state 9
+
+State 9:
+product -> product TIMES fa1 . [ TIMES RPAREN PLUS # ]
+-- On TIMES reduce production product -> product TIMES fa1 
+-- On RPAREN reduce production product -> product TIMES fa1 
+-- On PLUS reduce production product -> product TIMES fa1 
+-- On # reduce production product -> product TIMES fa1 
+
+State 10:
+product -> fa1 . [ TIMES RPAREN PLUS # ]
+-- On TIMES reduce production product -> fa1 
+-- On RPAREN reduce production product -> fa1 
+-- On PLUS reduce production product -> fa1 
+-- On # reduce production product -> fa1 
+
+State 11:
+fa1 -> LPAREN exp . RPAREN [ TIMES RPAREN PLUS # ]
+fa4 -> LPAREN exp . RPAREN [ TENSOR RPAREN PLUS # ]
+-- On RPAREN shift to state 12
+
+State 12:
+fa1 -> LPAREN exp RPAREN . [ TIMES RPAREN PLUS # ]
+fa4 -> LPAREN exp RPAREN . [ TENSOR RPAREN PLUS # ]
+-- On TIMES reduce production fa1 -> LPAREN exp RPAREN 
+-- On TENSOR reduce production fa4 -> LPAREN exp RPAREN 
+-- On RPAREN reduce production fa1 -> LPAREN exp RPAREN 
+-- On RPAREN reduce production fa4 -> LPAREN exp RPAREN 
+-- On PLUS reduce production fa1 -> LPAREN exp RPAREN 
+-- On PLUS reduce production fa4 -> LPAREN exp RPAREN 
+-- On # reduce production fa1 -> LPAREN exp RPAREN 
+-- On # reduce production fa4 -> LPAREN exp RPAREN 
+** Conflict on RPAREN PLUS #
+
+State 13:
+tensorproduct -> tensorproduct . TENSOR fa4 [ TENSOR RPAREN PLUS # ]
+term -> term PLUS tensorproduct . [ RPAREN PLUS # ]
+term -> term PLUS tensorproduct . [ RPAREN PLUS # ]
+-- On TENSOR shift to state 14
+-- On RPAREN reduce production term -> term PLUS tensorproduct 
+-- On RPAREN reduce production term -> term PLUS tensorproduct 
+-- On PLUS reduce production term -> term PLUS tensorproduct 
+-- On PLUS reduce production term -> term PLUS tensorproduct 
+-- On # reduce production term -> term PLUS tensorproduct 
+-- On # reduce production term -> term PLUS tensorproduct 
+** Conflict on RPAREN PLUS #
+
+State 14:
+tensorproduct -> tensorproduct TENSOR . fa4 [ TENSOR RPAREN PLUS # ]
+-- On MATRIX shift to state 5
+-- On LPAREN shift to state 15
+-- On fa4 shift to state 18
+
+State 15:
+fa4 -> LPAREN . exp RPAREN [ TENSOR RPAREN PLUS # ]
+-- On LPAREN shift to state 1
+-- On INT shift to state 2
+-- On term shift to state 3
+-- On product shift to state 7
+-- On fa1 shift to state 10
+-- On exp shift to state 16
+
+State 16:
+fa4 -> LPAREN exp . RPAREN [ TENSOR RPAREN PLUS # ]
+-- On RPAREN shift to state 17
+
+State 17:
+fa4 -> LPAREN exp RPAREN . [ TENSOR RPAREN PLUS # ]
+-- On TENSOR reduce production fa4 -> LPAREN exp RPAREN 
+-- On RPAREN reduce production fa4 -> LPAREN exp RPAREN 
+-- On PLUS reduce production fa4 -> LPAREN exp RPAREN 
+-- On # reduce production fa4 -> LPAREN exp RPAREN 
+
+State 18:
+tensorproduct -> tensorproduct TENSOR fa4 . [ TENSOR RPAREN PLUS # ]
+-- On TENSOR reduce production tensorproduct -> tensorproduct TENSOR fa4 
+-- On RPAREN reduce production tensorproduct -> tensorproduct TENSOR fa4 
+-- On PLUS reduce production tensorproduct -> tensorproduct TENSOR fa4 
+-- On # reduce production tensorproduct -> tensorproduct TENSOR fa4 
+
+State 19:
+product -> product . TIMES fa1 [ TIMES RPAREN PLUS # ]
+term -> term PLUS product . [ RPAREN PLUS # ]
+-- On TIMES shift to state 8
+-- On RPAREN reduce production term -> term PLUS product 
+-- On PLUS reduce production term -> term PLUS product 
+-- On # reduce production term -> term PLUS product 
+
+State 20:
+tensorproduct -> fa4 . [ TENSOR RPAREN PLUS # ]
+-- On TENSOR reduce production tensorproduct -> fa4 
+-- On RPAREN reduce production tensorproduct -> fa4 
+-- On PLUS reduce production tensorproduct -> fa4 
+-- On # reduce production tensorproduct -> fa4 
+
+State 21:
+fa1 -> LPAREN exp . RPAREN [ TIMES RPAREN PLUS # ]
+-- On RPAREN shift to state 22
+
+State 22:
+fa1 -> LPAREN exp RPAREN . [ TIMES RPAREN PLUS # ]
+-- On TIMES reduce production fa1 -> LPAREN exp RPAREN 
+-- On RPAREN reduce production fa1 -> LPAREN exp RPAREN 
+-- On PLUS reduce production fa1 -> LPAREN exp RPAREN 
+-- On # reduce production fa1 -> LPAREN exp RPAREN 
+
+State 23:
+exp -> term . [ # ]
+term -> term . PLUS product [ PLUS # ]
+term -> term . PLUS tensorproduct [ PLUS # ]
+term -> term . PLUS tensorproduct [ PLUS # ]
+-- On PLUS shift to state 4
+-- On # reduce production exp -> term 
+
+State 24:
+exp' -> exp . [ # ]
+-- On # accept exp
+
+State 2 has an end-of-stream conflict. There is a tension between
+(1) reducing production fa1 -> INT 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of TIMES RPAREN PLUS,
+which would require some other action.
+
+State 5 has an end-of-stream conflict. There is a tension between
+(1) reducing production fa4 -> MATRIX 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of TENSOR RPAREN PLUS,
+which would require some other action.
+
+State 7 has an end-of-stream conflict. There is a tension between
+(1) reducing production term -> product 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of TIMES RPAREN PLUS,
+which would require some other action.
+
+State 9 has an end-of-stream conflict. There is a tension between
+(1) reducing production product -> product TIMES fa1 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of TIMES RPAREN PLUS,
+which would require some other action.
+
+State 10 has an end-of-stream conflict. There is a tension between
+(1) reducing production product -> fa1 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of TIMES RPAREN PLUS,
+which would require some other action.
+
+State 12 has an end-of-stream conflict. There is a tension between
+(1) reducing production fa1 -> LPAREN exp RPAREN 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of TIMES TENSOR RPAREN PLUS,
+which would require some other action.
+
+State 13 has an end-of-stream conflict. There is a tension between
+(1) reducing production term -> term PLUS tensorproduct 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of TENSOR RPAREN PLUS,
+which would require some other action.
+
+State 17 has an end-of-stream conflict. There is a tension between
+(1) reducing production fa4 -> LPAREN exp RPAREN 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of TENSOR RPAREN PLUS,
+which would require some other action.
+
+State 18 has an end-of-stream conflict. There is a tension between
+(1) reducing production tensorproduct -> tensorproduct TENSOR fa4 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of TENSOR RPAREN PLUS,
+which would require some other action.
+
+State 19 has an end-of-stream conflict. There is a tension between
+(1) reducing production term -> term PLUS product 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of TIMES RPAREN PLUS,
+which would require some other action.
+
+State 20 has an end-of-stream conflict. There is a tension between
+(1) reducing production tensorproduct -> fa4 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of TENSOR RPAREN PLUS,
+which would require some other action.
+
+State 22 has an end-of-stream conflict. There is a tension between
+(1) reducing production fa1 -> LPAREN exp RPAREN 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is one of TIMES RPAREN PLUS,
+which would require some other action.
+
+State 23 has an end-of-stream conflict. There is a tension between
+(1) reducing production exp -> term 
+without even requesting a lookahead token, and
+(2) checking whether the lookahead token is PLUS,
+which would require some other action.
+
