@@ -946,6 +946,9 @@ let default_conflict_resolution () =
      an end-of-stream conflict. This conflict is resolved by suppressing
      the reduce action at [#]. *)
 
+  (* Because we have already removed some reductions above, we may find
+     fewer end-of-stream conflicts than we did during our first pass. *)
+
   let eos_conflicts = ref 0 in
 
   iter begin fun node ->
@@ -958,6 +961,9 @@ let default_conflict_resolution () =
       let _, reductions =
         TerminalMap.lookup_and_remove Terminal.sharp reductions in
       set_reductions node reductions;
+
+      (* Mark this end-of-stream conflict as resolved. *)
+      has_eos_conflict.(raw node) <- None;
 
       (* Count this end-of-stream conflict. *)
       incr eos_conflicts
