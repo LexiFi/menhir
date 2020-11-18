@@ -11,15 +11,8 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* This module writes a description of the automaton, before conflict
-   resolution, to <basename>.automaton.
+(* [dump filename] writes a description of the LR(1) automaton to the
+   file [filename]. This function can be invoked either before or after
+   conflicts have been resolved and extra reductions have been added. *)
 
-   It writes conflict explanations to the file <basename>.conflicts.
-
-   Then, it performs conflict resolution and introduces extra reductions.
-
-   Finally, if any warnings about the grammar have been emitted up to this
-   point, and if [--strict] is enabled, then it stops Menhir, before going
-   into the back-end.
-
-   No functionality is offered by this module. *)
+val dump: string -> unit

@@ -13,10 +13,19 @@
 
 open Grammar
 
+(* -------------------------------------------------------------------------- *)
+(* I suppose now is as good a time as any to do this. *)
+
 let () =
   if Settings.graph then
     DependencyGraph.print_dependency_graph()
-  (* artificial dependency *)
+
+(* -------------------------------------------------------------------------- *)
+(* If [--dump] is present, honor it before performing conflict resolution. *)
+
+let () =
+  if Settings.dump then
+    Dump.dump (Settings.base ^ ".automaton")
 
 (* -------------------------------------------------------------------------- *)
 (* Explaining shift actions. *)

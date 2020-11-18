@@ -18,7 +18,7 @@
 
 let () =
   if Settings.dump_resolved then
-    Lr1.dump (Settings.base ^ ".automaton.resolved")
+    Dump.dump (Settings.base ^ ".automaton.resolved")
 
 (* Let [Interpret] handle the command line options [--interpret],
    [--interpret-error], [--compile-errors], [--compare-errors]. *)

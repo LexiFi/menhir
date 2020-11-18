@@ -146,6 +146,11 @@ val targets: ('a -> node list -> node -> 'a) -> 'a -> Symbol.t -> 'a
 
 val conflicts: (TerminalSet.t -> node -> unit) -> unit
 
+(* [conflict_tokens node] returns the set of tokens where [node] has a
+   conflict. *)
+
+val conflict_tokens: node -> TerminalSet.t
+
 (* [has_eos_conflict node] indicates whether [node] has an end-of-stream
    conflict. If so, the list of productions and the lookahead tokens that are
    involved are returned.
@@ -187,15 +192,6 @@ val default_conflict_resolution: unit -> unit
    one interpretation of the past, among several possible interpretations. *)
 
 val extra_reductions: unit -> unit
-
-(* ------------------------------------------------------------------------- *)
-(* Dumping the automaton. *)
-
-(* This function dumps a description of the automaton to the file whose
-   name is passed as an argument. It can be called before or after conflict
-   resolution has taken place. *)
-
-val dump: string -> unit
 
 (* ------------------------------------------------------------------------- *)
 (* Information about which productions are reduced and where. *)
