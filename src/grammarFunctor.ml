@@ -828,7 +828,11 @@ module Production = struct
   let print prod =
     assert (not (is_start prod));
     let nt, rhs = table.(prod) in
-    Printf.sprintf "%s -> %s" (Nonterminal.print false nt) (Symbol.printao 0 rhs)
+    if Array.length rhs = 0 then
+      (* Avoid producing a trailing space. *)
+      Printf.sprintf "%s ->" (Nonterminal.print false nt)
+    else
+      Printf.sprintf "%s -> %s" (Nonterminal.print false nt) (Symbol.printao 0 rhs)
 
   let describe prod =
     match classify prod with

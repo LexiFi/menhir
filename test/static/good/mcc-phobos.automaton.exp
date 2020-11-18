@@ -44,7 +44,7 @@ main -> module_name . includes term_sections opt_preamble lexer opt_assocs gramm
 -- On includes shift to state 11
 -- On include_list_rev shift to state 213
 -- On include_item shift to state 215
--- On TokTerms reduce production includes -> 
+-- On TokTerms reduce production includes ->
 
 State 5:
 include_item -> TokInclude . string_list [ TokTerms TokInclude ]
@@ -122,7 +122,7 @@ term_option -> TokExtend TokString TokLeftBrace . opt_term_declarations TokRight
 -- On term_declaration_list shift to state 46
 -- On term_declaration shift to state 48
 -- On opt_term_declarations shift to state 49
--- On TokRightBrace reduce production opt_term_declarations -> 
+-- On TokRightBrace reduce production opt_term_declarations ->
 
 State 17:
 term_declaration -> TokDeclare . syntax_terms [ TokRightBrace TokDeclare ]
@@ -177,7 +177,7 @@ syntax_term -> st_identifier TokLeftBrace . opt_syntax_subterms TokRightBrace [ 
 -- On quoted_identifier shift to state 30
 -- On opt_syntax_subterms shift to state 38
 -- On identifier shift to state 34
--- On TokRightBrace reduce production opt_syntax_subterms -> 
+-- On TokRightBrace reduce production opt_syntax_subterms ->
 
 State 24:
 quoted_identifier -> TokQuotedId . [ TokSemi TokRightBrack TokRightBrace TokQuotedId TokQuestionMark TokPipe TokLeftBrack TokInt TokInline TokId TokEof TokArrow ]
@@ -378,7 +378,7 @@ main -> module_name includes term_sections . opt_preamble lexer opt_assocs gramm
 -- On TokLeftBrace shift to state 56
 -- On preamble shift to state 108
 -- On opt_preamble shift to state 109
--- On TokTokens reduce production opt_preamble -> 
+-- On TokTokens reduce production opt_preamble ->
 
 State 56:
 preamble -> TokLeftBrace . new_rewrites TokRightBrace [ TokTokens ]
@@ -395,7 +395,7 @@ preamble -> TokLeftBrace . new_rewrites TokRightBrace [ TokTokens ]
 -- On module_identifier shift to state 68
 -- On identifier shift to state 103
 -- On from shift to state 104
--- On TokRightBrace reduce production new_rewrites -> 
+-- On TokRightBrace reduce production new_rewrites ->
 
 State 57:
 simple_term -> TokQuestionMark . [ TokSemi TokRightBrace TokQuotedId TokQuestionMark TokPipe TokInt TokInline TokId TokEof TokArrow ]
@@ -500,7 +500,7 @@ simple_term -> module_identifier . term_params [ TokSemi TokRightBrace TokQuoted
 -- On TokLeftBrack shift to state 69
 -- On term_params shift to state 83
 -- On opt_term_params shift to state 84
--- On TokLeftBrace reduce production opt_term_params -> 
+-- On TokLeftBrace reduce production opt_term_params ->
 
 State 69:
 term_params -> TokLeftBrack . term_param_list TokRightBrack [ TokSemi TokRightBrace TokQuotedId TokQuestionMark TokPipe TokLeftBrace TokInt TokInline TokId TokEof TokArrow ]
@@ -646,7 +646,7 @@ subterms -> TokLeftBrace . opt_subterm_list_semi TokRightBrace [ TokSemi TokRigh
 -- On module_identifier shift to state 68
 -- On identifiers_with_comma shift to state 94
 -- On identifier shift to state 98
--- On TokRightBrace reduce production opt_subterm_list_semi -> 
+-- On TokRightBrace reduce production opt_subterm_list_semi ->
 
 State 86:
 opt_subterm_list_semi -> subterms_with_semi . [ TokRightBrace ]
@@ -831,7 +831,7 @@ lexer -> TokTokens . opt_lexer_options TokLeftBrace tokens TokRightBrace [ TokRi
 -- On opt_lexer_options shift to state 114
 -- On lexer_option_list shift to state 143
 -- On lexer_option shift to state 145
--- On TokLeftBrace reduce production opt_lexer_options -> 
+-- On TokLeftBrace reduce production opt_lexer_options ->
 
 State 111:
 lexer_option -> TokOption . [ TokOption TokLongest TokLeftBrace TokFirst ]
@@ -900,7 +900,7 @@ token_body -> TokLeftBrace . token_term_matches TokRightBrace [ TokRightBrace To
 -- On froms shift to state 126
 -- On from_list shift to state 129
 -- On from shift to state 131
--- On TokRightBrace reduce production token_term_matches -> 
+-- On TokRightBrace reduce production token_term_matches ->
 
 State 121:
 token_body -> TokLeftBrace token_term_matches . TokRightBrace [ TokRightBrace TokIgnore TokId ]
@@ -1083,7 +1083,7 @@ main -> module_name includes term_sections opt_preamble lexer . opt_assocs gramm
 -- On opt_assocs shift to state 156
 -- On assoc_list shift to state 207
 -- On assoc shift to state 209
--- On TokGrammar reduce production opt_assocs -> 
+-- On TokGrammar reduce production opt_assocs ->
 
 State 147:
 assoc -> TokRightAssoc . identifiers [ TokRightAssoc TokNonAssoc TokLeftAssoc TokGrammar ]
@@ -1173,7 +1173,7 @@ grammar -> TokGrammar . opt_grammar_options TokLeftBrace rules TokRightBrace [ T
 -- On opt_grammar_options shift to state 160
 -- On grammar_option_list shift to state 188
 -- On grammar_option shift to state 190
--- On TokLeftBrace reduce production opt_grammar_options -> 
+-- On TokLeftBrace reduce production opt_grammar_options ->
 
 State 158:
 grammar_option -> TokStart . identifier [ TokStart TokLeftBrace ]
@@ -1243,8 +1243,8 @@ prod_body -> identifiers . opt_prec body [ TokRightBrace TokPipe TokId ]
 prod_body -> identifiers . opt_prec TokDoubledArrow simple_term [ TokRightBrace TokPipe TokId ]
 -- On TokPrec shift to state 169
 -- On opt_prec shift to state 171
--- On TokLeftBrace reduce production opt_prec -> 
--- On TokDoubledArrow reduce production opt_prec -> 
+-- On TokLeftBrace reduce production opt_prec ->
+-- On TokDoubledArrow reduce production opt_prec ->
 
 State 169:
 opt_prec -> TokPrec . TokId [ TokLeftBrace TokDoubledArrow ]
@@ -1279,7 +1279,7 @@ body -> TokLeftBrace . opt_term_matches TokRightBrace [ TokRightBrace TokPipe To
 -- On froms shift to state 126
 -- On from_list shift to state 129
 -- On from shift to state 131
--- On TokRightBrace reduce production opt_term_matches -> 
+-- On TokRightBrace reduce production opt_term_matches ->
 
 State 173:
 opt_term_matches -> term_match_list . [ TokRightBrace ]
@@ -1396,8 +1396,8 @@ main -> module_name includes term_sections opt_preamble lexer opt_assocs grammar
 -- On rewrites_section shift to state 196
 -- On rev_rewrites_section_list shift to state 197
 -- On opt_rewrites_section shift to state 199
--- On TokInline reduce production opt_rewrites_section -> 
--- On TokEof reduce production opt_rewrites_section -> 
+-- On TokInline reduce production opt_rewrites_section ->
+-- On TokEof reduce production opt_rewrites_section ->
 
 State 192:
 rewrites_section -> TokRewrites . TokLeftBrace new_rewrites TokRightBrace [ TokRewrites TokInline TokEof ]
@@ -1418,7 +1418,7 @@ rewrites_section -> TokRewrites TokLeftBrace . new_rewrites TokRightBrace [ TokR
 -- On module_identifier shift to state 68
 -- On identifier shift to state 103
 -- On from shift to state 104
--- On TokRightBrace reduce production new_rewrites -> 
+-- On TokRightBrace reduce production new_rewrites ->
 
 State 194:
 rewrites_section -> TokRewrites TokLeftBrace new_rewrites . TokRightBrace [ TokRewrites TokInline TokEof ]
@@ -1456,7 +1456,7 @@ main -> module_name includes term_sections opt_preamble lexer opt_assocs grammar
 -- On opt_inline_forms shift to state 202
 -- On inline_form_list_rev shift to state 204
 -- On inline_form shift to state 206
--- On TokEof reduce production opt_inline_forms -> 
+-- On TokEof reduce production opt_inline_forms ->
 
 State 200:
 inline_form -> TokInline . simple_term [ TokInline TokEof ]
