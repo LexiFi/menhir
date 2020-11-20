@@ -416,3 +416,6 @@ let array_for_all2 p l1 l2 =
     else if p (Array.unsafe_get l1 i) (Array.unsafe_get l2 i) then loop (succ i)
     else false in
   loop 0
+
+let rec list_make n x =
+  if n = 0 then [] else x :: list_make (n - 1) x

@@ -190,3 +190,7 @@ val nth: int -> string
 
 val array_for_all : ('a -> bool) -> 'a array -> bool
 val array_for_all2 : ('a -> 'b -> bool) -> 'a array -> 'b array -> bool
+
+(* [List.make] *)
+
+val list_make: int -> 'a -> 'a list
