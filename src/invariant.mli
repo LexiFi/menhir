@@ -58,8 +58,11 @@ val fold_top: (bool -> Symbol.t -> 'a) -> 'a -> word -> 'a
 val stack: Lr1.node -> word
 
 (* [prodstack prod] is the structure of the stack when production
-   [prod] is about to be reduced. This function should not be called
-   if production [prod] is never reduced. *)
+   [prod] is about to be reduced. *)
+
+(* Until 2020/11/20, it was forbidden to call this function if production
+   [prod] is never reduced. It is now possible to do so. In that case, it
+   returns a word where every cell contains an empty set of states. *)
 
 val prodstack: Production.index -> word
 

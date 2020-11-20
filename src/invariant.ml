@@ -57,18 +57,6 @@ module StateVector = struct
   let empty =
     []
 
-  let rec equal v1 v2 =
-    match v1, v2 with
-    | [], [] ->
-        true
-    | states1 :: v1, states2 :: v2 ->
-        Lr1.NodeSet.equal states1 states2 &&
-        equal v1 v2
-    | _, _ ->
-        (* Because all heights are known ahead of time, we are able
-           to (and careful to) compare only vectors of equal length. *)
-        assert false
-
   let rec leq_join v1 v2 =
     match v1, v2 with
     | [], [] ->
@@ -85,8 +73,6 @@ module StateVector = struct
            to (and careful to) compare only vectors of equal length. *)
         assert false
 
-  let join = leq_join
-
   let push v x =
     x :: v
 
@@ -95,116 +81,60 @@ module StateVector = struct
 
 end
 
-(* In order to perform the fixed point computation, we must extend our type of
-   vectors with a bottom element. This element will not appear in the least
-   fixed point, provided every state of the automaton is reachable. *)
+open StateVector
 
-module StateLattice = struct
+(* Define the data flow graph. *)
 
-  type property =
-    | Bottom
-    | NonBottom of StateVector.property
+module G = struct
 
-  let bottom =
-    Bottom
+  type variable = Lr1.node
 
-  let empty =
-    NonBottom StateVector.empty
+  type property = StateVector.property
 
-  let equal v1 v2 =
-    match v1, v2 with
-    | Bottom, Bottom ->
-        true
-    | NonBottom v1, NonBottom v2 ->
-        StateVector.equal v1 v2
-    | _, _ ->
-      false
+  (* At each start state of the automaton, the stack is empty. *)
 
-  let join v1 v2 =
-    match v1, v2 with
-    | Bottom, v
-    | v, Bottom ->
-        v
-    | NonBottom v1, NonBottom v2 ->
-        NonBottom (StateVector.join v1 v2)
+  let foreach_root contribute =
+    Lr1.entry |> ProductionMap.iter (fun _prod root ->
+      assert (stack_height root = 0);
+      contribute root empty
+    )
 
-  let push v x =
-    match v with
-    | Bottom ->
-        Bottom
-    | NonBottom v ->
-        NonBottom (StateVector.push v x)
+  (* The edges of the data flow graph are the transitions of the automaton. *)
 
-  let truncate h v =
-    match v with
-    | Bottom ->
-        Bottom
-    | NonBottom v ->
-        NonBottom (StateVector.truncate h v)
-
-  let is_maximal _ =
-    false
+  let foreach_successor source stack contribute =
+    Lr1.transitions source |> SymbolMap.iter (fun _symbol target ->
+      (* The contribution of [source], through this edge, to [target], is the
+         stack at [source], extended with a new cell for this transition, and
+         truncated to the stack height at [target], so as to avoid obtaining a
+         vector that is longer than expected/necessary. *)
+      let cell = Lr1.NodeSet.singleton source
+      and height = stack_height target in
+      contribute target (truncate height (push stack cell))
+    )
 
 end
 
-open StateLattice
+(* Compute the least fixed point. *)
 
-(* Define the fixed point. *)
-
-let stack_states : Lr1.node -> property =
-
+let stack_states : Lr1.node -> property option =
   let module F =
-    Fix.Make
+    Fix.DataFlow.Run
       (Fix.Glue.PersistentMapsToImperativeMaps(Lr1.NodeMap))
-      (StateLattice)
+      (StateVector)
+      (G)
   in
+  F.solution
 
-  F.lfp (fun node (get : Lr1.node -> property) ->
-
-    (* We use the fact that a state has incoming transitions if and only if
-       it is not a start state. *)
-
-    match Lr1.incoming_symbol node with
-
-    | None ->
-        assert (Lr1.predecessors node = []);
-        assert (stack_height node = 0);
-
-        (* If [node] is a start state, then the stack at [node] may be (in
-           fact, must be) the empty stack. *)
-
-        empty
-
-    | Some _symbol ->
-
-        (* If [node] is not a start state, then include the contribution of
-           every incoming transition. We compute a join over all predecessors.
-           The contribution of one predecessor is the abstract value found at
-           this predecessor, extended with a new cell for this transition, and
-           truncated to the stack height at [node], so as to avoid obtaining a
-           vector that is longer than expected/necessary. *)
-
-        let height = stack_height node in
-
-        List.fold_left (fun v predecessor ->
-          join v
-            (truncate height
-              (push (get predecessor) (Lr1.NodeSet.singleton predecessor))
-            )
-        ) bottom (Lr1.predecessors node)
-
-  )
-
-(* If every state is reachable, then the least fixed point must be non-bottom
+(* If every state is reachable, then the least fixed point must be non-[None]
    everywhere, so we may view it as a function that produces a vector of sets
    of states. *)
 
-let stack_states (node : Lr1.node) : StateVector.property =
+let stack_states (node : Lr1.node) : property =
   match stack_states node with
-  | Bottom ->
+  | None ->
       (* apparently this node is unreachable *)
       assert false
-  | NonBottom v ->
+  | Some v ->
       v
 
 (* ------------------------------------------------------------------------ *)
@@ -214,16 +144,14 @@ let stack_states (node : Lr1.node) : StateVector.property =
 (* We are careful to produce a vector of states whose length is exactly that
    of the production [prod]. *)
 
-let production_states : Production.index -> StateLattice.property =
+let production_states : Production.index -> property =
   Production.tabulate (fun prod ->
-    let nodes = Lr1.production_where prod in
+    let sites = Lr1.production_where prod in
     let height = Production.length prod in
+    let bottom = Misc.list_make height Lr1.NodeSet.empty in
     Lr1.NodeSet.fold (fun node accu ->
-      join accu
-        (truncate height
-           (NonBottom (stack_states node))
-        )
-    ) nodes bottom
+      leq_join (truncate height (stack_states node)) accu
+    ) sites bottom
   )
 
 (* ------------------------------------------------------------------------ *)
@@ -274,7 +202,7 @@ let represents states =
 
 (* Enforce condition (1) above. *)
 
-let share (v : StateVector.property) =
+let share (v : property) =
   List.iter (fun states ->
     let dummy = UnionFind.fresh false in
     Lr1.NodeSet.iter (fun state ->
@@ -287,11 +215,7 @@ let () =
     share (stack_states node)
   );
   Production.iter (fun prod ->
-    match production_states prod with
-    | Bottom ->
-        ()
-    | NonBottom v ->
-        share v
+    share (production_states prod)
   )
 
 (* Enforce condition (2) above. *)
@@ -339,17 +263,13 @@ let () =
 let () =
   Production.iterx (fun prod ->
     if Action.has_syntaxerror (Production.action prod) then
-      match production_states prod with
-      | Bottom ->
-          ()
-      | NonBottom v ->
-          let sites = Lr1.production_where prod in
-          let length = Production.length prod in
-          if length = 0 then
-            Lr1.NodeSet.iter represent sites
-          else
-            let states = List.nth v (length - 1) in
-            represents states
+      let sites = Lr1.production_where prod in
+      let length = Production.length prod in
+      if length = 0 then
+        Lr1.NodeSet.iter represent sites
+      else
+        let states = List.nth (production_states prod) (length - 1) in
+        represents states
   )
 
 (* Define accessors. *)
@@ -409,14 +329,9 @@ let stack node : word =
    reduced. *)
 
 let prodstack prod : word =
-  match production_states prod with
-  | Bottom ->
-      (* This production is never reduced. *)
-      assert false
-  | NonBottom v ->
-      List.combine
-        (convert (Production.rhs prod))
-        v
+  List.combine
+    (convert (Production.rhs prod))
+    (production_states prod)
 
 (* [gotostack nt] is the structure of the stack when a shift
    transition over nonterminal [nt] is about to be taken. It
