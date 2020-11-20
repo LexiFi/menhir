@@ -69,17 +69,23 @@ module StateVector = struct
            to (and careful to) compare only vectors of equal length. *)
         assert false
 
-  let rec join v1 v2 =
+  let rec leq_join v1 v2 =
     match v1, v2 with
     | [], [] ->
         []
-    | states1 :: v1, states2 :: v2 ->
-        Lr1.NodeSet.union states1 states2 ::
-        join v1 v2
+    | states1 :: vtail1, states2 :: vtail2 ->
+        let states = Lr1.NodeSet.leq_join states1 states2
+        and vtail = leq_join vtail1 vtail2 in
+        if states2 == states && vtail2 == vtail then
+          v2
+        else
+          states :: vtail
     | _, _ ->
         (* Because all heights are known ahead of time, we are able
            to (and careful to) compare only vectors of equal length. *)
         assert false
+
+  let join = leq_join
 
   let push v x =
     x :: v
