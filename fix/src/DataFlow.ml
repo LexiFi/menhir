@@ -52,8 +52,8 @@ module Run
      [unit] should suffice, but our minimal map API does not offer a [remove]
      function. Thus, we have to use a map of variables to Booleans.) *)
 
-  let pending : variable Stack.t =
-    Stack.create()
+  let pending : variable Queue.t =
+    Queue.create()
 
   let dirty : bool M.t =
     M.create()
@@ -64,7 +64,7 @@ module Run
   let schedule (x : variable) =
     if not (is_dirty x) then begin
       M.add x true dirty;
-      Stack.push x pending
+      Queue.push x pending
     end
 
   (* [update x' p'] ensures that the property associated with the variable [x']
@@ -109,11 +109,11 @@ module Run
   let () =
     try
       while true do
-        let x = Stack.pop pending in
+        let x = Queue.pop pending in
         M.add x false dirty;
         examine x
       done
-    with Stack.Empty ->
+    with Queue.Empty ->
       ()
 
   (* Expose the solution. *)
