@@ -635,11 +635,22 @@ let error_compatible  (k1, toksr1) (k2, toksr2) =
 (* Union of two states. The two states must have the same core. The
    new state is obtained by pointwise union of the lookahead sets. *)
 
-let union (k1, toksr1) (k2, toksr2) =
+let union (k1, toksr1) ((k2, toksr2) as s2) =
   assert (k1 = k2);
-  k1, Array.init (Array.length toksr1) (fun i ->
-    TerminalSet.union toksr1.(i) toksr2.(i)
-  )
+  let k = k1 in
+  let toksr =
+    Array.init (Array.length toksr1) (fun i ->
+      TerminalSet.union toksr1.(i) toksr2.(i)
+    ) in
+  (* If the fresh array [toksr] has the same content as [toksr2],
+     then we must return the state [s2], unchanged. We could be
+     even more ambitious and try to not even allocate the array
+     [toksr] in that case, but that seems more trouble than it
+     is worth. *)
+  if Misc.array_for_all2 (==) toksr2 toksr then
+    s2
+  else
+    k, toksr
 
 (* Restriction of a state to a set of tokens of interest. Every
    lookahead set is intersected with that set. *)
