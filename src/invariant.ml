@@ -47,6 +47,14 @@ let stack_height (node : Lr1.node) : int =
 (* By the way, this least fixed point analysis remains the most costly
    computation throughout this module. *)
 
+(* Our keys are the nodes of the LR(1) automaton. *)
+
+module Key = struct
+  type t = Lr1.node
+  let n = Lr1.n
+  let encode = Lr1.number
+end
+
 (* Vectors of sets of states. *)
 
 module StateVector = struct
@@ -117,12 +125,12 @@ end
 (* Compute the least fixed point. *)
 
 let stack_states : Lr1.node -> property option =
-  let module F =
-    Fix.DataFlow.Run
-      (Fix.Glue.PersistentMapsToImperativeMaps(Lr1.NodeMap))
-      (StateVector)
-      (G)
+  let module M =
+    Fix.Glue.InjectMinimalImperativeMaps
+      (Fix.Glue.ArraysAsImperativeMaps(Key))
+      (Key)
   in
+  let module F = Fix.DataFlow.Run(M)(StateVector)(G) in
   F.solution
 
 (* If every state is reachable, then the least fixed point must be non-[None]
