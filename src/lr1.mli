@@ -34,7 +34,10 @@ type node
 
 module Node : Set.OrderedType with type t = node
 
-module NodeSet : Set.S with type elt = node
+module NodeSet : sig
+  include Set.S with type elt = node
+  val leq_join: t -> t -> t
+end
 
 module NodeMap : Map.S with type key = node
 
