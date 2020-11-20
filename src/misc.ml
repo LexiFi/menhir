@@ -405,3 +405,14 @@ let array_for_all p a =
     else if p (Array.unsafe_get a i) then loop (succ i)
     else false in
   loop 0
+
+(* Similarly, we copy [Array.for_all2], which appeared in 4.11. *)
+let array_for_all2 p l1 l2 =
+  let n1 = Array.length l1
+  and n2 = Array.length l2 in
+  if n1 <> n2 then invalid_arg "Array.for_all2"
+  else let rec loop i =
+    if i = n1 then true
+    else if p (Array.unsafe_get l1 i) (Array.unsafe_get l2 i) then loop (succ i)
+    else false in
+  loop 0

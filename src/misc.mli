@@ -189,3 +189,4 @@ val nth: int -> string
 (* [Array.for_all] *)
 
 val array_for_all : ('a -> bool) -> 'a array -> bool
+val array_for_all2 : ('a -> 'b -> bool) -> 'a array -> 'b array -> bool
