@@ -1,5 +1,12 @@
 # TODO
 
+* In `MEMOIZER`, some variations are missing, e.g. `visibly_fix`,
+  `visibly_defensive_fix`.
+
+* Think about a heterogeneous version of the fixed point computation
+  algorithm, where valuations have type `forall 'a. 'a variable -> 'a property`.
+  (This would internally require using heterogenous maps...)
+
 * Do something with `src/attic/BoolEqs` and `src/attic/ChopFix`,
   or remove them.
 

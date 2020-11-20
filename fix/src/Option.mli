@@ -10,9 +10,9 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* The option lattice. The ordering is [None <= Some x]. *)
+(**The option lattice. The ordering is [None <= Some x]. *)
 
-(* Although the code is polymorphic in the type of elements, it must still
+(**Although the code is polymorphic in the type of elements, it must still
    be packaged as a functor, because [property] cannot be a parameterized
    type. *)
 

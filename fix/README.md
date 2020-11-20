@@ -66,6 +66,13 @@ The signatures that appear in the above files,
 such as `MEMOIZER`, `TABULATOR`, `SOLVER`, and so on,
 are defined [here](src/Sigs.ml).
 
+The documentation is built by `make doc` and is then found in the
+file `_build/default/_doc/_html/index.html`.
+
+The [documentation of the latest released
+version](http://cambium.inria.fr/~fpottier/fix/doc/fix/Fix/index.html)
+is also available online.
+
 ## Demos
 
 A few demos are provided:

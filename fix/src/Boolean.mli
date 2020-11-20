@@ -10,7 +10,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* The Boolean lattice. The ordering is [false <= true]. *)
+(**The Boolean lattice. The ordering is [false <= true]. *)
 
 open Sigs
 

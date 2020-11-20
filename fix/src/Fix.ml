@@ -33,12 +33,22 @@ module HashCons       = HashCons
 module DataFlow       = DataFlow
 
 module Prop = struct
-  (* A number of ready-made implementations of the signature [PROPERTY]. *)
+
+  (**[Prop] offers a number of ready-made implementations of the
+     signature [PROPERTY]. *)
+
+  (**The lattice of Booleans. *)
   module Boolean = Boolean
-  (* These declarations are set up so that the user sees [Prop.Option] and
-     [Prop.Set] as functors. *)
+
+  (* The following declarations are set up so that the user sees
+     [Prop.Option] and [Prop.Set] as functors. *)
+
+  (**The lattice of options. *)
   include Option
+
+  (**The lattice of sets. *)
   include Set
+
 end
 
 (* As a special case, [Core] is renamed [Fix]. Thus, if the user has declared

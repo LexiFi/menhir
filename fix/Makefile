@@ -68,6 +68,16 @@ pin:
 unpin:
 	opam pin remove $(THIS)
 
+.PHONY: doc
+doc:
+	dune build @doc
+	@echo You can find the documentation in _build/default/_doc/_html/index.html
+
+.PHONY: export
+export: doc
+	ssh yquem.inria.fr rm -rf public_html/$(THIS)/doc
+	scp -r _build/default/_doc/_html yquem.inria.fr:public_html/$(THIS)/doc
+
 HEADACHE := headache
 LIBHEAD  := $(shell pwd)/headers/library-header
 FIND     := $(shell if command -v gfind >/dev/null ; then echo gfind ; else echo find ; fi)
@@ -105,6 +115,7 @@ publish:
 	@ opam publish -v $(DATE) $(THIS) $(ARCHIVE) .
 
 MENHIR_WORKING_COPY=$(HOME)/dev/menhir
+FIX_COPY=$(MENHIR_WORKING_COPY)/fix
 
 .PHONY: menhir
 menhir:
@@ -115,6 +126,7 @@ menhir:
 	  exit 1 ; \
 	fi
 # Copy our source files to the Menhir repository.
-	@ (cd .. && cp -r fix $(MENHIR_WORKING_COPY))
+	@ rm -rf $(FIX_COPY)
+	@ cp -r $(shell pwd) $(FIX_COPY)
 # Remove a number of unneeded subdirectories.
-	@ (cd $(MENHIR_WORKING_COPY)/fix && rm -rf .git demos misc)
+	@ (cd $(FIX_COPY) && rm -rf .git demos misc)
