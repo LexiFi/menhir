@@ -149,7 +149,7 @@ let stack_states : Lr1.node -> property =
 
   let module F =
     Fix.Make
-      (Maps.PersistentMapsToImperativeMaps(Lr1.NodeMap))
+      (Fix.Glue.PersistentMapsToImperativeMaps(Lr1.NodeMap))
       (StateLattice)
   in
 

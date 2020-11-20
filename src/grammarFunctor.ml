@@ -1069,7 +1069,7 @@ end = struct
 
   module F =
     Fix.Make
-      (Maps.ArrayAsImperativeMaps(Nonterminal))
+      (Fix.Glue.ArraysAsImperativeMaps(Nonterminal))
       (P)
 
   let nonterminal =
@@ -1249,7 +1249,7 @@ end) = struct
 
   module S =
     FixSolver.Make
-      (Maps.ArrayAsImperativeMaps(Nonterminal))
+      (Fix.Glue.ArraysAsImperativeMaps(Nonterminal))
       (P)
 
   (* Build a system of constraints. *)
