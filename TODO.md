@@ -111,10 +111,6 @@
 * Preserve the directory name in the `#` directives that we emit.
   (Not sure if this is necessary.)
 
-* In the file `.automaton.resolved`, show which states have default
-  reductions. (When this is the case, do not show individual reduction
-  actions.)
-
 ## Scripts
 
 * In `make data`, the message `TIMEOUT after 60 seconds` should be printed
