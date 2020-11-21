@@ -706,14 +706,15 @@ let reduction_tokens reductions =
 
 let invert reductions : TerminalSet.t ProductionMap.t =
   TerminalMap.fold (fun tok prods inverse ->
-    let prod = Misc.single prods in
-    let toks =
-      try
-        ProductionMap.lookup prod inverse
-      with Not_found ->
-        TerminalSet.empty
-    in
-    ProductionMap.add prod (TerminalSet.add tok toks) inverse
+    List.fold_left (fun inverse prod ->
+      let toks =
+        try
+          ProductionMap.lookup prod inverse
+        with Not_found ->
+          TerminalSet.empty
+      in
+      ProductionMap.add prod (TerminalSet.add tok toks) inverse
+    ) inverse prods
   ) reductions ProductionMap.empty
 
 (* [has_eos_conflict transitions reductions] tells whether a state has
