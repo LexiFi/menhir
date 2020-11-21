@@ -249,3 +249,97 @@
   description either is definite or contains at least one represented state").
   Find out why it is incorrect. Find out what the implications for `rewind`
   are; does this imply that `rewind` can return `Die` too early?
+
+## Things Not To Do
+
+A series of ideas and remarks that could be in the "to do" list, but on which
+we do not intend to act, for now.
+
+* Fix the incompatibility with `yacc` and `bison`. These tools guarantee
+  to perform a default reduction without looking ahead at the next
+  token, whereas Menhir does not.
+  (See messages by Tiphaine Turpin from 2011/08/30 on.)
+    * Changing this behavior would involve changing both back-ends.
+    * Changing this behavior could break existing Menhir parsers.
+      (Make it a command line option.)
+    * This affects only people who are doing lexical feedback (lexer hacks).
+    * Suggestion by Frédéric Bour: allow annotating a production with `%default`
+      to indicate that it should always be a default reduction. (Not sure why
+      this helps, though.)
+    * Think about end-of-stream conflicts, too.
+      If there is a default reduction, there is no end-of-stream conflict.
+        (Do we report one at the moment?)
+      If there is a conflict, why do we arbitrarily solve it in favor of
+      looking ahead (eliminating the reduction on `#`)? What does `ocamlyacc` do?
+
+* Here is an idea inspired by our work with Jacques-Henri Jourdan on parsing
+  C11. Allow asserting that the distinction between certain tokens (say, `{A,
+  B, C}`) cannot influence which action is chosen. Or (maybe) asserting that
+  no reduction can take place when the lookahead symbol is one of `{A, B, C}`.
+  The goal is to ensure that a lexer hack is robust, i.e., even if the lexer
+  cannot reliably distinguish between `A`, `B`, `C`, this cannot cause the
+  parser to become misguided.
+
+* Incompatibility with `ocamlyacc`: Menhir discards the lookahead token when
+  entering error mode, whereas `ocamlyacc` doesn't. (Reported by Frédéric Bour.)
+
+* Implement `$0`, `$-1`, etc.
+  (Along the lines of Bison. They are a potentially dangerous feature, as
+   they allow peeking into the stack, which requires the shape of the stack
+   to be known / guessed by the programmer.)
+  Propose a named syntax, perhaps `<x> foo: ...`
+    where the name `x` is bound to the value in the topmost stack cell.
+  Ensure that the mechanism is type-safe.
+    (Is `--infer` required?)
+    (Requires an analysis so that the shape of the stack is known. The
+     existing analysis may be sufficient.)
+  Implement it in both back-ends.
+  On top of this mechanism, it is easy to implement mid-rule actions (à la Bison).
+  On top of that, it should be easy to implement inherited attributes (à la BtYacc).
+  However, my impression so far is that the whole thing is of interest
+  mainly to people who are doing lexer hacks. Otherwise, it is much easier
+  to just parse, produce a tree, and transform the tree afterwards.
+
+* Why does `--canonical --table` consume a huge amount of time on a large
+  grammar? (3m57s for ocaml.mly, versus 16s without --table) Display how much
+  time is spent compressing tables.
+
+* Explain end-of-stream conflicts, too.
+
+* To assign a priority level to a token without choosing an associativity
+  status (`%left`, `%right`, `%nonassoc`), one should be allowed to declare
+  `%neutral` and obtain an unspecified associativity status (causing an error
+  if this status is ever consulted).
+
+* Since the table back-end does not use the invariant,
+  it should be possible to save time, in `--table` mode,
+  by not running the analysis in `Invariant`.
+  That would require making `Invariant` a functor
+  and calling it from the back-ends that need it.
+  Or perhaps just running the computation on demand (using lazy)
+  but that makes timing more difficult.
+
+* The warning "this production is never reduced" is sound but incomplete.
+  See `never_reduced.mly`:
+
+  ```
+  a: b B | B {}
+  b:         {}
+  ```
+
+  where we get a warning that `b -> ` is never reduced, but actually (as a
+  consequence) `a -> b B` is never reduced either. Reword the current warning?
+  Document the problem? Develop a new warning based on `LRijkstra`?
+  By the same token, some states could be unreachable, without us knowing.
+  What should we do about it?
+  Note that the incremental API may allow reaching some states that `LRijkstra`
+  would declare unreachable, so, be careful.
+
+* Implementing `may_reduce` by looping over the action table may be too
+  conservative? There may be situations where there is no reduce action
+  in the table (because they were killed off by conflict resolution) yet
+  this state is still capable of reducing this production.
+
+* Read Chen and Pager's paper, *An Extension Of The Unit Production
+  Elimination Algorithm*, and find out whether such an optimization
+  would be useful (beneficial) in the context of Menhir.
