@@ -59,3 +59,10 @@ let hash hash = function
       hash x
   | None ->
       Hashtbl.hash None
+
+let value o ~default =
+  match o with
+  | Some x ->
+      x
+  | None ->
+      default
