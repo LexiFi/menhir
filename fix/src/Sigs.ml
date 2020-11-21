@@ -284,12 +284,12 @@ end
 (**Numberings. *)
 
 (**An ongoing numbering of (a subset of) a type [t] offers a function [encode]
-    which maps a value of type [t] to a unique integer code. If applied twice
-    to the same value, [encode] returns the same code; if applied to a value
-    that has never been encountered, it returns a fresh code. The function
-    [current] returns the next available code, which is also the number of
-    values that have been encoded so far. The function [has_been_encoded] tests
-    whether a value has been encoded already. *)
+   which maps a value of type [t] to a unique integer code. If applied twice
+   to the same value, [encode] returns the same code; if applied to a value
+   that has never been encountered, it returns a fresh code. The function
+   [current] returns the next available code, which is also the number of
+   values that have been encoded so far. The function [has_been_encoded] tests
+   whether a value has been encoded already. *)
 
 module type ONGOING_NUMBERING = sig
   type t
@@ -299,8 +299,8 @@ module type ONGOING_NUMBERING = sig
 end
 
 (**A numbering of (a subset of) a type [t] is a triple of an integer [n] and
-    two functions [encode] and [decode] which represent an isomorphism between
-    this subset of [t] and the interval [\[0..n)]. *)
+   two functions [encode] and [decode] which represent an isomorphism between
+   this subset of [t] and the interval [\[0..n)]. *)
 
 module type NUMBERING = sig
   type t
@@ -310,11 +310,11 @@ module type NUMBERING = sig
 end
 
 (**A combination of the above two signatures. According to this signature, a
-    numbering process is organized in two phases. During the first phase, the
-    numbering is ongoing; one can encode keys, but not decode. Applying the
-    functor [Done()] ends the first phase. A fixed numbering then becomes
-    available, which gives access to the total number [n] of encoded keys and
-    to both [encode] and [decode] functions. *)
+   numbering process is organized in two phases. During the first phase, the
+   numbering is ongoing; one can encode keys, but not decode. Applying the
+   functor [Done()] ends the first phase. A fixed numbering then becomes
+   available, which gives access to the total number [n] of encoded keys and
+   to both [encode] and [decode] functions. *)
 
 module type TWO_PHASE_NUMBERING = sig
   include ONGOING_NUMBERING
@@ -326,8 +326,8 @@ end
 (**Injections. *)
 
 (**An injection of [t] into [u] is an injective function of type [t -> u].
-    Because [encode] is injective, [encode x] can be thought of as the identity
-    of the object [x]. *)
+   Because [encode] is injective, [encode x] can be thought of as the identity
+   of the object [x]. *)
 
 module type INJECTION = sig
   type t
