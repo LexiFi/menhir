@@ -4,7 +4,8 @@
 
 * The new command line switch `--dump-resolved` writes a description of the
   automaton to the file `.automaton.resolved` *after* conflicts have been
-  resolved and extra reductions have been introduced.
+  resolved and extra reductions have been introduced. This file also shows
+  which states have a default reduction.
 
 * The command line switch `--dump` writes a description of the automaton to
   the file `.automaton` *before* conflicts have been resolved and extra
