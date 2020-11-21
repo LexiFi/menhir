@@ -56,9 +56,6 @@ module Run () = struct
   let stack_symbols (node : Lr1.node) : Symbol.t array =
     stack_symbols (Lr0.core (Lr1.state node))
 
-  let () =
-    Time.tick "Computing stack symbols"
-
   (* Printing. *)
 
   let buffer =
