@@ -106,6 +106,7 @@
   stderr`. That would allow the programmer to decide at runtime whether
   a trace should be printed, for instance. Also, give users access to
   the function `print_token` that is generated in `--trace` mode?
+  (Issue #6.)
 
 * Preserve the directory name in the `#` directives that we emit.
   (Not sure if this is necessary.)
@@ -116,7 +117,7 @@
 
 ## Scripts
 
-* In [make data], the message `TIMEOUT after 60 seconds` should be printed
+* In `make data`, the message `TIMEOUT after 60 seconds` should be printed
   only if the exit code is 124.
 
 ## Installation
