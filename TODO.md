@@ -21,19 +21,19 @@
 ## Enhancements
 
 * Extensions to the incremental API:
-      - Expose a function `lookahead` of type `'a env -> token option`.
-      - Expose `print_checkpoint`.
-      - Define a printer for stacks.
+    * Expose a function `lookahead` of type `'a env -> token option`.
+    * Expose `print_checkpoint`.
+    * Define a printer for stacks.
 
 * Extensions to the inspection API:
-      - Offer a way of mapping an initial state (number) back to its
-        nonterminal symbol.
-      - Expose the number of states (useful for memoization).
-      - Expose the number of productions.
-      - Expose an isomorphism between `token` and `xtoken`,
-        defined as `exists 'a. ('a terminal * 'a)`.
-        The functions `T.token2terminal` and `T.token2value` offer one direction,
-        from `token` to `xtoken`. The other direction would have to be generated.
+    * Offer a way of mapping an initial state (number) back to its
+      nonterminal symbol.
+    * Expose the number of states (useful for memoization).
+    * Expose the number of productions.
+    * Expose an isomorphism between `token` and `xtoken`,
+      defined as `exists 'a. ('a terminal * 'a)`.
+      The functions `T.token2terminal` and `T.token2value` offer one direction,
+      from `token` to `xtoken`. The other direction would have to be generated.
 
 * The inspection API does not allow determining the current state in the
   special case where the stack is empty (which implies that we are in an
@@ -158,17 +158,17 @@
   Souza Amorim, Steindorfer & Visser.
 
 * Integrate Frédéric Bour's work on concrete syntax trees.
-      - Produce a definition of the specific type of CSTs for this grammar.
-        (Before expansion.)
-      - Produce a grammar where the semantic actions build CSTs.
-      - Define a generic (internal) type of CSTs and
-        produce a function that maps generic CSTs to specific CSTs.
-      - "Uninliner" : map CSTs for the expanded grammar
-        back to CSTs for the source grammar?
-      - "Unparsing" : map an arbitrary CST to one that can be printed
-        and re-parsed identically, while inserting a minimal number of
-        "parentheses". Ideally, with a static guarantee of success,
-        and in linear time.
+    * Produce a definition of the specific type of CSTs for this grammar.
+      (Before expansion.)
+    * Produce a grammar where the semantic actions build CSTs.
+    * Define a generic (internal) type of CSTs and
+      produce a function that maps generic CSTs to specific CSTs.
+    * "Uninliner" : map CSTs for the expanded grammar
+      back to CSTs for the source grammar?
+    * "Unparsing" : map an arbitrary CST to one that can be printed
+      and re-parsed identically, while inserting a minimal number of
+      "parentheses". Ideally, with a static guarantee of success,
+      and in linear time.
 
 * Allow the user to choose the type of "source code intervals" that are stored
   in the stack (instead of imposing a pair of locations, `$startpos` and
