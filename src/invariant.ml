@@ -522,11 +522,8 @@ end
    property -- in particular, I would like to keep track of no positions at all,
    if the user doesn't use any position keyword. But I am suffering. *)
 
-module S =
-  FixSolver.Make(M)(Boolean)
-
-let record_ConVar, record_VarVar, solve =
-  S.create()
+module F =
+  FixSolver.Make(M)(Fix.Prop.Boolean)
 
 let () =
 
@@ -544,10 +541,10 @@ let () =
     if length > 0 then begin
       (* If [nt] keeps track of its start position, then the first symbol
          in the right-hand side must do so as well. *)
-      record_VarVar (Symbol.N nt, WhereStart) (rhs.(0), WhereStart);
+      F.record_VarVar (Symbol.N nt, WhereStart) (rhs.(0), WhereStart);
       (* If [nt] keeps track of its end position, then the last symbol
          in the right-hand side must do so as well. *)
-      record_VarVar (Symbol.N nt, WhereEnd) (rhs.(length - 1), WhereEnd)
+      F.record_VarVar (Symbol.N nt, WhereEnd) (rhs.(length - 1), WhereEnd)
     end;
 
     KeywordSet.iter (function
@@ -572,7 +569,7 @@ let () =
              its start position. Similarly for end positions. *)
           Array.iteri (fun i id' ->
             if id = id' then
-              record_ConVar true (rhs.(i), where)
+              F.record_ConVar true (rhs.(i), where)
           ) ids
     ) (Action.keywords action)
 
@@ -591,8 +588,8 @@ let () =
       let nt, rhs = Production.def prod in
       let length = Array.length rhs in
       if length = 0 then begin
-        record_VarVar (Symbol.N nt, WhereStart) (sym, WhereEnd);
-        record_VarVar (Symbol.N nt, WhereEnd) (sym, WhereEnd)
+        F.record_VarVar (Symbol.N nt, WhereStart) (sym, WhereEnd);
+        F.record_VarVar (Symbol.N nt, WhereEnd) (sym, WhereEnd)
       end
     ) (Lr1.reductions s);
 
@@ -600,12 +597,16 @@ let () =
        can be reduced in state [s] and mentions [$endpos($0)], then [sym]
        must keep track of its end position. *)
     if Lr1.has_beforeend s then
-      record_ConVar true (sym, WhereEnd)
+      F.record_ConVar true (sym, WhereEnd)
 
   )
 
+let track : variable -> bool option =
+  let module S = F.Solve() in
+  S.solution
+
 let track : variable -> bool =
-  solve()
+  fun x -> Option.value (track x) ~default:false
 
 let startp symbol =
   track (symbol, WhereStart)

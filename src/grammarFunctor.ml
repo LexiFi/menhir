@@ -429,6 +429,9 @@ module TerminalSet = struct
   let is_maximal _ =
     false
 
+  let leq_join =
+    union
+
 end
 
 (* Maps over terminals. *)
@@ -561,8 +564,11 @@ module SymbolSet = struct
   let bottom =
     empty
 
-  let is_maximal _ =
-    false
+  let leq =
+    subset
+
+  let join =
+    union
 
 end
 
@@ -1094,7 +1100,7 @@ end
 
 module NONEMPTY =
   GenericAnalysis
-    (Boolean)
+    (Fix.Prop.Boolean)
     (struct
       (* A terminal symbol is nonempty. *)
       let terminal _ = true
@@ -1109,7 +1115,7 @@ module NONEMPTY =
 
 module NULLABLE =
   GenericAnalysis
-    (Boolean)
+    (Fix.Prop.Boolean)
     (struct
       (* A terminal symbol is not nullable. *)
       let terminal _ = false
@@ -1241,21 +1247,19 @@ let () =
    intuitively represents a set of symbols. *)
 
 module FOLLOW (P : sig
-  include Fix.PROPERTY
-  val union: property -> property -> property
+  include Fix.MINIMAL_SEMI_LATTICE
+  val bottom: property
   val terminal: Terminal.t -> property
   val first: Production.index -> int -> property
 end) = struct
 
+  module M =
+    Fix.Glue.ArraysAsImperativeMaps(Nonterminal)
+
   module S =
-    FixSolver.Make
-      (Fix.Glue.ArraysAsImperativeMaps(Nonterminal))
-      (P)
+    FixSolver.Make(M)(P)
 
   (* Build a system of constraints. *)
-
-  let record_ConVar, record_VarVar, solve =
-    S.create()
 
   (* Iterate over all start symbols. *)
   let () =
@@ -1263,7 +1267,7 @@ end) = struct
     for nt = 0 to Nonterminal.start - 1 do
       assert (Nonterminal.is_start nt);
       (* Add # to FOLLOW(nt). *)
-      record_ConVar sharp nt
+      S.record_ConVar sharp nt
     done
     (* We need to do this explicitly because our start productions are
        of the form S' -> S, not S' -> S #, so # will not automatically
@@ -1282,18 +1286,24 @@ end) = struct
             and first = P.first prod (i+1) in
             (* The FIRST set of the remainder of the right-hand side
                contributes to the FOLLOW set of [nt2]. *)
-            record_ConVar first nt2;
+            S.record_ConVar first nt2;
             (* If the remainder of the right-hand side is nullable,
                FOLLOW(nt1) contributes to FOLLOW(nt2). *)
             if nullable then
-              record_VarVar nt1 nt2
+              S.record_VarVar nt1 nt2
       ) rhs
     ) Production.table
 
   (* Second pass. Solve the equations (on demand). *)
 
+  let follow : (Nonterminal.t -> P.property) Lazy.t =
+    lazy (
+      let module S = S.Solve() in
+      fun nt -> Option.value (S.solution nt) ~default:P.bottom
+    )
+
   let follow : Nonterminal.t -> P.property =
-    solve()
+    fun nt -> (Lazy.force follow) nt
 
 end
 
@@ -1402,7 +1412,8 @@ let sfirst prod i =
 
 let sfollow : Nonterminal.t -> SymbolSet.t =
   let module F = FOLLOW(struct
-    include SymbolSet
+    let bottom = SymbolSet.bottom
+    include Fix.Glue.MinimalSemiLattice(SymbolSet)
     let terminal t = SymbolSet.singleton (Symbol.T t)
     let first = sfirst
   end) in
