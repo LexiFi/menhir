@@ -8,10 +8,8 @@ input' -> . input [ # ]
 -- On null shift to state 2
 -- On input shift to state 3
 ## Reductions:
--- On QMF reduce production null ->
--- On HOF reduce production null ->
--- On FOF reduce production null ->
--- On CNF reduce production null ->
+-- On QMF HOF FOF CNF
+--   reduce production null ->
 
 State 1:
 ## Known stack suffix:
@@ -578,7 +576,8 @@ qmf_args -> qmf_term . COMMA qmf_args [ RPAREN ]
 ## Transitions:
 -- On COMMA shift to state 44
 ## Reductions:
--- On RPAREN reduce production qmf_args -> qmf_term
+-- On RPAREN
+--   reduce production qmf_args -> qmf_term
 
 State 44:
 ## Known stack suffix:
@@ -637,17 +636,10 @@ qmf_constant -> atomic_word . [ VLINE RPAREN NVLINE NIFF NAMPERSAND IMPLIES IFF 
 qmf_pred -> atomic_word . [ LPAREN ]
 ## Transitions:
 ## Reductions:
--- On VLINE reduce production qmf_constant -> atomic_word
--- On RPAREN reduce production qmf_constant -> atomic_word
--- On NVLINE reduce production qmf_constant -> atomic_word
--- On NIFF reduce production qmf_constant -> atomic_word
--- On NAMPERSAND reduce production qmf_constant -> atomic_word
--- On LPAREN reduce production qmf_pred -> atomic_word
--- On IMPLIES reduce production qmf_constant -> atomic_word
--- On IFF reduce production qmf_constant -> atomic_word
--- On IF reduce production qmf_constant -> atomic_word
--- On COMMA reduce production qmf_constant -> atomic_word
--- On AMPERSAND reduce production qmf_constant -> atomic_word
+-- On VLINE RPAREN NVLINE NIFF NAMPERSAND IMPLIES IFF IF COMMA AMPERSAND
+--   reduce production qmf_constant -> atomic_word
+-- On LPAREN
+--   reduce production qmf_pred -> atomic_word
 
 State 49:
 ## Known stack suffix:
@@ -736,18 +728,10 @@ qmf_atomic_formula -> qmf_pred LPAREN qmf_args RPAREN . [ VLINE RPAREN NVLINE NI
 qmf_term -> qmf_pred LPAREN qmf_args RPAREN . [ NEQUALS EQUALS ]
 ## Transitions:
 ## Reductions:
--- On VLINE reduce production qmf_atomic_formula -> qmf_pred LPAREN qmf_args RPAREN
--- On RPAREN reduce production qmf_atomic_formula -> qmf_pred LPAREN qmf_args RPAREN
--- On NVLINE reduce production qmf_atomic_formula -> qmf_pred LPAREN qmf_args RPAREN
--- On NIFF reduce production qmf_atomic_formula -> qmf_pred LPAREN qmf_args RPAREN
--- On NEQUALS reduce production qmf_term -> qmf_pred LPAREN qmf_args RPAREN
--- On NAMPERSAND reduce production qmf_atomic_formula -> qmf_pred LPAREN qmf_args RPAREN
--- On IMPLIES reduce production qmf_atomic_formula -> qmf_pred LPAREN qmf_args RPAREN
--- On IFF reduce production qmf_atomic_formula -> qmf_pred LPAREN qmf_args RPAREN
--- On IF reduce production qmf_atomic_formula -> qmf_pred LPAREN qmf_args RPAREN
--- On EQUALS reduce production qmf_term -> qmf_pred LPAREN qmf_args RPAREN
--- On COMMA reduce production qmf_atomic_formula -> qmf_pred LPAREN qmf_args RPAREN
--- On AMPERSAND reduce production qmf_atomic_formula -> qmf_pred LPAREN qmf_args RPAREN
+-- On VLINE RPAREN NVLINE NIFF NAMPERSAND IMPLIES IFF IF COMMA AMPERSAND
+--   reduce production qmf_atomic_formula -> qmf_pred LPAREN qmf_args RPAREN
+-- On NEQUALS EQUALS
+--   reduce production qmf_term -> qmf_pred LPAREN qmf_args RPAREN
 
 State 57:
 ## Known stack suffix:
@@ -832,19 +816,12 @@ qmf_pred -> atomic_word . [ LPAREN ]
 qmf_prop_const -> atomic_word . [ VLINE RPAREN NVLINE NIFF NAMPERSAND IMPLIES IFF IF COMMA AMPERSAND ]
 ## Transitions:
 ## Reductions:
--- On VLINE reduce production qmf_prop_const -> atomic_word
--- On RPAREN reduce production qmf_prop_const -> atomic_word
--- On NVLINE reduce production qmf_prop_const -> atomic_word
--- On NIFF reduce production qmf_prop_const -> atomic_word
--- On NEQUALS reduce production qmf_constant -> atomic_word
--- On NAMPERSAND reduce production qmf_prop_const -> atomic_word
--- On LPAREN reduce production qmf_pred -> atomic_word
--- On IMPLIES reduce production qmf_prop_const -> atomic_word
--- On IFF reduce production qmf_prop_const -> atomic_word
--- On IF reduce production qmf_prop_const -> atomic_word
--- On EQUALS reduce production qmf_constant -> atomic_word
--- On COMMA reduce production qmf_prop_const -> atomic_word
--- On AMPERSAND reduce production qmf_prop_const -> atomic_word
+-- On NEQUALS EQUALS
+--   reduce production qmf_constant -> atomic_word
+-- On LPAREN
+--   reduce production qmf_pred -> atomic_word
+-- On VLINE RPAREN NVLINE NIFF NAMPERSAND IMPLIES IFF IF COMMA AMPERSAND
+--   reduce production qmf_prop_const -> atomic_word
 
 State 63:
 ## Known stack suffix:
@@ -855,7 +832,8 @@ qmf_variable_decls -> qmf_variable_decl . COMMA qmf_variable_decls [ RBRKT ]
 ## Transitions:
 -- On COMMA shift to state 64
 ## Reductions:
--- On RBRKT reduce production qmf_variable_decls -> qmf_variable_decl
+-- On RBRKT
+--   reduce production qmf_variable_decls -> qmf_variable_decl
 
 State 64:
 ## Known stack suffix:
@@ -906,9 +884,10 @@ qmf_or_formula -> qmf_unitary_formula . [ VLINE RPAREN COMMA ]
 -- On AMPERSAND shift to state 74
 -- On fof_binary_connective shift to state 76
 ## Reductions:
--- On VLINE reduce production qmf_or_formula -> qmf_unitary_formula
--- On RPAREN reduce production qmf_formula -> qmf_unitary_formula
--- On COMMA reduce production qmf_formula -> qmf_unitary_formula
+-- On RPAREN COMMA
+--   reduce production qmf_formula -> qmf_unitary_formula
+-- On VLINE
+--   reduce production qmf_or_formula -> qmf_unitary_formula
 
 State 68:
 ## Known stack suffix:
@@ -1067,8 +1046,8 @@ qmf_or_formula -> qmf_or_formula . VLINE qmf_unitary_formula [ VLINE RPAREN COMM
 ## Transitions:
 -- On VLINE shift to state 79
 ## Reductions:
--- On RPAREN reduce production qmf_assoc_binary -> qmf_or_formula
--- On COMMA reduce production qmf_assoc_binary -> qmf_or_formula
+-- On RPAREN COMMA
+--   reduce production qmf_assoc_binary -> qmf_or_formula
 
 State 79:
 ## Known stack suffix:
@@ -1171,8 +1150,8 @@ qmf_assoc_binary -> qmf_and_formula . [ RPAREN COMMA ]
 ## Transitions:
 -- On AMPERSAND shift to state 87
 ## Reductions:
--- On RPAREN reduce production qmf_assoc_binary -> qmf_and_formula
--- On COMMA reduce production qmf_assoc_binary -> qmf_and_formula
+-- On RPAREN COMMA
+--   reduce production qmf_assoc_binary -> qmf_and_formula
 
 State 87:
 ## Known stack suffix:
@@ -1231,7 +1210,8 @@ qmf_annotated -> QMF LPAREN name COMMA formula_role COMMA qmf_top . annotations 
 -- On null shift to state 314
 -- On annotations shift to state 315
 ## Reductions:
--- On RPAREN reduce production null ->
+-- On RPAREN
+--   reduce production null ->
 
 State 90:
 ## Known stack suffix:
@@ -1409,19 +1389,8 @@ unary_connective -> TILDE . [ VLINE RPAREN NVLINE NIFF NEQUALS NAMPERSAND IMPLIE
 ## Transitions:
 -- On LPAREN shift to state 100
 ## Reductions:
--- On VLINE reduce production unary_connective -> TILDE
--- On RPAREN reduce production unary_connective -> TILDE
--- On NVLINE reduce production unary_connective -> TILDE
--- On NIFF reduce production unary_connective -> TILDE
--- On NEQUALS reduce production unary_connective -> TILDE
--- On NAMPERSAND reduce production unary_connective -> TILDE
--- On IMPLIES reduce production unary_connective -> TILDE
--- On IFF reduce production unary_connective -> TILDE
--- On IF reduce production unary_connective -> TILDE
--- On EQUALS reduce production unary_connective -> TILDE
--- On COMMA reduce production unary_connective -> TILDE
--- On AT_SIGN reduce production unary_connective -> TILDE
--- On AMPERSAND reduce production unary_connective -> TILDE
+-- On VLINE RPAREN NVLINE NIFF NEQUALS NAMPERSAND IMPLIES IFF IF EQUALS COMMA AT_SIGN AMPERSAND
+--   reduce production unary_connective -> TILDE
 
 State 100:
 ## Known stack suffix:
@@ -1691,8 +1660,8 @@ thf_or_formula -> thf_unitary_formula . VLINE thf_unitary_formula [ VLINE RPAREN
 -- On AMPERSAND shift to state 202
 -- On thf_pair_connective shift to state 204
 ## Reductions:
--- On RPAREN reduce production thf_logic_formula -> thf_unitary_formula
--- On COMMA reduce production thf_logic_formula -> thf_unitary_formula
+-- On RPAREN COMMA
+--   reduce production thf_logic_formula -> thf_unitary_formula
 
 State 118:
 ## Known stack suffix:
@@ -1909,18 +1878,8 @@ thf_or_formula -> thf_or_formula . VLINE thf_unitary_formula [ VLINE RPAREN NVLI
 ## Transitions:
 -- On VLINE shift to state 127
 ## Reductions:
--- On RPAREN reduce production thf_binary_tuple -> thf_or_formula
--- On NVLINE reduce production thf_binary_tuple -> thf_or_formula
--- On NIFF reduce production thf_binary_tuple -> thf_or_formula
--- On NEQUALS reduce production thf_binary_tuple -> thf_or_formula
--- On NAMPERSAND reduce production thf_binary_tuple -> thf_or_formula
--- On IMPLIES reduce production thf_binary_tuple -> thf_or_formula
--- On IFF reduce production thf_binary_tuple -> thf_or_formula
--- On IF reduce production thf_binary_tuple -> thf_or_formula
--- On EQUALS reduce production thf_binary_tuple -> thf_or_formula
--- On COMMA reduce production thf_binary_tuple -> thf_or_formula
--- On AT_SIGN reduce production thf_binary_tuple -> thf_or_formula
--- On AMPERSAND reduce production thf_binary_tuple -> thf_or_formula
+-- On RPAREN NVLINE NIFF NEQUALS NAMPERSAND IMPLIES IFF IF EQUALS COMMA AT_SIGN AMPERSAND
+--   reduce production thf_binary_tuple -> thf_or_formula
 
 State 127:
 ## Known stack suffix:
@@ -2220,7 +2179,8 @@ variable_decls -> variable_decl . COMMA variable_decls [ RBRKT ]
 ## Transitions:
 -- On COMMA shift to state 146
 ## Reductions:
--- On RBRKT reduce production variable_decls -> variable_decl
+-- On RBRKT
+--   reduce production variable_decls -> variable_decl
 
 State 146:
 ## Known stack suffix:
@@ -2436,10 +2396,8 @@ type_expr -> type_expr map_arrow type_expr . [ RPAREN RBRKT MAP_TO GREATER GETS 
 -- On GREATER shift to state 162
 -- On map_arrow shift to state 163
 ## Reductions:
--- On RPAREN reduce production type_expr -> type_expr map_arrow type_expr
--- On RBRKT reduce production type_expr -> type_expr map_arrow type_expr
--- On GETS reduce production type_expr -> type_expr map_arrow type_expr
--- On COMMA reduce production type_expr -> type_expr map_arrow type_expr
+-- On RPAREN RBRKT GETS COMMA
+--   reduce production type_expr -> type_expr map_arrow type_expr
 
 State 165:
 ## Known stack suffix:
@@ -2470,8 +2428,8 @@ variable_decl -> variable COLON type_expr . [ RBRKT COMMA ]
 -- On GREATER shift to state 162
 -- On map_arrow shift to state 163
 ## Reductions:
--- On RBRKT reduce production variable_decl -> variable COLON type_expr
--- On COMMA reduce production variable_decl -> variable COLON type_expr
+-- On RBRKT COMMA
+--   reduce production variable_decl -> variable COLON type_expr
 
 State 168:
 ## Known stack suffix:
@@ -2512,10 +2470,10 @@ atomic_type -> TOK_TYPE . [ RBRKT MAP_TO GREATER COMMA ]
 type_variable_decl -> variable COLON TOK_TYPE . [ RBRKT COMMA ]
 ## Transitions:
 ## Reductions:
--- On RBRKT reduce production type_variable_decl -> variable COLON TOK_TYPE
--- On MAP_TO reduce production atomic_type -> TOK_TYPE
--- On GREATER reduce production atomic_type -> TOK_TYPE
--- On COMMA reduce production type_variable_decl -> variable COLON TOK_TYPE
+-- On MAP_TO GREATER
+--   reduce production atomic_type -> TOK_TYPE
+-- On RBRKT COMMA
+--   reduce production type_variable_decl -> variable COLON TOK_TYPE
 
 State 171:
 ## Known stack suffix:
@@ -2601,7 +2559,8 @@ type_variable_decls -> type_variable_decl . COMMA type_variable_decls [ RBRKT ]
 ## Transitions:
 -- On COMMA shift to state 176
 ## Reductions:
--- On RBRKT reduce production type_variable_decls -> type_variable_decl
+-- On RBRKT
+--   reduce production type_variable_decls -> type_variable_decl
 
 State 176:
 ## Known stack suffix:
@@ -2696,18 +2655,8 @@ thf_binary_tuple -> thf_apply_formula . [ VLINE RPAREN NVLINE NIFF NEQUALS NAMPE
 ## Transitions:
 -- On AT_SIGN shift to state 186
 ## Reductions:
--- On VLINE reduce production thf_binary_tuple -> thf_apply_formula
--- On RPAREN reduce production thf_binary_tuple -> thf_apply_formula
--- On NVLINE reduce production thf_binary_tuple -> thf_apply_formula
--- On NIFF reduce production thf_binary_tuple -> thf_apply_formula
--- On NEQUALS reduce production thf_binary_tuple -> thf_apply_formula
--- On NAMPERSAND reduce production thf_binary_tuple -> thf_apply_formula
--- On IMPLIES reduce production thf_binary_tuple -> thf_apply_formula
--- On IFF reduce production thf_binary_tuple -> thf_apply_formula
--- On IF reduce production thf_binary_tuple -> thf_apply_formula
--- On EQUALS reduce production thf_binary_tuple -> thf_apply_formula
--- On COMMA reduce production thf_binary_tuple -> thf_apply_formula
--- On AMPERSAND reduce production thf_binary_tuple -> thf_apply_formula
+-- On VLINE RPAREN NVLINE NIFF NEQUALS NAMPERSAND IMPLIES IFF IF EQUALS COMMA AMPERSAND
+--   reduce production thf_binary_tuple -> thf_apply_formula
 
 State 186:
 ## Known stack suffix:
@@ -2775,18 +2724,8 @@ thf_binary_tuple -> thf_and_formula . [ VLINE RPAREN NVLINE NIFF NEQUALS NAMPERS
 ## Transitions:
 -- On AMPERSAND shift to state 189
 ## Reductions:
--- On VLINE reduce production thf_binary_tuple -> thf_and_formula
--- On RPAREN reduce production thf_binary_tuple -> thf_and_formula
--- On NVLINE reduce production thf_binary_tuple -> thf_and_formula
--- On NIFF reduce production thf_binary_tuple -> thf_and_formula
--- On NEQUALS reduce production thf_binary_tuple -> thf_and_formula
--- On NAMPERSAND reduce production thf_binary_tuple -> thf_and_formula
--- On IMPLIES reduce production thf_binary_tuple -> thf_and_formula
--- On IFF reduce production thf_binary_tuple -> thf_and_formula
--- On IF reduce production thf_binary_tuple -> thf_and_formula
--- On EQUALS reduce production thf_binary_tuple -> thf_and_formula
--- On COMMA reduce production thf_binary_tuple -> thf_and_formula
--- On AT_SIGN reduce production thf_binary_tuple -> thf_and_formula
+-- On VLINE RPAREN NVLINE NIFF NEQUALS NAMPERSAND IMPLIES IFF IF EQUALS COMMA AT_SIGN
+--   reduce production thf_binary_tuple -> thf_and_formula
 
 State 189:
 ## Known stack suffix:
@@ -3267,7 +3206,8 @@ fof_args -> fof_term . COMMA fof_args [ RPAREN ]
 ## Transitions:
 -- On COMMA shift to state 222
 ## Reductions:
--- On RPAREN reduce production fof_args -> fof_term
+-- On RPAREN
+--   reduce production fof_args -> fof_term
 
 State 222:
 ## Known stack suffix:
@@ -3317,17 +3257,10 @@ fof_constant -> atomic_word . [ VLINE RPAREN NVLINE NIFF NAMPERSAND IMPLIES IFF 
 fof_pred -> atomic_word . [ LPAREN ]
 ## Transitions:
 ## Reductions:
--- On VLINE reduce production fof_constant -> atomic_word
--- On RPAREN reduce production fof_constant -> atomic_word
--- On NVLINE reduce production fof_constant -> atomic_word
--- On NIFF reduce production fof_constant -> atomic_word
--- On NAMPERSAND reduce production fof_constant -> atomic_word
--- On LPAREN reduce production fof_pred -> atomic_word
--- On IMPLIES reduce production fof_constant -> atomic_word
--- On IFF reduce production fof_constant -> atomic_word
--- On IF reduce production fof_constant -> atomic_word
--- On COMMA reduce production fof_constant -> atomic_word
--- On AMPERSAND reduce production fof_constant -> atomic_word
+-- On VLINE RPAREN NVLINE NIFF NAMPERSAND IMPLIES IFF IF COMMA AMPERSAND
+--   reduce production fof_constant -> atomic_word
+-- On LPAREN
+--   reduce production fof_pred -> atomic_word
 
 State 226:
 ## Known stack suffix:
@@ -3726,18 +3659,10 @@ fof_atomic_formula -> fof_pred LPAREN fof_args RPAREN . [ VLINE RPAREN NVLINE NI
 fof_term -> fof_pred LPAREN fof_args RPAREN . [ NEQUALS EQUALS ]
 ## Transitions:
 ## Reductions:
--- On VLINE reduce production fof_atomic_formula -> fof_pred LPAREN fof_args RPAREN
--- On RPAREN reduce production fof_atomic_formula -> fof_pred LPAREN fof_args RPAREN
--- On NVLINE reduce production fof_atomic_formula -> fof_pred LPAREN fof_args RPAREN
--- On NIFF reduce production fof_atomic_formula -> fof_pred LPAREN fof_args RPAREN
--- On NEQUALS reduce production fof_term -> fof_pred LPAREN fof_args RPAREN
--- On NAMPERSAND reduce production fof_atomic_formula -> fof_pred LPAREN fof_args RPAREN
--- On IMPLIES reduce production fof_atomic_formula -> fof_pred LPAREN fof_args RPAREN
--- On IFF reduce production fof_atomic_formula -> fof_pred LPAREN fof_args RPAREN
--- On IF reduce production fof_atomic_formula -> fof_pred LPAREN fof_args RPAREN
--- On EQUALS reduce production fof_term -> fof_pred LPAREN fof_args RPAREN
--- On COMMA reduce production fof_atomic_formula -> fof_pred LPAREN fof_args RPAREN
--- On AMPERSAND reduce production fof_atomic_formula -> fof_pred LPAREN fof_args RPAREN
+-- On VLINE RPAREN NVLINE NIFF NAMPERSAND IMPLIES IFF IF COMMA AMPERSAND
+--   reduce production fof_atomic_formula -> fof_pred LPAREN fof_args RPAREN
+-- On NEQUALS EQUALS
+--   reduce production fof_term -> fof_pred LPAREN fof_args RPAREN
 
 State 254:
 ## Known stack suffix:
@@ -3757,19 +3682,12 @@ fof_pred -> atomic_word . [ LPAREN ]
 fof_prop_const -> atomic_word . [ VLINE RPAREN NVLINE NIFF NAMPERSAND IMPLIES IFF IF COMMA AMPERSAND ]
 ## Transitions:
 ## Reductions:
--- On VLINE reduce production fof_prop_const -> atomic_word
--- On RPAREN reduce production fof_prop_const -> atomic_word
--- On NVLINE reduce production fof_prop_const -> atomic_word
--- On NIFF reduce production fof_prop_const -> atomic_word
--- On NEQUALS reduce production fof_constant -> atomic_word
--- On NAMPERSAND reduce production fof_prop_const -> atomic_word
--- On LPAREN reduce production fof_pred -> atomic_word
--- On IMPLIES reduce production fof_prop_const -> atomic_word
--- On IFF reduce production fof_prop_const -> atomic_word
--- On IF reduce production fof_prop_const -> atomic_word
--- On EQUALS reduce production fof_constant -> atomic_word
--- On COMMA reduce production fof_prop_const -> atomic_word
--- On AMPERSAND reduce production fof_prop_const -> atomic_word
+-- On NEQUALS EQUALS
+--   reduce production fof_constant -> atomic_word
+-- On LPAREN
+--   reduce production fof_pred -> atomic_word
+-- On VLINE RPAREN NVLINE NIFF NAMPERSAND IMPLIES IFF IF COMMA AMPERSAND
+--   reduce production fof_prop_const -> atomic_word
 
 State 256:
 ## Known stack suffix:
@@ -3780,7 +3698,8 @@ fof_variable_decls -> fof_variable_decl . COMMA fof_variable_decls [ RBRKT ]
 ## Transitions:
 -- On COMMA shift to state 257
 ## Reductions:
--- On RBRKT reduce production fof_variable_decls -> fof_variable_decl
+-- On RBRKT
+--   reduce production fof_variable_decls -> fof_variable_decl
 
 State 257:
 ## Known stack suffix:
@@ -3831,9 +3750,10 @@ fof_or_formula -> fof_unitary_formula . [ VLINE RPAREN COMMA ]
 -- On AMPERSAND shift to state 261
 -- On fof_binary_connective shift to state 263
 ## Reductions:
--- On VLINE reduce production fof_or_formula -> fof_unitary_formula
--- On RPAREN reduce production fof_formula -> fof_unitary_formula
--- On COMMA reduce production fof_formula -> fof_unitary_formula
+-- On RPAREN COMMA
+--   reduce production fof_formula -> fof_unitary_formula
+-- On VLINE
+--   reduce production fof_or_formula -> fof_unitary_formula
 
 State 261:
 ## Known stack suffix:
@@ -3930,8 +3850,8 @@ fof_or_formula -> fof_or_formula . VLINE fof_unitary_formula [ VLINE RPAREN COMM
 ## Transitions:
 -- On VLINE shift to state 266
 ## Reductions:
--- On RPAREN reduce production fof_assoc_binary -> fof_or_formula
--- On COMMA reduce production fof_assoc_binary -> fof_or_formula
+-- On RPAREN COMMA
+--   reduce production fof_assoc_binary -> fof_or_formula
 
 State 266:
 ## Known stack suffix:
@@ -4030,8 +3950,8 @@ fof_assoc_binary -> fof_and_formula . [ RPAREN COMMA ]
 ## Transitions:
 -- On AMPERSAND shift to state 274
 ## Reductions:
--- On RPAREN reduce production fof_assoc_binary -> fof_and_formula
--- On COMMA reduce production fof_assoc_binary -> fof_and_formula
+-- On RPAREN COMMA
+--   reduce production fof_assoc_binary -> fof_and_formula
 
 State 274:
 ## Known stack suffix:
@@ -4213,8 +4133,8 @@ cnf_formula -> cnf_literal . VLINE cnf_formula [ RPAREN COMMA ]
 ## Transitions:
 -- On VLINE shift to state 285
 ## Reductions:
--- On RPAREN reduce production cnf_formula -> cnf_literal
--- On COMMA reduce production cnf_formula -> cnf_literal
+-- On RPAREN COMMA
+--   reduce production cnf_formula -> cnf_literal
 
 State 285:
 ## Known stack suffix:
@@ -4335,8 +4255,8 @@ general_terms -> general_term . COMMA general_terms [ RPAREN RBRKT ]
 ## Transitions:
 -- On COMMA shift to state 296
 ## Reductions:
--- On RPAREN reduce production general_terms -> general_term
--- On RBRKT reduce production general_terms -> general_term
+-- On RPAREN RBRKT
+--   reduce production general_terms -> general_term
 
 State 296:
 ## Known stack suffix:
@@ -4393,9 +4313,8 @@ general_term -> general_data . COLON general_term [ RPAREN RBRKT COMMA ]
 ## Transitions:
 -- On COLON shift to state 300
 ## Reductions:
--- On RPAREN reduce production general_term -> general_data
--- On RBRKT reduce production general_term -> general_data
--- On COMMA reduce production general_term -> general_data
+-- On RPAREN RBRKT COMMA
+--   reduce production general_term -> general_data
 
 State 300:
 ## Known stack suffix:
@@ -4451,10 +4370,8 @@ general_data -> atomic_word . LPAREN general_terms RPAREN [ RPAREN RBRKT COMMA C
 ## Transitions:
 -- On LPAREN shift to state 304
 ## Reductions:
--- On RPAREN reduce production general_data -> atomic_word
--- On RBRKT reduce production general_data -> atomic_word
--- On COMMA reduce production general_data -> atomic_word
--- On COLON reduce production general_data -> atomic_word
+-- On RPAREN RBRKT COMMA COLON
+--   reduce production general_data -> atomic_word
 
 State 304:
 ## Known stack suffix:
@@ -4512,7 +4429,8 @@ annotations -> COMMA source . optional_info [ RPAREN ]
 -- On optional_info shift to state 311
 -- On null shift to state 312
 ## Reductions:
--- On RPAREN reduce production null ->
+-- On RPAREN
+--   reduce production null ->
 
 State 308:
 ## Known stack suffix:
@@ -4879,18 +4797,8 @@ typed_constant -> LPAREN constant . COLON type_expr RPAREN [ GETS ]
 ## Transitions:
 -- On COLON shift to state 330
 ## Reductions:
--- On VLINE reduce production thf_atom -> constant
--- On RPAREN reduce production thf_atom -> constant
--- On NVLINE reduce production thf_atom -> constant
--- On NIFF reduce production thf_atom -> constant
--- On NEQUALS reduce production thf_atom -> constant
--- On NAMPERSAND reduce production thf_atom -> constant
--- On IMPLIES reduce production thf_atom -> constant
--- On IFF reduce production thf_atom -> constant
--- On IF reduce production thf_atom -> constant
--- On EQUALS reduce production thf_atom -> constant
--- On AT_SIGN reduce production thf_atom -> constant
--- On AMPERSAND reduce production thf_atom -> constant
+-- On VLINE RPAREN NVLINE NIFF NEQUALS NAMPERSAND IMPLIES IFF IF EQUALS AT_SIGN AMPERSAND
+--   reduce production thf_atom -> constant
 
 State 330:
 ## Known stack suffix:
@@ -5036,19 +4944,10 @@ typed_constant -> constant . COLON type_expr [ GETS ]
 ## Transitions:
 -- On COLON shift to state 339
 ## Reductions:
--- On VLINE reduce production thf_atom -> constant
--- On RPAREN reduce production thf_atom -> constant
--- On NVLINE reduce production thf_atom -> constant
--- On NIFF reduce production thf_atom -> constant
--- On NEQUALS reduce production thf_atom -> constant
--- On NAMPERSAND reduce production thf_atom -> constant
--- On IMPLIES reduce production thf_atom -> constant
--- On IFF reduce production thf_atom -> constant
--- On IF reduce production thf_atom -> constant
--- On GETS reduce production defined_element -> constant
--- On EQUALS reduce production thf_atom -> constant
--- On AT_SIGN reduce production thf_atom -> constant
--- On AMPERSAND reduce production thf_atom -> constant
+-- On GETS
+--   reduce production defined_element -> constant
+-- On VLINE RPAREN NVLINE NIFF NEQUALS NAMPERSAND IMPLIES IFF IF EQUALS AT_SIGN AMPERSAND
+--   reduce production thf_atom -> constant
 
 State 339:
 ## Known stack suffix:
@@ -5084,7 +4983,8 @@ typed_constant -> constant COLON type_expr . [ GETS ]
 -- On GREATER shift to state 162
 -- On map_arrow shift to state 163
 ## Reductions:
--- On GETS reduce production typed_constant -> constant COLON type_expr
+-- On GETS
+--   reduce production typed_constant -> constant COLON type_expr
 
 State 341:
 ## Known stack suffix:
@@ -5097,8 +4997,10 @@ hof_annotated -> HOF LPAREN name COMMA formula_role COMMA typed_constant . annot
 -- On null shift to state 314
 -- On annotations shift to state 342
 ## Reductions:
--- On RPAREN reduce production null ->
--- On GETS reduce production defined_element -> typed_constant
+-- On GETS
+--   reduce production defined_element -> typed_constant
+-- On RPAREN
+--   reduce production null ->
 
 State 342:
 ## Known stack suffix:
@@ -5137,7 +5039,8 @@ hof_annotated -> HOF LPAREN name COMMA formula_role COMMA thf_logic_formula . an
 -- On null shift to state 314
 -- On annotations shift to state 346
 ## Reductions:
--- On RPAREN reduce production null ->
+-- On RPAREN
+--   reduce production null ->
 
 State 346:
 ## Known stack suffix:
@@ -5176,7 +5079,8 @@ hof_annotated -> HOF LPAREN name COMMA formula_role COMMA definition . annotatio
 -- On null shift to state 314
 -- On annotations shift to state 350
 ## Reductions:
--- On RPAREN reduce production null ->
+-- On RPAREN
+--   reduce production null ->
 
 State 350:
 ## Known stack suffix:
@@ -5288,20 +5192,10 @@ typed_constant -> constant . COLON type_expr [ RPAREN GETS COMMA ]
 ## Transitions:
 -- On COLON shift to state 357
 ## Reductions:
--- On VLINE reduce production thf_atom -> constant
--- On RPAREN reduce production thf_atom -> constant
--- On NVLINE reduce production thf_atom -> constant
--- On NIFF reduce production thf_atom -> constant
--- On NEQUALS reduce production thf_atom -> constant
--- On NAMPERSAND reduce production thf_atom -> constant
--- On IMPLIES reduce production thf_atom -> constant
--- On IFF reduce production thf_atom -> constant
--- On IF reduce production thf_atom -> constant
--- On GETS reduce production defined_element -> constant
--- On EQUALS reduce production thf_atom -> constant
--- On COMMA reduce production thf_atom -> constant
--- On AT_SIGN reduce production thf_atom -> constant
--- On AMPERSAND reduce production thf_atom -> constant
+-- On GETS
+--   reduce production defined_element -> constant
+-- On VLINE RPAREN NVLINE NIFF NEQUALS NAMPERSAND IMPLIES IFF IF EQUALS COMMA AT_SIGN AMPERSAND
+--   reduce production thf_atom -> constant
 
 State 357:
 ## Known stack suffix:
@@ -5334,9 +5228,8 @@ typed_constant -> constant COLON type_expr . [ RPAREN GETS COMMA ]
 -- On GREATER shift to state 162
 -- On map_arrow shift to state 163
 ## Reductions:
--- On RPAREN reduce production typed_constant -> constant COLON type_expr
--- On GETS reduce production typed_constant -> constant COLON type_expr
--- On COMMA reduce production typed_constant -> constant COLON type_expr
+-- On RPAREN GETS COMMA
+--   reduce production typed_constant -> constant COLON type_expr
 
 State 359:
 ## Known stack suffix:
@@ -5441,7 +5334,8 @@ fof_annotated -> FOF LPAREN name COMMA formula_role COMMA fof_top . annotations 
 -- On null shift to state 314
 -- On annotations shift to state 366
 ## Reductions:
--- On RPAREN reduce production null ->
+-- On RPAREN
+--   reduce production null ->
 
 State 366:
 ## Known stack suffix:
@@ -5571,7 +5465,8 @@ cnf_annotated -> CNF LPAREN name COMMA formula_role COMMA cnf_top . annotations 
 -- On null shift to state 314
 -- On annotations shift to state 377
 ## Reductions:
--- On RPAREN reduce production null ->
+-- On RPAREN
+--   reduce production null ->
 
 State 377:
 ## Known stack suffix:

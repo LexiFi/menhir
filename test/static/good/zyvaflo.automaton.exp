@@ -17,9 +17,8 @@ main -> PROGRAM . vars definitions body endtok [ # ]
 -- On VAR shift to state 2
 -- On vars shift to state 19
 ## Reductions:
--- On PROCEDURE reduce production vars ->
--- On FUNCTION reduce production vars ->
--- On BEGIN reduce production vars ->
+-- On PROCEDURE FUNCTION BEGIN
+--   reduce production vars ->
 
 State 2:
 ## Known stack suffix:
@@ -32,9 +31,8 @@ vars -> VAR . args2 [ PROCEDURE FUNCTION BEGIN ]
 -- On declvar shift to state 15
 -- On args2 shift to state 18
 ## Reductions:
--- On PROCEDURE reduce production args2 ->
--- On FUNCTION reduce production args2 ->
--- On BEGIN reduce production args2 ->
+-- On PROCEDURE FUNCTION BEGIN
+--   reduce production args2 ->
 
 State 3:
 ## Known stack suffix:
@@ -45,7 +43,8 @@ idents -> IDENT . [ COLON ]
 ## Transitions:
 -- On COMMA shift to state 4
 ## Reductions:
--- On COLON reduce production idents -> IDENT
+-- On COLON
+--   reduce production idents -> IDENT
 
 State 4:
 ## Known stack suffix:
@@ -64,7 +63,8 @@ State 5:
 idents -> IDENT COMMA idents . [ COLON ]
 ## Transitions:
 ## Reductions:
--- On COLON reduce production idents -> IDENT COMMA idents
+-- On COLON
+--   reduce production idents -> IDENT COMMA idents
 
 State 6:
 ## Known stack suffix:
@@ -95,8 +95,8 @@ State 8:
 type_expr -> REAL . [ SEMI RPAREN ]
 ## Transitions:
 ## Reductions:
--- On SEMI reduce production type_expr -> REAL
--- On RPAREN reduce production type_expr -> REAL
+-- On SEMI RPAREN
+--   reduce production type_expr -> REAL
 
 State 9:
 ## Known stack suffix:
@@ -105,8 +105,8 @@ State 9:
 type_expr -> INTEGER . [ SEMI RPAREN ]
 ## Transitions:
 ## Reductions:
--- On SEMI reduce production type_expr -> INTEGER
--- On RPAREN reduce production type_expr -> INTEGER
+-- On SEMI RPAREN
+--   reduce production type_expr -> INTEGER
 
 State 10:
 ## Known stack suffix:
@@ -115,8 +115,8 @@ State 10:
 type_expr -> BOOLEAN . [ SEMI RPAREN ]
 ## Transitions:
 ## Reductions:
--- On SEMI reduce production type_expr -> BOOLEAN
--- On RPAREN reduce production type_expr -> BOOLEAN
+-- On SEMI RPAREN
+--   reduce production type_expr -> BOOLEAN
 
 State 11:
 ## Known stack suffix:
@@ -147,8 +147,8 @@ State 13:
 type_expr -> ARRAY OF type_expr . [ SEMI RPAREN ]
 ## Transitions:
 ## Reductions:
--- On SEMI reduce production type_expr -> ARRAY OF type_expr
--- On RPAREN reduce production type_expr -> ARRAY OF type_expr
+-- On SEMI RPAREN
+--   reduce production type_expr -> ARRAY OF type_expr
 
 State 14:
 ## Known stack suffix:
@@ -157,8 +157,8 @@ State 14:
 declvar -> idents COLON type_expr . [ SEMI RPAREN ]
 ## Transitions:
 ## Reductions:
--- On SEMI reduce production declvar -> idents COLON type_expr
--- On RPAREN reduce production declvar -> idents COLON type_expr
+-- On SEMI RPAREN
+--   reduce production declvar -> idents COLON type_expr
 
 State 15:
 ## Known stack suffix:
@@ -180,9 +180,8 @@ args2 -> declvar SEMI . args2 [ PROCEDURE FUNCTION BEGIN ]
 -- On declvar shift to state 15
 -- On args2 shift to state 17
 ## Reductions:
--- On PROCEDURE reduce production args2 ->
--- On FUNCTION reduce production args2 ->
--- On BEGIN reduce production args2 ->
+-- On PROCEDURE FUNCTION BEGIN
+--   reduce production args2 ->
 
 State 17:
 ## Known stack suffix:
@@ -191,9 +190,8 @@ State 17:
 args2 -> declvar SEMI args2 . [ PROCEDURE FUNCTION BEGIN ]
 ## Transitions:
 ## Reductions:
--- On PROCEDURE reduce production args2 -> declvar SEMI args2
--- On FUNCTION reduce production args2 -> declvar SEMI args2
--- On BEGIN reduce production args2 -> declvar SEMI args2
+-- On PROCEDURE FUNCTION BEGIN
+--   reduce production args2 -> declvar SEMI args2
 
 State 18:
 ## Known stack suffix:
@@ -202,9 +200,8 @@ State 18:
 vars -> VAR args2 . [ PROCEDURE FUNCTION BEGIN ]
 ## Transitions:
 ## Reductions:
--- On PROCEDURE reduce production vars -> VAR args2
--- On FUNCTION reduce production vars -> VAR args2
--- On BEGIN reduce production vars -> VAR args2
+-- On PROCEDURE FUNCTION BEGIN
+--   reduce production vars -> VAR args2
 
 State 19:
 ## Known stack suffix:
@@ -217,7 +214,8 @@ main -> PROGRAM vars . definitions body endtok [ # ]
 -- On fonction shift to state 140
 -- On definitions shift to state 143
 ## Reductions:
--- On BEGIN reduce production definitions ->
+-- On BEGIN
+--   reduce production definitions ->
 
 State 20:
 ## Known stack suffix:
@@ -248,7 +246,8 @@ fonction -> PROCEDURE IDENT LPAREN . args RPAREN SEMI vars body [ SEMI ]
 -- On declvar shift to state 23
 -- On args shift to state 28
 ## Reductions:
--- On RPAREN reduce production args ->
+-- On RPAREN
+--   reduce production args ->
 
 State 23:
 ## Known stack suffix:
@@ -259,7 +258,8 @@ args -> declvar . args1 [ RPAREN ]
 -- On SEMI shift to state 24
 -- On args1 shift to state 27
 ## Reductions:
--- On RPAREN reduce production args1 ->
+-- On RPAREN
+--   reduce production args1 ->
 
 State 24:
 ## Known stack suffix:
@@ -281,7 +281,8 @@ args1 -> SEMI declvar . args1 [ RPAREN ]
 -- On SEMI shift to state 24
 -- On args1 shift to state 26
 ## Reductions:
--- On RPAREN reduce production args1 ->
+-- On RPAREN
+--   reduce production args1 ->
 
 State 26:
 ## Known stack suffix:
@@ -290,7 +291,8 @@ State 26:
 args1 -> SEMI declvar args1 . [ RPAREN ]
 ## Transitions:
 ## Reductions:
--- On RPAREN reduce production args1 -> SEMI declvar args1
+-- On RPAREN
+--   reduce production args1 -> SEMI declvar args1
 
 State 27:
 ## Known stack suffix:
@@ -299,7 +301,8 @@ State 27:
 args -> declvar args1 . [ RPAREN ]
 ## Transitions:
 ## Reductions:
--- On RPAREN reduce production args -> declvar args1
+-- On RPAREN
+--   reduce production args -> declvar args1
 
 State 28:
 ## Known stack suffix:
@@ -328,7 +331,8 @@ fonction -> PROCEDURE IDENT LPAREN args RPAREN SEMI . vars body [ SEMI ]
 -- On VAR shift to state 2
 -- On vars shift to state 31
 ## Reductions:
--- On BEGIN reduce production vars ->
+-- On BEGIN
+--   reduce production vars ->
 
 State 31:
 ## Known stack suffix:
@@ -360,7 +364,8 @@ body -> BEGIN . bloc END [ SEMISEMI SEMI DOT ]
 -- On bloc shift to state 127
 -- On array_expression shift to state 114
 ## Reductions:
--- On END reduce production bloc ->
+-- On END
+--   reduce production bloc ->
 
 State 33:
 ## Known stack suffix:
@@ -433,25 +438,8 @@ State 37:
 expression -> INT . [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
 ## Transitions:
 ## Reductions:
--- On TIMES reduce production expression -> INT
--- On THEN reduce production expression -> INT
--- On SEMI reduce production expression -> INT
--- On RPAREN reduce production expression -> INT
--- On RBRACKET reduce production expression -> INT
--- On PLUS reduce production expression -> INT
--- On MINUS reduce production expression -> INT
--- On LESSGREATER reduce production expression -> INT
--- On LESSEQUAL reduce production expression -> INT
--- On LESS reduce production expression -> INT
--- On GREATEREQUAL reduce production expression -> INT
--- On GREATER reduce production expression -> INT
--- On EQUAL reduce production expression -> INT
--- On END reduce production expression -> INT
--- On ELSE reduce production expression -> INT
--- On DO reduce production expression -> INT
--- On DIV reduce production expression -> INT
--- On COMMA reduce production expression -> INT
--- On COLON reduce production expression -> INT
+-- On TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON
+--   reduce production expression -> INT
 
 State 38:
 ## Known stack suffix:
@@ -463,26 +451,10 @@ expression -> IDENT . [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER L
 ## Transitions:
 -- On LPAREN shift to state 39
 ## Reductions:
--- On TIMES reduce production expression -> IDENT
--- On THEN reduce production expression -> IDENT
--- On SEMI reduce production expression -> IDENT
--- On RPAREN reduce production expression -> IDENT
--- On RBRACKET reduce production expression -> IDENT
--- On PLUS reduce production expression -> IDENT
--- On MINUS reduce production expression -> IDENT
--- On LESSGREATER reduce production expression -> IDENT
--- On LESSEQUAL reduce production expression -> IDENT
--- On LESS reduce production expression -> IDENT
--- On LBRACKET reduce production array_expression -> IDENT
--- On GREATEREQUAL reduce production expression -> IDENT
--- On GREATER reduce production expression -> IDENT
--- On EQUAL reduce production expression -> IDENT
--- On END reduce production expression -> IDENT
--- On ELSE reduce production expression -> IDENT
--- On DO reduce production expression -> IDENT
--- On DIV reduce production expression -> IDENT
--- On COMMA reduce production expression -> IDENT
--- On COLON reduce production expression -> IDENT
+-- On LBRACKET
+--   reduce production array_expression -> IDENT
+-- On TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON
+--   reduce production expression -> IDENT
 
 State 39:
 ## Known stack suffix:
@@ -502,7 +474,8 @@ call_expression -> IDENT LPAREN . arguments RPAREN [ TIMES THEN SEMI RPAREN RBRA
 -- On array_expression shift to state 48
 -- On arguments shift to state 78
 ## Reductions:
--- On RPAREN reduce production arguments ->
+-- On RPAREN
+--   reduce production arguments ->
 
 State 40:
 ## Known stack suffix:
@@ -511,25 +484,8 @@ State 40:
 expression -> FLOAT . [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
 ## Transitions:
 ## Reductions:
--- On TIMES reduce production expression -> FLOAT
--- On THEN reduce production expression -> FLOAT
--- On SEMI reduce production expression -> FLOAT
--- On RPAREN reduce production expression -> FLOAT
--- On RBRACKET reduce production expression -> FLOAT
--- On PLUS reduce production expression -> FLOAT
--- On MINUS reduce production expression -> FLOAT
--- On LESSGREATER reduce production expression -> FLOAT
--- On LESSEQUAL reduce production expression -> FLOAT
--- On LESS reduce production expression -> FLOAT
--- On GREATEREQUAL reduce production expression -> FLOAT
--- On GREATER reduce production expression -> FLOAT
--- On EQUAL reduce production expression -> FLOAT
--- On END reduce production expression -> FLOAT
--- On ELSE reduce production expression -> FLOAT
--- On DO reduce production expression -> FLOAT
--- On DIV reduce production expression -> FLOAT
--- On COMMA reduce production expression -> FLOAT
--- On COLON reduce production expression -> FLOAT
+-- On TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON
+--   reduce production expression -> FLOAT
 
 State 41:
 ## Known stack suffix:
@@ -538,25 +494,8 @@ State 41:
 expression -> BOOL . [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
 ## Transitions:
 ## Reductions:
--- On TIMES reduce production expression -> BOOL
--- On THEN reduce production expression -> BOOL
--- On SEMI reduce production expression -> BOOL
--- On RPAREN reduce production expression -> BOOL
--- On RBRACKET reduce production expression -> BOOL
--- On PLUS reduce production expression -> BOOL
--- On MINUS reduce production expression -> BOOL
--- On LESSGREATER reduce production expression -> BOOL
--- On LESSEQUAL reduce production expression -> BOOL
--- On LESS reduce production expression -> BOOL
--- On GREATEREQUAL reduce production expression -> BOOL
--- On GREATER reduce production expression -> BOOL
--- On EQUAL reduce production expression -> BOOL
--- On END reduce production expression -> BOOL
--- On ELSE reduce production expression -> BOOL
--- On DO reduce production expression -> BOOL
--- On DIV reduce production expression -> BOOL
--- On COMMA reduce production expression -> BOOL
--- On COLON reduce production expression -> BOOL
+-- On TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON
+--   reduce production expression -> BOOL
 
 State 42:
 ## Known stack suffix:
@@ -649,25 +588,8 @@ expression -> expression . EQUAL expression [ TIMES THEN SEMI RPAREN RBRACKET PL
 expression -> expression . LESSGREATER expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
 ## Transitions:
 ## Reductions:
--- On TIMES reduce production expression -> expression TIMES expression
--- On THEN reduce production expression -> expression TIMES expression
--- On SEMI reduce production expression -> expression TIMES expression
--- On RPAREN reduce production expression -> expression TIMES expression
--- On RBRACKET reduce production expression -> expression TIMES expression
--- On PLUS reduce production expression -> expression TIMES expression
--- On MINUS reduce production expression -> expression TIMES expression
--- On LESSGREATER reduce production expression -> expression TIMES expression
--- On LESSEQUAL reduce production expression -> expression TIMES expression
--- On LESS reduce production expression -> expression TIMES expression
--- On GREATEREQUAL reduce production expression -> expression TIMES expression
--- On GREATER reduce production expression -> expression TIMES expression
--- On EQUAL reduce production expression -> expression TIMES expression
--- On END reduce production expression -> expression TIMES expression
--- On ELSE reduce production expression -> expression TIMES expression
--- On DO reduce production expression -> expression TIMES expression
--- On DIV reduce production expression -> expression TIMES expression
--- On COMMA reduce production expression -> expression TIMES expression
--- On COLON reduce production expression -> expression TIMES expression
+-- On TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON
+--   reduce production expression -> expression TIMES expression
 
 State 47:
 ## Known stack suffix:
@@ -677,26 +599,10 @@ array_expression -> call_expression . [ LBRACKET ]
 expression -> call_expression . [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
 ## Transitions:
 ## Reductions:
--- On TIMES reduce production expression -> call_expression
--- On THEN reduce production expression -> call_expression
--- On SEMI reduce production expression -> call_expression
--- On RPAREN reduce production expression -> call_expression
--- On RBRACKET reduce production expression -> call_expression
--- On PLUS reduce production expression -> call_expression
--- On MINUS reduce production expression -> call_expression
--- On LESSGREATER reduce production expression -> call_expression
--- On LESSEQUAL reduce production expression -> call_expression
--- On LESS reduce production expression -> call_expression
--- On LBRACKET reduce production array_expression -> call_expression
--- On GREATEREQUAL reduce production expression -> call_expression
--- On GREATER reduce production expression -> call_expression
--- On EQUAL reduce production expression -> call_expression
--- On END reduce production expression -> call_expression
--- On ELSE reduce production expression -> call_expression
--- On DO reduce production expression -> call_expression
--- On DIV reduce production expression -> call_expression
--- On COMMA reduce production expression -> call_expression
--- On COLON reduce production expression -> call_expression
+-- On LBRACKET
+--   reduce production array_expression -> call_expression
+-- On TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON
+--   reduce production expression -> call_expression
 
 State 48:
 ## Known stack suffix:
@@ -765,26 +671,10 @@ array_expression -> array_expression LBRACKET expression RBRACKET . [ LBRACKET ]
 expression -> array_expression LBRACKET expression RBRACKET . [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
 ## Transitions:
 ## Reductions:
--- On TIMES reduce production expression -> array_expression LBRACKET expression RBRACKET
--- On THEN reduce production expression -> array_expression LBRACKET expression RBRACKET
--- On SEMI reduce production expression -> array_expression LBRACKET expression RBRACKET
--- On RPAREN reduce production expression -> array_expression LBRACKET expression RBRACKET
--- On RBRACKET reduce production expression -> array_expression LBRACKET expression RBRACKET
--- On PLUS reduce production expression -> array_expression LBRACKET expression RBRACKET
--- On MINUS reduce production expression -> array_expression LBRACKET expression RBRACKET
--- On LESSGREATER reduce production expression -> array_expression LBRACKET expression RBRACKET
--- On LESSEQUAL reduce production expression -> array_expression LBRACKET expression RBRACKET
--- On LESS reduce production expression -> array_expression LBRACKET expression RBRACKET
--- On LBRACKET reduce production array_expression -> array_expression LBRACKET expression RBRACKET
--- On GREATEREQUAL reduce production expression -> array_expression LBRACKET expression RBRACKET
--- On GREATER reduce production expression -> array_expression LBRACKET expression RBRACKET
--- On EQUAL reduce production expression -> array_expression LBRACKET expression RBRACKET
--- On END reduce production expression -> array_expression LBRACKET expression RBRACKET
--- On ELSE reduce production expression -> array_expression LBRACKET expression RBRACKET
--- On DO reduce production expression -> array_expression LBRACKET expression RBRACKET
--- On DIV reduce production expression -> array_expression LBRACKET expression RBRACKET
--- On COMMA reduce production expression -> array_expression LBRACKET expression RBRACKET
--- On COLON reduce production expression -> array_expression LBRACKET expression RBRACKET
+-- On LBRACKET
+--   reduce production array_expression -> array_expression LBRACKET expression RBRACKET
+-- On TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON
+--   reduce production expression -> array_expression LBRACKET expression RBRACKET
 
 State 52:
 ## Known stack suffix:
@@ -823,23 +713,8 @@ expression -> expression . LESSGREATER expression [ TIMES THEN SEMI RPAREN RBRAC
 -- On TIMES shift to state 45
 -- On DIV shift to state 54
 ## Reductions:
--- On THEN reduce production expression -> expression PLUS expression
--- On SEMI reduce production expression -> expression PLUS expression
--- On RPAREN reduce production expression -> expression PLUS expression
--- On RBRACKET reduce production expression -> expression PLUS expression
--- On PLUS reduce production expression -> expression PLUS expression
--- On MINUS reduce production expression -> expression PLUS expression
--- On LESSGREATER reduce production expression -> expression PLUS expression
--- On LESSEQUAL reduce production expression -> expression PLUS expression
--- On LESS reduce production expression -> expression PLUS expression
--- On GREATEREQUAL reduce production expression -> expression PLUS expression
--- On GREATER reduce production expression -> expression PLUS expression
--- On EQUAL reduce production expression -> expression PLUS expression
--- On END reduce production expression -> expression PLUS expression
--- On ELSE reduce production expression -> expression PLUS expression
--- On DO reduce production expression -> expression PLUS expression
--- On COMMA reduce production expression -> expression PLUS expression
--- On COLON reduce production expression -> expression PLUS expression
+-- On THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO COMMA COLON
+--   reduce production expression -> expression PLUS expression
 
 State 54:
 ## Known stack suffix:
@@ -876,25 +751,8 @@ expression -> expression . EQUAL expression [ TIMES THEN SEMI RPAREN RBRACKET PL
 expression -> expression . LESSGREATER expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
 ## Transitions:
 ## Reductions:
--- On TIMES reduce production expression -> expression DIV expression
--- On THEN reduce production expression -> expression DIV expression
--- On SEMI reduce production expression -> expression DIV expression
--- On RPAREN reduce production expression -> expression DIV expression
--- On RBRACKET reduce production expression -> expression DIV expression
--- On PLUS reduce production expression -> expression DIV expression
--- On MINUS reduce production expression -> expression DIV expression
--- On LESSGREATER reduce production expression -> expression DIV expression
--- On LESSEQUAL reduce production expression -> expression DIV expression
--- On LESS reduce production expression -> expression DIV expression
--- On GREATEREQUAL reduce production expression -> expression DIV expression
--- On GREATER reduce production expression -> expression DIV expression
--- On EQUAL reduce production expression -> expression DIV expression
--- On END reduce production expression -> expression DIV expression
--- On ELSE reduce production expression -> expression DIV expression
--- On DO reduce production expression -> expression DIV expression
--- On DIV reduce production expression -> expression DIV expression
--- On COMMA reduce production expression -> expression DIV expression
--- On COLON reduce production expression -> expression DIV expression
+-- On TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON
+--   reduce production expression -> expression DIV expression
 
 State 56:
 ## Known stack suffix:
@@ -933,23 +791,8 @@ expression -> expression . LESSGREATER expression [ TIMES THEN SEMI RPAREN RBRAC
 -- On TIMES shift to state 45
 -- On DIV shift to state 54
 ## Reductions:
--- On THEN reduce production expression -> expression MINUS expression
--- On SEMI reduce production expression -> expression MINUS expression
--- On RPAREN reduce production expression -> expression MINUS expression
--- On RBRACKET reduce production expression -> expression MINUS expression
--- On PLUS reduce production expression -> expression MINUS expression
--- On MINUS reduce production expression -> expression MINUS expression
--- On LESSGREATER reduce production expression -> expression MINUS expression
--- On LESSEQUAL reduce production expression -> expression MINUS expression
--- On LESS reduce production expression -> expression MINUS expression
--- On GREATEREQUAL reduce production expression -> expression MINUS expression
--- On GREATER reduce production expression -> expression MINUS expression
--- On EQUAL reduce production expression -> expression MINUS expression
--- On END reduce production expression -> expression MINUS expression
--- On ELSE reduce production expression -> expression MINUS expression
--- On DO reduce production expression -> expression MINUS expression
--- On COMMA reduce production expression -> expression MINUS expression
--- On COLON reduce production expression -> expression MINUS expression
+-- On THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO COMMA COLON
+--   reduce production expression -> expression MINUS expression
 
 State 58:
 ## Known stack suffix:
@@ -990,21 +833,8 @@ expression -> expression LESSGREATER expression . [ TIMES THEN SEMI RPAREN RBRAC
 -- On MINUS shift to state 56
 -- On DIV shift to state 54
 ## Reductions:
--- On THEN reduce production expression -> expression LESSGREATER expression
--- On SEMI reduce production expression -> expression LESSGREATER expression
--- On RPAREN reduce production expression -> expression LESSGREATER expression
--- On RBRACKET reduce production expression -> expression LESSGREATER expression
--- On LESSGREATER reduce production expression -> expression LESSGREATER expression
--- On LESSEQUAL reduce production expression -> expression LESSGREATER expression
--- On LESS reduce production expression -> expression LESSGREATER expression
--- On GREATEREQUAL reduce production expression -> expression LESSGREATER expression
--- On GREATER reduce production expression -> expression LESSGREATER expression
--- On EQUAL reduce production expression -> expression LESSGREATER expression
--- On END reduce production expression -> expression LESSGREATER expression
--- On ELSE reduce production expression -> expression LESSGREATER expression
--- On DO reduce production expression -> expression LESSGREATER expression
--- On COMMA reduce production expression -> expression LESSGREATER expression
--- On COLON reduce production expression -> expression LESSGREATER expression
+-- On THEN SEMI RPAREN RBRACKET LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO COMMA COLON
+--   reduce production expression -> expression LESSGREATER expression
 
 State 60:
 ## Known stack suffix:
@@ -1045,21 +875,8 @@ expression -> expression . LESSGREATER expression [ TIMES THEN SEMI RPAREN RBRAC
 -- On MINUS shift to state 56
 -- On DIV shift to state 54
 ## Reductions:
--- On THEN reduce production expression -> expression LESSEQUAL expression
--- On SEMI reduce production expression -> expression LESSEQUAL expression
--- On RPAREN reduce production expression -> expression LESSEQUAL expression
--- On RBRACKET reduce production expression -> expression LESSEQUAL expression
--- On LESSGREATER reduce production expression -> expression LESSEQUAL expression
--- On LESSEQUAL reduce production expression -> expression LESSEQUAL expression
--- On LESS reduce production expression -> expression LESSEQUAL expression
--- On GREATEREQUAL reduce production expression -> expression LESSEQUAL expression
--- On GREATER reduce production expression -> expression LESSEQUAL expression
--- On EQUAL reduce production expression -> expression LESSEQUAL expression
--- On END reduce production expression -> expression LESSEQUAL expression
--- On ELSE reduce production expression -> expression LESSEQUAL expression
--- On DO reduce production expression -> expression LESSEQUAL expression
--- On COMMA reduce production expression -> expression LESSEQUAL expression
--- On COLON reduce production expression -> expression LESSEQUAL expression
+-- On THEN SEMI RPAREN RBRACKET LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO COMMA COLON
+--   reduce production expression -> expression LESSEQUAL expression
 
 State 62:
 ## Known stack suffix:
@@ -1100,21 +917,8 @@ expression -> expression . LESSGREATER expression [ TIMES THEN SEMI RPAREN RBRAC
 -- On MINUS shift to state 56
 -- On DIV shift to state 54
 ## Reductions:
--- On THEN reduce production expression -> expression LESS expression
--- On SEMI reduce production expression -> expression LESS expression
--- On RPAREN reduce production expression -> expression LESS expression
--- On RBRACKET reduce production expression -> expression LESS expression
--- On LESSGREATER reduce production expression -> expression LESS expression
--- On LESSEQUAL reduce production expression -> expression LESS expression
--- On LESS reduce production expression -> expression LESS expression
--- On GREATEREQUAL reduce production expression -> expression LESS expression
--- On GREATER reduce production expression -> expression LESS expression
--- On EQUAL reduce production expression -> expression LESS expression
--- On END reduce production expression -> expression LESS expression
--- On ELSE reduce production expression -> expression LESS expression
--- On DO reduce production expression -> expression LESS expression
--- On COMMA reduce production expression -> expression LESS expression
--- On COLON reduce production expression -> expression LESS expression
+-- On THEN SEMI RPAREN RBRACKET LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO COMMA COLON
+--   reduce production expression -> expression LESS expression
 
 State 64:
 ## Known stack suffix:
@@ -1155,21 +959,8 @@ expression -> expression . LESSGREATER expression [ TIMES THEN SEMI RPAREN RBRAC
 -- On MINUS shift to state 56
 -- On DIV shift to state 54
 ## Reductions:
--- On THEN reduce production expression -> expression GREATEREQUAL expression
--- On SEMI reduce production expression -> expression GREATEREQUAL expression
--- On RPAREN reduce production expression -> expression GREATEREQUAL expression
--- On RBRACKET reduce production expression -> expression GREATEREQUAL expression
--- On LESSGREATER reduce production expression -> expression GREATEREQUAL expression
--- On LESSEQUAL reduce production expression -> expression GREATEREQUAL expression
--- On LESS reduce production expression -> expression GREATEREQUAL expression
--- On GREATEREQUAL reduce production expression -> expression GREATEREQUAL expression
--- On GREATER reduce production expression -> expression GREATEREQUAL expression
--- On EQUAL reduce production expression -> expression GREATEREQUAL expression
--- On END reduce production expression -> expression GREATEREQUAL expression
--- On ELSE reduce production expression -> expression GREATEREQUAL expression
--- On DO reduce production expression -> expression GREATEREQUAL expression
--- On COMMA reduce production expression -> expression GREATEREQUAL expression
--- On COLON reduce production expression -> expression GREATEREQUAL expression
+-- On THEN SEMI RPAREN RBRACKET LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO COMMA COLON
+--   reduce production expression -> expression GREATEREQUAL expression
 
 State 66:
 ## Known stack suffix:
@@ -1210,21 +1001,8 @@ expression -> expression . LESSGREATER expression [ TIMES THEN SEMI RPAREN RBRAC
 -- On MINUS shift to state 56
 -- On DIV shift to state 54
 ## Reductions:
--- On THEN reduce production expression -> expression GREATER expression
--- On SEMI reduce production expression -> expression GREATER expression
--- On RPAREN reduce production expression -> expression GREATER expression
--- On RBRACKET reduce production expression -> expression GREATER expression
--- On LESSGREATER reduce production expression -> expression GREATER expression
--- On LESSEQUAL reduce production expression -> expression GREATER expression
--- On LESS reduce production expression -> expression GREATER expression
--- On GREATEREQUAL reduce production expression -> expression GREATER expression
--- On GREATER reduce production expression -> expression GREATER expression
--- On EQUAL reduce production expression -> expression GREATER expression
--- On END reduce production expression -> expression GREATER expression
--- On ELSE reduce production expression -> expression GREATER expression
--- On DO reduce production expression -> expression GREATER expression
--- On COMMA reduce production expression -> expression GREATER expression
--- On COLON reduce production expression -> expression GREATER expression
+-- On THEN SEMI RPAREN RBRACKET LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO COMMA COLON
+--   reduce production expression -> expression GREATER expression
 
 State 68:
 ## Known stack suffix:
@@ -1265,21 +1043,8 @@ expression -> expression . LESSGREATER expression [ TIMES THEN SEMI RPAREN RBRAC
 -- On MINUS shift to state 56
 -- On DIV shift to state 54
 ## Reductions:
--- On THEN reduce production expression -> expression EQUAL expression
--- On SEMI reduce production expression -> expression EQUAL expression
--- On RPAREN reduce production expression -> expression EQUAL expression
--- On RBRACKET reduce production expression -> expression EQUAL expression
--- On LESSGREATER reduce production expression -> expression EQUAL expression
--- On LESSEQUAL reduce production expression -> expression EQUAL expression
--- On LESS reduce production expression -> expression EQUAL expression
--- On GREATEREQUAL reduce production expression -> expression EQUAL expression
--- On GREATER reduce production expression -> expression EQUAL expression
--- On EQUAL reduce production expression -> expression EQUAL expression
--- On END reduce production expression -> expression EQUAL expression
--- On ELSE reduce production expression -> expression EQUAL expression
--- On DO reduce production expression -> expression EQUAL expression
--- On COMMA reduce production expression -> expression EQUAL expression
--- On COLON reduce production expression -> expression EQUAL expression
+-- On THEN SEMI RPAREN RBRACKET LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO COMMA COLON
+--   reduce production expression -> expression EQUAL expression
 
 State 70:
 ## Known stack suffix:
@@ -1310,26 +1075,8 @@ State 72:
 call_expression -> ALLOC LPAREN expression COLON type_expr RPAREN . [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
 ## Transitions:
 ## Reductions:
--- On TIMES reduce production call_expression -> ALLOC LPAREN expression COLON type_expr RPAREN
--- On THEN reduce production call_expression -> ALLOC LPAREN expression COLON type_expr RPAREN
--- On SEMI reduce production call_expression -> ALLOC LPAREN expression COLON type_expr RPAREN
--- On RPAREN reduce production call_expression -> ALLOC LPAREN expression COLON type_expr RPAREN
--- On RBRACKET reduce production call_expression -> ALLOC LPAREN expression COLON type_expr RPAREN
--- On PLUS reduce production call_expression -> ALLOC LPAREN expression COLON type_expr RPAREN
--- On MINUS reduce production call_expression -> ALLOC LPAREN expression COLON type_expr RPAREN
--- On LESSGREATER reduce production call_expression -> ALLOC LPAREN expression COLON type_expr RPAREN
--- On LESSEQUAL reduce production call_expression -> ALLOC LPAREN expression COLON type_expr RPAREN
--- On LESS reduce production call_expression -> ALLOC LPAREN expression COLON type_expr RPAREN
--- On LBRACKET reduce production call_expression -> ALLOC LPAREN expression COLON type_expr RPAREN
--- On GREATEREQUAL reduce production call_expression -> ALLOC LPAREN expression COLON type_expr RPAREN
--- On GREATER reduce production call_expression -> ALLOC LPAREN expression COLON type_expr RPAREN
--- On EQUAL reduce production call_expression -> ALLOC LPAREN expression COLON type_expr RPAREN
--- On END reduce production call_expression -> ALLOC LPAREN expression COLON type_expr RPAREN
--- On ELSE reduce production call_expression -> ALLOC LPAREN expression COLON type_expr RPAREN
--- On DO reduce production call_expression -> ALLOC LPAREN expression COLON type_expr RPAREN
--- On DIV reduce production call_expression -> ALLOC LPAREN expression COLON type_expr RPAREN
--- On COMMA reduce production call_expression -> ALLOC LPAREN expression COLON type_expr RPAREN
--- On COLON reduce production call_expression -> ALLOC LPAREN expression COLON type_expr RPAREN
+-- On TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON
+--   reduce production call_expression -> ALLOC LPAREN expression COLON type_expr RPAREN
 
 State 73:
 ## Known stack suffix:
@@ -1360,7 +1107,8 @@ expression -> expression . LESSGREATER expression [ TIMES RPAREN PLUS MINUS LESS
 -- On COMMA shift to state 74
 -- On arguments1 shift to state 77
 ## Reductions:
--- On RPAREN reduce production arguments1 ->
+-- On RPAREN
+--   reduce production arguments1 ->
 
 State 74:
 ## Known stack suffix:
@@ -1409,7 +1157,8 @@ expression -> expression . LESSGREATER expression [ TIMES RPAREN PLUS MINUS LESS
 -- On COMMA shift to state 74
 -- On arguments1 shift to state 76
 ## Reductions:
--- On RPAREN reduce production arguments1 ->
+-- On RPAREN
+--   reduce production arguments1 ->
 
 State 76:
 ## Known stack suffix:
@@ -1418,7 +1167,8 @@ State 76:
 arguments1 -> COMMA expression arguments1 . [ RPAREN ]
 ## Transitions:
 ## Reductions:
--- On RPAREN reduce production arguments1 -> COMMA expression arguments1
+-- On RPAREN
+--   reduce production arguments1 -> COMMA expression arguments1
 
 State 77:
 ## Known stack suffix:
@@ -1427,7 +1177,8 @@ State 77:
 arguments -> expression arguments1 . [ RPAREN ]
 ## Transitions:
 ## Reductions:
--- On RPAREN reduce production arguments -> expression arguments1
+-- On RPAREN
+--   reduce production arguments -> expression arguments1
 
 State 78:
 ## Known stack suffix:
@@ -1445,26 +1196,8 @@ State 79:
 call_expression -> IDENT LPAREN arguments RPAREN . [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
 ## Transitions:
 ## Reductions:
--- On TIMES reduce production call_expression -> IDENT LPAREN arguments RPAREN
--- On THEN reduce production call_expression -> IDENT LPAREN arguments RPAREN
--- On SEMI reduce production call_expression -> IDENT LPAREN arguments RPAREN
--- On RPAREN reduce production call_expression -> IDENT LPAREN arguments RPAREN
--- On RBRACKET reduce production call_expression -> IDENT LPAREN arguments RPAREN
--- On PLUS reduce production call_expression -> IDENT LPAREN arguments RPAREN
--- On MINUS reduce production call_expression -> IDENT LPAREN arguments RPAREN
--- On LESSGREATER reduce production call_expression -> IDENT LPAREN arguments RPAREN
--- On LESSEQUAL reduce production call_expression -> IDENT LPAREN arguments RPAREN
--- On LESS reduce production call_expression -> IDENT LPAREN arguments RPAREN
--- On LBRACKET reduce production call_expression -> IDENT LPAREN arguments RPAREN
--- On GREATEREQUAL reduce production call_expression -> IDENT LPAREN arguments RPAREN
--- On GREATER reduce production call_expression -> IDENT LPAREN arguments RPAREN
--- On EQUAL reduce production call_expression -> IDENT LPAREN arguments RPAREN
--- On END reduce production call_expression -> IDENT LPAREN arguments RPAREN
--- On ELSE reduce production call_expression -> IDENT LPAREN arguments RPAREN
--- On DO reduce production call_expression -> IDENT LPAREN arguments RPAREN
--- On DIV reduce production call_expression -> IDENT LPAREN arguments RPAREN
--- On COMMA reduce production call_expression -> IDENT LPAREN arguments RPAREN
--- On COLON reduce production call_expression -> IDENT LPAREN arguments RPAREN
+-- On TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON
+--   reduce production call_expression -> IDENT LPAREN arguments RPAREN
 
 State 80:
 ## Known stack suffix:
@@ -1504,26 +1237,10 @@ array_expression -> LPAREN expression RPAREN . [ LBRACKET ]
 expression -> LPAREN expression RPAREN . [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
 ## Transitions:
 ## Reductions:
--- On TIMES reduce production expression -> LPAREN expression RPAREN
--- On THEN reduce production expression -> LPAREN expression RPAREN
--- On SEMI reduce production expression -> LPAREN expression RPAREN
--- On RPAREN reduce production expression -> LPAREN expression RPAREN
--- On RBRACKET reduce production expression -> LPAREN expression RPAREN
--- On PLUS reduce production expression -> LPAREN expression RPAREN
--- On MINUS reduce production expression -> LPAREN expression RPAREN
--- On LESSGREATER reduce production expression -> LPAREN expression RPAREN
--- On LESSEQUAL reduce production expression -> LPAREN expression RPAREN
--- On LESS reduce production expression -> LPAREN expression RPAREN
--- On LBRACKET reduce production array_expression -> LPAREN expression RPAREN
--- On GREATEREQUAL reduce production expression -> LPAREN expression RPAREN
--- On GREATER reduce production expression -> LPAREN expression RPAREN
--- On EQUAL reduce production expression -> LPAREN expression RPAREN
--- On END reduce production expression -> LPAREN expression RPAREN
--- On ELSE reduce production expression -> LPAREN expression RPAREN
--- On DO reduce production expression -> LPAREN expression RPAREN
--- On DIV reduce production expression -> LPAREN expression RPAREN
--- On COMMA reduce production expression -> LPAREN expression RPAREN
--- On COLON reduce production expression -> LPAREN expression RPAREN
+-- On LBRACKET
+--   reduce production array_expression -> LPAREN expression RPAREN
+-- On TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON
+--   reduce production expression -> LPAREN expression RPAREN
 
 State 82:
 ## Known stack suffix:
@@ -1542,25 +1259,8 @@ expression -> expression . EQUAL expression [ TIMES THEN SEMI RPAREN RBRACKET PL
 expression -> expression . LESSGREATER expression [ TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON ]
 ## Transitions:
 ## Reductions:
--- On TIMES reduce production expression -> MINUS expression
--- On THEN reduce production expression -> MINUS expression
--- On SEMI reduce production expression -> MINUS expression
--- On RPAREN reduce production expression -> MINUS expression
--- On RBRACKET reduce production expression -> MINUS expression
--- On PLUS reduce production expression -> MINUS expression
--- On MINUS reduce production expression -> MINUS expression
--- On LESSGREATER reduce production expression -> MINUS expression
--- On LESSEQUAL reduce production expression -> MINUS expression
--- On LESS reduce production expression -> MINUS expression
--- On GREATEREQUAL reduce production expression -> MINUS expression
--- On GREATER reduce production expression -> MINUS expression
--- On EQUAL reduce production expression -> MINUS expression
--- On END reduce production expression -> MINUS expression
--- On ELSE reduce production expression -> MINUS expression
--- On DO reduce production expression -> MINUS expression
--- On DIV reduce production expression -> MINUS expression
--- On COMMA reduce production expression -> MINUS expression
--- On COLON reduce production expression -> MINUS expression
+-- On TIMES THEN SEMI RPAREN RBRACKET PLUS MINUS LESSGREATER LESSEQUAL LESS GREATEREQUAL GREATER EQUAL END ELSE DO DIV COMMA COLON
+--   reduce production expression -> MINUS expression
 
 State 83:
 ## Known stack suffix:
@@ -1598,9 +1298,8 @@ State 84:
 instruction -> WRITELN LPAREN expression RPAREN . [ SEMI END ELSE ]
 ## Transitions:
 ## Reductions:
--- On SEMI reduce production instruction -> WRITELN LPAREN expression RPAREN
--- On END reduce production instruction -> WRITELN LPAREN expression RPAREN
--- On ELSE reduce production instruction -> WRITELN LPAREN expression RPAREN
+-- On SEMI END ELSE
+--   reduce production instruction -> WRITELN LPAREN expression RPAREN
 
 State 85:
 ## Known stack suffix:
@@ -1665,9 +1364,8 @@ State 88:
 instruction -> WRITE LPAREN expression RPAREN . [ SEMI END ELSE ]
 ## Transitions:
 ## Reductions:
--- On SEMI reduce production instruction -> WRITE LPAREN expression RPAREN
--- On END reduce production instruction -> WRITE LPAREN expression RPAREN
--- On ELSE reduce production instruction -> WRITE LPAREN expression RPAREN
+-- On SEMI END ELSE
+--   reduce production instruction -> WRITE LPAREN expression RPAREN
 
 State 89:
 ## Known stack suffix:
@@ -1770,9 +1468,8 @@ State 95:
 instruction -> READ LPAREN IDENT RPAREN . [ SEMI END ELSE ]
 ## Transitions:
 ## Reductions:
--- On SEMI reduce production instruction -> READ LPAREN IDENT RPAREN
--- On END reduce production instruction -> READ LPAREN IDENT RPAREN
--- On ELSE reduce production instruction -> READ LPAREN IDENT RPAREN
+-- On SEMI END ELSE
+--   reduce production instruction -> READ LPAREN IDENT RPAREN
 
 State 96:
 ## Known stack suffix:
@@ -1828,7 +1525,8 @@ State 98:
 array_expression -> LPAREN expression RPAREN . [ LBRACKET ]
 ## Transitions:
 ## Reductions:
--- On LBRACKET reduce production array_expression -> LPAREN expression RPAREN
+-- On LBRACKET
+--   reduce production array_expression -> LPAREN expression RPAREN
 
 State 99:
 ## Known stack suffix:
@@ -1909,7 +1607,8 @@ instruction -> IDENT . LPAREN arguments RPAREN [ SEMI END ELSE ]
 -- On LPAREN shift to state 103
 -- On COLONEQUAL shift to state 106
 ## Reductions:
--- On LBRACKET reduce production array_expression -> IDENT
+-- On LBRACKET
+--   reduce production array_expression -> IDENT
 
 State 103:
 ## Known stack suffix:
@@ -1930,7 +1629,8 @@ instruction -> IDENT LPAREN . arguments RPAREN [ SEMI END ELSE ]
 -- On array_expression shift to state 48
 -- On arguments shift to state 104
 ## Reductions:
--- On RPAREN reduce production arguments ->
+-- On RPAREN
+--   reduce production arguments ->
 
 State 104:
 ## Known stack suffix:
@@ -1950,10 +1650,10 @@ call_expression -> IDENT LPAREN arguments RPAREN . [ LBRACKET ]
 instruction -> IDENT LPAREN arguments RPAREN . [ SEMI END ELSE ]
 ## Transitions:
 ## Reductions:
--- On SEMI reduce production instruction -> IDENT LPAREN arguments RPAREN
--- On LBRACKET reduce production call_expression -> IDENT LPAREN arguments RPAREN
--- On END reduce production instruction -> IDENT LPAREN arguments RPAREN
--- On ELSE reduce production instruction -> IDENT LPAREN arguments RPAREN
+-- On LBRACKET
+--   reduce production call_expression -> IDENT LPAREN arguments RPAREN
+-- On SEMI END ELSE
+--   reduce production instruction -> IDENT LPAREN arguments RPAREN
 
 State 106:
 ## Known stack suffix:
@@ -2000,9 +1700,8 @@ instruction -> IDENT COLONEQUAL expression . [ SEMI END ELSE ]
 -- On EQUAL shift to state 68
 -- On DIV shift to state 54
 ## Reductions:
--- On SEMI reduce production instruction -> IDENT COLONEQUAL expression
--- On END reduce production instruction -> IDENT COLONEQUAL expression
--- On ELSE reduce production instruction -> IDENT COLONEQUAL expression
+-- On SEMI END ELSE
+--   reduce production instruction -> IDENT COLONEQUAL expression
 
 State 108:
 ## Known stack suffix:
@@ -2024,7 +1723,8 @@ instruction -> BEGIN . bloc END [ SEMI END ELSE ]
 -- On bloc shift to state 121
 -- On array_expression shift to state 114
 ## Reductions:
--- On END reduce production bloc ->
+-- On END
+--   reduce production bloc ->
 
 State 109:
 ## Known stack suffix:
@@ -2035,7 +1735,8 @@ bloc -> instruction . bloc1 [ END ]
 -- On SEMI shift to state 110
 -- On bloc1 shift to state 120
 ## Reductions:
--- On END reduce production bloc1 ->
+-- On END
+--   reduce production bloc1 ->
 
 State 110:
 ## Known stack suffix:
@@ -2066,7 +1767,8 @@ bloc1 -> SEMI instruction . bloc1 [ END ]
 -- On SEMI shift to state 110
 -- On bloc1 shift to state 112
 ## Reductions:
--- On END reduce production bloc1 ->
+-- On END
+--   reduce production bloc1 ->
 
 State 112:
 ## Known stack suffix:
@@ -2075,7 +1777,8 @@ State 112:
 bloc1 -> SEMI instruction bloc1 . [ END ]
 ## Transitions:
 ## Reductions:
--- On END reduce production bloc1 -> SEMI instruction bloc1
+-- On END
+--   reduce production bloc1 -> SEMI instruction bloc1
 
 State 113:
 ## Known stack suffix:
@@ -2084,7 +1787,8 @@ State 113:
 array_expression -> call_expression . [ LBRACKET ]
 ## Transitions:
 ## Reductions:
--- On LBRACKET reduce production array_expression -> call_expression
+-- On LBRACKET
+--   reduce production array_expression -> call_expression
 
 State 114:
 ## Known stack suffix:
@@ -2154,7 +1858,8 @@ instruction -> array_expression LBRACKET expression RBRACKET . COLONEQUAL expres
 ## Transitions:
 -- On COLONEQUAL shift to state 118
 ## Reductions:
--- On LBRACKET reduce production array_expression -> array_expression LBRACKET expression RBRACKET
+-- On LBRACKET
+--   reduce production array_expression -> array_expression LBRACKET expression RBRACKET
 
 State 118:
 ## Known stack suffix:
@@ -2201,9 +1906,8 @@ instruction -> array_expression LBRACKET expression RBRACKET COLONEQUAL expressi
 -- On EQUAL shift to state 68
 -- On DIV shift to state 54
 ## Reductions:
--- On SEMI reduce production instruction -> array_expression LBRACKET expression RBRACKET COLONEQUAL expression
--- On END reduce production instruction -> array_expression LBRACKET expression RBRACKET COLONEQUAL expression
--- On ELSE reduce production instruction -> array_expression LBRACKET expression RBRACKET COLONEQUAL expression
+-- On SEMI END ELSE
+--   reduce production instruction -> array_expression LBRACKET expression RBRACKET COLONEQUAL expression
 
 State 120:
 ## Known stack suffix:
@@ -2212,7 +1916,8 @@ State 120:
 bloc -> instruction bloc1 . [ END ]
 ## Transitions:
 ## Reductions:
--- On END reduce production bloc -> instruction bloc1
+-- On END
+--   reduce production bloc -> instruction bloc1
 
 State 121:
 ## Known stack suffix:
@@ -2230,9 +1935,8 @@ State 122:
 instruction -> BEGIN bloc END . [ SEMI END ELSE ]
 ## Transitions:
 ## Reductions:
--- On SEMI reduce production instruction -> BEGIN bloc END
--- On END reduce production instruction -> BEGIN bloc END
--- On ELSE reduce production instruction -> BEGIN bloc END
+-- On SEMI END ELSE
+--   reduce production instruction -> BEGIN bloc END
 
 State 123:
 ## Known stack suffix:
@@ -2270,9 +1974,8 @@ State 125:
 instruction -> IF expression THEN instruction ELSE instruction . [ SEMI END ELSE ]
 ## Transitions:
 ## Reductions:
--- On SEMI reduce production instruction -> IF expression THEN instruction ELSE instruction
--- On END reduce production instruction -> IF expression THEN instruction ELSE instruction
--- On ELSE reduce production instruction -> IF expression THEN instruction ELSE instruction
+-- On SEMI END ELSE
+--   reduce production instruction -> IF expression THEN instruction ELSE instruction
 
 State 126:
 ## Known stack suffix:
@@ -2281,9 +1984,8 @@ State 126:
 instruction -> WHILE expression DO instruction . [ SEMI END ELSE ]
 ## Transitions:
 ## Reductions:
--- On SEMI reduce production instruction -> WHILE expression DO instruction
--- On END reduce production instruction -> WHILE expression DO instruction
--- On ELSE reduce production instruction -> WHILE expression DO instruction
+-- On SEMI END ELSE
+--   reduce production instruction -> WHILE expression DO instruction
 
 State 127:
 ## Known stack suffix:
@@ -2301,9 +2003,8 @@ State 128:
 body -> BEGIN bloc END . [ SEMISEMI SEMI DOT ]
 ## Transitions:
 ## Reductions:
--- On SEMISEMI reduce production body -> BEGIN bloc END
--- On SEMI reduce production body -> BEGIN bloc END
--- On DOT reduce production body -> BEGIN bloc END
+-- On SEMISEMI SEMI DOT
+--   reduce production body -> BEGIN bloc END
 
 State 129:
 ## Known stack suffix:
@@ -2312,7 +2013,8 @@ State 129:
 fonction -> PROCEDURE IDENT LPAREN args RPAREN SEMI vars body . [ SEMI ]
 ## Transitions:
 ## Reductions:
--- On SEMI reduce production fonction -> PROCEDURE IDENT LPAREN args RPAREN SEMI vars body
+-- On SEMI
+--   reduce production fonction -> PROCEDURE IDENT LPAREN args RPAREN SEMI vars body
 
 State 130:
 ## Known stack suffix:
@@ -2343,7 +2045,8 @@ fonction -> FUNCTION IDENT LPAREN . args RPAREN COLON type_expr SEMI vars body [
 -- On declvar shift to state 23
 -- On args shift to state 133
 ## Reductions:
--- On RPAREN reduce production args ->
+-- On RPAREN
+--   reduce production args ->
 
 State 133:
 ## Known stack suffix:
@@ -2394,7 +2097,8 @@ fonction -> FUNCTION IDENT LPAREN args RPAREN COLON type_expr SEMI . vars body [
 -- On VAR shift to state 2
 -- On vars shift to state 138
 ## Reductions:
--- On BEGIN reduce production vars ->
+-- On BEGIN
+--   reduce production vars ->
 
 State 138:
 ## Known stack suffix:
@@ -2413,7 +2117,8 @@ State 139:
 fonction -> FUNCTION IDENT LPAREN args RPAREN COLON type_expr SEMI vars body . [ SEMI ]
 ## Transitions:
 ## Reductions:
--- On SEMI reduce production fonction -> FUNCTION IDENT LPAREN args RPAREN COLON type_expr SEMI vars body
+-- On SEMI
+--   reduce production fonction -> FUNCTION IDENT LPAREN args RPAREN COLON type_expr SEMI vars body
 
 State 140:
 ## Known stack suffix:
@@ -2435,7 +2140,8 @@ definitions -> fonction SEMI . definitions [ BEGIN ]
 -- On fonction shift to state 140
 -- On definitions shift to state 142
 ## Reductions:
--- On BEGIN reduce production definitions ->
+-- On BEGIN
+--   reduce production definitions ->
 
 State 142:
 ## Known stack suffix:
@@ -2444,7 +2150,8 @@ State 142:
 definitions -> fonction SEMI definitions . [ BEGIN ]
 ## Transitions:
 ## Reductions:
--- On BEGIN reduce production definitions -> fonction SEMI definitions
+-- On BEGIN
+--   reduce production definitions -> fonction SEMI definitions
 
 State 143:
 ## Known stack suffix:
@@ -2474,7 +2181,8 @@ State 145:
 endtok -> SEMISEMI . [ # ]
 ## Transitions:
 ## Reductions:
--- On # reduce production endtok -> SEMISEMI
+-- On #
+--   reduce production endtok -> SEMISEMI
 
 State 146:
 ## Known stack suffix:
@@ -2483,7 +2191,8 @@ State 146:
 endtok -> DOT . [ # ]
 ## Transitions:
 ## Reductions:
--- On # reduce production endtok -> DOT
+-- On #
+--   reduce production endtok -> DOT
 
 State 147:
 ## Known stack suffix:
@@ -2492,7 +2201,8 @@ State 147:
 main -> PROGRAM vars definitions body endtok . [ # ]
 ## Transitions:
 ## Reductions:
--- On # reduce production main -> PROGRAM vars definitions body endtok
+-- On #
+--   reduce production main -> PROGRAM vars definitions body endtok
 
 State 148:
 ## Known stack suffix:
@@ -2501,5 +2211,6 @@ State 148:
 main' -> main . [ # ]
 ## Transitions:
 ## Reductions:
--- On # accept main
+-- On #
+--   accept main
 

@@ -99,10 +99,8 @@ texpr -> texpr TIMES texpr . [ TIMES RPAR Eof ARROW AND ]
 ## Transitions:
 -- On TIMES shift to state 7
 ## Reductions:
--- On RPAR reduce production texpr -> texpr TIMES texpr
--- On Eof reduce production texpr -> texpr TIMES texpr
--- On ARROW reduce production texpr -> texpr TIMES texpr
--- On AND reduce production texpr -> texpr TIMES texpr
+-- On RPAR Eof ARROW AND
+--   reduce production texpr -> texpr TIMES texpr
 
 State 9:
 ## Known stack suffix:
@@ -136,9 +134,8 @@ texpr -> texpr . TIMES texpr [ TIMES RPAR Eof ARROW AND ]
 -- On TIMES shift to state 7
 -- On ARROW shift to state 10
 ## Reductions:
--- On RPAR reduce production texpr -> texpr ARROW texpr
--- On Eof reduce production texpr -> texpr ARROW texpr
--- On AND reduce production texpr -> texpr ARROW texpr
+-- On RPAR Eof AND
+--   reduce production texpr -> texpr ARROW texpr
 
 State 12:
 ## Known stack suffix:
@@ -151,9 +148,8 @@ type_binding -> IDENT EQ texpr . [ TIMES RPAR Eof ARROW AND ]
 -- On TIMES shift to state 7
 -- On ARROW shift to state 10
 ## Reductions:
--- On RPAR reduce production type_binding -> IDENT EQ texpr
--- On Eof reduce production type_binding -> IDENT EQ texpr
--- On AND reduce production type_binding -> IDENT EQ texpr
+-- On RPAR Eof AND
+--   reduce production type_binding -> IDENT EQ texpr
 
 State 13:
 ## Known stack suffix:
@@ -164,10 +160,8 @@ type_binding_list -> type_binding_list . AND type_binding [ TIMES RPAR Eof ARROW
 ## Transitions:
 -- On AND shift to state 14
 ## Reductions:
--- On TIMES reduce production texpr -> TYPE type_binding_list
--- On RPAR reduce production texpr -> TYPE type_binding_list
--- On Eof reduce production texpr -> TYPE type_binding_list
--- On ARROW reduce production texpr -> TYPE type_binding_list
+-- On TIMES RPAR Eof ARROW
+--   reduce production texpr -> TYPE type_binding_list
 
 State 14:
 ## Known stack suffix:

@@ -8,8 +8,8 @@ lexer_definition' -> . lexer_definition [ # ]
 -- On lexer_definition shift to state 2
 -- On header shift to state 3
 ## Reductions:
--- On Trule reduce production header ->
--- On Tlet reduce production header ->
+-- On Trule Tlet
+--   reduce production header ->
 
 State 1:
 ## Known stack suffix:
@@ -70,7 +70,8 @@ definition -> Tident . arguments Tequal Tparse_shortest entry [ Tend Tand Tactio
 -- On Tident shift to state 7
 -- On arguments shift to state 9
 ## Reductions:
--- On Tequal reduce production arguments ->
+-- On Tequal
+--   reduce production arguments ->
 
 State 7:
 ## Known stack suffix:
@@ -81,7 +82,8 @@ arguments -> Tident . arguments [ Tequal ]
 -- On Tident shift to state 7
 -- On arguments shift to state 8
 ## Reductions:
--- On Tequal reduce production arguments ->
+-- On Tequal
+--   reduce production arguments ->
 
 State 8:
 ## Known stack suffix:
@@ -204,8 +206,8 @@ char_class1 -> Tchar . [ Trbracket Tchar ]
 ## Transitions:
 -- On Tdash shift to state 18
 ## Reductions:
--- On Trbracket reduce production char_class1 -> Tchar
--- On Tchar reduce production char_class1 -> Tchar
+-- On Trbracket Tchar
+--   reduce production char_class1 -> Tchar
 
 State 18:
 ## Known stack suffix:
@@ -245,7 +247,8 @@ char_class1 -> char_class1 . char_class1 [ Trbracket Tchar ]
 -- On Tchar shift to state 17
 -- On char_class1 shift to state 22
 ## Reductions:
--- On Trbracket reduce production char_class -> Tcaret char_class1
+-- On Trbracket
+--   reduce production char_class -> Tcaret char_class1
 
 State 22:
 ## Known stack suffix:
@@ -257,7 +260,8 @@ char_class1 -> char_class1 char_class1 . [ Trbracket Tchar ]
 -- On Tchar shift to state 17
 -- On char_class1 shift to state 22
 ## Reductions:
--- On Trbracket reduce production char_class1 -> char_class1 char_class1
+-- On Trbracket
+--   reduce production char_class1 -> char_class1 char_class1
 
 State 23:
 ## Known stack suffix:
@@ -269,7 +273,8 @@ char_class1 -> char_class1 . char_class1 [ Trbracket Tchar ]
 -- On Tchar shift to state 17
 -- On char_class1 shift to state 22
 ## Reductions:
--- On Trbracket reduce production char_class -> char_class1
+-- On Trbracket
+--   reduce production char_class -> char_class1
 
 State 24:
 ## Known stack suffix:
@@ -397,12 +402,8 @@ regexp -> regexp . Tas ident [ Tunderscore Tstring Tstar Tsharp Trule Trparen Tp
 -- On Tchar shift to state 28
 -- On regexp shift to state 37
 ## Reductions:
--- On Tsharp reduce production regexp -> regexp Tsharp regexp
--- On Trule reduce production regexp -> regexp Tsharp regexp
--- On Trparen reduce production regexp -> regexp Tsharp regexp
--- On Tlet reduce production regexp -> regexp Tsharp regexp
--- On Tas reduce production regexp -> regexp Tsharp regexp
--- On Taction reduce production regexp -> regexp Tsharp regexp
+-- On Tsharp Trule Trparen Tlet Tas Taction
+--   reduce production regexp -> regexp Tsharp regexp
 
 State 33:
 ## Known stack suffix:
@@ -454,13 +455,8 @@ regexp -> regexp . Tas ident [ Tunderscore Tstring Tstar Tsharp Trule Trparen Tp
 -- On Tchar shift to state 28
 -- On regexp shift to state 37
 ## Reductions:
--- On Tsharp reduce production regexp -> regexp Tor regexp
--- On Trule reduce production regexp -> regexp Tor regexp
--- On Trparen reduce production regexp -> regexp Tor regexp
--- On Tor reduce production regexp -> regexp Tor regexp
--- On Tlet reduce production regexp -> regexp Tor regexp
--- On Tas reduce production regexp -> regexp Tor regexp
--- On Taction reduce production regexp -> regexp Tor regexp
+-- On Tsharp Trule Trparen Tor Tlet Tas Taction
+--   reduce production regexp -> regexp Tor regexp
 
 State 36:
 ## Known stack suffix:
@@ -496,13 +492,8 @@ regexp -> regexp . Tas ident [ Tunderscore Tstring Tstar Tsharp Trule Trparen Tp
 -- On Tchar shift to state 28
 -- On regexp shift to state 37
 ## Reductions:
--- On Tsharp reduce production regexp -> regexp regexp
--- On Trule reduce production regexp -> regexp regexp
--- On Trparen reduce production regexp -> regexp regexp
--- On Tor reduce production regexp -> regexp regexp
--- On Tlet reduce production regexp -> regexp regexp
--- On Tas reduce production regexp -> regexp regexp
--- On Taction reduce production regexp -> regexp regexp
+-- On Tsharp Trule Trparen Tor Tlet Tas Taction
+--   reduce production regexp -> regexp regexp
 
 State 38:
 ## Known stack suffix:
@@ -599,9 +590,8 @@ rest_of_entry -> rest_of_entry . Tor case [ Tor Tend Tand Taction ]
 ## Transitions:
 -- On Tor shift to state 46
 ## Reductions:
--- On Tend reduce production entry -> Tor case rest_of_entry
--- On Tand reduce production entry -> Tor case rest_of_entry
--- On Taction reduce production entry -> Tor case rest_of_entry
+-- On Tend Tand Taction
+--   reduce production entry -> Tor case rest_of_entry
 
 State 46:
 ## Known stack suffix:
@@ -657,9 +647,8 @@ rest_of_entry -> rest_of_entry . Tor case [ Tor Tend Tand Taction ]
 ## Transitions:
 -- On Tor shift to state 46
 ## Reductions:
--- On Tend reduce production entry -> case rest_of_entry
--- On Tand reduce production entry -> case rest_of_entry
--- On Taction reduce production entry -> case rest_of_entry
+-- On Tend Tand Taction
+--   reduce production entry -> case rest_of_entry
 
 State 51:
 ## Known stack suffix:
@@ -710,7 +699,8 @@ other_definitions -> other_definitions . Tand definition [ Tend Tand Taction ]
 -- On Taction shift to state 1
 -- On header shift to state 57
 ## Reductions:
--- On Tend reduce production header ->
+-- On Tend
+--   reduce production header ->
 
 State 55:
 ## Known stack suffix:
@@ -811,6 +801,6 @@ regexp -> regexp . Tas ident [ Tunderscore Tstring Tstar Tsharp Trule Tplus Tor 
 -- On Tas shift to state 39
 -- On regexp shift to state 37
 ## Reductions:
--- On Trule reduce production named_regexps -> named_regexps Tlet Tident Tequal regexp
--- On Tlet reduce production named_regexps -> named_regexps Tlet Tident Tequal regexp
+-- On Trule Tlet
+--   reduce production named_regexps -> named_regexps Tlet Tident Tequal regexp
 

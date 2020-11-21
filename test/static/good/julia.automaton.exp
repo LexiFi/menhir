@@ -17,8 +17,8 @@ State 1:
 statement -> TReturn . [ TElse EOF ]
 ## Transitions:
 ## Reductions:
--- On TElse reduce production statement -> TReturn
--- On EOF reduce production statement -> TReturn
+-- On TElse EOF
+--   reduce production statement -> TReturn
 
 State 2:
 ## Known stack suffix:
@@ -48,7 +48,8 @@ State 4:
 expr -> TIdent . [ TCPar ]
 ## Transitions:
 ## Reductions:
--- On TCPar reduce production expr -> TIdent
+-- On TCPar
+--   reduce production expr -> TIdent
 
 State 5:
 ## Known stack suffix:
@@ -81,7 +82,8 @@ statement -> TIf TOPar expr TCPar statement . TElse statement [ TElse EOF ]
 ## Transitions:
 -- On TElse shift to state 8
 ## Reductions:
--- On EOF reduce production statement -> TIf TOPar expr TCPar statement
+-- On EOF
+--   reduce production statement -> TIf TOPar expr TCPar statement
 
 State 8:
 ## Known stack suffix:
@@ -101,8 +103,8 @@ State 9:
 statement -> TIf TOPar expr TCPar statement TElse statement . [ TElse EOF ]
 ## Transitions:
 ## Reductions:
--- On TElse reduce production statement -> TIf TOPar expr TCPar statement TElse statement
--- On EOF reduce production statement -> TIf TOPar expr TCPar statement TElse statement
+-- On TElse EOF
+--   reduce production statement -> TIf TOPar expr TCPar statement TElse statement
 
 State 10:
 ## Known stack suffix:
@@ -120,7 +122,8 @@ State 11:
 main -> statement EOF . [ # ]
 ## Transitions:
 ## Reductions:
--- On # reduce production main -> statement EOF
+-- On #
+--   reduce production main -> statement EOF
 
 State 12:
 ## Known stack suffix:
@@ -129,5 +132,6 @@ State 12:
 main' -> main . [ # ]
 ## Transitions:
 ## Reductions:
--- On # accept main
+-- On #
+--   accept main
 

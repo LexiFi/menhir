@@ -8,8 +8,8 @@ spec' -> . spec [ # ]
 -- On spec shift to state 2
 -- On codeopt shift to state 3
 ## Reductions:
--- On RULE reduce production codeopt ->
--- On LET reduce production codeopt ->
+-- On RULE LET
+--   reduce production codeopt ->
 
 State 1:
 ## Known stack suffix:
@@ -39,7 +39,8 @@ spec -> codeopt . macros RULE rules codeopt [ # ]
 -- On macros shift to state 32
 -- On macro shift to state 54
 ## Reductions:
--- On RULE reduce production macros ->
+-- On RULE
+--   reduce production macros ->
 
 State 4:
 ## Known stack suffix:
@@ -140,8 +141,8 @@ charset -> CHAR . DASH CHAR [ RBRACK CHAR ]
 ## Transitions:
 -- On DASH shift to state 13
 ## Reductions:
--- On RBRACK reduce production charset -> CHAR
--- On CHAR reduce production charset -> CHAR
+-- On RBRACK CHAR
+--   reduce production charset -> CHAR
 
 State 13:
 ## Known stack suffix:
@@ -192,7 +193,8 @@ charset -> charset charset . [ RBRACK CHAR ]
 -- On CHAR shift to state 12
 -- On charset shift to state 17
 ## Reductions:
--- On RBRACK reduce production charset -> charset charset
+-- On RBRACK
+--   reduce production charset -> charset charset
 
 State 18:
 ## Known stack suffix:
@@ -343,11 +345,8 @@ regexp -> regexp BAR regexp . [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LP
 -- On CHAR shift to state 22
 -- On regexp shift to state 30
 ## Reductions:
--- On RULE reduce production regexp -> regexp BAR regexp
--- On RPAREN reduce production regexp -> regexp BAR regexp
--- On LET reduce production regexp -> regexp BAR regexp
--- On CODE reduce production regexp -> regexp BAR regexp
--- On BAR reduce production regexp -> regexp BAR regexp
+-- On RULE RPAREN LET CODE BAR
+--   reduce production regexp -> regexp BAR regexp
 
 State 30:
 ## Known stack suffix:
@@ -372,11 +371,8 @@ regexp -> regexp . BAR regexp [ UNDERSCORE STRING STAR RULE RPAREN QMARK PLUS LP
 -- On CHAR shift to state 22
 -- On regexp shift to state 30
 ## Reductions:
--- On RULE reduce production regexp -> regexp regexp
--- On RPAREN reduce production regexp -> regexp regexp
--- On LET reduce production regexp -> regexp regexp
--- On CODE reduce production regexp -> regexp regexp
--- On BAR reduce production regexp -> regexp regexp
+-- On RULE RPAREN LET CODE BAR
+--   reduce production regexp -> regexp regexp
 
 State 31:
 ## Known stack suffix:
@@ -402,8 +398,8 @@ regexp -> regexp . BAR regexp [ UNDERSCORE STRING STAR RULE QMARK PLUS LPAREN LE
 -- On BAR shift to state 28
 -- On regexp shift to state 30
 ## Reductions:
--- On RULE reduce production macro -> LET IDENT EQUALS regexp
--- On LET reduce production macro -> LET IDENT EQUALS regexp
+-- On RULE LET
+--   reduce production macro -> LET IDENT EQUALS regexp
 
 State 32:
 ## Known stack suffix:
@@ -434,7 +430,8 @@ rule -> IDENT . args EQUALS PARSE optbar clauses [ CODE AND # ]
 -- On IDENT shift to state 35
 -- On args shift to state 37
 ## Reductions:
--- On EQUALS reduce production args ->
+-- On EQUALS
+--   reduce production args ->
 
 State 35:
 ## Known stack suffix:
@@ -445,7 +442,8 @@ args -> IDENT . args [ EQUALS ]
 -- On IDENT shift to state 35
 -- On args shift to state 36
 ## Reductions:
--- On EQUALS reduce production args ->
+-- On EQUALS
+--   reduce production args ->
 
 State 36:
 ## Known stack suffix:
@@ -483,13 +481,8 @@ rule -> IDENT args EQUALS PARSE . optbar clauses [ CODE AND # ]
 -- On BAR shift to state 40
 -- On optbar shift to state 41
 ## Reductions:
--- On UNDERSCORE reduce production optbar ->
--- On STRING reduce production optbar ->
--- On LPAREN reduce production optbar ->
--- On LBRACK reduce production optbar ->
--- On IDENT reduce production optbar ->
--- On EOF reduce production optbar ->
--- On CHAR reduce production optbar ->
+-- On UNDERSCORE STRING LPAREN LBRACK IDENT EOF CHAR
+--   reduce production optbar ->
 
 State 40:
 ## Known stack suffix:
@@ -571,8 +564,8 @@ clauses -> clause . [ CODE AND # ]
 ## Transitions:
 -- On BAR shift to state 46
 ## Reductions:
--- On CODE reduce production clauses -> clause
--- On AND reduce production clauses -> clause
+-- On CODE AND
+--   reduce production clauses -> clause
 
 State 46:
 ## Known stack suffix:
@@ -638,7 +631,8 @@ rules -> rule . [ CODE # ]
 ## Transitions:
 -- On AND shift to state 52
 ## Reductions:
--- On CODE reduce production rules -> rule
+-- On CODE
+--   reduce production rules -> rule
 
 State 52:
 ## Known stack suffix:
@@ -670,7 +664,8 @@ macros -> macro . macros [ RULE ]
 -- On macros shift to state 55
 -- On macro shift to state 54
 ## Reductions:
--- On RULE reduce production macros ->
+-- On RULE
+--   reduce production macros ->
 
 State 55:
 ## Known stack suffix:

@@ -82,7 +82,8 @@ components -> components VAL WILDCARD AS LIDENT . dependencies EQUAL expression 
 -- On LSQUARE shift to state 7
 -- On dependencies shift to state 11
 ## Reductions:
--- On EQUAL reduce production dependencies ->
+-- On EQUAL
+--   reduce production dependencies ->
 
 State 7:
 ## Known stack suffix:
@@ -433,14 +434,8 @@ unary_expression -> atomic_expression . [ VAL RPAREN RCURLY PLUS IN EOF END AND 
 ## Transitions:
 -- On DOT shift to state 37
 ## Reductions:
--- On VAL reduce production unary_expression -> atomic_expression
--- On RPAREN reduce production unary_expression -> atomic_expression
--- On RCURLY reduce production unary_expression -> atomic_expression
--- On PLUS reduce production unary_expression -> atomic_expression
--- On IN reduce production unary_expression -> atomic_expression
--- On EOF reduce production unary_expression -> atomic_expression
--- On END reduce production unary_expression -> atomic_expression
--- On AND reduce production unary_expression -> atomic_expression
+-- On VAL RPAREN RCURLY PLUS IN EOF END AND
+--   reduce production unary_expression -> atomic_expression
 
 State 37:
 ## Known stack suffix:
@@ -496,13 +491,8 @@ summand_expression -> summand_expression . PLUS unary_expression [ VAL RPAREN RC
 ## Transitions:
 -- On PLUS shift to state 43
 ## Reductions:
--- On VAL reduce production expression -> summand_expression
--- On RPAREN reduce production expression -> summand_expression
--- On RCURLY reduce production expression -> summand_expression
--- On IN reduce production expression -> summand_expression
--- On EOF reduce production expression -> summand_expression
--- On END reduce production expression -> summand_expression
--- On AND reduce production expression -> summand_expression
+-- On VAL RPAREN RCURLY IN EOF END AND
+--   reduce production expression -> summand_expression
 
 State 43:
 ## Known stack suffix:
@@ -661,10 +651,8 @@ lident_pun -> LIDENT . [ VAL LSQUARE EQUAL END ]
 ## Transitions:
 -- On AS shift to state 58
 ## Reductions:
--- On VAL reduce production lident_pun -> LIDENT
--- On LSQUARE reduce production lident_pun -> LIDENT
--- On EQUAL reduce production lident_pun -> LIDENT
--- On END reduce production lident_pun -> LIDENT
+-- On VAL LSQUARE EQUAL END
+--   reduce production lident_pun -> LIDENT
 
 State 58:
 ## Known stack suffix:
@@ -694,9 +682,10 @@ components -> components VAL lident_pun . [ VAL END ]
 -- On LSQUARE shift to state 7
 -- On dependencies shift to state 61
 ## Reductions:
--- On VAL reduce production components -> components VAL lident_pun
--- On EQUAL reduce production dependencies ->
--- On END reduce production components -> components VAL lident_pun
+-- On VAL END
+--   reduce production components -> components VAL lident_pun
+-- On EQUAL
+--   reduce production dependencies ->
 
 State 61:
 ## Known stack suffix:

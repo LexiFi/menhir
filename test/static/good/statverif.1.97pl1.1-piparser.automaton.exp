@@ -22,10 +22,10 @@ all' -> . all [ # ]
 -- On lib shift to state 399
 -- On all shift to state 403
 ## Reductions:
--- On REDUCTION reduce production privateopt ->
--- On PROCESS reduce production lib ->
--- On FUN reduce production privateopt ->
--- On FREE reduce production privateopt ->
+-- On PROCESS
+--   reduce production lib ->
+-- On REDUCTION FUN FREE
+--   reduce production privateopt ->
 
 State 1:
 ## Known stack suffix:
@@ -68,10 +68,10 @@ lib -> WEAKSECRET IDENT DOT . lib [ PROCESS ]
 -- On privateopt shift to state 301
 -- On lib shift to state 398
 ## Reductions:
--- On REDUCTION reduce production privateopt ->
--- On PROCESS reduce production lib ->
--- On FUN reduce production privateopt ->
--- On FREE reduce production privateopt ->
+-- On PROCESS
+--   reduce production lib ->
+-- On REDUCTION FUN FREE
+--   reduce production privateopt ->
 
 State 4:
 ## Known stack suffix:
@@ -128,12 +128,8 @@ neidentseq -> IDENT . [ SUCHTHAT SEMI RPAREN DOT ASSIGN AS ]
 ## Transitions:
 -- On COMMA shift to state 9
 ## Reductions:
--- On SUCHTHAT reduce production neidentseq -> IDENT
--- On SEMI reduce production neidentseq -> IDENT
--- On RPAREN reduce production neidentseq -> IDENT
--- On DOT reduce production neidentseq -> IDENT
--- On ASSIGN reduce production neidentseq -> IDENT
--- On AS reduce production neidentseq -> IDENT
+-- On SUCHTHAT SEMI RPAREN DOT ASSIGN AS
+--   reduce production neidentseq -> IDENT
 
 State 9:
 ## Known stack suffix:
@@ -152,12 +148,8 @@ State 10:
 neidentseq -> IDENT COMMA neidentseq . [ SUCHTHAT SEMI RPAREN DOT ASSIGN AS ]
 ## Transitions:
 ## Reductions:
--- On SUCHTHAT reduce production neidentseq -> IDENT COMMA neidentseq
--- On SEMI reduce production neidentseq -> IDENT COMMA neidentseq
--- On RPAREN reduce production neidentseq -> IDENT COMMA neidentseq
--- On DOT reduce production neidentseq -> IDENT COMMA neidentseq
--- On ASSIGN reduce production neidentseq -> IDENT COMMA neidentseq
--- On AS reduce production neidentseq -> IDENT COMMA neidentseq
+-- On SUCHTHAT SEMI RPAREN DOT ASSIGN AS
+--   reduce production neidentseq -> IDENT COMMA neidentseq
 
 State 11:
 ## Known stack suffix:
@@ -166,8 +158,8 @@ State 11:
 query -> PUTBEGIN IDENT COLON neidentseq . [ SEMI DOT ]
 ## Transitions:
 ## Reductions:
--- On SEMI reduce production query -> PUTBEGIN IDENT COLON neidentseq
--- On DOT reduce production query -> PUTBEGIN IDENT COLON neidentseq
+-- On SEMI DOT
+--   reduce production query -> PUTBEGIN IDENT COLON neidentseq
 
 State 12:
 ## Known stack suffix:
@@ -181,7 +173,8 @@ gterm -> LPAREN . gtermseq RPAREN [ WEDGE SEMI RPAREN RBRACKET PHASE EQUAL DOT D
 -- On gtermseq shift to state 36
 -- On gterm shift to state 18
 ## Reductions:
--- On RPAREN reduce production gtermseq ->
+-- On RPAREN
+--   reduce production gtermseq ->
 
 State 13:
 ## Known stack suffix:
@@ -194,15 +187,8 @@ gterm -> IDENT . LBRACKET bindingseq RBRACKET [ WEDGE SEMI RPAREN RBRACKET PHASE
 -- On LPAREN shift to state 14
 -- On LBRACKET shift to state 21
 ## Reductions:
--- On WEDGE reduce production gterm -> IDENT
--- On SEMI reduce production gterm -> IDENT
--- On RPAREN reduce production gterm -> IDENT
--- On RBRACKET reduce production gterm -> IDENT
--- On PHASE reduce production gterm -> IDENT
--- On DOT reduce production gterm -> IDENT
--- On COMMA reduce production gterm -> IDENT
--- On BEFORE reduce production gterm -> IDENT
--- On BAR reduce production gterm -> IDENT
+-- On WEDGE SEMI RPAREN RBRACKET PHASE DOT COMMA BEFORE BAR
+--   reduce production gterm -> IDENT
 
 State 14:
 ## Known stack suffix:
@@ -216,7 +202,8 @@ gterm -> IDENT LPAREN . gtermseq RPAREN [ WEDGE SEMI RPAREN RBRACKET PHASE EQUAL
 -- On gtermseq shift to state 16
 -- On gterm shift to state 18
 ## Reductions:
--- On RPAREN reduce production gtermseq ->
+-- On RPAREN
+--   reduce production gtermseq ->
 
 State 15:
 ## Known stack suffix:
@@ -225,13 +212,8 @@ State 15:
 gtermseq -> negtermseq . [ WEDGE SEMI RPAREN PHASE DOT BEFORE BAR ]
 ## Transitions:
 ## Reductions:
--- On WEDGE reduce production gtermseq -> negtermseq
--- On SEMI reduce production gtermseq -> negtermseq
--- On RPAREN reduce production gtermseq -> negtermseq
--- On PHASE reduce production gtermseq -> negtermseq
--- On DOT reduce production gtermseq -> negtermseq
--- On BEFORE reduce production gtermseq -> negtermseq
--- On BAR reduce production gtermseq -> negtermseq
+-- On WEDGE SEMI RPAREN PHASE DOT BEFORE BAR
+--   reduce production gtermseq -> negtermseq
 
 State 16:
 ## Known stack suffix:
@@ -249,17 +231,8 @@ State 17:
 gterm -> IDENT LPAREN gtermseq RPAREN . [ WEDGE SEMI RPAREN RBRACKET PHASE EQUAL DOT DIFF COMMA BEFORE BAR ]
 ## Transitions:
 ## Reductions:
--- On WEDGE reduce production gterm -> IDENT LPAREN gtermseq RPAREN
--- On SEMI reduce production gterm -> IDENT LPAREN gtermseq RPAREN
--- On RPAREN reduce production gterm -> IDENT LPAREN gtermseq RPAREN
--- On RBRACKET reduce production gterm -> IDENT LPAREN gtermseq RPAREN
--- On PHASE reduce production gterm -> IDENT LPAREN gtermseq RPAREN
--- On EQUAL reduce production gterm -> IDENT LPAREN gtermseq RPAREN
--- On DOT reduce production gterm -> IDENT LPAREN gtermseq RPAREN
--- On DIFF reduce production gterm -> IDENT LPAREN gtermseq RPAREN
--- On COMMA reduce production gterm -> IDENT LPAREN gtermseq RPAREN
--- On BEFORE reduce production gterm -> IDENT LPAREN gtermseq RPAREN
--- On BAR reduce production gterm -> IDENT LPAREN gtermseq RPAREN
+-- On WEDGE SEMI RPAREN RBRACKET PHASE EQUAL DOT DIFF COMMA BEFORE BAR
+--   reduce production gterm -> IDENT LPAREN gtermseq RPAREN
 
 State 18:
 ## Known stack suffix:
@@ -270,13 +243,8 @@ negtermseq -> gterm . [ WEDGE SEMI RPAREN PHASE DOT BEFORE BAR ]
 ## Transitions:
 -- On COMMA shift to state 19
 ## Reductions:
--- On WEDGE reduce production negtermseq -> gterm
--- On SEMI reduce production negtermseq -> gterm
--- On RPAREN reduce production negtermseq -> gterm
--- On PHASE reduce production negtermseq -> gterm
--- On DOT reduce production negtermseq -> gterm
--- On BEFORE reduce production negtermseq -> gterm
--- On BAR reduce production negtermseq -> gterm
+-- On WEDGE SEMI RPAREN PHASE DOT BEFORE BAR
+--   reduce production negtermseq -> gterm
 
 State 19:
 ## Known stack suffix:
@@ -297,13 +265,8 @@ State 20:
 negtermseq -> gterm COMMA negtermseq . [ WEDGE SEMI RPAREN PHASE DOT BEFORE BAR ]
 ## Transitions:
 ## Reductions:
--- On WEDGE reduce production negtermseq -> gterm COMMA negtermseq
--- On SEMI reduce production negtermseq -> gterm COMMA negtermseq
--- On RPAREN reduce production negtermseq -> gterm COMMA negtermseq
--- On PHASE reduce production negtermseq -> gterm COMMA negtermseq
--- On DOT reduce production negtermseq -> gterm COMMA negtermseq
--- On BEFORE reduce production negtermseq -> gterm COMMA negtermseq
--- On BAR reduce production negtermseq -> gterm COMMA negtermseq
+-- On WEDGE SEMI RPAREN PHASE DOT BEFORE BAR
+--   reduce production negtermseq -> gterm COMMA negtermseq
 
 State 21:
 ## Known stack suffix:
@@ -316,7 +279,8 @@ gterm -> IDENT LBRACKET . bindingseq RBRACKET [ WEDGE SEMI RPAREN RBRACKET PHASE
 -- On nesbindingseq shift to state 33
 -- On bindingseq shift to state 34
 ## Reductions:
--- On RBRACKET reduce production bindingseq ->
+-- On RBRACKET
+--   reduce production bindingseq ->
 
 State 22:
 ## Known stack suffix:
@@ -359,7 +323,8 @@ nesbindingseq -> REPL INT EQUAL gterm . [ RBRACKET ]
 ## Transitions:
 -- On SEMI shift to state 26
 ## Reductions:
--- On RBRACKET reduce production nesbindingseq -> REPL INT EQUAL gterm
+-- On RBRACKET
+--   reduce production nesbindingseq -> REPL INT EQUAL gterm
 
 State 26:
 ## Known stack suffix:
@@ -403,7 +368,8 @@ nesbindingseq -> IDENT EQUAL gterm . [ RBRACKET ]
 ## Transitions:
 -- On SEMI shift to state 30
 ## Reductions:
--- On RBRACKET reduce production nesbindingseq -> IDENT EQUAL gterm
+-- On RBRACKET
+--   reduce production nesbindingseq -> IDENT EQUAL gterm
 
 State 30:
 ## Known stack suffix:
@@ -423,7 +389,8 @@ State 31:
 nesbindingseq -> IDENT EQUAL gterm SEMI nesbindingseq . [ RBRACKET ]
 ## Transitions:
 ## Reductions:
--- On RBRACKET reduce production nesbindingseq -> IDENT EQUAL gterm SEMI nesbindingseq
+-- On RBRACKET
+--   reduce production nesbindingseq -> IDENT EQUAL gterm SEMI nesbindingseq
 
 State 32:
 ## Known stack suffix:
@@ -432,7 +399,8 @@ State 32:
 nesbindingseq -> REPL INT EQUAL gterm SEMI nesbindingseq . [ RBRACKET ]
 ## Transitions:
 ## Reductions:
--- On RBRACKET reduce production nesbindingseq -> REPL INT EQUAL gterm SEMI nesbindingseq
+-- On RBRACKET
+--   reduce production nesbindingseq -> REPL INT EQUAL gterm SEMI nesbindingseq
 
 State 33:
 ## Known stack suffix:
@@ -441,7 +409,8 @@ State 33:
 bindingseq -> nesbindingseq . [ RBRACKET ]
 ## Transitions:
 ## Reductions:
--- On RBRACKET reduce production bindingseq -> nesbindingseq
+-- On RBRACKET
+--   reduce production bindingseq -> nesbindingseq
 
 State 34:
 ## Known stack suffix:
@@ -459,17 +428,8 @@ State 35:
 gterm -> IDENT LBRACKET bindingseq RBRACKET . [ WEDGE SEMI RPAREN RBRACKET PHASE EQUAL DOT DIFF COMMA BEFORE BAR ]
 ## Transitions:
 ## Reductions:
--- On WEDGE reduce production gterm -> IDENT LBRACKET bindingseq RBRACKET
--- On SEMI reduce production gterm -> IDENT LBRACKET bindingseq RBRACKET
--- On RPAREN reduce production gterm -> IDENT LBRACKET bindingseq RBRACKET
--- On RBRACKET reduce production gterm -> IDENT LBRACKET bindingseq RBRACKET
--- On PHASE reduce production gterm -> IDENT LBRACKET bindingseq RBRACKET
--- On EQUAL reduce production gterm -> IDENT LBRACKET bindingseq RBRACKET
--- On DOT reduce production gterm -> IDENT LBRACKET bindingseq RBRACKET
--- On DIFF reduce production gterm -> IDENT LBRACKET bindingseq RBRACKET
--- On COMMA reduce production gterm -> IDENT LBRACKET bindingseq RBRACKET
--- On BEFORE reduce production gterm -> IDENT LBRACKET bindingseq RBRACKET
--- On BAR reduce production gterm -> IDENT LBRACKET bindingseq RBRACKET
+-- On WEDGE SEMI RPAREN RBRACKET PHASE EQUAL DOT DIFF COMMA BEFORE BAR
+--   reduce production gterm -> IDENT LBRACKET bindingseq RBRACKET
 
 State 36:
 ## Known stack suffix:
@@ -487,17 +447,8 @@ State 37:
 gterm -> LPAREN gtermseq RPAREN . [ WEDGE SEMI RPAREN RBRACKET PHASE EQUAL DOT DIFF COMMA BEFORE BAR ]
 ## Transitions:
 ## Reductions:
--- On WEDGE reduce production gterm -> LPAREN gtermseq RPAREN
--- On SEMI reduce production gterm -> LPAREN gtermseq RPAREN
--- On RPAREN reduce production gterm -> LPAREN gtermseq RPAREN
--- On RBRACKET reduce production gterm -> LPAREN gtermseq RPAREN
--- On PHASE reduce production gterm -> LPAREN gtermseq RPAREN
--- On EQUAL reduce production gterm -> LPAREN gtermseq RPAREN
--- On DOT reduce production gterm -> LPAREN gtermseq RPAREN
--- On DIFF reduce production gterm -> LPAREN gtermseq RPAREN
--- On COMMA reduce production gterm -> LPAREN gtermseq RPAREN
--- On BEFORE reduce production gterm -> LPAREN gtermseq RPAREN
--- On BAR reduce production gterm -> LPAREN gtermseq RPAREN
+-- On WEDGE SEMI RPAREN RBRACKET PHASE EQUAL DOT DIFF COMMA BEFORE BAR
+--   reduce production gterm -> LPAREN gtermseq RPAREN
 
 State 38:
 ## Known stack suffix:
@@ -535,8 +486,8 @@ State 41:
 query -> LET IDENT EQUAL gterm . [ SEMI DOT ]
 ## Transitions:
 ## Reductions:
--- On SEMI reduce production query -> LET IDENT EQUAL gterm
--- On DOT reduce production query -> LET IDENT EQUAL gterm
+-- On SEMI DOT
+--   reduce production query -> LET IDENT EQUAL gterm
 
 State 42:
 ## Known stack suffix:
@@ -551,13 +502,8 @@ gterm -> IDENT . LBRACKET bindingseq RBRACKET [ SEMI RPAREN PHASE EQUAL DOT DIFF
 -- On LBRACKET shift to state 21
 -- On COLON shift to state 43
 ## Reductions:
--- On SEMI reduce production gterm -> IDENT
--- On RPAREN reduce production gterm -> IDENT
--- On PHASE reduce production gterm -> IDENT
--- On EQUAL reduce production gterm -> IDENT
--- On DOT reduce production gterm -> IDENT
--- On DIFF reduce production gterm -> IDENT
--- On COMMA reduce production gterm -> IDENT
+-- On SEMI RPAREN PHASE EQUAL DOT DIFF COMMA
+--   reduce production gterm -> IDENT
 
 State 43:
 ## Known stack suffix:
@@ -571,13 +517,8 @@ gfact -> IDENT COLON . gtermseq [ WEDGE SEMI RPAREN PHASE DOT BEFORE BAR ]
 -- On gtermseq shift to state 44
 -- On gterm shift to state 18
 ## Reductions:
--- On WEDGE reduce production gtermseq ->
--- On SEMI reduce production gtermseq ->
--- On RPAREN reduce production gtermseq ->
--- On PHASE reduce production gtermseq ->
--- On DOT reduce production gtermseq ->
--- On BEFORE reduce production gtermseq ->
--- On BAR reduce production gtermseq ->
+-- On WEDGE SEMI RPAREN PHASE DOT BEFORE BAR
+--   reduce production gtermseq ->
 
 State 44:
 ## Known stack suffix:
@@ -586,13 +527,8 @@ State 44:
 gfact -> IDENT COLON gtermseq . [ WEDGE SEMI RPAREN PHASE DOT BEFORE BAR ]
 ## Transitions:
 ## Reductions:
--- On WEDGE reduce production gfact -> IDENT COLON gtermseq
--- On SEMI reduce production gfact -> IDENT COLON gtermseq
--- On RPAREN reduce production gfact -> IDENT COLON gtermseq
--- On PHASE reduce production gfact -> IDENT COLON gtermseq
--- On DOT reduce production gfact -> IDENT COLON gtermseq
--- On BEFORE reduce production gfact -> IDENT COLON gtermseq
--- On BAR reduce production gfact -> IDENT COLON gtermseq
+-- On WEDGE SEMI RPAREN PHASE DOT BEFORE BAR
+--   reduce production gfact -> IDENT COLON gtermseq
 
 State 45:
 ## Known stack suffix:
@@ -601,8 +537,8 @@ State 45:
 query -> realquery . [ SEMI DOT ]
 ## Transitions:
 ## Reductions:
--- On SEMI reduce production query -> realquery
--- On DOT reduce production query -> realquery
+-- On SEMI DOT
+--   reduce production query -> realquery
 
 State 46:
 ## Known stack suffix:
@@ -636,10 +572,10 @@ lib -> QUERY queryseq DOT . lib [ PROCESS ]
 -- On privateopt shift to state 301
 -- On lib shift to state 378
 ## Reductions:
--- On REDUCTION reduce production privateopt ->
--- On PROCESS reduce production lib ->
--- On FUN reduce production privateopt ->
--- On FREE reduce production privateopt ->
+-- On PROCESS
+--   reduce production lib ->
+-- On REDUCTION FUN FREE
+--   reduce production privateopt ->
 
 State 48:
 ## Known stack suffix:
@@ -648,9 +584,8 @@ State 48:
 privateopt -> PRIVATE . [ REDUCTION FUN FREE ]
 ## Transitions:
 ## Reductions:
--- On REDUCTION reduce production privateopt -> PRIVATE
--- On FUN reduce production privateopt -> PRIVATE
--- On FREE reduce production privateopt -> PRIVATE
+-- On REDUCTION FUN FREE
+--   reduce production privateopt -> PRIVATE
 
 State 49:
 ## Known stack suffix:
@@ -717,10 +652,10 @@ lib -> PREDICATE IDENT SLASH INT DOT . lib [ PROCESS ]
 -- On privateopt shift to state 301
 -- On lib shift to state 374
 ## Reductions:
--- On REDUCTION reduce production privateopt ->
--- On PROCESS reduce production lib ->
--- On FUN reduce production privateopt ->
--- On FREE reduce production privateopt ->
+-- On PROCESS
+--   reduce production lib ->
+-- On REDUCTION FUN FREE
+--   reduce production privateopt ->
 
 State 54:
 ## Known stack suffix:
@@ -789,10 +724,10 @@ lib -> PARAM IDENT EQUAL STRING DOT . lib [ PROCESS ]
 -- On privateopt shift to state 301
 -- On lib shift to state 367
 ## Reductions:
--- On REDUCTION reduce production privateopt ->
--- On PROCESS reduce production lib ->
--- On FUN reduce production privateopt ->
--- On FREE reduce production privateopt ->
+-- On PROCESS
+--   reduce production lib ->
+-- On REDUCTION FUN FREE
+--   reduce production privateopt ->
 
 State 59:
 ## Known stack suffix:
@@ -826,10 +761,8 @@ gfactformat -> IDENT COLON . gformatseq optphase [ SLASH SEMI DOT ]
 -- On gformatseq shift to state 90
 -- On gformat shift to state 70
 ## Reductions:
--- On SLASH reduce production gformatseq ->
--- On SEMI reduce production gformatseq ->
--- On PHASE reduce production gformatseq ->
--- On DOT reduce production gformatseq ->
+-- On SLASH SEMI PHASE DOT
+--   reduce production gformatseq ->
 
 State 62:
 ## Known stack suffix:
@@ -847,13 +780,8 @@ State 63:
 gformat -> STAR IDENT . [ SLASH SEMI RPAREN RBRACKET PHASE DOT COMMA ]
 ## Transitions:
 ## Reductions:
--- On SLASH reduce production gformat -> STAR IDENT
--- On SEMI reduce production gformat -> STAR IDENT
--- On RPAREN reduce production gformat -> STAR IDENT
--- On RBRACKET reduce production gformat -> STAR IDENT
--- On PHASE reduce production gformat -> STAR IDENT
--- On DOT reduce production gformat -> STAR IDENT
--- On COMMA reduce production gformat -> STAR IDENT
+-- On SLASH SEMI RPAREN RBRACKET PHASE DOT COMMA
+--   reduce production gformat -> STAR IDENT
 
 State 64:
 ## Known stack suffix:
@@ -868,7 +796,8 @@ gformat -> LPAREN . gformatseq RPAREN [ SLASH SEMI RPAREN RBRACKET PHASE DOT COM
 -- On gformatseq shift to state 88
 -- On gformat shift to state 70
 ## Reductions:
--- On RPAREN reduce production gformatseq ->
+-- On RPAREN
+--   reduce production gformatseq ->
 
 State 65:
 ## Known stack suffix:
@@ -881,13 +810,8 @@ gformat -> IDENT . LBRACKET fbindingseq RBRACKET [ SLASH SEMI RPAREN RBRACKET PH
 -- On LPAREN shift to state 66
 -- On LBRACKET shift to state 73
 ## Reductions:
--- On SLASH reduce production gformat -> IDENT
--- On SEMI reduce production gformat -> IDENT
--- On RPAREN reduce production gformat -> IDENT
--- On RBRACKET reduce production gformat -> IDENT
--- On PHASE reduce production gformat -> IDENT
--- On DOT reduce production gformat -> IDENT
--- On COMMA reduce production gformat -> IDENT
+-- On SLASH SEMI RPAREN RBRACKET PHASE DOT COMMA
+--   reduce production gformat -> IDENT
 
 State 66:
 ## Known stack suffix:
@@ -902,7 +826,8 @@ gformat -> IDENT LPAREN . gformatseq RPAREN [ SLASH SEMI RPAREN RBRACKET PHASE D
 -- On gformatseq shift to state 68
 -- On gformat shift to state 70
 ## Reductions:
--- On RPAREN reduce production gformatseq ->
+-- On RPAREN
+--   reduce production gformatseq ->
 
 State 67:
 ## Known stack suffix:
@@ -911,11 +836,8 @@ State 67:
 gformatseq -> negformatseq . [ SLASH SEMI RPAREN PHASE DOT ]
 ## Transitions:
 ## Reductions:
--- On SLASH reduce production gformatseq -> negformatseq
--- On SEMI reduce production gformatseq -> negformatseq
--- On RPAREN reduce production gformatseq -> negformatseq
--- On PHASE reduce production gformatseq -> negformatseq
--- On DOT reduce production gformatseq -> negformatseq
+-- On SLASH SEMI RPAREN PHASE DOT
+--   reduce production gformatseq -> negformatseq
 
 State 68:
 ## Known stack suffix:
@@ -933,13 +855,8 @@ State 69:
 gformat -> IDENT LPAREN gformatseq RPAREN . [ SLASH SEMI RPAREN RBRACKET PHASE DOT COMMA ]
 ## Transitions:
 ## Reductions:
--- On SLASH reduce production gformat -> IDENT LPAREN gformatseq RPAREN
--- On SEMI reduce production gformat -> IDENT LPAREN gformatseq RPAREN
--- On RPAREN reduce production gformat -> IDENT LPAREN gformatseq RPAREN
--- On RBRACKET reduce production gformat -> IDENT LPAREN gformatseq RPAREN
--- On PHASE reduce production gformat -> IDENT LPAREN gformatseq RPAREN
--- On DOT reduce production gformat -> IDENT LPAREN gformatseq RPAREN
--- On COMMA reduce production gformat -> IDENT LPAREN gformatseq RPAREN
+-- On SLASH SEMI RPAREN RBRACKET PHASE DOT COMMA
+--   reduce production gformat -> IDENT LPAREN gformatseq RPAREN
 
 State 70:
 ## Known stack suffix:
@@ -950,11 +867,8 @@ negformatseq -> gformat . [ SLASH SEMI RPAREN PHASE DOT ]
 ## Transitions:
 -- On COMMA shift to state 71
 ## Reductions:
--- On SLASH reduce production negformatseq -> gformat
--- On SEMI reduce production negformatseq -> gformat
--- On RPAREN reduce production negformatseq -> gformat
--- On PHASE reduce production negformatseq -> gformat
--- On DOT reduce production negformatseq -> gformat
+-- On SLASH SEMI RPAREN PHASE DOT
+--   reduce production negformatseq -> gformat
 
 State 71:
 ## Known stack suffix:
@@ -976,11 +890,8 @@ State 72:
 negformatseq -> gformat COMMA negformatseq . [ SLASH SEMI RPAREN PHASE DOT ]
 ## Transitions:
 ## Reductions:
--- On SLASH reduce production negformatseq -> gformat COMMA negformatseq
--- On SEMI reduce production negformatseq -> gformat COMMA negformatseq
--- On RPAREN reduce production negformatseq -> gformat COMMA negformatseq
--- On PHASE reduce production negformatseq -> gformat COMMA negformatseq
--- On DOT reduce production negformatseq -> gformat COMMA negformatseq
+-- On SLASH SEMI RPAREN PHASE DOT
+--   reduce production negformatseq -> gformat COMMA negformatseq
 
 State 73:
 ## Known stack suffix:
@@ -993,7 +904,8 @@ gformat -> IDENT LBRACKET . fbindingseq RBRACKET [ SLASH SEMI RPAREN RBRACKET PH
 -- On fnesbindingseq shift to state 85
 -- On fbindingseq shift to state 86
 ## Reductions:
--- On RBRACKET reduce production fbindingseq ->
+-- On RBRACKET
+--   reduce production fbindingseq ->
 
 State 74:
 ## Known stack suffix:
@@ -1037,7 +949,8 @@ fnesbindingseq -> REPL INT EQUAL gformat . [ RBRACKET ]
 ## Transitions:
 -- On SEMI shift to state 78
 ## Reductions:
--- On RBRACKET reduce production fnesbindingseq -> REPL INT EQUAL gformat
+-- On RBRACKET
+--   reduce production fnesbindingseq -> REPL INT EQUAL gformat
 
 State 78:
 ## Known stack suffix:
@@ -1082,7 +995,8 @@ fnesbindingseq -> IDENT EQUAL gformat . [ RBRACKET ]
 ## Transitions:
 -- On SEMI shift to state 82
 ## Reductions:
--- On RBRACKET reduce production fnesbindingseq -> IDENT EQUAL gformat
+-- On RBRACKET
+--   reduce production fnesbindingseq -> IDENT EQUAL gformat
 
 State 82:
 ## Known stack suffix:
@@ -1102,7 +1016,8 @@ State 83:
 fnesbindingseq -> IDENT EQUAL gformat SEMI fnesbindingseq . [ RBRACKET ]
 ## Transitions:
 ## Reductions:
--- On RBRACKET reduce production fnesbindingseq -> IDENT EQUAL gformat SEMI fnesbindingseq
+-- On RBRACKET
+--   reduce production fnesbindingseq -> IDENT EQUAL gformat SEMI fnesbindingseq
 
 State 84:
 ## Known stack suffix:
@@ -1111,7 +1026,8 @@ State 84:
 fnesbindingseq -> REPL INT EQUAL gformat SEMI fnesbindingseq . [ RBRACKET ]
 ## Transitions:
 ## Reductions:
--- On RBRACKET reduce production fnesbindingseq -> REPL INT EQUAL gformat SEMI fnesbindingseq
+-- On RBRACKET
+--   reduce production fnesbindingseq -> REPL INT EQUAL gformat SEMI fnesbindingseq
 
 State 85:
 ## Known stack suffix:
@@ -1120,7 +1036,8 @@ State 85:
 fbindingseq -> fnesbindingseq . [ RBRACKET ]
 ## Transitions:
 ## Reductions:
--- On RBRACKET reduce production fbindingseq -> fnesbindingseq
+-- On RBRACKET
+--   reduce production fbindingseq -> fnesbindingseq
 
 State 86:
 ## Known stack suffix:
@@ -1138,13 +1055,8 @@ State 87:
 gformat -> IDENT LBRACKET fbindingseq RBRACKET . [ SLASH SEMI RPAREN RBRACKET PHASE DOT COMMA ]
 ## Transitions:
 ## Reductions:
--- On SLASH reduce production gformat -> IDENT LBRACKET fbindingseq RBRACKET
--- On SEMI reduce production gformat -> IDENT LBRACKET fbindingseq RBRACKET
--- On RPAREN reduce production gformat -> IDENT LBRACKET fbindingseq RBRACKET
--- On RBRACKET reduce production gformat -> IDENT LBRACKET fbindingseq RBRACKET
--- On PHASE reduce production gformat -> IDENT LBRACKET fbindingseq RBRACKET
--- On DOT reduce production gformat -> IDENT LBRACKET fbindingseq RBRACKET
--- On COMMA reduce production gformat -> IDENT LBRACKET fbindingseq RBRACKET
+-- On SLASH SEMI RPAREN RBRACKET PHASE DOT COMMA
+--   reduce production gformat -> IDENT LBRACKET fbindingseq RBRACKET
 
 State 88:
 ## Known stack suffix:
@@ -1162,13 +1074,8 @@ State 89:
 gformat -> LPAREN gformatseq RPAREN . [ SLASH SEMI RPAREN RBRACKET PHASE DOT COMMA ]
 ## Transitions:
 ## Reductions:
--- On SLASH reduce production gformat -> LPAREN gformatseq RPAREN
--- On SEMI reduce production gformat -> LPAREN gformatseq RPAREN
--- On RPAREN reduce production gformat -> LPAREN gformatseq RPAREN
--- On RBRACKET reduce production gformat -> LPAREN gformatseq RPAREN
--- On PHASE reduce production gformat -> LPAREN gformatseq RPAREN
--- On DOT reduce production gformat -> LPAREN gformatseq RPAREN
--- On COMMA reduce production gformat -> LPAREN gformatseq RPAREN
+-- On SLASH SEMI RPAREN RBRACKET PHASE DOT COMMA
+--   reduce production gformat -> LPAREN gformatseq RPAREN
 
 State 90:
 ## Known stack suffix:
@@ -1179,9 +1086,8 @@ gfactformat -> IDENT COLON gformatseq . optphase [ SLASH SEMI DOT ]
 -- On PHASE shift to state 91
 -- On optphase shift to state 93
 ## Reductions:
--- On SLASH reduce production optphase ->
--- On SEMI reduce production optphase ->
--- On DOT reduce production optphase ->
+-- On SLASH SEMI DOT
+--   reduce production optphase ->
 
 State 91:
 ## Known stack suffix:
@@ -1199,13 +1105,8 @@ State 92:
 optphase -> PHASE INT . [ WEDGE SLASH SEMI RPAREN DOT BEFORE BAR ]
 ## Transitions:
 ## Reductions:
--- On WEDGE reduce production optphase -> PHASE INT
--- On SLASH reduce production optphase -> PHASE INT
--- On SEMI reduce production optphase -> PHASE INT
--- On RPAREN reduce production optphase -> PHASE INT
--- On DOT reduce production optphase -> PHASE INT
--- On BEFORE reduce production optphase -> PHASE INT
--- On BAR reduce production optphase -> PHASE INT
+-- On WEDGE SLASH SEMI RPAREN DOT BEFORE BAR
+--   reduce production optphase -> PHASE INT
 
 State 93:
 ## Known stack suffix:
@@ -1214,9 +1115,8 @@ State 93:
 gfactformat -> IDENT COLON gformatseq optphase . [ SLASH SEMI DOT ]
 ## Transitions:
 ## Reductions:
--- On SLASH reduce production gfactformat -> IDENT COLON gformatseq optphase
--- On SEMI reduce production gfactformat -> IDENT COLON gformatseq optphase
--- On DOT reduce production gfactformat -> IDENT COLON gformatseq optphase
+-- On SLASH SEMI DOT
+--   reduce production gfactformat -> IDENT COLON gformatseq optphase
 
 State 94:
 ## Known stack suffix:
@@ -1227,8 +1127,8 @@ lib -> NOUNIF gfactformat . optint foptbindingseq DOT lib [ PROCESS ]
 -- On SLASH shift to state 95
 -- On optint shift to state 97
 ## Reductions:
--- On SEMI reduce production optint ->
--- On DOT reduce production optint ->
+-- On SEMI DOT
+--   reduce production optint ->
 
 State 95:
 ## Known stack suffix:
@@ -1246,8 +1146,8 @@ State 96:
 optint -> SLASH INT . [ SEMI DOT ]
 ## Transitions:
 ## Reductions:
--- On SEMI reduce production optint -> SLASH INT
--- On DOT reduce production optint -> SLASH INT
+-- On SEMI DOT
+--   reduce production optint -> SLASH INT
 
 State 97:
 ## Known stack suffix:
@@ -1258,7 +1158,8 @@ lib -> NOUNIF gfactformat optint . foptbindingseq DOT lib [ PROCESS ]
 -- On SEMI shift to state 98
 -- On foptbindingseq shift to state 105
 ## Reductions:
--- On DOT reduce production foptbindingseq ->
+-- On DOT
+--   reduce production foptbindingseq ->
 
 State 98:
 ## Known stack suffix:
@@ -1302,7 +1203,8 @@ fnebindingseq -> IDENT EQUAL gformat . [ DOT ]
 ## Transitions:
 -- On SEMI shift to state 102
 ## Reductions:
--- On DOT reduce production fnebindingseq -> IDENT EQUAL gformat
+-- On DOT
+--   reduce production fnebindingseq -> IDENT EQUAL gformat
 
 State 102:
 ## Known stack suffix:
@@ -1321,7 +1223,8 @@ State 103:
 fnebindingseq -> IDENT EQUAL gformat SEMI fnebindingseq . [ DOT ]
 ## Transitions:
 ## Reductions:
--- On DOT reduce production fnebindingseq -> IDENT EQUAL gformat SEMI fnebindingseq
+-- On DOT
+--   reduce production fnebindingseq -> IDENT EQUAL gformat SEMI fnebindingseq
 
 State 104:
 ## Known stack suffix:
@@ -1330,7 +1233,8 @@ State 104:
 foptbindingseq -> SEMI fnebindingseq . [ DOT ]
 ## Transitions:
 ## Reductions:
--- On DOT reduce production foptbindingseq -> SEMI fnebindingseq
+-- On DOT
+--   reduce production foptbindingseq -> SEMI fnebindingseq
 
 State 105:
 ## Known stack suffix:
@@ -1364,10 +1268,10 @@ lib -> NOUNIF gfactformat optint foptbindingseq DOT . lib [ PROCESS ]
 -- On privateopt shift to state 301
 -- On lib shift to state 366
 ## Reductions:
--- On REDUCTION reduce production privateopt ->
--- On PROCESS reduce production lib ->
--- On FUN reduce production privateopt ->
--- On FREE reduce production privateopt ->
+-- On PROCESS
+--   reduce production lib ->
+-- On REDUCTION FUN FREE
+--   reduce production privateopt ->
 
 State 107:
 ## Known stack suffix:
@@ -1396,8 +1300,8 @@ lib -> NOT gterm . optphase optbindingseq DOT lib [ PROCESS ]
 -- On DIFF shift to state 111
 -- On optphase shift to state 113
 ## Reductions:
--- On SEMI reduce production optphase ->
--- On DOT reduce production optphase ->
+-- On SEMI DOT
+--   reduce production optphase ->
 
 State 109:
 ## Known stack suffix:
@@ -1417,13 +1321,8 @@ State 110:
 gfact -> gterm EQUAL gterm . [ WEDGE SEMI RPAREN PHASE DOT BEFORE BAR ]
 ## Transitions:
 ## Reductions:
--- On WEDGE reduce production gfact -> gterm EQUAL gterm
--- On SEMI reduce production gfact -> gterm EQUAL gterm
--- On RPAREN reduce production gfact -> gterm EQUAL gterm
--- On PHASE reduce production gfact -> gterm EQUAL gterm
--- On DOT reduce production gfact -> gterm EQUAL gterm
--- On BEFORE reduce production gfact -> gterm EQUAL gterm
--- On BAR reduce production gfact -> gterm EQUAL gterm
+-- On WEDGE SEMI RPAREN PHASE DOT BEFORE BAR
+--   reduce production gfact -> gterm EQUAL gterm
 
 State 111:
 ## Known stack suffix:
@@ -1443,13 +1342,8 @@ State 112:
 gfact -> gterm DIFF gterm . [ WEDGE SEMI RPAREN PHASE DOT BEFORE BAR ]
 ## Transitions:
 ## Reductions:
--- On WEDGE reduce production gfact -> gterm DIFF gterm
--- On SEMI reduce production gfact -> gterm DIFF gterm
--- On RPAREN reduce production gfact -> gterm DIFF gterm
--- On PHASE reduce production gfact -> gterm DIFF gterm
--- On DOT reduce production gfact -> gterm DIFF gterm
--- On BEFORE reduce production gfact -> gterm DIFF gterm
--- On BAR reduce production gfact -> gterm DIFF gterm
+-- On WEDGE SEMI RPAREN PHASE DOT BEFORE BAR
+--   reduce production gfact -> gterm DIFF gterm
 
 State 113:
 ## Known stack suffix:
@@ -1460,7 +1354,8 @@ lib -> NOT gterm optphase . optbindingseq DOT lib [ PROCESS ]
 -- On SEMI shift to state 114
 -- On optbindingseq shift to state 121
 ## Reductions:
--- On DOT reduce production optbindingseq ->
+-- On DOT
+--   reduce production optbindingseq ->
 
 State 114:
 ## Known stack suffix:
@@ -1503,7 +1398,8 @@ nebindingseq -> IDENT EQUAL gterm . [ DOT ]
 ## Transitions:
 -- On SEMI shift to state 118
 ## Reductions:
--- On DOT reduce production nebindingseq -> IDENT EQUAL gterm
+-- On DOT
+--   reduce production nebindingseq -> IDENT EQUAL gterm
 
 State 118:
 ## Known stack suffix:
@@ -1522,7 +1418,8 @@ State 119:
 nebindingseq -> IDENT EQUAL gterm SEMI nebindingseq . [ DOT ]
 ## Transitions:
 ## Reductions:
--- On DOT reduce production nebindingseq -> IDENT EQUAL gterm SEMI nebindingseq
+-- On DOT
+--   reduce production nebindingseq -> IDENT EQUAL gterm SEMI nebindingseq
 
 State 120:
 ## Known stack suffix:
@@ -1531,7 +1428,8 @@ State 120:
 optbindingseq -> SEMI nebindingseq . [ DOT ]
 ## Transitions:
 ## Reductions:
--- On DOT reduce production optbindingseq -> SEMI nebindingseq
+-- On DOT
+--   reduce production optbindingseq -> SEMI nebindingseq
 
 State 121:
 ## Known stack suffix:
@@ -1565,10 +1463,10 @@ lib -> NOT gterm optphase optbindingseq DOT . lib [ PROCESS ]
 -- On privateopt shift to state 301
 -- On lib shift to state 359
 ## Reductions:
--- On REDUCTION reduce production privateopt ->
--- On PROCESS reduce production lib ->
--- On FUN reduce production privateopt ->
--- On FREE reduce production privateopt ->
+-- On PROCESS
+--   reduce production lib ->
+-- On REDUCTION FUN FREE
+--   reduce production privateopt ->
 
 State 123:
 ## Known stack suffix:
@@ -1590,8 +1488,8 @@ ni -> IDENT . [ DOT COMMA ]
 ## Transitions:
 -- On AMONG shift to state 125
 ## Reductions:
--- On DOT reduce production ni -> IDENT
--- On COMMA reduce production ni -> IDENT
+-- On DOT COMMA
+--   reduce production ni -> IDENT
 
 State 125:
 ## Known stack suffix:
@@ -1630,7 +1528,8 @@ term -> LPAREN . termseq RPAREN [ WHERE WEDGE THEN SEMI RPAREN RED RBRACKET OTHE
 -- On term shift to state 139
 -- On netermseq shift to state 142
 ## Reductions:
--- On RPAREN reduce production termseq ->
+-- On RPAREN
+--   reduce production termseq ->
 
 State 128:
 ## Known stack suffix:
@@ -1641,23 +1540,8 @@ term -> IDENT . [ WHERE WEDGE THEN SEMI RPAREN RED RBRACKET OTHERWISE IN EQUIVEQ
 ## Transitions:
 -- On LPAREN shift to state 129
 ## Reductions:
--- On WHERE reduce production term -> IDENT
--- On WEDGE reduce production term -> IDENT
--- On THEN reduce production term -> IDENT
--- On SEMI reduce production term -> IDENT
--- On RPAREN reduce production term -> IDENT
--- On RED reduce production term -> IDENT
--- On RBRACKET reduce production term -> IDENT
--- On OTHERWISE reduce production term -> IDENT
--- On IN reduce production term -> IDENT
--- On EQUIVEQ reduce production term -> IDENT
--- On EQUIV reduce production term -> IDENT
--- On EQUAL reduce production term -> IDENT
--- On EOF reduce production term -> IDENT
--- On ELSE reduce production term -> IDENT
--- On DOT reduce production term -> IDENT
--- On COMMA reduce production term -> IDENT
--- On BAR reduce production term -> IDENT
+-- On WHERE WEDGE THEN SEMI RPAREN RED RBRACKET OTHERWISE IN EQUIVEQ EQUIV EQUAL EOF ELSE DOT COMMA BAR
+--   reduce production term -> IDENT
 
 State 129:
 ## Known stack suffix:
@@ -1673,7 +1557,8 @@ term -> IDENT LPAREN . termseq RPAREN [ WHERE WEDGE THEN SEMI RPAREN RED RBRACKE
 -- On term shift to state 139
 -- On netermseq shift to state 142
 ## Reductions:
--- On RPAREN reduce production termseq ->
+-- On RPAREN
+--   reduce production termseq ->
 
 State 130:
 ## Known stack suffix:
@@ -1682,24 +1567,8 @@ State 130:
 term -> FAIL . [ WHERE WEDGE THEN SEMI RPAREN RED RBRACKET OTHERWISE IN EQUIVEQ EQUIV EQUAL EOF ELSE DOT DIFF COMMA BAR ]
 ## Transitions:
 ## Reductions:
--- On WHERE reduce production term -> FAIL
--- On WEDGE reduce production term -> FAIL
--- On THEN reduce production term -> FAIL
--- On SEMI reduce production term -> FAIL
--- On RPAREN reduce production term -> FAIL
--- On RED reduce production term -> FAIL
--- On RBRACKET reduce production term -> FAIL
--- On OTHERWISE reduce production term -> FAIL
--- On IN reduce production term -> FAIL
--- On EQUIVEQ reduce production term -> FAIL
--- On EQUIV reduce production term -> FAIL
--- On EQUAL reduce production term -> FAIL
--- On EOF reduce production term -> FAIL
--- On ELSE reduce production term -> FAIL
--- On DOT reduce production term -> FAIL
--- On DIFF reduce production term -> FAIL
--- On COMMA reduce production term -> FAIL
--- On BAR reduce production term -> FAIL
+-- On WHERE WEDGE THEN SEMI RPAREN RED RBRACKET OTHERWISE IN EQUIVEQ EQUIV EQUAL EOF ELSE DOT DIFF COMMA BAR
+--   reduce production term -> FAIL
 
 State 131:
 ## Known stack suffix:
@@ -1761,24 +1630,8 @@ State 136:
 term -> CHOICE LBRACKET term COMMA term RBRACKET . [ WHERE WEDGE THEN SEMI RPAREN RED RBRACKET OTHERWISE IN EQUIVEQ EQUIV EQUAL EOF ELSE DOT DIFF COMMA BAR ]
 ## Transitions:
 ## Reductions:
--- On WHERE reduce production term -> CHOICE LBRACKET term COMMA term RBRACKET
--- On WEDGE reduce production term -> CHOICE LBRACKET term COMMA term RBRACKET
--- On THEN reduce production term -> CHOICE LBRACKET term COMMA term RBRACKET
--- On SEMI reduce production term -> CHOICE LBRACKET term COMMA term RBRACKET
--- On RPAREN reduce production term -> CHOICE LBRACKET term COMMA term RBRACKET
--- On RED reduce production term -> CHOICE LBRACKET term COMMA term RBRACKET
--- On RBRACKET reduce production term -> CHOICE LBRACKET term COMMA term RBRACKET
--- On OTHERWISE reduce production term -> CHOICE LBRACKET term COMMA term RBRACKET
--- On IN reduce production term -> CHOICE LBRACKET term COMMA term RBRACKET
--- On EQUIVEQ reduce production term -> CHOICE LBRACKET term COMMA term RBRACKET
--- On EQUIV reduce production term -> CHOICE LBRACKET term COMMA term RBRACKET
--- On EQUAL reduce production term -> CHOICE LBRACKET term COMMA term RBRACKET
--- On EOF reduce production term -> CHOICE LBRACKET term COMMA term RBRACKET
--- On ELSE reduce production term -> CHOICE LBRACKET term COMMA term RBRACKET
--- On DOT reduce production term -> CHOICE LBRACKET term COMMA term RBRACKET
--- On DIFF reduce production term -> CHOICE LBRACKET term COMMA term RBRACKET
--- On COMMA reduce production term -> CHOICE LBRACKET term COMMA term RBRACKET
--- On BAR reduce production term -> CHOICE LBRACKET term COMMA term RBRACKET
+-- On WHERE WEDGE THEN SEMI RPAREN RED RBRACKET OTHERWISE IN EQUIVEQ EQUIV EQUAL EOF ELSE DOT DIFF COMMA BAR
+--   reduce production term -> CHOICE LBRACKET term COMMA term RBRACKET
 
 State 137:
 ## Known stack suffix:
@@ -1796,24 +1649,8 @@ State 138:
 term -> IDENT LPAREN termseq RPAREN . [ WHERE WEDGE THEN SEMI RPAREN RED RBRACKET OTHERWISE IN EQUIVEQ EQUIV EQUAL EOF ELSE DOT DIFF COMMA BAR ]
 ## Transitions:
 ## Reductions:
--- On WHERE reduce production term -> IDENT LPAREN termseq RPAREN
--- On WEDGE reduce production term -> IDENT LPAREN termseq RPAREN
--- On THEN reduce production term -> IDENT LPAREN termseq RPAREN
--- On SEMI reduce production term -> IDENT LPAREN termseq RPAREN
--- On RPAREN reduce production term -> IDENT LPAREN termseq RPAREN
--- On RED reduce production term -> IDENT LPAREN termseq RPAREN
--- On RBRACKET reduce production term -> IDENT LPAREN termseq RPAREN
--- On OTHERWISE reduce production term -> IDENT LPAREN termseq RPAREN
--- On IN reduce production term -> IDENT LPAREN termseq RPAREN
--- On EQUIVEQ reduce production term -> IDENT LPAREN termseq RPAREN
--- On EQUIV reduce production term -> IDENT LPAREN termseq RPAREN
--- On EQUAL reduce production term -> IDENT LPAREN termseq RPAREN
--- On EOF reduce production term -> IDENT LPAREN termseq RPAREN
--- On ELSE reduce production term -> IDENT LPAREN termseq RPAREN
--- On DOT reduce production term -> IDENT LPAREN termseq RPAREN
--- On DIFF reduce production term -> IDENT LPAREN termseq RPAREN
--- On COMMA reduce production term -> IDENT LPAREN termseq RPAREN
--- On BAR reduce production term -> IDENT LPAREN termseq RPAREN
+-- On WHERE WEDGE THEN SEMI RPAREN RED RBRACKET OTHERWISE IN EQUIVEQ EQUIV EQUAL EOF ELSE DOT DIFF COMMA BAR
+--   reduce production term -> IDENT LPAREN termseq RPAREN
 
 State 139:
 ## Known stack suffix:
@@ -1824,19 +1661,8 @@ netermseq -> term . [ WHERE WEDGE THEN SEMI RPAREN RED IN EQUIVEQ EQUIV EOF ELSE
 ## Transitions:
 -- On COMMA shift to state 140
 ## Reductions:
--- On WHERE reduce production netermseq -> term
--- On WEDGE reduce production netermseq -> term
--- On THEN reduce production netermseq -> term
--- On SEMI reduce production netermseq -> term
--- On RPAREN reduce production netermseq -> term
--- On RED reduce production netermseq -> term
--- On IN reduce production netermseq -> term
--- On EQUIVEQ reduce production netermseq -> term
--- On EQUIV reduce production netermseq -> term
--- On EOF reduce production netermseq -> term
--- On ELSE reduce production netermseq -> term
--- On DOT reduce production netermseq -> term
--- On BAR reduce production netermseq -> term
+-- On WHERE WEDGE THEN SEMI RPAREN RED IN EQUIVEQ EQUIV EOF ELSE DOT BAR
+--   reduce production netermseq -> term
 
 State 140:
 ## Known stack suffix:
@@ -1859,19 +1685,8 @@ State 141:
 netermseq -> term COMMA netermseq . [ WHERE WEDGE THEN SEMI RPAREN RED IN EQUIVEQ EQUIV EOF ELSE DOT BAR ]
 ## Transitions:
 ## Reductions:
--- On WHERE reduce production netermseq -> term COMMA netermseq
--- On WEDGE reduce production netermseq -> term COMMA netermseq
--- On THEN reduce production netermseq -> term COMMA netermseq
--- On SEMI reduce production netermseq -> term COMMA netermseq
--- On RPAREN reduce production netermseq -> term COMMA netermseq
--- On RED reduce production netermseq -> term COMMA netermseq
--- On IN reduce production netermseq -> term COMMA netermseq
--- On EQUIVEQ reduce production netermseq -> term COMMA netermseq
--- On EQUIV reduce production netermseq -> term COMMA netermseq
--- On EOF reduce production netermseq -> term COMMA netermseq
--- On ELSE reduce production netermseq -> term COMMA netermseq
--- On DOT reduce production netermseq -> term COMMA netermseq
--- On BAR reduce production netermseq -> term COMMA netermseq
+-- On WHERE WEDGE THEN SEMI RPAREN RED IN EQUIVEQ EQUIV EOF ELSE DOT BAR
+--   reduce production netermseq -> term COMMA netermseq
 
 State 142:
 ## Known stack suffix:
@@ -1880,16 +1695,8 @@ State 142:
 termseq -> netermseq . [ WHERE WEDGE THEN SEMI RPAREN RED IN EQUIVEQ EQUIV DOT ]
 ## Transitions:
 ## Reductions:
--- On WHERE reduce production termseq -> netermseq
--- On WEDGE reduce production termseq -> netermseq
--- On THEN reduce production termseq -> netermseq
--- On SEMI reduce production termseq -> netermseq
--- On RPAREN reduce production termseq -> netermseq
--- On RED reduce production termseq -> netermseq
--- On IN reduce production termseq -> netermseq
--- On EQUIVEQ reduce production termseq -> netermseq
--- On EQUIV reduce production termseq -> netermseq
--- On DOT reduce production termseq -> netermseq
+-- On WHERE WEDGE THEN SEMI RPAREN RED IN EQUIVEQ EQUIV DOT
+--   reduce production termseq -> netermseq
 
 State 143:
 ## Known stack suffix:
@@ -1907,24 +1714,8 @@ State 144:
 term -> LPAREN termseq RPAREN . [ WHERE WEDGE THEN SEMI RPAREN RED RBRACKET OTHERWISE IN EQUIVEQ EQUIV EQUAL EOF ELSE DOT DIFF COMMA BAR ]
 ## Transitions:
 ## Reductions:
--- On WHERE reduce production term -> LPAREN termseq RPAREN
--- On WEDGE reduce production term -> LPAREN termseq RPAREN
--- On THEN reduce production term -> LPAREN termseq RPAREN
--- On SEMI reduce production term -> LPAREN termseq RPAREN
--- On RPAREN reduce production term -> LPAREN termseq RPAREN
--- On RED reduce production term -> LPAREN termseq RPAREN
--- On RBRACKET reduce production term -> LPAREN termseq RPAREN
--- On OTHERWISE reduce production term -> LPAREN termseq RPAREN
--- On IN reduce production term -> LPAREN termseq RPAREN
--- On EQUIVEQ reduce production term -> LPAREN termseq RPAREN
--- On EQUIV reduce production term -> LPAREN termseq RPAREN
--- On EQUAL reduce production term -> LPAREN termseq RPAREN
--- On EOF reduce production term -> LPAREN termseq RPAREN
--- On ELSE reduce production term -> LPAREN termseq RPAREN
--- On DOT reduce production term -> LPAREN termseq RPAREN
--- On DIFF reduce production term -> LPAREN termseq RPAREN
--- On COMMA reduce production term -> LPAREN termseq RPAREN
--- On BAR reduce production term -> LPAREN termseq RPAREN
+-- On WHERE WEDGE THEN SEMI RPAREN RED RBRACKET OTHERWISE IN EQUIVEQ EQUIV EQUAL EOF ELSE DOT DIFF COMMA BAR
+--   reduce production term -> LPAREN termseq RPAREN
 
 State 145:
 ## Known stack suffix:
@@ -1942,8 +1733,8 @@ State 146:
 ni -> IDENT AMONG LPAREN netermseq RPAREN . [ DOT COMMA ]
 ## Transitions:
 ## Reductions:
--- On DOT reduce production ni -> IDENT AMONG LPAREN netermseq RPAREN
--- On COMMA reduce production ni -> IDENT AMONG LPAREN netermseq RPAREN
+-- On DOT COMMA
+--   reduce production ni -> IDENT AMONG LPAREN netermseq RPAREN
 
 State 147:
 ## Known stack suffix:
@@ -1977,10 +1768,10 @@ lib -> NONINTERF niseq DOT . lib [ PROCESS ]
 -- On privateopt shift to state 301
 -- On lib shift to state 355
 ## Reductions:
--- On REDUCTION reduce production privateopt ->
--- On PROCESS reduce production lib ->
--- On FUN reduce production privateopt ->
--- On FREE reduce production privateopt ->
+-- On PROCESS
+--   reduce production lib ->
+-- On REDUCTION FUN FREE
+--   reduce production privateopt ->
 
 State 149:
 ## Known stack suffix:
@@ -2062,11 +1853,8 @@ process -> UNLOCK LPAREN neidentseq RPAREN . optprocess [ RPAREN EOF ELSE DOT BA
 -- On SEMI shift to state 156
 -- On optprocess shift to state 256
 ## Reductions:
--- On RPAREN reduce production optprocess ->
--- On EOF reduce production optprocess ->
--- On ELSE reduce production optprocess ->
--- On DOT reduce production optprocess ->
--- On BAR reduce production optprocess ->
+-- On RPAREN EOF ELSE DOT BAR
+--   reduce production optprocess ->
 
 State 156:
 ## Known stack suffix:
@@ -2172,13 +1960,8 @@ pattern -> IDENT . LPAREN patternseq RPAREN [ SEMI RPAREN EOF ELSE DOT COMMA BAR
 ## Transitions:
 -- On LPAREN shift to state 163
 ## Reductions:
--- On SEMI reduce production pattern -> IDENT
--- On RPAREN reduce production pattern -> IDENT
--- On EOF reduce production pattern -> IDENT
--- On ELSE reduce production pattern -> IDENT
--- On DOT reduce production pattern -> IDENT
--- On COMMA reduce production pattern -> IDENT
--- On BAR reduce production pattern -> IDENT
+-- On SEMI RPAREN EOF ELSE DOT COMMA BAR
+--   reduce production pattern -> IDENT
 
 State 163:
 ## Known stack suffix:
@@ -2213,14 +1996,8 @@ State 165:
 pattern -> EQUAL term . [ SEMI RPAREN EQUAL EOF ELSE DOT COMMA BAR ]
 ## Transitions:
 ## Reductions:
--- On SEMI reduce production pattern -> EQUAL term
--- On RPAREN reduce production pattern -> EQUAL term
--- On EQUAL reduce production pattern -> EQUAL term
--- On EOF reduce production pattern -> EQUAL term
--- On ELSE reduce production pattern -> EQUAL term
--- On DOT reduce production pattern -> EQUAL term
--- On COMMA reduce production pattern -> EQUAL term
--- On BAR reduce production pattern -> EQUAL term
+-- On SEMI RPAREN EQUAL EOF ELSE DOT COMMA BAR
+--   reduce production pattern -> EQUAL term
 
 State 166:
 ## Known stack suffix:
@@ -2238,14 +2015,8 @@ State 167:
 pattern -> IDENT LPAREN patternseq RPAREN . [ SEMI RPAREN EQUAL EOF ELSE DOT COMMA BAR ]
 ## Transitions:
 ## Reductions:
--- On SEMI reduce production pattern -> IDENT LPAREN patternseq RPAREN
--- On RPAREN reduce production pattern -> IDENT LPAREN patternseq RPAREN
--- On EQUAL reduce production pattern -> IDENT LPAREN patternseq RPAREN
--- On EOF reduce production pattern -> IDENT LPAREN patternseq RPAREN
--- On ELSE reduce production pattern -> IDENT LPAREN patternseq RPAREN
--- On DOT reduce production pattern -> IDENT LPAREN patternseq RPAREN
--- On COMMA reduce production pattern -> IDENT LPAREN patternseq RPAREN
--- On BAR reduce production pattern -> IDENT LPAREN patternseq RPAREN
+-- On SEMI RPAREN EQUAL EOF ELSE DOT COMMA BAR
+--   reduce production pattern -> IDENT LPAREN patternseq RPAREN
 
 State 168:
 ## Known stack suffix:
@@ -2256,12 +2027,8 @@ patternseq -> pattern . [ SEMI RPAREN EOF ELSE DOT BAR ]
 ## Transitions:
 -- On COMMA shift to state 169
 ## Reductions:
--- On SEMI reduce production patternseq -> pattern
--- On RPAREN reduce production patternseq -> pattern
--- On EOF reduce production patternseq -> pattern
--- On ELSE reduce production patternseq -> pattern
--- On DOT reduce production patternseq -> pattern
--- On BAR reduce production patternseq -> pattern
+-- On SEMI RPAREN EOF ELSE DOT BAR
+--   reduce production patternseq -> pattern
 
 State 169:
 ## Known stack suffix:
@@ -2283,12 +2050,8 @@ State 170:
 patternseq -> pattern COMMA patternseq . [ SEMI RPAREN EOF ELSE DOT BAR ]
 ## Transitions:
 ## Reductions:
--- On SEMI reduce production patternseq -> pattern COMMA patternseq
--- On RPAREN reduce production patternseq -> pattern COMMA patternseq
--- On EOF reduce production patternseq -> pattern COMMA patternseq
--- On ELSE reduce production patternseq -> pattern COMMA patternseq
--- On DOT reduce production patternseq -> pattern COMMA patternseq
--- On BAR reduce production patternseq -> pattern COMMA patternseq
+-- On SEMI RPAREN EOF ELSE DOT BAR
+--   reduce production patternseq -> pattern COMMA patternseq
 
 State 171:
 ## Known stack suffix:
@@ -2306,14 +2069,8 @@ State 172:
 pattern -> LPAREN patternseq RPAREN . [ SEMI RPAREN EQUAL EOF ELSE DOT COMMA BAR ]
 ## Transitions:
 ## Reductions:
--- On SEMI reduce production pattern -> LPAREN patternseq RPAREN
--- On RPAREN reduce production pattern -> LPAREN patternseq RPAREN
--- On EQUAL reduce production pattern -> LPAREN patternseq RPAREN
--- On EOF reduce production pattern -> LPAREN patternseq RPAREN
--- On ELSE reduce production pattern -> LPAREN patternseq RPAREN
--- On DOT reduce production pattern -> LPAREN patternseq RPAREN
--- On COMMA reduce production pattern -> LPAREN patternseq RPAREN
--- On BAR reduce production pattern -> LPAREN patternseq RPAREN
+-- On SEMI RPAREN EQUAL EOF ELSE DOT COMMA BAR
+--   reduce production pattern -> LPAREN patternseq RPAREN
 
 State 173:
 ## Known stack suffix:
@@ -2324,11 +2081,8 @@ process -> READ neidentseq AS patternseq . optprocess [ RPAREN EOF ELSE DOT BAR 
 -- On SEMI shift to state 156
 -- On optprocess shift to state 174
 ## Reductions:
--- On RPAREN reduce production optprocess ->
--- On EOF reduce production optprocess ->
--- On ELSE reduce production optprocess ->
--- On DOT reduce production optprocess ->
--- On BAR reduce production optprocess ->
+-- On RPAREN EOF ELSE DOT BAR
+--   reduce production optprocess ->
 
 State 174:
 ## Known stack suffix:
@@ -2337,11 +2091,8 @@ State 174:
 process -> READ neidentseq AS patternseq optprocess . [ RPAREN EOF ELSE DOT BAR ]
 ## Transitions:
 ## Reductions:
--- On RPAREN reduce production process -> READ neidentseq AS patternseq optprocess
--- On EOF reduce production process -> READ neidentseq AS patternseq optprocess
--- On ELSE reduce production process -> READ neidentseq AS patternseq optprocess
--- On DOT reduce production process -> READ neidentseq AS patternseq optprocess
--- On BAR reduce production process -> READ neidentseq AS patternseq optprocess
+-- On RPAREN EOF ELSE DOT BAR
+--   reduce production process -> READ neidentseq AS patternseq optprocess
 
 State 175:
 ## Known stack suffix:
@@ -2361,11 +2112,8 @@ process -> PHASE INT . optprocess [ RPAREN EOF ELSE DOT BAR ]
 -- On SEMI shift to state 156
 -- On optprocess shift to state 177
 ## Reductions:
--- On RPAREN reduce production optprocess ->
--- On EOF reduce production optprocess ->
--- On ELSE reduce production optprocess ->
--- On DOT reduce production optprocess ->
--- On BAR reduce production optprocess ->
+-- On RPAREN EOF ELSE DOT BAR
+--   reduce production optprocess ->
 
 State 177:
 ## Known stack suffix:
@@ -2374,11 +2122,8 @@ State 177:
 process -> PHASE INT optprocess . [ RPAREN EOF ELSE DOT BAR ]
 ## Transitions:
 ## Reductions:
--- On RPAREN reduce production process -> PHASE INT optprocess
--- On EOF reduce production process -> PHASE INT optprocess
--- On ELSE reduce production process -> PHASE INT optprocess
--- On DOT reduce production process -> PHASE INT optprocess
--- On BAR reduce production process -> PHASE INT optprocess
+-- On RPAREN EOF ELSE DOT BAR
+--   reduce production process -> PHASE INT optprocess
 
 State 178:
 ## Known stack suffix:
@@ -2442,11 +2187,8 @@ process -> OUT LPAREN term COMMA term RPAREN . optprocess [ RPAREN EOF ELSE DOT 
 -- On SEMI shift to state 156
 -- On optprocess shift to state 184
 ## Reductions:
--- On RPAREN reduce production optprocess ->
--- On EOF reduce production optprocess ->
--- On ELSE reduce production optprocess ->
--- On DOT reduce production optprocess ->
--- On BAR reduce production optprocess ->
+-- On RPAREN EOF ELSE DOT BAR
+--   reduce production optprocess ->
 
 State 184:
 ## Known stack suffix:
@@ -2455,11 +2197,8 @@ State 184:
 process -> OUT LPAREN term COMMA term RPAREN optprocess . [ RPAREN EOF ELSE DOT BAR ]
 ## Transitions:
 ## Reductions:
--- On RPAREN reduce production process -> OUT LPAREN term COMMA term RPAREN optprocess
--- On EOF reduce production process -> OUT LPAREN term COMMA term RPAREN optprocess
--- On ELSE reduce production process -> OUT LPAREN term COMMA term RPAREN optprocess
--- On DOT reduce production process -> OUT LPAREN term COMMA term RPAREN optprocess
--- On BAR reduce production process -> OUT LPAREN term COMMA term RPAREN optprocess
+-- On RPAREN EOF ELSE DOT BAR
+--   reduce production process -> OUT LPAREN term COMMA term RPAREN optprocess
 
 State 185:
 ## Known stack suffix:
@@ -2479,11 +2218,8 @@ process -> NEW IDENT . optprocess [ RPAREN EOF ELSE DOT BAR ]
 -- On SEMI shift to state 156
 -- On optprocess shift to state 187
 ## Reductions:
--- On RPAREN reduce production optprocess ->
--- On EOF reduce production optprocess ->
--- On ELSE reduce production optprocess ->
--- On DOT reduce production optprocess ->
--- On BAR reduce production optprocess ->
+-- On RPAREN EOF ELSE DOT BAR
+--   reduce production optprocess ->
 
 State 187:
 ## Known stack suffix:
@@ -2492,11 +2228,8 @@ State 187:
 process -> NEW IDENT optprocess . [ RPAREN EOF ELSE DOT BAR ]
 ## Transitions:
 ## Reductions:
--- On RPAREN reduce production process -> NEW IDENT optprocess
--- On EOF reduce production process -> NEW IDENT optprocess
--- On ELSE reduce production process -> NEW IDENT optprocess
--- On DOT reduce production process -> NEW IDENT optprocess
--- On BAR reduce production process -> NEW IDENT optprocess
+-- On RPAREN EOF ELSE DOT BAR
+--   reduce production process -> NEW IDENT optprocess
 
 State 188:
 ## Known stack suffix:
@@ -2560,11 +2293,8 @@ process -> LOCK LPAREN neidentseq RPAREN . optprocess [ RPAREN EOF ELSE DOT BAR 
 -- On SEMI shift to state 156
 -- On optprocess shift to state 193
 ## Reductions:
--- On RPAREN reduce production optprocess ->
--- On EOF reduce production optprocess ->
--- On ELSE reduce production optprocess ->
--- On DOT reduce production optprocess ->
--- On BAR reduce production optprocess ->
+-- On RPAREN EOF ELSE DOT BAR
+--   reduce production optprocess ->
 
 State 193:
 ## Known stack suffix:
@@ -2573,11 +2303,8 @@ State 193:
 process -> LOCK LPAREN neidentseq RPAREN optprocess . [ RPAREN EOF ELSE DOT BAR ]
 ## Transitions:
 ## Reductions:
--- On RPAREN reduce production process -> LOCK LPAREN neidentseq RPAREN optprocess
--- On EOF reduce production process -> LOCK LPAREN neidentseq RPAREN optprocess
--- On ELSE reduce production process -> LOCK LPAREN neidentseq RPAREN optprocess
--- On DOT reduce production process -> LOCK LPAREN neidentseq RPAREN optprocess
--- On BAR reduce production process -> LOCK LPAREN neidentseq RPAREN optprocess
+-- On RPAREN EOF ELSE DOT BAR
+--   reduce production process -> LOCK LPAREN neidentseq RPAREN optprocess
 
 State 194:
 ## Known stack suffix:
@@ -2607,8 +2334,10 @@ pattern -> IDENT . LPAREN patternseq RPAREN [ EQUAL ]
 -- On LPAREN shift to state 163
 -- On COMMA shift to state 9
 ## Reductions:
--- On SUCHTHAT reduce production neidentseq -> IDENT
--- On EQUAL reduce production pattern -> IDENT
+-- On SUCHTHAT
+--   reduce production neidentseq -> IDENT
+-- On EQUAL
+--   reduce production pattern -> IDENT
 
 State 196:
 ## Known stack suffix:
@@ -2677,11 +2406,8 @@ State 200:
 process -> INT . [ RPAREN EOF ELSE DOT BAR ]
 ## Transitions:
 ## Reductions:
--- On RPAREN reduce production process -> INT
--- On EOF reduce production process -> INT
--- On ELSE reduce production process -> INT
--- On DOT reduce production process -> INT
--- On BAR reduce production process -> INT
+-- On RPAREN EOF ELSE DOT BAR
+--   reduce production process -> INT
 
 State 201:
 ## Known stack suffix:
@@ -2744,11 +2470,8 @@ process -> IN LPAREN term COMMA pattern RPAREN . optprocess [ RPAREN EOF ELSE DO
 -- On SEMI shift to state 156
 -- On optprocess shift to state 207
 ## Reductions:
--- On RPAREN reduce production optprocess ->
--- On EOF reduce production optprocess ->
--- On ELSE reduce production optprocess ->
--- On DOT reduce production optprocess ->
--- On BAR reduce production optprocess ->
+-- On RPAREN EOF ELSE DOT BAR
+--   reduce production optprocess ->
 
 State 207:
 ## Known stack suffix:
@@ -2757,11 +2480,8 @@ State 207:
 process -> IN LPAREN term COMMA pattern RPAREN optprocess . [ RPAREN EOF ELSE DOT BAR ]
 ## Transitions:
 ## Reductions:
--- On RPAREN reduce production process -> IN LPAREN term COMMA pattern RPAREN optprocess
--- On EOF reduce production process -> IN LPAREN term COMMA pattern RPAREN optprocess
--- On ELSE reduce production process -> IN LPAREN term COMMA pattern RPAREN optprocess
--- On DOT reduce production process -> IN LPAREN term COMMA pattern RPAREN optprocess
--- On BAR reduce production process -> IN LPAREN term COMMA pattern RPAREN optprocess
+-- On RPAREN EOF ELSE DOT BAR
+--   reduce production process -> IN LPAREN term COMMA pattern RPAREN optprocess
 
 State 208:
 ## Known stack suffix:
@@ -2789,8 +2509,8 @@ term -> IDENT . [ EQUAL DIFF ]
 -- On LPAREN shift to state 129
 -- On COLON shift to state 210
 ## Reductions:
--- On EQUAL reduce production term -> IDENT
--- On DIFF reduce production term -> IDENT
+-- On EQUAL DIFF
+--   reduce production term -> IDENT
 
 State 210:
 ## Known stack suffix:
@@ -2806,15 +2526,8 @@ fact -> IDENT COLON . termseq [ WHERE WEDGE THEN SEMI RED IN EQUIVEQ EQUIV DOT ]
 -- On term shift to state 139
 -- On netermseq shift to state 142
 ## Reductions:
--- On WHERE reduce production termseq ->
--- On WEDGE reduce production termseq ->
--- On THEN reduce production termseq ->
--- On SEMI reduce production termseq ->
--- On RED reduce production termseq ->
--- On IN reduce production termseq ->
--- On EQUIVEQ reduce production termseq ->
--- On EQUIV reduce production termseq ->
--- On DOT reduce production termseq ->
+-- On WHERE WEDGE THEN SEMI RED IN EQUIVEQ EQUIV DOT
+--   reduce production termseq ->
 
 State 211:
 ## Known stack suffix:
@@ -2823,15 +2536,8 @@ State 211:
 fact -> IDENT COLON termseq . [ WHERE WEDGE THEN SEMI RED IN EQUIVEQ EQUIV DOT ]
 ## Transitions:
 ## Reductions:
--- On WHERE reduce production fact -> IDENT COLON termseq
--- On WEDGE reduce production fact -> IDENT COLON termseq
--- On THEN reduce production fact -> IDENT COLON termseq
--- On SEMI reduce production fact -> IDENT COLON termseq
--- On RED reduce production fact -> IDENT COLON termseq
--- On IN reduce production fact -> IDENT COLON termseq
--- On EQUIVEQ reduce production fact -> IDENT COLON termseq
--- On EQUIV reduce production fact -> IDENT COLON termseq
--- On DOT reduce production fact -> IDENT COLON termseq
+-- On WHERE WEDGE THEN SEMI RED IN EQUIVEQ EQUIV DOT
+--   reduce production fact -> IDENT COLON termseq
 
 State 212:
 ## Known stack suffix:
@@ -2864,15 +2570,8 @@ State 214:
 fact -> term EQUAL term . [ WHERE WEDGE THEN SEMI RED IN EQUIVEQ EQUIV DOT ]
 ## Transitions:
 ## Reductions:
--- On WHERE reduce production fact -> term EQUAL term
--- On WEDGE reduce production fact -> term EQUAL term
--- On THEN reduce production fact -> term EQUAL term
--- On SEMI reduce production fact -> term EQUAL term
--- On RED reduce production fact -> term EQUAL term
--- On IN reduce production fact -> term EQUAL term
--- On EQUIVEQ reduce production fact -> term EQUAL term
--- On EQUIV reduce production fact -> term EQUAL term
--- On DOT reduce production fact -> term EQUAL term
+-- On WHERE WEDGE THEN SEMI RED IN EQUIVEQ EQUIV DOT
+--   reduce production fact -> term EQUAL term
 
 State 215:
 ## Known stack suffix:
@@ -2894,15 +2593,8 @@ State 216:
 fact -> term DIFF term . [ WHERE WEDGE THEN SEMI RED IN EQUIVEQ EQUIV DOT ]
 ## Transitions:
 ## Reductions:
--- On WHERE reduce production fact -> term DIFF term
--- On WEDGE reduce production fact -> term DIFF term
--- On THEN reduce production fact -> term DIFF term
--- On SEMI reduce production fact -> term DIFF term
--- On RED reduce production fact -> term DIFF term
--- On IN reduce production fact -> term DIFF term
--- On EQUIVEQ reduce production fact -> term DIFF term
--- On EQUIV reduce production fact -> term DIFF term
--- On DOT reduce production fact -> term DIFF term
+-- On WHERE WEDGE THEN SEMI RED IN EQUIVEQ EQUIV DOT
+--   reduce production fact -> term DIFF term
 
 State 217:
 ## Known stack suffix:
@@ -2950,12 +2642,10 @@ process -> IDENT . [ RPAREN EOF ELSE DOT BAR ]
 ## Transitions:
 -- On COMMA shift to state 9
 ## Reductions:
--- On RPAREN reduce production process -> IDENT
--- On EOF reduce production process -> IDENT
--- On ELSE reduce production process -> IDENT
--- On DOT reduce production process -> IDENT
--- On BAR reduce production process -> IDENT
--- On ASSIGN reduce production neidentseq -> IDENT
+-- On ASSIGN
+--   reduce production neidentseq -> IDENT
+-- On RPAREN EOF ELSE DOT BAR
+--   reduce production process -> IDENT
 
 State 220:
 ## Known stack suffix:
@@ -2989,7 +2679,8 @@ process -> EVENT IDENT LPAREN . termseq RPAREN optprocess [ RPAREN EOF ELSE DOT 
 -- On term shift to state 139
 -- On netermseq shift to state 142
 ## Reductions:
--- On RPAREN reduce production termseq ->
+-- On RPAREN
+--   reduce production termseq ->
 
 State 223:
 ## Known stack suffix:
@@ -3009,11 +2700,8 @@ process -> EVENT IDENT LPAREN termseq RPAREN . optprocess [ RPAREN EOF ELSE DOT 
 -- On SEMI shift to state 156
 -- On optprocess shift to state 225
 ## Reductions:
--- On RPAREN reduce production optprocess ->
--- On EOF reduce production optprocess ->
--- On ELSE reduce production optprocess ->
--- On DOT reduce production optprocess ->
--- On BAR reduce production optprocess ->
+-- On RPAREN EOF ELSE DOT BAR
+--   reduce production optprocess ->
 
 State 225:
 ## Known stack suffix:
@@ -3022,11 +2710,8 @@ State 225:
 process -> EVENT IDENT LPAREN termseq RPAREN optprocess . [ RPAREN EOF ELSE DOT BAR ]
 ## Transitions:
 ## Reductions:
--- On RPAREN reduce production process -> EVENT IDENT LPAREN termseq RPAREN optprocess
--- On EOF reduce production process -> EVENT IDENT LPAREN termseq RPAREN optprocess
--- On ELSE reduce production process -> EVENT IDENT LPAREN termseq RPAREN optprocess
--- On DOT reduce production process -> EVENT IDENT LPAREN termseq RPAREN optprocess
--- On BAR reduce production process -> EVENT IDENT LPAREN termseq RPAREN optprocess
+-- On RPAREN EOF ELSE DOT BAR
+--   reduce production process -> EVENT IDENT LPAREN termseq RPAREN optprocess
 
 State 226:
 ## Known stack suffix:
@@ -3049,11 +2734,8 @@ process -> BARRIER INT . LBRACKET IDENT RBRACKET optprocess [ RPAREN EOF ELSE DO
 -- On LBRACKET shift to state 228
 -- On optprocess shift to state 232
 ## Reductions:
--- On RPAREN reduce production optprocess ->
--- On EOF reduce production optprocess ->
--- On ELSE reduce production optprocess ->
--- On DOT reduce production optprocess ->
--- On BAR reduce production optprocess ->
+-- On RPAREN EOF ELSE DOT BAR
+--   reduce production optprocess ->
 
 State 228:
 ## Known stack suffix:
@@ -3082,11 +2764,8 @@ process -> BARRIER INT LBRACKET IDENT RBRACKET . optprocess [ RPAREN EOF ELSE DO
 -- On SEMI shift to state 156
 -- On optprocess shift to state 231
 ## Reductions:
--- On RPAREN reduce production optprocess ->
--- On EOF reduce production optprocess ->
--- On ELSE reduce production optprocess ->
--- On DOT reduce production optprocess ->
--- On BAR reduce production optprocess ->
+-- On RPAREN EOF ELSE DOT BAR
+--   reduce production optprocess ->
 
 State 231:
 ## Known stack suffix:
@@ -3095,11 +2774,8 @@ State 231:
 process -> BARRIER INT LBRACKET IDENT RBRACKET optprocess . [ RPAREN EOF ELSE DOT BAR ]
 ## Transitions:
 ## Reductions:
--- On RPAREN reduce production process -> BARRIER INT LBRACKET IDENT RBRACKET optprocess
--- On EOF reduce production process -> BARRIER INT LBRACKET IDENT RBRACKET optprocess
--- On ELSE reduce production process -> BARRIER INT LBRACKET IDENT RBRACKET optprocess
--- On DOT reduce production process -> BARRIER INT LBRACKET IDENT RBRACKET optprocess
--- On BAR reduce production process -> BARRIER INT LBRACKET IDENT RBRACKET optprocess
+-- On RPAREN EOF ELSE DOT BAR
+--   reduce production process -> BARRIER INT LBRACKET IDENT RBRACKET optprocess
 
 State 232:
 ## Known stack suffix:
@@ -3108,11 +2784,8 @@ State 232:
 process -> BARRIER INT optprocess . [ RPAREN EOF ELSE DOT BAR ]
 ## Transitions:
 ## Reductions:
--- On RPAREN reduce production process -> BARRIER INT optprocess
--- On EOF reduce production process -> BARRIER INT optprocess
--- On ELSE reduce production process -> BARRIER INT optprocess
--- On DOT reduce production process -> BARRIER INT optprocess
--- On BAR reduce production process -> BARRIER INT optprocess
+-- On RPAREN EOF ELSE DOT BAR
+--   reduce production process -> BARRIER INT optprocess
 
 State 233:
 ## Known stack suffix:
@@ -3125,11 +2798,8 @@ process -> process . BAR process [ RPAREN EOF ELSE DOT BAR ]
 -- On ELSE shift to state 234
 -- On BAR shift to state 236
 ## Reductions:
--- On RPAREN reduce production process -> IF fact THEN process
--- On EOF reduce production process -> IF fact THEN process
--- On ELSE reduce production process -> IF fact THEN process
--- On DOT reduce production process -> IF fact THEN process
--- On BAR reduce production process -> IF fact THEN process
+-- On RPAREN EOF ELSE DOT BAR
+--   reduce production process -> IF fact THEN process
 ** Conflict on ELSE BAR
 
 State 234:
@@ -3166,11 +2836,8 @@ process -> process . BAR process [ RPAREN EOF ELSE DOT BAR ]
 ## Transitions:
 -- On BAR shift to state 236
 ## Reductions:
--- On RPAREN reduce production process -> IF fact THEN process ELSE process
--- On EOF reduce production process -> IF fact THEN process ELSE process
--- On ELSE reduce production process -> IF fact THEN process ELSE process
--- On DOT reduce production process -> IF fact THEN process ELSE process
--- On BAR reduce production process -> IF fact THEN process ELSE process
+-- On RPAREN EOF ELSE DOT BAR
+--   reduce production process -> IF fact THEN process ELSE process
 ** Conflict on BAR
 
 State 236:
@@ -3207,10 +2874,8 @@ process -> process BAR process . [ RPAREN EOF ELSE DOT BAR ]
 ## Transitions:
 -- On BAR shift to state 236
 ## Reductions:
--- On RPAREN reduce production process -> process BAR process
--- On EOF reduce production process -> process BAR process
--- On ELSE reduce production process -> process BAR process
--- On DOT reduce production process -> process BAR process
+-- On RPAREN EOF ELSE DOT
+--   reduce production process -> process BAR process
 
 State 238:
 ## Known stack suffix:
@@ -3244,11 +2909,8 @@ process -> neidentseq ASSIGN netermseq . optprocess [ RPAREN EOF ELSE DOT BAR ]
 -- On SEMI shift to state 156
 -- On optprocess shift to state 241
 ## Reductions:
--- On RPAREN reduce production optprocess ->
--- On EOF reduce production optprocess ->
--- On ELSE reduce production optprocess ->
--- On DOT reduce production optprocess ->
--- On BAR reduce production optprocess ->
+-- On RPAREN EOF ELSE DOT BAR
+--   reduce production optprocess ->
 
 State 241:
 ## Known stack suffix:
@@ -3257,11 +2919,8 @@ State 241:
 process -> neidentseq ASSIGN netermseq optprocess . [ RPAREN EOF ELSE DOT BAR ]
 ## Transitions:
 ## Reductions:
--- On RPAREN reduce production process -> neidentseq ASSIGN netermseq optprocess
--- On EOF reduce production process -> neidentseq ASSIGN netermseq optprocess
--- On ELSE reduce production process -> neidentseq ASSIGN netermseq optprocess
--- On DOT reduce production process -> neidentseq ASSIGN netermseq optprocess
--- On BAR reduce production process -> neidentseq ASSIGN netermseq optprocess
+-- On RPAREN EOF ELSE DOT BAR
+--   reduce production process -> neidentseq ASSIGN netermseq optprocess
 
 State 242:
 ## Known stack suffix:
@@ -3274,11 +2933,8 @@ process -> process . BAR process [ RPAREN EOF ELSE DOT BAR ]
 -- On ELSE shift to state 243
 -- On BAR shift to state 236
 ## Reductions:
--- On RPAREN reduce production process -> LET pattern EQUAL term IN process
--- On EOF reduce production process -> LET pattern EQUAL term IN process
--- On ELSE reduce production process -> LET pattern EQUAL term IN process
--- On DOT reduce production process -> LET pattern EQUAL term IN process
--- On BAR reduce production process -> LET pattern EQUAL term IN process
+-- On RPAREN EOF ELSE DOT BAR
+--   reduce production process -> LET pattern EQUAL term IN process
 ** Conflict on ELSE BAR
 
 State 243:
@@ -3315,11 +2971,8 @@ process -> process . BAR process [ RPAREN EOF ELSE DOT BAR ]
 ## Transitions:
 -- On BAR shift to state 236
 ## Reductions:
--- On RPAREN reduce production process -> LET pattern EQUAL term IN process ELSE process
--- On EOF reduce production process -> LET pattern EQUAL term IN process ELSE process
--- On ELSE reduce production process -> LET pattern EQUAL term IN process ELSE process
--- On DOT reduce production process -> LET pattern EQUAL term IN process ELSE process
--- On BAR reduce production process -> LET pattern EQUAL term IN process ELSE process
+-- On RPAREN EOF ELSE DOT BAR
+--   reduce production process -> LET pattern EQUAL term IN process ELSE process
 ** Conflict on BAR
 
 State 245:
@@ -3394,11 +3047,8 @@ process -> process . BAR process [ RPAREN EOF ELSE DOT BAR ]
 -- On ELSE shift to state 250
 -- On BAR shift to state 236
 ## Reductions:
--- On RPAREN reduce production process -> LET neidentseq SUCHTHAT fact IN process
--- On EOF reduce production process -> LET neidentseq SUCHTHAT fact IN process
--- On ELSE reduce production process -> LET neidentseq SUCHTHAT fact IN process
--- On DOT reduce production process -> LET neidentseq SUCHTHAT fact IN process
--- On BAR reduce production process -> LET neidentseq SUCHTHAT fact IN process
+-- On RPAREN EOF ELSE DOT BAR
+--   reduce production process -> LET neidentseq SUCHTHAT fact IN process
 ** Conflict on ELSE BAR
 
 State 250:
@@ -3435,11 +3085,8 @@ process -> process . BAR process [ RPAREN EOF ELSE DOT BAR ]
 ## Transitions:
 -- On BAR shift to state 236
 ## Reductions:
--- On RPAREN reduce production process -> LET neidentseq SUCHTHAT fact IN process ELSE process
--- On EOF reduce production process -> LET neidentseq SUCHTHAT fact IN process ELSE process
--- On ELSE reduce production process -> LET neidentseq SUCHTHAT fact IN process ELSE process
--- On DOT reduce production process -> LET neidentseq SUCHTHAT fact IN process ELSE process
--- On BAR reduce production process -> LET neidentseq SUCHTHAT fact IN process ELSE process
+-- On RPAREN EOF ELSE DOT BAR
+--   reduce production process -> LET neidentseq SUCHTHAT fact IN process ELSE process
 ** Conflict on BAR
 
 State 252:
@@ -3460,11 +3107,8 @@ State 253:
 process -> LPAREN process RPAREN . [ RPAREN EOF ELSE DOT BAR ]
 ## Transitions:
 ## Reductions:
--- On RPAREN reduce production process -> LPAREN process RPAREN
--- On EOF reduce production process -> LPAREN process RPAREN
--- On ELSE reduce production process -> LPAREN process RPAREN
--- On DOT reduce production process -> LPAREN process RPAREN
--- On BAR reduce production process -> LPAREN process RPAREN
+-- On RPAREN EOF ELSE DOT BAR
+--   reduce production process -> LPAREN process RPAREN
 
 State 254:
 ## Known stack suffix:
@@ -3474,11 +3118,8 @@ process -> REPL process . [ RPAREN EOF ELSE DOT BAR ]
 process -> process . BAR process [ RPAREN EOF ELSE DOT BAR ]
 ## Transitions:
 ## Reductions:
--- On RPAREN reduce production process -> REPL process
--- On EOF reduce production process -> REPL process
--- On ELSE reduce production process -> REPL process
--- On DOT reduce production process -> REPL process
--- On BAR reduce production process -> REPL process
+-- On RPAREN EOF ELSE DOT BAR
+--   reduce production process -> REPL process
 
 State 255:
 ## Known stack suffix:
@@ -3489,11 +3130,8 @@ process -> process . BAR process [ RPAREN EOF ELSE DOT BAR ]
 ## Transitions:
 -- On BAR shift to state 236
 ## Reductions:
--- On RPAREN reduce production optprocess -> SEMI process
--- On EOF reduce production optprocess -> SEMI process
--- On ELSE reduce production optprocess -> SEMI process
--- On DOT reduce production optprocess -> SEMI process
--- On BAR reduce production optprocess -> SEMI process
+-- On RPAREN EOF ELSE DOT BAR
+--   reduce production optprocess -> SEMI process
 ** Conflict on BAR
 
 State 256:
@@ -3503,11 +3141,8 @@ State 256:
 process -> UNLOCK LPAREN neidentseq RPAREN optprocess . [ RPAREN EOF ELSE DOT BAR ]
 ## Transitions:
 ## Reductions:
--- On RPAREN reduce production process -> UNLOCK LPAREN neidentseq RPAREN optprocess
--- On EOF reduce production process -> UNLOCK LPAREN neidentseq RPAREN optprocess
--- On ELSE reduce production process -> UNLOCK LPAREN neidentseq RPAREN optprocess
--- On DOT reduce production process -> UNLOCK LPAREN neidentseq RPAREN optprocess
--- On BAR reduce production process -> UNLOCK LPAREN neidentseq RPAREN optprocess
+-- On RPAREN EOF ELSE DOT BAR
+--   reduce production process -> UNLOCK LPAREN neidentseq RPAREN optprocess
 
 State 257:
 ## Known stack suffix:
@@ -3543,10 +3178,10 @@ lib -> LET IDENT EQUAL process DOT . lib [ PROCESS ]
 -- On privateopt shift to state 301
 -- On lib shift to state 354
 ## Reductions:
--- On REDUCTION reduce production privateopt ->
--- On PROCESS reduce production lib ->
--- On FUN reduce production privateopt ->
--- On FREE reduce production privateopt ->
+-- On PROCESS
+--   reduce production lib ->
+-- On REDUCTION FUN FREE
+--   reduce production privateopt ->
 
 State 259:
 ## Known stack suffix:
@@ -3595,7 +3230,8 @@ eqlist -> term EQUAL term . SEMI eqlist [ DOT ]
 ## Transitions:
 -- On SEMI shift to state 263
 ## Reductions:
--- On DOT reduce production eqlist -> term EQUAL term
+-- On DOT
+--   reduce production eqlist -> term EQUAL term
 
 State 263:
 ## Known stack suffix:
@@ -3618,7 +3254,8 @@ State 264:
 eqlist -> term EQUAL term SEMI eqlist . [ DOT ]
 ## Transitions:
 ## Reductions:
--- On DOT reduce production eqlist -> term EQUAL term SEMI eqlist
+-- On DOT
+--   reduce production eqlist -> term EQUAL term SEMI eqlist
 
 State 265:
 ## Known stack suffix:
@@ -3652,10 +3289,10 @@ lib -> EQUATION eqlist DOT . lib [ PROCESS ]
 -- On privateopt shift to state 301
 -- On lib shift to state 353
 ## Reductions:
--- On REDUCTION reduce production privateopt ->
--- On PROCESS reduce production lib ->
--- On FUN reduce production privateopt ->
--- On FREE reduce production privateopt ->
+-- On PROCESS
+--   reduce production lib ->
+-- On REDUCTION FUN FREE
+--   reduce production privateopt ->
 
 State 267:
 ## Known stack suffix:
@@ -3702,7 +3339,8 @@ varmayfail -> IDENT . [ CANTEXT ]
 ## Transitions:
 -- On COMMA shift to state 271
 ## Reductions:
--- On CANTEXT reduce production varmayfail -> IDENT
+-- On CANTEXT
+--   reduce production varmayfail -> IDENT
 
 State 271:
 ## Known stack suffix:
@@ -3721,7 +3359,8 @@ State 272:
 varmayfail -> IDENT COMMA varmayfail . [ CANTEXT ]
 ## Transitions:
 ## Reductions:
--- On CANTEXT reduce production varmayfail -> IDENT COMMA varmayfail
+-- On CANTEXT
+--   reduce production varmayfail -> IDENT COMMA varmayfail
 
 State 273:
 ## Known stack suffix:
@@ -3773,10 +3412,10 @@ lib -> ELIMTRUE fact WHERE varmayfail CANTEXT FAIL DOT . lib [ PROCESS ]
 -- On privateopt shift to state 301
 -- On lib shift to state 350
 ## Reductions:
--- On REDUCTION reduce production privateopt ->
--- On PROCESS reduce production lib ->
--- On FUN reduce production privateopt ->
--- On FREE reduce production privateopt ->
+-- On PROCESS
+--   reduce production lib ->
+-- On REDUCTION FUN FREE
+--   reduce production privateopt ->
 
 State 277:
 ## Known stack suffix:
@@ -3837,10 +3476,10 @@ lib -> DATA IDENT SLASH INT DOT . lib [ PROCESS ]
 -- On privateopt shift to state 301
 -- On lib shift to state 349
 ## Reductions:
--- On REDUCTION reduce production privateopt ->
--- On PROCESS reduce production lib ->
--- On FUN reduce production privateopt ->
--- On FREE reduce production privateopt ->
+-- On PROCESS
+--   reduce production lib ->
+-- On REDUCTION FUN FREE
+--   reduce production privateopt ->
 
 State 282:
 ## Known stack suffix:
@@ -3894,9 +3533,8 @@ State 285:
 clause -> factand RED fact . [ WHERE SEMI DOT ]
 ## Transitions:
 ## Reductions:
--- On WHERE reduce production clause -> factand RED fact
--- On SEMI reduce production clause -> factand RED fact
--- On DOT reduce production clause -> factand RED fact
+-- On WHERE SEMI DOT
+--   reduce production clause -> factand RED fact
 
 State 286:
 ## Known stack suffix:
@@ -3919,9 +3557,8 @@ State 287:
 clause -> factand EQUIVEQ fact . [ WHERE SEMI DOT ]
 ## Transitions:
 ## Reductions:
--- On WHERE reduce production clause -> factand EQUIVEQ fact
--- On SEMI reduce production clause -> factand EQUIVEQ fact
--- On DOT reduce production clause -> factand EQUIVEQ fact
+-- On WHERE SEMI DOT
+--   reduce production clause -> factand EQUIVEQ fact
 
 State 288:
 ## Known stack suffix:
@@ -3944,9 +3581,8 @@ State 289:
 clause -> factand EQUIV fact . [ WHERE SEMI DOT ]
 ## Transitions:
 ## Reductions:
--- On WHERE reduce production clause -> factand EQUIV fact
--- On SEMI reduce production clause -> factand EQUIV fact
--- On DOT reduce production clause -> factand EQUIV fact
+-- On WHERE SEMI DOT
+--   reduce production clause -> factand EQUIV fact
 
 State 290:
 ## Known stack suffix:
@@ -3958,12 +3594,10 @@ factand -> fact . [ RED EQUIVEQ EQUIV ]
 ## Transitions:
 -- On WEDGE shift to state 291
 ## Reductions:
--- On WHERE reduce production clause -> fact
--- On SEMI reduce production clause -> fact
--- On RED reduce production factand -> fact
--- On EQUIVEQ reduce production factand -> fact
--- On EQUIV reduce production factand -> fact
--- On DOT reduce production clause -> fact
+-- On WHERE SEMI DOT
+--   reduce production clause -> fact
+-- On RED EQUIVEQ EQUIV
+--   reduce production factand -> fact
 
 State 291:
 ## Known stack suffix:
@@ -3987,9 +3621,8 @@ State 292:
 factand -> fact WEDGE factand . [ RED EQUIVEQ EQUIV ]
 ## Transitions:
 ## Reductions:
--- On RED reduce production factand -> fact WEDGE factand
--- On EQUIVEQ reduce production factand -> fact WEDGE factand
--- On EQUIV reduce production factand -> fact WEDGE factand
+-- On RED EQUIVEQ EQUIV
+--   reduce production factand -> fact WEDGE factand
 
 State 293:
 ## Known stack suffix:
@@ -4000,9 +3633,8 @@ factand -> fact . [ RED EQUIVEQ EQUIV ]
 ## Transitions:
 -- On WEDGE shift to state 291
 ## Reductions:
--- On RED reduce production factand -> fact
--- On EQUIVEQ reduce production factand -> fact
--- On EQUIV reduce production factand -> fact
+-- On RED EQUIVEQ EQUIV
+--   reduce production factand -> fact
 
 State 294:
 ## Known stack suffix:
@@ -4027,10 +3659,10 @@ lib -> CLAUSES clauses . lib [ PROCESS ]
 -- On privateopt shift to state 301
 -- On lib shift to state 339
 ## Reductions:
--- On REDUCTION reduce production privateopt ->
--- On PROCESS reduce production lib ->
--- On FUN reduce production privateopt ->
--- On FREE reduce production privateopt ->
+-- On PROCESS
+--   reduce production lib ->
+-- On REDUCTION FUN FREE
+--   reduce production privateopt ->
 
 State 295:
 ## Known stack suffix:
@@ -4051,7 +3683,8 @@ lib -> CELL neidentseq . optinit DOT lib [ PROCESS ]
 -- On ASSIGN shift to state 297
 -- On optinit shift to state 299
 ## Reductions:
--- On DOT reduce production optinit ->
+-- On DOT
+--   reduce production optinit ->
 
 State 297:
 ## Known stack suffix:
@@ -4073,7 +3706,8 @@ State 298:
 optinit -> ASSIGN term . [ DOT ]
 ## Transitions:
 ## Reductions:
--- On DOT reduce production optinit -> ASSIGN term
+-- On DOT
+--   reduce production optinit -> ASSIGN term
 
 State 299:
 ## Known stack suffix:
@@ -4107,10 +3741,10 @@ lib -> CELL neidentseq optinit DOT . lib [ PROCESS ]
 -- On privateopt shift to state 301
 -- On lib shift to state 338
 ## Reductions:
--- On REDUCTION reduce production privateopt ->
--- On PROCESS reduce production lib ->
--- On FUN reduce production privateopt ->
--- On FREE reduce production privateopt ->
+-- On PROCESS
+--   reduce production lib ->
+-- On REDUCTION FUN FREE
+--   reduce production privateopt ->
 
 State 301:
 ## Known stack suffix:
@@ -4179,8 +3813,8 @@ reducmayfail -> term EQUAL term . [ OTHERWISE DOT ]
 -- On WHERE shift to state 306
 -- On SEMI shift to state 310
 ## Reductions:
--- On OTHERWISE reduce production reducmayfail -> term EQUAL term
--- On DOT reduce production reducmayfail -> term EQUAL term
+-- On OTHERWISE DOT
+--   reduce production reducmayfail -> term EQUAL term
 
 State 306:
 ## Known stack suffix:
@@ -4217,8 +3851,8 @@ State 309:
 reducmayfail -> term EQUAL term WHERE varmayfail CANTEXT FAIL . [ OTHERWISE DOT ]
 ## Transitions:
 ## Reductions:
--- On OTHERWISE reduce production reducmayfail -> term EQUAL term WHERE varmayfail CANTEXT FAIL
--- On DOT reduce production reducmayfail -> term EQUAL term WHERE varmayfail CANTEXT FAIL
+-- On OTHERWISE DOT
+--   reduce production reducmayfail -> term EQUAL term WHERE varmayfail CANTEXT FAIL
 
 State 310:
 ## Known stack suffix:
@@ -4290,24 +3924,8 @@ State 315:
 reduc -> term EQUAL term SEMI reduc . [ WEAKSECRET REDUCTION QUERY PROCESS PRIVATE PREDICATE PARAM NOUNIF NOT NONINTERF LET FUN FREE EQUATION ELIMTRUE DATA CLAUSES CELL ]
 ## Transitions:
 ## Reductions:
--- On WEAKSECRET reduce production reduc -> term EQUAL term SEMI reduc
--- On REDUCTION reduce production reduc -> term EQUAL term SEMI reduc
--- On QUERY reduce production reduc -> term EQUAL term SEMI reduc
--- On PROCESS reduce production reduc -> term EQUAL term SEMI reduc
--- On PRIVATE reduce production reduc -> term EQUAL term SEMI reduc
--- On PREDICATE reduce production reduc -> term EQUAL term SEMI reduc
--- On PARAM reduce production reduc -> term EQUAL term SEMI reduc
--- On NOUNIF reduce production reduc -> term EQUAL term SEMI reduc
--- On NOT reduce production reduc -> term EQUAL term SEMI reduc
--- On NONINTERF reduce production reduc -> term EQUAL term SEMI reduc
--- On LET reduce production reduc -> term EQUAL term SEMI reduc
--- On FUN reduce production reduc -> term EQUAL term SEMI reduc
--- On FREE reduce production reduc -> term EQUAL term SEMI reduc
--- On EQUATION reduce production reduc -> term EQUAL term SEMI reduc
--- On ELIMTRUE reduce production reduc -> term EQUAL term SEMI reduc
--- On DATA reduce production reduc -> term EQUAL term SEMI reduc
--- On CLAUSES reduce production reduc -> term EQUAL term SEMI reduc
--- On CELL reduce production reduc -> term EQUAL term SEMI reduc
+-- On WEAKSECRET REDUCTION QUERY PROCESS PRIVATE PREDICATE PARAM NOUNIF NOT NONINTERF LET FUN FREE EQUATION ELIMTRUE DATA CLAUSES CELL
+--   reduce production reduc -> term EQUAL term SEMI reduc
 
 State 316:
 ## Known stack suffix:
@@ -4316,24 +3934,8 @@ State 316:
 reduc -> term EQUAL term DOT . [ WEAKSECRET REDUCTION QUERY PROCESS PRIVATE PREDICATE PARAM NOUNIF NOT NONINTERF LET FUN FREE EQUATION ELIMTRUE DATA CLAUSES CELL ]
 ## Transitions:
 ## Reductions:
--- On WEAKSECRET reduce production reduc -> term EQUAL term DOT
--- On REDUCTION reduce production reduc -> term EQUAL term DOT
--- On QUERY reduce production reduc -> term EQUAL term DOT
--- On PROCESS reduce production reduc -> term EQUAL term DOT
--- On PRIVATE reduce production reduc -> term EQUAL term DOT
--- On PREDICATE reduce production reduc -> term EQUAL term DOT
--- On PARAM reduce production reduc -> term EQUAL term DOT
--- On NOUNIF reduce production reduc -> term EQUAL term DOT
--- On NOT reduce production reduc -> term EQUAL term DOT
--- On NONINTERF reduce production reduc -> term EQUAL term DOT
--- On LET reduce production reduc -> term EQUAL term DOT
--- On FUN reduce production reduc -> term EQUAL term DOT
--- On FREE reduce production reduc -> term EQUAL term DOT
--- On EQUATION reduce production reduc -> term EQUAL term DOT
--- On ELIMTRUE reduce production reduc -> term EQUAL term DOT
--- On DATA reduce production reduc -> term EQUAL term DOT
--- On CLAUSES reduce production reduc -> term EQUAL term DOT
--- On CELL reduce production reduc -> term EQUAL term DOT
+-- On WEAKSECRET REDUCTION QUERY PROCESS PRIVATE PREDICATE PARAM NOUNIF NOT NONINTERF LET FUN FREE EQUATION ELIMTRUE DATA CLAUSES CELL
+--   reduce production reduc -> term EQUAL term DOT
 
 State 317:
 ## Known stack suffix:
@@ -4358,10 +3960,10 @@ lib -> privateopt REDUCTION term EQUAL term SEMI reduc . lib [ PROCESS ]
 -- On privateopt shift to state 301
 -- On lib shift to state 318
 ## Reductions:
--- On REDUCTION reduce production privateopt ->
--- On PROCESS reduce production lib ->
--- On FUN reduce production privateopt ->
--- On FREE reduce production privateopt ->
+-- On PROCESS
+--   reduce production lib ->
+-- On REDUCTION FUN FREE
+--   reduce production privateopt ->
 
 State 318:
 ## Known stack suffix:
@@ -4370,7 +3972,8 @@ State 318:
 lib -> privateopt REDUCTION term EQUAL term SEMI reduc lib . [ PROCESS ]
 ## Transitions:
 ## Reductions:
--- On PROCESS reduce production lib -> privateopt REDUCTION term EQUAL term SEMI reduc lib
+-- On PROCESS
+--   reduce production lib -> privateopt REDUCTION term EQUAL term SEMI reduc lib
 
 State 319:
 ## Known stack suffix:
@@ -4404,10 +4007,10 @@ lib -> privateopt REDUCTION reducmayfailseq DOT . lib [ PROCESS ]
 -- On privateopt shift to state 301
 -- On lib shift to state 321
 ## Reductions:
--- On REDUCTION reduce production privateopt ->
--- On PROCESS reduce production lib ->
--- On FUN reduce production privateopt ->
--- On FREE reduce production privateopt ->
+-- On PROCESS
+--   reduce production lib ->
+-- On REDUCTION FUN FREE
+--   reduce production privateopt ->
 
 State 321:
 ## Known stack suffix:
@@ -4416,7 +4019,8 @@ State 321:
 lib -> privateopt REDUCTION reducmayfailseq DOT lib . [ PROCESS ]
 ## Transitions:
 ## Reductions:
--- On PROCESS reduce production lib -> privateopt REDUCTION reducmayfailseq DOT lib
+-- On PROCESS
+--   reduce production lib -> privateopt REDUCTION reducmayfailseq DOT lib
 
 State 322:
 ## Known stack suffix:
@@ -4427,7 +4031,8 @@ reducmayfailseq -> reducmayfail . [ DOT ]
 ## Transitions:
 -- On OTHERWISE shift to state 323
 ## Reductions:
--- On DOT reduce production reducmayfailseq -> reducmayfail
+-- On DOT
+--   reduce production reducmayfailseq -> reducmayfail
 
 State 323:
 ## Known stack suffix:
@@ -4477,8 +4082,8 @@ reducmayfail -> term EQUAL term . [ OTHERWISE DOT ]
 ## Transitions:
 -- On WHERE shift to state 306
 ## Reductions:
--- On OTHERWISE reduce production reducmayfail -> term EQUAL term
--- On DOT reduce production reducmayfail -> term EQUAL term
+-- On OTHERWISE DOT
+--   reduce production reducmayfail -> term EQUAL term
 
 State 327:
 ## Known stack suffix:
@@ -4487,7 +4092,8 @@ State 327:
 reducmayfailseq -> reducmayfail OTHERWISE reducmayfailseq . [ DOT ]
 ## Transitions:
 ## Reductions:
--- On DOT reduce production reducmayfailseq -> reducmayfail OTHERWISE reducmayfailseq
+-- On DOT
+--   reduce production reducmayfailseq -> reducmayfail OTHERWISE reducmayfailseq
 
 State 328:
 ## Known stack suffix:
@@ -4548,10 +4154,10 @@ lib -> privateopt FUN IDENT SLASH INT DOT . lib [ PROCESS ]
 -- On privateopt shift to state 301
 -- On lib shift to state 333
 ## Reductions:
--- On REDUCTION reduce production privateopt ->
--- On PROCESS reduce production lib ->
--- On FUN reduce production privateopt ->
--- On FREE reduce production privateopt ->
+-- On PROCESS
+--   reduce production lib ->
+-- On REDUCTION FUN FREE
+--   reduce production privateopt ->
 
 State 333:
 ## Known stack suffix:
@@ -4560,7 +4166,8 @@ State 333:
 lib -> privateopt FUN IDENT SLASH INT DOT lib . [ PROCESS ]
 ## Transitions:
 ## Reductions:
--- On PROCESS reduce production lib -> privateopt FUN IDENT SLASH INT DOT lib
+-- On PROCESS
+--   reduce production lib -> privateopt FUN IDENT SLASH INT DOT lib
 
 State 334:
 ## Known stack suffix:
@@ -4604,10 +4211,10 @@ lib -> privateopt FREE neidentseq DOT . lib [ PROCESS ]
 -- On privateopt shift to state 301
 -- On lib shift to state 337
 ## Reductions:
--- On REDUCTION reduce production privateopt ->
--- On PROCESS reduce production lib ->
--- On FUN reduce production privateopt ->
--- On FREE reduce production privateopt ->
+-- On PROCESS
+--   reduce production lib ->
+-- On REDUCTION FUN FREE
+--   reduce production privateopt ->
 
 State 337:
 ## Known stack suffix:
@@ -4616,7 +4223,8 @@ State 337:
 lib -> privateopt FREE neidentseq DOT lib . [ PROCESS ]
 ## Transitions:
 ## Reductions:
--- On PROCESS reduce production lib -> privateopt FREE neidentseq DOT lib
+-- On PROCESS
+--   reduce production lib -> privateopt FREE neidentseq DOT lib
 
 State 338:
 ## Known stack suffix:
@@ -4625,7 +4233,8 @@ State 338:
 lib -> CELL neidentseq optinit DOT lib . [ PROCESS ]
 ## Transitions:
 ## Reductions:
--- On PROCESS reduce production lib -> CELL neidentseq optinit DOT lib
+-- On PROCESS
+--   reduce production lib -> CELL neidentseq optinit DOT lib
 
 State 339:
 ## Known stack suffix:
@@ -4634,7 +4243,8 @@ State 339:
 lib -> CLAUSES clauses lib . [ PROCESS ]
 ## Transitions:
 ## Reductions:
--- On PROCESS reduce production lib -> CLAUSES clauses lib
+-- On PROCESS
+--   reduce production lib -> CLAUSES clauses lib
 
 State 340:
 ## Known stack suffix:
@@ -4672,24 +4282,8 @@ State 342:
 clauses -> clausemayfail SEMI clauses . [ WEAKSECRET REDUCTION QUERY PROCESS PRIVATE PREDICATE PARAM NOUNIF NOT NONINTERF LET FUN FREE EQUATION ELIMTRUE DATA CLAUSES CELL ]
 ## Transitions:
 ## Reductions:
--- On WEAKSECRET reduce production clauses -> clausemayfail SEMI clauses
--- On REDUCTION reduce production clauses -> clausemayfail SEMI clauses
--- On QUERY reduce production clauses -> clausemayfail SEMI clauses
--- On PROCESS reduce production clauses -> clausemayfail SEMI clauses
--- On PRIVATE reduce production clauses -> clausemayfail SEMI clauses
--- On PREDICATE reduce production clauses -> clausemayfail SEMI clauses
--- On PARAM reduce production clauses -> clausemayfail SEMI clauses
--- On NOUNIF reduce production clauses -> clausemayfail SEMI clauses
--- On NOT reduce production clauses -> clausemayfail SEMI clauses
--- On NONINTERF reduce production clauses -> clausemayfail SEMI clauses
--- On LET reduce production clauses -> clausemayfail SEMI clauses
--- On FUN reduce production clauses -> clausemayfail SEMI clauses
--- On FREE reduce production clauses -> clausemayfail SEMI clauses
--- On EQUATION reduce production clauses -> clausemayfail SEMI clauses
--- On ELIMTRUE reduce production clauses -> clausemayfail SEMI clauses
--- On DATA reduce production clauses -> clausemayfail SEMI clauses
--- On CLAUSES reduce production clauses -> clausemayfail SEMI clauses
--- On CELL reduce production clauses -> clausemayfail SEMI clauses
+-- On WEAKSECRET REDUCTION QUERY PROCESS PRIVATE PREDICATE PARAM NOUNIF NOT NONINTERF LET FUN FREE EQUATION ELIMTRUE DATA CLAUSES CELL
+--   reduce production clauses -> clausemayfail SEMI clauses
 
 State 343:
 ## Known stack suffix:
@@ -4700,8 +4294,8 @@ clausemayfail -> clause . [ SEMI DOT ]
 ## Transitions:
 -- On WHERE shift to state 344
 ## Reductions:
--- On SEMI reduce production clausemayfail -> clause
--- On DOT reduce production clausemayfail -> clause
+-- On SEMI DOT
+--   reduce production clausemayfail -> clause
 
 State 344:
 ## Known stack suffix:
@@ -4738,8 +4332,8 @@ State 347:
 clausemayfail -> clause WHERE varmayfail CANTEXT FAIL . [ SEMI DOT ]
 ## Transitions:
 ## Reductions:
--- On SEMI reduce production clausemayfail -> clause WHERE varmayfail CANTEXT FAIL
--- On DOT reduce production clausemayfail -> clause WHERE varmayfail CANTEXT FAIL
+-- On SEMI DOT
+--   reduce production clausemayfail -> clause WHERE varmayfail CANTEXT FAIL
 
 State 348:
 ## Known stack suffix:
@@ -4748,24 +4342,8 @@ State 348:
 clauses -> clausemayfail DOT . [ WEAKSECRET REDUCTION QUERY PROCESS PRIVATE PREDICATE PARAM NOUNIF NOT NONINTERF LET FUN FREE EQUATION ELIMTRUE DATA CLAUSES CELL ]
 ## Transitions:
 ## Reductions:
--- On WEAKSECRET reduce production clauses -> clausemayfail DOT
--- On REDUCTION reduce production clauses -> clausemayfail DOT
--- On QUERY reduce production clauses -> clausemayfail DOT
--- On PROCESS reduce production clauses -> clausemayfail DOT
--- On PRIVATE reduce production clauses -> clausemayfail DOT
--- On PREDICATE reduce production clauses -> clausemayfail DOT
--- On PARAM reduce production clauses -> clausemayfail DOT
--- On NOUNIF reduce production clauses -> clausemayfail DOT
--- On NOT reduce production clauses -> clausemayfail DOT
--- On NONINTERF reduce production clauses -> clausemayfail DOT
--- On LET reduce production clauses -> clausemayfail DOT
--- On FUN reduce production clauses -> clausemayfail DOT
--- On FREE reduce production clauses -> clausemayfail DOT
--- On EQUATION reduce production clauses -> clausemayfail DOT
--- On ELIMTRUE reduce production clauses -> clausemayfail DOT
--- On DATA reduce production clauses -> clausemayfail DOT
--- On CLAUSES reduce production clauses -> clausemayfail DOT
--- On CELL reduce production clauses -> clausemayfail DOT
+-- On WEAKSECRET REDUCTION QUERY PROCESS PRIVATE PREDICATE PARAM NOUNIF NOT NONINTERF LET FUN FREE EQUATION ELIMTRUE DATA CLAUSES CELL
+--   reduce production clauses -> clausemayfail DOT
 
 State 349:
 ## Known stack suffix:
@@ -4774,7 +4352,8 @@ State 349:
 lib -> DATA IDENT SLASH INT DOT lib . [ PROCESS ]
 ## Transitions:
 ## Reductions:
--- On PROCESS reduce production lib -> DATA IDENT SLASH INT DOT lib
+-- On PROCESS
+--   reduce production lib -> DATA IDENT SLASH INT DOT lib
 
 State 350:
 ## Known stack suffix:
@@ -4783,7 +4362,8 @@ State 350:
 lib -> ELIMTRUE fact WHERE varmayfail CANTEXT FAIL DOT lib . [ PROCESS ]
 ## Transitions:
 ## Reductions:
--- On PROCESS reduce production lib -> ELIMTRUE fact WHERE varmayfail CANTEXT FAIL DOT lib
+-- On PROCESS
+--   reduce production lib -> ELIMTRUE fact WHERE varmayfail CANTEXT FAIL DOT lib
 
 State 351:
 ## Known stack suffix:
@@ -4808,10 +4388,10 @@ lib -> ELIMTRUE fact DOT . lib [ PROCESS ]
 -- On privateopt shift to state 301
 -- On lib shift to state 352
 ## Reductions:
--- On REDUCTION reduce production privateopt ->
--- On PROCESS reduce production lib ->
--- On FUN reduce production privateopt ->
--- On FREE reduce production privateopt ->
+-- On PROCESS
+--   reduce production lib ->
+-- On REDUCTION FUN FREE
+--   reduce production privateopt ->
 
 State 352:
 ## Known stack suffix:
@@ -4820,7 +4400,8 @@ State 352:
 lib -> ELIMTRUE fact DOT lib . [ PROCESS ]
 ## Transitions:
 ## Reductions:
--- On PROCESS reduce production lib -> ELIMTRUE fact DOT lib
+-- On PROCESS
+--   reduce production lib -> ELIMTRUE fact DOT lib
 
 State 353:
 ## Known stack suffix:
@@ -4829,7 +4410,8 @@ State 353:
 lib -> EQUATION eqlist DOT lib . [ PROCESS ]
 ## Transitions:
 ## Reductions:
--- On PROCESS reduce production lib -> EQUATION eqlist DOT lib
+-- On PROCESS
+--   reduce production lib -> EQUATION eqlist DOT lib
 
 State 354:
 ## Known stack suffix:
@@ -4838,7 +4420,8 @@ State 354:
 lib -> LET IDENT EQUAL process DOT lib . [ PROCESS ]
 ## Transitions:
 ## Reductions:
--- On PROCESS reduce production lib -> LET IDENT EQUAL process DOT lib
+-- On PROCESS
+--   reduce production lib -> LET IDENT EQUAL process DOT lib
 
 State 355:
 ## Known stack suffix:
@@ -4847,7 +4430,8 @@ State 355:
 lib -> NONINTERF niseq DOT lib . [ PROCESS ]
 ## Transitions:
 ## Reductions:
--- On PROCESS reduce production lib -> NONINTERF niseq DOT lib
+-- On PROCESS
+--   reduce production lib -> NONINTERF niseq DOT lib
 
 State 356:
 ## Known stack suffix:
@@ -4858,7 +4442,8 @@ niseq -> ni . [ DOT ]
 ## Transitions:
 -- On COMMA shift to state 357
 ## Reductions:
--- On DOT reduce production niseq -> ni
+-- On DOT
+--   reduce production niseq -> ni
 
 State 357:
 ## Known stack suffix:
@@ -4878,7 +4463,8 @@ State 358:
 niseq -> ni COMMA niseq . [ DOT ]
 ## Transitions:
 ## Reductions:
--- On DOT reduce production niseq -> ni COMMA niseq
+-- On DOT
+--   reduce production niseq -> ni COMMA niseq
 
 State 359:
 ## Known stack suffix:
@@ -4887,7 +4473,8 @@ State 359:
 lib -> NOT gterm optphase optbindingseq DOT lib . [ PROCESS ]
 ## Transitions:
 ## Reductions:
--- On PROCESS reduce production lib -> NOT gterm optphase optbindingseq DOT lib
+-- On PROCESS
+--   reduce production lib -> NOT gterm optphase optbindingseq DOT lib
 
 State 360:
 ## Known stack suffix:
@@ -4898,12 +4485,8 @@ event -> gfact . optphase [ WEDGE SEMI RPAREN DOT BEFORE BAR ]
 -- On PHASE shift to state 91
 -- On optphase shift to state 361
 ## Reductions:
--- On WEDGE reduce production optphase ->
--- On SEMI reduce production optphase ->
--- On RPAREN reduce production optphase ->
--- On DOT reduce production optphase ->
--- On BEFORE reduce production optphase ->
--- On BAR reduce production optphase ->
+-- On WEDGE SEMI RPAREN DOT BEFORE BAR
+--   reduce production optphase ->
 
 State 361:
 ## Known stack suffix:
@@ -4912,12 +4495,8 @@ State 361:
 event -> gfact optphase . [ WEDGE SEMI RPAREN DOT BEFORE BAR ]
 ## Transitions:
 ## Reductions:
--- On WEDGE reduce production event -> gfact optphase
--- On SEMI reduce production event -> gfact optphase
--- On RPAREN reduce production event -> gfact optphase
--- On DOT reduce production event -> gfact optphase
--- On BEFORE reduce production event -> gfact optphase
--- On BAR reduce production event -> gfact optphase
+-- On WEDGE SEMI RPAREN DOT BEFORE BAR
+--   reduce production event -> gfact optphase
 
 State 362:
 ## Known stack suffix:
@@ -4928,7 +4507,8 @@ lib -> NOT event . optbindingseq DOT lib [ PROCESS ]
 -- On SEMI shift to state 114
 -- On optbindingseq shift to state 363
 ## Reductions:
--- On DOT reduce production optbindingseq ->
+-- On DOT
+--   reduce production optbindingseq ->
 
 State 363:
 ## Known stack suffix:
@@ -4962,10 +4542,10 @@ lib -> NOT event optbindingseq DOT . lib [ PROCESS ]
 -- On privateopt shift to state 301
 -- On lib shift to state 365
 ## Reductions:
--- On REDUCTION reduce production privateopt ->
--- On PROCESS reduce production lib ->
--- On FUN reduce production privateopt ->
--- On FREE reduce production privateopt ->
+-- On PROCESS
+--   reduce production lib ->
+-- On REDUCTION FUN FREE
+--   reduce production privateopt ->
 
 State 365:
 ## Known stack suffix:
@@ -4974,7 +4554,8 @@ State 365:
 lib -> NOT event optbindingseq DOT lib . [ PROCESS ]
 ## Transitions:
 ## Reductions:
--- On PROCESS reduce production lib -> NOT event optbindingseq DOT lib
+-- On PROCESS
+--   reduce production lib -> NOT event optbindingseq DOT lib
 
 State 366:
 ## Known stack suffix:
@@ -4983,7 +4564,8 @@ State 366:
 lib -> NOUNIF gfactformat optint foptbindingseq DOT lib . [ PROCESS ]
 ## Transitions:
 ## Reductions:
--- On PROCESS reduce production lib -> NOUNIF gfactformat optint foptbindingseq DOT lib
+-- On PROCESS
+--   reduce production lib -> NOUNIF gfactformat optint foptbindingseq DOT lib
 
 State 367:
 ## Known stack suffix:
@@ -4992,7 +4574,8 @@ State 367:
 lib -> PARAM IDENT EQUAL STRING DOT lib . [ PROCESS ]
 ## Transitions:
 ## Reductions:
--- On PROCESS reduce production lib -> PARAM IDENT EQUAL STRING DOT lib
+-- On PROCESS
+--   reduce production lib -> PARAM IDENT EQUAL STRING DOT lib
 
 State 368:
 ## Known stack suffix:
@@ -5026,10 +4609,10 @@ lib -> PARAM IDENT EQUAL INT DOT . lib [ PROCESS ]
 -- On privateopt shift to state 301
 -- On lib shift to state 370
 ## Reductions:
--- On REDUCTION reduce production privateopt ->
--- On PROCESS reduce production lib ->
--- On FUN reduce production privateopt ->
--- On FREE reduce production privateopt ->
+-- On PROCESS
+--   reduce production lib ->
+-- On REDUCTION FUN FREE
+--   reduce production privateopt ->
 
 State 370:
 ## Known stack suffix:
@@ -5038,7 +4621,8 @@ State 370:
 lib -> PARAM IDENT EQUAL INT DOT lib . [ PROCESS ]
 ## Transitions:
 ## Reductions:
--- On PROCESS reduce production lib -> PARAM IDENT EQUAL INT DOT lib
+-- On PROCESS
+--   reduce production lib -> PARAM IDENT EQUAL INT DOT lib
 
 State 371:
 ## Known stack suffix:
@@ -5072,10 +4656,10 @@ lib -> PARAM IDENT EQUAL IDENT DOT . lib [ PROCESS ]
 -- On privateopt shift to state 301
 -- On lib shift to state 373
 ## Reductions:
--- On REDUCTION reduce production privateopt ->
--- On PROCESS reduce production lib ->
--- On FUN reduce production privateopt ->
--- On FREE reduce production privateopt ->
+-- On PROCESS
+--   reduce production lib ->
+-- On REDUCTION FUN FREE
+--   reduce production privateopt ->
 
 State 373:
 ## Known stack suffix:
@@ -5084,7 +4668,8 @@ State 373:
 lib -> PARAM IDENT EQUAL IDENT DOT lib . [ PROCESS ]
 ## Transitions:
 ## Reductions:
--- On PROCESS reduce production lib -> PARAM IDENT EQUAL IDENT DOT lib
+-- On PROCESS
+--   reduce production lib -> PARAM IDENT EQUAL IDENT DOT lib
 
 State 374:
 ## Known stack suffix:
@@ -5093,7 +4678,8 @@ State 374:
 lib -> PREDICATE IDENT SLASH INT DOT lib . [ PROCESS ]
 ## Transitions:
 ## Reductions:
--- On PROCESS reduce production lib -> PREDICATE IDENT SLASH INT DOT lib
+-- On PROCESS
+--   reduce production lib -> PREDICATE IDENT SLASH INT DOT lib
 
 State 375:
 ## Known stack suffix:
@@ -5127,10 +4713,10 @@ lib -> PREDICATE IDENT SLASH INT neidentseq DOT . lib [ PROCESS ]
 -- On privateopt shift to state 301
 -- On lib shift to state 377
 ## Reductions:
--- On REDUCTION reduce production privateopt ->
--- On PROCESS reduce production lib ->
--- On FUN reduce production privateopt ->
--- On FREE reduce production privateopt ->
+-- On PROCESS
+--   reduce production lib ->
+-- On REDUCTION FUN FREE
+--   reduce production privateopt ->
 
 State 377:
 ## Known stack suffix:
@@ -5139,7 +4725,8 @@ State 377:
 lib -> PREDICATE IDENT SLASH INT neidentseq DOT lib . [ PROCESS ]
 ## Transitions:
 ## Reductions:
--- On PROCESS reduce production lib -> PREDICATE IDENT SLASH INT neidentseq DOT lib
+-- On PROCESS
+--   reduce production lib -> PREDICATE IDENT SLASH INT neidentseq DOT lib
 
 State 378:
 ## Known stack suffix:
@@ -5148,7 +4735,8 @@ State 378:
 lib -> QUERY queryseq DOT lib . [ PROCESS ]
 ## Transitions:
 ## Reductions:
--- On PROCESS reduce production lib -> QUERY queryseq DOT lib
+-- On PROCESS
+--   reduce production lib -> QUERY queryseq DOT lib
 
 State 379:
 ## Known stack suffix:
@@ -5159,7 +4747,8 @@ queryseq -> query . [ DOT ]
 ## Transitions:
 -- On SEMI shift to state 380
 ## Reductions:
--- On DOT reduce production queryseq -> query
+-- On DOT
+--   reduce production queryseq -> query
 
 State 380:
 ## Known stack suffix:
@@ -5186,7 +4775,8 @@ State 381:
 queryseq -> query SEMI queryseq . [ DOT ]
 ## Transitions:
 ## Reductions:
--- On DOT reduce production queryseq -> query SEMI queryseq
+-- On DOT
+--   reduce production queryseq -> query SEMI queryseq
 
 State 382:
 ## Known stack suffix:
@@ -5208,8 +4798,8 @@ realquery -> event . BEFORE hyp [ SEMI DOT ]
 ## Transitions:
 -- On BEFORE shift to state 384
 ## Reductions:
--- On SEMI reduce production query -> event
--- On DOT reduce production query -> event
+-- On SEMI DOT
+--   reduce production query -> event
 
 State 384:
 ## Known stack suffix:
@@ -5243,7 +4833,8 @@ hyp -> LPAREN . realquery RPAREN [ WEDGE SEMI RPAREN DOT BAR ]
 -- On gfact shift to state 360
 -- On event shift to state 396
 ## Reductions:
--- On RPAREN reduce production gtermseq ->
+-- On RPAREN
+--   reduce production gtermseq ->
 
 State 386:
 ## Known stack suffix:
@@ -5261,11 +4852,8 @@ State 387:
 hyp -> LPAREN realquery RPAREN . [ WEDGE SEMI RPAREN DOT BAR ]
 ## Transitions:
 ## Reductions:
--- On WEDGE reduce production hyp -> LPAREN realquery RPAREN
--- On SEMI reduce production hyp -> LPAREN realquery RPAREN
--- On RPAREN reduce production hyp -> LPAREN realquery RPAREN
--- On DOT reduce production hyp -> LPAREN realquery RPAREN
--- On BAR reduce production hyp -> LPAREN realquery RPAREN
+-- On WEDGE SEMI RPAREN DOT BAR
+--   reduce production hyp -> LPAREN realquery RPAREN
 
 State 388:
 ## Known stack suffix:
@@ -5304,10 +4892,8 @@ hyp -> hyp WEDGE hyp . [ WEDGE SEMI RPAREN DOT BAR ]
 ## Transitions:
 -- On WEDGE shift to state 389
 ## Reductions:
--- On SEMI reduce production hyp -> hyp WEDGE hyp
--- On RPAREN reduce production hyp -> hyp WEDGE hyp
--- On DOT reduce production hyp -> hyp WEDGE hyp
--- On BAR reduce production hyp -> hyp WEDGE hyp
+-- On SEMI RPAREN DOT BAR
+--   reduce production hyp -> hyp WEDGE hyp
 
 State 391:
 ## Known stack suffix:
@@ -5316,11 +4902,8 @@ State 391:
 hyp -> event . [ WEDGE SEMI RPAREN DOT BAR ]
 ## Transitions:
 ## Reductions:
--- On WEDGE reduce production hyp -> event
--- On SEMI reduce production hyp -> event
--- On RPAREN reduce production hyp -> event
--- On DOT reduce production hyp -> event
--- On BAR reduce production hyp -> event
+-- On WEDGE SEMI RPAREN DOT BAR
+--   reduce production hyp -> event
 
 State 392:
 ## Known stack suffix:
@@ -5329,11 +4912,8 @@ State 392:
 hyp -> LPAREN hyp RPAREN . [ WEDGE SEMI RPAREN DOT BAR ]
 ## Transitions:
 ## Reductions:
--- On WEDGE reduce production hyp -> LPAREN hyp RPAREN
--- On SEMI reduce production hyp -> LPAREN hyp RPAREN
--- On RPAREN reduce production hyp -> LPAREN hyp RPAREN
--- On DOT reduce production hyp -> LPAREN hyp RPAREN
--- On BAR reduce production hyp -> LPAREN hyp RPAREN
+-- On WEDGE SEMI RPAREN DOT BAR
+--   reduce production hyp -> LPAREN hyp RPAREN
 
 State 393:
 ## Known stack suffix:
@@ -5360,9 +4940,8 @@ hyp -> hyp . WEDGE hyp [ WEDGE SEMI RPAREN DOT BAR ]
 -- On WEDGE shift to state 389
 -- On BAR shift to state 393
 ## Reductions:
--- On SEMI reduce production hyp -> hyp BAR hyp
--- On RPAREN reduce production hyp -> hyp BAR hyp
--- On DOT reduce production hyp -> hyp BAR hyp
+-- On SEMI RPAREN DOT
+--   reduce production hyp -> hyp BAR hyp
 
 State 395:
 ## Known stack suffix:
@@ -5377,7 +4956,8 @@ negtermseq -> gterm . [ RPAREN ]
 -- On DIFF shift to state 111
 -- On COMMA shift to state 19
 ## Reductions:
--- On RPAREN reduce production negtermseq -> gterm
+-- On RPAREN
+--   reduce production negtermseq -> gterm
 
 State 396:
 ## Known stack suffix:
@@ -5388,9 +4968,8 @@ realquery -> event . BEFORE hyp [ RPAREN ]
 ## Transitions:
 -- On BEFORE shift to state 384
 ## Reductions:
--- On WEDGE reduce production hyp -> event
--- On RPAREN reduce production hyp -> event
--- On BAR reduce production hyp -> event
+-- On WEDGE RPAREN BAR
+--   reduce production hyp -> event
 
 State 397:
 ## Known stack suffix:
@@ -5403,9 +4982,8 @@ realquery -> event BEFORE hyp . [ SEMI RPAREN DOT ]
 -- On WEDGE shift to state 389
 -- On BAR shift to state 393
 ## Reductions:
--- On SEMI reduce production realquery -> event BEFORE hyp
--- On RPAREN reduce production realquery -> event BEFORE hyp
--- On DOT reduce production realquery -> event BEFORE hyp
+-- On SEMI RPAREN DOT
+--   reduce production realquery -> event BEFORE hyp
 
 State 398:
 ## Known stack suffix:
@@ -5414,7 +4992,8 @@ State 398:
 lib -> WEAKSECRET IDENT DOT lib . [ PROCESS ]
 ## Transitions:
 ## Reductions:
--- On PROCESS reduce production lib -> WEAKSECRET IDENT DOT lib
+-- On PROCESS
+--   reduce production lib -> WEAKSECRET IDENT DOT lib
 
 State 399:
 ## Known stack suffix:
@@ -5468,7 +5047,8 @@ State 402:
 all -> lib PROCESS process EOF . [ # ]
 ## Transitions:
 ## Reductions:
--- On # reduce production all -> lib PROCESS process EOF
+-- On #
+--   reduce production all -> lib PROCESS process EOF
 
 State 403:
 ## Known stack suffix:
@@ -5477,5 +5057,6 @@ State 403:
 all' -> all . [ # ]
 ## Transitions:
 ## Reductions:
--- On # accept all
+-- On #
+--   accept all
 

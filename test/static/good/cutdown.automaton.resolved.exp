@@ -101,8 +101,8 @@ assignment -> left_hand_side ASSIGN expression . [ R_BRACKET L_BRACKET EOF ]
 ## Transitions:
 -- On L_BRACKET shift to state 9
 ## Reductions:
--- On R_BRACKET reduce production assignment -> left_hand_side ASSIGN expression
--- On EOF reduce production assignment -> left_hand_side ASSIGN expression
+-- On R_BRACKET EOF
+--   reduce production assignment -> left_hand_side ASSIGN expression
 
 State 9:
 ## Known stack suffix:
@@ -129,7 +129,8 @@ left_hand_side -> primary_not_name . [ ASSIGN ]
 ## Transitions:
 -- On R_BRACKET shift to state 11
 ## Reductions:
--- On ASSIGN reduce production left_hand_side -> primary_not_name
+-- On ASSIGN
+--   reduce production left_hand_side -> primary_not_name
 
 State 11:
 ## Known stack suffix:
@@ -166,9 +167,10 @@ primary -> array_access . [ L_BRACKET ]
 primary_not_name -> array_access . [ R_BRACKET ASSIGN ]
 ## Transitions:
 ## Reductions:
--- On R_BRACKET reduce production primary_not_name -> array_access
--- On L_BRACKET reduce production primary -> array_access
--- On ASSIGN reduce production primary_not_name -> array_access
+-- On L_BRACKET
+--   reduce production primary -> array_access
+-- On R_BRACKET ASSIGN
+--   reduce production primary_not_name -> array_access
 
 State 15:
 ## Known stack suffix:
@@ -178,10 +180,10 @@ primary -> array_access . [ R_BRACKET L_BRACKET EOF ]
 primary_not_name -> array_access . [ ASSIGN ]
 ## Transitions:
 ## Reductions:
--- On R_BRACKET reduce production primary -> array_access
--- On L_BRACKET reduce production primary -> array_access
--- On EOF reduce production primary -> array_access
--- On ASSIGN reduce production primary_not_name -> array_access
+-- On R_BRACKET L_BRACKET EOF
+--   reduce production primary -> array_access
+-- On ASSIGN
+--   reduce production primary_not_name -> array_access
 
 State 16:
 ## Known stack suffix:
@@ -221,7 +223,8 @@ goal -> assignment . EOF [ # ]
 ## Transitions:
 -- On EOF shift to state 20
 ## Reductions:
--- On L_BRACKET reduce production expression -> assignment
+-- On L_BRACKET
+--   reduce production expression -> assignment
 
 State 20:
 ## Known stack suffix:

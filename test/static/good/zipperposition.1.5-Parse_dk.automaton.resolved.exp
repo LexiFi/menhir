@@ -168,7 +168,8 @@ pre_typ -> type_simple . list(type_simple) [ RPAREN ]
 -- On type_qid shift to state 12
 -- On list(type_simple) shift to state 16
 ## Reductions:
--- On RPAREN reduce production list(type_simple) ->
+-- On RPAREN
+--   reduce production list(type_simple) ->
 
 State 14:
 ## Known stack suffix:
@@ -183,7 +184,8 @@ list(type_simple) -> type_simple . list(type_simple) [ RPAREN ]
 -- On type_qid shift to state 12
 -- On list(type_simple) shift to state 15
 ## Reductions:
--- On RPAREN reduce production list(type_simple) ->
+-- On RPAREN
+--   reduce production list(type_simple) ->
 
 State 15:
 ## Known stack suffix:
@@ -425,28 +427,8 @@ term_simple -> ID . DEF term DOUBLE_ARROW term_simple [ TRUE RPAREN REW QID OR N
 -- On DEF shift to state 31
 -- On COLON shift to state 101
 ## Reductions:
--- On TRUE reduce production qid -> ID
--- On RPAREN reduce production qid -> ID
--- On REW reduce production qid -> ID
--- On QID reduce production qid -> ID
--- On OR reduce production qid -> ID
--- On NUMBER reduce production qid -> ID
--- On NOT reduce production qid -> ID
--- On LPAREN reduce production qid -> ID
--- On IMP reduce production qid -> ID
--- On ID reduce production qid -> ID
--- On FALSE reduce production qid -> ID
--- On EX_TYPE reduce production qid -> ID
--- On EX reduce production qid -> ID
--- On EQV reduce production qid -> ID
--- On EQUAL reduce production qid -> ID
--- On END_HYP reduce production qid -> ID
--- On DOUBLE_ARROW reduce production qid -> ID
--- On DOT reduce production qid -> ID
--- On CCARR reduce production qid -> ID
--- On AND reduce production qid -> ID
--- On ALL_TYPE reduce production qid -> ID
--- On ALL reduce production qid -> ID
+-- On TRUE RPAREN REW QID OR NUMBER NOT LPAREN IMP ID FALSE EX_TYPE EX EQV EQUAL END_HYP DOUBLE_ARROW DOT CCARR AND ALL_TYPE ALL
+--   reduce production qid -> ID
 
 State 31:
 ## Known stack suffix:
@@ -678,11 +660,10 @@ arrow_type -> typ . [ RPAREN RBRACK DOT COMMA ]
 complex_type -> typ . [ ARROW ]
 ## Transitions:
 ## Reductions:
--- On RPAREN reduce production arrow_type -> typ
--- On RBRACK reduce production arrow_type -> typ
--- On DOT reduce production arrow_type -> typ
--- On COMMA reduce production arrow_type -> typ
--- On ARROW reduce production complex_type -> typ
+-- On RPAREN RBRACK DOT COMMA
+--   reduce production arrow_type -> typ
+-- On ARROW
+--   reduce production complex_type -> typ
 
 State 50:
 ## Known stack suffix:
@@ -1113,10 +1094,8 @@ term -> term_simple . nonempty_list(term_simple) [ RPAREN REW DOUBLE_ARROW DOT ]
 -- On qid shift to state 81
 -- On nonempty_list(term_simple) shift to state 83
 ## Reductions:
--- On RPAREN reduce production term -> term_simple
--- On REW reduce production term -> term_simple
--- On DOUBLE_ARROW reduce production term -> term_simple
--- On DOT reduce production term -> term_simple
+-- On RPAREN REW DOUBLE_ARROW DOT
+--   reduce production term -> term_simple
 
 State 80:
 ## Known stack suffix:
@@ -1146,10 +1125,8 @@ nonempty_list(term_simple) -> term_simple . nonempty_list(term_simple) [ RPAREN 
 -- On qid shift to state 81
 -- On nonempty_list(term_simple) shift to state 82
 ## Reductions:
--- On RPAREN reduce production nonempty_list(term_simple) -> term_simple
--- On REW reduce production nonempty_list(term_simple) -> term_simple
--- On DOUBLE_ARROW reduce production nonempty_list(term_simple) -> term_simple
--- On DOT reduce production nonempty_list(term_simple) -> term_simple
+-- On RPAREN REW DOUBLE_ARROW DOT
+--   reduce production nonempty_list(term_simple) -> term_simple
 
 State 81:
 ## Known stack suffix:
@@ -1593,7 +1570,8 @@ env -> LBRACK . loption(separated_nonempty_list(COMMA,env_decl)) RBRACK [ error 
 -- On loption(separated_nonempty_list(COMMA,env_decl)) shift to state 120
 -- On env_decl shift to state 122
 ## Reductions:
--- On RBRACK reduce production loption(separated_nonempty_list(COMMA,env_decl)) ->
+-- On RBRACK
+--   reduce production loption(separated_nonempty_list(COMMA,env_decl)) ->
 
 State 115:
 ## Known stack suffix:
@@ -1605,8 +1583,8 @@ env_decl -> ID . [ RBRACK COMMA ]
 ## Transitions:
 -- On COLON shift to state 116
 ## Reductions:
--- On RBRACK reduce production env_decl -> ID
--- On COMMA reduce production env_decl -> ID
+-- On RBRACK COMMA
+--   reduce production env_decl -> ID
 
 State 116:
 ## Known stack suffix:
@@ -1679,7 +1657,8 @@ separated_nonempty_list(COMMA,env_decl) -> env_decl . COMMA separated_nonempty_l
 ## Transitions:
 -- On COMMA shift to state 123
 ## Reductions:
--- On RBRACK reduce production separated_nonempty_list(COMMA,env_decl) -> env_decl
+-- On RBRACK
+--   reduce production separated_nonempty_list(COMMA,env_decl) -> env_decl
 
 State 123:
 ## Known stack suffix:
@@ -1789,8 +1768,8 @@ goal -> ID COLON PROOF term DOT . [ EOF ENDPROOF ]
 -- On env shift to state 138
 -- On body shift to state 173
 ## Reductions:
--- On EOF reduce production goal -> ID COLON PROOF term DOT
--- On ENDPROOF reduce production goal -> ID COLON PROOF term DOT
+-- On EOF ENDPROOF
+--   reduce production goal -> ID COLON PROOF term DOT
 
 State 130:
 ## Known stack suffix:
@@ -1817,7 +1796,8 @@ declared_or_defined_id -> QID . [ LPAREN ]
 ## Transitions:
 -- On COLON shift to state 132
 ## Reductions:
--- On LPAREN reduce production declared_or_defined_id -> QID
+-- On LPAREN
+--   reduce production declared_or_defined_id -> QID
 
 State 132:
 ## Known stack suffix:
@@ -1845,8 +1825,10 @@ complex_type -> typ . [ ARROW ]
 ## Transitions:
 -- On DEF shift to state 134
 ## Reductions:
--- On DOT reduce production arrow_type -> typ
--- On ARROW reduce production complex_type -> typ
+-- On DOT
+--   reduce production arrow_type -> typ
+-- On ARROW
+--   reduce production complex_type -> typ
 
 State 134:
 ## Known stack suffix:
@@ -2062,7 +2044,8 @@ declared_or_defined_id -> ID . [ LPAREN ]
 ## Transitions:
 -- On COLON shift to state 149
 ## Reductions:
--- On LPAREN reduce production declared_or_defined_id -> ID
+-- On LPAREN
+--   reduce production declared_or_defined_id -> ID
 
 State 149:
 ## Known stack suffix:
@@ -2090,8 +2073,10 @@ complex_type -> typ . [ ARROW ]
 ## Transitions:
 -- On DEF shift to state 151
 ## Reductions:
--- On DOT reduce production arrow_type -> typ
--- On ARROW reduce production complex_type -> typ
+-- On DOT
+--   reduce production arrow_type -> typ
+-- On ARROW
+--   reduce production complex_type -> typ
 
 State 151:
 ## Known stack suffix:
@@ -2352,7 +2337,8 @@ nonempty_list(compact_arg) -> compact_arg . nonempty_list(compact_arg) [ COLON ]
 -- On nonempty_list(compact_arg) shift to state 172
 -- On compact_arg shift to state 171
 ## Reductions:
--- On COLON reduce production nonempty_list(compact_arg) -> compact_arg
+-- On COLON
+--   reduce production nonempty_list(compact_arg) -> compact_arg
 
 State 172:
 ## Known stack suffix:

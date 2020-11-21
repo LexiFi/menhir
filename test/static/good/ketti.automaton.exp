@@ -40,10 +40,8 @@ State 3:
 expr -> INT . [ PLUS MINUS INT # ]
 ## Transitions:
 ## Reductions:
--- On PLUS reduce production expr -> INT
--- On MINUS reduce production expr -> INT
--- On INT reduce production expr -> INT
--- On # reduce production expr -> INT
+-- On PLUS MINUS INT #
+--   reduce production expr -> INT
 ** End-of-stream conflict on PLUS MINUS INT
 **   There is a tension between
 **   (1) reducing production expr -> INT
@@ -58,11 +56,10 @@ expr -> plus . [ PLUS MINUS INT # ]
 indir -> plus . [ MINUS ]
 ## Transitions:
 ## Reductions:
--- On PLUS reduce production expr -> plus
--- On MINUS reduce production expr -> plus
--- On MINUS reduce production indir -> plus
--- On INT reduce production expr -> plus
--- On # reduce production expr -> plus
+-- On PLUS MINUS INT #
+--   reduce production expr -> plus
+-- On MINUS
+--   reduce production indir -> plus
 ** Conflict on MINUS
 ** End-of-stream conflict on PLUS MINUS INT
 **   There is a tension between
@@ -100,11 +97,10 @@ expr -> plus . [ PLUS ]
 indir -> plus . [ PLUS MINUS INT # ]
 ## Transitions:
 ## Reductions:
--- On PLUS reduce production expr -> plus
--- On PLUS reduce production indir -> plus
--- On MINUS reduce production indir -> plus
--- On INT reduce production indir -> plus
--- On # reduce production indir -> plus
+-- On PLUS
+--   reduce production expr -> plus
+-- On PLUS MINUS INT #
+--   reduce production indir -> plus
 ** Conflict on PLUS
 ** End-of-stream conflict on PLUS MINUS INT
 **   There is a tension between
@@ -121,10 +117,8 @@ expr -> indir MINUS indir . [ PLUS MINUS INT # ]
 ## Transitions:
 -- On MINUS shift to state 6
 ## Reductions:
--- On PLUS reduce production expr -> indir MINUS indir
--- On MINUS reduce production expr -> indir MINUS indir
--- On INT reduce production expr -> indir MINUS indir
--- On # reduce production expr -> indir MINUS indir
+-- On PLUS MINUS INT #
+--   reduce production expr -> indir MINUS indir
 ** Conflict on MINUS
 ** End-of-stream conflict on PLUS MINUS INT
 **   There is a tension between
@@ -163,10 +157,8 @@ plus -> expr PLUS expr . [ PLUS MINUS INT # ]
 ## Transitions:
 -- On PLUS shift to state 10
 ## Reductions:
--- On PLUS reduce production plus -> expr PLUS expr
--- On MINUS reduce production plus -> expr PLUS expr
--- On INT reduce production plus -> expr PLUS expr
--- On # reduce production plus -> expr PLUS expr
+-- On PLUS MINUS INT #
+--   reduce production plus -> expr PLUS expr
 ** Conflict on PLUS
 ** End-of-stream conflict on PLUS MINUS INT
 **   There is a tension between
@@ -192,10 +184,8 @@ State 13:
 expr -> PLUS PLUS expr INT . [ PLUS MINUS INT # ]
 ## Transitions:
 ## Reductions:
--- On PLUS reduce production expr -> PLUS PLUS expr INT
--- On MINUS reduce production expr -> PLUS PLUS expr INT
--- On INT reduce production expr -> PLUS PLUS expr INT
--- On # reduce production expr -> PLUS PLUS expr INT
+-- On PLUS MINUS INT #
+--   reduce production expr -> PLUS PLUS expr INT
 ** End-of-stream conflict on PLUS MINUS INT
 **   There is a tension between
 **   (1) reducing production expr -> PLUS PLUS expr INT
@@ -211,7 +201,8 @@ plus -> expr . PLUS expr [ PLUS MINUS # ]
 ## Transitions:
 -- On PLUS shift to state 10
 ## Reductions:
--- On # accept expr
+-- On #
+--   accept expr
 ** End-of-stream conflict on PLUS
 **   There is a tension between
 **   (1) accepting expr

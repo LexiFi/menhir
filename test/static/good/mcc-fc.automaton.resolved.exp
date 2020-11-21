@@ -61,12 +61,10 @@ rev_all_defs -> rev_all_defs . all_def [ TokVolatile TokUnsigned TokUnion TokTyp
 -- On decl_specifiers shift to state 279
 -- On all_def shift to state 515
 ## Reductions:
--- On TokTypeVoid reduce production decl_specifiers_opt ->
--- On TokTypeInt reduce production decl_specifiers_opt ->
--- On TokTypeFloat reduce production decl_specifiers_opt ->
--- On TokTypeDouble reduce production decl_specifiers_opt ->
--- On TokTypeChar reduce production decl_specifiers_opt ->
--- On TokEof reduce production all_defs -> rev_all_defs
+-- On TokEof
+--   reduce production all_defs -> rev_all_defs
+-- On TokTypeVoid TokTypeInt TokTypeFloat TokTypeDouble TokTypeChar
+--   reduce production decl_specifiers_opt ->
 
 State 2:
 ## Known stack suffix:
@@ -95,11 +93,8 @@ union_enum -> TokUnion . TokEnum [ TokTypeVar TokTypeId TokLeftParen TokLeftBrac
 ## Transitions:
 -- On TokEnum shift to state 5
 ## Reductions:
--- On TokTypeVar reduce production struct_or_union -> TokUnion
--- On TokTypeId reduce production struct_or_union -> TokUnion
--- On TokLeftParen reduce production struct_or_union -> TokUnion
--- On TokLeftBrace reduce production struct_or_union -> TokUnion
--- On TokId reduce production struct_or_union -> TokUnion
+-- On TokTypeVar TokTypeId TokLeftParen TokLeftBrace TokId
+--   reduce production struct_or_union -> TokUnion
 
 State 5:
 ## Known stack suffix:
@@ -156,11 +151,8 @@ type_defs -> TokTypedef . decl_spec type_decl_list TokSemi [ TokWhile TokVolatil
 -- On decl_specifiers shift to state 279
 -- On decl_spec shift to state 486
 ## Reductions:
--- On TokTypeVoid reduce production decl_specifiers_opt ->
--- On TokTypeInt reduce production decl_specifiers_opt ->
--- On TokTypeFloat reduce production decl_specifiers_opt ->
--- On TokTypeDouble reduce production decl_specifiers_opt ->
--- On TokTypeChar reduce production decl_specifiers_opt ->
+-- On TokTypeVoid TokTypeInt TokTypeFloat TokTypeDouble TokTypeChar
+--   reduce production decl_specifiers_opt ->
 
 State 7:
 ## Known stack suffix:
@@ -192,9 +184,8 @@ tuple_spec_id -> TokTuple . opt_type_params id [ TokVolatile TokStatic TokStar T
 -- On type_params shift to state 17
 -- On opt_type_params shift to state 18
 ## Reductions:
--- On TokTypeId reduce production opt_type_params ->
--- On TokLeftBrace reduce production opt_type_params ->
--- On TokId reduce production opt_type_params ->
+-- On TokTypeId TokLeftBrace TokId
+--   reduce production opt_type_params ->
 
 State 10:
 ## Known stack suffix:
@@ -341,11 +332,8 @@ tuple_declaration_list -> TokLeftBrace . rev_tuple_decl_list TokRightBrace [ Tok
 -- On decl_specifiers_opt shift to state 265
 -- On decl_specifiers shift to state 279
 ## Reductions:
--- On TokTypeVoid reduce production decl_specifiers_opt ->
--- On TokTypeInt reduce production decl_specifiers_opt ->
--- On TokTypeFloat reduce production decl_specifiers_opt ->
--- On TokTypeDouble reduce production decl_specifiers_opt ->
--- On TokTypeChar reduce production decl_specifiers_opt ->
+-- On TokTypeVoid TokTypeInt TokTypeFloat TokTypeDouble TokTypeChar
+--   reduce production decl_specifiers_opt ->
 
 State 21:
 ## Known stack suffix:
@@ -401,27 +389,8 @@ simp_type_spec -> TokPoly . TokTypeId TokLeftParen opt_param_list TokRightParen 
 ## Transitions:
 -- On TokTypeId shift to state 27
 ## Reductions:
--- On TokVolatile reduce production simp_type_spec -> TokPoly
--- On TokString reduce production simp_type_spec -> TokPoly
--- On TokStatic reduce production simp_type_spec -> TokPoly
--- On TokStar reduce production simp_type_spec -> TokPoly
--- On TokSemi reduce production simp_type_spec -> TokPoly
--- On TokRightParen reduce production simp_type_spec -> TokPoly
--- On TokRegister reduce production simp_type_spec -> TokPoly
--- On TokPoly reduce production simp_type_spec -> TokPoly
--- On TokLeftParen reduce production simp_type_spec -> TokPoly
--- On TokLeftBrack reduce production simp_type_spec -> TokPoly
--- On TokLeftBrace reduce production simp_type_spec -> TokPoly
--- On TokInt reduce production simp_type_spec -> TokPoly
--- On TokId reduce production simp_type_spec -> TokPoly
--- On TokFloat reduce production simp_type_spec -> TokPoly
--- On TokExtern reduce production simp_type_spec -> TokPoly
--- On TokConst reduce production simp_type_spec -> TokPoly
--- On TokComma reduce production simp_type_spec -> TokPoly
--- On TokColon reduce production simp_type_spec -> TokPoly
--- On TokChar reduce production simp_type_spec -> TokPoly
--- On TokAuto reduce production simp_type_spec -> TokPoly
--- On TokAddr reduce production simp_type_spec -> TokPoly
+-- On TokVolatile TokString TokStatic TokStar TokSemi TokRightParen TokRegister TokPoly TokLeftParen TokLeftBrack TokLeftBrace TokInt TokId TokFloat TokExtern TokConst TokComma TokColon TokChar TokAuto TokAddr
+--   reduce production simp_type_spec -> TokPoly
 
 State 27:
 ## Known stack suffix:
@@ -482,12 +451,10 @@ simp_type_spec -> TokPoly TokTypeId TokLeftParen . opt_param_list TokRightParen 
 -- On decl_specifiers_opt shift to state 265
 -- On decl_specifiers shift to state 279
 ## Reductions:
--- On TokTypeVoid reduce production decl_specifiers_opt ->
--- On TokTypeInt reduce production decl_specifiers_opt ->
--- On TokTypeFloat reduce production decl_specifiers_opt ->
--- On TokTypeDouble reduce production decl_specifiers_opt ->
--- On TokTypeChar reduce production decl_specifiers_opt ->
--- On TokRightParen reduce production opt_param_list ->
+-- On TokTypeVoid TokTypeInt TokTypeFloat TokTypeDouble TokTypeChar
+--   reduce production decl_specifiers_opt ->
+-- On TokRightParen
+--   reduce production opt_param_list ->
 
 State 29:
 ## Known stack suffix:
@@ -521,9 +488,8 @@ union_enum -> TokEnum . TokUnion [ TokTypeVar TokTypeId TokLeftParen TokLeftBrac
 -- On type_params shift to state 17
 -- On opt_type_params shift to state 33
 ## Reductions:
--- On TokTypeId reduce production opt_type_params ->
--- On TokLeftBrace reduce production opt_type_params ->
--- On TokId reduce production opt_type_params ->
+-- On TokTypeId TokLeftBrace TokId
+--   reduce production opt_type_params ->
 
 State 32:
 ## Known stack suffix:
@@ -579,8 +545,8 @@ enum_decl -> TokId . TokEq nc_expr [ TokRightBrace TokComma ]
 ## Transitions:
 -- On TokEq shift to state 37
 ## Reductions:
--- On TokRightBrace reduce production enum_decl -> TokId
--- On TokComma reduce production enum_decl -> TokId
+-- On TokRightBrace TokComma
+--   reduce production enum_decl -> TokId
 
 State 37:
 ## Known stack suffix:
@@ -999,11 +965,8 @@ nc_expr -> TokLeftParen . cast_decl TokRightParen nc_expr [ TokStar TokSemi TokR
 -- On cast_decl shift to state 452
 -- On all_def shift to state 424
 ## Reductions:
--- On TokTypeVoid reduce production decl_specifiers_opt ->
--- On TokTypeInt reduce production decl_specifiers_opt ->
--- On TokTypeFloat reduce production decl_specifiers_opt ->
--- On TokTypeDouble reduce production decl_specifiers_opt ->
--- On TokTypeChar reduce production decl_specifiers_opt ->
+-- On TokTypeVoid TokTypeInt TokTypeFloat TokTypeDouble TokTypeChar
+--   reduce production decl_specifiers_opt ->
 
 State 64:
 ## Known stack suffix:
@@ -1126,26 +1089,8 @@ nc_expr -> nc_expr . TokQuest nc_expr TokColon nc_expr [ TokStar TokSemi TokRigh
 -- On TokLeftBrack shift to state 82
 -- On TokDot shift to state 93
 ## Reductions:
--- On TokStar reduce production nc_expr -> TokAddr nc_expr
--- On TokSemi reduce production nc_expr -> TokAddr nc_expr
--- On TokRightParen reduce production nc_expr -> TokAddr nc_expr
--- On TokRightBrack reduce production nc_expr -> TokAddr nc_expr
--- On TokRightBrace reduce production nc_expr -> TokAddr nc_expr
--- On TokQuest reduce production nc_expr -> TokAddr nc_expr
--- On TokOr reduce production nc_expr -> TokAddr nc_expr
--- On TokOp9 reduce production nc_expr -> TokAddr nc_expr
--- On TokOp8 reduce production nc_expr -> TokAddr nc_expr
--- On TokOp7 reduce production nc_expr -> TokAddr nc_expr
--- On TokOp5 reduce production nc_expr -> TokAddr nc_expr
--- On TokOp4 reduce production nc_expr -> TokAddr nc_expr
--- On TokOp11 reduce production nc_expr -> TokAddr nc_expr
--- On TokOp10 reduce production nc_expr -> TokAddr nc_expr
--- On TokOp1 reduce production nc_expr -> TokAddr nc_expr
--- On TokEq reduce production nc_expr -> TokAddr nc_expr
--- On TokComma reduce production nc_expr -> TokAddr nc_expr
--- On TokColon reduce production nc_expr -> TokAddr nc_expr
--- On TokAnd reduce production nc_expr -> TokAddr nc_expr
--- On TokAddr reduce production nc_expr -> TokAddr nc_expr
+-- On TokStar TokSemi TokRightParen TokRightBrack TokRightBrace TokQuest TokOr TokOp9 TokOp8 TokOp7 TokOp5 TokOp4 TokOp11 TokOp10 TokOp1 TokEq TokComma TokColon TokAnd TokAddr
+--   reduce production nc_expr -> TokAddr nc_expr
 
 State 72:
 ## Known stack suffix:
@@ -1208,7 +1153,8 @@ nc_expr -> nc_expr TokLeftParen . args TokRightParen [ TokStar TokSemi TokRightP
 -- On nc_expr shift to state 115
 -- On args shift to state 116
 ## Reductions:
--- On TokRightParen reduce production args ->
+-- On TokRightParen
+--   reduce production args ->
 
 State 77:
 ## Known stack suffix:
@@ -1219,7 +1165,8 @@ rev_args -> rev_args . TokComma nc_expr [ TokRightParen TokComma ]
 ## Transitions:
 -- On TokComma shift to state 78
 ## Reductions:
--- On TokRightParen reduce production args -> rev_args
+-- On TokRightParen
+--   reduce production args -> rev_args
 
 State 78:
 ## Known stack suffix:
@@ -1288,8 +1235,8 @@ rev_args -> rev_args TokComma nc_expr . [ TokRightParen TokComma ]
 -- On TokAnd shift to state 111
 -- On TokAddr shift to state 103
 ## Reductions:
--- On TokRightParen reduce production rev_args -> rev_args TokComma nc_expr
--- On TokComma reduce production rev_args -> rev_args TokComma nc_expr
+-- On TokRightParen TokComma
+--   reduce production rev_args -> rev_args TokComma nc_expr
 
 State 80:
 ## Known stack suffix:
@@ -1344,26 +1291,8 @@ nc_expr -> nc_expr . TokQuest nc_expr TokColon nc_expr [ TokStar TokSemi TokRigh
 -- On TokLeftBrack shift to state 82
 -- On TokDot shift to state 93
 ## Reductions:
--- On TokStar reduce production nc_expr -> nc_expr TokStar nc_expr
--- On TokSemi reduce production nc_expr -> nc_expr TokStar nc_expr
--- On TokRightParen reduce production nc_expr -> nc_expr TokStar nc_expr
--- On TokRightBrack reduce production nc_expr -> nc_expr TokStar nc_expr
--- On TokRightBrace reduce production nc_expr -> nc_expr TokStar nc_expr
--- On TokQuest reduce production nc_expr -> nc_expr TokStar nc_expr
--- On TokOr reduce production nc_expr -> nc_expr TokStar nc_expr
--- On TokOp9 reduce production nc_expr -> nc_expr TokStar nc_expr
--- On TokOp8 reduce production nc_expr -> nc_expr TokStar nc_expr
--- On TokOp7 reduce production nc_expr -> nc_expr TokStar nc_expr
--- On TokOp5 reduce production nc_expr -> nc_expr TokStar nc_expr
--- On TokOp4 reduce production nc_expr -> nc_expr TokStar nc_expr
--- On TokOp11 reduce production nc_expr -> nc_expr TokStar nc_expr
--- On TokOp10 reduce production nc_expr -> nc_expr TokStar nc_expr
--- On TokOp1 reduce production nc_expr -> nc_expr TokStar nc_expr
--- On TokEq reduce production nc_expr -> nc_expr TokStar nc_expr
--- On TokComma reduce production nc_expr -> nc_expr TokStar nc_expr
--- On TokColon reduce production nc_expr -> nc_expr TokStar nc_expr
--- On TokAnd reduce production nc_expr -> nc_expr TokStar nc_expr
--- On TokAddr reduce production nc_expr -> nc_expr TokStar nc_expr
+-- On TokStar TokSemi TokRightParen TokRightBrack TokRightBrace TokQuest TokOr TokOp9 TokOp8 TokOp7 TokOp5 TokOp4 TokOp11 TokOp10 TokOp1 TokEq TokComma TokColon TokAnd TokAddr
+--   reduce production nc_expr -> nc_expr TokStar nc_expr
 
 State 82:
 ## Known stack suffix:
@@ -1574,17 +1503,8 @@ nc_expr -> nc_expr . TokQuest nc_expr TokColon nc_expr [ TokStar TokSemi TokRigh
 -- On TokDot shift to state 93
 -- On TokAddr shift to state 103
 ## Reductions:
--- On TokSemi reduce production nc_expr -> nc_expr TokOr nc_expr
--- On TokRightParen reduce production nc_expr -> nc_expr TokOr nc_expr
--- On TokRightBrack reduce production nc_expr -> nc_expr TokOr nc_expr
--- On TokRightBrace reduce production nc_expr -> nc_expr TokOr nc_expr
--- On TokQuest reduce production nc_expr -> nc_expr TokOr nc_expr
--- On TokOr reduce production nc_expr -> nc_expr TokOr nc_expr
--- On TokOp1 reduce production nc_expr -> nc_expr TokOr nc_expr
--- On TokEq reduce production nc_expr -> nc_expr TokOr nc_expr
--- On TokComma reduce production nc_expr -> nc_expr TokOr nc_expr
--- On TokColon reduce production nc_expr -> nc_expr TokOr nc_expr
--- On TokAnd reduce production nc_expr -> nc_expr TokOr nc_expr
+-- On TokSemi TokRightParen TokRightBrack TokRightBrace TokQuest TokOr TokOp1 TokEq TokComma TokColon TokAnd
+--   reduce production nc_expr -> nc_expr TokOr nc_expr
 
 State 89:
 ## Known stack suffix:
@@ -1642,23 +1562,8 @@ nc_expr -> nc_expr . TokQuest nc_expr TokColon nc_expr [ TokStar TokSemi TokRigh
 -- On TokLeftBrack shift to state 82
 -- On TokDot shift to state 93
 ## Reductions:
--- On TokSemi reduce production nc_expr -> nc_expr TokOp9 nc_expr
--- On TokRightParen reduce production nc_expr -> nc_expr TokOp9 nc_expr
--- On TokRightBrack reduce production nc_expr -> nc_expr TokOp9 nc_expr
--- On TokRightBrace reduce production nc_expr -> nc_expr TokOp9 nc_expr
--- On TokQuest reduce production nc_expr -> nc_expr TokOp9 nc_expr
--- On TokOr reduce production nc_expr -> nc_expr TokOp9 nc_expr
--- On TokOp9 reduce production nc_expr -> nc_expr TokOp9 nc_expr
--- On TokOp8 reduce production nc_expr -> nc_expr TokOp9 nc_expr
--- On TokOp7 reduce production nc_expr -> nc_expr TokOp9 nc_expr
--- On TokOp5 reduce production nc_expr -> nc_expr TokOp9 nc_expr
--- On TokOp4 reduce production nc_expr -> nc_expr TokOp9 nc_expr
--- On TokOp1 reduce production nc_expr -> nc_expr TokOp9 nc_expr
--- On TokEq reduce production nc_expr -> nc_expr TokOp9 nc_expr
--- On TokComma reduce production nc_expr -> nc_expr TokOp9 nc_expr
--- On TokColon reduce production nc_expr -> nc_expr TokOp9 nc_expr
--- On TokAnd reduce production nc_expr -> nc_expr TokOp9 nc_expr
--- On TokAddr reduce production nc_expr -> nc_expr TokOp9 nc_expr
+-- On TokSemi TokRightParen TokRightBrack TokRightBrace TokQuest TokOr TokOp9 TokOp8 TokOp7 TokOp5 TokOp4 TokOp1 TokEq TokComma TokColon TokAnd TokAddr
+--   reduce production nc_expr -> nc_expr TokOp9 nc_expr
 
 State 91:
 ## Known stack suffix:
@@ -1713,26 +1618,8 @@ nc_expr -> nc_expr . TokQuest nc_expr TokColon nc_expr [ TokStar TokSemi TokRigh
 -- On TokLeftBrack shift to state 82
 -- On TokDot shift to state 93
 ## Reductions:
--- On TokStar reduce production nc_expr -> nc_expr TokOp11 nc_expr
--- On TokSemi reduce production nc_expr -> nc_expr TokOp11 nc_expr
--- On TokRightParen reduce production nc_expr -> nc_expr TokOp11 nc_expr
--- On TokRightBrack reduce production nc_expr -> nc_expr TokOp11 nc_expr
--- On TokRightBrace reduce production nc_expr -> nc_expr TokOp11 nc_expr
--- On TokQuest reduce production nc_expr -> nc_expr TokOp11 nc_expr
--- On TokOr reduce production nc_expr -> nc_expr TokOp11 nc_expr
--- On TokOp9 reduce production nc_expr -> nc_expr TokOp11 nc_expr
--- On TokOp8 reduce production nc_expr -> nc_expr TokOp11 nc_expr
--- On TokOp7 reduce production nc_expr -> nc_expr TokOp11 nc_expr
--- On TokOp5 reduce production nc_expr -> nc_expr TokOp11 nc_expr
--- On TokOp4 reduce production nc_expr -> nc_expr TokOp11 nc_expr
--- On TokOp11 reduce production nc_expr -> nc_expr TokOp11 nc_expr
--- On TokOp10 reduce production nc_expr -> nc_expr TokOp11 nc_expr
--- On TokOp1 reduce production nc_expr -> nc_expr TokOp11 nc_expr
--- On TokEq reduce production nc_expr -> nc_expr TokOp11 nc_expr
--- On TokComma reduce production nc_expr -> nc_expr TokOp11 nc_expr
--- On TokColon reduce production nc_expr -> nc_expr TokOp11 nc_expr
--- On TokAnd reduce production nc_expr -> nc_expr TokOp11 nc_expr
--- On TokAddr reduce production nc_expr -> nc_expr TokOp11 nc_expr
+-- On TokStar TokSemi TokRightParen TokRightBrack TokRightBrace TokQuest TokOr TokOp9 TokOp8 TokOp7 TokOp5 TokOp4 TokOp11 TokOp10 TokOp1 TokEq TokComma TokColon TokAnd TokAddr
+--   reduce production nc_expr -> nc_expr TokOp11 nc_expr
 
 State 93:
 ## Known stack suffix:
@@ -1809,24 +1696,8 @@ nc_expr -> nc_expr . TokQuest nc_expr TokColon nc_expr [ TokStar TokSemi TokRigh
 -- On TokLeftBrack shift to state 82
 -- On TokDot shift to state 93
 ## Reductions:
--- On TokSemi reduce production nc_expr -> nc_expr TokOp10 nc_expr
--- On TokRightParen reduce production nc_expr -> nc_expr TokOp10 nc_expr
--- On TokRightBrack reduce production nc_expr -> nc_expr TokOp10 nc_expr
--- On TokRightBrace reduce production nc_expr -> nc_expr TokOp10 nc_expr
--- On TokQuest reduce production nc_expr -> nc_expr TokOp10 nc_expr
--- On TokOr reduce production nc_expr -> nc_expr TokOp10 nc_expr
--- On TokOp9 reduce production nc_expr -> nc_expr TokOp10 nc_expr
--- On TokOp8 reduce production nc_expr -> nc_expr TokOp10 nc_expr
--- On TokOp7 reduce production nc_expr -> nc_expr TokOp10 nc_expr
--- On TokOp5 reduce production nc_expr -> nc_expr TokOp10 nc_expr
--- On TokOp4 reduce production nc_expr -> nc_expr TokOp10 nc_expr
--- On TokOp10 reduce production nc_expr -> nc_expr TokOp10 nc_expr
--- On TokOp1 reduce production nc_expr -> nc_expr TokOp10 nc_expr
--- On TokEq reduce production nc_expr -> nc_expr TokOp10 nc_expr
--- On TokComma reduce production nc_expr -> nc_expr TokOp10 nc_expr
--- On TokColon reduce production nc_expr -> nc_expr TokOp10 nc_expr
--- On TokAnd reduce production nc_expr -> nc_expr TokOp10 nc_expr
--- On TokAddr reduce production nc_expr -> nc_expr TokOp10 nc_expr
+-- On TokSemi TokRightParen TokRightBrack TokRightBrace TokQuest TokOr TokOp9 TokOp8 TokOp7 TokOp5 TokOp4 TokOp10 TokOp1 TokEq TokComma TokColon TokAnd TokAddr
+--   reduce production nc_expr -> nc_expr TokOp10 nc_expr
 
 State 97:
 ## Known stack suffix:
@@ -1885,22 +1756,8 @@ nc_expr -> nc_expr . TokQuest nc_expr TokColon nc_expr [ TokStar TokSemi TokRigh
 -- On TokLeftBrack shift to state 82
 -- On TokDot shift to state 93
 ## Reductions:
--- On TokSemi reduce production nc_expr -> nc_expr TokOp8 nc_expr
--- On TokRightParen reduce production nc_expr -> nc_expr TokOp8 nc_expr
--- On TokRightBrack reduce production nc_expr -> nc_expr TokOp8 nc_expr
--- On TokRightBrace reduce production nc_expr -> nc_expr TokOp8 nc_expr
--- On TokQuest reduce production nc_expr -> nc_expr TokOp8 nc_expr
--- On TokOr reduce production nc_expr -> nc_expr TokOp8 nc_expr
--- On TokOp8 reduce production nc_expr -> nc_expr TokOp8 nc_expr
--- On TokOp7 reduce production nc_expr -> nc_expr TokOp8 nc_expr
--- On TokOp5 reduce production nc_expr -> nc_expr TokOp8 nc_expr
--- On TokOp4 reduce production nc_expr -> nc_expr TokOp8 nc_expr
--- On TokOp1 reduce production nc_expr -> nc_expr TokOp8 nc_expr
--- On TokEq reduce production nc_expr -> nc_expr TokOp8 nc_expr
--- On TokComma reduce production nc_expr -> nc_expr TokOp8 nc_expr
--- On TokColon reduce production nc_expr -> nc_expr TokOp8 nc_expr
--- On TokAnd reduce production nc_expr -> nc_expr TokOp8 nc_expr
--- On TokAddr reduce production nc_expr -> nc_expr TokOp8 nc_expr
+-- On TokSemi TokRightParen TokRightBrack TokRightBrace TokQuest TokOr TokOp8 TokOp7 TokOp5 TokOp4 TokOp1 TokEq TokComma TokColon TokAnd TokAddr
+--   reduce production nc_expr -> nc_expr TokOp8 nc_expr
 
 State 99:
 ## Known stack suffix:
@@ -1960,21 +1817,8 @@ nc_expr -> nc_expr . TokQuest nc_expr TokColon nc_expr [ TokStar TokSemi TokRigh
 -- On TokLeftBrack shift to state 82
 -- On TokDot shift to state 93
 ## Reductions:
--- On TokSemi reduce production nc_expr -> nc_expr TokOp7 nc_expr
--- On TokRightParen reduce production nc_expr -> nc_expr TokOp7 nc_expr
--- On TokRightBrack reduce production nc_expr -> nc_expr TokOp7 nc_expr
--- On TokRightBrace reduce production nc_expr -> nc_expr TokOp7 nc_expr
--- On TokQuest reduce production nc_expr -> nc_expr TokOp7 nc_expr
--- On TokOr reduce production nc_expr -> nc_expr TokOp7 nc_expr
--- On TokOp7 reduce production nc_expr -> nc_expr TokOp7 nc_expr
--- On TokOp5 reduce production nc_expr -> nc_expr TokOp7 nc_expr
--- On TokOp4 reduce production nc_expr -> nc_expr TokOp7 nc_expr
--- On TokOp1 reduce production nc_expr -> nc_expr TokOp7 nc_expr
--- On TokEq reduce production nc_expr -> nc_expr TokOp7 nc_expr
--- On TokComma reduce production nc_expr -> nc_expr TokOp7 nc_expr
--- On TokColon reduce production nc_expr -> nc_expr TokOp7 nc_expr
--- On TokAnd reduce production nc_expr -> nc_expr TokOp7 nc_expr
--- On TokAddr reduce production nc_expr -> nc_expr TokOp7 nc_expr
+-- On TokSemi TokRightParen TokRightBrack TokRightBrace TokQuest TokOr TokOp7 TokOp5 TokOp4 TokOp1 TokEq TokComma TokColon TokAnd TokAddr
+--   reduce production nc_expr -> nc_expr TokOp7 nc_expr
 
 State 101:
 ## Known stack suffix:
@@ -2036,19 +1880,8 @@ nc_expr -> nc_expr . TokQuest nc_expr TokColon nc_expr [ TokStar TokSemi TokRigh
 -- On TokDot shift to state 93
 -- On TokAddr shift to state 103
 ## Reductions:
--- On TokSemi reduce production nc_expr -> nc_expr TokOp5 nc_expr
--- On TokRightParen reduce production nc_expr -> nc_expr TokOp5 nc_expr
--- On TokRightBrack reduce production nc_expr -> nc_expr TokOp5 nc_expr
--- On TokRightBrace reduce production nc_expr -> nc_expr TokOp5 nc_expr
--- On TokQuest reduce production nc_expr -> nc_expr TokOp5 nc_expr
--- On TokOr reduce production nc_expr -> nc_expr TokOp5 nc_expr
--- On TokOp5 reduce production nc_expr -> nc_expr TokOp5 nc_expr
--- On TokOp4 reduce production nc_expr -> nc_expr TokOp5 nc_expr
--- On TokOp1 reduce production nc_expr -> nc_expr TokOp5 nc_expr
--- On TokEq reduce production nc_expr -> nc_expr TokOp5 nc_expr
--- On TokComma reduce production nc_expr -> nc_expr TokOp5 nc_expr
--- On TokColon reduce production nc_expr -> nc_expr TokOp5 nc_expr
--- On TokAnd reduce production nc_expr -> nc_expr TokOp5 nc_expr
+-- On TokSemi TokRightParen TokRightBrack TokRightBrace TokQuest TokOr TokOp5 TokOp4 TokOp1 TokEq TokComma TokColon TokAnd
+--   reduce production nc_expr -> nc_expr TokOp5 nc_expr
 
 State 103:
 ## Known stack suffix:
@@ -2109,20 +1942,8 @@ nc_expr -> nc_expr . TokQuest nc_expr TokColon nc_expr [ TokStar TokSemi TokRigh
 -- On TokLeftBrack shift to state 82
 -- On TokDot shift to state 93
 ## Reductions:
--- On TokSemi reduce production nc_expr -> nc_expr TokAddr nc_expr
--- On TokRightParen reduce production nc_expr -> nc_expr TokAddr nc_expr
--- On TokRightBrack reduce production nc_expr -> nc_expr TokAddr nc_expr
--- On TokRightBrace reduce production nc_expr -> nc_expr TokAddr nc_expr
--- On TokQuest reduce production nc_expr -> nc_expr TokAddr nc_expr
--- On TokOr reduce production nc_expr -> nc_expr TokAddr nc_expr
--- On TokOp5 reduce production nc_expr -> nc_expr TokAddr nc_expr
--- On TokOp4 reduce production nc_expr -> nc_expr TokAddr nc_expr
--- On TokOp1 reduce production nc_expr -> nc_expr TokAddr nc_expr
--- On TokEq reduce production nc_expr -> nc_expr TokAddr nc_expr
--- On TokComma reduce production nc_expr -> nc_expr TokAddr nc_expr
--- On TokColon reduce production nc_expr -> nc_expr TokAddr nc_expr
--- On TokAnd reduce production nc_expr -> nc_expr TokAddr nc_expr
--- On TokAddr reduce production nc_expr -> nc_expr TokAddr nc_expr
+-- On TokSemi TokRightParen TokRightBrack TokRightBrace TokQuest TokOr TokOp5 TokOp4 TokOp1 TokEq TokComma TokColon TokAnd TokAddr
+--   reduce production nc_expr -> nc_expr TokAddr nc_expr
 
 State 105:
 ## Known stack suffix:
@@ -2185,18 +2006,8 @@ nc_expr -> nc_expr . TokQuest nc_expr TokColon nc_expr [ TokStar TokSemi TokRigh
 -- On TokDot shift to state 93
 -- On TokAddr shift to state 103
 ## Reductions:
--- On TokSemi reduce production nc_expr -> nc_expr TokOp4 nc_expr
--- On TokRightParen reduce production nc_expr -> nc_expr TokOp4 nc_expr
--- On TokRightBrack reduce production nc_expr -> nc_expr TokOp4 nc_expr
--- On TokRightBrace reduce production nc_expr -> nc_expr TokOp4 nc_expr
--- On TokQuest reduce production nc_expr -> nc_expr TokOp4 nc_expr
--- On TokOr reduce production nc_expr -> nc_expr TokOp4 nc_expr
--- On TokOp4 reduce production nc_expr -> nc_expr TokOp4 nc_expr
--- On TokOp1 reduce production nc_expr -> nc_expr TokOp4 nc_expr
--- On TokEq reduce production nc_expr -> nc_expr TokOp4 nc_expr
--- On TokComma reduce production nc_expr -> nc_expr TokOp4 nc_expr
--- On TokColon reduce production nc_expr -> nc_expr TokOp4 nc_expr
--- On TokAnd reduce production nc_expr -> nc_expr TokOp4 nc_expr
+-- On TokSemi TokRightParen TokRightBrack TokRightBrace TokQuest TokOr TokOp4 TokOp1 TokEq TokComma TokColon TokAnd
+--   reduce production nc_expr -> nc_expr TokOp4 nc_expr
 
 State 107:
 ## Known stack suffix:
@@ -2265,12 +2076,8 @@ nc_expr -> nc_expr . TokQuest nc_expr TokColon nc_expr [ TokStar TokSemi TokRigh
 -- On TokAnd shift to state 111
 -- On TokAddr shift to state 103
 ## Reductions:
--- On TokSemi reduce production nc_expr -> nc_expr TokOp1 nc_expr
--- On TokRightParen reduce production nc_expr -> nc_expr TokOp1 nc_expr
--- On TokRightBrack reduce production nc_expr -> nc_expr TokOp1 nc_expr
--- On TokRightBrace reduce production nc_expr -> nc_expr TokOp1 nc_expr
--- On TokComma reduce production nc_expr -> nc_expr TokOp1 nc_expr
--- On TokColon reduce production nc_expr -> nc_expr TokOp1 nc_expr
+-- On TokSemi TokRightParen TokRightBrack TokRightBrace TokComma TokColon
+--   reduce production nc_expr -> nc_expr TokOp1 nc_expr
 
 State 109:
 ## Known stack suffix:
@@ -2339,12 +2146,8 @@ nc_expr -> nc_expr . TokQuest nc_expr TokColon nc_expr [ TokStar TokSemi TokRigh
 -- On TokAnd shift to state 111
 -- On TokAddr shift to state 103
 ## Reductions:
--- On TokSemi reduce production nc_expr -> nc_expr TokEq nc_expr
--- On TokRightParen reduce production nc_expr -> nc_expr TokEq nc_expr
--- On TokRightBrack reduce production nc_expr -> nc_expr TokEq nc_expr
--- On TokRightBrace reduce production nc_expr -> nc_expr TokEq nc_expr
--- On TokComma reduce production nc_expr -> nc_expr TokEq nc_expr
--- On TokColon reduce production nc_expr -> nc_expr TokEq nc_expr
+-- On TokSemi TokRightParen TokRightBrack TokRightBrace TokComma TokColon
+--   reduce production nc_expr -> nc_expr TokEq nc_expr
 
 State 111:
 ## Known stack suffix:
@@ -2408,17 +2211,8 @@ nc_expr -> nc_expr . TokQuest nc_expr TokColon nc_expr [ TokStar TokSemi TokRigh
 -- On TokDot shift to state 93
 -- On TokAddr shift to state 103
 ## Reductions:
--- On TokSemi reduce production nc_expr -> nc_expr TokAnd nc_expr
--- On TokRightParen reduce production nc_expr -> nc_expr TokAnd nc_expr
--- On TokRightBrack reduce production nc_expr -> nc_expr TokAnd nc_expr
--- On TokRightBrace reduce production nc_expr -> nc_expr TokAnd nc_expr
--- On TokQuest reduce production nc_expr -> nc_expr TokAnd nc_expr
--- On TokOr reduce production nc_expr -> nc_expr TokAnd nc_expr
--- On TokOp1 reduce production nc_expr -> nc_expr TokAnd nc_expr
--- On TokEq reduce production nc_expr -> nc_expr TokAnd nc_expr
--- On TokComma reduce production nc_expr -> nc_expr TokAnd nc_expr
--- On TokColon reduce production nc_expr -> nc_expr TokAnd nc_expr
--- On TokAnd reduce production nc_expr -> nc_expr TokAnd nc_expr
+-- On TokSemi TokRightParen TokRightBrack TokRightBrace TokQuest TokOr TokOp1 TokEq TokComma TokColon TokAnd
+--   reduce production nc_expr -> nc_expr TokAnd nc_expr
 
 State 113:
 ## Known stack suffix:
@@ -2485,14 +2279,8 @@ nc_expr -> nc_expr TokQuest nc_expr TokColon nc_expr . [ TokStar TokSemi TokRigh
 -- On TokAnd shift to state 111
 -- On TokAddr shift to state 103
 ## Reductions:
--- On TokSemi reduce production nc_expr -> nc_expr TokQuest nc_expr TokColon nc_expr
--- On TokRightParen reduce production nc_expr -> nc_expr TokQuest nc_expr TokColon nc_expr
--- On TokRightBrack reduce production nc_expr -> nc_expr TokQuest nc_expr TokColon nc_expr
--- On TokRightBrace reduce production nc_expr -> nc_expr TokQuest nc_expr TokColon nc_expr
--- On TokOp1 reduce production nc_expr -> nc_expr TokQuest nc_expr TokColon nc_expr
--- On TokEq reduce production nc_expr -> nc_expr TokQuest nc_expr TokColon nc_expr
--- On TokComma reduce production nc_expr -> nc_expr TokQuest nc_expr TokColon nc_expr
--- On TokColon reduce production nc_expr -> nc_expr TokQuest nc_expr TokColon nc_expr
+-- On TokSemi TokRightParen TokRightBrack TokRightBrace TokOp1 TokEq TokComma TokColon
+--   reduce production nc_expr -> nc_expr TokQuest nc_expr TokColon nc_expr
 
 State 115:
 ## Known stack suffix:
@@ -2539,8 +2327,8 @@ rev_args -> nc_expr . [ TokRightParen TokComma ]
 -- On TokAnd shift to state 111
 -- On TokAddr shift to state 103
 ## Reductions:
--- On TokRightParen reduce production rev_args -> nc_expr
--- On TokComma reduce production rev_args -> nc_expr
+-- On TokRightParen TokComma
+--   reduce production rev_args -> nc_expr
 
 State 116:
 ## Known stack suffix:
@@ -2605,10 +2393,8 @@ nc_expr -> nc_expr . TokQuest nc_expr TokColon nc_expr [ TokStar TokSemi TokRigh
 -- On TokAnd shift to state 111
 -- On TokAddr shift to state 103
 ## Reductions:
--- On TokSemi reduce production expr -> nc_expr
--- On TokRightParen reduce production expr -> nc_expr
--- On TokRightBrack reduce production expr -> nc_expr
--- On TokComma reduce production expr -> nc_expr
+-- On TokSemi TokRightParen TokRightBrack TokComma
+--   reduce production expr -> nc_expr
 
 State 119:
 ## Known stack suffix:
@@ -2704,11 +2490,8 @@ stmt -> TokWhile TokLeftParen expr TokRightParen . stmt [ TokWhile TokVolatile T
 -- On decl_specifiers shift to state 279
 -- On all_def shift to state 424
 ## Reductions:
--- On TokTypeVoid reduce production decl_specifiers_opt ->
--- On TokTypeInt reduce production decl_specifiers_opt ->
--- On TokTypeFloat reduce production decl_specifiers_opt ->
--- On TokTypeDouble reduce production decl_specifiers_opt ->
--- On TokTypeChar reduce production decl_specifiers_opt ->
+-- On TokTypeVoid TokTypeInt TokTypeFloat TokTypeDouble TokTypeChar
+--   reduce production decl_specifiers_opt ->
 
 State 121:
 ## Known stack suffix:
@@ -2718,25 +2501,10 @@ id -> TokTypeId . [ TokColon ]
 simp_type_spec -> TokTypeId . [ TokVolatile TokString TokStatic TokStar TokSemi TokRightParen TokRegister TokLeftParen TokLeftBrack TokLeftBrace TokInt TokId TokFloat TokExtern TokConst TokChar TokAuto TokAddr ]
 ## Transitions:
 ## Reductions:
--- On TokVolatile reduce production simp_type_spec -> TokTypeId
--- On TokString reduce production simp_type_spec -> TokTypeId
--- On TokStatic reduce production simp_type_spec -> TokTypeId
--- On TokStar reduce production simp_type_spec -> TokTypeId
--- On TokSemi reduce production simp_type_spec -> TokTypeId
--- On TokRightParen reduce production simp_type_spec -> TokTypeId
--- On TokRegister reduce production simp_type_spec -> TokTypeId
--- On TokLeftParen reduce production simp_type_spec -> TokTypeId
--- On TokLeftBrack reduce production simp_type_spec -> TokTypeId
--- On TokLeftBrace reduce production simp_type_spec -> TokTypeId
--- On TokInt reduce production simp_type_spec -> TokTypeId
--- On TokId reduce production simp_type_spec -> TokTypeId
--- On TokFloat reduce production simp_type_spec -> TokTypeId
--- On TokExtern reduce production simp_type_spec -> TokTypeId
--- On TokConst reduce production simp_type_spec -> TokTypeId
--- On TokColon reduce production id -> TokTypeId
--- On TokChar reduce production simp_type_spec -> TokTypeId
--- On TokAuto reduce production simp_type_spec -> TokTypeId
--- On TokAddr reduce production simp_type_spec -> TokTypeId
+-- On TokColon
+--   reduce production id -> TokTypeId
+-- On TokVolatile TokString TokStatic TokStar TokSemi TokRightParen TokRegister TokLeftParen TokLeftBrack TokLeftBrace TokInt TokId TokFloat TokExtern TokConst TokChar TokAuto TokAddr
+--   reduce production simp_type_spec -> TokTypeId
 
 State 122:
 ## Known stack suffix:
@@ -2821,11 +2589,8 @@ stmt -> TokTry . stmt [ TokWhile TokVolatile TokUnsigned TokUnion TokTypedef Tok
 -- On decl_specifiers shift to state 279
 -- On all_def shift to state 424
 ## Reductions:
--- On TokTypeVoid reduce production decl_specifiers_opt ->
--- On TokTypeInt reduce production decl_specifiers_opt ->
--- On TokTypeFloat reduce production decl_specifiers_opt ->
--- On TokTypeDouble reduce production decl_specifiers_opt ->
--- On TokTypeChar reduce production decl_specifiers_opt ->
+-- On TokTypeVoid TokTypeInt TokTypeFloat TokTypeDouble TokTypeChar
+--   reduce production decl_specifiers_opt ->
 
 State 123:
 ## Known stack suffix:
@@ -2953,11 +2718,8 @@ stmt -> TokSwitch TokLeftParen expr TokRightParen . stmt [ TokWhile TokVolatile 
 -- On decl_specifiers shift to state 279
 -- On all_def shift to state 424
 ## Reductions:
--- On TokTypeVoid reduce production decl_specifiers_opt ->
--- On TokTypeInt reduce production decl_specifiers_opt ->
--- On TokTypeFloat reduce production decl_specifiers_opt ->
--- On TokTypeDouble reduce production decl_specifiers_opt ->
--- On TokTypeChar reduce production decl_specifiers_opt ->
+-- On TokTypeVoid TokTypeInt TokTypeFloat TokTypeDouble TokTypeChar
+--   reduce production decl_specifiers_opt ->
 
 State 127:
 ## Known stack suffix:
@@ -3089,10 +2851,8 @@ nc_expr -> nc_expr . TokQuest nc_expr TokColon nc_expr [ TokStar TokSemi TokRigh
 -- On TokAnd shift to state 111
 -- On TokAddr shift to state 103
 ## Reductions:
--- On TokSemi reduce production expr -> expr TokComma nc_expr
--- On TokRightParen reduce production expr -> expr TokComma nc_expr
--- On TokRightBrack reduce production expr -> expr TokComma nc_expr
--- On TokComma reduce production expr -> expr TokComma nc_expr
+-- On TokSemi TokRightParen TokRightBrack TokComma
+--   reduce production expr -> expr TokComma nc_expr
 
 State 134:
 ## Known stack suffix:
@@ -3276,11 +3036,8 @@ stmt -> TokIf TokLeftParen expr TokRightParen . stmt TokElse stmt [ TokWhile Tok
 -- On decl_specifiers shift to state 279
 -- On all_def shift to state 424
 ## Reductions:
--- On TokTypeVoid reduce production decl_specifiers_opt ->
--- On TokTypeInt reduce production decl_specifiers_opt ->
--- On TokTypeFloat reduce production decl_specifiers_opt ->
--- On TokTypeDouble reduce production decl_specifiers_opt ->
--- On TokTypeChar reduce production decl_specifiers_opt ->
+-- On TokTypeVoid TokTypeInt TokTypeFloat TokTypeDouble TokTypeChar
+--   reduce production decl_specifiers_opt ->
 
 State 142:
 ## Known stack suffix:
@@ -3290,30 +3047,10 @@ id -> TokId . [ TokColon ]
 nc_expr -> TokId . [ TokStar TokSemi TokRightParen TokRightBrace TokQuest TokPrePostOp12 TokOr TokOp9 TokOp8 TokOp7 TokOp5 TokOp4 TokOp13 TokOp11 TokOp10 TokOp1 TokLeftParen TokLeftBrack TokEq TokDot TokComma TokAnd TokAddr ]
 ## Transitions:
 ## Reductions:
--- On TokStar reduce production nc_expr -> TokId
--- On TokSemi reduce production nc_expr -> TokId
--- On TokRightParen reduce production nc_expr -> TokId
--- On TokRightBrace reduce production nc_expr -> TokId
--- On TokQuest reduce production nc_expr -> TokId
--- On TokPrePostOp12 reduce production nc_expr -> TokId
--- On TokOr reduce production nc_expr -> TokId
--- On TokOp9 reduce production nc_expr -> TokId
--- On TokOp8 reduce production nc_expr -> TokId
--- On TokOp7 reduce production nc_expr -> TokId
--- On TokOp5 reduce production nc_expr -> TokId
--- On TokOp4 reduce production nc_expr -> TokId
--- On TokOp13 reduce production nc_expr -> TokId
--- On TokOp11 reduce production nc_expr -> TokId
--- On TokOp10 reduce production nc_expr -> TokId
--- On TokOp1 reduce production nc_expr -> TokId
--- On TokLeftParen reduce production nc_expr -> TokId
--- On TokLeftBrack reduce production nc_expr -> TokId
--- On TokEq reduce production nc_expr -> TokId
--- On TokDot reduce production nc_expr -> TokId
--- On TokComma reduce production nc_expr -> TokId
--- On TokColon reduce production id -> TokId
--- On TokAnd reduce production nc_expr -> TokId
--- On TokAddr reduce production nc_expr -> TokId
+-- On TokColon
+--   reduce production id -> TokId
+-- On TokStar TokSemi TokRightParen TokRightBrace TokQuest TokPrePostOp12 TokOr TokOp9 TokOp8 TokOp7 TokOp5 TokOp4 TokOp13 TokOp11 TokOp10 TokOp1 TokLeftParen TokLeftBrack TokEq TokDot TokComma TokAnd TokAddr
+--   reduce production nc_expr -> TokId
 
 State 143:
 ## Known stack suffix:
@@ -3376,7 +3113,8 @@ stmt -> TokFor TokLeftParen . opt_expr TokSemi opt_expr TokSemi opt_expr TokRigh
 -- On nc_expr shift to state 118
 -- On expr shift to state 239
 ## Reductions:
--- On TokSemi reduce production opt_expr ->
+-- On TokSemi
+--   reduce production opt_expr ->
 
 State 148:
 ## Known stack suffix:
@@ -3410,7 +3148,8 @@ stmt -> TokFor TokLeftParen opt_expr TokSemi . opt_expr TokSemi opt_expr TokRigh
 -- On nc_expr shift to state 118
 -- On expr shift to state 239
 ## Reductions:
--- On TokSemi reduce production opt_expr ->
+-- On TokSemi
+--   reduce production opt_expr ->
 
 State 150:
 ## Known stack suffix:
@@ -3444,7 +3183,8 @@ stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi . opt_expr TokRigh
 -- On nc_expr shift to state 118
 -- On expr shift to state 239
 ## Reductions:
--- On TokRightParen reduce production opt_expr ->
+-- On TokRightParen
+--   reduce production opt_expr ->
 
 State 152:
 ## Known stack suffix:
@@ -3538,11 +3278,8 @@ stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightP
 -- On decl_specifiers shift to state 279
 -- On all_def shift to state 424
 ## Reductions:
--- On TokTypeVoid reduce production decl_specifiers_opt ->
--- On TokTypeInt reduce production decl_specifiers_opt ->
--- On TokTypeFloat reduce production decl_specifiers_opt ->
--- On TokTypeDouble reduce production decl_specifiers_opt ->
--- On TokTypeChar reduce production decl_specifiers_opt ->
+-- On TokTypeVoid TokTypeInt TokTypeFloat TokTypeDouble TokTypeChar
+--   reduce production decl_specifiers_opt ->
 
 State 154:
 ## Known stack suffix:
@@ -3627,11 +3364,8 @@ stmt -> TokDo . stmt TokWhile TokLeftParen expr TokRightParen TokSemi [ TokWhile
 -- On decl_specifiers shift to state 279
 -- On all_def shift to state 424
 ## Reductions:
--- On TokTypeVoid reduce production decl_specifiers_opt ->
--- On TokTypeInt reduce production decl_specifiers_opt ->
--- On TokTypeFloat reduce production decl_specifiers_opt ->
--- On TokTypeDouble reduce production decl_specifiers_opt ->
--- On TokTypeChar reduce production decl_specifiers_opt ->
+-- On TokTypeVoid TokTypeInt TokTypeFloat TokTypeDouble TokTypeChar
+--   reduce production decl_specifiers_opt ->
 
 State 155:
 ## Known stack suffix:
@@ -3765,9 +3499,10 @@ pattern -> TokId . pattern [ TokRightBrace TokComma ]
 -- On TokChar shift to state 168
 -- On pattern shift to state 169
 ## Reductions:
--- On TokRightBrace reduce production pattern -> TokId
--- On TokComma reduce production pattern -> TokId
--- On TokColon reduce production id -> TokId
+-- On TokColon
+--   reduce production id -> TokId
+-- On TokRightBrace TokComma
+--   reduce production pattern -> TokId
 
 State 166:
 ## Known stack suffix:
@@ -3785,12 +3520,8 @@ pattern -> TokId . pattern [ TokSemi TokRightParen TokRightBrace TokEq TokComma 
 -- On TokChar shift to state 168
 -- On pattern shift to state 169
 ## Reductions:
--- On TokSemi reduce production pattern -> TokId
--- On TokRightParen reduce production pattern -> TokId
--- On TokRightBrace reduce production pattern -> TokId
--- On TokEq reduce production pattern -> TokId
--- On TokComma reduce production pattern -> TokId
--- On TokColon reduce production pattern -> TokId
+-- On TokSemi TokRightParen TokRightBrace TokEq TokComma TokColon
+--   reduce production pattern -> TokId
 
 State 167:
 ## Known stack suffix:
@@ -3838,7 +3569,8 @@ rev_struct_field_pattern_list -> rev_struct_field_pattern_list . TokComma struct
 -- On TokComma shift to state 172
 -- On opt_comma shift to state 178
 ## Reductions:
--- On TokRightBrace reduce production opt_comma ->
+-- On TokRightBrace
+--   reduce production opt_comma ->
 
 State 172:
 ## Known stack suffix:
@@ -3859,7 +3591,8 @@ rev_struct_field_pattern_list -> rev_struct_field_pattern_list TokComma . struct
 -- On pattern shift to state 174
 -- On id shift to state 175
 ## Reductions:
--- On TokRightBrace reduce production opt_comma -> TokComma
+-- On TokRightBrace
+--   reduce production opt_comma -> TokComma
 
 State 173:
 ## Known stack suffix:
@@ -4015,9 +3748,8 @@ uenum_spec_id -> union_enum . opt_type_params id [ TokVolatile TokStatic TokStar
 -- On type_params shift to state 17
 -- On opt_type_params shift to state 189
 ## Reductions:
--- On TokTypeId reduce production opt_type_params ->
--- On TokLeftBrace reduce production opt_type_params ->
--- On TokId reduce production opt_type_params ->
+-- On TokTypeId TokLeftBrace TokId
+--   reduce production opt_type_params ->
 
 State 189:
 ## Known stack suffix:
@@ -4092,11 +3824,8 @@ uenum_declaration_list_cat -> uenum_declaration_list_cat . uenum_declaration [ T
 -- On decl_specifiers_opt shift to state 265
 -- On decl_specifiers shift to state 279
 ## Reductions:
--- On TokTypeVoid reduce production decl_specifiers_opt ->
--- On TokTypeInt reduce production decl_specifiers_opt ->
--- On TokTypeFloat reduce production decl_specifiers_opt ->
--- On TokTypeDouble reduce production decl_specifiers_opt ->
--- On TokTypeChar reduce production decl_specifiers_opt ->
+-- On TokTypeVoid TokTypeInt TokTypeFloat TokTypeDouble TokTypeChar
+--   reduce production decl_specifiers_opt ->
 
 State 192:
 ## Known stack suffix:
@@ -4135,22 +3864,8 @@ uenum_spec -> uenum_spec_id . [ TokVolatile TokStatic TokStar TokSemi TokRightPa
 -- On TokLeftBrace shift to state 190
 -- On uenum_declaration_list shift to state 196
 ## Reductions:
--- On TokVolatile reduce production uenum_spec -> uenum_spec_id
--- On TokStatic reduce production uenum_spec -> uenum_spec_id
--- On TokStar reduce production uenum_spec -> uenum_spec_id
--- On TokSemi reduce production uenum_spec -> uenum_spec_id
--- On TokRightParen reduce production uenum_spec -> uenum_spec_id
--- On TokRegister reduce production uenum_spec -> uenum_spec_id
--- On TokPoly reduce production uenum_spec -> uenum_spec_id
--- On TokLeftParen reduce production uenum_spec -> uenum_spec_id
--- On TokLeftBrack reduce production uenum_spec -> uenum_spec_id
--- On TokId reduce production uenum_spec -> uenum_spec_id
--- On TokExtern reduce production uenum_spec -> uenum_spec_id
--- On TokConst reduce production uenum_spec -> uenum_spec_id
--- On TokComma reduce production uenum_spec -> uenum_spec_id
--- On TokColon reduce production uenum_spec -> uenum_spec_id
--- On TokAuto reduce production uenum_spec -> uenum_spec_id
--- On TokAddr reduce production uenum_spec -> uenum_spec_id
+-- On TokVolatile TokStatic TokStar TokSemi TokRightParen TokRegister TokPoly TokLeftParen TokLeftBrack TokId TokExtern TokConst TokComma TokColon TokAuto TokAddr
+--   reduce production uenum_spec -> uenum_spec_id
 
 State 196:
 ## Known stack suffix:
@@ -4207,22 +3922,8 @@ tuple_spec -> tuple_spec_id . [ TokVolatile TokStatic TokStar TokSemi TokRightPa
 -- On TokLeftBrace shift to state 20
 -- On tuple_declaration_list shift to state 202
 ## Reductions:
--- On TokVolatile reduce production tuple_spec -> tuple_spec_id
--- On TokStatic reduce production tuple_spec -> tuple_spec_id
--- On TokStar reduce production tuple_spec -> tuple_spec_id
--- On TokSemi reduce production tuple_spec -> tuple_spec_id
--- On TokRightParen reduce production tuple_spec -> tuple_spec_id
--- On TokRegister reduce production tuple_spec -> tuple_spec_id
--- On TokPoly reduce production tuple_spec -> tuple_spec_id
--- On TokLeftParen reduce production tuple_spec -> tuple_spec_id
--- On TokLeftBrack reduce production tuple_spec -> tuple_spec_id
--- On TokId reduce production tuple_spec -> tuple_spec_id
--- On TokExtern reduce production tuple_spec -> tuple_spec_id
--- On TokConst reduce production tuple_spec -> tuple_spec_id
--- On TokComma reduce production tuple_spec -> tuple_spec_id
--- On TokColon reduce production tuple_spec -> tuple_spec_id
--- On TokAuto reduce production tuple_spec -> tuple_spec_id
--- On TokAddr reduce production tuple_spec -> tuple_spec_id
+-- On TokVolatile TokStatic TokStar TokSemi TokRightParen TokRegister TokPoly TokLeftParen TokLeftBrack TokId TokExtern TokConst TokComma TokColon TokAuto TokAddr
+--   reduce production tuple_spec -> tuple_spec_id
 
 State 202:
 ## Known stack suffix:
@@ -4260,16 +3961,8 @@ struct_decl_spec -> struct_type_spec . decl_type_specifiers_opt [ TokStar TokSem
 -- On decl_type_specifiers shift to state 207
 -- On decl_type_specifier shift to state 209
 ## Reductions:
--- On TokStar reduce production decl_type_specifiers_opt ->
--- On TokSemi reduce production decl_type_specifiers_opt ->
--- On TokRightParen reduce production decl_type_specifiers_opt ->
--- On TokPoly reduce production decl_type_specifiers_opt ->
--- On TokLeftParen reduce production decl_type_specifiers_opt ->
--- On TokLeftBrack reduce production decl_type_specifiers_opt ->
--- On TokId reduce production decl_type_specifiers_opt ->
--- On TokComma reduce production decl_type_specifiers_opt ->
--- On TokColon reduce production decl_type_specifiers_opt ->
--- On TokAddr reduce production decl_type_specifiers_opt ->
+-- On TokStar TokSemi TokRightParen TokPoly TokLeftParen TokLeftBrack TokId TokComma TokColon TokAddr
+--   reduce production decl_type_specifiers_opt ->
 
 State 205:
 ## Known stack suffix:
@@ -4306,21 +3999,8 @@ decl_type_specifiers_opt -> decl_type_specifiers . [ TokString TokStar TokSemi T
 -- On storage_class_spec shift to state 205
 -- On decl_type_specifier shift to state 208
 ## Reductions:
--- On TokString reduce production decl_type_specifiers_opt -> decl_type_specifiers
--- On TokStar reduce production decl_type_specifiers_opt -> decl_type_specifiers
--- On TokSemi reduce production decl_type_specifiers_opt -> decl_type_specifiers
--- On TokRightParen reduce production decl_type_specifiers_opt -> decl_type_specifiers
--- On TokPoly reduce production decl_type_specifiers_opt -> decl_type_specifiers
--- On TokLeftParen reduce production decl_type_specifiers_opt -> decl_type_specifiers
--- On TokLeftBrack reduce production decl_type_specifiers_opt -> decl_type_specifiers
--- On TokLeftBrace reduce production decl_type_specifiers_opt -> decl_type_specifiers
--- On TokInt reduce production decl_type_specifiers_opt -> decl_type_specifiers
--- On TokId reduce production decl_type_specifiers_opt -> decl_type_specifiers
--- On TokFloat reduce production decl_type_specifiers_opt -> decl_type_specifiers
--- On TokComma reduce production decl_type_specifiers_opt -> decl_type_specifiers
--- On TokColon reduce production decl_type_specifiers_opt -> decl_type_specifiers
--- On TokChar reduce production decl_type_specifiers_opt -> decl_type_specifiers
--- On TokAddr reduce production decl_type_specifiers_opt -> decl_type_specifiers
+-- On TokString TokStar TokSemi TokRightParen TokPoly TokLeftParen TokLeftBrack TokLeftBrace TokInt TokId TokFloat TokComma TokColon TokChar TokAddr
+--   reduce production decl_type_specifiers_opt -> decl_type_specifiers
 
 State 208:
 ## Known stack suffix:
@@ -4350,22 +4030,8 @@ struct_spec -> struct_spec_id . [ TokVolatile TokStatic TokStar TokSemi TokRight
 -- On TokLeftBrace shift to state 211
 -- On struct_declaration_list shift to state 346
 ## Reductions:
--- On TokVolatile reduce production struct_spec -> struct_spec_id
--- On TokStatic reduce production struct_spec -> struct_spec_id
--- On TokStar reduce production struct_spec -> struct_spec_id
--- On TokSemi reduce production struct_spec -> struct_spec_id
--- On TokRightParen reduce production struct_spec -> struct_spec_id
--- On TokRegister reduce production struct_spec -> struct_spec_id
--- On TokPoly reduce production struct_spec -> struct_spec_id
--- On TokLeftParen reduce production struct_spec -> struct_spec_id
--- On TokLeftBrack reduce production struct_spec -> struct_spec_id
--- On TokId reduce production struct_spec -> struct_spec_id
--- On TokExtern reduce production struct_spec -> struct_spec_id
--- On TokConst reduce production struct_spec -> struct_spec_id
--- On TokComma reduce production struct_spec -> struct_spec_id
--- On TokColon reduce production struct_spec -> struct_spec_id
--- On TokAuto reduce production struct_spec -> struct_spec_id
--- On TokAddr reduce production struct_spec -> struct_spec_id
+-- On TokVolatile TokStatic TokStar TokSemi TokRightParen TokRegister TokPoly TokLeftParen TokLeftBrack TokId TokExtern TokConst TokComma TokColon TokAuto TokAddr
+--   reduce production struct_spec -> struct_spec_id
 
 State 211:
 ## Known stack suffix:
@@ -4425,11 +4091,8 @@ struct_declaration_list_cat -> struct_declaration_list_cat . struct_declaration 
 -- On decl_specifiers_opt shift to state 265
 -- On decl_specifiers shift to state 279
 ## Reductions:
--- On TokTypeVoid reduce production decl_specifiers_opt ->
--- On TokTypeInt reduce production decl_specifiers_opt ->
--- On TokTypeFloat reduce production decl_specifiers_opt ->
--- On TokTypeDouble reduce production decl_specifiers_opt ->
--- On TokTypeChar reduce production decl_specifiers_opt ->
+-- On TokTypeVoid TokTypeInt TokTypeFloat TokTypeDouble TokTypeChar
+--   reduce production decl_specifiers_opt ->
 
 State 213:
 ## Known stack suffix:
@@ -4461,9 +4124,8 @@ struct_spec_id -> struct_or_union . opt_type_params id [ TokVolatile TokStatic T
 -- On type_params shift to state 17
 -- On opt_type_params shift to state 216
 ## Reductions:
--- On TokTypeId reduce production opt_type_params ->
--- On TokLeftBrace reduce production opt_type_params ->
--- On TokId reduce production opt_type_params ->
+-- On TokTypeId TokLeftBrace TokId
+--   reduce production opt_type_params ->
 
 State 216:
 ## Known stack suffix:
@@ -4537,10 +4199,8 @@ id_decl -> TokStar . decl_struct_type_specifiers_opt id_decl [ TokSemi TokRightP
 -- On decl_struct_type_specifiers shift to state 299
 -- On decl_struct_type_specifier shift to state 301
 ## Reductions:
--- On TokStar reduce production decl_struct_type_specifiers_opt ->
--- On TokLeftParen reduce production decl_struct_type_specifiers_opt ->
--- On TokId reduce production decl_struct_type_specifiers_opt ->
--- On TokAddr reduce production decl_struct_type_specifiers_opt ->
+-- On TokStar TokLeftParen TokId TokAddr
+--   reduce production decl_struct_type_specifiers_opt ->
 
 State 222:
 ## Known stack suffix:
@@ -4601,10 +4261,8 @@ id_decl -> TokAddr . decl_struct_type_specifiers_opt id_decl [ TokSemi TokRightP
 -- On decl_struct_type_specifiers shift to state 299
 -- On decl_struct_type_specifier shift to state 301
 ## Reductions:
--- On TokStar reduce production decl_struct_type_specifiers_opt ->
--- On TokLeftParen reduce production decl_struct_type_specifiers_opt ->
--- On TokId reduce production decl_struct_type_specifiers_opt ->
--- On TokAddr reduce production decl_struct_type_specifiers_opt ->
+-- On TokStar TokLeftParen TokId TokAddr
+--   reduce production decl_struct_type_specifiers_opt ->
 
 State 227:
 ## Known stack suffix:
@@ -4640,12 +4298,8 @@ id_decl -> direct_decl . [ TokSemi TokRightParen TokLeftBrace TokEq TokComma Tok
 -- On TokLeftParen shift to state 230
 -- On TokLeftBrack shift to state 329
 ## Reductions:
--- On TokSemi reduce production id_decl -> direct_decl
--- On TokRightParen reduce production id_decl -> direct_decl
--- On TokLeftBrace reduce production id_decl -> direct_decl
--- On TokEq reduce production id_decl -> direct_decl
--- On TokComma reduce production id_decl -> direct_decl
--- On TokColon reduce production id_decl -> direct_decl
+-- On TokSemi TokRightParen TokLeftBrace TokEq TokComma TokColon
+--   reduce production id_decl -> direct_decl
 
 State 230:
 ## Known stack suffix:
@@ -4697,12 +4351,10 @@ direct_decl -> direct_decl TokLeftParen . opt_param_list TokRightParen [ TokSemi
 -- On decl_specifiers_opt shift to state 265
 -- On decl_specifiers shift to state 279
 ## Reductions:
--- On TokTypeVoid reduce production decl_specifiers_opt ->
--- On TokTypeInt reduce production decl_specifiers_opt ->
--- On TokTypeFloat reduce production decl_specifiers_opt ->
--- On TokTypeDouble reduce production decl_specifiers_opt ->
--- On TokTypeChar reduce production decl_specifiers_opt ->
--- On TokRightParen reduce production opt_param_list ->
+-- On TokTypeVoid TokTypeInt TokTypeFloat TokTypeDouble TokTypeChar
+--   reduce production decl_specifiers_opt ->
+-- On TokRightParen
+--   reduce production opt_param_list ->
 
 State 231:
 ## Known stack suffix:
@@ -4732,8 +4384,8 @@ param_decl -> struct_decl_spec . [ TokRightParen TokComma ]
 -- On direct_abstract_decl shift to state 243
 -- On abstract_decl shift to state 326
 ## Reductions:
--- On TokRightParen reduce production param_decl -> struct_decl_spec
--- On TokComma reduce production param_decl -> struct_decl_spec
+-- On TokRightParen TokComma
+--   reduce production param_decl -> struct_decl_spec
 
 State 233:
 ## Known stack suffix:
@@ -4750,13 +4402,8 @@ id_decl -> TokStar . decl_struct_type_specifiers_opt id_decl [ TokSemi TokRightP
 -- On decl_struct_type_specifiers shift to state 299
 -- On decl_struct_type_specifier shift to state 301
 ## Reductions:
--- On TokStar reduce production decl_struct_type_specifiers_opt ->
--- On TokRightParen reduce production decl_struct_type_specifiers_opt ->
--- On TokLeftParen reduce production decl_struct_type_specifiers_opt ->
--- On TokLeftBrack reduce production decl_struct_type_specifiers_opt ->
--- On TokId reduce production decl_struct_type_specifiers_opt ->
--- On TokComma reduce production decl_struct_type_specifiers_opt ->
--- On TokAddr reduce production decl_struct_type_specifiers_opt ->
+-- On TokStar TokRightParen TokLeftParen TokLeftBrack TokId TokComma TokAddr
+--   reduce production decl_struct_type_specifiers_opt ->
 
 State 234:
 ## Known stack suffix:
@@ -4777,8 +4424,8 @@ id_decl -> TokStar decl_struct_type_specifiers_opt . id_decl [ TokSemi TokRightP
 -- On direct_abstract_decl shift to state 243
 -- On abstract_decl shift to state 310
 ## Reductions:
--- On TokRightParen reduce production abstract_decl -> TokStar decl_struct_type_specifiers_opt
--- On TokComma reduce production abstract_decl -> TokStar decl_struct_type_specifiers_opt
+-- On TokRightParen TokComma
+--   reduce production abstract_decl -> TokStar decl_struct_type_specifiers_opt
 
 State 235:
 ## Known stack suffix:
@@ -4842,12 +4489,10 @@ fun_param_list -> TokLeftParen . opt_param_list TokRightParen [ TokRightParen To
 -- On decl_specifiers shift to state 279
 -- On abstract_decl shift to state 306
 ## Reductions:
--- On TokTypeVoid reduce production decl_specifiers_opt ->
--- On TokTypeInt reduce production decl_specifiers_opt ->
--- On TokTypeFloat reduce production decl_specifiers_opt ->
--- On TokTypeDouble reduce production decl_specifiers_opt ->
--- On TokTypeChar reduce production decl_specifiers_opt ->
--- On TokRightParen reduce production opt_param_list ->
+-- On TokTypeVoid TokTypeInt TokTypeFloat TokTypeDouble TokTypeChar
+--   reduce production decl_specifiers_opt ->
+-- On TokRightParen
+--   reduce production opt_param_list ->
 
 State 236:
 ## Known stack suffix:
@@ -4872,7 +4517,8 @@ direct_abstract_decl -> TokLeftBrack . opt_expr TokRightBrack [ TokRightParen To
 -- On nc_expr shift to state 118
 -- On expr shift to state 239
 ## Reductions:
--- On TokRightBrack reduce production opt_expr ->
+-- On TokRightBrack
+--   reduce production opt_expr ->
 
 State 237:
 ## Known stack suffix:
@@ -4901,9 +4547,8 @@ opt_expr -> expr . [ TokSemi TokRightParen TokRightBrack ]
 ## Transitions:
 -- On TokComma shift to state 132
 ## Reductions:
--- On TokSemi reduce production opt_expr -> expr
--- On TokRightParen reduce production opt_expr -> expr
--- On TokRightBrack reduce production opt_expr -> expr
+-- On TokSemi TokRightParen TokRightBrack
+--   reduce production opt_expr -> expr
 
 State 240:
 ## Known stack suffix:
@@ -4920,13 +4565,8 @@ id_decl -> TokAddr . decl_struct_type_specifiers_opt id_decl [ TokSemi TokRightP
 -- On decl_struct_type_specifiers shift to state 299
 -- On decl_struct_type_specifier shift to state 301
 ## Reductions:
--- On TokStar reduce production decl_struct_type_specifiers_opt ->
--- On TokRightParen reduce production decl_struct_type_specifiers_opt ->
--- On TokLeftParen reduce production decl_struct_type_specifiers_opt ->
--- On TokLeftBrack reduce production decl_struct_type_specifiers_opt ->
--- On TokId reduce production decl_struct_type_specifiers_opt ->
--- On TokComma reduce production decl_struct_type_specifiers_opt ->
--- On TokAddr reduce production decl_struct_type_specifiers_opt ->
+-- On TokStar TokRightParen TokLeftParen TokLeftBrack TokId TokComma TokAddr
+--   reduce production decl_struct_type_specifiers_opt ->
 
 State 241:
 ## Known stack suffix:
@@ -4947,8 +4587,8 @@ id_decl -> TokAddr decl_struct_type_specifiers_opt . id_decl [ TokSemi TokRightP
 -- On direct_abstract_decl shift to state 243
 -- On abstract_decl shift to state 298
 ## Reductions:
--- On TokRightParen reduce production abstract_decl -> TokAddr decl_struct_type_specifiers_opt
--- On TokComma reduce production abstract_decl -> TokAddr decl_struct_type_specifiers_opt
+-- On TokRightParen TokComma
+--   reduce production abstract_decl -> TokAddr decl_struct_type_specifiers_opt
 
 State 242:
 ## Known stack suffix:
@@ -4971,8 +4611,8 @@ direct_abstract_decl -> direct_abstract_decl . fun_param_list [ TokRightParen To
 -- On TokLeftBrack shift to state 318
 -- On fun_param_list shift to state 321
 ## Reductions:
--- On TokRightParen reduce production abstract_decl -> direct_abstract_decl
--- On TokComma reduce production abstract_decl -> direct_abstract_decl
+-- On TokRightParen TokComma
+--   reduce production abstract_decl -> direct_abstract_decl
 
 State 244:
 ## Known stack suffix:
@@ -5024,12 +4664,10 @@ fun_param_list -> TokLeftParen . opt_param_list TokRightParen [ TokRightParen To
 -- On decl_specifiers_opt shift to state 265
 -- On decl_specifiers shift to state 279
 ## Reductions:
--- On TokTypeVoid reduce production decl_specifiers_opt ->
--- On TokTypeInt reduce production decl_specifiers_opt ->
--- On TokTypeFloat reduce production decl_specifiers_opt ->
--- On TokTypeDouble reduce production decl_specifiers_opt ->
--- On TokTypeChar reduce production decl_specifiers_opt ->
--- On TokRightParen reduce production opt_param_list ->
+-- On TokTypeVoid TokTypeInt TokTypeFloat TokTypeDouble TokTypeChar
+--   reduce production decl_specifiers_opt ->
+-- On TokRightParen
+--   reduce production opt_param_list ->
 
 State 245:
 ## Known stack suffix:
@@ -5049,21 +4687,8 @@ simp_decl_spec -> simp_type_spec . decl_type_specifiers_opt [ TokString TokStar 
 -- On decl_type_specifiers shift to state 207
 -- On decl_type_specifier shift to state 209
 ## Reductions:
--- On TokString reduce production decl_type_specifiers_opt ->
--- On TokStar reduce production decl_type_specifiers_opt ->
--- On TokSemi reduce production decl_type_specifiers_opt ->
--- On TokRightParen reduce production decl_type_specifiers_opt ->
--- On TokPoly reduce production decl_type_specifiers_opt ->
--- On TokLeftParen reduce production decl_type_specifiers_opt ->
--- On TokLeftBrack reduce production decl_type_specifiers_opt ->
--- On TokLeftBrace reduce production decl_type_specifiers_opt ->
--- On TokInt reduce production decl_type_specifiers_opt ->
--- On TokId reduce production decl_type_specifiers_opt ->
--- On TokFloat reduce production decl_type_specifiers_opt ->
--- On TokComma reduce production decl_type_specifiers_opt ->
--- On TokColon reduce production decl_type_specifiers_opt ->
--- On TokChar reduce production decl_type_specifiers_opt ->
--- On TokAddr reduce production decl_type_specifiers_opt ->
+-- On TokString TokStar TokSemi TokRightParen TokPoly TokLeftParen TokLeftBrack TokLeftBrace TokInt TokId TokFloat TokComma TokColon TokChar TokAddr
+--   reduce production decl_type_specifiers_opt ->
 
 State 246:
 ## Known stack suffix:
@@ -5100,8 +4725,8 @@ param_decl -> simp_decl_spec . [ TokRightParen TokComma ]
 -- On direct_abstract_decl shift to state 243
 -- On abstract_decl shift to state 317
 ## Reductions:
--- On TokRightParen reduce production param_decl -> simp_decl_spec
--- On TokComma reduce production param_decl -> simp_decl_spec
+-- On TokRightParen TokComma
+--   reduce production param_decl -> simp_decl_spec
 
 State 248:
 ## Known stack suffix:
@@ -5119,13 +4744,8 @@ patt_decl2 -> TokStar . decl_struct_type_specifiers_opt TokId [ TokSemi TokRight
 -- On decl_struct_type_specifiers shift to state 299
 -- On decl_struct_type_specifier shift to state 301
 ## Reductions:
--- On TokStar reduce production decl_struct_type_specifiers_opt ->
--- On TokRightParen reduce production decl_struct_type_specifiers_opt ->
--- On TokLeftParen reduce production decl_struct_type_specifiers_opt ->
--- On TokLeftBrack reduce production decl_struct_type_specifiers_opt ->
--- On TokId reduce production decl_struct_type_specifiers_opt ->
--- On TokComma reduce production decl_struct_type_specifiers_opt ->
--- On TokAddr reduce production decl_struct_type_specifiers_opt ->
+-- On TokStar TokRightParen TokLeftParen TokLeftBrack TokId TokComma TokAddr
+--   reduce production decl_struct_type_specifiers_opt ->
 
 State 249:
 ## Known stack suffix:
@@ -5147,8 +4767,8 @@ patt_decl2 -> TokStar decl_struct_type_specifiers_opt . TokId [ TokSemi TokRight
 -- On direct_abstract_decl shift to state 243
 -- On abstract_decl shift to state 310
 ## Reductions:
--- On TokRightParen reduce production abstract_decl -> TokStar decl_struct_type_specifiers_opt
--- On TokComma reduce production abstract_decl -> TokStar decl_struct_type_specifiers_opt
+-- On TokRightParen TokComma
+--   reduce production abstract_decl -> TokStar decl_struct_type_specifiers_opt
 
 State 250:
 ## Known stack suffix:
@@ -5212,12 +4832,10 @@ patt_direct_decl -> TokLeftParen . patt_decl2 TokRightParen [ TokSemi TokRightPa
 -- On decl_specifiers shift to state 279
 -- On abstract_decl shift to state 306
 ## Reductions:
--- On TokTypeVoid reduce production decl_specifiers_opt ->
--- On TokTypeInt reduce production decl_specifiers_opt ->
--- On TokTypeFloat reduce production decl_specifiers_opt ->
--- On TokTypeDouble reduce production decl_specifiers_opt ->
--- On TokTypeChar reduce production decl_specifiers_opt ->
--- On TokRightParen reduce production opt_param_list ->
+-- On TokTypeVoid TokTypeInt TokTypeFloat TokTypeDouble TokTypeChar
+--   reduce production decl_specifiers_opt ->
+-- On TokRightParen
+--   reduce production opt_param_list ->
 
 State 251:
 ## Known stack suffix:
@@ -5280,12 +4898,10 @@ patt_direct_decl -> TokId TokLeftParen . opt_param_list TokRightParen [ TokSemi 
 -- On decl_specifiers_opt shift to state 265
 -- On decl_specifiers shift to state 279
 ## Reductions:
--- On TokTypeVoid reduce production decl_specifiers_opt ->
--- On TokTypeInt reduce production decl_specifiers_opt ->
--- On TokTypeFloat reduce production decl_specifiers_opt ->
--- On TokTypeDouble reduce production decl_specifiers_opt ->
--- On TokTypeChar reduce production decl_specifiers_opt ->
--- On TokRightParen reduce production opt_param_list ->
+-- On TokTypeVoid TokTypeInt TokTypeFloat TokTypeDouble TokTypeChar
+--   reduce production decl_specifiers_opt ->
+-- On TokRightParen
+--   reduce production opt_param_list ->
 
 State 253:
 ## Known stack suffix:
@@ -5296,7 +4912,8 @@ rev_param_list -> rev_param_list . TokComma param_decl [ TokRightParen TokComma 
 ## Transitions:
 -- On TokComma shift to state 254
 ## Reductions:
--- On TokRightParen reduce production param_list -> rev_param_list
+-- On TokRightParen
+--   reduce production param_list -> rev_param_list
 
 State 254:
 ## Known stack suffix:
@@ -5345,11 +4962,8 @@ rev_param_list -> rev_param_list TokComma . param_decl [ TokRightParen TokComma 
 -- On decl_specifiers_opt shift to state 265
 -- On decl_specifiers shift to state 279
 ## Reductions:
--- On TokTypeVoid reduce production decl_specifiers_opt ->
--- On TokTypeInt reduce production decl_specifiers_opt ->
--- On TokTypeFloat reduce production decl_specifiers_opt ->
--- On TokTypeDouble reduce production decl_specifiers_opt ->
--- On TokTypeChar reduce production decl_specifiers_opt ->
+-- On TokTypeVoid TokTypeInt TokTypeFloat TokTypeDouble TokTypeChar
+--   reduce production decl_specifiers_opt ->
 
 State 255:
 ## Known stack suffix:
@@ -5370,22 +4984,8 @@ enum_spec -> enum_spec_id . [ TokVolatile TokStatic TokStar TokSemi TokRightPare
 -- On TokLeftBrace shift to state 34
 -- On enum_declaration_list shift to state 257
 ## Reductions:
--- On TokVolatile reduce production enum_spec -> enum_spec_id
--- On TokStatic reduce production enum_spec -> enum_spec_id
--- On TokStar reduce production enum_spec -> enum_spec_id
--- On TokSemi reduce production enum_spec -> enum_spec_id
--- On TokRightParen reduce production enum_spec -> enum_spec_id
--- On TokRegister reduce production enum_spec -> enum_spec_id
--- On TokPoly reduce production enum_spec -> enum_spec_id
--- On TokLeftParen reduce production enum_spec -> enum_spec_id
--- On TokLeftBrack reduce production enum_spec -> enum_spec_id
--- On TokId reduce production enum_spec -> enum_spec_id
--- On TokExtern reduce production enum_spec -> enum_spec_id
--- On TokConst reduce production enum_spec -> enum_spec_id
--- On TokComma reduce production enum_spec -> enum_spec_id
--- On TokColon reduce production enum_spec -> enum_spec_id
--- On TokAuto reduce production enum_spec -> enum_spec_id
--- On TokAddr reduce production enum_spec -> enum_spec_id
+-- On TokVolatile TokStatic TokStar TokSemi TokRightParen TokRegister TokPoly TokLeftParen TokLeftBrack TokId TokExtern TokConst TokComma TokColon TokAuto TokAddr
+--   reduce production enum_spec -> enum_spec_id
 
 State 257:
 ## Known stack suffix:
@@ -5449,11 +5049,8 @@ struct_decl_spec -> decl_type_specifiers . struct_type_spec decl_type_specifiers
 -- On enum_spec shift to state 258
 -- On decl_type_specifier shift to state 208
 ## Reductions:
--- On TokTypeVoid reduce production decl_specifiers_opt -> decl_type_specifiers
--- On TokTypeInt reduce production decl_specifiers_opt -> decl_type_specifiers
--- On TokTypeFloat reduce production decl_specifiers_opt -> decl_type_specifiers
--- On TokTypeDouble reduce production decl_specifiers_opt -> decl_type_specifiers
--- On TokTypeChar reduce production decl_specifiers_opt -> decl_type_specifiers
+-- On TokTypeVoid TokTypeInt TokTypeFloat TokTypeDouble TokTypeChar
+--   reduce production decl_specifiers_opt -> decl_type_specifiers
 
 State 260:
 ## Known stack suffix:
@@ -5482,16 +5079,8 @@ struct_decl_spec -> decl_type_specifiers struct_type_spec . decl_type_specifiers
 -- On decl_type_specifiers shift to state 207
 -- On decl_type_specifier shift to state 209
 ## Reductions:
--- On TokStar reduce production decl_type_specifiers_opt ->
--- On TokSemi reduce production decl_type_specifiers_opt ->
--- On TokRightParen reduce production decl_type_specifiers_opt ->
--- On TokPoly reduce production decl_type_specifiers_opt ->
--- On TokLeftParen reduce production decl_type_specifiers_opt ->
--- On TokLeftBrack reduce production decl_type_specifiers_opt ->
--- On TokId reduce production decl_type_specifiers_opt ->
--- On TokComma reduce production decl_type_specifiers_opt ->
--- On TokColon reduce production decl_type_specifiers_opt ->
--- On TokAddr reduce production decl_type_specifiers_opt ->
+-- On TokStar TokSemi TokRightParen TokPoly TokLeftParen TokLeftBrack TokId TokComma TokColon TokAddr
+--   reduce production decl_type_specifiers_opt ->
 
 State 262:
 ## Known stack suffix:
@@ -5520,21 +5109,8 @@ simp_decl_spec -> decl_type_specifiers simp_type_spec . decl_type_specifiers_opt
 -- On decl_type_specifiers shift to state 207
 -- On decl_type_specifier shift to state 209
 ## Reductions:
--- On TokString reduce production decl_type_specifiers_opt ->
--- On TokStar reduce production decl_type_specifiers_opt ->
--- On TokSemi reduce production decl_type_specifiers_opt ->
--- On TokRightParen reduce production decl_type_specifiers_opt ->
--- On TokPoly reduce production decl_type_specifiers_opt ->
--- On TokLeftParen reduce production decl_type_specifiers_opt ->
--- On TokLeftBrack reduce production decl_type_specifiers_opt ->
--- On TokLeftBrace reduce production decl_type_specifiers_opt ->
--- On TokInt reduce production decl_type_specifiers_opt ->
--- On TokId reduce production decl_type_specifiers_opt ->
--- On TokFloat reduce production decl_type_specifiers_opt ->
--- On TokComma reduce production decl_type_specifiers_opt ->
--- On TokColon reduce production decl_type_specifiers_opt ->
--- On TokChar reduce production decl_type_specifiers_opt ->
--- On TokAddr reduce production decl_type_specifiers_opt ->
+-- On TokString TokStar TokSemi TokRightParen TokPoly TokLeftParen TokLeftBrack TokLeftBrace TokInt TokId TokFloat TokComma TokColon TokChar TokAddr
+--   reduce production decl_type_specifiers_opt ->
 
 State 264:
 ## Known stack suffix:
@@ -5628,21 +5204,8 @@ simp_decl_spec -> decl_specifiers_opt type_builtin . decl_specifiers_opt [ TokSt
 -- On decl_specifiers_opt shift to state 273
 -- On decl_specifiers shift to state 274
 ## Reductions:
--- On TokString reduce production decl_specifiers_opt ->
--- On TokStar reduce production decl_specifiers_opt ->
--- On TokSemi reduce production decl_specifiers_opt ->
--- On TokRightParen reduce production decl_specifiers_opt ->
--- On TokPoly reduce production decl_specifiers_opt ->
--- On TokLeftParen reduce production decl_specifiers_opt ->
--- On TokLeftBrack reduce production decl_specifiers_opt ->
--- On TokLeftBrace reduce production decl_specifiers_opt ->
--- On TokInt reduce production decl_specifiers_opt ->
--- On TokId reduce production decl_specifiers_opt ->
--- On TokFloat reduce production decl_specifiers_opt ->
--- On TokComma reduce production decl_specifiers_opt ->
--- On TokColon reduce production decl_specifiers_opt ->
--- On TokChar reduce production decl_specifiers_opt ->
--- On TokAddr reduce production decl_specifiers_opt ->
+-- On TokString TokStar TokSemi TokRightParen TokPoly TokLeftParen TokLeftBrack TokLeftBrace TokInt TokId TokFloat TokComma TokColon TokChar TokAddr
+--   reduce production decl_specifiers_opt ->
 
 State 272:
 ## Known stack suffix:
@@ -5667,21 +5230,8 @@ decl_type_specifiers -> decl_type_specifiers . decl_type_specifier [ TokVolatile
 -- On storage_class_spec shift to state 205
 -- On decl_type_specifier shift to state 208
 ## Reductions:
--- On TokString reduce production decl_specifiers_opt -> decl_type_specifiers
--- On TokStar reduce production decl_specifiers_opt -> decl_type_specifiers
--- On TokSemi reduce production decl_specifiers_opt -> decl_type_specifiers
--- On TokRightParen reduce production decl_specifiers_opt -> decl_type_specifiers
--- On TokPoly reduce production decl_specifiers_opt -> decl_type_specifiers
--- On TokLeftParen reduce production decl_specifiers_opt -> decl_type_specifiers
--- On TokLeftBrack reduce production decl_specifiers_opt -> decl_type_specifiers
--- On TokLeftBrace reduce production decl_specifiers_opt -> decl_type_specifiers
--- On TokInt reduce production decl_specifiers_opt -> decl_type_specifiers
--- On TokId reduce production decl_specifiers_opt -> decl_type_specifiers
--- On TokFloat reduce production decl_specifiers_opt -> decl_type_specifiers
--- On TokComma reduce production decl_specifiers_opt -> decl_type_specifiers
--- On TokColon reduce production decl_specifiers_opt -> decl_type_specifiers
--- On TokChar reduce production decl_specifiers_opt -> decl_type_specifiers
--- On TokAddr reduce production decl_specifiers_opt -> decl_type_specifiers
+-- On TokString TokStar TokSemi TokRightParen TokPoly TokLeftParen TokLeftBrack TokLeftBrace TokInt TokId TokFloat TokComma TokColon TokChar TokAddr
+--   reduce production decl_specifiers_opt -> decl_type_specifiers
 
 State 273:
 ## Known stack suffix:
@@ -5714,21 +5264,8 @@ decl_specifiers_opt -> decl_specifiers . [ TokString TokStar TokSemi TokRightPar
 -- On storage_class_spec shift to state 277
 -- On decl_specifier shift to state 278
 ## Reductions:
--- On TokString reduce production decl_specifiers_opt -> decl_specifiers
--- On TokStar reduce production decl_specifiers_opt -> decl_specifiers
--- On TokSemi reduce production decl_specifiers_opt -> decl_specifiers
--- On TokRightParen reduce production decl_specifiers_opt -> decl_specifiers
--- On TokPoly reduce production decl_specifiers_opt -> decl_specifiers
--- On TokLeftParen reduce production decl_specifiers_opt -> decl_specifiers
--- On TokLeftBrack reduce production decl_specifiers_opt -> decl_specifiers
--- On TokLeftBrace reduce production decl_specifiers_opt -> decl_specifiers
--- On TokInt reduce production decl_specifiers_opt -> decl_specifiers
--- On TokId reduce production decl_specifiers_opt -> decl_specifiers
--- On TokFloat reduce production decl_specifiers_opt -> decl_specifiers
--- On TokComma reduce production decl_specifiers_opt -> decl_specifiers
--- On TokColon reduce production decl_specifiers_opt -> decl_specifiers
--- On TokChar reduce production decl_specifiers_opt -> decl_specifiers
--- On TokAddr reduce production decl_specifiers_opt -> decl_specifiers
+-- On TokString TokStar TokSemi TokRightParen TokPoly TokLeftParen TokLeftBrack TokLeftBrace TokInt TokId TokFloat TokComma TokColon TokChar TokAddr
+--   reduce production decl_specifiers_opt -> decl_specifiers
 
 State 275:
 ## Known stack suffix:
@@ -5789,26 +5326,10 @@ simp_decl_spec -> decl_specifiers . [ TokString TokStar TokSemi TokRightParen To
 -- On storage_class_spec shift to state 277
 -- On decl_specifier shift to state 278
 ## Reductions:
--- On TokTypeVoid reduce production decl_specifiers_opt -> decl_specifiers
--- On TokTypeInt reduce production decl_specifiers_opt -> decl_specifiers
--- On TokTypeFloat reduce production decl_specifiers_opt -> decl_specifiers
--- On TokTypeDouble reduce production decl_specifiers_opt -> decl_specifiers
--- On TokTypeChar reduce production decl_specifiers_opt -> decl_specifiers
--- On TokString reduce production simp_decl_spec -> decl_specifiers
--- On TokStar reduce production simp_decl_spec -> decl_specifiers
--- On TokSemi reduce production simp_decl_spec -> decl_specifiers
--- On TokRightParen reduce production simp_decl_spec -> decl_specifiers
--- On TokPoly reduce production simp_decl_spec -> decl_specifiers
--- On TokLeftParen reduce production simp_decl_spec -> decl_specifiers
--- On TokLeftBrack reduce production simp_decl_spec -> decl_specifiers
--- On TokLeftBrace reduce production simp_decl_spec -> decl_specifiers
--- On TokInt reduce production simp_decl_spec -> decl_specifiers
--- On TokId reduce production simp_decl_spec -> decl_specifiers
--- On TokFloat reduce production simp_decl_spec -> decl_specifiers
--- On TokComma reduce production simp_decl_spec -> decl_specifiers
--- On TokColon reduce production simp_decl_spec -> decl_specifiers
--- On TokChar reduce production simp_decl_spec -> decl_specifiers
--- On TokAddr reduce production simp_decl_spec -> decl_specifiers
+-- On TokTypeVoid TokTypeInt TokTypeFloat TokTypeDouble TokTypeChar
+--   reduce production decl_specifiers_opt -> decl_specifiers
+-- On TokString TokStar TokSemi TokRightParen TokPoly TokLeftParen TokLeftBrack TokLeftBrace TokInt TokId TokFloat TokComma TokColon TokChar TokAddr
+--   reduce production simp_decl_spec -> decl_specifiers
 
 State 280:
 ## Known stack suffix:
@@ -5869,7 +5390,8 @@ patt_direct_decl -> TokId TokLeftBrack . opt_expr TokRightBrack [ TokSemi TokRig
 -- On nc_expr shift to state 118
 -- On expr shift to state 239
 ## Reductions:
--- On TokRightBrack reduce production opt_expr ->
+-- On TokRightBrack
+--   reduce production opt_expr ->
 
 State 285:
 ## Known stack suffix:
@@ -5905,13 +5427,8 @@ patt_decl2 -> TokAddr . decl_struct_type_specifiers_opt TokId [ TokSemi TokRight
 -- On decl_struct_type_specifiers shift to state 299
 -- On decl_struct_type_specifier shift to state 301
 ## Reductions:
--- On TokStar reduce production decl_struct_type_specifiers_opt ->
--- On TokRightParen reduce production decl_struct_type_specifiers_opt ->
--- On TokLeftParen reduce production decl_struct_type_specifiers_opt ->
--- On TokLeftBrack reduce production decl_struct_type_specifiers_opt ->
--- On TokId reduce production decl_struct_type_specifiers_opt ->
--- On TokComma reduce production decl_struct_type_specifiers_opt ->
--- On TokAddr reduce production decl_struct_type_specifiers_opt ->
+-- On TokStar TokRightParen TokLeftParen TokLeftBrack TokId TokComma TokAddr
+--   reduce production decl_struct_type_specifiers_opt ->
 
 State 288:
 ## Known stack suffix:
@@ -5933,8 +5450,8 @@ patt_decl2 -> TokAddr decl_struct_type_specifiers_opt . TokId [ TokSemi TokRight
 -- On direct_abstract_decl shift to state 243
 -- On abstract_decl shift to state 298
 ## Reductions:
--- On TokRightParen reduce production abstract_decl -> TokAddr decl_struct_type_specifiers_opt
--- On TokComma reduce production abstract_decl -> TokAddr decl_struct_type_specifiers_opt
+-- On TokRightParen TokComma
+--   reduce production abstract_decl -> TokAddr decl_struct_type_specifiers_opt
 
 State 289:
 ## Known stack suffix:
@@ -5947,10 +5464,8 @@ patt_direct_decl -> TokId . TokLeftParen opt_param_list TokRightParen [ TokSemi 
 -- On TokLeftParen shift to state 252
 -- On TokLeftBrack shift to state 284
 ## Reductions:
--- On TokSemi reduce production patt_decl2 -> TokAddr decl_struct_type_specifiers_opt TokId
--- On TokRightParen reduce production patt_decl2 -> TokAddr decl_struct_type_specifiers_opt TokId
--- On TokEq reduce production patt_decl2 -> TokAddr decl_struct_type_specifiers_opt TokId
--- On TokComma reduce production patt_decl2 -> TokAddr decl_struct_type_specifiers_opt TokId
+-- On TokSemi TokRightParen TokEq TokComma
+--   reduce production patt_decl2 -> TokAddr decl_struct_type_specifiers_opt TokId
 
 State 290:
 ## Known stack suffix:
@@ -5963,10 +5478,8 @@ patt_direct_decl -> patt_direct_decl . TokLeftParen opt_param_list TokRightParen
 -- On TokLeftParen shift to state 291
 -- On TokLeftBrack shift to state 294
 ## Reductions:
--- On TokSemi reduce production patt_decl2 -> patt_direct_decl
--- On TokRightParen reduce production patt_decl2 -> patt_direct_decl
--- On TokEq reduce production patt_decl2 -> patt_direct_decl
--- On TokComma reduce production patt_decl2 -> patt_direct_decl
+-- On TokSemi TokRightParen TokEq TokComma
+--   reduce production patt_decl2 -> patt_direct_decl
 
 State 291:
 ## Known stack suffix:
@@ -6018,12 +5531,10 @@ patt_direct_decl -> patt_direct_decl TokLeftParen . opt_param_list TokRightParen
 -- On decl_specifiers_opt shift to state 265
 -- On decl_specifiers shift to state 279
 ## Reductions:
--- On TokTypeVoid reduce production decl_specifiers_opt ->
--- On TokTypeInt reduce production decl_specifiers_opt ->
--- On TokTypeFloat reduce production decl_specifiers_opt ->
--- On TokTypeDouble reduce production decl_specifiers_opt ->
--- On TokTypeChar reduce production decl_specifiers_opt ->
--- On TokRightParen reduce production opt_param_list ->
+-- On TokTypeVoid TokTypeInt TokTypeFloat TokTypeDouble TokTypeChar
+--   reduce production decl_specifiers_opt ->
+-- On TokRightParen
+--   reduce production opt_param_list ->
 
 State 292:
 ## Known stack suffix:
@@ -6066,7 +5577,8 @@ patt_direct_decl -> patt_direct_decl TokLeftBrack . opt_expr TokRightBrack [ Tok
 -- On nc_expr shift to state 118
 -- On expr shift to state 239
 ## Reductions:
--- On TokRightBrack reduce production opt_expr ->
+-- On TokRightBrack
+--   reduce production opt_expr ->
 
 State 295:
 ## Known stack suffix:
@@ -6116,14 +5628,8 @@ decl_struct_type_specifiers_opt -> decl_struct_type_specifiers . [ TokStar TokRi
 -- On type_qual shift to state 222
 -- On decl_struct_type_specifier shift to state 300
 ## Reductions:
--- On TokStar reduce production decl_struct_type_specifiers_opt -> decl_struct_type_specifiers
--- On TokRightParen reduce production decl_struct_type_specifiers_opt -> decl_struct_type_specifiers
--- On TokPoly reduce production decl_struct_type_specifiers_opt -> decl_struct_type_specifiers
--- On TokLeftParen reduce production decl_struct_type_specifiers_opt -> decl_struct_type_specifiers
--- On TokLeftBrack reduce production decl_struct_type_specifiers_opt -> decl_struct_type_specifiers
--- On TokId reduce production decl_struct_type_specifiers_opt -> decl_struct_type_specifiers
--- On TokComma reduce production decl_struct_type_specifiers_opt -> decl_struct_type_specifiers
--- On TokAddr reduce production decl_struct_type_specifiers_opt -> decl_struct_type_specifiers
+-- On TokStar TokRightParen TokPoly TokLeftParen TokLeftBrack TokId TokComma TokAddr
+--   reduce production decl_struct_type_specifiers_opt -> decl_struct_type_specifiers
 
 State 300:
 ## Known stack suffix:
@@ -6208,10 +5714,8 @@ patt_direct_decl -> TokId . TokLeftParen opt_param_list TokRightParen [ TokSemi 
 -- On TokLeftParen shift to state 252
 -- On TokLeftBrack shift to state 284
 ## Reductions:
--- On TokSemi reduce production patt_decl2 -> TokStar decl_struct_type_specifiers_opt TokId
--- On TokRightParen reduce production patt_decl2 -> TokStar decl_struct_type_specifiers_opt TokId
--- On TokEq reduce production patt_decl2 -> TokStar decl_struct_type_specifiers_opt TokId
--- On TokComma reduce production patt_decl2 -> TokStar decl_struct_type_specifiers_opt TokId
+-- On TokSemi TokRightParen TokEq TokComma
+--   reduce production patt_decl2 -> TokStar decl_struct_type_specifiers_opt TokId
 
 State 309:
 ## Known stack suffix:
@@ -6300,12 +5804,10 @@ pattern -> TokLeftParen . pattern TokRightParen [ TokSemi TokRightParen TokEq To
 -- On decl_specifiers shift to state 279
 -- On abstract_decl shift to state 306
 ## Reductions:
--- On TokTypeVoid reduce production decl_specifiers_opt ->
--- On TokTypeInt reduce production decl_specifiers_opt ->
--- On TokTypeFloat reduce production decl_specifiers_opt ->
--- On TokTypeDouble reduce production decl_specifiers_opt ->
--- On TokTypeChar reduce production decl_specifiers_opt ->
--- On TokRightParen reduce production opt_param_list ->
+-- On TokTypeVoid TokTypeInt TokTypeFloat TokTypeDouble TokTypeChar
+--   reduce production decl_specifiers_opt ->
+-- On TokRightParen
+--   reduce production opt_param_list ->
 
 State 312:
 ## Known stack suffix:
@@ -6326,10 +5828,8 @@ pattern -> TokId . pattern [ TokSemi TokRightParen TokEq TokComma ]
 -- On TokChar shift to state 168
 -- On pattern shift to state 169
 ## Reductions:
--- On TokSemi reduce production pattern -> TokId
--- On TokRightParen reduce production pattern -> TokId
--- On TokEq reduce production pattern -> TokId
--- On TokComma reduce production pattern -> TokId
+-- On TokSemi TokRightParen TokEq TokComma
+--   reduce production pattern -> TokId
 
 State 313:
 ## Known stack suffix:
@@ -6390,12 +5890,10 @@ pattern -> TokLeftParen . pattern TokRightParen [ TokSemi TokRightParen TokEq To
 -- On decl_specifiers_opt shift to state 265
 -- On decl_specifiers shift to state 279
 ## Reductions:
--- On TokTypeVoid reduce production decl_specifiers_opt ->
--- On TokTypeInt reduce production decl_specifiers_opt ->
--- On TokTypeFloat reduce production decl_specifiers_opt ->
--- On TokTypeDouble reduce production decl_specifiers_opt ->
--- On TokTypeChar reduce production decl_specifiers_opt ->
--- On TokRightParen reduce production opt_param_list ->
+-- On TokTypeVoid TokTypeInt TokTypeFloat TokTypeDouble TokTypeChar
+--   reduce production decl_specifiers_opt ->
+-- On TokRightParen
+--   reduce production opt_param_list ->
 
 State 314:
 ## Known stack suffix:
@@ -6456,7 +5954,8 @@ direct_abstract_decl -> direct_abstract_decl TokLeftBrack . opt_expr TokRightBra
 -- On nc_expr shift to state 118
 -- On expr shift to state 239
 ## Reductions:
--- On TokRightBrack reduce production opt_expr ->
+-- On TokRightBrack
+--   reduce production opt_expr ->
 
 State 319:
 ## Known stack suffix:
@@ -6571,7 +6070,8 @@ direct_decl -> direct_decl TokLeftBrack . opt_expr TokRightBrack [ TokSemi TokRi
 -- On nc_expr shift to state 118
 -- On expr shift to state 239
 ## Reductions:
--- On TokRightBrack reduce production opt_expr ->
+-- On TokRightBrack
+--   reduce production opt_expr ->
 
 State 330:
 ## Known stack suffix:
@@ -6658,8 +6158,8 @@ struct_decl -> TokColon nc_expr . [ TokSemi TokComma ]
 -- On TokAnd shift to state 111
 -- On TokAddr shift to state 103
 ## Reductions:
--- On TokSemi reduce production struct_decl -> TokColon nc_expr
--- On TokComma reduce production struct_decl -> TokColon nc_expr
+-- On TokSemi TokComma
+--   reduce production struct_decl -> TokColon nc_expr
 
 State 334:
 ## Known stack suffix:
@@ -6697,7 +6197,8 @@ struct_decl_list -> rev_struct_decl_list . [ TokSemi ]
 ## Transitions:
 -- On TokComma shift to state 338
 ## Reductions:
--- On TokSemi reduce production struct_decl_list -> rev_struct_decl_list
+-- On TokSemi
+--   reduce production struct_decl_list -> rev_struct_decl_list
 
 State 338:
 ## Known stack suffix:
@@ -6733,8 +6234,8 @@ struct_decl -> id_decl . TokColon nc_expr [ TokSemi TokComma ]
 ## Transitions:
 -- On TokColon shift to state 341
 ## Reductions:
--- On TokSemi reduce production struct_decl -> id_decl
--- On TokComma reduce production struct_decl -> id_decl
+-- On TokSemi TokComma
+--   reduce production struct_decl -> id_decl
 
 State 341:
 ## Known stack suffix:
@@ -6803,8 +6304,8 @@ struct_decl -> id_decl TokColon nc_expr . [ TokSemi TokComma ]
 -- On TokAnd shift to state 111
 -- On TokAddr shift to state 103
 ## Reductions:
--- On TokSemi reduce production struct_decl -> id_decl TokColon nc_expr
--- On TokComma reduce production struct_decl -> id_decl TokColon nc_expr
+-- On TokSemi TokComma
+--   reduce production struct_decl -> id_decl TokColon nc_expr
 
 State 343:
 ## Known stack suffix:
@@ -6894,7 +6395,8 @@ uenum_decl_list -> rev_uenum_decl_list . [ TokSemi ]
 ## Transitions:
 -- On TokComma shift to state 351
 ## Reductions:
--- On TokSemi reduce production uenum_decl_list -> rev_uenum_decl_list
+-- On TokSemi
+--   reduce production uenum_decl_list -> rev_uenum_decl_list
 
 State 351:
 ## Known stack suffix:
@@ -7027,7 +6529,8 @@ rev_id_init_decl_list -> rev_id_init_decl_list . TokComma id_init_decl [ TokSemi
 ## Transitions:
 -- On TokComma shift to state 363
 ## Reductions:
--- On TokSemi reduce production id_init_decl_list -> rev_id_init_decl_list
+-- On TokSemi
+--   reduce production id_init_decl_list -> rev_id_init_decl_list
 
 State 363:
 ## Known stack suffix:
@@ -7062,8 +6565,8 @@ id_init_decl -> id_decl . TokEq init [ TokSemi TokComma ]
 ## Transitions:
 -- On TokEq shift to state 366
 ## Reductions:
--- On TokSemi reduce production id_init_decl -> id_decl
--- On TokComma reduce production id_init_decl -> id_decl
+-- On TokSemi TokComma
+--   reduce production id_init_decl -> id_decl
 
 State 366:
 ## Known stack suffix:
@@ -7127,7 +6630,8 @@ rev_init_list -> rev_init_list . TokComma init_field [ TokRightBrace TokComma ]
 -- On TokComma shift to state 369
 -- On opt_comma shift to state 376
 ## Reductions:
--- On TokRightBrace reduce production opt_comma ->
+-- On TokRightBrace
+--   reduce production opt_comma ->
 
 State 369:
 ## Known stack suffix:
@@ -7156,7 +6660,8 @@ rev_init_list -> rev_init_list TokComma . init_field [ TokRightBrace TokComma ]
 -- On init shift to state 372
 -- On id shift to state 373
 ## Reductions:
--- On TokRightBrace reduce production opt_comma -> TokComma
+-- On TokRightBrace
+--   reduce production opt_comma -> TokComma
 
 State 370:
 ## Known stack suffix:
@@ -7203,9 +6708,8 @@ nc_expr -> nc_expr . TokQuest nc_expr TokColon nc_expr [ TokStar TokSemi TokRigh
 -- On TokAnd shift to state 111
 -- On TokAddr shift to state 103
 ## Reductions:
--- On TokSemi reduce production init -> nc_expr
--- On TokRightBrace reduce production init -> nc_expr
--- On TokComma reduce production init -> nc_expr
+-- On TokSemi TokRightBrace TokComma
+--   reduce production init -> nc_expr
 
 State 371:
 ## Known stack suffix:
@@ -7341,8 +6845,8 @@ id_init_decl -> id_decl . TokEq init [ TokSemi TokComma ]
 -- On TokLeftBrace shift to state 384
 -- On TokEq shift to state 366
 ## Reductions:
--- On TokSemi reduce production id_init_decl -> id_decl
--- On TokComma reduce production id_init_decl -> id_decl
+-- On TokSemi TokComma
+--   reduce production id_init_decl -> id_decl
 
 State 384:
 ## Known stack suffix:
@@ -7457,12 +6961,10 @@ stmt_list -> rev_stmt_list . [ TokRightBrace ]
 -- On decl_specifiers shift to state 279
 -- On all_def shift to state 424
 ## Reductions:
--- On TokTypeVoid reduce production decl_specifiers_opt ->
--- On TokTypeInt reduce production decl_specifiers_opt ->
--- On TokTypeFloat reduce production decl_specifiers_opt ->
--- On TokTypeDouble reduce production decl_specifiers_opt ->
--- On TokTypeChar reduce production decl_specifiers_opt ->
--- On TokRightBrace reduce production stmt_list -> rev_stmt_list
+-- On TokTypeVoid TokTypeInt TokTypeFloat TokTypeDouble TokTypeChar
+--   reduce production decl_specifiers_opt ->
+-- On TokRightBrace
+--   reduce production stmt_list -> rev_stmt_list
 
 State 388:
 ## Known stack suffix:
@@ -7475,58 +6977,8 @@ stmt -> stmt . TokFinally stmt [ TokWhile TokVolatile TokUnsigned TokUnion TokTy
 -- On TokFinally shift to state 389
 -- On TokCatch shift to state 425
 ## Reductions:
--- On TokWhile reduce production rev_stmt_list -> rev_stmt_list stmt
--- On TokVolatile reduce production rev_stmt_list -> rev_stmt_list stmt
--- On TokUnsigned reduce production rev_stmt_list -> rev_stmt_list stmt
--- On TokUnion reduce production rev_stmt_list -> rev_stmt_list stmt
--- On TokTypedef reduce production rev_stmt_list -> rev_stmt_list stmt
--- On TokTypeVoid reduce production rev_stmt_list -> rev_stmt_list stmt
--- On TokTypeVar reduce production rev_stmt_list -> rev_stmt_list stmt
--- On TokTypeInt reduce production rev_stmt_list -> rev_stmt_list stmt
--- On TokTypeId reduce production rev_stmt_list -> rev_stmt_list stmt
--- On TokTypeFloat reduce production rev_stmt_list -> rev_stmt_list stmt
--- On TokTypeDouble reduce production rev_stmt_list -> rev_stmt_list stmt
--- On TokTypeChar reduce production rev_stmt_list -> rev_stmt_list stmt
--- On TokTuple reduce production rev_stmt_list -> rev_stmt_list stmt
--- On TokTry reduce production rev_stmt_list -> rev_stmt_list stmt
--- On TokSwitch reduce production rev_stmt_list -> rev_stmt_list stmt
--- On TokStruct reduce production rev_stmt_list -> rev_stmt_list stmt
--- On TokString reduce production rev_stmt_list -> rev_stmt_list stmt
--- On TokStatic reduce production rev_stmt_list -> rev_stmt_list stmt
--- On TokStar reduce production rev_stmt_list -> rev_stmt_list stmt
--- On TokSizeof reduce production rev_stmt_list -> rev_stmt_list stmt
--- On TokSigned reduce production rev_stmt_list -> rev_stmt_list stmt
--- On TokShort reduce production rev_stmt_list -> rev_stmt_list stmt
--- On TokSemi reduce production rev_stmt_list -> rev_stmt_list stmt
--- On TokRightBrace reduce production rev_stmt_list -> rev_stmt_list stmt
--- On TokReturn reduce production rev_stmt_list -> rev_stmt_list stmt
--- On TokRegister reduce production rev_stmt_list -> rev_stmt_list stmt
--- On TokRaise reduce production rev_stmt_list -> rev_stmt_list stmt
--- On TokPrePostOp12 reduce production rev_stmt_list -> rev_stmt_list stmt
--- On TokPreOp12 reduce production rev_stmt_list -> rev_stmt_list stmt
--- On TokPoly reduce production rev_stmt_list -> rev_stmt_list stmt
--- On TokOperator reduce production rev_stmt_list -> rev_stmt_list stmt
--- On TokOp10 reduce production rev_stmt_list -> rev_stmt_list stmt
--- On TokLong reduce production rev_stmt_list -> rev_stmt_list stmt
--- On TokLeftParen reduce production rev_stmt_list -> rev_stmt_list stmt
--- On TokLeftBrace reduce production rev_stmt_list -> rev_stmt_list stmt
--- On TokInt reduce production rev_stmt_list -> rev_stmt_list stmt
--- On TokIf reduce production rev_stmt_list -> rev_stmt_list stmt
--- On TokId reduce production rev_stmt_list -> rev_stmt_list stmt
--- On TokGoto reduce production rev_stmt_list -> rev_stmt_list stmt
--- On TokFor reduce production rev_stmt_list -> rev_stmt_list stmt
--- On TokFloat reduce production rev_stmt_list -> rev_stmt_list stmt
--- On TokExtern reduce production rev_stmt_list -> rev_stmt_list stmt
--- On TokEnum reduce production rev_stmt_list -> rev_stmt_list stmt
--- On TokDo reduce production rev_stmt_list -> rev_stmt_list stmt
--- On TokDefault reduce production rev_stmt_list -> rev_stmt_list stmt
--- On TokContinue reduce production rev_stmt_list -> rev_stmt_list stmt
--- On TokConst reduce production rev_stmt_list -> rev_stmt_list stmt
--- On TokChar reduce production rev_stmt_list -> rev_stmt_list stmt
--- On TokCase reduce production rev_stmt_list -> rev_stmt_list stmt
--- On TokBreak reduce production rev_stmt_list -> rev_stmt_list stmt
--- On TokAuto reduce production rev_stmt_list -> rev_stmt_list stmt
--- On TokAddr reduce production rev_stmt_list -> rev_stmt_list stmt
+-- On TokWhile TokVolatile TokUnsigned TokUnion TokTypedef TokTypeVoid TokTypeVar TokTypeInt TokTypeId TokTypeFloat TokTypeDouble TokTypeChar TokTuple TokTry TokSwitch TokStruct TokString TokStatic TokStar TokSizeof TokSigned TokShort TokSemi TokRightBrace TokReturn TokRegister TokRaise TokPrePostOp12 TokPreOp12 TokPoly TokOperator TokOp10 TokLong TokLeftParen TokLeftBrace TokInt TokIf TokId TokGoto TokFor TokFloat TokExtern TokEnum TokDo TokDefault TokContinue TokConst TokChar TokCase TokBreak TokAuto TokAddr
+--   reduce production rev_stmt_list -> rev_stmt_list stmt
 
 State 389:
 ## Known stack suffix:
@@ -7611,11 +7063,8 @@ stmt -> stmt TokFinally . stmt [ TokWhile TokVolatile TokUnsigned TokUnion TokTy
 -- On decl_specifiers shift to state 279
 -- On all_def shift to state 424
 ## Reductions:
--- On TokTypeVoid reduce production decl_specifiers_opt ->
--- On TokTypeInt reduce production decl_specifiers_opt ->
--- On TokTypeFloat reduce production decl_specifiers_opt ->
--- On TokTypeDouble reduce production decl_specifiers_opt ->
--- On TokTypeChar reduce production decl_specifiers_opt ->
+-- On TokTypeVoid TokTypeInt TokTypeFloat TokTypeDouble TokTypeChar
+--   reduce production decl_specifiers_opt ->
 
 State 390:
 ## Known stack suffix:
@@ -7669,10 +7118,8 @@ patt_decl2 -> TokStar . decl_struct_type_specifiers_opt TokId [ TokSemi TokRight
 -- On decl_struct_type_specifiers shift to state 299
 -- On decl_struct_type_specifier shift to state 301
 ## Reductions:
--- On TokStar reduce production decl_struct_type_specifiers_opt ->
--- On TokLeftParen reduce production decl_struct_type_specifiers_opt ->
--- On TokId reduce production decl_struct_type_specifiers_opt ->
--- On TokAddr reduce production decl_struct_type_specifiers_opt ->
+-- On TokStar TokLeftParen TokId TokAddr
+--   reduce production decl_struct_type_specifiers_opt ->
 
 State 393:
 ## Known stack suffix:
@@ -7717,10 +7164,8 @@ patt_decl2 -> TokAddr . decl_struct_type_specifiers_opt TokId [ TokSemi TokRight
 -- On decl_struct_type_specifiers shift to state 299
 -- On decl_struct_type_specifier shift to state 301
 ## Reductions:
--- On TokStar reduce production decl_struct_type_specifiers_opt ->
--- On TokLeftParen reduce production decl_struct_type_specifiers_opt ->
--- On TokId reduce production decl_struct_type_specifiers_opt ->
--- On TokAddr reduce production decl_struct_type_specifiers_opt ->
+-- On TokStar TokLeftParen TokId TokAddr
+--   reduce production decl_struct_type_specifiers_opt ->
 
 State 396:
 ## Known stack suffix:
@@ -7787,9 +7232,8 @@ pattern -> TokId . pattern [ TokSemi TokEq TokComma ]
 -- On TokChar shift to state 168
 -- On pattern shift to state 169
 ## Reductions:
--- On TokSemi reduce production pattern -> TokId
--- On TokEq reduce production pattern -> TokId
--- On TokComma reduce production pattern -> TokId
+-- On TokSemi TokEq TokComma
+--   reduce production pattern -> TokId
 
 State 400:
 ## Known stack suffix:
@@ -7851,12 +7295,10 @@ pattern -> TokLeftParen . pattern TokRightParen [ TokSemi TokEq TokComma ]
 -- On decl_specifiers_opt shift to state 265
 -- On decl_specifiers shift to state 279
 ## Reductions:
--- On TokTypeVoid reduce production decl_specifiers_opt ->
--- On TokTypeInt reduce production decl_specifiers_opt ->
--- On TokTypeFloat reduce production decl_specifiers_opt ->
--- On TokTypeDouble reduce production decl_specifiers_opt ->
--- On TokTypeChar reduce production decl_specifiers_opt ->
--- On TokRightParen reduce production opt_param_list ->
+-- On TokTypeVoid TokTypeInt TokTypeFloat TokTypeDouble TokTypeChar
+--   reduce production decl_specifiers_opt ->
+-- On TokRightParen
+--   reduce production opt_param_list ->
 
 State 401:
 ## Known stack suffix:
@@ -7877,11 +7319,8 @@ patt_direct_decl -> TokId TokLeftParen opt_param_list TokRightParen . [ TokSemi 
 ## Transitions:
 -- On TokLeftBrace shift to state 403
 ## Reductions:
--- On TokSemi reduce production patt_direct_decl -> TokId TokLeftParen opt_param_list TokRightParen
--- On TokLeftParen reduce production patt_direct_decl -> TokId TokLeftParen opt_param_list TokRightParen
--- On TokLeftBrack reduce production patt_direct_decl -> TokId TokLeftParen opt_param_list TokRightParen
--- On TokEq reduce production patt_direct_decl -> TokId TokLeftParen opt_param_list TokRightParen
--- On TokComma reduce production patt_direct_decl -> TokId TokLeftParen opt_param_list TokRightParen
+-- On TokSemi TokLeftParen TokLeftBrack TokEq TokComma
+--   reduce production patt_direct_decl -> TokId TokLeftParen opt_param_list TokRightParen
 
 State 403:
 ## Known stack suffix:
@@ -7921,7 +7360,8 @@ rev_patt_init_decl_list -> rev_patt_init_decl_list . TokComma patt_init_decl [ T
 ## Transitions:
 -- On TokComma shift to state 407
 ## Reductions:
--- On TokSemi reduce production patt_init_decl_list -> rev_patt_init_decl_list
+-- On TokSemi
+--   reduce production patt_init_decl_list -> rev_patt_init_decl_list
 
 State 407:
 ## Known stack suffix:
@@ -7963,8 +7403,8 @@ patt_init_decl -> patt_decl . TokEq init [ TokSemi TokComma ]
 ## Transitions:
 -- On TokEq shift to state 410
 ## Reductions:
--- On TokSemi reduce production patt_init_decl -> patt_decl
--- On TokComma reduce production patt_init_decl -> patt_decl
+-- On TokSemi TokComma
+--   reduce production patt_init_decl -> patt_decl
 
 State 410:
 ## Known stack suffix:
@@ -8238,11 +7678,8 @@ stmt -> stmt TokCatch TokLeftParen pattern TokRightParen . stmt [ TokWhile TokVo
 -- On decl_specifiers shift to state 279
 -- On all_def shift to state 424
 ## Reductions:
--- On TokTypeVoid reduce production decl_specifiers_opt ->
--- On TokTypeInt reduce production decl_specifiers_opt ->
--- On TokTypeFloat reduce production decl_specifiers_opt ->
--- On TokTypeDouble reduce production decl_specifiers_opt ->
--- On TokTypeChar reduce production decl_specifiers_opt ->
+-- On TokTypeVoid TokTypeInt TokTypeFloat TokTypeDouble TokTypeChar
+--   reduce production decl_specifiers_opt ->
 
 State 429:
 ## Known stack suffix:
@@ -8340,60 +7777,8 @@ stmt -> stmt . TokFinally stmt [ TokWhile TokVolatile TokUnsigned TokUnion TokTy
 -- On TokFinally shift to state 389
 -- On TokCatch shift to state 425
 ## Reductions:
--- On TokWhile reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokVolatile reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokUnsigned reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokUnion reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokTypedef reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokTypeVoid reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokTypeVar reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokTypeInt reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokTypeId reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokTypeFloat reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokTypeDouble reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokTypeChar reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokTuple reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokTry reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokSwitch reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokStruct reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokString reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokStatic reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokStar reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokSizeof reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokSigned reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokShort reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokSemi reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokRightParen reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokRightBrace reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokReturn reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokRegister reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokRaise reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokPrePostOp12 reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokPreOp12 reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokPoly reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokOperator reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokOp10 reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokLong reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokLeftParen reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokLeftBrace reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokInt reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokIf reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokId reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokGoto reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokFor reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokFloat reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokExtern reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokEnum reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokElse reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokDo reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokDefault reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokContinue reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokConst reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokChar reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokCase reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokBreak reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokAuto reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
--- On TokAddr reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
+-- On TokWhile TokVolatile TokUnsigned TokUnion TokTypedef TokTypeVoid TokTypeVar TokTypeInt TokTypeId TokTypeFloat TokTypeDouble TokTypeChar TokTuple TokTry TokSwitch TokStruct TokString TokStatic TokStar TokSizeof TokSigned TokShort TokSemi TokRightParen TokRightBrace TokReturn TokRegister TokRaise TokPrePostOp12 TokPreOp12 TokPoly TokOperator TokOp10 TokLong TokLeftParen TokLeftBrace TokInt TokIf TokId TokGoto TokFor TokFloat TokExtern TokEnum TokElse TokDo TokDefault TokContinue TokConst TokChar TokCase TokBreak TokAuto TokAddr
+--   reduce production stmt -> TokFor TokLeftParen opt_expr TokSemi opt_expr TokSemi opt_expr TokRightParen stmt
 
 State 437:
 ## Known stack suffix:
@@ -8408,59 +7793,8 @@ stmt -> stmt . TokFinally stmt [ TokWhile TokVolatile TokUnsigned TokUnion TokTy
 -- On TokElse shift to state 438
 -- On TokCatch shift to state 425
 ## Reductions:
--- On TokWhile reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
--- On TokVolatile reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
--- On TokUnsigned reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
--- On TokUnion reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
--- On TokTypedef reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
--- On TokTypeVoid reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
--- On TokTypeVar reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
--- On TokTypeInt reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
--- On TokTypeId reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
--- On TokTypeFloat reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
--- On TokTypeDouble reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
--- On TokTypeChar reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
--- On TokTuple reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
--- On TokTry reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
--- On TokSwitch reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
--- On TokStruct reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
--- On TokString reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
--- On TokStatic reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
--- On TokStar reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
--- On TokSizeof reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
--- On TokSigned reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
--- On TokShort reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
--- On TokSemi reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
--- On TokRightParen reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
--- On TokRightBrace reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
--- On TokReturn reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
--- On TokRegister reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
--- On TokRaise reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
--- On TokPrePostOp12 reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
--- On TokPreOp12 reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
--- On TokPoly reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
--- On TokOperator reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
--- On TokOp10 reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
--- On TokLong reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
--- On TokLeftParen reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
--- On TokLeftBrace reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
--- On TokInt reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
--- On TokIf reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
--- On TokId reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
--- On TokGoto reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
--- On TokFor reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
--- On TokFloat reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
--- On TokExtern reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
--- On TokEnum reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
--- On TokDo reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
--- On TokDefault reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
--- On TokContinue reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
--- On TokConst reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
--- On TokChar reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
--- On TokCase reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
--- On TokBreak reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
--- On TokAuto reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
--- On TokAddr reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
+-- On TokWhile TokVolatile TokUnsigned TokUnion TokTypedef TokTypeVoid TokTypeVar TokTypeInt TokTypeId TokTypeFloat TokTypeDouble TokTypeChar TokTuple TokTry TokSwitch TokStruct TokString TokStatic TokStar TokSizeof TokSigned TokShort TokSemi TokRightParen TokRightBrace TokReturn TokRegister TokRaise TokPrePostOp12 TokPreOp12 TokPoly TokOperator TokOp10 TokLong TokLeftParen TokLeftBrace TokInt TokIf TokId TokGoto TokFor TokFloat TokExtern TokEnum TokDo TokDefault TokContinue TokConst TokChar TokCase TokBreak TokAuto TokAddr
+--   reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt
 
 State 438:
 ## Known stack suffix:
@@ -8545,11 +7879,8 @@ stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse . stmt [ TokWhile Tok
 -- On decl_specifiers shift to state 279
 -- On all_def shift to state 424
 ## Reductions:
--- On TokTypeVoid reduce production decl_specifiers_opt ->
--- On TokTypeInt reduce production decl_specifiers_opt ->
--- On TokTypeFloat reduce production decl_specifiers_opt ->
--- On TokTypeDouble reduce production decl_specifiers_opt ->
--- On TokTypeChar reduce production decl_specifiers_opt ->
+-- On TokTypeVoid TokTypeInt TokTypeFloat TokTypeDouble TokTypeChar
+--   reduce production decl_specifiers_opt ->
 
 State 439:
 ## Known stack suffix:
@@ -8562,60 +7893,8 @@ stmt -> stmt . TokFinally stmt [ TokWhile TokVolatile TokUnsigned TokUnion TokTy
 -- On TokFinally shift to state 389
 -- On TokCatch shift to state 425
 ## Reductions:
--- On TokWhile reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokVolatile reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokUnsigned reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokUnion reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokTypedef reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokTypeVoid reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokTypeVar reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokTypeInt reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokTypeId reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokTypeFloat reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokTypeDouble reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokTypeChar reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokTuple reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokTry reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokSwitch reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokStruct reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokString reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokStatic reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokStar reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokSizeof reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokSigned reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokShort reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokSemi reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokRightParen reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokRightBrace reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokReturn reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokRegister reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokRaise reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokPrePostOp12 reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokPreOp12 reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokPoly reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokOperator reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokOp10 reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokLong reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokLeftParen reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokLeftBrace reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokInt reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokIf reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokId reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokGoto reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokFor reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokFloat reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokExtern reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokEnum reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokElse reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokDo reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokDefault reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokContinue reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokConst reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokChar reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokCase reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokBreak reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokAuto reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
--- On TokAddr reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
+-- On TokWhile TokVolatile TokUnsigned TokUnion TokTypedef TokTypeVoid TokTypeVar TokTypeInt TokTypeId TokTypeFloat TokTypeDouble TokTypeChar TokTuple TokTry TokSwitch TokStruct TokString TokStatic TokStar TokSizeof TokSigned TokShort TokSemi TokRightParen TokRightBrace TokReturn TokRegister TokRaise TokPrePostOp12 TokPreOp12 TokPoly TokOperator TokOp10 TokLong TokLeftParen TokLeftBrace TokInt TokIf TokId TokGoto TokFor TokFloat TokExtern TokEnum TokElse TokDo TokDefault TokContinue TokConst TokChar TokCase TokBreak TokAuto TokAddr
+--   reduce production stmt -> TokIf TokLeftParen expr TokRightParen stmt TokElse stmt
 
 State 440:
 ## Known stack suffix:
@@ -8628,60 +7907,8 @@ stmt -> stmt . TokFinally stmt [ TokWhile TokVolatile TokUnsigned TokUnion TokTy
 -- On TokFinally shift to state 389
 -- On TokCatch shift to state 425
 ## Reductions:
--- On TokWhile reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokVolatile reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokUnsigned reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokUnion reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokTypedef reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokTypeVoid reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokTypeVar reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokTypeInt reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokTypeId reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokTypeFloat reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokTypeDouble reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokTypeChar reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokTuple reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokTry reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokSwitch reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokStruct reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokString reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokStatic reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokStar reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokSizeof reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokSigned reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokShort reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokSemi reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokRightParen reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokRightBrace reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokReturn reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokRegister reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokRaise reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokPrePostOp12 reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokPreOp12 reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokPoly reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokOperator reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokOp10 reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokLong reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokLeftParen reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokLeftBrace reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokInt reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokIf reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokId reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokGoto reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokFor reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokFloat reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokExtern reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokEnum reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokElse reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokDo reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokDefault reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokContinue reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokConst reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokChar reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokCase reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokBreak reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokAuto reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
--- On TokAddr reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
+-- On TokWhile TokVolatile TokUnsigned TokUnion TokTypedef TokTypeVoid TokTypeVar TokTypeInt TokTypeId TokTypeFloat TokTypeDouble TokTypeChar TokTuple TokTry TokSwitch TokStruct TokString TokStatic TokStar TokSizeof TokSigned TokShort TokSemi TokRightParen TokRightBrace TokReturn TokRegister TokRaise TokPrePostOp12 TokPreOp12 TokPoly TokOperator TokOp10 TokLong TokLeftParen TokLeftBrace TokInt TokIf TokId TokGoto TokFor TokFloat TokExtern TokEnum TokElse TokDo TokDefault TokContinue TokConst TokChar TokCase TokBreak TokAuto TokAddr
+--   reduce production stmt -> TokSwitch TokLeftParen expr TokRightParen stmt
 
 State 441:
 ## Known stack suffix:
@@ -8705,60 +7932,8 @@ stmt -> stmt . TokFinally stmt [ TokWhile TokVolatile TokUnsigned TokUnion TokTy
 -- On TokFinally shift to state 389
 -- On TokCatch shift to state 425
 ## Reductions:
--- On TokWhile reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokVolatile reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokUnsigned reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokUnion reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokTypedef reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokTypeVoid reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokTypeVar reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokTypeInt reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokTypeId reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokTypeFloat reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokTypeDouble reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokTypeChar reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokTuple reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokTry reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokSwitch reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokStruct reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokString reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokStatic reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokStar reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokSizeof reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokSigned reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokShort reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokSemi reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokRightParen reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokRightBrace reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokReturn reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokRegister reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokRaise reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokPrePostOp12 reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokPreOp12 reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokPoly reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokOperator reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokOp10 reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokLong reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokLeftParen reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokLeftBrace reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokInt reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokIf reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokId reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokGoto reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokFor reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokFloat reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokExtern reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokEnum reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokElse reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokDo reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokDefault reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokContinue reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokConst reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokChar reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokCase reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokBreak reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokAuto reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
--- On TokAddr reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
+-- On TokWhile TokVolatile TokUnsigned TokUnion TokTypedef TokTypeVoid TokTypeVar TokTypeInt TokTypeId TokTypeFloat TokTypeDouble TokTypeChar TokTuple TokTry TokSwitch TokStruct TokString TokStatic TokStar TokSizeof TokSigned TokShort TokSemi TokRightParen TokRightBrace TokReturn TokRegister TokRaise TokPrePostOp12 TokPreOp12 TokPoly TokOperator TokOp10 TokLong TokLeftParen TokLeftBrace TokInt TokIf TokId TokGoto TokFor TokFloat TokExtern TokEnum TokElse TokDo TokDefault TokContinue TokConst TokChar TokCase TokBreak TokAuto TokAddr
+--   reduce production stmt -> TokWhile TokLeftParen expr TokRightParen stmt
 
 State 443:
 ## Known stack suffix:
@@ -8785,7 +7960,8 @@ var_defs -> struct_decl_spec . id_init_decl_list TokSemi [ TokRightParen TokFina
 -- On direct_abstract_decl shift to state 243
 -- On abstract_decl shift to state 444
 ## Reductions:
--- On TokRightParen reduce production decl_spec -> struct_decl_spec
+-- On TokRightParen
+--   reduce production decl_spec -> struct_decl_spec
 
 State 444:
 ## Known stack suffix:
@@ -8850,7 +8026,8 @@ var_defs -> simp_decl_spec . patt_init_decl_list TokSemi [ TokRightParen TokFina
 -- On direct_abstract_decl shift to state 243
 -- On abstract_decl shift to state 448
 ## Reductions:
--- On TokRightParen reduce production decl_spec -> simp_decl_spec
+-- On TokRightParen
+--   reduce production decl_spec -> simp_decl_spec
 
 State 448:
 ## Known stack suffix:
@@ -8954,26 +8131,8 @@ nc_expr -> nc_expr . TokQuest nc_expr TokColon nc_expr [ TokStar TokSemi TokRigh
 -- On TokLeftBrack shift to state 82
 -- On TokDot shift to state 93
 ## Reductions:
--- On TokStar reduce production nc_expr -> TokLeftParen cast_decl TokRightParen nc_expr
--- On TokSemi reduce production nc_expr -> TokLeftParen cast_decl TokRightParen nc_expr
--- On TokRightParen reduce production nc_expr -> TokLeftParen cast_decl TokRightParen nc_expr
--- On TokRightBrack reduce production nc_expr -> TokLeftParen cast_decl TokRightParen nc_expr
--- On TokRightBrace reduce production nc_expr -> TokLeftParen cast_decl TokRightParen nc_expr
--- On TokQuest reduce production nc_expr -> TokLeftParen cast_decl TokRightParen nc_expr
--- On TokOr reduce production nc_expr -> TokLeftParen cast_decl TokRightParen nc_expr
--- On TokOp9 reduce production nc_expr -> TokLeftParen cast_decl TokRightParen nc_expr
--- On TokOp8 reduce production nc_expr -> TokLeftParen cast_decl TokRightParen nc_expr
--- On TokOp7 reduce production nc_expr -> TokLeftParen cast_decl TokRightParen nc_expr
--- On TokOp5 reduce production nc_expr -> TokLeftParen cast_decl TokRightParen nc_expr
--- On TokOp4 reduce production nc_expr -> TokLeftParen cast_decl TokRightParen nc_expr
--- On TokOp11 reduce production nc_expr -> TokLeftParen cast_decl TokRightParen nc_expr
--- On TokOp10 reduce production nc_expr -> TokLeftParen cast_decl TokRightParen nc_expr
--- On TokOp1 reduce production nc_expr -> TokLeftParen cast_decl TokRightParen nc_expr
--- On TokEq reduce production nc_expr -> TokLeftParen cast_decl TokRightParen nc_expr
--- On TokComma reduce production nc_expr -> TokLeftParen cast_decl TokRightParen nc_expr
--- On TokColon reduce production nc_expr -> TokLeftParen cast_decl TokRightParen nc_expr
--- On TokAnd reduce production nc_expr -> TokLeftParen cast_decl TokRightParen nc_expr
--- On TokAddr reduce production nc_expr -> TokLeftParen cast_decl TokRightParen nc_expr
+-- On TokStar TokSemi TokRightParen TokRightBrack TokRightBrace TokQuest TokOr TokOp9 TokOp8 TokOp7 TokOp5 TokOp4 TokOp11 TokOp10 TokOp1 TokEq TokComma TokColon TokAnd TokAddr
+--   reduce production nc_expr -> TokLeftParen cast_decl TokRightParen nc_expr
 
 State 455:
 ## Known stack suffix:
@@ -9006,26 +8165,8 @@ nc_expr -> nc_expr . TokQuest nc_expr TokColon nc_expr [ TokStar TokSemi TokRigh
 -- On TokLeftBrack shift to state 82
 -- On TokDot shift to state 93
 ## Reductions:
--- On TokStar reduce production nc_expr -> TokOp10 nc_expr
--- On TokSemi reduce production nc_expr -> TokOp10 nc_expr
--- On TokRightParen reduce production nc_expr -> TokOp10 nc_expr
--- On TokRightBrack reduce production nc_expr -> TokOp10 nc_expr
--- On TokRightBrace reduce production nc_expr -> TokOp10 nc_expr
--- On TokQuest reduce production nc_expr -> TokOp10 nc_expr
--- On TokOr reduce production nc_expr -> TokOp10 nc_expr
--- On TokOp9 reduce production nc_expr -> TokOp10 nc_expr
--- On TokOp8 reduce production nc_expr -> TokOp10 nc_expr
--- On TokOp7 reduce production nc_expr -> TokOp10 nc_expr
--- On TokOp5 reduce production nc_expr -> TokOp10 nc_expr
--- On TokOp4 reduce production nc_expr -> TokOp10 nc_expr
--- On TokOp11 reduce production nc_expr -> TokOp10 nc_expr
--- On TokOp10 reduce production nc_expr -> TokOp10 nc_expr
--- On TokOp1 reduce production nc_expr -> TokOp10 nc_expr
--- On TokEq reduce production nc_expr -> TokOp10 nc_expr
--- On TokComma reduce production nc_expr -> TokOp10 nc_expr
--- On TokColon reduce production nc_expr -> TokOp10 nc_expr
--- On TokAnd reduce production nc_expr -> TokOp10 nc_expr
--- On TokAddr reduce production nc_expr -> TokOp10 nc_expr
+-- On TokStar TokSemi TokRightParen TokRightBrack TokRightBrace TokQuest TokOr TokOp9 TokOp8 TokOp7 TokOp5 TokOp4 TokOp11 TokOp10 TokOp1 TokEq TokComma TokColon TokAnd TokAddr
+--   reduce production nc_expr -> TokOp10 nc_expr
 
 State 456:
 ## Known stack suffix:
@@ -9058,26 +8199,8 @@ nc_expr -> nc_expr . TokQuest nc_expr TokColon nc_expr [ TokStar TokSemi TokRigh
 -- On TokLeftBrack shift to state 82
 -- On TokDot shift to state 93
 ## Reductions:
--- On TokStar reduce production nc_expr -> TokPreOp12 nc_expr
--- On TokSemi reduce production nc_expr -> TokPreOp12 nc_expr
--- On TokRightParen reduce production nc_expr -> TokPreOp12 nc_expr
--- On TokRightBrack reduce production nc_expr -> TokPreOp12 nc_expr
--- On TokRightBrace reduce production nc_expr -> TokPreOp12 nc_expr
--- On TokQuest reduce production nc_expr -> TokPreOp12 nc_expr
--- On TokOr reduce production nc_expr -> TokPreOp12 nc_expr
--- On TokOp9 reduce production nc_expr -> TokPreOp12 nc_expr
--- On TokOp8 reduce production nc_expr -> TokPreOp12 nc_expr
--- On TokOp7 reduce production nc_expr -> TokPreOp12 nc_expr
--- On TokOp5 reduce production nc_expr -> TokPreOp12 nc_expr
--- On TokOp4 reduce production nc_expr -> TokPreOp12 nc_expr
--- On TokOp11 reduce production nc_expr -> TokPreOp12 nc_expr
--- On TokOp10 reduce production nc_expr -> TokPreOp12 nc_expr
--- On TokOp1 reduce production nc_expr -> TokPreOp12 nc_expr
--- On TokEq reduce production nc_expr -> TokPreOp12 nc_expr
--- On TokComma reduce production nc_expr -> TokPreOp12 nc_expr
--- On TokColon reduce production nc_expr -> TokPreOp12 nc_expr
--- On TokAnd reduce production nc_expr -> TokPreOp12 nc_expr
--- On TokAddr reduce production nc_expr -> TokPreOp12 nc_expr
+-- On TokStar TokSemi TokRightParen TokRightBrack TokRightBrace TokQuest TokOr TokOp9 TokOp8 TokOp7 TokOp5 TokOp4 TokOp11 TokOp10 TokOp1 TokEq TokComma TokColon TokAnd TokAddr
+--   reduce production nc_expr -> TokPreOp12 nc_expr
 
 State 457:
 ## Known stack suffix:
@@ -9110,26 +8233,8 @@ nc_expr -> nc_expr . TokQuest nc_expr TokColon nc_expr [ TokStar TokSemi TokRigh
 -- On TokLeftBrack shift to state 82
 -- On TokDot shift to state 93
 ## Reductions:
--- On TokStar reduce production nc_expr -> TokPrePostOp12 nc_expr
--- On TokSemi reduce production nc_expr -> TokPrePostOp12 nc_expr
--- On TokRightParen reduce production nc_expr -> TokPrePostOp12 nc_expr
--- On TokRightBrack reduce production nc_expr -> TokPrePostOp12 nc_expr
--- On TokRightBrace reduce production nc_expr -> TokPrePostOp12 nc_expr
--- On TokQuest reduce production nc_expr -> TokPrePostOp12 nc_expr
--- On TokOr reduce production nc_expr -> TokPrePostOp12 nc_expr
--- On TokOp9 reduce production nc_expr -> TokPrePostOp12 nc_expr
--- On TokOp8 reduce production nc_expr -> TokPrePostOp12 nc_expr
--- On TokOp7 reduce production nc_expr -> TokPrePostOp12 nc_expr
--- On TokOp5 reduce production nc_expr -> TokPrePostOp12 nc_expr
--- On TokOp4 reduce production nc_expr -> TokPrePostOp12 nc_expr
--- On TokOp11 reduce production nc_expr -> TokPrePostOp12 nc_expr
--- On TokOp10 reduce production nc_expr -> TokPrePostOp12 nc_expr
--- On TokOp1 reduce production nc_expr -> TokPrePostOp12 nc_expr
--- On TokEq reduce production nc_expr -> TokPrePostOp12 nc_expr
--- On TokComma reduce production nc_expr -> TokPrePostOp12 nc_expr
--- On TokColon reduce production nc_expr -> TokPrePostOp12 nc_expr
--- On TokAnd reduce production nc_expr -> TokPrePostOp12 nc_expr
--- On TokAddr reduce production nc_expr -> TokPrePostOp12 nc_expr
+-- On TokStar TokSemi TokRightParen TokRightBrack TokRightBrace TokQuest TokOr TokOp9 TokOp8 TokOp7 TokOp5 TokOp4 TokOp11 TokOp10 TokOp1 TokEq TokComma TokColon TokAnd TokAddr
+--   reduce production nc_expr -> TokPrePostOp12 nc_expr
 
 State 458:
 ## Known stack suffix:
@@ -9219,11 +8324,8 @@ nc_expr -> TokLeftParen . cast_decl TokRightParen nc_expr [ TokStar TokSemi TokR
 -- On cast_decl shift to state 459
 -- On all_def shift to state 424
 ## Reductions:
--- On TokTypeVoid reduce production decl_specifiers_opt ->
--- On TokTypeInt reduce production decl_specifiers_opt ->
--- On TokTypeFloat reduce production decl_specifiers_opt ->
--- On TokTypeDouble reduce production decl_specifiers_opt ->
--- On TokTypeChar reduce production decl_specifiers_opt ->
+-- On TokTypeVoid TokTypeInt TokTypeFloat TokTypeDouble TokTypeChar
+--   reduce production decl_specifiers_opt ->
 
 State 459:
 ## Known stack suffix:
@@ -9254,29 +8356,8 @@ nc_expr -> TokLeftParen cast_decl TokRightParen . nc_expr [ TokStar TokSemi TokR
 -- On TokChar shift to state 69
 -- On nc_expr shift to state 454
 ## Reductions:
--- On TokStar reduce production nc_expr -> TokSizeof TokLeftParen cast_decl TokRightParen
--- On TokSemi reduce production nc_expr -> TokSizeof TokLeftParen cast_decl TokRightParen
--- On TokRightParen reduce production nc_expr -> TokSizeof TokLeftParen cast_decl TokRightParen
--- On TokRightBrack reduce production nc_expr -> TokSizeof TokLeftParen cast_decl TokRightParen
--- On TokRightBrace reduce production nc_expr -> TokSizeof TokLeftParen cast_decl TokRightParen
--- On TokQuest reduce production nc_expr -> TokSizeof TokLeftParen cast_decl TokRightParen
--- On TokOr reduce production nc_expr -> TokSizeof TokLeftParen cast_decl TokRightParen
--- On TokOp9 reduce production nc_expr -> TokSizeof TokLeftParen cast_decl TokRightParen
--- On TokOp8 reduce production nc_expr -> TokSizeof TokLeftParen cast_decl TokRightParen
--- On TokOp7 reduce production nc_expr -> TokSizeof TokLeftParen cast_decl TokRightParen
--- On TokOp5 reduce production nc_expr -> TokSizeof TokLeftParen cast_decl TokRightParen
--- On TokOp4 reduce production nc_expr -> TokSizeof TokLeftParen cast_decl TokRightParen
--- On TokOp13 reduce production nc_expr -> TokSizeof TokLeftParen cast_decl TokRightParen
--- On TokOp11 reduce production nc_expr -> TokSizeof TokLeftParen cast_decl TokRightParen
--- On TokOp10 reduce production nc_expr -> TokSizeof TokLeftParen cast_decl TokRightParen
--- On TokOp1 reduce production nc_expr -> TokSizeof TokLeftParen cast_decl TokRightParen
--- On TokLeftBrack reduce production nc_expr -> TokSizeof TokLeftParen cast_decl TokRightParen
--- On TokEq reduce production nc_expr -> TokSizeof TokLeftParen cast_decl TokRightParen
--- On TokDot reduce production nc_expr -> TokSizeof TokLeftParen cast_decl TokRightParen
--- On TokComma reduce production nc_expr -> TokSizeof TokLeftParen cast_decl TokRightParen
--- On TokColon reduce production nc_expr -> TokSizeof TokLeftParen cast_decl TokRightParen
--- On TokAnd reduce production nc_expr -> TokSizeof TokLeftParen cast_decl TokRightParen
--- On TokAddr reduce production nc_expr -> TokSizeof TokLeftParen cast_decl TokRightParen
+-- On TokStar TokSemi TokRightParen TokRightBrack TokRightBrace TokQuest TokOr TokOp9 TokOp8 TokOp7 TokOp5 TokOp4 TokOp13 TokOp11 TokOp10 TokOp1 TokLeftBrack TokEq TokDot TokComma TokColon TokAnd TokAddr
+--   reduce production nc_expr -> TokSizeof TokLeftParen cast_decl TokRightParen
 
 State 461:
 ## Known stack suffix:
@@ -9309,26 +8390,8 @@ nc_expr -> nc_expr . TokQuest nc_expr TokColon nc_expr [ TokStar TokSemi TokRigh
 -- On TokLeftBrack shift to state 82
 -- On TokDot shift to state 93
 ## Reductions:
--- On TokStar reduce production nc_expr -> TokSizeof nc_expr
--- On TokSemi reduce production nc_expr -> TokSizeof nc_expr
--- On TokRightParen reduce production nc_expr -> TokSizeof nc_expr
--- On TokRightBrack reduce production nc_expr -> TokSizeof nc_expr
--- On TokRightBrace reduce production nc_expr -> TokSizeof nc_expr
--- On TokQuest reduce production nc_expr -> TokSizeof nc_expr
--- On TokOr reduce production nc_expr -> TokSizeof nc_expr
--- On TokOp9 reduce production nc_expr -> TokSizeof nc_expr
--- On TokOp8 reduce production nc_expr -> TokSizeof nc_expr
--- On TokOp7 reduce production nc_expr -> TokSizeof nc_expr
--- On TokOp5 reduce production nc_expr -> TokSizeof nc_expr
--- On TokOp4 reduce production nc_expr -> TokSizeof nc_expr
--- On TokOp11 reduce production nc_expr -> TokSizeof nc_expr
--- On TokOp10 reduce production nc_expr -> TokSizeof nc_expr
--- On TokOp1 reduce production nc_expr -> TokSizeof nc_expr
--- On TokEq reduce production nc_expr -> TokSizeof nc_expr
--- On TokComma reduce production nc_expr -> TokSizeof nc_expr
--- On TokColon reduce production nc_expr -> TokSizeof nc_expr
--- On TokAnd reduce production nc_expr -> TokSizeof nc_expr
--- On TokAddr reduce production nc_expr -> TokSizeof nc_expr
+-- On TokStar TokSemi TokRightParen TokRightBrack TokRightBrace TokQuest TokOr TokOp9 TokOp8 TokOp7 TokOp5 TokOp4 TokOp11 TokOp10 TokOp1 TokEq TokComma TokColon TokAnd TokAddr
+--   reduce production nc_expr -> TokSizeof nc_expr
 
 State 462:
 ## Known stack suffix:
@@ -9361,26 +8424,8 @@ nc_expr -> nc_expr . TokQuest nc_expr TokColon nc_expr [ TokStar TokSemi TokRigh
 -- On TokLeftBrack shift to state 82
 -- On TokDot shift to state 93
 ## Reductions:
--- On TokStar reduce production nc_expr -> TokStar nc_expr
--- On TokSemi reduce production nc_expr -> TokStar nc_expr
--- On TokRightParen reduce production nc_expr -> TokStar nc_expr
--- On TokRightBrack reduce production nc_expr -> TokStar nc_expr
--- On TokRightBrace reduce production nc_expr -> TokStar nc_expr
--- On TokQuest reduce production nc_expr -> TokStar nc_expr
--- On TokOr reduce production nc_expr -> TokStar nc_expr
--- On TokOp9 reduce production nc_expr -> TokStar nc_expr
--- On TokOp8 reduce production nc_expr -> TokStar nc_expr
--- On TokOp7 reduce production nc_expr -> TokStar nc_expr
--- On TokOp5 reduce production nc_expr -> TokStar nc_expr
--- On TokOp4 reduce production nc_expr -> TokStar nc_expr
--- On TokOp11 reduce production nc_expr -> TokStar nc_expr
--- On TokOp10 reduce production nc_expr -> TokStar nc_expr
--- On TokOp1 reduce production nc_expr -> TokStar nc_expr
--- On TokEq reduce production nc_expr -> TokStar nc_expr
--- On TokComma reduce production nc_expr -> TokStar nc_expr
--- On TokColon reduce production nc_expr -> TokStar nc_expr
--- On TokAnd reduce production nc_expr -> TokStar nc_expr
--- On TokAddr reduce production nc_expr -> TokStar nc_expr
+-- On TokStar TokSemi TokRightParen TokRightBrack TokRightBrace TokQuest TokOr TokOp9 TokOp8 TokOp7 TokOp5 TokOp4 TokOp11 TokOp10 TokOp1 TokEq TokComma TokColon TokAnd TokAddr
+--   reduce production nc_expr -> TokStar nc_expr
 
 State 463:
 ## Known stack suffix:
@@ -9427,8 +8472,8 @@ nc_expr -> nc_expr . TokQuest nc_expr TokColon nc_expr [ TokStar TokRightBrace T
 -- On TokAnd shift to state 111
 -- On TokAddr shift to state 103
 ## Reductions:
--- On TokRightBrace reduce production enum_decl -> TokId TokEq nc_expr
--- On TokComma reduce production enum_decl -> TokId TokEq nc_expr
+-- On TokRightBrace TokComma
+--   reduce production enum_decl -> TokId TokEq nc_expr
 
 State 464:
 ## Known stack suffix:
@@ -9440,7 +8485,8 @@ rev_enum_decl_list -> rev_enum_decl_list . TokComma enum_decl [ TokRightBrace To
 -- On TokComma shift to state 465
 -- On opt_comma shift to state 467
 ## Reductions:
--- On TokRightBrace reduce production opt_comma ->
+-- On TokRightBrace
+--   reduce production opt_comma ->
 
 State 465:
 ## Known stack suffix:
@@ -9452,7 +8498,8 @@ rev_enum_decl_list -> rev_enum_decl_list TokComma . enum_decl [ TokRightBrace To
 -- On TokId shift to state 36
 -- On enum_decl shift to state 466
 ## Reductions:
--- On TokRightBrace reduce production opt_comma -> TokComma
+-- On TokRightBrace
+--   reduce production opt_comma -> TokComma
 
 State 466:
 ## Known stack suffix:
@@ -9619,11 +8666,8 @@ tuple_declaration_list -> TokLeftBrace rev_tuple_decl_list . TokRightBrace [ Tok
 -- On decl_specifiers_opt shift to state 265
 -- On decl_specifiers shift to state 279
 ## Reductions:
--- On TokTypeVoid reduce production decl_specifiers_opt ->
--- On TokTypeInt reduce production decl_specifiers_opt ->
--- On TokTypeFloat reduce production decl_specifiers_opt ->
--- On TokTypeDouble reduce production decl_specifiers_opt ->
--- On TokTypeChar reduce production decl_specifiers_opt ->
+-- On TokTypeVoid TokTypeInt TokTypeFloat TokTypeDouble TokTypeChar
+--   reduce production decl_specifiers_opt ->
 
 State 480:
 ## Known stack suffix:
@@ -9709,11 +8753,8 @@ type_decl -> TokStar . decl_struct_type_specifiers_opt type_decl [ TokSemi TokRi
 -- On decl_struct_type_specifiers shift to state 299
 -- On decl_struct_type_specifier shift to state 301
 ## Reductions:
--- On TokStar reduce production decl_struct_type_specifiers_opt ->
--- On TokPoly reduce production decl_struct_type_specifiers_opt ->
--- On TokLeftParen reduce production decl_struct_type_specifiers_opt ->
--- On TokId reduce production decl_struct_type_specifiers_opt ->
--- On TokAddr reduce production decl_struct_type_specifiers_opt ->
+-- On TokStar TokPoly TokLeftParen TokId TokAddr
+--   reduce production decl_struct_type_specifiers_opt ->
 
 State 488:
 ## Known stack suffix:
@@ -9797,11 +8838,8 @@ type_direct_decl -> TokPoly TokTypeId TokLeftParen . param_list TokRightParen [ 
 -- On decl_specifiers_opt shift to state 265
 -- On decl_specifiers shift to state 279
 ## Reductions:
--- On TokTypeVoid reduce production decl_specifiers_opt ->
--- On TokTypeInt reduce production decl_specifiers_opt ->
--- On TokTypeFloat reduce production decl_specifiers_opt ->
--- On TokTypeDouble reduce production decl_specifiers_opt ->
--- On TokTypeChar reduce production decl_specifiers_opt ->
+-- On TokTypeVoid TokTypeInt TokTypeFloat TokTypeDouble TokTypeChar
+--   reduce production decl_specifiers_opt ->
 
 State 492:
 ## Known stack suffix:
@@ -9858,11 +8896,8 @@ type_decl -> TokAddr . decl_struct_type_specifiers_opt type_decl [ TokSemi TokRi
 -- On decl_struct_type_specifiers shift to state 299
 -- On decl_struct_type_specifier shift to state 301
 ## Reductions:
--- On TokStar reduce production decl_struct_type_specifiers_opt ->
--- On TokPoly reduce production decl_struct_type_specifiers_opt ->
--- On TokLeftParen reduce production decl_struct_type_specifiers_opt ->
--- On TokId reduce production decl_struct_type_specifiers_opt ->
--- On TokAddr reduce production decl_struct_type_specifiers_opt ->
+-- On TokStar TokPoly TokLeftParen TokId TokAddr
+--   reduce production decl_struct_type_specifiers_opt ->
 
 State 497:
 ## Known stack suffix:
@@ -9890,9 +8925,8 @@ type_direct_decl -> type_direct_decl . TokLeftParen opt_param_list TokRightParen
 -- On TokLeftParen shift to state 499
 -- On TokLeftBrack shift to state 502
 ## Reductions:
--- On TokSemi reduce production type_decl -> type_direct_decl
--- On TokRightParen reduce production type_decl -> type_direct_decl
--- On TokComma reduce production type_decl -> type_direct_decl
+-- On TokSemi TokRightParen TokComma
+--   reduce production type_decl -> type_direct_decl
 
 State 499:
 ## Known stack suffix:
@@ -9944,12 +8978,10 @@ type_direct_decl -> type_direct_decl TokLeftParen . opt_param_list TokRightParen
 -- On decl_specifiers_opt shift to state 265
 -- On decl_specifiers shift to state 279
 ## Reductions:
--- On TokTypeVoid reduce production decl_specifiers_opt ->
--- On TokTypeInt reduce production decl_specifiers_opt ->
--- On TokTypeFloat reduce production decl_specifiers_opt ->
--- On TokTypeDouble reduce production decl_specifiers_opt ->
--- On TokTypeChar reduce production decl_specifiers_opt ->
--- On TokRightParen reduce production opt_param_list ->
+-- On TokTypeVoid TokTypeInt TokTypeFloat TokTypeDouble TokTypeChar
+--   reduce production decl_specifiers_opt ->
+-- On TokRightParen
+--   reduce production opt_param_list ->
 
 State 500:
 ## Known stack suffix:
@@ -9992,7 +9024,8 @@ type_direct_decl -> type_direct_decl TokLeftBrack . opt_expr TokRightBrack [ Tok
 -- On nc_expr shift to state 118
 -- On expr shift to state 239
 ## Reductions:
--- On TokRightBrack reduce production opt_expr ->
+-- On TokRightBrack
+--   reduce production opt_expr ->
 
 State 503:
 ## Known stack suffix:
@@ -10084,7 +9117,8 @@ type_decl_list -> rev_type_decl_list . [ TokSemi ]
 ## Transitions:
 -- On TokComma shift to state 513
 ## Reductions:
--- On TokSemi reduce production type_decl_list -> rev_type_decl_list
+-- On TokSemi
+--   reduce production type_decl_list -> rev_type_decl_list
 
 State 513:
 ## Known stack suffix:

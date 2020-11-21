@@ -14,8 +14,8 @@ cword_eof' -> . cword_eof [ # ]
 -- On cword_eof shift to state 35
 -- On cword shift to state 36
 ## Reductions:
--- On PIPE reduce production word ->
--- On EOF reduce production word ->
+-- On PIPE EOF
+--   reduce production word ->
 
 State 1:
 ## Known stack suffix:
@@ -38,15 +38,8 @@ letter -> IDENT . expr_l [ SEMICOLON RPAR POWER PIPE LPAR IDENT FP EOF ARROW ]
 -- On expr_l shift to state 4
 -- On expr shift to state 5
 ## Reductions:
--- On SEMICOLON reduce production expr_l ->
--- On RPAR reduce production expr_l ->
--- On POWER reduce production expr_l ->
--- On PIPE reduce production expr_l ->
--- On LPAR reduce production expr_l ->
--- On IDENT reduce production expr_l ->
--- On FP reduce production expr_l ->
--- On EOF reduce production expr_l ->
--- On ARROW reduce production expr_l ->
+-- On SEMICOLON RPAR POWER PIPE LPAR IDENT FP EOF ARROW
+--   reduce production expr_l ->
 
 State 3:
 ## Known stack suffix:
@@ -76,15 +69,8 @@ expr_l -> expr . expr_l [ SEMICOLON RPAR POWER PIPE LPAR IDENT FP EOF ARROW ]
 -- On expr_l shift to state 6
 -- On expr shift to state 5
 ## Reductions:
--- On SEMICOLON reduce production expr_l ->
--- On RPAR reduce production expr_l ->
--- On POWER reduce production expr_l ->
--- On PIPE reduce production expr_l ->
--- On LPAR reduce production expr_l ->
--- On IDENT reduce production expr_l ->
--- On FP reduce production expr_l ->
--- On EOF reduce production expr_l ->
--- On ARROW reduce production expr_l ->
+-- On SEMICOLON RPAR POWER PIPE LPAR IDENT FP EOF ARROW
+--   reduce production expr_l ->
 
 State 6:
 ## Known stack suffix:
@@ -247,7 +233,8 @@ cword -> word . PIPE constr [ EOF ]
 ## Transitions:
 -- On PIPE shift to state 22
 ## Reductions:
--- On EOF reduce production cword -> word
+-- On EOF
+--   reduce production cword -> word
 
 State 22:
 ## Known stack suffix:
@@ -291,10 +278,8 @@ word -> simple_word . word_no_simple [ SEMICOLON PIPE EOF ARROW ]
 -- On letter shift to state 27
 -- On factor shift to state 30
 ## Reductions:
--- On SEMICOLON reduce production word_no_simple ->
--- On PIPE reduce production word_no_simple ->
--- On EOF reduce production word_no_simple ->
--- On ARROW reduce production word_no_simple ->
+-- On SEMICOLON PIPE EOF ARROW
+--   reduce production word_no_simple ->
 
 State 26:
 ## Known stack suffix:
@@ -314,13 +299,8 @@ simple_word -> simple_word letter . [ SEMICOLON PIPE LPAR IDENT FP EOF ARROW ]
 ## Transitions:
 -- On POWER shift to state 28
 ## Reductions:
--- On SEMICOLON reduce production simple_word -> simple_word letter
--- On PIPE reduce production simple_word -> simple_word letter
--- On LPAR reduce production simple_word -> simple_word letter
--- On IDENT reduce production simple_word -> simple_word letter
--- On FP reduce production simple_word -> simple_word letter
--- On EOF reduce production simple_word -> simple_word letter
--- On ARROW reduce production simple_word -> simple_word letter
+-- On SEMICOLON PIPE LPAR IDENT FP EOF ARROW
+--   reduce production simple_word -> simple_word letter
 
 State 28:
 ## Known stack suffix:
@@ -355,10 +335,8 @@ word_no_simple -> factor . word [ SEMICOLON PIPE EOF ARROW ]
 -- On letter shift to state 32
 -- On factor shift to state 33
 ## Reductions:
--- On SEMICOLON reduce production word ->
--- On PIPE reduce production word ->
--- On EOF reduce production word ->
--- On ARROW reduce production word ->
+-- On SEMICOLON PIPE EOF ARROW
+--   reduce production word ->
 
 State 31:
 ## Known stack suffix:
@@ -378,13 +356,8 @@ simple_word -> letter . [ SEMICOLON PIPE LPAR IDENT FP EOF ARROW ]
 ## Transitions:
 -- On POWER shift to state 28
 ## Reductions:
--- On SEMICOLON reduce production simple_word -> letter
--- On PIPE reduce production simple_word -> letter
--- On LPAR reduce production simple_word -> letter
--- On IDENT reduce production simple_word -> letter
--- On FP reduce production simple_word -> letter
--- On EOF reduce production simple_word -> letter
--- On ARROW reduce production simple_word -> letter
+-- On SEMICOLON PIPE LPAR IDENT FP EOF ARROW
+--   reduce production simple_word -> letter
 
 State 33:
 ## Known stack suffix:
@@ -400,10 +373,8 @@ word -> factor . word [ SEMICOLON PIPE EOF ARROW ]
 -- On letter shift to state 32
 -- On factor shift to state 33
 ## Reductions:
--- On SEMICOLON reduce production word ->
--- On PIPE reduce production word ->
--- On EOF reduce production word ->
--- On ARROW reduce production word ->
+-- On SEMICOLON PIPE EOF ARROW
+--   reduce production word ->
 
 State 34:
 ## Known stack suffix:
@@ -458,8 +429,10 @@ rules_eof' -> . rules_eof [ # ]
 -- On letter shift to state 32
 -- On factor shift to state 33
 ## Reductions:
--- On EOF reduce production rules ->
--- On ARROW reduce production word ->
+-- On EOF
+--   reduce production rules ->
+-- On ARROW
+--   reduce production word ->
 
 State 39:
 ## Known stack suffix:
@@ -486,9 +459,8 @@ rule -> word ARROW . word [ SEMICOLON EOF ]
 -- On letter shift to state 32
 -- On factor shift to state 33
 ## Reductions:
--- On SEMICOLON reduce production word ->
--- On PIPE reduce production word ->
--- On EOF reduce production word ->
+-- On SEMICOLON PIPE EOF
+--   reduce production word ->
 
 State 41:
 ## Known stack suffix:
@@ -499,8 +471,8 @@ rule -> word ARROW word . [ SEMICOLON EOF ]
 ## Transitions:
 -- On PIPE shift to state 42
 ## Reductions:
--- On SEMICOLON reduce production rule -> word ARROW word
--- On EOF reduce production rule -> word ARROW word
+-- On SEMICOLON EOF
+--   reduce production rule -> word ARROW word
 
 State 42:
 ## Known stack suffix:
@@ -557,7 +529,8 @@ rules -> rule . SEMICOLON rules [ EOF ]
 ## Transitions:
 -- On SEMICOLON shift to state 48
 ## Reductions:
--- On EOF reduce production rules -> rule
+-- On EOF
+--   reduce production rules -> rule
 
 State 48:
 ## Known stack suffix:
@@ -575,8 +548,10 @@ rules -> rule SEMICOLON . rules [ EOF ]
 -- On letter shift to state 32
 -- On factor shift to state 33
 ## Reductions:
--- On EOF reduce production rules ->
--- On ARROW reduce production word ->
+-- On EOF
+--   reduce production rules ->
+-- On ARROW
+--   reduce production word ->
 
 State 49:
 ## Known stack suffix:
@@ -611,9 +586,8 @@ elt -> IDENT . expr_l PIPE constr [ SEMICOLON EOF ]
 -- On expr_l shift to state 52
 -- On expr shift to state 5
 ## Reductions:
--- On SEMICOLON reduce production expr_l ->
--- On PIPE reduce production expr_l ->
--- On EOF reduce production expr_l ->
+-- On SEMICOLON PIPE EOF
+--   reduce production expr_l ->
 
 State 52:
 ## Known stack suffix:
@@ -624,8 +598,8 @@ elt -> IDENT expr_l . PIPE constr [ SEMICOLON EOF ]
 ## Transitions:
 -- On PIPE shift to state 53
 ## Reductions:
--- On SEMICOLON reduce production elt -> IDENT expr_l
--- On EOF reduce production elt -> IDENT expr_l
+-- On SEMICOLON EOF
+--   reduce production elt -> IDENT expr_l
 
 State 53:
 ## Known stack suffix:
@@ -692,7 +666,8 @@ signature -> elt . SEMICOLON signature [ EOF ]
 ## Transitions:
 -- On SEMICOLON shift to state 60
 ## Reductions:
--- On EOF reduce production signature -> elt
+-- On EOF
+--   reduce production signature -> elt
 
 State 60:
 ## Known stack suffix:
@@ -705,7 +680,8 @@ signature -> elt SEMICOLON . signature [ EOF ]
 -- On signature shift to state 61
 -- On elt shift to state 59
 ## Reductions:
--- On EOF reduce production signature -> elt SEMICOLON
+-- On EOF
+--   reduce production signature -> elt SEMICOLON
 
 State 61:
 ## Known stack suffix:

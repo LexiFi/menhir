@@ -9,7 +9,8 @@ main' -> . main [ # ]
 -- On items shift to state 42
 -- On item shift to state 6
 ## Reductions:
--- On EOF reduce production items ->
+-- On EOF
+--   reduce production items ->
 
 State 1:
 ## Known stack suffix:
@@ -43,7 +44,8 @@ item -> IDENT STRING LBRACE . items RBRACE [ RBRACE IDENT EOF ]
 -- On items shift to state 4
 -- On item shift to state 6
 ## Reductions:
--- On RBRACE reduce production items ->
+-- On RBRACE
+--   reduce production items ->
 
 State 4:
 ## Known stack suffix:
@@ -73,8 +75,8 @@ items -> item . items [ RBRACE EOF ]
 -- On items shift to state 7
 -- On item shift to state 6
 ## Reductions:
--- On RBRACE reduce production items ->
--- On EOF reduce production items ->
+-- On RBRACE EOF
+--   reduce production items ->
 
 State 7:
 ## Known stack suffix:
@@ -95,7 +97,8 @@ item -> IDENT LBRACE . items RBRACE [ RBRACE IDENT EOF ]
 -- On items shift to state 9
 -- On item shift to state 6
 ## Reductions:
--- On RBRACE reduce production items ->
+-- On RBRACE
+--   reduce production items ->
 
 State 9:
 ## Known stack suffix:
@@ -227,7 +230,8 @@ value -> LPAR . values RPAR [ STRING RPAR RELOP RBRACKET RBRACE PFXOP OR LPAR LB
 -- On value shift to state 23
 -- On atom shift to state 29
 ## Reductions:
--- On RPAR reduce production values ->
+-- On RPAR
+--   reduce production values ->
 
 State 20:
 ## Known stack suffix:
@@ -247,7 +251,8 @@ value -> LBRACKET . values RBRACKET [ STRING RPAR RELOP RBRACKET RBRACE PFXOP OR
 -- On value shift to state 23
 -- On atom shift to state 29
 ## Reductions:
--- On RBRACKET reduce production values ->
+-- On RBRACKET
+--   reduce production values ->
 
 State 21:
 ## Known stack suffix:
@@ -291,9 +296,8 @@ values -> value . values [ RPAR RBRACKET RBRACE ]
 -- On value shift to state 23
 -- On atom shift to state 29
 ## Reductions:
--- On RPAR reduce production values ->
--- On RBRACKET reduce production values ->
--- On RBRACE reduce production values ->
+-- On RPAR RBRACKET RBRACE
+--   reduce production values ->
 
 State 24:
 ## Known stack suffix:
@@ -324,20 +328,8 @@ value -> value OR value . [ STRING RPAR RELOP RBRACKET RBRACE PFXOP OR LPAR LBRA
 ## Transitions:
 -- On LBRACE shift to state 26
 ## Reductions:
--- On STRING reduce production value -> value OR value
--- On RPAR reduce production value -> value OR value
--- On RELOP reduce production value -> value OR value
--- On RBRACKET reduce production value -> value OR value
--- On RBRACE reduce production value -> value OR value
--- On PFXOP reduce production value -> value OR value
--- On OR reduce production value -> value OR value
--- On LPAR reduce production value -> value OR value
--- On LBRACKET reduce production value -> value OR value
--- On INT reduce production value -> value OR value
--- On IDENT reduce production value -> value OR value
--- On EOF reduce production value -> value OR value
--- On BOOL reduce production value -> value OR value
--- On AND reduce production value -> value OR value
+-- On STRING RPAR RELOP RBRACKET RBRACE PFXOP OR LPAR LBRACKET INT IDENT EOF BOOL AND
+--   reduce production value -> value OR value
 
 State 26:
 ## Known stack suffix:
@@ -357,7 +349,8 @@ value -> value LBRACE . values RBRACE [ STRING RPAR RELOP RBRACKET RBRACE PFXOP 
 -- On value shift to state 23
 -- On atom shift to state 29
 ## Reductions:
--- On RBRACE reduce production values ->
+-- On RBRACE
+--   reduce production values ->
 
 State 27:
 ## Known stack suffix:
@@ -388,20 +381,8 @@ value -> atom . ENVOP atom [ STRING RPAR RELOP RBRACKET RBRACE PFXOP OR LPAR LBR
 -- On RELOP shift to state 30
 -- On ENVOP shift to state 32
 ## Reductions:
--- On STRING reduce production value -> atom
--- On RPAR reduce production value -> atom
--- On RBRACKET reduce production value -> atom
--- On RBRACE reduce production value -> atom
--- On PFXOP reduce production value -> atom
--- On OR reduce production value -> atom
--- On LPAR reduce production value -> atom
--- On LBRACKET reduce production value -> atom
--- On LBRACE reduce production value -> atom
--- On INT reduce production value -> atom
--- On IDENT reduce production value -> atom
--- On EOF reduce production value -> atom
--- On BOOL reduce production value -> atom
--- On AND reduce production value -> atom
+-- On STRING RPAR RBRACKET RBRACE PFXOP OR LPAR LBRACKET LBRACE INT IDENT EOF BOOL AND
+--   reduce production value -> atom
 
 State 30:
 ## Known stack suffix:
@@ -477,19 +458,8 @@ value -> value . OR value [ STRING RPAR RELOP RBRACKET RBRACE PFXOP OR LPAR LBRA
 -- On OR shift to state 24
 -- On LBRACE shift to state 26
 ## Reductions:
--- On STRING reduce production value -> value AND value
--- On RPAR reduce production value -> value AND value
--- On RELOP reduce production value -> value AND value
--- On RBRACKET reduce production value -> value AND value
--- On RBRACE reduce production value -> value AND value
--- On PFXOP reduce production value -> value AND value
--- On LPAR reduce production value -> value AND value
--- On LBRACKET reduce production value -> value AND value
--- On INT reduce production value -> value AND value
--- On IDENT reduce production value -> value AND value
--- On EOF reduce production value -> value AND value
--- On BOOL reduce production value -> value AND value
--- On AND reduce production value -> value AND value
+-- On STRING RPAR RELOP RBRACKET RBRACE PFXOP LPAR LBRACKET INT IDENT EOF BOOL AND
+--   reduce production value -> value AND value
 
 State 36:
 ## Known stack suffix:
@@ -529,20 +499,8 @@ value -> PFXOP value . [ STRING RPAR RELOP RBRACKET RBRACE PFXOP OR LPAR LBRACKE
 ## Transitions:
 -- On LBRACE shift to state 26
 ## Reductions:
--- On STRING reduce production value -> PFXOP value
--- On RPAR reduce production value -> PFXOP value
--- On RELOP reduce production value -> PFXOP value
--- On RBRACKET reduce production value -> PFXOP value
--- On RBRACE reduce production value -> PFXOP value
--- On PFXOP reduce production value -> PFXOP value
--- On OR reduce production value -> PFXOP value
--- On LPAR reduce production value -> PFXOP value
--- On LBRACKET reduce production value -> PFXOP value
--- On INT reduce production value -> PFXOP value
--- On IDENT reduce production value -> PFXOP value
--- On EOF reduce production value -> PFXOP value
--- On BOOL reduce production value -> PFXOP value
--- On AND reduce production value -> PFXOP value
+-- On STRING RPAR RELOP RBRACKET RBRACE PFXOP OR LPAR LBRACKET INT IDENT EOF BOOL AND
+--   reduce production value -> PFXOP value
 
 State 40:
 ## Known stack suffix:
@@ -557,9 +515,8 @@ value -> value . OR value [ RBRACE OR LBRACE IDENT EOF AND ]
 -- On LBRACE shift to state 26
 -- On AND shift to state 34
 ## Reductions:
--- On RBRACE reduce production item -> IDENT COLON value
--- On IDENT reduce production item -> IDENT COLON value
--- On EOF reduce production item -> IDENT COLON value
+-- On RBRACE IDENT EOF
+--   reduce production item -> IDENT COLON value
 
 State 41:
 ## Known stack suffix:

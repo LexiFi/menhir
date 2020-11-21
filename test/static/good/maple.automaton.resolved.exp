@@ -78,16 +78,10 @@ statseq -> statseq SEMICOLON comments . stat [ SEMICOLON OD FI EOF END ELSE ELIF
 -- On for_body shift to state 159
 -- On expr shift to state 192
 ## Reductions:
--- On SEMICOLON reduce production stat ->
--- On OD reduce production stat ->
--- On FI reduce production stat ->
--- On EOF reduce production stat ->
--- On END reduce production stat ->
--- On ELSE reduce production stat ->
--- On ELIF reduce production stat ->
--- On COMMA reduce production nameseq ->
--- On COLON reduce production stat ->
--- On ASSIGN reduce production nameseq ->
+-- On COMMA ASSIGN
+--   reduce production nameseq ->
+-- On SEMICOLON OD FI EOF END ELSE ELIF COLON
+--   reduce production stat ->
 
 State 4:
 ## Known stack suffix:
@@ -229,8 +223,8 @@ expr -> PROC LPAREN . parmseq RPAREN result_type decls_proc options_of_proc stat
 -- On name_string shift to state 23
 -- On name shift to state 200
 ## Reductions:
--- On RPAREN reduce production parmseq ->
--- On COMMA reduce production parmseq ->
+-- On RPAREN COMMA
+--   reduce production parmseq ->
 
 State 12:
 ## Known stack suffix:
@@ -261,40 +255,8 @@ expr -> PROC LPAREN parmseq RPAREN . result_type decls_proc options_of_proc stat
 -- On DOUBLE_COLON shift to state 15
 -- On result_type shift to state 18
 ## Reductions:
--- On WHILE reduce production result_type ->
--- On TO reduce production result_type ->
--- On SUBTRACT reduce production result_type ->
--- On STRING reduce production result_type ->
--- On STOP reduce production result_type ->
--- On SEQ reduce production result_type ->
--- On SEMICOLON reduce production result_type ->
--- On SAVE reduce production result_type ->
--- On READ reduce production result_type ->
--- On QUOTED_STRING reduce production result_type ->
--- On QUOTE reduce production result_type ->
--- On QUIT reduce production result_type ->
--- On PROC reduce production result_type ->
--- On PLUS reduce production result_type ->
--- On OPTION reduce production result_type ->
--- On NOT reduce production result_type ->
--- On LPAREN reduce production result_type ->
--- On LOCAL reduce production result_type ->
--- On LBRACK reduce production result_type ->
--- On LBRACE reduce production result_type ->
--- On INT reduce production result_type ->
--- On IF reduce production result_type ->
--- On ID reduce production result_type ->
--- On GLOBAL reduce production result_type ->
--- On FROM reduce production result_type ->
--- On FOR reduce production result_type ->
--- On END reduce production result_type ->
--- On DOT reduce production result_type ->
--- On DO reduce production result_type ->
--- On COMMENT reduce production result_type ->
--- On COMMA reduce production result_type ->
--- On COLON reduce production result_type ->
--- On BY reduce production result_type ->
--- On ASSIGN reduce production result_type ->
+-- On WHILE TO SUBTRACT STRING STOP SEQ SEMICOLON SAVE READ QUOTED_STRING QUOTE QUIT PROC PLUS OPTION NOT LPAREN LOCAL LBRACK LBRACE INT IF ID GLOBAL FROM FOR END DOT DO COMMENT COMMA COLON BY ASSIGN
+--   reduce production result_type ->
 
 State 15:
 ## Known stack suffix:
@@ -337,38 +299,8 @@ expr -> PROC LPAREN parmseq RPAREN result_type . decls_proc options_of_proc stat
 -- On globals_of_proc shift to state 120
 -- On decls_proc shift to state 122
 ## Reductions:
--- On WHILE reduce production decls_proc ->
--- On TO reduce production decls_proc ->
--- On SUBTRACT reduce production decls_proc ->
--- On STRING reduce production decls_proc ->
--- On STOP reduce production decls_proc ->
--- On SEQ reduce production decls_proc ->
--- On SEMICOLON reduce production decls_proc ->
--- On SAVE reduce production decls_proc ->
--- On READ reduce production decls_proc ->
--- On QUOTED_STRING reduce production decls_proc ->
--- On QUOTE reduce production decls_proc ->
--- On QUIT reduce production decls_proc ->
--- On PROC reduce production decls_proc ->
--- On PLUS reduce production decls_proc ->
--- On OPTION reduce production decls_proc ->
--- On NOT reduce production decls_proc ->
--- On LPAREN reduce production decls_proc ->
--- On LBRACK reduce production decls_proc ->
--- On LBRACE reduce production decls_proc ->
--- On INT reduce production decls_proc ->
--- On IF reduce production decls_proc ->
--- On ID reduce production decls_proc ->
--- On FROM reduce production decls_proc ->
--- On FOR reduce production decls_proc ->
--- On END reduce production decls_proc ->
--- On DOT reduce production decls_proc ->
--- On DO reduce production decls_proc ->
--- On COMMENT reduce production decls_proc ->
--- On COMMA reduce production decls_proc ->
--- On COLON reduce production decls_proc ->
--- On BY reduce production decls_proc ->
--- On ASSIGN reduce production decls_proc ->
+-- On WHILE TO SUBTRACT STRING STOP SEQ SEMICOLON SAVE READ QUOTED_STRING QUOTE QUIT PROC PLUS OPTION NOT LPAREN LBRACK LBRACE INT IF ID FROM FOR END DOT DO COMMENT COMMA COLON BY ASSIGN
+--   reduce production decls_proc ->
 
 State 19:
 ## Known stack suffix:
@@ -382,8 +314,8 @@ locals_of_proc -> LOCAL . nameseq SEMICOLON [ WHILE TO SUBTRACT STRING STOP SEQ 
 -- On name_string shift to state 23
 -- On name shift to state 114
 ## Reductions:
--- On SEMICOLON reduce production nameseq ->
--- On COMMA reduce production nameseq ->
+-- On SEMICOLON COMMA
+--   reduce production nameseq ->
 
 State 20:
 ## Known stack suffix:
@@ -439,9 +371,8 @@ nameseq -> nameseq COMMA name . [ SEMICOLON COMMA ASSIGN ]
 -- On LBRACK shift to state 25
 -- On DOT shift to state 94
 ## Reductions:
--- On SEMICOLON reduce production nameseq -> nameseq COMMA name
--- On COMMA reduce production nameseq -> nameseq COMMA name
--- On ASSIGN reduce production nameseq -> nameseq COMMA name
+-- On SEMICOLON COMMA ASSIGN
+--   reduce production nameseq -> nameseq COMMA name
 
 State 25:
 ## Known stack suffix:
@@ -468,8 +399,8 @@ name -> name LBRACK . exprseq RBRACK [ WHILE UNION TO THEN SUBTRACT SLASH SEQ SE
 -- On exprseq shift to state 112
 -- On expr shift to state 93
 ## Reductions:
--- On RBRACK reduce production exprseq ->
--- On COMMA reduce production exprseq ->
+-- On RBRACK COMMA
+--   reduce production exprseq ->
 
 State 26:
 ## Known stack suffix:
@@ -546,8 +477,8 @@ expr -> LPAREN . exprseq RPAREN [ WHILE UNION TO THEN SUBTRACT SLASH SEQ SEMICOL
 -- On exprseq shift to state 108
 -- On expr shift to state 93
 ## Reductions:
--- On RPAREN reduce production exprseq ->
--- On COMMA reduce production exprseq ->
+-- On RPAREN COMMA
+--   reduce production exprseq ->
 
 State 29:
 ## Known stack suffix:
@@ -574,8 +505,8 @@ expr -> LBRACK . exprseq RBRACK [ WHILE UNION TO THEN SUBTRACT SLASH SEQ SEMICOL
 -- On exprseq shift to state 106
 -- On expr shift to state 93
 ## Reductions:
--- On RBRACK reduce production exprseq ->
--- On COMMA reduce production exprseq ->
+-- On RBRACK COMMA
+--   reduce production exprseq ->
 
 State 30:
 ## Known stack suffix:
@@ -602,8 +533,8 @@ expr -> LBRACE . exprseq RBRACE [ WHILE UNION TO THEN SUBTRACT SLASH SEQ SEMICOL
 -- On exprseq shift to state 104
 -- On expr shift to state 93
 ## Reductions:
--- On RBRACE reduce production exprseq ->
--- On COMMA reduce production exprseq ->
+-- On RBRACE COMMA
+--   reduce production exprseq ->
 
 State 31:
 ## Known stack suffix:
@@ -615,50 +546,8 @@ expr -> INT . DOT [ WHILE UNION TO THEN SUBTRACT SLASH SEQ SEMICOLON RPAREN REPE
 ## Transitions:
 -- On DOT shift to state 32
 ## Reductions:
--- On WHILE reduce production expr -> INT
--- On UNION reduce production expr -> INT
--- On TO reduce production expr -> INT
--- On THEN reduce production expr -> INT
--- On SUBTRACT reduce production expr -> INT
--- On SLASH reduce production expr -> INT
--- On SEQ reduce production expr -> INT
--- On SEMICOLON reduce production expr -> INT
--- On RPAREN reduce production expr -> INT
--- On REPEAT_COMPOSE reduce production expr -> INT
--- On RBRACK reduce production expr -> INT
--- On RBRACE reduce production expr -> INT
--- On QUOTE reduce production expr -> INT
--- On PLUS reduce production expr -> INT
--- On OR reduce production expr -> INT
--- On OD reduce production expr -> INT
--- On NE reduce production expr -> INT
--- On MULT reduce production expr -> INT
--- On MOD reduce production expr -> INT
--- On MINUS reduce production expr -> INT
--- On LT reduce production expr -> INT
--- On LE reduce production expr -> INT
--- On INTERSECT reduce production expr -> INT
--- On GT reduce production expr -> INT
--- On GE reduce production expr -> INT
--- On FI reduce production expr -> INT
--- On EXP reduce production expr -> INT
--- On EXCLAM reduce production expr -> INT
--- On EQUAL reduce production expr -> INT
--- On EOF reduce production expr -> INT
--- On END reduce production expr -> INT
--- On ELSE reduce production expr -> INT
--- On ELLIPSE reduce production expr -> INT
--- On ELIF reduce production expr -> INT
--- On DO reduce production expr -> INT
--- On COMMA reduce production expr -> INT
--- On COLON reduce production expr -> INT
--- On CARET reduce production expr -> INT
--- On BY reduce production expr -> INT
--- On AT reduce production expr -> INT
--- On ARROW reduce production expr -> INT
--- On AND reduce production expr -> INT
--- On AMPOP reduce production expr -> INT
--- On AMPMUL reduce production expr -> INT
+-- On WHILE UNION TO THEN SUBTRACT SLASH SEQ SEMICOLON RPAREN REPEAT_COMPOSE RBRACK RBRACE QUOTE PLUS OR OD NE MULT MOD MINUS LT LE INTERSECT GT GE FI EXP EXCLAM EQUAL EOF END ELSE ELLIPSE ELIF DO COMMA COLON CARET BY AT ARROW AND AMPOP AMPMUL
+--   reduce production expr -> INT
 
 State 32:
 ## Known stack suffix:
@@ -669,50 +558,8 @@ expr -> INT DOT . [ WHILE UNION TO THEN SUBTRACT SLASH SEQ SEMICOLON RPAREN REPE
 ## Transitions:
 -- On INT shift to state 33
 ## Reductions:
--- On WHILE reduce production expr -> INT DOT
--- On UNION reduce production expr -> INT DOT
--- On TO reduce production expr -> INT DOT
--- On THEN reduce production expr -> INT DOT
--- On SUBTRACT reduce production expr -> INT DOT
--- On SLASH reduce production expr -> INT DOT
--- On SEQ reduce production expr -> INT DOT
--- On SEMICOLON reduce production expr -> INT DOT
--- On RPAREN reduce production expr -> INT DOT
--- On REPEAT_COMPOSE reduce production expr -> INT DOT
--- On RBRACK reduce production expr -> INT DOT
--- On RBRACE reduce production expr -> INT DOT
--- On QUOTE reduce production expr -> INT DOT
--- On PLUS reduce production expr -> INT DOT
--- On OR reduce production expr -> INT DOT
--- On OD reduce production expr -> INT DOT
--- On NE reduce production expr -> INT DOT
--- On MULT reduce production expr -> INT DOT
--- On MOD reduce production expr -> INT DOT
--- On MINUS reduce production expr -> INT DOT
--- On LT reduce production expr -> INT DOT
--- On LE reduce production expr -> INT DOT
--- On INTERSECT reduce production expr -> INT DOT
--- On GT reduce production expr -> INT DOT
--- On GE reduce production expr -> INT DOT
--- On FI reduce production expr -> INT DOT
--- On EXP reduce production expr -> INT DOT
--- On EXCLAM reduce production expr -> INT DOT
--- On EQUAL reduce production expr -> INT DOT
--- On EOF reduce production expr -> INT DOT
--- On END reduce production expr -> INT DOT
--- On ELSE reduce production expr -> INT DOT
--- On ELLIPSE reduce production expr -> INT DOT
--- On ELIF reduce production expr -> INT DOT
--- On DO reduce production expr -> INT DOT
--- On COMMA reduce production expr -> INT DOT
--- On COLON reduce production expr -> INT DOT
--- On CARET reduce production expr -> INT DOT
--- On BY reduce production expr -> INT DOT
--- On AT reduce production expr -> INT DOT
--- On ARROW reduce production expr -> INT DOT
--- On AND reduce production expr -> INT DOT
--- On AMPOP reduce production expr -> INT DOT
--- On AMPMUL reduce production expr -> INT DOT
+-- On WHILE UNION TO THEN SUBTRACT SLASH SEQ SEMICOLON RPAREN REPEAT_COMPOSE RBRACK RBRACE QUOTE PLUS OR OD NE MULT MOD MINUS LT LE INTERSECT GT GE FI EXP EXCLAM EQUAL EOF END ELSE ELLIPSE ELIF DO COMMA COLON CARET BY AT ARROW AND AMPOP AMPMUL
+--   reduce production expr -> INT DOT
 
 State 33:
 ## Known stack suffix:
@@ -757,50 +604,8 @@ name -> name . LBRACK exprseq RBRACK [ WHILE UNION TO THEN SUBTRACT SLASH SEQ SE
 -- On DOT shift to state 94
 -- On functional_operator shift to state 100
 ## Reductions:
--- On WHILE reduce production expr -> name
--- On UNION reduce production expr -> name
--- On TO reduce production expr -> name
--- On THEN reduce production expr -> name
--- On SUBTRACT reduce production expr -> name
--- On SLASH reduce production expr -> name
--- On SEQ reduce production expr -> name
--- On SEMICOLON reduce production expr -> name
--- On RPAREN reduce production expr -> name
--- On REPEAT_COMPOSE reduce production expr -> name
--- On RBRACK reduce production expr -> name
--- On RBRACE reduce production expr -> name
--- On QUOTE reduce production expr -> name
--- On PLUS reduce production expr -> name
--- On OR reduce production expr -> name
--- On OD reduce production expr -> name
--- On NE reduce production expr -> name
--- On MULT reduce production expr -> name
--- On MOD reduce production expr -> name
--- On MINUS reduce production expr -> name
--- On LT reduce production expr -> name
--- On LE reduce production expr -> name
--- On INTERSECT reduce production expr -> name
--- On GT reduce production expr -> name
--- On GE reduce production expr -> name
--- On FI reduce production expr -> name
--- On EXP reduce production expr -> name
--- On EXCLAM reduce production expr -> name
--- On EQUAL reduce production expr -> name
--- On EOF reduce production expr -> name
--- On END reduce production expr -> name
--- On ELSE reduce production expr -> name
--- On ELLIPSE reduce production expr -> name
--- On ELIF reduce production expr -> name
--- On DO reduce production expr -> name
--- On COMMA reduce production expr -> name
--- On COLON reduce production expr -> name
--- On CARET reduce production expr -> name
--- On BY reduce production expr -> name
--- On AT reduce production expr -> name
--- On ARROW reduce production expr -> name
--- On AND reduce production expr -> name
--- On AMPOP reduce production expr -> name
--- On AMPMUL reduce production expr -> name
+-- On WHILE UNION TO THEN SUBTRACT SLASH SEQ SEMICOLON RPAREN REPEAT_COMPOSE RBRACK RBRACE QUOTE PLUS OR OD NE MULT MOD MINUS LT LE INTERSECT GT GE FI EXP EXCLAM EQUAL EOF END ELSE ELLIPSE ELIF DO COMMA COLON CARET BY AT ARROW AND AMPOP AMPMUL
+--   reduce production expr -> name
 
 State 37:
 ## Known stack suffix:
@@ -827,8 +632,8 @@ functional_operator -> LPAREN . exprseq RPAREN [ WHILE UNION TO THEN SUBTRACT SL
 -- On exprseq shift to state 38
 -- On expr shift to state 93
 ## Reductions:
--- On RPAREN reduce production exprseq ->
--- On COMMA reduce production exprseq ->
+-- On RPAREN COMMA
+--   reduce production exprseq ->
 
 State 38:
 ## Known stack suffix:
@@ -934,18 +739,8 @@ exprseq -> exprseq COMMA expr . [ SEMICOLON RPAREN RBRACK RBRACE OD FI EOF END E
 -- On AMPOP shift to state 49
 -- On AMPMUL shift to state 61
 ## Reductions:
--- On SEMICOLON reduce production exprseq -> exprseq COMMA expr
--- On RPAREN reduce production exprseq -> exprseq COMMA expr
--- On RBRACK reduce production exprseq -> exprseq COMMA expr
--- On RBRACE reduce production exprseq -> exprseq COMMA expr
--- On OD reduce production exprseq -> exprseq COMMA expr
--- On FI reduce production exprseq -> exprseq COMMA expr
--- On EOF reduce production exprseq -> exprseq COMMA expr
--- On END reduce production exprseq -> exprseq COMMA expr
--- On ELSE reduce production exprseq -> exprseq COMMA expr
--- On ELIF reduce production exprseq -> exprseq COMMA expr
--- On COMMA reduce production exprseq -> exprseq COMMA expr
--- On COLON reduce production exprseq -> exprseq COMMA expr
+-- On SEMICOLON RPAREN RBRACK RBRACE OD FI EOF END ELSE ELIF COMMA COLON
+--   reduce production exprseq -> exprseq COMMA expr
 
 State 42:
 ## Known stack suffix:
@@ -1015,40 +810,8 @@ expr -> expr . REPEAT_COMPOSE expr [ WHILE UNION TO THEN SUBTRACT SLASH SEQ SEMI
 -- On AMPOP shift to state 49
 -- On AMPMUL shift to state 61
 ## Reductions:
--- On WHILE reduce production expr -> expr UNION expr
--- On UNION reduce production expr -> expr UNION expr
--- On TO reduce production expr -> expr UNION expr
--- On THEN reduce production expr -> expr UNION expr
--- On SUBTRACT reduce production expr -> expr UNION expr
--- On SEQ reduce production expr -> expr UNION expr
--- On SEMICOLON reduce production expr -> expr UNION expr
--- On RPAREN reduce production expr -> expr UNION expr
--- On RBRACK reduce production expr -> expr UNION expr
--- On RBRACE reduce production expr -> expr UNION expr
--- On QUOTE reduce production expr -> expr UNION expr
--- On PLUS reduce production expr -> expr UNION expr
--- On OR reduce production expr -> expr UNION expr
--- On OD reduce production expr -> expr UNION expr
--- On NE reduce production expr -> expr UNION expr
--- On MOD reduce production expr -> expr UNION expr
--- On MINUS reduce production expr -> expr UNION expr
--- On LT reduce production expr -> expr UNION expr
--- On LE reduce production expr -> expr UNION expr
--- On GT reduce production expr -> expr UNION expr
--- On GE reduce production expr -> expr UNION expr
--- On FI reduce production expr -> expr UNION expr
--- On EQUAL reduce production expr -> expr UNION expr
--- On EOF reduce production expr -> expr UNION expr
--- On END reduce production expr -> expr UNION expr
--- On ELSE reduce production expr -> expr UNION expr
--- On ELLIPSE reduce production expr -> expr UNION expr
--- On ELIF reduce production expr -> expr UNION expr
--- On DO reduce production expr -> expr UNION expr
--- On COMMA reduce production expr -> expr UNION expr
--- On COLON reduce production expr -> expr UNION expr
--- On BY reduce production expr -> expr UNION expr
--- On ARROW reduce production expr -> expr UNION expr
--- On AND reduce production expr -> expr UNION expr
+-- On WHILE UNION TO THEN SUBTRACT SEQ SEMICOLON RPAREN RBRACK RBRACE QUOTE PLUS OR OD NE MOD MINUS LT LE GT GE FI EQUAL EOF END ELSE ELLIPSE ELIF DO COMMA COLON BY ARROW AND
+--   reduce production expr -> expr UNION expr
 
 State 44:
 ## Known stack suffix:
@@ -1113,45 +876,8 @@ expr -> expr . REPEAT_COMPOSE expr [ WHILE UNION TO THEN SUBTRACT SLASH SEQ SEMI
 -- On CARET shift to state 53
 -- On AMPOP shift to state 49
 ## Reductions:
--- On WHILE reduce production expr -> expr SLASH expr
--- On UNION reduce production expr -> expr SLASH expr
--- On TO reduce production expr -> expr SLASH expr
--- On THEN reduce production expr -> expr SLASH expr
--- On SUBTRACT reduce production expr -> expr SLASH expr
--- On SLASH reduce production expr -> expr SLASH expr
--- On SEQ reduce production expr -> expr SLASH expr
--- On SEMICOLON reduce production expr -> expr SLASH expr
--- On RPAREN reduce production expr -> expr SLASH expr
--- On RBRACK reduce production expr -> expr SLASH expr
--- On RBRACE reduce production expr -> expr SLASH expr
--- On QUOTE reduce production expr -> expr SLASH expr
--- On PLUS reduce production expr -> expr SLASH expr
--- On OR reduce production expr -> expr SLASH expr
--- On OD reduce production expr -> expr SLASH expr
--- On NE reduce production expr -> expr SLASH expr
--- On MULT reduce production expr -> expr SLASH expr
--- On MOD reduce production expr -> expr SLASH expr
--- On MINUS reduce production expr -> expr SLASH expr
--- On LT reduce production expr -> expr SLASH expr
--- On LE reduce production expr -> expr SLASH expr
--- On INTERSECT reduce production expr -> expr SLASH expr
--- On GT reduce production expr -> expr SLASH expr
--- On GE reduce production expr -> expr SLASH expr
--- On FI reduce production expr -> expr SLASH expr
--- On EQUAL reduce production expr -> expr SLASH expr
--- On EOF reduce production expr -> expr SLASH expr
--- On END reduce production expr -> expr SLASH expr
--- On ELSE reduce production expr -> expr SLASH expr
--- On ELLIPSE reduce production expr -> expr SLASH expr
--- On ELIF reduce production expr -> expr SLASH expr
--- On DO reduce production expr -> expr SLASH expr
--- On COMMA reduce production expr -> expr SLASH expr
--- On COLON reduce production expr -> expr SLASH expr
--- On BY reduce production expr -> expr SLASH expr
--- On AT reduce production expr -> expr SLASH expr
--- On ARROW reduce production expr -> expr SLASH expr
--- On AND reduce production expr -> expr SLASH expr
--- On AMPMUL reduce production expr -> expr SLASH expr
+-- On WHILE UNION TO THEN SUBTRACT SLASH SEQ SEMICOLON RPAREN RBRACK RBRACE QUOTE PLUS OR OD NE MULT MOD MINUS LT LE INTERSECT GT GE FI EQUAL EOF END ELSE ELLIPSE ELIF DO COMMA COLON BY AT ARROW AND AMPMUL
+--   reduce production expr -> expr SLASH expr
 
 State 46:
 ## Known stack suffix:
@@ -1213,45 +939,8 @@ expr -> expr REPEAT_COMPOSE expr . [ WHILE UNION TO THEN SUBTRACT SLASH SEQ SEMI
 -- On EXCLAM shift to state 48
 -- On AMPOP shift to state 49
 ## Reductions:
--- On WHILE reduce production expr -> expr REPEAT_COMPOSE expr
--- On UNION reduce production expr -> expr REPEAT_COMPOSE expr
--- On TO reduce production expr -> expr REPEAT_COMPOSE expr
--- On THEN reduce production expr -> expr REPEAT_COMPOSE expr
--- On SUBTRACT reduce production expr -> expr REPEAT_COMPOSE expr
--- On SLASH reduce production expr -> expr REPEAT_COMPOSE expr
--- On SEQ reduce production expr -> expr REPEAT_COMPOSE expr
--- On SEMICOLON reduce production expr -> expr REPEAT_COMPOSE expr
--- On RPAREN reduce production expr -> expr REPEAT_COMPOSE expr
--- On RBRACK reduce production expr -> expr REPEAT_COMPOSE expr
--- On RBRACE reduce production expr -> expr REPEAT_COMPOSE expr
--- On QUOTE reduce production expr -> expr REPEAT_COMPOSE expr
--- On PLUS reduce production expr -> expr REPEAT_COMPOSE expr
--- On OR reduce production expr -> expr REPEAT_COMPOSE expr
--- On OD reduce production expr -> expr REPEAT_COMPOSE expr
--- On NE reduce production expr -> expr REPEAT_COMPOSE expr
--- On MULT reduce production expr -> expr REPEAT_COMPOSE expr
--- On MOD reduce production expr -> expr REPEAT_COMPOSE expr
--- On MINUS reduce production expr -> expr REPEAT_COMPOSE expr
--- On LT reduce production expr -> expr REPEAT_COMPOSE expr
--- On LE reduce production expr -> expr REPEAT_COMPOSE expr
--- On INTERSECT reduce production expr -> expr REPEAT_COMPOSE expr
--- On GT reduce production expr -> expr REPEAT_COMPOSE expr
--- On GE reduce production expr -> expr REPEAT_COMPOSE expr
--- On FI reduce production expr -> expr REPEAT_COMPOSE expr
--- On EQUAL reduce production expr -> expr REPEAT_COMPOSE expr
--- On EOF reduce production expr -> expr REPEAT_COMPOSE expr
--- On END reduce production expr -> expr REPEAT_COMPOSE expr
--- On ELSE reduce production expr -> expr REPEAT_COMPOSE expr
--- On ELLIPSE reduce production expr -> expr REPEAT_COMPOSE expr
--- On ELIF reduce production expr -> expr REPEAT_COMPOSE expr
--- On DO reduce production expr -> expr REPEAT_COMPOSE expr
--- On COMMA reduce production expr -> expr REPEAT_COMPOSE expr
--- On COLON reduce production expr -> expr REPEAT_COMPOSE expr
--- On BY reduce production expr -> expr REPEAT_COMPOSE expr
--- On AT reduce production expr -> expr REPEAT_COMPOSE expr
--- On ARROW reduce production expr -> expr REPEAT_COMPOSE expr
--- On AND reduce production expr -> expr REPEAT_COMPOSE expr
--- On AMPMUL reduce production expr -> expr REPEAT_COMPOSE expr
+-- On WHILE UNION TO THEN SUBTRACT SLASH SEQ SEMICOLON RPAREN RBRACK RBRACE QUOTE PLUS OR OD NE MULT MOD MINUS LT LE INTERSECT GT GE FI EQUAL EOF END ELSE ELLIPSE ELIF DO COMMA COLON BY AT ARROW AND AMPMUL
+--   reduce production expr -> expr REPEAT_COMPOSE expr
 
 State 48:
 ## Known stack suffix:
@@ -1382,45 +1071,8 @@ expr -> expr . REPEAT_COMPOSE expr [ WHILE UNION TO THEN SUBTRACT SLASH SEQ SEMI
 -- On EXCLAM shift to state 48
 -- On AMPOP shift to state 49
 ## Reductions:
--- On WHILE reduce production expr -> expr EXP expr
--- On UNION reduce production expr -> expr EXP expr
--- On TO reduce production expr -> expr EXP expr
--- On THEN reduce production expr -> expr EXP expr
--- On SUBTRACT reduce production expr -> expr EXP expr
--- On SLASH reduce production expr -> expr EXP expr
--- On SEQ reduce production expr -> expr EXP expr
--- On SEMICOLON reduce production expr -> expr EXP expr
--- On RPAREN reduce production expr -> expr EXP expr
--- On RBRACK reduce production expr -> expr EXP expr
--- On RBRACE reduce production expr -> expr EXP expr
--- On QUOTE reduce production expr -> expr EXP expr
--- On PLUS reduce production expr -> expr EXP expr
--- On OR reduce production expr -> expr EXP expr
--- On OD reduce production expr -> expr EXP expr
--- On NE reduce production expr -> expr EXP expr
--- On MULT reduce production expr -> expr EXP expr
--- On MOD reduce production expr -> expr EXP expr
--- On MINUS reduce production expr -> expr EXP expr
--- On LT reduce production expr -> expr EXP expr
--- On LE reduce production expr -> expr EXP expr
--- On INTERSECT reduce production expr -> expr EXP expr
--- On GT reduce production expr -> expr EXP expr
--- On GE reduce production expr -> expr EXP expr
--- On FI reduce production expr -> expr EXP expr
--- On EQUAL reduce production expr -> expr EXP expr
--- On EOF reduce production expr -> expr EXP expr
--- On END reduce production expr -> expr EXP expr
--- On ELSE reduce production expr -> expr EXP expr
--- On ELLIPSE reduce production expr -> expr EXP expr
--- On ELIF reduce production expr -> expr EXP expr
--- On DO reduce production expr -> expr EXP expr
--- On COMMA reduce production expr -> expr EXP expr
--- On COLON reduce production expr -> expr EXP expr
--- On BY reduce production expr -> expr EXP expr
--- On AT reduce production expr -> expr EXP expr
--- On ARROW reduce production expr -> expr EXP expr
--- On AND reduce production expr -> expr EXP expr
--- On AMPMUL reduce production expr -> expr EXP expr
+-- On WHILE UNION TO THEN SUBTRACT SLASH SEQ SEMICOLON RPAREN RBRACK RBRACE QUOTE PLUS OR OD NE MULT MOD MINUS LT LE INTERSECT GT GE FI EQUAL EOF END ELSE ELLIPSE ELIF DO COMMA COLON BY AT ARROW AND AMPMUL
+--   reduce production expr -> expr EXP expr
 
 State 53:
 ## Known stack suffix:
@@ -1482,45 +1134,8 @@ expr -> expr . REPEAT_COMPOSE expr [ WHILE UNION TO THEN SUBTRACT SLASH SEQ SEMI
 -- On EXCLAM shift to state 48
 -- On AMPOP shift to state 49
 ## Reductions:
--- On WHILE reduce production expr -> expr CARET expr
--- On UNION reduce production expr -> expr CARET expr
--- On TO reduce production expr -> expr CARET expr
--- On THEN reduce production expr -> expr CARET expr
--- On SUBTRACT reduce production expr -> expr CARET expr
--- On SLASH reduce production expr -> expr CARET expr
--- On SEQ reduce production expr -> expr CARET expr
--- On SEMICOLON reduce production expr -> expr CARET expr
--- On RPAREN reduce production expr -> expr CARET expr
--- On RBRACK reduce production expr -> expr CARET expr
--- On RBRACE reduce production expr -> expr CARET expr
--- On QUOTE reduce production expr -> expr CARET expr
--- On PLUS reduce production expr -> expr CARET expr
--- On OR reduce production expr -> expr CARET expr
--- On OD reduce production expr -> expr CARET expr
--- On NE reduce production expr -> expr CARET expr
--- On MULT reduce production expr -> expr CARET expr
--- On MOD reduce production expr -> expr CARET expr
--- On MINUS reduce production expr -> expr CARET expr
--- On LT reduce production expr -> expr CARET expr
--- On LE reduce production expr -> expr CARET expr
--- On INTERSECT reduce production expr -> expr CARET expr
--- On GT reduce production expr -> expr CARET expr
--- On GE reduce production expr -> expr CARET expr
--- On FI reduce production expr -> expr CARET expr
--- On EQUAL reduce production expr -> expr CARET expr
--- On EOF reduce production expr -> expr CARET expr
--- On END reduce production expr -> expr CARET expr
--- On ELSE reduce production expr -> expr CARET expr
--- On ELLIPSE reduce production expr -> expr CARET expr
--- On ELIF reduce production expr -> expr CARET expr
--- On DO reduce production expr -> expr CARET expr
--- On COMMA reduce production expr -> expr CARET expr
--- On COLON reduce production expr -> expr CARET expr
--- On BY reduce production expr -> expr CARET expr
--- On AT reduce production expr -> expr CARET expr
--- On ARROW reduce production expr -> expr CARET expr
--- On AND reduce production expr -> expr CARET expr
--- On AMPMUL reduce production expr -> expr CARET expr
+-- On WHILE UNION TO THEN SUBTRACT SLASH SEQ SEMICOLON RPAREN RBRACK RBRACE QUOTE PLUS OR OD NE MULT MOD MINUS LT LE INTERSECT GT GE FI EQUAL EOF END ELSE ELLIPSE ELIF DO COMMA COLON BY AT ARROW AND AMPMUL
+--   reduce production expr -> expr CARET expr
 
 State 55:
 ## Known stack suffix:
@@ -1585,45 +1200,8 @@ expr -> expr . REPEAT_COMPOSE expr [ WHILE UNION TO THEN SUBTRACT SLASH SEQ SEMI
 -- On CARET shift to state 53
 -- On AMPOP shift to state 49
 ## Reductions:
--- On WHILE reduce production expr -> expr MULT expr
--- On UNION reduce production expr -> expr MULT expr
--- On TO reduce production expr -> expr MULT expr
--- On THEN reduce production expr -> expr MULT expr
--- On SUBTRACT reduce production expr -> expr MULT expr
--- On SLASH reduce production expr -> expr MULT expr
--- On SEQ reduce production expr -> expr MULT expr
--- On SEMICOLON reduce production expr -> expr MULT expr
--- On RPAREN reduce production expr -> expr MULT expr
--- On RBRACK reduce production expr -> expr MULT expr
--- On RBRACE reduce production expr -> expr MULT expr
--- On QUOTE reduce production expr -> expr MULT expr
--- On PLUS reduce production expr -> expr MULT expr
--- On OR reduce production expr -> expr MULT expr
--- On OD reduce production expr -> expr MULT expr
--- On NE reduce production expr -> expr MULT expr
--- On MULT reduce production expr -> expr MULT expr
--- On MOD reduce production expr -> expr MULT expr
--- On MINUS reduce production expr -> expr MULT expr
--- On LT reduce production expr -> expr MULT expr
--- On LE reduce production expr -> expr MULT expr
--- On INTERSECT reduce production expr -> expr MULT expr
--- On GT reduce production expr -> expr MULT expr
--- On GE reduce production expr -> expr MULT expr
--- On FI reduce production expr -> expr MULT expr
--- On EQUAL reduce production expr -> expr MULT expr
--- On EOF reduce production expr -> expr MULT expr
--- On END reduce production expr -> expr MULT expr
--- On ELSE reduce production expr -> expr MULT expr
--- On ELLIPSE reduce production expr -> expr MULT expr
--- On ELIF reduce production expr -> expr MULT expr
--- On DO reduce production expr -> expr MULT expr
--- On COMMA reduce production expr -> expr MULT expr
--- On COLON reduce production expr -> expr MULT expr
--- On BY reduce production expr -> expr MULT expr
--- On AT reduce production expr -> expr MULT expr
--- On ARROW reduce production expr -> expr MULT expr
--- On AND reduce production expr -> expr MULT expr
--- On AMPMUL reduce production expr -> expr MULT expr
+-- On WHILE UNION TO THEN SUBTRACT SLASH SEQ SEMICOLON RPAREN RBRACK RBRACE QUOTE PLUS OR OD NE MULT MOD MINUS LT LE INTERSECT GT GE FI EQUAL EOF END ELSE ELLIPSE ELIF DO COMMA COLON BY AT ARROW AND AMPMUL
+--   reduce production expr -> expr MULT expr
 
 State 57:
 ## Known stack suffix:
@@ -1688,45 +1266,8 @@ expr -> expr . REPEAT_COMPOSE expr [ WHILE UNION TO THEN SUBTRACT SLASH SEQ SEMI
 -- On CARET shift to state 53
 -- On AMPOP shift to state 49
 ## Reductions:
--- On WHILE reduce production expr -> expr INTERSECT expr
--- On UNION reduce production expr -> expr INTERSECT expr
--- On TO reduce production expr -> expr INTERSECT expr
--- On THEN reduce production expr -> expr INTERSECT expr
--- On SUBTRACT reduce production expr -> expr INTERSECT expr
--- On SLASH reduce production expr -> expr INTERSECT expr
--- On SEQ reduce production expr -> expr INTERSECT expr
--- On SEMICOLON reduce production expr -> expr INTERSECT expr
--- On RPAREN reduce production expr -> expr INTERSECT expr
--- On RBRACK reduce production expr -> expr INTERSECT expr
--- On RBRACE reduce production expr -> expr INTERSECT expr
--- On QUOTE reduce production expr -> expr INTERSECT expr
--- On PLUS reduce production expr -> expr INTERSECT expr
--- On OR reduce production expr -> expr INTERSECT expr
--- On OD reduce production expr -> expr INTERSECT expr
--- On NE reduce production expr -> expr INTERSECT expr
--- On MULT reduce production expr -> expr INTERSECT expr
--- On MOD reduce production expr -> expr INTERSECT expr
--- On MINUS reduce production expr -> expr INTERSECT expr
--- On LT reduce production expr -> expr INTERSECT expr
--- On LE reduce production expr -> expr INTERSECT expr
--- On INTERSECT reduce production expr -> expr INTERSECT expr
--- On GT reduce production expr -> expr INTERSECT expr
--- On GE reduce production expr -> expr INTERSECT expr
--- On FI reduce production expr -> expr INTERSECT expr
--- On EQUAL reduce production expr -> expr INTERSECT expr
--- On EOF reduce production expr -> expr INTERSECT expr
--- On END reduce production expr -> expr INTERSECT expr
--- On ELSE reduce production expr -> expr INTERSECT expr
--- On ELLIPSE reduce production expr -> expr INTERSECT expr
--- On ELIF reduce production expr -> expr INTERSECT expr
--- On DO reduce production expr -> expr INTERSECT expr
--- On COMMA reduce production expr -> expr INTERSECT expr
--- On COLON reduce production expr -> expr INTERSECT expr
--- On BY reduce production expr -> expr INTERSECT expr
--- On AT reduce production expr -> expr INTERSECT expr
--- On ARROW reduce production expr -> expr INTERSECT expr
--- On AND reduce production expr -> expr INTERSECT expr
--- On AMPMUL reduce production expr -> expr INTERSECT expr
+-- On WHILE UNION TO THEN SUBTRACT SLASH SEQ SEMICOLON RPAREN RBRACK RBRACE QUOTE PLUS OR OD NE MULT MOD MINUS LT LE INTERSECT GT GE FI EQUAL EOF END ELSE ELLIPSE ELIF DO COMMA COLON BY AT ARROW AND AMPMUL
+--   reduce production expr -> expr INTERSECT expr
 
 State 59:
 ## Known stack suffix:
@@ -1791,45 +1332,8 @@ expr -> expr . REPEAT_COMPOSE expr [ WHILE UNION TO THEN SUBTRACT SLASH SEQ SEMI
 -- On CARET shift to state 53
 -- On AMPOP shift to state 49
 ## Reductions:
--- On WHILE reduce production expr -> expr AT expr
--- On UNION reduce production expr -> expr AT expr
--- On TO reduce production expr -> expr AT expr
--- On THEN reduce production expr -> expr AT expr
--- On SUBTRACT reduce production expr -> expr AT expr
--- On SLASH reduce production expr -> expr AT expr
--- On SEQ reduce production expr -> expr AT expr
--- On SEMICOLON reduce production expr -> expr AT expr
--- On RPAREN reduce production expr -> expr AT expr
--- On RBRACK reduce production expr -> expr AT expr
--- On RBRACE reduce production expr -> expr AT expr
--- On QUOTE reduce production expr -> expr AT expr
--- On PLUS reduce production expr -> expr AT expr
--- On OR reduce production expr -> expr AT expr
--- On OD reduce production expr -> expr AT expr
--- On NE reduce production expr -> expr AT expr
--- On MULT reduce production expr -> expr AT expr
--- On MOD reduce production expr -> expr AT expr
--- On MINUS reduce production expr -> expr AT expr
--- On LT reduce production expr -> expr AT expr
--- On LE reduce production expr -> expr AT expr
--- On INTERSECT reduce production expr -> expr AT expr
--- On GT reduce production expr -> expr AT expr
--- On GE reduce production expr -> expr AT expr
--- On FI reduce production expr -> expr AT expr
--- On EQUAL reduce production expr -> expr AT expr
--- On EOF reduce production expr -> expr AT expr
--- On END reduce production expr -> expr AT expr
--- On ELSE reduce production expr -> expr AT expr
--- On ELLIPSE reduce production expr -> expr AT expr
--- On ELIF reduce production expr -> expr AT expr
--- On DO reduce production expr -> expr AT expr
--- On COMMA reduce production expr -> expr AT expr
--- On COLON reduce production expr -> expr AT expr
--- On BY reduce production expr -> expr AT expr
--- On AT reduce production expr -> expr AT expr
--- On ARROW reduce production expr -> expr AT expr
--- On AND reduce production expr -> expr AT expr
--- On AMPMUL reduce production expr -> expr AT expr
+-- On WHILE UNION TO THEN SUBTRACT SLASH SEQ SEMICOLON RPAREN RBRACK RBRACE QUOTE PLUS OR OD NE MULT MOD MINUS LT LE INTERSECT GT GE FI EQUAL EOF END ELSE ELLIPSE ELIF DO COMMA COLON BY AT ARROW AND AMPMUL
+--   reduce production expr -> expr AT expr
 
 State 61:
 ## Known stack suffix:
@@ -1894,45 +1398,8 @@ expr -> expr . REPEAT_COMPOSE expr [ WHILE UNION TO THEN SUBTRACT SLASH SEQ SEMI
 -- On CARET shift to state 53
 -- On AMPOP shift to state 49
 ## Reductions:
--- On WHILE reduce production expr -> expr AMPMUL expr
--- On UNION reduce production expr -> expr AMPMUL expr
--- On TO reduce production expr -> expr AMPMUL expr
--- On THEN reduce production expr -> expr AMPMUL expr
--- On SUBTRACT reduce production expr -> expr AMPMUL expr
--- On SLASH reduce production expr -> expr AMPMUL expr
--- On SEQ reduce production expr -> expr AMPMUL expr
--- On SEMICOLON reduce production expr -> expr AMPMUL expr
--- On RPAREN reduce production expr -> expr AMPMUL expr
--- On RBRACK reduce production expr -> expr AMPMUL expr
--- On RBRACE reduce production expr -> expr AMPMUL expr
--- On QUOTE reduce production expr -> expr AMPMUL expr
--- On PLUS reduce production expr -> expr AMPMUL expr
--- On OR reduce production expr -> expr AMPMUL expr
--- On OD reduce production expr -> expr AMPMUL expr
--- On NE reduce production expr -> expr AMPMUL expr
--- On MULT reduce production expr -> expr AMPMUL expr
--- On MOD reduce production expr -> expr AMPMUL expr
--- On MINUS reduce production expr -> expr AMPMUL expr
--- On LT reduce production expr -> expr AMPMUL expr
--- On LE reduce production expr -> expr AMPMUL expr
--- On INTERSECT reduce production expr -> expr AMPMUL expr
--- On GT reduce production expr -> expr AMPMUL expr
--- On GE reduce production expr -> expr AMPMUL expr
--- On FI reduce production expr -> expr AMPMUL expr
--- On EQUAL reduce production expr -> expr AMPMUL expr
--- On EOF reduce production expr -> expr AMPMUL expr
--- On END reduce production expr -> expr AMPMUL expr
--- On ELSE reduce production expr -> expr AMPMUL expr
--- On ELLIPSE reduce production expr -> expr AMPMUL expr
--- On ELIF reduce production expr -> expr AMPMUL expr
--- On DO reduce production expr -> expr AMPMUL expr
--- On COMMA reduce production expr -> expr AMPMUL expr
--- On COLON reduce production expr -> expr AMPMUL expr
--- On BY reduce production expr -> expr AMPMUL expr
--- On AT reduce production expr -> expr AMPMUL expr
--- On ARROW reduce production expr -> expr AMPMUL expr
--- On AND reduce production expr -> expr AMPMUL expr
--- On AMPMUL reduce production expr -> expr AMPMUL expr
+-- On WHILE UNION TO THEN SUBTRACT SLASH SEQ SEMICOLON RPAREN RBRACK RBRACE QUOTE PLUS OR OD NE MULT MOD MINUS LT LE INTERSECT GT GE FI EQUAL EOF END ELSE ELLIPSE ELIF DO COMMA COLON BY AT ARROW AND AMPMUL
+--   reduce production expr -> expr AMPMUL expr
 
 State 63:
 ## Known stack suffix:
@@ -2002,40 +1469,8 @@ expr -> expr . REPEAT_COMPOSE expr [ WHILE UNION TO THEN SUBTRACT SLASH SEQ SEMI
 -- On AMPOP shift to state 49
 -- On AMPMUL shift to state 61
 ## Reductions:
--- On WHILE reduce production expr -> expr SUBTRACT expr
--- On UNION reduce production expr -> expr SUBTRACT expr
--- On TO reduce production expr -> expr SUBTRACT expr
--- On THEN reduce production expr -> expr SUBTRACT expr
--- On SUBTRACT reduce production expr -> expr SUBTRACT expr
--- On SEQ reduce production expr -> expr SUBTRACT expr
--- On SEMICOLON reduce production expr -> expr SUBTRACT expr
--- On RPAREN reduce production expr -> expr SUBTRACT expr
--- On RBRACK reduce production expr -> expr SUBTRACT expr
--- On RBRACE reduce production expr -> expr SUBTRACT expr
--- On QUOTE reduce production expr -> expr SUBTRACT expr
--- On PLUS reduce production expr -> expr SUBTRACT expr
--- On OR reduce production expr -> expr SUBTRACT expr
--- On OD reduce production expr -> expr SUBTRACT expr
--- On NE reduce production expr -> expr SUBTRACT expr
--- On MOD reduce production expr -> expr SUBTRACT expr
--- On MINUS reduce production expr -> expr SUBTRACT expr
--- On LT reduce production expr -> expr SUBTRACT expr
--- On LE reduce production expr -> expr SUBTRACT expr
--- On GT reduce production expr -> expr SUBTRACT expr
--- On GE reduce production expr -> expr SUBTRACT expr
--- On FI reduce production expr -> expr SUBTRACT expr
--- On EQUAL reduce production expr -> expr SUBTRACT expr
--- On EOF reduce production expr -> expr SUBTRACT expr
--- On END reduce production expr -> expr SUBTRACT expr
--- On ELSE reduce production expr -> expr SUBTRACT expr
--- On ELLIPSE reduce production expr -> expr SUBTRACT expr
--- On ELIF reduce production expr -> expr SUBTRACT expr
--- On DO reduce production expr -> expr SUBTRACT expr
--- On COMMA reduce production expr -> expr SUBTRACT expr
--- On COLON reduce production expr -> expr SUBTRACT expr
--- On BY reduce production expr -> expr SUBTRACT expr
--- On ARROW reduce production expr -> expr SUBTRACT expr
--- On AND reduce production expr -> expr SUBTRACT expr
+-- On WHILE UNION TO THEN SUBTRACT SEQ SEMICOLON RPAREN RBRACK RBRACE QUOTE PLUS OR OD NE MOD MINUS LT LE GT GE FI EQUAL EOF END ELSE ELLIPSE ELIF DO COMMA COLON BY ARROW AND
+--   reduce production expr -> expr SUBTRACT expr
 
 State 65:
 ## Known stack suffix:
@@ -2117,27 +1552,8 @@ expr -> expr . REPEAT_COMPOSE expr [ WHILE UNION TO THEN SUBTRACT SLASH SEQ SEMI
 -- On AMPOP shift to state 49
 -- On AMPMUL shift to state 61
 ## Reductions:
--- On WHILE reduce production expr -> expr SEQ expr
--- On TO reduce production expr -> expr SEQ expr
--- On THEN reduce production expr -> expr SEQ expr
--- On SEMICOLON reduce production expr -> expr SEQ expr
--- On RPAREN reduce production expr -> expr SEQ expr
--- On RBRACK reduce production expr -> expr SEQ expr
--- On RBRACE reduce production expr -> expr SEQ expr
--- On QUOTE reduce production expr -> expr SEQ expr
--- On OR reduce production expr -> expr SEQ expr
--- On OD reduce production expr -> expr SEQ expr
--- On FI reduce production expr -> expr SEQ expr
--- On EOF reduce production expr -> expr SEQ expr
--- On END reduce production expr -> expr SEQ expr
--- On ELSE reduce production expr -> expr SEQ expr
--- On ELIF reduce production expr -> expr SEQ expr
--- On DO reduce production expr -> expr SEQ expr
--- On COMMA reduce production expr -> expr SEQ expr
--- On COLON reduce production expr -> expr SEQ expr
--- On BY reduce production expr -> expr SEQ expr
--- On ARROW reduce production expr -> expr SEQ expr
--- On AND reduce production expr -> expr SEQ expr
+-- On WHILE TO THEN SEMICOLON RPAREN RBRACK RBRACE QUOTE OR OD FI EOF END ELSE ELIF DO COMMA COLON BY ARROW AND
+--   reduce production expr -> expr SEQ expr
 
 State 67:
 ## Known stack suffix:
@@ -2207,40 +1623,8 @@ expr -> expr . REPEAT_COMPOSE expr [ WHILE UNION TO THEN SUBTRACT SLASH SEQ SEMI
 -- On AMPOP shift to state 49
 -- On AMPMUL shift to state 61
 ## Reductions:
--- On WHILE reduce production expr -> expr PLUS expr
--- On UNION reduce production expr -> expr PLUS expr
--- On TO reduce production expr -> expr PLUS expr
--- On THEN reduce production expr -> expr PLUS expr
--- On SUBTRACT reduce production expr -> expr PLUS expr
--- On SEQ reduce production expr -> expr PLUS expr
--- On SEMICOLON reduce production expr -> expr PLUS expr
--- On RPAREN reduce production expr -> expr PLUS expr
--- On RBRACK reduce production expr -> expr PLUS expr
--- On RBRACE reduce production expr -> expr PLUS expr
--- On QUOTE reduce production expr -> expr PLUS expr
--- On PLUS reduce production expr -> expr PLUS expr
--- On OR reduce production expr -> expr PLUS expr
--- On OD reduce production expr -> expr PLUS expr
--- On NE reduce production expr -> expr PLUS expr
--- On MOD reduce production expr -> expr PLUS expr
--- On MINUS reduce production expr -> expr PLUS expr
--- On LT reduce production expr -> expr PLUS expr
--- On LE reduce production expr -> expr PLUS expr
--- On GT reduce production expr -> expr PLUS expr
--- On GE reduce production expr -> expr PLUS expr
--- On FI reduce production expr -> expr PLUS expr
--- On EQUAL reduce production expr -> expr PLUS expr
--- On EOF reduce production expr -> expr PLUS expr
--- On END reduce production expr -> expr PLUS expr
--- On ELSE reduce production expr -> expr PLUS expr
--- On ELLIPSE reduce production expr -> expr PLUS expr
--- On ELIF reduce production expr -> expr PLUS expr
--- On DO reduce production expr -> expr PLUS expr
--- On COMMA reduce production expr -> expr PLUS expr
--- On COLON reduce production expr -> expr PLUS expr
--- On BY reduce production expr -> expr PLUS expr
--- On ARROW reduce production expr -> expr PLUS expr
--- On AND reduce production expr -> expr PLUS expr
+-- On WHILE UNION TO THEN SUBTRACT SEQ SEMICOLON RPAREN RBRACK RBRACE QUOTE PLUS OR OD NE MOD MINUS LT LE GT GE FI EQUAL EOF END ELSE ELLIPSE ELIF DO COMMA COLON BY ARROW AND
+--   reduce production expr -> expr PLUS expr
 
 State 69:
 ## Known stack suffix:
@@ -2316,28 +1700,8 @@ expr -> expr . REPEAT_COMPOSE expr [ WHILE UNION TO THEN SUBTRACT SLASH SEQ SEMI
 -- On AMPOP shift to state 49
 -- On AMPMUL shift to state 61
 ## Reductions:
--- On WHILE reduce production expr -> expr NE expr
--- On TO reduce production expr -> expr NE expr
--- On THEN reduce production expr -> expr NE expr
--- On SEQ reduce production expr -> expr NE expr
--- On SEMICOLON reduce production expr -> expr NE expr
--- On RPAREN reduce production expr -> expr NE expr
--- On RBRACK reduce production expr -> expr NE expr
--- On RBRACE reduce production expr -> expr NE expr
--- On QUOTE reduce production expr -> expr NE expr
--- On OR reduce production expr -> expr NE expr
--- On OD reduce production expr -> expr NE expr
--- On FI reduce production expr -> expr NE expr
--- On EOF reduce production expr -> expr NE expr
--- On END reduce production expr -> expr NE expr
--- On ELSE reduce production expr -> expr NE expr
--- On ELIF reduce production expr -> expr NE expr
--- On DO reduce production expr -> expr NE expr
--- On COMMA reduce production expr -> expr NE expr
--- On COLON reduce production expr -> expr NE expr
--- On BY reduce production expr -> expr NE expr
--- On ARROW reduce production expr -> expr NE expr
--- On AND reduce production expr -> expr NE expr
+-- On WHILE TO THEN SEQ SEMICOLON RPAREN RBRACK RBRACE QUOTE OR OD FI EOF END ELSE ELIF DO COMMA COLON BY ARROW AND
+--   reduce production expr -> expr NE expr
 
 State 71:
 ## Known stack suffix:
@@ -2411,35 +1775,8 @@ expr -> expr . REPEAT_COMPOSE expr [ WHILE UNION TO THEN SUBTRACT SLASH SEQ SEMI
 -- On AMPOP shift to state 49
 -- On AMPMUL shift to state 61
 ## Reductions:
--- On WHILE reduce production expr -> expr MOD expr
--- On TO reduce production expr -> expr MOD expr
--- On THEN reduce production expr -> expr MOD expr
--- On SEQ reduce production expr -> expr MOD expr
--- On SEMICOLON reduce production expr -> expr MOD expr
--- On RPAREN reduce production expr -> expr MOD expr
--- On RBRACK reduce production expr -> expr MOD expr
--- On RBRACE reduce production expr -> expr MOD expr
--- On QUOTE reduce production expr -> expr MOD expr
--- On OR reduce production expr -> expr MOD expr
--- On OD reduce production expr -> expr MOD expr
--- On NE reduce production expr -> expr MOD expr
--- On LT reduce production expr -> expr MOD expr
--- On LE reduce production expr -> expr MOD expr
--- On GT reduce production expr -> expr MOD expr
--- On GE reduce production expr -> expr MOD expr
--- On FI reduce production expr -> expr MOD expr
--- On EQUAL reduce production expr -> expr MOD expr
--- On EOF reduce production expr -> expr MOD expr
--- On END reduce production expr -> expr MOD expr
--- On ELSE reduce production expr -> expr MOD expr
--- On ELLIPSE reduce production expr -> expr MOD expr
--- On ELIF reduce production expr -> expr MOD expr
--- On DO reduce production expr -> expr MOD expr
--- On COMMA reduce production expr -> expr MOD expr
--- On COLON reduce production expr -> expr MOD expr
--- On BY reduce production expr -> expr MOD expr
--- On ARROW reduce production expr -> expr MOD expr
--- On AND reduce production expr -> expr MOD expr
+-- On WHILE TO THEN SEQ SEMICOLON RPAREN RBRACK RBRACE QUOTE OR OD NE LT LE GT GE FI EQUAL EOF END ELSE ELLIPSE ELIF DO COMMA COLON BY ARROW AND
+--   reduce production expr -> expr MOD expr
 
 State 73:
 ## Known stack suffix:
@@ -2509,40 +1846,8 @@ expr -> expr . REPEAT_COMPOSE expr [ WHILE UNION TO THEN SUBTRACT SLASH SEQ SEMI
 -- On AMPOP shift to state 49
 -- On AMPMUL shift to state 61
 ## Reductions:
--- On WHILE reduce production expr -> expr MINUS expr
--- On UNION reduce production expr -> expr MINUS expr
--- On TO reduce production expr -> expr MINUS expr
--- On THEN reduce production expr -> expr MINUS expr
--- On SUBTRACT reduce production expr -> expr MINUS expr
--- On SEQ reduce production expr -> expr MINUS expr
--- On SEMICOLON reduce production expr -> expr MINUS expr
--- On RPAREN reduce production expr -> expr MINUS expr
--- On RBRACK reduce production expr -> expr MINUS expr
--- On RBRACE reduce production expr -> expr MINUS expr
--- On QUOTE reduce production expr -> expr MINUS expr
--- On PLUS reduce production expr -> expr MINUS expr
--- On OR reduce production expr -> expr MINUS expr
--- On OD reduce production expr -> expr MINUS expr
--- On NE reduce production expr -> expr MINUS expr
--- On MOD reduce production expr -> expr MINUS expr
--- On MINUS reduce production expr -> expr MINUS expr
--- On LT reduce production expr -> expr MINUS expr
--- On LE reduce production expr -> expr MINUS expr
--- On GT reduce production expr -> expr MINUS expr
--- On GE reduce production expr -> expr MINUS expr
--- On FI reduce production expr -> expr MINUS expr
--- On EQUAL reduce production expr -> expr MINUS expr
--- On EOF reduce production expr -> expr MINUS expr
--- On END reduce production expr -> expr MINUS expr
--- On ELSE reduce production expr -> expr MINUS expr
--- On ELLIPSE reduce production expr -> expr MINUS expr
--- On ELIF reduce production expr -> expr MINUS expr
--- On DO reduce production expr -> expr MINUS expr
--- On COMMA reduce production expr -> expr MINUS expr
--- On COLON reduce production expr -> expr MINUS expr
--- On BY reduce production expr -> expr MINUS expr
--- On ARROW reduce production expr -> expr MINUS expr
--- On AND reduce production expr -> expr MINUS expr
+-- On WHILE UNION TO THEN SUBTRACT SEQ SEMICOLON RPAREN RBRACK RBRACE QUOTE PLUS OR OD NE MOD MINUS LT LE GT GE FI EQUAL EOF END ELSE ELLIPSE ELIF DO COMMA COLON BY ARROW AND
+--   reduce production expr -> expr MINUS expr
 
 State 75:
 ## Known stack suffix:
@@ -2617,34 +1922,8 @@ expr -> expr . REPEAT_COMPOSE expr [ WHILE UNION TO THEN SUBTRACT SLASH SEQ SEMI
 -- On AMPOP shift to state 49
 -- On AMPMUL shift to state 61
 ## Reductions:
--- On WHILE reduce production expr -> expr ELLIPSE expr
--- On TO reduce production expr -> expr ELLIPSE expr
--- On THEN reduce production expr -> expr ELLIPSE expr
--- On SEQ reduce production expr -> expr ELLIPSE expr
--- On SEMICOLON reduce production expr -> expr ELLIPSE expr
--- On RPAREN reduce production expr -> expr ELLIPSE expr
--- On RBRACK reduce production expr -> expr ELLIPSE expr
--- On RBRACE reduce production expr -> expr ELLIPSE expr
--- On QUOTE reduce production expr -> expr ELLIPSE expr
--- On OR reduce production expr -> expr ELLIPSE expr
--- On OD reduce production expr -> expr ELLIPSE expr
--- On NE reduce production expr -> expr ELLIPSE expr
--- On LT reduce production expr -> expr ELLIPSE expr
--- On LE reduce production expr -> expr ELLIPSE expr
--- On GT reduce production expr -> expr ELLIPSE expr
--- On GE reduce production expr -> expr ELLIPSE expr
--- On FI reduce production expr -> expr ELLIPSE expr
--- On EQUAL reduce production expr -> expr ELLIPSE expr
--- On EOF reduce production expr -> expr ELLIPSE expr
--- On END reduce production expr -> expr ELLIPSE expr
--- On ELSE reduce production expr -> expr ELLIPSE expr
--- On ELIF reduce production expr -> expr ELLIPSE expr
--- On DO reduce production expr -> expr ELLIPSE expr
--- On COMMA reduce production expr -> expr ELLIPSE expr
--- On COLON reduce production expr -> expr ELLIPSE expr
--- On BY reduce production expr -> expr ELLIPSE expr
--- On ARROW reduce production expr -> expr ELLIPSE expr
--- On AND reduce production expr -> expr ELLIPSE expr
+-- On WHILE TO THEN SEQ SEMICOLON RPAREN RBRACK RBRACE QUOTE OR OD NE LT LE GT GE FI EQUAL EOF END ELSE ELIF DO COMMA COLON BY ARROW AND
+--   reduce production expr -> expr ELLIPSE expr
 
 State 77:
 ## Known stack suffix:
@@ -2720,28 +1999,8 @@ expr -> expr . REPEAT_COMPOSE expr [ WHILE UNION TO THEN SUBTRACT SLASH SEQ SEMI
 -- On AMPOP shift to state 49
 -- On AMPMUL shift to state 61
 ## Reductions:
--- On WHILE reduce production expr -> expr LT expr
--- On TO reduce production expr -> expr LT expr
--- On THEN reduce production expr -> expr LT expr
--- On SEQ reduce production expr -> expr LT expr
--- On SEMICOLON reduce production expr -> expr LT expr
--- On RPAREN reduce production expr -> expr LT expr
--- On RBRACK reduce production expr -> expr LT expr
--- On RBRACE reduce production expr -> expr LT expr
--- On QUOTE reduce production expr -> expr LT expr
--- On OR reduce production expr -> expr LT expr
--- On OD reduce production expr -> expr LT expr
--- On FI reduce production expr -> expr LT expr
--- On EOF reduce production expr -> expr LT expr
--- On END reduce production expr -> expr LT expr
--- On ELSE reduce production expr -> expr LT expr
--- On ELIF reduce production expr -> expr LT expr
--- On DO reduce production expr -> expr LT expr
--- On COMMA reduce production expr -> expr LT expr
--- On COLON reduce production expr -> expr LT expr
--- On BY reduce production expr -> expr LT expr
--- On ARROW reduce production expr -> expr LT expr
--- On AND reduce production expr -> expr LT expr
+-- On WHILE TO THEN SEQ SEMICOLON RPAREN RBRACK RBRACE QUOTE OR OD FI EOF END ELSE ELIF DO COMMA COLON BY ARROW AND
+--   reduce production expr -> expr LT expr
 
 State 79:
 ## Known stack suffix:
@@ -2817,28 +2076,8 @@ expr -> expr . REPEAT_COMPOSE expr [ WHILE UNION TO THEN SUBTRACT SLASH SEQ SEMI
 -- On AMPOP shift to state 49
 -- On AMPMUL shift to state 61
 ## Reductions:
--- On WHILE reduce production expr -> expr LE expr
--- On TO reduce production expr -> expr LE expr
--- On THEN reduce production expr -> expr LE expr
--- On SEQ reduce production expr -> expr LE expr
--- On SEMICOLON reduce production expr -> expr LE expr
--- On RPAREN reduce production expr -> expr LE expr
--- On RBRACK reduce production expr -> expr LE expr
--- On RBRACE reduce production expr -> expr LE expr
--- On QUOTE reduce production expr -> expr LE expr
--- On OR reduce production expr -> expr LE expr
--- On OD reduce production expr -> expr LE expr
--- On FI reduce production expr -> expr LE expr
--- On EOF reduce production expr -> expr LE expr
--- On END reduce production expr -> expr LE expr
--- On ELSE reduce production expr -> expr LE expr
--- On ELIF reduce production expr -> expr LE expr
--- On DO reduce production expr -> expr LE expr
--- On COMMA reduce production expr -> expr LE expr
--- On COLON reduce production expr -> expr LE expr
--- On BY reduce production expr -> expr LE expr
--- On ARROW reduce production expr -> expr LE expr
--- On AND reduce production expr -> expr LE expr
+-- On WHILE TO THEN SEQ SEMICOLON RPAREN RBRACK RBRACE QUOTE OR OD FI EOF END ELSE ELIF DO COMMA COLON BY ARROW AND
+--   reduce production expr -> expr LE expr
 
 State 81:
 ## Known stack suffix:
@@ -2914,28 +2153,8 @@ expr -> expr . REPEAT_COMPOSE expr [ WHILE UNION TO THEN SUBTRACT SLASH SEQ SEMI
 -- On AMPOP shift to state 49
 -- On AMPMUL shift to state 61
 ## Reductions:
--- On WHILE reduce production expr -> expr GT expr
--- On TO reduce production expr -> expr GT expr
--- On THEN reduce production expr -> expr GT expr
--- On SEQ reduce production expr -> expr GT expr
--- On SEMICOLON reduce production expr -> expr GT expr
--- On RPAREN reduce production expr -> expr GT expr
--- On RBRACK reduce production expr -> expr GT expr
--- On RBRACE reduce production expr -> expr GT expr
--- On QUOTE reduce production expr -> expr GT expr
--- On OR reduce production expr -> expr GT expr
--- On OD reduce production expr -> expr GT expr
--- On FI reduce production expr -> expr GT expr
--- On EOF reduce production expr -> expr GT expr
--- On END reduce production expr -> expr GT expr
--- On ELSE reduce production expr -> expr GT expr
--- On ELIF reduce production expr -> expr GT expr
--- On DO reduce production expr -> expr GT expr
--- On COMMA reduce production expr -> expr GT expr
--- On COLON reduce production expr -> expr GT expr
--- On BY reduce production expr -> expr GT expr
--- On ARROW reduce production expr -> expr GT expr
--- On AND reduce production expr -> expr GT expr
+-- On WHILE TO THEN SEQ SEMICOLON RPAREN RBRACK RBRACE QUOTE OR OD FI EOF END ELSE ELIF DO COMMA COLON BY ARROW AND
+--   reduce production expr -> expr GT expr
 
 State 83:
 ## Known stack suffix:
@@ -3011,28 +2230,8 @@ expr -> expr . REPEAT_COMPOSE expr [ WHILE UNION TO THEN SUBTRACT SLASH SEQ SEMI
 -- On AMPOP shift to state 49
 -- On AMPMUL shift to state 61
 ## Reductions:
--- On WHILE reduce production expr -> expr GE expr
--- On TO reduce production expr -> expr GE expr
--- On THEN reduce production expr -> expr GE expr
--- On SEQ reduce production expr -> expr GE expr
--- On SEMICOLON reduce production expr -> expr GE expr
--- On RPAREN reduce production expr -> expr GE expr
--- On RBRACK reduce production expr -> expr GE expr
--- On RBRACE reduce production expr -> expr GE expr
--- On QUOTE reduce production expr -> expr GE expr
--- On OR reduce production expr -> expr GE expr
--- On OD reduce production expr -> expr GE expr
--- On FI reduce production expr -> expr GE expr
--- On EOF reduce production expr -> expr GE expr
--- On END reduce production expr -> expr GE expr
--- On ELSE reduce production expr -> expr GE expr
--- On ELIF reduce production expr -> expr GE expr
--- On DO reduce production expr -> expr GE expr
--- On COMMA reduce production expr -> expr GE expr
--- On COLON reduce production expr -> expr GE expr
--- On BY reduce production expr -> expr GE expr
--- On ARROW reduce production expr -> expr GE expr
--- On AND reduce production expr -> expr GE expr
+-- On WHILE TO THEN SEQ SEMICOLON RPAREN RBRACK RBRACE QUOTE OR OD FI EOF END ELSE ELIF DO COMMA COLON BY ARROW AND
+--   reduce production expr -> expr GE expr
 
 State 85:
 ## Known stack suffix:
@@ -3108,28 +2307,8 @@ expr -> expr . REPEAT_COMPOSE expr [ WHILE UNION TO THEN SUBTRACT SLASH SEQ SEMI
 -- On AMPOP shift to state 49
 -- On AMPMUL shift to state 61
 ## Reductions:
--- On WHILE reduce production expr -> expr EQUAL expr
--- On TO reduce production expr -> expr EQUAL expr
--- On THEN reduce production expr -> expr EQUAL expr
--- On SEQ reduce production expr -> expr EQUAL expr
--- On SEMICOLON reduce production expr -> expr EQUAL expr
--- On RPAREN reduce production expr -> expr EQUAL expr
--- On RBRACK reduce production expr -> expr EQUAL expr
--- On RBRACE reduce production expr -> expr EQUAL expr
--- On QUOTE reduce production expr -> expr EQUAL expr
--- On OR reduce production expr -> expr EQUAL expr
--- On OD reduce production expr -> expr EQUAL expr
--- On FI reduce production expr -> expr EQUAL expr
--- On EOF reduce production expr -> expr EQUAL expr
--- On END reduce production expr -> expr EQUAL expr
--- On ELSE reduce production expr -> expr EQUAL expr
--- On ELIF reduce production expr -> expr EQUAL expr
--- On DO reduce production expr -> expr EQUAL expr
--- On COMMA reduce production expr -> expr EQUAL expr
--- On COLON reduce production expr -> expr EQUAL expr
--- On BY reduce production expr -> expr EQUAL expr
--- On ARROW reduce production expr -> expr EQUAL expr
--- On AND reduce production expr -> expr EQUAL expr
+-- On WHILE TO THEN SEQ SEMICOLON RPAREN RBRACK RBRACE QUOTE OR OD FI EOF END ELSE ELIF DO COMMA COLON BY ARROW AND
+--   reduce production expr -> expr EQUAL expr
 
 State 87:
 ## Known stack suffix:
@@ -3213,26 +2392,8 @@ expr -> expr . REPEAT_COMPOSE expr [ WHILE UNION TO THEN SUBTRACT SLASH SEQ SEMI
 -- On AMPOP shift to state 49
 -- On AMPMUL shift to state 61
 ## Reductions:
--- On WHILE reduce production expr -> expr OR expr
--- On TO reduce production expr -> expr OR expr
--- On THEN reduce production expr -> expr OR expr
--- On SEMICOLON reduce production expr -> expr OR expr
--- On RPAREN reduce production expr -> expr OR expr
--- On RBRACK reduce production expr -> expr OR expr
--- On RBRACE reduce production expr -> expr OR expr
--- On QUOTE reduce production expr -> expr OR expr
--- On OR reduce production expr -> expr OR expr
--- On OD reduce production expr -> expr OR expr
--- On FI reduce production expr -> expr OR expr
--- On EOF reduce production expr -> expr OR expr
--- On END reduce production expr -> expr OR expr
--- On ELSE reduce production expr -> expr OR expr
--- On ELIF reduce production expr -> expr OR expr
--- On DO reduce production expr -> expr OR expr
--- On COMMA reduce production expr -> expr OR expr
--- On COLON reduce production expr -> expr OR expr
--- On BY reduce production expr -> expr OR expr
--- On ARROW reduce production expr -> expr OR expr
+-- On WHILE TO THEN SEMICOLON RPAREN RBRACK RBRACE QUOTE OR OD FI EOF END ELSE ELIF DO COMMA COLON BY ARROW
+--   reduce production expr -> expr OR expr
 
 State 89:
 ## Known stack suffix:
@@ -3315,27 +2476,8 @@ expr -> expr . REPEAT_COMPOSE expr [ WHILE UNION TO THEN SUBTRACT SLASH SEQ SEMI
 -- On AMPOP shift to state 49
 -- On AMPMUL shift to state 61
 ## Reductions:
--- On WHILE reduce production expr -> expr AND expr
--- On TO reduce production expr -> expr AND expr
--- On THEN reduce production expr -> expr AND expr
--- On SEMICOLON reduce production expr -> expr AND expr
--- On RPAREN reduce production expr -> expr AND expr
--- On RBRACK reduce production expr -> expr AND expr
--- On RBRACE reduce production expr -> expr AND expr
--- On QUOTE reduce production expr -> expr AND expr
--- On OR reduce production expr -> expr AND expr
--- On OD reduce production expr -> expr AND expr
--- On FI reduce production expr -> expr AND expr
--- On EOF reduce production expr -> expr AND expr
--- On END reduce production expr -> expr AND expr
--- On ELSE reduce production expr -> expr AND expr
--- On ELIF reduce production expr -> expr AND expr
--- On DO reduce production expr -> expr AND expr
--- On COMMA reduce production expr -> expr AND expr
--- On COLON reduce production expr -> expr AND expr
--- On BY reduce production expr -> expr AND expr
--- On ARROW reduce production expr -> expr AND expr
--- On AND reduce production expr -> expr AND expr
+-- On WHILE TO THEN SEMICOLON RPAREN RBRACK RBRACE QUOTE OR OD FI EOF END ELSE ELIF DO COMMA COLON BY ARROW AND
+--   reduce production expr -> expr AND expr
 
 State 91:
 ## Known stack suffix:
@@ -3421,24 +2563,8 @@ expr -> expr . REPEAT_COMPOSE expr [ WHILE UNION TO THEN SUBTRACT SLASH SEQ SEMI
 -- On AMPOP shift to state 49
 -- On AMPMUL shift to state 61
 ## Reductions:
--- On WHILE reduce production expr -> expr ARROW expr
--- On TO reduce production expr -> expr ARROW expr
--- On THEN reduce production expr -> expr ARROW expr
--- On SEMICOLON reduce production expr -> expr ARROW expr
--- On RPAREN reduce production expr -> expr ARROW expr
--- On RBRACK reduce production expr -> expr ARROW expr
--- On RBRACE reduce production expr -> expr ARROW expr
--- On QUOTE reduce production expr -> expr ARROW expr
--- On OD reduce production expr -> expr ARROW expr
--- On FI reduce production expr -> expr ARROW expr
--- On EOF reduce production expr -> expr ARROW expr
--- On END reduce production expr -> expr ARROW expr
--- On ELSE reduce production expr -> expr ARROW expr
--- On ELIF reduce production expr -> expr ARROW expr
--- On DO reduce production expr -> expr ARROW expr
--- On COMMA reduce production expr -> expr ARROW expr
--- On COLON reduce production expr -> expr ARROW expr
--- On BY reduce production expr -> expr ARROW expr
+-- On WHILE TO THEN SEMICOLON RPAREN RBRACK RBRACE QUOTE OD FI EOF END ELSE ELIF DO COMMA COLON BY
+--   reduce production expr -> expr ARROW expr
 
 State 93:
 ## Known stack suffix:
@@ -3499,18 +2625,8 @@ exprseq -> expr . [ SEMICOLON RPAREN RBRACK RBRACE OD FI EOF END ELSE ELIF COMMA
 -- On AMPOP shift to state 49
 -- On AMPMUL shift to state 61
 ## Reductions:
--- On SEMICOLON reduce production exprseq -> expr
--- On RPAREN reduce production exprseq -> expr
--- On RBRACK reduce production exprseq -> expr
--- On RBRACE reduce production exprseq -> expr
--- On OD reduce production exprseq -> expr
--- On FI reduce production exprseq -> expr
--- On EOF reduce production exprseq -> expr
--- On END reduce production exprseq -> expr
--- On ELSE reduce production exprseq -> expr
--- On ELIF reduce production exprseq -> expr
--- On COMMA reduce production exprseq -> expr
--- On COLON reduce production exprseq -> expr
+-- On SEMICOLON RPAREN RBRACK RBRACE OD FI EOF END ELSE ELIF COMMA COLON
+--   reduce production exprseq -> expr
 
 State 94:
 ## Known stack suffix:
@@ -3647,50 +2763,8 @@ functional_operator -> functional_operator . LPAREN exprseq RPAREN [ WHILE UNION
 ## Transitions:
 -- On LPAREN shift to state 101
 ## Reductions:
--- On WHILE reduce production expr -> name functional_operator
--- On UNION reduce production expr -> name functional_operator
--- On TO reduce production expr -> name functional_operator
--- On THEN reduce production expr -> name functional_operator
--- On SUBTRACT reduce production expr -> name functional_operator
--- On SLASH reduce production expr -> name functional_operator
--- On SEQ reduce production expr -> name functional_operator
--- On SEMICOLON reduce production expr -> name functional_operator
--- On RPAREN reduce production expr -> name functional_operator
--- On REPEAT_COMPOSE reduce production expr -> name functional_operator
--- On RBRACK reduce production expr -> name functional_operator
--- On RBRACE reduce production expr -> name functional_operator
--- On QUOTE reduce production expr -> name functional_operator
--- On PLUS reduce production expr -> name functional_operator
--- On OR reduce production expr -> name functional_operator
--- On OD reduce production expr -> name functional_operator
--- On NE reduce production expr -> name functional_operator
--- On MULT reduce production expr -> name functional_operator
--- On MOD reduce production expr -> name functional_operator
--- On MINUS reduce production expr -> name functional_operator
--- On LT reduce production expr -> name functional_operator
--- On LE reduce production expr -> name functional_operator
--- On INTERSECT reduce production expr -> name functional_operator
--- On GT reduce production expr -> name functional_operator
--- On GE reduce production expr -> name functional_operator
--- On FI reduce production expr -> name functional_operator
--- On EXP reduce production expr -> name functional_operator
--- On EXCLAM reduce production expr -> name functional_operator
--- On EQUAL reduce production expr -> name functional_operator
--- On EOF reduce production expr -> name functional_operator
--- On END reduce production expr -> name functional_operator
--- On ELSE reduce production expr -> name functional_operator
--- On ELLIPSE reduce production expr -> name functional_operator
--- On ELIF reduce production expr -> name functional_operator
--- On DO reduce production expr -> name functional_operator
--- On COMMA reduce production expr -> name functional_operator
--- On COLON reduce production expr -> name functional_operator
--- On CARET reduce production expr -> name functional_operator
--- On BY reduce production expr -> name functional_operator
--- On AT reduce production expr -> name functional_operator
--- On ARROW reduce production expr -> name functional_operator
--- On AND reduce production expr -> name functional_operator
--- On AMPOP reduce production expr -> name functional_operator
--- On AMPMUL reduce production expr -> name functional_operator
+-- On WHILE UNION TO THEN SUBTRACT SLASH SEQ SEMICOLON RPAREN REPEAT_COMPOSE RBRACK RBRACE QUOTE PLUS OR OD NE MULT MOD MINUS LT LE INTERSECT GT GE FI EXP EXCLAM EQUAL EOF END ELSE ELLIPSE ELIF DO COMMA COLON CARET BY AT ARROW AND AMPOP AMPMUL
+--   reduce production expr -> name functional_operator
 
 State 101:
 ## Known stack suffix:
@@ -3717,8 +2791,8 @@ functional_operator -> functional_operator LPAREN . exprseq RPAREN [ WHILE UNION
 -- On exprseq shift to state 102
 -- On expr shift to state 93
 ## Reductions:
--- On RPAREN reduce production exprseq ->
--- On COMMA reduce production exprseq ->
+-- On RPAREN COMMA
+--   reduce production exprseq ->
 
 State 102:
 ## Known stack suffix:
@@ -3856,27 +2930,8 @@ expr -> expr . REPEAT_COMPOSE expr [ WHILE UNION TO THEN SUBTRACT SLASH SEQ SEMI
 -- On AMPOP shift to state 49
 -- On AMPMUL shift to state 61
 ## Reductions:
--- On WHILE reduce production expr -> NOT expr
--- On TO reduce production expr -> NOT expr
--- On THEN reduce production expr -> NOT expr
--- On SEMICOLON reduce production expr -> NOT expr
--- On RPAREN reduce production expr -> NOT expr
--- On RBRACK reduce production expr -> NOT expr
--- On RBRACE reduce production expr -> NOT expr
--- On QUOTE reduce production expr -> NOT expr
--- On OR reduce production expr -> NOT expr
--- On OD reduce production expr -> NOT expr
--- On FI reduce production expr -> NOT expr
--- On EOF reduce production expr -> NOT expr
--- On END reduce production expr -> NOT expr
--- On ELSE reduce production expr -> NOT expr
--- On ELIF reduce production expr -> NOT expr
--- On DO reduce production expr -> NOT expr
--- On COMMA reduce production expr -> NOT expr
--- On COLON reduce production expr -> NOT expr
--- On BY reduce production expr -> NOT expr
--- On ARROW reduce production expr -> NOT expr
--- On AND reduce production expr -> NOT expr
+-- On WHILE TO THEN SEMICOLON RPAREN RBRACK RBRACE QUOTE OR OD FI EOF END ELSE ELIF DO COMMA COLON BY ARROW AND
+--   reduce production expr -> NOT expr
 
 State 111:
 ## Known stack suffix:
@@ -3925,36 +2980,8 @@ expr -> expr . REPEAT_COMPOSE expr [ WHILE UNION TO THEN SUBTRACT SLASH SEQ SEMI
 -- On AMPOP shift to state 49
 -- On AMPMUL shift to state 61
 ## Reductions:
--- On WHILE reduce production expr -> PLUS expr
--- On TO reduce production expr -> PLUS expr
--- On THEN reduce production expr -> PLUS expr
--- On SEQ reduce production expr -> PLUS expr
--- On SEMICOLON reduce production expr -> PLUS expr
--- On RPAREN reduce production expr -> PLUS expr
--- On RBRACK reduce production expr -> PLUS expr
--- On RBRACE reduce production expr -> PLUS expr
--- On QUOTE reduce production expr -> PLUS expr
--- On OR reduce production expr -> PLUS expr
--- On OD reduce production expr -> PLUS expr
--- On NE reduce production expr -> PLUS expr
--- On MOD reduce production expr -> PLUS expr
--- On LT reduce production expr -> PLUS expr
--- On LE reduce production expr -> PLUS expr
--- On GT reduce production expr -> PLUS expr
--- On GE reduce production expr -> PLUS expr
--- On FI reduce production expr -> PLUS expr
--- On EQUAL reduce production expr -> PLUS expr
--- On EOF reduce production expr -> PLUS expr
--- On END reduce production expr -> PLUS expr
--- On ELSE reduce production expr -> PLUS expr
--- On ELLIPSE reduce production expr -> PLUS expr
--- On ELIF reduce production expr -> PLUS expr
--- On DO reduce production expr -> PLUS expr
--- On COMMA reduce production expr -> PLUS expr
--- On COLON reduce production expr -> PLUS expr
--- On BY reduce production expr -> PLUS expr
--- On ARROW reduce production expr -> PLUS expr
--- On AND reduce production expr -> PLUS expr
+-- On WHILE TO THEN SEQ SEMICOLON RPAREN RBRACK RBRACE QUOTE OR OD NE MOD LT LE GT GE FI EQUAL EOF END ELSE ELLIPSE ELIF DO COMMA COLON BY ARROW AND
+--   reduce production expr -> PLUS expr
 
 State 112:
 ## Known stack suffix:
@@ -3989,8 +3016,8 @@ nameseq -> name . [ SEMICOLON COMMA ]
 -- On LBRACK shift to state 25
 -- On DOT shift to state 94
 ## Reductions:
--- On SEMICOLON reduce production nameseq -> name
--- On COMMA reduce production nameseq -> name
+-- On SEMICOLON COMMA
+--   reduce production nameseq -> name
 
 State 115:
 ## Known stack suffix:
@@ -4004,8 +3031,8 @@ globals_of_proc -> GLOBAL . nameseq SEMICOLON [ WHILE TO SUBTRACT STRING STOP SE
 -- On name_string shift to state 23
 -- On name shift to state 114
 ## Reductions:
--- On SEMICOLON reduce production nameseq ->
--- On COMMA reduce production nameseq ->
+-- On SEMICOLON COMMA
+--   reduce production nameseq ->
 
 State 116:
 ## Known stack suffix:
@@ -4037,38 +3064,8 @@ decls_proc -> locals_of_proc . globals_of_proc [ WHILE TO SUBTRACT STRING STOP S
 -- On GLOBAL shift to state 115
 -- On globals_of_proc shift to state 119
 ## Reductions:
--- On WHILE reduce production decls_proc -> locals_of_proc
--- On TO reduce production decls_proc -> locals_of_proc
--- On SUBTRACT reduce production decls_proc -> locals_of_proc
--- On STRING reduce production decls_proc -> locals_of_proc
--- On STOP reduce production decls_proc -> locals_of_proc
--- On SEQ reduce production decls_proc -> locals_of_proc
--- On SEMICOLON reduce production decls_proc -> locals_of_proc
--- On SAVE reduce production decls_proc -> locals_of_proc
--- On READ reduce production decls_proc -> locals_of_proc
--- On QUOTED_STRING reduce production decls_proc -> locals_of_proc
--- On QUOTE reduce production decls_proc -> locals_of_proc
--- On QUIT reduce production decls_proc -> locals_of_proc
--- On PROC reduce production decls_proc -> locals_of_proc
--- On PLUS reduce production decls_proc -> locals_of_proc
--- On OPTION reduce production decls_proc -> locals_of_proc
--- On NOT reduce production decls_proc -> locals_of_proc
--- On LPAREN reduce production decls_proc -> locals_of_proc
--- On LBRACK reduce production decls_proc -> locals_of_proc
--- On LBRACE reduce production decls_proc -> locals_of_proc
--- On INT reduce production decls_proc -> locals_of_proc
--- On IF reduce production decls_proc -> locals_of_proc
--- On ID reduce production decls_proc -> locals_of_proc
--- On FROM reduce production decls_proc -> locals_of_proc
--- On FOR reduce production decls_proc -> locals_of_proc
--- On END reduce production decls_proc -> locals_of_proc
--- On DOT reduce production decls_proc -> locals_of_proc
--- On DO reduce production decls_proc -> locals_of_proc
--- On COMMENT reduce production decls_proc -> locals_of_proc
--- On COMMA reduce production decls_proc -> locals_of_proc
--- On COLON reduce production decls_proc -> locals_of_proc
--- On BY reduce production decls_proc -> locals_of_proc
--- On ASSIGN reduce production decls_proc -> locals_of_proc
+-- On WHILE TO SUBTRACT STRING STOP SEQ SEMICOLON SAVE READ QUOTED_STRING QUOTE QUIT PROC PLUS OPTION NOT LPAREN LBRACK LBRACE INT IF ID FROM FOR END DOT DO COMMENT COMMA COLON BY ASSIGN
+--   reduce production decls_proc -> locals_of_proc
 
 State 119:
 ## Known stack suffix:
@@ -4089,38 +3086,8 @@ decls_proc -> globals_of_proc . locals_of_proc [ WHILE TO SUBTRACT STRING STOP S
 -- On LOCAL shift to state 19
 -- On locals_of_proc shift to state 121
 ## Reductions:
--- On WHILE reduce production decls_proc -> globals_of_proc
--- On TO reduce production decls_proc -> globals_of_proc
--- On SUBTRACT reduce production decls_proc -> globals_of_proc
--- On STRING reduce production decls_proc -> globals_of_proc
--- On STOP reduce production decls_proc -> globals_of_proc
--- On SEQ reduce production decls_proc -> globals_of_proc
--- On SEMICOLON reduce production decls_proc -> globals_of_proc
--- On SAVE reduce production decls_proc -> globals_of_proc
--- On READ reduce production decls_proc -> globals_of_proc
--- On QUOTED_STRING reduce production decls_proc -> globals_of_proc
--- On QUOTE reduce production decls_proc -> globals_of_proc
--- On QUIT reduce production decls_proc -> globals_of_proc
--- On PROC reduce production decls_proc -> globals_of_proc
--- On PLUS reduce production decls_proc -> globals_of_proc
--- On OPTION reduce production decls_proc -> globals_of_proc
--- On NOT reduce production decls_proc -> globals_of_proc
--- On LPAREN reduce production decls_proc -> globals_of_proc
--- On LBRACK reduce production decls_proc -> globals_of_proc
--- On LBRACE reduce production decls_proc -> globals_of_proc
--- On INT reduce production decls_proc -> globals_of_proc
--- On IF reduce production decls_proc -> globals_of_proc
--- On ID reduce production decls_proc -> globals_of_proc
--- On FROM reduce production decls_proc -> globals_of_proc
--- On FOR reduce production decls_proc -> globals_of_proc
--- On END reduce production decls_proc -> globals_of_proc
--- On DOT reduce production decls_proc -> globals_of_proc
--- On DO reduce production decls_proc -> globals_of_proc
--- On COMMENT reduce production decls_proc -> globals_of_proc
--- On COMMA reduce production decls_proc -> globals_of_proc
--- On COLON reduce production decls_proc -> globals_of_proc
--- On BY reduce production decls_proc -> globals_of_proc
--- On ASSIGN reduce production decls_proc -> globals_of_proc
+-- On WHILE TO SUBTRACT STRING STOP SEQ SEMICOLON SAVE READ QUOTED_STRING QUOTE QUIT PROC PLUS OPTION NOT LPAREN LBRACK LBRACE INT IF ID FROM FOR END DOT DO COMMENT COMMA COLON BY ASSIGN
+--   reduce production decls_proc -> globals_of_proc
 
 State 121:
 ## Known stack suffix:
@@ -4140,37 +3107,8 @@ expr -> PROC LPAREN parmseq RPAREN result_type decls_proc . options_of_proc stat
 -- On OPTION shift to state 123
 -- On options_of_proc shift to state 126
 ## Reductions:
--- On WHILE reduce production options_of_proc ->
--- On TO reduce production options_of_proc ->
--- On SUBTRACT reduce production options_of_proc ->
--- On STRING reduce production options_of_proc ->
--- On STOP reduce production options_of_proc ->
--- On SEQ reduce production options_of_proc ->
--- On SEMICOLON reduce production options_of_proc ->
--- On SAVE reduce production options_of_proc ->
--- On READ reduce production options_of_proc ->
--- On QUOTED_STRING reduce production options_of_proc ->
--- On QUOTE reduce production options_of_proc ->
--- On QUIT reduce production options_of_proc ->
--- On PROC reduce production options_of_proc ->
--- On PLUS reduce production options_of_proc ->
--- On NOT reduce production options_of_proc ->
--- On LPAREN reduce production options_of_proc ->
--- On LBRACK reduce production options_of_proc ->
--- On LBRACE reduce production options_of_proc ->
--- On INT reduce production options_of_proc ->
--- On IF reduce production options_of_proc ->
--- On ID reduce production options_of_proc ->
--- On FROM reduce production options_of_proc ->
--- On FOR reduce production options_of_proc ->
--- On END reduce production options_of_proc ->
--- On DOT reduce production options_of_proc ->
--- On DO reduce production options_of_proc ->
--- On COMMENT reduce production options_of_proc ->
--- On COMMA reduce production options_of_proc ->
--- On COLON reduce production options_of_proc ->
--- On BY reduce production options_of_proc ->
--- On ASSIGN reduce production options_of_proc ->
+-- On WHILE TO SUBTRACT STRING STOP SEQ SEMICOLON SAVE READ QUOTED_STRING QUOTE QUIT PROC PLUS NOT LPAREN LBRACK LBRACE INT IF ID FROM FOR END DOT DO COMMENT COMMA COLON BY ASSIGN
+--   reduce production options_of_proc ->
 
 State 123:
 ## Known stack suffix:
@@ -4184,8 +3122,8 @@ options_of_proc -> OPTION . nameseq SEMICOLON [ WHILE TO SUBTRACT STRING STOP SE
 -- On name_string shift to state 23
 -- On name shift to state 114
 ## Reductions:
--- On SEMICOLON reduce production nameseq ->
--- On COMMA reduce production nameseq ->
+-- On SEMICOLON COMMA
+--   reduce production nameseq ->
 
 State 124:
 ## Known stack suffix:
@@ -4295,16 +3233,10 @@ statseq -> statseq COLON comments . stat [ SEMICOLON OD FI EOF END ELSE ELIF COL
 -- On for_body shift to state 159
 -- On expr shift to state 192
 ## Reductions:
--- On SEMICOLON reduce production stat ->
--- On OD reduce production stat ->
--- On FI reduce production stat ->
--- On EOF reduce production stat ->
--- On END reduce production stat ->
--- On ELSE reduce production stat ->
--- On ELIF reduce production stat ->
--- On COMMA reduce production nameseq ->
--- On COLON reduce production stat ->
--- On ASSIGN reduce production nameseq ->
+-- On COMMA ASSIGN
+--   reduce production nameseq ->
+-- On SEMICOLON OD FI EOF END ELSE ELIF COLON
+--   reduce production stat ->
 
 State 131:
 ## Known stack suffix:
@@ -4475,16 +3407,10 @@ statseq -> comments . stat [ SEMICOLON OD FI EOF END ELSE ELIF COLON ]
 -- On for_body shift to state 159
 -- On expr shift to state 192
 ## Reductions:
--- On SEMICOLON reduce production stat ->
--- On OD reduce production stat ->
--- On FI reduce production stat ->
--- On EOF reduce production stat ->
--- On END reduce production stat ->
--- On ELSE reduce production stat ->
--- On ELIF reduce production stat ->
--- On COMMA reduce production nameseq ->
--- On COLON reduce production stat ->
--- On ASSIGN reduce production nameseq ->
+-- On COMMA ASSIGN
+--   reduce production nameseq ->
+-- On SEMICOLON OD FI EOF END ELSE ELIF COLON
+--   reduce production stat ->
 
 State 137:
 ## Known stack suffix:
@@ -4508,7 +3434,8 @@ stat -> SAVE . nameseq COMMA name_string [ SEMICOLON OD FI EOF END ELSE ELIF COL
 -- On name_string shift to state 142
 -- On name shift to state 114
 ## Reductions:
--- On COMMA reduce production nameseq ->
+-- On COMMA
+--   reduce production nameseq ->
 
 State 139:
 ## Known stack suffix:
@@ -4541,17 +3468,10 @@ name -> name_string . [ LBRACK DOT COMMA ]
 stat -> SAVE nameseq COMMA name_string . [ SEMICOLON OD FI EOF END ELSE ELIF COLON ]
 ## Transitions:
 ## Reductions:
--- On SEMICOLON reduce production stat -> SAVE nameseq COMMA name_string
--- On OD reduce production stat -> SAVE nameseq COMMA name_string
--- On LBRACK reduce production name -> name_string
--- On FI reduce production stat -> SAVE nameseq COMMA name_string
--- On EOF reduce production stat -> SAVE nameseq COMMA name_string
--- On END reduce production stat -> SAVE nameseq COMMA name_string
--- On ELSE reduce production stat -> SAVE nameseq COMMA name_string
--- On ELIF reduce production stat -> SAVE nameseq COMMA name_string
--- On DOT reduce production name -> name_string
--- On COMMA reduce production name -> name_string
--- On COLON reduce production stat -> SAVE nameseq COMMA name_string
+-- On LBRACK DOT COMMA
+--   reduce production name -> name_string
+-- On SEMICOLON OD FI EOF END ELSE ELIF COLON
+--   reduce production stat -> SAVE nameseq COMMA name_string
 
 State 142:
 ## Known stack suffix:
@@ -4561,17 +3481,10 @@ name -> name_string . [ LBRACK DOT COMMA ]
 stat -> SAVE name_string . [ SEMICOLON OD FI EOF END ELSE ELIF COLON ]
 ## Transitions:
 ## Reductions:
--- On SEMICOLON reduce production stat -> SAVE name_string
--- On OD reduce production stat -> SAVE name_string
--- On LBRACK reduce production name -> name_string
--- On FI reduce production stat -> SAVE name_string
--- On EOF reduce production stat -> SAVE name_string
--- On END reduce production stat -> SAVE name_string
--- On ELSE reduce production stat -> SAVE name_string
--- On ELIF reduce production stat -> SAVE name_string
--- On DOT reduce production name -> name_string
--- On COMMA reduce production name -> name_string
--- On COLON reduce production stat -> SAVE name_string
+-- On LBRACK DOT COMMA
+--   reduce production name -> name_string
+-- On SEMICOLON OD FI EOF END ELSE ELIF COLON
+--   reduce production stat -> SAVE name_string
 
 State 143:
 ## Known stack suffix:
@@ -4657,14 +3570,8 @@ stat -> READ expr . [ SEMICOLON OD FI EOF END ELSE ELIF COLON ]
 -- On AMPOP shift to state 49
 -- On AMPMUL shift to state 61
 ## Reductions:
--- On SEMICOLON reduce production stat -> READ expr
--- On OD reduce production stat -> READ expr
--- On FI reduce production stat -> READ expr
--- On EOF reduce production stat -> READ expr
--- On END reduce production stat -> READ expr
--- On ELSE reduce production stat -> READ expr
--- On ELIF reduce production stat -> READ expr
--- On COLON reduce production stat -> READ expr
+-- On SEMICOLON OD FI EOF END ELSE ELIF COLON
+--   reduce production stat -> READ expr
 
 State 145:
 ## Known stack suffix:
@@ -4783,9 +3690,8 @@ statseq -> statseq . COLON comments stat [ SEMICOLON FI ELSE ELIF COLON ]
 -- On SEMICOLON shift to state 2
 -- On COLON shift to state 129
 ## Reductions:
--- On FI reduce production ifpart -> IF expr THEN statseq
--- On ELSE reduce production ifpart -> IF expr THEN statseq
--- On ELIF reduce production ifpart -> IF expr THEN statseq
+-- On FI ELSE ELIF
+--   reduce production ifpart -> IF expr THEN statseq
 
 State 150:
 ## Known stack suffix:
@@ -5445,15 +4351,8 @@ stat -> nameseq ASSIGN . exprseq [ SEMICOLON OD FI EOF END ELSE ELIF COLON ]
 -- On exprseq shift to state 178
 -- On expr shift to state 93
 ## Reductions:
--- On SEMICOLON reduce production exprseq ->
--- On OD reduce production exprseq ->
--- On FI reduce production exprseq ->
--- On EOF reduce production exprseq ->
--- On END reduce production exprseq ->
--- On ELSE reduce production exprseq ->
--- On ELIF reduce production exprseq ->
--- On COMMA reduce production exprseq ->
--- On COLON reduce production exprseq ->
+-- On SEMICOLON OD FI EOF END ELSE ELIF COMMA COLON
+--   reduce production exprseq ->
 
 State 178:
 ## Known stack suffix:
@@ -5464,14 +4363,8 @@ stat -> nameseq ASSIGN exprseq . [ SEMICOLON OD FI EOF END ELSE ELIF COLON ]
 ## Transitions:
 -- On COMMA shift to state 40
 ## Reductions:
--- On SEMICOLON reduce production stat -> nameseq ASSIGN exprseq
--- On OD reduce production stat -> nameseq ASSIGN exprseq
--- On FI reduce production stat -> nameseq ASSIGN exprseq
--- On EOF reduce production stat -> nameseq ASSIGN exprseq
--- On END reduce production stat -> nameseq ASSIGN exprseq
--- On ELSE reduce production stat -> nameseq ASSIGN exprseq
--- On ELIF reduce production stat -> nameseq ASSIGN exprseq
--- On COLON reduce production stat -> nameseq ASSIGN exprseq
+-- On SEMICOLON OD FI EOF END ELSE ELIF COLON
+--   reduce production stat -> nameseq ASSIGN exprseq
 
 State 179:
 ## Known stack suffix:
@@ -5490,42 +4383,10 @@ nameseq -> name . [ COMMA ASSIGN ]
 -- On DOT shift to state 94
 -- On functional_operator shift to state 100
 ## Reductions:
--- On UNION reduce production expr -> name
--- On SUBTRACT reduce production expr -> name
--- On SLASH reduce production expr -> name
--- On SEQ reduce production expr -> name
--- On SEMICOLON reduce production expr -> name
--- On REPEAT_COMPOSE reduce production expr -> name
--- On PLUS reduce production expr -> name
--- On OR reduce production expr -> name
--- On OD reduce production expr -> name
--- On NE reduce production expr -> name
--- On MULT reduce production expr -> name
--- On MOD reduce production expr -> name
--- On MINUS reduce production expr -> name
--- On LT reduce production expr -> name
--- On LE reduce production expr -> name
--- On INTERSECT reduce production expr -> name
--- On GT reduce production expr -> name
--- On GE reduce production expr -> name
--- On FI reduce production expr -> name
--- On EXP reduce production expr -> name
--- On EXCLAM reduce production expr -> name
--- On EQUAL reduce production expr -> name
--- On EOF reduce production expr -> name
--- On END reduce production expr -> name
--- On ELSE reduce production expr -> name
--- On ELLIPSE reduce production expr -> name
--- On ELIF reduce production expr -> name
--- On COMMA reduce production nameseq -> name
--- On COLON reduce production expr -> name
--- On CARET reduce production expr -> name
--- On AT reduce production expr -> name
--- On ASSIGN reduce production nameseq -> name
--- On ARROW reduce production expr -> name
--- On AND reduce production expr -> name
--- On AMPOP reduce production expr -> name
--- On AMPMUL reduce production expr -> name
+-- On UNION SUBTRACT SLASH SEQ SEMICOLON REPEAT_COMPOSE PLUS OR OD NE MULT MOD MINUS LT LE INTERSECT GT GE FI EXP EXCLAM EQUAL EOF END ELSE ELLIPSE ELIF COLON CARET AT ARROW AND AMPOP AMPMUL
+--   reduce production expr -> name
+-- On COMMA ASSIGN
+--   reduce production nameseq -> name
 
 State 180:
 ## Known stack suffix:
@@ -5690,9 +4551,8 @@ statseq -> statseq . COLON comments stat [ SEMICOLON FI ELSE ELIF COLON ]
 -- On SEMICOLON shift to state 2
 -- On COLON shift to state 129
 ## Reductions:
--- On FI reduce production ifpart -> ifpart ELIF expr THEN statseq
--- On ELSE reduce production ifpart -> ifpart ELIF expr THEN statseq
--- On ELIF reduce production ifpart -> ifpart ELIF expr THEN statseq
+-- On FI ELSE ELIF
+--   reduce production ifpart -> ifpart ELIF expr THEN statseq
 
 State 189:
 ## Known stack suffix:
@@ -5780,14 +4640,8 @@ stat -> expr . [ SEMICOLON OD FI EOF END ELSE ELIF COLON ]
 -- On AMPOP shift to state 49
 -- On AMPMUL shift to state 61
 ## Reductions:
--- On SEMICOLON reduce production stat -> expr
--- On OD reduce production stat -> expr
--- On FI reduce production stat -> expr
--- On EOF reduce production stat -> expr
--- On END reduce production stat -> expr
--- On ELSE reduce production stat -> expr
--- On ELIF reduce production stat -> expr
--- On COLON reduce production stat -> expr
+-- On SEMICOLON OD FI EOF END ELSE ELIF COLON
+--   reduce production stat -> expr
 
 State 193:
 ## Known stack suffix:
@@ -5941,8 +4795,8 @@ oneparm -> name . DOUBLE_COLON name_string [ RPAREN COMMA ]
 -- On DOUBLE_COLON shift to state 201
 -- On DOT shift to state 94
 ## Reductions:
--- On RPAREN reduce production oneparm -> name
--- On COMMA reduce production oneparm -> name
+-- On RPAREN COMMA
+--   reduce production oneparm -> name
 
 State 201:
 ## Known stack suffix:
@@ -6098,27 +4952,8 @@ expr -> expr . REPEAT_COMPOSE expr [ WHILE UNION TO THEN SUBTRACT SLASH SEQ SEMI
 -- On AMPOP shift to state 49
 -- On AMPMUL shift to state 61
 ## Reductions:
--- On WHILE reduce production expr -> SEQ expr
--- On TO reduce production expr -> SEQ expr
--- On THEN reduce production expr -> SEQ expr
--- On SEMICOLON reduce production expr -> SEQ expr
--- On RPAREN reduce production expr -> SEQ expr
--- On RBRACK reduce production expr -> SEQ expr
--- On RBRACE reduce production expr -> SEQ expr
--- On QUOTE reduce production expr -> SEQ expr
--- On OR reduce production expr -> SEQ expr
--- On OD reduce production expr -> SEQ expr
--- On FI reduce production expr -> SEQ expr
--- On EOF reduce production expr -> SEQ expr
--- On END reduce production expr -> SEQ expr
--- On ELSE reduce production expr -> SEQ expr
--- On ELIF reduce production expr -> SEQ expr
--- On DO reduce production expr -> SEQ expr
--- On COMMA reduce production expr -> SEQ expr
--- On COLON reduce production expr -> SEQ expr
--- On BY reduce production expr -> SEQ expr
--- On ARROW reduce production expr -> SEQ expr
--- On AND reduce production expr -> SEQ expr
+-- On WHILE TO THEN SEMICOLON RPAREN RBRACK RBRACE QUOTE OR OD FI EOF END ELSE ELIF DO COMMA COLON BY ARROW AND
+--   reduce production expr -> SEQ expr
 
 State 207:
 ## Known stack suffix:
@@ -6167,36 +5002,8 @@ expr -> expr . REPEAT_COMPOSE expr [ WHILE UNION TO THEN SUBTRACT SLASH SEQ SEMI
 -- On AMPOP shift to state 49
 -- On AMPMUL shift to state 61
 ## Reductions:
--- On WHILE reduce production expr -> SUBTRACT expr
--- On TO reduce production expr -> SUBTRACT expr
--- On THEN reduce production expr -> SUBTRACT expr
--- On SEQ reduce production expr -> SUBTRACT expr
--- On SEMICOLON reduce production expr -> SUBTRACT expr
--- On RPAREN reduce production expr -> SUBTRACT expr
--- On RBRACK reduce production expr -> SUBTRACT expr
--- On RBRACE reduce production expr -> SUBTRACT expr
--- On QUOTE reduce production expr -> SUBTRACT expr
--- On OR reduce production expr -> SUBTRACT expr
--- On OD reduce production expr -> SUBTRACT expr
--- On NE reduce production expr -> SUBTRACT expr
--- On MOD reduce production expr -> SUBTRACT expr
--- On LT reduce production expr -> SUBTRACT expr
--- On LE reduce production expr -> SUBTRACT expr
--- On GT reduce production expr -> SUBTRACT expr
--- On GE reduce production expr -> SUBTRACT expr
--- On FI reduce production expr -> SUBTRACT expr
--- On EQUAL reduce production expr -> SUBTRACT expr
--- On EOF reduce production expr -> SUBTRACT expr
--- On END reduce production expr -> SUBTRACT expr
--- On ELSE reduce production expr -> SUBTRACT expr
--- On ELLIPSE reduce production expr -> SUBTRACT expr
--- On ELIF reduce production expr -> SUBTRACT expr
--- On DO reduce production expr -> SUBTRACT expr
--- On COMMA reduce production expr -> SUBTRACT expr
--- On COLON reduce production expr -> SUBTRACT expr
--- On BY reduce production expr -> SUBTRACT expr
--- On ARROW reduce production expr -> SUBTRACT expr
--- On AND reduce production expr -> SUBTRACT expr
+-- On WHILE TO THEN SEQ SEMICOLON RPAREN RBRACK RBRACE QUOTE OR OD NE MOD LT LE GT GE FI EQUAL EOF END ELSE ELLIPSE ELIF DO COMMA COLON BY ARROW AND
+--   reduce production expr -> SUBTRACT expr
 
 State 208:
 ## Known stack suffix:

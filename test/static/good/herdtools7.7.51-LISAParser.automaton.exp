@@ -17,8 +17,8 @@ instr_option_seq' -> . instr_option_seq [ # ]
 -- On instr_option shift to state 89
 -- On instr shift to state 87
 ## Reductions:
--- On SEMI reduce production instr_option ->
--- On # reduce production instr_option ->
+-- On SEMI #
+--   reduce production instr_option ->
 ** End-of-stream conflict on WRITE SEMI RMW READ NAME MOV FENCE CODEVAR CALL BRANCH
 **   There is a tension between
 **   (1) reducing production instr_option ->
@@ -34,13 +34,8 @@ instr -> WRITE . annot_list_option addr_op reg_or_imm [ SEMI PIPE # ]
 -- On LBRAC shift to state 2
 -- On annot_list_option shift to state 14
 ## Reductions:
--- On WRITE reduce production annot_list_option ->
--- On SYMB_REG reduce production annot_list_option ->
--- On REG reduce production annot_list_option ->
--- On READ reduce production annot_list_option ->
--- On NAME reduce production annot_list_option ->
--- On FENCE reduce production annot_list_option ->
--- On BRANCH reduce production annot_list_option ->
+-- On WRITE SYMB_REG REG READ NAME FENCE BRANCH
+--   reduce production annot_list_option ->
 
 State 2:
 ## Known stack suffix:
@@ -57,7 +52,8 @@ annot_list_option -> LBRAC . name_list RBRAC [ WRITE SYMB_REG SEMI REG READ PIPE
 -- On name_list shift to state 9
 -- On name shift to state 11
 ## Reductions:
--- On RBRAC reduce production name_list ->
+-- On RBRAC
+--   reduce production name_list ->
 
 State 3:
 ## Known stack suffix:
@@ -66,23 +62,8 @@ State 3:
 name -> WRITE . [ WRITE SYMB_REG SEMI RPAR REG READ RBRACE RBRAC PLUS PIPE NUM NAME META FENCE COMMA BRANCH # ]
 ## Transitions:
 ## Reductions:
--- On WRITE reduce production name -> WRITE
--- On SYMB_REG reduce production name -> WRITE
--- On SEMI reduce production name -> WRITE
--- On RPAR reduce production name -> WRITE
--- On REG reduce production name -> WRITE
--- On READ reduce production name -> WRITE
--- On RBRACE reduce production name -> WRITE
--- On RBRAC reduce production name -> WRITE
--- On PLUS reduce production name -> WRITE
--- On PIPE reduce production name -> WRITE
--- On NUM reduce production name -> WRITE
--- On NAME reduce production name -> WRITE
--- On META reduce production name -> WRITE
--- On FENCE reduce production name -> WRITE
--- On COMMA reduce production name -> WRITE
--- On BRANCH reduce production name -> WRITE
--- On # reduce production name -> WRITE
+-- On WRITE SYMB_REG SEMI RPAR REG READ RBRACE RBRAC PLUS PIPE NUM NAME META FENCE COMMA BRANCH #
+--   reduce production name -> WRITE
 ** End-of-stream conflict on WRITE SYMB_REG SEMI RPAR REG READ RBRACE RBRAC PLUS PIPE NUM NAME META FENCE COMMA BRANCH
 **   There is a tension between
 **   (1) reducing production name -> WRITE
@@ -96,23 +77,8 @@ State 4:
 name -> READ . [ WRITE SYMB_REG SEMI RPAR REG READ RBRACE RBRAC PLUS PIPE NUM NAME META FENCE COMMA BRANCH # ]
 ## Transitions:
 ## Reductions:
--- On WRITE reduce production name -> READ
--- On SYMB_REG reduce production name -> READ
--- On SEMI reduce production name -> READ
--- On RPAR reduce production name -> READ
--- On REG reduce production name -> READ
--- On READ reduce production name -> READ
--- On RBRACE reduce production name -> READ
--- On RBRAC reduce production name -> READ
--- On PLUS reduce production name -> READ
--- On PIPE reduce production name -> READ
--- On NUM reduce production name -> READ
--- On NAME reduce production name -> READ
--- On META reduce production name -> READ
--- On FENCE reduce production name -> READ
--- On COMMA reduce production name -> READ
--- On BRANCH reduce production name -> READ
--- On # reduce production name -> READ
+-- On WRITE SYMB_REG SEMI RPAR REG READ RBRACE RBRAC PLUS PIPE NUM NAME META FENCE COMMA BRANCH #
+--   reduce production name -> READ
 ** End-of-stream conflict on WRITE SYMB_REG SEMI RPAR REG READ RBRACE RBRAC PLUS PIPE NUM NAME META FENCE COMMA BRANCH
 **   There is a tension between
 **   (1) reducing production name -> READ
@@ -126,23 +92,8 @@ State 5:
 name -> NAME . [ WRITE SYMB_REG SEMI RPAR REG READ RBRACE RBRAC PLUS PIPE NUM NAME META FENCE COMMA BRANCH # ]
 ## Transitions:
 ## Reductions:
--- On WRITE reduce production name -> NAME
--- On SYMB_REG reduce production name -> NAME
--- On SEMI reduce production name -> NAME
--- On RPAR reduce production name -> NAME
--- On REG reduce production name -> NAME
--- On READ reduce production name -> NAME
--- On RBRACE reduce production name -> NAME
--- On RBRAC reduce production name -> NAME
--- On PLUS reduce production name -> NAME
--- On PIPE reduce production name -> NAME
--- On NUM reduce production name -> NAME
--- On NAME reduce production name -> NAME
--- On META reduce production name -> NAME
--- On FENCE reduce production name -> NAME
--- On COMMA reduce production name -> NAME
--- On BRANCH reduce production name -> NAME
--- On # reduce production name -> NAME
+-- On WRITE SYMB_REG SEMI RPAR REG READ RBRACE RBRAC PLUS PIPE NUM NAME META FENCE COMMA BRANCH #
+--   reduce production name -> NAME
 ** End-of-stream conflict on WRITE SYMB_REG SEMI RPAR REG READ RBRACE RBRAC PLUS PIPE NUM NAME META FENCE COMMA BRANCH
 **   There is a tension between
 **   (1) reducing production name -> NAME
@@ -156,23 +107,8 @@ State 6:
 name -> FENCE . [ WRITE SYMB_REG SEMI RPAR REG READ RBRACE RBRAC PLUS PIPE NUM NAME META FENCE COMMA BRANCH # ]
 ## Transitions:
 ## Reductions:
--- On WRITE reduce production name -> FENCE
--- On SYMB_REG reduce production name -> FENCE
--- On SEMI reduce production name -> FENCE
--- On RPAR reduce production name -> FENCE
--- On REG reduce production name -> FENCE
--- On READ reduce production name -> FENCE
--- On RBRACE reduce production name -> FENCE
--- On RBRAC reduce production name -> FENCE
--- On PLUS reduce production name -> FENCE
--- On PIPE reduce production name -> FENCE
--- On NUM reduce production name -> FENCE
--- On NAME reduce production name -> FENCE
--- On META reduce production name -> FENCE
--- On FENCE reduce production name -> FENCE
--- On COMMA reduce production name -> FENCE
--- On BRANCH reduce production name -> FENCE
--- On # reduce production name -> FENCE
+-- On WRITE SYMB_REG SEMI RPAR REG READ RBRACE RBRAC PLUS PIPE NUM NAME META FENCE COMMA BRANCH #
+--   reduce production name -> FENCE
 ** End-of-stream conflict on WRITE SYMB_REG SEMI RPAR REG READ RBRACE RBRAC PLUS PIPE NUM NAME META FENCE COMMA BRANCH
 **   There is a tension between
 **   (1) reducing production name -> FENCE
@@ -186,23 +122,8 @@ State 7:
 name -> BRANCH . [ WRITE SYMB_REG SEMI RPAR REG READ RBRACE RBRAC PLUS PIPE NUM NAME META FENCE COMMA BRANCH # ]
 ## Transitions:
 ## Reductions:
--- On WRITE reduce production name -> BRANCH
--- On SYMB_REG reduce production name -> BRANCH
--- On SEMI reduce production name -> BRANCH
--- On RPAR reduce production name -> BRANCH
--- On REG reduce production name -> BRANCH
--- On READ reduce production name -> BRANCH
--- On RBRACE reduce production name -> BRANCH
--- On RBRAC reduce production name -> BRANCH
--- On PLUS reduce production name -> BRANCH
--- On PIPE reduce production name -> BRANCH
--- On NUM reduce production name -> BRANCH
--- On NAME reduce production name -> BRANCH
--- On META reduce production name -> BRANCH
--- On FENCE reduce production name -> BRANCH
--- On COMMA reduce production name -> BRANCH
--- On BRANCH reduce production name -> BRANCH
--- On # reduce production name -> BRANCH
+-- On WRITE SYMB_REG SEMI RPAR REG READ RBRACE RBRAC PLUS PIPE NUM NAME META FENCE COMMA BRANCH #
+--   reduce production name -> BRANCH
 ** End-of-stream conflict on WRITE SYMB_REG SEMI RPAR REG READ RBRACE RBRAC PLUS PIPE NUM NAME META FENCE COMMA BRANCH
 **   There is a tension between
 **   (1) reducing production name -> BRANCH
@@ -216,8 +137,8 @@ State 8:
 name_list -> name_list_ne . [ RBRACE RBRAC ]
 ## Transitions:
 ## Reductions:
--- On RBRACE reduce production name_list -> name_list_ne
--- On RBRAC reduce production name_list -> name_list_ne
+-- On RBRACE RBRAC
+--   reduce production name_list -> name_list_ne
 
 State 9:
 ## Known stack suffix:
@@ -235,17 +156,8 @@ State 10:
 annot_list_option -> LBRAC name_list RBRAC . [ WRITE SYMB_REG SEMI REG READ PIPE NAME LBRACE FENCE BRANCH # ]
 ## Transitions:
 ## Reductions:
--- On WRITE reduce production annot_list_option -> LBRAC name_list RBRAC
--- On SYMB_REG reduce production annot_list_option -> LBRAC name_list RBRAC
--- On SEMI reduce production annot_list_option -> LBRAC name_list RBRAC
--- On REG reduce production annot_list_option -> LBRAC name_list RBRAC
--- On READ reduce production annot_list_option -> LBRAC name_list RBRAC
--- On PIPE reduce production annot_list_option -> LBRAC name_list RBRAC
--- On NAME reduce production annot_list_option -> LBRAC name_list RBRAC
--- On LBRACE reduce production annot_list_option -> LBRAC name_list RBRAC
--- On FENCE reduce production annot_list_option -> LBRAC name_list RBRAC
--- On BRANCH reduce production annot_list_option -> LBRAC name_list RBRAC
--- On # reduce production annot_list_option -> LBRAC name_list RBRAC
+-- On WRITE SYMB_REG SEMI REG READ PIPE NAME LBRACE FENCE BRANCH #
+--   reduce production annot_list_option -> LBRAC name_list RBRAC
 ** End-of-stream conflict on WRITE SYMB_REG SEMI REG READ PIPE NAME LBRACE FENCE BRANCH
 **   There is a tension between
 **   (1) reducing production annot_list_option -> LBRAC name_list RBRAC
@@ -261,8 +173,8 @@ name_list_ne -> name . [ RBRACE RBRAC ]
 ## Transitions:
 -- On COMMA shift to state 12
 ## Reductions:
--- On RBRACE reduce production name_list_ne -> name
--- On RBRAC reduce production name_list_ne -> name
+-- On RBRACE RBRAC
+--   reduce production name_list_ne -> name
 
 State 12:
 ## Known stack suffix:
@@ -286,8 +198,8 @@ State 13:
 name_list_ne -> name COMMA name_list_ne . [ RBRACE RBRAC ]
 ## Transitions:
 ## Reductions:
--- On RBRACE reduce production name_list_ne -> name COMMA name_list_ne
--- On RBRAC reduce production name_list_ne -> name COMMA name_list_ne
+-- On RBRACE RBRAC
+--   reduce production name_list_ne -> name COMMA name_list_ne
 
 State 14:
 ## Known stack suffix:
@@ -315,21 +227,8 @@ State 15:
 reg -> SYMB_REG . [ WRITE SYMB_REG SEMI RPAR REG READ PLUS PIPE NUM NAME META LPAR FENCE BRANCH # ]
 ## Transitions:
 ## Reductions:
--- On WRITE reduce production reg -> SYMB_REG
--- On SYMB_REG reduce production reg -> SYMB_REG
--- On SEMI reduce production reg -> SYMB_REG
--- On RPAR reduce production reg -> SYMB_REG
--- On REG reduce production reg -> SYMB_REG
--- On READ reduce production reg -> SYMB_REG
--- On PLUS reduce production reg -> SYMB_REG
--- On PIPE reduce production reg -> SYMB_REG
--- On NUM reduce production reg -> SYMB_REG
--- On NAME reduce production reg -> SYMB_REG
--- On META reduce production reg -> SYMB_REG
--- On LPAR reduce production reg -> SYMB_REG
--- On FENCE reduce production reg -> SYMB_REG
--- On BRANCH reduce production reg -> SYMB_REG
--- On # reduce production reg -> SYMB_REG
+-- On WRITE SYMB_REG SEMI RPAR REG READ PLUS PIPE NUM NAME META LPAR FENCE BRANCH #
+--   reduce production reg -> SYMB_REG
 ** End-of-stream conflict on WRITE SYMB_REG SEMI RPAR REG READ PLUS PIPE NUM NAME META LPAR FENCE BRANCH
 **   There is a tension between
 **   (1) reducing production reg -> SYMB_REG
@@ -343,21 +242,8 @@ State 16:
 reg -> REG . [ WRITE SYMB_REG SEMI RPAR REG READ PLUS PIPE NUM NAME META LPAR FENCE BRANCH # ]
 ## Transitions:
 ## Reductions:
--- On WRITE reduce production reg -> REG
--- On SYMB_REG reduce production reg -> REG
--- On SEMI reduce production reg -> REG
--- On RPAR reduce production reg -> REG
--- On REG reduce production reg -> REG
--- On READ reduce production reg -> REG
--- On PLUS reduce production reg -> REG
--- On PIPE reduce production reg -> REG
--- On NUM reduce production reg -> REG
--- On NAME reduce production reg -> REG
--- On META reduce production reg -> REG
--- On LPAR reduce production reg -> REG
--- On FENCE reduce production reg -> REG
--- On BRANCH reduce production reg -> REG
--- On # reduce production reg -> REG
+-- On WRITE SYMB_REG SEMI RPAR REG READ PLUS PIPE NUM NAME META LPAR FENCE BRANCH #
+--   reduce production reg -> REG
 ** End-of-stream conflict on WRITE SYMB_REG SEMI RPAR REG READ PLUS PIPE NUM NAME META LPAR FENCE BRANCH
 **   There is a tension between
 **   (1) reducing production reg -> REG
@@ -373,13 +259,8 @@ addr_op -> reg_or_addr . PLUS reg_or_imm [ SYMB_REG SEMI REG PIPE NUM META # ]
 ## Transitions:
 -- On PLUS shift to state 18
 ## Reductions:
--- On SYMB_REG reduce production addr_op -> reg_or_addr
--- On SEMI reduce production addr_op -> reg_or_addr
--- On REG reduce production addr_op -> reg_or_addr
--- On PIPE reduce production addr_op -> reg_or_addr
--- On NUM reduce production addr_op -> reg_or_addr
--- On META reduce production addr_op -> reg_or_addr
--- On # reduce production addr_op -> reg_or_addr
+-- On SYMB_REG SEMI REG PIPE NUM META #
+--   reduce production addr_op -> reg_or_addr
 ** End-of-stream conflict on SYMB_REG SEMI REG PLUS PIPE NUM META
 **   There is a tension between
 **   (1) reducing production addr_op -> reg_or_addr
@@ -408,19 +289,8 @@ State 19:
 k -> NUM . [ WRITE SYMB_REG SEMI RPAR REG READ PIPE NUM NAME META FENCE BRANCH # ]
 ## Transitions:
 ## Reductions:
--- On WRITE reduce production k -> NUM
--- On SYMB_REG reduce production k -> NUM
--- On SEMI reduce production k -> NUM
--- On RPAR reduce production k -> NUM
--- On REG reduce production k -> NUM
--- On READ reduce production k -> NUM
--- On PIPE reduce production k -> NUM
--- On NUM reduce production k -> NUM
--- On NAME reduce production k -> NUM
--- On META reduce production k -> NUM
--- On FENCE reduce production k -> NUM
--- On BRANCH reduce production k -> NUM
--- On # reduce production k -> NUM
+-- On WRITE SYMB_REG SEMI RPAR REG READ PIPE NUM NAME META FENCE BRANCH #
+--   reduce production k -> NUM
 ** End-of-stream conflict on WRITE SYMB_REG SEMI RPAR REG READ PIPE NUM NAME META FENCE BRANCH
 **   There is a tension between
 **   (1) reducing production k -> NUM
@@ -434,19 +304,8 @@ State 20:
 k -> META . [ WRITE SYMB_REG SEMI RPAR REG READ PIPE NUM NAME META FENCE BRANCH # ]
 ## Transitions:
 ## Reductions:
--- On WRITE reduce production k -> META
--- On SYMB_REG reduce production k -> META
--- On SEMI reduce production k -> META
--- On RPAR reduce production k -> META
--- On REG reduce production k -> META
--- On READ reduce production k -> META
--- On PIPE reduce production k -> META
--- On NUM reduce production k -> META
--- On NAME reduce production k -> META
--- On META reduce production k -> META
--- On FENCE reduce production k -> META
--- On BRANCH reduce production k -> META
--- On # reduce production k -> META
+-- On WRITE SYMB_REG SEMI RPAR REG READ PIPE NUM NAME META FENCE BRANCH #
+--   reduce production k -> META
 ** End-of-stream conflict on WRITE SYMB_REG SEMI RPAR REG READ PIPE NUM NAME META FENCE BRANCH
 **   There is a tension between
 **   (1) reducing production k -> META
@@ -460,13 +319,8 @@ State 21:
 addr_op -> reg_or_addr PLUS reg_or_imm . [ SYMB_REG SEMI REG PIPE NUM META # ]
 ## Transitions:
 ## Reductions:
--- On SYMB_REG reduce production addr_op -> reg_or_addr PLUS reg_or_imm
--- On SEMI reduce production addr_op -> reg_or_addr PLUS reg_or_imm
--- On REG reduce production addr_op -> reg_or_addr PLUS reg_or_imm
--- On PIPE reduce production addr_op -> reg_or_addr PLUS reg_or_imm
--- On NUM reduce production addr_op -> reg_or_addr PLUS reg_or_imm
--- On META reduce production addr_op -> reg_or_addr PLUS reg_or_imm
--- On # reduce production addr_op -> reg_or_addr PLUS reg_or_imm
+-- On SYMB_REG SEMI REG PIPE NUM META #
+--   reduce production addr_op -> reg_or_addr PLUS reg_or_imm
 ** End-of-stream conflict on SYMB_REG SEMI REG PIPE NUM META
 **   There is a tension between
 **   (1) reducing production addr_op -> reg_or_addr PLUS reg_or_imm
@@ -480,13 +334,8 @@ State 22:
 reg_or_imm -> reg . [ SYMB_REG SEMI REG PIPE NUM META # ]
 ## Transitions:
 ## Reductions:
--- On SYMB_REG reduce production reg_or_imm -> reg
--- On SEMI reduce production reg_or_imm -> reg
--- On REG reduce production reg_or_imm -> reg
--- On PIPE reduce production reg_or_imm -> reg
--- On NUM reduce production reg_or_imm -> reg
--- On META reduce production reg_or_imm -> reg
--- On # reduce production reg_or_imm -> reg
+-- On SYMB_REG SEMI REG PIPE NUM META #
+--   reduce production reg_or_imm -> reg
 ** End-of-stream conflict on SYMB_REG SEMI REG PIPE NUM META
 **   There is a tension between
 **   (1) reducing production reg_or_imm -> reg
@@ -500,13 +349,8 @@ State 23:
 reg_or_imm -> k . [ SYMB_REG SEMI REG PIPE NUM META # ]
 ## Transitions:
 ## Reductions:
--- On SYMB_REG reduce production reg_or_imm -> k
--- On SEMI reduce production reg_or_imm -> k
--- On REG reduce production reg_or_imm -> k
--- On PIPE reduce production reg_or_imm -> k
--- On NUM reduce production reg_or_imm -> k
--- On META reduce production reg_or_imm -> k
--- On # reduce production reg_or_imm -> k
+-- On SYMB_REG SEMI REG PIPE NUM META #
+--   reduce production reg_or_imm -> k
 ** End-of-stream conflict on SYMB_REG SEMI REG PIPE NUM META
 **   There is a tension between
 **   (1) reducing production reg_or_imm -> k
@@ -520,20 +364,8 @@ State 24:
 reg_or_addr -> reg . [ WRITE SYMB_REG SEMI RPAR REG READ PLUS PIPE NUM NAME META FENCE BRANCH # ]
 ## Transitions:
 ## Reductions:
--- On WRITE reduce production reg_or_addr -> reg
--- On SYMB_REG reduce production reg_or_addr -> reg
--- On SEMI reduce production reg_or_addr -> reg
--- On RPAR reduce production reg_or_addr -> reg
--- On REG reduce production reg_or_addr -> reg
--- On READ reduce production reg_or_addr -> reg
--- On PLUS reduce production reg_or_addr -> reg
--- On PIPE reduce production reg_or_addr -> reg
--- On NUM reduce production reg_or_addr -> reg
--- On NAME reduce production reg_or_addr -> reg
--- On META reduce production reg_or_addr -> reg
--- On FENCE reduce production reg_or_addr -> reg
--- On BRANCH reduce production reg_or_addr -> reg
--- On # reduce production reg_or_addr -> reg
+-- On WRITE SYMB_REG SEMI RPAR REG READ PLUS PIPE NUM NAME META FENCE BRANCH #
+--   reduce production reg_or_addr -> reg
 ** End-of-stream conflict on WRITE SYMB_REG SEMI RPAR REG READ PLUS PIPE NUM NAME META FENCE BRANCH
 **   There is a tension between
 **   (1) reducing production reg_or_addr -> reg
@@ -547,20 +379,8 @@ State 25:
 reg_or_addr -> name . [ WRITE SYMB_REG SEMI RPAR REG READ PLUS PIPE NUM NAME META FENCE BRANCH # ]
 ## Transitions:
 ## Reductions:
--- On WRITE reduce production reg_or_addr -> name
--- On SYMB_REG reduce production reg_or_addr -> name
--- On SEMI reduce production reg_or_addr -> name
--- On RPAR reduce production reg_or_addr -> name
--- On REG reduce production reg_or_addr -> name
--- On READ reduce production reg_or_addr -> name
--- On PLUS reduce production reg_or_addr -> name
--- On PIPE reduce production reg_or_addr -> name
--- On NUM reduce production reg_or_addr -> name
--- On NAME reduce production reg_or_addr -> name
--- On META reduce production reg_or_addr -> name
--- On FENCE reduce production reg_or_addr -> name
--- On BRANCH reduce production reg_or_addr -> name
--- On # reduce production reg_or_addr -> name
+-- On WRITE SYMB_REG SEMI RPAR REG READ PLUS PIPE NUM NAME META FENCE BRANCH #
+--   reduce production reg_or_addr -> name
 ** End-of-stream conflict on WRITE SYMB_REG SEMI RPAR REG READ PLUS PIPE NUM NAME META FENCE BRANCH
 **   There is a tension between
 **   (1) reducing production reg_or_addr -> name
@@ -589,9 +409,8 @@ State 27:
 instr -> WRITE annot_list_option addr_op reg_or_imm . [ SEMI PIPE # ]
 ## Transitions:
 ## Reductions:
--- On SEMI reduce production instr -> WRITE annot_list_option addr_op reg_or_imm
--- On PIPE reduce production instr -> WRITE annot_list_option addr_op reg_or_imm
--- On # reduce production instr -> WRITE annot_list_option addr_op reg_or_imm
+-- On SEMI PIPE #
+--   reduce production instr -> WRITE annot_list_option addr_op reg_or_imm
 ** End-of-stream conflict on SEMI PIPE
 **   There is a tension between
 **   (1) reducing production instr -> WRITE annot_list_option addr_op reg_or_imm
@@ -607,8 +426,8 @@ instr -> RMW . annot_list_option reg operation addr_op [ SEMI PIPE # ]
 -- On LBRAC shift to state 2
 -- On annot_list_option shift to state 29
 ## Reductions:
--- On SYMB_REG reduce production annot_list_option ->
--- On REG reduce production annot_list_option ->
+-- On SYMB_REG REG
+--   reduce production annot_list_option ->
 
 State 29:
 ## Known stack suffix:
@@ -691,19 +510,8 @@ State 33:
 any_value -> reg_or_addr . [ WRITE SYMB_REG SEMI RPAR REG READ PIPE NUM NAME META FENCE BRANCH # ]
 ## Transitions:
 ## Reductions:
--- On WRITE reduce production any_value -> reg_or_addr
--- On SYMB_REG reduce production any_value -> reg_or_addr
--- On SEMI reduce production any_value -> reg_or_addr
--- On RPAR reduce production any_value -> reg_or_addr
--- On REG reduce production any_value -> reg_or_addr
--- On READ reduce production any_value -> reg_or_addr
--- On PIPE reduce production any_value -> reg_or_addr
--- On NUM reduce production any_value -> reg_or_addr
--- On NAME reduce production any_value -> reg_or_addr
--- On META reduce production any_value -> reg_or_addr
--- On FENCE reduce production any_value -> reg_or_addr
--- On BRANCH reduce production any_value -> reg_or_addr
--- On # reduce production any_value -> reg_or_addr
+-- On WRITE SYMB_REG SEMI RPAR REG READ PIPE NUM NAME META FENCE BRANCH #
+--   reduce production any_value -> reg_or_addr
 ** End-of-stream conflict on WRITE SYMB_REG SEMI RPAR REG READ PIPE NUM NAME META FENCE BRANCH
 **   There is a tension between
 **   (1) reducing production any_value -> reg_or_addr
@@ -717,19 +525,8 @@ State 34:
 any_value -> k . [ WRITE SYMB_REG SEMI RPAR REG READ PIPE NUM NAME META FENCE BRANCH # ]
 ## Transitions:
 ## Reductions:
--- On WRITE reduce production any_value -> k
--- On SYMB_REG reduce production any_value -> k
--- On SEMI reduce production any_value -> k
--- On RPAR reduce production any_value -> k
--- On REG reduce production any_value -> k
--- On READ reduce production any_value -> k
--- On PIPE reduce production any_value -> k
--- On NUM reduce production any_value -> k
--- On NAME reduce production any_value -> k
--- On META reduce production any_value -> k
--- On FENCE reduce production any_value -> k
--- On BRANCH reduce production any_value -> k
--- On # reduce production any_value -> k
+-- On WRITE SYMB_REG SEMI RPAR REG READ PIPE NUM NAME META FENCE BRANCH #
+--   reduce production any_value -> k
 ** End-of-stream conflict on WRITE SYMB_REG SEMI RPAR REG READ PIPE NUM NAME META FENCE BRANCH
 **   There is a tension between
 **   (1) reducing production any_value -> k
@@ -774,16 +571,8 @@ State 37:
 operation -> LPAR XOR any_value any_value RPAR . [ WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH # ]
 ## Transitions:
 ## Reductions:
--- On WRITE reduce production operation -> LPAR XOR any_value any_value RPAR
--- On SYMB_REG reduce production operation -> LPAR XOR any_value any_value RPAR
--- On SEMI reduce production operation -> LPAR XOR any_value any_value RPAR
--- On REG reduce production operation -> LPAR XOR any_value any_value RPAR
--- On READ reduce production operation -> LPAR XOR any_value any_value RPAR
--- On PIPE reduce production operation -> LPAR XOR any_value any_value RPAR
--- On NAME reduce production operation -> LPAR XOR any_value any_value RPAR
--- On FENCE reduce production operation -> LPAR XOR any_value any_value RPAR
--- On BRANCH reduce production operation -> LPAR XOR any_value any_value RPAR
--- On # reduce production operation -> LPAR XOR any_value any_value RPAR
+-- On WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH #
+--   reduce production operation -> LPAR XOR any_value any_value RPAR
 ** End-of-stream conflict on WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH
 **   There is a tension between
 **   (1) reducing production operation -> LPAR XOR any_value any_value RPAR
@@ -850,16 +639,8 @@ State 41:
 operation -> LPAR NEQ any_value any_value RPAR . [ WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH # ]
 ## Transitions:
 ## Reductions:
--- On WRITE reduce production operation -> LPAR NEQ any_value any_value RPAR
--- On SYMB_REG reduce production operation -> LPAR NEQ any_value any_value RPAR
--- On SEMI reduce production operation -> LPAR NEQ any_value any_value RPAR
--- On REG reduce production operation -> LPAR NEQ any_value any_value RPAR
--- On READ reduce production operation -> LPAR NEQ any_value any_value RPAR
--- On PIPE reduce production operation -> LPAR NEQ any_value any_value RPAR
--- On NAME reduce production operation -> LPAR NEQ any_value any_value RPAR
--- On FENCE reduce production operation -> LPAR NEQ any_value any_value RPAR
--- On BRANCH reduce production operation -> LPAR NEQ any_value any_value RPAR
--- On # reduce production operation -> LPAR NEQ any_value any_value RPAR
+-- On WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH #
+--   reduce production operation -> LPAR NEQ any_value any_value RPAR
 ** End-of-stream conflict on WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH
 **   There is a tension between
 **   (1) reducing production operation -> LPAR NEQ any_value any_value RPAR
@@ -926,16 +707,8 @@ State 45:
 operation -> LPAR EQ any_value any_value RPAR . [ WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH # ]
 ## Transitions:
 ## Reductions:
--- On WRITE reduce production operation -> LPAR EQ any_value any_value RPAR
--- On SYMB_REG reduce production operation -> LPAR EQ any_value any_value RPAR
--- On SEMI reduce production operation -> LPAR EQ any_value any_value RPAR
--- On REG reduce production operation -> LPAR EQ any_value any_value RPAR
--- On READ reduce production operation -> LPAR EQ any_value any_value RPAR
--- On PIPE reduce production operation -> LPAR EQ any_value any_value RPAR
--- On NAME reduce production operation -> LPAR EQ any_value any_value RPAR
--- On FENCE reduce production operation -> LPAR EQ any_value any_value RPAR
--- On BRANCH reduce production operation -> LPAR EQ any_value any_value RPAR
--- On # reduce production operation -> LPAR EQ any_value any_value RPAR
+-- On WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH #
+--   reduce production operation -> LPAR EQ any_value any_value RPAR
 ** End-of-stream conflict on WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH
 **   There is a tension between
 **   (1) reducing production operation -> LPAR EQ any_value any_value RPAR
@@ -1002,16 +775,8 @@ State 49:
 operation -> LPAR AND any_value any_value RPAR . [ WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH # ]
 ## Transitions:
 ## Reductions:
--- On WRITE reduce production operation -> LPAR AND any_value any_value RPAR
--- On SYMB_REG reduce production operation -> LPAR AND any_value any_value RPAR
--- On SEMI reduce production operation -> LPAR AND any_value any_value RPAR
--- On REG reduce production operation -> LPAR AND any_value any_value RPAR
--- On READ reduce production operation -> LPAR AND any_value any_value RPAR
--- On PIPE reduce production operation -> LPAR AND any_value any_value RPAR
--- On NAME reduce production operation -> LPAR AND any_value any_value RPAR
--- On FENCE reduce production operation -> LPAR AND any_value any_value RPAR
--- On BRANCH reduce production operation -> LPAR AND any_value any_value RPAR
--- On # reduce production operation -> LPAR AND any_value any_value RPAR
+-- On WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH #
+--   reduce production operation -> LPAR AND any_value any_value RPAR
 ** End-of-stream conflict on WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH
 **   There is a tension between
 **   (1) reducing production operation -> LPAR AND any_value any_value RPAR
@@ -1078,16 +843,8 @@ State 53:
 operation -> LPAR ADD any_value any_value RPAR . [ WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH # ]
 ## Transitions:
 ## Reductions:
--- On WRITE reduce production operation -> LPAR ADD any_value any_value RPAR
--- On SYMB_REG reduce production operation -> LPAR ADD any_value any_value RPAR
--- On SEMI reduce production operation -> LPAR ADD any_value any_value RPAR
--- On REG reduce production operation -> LPAR ADD any_value any_value RPAR
--- On READ reduce production operation -> LPAR ADD any_value any_value RPAR
--- On PIPE reduce production operation -> LPAR ADD any_value any_value RPAR
--- On NAME reduce production operation -> LPAR ADD any_value any_value RPAR
--- On FENCE reduce production operation -> LPAR ADD any_value any_value RPAR
--- On BRANCH reduce production operation -> LPAR ADD any_value any_value RPAR
--- On # reduce production operation -> LPAR ADD any_value any_value RPAR
+-- On WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH #
+--   reduce production operation -> LPAR ADD any_value any_value RPAR
 ** End-of-stream conflict on WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH
 **   There is a tension between
 **   (1) reducing production operation -> LPAR ADD any_value any_value RPAR
@@ -1120,9 +877,8 @@ State 55:
 instr -> RMW annot_list_option reg operation addr_op . [ SEMI PIPE # ]
 ## Transitions:
 ## Reductions:
--- On SEMI reduce production instr -> RMW annot_list_option reg operation addr_op
--- On PIPE reduce production instr -> RMW annot_list_option reg operation addr_op
--- On # reduce production instr -> RMW annot_list_option reg operation addr_op
+-- On SEMI PIPE #
+--   reduce production instr -> RMW annot_list_option reg operation addr_op
 ** End-of-stream conflict on SEMI PIPE
 **   There is a tension between
 **   (1) reducing production instr -> RMW annot_list_option reg operation addr_op
@@ -1136,16 +892,8 @@ State 56:
 operation -> any_value . [ WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH # ]
 ## Transitions:
 ## Reductions:
--- On WRITE reduce production operation -> any_value
--- On SYMB_REG reduce production operation -> any_value
--- On SEMI reduce production operation -> any_value
--- On REG reduce production operation -> any_value
--- On READ reduce production operation -> any_value
--- On PIPE reduce production operation -> any_value
--- On NAME reduce production operation -> any_value
--- On FENCE reduce production operation -> any_value
--- On BRANCH reduce production operation -> any_value
--- On # reduce production operation -> any_value
+-- On WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH #
+--   reduce production operation -> any_value
 ** End-of-stream conflict on WRITE SYMB_REG SEMI REG READ PIPE NAME FENCE BRANCH
 **   There is a tension between
 **   (1) reducing production operation -> any_value
@@ -1161,8 +909,8 @@ instr -> READ . annot_list_option reg addr_op [ SEMI PIPE # ]
 -- On LBRAC shift to state 2
 -- On annot_list_option shift to state 58
 ## Reductions:
--- On SYMB_REG reduce production annot_list_option ->
--- On REG reduce production annot_list_option ->
+-- On SYMB_REG REG
+--   reduce production annot_list_option ->
 
 State 58:
 ## Known stack suffix:
@@ -1201,9 +949,8 @@ State 60:
 instr -> READ annot_list_option reg addr_op . [ SEMI PIPE # ]
 ## Transitions:
 ## Reductions:
--- On SEMI reduce production instr -> READ annot_list_option reg addr_op
--- On PIPE reduce production instr -> READ annot_list_option reg addr_op
--- On # reduce production instr -> READ annot_list_option reg addr_op
+-- On SEMI PIPE #
+--   reduce production instr -> READ annot_list_option reg addr_op
 ** End-of-stream conflict on SEMI PIPE
 **   There is a tension between
 **   (1) reducing production instr -> READ annot_list_option reg addr_op
@@ -1237,9 +984,8 @@ instr_option -> NAME COLON . instr_option [ SEMI PIPE # ]
 -- On instr_option shift to state 86
 -- On instr shift to state 87
 ## Reductions:
--- On SEMI reduce production instr_option ->
--- On PIPE reduce production instr_option ->
--- On # reduce production instr_option ->
+-- On SEMI PIPE #
+--   reduce production instr_option ->
 ** End-of-stream conflict on WRITE SEMI RMW READ PIPE NAME MOV FENCE CODEVAR CALL BRANCH
 **   There is a tension between
 **   (1) reducing production instr_option ->
@@ -1288,9 +1034,8 @@ State 65:
 instr -> MOV reg operation . [ SEMI PIPE # ]
 ## Transitions:
 ## Reductions:
--- On SEMI reduce production instr -> MOV reg operation
--- On PIPE reduce production instr -> MOV reg operation
--- On # reduce production instr -> MOV reg operation
+-- On SEMI PIPE #
+--   reduce production instr -> MOV reg operation
 ** End-of-stream conflict on SEMI PIPE
 **   There is a tension between
 **   (1) reducing production instr -> MOV reg operation
@@ -1306,10 +1051,8 @@ instr -> FENCE . annot_list_option fence_labels_option [ SEMI PIPE # ]
 -- On LBRAC shift to state 2
 -- On annot_list_option shift to state 67
 ## Reductions:
--- On SEMI reduce production annot_list_option ->
--- On PIPE reduce production annot_list_option ->
--- On LBRACE reduce production annot_list_option ->
--- On # reduce production annot_list_option ->
+-- On SEMI PIPE LBRACE #
+--   reduce production annot_list_option ->
 ** End-of-stream conflict on SEMI PIPE LBRACE LBRAC
 **   There is a tension between
 **   (1) reducing production annot_list_option ->
@@ -1325,9 +1068,8 @@ instr -> FENCE annot_list_option . fence_labels_option [ SEMI PIPE # ]
 -- On LBRACE shift to state 68
 -- On fence_labels_option shift to state 75
 ## Reductions:
--- On SEMI reduce production fence_labels_option ->
--- On PIPE reduce production fence_labels_option ->
--- On # reduce production fence_labels_option ->
+-- On SEMI PIPE #
+--   reduce production fence_labels_option ->
 ** End-of-stream conflict on SEMI PIPE LBRACE
 **   There is a tension between
 **   (1) reducing production fence_labels_option ->
@@ -1350,7 +1092,8 @@ fence_labels_option -> LBRACE . name_set RBRACE LBRACE name_set RBRACE [ SEMI PI
 -- On name_list shift to state 74
 -- On name shift to state 11
 ## Reductions:
--- On RBRACE reduce production name_list ->
+-- On RBRACE
+--   reduce production name_list ->
 
 State 69:
 ## Known stack suffix:
@@ -1386,7 +1129,8 @@ fence_labels_option -> LBRACE name_set RBRACE LBRACE . name_set RBRACE [ SEMI PI
 -- On name_list shift to state 74
 -- On name shift to state 11
 ## Reductions:
--- On RBRACE reduce production name_list ->
+-- On RBRACE
+--   reduce production name_list ->
 
 State 72:
 ## Known stack suffix:
@@ -1404,9 +1148,8 @@ State 73:
 fence_labels_option -> LBRACE name_set RBRACE LBRACE name_set RBRACE . [ SEMI PIPE # ]
 ## Transitions:
 ## Reductions:
--- On SEMI reduce production fence_labels_option -> LBRACE name_set RBRACE LBRACE name_set RBRACE
--- On PIPE reduce production fence_labels_option -> LBRACE name_set RBRACE LBRACE name_set RBRACE
--- On # reduce production fence_labels_option -> LBRACE name_set RBRACE LBRACE name_set RBRACE
+-- On SEMI PIPE #
+--   reduce production fence_labels_option -> LBRACE name_set RBRACE LBRACE name_set RBRACE
 ** End-of-stream conflict on SEMI PIPE
 **   There is a tension between
 **   (1) reducing production fence_labels_option -> LBRACE name_set RBRACE LBRACE name_set RBRACE
@@ -1420,7 +1163,8 @@ State 74:
 name_set -> name_list . [ RBRACE ]
 ## Transitions:
 ## Reductions:
--- On RBRACE reduce production name_set -> name_list
+-- On RBRACE
+--   reduce production name_set -> name_list
 
 State 75:
 ## Known stack suffix:
@@ -1429,9 +1173,8 @@ State 75:
 instr -> FENCE annot_list_option fence_labels_option . [ SEMI PIPE # ]
 ## Transitions:
 ## Reductions:
--- On SEMI reduce production instr -> FENCE annot_list_option fence_labels_option
--- On PIPE reduce production instr -> FENCE annot_list_option fence_labels_option
--- On # reduce production instr -> FENCE annot_list_option fence_labels_option
+-- On SEMI PIPE #
+--   reduce production instr -> FENCE annot_list_option fence_labels_option
 ** End-of-stream conflict on SEMI PIPE
 **   There is a tension between
 **   (1) reducing production instr -> FENCE annot_list_option fence_labels_option
@@ -1445,9 +1188,8 @@ State 76:
 instr_option -> CODEVAR . [ SEMI PIPE # ]
 ## Transitions:
 ## Reductions:
--- On SEMI reduce production instr_option -> CODEVAR
--- On PIPE reduce production instr_option -> CODEVAR
--- On # reduce production instr_option -> CODEVAR
+-- On SEMI PIPE #
+--   reduce production instr_option -> CODEVAR
 ** End-of-stream conflict on SEMI PIPE
 **   There is a tension between
 **   (1) reducing production instr_option -> CODEVAR
@@ -1493,9 +1235,8 @@ State 80:
 instr -> CALL LBRAC name RBRAC . [ SEMI PIPE # ]
 ## Transitions:
 ## Reductions:
--- On SEMI reduce production instr -> CALL LBRAC name RBRAC
--- On PIPE reduce production instr -> CALL LBRAC name RBRAC
--- On # reduce production instr -> CALL LBRAC name RBRAC
+-- On SEMI PIPE #
+--   reduce production instr -> CALL LBRAC name RBRAC
 ** End-of-stream conflict on SEMI PIPE
 **   There is a tension between
 **   (1) reducing production instr -> CALL LBRAC name RBRAC
@@ -1512,9 +1253,8 @@ instr -> BRANCH . annot_list_option NAME [ SEMI PIPE # ]
 -- On LBRAC shift to state 2
 -- On annot_list_option shift to state 82
 ## Reductions:
--- On SYMB_REG reduce production annot_list_option ->
--- On REG reduce production annot_list_option ->
--- On NAME reduce production annot_list_option ->
+-- On SYMB_REG REG NAME
+--   reduce production annot_list_option ->
 
 State 82:
 ## Known stack suffix:
@@ -1536,9 +1276,8 @@ State 83:
 instr -> BRANCH annot_list_option NAME . [ SEMI PIPE # ]
 ## Transitions:
 ## Reductions:
--- On SEMI reduce production instr -> BRANCH annot_list_option NAME
--- On PIPE reduce production instr -> BRANCH annot_list_option NAME
--- On # reduce production instr -> BRANCH annot_list_option NAME
+-- On SEMI PIPE #
+--   reduce production instr -> BRANCH annot_list_option NAME
 ** End-of-stream conflict on SEMI PIPE
 **   There is a tension between
 **   (1) reducing production instr -> BRANCH annot_list_option NAME
@@ -1561,9 +1300,8 @@ State 85:
 instr -> BRANCH annot_list_option reg NAME . [ SEMI PIPE # ]
 ## Transitions:
 ## Reductions:
--- On SEMI reduce production instr -> BRANCH annot_list_option reg NAME
--- On PIPE reduce production instr -> BRANCH annot_list_option reg NAME
--- On # reduce production instr -> BRANCH annot_list_option reg NAME
+-- On SEMI PIPE #
+--   reduce production instr -> BRANCH annot_list_option reg NAME
 ** End-of-stream conflict on SEMI PIPE
 **   There is a tension between
 **   (1) reducing production instr -> BRANCH annot_list_option reg NAME
@@ -1577,9 +1315,8 @@ State 86:
 instr_option -> NAME COLON instr_option . [ SEMI PIPE # ]
 ## Transitions:
 ## Reductions:
--- On SEMI reduce production instr_option -> NAME COLON instr_option
--- On PIPE reduce production instr_option -> NAME COLON instr_option
--- On # reduce production instr_option -> NAME COLON instr_option
+-- On SEMI PIPE #
+--   reduce production instr_option -> NAME COLON instr_option
 ** End-of-stream conflict on SEMI PIPE
 **   There is a tension between
 **   (1) reducing production instr_option -> NAME COLON instr_option
@@ -1593,9 +1330,8 @@ State 87:
 instr_option -> instr . [ SEMI PIPE # ]
 ## Transitions:
 ## Reductions:
--- On SEMI reduce production instr_option -> instr
--- On PIPE reduce production instr_option -> instr
--- On # reduce production instr_option -> instr
+-- On SEMI PIPE #
+--   reduce production instr_option -> instr
 ** End-of-stream conflict on SEMI PIPE
 **   There is a tension between
 **   (1) reducing production instr_option -> instr
@@ -1609,7 +1345,8 @@ State 88:
 instr_option_seq' -> instr_option_seq . [ # ]
 ## Transitions:
 ## Reductions:
--- On # accept instr_option_seq
+-- On #
+--   accept instr_option_seq
 
 State 89:
 ## Known stack suffix:
@@ -1620,7 +1357,8 @@ instr_option_seq -> instr_option . SEMI instr_option_seq [ # ]
 ## Transitions:
 -- On SEMI shift to state 90
 ## Reductions:
--- On # reduce production instr_option_seq -> instr_option
+-- On #
+--   reduce production instr_option_seq -> instr_option
 ** End-of-stream conflict on SEMI
 **   There is a tension between
 **   (1) reducing production instr_option_seq -> instr_option
@@ -1646,8 +1384,8 @@ instr_option_seq -> instr_option SEMI . instr_option_seq [ # ]
 -- On instr_option shift to state 89
 -- On instr shift to state 87
 ## Reductions:
--- On SEMI reduce production instr_option ->
--- On # reduce production instr_option ->
+-- On SEMI #
+--   reduce production instr_option ->
 ** End-of-stream conflict on WRITE SEMI RMW READ NAME MOV FENCE CODEVAR CALL BRANCH
 **   There is a tension between
 **   (1) reducing production instr_option ->
@@ -1661,7 +1399,8 @@ State 91:
 instr_option_seq -> instr_option SEMI instr_option_seq . [ # ]
 ## Transitions:
 ## Reductions:
--- On # reduce production instr_option_seq -> instr_option SEMI instr_option_seq
+-- On #
+--   reduce production instr_option_seq -> instr_option SEMI instr_option_seq
 
 State 92:
 ## Known stack suffix:
@@ -1673,7 +1412,8 @@ main' -> . main [ # ]
 -- On semi_opt shift to state 94
 -- On main shift to state 136
 ## Reductions:
--- On PROC reduce production semi_opt ->
+-- On PROC
+--   reduce production semi_opt ->
 
 State 93:
 ## Known stack suffix:
@@ -1682,7 +1422,8 @@ State 93:
 semi_opt -> SEMI . [ PROC ]
 ## Transitions:
 ## Reductions:
--- On PROC reduce production semi_opt -> SEMI
+-- On PROC
+--   reduce production semi_opt -> SEMI
 
 State 94:
 ## Known stack suffix:
@@ -1712,17 +1453,8 @@ State 96:
 proc_list -> PROC SEMI . [ WRITE SEMI RMW READ PIPE NAME MOV FENCE CODEVAR CALL BRANCH ]
 ## Transitions:
 ## Reductions:
--- On WRITE reduce production proc_list -> PROC SEMI
--- On SEMI reduce production proc_list -> PROC SEMI
--- On RMW reduce production proc_list -> PROC SEMI
--- On READ reduce production proc_list -> PROC SEMI
--- On PIPE reduce production proc_list -> PROC SEMI
--- On NAME reduce production proc_list -> PROC SEMI
--- On MOV reduce production proc_list -> PROC SEMI
--- On FENCE reduce production proc_list -> PROC SEMI
--- On CODEVAR reduce production proc_list -> PROC SEMI
--- On CALL reduce production proc_list -> PROC SEMI
--- On BRANCH reduce production proc_list -> PROC SEMI
+-- On WRITE SEMI RMW READ PIPE NAME MOV FENCE CODEVAR CALL BRANCH
+--   reduce production proc_list -> PROC SEMI
 
 State 97:
 ## Known stack suffix:
@@ -1741,17 +1473,8 @@ State 98:
 proc_list -> PROC PIPE proc_list . [ WRITE SEMI RMW READ PIPE NAME MOV FENCE CODEVAR CALL BRANCH ]
 ## Transitions:
 ## Reductions:
--- On WRITE reduce production proc_list -> PROC PIPE proc_list
--- On SEMI reduce production proc_list -> PROC PIPE proc_list
--- On RMW reduce production proc_list -> PROC PIPE proc_list
--- On READ reduce production proc_list -> PROC PIPE proc_list
--- On PIPE reduce production proc_list -> PROC PIPE proc_list
--- On NAME reduce production proc_list -> PROC PIPE proc_list
--- On MOV reduce production proc_list -> PROC PIPE proc_list
--- On FENCE reduce production proc_list -> PROC PIPE proc_list
--- On CODEVAR reduce production proc_list -> PROC PIPE proc_list
--- On CALL reduce production proc_list -> PROC PIPE proc_list
--- On BRANCH reduce production proc_list -> PROC PIPE proc_list
+-- On WRITE SEMI RMW READ PIPE NAME MOV FENCE CODEVAR CALL BRANCH
+--   reduce production proc_list -> PROC PIPE proc_list
 
 State 99:
 ## Known stack suffix:
@@ -1773,8 +1496,8 @@ main -> semi_opt proc_list . iol_list scopes_and_memory_map EOF [ # ]
 -- On instr_option shift to state 133
 -- On instr shift to state 87
 ## Reductions:
--- On SEMI reduce production instr_option ->
--- On PIPE reduce production instr_option ->
+-- On SEMI PIPE
+--   reduce production instr_option ->
 
 State 100:
 ## Known stack suffix:
@@ -1786,8 +1509,8 @@ main -> semi_opt proc_list iol_list . scopes_and_memory_map EOF [ # ]
 -- On scopes_and_memory_map shift to state 117
 -- On scope_option shift to state 119
 ## Reductions:
--- On REGIONS reduce production scope_option ->
--- On EOF reduce production scope_option ->
+-- On REGIONS EOF
+--   reduce production scope_option ->
 
 State 101:
 ## Known stack suffix:
@@ -1835,7 +1558,8 @@ scope_tree -> LPAR NAME . proc_list_sc RPAR [ RPAR REGIONS LPAR EOF ]
 -- On proc_list_sc shift to state 111
 -- On proc shift to state 113
 ## Reductions:
--- On RPAR reduce production proc_list_sc ->
+-- On RPAR
+--   reduce production proc_list_sc ->
 
 State 105:
 ## Known stack suffix:
@@ -1844,9 +1568,8 @@ State 105:
 proc -> PROC . [ RPAR PROC NUM ]
 ## Transitions:
 ## Reductions:
--- On RPAR reduce production proc -> PROC
--- On PROC reduce production proc -> PROC
--- On NUM reduce production proc -> PROC
+-- On RPAR PROC NUM
+--   reduce production proc -> PROC
 
 State 106:
 ## Known stack suffix:
@@ -1855,9 +1578,8 @@ State 106:
 proc -> NUM . [ RPAR PROC NUM ]
 ## Transitions:
 ## Reductions:
--- On RPAR reduce production proc -> NUM
--- On PROC reduce production proc -> NUM
--- On NUM reduce production proc -> NUM
+-- On RPAR PROC NUM
+--   reduce production proc -> NUM
 
 State 107:
 ## Known stack suffix:
@@ -1875,10 +1597,8 @@ State 108:
 scope_tree -> LPAR NAME scope_tree_list RPAR . [ RPAR REGIONS LPAR EOF ]
 ## Transitions:
 ## Reductions:
--- On RPAR reduce production scope_tree -> LPAR NAME scope_tree_list RPAR
--- On REGIONS reduce production scope_tree -> LPAR NAME scope_tree_list RPAR
--- On LPAR reduce production scope_tree -> LPAR NAME scope_tree_list RPAR
--- On EOF reduce production scope_tree -> LPAR NAME scope_tree_list RPAR
+-- On RPAR REGIONS LPAR EOF
+--   reduce production scope_tree -> LPAR NAME scope_tree_list RPAR
 
 State 109:
 ## Known stack suffix:
@@ -1891,9 +1611,8 @@ scope_tree_list -> scope_tree . scope_tree_list [ RPAR REGIONS EOF ]
 -- On scope_tree_list shift to state 110
 -- On scope_tree shift to state 109
 ## Reductions:
--- On RPAR reduce production scope_tree_list -> scope_tree
--- On REGIONS reduce production scope_tree_list -> scope_tree
--- On EOF reduce production scope_tree_list -> scope_tree
+-- On RPAR REGIONS EOF
+--   reduce production scope_tree_list -> scope_tree
 
 State 110:
 ## Known stack suffix:
@@ -1902,9 +1621,8 @@ State 110:
 scope_tree_list -> scope_tree scope_tree_list . [ RPAR REGIONS EOF ]
 ## Transitions:
 ## Reductions:
--- On RPAR reduce production scope_tree_list -> scope_tree scope_tree_list
--- On REGIONS reduce production scope_tree_list -> scope_tree scope_tree_list
--- On EOF reduce production scope_tree_list -> scope_tree scope_tree_list
+-- On RPAR REGIONS EOF
+--   reduce production scope_tree_list -> scope_tree scope_tree_list
 
 State 111:
 ## Known stack suffix:
@@ -1922,10 +1640,8 @@ State 112:
 scope_tree -> LPAR NAME proc_list_sc RPAR . [ RPAR REGIONS LPAR EOF ]
 ## Transitions:
 ## Reductions:
--- On RPAR reduce production scope_tree -> LPAR NAME proc_list_sc RPAR
--- On REGIONS reduce production scope_tree -> LPAR NAME proc_list_sc RPAR
--- On LPAR reduce production scope_tree -> LPAR NAME proc_list_sc RPAR
--- On EOF reduce production scope_tree -> LPAR NAME proc_list_sc RPAR
+-- On RPAR REGIONS LPAR EOF
+--   reduce production scope_tree -> LPAR NAME proc_list_sc RPAR
 
 State 113:
 ## Known stack suffix:
@@ -1938,7 +1654,8 @@ proc_list_sc -> proc . proc_list_sc [ RPAR ]
 -- On proc_list_sc shift to state 114
 -- On proc shift to state 113
 ## Reductions:
--- On RPAR reduce production proc_list_sc ->
+-- On RPAR
+--   reduce production proc_list_sc ->
 
 State 114:
 ## Known stack suffix:
@@ -1947,7 +1664,8 @@ State 114:
 proc_list_sc -> proc proc_list_sc . [ RPAR ]
 ## Transitions:
 ## Reductions:
--- On RPAR reduce production proc_list_sc -> proc proc_list_sc
+-- On RPAR
+--   reduce production proc_list_sc -> proc proc_list_sc
 
 State 115:
 ## Known stack suffix:
@@ -1956,8 +1674,8 @@ State 115:
 scope_option -> SCOPES COLON top_scope_tree . [ REGIONS EOF ]
 ## Transitions:
 ## Reductions:
--- On REGIONS reduce production scope_option -> SCOPES COLON top_scope_tree
--- On EOF reduce production scope_option -> SCOPES COLON top_scope_tree
+-- On REGIONS EOF
+--   reduce production scope_option -> SCOPES COLON top_scope_tree
 
 State 116:
 ## Known stack suffix:
@@ -1966,8 +1684,8 @@ State 116:
 top_scope_tree -> scope_tree_list . [ REGIONS EOF ]
 ## Transitions:
 ## Reductions:
--- On REGIONS reduce production top_scope_tree -> scope_tree_list
--- On EOF reduce production top_scope_tree -> scope_tree_list
+-- On REGIONS EOF
+--   reduce production top_scope_tree -> scope_tree_list
 
 State 117:
 ## Known stack suffix:
@@ -1985,7 +1703,8 @@ State 118:
 main -> semi_opt proc_list iol_list scopes_and_memory_map EOF . [ # ]
 ## Transitions:
 ## Reductions:
--- On # reduce production main -> semi_opt proc_list iol_list scopes_and_memory_map EOF
+-- On #
+--   reduce production main -> semi_opt proc_list iol_list scopes_and_memory_map EOF
 
 State 119:
 ## Known stack suffix:
@@ -1996,7 +1715,8 @@ scopes_and_memory_map -> scope_option . memory_map_option [ EOF ]
 -- On REGIONS shift to state 120
 -- On memory_map_option shift to state 129
 ## Reductions:
--- On EOF reduce production memory_map_option ->
+-- On EOF
+--   reduce production memory_map_option ->
 
 State 120:
 ## Known stack suffix:
@@ -2017,7 +1737,8 @@ memory_map_option -> REGIONS COLON . memory_map [ EOF ]
 -- On memory_map_atom shift to state 125
 -- On memory_map shift to state 128
 ## Reductions:
--- On EOF reduce production memory_map ->
+-- On EOF
+--   reduce production memory_map ->
 
 State 122:
 ## Known stack suffix:
@@ -2044,8 +1765,8 @@ State 124:
 memory_map_atom -> NAME COLON NAME . [ EOF COMMA ]
 ## Transitions:
 ## Reductions:
--- On EOF reduce production memory_map_atom -> NAME COLON NAME
--- On COMMA reduce production memory_map_atom -> NAME COLON NAME
+-- On EOF COMMA
+--   reduce production memory_map_atom -> NAME COLON NAME
 
 State 125:
 ## Known stack suffix:
@@ -2056,7 +1777,8 @@ memory_map -> memory_map_atom . [ EOF ]
 ## Transitions:
 -- On COMMA shift to state 126
 ## Reductions:
--- On EOF reduce production memory_map -> memory_map_atom
+-- On EOF
+--   reduce production memory_map -> memory_map_atom
 
 State 126:
 ## Known stack suffix:
@@ -2068,7 +1790,8 @@ memory_map -> memory_map_atom COMMA . memory_map [ EOF ]
 -- On memory_map_atom shift to state 125
 -- On memory_map shift to state 127
 ## Reductions:
--- On EOF reduce production memory_map ->
+-- On EOF
+--   reduce production memory_map ->
 
 State 127:
 ## Known stack suffix:
@@ -2077,7 +1800,8 @@ State 127:
 memory_map -> memory_map_atom COMMA memory_map . [ EOF ]
 ## Transitions:
 ## Reductions:
--- On EOF reduce production memory_map -> memory_map_atom COMMA memory_map
+-- On EOF
+--   reduce production memory_map -> memory_map_atom COMMA memory_map
 
 State 128:
 ## Known stack suffix:
@@ -2086,7 +1810,8 @@ State 128:
 memory_map_option -> REGIONS COLON memory_map . [ EOF ]
 ## Transitions:
 ## Reductions:
--- On EOF reduce production memory_map_option -> REGIONS COLON memory_map
+-- On EOF
+--   reduce production memory_map_option -> REGIONS COLON memory_map
 
 State 129:
 ## Known stack suffix:
@@ -2095,7 +1820,8 @@ State 129:
 scopes_and_memory_map -> scope_option memory_map_option . [ EOF ]
 ## Transitions:
 ## Reductions:
--- On EOF reduce production scopes_and_memory_map -> scope_option memory_map_option
+-- On EOF
+--   reduce production scopes_and_memory_map -> scope_option memory_map_option
 
 State 130:
 ## Known stack suffix:
@@ -2128,11 +1854,10 @@ iol_list -> instr_option_list SEMI . iol_list [ SCOPES REGIONS EOF ]
 -- On instr_option shift to state 133
 -- On instr shift to state 87
 ## Reductions:
--- On SEMI reduce production instr_option ->
--- On SCOPES reduce production iol_list -> instr_option_list SEMI
--- On REGIONS reduce production iol_list -> instr_option_list SEMI
--- On PIPE reduce production instr_option ->
--- On EOF reduce production iol_list -> instr_option_list SEMI
+-- On SEMI PIPE
+--   reduce production instr_option ->
+-- On SCOPES REGIONS EOF
+--   reduce production iol_list -> instr_option_list SEMI
 
 State 132:
 ## Known stack suffix:
@@ -2141,9 +1866,8 @@ State 132:
 iol_list -> instr_option_list SEMI iol_list . [ SCOPES REGIONS EOF ]
 ## Transitions:
 ## Reductions:
--- On SCOPES reduce production iol_list -> instr_option_list SEMI iol_list
--- On REGIONS reduce production iol_list -> instr_option_list SEMI iol_list
--- On EOF reduce production iol_list -> instr_option_list SEMI iol_list
+-- On SCOPES REGIONS EOF
+--   reduce production iol_list -> instr_option_list SEMI iol_list
 
 State 133:
 ## Known stack suffix:
@@ -2154,7 +1878,8 @@ instr_option_list -> instr_option . PIPE instr_option_list [ SEMI ]
 ## Transitions:
 -- On PIPE shift to state 134
 ## Reductions:
--- On SEMI reduce production instr_option_list -> instr_option
+-- On SEMI
+--   reduce production instr_option_list -> instr_option
 
 State 134:
 ## Known stack suffix:
@@ -2175,8 +1900,8 @@ instr_option_list -> instr_option PIPE . instr_option_list [ SEMI ]
 -- On instr_option shift to state 133
 -- On instr shift to state 87
 ## Reductions:
--- On SEMI reduce production instr_option ->
--- On PIPE reduce production instr_option ->
+-- On SEMI PIPE
+--   reduce production instr_option ->
 
 State 135:
 ## Known stack suffix:
@@ -2185,7 +1910,8 @@ State 135:
 instr_option_list -> instr_option PIPE instr_option_list . [ SEMI ]
 ## Transitions:
 ## Reductions:
--- On SEMI reduce production instr_option_list -> instr_option PIPE instr_option_list
+-- On SEMI
+--   reduce production instr_option_list -> instr_option PIPE instr_option_list
 
 State 136:
 ## Known stack suffix:
@@ -2194,5 +1920,6 @@ State 136:
 main' -> main . [ # ]
 ## Transitions:
 ## Reductions:
--- On # accept main
+-- On #
+--   accept main
 

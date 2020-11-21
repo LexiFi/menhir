@@ -17,7 +17,8 @@ main' -> . main [ # ]
 -- On nxtoplevel shift to state 360
 -- On main shift to state 362
 ## Reductions:
--- On EOI reduce production sxblock ->
+-- On EOI
+--   reduce production sxblock ->
 
 State 1:
 ## Known stack suffix:
@@ -86,7 +87,8 @@ nxtoplevel -> MUTUAL LET VAR . argvar DEFEQ nxlet nxmutual IN nxlet [ EOI ]
 -- On VAR shift to state 7
 -- On argvar shift to state 9
 ## Reductions:
--- On DEFEQ reduce production argvar ->
+-- On DEFEQ
+--   reduce production argvar ->
 
 State 7:
 ## Known stack suffix:
@@ -97,8 +99,8 @@ argvar -> VAR . argvar [ DEFEQ ARROW ]
 -- On VAR shift to state 7
 -- On argvar shift to state 8
 ## Reductions:
--- On DEFEQ reduce production argvar ->
--- On ARROW reduce production argvar ->
+-- On DEFEQ ARROW
+--   reduce production argvar ->
 
 State 8:
 ## Known stack suffix:
@@ -235,47 +237,8 @@ nxlambda -> VAR . OVERWRITEEQ nxlor [ THEN RPAREN OVERWRITEGLOBALHASH MUTUAL LIS
 ## Transitions:
 -- On OVERWRITEEQ shift to state 14
 ## Reductions:
--- On VAR reduce production nxbot -> VAR
--- On UNITVALUE reduce production nxbot -> VAR
--- On TRUE reduce production nxbot -> VAR
--- On TIMES reduce production nxbot -> VAR
--- On THEN reduce production nxbot -> VAR
--- On RPAREN reduce production nxbot -> VAR
--- On PLUS reduce production nxbot -> VAR
--- On OVERWRITEGLOBALHASH reduce production nxbot -> VAR
--- On OPENSTR reduce production nxbot -> VAR
--- On OPENQT reduce production nxbot -> VAR
--- On NUMCONST reduce production nxbot -> VAR
--- On NEQ reduce production nxbot -> VAR
--- On MUTUAL reduce production nxbot -> VAR
--- On MOD reduce production nxbot -> VAR
--- On MINUS reduce production nxbot -> VAR
--- On LT reduce production nxbot -> VAR
--- On LPAREN reduce production nxbot -> VAR
--- On LOR reduce production nxbot -> VAR
--- On LISTPUNCT reduce production nxbot -> VAR
--- On LETMUTABLE reduce production nxbot -> VAR
--- On LETAND reduce production nxbot -> VAR
--- On LET reduce production nxbot -> VAR
--- On LEQ reduce production nxbot -> VAR
--- On LAND reduce production nxbot -> VAR
--- On IN reduce production nxbot -> VAR
--- On GT reduce production nxbot -> VAR
--- On GEQ reduce production nxbot -> VAR
--- On FINISH reduce production nxbot -> VAR
--- On FALSE reduce production nxbot -> VAR
--- On EQ reduce production nxbot -> VAR
--- On EOI reduce production nxbot -> VAR
--- On ENDMUTUAL reduce production nxbot -> VAR
--- On ELSE reduce production nxbot -> VAR
--- On ELIST reduce production nxbot -> VAR
--- On DO reduce production nxbot -> VAR
--- On DIVIDES reduce production nxbot -> VAR
--- On CONS reduce production nxbot -> VAR
--- On CONCAT reduce production nxbot -> VAR
--- On CLOSENUM reduce production nxbot -> VAR
--- On BLIST reduce production nxbot -> VAR
--- On BEFORE reduce production nxbot -> VAR
+-- On VAR UNITVALUE TRUE TIMES THEN RPAREN PLUS OVERWRITEGLOBALHASH OPENSTR OPENQT NUMCONST NEQ MUTUAL MOD MINUS LT LPAREN LOR LISTPUNCT LETMUTABLE LETAND LET LEQ LAND IN GT GEQ FINISH FALSE EQ EOI ENDMUTUAL ELSE ELIST DO DIVIDES CONS CONCAT CLOSENUM BLIST BEFORE
+--   reduce production nxbot -> VAR
 
 State 14:
 ## Known stack suffix:
@@ -385,7 +348,8 @@ nxbot -> OPENSTR . error [ VAR UNITVALUE TRUE TIMES THEN RPAREN PLUS OVERWRITEGL
 -- On sxbot shift to state 41
 -- On sxblock shift to state 43
 ## Reductions:
--- On CLOSESTR reduce production sxblock ->
+-- On CLOSESTR
+--   reduce production sxblock ->
 
 State 21:
 ## Known stack suffix:
@@ -413,10 +377,10 @@ sxsep -> SEP . error [ EGRP CLOSESTR CLOSEQT ]
 -- On sxbot shift to state 41
 -- On sxblock shift to state 288
 ## Reductions:
--- On SEP reduce production sxblock ->
--- On EGRP reduce production sxsepsub ->
--- On CLOSESTR reduce production sxsepsub ->
--- On CLOSEQT reduce production sxsepsub ->
+-- On SEP
+--   reduce production sxblock ->
+-- On EGRP CLOSESTR CLOSEQT
+--   reduce production sxsepsub ->
 
 State 23:
 ## Known stack suffix:
@@ -438,11 +402,8 @@ sxbot -> CTRLSEQ . error [ VARINSTR SPACE SEP EOI EGRP CTRLSEQ CLOSESTR CLOSEQT 
 -- On CLASSNAME shift to state 26
 -- On sxclsnm shift to state 27
 ## Reductions:
--- On OPENQT reduce production sxclsnm ->
--- On OPENNUM reduce production sxclsnm ->
--- On IDNAME reduce production sxclsnm ->
--- On END reduce production sxclsnm ->
--- On BGRP reduce production sxclsnm ->
+-- On OPENQT OPENNUM IDNAME END BGRP
+--   reduce production sxclsnm ->
 
 State 25:
 ## Known stack suffix:
@@ -471,10 +432,8 @@ sxbot -> CTRLSEQ sxclsnm . sxidnm narg sarg [ VARINSTR SPACE SEP EOI EGRP CTRLSE
 -- On IDNAME shift to state 28
 -- On sxidnm shift to state 29
 ## Reductions:
--- On OPENQT reduce production sxidnm ->
--- On OPENNUM reduce production sxidnm ->
--- On END reduce production sxidnm ->
--- On BGRP reduce production sxidnm ->
+-- On OPENQT OPENNUM END BGRP
+--   reduce production sxidnm ->
 
 State 28:
 ## Known stack suffix:
@@ -494,9 +453,8 @@ sxbot -> CTRLSEQ sxclsnm sxidnm . narg sarg [ VARINSTR SPACE SEP EOI EGRP CTRLSE
 -- On OPENNUM shift to state 30
 -- On narg shift to state 264
 ## Reductions:
--- On OPENQT reduce production narg ->
--- On END reduce production narg ->
--- On BGRP reduce production narg ->
+-- On OPENQT END BGRP
+--   reduce production narg ->
 
 State 30:
 ## Known stack suffix:
@@ -661,7 +619,8 @@ nxbot -> OPENQT . sxsep CLOSEQT [ VAR UNITVALUE TRUE TIMES THEN RPAREN PLUS OVER
 -- On sxbot shift to state 41
 -- On sxblock shift to state 43
 ## Reductions:
--- On CLOSEQT reduce production sxblock ->
+-- On CLOSEQT
+--   reduce production sxblock ->
 
 State 37:
 ## Known stack suffix:
@@ -713,11 +672,8 @@ sxblock -> sxbot . sxblock [ SEP EOI EGRP CLOSESTR CLOSEQT ]
 -- On sxbot shift to state 41
 -- On sxblock shift to state 42
 ## Reductions:
--- On SEP reduce production sxblock ->
--- On EOI reduce production sxblock ->
--- On EGRP reduce production sxblock ->
--- On CLOSESTR reduce production sxblock ->
--- On CLOSEQT reduce production sxblock ->
+-- On SEP EOI EGRP CLOSESTR CLOSEQT
+--   reduce production sxblock ->
 
 State 42:
 ## Known stack suffix:
@@ -877,7 +833,8 @@ nxun -> MINUS . error [ TIMES RPAREN PLUS NEQ MOD MINUS LT LOR LEQ LAND GT GEQ E
 -- On nxbot shift to state 58
 -- On nxapp shift to state 59
 ## Reductions:
--- On RPAREN reduce production binop -> MINUS
+-- On RPAREN
+--   reduce production binop -> MINUS
 
 State 52:
 ## Known stack suffix:
@@ -1015,37 +972,8 @@ nxun -> MINUS nxapp . [ TIMES THEN RPAREN PLUS OVERWRITEGLOBALHASH NEQ MUTUAL MO
 -- On BLIST shift to state 55
 -- On nxbot shift to state 60
 ## Reductions:
--- On TIMES reduce production nxun -> MINUS nxapp
--- On THEN reduce production nxun -> MINUS nxapp
--- On RPAREN reduce production nxun -> MINUS nxapp
--- On PLUS reduce production nxun -> MINUS nxapp
--- On OVERWRITEGLOBALHASH reduce production nxun -> MINUS nxapp
--- On NEQ reduce production nxun -> MINUS nxapp
--- On MUTUAL reduce production nxun -> MINUS nxapp
--- On MOD reduce production nxun -> MINUS nxapp
--- On MINUS reduce production nxun -> MINUS nxapp
--- On LT reduce production nxun -> MINUS nxapp
--- On LOR reduce production nxun -> MINUS nxapp
--- On LISTPUNCT reduce production nxun -> MINUS nxapp
--- On LETMUTABLE reduce production nxun -> MINUS nxapp
--- On LETAND reduce production nxun -> MINUS nxapp
--- On LET reduce production nxun -> MINUS nxapp
--- On LEQ reduce production nxun -> MINUS nxapp
--- On LAND reduce production nxun -> MINUS nxapp
--- On IN reduce production nxun -> MINUS nxapp
--- On GT reduce production nxun -> MINUS nxapp
--- On GEQ reduce production nxun -> MINUS nxapp
--- On EQ reduce production nxun -> MINUS nxapp
--- On EOI reduce production nxun -> MINUS nxapp
--- On ENDMUTUAL reduce production nxun -> MINUS nxapp
--- On ELSE reduce production nxun -> MINUS nxapp
--- On ELIST reduce production nxun -> MINUS nxapp
--- On DO reduce production nxun -> MINUS nxapp
--- On DIVIDES reduce production nxun -> MINUS nxapp
--- On CONS reduce production nxun -> MINUS nxapp
--- On CONCAT reduce production nxun -> MINUS nxapp
--- On CLOSENUM reduce production nxun -> MINUS nxapp
--- On BEFORE reduce production nxun -> MINUS nxapp
+-- On TIMES THEN RPAREN PLUS OVERWRITEGLOBALHASH NEQ MUTUAL MOD MINUS LT LOR LISTPUNCT LETMUTABLE LETAND LET LEQ LAND IN GT GEQ EQ EOI ENDMUTUAL ELSE ELIST DO DIVIDES CONS CONCAT CLOSENUM BEFORE
+--   reduce production nxun -> MINUS nxapp
 
 State 60:
 ## Known stack suffix:
@@ -1106,37 +1034,8 @@ nxun -> LNOT nxapp . [ TIMES THEN RPAREN PLUS OVERWRITEGLOBALHASH NEQ MUTUAL MOD
 -- On BLIST shift to state 55
 -- On nxbot shift to state 60
 ## Reductions:
--- On TIMES reduce production nxun -> LNOT nxapp
--- On THEN reduce production nxun -> LNOT nxapp
--- On RPAREN reduce production nxun -> LNOT nxapp
--- On PLUS reduce production nxun -> LNOT nxapp
--- On OVERWRITEGLOBALHASH reduce production nxun -> LNOT nxapp
--- On NEQ reduce production nxun -> LNOT nxapp
--- On MUTUAL reduce production nxun -> LNOT nxapp
--- On MOD reduce production nxun -> LNOT nxapp
--- On MINUS reduce production nxun -> LNOT nxapp
--- On LT reduce production nxun -> LNOT nxapp
--- On LOR reduce production nxun -> LNOT nxapp
--- On LISTPUNCT reduce production nxun -> LNOT nxapp
--- On LETMUTABLE reduce production nxun -> LNOT nxapp
--- On LETAND reduce production nxun -> LNOT nxapp
--- On LET reduce production nxun -> LNOT nxapp
--- On LEQ reduce production nxun -> LNOT nxapp
--- On LAND reduce production nxun -> LNOT nxapp
--- On IN reduce production nxun -> LNOT nxapp
--- On GT reduce production nxun -> LNOT nxapp
--- On GEQ reduce production nxun -> LNOT nxapp
--- On EQ reduce production nxun -> LNOT nxapp
--- On EOI reduce production nxun -> LNOT nxapp
--- On ENDMUTUAL reduce production nxun -> LNOT nxapp
--- On ELSE reduce production nxun -> LNOT nxapp
--- On ELIST reduce production nxun -> LNOT nxapp
--- On DO reduce production nxun -> LNOT nxapp
--- On DIVIDES reduce production nxun -> LNOT nxapp
--- On CONS reduce production nxun -> LNOT nxapp
--- On CONCAT reduce production nxun -> LNOT nxapp
--- On CLOSENUM reduce production nxun -> LNOT nxapp
--- On BEFORE reduce production nxun -> LNOT nxapp
+-- On TIMES THEN RPAREN PLUS OVERWRITEGLOBALHASH NEQ MUTUAL MOD MINUS LT LOR LISTPUNCT LETMUTABLE LETAND LET LEQ LAND IN GT GEQ EQ EOI ENDMUTUAL ELSE ELIST DO DIVIDES CONS CONCAT CLOSENUM BEFORE
+--   reduce production nxun -> LNOT nxapp
 
 State 64:
 ## Known stack suffix:
@@ -1282,7 +1181,8 @@ nxlet -> LET VAR . argvar DEFEQ nxlet nxdec IN error [ THEN RPAREN OVERWRITEGLOB
 -- On VAR shift to state 7
 -- On argvar shift to state 74
 ## Reductions:
--- On DEFEQ reduce production argvar ->
+-- On DEFEQ
+--   reduce production argvar ->
 
 State 73:
 ## Known stack suffix:
@@ -1374,7 +1274,8 @@ nxlambda -> LAMBDA . argvar ARROW error [ THEN RPAREN OVERWRITEGLOBALHASH MUTUAL
 -- On VAR shift to state 7
 -- On argvar shift to state 79
 ## Reductions:
--- On ARROW reduce production argvar ->
+-- On ARROW
+--   reduce production argvar ->
 
 State 78:
 ## Known stack suffix:
@@ -1448,36 +1349,8 @@ nxltimes -> nxun . TIMES error [ THEN RPAREN PLUS OVERWRITEGLOBALHASH NEQ MUTUAL
 ## Transitions:
 -- On TIMES shift to state 83
 ## Reductions:
--- On THEN reduce production nxltimes -> nxun
--- On RPAREN reduce production nxltimes -> nxun
--- On PLUS reduce production nxltimes -> nxun
--- On OVERWRITEGLOBALHASH reduce production nxltimes -> nxun
--- On NEQ reduce production nxltimes -> nxun
--- On MUTUAL reduce production nxltimes -> nxun
--- On MOD reduce production nxltimes -> nxun
--- On MINUS reduce production nxltimes -> nxun
--- On LT reduce production nxltimes -> nxun
--- On LOR reduce production nxltimes -> nxun
--- On LISTPUNCT reduce production nxltimes -> nxun
--- On LETMUTABLE reduce production nxltimes -> nxun
--- On LETAND reduce production nxltimes -> nxun
--- On LET reduce production nxltimes -> nxun
--- On LEQ reduce production nxltimes -> nxun
--- On LAND reduce production nxltimes -> nxun
--- On IN reduce production nxltimes -> nxun
--- On GT reduce production nxltimes -> nxun
--- On GEQ reduce production nxltimes -> nxun
--- On EQ reduce production nxltimes -> nxun
--- On EOI reduce production nxltimes -> nxun
--- On ENDMUTUAL reduce production nxltimes -> nxun
--- On ELSE reduce production nxltimes -> nxun
--- On ELIST reduce production nxltimes -> nxun
--- On DO reduce production nxltimes -> nxun
--- On DIVIDES reduce production nxltimes -> nxun
--- On CONS reduce production nxltimes -> nxun
--- On CONCAT reduce production nxltimes -> nxun
--- On CLOSENUM reduce production nxltimes -> nxun
--- On BEFORE reduce production nxltimes -> nxun
+-- On THEN RPAREN PLUS OVERWRITEGLOBALHASH NEQ MUTUAL MOD MINUS LT LOR LISTPUNCT LETMUTABLE LETAND LET LEQ LAND IN GT GEQ EQ EOI ENDMUTUAL ELSE ELIST DO DIVIDES CONS CONCAT CLOSENUM BEFORE
+--   reduce production nxltimes -> nxun
 
 State 83:
 ## Known stack suffix:
@@ -1524,34 +1397,8 @@ nxrtimes -> nxrtimes . MOD error [ THEN RPAREN PLUS OVERWRITEGLOBALHASH NEQ MUTU
 -- On MOD shift to state 86
 -- On DIVIDES shift to state 89
 ## Reductions:
--- On THEN reduce production nxltimes -> nxun TIMES nxrtimes
--- On RPAREN reduce production nxltimes -> nxun TIMES nxrtimes
--- On PLUS reduce production nxltimes -> nxun TIMES nxrtimes
--- On OVERWRITEGLOBALHASH reduce production nxltimes -> nxun TIMES nxrtimes
--- On NEQ reduce production nxltimes -> nxun TIMES nxrtimes
--- On MUTUAL reduce production nxltimes -> nxun TIMES nxrtimes
--- On MINUS reduce production nxltimes -> nxun TIMES nxrtimes
--- On LT reduce production nxltimes -> nxun TIMES nxrtimes
--- On LOR reduce production nxltimes -> nxun TIMES nxrtimes
--- On LISTPUNCT reduce production nxltimes -> nxun TIMES nxrtimes
--- On LETMUTABLE reduce production nxltimes -> nxun TIMES nxrtimes
--- On LETAND reduce production nxltimes -> nxun TIMES nxrtimes
--- On LET reduce production nxltimes -> nxun TIMES nxrtimes
--- On LEQ reduce production nxltimes -> nxun TIMES nxrtimes
--- On LAND reduce production nxltimes -> nxun TIMES nxrtimes
--- On IN reduce production nxltimes -> nxun TIMES nxrtimes
--- On GT reduce production nxltimes -> nxun TIMES nxrtimes
--- On GEQ reduce production nxltimes -> nxun TIMES nxrtimes
--- On EQ reduce production nxltimes -> nxun TIMES nxrtimes
--- On EOI reduce production nxltimes -> nxun TIMES nxrtimes
--- On ENDMUTUAL reduce production nxltimes -> nxun TIMES nxrtimes
--- On ELSE reduce production nxltimes -> nxun TIMES nxrtimes
--- On ELIST reduce production nxltimes -> nxun TIMES nxrtimes
--- On DO reduce production nxltimes -> nxun TIMES nxrtimes
--- On CONS reduce production nxltimes -> nxun TIMES nxrtimes
--- On CONCAT reduce production nxltimes -> nxun TIMES nxrtimes
--- On CLOSENUM reduce production nxltimes -> nxun TIMES nxrtimes
--- On BEFORE reduce production nxltimes -> nxun TIMES nxrtimes
+-- On THEN RPAREN PLUS OVERWRITEGLOBALHASH NEQ MUTUAL MINUS LT LOR LISTPUNCT LETMUTABLE LETAND LET LEQ LAND IN GT GEQ EQ EOI ENDMUTUAL ELSE ELIST DO CONS CONCAT CLOSENUM BEFORE
+--   reduce production nxltimes -> nxun TIMES nxrtimes
 
 State 86:
 ## Known stack suffix:
@@ -1603,36 +1450,8 @@ nxrtimes -> nxrtimes MOD nxapp . [ THEN RPAREN PLUS OVERWRITEGLOBALHASH NEQ MUTU
 -- On BLIST shift to state 55
 -- On nxbot shift to state 60
 ## Reductions:
--- On THEN reduce production nxrtimes -> nxrtimes MOD nxapp
--- On RPAREN reduce production nxrtimes -> nxrtimes MOD nxapp
--- On PLUS reduce production nxrtimes -> nxrtimes MOD nxapp
--- On OVERWRITEGLOBALHASH reduce production nxrtimes -> nxrtimes MOD nxapp
--- On NEQ reduce production nxrtimes -> nxrtimes MOD nxapp
--- On MUTUAL reduce production nxrtimes -> nxrtimes MOD nxapp
--- On MOD reduce production nxrtimes -> nxrtimes MOD nxapp
--- On MINUS reduce production nxrtimes -> nxrtimes MOD nxapp
--- On LT reduce production nxrtimes -> nxrtimes MOD nxapp
--- On LOR reduce production nxrtimes -> nxrtimes MOD nxapp
--- On LISTPUNCT reduce production nxrtimes -> nxrtimes MOD nxapp
--- On LETMUTABLE reduce production nxrtimes -> nxrtimes MOD nxapp
--- On LETAND reduce production nxrtimes -> nxrtimes MOD nxapp
--- On LET reduce production nxrtimes -> nxrtimes MOD nxapp
--- On LEQ reduce production nxrtimes -> nxrtimes MOD nxapp
--- On LAND reduce production nxrtimes -> nxrtimes MOD nxapp
--- On IN reduce production nxrtimes -> nxrtimes MOD nxapp
--- On GT reduce production nxrtimes -> nxrtimes MOD nxapp
--- On GEQ reduce production nxrtimes -> nxrtimes MOD nxapp
--- On EQ reduce production nxrtimes -> nxrtimes MOD nxapp
--- On EOI reduce production nxrtimes -> nxrtimes MOD nxapp
--- On ENDMUTUAL reduce production nxrtimes -> nxrtimes MOD nxapp
--- On ELSE reduce production nxrtimes -> nxrtimes MOD nxapp
--- On ELIST reduce production nxrtimes -> nxrtimes MOD nxapp
--- On DO reduce production nxrtimes -> nxrtimes MOD nxapp
--- On DIVIDES reduce production nxrtimes -> nxrtimes MOD nxapp
--- On CONS reduce production nxrtimes -> nxrtimes MOD nxapp
--- On CONCAT reduce production nxrtimes -> nxrtimes MOD nxapp
--- On CLOSENUM reduce production nxrtimes -> nxrtimes MOD nxapp
--- On BEFORE reduce production nxrtimes -> nxrtimes MOD nxapp
+-- On THEN RPAREN PLUS OVERWRITEGLOBALHASH NEQ MUTUAL MOD MINUS LT LOR LISTPUNCT LETMUTABLE LETAND LET LEQ LAND IN GT GEQ EQ EOI ENDMUTUAL ELSE ELIST DO DIVIDES CONS CONCAT CLOSENUM BEFORE
+--   reduce production nxrtimes -> nxrtimes MOD nxapp
 
 State 89:
 ## Known stack suffix:
@@ -1684,36 +1503,8 @@ nxrtimes -> nxrtimes DIVIDES nxapp . [ THEN RPAREN PLUS OVERWRITEGLOBALHASH NEQ 
 -- On BLIST shift to state 55
 -- On nxbot shift to state 60
 ## Reductions:
--- On THEN reduce production nxrtimes -> nxrtimes DIVIDES nxapp
--- On RPAREN reduce production nxrtimes -> nxrtimes DIVIDES nxapp
--- On PLUS reduce production nxrtimes -> nxrtimes DIVIDES nxapp
--- On OVERWRITEGLOBALHASH reduce production nxrtimes -> nxrtimes DIVIDES nxapp
--- On NEQ reduce production nxrtimes -> nxrtimes DIVIDES nxapp
--- On MUTUAL reduce production nxrtimes -> nxrtimes DIVIDES nxapp
--- On MOD reduce production nxrtimes -> nxrtimes DIVIDES nxapp
--- On MINUS reduce production nxrtimes -> nxrtimes DIVIDES nxapp
--- On LT reduce production nxrtimes -> nxrtimes DIVIDES nxapp
--- On LOR reduce production nxrtimes -> nxrtimes DIVIDES nxapp
--- On LISTPUNCT reduce production nxrtimes -> nxrtimes DIVIDES nxapp
--- On LETMUTABLE reduce production nxrtimes -> nxrtimes DIVIDES nxapp
--- On LETAND reduce production nxrtimes -> nxrtimes DIVIDES nxapp
--- On LET reduce production nxrtimes -> nxrtimes DIVIDES nxapp
--- On LEQ reduce production nxrtimes -> nxrtimes DIVIDES nxapp
--- On LAND reduce production nxrtimes -> nxrtimes DIVIDES nxapp
--- On IN reduce production nxrtimes -> nxrtimes DIVIDES nxapp
--- On GT reduce production nxrtimes -> nxrtimes DIVIDES nxapp
--- On GEQ reduce production nxrtimes -> nxrtimes DIVIDES nxapp
--- On EQ reduce production nxrtimes -> nxrtimes DIVIDES nxapp
--- On EOI reduce production nxrtimes -> nxrtimes DIVIDES nxapp
--- On ENDMUTUAL reduce production nxrtimes -> nxrtimes DIVIDES nxapp
--- On ELSE reduce production nxrtimes -> nxrtimes DIVIDES nxapp
--- On ELIST reduce production nxrtimes -> nxrtimes DIVIDES nxapp
--- On DO reduce production nxrtimes -> nxrtimes DIVIDES nxapp
--- On DIVIDES reduce production nxrtimes -> nxrtimes DIVIDES nxapp
--- On CONS reduce production nxrtimes -> nxrtimes DIVIDES nxapp
--- On CONCAT reduce production nxrtimes -> nxrtimes DIVIDES nxapp
--- On CLOSENUM reduce production nxrtimes -> nxrtimes DIVIDES nxapp
--- On BEFORE reduce production nxrtimes -> nxrtimes DIVIDES nxapp
+-- On THEN RPAREN PLUS OVERWRITEGLOBALHASH NEQ MUTUAL MOD MINUS LT LOR LISTPUNCT LETMUTABLE LETAND LET LEQ LAND IN GT GEQ EQ EOI ENDMUTUAL ELSE ELIST DO DIVIDES CONS CONCAT CLOSENUM BEFORE
+--   reduce production nxrtimes -> nxrtimes DIVIDES nxapp
 
 State 92:
 ## Known stack suffix:
@@ -1737,36 +1528,8 @@ nxrtimes -> nxapp . TIMES error [ THEN RPAREN PLUS OVERWRITEGLOBALHASH NEQ MUTUA
 -- On BLIST shift to state 55
 -- On nxbot shift to state 60
 ## Reductions:
--- On THEN reduce production nxrtimes -> nxapp
--- On RPAREN reduce production nxrtimes -> nxapp
--- On PLUS reduce production nxrtimes -> nxapp
--- On OVERWRITEGLOBALHASH reduce production nxrtimes -> nxapp
--- On NEQ reduce production nxrtimes -> nxapp
--- On MUTUAL reduce production nxrtimes -> nxapp
--- On MOD reduce production nxrtimes -> nxapp
--- On MINUS reduce production nxrtimes -> nxapp
--- On LT reduce production nxrtimes -> nxapp
--- On LOR reduce production nxrtimes -> nxapp
--- On LISTPUNCT reduce production nxrtimes -> nxapp
--- On LETMUTABLE reduce production nxrtimes -> nxapp
--- On LETAND reduce production nxrtimes -> nxapp
--- On LET reduce production nxrtimes -> nxapp
--- On LEQ reduce production nxrtimes -> nxapp
--- On LAND reduce production nxrtimes -> nxapp
--- On IN reduce production nxrtimes -> nxapp
--- On GT reduce production nxrtimes -> nxapp
--- On GEQ reduce production nxrtimes -> nxapp
--- On EQ reduce production nxrtimes -> nxapp
--- On EOI reduce production nxrtimes -> nxapp
--- On ENDMUTUAL reduce production nxrtimes -> nxapp
--- On ELSE reduce production nxrtimes -> nxapp
--- On ELIST reduce production nxrtimes -> nxapp
--- On DO reduce production nxrtimes -> nxapp
--- On DIVIDES reduce production nxrtimes -> nxapp
--- On CONS reduce production nxrtimes -> nxapp
--- On CONCAT reduce production nxrtimes -> nxapp
--- On CLOSENUM reduce production nxrtimes -> nxapp
--- On BEFORE reduce production nxrtimes -> nxapp
+-- On THEN RPAREN PLUS OVERWRITEGLOBALHASH NEQ MUTUAL MOD MINUS LT LOR LISTPUNCT LETMUTABLE LETAND LET LEQ LAND IN GT GEQ EQ EOI ENDMUTUAL ELSE ELIST DO DIVIDES CONS CONCAT CLOSENUM BEFORE
+--   reduce production nxrtimes -> nxapp
 
 State 93:
 ## Known stack suffix:
@@ -1813,34 +1576,8 @@ nxrtimes -> nxrtimes . MOD error [ THEN RPAREN PLUS OVERWRITEGLOBALHASH NEQ MUTU
 -- On MOD shift to state 86
 -- On DIVIDES shift to state 89
 ## Reductions:
--- On THEN reduce production nxrtimes -> nxapp TIMES nxrtimes
--- On RPAREN reduce production nxrtimes -> nxapp TIMES nxrtimes
--- On PLUS reduce production nxrtimes -> nxapp TIMES nxrtimes
--- On OVERWRITEGLOBALHASH reduce production nxrtimes -> nxapp TIMES nxrtimes
--- On NEQ reduce production nxrtimes -> nxapp TIMES nxrtimes
--- On MUTUAL reduce production nxrtimes -> nxapp TIMES nxrtimes
--- On MINUS reduce production nxrtimes -> nxapp TIMES nxrtimes
--- On LT reduce production nxrtimes -> nxapp TIMES nxrtimes
--- On LOR reduce production nxrtimes -> nxapp TIMES nxrtimes
--- On LISTPUNCT reduce production nxrtimes -> nxapp TIMES nxrtimes
--- On LETMUTABLE reduce production nxrtimes -> nxapp TIMES nxrtimes
--- On LETAND reduce production nxrtimes -> nxapp TIMES nxrtimes
--- On LET reduce production nxrtimes -> nxapp TIMES nxrtimes
--- On LEQ reduce production nxrtimes -> nxapp TIMES nxrtimes
--- On LAND reduce production nxrtimes -> nxapp TIMES nxrtimes
--- On IN reduce production nxrtimes -> nxapp TIMES nxrtimes
--- On GT reduce production nxrtimes -> nxapp TIMES nxrtimes
--- On GEQ reduce production nxrtimes -> nxapp TIMES nxrtimes
--- On EQ reduce production nxrtimes -> nxapp TIMES nxrtimes
--- On EOI reduce production nxrtimes -> nxapp TIMES nxrtimes
--- On ENDMUTUAL reduce production nxrtimes -> nxapp TIMES nxrtimes
--- On ELSE reduce production nxrtimes -> nxapp TIMES nxrtimes
--- On ELIST reduce production nxrtimes -> nxapp TIMES nxrtimes
--- On DO reduce production nxrtimes -> nxapp TIMES nxrtimes
--- On CONS reduce production nxrtimes -> nxapp TIMES nxrtimes
--- On CONCAT reduce production nxrtimes -> nxapp TIMES nxrtimes
--- On CLOSENUM reduce production nxrtimes -> nxapp TIMES nxrtimes
--- On BEFORE reduce production nxrtimes -> nxapp TIMES nxrtimes
+-- On THEN RPAREN PLUS OVERWRITEGLOBALHASH NEQ MUTUAL MINUS LT LOR LISTPUNCT LETMUTABLE LETAND LET LEQ LAND IN GT GEQ EQ EOI ENDMUTUAL ELSE ELIST DO CONS CONCAT CLOSENUM BEFORE
+--   reduce production nxrtimes -> nxapp TIMES nxrtimes
 
 State 96:
 ## Known stack suffix:
@@ -1855,34 +1592,8 @@ nxltimes -> nxltimes . MOD error [ THEN RPAREN PLUS OVERWRITEGLOBALHASH NEQ MUTU
 -- On MOD shift to state 97
 -- On DIVIDES shift to state 100
 ## Reductions:
--- On THEN reduce production nxlminus -> nxltimes
--- On RPAREN reduce production nxlminus -> nxltimes
--- On PLUS reduce production nxlminus -> nxltimes
--- On OVERWRITEGLOBALHASH reduce production nxlminus -> nxltimes
--- On NEQ reduce production nxlminus -> nxltimes
--- On MUTUAL reduce production nxlminus -> nxltimes
--- On MINUS reduce production nxlminus -> nxltimes
--- On LT reduce production nxlminus -> nxltimes
--- On LOR reduce production nxlminus -> nxltimes
--- On LISTPUNCT reduce production nxlminus -> nxltimes
--- On LETMUTABLE reduce production nxlminus -> nxltimes
--- On LETAND reduce production nxlminus -> nxltimes
--- On LET reduce production nxlminus -> nxltimes
--- On LEQ reduce production nxlminus -> nxltimes
--- On LAND reduce production nxlminus -> nxltimes
--- On IN reduce production nxlminus -> nxltimes
--- On GT reduce production nxlminus -> nxltimes
--- On GEQ reduce production nxlminus -> nxltimes
--- On EQ reduce production nxlminus -> nxltimes
--- On EOI reduce production nxlminus -> nxltimes
--- On ENDMUTUAL reduce production nxlminus -> nxltimes
--- On ELSE reduce production nxlminus -> nxltimes
--- On ELIST reduce production nxlminus -> nxltimes
--- On DO reduce production nxlminus -> nxltimes
--- On CONS reduce production nxlminus -> nxltimes
--- On CONCAT reduce production nxlminus -> nxltimes
--- On CLOSENUM reduce production nxlminus -> nxltimes
--- On BEFORE reduce production nxlminus -> nxltimes
+-- On THEN RPAREN PLUS OVERWRITEGLOBALHASH NEQ MUTUAL MINUS LT LOR LISTPUNCT LETMUTABLE LETAND LET LEQ LAND IN GT GEQ EQ EOI ENDMUTUAL ELSE ELIST DO CONS CONCAT CLOSENUM BEFORE
+--   reduce production nxlminus -> nxltimes
 
 State 97:
 ## Known stack suffix:
@@ -1934,36 +1645,8 @@ nxltimes -> nxltimes MOD nxapp . [ THEN RPAREN PLUS OVERWRITEGLOBALHASH NEQ MUTU
 -- On BLIST shift to state 55
 -- On nxbot shift to state 60
 ## Reductions:
--- On THEN reduce production nxltimes -> nxltimes MOD nxapp
--- On RPAREN reduce production nxltimes -> nxltimes MOD nxapp
--- On PLUS reduce production nxltimes -> nxltimes MOD nxapp
--- On OVERWRITEGLOBALHASH reduce production nxltimes -> nxltimes MOD nxapp
--- On NEQ reduce production nxltimes -> nxltimes MOD nxapp
--- On MUTUAL reduce production nxltimes -> nxltimes MOD nxapp
--- On MOD reduce production nxltimes -> nxltimes MOD nxapp
--- On MINUS reduce production nxltimes -> nxltimes MOD nxapp
--- On LT reduce production nxltimes -> nxltimes MOD nxapp
--- On LOR reduce production nxltimes -> nxltimes MOD nxapp
--- On LISTPUNCT reduce production nxltimes -> nxltimes MOD nxapp
--- On LETMUTABLE reduce production nxltimes -> nxltimes MOD nxapp
--- On LETAND reduce production nxltimes -> nxltimes MOD nxapp
--- On LET reduce production nxltimes -> nxltimes MOD nxapp
--- On LEQ reduce production nxltimes -> nxltimes MOD nxapp
--- On LAND reduce production nxltimes -> nxltimes MOD nxapp
--- On IN reduce production nxltimes -> nxltimes MOD nxapp
--- On GT reduce production nxltimes -> nxltimes MOD nxapp
--- On GEQ reduce production nxltimes -> nxltimes MOD nxapp
--- On EQ reduce production nxltimes -> nxltimes MOD nxapp
--- On EOI reduce production nxltimes -> nxltimes MOD nxapp
--- On ENDMUTUAL reduce production nxltimes -> nxltimes MOD nxapp
--- On ELSE reduce production nxltimes -> nxltimes MOD nxapp
--- On ELIST reduce production nxltimes -> nxltimes MOD nxapp
--- On DO reduce production nxltimes -> nxltimes MOD nxapp
--- On DIVIDES reduce production nxltimes -> nxltimes MOD nxapp
--- On CONS reduce production nxltimes -> nxltimes MOD nxapp
--- On CONCAT reduce production nxltimes -> nxltimes MOD nxapp
--- On CLOSENUM reduce production nxltimes -> nxltimes MOD nxapp
--- On BEFORE reduce production nxltimes -> nxltimes MOD nxapp
+-- On THEN RPAREN PLUS OVERWRITEGLOBALHASH NEQ MUTUAL MOD MINUS LT LOR LISTPUNCT LETMUTABLE LETAND LET LEQ LAND IN GT GEQ EQ EOI ENDMUTUAL ELSE ELIST DO DIVIDES CONS CONCAT CLOSENUM BEFORE
+--   reduce production nxltimes -> nxltimes MOD nxapp
 
 State 100:
 ## Known stack suffix:
@@ -2015,36 +1698,8 @@ nxltimes -> nxltimes DIVIDES nxapp . [ THEN RPAREN PLUS OVERWRITEGLOBALHASH NEQ 
 -- On BLIST shift to state 55
 -- On nxbot shift to state 60
 ## Reductions:
--- On THEN reduce production nxltimes -> nxltimes DIVIDES nxapp
--- On RPAREN reduce production nxltimes -> nxltimes DIVIDES nxapp
--- On PLUS reduce production nxltimes -> nxltimes DIVIDES nxapp
--- On OVERWRITEGLOBALHASH reduce production nxltimes -> nxltimes DIVIDES nxapp
--- On NEQ reduce production nxltimes -> nxltimes DIVIDES nxapp
--- On MUTUAL reduce production nxltimes -> nxltimes DIVIDES nxapp
--- On MOD reduce production nxltimes -> nxltimes DIVIDES nxapp
--- On MINUS reduce production nxltimes -> nxltimes DIVIDES nxapp
--- On LT reduce production nxltimes -> nxltimes DIVIDES nxapp
--- On LOR reduce production nxltimes -> nxltimes DIVIDES nxapp
--- On LISTPUNCT reduce production nxltimes -> nxltimes DIVIDES nxapp
--- On LETMUTABLE reduce production nxltimes -> nxltimes DIVIDES nxapp
--- On LETAND reduce production nxltimes -> nxltimes DIVIDES nxapp
--- On LET reduce production nxltimes -> nxltimes DIVIDES nxapp
--- On LEQ reduce production nxltimes -> nxltimes DIVIDES nxapp
--- On LAND reduce production nxltimes -> nxltimes DIVIDES nxapp
--- On IN reduce production nxltimes -> nxltimes DIVIDES nxapp
--- On GT reduce production nxltimes -> nxltimes DIVIDES nxapp
--- On GEQ reduce production nxltimes -> nxltimes DIVIDES nxapp
--- On EQ reduce production nxltimes -> nxltimes DIVIDES nxapp
--- On EOI reduce production nxltimes -> nxltimes DIVIDES nxapp
--- On ENDMUTUAL reduce production nxltimes -> nxltimes DIVIDES nxapp
--- On ELSE reduce production nxltimes -> nxltimes DIVIDES nxapp
--- On ELIST reduce production nxltimes -> nxltimes DIVIDES nxapp
--- On DO reduce production nxltimes -> nxltimes DIVIDES nxapp
--- On DIVIDES reduce production nxltimes -> nxltimes DIVIDES nxapp
--- On CONS reduce production nxltimes -> nxltimes DIVIDES nxapp
--- On CONCAT reduce production nxltimes -> nxltimes DIVIDES nxapp
--- On CLOSENUM reduce production nxltimes -> nxltimes DIVIDES nxapp
--- On BEFORE reduce production nxltimes -> nxltimes DIVIDES nxapp
+-- On THEN RPAREN PLUS OVERWRITEGLOBALHASH NEQ MUTUAL MOD MINUS LT LOR LISTPUNCT LETMUTABLE LETAND LET LEQ LAND IN GT GEQ EQ EOI ENDMUTUAL ELSE ELIST DO DIVIDES CONS CONCAT CLOSENUM BEFORE
+--   reduce production nxltimes -> nxltimes DIVIDES nxapp
 
 State 103:
 ## Known stack suffix:
@@ -2061,30 +1716,8 @@ nxlminus -> nxlplus . MINUS error [ THEN RPAREN PLUS OVERWRITEGLOBALHASH NEQ MUT
 -- On CONS shift to state 107
 -- On CONCAT shift to state 122
 ## Reductions:
--- On THEN reduce production nxconcat -> nxlplus
--- On RPAREN reduce production nxconcat -> nxlplus
--- On OVERWRITEGLOBALHASH reduce production nxconcat -> nxlplus
--- On NEQ reduce production nxconcat -> nxlplus
--- On MUTUAL reduce production nxconcat -> nxlplus
--- On LT reduce production nxconcat -> nxlplus
--- On LOR reduce production nxconcat -> nxlplus
--- On LISTPUNCT reduce production nxconcat -> nxlplus
--- On LETMUTABLE reduce production nxconcat -> nxlplus
--- On LETAND reduce production nxconcat -> nxlplus
--- On LET reduce production nxconcat -> nxlplus
--- On LEQ reduce production nxconcat -> nxlplus
--- On LAND reduce production nxconcat -> nxlplus
--- On IN reduce production nxconcat -> nxlplus
--- On GT reduce production nxconcat -> nxlplus
--- On GEQ reduce production nxconcat -> nxlplus
--- On EQ reduce production nxconcat -> nxlplus
--- On EOI reduce production nxconcat -> nxlplus
--- On ENDMUTUAL reduce production nxconcat -> nxlplus
--- On ELSE reduce production nxconcat -> nxlplus
--- On ELIST reduce production nxconcat -> nxlplus
--- On DO reduce production nxconcat -> nxlplus
--- On CLOSENUM reduce production nxconcat -> nxlplus
--- On BEFORE reduce production nxconcat -> nxlplus
+-- On THEN RPAREN OVERWRITEGLOBALHASH NEQ MUTUAL LT LOR LISTPUNCT LETMUTABLE LETAND LET LEQ LAND IN GT GEQ EQ EOI ENDMUTUAL ELSE ELIST DO CLOSENUM BEFORE
+--   reduce production nxconcat -> nxlplus
 
 State 104:
 ## Known stack suffix:
@@ -2131,34 +1764,8 @@ nxrtimes -> nxrtimes . MOD error [ THEN RPAREN PLUS OVERWRITEGLOBALHASH NEQ MUTU
 -- On MOD shift to state 86
 -- On DIVIDES shift to state 89
 ## Reductions:
--- On THEN reduce production nxlminus -> nxlplus MINUS nxrtimes
--- On RPAREN reduce production nxlminus -> nxlplus MINUS nxrtimes
--- On PLUS reduce production nxlminus -> nxlplus MINUS nxrtimes
--- On OVERWRITEGLOBALHASH reduce production nxlminus -> nxlplus MINUS nxrtimes
--- On NEQ reduce production nxlminus -> nxlplus MINUS nxrtimes
--- On MUTUAL reduce production nxlminus -> nxlplus MINUS nxrtimes
--- On MINUS reduce production nxlminus -> nxlplus MINUS nxrtimes
--- On LT reduce production nxlminus -> nxlplus MINUS nxrtimes
--- On LOR reduce production nxlminus -> nxlplus MINUS nxrtimes
--- On LISTPUNCT reduce production nxlminus -> nxlplus MINUS nxrtimes
--- On LETMUTABLE reduce production nxlminus -> nxlplus MINUS nxrtimes
--- On LETAND reduce production nxlminus -> nxlplus MINUS nxrtimes
--- On LET reduce production nxlminus -> nxlplus MINUS nxrtimes
--- On LEQ reduce production nxlminus -> nxlplus MINUS nxrtimes
--- On LAND reduce production nxlminus -> nxlplus MINUS nxrtimes
--- On IN reduce production nxlminus -> nxlplus MINUS nxrtimes
--- On GT reduce production nxlminus -> nxlplus MINUS nxrtimes
--- On GEQ reduce production nxlminus -> nxlplus MINUS nxrtimes
--- On EQ reduce production nxlminus -> nxlplus MINUS nxrtimes
--- On EOI reduce production nxlminus -> nxlplus MINUS nxrtimes
--- On ENDMUTUAL reduce production nxlminus -> nxlplus MINUS nxrtimes
--- On ELSE reduce production nxlminus -> nxlplus MINUS nxrtimes
--- On ELIST reduce production nxlminus -> nxlplus MINUS nxrtimes
--- On DO reduce production nxlminus -> nxlplus MINUS nxrtimes
--- On CONS reduce production nxlminus -> nxlplus MINUS nxrtimes
--- On CONCAT reduce production nxlminus -> nxlplus MINUS nxrtimes
--- On CLOSENUM reduce production nxlminus -> nxlplus MINUS nxrtimes
--- On BEFORE reduce production nxlminus -> nxlplus MINUS nxrtimes
+-- On THEN RPAREN PLUS OVERWRITEGLOBALHASH NEQ MUTUAL MINUS LT LOR LISTPUNCT LETMUTABLE LETAND LET LEQ LAND IN GT GEQ EQ EOI ENDMUTUAL ELSE ELIST DO CONS CONCAT CLOSENUM BEFORE
+--   reduce production nxlminus -> nxlplus MINUS nxrtimes
 
 State 107:
 ## Known stack suffix:
@@ -2199,33 +1806,8 @@ nxlplus -> nxlminus . PLUS error [ THEN RPAREN OVERWRITEGLOBALHASH NEQ MUTUAL MI
 ## Transitions:
 -- On PLUS shift to state 109
 ## Reductions:
--- On THEN reduce production nxlplus -> nxlminus
--- On RPAREN reduce production nxlplus -> nxlminus
--- On OVERWRITEGLOBALHASH reduce production nxlplus -> nxlminus
--- On NEQ reduce production nxlplus -> nxlminus
--- On MUTUAL reduce production nxlplus -> nxlminus
--- On MINUS reduce production nxlplus -> nxlminus
--- On LT reduce production nxlplus -> nxlminus
--- On LOR reduce production nxlplus -> nxlminus
--- On LISTPUNCT reduce production nxlplus -> nxlminus
--- On LETMUTABLE reduce production nxlplus -> nxlminus
--- On LETAND reduce production nxlplus -> nxlminus
--- On LET reduce production nxlplus -> nxlminus
--- On LEQ reduce production nxlplus -> nxlminus
--- On LAND reduce production nxlplus -> nxlminus
--- On IN reduce production nxlplus -> nxlminus
--- On GT reduce production nxlplus -> nxlminus
--- On GEQ reduce production nxlplus -> nxlminus
--- On EQ reduce production nxlplus -> nxlminus
--- On EOI reduce production nxlplus -> nxlminus
--- On ENDMUTUAL reduce production nxlplus -> nxlminus
--- On ELSE reduce production nxlplus -> nxlminus
--- On ELIST reduce production nxlplus -> nxlminus
--- On DO reduce production nxlplus -> nxlminus
--- On CONS reduce production nxlplus -> nxlminus
--- On CONCAT reduce production nxlplus -> nxlminus
--- On CLOSENUM reduce production nxlplus -> nxlminus
--- On BEFORE reduce production nxlplus -> nxlminus
+-- On THEN RPAREN OVERWRITEGLOBALHASH NEQ MUTUAL MINUS LT LOR LISTPUNCT LETMUTABLE LETAND LET LEQ LAND IN GT GEQ EQ EOI ENDMUTUAL ELSE ELIST DO CONS CONCAT CLOSENUM BEFORE
+--   reduce production nxlplus -> nxlminus
 
 State 109:
 ## Known stack suffix:
@@ -2274,34 +1856,8 @@ nxrtimes -> nxrtimes . MOD error [ THEN RPAREN PLUS OVERWRITEGLOBALHASH NEQ MUTU
 -- On MOD shift to state 86
 -- On DIVIDES shift to state 89
 ## Reductions:
--- On THEN reduce production nxrminus -> nxrtimes
--- On RPAREN reduce production nxrminus -> nxrtimes
--- On PLUS reduce production nxrminus -> nxrtimes
--- On OVERWRITEGLOBALHASH reduce production nxrminus -> nxrtimes
--- On NEQ reduce production nxrminus -> nxrtimes
--- On MUTUAL reduce production nxrminus -> nxrtimes
--- On MINUS reduce production nxrminus -> nxrtimes
--- On LT reduce production nxrminus -> nxrtimes
--- On LOR reduce production nxrminus -> nxrtimes
--- On LISTPUNCT reduce production nxrminus -> nxrtimes
--- On LETMUTABLE reduce production nxrminus -> nxrtimes
--- On LETAND reduce production nxrminus -> nxrtimes
--- On LET reduce production nxrminus -> nxrtimes
--- On LEQ reduce production nxrminus -> nxrtimes
--- On LAND reduce production nxrminus -> nxrtimes
--- On IN reduce production nxrminus -> nxrtimes
--- On GT reduce production nxrminus -> nxrtimes
--- On GEQ reduce production nxrminus -> nxrtimes
--- On EQ reduce production nxrminus -> nxrtimes
--- On EOI reduce production nxrminus -> nxrtimes
--- On ENDMUTUAL reduce production nxrminus -> nxrtimes
--- On ELSE reduce production nxrminus -> nxrtimes
--- On ELIST reduce production nxrminus -> nxrtimes
--- On DO reduce production nxrminus -> nxrtimes
--- On CONS reduce production nxrminus -> nxrtimes
--- On CONCAT reduce production nxrminus -> nxrtimes
--- On CLOSENUM reduce production nxrminus -> nxrtimes
--- On BEFORE reduce production nxrminus -> nxrtimes
+-- On THEN RPAREN PLUS OVERWRITEGLOBALHASH NEQ MUTUAL MINUS LT LOR LISTPUNCT LETMUTABLE LETAND LET LEQ LAND IN GT GEQ EQ EOI ENDMUTUAL ELSE ELIST DO CONS CONCAT CLOSENUM BEFORE
+--   reduce production nxrminus -> nxrtimes
 
 State 112:
 ## Known stack suffix:
@@ -2313,32 +1869,8 @@ nxrminus -> nxrplus . MINUS error [ THEN RPAREN PLUS OVERWRITEGLOBALHASH NEQ MUT
 ## Transitions:
 -- On MINUS shift to state 113
 ## Reductions:
--- On THEN reduce production nxlplus -> nxlminus PLUS nxrplus
--- On RPAREN reduce production nxlplus -> nxlminus PLUS nxrplus
--- On OVERWRITEGLOBALHASH reduce production nxlplus -> nxlminus PLUS nxrplus
--- On NEQ reduce production nxlplus -> nxlminus PLUS nxrplus
--- On MUTUAL reduce production nxlplus -> nxlminus PLUS nxrplus
--- On LT reduce production nxlplus -> nxlminus PLUS nxrplus
--- On LOR reduce production nxlplus -> nxlminus PLUS nxrplus
--- On LISTPUNCT reduce production nxlplus -> nxlminus PLUS nxrplus
--- On LETMUTABLE reduce production nxlplus -> nxlminus PLUS nxrplus
--- On LETAND reduce production nxlplus -> nxlminus PLUS nxrplus
--- On LET reduce production nxlplus -> nxlminus PLUS nxrplus
--- On LEQ reduce production nxlplus -> nxlminus PLUS nxrplus
--- On LAND reduce production nxlplus -> nxlminus PLUS nxrplus
--- On IN reduce production nxlplus -> nxlminus PLUS nxrplus
--- On GT reduce production nxlplus -> nxlminus PLUS nxrplus
--- On GEQ reduce production nxlplus -> nxlminus PLUS nxrplus
--- On EQ reduce production nxlplus -> nxlminus PLUS nxrplus
--- On EOI reduce production nxlplus -> nxlminus PLUS nxrplus
--- On ENDMUTUAL reduce production nxlplus -> nxlminus PLUS nxrplus
--- On ELSE reduce production nxlplus -> nxlminus PLUS nxrplus
--- On ELIST reduce production nxlplus -> nxlminus PLUS nxrplus
--- On DO reduce production nxlplus -> nxlminus PLUS nxrplus
--- On CONS reduce production nxlplus -> nxlminus PLUS nxrplus
--- On CONCAT reduce production nxlplus -> nxlminus PLUS nxrplus
--- On CLOSENUM reduce production nxlplus -> nxlminus PLUS nxrplus
--- On BEFORE reduce production nxlplus -> nxlminus PLUS nxrplus
+-- On THEN RPAREN OVERWRITEGLOBALHASH NEQ MUTUAL LT LOR LISTPUNCT LETMUTABLE LETAND LET LEQ LAND IN GT GEQ EQ EOI ENDMUTUAL ELSE ELIST DO CONS CONCAT CLOSENUM BEFORE
+--   reduce production nxlplus -> nxlminus PLUS nxrplus
 
 State 113:
 ## Known stack suffix:
@@ -2385,34 +1917,8 @@ nxrtimes -> nxrtimes . MOD error [ THEN RPAREN PLUS OVERWRITEGLOBALHASH NEQ MUTU
 -- On MOD shift to state 86
 -- On DIVIDES shift to state 89
 ## Reductions:
--- On THEN reduce production nxrminus -> nxrplus MINUS nxrtimes
--- On RPAREN reduce production nxrminus -> nxrplus MINUS nxrtimes
--- On PLUS reduce production nxrminus -> nxrplus MINUS nxrtimes
--- On OVERWRITEGLOBALHASH reduce production nxrminus -> nxrplus MINUS nxrtimes
--- On NEQ reduce production nxrminus -> nxrplus MINUS nxrtimes
--- On MUTUAL reduce production nxrminus -> nxrplus MINUS nxrtimes
--- On MINUS reduce production nxrminus -> nxrplus MINUS nxrtimes
--- On LT reduce production nxrminus -> nxrplus MINUS nxrtimes
--- On LOR reduce production nxrminus -> nxrplus MINUS nxrtimes
--- On LISTPUNCT reduce production nxrminus -> nxrplus MINUS nxrtimes
--- On LETMUTABLE reduce production nxrminus -> nxrplus MINUS nxrtimes
--- On LETAND reduce production nxrminus -> nxrplus MINUS nxrtimes
--- On LET reduce production nxrminus -> nxrplus MINUS nxrtimes
--- On LEQ reduce production nxrminus -> nxrplus MINUS nxrtimes
--- On LAND reduce production nxrminus -> nxrplus MINUS nxrtimes
--- On IN reduce production nxrminus -> nxrplus MINUS nxrtimes
--- On GT reduce production nxrminus -> nxrplus MINUS nxrtimes
--- On GEQ reduce production nxrminus -> nxrplus MINUS nxrtimes
--- On EQ reduce production nxrminus -> nxrplus MINUS nxrtimes
--- On EOI reduce production nxrminus -> nxrplus MINUS nxrtimes
--- On ENDMUTUAL reduce production nxrminus -> nxrplus MINUS nxrtimes
--- On ELSE reduce production nxrminus -> nxrplus MINUS nxrtimes
--- On ELIST reduce production nxrminus -> nxrplus MINUS nxrtimes
--- On DO reduce production nxrminus -> nxrplus MINUS nxrtimes
--- On CONS reduce production nxrminus -> nxrplus MINUS nxrtimes
--- On CONCAT reduce production nxrminus -> nxrplus MINUS nxrtimes
--- On CLOSENUM reduce production nxrminus -> nxrplus MINUS nxrtimes
--- On BEFORE reduce production nxrminus -> nxrplus MINUS nxrtimes
+-- On THEN RPAREN PLUS OVERWRITEGLOBALHASH NEQ MUTUAL MINUS LT LOR LISTPUNCT LETMUTABLE LETAND LET LEQ LAND IN GT GEQ EQ EOI ENDMUTUAL ELSE ELIST DO CONS CONCAT CLOSENUM BEFORE
+--   reduce production nxrminus -> nxrplus MINUS nxrtimes
 
 State 116:
 ## Known stack suffix:
@@ -2424,33 +1930,8 @@ nxrplus -> nxrminus . PLUS error [ THEN RPAREN OVERWRITEGLOBALHASH NEQ MUTUAL MI
 ## Transitions:
 -- On PLUS shift to state 117
 ## Reductions:
--- On THEN reduce production nxrplus -> nxrminus
--- On RPAREN reduce production nxrplus -> nxrminus
--- On OVERWRITEGLOBALHASH reduce production nxrplus -> nxrminus
--- On NEQ reduce production nxrplus -> nxrminus
--- On MUTUAL reduce production nxrplus -> nxrminus
--- On MINUS reduce production nxrplus -> nxrminus
--- On LT reduce production nxrplus -> nxrminus
--- On LOR reduce production nxrplus -> nxrminus
--- On LISTPUNCT reduce production nxrplus -> nxrminus
--- On LETMUTABLE reduce production nxrplus -> nxrminus
--- On LETAND reduce production nxrplus -> nxrminus
--- On LET reduce production nxrplus -> nxrminus
--- On LEQ reduce production nxrplus -> nxrminus
--- On LAND reduce production nxrplus -> nxrminus
--- On IN reduce production nxrplus -> nxrminus
--- On GT reduce production nxrplus -> nxrminus
--- On GEQ reduce production nxrplus -> nxrminus
--- On EQ reduce production nxrplus -> nxrminus
--- On EOI reduce production nxrplus -> nxrminus
--- On ENDMUTUAL reduce production nxrplus -> nxrminus
--- On ELSE reduce production nxrplus -> nxrminus
--- On ELIST reduce production nxrplus -> nxrminus
--- On DO reduce production nxrplus -> nxrminus
--- On CONS reduce production nxrplus -> nxrminus
--- On CONCAT reduce production nxrplus -> nxrminus
--- On CLOSENUM reduce production nxrplus -> nxrminus
--- On BEFORE reduce production nxrplus -> nxrminus
+-- On THEN RPAREN OVERWRITEGLOBALHASH NEQ MUTUAL MINUS LT LOR LISTPUNCT LETMUTABLE LETAND LET LEQ LAND IN GT GEQ EQ EOI ENDMUTUAL ELSE ELIST DO CONS CONCAT CLOSENUM BEFORE
+--   reduce production nxrplus -> nxrminus
 
 State 117:
 ## Known stack suffix:
@@ -2496,32 +1977,8 @@ nxrplus -> nxrminus PLUS nxrplus . [ THEN RPAREN OVERWRITEGLOBALHASH NEQ MUTUAL 
 ## Transitions:
 -- On MINUS shift to state 113
 ## Reductions:
--- On THEN reduce production nxrplus -> nxrminus PLUS nxrplus
--- On RPAREN reduce production nxrplus -> nxrminus PLUS nxrplus
--- On OVERWRITEGLOBALHASH reduce production nxrplus -> nxrminus PLUS nxrplus
--- On NEQ reduce production nxrplus -> nxrminus PLUS nxrplus
--- On MUTUAL reduce production nxrplus -> nxrminus PLUS nxrplus
--- On LT reduce production nxrplus -> nxrminus PLUS nxrplus
--- On LOR reduce production nxrplus -> nxrminus PLUS nxrplus
--- On LISTPUNCT reduce production nxrplus -> nxrminus PLUS nxrplus
--- On LETMUTABLE reduce production nxrplus -> nxrminus PLUS nxrplus
--- On LETAND reduce production nxrplus -> nxrminus PLUS nxrplus
--- On LET reduce production nxrplus -> nxrminus PLUS nxrplus
--- On LEQ reduce production nxrplus -> nxrminus PLUS nxrplus
--- On LAND reduce production nxrplus -> nxrminus PLUS nxrplus
--- On IN reduce production nxrplus -> nxrminus PLUS nxrplus
--- On GT reduce production nxrplus -> nxrminus PLUS nxrplus
--- On GEQ reduce production nxrplus -> nxrminus PLUS nxrplus
--- On EQ reduce production nxrplus -> nxrminus PLUS nxrplus
--- On EOI reduce production nxrplus -> nxrminus PLUS nxrplus
--- On ENDMUTUAL reduce production nxrplus -> nxrminus PLUS nxrplus
--- On ELSE reduce production nxrplus -> nxrminus PLUS nxrplus
--- On ELIST reduce production nxrplus -> nxrminus PLUS nxrplus
--- On DO reduce production nxrplus -> nxrminus PLUS nxrplus
--- On CONS reduce production nxrplus -> nxrminus PLUS nxrplus
--- On CONCAT reduce production nxrplus -> nxrminus PLUS nxrplus
--- On CLOSENUM reduce production nxrplus -> nxrminus PLUS nxrplus
--- On BEFORE reduce production nxrplus -> nxrminus PLUS nxrplus
+-- On THEN RPAREN OVERWRITEGLOBALHASH NEQ MUTUAL LT LOR LISTPUNCT LETMUTABLE LETAND LET LEQ LAND IN GT GEQ EQ EOI ENDMUTUAL ELSE ELIST DO CONS CONCAT CLOSENUM BEFORE
+--   reduce production nxrplus -> nxrminus PLUS nxrplus
 
 State 120:
 ## Known stack suffix:
@@ -2551,37 +2008,8 @@ nxun -> nxapp . [ TIMES THEN RPAREN PLUS OVERWRITEGLOBALHASH NEQ MUTUAL MOD MINU
 -- On BLIST shift to state 55
 -- On nxbot shift to state 60
 ## Reductions:
--- On TIMES reduce production nxun -> nxapp
--- On THEN reduce production nxun -> nxapp
--- On RPAREN reduce production nxun -> nxapp
--- On PLUS reduce production nxun -> nxapp
--- On OVERWRITEGLOBALHASH reduce production nxun -> nxapp
--- On NEQ reduce production nxun -> nxapp
--- On MUTUAL reduce production nxun -> nxapp
--- On MOD reduce production nxun -> nxapp
--- On MINUS reduce production nxun -> nxapp
--- On LT reduce production nxun -> nxapp
--- On LOR reduce production nxun -> nxapp
--- On LISTPUNCT reduce production nxun -> nxapp
--- On LETMUTABLE reduce production nxun -> nxapp
--- On LETAND reduce production nxun -> nxapp
--- On LET reduce production nxun -> nxapp
--- On LEQ reduce production nxun -> nxapp
--- On LAND reduce production nxun -> nxapp
--- On IN reduce production nxun -> nxapp
--- On GT reduce production nxun -> nxapp
--- On GEQ reduce production nxun -> nxapp
--- On EQ reduce production nxun -> nxapp
--- On EOI reduce production nxun -> nxapp
--- On ENDMUTUAL reduce production nxun -> nxapp
--- On ELSE reduce production nxun -> nxapp
--- On ELIST reduce production nxun -> nxapp
--- On DO reduce production nxun -> nxapp
--- On DIVIDES reduce production nxun -> nxapp
--- On CONS reduce production nxun -> nxapp
--- On CONCAT reduce production nxun -> nxapp
--- On CLOSENUM reduce production nxun -> nxapp
--- On BEFORE reduce production nxun -> nxapp
+-- On TIMES THEN RPAREN PLUS OVERWRITEGLOBALHASH NEQ MUTUAL MOD MINUS LT LOR LISTPUNCT LETMUTABLE LETAND LET LEQ LAND IN GT GEQ EQ EOI ENDMUTUAL ELSE ELIST DO DIVIDES CONS CONCAT CLOSENUM BEFORE
+--   reduce production nxun -> nxapp
 
 State 122:
 ## Known stack suffix:
@@ -2651,22 +2079,8 @@ nxlor -> nxland . LOR error [ THEN RPAREN OVERWRITEGLOBALHASH MUTUAL LISTPUNCT L
 ## Transitions:
 -- On LOR shift to state 127
 ## Reductions:
--- On THEN reduce production nxlor -> nxland
--- On RPAREN reduce production nxlor -> nxland
--- On OVERWRITEGLOBALHASH reduce production nxlor -> nxland
--- On MUTUAL reduce production nxlor -> nxland
--- On LISTPUNCT reduce production nxlor -> nxland
--- On LETMUTABLE reduce production nxlor -> nxland
--- On LETAND reduce production nxlor -> nxland
--- On LET reduce production nxlor -> nxland
--- On IN reduce production nxlor -> nxland
--- On EOI reduce production nxlor -> nxland
--- On ENDMUTUAL reduce production nxlor -> nxland
--- On ELSE reduce production nxlor -> nxland
--- On ELIST reduce production nxlor -> nxland
--- On DO reduce production nxlor -> nxland
--- On CLOSENUM reduce production nxlor -> nxland
--- On BEFORE reduce production nxlor -> nxland
+-- On THEN RPAREN OVERWRITEGLOBALHASH MUTUAL LISTPUNCT LETMUTABLE LETAND LET IN EOI ENDMUTUAL ELSE ELIST DO CLOSENUM BEFORE
+--   reduce production nxlor -> nxland
 
 State 127:
 ## Known stack suffix:
@@ -2745,24 +2159,8 @@ nxcomp -> nxconcat . LT error [ THEN RPAREN OVERWRITEGLOBALHASH MUTUAL LOR LISTP
 -- On GEQ shift to state 143
 -- On EQ shift to state 146
 ## Reductions:
--- On THEN reduce production nxcomp -> nxconcat
--- On RPAREN reduce production nxcomp -> nxconcat
--- On OVERWRITEGLOBALHASH reduce production nxcomp -> nxconcat
--- On MUTUAL reduce production nxcomp -> nxconcat
--- On LOR reduce production nxcomp -> nxconcat
--- On LISTPUNCT reduce production nxcomp -> nxconcat
--- On LETMUTABLE reduce production nxcomp -> nxconcat
--- On LETAND reduce production nxcomp -> nxconcat
--- On LET reduce production nxcomp -> nxconcat
--- On LAND reduce production nxcomp -> nxconcat
--- On IN reduce production nxcomp -> nxconcat
--- On EOI reduce production nxcomp -> nxconcat
--- On ENDMUTUAL reduce production nxcomp -> nxconcat
--- On ELSE reduce production nxcomp -> nxconcat
--- On ELIST reduce production nxcomp -> nxconcat
--- On DO reduce production nxcomp -> nxconcat
--- On CLOSENUM reduce production nxcomp -> nxconcat
--- On BEFORE reduce production nxcomp -> nxconcat
+-- On THEN RPAREN OVERWRITEGLOBALHASH MUTUAL LOR LISTPUNCT LETMUTABLE LETAND LET LAND IN EOI ENDMUTUAL ELSE ELIST DO CLOSENUM BEFORE
+--   reduce production nxcomp -> nxconcat
 
 State 131:
 ## Known stack suffix:
@@ -3074,23 +2472,8 @@ nxland -> nxcomp . LAND error [ THEN RPAREN OVERWRITEGLOBALHASH MUTUAL LOR LISTP
 ## Transitions:
 -- On LAND shift to state 150
 ## Reductions:
--- On THEN reduce production nxland -> nxcomp
--- On RPAREN reduce production nxland -> nxcomp
--- On OVERWRITEGLOBALHASH reduce production nxland -> nxcomp
--- On MUTUAL reduce production nxland -> nxcomp
--- On LOR reduce production nxland -> nxcomp
--- On LISTPUNCT reduce production nxland -> nxcomp
--- On LETMUTABLE reduce production nxland -> nxcomp
--- On LETAND reduce production nxland -> nxcomp
--- On LET reduce production nxland -> nxcomp
--- On IN reduce production nxland -> nxcomp
--- On EOI reduce production nxland -> nxcomp
--- On ENDMUTUAL reduce production nxland -> nxcomp
--- On ELSE reduce production nxland -> nxcomp
--- On ELIST reduce production nxland -> nxcomp
--- On DO reduce production nxland -> nxcomp
--- On CLOSENUM reduce production nxland -> nxcomp
--- On BEFORE reduce production nxland -> nxcomp
+-- On THEN RPAREN OVERWRITEGLOBALHASH MUTUAL LOR LISTPUNCT LETMUTABLE LETAND LET IN EOI ENDMUTUAL ELSE ELIST DO CLOSENUM BEFORE
+--   reduce production nxland -> nxcomp
 
 State 150:
 ## Known stack suffix:
@@ -3590,21 +2973,8 @@ nxbfr -> nxlambda . BEFORE error [ THEN RPAREN OVERWRITEGLOBALHASH MUTUAL LISTPU
 ## Transitions:
 -- On BEFORE shift to state 172
 ## Reductions:
--- On THEN reduce production nxbfr -> nxlambda
--- On RPAREN reduce production nxbfr -> nxlambda
--- On OVERWRITEGLOBALHASH reduce production nxbfr -> nxlambda
--- On MUTUAL reduce production nxbfr -> nxlambda
--- On LISTPUNCT reduce production nxbfr -> nxlambda
--- On LETMUTABLE reduce production nxbfr -> nxlambda
--- On LETAND reduce production nxbfr -> nxlambda
--- On LET reduce production nxbfr -> nxlambda
--- On IN reduce production nxbfr -> nxlambda
--- On EOI reduce production nxbfr -> nxlambda
--- On ENDMUTUAL reduce production nxbfr -> nxlambda
--- On ELSE reduce production nxbfr -> nxlambda
--- On ELIST reduce production nxbfr -> nxlambda
--- On DO reduce production nxbfr -> nxlambda
--- On CLOSENUM reduce production nxbfr -> nxlambda
+-- On THEN RPAREN OVERWRITEGLOBALHASH MUTUAL LISTPUNCT LETMUTABLE LETAND LET IN EOI ENDMUTUAL ELSE ELIST DO CLOSENUM
+--   reduce production nxbfr -> nxlambda
 
 State 172:
 ## Known stack suffix:
@@ -4140,7 +3510,8 @@ nxlet -> LET VAR argvar DEFEQ nxlet . nxdec IN error [ THEN RPAREN OVERWRITEGLOB
 -- On LETAND shift to state 201
 -- On nxdec shift to state 214
 ## Reductions:
--- On IN reduce production nxdec ->
+-- On IN
+--   reduce production nxdec ->
 
 State 201:
 ## Known stack suffix:
@@ -4166,7 +3537,8 @@ nxdec -> LETAND VAR . error [ MUTUAL LETMUTABLE LET IN EOI ]
 -- On VAR shift to state 7
 -- On argvar shift to state 204
 ## Reductions:
--- On DEFEQ reduce production argvar ->
+-- On DEFEQ
+--   reduce production argvar ->
 
 State 203:
 ## Known stack suffix:
@@ -4241,11 +3613,8 @@ nxdec -> LETAND VAR argvar DEFEQ nxlet . nxdec [ MUTUAL LETMUTABLE LET IN EOI ]
 -- On LETAND shift to state 201
 -- On nxdec shift to state 207
 ## Reductions:
--- On MUTUAL reduce production nxdec ->
--- On LETMUTABLE reduce production nxdec ->
--- On LET reduce production nxdec ->
--- On IN reduce production nxdec ->
--- On EOI reduce production nxdec ->
+-- On MUTUAL LETMUTABLE LET IN EOI
+--   reduce production nxdec ->
 
 State 207:
 ## Known stack suffix:
@@ -4267,7 +3636,8 @@ nxdec -> LETAND CTRLSEQ . error [ MUTUAL LETMUTABLE LET IN EOI ]
 -- On VAR shift to state 7
 -- On argvar shift to state 210
 ## Reductions:
--- On DEFEQ reduce production argvar ->
+-- On DEFEQ
+--   reduce production argvar ->
 
 State 209:
 ## Known stack suffix:
@@ -4342,11 +3712,8 @@ nxdec -> LETAND CTRLSEQ argvar DEFEQ nxlet . nxdec [ MUTUAL LETMUTABLE LET IN EO
 -- On LETAND shift to state 201
 -- On nxdec shift to state 213
 ## Reductions:
--- On MUTUAL reduce production nxdec ->
--- On LETMUTABLE reduce production nxdec ->
--- On LET reduce production nxdec ->
--- On IN reduce production nxdec ->
--- On EOI reduce production nxdec ->
+-- On MUTUAL LETMUTABLE LET IN EOI
+--   reduce production nxdec ->
 
 State 213:
 ## Known stack suffix:
@@ -4446,7 +3813,8 @@ nxlet -> LET CTRLSEQ . argvar DEFEQ nxlet nxdec IN error [ THEN RPAREN OVERWRITE
 -- On VAR shift to state 7
 -- On argvar shift to state 220
 ## Reductions:
--- On DEFEQ reduce production argvar ->
+-- On DEFEQ
+--   reduce production argvar ->
 
 State 219:
 ## Known stack suffix:
@@ -4536,7 +3904,8 @@ nxlet -> LET CTRLSEQ argvar DEFEQ nxlet . nxdec IN error [ THEN RPAREN OVERWRITE
 -- On LETAND shift to state 201
 -- On nxdec shift to state 224
 ## Reductions:
--- On IN reduce production nxdec ->
+-- On IN
+--   reduce production nxdec ->
 
 State 224:
 ## Known stack suffix:
@@ -4708,7 +4077,8 @@ nxbot -> BLIST nxlet . nxlist ELIST [ VAR UNITVALUE TRUE TIMES THEN RPAREN PLUS 
 -- On LISTPUNCT shift to state 234
 -- On nxlist shift to state 238
 ## Reductions:
--- On ELIST reduce production nxlist ->
+-- On ELIST
+--   reduce production nxlist ->
 
 State 234:
 ## Known stack suffix:
@@ -4776,7 +4146,8 @@ nxlist -> LISTPUNCT nxlet . nxlist [ ELIST ]
 -- On LISTPUNCT shift to state 234
 -- On nxlist shift to state 237
 ## Reductions:
--- On ELIST reduce production nxlist ->
+-- On ELIST
+--   reduce production nxlist ->
 
 State 237:
 ## Known stack suffix:
@@ -4845,7 +4216,8 @@ nxun -> LNOT . error [ TIMES RPAREN PLUS NEQ MOD MINUS LT LOR LEQ LAND GT GEQ EQ
 -- On nxbot shift to state 58
 -- On nxapp shift to state 63
 ## Reductions:
--- On RPAREN reduce production binop -> LNOT
+-- On RPAREN
+--   reduce production binop -> LNOT
 
 State 243:
 ## Known stack suffix:
@@ -4974,37 +4346,8 @@ nxun -> REFFINAL nxapp . [ TIMES THEN RPAREN PLUS OVERWRITEGLOBALHASH NEQ MUTUAL
 -- On BLIST shift to state 55
 -- On nxbot shift to state 60
 ## Reductions:
--- On TIMES reduce production nxun -> REFFINAL nxapp
--- On THEN reduce production nxun -> REFFINAL nxapp
--- On RPAREN reduce production nxun -> REFFINAL nxapp
--- On PLUS reduce production nxun -> REFFINAL nxapp
--- On OVERWRITEGLOBALHASH reduce production nxun -> REFFINAL nxapp
--- On NEQ reduce production nxun -> REFFINAL nxapp
--- On MUTUAL reduce production nxun -> REFFINAL nxapp
--- On MOD reduce production nxun -> REFFINAL nxapp
--- On MINUS reduce production nxun -> REFFINAL nxapp
--- On LT reduce production nxun -> REFFINAL nxapp
--- On LOR reduce production nxun -> REFFINAL nxapp
--- On LISTPUNCT reduce production nxun -> REFFINAL nxapp
--- On LETMUTABLE reduce production nxun -> REFFINAL nxapp
--- On LETAND reduce production nxun -> REFFINAL nxapp
--- On LET reduce production nxun -> REFFINAL nxapp
--- On LEQ reduce production nxun -> REFFINAL nxapp
--- On LAND reduce production nxun -> REFFINAL nxapp
--- On IN reduce production nxun -> REFFINAL nxapp
--- On GT reduce production nxun -> REFFINAL nxapp
--- On GEQ reduce production nxun -> REFFINAL nxapp
--- On EQ reduce production nxun -> REFFINAL nxapp
--- On EOI reduce production nxun -> REFFINAL nxapp
--- On ENDMUTUAL reduce production nxun -> REFFINAL nxapp
--- On ELSE reduce production nxun -> REFFINAL nxapp
--- On ELIST reduce production nxun -> REFFINAL nxapp
--- On DO reduce production nxun -> REFFINAL nxapp
--- On DIVIDES reduce production nxun -> REFFINAL nxapp
--- On CONS reduce production nxun -> REFFINAL nxapp
--- On CONCAT reduce production nxun -> REFFINAL nxapp
--- On CLOSENUM reduce production nxun -> REFFINAL nxapp
--- On BEFORE reduce production nxun -> REFFINAL nxapp
+-- On TIMES THEN RPAREN PLUS OVERWRITEGLOBALHASH NEQ MUTUAL MOD MINUS LT LOR LISTPUNCT LETMUTABLE LETAND LET LEQ LAND IN GT GEQ EQ EOI ENDMUTUAL ELSE ELIST DO DIVIDES CONS CONCAT CLOSENUM BEFORE
+--   reduce production nxun -> REFFINAL nxapp
 
 State 256:
 ## Known stack suffix:
@@ -5089,9 +4432,8 @@ narg -> OPENNUM nxlet CLOSENUM . error [ OPENQT END BGRP ]
 -- On OPENNUM shift to state 30
 -- On narg shift to state 263
 ## Reductions:
--- On OPENQT reduce production narg ->
--- On END reduce production narg ->
--- On BGRP reduce production narg ->
+-- On OPENQT END BGRP
+--   reduce production narg ->
 
 State 262:
 ## Known stack suffix:
@@ -5139,7 +4481,8 @@ sarg -> OPENQT . sxsep CLOSEQT sargsub [ VARINSTR SPACE SEP EOI EGRP CTRLSEQ CLO
 -- On sxbot shift to state 41
 -- On sxblock shift to state 43
 ## Reductions:
--- On CLOSEQT reduce production sxblock ->
+-- On CLOSEQT
+--   reduce production sxblock ->
 
 State 266:
 ## Known stack suffix:
@@ -5160,16 +4503,8 @@ sarg -> OPENQT sxsep CLOSEQT . sargsub [ VARINSTR SPACE SEP EOI EGRP CTRLSEQ CLO
 -- On BGRP shift to state 271
 -- On sargsub shift to state 278
 ## Reductions:
--- On VARINSTR reduce production sargsub ->
--- On SPACE reduce production sargsub ->
--- On SEP reduce production sargsub ->
--- On EOI reduce production sargsub ->
--- On EGRP reduce production sargsub ->
--- On CTRLSEQ reduce production sargsub ->
--- On CLOSESTR reduce production sargsub ->
--- On CLOSEQT reduce production sargsub ->
--- On CHAR reduce production sargsub ->
--- On BREAK reduce production sargsub ->
+-- On VARINSTR SPACE SEP EOI EGRP CTRLSEQ CLOSESTR CLOSEQT CHAR BREAK
+--   reduce production sargsub ->
 
 State 268:
 ## Known stack suffix:
@@ -5187,7 +4522,8 @@ sargsub -> OPENQT . sxsep CLOSEQT sargsub [ VARINSTR SPACE SEP EOI EGRP CTRLSEQ 
 -- On sxbot shift to state 41
 -- On sxblock shift to state 43
 ## Reductions:
--- On CLOSEQT reduce production sxblock ->
+-- On CLOSEQT
+--   reduce production sxblock ->
 
 State 269:
 ## Known stack suffix:
@@ -5208,16 +4544,8 @@ sargsub -> OPENQT sxsep CLOSEQT . sargsub [ VARINSTR SPACE SEP EOI EGRP CTRLSEQ 
 -- On BGRP shift to state 271
 -- On sargsub shift to state 277
 ## Reductions:
--- On VARINSTR reduce production sargsub ->
--- On SPACE reduce production sargsub ->
--- On SEP reduce production sargsub ->
--- On EOI reduce production sargsub ->
--- On EGRP reduce production sargsub ->
--- On CTRLSEQ reduce production sargsub ->
--- On CLOSESTR reduce production sargsub ->
--- On CLOSEQT reduce production sargsub ->
--- On CHAR reduce production sargsub ->
--- On BREAK reduce production sargsub ->
+-- On VARINSTR SPACE SEP EOI EGRP CTRLSEQ CLOSESTR CLOSEQT CHAR BREAK
+--   reduce production sargsub ->
 
 State 271:
 ## Known stack suffix:
@@ -5238,7 +4566,8 @@ sargsub -> BGRP . sxsep EGRP error [ VARINSTR SPACE SEP EOI EGRP CTRLSEQ CLOSEST
 -- On sxbot shift to state 41
 -- On sxblock shift to state 43
 ## Reductions:
--- On EGRP reduce production sxblock ->
+-- On EGRP
+--   reduce production sxblock ->
 
 State 272:
 ## Known stack suffix:
@@ -5271,16 +4600,8 @@ sargsub -> BGRP sxsep EGRP . error [ VARINSTR SPACE SEP EOI EGRP CTRLSEQ CLOSEST
 -- On BGRP shift to state 271
 -- On sargsub shift to state 276
 ## Reductions:
--- On VARINSTR reduce production sargsub ->
--- On SPACE reduce production sargsub ->
--- On SEP reduce production sargsub ->
--- On EOI reduce production sargsub ->
--- On EGRP reduce production sargsub ->
--- On CTRLSEQ reduce production sargsub ->
--- On CLOSESTR reduce production sargsub ->
--- On CLOSEQT reduce production sargsub ->
--- On CHAR reduce production sargsub ->
--- On BREAK reduce production sargsub ->
+-- On VARINSTR SPACE SEP EOI EGRP CTRLSEQ CLOSESTR CLOSEQT CHAR BREAK
+--   reduce production sargsub ->
 
 State 275:
 ## Known stack suffix:
@@ -5346,7 +4667,8 @@ sarg -> BGRP . sxsep EGRP error [ VARINSTR SPACE SEP EOI EGRP CTRLSEQ CLOSESTR C
 -- On sxbot shift to state 41
 -- On sxblock shift to state 43
 ## Reductions:
--- On EGRP reduce production sxblock ->
+-- On EGRP
+--   reduce production sxblock ->
 
 State 281:
 ## Known stack suffix:
@@ -5379,16 +4701,8 @@ sarg -> BGRP sxsep EGRP . error [ VARINSTR SPACE SEP EOI EGRP CTRLSEQ CLOSESTR C
 -- On BGRP shift to state 271
 -- On sargsub shift to state 285
 ## Reductions:
--- On VARINSTR reduce production sargsub ->
--- On SPACE reduce production sargsub ->
--- On SEP reduce production sargsub ->
--- On EOI reduce production sargsub ->
--- On EGRP reduce production sargsub ->
--- On CTRLSEQ reduce production sargsub ->
--- On CLOSESTR reduce production sargsub ->
--- On CLOSEQT reduce production sargsub ->
--- On CHAR reduce production sargsub ->
--- On BREAK reduce production sargsub ->
+-- On VARINSTR SPACE SEP EOI EGRP CTRLSEQ CLOSESTR CLOSEQT CHAR BREAK
+--   reduce production sargsub ->
 
 State 284:
 ## Known stack suffix:
@@ -5453,10 +4767,10 @@ sxsepsub -> sxblock SEP . error [ EGRP CLOSESTR CLOSEQT ]
 -- On sxbot shift to state 41
 -- On sxblock shift to state 288
 ## Reductions:
--- On SEP reduce production sxblock ->
--- On EGRP reduce production sxsepsub ->
--- On CLOSESTR reduce production sxsepsub ->
--- On CLOSEQT reduce production sxsepsub ->
+-- On SEP
+--   reduce production sxblock ->
+-- On EGRP CLOSESTR CLOSEQT
+--   reduce production sxsepsub ->
 
 State 290:
 ## Known stack suffix:
@@ -5513,37 +4827,8 @@ nxun -> REFNOW nxapp . [ TIMES THEN RPAREN PLUS OVERWRITEGLOBALHASH NEQ MUTUAL M
 -- On BLIST shift to state 55
 -- On nxbot shift to state 60
 ## Reductions:
--- On TIMES reduce production nxun -> REFNOW nxapp
--- On THEN reduce production nxun -> REFNOW nxapp
--- On RPAREN reduce production nxun -> REFNOW nxapp
--- On PLUS reduce production nxun -> REFNOW nxapp
--- On OVERWRITEGLOBALHASH reduce production nxun -> REFNOW nxapp
--- On NEQ reduce production nxun -> REFNOW nxapp
--- On MUTUAL reduce production nxun -> REFNOW nxapp
--- On MOD reduce production nxun -> REFNOW nxapp
--- On MINUS reduce production nxun -> REFNOW nxapp
--- On LT reduce production nxun -> REFNOW nxapp
--- On LOR reduce production nxun -> REFNOW nxapp
--- On LISTPUNCT reduce production nxun -> REFNOW nxapp
--- On LETMUTABLE reduce production nxun -> REFNOW nxapp
--- On LETAND reduce production nxun -> REFNOW nxapp
--- On LET reduce production nxun -> REFNOW nxapp
--- On LEQ reduce production nxun -> REFNOW nxapp
--- On LAND reduce production nxun -> REFNOW nxapp
--- On IN reduce production nxun -> REFNOW nxapp
--- On GT reduce production nxun -> REFNOW nxapp
--- On GEQ reduce production nxun -> REFNOW nxapp
--- On EQ reduce production nxun -> REFNOW nxapp
--- On EOI reduce production nxun -> REFNOW nxapp
--- On ENDMUTUAL reduce production nxun -> REFNOW nxapp
--- On ELSE reduce production nxun -> REFNOW nxapp
--- On ELIST reduce production nxun -> REFNOW nxapp
--- On DO reduce production nxun -> REFNOW nxapp
--- On DIVIDES reduce production nxun -> REFNOW nxapp
--- On CONS reduce production nxun -> REFNOW nxapp
--- On CONCAT reduce production nxun -> REFNOW nxapp
--- On CLOSENUM reduce production nxun -> REFNOW nxapp
--- On BEFORE reduce production nxun -> REFNOW nxapp
+-- On TIMES THEN RPAREN PLUS OVERWRITEGLOBALHASH NEQ MUTUAL MOD MINUS LT LOR LISTPUNCT LETMUTABLE LETAND LET LEQ LAND IN GT GEQ EQ EOI ENDMUTUAL ELSE ELIST DO DIVIDES CONS CONCAT CLOSENUM BEFORE
+--   reduce production nxun -> REFNOW nxapp
 
 State 295:
 ## Known stack suffix:
@@ -5660,7 +4945,8 @@ nxmutual -> LET VAR . argvar DEFEQ nxlet nxmutual [ MUTUAL LETMUTABLE LET IN EOI
 -- On VAR shift to state 7
 -- On argvar shift to state 303
 ## Reductions:
--- On DEFEQ reduce production argvar ->
+-- On DEFEQ
+--   reduce production argvar ->
 
 State 303:
 ## Known stack suffix:
@@ -5755,7 +5041,8 @@ nxmutual -> LET CTRLSEQ . argvar DEFEQ nxlet nxmutual [ MUTUAL LETMUTABLE LET IN
 -- On VAR shift to state 7
 -- On argvar shift to state 309
 ## Reductions:
--- On DEFEQ reduce production argvar ->
+-- On DEFEQ
+--   reduce production argvar ->
 
 State 309:
 ## Known stack suffix:
@@ -5846,7 +5133,8 @@ nxtoplevel -> MUTUAL LET VAR argvar DEFEQ nxlet nxmutual . IN nxlet [ EOI ]
 -- On IN shift to state 347
 -- On nxtoplevel shift to state 349
 ## Reductions:
--- On EOI reduce production nxtoplevel -> MUTUAL LET VAR argvar DEFEQ nxlet nxmutual
+-- On EOI
+--   reduce production nxtoplevel -> MUTUAL LET VAR argvar DEFEQ nxlet nxmutual
 
 State 314:
 ## Known stack suffix:
@@ -5968,7 +5256,8 @@ nxtoplevel -> LETMUTABLE VAR OVERWRITEEQ nxlet . IN nxlet [ EOI ]
 -- On IN shift to state 344
 -- On nxtoplevel shift to state 346
 ## Reductions:
--- On EOI reduce production nxtoplevel -> LETMUTABLE VAR OVERWRITEEQ nxlet
+-- On EOI
+--   reduce production nxtoplevel -> LETMUTABLE VAR OVERWRITEEQ nxlet
 
 State 321:
 ## Known stack suffix:
@@ -6015,7 +5304,8 @@ nxtoplevel -> LET VAR . argvar DEFEQ error [ EOI ]
 -- On VAR shift to state 7
 -- On argvar shift to state 325
 ## Reductions:
--- On DEFEQ reduce production argvar ->
+-- On DEFEQ
+--   reduce production argvar ->
 
 State 324:
 ## Known stack suffix:
@@ -6108,11 +5398,8 @@ nxtoplevel -> LET VAR argvar DEFEQ nxlet . nxdec IN nxlet [ EOI ]
 -- On LETAND shift to state 201
 -- On nxdec shift to state 329
 ## Reductions:
--- On MUTUAL reduce production nxdec ->
--- On LETMUTABLE reduce production nxdec ->
--- On LET reduce production nxdec ->
--- On IN reduce production nxdec ->
--- On EOI reduce production nxdec ->
+-- On MUTUAL LETMUTABLE LET IN EOI
+--   reduce production nxdec ->
 
 State 329:
 ## Known stack suffix:
@@ -6128,7 +5415,8 @@ nxtoplevel -> LET VAR argvar DEFEQ nxlet nxdec . IN nxlet [ EOI ]
 -- On IN shift to state 330
 -- On nxtoplevel shift to state 332
 ## Reductions:
--- On EOI reduce production nxtoplevel -> LET VAR argvar DEFEQ nxlet nxdec
+-- On EOI
+--   reduce production nxtoplevel -> LET VAR argvar DEFEQ nxlet nxdec
 
 State 330:
 ## Known stack suffix:
@@ -6209,7 +5497,8 @@ nxtoplevel -> LET CTRLSEQ . argvar DEFEQ nxlet nxdec IN error [ EOI ]
 -- On VAR shift to state 7
 -- On argvar shift to state 335
 ## Reductions:
--- On DEFEQ reduce production argvar ->
+-- On DEFEQ
+--   reduce production argvar ->
 
 State 334:
 ## Known stack suffix:
@@ -6305,11 +5594,8 @@ nxtoplevel -> LET CTRLSEQ argvar DEFEQ nxlet . nxdec IN error [ EOI ]
 -- On LETAND shift to state 201
 -- On nxdec shift to state 339
 ## Reductions:
--- On MUTUAL reduce production nxdec ->
--- On LETMUTABLE reduce production nxdec ->
--- On LET reduce production nxdec ->
--- On IN reduce production nxdec ->
--- On EOI reduce production nxdec ->
+-- On MUTUAL LETMUTABLE LET IN EOI
+--   reduce production nxdec ->
 
 State 339:
 ## Known stack suffix:
@@ -6326,7 +5612,8 @@ nxtoplevel -> LET CTRLSEQ argvar DEFEQ nxlet nxdec . IN error [ EOI ]
 -- On IN shift to state 340
 -- On nxtoplevel shift to state 343
 ## Reductions:
--- On EOI reduce production nxtoplevel -> LET CTRLSEQ argvar DEFEQ nxlet nxdec
+-- On EOI
+--   reduce production nxtoplevel -> LET CTRLSEQ argvar DEFEQ nxlet nxdec
 
 State 340:
 ## Known stack suffix:
@@ -6542,7 +5829,8 @@ nxtoplevel -> MUTUAL LET CTRLSEQ . argvar DEFEQ nxlet nxmutual IN nxlet [ EOI ]
 -- On VAR shift to state 7
 -- On argvar shift to state 351
 ## Reductions:
--- On DEFEQ reduce production argvar ->
+-- On DEFEQ
+--   reduce production argvar ->
 
 State 351:
 ## Known stack suffix:
@@ -6630,7 +5918,8 @@ nxtoplevel -> MUTUAL LET CTRLSEQ argvar DEFEQ nxlet nxmutual . IN nxlet [ EOI ]
 -- On IN shift to state 355
 -- On nxtoplevel shift to state 357
 ## Reductions:
--- On EOI reduce production nxtoplevel -> MUTUAL LET CTRLSEQ argvar DEFEQ nxlet nxmutual
+-- On EOI
+--   reduce production nxtoplevel -> MUTUAL LET CTRLSEQ argvar DEFEQ nxlet nxmutual
 
 State 355:
 ## Known stack suffix:

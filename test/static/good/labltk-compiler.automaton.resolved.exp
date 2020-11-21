@@ -15,7 +15,8 @@ entry' -> . entry [ # ]
 -- On Safe shift to state 170
 -- On Command shift to state 178
 ## Reductions:
--- On FUNCTION reduce production Safe ->
+-- On FUNCTION
+--   reduce production Safe ->
 
 State 1:
 ## Known stack suffix:
@@ -49,9 +50,10 @@ entry -> WIDGET IDENT LBRACE . WidgetComponents RBRACE [ # ]
 -- On External shift to state 112
 -- On Command shift to state 114
 ## Reductions:
--- On RBRACE reduce production WidgetComponents ->
--- On FUNCTION reduce production Safe ->
--- On EXTERNAL reduce production Safe ->
+-- On FUNCTION EXTERNAL
+--   reduce production Safe ->
+-- On RBRACE
+--   reduce production WidgetComponents ->
 
 State 4:
 ## Known stack suffix:
@@ -85,11 +87,8 @@ Option -> OPTION IDENT . [ UNSAFE RBRACE OPTION FUNCTION EXTERNAL ]
 -- On LBRACKET shift to state 10
 -- On Template shift to state 99
 ## Reductions:
--- On UNSAFE reduce production Option -> OPTION IDENT
--- On RBRACE reduce production Option -> OPTION IDENT
--- On OPTION reduce production Option -> OPTION IDENT
--- On FUNCTION reduce production Option -> OPTION IDENT
--- On EXTERNAL reduce production Option -> OPTION IDENT
+-- On UNSAFE RBRACE OPTION FUNCTION EXTERNAL
+--   reduce production Option -> OPTION IDENT
 
 State 7:
 ## Known stack suffix:
@@ -160,12 +159,8 @@ TypeName -> WIDGET . [ SLASH SEMICOLON RBRACKET RBRACE LPAREN LIST AS ]
 -- On LPAREN shift to state 12
 -- On COLON shift to state 15
 ## Reductions:
--- On SLASH reduce production TypeName -> WIDGET
--- On SEMICOLON reduce production TypeName -> WIDGET
--- On RBRACKET reduce production TypeName -> WIDGET
--- On RBRACE reduce production TypeName -> WIDGET
--- On LIST reduce production TypeName -> WIDGET
--- On AS reduce production TypeName -> WIDGET
+-- On SLASH SEMICOLON RBRACKET RBRACE LIST AS
+--   reduce production TypeName -> WIDGET
 
 State 12:
 ## Known stack suffix:
@@ -227,14 +222,8 @@ TypeName -> WIDGET . [ SLASH SEMICOLON RPAREN RBRACKET RBRACE LPAREN LIST COMMA 
 ## Transitions:
 -- On LPAREN shift to state 12
 ## Reductions:
--- On SLASH reduce production TypeName -> WIDGET
--- On SEMICOLON reduce production TypeName -> WIDGET
--- On RPAREN reduce production TypeName -> WIDGET
--- On RBRACKET reduce production TypeName -> WIDGET
--- On RBRACE reduce production TypeName -> WIDGET
--- On LIST reduce production TypeName -> WIDGET
--- On COMMA reduce production TypeName -> WIDGET
--- On AS reduce production TypeName -> WIDGET
+-- On SLASH SEMICOLON RPAREN RBRACKET RBRACE LIST COMMA AS
+--   reduce production TypeName -> WIDGET
 
 State 17:
 ## Known stack suffix:
@@ -376,14 +365,8 @@ Type1 -> TypeName . LPAREN IDENT RPAREN [ SEMICOLON RPAREN RBRACKET RBRACE LIST 
 ## Transitions:
 -- On LPAREN shift to state 31
 ## Reductions:
--- On SLASH reduce production Type0 -> TypeName
--- On SEMICOLON reduce production Type0 -> TypeName
--- On RPAREN reduce production Type0 -> TypeName
--- On RBRACKET reduce production Type0 -> TypeName
--- On RBRACE reduce production Type0 -> TypeName
--- On LIST reduce production Type0 -> TypeName
--- On COMMA reduce production Type0 -> TypeName
--- On AS reduce production Type0 -> TypeName
+-- On SLASH SEMICOLON RPAREN RBRACKET RBRACE LIST COMMA AS
+--   reduce production Type0 -> TypeName
 
 State 31:
 ## Known stack suffix:
@@ -423,7 +406,8 @@ Type_list -> Type2 . [ RBRACE ]
 -- On LIST shift to state 35
 -- On COMMA shift to state 36
 ## Reductions:
--- On RBRACE reduce production Type_list -> Type2
+-- On RBRACE
+--   reduce production Type_list -> Type2
 
 State 35:
 ## Known stack suffix:
@@ -475,12 +459,8 @@ Type2 -> Type1 . [ SEMICOLON RPAREN RBRACKET RBRACE LIST COMMA ]
 ## Transitions:
 -- On AS shift to state 39
 ## Reductions:
--- On SEMICOLON reduce production Type2 -> Type1
--- On RPAREN reduce production Type2 -> Type1
--- On RBRACKET reduce production Type2 -> Type1
--- On RBRACE reduce production Type2 -> Type1
--- On LIST reduce production Type2 -> Type1
--- On COMMA reduce production Type2 -> Type1
+-- On SEMICOLON RPAREN RBRACKET RBRACE LIST COMMA
+--   reduce production Type2 -> Type1
 
 State 39:
 ## Known stack suffix:
@@ -518,13 +498,8 @@ Type0_5 -> Type0 . [ SEMICOLON RPAREN RBRACKET RBRACE LIST COMMA AS ]
 ## Transitions:
 -- On SLASH shift to state 43
 ## Reductions:
--- On SEMICOLON reduce production Type0_5 -> Type0
--- On RPAREN reduce production Type0_5 -> Type0
--- On RBRACKET reduce production Type0_5 -> Type0
--- On RBRACE reduce production Type0_5 -> Type0
--- On LIST reduce production Type0_5 -> Type0
--- On COMMA reduce production Type0_5 -> Type0
--- On AS reduce production Type0_5 -> Type0
+-- On SEMICOLON RPAREN RBRACKET RBRACE LIST COMMA AS
+--   reduce production Type0_5 -> Type0
 
 State 43:
 ## Known stack suffix:
@@ -625,12 +600,8 @@ TypeName -> IDENT . [ SLASH RPAREN LPAREN LIST COMMA AS ]
 ## Transitions:
 -- On COLON shift to state 51
 ## Reductions:
--- On SLASH reduce production TypeName -> IDENT
--- On RPAREN reduce production TypeName -> IDENT
--- On LPAREN reduce production TypeName -> IDENT
--- On LIST reduce production TypeName -> IDENT
--- On COMMA reduce production TypeName -> IDENT
--- On AS reduce production TypeName -> IDENT
+-- On SLASH RPAREN LPAREN LIST COMMA AS
+--   reduce production TypeName -> IDENT
 
 State 51:
 ## Known stack suffix:
@@ -663,8 +634,8 @@ Type2 -> Type2 . LIST [ RPAREN LIST COMMA ]
 ## Transitions:
 -- On LIST shift to state 35
 ## Reductions:
--- On RPAREN reduce production Labeled_type2 -> IDENT COLON Type2
--- On COMMA reduce production Labeled_type2 -> IDENT COLON Type2
+-- On RPAREN COMMA
+--   reduce production Labeled_type2 -> IDENT COLON Type2
 
 State 53:
 ## Known stack suffix:
@@ -695,7 +666,8 @@ Type2 -> Type2 . LIST [ RPAREN LIST COMMA ]
 -- On RPAREN shift to state 56
 -- On LIST shift to state 35
 ## Reductions:
--- On COMMA reduce production Labeled_type2 -> Type2
+-- On COMMA
+--   reduce production Labeled_type2 -> Type2
 
 State 56:
 ## Known stack suffix:
@@ -715,7 +687,8 @@ Type_record -> Labeled_type2 . [ RPAREN ]
 ## Transitions:
 -- On COMMA shift to state 58
 ## Reductions:
--- On RPAREN reduce production Type_record -> Labeled_type2
+-- On RPAREN
+--   reduce production Type_record -> Labeled_type2
 
 State 58:
 ## Known stack suffix:
@@ -759,8 +732,8 @@ Type2 -> Type2 . LIST [ RPAREN LIST COMMA ]
 ## Transitions:
 -- On LIST shift to state 35
 ## Reductions:
--- On RPAREN reduce production Labeled_type2 -> Type2
--- On COMMA reduce production Labeled_type2 -> Type2
+-- On RPAREN COMMA
+--   reduce production Labeled_type2 -> Type2
 
 State 61:
 ## Known stack suffix:
@@ -780,9 +753,8 @@ Type2 -> Type2 . LIST [ SEMICOLON RBRACKET RBRACE LIST ]
 ## Transitions:
 -- On LIST shift to state 35
 ## Reductions:
--- On SEMICOLON reduce production Type -> Type2
--- On RBRACKET reduce production Type -> Type2
--- On RBRACE reduce production Type -> Type2
+-- On SEMICOLON RBRACKET RBRACE
+--   reduce production Type -> Type2
 
 State 63:
 ## Known stack suffix:
@@ -901,9 +873,8 @@ Arg -> QUESTION WIDGET COLON LBRACKET SimpleArgList RBRACKET . [ SEMICOLON RBRAC
 -- On LBRACKET shift to state 73
 -- On DefaultList shift to state 86
 ## Reductions:
--- On SEMICOLON reduce production Arg -> QUESTION WIDGET COLON LBRACKET SimpleArgList RBRACKET
--- On RBRACKET reduce production Arg -> QUESTION WIDGET COLON LBRACKET SimpleArgList RBRACKET
--- On RBRACE reduce production Arg -> QUESTION WIDGET COLON LBRACKET SimpleArgList RBRACKET
+-- On SEMICOLON RBRACKET RBRACE
+--   reduce production Arg -> QUESTION WIDGET COLON LBRACKET SimpleArgList RBRACKET
 
 State 73:
 ## Known stack suffix:
@@ -953,13 +924,8 @@ TypeName -> IDENT . [ SLASH SEMICOLON RBRACKET RBRACE LPAREN LIST AS ]
 ## Transitions:
 -- On COLON shift to state 76
 ## Reductions:
--- On SLASH reduce production TypeName -> IDENT
--- On SEMICOLON reduce production TypeName -> IDENT
--- On RBRACKET reduce production TypeName -> IDENT
--- On RBRACE reduce production TypeName -> IDENT
--- On LPAREN reduce production TypeName -> IDENT
--- On LIST reduce production TypeName -> IDENT
--- On AS reduce production TypeName -> IDENT
+-- On SLASH SEMICOLON RBRACKET RBRACE LPAREN LIST AS
+--   reduce production TypeName -> IDENT
 
 State 76:
 ## Known stack suffix:
@@ -1048,8 +1014,8 @@ ArgList -> Arg . [ RBRACKET RBRACE ]
 ## Transitions:
 -- On SEMICOLON shift to state 84
 ## Reductions:
--- On RBRACKET reduce production ArgList -> Arg
--- On RBRACE reduce production ArgList -> Arg
+-- On RBRACKET RBRACE
+--   reduce production ArgList -> Arg
 
 State 84:
 ## Known stack suffix:
@@ -1108,7 +1074,8 @@ SimpleArgList -> SimpleArg . [ RBRACKET ]
 ## Transitions:
 -- On SEMICOLON shift to state 88
 ## Reductions:
--- On RBRACKET reduce production SimpleArgList -> SimpleArg
+-- On RBRACKET
+--   reduce production SimpleArgList -> SimpleArg
 
 State 88:
 ## Known stack suffix:
@@ -1214,9 +1181,8 @@ Arg -> QUESTION IDENT COLON LBRACKET SimpleArgList RBRACKET . [ SEMICOLON RBRACK
 -- On LBRACKET shift to state 73
 -- On DefaultList shift to state 95
 ## Reductions:
--- On SEMICOLON reduce production Arg -> QUESTION IDENT COLON LBRACKET SimpleArgList RBRACKET
--- On RBRACKET reduce production Arg -> QUESTION IDENT COLON LBRACKET SimpleArgList RBRACKET
--- On RBRACE reduce production Arg -> QUESTION IDENT COLON LBRACKET SimpleArgList RBRACKET
+-- On SEMICOLON RBRACKET RBRACE
+--   reduce production Arg -> QUESTION IDENT COLON LBRACKET SimpleArgList RBRACKET
 
 State 95:
 ## Known stack suffix:
@@ -1371,9 +1337,10 @@ WidgetComponents -> Option . WidgetComponents [ RBRACE ]
 -- On External shift to state 112
 -- On Command shift to state 114
 ## Reductions:
--- On RBRACE reduce production WidgetComponents ->
--- On FUNCTION reduce production Safe ->
--- On EXTERNAL reduce production Safe ->
+-- On FUNCTION EXTERNAL
+--   reduce production Safe ->
+-- On RBRACE
+--   reduce production WidgetComponents ->
 
 State 111:
 ## Known stack suffix:
@@ -1398,9 +1365,10 @@ WidgetComponents -> External . WidgetComponents [ RBRACE ]
 -- On External shift to state 112
 -- On Command shift to state 114
 ## Reductions:
--- On RBRACE reduce production WidgetComponents ->
--- On FUNCTION reduce production Safe ->
--- On EXTERNAL reduce production Safe ->
+-- On FUNCTION EXTERNAL
+--   reduce production Safe ->
+-- On RBRACE
+--   reduce production WidgetComponents ->
 
 State 113:
 ## Known stack suffix:
@@ -1425,9 +1393,10 @@ WidgetComponents -> Command . WidgetComponents [ RBRACE ]
 -- On External shift to state 112
 -- On Command shift to state 114
 ## Reductions:
--- On RBRACE reduce production WidgetComponents ->
--- On FUNCTION reduce production Safe ->
--- On EXTERNAL reduce production Safe ->
+-- On FUNCTION EXTERNAL
+--   reduce production Safe ->
+-- On RBRACE
+--   reduce production WidgetComponents ->
 
 State 115:
 ## Known stack suffix:
@@ -1456,8 +1425,8 @@ entry -> VARIANT TYPE . ParserArity TypeName LBRACE Constructors RBRACE [ # ]
 -- On SEQUENCE shift to state 118
 -- On ParserArity shift to state 119
 ## Reductions:
--- On WIDGET reduce production ParserArity ->
--- On IDENT reduce production ParserArity ->
+-- On WIDGET IDENT
+--   reduce production ParserArity ->
 
 State 118:
 ## Known stack suffix:
@@ -1586,7 +1555,8 @@ Constructors -> Constructor . [ RBRACE ]
 -- On Constructors shift to state 131
 -- On Constructor shift to state 130
 ## Reductions:
--- On RBRACE reduce production Constructors -> Constructor
+-- On RBRACE
+--   reduce production Constructors -> Constructor
 
 State 131:
 ## Known stack suffix:
@@ -1607,8 +1577,8 @@ entry -> TYPE . ParserArity TypeName EXTERNAL [ # ]
 -- On SEQUENCE shift to state 118
 -- On ParserArity shift to state 133
 ## Reductions:
--- On WIDGET reduce production ParserArity ->
--- On IDENT reduce production ParserArity ->
+-- On WIDGET IDENT
+--   reduce production ParserArity ->
 
 State 133:
 ## Known stack suffix:
@@ -1681,9 +1651,8 @@ entry -> SUBTYPE . ParserArity TypeName LPAREN IDENT RPAREN LBRACE AbbrevConstru
 -- On SEQUENCE shift to state 118
 -- On ParserArity shift to state 140
 ## Reductions:
--- On WIDGET reduce production ParserArity ->
--- On OPTION reduce production ParserArity ->
--- On IDENT reduce production ParserArity ->
+-- On WIDGET OPTION IDENT
+--   reduce production ParserArity ->
 
 State 140:
 ## Known stack suffix:
@@ -1758,8 +1727,8 @@ Constructor -> IDENT . LPAREN IDENT RPAREN Template [ RBRACE IDENT ]
 -- On LBRACKET shift to state 10
 -- On Template shift to state 127
 ## Reductions:
--- On RBRACE reduce production AbbrevConstructor -> IDENT
--- On IDENT reduce production AbbrevConstructor -> IDENT
+-- On RBRACE IDENT
+--   reduce production AbbrevConstructor -> IDENT
 
 State 147:
 ## Known stack suffix:
@@ -1800,7 +1769,8 @@ AbbrevConstructors -> AbbrevConstructor . [ RBRACE ]
 -- On AbbrevConstructors shift to state 151
 -- On AbbrevConstructor shift to state 150
 ## Reductions:
--- On RBRACE reduce production AbbrevConstructors -> AbbrevConstructor
+-- On RBRACE
+--   reduce production AbbrevConstructors -> AbbrevConstructor
 
 State 151:
 ## Known stack suffix:
@@ -1907,9 +1877,10 @@ entry -> MODULE IDENT LBRACE . ModuleComponents RBRACE [ # ]
 -- On External shift to state 164
 -- On Command shift to state 166
 ## Reductions:
--- On RBRACE reduce production ModuleComponents ->
--- On FUNCTION reduce production Safe ->
--- On EXTERNAL reduce production Safe ->
+-- On RBRACE
+--   reduce production ModuleComponents ->
+-- On FUNCTION EXTERNAL
+--   reduce production Safe ->
 
 State 162:
 ## Known stack suffix:
@@ -1941,9 +1912,10 @@ ModuleComponents -> External . ModuleComponents [ RBRACE ]
 -- On External shift to state 164
 -- On Command shift to state 166
 ## Reductions:
--- On RBRACE reduce production ModuleComponents ->
--- On FUNCTION reduce production Safe ->
--- On EXTERNAL reduce production Safe ->
+-- On RBRACE
+--   reduce production ModuleComponents ->
+-- On FUNCTION EXTERNAL
+--   reduce production Safe ->
 
 State 165:
 ## Known stack suffix:
@@ -1966,9 +1938,10 @@ ModuleComponents -> Command . ModuleComponents [ RBRACE ]
 -- On External shift to state 164
 -- On Command shift to state 166
 ## Reductions:
--- On RBRACE reduce production ModuleComponents ->
--- On FUNCTION reduce production Safe ->
--- On EXTERNAL reduce production Safe ->
+-- On RBRACE
+--   reduce production ModuleComponents ->
+-- On FUNCTION EXTERNAL
+--   reduce production Safe ->
 
 State 167:
 ## Known stack suffix:

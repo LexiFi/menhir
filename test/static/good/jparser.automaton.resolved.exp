@@ -21,8 +21,8 @@ file' -> . file [ # ]
 -- On modifier shift to state 443
 -- On file shift to state 450
 ## Reductions:
--- On INTERFACE reduce production modifier_list_star ->
--- On CLASS reduce production modifier_list_star ->
+-- On INTERFACE CLASS
+--   reduce production modifier_list_star ->
 
 State 1:
 ## Known stack suffix:
@@ -288,8 +288,8 @@ file -> modifier_list_star file_type class_name . extends_clause implements_clau
 -- On EXTENDS shift to state 29
 -- On extends_clause shift to state 34
 ## Reductions:
--- On L_BRACE reduce production extends_clause ->
--- On IMPLEMENTS reduce production extends_clause ->
+-- On L_BRACE IMPLEMENTS
+--   reduce production extends_clause ->
 
 State 29:
 ## Known stack suffix:
@@ -329,12 +329,8 @@ class_name_list -> class_name . COMMA class_name_list [ SEMICOLON REQUIRES OLD L
 ## Transitions:
 -- On COMMA shift to state 32
 ## Reductions:
--- On SEMICOLON reduce production class_name_list -> class_name
--- On REQUIRES reduce production class_name_list -> class_name
--- On OLD reduce production class_name_list -> class_name
--- On L_BRACE reduce production class_name_list -> class_name
--- On IMPLEMENTS reduce production class_name_list -> class_name
--- On ENSURES reduce production class_name_list -> class_name
+-- On SEMICOLON REQUIRES OLD L_BRACE IMPLEMENTS ENSURES
+--   reduce production class_name_list -> class_name
 
 State 32:
 ## Known stack suffix:
@@ -374,7 +370,8 @@ file -> modifier_list_star file_type class_name extends_clause . implements_clau
 -- On IMPLEMENTS shift to state 35
 -- On implements_clause shift to state 37
 ## Reductions:
--- On L_BRACE reduce production implements_clause ->
+-- On L_BRACE
+--   reduce production implements_clause ->
 
 State 35:
 ## Known stack suffix:
@@ -439,24 +436,10 @@ file_body -> L_BRACE . member_list_star R_BRACE [ # ]
 -- On member_list_star shift to state 445
 -- On member shift to state 447
 ## Reductions:
--- On VOID reduce production modifier_list_star ->
--- On TRUE reduce production modifier_list_star ->
--- On SHORT reduce production modifier_list_star ->
--- On R_BRACE reduce production member_list_star ->
--- On QUOTED_NAME reduce production modifier_list_star ->
--- On NULL reduce production modifier_list_star ->
--- On LONG reduce production modifier_list_star ->
--- On INT reduce production modifier_list_star ->
--- On IDENTIFIER reduce production modifier_list_star ->
--- On FULL_IDENTIFIER reduce production modifier_list_star ->
--- On FLOAT reduce production modifier_list_star ->
--- On FALSE reduce production modifier_list_star ->
--- On EMP reduce production modifier_list_star ->
--- On DOUBLE reduce production modifier_list_star ->
--- On CHAR reduce production modifier_list_star ->
--- On BYTE reduce production modifier_list_star ->
--- On BOOLEAN reduce production modifier_list_star ->
--- On AS reduce production modifier_list_star ->
+-- On R_BRACE
+--   reduce production member_list_star ->
+-- On VOID TRUE SHORT QUOTED_NAME NULL LONG INT IDENTIFIER FULL_IDENTIFIER FLOAT FALSE EMP DOUBLE CHAR BYTE BOOLEAN AS
+--   reduce production modifier_list_star ->
 
 State 39:
 ## Known stack suffix:
@@ -589,15 +572,8 @@ nonvoid_type -> quoted_name . array_brackets_list_star [ TRUE SEMICOLON R_PAREN 
 -- On L_BRACKET shift to state 51
 -- On array_brackets_list_star shift to state 54
 ## Reductions:
--- On TRUE reduce production array_brackets_list_star ->
--- On SEMICOLON reduce production array_brackets_list_star ->
--- On R_PAREN reduce production array_brackets_list_star ->
--- On QUOTED_NAME reduce production array_brackets_list_star ->
--- On IDENTIFIER reduce production array_brackets_list_star ->
--- On FALSE reduce production array_brackets_list_star ->
--- On EMP reduce production array_brackets_list_star ->
--- On COMMA reduce production array_brackets_list_star ->
--- On AS reduce production array_brackets_list_star ->
+-- On TRUE SEMICOLON R_PAREN QUOTED_NAME IDENTIFIER FALSE EMP COMMA AS
+--   reduce production array_brackets_list_star ->
 
 State 51:
 ## Known stack suffix:
@@ -617,15 +593,8 @@ array_brackets_list_star -> L_BRACKET R_BRACKET . array_brackets_list_star [ TRU
 -- On L_BRACKET shift to state 51
 -- On array_brackets_list_star shift to state 53
 ## Reductions:
--- On TRUE reduce production array_brackets_list_star ->
--- On SEMICOLON reduce production array_brackets_list_star ->
--- On R_PAREN reduce production array_brackets_list_star ->
--- On QUOTED_NAME reduce production array_brackets_list_star ->
--- On IDENTIFIER reduce production array_brackets_list_star ->
--- On FALSE reduce production array_brackets_list_star ->
--- On EMP reduce production array_brackets_list_star ->
--- On COMMA reduce production array_brackets_list_star ->
--- On AS reduce production array_brackets_list_star ->
+-- On TRUE SEMICOLON R_PAREN QUOTED_NAME IDENTIFIER FALSE EMP COMMA AS
+--   reduce production array_brackets_list_star ->
 
 State 53:
 ## Known stack suffix:
@@ -732,7 +701,8 @@ member -> modifier_list_star jtype name L_PAREN . parameter_list_question_mark R
 -- On full_identifier shift to state 129
 -- On base_type_no_name shift to state 131
 ## Reductions:
--- On R_PAREN reduce production parameter_list_question_mark ->
+-- On R_PAREN
+--   reduce production parameter_list_question_mark ->
 
 State 61:
 ## Known stack suffix:
@@ -752,11 +722,8 @@ member -> modifier_list_star jtype name L_PAREN parameter_list_question_mark R_P
 -- On THROWS shift to state 63
 -- On throws_clause shift to state 65
 ## Reductions:
--- On SEMICOLON reduce production throws_clause ->
--- On REQUIRES reduce production throws_clause ->
--- On OLD reduce production throws_clause ->
--- On L_BRACE reduce production throws_clause ->
--- On ENSURES reduce production throws_clause ->
+-- On SEMICOLON REQUIRES OLD L_BRACE ENSURES
+--   reduce production throws_clause ->
 
 State 63:
 ## Known stack suffix:
@@ -796,10 +763,8 @@ member -> modifier_list_star jtype name L_PAREN parameter_list_question_mark R_P
 -- On REQUIRES shift to state 66
 -- On requires_clause shift to state 433
 ## Reductions:
--- On SEMICOLON reduce production requires_clause ->
--- On OLD reduce production requires_clause ->
--- On L_BRACE reduce production requires_clause ->
--- On ENSURES reduce production requires_clause ->
+-- On SEMICOLON OLD L_BRACE ENSURES
+--   reduce production requires_clause ->
 
 State 66:
 ## Known stack suffix:
@@ -884,8 +849,8 @@ method_body -> L_BRACE . declaration_or_statement_list_star catch_clause_list_st
 -- On base_type_no_name shift to state 131
 -- On array_ref shift to state 371
 ## Reductions:
--- On R_BRACE reduce production declaration_or_statement_list_star ->
--- On CATCH reduce production declaration_or_statement_list_star ->
+-- On R_BRACE CATCH
+--   reduce production declaration_or_statement_list_star ->
 
 State 69:
 ## Known stack suffix:
@@ -930,9 +895,8 @@ statement -> THROW . immediate SEMICOLON [ VIRTUALINVOKE UNKNOWN TRUE THROW TABL
 -- On identifier shift to state 89
 -- On constant shift to state 90
 ## Reductions:
--- On INTEGER_CONSTANT_LONG reduce production minus_question_mark ->
--- On INTEGER_CONSTANT reduce production minus_question_mark ->
--- On FLOAT_CONSTANT reduce production minus_question_mark ->
+-- On INTEGER_CONSTANT_LONG INTEGER_CONSTANT FLOAT_CONSTANT
+--   reduce production minus_question_mark ->
 
 State 72:
 ## Known stack suffix:
@@ -1147,9 +1111,8 @@ statement -> TABLESWITCH L_PAREN . immediate R_PAREN L_BRACE case_stmt_list_plus
 -- On identifier shift to state 89
 -- On constant shift to state 90
 ## Reductions:
--- On INTEGER_CONSTANT_LONG reduce production minus_question_mark ->
--- On INTEGER_CONSTANT reduce production minus_question_mark ->
--- On FLOAT_CONSTANT reduce production minus_question_mark ->
+-- On INTEGER_CONSTANT_LONG INTEGER_CONSTANT FLOAT_CONSTANT
+--   reduce production minus_question_mark ->
 
 State 93:
 ## Known stack suffix:
@@ -1200,7 +1163,8 @@ case_label -> CASE . minus_question_mark integer_constant [ COLON ]
 -- On MINUS shift to state 74
 -- On minus_question_mark shift to state 98
 ## Reductions:
--- On INTEGER_CONSTANT reduce production minus_question_mark ->
+-- On INTEGER_CONSTANT
+--   reduce production minus_question_mark ->
 
 State 98:
 ## Known stack suffix:
@@ -1261,7 +1225,8 @@ case_stmt_list_plus -> case_stmt . case_stmt_list_plus [ R_BRACE ]
 -- On case_stmt shift to state 103
 -- On case_label shift to state 105
 ## Reductions:
--- On R_BRACE reduce production case_stmt_list_plus -> case_stmt
+-- On R_BRACE
+--   reduce production case_stmt_list_plus -> case_stmt
 
 State 104:
 ## Known stack suffix:
@@ -1468,7 +1433,8 @@ method_signature -> CMPLT class_name COLON jtype name L_PAREN . parameter_list_q
 -- On full_identifier shift to state 129
 -- On base_type_no_name shift to state 131
 ## Reductions:
--- On R_PAREN reduce production parameter_list_question_mark ->
+-- On R_PAREN
+--   reduce production parameter_list_question_mark ->
 
 State 119:
 ## Known stack suffix:
@@ -1515,7 +1481,8 @@ parameter_list -> parameter . COMMA parameter_list [ R_PAREN ]
 ## Transitions:
 -- On COMMA shift to state 124
 ## Reductions:
--- On R_PAREN reduce production parameter_list -> parameter
+-- On R_PAREN
+--   reduce production parameter_list -> parameter
 
 State 124:
 ## Known stack suffix:
@@ -1575,15 +1542,8 @@ nonvoid_type -> identifier . array_brackets_list_star [ TRUE SEMICOLON R_PAREN Q
 -- On L_BRACKET shift to state 51
 -- On array_brackets_list_star shift to state 128
 ## Reductions:
--- On TRUE reduce production array_brackets_list_star ->
--- On SEMICOLON reduce production array_brackets_list_star ->
--- On R_PAREN reduce production array_brackets_list_star ->
--- On QUOTED_NAME reduce production array_brackets_list_star ->
--- On IDENTIFIER reduce production array_brackets_list_star ->
--- On FALSE reduce production array_brackets_list_star ->
--- On EMP reduce production array_brackets_list_star ->
--- On COMMA reduce production array_brackets_list_star ->
--- On AS reduce production array_brackets_list_star ->
+-- On TRUE SEMICOLON R_PAREN QUOTED_NAME IDENTIFIER FALSE EMP COMMA AS
+--   reduce production array_brackets_list_star ->
 
 State 128:
 ## Known stack suffix:
@@ -1603,15 +1563,8 @@ nonvoid_type -> full_identifier . array_brackets_list_star [ TRUE SEMICOLON R_PA
 -- On L_BRACKET shift to state 51
 -- On array_brackets_list_star shift to state 130
 ## Reductions:
--- On TRUE reduce production array_brackets_list_star ->
--- On SEMICOLON reduce production array_brackets_list_star ->
--- On R_PAREN reduce production array_brackets_list_star ->
--- On QUOTED_NAME reduce production array_brackets_list_star ->
--- On IDENTIFIER reduce production array_brackets_list_star ->
--- On FALSE reduce production array_brackets_list_star ->
--- On EMP reduce production array_brackets_list_star ->
--- On COMMA reduce production array_brackets_list_star ->
--- On AS reduce production array_brackets_list_star ->
+-- On TRUE SEMICOLON R_PAREN QUOTED_NAME IDENTIFIER FALSE EMP COMMA AS
+--   reduce production array_brackets_list_star ->
 
 State 130:
 ## Known stack suffix:
@@ -1631,15 +1584,8 @@ nonvoid_type -> base_type_no_name . array_brackets_list_star [ TRUE SEMICOLON R_
 -- On L_BRACKET shift to state 51
 -- On array_brackets_list_star shift to state 132
 ## Reductions:
--- On TRUE reduce production array_brackets_list_star ->
--- On SEMICOLON reduce production array_brackets_list_star ->
--- On R_PAREN reduce production array_brackets_list_star ->
--- On QUOTED_NAME reduce production array_brackets_list_star ->
--- On IDENTIFIER reduce production array_brackets_list_star ->
--- On FALSE reduce production array_brackets_list_star ->
--- On EMP reduce production array_brackets_list_star ->
--- On COMMA reduce production array_brackets_list_star ->
--- On AS reduce production array_brackets_list_star ->
+-- On TRUE SEMICOLON R_PAREN QUOTED_NAME IDENTIFIER FALSE EMP COMMA AS
+--   reduce production array_brackets_list_star ->
 
 State 132:
 ## Known stack suffix:
@@ -1686,10 +1632,10 @@ invoke_expr -> STATICINVOKE method_signature L_PAREN . arg_list_question_mark R_
 -- On arg_list_question_mark shift to state 138
 -- On arg_list shift to state 140
 ## Reductions:
--- On R_PAREN reduce production arg_list_question_mark ->
--- On INTEGER_CONSTANT_LONG reduce production minus_question_mark ->
--- On INTEGER_CONSTANT reduce production minus_question_mark ->
--- On FLOAT_CONSTANT reduce production minus_question_mark ->
+-- On R_PAREN
+--   reduce production arg_list_question_mark ->
+-- On INTEGER_CONSTANT_LONG INTEGER_CONSTANT FLOAT_CONSTANT
+--   reduce production minus_question_mark ->
 
 State 135:
 ## Known stack suffix:
@@ -1700,7 +1646,8 @@ arg_list -> immediate . COMMA arg_list [ R_PAREN ]
 ## Transitions:
 -- On COMMA shift to state 136
 ## Reductions:
--- On R_PAREN reduce production arg_list -> immediate
+-- On R_PAREN
+--   reduce production arg_list -> immediate
 
 State 136:
 ## Known stack suffix:
@@ -1728,9 +1675,8 @@ arg_list -> immediate COMMA . arg_list [ R_PAREN ]
 -- On constant shift to state 90
 -- On arg_list shift to state 137
 ## Reductions:
--- On INTEGER_CONSTANT_LONG reduce production minus_question_mark ->
--- On INTEGER_CONSTANT reduce production minus_question_mark ->
--- On FLOAT_CONSTANT reduce production minus_question_mark ->
+-- On INTEGER_CONSTANT_LONG INTEGER_CONSTANT FLOAT_CONSTANT
+--   reduce production minus_question_mark ->
 
 State 137:
 ## Known stack suffix:
@@ -1803,10 +1749,10 @@ statement -> RETURN . immediate_question_mark SEMICOLON [ VIRTUALINVOKE UNKNOWN 
 -- On identifier shift to state 89
 -- On constant shift to state 90
 ## Reductions:
--- On SEMICOLON reduce production immediate_question_mark ->
--- On INTEGER_CONSTANT_LONG reduce production minus_question_mark ->
--- On INTEGER_CONSTANT reduce production minus_question_mark ->
--- On FLOAT_CONSTANT reduce production minus_question_mark ->
+-- On SEMICOLON
+--   reduce production immediate_question_mark ->
+-- On INTEGER_CONSTANT_LONG INTEGER_CONSTANT FLOAT_CONSTANT
+--   reduce production minus_question_mark ->
 
 State 143:
 ## Known stack suffix:
@@ -1861,10 +1807,10 @@ statement -> RET . immediate_question_mark SEMICOLON [ VIRTUALINVOKE UNKNOWN TRU
 -- On identifier shift to state 89
 -- On constant shift to state 90
 ## Reductions:
--- On SEMICOLON reduce production immediate_question_mark ->
--- On INTEGER_CONSTANT_LONG reduce production minus_question_mark ->
--- On INTEGER_CONSTANT reduce production minus_question_mark ->
--- On FLOAT_CONSTANT reduce production minus_question_mark ->
+-- On SEMICOLON
+--   reduce production immediate_question_mark ->
+-- On INTEGER_CONSTANT_LONG INTEGER_CONSTANT FLOAT_CONSTANT
+--   reduce production minus_question_mark ->
 
 State 147:
 ## Known stack suffix:
@@ -1930,7 +1876,8 @@ statement -> L_BRACE . lvariable_list R_BRACE COLON spec SEMICOLON [ VIRTUALINVO
 -- On identifier shift to state 268
 -- On at_identifier shift to state 200
 ## Reductions:
--- On R_BRACE reduce production lvariable_list ->
+-- On R_BRACE
+--   reduce production lvariable_list ->
 
 State 153:
 ## Known stack suffix:
@@ -2031,10 +1978,8 @@ spec -> L_BRACE . formula R_BRACE L_BRACE formula R_BRACE exp_posts [ VOLATILE V
 -- On field_signature shift to state 199
 -- On at_identifier shift to state 200
 ## Reductions:
--- On R_BRACE reduce production formula ->
--- On OROR reduce production formula ->
--- On OR reduce production formula ->
--- On MULT reduce production formula ->
+-- On R_BRACE OROR OR MULT
+--   reduce production formula ->
 
 State 161:
 ## Known stack suffix:
@@ -2103,10 +2048,8 @@ jargument -> L_PAREN . jargument binop_val_no_multor jargument R_PAREN [ XOR USH
 -- On field_signature shift to state 199
 -- On at_identifier shift to state 200
 ## Reductions:
--- On R_PAREN reduce production formula ->
--- On OROR reduce production formula ->
--- On OR reduce production formula ->
--- On MULT reduce production formula ->
+-- On R_PAREN OROR OR MULT
+--   reduce production formula ->
 
 State 166:
 ## Known stack suffix:
@@ -2122,7 +2065,8 @@ jargument -> L_BRACE . fldlist R_BRACE [ XOR WITHOUT WHERE WAND VDASH USHR SHR S
 -- On identifier shift to state 167
 -- On fldlist shift to state 204
 ## Reductions:
--- On R_BRACE reduce production fldlist ->
+-- On R_BRACE
+--   reduce production fldlist ->
 
 State 167:
 ## Known stack suffix:
@@ -2454,41 +2398,8 @@ lvariable -> identifier . [ XOR WITHOUT WHERE WAND VDASH USHR SHR SHL SEMICOLON 
 ## Transitions:
 -- On L_PAREN shift to state 192
 ## Reductions:
--- On XOR reduce production lvariable -> identifier
--- On WITHOUT reduce production lvariable -> identifier
--- On WHERE reduce production lvariable -> identifier
--- On WAND reduce production lvariable -> identifier
--- On VDASH reduce production lvariable -> identifier
--- On USHR reduce production lvariable -> identifier
--- On SHR reduce production lvariable -> identifier
--- On SHL reduce production lvariable -> identifier
--- On SEMICOLON reduce production lvariable -> identifier
--- On R_PAREN reduce production lvariable -> identifier
--- On R_BRACE reduce production lvariable -> identifier
--- On RULE reduce production lvariable -> identifier
--- On REWRITERULE reduce production lvariable -> identifier
--- On PUREGUARD reduce production lvariable -> identifier
--- On PLUS reduce production lvariable -> identifier
--- On ORTEXT reduce production lvariable -> identifier
--- On OROR reduce production lvariable -> identifier
--- On OR reduce production lvariable -> identifier
--- On MULT reduce production lvariable -> identifier
--- On MOD reduce production lvariable -> identifier
--- On MINUS reduce production lvariable -> identifier
--- On MAPSTO reduce production lvariable -> identifier
--- On LEADSTO reduce production lvariable -> identifier
--- On IMPORT reduce production lvariable -> identifier
--- On IMP reduce production lvariable -> identifier
--- On IF reduce production lvariable -> identifier
--- On EQUIV reduce production lvariable -> identifier
--- On EOF reduce production lvariable -> identifier
--- On DIV reduce production lvariable -> identifier
--- On DASHV reduce production lvariable -> identifier
--- On CONSTRUCTOR reduce production lvariable -> identifier
--- On COMMA reduce production lvariable -> identifier
--- On BIMP reduce production lvariable -> identifier
--- On AND reduce production lvariable -> identifier
--- On ABSRULE reduce production lvariable -> identifier
+-- On XOR WITHOUT WHERE WAND VDASH USHR SHR SHL SEMICOLON R_PAREN R_BRACE RULE REWRITERULE PUREGUARD PLUS ORTEXT OROR OR MULT MOD MINUS MAPSTO LEADSTO IMPORT IMP IF EQUIV EOF DIV DASHV CONSTRUCTOR COMMA BIMP AND ABSRULE
+--   reduce production lvariable -> identifier
 
 State 192:
 ## Known stack suffix:
@@ -2518,7 +2429,8 @@ jargument -> identifier L_PAREN . jargument_list R_PAREN [ XOR WITHOUT WHERE WAN
 -- On field_signature shift to state 199
 -- On at_identifier shift to state 200
 ## Reductions:
--- On R_PAREN reduce production jargument_list ->
+-- On R_PAREN
+--   reduce production jargument_list ->
 
 State 193:
 ## Known stack suffix:
@@ -2556,7 +2468,8 @@ jargument_list_ne -> jargument . COMMA jargument_list_ne [ R_PAREN ]
 ## Transitions:
 -- On COMMA shift to state 197
 ## Reductions:
--- On R_PAREN reduce production jargument_list_ne -> jargument
+-- On R_PAREN
+--   reduce production jargument_list_ne -> jargument
 
 State 197:
 ## Known stack suffix:
@@ -2622,8 +2535,8 @@ fldlist -> identifier EQUALS jargument . SEMICOLON fldlist [ R_PAREN R_BRACE ]
 ## Transitions:
 -- On SEMICOLON shift to state 202
 ## Reductions:
--- On R_PAREN reduce production fldlist -> identifier EQUALS jargument
--- On R_BRACE reduce production fldlist -> identifier EQUALS jargument
+-- On R_PAREN R_BRACE
+--   reduce production fldlist -> identifier EQUALS jargument
 
 State 202:
 ## Known stack suffix:
@@ -2639,8 +2552,8 @@ fldlist -> identifier EQUALS jargument SEMICOLON . fldlist [ R_PAREN R_BRACE ]
 -- On identifier shift to state 167
 -- On fldlist shift to state 203
 ## Reductions:
--- On R_PAREN reduce production fldlist ->
--- On R_BRACE reduce production fldlist ->
+-- On R_PAREN R_BRACE
+--   reduce production fldlist ->
 
 State 203:
 ## Known stack suffix:
@@ -2677,55 +2590,10 @@ formula -> FALSE . [ WITHOUT WHERE WAND VDASH SEMICOLON R_PAREN R_BRACE RULE REW
 identifier -> FALSE . [ XOR USHR SHR SHL PLUS NOTINCONTEXT NOTIN MOD MINUS L_PAREN EQUALS DOT DIV COMMA COLON CMPNE CMPLT CMPLE CMPL CMPGT CMPGE CMPG CMPEQ CMP AND ]
 ## Transitions:
 ## Reductions:
--- On XOR reduce production identifier -> FALSE
--- On WITHOUT reduce production formula -> FALSE
--- On WHERE reduce production formula -> FALSE
--- On WAND reduce production formula -> FALSE
--- On VDASH reduce production formula -> FALSE
--- On USHR reduce production identifier -> FALSE
--- On SHR reduce production identifier -> FALSE
--- On SHL reduce production identifier -> FALSE
--- On SEMICOLON reduce production formula -> FALSE
--- On R_PAREN reduce production formula -> FALSE
--- On R_BRACE reduce production formula -> FALSE
--- On RULE reduce production formula -> FALSE
--- On REWRITERULE reduce production formula -> FALSE
--- On PUREGUARD reduce production formula -> FALSE
--- On PLUS reduce production identifier -> FALSE
--- On ORTEXT reduce production formula -> FALSE
--- On OROR reduce production formula -> FALSE
--- On OR reduce production formula -> FALSE
--- On NOTINCONTEXT reduce production identifier -> FALSE
--- On NOTIN reduce production identifier -> FALSE
--- On MULT reduce production formula -> FALSE
--- On MOD reduce production identifier -> FALSE
--- On MINUS reduce production identifier -> FALSE
--- On L_PAREN reduce production identifier -> FALSE
--- On LEADSTO reduce production formula -> FALSE
--- On IMPORT reduce production formula -> FALSE
--- On IMP reduce production formula -> FALSE
--- On IF reduce production formula -> FALSE
--- On EQUIV reduce production formula -> FALSE
--- On EQUALS reduce production identifier -> FALSE
--- On EOF reduce production formula -> FALSE
--- On DOT reduce production identifier -> FALSE
--- On DIV reduce production identifier -> FALSE
--- On DASHV reduce production formula -> FALSE
--- On CONSTRUCTOR reduce production formula -> FALSE
--- On COMMA reduce production identifier -> FALSE
--- On COLON reduce production identifier -> FALSE
--- On CMPNE reduce production identifier -> FALSE
--- On CMPLT reduce production identifier -> FALSE
--- On CMPLE reduce production identifier -> FALSE
--- On CMPL reduce production identifier -> FALSE
--- On CMPGT reduce production identifier -> FALSE
--- On CMPGE reduce production identifier -> FALSE
--- On CMPG reduce production identifier -> FALSE
--- On CMPEQ reduce production identifier -> FALSE
--- On CMP reduce production identifier -> FALSE
--- On BIMP reduce production formula -> FALSE
--- On AND reduce production identifier -> FALSE
--- On ABSRULE reduce production formula -> FALSE
+-- On WITHOUT WHERE WAND VDASH SEMICOLON R_PAREN R_BRACE RULE REWRITERULE PUREGUARD ORTEXT OROR OR MULT LEADSTO IMPORT IMP IF EQUIV EOF DASHV CONSTRUCTOR BIMP ABSRULE
+--   reduce production formula -> FALSE
+-- On XOR USHR SHR SHL PLUS NOTINCONTEXT NOTIN MOD MINUS L_PAREN EQUALS DOT DIV COMMA COLON CMPNE CMPLT CMPLE CMPL CMPGT CMPGE CMPG CMPEQ CMP AND
+--   reduce production identifier -> FALSE
 
 State 207:
 ## Known stack suffix:
@@ -2735,55 +2603,10 @@ formula -> EMP . [ WITHOUT WHERE WAND VDASH SEMICOLON R_PAREN R_BRACE RULE REWRI
 identifier -> EMP . [ XOR USHR SHR SHL PLUS NOTINCONTEXT NOTIN MOD MINUS L_PAREN EQUALS DOT DIV COMMA COLON CMPNE CMPLT CMPLE CMPL CMPGT CMPGE CMPG CMPEQ CMP AND ]
 ## Transitions:
 ## Reductions:
--- On XOR reduce production identifier -> EMP
--- On WITHOUT reduce production formula -> EMP
--- On WHERE reduce production formula -> EMP
--- On WAND reduce production formula -> EMP
--- On VDASH reduce production formula -> EMP
--- On USHR reduce production identifier -> EMP
--- On SHR reduce production identifier -> EMP
--- On SHL reduce production identifier -> EMP
--- On SEMICOLON reduce production formula -> EMP
--- On R_PAREN reduce production formula -> EMP
--- On R_BRACE reduce production formula -> EMP
--- On RULE reduce production formula -> EMP
--- On REWRITERULE reduce production formula -> EMP
--- On PUREGUARD reduce production formula -> EMP
--- On PLUS reduce production identifier -> EMP
--- On ORTEXT reduce production formula -> EMP
--- On OROR reduce production formula -> EMP
--- On OR reduce production formula -> EMP
--- On NOTINCONTEXT reduce production identifier -> EMP
--- On NOTIN reduce production identifier -> EMP
--- On MULT reduce production formula -> EMP
--- On MOD reduce production identifier -> EMP
--- On MINUS reduce production identifier -> EMP
--- On L_PAREN reduce production identifier -> EMP
--- On LEADSTO reduce production formula -> EMP
--- On IMPORT reduce production formula -> EMP
--- On IMP reduce production formula -> EMP
--- On IF reduce production formula -> EMP
--- On EQUIV reduce production formula -> EMP
--- On EQUALS reduce production identifier -> EMP
--- On EOF reduce production formula -> EMP
--- On DOT reduce production identifier -> EMP
--- On DIV reduce production identifier -> EMP
--- On DASHV reduce production formula -> EMP
--- On CONSTRUCTOR reduce production formula -> EMP
--- On COMMA reduce production identifier -> EMP
--- On COLON reduce production identifier -> EMP
--- On CMPNE reduce production identifier -> EMP
--- On CMPLT reduce production identifier -> EMP
--- On CMPLE reduce production identifier -> EMP
--- On CMPL reduce production identifier -> EMP
--- On CMPGT reduce production identifier -> EMP
--- On CMPGE reduce production identifier -> EMP
--- On CMPG reduce production identifier -> EMP
--- On CMPEQ reduce production identifier -> EMP
--- On CMP reduce production identifier -> EMP
--- On BIMP reduce production formula -> EMP
--- On AND reduce production identifier -> EMP
--- On ABSRULE reduce production formula -> EMP
+-- On WITHOUT WHERE WAND VDASH SEMICOLON R_PAREN R_BRACE RULE REWRITERULE PUREGUARD ORTEXT OROR OR MULT LEADSTO IMPORT IMP IF EQUIV EOF DASHV CONSTRUCTOR BIMP ABSRULE
+--   reduce production formula -> EMP
+-- On XOR USHR SHR SHL PLUS NOTINCONTEXT NOTIN MOD MINUS L_PAREN EQUALS DOT DIV COMMA COLON CMPNE CMPLT CMPLE CMPL CMPGT CMPGE CMPG CMPEQ CMP AND
+--   reduce production identifier -> EMP
 
 State 208:
 ## Known stack suffix:
@@ -2836,7 +2659,8 @@ formula -> BANG identifier L_PAREN . jargument_list R_PAREN [ WITHOUT WHERE WAND
 -- On field_signature shift to state 199
 -- On at_identifier shift to state 200
 ## Reductions:
--- On R_PAREN reduce production jargument_list ->
+-- On R_PAREN
+--   reduce production jargument_list ->
 
 State 211:
 ## Known stack suffix:
@@ -2867,25 +2691,8 @@ jargument -> lvariable . [ XOR USHR SHR SHL PLUS MOD MINUS EQUALS DIV CMPNE CMPL
 -- On DOT shift to state 214
 -- On COLON shift to state 218
 ## Reductions:
--- On XOR reduce production jargument -> lvariable
--- On USHR reduce production jargument -> lvariable
--- On SHR reduce production jargument -> lvariable
--- On SHL reduce production jargument -> lvariable
--- On PLUS reduce production jargument -> lvariable
--- On MOD reduce production jargument -> lvariable
--- On MINUS reduce production jargument -> lvariable
--- On EQUALS reduce production jargument -> lvariable
--- On DIV reduce production jargument -> lvariable
--- On CMPNE reduce production jargument -> lvariable
--- On CMPLT reduce production jargument -> lvariable
--- On CMPLE reduce production jargument -> lvariable
--- On CMPL reduce production jargument -> lvariable
--- On CMPGT reduce production jargument -> lvariable
--- On CMPGE reduce production jargument -> lvariable
--- On CMPG reduce production jargument -> lvariable
--- On CMPEQ reduce production jargument -> lvariable
--- On CMP reduce production jargument -> lvariable
--- On AND reduce production jargument -> lvariable
+-- On XOR USHR SHR SHL PLUS MOD MINUS EQUALS DIV CMPNE CMPLT CMPLE CMPL CMPGT CMPGE CMPG CMPEQ CMP AND
+--   reduce production jargument -> lvariable
 
 State 214:
 ## Known stack suffix:
@@ -3176,30 +2983,8 @@ lvariable -> identifier . [ XOR USHR SHR SHL PLUS NOTINCONTEXT NOTIN MOD MINUS E
 ## Transitions:
 -- On L_PAREN shift to state 235
 ## Reductions:
--- On XOR reduce production lvariable -> identifier
--- On USHR reduce production lvariable -> identifier
--- On SHR reduce production lvariable -> identifier
--- On SHL reduce production lvariable -> identifier
--- On PLUS reduce production lvariable -> identifier
--- On NOTINCONTEXT reduce production lvariable -> identifier
--- On NOTIN reduce production lvariable -> identifier
--- On MOD reduce production lvariable -> identifier
--- On MINUS reduce production lvariable -> identifier
--- On EQUALS reduce production lvariable -> identifier
--- On DOT reduce production lvariable -> identifier
--- On DIV reduce production lvariable -> identifier
--- On COMMA reduce production lvariable -> identifier
--- On COLON reduce production lvariable -> identifier
--- On CMPNE reduce production lvariable -> identifier
--- On CMPLT reduce production lvariable -> identifier
--- On CMPLE reduce production lvariable -> identifier
--- On CMPL reduce production lvariable -> identifier
--- On CMPGT reduce production lvariable -> identifier
--- On CMPGE reduce production lvariable -> identifier
--- On CMPG reduce production lvariable -> identifier
--- On CMPEQ reduce production lvariable -> identifier
--- On CMP reduce production lvariable -> identifier
--- On AND reduce production lvariable -> identifier
+-- On XOR USHR SHR SHL PLUS NOTINCONTEXT NOTIN MOD MINUS EQUALS DOT DIV COMMA COLON CMPNE CMPLT CMPLE CMPL CMPGT CMPGE CMPG CMPEQ CMP AND
+--   reduce production lvariable -> identifier
 
 State 235:
 ## Known stack suffix:
@@ -3230,7 +3015,8 @@ jargument -> identifier L_PAREN . jargument_list R_PAREN [ XOR USHR SHR SHL PLUS
 -- On field_signature shift to state 199
 -- On at_identifier shift to state 200
 ## Reductions:
--- On R_PAREN reduce production jargument_list ->
+-- On R_PAREN
+--   reduce production jargument_list ->
 
 State 236:
 ## Known stack suffix:
@@ -3250,49 +3036,10 @@ formula -> identifier L_PAREN jargument_list R_PAREN . [ WITHOUT WHERE WAND VDAS
 jargument -> identifier L_PAREN jargument_list R_PAREN . [ XOR USHR SHR SHL PLUS MOD MINUS EQUALS DIV CMPNE CMPLT CMPLE CMPL CMPGT CMPGE CMPG CMPEQ CMP AND ]
 ## Transitions:
 ## Reductions:
--- On XOR reduce production jargument -> identifier L_PAREN jargument_list R_PAREN
--- On WITHOUT reduce production formula -> identifier L_PAREN jargument_list R_PAREN
--- On WHERE reduce production formula -> identifier L_PAREN jargument_list R_PAREN
--- On WAND reduce production formula -> identifier L_PAREN jargument_list R_PAREN
--- On VDASH reduce production formula -> identifier L_PAREN jargument_list R_PAREN
--- On USHR reduce production jargument -> identifier L_PAREN jargument_list R_PAREN
--- On SHR reduce production jargument -> identifier L_PAREN jargument_list R_PAREN
--- On SHL reduce production jargument -> identifier L_PAREN jargument_list R_PAREN
--- On SEMICOLON reduce production formula -> identifier L_PAREN jargument_list R_PAREN
--- On R_PAREN reduce production formula -> identifier L_PAREN jargument_list R_PAREN
--- On R_BRACE reduce production formula -> identifier L_PAREN jargument_list R_PAREN
--- On RULE reduce production formula -> identifier L_PAREN jargument_list R_PAREN
--- On REWRITERULE reduce production formula -> identifier L_PAREN jargument_list R_PAREN
--- On PUREGUARD reduce production formula -> identifier L_PAREN jargument_list R_PAREN
--- On PLUS reduce production jargument -> identifier L_PAREN jargument_list R_PAREN
--- On ORTEXT reduce production formula -> identifier L_PAREN jargument_list R_PAREN
--- On OROR reduce production formula -> identifier L_PAREN jargument_list R_PAREN
--- On OR reduce production formula -> identifier L_PAREN jargument_list R_PAREN
--- On MULT reduce production formula -> identifier L_PAREN jargument_list R_PAREN
--- On MOD reduce production jargument -> identifier L_PAREN jargument_list R_PAREN
--- On MINUS reduce production jargument -> identifier L_PAREN jargument_list R_PAREN
--- On LEADSTO reduce production formula -> identifier L_PAREN jargument_list R_PAREN
--- On IMPORT reduce production formula -> identifier L_PAREN jargument_list R_PAREN
--- On IMP reduce production formula -> identifier L_PAREN jargument_list R_PAREN
--- On IF reduce production formula -> identifier L_PAREN jargument_list R_PAREN
--- On EQUIV reduce production formula -> identifier L_PAREN jargument_list R_PAREN
--- On EQUALS reduce production jargument -> identifier L_PAREN jargument_list R_PAREN
--- On EOF reduce production formula -> identifier L_PAREN jargument_list R_PAREN
--- On DIV reduce production jargument -> identifier L_PAREN jargument_list R_PAREN
--- On DASHV reduce production formula -> identifier L_PAREN jargument_list R_PAREN
--- On CONSTRUCTOR reduce production formula -> identifier L_PAREN jargument_list R_PAREN
--- On CMPNE reduce production jargument -> identifier L_PAREN jargument_list R_PAREN
--- On CMPLT reduce production jargument -> identifier L_PAREN jargument_list R_PAREN
--- On CMPLE reduce production jargument -> identifier L_PAREN jargument_list R_PAREN
--- On CMPL reduce production jargument -> identifier L_PAREN jargument_list R_PAREN
--- On CMPGT reduce production jargument -> identifier L_PAREN jargument_list R_PAREN
--- On CMPGE reduce production jargument -> identifier L_PAREN jargument_list R_PAREN
--- On CMPG reduce production jargument -> identifier L_PAREN jargument_list R_PAREN
--- On CMPEQ reduce production jargument -> identifier L_PAREN jargument_list R_PAREN
--- On CMP reduce production jargument -> identifier L_PAREN jargument_list R_PAREN
--- On BIMP reduce production formula -> identifier L_PAREN jargument_list R_PAREN
--- On AND reduce production jargument -> identifier L_PAREN jargument_list R_PAREN
--- On ABSRULE reduce production formula -> identifier L_PAREN jargument_list R_PAREN
+-- On WITHOUT WHERE WAND VDASH SEMICOLON R_PAREN R_BRACE RULE REWRITERULE PUREGUARD ORTEXT OROR OR MULT LEADSTO IMPORT IMP IF EQUIV EOF DASHV CONSTRUCTOR BIMP ABSRULE
+--   reduce production formula -> identifier L_PAREN jargument_list R_PAREN
+-- On XOR USHR SHR SHL PLUS MOD MINUS EQUALS DIV CMPNE CMPLT CMPLE CMPL CMPGT CMPGE CMPG CMPEQ CMP AND
+--   reduce production jargument -> identifier L_PAREN jargument_list R_PAREN
 
 State 238:
 ## Known stack suffix:
@@ -3331,7 +3078,8 @@ formula -> full_identifier L_PAREN . jargument_list R_PAREN [ WITHOUT WHERE WAND
 -- On field_signature shift to state 199
 -- On at_identifier shift to state 200
 ## Reductions:
--- On R_PAREN reduce production jargument_list ->
+-- On R_PAREN
+--   reduce production jargument_list ->
 
 State 240:
 ## Known stack suffix:
@@ -3405,30 +3153,8 @@ formula -> formula OROR . formula [ WITHOUT WHERE WAND VDASH SEMICOLON R_PAREN R
 -- On field_signature shift to state 199
 -- On at_identifier shift to state 200
 ## Reductions:
--- On WITHOUT reduce production formula ->
--- On WHERE reduce production formula ->
--- On WAND reduce production formula ->
--- On VDASH reduce production formula ->
--- On SEMICOLON reduce production formula ->
--- On R_PAREN reduce production formula ->
--- On R_BRACE reduce production formula ->
--- On RULE reduce production formula ->
--- On REWRITERULE reduce production formula ->
--- On PUREGUARD reduce production formula ->
--- On ORTEXT reduce production formula ->
--- On OROR reduce production formula ->
--- On OR reduce production formula ->
--- On MULT reduce production formula ->
--- On LEADSTO reduce production formula ->
--- On IMPORT reduce production formula ->
--- On IMP reduce production formula ->
--- On IF reduce production formula ->
--- On EQUIV reduce production formula ->
--- On EOF reduce production formula ->
--- On DASHV reduce production formula ->
--- On CONSTRUCTOR reduce production formula ->
--- On BIMP reduce production formula ->
--- On ABSRULE reduce production formula ->
+-- On WITHOUT WHERE WAND VDASH SEMICOLON R_PAREN R_BRACE RULE REWRITERULE PUREGUARD ORTEXT OROR OR MULT LEADSTO IMPORT IMP IF EQUIV EOF DASHV CONSTRUCTOR BIMP ABSRULE
+--   reduce production formula ->
 
 State 245:
 ## Known stack suffix:
@@ -3461,29 +3187,8 @@ formula -> formula OROR formula . [ WITHOUT WHERE WAND VDASH SEMICOLON R_PAREN R
 ## Transitions:
 -- On MULT shift to state 247
 ## Reductions:
--- On WITHOUT reduce production formula -> formula OROR formula
--- On WHERE reduce production formula -> formula OROR formula
--- On WAND reduce production formula -> formula OROR formula
--- On VDASH reduce production formula -> formula OROR formula
--- On SEMICOLON reduce production formula -> formula OROR formula
--- On R_PAREN reduce production formula -> formula OROR formula
--- On R_BRACE reduce production formula -> formula OROR formula
--- On RULE reduce production formula -> formula OROR formula
--- On REWRITERULE reduce production formula -> formula OROR formula
--- On PUREGUARD reduce production formula -> formula OROR formula
--- On ORTEXT reduce production formula -> formula OROR formula
--- On OROR reduce production formula -> formula OROR formula
--- On OR reduce production formula -> formula OROR formula
--- On LEADSTO reduce production formula -> formula OROR formula
--- On IMPORT reduce production formula -> formula OROR formula
--- On IMP reduce production formula -> formula OROR formula
--- On IF reduce production formula -> formula OROR formula
--- On EQUIV reduce production formula -> formula OROR formula
--- On EOF reduce production formula -> formula OROR formula
--- On DASHV reduce production formula -> formula OROR formula
--- On CONSTRUCTOR reduce production formula -> formula OROR formula
--- On BIMP reduce production formula -> formula OROR formula
--- On ABSRULE reduce production formula -> formula OROR formula
+-- On WITHOUT WHERE WAND VDASH SEMICOLON R_PAREN R_BRACE RULE REWRITERULE PUREGUARD ORTEXT OROR OR LEADSTO IMPORT IMP IF EQUIV EOF DASHV CONSTRUCTOR BIMP ABSRULE
+--   reduce production formula -> formula OROR formula
 
 State 247:
 ## Known stack suffix:
@@ -3515,30 +3220,8 @@ formula -> formula MULT . formula [ WITHOUT WHERE WAND VDASH SEMICOLON R_PAREN R
 -- On field_signature shift to state 199
 -- On at_identifier shift to state 200
 ## Reductions:
--- On WITHOUT reduce production formula ->
--- On WHERE reduce production formula ->
--- On WAND reduce production formula ->
--- On VDASH reduce production formula ->
--- On SEMICOLON reduce production formula ->
--- On R_PAREN reduce production formula ->
--- On R_BRACE reduce production formula ->
--- On RULE reduce production formula ->
--- On REWRITERULE reduce production formula ->
--- On PUREGUARD reduce production formula ->
--- On ORTEXT reduce production formula ->
--- On OROR reduce production formula ->
--- On OR reduce production formula ->
--- On MULT reduce production formula ->
--- On LEADSTO reduce production formula ->
--- On IMPORT reduce production formula ->
--- On IMP reduce production formula ->
--- On IF reduce production formula ->
--- On EQUIV reduce production formula ->
--- On EOF reduce production formula ->
--- On DASHV reduce production formula ->
--- On CONSTRUCTOR reduce production formula ->
--- On BIMP reduce production formula ->
--- On ABSRULE reduce production formula ->
+-- On WITHOUT WHERE WAND VDASH SEMICOLON R_PAREN R_BRACE RULE REWRITERULE PUREGUARD ORTEXT OROR OR MULT LEADSTO IMPORT IMP IF EQUIV EOF DASHV CONSTRUCTOR BIMP ABSRULE
+--   reduce production formula ->
 
 State 248:
 ## Known stack suffix:
@@ -3582,30 +3265,8 @@ formula -> formula OR . formula [ WITHOUT WHERE WAND VDASH SEMICOLON R_PAREN R_B
 -- On field_signature shift to state 199
 -- On at_identifier shift to state 200
 ## Reductions:
--- On WITHOUT reduce production formula ->
--- On WHERE reduce production formula ->
--- On WAND reduce production formula ->
--- On VDASH reduce production formula ->
--- On SEMICOLON reduce production formula ->
--- On R_PAREN reduce production formula ->
--- On R_BRACE reduce production formula ->
--- On RULE reduce production formula ->
--- On REWRITERULE reduce production formula ->
--- On PUREGUARD reduce production formula ->
--- On ORTEXT reduce production formula ->
--- On OROR reduce production formula ->
--- On OR reduce production formula ->
--- On MULT reduce production formula ->
--- On LEADSTO reduce production formula ->
--- On IMPORT reduce production formula ->
--- On IMP reduce production formula ->
--- On IF reduce production formula ->
--- On EQUIV reduce production formula ->
--- On EOF reduce production formula ->
--- On DASHV reduce production formula ->
--- On CONSTRUCTOR reduce production formula ->
--- On BIMP reduce production formula ->
--- On ABSRULE reduce production formula ->
+-- On WITHOUT WHERE WAND VDASH SEMICOLON R_PAREN R_BRACE RULE REWRITERULE PUREGUARD ORTEXT OROR OR MULT LEADSTO IMPORT IMP IF EQUIV EOF DASHV CONSTRUCTOR BIMP ABSRULE
+--   reduce production formula ->
 
 State 250:
 ## Known stack suffix:
@@ -3619,28 +3280,8 @@ formula -> formula . OROR formula [ WITHOUT WHERE WAND VDASH SEMICOLON R_PAREN R
 -- On OROR shift to state 244
 -- On MULT shift to state 247
 ## Reductions:
--- On WITHOUT reduce production formula -> formula OR formula
--- On WHERE reduce production formula -> formula OR formula
--- On WAND reduce production formula -> formula OR formula
--- On VDASH reduce production formula -> formula OR formula
--- On SEMICOLON reduce production formula -> formula OR formula
--- On R_PAREN reduce production formula -> formula OR formula
--- On R_BRACE reduce production formula -> formula OR formula
--- On RULE reduce production formula -> formula OR formula
--- On REWRITERULE reduce production formula -> formula OR formula
--- On PUREGUARD reduce production formula -> formula OR formula
--- On ORTEXT reduce production formula -> formula OR formula
--- On OR reduce production formula -> formula OR formula
--- On LEADSTO reduce production formula -> formula OR formula
--- On IMPORT reduce production formula -> formula OR formula
--- On IMP reduce production formula -> formula OR formula
--- On IF reduce production formula -> formula OR formula
--- On EQUIV reduce production formula -> formula OR formula
--- On EOF reduce production formula -> formula OR formula
--- On DASHV reduce production formula -> formula OR formula
--- On CONSTRUCTOR reduce production formula -> formula OR formula
--- On BIMP reduce production formula -> formula OR formula
--- On ABSRULE reduce production formula -> formula OR formula
+-- On WITHOUT WHERE WAND VDASH SEMICOLON R_PAREN R_BRACE RULE REWRITERULE PUREGUARD ORTEXT OR LEADSTO IMPORT IMP IF EQUIV EOF DASHV CONSTRUCTOR BIMP ABSRULE
+--   reduce production formula -> formula OR formula
 
 State 251:
 ## Known stack suffix:
@@ -3696,10 +3337,8 @@ spec -> L_BRACE formula R_BRACE L_BRACE . formula R_BRACE exp_posts [ VOLATILE V
 -- On field_signature shift to state 199
 -- On at_identifier shift to state 200
 ## Reductions:
--- On R_BRACE reduce production formula ->
--- On OROR reduce production formula ->
--- On OR reduce production formula ->
--- On MULT reduce production formula ->
+-- On R_BRACE OROR OR MULT
+--   reduce production formula ->
 
 State 254:
 ## Known stack suffix:
@@ -3725,42 +3364,8 @@ spec -> L_BRACE formula R_BRACE L_BRACE formula R_BRACE . exp_posts [ VOLATILE V
 -- On L_BRACE shift to state 256
 -- On exp_posts shift to state 262
 ## Reductions:
--- On VOLATILE reduce production exp_posts ->
--- On VOID reduce production exp_posts ->
--- On TRUE reduce production exp_posts ->
--- On TRANSIENT reduce production exp_posts ->
--- On SYNCHRONIZED reduce production exp_posts ->
--- On STRICTFP reduce production exp_posts ->
--- On STATIC reduce production exp_posts ->
--- On SOURCE_POS_TAG reduce production exp_posts ->
--- On SHORT reduce production exp_posts ->
--- On SEMICOLON reduce production exp_posts ->
--- On R_BRACE reduce production exp_posts ->
--- On QUOTED_NAME reduce production exp_posts ->
--- On QUESTIONMARK reduce production exp_posts ->
--- On PUBLIC reduce production exp_posts ->
--- On PROTECTED reduce production exp_posts ->
--- On PRIVATE reduce production exp_posts ->
--- On NULL reduce production exp_posts ->
--- On NATIVE reduce production exp_posts ->
--- On L_PAREN reduce production exp_posts ->
--- On LONG reduce production exp_posts ->
--- On INT reduce production exp_posts ->
--- On IDENTIFIER reduce production exp_posts ->
--- On FULL_IDENTIFIER reduce production exp_posts ->
--- On FLOAT reduce production exp_posts ->
--- On FINAL reduce production exp_posts ->
--- On FALSE reduce production exp_posts ->
--- On ENUM reduce production exp_posts ->
--- On EMP reduce production exp_posts ->
--- On DOUBLE reduce production exp_posts ->
--- On CHAR reduce production exp_posts ->
--- On BYTE reduce production exp_posts ->
--- On BOOLEAN reduce production exp_posts ->
--- On AS reduce production exp_posts ->
--- On ANNOTATION reduce production exp_posts ->
--- On ANDALSO reduce production exp_posts ->
--- On ABSTRACT reduce production exp_posts ->
+-- On VOLATILE VOID TRUE TRANSIENT SYNCHRONIZED STRICTFP STATIC SOURCE_POS_TAG SHORT SEMICOLON R_BRACE QUOTED_NAME QUESTIONMARK PUBLIC PROTECTED PRIVATE NULL NATIVE L_PAREN LONG INT IDENTIFIER FULL_IDENTIFIER FLOAT FINAL FALSE ENUM EMP DOUBLE CHAR BYTE BOOLEAN AS ANNOTATION ANDALSO ABSTRACT
+--   reduce production exp_posts ->
 
 State 256:
 ## Known stack suffix:
@@ -3815,10 +3420,8 @@ exp_posts -> L_BRACE identifier COLON . formula R_BRACE exp_posts [ VOLATILE VOI
 -- On field_signature shift to state 199
 -- On at_identifier shift to state 200
 ## Reductions:
--- On R_BRACE reduce production formula ->
--- On OROR reduce production formula ->
--- On OR reduce production formula ->
--- On MULT reduce production formula ->
+-- On R_BRACE OROR OR MULT
+--   reduce production formula ->
 
 State 259:
 ## Known stack suffix:
@@ -3844,42 +3447,8 @@ exp_posts -> L_BRACE identifier COLON formula R_BRACE . exp_posts [ VOLATILE VOI
 -- On L_BRACE shift to state 256
 -- On exp_posts shift to state 261
 ## Reductions:
--- On VOLATILE reduce production exp_posts ->
--- On VOID reduce production exp_posts ->
--- On TRUE reduce production exp_posts ->
--- On TRANSIENT reduce production exp_posts ->
--- On SYNCHRONIZED reduce production exp_posts ->
--- On STRICTFP reduce production exp_posts ->
--- On STATIC reduce production exp_posts ->
--- On SOURCE_POS_TAG reduce production exp_posts ->
--- On SHORT reduce production exp_posts ->
--- On SEMICOLON reduce production exp_posts ->
--- On R_BRACE reduce production exp_posts ->
--- On QUOTED_NAME reduce production exp_posts ->
--- On QUESTIONMARK reduce production exp_posts ->
--- On PUBLIC reduce production exp_posts ->
--- On PROTECTED reduce production exp_posts ->
--- On PRIVATE reduce production exp_posts ->
--- On NULL reduce production exp_posts ->
--- On NATIVE reduce production exp_posts ->
--- On L_PAREN reduce production exp_posts ->
--- On LONG reduce production exp_posts ->
--- On INT reduce production exp_posts ->
--- On IDENTIFIER reduce production exp_posts ->
--- On FULL_IDENTIFIER reduce production exp_posts ->
--- On FLOAT reduce production exp_posts ->
--- On FINAL reduce production exp_posts ->
--- On FALSE reduce production exp_posts ->
--- On ENUM reduce production exp_posts ->
--- On EMP reduce production exp_posts ->
--- On DOUBLE reduce production exp_posts ->
--- On CHAR reduce production exp_posts ->
--- On BYTE reduce production exp_posts ->
--- On BOOLEAN reduce production exp_posts ->
--- On AS reduce production exp_posts ->
--- On ANNOTATION reduce production exp_posts ->
--- On ANDALSO reduce production exp_posts ->
--- On ABSTRACT reduce production exp_posts ->
+-- On VOLATILE VOID TRUE TRANSIENT SYNCHRONIZED STRICTFP STATIC SOURCE_POS_TAG SHORT SEMICOLON R_BRACE QUOTED_NAME QUESTIONMARK PUBLIC PROTECTED PRIVATE NULL NATIVE L_PAREN LONG INT IDENTIFIER FULL_IDENTIFIER FLOAT FINAL FALSE ENUM EMP DOUBLE CHAR BYTE BOOLEAN AS ANNOTATION ANDALSO ABSTRACT
+--   reduce production exp_posts ->
 
 State 261:
 ## Known stack suffix:
@@ -3926,10 +3495,8 @@ lvariable_list_ne -> lvariable . COMMA lvariable_list_ne [ R_PAREN R_BRACE NOTIN
 ## Transitions:
 -- On COMMA shift to state 266
 ## Reductions:
--- On R_PAREN reduce production lvariable_list_ne -> lvariable
--- On R_BRACE reduce production lvariable_list_ne -> lvariable
--- On NOTINCONTEXT reduce production lvariable_list_ne -> lvariable
--- On NOTIN reduce production lvariable_list_ne -> lvariable
+-- On R_PAREN R_BRACE NOTINCONTEXT NOTIN
+--   reduce production lvariable_list_ne -> lvariable
 
 State 266:
 ## Known stack suffix:
@@ -4002,9 +3569,8 @@ statement -> LOOKUPSWITCH L_PAREN . immediate R_PAREN L_BRACE case_stmt_list_plu
 -- On identifier shift to state 89
 -- On constant shift to state 90
 ## Reductions:
--- On INTEGER_CONSTANT_LONG reduce production minus_question_mark ->
--- On INTEGER_CONSTANT reduce production minus_question_mark ->
--- On FLOAT_CONSTANT reduce production minus_question_mark ->
+-- On INTEGER_CONSTANT_LONG INTEGER_CONSTANT FLOAT_CONSTANT
+--   reduce production minus_question_mark ->
 
 State 271:
 ## Known stack suffix:
@@ -4104,9 +3670,8 @@ statement -> IF . bool_expr goto_stmt [ VIRTUALINVOKE UNKNOWN TRUE THROW TABLESW
 -- On bool_expr shift to state 308
 -- On binop_expr shift to state 310
 ## Reductions:
--- On INTEGER_CONSTANT_LONG reduce production minus_question_mark ->
--- On INTEGER_CONSTANT reduce production minus_question_mark ->
--- On FLOAT_CONSTANT reduce production minus_question_mark ->
+-- On INTEGER_CONSTANT_LONG INTEGER_CONSTANT FLOAT_CONSTANT
+--   reduce production minus_question_mark ->
 
 State 279:
 ## Known stack suffix:
@@ -4160,9 +3725,8 @@ unop_expr -> unop . immediate [ SEMICOLON GOTO ]
 -- On identifier shift to state 89
 -- On constant shift to state 90
 ## Reductions:
--- On INTEGER_CONSTANT_LONG reduce production minus_question_mark ->
--- On INTEGER_CONSTANT reduce production minus_question_mark ->
--- On FLOAT_CONSTANT reduce production minus_question_mark ->
+-- On INTEGER_CONSTANT_LONG INTEGER_CONSTANT FLOAT_CONSTANT
+--   reduce production minus_question_mark ->
 
 State 283:
 ## Known stack suffix:
@@ -4417,9 +3981,8 @@ binop_expr -> immediate binop . immediate [ SEMICOLON GOTO ]
 -- On identifier shift to state 89
 -- On constant shift to state 90
 ## Reductions:
--- On INTEGER_CONSTANT_LONG reduce production minus_question_mark ->
--- On INTEGER_CONSTANT reduce production minus_question_mark ->
--- On FLOAT_CONSTANT reduce production minus_question_mark ->
+-- On INTEGER_CONSTANT_LONG INTEGER_CONSTANT FLOAT_CONSTANT
+--   reduce production minus_question_mark ->
 
 State 307:
 ## Known stack suffix:
@@ -4483,9 +4046,8 @@ statement -> EXITMONITOR . immediate SEMICOLON [ VIRTUALINVOKE UNKNOWN TRUE THRO
 -- On identifier shift to state 89
 -- On constant shift to state 90
 ## Reductions:
--- On INTEGER_CONSTANT_LONG reduce production minus_question_mark ->
--- On INTEGER_CONSTANT reduce production minus_question_mark ->
--- On FLOAT_CONSTANT reduce production minus_question_mark ->
+-- On INTEGER_CONSTANT_LONG INTEGER_CONSTANT FLOAT_CONSTANT
+--   reduce production minus_question_mark ->
 
 State 312:
 ## Known stack suffix:
@@ -4530,9 +4092,8 @@ statement -> ENTERMONITOR . immediate SEMICOLON [ VIRTUALINVOKE UNKNOWN TRUE THR
 -- On identifier shift to state 89
 -- On constant shift to state 90
 ## Reductions:
--- On INTEGER_CONSTANT_LONG reduce production minus_question_mark ->
--- On INTEGER_CONSTANT reduce production minus_question_mark ->
--- On FLOAT_CONSTANT reduce production minus_question_mark ->
+-- On INTEGER_CONSTANT_LONG INTEGER_CONSTANT FLOAT_CONSTANT
+--   reduce production minus_question_mark ->
 
 State 315:
 ## Known stack suffix:
@@ -4626,9 +4187,8 @@ statement -> variable EQUALS . expression SEMICOLON [ VIRTUALINVOKE UNKNOWN TRUE
 -- On binop_expr shift to state 370
 -- On array_ref shift to state 371
 ## Reductions:
--- On INTEGER_CONSTANT_LONG reduce production minus_question_mark ->
--- On INTEGER_CONSTANT reduce production minus_question_mark ->
--- On FLOAT_CONSTANT reduce production minus_question_mark ->
+-- On INTEGER_CONSTANT_LONG INTEGER_CONSTANT FLOAT_CONSTANT
+--   reduce production minus_question_mark ->
 
 State 321:
 ## Known stack suffix:
@@ -4733,10 +4293,10 @@ array_descriptor -> L_BRACKET . immediate_question_mark R_BRACKET [ SEMICOLON L_
 -- On identifier shift to state 89
 -- On constant shift to state 90
 ## Reductions:
--- On R_BRACKET reduce production immediate_question_mark ->
--- On INTEGER_CONSTANT_LONG reduce production minus_question_mark ->
--- On INTEGER_CONSTANT reduce production minus_question_mark ->
--- On FLOAT_CONSTANT reduce production minus_question_mark ->
+-- On R_BRACKET
+--   reduce production immediate_question_mark ->
+-- On INTEGER_CONSTANT_LONG INTEGER_CONSTANT FLOAT_CONSTANT
+--   reduce production minus_question_mark ->
 
 State 328:
 ## Known stack suffix:
@@ -4776,7 +4336,8 @@ array_descriptor_list_plus -> array_descriptor . array_descriptor_list_plus [ SE
 -- On array_descriptor_list_plus shift to state 332
 -- On array_descriptor shift to state 331
 ## Reductions:
--- On SEMICOLON reduce production array_descriptor_list_plus -> array_descriptor
+-- On SEMICOLON
+--   reduce production array_descriptor_list_plus -> array_descriptor
 
 State 332:
 ## Known stack suffix:
@@ -4869,9 +4430,8 @@ fixed_array_descriptor -> L_BRACKET . immediate R_BRACKET [ SEMICOLON ]
 -- On identifier shift to state 89
 -- On constant shift to state 90
 ## Reductions:
--- On INTEGER_CONSTANT_LONG reduce production minus_question_mark ->
--- On INTEGER_CONSTANT reduce production minus_question_mark ->
--- On FLOAT_CONSTANT reduce production minus_question_mark ->
+-- On INTEGER_CONSTANT_LONG INTEGER_CONSTANT FLOAT_CONSTANT
+--   reduce production minus_question_mark ->
 
 State 338:
 ## Known stack suffix:
@@ -5002,9 +4562,8 @@ expression -> L_PAREN nonvoid_type R_PAREN . immediate [ SEMICOLON ]
 -- On identifier shift to state 89
 -- On constant shift to state 90
 ## Reductions:
--- On INTEGER_CONSTANT_LONG reduce production minus_question_mark ->
--- On INTEGER_CONSTANT reduce production minus_question_mark ->
--- On FLOAT_CONSTANT reduce production minus_question_mark ->
+-- On INTEGER_CONSTANT_LONG INTEGER_CONSTANT FLOAT_CONSTANT
+--   reduce production minus_question_mark ->
 
 State 346:
 ## Known stack suffix:
@@ -5106,10 +4665,10 @@ invoke_expr -> nonstatic_invoke local_name DOT method_signature L_PAREN . arg_li
 -- On arg_list_question_mark shift to state 354
 -- On arg_list shift to state 140
 ## Reductions:
--- On R_PAREN reduce production arg_list_question_mark ->
--- On INTEGER_CONSTANT_LONG reduce production minus_question_mark ->
--- On INTEGER_CONSTANT reduce production minus_question_mark ->
--- On FLOAT_CONSTANT reduce production minus_question_mark ->
+-- On R_PAREN
+--   reduce production arg_list_question_mark ->
+-- On INTEGER_CONSTANT_LONG INTEGER_CONSTANT FLOAT_CONSTANT
+--   reduce production minus_question_mark ->
 
 State 354:
 ## Known stack suffix:
@@ -5147,28 +4706,8 @@ immediate -> local_name . [ XOR USHR SHR SHL SEMICOLON PLUS OR MULT MOD MINUS IN
 ## Transitions:
 -- On DOT shift to state 358
 ## Reductions:
--- On XOR reduce production immediate -> local_name
--- On USHR reduce production immediate -> local_name
--- On SHR reduce production immediate -> local_name
--- On SHL reduce production immediate -> local_name
--- On SEMICOLON reduce production immediate -> local_name
--- On PLUS reduce production immediate -> local_name
--- On OR reduce production immediate -> local_name
--- On MULT reduce production immediate -> local_name
--- On MOD reduce production immediate -> local_name
--- On MINUS reduce production immediate -> local_name
--- On INSTANCEOF reduce production immediate -> local_name
--- On DIV reduce production immediate -> local_name
--- On CMPNE reduce production immediate -> local_name
--- On CMPLT reduce production immediate -> local_name
--- On CMPLE reduce production immediate -> local_name
--- On CMPL reduce production immediate -> local_name
--- On CMPGT reduce production immediate -> local_name
--- On CMPGE reduce production immediate -> local_name
--- On CMPG reduce production immediate -> local_name
--- On CMPEQ reduce production immediate -> local_name
--- On CMP reduce production immediate -> local_name
--- On AND reduce production immediate -> local_name
+-- On XOR USHR SHR SHL SEMICOLON PLUS OR MULT MOD MINUS INSTANCEOF DIV CMPNE CMPLT CMPLE CMPL CMPGT CMPGE CMPG CMPEQ CMP AND
+--   reduce production immediate -> local_name
 
 State 358:
 ## Known stack suffix:
@@ -5230,7 +4769,8 @@ expression -> immediate . [ SEMICOLON ]
 -- On binop_no_mult shift to state 305
 -- On binop shift to state 306
 ## Reductions:
--- On SEMICOLON reduce production expression -> immediate
+-- On SEMICOLON
+--   reduce production expression -> immediate
 
 State 362:
 ## Known stack suffix:
@@ -5280,29 +4820,8 @@ name -> identifier . [ XOR USHR SHR SHL SEMICOLON PLUS OR MULT MOD MINUS INSTANC
 -- On L_BRACKET shift to state 337
 -- On fixed_array_descriptor shift to state 365
 ## Reductions:
--- On XOR reduce production name -> identifier
--- On USHR reduce production name -> identifier
--- On SHR reduce production name -> identifier
--- On SHL reduce production name -> identifier
--- On SEMICOLON reduce production name -> identifier
--- On PLUS reduce production name -> identifier
--- On OR reduce production name -> identifier
--- On MULT reduce production name -> identifier
--- On MOD reduce production name -> identifier
--- On MINUS reduce production name -> identifier
--- On INSTANCEOF reduce production name -> identifier
--- On DOT reduce production name -> identifier
--- On DIV reduce production name -> identifier
--- On CMPNE reduce production name -> identifier
--- On CMPLT reduce production name -> identifier
--- On CMPLE reduce production name -> identifier
--- On CMPL reduce production name -> identifier
--- On CMPGT reduce production name -> identifier
--- On CMPGE reduce production name -> identifier
--- On CMPG reduce production name -> identifier
--- On CMPEQ reduce production name -> identifier
--- On CMP reduce production name -> identifier
--- On AND reduce production name -> identifier
+-- On XOR USHR SHR SHL SEMICOLON PLUS OR MULT MOD MINUS INSTANCEOF DOT DIV CMPNE CMPLT CMPLE CMPL CMPGT CMPGE CMPG CMPEQ CMP AND
+--   reduce production name -> identifier
 
 State 365:
 ## Known stack suffix:
@@ -5377,43 +4896,8 @@ declaration_or_statement -> statement . source_pos_tag_option [ VIRTUALINVOKE UN
 -- On source_pos_tag_option shift to state 391
 -- On source_pos_tag shift to state 392
 ## Reductions:
--- On VIRTUALINVOKE reduce production source_pos_tag_option ->
--- On UNKNOWN reduce production source_pos_tag_option ->
--- On TRUE reduce production source_pos_tag_option ->
--- On THROW reduce production source_pos_tag_option ->
--- On TABLESWITCH reduce production source_pos_tag_option ->
--- On STATICINVOKE reduce production source_pos_tag_option ->
--- On SPECIALINVOKE reduce production source_pos_tag_option ->
--- On SHORT reduce production source_pos_tag_option ->
--- On R_BRACE reduce production source_pos_tag_option ->
--- On RETURN reduce production source_pos_tag_option ->
--- On RET reduce production source_pos_tag_option ->
--- On QUOTED_NAME reduce production source_pos_tag_option ->
--- On NULL_TYPE reduce production source_pos_tag_option ->
--- On NULL reduce production source_pos_tag_option ->
--- On NOP reduce production source_pos_tag_option ->
--- On L_BRACE reduce production source_pos_tag_option ->
--- On LOOKUPSWITCH reduce production source_pos_tag_option ->
--- On LONG reduce production source_pos_tag_option ->
--- On INTERFACEINVOKE reduce production source_pos_tag_option ->
--- On INT reduce production source_pos_tag_option ->
--- On IF reduce production source_pos_tag_option ->
--- On IDENTIFIER reduce production source_pos_tag_option ->
--- On GOTO reduce production source_pos_tag_option ->
--- On FULL_IDENTIFIER reduce production source_pos_tag_option ->
--- On FLOAT reduce production source_pos_tag_option ->
--- On FALSE reduce production source_pos_tag_option ->
--- On EXITMONITOR reduce production source_pos_tag_option ->
--- On ENTERMONITOR reduce production source_pos_tag_option ->
--- On EMP reduce production source_pos_tag_option ->
--- On DOUBLE reduce production source_pos_tag_option ->
--- On CMPLT reduce production source_pos_tag_option ->
--- On CHAR reduce production source_pos_tag_option ->
--- On CATCH reduce production source_pos_tag_option ->
--- On BYTE reduce production source_pos_tag_option ->
--- On BREAKPOINT reduce production source_pos_tag_option ->
--- On BOOLEAN reduce production source_pos_tag_option ->
--- On AS reduce production source_pos_tag_option ->
+-- On VIRTUALINVOKE UNKNOWN TRUE THROW TABLESWITCH STATICINVOKE SPECIALINVOKE SHORT R_BRACE RETURN RET QUOTED_NAME NULL_TYPE NULL NOP L_BRACE LOOKUPSWITCH LONG INTERFACEINVOKE INT IF IDENTIFIER GOTO FULL_IDENTIFIER FLOAT FALSE EXITMONITOR ENTERMONITOR EMP DOUBLE CMPLT CHAR CATCH BYTE BREAKPOINT BOOLEAN AS
+--   reduce production source_pos_tag_option ->
 
 State 373:
 ## Known stack suffix:
@@ -5644,15 +5128,10 @@ nonvoid_type -> quoted_name . array_brackets_list_star [ TRUE QUOTED_NAME IDENTI
 -- On L_BRACKET shift to state 51
 -- On array_brackets_list_star shift to state 54
 ## Reductions:
--- On TRUE reduce production array_brackets_list_star ->
--- On QUOTED_NAME reduce production array_brackets_list_star ->
--- On IDENTIFIER reduce production array_brackets_list_star ->
--- On FALSE reduce production array_brackets_list_star ->
--- On EQUALS reduce production name -> quoted_name
--- On EMP reduce production array_brackets_list_star ->
--- On DOT reduce production name -> quoted_name
--- On COLON_EQUALS reduce production name -> quoted_name
--- On AS reduce production array_brackets_list_star ->
+-- On TRUE QUOTED_NAME IDENTIFIER FALSE EMP AS
+--   reduce production array_brackets_list_star ->
+-- On EQUALS DOT COLON_EQUALS
+--   reduce production name -> quoted_name
 
 State 395:
 ## Known stack suffix:
@@ -5675,7 +5154,8 @@ variable -> local_name . [ EQUALS ]
 -- On DOT shift to state 358
 -- On COLON_EQUALS shift to state 397
 ## Reductions:
--- On EQUALS reduce production variable -> local_name
+-- On EQUALS
+--   reduce production variable -> local_name
 
 State 397:
 ## Known stack suffix:
@@ -5812,7 +5292,8 @@ local_name_list -> local_name . COMMA local_name_list [ SEMICOLON ]
 ## Transitions:
 -- On COMMA shift to state 408
 ## Reductions:
--- On SEMICOLON reduce production local_name_list -> local_name
+-- On SEMICOLON
+--   reduce production local_name_list -> local_name
 
 State 408:
 ## Known stack suffix:
@@ -5873,16 +5354,12 @@ nonvoid_type -> identifier . array_brackets_list_star [ TRUE QUOTED_NAME IDENTIF
 -- On fixed_array_descriptor shift to state 365
 -- On array_brackets_list_star shift to state 128
 ## Reductions:
--- On TRUE reduce production array_brackets_list_star ->
--- On QUOTED_NAME reduce production array_brackets_list_star ->
--- On IDENTIFIER reduce production array_brackets_list_star ->
--- On FALSE reduce production array_brackets_list_star ->
--- On EQUALS reduce production name -> identifier
--- On EMP reduce production array_brackets_list_star ->
--- On DOT reduce production name -> identifier
--- On COLON_EQUALS reduce production name -> identifier
--- On COLON reduce production label_name -> identifier
--- On AS reduce production array_brackets_list_star ->
+-- On TRUE QUOTED_NAME IDENTIFIER FALSE EMP AS
+--   reduce production array_brackets_list_star ->
+-- On COLON
+--   reduce production label_name -> identifier
+-- On EQUALS DOT COLON_EQUALS
+--   reduce production name -> identifier
 
 State 413:
 ## Known stack suffix:
@@ -5911,9 +5388,8 @@ fixed_array_descriptor -> L_BRACKET . immediate R_BRACKET [ EQUALS ]
 -- On identifier shift to state 89
 -- On constant shift to state 90
 ## Reductions:
--- On INTEGER_CONSTANT_LONG reduce production minus_question_mark ->
--- On INTEGER_CONSTANT reduce production minus_question_mark ->
--- On FLOAT_CONSTANT reduce production minus_question_mark ->
+-- On INTEGER_CONSTANT_LONG INTEGER_CONSTANT FLOAT_CONSTANT
+--   reduce production minus_question_mark ->
 
 State 414:
 ## Known stack suffix:
@@ -5934,7 +5410,8 @@ method_body -> L_BRACE declaration_or_statement_list_star . catch_clause_list_st
 -- On catch_clause_list_star shift to state 425
 -- On catch_clause shift to state 427
 ## Reductions:
--- On R_BRACE reduce production catch_clause_list_star ->
+-- On R_BRACE
+--   reduce production catch_clause_list_star ->
 
 State 416:
 ## Known stack suffix:
@@ -6073,7 +5550,8 @@ catch_clause_list_star -> catch_clause . catch_clause_list_star [ R_BRACE ]
 -- On catch_clause_list_star shift to state 428
 -- On catch_clause shift to state 427
 ## Reductions:
--- On R_BRACE reduce production catch_clause_list_star ->
+-- On R_BRACE
+--   reduce production catch_clause_list_star ->
 
 State 428:
 ## Known stack suffix:
@@ -6147,8 +5625,8 @@ declaration_or_statement_list_star -> declaration_or_statement . declaration_or_
 -- On base_type_no_name shift to state 131
 -- On array_ref shift to state 371
 ## Reductions:
--- On R_BRACE reduce production declaration_or_statement_list_star ->
--- On CATCH reduce production declaration_or_statement_list_star ->
+-- On R_BRACE CATCH
+--   reduce production declaration_or_statement_list_star ->
 
 State 430:
 ## Known stack suffix:
@@ -6187,9 +5665,8 @@ member -> modifier_list_star jtype name L_PAREN parameter_list_question_mark R_P
 -- On old_clauses shift to state 436
 -- On old_clause shift to state 441
 ## Reductions:
--- On SEMICOLON reduce production old_clauses ->
--- On L_BRACE reduce production old_clauses ->
--- On ENSURES reduce production old_clauses ->
+-- On SEMICOLON L_BRACE ENSURES
+--   reduce production old_clauses ->
 
 State 434:
 ## Known stack suffix:
@@ -6220,8 +5697,8 @@ member -> modifier_list_star jtype name L_PAREN parameter_list_question_mark R_P
 -- On ENSURES shift to state 437
 -- On ensures_clause shift to state 439
 ## Reductions:
--- On SEMICOLON reduce production ensures_clause ->
--- On L_BRACE reduce production ensures_clause ->
+-- On SEMICOLON L_BRACE
+--   reduce production ensures_clause ->
 
 State 437:
 ## Known stack suffix:
@@ -6273,9 +5750,8 @@ old_clauses -> old_clause . old_clauses [ SEMICOLON L_BRACE ENSURES ]
 -- On old_clauses shift to state 442
 -- On old_clause shift to state 441
 ## Reductions:
--- On SEMICOLON reduce production old_clauses ->
--- On L_BRACE reduce production old_clauses ->
--- On ENSURES reduce production old_clauses ->
+-- On SEMICOLON L_BRACE ENSURES
+--   reduce production old_clauses ->
 
 State 442:
 ## Known stack suffix:
@@ -6308,25 +5784,8 @@ modifier_list_star -> modifier . modifier_list_star [ VOID TRUE SHORT QUOTED_NAM
 -- On modifier_list_star shift to state 444
 -- On modifier shift to state 443
 ## Reductions:
--- On VOID reduce production modifier_list_star ->
--- On TRUE reduce production modifier_list_star ->
--- On SHORT reduce production modifier_list_star ->
--- On QUOTED_NAME reduce production modifier_list_star ->
--- On NULL reduce production modifier_list_star ->
--- On LONG reduce production modifier_list_star ->
--- On INTERFACE reduce production modifier_list_star ->
--- On INT reduce production modifier_list_star ->
--- On IDENTIFIER reduce production modifier_list_star ->
--- On FULL_IDENTIFIER reduce production modifier_list_star ->
--- On FLOAT reduce production modifier_list_star ->
--- On FALSE reduce production modifier_list_star ->
--- On EMP reduce production modifier_list_star ->
--- On DOUBLE reduce production modifier_list_star ->
--- On CLASS reduce production modifier_list_star ->
--- On CHAR reduce production modifier_list_star ->
--- On BYTE reduce production modifier_list_star ->
--- On BOOLEAN reduce production modifier_list_star ->
--- On AS reduce production modifier_list_star ->
+-- On VOID TRUE SHORT QUOTED_NAME NULL LONG INTERFACE INT IDENTIFIER FULL_IDENTIFIER FLOAT FALSE EMP DOUBLE CLASS CHAR BYTE BOOLEAN AS
+--   reduce production modifier_list_star ->
 
 State 444:
 ## Known stack suffix:
@@ -6379,24 +5838,10 @@ member_list_star -> member . member_list_star [ R_BRACE ]
 -- On member_list_star shift to state 448
 -- On member shift to state 447
 ## Reductions:
--- On VOID reduce production modifier_list_star ->
--- On TRUE reduce production modifier_list_star ->
--- On SHORT reduce production modifier_list_star ->
--- On R_BRACE reduce production member_list_star ->
--- On QUOTED_NAME reduce production modifier_list_star ->
--- On NULL reduce production modifier_list_star ->
--- On LONG reduce production modifier_list_star ->
--- On INT reduce production modifier_list_star ->
--- On IDENTIFIER reduce production modifier_list_star ->
--- On FULL_IDENTIFIER reduce production modifier_list_star ->
--- On FLOAT reduce production modifier_list_star ->
--- On FALSE reduce production modifier_list_star ->
--- On EMP reduce production modifier_list_star ->
--- On DOUBLE reduce production modifier_list_star ->
--- On CHAR reduce production modifier_list_star ->
--- On BYTE reduce production modifier_list_star ->
--- On BOOLEAN reduce production modifier_list_star ->
--- On AS reduce production modifier_list_star ->
+-- On R_BRACE
+--   reduce production member_list_star ->
+-- On VOID TRUE SHORT QUOTED_NAME NULL LONG INT IDENTIFIER FULL_IDENTIFIER FLOAT FALSE EMP DOUBLE CHAR BYTE BOOLEAN AS
+--   reduce production modifier_list_star ->
 
 State 448:
 ## Known stack suffix:
@@ -6479,15 +5924,8 @@ question -> INCONSISTENCY COLON . formula_npv [ INCONSISTENCY IMPLICATION FRAME 
 -- On field_signature shift to state 477
 -- On at_identifier shift to state 478
 ## Reductions:
--- On OROR reduce production formula_npv ->
--- On OR reduce production formula_npv ->
--- On MULT reduce production formula_npv ->
--- On INCONSISTENCY reduce production formula_npv ->
--- On IMPLICATION reduce production formula_npv ->
--- On FRAME reduce production formula_npv ->
--- On EOF reduce production formula_npv ->
--- On ABS reduce production formula_npv ->
--- On ABDUCTION reduce production formula_npv ->
+-- On OROR OR MULT INCONSISTENCY IMPLICATION FRAME EOF ABS ABDUCTION
+--   reduce production formula_npv ->
 
 State 454:
 ## Known stack suffix:
@@ -6555,10 +5993,8 @@ jargument_npv -> L_PAREN . jargument_npv binop_val_no_multor jargument_npv R_PAR
 -- On field_signature shift to state 477
 -- On at_identifier shift to state 478
 ## Reductions:
--- On R_PAREN reduce production formula_npv ->
--- On OROR reduce production formula_npv ->
--- On OR reduce production formula_npv ->
--- On MULT reduce production formula_npv ->
+-- On R_PAREN OROR OR MULT
+--   reduce production formula_npv ->
 
 State 459:
 ## Known stack suffix:
@@ -6574,7 +6010,8 @@ jargument_npv -> L_BRACE . fldlist_npv R_BRACE [ XOR VDASH USHR SHR SHL SEMICOLO
 -- On identifier shift to state 460
 -- On fldlist_npv shift to state 482
 ## Reductions:
--- On R_BRACE reduce production fldlist_npv ->
+-- On R_BRACE
+--   reduce production fldlist_npv ->
 
 State 460:
 ## Known stack suffix:
@@ -6728,31 +6165,8 @@ lvariable_npv -> identifier . [ XOR VDASH USHR SHR SHL SEMICOLON R_PAREN R_BRACE
 ## Transitions:
 -- On L_PAREN shift to state 470
 ## Reductions:
--- On XOR reduce production lvariable_npv -> identifier
--- On VDASH reduce production lvariable_npv -> identifier
--- On USHR reduce production lvariable_npv -> identifier
--- On SHR reduce production lvariable_npv -> identifier
--- On SHL reduce production lvariable_npv -> identifier
--- On SEMICOLON reduce production lvariable_npv -> identifier
--- On R_PAREN reduce production lvariable_npv -> identifier
--- On R_BRACE reduce production lvariable_npv -> identifier
--- On QUESTIONMARK reduce production lvariable_npv -> identifier
--- On PLUS reduce production lvariable_npv -> identifier
--- On OROR reduce production lvariable_npv -> identifier
--- On OR reduce production lvariable_npv -> identifier
--- On MULT reduce production lvariable_npv -> identifier
--- On MOD reduce production lvariable_npv -> identifier
--- On MINUS reduce production lvariable_npv -> identifier
--- On MAPSTO reduce production lvariable_npv -> identifier
--- On INCONSISTENCY reduce production lvariable_npv -> identifier
--- On IMPLICATION reduce production lvariable_npv -> identifier
--- On FRAME reduce production lvariable_npv -> identifier
--- On EOF reduce production lvariable_npv -> identifier
--- On DIV reduce production lvariable_npv -> identifier
--- On COMMA reduce production lvariable_npv -> identifier
--- On AND reduce production lvariable_npv -> identifier
--- On ABS reduce production lvariable_npv -> identifier
--- On ABDUCTION reduce production lvariable_npv -> identifier
+-- On XOR VDASH USHR SHR SHL SEMICOLON R_PAREN R_BRACE QUESTIONMARK PLUS OROR OR MULT MOD MINUS MAPSTO INCONSISTENCY IMPLICATION FRAME EOF DIV COMMA AND ABS ABDUCTION
+--   reduce production lvariable_npv -> identifier
 
 State 470:
 ## Known stack suffix:
@@ -6781,7 +6195,8 @@ jargument_npv -> identifier L_PAREN . jargument_npv_list R_PAREN [ XOR VDASH USH
 -- On field_signature shift to state 477
 -- On at_identifier shift to state 478
 ## Reductions:
--- On R_PAREN reduce production jargument_npv_list ->
+-- On R_PAREN
+--   reduce production jargument_npv_list ->
 
 State 471:
 ## Known stack suffix:
@@ -6819,7 +6234,8 @@ jargument_npv_list_ne -> jargument_npv . COMMA jargument_npv_list_ne [ R_PAREN ]
 ## Transitions:
 -- On COMMA shift to state 475
 ## Reductions:
--- On R_PAREN reduce production jargument_npv_list_ne -> jargument_npv
+-- On R_PAREN
+--   reduce production jargument_npv_list_ne -> jargument_npv
 
 State 475:
 ## Known stack suffix:
@@ -6884,7 +6300,8 @@ fldlist_npv -> identifier EQUALS jargument_npv . SEMICOLON fldlist_npv [ R_BRACE
 ## Transitions:
 -- On SEMICOLON shift to state 480
 ## Reductions:
--- On R_BRACE reduce production fldlist_npv -> identifier EQUALS jargument_npv
+-- On R_BRACE
+--   reduce production fldlist_npv -> identifier EQUALS jargument_npv
 
 State 480:
 ## Known stack suffix:
@@ -6900,7 +6317,8 @@ fldlist_npv -> identifier EQUALS jargument_npv SEMICOLON . fldlist_npv [ R_BRACE
 -- On identifier shift to state 460
 -- On fldlist_npv shift to state 481
 ## Reductions:
--- On R_BRACE reduce production fldlist_npv ->
+-- On R_BRACE
+--   reduce production fldlist_npv ->
 
 State 481:
 ## Known stack suffix:
@@ -6937,40 +6355,10 @@ formula_npv -> FALSE . [ VDASH R_PAREN QUESTIONMARK OROR OR MULT INCONSISTENCY I
 identifier -> FALSE . [ XOR USHR SHR SHL PLUS MOD MINUS L_PAREN EQUALS DOT DIV COLON CMPNE CMPLT CMPLE CMPL CMPGT CMPGE CMPG CMPEQ CMP AND ]
 ## Transitions:
 ## Reductions:
--- On XOR reduce production identifier -> FALSE
--- On VDASH reduce production formula_npv -> FALSE
--- On USHR reduce production identifier -> FALSE
--- On SHR reduce production identifier -> FALSE
--- On SHL reduce production identifier -> FALSE
--- On R_PAREN reduce production formula_npv -> FALSE
--- On QUESTIONMARK reduce production formula_npv -> FALSE
--- On PLUS reduce production identifier -> FALSE
--- On OROR reduce production formula_npv -> FALSE
--- On OR reduce production formula_npv -> FALSE
--- On MULT reduce production formula_npv -> FALSE
--- On MOD reduce production identifier -> FALSE
--- On MINUS reduce production identifier -> FALSE
--- On L_PAREN reduce production identifier -> FALSE
--- On INCONSISTENCY reduce production formula_npv -> FALSE
--- On IMPLICATION reduce production formula_npv -> FALSE
--- On FRAME reduce production formula_npv -> FALSE
--- On EQUALS reduce production identifier -> FALSE
--- On EOF reduce production formula_npv -> FALSE
--- On DOT reduce production identifier -> FALSE
--- On DIV reduce production identifier -> FALSE
--- On COLON reduce production identifier -> FALSE
--- On CMPNE reduce production identifier -> FALSE
--- On CMPLT reduce production identifier -> FALSE
--- On CMPLE reduce production identifier -> FALSE
--- On CMPL reduce production identifier -> FALSE
--- On CMPGT reduce production identifier -> FALSE
--- On CMPGE reduce production identifier -> FALSE
--- On CMPG reduce production identifier -> FALSE
--- On CMPEQ reduce production identifier -> FALSE
--- On CMP reduce production identifier -> FALSE
--- On AND reduce production identifier -> FALSE
--- On ABS reduce production formula_npv -> FALSE
--- On ABDUCTION reduce production formula_npv -> FALSE
+-- On VDASH R_PAREN QUESTIONMARK OROR OR MULT INCONSISTENCY IMPLICATION FRAME EOF ABS ABDUCTION
+--   reduce production formula_npv -> FALSE
+-- On XOR USHR SHR SHL PLUS MOD MINUS L_PAREN EQUALS DOT DIV COLON CMPNE CMPLT CMPLE CMPL CMPGT CMPGE CMPG CMPEQ CMP AND
+--   reduce production identifier -> FALSE
 
 State 485:
 ## Known stack suffix:
@@ -6980,40 +6368,10 @@ formula_npv -> EMP . [ VDASH R_PAREN QUESTIONMARK OROR OR MULT INCONSISTENCY IMP
 identifier -> EMP . [ XOR USHR SHR SHL PLUS MOD MINUS L_PAREN EQUALS DOT DIV COLON CMPNE CMPLT CMPLE CMPL CMPGT CMPGE CMPG CMPEQ CMP AND ]
 ## Transitions:
 ## Reductions:
--- On XOR reduce production identifier -> EMP
--- On VDASH reduce production formula_npv -> EMP
--- On USHR reduce production identifier -> EMP
--- On SHR reduce production identifier -> EMP
--- On SHL reduce production identifier -> EMP
--- On R_PAREN reduce production formula_npv -> EMP
--- On QUESTIONMARK reduce production formula_npv -> EMP
--- On PLUS reduce production identifier -> EMP
--- On OROR reduce production formula_npv -> EMP
--- On OR reduce production formula_npv -> EMP
--- On MULT reduce production formula_npv -> EMP
--- On MOD reduce production identifier -> EMP
--- On MINUS reduce production identifier -> EMP
--- On L_PAREN reduce production identifier -> EMP
--- On INCONSISTENCY reduce production formula_npv -> EMP
--- On IMPLICATION reduce production formula_npv -> EMP
--- On FRAME reduce production formula_npv -> EMP
--- On EQUALS reduce production identifier -> EMP
--- On EOF reduce production formula_npv -> EMP
--- On DOT reduce production identifier -> EMP
--- On DIV reduce production identifier -> EMP
--- On COLON reduce production identifier -> EMP
--- On CMPNE reduce production identifier -> EMP
--- On CMPLT reduce production identifier -> EMP
--- On CMPLE reduce production identifier -> EMP
--- On CMPL reduce production identifier -> EMP
--- On CMPGT reduce production identifier -> EMP
--- On CMPGE reduce production identifier -> EMP
--- On CMPG reduce production identifier -> EMP
--- On CMPEQ reduce production identifier -> EMP
--- On CMP reduce production identifier -> EMP
--- On AND reduce production identifier -> EMP
--- On ABS reduce production formula_npv -> EMP
--- On ABDUCTION reduce production formula_npv -> EMP
+-- On VDASH R_PAREN QUESTIONMARK OROR OR MULT INCONSISTENCY IMPLICATION FRAME EOF ABS ABDUCTION
+--   reduce production formula_npv -> EMP
+-- On XOR USHR SHR SHL PLUS MOD MINUS L_PAREN EQUALS DOT DIV COLON CMPNE CMPLT CMPLE CMPL CMPGT CMPGE CMPG CMPEQ CMP AND
+--   reduce production identifier -> EMP
 
 State 486:
 ## Known stack suffix:
@@ -7065,7 +6423,8 @@ formula_npv -> BANG identifier L_PAREN . jargument_npv_list R_PAREN [ VDASH R_PA
 -- On field_signature shift to state 477
 -- On at_identifier shift to state 478
 ## Reductions:
--- On R_PAREN reduce production jargument_npv_list ->
+-- On R_PAREN
+--   reduce production jargument_npv_list ->
 
 State 489:
 ## Known stack suffix:
@@ -7096,25 +6455,8 @@ jargument_npv -> lvariable_npv . [ XOR USHR SHR SHL PLUS MOD MINUS EQUALS DIV CM
 -- On DOT shift to state 492
 -- On COLON shift to state 496
 ## Reductions:
--- On XOR reduce production jargument_npv -> lvariable_npv
--- On USHR reduce production jargument_npv -> lvariable_npv
--- On SHR reduce production jargument_npv -> lvariable_npv
--- On SHL reduce production jargument_npv -> lvariable_npv
--- On PLUS reduce production jargument_npv -> lvariable_npv
--- On MOD reduce production jargument_npv -> lvariable_npv
--- On MINUS reduce production jargument_npv -> lvariable_npv
--- On EQUALS reduce production jargument_npv -> lvariable_npv
--- On DIV reduce production jargument_npv -> lvariable_npv
--- On CMPNE reduce production jargument_npv -> lvariable_npv
--- On CMPLT reduce production jargument_npv -> lvariable_npv
--- On CMPLE reduce production jargument_npv -> lvariable_npv
--- On CMPL reduce production jargument_npv -> lvariable_npv
--- On CMPGT reduce production jargument_npv -> lvariable_npv
--- On CMPGE reduce production jargument_npv -> lvariable_npv
--- On CMPG reduce production jargument_npv -> lvariable_npv
--- On CMPEQ reduce production jargument_npv -> lvariable_npv
--- On CMP reduce production jargument_npv -> lvariable_npv
--- On AND reduce production jargument_npv -> lvariable_npv
+-- On XOR USHR SHR SHL PLUS MOD MINUS EQUALS DIV CMPNE CMPLT CMPLE CMPL CMPGT CMPGE CMPG CMPEQ CMP AND
+--   reduce production jargument_npv -> lvariable_npv
 
 State 492:
 ## Known stack suffix:
@@ -7320,27 +6662,8 @@ lvariable_npv -> identifier . [ XOR USHR SHR SHL PLUS MOD MINUS EQUALS DOT DIV C
 ## Transitions:
 -- On L_PAREN shift to state 504
 ## Reductions:
--- On XOR reduce production lvariable_npv -> identifier
--- On USHR reduce production lvariable_npv -> identifier
--- On SHR reduce production lvariable_npv -> identifier
--- On SHL reduce production lvariable_npv -> identifier
--- On PLUS reduce production lvariable_npv -> identifier
--- On MOD reduce production lvariable_npv -> identifier
--- On MINUS reduce production lvariable_npv -> identifier
--- On EQUALS reduce production lvariable_npv -> identifier
--- On DOT reduce production lvariable_npv -> identifier
--- On DIV reduce production lvariable_npv -> identifier
--- On COLON reduce production lvariable_npv -> identifier
--- On CMPNE reduce production lvariable_npv -> identifier
--- On CMPLT reduce production lvariable_npv -> identifier
--- On CMPLE reduce production lvariable_npv -> identifier
--- On CMPL reduce production lvariable_npv -> identifier
--- On CMPGT reduce production lvariable_npv -> identifier
--- On CMPGE reduce production lvariable_npv -> identifier
--- On CMPG reduce production lvariable_npv -> identifier
--- On CMPEQ reduce production lvariable_npv -> identifier
--- On CMP reduce production lvariable_npv -> identifier
--- On AND reduce production lvariable_npv -> identifier
+-- On XOR USHR SHR SHL PLUS MOD MINUS EQUALS DOT DIV COLON CMPNE CMPLT CMPLE CMPL CMPGT CMPGE CMPG CMPEQ CMP AND
+--   reduce production lvariable_npv -> identifier
 
 State 504:
 ## Known stack suffix:
@@ -7370,7 +6693,8 @@ jargument_npv -> identifier L_PAREN . jargument_npv_list R_PAREN [ XOR USHR SHR 
 -- On field_signature shift to state 477
 -- On at_identifier shift to state 478
 ## Reductions:
--- On R_PAREN reduce production jargument_npv_list ->
+-- On R_PAREN
+--   reduce production jargument_npv_list ->
 
 State 505:
 ## Known stack suffix:
@@ -7390,37 +6714,10 @@ formula_npv -> identifier L_PAREN jargument_npv_list R_PAREN . [ VDASH R_PAREN Q
 jargument_npv -> identifier L_PAREN jargument_npv_list R_PAREN . [ XOR USHR SHR SHL PLUS MOD MINUS EQUALS DIV CMPNE CMPLT CMPLE CMPL CMPGT CMPGE CMPG CMPEQ CMP AND ]
 ## Transitions:
 ## Reductions:
--- On XOR reduce production jargument_npv -> identifier L_PAREN jargument_npv_list R_PAREN
--- On VDASH reduce production formula_npv -> identifier L_PAREN jargument_npv_list R_PAREN
--- On USHR reduce production jargument_npv -> identifier L_PAREN jargument_npv_list R_PAREN
--- On SHR reduce production jargument_npv -> identifier L_PAREN jargument_npv_list R_PAREN
--- On SHL reduce production jargument_npv -> identifier L_PAREN jargument_npv_list R_PAREN
--- On R_PAREN reduce production formula_npv -> identifier L_PAREN jargument_npv_list R_PAREN
--- On QUESTIONMARK reduce production formula_npv -> identifier L_PAREN jargument_npv_list R_PAREN
--- On PLUS reduce production jargument_npv -> identifier L_PAREN jargument_npv_list R_PAREN
--- On OROR reduce production formula_npv -> identifier L_PAREN jargument_npv_list R_PAREN
--- On OR reduce production formula_npv -> identifier L_PAREN jargument_npv_list R_PAREN
--- On MULT reduce production formula_npv -> identifier L_PAREN jargument_npv_list R_PAREN
--- On MOD reduce production jargument_npv -> identifier L_PAREN jargument_npv_list R_PAREN
--- On MINUS reduce production jargument_npv -> identifier L_PAREN jargument_npv_list R_PAREN
--- On INCONSISTENCY reduce production formula_npv -> identifier L_PAREN jargument_npv_list R_PAREN
--- On IMPLICATION reduce production formula_npv -> identifier L_PAREN jargument_npv_list R_PAREN
--- On FRAME reduce production formula_npv -> identifier L_PAREN jargument_npv_list R_PAREN
--- On EQUALS reduce production jargument_npv -> identifier L_PAREN jargument_npv_list R_PAREN
--- On EOF reduce production formula_npv -> identifier L_PAREN jargument_npv_list R_PAREN
--- On DIV reduce production jargument_npv -> identifier L_PAREN jargument_npv_list R_PAREN
--- On CMPNE reduce production jargument_npv -> identifier L_PAREN jargument_npv_list R_PAREN
--- On CMPLT reduce production jargument_npv -> identifier L_PAREN jargument_npv_list R_PAREN
--- On CMPLE reduce production jargument_npv -> identifier L_PAREN jargument_npv_list R_PAREN
--- On CMPL reduce production jargument_npv -> identifier L_PAREN jargument_npv_list R_PAREN
--- On CMPGT reduce production jargument_npv -> identifier L_PAREN jargument_npv_list R_PAREN
--- On CMPGE reduce production jargument_npv -> identifier L_PAREN jargument_npv_list R_PAREN
--- On CMPG reduce production jargument_npv -> identifier L_PAREN jargument_npv_list R_PAREN
--- On CMPEQ reduce production jargument_npv -> identifier L_PAREN jargument_npv_list R_PAREN
--- On CMP reduce production jargument_npv -> identifier L_PAREN jargument_npv_list R_PAREN
--- On AND reduce production jargument_npv -> identifier L_PAREN jargument_npv_list R_PAREN
--- On ABS reduce production formula_npv -> identifier L_PAREN jargument_npv_list R_PAREN
--- On ABDUCTION reduce production formula_npv -> identifier L_PAREN jargument_npv_list R_PAREN
+-- On VDASH R_PAREN QUESTIONMARK OROR OR MULT INCONSISTENCY IMPLICATION FRAME EOF ABS ABDUCTION
+--   reduce production formula_npv -> identifier L_PAREN jargument_npv_list R_PAREN
+-- On XOR USHR SHR SHL PLUS MOD MINUS EQUALS DIV CMPNE CMPLT CMPLE CMPL CMPGT CMPGE CMPG CMPEQ CMP AND
+--   reduce production jargument_npv -> identifier L_PAREN jargument_npv_list R_PAREN
 
 State 507:
 ## Known stack suffix:
@@ -7458,7 +6755,8 @@ formula_npv -> full_identifier L_PAREN . jargument_npv_list R_PAREN [ VDASH R_PA
 -- On field_signature shift to state 477
 -- On at_identifier shift to state 478
 ## Reductions:
--- On R_PAREN reduce production jargument_npv_list ->
+-- On R_PAREN
+--   reduce production jargument_npv_list ->
 
 State 509:
 ## Known stack suffix:
@@ -7531,18 +6829,8 @@ formula_npv -> formula_npv OROR . formula_npv [ VDASH R_PAREN QUESTIONMARK OROR 
 -- On field_signature shift to state 477
 -- On at_identifier shift to state 478
 ## Reductions:
--- On VDASH reduce production formula_npv ->
--- On R_PAREN reduce production formula_npv ->
--- On QUESTIONMARK reduce production formula_npv ->
--- On OROR reduce production formula_npv ->
--- On OR reduce production formula_npv ->
--- On MULT reduce production formula_npv ->
--- On INCONSISTENCY reduce production formula_npv ->
--- On IMPLICATION reduce production formula_npv ->
--- On FRAME reduce production formula_npv ->
--- On EOF reduce production formula_npv ->
--- On ABS reduce production formula_npv ->
--- On ABDUCTION reduce production formula_npv ->
+-- On VDASH R_PAREN QUESTIONMARK OROR OR MULT INCONSISTENCY IMPLICATION FRAME EOF ABS ABDUCTION
+--   reduce production formula_npv ->
 
 State 514:
 ## Known stack suffix:
@@ -7575,17 +6863,8 @@ formula_npv -> formula_npv OROR formula_npv . [ VDASH R_PAREN QUESTIONMARK OROR 
 ## Transitions:
 -- On MULT shift to state 516
 ## Reductions:
--- On VDASH reduce production formula_npv -> formula_npv OROR formula_npv
--- On R_PAREN reduce production formula_npv -> formula_npv OROR formula_npv
--- On QUESTIONMARK reduce production formula_npv -> formula_npv OROR formula_npv
--- On OROR reduce production formula_npv -> formula_npv OROR formula_npv
--- On OR reduce production formula_npv -> formula_npv OROR formula_npv
--- On INCONSISTENCY reduce production formula_npv -> formula_npv OROR formula_npv
--- On IMPLICATION reduce production formula_npv -> formula_npv OROR formula_npv
--- On FRAME reduce production formula_npv -> formula_npv OROR formula_npv
--- On EOF reduce production formula_npv -> formula_npv OROR formula_npv
--- On ABS reduce production formula_npv -> formula_npv OROR formula_npv
--- On ABDUCTION reduce production formula_npv -> formula_npv OROR formula_npv
+-- On VDASH R_PAREN QUESTIONMARK OROR OR INCONSISTENCY IMPLICATION FRAME EOF ABS ABDUCTION
+--   reduce production formula_npv -> formula_npv OROR formula_npv
 
 State 516:
 ## Known stack suffix:
@@ -7616,18 +6895,8 @@ formula_npv -> formula_npv MULT . formula_npv [ VDASH R_PAREN QUESTIONMARK OROR 
 -- On field_signature shift to state 477
 -- On at_identifier shift to state 478
 ## Reductions:
--- On VDASH reduce production formula_npv ->
--- On R_PAREN reduce production formula_npv ->
--- On QUESTIONMARK reduce production formula_npv ->
--- On OROR reduce production formula_npv ->
--- On OR reduce production formula_npv ->
--- On MULT reduce production formula_npv ->
--- On INCONSISTENCY reduce production formula_npv ->
--- On IMPLICATION reduce production formula_npv ->
--- On FRAME reduce production formula_npv ->
--- On EOF reduce production formula_npv ->
--- On ABS reduce production formula_npv ->
--- On ABDUCTION reduce production formula_npv ->
+-- On VDASH R_PAREN QUESTIONMARK OROR OR MULT INCONSISTENCY IMPLICATION FRAME EOF ABS ABDUCTION
+--   reduce production formula_npv ->
 
 State 517:
 ## Known stack suffix:
@@ -7670,18 +6939,8 @@ formula_npv -> formula_npv OR . formula_npv [ VDASH R_PAREN QUESTIONMARK OROR OR
 -- On field_signature shift to state 477
 -- On at_identifier shift to state 478
 ## Reductions:
--- On VDASH reduce production formula_npv ->
--- On R_PAREN reduce production formula_npv ->
--- On QUESTIONMARK reduce production formula_npv ->
--- On OROR reduce production formula_npv ->
--- On OR reduce production formula_npv ->
--- On MULT reduce production formula_npv ->
--- On INCONSISTENCY reduce production formula_npv ->
--- On IMPLICATION reduce production formula_npv ->
--- On FRAME reduce production formula_npv ->
--- On EOF reduce production formula_npv ->
--- On ABS reduce production formula_npv ->
--- On ABDUCTION reduce production formula_npv ->
+-- On VDASH R_PAREN QUESTIONMARK OROR OR MULT INCONSISTENCY IMPLICATION FRAME EOF ABS ABDUCTION
+--   reduce production formula_npv ->
 
 State 519:
 ## Known stack suffix:
@@ -7695,16 +6954,8 @@ formula_npv -> formula_npv . OROR formula_npv [ VDASH R_PAREN QUESTIONMARK OROR 
 -- On OROR shift to state 513
 -- On MULT shift to state 516
 ## Reductions:
--- On VDASH reduce production formula_npv -> formula_npv OR formula_npv
--- On R_PAREN reduce production formula_npv -> formula_npv OR formula_npv
--- On QUESTIONMARK reduce production formula_npv -> formula_npv OR formula_npv
--- On OR reduce production formula_npv -> formula_npv OR formula_npv
--- On INCONSISTENCY reduce production formula_npv -> formula_npv OR formula_npv
--- On IMPLICATION reduce production formula_npv -> formula_npv OR formula_npv
--- On FRAME reduce production formula_npv -> formula_npv OR formula_npv
--- On EOF reduce production formula_npv -> formula_npv OR formula_npv
--- On ABS reduce production formula_npv -> formula_npv OR formula_npv
--- On ABDUCTION reduce production formula_npv -> formula_npv OR formula_npv
+-- On VDASH R_PAREN QUESTIONMARK OR INCONSISTENCY IMPLICATION FRAME EOF ABS ABDUCTION
+--   reduce production formula_npv -> formula_npv OR formula_npv
 
 State 520:
 ## Known stack suffix:
@@ -7719,12 +6970,8 @@ question -> INCONSISTENCY COLON formula_npv . [ INCONSISTENCY IMPLICATION FRAME 
 -- On OR shift to state 518
 -- On MULT shift to state 516
 ## Reductions:
--- On INCONSISTENCY reduce production question -> INCONSISTENCY COLON formula_npv
--- On IMPLICATION reduce production question -> INCONSISTENCY COLON formula_npv
--- On FRAME reduce production question -> INCONSISTENCY COLON formula_npv
--- On EOF reduce production question -> INCONSISTENCY COLON formula_npv
--- On ABS reduce production question -> INCONSISTENCY COLON formula_npv
--- On ABDUCTION reduce production question -> INCONSISTENCY COLON formula_npv
+-- On INCONSISTENCY IMPLICATION FRAME EOF ABS ABDUCTION
+--   reduce production question -> INCONSISTENCY COLON formula_npv
 
 State 521:
 ## Known stack suffix:
@@ -7764,10 +7011,8 @@ question -> IMPLICATION COLON . formula_npv VDASH formula_npv [ INCONSISTENCY IM
 -- On field_signature shift to state 477
 -- On at_identifier shift to state 478
 ## Reductions:
--- On VDASH reduce production formula_npv ->
--- On OROR reduce production formula_npv ->
--- On OR reduce production formula_npv ->
--- On MULT reduce production formula_npv ->
+-- On VDASH OROR OR MULT
+--   reduce production formula_npv ->
 
 State 523:
 ## Known stack suffix:
@@ -7813,15 +7058,8 @@ question -> IMPLICATION COLON formula_npv VDASH . formula_npv [ INCONSISTENCY IM
 -- On field_signature shift to state 477
 -- On at_identifier shift to state 478
 ## Reductions:
--- On OROR reduce production formula_npv ->
--- On OR reduce production formula_npv ->
--- On MULT reduce production formula_npv ->
--- On INCONSISTENCY reduce production formula_npv ->
--- On IMPLICATION reduce production formula_npv ->
--- On FRAME reduce production formula_npv ->
--- On EOF reduce production formula_npv ->
--- On ABS reduce production formula_npv ->
--- On ABDUCTION reduce production formula_npv ->
+-- On OROR OR MULT INCONSISTENCY IMPLICATION FRAME EOF ABS ABDUCTION
+--   reduce production formula_npv ->
 
 State 525:
 ## Known stack suffix:
@@ -7836,12 +7074,8 @@ question -> IMPLICATION COLON formula_npv VDASH formula_npv . [ INCONSISTENCY IM
 -- On OR shift to state 518
 -- On MULT shift to state 516
 ## Reductions:
--- On INCONSISTENCY reduce production question -> IMPLICATION COLON formula_npv VDASH formula_npv
--- On IMPLICATION reduce production question -> IMPLICATION COLON formula_npv VDASH formula_npv
--- On FRAME reduce production question -> IMPLICATION COLON formula_npv VDASH formula_npv
--- On EOF reduce production question -> IMPLICATION COLON formula_npv VDASH formula_npv
--- On ABS reduce production question -> IMPLICATION COLON formula_npv VDASH formula_npv
--- On ABDUCTION reduce production question -> IMPLICATION COLON formula_npv VDASH formula_npv
+-- On INCONSISTENCY IMPLICATION FRAME EOF ABS ABDUCTION
+--   reduce production question -> IMPLICATION COLON formula_npv VDASH formula_npv
 
 State 526:
 ## Known stack suffix:
@@ -7881,10 +7115,8 @@ question -> FRAME COLON . formula_npv VDASH formula_npv [ INCONSISTENCY IMPLICAT
 -- On field_signature shift to state 477
 -- On at_identifier shift to state 478
 ## Reductions:
--- On VDASH reduce production formula_npv ->
--- On OROR reduce production formula_npv ->
--- On OR reduce production formula_npv ->
--- On MULT reduce production formula_npv ->
+-- On VDASH OROR OR MULT
+--   reduce production formula_npv ->
 
 State 528:
 ## Known stack suffix:
@@ -7930,15 +7162,8 @@ question -> FRAME COLON formula_npv VDASH . formula_npv [ INCONSISTENCY IMPLICAT
 -- On field_signature shift to state 477
 -- On at_identifier shift to state 478
 ## Reductions:
--- On OROR reduce production formula_npv ->
--- On OR reduce production formula_npv ->
--- On MULT reduce production formula_npv ->
--- On INCONSISTENCY reduce production formula_npv ->
--- On IMPLICATION reduce production formula_npv ->
--- On FRAME reduce production formula_npv ->
--- On EOF reduce production formula_npv ->
--- On ABS reduce production formula_npv ->
--- On ABDUCTION reduce production formula_npv ->
+-- On OROR OR MULT INCONSISTENCY IMPLICATION FRAME EOF ABS ABDUCTION
+--   reduce production formula_npv ->
 
 State 530:
 ## Known stack suffix:
@@ -7953,12 +7178,8 @@ question -> FRAME COLON formula_npv VDASH formula_npv . [ INCONSISTENCY IMPLICAT
 -- On OR shift to state 518
 -- On MULT shift to state 516
 ## Reductions:
--- On INCONSISTENCY reduce production question -> FRAME COLON formula_npv VDASH formula_npv
--- On IMPLICATION reduce production question -> FRAME COLON formula_npv VDASH formula_npv
--- On FRAME reduce production question -> FRAME COLON formula_npv VDASH formula_npv
--- On EOF reduce production question -> FRAME COLON formula_npv VDASH formula_npv
--- On ABS reduce production question -> FRAME COLON formula_npv VDASH formula_npv
--- On ABDUCTION reduce production question -> FRAME COLON formula_npv VDASH formula_npv
+-- On INCONSISTENCY IMPLICATION FRAME EOF ABS ABDUCTION
+--   reduce production question -> FRAME COLON formula_npv VDASH formula_npv
 
 State 531:
 ## Known stack suffix:
@@ -8007,15 +7228,8 @@ question -> ABS COLON . formula_npv [ INCONSISTENCY IMPLICATION FRAME EOF ABS AB
 -- On field_signature shift to state 477
 -- On at_identifier shift to state 478
 ## Reductions:
--- On OROR reduce production formula_npv ->
--- On OR reduce production formula_npv ->
--- On MULT reduce production formula_npv ->
--- On INCONSISTENCY reduce production formula_npv ->
--- On IMPLICATION reduce production formula_npv ->
--- On FRAME reduce production formula_npv ->
--- On EOF reduce production formula_npv ->
--- On ABS reduce production formula_npv ->
--- On ABDUCTION reduce production formula_npv ->
+-- On OROR OR MULT INCONSISTENCY IMPLICATION FRAME EOF ABS ABDUCTION
+--   reduce production formula_npv ->
 
 State 534:
 ## Known stack suffix:
@@ -8030,12 +7244,8 @@ question -> ABS COLON formula_npv . [ INCONSISTENCY IMPLICATION FRAME EOF ABS AB
 -- On OR shift to state 518
 -- On MULT shift to state 516
 ## Reductions:
--- On INCONSISTENCY reduce production question -> ABS COLON formula_npv
--- On IMPLICATION reduce production question -> ABS COLON formula_npv
--- On FRAME reduce production question -> ABS COLON formula_npv
--- On EOF reduce production question -> ABS COLON formula_npv
--- On ABS reduce production question -> ABS COLON formula_npv
--- On ABDUCTION reduce production question -> ABS COLON formula_npv
+-- On INCONSISTENCY IMPLICATION FRAME EOF ABS ABDUCTION
+--   reduce production question -> ABS COLON formula_npv
 
 State 535:
 ## Known stack suffix:
@@ -8075,10 +7285,8 @@ question -> ABDUCTION COLON . formula_npv VDASH formula_npv [ INCONSISTENCY IMPL
 -- On field_signature shift to state 477
 -- On at_identifier shift to state 478
 ## Reductions:
--- On VDASH reduce production formula_npv ->
--- On OROR reduce production formula_npv ->
--- On OR reduce production formula_npv ->
--- On MULT reduce production formula_npv ->
+-- On VDASH OROR OR MULT
+--   reduce production formula_npv ->
 
 State 537:
 ## Known stack suffix:
@@ -8124,15 +7332,8 @@ question -> ABDUCTION COLON formula_npv VDASH . formula_npv [ INCONSISTENCY IMPL
 -- On field_signature shift to state 477
 -- On at_identifier shift to state 478
 ## Reductions:
--- On OROR reduce production formula_npv ->
--- On OR reduce production formula_npv ->
--- On MULT reduce production formula_npv ->
--- On INCONSISTENCY reduce production formula_npv ->
--- On IMPLICATION reduce production formula_npv ->
--- On FRAME reduce production formula_npv ->
--- On EOF reduce production formula_npv ->
--- On ABS reduce production formula_npv ->
--- On ABDUCTION reduce production formula_npv ->
+-- On OROR OR MULT INCONSISTENCY IMPLICATION FRAME EOF ABS ABDUCTION
+--   reduce production formula_npv ->
 
 State 539:
 ## Known stack suffix:
@@ -8147,12 +7348,8 @@ question -> ABDUCTION COLON formula_npv VDASH formula_npv . [ INCONSISTENCY IMPL
 -- On OR shift to state 518
 -- On MULT shift to state 516
 ## Reductions:
--- On INCONSISTENCY reduce production question -> ABDUCTION COLON formula_npv VDASH formula_npv
--- On IMPLICATION reduce production question -> ABDUCTION COLON formula_npv VDASH formula_npv
--- On FRAME reduce production question -> ABDUCTION COLON formula_npv VDASH formula_npv
--- On EOF reduce production question -> ABDUCTION COLON formula_npv VDASH formula_npv
--- On ABS reduce production question -> ABDUCTION COLON formula_npv VDASH formula_npv
--- On ABDUCTION reduce production question -> ABDUCTION COLON formula_npv VDASH formula_npv
+-- On INCONSISTENCY IMPLICATION FRAME EOF ABS ABDUCTION
+--   reduce production question -> ABDUCTION COLON formula_npv VDASH formula_npv
 
 State 540:
 ## Known stack suffix:
@@ -8220,7 +7417,8 @@ rule -> RULE . identifier_op COLON sequent without where IF sequent_list_or_list
 -- On identifier_op shift to state 545
 -- On identifier shift to state 604
 ## Reductions:
--- On COLON reduce production identifier_op ->
+-- On COLON
+--   reduce production identifier_op ->
 
 State 545:
 ## Known stack suffix:
@@ -8263,8 +7461,8 @@ rule -> RULE identifier_op COLON . sequent without where IF sequent_list_or_list
 -- On field_signature shift to state 199
 -- On at_identifier shift to state 200
 ## Reductions:
--- On OROR reduce production spatial_list ->
--- On OR reduce production spatial_list ->
+-- On OROR OR
+--   reduce production spatial_list ->
 
 State 547:
 ## Known stack suffix:
@@ -8317,10 +7515,8 @@ sequent -> spatial_list OROR . formula VDASH formula [ WITHOUT WHERE SEMICOLON R
 -- On field_signature shift to state 199
 -- On at_identifier shift to state 200
 ## Reductions:
--- On VDASH reduce production formula ->
--- On OROR reduce production formula ->
--- On OR reduce production formula ->
--- On MULT reduce production formula ->
+-- On VDASH OROR OR MULT
+--   reduce production formula ->
 
 State 550:
 ## Known stack suffix:
@@ -8367,21 +7563,8 @@ sequent -> spatial_list OROR formula VDASH . formula [ WITHOUT WHERE SEMICOLON R
 -- On field_signature shift to state 199
 -- On at_identifier shift to state 200
 ## Reductions:
--- On WITHOUT reduce production formula ->
--- On WHERE reduce production formula ->
--- On SEMICOLON reduce production formula ->
--- On RULE reduce production formula ->
--- On REWRITERULE reduce production formula ->
--- On ORTEXT reduce production formula ->
--- On OROR reduce production formula ->
--- On OR reduce production formula ->
--- On MULT reduce production formula ->
--- On IMPORT reduce production formula ->
--- On IF reduce production formula ->
--- On EQUIV reduce production formula ->
--- On EOF reduce production formula ->
--- On CONSTRUCTOR reduce production formula ->
--- On ABSRULE reduce production formula ->
+-- On WITHOUT WHERE SEMICOLON RULE REWRITERULE ORTEXT OROR OR MULT IMPORT IF EQUIV EOF CONSTRUCTOR ABSRULE
+--   reduce production formula ->
 
 State 552:
 ## Known stack suffix:
@@ -8396,18 +7579,8 @@ sequent -> spatial_list OROR formula VDASH formula . [ WITHOUT WHERE SEMICOLON R
 -- On OR shift to state 249
 -- On MULT shift to state 247
 ## Reductions:
--- On WITHOUT reduce production sequent -> spatial_list OROR formula VDASH formula
--- On WHERE reduce production sequent -> spatial_list OROR formula VDASH formula
--- On SEMICOLON reduce production sequent -> spatial_list OROR formula VDASH formula
--- On RULE reduce production sequent -> spatial_list OROR formula VDASH formula
--- On REWRITERULE reduce production sequent -> spatial_list OROR formula VDASH formula
--- On ORTEXT reduce production sequent -> spatial_list OROR formula VDASH formula
--- On IMPORT reduce production sequent -> spatial_list OROR formula VDASH formula
--- On IF reduce production sequent -> spatial_list OROR formula VDASH formula
--- On EQUIV reduce production sequent -> spatial_list OROR formula VDASH formula
--- On EOF reduce production sequent -> spatial_list OROR formula VDASH formula
--- On CONSTRUCTOR reduce production sequent -> spatial_list OROR formula VDASH formula
--- On ABSRULE reduce production sequent -> spatial_list OROR formula VDASH formula
+-- On WITHOUT WHERE SEMICOLON RULE REWRITERULE ORTEXT IMPORT IF EQUIV EOF CONSTRUCTOR ABSRULE
+--   reduce production sequent -> spatial_list OROR formula VDASH formula
 
 State 553:
 ## Known stack suffix:
@@ -8440,10 +7613,8 @@ sequent -> spatial_list OR . formula VDASH formula DASHV formula [ WITHOUT WHERE
 -- On field_signature shift to state 199
 -- On at_identifier shift to state 200
 ## Reductions:
--- On VDASH reduce production formula ->
--- On OROR reduce production formula ->
--- On OR reduce production formula ->
--- On MULT reduce production formula ->
+-- On VDASH OROR OR MULT
+--   reduce production formula ->
 
 State 554:
 ## Known stack suffix:
@@ -8492,22 +7663,8 @@ sequent -> spatial_list OR formula VDASH . formula DASHV formula [ WITHOUT WHERE
 -- On field_signature shift to state 199
 -- On at_identifier shift to state 200
 ## Reductions:
--- On WITHOUT reduce production formula ->
--- On WHERE reduce production formula ->
--- On SEMICOLON reduce production formula ->
--- On RULE reduce production formula ->
--- On REWRITERULE reduce production formula ->
--- On ORTEXT reduce production formula ->
--- On OROR reduce production formula ->
--- On OR reduce production formula ->
--- On MULT reduce production formula ->
--- On IMPORT reduce production formula ->
--- On IF reduce production formula ->
--- On EQUIV reduce production formula ->
--- On EOF reduce production formula ->
--- On DASHV reduce production formula ->
--- On CONSTRUCTOR reduce production formula ->
--- On ABSRULE reduce production formula ->
+-- On WITHOUT WHERE SEMICOLON RULE REWRITERULE ORTEXT OROR OR MULT IMPORT IF EQUIV EOF DASHV CONSTRUCTOR ABSRULE
+--   reduce production formula ->
 
 State 556:
 ## Known stack suffix:
@@ -8524,18 +7681,8 @@ sequent -> spatial_list OR formula VDASH formula . DASHV formula [ WITHOUT WHERE
 -- On MULT shift to state 247
 -- On DASHV shift to state 557
 ## Reductions:
--- On WITHOUT reduce production sequent -> spatial_list OR formula VDASH formula
--- On WHERE reduce production sequent -> spatial_list OR formula VDASH formula
--- On SEMICOLON reduce production sequent -> spatial_list OR formula VDASH formula
--- On RULE reduce production sequent -> spatial_list OR formula VDASH formula
--- On REWRITERULE reduce production sequent -> spatial_list OR formula VDASH formula
--- On ORTEXT reduce production sequent -> spatial_list OR formula VDASH formula
--- On IMPORT reduce production sequent -> spatial_list OR formula VDASH formula
--- On IF reduce production sequent -> spatial_list OR formula VDASH formula
--- On EQUIV reduce production sequent -> spatial_list OR formula VDASH formula
--- On EOF reduce production sequent -> spatial_list OR formula VDASH formula
--- On CONSTRUCTOR reduce production sequent -> spatial_list OR formula VDASH formula
--- On ABSRULE reduce production sequent -> spatial_list OR formula VDASH formula
+-- On WITHOUT WHERE SEMICOLON RULE REWRITERULE ORTEXT IMPORT IF EQUIV EOF CONSTRUCTOR ABSRULE
+--   reduce production sequent -> spatial_list OR formula VDASH formula
 
 State 557:
 ## Known stack suffix:
@@ -8567,21 +7714,8 @@ sequent -> spatial_list OR formula VDASH formula DASHV . formula [ WITHOUT WHERE
 -- On field_signature shift to state 199
 -- On at_identifier shift to state 200
 ## Reductions:
--- On WITHOUT reduce production formula ->
--- On WHERE reduce production formula ->
--- On SEMICOLON reduce production formula ->
--- On RULE reduce production formula ->
--- On REWRITERULE reduce production formula ->
--- On ORTEXT reduce production formula ->
--- On OROR reduce production formula ->
--- On OR reduce production formula ->
--- On MULT reduce production formula ->
--- On IMPORT reduce production formula ->
--- On IF reduce production formula ->
--- On EQUIV reduce production formula ->
--- On EOF reduce production formula ->
--- On CONSTRUCTOR reduce production formula ->
--- On ABSRULE reduce production formula ->
+-- On WITHOUT WHERE SEMICOLON RULE REWRITERULE ORTEXT OROR OR MULT IMPORT IF EQUIV EOF CONSTRUCTOR ABSRULE
+--   reduce production formula ->
 
 State 558:
 ## Known stack suffix:
@@ -8596,18 +7730,8 @@ sequent -> spatial_list OR formula VDASH formula DASHV formula . [ WITHOUT WHERE
 -- On OR shift to state 249
 -- On MULT shift to state 247
 ## Reductions:
--- On WITHOUT reduce production sequent -> spatial_list OR formula VDASH formula DASHV formula
--- On WHERE reduce production sequent -> spatial_list OR formula VDASH formula DASHV formula
--- On SEMICOLON reduce production sequent -> spatial_list OR formula VDASH formula DASHV formula
--- On RULE reduce production sequent -> spatial_list OR formula VDASH formula DASHV formula
--- On REWRITERULE reduce production sequent -> spatial_list OR formula VDASH formula DASHV formula
--- On ORTEXT reduce production sequent -> spatial_list OR formula VDASH formula DASHV formula
--- On IMPORT reduce production sequent -> spatial_list OR formula VDASH formula DASHV formula
--- On IF reduce production sequent -> spatial_list OR formula VDASH formula DASHV formula
--- On EQUIV reduce production sequent -> spatial_list OR formula VDASH formula DASHV formula
--- On EOF reduce production sequent -> spatial_list OR formula VDASH formula DASHV formula
--- On CONSTRUCTOR reduce production sequent -> spatial_list OR formula VDASH formula DASHV formula
--- On ABSRULE reduce production sequent -> spatial_list OR formula VDASH formula DASHV formula
+-- On WITHOUT WHERE SEMICOLON RULE REWRITERULE ORTEXT IMPORT IF EQUIV EOF CONSTRUCTOR ABSRULE
+--   reduce production sequent -> spatial_list OR formula VDASH formula DASHV formula
 
 State 559:
 ## Known stack suffix:
@@ -8618,8 +7742,8 @@ spatial_list_ne -> spatial_at . [ OROR OR ]
 ## Transitions:
 -- On MULT shift to state 560
 ## Reductions:
--- On OROR reduce production spatial_list_ne -> spatial_at
--- On OR reduce production spatial_list_ne -> spatial_at
+-- On OROR OR
+--   reduce production spatial_list_ne -> spatial_at
 
 State 560:
 ## Known stack suffix:
@@ -8735,7 +7859,8 @@ spatial_at -> identifier . L_PAREN jargument_list R_PAREN [ OROR OR MULT ]
 ## Transitions:
 -- On L_PAREN shift to state 568
 ## Reductions:
--- On DOT reduce production lvariable -> identifier
+-- On DOT
+--   reduce production lvariable -> identifier
 
 State 568:
 ## Known stack suffix:
@@ -8766,7 +7891,8 @@ spatial_at -> identifier L_PAREN . jargument_list R_PAREN [ OROR OR MULT ]
 -- On field_signature shift to state 199
 -- On at_identifier shift to state 200
 ## Reductions:
--- On R_PAREN reduce production jargument_list ->
+-- On R_PAREN
+--   reduce production jargument_list ->
 
 State 569:
 ## Known stack suffix:
@@ -8786,10 +7912,10 @@ jargument -> identifier L_PAREN jargument_list R_PAREN . [ DOT ]
 spatial_at -> identifier L_PAREN jargument_list R_PAREN . [ OROR OR MULT ]
 ## Transitions:
 ## Reductions:
--- On OROR reduce production spatial_at -> identifier L_PAREN jargument_list R_PAREN
--- On OR reduce production spatial_at -> identifier L_PAREN jargument_list R_PAREN
--- On MULT reduce production spatial_at -> identifier L_PAREN jargument_list R_PAREN
--- On DOT reduce production jargument -> identifier L_PAREN jargument_list R_PAREN
+-- On DOT
+--   reduce production jargument -> identifier L_PAREN jargument_list R_PAREN
+-- On OROR OR MULT
+--   reduce production spatial_at -> identifier L_PAREN jargument_list R_PAREN
 
 State 571:
 ## Known stack suffix:
@@ -8828,7 +7954,8 @@ spatial_at -> full_identifier L_PAREN . jargument_list R_PAREN [ OROR OR MULT ]
 -- On field_signature shift to state 199
 -- On at_identifier shift to state 200
 ## Reductions:
--- On R_PAREN reduce production jargument_list ->
+-- On R_PAREN
+--   reduce production jargument_list ->
 
 State 573:
 ## Known stack suffix:
@@ -8857,8 +7984,8 @@ rule -> RULE identifier_op COLON sequent . without where IF sequent_list_or_list
 -- On WITHOUT shift to state 576
 -- On without shift to state 580
 ## Reductions:
--- On WHERE reduce production without ->
--- On IF reduce production without ->
+-- On WHERE IF
+--   reduce production without ->
 
 State 576:
 ## Known stack suffix:
@@ -8891,12 +8018,8 @@ without -> WITHOUT . formula VDASH formula [ WHERE IF ]
 -- On field_signature shift to state 199
 -- On at_identifier shift to state 200
 ## Reductions:
--- On WHERE reduce production formula ->
--- On VDASH reduce production formula ->
--- On OROR reduce production formula ->
--- On OR reduce production formula ->
--- On MULT reduce production formula ->
--- On IF reduce production formula ->
+-- On WHERE VDASH OROR OR MULT IF
+--   reduce production formula ->
 
 State 577:
 ## Known stack suffix:
@@ -8913,8 +8036,8 @@ without -> WITHOUT formula . VDASH formula [ WHERE IF ]
 -- On OR shift to state 249
 -- On MULT shift to state 247
 ## Reductions:
--- On WHERE reduce production without -> WITHOUT formula
--- On IF reduce production without -> WITHOUT formula
+-- On WHERE IF
+--   reduce production without -> WITHOUT formula
 
 State 578:
 ## Known stack suffix:
@@ -8946,11 +8069,8 @@ without -> WITHOUT formula VDASH . formula [ WHERE IF ]
 -- On field_signature shift to state 199
 -- On at_identifier shift to state 200
 ## Reductions:
--- On WHERE reduce production formula ->
--- On OROR reduce production formula ->
--- On OR reduce production formula ->
--- On MULT reduce production formula ->
--- On IF reduce production formula ->
+-- On WHERE OROR OR MULT IF
+--   reduce production formula ->
 
 State 579:
 ## Known stack suffix:
@@ -8965,8 +8085,8 @@ without -> WITHOUT formula VDASH formula . [ WHERE IF ]
 -- On OR shift to state 249
 -- On MULT shift to state 247
 ## Reductions:
--- On WHERE reduce production without -> WITHOUT formula VDASH formula
--- On IF reduce production without -> WITHOUT formula VDASH formula
+-- On WHERE IF
+--   reduce production without -> WITHOUT formula VDASH formula
 
 State 580:
 ## Known stack suffix:
@@ -8977,7 +8097,8 @@ rule -> RULE identifier_op COLON sequent without . where IF sequent_list_or_list
 -- On WHERE shift to state 581
 -- On where shift to state 594
 ## Reductions:
--- On IF reduce production where ->
+-- On IF
+--   reduce production where ->
 
 State 581:
 ## Known stack suffix:
@@ -9014,12 +8135,10 @@ where -> WHERE . clause_list [ RULE REWRITERULE IMPORT IF EQUIV EOF CONSTRUCTOR 
 -- On clause shift to state 591
 -- On at_identifier shift to state 200
 ## Reductions:
--- On PUREGUARD reduce production formula ->
--- On OROR reduce production formula ->
--- On OR reduce production formula ->
--- On NOTINCONTEXT reduce production lvariable_list ->
--- On NOTIN reduce production lvariable_list ->
--- On MULT reduce production formula ->
+-- On PUREGUARD OROR OR MULT
+--   reduce production formula ->
+-- On NOTINCONTEXT NOTIN
+--   reduce production lvariable_list ->
 
 State 582:
 ## Known stack suffix:
@@ -9100,18 +8219,10 @@ lvariable_list_ne -> lvariable . COMMA lvariable_list_ne [ NOTINCONTEXT NOTIN ]
 -- On COMMA shift to state 266
 -- On COLON shift to state 218
 ## Reductions:
--- On NOTINCONTEXT reduce production lvariable_list_ne -> lvariable
--- On NOTIN reduce production lvariable_list_ne -> lvariable
--- On EQUALS reduce production jargument -> lvariable
--- On CMPNE reduce production jargument -> lvariable
--- On CMPLT reduce production jargument -> lvariable
--- On CMPLE reduce production jargument -> lvariable
--- On CMPL reduce production jargument -> lvariable
--- On CMPGT reduce production jargument -> lvariable
--- On CMPGE reduce production jargument -> lvariable
--- On CMPG reduce production jargument -> lvariable
--- On CMPEQ reduce production jargument -> lvariable
--- On CMP reduce production jargument -> lvariable
+-- On EQUALS CMPNE CMPLT CMPLE CMPL CMPGT CMPGE CMPG CMPEQ CMP
+--   reduce production jargument -> lvariable
+-- On NOTINCONTEXT NOTIN
+--   reduce production lvariable_list_ne -> lvariable
 
 State 588:
 ## Known stack suffix:
@@ -9155,14 +8266,8 @@ clause_list -> clause . SEMICOLON clause_list [ RULE REWRITERULE IMPORT IF EQUIV
 ## Transitions:
 -- On SEMICOLON shift to state 592
 ## Reductions:
--- On RULE reduce production clause_list -> clause
--- On REWRITERULE reduce production clause_list -> clause
--- On IMPORT reduce production clause_list -> clause
--- On IF reduce production clause_list -> clause
--- On EQUIV reduce production clause_list -> clause
--- On EOF reduce production clause_list -> clause
--- On CONSTRUCTOR reduce production clause_list -> clause
--- On ABSRULE reduce production clause_list -> clause
+-- On RULE REWRITERULE IMPORT IF EQUIV EOF CONSTRUCTOR ABSRULE
+--   reduce production clause_list -> clause
 
 State 592:
 ## Known stack suffix:
@@ -9199,12 +8304,10 @@ clause_list -> clause SEMICOLON . clause_list [ RULE REWRITERULE IMPORT IF EQUIV
 -- On clause shift to state 591
 -- On at_identifier shift to state 200
 ## Reductions:
--- On PUREGUARD reduce production formula ->
--- On OROR reduce production formula ->
--- On OR reduce production formula ->
--- On NOTINCONTEXT reduce production lvariable_list ->
--- On NOTIN reduce production lvariable_list ->
--- On MULT reduce production formula ->
+-- On PUREGUARD OROR OR MULT
+--   reduce production formula ->
+-- On NOTINCONTEXT NOTIN
+--   reduce production lvariable_list ->
 
 State 593:
 ## Known stack suffix:
@@ -9258,16 +8361,10 @@ rule -> RULE identifier_op COLON sequent without where IF . sequent_list_or_list
 -- On field_signature shift to state 199
 -- On at_identifier shift to state 200
 ## Reductions:
--- On RULE reduce production sequent_list ->
--- On REWRITERULE reduce production sequent_list ->
--- On ORTEXT reduce production sequent_list ->
--- On OROR reduce production spatial_list ->
--- On OR reduce production spatial_list ->
--- On IMPORT reduce production sequent_list ->
--- On EQUIV reduce production sequent_list ->
--- On EOF reduce production sequent_list ->
--- On CONSTRUCTOR reduce production sequent_list ->
--- On ABSRULE reduce production sequent_list ->
+-- On RULE REWRITERULE ORTEXT IMPORT EQUIV EOF CONSTRUCTOR ABSRULE
+--   reduce production sequent_list ->
+-- On OROR OR
+--   reduce production spatial_list ->
 
 State 596:
 ## Known stack suffix:
@@ -9277,16 +8374,10 @@ identifier -> TRUE . [ L_PAREN DOT ]
 sequent_list -> TRUE . [ RULE REWRITERULE ORTEXT IMPORT EQUIV EOF CONSTRUCTOR ABSRULE ]
 ## Transitions:
 ## Reductions:
--- On RULE reduce production sequent_list -> TRUE
--- On REWRITERULE reduce production sequent_list -> TRUE
--- On ORTEXT reduce production sequent_list -> TRUE
--- On L_PAREN reduce production identifier -> TRUE
--- On IMPORT reduce production sequent_list -> TRUE
--- On EQUIV reduce production sequent_list -> TRUE
--- On EOF reduce production sequent_list -> TRUE
--- On DOT reduce production identifier -> TRUE
--- On CONSTRUCTOR reduce production sequent_list -> TRUE
--- On ABSRULE reduce production sequent_list -> TRUE
+-- On L_PAREN DOT
+--   reduce production identifier -> TRUE
+-- On RULE REWRITERULE ORTEXT IMPORT EQUIV EOF CONSTRUCTOR ABSRULE
+--   reduce production sequent_list -> TRUE
 
 State 597:
 ## Known stack suffix:
@@ -9306,13 +8397,8 @@ sequent_list_or_list -> sequent_list . ORTEXT sequent_list_or_list [ RULE REWRIT
 ## Transitions:
 -- On ORTEXT shift to state 599
 ## Reductions:
--- On RULE reduce production sequent_list_or_list -> sequent_list
--- On REWRITERULE reduce production sequent_list_or_list -> sequent_list
--- On IMPORT reduce production sequent_list_or_list -> sequent_list
--- On EQUIV reduce production sequent_list_or_list -> sequent_list
--- On EOF reduce production sequent_list_or_list -> sequent_list
--- On CONSTRUCTOR reduce production sequent_list_or_list -> sequent_list
--- On ABSRULE reduce production sequent_list_or_list -> sequent_list
+-- On RULE REWRITERULE IMPORT EQUIV EOF CONSTRUCTOR ABSRULE
+--   reduce production sequent_list_or_list -> sequent_list
 
 State 599:
 ## Known stack suffix:
@@ -9348,16 +8434,10 @@ sequent_list_or_list -> sequent_list ORTEXT . sequent_list_or_list [ RULE REWRIT
 -- On field_signature shift to state 199
 -- On at_identifier shift to state 200
 ## Reductions:
--- On RULE reduce production sequent_list ->
--- On REWRITERULE reduce production sequent_list ->
--- On ORTEXT reduce production sequent_list ->
--- On OROR reduce production spatial_list ->
--- On OR reduce production spatial_list ->
--- On IMPORT reduce production sequent_list ->
--- On EQUIV reduce production sequent_list ->
--- On EOF reduce production sequent_list ->
--- On CONSTRUCTOR reduce production sequent_list ->
--- On ABSRULE reduce production sequent_list ->
+-- On RULE REWRITERULE ORTEXT IMPORT EQUIV EOF CONSTRUCTOR ABSRULE
+--   reduce production sequent_list ->
+-- On OROR OR
+--   reduce production spatial_list ->
 
 State 600:
 ## Known stack suffix:
@@ -9377,14 +8457,8 @@ sequent_list -> sequent . SEMICOLON sequent_list [ RULE REWRITERULE ORTEXT IMPOR
 ## Transitions:
 -- On SEMICOLON shift to state 602
 ## Reductions:
--- On RULE reduce production sequent_list -> sequent
--- On REWRITERULE reduce production sequent_list -> sequent
--- On ORTEXT reduce production sequent_list -> sequent
--- On IMPORT reduce production sequent_list -> sequent
--- On EQUIV reduce production sequent_list -> sequent
--- On EOF reduce production sequent_list -> sequent
--- On CONSTRUCTOR reduce production sequent_list -> sequent
--- On ABSRULE reduce production sequent_list -> sequent
+-- On RULE REWRITERULE ORTEXT IMPORT EQUIV EOF CONSTRUCTOR ABSRULE
+--   reduce production sequent_list -> sequent
 
 State 602:
 ## Known stack suffix:
@@ -9419,16 +8493,10 @@ sequent_list -> sequent SEMICOLON . sequent_list [ RULE REWRITERULE ORTEXT IMPOR
 -- On field_signature shift to state 199
 -- On at_identifier shift to state 200
 ## Reductions:
--- On RULE reduce production sequent_list ->
--- On REWRITERULE reduce production sequent_list ->
--- On ORTEXT reduce production sequent_list ->
--- On OROR reduce production spatial_list ->
--- On OR reduce production spatial_list ->
--- On IMPORT reduce production sequent_list ->
--- On EQUIV reduce production sequent_list ->
--- On EOF reduce production sequent_list ->
--- On CONSTRUCTOR reduce production sequent_list ->
--- On ABSRULE reduce production sequent_list ->
+-- On RULE REWRITERULE ORTEXT IMPORT EQUIV EOF CONSTRUCTOR ABSRULE
+--   reduce production sequent_list ->
+-- On OROR OR
+--   reduce production spatial_list ->
 
 State 603:
 ## Known stack suffix:
@@ -9463,8 +8531,8 @@ rule -> REWRITERULE . identifier_op MULT COLON identifier L_PAREN jargument_list
 -- On identifier_op shift to state 606
 -- On identifier shift to state 604
 ## Reductions:
--- On MULT reduce production identifier_op ->
--- On COLON reduce production identifier_op ->
+-- On MULT COLON
+--   reduce production identifier_op ->
 
 State 606:
 ## Known stack suffix:
@@ -9537,7 +8605,8 @@ rule -> REWRITERULE identifier_op MULT COLON identifier L_PAREN . jargument_list
 -- On field_signature shift to state 199
 -- On at_identifier shift to state 200
 ## Reductions:
--- On R_PAREN reduce production jargument_list ->
+-- On R_PAREN
+--   reduce production jargument_list ->
 
 State 611:
 ## Known stack suffix:
@@ -9593,15 +8662,8 @@ rule -> REWRITERULE identifier_op MULT COLON identifier L_PAREN jargument_list R
 -- On IF shift to state 615
 -- On ifclause shift to state 617
 ## Reductions:
--- On WITHOUT reduce production ifclause ->
--- On WHERE reduce production ifclause ->
--- On RULE reduce production ifclause ->
--- On REWRITERULE reduce production ifclause ->
--- On IMPORT reduce production ifclause ->
--- On EQUIV reduce production ifclause ->
--- On EOF reduce production ifclause ->
--- On CONSTRUCTOR reduce production ifclause ->
--- On ABSRULE reduce production ifclause ->
+-- On WITHOUT WHERE RULE REWRITERULE IMPORT EQUIV EOF CONSTRUCTOR ABSRULE
+--   reduce production ifclause ->
 
 State 615:
 ## Known stack suffix:
@@ -9633,18 +8695,8 @@ ifclause -> IF . formula [ WITHOUT WHERE RULE REWRITERULE IMPORT EQUIV EOF CONST
 -- On field_signature shift to state 199
 -- On at_identifier shift to state 200
 ## Reductions:
--- On WITHOUT reduce production formula ->
--- On WHERE reduce production formula ->
--- On RULE reduce production formula ->
--- On REWRITERULE reduce production formula ->
--- On OROR reduce production formula ->
--- On OR reduce production formula ->
--- On MULT reduce production formula ->
--- On IMPORT reduce production formula ->
--- On EQUIV reduce production formula ->
--- On EOF reduce production formula ->
--- On CONSTRUCTOR reduce production formula ->
--- On ABSRULE reduce production formula ->
+-- On WITHOUT WHERE RULE REWRITERULE OROR OR MULT IMPORT EQUIV EOF CONSTRUCTOR ABSRULE
+--   reduce production formula ->
 
 State 616:
 ## Known stack suffix:
@@ -9659,15 +8711,8 @@ ifclause -> IF formula . [ WITHOUT WHERE RULE REWRITERULE IMPORT EQUIV EOF CONST
 -- On OR shift to state 249
 -- On MULT shift to state 247
 ## Reductions:
--- On WITHOUT reduce production ifclause -> IF formula
--- On WHERE reduce production ifclause -> IF formula
--- On RULE reduce production ifclause -> IF formula
--- On REWRITERULE reduce production ifclause -> IF formula
--- On IMPORT reduce production ifclause -> IF formula
--- On EQUIV reduce production ifclause -> IF formula
--- On EOF reduce production ifclause -> IF formula
--- On CONSTRUCTOR reduce production ifclause -> IF formula
--- On ABSRULE reduce production ifclause -> IF formula
+-- On WITHOUT WHERE RULE REWRITERULE IMPORT EQUIV EOF CONSTRUCTOR ABSRULE
+--   reduce production ifclause -> IF formula
 
 State 617:
 ## Known stack suffix:
@@ -9678,14 +8723,8 @@ rule -> REWRITERULE identifier_op MULT COLON identifier L_PAREN jargument_list R
 -- On WITHOUT shift to state 618
 -- On without_simp shift to state 620
 ## Reductions:
--- On WHERE reduce production without_simp ->
--- On RULE reduce production without_simp ->
--- On REWRITERULE reduce production without_simp ->
--- On IMPORT reduce production without_simp ->
--- On EQUIV reduce production without_simp ->
--- On EOF reduce production without_simp ->
--- On CONSTRUCTOR reduce production without_simp ->
--- On ABSRULE reduce production without_simp ->
+-- On WHERE RULE REWRITERULE IMPORT EQUIV EOF CONSTRUCTOR ABSRULE
+--   reduce production without_simp ->
 
 State 618:
 ## Known stack suffix:
@@ -9717,17 +8756,8 @@ without_simp -> WITHOUT . formula [ WHERE RULE REWRITERULE IMPORT EQUIV EOF CONS
 -- On field_signature shift to state 199
 -- On at_identifier shift to state 200
 ## Reductions:
--- On WHERE reduce production formula ->
--- On RULE reduce production formula ->
--- On REWRITERULE reduce production formula ->
--- On OROR reduce production formula ->
--- On OR reduce production formula ->
--- On MULT reduce production formula ->
--- On IMPORT reduce production formula ->
--- On EQUIV reduce production formula ->
--- On EOF reduce production formula ->
--- On CONSTRUCTOR reduce production formula ->
--- On ABSRULE reduce production formula ->
+-- On WHERE RULE REWRITERULE OROR OR MULT IMPORT EQUIV EOF CONSTRUCTOR ABSRULE
+--   reduce production formula ->
 
 State 619:
 ## Known stack suffix:
@@ -9742,14 +8772,8 @@ without_simp -> WITHOUT formula . [ WHERE RULE REWRITERULE IMPORT EQUIV EOF CONS
 -- On OR shift to state 249
 -- On MULT shift to state 247
 ## Reductions:
--- On WHERE reduce production without_simp -> WITHOUT formula
--- On RULE reduce production without_simp -> WITHOUT formula
--- On REWRITERULE reduce production without_simp -> WITHOUT formula
--- On IMPORT reduce production without_simp -> WITHOUT formula
--- On EQUIV reduce production without_simp -> WITHOUT formula
--- On EOF reduce production without_simp -> WITHOUT formula
--- On CONSTRUCTOR reduce production without_simp -> WITHOUT formula
--- On ABSRULE reduce production without_simp -> WITHOUT formula
+-- On WHERE RULE REWRITERULE IMPORT EQUIV EOF CONSTRUCTOR ABSRULE
+--   reduce production without_simp -> WITHOUT formula
 
 State 620:
 ## Known stack suffix:
@@ -9760,13 +8784,8 @@ rule -> REWRITERULE identifier_op MULT COLON identifier L_PAREN jargument_list R
 -- On WHERE shift to state 581
 -- On where shift to state 621
 ## Reductions:
--- On RULE reduce production where ->
--- On REWRITERULE reduce production where ->
--- On IMPORT reduce production where ->
--- On EQUIV reduce production where ->
--- On EOF reduce production where ->
--- On CONSTRUCTOR reduce production where ->
--- On ABSRULE reduce production where ->
+-- On RULE REWRITERULE IMPORT EQUIV EOF CONSTRUCTOR ABSRULE
+--   reduce production where ->
 
 State 621:
 ## Known stack suffix:
@@ -9828,7 +8847,8 @@ rule -> REWRITERULE identifier_op COLON identifier L_PAREN . jargument_list R_PA
 -- On field_signature shift to state 199
 -- On at_identifier shift to state 200
 ## Reductions:
--- On R_PAREN reduce production jargument_list ->
+-- On R_PAREN
+--   reduce production jargument_list ->
 
 State 625:
 ## Known stack suffix:
@@ -9884,15 +8904,8 @@ rule -> REWRITERULE identifier_op COLON identifier L_PAREN jargument_list R_PARE
 -- On IF shift to state 615
 -- On ifclause shift to state 629
 ## Reductions:
--- On WITHOUT reduce production ifclause ->
--- On WHERE reduce production ifclause ->
--- On RULE reduce production ifclause ->
--- On REWRITERULE reduce production ifclause ->
--- On IMPORT reduce production ifclause ->
--- On EQUIV reduce production ifclause ->
--- On EOF reduce production ifclause ->
--- On CONSTRUCTOR reduce production ifclause ->
--- On ABSRULE reduce production ifclause ->
+-- On WITHOUT WHERE RULE REWRITERULE IMPORT EQUIV EOF CONSTRUCTOR ABSRULE
+--   reduce production ifclause ->
 
 State 629:
 ## Known stack suffix:
@@ -9903,14 +8916,8 @@ rule -> REWRITERULE identifier_op COLON identifier L_PAREN jargument_list R_PARE
 -- On WITHOUT shift to state 618
 -- On without_simp shift to state 630
 ## Reductions:
--- On WHERE reduce production without_simp ->
--- On RULE reduce production without_simp ->
--- On REWRITERULE reduce production without_simp ->
--- On IMPORT reduce production without_simp ->
--- On EQUIV reduce production without_simp ->
--- On EOF reduce production without_simp ->
--- On CONSTRUCTOR reduce production without_simp ->
--- On ABSRULE reduce production without_simp ->
+-- On WHERE RULE REWRITERULE IMPORT EQUIV EOF CONSTRUCTOR ABSRULE
+--   reduce production without_simp ->
 
 State 630:
 ## Known stack suffix:
@@ -9921,13 +8928,8 @@ rule -> REWRITERULE identifier_op COLON identifier L_PAREN jargument_list R_PARE
 -- On WHERE shift to state 581
 -- On where shift to state 631
 ## Reductions:
--- On RULE reduce production where ->
--- On REWRITERULE reduce production where ->
--- On IMPORT reduce production where ->
--- On EQUIV reduce production where ->
--- On EOF reduce production where ->
--- On CONSTRUCTOR reduce production where ->
--- On ABSRULE reduce production where ->
+-- On RULE REWRITERULE IMPORT EQUIV EOF CONSTRUCTOR ABSRULE
+--   reduce production where ->
 
 State 631:
 ## Known stack suffix:
@@ -9982,7 +8984,8 @@ equiv_rule -> EQUIV . identifier_op COLON formula BIMP formula without_simp [ RU
 -- On identifier_op shift to state 636
 -- On identifier shift to state 604
 ## Reductions:
--- On COLON reduce production identifier_op ->
+-- On COLON
+--   reduce production identifier_op ->
 
 State 636:
 ## Known stack suffix:
@@ -10029,12 +9032,8 @@ equiv_rule -> EQUIV identifier_op COLON . formula BIMP formula without_simp [ RU
 -- On field_signature shift to state 199
 -- On at_identifier shift to state 200
 ## Reductions:
--- On WAND reduce production formula ->
--- On OROR reduce production formula ->
--- On OR reduce production formula ->
--- On MULT reduce production formula ->
--- On IMP reduce production formula ->
--- On BIMP reduce production formula ->
+-- On WAND OROR OR MULT IMP BIMP
+--   reduce production formula ->
 
 State 638:
 ## Known stack suffix:
@@ -10086,10 +9085,8 @@ equiv_rule -> EQUIV identifier_op COLON formula WAND . formula BIMP formula with
 -- On field_signature shift to state 199
 -- On at_identifier shift to state 200
 ## Reductions:
--- On OROR reduce production formula ->
--- On OR reduce production formula ->
--- On MULT reduce production formula ->
--- On BIMP reduce production formula ->
+-- On OROR OR MULT BIMP
+--   reduce production formula ->
 
 State 640:
 ## Known stack suffix:
@@ -10136,17 +9133,8 @@ equiv_rule -> EQUIV identifier_op COLON formula WAND formula BIMP . formula with
 -- On field_signature shift to state 199
 -- On at_identifier shift to state 200
 ## Reductions:
--- On WITHOUT reduce production formula ->
--- On RULE reduce production formula ->
--- On REWRITERULE reduce production formula ->
--- On OROR reduce production formula ->
--- On OR reduce production formula ->
--- On MULT reduce production formula ->
--- On IMPORT reduce production formula ->
--- On EQUIV reduce production formula ->
--- On EOF reduce production formula ->
--- On CONSTRUCTOR reduce production formula ->
--- On ABSRULE reduce production formula ->
+-- On WITHOUT RULE REWRITERULE OROR OR MULT IMPORT EQUIV EOF CONSTRUCTOR ABSRULE
+--   reduce production formula ->
 
 State 642:
 ## Known stack suffix:
@@ -10163,13 +9151,8 @@ formula -> formula . OROR formula [ WITHOUT RULE REWRITERULE OROR OR MULT IMPORT
 -- On MULT shift to state 247
 -- On without_simp shift to state 643
 ## Reductions:
--- On RULE reduce production without_simp ->
--- On REWRITERULE reduce production without_simp ->
--- On IMPORT reduce production without_simp ->
--- On EQUIV reduce production without_simp ->
--- On EOF reduce production without_simp ->
--- On CONSTRUCTOR reduce production without_simp ->
--- On ABSRULE reduce production without_simp ->
+-- On RULE REWRITERULE IMPORT EQUIV EOF CONSTRUCTOR ABSRULE
+--   reduce production without_simp ->
 
 State 643:
 ## Known stack suffix:
@@ -10211,18 +9194,8 @@ equiv_rule -> EQUIV identifier_op COLON formula IMP . formula without_simp [ RUL
 -- On field_signature shift to state 199
 -- On at_identifier shift to state 200
 ## Reductions:
--- On WITHOUT reduce production formula ->
--- On RULE reduce production formula ->
--- On REWRITERULE reduce production formula ->
--- On OROR reduce production formula ->
--- On OR reduce production formula ->
--- On MULT reduce production formula ->
--- On IMPORT reduce production formula ->
--- On EQUIV reduce production formula ->
--- On EOF reduce production formula ->
--- On CONSTRUCTOR reduce production formula ->
--- On BIMP reduce production formula ->
--- On ABSRULE reduce production formula ->
+-- On WITHOUT RULE REWRITERULE OROR OR MULT IMPORT EQUIV EOF CONSTRUCTOR BIMP ABSRULE
+--   reduce production formula ->
 
 State 645:
 ## Known stack suffix:
@@ -10241,13 +9214,8 @@ formula -> formula . OROR formula [ WITHOUT RULE REWRITERULE OROR OR MULT IMPORT
 -- On BIMP shift to state 646
 -- On without_simp shift to state 649
 ## Reductions:
--- On RULE reduce production without_simp ->
--- On REWRITERULE reduce production without_simp ->
--- On IMPORT reduce production without_simp ->
--- On EQUIV reduce production without_simp ->
--- On EOF reduce production without_simp ->
--- On CONSTRUCTOR reduce production without_simp ->
--- On ABSRULE reduce production without_simp ->
+-- On RULE REWRITERULE IMPORT EQUIV EOF CONSTRUCTOR ABSRULE
+--   reduce production without_simp ->
 
 State 646:
 ## Known stack suffix:
@@ -10279,17 +9247,8 @@ equiv_rule -> EQUIV identifier_op COLON formula IMP formula BIMP . formula witho
 -- On field_signature shift to state 199
 -- On at_identifier shift to state 200
 ## Reductions:
--- On WITHOUT reduce production formula ->
--- On RULE reduce production formula ->
--- On REWRITERULE reduce production formula ->
--- On OROR reduce production formula ->
--- On OR reduce production formula ->
--- On MULT reduce production formula ->
--- On IMPORT reduce production formula ->
--- On EQUIV reduce production formula ->
--- On EOF reduce production formula ->
--- On CONSTRUCTOR reduce production formula ->
--- On ABSRULE reduce production formula ->
+-- On WITHOUT RULE REWRITERULE OROR OR MULT IMPORT EQUIV EOF CONSTRUCTOR ABSRULE
+--   reduce production formula ->
 
 State 647:
 ## Known stack suffix:
@@ -10306,13 +9265,8 @@ formula -> formula . OROR formula [ WITHOUT RULE REWRITERULE OROR OR MULT IMPORT
 -- On MULT shift to state 247
 -- On without_simp shift to state 648
 ## Reductions:
--- On RULE reduce production without_simp ->
--- On REWRITERULE reduce production without_simp ->
--- On IMPORT reduce production without_simp ->
--- On EQUIV reduce production without_simp ->
--- On EOF reduce production without_simp ->
--- On CONSTRUCTOR reduce production without_simp ->
--- On ABSRULE reduce production without_simp ->
+-- On RULE REWRITERULE IMPORT EQUIV EOF CONSTRUCTOR ABSRULE
+--   reduce production without_simp ->
 
 State 648:
 ## Known stack suffix:
@@ -10362,17 +9316,8 @@ equiv_rule -> EQUIV identifier_op COLON formula BIMP . formula without_simp [ RU
 -- On field_signature shift to state 199
 -- On at_identifier shift to state 200
 ## Reductions:
--- On WITHOUT reduce production formula ->
--- On RULE reduce production formula ->
--- On REWRITERULE reduce production formula ->
--- On OROR reduce production formula ->
--- On OR reduce production formula ->
--- On MULT reduce production formula ->
--- On IMPORT reduce production formula ->
--- On EQUIV reduce production formula ->
--- On EOF reduce production formula ->
--- On CONSTRUCTOR reduce production formula ->
--- On ABSRULE reduce production formula ->
+-- On WITHOUT RULE REWRITERULE OROR OR MULT IMPORT EQUIV EOF CONSTRUCTOR ABSRULE
+--   reduce production formula ->
 
 State 651:
 ## Known stack suffix:
@@ -10389,13 +9334,8 @@ formula -> formula . OROR formula [ WITHOUT RULE REWRITERULE OROR OR MULT IMPORT
 -- On MULT shift to state 247
 -- On without_simp shift to state 652
 ## Reductions:
--- On RULE reduce production without_simp ->
--- On REWRITERULE reduce production without_simp ->
--- On IMPORT reduce production without_simp ->
--- On EQUIV reduce production without_simp ->
--- On EOF reduce production without_simp ->
--- On CONSTRUCTOR reduce production without_simp ->
--- On ABSRULE reduce production without_simp ->
+-- On RULE REWRITERULE IMPORT EQUIV EOF CONSTRUCTOR ABSRULE
+--   reduce production without_simp ->
 
 State 652:
 ## Known stack suffix:
@@ -10452,7 +9392,8 @@ rule -> ABSRULE . identifier_op COLON formula LEADSTO formula where [ RULE REWRI
 -- On identifier_op shift to state 657
 -- On identifier shift to state 604
 ## Reductions:
--- On COLON reduce production identifier_op ->
+-- On COLON
+--   reduce production identifier_op ->
 
 State 657:
 ## Known stack suffix:
@@ -10493,10 +9434,8 @@ rule -> ABSRULE identifier_op COLON . formula LEADSTO formula where [ RULE REWRI
 -- On field_signature shift to state 199
 -- On at_identifier shift to state 200
 ## Reductions:
--- On OROR reduce production formula ->
--- On OR reduce production formula ->
--- On MULT reduce production formula ->
--- On LEADSTO reduce production formula ->
+-- On OROR OR MULT LEADSTO
+--   reduce production formula ->
 
 State 659:
 ## Known stack suffix:
@@ -10543,17 +9482,8 @@ rule -> ABSRULE identifier_op COLON formula LEADSTO . formula where [ RULE REWRI
 -- On field_signature shift to state 199
 -- On at_identifier shift to state 200
 ## Reductions:
--- On WHERE reduce production formula ->
--- On RULE reduce production formula ->
--- On REWRITERULE reduce production formula ->
--- On OROR reduce production formula ->
--- On OR reduce production formula ->
--- On MULT reduce production formula ->
--- On IMPORT reduce production formula ->
--- On EQUIV reduce production formula ->
--- On EOF reduce production formula ->
--- On CONSTRUCTOR reduce production formula ->
--- On ABSRULE reduce production formula ->
+-- On WHERE RULE REWRITERULE OROR OR MULT IMPORT EQUIV EOF CONSTRUCTOR ABSRULE
+--   reduce production formula ->
 
 State 661:
 ## Known stack suffix:
@@ -10570,13 +9500,8 @@ rule -> ABSRULE identifier_op COLON formula LEADSTO formula . where [ RULE REWRI
 -- On MULT shift to state 247
 -- On where shift to state 662
 ## Reductions:
--- On RULE reduce production where ->
--- On REWRITERULE reduce production where ->
--- On IMPORT reduce production where ->
--- On EQUIV reduce production where ->
--- On EOF reduce production where ->
--- On CONSTRUCTOR reduce production where ->
--- On ABSRULE reduce production where ->
+-- On RULE REWRITERULE IMPORT EQUIV EOF CONSTRUCTOR ABSRULE
+--   reduce production where ->
 
 State 662:
 ## Known stack suffix:
@@ -10672,10 +9597,8 @@ spec -> L_BRACE . formula R_BRACE L_BRACE formula R_BRACE exp_posts [ # ]
 -- On field_signature shift to state 199
 -- On at_identifier shift to state 200
 ## Reductions:
--- On R_BRACE reduce production formula ->
--- On OROR reduce production formula ->
--- On OR reduce production formula ->
--- On MULT reduce production formula ->
+-- On R_BRACE OROR OR MULT
+--   reduce production formula ->
 
 State 669:
 ## Known stack suffix:
@@ -10731,10 +9654,8 @@ spec -> L_BRACE formula R_BRACE L_BRACE . formula R_BRACE exp_posts [ # ]
 -- On field_signature shift to state 199
 -- On at_identifier shift to state 200
 ## Reductions:
--- On R_BRACE reduce production formula ->
--- On OROR reduce production formula ->
--- On OR reduce production formula ->
--- On MULT reduce production formula ->
+-- On R_BRACE OROR OR MULT
+--   reduce production formula ->
 
 State 672:
 ## Known stack suffix:
@@ -10814,10 +9735,8 @@ exp_posts -> L_BRACE identifier COLON . formula R_BRACE exp_posts [ # ]
 -- On field_signature shift to state 199
 -- On at_identifier shift to state 200
 ## Reductions:
--- On R_BRACE reduce production formula ->
--- On OROR reduce production formula ->
--- On OR reduce production formula ->
--- On MULT reduce production formula ->
+-- On R_BRACE OROR OR MULT
+--   reduce production formula ->
 
 State 677:
 ## Known stack suffix:
@@ -10965,8 +9884,8 @@ classspec -> file_type class_name . extends_clause implements_clause L_BRACE apf
 -- On EXTENDS shift to state 29
 -- On extends_clause shift to state 690
 ## Reductions:
--- On L_BRACE reduce production extends_clause ->
--- On IMPLEMENTS reduce production extends_clause ->
+-- On L_BRACE IMPLEMENTS
+--   reduce production extends_clause ->
 
 State 690:
 ## Known stack suffix:
@@ -10977,7 +9896,8 @@ classspec -> file_type class_name extends_clause . implements_clause L_BRACE apf
 -- On IMPLEMENTS shift to state 35
 -- On implements_clause shift to state 691
 ## Reductions:
--- On L_BRACE reduce production implements_clause ->
+-- On L_BRACE
+--   reduce production implements_clause ->
 
 State 691:
 ## Known stack suffix:
@@ -10999,39 +9919,8 @@ classspec -> file_type class_name extends_clause implements_clause L_BRACE . apf
 -- On apf_defines shift to state 723
 -- On apf_define shift to state 789
 ## Reductions:
--- On VOLATILE reduce production apf_defines ->
--- On VOID reduce production apf_defines ->
--- On TRUE reduce production apf_defines ->
--- On TRANSIENT reduce production apf_defines ->
--- On SYNCHRONIZED reduce production apf_defines ->
--- On STRICTFP reduce production apf_defines ->
--- On STATIC reduce production apf_defines ->
--- On SHORT reduce production apf_defines ->
--- On R_BRACE reduce production apf_defines ->
--- On QUOTED_NAME reduce production apf_defines ->
--- On PUBLIC reduce production apf_defines ->
--- On PROTECTED reduce production apf_defines ->
--- On PRIVATE reduce production apf_defines ->
--- On NULL reduce production apf_defines ->
--- On NATIVE reduce production apf_defines ->
--- On LONG reduce production apf_defines ->
--- On INT reduce production apf_defines ->
--- On IDENTIFIER reduce production apf_defines ->
--- On FULL_IDENTIFIER reduce production apf_defines ->
--- On FLOAT reduce production apf_defines ->
--- On FINAL reduce production apf_defines ->
--- On FALSE reduce production apf_defines ->
--- On EXPORTS reduce production apf_defines ->
--- On ENUM reduce production apf_defines ->
--- On EMP reduce production apf_defines ->
--- On DOUBLE reduce production apf_defines ->
--- On CHAR reduce production apf_defines ->
--- On BYTE reduce production apf_defines ->
--- On BOOLEAN reduce production apf_defines ->
--- On AXIOMS reduce production apf_defines ->
--- On AS reduce production apf_defines ->
--- On ANNOTATION reduce production apf_defines ->
--- On ABSTRACT reduce production apf_defines ->
+-- On VOLATILE VOID TRUE TRANSIENT SYNCHRONIZED STRICTFP STATIC SHORT R_BRACE QUOTED_NAME PUBLIC PROTECTED PRIVATE NULL NATIVE LONG INT IDENTIFIER FULL_IDENTIFIER FLOAT FINAL FALSE EXPORTS ENUM EMP DOUBLE CHAR BYTE BOOLEAN AXIOMS AS ANNOTATION ABSTRACT
+--   reduce production apf_defines ->
 
 State 693:
 ## Known stack suffix:
@@ -11083,7 +9972,8 @@ apf_define -> EXPORT identifier L_PAREN lvariable . paramlist_question_mark R_PA
 -- On COMMA shift to state 697
 -- On paramlist_question_mark shift to state 707
 ## Reductions:
--- On R_PAREN reduce production paramlist_question_mark ->
+-- On R_PAREN
+--   reduce production paramlist_question_mark ->
 
 State 697:
 ## Known stack suffix:
@@ -11101,7 +9991,8 @@ paramlist_question_mark -> COMMA . paramlist [ R_PAREN ]
 -- On paramlist shift to state 706
 -- On identifier shift to state 701
 ## Reductions:
--- On R_PAREN reduce production paramlist ->
+-- On R_PAREN
+--   reduce production paramlist ->
 
 State 698:
 ## Known stack suffix:
@@ -11117,7 +10008,8 @@ paramlist_question_mark -> COMMA L_BRACE . paramlist R_BRACE [ R_PAREN ]
 -- On paramlist shift to state 699
 -- On identifier shift to state 701
 ## Reductions:
--- On R_BRACE reduce production paramlist ->
+-- On R_BRACE
+--   reduce production paramlist ->
 
 State 699:
 ## Known stack suffix:
@@ -11175,8 +10067,8 @@ paramlist -> identifier EQUALS lvariable . SEMICOLON fldlist [ R_PAREN R_BRACE ]
 ## Transitions:
 -- On SEMICOLON shift to state 704
 ## Reductions:
--- On R_PAREN reduce production paramlist -> identifier EQUALS lvariable
--- On R_BRACE reduce production paramlist -> identifier EQUALS lvariable
+-- On R_PAREN R_BRACE
+--   reduce production paramlist -> identifier EQUALS lvariable
 
 State 704:
 ## Known stack suffix:
@@ -11192,8 +10084,8 @@ paramlist -> identifier EQUALS lvariable SEMICOLON . fldlist [ R_PAREN R_BRACE ]
 -- On identifier shift to state 167
 -- On fldlist shift to state 705
 ## Reductions:
--- On R_PAREN reduce production fldlist ->
--- On R_BRACE reduce production fldlist ->
+-- On R_PAREN R_BRACE
+--   reduce production fldlist ->
 
 State 705:
 ## Known stack suffix:
@@ -11281,10 +10173,8 @@ apf_define -> EXPORT identifier L_PAREN lvariable paramlist_question_mark R_PARE
 -- On field_signature shift to state 199
 -- On at_identifier shift to state 200
 ## Reductions:
--- On SEMICOLON reduce production formula ->
--- On OROR reduce production formula ->
--- On OR reduce production formula ->
--- On MULT reduce production formula ->
+-- On SEMICOLON OROR OR MULT
+--   reduce production formula ->
 
 State 712:
 ## Known stack suffix:
@@ -11360,7 +10250,8 @@ apf_define -> DEFINE identifier L_PAREN lvariable . paramlist_question_mark R_PA
 -- On COMMA shift to state 697
 -- On paramlist_question_mark shift to state 718
 ## Reductions:
--- On R_PAREN reduce production paramlist_question_mark ->
+-- On R_PAREN
+--   reduce production paramlist_question_mark ->
 
 State 718:
 ## Known stack suffix:
@@ -11412,10 +10303,8 @@ apf_define -> DEFINE identifier L_PAREN lvariable paramlist_question_mark R_PARE
 -- On field_signature shift to state 199
 -- On at_identifier shift to state 200
 ## Reductions:
--- On SEMICOLON reduce production formula ->
--- On OROR reduce production formula ->
--- On OR reduce production formula ->
--- On MULT reduce production formula ->
+-- On SEMICOLON OROR OR MULT
+--   reduce production formula ->
 
 State 721:
 ## Known stack suffix:
@@ -11450,38 +10339,8 @@ classspec -> file_type class_name extends_clause implements_clause L_BRACE apf_d
 -- On EXPORTS shift to state 724
 -- On exports_clause shift to state 752
 ## Reductions:
--- On VOLATILE reduce production exports_clause ->
--- On VOID reduce production exports_clause ->
--- On TRUE reduce production exports_clause ->
--- On TRANSIENT reduce production exports_clause ->
--- On SYNCHRONIZED reduce production exports_clause ->
--- On STRICTFP reduce production exports_clause ->
--- On STATIC reduce production exports_clause ->
--- On SHORT reduce production exports_clause ->
--- On R_BRACE reduce production exports_clause ->
--- On QUOTED_NAME reduce production exports_clause ->
--- On PUBLIC reduce production exports_clause ->
--- On PROTECTED reduce production exports_clause ->
--- On PRIVATE reduce production exports_clause ->
--- On NULL reduce production exports_clause ->
--- On NATIVE reduce production exports_clause ->
--- On LONG reduce production exports_clause ->
--- On INT reduce production exports_clause ->
--- On IDENTIFIER reduce production exports_clause ->
--- On FULL_IDENTIFIER reduce production exports_clause ->
--- On FLOAT reduce production exports_clause ->
--- On FINAL reduce production exports_clause ->
--- On FALSE reduce production exports_clause ->
--- On ENUM reduce production exports_clause ->
--- On EMP reduce production exports_clause ->
--- On DOUBLE reduce production exports_clause ->
--- On CHAR reduce production exports_clause ->
--- On BYTE reduce production exports_clause ->
--- On BOOLEAN reduce production exports_clause ->
--- On AXIOMS reduce production exports_clause ->
--- On AS reduce production exports_clause ->
--- On ANNOTATION reduce production exports_clause ->
--- On ABSTRACT reduce production exports_clause ->
+-- On VOLATILE VOID TRUE TRANSIENT SYNCHRONIZED STRICTFP STATIC SHORT R_BRACE QUOTED_NAME PUBLIC PROTECTED PRIVATE NULL NATIVE LONG INT IDENTIFIER FULL_IDENTIFIER FLOAT FINAL FALSE ENUM EMP DOUBLE CHAR BYTE BOOLEAN AXIOMS AS ANNOTATION ABSTRACT
+--   reduce production exports_clause ->
 
 State 724:
 ## Known stack suffix:
@@ -11507,7 +10366,8 @@ exports_clause -> EXPORTS L_BRACE . named_implication_star R_BRACE WHERE L_BRACE
 -- On named_implication shift to state 741
 -- On identifier shift to state 743
 ## Reductions:
--- On R_BRACE reduce production named_implication_star ->
+-- On R_BRACE
+--   reduce production named_implication_star ->
 
 State 726:
 ## Known stack suffix:
@@ -11551,7 +10411,8 @@ exports_clause -> EXPORTS L_BRACE named_implication_star R_BRACE WHERE L_BRACE .
 -- On exportLocal_predicate_def_star shift to state 737
 -- On exportLocal_predicate_def shift to state 739
 ## Reductions:
--- On R_BRACE reduce production exportLocal_predicate_def_star ->
+-- On R_BRACE
+--   reduce production exportLocal_predicate_def_star ->
 
 State 730:
 ## Known stack suffix:
@@ -11631,10 +10492,8 @@ exportLocal_predicate_def -> identifier L_PAREN lvariable_list_ne R_PAREN eq_as 
 -- On field_signature shift to state 199
 -- On at_identifier shift to state 200
 ## Reductions:
--- On SEMICOLON reduce production formula ->
--- On OROR reduce production formula ->
--- On OR reduce production formula ->
--- On MULT reduce production formula ->
+-- On SEMICOLON OROR OR MULT
+--   reduce production formula ->
 
 State 735:
 ## Known stack suffix:
@@ -11693,7 +10552,8 @@ exportLocal_predicate_def_star -> exportLocal_predicate_def . exportLocal_predic
 -- On exportLocal_predicate_def_star shift to state 740
 -- On exportLocal_predicate_def shift to state 739
 ## Reductions:
--- On R_BRACE reduce production exportLocal_predicate_def_star ->
+-- On R_BRACE
+--   reduce production exportLocal_predicate_def_star ->
 
 State 740:
 ## Known stack suffix:
@@ -11719,7 +10579,8 @@ named_implication_star -> named_implication . named_implication_star [ R_BRACE ]
 -- On named_implication shift to state 741
 -- On identifier shift to state 743
 ## Reductions:
--- On R_BRACE reduce production named_implication_star ->
+-- On R_BRACE
+--   reduce production named_implication_star ->
 
 State 742:
 ## Known stack suffix:
@@ -11771,11 +10632,8 @@ named_implication -> identifier COLON . formula BIMP formula SEMICOLON [ TRUE R_
 -- On field_signature shift to state 199
 -- On at_identifier shift to state 200
 ## Reductions:
--- On OROR reduce production formula ->
--- On OR reduce production formula ->
--- On MULT reduce production formula ->
--- On IMP reduce production formula ->
--- On BIMP reduce production formula ->
+-- On OROR OR MULT IMP BIMP
+--   reduce production formula ->
 
 State 745:
 ## Known stack suffix:
@@ -11824,10 +10682,8 @@ named_implication -> identifier COLON formula IMP . formula SEMICOLON [ TRUE R_B
 -- On field_signature shift to state 199
 -- On at_identifier shift to state 200
 ## Reductions:
--- On SEMICOLON reduce production formula ->
--- On OROR reduce production formula ->
--- On OR reduce production formula ->
--- On MULT reduce production formula ->
+-- On SEMICOLON OROR OR MULT
+--   reduce production formula ->
 
 State 747:
 ## Known stack suffix:
@@ -11883,10 +10739,8 @@ named_implication -> identifier COLON formula BIMP . formula SEMICOLON [ TRUE R_
 -- On field_signature shift to state 199
 -- On at_identifier shift to state 200
 ## Reductions:
--- On SEMICOLON reduce production formula ->
--- On OROR reduce production formula ->
--- On OR reduce production formula ->
--- On MULT reduce production formula ->
+-- On SEMICOLON OROR OR MULT
+--   reduce production formula ->
 
 State 750:
 ## Known stack suffix:
@@ -11921,37 +10775,8 @@ classspec -> file_type class_name extends_clause implements_clause L_BRACE apf_d
 -- On AXIOMS shift to state 753
 -- On axioms_clause shift to state 757
 ## Reductions:
--- On VOLATILE reduce production axioms_clause ->
--- On VOID reduce production axioms_clause ->
--- On TRUE reduce production axioms_clause ->
--- On TRANSIENT reduce production axioms_clause ->
--- On SYNCHRONIZED reduce production axioms_clause ->
--- On STRICTFP reduce production axioms_clause ->
--- On STATIC reduce production axioms_clause ->
--- On SHORT reduce production axioms_clause ->
--- On R_BRACE reduce production axioms_clause ->
--- On QUOTED_NAME reduce production axioms_clause ->
--- On PUBLIC reduce production axioms_clause ->
--- On PROTECTED reduce production axioms_clause ->
--- On PRIVATE reduce production axioms_clause ->
--- On NULL reduce production axioms_clause ->
--- On NATIVE reduce production axioms_clause ->
--- On LONG reduce production axioms_clause ->
--- On INT reduce production axioms_clause ->
--- On IDENTIFIER reduce production axioms_clause ->
--- On FULL_IDENTIFIER reduce production axioms_clause ->
--- On FLOAT reduce production axioms_clause ->
--- On FINAL reduce production axioms_clause ->
--- On FALSE reduce production axioms_clause ->
--- On ENUM reduce production axioms_clause ->
--- On EMP reduce production axioms_clause ->
--- On DOUBLE reduce production axioms_clause ->
--- On CHAR reduce production axioms_clause ->
--- On BYTE reduce production axioms_clause ->
--- On BOOLEAN reduce production axioms_clause ->
--- On AS reduce production axioms_clause ->
--- On ANNOTATION reduce production axioms_clause ->
--- On ABSTRACT reduce production axioms_clause ->
+-- On VOLATILE VOID TRUE TRANSIENT SYNCHRONIZED STRICTFP STATIC SHORT R_BRACE QUOTED_NAME PUBLIC PROTECTED PRIVATE NULL NATIVE LONG INT IDENTIFIER FULL_IDENTIFIER FLOAT FINAL FALSE ENUM EMP DOUBLE CHAR BYTE BOOLEAN AS ANNOTATION ABSTRACT
+--   reduce production axioms_clause ->
 
 State 753:
 ## Known stack suffix:
@@ -11977,7 +10802,8 @@ axioms_clause -> AXIOMS L_BRACE . named_implication_star R_BRACE [ VOLATILE VOID
 -- On named_implication shift to state 741
 -- On identifier shift to state 743
 ## Reductions:
--- On R_BRACE reduce production named_implication_star ->
+-- On R_BRACE
+--   reduce production named_implication_star ->
 
 State 755:
 ## Known stack suffix:
@@ -12022,24 +10848,10 @@ classspec -> file_type class_name extends_clause implements_clause L_BRACE apf_d
 -- On method_spec shift to state 772
 -- On method_signature_short shift to state 774
 ## Reductions:
--- On VOID reduce production modifier_list_star ->
--- On TRUE reduce production modifier_list_star ->
--- On SHORT reduce production modifier_list_star ->
--- On R_BRACE reduce production methods_specs ->
--- On QUOTED_NAME reduce production modifier_list_star ->
--- On NULL reduce production modifier_list_star ->
--- On LONG reduce production modifier_list_star ->
--- On INT reduce production modifier_list_star ->
--- On IDENTIFIER reduce production modifier_list_star ->
--- On FULL_IDENTIFIER reduce production modifier_list_star ->
--- On FLOAT reduce production modifier_list_star ->
--- On FALSE reduce production modifier_list_star ->
--- On EMP reduce production modifier_list_star ->
--- On DOUBLE reduce production modifier_list_star ->
--- On CHAR reduce production modifier_list_star ->
--- On BYTE reduce production modifier_list_star ->
--- On BOOLEAN reduce production modifier_list_star ->
--- On AS reduce production modifier_list_star ->
+-- On R_BRACE
+--   reduce production methods_specs ->
+-- On VOID TRUE SHORT QUOTED_NAME NULL LONG INT IDENTIFIER FULL_IDENTIFIER FLOAT FALSE EMP DOUBLE CHAR BYTE BOOLEAN AS
+--   reduce production modifier_list_star ->
 
 State 758:
 ## Known stack suffix:
@@ -12129,7 +10941,8 @@ method_signature_short -> modifier_list_star jtype name L_PAREN . parameter_args
 -- On full_identifier shift to state 129
 -- On base_type_no_name shift to state 131
 ## Reductions:
--- On R_PAREN reduce production parameter_args_opt_list_question_mark ->
+-- On R_PAREN
+--   reduce production parameter_args_opt_list_question_mark ->
 
 State 762:
 ## Known stack suffix:
@@ -12167,7 +10980,8 @@ parameter_list_args_opt -> parameter_args_opt . COMMA parameter_list_args_opt [ 
 ## Transitions:
 -- On COMMA shift to state 766
 ## Reductions:
--- On R_PAREN reduce production parameter_list_args_opt -> parameter_args_opt
+-- On R_PAREN
+--   reduce production parameter_list_args_opt -> parameter_args_opt
 
 State 766:
 ## Known stack suffix:
@@ -12223,8 +11037,8 @@ parameter_args_opt -> nonvoid_type . identifier [ R_PAREN COMMA ]
 -- On AS shift to state 24
 -- On identifier shift to state 769
 ## Reductions:
--- On R_PAREN reduce production parameter_args_opt -> nonvoid_type
--- On COMMA reduce production parameter_args_opt -> nonvoid_type
+-- On R_PAREN COMMA
+--   reduce production parameter_args_opt -> nonvoid_type
 
 State 769:
 ## Known stack suffix:
@@ -12278,24 +11092,10 @@ methods_specs -> method_spec . methods_specs [ R_BRACE ]
 -- On method_spec shift to state 772
 -- On method_signature_short shift to state 774
 ## Reductions:
--- On VOID reduce production modifier_list_star ->
--- On TRUE reduce production modifier_list_star ->
--- On SHORT reduce production modifier_list_star ->
--- On R_BRACE reduce production methods_specs ->
--- On QUOTED_NAME reduce production modifier_list_star ->
--- On NULL reduce production modifier_list_star ->
--- On LONG reduce production modifier_list_star ->
--- On INT reduce production modifier_list_star ->
--- On IDENTIFIER reduce production modifier_list_star ->
--- On FULL_IDENTIFIER reduce production modifier_list_star ->
--- On FLOAT reduce production modifier_list_star ->
--- On FALSE reduce production modifier_list_star ->
--- On EMP reduce production modifier_list_star ->
--- On DOUBLE reduce production modifier_list_star ->
--- On CHAR reduce production modifier_list_star ->
--- On BYTE reduce production modifier_list_star ->
--- On BOOLEAN reduce production modifier_list_star ->
--- On AS reduce production modifier_list_star ->
+-- On R_BRACE
+--   reduce production methods_specs ->
+-- On VOID TRUE SHORT QUOTED_NAME NULL LONG INT IDENTIFIER FULL_IDENTIFIER FLOAT FALSE EMP DOUBLE CHAR BYTE BOOLEAN AS
+--   reduce production modifier_list_star ->
 
 State 773:
 ## Known stack suffix:
@@ -12353,37 +11153,8 @@ method_spec -> method_signature_short STATIC COLON specs . source_pos_tag_option
 -- On source_pos_tag_option shift to state 780
 -- On source_pos_tag shift to state 392
 ## Reductions:
--- On VOLATILE reduce production source_pos_tag_option ->
--- On VOID reduce production source_pos_tag_option ->
--- On TRUE reduce production source_pos_tag_option ->
--- On TRANSIENT reduce production source_pos_tag_option ->
--- On SYNCHRONIZED reduce production source_pos_tag_option ->
--- On STRICTFP reduce production source_pos_tag_option ->
--- On STATIC reduce production source_pos_tag_option ->
--- On SHORT reduce production source_pos_tag_option ->
--- On R_BRACE reduce production source_pos_tag_option ->
--- On QUOTED_NAME reduce production source_pos_tag_option ->
--- On PUBLIC reduce production source_pos_tag_option ->
--- On PROTECTED reduce production source_pos_tag_option ->
--- On PRIVATE reduce production source_pos_tag_option ->
--- On NULL reduce production source_pos_tag_option ->
--- On NATIVE reduce production source_pos_tag_option ->
--- On LONG reduce production source_pos_tag_option ->
--- On INT reduce production source_pos_tag_option ->
--- On IDENTIFIER reduce production source_pos_tag_option ->
--- On FULL_IDENTIFIER reduce production source_pos_tag_option ->
--- On FLOAT reduce production source_pos_tag_option ->
--- On FINAL reduce production source_pos_tag_option ->
--- On FALSE reduce production source_pos_tag_option ->
--- On ENUM reduce production source_pos_tag_option ->
--- On EMP reduce production source_pos_tag_option ->
--- On DOUBLE reduce production source_pos_tag_option ->
--- On CHAR reduce production source_pos_tag_option ->
--- On BYTE reduce production source_pos_tag_option ->
--- On BOOLEAN reduce production source_pos_tag_option ->
--- On AS reduce production source_pos_tag_option ->
--- On ANNOTATION reduce production source_pos_tag_option ->
--- On ABSTRACT reduce production source_pos_tag_option ->
+-- On VOLATILE VOID TRUE TRANSIENT SYNCHRONIZED STRICTFP STATIC SHORT R_BRACE QUOTED_NAME PUBLIC PROTECTED PRIVATE NULL NATIVE LONG INT IDENTIFIER FULL_IDENTIFIER FLOAT FINAL FALSE ENUM EMP DOUBLE CHAR BYTE BOOLEAN AS ANNOTATION ABSTRACT
+--   reduce production source_pos_tag_option ->
 
 State 778:
 ## Known stack suffix:
@@ -12395,37 +11166,8 @@ method_spec -> method_signature_short STATIC COLON specs SEMICOLON . source_pos_
 -- On source_pos_tag_option shift to state 779
 -- On source_pos_tag shift to state 392
 ## Reductions:
--- On VOLATILE reduce production source_pos_tag_option ->
--- On VOID reduce production source_pos_tag_option ->
--- On TRUE reduce production source_pos_tag_option ->
--- On TRANSIENT reduce production source_pos_tag_option ->
--- On SYNCHRONIZED reduce production source_pos_tag_option ->
--- On STRICTFP reduce production source_pos_tag_option ->
--- On STATIC reduce production source_pos_tag_option ->
--- On SHORT reduce production source_pos_tag_option ->
--- On R_BRACE reduce production source_pos_tag_option ->
--- On QUOTED_NAME reduce production source_pos_tag_option ->
--- On PUBLIC reduce production source_pos_tag_option ->
--- On PROTECTED reduce production source_pos_tag_option ->
--- On PRIVATE reduce production source_pos_tag_option ->
--- On NULL reduce production source_pos_tag_option ->
--- On NATIVE reduce production source_pos_tag_option ->
--- On LONG reduce production source_pos_tag_option ->
--- On INT reduce production source_pos_tag_option ->
--- On IDENTIFIER reduce production source_pos_tag_option ->
--- On FULL_IDENTIFIER reduce production source_pos_tag_option ->
--- On FLOAT reduce production source_pos_tag_option ->
--- On FINAL reduce production source_pos_tag_option ->
--- On FALSE reduce production source_pos_tag_option ->
--- On ENUM reduce production source_pos_tag_option ->
--- On EMP reduce production source_pos_tag_option ->
--- On DOUBLE reduce production source_pos_tag_option ->
--- On CHAR reduce production source_pos_tag_option ->
--- On BYTE reduce production source_pos_tag_option ->
--- On BOOLEAN reduce production source_pos_tag_option ->
--- On AS reduce production source_pos_tag_option ->
--- On ANNOTATION reduce production source_pos_tag_option ->
--- On ABSTRACT reduce production source_pos_tag_option ->
+-- On VOLATILE VOID TRUE TRANSIENT SYNCHRONIZED STRICTFP STATIC SHORT R_BRACE QUOTED_NAME PUBLIC PROTECTED PRIVATE NULL NATIVE LONG INT IDENTIFIER FULL_IDENTIFIER FLOAT FINAL FALSE ENUM EMP DOUBLE CHAR BYTE BOOLEAN AS ANNOTATION ABSTRACT
+--   reduce production source_pos_tag_option ->
 
 State 779:
 ## Known stack suffix:
@@ -12454,39 +11196,8 @@ specs -> spec . [ VOLATILE VOID TRUE TRANSIENT SYNCHRONIZED STRICTFP STATIC SOUR
 ## Transitions:
 -- On ANDALSO shift to state 782
 ## Reductions:
--- On VOLATILE reduce production specs -> spec
--- On VOID reduce production specs -> spec
--- On TRUE reduce production specs -> spec
--- On TRANSIENT reduce production specs -> spec
--- On SYNCHRONIZED reduce production specs -> spec
--- On STRICTFP reduce production specs -> spec
--- On STATIC reduce production specs -> spec
--- On SOURCE_POS_TAG reduce production specs -> spec
--- On SHORT reduce production specs -> spec
--- On SEMICOLON reduce production specs -> spec
--- On R_BRACE reduce production specs -> spec
--- On QUOTED_NAME reduce production specs -> spec
--- On PUBLIC reduce production specs -> spec
--- On PROTECTED reduce production specs -> spec
--- On PRIVATE reduce production specs -> spec
--- On NULL reduce production specs -> spec
--- On NATIVE reduce production specs -> spec
--- On LONG reduce production specs -> spec
--- On INT reduce production specs -> spec
--- On IDENTIFIER reduce production specs -> spec
--- On FULL_IDENTIFIER reduce production specs -> spec
--- On FLOAT reduce production specs -> spec
--- On FINAL reduce production specs -> spec
--- On FALSE reduce production specs -> spec
--- On ENUM reduce production specs -> spec
--- On EMP reduce production specs -> spec
--- On DOUBLE reduce production specs -> spec
--- On CHAR reduce production specs -> spec
--- On BYTE reduce production specs -> spec
--- On BOOLEAN reduce production specs -> spec
--- On AS reduce production specs -> spec
--- On ANNOTATION reduce production specs -> spec
--- On ABSTRACT reduce production specs -> spec
+-- On VOLATILE VOID TRUE TRANSIENT SYNCHRONIZED STRICTFP STATIC SOURCE_POS_TAG SHORT SEMICOLON R_BRACE QUOTED_NAME PUBLIC PROTECTED PRIVATE NULL NATIVE LONG INT IDENTIFIER FULL_IDENTIFIER FLOAT FINAL FALSE ENUM EMP DOUBLE CHAR BYTE BOOLEAN AS ANNOTATION ABSTRACT
+--   reduce production specs -> spec
 
 State 782:
 ## Known stack suffix:
@@ -12532,37 +11243,8 @@ method_spec -> method_signature_short COLON specs . source_pos_tag_option [ VOLA
 -- On source_pos_tag_option shift to state 788
 -- On source_pos_tag shift to state 392
 ## Reductions:
--- On VOLATILE reduce production source_pos_tag_option ->
--- On VOID reduce production source_pos_tag_option ->
--- On TRUE reduce production source_pos_tag_option ->
--- On TRANSIENT reduce production source_pos_tag_option ->
--- On SYNCHRONIZED reduce production source_pos_tag_option ->
--- On STRICTFP reduce production source_pos_tag_option ->
--- On STATIC reduce production source_pos_tag_option ->
--- On SHORT reduce production source_pos_tag_option ->
--- On R_BRACE reduce production source_pos_tag_option ->
--- On QUOTED_NAME reduce production source_pos_tag_option ->
--- On PUBLIC reduce production source_pos_tag_option ->
--- On PROTECTED reduce production source_pos_tag_option ->
--- On PRIVATE reduce production source_pos_tag_option ->
--- On NULL reduce production source_pos_tag_option ->
--- On NATIVE reduce production source_pos_tag_option ->
--- On LONG reduce production source_pos_tag_option ->
--- On INT reduce production source_pos_tag_option ->
--- On IDENTIFIER reduce production source_pos_tag_option ->
--- On FULL_IDENTIFIER reduce production source_pos_tag_option ->
--- On FLOAT reduce production source_pos_tag_option ->
--- On FINAL reduce production source_pos_tag_option ->
--- On FALSE reduce production source_pos_tag_option ->
--- On ENUM reduce production source_pos_tag_option ->
--- On EMP reduce production source_pos_tag_option ->
--- On DOUBLE reduce production source_pos_tag_option ->
--- On CHAR reduce production source_pos_tag_option ->
--- On BYTE reduce production source_pos_tag_option ->
--- On BOOLEAN reduce production source_pos_tag_option ->
--- On AS reduce production source_pos_tag_option ->
--- On ANNOTATION reduce production source_pos_tag_option ->
--- On ABSTRACT reduce production source_pos_tag_option ->
+-- On VOLATILE VOID TRUE TRANSIENT SYNCHRONIZED STRICTFP STATIC SHORT R_BRACE QUOTED_NAME PUBLIC PROTECTED PRIVATE NULL NATIVE LONG INT IDENTIFIER FULL_IDENTIFIER FLOAT FINAL FALSE ENUM EMP DOUBLE CHAR BYTE BOOLEAN AS ANNOTATION ABSTRACT
+--   reduce production source_pos_tag_option ->
 
 State 786:
 ## Known stack suffix:
@@ -12574,37 +11256,8 @@ method_spec -> method_signature_short COLON specs SEMICOLON . source_pos_tag_opt
 -- On source_pos_tag_option shift to state 787
 -- On source_pos_tag shift to state 392
 ## Reductions:
--- On VOLATILE reduce production source_pos_tag_option ->
--- On VOID reduce production source_pos_tag_option ->
--- On TRUE reduce production source_pos_tag_option ->
--- On TRANSIENT reduce production source_pos_tag_option ->
--- On SYNCHRONIZED reduce production source_pos_tag_option ->
--- On STRICTFP reduce production source_pos_tag_option ->
--- On STATIC reduce production source_pos_tag_option ->
--- On SHORT reduce production source_pos_tag_option ->
--- On R_BRACE reduce production source_pos_tag_option ->
--- On QUOTED_NAME reduce production source_pos_tag_option ->
--- On PUBLIC reduce production source_pos_tag_option ->
--- On PROTECTED reduce production source_pos_tag_option ->
--- On PRIVATE reduce production source_pos_tag_option ->
--- On NULL reduce production source_pos_tag_option ->
--- On NATIVE reduce production source_pos_tag_option ->
--- On LONG reduce production source_pos_tag_option ->
--- On INT reduce production source_pos_tag_option ->
--- On IDENTIFIER reduce production source_pos_tag_option ->
--- On FULL_IDENTIFIER reduce production source_pos_tag_option ->
--- On FLOAT reduce production source_pos_tag_option ->
--- On FINAL reduce production source_pos_tag_option ->
--- On FALSE reduce production source_pos_tag_option ->
--- On ENUM reduce production source_pos_tag_option ->
--- On EMP reduce production source_pos_tag_option ->
--- On DOUBLE reduce production source_pos_tag_option ->
--- On CHAR reduce production source_pos_tag_option ->
--- On BYTE reduce production source_pos_tag_option ->
--- On BOOLEAN reduce production source_pos_tag_option ->
--- On AS reduce production source_pos_tag_option ->
--- On ANNOTATION reduce production source_pos_tag_option ->
--- On ABSTRACT reduce production source_pos_tag_option ->
+-- On VOLATILE VOID TRUE TRANSIENT SYNCHRONIZED STRICTFP STATIC SHORT R_BRACE QUOTED_NAME PUBLIC PROTECTED PRIVATE NULL NATIVE LONG INT IDENTIFIER FULL_IDENTIFIER FLOAT FINAL FALSE ENUM EMP DOUBLE CHAR BYTE BOOLEAN AS ANNOTATION ABSTRACT
+--   reduce production source_pos_tag_option ->
 
 State 787:
 ## Known stack suffix:
@@ -12635,39 +11288,8 @@ apf_defines -> apf_define . apf_defines [ VOLATILE VOID TRUE TRANSIENT SYNCHRONI
 -- On apf_defines shift to state 790
 -- On apf_define shift to state 789
 ## Reductions:
--- On VOLATILE reduce production apf_defines ->
--- On VOID reduce production apf_defines ->
--- On TRUE reduce production apf_defines ->
--- On TRANSIENT reduce production apf_defines ->
--- On SYNCHRONIZED reduce production apf_defines ->
--- On STRICTFP reduce production apf_defines ->
--- On STATIC reduce production apf_defines ->
--- On SHORT reduce production apf_defines ->
--- On R_BRACE reduce production apf_defines ->
--- On QUOTED_NAME reduce production apf_defines ->
--- On PUBLIC reduce production apf_defines ->
--- On PROTECTED reduce production apf_defines ->
--- On PRIVATE reduce production apf_defines ->
--- On NULL reduce production apf_defines ->
--- On NATIVE reduce production apf_defines ->
--- On LONG reduce production apf_defines ->
--- On INT reduce production apf_defines ->
--- On IDENTIFIER reduce production apf_defines ->
--- On FULL_IDENTIFIER reduce production apf_defines ->
--- On FLOAT reduce production apf_defines ->
--- On FINAL reduce production apf_defines ->
--- On FALSE reduce production apf_defines ->
--- On EXPORTS reduce production apf_defines ->
--- On ENUM reduce production apf_defines ->
--- On EMP reduce production apf_defines ->
--- On DOUBLE reduce production apf_defines ->
--- On CHAR reduce production apf_defines ->
--- On BYTE reduce production apf_defines ->
--- On BOOLEAN reduce production apf_defines ->
--- On AXIOMS reduce production apf_defines ->
--- On AS reduce production apf_defines ->
--- On ANNOTATION reduce production apf_defines ->
--- On ABSTRACT reduce production apf_defines ->
+-- On VOLATILE VOID TRUE TRANSIENT SYNCHRONIZED STRICTFP STATIC SHORT R_BRACE QUOTED_NAME PUBLIC PROTECTED PRIVATE NULL NATIVE LONG INT IDENTIFIER FULL_IDENTIFIER FLOAT FINAL FALSE EXPORTS ENUM EMP DOUBLE CHAR BYTE BOOLEAN AXIOMS AS ANNOTATION ABSTRACT
+--   reduce production apf_defines ->
 
 State 790:
 ## Known stack suffix:
@@ -12779,8 +11401,8 @@ symb_question -> SPECIFICATION identifier COLON spec QUESTIONMARK . core_stmt_li
 -- On core_stmt_list shift to state 822
 -- On core_stmt shift to state 823
 ## Reductions:
--- On SPECIFICATION reduce production core_stmt_list ->
--- On EOF reduce production core_stmt_list ->
+-- On SPECIFICATION EOF
+--   reduce production core_stmt_list ->
 
 State 800:
 ## Known stack suffix:
@@ -12828,7 +11450,8 @@ label_list -> IDENTIFIER . COMMA label_list [ SEMICOLON ]
 ## Transitions:
 -- On COMMA shift to state 805
 ## Reductions:
--- On SEMICOLON reduce production label_list -> IDENTIFIER
+-- On SEMICOLON
+--   reduce production label_list -> IDENTIFIER
 
 State 805:
 ## Known stack suffix:
@@ -12886,7 +11509,8 @@ core_stmt -> ASSIGN . core_assn_args spec L_PAREN jargument_npv_list R_PAREN [ S
 -- On core_assn_args shift to state 817
 -- On at_identifier shift to state 478
 ## Reductions:
--- On L_BRACE reduce production core_assn_args ->
+-- On L_BRACE
+--   reduce production core_assn_args ->
 
 State 810:
 ## Known stack suffix:
@@ -12924,7 +11548,8 @@ lvariable_npv_list_ne -> lvariable_npv . COMMA lvariable_npv_list_ne [ COLON_EQU
 ## Transitions:
 -- On COMMA shift to state 814
 ## Reductions:
--- On COLON_EQUALS reduce production lvariable_npv_list_ne -> lvariable_npv
+-- On COLON_EQUALS
+--   reduce production lvariable_npv_list_ne -> lvariable_npv
 
 State 814:
 ## Known stack suffix:
@@ -13008,7 +11633,8 @@ core_stmt -> ASSIGN core_assn_args spec L_PAREN . jargument_npv_list R_PAREN [ S
 -- On field_signature shift to state 477
 -- On at_identifier shift to state 478
 ## Reductions:
--- On R_PAREN reduce production jargument_npv_list ->
+-- On R_PAREN
+--   reduce production jargument_npv_list ->
 
 State 820:
 ## Known stack suffix:
@@ -13060,9 +11686,8 @@ core_stmt_list -> core_stmt SEMICOLON . core_stmt_list [ SPECTEST SPECIFICATION 
 -- On core_stmt_list shift to state 825
 -- On core_stmt shift to state 823
 ## Reductions:
--- On SPECTEST reduce production core_stmt_list ->
--- On SPECIFICATION reduce production core_stmt_list ->
--- On EOF reduce production core_stmt_list ->
+-- On SPECTEST SPECIFICATION EOF
+--   reduce production core_stmt_list ->
 
 State 825:
 ## Known stack suffix:
@@ -13209,8 +11834,8 @@ symb_test -> SPECTEST identifier COLON spec QUESTIONMARK boolean . core_stmt_lis
 -- On core_stmt_list shift to state 839
 -- On core_stmt shift to state 823
 ## Reductions:
--- On SPECTEST reduce production core_stmt_list ->
--- On EOF reduce production core_stmt_list ->
+-- On SPECTEST EOF
+--   reduce production core_stmt_list ->
 
 State 839:
 ## Known stack suffix:
@@ -13313,10 +11938,8 @@ test -> INCONSISTENCY COLON . formula_npv QUESTIONMARK boolean [ INCONSISTENCY I
 -- On field_signature shift to state 477
 -- On at_identifier shift to state 478
 ## Reductions:
--- On QUESTIONMARK reduce production formula_npv ->
--- On OROR reduce production formula_npv ->
--- On OR reduce production formula_npv ->
--- On MULT reduce production formula_npv ->
+-- On QUESTIONMARK OROR OR MULT
+--   reduce production formula_npv ->
 
 State 847:
 ## Known stack suffix:
@@ -13391,10 +12014,8 @@ test -> IMPLICATION COLON . formula_npv VDASH formula_npv QUESTIONMARK boolean [
 -- On field_signature shift to state 477
 -- On at_identifier shift to state 478
 ## Reductions:
--- On VDASH reduce production formula_npv ->
--- On OROR reduce production formula_npv ->
--- On OR reduce production formula_npv ->
--- On MULT reduce production formula_npv ->
+-- On VDASH OROR OR MULT
+--   reduce production formula_npv ->
 
 State 852:
 ## Known stack suffix:
@@ -13440,10 +12061,8 @@ test -> IMPLICATION COLON formula_npv VDASH . formula_npv QUESTIONMARK boolean [
 -- On field_signature shift to state 477
 -- On at_identifier shift to state 478
 ## Reductions:
--- On QUESTIONMARK reduce production formula_npv ->
--- On OROR reduce production formula_npv ->
--- On OR reduce production formula_npv ->
--- On MULT reduce production formula_npv ->
+-- On QUESTIONMARK OROR OR MULT
+--   reduce production formula_npv ->
 
 State 854:
 ## Known stack suffix:
@@ -13518,10 +12137,8 @@ test -> FRAME COLON . formula_npv VDASH formula_npv QUESTIONMARK formula_npv [ I
 -- On field_signature shift to state 477
 -- On at_identifier shift to state 478
 ## Reductions:
--- On VDASH reduce production formula_npv ->
--- On OROR reduce production formula_npv ->
--- On OR reduce production formula_npv ->
--- On MULT reduce production formula_npv ->
+-- On VDASH OROR OR MULT
+--   reduce production formula_npv ->
 
 State 859:
 ## Known stack suffix:
@@ -13567,10 +12184,8 @@ test -> FRAME COLON formula_npv VDASH . formula_npv QUESTIONMARK formula_npv [ I
 -- On field_signature shift to state 477
 -- On at_identifier shift to state 478
 ## Reductions:
--- On QUESTIONMARK reduce production formula_npv ->
--- On OROR reduce production formula_npv ->
--- On OR reduce production formula_npv ->
--- On MULT reduce production formula_npv ->
+-- On QUESTIONMARK OROR OR MULT
+--   reduce production formula_npv ->
 
 State 861:
 ## Known stack suffix:
@@ -13616,14 +12231,8 @@ test -> FRAME COLON formula_npv VDASH formula_npv QUESTIONMARK . formula_npv [ I
 -- On field_signature shift to state 477
 -- On at_identifier shift to state 478
 ## Reductions:
--- On OROR reduce production formula_npv ->
--- On OR reduce production formula_npv ->
--- On MULT reduce production formula_npv ->
--- On INCONSISTENCY reduce production formula_npv ->
--- On IMPLICATION reduce production formula_npv ->
--- On FRAME reduce production formula_npv ->
--- On EOF reduce production formula_npv ->
--- On ABS reduce production formula_npv ->
+-- On OROR OR MULT INCONSISTENCY IMPLICATION FRAME EOF ABS
+--   reduce production formula_npv ->
 
 State 863:
 ## Known stack suffix:
@@ -13638,11 +12247,8 @@ test -> FRAME COLON formula_npv VDASH formula_npv QUESTIONMARK formula_npv . [ I
 -- On OR shift to state 518
 -- On MULT shift to state 516
 ## Reductions:
--- On INCONSISTENCY reduce production test -> FRAME COLON formula_npv VDASH formula_npv QUESTIONMARK formula_npv
--- On IMPLICATION reduce production test -> FRAME COLON formula_npv VDASH formula_npv QUESTIONMARK formula_npv
--- On FRAME reduce production test -> FRAME COLON formula_npv VDASH formula_npv QUESTIONMARK formula_npv
--- On EOF reduce production test -> FRAME COLON formula_npv VDASH formula_npv QUESTIONMARK formula_npv
--- On ABS reduce production test -> FRAME COLON formula_npv VDASH formula_npv QUESTIONMARK formula_npv
+-- On INCONSISTENCY IMPLICATION FRAME EOF ABS
+--   reduce production test -> FRAME COLON formula_npv VDASH formula_npv QUESTIONMARK formula_npv
 
 State 864:
 ## Known stack suffix:
@@ -13691,10 +12297,8 @@ test -> ABS COLON . formula_npv QUESTIONMARK formula_npv [ INCONSISTENCY IMPLICA
 -- On field_signature shift to state 477
 -- On at_identifier shift to state 478
 ## Reductions:
--- On QUESTIONMARK reduce production formula_npv ->
--- On OROR reduce production formula_npv ->
--- On OR reduce production formula_npv ->
--- On MULT reduce production formula_npv ->
+-- On QUESTIONMARK OROR OR MULT
+--   reduce production formula_npv ->
 
 State 867:
 ## Known stack suffix:
@@ -13740,14 +12344,8 @@ test -> ABS COLON formula_npv QUESTIONMARK . formula_npv [ INCONSISTENCY IMPLICA
 -- On field_signature shift to state 477
 -- On at_identifier shift to state 478
 ## Reductions:
--- On OROR reduce production formula_npv ->
--- On OR reduce production formula_npv ->
--- On MULT reduce production formula_npv ->
--- On INCONSISTENCY reduce production formula_npv ->
--- On IMPLICATION reduce production formula_npv ->
--- On FRAME reduce production formula_npv ->
--- On EOF reduce production formula_npv ->
--- On ABS reduce production formula_npv ->
+-- On OROR OR MULT INCONSISTENCY IMPLICATION FRAME EOF ABS
+--   reduce production formula_npv ->
 
 State 869:
 ## Known stack suffix:
@@ -13762,11 +12360,8 @@ test -> ABS COLON formula_npv QUESTIONMARK formula_npv . [ INCONSISTENCY IMPLICA
 -- On OR shift to state 518
 -- On MULT shift to state 516
 ## Reductions:
--- On INCONSISTENCY reduce production test -> ABS COLON formula_npv QUESTIONMARK formula_npv
--- On IMPLICATION reduce production test -> ABS COLON formula_npv QUESTIONMARK formula_npv
--- On FRAME reduce production test -> ABS COLON formula_npv QUESTIONMARK formula_npv
--- On EOF reduce production test -> ABS COLON formula_npv QUESTIONMARK formula_npv
--- On ABS reduce production test -> ABS COLON formula_npv QUESTIONMARK formula_npv
+-- On INCONSISTENCY IMPLICATION FRAME EOF ABS
+--   reduce production test -> ABS COLON formula_npv QUESTIONMARK formula_npv
 
 State 870:
 ## Known stack suffix:

@@ -35,9 +35,8 @@ statement -> VAL . attrs raw_var COLON term DOT [ EOI ]
 -- On LEFT_BRACKET shift to state 3
 -- On attrs shift to state 27
 ## Reductions:
--- On UPPER_WORD reduce production attrs ->
--- On SINGLE_QUOTED reduce production attrs ->
--- On LOWER_WORD reduce production attrs ->
+-- On UPPER_WORD SINGLE_QUOTED LOWER_WORD
+--   reduce production attrs ->
 
 State 3:
 ## Known stack suffix:
@@ -140,7 +139,8 @@ atomic_attr -> LEFT_BRACKET . loption(separated_nonempty_list(COMMA,attr)) RIGHT
 -- On attr shift to state 19
 -- On atomic_attr shift to state 22
 ## Reductions:
--- On RIGHT_BRACKET reduce production loption(separated_nonempty_list(COMMA,attr)) ->
+-- On RIGHT_BRACKET
+--   reduce production loption(separated_nonempty_list(COMMA,attr)) ->
 
 State 11:
 ## Known stack suffix:
@@ -168,9 +168,8 @@ attr -> raw_var . nonempty_list(atomic_attr) [ RIGHT_PAREN RIGHT_BRACKET COMMA ]
 -- On nonempty_list(atomic_attr) shift to state 14
 -- On atomic_attr shift to state 15
 ## Reductions:
--- On RIGHT_PAREN reduce production atomic_attr -> raw_var
--- On RIGHT_BRACKET reduce production atomic_attr -> raw_var
--- On COMMA reduce production atomic_attr -> raw_var
+-- On RIGHT_PAREN RIGHT_BRACKET COMMA
+--   reduce production atomic_attr -> raw_var
 
 State 13:
 ## Known stack suffix:
@@ -207,9 +206,8 @@ nonempty_list(atomic_attr) -> atomic_attr . nonempty_list(atomic_attr) [ RIGHT_P
 -- On nonempty_list(atomic_attr) shift to state 16
 -- On atomic_attr shift to state 15
 ## Reductions:
--- On RIGHT_PAREN reduce production nonempty_list(atomic_attr) -> atomic_attr
--- On RIGHT_BRACKET reduce production nonempty_list(atomic_attr) -> atomic_attr
--- On COMMA reduce production nonempty_list(atomic_attr) -> atomic_attr
+-- On RIGHT_PAREN RIGHT_BRACKET COMMA
+--   reduce production nonempty_list(atomic_attr) -> atomic_attr
 
 State 16:
 ## Known stack suffix:
@@ -247,7 +245,8 @@ separated_nonempty_list(COMMA,attr) -> attr . COMMA separated_nonempty_list(COMM
 ## Transitions:
 -- On COMMA shift to state 20
 ## Reductions:
--- On RIGHT_BRACKET reduce production separated_nonempty_list(COMMA,attr) -> attr
+-- On RIGHT_BRACKET
+--   reduce production separated_nonempty_list(COMMA,attr) -> attr
 
 State 20:
 ## Known stack suffix:
@@ -462,7 +461,8 @@ nonempty_list(raw_var) -> raw_var . nonempty_list(raw_var) [ COLON ]
 -- On raw_var shift to state 36
 -- On nonempty_list(raw_var) shift to state 37
 ## Reductions:
--- On COLON reduce production nonempty_list(raw_var) -> raw_var
+-- On COLON
+--   reduce production nonempty_list(raw_var) -> raw_var
 
 State 37:
 ## Known stack suffix:
@@ -1115,33 +1115,8 @@ apply_term -> atomic_term . nonempty_list(atomic_term) [ WITH WHERE VERTICAL_BAR
 -- On const shift to state 69
 -- On atomic_term shift to state 72
 ## Reductions:
--- On WITH reduce production apply_term -> atomic_term
--- On WHERE reduce production apply_term -> atomic_term
--- On VERTICAL_BAR reduce production apply_term -> atomic_term
--- On THEN reduce production apply_term -> atomic_term
--- On SEMI_COLON reduce production apply_term -> atomic_term
--- On RIGHT_PAREN reduce production apply_term -> atomic_term
--- On LOGIC_OR reduce production apply_term -> atomic_term
--- On LOGIC_NEQ reduce production apply_term -> atomic_term
--- On LOGIC_IMPLY reduce production apply_term -> atomic_term
--- On LOGIC_EQUIV reduce production apply_term -> atomic_term
--- On LOGIC_EQ reduce production apply_term -> atomic_term
--- On LOGIC_AND reduce production apply_term -> atomic_term
--- On IN reduce production apply_term -> atomic_term
--- On EQDEF reduce production apply_term -> atomic_term
--- On EOI reduce production apply_term -> atomic_term
--- On END reduce production apply_term -> atomic_term
--- On ELSE reduce production apply_term -> atomic_term
--- On DOT reduce production apply_term -> atomic_term
--- On ARROW reduce production apply_term -> atomic_term
--- On ARITH_PRODUCT reduce production apply_term -> atomic_term
--- On ARITH_PLUS reduce production apply_term -> atomic_term
--- On ARITH_MINUS reduce production apply_term -> atomic_term
--- On ARITH_LT reduce production apply_term -> atomic_term
--- On ARITH_LEQ reduce production apply_term -> atomic_term
--- On ARITH_GT reduce production apply_term -> atomic_term
--- On ARITH_GEQ reduce production apply_term -> atomic_term
--- On AND reduce production apply_term -> atomic_term
+-- On WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_EQUIV LOGIC_EQ LOGIC_AND IN EQDEF EOI END ELSE DOT ARROW ARITH_PRODUCT ARITH_PLUS ARITH_MINUS ARITH_LT ARITH_LEQ ARITH_GT ARITH_GEQ AND
+--   reduce production apply_term -> atomic_term
 
 State 71:
 ## Known stack suffix:
@@ -1177,33 +1152,8 @@ nonempty_list(atomic_term) -> atomic_term . nonempty_list(atomic_term) [ WITH WH
 -- On const shift to state 69
 -- On atomic_term shift to state 72
 ## Reductions:
--- On WITH reduce production nonempty_list(atomic_term) -> atomic_term
--- On WHERE reduce production nonempty_list(atomic_term) -> atomic_term
--- On VERTICAL_BAR reduce production nonempty_list(atomic_term) -> atomic_term
--- On THEN reduce production nonempty_list(atomic_term) -> atomic_term
--- On SEMI_COLON reduce production nonempty_list(atomic_term) -> atomic_term
--- On RIGHT_PAREN reduce production nonempty_list(atomic_term) -> atomic_term
--- On LOGIC_OR reduce production nonempty_list(atomic_term) -> atomic_term
--- On LOGIC_NEQ reduce production nonempty_list(atomic_term) -> atomic_term
--- On LOGIC_IMPLY reduce production nonempty_list(atomic_term) -> atomic_term
--- On LOGIC_EQUIV reduce production nonempty_list(atomic_term) -> atomic_term
--- On LOGIC_EQ reduce production nonempty_list(atomic_term) -> atomic_term
--- On LOGIC_AND reduce production nonempty_list(atomic_term) -> atomic_term
--- On IN reduce production nonempty_list(atomic_term) -> atomic_term
--- On EQDEF reduce production nonempty_list(atomic_term) -> atomic_term
--- On EOI reduce production nonempty_list(atomic_term) -> atomic_term
--- On END reduce production nonempty_list(atomic_term) -> atomic_term
--- On ELSE reduce production nonempty_list(atomic_term) -> atomic_term
--- On DOT reduce production nonempty_list(atomic_term) -> atomic_term
--- On ARROW reduce production nonempty_list(atomic_term) -> atomic_term
--- On ARITH_PRODUCT reduce production nonempty_list(atomic_term) -> atomic_term
--- On ARITH_PLUS reduce production nonempty_list(atomic_term) -> atomic_term
--- On ARITH_MINUS reduce production nonempty_list(atomic_term) -> atomic_term
--- On ARITH_LT reduce production nonempty_list(atomic_term) -> atomic_term
--- On ARITH_LEQ reduce production nonempty_list(atomic_term) -> atomic_term
--- On ARITH_GT reduce production nonempty_list(atomic_term) -> atomic_term
--- On ARITH_GEQ reduce production nonempty_list(atomic_term) -> atomic_term
--- On AND reduce production nonempty_list(atomic_term) -> atomic_term
+-- On WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_EQUIV LOGIC_EQ LOGIC_AND IN EQDEF EOI END ELSE DOT ARROW ARITH_PRODUCT ARITH_PLUS ARITH_MINUS ARITH_LT ARITH_LEQ ARITH_GT ARITH_GEQ AND
+--   reduce production nonempty_list(atomic_term) -> atomic_term
 
 State 73:
 ## Known stack suffix:
@@ -1247,25 +1197,8 @@ arith_op_term -> plus_term . ARITH_GEQ plus_term [ WITH WHERE VERTICAL_BAR THEN 
 -- On ARITH_GT shift to state 89
 -- On ARITH_GEQ shift to state 91
 ## Reductions:
--- On WITH reduce production arith_op_term -> plus_term
--- On WHERE reduce production arith_op_term -> plus_term
--- On VERTICAL_BAR reduce production arith_op_term -> plus_term
--- On THEN reduce production arith_op_term -> plus_term
--- On SEMI_COLON reduce production arith_op_term -> plus_term
--- On RIGHT_PAREN reduce production arith_op_term -> plus_term
--- On LOGIC_OR reduce production arith_op_term -> plus_term
--- On LOGIC_NEQ reduce production arith_op_term -> plus_term
--- On LOGIC_IMPLY reduce production arith_op_term -> plus_term
--- On LOGIC_EQUIV reduce production arith_op_term -> plus_term
--- On LOGIC_EQ reduce production arith_op_term -> plus_term
--- On LOGIC_AND reduce production arith_op_term -> plus_term
--- On IN reduce production arith_op_term -> plus_term
--- On EQDEF reduce production arith_op_term -> plus_term
--- On EOI reduce production arith_op_term -> plus_term
--- On END reduce production arith_op_term -> plus_term
--- On ELSE reduce production arith_op_term -> plus_term
--- On DOT reduce production arith_op_term -> plus_term
--- On AND reduce production arith_op_term -> plus_term
+-- On WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_EQUIV LOGIC_EQ LOGIC_AND IN EQDEF EOI END ELSE DOT AND
+--   reduce production arith_op_term -> plus_term
 
 State 77:
 ## Known stack suffix:
@@ -1315,29 +1248,8 @@ plus_term -> mult_term . ARITH_MINUS plus_term [ WITH WHERE VERTICAL_BAR THEN SE
 -- On ARITH_PLUS shift to state 80
 -- On ARITH_MINUS shift to state 85
 ## Reductions:
--- On WITH reduce production plus_term -> mult_term
--- On WHERE reduce production plus_term -> mult_term
--- On VERTICAL_BAR reduce production plus_term -> mult_term
--- On THEN reduce production plus_term -> mult_term
--- On SEMI_COLON reduce production plus_term -> mult_term
--- On RIGHT_PAREN reduce production plus_term -> mult_term
--- On LOGIC_OR reduce production plus_term -> mult_term
--- On LOGIC_NEQ reduce production plus_term -> mult_term
--- On LOGIC_IMPLY reduce production plus_term -> mult_term
--- On LOGIC_EQUIV reduce production plus_term -> mult_term
--- On LOGIC_EQ reduce production plus_term -> mult_term
--- On LOGIC_AND reduce production plus_term -> mult_term
--- On IN reduce production plus_term -> mult_term
--- On EQDEF reduce production plus_term -> mult_term
--- On EOI reduce production plus_term -> mult_term
--- On END reduce production plus_term -> mult_term
--- On ELSE reduce production plus_term -> mult_term
--- On DOT reduce production plus_term -> mult_term
--- On ARITH_LT reduce production plus_term -> mult_term
--- On ARITH_LEQ reduce production plus_term -> mult_term
--- On ARITH_GT reduce production plus_term -> mult_term
--- On ARITH_GEQ reduce production plus_term -> mult_term
--- On AND reduce production plus_term -> mult_term
+-- On WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_EQUIV LOGIC_EQ LOGIC_AND IN EQDEF EOI END ELSE DOT ARITH_LT ARITH_LEQ ARITH_GT ARITH_GEQ AND
+--   reduce production plus_term -> mult_term
 
 State 80:
 ## Known stack suffix:
@@ -1385,31 +1297,8 @@ mult_term -> apply_term . ARITH_PRODUCT mult_term [ WITH WHERE VERTICAL_BAR THEN
 ## Transitions:
 -- On ARITH_PRODUCT shift to state 83
 ## Reductions:
--- On WITH reduce production mult_term -> apply_term
--- On WHERE reduce production mult_term -> apply_term
--- On VERTICAL_BAR reduce production mult_term -> apply_term
--- On THEN reduce production mult_term -> apply_term
--- On SEMI_COLON reduce production mult_term -> apply_term
--- On RIGHT_PAREN reduce production mult_term -> apply_term
--- On LOGIC_OR reduce production mult_term -> apply_term
--- On LOGIC_NEQ reduce production mult_term -> apply_term
--- On LOGIC_IMPLY reduce production mult_term -> apply_term
--- On LOGIC_EQUIV reduce production mult_term -> apply_term
--- On LOGIC_EQ reduce production mult_term -> apply_term
--- On LOGIC_AND reduce production mult_term -> apply_term
--- On IN reduce production mult_term -> apply_term
--- On EQDEF reduce production mult_term -> apply_term
--- On EOI reduce production mult_term -> apply_term
--- On END reduce production mult_term -> apply_term
--- On ELSE reduce production mult_term -> apply_term
--- On DOT reduce production mult_term -> apply_term
--- On ARITH_PLUS reduce production mult_term -> apply_term
--- On ARITH_MINUS reduce production mult_term -> apply_term
--- On ARITH_LT reduce production mult_term -> apply_term
--- On ARITH_LEQ reduce production mult_term -> apply_term
--- On ARITH_GT reduce production mult_term -> apply_term
--- On ARITH_GEQ reduce production mult_term -> apply_term
--- On AND reduce production mult_term -> apply_term
+-- On WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_EQUIV LOGIC_EQ LOGIC_AND IN EQDEF EOI END ELSE DOT ARITH_PLUS ARITH_MINUS ARITH_LT ARITH_LEQ ARITH_GT ARITH_GEQ AND
+--   reduce production mult_term -> apply_term
 
 State 83:
 ## Known stack suffix:
@@ -1615,23 +1504,8 @@ eq_term -> not_term . LOGIC_NEQ not_term [ WITH WHERE VERTICAL_BAR THEN SEMI_COL
 -- On LOGIC_NEQ shift to state 95
 -- On LOGIC_EQ shift to state 98
 ## Reductions:
--- On WITH reduce production eq_term -> not_term
--- On WHERE reduce production eq_term -> not_term
--- On VERTICAL_BAR reduce production eq_term -> not_term
--- On THEN reduce production eq_term -> not_term
--- On SEMI_COLON reduce production eq_term -> not_term
--- On RIGHT_PAREN reduce production eq_term -> not_term
--- On LOGIC_OR reduce production eq_term -> not_term
--- On LOGIC_IMPLY reduce production eq_term -> not_term
--- On LOGIC_EQUIV reduce production eq_term -> not_term
--- On LOGIC_AND reduce production eq_term -> not_term
--- On IN reduce production eq_term -> not_term
--- On EQDEF reduce production eq_term -> not_term
--- On EOI reduce production eq_term -> not_term
--- On END reduce production eq_term -> not_term
--- On ELSE reduce production eq_term -> not_term
--- On DOT reduce production eq_term -> not_term
--- On AND reduce production eq_term -> not_term
+-- On WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_IMPLY LOGIC_EQUIV LOGIC_AND IN EQDEF EOI END ELSE DOT AND
+--   reduce production eq_term -> not_term
 
 State 95:
 ## Known stack suffix:
@@ -1731,22 +1605,8 @@ and_term -> eq_term . LOGIC_AND and_term [ WITH WHERE VERTICAL_BAR THEN SEMI_COL
 ## Transitions:
 -- On LOGIC_AND shift to state 101
 ## Reductions:
--- On WITH reduce production and_term -> eq_term
--- On WHERE reduce production and_term -> eq_term
--- On VERTICAL_BAR reduce production and_term -> eq_term
--- On THEN reduce production and_term -> eq_term
--- On SEMI_COLON reduce production and_term -> eq_term
--- On RIGHT_PAREN reduce production and_term -> eq_term
--- On LOGIC_OR reduce production and_term -> eq_term
--- On LOGIC_IMPLY reduce production and_term -> eq_term
--- On LOGIC_EQUIV reduce production and_term -> eq_term
--- On IN reduce production and_term -> eq_term
--- On EQDEF reduce production and_term -> eq_term
--- On EOI reduce production and_term -> eq_term
--- On END reduce production and_term -> eq_term
--- On ELSE reduce production and_term -> eq_term
--- On DOT reduce production and_term -> eq_term
--- On AND reduce production and_term -> eq_term
+-- On WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_IMPLY LOGIC_EQUIV IN EQDEF EOI END ELSE DOT AND
+--   reduce production and_term -> eq_term
 
 State 101:
 ## Known stack suffix:
@@ -1801,31 +1661,8 @@ term -> apply_term . ARROW term [ WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_
 -- On ARROW shift to state 104
 -- On ARITH_PRODUCT shift to state 83
 ## Reductions:
--- On WITH reduce production mult_term -> apply_term
--- On WHERE reduce production mult_term -> apply_term
--- On VERTICAL_BAR reduce production mult_term -> apply_term
--- On THEN reduce production mult_term -> apply_term
--- On SEMI_COLON reduce production mult_term -> apply_term
--- On RIGHT_PAREN reduce production mult_term -> apply_term
--- On LOGIC_OR reduce production mult_term -> apply_term
--- On LOGIC_NEQ reduce production mult_term -> apply_term
--- On LOGIC_IMPLY reduce production mult_term -> apply_term
--- On LOGIC_EQUIV reduce production mult_term -> apply_term
--- On LOGIC_EQ reduce production mult_term -> apply_term
--- On LOGIC_AND reduce production mult_term -> apply_term
--- On IN reduce production mult_term -> apply_term
--- On EQDEF reduce production mult_term -> apply_term
--- On EOI reduce production mult_term -> apply_term
--- On END reduce production mult_term -> apply_term
--- On ELSE reduce production mult_term -> apply_term
--- On DOT reduce production mult_term -> apply_term
--- On ARITH_PLUS reduce production mult_term -> apply_term
--- On ARITH_MINUS reduce production mult_term -> apply_term
--- On ARITH_LT reduce production mult_term -> apply_term
--- On ARITH_LEQ reduce production mult_term -> apply_term
--- On ARITH_GT reduce production mult_term -> apply_term
--- On ARITH_GEQ reduce production mult_term -> apply_term
--- On AND reduce production mult_term -> apply_term
+-- On WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_EQUIV LOGIC_EQ LOGIC_AND IN EQDEF EOI END ELSE DOT ARITH_PLUS ARITH_MINUS ARITH_LT ARITH_LEQ ARITH_GT ARITH_GEQ AND
+--   reduce production mult_term -> apply_term
 
 State 104:
 ## Known stack suffix:
@@ -1891,19 +1728,8 @@ or_term -> and_term . LOGIC_EQUIV or_term [ WITH WHERE VERTICAL_BAR THEN SEMI_CO
 -- On LOGIC_IMPLY shift to state 109
 -- On LOGIC_EQUIV shift to state 111
 ## Reductions:
--- On WITH reduce production or_term -> and_term
--- On WHERE reduce production or_term -> and_term
--- On VERTICAL_BAR reduce production or_term -> and_term
--- On THEN reduce production or_term -> and_term
--- On SEMI_COLON reduce production or_term -> and_term
--- On RIGHT_PAREN reduce production or_term -> and_term
--- On IN reduce production or_term -> and_term
--- On EQDEF reduce production or_term -> and_term
--- On EOI reduce production or_term -> and_term
--- On END reduce production or_term -> and_term
--- On ELSE reduce production or_term -> and_term
--- On DOT reduce production or_term -> and_term
--- On AND reduce production or_term -> and_term
+-- On WITH WHERE VERTICAL_BAR THEN SEMI_COLON RIGHT_PAREN IN EQDEF EOI END ELSE DOT AND
+--   reduce production or_term -> and_term
 
 State 107:
 ## Known stack suffix:
@@ -2050,7 +1876,8 @@ typed_var_list -> typed_var_block . typed_var_list [ DOT ]
 -- On typed_var_block shift to state 113
 -- On raw_var shift to state 115
 ## Reductions:
--- On DOT reduce production typed_var_list -> typed_var_block
+-- On DOT
+--   reduce production typed_var_list -> typed_var_block
 
 State 114:
 ## Known stack suffix:
@@ -2401,7 +2228,8 @@ match_branch -> VERTICAL_BAR raw_var . list(var_or_wildcard) ARROW term [ VERTIC
 -- On raw_var shift to state 139
 -- On list(var_or_wildcard) shift to state 141
 ## Reductions:
--- On ARROW reduce production list(var_or_wildcard) ->
+-- On ARROW
+--   reduce production list(var_or_wildcard) ->
 
 State 137:
 ## Known stack suffix:
@@ -2426,7 +2254,8 @@ list(var_or_wildcard) -> var_or_wildcard . list(var_or_wildcard) [ ARROW ]
 -- On raw_var shift to state 139
 -- On list(var_or_wildcard) shift to state 140
 ## Reductions:
--- On ARROW reduce production list(var_or_wildcard) ->
+-- On ARROW
+--   reduce production list(var_or_wildcard) ->
 
 State 139:
 ## Known stack suffix:
@@ -2535,7 +2364,8 @@ nonempty_list(match_branch) -> match_branch . nonempty_list(match_branch) [ END 
 -- On nonempty_list(match_branch) shift to state 147
 -- On match_branch shift to state 146
 ## Reductions:
--- On END reduce production nonempty_list(match_branch) -> match_branch
+-- On END
+--   reduce production nonempty_list(match_branch) -> match_branch
 
 State 147:
 ## Known stack suffix:
@@ -2570,7 +2400,8 @@ typed_ty_var_list -> typed_ty_var_block . typed_ty_var_list [ DOT ]
 -- On typed_ty_var_block shift to state 149
 -- On raw_var shift to state 151
 ## Reductions:
--- On DOT reduce production typed_ty_var_list -> typed_ty_var_block
+-- On DOT
+--   reduce production typed_ty_var_list -> typed_ty_var_block
 
 State 150:
 ## Known stack suffix:
@@ -2590,11 +2421,8 @@ typed_ty_var_block -> raw_var . COLON TYPE [ UPPER_WORD SINGLE_QUOTED LOWER_WORD
 ## Transitions:
 -- On COLON shift to state 152
 ## Reductions:
--- On UPPER_WORD reduce production typed_ty_var_block -> raw_var
--- On SINGLE_QUOTED reduce production typed_ty_var_block -> raw_var
--- On LOWER_WORD reduce production typed_ty_var_block -> raw_var
--- On LEFT_PAREN reduce production typed_ty_var_block -> raw_var
--- On DOT reduce production typed_ty_var_block -> raw_var
+-- On UPPER_WORD SINGLE_QUOTED LOWER_WORD LEFT_PAREN DOT
+--   reduce production typed_ty_var_block -> raw_var
 
 State 152:
 ## Known stack suffix:
@@ -2641,27 +2469,8 @@ statement -> REWRITE . attrs term DOT [ EOI ]
 -- On LEFT_BRACKET shift to state 157
 -- On attrs shift to state 160
 ## Reductions:
--- On error reduce production attrs ->
--- On WILDCARD reduce production attrs ->
--- On UPPER_WORD reduce production attrs ->
--- On TYPE reduce production attrs ->
--- On SINGLE_QUOTED reduce production attrs ->
--- On PROP reduce production attrs ->
--- On PI reduce production attrs ->
--- On MATCH reduce production attrs ->
--- On LOWER_WORD reduce production attrs ->
--- On LOGIC_TRUE reduce production attrs ->
--- On LOGIC_NOT reduce production attrs ->
--- On LOGIC_FORALL reduce production attrs ->
--- On LOGIC_FALSE reduce production attrs ->
--- On LOGIC_EXISTS reduce production attrs ->
--- On LET reduce production attrs ->
--- On LEFT_PAREN reduce production attrs ->
--- On INTEGER reduce production attrs ->
--- On INT reduce production attrs ->
--- On IF reduce production attrs ->
--- On FUN reduce production attrs ->
--- On ARITH_MINUS reduce production attrs ->
+-- On error WILDCARD UPPER_WORD TYPE SINGLE_QUOTED PROP PI MATCH LOWER_WORD LOGIC_TRUE LOGIC_NOT LOGIC_FORALL LOGIC_FALSE LOGIC_EXISTS LET LEFT_PAREN INTEGER INT IF FUN ARITH_MINUS
+--   reduce production attrs ->
 
 State 157:
 ## Known stack suffix:
@@ -2769,27 +2578,8 @@ statement -> LEMMA . attrs term DOT [ EOI ]
 -- On LEFT_BRACKET shift to state 157
 -- On attrs shift to state 164
 ## Reductions:
--- On error reduce production attrs ->
--- On WILDCARD reduce production attrs ->
--- On UPPER_WORD reduce production attrs ->
--- On TYPE reduce production attrs ->
--- On SINGLE_QUOTED reduce production attrs ->
--- On PROP reduce production attrs ->
--- On PI reduce production attrs ->
--- On MATCH reduce production attrs ->
--- On LOWER_WORD reduce production attrs ->
--- On LOGIC_TRUE reduce production attrs ->
--- On LOGIC_NOT reduce production attrs ->
--- On LOGIC_FORALL reduce production attrs ->
--- On LOGIC_FALSE reduce production attrs ->
--- On LOGIC_EXISTS reduce production attrs ->
--- On LET reduce production attrs ->
--- On LEFT_PAREN reduce production attrs ->
--- On INTEGER reduce production attrs ->
--- On INT reduce production attrs ->
--- On IF reduce production attrs ->
--- On FUN reduce production attrs ->
--- On ARITH_MINUS reduce production attrs ->
+-- On error WILDCARD UPPER_WORD TYPE SINGLE_QUOTED PROP PI MATCH LOWER_WORD LOGIC_TRUE LOGIC_NOT LOGIC_FORALL LOGIC_FALSE LOGIC_EXISTS LET LEFT_PAREN INTEGER INT IF FUN ARITH_MINUS
+--   reduce production attrs ->
 
 State 164:
 ## Known stack suffix:
@@ -2887,27 +2677,8 @@ statement -> GOAL . attrs term DOT [ EOI ]
 -- On LEFT_BRACKET shift to state 157
 -- On attrs shift to state 171
 ## Reductions:
--- On error reduce production attrs ->
--- On WILDCARD reduce production attrs ->
--- On UPPER_WORD reduce production attrs ->
--- On TYPE reduce production attrs ->
--- On SINGLE_QUOTED reduce production attrs ->
--- On PROP reduce production attrs ->
--- On PI reduce production attrs ->
--- On MATCH reduce production attrs ->
--- On LOWER_WORD reduce production attrs ->
--- On LOGIC_TRUE reduce production attrs ->
--- On LOGIC_NOT reduce production attrs ->
--- On LOGIC_FORALL reduce production attrs ->
--- On LOGIC_FALSE reduce production attrs ->
--- On LOGIC_EXISTS reduce production attrs ->
--- On LET reduce production attrs ->
--- On LEFT_PAREN reduce production attrs ->
--- On INTEGER reduce production attrs ->
--- On INT reduce production attrs ->
--- On IF reduce production attrs ->
--- On FUN reduce production attrs ->
--- On ARITH_MINUS reduce production attrs ->
+-- On error WILDCARD UPPER_WORD TYPE SINGLE_QUOTED PROP PI MATCH LOWER_WORD LOGIC_TRUE LOGIC_NOT LOGIC_FORALL LOGIC_FALSE LOGIC_EXISTS LET LEFT_PAREN INTEGER INT IF FUN ARITH_MINUS
+--   reduce production attrs ->
 
 State 171:
 ## Known stack suffix:
@@ -2978,9 +2749,8 @@ statement -> DEF . attrs separated_nonempty_list(AND,def) DOT [ EOI ]
 -- On LEFT_BRACKET shift to state 3
 -- On attrs shift to state 175
 ## Reductions:
--- On UPPER_WORD reduce production attrs ->
--- On SINGLE_QUOTED reduce production attrs ->
--- On LOWER_WORD reduce production attrs ->
+-- On UPPER_WORD SINGLE_QUOTED LOWER_WORD
+--   reduce production attrs ->
 
 State 175:
 ## Known stack suffix:
@@ -3216,8 +2986,8 @@ separated_nonempty_list(SEMI_COLON,term) -> term . SEMI_COLON separated_nonempty
 ## Transitions:
 -- On SEMI_COLON shift to state 188
 ## Reductions:
--- On DOT reduce production separated_nonempty_list(SEMI_COLON,term) -> term
--- On AND reduce production separated_nonempty_list(SEMI_COLON,term) -> term
+-- On DOT AND
+--   reduce production separated_nonempty_list(SEMI_COLON,term) -> term
 
 State 188:
 ## Known stack suffix:
@@ -3453,7 +3223,8 @@ mandatory_typed_var_list -> mandatory_typed_var_block . mandatory_typed_var_list
 -- On mandatory_typed_var_list shift to state 199
 -- On mandatory_typed_var_block shift to state 198
 ## Reductions:
--- On COLON reduce production mandatory_typed_var_list -> mandatory_typed_var_block
+-- On COLON
+--   reduce production mandatory_typed_var_list -> mandatory_typed_var_block
 
 State 199:
 ## Known stack suffix:
@@ -3473,7 +3244,8 @@ separated_nonempty_list(AND,def) -> def . AND separated_nonempty_list(AND,def) [
 ## Transitions:
 -- On AND shift to state 201
 ## Reductions:
--- On DOT reduce production separated_nonempty_list(AND,def) -> def
+-- On DOT
+--   reduce production separated_nonempty_list(AND,def) -> def
 
 State 201:
 ## Known stack suffix:
@@ -3507,9 +3279,8 @@ statement -> DATA . attrs mutual_types DOT [ EOI ]
 -- On LEFT_BRACKET shift to state 3
 -- On attrs shift to state 204
 ## Reductions:
--- On UPPER_WORD reduce production attrs ->
--- On SINGLE_QUOTED reduce production attrs ->
--- On LOWER_WORD reduce production attrs ->
+-- On UPPER_WORD SINGLE_QUOTED LOWER_WORD
+--   reduce production attrs ->
 
 State 204:
 ## Known stack suffix:
@@ -3535,7 +3306,8 @@ separated_nonempty_list(AND,type_def) -> type_def . AND separated_nonempty_list(
 ## Transitions:
 -- On AND shift to state 206
 ## Reductions:
--- On DOT reduce production separated_nonempty_list(AND,type_def) -> type_def
+-- On DOT
+--   reduce production separated_nonempty_list(AND,type_def) -> type_def
 
 State 206:
 ## Known stack suffix:
@@ -3572,7 +3344,8 @@ type_def -> raw_var . list(raw_var) EQDEF constructors [ DOT AND ]
 -- On raw_var shift to state 209
 -- On list(raw_var) shift to state 211
 ## Reductions:
--- On EQDEF reduce production list(raw_var) ->
+-- On EQDEF
+--   reduce production list(raw_var) ->
 
 State 209:
 ## Known stack suffix:
@@ -3586,7 +3359,8 @@ list(raw_var) -> raw_var . list(raw_var) [ EQDEF ]
 -- On raw_var shift to state 209
 -- On list(raw_var) shift to state 210
 ## Reductions:
--- On EQDEF reduce production list(raw_var) ->
+-- On EQDEF
+--   reduce production list(raw_var) ->
 
 State 210:
 ## Known stack suffix:
@@ -3616,9 +3390,8 @@ type_def -> raw_var list(raw_var) EQDEF . constructors [ DOT AND ]
 -- On option(VERTICAL_BAR) shift to state 214
 -- On constructors shift to state 229
 ## Reductions:
--- On UPPER_WORD reduce production option(VERTICAL_BAR) ->
--- On SINGLE_QUOTED reduce production option(VERTICAL_BAR) ->
--- On LOWER_WORD reduce production option(VERTICAL_BAR) ->
+-- On UPPER_WORD SINGLE_QUOTED LOWER_WORD
+--   reduce production option(VERTICAL_BAR) ->
 
 State 213:
 ## Known stack suffix:
@@ -3677,9 +3450,8 @@ constructor -> raw_var . list(constructor_arg) [ VERTICAL_BAR DOT AND ]
 -- On const shift to state 69
 -- On atomic_term shift to state 225
 ## Reductions:
--- On VERTICAL_BAR reduce production list(constructor_arg) ->
--- On DOT reduce production list(constructor_arg) ->
--- On AND reduce production list(constructor_arg) ->
+-- On VERTICAL_BAR DOT AND
+--   reduce production list(constructor_arg) ->
 
 State 217:
 ## Known stack suffix:
@@ -3733,33 +3505,8 @@ var -> raw_var . [ WILDCARD UPPER_WORD TYPE SINGLE_QUOTED RIGHT_PAREN PROP MATCH
 ## Transitions:
 -- On COLON shift to state 219
 ## Reductions:
--- On WILDCARD reduce production var -> raw_var
--- On UPPER_WORD reduce production var -> raw_var
--- On TYPE reduce production var -> raw_var
--- On SINGLE_QUOTED reduce production var -> raw_var
--- On RIGHT_PAREN reduce production var -> raw_var
--- On PROP reduce production var -> raw_var
--- On MATCH reduce production var -> raw_var
--- On LOWER_WORD reduce production var -> raw_var
--- On LOGIC_TRUE reduce production var -> raw_var
--- On LOGIC_OR reduce production var -> raw_var
--- On LOGIC_NEQ reduce production var -> raw_var
--- On LOGIC_IMPLY reduce production var -> raw_var
--- On LOGIC_FALSE reduce production var -> raw_var
--- On LOGIC_EQUIV reduce production var -> raw_var
--- On LOGIC_EQ reduce production var -> raw_var
--- On LOGIC_AND reduce production var -> raw_var
--- On LEFT_PAREN reduce production var -> raw_var
--- On INTEGER reduce production var -> raw_var
--- On INT reduce production var -> raw_var
--- On ARROW reduce production var -> raw_var
--- On ARITH_PRODUCT reduce production var -> raw_var
--- On ARITH_PLUS reduce production var -> raw_var
--- On ARITH_MINUS reduce production var -> raw_var
--- On ARITH_LT reduce production var -> raw_var
--- On ARITH_LEQ reduce production var -> raw_var
--- On ARITH_GT reduce production var -> raw_var
--- On ARITH_GEQ reduce production var -> raw_var
+-- On WILDCARD UPPER_WORD TYPE SINGLE_QUOTED RIGHT_PAREN PROP MATCH LOWER_WORD LOGIC_TRUE LOGIC_OR LOGIC_NEQ LOGIC_IMPLY LOGIC_FALSE LOGIC_EQUIV LOGIC_EQ LOGIC_AND LEFT_PAREN INTEGER INT ARROW ARITH_PRODUCT ARITH_PLUS ARITH_MINUS ARITH_LT ARITH_LEQ ARITH_GT ARITH_GEQ
+--   reduce production var -> raw_var
 
 State 219:
 ## Known stack suffix:
@@ -3837,9 +3584,8 @@ list(constructor_arg) -> constructor_arg . list(constructor_arg) [ VERTICAL_BAR 
 -- On const shift to state 69
 -- On atomic_term shift to state 225
 ## Reductions:
--- On VERTICAL_BAR reduce production list(constructor_arg) ->
--- On DOT reduce production list(constructor_arg) ->
--- On AND reduce production list(constructor_arg) ->
+-- On VERTICAL_BAR DOT AND
+--   reduce production list(constructor_arg) ->
 
 State 224:
 ## Known stack suffix:
@@ -3868,8 +3614,8 @@ separated_nonempty_list(VERTICAL_BAR,constructor) -> constructor . VERTICAL_BAR 
 ## Transitions:
 -- On VERTICAL_BAR shift to state 227
 ## Reductions:
--- On DOT reduce production separated_nonempty_list(VERTICAL_BAR,constructor) -> constructor
--- On AND reduce production separated_nonempty_list(VERTICAL_BAR,constructor) -> constructor
+-- On DOT AND
+--   reduce production separated_nonempty_list(VERTICAL_BAR,constructor) -> constructor
 
 State 227:
 ## Known stack suffix:
@@ -3939,27 +3685,8 @@ statement -> ASSERT . attrs term DOT [ EOI ]
 -- On LEFT_BRACKET shift to state 157
 -- On attrs shift to state 234
 ## Reductions:
--- On error reduce production attrs ->
--- On WILDCARD reduce production attrs ->
--- On UPPER_WORD reduce production attrs ->
--- On TYPE reduce production attrs ->
--- On SINGLE_QUOTED reduce production attrs ->
--- On PROP reduce production attrs ->
--- On PI reduce production attrs ->
--- On MATCH reduce production attrs ->
--- On LOWER_WORD reduce production attrs ->
--- On LOGIC_TRUE reduce production attrs ->
--- On LOGIC_NOT reduce production attrs ->
--- On LOGIC_FORALL reduce production attrs ->
--- On LOGIC_FALSE reduce production attrs ->
--- On LOGIC_EXISTS reduce production attrs ->
--- On LET reduce production attrs ->
--- On LEFT_PAREN reduce production attrs ->
--- On INTEGER reduce production attrs ->
--- On INT reduce production attrs ->
--- On IF reduce production attrs ->
--- On FUN reduce production attrs ->
--- On ARITH_MINUS reduce production attrs ->
+-- On error WILDCARD UPPER_WORD TYPE SINGLE_QUOTED PROP PI MATCH LOWER_WORD LOGIC_TRUE LOGIC_NOT LOGIC_FORALL LOGIC_FALSE LOGIC_EXISTS LET LEFT_PAREN INTEGER INT IF FUN ARITH_MINUS
+--   reduce production attrs ->
 
 State 234:
 ## Known stack suffix:
@@ -4067,7 +3794,8 @@ parse_statement_list' -> . parse_statement_list [ # ]
 -- On parse_statement_list shift to state 277
 -- On list(statement) shift to state 278
 ## Reductions:
--- On EOI reduce production list(statement) ->
+-- On EOI
+--   reduce production list(statement) ->
 
 State 241:
 ## Known stack suffix:
@@ -4087,9 +3815,8 @@ statement -> VAL . attrs raw_var COLON term DOT [ error VAL REWRITE LEMMA INCLUD
 -- On LEFT_BRACKET shift to state 3
 -- On attrs shift to state 243
 ## Reductions:
--- On UPPER_WORD reduce production attrs ->
--- On SINGLE_QUOTED reduce production attrs ->
--- On LOWER_WORD reduce production attrs ->
+-- On UPPER_WORD SINGLE_QUOTED LOWER_WORD
+--   reduce production attrs ->
 
 State 243:
 ## Known stack suffix:
@@ -4181,27 +3908,8 @@ statement -> REWRITE . attrs term DOT [ error VAL REWRITE LEMMA INCLUDE GOAL EOI
 -- On LEFT_BRACKET shift to state 157
 -- On attrs shift to state 249
 ## Reductions:
--- On error reduce production attrs ->
--- On WILDCARD reduce production attrs ->
--- On UPPER_WORD reduce production attrs ->
--- On TYPE reduce production attrs ->
--- On SINGLE_QUOTED reduce production attrs ->
--- On PROP reduce production attrs ->
--- On PI reduce production attrs ->
--- On MATCH reduce production attrs ->
--- On LOWER_WORD reduce production attrs ->
--- On LOGIC_TRUE reduce production attrs ->
--- On LOGIC_NOT reduce production attrs ->
--- On LOGIC_FORALL reduce production attrs ->
--- On LOGIC_FALSE reduce production attrs ->
--- On LOGIC_EXISTS reduce production attrs ->
--- On LET reduce production attrs ->
--- On LEFT_PAREN reduce production attrs ->
--- On INTEGER reduce production attrs ->
--- On INT reduce production attrs ->
--- On IF reduce production attrs ->
--- On FUN reduce production attrs ->
--- On ARITH_MINUS reduce production attrs ->
+-- On error WILDCARD UPPER_WORD TYPE SINGLE_QUOTED PROP PI MATCH LOWER_WORD LOGIC_TRUE LOGIC_NOT LOGIC_FORALL LOGIC_FALSE LOGIC_EXISTS LET LEFT_PAREN INTEGER INT IF FUN ARITH_MINUS
+--   reduce production attrs ->
 
 State 249:
 ## Known stack suffix:
@@ -4272,27 +3980,8 @@ statement -> LEMMA . attrs term DOT [ error VAL REWRITE LEMMA INCLUDE GOAL EOI D
 -- On LEFT_BRACKET shift to state 157
 -- On attrs shift to state 253
 ## Reductions:
--- On error reduce production attrs ->
--- On WILDCARD reduce production attrs ->
--- On UPPER_WORD reduce production attrs ->
--- On TYPE reduce production attrs ->
--- On SINGLE_QUOTED reduce production attrs ->
--- On PROP reduce production attrs ->
--- On PI reduce production attrs ->
--- On MATCH reduce production attrs ->
--- On LOWER_WORD reduce production attrs ->
--- On LOGIC_TRUE reduce production attrs ->
--- On LOGIC_NOT reduce production attrs ->
--- On LOGIC_FORALL reduce production attrs ->
--- On LOGIC_FALSE reduce production attrs ->
--- On LOGIC_EXISTS reduce production attrs ->
--- On LET reduce production attrs ->
--- On LEFT_PAREN reduce production attrs ->
--- On INTEGER reduce production attrs ->
--- On INT reduce production attrs ->
--- On IF reduce production attrs ->
--- On FUN reduce production attrs ->
--- On ARITH_MINUS reduce production attrs ->
+-- On error WILDCARD UPPER_WORD TYPE SINGLE_QUOTED PROP PI MATCH LOWER_WORD LOGIC_TRUE LOGIC_NOT LOGIC_FORALL LOGIC_FALSE LOGIC_EXISTS LET LEFT_PAREN INTEGER INT IF FUN ARITH_MINUS
+--   reduce production attrs ->
 
 State 253:
 ## Known stack suffix:
@@ -4390,27 +4079,8 @@ statement -> GOAL . attrs term DOT [ error VAL REWRITE LEMMA INCLUDE GOAL EOI DE
 -- On LEFT_BRACKET shift to state 157
 -- On attrs shift to state 260
 ## Reductions:
--- On error reduce production attrs ->
--- On WILDCARD reduce production attrs ->
--- On UPPER_WORD reduce production attrs ->
--- On TYPE reduce production attrs ->
--- On SINGLE_QUOTED reduce production attrs ->
--- On PROP reduce production attrs ->
--- On PI reduce production attrs ->
--- On MATCH reduce production attrs ->
--- On LOWER_WORD reduce production attrs ->
--- On LOGIC_TRUE reduce production attrs ->
--- On LOGIC_NOT reduce production attrs ->
--- On LOGIC_FORALL reduce production attrs ->
--- On LOGIC_FALSE reduce production attrs ->
--- On LOGIC_EXISTS reduce production attrs ->
--- On LET reduce production attrs ->
--- On LEFT_PAREN reduce production attrs ->
--- On INTEGER reduce production attrs ->
--- On INT reduce production attrs ->
--- On IF reduce production attrs ->
--- On FUN reduce production attrs ->
--- On ARITH_MINUS reduce production attrs ->
+-- On error WILDCARD UPPER_WORD TYPE SINGLE_QUOTED PROP PI MATCH LOWER_WORD LOGIC_TRUE LOGIC_NOT LOGIC_FORALL LOGIC_FALSE LOGIC_EXISTS LET LEFT_PAREN INTEGER INT IF FUN ARITH_MINUS
+--   reduce production attrs ->
 
 State 260:
 ## Known stack suffix:
@@ -4481,9 +4151,8 @@ statement -> DEF . attrs separated_nonempty_list(AND,def) DOT [ error VAL REWRIT
 -- On LEFT_BRACKET shift to state 3
 -- On attrs shift to state 264
 ## Reductions:
--- On UPPER_WORD reduce production attrs ->
--- On SINGLE_QUOTED reduce production attrs ->
--- On LOWER_WORD reduce production attrs ->
+-- On UPPER_WORD SINGLE_QUOTED LOWER_WORD
+--   reduce production attrs ->
 
 State 264:
 ## Known stack suffix:
@@ -4526,9 +4195,8 @@ statement -> DATA . attrs mutual_types DOT [ error VAL REWRITE LEMMA INCLUDE GOA
 -- On LEFT_BRACKET shift to state 3
 -- On attrs shift to state 268
 ## Reductions:
--- On UPPER_WORD reduce production attrs ->
--- On SINGLE_QUOTED reduce production attrs ->
--- On LOWER_WORD reduce production attrs ->
+-- On UPPER_WORD SINGLE_QUOTED LOWER_WORD
+--   reduce production attrs ->
 
 State 268:
 ## Known stack suffix:
@@ -4572,27 +4240,8 @@ statement -> ASSERT . attrs term DOT [ error VAL REWRITE LEMMA INCLUDE GOAL EOI 
 -- On LEFT_BRACKET shift to state 157
 -- On attrs shift to state 272
 ## Reductions:
--- On error reduce production attrs ->
--- On WILDCARD reduce production attrs ->
--- On UPPER_WORD reduce production attrs ->
--- On TYPE reduce production attrs ->
--- On SINGLE_QUOTED reduce production attrs ->
--- On PROP reduce production attrs ->
--- On PI reduce production attrs ->
--- On MATCH reduce production attrs ->
--- On LOWER_WORD reduce production attrs ->
--- On LOGIC_TRUE reduce production attrs ->
--- On LOGIC_NOT reduce production attrs ->
--- On LOGIC_FORALL reduce production attrs ->
--- On LOGIC_FALSE reduce production attrs ->
--- On LOGIC_EXISTS reduce production attrs ->
--- On LET reduce production attrs ->
--- On LEFT_PAREN reduce production attrs ->
--- On INTEGER reduce production attrs ->
--- On INT reduce production attrs ->
--- On IF reduce production attrs ->
--- On FUN reduce production attrs ->
--- On ARITH_MINUS reduce production attrs ->
+-- On error WILDCARD UPPER_WORD TYPE SINGLE_QUOTED PROP PI MATCH LOWER_WORD LOGIC_TRUE LOGIC_NOT LOGIC_FORALL LOGIC_FALSE LOGIC_EXISTS LET LEFT_PAREN INTEGER INT IF FUN ARITH_MINUS
+--   reduce production attrs ->
 
 State 272:
 ## Known stack suffix:
@@ -4672,7 +4321,8 @@ list(statement) -> statement . list(statement) [ EOI ]
 -- On statement shift to state 275
 -- On list(statement) shift to state 276
 ## Reductions:
--- On EOI reduce production list(statement) ->
+-- On EOI
+--   reduce production list(statement) ->
 
 State 276:
 ## Known stack suffix:

@@ -27,8 +27,8 @@ atomic_expression -> MIXIN . components END [ VAL RPAREN RCURLY PLUS IN EOF END 
 ## Transitions:
 -- On components shift to state 2
 ## Reductions:
--- On VAL reduce production components ->
--- On END reduce production components ->
+-- On VAL END
+--   reduce production components ->
 
 State 2:
 ## Known stack suffix:
@@ -83,7 +83,8 @@ components -> components VAL WILDCARD AS LIDENT . dependencies EQUAL expression 
 -- On LSQUARE shift to state 7
 -- On dependencies shift to state 11
 ## Reductions:
--- On EQUAL reduce production dependencies ->
+-- On EQUAL
+--   reduce production dependencies ->
 
 State 7:
 ## Known stack suffix:
@@ -93,8 +94,8 @@ dependencies -> LSQUARE . variables RSQUARE [ EQUAL ]
 ## Transitions:
 -- On variables shift to state 8
 ## Reductions:
--- On RSQUARE reduce production variables ->
--- On LIDENT reduce production variables ->
+-- On RSQUARE LIDENT
+--   reduce production variables ->
 
 State 8:
 ## Known stack suffix:
@@ -114,7 +115,8 @@ State 9:
 dependencies -> LSQUARE variables RSQUARE . [ EQUAL ]
 ## Transitions:
 ## Reductions:
--- On EQUAL reduce production dependencies -> LSQUARE variables RSQUARE
+-- On EQUAL
+--   reduce production dependencies -> LSQUARE variables RSQUARE
 
 State 10:
 ## Known stack suffix:
@@ -123,8 +125,8 @@ State 10:
 variables -> variables LIDENT . [ RSQUARE LIDENT ]
 ## Transitions:
 ## Reductions:
--- On RSQUARE reduce production variables -> variables LIDENT
--- On LIDENT reduce production variables -> variables LIDENT
+-- On RSQUARE LIDENT
+--   reduce production variables -> variables LIDENT
 
 State 11:
 ## Known stack suffix:
@@ -182,15 +184,8 @@ State 14:
 atomic_expression -> LIDENT . [ VAL RPAREN RCURLY PLUS IN EOF END DOT AND ]
 ## Transitions:
 ## Reductions:
--- On VAL reduce production atomic_expression -> LIDENT
--- On RPAREN reduce production atomic_expression -> LIDENT
--- On RCURLY reduce production atomic_expression -> LIDENT
--- On PLUS reduce production atomic_expression -> LIDENT
--- On IN reduce production atomic_expression -> LIDENT
--- On EOF reduce production atomic_expression -> LIDENT
--- On END reduce production atomic_expression -> LIDENT
--- On DOT reduce production atomic_expression -> LIDENT
--- On AND reduce production atomic_expression -> LIDENT
+-- On VAL RPAREN RCURLY PLUS IN EOF END DOT AND
+--   reduce production atomic_expression -> LIDENT
 
 State 15:
 ## Known stack suffix:
@@ -249,8 +244,8 @@ atomic_expression -> LCURLY . record_fields RCURLY [ VAL RPAREN RCURLY PLUS IN E
 ## Transitions:
 -- On record_fields shift to state 20
 ## Reductions:
--- On VAL reduce production record_fields ->
--- On RCURLY reduce production record_fields ->
+-- On VAL RCURLY
+--   reduce production record_fields ->
 
 State 20:
 ## Known stack suffix:
@@ -371,8 +366,8 @@ unary_expression -> DELETE . fields IN unary_expression [ VAL RPAREN RCURLY PLUS
 ## Transitions:
 -- On fields shift to state 31
 ## Reductions:
--- On LIDENT reduce production fields ->
--- On IN reduce production fields ->
+-- On LIDENT IN
+--   reduce production fields ->
 
 State 31:
 ## Known stack suffix:
@@ -392,8 +387,8 @@ State 32:
 fields -> fields LIDENT . [ LIDENT IN ]
 ## Transitions:
 ## Reductions:
--- On LIDENT reduce production fields -> fields LIDENT
--- On IN reduce production fields -> fields LIDENT
+-- On LIDENT IN
+--   reduce production fields -> fields LIDENT
 
 State 33:
 ## Known stack suffix:
@@ -436,14 +431,8 @@ State 35:
 unary_expression -> CLOSE unary_expression . [ VAL RPAREN RCURLY PLUS IN EOF END AND ]
 ## Transitions:
 ## Reductions:
--- On VAL reduce production unary_expression -> CLOSE unary_expression
--- On RPAREN reduce production unary_expression -> CLOSE unary_expression
--- On RCURLY reduce production unary_expression -> CLOSE unary_expression
--- On PLUS reduce production unary_expression -> CLOSE unary_expression
--- On IN reduce production unary_expression -> CLOSE unary_expression
--- On EOF reduce production unary_expression -> CLOSE unary_expression
--- On END reduce production unary_expression -> CLOSE unary_expression
--- On AND reduce production unary_expression -> CLOSE unary_expression
+-- On VAL RPAREN RCURLY PLUS IN EOF END AND
+--   reduce production unary_expression -> CLOSE unary_expression
 
 State 36:
 ## Known stack suffix:
@@ -454,14 +443,8 @@ unary_expression -> atomic_expression . [ VAL RPAREN RCURLY PLUS IN EOF END AND 
 ## Transitions:
 -- On DOT shift to state 37
 ## Reductions:
--- On VAL reduce production unary_expression -> atomic_expression
--- On RPAREN reduce production unary_expression -> atomic_expression
--- On RCURLY reduce production unary_expression -> atomic_expression
--- On PLUS reduce production unary_expression -> atomic_expression
--- On IN reduce production unary_expression -> atomic_expression
--- On EOF reduce production unary_expression -> atomic_expression
--- On END reduce production unary_expression -> atomic_expression
--- On AND reduce production unary_expression -> atomic_expression
+-- On VAL RPAREN RCURLY PLUS IN EOF END AND
+--   reduce production unary_expression -> atomic_expression
 
 State 37:
 ## Known stack suffix:
@@ -479,15 +462,8 @@ State 38:
 atomic_expression -> atomic_expression DOT LIDENT . [ VAL RPAREN RCURLY PLUS IN EOF END DOT AND ]
 ## Transitions:
 ## Reductions:
--- On VAL reduce production atomic_expression -> atomic_expression DOT LIDENT
--- On RPAREN reduce production atomic_expression -> atomic_expression DOT LIDENT
--- On RCURLY reduce production atomic_expression -> atomic_expression DOT LIDENT
--- On PLUS reduce production atomic_expression -> atomic_expression DOT LIDENT
--- On IN reduce production atomic_expression -> atomic_expression DOT LIDENT
--- On EOF reduce production atomic_expression -> atomic_expression DOT LIDENT
--- On END reduce production atomic_expression -> atomic_expression DOT LIDENT
--- On DOT reduce production atomic_expression -> atomic_expression DOT LIDENT
--- On AND reduce production atomic_expression -> atomic_expression DOT LIDENT
+-- On VAL RPAREN RCURLY PLUS IN EOF END DOT AND
+--   reduce production atomic_expression -> atomic_expression DOT LIDENT
 
 State 39:
 ## Known stack suffix:
@@ -496,14 +472,8 @@ State 39:
 unary_expression -> DELETE fields IN unary_expression . [ VAL RPAREN RCURLY PLUS IN EOF END AND ]
 ## Transitions:
 ## Reductions:
--- On VAL reduce production unary_expression -> DELETE fields IN unary_expression
--- On RPAREN reduce production unary_expression -> DELETE fields IN unary_expression
--- On RCURLY reduce production unary_expression -> DELETE fields IN unary_expression
--- On PLUS reduce production unary_expression -> DELETE fields IN unary_expression
--- On IN reduce production unary_expression -> DELETE fields IN unary_expression
--- On EOF reduce production unary_expression -> DELETE fields IN unary_expression
--- On END reduce production unary_expression -> DELETE fields IN unary_expression
--- On AND reduce production unary_expression -> DELETE fields IN unary_expression
+-- On VAL RPAREN RCURLY PLUS IN EOF END AND
+--   reduce production unary_expression -> DELETE fields IN unary_expression
 
 State 40:
 ## Known stack suffix:
@@ -512,14 +482,8 @@ State 40:
 unary_expression -> FAKE LIDENT DEPENDS ON LIDENT IN unary_expression . [ VAL RPAREN RCURLY PLUS IN EOF END AND ]
 ## Transitions:
 ## Reductions:
--- On VAL reduce production unary_expression -> FAKE LIDENT DEPENDS ON LIDENT IN unary_expression
--- On RPAREN reduce production unary_expression -> FAKE LIDENT DEPENDS ON LIDENT IN unary_expression
--- On RCURLY reduce production unary_expression -> FAKE LIDENT DEPENDS ON LIDENT IN unary_expression
--- On PLUS reduce production unary_expression -> FAKE LIDENT DEPENDS ON LIDENT IN unary_expression
--- On IN reduce production unary_expression -> FAKE LIDENT DEPENDS ON LIDENT IN unary_expression
--- On EOF reduce production unary_expression -> FAKE LIDENT DEPENDS ON LIDENT IN unary_expression
--- On END reduce production unary_expression -> FAKE LIDENT DEPENDS ON LIDENT IN unary_expression
--- On AND reduce production unary_expression -> FAKE LIDENT DEPENDS ON LIDENT IN unary_expression
+-- On VAL RPAREN RCURLY PLUS IN EOF END AND
+--   reduce production unary_expression -> FAKE LIDENT DEPENDS ON LIDENT IN unary_expression
 
 State 41:
 ## Known stack suffix:
@@ -528,14 +492,8 @@ State 41:
 summand_expression -> unary_expression . [ VAL RPAREN RCURLY PLUS IN EOF END AND ]
 ## Transitions:
 ## Reductions:
--- On VAL reduce production summand_expression -> unary_expression
--- On RPAREN reduce production summand_expression -> unary_expression
--- On RCURLY reduce production summand_expression -> unary_expression
--- On PLUS reduce production summand_expression -> unary_expression
--- On IN reduce production summand_expression -> unary_expression
--- On EOF reduce production summand_expression -> unary_expression
--- On END reduce production summand_expression -> unary_expression
--- On AND reduce production summand_expression -> unary_expression
+-- On VAL RPAREN RCURLY PLUS IN EOF END AND
+--   reduce production summand_expression -> unary_expression
 
 State 42:
 ## Known stack suffix:
@@ -546,13 +504,8 @@ summand_expression -> summand_expression . PLUS unary_expression [ VAL RPAREN RC
 ## Transitions:
 -- On PLUS shift to state 43
 ## Reductions:
--- On VAL reduce production expression -> summand_expression
--- On RPAREN reduce production expression -> summand_expression
--- On RCURLY reduce production expression -> summand_expression
--- On IN reduce production expression -> summand_expression
--- On EOF reduce production expression -> summand_expression
--- On END reduce production expression -> summand_expression
--- On AND reduce production expression -> summand_expression
+-- On VAL RPAREN RCURLY IN EOF END AND
+--   reduce production expression -> summand_expression
 
 State 43:
 ## Known stack suffix:
@@ -578,14 +531,8 @@ State 44:
 summand_expression -> summand_expression PLUS unary_expression . [ VAL RPAREN RCURLY PLUS IN EOF END AND ]
 ## Transitions:
 ## Reductions:
--- On VAL reduce production summand_expression -> summand_expression PLUS unary_expression
--- On RPAREN reduce production summand_expression -> summand_expression PLUS unary_expression
--- On RCURLY reduce production summand_expression -> summand_expression PLUS unary_expression
--- On PLUS reduce production summand_expression -> summand_expression PLUS unary_expression
--- On IN reduce production summand_expression -> summand_expression PLUS unary_expression
--- On EOF reduce production summand_expression -> summand_expression PLUS unary_expression
--- On END reduce production summand_expression -> summand_expression PLUS unary_expression
--- On AND reduce production summand_expression -> summand_expression PLUS unary_expression
+-- On VAL RPAREN RCURLY PLUS IN EOF END AND
+--   reduce production summand_expression -> summand_expression PLUS unary_expression
 
 State 45:
 ## Known stack suffix:
@@ -594,8 +541,8 @@ State 45:
 record_fields -> record_fields VAL LIDENT EQUAL expression . [ VAL RCURLY ]
 ## Transitions:
 ## Reductions:
--- On VAL reduce production record_fields -> record_fields VAL LIDENT EQUAL expression
--- On RCURLY reduce production record_fields -> record_fields VAL LIDENT EQUAL expression
+-- On VAL RCURLY
+--   reduce production record_fields -> record_fields VAL LIDENT EQUAL expression
 
 State 46:
 ## Known stack suffix:
@@ -604,15 +551,8 @@ State 46:
 atomic_expression -> LCURLY record_fields RCURLY . [ VAL RPAREN RCURLY PLUS IN EOF END DOT AND ]
 ## Transitions:
 ## Reductions:
--- On VAL reduce production atomic_expression -> LCURLY record_fields RCURLY
--- On RPAREN reduce production atomic_expression -> LCURLY record_fields RCURLY
--- On RCURLY reduce production atomic_expression -> LCURLY record_fields RCURLY
--- On PLUS reduce production atomic_expression -> LCURLY record_fields RCURLY
--- On IN reduce production atomic_expression -> LCURLY record_fields RCURLY
--- On EOF reduce production atomic_expression -> LCURLY record_fields RCURLY
--- On END reduce production atomic_expression -> LCURLY record_fields RCURLY
--- On DOT reduce production atomic_expression -> LCURLY record_fields RCURLY
--- On AND reduce production atomic_expression -> LCURLY record_fields RCURLY
+-- On VAL RPAREN RCURLY PLUS IN EOF END DOT AND
+--   reduce production atomic_expression -> LCURLY record_fields RCURLY
 
 State 47:
 ## Known stack suffix:
@@ -621,8 +561,8 @@ State 47:
 binding -> LIDENT EQUAL expression . [ IN AND ]
 ## Transitions:
 ## Reductions:
--- On IN reduce production binding -> LIDENT EQUAL expression
--- On AND reduce production binding -> LIDENT EQUAL expression
+-- On IN AND
+--   reduce production binding -> LIDENT EQUAL expression
 
 State 48:
 ## Known stack suffix:
@@ -662,13 +602,8 @@ State 50:
 expression -> LET REC bindings IN expression . [ VAL RPAREN RCURLY IN EOF END AND ]
 ## Transitions:
 ## Reductions:
--- On VAL reduce production expression -> LET REC bindings IN expression
--- On RPAREN reduce production expression -> LET REC bindings IN expression
--- On RCURLY reduce production expression -> LET REC bindings IN expression
--- On IN reduce production expression -> LET REC bindings IN expression
--- On EOF reduce production expression -> LET REC bindings IN expression
--- On END reduce production expression -> LET REC bindings IN expression
--- On AND reduce production expression -> LET REC bindings IN expression
+-- On VAL RPAREN RCURLY IN EOF END AND
+--   reduce production expression -> LET REC bindings IN expression
 
 State 51:
 ## Known stack suffix:
@@ -687,8 +622,8 @@ State 52:
 bindings -> bindings AND binding . [ IN AND ]
 ## Transitions:
 ## Reductions:
--- On IN reduce production bindings -> bindings AND binding
--- On AND reduce production bindings -> bindings AND binding
+-- On IN AND
+--   reduce production bindings -> bindings AND binding
 
 State 53:
 ## Known stack suffix:
@@ -697,8 +632,8 @@ State 53:
 bindings -> binding . [ IN AND ]
 ## Transitions:
 ## Reductions:
--- On IN reduce production bindings -> binding
--- On AND reduce production bindings -> binding
+-- On IN AND
+--   reduce production bindings -> binding
 
 State 54:
 ## Known stack suffix:
@@ -716,15 +651,8 @@ State 55:
 atomic_expression -> LPAREN expression RPAREN . [ VAL RPAREN RCURLY PLUS IN EOF END DOT AND ]
 ## Transitions:
 ## Reductions:
--- On VAL reduce production atomic_expression -> LPAREN expression RPAREN
--- On RPAREN reduce production atomic_expression -> LPAREN expression RPAREN
--- On RCURLY reduce production atomic_expression -> LPAREN expression RPAREN
--- On PLUS reduce production atomic_expression -> LPAREN expression RPAREN
--- On IN reduce production atomic_expression -> LPAREN expression RPAREN
--- On EOF reduce production atomic_expression -> LPAREN expression RPAREN
--- On END reduce production atomic_expression -> LPAREN expression RPAREN
--- On DOT reduce production atomic_expression -> LPAREN expression RPAREN
--- On AND reduce production atomic_expression -> LPAREN expression RPAREN
+-- On VAL RPAREN RCURLY PLUS IN EOF END DOT AND
+--   reduce production atomic_expression -> LPAREN expression RPAREN
 
 State 56:
 ## Known stack suffix:
@@ -733,8 +661,8 @@ State 56:
 components -> components VAL WILDCARD AS LIDENT dependencies EQUAL expression . [ VAL END ]
 ## Transitions:
 ## Reductions:
--- On VAL reduce production components -> components VAL WILDCARD AS LIDENT dependencies EQUAL expression
--- On END reduce production components -> components VAL WILDCARD AS LIDENT dependencies EQUAL expression
+-- On VAL END
+--   reduce production components -> components VAL WILDCARD AS LIDENT dependencies EQUAL expression
 
 State 57:
 ## Known stack suffix:
@@ -745,10 +673,8 @@ lident_pun -> LIDENT . [ VAL LSQUARE EQUAL END ]
 ## Transitions:
 -- On AS shift to state 58
 ## Reductions:
--- On VAL reduce production lident_pun -> LIDENT
--- On LSQUARE reduce production lident_pun -> LIDENT
--- On EQUAL reduce production lident_pun -> LIDENT
--- On END reduce production lident_pun -> LIDENT
+-- On VAL LSQUARE EQUAL END
+--   reduce production lident_pun -> LIDENT
 
 State 58:
 ## Known stack suffix:
@@ -766,10 +692,8 @@ State 59:
 lident_pun -> LIDENT AS LIDENT . [ VAL LSQUARE EQUAL END ]
 ## Transitions:
 ## Reductions:
--- On VAL reduce production lident_pun -> LIDENT AS LIDENT
--- On LSQUARE reduce production lident_pun -> LIDENT AS LIDENT
--- On EQUAL reduce production lident_pun -> LIDENT AS LIDENT
--- On END reduce production lident_pun -> LIDENT AS LIDENT
+-- On VAL LSQUARE EQUAL END
+--   reduce production lident_pun -> LIDENT AS LIDENT
 
 State 60:
 ## Known stack suffix:
@@ -781,9 +705,10 @@ components -> components VAL lident_pun . [ VAL END ]
 -- On LSQUARE shift to state 7
 -- On dependencies shift to state 61
 ## Reductions:
--- On VAL reduce production components -> components VAL lident_pun
--- On EQUAL reduce production dependencies ->
--- On END reduce production components -> components VAL lident_pun
+-- On VAL END
+--   reduce production components -> components VAL lident_pun
+-- On EQUAL
+--   reduce production dependencies ->
 
 State 61:
 ## Known stack suffix:
@@ -821,8 +746,8 @@ State 63:
 components -> components VAL lident_pun dependencies EQUAL expression . [ VAL END ]
 ## Transitions:
 ## Reductions:
--- On VAL reduce production components -> components VAL lident_pun dependencies EQUAL expression
--- On END reduce production components -> components VAL lident_pun dependencies EQUAL expression
+-- On VAL END
+--   reduce production components -> components VAL lident_pun dependencies EQUAL expression
 
 State 64:
 ## Known stack suffix:
@@ -831,15 +756,8 @@ State 64:
 atomic_expression -> MIXIN components END . [ VAL RPAREN RCURLY PLUS IN EOF END DOT AND ]
 ## Transitions:
 ## Reductions:
--- On VAL reduce production atomic_expression -> MIXIN components END
--- On RPAREN reduce production atomic_expression -> MIXIN components END
--- On RCURLY reduce production atomic_expression -> MIXIN components END
--- On PLUS reduce production atomic_expression -> MIXIN components END
--- On IN reduce production atomic_expression -> MIXIN components END
--- On EOF reduce production atomic_expression -> MIXIN components END
--- On END reduce production atomic_expression -> MIXIN components END
--- On DOT reduce production atomic_expression -> MIXIN components END
--- On AND reduce production atomic_expression -> MIXIN components END
+-- On VAL RPAREN RCURLY PLUS IN EOF END DOT AND
+--   reduce production atomic_expression -> MIXIN components END
 
 State 65:
 ## Known stack suffix:
@@ -848,7 +766,8 @@ State 65:
 toplevel' -> toplevel . [ # ]
 ## Transitions:
 ## Reductions:
--- On # accept toplevel
+-- On #
+--   accept toplevel
 
 State 66:
 ## Known stack suffix:
@@ -866,5 +785,6 @@ State 67:
 toplevel -> expression EOF . [ # ]
 ## Transitions:
 ## Reductions:
--- On # reduce production toplevel -> expression EOF
+-- On #
+--   reduce production toplevel -> expression EOF
 

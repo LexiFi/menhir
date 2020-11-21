@@ -43,7 +43,8 @@ universe -> UNIV COLON LBRACE . list(urelements) RBRACE SEMI [ VAR SYM RUN INVAR
 -- On list(urelements) shift to state 12
 -- On interval shift to state 11
 ## Reductions:
--- On RBRACE reduce production list(urelements) ->
+-- On RBRACE
+--   reduce production list(urelements) ->
 
 State 4:
 ## Known stack suffix:
@@ -72,10 +73,8 @@ urelements -> IDX_ID . [ RBRACE PLAIN_ID NUMBER IDX_ID ]
 ## Transitions:
 -- On DOTDOT shift to state 7
 ## Reductions:
--- On RBRACE reduce production urelements -> IDX_ID
--- On PLAIN_ID reduce production urelements -> IDX_ID
--- On NUMBER reduce production urelements -> IDX_ID
--- On IDX_ID reduce production urelements -> IDX_ID
+-- On RBRACE PLAIN_ID NUMBER IDX_ID
+--   reduce production urelements -> IDX_ID
 
 State 7:
 ## Known stack suffix:
@@ -108,7 +107,8 @@ list(urelements) -> urelements . list(urelements) [ RBRACE ]
 -- On list(urelements) shift to state 10
 -- On interval shift to state 11
 ## Reductions:
--- On RBRACE reduce production list(urelements) ->
+-- On RBRACE
+--   reduce production list(urelements) ->
 
 State 10:
 ## Known stack suffix:
@@ -147,12 +147,8 @@ universe -> UNIV COLON LBRACE list(urelements) RBRACE . SEMI [ VAR SYM RUN INVAR
 ## Transitions:
 -- On SEMI shift to state 14
 ## Reductions:
--- On VAR reduce production universe -> UNIV COLON LBRACE list(urelements) RBRACE
--- On SYM reduce production universe -> UNIV COLON LBRACE list(urelements) RBRACE
--- On RUN reduce production universe -> UNIV COLON LBRACE list(urelements) RBRACE
--- On INVARIANT reduce production universe -> UNIV COLON LBRACE list(urelements) RBRACE
--- On INST reduce production universe -> UNIV COLON LBRACE list(urelements) RBRACE
--- On CONST reduce production universe -> UNIV COLON LBRACE list(urelements) RBRACE
+-- On VAR SYM RUN INVARIANT INST CONST
+--   reduce production universe -> UNIV COLON LBRACE list(urelements) RBRACE
 
 State 14:
 ## Known stack suffix:
@@ -174,10 +170,8 @@ parse_problem -> universe . list(declaration) nonempty_list(paragraph) EOF [ # ]
 -- On list(declaration) shift to state 71
 -- On declaration shift to state 316
 ## Reductions:
--- On SYM reduce production list(declaration) ->
--- On RUN reduce production list(declaration) ->
--- On INVARIANT reduce production list(declaration) ->
--- On INST reduce production list(declaration) ->
+-- On SYM RUN INVARIANT INST
+--   reduce production list(declaration) ->
 
 State 16:
 ## Known stack suffix:
@@ -286,7 +280,8 @@ bound -> LBRACE . list(element) RBRACE [ VAR UNIV THEN SYM SEMI RUN RPAREN PLUS 
 -- On element shift to state 38
 -- On atom shift to state 40
 ## Reductions:
--- On RBRACE reduce production list(element) ->
+-- On RBRACE
+--   reduce production list(element) ->
 
 State 25:
 ## Known stack suffix:
@@ -359,7 +354,8 @@ nonempty_list(atom) -> atom . nonempty_list(atom) [ RPAREN ]
 -- On nonempty_list(atom) shift to state 32
 -- On atom shift to state 31
 ## Reductions:
--- On RPAREN reduce production nonempty_list(atom) -> atom
+-- On RPAREN
+--   reduce production nonempty_list(atom) -> atom
 
 State 32:
 ## Known stack suffix:
@@ -379,11 +375,8 @@ interval -> IDX_ID . DOTDOT IDX_ID [ RBRACE PLAIN_ID NUMBER LPAREN IDX_ID ]
 ## Transitions:
 -- On DOTDOT shift to state 7
 ## Reductions:
--- On RBRACE reduce production atom -> IDX_ID
--- On PLAIN_ID reduce production atom -> IDX_ID
--- On NUMBER reduce production atom -> IDX_ID
--- On LPAREN reduce production atom -> IDX_ID
--- On IDX_ID reduce production atom -> IDX_ID
+-- On RBRACE PLAIN_ID NUMBER LPAREN IDX_ID
+--   reduce production atom -> IDX_ID
 
 State 34:
 ## Known stack suffix:
@@ -437,7 +430,8 @@ list(element) -> element . list(element) [ RBRACE ]
 -- On element shift to state 38
 -- On atom shift to state 40
 ## Reductions:
--- On RBRACE reduce production list(element) ->
+-- On RBRACE
+--   reduce production list(element) ->
 
 State 39:
 ## Known stack suffix:
@@ -502,22 +496,8 @@ bound -> bound PLUS bound . [ VAR UNIV THEN SYM SEMI RUN RPAREN PLUS PLAIN_ID ON
 ## Transitions:
 -- On ARROW shift to state 45
 ## Reductions:
--- On VAR reduce production bound -> bound PLUS bound
--- On UNIV reduce production bound -> bound PLUS bound
--- On THEN reduce production bound -> bound PLUS bound
--- On SYM reduce production bound -> bound PLUS bound
--- On SEMI reduce production bound -> bound PLUS bound
--- On RUN reduce production bound -> bound PLUS bound
--- On RPAREN reduce production bound -> bound PLUS bound
--- On PLUS reduce production bound -> bound PLUS bound
--- On PLAIN_ID reduce production bound -> bound PLUS bound
--- On ONE reduce production bound -> bound PLUS bound
--- On LPAREN reduce production bound -> bound PLUS bound
--- On LONE reduce production bound -> bound PLUS bound
--- On LBRACE reduce production bound -> bound PLUS bound
--- On INVARIANT reduce production bound -> bound PLUS bound
--- On INST reduce production bound -> bound PLUS bound
--- On CONST reduce production bound -> bound PLUS bound
+-- On VAR UNIV THEN SYM SEMI RUN RPAREN PLUS PLAIN_ID ONE LPAREN LONE LBRACE INVARIANT INST CONST
+--   reduce production bound -> bound PLUS bound
 
 State 45:
 ## Known stack suffix:
@@ -530,10 +510,8 @@ bound -> bound ARROW . option(boundmult) bound [ VAR UNIV THEN SYM SEMI RUN RPAR
 -- On option(boundmult) shift to state 48
 -- On boundmult shift to state 50
 ## Reductions:
--- On UNIV reduce production option(boundmult) ->
--- On PLAIN_ID reduce production option(boundmult) ->
--- On LPAREN reduce production option(boundmult) ->
--- On LBRACE reduce production option(boundmult) ->
+-- On UNIV PLAIN_ID LPAREN LBRACE
+--   reduce production option(boundmult) ->
 
 State 46:
 ## Known stack suffix:
@@ -607,17 +585,10 @@ declaration -> VAR PLAIN_ID colon_w_or_wo_arity bound . option(boundmult) bound 
 -- On next_scope shift to state 62
 -- On boundmult shift to state 50
 ## Reductions:
--- On VAR reduce production option(next_scope) ->
--- On UNIV reduce production option(boundmult) ->
--- On SYM reduce production option(next_scope) ->
--- On SEMI reduce production option(next_scope) ->
--- On RUN reduce production option(next_scope) ->
--- On PLAIN_ID reduce production option(boundmult) ->
--- On LPAREN reduce production option(boundmult) ->
--- On LBRACE reduce production option(boundmult) ->
--- On INVARIANT reduce production option(next_scope) ->
--- On INST reduce production option(next_scope) ->
--- On CONST reduce production option(next_scope) ->
+-- On UNIV PLAIN_ID LPAREN LBRACE
+--   reduce production option(boundmult) ->
+-- On VAR SYM SEMI RUN INVARIANT INST CONST
+--   reduce production option(next_scope) ->
 
 State 52:
 ## Known stack suffix:
@@ -649,17 +620,10 @@ next_scope -> THEN bound . option(boundmult) bound [ VAR SYM SEMI RUN INVARIANT 
 -- On option(boundmult) shift to state 54
 -- On boundmult shift to state 50
 ## Reductions:
--- On VAR reduce production next_scope -> THEN bound
--- On UNIV reduce production option(boundmult) ->
--- On SYM reduce production next_scope -> THEN bound
--- On SEMI reduce production next_scope -> THEN bound
--- On RUN reduce production next_scope -> THEN bound
--- On PLAIN_ID reduce production option(boundmult) ->
--- On LPAREN reduce production option(boundmult) ->
--- On LBRACE reduce production option(boundmult) ->
--- On INVARIANT reduce production next_scope -> THEN bound
--- On INST reduce production next_scope -> THEN bound
--- On CONST reduce production next_scope -> THEN bound
+-- On VAR SYM SEMI RUN INVARIANT INST CONST
+--   reduce production next_scope -> THEN bound
+-- On UNIV PLAIN_ID LPAREN LBRACE
+--   reduce production option(boundmult) ->
 
 State 54:
 ## Known stack suffix:
@@ -685,13 +649,8 @@ next_scope -> THEN bound option(boundmult) bound . [ VAR SYM SEMI RUN INVARIANT 
 -- On PLUS shift to state 43
 -- On ARROW shift to state 45
 ## Reductions:
--- On VAR reduce production next_scope -> THEN bound option(boundmult) bound
--- On SYM reduce production next_scope -> THEN bound option(boundmult) bound
--- On SEMI reduce production next_scope -> THEN bound option(boundmult) bound
--- On RUN reduce production next_scope -> THEN bound option(boundmult) bound
--- On INVARIANT reduce production next_scope -> THEN bound option(boundmult) bound
--- On INST reduce production next_scope -> THEN bound option(boundmult) bound
--- On CONST reduce production next_scope -> THEN bound option(boundmult) bound
+-- On VAR SYM SEMI RUN INVARIANT INST CONST
+--   reduce production next_scope -> THEN bound option(boundmult) bound
 
 State 56:
 ## Known stack suffix:
@@ -702,12 +661,8 @@ declaration -> VAR PLAIN_ID colon_w_or_wo_arity bound option(next_scope) . SEMI 
 ## Transitions:
 -- On SEMI shift to state 57
 ## Reductions:
--- On VAR reduce production declaration -> VAR PLAIN_ID colon_w_or_wo_arity bound option(next_scope)
--- On SYM reduce production declaration -> VAR PLAIN_ID colon_w_or_wo_arity bound option(next_scope)
--- On RUN reduce production declaration -> VAR PLAIN_ID colon_w_or_wo_arity bound option(next_scope)
--- On INVARIANT reduce production declaration -> VAR PLAIN_ID colon_w_or_wo_arity bound option(next_scope)
--- On INST reduce production declaration -> VAR PLAIN_ID colon_w_or_wo_arity bound option(next_scope)
--- On CONST reduce production declaration -> VAR PLAIN_ID colon_w_or_wo_arity bound option(next_scope)
+-- On VAR SYM RUN INVARIANT INST CONST
+--   reduce production declaration -> VAR PLAIN_ID colon_w_or_wo_arity bound option(next_scope)
 
 State 57:
 ## Known stack suffix:
@@ -747,13 +702,8 @@ declaration -> VAR PLAIN_ID colon_w_or_wo_arity bound option(boundmult) bound . 
 -- On option(next_scope) shift to state 60
 -- On next_scope shift to state 62
 ## Reductions:
--- On VAR reduce production option(next_scope) ->
--- On SYM reduce production option(next_scope) ->
--- On SEMI reduce production option(next_scope) ->
--- On RUN reduce production option(next_scope) ->
--- On INVARIANT reduce production option(next_scope) ->
--- On INST reduce production option(next_scope) ->
--- On CONST reduce production option(next_scope) ->
+-- On VAR SYM SEMI RUN INVARIANT INST CONST
+--   reduce production option(next_scope) ->
 
 State 60:
 ## Known stack suffix:
@@ -764,12 +714,8 @@ declaration -> VAR PLAIN_ID colon_w_or_wo_arity bound option(boundmult) bound op
 ## Transitions:
 -- On SEMI shift to state 61
 ## Reductions:
--- On VAR reduce production declaration -> VAR PLAIN_ID colon_w_or_wo_arity bound option(boundmult) bound option(next_scope)
--- On SYM reduce production declaration -> VAR PLAIN_ID colon_w_or_wo_arity bound option(boundmult) bound option(next_scope)
--- On RUN reduce production declaration -> VAR PLAIN_ID colon_w_or_wo_arity bound option(boundmult) bound option(next_scope)
--- On INVARIANT reduce production declaration -> VAR PLAIN_ID colon_w_or_wo_arity bound option(boundmult) bound option(next_scope)
--- On INST reduce production declaration -> VAR PLAIN_ID colon_w_or_wo_arity bound option(boundmult) bound option(next_scope)
--- On CONST reduce production declaration -> VAR PLAIN_ID colon_w_or_wo_arity bound option(boundmult) bound option(next_scope)
+-- On VAR SYM RUN INVARIANT INST CONST
+--   reduce production declaration -> VAR PLAIN_ID colon_w_or_wo_arity bound option(boundmult) bound option(next_scope)
 
 State 61:
 ## Known stack suffix:
@@ -850,16 +796,10 @@ declaration -> CONST PLAIN_ID colon_w_or_wo_arity bound . option(boundmult) boun
 -- On option(boundmult) shift to state 68
 -- On boundmult shift to state 50
 ## Reductions:
--- On VAR reduce production declaration -> CONST PLAIN_ID colon_w_or_wo_arity bound
--- On UNIV reduce production option(boundmult) ->
--- On SYM reduce production declaration -> CONST PLAIN_ID colon_w_or_wo_arity bound
--- On RUN reduce production declaration -> CONST PLAIN_ID colon_w_or_wo_arity bound
--- On PLAIN_ID reduce production option(boundmult) ->
--- On LPAREN reduce production option(boundmult) ->
--- On LBRACE reduce production option(boundmult) ->
--- On INVARIANT reduce production declaration -> CONST PLAIN_ID colon_w_or_wo_arity bound
--- On INST reduce production declaration -> CONST PLAIN_ID colon_w_or_wo_arity bound
--- On CONST reduce production declaration -> CONST PLAIN_ID colon_w_or_wo_arity bound
+-- On VAR SYM RUN INVARIANT INST CONST
+--   reduce production declaration -> CONST PLAIN_ID colon_w_or_wo_arity bound
+-- On UNIV PLAIN_ID LPAREN LBRACE
+--   reduce production option(boundmult) ->
 
 State 67:
 ## Known stack suffix:
@@ -897,12 +837,8 @@ declaration -> CONST PLAIN_ID colon_w_or_wo_arity bound option(boundmult) bound 
 -- On PLUS shift to state 43
 -- On ARROW shift to state 45
 ## Reductions:
--- On VAR reduce production declaration -> CONST PLAIN_ID colon_w_or_wo_arity bound option(boundmult) bound
--- On SYM reduce production declaration -> CONST PLAIN_ID colon_w_or_wo_arity bound option(boundmult) bound
--- On RUN reduce production declaration -> CONST PLAIN_ID colon_w_or_wo_arity bound option(boundmult) bound
--- On INVARIANT reduce production declaration -> CONST PLAIN_ID colon_w_or_wo_arity bound option(boundmult) bound
--- On INST reduce production declaration -> CONST PLAIN_ID colon_w_or_wo_arity bound option(boundmult) bound
--- On CONST reduce production declaration -> CONST PLAIN_ID colon_w_or_wo_arity bound option(boundmult) bound
+-- On VAR SYM RUN INVARIANT INST CONST
+--   reduce production declaration -> CONST PLAIN_ID colon_w_or_wo_arity bound option(boundmult) bound
 
 State 70:
 ## Known stack suffix:
@@ -1001,12 +937,8 @@ bracketed_symmetry -> LBRACKET symmetry RBRACKET . option(SEMI) [ SYM RUN LBRACK
 -- On SEMI shift to state 79
 -- On option(SEMI) shift to state 80
 ## Reductions:
--- On SYM reduce production option(SEMI) ->
--- On RUN reduce production option(SEMI) ->
--- On LBRACKET reduce production option(SEMI) ->
--- On INVARIANT reduce production option(SEMI) ->
--- On INST reduce production option(SEMI) ->
--- On EOF reduce production option(SEMI) ->
+-- On SYM RUN LBRACKET INVARIANT INST EOF
+--   reduce production option(SEMI) ->
 
 State 79:
 ## Known stack suffix:
@@ -1037,8 +969,8 @@ nonempty_list(sym_element) -> sym_element . nonempty_list(sym_element) [ RBRACKE
 -- On sym_element shift to state 81
 -- On nonempty_list(sym_element) shift to state 82
 ## Reductions:
--- On RBRACKET reduce production nonempty_list(sym_element) -> sym_element
--- On LTE reduce production nonempty_list(sym_element) -> sym_element
+-- On RBRACKET LTE
+--   reduce production nonempty_list(sym_element) -> sym_element
 
 State 82:
 ## Known stack suffix:
@@ -1098,11 +1030,8 @@ nonempty_list(bracketed_symmetry) -> bracketed_symmetry . nonempty_list(brackete
 -- On nonempty_list(bracketed_symmetry) shift to state 88
 -- On bracketed_symmetry shift to state 87
 ## Reductions:
--- On SYM reduce production nonempty_list(bracketed_symmetry) -> bracketed_symmetry
--- On RUN reduce production nonempty_list(bracketed_symmetry) -> bracketed_symmetry
--- On INVARIANT reduce production nonempty_list(bracketed_symmetry) -> bracketed_symmetry
--- On INST reduce production nonempty_list(bracketed_symmetry) -> bracketed_symmetry
--- On EOF reduce production nonempty_list(bracketed_symmetry) -> bracketed_symmetry
+-- On SYM RUN INVARIANT INST EOF
+--   reduce production nonempty_list(bracketed_symmetry) -> bracketed_symmetry
 
 State 88:
 ## Known stack suffix:
@@ -1562,67 +1491,10 @@ separated_nonempty_list(COMMA,plain_id) -> PLAIN_ID . COMMA separated_nonempty_l
 ## Transitions:
 -- On COMMA shift to state 107
 ## Reductions:
--- On UNTIL reduce production expr -> PLAIN_ID
--- On UNIV reduce production expr -> PLAIN_ID
--- On TRUE reduce production expr -> PLAIN_ID
--- On TILDE reduce production expr -> PLAIN_ID
--- On SYM reduce production expr -> PLAIN_ID
--- On SUB reduce production expr -> PLAIN_ID
--- On STAR reduce production expr -> PLAIN_ID
--- On SOMETIME reduce production expr -> PLAIN_ID
--- On SOME reduce production expr -> PLAIN_ID
--- On SINCE reduce production expr -> PLAIN_ID
--- On SEMI reduce production expr -> PLAIN_ID
--- On RUN reduce production expr -> PLAIN_ID
--- On RPROJ reduce production expr -> PLAIN_ID
--- On RPAREN reduce production expr -> PLAIN_ID
--- On RELEASES reduce production expr -> PLAIN_ID
--- On RBRACE reduce production expr -> PLAIN_ID
--- On PRIME reduce production expr -> PLAIN_ID
--- On PREVIOUS reduce production expr -> PLAIN_ID
--- On PLUS reduce production expr -> PLAIN_ID
--- On PLAIN_ID reduce production expr -> PLAIN_ID
--- On OVERRIDE reduce production expr -> PLAIN_ID
--- On OR reduce production expr -> PLAIN_ID
--- On ONE reduce production expr -> PLAIN_ID
--- On ONCE reduce production expr -> PLAIN_ID
--- On NUMBER reduce production expr -> PLAIN_ID
--- On NOT_IN reduce production expr -> PLAIN_ID
--- On NOT reduce production expr -> PLAIN_ID
--- On NONE reduce production expr -> PLAIN_ID
--- On NO reduce production expr -> PLAIN_ID
--- On NEXT reduce production expr -> PLAIN_ID
--- On NEQ reduce production expr -> PLAIN_ID
--- On NEG reduce production expr -> PLAIN_ID
--- On MINUS reduce production expr -> PLAIN_ID
--- On LPROJ reduce production expr -> PLAIN_ID
--- On LPAREN reduce production expr -> PLAIN_ID
--- On LONE reduce production expr -> PLAIN_ID
--- On LET reduce production expr -> PLAIN_ID
--- On LBRACKET reduce production expr -> PLAIN_ID
--- On LBRACE reduce production expr -> PLAIN_ID
--- On INVARIANT reduce production expr -> PLAIN_ID
--- On INTER reduce production expr -> PLAIN_ID
--- On INST reduce production expr -> PLAIN_ID
--- On IN reduce production expr -> PLAIN_ID
--- On IMPLIES reduce production expr -> PLAIN_ID
--- On IFF reduce production expr -> PLAIN_ID
--- On IDEN reduce production expr -> PLAIN_ID
--- On HISTORICALLY reduce production expr -> PLAIN_ID
--- On HAT reduce production expr -> PLAIN_ID
--- On HASH reduce production expr -> PLAIN_ID
--- On FALSE reduce production expr -> PLAIN_ID
--- On EVENTUALLY reduce production expr -> PLAIN_ID
--- On EQ reduce production expr -> PLAIN_ID
--- On EOF reduce production expr -> PLAIN_ID
--- On ELSE reduce production expr -> PLAIN_ID
--- On DOT reduce production expr -> PLAIN_ID
--- On COLON reduce production separated_nonempty_list(COMMA,plain_id) -> PLAIN_ID
--- On ARROW reduce production expr -> PLAIN_ID
--- On AND reduce production expr -> PLAIN_ID
--- On ALWAYS reduce production expr -> PLAIN_ID
--- On ALL reduce production expr -> PLAIN_ID
--- On ADD reduce production expr -> PLAIN_ID
+-- On UNTIL UNIV TRUE TILDE SYM SUB STAR SOMETIME SOME SINCE SEMI RUN RPROJ RPAREN RELEASES RBRACE PRIME PREVIOUS PLUS PLAIN_ID OVERRIDE OR ONE ONCE NUMBER NOT_IN NOT NONE NO NEXT NEQ NEG MINUS LPROJ LPAREN LONE LET LBRACKET LBRACE INVARIANT INTER INST IN IMPLIES IFF IDEN HISTORICALLY HAT HASH FALSE EVENTUALLY EQ EOF ELSE DOT ARROW AND ALWAYS ALL ADD
+--   reduce production expr -> PLAIN_ID
+-- On COLON
+--   reduce production separated_nonempty_list(COMMA,plain_id) -> PLAIN_ID
 
 State 107:
 ## Known stack suffix:
@@ -1643,7 +1515,8 @@ separated_nonempty_list(COMMA,plain_id) -> PLAIN_ID . COMMA separated_nonempty_l
 ## Transitions:
 -- On COMMA shift to state 107
 ## Reductions:
--- On COLON reduce production separated_nonempty_list(COMMA,plain_id) -> PLAIN_ID
+-- On COLON
+--   reduce production separated_nonempty_list(COMMA,plain_id) -> PLAIN_ID
 
 State 109:
 ## Known stack suffix:
@@ -2075,7 +1948,8 @@ formula -> LBRACE . specification RBRACE [ UNTIL SINCE RELEASES OR IMPLIES IFF A
 -- On formula shift to state 217
 -- On expr shift to state 151
 ## Reductions:
--- On RBRACE reduce production list(formula_semi) ->
+-- On RBRACE
+--   reduce production list(formula_semi) ->
 
 State 122:
 ## Known stack suffix:
@@ -2125,7 +1999,8 @@ formula -> LBRACE . specification RBRACE [ UNTIL UNIV TRUE TILDE SYM SUB STAR SO
 -- On formula shift to state 217
 -- On expr shift to state 151
 ## Reductions:
--- On RBRACE reduce production list(formula_semi) ->
+-- On RBRACE
+--   reduce production list(formula_semi) ->
 
 State 123:
 ## Known stack suffix:
@@ -2726,70 +2601,8 @@ formula -> expr . NEQ expr [ UNTIL SINCE RELEASES OR IMPLIES IFF AND ]
 -- On LBRACKET shift to state 155
 -- On DOT shift to state 165
 ## Reductions:
--- On UNTIL reduce production expr -> expr RPROJ expr
--- On UNIV reduce production expr -> expr RPROJ expr
--- On TRUE reduce production expr -> expr RPROJ expr
--- On TILDE reduce production expr -> expr RPROJ expr
--- On SYM reduce production expr -> expr RPROJ expr
--- On SUB reduce production expr -> expr RPROJ expr
--- On STAR reduce production expr -> expr RPROJ expr
--- On SOMETIME reduce production expr -> expr RPROJ expr
--- On SOME reduce production expr -> expr RPROJ expr
--- On SINCE reduce production expr -> expr RPROJ expr
--- On SEMI reduce production expr -> expr RPROJ expr
--- On RUN reduce production expr -> expr RPROJ expr
--- On RPROJ reduce production expr -> expr RPROJ expr
--- On RPAREN reduce production expr -> expr RPROJ expr
--- On RELEASES reduce production expr -> expr RPROJ expr
--- On RBRACKET reduce production expr -> expr RPROJ expr
--- On RBRACE reduce production expr -> expr RPROJ expr
--- On PREVIOUS reduce production expr -> expr RPROJ expr
--- On PLUS reduce production expr -> expr RPROJ expr
--- On PLAIN_ID reduce production expr -> expr RPROJ expr
--- On OVERRIDE reduce production expr -> expr RPROJ expr
--- On OR reduce production expr -> expr RPROJ expr
--- On ONE reduce production expr -> expr RPROJ expr
--- On ONCE reduce production expr -> expr RPROJ expr
--- On NUMBER reduce production expr -> expr RPROJ expr
--- On NOT_IN reduce production expr -> expr RPROJ expr
--- On NOT reduce production expr -> expr RPROJ expr
--- On NONE reduce production expr -> expr RPROJ expr
--- On NO reduce production expr -> expr RPROJ expr
--- On NEXT reduce production expr -> expr RPROJ expr
--- On NEQ reduce production expr -> expr RPROJ expr
--- On NEG reduce production expr -> expr RPROJ expr
--- On MINUS reduce production expr -> expr RPROJ expr
--- On LTE reduce production expr -> expr RPROJ expr
--- On LT reduce production expr -> expr RPROJ expr
--- On LPROJ reduce production expr -> expr RPROJ expr
--- On LPAREN reduce production expr -> expr RPROJ expr
--- On LONE reduce production expr -> expr RPROJ expr
--- On LET reduce production expr -> expr RPROJ expr
--- On LBRACE reduce production expr -> expr RPROJ expr
--- On INVARIANT reduce production expr -> expr RPROJ expr
--- On INTER reduce production expr -> expr RPROJ expr
--- On INST reduce production expr -> expr RPROJ expr
--- On IN reduce production expr -> expr RPROJ expr
--- On IMPLIES reduce production expr -> expr RPROJ expr
--- On IFF reduce production expr -> expr RPROJ expr
--- On IDEN reduce production expr -> expr RPROJ expr
--- On HISTORICALLY reduce production expr -> expr RPROJ expr
--- On HAT reduce production expr -> expr RPROJ expr
--- On HASH reduce production expr -> expr RPROJ expr
--- On GTE reduce production expr -> expr RPROJ expr
--- On GT reduce production expr -> expr RPROJ expr
--- On FALSE reduce production expr -> expr RPROJ expr
--- On EVENTUALLY reduce production expr -> expr RPROJ expr
--- On EQ reduce production expr -> expr RPROJ expr
--- On EOF reduce production expr -> expr RPROJ expr
--- On ELSE reduce production expr -> expr RPROJ expr
--- On COMMA reduce production expr -> expr RPROJ expr
--- On BAR reduce production expr -> expr RPROJ expr
--- On ARROW reduce production expr -> expr RPROJ expr
--- On AND reduce production expr -> expr RPROJ expr
--- On ALWAYS reduce production expr -> expr RPROJ expr
--- On ALL reduce production expr -> expr RPROJ expr
--- On ADD reduce production expr -> expr RPROJ expr
+-- On UNTIL UNIV TRUE TILDE SYM SUB STAR SOMETIME SOME SINCE SEMI RUN RPROJ RPAREN RELEASES RBRACKET RBRACE PREVIOUS PLUS PLAIN_ID OVERRIDE OR ONE ONCE NUMBER NOT_IN NOT NONE NO NEXT NEQ NEG MINUS LTE LT LPROJ LPAREN LONE LET LBRACE INVARIANT INTER INST IN IMPLIES IFF IDEN HISTORICALLY HAT HASH GTE GT FALSE EVENTUALLY EQ EOF ELSE COMMA BAR ARROW AND ALWAYS ALL ADD
+--   reduce production expr -> expr RPROJ expr
 
 State 154:
 ## Known stack suffix:
@@ -2897,7 +2710,8 @@ separated_nonempty_list(COMMA,expr) -> expr . COMMA separated_nonempty_list(COMM
 -- On COMMA shift to state 181
 -- On ARROW shift to state 169
 ## Reductions:
--- On RBRACKET reduce production separated_nonempty_list(COMMA,expr) -> expr
+-- On RBRACKET
+--   reduce production separated_nonempty_list(COMMA,expr) -> expr
 
 State 159:
 ## Known stack suffix:
@@ -2969,65 +2783,8 @@ formula -> expr . NEQ expr [ UNTIL SINCE RELEASES OR IMPLIES IFF AND ]
 -- On DOT shift to state 165
 -- On ARROW shift to state 169
 ## Reductions:
--- On UNTIL reduce production expr -> expr PLUS expr
--- On UNIV reduce production expr -> expr PLUS expr
--- On TRUE reduce production expr -> expr PLUS expr
--- On TILDE reduce production expr -> expr PLUS expr
--- On SYM reduce production expr -> expr PLUS expr
--- On SUB reduce production expr -> expr PLUS expr
--- On STAR reduce production expr -> expr PLUS expr
--- On SOMETIME reduce production expr -> expr PLUS expr
--- On SOME reduce production expr -> expr PLUS expr
--- On SINCE reduce production expr -> expr PLUS expr
--- On SEMI reduce production expr -> expr PLUS expr
--- On RUN reduce production expr -> expr PLUS expr
--- On RPAREN reduce production expr -> expr PLUS expr
--- On RELEASES reduce production expr -> expr PLUS expr
--- On RBRACKET reduce production expr -> expr PLUS expr
--- On RBRACE reduce production expr -> expr PLUS expr
--- On PREVIOUS reduce production expr -> expr PLUS expr
--- On PLUS reduce production expr -> expr PLUS expr
--- On PLAIN_ID reduce production expr -> expr PLUS expr
--- On OR reduce production expr -> expr PLUS expr
--- On ONE reduce production expr -> expr PLUS expr
--- On ONCE reduce production expr -> expr PLUS expr
--- On NUMBER reduce production expr -> expr PLUS expr
--- On NOT_IN reduce production expr -> expr PLUS expr
--- On NOT reduce production expr -> expr PLUS expr
--- On NONE reduce production expr -> expr PLUS expr
--- On NO reduce production expr -> expr PLUS expr
--- On NEXT reduce production expr -> expr PLUS expr
--- On NEQ reduce production expr -> expr PLUS expr
--- On NEG reduce production expr -> expr PLUS expr
--- On MINUS reduce production expr -> expr PLUS expr
--- On LTE reduce production expr -> expr PLUS expr
--- On LT reduce production expr -> expr PLUS expr
--- On LPAREN reduce production expr -> expr PLUS expr
--- On LONE reduce production expr -> expr PLUS expr
--- On LET reduce production expr -> expr PLUS expr
--- On LBRACE reduce production expr -> expr PLUS expr
--- On INVARIANT reduce production expr -> expr PLUS expr
--- On INST reduce production expr -> expr PLUS expr
--- On IN reduce production expr -> expr PLUS expr
--- On IMPLIES reduce production expr -> expr PLUS expr
--- On IFF reduce production expr -> expr PLUS expr
--- On IDEN reduce production expr -> expr PLUS expr
--- On HISTORICALLY reduce production expr -> expr PLUS expr
--- On HAT reduce production expr -> expr PLUS expr
--- On HASH reduce production expr -> expr PLUS expr
--- On GTE reduce production expr -> expr PLUS expr
--- On GT reduce production expr -> expr PLUS expr
--- On FALSE reduce production expr -> expr PLUS expr
--- On EVENTUALLY reduce production expr -> expr PLUS expr
--- On EQ reduce production expr -> expr PLUS expr
--- On EOF reduce production expr -> expr PLUS expr
--- On ELSE reduce production expr -> expr PLUS expr
--- On COMMA reduce production expr -> expr PLUS expr
--- On BAR reduce production expr -> expr PLUS expr
--- On AND reduce production expr -> expr PLUS expr
--- On ALWAYS reduce production expr -> expr PLUS expr
--- On ALL reduce production expr -> expr PLUS expr
--- On ADD reduce production expr -> expr PLUS expr
+-- On UNTIL UNIV TRUE TILDE SYM SUB STAR SOMETIME SOME SINCE SEMI RUN RPAREN RELEASES RBRACKET RBRACE PREVIOUS PLUS PLAIN_ID OR ONE ONCE NUMBER NOT_IN NOT NONE NO NEXT NEQ NEG MINUS LTE LT LPAREN LONE LET LBRACE INVARIANT INST IN IMPLIES IFF IDEN HISTORICALLY HAT HASH GTE GT FALSE EVENTUALLY EQ EOF ELSE COMMA BAR AND ALWAYS ALL ADD
+--   reduce production expr -> expr PLUS expr
 
 State 161:
 ## Known stack suffix:
@@ -3098,66 +2855,8 @@ formula -> expr . NEQ expr [ UNTIL SINCE RELEASES OR IMPLIES IFF AND ]
 -- On DOT shift to state 165
 -- On ARROW shift to state 169
 ## Reductions:
--- On UNTIL reduce production expr -> expr OVERRIDE expr
--- On UNIV reduce production expr -> expr OVERRIDE expr
--- On TRUE reduce production expr -> expr OVERRIDE expr
--- On TILDE reduce production expr -> expr OVERRIDE expr
--- On SYM reduce production expr -> expr OVERRIDE expr
--- On SUB reduce production expr -> expr OVERRIDE expr
--- On STAR reduce production expr -> expr OVERRIDE expr
--- On SOMETIME reduce production expr -> expr OVERRIDE expr
--- On SOME reduce production expr -> expr OVERRIDE expr
--- On SINCE reduce production expr -> expr OVERRIDE expr
--- On SEMI reduce production expr -> expr OVERRIDE expr
--- On RUN reduce production expr -> expr OVERRIDE expr
--- On RPAREN reduce production expr -> expr OVERRIDE expr
--- On RELEASES reduce production expr -> expr OVERRIDE expr
--- On RBRACKET reduce production expr -> expr OVERRIDE expr
--- On RBRACE reduce production expr -> expr OVERRIDE expr
--- On PREVIOUS reduce production expr -> expr OVERRIDE expr
--- On PLUS reduce production expr -> expr OVERRIDE expr
--- On PLAIN_ID reduce production expr -> expr OVERRIDE expr
--- On OVERRIDE reduce production expr -> expr OVERRIDE expr
--- On OR reduce production expr -> expr OVERRIDE expr
--- On ONE reduce production expr -> expr OVERRIDE expr
--- On ONCE reduce production expr -> expr OVERRIDE expr
--- On NUMBER reduce production expr -> expr OVERRIDE expr
--- On NOT_IN reduce production expr -> expr OVERRIDE expr
--- On NOT reduce production expr -> expr OVERRIDE expr
--- On NONE reduce production expr -> expr OVERRIDE expr
--- On NO reduce production expr -> expr OVERRIDE expr
--- On NEXT reduce production expr -> expr OVERRIDE expr
--- On NEQ reduce production expr -> expr OVERRIDE expr
--- On NEG reduce production expr -> expr OVERRIDE expr
--- On MINUS reduce production expr -> expr OVERRIDE expr
--- On LTE reduce production expr -> expr OVERRIDE expr
--- On LT reduce production expr -> expr OVERRIDE expr
--- On LPAREN reduce production expr -> expr OVERRIDE expr
--- On LONE reduce production expr -> expr OVERRIDE expr
--- On LET reduce production expr -> expr OVERRIDE expr
--- On LBRACE reduce production expr -> expr OVERRIDE expr
--- On INVARIANT reduce production expr -> expr OVERRIDE expr
--- On INST reduce production expr -> expr OVERRIDE expr
--- On IN reduce production expr -> expr OVERRIDE expr
--- On IMPLIES reduce production expr -> expr OVERRIDE expr
--- On IFF reduce production expr -> expr OVERRIDE expr
--- On IDEN reduce production expr -> expr OVERRIDE expr
--- On HISTORICALLY reduce production expr -> expr OVERRIDE expr
--- On HAT reduce production expr -> expr OVERRIDE expr
--- On HASH reduce production expr -> expr OVERRIDE expr
--- On GTE reduce production expr -> expr OVERRIDE expr
--- On GT reduce production expr -> expr OVERRIDE expr
--- On FALSE reduce production expr -> expr OVERRIDE expr
--- On EVENTUALLY reduce production expr -> expr OVERRIDE expr
--- On EQ reduce production expr -> expr OVERRIDE expr
--- On EOF reduce production expr -> expr OVERRIDE expr
--- On ELSE reduce production expr -> expr OVERRIDE expr
--- On COMMA reduce production expr -> expr OVERRIDE expr
--- On BAR reduce production expr -> expr OVERRIDE expr
--- On AND reduce production expr -> expr OVERRIDE expr
--- On ALWAYS reduce production expr -> expr OVERRIDE expr
--- On ALL reduce production expr -> expr OVERRIDE expr
--- On ADD reduce production expr -> expr OVERRIDE expr
+-- On UNTIL UNIV TRUE TILDE SYM SUB STAR SOMETIME SOME SINCE SEMI RUN RPAREN RELEASES RBRACKET RBRACE PREVIOUS PLUS PLAIN_ID OVERRIDE OR ONE ONCE NUMBER NOT_IN NOT NONE NO NEXT NEQ NEG MINUS LTE LT LPAREN LONE LET LBRACE INVARIANT INST IN IMPLIES IFF IDEN HISTORICALLY HAT HASH GTE GT FALSE EVENTUALLY EQ EOF ELSE COMMA BAR AND ALWAYS ALL ADD
+--   reduce production expr -> expr OVERRIDE expr
 
 State 163:
 ## Known stack suffix:
@@ -3225,69 +2924,8 @@ formula -> expr . NEQ expr [ UNTIL SINCE RELEASES OR IMPLIES IFF AND ]
 -- On LBRACKET shift to state 155
 -- On DOT shift to state 165
 ## Reductions:
--- On UNTIL reduce production expr -> expr LPROJ expr
--- On UNIV reduce production expr -> expr LPROJ expr
--- On TRUE reduce production expr -> expr LPROJ expr
--- On TILDE reduce production expr -> expr LPROJ expr
--- On SYM reduce production expr -> expr LPROJ expr
--- On SUB reduce production expr -> expr LPROJ expr
--- On STAR reduce production expr -> expr LPROJ expr
--- On SOMETIME reduce production expr -> expr LPROJ expr
--- On SOME reduce production expr -> expr LPROJ expr
--- On SINCE reduce production expr -> expr LPROJ expr
--- On SEMI reduce production expr -> expr LPROJ expr
--- On RUN reduce production expr -> expr LPROJ expr
--- On RPAREN reduce production expr -> expr LPROJ expr
--- On RELEASES reduce production expr -> expr LPROJ expr
--- On RBRACKET reduce production expr -> expr LPROJ expr
--- On RBRACE reduce production expr -> expr LPROJ expr
--- On PREVIOUS reduce production expr -> expr LPROJ expr
--- On PLUS reduce production expr -> expr LPROJ expr
--- On PLAIN_ID reduce production expr -> expr LPROJ expr
--- On OVERRIDE reduce production expr -> expr LPROJ expr
--- On OR reduce production expr -> expr LPROJ expr
--- On ONE reduce production expr -> expr LPROJ expr
--- On ONCE reduce production expr -> expr LPROJ expr
--- On NUMBER reduce production expr -> expr LPROJ expr
--- On NOT_IN reduce production expr -> expr LPROJ expr
--- On NOT reduce production expr -> expr LPROJ expr
--- On NONE reduce production expr -> expr LPROJ expr
--- On NO reduce production expr -> expr LPROJ expr
--- On NEXT reduce production expr -> expr LPROJ expr
--- On NEQ reduce production expr -> expr LPROJ expr
--- On NEG reduce production expr -> expr LPROJ expr
--- On MINUS reduce production expr -> expr LPROJ expr
--- On LTE reduce production expr -> expr LPROJ expr
--- On LT reduce production expr -> expr LPROJ expr
--- On LPROJ reduce production expr -> expr LPROJ expr
--- On LPAREN reduce production expr -> expr LPROJ expr
--- On LONE reduce production expr -> expr LPROJ expr
--- On LET reduce production expr -> expr LPROJ expr
--- On LBRACE reduce production expr -> expr LPROJ expr
--- On INVARIANT reduce production expr -> expr LPROJ expr
--- On INTER reduce production expr -> expr LPROJ expr
--- On INST reduce production expr -> expr LPROJ expr
--- On IN reduce production expr -> expr LPROJ expr
--- On IMPLIES reduce production expr -> expr LPROJ expr
--- On IFF reduce production expr -> expr LPROJ expr
--- On IDEN reduce production expr -> expr LPROJ expr
--- On HISTORICALLY reduce production expr -> expr LPROJ expr
--- On HAT reduce production expr -> expr LPROJ expr
--- On HASH reduce production expr -> expr LPROJ expr
--- On GTE reduce production expr -> expr LPROJ expr
--- On GT reduce production expr -> expr LPROJ expr
--- On FALSE reduce production expr -> expr LPROJ expr
--- On EVENTUALLY reduce production expr -> expr LPROJ expr
--- On EQ reduce production expr -> expr LPROJ expr
--- On EOF reduce production expr -> expr LPROJ expr
--- On ELSE reduce production expr -> expr LPROJ expr
--- On COMMA reduce production expr -> expr LPROJ expr
--- On BAR reduce production expr -> expr LPROJ expr
--- On ARROW reduce production expr -> expr LPROJ expr
--- On AND reduce production expr -> expr LPROJ expr
--- On ALWAYS reduce production expr -> expr LPROJ expr
--- On ALL reduce production expr -> expr LPROJ expr
--- On ADD reduce production expr -> expr LPROJ expr
+-- On UNTIL UNIV TRUE TILDE SYM SUB STAR SOMETIME SOME SINCE SEMI RUN RPAREN RELEASES RBRACKET RBRACE PREVIOUS PLUS PLAIN_ID OVERRIDE OR ONE ONCE NUMBER NOT_IN NOT NONE NO NEXT NEQ NEG MINUS LTE LT LPROJ LPAREN LONE LET LBRACE INVARIANT INTER INST IN IMPLIES IFF IDEN HISTORICALLY HAT HASH GTE GT FALSE EVENTUALLY EQ EOF ELSE COMMA BAR ARROW AND ALWAYS ALL ADD
+--   reduce production expr -> expr LPROJ expr
 
 State 165:
 ## Known stack suffix:
@@ -3352,72 +2990,8 @@ formula -> expr . NEQ expr [ UNTIL SINCE RELEASES OR IMPLIES IFF AND ]
 ## Transitions:
 -- On PRIME shift to state 154
 ## Reductions:
--- On UNTIL reduce production expr -> expr DOT expr
--- On UNIV reduce production expr -> expr DOT expr
--- On TRUE reduce production expr -> expr DOT expr
--- On TILDE reduce production expr -> expr DOT expr
--- On SYM reduce production expr -> expr DOT expr
--- On SUB reduce production expr -> expr DOT expr
--- On STAR reduce production expr -> expr DOT expr
--- On SOMETIME reduce production expr -> expr DOT expr
--- On SOME reduce production expr -> expr DOT expr
--- On SINCE reduce production expr -> expr DOT expr
--- On SEMI reduce production expr -> expr DOT expr
--- On RUN reduce production expr -> expr DOT expr
--- On RPROJ reduce production expr -> expr DOT expr
--- On RPAREN reduce production expr -> expr DOT expr
--- On RELEASES reduce production expr -> expr DOT expr
--- On RBRACKET reduce production expr -> expr DOT expr
--- On RBRACE reduce production expr -> expr DOT expr
--- On PREVIOUS reduce production expr -> expr DOT expr
--- On PLUS reduce production expr -> expr DOT expr
--- On PLAIN_ID reduce production expr -> expr DOT expr
--- On OVERRIDE reduce production expr -> expr DOT expr
--- On OR reduce production expr -> expr DOT expr
--- On ONE reduce production expr -> expr DOT expr
--- On ONCE reduce production expr -> expr DOT expr
--- On NUMBER reduce production expr -> expr DOT expr
--- On NOT_IN reduce production expr -> expr DOT expr
--- On NOT reduce production expr -> expr DOT expr
--- On NONE reduce production expr -> expr DOT expr
--- On NO reduce production expr -> expr DOT expr
--- On NEXT reduce production expr -> expr DOT expr
--- On NEQ reduce production expr -> expr DOT expr
--- On NEG reduce production expr -> expr DOT expr
--- On MINUS reduce production expr -> expr DOT expr
--- On LTE reduce production expr -> expr DOT expr
--- On LT reduce production expr -> expr DOT expr
--- On LPROJ reduce production expr -> expr DOT expr
--- On LPAREN reduce production expr -> expr DOT expr
--- On LONE reduce production expr -> expr DOT expr
--- On LET reduce production expr -> expr DOT expr
--- On LBRACKET reduce production expr -> expr DOT expr
--- On LBRACE reduce production expr -> expr DOT expr
--- On INVARIANT reduce production expr -> expr DOT expr
--- On INTER reduce production expr -> expr DOT expr
--- On INST reduce production expr -> expr DOT expr
--- On IN reduce production expr -> expr DOT expr
--- On IMPLIES reduce production expr -> expr DOT expr
--- On IFF reduce production expr -> expr DOT expr
--- On IDEN reduce production expr -> expr DOT expr
--- On HISTORICALLY reduce production expr -> expr DOT expr
--- On HAT reduce production expr -> expr DOT expr
--- On HASH reduce production expr -> expr DOT expr
--- On GTE reduce production expr -> expr DOT expr
--- On GT reduce production expr -> expr DOT expr
--- On FALSE reduce production expr -> expr DOT expr
--- On EVENTUALLY reduce production expr -> expr DOT expr
--- On EQ reduce production expr -> expr DOT expr
--- On EOF reduce production expr -> expr DOT expr
--- On ELSE reduce production expr -> expr DOT expr
--- On DOT reduce production expr -> expr DOT expr
--- On COMMA reduce production expr -> expr DOT expr
--- On BAR reduce production expr -> expr DOT expr
--- On ARROW reduce production expr -> expr DOT expr
--- On AND reduce production expr -> expr DOT expr
--- On ALWAYS reduce production expr -> expr DOT expr
--- On ALL reduce production expr -> expr DOT expr
--- On ADD reduce production expr -> expr DOT expr
+-- On UNTIL UNIV TRUE TILDE SYM SUB STAR SOMETIME SOME SINCE SEMI RUN RPROJ RPAREN RELEASES RBRACKET RBRACE PREVIOUS PLUS PLAIN_ID OVERRIDE OR ONE ONCE NUMBER NOT_IN NOT NONE NO NEXT NEQ NEG MINUS LTE LT LPROJ LPAREN LONE LET LBRACKET LBRACE INVARIANT INTER INST IN IMPLIES IFF IDEN HISTORICALLY HAT HASH GTE GT FALSE EVENTUALLY EQ EOF ELSE DOT COMMA BAR ARROW AND ALWAYS ALL ADD
+--   reduce production expr -> expr DOT expr
 
 State 167:
 ## Known stack suffix:
@@ -3487,67 +3061,8 @@ formula -> expr . NEQ expr [ UNTIL SINCE RELEASES OR IMPLIES IFF AND ]
 -- On DOT shift to state 165
 -- On ARROW shift to state 169
 ## Reductions:
--- On UNTIL reduce production expr -> expr INTER expr
--- On UNIV reduce production expr -> expr INTER expr
--- On TRUE reduce production expr -> expr INTER expr
--- On TILDE reduce production expr -> expr INTER expr
--- On SYM reduce production expr -> expr INTER expr
--- On SUB reduce production expr -> expr INTER expr
--- On STAR reduce production expr -> expr INTER expr
--- On SOMETIME reduce production expr -> expr INTER expr
--- On SOME reduce production expr -> expr INTER expr
--- On SINCE reduce production expr -> expr INTER expr
--- On SEMI reduce production expr -> expr INTER expr
--- On RUN reduce production expr -> expr INTER expr
--- On RPAREN reduce production expr -> expr INTER expr
--- On RELEASES reduce production expr -> expr INTER expr
--- On RBRACKET reduce production expr -> expr INTER expr
--- On RBRACE reduce production expr -> expr INTER expr
--- On PREVIOUS reduce production expr -> expr INTER expr
--- On PLUS reduce production expr -> expr INTER expr
--- On PLAIN_ID reduce production expr -> expr INTER expr
--- On OVERRIDE reduce production expr -> expr INTER expr
--- On OR reduce production expr -> expr INTER expr
--- On ONE reduce production expr -> expr INTER expr
--- On ONCE reduce production expr -> expr INTER expr
--- On NUMBER reduce production expr -> expr INTER expr
--- On NOT_IN reduce production expr -> expr INTER expr
--- On NOT reduce production expr -> expr INTER expr
--- On NONE reduce production expr -> expr INTER expr
--- On NO reduce production expr -> expr INTER expr
--- On NEXT reduce production expr -> expr INTER expr
--- On NEQ reduce production expr -> expr INTER expr
--- On NEG reduce production expr -> expr INTER expr
--- On MINUS reduce production expr -> expr INTER expr
--- On LTE reduce production expr -> expr INTER expr
--- On LT reduce production expr -> expr INTER expr
--- On LPAREN reduce production expr -> expr INTER expr
--- On LONE reduce production expr -> expr INTER expr
--- On LET reduce production expr -> expr INTER expr
--- On LBRACE reduce production expr -> expr INTER expr
--- On INVARIANT reduce production expr -> expr INTER expr
--- On INTER reduce production expr -> expr INTER expr
--- On INST reduce production expr -> expr INTER expr
--- On IN reduce production expr -> expr INTER expr
--- On IMPLIES reduce production expr -> expr INTER expr
--- On IFF reduce production expr -> expr INTER expr
--- On IDEN reduce production expr -> expr INTER expr
--- On HISTORICALLY reduce production expr -> expr INTER expr
--- On HAT reduce production expr -> expr INTER expr
--- On HASH reduce production expr -> expr INTER expr
--- On GTE reduce production expr -> expr INTER expr
--- On GT reduce production expr -> expr INTER expr
--- On FALSE reduce production expr -> expr INTER expr
--- On EVENTUALLY reduce production expr -> expr INTER expr
--- On EQ reduce production expr -> expr INTER expr
--- On EOF reduce production expr -> expr INTER expr
--- On ELSE reduce production expr -> expr INTER expr
--- On COMMA reduce production expr -> expr INTER expr
--- On BAR reduce production expr -> expr INTER expr
--- On AND reduce production expr -> expr INTER expr
--- On ALWAYS reduce production expr -> expr INTER expr
--- On ALL reduce production expr -> expr INTER expr
--- On ADD reduce production expr -> expr INTER expr
+-- On UNTIL UNIV TRUE TILDE SYM SUB STAR SOMETIME SOME SINCE SEMI RUN RPAREN RELEASES RBRACKET RBRACE PREVIOUS PLUS PLAIN_ID OVERRIDE OR ONE ONCE NUMBER NOT_IN NOT NONE NO NEXT NEQ NEG MINUS LTE LT LPAREN LONE LET LBRACE INVARIANT INTER INST IN IMPLIES IFF IDEN HISTORICALLY HAT HASH GTE GT FALSE EVENTUALLY EQ EOF ELSE COMMA BAR AND ALWAYS ALL ADD
+--   reduce production expr -> expr INTER expr
 
 State 169:
 ## Known stack suffix:
@@ -3616,68 +3131,8 @@ formula -> expr . NEQ expr [ UNTIL SINCE RELEASES OR IMPLIES IFF AND ]
 -- On LBRACKET shift to state 155
 -- On DOT shift to state 165
 ## Reductions:
--- On UNTIL reduce production expr -> expr ARROW expr
--- On UNIV reduce production expr -> expr ARROW expr
--- On TRUE reduce production expr -> expr ARROW expr
--- On TILDE reduce production expr -> expr ARROW expr
--- On SYM reduce production expr -> expr ARROW expr
--- On SUB reduce production expr -> expr ARROW expr
--- On STAR reduce production expr -> expr ARROW expr
--- On SOMETIME reduce production expr -> expr ARROW expr
--- On SOME reduce production expr -> expr ARROW expr
--- On SINCE reduce production expr -> expr ARROW expr
--- On SEMI reduce production expr -> expr ARROW expr
--- On RUN reduce production expr -> expr ARROW expr
--- On RPAREN reduce production expr -> expr ARROW expr
--- On RELEASES reduce production expr -> expr ARROW expr
--- On RBRACKET reduce production expr -> expr ARROW expr
--- On RBRACE reduce production expr -> expr ARROW expr
--- On PREVIOUS reduce production expr -> expr ARROW expr
--- On PLUS reduce production expr -> expr ARROW expr
--- On PLAIN_ID reduce production expr -> expr ARROW expr
--- On OVERRIDE reduce production expr -> expr ARROW expr
--- On OR reduce production expr -> expr ARROW expr
--- On ONE reduce production expr -> expr ARROW expr
--- On ONCE reduce production expr -> expr ARROW expr
--- On NUMBER reduce production expr -> expr ARROW expr
--- On NOT_IN reduce production expr -> expr ARROW expr
--- On NOT reduce production expr -> expr ARROW expr
--- On NONE reduce production expr -> expr ARROW expr
--- On NO reduce production expr -> expr ARROW expr
--- On NEXT reduce production expr -> expr ARROW expr
--- On NEQ reduce production expr -> expr ARROW expr
--- On NEG reduce production expr -> expr ARROW expr
--- On MINUS reduce production expr -> expr ARROW expr
--- On LTE reduce production expr -> expr ARROW expr
--- On LT reduce production expr -> expr ARROW expr
--- On LPAREN reduce production expr -> expr ARROW expr
--- On LONE reduce production expr -> expr ARROW expr
--- On LET reduce production expr -> expr ARROW expr
--- On LBRACE reduce production expr -> expr ARROW expr
--- On INVARIANT reduce production expr -> expr ARROW expr
--- On INTER reduce production expr -> expr ARROW expr
--- On INST reduce production expr -> expr ARROW expr
--- On IN reduce production expr -> expr ARROW expr
--- On IMPLIES reduce production expr -> expr ARROW expr
--- On IFF reduce production expr -> expr ARROW expr
--- On IDEN reduce production expr -> expr ARROW expr
--- On HISTORICALLY reduce production expr -> expr ARROW expr
--- On HAT reduce production expr -> expr ARROW expr
--- On HASH reduce production expr -> expr ARROW expr
--- On GTE reduce production expr -> expr ARROW expr
--- On GT reduce production expr -> expr ARROW expr
--- On FALSE reduce production expr -> expr ARROW expr
--- On EVENTUALLY reduce production expr -> expr ARROW expr
--- On EQ reduce production expr -> expr ARROW expr
--- On EOF reduce production expr -> expr ARROW expr
--- On ELSE reduce production expr -> expr ARROW expr
--- On COMMA reduce production expr -> expr ARROW expr
--- On BAR reduce production expr -> expr ARROW expr
--- On ARROW reduce production expr -> expr ARROW expr
--- On AND reduce production expr -> expr ARROW expr
--- On ALWAYS reduce production expr -> expr ARROW expr
--- On ALL reduce production expr -> expr ARROW expr
--- On ADD reduce production expr -> expr ARROW expr
+-- On UNTIL UNIV TRUE TILDE SYM SUB STAR SOMETIME SOME SINCE SEMI RUN RPAREN RELEASES RBRACKET RBRACE PREVIOUS PLUS PLAIN_ID OVERRIDE OR ONE ONCE NUMBER NOT_IN NOT NONE NO NEXT NEQ NEG MINUS LTE LT LPAREN LONE LET LBRACE INVARIANT INTER INST IN IMPLIES IFF IDEN HISTORICALLY HAT HASH GTE GT FALSE EVENTUALLY EQ EOF ELSE COMMA BAR ARROW AND ALWAYS ALL ADD
+--   reduce production expr -> expr ARROW expr
 
 State 171:
 ## Known stack suffix:
@@ -3755,52 +3210,8 @@ formula -> expr . NEQ expr [ UNTIL SINCE RELEASES OR IMPLIES IFF AND ]
 -- On DOT shift to state 165
 -- On ARROW shift to state 169
 ## Reductions:
--- On UNTIL reduce production formula -> expr NOT_IN expr
--- On UNIV reduce production formula -> expr NOT_IN expr
--- On TRUE reduce production formula -> expr NOT_IN expr
--- On TILDE reduce production formula -> expr NOT_IN expr
--- On SYM reduce production formula -> expr NOT_IN expr
--- On SUB reduce production formula -> expr NOT_IN expr
--- On STAR reduce production formula -> expr NOT_IN expr
--- On SOMETIME reduce production formula -> expr NOT_IN expr
--- On SOME reduce production formula -> expr NOT_IN expr
--- On SINCE reduce production formula -> expr NOT_IN expr
--- On SEMI reduce production formula -> expr NOT_IN expr
--- On RUN reduce production formula -> expr NOT_IN expr
--- On RPAREN reduce production formula -> expr NOT_IN expr
--- On RELEASES reduce production formula -> expr NOT_IN expr
--- On RBRACE reduce production formula -> expr NOT_IN expr
--- On PREVIOUS reduce production formula -> expr NOT_IN expr
--- On PLAIN_ID reduce production formula -> expr NOT_IN expr
--- On OR reduce production formula -> expr NOT_IN expr
--- On ONE reduce production formula -> expr NOT_IN expr
--- On ONCE reduce production formula -> expr NOT_IN expr
--- On NUMBER reduce production formula -> expr NOT_IN expr
--- On NOT reduce production formula -> expr NOT_IN expr
--- On NONE reduce production formula -> expr NOT_IN expr
--- On NO reduce production formula -> expr NOT_IN expr
--- On NEXT reduce production formula -> expr NOT_IN expr
--- On NEG reduce production formula -> expr NOT_IN expr
--- On LPAREN reduce production formula -> expr NOT_IN expr
--- On LONE reduce production formula -> expr NOT_IN expr
--- On LET reduce production formula -> expr NOT_IN expr
--- On LBRACE reduce production formula -> expr NOT_IN expr
--- On INVARIANT reduce production formula -> expr NOT_IN expr
--- On INST reduce production formula -> expr NOT_IN expr
--- On IMPLIES reduce production formula -> expr NOT_IN expr
--- On IFF reduce production formula -> expr NOT_IN expr
--- On IDEN reduce production formula -> expr NOT_IN expr
--- On HISTORICALLY reduce production formula -> expr NOT_IN expr
--- On HAT reduce production formula -> expr NOT_IN expr
--- On HASH reduce production formula -> expr NOT_IN expr
--- On FALSE reduce production formula -> expr NOT_IN expr
--- On EVENTUALLY reduce production formula -> expr NOT_IN expr
--- On EOF reduce production formula -> expr NOT_IN expr
--- On ELSE reduce production formula -> expr NOT_IN expr
--- On AND reduce production formula -> expr NOT_IN expr
--- On ALWAYS reduce production formula -> expr NOT_IN expr
--- On ALL reduce production formula -> expr NOT_IN expr
--- On ADD reduce production formula -> expr NOT_IN expr
+-- On UNTIL UNIV TRUE TILDE SYM SUB STAR SOMETIME SOME SINCE SEMI RUN RPAREN RELEASES RBRACE PREVIOUS PLAIN_ID OR ONE ONCE NUMBER NOT NONE NO NEXT NEG LPAREN LONE LET LBRACE INVARIANT INST IMPLIES IFF IDEN HISTORICALLY HAT HASH FALSE EVENTUALLY EOF ELSE AND ALWAYS ALL ADD
+--   reduce production formula -> expr NOT_IN expr
 
 State 173:
 ## Known stack suffix:
@@ -3878,52 +3289,8 @@ formula -> expr NEQ expr . [ UNTIL UNIV TRUE TILDE SYM SUB STAR SOMETIME SOME SI
 -- On DOT shift to state 165
 -- On ARROW shift to state 169
 ## Reductions:
--- On UNTIL reduce production formula -> expr NEQ expr
--- On UNIV reduce production formula -> expr NEQ expr
--- On TRUE reduce production formula -> expr NEQ expr
--- On TILDE reduce production formula -> expr NEQ expr
--- On SYM reduce production formula -> expr NEQ expr
--- On SUB reduce production formula -> expr NEQ expr
--- On STAR reduce production formula -> expr NEQ expr
--- On SOMETIME reduce production formula -> expr NEQ expr
--- On SOME reduce production formula -> expr NEQ expr
--- On SINCE reduce production formula -> expr NEQ expr
--- On SEMI reduce production formula -> expr NEQ expr
--- On RUN reduce production formula -> expr NEQ expr
--- On RPAREN reduce production formula -> expr NEQ expr
--- On RELEASES reduce production formula -> expr NEQ expr
--- On RBRACE reduce production formula -> expr NEQ expr
--- On PREVIOUS reduce production formula -> expr NEQ expr
--- On PLAIN_ID reduce production formula -> expr NEQ expr
--- On OR reduce production formula -> expr NEQ expr
--- On ONE reduce production formula -> expr NEQ expr
--- On ONCE reduce production formula -> expr NEQ expr
--- On NUMBER reduce production formula -> expr NEQ expr
--- On NOT reduce production formula -> expr NEQ expr
--- On NONE reduce production formula -> expr NEQ expr
--- On NO reduce production formula -> expr NEQ expr
--- On NEXT reduce production formula -> expr NEQ expr
--- On NEG reduce production formula -> expr NEQ expr
--- On LPAREN reduce production formula -> expr NEQ expr
--- On LONE reduce production formula -> expr NEQ expr
--- On LET reduce production formula -> expr NEQ expr
--- On LBRACE reduce production formula -> expr NEQ expr
--- On INVARIANT reduce production formula -> expr NEQ expr
--- On INST reduce production formula -> expr NEQ expr
--- On IMPLIES reduce production formula -> expr NEQ expr
--- On IFF reduce production formula -> expr NEQ expr
--- On IDEN reduce production formula -> expr NEQ expr
--- On HISTORICALLY reduce production formula -> expr NEQ expr
--- On HAT reduce production formula -> expr NEQ expr
--- On HASH reduce production formula -> expr NEQ expr
--- On FALSE reduce production formula -> expr NEQ expr
--- On EVENTUALLY reduce production formula -> expr NEQ expr
--- On EOF reduce production formula -> expr NEQ expr
--- On ELSE reduce production formula -> expr NEQ expr
--- On AND reduce production formula -> expr NEQ expr
--- On ALWAYS reduce production formula -> expr NEQ expr
--- On ALL reduce production formula -> expr NEQ expr
--- On ADD reduce production formula -> expr NEQ expr
+-- On UNTIL UNIV TRUE TILDE SYM SUB STAR SOMETIME SOME SINCE SEMI RUN RPAREN RELEASES RBRACE PREVIOUS PLAIN_ID OR ONE ONCE NUMBER NOT NONE NO NEXT NEG LPAREN LONE LET LBRACE INVARIANT INST IMPLIES IFF IDEN HISTORICALLY HAT HASH FALSE EVENTUALLY EOF ELSE AND ALWAYS ALL ADD
+--   reduce production formula -> expr NEQ expr
 
 State 175:
 ## Known stack suffix:
@@ -3995,65 +3362,8 @@ formula -> expr . NEQ expr [ UNTIL SINCE RELEASES OR IMPLIES IFF AND ]
 -- On DOT shift to state 165
 -- On ARROW shift to state 169
 ## Reductions:
--- On UNTIL reduce production expr -> expr MINUS expr
--- On UNIV reduce production expr -> expr MINUS expr
--- On TRUE reduce production expr -> expr MINUS expr
--- On TILDE reduce production expr -> expr MINUS expr
--- On SYM reduce production expr -> expr MINUS expr
--- On SUB reduce production expr -> expr MINUS expr
--- On STAR reduce production expr -> expr MINUS expr
--- On SOMETIME reduce production expr -> expr MINUS expr
--- On SOME reduce production expr -> expr MINUS expr
--- On SINCE reduce production expr -> expr MINUS expr
--- On SEMI reduce production expr -> expr MINUS expr
--- On RUN reduce production expr -> expr MINUS expr
--- On RPAREN reduce production expr -> expr MINUS expr
--- On RELEASES reduce production expr -> expr MINUS expr
--- On RBRACKET reduce production expr -> expr MINUS expr
--- On RBRACE reduce production expr -> expr MINUS expr
--- On PREVIOUS reduce production expr -> expr MINUS expr
--- On PLUS reduce production expr -> expr MINUS expr
--- On PLAIN_ID reduce production expr -> expr MINUS expr
--- On OR reduce production expr -> expr MINUS expr
--- On ONE reduce production expr -> expr MINUS expr
--- On ONCE reduce production expr -> expr MINUS expr
--- On NUMBER reduce production expr -> expr MINUS expr
--- On NOT_IN reduce production expr -> expr MINUS expr
--- On NOT reduce production expr -> expr MINUS expr
--- On NONE reduce production expr -> expr MINUS expr
--- On NO reduce production expr -> expr MINUS expr
--- On NEXT reduce production expr -> expr MINUS expr
--- On NEQ reduce production expr -> expr MINUS expr
--- On NEG reduce production expr -> expr MINUS expr
--- On MINUS reduce production expr -> expr MINUS expr
--- On LTE reduce production expr -> expr MINUS expr
--- On LT reduce production expr -> expr MINUS expr
--- On LPAREN reduce production expr -> expr MINUS expr
--- On LONE reduce production expr -> expr MINUS expr
--- On LET reduce production expr -> expr MINUS expr
--- On LBRACE reduce production expr -> expr MINUS expr
--- On INVARIANT reduce production expr -> expr MINUS expr
--- On INST reduce production expr -> expr MINUS expr
--- On IN reduce production expr -> expr MINUS expr
--- On IMPLIES reduce production expr -> expr MINUS expr
--- On IFF reduce production expr -> expr MINUS expr
--- On IDEN reduce production expr -> expr MINUS expr
--- On HISTORICALLY reduce production expr -> expr MINUS expr
--- On HAT reduce production expr -> expr MINUS expr
--- On HASH reduce production expr -> expr MINUS expr
--- On GTE reduce production expr -> expr MINUS expr
--- On GT reduce production expr -> expr MINUS expr
--- On FALSE reduce production expr -> expr MINUS expr
--- On EVENTUALLY reduce production expr -> expr MINUS expr
--- On EQ reduce production expr -> expr MINUS expr
--- On EOF reduce production expr -> expr MINUS expr
--- On ELSE reduce production expr -> expr MINUS expr
--- On COMMA reduce production expr -> expr MINUS expr
--- On BAR reduce production expr -> expr MINUS expr
--- On AND reduce production expr -> expr MINUS expr
--- On ALWAYS reduce production expr -> expr MINUS expr
--- On ALL reduce production expr -> expr MINUS expr
--- On ADD reduce production expr -> expr MINUS expr
+-- On UNTIL UNIV TRUE TILDE SYM SUB STAR SOMETIME SOME SINCE SEMI RUN RPAREN RELEASES RBRACKET RBRACE PREVIOUS PLUS PLAIN_ID OR ONE ONCE NUMBER NOT_IN NOT NONE NO NEXT NEQ NEG MINUS LTE LT LPAREN LONE LET LBRACE INVARIANT INST IN IMPLIES IFF IDEN HISTORICALLY HAT HASH GTE GT FALSE EVENTUALLY EQ EOF ELSE COMMA BAR AND ALWAYS ALL ADD
+--   reduce production expr -> expr MINUS expr
 
 State 177:
 ## Known stack suffix:
@@ -4131,52 +3441,8 @@ formula -> expr . NEQ expr [ UNTIL SINCE RELEASES OR IMPLIES IFF AND ]
 -- On DOT shift to state 165
 -- On ARROW shift to state 169
 ## Reductions:
--- On UNTIL reduce production formula -> expr IN expr
--- On UNIV reduce production formula -> expr IN expr
--- On TRUE reduce production formula -> expr IN expr
--- On TILDE reduce production formula -> expr IN expr
--- On SYM reduce production formula -> expr IN expr
--- On SUB reduce production formula -> expr IN expr
--- On STAR reduce production formula -> expr IN expr
--- On SOMETIME reduce production formula -> expr IN expr
--- On SOME reduce production formula -> expr IN expr
--- On SINCE reduce production formula -> expr IN expr
--- On SEMI reduce production formula -> expr IN expr
--- On RUN reduce production formula -> expr IN expr
--- On RPAREN reduce production formula -> expr IN expr
--- On RELEASES reduce production formula -> expr IN expr
--- On RBRACE reduce production formula -> expr IN expr
--- On PREVIOUS reduce production formula -> expr IN expr
--- On PLAIN_ID reduce production formula -> expr IN expr
--- On OR reduce production formula -> expr IN expr
--- On ONE reduce production formula -> expr IN expr
--- On ONCE reduce production formula -> expr IN expr
--- On NUMBER reduce production formula -> expr IN expr
--- On NOT reduce production formula -> expr IN expr
--- On NONE reduce production formula -> expr IN expr
--- On NO reduce production formula -> expr IN expr
--- On NEXT reduce production formula -> expr IN expr
--- On NEG reduce production formula -> expr IN expr
--- On LPAREN reduce production formula -> expr IN expr
--- On LONE reduce production formula -> expr IN expr
--- On LET reduce production formula -> expr IN expr
--- On LBRACE reduce production formula -> expr IN expr
--- On INVARIANT reduce production formula -> expr IN expr
--- On INST reduce production formula -> expr IN expr
--- On IMPLIES reduce production formula -> expr IN expr
--- On IFF reduce production formula -> expr IN expr
--- On IDEN reduce production formula -> expr IN expr
--- On HISTORICALLY reduce production formula -> expr IN expr
--- On HAT reduce production formula -> expr IN expr
--- On HASH reduce production formula -> expr IN expr
--- On FALSE reduce production formula -> expr IN expr
--- On EVENTUALLY reduce production formula -> expr IN expr
--- On EOF reduce production formula -> expr IN expr
--- On ELSE reduce production formula -> expr IN expr
--- On AND reduce production formula -> expr IN expr
--- On ALWAYS reduce production formula -> expr IN expr
--- On ALL reduce production formula -> expr IN expr
--- On ADD reduce production formula -> expr IN expr
+-- On UNTIL UNIV TRUE TILDE SYM SUB STAR SOMETIME SOME SINCE SEMI RUN RPAREN RELEASES RBRACE PREVIOUS PLAIN_ID OR ONE ONCE NUMBER NOT NONE NO NEXT NEG LPAREN LONE LET LBRACE INVARIANT INST IMPLIES IFF IDEN HISTORICALLY HAT HASH FALSE EVENTUALLY EOF ELSE AND ALWAYS ALL ADD
+--   reduce production formula -> expr IN expr
 
 State 179:
 ## Known stack suffix:
@@ -4254,52 +3520,8 @@ formula -> expr . NEQ expr [ UNTIL SINCE RELEASES OR IMPLIES IFF AND ]
 -- On DOT shift to state 165
 -- On ARROW shift to state 169
 ## Reductions:
--- On UNTIL reduce production formula -> expr EQ expr
--- On UNIV reduce production formula -> expr EQ expr
--- On TRUE reduce production formula -> expr EQ expr
--- On TILDE reduce production formula -> expr EQ expr
--- On SYM reduce production formula -> expr EQ expr
--- On SUB reduce production formula -> expr EQ expr
--- On STAR reduce production formula -> expr EQ expr
--- On SOMETIME reduce production formula -> expr EQ expr
--- On SOME reduce production formula -> expr EQ expr
--- On SINCE reduce production formula -> expr EQ expr
--- On SEMI reduce production formula -> expr EQ expr
--- On RUN reduce production formula -> expr EQ expr
--- On RPAREN reduce production formula -> expr EQ expr
--- On RELEASES reduce production formula -> expr EQ expr
--- On RBRACE reduce production formula -> expr EQ expr
--- On PREVIOUS reduce production formula -> expr EQ expr
--- On PLAIN_ID reduce production formula -> expr EQ expr
--- On OR reduce production formula -> expr EQ expr
--- On ONE reduce production formula -> expr EQ expr
--- On ONCE reduce production formula -> expr EQ expr
--- On NUMBER reduce production formula -> expr EQ expr
--- On NOT reduce production formula -> expr EQ expr
--- On NONE reduce production formula -> expr EQ expr
--- On NO reduce production formula -> expr EQ expr
--- On NEXT reduce production formula -> expr EQ expr
--- On NEG reduce production formula -> expr EQ expr
--- On LPAREN reduce production formula -> expr EQ expr
--- On LONE reduce production formula -> expr EQ expr
--- On LET reduce production formula -> expr EQ expr
--- On LBRACE reduce production formula -> expr EQ expr
--- On INVARIANT reduce production formula -> expr EQ expr
--- On INST reduce production formula -> expr EQ expr
--- On IMPLIES reduce production formula -> expr EQ expr
--- On IFF reduce production formula -> expr EQ expr
--- On IDEN reduce production formula -> expr EQ expr
--- On HISTORICALLY reduce production formula -> expr EQ expr
--- On HAT reduce production formula -> expr EQ expr
--- On HASH reduce production formula -> expr EQ expr
--- On FALSE reduce production formula -> expr EQ expr
--- On EVENTUALLY reduce production formula -> expr EQ expr
--- On EOF reduce production formula -> expr EQ expr
--- On ELSE reduce production formula -> expr EQ expr
--- On AND reduce production formula -> expr EQ expr
--- On ALWAYS reduce production formula -> expr EQ expr
--- On ALL reduce production formula -> expr EQ expr
--- On ADD reduce production formula -> expr EQ expr
+-- On UNTIL UNIV TRUE TILDE SYM SUB STAR SOMETIME SOME SINCE SEMI RUN RPAREN RELEASES RBRACE PREVIOUS PLAIN_ID OR ONE ONCE NUMBER NOT NONE NO NEXT NEG LPAREN LONE LET LBRACE INVARIANT INST IMPLIES IFF IDEN HISTORICALLY HAT HASH FALSE EVENTUALLY EOF ELSE AND ALWAYS ALL ADD
+--   reduce production formula -> expr EQ expr
 
 State 181:
 ## Known stack suffix:
@@ -4533,46 +3755,8 @@ formula -> formula . IMPLIES formula [ UNTIL UNIV TRUE TILDE SYM SUB STAR SOMETI
 -- On IFF shift to state 198
 -- On AND shift to state 193
 ## Reductions:
--- On UNIV reduce production formula -> formula OR formula
--- On TRUE reduce production formula -> formula OR formula
--- On TILDE reduce production formula -> formula OR formula
--- On SYM reduce production formula -> formula OR formula
--- On SUB reduce production formula -> formula OR formula
--- On STAR reduce production formula -> formula OR formula
--- On SOMETIME reduce production formula -> formula OR formula
--- On SOME reduce production formula -> formula OR formula
--- On SEMI reduce production formula -> formula OR formula
--- On RUN reduce production formula -> formula OR formula
--- On RPAREN reduce production formula -> formula OR formula
--- On RBRACE reduce production formula -> formula OR formula
--- On PREVIOUS reduce production formula -> formula OR formula
--- On PLAIN_ID reduce production formula -> formula OR formula
--- On OR reduce production formula -> formula OR formula
--- On ONE reduce production formula -> formula OR formula
--- On ONCE reduce production formula -> formula OR formula
--- On NUMBER reduce production formula -> formula OR formula
--- On NOT reduce production formula -> formula OR formula
--- On NONE reduce production formula -> formula OR formula
--- On NO reduce production formula -> formula OR formula
--- On NEXT reduce production formula -> formula OR formula
--- On NEG reduce production formula -> formula OR formula
--- On LPAREN reduce production formula -> formula OR formula
--- On LONE reduce production formula -> formula OR formula
--- On LET reduce production formula -> formula OR formula
--- On LBRACE reduce production formula -> formula OR formula
--- On INVARIANT reduce production formula -> formula OR formula
--- On INST reduce production formula -> formula OR formula
--- On IDEN reduce production formula -> formula OR formula
--- On HISTORICALLY reduce production formula -> formula OR formula
--- On HAT reduce production formula -> formula OR formula
--- On HASH reduce production formula -> formula OR formula
--- On FALSE reduce production formula -> formula OR formula
--- On EVENTUALLY reduce production formula -> formula OR formula
--- On EOF reduce production formula -> formula OR formula
--- On ELSE reduce production formula -> formula OR formula
--- On ALWAYS reduce production formula -> formula OR formula
--- On ALL reduce production formula -> formula OR formula
--- On ADD reduce production formula -> formula OR formula
+-- On UNIV TRUE TILDE SYM SUB STAR SOMETIME SOME SEMI RUN RPAREN RBRACE PREVIOUS PLAIN_ID OR ONE ONCE NUMBER NOT NONE NO NEXT NEG LPAREN LONE LET LBRACE INVARIANT INST IDEN HISTORICALLY HAT HASH FALSE EVENTUALLY EOF ELSE ALWAYS ALL ADD
+--   reduce production formula -> formula OR formula
 
 State 189:
 ## Known stack suffix:
@@ -4640,46 +3824,8 @@ formula -> formula IMPLIES formula . [ UNTIL UNIV TRUE TILDE SYM SUB STAR SOMETI
 -- On ELSE shift to state 191
 -- On AND shift to state 193
 ## Reductions:
--- On UNIV reduce production formula -> formula IMPLIES formula
--- On TRUE reduce production formula -> formula IMPLIES formula
--- On TILDE reduce production formula -> formula IMPLIES formula
--- On SYM reduce production formula -> formula IMPLIES formula
--- On SUB reduce production formula -> formula IMPLIES formula
--- On STAR reduce production formula -> formula IMPLIES formula
--- On SOMETIME reduce production formula -> formula IMPLIES formula
--- On SOME reduce production formula -> formula IMPLIES formula
--- On SEMI reduce production formula -> formula IMPLIES formula
--- On RUN reduce production formula -> formula IMPLIES formula
--- On RPAREN reduce production formula -> formula IMPLIES formula
--- On RBRACE reduce production formula -> formula IMPLIES formula
--- On PREVIOUS reduce production formula -> formula IMPLIES formula
--- On PLAIN_ID reduce production formula -> formula IMPLIES formula
--- On OR reduce production formula -> formula IMPLIES formula
--- On ONE reduce production formula -> formula IMPLIES formula
--- On ONCE reduce production formula -> formula IMPLIES formula
--- On NUMBER reduce production formula -> formula IMPLIES formula
--- On NOT reduce production formula -> formula IMPLIES formula
--- On NONE reduce production formula -> formula IMPLIES formula
--- On NO reduce production formula -> formula IMPLIES formula
--- On NEXT reduce production formula -> formula IMPLIES formula
--- On NEG reduce production formula -> formula IMPLIES formula
--- On LPAREN reduce production formula -> formula IMPLIES formula
--- On LONE reduce production formula -> formula IMPLIES formula
--- On LET reduce production formula -> formula IMPLIES formula
--- On LBRACE reduce production formula -> formula IMPLIES formula
--- On INVARIANT reduce production formula -> formula IMPLIES formula
--- On INST reduce production formula -> formula IMPLIES formula
--- On IFF reduce production formula -> formula IMPLIES formula
--- On IDEN reduce production formula -> formula IMPLIES formula
--- On HISTORICALLY reduce production formula -> formula IMPLIES formula
--- On HAT reduce production formula -> formula IMPLIES formula
--- On HASH reduce production formula -> formula IMPLIES formula
--- On FALSE reduce production formula -> formula IMPLIES formula
--- On EVENTUALLY reduce production formula -> formula IMPLIES formula
--- On EOF reduce production formula -> formula IMPLIES formula
--- On ALWAYS reduce production formula -> formula IMPLIES formula
--- On ALL reduce production formula -> formula IMPLIES formula
--- On ADD reduce production formula -> formula IMPLIES formula
+-- On UNIV TRUE TILDE SYM SUB STAR SOMETIME SOME SEMI RUN RPAREN RBRACE PREVIOUS PLAIN_ID OR ONE ONCE NUMBER NOT NONE NO NEXT NEG LPAREN LONE LET LBRACE INVARIANT INST IFF IDEN HISTORICALLY HAT HASH FALSE EVENTUALLY EOF ALWAYS ALL ADD
+--   reduce production formula -> formula IMPLIES formula
 
 State 191:
 ## Known stack suffix:
@@ -4743,47 +3889,8 @@ formula -> formula . IMPLIES formula [ UNTIL UNIV TRUE TILDE SYM SUB STAR SOMETI
 -- On IMPLIES shift to state 189
 -- On AND shift to state 193
 ## Reductions:
--- On UNIV reduce production formula -> formula IMPLIES formula ELSE formula
--- On TRUE reduce production formula -> formula IMPLIES formula ELSE formula
--- On TILDE reduce production formula -> formula IMPLIES formula ELSE formula
--- On SYM reduce production formula -> formula IMPLIES formula ELSE formula
--- On SUB reduce production formula -> formula IMPLIES formula ELSE formula
--- On STAR reduce production formula -> formula IMPLIES formula ELSE formula
--- On SOMETIME reduce production formula -> formula IMPLIES formula ELSE formula
--- On SOME reduce production formula -> formula IMPLIES formula ELSE formula
--- On SEMI reduce production formula -> formula IMPLIES formula ELSE formula
--- On RUN reduce production formula -> formula IMPLIES formula ELSE formula
--- On RPAREN reduce production formula -> formula IMPLIES formula ELSE formula
--- On RBRACE reduce production formula -> formula IMPLIES formula ELSE formula
--- On PREVIOUS reduce production formula -> formula IMPLIES formula ELSE formula
--- On PLAIN_ID reduce production formula -> formula IMPLIES formula ELSE formula
--- On OR reduce production formula -> formula IMPLIES formula ELSE formula
--- On ONE reduce production formula -> formula IMPLIES formula ELSE formula
--- On ONCE reduce production formula -> formula IMPLIES formula ELSE formula
--- On NUMBER reduce production formula -> formula IMPLIES formula ELSE formula
--- On NOT reduce production formula -> formula IMPLIES formula ELSE formula
--- On NONE reduce production formula -> formula IMPLIES formula ELSE formula
--- On NO reduce production formula -> formula IMPLIES formula ELSE formula
--- On NEXT reduce production formula -> formula IMPLIES formula ELSE formula
--- On NEG reduce production formula -> formula IMPLIES formula ELSE formula
--- On LPAREN reduce production formula -> formula IMPLIES formula ELSE formula
--- On LONE reduce production formula -> formula IMPLIES formula ELSE formula
--- On LET reduce production formula -> formula IMPLIES formula ELSE formula
--- On LBRACE reduce production formula -> formula IMPLIES formula ELSE formula
--- On INVARIANT reduce production formula -> formula IMPLIES formula ELSE formula
--- On INST reduce production formula -> formula IMPLIES formula ELSE formula
--- On IFF reduce production formula -> formula IMPLIES formula ELSE formula
--- On IDEN reduce production formula -> formula IMPLIES formula ELSE formula
--- On HISTORICALLY reduce production formula -> formula IMPLIES formula ELSE formula
--- On HAT reduce production formula -> formula IMPLIES formula ELSE formula
--- On HASH reduce production formula -> formula IMPLIES formula ELSE formula
--- On FALSE reduce production formula -> formula IMPLIES formula ELSE formula
--- On EVENTUALLY reduce production formula -> formula IMPLIES formula ELSE formula
--- On EOF reduce production formula -> formula IMPLIES formula ELSE formula
--- On ELSE reduce production formula -> formula IMPLIES formula ELSE formula
--- On ALWAYS reduce production formula -> formula IMPLIES formula ELSE formula
--- On ALL reduce production formula -> formula IMPLIES formula ELSE formula
--- On ADD reduce production formula -> formula IMPLIES formula ELSE formula
+-- On UNIV TRUE TILDE SYM SUB STAR SOMETIME SOME SEMI RUN RPAREN RBRACE PREVIOUS PLAIN_ID OR ONE ONCE NUMBER NOT NONE NO NEXT NEG LPAREN LONE LET LBRACE INVARIANT INST IFF IDEN HISTORICALLY HAT HASH FALSE EVENTUALLY EOF ELSE ALWAYS ALL ADD
+--   reduce production formula -> formula IMPLIES formula ELSE formula
 
 State 193:
 ## Known stack suffix:
@@ -4845,49 +3952,8 @@ formula -> formula . IMPLIES formula [ UNTIL UNIV TRUE TILDE SYM SUB STAR SOMETI
 -- On SINCE shift to state 183
 -- On RELEASES shift to state 185
 ## Reductions:
--- On UNIV reduce production formula -> formula AND formula
--- On TRUE reduce production formula -> formula AND formula
--- On TILDE reduce production formula -> formula AND formula
--- On SYM reduce production formula -> formula AND formula
--- On SUB reduce production formula -> formula AND formula
--- On STAR reduce production formula -> formula AND formula
--- On SOMETIME reduce production formula -> formula AND formula
--- On SOME reduce production formula -> formula AND formula
--- On SEMI reduce production formula -> formula AND formula
--- On RUN reduce production formula -> formula AND formula
--- On RPAREN reduce production formula -> formula AND formula
--- On RBRACE reduce production formula -> formula AND formula
--- On PREVIOUS reduce production formula -> formula AND formula
--- On PLAIN_ID reduce production formula -> formula AND formula
--- On OR reduce production formula -> formula AND formula
--- On ONE reduce production formula -> formula AND formula
--- On ONCE reduce production formula -> formula AND formula
--- On NUMBER reduce production formula -> formula AND formula
--- On NOT reduce production formula -> formula AND formula
--- On NONE reduce production formula -> formula AND formula
--- On NO reduce production formula -> formula AND formula
--- On NEXT reduce production formula -> formula AND formula
--- On NEG reduce production formula -> formula AND formula
--- On LPAREN reduce production formula -> formula AND formula
--- On LONE reduce production formula -> formula AND formula
--- On LET reduce production formula -> formula AND formula
--- On LBRACE reduce production formula -> formula AND formula
--- On INVARIANT reduce production formula -> formula AND formula
--- On INST reduce production formula -> formula AND formula
--- On IMPLIES reduce production formula -> formula AND formula
--- On IFF reduce production formula -> formula AND formula
--- On IDEN reduce production formula -> formula AND formula
--- On HISTORICALLY reduce production formula -> formula AND formula
--- On HAT reduce production formula -> formula AND formula
--- On HASH reduce production formula -> formula AND formula
--- On FALSE reduce production formula -> formula AND formula
--- On EVENTUALLY reduce production formula -> formula AND formula
--- On EOF reduce production formula -> formula AND formula
--- On ELSE reduce production formula -> formula AND formula
--- On AND reduce production formula -> formula AND formula
--- On ALWAYS reduce production formula -> formula AND formula
--- On ALL reduce production formula -> formula AND formula
--- On ADD reduce production formula -> formula AND formula
+-- On UNIV TRUE TILDE SYM SUB STAR SOMETIME SOME SEMI RUN RPAREN RBRACE PREVIOUS PLAIN_ID OR ONE ONCE NUMBER NOT NONE NO NEXT NEG LPAREN LONE LET LBRACE INVARIANT INST IMPLIES IFF IDEN HISTORICALLY HAT HASH FALSE EVENTUALLY EOF ELSE AND ALWAYS ALL ADD
+--   reduce production formula -> formula AND formula
 
 State 195:
 ## Known stack suffix:
@@ -5002,59 +4068,8 @@ formula -> expr . NEQ expr [ UNTIL SINCE RELEASES OR IMPLIES IFF AND ]
 -- On DOT shift to state 165
 -- On ARROW shift to state 169
 ## Reductions:
--- On UNTIL reduce production expr -> formula IMPLIES expr ELSE expr
--- On UNIV reduce production expr -> formula IMPLIES expr ELSE expr
--- On TRUE reduce production expr -> formula IMPLIES expr ELSE expr
--- On TILDE reduce production expr -> formula IMPLIES expr ELSE expr
--- On SYM reduce production expr -> formula IMPLIES expr ELSE expr
--- On SUB reduce production expr -> formula IMPLIES expr ELSE expr
--- On STAR reduce production expr -> formula IMPLIES expr ELSE expr
--- On SOMETIME reduce production expr -> formula IMPLIES expr ELSE expr
--- On SOME reduce production expr -> formula IMPLIES expr ELSE expr
--- On SINCE reduce production expr -> formula IMPLIES expr ELSE expr
--- On SEMI reduce production expr -> formula IMPLIES expr ELSE expr
--- On RUN reduce production expr -> formula IMPLIES expr ELSE expr
--- On RPAREN reduce production expr -> formula IMPLIES expr ELSE expr
--- On RELEASES reduce production expr -> formula IMPLIES expr ELSE expr
--- On RBRACKET reduce production expr -> formula IMPLIES expr ELSE expr
--- On RBRACE reduce production expr -> formula IMPLIES expr ELSE expr
--- On PREVIOUS reduce production expr -> formula IMPLIES expr ELSE expr
--- On PLAIN_ID reduce production expr -> formula IMPLIES expr ELSE expr
--- On OR reduce production expr -> formula IMPLIES expr ELSE expr
--- On ONE reduce production expr -> formula IMPLIES expr ELSE expr
--- On ONCE reduce production expr -> formula IMPLIES expr ELSE expr
--- On NUMBER reduce production expr -> formula IMPLIES expr ELSE expr
--- On NOT reduce production expr -> formula IMPLIES expr ELSE expr
--- On NONE reduce production expr -> formula IMPLIES expr ELSE expr
--- On NO reduce production expr -> formula IMPLIES expr ELSE expr
--- On NEXT reduce production expr -> formula IMPLIES expr ELSE expr
--- On NEG reduce production expr -> formula IMPLIES expr ELSE expr
--- On LTE reduce production expr -> formula IMPLIES expr ELSE expr
--- On LT reduce production expr -> formula IMPLIES expr ELSE expr
--- On LPAREN reduce production expr -> formula IMPLIES expr ELSE expr
--- On LONE reduce production expr -> formula IMPLIES expr ELSE expr
--- On LET reduce production expr -> formula IMPLIES expr ELSE expr
--- On LBRACE reduce production expr -> formula IMPLIES expr ELSE expr
--- On INVARIANT reduce production expr -> formula IMPLIES expr ELSE expr
--- On INST reduce production expr -> formula IMPLIES expr ELSE expr
--- On IMPLIES reduce production expr -> formula IMPLIES expr ELSE expr
--- On IFF reduce production expr -> formula IMPLIES expr ELSE expr
--- On IDEN reduce production expr -> formula IMPLIES expr ELSE expr
--- On HISTORICALLY reduce production expr -> formula IMPLIES expr ELSE expr
--- On HAT reduce production expr -> formula IMPLIES expr ELSE expr
--- On HASH reduce production expr -> formula IMPLIES expr ELSE expr
--- On GTE reduce production expr -> formula IMPLIES expr ELSE expr
--- On GT reduce production expr -> formula IMPLIES expr ELSE expr
--- On FALSE reduce production expr -> formula IMPLIES expr ELSE expr
--- On EVENTUALLY reduce production expr -> formula IMPLIES expr ELSE expr
--- On EOF reduce production expr -> formula IMPLIES expr ELSE expr
--- On ELSE reduce production expr -> formula IMPLIES expr ELSE expr
--- On COMMA reduce production expr -> formula IMPLIES expr ELSE expr
--- On BAR reduce production expr -> formula IMPLIES expr ELSE expr
--- On AND reduce production expr -> formula IMPLIES expr ELSE expr
--- On ALWAYS reduce production expr -> formula IMPLIES expr ELSE expr
--- On ALL reduce production expr -> formula IMPLIES expr ELSE expr
--- On ADD reduce production expr -> formula IMPLIES expr ELSE expr
+-- On UNTIL UNIV TRUE TILDE SYM SUB STAR SOMETIME SOME SINCE SEMI RUN RPAREN RELEASES RBRACKET RBRACE PREVIOUS PLAIN_ID OR ONE ONCE NUMBER NOT NONE NO NEXT NEG LTE LT LPAREN LONE LET LBRACE INVARIANT INST IMPLIES IFF IDEN HISTORICALLY HAT HASH GTE GT FALSE EVENTUALLY EOF ELSE COMMA BAR AND ALWAYS ALL ADD
+--   reduce production expr -> formula IMPLIES expr ELSE expr
 
 State 198:
 ## Known stack suffix:
@@ -5118,47 +4133,8 @@ formula -> formula . IMPLIES formula [ UNTIL UNIV TRUE TILDE SYM SUB STAR SOMETI
 -- On IMPLIES shift to state 189
 -- On AND shift to state 193
 ## Reductions:
--- On UNIV reduce production formula -> formula IFF formula
--- On TRUE reduce production formula -> formula IFF formula
--- On TILDE reduce production formula -> formula IFF formula
--- On SYM reduce production formula -> formula IFF formula
--- On SUB reduce production formula -> formula IFF formula
--- On STAR reduce production formula -> formula IFF formula
--- On SOMETIME reduce production formula -> formula IFF formula
--- On SOME reduce production formula -> formula IFF formula
--- On SEMI reduce production formula -> formula IFF formula
--- On RUN reduce production formula -> formula IFF formula
--- On RPAREN reduce production formula -> formula IFF formula
--- On RBRACE reduce production formula -> formula IFF formula
--- On PREVIOUS reduce production formula -> formula IFF formula
--- On PLAIN_ID reduce production formula -> formula IFF formula
--- On OR reduce production formula -> formula IFF formula
--- On ONE reduce production formula -> formula IFF formula
--- On ONCE reduce production formula -> formula IFF formula
--- On NUMBER reduce production formula -> formula IFF formula
--- On NOT reduce production formula -> formula IFF formula
--- On NONE reduce production formula -> formula IFF formula
--- On NO reduce production formula -> formula IFF formula
--- On NEXT reduce production formula -> formula IFF formula
--- On NEG reduce production formula -> formula IFF formula
--- On LPAREN reduce production formula -> formula IFF formula
--- On LONE reduce production formula -> formula IFF formula
--- On LET reduce production formula -> formula IFF formula
--- On LBRACE reduce production formula -> formula IFF formula
--- On INVARIANT reduce production formula -> formula IFF formula
--- On INST reduce production formula -> formula IFF formula
--- On IFF reduce production formula -> formula IFF formula
--- On IDEN reduce production formula -> formula IFF formula
--- On HISTORICALLY reduce production formula -> formula IFF formula
--- On HAT reduce production formula -> formula IFF formula
--- On HASH reduce production formula -> formula IFF formula
--- On FALSE reduce production formula -> formula IFF formula
--- On EVENTUALLY reduce production formula -> formula IFF formula
--- On EOF reduce production formula -> formula IFF formula
--- On ELSE reduce production formula -> formula IFF formula
--- On ALWAYS reduce production formula -> formula IFF formula
--- On ALL reduce production formula -> formula IFF formula
--- On ADD reduce production formula -> formula IFF formula
+-- On UNIV TRUE TILDE SYM SUB STAR SOMETIME SOME SEMI RUN RPAREN RBRACE PREVIOUS PLAIN_ID OR ONE ONCE NUMBER NOT NONE NO NEXT NEG LPAREN LONE LET LBRACE INVARIANT INST IFF IDEN HISTORICALLY HAT HASH FALSE EVENTUALLY EOF ELSE ALWAYS ALL ADD
+--   reduce production formula -> formula IFF formula
 
 State 200:
 ## Known stack suffix:
@@ -5277,8 +4253,8 @@ separated_nonempty_list(COMMA,ae_decl) -> DISJ separated_nonempty_list(COMMA,pla
 -- On COMMA shift to state 203
 -- On ARROW shift to state 169
 ## Reductions:
--- On LBRACE reduce production separated_nonempty_list(COMMA,ae_decl) -> DISJ separated_nonempty_list(COMMA,plain_id) COLON expr
--- On BAR reduce production separated_nonempty_list(COMMA,ae_decl) -> DISJ separated_nonempty_list(COMMA,plain_id) COLON expr
+-- On LBRACE BAR
+--   reduce production separated_nonempty_list(COMMA,ae_decl) -> DISJ separated_nonempty_list(COMMA,plain_id) COLON expr
 
 State 203:
 ## Known stack suffix:
@@ -5381,8 +4357,8 @@ separated_nonempty_list(COMMA,ae_decl) -> separated_nonempty_list(COMMA,plain_id
 -- On COMMA shift to state 207
 -- On ARROW shift to state 169
 ## Reductions:
--- On LBRACE reduce production separated_nonempty_list(COMMA,ae_decl) -> separated_nonempty_list(COMMA,plain_id) COLON expr
--- On BAR reduce production separated_nonempty_list(COMMA,ae_decl) -> separated_nonempty_list(COMMA,plain_id) COLON expr
+-- On LBRACE BAR
+--   reduce production separated_nonempty_list(COMMA,ae_decl) -> separated_nonempty_list(COMMA,plain_id) COLON expr
 
 State 207:
 ## Known stack suffix:
@@ -5468,7 +4444,8 @@ formula -> ALL separated_nonempty_list(COMMA,ae_decl) LBRACE . specification RBR
 -- On formula shift to state 217
 -- On expr shift to state 151
 ## Reductions:
--- On RBRACE reduce production list(formula_semi) ->
+-- On RBRACE
+--   reduce production list(formula_semi) ->
 
 State 212:
 ## Known stack suffix:
@@ -5539,12 +4516,8 @@ list(formula_semi) -> formula_semi . list(formula_semi) [ SYM RUN RBRACE INVARIA
 -- On formula shift to state 217
 -- On expr shift to state 151
 ## Reductions:
--- On SYM reduce production list(formula_semi) ->
--- On RUN reduce production list(formula_semi) ->
--- On RBRACE reduce production list(formula_semi) ->
--- On INVARIANT reduce production list(formula_semi) ->
--- On INST reduce production list(formula_semi) ->
--- On EOF reduce production list(formula_semi) ->
+-- On SYM RUN RBRACE INVARIANT INST EOF
+--   reduce production list(formula_semi) ->
 
 State 216:
 ## Known stack suffix:
@@ -5580,42 +4553,8 @@ formula_semi -> formula . SEMI [ UNIV TRUE TILDE SYM SUB STAR SOMETIME SOME RUN 
 -- On IFF shift to state 198
 -- On AND shift to state 193
 ## Reductions:
--- On UNIV reduce production formula_semi -> formula
--- On TRUE reduce production formula_semi -> formula
--- On TILDE reduce production formula_semi -> formula
--- On SYM reduce production formula_semi -> formula
--- On SUB reduce production formula_semi -> formula
--- On STAR reduce production formula_semi -> formula
--- On SOMETIME reduce production formula_semi -> formula
--- On SOME reduce production formula_semi -> formula
--- On RUN reduce production formula_semi -> formula
--- On RBRACE reduce production formula_semi -> formula
--- On PREVIOUS reduce production formula_semi -> formula
--- On PLAIN_ID reduce production formula_semi -> formula
--- On ONE reduce production formula_semi -> formula
--- On ONCE reduce production formula_semi -> formula
--- On NUMBER reduce production formula_semi -> formula
--- On NOT reduce production formula_semi -> formula
--- On NONE reduce production formula_semi -> formula
--- On NO reduce production formula_semi -> formula
--- On NEXT reduce production formula_semi -> formula
--- On NEG reduce production formula_semi -> formula
--- On LPAREN reduce production formula_semi -> formula
--- On LONE reduce production formula_semi -> formula
--- On LET reduce production formula_semi -> formula
--- On LBRACE reduce production formula_semi -> formula
--- On INVARIANT reduce production formula_semi -> formula
--- On INST reduce production formula_semi -> formula
--- On IDEN reduce production formula_semi -> formula
--- On HISTORICALLY reduce production formula_semi -> formula
--- On HAT reduce production formula_semi -> formula
--- On HASH reduce production formula_semi -> formula
--- On FALSE reduce production formula_semi -> formula
--- On EVENTUALLY reduce production formula_semi -> formula
--- On EOF reduce production formula_semi -> formula
--- On ALWAYS reduce production formula_semi -> formula
--- On ALL reduce production formula_semi -> formula
--- On ADD reduce production formula_semi -> formula
+-- On UNIV TRUE TILDE SYM SUB STAR SOMETIME SOME RUN RBRACE PREVIOUS PLAIN_ID ONE ONCE NUMBER NOT NONE NO NEXT NEG LPAREN LONE LET LBRACE INVARIANT INST IDEN HISTORICALLY HAT HASH FALSE EVENTUALLY EOF ALWAYS ALL ADD
+--   reduce production formula_semi -> formula
 
 State 218:
 ## Known stack suffix:
@@ -5690,45 +4629,8 @@ formula -> formula . IMPLIES formula [ UNTIL UNIV TRUE TILDE SYM SUB STAR SOMETI
 -- On IFF shift to state 198
 -- On AND shift to state 193
 ## Reductions:
--- On UNIV reduce production formula -> ALL separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On TRUE reduce production formula -> ALL separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On TILDE reduce production formula -> ALL separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On SYM reduce production formula -> ALL separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On SUB reduce production formula -> ALL separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On STAR reduce production formula -> ALL separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On SOMETIME reduce production formula -> ALL separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On SOME reduce production formula -> ALL separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On SEMI reduce production formula -> ALL separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On RUN reduce production formula -> ALL separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On RPAREN reduce production formula -> ALL separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On RBRACE reduce production formula -> ALL separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On PREVIOUS reduce production formula -> ALL separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On PLAIN_ID reduce production formula -> ALL separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On ONE reduce production formula -> ALL separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On ONCE reduce production formula -> ALL separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On NUMBER reduce production formula -> ALL separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On NOT reduce production formula -> ALL separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On NONE reduce production formula -> ALL separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On NO reduce production formula -> ALL separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On NEXT reduce production formula -> ALL separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On NEG reduce production formula -> ALL separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On LPAREN reduce production formula -> ALL separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On LONE reduce production formula -> ALL separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On LET reduce production formula -> ALL separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On LBRACE reduce production formula -> ALL separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On INVARIANT reduce production formula -> ALL separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On INST reduce production formula -> ALL separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On IDEN reduce production formula -> ALL separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On HISTORICALLY reduce production formula -> ALL separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On HAT reduce production formula -> ALL separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On HASH reduce production formula -> ALL separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On FALSE reduce production formula -> ALL separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On EVENTUALLY reduce production formula -> ALL separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On EOF reduce production formula -> ALL separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On ELSE reduce production formula -> ALL separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On ALWAYS reduce production formula -> ALL separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On ALL reduce production formula -> ALL separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On ADD reduce production formula -> ALL separated_nonempty_list(COMMA,ae_decl) BAR formula
+-- On UNIV TRUE TILDE SYM SUB STAR SOMETIME SOME SEMI RUN RPAREN RBRACE PREVIOUS PLAIN_ID ONE ONCE NUMBER NOT NONE NO NEXT NEG LPAREN LONE LET LBRACE INVARIANT INST IDEN HISTORICALLY HAT HASH FALSE EVENTUALLY EOF ELSE ALWAYS ALL ADD
+--   reduce production formula -> ALL separated_nonempty_list(COMMA,ae_decl) BAR formula
 
 State 221:
 ## Known stack suffix:
@@ -5788,72 +4690,8 @@ formula -> expr . NEQ expr [ UNTIL SINCE RELEASES OR IMPLIES IFF AND ]
 ## Transitions:
 -- On PRIME shift to state 154
 ## Reductions:
--- On UNTIL reduce production expr -> HAT expr
--- On UNIV reduce production expr -> HAT expr
--- On TRUE reduce production expr -> HAT expr
--- On TILDE reduce production expr -> HAT expr
--- On SYM reduce production expr -> HAT expr
--- On SUB reduce production expr -> HAT expr
--- On STAR reduce production expr -> HAT expr
--- On SOMETIME reduce production expr -> HAT expr
--- On SOME reduce production expr -> HAT expr
--- On SINCE reduce production expr -> HAT expr
--- On SEMI reduce production expr -> HAT expr
--- On RUN reduce production expr -> HAT expr
--- On RPROJ reduce production expr -> HAT expr
--- On RPAREN reduce production expr -> HAT expr
--- On RELEASES reduce production expr -> HAT expr
--- On RBRACKET reduce production expr -> HAT expr
--- On RBRACE reduce production expr -> HAT expr
--- On PREVIOUS reduce production expr -> HAT expr
--- On PLUS reduce production expr -> HAT expr
--- On PLAIN_ID reduce production expr -> HAT expr
--- On OVERRIDE reduce production expr -> HAT expr
--- On OR reduce production expr -> HAT expr
--- On ONE reduce production expr -> HAT expr
--- On ONCE reduce production expr -> HAT expr
--- On NUMBER reduce production expr -> HAT expr
--- On NOT_IN reduce production expr -> HAT expr
--- On NOT reduce production expr -> HAT expr
--- On NONE reduce production expr -> HAT expr
--- On NO reduce production expr -> HAT expr
--- On NEXT reduce production expr -> HAT expr
--- On NEQ reduce production expr -> HAT expr
--- On NEG reduce production expr -> HAT expr
--- On MINUS reduce production expr -> HAT expr
--- On LTE reduce production expr -> HAT expr
--- On LT reduce production expr -> HAT expr
--- On LPROJ reduce production expr -> HAT expr
--- On LPAREN reduce production expr -> HAT expr
--- On LONE reduce production expr -> HAT expr
--- On LET reduce production expr -> HAT expr
--- On LBRACKET reduce production expr -> HAT expr
--- On LBRACE reduce production expr -> HAT expr
--- On INVARIANT reduce production expr -> HAT expr
--- On INTER reduce production expr -> HAT expr
--- On INST reduce production expr -> HAT expr
--- On IN reduce production expr -> HAT expr
--- On IMPLIES reduce production expr -> HAT expr
--- On IFF reduce production expr -> HAT expr
--- On IDEN reduce production expr -> HAT expr
--- On HISTORICALLY reduce production expr -> HAT expr
--- On HAT reduce production expr -> HAT expr
--- On HASH reduce production expr -> HAT expr
--- On GTE reduce production expr -> HAT expr
--- On GT reduce production expr -> HAT expr
--- On FALSE reduce production expr -> HAT expr
--- On EVENTUALLY reduce production expr -> HAT expr
--- On EQ reduce production expr -> HAT expr
--- On EOF reduce production expr -> HAT expr
--- On ELSE reduce production expr -> HAT expr
--- On DOT reduce production expr -> HAT expr
--- On COMMA reduce production expr -> HAT expr
--- On BAR reduce production expr -> HAT expr
--- On ARROW reduce production expr -> HAT expr
--- On AND reduce production expr -> HAT expr
--- On ALWAYS reduce production expr -> HAT expr
--- On ALL reduce production expr -> HAT expr
--- On ADD reduce production expr -> HAT expr
+-- On UNTIL UNIV TRUE TILDE SYM SUB STAR SOMETIME SOME SINCE SEMI RUN RPROJ RPAREN RELEASES RBRACKET RBRACE PREVIOUS PLUS PLAIN_ID OVERRIDE OR ONE ONCE NUMBER NOT_IN NOT NONE NO NEXT NEQ NEG MINUS LTE LT LPROJ LPAREN LONE LET LBRACKET LBRACE INVARIANT INTER INST IN IMPLIES IFF IDEN HISTORICALLY HAT HASH GTE GT FALSE EVENTUALLY EQ EOF ELSE DOT COMMA BAR ARROW AND ALWAYS ALL ADD
+--   reduce production expr -> HAT expr
 
 State 224:
 ## Known stack suffix:
@@ -5945,7 +4783,8 @@ expr -> LBRACE separated_nonempty_list(COMMA,ae_decl) LBRACE . specification RBR
 -- On formula shift to state 217
 -- On expr shift to state 151
 ## Reductions:
--- On RBRACE reduce production list(formula_semi) ->
+-- On RBRACE
+--   reduce production list(formula_semi) ->
 
 State 229:
 ## Known stack suffix:
@@ -6086,8 +4925,8 @@ separated_nonempty_list(COMMA,let_decl) -> PLAIN_ID EQ expr . COMMA separated_no
 -- On COMMA shift to state 236
 -- On ARROW shift to state 169
 ## Reductions:
--- On LBRACE reduce production separated_nonempty_list(COMMA,let_decl) -> PLAIN_ID EQ expr
--- On BAR reduce production separated_nonempty_list(COMMA,let_decl) -> PLAIN_ID EQ expr
+-- On LBRACE BAR
+--   reduce production separated_nonempty_list(COMMA,let_decl) -> PLAIN_ID EQ expr
 
 State 236:
 ## Known stack suffix:
@@ -6162,7 +5001,8 @@ formula -> LET separated_nonempty_list(COMMA,let_decl) LBRACE . specification RB
 -- On formula shift to state 217
 -- On expr shift to state 151
 ## Reductions:
--- On RBRACE reduce production list(formula_semi) ->
+-- On RBRACE
+--   reduce production list(formula_semi) ->
 
 State 240:
 ## Known stack suffix:
@@ -6246,45 +5086,8 @@ formula -> formula . IMPLIES formula [ UNTIL UNIV TRUE TILDE SYM SUB STAR SOMETI
 -- On IFF shift to state 198
 -- On AND shift to state 193
 ## Reductions:
--- On UNIV reduce production formula -> LET separated_nonempty_list(COMMA,let_decl) BAR formula
--- On TRUE reduce production formula -> LET separated_nonempty_list(COMMA,let_decl) BAR formula
--- On TILDE reduce production formula -> LET separated_nonempty_list(COMMA,let_decl) BAR formula
--- On SYM reduce production formula -> LET separated_nonempty_list(COMMA,let_decl) BAR formula
--- On SUB reduce production formula -> LET separated_nonempty_list(COMMA,let_decl) BAR formula
--- On STAR reduce production formula -> LET separated_nonempty_list(COMMA,let_decl) BAR formula
--- On SOMETIME reduce production formula -> LET separated_nonempty_list(COMMA,let_decl) BAR formula
--- On SOME reduce production formula -> LET separated_nonempty_list(COMMA,let_decl) BAR formula
--- On SEMI reduce production formula -> LET separated_nonempty_list(COMMA,let_decl) BAR formula
--- On RUN reduce production formula -> LET separated_nonempty_list(COMMA,let_decl) BAR formula
--- On RPAREN reduce production formula -> LET separated_nonempty_list(COMMA,let_decl) BAR formula
--- On RBRACE reduce production formula -> LET separated_nonempty_list(COMMA,let_decl) BAR formula
--- On PREVIOUS reduce production formula -> LET separated_nonempty_list(COMMA,let_decl) BAR formula
--- On PLAIN_ID reduce production formula -> LET separated_nonempty_list(COMMA,let_decl) BAR formula
--- On ONE reduce production formula -> LET separated_nonempty_list(COMMA,let_decl) BAR formula
--- On ONCE reduce production formula -> LET separated_nonempty_list(COMMA,let_decl) BAR formula
--- On NUMBER reduce production formula -> LET separated_nonempty_list(COMMA,let_decl) BAR formula
--- On NOT reduce production formula -> LET separated_nonempty_list(COMMA,let_decl) BAR formula
--- On NONE reduce production formula -> LET separated_nonempty_list(COMMA,let_decl) BAR formula
--- On NO reduce production formula -> LET separated_nonempty_list(COMMA,let_decl) BAR formula
--- On NEXT reduce production formula -> LET separated_nonempty_list(COMMA,let_decl) BAR formula
--- On NEG reduce production formula -> LET separated_nonempty_list(COMMA,let_decl) BAR formula
--- On LPAREN reduce production formula -> LET separated_nonempty_list(COMMA,let_decl) BAR formula
--- On LONE reduce production formula -> LET separated_nonempty_list(COMMA,let_decl) BAR formula
--- On LET reduce production formula -> LET separated_nonempty_list(COMMA,let_decl) BAR formula
--- On LBRACE reduce production formula -> LET separated_nonempty_list(COMMA,let_decl) BAR formula
--- On INVARIANT reduce production formula -> LET separated_nonempty_list(COMMA,let_decl) BAR formula
--- On INST reduce production formula -> LET separated_nonempty_list(COMMA,let_decl) BAR formula
--- On IDEN reduce production formula -> LET separated_nonempty_list(COMMA,let_decl) BAR formula
--- On HISTORICALLY reduce production formula -> LET separated_nonempty_list(COMMA,let_decl) BAR formula
--- On HAT reduce production formula -> LET separated_nonempty_list(COMMA,let_decl) BAR formula
--- On HASH reduce production formula -> LET separated_nonempty_list(COMMA,let_decl) BAR formula
--- On FALSE reduce production formula -> LET separated_nonempty_list(COMMA,let_decl) BAR formula
--- On EVENTUALLY reduce production formula -> LET separated_nonempty_list(COMMA,let_decl) BAR formula
--- On EOF reduce production formula -> LET separated_nonempty_list(COMMA,let_decl) BAR formula
--- On ELSE reduce production formula -> LET separated_nonempty_list(COMMA,let_decl) BAR formula
--- On ALWAYS reduce production formula -> LET separated_nonempty_list(COMMA,let_decl) BAR formula
--- On ALL reduce production formula -> LET separated_nonempty_list(COMMA,let_decl) BAR formula
--- On ADD reduce production formula -> LET separated_nonempty_list(COMMA,let_decl) BAR formula
+-- On UNIV TRUE TILDE SYM SUB STAR SOMETIME SOME SEMI RUN RPAREN RBRACE PREVIOUS PLAIN_ID ONE ONCE NUMBER NOT NONE NO NEXT NEG LPAREN LONE LET LBRACE INVARIANT INST IDEN HISTORICALLY HAT HASH FALSE EVENTUALLY EOF ELSE ALWAYS ALL ADD
+--   reduce production formula -> LET separated_nonempty_list(COMMA,let_decl) BAR formula
 
 State 244:
 ## Known stack suffix:
@@ -6446,7 +5249,8 @@ formula -> LONE separated_nonempty_list(COMMA,ae_decl) LBRACE . specification RB
 -- On formula shift to state 217
 -- On expr shift to state 151
 ## Reductions:
--- On RBRACE reduce production list(formula_semi) ->
+-- On RBRACE
+--   reduce production list(formula_semi) ->
 
 State 252:
 ## Known stack suffix:
@@ -6530,45 +5334,8 @@ formula -> formula . IMPLIES formula [ UNTIL UNIV TRUE TILDE SYM SUB STAR SOMETI
 -- On IFF shift to state 198
 -- On AND shift to state 193
 ## Reductions:
--- On UNIV reduce production formula -> LONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On TRUE reduce production formula -> LONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On TILDE reduce production formula -> LONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On SYM reduce production formula -> LONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On SUB reduce production formula -> LONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On STAR reduce production formula -> LONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On SOMETIME reduce production formula -> LONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On SOME reduce production formula -> LONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On SEMI reduce production formula -> LONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On RUN reduce production formula -> LONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On RPAREN reduce production formula -> LONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On RBRACE reduce production formula -> LONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On PREVIOUS reduce production formula -> LONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On PLAIN_ID reduce production formula -> LONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On ONE reduce production formula -> LONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On ONCE reduce production formula -> LONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On NUMBER reduce production formula -> LONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On NOT reduce production formula -> LONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On NONE reduce production formula -> LONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On NO reduce production formula -> LONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On NEXT reduce production formula -> LONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On NEG reduce production formula -> LONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On LPAREN reduce production formula -> LONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On LONE reduce production formula -> LONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On LET reduce production formula -> LONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On LBRACE reduce production formula -> LONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On INVARIANT reduce production formula -> LONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On INST reduce production formula -> LONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On IDEN reduce production formula -> LONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On HISTORICALLY reduce production formula -> LONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On HAT reduce production formula -> LONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On HASH reduce production formula -> LONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On FALSE reduce production formula -> LONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On EVENTUALLY reduce production formula -> LONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On EOF reduce production formula -> LONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On ELSE reduce production formula -> LONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On ALWAYS reduce production formula -> LONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On ALL reduce production formula -> LONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On ADD reduce production formula -> LONE separated_nonempty_list(COMMA,ae_decl) BAR formula
+-- On UNIV TRUE TILDE SYM SUB STAR SOMETIME SOME SEMI RUN RPAREN RBRACE PREVIOUS PLAIN_ID ONE ONCE NUMBER NOT NONE NO NEXT NEG LPAREN LONE LET LBRACE INVARIANT INST IDEN HISTORICALLY HAT HASH FALSE EVENTUALLY EOF ELSE ALWAYS ALL ADD
+--   reduce production formula -> LONE separated_nonempty_list(COMMA,ae_decl) BAR formula
 
 State 256:
 ## Known stack suffix:
@@ -6605,52 +5372,8 @@ formula -> expr . NEQ expr [ UNTIL SINCE RELEASES OR IMPLIES IFF AND ]
 -- On DOT shift to state 165
 -- On ARROW shift to state 169
 ## Reductions:
--- On UNTIL reduce production formula -> LONE expr
--- On UNIV reduce production formula -> LONE expr
--- On TRUE reduce production formula -> LONE expr
--- On TILDE reduce production formula -> LONE expr
--- On SYM reduce production formula -> LONE expr
--- On SUB reduce production formula -> LONE expr
--- On STAR reduce production formula -> LONE expr
--- On SOMETIME reduce production formula -> LONE expr
--- On SOME reduce production formula -> LONE expr
--- On SINCE reduce production formula -> LONE expr
--- On SEMI reduce production formula -> LONE expr
--- On RUN reduce production formula -> LONE expr
--- On RPAREN reduce production formula -> LONE expr
--- On RELEASES reduce production formula -> LONE expr
--- On RBRACE reduce production formula -> LONE expr
--- On PREVIOUS reduce production formula -> LONE expr
--- On PLAIN_ID reduce production formula -> LONE expr
--- On OR reduce production formula -> LONE expr
--- On ONE reduce production formula -> LONE expr
--- On ONCE reduce production formula -> LONE expr
--- On NUMBER reduce production formula -> LONE expr
--- On NOT reduce production formula -> LONE expr
--- On NONE reduce production formula -> LONE expr
--- On NO reduce production formula -> LONE expr
--- On NEXT reduce production formula -> LONE expr
--- On NEG reduce production formula -> LONE expr
--- On LPAREN reduce production formula -> LONE expr
--- On LONE reduce production formula -> LONE expr
--- On LET reduce production formula -> LONE expr
--- On LBRACE reduce production formula -> LONE expr
--- On INVARIANT reduce production formula -> LONE expr
--- On INST reduce production formula -> LONE expr
--- On IMPLIES reduce production formula -> LONE expr
--- On IFF reduce production formula -> LONE expr
--- On IDEN reduce production formula -> LONE expr
--- On HISTORICALLY reduce production formula -> LONE expr
--- On HAT reduce production formula -> LONE expr
--- On HASH reduce production formula -> LONE expr
--- On FALSE reduce production formula -> LONE expr
--- On EVENTUALLY reduce production formula -> LONE expr
--- On EOF reduce production formula -> LONE expr
--- On ELSE reduce production formula -> LONE expr
--- On AND reduce production formula -> LONE expr
--- On ALWAYS reduce production formula -> LONE expr
--- On ALL reduce production formula -> LONE expr
--- On ADD reduce production formula -> LONE expr
+-- On UNTIL UNIV TRUE TILDE SYM SUB STAR SOMETIME SOME SINCE SEMI RUN RPAREN RELEASES RBRACE PREVIOUS PLAIN_ID OR ONE ONCE NUMBER NOT NONE NO NEXT NEG LPAREN LONE LET LBRACE INVARIANT INST IMPLIES IFF IDEN HISTORICALLY HAT HASH FALSE EVENTUALLY EOF ELSE AND ALWAYS ALL ADD
+--   reduce production formula -> LONE expr
 
 State 257:
 ## Known stack suffix:
@@ -6724,7 +5447,8 @@ formula -> NO separated_nonempty_list(COMMA,ae_decl) LBRACE . specification RBRA
 -- On formula shift to state 217
 -- On expr shift to state 151
 ## Reductions:
--- On RBRACE reduce production list(formula_semi) ->
+-- On RBRACE
+--   reduce production list(formula_semi) ->
 
 State 260:
 ## Known stack suffix:
@@ -6808,45 +5532,8 @@ formula -> formula . IMPLIES formula [ UNTIL UNIV TRUE TILDE SYM SUB STAR SOMETI
 -- On IFF shift to state 198
 -- On AND shift to state 193
 ## Reductions:
--- On UNIV reduce production formula -> NO separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On TRUE reduce production formula -> NO separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On TILDE reduce production formula -> NO separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On SYM reduce production formula -> NO separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On SUB reduce production formula -> NO separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On STAR reduce production formula -> NO separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On SOMETIME reduce production formula -> NO separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On SOME reduce production formula -> NO separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On SEMI reduce production formula -> NO separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On RUN reduce production formula -> NO separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On RPAREN reduce production formula -> NO separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On RBRACE reduce production formula -> NO separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On PREVIOUS reduce production formula -> NO separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On PLAIN_ID reduce production formula -> NO separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On ONE reduce production formula -> NO separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On ONCE reduce production formula -> NO separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On NUMBER reduce production formula -> NO separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On NOT reduce production formula -> NO separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On NONE reduce production formula -> NO separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On NO reduce production formula -> NO separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On NEXT reduce production formula -> NO separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On NEG reduce production formula -> NO separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On LPAREN reduce production formula -> NO separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On LONE reduce production formula -> NO separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On LET reduce production formula -> NO separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On LBRACE reduce production formula -> NO separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On INVARIANT reduce production formula -> NO separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On INST reduce production formula -> NO separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On IDEN reduce production formula -> NO separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On HISTORICALLY reduce production formula -> NO separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On HAT reduce production formula -> NO separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On HASH reduce production formula -> NO separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On FALSE reduce production formula -> NO separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On EVENTUALLY reduce production formula -> NO separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On EOF reduce production formula -> NO separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On ELSE reduce production formula -> NO separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On ALWAYS reduce production formula -> NO separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On ALL reduce production formula -> NO separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On ADD reduce production formula -> NO separated_nonempty_list(COMMA,ae_decl) BAR formula
+-- On UNIV TRUE TILDE SYM SUB STAR SOMETIME SOME SEMI RUN RPAREN RBRACE PREVIOUS PLAIN_ID ONE ONCE NUMBER NOT NONE NO NEXT NEG LPAREN LONE LET LBRACE INVARIANT INST IDEN HISTORICALLY HAT HASH FALSE EVENTUALLY EOF ELSE ALWAYS ALL ADD
+--   reduce production formula -> NO separated_nonempty_list(COMMA,ae_decl) BAR formula
 
 State 264:
 ## Known stack suffix:
@@ -6883,52 +5570,8 @@ formula -> expr . NEQ expr [ UNTIL SINCE RELEASES OR IMPLIES IFF AND ]
 -- On DOT shift to state 165
 -- On ARROW shift to state 169
 ## Reductions:
--- On UNTIL reduce production formula -> NO expr
--- On UNIV reduce production formula -> NO expr
--- On TRUE reduce production formula -> NO expr
--- On TILDE reduce production formula -> NO expr
--- On SYM reduce production formula -> NO expr
--- On SUB reduce production formula -> NO expr
--- On STAR reduce production formula -> NO expr
--- On SOMETIME reduce production formula -> NO expr
--- On SOME reduce production formula -> NO expr
--- On SINCE reduce production formula -> NO expr
--- On SEMI reduce production formula -> NO expr
--- On RUN reduce production formula -> NO expr
--- On RPAREN reduce production formula -> NO expr
--- On RELEASES reduce production formula -> NO expr
--- On RBRACE reduce production formula -> NO expr
--- On PREVIOUS reduce production formula -> NO expr
--- On PLAIN_ID reduce production formula -> NO expr
--- On OR reduce production formula -> NO expr
--- On ONE reduce production formula -> NO expr
--- On ONCE reduce production formula -> NO expr
--- On NUMBER reduce production formula -> NO expr
--- On NOT reduce production formula -> NO expr
--- On NONE reduce production formula -> NO expr
--- On NO reduce production formula -> NO expr
--- On NEXT reduce production formula -> NO expr
--- On NEG reduce production formula -> NO expr
--- On LPAREN reduce production formula -> NO expr
--- On LONE reduce production formula -> NO expr
--- On LET reduce production formula -> NO expr
--- On LBRACE reduce production formula -> NO expr
--- On INVARIANT reduce production formula -> NO expr
--- On INST reduce production formula -> NO expr
--- On IMPLIES reduce production formula -> NO expr
--- On IFF reduce production formula -> NO expr
--- On IDEN reduce production formula -> NO expr
--- On HISTORICALLY reduce production formula -> NO expr
--- On HAT reduce production formula -> NO expr
--- On HASH reduce production formula -> NO expr
--- On FALSE reduce production formula -> NO expr
--- On EVENTUALLY reduce production formula -> NO expr
--- On EOF reduce production formula -> NO expr
--- On ELSE reduce production formula -> NO expr
--- On AND reduce production formula -> NO expr
--- On ALWAYS reduce production formula -> NO expr
--- On ALL reduce production formula -> NO expr
--- On ADD reduce production formula -> NO expr
+-- On UNTIL UNIV TRUE TILDE SYM SUB STAR SOMETIME SOME SINCE SEMI RUN RPAREN RELEASES RBRACE PREVIOUS PLAIN_ID OR ONE ONCE NUMBER NOT NONE NO NEXT NEG LPAREN LONE LET LBRACE INVARIANT INST IMPLIES IFF IDEN HISTORICALLY HAT HASH FALSE EVENTUALLY EOF ELSE AND ALWAYS ALL ADD
+--   reduce production formula -> NO expr
 
 State 265:
 ## Known stack suffix:
@@ -7020,7 +5663,8 @@ formula -> ONE separated_nonempty_list(COMMA,ae_decl) LBRACE . specification RBR
 -- On formula shift to state 217
 -- On expr shift to state 151
 ## Reductions:
--- On RBRACE reduce production list(formula_semi) ->
+-- On RBRACE
+--   reduce production list(formula_semi) ->
 
 State 269:
 ## Known stack suffix:
@@ -7104,45 +5748,8 @@ formula -> formula . IMPLIES formula [ UNTIL UNIV TRUE TILDE SYM SUB STAR SOMETI
 -- On IFF shift to state 198
 -- On AND shift to state 193
 ## Reductions:
--- On UNIV reduce production formula -> ONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On TRUE reduce production formula -> ONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On TILDE reduce production formula -> ONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On SYM reduce production formula -> ONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On SUB reduce production formula -> ONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On STAR reduce production formula -> ONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On SOMETIME reduce production formula -> ONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On SOME reduce production formula -> ONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On SEMI reduce production formula -> ONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On RUN reduce production formula -> ONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On RPAREN reduce production formula -> ONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On RBRACE reduce production formula -> ONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On PREVIOUS reduce production formula -> ONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On PLAIN_ID reduce production formula -> ONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On ONE reduce production formula -> ONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On ONCE reduce production formula -> ONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On NUMBER reduce production formula -> ONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On NOT reduce production formula -> ONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On NONE reduce production formula -> ONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On NO reduce production formula -> ONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On NEXT reduce production formula -> ONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On NEG reduce production formula -> ONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On LPAREN reduce production formula -> ONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On LONE reduce production formula -> ONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On LET reduce production formula -> ONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On LBRACE reduce production formula -> ONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On INVARIANT reduce production formula -> ONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On INST reduce production formula -> ONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On IDEN reduce production formula -> ONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On HISTORICALLY reduce production formula -> ONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On HAT reduce production formula -> ONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On HASH reduce production formula -> ONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On FALSE reduce production formula -> ONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On EVENTUALLY reduce production formula -> ONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On EOF reduce production formula -> ONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On ELSE reduce production formula -> ONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On ALWAYS reduce production formula -> ONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On ALL reduce production formula -> ONE separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On ADD reduce production formula -> ONE separated_nonempty_list(COMMA,ae_decl) BAR formula
+-- On UNIV TRUE TILDE SYM SUB STAR SOMETIME SOME SEMI RUN RPAREN RBRACE PREVIOUS PLAIN_ID ONE ONCE NUMBER NOT NONE NO NEXT NEG LPAREN LONE LET LBRACE INVARIANT INST IDEN HISTORICALLY HAT HASH FALSE EVENTUALLY EOF ELSE ALWAYS ALL ADD
+--   reduce production formula -> ONE separated_nonempty_list(COMMA,ae_decl) BAR formula
 
 State 273:
 ## Known stack suffix:
@@ -7179,52 +5786,8 @@ formula -> expr . NEQ expr [ UNTIL SINCE RELEASES OR IMPLIES IFF AND ]
 -- On DOT shift to state 165
 -- On ARROW shift to state 169
 ## Reductions:
--- On UNTIL reduce production formula -> ONE expr
--- On UNIV reduce production formula -> ONE expr
--- On TRUE reduce production formula -> ONE expr
--- On TILDE reduce production formula -> ONE expr
--- On SYM reduce production formula -> ONE expr
--- On SUB reduce production formula -> ONE expr
--- On STAR reduce production formula -> ONE expr
--- On SOMETIME reduce production formula -> ONE expr
--- On SOME reduce production formula -> ONE expr
--- On SINCE reduce production formula -> ONE expr
--- On SEMI reduce production formula -> ONE expr
--- On RUN reduce production formula -> ONE expr
--- On RPAREN reduce production formula -> ONE expr
--- On RELEASES reduce production formula -> ONE expr
--- On RBRACE reduce production formula -> ONE expr
--- On PREVIOUS reduce production formula -> ONE expr
--- On PLAIN_ID reduce production formula -> ONE expr
--- On OR reduce production formula -> ONE expr
--- On ONE reduce production formula -> ONE expr
--- On ONCE reduce production formula -> ONE expr
--- On NUMBER reduce production formula -> ONE expr
--- On NOT reduce production formula -> ONE expr
--- On NONE reduce production formula -> ONE expr
--- On NO reduce production formula -> ONE expr
--- On NEXT reduce production formula -> ONE expr
--- On NEG reduce production formula -> ONE expr
--- On LPAREN reduce production formula -> ONE expr
--- On LONE reduce production formula -> ONE expr
--- On LET reduce production formula -> ONE expr
--- On LBRACE reduce production formula -> ONE expr
--- On INVARIANT reduce production formula -> ONE expr
--- On INST reduce production formula -> ONE expr
--- On IMPLIES reduce production formula -> ONE expr
--- On IFF reduce production formula -> ONE expr
--- On IDEN reduce production formula -> ONE expr
--- On HISTORICALLY reduce production formula -> ONE expr
--- On HAT reduce production formula -> ONE expr
--- On HASH reduce production formula -> ONE expr
--- On FALSE reduce production formula -> ONE expr
--- On EVENTUALLY reduce production formula -> ONE expr
--- On EOF reduce production formula -> ONE expr
--- On ELSE reduce production formula -> ONE expr
--- On AND reduce production formula -> ONE expr
--- On ALWAYS reduce production formula -> ONE expr
--- On ALL reduce production formula -> ONE expr
--- On ADD reduce production formula -> ONE expr
+-- On UNTIL UNIV TRUE TILDE SYM SUB STAR SOMETIME SOME SINCE SEMI RUN RPAREN RELEASES RBRACE PREVIOUS PLAIN_ID OR ONE ONCE NUMBER NOT NONE NO NEXT NEG LPAREN LONE LET LBRACE INVARIANT INST IMPLIES IFF IDEN HISTORICALLY HAT HASH FALSE EVENTUALLY EOF ELSE AND ALWAYS ALL ADD
+--   reduce production formula -> ONE expr
 
 State 274:
 ## Known stack suffix:
@@ -7298,7 +5861,8 @@ formula -> SOME separated_nonempty_list(COMMA,ae_decl) LBRACE . specification RB
 -- On formula shift to state 217
 -- On expr shift to state 151
 ## Reductions:
--- On RBRACE reduce production list(formula_semi) ->
+-- On RBRACE
+--   reduce production list(formula_semi) ->
 
 State 277:
 ## Known stack suffix:
@@ -7382,45 +5946,8 @@ formula -> formula . IMPLIES formula [ UNTIL UNIV TRUE TILDE SYM SUB STAR SOMETI
 -- On IFF shift to state 198
 -- On AND shift to state 193
 ## Reductions:
--- On UNIV reduce production formula -> SOME separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On TRUE reduce production formula -> SOME separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On TILDE reduce production formula -> SOME separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On SYM reduce production formula -> SOME separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On SUB reduce production formula -> SOME separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On STAR reduce production formula -> SOME separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On SOMETIME reduce production formula -> SOME separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On SOME reduce production formula -> SOME separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On SEMI reduce production formula -> SOME separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On RUN reduce production formula -> SOME separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On RPAREN reduce production formula -> SOME separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On RBRACE reduce production formula -> SOME separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On PREVIOUS reduce production formula -> SOME separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On PLAIN_ID reduce production formula -> SOME separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On ONE reduce production formula -> SOME separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On ONCE reduce production formula -> SOME separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On NUMBER reduce production formula -> SOME separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On NOT reduce production formula -> SOME separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On NONE reduce production formula -> SOME separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On NO reduce production formula -> SOME separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On NEXT reduce production formula -> SOME separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On NEG reduce production formula -> SOME separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On LPAREN reduce production formula -> SOME separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On LONE reduce production formula -> SOME separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On LET reduce production formula -> SOME separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On LBRACE reduce production formula -> SOME separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On INVARIANT reduce production formula -> SOME separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On INST reduce production formula -> SOME separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On IDEN reduce production formula -> SOME separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On HISTORICALLY reduce production formula -> SOME separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On HAT reduce production formula -> SOME separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On HASH reduce production formula -> SOME separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On FALSE reduce production formula -> SOME separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On EVENTUALLY reduce production formula -> SOME separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On EOF reduce production formula -> SOME separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On ELSE reduce production formula -> SOME separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On ALWAYS reduce production formula -> SOME separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On ALL reduce production formula -> SOME separated_nonempty_list(COMMA,ae_decl) BAR formula
--- On ADD reduce production formula -> SOME separated_nonempty_list(COMMA,ae_decl) BAR formula
+-- On UNIV TRUE TILDE SYM SUB STAR SOMETIME SOME SEMI RUN RPAREN RBRACE PREVIOUS PLAIN_ID ONE ONCE NUMBER NOT NONE NO NEXT NEG LPAREN LONE LET LBRACE INVARIANT INST IDEN HISTORICALLY HAT HASH FALSE EVENTUALLY EOF ELSE ALWAYS ALL ADD
+--   reduce production formula -> SOME separated_nonempty_list(COMMA,ae_decl) BAR formula
 
 State 281:
 ## Known stack suffix:
@@ -7457,52 +5984,8 @@ formula -> expr . NEQ expr [ UNTIL SINCE RELEASES OR IMPLIES IFF AND ]
 -- On DOT shift to state 165
 -- On ARROW shift to state 169
 ## Reductions:
--- On UNTIL reduce production formula -> SOME expr
--- On UNIV reduce production formula -> SOME expr
--- On TRUE reduce production formula -> SOME expr
--- On TILDE reduce production formula -> SOME expr
--- On SYM reduce production formula -> SOME expr
--- On SUB reduce production formula -> SOME expr
--- On STAR reduce production formula -> SOME expr
--- On SOMETIME reduce production formula -> SOME expr
--- On SOME reduce production formula -> SOME expr
--- On SINCE reduce production formula -> SOME expr
--- On SEMI reduce production formula -> SOME expr
--- On RUN reduce production formula -> SOME expr
--- On RPAREN reduce production formula -> SOME expr
--- On RELEASES reduce production formula -> SOME expr
--- On RBRACE reduce production formula -> SOME expr
--- On PREVIOUS reduce production formula -> SOME expr
--- On PLAIN_ID reduce production formula -> SOME expr
--- On OR reduce production formula -> SOME expr
--- On ONE reduce production formula -> SOME expr
--- On ONCE reduce production formula -> SOME expr
--- On NUMBER reduce production formula -> SOME expr
--- On NOT reduce production formula -> SOME expr
--- On NONE reduce production formula -> SOME expr
--- On NO reduce production formula -> SOME expr
--- On NEXT reduce production formula -> SOME expr
--- On NEG reduce production formula -> SOME expr
--- On LPAREN reduce production formula -> SOME expr
--- On LONE reduce production formula -> SOME expr
--- On LET reduce production formula -> SOME expr
--- On LBRACE reduce production formula -> SOME expr
--- On INVARIANT reduce production formula -> SOME expr
--- On INST reduce production formula -> SOME expr
--- On IMPLIES reduce production formula -> SOME expr
--- On IFF reduce production formula -> SOME expr
--- On IDEN reduce production formula -> SOME expr
--- On HISTORICALLY reduce production formula -> SOME expr
--- On HAT reduce production formula -> SOME expr
--- On HASH reduce production formula -> SOME expr
--- On FALSE reduce production formula -> SOME expr
--- On EVENTUALLY reduce production formula -> SOME expr
--- On EOF reduce production formula -> SOME expr
--- On ELSE reduce production formula -> SOME expr
--- On AND reduce production formula -> SOME expr
--- On ALWAYS reduce production formula -> SOME expr
--- On ALL reduce production formula -> SOME expr
--- On ADD reduce production formula -> SOME expr
+-- On UNTIL UNIV TRUE TILDE SYM SUB STAR SOMETIME SOME SINCE SEMI RUN RPAREN RELEASES RBRACE PREVIOUS PLAIN_ID OR ONE ONCE NUMBER NOT NONE NO NEXT NEG LPAREN LONE LET LBRACE INVARIANT INST IMPLIES IFF IDEN HISTORICALLY HAT HASH FALSE EVENTUALLY EOF ELSE AND ALWAYS ALL ADD
+--   reduce production formula -> SOME expr
 
 State 282:
 ## Known stack suffix:
@@ -7544,72 +6027,8 @@ formula -> expr . NEQ expr [ UNTIL SINCE RELEASES OR IMPLIES IFF AND ]
 ## Transitions:
 -- On PRIME shift to state 154
 ## Reductions:
--- On UNTIL reduce production expr -> STAR expr
--- On UNIV reduce production expr -> STAR expr
--- On TRUE reduce production expr -> STAR expr
--- On TILDE reduce production expr -> STAR expr
--- On SYM reduce production expr -> STAR expr
--- On SUB reduce production expr -> STAR expr
--- On STAR reduce production expr -> STAR expr
--- On SOMETIME reduce production expr -> STAR expr
--- On SOME reduce production expr -> STAR expr
--- On SINCE reduce production expr -> STAR expr
--- On SEMI reduce production expr -> STAR expr
--- On RUN reduce production expr -> STAR expr
--- On RPROJ reduce production expr -> STAR expr
--- On RPAREN reduce production expr -> STAR expr
--- On RELEASES reduce production expr -> STAR expr
--- On RBRACKET reduce production expr -> STAR expr
--- On RBRACE reduce production expr -> STAR expr
--- On PREVIOUS reduce production expr -> STAR expr
--- On PLUS reduce production expr -> STAR expr
--- On PLAIN_ID reduce production expr -> STAR expr
--- On OVERRIDE reduce production expr -> STAR expr
--- On OR reduce production expr -> STAR expr
--- On ONE reduce production expr -> STAR expr
--- On ONCE reduce production expr -> STAR expr
--- On NUMBER reduce production expr -> STAR expr
--- On NOT_IN reduce production expr -> STAR expr
--- On NOT reduce production expr -> STAR expr
--- On NONE reduce production expr -> STAR expr
--- On NO reduce production expr -> STAR expr
--- On NEXT reduce production expr -> STAR expr
--- On NEQ reduce production expr -> STAR expr
--- On NEG reduce production expr -> STAR expr
--- On MINUS reduce production expr -> STAR expr
--- On LTE reduce production expr -> STAR expr
--- On LT reduce production expr -> STAR expr
--- On LPROJ reduce production expr -> STAR expr
--- On LPAREN reduce production expr -> STAR expr
--- On LONE reduce production expr -> STAR expr
--- On LET reduce production expr -> STAR expr
--- On LBRACKET reduce production expr -> STAR expr
--- On LBRACE reduce production expr -> STAR expr
--- On INVARIANT reduce production expr -> STAR expr
--- On INTER reduce production expr -> STAR expr
--- On INST reduce production expr -> STAR expr
--- On IN reduce production expr -> STAR expr
--- On IMPLIES reduce production expr -> STAR expr
--- On IFF reduce production expr -> STAR expr
--- On IDEN reduce production expr -> STAR expr
--- On HISTORICALLY reduce production expr -> STAR expr
--- On HAT reduce production expr -> STAR expr
--- On HASH reduce production expr -> STAR expr
--- On GTE reduce production expr -> STAR expr
--- On GT reduce production expr -> STAR expr
--- On FALSE reduce production expr -> STAR expr
--- On EVENTUALLY reduce production expr -> STAR expr
--- On EQ reduce production expr -> STAR expr
--- On EOF reduce production expr -> STAR expr
--- On ELSE reduce production expr -> STAR expr
--- On DOT reduce production expr -> STAR expr
--- On COMMA reduce production expr -> STAR expr
--- On BAR reduce production expr -> STAR expr
--- On ARROW reduce production expr -> STAR expr
--- On AND reduce production expr -> STAR expr
--- On ALWAYS reduce production expr -> STAR expr
--- On ALL reduce production expr -> STAR expr
--- On ADD reduce production expr -> STAR expr
+-- On UNTIL UNIV TRUE TILDE SYM SUB STAR SOMETIME SOME SINCE SEMI RUN RPROJ RPAREN RELEASES RBRACKET RBRACE PREVIOUS PLUS PLAIN_ID OVERRIDE OR ONE ONCE NUMBER NOT_IN NOT NONE NO NEXT NEQ NEG MINUS LTE LT LPROJ LPAREN LONE LET LBRACKET LBRACE INVARIANT INTER INST IN IMPLIES IFF IDEN HISTORICALLY HAT HASH GTE GT FALSE EVENTUALLY EQ EOF ELSE DOT COMMA BAR ARROW AND ALWAYS ALL ADD
+--   reduce production expr -> STAR expr
 
 State 284:
 ## Known stack suffix:
@@ -7644,60 +6063,8 @@ iexpr -> HASH expr . [ UNTIL UNIV TRUE TILDE SYM SUB STAR SOMETIME SOME SINCE SE
 -- On DOT shift to state 165
 -- On ARROW shift to state 169
 ## Reductions:
--- On UNTIL reduce production iexpr -> HASH expr
--- On UNIV reduce production iexpr -> HASH expr
--- On TRUE reduce production iexpr -> HASH expr
--- On TILDE reduce production iexpr -> HASH expr
--- On SYM reduce production iexpr -> HASH expr
--- On SUB reduce production iexpr -> HASH expr
--- On STAR reduce production iexpr -> HASH expr
--- On SOMETIME reduce production iexpr -> HASH expr
--- On SOME reduce production iexpr -> HASH expr
--- On SINCE reduce production iexpr -> HASH expr
--- On SEMI reduce production iexpr -> HASH expr
--- On RUN reduce production iexpr -> HASH expr
--- On RPAREN reduce production iexpr -> HASH expr
--- On RELEASES reduce production iexpr -> HASH expr
--- On RBRACKET reduce production iexpr -> HASH expr
--- On RBRACE reduce production iexpr -> HASH expr
--- On PREVIOUS reduce production iexpr -> HASH expr
--- On PLAIN_ID reduce production iexpr -> HASH expr
--- On OR reduce production iexpr -> HASH expr
--- On ONE reduce production iexpr -> HASH expr
--- On ONCE reduce production iexpr -> HASH expr
--- On NUMBER reduce production iexpr -> HASH expr
--- On NOT reduce production iexpr -> HASH expr
--- On NONE reduce production iexpr -> HASH expr
--- On NO reduce production iexpr -> HASH expr
--- On NEXT reduce production iexpr -> HASH expr
--- On NEQ reduce production iexpr -> HASH expr
--- On NEG reduce production iexpr -> HASH expr
--- On LTE reduce production iexpr -> HASH expr
--- On LT reduce production iexpr -> HASH expr
--- On LPAREN reduce production iexpr -> HASH expr
--- On LONE reduce production iexpr -> HASH expr
--- On LET reduce production iexpr -> HASH expr
--- On LBRACE reduce production iexpr -> HASH expr
--- On INVARIANT reduce production iexpr -> HASH expr
--- On INST reduce production iexpr -> HASH expr
--- On IMPLIES reduce production iexpr -> HASH expr
--- On IFF reduce production iexpr -> HASH expr
--- On IDEN reduce production iexpr -> HASH expr
--- On HISTORICALLY reduce production iexpr -> HASH expr
--- On HAT reduce production iexpr -> HASH expr
--- On HASH reduce production iexpr -> HASH expr
--- On GTE reduce production iexpr -> HASH expr
--- On GT reduce production iexpr -> HASH expr
--- On FALSE reduce production iexpr -> HASH expr
--- On EVENTUALLY reduce production iexpr -> HASH expr
--- On EQ reduce production iexpr -> HASH expr
--- On EOF reduce production iexpr -> HASH expr
--- On ELSE reduce production iexpr -> HASH expr
--- On COMMA reduce production iexpr -> HASH expr
--- On AND reduce production iexpr -> HASH expr
--- On ALWAYS reduce production iexpr -> HASH expr
--- On ALL reduce production iexpr -> HASH expr
--- On ADD reduce production iexpr -> HASH expr
+-- On UNTIL UNIV TRUE TILDE SYM SUB STAR SOMETIME SOME SINCE SEMI RUN RPAREN RELEASES RBRACKET RBRACE PREVIOUS PLAIN_ID OR ONE ONCE NUMBER NOT NONE NO NEXT NEQ NEG LTE LT LPAREN LONE LET LBRACE INVARIANT INST IMPLIES IFF IDEN HISTORICALLY HAT HASH GTE GT FALSE EVENTUALLY EQ EOF ELSE COMMA AND ALWAYS ALL ADD
+--   reduce production iexpr -> HASH expr
 
 State 285:
 ## Known stack suffix:
@@ -7790,72 +6157,8 @@ formula -> expr . NEQ expr [ UNTIL SINCE RELEASES OR IMPLIES IFF AND ]
 ## Transitions:
 -- On PRIME shift to state 154
 ## Reductions:
--- On UNTIL reduce production expr -> TILDE expr
--- On UNIV reduce production expr -> TILDE expr
--- On TRUE reduce production expr -> TILDE expr
--- On TILDE reduce production expr -> TILDE expr
--- On SYM reduce production expr -> TILDE expr
--- On SUB reduce production expr -> TILDE expr
--- On STAR reduce production expr -> TILDE expr
--- On SOMETIME reduce production expr -> TILDE expr
--- On SOME reduce production expr -> TILDE expr
--- On SINCE reduce production expr -> TILDE expr
--- On SEMI reduce production expr -> TILDE expr
--- On RUN reduce production expr -> TILDE expr
--- On RPROJ reduce production expr -> TILDE expr
--- On RPAREN reduce production expr -> TILDE expr
--- On RELEASES reduce production expr -> TILDE expr
--- On RBRACKET reduce production expr -> TILDE expr
--- On RBRACE reduce production expr -> TILDE expr
--- On PREVIOUS reduce production expr -> TILDE expr
--- On PLUS reduce production expr -> TILDE expr
--- On PLAIN_ID reduce production expr -> TILDE expr
--- On OVERRIDE reduce production expr -> TILDE expr
--- On OR reduce production expr -> TILDE expr
--- On ONE reduce production expr -> TILDE expr
--- On ONCE reduce production expr -> TILDE expr
--- On NUMBER reduce production expr -> TILDE expr
--- On NOT_IN reduce production expr -> TILDE expr
--- On NOT reduce production expr -> TILDE expr
--- On NONE reduce production expr -> TILDE expr
--- On NO reduce production expr -> TILDE expr
--- On NEXT reduce production expr -> TILDE expr
--- On NEQ reduce production expr -> TILDE expr
--- On NEG reduce production expr -> TILDE expr
--- On MINUS reduce production expr -> TILDE expr
--- On LTE reduce production expr -> TILDE expr
--- On LT reduce production expr -> TILDE expr
--- On LPROJ reduce production expr -> TILDE expr
--- On LPAREN reduce production expr -> TILDE expr
--- On LONE reduce production expr -> TILDE expr
--- On LET reduce production expr -> TILDE expr
--- On LBRACKET reduce production expr -> TILDE expr
--- On LBRACE reduce production expr -> TILDE expr
--- On INVARIANT reduce production expr -> TILDE expr
--- On INTER reduce production expr -> TILDE expr
--- On INST reduce production expr -> TILDE expr
--- On IN reduce production expr -> TILDE expr
--- On IMPLIES reduce production expr -> TILDE expr
--- On IFF reduce production expr -> TILDE expr
--- On IDEN reduce production expr -> TILDE expr
--- On HISTORICALLY reduce production expr -> TILDE expr
--- On HAT reduce production expr -> TILDE expr
--- On HASH reduce production expr -> TILDE expr
--- On GTE reduce production expr -> TILDE expr
--- On GT reduce production expr -> TILDE expr
--- On FALSE reduce production expr -> TILDE expr
--- On EVENTUALLY reduce production expr -> TILDE expr
--- On EQ reduce production expr -> TILDE expr
--- On EOF reduce production expr -> TILDE expr
--- On ELSE reduce production expr -> TILDE expr
--- On DOT reduce production expr -> TILDE expr
--- On COMMA reduce production expr -> TILDE expr
--- On BAR reduce production expr -> TILDE expr
--- On ARROW reduce production expr -> TILDE expr
--- On AND reduce production expr -> TILDE expr
--- On ALWAYS reduce production expr -> TILDE expr
--- On ALL reduce production expr -> TILDE expr
--- On ADD reduce production expr -> TILDE expr
+-- On UNTIL UNIV TRUE TILDE SYM SUB STAR SOMETIME SOME SINCE SEMI RUN RPROJ RPAREN RELEASES RBRACKET RBRACE PREVIOUS PLUS PLAIN_ID OVERRIDE OR ONE ONCE NUMBER NOT_IN NOT NONE NO NEXT NEQ NEG MINUS LTE LT LPROJ LPAREN LONE LET LBRACKET LBRACE INVARIANT INTER INST IN IMPLIES IFF IDEN HISTORICALLY HAT HASH GTE GT FALSE EVENTUALLY EQ EOF ELSE DOT COMMA BAR ARROW AND ALWAYS ALL ADD
+--   reduce production expr -> TILDE expr
 
 State 293:
 ## Known stack suffix:
@@ -7909,11 +6212,8 @@ nonempty_list(formula_semi) -> formula_semi . nonempty_list(formula_semi) [ SYM 
 -- On formula shift to state 217
 -- On expr shift to state 151
 ## Reductions:
--- On SYM reduce production nonempty_list(formula_semi) -> formula_semi
--- On RUN reduce production nonempty_list(formula_semi) -> formula_semi
--- On INVARIANT reduce production nonempty_list(formula_semi) -> formula_semi
--- On INST reduce production nonempty_list(formula_semi) -> formula_semi
--- On EOF reduce production nonempty_list(formula_semi) -> formula_semi
+-- On SYM RUN INVARIANT INST EOF
+--   reduce production nonempty_list(formula_semi) -> formula_semi
 
 State 295:
 ## Known stack suffix:
@@ -7967,11 +6267,8 @@ paragraph -> INVARIANT . specification [ SYM RUN INVARIANT INST EOF ]
 -- On formula shift to state 217
 -- On expr shift to state 151
 ## Reductions:
--- On SYM reduce production list(formula_semi) ->
--- On RUN reduce production list(formula_semi) ->
--- On INVARIANT reduce production list(formula_semi) ->
--- On INST reduce production list(formula_semi) ->
--- On EOF reduce production list(formula_semi) ->
+-- On SYM RUN INVARIANT INST EOF
+--   reduce production list(formula_semi) ->
 
 State 297:
 ## Known stack suffix:
@@ -8024,7 +6321,8 @@ inst -> PLAIN_ID EQ LBRACE . list(tuple) RBRACE SEMI [ SYM RUN PLAIN_ID INVARIAN
 -- On tuple shift to state 302
 -- On list(tuple) shift to state 304
 ## Reductions:
--- On RBRACE reduce production list(tuple) ->
+-- On RBRACE
+--   reduce production list(tuple) ->
 
 State 302:
 ## Known stack suffix:
@@ -8036,7 +6334,8 @@ list(tuple) -> tuple . list(tuple) [ RBRACE ]
 -- On tuple shift to state 302
 -- On list(tuple) shift to state 303
 ## Reductions:
--- On RBRACE reduce production list(tuple) ->
+-- On RBRACE
+--   reduce production list(tuple) ->
 
 State 303:
 ## Known stack suffix:
@@ -8066,12 +6365,8 @@ inst -> PLAIN_ID EQ LBRACE list(tuple) RBRACE . SEMI [ SYM RUN PLAIN_ID INVARIAN
 ## Transitions:
 -- On SEMI shift to state 306
 ## Reductions:
--- On SYM reduce production inst -> PLAIN_ID EQ LBRACE list(tuple) RBRACE
--- On RUN reduce production inst -> PLAIN_ID EQ LBRACE list(tuple) RBRACE
--- On PLAIN_ID reduce production inst -> PLAIN_ID EQ LBRACE list(tuple) RBRACE
--- On INVARIANT reduce production inst -> PLAIN_ID EQ LBRACE list(tuple) RBRACE
--- On INST reduce production inst -> PLAIN_ID EQ LBRACE list(tuple) RBRACE
--- On EOF reduce production inst -> PLAIN_ID EQ LBRACE list(tuple) RBRACE
+-- On SYM RUN PLAIN_ID INVARIANT INST EOF
+--   reduce production inst -> PLAIN_ID EQ LBRACE list(tuple) RBRACE
 
 State 306:
 ## Known stack suffix:
@@ -8102,11 +6397,8 @@ nonempty_list(inst) -> inst . nonempty_list(inst) [ SYM RUN INVARIANT INST EOF ]
 -- On nonempty_list(inst) shift to state 309
 -- On inst shift to state 308
 ## Reductions:
--- On SYM reduce production nonempty_list(inst) -> inst
--- On RUN reduce production nonempty_list(inst) -> inst
--- On INVARIANT reduce production nonempty_list(inst) -> inst
--- On INST reduce production nonempty_list(inst) -> inst
--- On EOF reduce production nonempty_list(inst) -> inst
+-- On SYM RUN INVARIANT INST EOF
+--   reduce production nonempty_list(inst) -> inst
 
 State 309:
 ## Known stack suffix:
@@ -8142,7 +6434,8 @@ nonempty_list(paragraph) -> paragraph . nonempty_list(paragraph) [ EOF ]
 -- On nonempty_list(paragraph) shift to state 312
 -- On insts shift to state 313
 ## Reductions:
--- On EOF reduce production nonempty_list(paragraph) -> paragraph
+-- On EOF
+--   reduce production nonempty_list(paragraph) -> paragraph
 
 State 312:
 ## Known stack suffix:
@@ -8191,10 +6484,8 @@ list(declaration) -> declaration . list(declaration) [ SYM RUN INVARIANT INST ]
 -- On list(declaration) shift to state 317
 -- On declaration shift to state 316
 ## Reductions:
--- On SYM reduce production list(declaration) ->
--- On RUN reduce production list(declaration) ->
--- On INVARIANT reduce production list(declaration) ->
--- On INST reduce production list(declaration) ->
+-- On SYM RUN INVARIANT INST
+--   reduce production list(declaration) ->
 
 State 317:
 ## Known stack suffix:

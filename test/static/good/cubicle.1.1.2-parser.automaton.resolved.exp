@@ -8,15 +8,8 @@ system' -> . system [ # ]
 -- On system shift to state 3
 -- On size_proc shift to state 4
 ## Reductions:
--- On VAR reduce production size_proc ->
--- On UNSAFE reduce production size_proc ->
--- On TYPE reduce production size_proc ->
--- On TRANSITION reduce production size_proc ->
--- On PREDICATE reduce production size_proc ->
--- On INVARIANT reduce production size_proc ->
--- On INIT reduce production size_proc ->
--- On CONST reduce production size_proc ->
--- On ARRAY reduce production size_proc ->
+-- On VAR UNSAFE TYPE TRANSITION PREDICATE INVARIANT INIT CONST ARRAY
+--   reduce production size_proc ->
 
 State 1:
 ## Known stack suffix:
@@ -56,14 +49,8 @@ system -> size_proc . type_defs symbold_decls decl_list EOF [ # ]
 -- On type_def_plus shift to state 250
 -- On type_def shift to state 251
 ## Reductions:
--- On VAR reduce production type_defs ->
--- On UNSAFE reduce production type_defs ->
--- On TRANSITION reduce production type_defs ->
--- On PREDICATE reduce production type_defs ->
--- On INVARIANT reduce production type_defs ->
--- On INIT reduce production type_defs ->
--- On CONST reduce production type_defs ->
--- On ARRAY reduce production type_defs ->
+-- On VAR UNSAFE TRANSITION PREDICATE INVARIANT INIT CONST ARRAY
+--   reduce production type_defs ->
 
 State 5:
 ## Known stack suffix:
@@ -96,15 +83,8 @@ type_def -> TYPE lident . EQ BAR constructors [ VAR UNSAFE TYPE TRANSITION PREDI
 ## Transitions:
 -- On EQ shift to state 8
 ## Reductions:
--- On VAR reduce production type_def -> TYPE lident
--- On UNSAFE reduce production type_def -> TYPE lident
--- On TYPE reduce production type_def -> TYPE lident
--- On TRANSITION reduce production type_def -> TYPE lident
--- On PREDICATE reduce production type_def -> TYPE lident
--- On INVARIANT reduce production type_def -> TYPE lident
--- On INIT reduce production type_def -> TYPE lident
--- On CONST reduce production type_def -> TYPE lident
--- On ARRAY reduce production type_def -> TYPE lident
+-- On VAR UNSAFE TYPE TRANSITION PREDICATE INVARIANT INIT CONST ARRAY
+--   reduce production type_def -> TYPE lident
 
 State 8:
 ## Known stack suffix:
@@ -148,15 +128,8 @@ constructors -> mident . BAR constructors [ VAR UNSAFE TYPE TRANSITION PREDICATE
 ## Transitions:
 -- On BAR shift to state 12
 ## Reductions:
--- On VAR reduce production constructors -> mident
--- On UNSAFE reduce production constructors -> mident
--- On TYPE reduce production constructors -> mident
--- On TRANSITION reduce production constructors -> mident
--- On PREDICATE reduce production constructors -> mident
--- On INVARIANT reduce production constructors -> mident
--- On INIT reduce production constructors -> mident
--- On CONST reduce production constructors -> mident
--- On ARRAY reduce production constructors -> mident
+-- On VAR UNSAFE TYPE TRANSITION PREDICATE INVARIANT INIT CONST ARRAY
+--   reduce production constructors -> mident
 
 State 12:
 ## Known stack suffix:
@@ -210,11 +183,8 @@ system -> size_proc type_defs . symbold_decls decl_list EOF [ # ]
 -- On const_decl shift to state 37
 -- On array_decl shift to state 39
 ## Reductions:
--- On UNSAFE reduce production symbold_decls ->
--- On TRANSITION reduce production symbold_decls ->
--- On PREDICATE reduce production symbold_decls ->
--- On INVARIANT reduce production symbold_decls ->
--- On INIT reduce production symbold_decls ->
+-- On UNSAFE TRANSITION PREDICATE INVARIANT INIT
+--   reduce production symbold_decls ->
 
 State 17:
 ## Known stack suffix:
@@ -368,8 +338,8 @@ lident_list_plus -> lident . COMMA lident_list_plus [ RIGHTSQ RIGHTPAR ]
 ## Transitions:
 -- On COMMA shift to state 33
 ## Reductions:
--- On RIGHTSQ reduce production lident_list_plus -> lident
--- On RIGHTPAR reduce production lident_list_plus -> lident
+-- On RIGHTSQ RIGHTPAR
+--   reduce production lident_list_plus -> lident
 
 State 33:
 ## Known stack suffix:
@@ -405,11 +375,8 @@ symbold_decls -> var_decl . symbold_decls [ UNSAFE TRANSITION PREDICATE INVARIAN
 -- On const_decl shift to state 37
 -- On array_decl shift to state 39
 ## Reductions:
--- On UNSAFE reduce production symbold_decls ->
--- On TRANSITION reduce production symbold_decls ->
--- On PREDICATE reduce production symbold_decls ->
--- On INVARIANT reduce production symbold_decls ->
--- On INIT reduce production symbold_decls ->
+-- On UNSAFE TRANSITION PREDICATE INVARIANT INIT
+--   reduce production symbold_decls ->
 
 State 36:
 ## Known stack suffix:
@@ -434,11 +401,8 @@ symbold_decls -> const_decl . symbold_decls [ UNSAFE TRANSITION PREDICATE INVARI
 -- On const_decl shift to state 37
 -- On array_decl shift to state 39
 ## Reductions:
--- On UNSAFE reduce production symbold_decls ->
--- On TRANSITION reduce production symbold_decls ->
--- On PREDICATE reduce production symbold_decls ->
--- On INVARIANT reduce production symbold_decls ->
--- On INIT reduce production symbold_decls ->
+-- On UNSAFE TRANSITION PREDICATE INVARIANT INIT
+--   reduce production symbold_decls ->
 
 State 38:
 ## Known stack suffix:
@@ -463,11 +427,8 @@ symbold_decls -> array_decl . symbold_decls [ UNSAFE TRANSITION PREDICATE INVARI
 -- On const_decl shift to state 37
 -- On array_decl shift to state 39
 ## Reductions:
--- On UNSAFE reduce production symbold_decls ->
--- On TRANSITION reduce production symbold_decls ->
--- On PREDICATE reduce production symbold_decls ->
--- On INVARIANT reduce production symbold_decls ->
--- On INIT reduce production symbold_decls ->
+-- On UNSAFE TRANSITION PREDICATE INVARIANT INIT
+--   reduce production symbold_decls ->
 
 State 40:
 ## Known stack suffix:
@@ -520,7 +481,8 @@ unsafe -> UNSAFE LEFTPAR . lidents RIGHTPAR LEFTBR expr RIGHTBR [ UNSAFE TRANSIT
 -- On lidents shift to state 45
 -- On lident shift to state 156
 ## Reductions:
--- On RIGHTPAR reduce production lidents ->
+-- On RIGHTPAR
+--   reduce production lidents ->
 
 State 44:
 ## Known stack suffix:
@@ -724,25 +686,8 @@ constnum -> INT . [ THEN RIGHTPAR RIGHTBR PV OR NEQ LT LE IN IMP GT GE EQUIV EQ 
 ## Transitions:
 -- On TIMES shift to state 57
 ## Reductions:
--- On THEN reduce production constnum -> INT
--- On RIGHTPAR reduce production constnum -> INT
--- On RIGHTBR reduce production constnum -> INT
--- On PV reduce production constnum -> INT
--- On OR reduce production constnum -> INT
--- On NEQ reduce production constnum -> INT
--- On LT reduce production constnum -> INT
--- On LE reduce production constnum -> INT
--- On IN reduce production constnum -> INT
--- On IMP reduce production constnum -> INT
--- On GT reduce production constnum -> INT
--- On GE reduce production constnum -> INT
--- On EQUIV reduce production constnum -> INT
--- On EQ reduce production constnum -> INT
--- On ELSE reduce production constnum -> INT
--- On COMMA reduce production constnum -> INT
--- On COLON reduce production constnum -> INT
--- On BAR reduce production constnum -> INT
--- On AND reduce production constnum -> INT
+-- On THEN RIGHTPAR RIGHTBR PV OR NEQ LT LE IN IMP GT GE EQUIV EQ ELSE COMMA COLON BAR AND
+--   reduce production constnum -> INT
 
 State 57:
 ## Known stack suffix:
@@ -1052,27 +997,10 @@ top_id_term -> var_term . [ THEN RIGHTPAR RIGHTBR PV OR NEQ LT LE IN IMP GT GE E
 var_or_array_term -> var_term . [ PLUS MINUS ]
 ## Transitions:
 ## Reductions:
--- On THEN reduce production top_id_term -> var_term
--- On RIGHTPAR reduce production top_id_term -> var_term
--- On RIGHTBR reduce production top_id_term -> var_term
--- On PV reduce production top_id_term -> var_term
--- On PLUS reduce production var_or_array_term -> var_term
--- On OR reduce production top_id_term -> var_term
--- On NEQ reduce production top_id_term -> var_term
--- On MINUS reduce production var_or_array_term -> var_term
--- On LT reduce production top_id_term -> var_term
--- On LE reduce production top_id_term -> var_term
--- On IN reduce production top_id_term -> var_term
--- On IMP reduce production top_id_term -> var_term
--- On GT reduce production top_id_term -> var_term
--- On GE reduce production top_id_term -> var_term
--- On EQUIV reduce production top_id_term -> var_term
--- On EQ reduce production top_id_term -> var_term
--- On ELSE reduce production top_id_term -> var_term
--- On COMMA reduce production top_id_term -> var_term
--- On COLON reduce production top_id_term -> var_term
--- On BAR reduce production top_id_term -> var_term
--- On AND reduce production top_id_term -> var_term
+-- On THEN RIGHTPAR RIGHTBR PV OR NEQ LT LE IN IMP GT GE EQUIV EQ ELSE COMMA COLON BAR AND
+--   reduce production top_id_term -> var_term
+-- On PLUS MINUS
+--   reduce production var_or_array_term -> var_term
 
 State 75:
 ## Known stack suffix:
@@ -1116,25 +1044,8 @@ constnum -> INT . [ THEN RIGHTPAR RIGHTBR PV OR NEQ LT LE IN IMP GT GE EQUIV EQ 
 ## Transitions:
 -- On TIMES shift to state 78
 ## Reductions:
--- On THEN reduce production constnum -> INT
--- On RIGHTPAR reduce production constnum -> INT
--- On RIGHTBR reduce production constnum -> INT
--- On PV reduce production constnum -> INT
--- On OR reduce production constnum -> INT
--- On NEQ reduce production constnum -> INT
--- On LT reduce production constnum -> INT
--- On LE reduce production constnum -> INT
--- On IN reduce production constnum -> INT
--- On IMP reduce production constnum -> INT
--- On GT reduce production constnum -> INT
--- On GE reduce production constnum -> INT
--- On EQUIV reduce production constnum -> INT
--- On EQ reduce production constnum -> INT
--- On ELSE reduce production constnum -> INT
--- On COMMA reduce production constnum -> INT
--- On COLON reduce production constnum -> INT
--- On BAR reduce production constnum -> INT
--- On AND reduce production constnum -> INT
+-- On THEN RIGHTPAR RIGHTBR PV OR NEQ LT LE IN IMP GT GE EQUIV EQ ELSE COMMA COLON BAR AND
+--   reduce production constnum -> INT
 
 State 78:
 ## Known stack suffix:
@@ -1164,25 +1075,8 @@ arith_term -> var_or_array_term PLUS mident . TIMES INT [ THEN RIGHTPAR RIGHTBR 
 ## Transitions:
 -- On TIMES shift to state 81
 ## Reductions:
--- On THEN reduce production arith_term -> var_or_array_term PLUS mident
--- On RIGHTPAR reduce production arith_term -> var_or_array_term PLUS mident
--- On RIGHTBR reduce production arith_term -> var_or_array_term PLUS mident
--- On PV reduce production arith_term -> var_or_array_term PLUS mident
--- On OR reduce production arith_term -> var_or_array_term PLUS mident
--- On NEQ reduce production arith_term -> var_or_array_term PLUS mident
--- On LT reduce production arith_term -> var_or_array_term PLUS mident
--- On LE reduce production arith_term -> var_or_array_term PLUS mident
--- On IN reduce production arith_term -> var_or_array_term PLUS mident
--- On IMP reduce production arith_term -> var_or_array_term PLUS mident
--- On GT reduce production arith_term -> var_or_array_term PLUS mident
--- On GE reduce production arith_term -> var_or_array_term PLUS mident
--- On EQUIV reduce production arith_term -> var_or_array_term PLUS mident
--- On EQ reduce production arith_term -> var_or_array_term PLUS mident
--- On ELSE reduce production arith_term -> var_or_array_term PLUS mident
--- On COMMA reduce production arith_term -> var_or_array_term PLUS mident
--- On COLON reduce production arith_term -> var_or_array_term PLUS mident
--- On BAR reduce production arith_term -> var_or_array_term PLUS mident
--- On AND reduce production arith_term -> var_or_array_term PLUS mident
+-- On THEN RIGHTPAR RIGHTBR PV OR NEQ LT LE IN IMP GT GE EQUIV EQ ELSE COMMA COLON BAR AND
+--   reduce production arith_term -> var_or_array_term PLUS mident
 
 State 81:
 ## Known stack suffix:
@@ -1236,25 +1130,8 @@ constnum -> INT . [ THEN RIGHTPAR RIGHTBR PV OR NEQ LT LE IN IMP GT GE EQUIV EQ 
 ## Transitions:
 -- On TIMES shift to state 86
 ## Reductions:
--- On THEN reduce production constnum -> INT
--- On RIGHTPAR reduce production constnum -> INT
--- On RIGHTBR reduce production constnum -> INT
--- On PV reduce production constnum -> INT
--- On OR reduce production constnum -> INT
--- On NEQ reduce production constnum -> INT
--- On LT reduce production constnum -> INT
--- On LE reduce production constnum -> INT
--- On IN reduce production constnum -> INT
--- On IMP reduce production constnum -> INT
--- On GT reduce production constnum -> INT
--- On GE reduce production constnum -> INT
--- On EQUIV reduce production constnum -> INT
--- On EQ reduce production constnum -> INT
--- On ELSE reduce production constnum -> INT
--- On COMMA reduce production constnum -> INT
--- On COLON reduce production constnum -> INT
--- On BAR reduce production constnum -> INT
--- On AND reduce production constnum -> INT
+-- On THEN RIGHTPAR RIGHTBR PV OR NEQ LT LE IN IMP GT GE EQUIV EQ ELSE COMMA COLON BAR AND
+--   reduce production constnum -> INT
 
 State 86:
 ## Known stack suffix:
@@ -1284,25 +1161,8 @@ arith_term -> var_or_array_term MINUS mident . TIMES INT [ THEN RIGHTPAR RIGHTBR
 ## Transitions:
 -- On TIMES shift to state 89
 ## Reductions:
--- On THEN reduce production arith_term -> var_or_array_term MINUS mident
--- On RIGHTPAR reduce production arith_term -> var_or_array_term MINUS mident
--- On RIGHTBR reduce production arith_term -> var_or_array_term MINUS mident
--- On PV reduce production arith_term -> var_or_array_term MINUS mident
--- On OR reduce production arith_term -> var_or_array_term MINUS mident
--- On NEQ reduce production arith_term -> var_or_array_term MINUS mident
--- On LT reduce production arith_term -> var_or_array_term MINUS mident
--- On LE reduce production arith_term -> var_or_array_term MINUS mident
--- On IN reduce production arith_term -> var_or_array_term MINUS mident
--- On IMP reduce production arith_term -> var_or_array_term MINUS mident
--- On GT reduce production arith_term -> var_or_array_term MINUS mident
--- On GE reduce production arith_term -> var_or_array_term MINUS mident
--- On EQUIV reduce production arith_term -> var_or_array_term MINUS mident
--- On EQ reduce production arith_term -> var_or_array_term MINUS mident
--- On ELSE reduce production arith_term -> var_or_array_term MINUS mident
--- On COMMA reduce production arith_term -> var_or_array_term MINUS mident
--- On COLON reduce production arith_term -> var_or_array_term MINUS mident
--- On BAR reduce production arith_term -> var_or_array_term MINUS mident
--- On AND reduce production arith_term -> var_or_array_term MINUS mident
+-- On THEN RIGHTPAR RIGHTBR PV OR NEQ LT LE IN IMP GT GE EQUIV EQ ELSE COMMA COLON BAR AND
+--   reduce production arith_term -> var_or_array_term MINUS mident
 
 State 89:
 ## Known stack suffix:
@@ -1411,27 +1271,8 @@ var_term -> mident . [ THEN RIGHTPAR RIGHTBR PV PLUS OR NEQ MINUS LT LE IN IMP G
 ## Transitions:
 -- On LEFTSQ shift to state 98
 ## Reductions:
--- On THEN reduce production var_term -> mident
--- On RIGHTPAR reduce production var_term -> mident
--- On RIGHTBR reduce production var_term -> mident
--- On PV reduce production var_term -> mident
--- On PLUS reduce production var_term -> mident
--- On OR reduce production var_term -> mident
--- On NEQ reduce production var_term -> mident
--- On MINUS reduce production var_term -> mident
--- On LT reduce production var_term -> mident
--- On LE reduce production var_term -> mident
--- On IN reduce production var_term -> mident
--- On IMP reduce production var_term -> mident
--- On GT reduce production var_term -> mident
--- On GE reduce production var_term -> mident
--- On EQUIV reduce production var_term -> mident
--- On EQ reduce production var_term -> mident
--- On ELSE reduce production var_term -> mident
--- On COMMA reduce production var_term -> mident
--- On COLON reduce production var_term -> mident
--- On BAR reduce production var_term -> mident
--- On AND reduce production var_term -> mident
+-- On THEN RIGHTPAR RIGHTBR PV PLUS OR NEQ MINUS LT LE IN IMP GT GE EQUIV EQ ELSE COMMA COLON BAR AND
+--   reduce production var_term -> mident
 
 State 98:
 ## Known stack suffix:
@@ -1474,7 +1315,8 @@ proc_name_list_plus -> proc_name . COMMA proc_name_list_plus [ RIGHTSQ ]
 ## Transitions:
 -- On COMMA shift to state 102
 ## Reductions:
--- On RIGHTSQ reduce production proc_name_list_plus -> proc_name
+-- On RIGHTSQ
+--   reduce production proc_name_list_plus -> proc_name
 
 State 102:
 ## Known stack suffix:
@@ -1534,27 +1376,10 @@ term -> array_term . [ THEN RIGHTPAR RIGHTBR PV OR NEQ LT LE IN IMP GT GE EQUIV 
 var_or_array_term -> array_term . [ PLUS MINUS ]
 ## Transitions:
 ## Reductions:
--- On THEN reduce production term -> array_term
--- On RIGHTPAR reduce production term -> array_term
--- On RIGHTBR reduce production term -> array_term
--- On PV reduce production term -> array_term
--- On PLUS reduce production var_or_array_term -> array_term
--- On OR reduce production term -> array_term
--- On NEQ reduce production term -> array_term
--- On MINUS reduce production var_or_array_term -> array_term
--- On LT reduce production term -> array_term
--- On LE reduce production term -> array_term
--- On IN reduce production term -> array_term
--- On IMP reduce production term -> array_term
--- On GT reduce production term -> array_term
--- On GE reduce production term -> array_term
--- On EQUIV reduce production term -> array_term
--- On EQ reduce production term -> array_term
--- On ELSE reduce production term -> array_term
--- On COMMA reduce production term -> array_term
--- On COLON reduce production term -> array_term
--- On BAR reduce production term -> array_term
--- On AND reduce production term -> array_term
+-- On THEN RIGHTPAR RIGHTBR PV OR NEQ LT LE IN IMP GT GE EQUIV EQ ELSE COMMA COLON BAR AND
+--   reduce production term -> array_term
+-- On PLUS MINUS
+--   reduce production var_or_array_term -> array_term
 
 State 108:
 ## Known stack suffix:
@@ -1762,16 +1587,8 @@ simple_expr -> lident . LEFTPAR expr_or_term_comma_list RIGHTPAR [ THEN RIGHTPAR
 ## Transitions:
 -- On LEFTPAR shift to state 122
 ## Reductions:
--- On RIGHTPAR reduce production proc_name -> lident
--- On PLUS reduce production proc_name -> lident
--- On NEQ reduce production proc_name -> lident
--- On MINUS reduce production proc_name -> lident
--- On LT reduce production proc_name -> lident
--- On LE reduce production proc_name -> lident
--- On GT reduce production proc_name -> lident
--- On GE reduce production proc_name -> lident
--- On EQ reduce production proc_name -> lident
--- On COMMA reduce production proc_name -> lident
+-- On RIGHTPAR PLUS NEQ MINUS LT LE GT GE EQ COMMA
+--   reduce production proc_name -> lident
 
 State 122:
 ## Known stack suffix:
@@ -1810,7 +1627,8 @@ simple_expr -> lident LEFTPAR . expr_or_term_comma_list RIGHTPAR [ THEN RIGHTPAR
 -- On array_term shift to state 107
 -- On arith_term shift to state 108
 ## Reductions:
--- On RIGHTPAR reduce production expr_or_term_comma_list ->
+-- On RIGHTPAR
+--   reduce production expr_or_term_comma_list ->
 
 State 123:
 ## Known stack suffix:
@@ -1833,7 +1651,8 @@ literal -> term . GE term [ RIGHTPAR OR IMP EQUIV COMMA AND ]
 -- On EQ shift to state 117
 -- On COMMA shift to state 124
 ## Reductions:
--- On RIGHTPAR reduce production expr_or_term_comma_list -> term
+-- On RIGHTPAR
+--   reduce production expr_or_term_comma_list -> term
 
 State 124:
 ## Known stack suffix:
@@ -1872,7 +1691,8 @@ expr_or_term_comma_list -> term COMMA . expr_or_term_comma_list [ RIGHTPAR ]
 -- On array_term shift to state 107
 -- On arith_term shift to state 108
 ## Reductions:
--- On RIGHTPAR reduce production expr_or_term_comma_list ->
+-- On RIGHTPAR
+--   reduce production expr_or_term_comma_list ->
 
 State 125:
 ## Known stack suffix:
@@ -1900,7 +1720,8 @@ expr_or_term_comma_list -> expr . COMMA expr_or_term_comma_list [ RIGHTPAR ]
 -- On COMMA shift to state 135
 -- On AND shift to state 129
 ## Reductions:
--- On RIGHTPAR reduce production expr_or_term_comma_list -> expr
+-- On RIGHTPAR
+--   reduce production expr_or_term_comma_list -> expr
 
 State 127:
 ## Known stack suffix:
@@ -1952,14 +1773,8 @@ expr -> expr . EQUIV expr [ THEN RIGHTPAR RIGHTBR OR IMP EQUIV ELSE COMMA COLON 
 -- On OR shift to state 127
 -- On AND shift to state 129
 ## Reductions:
--- On THEN reduce production expr -> expr OR expr
--- On RIGHTPAR reduce production expr -> expr OR expr
--- On RIGHTBR reduce production expr -> expr OR expr
--- On IMP reduce production expr -> expr OR expr
--- On EQUIV reduce production expr -> expr OR expr
--- On ELSE reduce production expr -> expr OR expr
--- On COMMA reduce production expr -> expr OR expr
--- On COLON reduce production expr -> expr OR expr
+-- On THEN RIGHTPAR RIGHTBR IMP EQUIV ELSE COMMA COLON
+--   reduce production expr -> expr OR expr
 
 State 129:
 ## Known stack suffix:
@@ -2010,15 +1825,8 @@ expr -> expr . EQUIV expr [ THEN RIGHTPAR RIGHTBR OR IMP EQUIV ELSE COMMA COLON 
 ## Transitions:
 -- On AND shift to state 129
 ## Reductions:
--- On THEN reduce production expr -> expr AND expr
--- On RIGHTPAR reduce production expr -> expr AND expr
--- On RIGHTBR reduce production expr -> expr AND expr
--- On OR reduce production expr -> expr AND expr
--- On IMP reduce production expr -> expr AND expr
--- On EQUIV reduce production expr -> expr AND expr
--- On ELSE reduce production expr -> expr AND expr
--- On COMMA reduce production expr -> expr AND expr
--- On COLON reduce production expr -> expr AND expr
+-- On THEN RIGHTPAR RIGHTBR OR IMP EQUIV ELSE COMMA COLON
+--   reduce production expr -> expr AND expr
 
 State 131:
 ## Known stack suffix:
@@ -2072,12 +1880,8 @@ expr -> expr . EQUIV expr [ THEN RIGHTPAR RIGHTBR OR IMP EQUIV ELSE COMMA COLON 
 -- On EQUIV shift to state 133
 -- On AND shift to state 129
 ## Reductions:
--- On THEN reduce production expr -> expr IMP expr
--- On RIGHTPAR reduce production expr -> expr IMP expr
--- On RIGHTBR reduce production expr -> expr IMP expr
--- On ELSE reduce production expr -> expr IMP expr
--- On COMMA reduce production expr -> expr IMP expr
--- On COLON reduce production expr -> expr IMP expr
+-- On THEN RIGHTPAR RIGHTBR ELSE COMMA COLON
+--   reduce production expr -> expr IMP expr
 
 State 133:
 ## Known stack suffix:
@@ -2131,12 +1935,8 @@ expr -> expr EQUIV expr . [ THEN RIGHTPAR RIGHTBR OR IMP EQUIV ELSE COMMA COLON 
 -- On EQUIV shift to state 133
 -- On AND shift to state 129
 ## Reductions:
--- On THEN reduce production expr -> expr EQUIV expr
--- On RIGHTPAR reduce production expr -> expr EQUIV expr
--- On RIGHTBR reduce production expr -> expr EQUIV expr
--- On ELSE reduce production expr -> expr EQUIV expr
--- On COMMA reduce production expr -> expr EQUIV expr
--- On COLON reduce production expr -> expr EQUIV expr
+-- On THEN RIGHTPAR RIGHTBR ELSE COMMA COLON
+--   reduce production expr -> expr EQUIV expr
 
 State 135:
 ## Known stack suffix:
@@ -2175,7 +1975,8 @@ expr_or_term_comma_list -> expr COMMA . expr_or_term_comma_list [ RIGHTPAR ]
 -- On array_term shift to state 107
 -- On arith_term shift to state 108
 ## Reductions:
--- On RIGHTPAR reduce production expr_or_term_comma_list ->
+-- On RIGHTPAR
+--   reduce production expr_or_term_comma_list ->
 
 State 136:
 ## Known stack suffix:
@@ -2219,12 +2020,8 @@ expr -> EXISTS lidents_plus_distinct DOT expr . [ THEN RIGHTPAR RIGHTBR OR IMP E
 -- On EQUIV shift to state 133
 -- On AND shift to state 129
 ## Reductions:
--- On THEN reduce production expr -> EXISTS lidents_plus_distinct DOT expr
--- On RIGHTPAR reduce production expr -> EXISTS lidents_plus_distinct DOT expr
--- On RIGHTBR reduce production expr -> EXISTS lidents_plus_distinct DOT expr
--- On ELSE reduce production expr -> EXISTS lidents_plus_distinct DOT expr
--- On COMMA reduce production expr -> EXISTS lidents_plus_distinct DOT expr
--- On COLON reduce production expr -> EXISTS lidents_plus_distinct DOT expr
+-- On THEN RIGHTPAR RIGHTBR ELSE COMMA COLON
+--   reduce production expr -> EXISTS lidents_plus_distinct DOT expr
 
 State 140:
 ## Known stack suffix:
@@ -2235,7 +2032,8 @@ lidents_plus_distinct -> lident . NEQ lidents_plus_distinct [ DOT ]
 ## Transitions:
 -- On NEQ shift to state 141
 ## Reductions:
--- On DOT reduce production lidents_plus_distinct -> lident
+-- On DOT
+--   reduce production lidents_plus_distinct -> lident
 
 State 141:
 ## Known stack suffix:
@@ -2272,12 +2070,8 @@ expr -> EXISTS_OTHER lident DOT expr . [ THEN RIGHTPAR RIGHTBR OR IMP EQUIV ELSE
 -- On EQUIV shift to state 133
 -- On AND shift to state 129
 ## Reductions:
--- On THEN reduce production expr -> EXISTS_OTHER lident DOT expr
--- On RIGHTPAR reduce production expr -> EXISTS_OTHER lident DOT expr
--- On RIGHTBR reduce production expr -> EXISTS_OTHER lident DOT expr
--- On ELSE reduce production expr -> EXISTS_OTHER lident DOT expr
--- On COMMA reduce production expr -> EXISTS_OTHER lident DOT expr
--- On COLON reduce production expr -> EXISTS_OTHER lident DOT expr
+-- On THEN RIGHTPAR RIGHTBR ELSE COMMA COLON
+--   reduce production expr -> EXISTS_OTHER lident DOT expr
 
 State 144:
 ## Known stack suffix:
@@ -2294,12 +2088,8 @@ expr -> FORALL lidents_plus_distinct DOT expr . [ THEN RIGHTPAR RIGHTBR OR IMP E
 -- On EQUIV shift to state 133
 -- On AND shift to state 129
 ## Reductions:
--- On THEN reduce production expr -> FORALL lidents_plus_distinct DOT expr
--- On RIGHTPAR reduce production expr -> FORALL lidents_plus_distinct DOT expr
--- On RIGHTBR reduce production expr -> FORALL lidents_plus_distinct DOT expr
--- On ELSE reduce production expr -> FORALL lidents_plus_distinct DOT expr
--- On COMMA reduce production expr -> FORALL lidents_plus_distinct DOT expr
--- On COLON reduce production expr -> FORALL lidents_plus_distinct DOT expr
+-- On THEN RIGHTPAR RIGHTBR ELSE COMMA COLON
+--   reduce production expr -> FORALL lidents_plus_distinct DOT expr
 
 State 145:
 ## Known stack suffix:
@@ -2316,12 +2106,8 @@ expr -> FORALL_OTHER lident DOT expr . [ THEN RIGHTPAR RIGHTBR OR IMP EQUIV ELSE
 -- On EQUIV shift to state 133
 -- On AND shift to state 129
 ## Reductions:
--- On THEN reduce production expr -> FORALL_OTHER lident DOT expr
--- On RIGHTPAR reduce production expr -> FORALL_OTHER lident DOT expr
--- On RIGHTBR reduce production expr -> FORALL_OTHER lident DOT expr
--- On ELSE reduce production expr -> FORALL_OTHER lident DOT expr
--- On COMMA reduce production expr -> FORALL_OTHER lident DOT expr
--- On COLON reduce production expr -> FORALL_OTHER lident DOT expr
+-- On THEN RIGHTPAR RIGHTBR ELSE COMMA COLON
+--   reduce production expr -> FORALL_OTHER lident DOT expr
 
 State 146:
 ## Known stack suffix:
@@ -2520,7 +2306,8 @@ lidents_plus -> lident . lidents_plus [ RIGHTPAR ]
 -- On lidents_plus shift to state 157
 -- On lident shift to state 156
 ## Reductions:
--- On RIGHTPAR reduce production lidents_plus -> lident
+-- On RIGHTPAR
+--   reduce production lidents_plus -> lident
 
 State 157:
 ## Known stack suffix:
@@ -2627,7 +2414,8 @@ transition -> TRANSITION transition_name LEFTPAR . lidents RIGHTPAR require LEFT
 -- On lidents shift to state 164
 -- On lident shift to state 156
 ## Reductions:
--- On RIGHTPAR reduce production lidents ->
+-- On RIGHTPAR
+--   reduce production lidents ->
 
 State 164:
 ## Known stack suffix:
@@ -2647,7 +2435,8 @@ transition -> TRANSITION transition_name LEFTPAR lidents RIGHTPAR . require LEFT
 -- On REQUIRE shift to state 166
 -- On require shift to state 170
 ## Reductions:
--- On LEFTBR reduce production require ->
+-- On LEFTBR
+--   reduce production require ->
 
 State 166:
 ## Known stack suffix:
@@ -2746,7 +2535,8 @@ transition -> TRANSITION transition_name LEFTPAR lidents RIGHTPAR require LEFTBR
 -- On assignment shift to state 204
 -- On assign_nondet_update shift to state 205
 ## Reductions:
--- On RIGHTBR reduce production assigns_nondets_updates ->
+-- On RIGHTBR
+--   reduce production assigns_nondets_updates ->
 
 State 172:
 ## Known stack suffix:
@@ -2817,7 +2607,8 @@ let_assigns_nondets_updates -> LET lident EQ term IN . let_assigns_nondets_updat
 -- On assignment shift to state 204
 -- On assign_nondet_update shift to state 205
 ## Reductions:
--- On RIGHTBR reduce production assigns_nondets_updates ->
+-- On RIGHTBR
+--   reduce production assigns_nondets_updates ->
 
 State 177:
 ## Known stack suffix:
@@ -3018,8 +2809,8 @@ switchs -> BAR switch . switchs [ RIGHTBR PV ]
 -- On BAR shift to state 185
 -- On switchs shift to state 190
 ## Reductions:
--- On RIGHTBR reduce production switchs -> BAR switch
--- On PV reduce production switchs -> BAR switch
+-- On RIGHTBR PV
+--   reduce production switchs -> BAR switch
 
 State 190:
 ## Known stack suffix:
@@ -3212,7 +3003,8 @@ assigns_nondets_updates -> assign_nondet_update . PV assigns_nondets_updates [ R
 ## Transitions:
 -- On PV shift to state 206
 ## Reductions:
--- On RIGHTBR reduce production assigns_nondets_updates -> assign_nondet_update
+-- On RIGHTBR
+--   reduce production assigns_nondets_updates -> assign_nondet_update
 
 State 206:
 ## Known stack suffix:
@@ -3228,7 +3020,8 @@ assigns_nondets_updates -> assign_nondet_update PV . assigns_nondets_updates [ R
 -- On assignment shift to state 204
 -- On assign_nondet_update shift to state 205
 ## Reductions:
--- On RIGHTBR reduce production assigns_nondets_updates ->
+-- On RIGHTBR
+--   reduce production assigns_nondets_updates ->
 
 State 207:
 ## Known stack suffix:
@@ -3305,7 +3098,8 @@ function_decl -> PREDICATE lident LEFTPAR . lident_comma_list RIGHTPAR LEFTBR ex
 -- On lident_comma_list shift to state 216
 -- On lident shift to state 32
 ## Reductions:
--- On RIGHTPAR reduce production lident_comma_list ->
+-- On RIGHTPAR
+--   reduce production lident_comma_list ->
 
 State 215:
 ## Known stack suffix:
@@ -3419,7 +3213,8 @@ invariant -> INVARIANT LEFTPAR . lidents RIGHTPAR LEFTBR expr RIGHTBR [ UNSAFE T
 -- On lidents shift to state 223
 -- On lident shift to state 156
 ## Reductions:
--- On RIGHTPAR reduce production lidents ->
+-- On RIGHTPAR
+--   reduce production lidents ->
 
 State 223:
 ## Known stack suffix:
@@ -3587,7 +3382,8 @@ init -> INIT LEFTPAR . lidents RIGHTPAR LEFTBR expr RIGHTBR [ UNSAFE TRANSITION 
 -- On lidents shift to state 233
 -- On lident shift to state 156
 ## Reductions:
--- On RIGHTPAR reduce production lidents ->
+-- On RIGHTPAR
+--   reduce production lidents ->
 
 State 233:
 ## Known stack suffix:
@@ -3816,7 +3612,8 @@ decl_list -> decl . decl_list [ EOF ]
 -- On decl_list shift to state 249
 -- On decl shift to state 248
 ## Reductions:
--- On EOF reduce production decl_list -> decl
+-- On EOF
+--   reduce production decl_list -> decl
 
 State 249:
 ## Known stack suffix:
@@ -3847,14 +3644,8 @@ type_def_plus -> type_def . type_def_plus [ VAR UNSAFE TRANSITION PREDICATE INVA
 -- On type_def_plus shift to state 252
 -- On type_def shift to state 251
 ## Reductions:
--- On VAR reduce production type_def_plus -> type_def
--- On UNSAFE reduce production type_def_plus -> type_def
--- On TRANSITION reduce production type_def_plus -> type_def
--- On PREDICATE reduce production type_def_plus -> type_def
--- On INVARIANT reduce production type_def_plus -> type_def
--- On INIT reduce production type_def_plus -> type_def
--- On CONST reduce production type_def_plus -> type_def
--- On ARRAY reduce production type_def_plus -> type_def
+-- On VAR UNSAFE TRANSITION PREDICATE INVARIANT INIT CONST ARRAY
+--   reduce production type_def_plus -> type_def
 
 State 252:
 ## Known stack suffix:

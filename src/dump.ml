@@ -71,15 +71,14 @@ let dump_node out print_stack_symbols node =
 
   | None ->
       (* There is no default reduction. *)
-      (* One might wish to group all symbols that
-         lead to reducing a common production. *)
       fprintf out "## Reductions:\n";
-      TerminalMap.iter (fun tok prods ->
-        List.iter (fun prod ->
-          fprintf out "-- On %s " (Terminal.print tok);
-          fprintf out "%s\n" (Production.describe false prod)
-        ) prods
-      ) (Lr1.reductions node);
+      (* 2020/11/21: for better readability, we now group the symbols that
+         lead to reducing the same production. *)
+      let reductions = Lr0.invert (Lr1.reductions node) in
+      ProductionMap.iter (fun prod toks ->
+        fprintf out "-- On %s\n" (TerminalSet.print toks);
+        fprintf out "--   %s\n" (Production.describe false prod)
+      ) reductions
   end;
 
   (* Print the conflicts. *)

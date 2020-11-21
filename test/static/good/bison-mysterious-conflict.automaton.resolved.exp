@@ -20,9 +20,10 @@ name -> ID . [ COMMA COLON ]
 typ -> ID . [ ID ]
 ## Transitions:
 ## Reductions:
--- On ID reduce production typ -> ID
--- On COMMA reduce production name -> ID
--- On COLON reduce production name -> ID
+-- On COMMA COLON
+--   reduce production name -> ID
+-- On ID
+--   reduce production typ -> ID
 
 State 2:
 ## Known stack suffix:
@@ -90,8 +91,10 @@ name -> ID . [ COLON ]
 typ -> ID . [ COMMA ]
 ## Transitions:
 ## Reductions:
--- On COMMA reduce production typ -> ID
--- On COLON reduce production name -> ID
+-- On COLON
+--   reduce production name -> ID
+-- On COMMA
+--   reduce production typ -> ID
 
 State 9:
 ## Known stack suffix:
@@ -157,7 +160,8 @@ separated_nonempty_list(COMMA,name) -> name . COMMA separated_nonempty_list(COMM
 ## Transitions:
 -- On COMMA shift to state 16
 ## Reductions:
--- On COLON reduce production separated_nonempty_list(COMMA,name) -> name
+-- On COLON
+--   reduce production separated_nonempty_list(COMMA,name) -> name
 
 State 16:
 ## Known stack suffix:

@@ -35,11 +35,8 @@ modl -> MODULE UIDENT EQUAL . opens decls EOF [ # ]
 -- On OPEN shift to state 4
 -- On opens shift to state 10
 ## Reductions:
--- On TYPE reduce production opens ->
--- On TEST reduce production opens ->
--- On MODULE reduce production opens ->
--- On LET reduce production opens ->
--- On EOF reduce production opens ->
+-- On TYPE TEST MODULE LET EOF
+--   reduce production opens ->
 
 State 4:
 ## Known stack suffix:
@@ -89,11 +86,8 @@ opens -> OPEN qid . opens [ TYPE TEST MODULE LET EOF ]
 -- On OPEN shift to state 4
 -- On opens shift to state 9
 ## Reductions:
--- On TYPE reduce production opens ->
--- On TEST reduce production opens ->
--- On MODULE reduce production opens ->
--- On LET reduce production opens ->
--- On EOF reduce production opens ->
+-- On TYPE TEST MODULE LET EOF
+--   reduce production opens ->
 
 State 9:
 ## Known stack suffix:
@@ -116,7 +110,8 @@ modl -> MODULE UIDENT EQUAL opens . decls EOF [ # ]
 -- On LET shift to state 466
 -- On decls shift to state 506
 ## Reductions:
--- On EOF reduce production decls ->
+-- On EOF
+--   reduce production decls ->
 
 State 11:
 ## Known stack suffix:
@@ -129,7 +124,8 @@ decls -> TYPE . tyvar_list LIDENT EQUAL dtsort_list decls [ EOF END ]
 -- On tyvar_list shift to state 19
 -- On tyvar shift to state 505
 ## Reductions:
--- On LIDENT reduce production tyvar_list ->
+-- On LIDENT
+--   reduce production tyvar_list ->
 
 State 12:
 ## Known stack suffix:
@@ -178,7 +174,8 @@ tyvar_list2 -> tyvar . COMMA tyvar_list2 [ RPAREN ]
 ## Transitions:
 -- On COMMA shift to state 17
 ## Reductions:
--- On RPAREN reduce production tyvar_list2 -> tyvar
+-- On RPAREN
+--   reduce production tyvar_list2 -> tyvar
 
 State 17:
 ## Known stack suffix:
@@ -238,13 +235,8 @@ dtsort -> UIDENT . OF sort [ TYPE TEST MODULE LET EOF END BAR ]
 ## Transitions:
 -- On OF shift to state 23
 ## Reductions:
--- On TYPE reduce production dtsort -> UIDENT
--- On TEST reduce production dtsort -> UIDENT
--- On MODULE reduce production dtsort -> UIDENT
--- On LET reduce production dtsort -> UIDENT
--- On EOF reduce production dtsort -> UIDENT
--- On END reduce production dtsort -> UIDENT
--- On BAR reduce production dtsort -> UIDENT
+-- On TYPE TEST MODULE LET EOF END BAR
+--   reduce production dtsort -> UIDENT
 
 State 23:
 ## Known stack suffix:
@@ -423,13 +415,8 @@ bsort -> LPAREN STRING . IN exp RPAREN [ WHERE TYPE TEST STAR RPAREN RBRACE RANG
 ## Transitions:
 -- On IN shift to state 35
 ## Reductions:
--- On WHERE reduce production asort -> STRING
--- On STAR reduce production asort -> STRING
--- On RPAREN reduce production asort -> STRING
--- On QUALIDENT reduce production asort -> STRING
--- On LIDENT reduce production asort -> STRING
--- On COMMA reduce production asort -> STRING
--- On ARROW reduce production asort -> STRING
+-- On WHERE STAR RPAREN QUALIDENT LIDENT COMMA ARROW
+--   reduce production asort -> STRING
 
 State 35:
 ## Known stack suffix:
@@ -1101,22 +1088,8 @@ productsort -> productsort . STAR datatypesort [ WHERE TYPE TEST STAR RPAREN RBR
 -- On STAR shift to state 68
 -- On ARROW shift to state 386
 ## Reductions:
--- On WHERE reduce production arrowsort -> productsort
--- On TYPE reduce production arrowsort -> productsort
--- On TEST reduce production arrowsort -> productsort
--- On RPAREN reduce production arrowsort -> productsort
--- On RBRACE reduce production arrowsort -> productsort
--- On RANGLE reduce production arrowsort -> productsort
--- On MODULE reduce production arrowsort -> productsort
--- On LLIST reduce production arrowsort -> productsort
--- On LET reduce production arrowsort -> productsort
--- On IN reduce production arrowsort -> productsort
--- On EQUAL reduce production arrowsort -> productsort
--- On EOF reduce production arrowsort -> productsort
--- On END reduce production arrowsort -> productsort
--- On DOLLAR reduce production arrowsort -> productsort
--- On COMMA reduce production arrowsort -> productsort
--- On BAR reduce production arrowsort -> productsort
+-- On WHERE TYPE TEST RPAREN RBRACE RANGLE MODULE LLIST LET IN EQUAL EOF END DOLLAR COMMA BAR
+--   reduce production arrowsort -> productsort
 
 State 68:
 ## Known stack suffix:
@@ -1208,14 +1181,10 @@ id -> LIDENT . [ COLON ]
 qvar -> LIDENT . [ WHERE STAR RPAREN QUALIDENT LIDENT COMMA ARROW ]
 ## Transitions:
 ## Reductions:
--- On WHERE reduce production qvar -> LIDENT
--- On STAR reduce production qvar -> LIDENT
--- On RPAREN reduce production qvar -> LIDENT
--- On QUALIDENT reduce production qvar -> LIDENT
--- On LIDENT reduce production qvar -> LIDENT
--- On COMMA reduce production qvar -> LIDENT
--- On COLON reduce production id -> LIDENT
--- On ARROW reduce production qvar -> LIDENT
+-- On COLON
+--   reduce production id -> LIDENT
+-- On WHERE STAR RPAREN QUALIDENT LIDENT COMMA ARROW
+--   reduce production qvar -> LIDENT
 
 State 71:
 ## Known stack suffix:
@@ -1231,13 +1200,8 @@ bsort -> LPAREN LENS . IN appexp DEQARROW appexp RPAREN [ WHERE TYPE TEST STAR R
 ## Transitions:
 -- On IN shift to state 72
 ## Reductions:
--- On WHERE reduce production asort -> LENS
--- On STAR reduce production asort -> LENS
--- On RPAREN reduce production asort -> LENS
--- On QUALIDENT reduce production asort -> LENS
--- On LIDENT reduce production asort -> LENS
--- On COMMA reduce production asort -> LENS
--- On ARROW reduce production asort -> LENS
+-- On WHERE STAR RPAREN QUALIDENT LIDENT COMMA ARROW
+--   reduce production asort -> LENS
 
 State 72:
 ## Known stack suffix:
@@ -1391,27 +1355,8 @@ qid -> LIDENT . [ VTYPE UIDENT STYPE STR QUALIDENT NSET LPAREN LIDENT LANGLE INT
 ## Transitions:
 -- On COLON shift to state 80
 ## Reductions:
--- On VTYPE reduce production qid -> LIDENT
--- On UIDENT reduce production qid -> LIDENT
--- On STYPE reduce production qid -> LIDENT
--- On STR reduce production qid -> LIDENT
--- On QUALIDENT reduce production qid -> LIDENT
--- On NSET reduce production qid -> LIDENT
--- On LPAREN reduce production qid -> LIDENT
--- On LIDENT reduce production qid -> LIDENT
--- On LANGLE reduce production qid -> LIDENT
--- On INTEGER reduce production qid -> LIDENT
--- On HASH reduce production qid -> LIDENT
--- On GRAMMAR reduce production qid -> LIDENT
--- On DARROW reduce production qid -> LIDENT
--- On CSET reduce production qid -> LIDENT
--- On CHARACTER reduce production qid -> LIDENT
--- On CEX reduce production qid -> LIDENT
--- On BOOLEAN reduce production qid -> LIDENT
--- On BIJ reduce production qid -> LIDENT
--- On BEGIN reduce production qid -> LIDENT
--- On AVTYPE reduce production qid -> LIDENT
--- On ASTYPE reduce production qid -> LIDENT
+-- On VTYPE UIDENT STYPE STR QUALIDENT NSET LPAREN LIDENT LANGLE INTEGER HASH GRAMMAR DARROW CSET CHARACTER CEX BOOLEAN BIJ BEGIN AVTYPE ASTYPE
+--   reduce production qid -> LIDENT
 
 State 80:
 ## Known stack suffix:
@@ -1565,11 +1510,10 @@ apat -> UIDENT . [ EQUAL COMMA COLON ]
 id -> UIDENT . [ TYVARIDENT LPAREN ]
 ## Transitions:
 ## Reductions:
--- On TYVARIDENT reduce production id -> UIDENT
--- On LPAREN reduce production id -> UIDENT
--- On EQUAL reduce production apat -> UIDENT
--- On COMMA reduce production apat -> UIDENT
--- On COLON reduce production apat -> UIDENT
+-- On EQUAL COMMA COLON
+--   reduce production apat -> UIDENT
+-- On TYVARIDENT LPAREN
+--   reduce production id -> UIDENT
 
 State 88:
 ## Known stack suffix:
@@ -1599,9 +1543,8 @@ letpat -> QUALIDENT . apat [ EQUAL COMMA COLON ]
 -- On apat shift to state 119
 -- On aapat shift to state 101
 ## Reductions:
--- On EQUAL reduce production apat -> QUALIDENT
--- On COMMA reduce production apat -> QUALIDENT
--- On COLON reduce production apat -> QUALIDENT
+-- On EQUAL COMMA COLON
+--   reduce production apat -> QUALIDENT
 
 State 90:
 ## Known stack suffix:
@@ -1666,12 +1609,8 @@ conpat -> UIDENT . apat [ RPAREN EQUAL COMMA COLONCOLON COLON ARROW ]
 -- On apat shift to state 115
 -- On aapat shift to state 101
 ## Reductions:
--- On RPAREN reduce production apat -> UIDENT
--- On EQUAL reduce production apat -> UIDENT
--- On COMMA reduce production apat -> UIDENT
--- On COLONCOLON reduce production apat -> UIDENT
--- On COLON reduce production apat -> UIDENT
--- On ARROW reduce production apat -> UIDENT
+-- On RPAREN EQUAL COMMA COLONCOLON COLON ARROW
+--   reduce production apat -> UIDENT
 
 State 94:
 ## Known stack suffix:
@@ -1743,12 +1682,8 @@ conpat -> QUALIDENT . apat [ RPAREN EQUAL COMMA COLONCOLON COLON ARROW ]
 -- On apat shift to state 100
 -- On aapat shift to state 101
 ## Reductions:
--- On RPAREN reduce production apat -> QUALIDENT
--- On EQUAL reduce production apat -> QUALIDENT
--- On COMMA reduce production apat -> QUALIDENT
--- On COLONCOLON reduce production apat -> QUALIDENT
--- On COLON reduce production apat -> QUALIDENT
--- On ARROW reduce production apat -> QUALIDENT
+-- On RPAREN EQUAL COMMA COLONCOLON COLON ARROW
+--   reduce production apat -> QUALIDENT
 
 State 99:
 ## Known stack suffix:
@@ -1857,11 +1792,8 @@ listpat -> conpat . COLONCOLON listpat [ RPAREN EQUAL COMMA COLON ARROW ]
 ## Transitions:
 -- On COLONCOLON shift to state 109
 ## Reductions:
--- On RPAREN reduce production lcpat -> conpat
--- On EQUAL reduce production lcpat -> conpat
--- On COMMA reduce production lcpat -> conpat
--- On COLON reduce production lcpat -> conpat
--- On ARROW reduce production lcpat -> conpat
+-- On RPAREN EQUAL COMMA COLON ARROW
+--   reduce production lcpat -> conpat
 
 State 109:
 ## Known stack suffix:
@@ -1922,12 +1854,10 @@ apat -> aapat . [ COLONCOLON ]
 listpat -> conpat COLONCOLON aapat . [ RPAREN EQUAL COMMA COLON ARROW ]
 ## Transitions:
 ## Reductions:
--- On RPAREN reduce production listpat -> conpat COLONCOLON aapat
--- On EQUAL reduce production listpat -> conpat COLONCOLON aapat
--- On COMMA reduce production listpat -> conpat COLONCOLON aapat
--- On COLONCOLON reduce production apat -> aapat
--- On COLON reduce production listpat -> conpat COLONCOLON aapat
--- On ARROW reduce production listpat -> conpat COLONCOLON aapat
+-- On COLONCOLON
+--   reduce production apat -> aapat
+-- On RPAREN EQUAL COMMA COLON ARROW
+--   reduce production listpat -> conpat COLONCOLON aapat
 
 State 114:
 ## Known stack suffix:
@@ -1993,11 +1923,10 @@ aapat -> LIDENT . [ EQUAL COMMA COLON ]
 id -> LIDENT . [ TYVARIDENT LPAREN ]
 ## Transitions:
 ## Reductions:
--- On TYVARIDENT reduce production id -> LIDENT
--- On LPAREN reduce production id -> LIDENT
--- On EQUAL reduce production aapat -> LIDENT
--- On COMMA reduce production aapat -> LIDENT
--- On COLON reduce production aapat -> LIDENT
+-- On EQUAL COMMA COLON
+--   reduce production aapat -> LIDENT
+-- On TYVARIDENT LPAREN
+--   reduce production id -> LIDENT
 
 State 121:
 ## Known stack suffix:
@@ -2224,12 +2153,8 @@ param -> LPAREN id COLON STRING . IN exp RPAREN [ TYVARIDENT LPAREN EQUAL COLON 
 ## Transitions:
 -- On IN shift to state 133
 ## Reductions:
--- On WHERE reduce production asort -> STRING
--- On STAR reduce production asort -> STRING
--- On RPAREN reduce production asort -> STRING
--- On QUALIDENT reduce production asort -> STRING
--- On LIDENT reduce production asort -> STRING
--- On ARROW reduce production asort -> STRING
+-- On WHERE STAR RPAREN QUALIDENT LIDENT ARROW
+--   reduce production asort -> STRING
 
 State 133:
 ## Known stack suffix:
@@ -2370,58 +2295,8 @@ tyexp -> tyexp . LBRACE sort RBRACE [ WITH USING UIDENT TYPE TILDE TEST STR STAR
 -- On LBRACE shift to state 140
 -- On rep shift to state 154
 ## Reductions:
--- On WITH reduce production repexp -> tyexp
--- On USING reduce production repexp -> tyexp
--- On UIDENT reduce production repexp -> tyexp
--- On TYPE reduce production repexp -> tyexp
--- On TILDE reduce production repexp -> tyexp
--- On TEST reduce production repexp -> tyexp
--- On STR reduce production repexp -> tyexp
--- On SEMI reduce production repexp -> tyexp
--- On RPAREN reduce production repexp -> tyexp
--- On RBRACK reduce production repexp -> tyexp
--- On RBRACE reduce production repexp -> tyexp
--- On RANGLE reduce production repexp -> tyexp
--- On QUALIDENT reduce production repexp -> tyexp
--- On PUT reduce production repexp -> tyexp
--- On NSET reduce production repexp -> tyexp
--- On MODULE reduce production repexp -> tyexp
--- On MINUS reduce production repexp -> tyexp
--- On LT reduce production repexp -> tyexp
--- On LPAREN reduce production repexp -> tyexp
--- On LIDENT reduce production repexp -> tyexp
--- On LET reduce production repexp -> tyexp
--- On LEQ reduce production repexp -> tyexp
--- On LANGLE reduce production repexp -> tyexp
--- On INTO reduce production repexp -> tyexp
--- On INTEGER reduce production repexp -> tyexp
--- On IN reduce production repexp -> tyexp
--- On HASH reduce production repexp -> tyexp
--- On GT reduce production repexp -> tyexp
--- On GRAMMAR reduce production repexp -> tyexp
--- On GET reduce production repexp -> tyexp
--- On GEQ reduce production repexp -> tyexp
--- On EQUAL reduce production repexp -> tyexp
--- On EOF reduce production repexp -> tyexp
--- On END reduce production repexp -> tyexp
--- On DOT reduce production repexp -> tyexp
--- On DOLLAR reduce production repexp -> tyexp
--- On DEQARROW reduce production repexp -> tyexp
--- On DARROW reduce production repexp -> tyexp
--- On CSET reduce production repexp -> tyexp
--- On CREATE reduce production repexp -> tyexp
--- On COMMA reduce production repexp -> tyexp
--- On COLON reduce production repexp -> tyexp
--- On CHOOSE reduce production repexp -> tyexp
--- On CHARACTER reduce production repexp -> tyexp
--- On CEX reduce production repexp -> tyexp
--- On CANONIZE reduce production repexp -> tyexp
--- On BOOLEAN reduce production repexp -> tyexp
--- On BEGIN reduce production repexp -> tyexp
--- On BARBAR reduce production repexp -> tyexp
--- On BAR reduce production repexp -> tyexp
--- On ARROW reduce production repexp -> tyexp
--- On AMPERSAND reduce production repexp -> tyexp
+-- On WITH USING UIDENT TYPE TILDE TEST STR SEMI RPAREN RBRACK RBRACE RANGLE QUALIDENT PUT NSET MODULE MINUS LT LPAREN LIDENT LET LEQ LANGLE INTO INTEGER IN HASH GT GRAMMAR GET GEQ EQUAL EOF END DOT DOLLAR DEQARROW DARROW CSET CREATE COMMA COLON CHOOSE CHARACTER CEX CANONIZE BOOLEAN BEGIN BARBAR BAR ARROW AMPERSAND
+--   reduce production repexp -> tyexp
 
 State 137:
 ## Known stack suffix:
@@ -2587,24 +2462,8 @@ datatypesort -> bsort . [ WHERE TYPE TEST STAR RPAREN RBRACE RANGLE MODULE LLIST
 -- On LIDENT shift to state 52
 -- On qvar shift to state 151
 ## Reductions:
--- On WHERE reduce production datatypesort -> bsort
--- On TYPE reduce production datatypesort -> bsort
--- On TEST reduce production datatypesort -> bsort
--- On STAR reduce production datatypesort -> bsort
--- On RPAREN reduce production datatypesort -> bsort
--- On RBRACE reduce production datatypesort -> bsort
--- On RANGLE reduce production datatypesort -> bsort
--- On MODULE reduce production datatypesort -> bsort
--- On LLIST reduce production datatypesort -> bsort
--- On LET reduce production datatypesort -> bsort
--- On IN reduce production datatypesort -> bsort
--- On EQUAL reduce production datatypesort -> bsort
--- On EOF reduce production datatypesort -> bsort
--- On END reduce production datatypesort -> bsort
--- On DOLLAR reduce production datatypesort -> bsort
--- On COMMA reduce production datatypesort -> bsort
--- On BAR reduce production datatypesort -> bsort
--- On ARROW reduce production datatypesort -> bsort
+-- On WHERE TYPE TEST STAR RPAREN RBRACE RANGLE MODULE LLIST LET IN EQUAL EOF END DOLLAR COMMA BAR ARROW
+--   reduce production datatypesort -> bsort
 
 State 151:
 ## Known stack suffix:
@@ -2651,25 +2510,8 @@ tildeexp -> tildeexp . TILDE appexp [ WITH TYPE TILDE TEST SEMI RPAREN RBRACK RA
 ## Transitions:
 -- On TILDE shift to state 156
 ## Reductions:
--- On WITH reduce production infixexp -> tildeexp
--- On TYPE reduce production infixexp -> tildeexp
--- On TEST reduce production infixexp -> tildeexp
--- On SEMI reduce production infixexp -> tildeexp
--- On RPAREN reduce production infixexp -> tildeexp
--- On RBRACK reduce production infixexp -> tildeexp
--- On RANGLE reduce production infixexp -> tildeexp
--- On MODULE reduce production infixexp -> tildeexp
--- On MINUS reduce production infixexp -> tildeexp
--- On LET reduce production infixexp -> tildeexp
--- On IN reduce production infixexp -> tildeexp
--- On EQUAL reduce production infixexp -> tildeexp
--- On EOF reduce production infixexp -> tildeexp
--- On END reduce production infixexp -> tildeexp
--- On DOLLAR reduce production infixexp -> tildeexp
--- On COMMA reduce production infixexp -> tildeexp
--- On COLON reduce production infixexp -> tildeexp
--- On BARBAR reduce production infixexp -> tildeexp
--- On BAR reduce production infixexp -> tildeexp
+-- On WITH TYPE TEST SEMI RPAREN RBRACK RANGLE MODULE MINUS LET IN EQUAL EOF END DOLLAR COMMA COLON BARBAR BAR
+--   reduce production infixexp -> tildeexp
 
 State 156:
 ## Known stack suffix:
@@ -2759,26 +2601,8 @@ tildeexp -> tildeexp TILDE appexp . [ WITH TYPE TILDE TEST SEMI RPAREN RBRACK RA
 -- On matchexp shift to state 159
 -- On aexp shift to state 162
 ## Reductions:
--- On WITH reduce production tildeexp -> tildeexp TILDE appexp
--- On TYPE reduce production tildeexp -> tildeexp TILDE appexp
--- On TILDE reduce production tildeexp -> tildeexp TILDE appexp
--- On TEST reduce production tildeexp -> tildeexp TILDE appexp
--- On SEMI reduce production tildeexp -> tildeexp TILDE appexp
--- On RPAREN reduce production tildeexp -> tildeexp TILDE appexp
--- On RBRACK reduce production tildeexp -> tildeexp TILDE appexp
--- On RANGLE reduce production tildeexp -> tildeexp TILDE appexp
--- On MODULE reduce production tildeexp -> tildeexp TILDE appexp
--- On MINUS reduce production tildeexp -> tildeexp TILDE appexp
--- On LET reduce production tildeexp -> tildeexp TILDE appexp
--- On IN reduce production tildeexp -> tildeexp TILDE appexp
--- On EQUAL reduce production tildeexp -> tildeexp TILDE appexp
--- On EOF reduce production tildeexp -> tildeexp TILDE appexp
--- On END reduce production tildeexp -> tildeexp TILDE appexp
--- On DOLLAR reduce production tildeexp -> tildeexp TILDE appexp
--- On COMMA reduce production tildeexp -> tildeexp TILDE appexp
--- On COLON reduce production tildeexp -> tildeexp TILDE appexp
--- On BARBAR reduce production tildeexp -> tildeexp TILDE appexp
--- On BAR reduce production tildeexp -> tildeexp TILDE appexp
+-- On WITH TYPE TILDE TEST SEMI RPAREN RBRACK RANGLE MODULE MINUS LET IN EQUAL EOF END DOLLAR COMMA COLON BARBAR BAR
+--   reduce production tildeexp -> tildeexp TILDE appexp
 
 State 161:
 ## Known stack suffix:
@@ -2806,62 +2630,8 @@ tyexp -> aexp . [ WITH USING UIDENT TYPE TILDE TEST STR STAR SEMI RPAREN RBRACK 
 -- On AVTYPE shift to state 166
 -- On ASTYPE shift to state 167
 ## Reductions:
--- On WITH reduce production tyexp -> aexp
--- On USING reduce production tyexp -> aexp
--- On UIDENT reduce production tyexp -> aexp
--- On TYPE reduce production tyexp -> aexp
--- On TILDE reduce production tyexp -> aexp
--- On TEST reduce production tyexp -> aexp
--- On STR reduce production tyexp -> aexp
--- On STAR reduce production tyexp -> aexp
--- On SEMI reduce production tyexp -> aexp
--- On RPAREN reduce production tyexp -> aexp
--- On RBRACK reduce production tyexp -> aexp
--- On RBRACE reduce production tyexp -> aexp
--- On RANGLE reduce production tyexp -> aexp
--- On QUALIDENT reduce production tyexp -> aexp
--- On QMARK reduce production tyexp -> aexp
--- On PUT reduce production tyexp -> aexp
--- On PLUS reduce production tyexp -> aexp
--- On NSET reduce production tyexp -> aexp
--- On MODULE reduce production tyexp -> aexp
--- On MINUS reduce production tyexp -> aexp
--- On LT reduce production tyexp -> aexp
--- On LPAREN reduce production tyexp -> aexp
--- On LIDENT reduce production tyexp -> aexp
--- On LET reduce production tyexp -> aexp
--- On LEQ reduce production tyexp -> aexp
--- On LBRACE reduce production tyexp -> aexp
--- On LANGLE reduce production tyexp -> aexp
--- On INTO reduce production tyexp -> aexp
--- On INTEGER reduce production tyexp -> aexp
--- On IN reduce production tyexp -> aexp
--- On HASH reduce production tyexp -> aexp
--- On GT reduce production tyexp -> aexp
--- On GRAMMAR reduce production tyexp -> aexp
--- On GET reduce production tyexp -> aexp
--- On GEQ reduce production tyexp -> aexp
--- On EQUAL reduce production tyexp -> aexp
--- On EOF reduce production tyexp -> aexp
--- On END reduce production tyexp -> aexp
--- On DOT reduce production tyexp -> aexp
--- On DOLLAR reduce production tyexp -> aexp
--- On DEQARROW reduce production tyexp -> aexp
--- On DARROW reduce production tyexp -> aexp
--- On CSET reduce production tyexp -> aexp
--- On CREATE reduce production tyexp -> aexp
--- On COMMA reduce production tyexp -> aexp
--- On COLON reduce production tyexp -> aexp
--- On CHOOSE reduce production tyexp -> aexp
--- On CHARACTER reduce production tyexp -> aexp
--- On CEX reduce production tyexp -> aexp
--- On CANONIZE reduce production tyexp -> aexp
--- On BOOLEAN reduce production tyexp -> aexp
--- On BEGIN reduce production tyexp -> aexp
--- On BARBAR reduce production tyexp -> aexp
--- On BAR reduce production tyexp -> aexp
--- On ARROW reduce production tyexp -> aexp
--- On AMPERSAND reduce production tyexp -> aexp
+-- On WITH USING UIDENT TYPE TILDE TEST STR STAR SEMI RPAREN RBRACK RBRACE RANGLE QUALIDENT QMARK PUT PLUS NSET MODULE MINUS LT LPAREN LIDENT LET LEQ LBRACE LANGLE INTO INTEGER IN HASH GT GRAMMAR GET GEQ EQUAL EOF END DOT DOLLAR DEQARROW DARROW CSET CREATE COMMA COLON CHOOSE CHARACTER CEX CANONIZE BOOLEAN BEGIN BARBAR BAR ARROW AMPERSAND
+--   reduce production tyexp -> aexp
 
 State 163:
 ## Known stack suffix:
@@ -2918,25 +2688,8 @@ infixexp -> rewriteexp . [ WITH TYPE TEST SEMI RPAREN RBRACK RANGLE MODULE MINUS
 ## Transitions:
 -- On DOT shift to state 169
 ## Reductions:
--- On WITH reduce production infixexp -> rewriteexp
--- On TYPE reduce production infixexp -> rewriteexp
--- On TEST reduce production infixexp -> rewriteexp
--- On SEMI reduce production infixexp -> rewriteexp
--- On RPAREN reduce production infixexp -> rewriteexp
--- On RBRACK reduce production infixexp -> rewriteexp
--- On RANGLE reduce production infixexp -> rewriteexp
--- On MODULE reduce production infixexp -> rewriteexp
--- On MINUS reduce production infixexp -> rewriteexp
--- On LET reduce production infixexp -> rewriteexp
--- On IN reduce production infixexp -> rewriteexp
--- On EQUAL reduce production infixexp -> rewriteexp
--- On EOF reduce production infixexp -> rewriteexp
--- On END reduce production infixexp -> rewriteexp
--- On DOLLAR reduce production infixexp -> rewriteexp
--- On COMMA reduce production infixexp -> rewriteexp
--- On COLON reduce production infixexp -> rewriteexp
--- On BARBAR reduce production infixexp -> rewriteexp
--- On BAR reduce production infixexp -> rewriteexp
+-- On WITH TYPE TEST SEMI RPAREN RBRACK RANGLE MODULE MINUS LET IN EQUAL EOF END DOLLAR COMMA COLON BARBAR BAR
+--   reduce production infixexp -> rewriteexp
 
 State 169:
 ## Known stack suffix:
@@ -3014,26 +2767,8 @@ rewriteexp -> appexp . DEQARROW appexp [ WITH TYPE TEST SEMI RPAREN RBRACK RANGL
 -- On matchexp shift to state 159
 -- On aexp shift to state 162
 ## Reductions:
--- On WITH reduce production dotexp -> rewriteexp DOT appexp
--- On TYPE reduce production dotexp -> rewriteexp DOT appexp
--- On TEST reduce production dotexp -> rewriteexp DOT appexp
--- On SEMI reduce production dotexp -> rewriteexp DOT appexp
--- On RPAREN reduce production dotexp -> rewriteexp DOT appexp
--- On RBRACK reduce production dotexp -> rewriteexp DOT appexp
--- On RANGLE reduce production dotexp -> rewriteexp DOT appexp
--- On MODULE reduce production dotexp -> rewriteexp DOT appexp
--- On MINUS reduce production dotexp -> rewriteexp DOT appexp
--- On LET reduce production dotexp -> rewriteexp DOT appexp
--- On IN reduce production dotexp -> rewriteexp DOT appexp
--- On EQUAL reduce production dotexp -> rewriteexp DOT appexp
--- On EOF reduce production dotexp -> rewriteexp DOT appexp
--- On END reduce production dotexp -> rewriteexp DOT appexp
--- On DOT reduce production dotexp -> rewriteexp DOT appexp
--- On DOLLAR reduce production dotexp -> rewriteexp DOT appexp
--- On COMMA reduce production dotexp -> rewriteexp DOT appexp
--- On COLON reduce production dotexp -> rewriteexp DOT appexp
--- On BARBAR reduce production dotexp -> rewriteexp DOT appexp
--- On BAR reduce production dotexp -> rewriteexp DOT appexp
+-- On WITH TYPE TEST SEMI RPAREN RBRACK RANGLE MODULE MINUS LET IN EQUAL EOF END DOT DOLLAR COMMA COLON BARBAR BAR
+--   reduce production dotexp -> rewriteexp DOT appexp
 
 State 172:
 ## Known stack suffix:
@@ -3096,26 +2831,8 @@ rewriteexp -> appexp DEQARROW appexp . [ WITH TYPE TEST SEMI RPAREN RBRACK RANGL
 -- On matchexp shift to state 159
 -- On aexp shift to state 162
 ## Reductions:
--- On WITH reduce production rewriteexp -> appexp DEQARROW appexp
--- On TYPE reduce production rewriteexp -> appexp DEQARROW appexp
--- On TEST reduce production rewriteexp -> appexp DEQARROW appexp
--- On SEMI reduce production rewriteexp -> appexp DEQARROW appexp
--- On RPAREN reduce production rewriteexp -> appexp DEQARROW appexp
--- On RBRACK reduce production rewriteexp -> appexp DEQARROW appexp
--- On RANGLE reduce production rewriteexp -> appexp DEQARROW appexp
--- On MODULE reduce production rewriteexp -> appexp DEQARROW appexp
--- On MINUS reduce production rewriteexp -> appexp DEQARROW appexp
--- On LET reduce production rewriteexp -> appexp DEQARROW appexp
--- On IN reduce production rewriteexp -> appexp DEQARROW appexp
--- On EQUAL reduce production rewriteexp -> appexp DEQARROW appexp
--- On EOF reduce production rewriteexp -> appexp DEQARROW appexp
--- On END reduce production rewriteexp -> appexp DEQARROW appexp
--- On DOT reduce production rewriteexp -> appexp DEQARROW appexp
--- On DOLLAR reduce production rewriteexp -> appexp DEQARROW appexp
--- On COMMA reduce production rewriteexp -> appexp DEQARROW appexp
--- On COLON reduce production rewriteexp -> appexp DEQARROW appexp
--- On BARBAR reduce production rewriteexp -> appexp DEQARROW appexp
--- On BAR reduce production rewriteexp -> appexp DEQARROW appexp
+-- On WITH TYPE TEST SEMI RPAREN RBRACK RANGLE MODULE MINUS LET IN EQUAL EOF END DOT DOLLAR COMMA COLON BARBAR BAR
+--   reduce production rewriteexp -> appexp DEQARROW appexp
 
 State 174:
 ## Known stack suffix:
@@ -3178,26 +2895,8 @@ rewriteexp -> appexp DARROW appexp . [ WITH TYPE TEST SEMI RPAREN RBRACK RANGLE 
 -- On matchexp shift to state 159
 -- On aexp shift to state 162
 ## Reductions:
--- On WITH reduce production rewriteexp -> appexp DARROW appexp
--- On TYPE reduce production rewriteexp -> appexp DARROW appexp
--- On TEST reduce production rewriteexp -> appexp DARROW appexp
--- On SEMI reduce production rewriteexp -> appexp DARROW appexp
--- On RPAREN reduce production rewriteexp -> appexp DARROW appexp
--- On RBRACK reduce production rewriteexp -> appexp DARROW appexp
--- On RANGLE reduce production rewriteexp -> appexp DARROW appexp
--- On MODULE reduce production rewriteexp -> appexp DARROW appexp
--- On MINUS reduce production rewriteexp -> appexp DARROW appexp
--- On LET reduce production rewriteexp -> appexp DARROW appexp
--- On IN reduce production rewriteexp -> appexp DARROW appexp
--- On EQUAL reduce production rewriteexp -> appexp DARROW appexp
--- On EOF reduce production rewriteexp -> appexp DARROW appexp
--- On END reduce production rewriteexp -> appexp DARROW appexp
--- On DOT reduce production rewriteexp -> appexp DARROW appexp
--- On DOLLAR reduce production rewriteexp -> appexp DARROW appexp
--- On COMMA reduce production rewriteexp -> appexp DARROW appexp
--- On COLON reduce production rewriteexp -> appexp DARROW appexp
--- On BARBAR reduce production rewriteexp -> appexp DARROW appexp
--- On BAR reduce production rewriteexp -> appexp DARROW appexp
+-- On WITH TYPE TEST SEMI RPAREN RBRACK RANGLE MODULE MINUS LET IN EQUAL EOF END DOT DOLLAR COMMA COLON BARBAR BAR
+--   reduce production rewriteexp -> appexp DARROW appexp
 
 State 176:
 ## Known stack suffix:
@@ -3208,20 +2907,8 @@ obarexp -> obarexp . BAR equalexp [ WITH TYPE TEST SEMI RPAREN RBRACK RANGLE MOD
 ## Transitions:
 -- On BAR shift to state 177
 ## Reductions:
--- On WITH reduce production barexp -> obarexp
--- On TYPE reduce production barexp -> obarexp
--- On TEST reduce production barexp -> obarexp
--- On SEMI reduce production barexp -> obarexp
--- On RPAREN reduce production barexp -> obarexp
--- On RBRACK reduce production barexp -> obarexp
--- On RANGLE reduce production barexp -> obarexp
--- On MODULE reduce production barexp -> obarexp
--- On LET reduce production barexp -> obarexp
--- On IN reduce production barexp -> obarexp
--- On EOF reduce production barexp -> obarexp
--- On END reduce production barexp -> obarexp
--- On DOLLAR reduce production barexp -> obarexp
--- On COMMA reduce production barexp -> obarexp
+-- On WITH TYPE TEST SEMI RPAREN RBRACK RANGLE MODULE LET IN EOF END DOLLAR COMMA
+--   reduce production barexp -> obarexp
 
 State 177:
 ## Known stack suffix:
@@ -3315,23 +3002,8 @@ minusexp -> infixexp . MINUS appexp [ WITH TYPE TEST SEMI RPAREN RBRACK RANGLE M
 ## Transitions:
 -- On MINUS shift to state 183
 ## Reductions:
--- On WITH reduce production equalexp -> infixexp
--- On TYPE reduce production equalexp -> infixexp
--- On TEST reduce production equalexp -> infixexp
--- On SEMI reduce production equalexp -> infixexp
--- On RPAREN reduce production equalexp -> infixexp
--- On RBRACK reduce production equalexp -> infixexp
--- On RANGLE reduce production equalexp -> infixexp
--- On MODULE reduce production equalexp -> infixexp
--- On LET reduce production equalexp -> infixexp
--- On IN reduce production equalexp -> infixexp
--- On EOF reduce production equalexp -> infixexp
--- On END reduce production equalexp -> infixexp
--- On DOLLAR reduce production equalexp -> infixexp
--- On COMMA reduce production equalexp -> infixexp
--- On COLON reduce production equalexp -> infixexp
--- On BARBAR reduce production equalexp -> infixexp
--- On BAR reduce production equalexp -> infixexp
+-- On WITH TYPE TEST SEMI RPAREN RBRACK RANGLE MODULE LET IN EOF END DOLLAR COMMA COLON BARBAR BAR
+--   reduce production equalexp -> infixexp
 
 State 183:
 ## Known stack suffix:
@@ -3394,25 +3066,8 @@ minusexp -> infixexp MINUS appexp . [ WITH TYPE TEST SEMI RPAREN RBRACK RANGLE M
 -- On matchexp shift to state 159
 -- On aexp shift to state 162
 ## Reductions:
--- On WITH reduce production minusexp -> infixexp MINUS appexp
--- On TYPE reduce production minusexp -> infixexp MINUS appexp
--- On TEST reduce production minusexp -> infixexp MINUS appexp
--- On SEMI reduce production minusexp -> infixexp MINUS appexp
--- On RPAREN reduce production minusexp -> infixexp MINUS appexp
--- On RBRACK reduce production minusexp -> infixexp MINUS appexp
--- On RANGLE reduce production minusexp -> infixexp MINUS appexp
--- On MODULE reduce production minusexp -> infixexp MINUS appexp
--- On MINUS reduce production minusexp -> infixexp MINUS appexp
--- On LET reduce production minusexp -> infixexp MINUS appexp
--- On IN reduce production minusexp -> infixexp MINUS appexp
--- On EQUAL reduce production minusexp -> infixexp MINUS appexp
--- On EOF reduce production minusexp -> infixexp MINUS appexp
--- On END reduce production minusexp -> infixexp MINUS appexp
--- On DOLLAR reduce production minusexp -> infixexp MINUS appexp
--- On COMMA reduce production minusexp -> infixexp MINUS appexp
--- On COLON reduce production minusexp -> infixexp MINUS appexp
--- On BARBAR reduce production minusexp -> infixexp MINUS appexp
--- On BAR reduce production minusexp -> infixexp MINUS appexp
+-- On WITH TYPE TEST SEMI RPAREN RBRACK RANGLE MODULE MINUS LET IN EQUAL EOF END DOLLAR COMMA COLON BARBAR BAR
+--   reduce production minusexp -> infixexp MINUS appexp
 
 State 185:
 ## Known stack suffix:
@@ -3451,25 +3106,8 @@ infixexp -> dotexp . [ WITH TYPE TEST SEMI RPAREN RBRACK RANGLE MODULE MINUS LET
 ## Transitions:
 -- On DOT shift to state 189
 ## Reductions:
--- On WITH reduce production infixexp -> dotexp
--- On TYPE reduce production infixexp -> dotexp
--- On TEST reduce production infixexp -> dotexp
--- On SEMI reduce production infixexp -> dotexp
--- On RPAREN reduce production infixexp -> dotexp
--- On RBRACK reduce production infixexp -> dotexp
--- On RANGLE reduce production infixexp -> dotexp
--- On MODULE reduce production infixexp -> dotexp
--- On MINUS reduce production infixexp -> dotexp
--- On LET reduce production infixexp -> dotexp
--- On IN reduce production infixexp -> dotexp
--- On EQUAL reduce production infixexp -> dotexp
--- On EOF reduce production infixexp -> dotexp
--- On END reduce production infixexp -> dotexp
--- On DOLLAR reduce production infixexp -> dotexp
--- On COMMA reduce production infixexp -> dotexp
--- On COLON reduce production infixexp -> dotexp
--- On BARBAR reduce production infixexp -> dotexp
--- On BAR reduce production infixexp -> dotexp
+-- On WITH TYPE TEST SEMI RPAREN RBRACK RANGLE MODULE MINUS LET IN EQUAL EOF END DOLLAR COMMA COLON BARBAR BAR
+--   reduce production infixexp -> dotexp
 
 State 189:
 ## Known stack suffix:
@@ -3547,26 +3185,8 @@ rewriteexp -> appexp . DEQARROW appexp [ WITH TYPE TEST SEMI RPAREN RBRACK RANGL
 -- On matchexp shift to state 159
 -- On aexp shift to state 162
 ## Reductions:
--- On WITH reduce production dotexp -> dotexp DOT appexp
--- On TYPE reduce production dotexp -> dotexp DOT appexp
--- On TEST reduce production dotexp -> dotexp DOT appexp
--- On SEMI reduce production dotexp -> dotexp DOT appexp
--- On RPAREN reduce production dotexp -> dotexp DOT appexp
--- On RBRACK reduce production dotexp -> dotexp DOT appexp
--- On RANGLE reduce production dotexp -> dotexp DOT appexp
--- On MODULE reduce production dotexp -> dotexp DOT appexp
--- On MINUS reduce production dotexp -> dotexp DOT appexp
--- On LET reduce production dotexp -> dotexp DOT appexp
--- On IN reduce production dotexp -> dotexp DOT appexp
--- On EQUAL reduce production dotexp -> dotexp DOT appexp
--- On EOF reduce production dotexp -> dotexp DOT appexp
--- On END reduce production dotexp -> dotexp DOT appexp
--- On DOT reduce production dotexp -> dotexp DOT appexp
--- On DOLLAR reduce production dotexp -> dotexp DOT appexp
--- On COMMA reduce production dotexp -> dotexp DOT appexp
--- On COLON reduce production dotexp -> dotexp DOT appexp
--- On BARBAR reduce production dotexp -> dotexp DOT appexp
--- On BAR reduce production dotexp -> dotexp DOT appexp
+-- On WITH TYPE TEST SEMI RPAREN RBRACK RANGLE MODULE MINUS LET IN EQUAL EOF END DOT DOLLAR COMMA COLON BARBAR BAR
+--   reduce production dotexp -> dotexp DOT appexp
 
 State 192:
 ## Known stack suffix:
@@ -3629,24 +3249,8 @@ tildeexp -> appexp . TILDE appexp [ WITH TYPE TILDE TEST SEMI RPAREN RBRACK RANG
 -- On matchexp shift to state 159
 -- On aexp shift to state 162
 ## Reductions:
--- On WITH reduce production infixexp -> appexp
--- On TYPE reduce production infixexp -> appexp
--- On TEST reduce production infixexp -> appexp
--- On SEMI reduce production infixexp -> appexp
--- On RPAREN reduce production infixexp -> appexp
--- On RBRACK reduce production infixexp -> appexp
--- On RANGLE reduce production infixexp -> appexp
--- On MODULE reduce production infixexp -> appexp
--- On MINUS reduce production infixexp -> appexp
--- On LET reduce production infixexp -> appexp
--- On IN reduce production infixexp -> appexp
--- On EOF reduce production infixexp -> appexp
--- On END reduce production infixexp -> appexp
--- On DOLLAR reduce production infixexp -> appexp
--- On COMMA reduce production infixexp -> appexp
--- On COLON reduce production infixexp -> appexp
--- On BARBAR reduce production infixexp -> appexp
--- On BAR reduce production infixexp -> appexp
+-- On WITH TYPE TEST SEMI RPAREN RBRACK RANGLE MODULE MINUS LET IN EOF END DOLLAR COMMA COLON BARBAR BAR
+--   reduce production infixexp -> appexp
 
 State 193:
 ## Known stack suffix:
@@ -3709,26 +3313,8 @@ tildeexp -> appexp TILDE appexp . [ WITH TYPE TILDE TEST SEMI RPAREN RBRACK RANG
 -- On matchexp shift to state 159
 -- On aexp shift to state 162
 ## Reductions:
--- On WITH reduce production tildeexp -> appexp TILDE appexp
--- On TYPE reduce production tildeexp -> appexp TILDE appexp
--- On TILDE reduce production tildeexp -> appexp TILDE appexp
--- On TEST reduce production tildeexp -> appexp TILDE appexp
--- On SEMI reduce production tildeexp -> appexp TILDE appexp
--- On RPAREN reduce production tildeexp -> appexp TILDE appexp
--- On RBRACK reduce production tildeexp -> appexp TILDE appexp
--- On RANGLE reduce production tildeexp -> appexp TILDE appexp
--- On MODULE reduce production tildeexp -> appexp TILDE appexp
--- On MINUS reduce production tildeexp -> appexp TILDE appexp
--- On LET reduce production tildeexp -> appexp TILDE appexp
--- On IN reduce production tildeexp -> appexp TILDE appexp
--- On EQUAL reduce production tildeexp -> appexp TILDE appexp
--- On EOF reduce production tildeexp -> appexp TILDE appexp
--- On END reduce production tildeexp -> appexp TILDE appexp
--- On DOLLAR reduce production tildeexp -> appexp TILDE appexp
--- On COMMA reduce production tildeexp -> appexp TILDE appexp
--- On COLON reduce production tildeexp -> appexp TILDE appexp
--- On BARBAR reduce production tildeexp -> appexp TILDE appexp
--- On BAR reduce production tildeexp -> appexp TILDE appexp
+-- On WITH TYPE TILDE TEST SEMI RPAREN RBRACK RANGLE MODULE MINUS LET IN EQUAL EOF END DOLLAR COMMA COLON BARBAR BAR
+--   reduce production tildeexp -> appexp TILDE appexp
 
 State 195:
 ## Known stack suffix:
@@ -3854,25 +3440,8 @@ lenscomponentexp -> appexp PUT appexp INTO appexp . [ WITH TYPE TEST SEMI RPAREN
 -- On matchexp shift to state 159
 -- On aexp shift to state 162
 ## Reductions:
--- On WITH reduce production lenscomponentexp -> appexp PUT appexp INTO appexp
--- On TYPE reduce production lenscomponentexp -> appexp PUT appexp INTO appexp
--- On TEST reduce production lenscomponentexp -> appexp PUT appexp INTO appexp
--- On SEMI reduce production lenscomponentexp -> appexp PUT appexp INTO appexp
--- On RPAREN reduce production lenscomponentexp -> appexp PUT appexp INTO appexp
--- On RBRACK reduce production lenscomponentexp -> appexp PUT appexp INTO appexp
--- On RANGLE reduce production lenscomponentexp -> appexp PUT appexp INTO appexp
--- On MODULE reduce production lenscomponentexp -> appexp PUT appexp INTO appexp
--- On MINUS reduce production lenscomponentexp -> appexp PUT appexp INTO appexp
--- On LET reduce production lenscomponentexp -> appexp PUT appexp INTO appexp
--- On IN reduce production lenscomponentexp -> appexp PUT appexp INTO appexp
--- On EQUAL reduce production lenscomponentexp -> appexp PUT appexp INTO appexp
--- On EOF reduce production lenscomponentexp -> appexp PUT appexp INTO appexp
--- On END reduce production lenscomponentexp -> appexp PUT appexp INTO appexp
--- On DOLLAR reduce production lenscomponentexp -> appexp PUT appexp INTO appexp
--- On COMMA reduce production lenscomponentexp -> appexp PUT appexp INTO appexp
--- On COLON reduce production lenscomponentexp -> appexp PUT appexp INTO appexp
--- On BARBAR reduce production lenscomponentexp -> appexp PUT appexp INTO appexp
--- On BAR reduce production lenscomponentexp -> appexp PUT appexp INTO appexp
+-- On WITH TYPE TEST SEMI RPAREN RBRACK RANGLE MODULE MINUS LET IN EQUAL EOF END DOLLAR COMMA COLON BARBAR BAR
+--   reduce production lenscomponentexp -> appexp PUT appexp INTO appexp
 
 State 199:
 ## Known stack suffix:
@@ -3935,25 +3504,8 @@ ltexp -> appexp LT appexp . [ WITH TYPE TEST SEMI RPAREN RBRACK RANGLE MODULE MI
 -- On matchexp shift to state 159
 -- On aexp shift to state 162
 ## Reductions:
--- On WITH reduce production ltexp -> appexp LT appexp
--- On TYPE reduce production ltexp -> appexp LT appexp
--- On TEST reduce production ltexp -> appexp LT appexp
--- On SEMI reduce production ltexp -> appexp LT appexp
--- On RPAREN reduce production ltexp -> appexp LT appexp
--- On RBRACK reduce production ltexp -> appexp LT appexp
--- On RANGLE reduce production ltexp -> appexp LT appexp
--- On MODULE reduce production ltexp -> appexp LT appexp
--- On MINUS reduce production ltexp -> appexp LT appexp
--- On LET reduce production ltexp -> appexp LT appexp
--- On IN reduce production ltexp -> appexp LT appexp
--- On EQUAL reduce production ltexp -> appexp LT appexp
--- On EOF reduce production ltexp -> appexp LT appexp
--- On END reduce production ltexp -> appexp LT appexp
--- On DOLLAR reduce production ltexp -> appexp LT appexp
--- On COMMA reduce production ltexp -> appexp LT appexp
--- On COLON reduce production ltexp -> appexp LT appexp
--- On BARBAR reduce production ltexp -> appexp LT appexp
--- On BAR reduce production ltexp -> appexp LT appexp
+-- On WITH TYPE TEST SEMI RPAREN RBRACK RANGLE MODULE MINUS LET IN EQUAL EOF END DOLLAR COMMA COLON BARBAR BAR
+--   reduce production ltexp -> appexp LT appexp
 
 State 201:
 ## Known stack suffix:
@@ -4016,25 +3568,8 @@ leqexp -> appexp LEQ appexp . [ WITH TYPE TEST SEMI RPAREN RBRACK RANGLE MODULE 
 -- On matchexp shift to state 159
 -- On aexp shift to state 162
 ## Reductions:
--- On WITH reduce production leqexp -> appexp LEQ appexp
--- On TYPE reduce production leqexp -> appexp LEQ appexp
--- On TEST reduce production leqexp -> appexp LEQ appexp
--- On SEMI reduce production leqexp -> appexp LEQ appexp
--- On RPAREN reduce production leqexp -> appexp LEQ appexp
--- On RBRACK reduce production leqexp -> appexp LEQ appexp
--- On RANGLE reduce production leqexp -> appexp LEQ appexp
--- On MODULE reduce production leqexp -> appexp LEQ appexp
--- On MINUS reduce production leqexp -> appexp LEQ appexp
--- On LET reduce production leqexp -> appexp LEQ appexp
--- On IN reduce production leqexp -> appexp LEQ appexp
--- On EQUAL reduce production leqexp -> appexp LEQ appexp
--- On EOF reduce production leqexp -> appexp LEQ appexp
--- On END reduce production leqexp -> appexp LEQ appexp
--- On DOLLAR reduce production leqexp -> appexp LEQ appexp
--- On COMMA reduce production leqexp -> appexp LEQ appexp
--- On COLON reduce production leqexp -> appexp LEQ appexp
--- On BARBAR reduce production leqexp -> appexp LEQ appexp
--- On BAR reduce production leqexp -> appexp LEQ appexp
+-- On WITH TYPE TEST SEMI RPAREN RBRACK RANGLE MODULE MINUS LET IN EQUAL EOF END DOLLAR COMMA COLON BARBAR BAR
+--   reduce production leqexp -> appexp LEQ appexp
 
 State 203:
 ## Known stack suffix:
@@ -4097,25 +3632,8 @@ gtexp -> appexp GT appexp . [ WITH TYPE TEST SEMI RPAREN RBRACK RANGLE MODULE MI
 -- On matchexp shift to state 159
 -- On aexp shift to state 162
 ## Reductions:
--- On WITH reduce production gtexp -> appexp GT appexp
--- On TYPE reduce production gtexp -> appexp GT appexp
--- On TEST reduce production gtexp -> appexp GT appexp
--- On SEMI reduce production gtexp -> appexp GT appexp
--- On RPAREN reduce production gtexp -> appexp GT appexp
--- On RBRACK reduce production gtexp -> appexp GT appexp
--- On RANGLE reduce production gtexp -> appexp GT appexp
--- On MODULE reduce production gtexp -> appexp GT appexp
--- On MINUS reduce production gtexp -> appexp GT appexp
--- On LET reduce production gtexp -> appexp GT appexp
--- On IN reduce production gtexp -> appexp GT appexp
--- On EQUAL reduce production gtexp -> appexp GT appexp
--- On EOF reduce production gtexp -> appexp GT appexp
--- On END reduce production gtexp -> appexp GT appexp
--- On DOLLAR reduce production gtexp -> appexp GT appexp
--- On COMMA reduce production gtexp -> appexp GT appexp
--- On COLON reduce production gtexp -> appexp GT appexp
--- On BARBAR reduce production gtexp -> appexp GT appexp
--- On BAR reduce production gtexp -> appexp GT appexp
+-- On WITH TYPE TEST SEMI RPAREN RBRACK RANGLE MODULE MINUS LET IN EQUAL EOF END DOLLAR COMMA COLON BARBAR BAR
+--   reduce production gtexp -> appexp GT appexp
 
 State 205:
 ## Known stack suffix:
@@ -4178,25 +3696,8 @@ lenscomponentexp -> appexp GET appexp . [ WITH TYPE TEST SEMI RPAREN RBRACK RANG
 -- On matchexp shift to state 159
 -- On aexp shift to state 162
 ## Reductions:
--- On WITH reduce production lenscomponentexp -> appexp GET appexp
--- On TYPE reduce production lenscomponentexp -> appexp GET appexp
--- On TEST reduce production lenscomponentexp -> appexp GET appexp
--- On SEMI reduce production lenscomponentexp -> appexp GET appexp
--- On RPAREN reduce production lenscomponentexp -> appexp GET appexp
--- On RBRACK reduce production lenscomponentexp -> appexp GET appexp
--- On RANGLE reduce production lenscomponentexp -> appexp GET appexp
--- On MODULE reduce production lenscomponentexp -> appexp GET appexp
--- On MINUS reduce production lenscomponentexp -> appexp GET appexp
--- On LET reduce production lenscomponentexp -> appexp GET appexp
--- On IN reduce production lenscomponentexp -> appexp GET appexp
--- On EQUAL reduce production lenscomponentexp -> appexp GET appexp
--- On EOF reduce production lenscomponentexp -> appexp GET appexp
--- On END reduce production lenscomponentexp -> appexp GET appexp
--- On DOLLAR reduce production lenscomponentexp -> appexp GET appexp
--- On COMMA reduce production lenscomponentexp -> appexp GET appexp
--- On COLON reduce production lenscomponentexp -> appexp GET appexp
--- On BARBAR reduce production lenscomponentexp -> appexp GET appexp
--- On BAR reduce production lenscomponentexp -> appexp GET appexp
+-- On WITH TYPE TEST SEMI RPAREN RBRACK RANGLE MODULE MINUS LET IN EQUAL EOF END DOLLAR COMMA COLON BARBAR BAR
+--   reduce production lenscomponentexp -> appexp GET appexp
 
 State 207:
 ## Known stack suffix:
@@ -4259,25 +3760,8 @@ geqexp -> appexp GEQ appexp . [ WITH TYPE TEST SEMI RPAREN RBRACK RANGLE MODULE 
 -- On matchexp shift to state 159
 -- On aexp shift to state 162
 ## Reductions:
--- On WITH reduce production geqexp -> appexp GEQ appexp
--- On TYPE reduce production geqexp -> appexp GEQ appexp
--- On TEST reduce production geqexp -> appexp GEQ appexp
--- On SEMI reduce production geqexp -> appexp GEQ appexp
--- On RPAREN reduce production geqexp -> appexp GEQ appexp
--- On RBRACK reduce production geqexp -> appexp GEQ appexp
--- On RANGLE reduce production geqexp -> appexp GEQ appexp
--- On MODULE reduce production geqexp -> appexp GEQ appexp
--- On MINUS reduce production geqexp -> appexp GEQ appexp
--- On LET reduce production geqexp -> appexp GEQ appexp
--- On IN reduce production geqexp -> appexp GEQ appexp
--- On EQUAL reduce production geqexp -> appexp GEQ appexp
--- On EOF reduce production geqexp -> appexp GEQ appexp
--- On END reduce production geqexp -> appexp GEQ appexp
--- On DOLLAR reduce production geqexp -> appexp GEQ appexp
--- On COMMA reduce production geqexp -> appexp GEQ appexp
--- On COLON reduce production geqexp -> appexp GEQ appexp
--- On BARBAR reduce production geqexp -> appexp GEQ appexp
--- On BAR reduce production geqexp -> appexp GEQ appexp
+-- On WITH TYPE TEST SEMI RPAREN RBRACK RANGLE MODULE MINUS LET IN EQUAL EOF END DOLLAR COMMA COLON BARBAR BAR
+--   reduce production geqexp -> appexp GEQ appexp
 
 State 209:
 ## Known stack suffix:
@@ -4340,23 +3824,8 @@ equalexp -> appexp EQUAL appexp . [ WITH TYPE TEST SEMI RPAREN RBRACK RANGLE MOD
 -- On matchexp shift to state 159
 -- On aexp shift to state 162
 ## Reductions:
--- On WITH reduce production equalexp -> appexp EQUAL appexp
--- On TYPE reduce production equalexp -> appexp EQUAL appexp
--- On TEST reduce production equalexp -> appexp EQUAL appexp
--- On SEMI reduce production equalexp -> appexp EQUAL appexp
--- On RPAREN reduce production equalexp -> appexp EQUAL appexp
--- On RBRACK reduce production equalexp -> appexp EQUAL appexp
--- On RANGLE reduce production equalexp -> appexp EQUAL appexp
--- On MODULE reduce production equalexp -> appexp EQUAL appexp
--- On LET reduce production equalexp -> appexp EQUAL appexp
--- On IN reduce production equalexp -> appexp EQUAL appexp
--- On EOF reduce production equalexp -> appexp EQUAL appexp
--- On END reduce production equalexp -> appexp EQUAL appexp
--- On DOLLAR reduce production equalexp -> appexp EQUAL appexp
--- On COMMA reduce production equalexp -> appexp EQUAL appexp
--- On COLON reduce production equalexp -> appexp EQUAL appexp
--- On BARBAR reduce production equalexp -> appexp EQUAL appexp
--- On BAR reduce production equalexp -> appexp EQUAL appexp
+-- On WITH TYPE TEST SEMI RPAREN RBRACK RANGLE MODULE LET IN EOF END DOLLAR COMMA COLON BARBAR BAR
+--   reduce production equalexp -> appexp EQUAL appexp
 
 State 211:
 ## Known stack suffix:
@@ -4434,26 +3903,8 @@ rewriteexp -> appexp . DEQARROW appexp [ WITH TYPE TEST SEMI RPAREN RBRACK RANGL
 -- On matchexp shift to state 159
 -- On aexp shift to state 162
 ## Reductions:
--- On WITH reduce production dotexp -> appexp DOT appexp
--- On TYPE reduce production dotexp -> appexp DOT appexp
--- On TEST reduce production dotexp -> appexp DOT appexp
--- On SEMI reduce production dotexp -> appexp DOT appexp
--- On RPAREN reduce production dotexp -> appexp DOT appexp
--- On RBRACK reduce production dotexp -> appexp DOT appexp
--- On RANGLE reduce production dotexp -> appexp DOT appexp
--- On MODULE reduce production dotexp -> appexp DOT appexp
--- On MINUS reduce production dotexp -> appexp DOT appexp
--- On LET reduce production dotexp -> appexp DOT appexp
--- On IN reduce production dotexp -> appexp DOT appexp
--- On EQUAL reduce production dotexp -> appexp DOT appexp
--- On EOF reduce production dotexp -> appexp DOT appexp
--- On END reduce production dotexp -> appexp DOT appexp
--- On DOT reduce production dotexp -> appexp DOT appexp
--- On DOLLAR reduce production dotexp -> appexp DOT appexp
--- On COMMA reduce production dotexp -> appexp DOT appexp
--- On COLON reduce production dotexp -> appexp DOT appexp
--- On BARBAR reduce production dotexp -> appexp DOT appexp
--- On BAR reduce production dotexp -> appexp DOT appexp
+-- On WITH TYPE TEST SEMI RPAREN RBRACK RANGLE MODULE MINUS LET IN EQUAL EOF END DOT DOLLAR COMMA COLON BARBAR BAR
+--   reduce production dotexp -> appexp DOT appexp
 
 State 214:
 ## Known stack suffix:
@@ -4516,25 +3967,8 @@ lenscomponentexp -> appexp CREATE appexp . [ WITH TYPE TEST SEMI RPAREN RBRACK R
 -- On matchexp shift to state 159
 -- On aexp shift to state 162
 ## Reductions:
--- On WITH reduce production lenscomponentexp -> appexp CREATE appexp
--- On TYPE reduce production lenscomponentexp -> appexp CREATE appexp
--- On TEST reduce production lenscomponentexp -> appexp CREATE appexp
--- On SEMI reduce production lenscomponentexp -> appexp CREATE appexp
--- On RPAREN reduce production lenscomponentexp -> appexp CREATE appexp
--- On RBRACK reduce production lenscomponentexp -> appexp CREATE appexp
--- On RANGLE reduce production lenscomponentexp -> appexp CREATE appexp
--- On MODULE reduce production lenscomponentexp -> appexp CREATE appexp
--- On MINUS reduce production lenscomponentexp -> appexp CREATE appexp
--- On LET reduce production lenscomponentexp -> appexp CREATE appexp
--- On IN reduce production lenscomponentexp -> appexp CREATE appexp
--- On EQUAL reduce production lenscomponentexp -> appexp CREATE appexp
--- On EOF reduce production lenscomponentexp -> appexp CREATE appexp
--- On END reduce production lenscomponentexp -> appexp CREATE appexp
--- On DOLLAR reduce production lenscomponentexp -> appexp CREATE appexp
--- On COMMA reduce production lenscomponentexp -> appexp CREATE appexp
--- On COLON reduce production lenscomponentexp -> appexp CREATE appexp
--- On BARBAR reduce production lenscomponentexp -> appexp CREATE appexp
--- On BAR reduce production lenscomponentexp -> appexp CREATE appexp
+-- On WITH TYPE TEST SEMI RPAREN RBRACK RANGLE MODULE MINUS LET IN EQUAL EOF END DOLLAR COMMA COLON BARBAR BAR
+--   reduce production lenscomponentexp -> appexp CREATE appexp
 
 State 216:
 ## Known stack suffix:
@@ -4597,25 +4031,8 @@ lenscomponentexp -> appexp CHOOSE appexp . [ WITH TYPE TEST SEMI RPAREN RBRACK R
 -- On matchexp shift to state 159
 -- On aexp shift to state 162
 ## Reductions:
--- On WITH reduce production lenscomponentexp -> appexp CHOOSE appexp
--- On TYPE reduce production lenscomponentexp -> appexp CHOOSE appexp
--- On TEST reduce production lenscomponentexp -> appexp CHOOSE appexp
--- On SEMI reduce production lenscomponentexp -> appexp CHOOSE appexp
--- On RPAREN reduce production lenscomponentexp -> appexp CHOOSE appexp
--- On RBRACK reduce production lenscomponentexp -> appexp CHOOSE appexp
--- On RANGLE reduce production lenscomponentexp -> appexp CHOOSE appexp
--- On MODULE reduce production lenscomponentexp -> appexp CHOOSE appexp
--- On MINUS reduce production lenscomponentexp -> appexp CHOOSE appexp
--- On LET reduce production lenscomponentexp -> appexp CHOOSE appexp
--- On IN reduce production lenscomponentexp -> appexp CHOOSE appexp
--- On EQUAL reduce production lenscomponentexp -> appexp CHOOSE appexp
--- On EOF reduce production lenscomponentexp -> appexp CHOOSE appexp
--- On END reduce production lenscomponentexp -> appexp CHOOSE appexp
--- On DOLLAR reduce production lenscomponentexp -> appexp CHOOSE appexp
--- On COMMA reduce production lenscomponentexp -> appexp CHOOSE appexp
--- On COLON reduce production lenscomponentexp -> appexp CHOOSE appexp
--- On BARBAR reduce production lenscomponentexp -> appexp CHOOSE appexp
--- On BAR reduce production lenscomponentexp -> appexp CHOOSE appexp
+-- On WITH TYPE TEST SEMI RPAREN RBRACK RANGLE MODULE MINUS LET IN EQUAL EOF END DOLLAR COMMA COLON BARBAR BAR
+--   reduce production lenscomponentexp -> appexp CHOOSE appexp
 
 State 218:
 ## Known stack suffix:
@@ -4678,25 +4095,8 @@ lenscomponentexp -> appexp CANONIZE appexp . [ WITH TYPE TEST SEMI RPAREN RBRACK
 -- On matchexp shift to state 159
 -- On aexp shift to state 162
 ## Reductions:
--- On WITH reduce production lenscomponentexp -> appexp CANONIZE appexp
--- On TYPE reduce production lenscomponentexp -> appexp CANONIZE appexp
--- On TEST reduce production lenscomponentexp -> appexp CANONIZE appexp
--- On SEMI reduce production lenscomponentexp -> appexp CANONIZE appexp
--- On RPAREN reduce production lenscomponentexp -> appexp CANONIZE appexp
--- On RBRACK reduce production lenscomponentexp -> appexp CANONIZE appexp
--- On RANGLE reduce production lenscomponentexp -> appexp CANONIZE appexp
--- On MODULE reduce production lenscomponentexp -> appexp CANONIZE appexp
--- On MINUS reduce production lenscomponentexp -> appexp CANONIZE appexp
--- On LET reduce production lenscomponentexp -> appexp CANONIZE appexp
--- On IN reduce production lenscomponentexp -> appexp CANONIZE appexp
--- On EQUAL reduce production lenscomponentexp -> appexp CANONIZE appexp
--- On EOF reduce production lenscomponentexp -> appexp CANONIZE appexp
--- On END reduce production lenscomponentexp -> appexp CANONIZE appexp
--- On DOLLAR reduce production lenscomponentexp -> appexp CANONIZE appexp
--- On COMMA reduce production lenscomponentexp -> appexp CANONIZE appexp
--- On COLON reduce production lenscomponentexp -> appexp CANONIZE appexp
--- On BARBAR reduce production lenscomponentexp -> appexp CANONIZE appexp
--- On BAR reduce production lenscomponentexp -> appexp CANONIZE appexp
+-- On WITH TYPE TEST SEMI RPAREN RBRACK RANGLE MODULE MINUS LET IN EQUAL EOF END DOLLAR COMMA COLON BARBAR BAR
+--   reduce production lenscomponentexp -> appexp CANONIZE appexp
 
 State 220:
 ## Known stack suffix:
@@ -4800,25 +4200,8 @@ appexp -> appexp . repexp [ WITH UIDENT TYPE TEST STR SEMI RPAREN RBRACK RANGLE 
 -- On matchexp shift to state 159
 -- On aexp shift to state 162
 ## Reductions:
--- On WITH reduce production ampampexp -> appexp AMPERSAND AMPERSAND appexp
--- On TYPE reduce production ampampexp -> appexp AMPERSAND AMPERSAND appexp
--- On TEST reduce production ampampexp -> appexp AMPERSAND AMPERSAND appexp
--- On SEMI reduce production ampampexp -> appexp AMPERSAND AMPERSAND appexp
--- On RPAREN reduce production ampampexp -> appexp AMPERSAND AMPERSAND appexp
--- On RBRACK reduce production ampampexp -> appexp AMPERSAND AMPERSAND appexp
--- On RANGLE reduce production ampampexp -> appexp AMPERSAND AMPERSAND appexp
--- On MODULE reduce production ampampexp -> appexp AMPERSAND AMPERSAND appexp
--- On MINUS reduce production ampampexp -> appexp AMPERSAND AMPERSAND appexp
--- On LET reduce production ampampexp -> appexp AMPERSAND AMPERSAND appexp
--- On IN reduce production ampampexp -> appexp AMPERSAND AMPERSAND appexp
--- On EQUAL reduce production ampampexp -> appexp AMPERSAND AMPERSAND appexp
--- On EOF reduce production ampampexp -> appexp AMPERSAND AMPERSAND appexp
--- On END reduce production ampampexp -> appexp AMPERSAND AMPERSAND appexp
--- On DOLLAR reduce production ampampexp -> appexp AMPERSAND AMPERSAND appexp
--- On COMMA reduce production ampampexp -> appexp AMPERSAND AMPERSAND appexp
--- On COLON reduce production ampampexp -> appexp AMPERSAND AMPERSAND appexp
--- On BARBAR reduce production ampampexp -> appexp AMPERSAND AMPERSAND appexp
--- On BAR reduce production ampampexp -> appexp AMPERSAND AMPERSAND appexp
+-- On WITH TYPE TEST SEMI RPAREN RBRACK RANGLE MODULE MINUS LET IN EQUAL EOF END DOLLAR COMMA COLON BARBAR BAR
+--   reduce production ampampexp -> appexp AMPERSAND AMPERSAND appexp
 
 State 223:
 ## Known stack suffix:
@@ -4867,26 +4250,8 @@ appexp -> appexp . repexp [ WITH UIDENT TYPE TEST STR SEMI RPAREN RBRACK RANGLE 
 -- On matchexp shift to state 159
 -- On aexp shift to state 162
 ## Reductions:
--- On WITH reduce production ampexp -> appexp AMPERSAND appexp
--- On TYPE reduce production ampexp -> appexp AMPERSAND appexp
--- On TEST reduce production ampexp -> appexp AMPERSAND appexp
--- On SEMI reduce production ampexp -> appexp AMPERSAND appexp
--- On RPAREN reduce production ampexp -> appexp AMPERSAND appexp
--- On RBRACK reduce production ampexp -> appexp AMPERSAND appexp
--- On RANGLE reduce production ampexp -> appexp AMPERSAND appexp
--- On MODULE reduce production ampexp -> appexp AMPERSAND appexp
--- On MINUS reduce production ampexp -> appexp AMPERSAND appexp
--- On LET reduce production ampexp -> appexp AMPERSAND appexp
--- On IN reduce production ampexp -> appexp AMPERSAND appexp
--- On EQUAL reduce production ampexp -> appexp AMPERSAND appexp
--- On EOF reduce production ampexp -> appexp AMPERSAND appexp
--- On END reduce production ampexp -> appexp AMPERSAND appexp
--- On DOLLAR reduce production ampexp -> appexp AMPERSAND appexp
--- On COMMA reduce production ampexp -> appexp AMPERSAND appexp
--- On COLON reduce production ampexp -> appexp AMPERSAND appexp
--- On BARBAR reduce production ampexp -> appexp AMPERSAND appexp
--- On BAR reduce production ampexp -> appexp AMPERSAND appexp
--- On AMPERSAND reduce production ampexp -> appexp AMPERSAND appexp
+-- On WITH TYPE TEST SEMI RPAREN RBRACK RANGLE MODULE MINUS LET IN EQUAL EOF END DOLLAR COMMA COLON BARBAR BAR AMPERSAND
+--   reduce production ampexp -> appexp AMPERSAND appexp
 
 State 226:
 ## Known stack suffix:
@@ -4897,25 +4262,8 @@ infixexp -> ampexp . [ WITH TYPE TEST SEMI RPAREN RBRACK RANGLE MODULE MINUS LET
 ## Transitions:
 -- On AMPERSAND shift to state 227
 ## Reductions:
--- On WITH reduce production infixexp -> ampexp
--- On TYPE reduce production infixexp -> ampexp
--- On TEST reduce production infixexp -> ampexp
--- On SEMI reduce production infixexp -> ampexp
--- On RPAREN reduce production infixexp -> ampexp
--- On RBRACK reduce production infixexp -> ampexp
--- On RANGLE reduce production infixexp -> ampexp
--- On MODULE reduce production infixexp -> ampexp
--- On MINUS reduce production infixexp -> ampexp
--- On LET reduce production infixexp -> ampexp
--- On IN reduce production infixexp -> ampexp
--- On EQUAL reduce production infixexp -> ampexp
--- On EOF reduce production infixexp -> ampexp
--- On END reduce production infixexp -> ampexp
--- On DOLLAR reduce production infixexp -> ampexp
--- On COMMA reduce production infixexp -> ampexp
--- On COLON reduce production infixexp -> ampexp
--- On BARBAR reduce production infixexp -> ampexp
--- On BAR reduce production infixexp -> ampexp
+-- On WITH TYPE TEST SEMI RPAREN RBRACK RANGLE MODULE MINUS LET IN EQUAL EOF END DOLLAR COMMA COLON BARBAR BAR
+--   reduce production infixexp -> ampexp
 
 State 227:
 ## Known stack suffix:
@@ -4978,26 +4326,8 @@ appexp -> appexp . repexp [ WITH UIDENT TYPE TEST STR SEMI RPAREN RBRACK RANGLE 
 -- On matchexp shift to state 159
 -- On aexp shift to state 162
 ## Reductions:
--- On WITH reduce production ampexp -> ampexp AMPERSAND appexp
--- On TYPE reduce production ampexp -> ampexp AMPERSAND appexp
--- On TEST reduce production ampexp -> ampexp AMPERSAND appexp
--- On SEMI reduce production ampexp -> ampexp AMPERSAND appexp
--- On RPAREN reduce production ampexp -> ampexp AMPERSAND appexp
--- On RBRACK reduce production ampexp -> ampexp AMPERSAND appexp
--- On RANGLE reduce production ampexp -> ampexp AMPERSAND appexp
--- On MODULE reduce production ampexp -> ampexp AMPERSAND appexp
--- On MINUS reduce production ampexp -> ampexp AMPERSAND appexp
--- On LET reduce production ampexp -> ampexp AMPERSAND appexp
--- On IN reduce production ampexp -> ampexp AMPERSAND appexp
--- On EQUAL reduce production ampexp -> ampexp AMPERSAND appexp
--- On EOF reduce production ampexp -> ampexp AMPERSAND appexp
--- On END reduce production ampexp -> ampexp AMPERSAND appexp
--- On DOLLAR reduce production ampexp -> ampexp AMPERSAND appexp
--- On COMMA reduce production ampexp -> ampexp AMPERSAND appexp
--- On COLON reduce production ampexp -> ampexp AMPERSAND appexp
--- On BARBAR reduce production ampexp -> ampexp AMPERSAND appexp
--- On BAR reduce production ampexp -> ampexp AMPERSAND appexp
--- On AMPERSAND reduce production ampexp -> ampexp AMPERSAND appexp
+-- On WITH TYPE TEST SEMI RPAREN RBRACK RANGLE MODULE MINUS LET IN EQUAL EOF END DOLLAR COMMA COLON BARBAR BAR AMPERSAND
+--   reduce production ampexp -> ampexp AMPERSAND appexp
 
 State 229:
 ## Known stack suffix:
@@ -5046,20 +4376,8 @@ obarexp -> equalexp . BAR equalexp [ WITH TYPE TEST SEMI RPAREN RBRACK RANGLE MO
 -- On BARBAR shift to state 234
 -- On BAR shift to state 236
 ## Reductions:
--- On WITH reduce production barexp -> equalexp
--- On TYPE reduce production barexp -> equalexp
--- On TEST reduce production barexp -> equalexp
--- On SEMI reduce production barexp -> equalexp
--- On RPAREN reduce production barexp -> equalexp
--- On RBRACK reduce production barexp -> equalexp
--- On RANGLE reduce production barexp -> equalexp
--- On MODULE reduce production barexp -> equalexp
--- On LET reduce production barexp -> equalexp
--- On IN reduce production barexp -> equalexp
--- On EOF reduce production barexp -> equalexp
--- On END reduce production barexp -> equalexp
--- On DOLLAR reduce production barexp -> equalexp
--- On COMMA reduce production barexp -> equalexp
+-- On WITH TYPE TEST SEMI RPAREN RBRACK RANGLE MODULE LET IN EOF END DOLLAR COMMA
+--   reduce production barexp -> equalexp
 
 State 234:
 ## Known stack suffix:
@@ -5182,20 +4500,8 @@ dbarexp -> dbarexp . BARBAR equalexp [ WITH TYPE TEST SEMI RPAREN RBRACK RANGLE 
 ## Transitions:
 -- On BARBAR shift to state 239
 ## Reductions:
--- On WITH reduce production barexp -> dbarexp
--- On TYPE reduce production barexp -> dbarexp
--- On TEST reduce production barexp -> dbarexp
--- On SEMI reduce production barexp -> dbarexp
--- On RPAREN reduce production barexp -> dbarexp
--- On RBRACK reduce production barexp -> dbarexp
--- On RANGLE reduce production barexp -> dbarexp
--- On MODULE reduce production barexp -> dbarexp
--- On LET reduce production barexp -> dbarexp
--- On IN reduce production barexp -> dbarexp
--- On EOF reduce production barexp -> dbarexp
--- On END reduce production barexp -> dbarexp
--- On DOLLAR reduce production barexp -> dbarexp
--- On COMMA reduce production barexp -> dbarexp
+-- On WITH TYPE TEST SEMI RPAREN RBRACK RANGLE MODULE LET IN EOF END DOLLAR COMMA
+--   reduce production barexp -> dbarexp
 
 State 239:
 ## Known stack suffix:
@@ -5262,16 +4568,8 @@ composeexp -> composeexp . SEMI commaexp [ TYPE TEST SEMI RPAREN RANGLE MODULE L
 ## Transitions:
 -- On SEMI shift to state 242
 ## Reductions:
--- On TYPE reduce production cexp -> composeexp
--- On TEST reduce production cexp -> composeexp
--- On RPAREN reduce production cexp -> composeexp
--- On RANGLE reduce production cexp -> composeexp
--- On MODULE reduce production cexp -> composeexp
--- On LET reduce production cexp -> composeexp
--- On IN reduce production cexp -> composeexp
--- On EOF reduce production cexp -> composeexp
--- On END reduce production cexp -> composeexp
--- On DOLLAR reduce production cexp -> composeexp
+-- On TYPE TEST RPAREN RANGLE MODULE LET IN EOF END DOLLAR
+--   reduce production cexp -> composeexp
 
 State 242:
 ## Known stack suffix:
@@ -5333,18 +4631,8 @@ composeexp -> composeexp SEMI commaexp . [ WITH TYPE TEST SEMI RPAREN RANGLE MOD
 ## Transitions:
 -- On COMMA shift to state 244
 ## Reductions:
--- On WITH reduce production composeexp -> composeexp SEMI commaexp
--- On TYPE reduce production composeexp -> composeexp SEMI commaexp
--- On TEST reduce production composeexp -> composeexp SEMI commaexp
--- On SEMI reduce production composeexp -> composeexp SEMI commaexp
--- On RPAREN reduce production composeexp -> composeexp SEMI commaexp
--- On RANGLE reduce production composeexp -> composeexp SEMI commaexp
--- On MODULE reduce production composeexp -> composeexp SEMI commaexp
--- On LET reduce production composeexp -> composeexp SEMI commaexp
--- On IN reduce production composeexp -> composeexp SEMI commaexp
--- On EOF reduce production composeexp -> composeexp SEMI commaexp
--- On END reduce production composeexp -> composeexp SEMI commaexp
--- On DOLLAR reduce production composeexp -> composeexp SEMI commaexp
+-- On WITH TYPE TEST SEMI RPAREN RANGLE MODULE LET IN EOF END DOLLAR
+--   reduce production composeexp -> composeexp SEMI commaexp
 
 State 244:
 ## Known stack suffix:
@@ -5423,18 +4711,8 @@ composeexp -> commaexp . [ WITH TYPE TEST SEMI RPAREN RANGLE MODULE LET IN EOF E
 ## Transitions:
 -- On COMMA shift to state 244
 ## Reductions:
--- On WITH reduce production composeexp -> commaexp
--- On TYPE reduce production composeexp -> commaexp
--- On TEST reduce production composeexp -> commaexp
--- On SEMI reduce production composeexp -> commaexp
--- On RPAREN reduce production composeexp -> commaexp
--- On RANGLE reduce production composeexp -> commaexp
--- On MODULE reduce production composeexp -> commaexp
--- On LET reduce production composeexp -> commaexp
--- On IN reduce production composeexp -> commaexp
--- On EOF reduce production composeexp -> commaexp
--- On END reduce production composeexp -> commaexp
--- On DOLLAR reduce production composeexp -> commaexp
+-- On WITH TYPE TEST SEMI RPAREN RANGLE MODULE LET IN EOF END DOLLAR
+--   reduce production composeexp -> commaexp
 
 State 248:
 ## Known stack suffix:
@@ -5445,15 +4723,8 @@ funexp -> cexp . [ TYPE TEST RPAREN RANGLE MODULE LET IN EOF END ]
 ## Transitions:
 -- On DOLLAR shift to state 249
 ## Reductions:
--- On TYPE reduce production funexp -> cexp
--- On TEST reduce production funexp -> cexp
--- On RPAREN reduce production funexp -> cexp
--- On RANGLE reduce production funexp -> cexp
--- On MODULE reduce production funexp -> cexp
--- On LET reduce production funexp -> cexp
--- On IN reduce production funexp -> cexp
--- On EOF reduce production funexp -> cexp
--- On END reduce production funexp -> cexp
+-- On TYPE TEST RPAREN RANGLE MODULE LET IN EOF END
+--   reduce production funexp -> cexp
 
 State 249:
 ## Known stack suffix:
@@ -5552,12 +4823,8 @@ param -> LPAREN id COLON LENS . IN appexp DEQARROW appexp RPAREN [ TYVARIDENT LP
 ## Transitions:
 -- On IN shift to state 254
 ## Reductions:
--- On WHERE reduce production asort -> LENS
--- On STAR reduce production asort -> LENS
--- On RPAREN reduce production asort -> LENS
--- On QUALIDENT reduce production asort -> LENS
--- On LIDENT reduce production asort -> LENS
--- On ARROW reduce production asort -> LENS
+-- On WHERE STAR RPAREN QUALIDENT LIDENT ARROW
+--   reduce production asort -> LENS
 
 State 254:
 ## Known stack suffix:
@@ -6340,9 +5607,8 @@ param_list -> param . param_list2 [ EQUAL COLON ARROW ]
 -- On param_list2 shift to state 289
 -- On param shift to state 290
 ## Reductions:
--- On EQUAL reduce production param_list2 ->
--- On COLON reduce production param_list2 ->
--- On ARROW reduce production param_list2 ->
+-- On EQUAL COLON ARROW
+--   reduce production param_list2 ->
 
 State 289:
 ## Known stack suffix:
@@ -6364,9 +5630,8 @@ param_list2 -> param . param_list2 [ EQUAL COLON ARROW ]
 -- On param_list2 shift to state 291
 -- On param shift to state 290
 ## Reductions:
--- On EQUAL reduce production param_list2 ->
--- On COLON reduce production param_list2 ->
--- On ARROW reduce production param_list2 ->
+-- On EQUAL COLON ARROW
+--   reduce production param_list2 ->
 
 State 291:
 ## Known stack suffix:
@@ -7045,22 +6310,8 @@ atom -> LIDENT COLON aexp . [ UIDENT STR QUALIDENT NSET LPAREN LIDENT LANGLE INT
 -- On AVTYPE shift to state 166
 -- On ASTYPE shift to state 167
 ## Reductions:
--- On UIDENT reduce production atom -> LIDENT COLON aexp
--- On STR reduce production atom -> LIDENT COLON aexp
--- On QUALIDENT reduce production atom -> LIDENT COLON aexp
--- On NSET reduce production atom -> LIDENT COLON aexp
--- On LPAREN reduce production atom -> LIDENT COLON aexp
--- On LIDENT reduce production atom -> LIDENT COLON aexp
--- On LANGLE reduce production atom -> LIDENT COLON aexp
--- On INTEGER reduce production atom -> LIDENT COLON aexp
--- On HASH reduce production atom -> LIDENT COLON aexp
--- On GRAMMAR reduce production atom -> LIDENT COLON aexp
--- On DARROW reduce production atom -> LIDENT COLON aexp
--- On CSET reduce production atom -> LIDENT COLON aexp
--- On CHARACTER reduce production atom -> LIDENT COLON aexp
--- On CEX reduce production atom -> LIDENT COLON aexp
--- On BOOLEAN reduce production atom -> LIDENT COLON aexp
--- On BEGIN reduce production atom -> LIDENT COLON aexp
+-- On UIDENT STR QUALIDENT NSET LPAREN LIDENT LANGLE INTEGER HASH GRAMMAR DARROW CSET CHARACTER CEX BOOLEAN BEGIN
+--   reduce production atom -> LIDENT COLON aexp
 
 State 319:
 ## Known stack suffix:
@@ -7100,8 +6351,8 @@ rules -> BAR rule . rules2 [ END AND ]
 -- On BAR shift to state 321
 -- On rules2 shift to state 336
 ## Reductions:
--- On END reduce production rules2 ->
--- On AND reduce production rules2 ->
+-- On END AND
+--   reduce production rules2 ->
 
 State 321:
 ## Known stack suffix:
@@ -7141,8 +6392,8 @@ rules2 -> BAR rule . rules2 [ END AND ]
 -- On BAR shift to state 321
 -- On rules2 shift to state 323
 ## Reductions:
--- On END reduce production rules2 ->
--- On AND reduce production rules2 ->
+-- On END AND
+--   reduce production rules2 ->
 
 State 323:
 ## Known stack suffix:
@@ -7234,9 +6485,8 @@ aexps -> aexp . aexps2 [ END BAR AND ]
 -- On aexps2 shift to state 328
 -- On aexp shift to state 329
 ## Reductions:
--- On END reduce production aexps2 ->
--- On BAR reduce production aexps2 ->
--- On AND reduce production aexps2 ->
+-- On END BAR AND
+--   reduce production aexps2 ->
 
 State 328:
 ## Known stack suffix:
@@ -7283,9 +6533,8 @@ aexps2 -> aexp . aexps2 [ END BAR AND ]
 -- On aexps2 shift to state 330
 -- On aexp shift to state 329
 ## Reductions:
--- On END reduce production aexps2 ->
--- On BAR reduce production aexps2 ->
--- On AND reduce production aexps2 ->
+-- On END BAR AND
+--   reduce production aexps2 ->
 
 State 330:
 ## Known stack suffix:
@@ -7323,7 +6572,8 @@ atoms -> atom . atoms2 [ DARROW ]
 -- On atom shift to state 333
 -- On aexp shift to state 335
 ## Reductions:
--- On DARROW reduce production atoms2 ->
+-- On DARROW
+--   reduce production atoms2 ->
 
 State 332:
 ## Known stack suffix:
@@ -7361,7 +6611,8 @@ atoms2 -> atom . atoms2 [ DARROW ]
 -- On atom shift to state 333
 -- On aexp shift to state 335
 ## Reductions:
--- On DARROW reduce production atoms2 ->
+-- On DARROW
+--   reduce production atoms2 ->
 
 State 334:
 ## Known stack suffix:
@@ -7389,22 +6640,8 @@ atom -> aexp . [ UIDENT STR QUALIDENT NSET LPAREN LIDENT LANGLE INTEGER HASH GRA
 -- On AVTYPE shift to state 166
 -- On ASTYPE shift to state 167
 ## Reductions:
--- On UIDENT reduce production atom -> aexp
--- On STR reduce production atom -> aexp
--- On QUALIDENT reduce production atom -> aexp
--- On NSET reduce production atom -> aexp
--- On LPAREN reduce production atom -> aexp
--- On LIDENT reduce production atom -> aexp
--- On LANGLE reduce production atom -> aexp
--- On INTEGER reduce production atom -> aexp
--- On HASH reduce production atom -> aexp
--- On GRAMMAR reduce production atom -> aexp
--- On DARROW reduce production atom -> aexp
--- On CSET reduce production atom -> aexp
--- On CHARACTER reduce production atom -> aexp
--- On CEX reduce production atom -> aexp
--- On BOOLEAN reduce production atom -> aexp
--- On BEGIN reduce production atom -> aexp
+-- On UIDENT STR QUALIDENT NSET LPAREN LIDENT LANGLE INTEGER HASH GRAMMAR DARROW CSET CHARACTER CEX BOOLEAN BEGIN
+--   reduce production atom -> aexp
 
 State 336:
 ## Known stack suffix:
@@ -7433,8 +6670,8 @@ rules -> rule . rules2 [ END AND ]
 -- On BAR shift to state 321
 -- On rules2 shift to state 339
 ## Reductions:
--- On END reduce production rules2 ->
--- On AND reduce production rules2 ->
+-- On END AND
+--   reduce production rules2 ->
 
 State 339:
 ## Known stack suffix:
@@ -7472,7 +6709,8 @@ productions -> production . AND productions [ END ]
 ## Transitions:
 -- On AND shift to state 343
 ## Reductions:
--- On END reduce production productions -> production
+-- On END
+--   reduce production productions -> production
 
 State 343:
 ## Known stack suffix:
@@ -8075,7 +7313,8 @@ sort_list -> sort . COMMA sort_list [ RPAREN ]
 ## Transitions:
 -- On COMMA shift to state 374
 ## Reductions:
--- On RPAREN reduce production sort_list -> sort
+-- On RPAREN
+--   reduce production sort_list -> sort
 
 State 374:
 ## Known stack suffix:
@@ -8691,17 +7930,8 @@ branch_list -> BAR branch . branch_list2 [ TYPE TEST RPAREN RANGLE MODULE LET IN
 -- On BAR shift to state 403
 -- On branch_list2 shift to state 406
 ## Reductions:
--- On TYPE reduce production branch_list2 ->
--- On TEST reduce production branch_list2 ->
--- On RPAREN reduce production branch_list2 ->
--- On RANGLE reduce production branch_list2 ->
--- On MODULE reduce production branch_list2 ->
--- On LET reduce production branch_list2 ->
--- On IN reduce production branch_list2 ->
--- On EOF reduce production branch_list2 ->
--- On END reduce production branch_list2 ->
--- On DOLLAR reduce production branch_list2 ->
--- On COLON reduce production branch_list2 ->
+-- On TYPE TEST RPAREN RANGLE MODULE LET IN EOF END DOLLAR COLON
+--   reduce production branch_list2 ->
 
 State 403:
 ## Known stack suffix:
@@ -8737,17 +7967,8 @@ branch_list2 -> BAR branch . branch_list2 [ TYPE TEST RPAREN RANGLE MODULE LET I
 -- On BAR shift to state 403
 -- On branch_list2 shift to state 405
 ## Reductions:
--- On TYPE reduce production branch_list2 ->
--- On TEST reduce production branch_list2 ->
--- On RPAREN reduce production branch_list2 ->
--- On RANGLE reduce production branch_list2 ->
--- On MODULE reduce production branch_list2 ->
--- On LET reduce production branch_list2 ->
--- On IN reduce production branch_list2 ->
--- On EOF reduce production branch_list2 ->
--- On END reduce production branch_list2 ->
--- On DOLLAR reduce production branch_list2 ->
--- On COLON reduce production branch_list2 ->
+-- On TYPE TEST RPAREN RANGLE MODULE LET IN EOF END DOLLAR COLON
+--   reduce production branch_list2 ->
 
 State 405:
 ## Known stack suffix:
@@ -8776,16 +7997,8 @@ cexp -> MATCH composeexp WITH branch_list . COLON sort [ TYPE TEST RPAREN RANGLE
 ## Transitions:
 -- On COLON shift to state 408
 ## Reductions:
--- On TYPE reduce production cexp -> MATCH composeexp WITH branch_list
--- On TEST reduce production cexp -> MATCH composeexp WITH branch_list
--- On RPAREN reduce production cexp -> MATCH composeexp WITH branch_list
--- On RANGLE reduce production cexp -> MATCH composeexp WITH branch_list
--- On MODULE reduce production cexp -> MATCH composeexp WITH branch_list
--- On LET reduce production cexp -> MATCH composeexp WITH branch_list
--- On IN reduce production cexp -> MATCH composeexp WITH branch_list
--- On EOF reduce production cexp -> MATCH composeexp WITH branch_list
--- On END reduce production cexp -> MATCH composeexp WITH branch_list
--- On DOLLAR reduce production cexp -> MATCH composeexp WITH branch_list
+-- On TYPE TEST RPAREN RANGLE MODULE LET IN EOF END DOLLAR
+--   reduce production cexp -> MATCH composeexp WITH branch_list
 
 State 408:
 ## Known stack suffix:
@@ -8841,17 +8054,8 @@ branch_list -> branch . branch_list2 [ TYPE TEST RPAREN RANGLE MODULE LET IN EOF
 -- On BAR shift to state 403
 -- On branch_list2 shift to state 411
 ## Reductions:
--- On TYPE reduce production branch_list2 ->
--- On TEST reduce production branch_list2 ->
--- On RPAREN reduce production branch_list2 ->
--- On RANGLE reduce production branch_list2 ->
--- On MODULE reduce production branch_list2 ->
--- On LET reduce production branch_list2 ->
--- On IN reduce production branch_list2 ->
--- On EOF reduce production branch_list2 ->
--- On END reduce production branch_list2 ->
--- On DOLLAR reduce production branch_list2 ->
--- On COLON reduce production branch_list2 ->
+-- On TYPE TEST RPAREN RANGLE MODULE LET IN EOF END DOLLAR COLON
+--   reduce production branch_list2 ->
 
 State 411:
 ## Known stack suffix:
@@ -8943,13 +8147,8 @@ tildeexp -> appexp . TILDE appexp [ TILDE SEMI RANGLE MINUS DOLLAR COMMA BARBAR 
 -- On matchexp shift to state 159
 -- On aexp shift to state 162
 ## Reductions:
--- On SEMI reduce production infixexp -> appexp
--- On RANGLE reduce production infixexp -> appexp
--- On MINUS reduce production infixexp -> appexp
--- On DOLLAR reduce production infixexp -> appexp
--- On COMMA reduce production infixexp -> appexp
--- On BARBAR reduce production infixexp -> appexp
--- On BAR reduce production infixexp -> appexp
+-- On SEMI RANGLE MINUS DOLLAR COMMA BARBAR BAR
+--   reduce production infixexp -> appexp
 
 State 415:
 ## Known stack suffix:
@@ -9055,25 +8254,8 @@ minusexp -> MINUS appexp . [ WITH TYPE TEST SEMI RPAREN RBRACK RANGLE MODULE MIN
 -- On matchexp shift to state 159
 -- On aexp shift to state 162
 ## Reductions:
--- On WITH reduce production minusexp -> MINUS appexp
--- On TYPE reduce production minusexp -> MINUS appexp
--- On TEST reduce production minusexp -> MINUS appexp
--- On SEMI reduce production minusexp -> MINUS appexp
--- On RPAREN reduce production minusexp -> MINUS appexp
--- On RBRACK reduce production minusexp -> MINUS appexp
--- On RANGLE reduce production minusexp -> MINUS appexp
--- On MODULE reduce production minusexp -> MINUS appexp
--- On MINUS reduce production minusexp -> MINUS appexp
--- On LET reduce production minusexp -> MINUS appexp
--- On IN reduce production minusexp -> MINUS appexp
--- On EQUAL reduce production minusexp -> MINUS appexp
--- On EOF reduce production minusexp -> MINUS appexp
--- On END reduce production minusexp -> MINUS appexp
--- On DOLLAR reduce production minusexp -> MINUS appexp
--- On COMMA reduce production minusexp -> MINUS appexp
--- On COLON reduce production minusexp -> MINUS appexp
--- On BARBAR reduce production minusexp -> MINUS appexp
--- On BAR reduce production minusexp -> MINUS appexp
+-- On WITH TYPE TEST SEMI RPAREN RBRACK RANGLE MODULE MINUS LET IN EQUAL EOF END DOLLAR COMMA COLON BARBAR BAR
+--   reduce production minusexp -> MINUS appexp
 
 State 419:
 ## Known stack suffix:
@@ -9464,57 +8646,8 @@ appexp -> SYNTH appexp DEQARROW repexp . [ WITH UIDENT TYPE TILDE TEST STR SEMI 
 ## Transitions:
 -- On USING shift to state 439
 ## Reductions:
--- On WITH reduce production appexp -> SYNTH appexp DEQARROW repexp
--- On UIDENT reduce production appexp -> SYNTH appexp DEQARROW repexp
--- On TYPE reduce production appexp -> SYNTH appexp DEQARROW repexp
--- On TILDE reduce production appexp -> SYNTH appexp DEQARROW repexp
--- On TEST reduce production appexp -> SYNTH appexp DEQARROW repexp
--- On STR reduce production appexp -> SYNTH appexp DEQARROW repexp
--- On SEMI reduce production appexp -> SYNTH appexp DEQARROW repexp
--- On RPAREN reduce production appexp -> SYNTH appexp DEQARROW repexp
--- On RBRACK reduce production appexp -> SYNTH appexp DEQARROW repexp
--- On RBRACE reduce production appexp -> SYNTH appexp DEQARROW repexp
--- On RANGLE reduce production appexp -> SYNTH appexp DEQARROW repexp
--- On QUALIDENT reduce production appexp -> SYNTH appexp DEQARROW repexp
--- On PUT reduce production appexp -> SYNTH appexp DEQARROW repexp
--- On NSET reduce production appexp -> SYNTH appexp DEQARROW repexp
--- On MODULE reduce production appexp -> SYNTH appexp DEQARROW repexp
--- On MINUS reduce production appexp -> SYNTH appexp DEQARROW repexp
--- On LT reduce production appexp -> SYNTH appexp DEQARROW repexp
--- On LPAREN reduce production appexp -> SYNTH appexp DEQARROW repexp
--- On LIDENT reduce production appexp -> SYNTH appexp DEQARROW repexp
--- On LET reduce production appexp -> SYNTH appexp DEQARROW repexp
--- On LEQ reduce production appexp -> SYNTH appexp DEQARROW repexp
--- On LANGLE reduce production appexp -> SYNTH appexp DEQARROW repexp
--- On INTO reduce production appexp -> SYNTH appexp DEQARROW repexp
--- On INTEGER reduce production appexp -> SYNTH appexp DEQARROW repexp
--- On IN reduce production appexp -> SYNTH appexp DEQARROW repexp
--- On HASH reduce production appexp -> SYNTH appexp DEQARROW repexp
--- On GT reduce production appexp -> SYNTH appexp DEQARROW repexp
--- On GRAMMAR reduce production appexp -> SYNTH appexp DEQARROW repexp
--- On GET reduce production appexp -> SYNTH appexp DEQARROW repexp
--- On GEQ reduce production appexp -> SYNTH appexp DEQARROW repexp
--- On EQUAL reduce production appexp -> SYNTH appexp DEQARROW repexp
--- On EOF reduce production appexp -> SYNTH appexp DEQARROW repexp
--- On END reduce production appexp -> SYNTH appexp DEQARROW repexp
--- On DOT reduce production appexp -> SYNTH appexp DEQARROW repexp
--- On DOLLAR reduce production appexp -> SYNTH appexp DEQARROW repexp
--- On DEQARROW reduce production appexp -> SYNTH appexp DEQARROW repexp
--- On DARROW reduce production appexp -> SYNTH appexp DEQARROW repexp
--- On CSET reduce production appexp -> SYNTH appexp DEQARROW repexp
--- On CREATE reduce production appexp -> SYNTH appexp DEQARROW repexp
--- On COMMA reduce production appexp -> SYNTH appexp DEQARROW repexp
--- On COLON reduce production appexp -> SYNTH appexp DEQARROW repexp
--- On CHOOSE reduce production appexp -> SYNTH appexp DEQARROW repexp
--- On CHARACTER reduce production appexp -> SYNTH appexp DEQARROW repexp
--- On CEX reduce production appexp -> SYNTH appexp DEQARROW repexp
--- On CANONIZE reduce production appexp -> SYNTH appexp DEQARROW repexp
--- On BOOLEAN reduce production appexp -> SYNTH appexp DEQARROW repexp
--- On BEGIN reduce production appexp -> SYNTH appexp DEQARROW repexp
--- On BARBAR reduce production appexp -> SYNTH appexp DEQARROW repexp
--- On BAR reduce production appexp -> SYNTH appexp DEQARROW repexp
--- On ARROW reduce production appexp -> SYNTH appexp DEQARROW repexp
--- On AMPERSAND reduce production appexp -> SYNTH appexp DEQARROW repexp
+-- On WITH UIDENT TYPE TILDE TEST STR SEMI RPAREN RBRACK RBRACE RANGLE QUALIDENT PUT NSET MODULE MINUS LT LPAREN LIDENT LET LEQ LANGLE INTO INTEGER IN HASH GT GRAMMAR GET GEQ EQUAL EOF END DOT DOLLAR DEQARROW DARROW CSET CREATE COMMA COLON CHOOSE CHARACTER CEX CANONIZE BOOLEAN BEGIN BARBAR BAR ARROW AMPERSAND
+--   reduce production appexp -> SYNTH appexp DEQARROW repexp
 
 State 439:
 ## Known stack suffix:
@@ -9742,7 +8875,8 @@ productsort -> productsort . STAR datatypesort [ WHERE STAR ARROW ]
 -- On STAR shift to state 68
 -- On ARROW shift to state 452
 ## Reductions:
--- On WHERE reduce production arrowsort -> productsort
+-- On WHERE
+--   reduce production arrowsort -> productsort
 
 State 452:
 ## Known stack suffix:
@@ -9788,7 +8922,8 @@ arrowsort -> LPAREN id COLON productsort ARROW arrowsort . RPAREN [ WHERE TYPE T
 ## Transitions:
 -- On RPAREN shift to state 454
 ## Reductions:
--- On WHERE reduce production arrowsort -> productsort ARROW arrowsort
+-- On WHERE
+--   reduce production arrowsort -> productsort ARROW arrowsort
 
 State 454:
 ## Known stack suffix:
@@ -9820,8 +8955,8 @@ decls -> TYPE tyvar_list LIDENT EQUAL dtsort_list . decls [ EOF END ]
 -- On LET shift to state 466
 -- On decls shift to state 499
 ## Reductions:
--- On EOF reduce production decls ->
--- On END reduce production decls ->
+-- On EOF END
+--   reduce production decls ->
 
 State 457:
 ## Known stack suffix:
@@ -9951,8 +9086,8 @@ decls -> TEST infixexp EQUAL test_res_exp . decls [ EOF END ]
 -- On LET shift to state 466
 -- On decls shift to state 489
 ## Reductions:
--- On EOF reduce production decls ->
--- On END reduce production decls ->
+-- On EOF END
+--   reduce production decls ->
 
 State 463:
 ## Known stack suffix:
@@ -9984,7 +9119,8 @@ decls -> MODULE UIDENT EQUAL . decls END decls [ EOF END ]
 -- On LET shift to state 466
 -- On decls shift to state 486
 ## Reductions:
--- On END reduce production decls ->
+-- On END
+--   reduce production decls ->
 
 State 466:
 ## Known stack suffix:
@@ -10093,8 +9229,8 @@ decls -> LET letpat EQUAL exp . decls [ EOF END ]
 -- On LET shift to state 466
 -- On decls shift to state 470
 ## Reductions:
--- On EOF reduce production decls ->
--- On END reduce production decls ->
+-- On EOF END
+--   reduce production decls ->
 
 State 470:
 ## Known stack suffix:
@@ -10220,8 +9356,8 @@ decls -> LET letpat COLON sort EQUAL exp . decls [ EOF END ]
 -- On LET shift to state 466
 -- On decls shift to state 475
 ## Reductions:
--- On EOF reduce production decls ->
--- On END reduce production decls ->
+-- On EOF END
+--   reduce production decls ->
 
 State 475:
 ## Known stack suffix:
@@ -10326,8 +9462,8 @@ decls -> LET id param_list EQUAL exp . decls [ EOF END ]
 -- On LET shift to state 466
 -- On decls shift to state 480
 ## Reductions:
--- On EOF reduce production decls ->
--- On END reduce production decls ->
+-- On EOF END
+--   reduce production decls ->
 
 State 480:
 ## Known stack suffix:
@@ -10453,8 +9589,8 @@ decls -> LET id param_list COLON sort EQUAL exp . decls [ EOF END ]
 -- On LET shift to state 466
 -- On decls shift to state 485
 ## Reductions:
--- On EOF reduce production decls ->
--- On END reduce production decls ->
+-- On EOF END
+--   reduce production decls ->
 
 State 485:
 ## Known stack suffix:
@@ -10486,8 +9622,8 @@ decls -> MODULE UIDENT EQUAL decls END . decls [ EOF END ]
 -- On LET shift to state 466
 -- On decls shift to state 488
 ## Reductions:
--- On EOF reduce production decls ->
--- On END reduce production decls ->
+-- On EOF END
+--   reduce production decls ->
 
 State 488:
 ## Known stack suffix:
@@ -10535,12 +9671,8 @@ test_res_exp -> appexp . [ TYPE TEST MODULE LET EOF END ]
 -- On matchexp shift to state 159
 -- On aexp shift to state 162
 ## Reductions:
--- On TYPE reduce production test_res_exp -> appexp
--- On TEST reduce production test_res_exp -> appexp
--- On MODULE reduce production test_res_exp -> appexp
--- On LET reduce production test_res_exp -> appexp
--- On EOF reduce production test_res_exp -> appexp
--- On END reduce production test_res_exp -> appexp
+-- On TYPE TEST MODULE LET EOF END
+--   reduce production test_res_exp -> appexp
 
 State 491:
 ## Known stack suffix:
@@ -10603,8 +9735,8 @@ decls -> TEST infixexp COLON ERROR . decls [ EOF END ]
 -- On LET shift to state 466
 -- On decls shift to state 494
 ## Reductions:
--- On EOF reduce production decls ->
--- On END reduce production decls ->
+-- On EOF END
+--   reduce production decls ->
 
 State 494:
 ## Known stack suffix:
@@ -10627,8 +9759,8 @@ decls -> TEST infixexp COLON test_res_sort . decls [ EOF END ]
 -- On LET shift to state 466
 -- On decls shift to state 496
 ## Reductions:
--- On EOF reduce production decls ->
--- On END reduce production decls ->
+-- On EOF END
+--   reduce production decls ->
 
 State 496:
 ## Known stack suffix:
@@ -10707,9 +9839,8 @@ tildeexp -> appexp . TILDE appexp [ TILDE MINUS EQUAL COLON ]
 -- On matchexp shift to state 159
 -- On aexp shift to state 162
 ## Reductions:
--- On MINUS reduce production infixexp -> appexp
--- On EQUAL reduce production infixexp -> appexp
--- On COLON reduce production infixexp -> appexp
+-- On MINUS EQUAL COLON
+--   reduce production infixexp -> appexp
 
 State 499:
 ## Known stack suffix:
@@ -10729,12 +9860,8 @@ dtsort_list -> dtsort . dtsort_list2 [ TYPE TEST MODULE LET EOF END ]
 -- On BAR shift to state 501
 -- On dtsort_list2 shift to state 504
 ## Reductions:
--- On TYPE reduce production dtsort_list2 ->
--- On TEST reduce production dtsort_list2 ->
--- On MODULE reduce production dtsort_list2 ->
--- On LET reduce production dtsort_list2 ->
--- On EOF reduce production dtsort_list2 ->
--- On END reduce production dtsort_list2 ->
+-- On TYPE TEST MODULE LET EOF END
+--   reduce production dtsort_list2 ->
 
 State 501:
 ## Known stack suffix:
@@ -10755,12 +9882,8 @@ dtsort_list2 -> BAR dtsort . dtsort_list2 [ TYPE TEST MODULE LET EOF END ]
 -- On BAR shift to state 501
 -- On dtsort_list2 shift to state 503
 ## Reductions:
--- On TYPE reduce production dtsort_list2 ->
--- On TEST reduce production dtsort_list2 ->
--- On MODULE reduce production dtsort_list2 ->
--- On LET reduce production dtsort_list2 ->
--- On EOF reduce production dtsort_list2 ->
--- On END reduce production dtsort_list2 ->
+-- On TYPE TEST MODULE LET EOF END
+--   reduce production dtsort_list2 ->
 
 State 503:
 ## Known stack suffix:

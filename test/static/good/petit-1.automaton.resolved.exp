@@ -18,9 +18,8 @@ program -> PROGRAM . variables list(procedure) block DOT [ # ]
 -- On variables shift to state 19
 -- On loption(preceded(VAR,terminated_bindings)) shift to state 127
 ## Reductions:
--- On PROCEDURE reduce production loption(preceded(VAR,terminated_bindings)) ->
--- On FUNCTION reduce production loption(preceded(VAR,terminated_bindings)) ->
--- On BEGIN reduce production loption(preceded(VAR,terminated_bindings)) ->
+-- On PROCEDURE FUNCTION BEGIN
+--   reduce production loption(preceded(VAR,terminated_bindings)) ->
 
 State 2:
 ## Known stack suffix:
@@ -44,7 +43,8 @@ separated_nonempty_list(COMMA,ID) -> ID . COMMA separated_nonempty_list(COMMA,ID
 ## Transitions:
 -- On COMMA shift to state 4
 ## Reductions:
--- On COLON reduce production separated_nonempty_list(COMMA,ID) -> ID
+-- On COLON
+--   reduce production separated_nonempty_list(COMMA,ID) -> ID
 
 State 4:
 ## Known stack suffix:
@@ -183,9 +183,8 @@ nonempty_list(terminated(binding,SEMICOLON)) -> binding SEMICOLON . nonempty_lis
 -- On nonempty_list(terminated(binding,SEMICOLON)) shift to state 18
 -- On binding shift to state 16
 ## Reductions:
--- On PROCEDURE reduce production nonempty_list(terminated(binding,SEMICOLON)) -> binding SEMICOLON
--- On FUNCTION reduce production nonempty_list(terminated(binding,SEMICOLON)) -> binding SEMICOLON
--- On BEGIN reduce production nonempty_list(terminated(binding,SEMICOLON)) -> binding SEMICOLON
+-- On PROCEDURE FUNCTION BEGIN
+--   reduce production nonempty_list(terminated(binding,SEMICOLON)) -> binding SEMICOLON
 
 State 18:
 ## Known stack suffix:
@@ -207,7 +206,8 @@ program -> PROGRAM variables . list(procedure) block DOT [ # ]
 -- On procedure shift to state 143
 -- On list(procedure) shift to state 145
 ## Reductions:
--- On BEGIN reduce production list(procedure) ->
+-- On BEGIN
+--   reduce production list(procedure) ->
 
 State 20:
 ## Known stack suffix:
@@ -240,7 +240,8 @@ procedure -> PROCEDURE ID LPAREN . separated_bindings RPAREN SEMICOLON variables
 -- On loption(separated_nonempty_list(SEMICOLON,binding)) shift to state 128
 -- On binding shift to state 129
 ## Reductions:
--- On RPAREN reduce production loption(separated_nonempty_list(SEMICOLON,binding)) ->
+-- On RPAREN
+--   reduce production loption(separated_nonempty_list(SEMICOLON,binding)) ->
 
 State 23:
 ## Known stack suffix:
@@ -279,7 +280,8 @@ procedure -> PROCEDURE ID LPAREN separated_bindings RPAREN SEMICOLON . variables
 -- On variables shift to state 27
 -- On loption(preceded(VAR,terminated_bindings)) shift to state 127
 ## Reductions:
--- On BEGIN reduce production loption(preceded(VAR,terminated_bindings)) ->
+-- On BEGIN
+--   reduce production loption(preceded(VAR,terminated_bindings)) ->
 
 State 27:
 ## Known stack suffix:
@@ -316,7 +318,8 @@ block -> BEGIN . loption(separated_nonempty_list(SEMICOLON,instruction)) END [ S
 -- On expression shift to state 99
 -- On callee shift to state 113
 ## Reductions:
--- On END reduce production loption(separated_nonempty_list(SEMICOLON,instruction)) ->
+-- On END
+--   reduce production loption(separated_nonempty_list(SEMICOLON,instruction)) ->
 
 State 29:
 ## Known stack suffix:
@@ -493,28 +496,10 @@ callee -> ID . [ LPAREN ]
 raw_expression -> ID . [ TIMES THEN SLASH SEMICOLON RPAREN RBRACKET PLUS OR NE MINUS LT LE LBRACKET GT GE EQ END ELSE DO COMMA AND ]
 ## Transitions:
 ## Reductions:
--- On TIMES reduce production raw_expression -> ID
--- On THEN reduce production raw_expression -> ID
--- On SLASH reduce production raw_expression -> ID
--- On SEMICOLON reduce production raw_expression -> ID
--- On RPAREN reduce production raw_expression -> ID
--- On RBRACKET reduce production raw_expression -> ID
--- On PLUS reduce production raw_expression -> ID
--- On OR reduce production raw_expression -> ID
--- On NE reduce production raw_expression -> ID
--- On MINUS reduce production raw_expression -> ID
--- On LT reduce production raw_expression -> ID
--- On LPAREN reduce production callee -> ID
--- On LE reduce production raw_expression -> ID
--- On LBRACKET reduce production raw_expression -> ID
--- On GT reduce production raw_expression -> ID
--- On GE reduce production raw_expression -> ID
--- On EQ reduce production raw_expression -> ID
--- On END reduce production raw_expression -> ID
--- On ELSE reduce production raw_expression -> ID
--- On DO reduce production raw_expression -> ID
--- On COMMA reduce production raw_expression -> ID
--- On AND reduce production raw_expression -> ID
+-- On LPAREN
+--   reduce production callee -> ID
+-- On TIMES THEN SLASH SEMICOLON RPAREN RBRACKET PLUS OR NE MINUS LT LE LBRACKET GT GE EQ END ELSE DO COMMA AND
+--   reduce production raw_expression -> ID
 
 State 42:
 ## Known stack suffix:
@@ -603,26 +588,8 @@ raw_expression -> expression . LBRACKET expression RBRACKET [ TIMES THEN SLASH S
 ## Transitions:
 -- On LBRACKET shift to state 47
 ## Reductions:
--- On TIMES reduce production raw_expression -> expression TIMES expression
--- On THEN reduce production raw_expression -> expression TIMES expression
--- On SLASH reduce production raw_expression -> expression TIMES expression
--- On SEMICOLON reduce production raw_expression -> expression TIMES expression
--- On RPAREN reduce production raw_expression -> expression TIMES expression
--- On RBRACKET reduce production raw_expression -> expression TIMES expression
--- On PLUS reduce production raw_expression -> expression TIMES expression
--- On OR reduce production raw_expression -> expression TIMES expression
--- On NE reduce production raw_expression -> expression TIMES expression
--- On MINUS reduce production raw_expression -> expression TIMES expression
--- On LT reduce production raw_expression -> expression TIMES expression
--- On LE reduce production raw_expression -> expression TIMES expression
--- On GT reduce production raw_expression -> expression TIMES expression
--- On GE reduce production raw_expression -> expression TIMES expression
--- On EQ reduce production raw_expression -> expression TIMES expression
--- On END reduce production raw_expression -> expression TIMES expression
--- On ELSE reduce production raw_expression -> expression TIMES expression
--- On DO reduce production raw_expression -> expression TIMES expression
--- On COMMA reduce production raw_expression -> expression TIMES expression
--- On AND reduce production raw_expression -> expression TIMES expression
+-- On TIMES THEN SLASH SEMICOLON RPAREN RBRACKET PLUS OR NE MINUS LT LE GT GE EQ END ELSE DO COMMA AND
+--   reduce production raw_expression -> expression TIMES expression
 
 State 47:
 ## Known stack suffix:
@@ -712,26 +679,8 @@ raw_expression -> expression . LBRACKET expression RBRACKET [ TIMES THEN SLASH S
 ## Transitions:
 -- On LBRACKET shift to state 47
 ## Reductions:
--- On TIMES reduce production raw_expression -> expression SLASH expression
--- On THEN reduce production raw_expression -> expression SLASH expression
--- On SLASH reduce production raw_expression -> expression SLASH expression
--- On SEMICOLON reduce production raw_expression -> expression SLASH expression
--- On RPAREN reduce production raw_expression -> expression SLASH expression
--- On RBRACKET reduce production raw_expression -> expression SLASH expression
--- On PLUS reduce production raw_expression -> expression SLASH expression
--- On OR reduce production raw_expression -> expression SLASH expression
--- On NE reduce production raw_expression -> expression SLASH expression
--- On MINUS reduce production raw_expression -> expression SLASH expression
--- On LT reduce production raw_expression -> expression SLASH expression
--- On LE reduce production raw_expression -> expression SLASH expression
--- On GT reduce production raw_expression -> expression SLASH expression
--- On GE reduce production raw_expression -> expression SLASH expression
--- On EQ reduce production raw_expression -> expression SLASH expression
--- On END reduce production raw_expression -> expression SLASH expression
--- On ELSE reduce production raw_expression -> expression SLASH expression
--- On DO reduce production raw_expression -> expression SLASH expression
--- On COMMA reduce production raw_expression -> expression SLASH expression
--- On AND reduce production raw_expression -> expression SLASH expression
+-- On TIMES THEN SLASH SEMICOLON RPAREN RBRACKET PLUS OR NE MINUS LT LE GT GE EQ END ELSE DO COMMA AND
+--   reduce production raw_expression -> expression SLASH expression
 
 State 51:
 ## Known stack suffix:
@@ -762,7 +711,8 @@ raw_expression -> callee LPAREN . loption(separated_nonempty_list(COMMA,expressi
 -- On expression shift to state 56
 -- On callee shift to state 51
 ## Reductions:
--- On RPAREN reduce production loption(separated_nonempty_list(COMMA,expression)) ->
+-- On RPAREN
+--   reduce production loption(separated_nonempty_list(COMMA,expression)) ->
 
 State 53:
 ## Known stack suffix:
@@ -822,7 +772,8 @@ separated_nonempty_list(COMMA,expression) -> expression . COMMA separated_nonemp
 -- On EQ shift to state 71
 -- On COMMA shift to state 73
 ## Reductions:
--- On RPAREN reduce production separated_nonempty_list(COMMA,expression) -> expression
+-- On RPAREN
+--   reduce production separated_nonempty_list(COMMA,expression) -> expression
 
 State 57:
 ## Known stack suffix:
@@ -864,24 +815,8 @@ raw_expression -> expression . LBRACKET expression RBRACKET [ TIMES THEN SLASH S
 -- On SLASH shift to state 49
 -- On LBRACKET shift to state 47
 ## Reductions:
--- On THEN reduce production raw_expression -> expression PLUS expression
--- On SEMICOLON reduce production raw_expression -> expression PLUS expression
--- On RPAREN reduce production raw_expression -> expression PLUS expression
--- On RBRACKET reduce production raw_expression -> expression PLUS expression
--- On PLUS reduce production raw_expression -> expression PLUS expression
--- On OR reduce production raw_expression -> expression PLUS expression
--- On NE reduce production raw_expression -> expression PLUS expression
--- On MINUS reduce production raw_expression -> expression PLUS expression
--- On LT reduce production raw_expression -> expression PLUS expression
--- On LE reduce production raw_expression -> expression PLUS expression
--- On GT reduce production raw_expression -> expression PLUS expression
--- On GE reduce production raw_expression -> expression PLUS expression
--- On EQ reduce production raw_expression -> expression PLUS expression
--- On END reduce production raw_expression -> expression PLUS expression
--- On ELSE reduce production raw_expression -> expression PLUS expression
--- On DO reduce production raw_expression -> expression PLUS expression
--- On COMMA reduce production raw_expression -> expression PLUS expression
--- On AND reduce production raw_expression -> expression PLUS expression
+-- On THEN SEMICOLON RPAREN RBRACKET PLUS OR NE MINUS LT LE GT GE EQ END ELSE DO COMMA AND
+--   reduce production raw_expression -> expression PLUS expression
 
 State 59:
 ## Known stack suffix:
@@ -925,16 +860,8 @@ raw_expression -> expression . LBRACKET expression RBRACKET [ TIMES THEN SLASH S
 -- On MINUS shift to state 61
 -- On LBRACKET shift to state 47
 ## Reductions:
--- On THEN reduce production raw_expression -> expression NE expression
--- On SEMICOLON reduce production raw_expression -> expression NE expression
--- On RPAREN reduce production raw_expression -> expression NE expression
--- On RBRACKET reduce production raw_expression -> expression NE expression
--- On OR reduce production raw_expression -> expression NE expression
--- On END reduce production raw_expression -> expression NE expression
--- On ELSE reduce production raw_expression -> expression NE expression
--- On DO reduce production raw_expression -> expression NE expression
--- On COMMA reduce production raw_expression -> expression NE expression
--- On AND reduce production raw_expression -> expression NE expression
+-- On THEN SEMICOLON RPAREN RBRACKET OR END ELSE DO COMMA AND
+--   reduce production raw_expression -> expression NE expression
 
 State 61:
 ## Known stack suffix:
@@ -976,24 +903,8 @@ raw_expression -> expression . LBRACKET expression RBRACKET [ TIMES THEN SLASH S
 -- On SLASH shift to state 49
 -- On LBRACKET shift to state 47
 ## Reductions:
--- On THEN reduce production raw_expression -> expression MINUS expression
--- On SEMICOLON reduce production raw_expression -> expression MINUS expression
--- On RPAREN reduce production raw_expression -> expression MINUS expression
--- On RBRACKET reduce production raw_expression -> expression MINUS expression
--- On PLUS reduce production raw_expression -> expression MINUS expression
--- On OR reduce production raw_expression -> expression MINUS expression
--- On NE reduce production raw_expression -> expression MINUS expression
--- On MINUS reduce production raw_expression -> expression MINUS expression
--- On LT reduce production raw_expression -> expression MINUS expression
--- On LE reduce production raw_expression -> expression MINUS expression
--- On GT reduce production raw_expression -> expression MINUS expression
--- On GE reduce production raw_expression -> expression MINUS expression
--- On EQ reduce production raw_expression -> expression MINUS expression
--- On END reduce production raw_expression -> expression MINUS expression
--- On ELSE reduce production raw_expression -> expression MINUS expression
--- On DO reduce production raw_expression -> expression MINUS expression
--- On COMMA reduce production raw_expression -> expression MINUS expression
--- On AND reduce production raw_expression -> expression MINUS expression
+-- On THEN SEMICOLON RPAREN RBRACKET PLUS OR NE MINUS LT LE GT GE EQ END ELSE DO COMMA AND
+--   reduce production raw_expression -> expression MINUS expression
 
 State 63:
 ## Known stack suffix:
@@ -1037,16 +948,8 @@ raw_expression -> expression . LBRACKET expression RBRACKET [ TIMES THEN SLASH S
 -- On MINUS shift to state 61
 -- On LBRACKET shift to state 47
 ## Reductions:
--- On THEN reduce production raw_expression -> expression LT expression
--- On SEMICOLON reduce production raw_expression -> expression LT expression
--- On RPAREN reduce production raw_expression -> expression LT expression
--- On RBRACKET reduce production raw_expression -> expression LT expression
--- On OR reduce production raw_expression -> expression LT expression
--- On END reduce production raw_expression -> expression LT expression
--- On ELSE reduce production raw_expression -> expression LT expression
--- On DO reduce production raw_expression -> expression LT expression
--- On COMMA reduce production raw_expression -> expression LT expression
--- On AND reduce production raw_expression -> expression LT expression
+-- On THEN SEMICOLON RPAREN RBRACKET OR END ELSE DO COMMA AND
+--   reduce production raw_expression -> expression LT expression
 
 State 65:
 ## Known stack suffix:
@@ -1090,16 +993,8 @@ raw_expression -> expression . LBRACKET expression RBRACKET [ TIMES THEN SLASH S
 -- On MINUS shift to state 61
 -- On LBRACKET shift to state 47
 ## Reductions:
--- On THEN reduce production raw_expression -> expression LE expression
--- On SEMICOLON reduce production raw_expression -> expression LE expression
--- On RPAREN reduce production raw_expression -> expression LE expression
--- On RBRACKET reduce production raw_expression -> expression LE expression
--- On OR reduce production raw_expression -> expression LE expression
--- On END reduce production raw_expression -> expression LE expression
--- On ELSE reduce production raw_expression -> expression LE expression
--- On DO reduce production raw_expression -> expression LE expression
--- On COMMA reduce production raw_expression -> expression LE expression
--- On AND reduce production raw_expression -> expression LE expression
+-- On THEN SEMICOLON RPAREN RBRACKET OR END ELSE DO COMMA AND
+--   reduce production raw_expression -> expression LE expression
 
 State 67:
 ## Known stack suffix:
@@ -1143,16 +1038,8 @@ raw_expression -> expression . LBRACKET expression RBRACKET [ TIMES THEN SLASH S
 -- On MINUS shift to state 61
 -- On LBRACKET shift to state 47
 ## Reductions:
--- On THEN reduce production raw_expression -> expression GT expression
--- On SEMICOLON reduce production raw_expression -> expression GT expression
--- On RPAREN reduce production raw_expression -> expression GT expression
--- On RBRACKET reduce production raw_expression -> expression GT expression
--- On OR reduce production raw_expression -> expression GT expression
--- On END reduce production raw_expression -> expression GT expression
--- On ELSE reduce production raw_expression -> expression GT expression
--- On DO reduce production raw_expression -> expression GT expression
--- On COMMA reduce production raw_expression -> expression GT expression
--- On AND reduce production raw_expression -> expression GT expression
+-- On THEN SEMICOLON RPAREN RBRACKET OR END ELSE DO COMMA AND
+--   reduce production raw_expression -> expression GT expression
 
 State 69:
 ## Known stack suffix:
@@ -1196,16 +1083,8 @@ raw_expression -> expression . LBRACKET expression RBRACKET [ TIMES THEN SLASH S
 -- On MINUS shift to state 61
 -- On LBRACKET shift to state 47
 ## Reductions:
--- On THEN reduce production raw_expression -> expression GE expression
--- On SEMICOLON reduce production raw_expression -> expression GE expression
--- On RPAREN reduce production raw_expression -> expression GE expression
--- On RBRACKET reduce production raw_expression -> expression GE expression
--- On OR reduce production raw_expression -> expression GE expression
--- On END reduce production raw_expression -> expression GE expression
--- On ELSE reduce production raw_expression -> expression GE expression
--- On DO reduce production raw_expression -> expression GE expression
--- On COMMA reduce production raw_expression -> expression GE expression
--- On AND reduce production raw_expression -> expression GE expression
+-- On THEN SEMICOLON RPAREN RBRACKET OR END ELSE DO COMMA AND
+--   reduce production raw_expression -> expression GE expression
 
 State 71:
 ## Known stack suffix:
@@ -1249,16 +1128,8 @@ raw_expression -> expression . LBRACKET expression RBRACKET [ TIMES THEN SLASH S
 -- On MINUS shift to state 61
 -- On LBRACKET shift to state 47
 ## Reductions:
--- On THEN reduce production raw_expression -> expression EQ expression
--- On SEMICOLON reduce production raw_expression -> expression EQ expression
--- On RPAREN reduce production raw_expression -> expression EQ expression
--- On RBRACKET reduce production raw_expression -> expression EQ expression
--- On OR reduce production raw_expression -> expression EQ expression
--- On END reduce production raw_expression -> expression EQ expression
--- On ELSE reduce production raw_expression -> expression EQ expression
--- On DO reduce production raw_expression -> expression EQ expression
--- On COMMA reduce production raw_expression -> expression EQ expression
--- On AND reduce production raw_expression -> expression EQ expression
+-- On THEN SEMICOLON RPAREN RBRACKET OR END ELSE DO COMMA AND
+--   reduce production raw_expression -> expression EQ expression
 
 State 73:
 ## Known stack suffix:
@@ -1326,26 +1197,8 @@ raw_expression -> expression . LBRACKET expression RBRACKET [ TIMES THEN SLASH S
 ## Transitions:
 -- On LBRACKET shift to state 47
 ## Reductions:
--- On TIMES reduce production raw_expression -> MINUS expression
--- On THEN reduce production raw_expression -> MINUS expression
--- On SLASH reduce production raw_expression -> MINUS expression
--- On SEMICOLON reduce production raw_expression -> MINUS expression
--- On RPAREN reduce production raw_expression -> MINUS expression
--- On RBRACKET reduce production raw_expression -> MINUS expression
--- On PLUS reduce production raw_expression -> MINUS expression
--- On OR reduce production raw_expression -> MINUS expression
--- On NE reduce production raw_expression -> MINUS expression
--- On MINUS reduce production raw_expression -> MINUS expression
--- On LT reduce production raw_expression -> MINUS expression
--- On LE reduce production raw_expression -> MINUS expression
--- On GT reduce production raw_expression -> MINUS expression
--- On GE reduce production raw_expression -> MINUS expression
--- On EQ reduce production raw_expression -> MINUS expression
--- On END reduce production raw_expression -> MINUS expression
--- On ELSE reduce production raw_expression -> MINUS expression
--- On DO reduce production raw_expression -> MINUS expression
--- On COMMA reduce production raw_expression -> MINUS expression
--- On AND reduce production raw_expression -> MINUS expression
+-- On TIMES THEN SLASH SEMICOLON RPAREN RBRACKET PLUS OR NE MINUS LT LE GT GE EQ END ELSE DO COMMA AND
+--   reduce production raw_expression -> MINUS expression
 
 State 78:
 ## Known stack suffix:
@@ -1419,8 +1272,8 @@ nontrivial_condition -> LPAREN nontrivial_condition . RPAREN [ THEN RPAREN OR DO
 ## Transitions:
 -- On RPAREN shift to state 82
 ## Reductions:
--- On OR reduce production condition -> nontrivial_condition
--- On AND reduce production condition -> nontrivial_condition
+-- On OR AND
+--   reduce production condition -> nontrivial_condition
 
 State 82:
 ## Known stack suffix:
@@ -1462,8 +1315,8 @@ raw_expression -> expression . LBRACKET expression RBRACKET [ TIMES SLASH RPAREN
 -- On GE shift to state 69
 -- On EQ shift to state 71
 ## Reductions:
--- On OR reduce production condition -> expression
--- On AND reduce production condition -> expression
+-- On OR AND
+--   reduce production condition -> expression
 
 State 84:
 ## Known stack suffix:
@@ -1536,11 +1389,8 @@ raw_expression -> expression . LBRACKET expression RBRACKET [ TIMES THEN SLASH R
 -- On GE shift to state 69
 -- On EQ shift to state 71
 ## Reductions:
--- On THEN reduce production condition -> expression
--- On RPAREN reduce production condition -> expression
--- On OR reduce production condition -> expression
--- On DO reduce production condition -> expression
--- On AND reduce production condition -> expression
+-- On THEN RPAREN OR DO AND
+--   reduce production condition -> expression
 
 State 88:
 ## Known stack suffix:
@@ -1552,10 +1402,8 @@ nontrivial_condition -> condition OR condition . [ THEN RPAREN OR DO AND ]
 ## Transitions:
 -- On AND shift to state 89
 ## Reductions:
--- On THEN reduce production nontrivial_condition -> condition OR condition
--- On RPAREN reduce production nontrivial_condition -> condition OR condition
--- On OR reduce production nontrivial_condition -> condition OR condition
--- On DO reduce production nontrivial_condition -> condition OR condition
+-- On THEN RPAREN OR DO
+--   reduce production nontrivial_condition -> condition OR condition
 
 State 89:
 ## Known stack suffix:
@@ -1679,20 +1527,12 @@ lvalue -> ID . [ RPAREN COLONEQ ]
 raw_expression -> ID . [ TIMES SLASH PLUS NE MINUS LT LE LBRACKET GT GE EQ ]
 ## Transitions:
 ## Reductions:
--- On TIMES reduce production raw_expression -> ID
--- On SLASH reduce production raw_expression -> ID
--- On RPAREN reduce production lvalue -> ID
--- On PLUS reduce production raw_expression -> ID
--- On NE reduce production raw_expression -> ID
--- On MINUS reduce production raw_expression -> ID
--- On LT reduce production raw_expression -> ID
--- On LPAREN reduce production callee -> ID
--- On LE reduce production raw_expression -> ID
--- On LBRACKET reduce production raw_expression -> ID
--- On GT reduce production raw_expression -> ID
--- On GE reduce production raw_expression -> ID
--- On EQ reduce production raw_expression -> ID
--- On COLONEQ reduce production lvalue -> ID
+-- On LPAREN
+--   reduce production callee -> ID
+-- On RPAREN COLONEQ
+--   reduce production lvalue -> ID
+-- On TIMES SLASH PLUS NE MINUS LT LE LBRACKET GT GE EQ
+--   reduce production raw_expression -> ID
 
 State 97:
 ## Known stack suffix:
@@ -1802,19 +1642,10 @@ lvalue -> expression LBRACKET expression RBRACKET . [ RPAREN COLONEQ ]
 raw_expression -> expression LBRACKET expression RBRACKET . [ TIMES SLASH PLUS NE MINUS LT LE LBRACKET GT GE EQ ]
 ## Transitions:
 ## Reductions:
--- On TIMES reduce production raw_expression -> expression LBRACKET expression RBRACKET
--- On SLASH reduce production raw_expression -> expression LBRACKET expression RBRACKET
--- On RPAREN reduce production lvalue -> expression LBRACKET expression RBRACKET
--- On PLUS reduce production raw_expression -> expression LBRACKET expression RBRACKET
--- On NE reduce production raw_expression -> expression LBRACKET expression RBRACKET
--- On MINUS reduce production raw_expression -> expression LBRACKET expression RBRACKET
--- On LT reduce production raw_expression -> expression LBRACKET expression RBRACKET
--- On LE reduce production raw_expression -> expression LBRACKET expression RBRACKET
--- On LBRACKET reduce production raw_expression -> expression LBRACKET expression RBRACKET
--- On GT reduce production raw_expression -> expression LBRACKET expression RBRACKET
--- On GE reduce production raw_expression -> expression LBRACKET expression RBRACKET
--- On EQ reduce production raw_expression -> expression LBRACKET expression RBRACKET
--- On COLONEQ reduce production lvalue -> expression LBRACKET expression RBRACKET
+-- On RPAREN COLONEQ
+--   reduce production lvalue -> expression LBRACKET expression RBRACKET
+-- On TIMES SLASH PLUS NE MINUS LT LE LBRACKET GT GE EQ
+--   reduce production raw_expression -> expression LBRACKET expression RBRACKET
 
 State 103:
 ## Known stack suffix:
@@ -1938,9 +1769,8 @@ raw_expression -> expression . LBRACKET expression RBRACKET [ TIMES SLASH SEMICO
 -- On GE shift to state 69
 -- On EQ shift to state 71
 ## Reductions:
--- On SEMICOLON reduce production instruction -> lvalue COLONEQ expression
--- On END reduce production instruction -> lvalue COLONEQ expression
--- On ELSE reduce production instruction -> lvalue COLONEQ expression
+-- On SEMICOLON END ELSE
+--   reduce production instruction -> lvalue COLONEQ expression
 
 State 109:
 ## Known stack suffix:
@@ -1951,8 +1781,8 @@ instruction -> IF condition THEN instruction_or_block . ELSE instruction_or_bloc
 ## Transitions:
 -- On ELSE shift to state 110
 ## Reductions:
--- On SEMICOLON reduce production instruction -> IF condition THEN instruction_or_block
--- On END reduce production instruction -> IF condition THEN instruction_or_block
+-- On SEMICOLON END
+--   reduce production instruction -> IF condition THEN instruction_or_block
 
 State 110:
 ## Known stack suffix:
@@ -2030,7 +1860,8 @@ raw_expression -> callee LPAREN . loption(separated_nonempty_list(COMMA,expressi
 -- On expression shift to state 56
 -- On callee shift to state 51
 ## Reductions:
--- On RPAREN reduce production loption(separated_nonempty_list(COMMA,expression)) ->
+-- On RPAREN
+--   reduce production loption(separated_nonempty_list(COMMA,expression)) ->
 
 State 115:
 ## Known stack suffix:
@@ -2050,20 +1881,10 @@ instruction -> callee LPAREN loption(separated_nonempty_list(COMMA,expression)) 
 raw_expression -> callee LPAREN loption(separated_nonempty_list(COMMA,expression)) RPAREN . [ TIMES SLASH PLUS NE MINUS LT LE LBRACKET GT GE EQ ]
 ## Transitions:
 ## Reductions:
--- On TIMES reduce production raw_expression -> callee LPAREN loption(separated_nonempty_list(COMMA,expression)) RPAREN
--- On SLASH reduce production raw_expression -> callee LPAREN loption(separated_nonempty_list(COMMA,expression)) RPAREN
--- On SEMICOLON reduce production instruction -> callee LPAREN loption(separated_nonempty_list(COMMA,expression)) RPAREN
--- On PLUS reduce production raw_expression -> callee LPAREN loption(separated_nonempty_list(COMMA,expression)) RPAREN
--- On NE reduce production raw_expression -> callee LPAREN loption(separated_nonempty_list(COMMA,expression)) RPAREN
--- On MINUS reduce production raw_expression -> callee LPAREN loption(separated_nonempty_list(COMMA,expression)) RPAREN
--- On LT reduce production raw_expression -> callee LPAREN loption(separated_nonempty_list(COMMA,expression)) RPAREN
--- On LE reduce production raw_expression -> callee LPAREN loption(separated_nonempty_list(COMMA,expression)) RPAREN
--- On LBRACKET reduce production raw_expression -> callee LPAREN loption(separated_nonempty_list(COMMA,expression)) RPAREN
--- On GT reduce production raw_expression -> callee LPAREN loption(separated_nonempty_list(COMMA,expression)) RPAREN
--- On GE reduce production raw_expression -> callee LPAREN loption(separated_nonempty_list(COMMA,expression)) RPAREN
--- On EQ reduce production raw_expression -> callee LPAREN loption(separated_nonempty_list(COMMA,expression)) RPAREN
--- On END reduce production instruction -> callee LPAREN loption(separated_nonempty_list(COMMA,expression)) RPAREN
--- On ELSE reduce production instruction -> callee LPAREN loption(separated_nonempty_list(COMMA,expression)) RPAREN
+-- On SEMICOLON END ELSE
+--   reduce production instruction -> callee LPAREN loption(separated_nonempty_list(COMMA,expression)) RPAREN
+-- On TIMES SLASH PLUS NE MINUS LT LE LBRACKET GT GE EQ
+--   reduce production raw_expression -> callee LPAREN loption(separated_nonempty_list(COMMA,expression)) RPAREN
 
 State 117:
 ## Known stack suffix:
@@ -2119,7 +1940,8 @@ separated_nonempty_list(SEMICOLON,instruction) -> instruction . SEMICOLON separa
 ## Transitions:
 -- On SEMICOLON shift to state 123
 ## Reductions:
--- On END reduce production separated_nonempty_list(SEMICOLON,instruction) -> instruction
+-- On END
+--   reduce production separated_nonempty_list(SEMICOLON,instruction) -> instruction
 
 State 123:
 ## Known stack suffix:
@@ -2200,7 +2022,8 @@ separated_nonempty_list(SEMICOLON,binding) -> binding . SEMICOLON separated_none
 ## Transitions:
 -- On SEMICOLON shift to state 130
 ## Reductions:
--- On RPAREN reduce production separated_nonempty_list(SEMICOLON,binding) -> binding
+-- On RPAREN
+--   reduce production separated_nonempty_list(SEMICOLON,binding) -> binding
 
 State 130:
 ## Known stack suffix:
@@ -2254,7 +2077,8 @@ procedure -> FUNCTION ID LPAREN . separated_bindings RPAREN COLON typ SEMICOLON 
 -- On loption(separated_nonempty_list(SEMICOLON,binding)) shift to state 128
 -- On binding shift to state 129
 ## Reductions:
--- On RPAREN reduce production loption(separated_nonempty_list(SEMICOLON,binding)) ->
+-- On RPAREN
+--   reduce production loption(separated_nonempty_list(SEMICOLON,binding)) ->
 
 State 135:
 ## Known stack suffix:
@@ -2305,7 +2129,8 @@ procedure -> FUNCTION ID LPAREN separated_bindings RPAREN COLON typ SEMICOLON . 
 -- On variables shift to state 140
 -- On loption(preceded(VAR,terminated_bindings)) shift to state 127
 ## Reductions:
--- On BEGIN reduce production loption(preceded(VAR,terminated_bindings)) ->
+-- On BEGIN
+--   reduce production loption(preceded(VAR,terminated_bindings)) ->
 
 State 140:
 ## Known stack suffix:
@@ -2346,7 +2171,8 @@ list(procedure) -> procedure . list(procedure) [ BEGIN ]
 -- On procedure shift to state 143
 -- On list(procedure) shift to state 144
 ## Reductions:
--- On BEGIN reduce production list(procedure) ->
+-- On BEGIN
+--   reduce production list(procedure) ->
 
 State 144:
 ## Known stack suffix:

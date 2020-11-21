@@ -10,7 +10,8 @@ deep_main' -> . deep_main [ # ]
 -- On function_def shift to state 345
 -- On deep_main shift to state 346
 ## Reductions:
--- On PROC reduce production voidopt ->
+-- On PROC
+--   reduce production voidopt ->
 
 State 1:
 ## Known stack suffix:
@@ -59,11 +60,10 @@ function_def -> voidopt PROC LPAR . parameter_list RPAR LBRACE pseudo_seq RBRACE
 -- On base0 shift to state 17
 -- On base shift to state 23
 ## Reductions:
--- On RPAR reduce production parameter_list ->
--- On MUTEX reduce production ty_attr ->
--- On LONG reduce production ty_attr ->
--- On INT reduce production ty_attr ->
--- On CHAR reduce production ty_attr ->
+-- On RPAR
+--   reduce production parameter_list ->
+-- On MUTEX LONG INT CHAR
+--   reduce production ty_attr ->
 
 State 5:
 ## Known stack suffix:
@@ -77,10 +77,8 @@ typ -> VOLATILE . base0 [ VOLATILE STAR RPAR IDENTIFIER ]
 -- On ty_attr shift to state 9
 -- On base0 shift to state 14
 ## Reductions:
--- On MUTEX reduce production ty_attr ->
--- On LONG reduce production ty_attr ->
--- On INT reduce production ty_attr ->
--- On CHAR reduce production ty_attr ->
+-- On MUTEX LONG INT CHAR
+--   reduce production ty_attr ->
 
 State 6:
 ## Known stack suffix:
@@ -186,10 +184,8 @@ base -> LPAR . typ RPAR [ VOLATILE STAR RPAR IDENTIFIER ]
 -- On base0 shift to state 17
 -- On base shift to state 23
 ## Reductions:
--- On MUTEX reduce production ty_attr ->
--- On LONG reduce production ty_attr ->
--- On INT reduce production ty_attr ->
--- On CHAR reduce production ty_attr ->
+-- On MUTEX LONG INT CHAR
+--   reduce production ty_attr ->
 
 State 16:
 ## Known stack suffix:
@@ -205,10 +201,8 @@ typ -> ATOMIC . base [ VOLATILE STAR RPAR IDENTIFIER ]
 -- On base0 shift to state 17
 -- On base shift to state 18
 ## Reductions:
--- On MUTEX reduce production ty_attr ->
--- On LONG reduce production ty_attr ->
--- On INT reduce production ty_attr ->
--- On CHAR reduce production ty_attr ->
+-- On MUTEX LONG INT CHAR
+--   reduce production ty_attr ->
 
 State 17:
 ## Known stack suffix:
@@ -297,9 +291,10 @@ toptyp -> typ STAR . [ IDENTIFIER ]
 typ -> typ STAR . [ VOLATILE STAR ]
 ## Transitions:
 ## Reductions:
--- On VOLATILE reduce production typ -> typ STAR
--- On STAR reduce production typ -> typ STAR
--- On IDENTIFIER reduce production toptyp -> typ STAR
+-- On IDENTIFIER
+--   reduce production toptyp -> typ STAR
+-- On VOLATILE STAR
+--   reduce production typ -> typ STAR
 
 State 26:
 ## Known stack suffix:
@@ -373,10 +368,8 @@ function_def -> voidopt PROC LPAR parameter_list RPAR LBRACE . pseudo_seq RBRACE
 -- On base0 shift to state 17
 -- On base shift to state 23
 ## Reductions:
--- On MUTEX reduce production ty_attr ->
--- On LONG reduce production ty_attr ->
--- On INT reduce production ty_attr ->
--- On CHAR reduce production ty_attr ->
+-- On MUTEX LONG INT CHAR
+--   reduce production ty_attr ->
 
 State 31:
 ## Known stack suffix:
@@ -825,10 +818,8 @@ expr -> STAR LPAR . expr RPAR [ XOR SUB STAR SEMI RPAR PIPE NEQ_OP LT LE LAND ID
 -- On base0 shift to state 17
 -- On base shift to state 23
 ## Reductions:
--- On MUTEX reduce production ty_attr ->
--- On LONG reduce production ty_attr ->
--- On INT reduce production ty_attr ->
--- On CHAR reduce production ty_attr ->
+-- On MUTEX LONG INT CHAR
+--   reduce production ty_attr ->
 
 State 59:
 ## Known stack suffix:
@@ -1025,10 +1016,8 @@ expr -> LPAR . typ RPAR expr [ XOR SUB STAR SEMI RPAR PIPE NEQ_OP LT LE LAND IDE
 -- On base0 shift to state 17
 -- On base shift to state 23
 ## Reductions:
--- On MUTEX reduce production ty_attr ->
--- On LONG reduce production ty_attr ->
--- On INT reduce production ty_attr ->
--- On CHAR reduce production ty_attr ->
+-- On MUTEX LONG INT CHAR
+--   reduce production ty_attr ->
 
 State 68:
 ## Known stack suffix:
@@ -1070,10 +1059,8 @@ expr -> LPAR . typ RPAR expr [ XOR SUB STAR RPAR PIPE NEQ_OP LT LE LAND GT GE EQ
 -- On base0 shift to state 17
 -- On base shift to state 23
 ## Reductions:
--- On MUTEX reduce production ty_attr ->
--- On LONG reduce production ty_attr ->
--- On INT reduce production ty_attr ->
--- On CHAR reduce production ty_attr ->
+-- On MUTEX LONG INT CHAR
+--   reduce production ty_attr ->
 
 State 69:
 ## Known stack suffix:
@@ -1194,23 +1181,8 @@ expr -> IDENTIFIER . LPAR args RPAR [ XOR SUB STAR SEMI RPAR PIPE NEQ_OP LT LE L
 ## Transitions:
 -- On LPAR shift to state 77
 ## Reductions:
--- On XOR reduce production expr -> IDENTIFIER
--- On SUB reduce production expr -> IDENTIFIER
--- On STAR reduce production expr -> IDENTIFIER
--- On SEMI reduce production expr -> IDENTIFIER
--- On RPAR reduce production expr -> IDENTIFIER
--- On PIPE reduce production expr -> IDENTIFIER
--- On NEQ_OP reduce production expr -> IDENTIFIER
--- On LT reduce production expr -> IDENTIFIER
--- On LE reduce production expr -> IDENTIFIER
--- On LAND reduce production expr -> IDENTIFIER
--- On IDENTIFIER reduce production expr -> IDENTIFIER
--- On GT reduce production expr -> IDENTIFIER
--- On GE reduce production expr -> IDENTIFIER
--- On EQ_OP reduce production expr -> IDENTIFIER
--- On DIV reduce production expr -> IDENTIFIER
--- On COMMA reduce production expr -> IDENTIFIER
--- On ADD reduce production expr -> IDENTIFIER
+-- On XOR SUB STAR SEMI RPAR PIPE NEQ_OP LT LE LAND IDENTIFIER GT GE EQ_OP DIV COMMA ADD
+--   reduce production expr -> IDENTIFIER
 
 State 77:
 ## Known stack suffix:
@@ -1243,7 +1215,8 @@ expr -> IDENTIFIER LPAR . args RPAR [ XOR SUB STAR SEMI RPAR PIPE NEQ_OP LT LE L
 -- On args_ne shift to state 150
 -- On args shift to state 151
 ## Reductions:
--- On RPAR reduce production args ->
+-- On RPAR
+--   reduce production args ->
 
 State 78:
 ## Known stack suffix:
@@ -1547,12 +1520,8 @@ expr -> expr . GE expr [ XOR SUB STAR SEMI RPAR PIPE NEQ_OP LT LE LAND IDENTIFIE
 -- On DIV shift to state 98
 -- On ADD shift to state 102
 ## Reductions:
--- On XOR reduce production expr -> expr XOR expr
--- On SEMI reduce production expr -> expr XOR expr
--- On RPAR reduce production expr -> expr XOR expr
--- On PIPE reduce production expr -> expr XOR expr
--- On IDENTIFIER reduce production expr -> expr XOR expr
--- On COMMA reduce production expr -> expr XOR expr
+-- On XOR SEMI RPAR PIPE IDENTIFIER COMMA
+--   reduce production expr -> expr XOR expr
 
 State 94:
 ## Known stack suffix:
@@ -1606,21 +1575,8 @@ expr -> expr . GE expr [ XOR SUB STAR SEMI RPAR PIPE NEQ_OP LT LE LAND IDENTIFIE
 -- On STAR shift to state 96
 -- On DIV shift to state 98
 ## Reductions:
--- On XOR reduce production expr -> expr SUB expr
--- On SUB reduce production expr -> expr SUB expr
--- On SEMI reduce production expr -> expr SUB expr
--- On RPAR reduce production expr -> expr SUB expr
--- On PIPE reduce production expr -> expr SUB expr
--- On NEQ_OP reduce production expr -> expr SUB expr
--- On LT reduce production expr -> expr SUB expr
--- On LE reduce production expr -> expr SUB expr
--- On LAND reduce production expr -> expr SUB expr
--- On IDENTIFIER reduce production expr -> expr SUB expr
--- On GT reduce production expr -> expr SUB expr
--- On GE reduce production expr -> expr SUB expr
--- On EQ_OP reduce production expr -> expr SUB expr
--- On COMMA reduce production expr -> expr SUB expr
--- On ADD reduce production expr -> expr SUB expr
+-- On XOR SUB SEMI RPAR PIPE NEQ_OP LT LE LAND IDENTIFIER GT GE EQ_OP COMMA ADD
+--   reduce production expr -> expr SUB expr
 
 State 96:
 ## Known stack suffix:
@@ -1780,13 +1736,8 @@ expr -> expr . GE expr [ XOR SUB STAR SEMI RPAR PIPE NEQ_OP LT LE LAND IDENTIFIE
 -- On DIV shift to state 98
 -- On ADD shift to state 102
 ## Reductions:
--- On XOR reduce production expr -> expr NEQ_OP expr
--- On SEMI reduce production expr -> expr NEQ_OP expr
--- On RPAR reduce production expr -> expr NEQ_OP expr
--- On PIPE reduce production expr -> expr NEQ_OP expr
--- On LAND reduce production expr -> expr NEQ_OP expr
--- On IDENTIFIER reduce production expr -> expr NEQ_OP expr
--- On COMMA reduce production expr -> expr NEQ_OP expr
+-- On XOR SEMI RPAR PIPE LAND IDENTIFIER COMMA
+--   reduce production expr -> expr NEQ_OP expr
 
 State 102:
 ## Known stack suffix:
@@ -1840,21 +1791,8 @@ expr -> expr . GE expr [ XOR SUB STAR SEMI RPAR PIPE NEQ_OP LT LE LAND IDENTIFIE
 -- On STAR shift to state 96
 -- On DIV shift to state 98
 ## Reductions:
--- On XOR reduce production expr -> expr ADD expr
--- On SUB reduce production expr -> expr ADD expr
--- On SEMI reduce production expr -> expr ADD expr
--- On RPAR reduce production expr -> expr ADD expr
--- On PIPE reduce production expr -> expr ADD expr
--- On NEQ_OP reduce production expr -> expr ADD expr
--- On LT reduce production expr -> expr ADD expr
--- On LE reduce production expr -> expr ADD expr
--- On LAND reduce production expr -> expr ADD expr
--- On IDENTIFIER reduce production expr -> expr ADD expr
--- On GT reduce production expr -> expr ADD expr
--- On GE reduce production expr -> expr ADD expr
--- On EQ_OP reduce production expr -> expr ADD expr
--- On COMMA reduce production expr -> expr ADD expr
--- On ADD reduce production expr -> expr ADD expr
+-- On XOR SUB SEMI RPAR PIPE NEQ_OP LT LE LAND IDENTIFIER GT GE EQ_OP COMMA ADD
+--   reduce production expr -> expr ADD expr
 
 State 104:
 ## Known stack suffix:
@@ -1910,13 +1848,8 @@ expr -> expr . GE expr [ XOR SUB STAR SEMI RPAR PIPE NEQ_OP LT LE LAND IDENTIFIE
 -- On DIV shift to state 98
 -- On ADD shift to state 102
 ## Reductions:
--- On XOR reduce production expr -> expr LT expr
--- On SEMI reduce production expr -> expr LT expr
--- On RPAR reduce production expr -> expr LT expr
--- On PIPE reduce production expr -> expr LT expr
--- On LAND reduce production expr -> expr LT expr
--- On IDENTIFIER reduce production expr -> expr LT expr
--- On COMMA reduce production expr -> expr LT expr
+-- On XOR SEMI RPAR PIPE LAND IDENTIFIER COMMA
+--   reduce production expr -> expr LT expr
 
 State 106:
 ## Known stack suffix:
@@ -1972,13 +1905,8 @@ expr -> expr . GE expr [ XOR SUB STAR SEMI RPAR PIPE NEQ_OP LT LE LAND IDENTIFIE
 -- On DIV shift to state 98
 -- On ADD shift to state 102
 ## Reductions:
--- On XOR reduce production expr -> expr LE expr
--- On SEMI reduce production expr -> expr LE expr
--- On RPAR reduce production expr -> expr LE expr
--- On PIPE reduce production expr -> expr LE expr
--- On LAND reduce production expr -> expr LE expr
--- On IDENTIFIER reduce production expr -> expr LE expr
--- On COMMA reduce production expr -> expr LE expr
+-- On XOR SEMI RPAR PIPE LAND IDENTIFIER COMMA
+--   reduce production expr -> expr LE expr
 
 State 108:
 ## Known stack suffix:
@@ -2040,13 +1968,8 @@ expr -> expr . GE expr [ XOR SUB STAR SEMI RPAR PIPE NEQ_OP LT LE LAND IDENTIFIE
 -- On DIV shift to state 98
 -- On ADD shift to state 102
 ## Reductions:
--- On XOR reduce production expr -> expr LAND expr
--- On SEMI reduce production expr -> expr LAND expr
--- On RPAR reduce production expr -> expr LAND expr
--- On PIPE reduce production expr -> expr LAND expr
--- On LAND reduce production expr -> expr LAND expr
--- On IDENTIFIER reduce production expr -> expr LAND expr
--- On COMMA reduce production expr -> expr LAND expr
+-- On XOR SEMI RPAR PIPE LAND IDENTIFIER COMMA
+--   reduce production expr -> expr LAND expr
 
 State 110:
 ## Known stack suffix:
@@ -2102,13 +2025,8 @@ expr -> expr . GE expr [ XOR SUB STAR SEMI RPAR PIPE NEQ_OP LT LE LAND IDENTIFIE
 -- On DIV shift to state 98
 -- On ADD shift to state 102
 ## Reductions:
--- On XOR reduce production expr -> expr GT expr
--- On SEMI reduce production expr -> expr GT expr
--- On RPAR reduce production expr -> expr GT expr
--- On PIPE reduce production expr -> expr GT expr
--- On LAND reduce production expr -> expr GT expr
--- On IDENTIFIER reduce production expr -> expr GT expr
--- On COMMA reduce production expr -> expr GT expr
+-- On XOR SEMI RPAR PIPE LAND IDENTIFIER COMMA
+--   reduce production expr -> expr GT expr
 
 State 112:
 ## Known stack suffix:
@@ -2164,13 +2082,8 @@ expr -> expr GE expr . [ XOR SUB STAR SEMI RPAR PIPE NEQ_OP LT LE LAND IDENTIFIE
 -- On DIV shift to state 98
 -- On ADD shift to state 102
 ## Reductions:
--- On XOR reduce production expr -> expr GE expr
--- On SEMI reduce production expr -> expr GE expr
--- On RPAR reduce production expr -> expr GE expr
--- On PIPE reduce production expr -> expr GE expr
--- On LAND reduce production expr -> expr GE expr
--- On IDENTIFIER reduce production expr -> expr GE expr
--- On COMMA reduce production expr -> expr GE expr
+-- On XOR SEMI RPAR PIPE LAND IDENTIFIER COMMA
+--   reduce production expr -> expr GE expr
 
 State 114:
 ## Known stack suffix:
@@ -2226,13 +2139,8 @@ expr -> expr . GE expr [ XOR SUB STAR SEMI RPAR PIPE NEQ_OP LT LE LAND IDENTIFIE
 -- On DIV shift to state 98
 -- On ADD shift to state 102
 ## Reductions:
--- On XOR reduce production expr -> expr EQ_OP expr
--- On SEMI reduce production expr -> expr EQ_OP expr
--- On RPAR reduce production expr -> expr EQ_OP expr
--- On PIPE reduce production expr -> expr EQ_OP expr
--- On LAND reduce production expr -> expr EQ_OP expr
--- On IDENTIFIER reduce production expr -> expr EQ_OP expr
--- On COMMA reduce production expr -> expr EQ_OP expr
+-- On XOR SEMI RPAR PIPE LAND IDENTIFIER COMMA
+--   reduce production expr -> expr EQ_OP expr
 
 State 116:
 ## Known stack suffix:
@@ -2296,11 +2204,8 @@ expr -> expr . GE expr [ XOR SUB STAR SEMI RPAR PIPE NEQ_OP LT LE LAND IDENTIFIE
 -- On DIV shift to state 98
 -- On ADD shift to state 102
 ## Reductions:
--- On SEMI reduce production expr -> expr PIPE expr
--- On RPAR reduce production expr -> expr PIPE expr
--- On PIPE reduce production expr -> expr PIPE expr
--- On IDENTIFIER reduce production expr -> expr PIPE expr
--- On COMMA reduce production expr -> expr PIPE expr
+-- On SEMI RPAR PIPE IDENTIFIER COMMA
+--   reduce production expr -> expr PIPE expr
 
 State 118:
 ## Known stack suffix:
@@ -2751,8 +2656,8 @@ annot -> annot_base . SUB annot [ RBRACE COMMA ]
 ## Transitions:
 -- On SUB shift to state 136
 ## Reductions:
--- On RBRACE reduce production annot -> annot_base
--- On COMMA reduce production annot -> annot_base
+-- On RBRACE COMMA
+--   reduce production annot -> annot_base
 
 State 136:
 ## Known stack suffix:
@@ -2785,7 +2690,8 @@ annot_list -> annot . [ RBRACE ]
 ## Transitions:
 -- On COMMA shift to state 139
 ## Reductions:
--- On RBRACE reduce production annot_list -> annot
+-- On RBRACE
+--   reduce production annot_list -> annot
 
 State 139:
 ## Known stack suffix:
@@ -2972,7 +2878,8 @@ expr -> expr . GE expr [ XOR SUB STAR RPAR PIPE NEQ_OP LT LE LAND GT GE EQ_OP DI
 -- On COMMA shift to state 148
 -- On ADD shift to state 102
 ## Reductions:
--- On RPAR reduce production args_ne -> expr
+-- On RPAR
+--   reduce production args_ne -> expr
 
 State 148:
 ## Known stack suffix:
@@ -3190,9 +3097,8 @@ expr -> LPAR typ RPAR . expr [ XOR SUB STAR RPAR PIPE NEQ_OP LT LE LAND GT GE EQ
 -- On ATOMICADDUNLESS shift to state 89
 -- On expr shift to state 161
 ## Reductions:
--- On VOLATILE reduce production base -> LPAR typ RPAR
--- On STAR reduce production base -> LPAR typ RPAR
--- On RPAR reduce production base -> LPAR typ RPAR
+-- On VOLATILE STAR RPAR
+--   reduce production base -> LPAR typ RPAR
 
 State 161:
 ## Known stack suffix:
@@ -5957,10 +5863,8 @@ block_ins -> LBRACE . ins_seq RBRACE [ VOLATILE VOID UNLOCK UNDERFENCE UNDERATOM
 -- On base0 shift to state 17
 -- On base shift to state 23
 ## Reductions:
--- On MUTEX reduce production ty_attr ->
--- On LONG reduce production ty_attr ->
--- On INT reduce production ty_attr ->
--- On CHAR reduce production ty_attr ->
+-- On MUTEX LONG INT CHAR
+--   reduce production ty_attr ->
 
 State 295:
 ## Known stack suffix:
@@ -6074,10 +5978,8 @@ instruction -> IF LPAR expr RPAR . block_ins ELSE block_ins [ VOLATILE VOID UNLO
 -- On base0 shift to state 17
 -- On base shift to state 23
 ## Reductions:
--- On MUTEX reduce production ty_attr ->
--- On LONG reduce production ty_attr ->
--- On INT reduce production ty_attr ->
--- On CHAR reduce production ty_attr ->
+-- On MUTEX LONG INT CHAR
+--   reduce production ty_attr ->
 
 State 299:
 ## Known stack suffix:
@@ -6121,7 +6023,8 @@ instruction -> IDENTIFIER LPAR . args RPAR SEMI [ VOLATILE VOID UNLOCK UNDERFENC
 -- On args_ne shift to state 150
 -- On args shift to state 301
 ## Reductions:
--- On RPAR reduce production args ->
+-- On RPAR
+--   reduce production args ->
 
 State 301:
 ## Known stack suffix:
@@ -6372,7 +6275,8 @@ initialisation -> typ IDENTIFIER EQ expr . [ SEMI ]
 -- On DIV shift to state 98
 -- On ADD shift to state 102
 ## Reductions:
--- On SEMI reduce production initialisation -> typ IDENTIFIER EQ expr
+-- On SEMI
+--   reduce production initialisation -> typ IDENTIFIER EQ expr
 
 State 318:
 ## Known stack suffix:
@@ -6410,31 +6314,8 @@ instruction -> IF LPAR expr RPAR block_ins . ELSE block_ins [ VOLATILE VOID UNLO
 ## Transitions:
 -- On ELSE shift to state 322
 ## Reductions:
--- On VOLATILE reduce production instruction -> IF LPAR expr RPAR block_ins
--- On VOID reduce production instruction -> IF LPAR expr RPAR block_ins
--- On UNLOCK reduce production instruction -> IF LPAR expr RPAR block_ins
--- On UNDERFENCE reduce production instruction -> IF LPAR expr RPAR block_ins
--- On UNDERATOMICOP reduce production instruction -> IF LPAR expr RPAR block_ins
--- On ST_EXPLICIT reduce production instruction -> IF LPAR expr RPAR block_ins
--- On STORE reduce production instruction -> IF LPAR expr RPAR block_ins
--- On STAR reduce production instruction -> IF LPAR expr RPAR block_ins
--- On SPINUNLOCK reduce production instruction -> IF LPAR expr RPAR block_ins
--- On SPINLOCK reduce production instruction -> IF LPAR expr RPAR block_ins
--- On RBRACE reduce production instruction -> IF LPAR expr RPAR block_ins
--- On MUTEX reduce production instruction -> IF LPAR expr RPAR block_ins
--- On LPAR reduce production instruction -> IF LPAR expr RPAR block_ins
--- On LONG reduce production instruction -> IF LPAR expr RPAR block_ins
--- On LOCK reduce production instruction -> IF LPAR expr RPAR block_ins
--- On LBRACE reduce production instruction -> IF LPAR expr RPAR block_ins
--- On INT reduce production instruction -> IF LPAR expr RPAR block_ins
--- On IF reduce production instruction -> IF LPAR expr RPAR block_ins
--- On IDENTIFIER reduce production instruction -> IF LPAR expr RPAR block_ins
--- On FENCE reduce production instruction -> IF LPAR expr RPAR block_ins
--- On CODEVAR reduce production instruction -> IF LPAR expr RPAR block_ins
--- On CHAR reduce production instruction -> IF LPAR expr RPAR block_ins
--- On BASE_TYPE reduce production instruction -> IF LPAR expr RPAR block_ins
--- On ATOMIC_TYPE reduce production instruction -> IF LPAR expr RPAR block_ins
--- On ATOMIC reduce production instruction -> IF LPAR expr RPAR block_ins
+-- On VOLATILE VOID UNLOCK UNDERFENCE UNDERATOMICOP ST_EXPLICIT STORE STAR SPINUNLOCK SPINLOCK RBRACE MUTEX LPAR LONG LOCK LBRACE INT IF IDENTIFIER FENCE CODEVAR CHAR BASE_TYPE ATOMIC_TYPE ATOMIC
+--   reduce production instruction -> IF LPAR expr RPAR block_ins
 
 State 322:
 ## Known stack suffix:
@@ -6470,10 +6351,8 @@ instruction -> IF LPAR expr RPAR block_ins ELSE . block_ins [ VOLATILE VOID UNLO
 -- On base0 shift to state 17
 -- On base shift to state 23
 ## Reductions:
--- On MUTEX reduce production ty_attr ->
--- On LONG reduce production ty_attr ->
--- On INT reduce production ty_attr ->
--- On CHAR reduce production ty_attr ->
+-- On MUTEX LONG INT CHAR
+--   reduce production ty_attr ->
 
 State 323:
 ## Known stack suffix:
@@ -6573,11 +6452,10 @@ ins_seq -> declaration . ins_seq [ RBRACE ]
 -- On base0 shift to state 17
 -- On base shift to state 23
 ## Reductions:
--- On RBRACE reduce production ins_seq -> declaration
--- On MUTEX reduce production ty_attr ->
--- On LONG reduce production ty_attr ->
--- On INT reduce production ty_attr ->
--- On CHAR reduce production ty_attr ->
+-- On RBRACE
+--   reduce production ins_seq -> declaration
+-- On MUTEX LONG INT CHAR
+--   reduce production ty_attr ->
 
 State 330:
 ## Known stack suffix:
@@ -6625,11 +6503,10 @@ ins_seq -> block_ins . ins_seq [ RBRACE ]
 -- On base0 shift to state 17
 -- On base shift to state 23
 ## Reductions:
--- On RBRACE reduce production ins_seq -> block_ins
--- On MUTEX reduce production ty_attr ->
--- On LONG reduce production ty_attr ->
--- On INT reduce production ty_attr ->
--- On CHAR reduce production ty_attr ->
+-- On RBRACE
+--   reduce production ins_seq -> block_ins
+-- On MUTEX LONG INT CHAR
+--   reduce production ty_attr ->
 
 State 332:
 ## Known stack suffix:
@@ -6695,11 +6572,10 @@ pseudo_seq -> declaration . pseudo_seq [ RBRACE ]
 -- On base0 shift to state 17
 -- On base shift to state 23
 ## Reductions:
--- On RBRACE reduce production pseudo_seq -> declaration
--- On MUTEX reduce production ty_attr ->
--- On LONG reduce production ty_attr ->
--- On INT reduce production ty_attr ->
--- On CHAR reduce production ty_attr ->
+-- On RBRACE
+--   reduce production pseudo_seq -> declaration
+-- On MUTEX LONG INT CHAR
+--   reduce production ty_attr ->
 
 State 336:
 ## Known stack suffix:
@@ -6747,11 +6623,10 @@ pseudo_seq -> block_ins . pseudo_seq [ RBRACE ]
 -- On base0 shift to state 17
 -- On base shift to state 23
 ## Reductions:
--- On RBRACE reduce production pseudo_seq -> block_ins
--- On MUTEX reduce production ty_attr ->
--- On LONG reduce production ty_attr ->
--- On INT reduce production ty_attr ->
--- On CHAR reduce production ty_attr ->
+-- On RBRACE
+--   reduce production pseudo_seq -> block_ins
+-- On MUTEX LONG INT CHAR
+--   reduce production ty_attr ->
 
 State 338:
 ## Known stack suffix:
@@ -6771,7 +6646,8 @@ parameter_list -> parameter_declaration . COMMA parameter_list [ RPAR ]
 ## Transitions:
 -- On COMMA shift to state 340
 ## Reductions:
--- On RPAR reduce production parameter_list -> parameter_declaration
+-- On RPAR
+--   reduce production parameter_list -> parameter_declaration
 
 State 340:
 ## Known stack suffix:
@@ -6793,11 +6669,10 @@ parameter_list -> parameter_declaration COMMA . parameter_list [ RPAR ]
 -- On base0 shift to state 17
 -- On base shift to state 23
 ## Reductions:
--- On RPAR reduce production parameter_list ->
--- On MUTEX reduce production ty_attr ->
--- On LONG reduce production ty_attr ->
--- On INT reduce production ty_attr ->
--- On CHAR reduce production ty_attr ->
+-- On RPAR
+--   reduce production parameter_list ->
+-- On MUTEX LONG INT CHAR
+--   reduce production ty_attr ->
 
 State 341:
 ## Known stack suffix:
@@ -6820,7 +6695,8 @@ trans_unit -> trans_unit . function_def [ VOID PROC EOF ]
 -- On voidopt shift to state 2
 -- On function_def shift to state 344
 ## Reductions:
--- On PROC reduce production voidopt ->
+-- On PROC
+--   reduce production voidopt ->
 
 State 343:
 ## Known stack suffix:
@@ -6890,7 +6766,8 @@ macro -> IDENTIFIER LPAR . formals RPAR body [ IDENTIFIER # ]
 -- On formals_ne shift to state 353
 -- On formals shift to state 354
 ## Reductions:
--- On RPAR reduce production formals ->
+-- On RPAR
+--   reduce production formals ->
 
 State 350:
 ## Known stack suffix:
@@ -6901,7 +6778,8 @@ formals_ne -> IDENTIFIER . COMMA formals_ne [ RPAR ]
 ## Transitions:
 -- On COMMA shift to state 351
 ## Reductions:
--- On RPAR reduce production formals_ne -> IDENTIFIER
+-- On RPAR
+--   reduce production formals_ne -> IDENTIFIER
 
 State 351:
 ## Known stack suffix:
@@ -7010,10 +6888,8 @@ body -> LBRACE . ins_seq RBRACE [ IDENTIFIER # ]
 -- On base0 shift to state 17
 -- On base shift to state 23
 ## Reductions:
--- On MUTEX reduce production ty_attr ->
--- On LONG reduce production ty_attr ->
--- On INT reduce production ty_attr ->
--- On CHAR reduce production ty_attr ->
+-- On MUTEX LONG INT CHAR
+--   reduce production ty_attr ->
 
 State 357:
 ## Known stack suffix:
@@ -7066,7 +6942,8 @@ macro -> IDENTIFIER LPAR formals RPAR expr . [ IDENTIFIER # ]
 -- On DIV shift to state 98
 -- On ADD shift to state 102
 ## Reductions:
--- On IDENTIFIER reduce production macro -> IDENTIFIER LPAR formals RPAR expr
+-- On IDENTIFIER
+--   reduce production macro -> IDENTIFIER LPAR formals RPAR expr
 
 State 360:
 ## Known stack suffix:
@@ -7142,10 +7019,8 @@ pseudo_seq' -> . pseudo_seq [ # ]
 -- On base0 shift to state 17
 -- On base shift to state 23
 ## Reductions:
--- On MUTEX reduce production ty_attr ->
--- On LONG reduce production ty_attr ->
--- On INT reduce production ty_attr ->
--- On CHAR reduce production ty_attr ->
+-- On MUTEX LONG INT CHAR
+--   reduce production ty_attr ->
 
 State 365:
 ## Known stack suffix:
@@ -7193,10 +7068,8 @@ pseudo_seq -> declaration . pseudo_seq [ # ]
 -- On base0 shift to state 17
 -- On base shift to state 23
 ## Reductions:
--- On MUTEX reduce production ty_attr ->
--- On LONG reduce production ty_attr ->
--- On INT reduce production ty_attr ->
--- On CHAR reduce production ty_attr ->
+-- On MUTEX LONG INT CHAR
+--   reduce production ty_attr ->
 
 State 367:
 ## Known stack suffix:
@@ -7244,10 +7117,8 @@ pseudo_seq -> block_ins . pseudo_seq [ # ]
 -- On base0 shift to state 17
 -- On base shift to state 23
 ## Reductions:
--- On MUTEX reduce production ty_attr ->
--- On LONG reduce production ty_attr ->
--- On INT reduce production ty_attr ->
--- On CHAR reduce production ty_attr ->
+-- On MUTEX LONG INT CHAR
+--   reduce production ty_attr ->
 
 State 369:
 ## Known stack suffix:
@@ -7270,7 +7141,8 @@ shallow_main' -> . shallow_main [ # ]
 -- On voidopt shift to state 373
 -- On shallow_main shift to state 381
 ## Reductions:
--- On PROC reduce production voidopt ->
+-- On PROC
+--   reduce production voidopt ->
 
 State 371:
 ## Known stack suffix:
@@ -7293,7 +7165,8 @@ shallow_main -> BODY . shallow_main [ # ]
 -- On voidopt shift to state 373
 -- On shallow_main shift to state 380
 ## Reductions:
--- On PROC reduce production voidopt ->
+-- On PROC
+--   reduce production voidopt ->
 
 State 373:
 ## Known stack suffix:
@@ -7333,11 +7206,10 @@ shallow_main -> voidopt PROC LPAR . parameter_list RPAR BODY shallow_main [ # ]
 -- On base0 shift to state 17
 -- On base shift to state 23
 ## Reductions:
--- On RPAR reduce production parameter_list ->
--- On MUTEX reduce production ty_attr ->
--- On LONG reduce production ty_attr ->
--- On INT reduce production ty_attr ->
--- On CHAR reduce production ty_attr ->
+-- On RPAR
+--   reduce production parameter_list ->
+-- On MUTEX LONG INT CHAR
+--   reduce production ty_attr ->
 
 State 376:
 ## Known stack suffix:
@@ -7369,7 +7241,8 @@ shallow_main -> voidopt PROC LPAR parameter_list RPAR BODY . shallow_main [ # ]
 -- On voidopt shift to state 373
 -- On shallow_main shift to state 379
 ## Reductions:
--- On PROC reduce production voidopt ->
+-- On PROC
+--   reduce production voidopt ->
 
 State 379:
 ## Known stack suffix:

@@ -17,11 +17,8 @@ input_output' -> . input_output [ # ]
 -- On input_prefix shift to state 46
 -- On input_output shift to state 47
 ## Reductions:
--- On PLUS reduce production option(TOKEN) ->
--- On MINUS reduce production option(TOKEN) ->
--- On EQUAL reduce production option(TOKEN) ->
--- On CARET reduce production option(TOKEN) ->
--- On ASTERISK reduce production option(TOKEN) ->
+-- On PLUS MINUS EQUAL CARET ASTERISK
+--   reduce production option(TOKEN) ->
 
 State 1:
 ## Known stack suffix:
@@ -30,11 +27,8 @@ State 1:
 option(TOKEN) -> TOKEN . [ PLUS MINUS EQUAL CARET ASTERISK ]
 ## Transitions:
 ## Reductions:
--- On PLUS reduce production option(TOKEN) -> TOKEN
--- On MINUS reduce production option(TOKEN) -> TOKEN
--- On EQUAL reduce production option(TOKEN) -> TOKEN
--- On CARET reduce production option(TOKEN) -> TOKEN
--- On ASTERISK reduce production option(TOKEN) -> TOKEN
+-- On PLUS MINUS EQUAL CARET ASTERISK
+--   reduce production option(TOKEN) -> TOKEN
 
 State 2:
 ## Known stack suffix:
@@ -43,7 +37,8 @@ State 2:
 stream_type -> TILDE . [ STRING ]
 ## Transitions:
 ## Reductions:
--- On STRING reduce production stream_type -> TILDE
+-- On STRING
+--   reduce production stream_type -> TILDE
 
 State 3:
 ## Known stack suffix:
@@ -61,7 +56,8 @@ State 4:
 input_output -> PROMPT EOF . [ # ]
 ## Transitions:
 ## Reductions:
--- On # reduce production input_output -> PROMPT EOF
+-- On #
+--   reduce production input_output -> PROMPT EOF
 
 State 5:
 ## Known stack suffix:
@@ -70,7 +66,8 @@ State 5:
 input_prefix -> IDENT . [ # ]
 ## Transitions:
 ## Reductions:
--- On # reduce production input_prefix -> IDENT
+-- On #
+--   reduce production input_prefix -> IDENT
 
 State 6:
 ## Known stack suffix:
@@ -79,7 +76,8 @@ State 6:
 stream_type -> AT . [ STRING ]
 ## Transitions:
 ## Reductions:
--- On STRING reduce production stream_type -> AT
+-- On STRING
+--   reduce production stream_type -> AT
 
 State 7:
 ## Known stack suffix:
@@ -88,7 +86,8 @@ State 7:
 stream_type -> AMPERSAND . [ STRING ]
 ## Transitions:
 ## Reductions:
--- On STRING reduce production stream_type -> AMPERSAND
+-- On STRING
+--   reduce production stream_type -> AMPERSAND
 
 State 8:
 ## Known stack suffix:
@@ -106,7 +105,8 @@ State 9:
 output_record -> stream_type STRING . [ EOF ]
 ## Transitions:
 ## Reductions:
--- On EOF reduce production output_record -> stream_type STRING
+-- On EOF
+--   reduce production output_record -> stream_type STRING
 
 State 10:
 ## Known stack suffix:
@@ -124,7 +124,8 @@ State 11:
 output -> output_record EOF . [ # ]
 ## Transitions:
 ## Reductions:
--- On # reduce production output -> output_record EOF
+-- On #
+--   reduce production output -> output_record EOF
 
 State 12:
 ## Known stack suffix:
@@ -133,7 +134,8 @@ State 12:
 input_output -> output . [ # ]
 ## Transitions:
 ## Reductions:
--- On # reduce production input_output -> output
+-- On #
+--   reduce production input_output -> output
 
 State 13:
 ## Known stack suffix:
@@ -158,7 +160,8 @@ State 14:
 async_type -> PLUS . [ IDENT ]
 ## Transitions:
 ## Reductions:
--- On IDENT reduce production async_type -> PLUS
+-- On IDENT
+--   reduce production async_type -> PLUS
 
 State 15:
 ## Known stack suffix:
@@ -167,7 +170,8 @@ State 15:
 input_prefix -> option(TOKEN) MINUS . [ # ]
 ## Transitions:
 ## Reductions:
--- On # reduce production input_prefix -> option(TOKEN) MINUS
+-- On #
+--   reduce production input_prefix -> option(TOKEN) MINUS
 
 State 16:
 ## Known stack suffix:
@@ -176,7 +180,8 @@ State 16:
 async_type -> EQUAL . [ IDENT ]
 ## Transitions:
 ## Reductions:
--- On IDENT reduce production async_type -> EQUAL
+-- On IDENT
+--   reduce production async_type -> EQUAL
 
 State 17:
 ## Known stack suffix:
@@ -196,7 +201,8 @@ output_record -> option(TOKEN) CARET IDENT . list(preceded(COMMA,result)) [ EOF 
 -- On COMMA shift to state 19
 -- On list(preceded(COMMA,result)) shift to state 41
 ## Reductions:
--- On EOF reduce production list(preceded(COMMA,result)) ->
+-- On EOF
+--   reduce production list(preceded(COMMA,result)) ->
 
 State 19:
 ## Known stack suffix:
@@ -236,10 +242,8 @@ State 22:
 value -> STRING . [ RCURLY RBRACKET EOF COMMA ]
 ## Transitions:
 ## Reductions:
--- On RCURLY reduce production value -> STRING
--- On RBRACKET reduce production value -> STRING
--- On EOF reduce production value -> STRING
--- On COMMA reduce production value -> STRING
+-- On RCURLY RBRACKET EOF COMMA
+--   reduce production value -> STRING
 
 State 23:
 ## Known stack suffix:
@@ -252,7 +256,8 @@ value -> LCURLY . loption(separated_nonempty_list(COMMA,result)) RCURLY [ RCURLY
 -- On result shift to state 25
 -- On loption(separated_nonempty_list(COMMA,result)) shift to state 28
 ## Reductions:
--- On RCURLY reduce production loption(separated_nonempty_list(COMMA,result)) ->
+-- On RCURLY
+--   reduce production loption(separated_nonempty_list(COMMA,result)) ->
 
 State 24:
 ## Known stack suffix:
@@ -261,8 +266,8 @@ State 24:
 loption(separated_nonempty_list(COMMA,result)) -> separated_nonempty_list(COMMA,result) . [ RCURLY RBRACKET ]
 ## Transitions:
 ## Reductions:
--- On RCURLY reduce production loption(separated_nonempty_list(COMMA,result)) -> separated_nonempty_list(COMMA,result)
--- On RBRACKET reduce production loption(separated_nonempty_list(COMMA,result)) -> separated_nonempty_list(COMMA,result)
+-- On RCURLY RBRACKET
+--   reduce production loption(separated_nonempty_list(COMMA,result)) -> separated_nonempty_list(COMMA,result)
 
 State 25:
 ## Known stack suffix:
@@ -273,8 +278,8 @@ separated_nonempty_list(COMMA,result) -> result . COMMA separated_nonempty_list(
 ## Transitions:
 -- On COMMA shift to state 26
 ## Reductions:
--- On RCURLY reduce production separated_nonempty_list(COMMA,result) -> result
--- On RBRACKET reduce production separated_nonempty_list(COMMA,result) -> result
+-- On RCURLY RBRACKET
+--   reduce production separated_nonempty_list(COMMA,result) -> result
 
 State 26:
 ## Known stack suffix:
@@ -294,8 +299,8 @@ State 27:
 separated_nonempty_list(COMMA,result) -> result COMMA separated_nonempty_list(COMMA,result) . [ RCURLY RBRACKET ]
 ## Transitions:
 ## Reductions:
--- On RCURLY reduce production separated_nonempty_list(COMMA,result) -> result COMMA separated_nonempty_list(COMMA,result)
--- On RBRACKET reduce production separated_nonempty_list(COMMA,result) -> result COMMA separated_nonempty_list(COMMA,result)
+-- On RCURLY RBRACKET
+--   reduce production separated_nonempty_list(COMMA,result) -> result COMMA separated_nonempty_list(COMMA,result)
 
 State 28:
 ## Known stack suffix:
@@ -313,10 +318,8 @@ State 29:
 value -> LCURLY loption(separated_nonempty_list(COMMA,result)) RCURLY . [ RCURLY RBRACKET EOF COMMA ]
 ## Transitions:
 ## Reductions:
--- On RCURLY reduce production value -> LCURLY loption(separated_nonempty_list(COMMA,result)) RCURLY
--- On RBRACKET reduce production value -> LCURLY loption(separated_nonempty_list(COMMA,result)) RCURLY
--- On EOF reduce production value -> LCURLY loption(separated_nonempty_list(COMMA,result)) RCURLY
--- On COMMA reduce production value -> LCURLY loption(separated_nonempty_list(COMMA,result)) RCURLY
+-- On RCURLY RBRACKET EOF COMMA
+--   reduce production value -> LCURLY loption(separated_nonempty_list(COMMA,result)) RCURLY
 
 State 30:
 ## Known stack suffix:
@@ -335,7 +338,8 @@ value -> LBRACKET . separated_nonempty_list(COMMA,value) RBRACKET [ RCURLY RBRAC
 -- On result shift to state 25
 -- On loption(separated_nonempty_list(COMMA,result)) shift to state 36
 ## Reductions:
--- On RBRACKET reduce production loption(separated_nonempty_list(COMMA,result)) ->
+-- On RBRACKET
+--   reduce production loption(separated_nonempty_list(COMMA,result)) ->
 
 State 31:
 ## Known stack suffix:
@@ -346,7 +350,8 @@ separated_nonempty_list(COMMA,value) -> value . COMMA separated_nonempty_list(CO
 ## Transitions:
 -- On COMMA shift to state 32
 ## Reductions:
--- On RBRACKET reduce production separated_nonempty_list(COMMA,value) -> value
+-- On RBRACKET
+--   reduce production separated_nonempty_list(COMMA,value) -> value
 
 State 32:
 ## Known stack suffix:
@@ -368,7 +373,8 @@ State 33:
 separated_nonempty_list(COMMA,value) -> value COMMA separated_nonempty_list(COMMA,value) . [ RBRACKET ]
 ## Transitions:
 ## Reductions:
--- On RBRACKET reduce production separated_nonempty_list(COMMA,value) -> value COMMA separated_nonempty_list(COMMA,value)
+-- On RBRACKET
+--   reduce production separated_nonempty_list(COMMA,value) -> value COMMA separated_nonempty_list(COMMA,value)
 
 State 34:
 ## Known stack suffix:
@@ -386,10 +392,8 @@ State 35:
 value -> LBRACKET separated_nonempty_list(COMMA,value) RBRACKET . [ RCURLY RBRACKET EOF COMMA ]
 ## Transitions:
 ## Reductions:
--- On RCURLY reduce production value -> LBRACKET separated_nonempty_list(COMMA,value) RBRACKET
--- On RBRACKET reduce production value -> LBRACKET separated_nonempty_list(COMMA,value) RBRACKET
--- On EOF reduce production value -> LBRACKET separated_nonempty_list(COMMA,value) RBRACKET
--- On COMMA reduce production value -> LBRACKET separated_nonempty_list(COMMA,value) RBRACKET
+-- On RCURLY RBRACKET EOF COMMA
+--   reduce production value -> LBRACKET separated_nonempty_list(COMMA,value) RBRACKET
 
 State 36:
 ## Known stack suffix:
@@ -407,10 +411,8 @@ State 37:
 value -> LBRACKET loption(separated_nonempty_list(COMMA,result)) RBRACKET . [ RCURLY RBRACKET EOF COMMA ]
 ## Transitions:
 ## Reductions:
--- On RCURLY reduce production value -> LBRACKET loption(separated_nonempty_list(COMMA,result)) RBRACKET
--- On RBRACKET reduce production value -> LBRACKET loption(separated_nonempty_list(COMMA,result)) RBRACKET
--- On EOF reduce production value -> LBRACKET loption(separated_nonempty_list(COMMA,result)) RBRACKET
--- On COMMA reduce production value -> LBRACKET loption(separated_nonempty_list(COMMA,result)) RBRACKET
+-- On RCURLY RBRACKET EOF COMMA
+--   reduce production value -> LBRACKET loption(separated_nonempty_list(COMMA,result)) RBRACKET
 
 State 38:
 ## Known stack suffix:
@@ -419,10 +421,8 @@ State 38:
 result -> IDENT EQUAL value . [ RCURLY RBRACKET EOF COMMA ]
 ## Transitions:
 ## Reductions:
--- On RCURLY reduce production result -> IDENT EQUAL value
--- On RBRACKET reduce production result -> IDENT EQUAL value
--- On EOF reduce production result -> IDENT EQUAL value
--- On COMMA reduce production result -> IDENT EQUAL value
+-- On RCURLY RBRACKET EOF COMMA
+--   reduce production result -> IDENT EQUAL value
 
 State 39:
 ## Known stack suffix:
@@ -433,7 +433,8 @@ list(preceded(COMMA,result)) -> COMMA result . list(preceded(COMMA,result)) [ EO
 -- On COMMA shift to state 19
 -- On list(preceded(COMMA,result)) shift to state 40
 ## Reductions:
--- On EOF reduce production list(preceded(COMMA,result)) ->
+-- On EOF
+--   reduce production list(preceded(COMMA,result)) ->
 
 State 40:
 ## Known stack suffix:
@@ -442,7 +443,8 @@ State 40:
 list(preceded(COMMA,result)) -> COMMA result list(preceded(COMMA,result)) . [ EOF ]
 ## Transitions:
 ## Reductions:
--- On EOF reduce production list(preceded(COMMA,result)) -> COMMA result list(preceded(COMMA,result))
+-- On EOF
+--   reduce production list(preceded(COMMA,result)) -> COMMA result list(preceded(COMMA,result))
 
 State 41:
 ## Known stack suffix:
@@ -451,7 +453,8 @@ State 41:
 output_record -> option(TOKEN) CARET IDENT list(preceded(COMMA,result)) . [ EOF ]
 ## Transitions:
 ## Reductions:
--- On EOF reduce production output_record -> option(TOKEN) CARET IDENT list(preceded(COMMA,result))
+-- On EOF
+--   reduce production output_record -> option(TOKEN) CARET IDENT list(preceded(COMMA,result))
 
 State 42:
 ## Known stack suffix:
@@ -460,7 +463,8 @@ State 42:
 async_type -> ASTERISK . [ IDENT ]
 ## Transitions:
 ## Reductions:
--- On IDENT reduce production async_type -> ASTERISK
+-- On IDENT
+--   reduce production async_type -> ASTERISK
 
 State 43:
 ## Known stack suffix:
@@ -480,7 +484,8 @@ output_record -> option(TOKEN) async_type IDENT . list(preceded(COMMA,result)) [
 -- On COMMA shift to state 19
 -- On list(preceded(COMMA,result)) shift to state 45
 ## Reductions:
--- On EOF reduce production list(preceded(COMMA,result)) ->
+-- On EOF
+--   reduce production list(preceded(COMMA,result)) ->
 
 State 45:
 ## Known stack suffix:
@@ -489,7 +494,8 @@ State 45:
 output_record -> option(TOKEN) async_type IDENT list(preceded(COMMA,result)) . [ EOF ]
 ## Transitions:
 ## Reductions:
--- On EOF reduce production output_record -> option(TOKEN) async_type IDENT list(preceded(COMMA,result))
+-- On EOF
+--   reduce production output_record -> option(TOKEN) async_type IDENT list(preceded(COMMA,result))
 
 State 46:
 ## Known stack suffix:
@@ -498,7 +504,8 @@ State 46:
 input_output -> input_prefix . [ # ]
 ## Transitions:
 ## Reductions:
--- On # reduce production input_output -> input_prefix
+-- On #
+--   reduce production input_output -> input_prefix
 
 State 47:
 ## Known stack suffix:
@@ -507,7 +514,8 @@ State 47:
 input_output' -> input_output . [ # ]
 ## Transitions:
 ## Reductions:
--- On # accept input_output
+-- On #
+--   accept input_output
 
 State 48:
 ## Known stack suffix:
@@ -524,10 +532,8 @@ output' -> . output [ # ]
 -- On output shift to state 49
 -- On option(TOKEN) shift to state 50
 ## Reductions:
--- On PLUS reduce production option(TOKEN) ->
--- On EQUAL reduce production option(TOKEN) ->
--- On CARET reduce production option(TOKEN) ->
--- On ASTERISK reduce production option(TOKEN) ->
+-- On PLUS EQUAL CARET ASTERISK
+--   reduce production option(TOKEN) ->
 
 State 49:
 ## Known stack suffix:
@@ -536,7 +542,8 @@ State 49:
 output' -> output . [ # ]
 ## Transitions:
 ## Reductions:
--- On # accept output
+-- On #
+--   accept output
 
 State 50:
 ## Known stack suffix:

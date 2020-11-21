@@ -28,15 +28,8 @@ stylesheet -> s_star . statement_star EOF [ # ]
 -- On S shift to state 3
 -- On statement_star shift to state 4
 ## Reductions:
--- On SEL_FUNC reduce production statement_star ->
--- On PERIOD reduce production statement_star ->
--- On OPEN_SQUARE reduce production statement_star ->
--- On IDENT reduce production statement_star ->
--- On HASH reduce production statement_star ->
--- On EOF reduce production statement_star ->
--- On DOUBLE_COLON reduce production statement_star ->
--- On COLON reduce production statement_star ->
--- On ASTERISK reduce production statement_star ->
+-- On SEL_FUNC PERIOD OPEN_SQUARE IDENT HASH EOF DOUBLE_COLON COLON ASTERISK
+--   reduce production statement_star ->
 
 State 3:
 ## Known stack suffix:
@@ -134,7 +127,8 @@ qualifier -> OPEN_SQUARE IDENT . attr_operation CLOSE_SQUARE [ TILDE SEL_FUNC S 
 -- On ATTR_DASHMATCH shift to state 22
 -- On attr_operation shift to state 24
 ## Reductions:
--- On CLOSE_SQUARE reduce production attr_operation ->
+-- On CLOSE_SQUARE
+--   reduce production attr_operation ->
 
 State 10:
 ## Known stack suffix:
@@ -370,7 +364,8 @@ qualifier_plus -> qualifier_plus . qualifier [ SEL_FUNC PERIOD OPEN_SQUARE HASH 
 -- On COLON shift to state 31
 -- On qualifier shift to state 34
 ## Reductions:
--- On CLOSE_ROUND reduce production function_args -> qualifier_plus
+-- On CLOSE_ROUND
+--   reduce production function_args -> qualifier_plus
 
 State 34:
 ## Known stack suffix:
@@ -468,8 +463,8 @@ selector -> simple_selector combination_star . [ OPEN_CURLY COMMA ]
 -- On combinator shift to state 48
 -- On combination shift to state 54
 ## Reductions:
--- On OPEN_CURLY reduce production selector -> simple_selector combination_star
--- On COMMA reduce production selector -> simple_selector combination_star
+-- On OPEN_CURLY COMMA
+--   reduce production selector -> simple_selector combination_star
 
 State 44:
 ## Known stack suffix:
@@ -551,12 +546,8 @@ simple_selector -> qualifier_plus . [ TILDE S PLUS OPEN_CURLY GT COMMA ]
 -- On COLON shift to state 31
 -- On qualifier shift to state 34
 ## Reductions:
--- On TILDE reduce production simple_selector -> qualifier_plus
--- On S reduce production simple_selector -> qualifier_plus
--- On PLUS reduce production simple_selector -> qualifier_plus
--- On OPEN_CURLY reduce production simple_selector -> qualifier_plus
--- On GT reduce production simple_selector -> qualifier_plus
--- On COMMA reduce production simple_selector -> qualifier_plus
+-- On TILDE S PLUS OPEN_CURLY GT COMMA
+--   reduce production simple_selector -> qualifier_plus
 
 State 51:
 ## Known stack suffix:
@@ -583,12 +574,8 @@ simple_selector -> element qualifier_star . [ TILDE S PLUS OPEN_CURLY GT COMMA ]
 -- On COLON shift to state 31
 -- On qualifier shift to state 53
 ## Reductions:
--- On TILDE reduce production simple_selector -> element qualifier_star
--- On S reduce production simple_selector -> element qualifier_star
--- On PLUS reduce production simple_selector -> element qualifier_star
--- On OPEN_CURLY reduce production simple_selector -> element qualifier_star
--- On GT reduce production simple_selector -> element qualifier_star
--- On COMMA reduce production simple_selector -> element qualifier_star
+-- On TILDE S PLUS OPEN_CURLY GT COMMA
+--   reduce production simple_selector -> element qualifier_star
 
 State 53:
 ## Known stack suffix:
@@ -617,7 +604,8 @@ selector_separated_nonempty_list_COMMA -> selector_separated_nonempty_list_COMMA
 ## Transitions:
 -- On COMMA shift to state 56
 ## Reductions:
--- On OPEN_CURLY reduce production selector_list -> selector_separated_nonempty_list_COMMA
+-- On OPEN_CURLY
+--   reduce production selector_list -> selector_separated_nonempty_list_COMMA
 
 State 56:
 ## Known stack suffix:
@@ -813,10 +801,8 @@ term_separated_nonempty_list_sopt -> term_separated_nonempty_list_sopt . S term 
 ## Transitions:
 -- On S shift to state 73
 ## Reductions:
--- On SEMICOLON reduce production sentence -> term_separated_nonempty_list_sopt
--- On IMPORTANT reduce production sentence -> term_separated_nonempty_list_sopt
--- On COMMA reduce production sentence -> term_separated_nonempty_list_sopt
--- On CLOSE_ROUND reduce production sentence -> term_separated_nonempty_list_sopt
+-- On SEMICOLON IMPORTANT COMMA CLOSE_ROUND
+--   reduce production sentence -> term_separated_nonempty_list_sopt
 
 State 73:
 ## Known stack suffix:
@@ -872,9 +858,8 @@ sentence_separated_nonempty_list_COMMA -> sentence_separated_nonempty_list_COMMA
 ## Transitions:
 -- On COMMA shift to state 78
 ## Reductions:
--- On SEMICOLON reduce production expr -> sentence_separated_nonempty_list_COMMA
--- On IMPORTANT reduce production expr -> sentence_separated_nonempty_list_COMMA
--- On CLOSE_ROUND reduce production expr -> sentence_separated_nonempty_list_COMMA
+-- On SEMICOLON IMPORTANT CLOSE_ROUND
+--   reduce production expr -> sentence_separated_nonempty_list_COMMA
 
 State 78:
 ## Known stack suffix:
@@ -941,7 +926,8 @@ declaration -> IDENT COLON expr . boption_IMPORTANT SEMICOLON [ IDENT CLOSE_CURL
 -- On IMPORTANT shift to state 84
 -- On boption_IMPORTANT shift to state 85
 ## Reductions:
--- On SEMICOLON reduce production boption_IMPORTANT ->
+-- On SEMICOLON
+--   reduce production boption_IMPORTANT ->
 
 State 84:
 ## Known stack suffix:

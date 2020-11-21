@@ -121,7 +121,8 @@ expression -> LET REC LIDENT . pattern_list EQUAL expression IN expression [ SEM
 -- On pattern_list shift to state 11
 -- On pattern shift to state 71
 ## Reductions:
--- On EQUAL reduce production pattern_list ->
+-- On EQUAL
+--   reduce production pattern_list ->
 
 State 10:
 ## Known stack suffix:
@@ -183,7 +184,8 @@ expression -> FUN . pattern_list ARROW expression [ SEMISEMI RPAREN OF IN END BA
 -- On pattern_list shift to state 15
 -- On pattern shift to state 71
 ## Reductions:
--- On ARROW reduce production pattern_list ->
+-- On ARROW
+--   reduce production pattern_list ->
 
 State 15:
 ## Known stack suffix:
@@ -252,7 +254,8 @@ pattern -> LIDENT . [ EQUAL ]
 ## Transitions:
 -- On OF shift to state 20
 ## Reductions:
--- On EQUAL reduce production pattern -> LIDENT
+-- On EQUAL
+--   reduce production pattern -> LIDENT
 
 State 20:
 ## Known stack suffix:
@@ -264,7 +267,8 @@ expression0 -> CASE LIDENT OF . case_list END [ UNIT UIDENT SETMINUS SEMISEMI SE
 -- On case_list shift to state 58
 -- On case_entry shift to state 60
 ## Reductions:
--- On END reduce production case_list ->
+-- On END
+--   reduce production case_list ->
 
 State 21:
 ## Known stack suffix:
@@ -351,12 +355,8 @@ expression2 -> expression1 . SEMI expression [ SEMISEMI RPAREN OF IN END BAR ]
 -- On CASE shift to state 18
 -- On expression0 shift to state 43
 ## Reductions:
--- On SEMISEMI reduce production expression2 -> expression1
--- On RPAREN reduce production expression2 -> expression1
--- On OF reduce production expression2 -> expression1
--- On IN reduce production expression2 -> expression1
--- On END reduce production expression2 -> expression1
--- On BAR reduce production expression2 -> expression1
+-- On SEMISEMI RPAREN OF IN END BAR
+--   reduce production expression2 -> expression1
 
 State 28:
 ## Known stack suffix:
@@ -394,20 +394,8 @@ expression1 -> expression0 . [ UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE 
 -- On LBRACE shift to state 38
 -- On DOT shift to state 44
 ## Reductions:
--- On UNIT reduce production expression1 -> expression0
--- On UIDENT reduce production expression1 -> expression0
--- On SEMISEMI reduce production expression1 -> expression0
--- On SEMI reduce production expression1 -> expression0
--- On RPAREN reduce production expression1 -> expression0
--- On RBRACE reduce production expression1 -> expression0
--- On OF reduce production expression1 -> expression0
--- On LPAREN reduce production expression1 -> expression0
--- On LIDENT reduce production expression1 -> expression0
--- On INT reduce production expression1 -> expression0
--- On IN reduce production expression1 -> expression0
--- On END reduce production expression1 -> expression0
--- On CASE reduce production expression1 -> expression0
--- On BAR reduce production expression1 -> expression0
+-- On UNIT UIDENT SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT INT IN END CASE BAR
+--   reduce production expression1 -> expression0
 
 State 30:
 ## Known stack suffix:
@@ -438,7 +426,8 @@ expression0 -> expression0 SETMINUS LBRACE . field_list RBRACE [ UNIT UIDENT SET
 -- On LIDENT shift to state 33
 -- On field_list shift to state 36
 ## Reductions:
--- On RBRACE reduce production field_list ->
+-- On RBRACE
+--   reduce production field_list ->
 
 State 33:
 ## Known stack suffix:
@@ -449,7 +438,8 @@ field_list -> LIDENT . SEMI field_list [ RBRACE ]
 ## Transitions:
 -- On SEMI shift to state 34
 ## Reductions:
--- On RBRACE reduce production field_list -> LIDENT
+-- On RBRACE
+--   reduce production field_list -> LIDENT
 
 State 34:
 ## Known stack suffix:
@@ -460,7 +450,8 @@ field_list -> LIDENT SEMI . field_list [ RBRACE ]
 -- On LIDENT shift to state 33
 -- On field_list shift to state 35
 ## Reductions:
--- On RBRACE reduce production field_list ->
+-- On RBRACE
+--   reduce production field_list ->
 
 State 35:
 ## Known stack suffix:
@@ -500,7 +491,8 @@ expression0 -> expression0 LBRACE . field_expr_list RBRACE [ UNIT UIDENT SETMINU
 -- On field_expr_list shift to state 51
 -- On field_expr shift to state 53
 ## Reductions:
--- On RBRACE reduce production field_expr_list ->
+-- On RBRACE
+--   reduce production field_expr_list ->
 
 State 39:
 ## Known stack suffix:
@@ -552,8 +544,8 @@ field_expr -> MUTABLE LIDENT EQUAL expression1 . [ SEMI RBRACE ]
 -- On CASE shift to state 18
 -- On expression0 shift to state 43
 ## Reductions:
--- On SEMI reduce production field_expr -> MUTABLE LIDENT EQUAL expression1
--- On RBRACE reduce production field_expr -> MUTABLE LIDENT EQUAL expression1
+-- On SEMI RBRACE
+--   reduce production field_expr -> MUTABLE LIDENT EQUAL expression1
 
 State 43:
 ## Known stack suffix:
@@ -570,20 +562,8 @@ expression1 -> expression1 expression0 . [ UNIT UIDENT SETMINUS SEMISEMI SEMI RP
 -- On LBRACE shift to state 38
 -- On DOT shift to state 44
 ## Reductions:
--- On UNIT reduce production expression1 -> expression1 expression0
--- On UIDENT reduce production expression1 -> expression1 expression0
--- On SEMISEMI reduce production expression1 -> expression1 expression0
--- On SEMI reduce production expression1 -> expression1 expression0
--- On RPAREN reduce production expression1 -> expression1 expression0
--- On RBRACE reduce production expression1 -> expression1 expression0
--- On OF reduce production expression1 -> expression1 expression0
--- On LPAREN reduce production expression1 -> expression1 expression0
--- On LIDENT reduce production expression1 -> expression1 expression0
--- On INT reduce production expression1 -> expression1 expression0
--- On IN reduce production expression1 -> expression1 expression0
--- On END reduce production expression1 -> expression1 expression0
--- On CASE reduce production expression1 -> expression1 expression0
--- On BAR reduce production expression1 -> expression1 expression0
+-- On UNIT UIDENT SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT INT IN END CASE BAR
+--   reduce production expression1 -> expression1 expression0
 
 State 44:
 ## Known stack suffix:
@@ -604,23 +584,8 @@ expression0 -> expression0 DOT LIDENT . LEFTARROW expression1 [ UNIT UIDENT SETM
 ## Transitions:
 -- On LEFTARROW shift to state 46
 ## Reductions:
--- On UNIT reduce production expression0 -> expression0 DOT LIDENT
--- On UIDENT reduce production expression0 -> expression0 DOT LIDENT
--- On SETMINUS reduce production expression0 -> expression0 DOT LIDENT
--- On SEMISEMI reduce production expression0 -> expression0 DOT LIDENT
--- On SEMI reduce production expression0 -> expression0 DOT LIDENT
--- On RPAREN reduce production expression0 -> expression0 DOT LIDENT
--- On RBRACE reduce production expression0 -> expression0 DOT LIDENT
--- On OF reduce production expression0 -> expression0 DOT LIDENT
--- On LPAREN reduce production expression0 -> expression0 DOT LIDENT
--- On LIDENT reduce production expression0 -> expression0 DOT LIDENT
--- On LBRACE reduce production expression0 -> expression0 DOT LIDENT
--- On INT reduce production expression0 -> expression0 DOT LIDENT
--- On IN reduce production expression0 -> expression0 DOT LIDENT
--- On END reduce production expression0 -> expression0 DOT LIDENT
--- On DOT reduce production expression0 -> expression0 DOT LIDENT
--- On CASE reduce production expression0 -> expression0 DOT LIDENT
--- On BAR reduce production expression0 -> expression0 DOT LIDENT
+-- On UNIT UIDENT SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT LBRACE INT IN END DOT CASE BAR
+--   reduce production expression0 -> expression0 DOT LIDENT
 
 State 46:
 ## Known stack suffix:
@@ -654,17 +619,8 @@ expression1 -> expression1 . expression0 [ UNIT UIDENT SETMINUS SEMISEMI SEMI RP
 -- On CASE shift to state 18
 -- On expression0 shift to state 43
 ## Reductions:
--- On SETMINUS reduce production expression0 -> expression0 DOT LIDENT LEFTARROW expression1
--- On SEMISEMI reduce production expression0 -> expression0 DOT LIDENT LEFTARROW expression1
--- On SEMI reduce production expression0 -> expression0 DOT LIDENT LEFTARROW expression1
--- On RPAREN reduce production expression0 -> expression0 DOT LIDENT LEFTARROW expression1
--- On RBRACE reduce production expression0 -> expression0 DOT LIDENT LEFTARROW expression1
--- On OF reduce production expression0 -> expression0 DOT LIDENT LEFTARROW expression1
--- On LBRACE reduce production expression0 -> expression0 DOT LIDENT LEFTARROW expression1
--- On IN reduce production expression0 -> expression0 DOT LIDENT LEFTARROW expression1
--- On END reduce production expression0 -> expression0 DOT LIDENT LEFTARROW expression1
--- On DOT reduce production expression0 -> expression0 DOT LIDENT LEFTARROW expression1
--- On BAR reduce production expression0 -> expression0 DOT LIDENT LEFTARROW expression1
+-- On SETMINUS SEMISEMI SEMI RPAREN RBRACE OF LBRACE IN END DOT BAR
+--   reduce production expression0 -> expression0 DOT LIDENT LEFTARROW expression1
 
 State 48:
 ## Known stack suffix:
@@ -707,8 +663,8 @@ field_expr -> LIDENT EQUAL expression1 . [ SEMI RBRACE ]
 -- On CASE shift to state 18
 -- On expression0 shift to state 43
 ## Reductions:
--- On SEMI reduce production field_expr -> LIDENT EQUAL expression1
--- On RBRACE reduce production field_expr -> LIDENT EQUAL expression1
+-- On SEMI RBRACE
+--   reduce production field_expr -> LIDENT EQUAL expression1
 
 State 51:
 ## Known stack suffix:
@@ -737,7 +693,8 @@ field_expr_list -> field_expr . SEMI field_expr_list [ RBRACE ]
 ## Transitions:
 -- On SEMI shift to state 54
 ## Reductions:
--- On RBRACE reduce production field_expr_list -> field_expr
+-- On RBRACE
+--   reduce production field_expr_list -> field_expr
 
 State 54:
 ## Known stack suffix:
@@ -750,7 +707,8 @@ field_expr_list -> field_expr SEMI . field_expr_list [ RBRACE ]
 -- On field_expr_list shift to state 55
 -- On field_expr shift to state 53
 ## Reductions:
--- On RBRACE reduce production field_expr_list ->
+-- On RBRACE
+--   reduce production field_expr_list ->
 
 State 55:
 ## Known stack suffix:
@@ -807,7 +765,8 @@ case_list -> case_entry . case_list [ END ]
 -- On case_list shift to state 61
 -- On case_entry shift to state 60
 ## Reductions:
--- On END reduce production case_list ->
+-- On END
+--   reduce production case_list ->
 
 State 61:
 ## Known stack suffix:
@@ -867,7 +826,8 @@ expression0 -> CASE pattern EQUAL expression OF . case_list END [ UNIT UIDENT SE
 -- On case_list shift to state 66
 -- On case_entry shift to state 60
 ## Reductions:
--- On END reduce production case_list ->
+-- On END
+--   reduce production case_list ->
 
 State 66:
 ## Known stack suffix:
@@ -925,20 +885,8 @@ expression1 -> CHOOSE expression0 expression0 . [ UNIT UIDENT SETMINUS SEMISEMI 
 -- On LBRACE shift to state 38
 -- On DOT shift to state 44
 ## Reductions:
--- On UNIT reduce production expression1 -> CHOOSE expression0 expression0
--- On UIDENT reduce production expression1 -> CHOOSE expression0 expression0
--- On SEMISEMI reduce production expression1 -> CHOOSE expression0 expression0
--- On SEMI reduce production expression1 -> CHOOSE expression0 expression0
--- On RPAREN reduce production expression1 -> CHOOSE expression0 expression0
--- On RBRACE reduce production expression1 -> CHOOSE expression0 expression0
--- On OF reduce production expression1 -> CHOOSE expression0 expression0
--- On LPAREN reduce production expression1 -> CHOOSE expression0 expression0
--- On LIDENT reduce production expression1 -> CHOOSE expression0 expression0
--- On INT reduce production expression1 -> CHOOSE expression0 expression0
--- On IN reduce production expression1 -> CHOOSE expression0 expression0
--- On END reduce production expression1 -> CHOOSE expression0 expression0
--- On CASE reduce production expression1 -> CHOOSE expression0 expression0
--- On BAR reduce production expression1 -> CHOOSE expression0 expression0
+-- On UNIT UIDENT SEMISEMI SEMI RPAREN RBRACE OF LPAREN LIDENT INT IN END CASE BAR
+--   reduce production expression1 -> CHOOSE expression0 expression0
 
 State 70:
 ## Known stack suffix:
@@ -961,8 +909,8 @@ pattern_list -> pattern . pattern_list [ EQUAL ARROW ]
 -- On pattern_list shift to state 72
 -- On pattern shift to state 71
 ## Reductions:
--- On EQUAL reduce production pattern_list ->
--- On ARROW reduce production pattern_list ->
+-- On EQUAL ARROW
+--   reduce production pattern_list ->
 
 State 72:
 ## Known stack suffix:
@@ -1024,7 +972,8 @@ expression -> LET pattern . pattern_list EQUAL expression IN expression [ SEMISE
 -- On pattern_list shift to state 77
 -- On pattern shift to state 71
 ## Reductions:
--- On EQUAL reduce production pattern_list ->
+-- On EQUAL
+--   reduce production pattern_list ->
 
 State 77:
 ## Known stack suffix:
@@ -1152,7 +1101,8 @@ phrase -> LET REC LIDENT . pattern_list EQUAL expression SEMISEMI [ # ]
 -- On pattern_list shift to state 87
 -- On pattern shift to state 71
 ## Reductions:
--- On EQUAL reduce production pattern_list ->
+-- On EQUAL
+--   reduce production pattern_list ->
 
 State 87:
 ## Known stack suffix:
@@ -1219,7 +1169,8 @@ phrase -> LET pattern . pattern_list EQUAL expression SEMISEMI [ # ]
 -- On pattern_list shift to state 92
 -- On pattern shift to state 71
 ## Reductions:
--- On EQUAL reduce production pattern_list ->
+-- On EQUAL
+--   reduce production pattern_list ->
 
 State 92:
 ## Known stack suffix:

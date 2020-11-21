@@ -167,7 +167,8 @@ ann_list -> ann . COMMA ann_list [ RBRACKET ]
 ## Transitions:
 -- On COMMA shift to state 15
 ## Reductions:
--- On RBRACKET reduce production ann_list -> ann
+-- On RBRACKET
+--   reduce production ann_list -> ann
 
 State 15:
 ## Known stack suffix:
@@ -373,13 +374,10 @@ ident -> IDENT . [ RPAREN LBRACKET LBRACE IMPLEMENTS IDENT COMMA ]
 ident_list -> IDENT . [ DOT ]
 ## Transitions:
 ## Reductions:
--- On RPAREN reduce production ident -> IDENT
--- On LBRACKET reduce production ident -> IDENT
--- On LBRACE reduce production ident -> IDENT
--- On IMPLEMENTS reduce production ident -> IDENT
--- On IDENT reduce production ident -> IDENT
--- On DOT reduce production ident_list -> IDENT
--- On COMMA reduce production ident -> IDENT
+-- On RPAREN LBRACKET LBRACE IMPLEMENTS IDENT COMMA
+--   reduce production ident -> IDENT
+-- On DOT
+--   reduce production ident_list -> IDENT
 
 State 31:
 ## Known stack suffix:
@@ -438,8 +436,8 @@ typ -> typ . LBRACKET RBRACKET [ RPAREN LBRACKET IDENT COMMA ]
 -- On IDENT shift to state 8
 -- On ident shift to state 39
 ## Reductions:
--- On RPAREN reduce production arg -> typ
--- On COMMA reduce production arg -> typ
+-- On RPAREN COMMA
+--   reduce production arg -> typ
 
 State 37:
 ## Known stack suffix:
@@ -506,13 +504,10 @@ ident -> IDENT . [ RPAREN LBRACKET LBRACE IMPLEMENTS IDENT COMMA ]
 ident_list -> ident_list DOT IDENT . [ DOT ]
 ## Transitions:
 ## Reductions:
--- On RPAREN reduce production ident -> IDENT
--- On LBRACKET reduce production ident -> IDENT
--- On LBRACE reduce production ident -> IDENT
--- On IMPLEMENTS reduce production ident -> IDENT
--- On IDENT reduce production ident -> IDENT
--- On DOT reduce production ident_list -> ident_list DOT IDENT
--- On COMMA reduce production ident -> IDENT
+-- On RPAREN LBRACKET LBRACE IMPLEMENTS IDENT COMMA
+--   reduce production ident -> IDENT
+-- On DOT
+--   reduce production ident_list -> ident_list DOT IDENT
 
 State 44:
 ## Known stack suffix:
@@ -559,7 +554,8 @@ arg_list -> arg . COMMA arg_list [ RPAREN ]
 ## Transitions:
 -- On COMMA shift to state 49
 ## Reductions:
--- On RPAREN reduce production arg_list -> arg
+-- On RPAREN
+--   reduce production arg_list -> arg
 
 State 49:
 ## Known stack suffix:
@@ -635,8 +631,8 @@ typ -> typ . LBRACKET RBRACKET [ RPAREN LBRACKET IDENT COMMA ]
 -- On IDENT shift to state 8
 -- On ident shift to state 53
 ## Reductions:
--- On RPAREN reduce production arg -> annotations typ
--- On COMMA reduce production arg -> annotations typ
+-- On RPAREN COMMA
+--   reduce production arg -> annotations typ
 
 State 53:
 ## Known stack suffix:
@@ -697,7 +693,8 @@ methods -> typ ident . args [ SEMI ]
 -- On LPAREN shift to state 28
 -- On args shift to state 59
 ## Reductions:
--- On SEMI reduce production fields -> typ ident
+-- On SEMI
+--   reduce production fields -> typ ident
 
 State 59:
 ## Known stack suffix:
@@ -756,7 +753,8 @@ methods -> modifiers typ ident . args [ SEMI ]
 -- On LPAREN shift to state 28
 -- On args shift to state 63
 ## Reductions:
--- On SEMI reduce production fields -> modifiers typ ident
+-- On SEMI
+--   reduce production fields -> modifiers typ ident
 
 State 63:
 ## Known stack suffix:
@@ -780,19 +778,8 @@ modifiers -> modifier . modifiers [ VOID TOP STRING SHORT LONG INT IDENT FLOAT D
 -- On modifiers shift to state 65
 -- On modifier shift to state 64
 ## Reductions:
--- On VOID reduce production modifiers -> modifier
--- On TOP reduce production modifiers -> modifier
--- On STRING reduce production modifiers -> modifier
--- On SHORT reduce production modifiers -> modifier
--- On LONG reduce production modifiers -> modifier
--- On INT reduce production modifiers -> modifier
--- On IDENT reduce production modifiers -> modifier
--- On FLOAT reduce production modifiers -> modifier
--- On DOUBLE reduce production modifiers -> modifier
--- On CLASS reduce production modifiers -> modifier
--- On CHAR reduce production modifiers -> modifier
--- On BYTE reduce production modifiers -> modifier
--- On BOOLEAN reduce production modifiers -> modifier
+-- On VOID TOP STRING SHORT LONG INT IDENT FLOAT DOUBLE CLASS CHAR BYTE BOOLEAN
+--   reduce production modifiers -> modifier
 
 State 65:
 ## Known stack suffix:
@@ -895,7 +882,8 @@ decls -> decl SEMI . decls [ RBRACE ]
 -- On decl shift to state 71
 -- On annotations shift to state 74
 ## Reductions:
--- On RBRACE reduce production decls -> decl SEMI
+-- On RBRACE
+--   reduce production decls -> decl SEMI
 
 State 73:
 ## Known stack suffix:
@@ -982,7 +970,8 @@ methods -> annotations typ ident . args [ SEMI ]
 -- On LPAREN shift to state 28
 -- On args shift to state 79
 ## Reductions:
--- On SEMI reduce production fields -> annotations typ ident
+-- On SEMI
+--   reduce production fields -> annotations typ ident
 
 State 79:
 ## Known stack suffix:
@@ -1041,7 +1030,8 @@ methods -> annotations modifiers typ ident . args [ SEMI ]
 -- On LPAREN shift to state 28
 -- On args shift to state 83
 ## Reductions:
--- On SEMI reduce production fields -> annotations modifiers typ ident
+-- On SEMI
+--   reduce production fields -> annotations modifiers typ ident
 
 State 83:
 ## Known stack suffix:
@@ -1074,7 +1064,8 @@ interface_list -> qident . COMMA interface_list [ LBRACE ]
 ## Transitions:
 -- On COMMA shift to state 86
 ## Reductions:
--- On LBRACE reduce production interface_list -> qident
+-- On LBRACE
+--   reduce production interface_list -> qident
 
 State 86:
 ## Known stack suffix:
@@ -1415,7 +1406,8 @@ idl_file_list -> PACKAGE ident_list SEMI defs . idl_file_list [ EOF ]
 -- On PACKAGE shift to state 2
 -- On idl_file_list shift to state 117
 ## Reductions:
--- On EOF reduce production idl_file_list -> PACKAGE ident_list SEMI defs
+-- On EOF
+--   reduce production idl_file_list -> PACKAGE ident_list SEMI defs
 
 State 117:
 ## Known stack suffix:
@@ -1445,8 +1437,8 @@ defs -> def . defs [ PACKAGE EOF ]
 -- On def shift to state 118
 -- On annotations shift to state 120
 ## Reductions:
--- On PACKAGE reduce production defs -> def
--- On EOF reduce production defs -> def
+-- On PACKAGE EOF
+--   reduce production defs -> def
 
 State 119:
 ## Known stack suffix:

@@ -25,11 +25,10 @@ annot' -> . annot [ # ]
 -- On annotation shift to state 278
 -- On annot shift to state 280
 ## Reductions:
--- On VARIANT reduce production loop_effects ->
--- On EOF reduce production pre_condition ->
--- On ENSURES reduce production pre_condition ->
--- On DECREASES reduce production pre_condition ->
--- On ASSIGNS reduce production pre_condition ->
+-- On VARIANT
+--   reduce production loop_effects ->
+-- On EOF ENSURES DECREASES ASSIGNS
+--   reduce production pre_condition ->
 
 State 1:
 ## Known stack suffix:
@@ -534,9 +533,8 @@ logic_type_not_id -> UNSIGNED LONG . LONG [ STAR RPAR IDENTIFIER ]
 ## Transitions:
 -- On LONG shift to state 24
 ## Reductions:
--- On STAR reduce production logic_type_not_id -> UNSIGNED LONG
--- On RPAR reduce production logic_type_not_id -> UNSIGNED LONG
--- On IDENTIFIER reduce production logic_type_not_id -> UNSIGNED LONG
+-- On STAR RPAR IDENTIFIER
+--   reduce production logic_type_not_id -> UNSIGNED LONG
 
 State 24:
 ## Known stack suffix:
@@ -608,9 +606,8 @@ logic_type_not_id -> SIGNED LONG . LONG [ STAR RPAR IDENTIFIER ]
 ## Transitions:
 -- On LONG shift to state 31
 ## Reductions:
--- On STAR reduce production logic_type_not_id -> SIGNED LONG
--- On RPAR reduce production logic_type_not_id -> SIGNED LONG
--- On IDENTIFIER reduce production logic_type_not_id -> SIGNED LONG
+-- On STAR RPAR IDENTIFIER
+--   reduce production logic_type_not_id -> SIGNED LONG
 
 State 31:
 ## Known stack suffix:
@@ -659,9 +656,8 @@ logic_type_not_id -> LONG . DOUBLE [ STAR RPAR IDENTIFIER ]
 -- On LONG shift to state 36
 -- On DOUBLE shift to state 37
 ## Reductions:
--- On STAR reduce production logic_type_not_id -> LONG
--- On RPAR reduce production logic_type_not_id -> LONG
--- On IDENTIFIER reduce production logic_type_not_id -> LONG
+-- On STAR RPAR IDENTIFIER
+--   reduce production logic_type_not_id -> LONG
 
 State 36:
 ## Known stack suffix:
@@ -735,41 +731,8 @@ lexpr -> IDENTIFIER . COLONCOLON lexpr [ VARIANT THEN STAR SLASH RSQUARE RPAR RB
 -- On LPAR shift to state 41
 -- On COLONCOLON shift to state 142
 ## Reductions:
--- On VARIANT reduce production lexpr -> IDENTIFIER
--- On THEN reduce production lexpr -> IDENTIFIER
--- On STAR reduce production lexpr -> IDENTIFIER
--- On SLASH reduce production lexpr -> IDENTIFIER
--- On RSQUARE reduce production lexpr -> IDENTIFIER
--- On RPAR reduce production lexpr -> IDENTIFIER
--- On RBRACE reduce production lexpr -> IDENTIFIER
--- On QUESTION reduce production lexpr -> IDENTIFIER
--- On PLUS reduce production lexpr -> IDENTIFIER
--- On PERCENT reduce production lexpr -> IDENTIFIER
--- On OR reduce production lexpr -> IDENTIFIER
--- On NE reduce production lexpr -> IDENTIFIER
--- On MINUS reduce production lexpr -> IDENTIFIER
--- On LT reduce production lexpr -> IDENTIFIER
--- On LSQUARE reduce production lexpr -> IDENTIFIER
--- On LOOP_ASSIGNS reduce production lexpr -> IDENTIFIER
--- On LE reduce production lexpr -> IDENTIFIER
--- On IMPLIES reduce production lexpr -> IDENTIFIER
--- On IFF reduce production lexpr -> IDENTIFIER
--- On GT reduce production lexpr -> IDENTIFIER
--- On GE reduce production lexpr -> IDENTIFIER
--- On FOR reduce production lexpr -> IDENTIFIER
--- On EQUAL reduce production lexpr -> IDENTIFIER
--- On EQ reduce production lexpr -> IDENTIFIER
--- On EOF reduce production lexpr -> IDENTIFIER
--- On ENSURES reduce production lexpr -> IDENTIFIER
--- On ELSE reduce production lexpr -> IDENTIFIER
--- On DOTDOT reduce production lexpr -> IDENTIFIER
--- On DOT reduce production lexpr -> IDENTIFIER
--- On DECREASES reduce production lexpr -> IDENTIFIER
--- On COMMA reduce production lexpr -> IDENTIFIER
--- On COLON reduce production lexpr -> IDENTIFIER
--- On ASSIGNS reduce production lexpr -> IDENTIFIER
--- On ARROW reduce production lexpr -> IDENTIFIER
--- On AND reduce production lexpr -> IDENTIFIER
+-- On VARIANT THEN STAR SLASH RSQUARE RPAR RBRACE QUESTION PLUS PERCENT OR NE MINUS LT LSQUARE LOOP_ASSIGNS LE IMPLIES IFF GT GE FOR EQUAL EQ EOF ENSURES ELSE DOTDOT DOT DECREASES COMMA COLON ASSIGNS ARROW AND
+--   reduce production lexpr -> IDENTIFIER
 
 State 41:
 ## Known stack suffix:
@@ -806,7 +769,8 @@ lexpr -> IDENTIFIER LPAR . lexpr_list RPAR [ VARIANT THEN STAR SLASH RSQUARE RPA
 -- On lexpr_list shift to state 137
 -- On lexpr shift to state 139
 ## Reductions:
--- On RPAR reduce production lexpr_list ->
+-- On RPAR
+--   reduce production lexpr_list ->
 
 State 42:
 ## Known stack suffix:
@@ -927,7 +891,8 @@ logic_type -> IDENTIFIER . stars [ IDENTIFIER ]
 -- On STAR shift to state 48
 -- On stars shift to state 49
 ## Reductions:
--- On IDENTIFIER reduce production logic_type -> IDENTIFIER
+-- On IDENTIFIER
+--   reduce production logic_type -> IDENTIFIER
 
 State 48:
 ## Known stack suffix:
@@ -947,7 +912,8 @@ stars -> stars . STAR [ STAR IDENTIFIER ]
 ## Transitions:
 -- On STAR shift to state 50
 ## Reductions:
--- On IDENTIFIER reduce production logic_type -> IDENTIFIER stars
+-- On IDENTIFIER
+--   reduce production logic_type -> IDENTIFIER stars
 
 State 50:
 ## Known stack suffix:
@@ -994,8 +960,8 @@ ne_parameters -> parameter . COMMA ne_parameters [ SEMICOLON RPAR ]
 ## Transitions:
 -- On COMMA shift to state 55
 ## Reductions:
--- On SEMICOLON reduce production ne_parameters -> parameter
--- On RPAR reduce production ne_parameters -> parameter
+-- On SEMICOLON RPAR
+--   reduce production ne_parameters -> parameter
 
 State 55:
 ## Known stack suffix:
@@ -1038,7 +1004,8 @@ logic_type_not_id -> logic_type_not_id . STAR [ STAR IDENTIFIER ]
 ## Transitions:
 -- On STAR shift to state 58
 ## Reductions:
--- On IDENTIFIER reduce production logic_type -> logic_type_not_id
+-- On IDENTIFIER
+--   reduce production logic_type -> logic_type_not_id
 
 State 58:
 ## Known stack suffix:
@@ -1068,9 +1035,8 @@ parameter -> logic_type IDENTIFIER . LSQUARE RSQUARE [ SEMICOLON RPAR COMMA ]
 ## Transitions:
 -- On LSQUARE shift to state 61
 ## Reductions:
--- On SEMICOLON reduce production parameter -> logic_type IDENTIFIER
--- On RPAR reduce production parameter -> logic_type IDENTIFIER
--- On COMMA reduce production parameter -> logic_type IDENTIFIER
+-- On SEMICOLON RPAR COMMA
+--   reduce production parameter -> logic_type IDENTIFIER
 
 State 61:
 ## Known stack suffix:
@@ -1406,38 +1372,8 @@ lexpr -> lexpr . QUESTION lexpr COLON lexpr [ VARIANT THEN STAR SLASH RSQUARE RP
 -- On ARROW shift to state 88
 -- On relation shift to state 90
 ## Reductions:
--- On VARIANT reduce production lexpr -> AMP lexpr
--- On THEN reduce production lexpr -> AMP lexpr
--- On STAR reduce production lexpr -> AMP lexpr
--- On SLASH reduce production lexpr -> AMP lexpr
--- On RSQUARE reduce production lexpr -> AMP lexpr
--- On RPAR reduce production lexpr -> AMP lexpr
--- On RBRACE reduce production lexpr -> AMP lexpr
--- On QUESTION reduce production lexpr -> AMP lexpr
--- On PLUS reduce production lexpr -> AMP lexpr
--- On PERCENT reduce production lexpr -> AMP lexpr
--- On OR reduce production lexpr -> AMP lexpr
--- On NE reduce production lexpr -> AMP lexpr
--- On MINUS reduce production lexpr -> AMP lexpr
--- On LT reduce production lexpr -> AMP lexpr
--- On LOOP_ASSIGNS reduce production lexpr -> AMP lexpr
--- On LE reduce production lexpr -> AMP lexpr
--- On IMPLIES reduce production lexpr -> AMP lexpr
--- On IFF reduce production lexpr -> AMP lexpr
--- On GT reduce production lexpr -> AMP lexpr
--- On GE reduce production lexpr -> AMP lexpr
--- On FOR reduce production lexpr -> AMP lexpr
--- On EQUAL reduce production lexpr -> AMP lexpr
--- On EQ reduce production lexpr -> AMP lexpr
--- On EOF reduce production lexpr -> AMP lexpr
--- On ENSURES reduce production lexpr -> AMP lexpr
--- On ELSE reduce production lexpr -> AMP lexpr
--- On DOTDOT reduce production lexpr -> AMP lexpr
--- On DECREASES reduce production lexpr -> AMP lexpr
--- On COMMA reduce production lexpr -> AMP lexpr
--- On COLON reduce production lexpr -> AMP lexpr
--- On ASSIGNS reduce production lexpr -> AMP lexpr
--- On AND reduce production lexpr -> AMP lexpr
+-- On VARIANT THEN STAR SLASH RSQUARE RPAR RBRACE QUESTION PLUS PERCENT OR NE MINUS LT LOOP_ASSIGNS LE IMPLIES IFF GT GE FOR EQUAL EQ EOF ENSURES ELSE DOTDOT DECREASES COMMA COLON ASSIGNS AND
+--   reduce production lexpr -> AMP lexpr
 
 State 78:
 ## Known stack suffix:
@@ -1474,7 +1410,8 @@ lexpr -> lexpr LSQUARE . lexpr_option DOTDOT lexpr_option RSQUARE [ VARIANT THEN
 -- On lexpr_option shift to state 79
 -- On lexpr shift to state 118
 ## Reductions:
--- On DOTDOT reduce production lexpr_option ->
+-- On DOTDOT
+--   reduce production lexpr_option ->
 
 State 79:
 ## Known stack suffix:
@@ -1519,7 +1456,8 @@ lexpr -> lexpr LSQUARE lexpr_option DOTDOT . lexpr_option RSQUARE [ VARIANT THEN
 -- On lexpr_option shift to state 81
 -- On lexpr shift to state 83
 ## Reductions:
--- On RSQUARE reduce production lexpr_option ->
+-- On RSQUARE
+--   reduce production lexpr_option ->
 
 State 81:
 ## Known stack suffix:
@@ -1581,7 +1519,8 @@ lexpr_option -> lexpr . [ RSQUARE ]
 -- On AND shift to state 110
 -- On relation shift to state 90
 ## Reductions:
--- On RSQUARE reduce production lexpr_option -> lexpr
+-- On RSQUARE
+--   reduce production lexpr_option -> lexpr
 
 State 84:
 ## Known stack suffix:
@@ -1643,38 +1582,8 @@ lexpr -> lexpr . QUESTION lexpr COLON lexpr [ VARIANT THEN STAR SLASH RSQUARE RP
 -- On ARROW shift to state 88
 -- On relation shift to state 90
 ## Reductions:
--- On VARIANT reduce production lexpr -> lexpr STAR lexpr
--- On THEN reduce production lexpr -> lexpr STAR lexpr
--- On STAR reduce production lexpr -> lexpr STAR lexpr
--- On SLASH reduce production lexpr -> lexpr STAR lexpr
--- On RSQUARE reduce production lexpr -> lexpr STAR lexpr
--- On RPAR reduce production lexpr -> lexpr STAR lexpr
--- On RBRACE reduce production lexpr -> lexpr STAR lexpr
--- On QUESTION reduce production lexpr -> lexpr STAR lexpr
--- On PLUS reduce production lexpr -> lexpr STAR lexpr
--- On PERCENT reduce production lexpr -> lexpr STAR lexpr
--- On OR reduce production lexpr -> lexpr STAR lexpr
--- On NE reduce production lexpr -> lexpr STAR lexpr
--- On MINUS reduce production lexpr -> lexpr STAR lexpr
--- On LT reduce production lexpr -> lexpr STAR lexpr
--- On LOOP_ASSIGNS reduce production lexpr -> lexpr STAR lexpr
--- On LE reduce production lexpr -> lexpr STAR lexpr
--- On IMPLIES reduce production lexpr -> lexpr STAR lexpr
--- On IFF reduce production lexpr -> lexpr STAR lexpr
--- On GT reduce production lexpr -> lexpr STAR lexpr
--- On GE reduce production lexpr -> lexpr STAR lexpr
--- On FOR reduce production lexpr -> lexpr STAR lexpr
--- On EQUAL reduce production lexpr -> lexpr STAR lexpr
--- On EQ reduce production lexpr -> lexpr STAR lexpr
--- On EOF reduce production lexpr -> lexpr STAR lexpr
--- On ENSURES reduce production lexpr -> lexpr STAR lexpr
--- On ELSE reduce production lexpr -> lexpr STAR lexpr
--- On DOTDOT reduce production lexpr -> lexpr STAR lexpr
--- On DECREASES reduce production lexpr -> lexpr STAR lexpr
--- On COMMA reduce production lexpr -> lexpr STAR lexpr
--- On COLON reduce production lexpr -> lexpr STAR lexpr
--- On ASSIGNS reduce production lexpr -> lexpr STAR lexpr
--- On AND reduce production lexpr -> lexpr STAR lexpr
+-- On VARIANT THEN STAR SLASH RSQUARE RPAR RBRACE QUESTION PLUS PERCENT OR NE MINUS LT LOOP_ASSIGNS LE IMPLIES IFF GT GE FOR EQUAL EQ EOF ENSURES ELSE DOTDOT DECREASES COMMA COLON ASSIGNS AND
+--   reduce production lexpr -> lexpr STAR lexpr
 
 State 86:
 ## Known stack suffix:
@@ -1777,33 +1686,8 @@ lexpr -> lexpr . QUESTION lexpr COLON lexpr [ VARIANT THEN STAR SLASH RSQUARE RP
 -- On ARROW shift to state 88
 -- On relation shift to state 90
 ## Reductions:
--- On VARIANT reduce production lexpr -> lexpr relation lexpr
--- On THEN reduce production lexpr -> lexpr relation lexpr
--- On RSQUARE reduce production lexpr -> lexpr relation lexpr
--- On RPAR reduce production lexpr -> lexpr relation lexpr
--- On RBRACE reduce production lexpr -> lexpr relation lexpr
--- On QUESTION reduce production lexpr -> lexpr relation lexpr
--- On OR reduce production lexpr -> lexpr relation lexpr
--- On NE reduce production lexpr -> lexpr relation lexpr
--- On LT reduce production lexpr -> lexpr relation lexpr
--- On LOOP_ASSIGNS reduce production lexpr -> lexpr relation lexpr
--- On LE reduce production lexpr -> lexpr relation lexpr
--- On IMPLIES reduce production lexpr -> lexpr relation lexpr
--- On IFF reduce production lexpr -> lexpr relation lexpr
--- On GT reduce production lexpr -> lexpr relation lexpr
--- On GE reduce production lexpr -> lexpr relation lexpr
--- On FOR reduce production lexpr -> lexpr relation lexpr
--- On EQUAL reduce production lexpr -> lexpr relation lexpr
--- On EQ reduce production lexpr -> lexpr relation lexpr
--- On EOF reduce production lexpr -> lexpr relation lexpr
--- On ENSURES reduce production lexpr -> lexpr relation lexpr
--- On ELSE reduce production lexpr -> lexpr relation lexpr
--- On DOTDOT reduce production lexpr -> lexpr relation lexpr
--- On DECREASES reduce production lexpr -> lexpr relation lexpr
--- On COMMA reduce production lexpr -> lexpr relation lexpr
--- On COLON reduce production lexpr -> lexpr relation lexpr
--- On ASSIGNS reduce production lexpr -> lexpr relation lexpr
--- On AND reduce production lexpr -> lexpr relation lexpr
+-- On VARIANT THEN RSQUARE RPAR RBRACE QUESTION OR NE LT LOOP_ASSIGNS LE IMPLIES IFF GT GE FOR EQUAL EQ EOF ENSURES ELSE DOTDOT DECREASES COMMA COLON ASSIGNS AND
+--   reduce production lexpr -> lexpr relation lexpr
 
 State 92:
 ## Known stack suffix:
@@ -1865,38 +1749,8 @@ lexpr -> lexpr . QUESTION lexpr COLON lexpr [ VARIANT THEN STAR SLASH RSQUARE RP
 -- On ARROW shift to state 88
 -- On relation shift to state 90
 ## Reductions:
--- On VARIANT reduce production lexpr -> lexpr SLASH lexpr
--- On THEN reduce production lexpr -> lexpr SLASH lexpr
--- On STAR reduce production lexpr -> lexpr SLASH lexpr
--- On SLASH reduce production lexpr -> lexpr SLASH lexpr
--- On RSQUARE reduce production lexpr -> lexpr SLASH lexpr
--- On RPAR reduce production lexpr -> lexpr SLASH lexpr
--- On RBRACE reduce production lexpr -> lexpr SLASH lexpr
--- On QUESTION reduce production lexpr -> lexpr SLASH lexpr
--- On PLUS reduce production lexpr -> lexpr SLASH lexpr
--- On PERCENT reduce production lexpr -> lexpr SLASH lexpr
--- On OR reduce production lexpr -> lexpr SLASH lexpr
--- On NE reduce production lexpr -> lexpr SLASH lexpr
--- On MINUS reduce production lexpr -> lexpr SLASH lexpr
--- On LT reduce production lexpr -> lexpr SLASH lexpr
--- On LOOP_ASSIGNS reduce production lexpr -> lexpr SLASH lexpr
--- On LE reduce production lexpr -> lexpr SLASH lexpr
--- On IMPLIES reduce production lexpr -> lexpr SLASH lexpr
--- On IFF reduce production lexpr -> lexpr SLASH lexpr
--- On GT reduce production lexpr -> lexpr SLASH lexpr
--- On GE reduce production lexpr -> lexpr SLASH lexpr
--- On FOR reduce production lexpr -> lexpr SLASH lexpr
--- On EQUAL reduce production lexpr -> lexpr SLASH lexpr
--- On EQ reduce production lexpr -> lexpr SLASH lexpr
--- On EOF reduce production lexpr -> lexpr SLASH lexpr
--- On ENSURES reduce production lexpr -> lexpr SLASH lexpr
--- On ELSE reduce production lexpr -> lexpr SLASH lexpr
--- On DOTDOT reduce production lexpr -> lexpr SLASH lexpr
--- On DECREASES reduce production lexpr -> lexpr SLASH lexpr
--- On COMMA reduce production lexpr -> lexpr SLASH lexpr
--- On COLON reduce production lexpr -> lexpr SLASH lexpr
--- On ASSIGNS reduce production lexpr -> lexpr SLASH lexpr
--- On AND reduce production lexpr -> lexpr SLASH lexpr
+-- On VARIANT THEN STAR SLASH RSQUARE RPAR RBRACE QUESTION PLUS PERCENT OR NE MINUS LT LOOP_ASSIGNS LE IMPLIES IFF GT GE FOR EQUAL EQ EOF ENSURES ELSE DOTDOT DECREASES COMMA COLON ASSIGNS AND
+--   reduce production lexpr -> lexpr SLASH lexpr
 
 State 94:
 ## Known stack suffix:
@@ -1961,35 +1815,8 @@ lexpr -> lexpr . QUESTION lexpr COLON lexpr [ VARIANT THEN STAR SLASH RSQUARE RP
 -- On ARROW shift to state 88
 -- On relation shift to state 90
 ## Reductions:
--- On VARIANT reduce production lexpr -> lexpr PLUS lexpr
--- On THEN reduce production lexpr -> lexpr PLUS lexpr
--- On RSQUARE reduce production lexpr -> lexpr PLUS lexpr
--- On RPAR reduce production lexpr -> lexpr PLUS lexpr
--- On RBRACE reduce production lexpr -> lexpr PLUS lexpr
--- On QUESTION reduce production lexpr -> lexpr PLUS lexpr
--- On PLUS reduce production lexpr -> lexpr PLUS lexpr
--- On OR reduce production lexpr -> lexpr PLUS lexpr
--- On NE reduce production lexpr -> lexpr PLUS lexpr
--- On MINUS reduce production lexpr -> lexpr PLUS lexpr
--- On LT reduce production lexpr -> lexpr PLUS lexpr
--- On LOOP_ASSIGNS reduce production lexpr -> lexpr PLUS lexpr
--- On LE reduce production lexpr -> lexpr PLUS lexpr
--- On IMPLIES reduce production lexpr -> lexpr PLUS lexpr
--- On IFF reduce production lexpr -> lexpr PLUS lexpr
--- On GT reduce production lexpr -> lexpr PLUS lexpr
--- On GE reduce production lexpr -> lexpr PLUS lexpr
--- On FOR reduce production lexpr -> lexpr PLUS lexpr
--- On EQUAL reduce production lexpr -> lexpr PLUS lexpr
--- On EQ reduce production lexpr -> lexpr PLUS lexpr
--- On EOF reduce production lexpr -> lexpr PLUS lexpr
--- On ENSURES reduce production lexpr -> lexpr PLUS lexpr
--- On ELSE reduce production lexpr -> lexpr PLUS lexpr
--- On DOTDOT reduce production lexpr -> lexpr PLUS lexpr
--- On DECREASES reduce production lexpr -> lexpr PLUS lexpr
--- On COMMA reduce production lexpr -> lexpr PLUS lexpr
--- On COLON reduce production lexpr -> lexpr PLUS lexpr
--- On ASSIGNS reduce production lexpr -> lexpr PLUS lexpr
--- On AND reduce production lexpr -> lexpr PLUS lexpr
+-- On VARIANT THEN RSQUARE RPAR RBRACE QUESTION PLUS OR NE MINUS LT LOOP_ASSIGNS LE IMPLIES IFF GT GE FOR EQUAL EQ EOF ENSURES ELSE DOTDOT DECREASES COMMA COLON ASSIGNS AND
+--   reduce production lexpr -> lexpr PLUS lexpr
 
 State 96:
 ## Known stack suffix:
@@ -2051,38 +1878,8 @@ lexpr -> lexpr . QUESTION lexpr COLON lexpr [ VARIANT THEN STAR SLASH RSQUARE RP
 -- On ARROW shift to state 88
 -- On relation shift to state 90
 ## Reductions:
--- On VARIANT reduce production lexpr -> lexpr PERCENT lexpr
--- On THEN reduce production lexpr -> lexpr PERCENT lexpr
--- On STAR reduce production lexpr -> lexpr PERCENT lexpr
--- On SLASH reduce production lexpr -> lexpr PERCENT lexpr
--- On RSQUARE reduce production lexpr -> lexpr PERCENT lexpr
--- On RPAR reduce production lexpr -> lexpr PERCENT lexpr
--- On RBRACE reduce production lexpr -> lexpr PERCENT lexpr
--- On QUESTION reduce production lexpr -> lexpr PERCENT lexpr
--- On PLUS reduce production lexpr -> lexpr PERCENT lexpr
--- On PERCENT reduce production lexpr -> lexpr PERCENT lexpr
--- On OR reduce production lexpr -> lexpr PERCENT lexpr
--- On NE reduce production lexpr -> lexpr PERCENT lexpr
--- On MINUS reduce production lexpr -> lexpr PERCENT lexpr
--- On LT reduce production lexpr -> lexpr PERCENT lexpr
--- On LOOP_ASSIGNS reduce production lexpr -> lexpr PERCENT lexpr
--- On LE reduce production lexpr -> lexpr PERCENT lexpr
--- On IMPLIES reduce production lexpr -> lexpr PERCENT lexpr
--- On IFF reduce production lexpr -> lexpr PERCENT lexpr
--- On GT reduce production lexpr -> lexpr PERCENT lexpr
--- On GE reduce production lexpr -> lexpr PERCENT lexpr
--- On FOR reduce production lexpr -> lexpr PERCENT lexpr
--- On EQUAL reduce production lexpr -> lexpr PERCENT lexpr
--- On EQ reduce production lexpr -> lexpr PERCENT lexpr
--- On EOF reduce production lexpr -> lexpr PERCENT lexpr
--- On ENSURES reduce production lexpr -> lexpr PERCENT lexpr
--- On ELSE reduce production lexpr -> lexpr PERCENT lexpr
--- On DOTDOT reduce production lexpr -> lexpr PERCENT lexpr
--- On DECREASES reduce production lexpr -> lexpr PERCENT lexpr
--- On COMMA reduce production lexpr -> lexpr PERCENT lexpr
--- On COLON reduce production lexpr -> lexpr PERCENT lexpr
--- On ASSIGNS reduce production lexpr -> lexpr PERCENT lexpr
--- On AND reduce production lexpr -> lexpr PERCENT lexpr
+-- On VARIANT THEN STAR SLASH RSQUARE RPAR RBRACE QUESTION PLUS PERCENT OR NE MINUS LT LOOP_ASSIGNS LE IMPLIES IFF GT GE FOR EQUAL EQ EOF ENSURES ELSE DOTDOT DECREASES COMMA COLON ASSIGNS AND
+--   reduce production lexpr -> lexpr PERCENT lexpr
 
 State 98:
 ## Known stack suffix:
@@ -2147,35 +1944,8 @@ lexpr -> lexpr . QUESTION lexpr COLON lexpr [ VARIANT THEN STAR SLASH RSQUARE RP
 -- On ARROW shift to state 88
 -- On relation shift to state 90
 ## Reductions:
--- On VARIANT reduce production lexpr -> lexpr MINUS lexpr
--- On THEN reduce production lexpr -> lexpr MINUS lexpr
--- On RSQUARE reduce production lexpr -> lexpr MINUS lexpr
--- On RPAR reduce production lexpr -> lexpr MINUS lexpr
--- On RBRACE reduce production lexpr -> lexpr MINUS lexpr
--- On QUESTION reduce production lexpr -> lexpr MINUS lexpr
--- On PLUS reduce production lexpr -> lexpr MINUS lexpr
--- On OR reduce production lexpr -> lexpr MINUS lexpr
--- On NE reduce production lexpr -> lexpr MINUS lexpr
--- On MINUS reduce production lexpr -> lexpr MINUS lexpr
--- On LT reduce production lexpr -> lexpr MINUS lexpr
--- On LOOP_ASSIGNS reduce production lexpr -> lexpr MINUS lexpr
--- On LE reduce production lexpr -> lexpr MINUS lexpr
--- On IMPLIES reduce production lexpr -> lexpr MINUS lexpr
--- On IFF reduce production lexpr -> lexpr MINUS lexpr
--- On GT reduce production lexpr -> lexpr MINUS lexpr
--- On GE reduce production lexpr -> lexpr MINUS lexpr
--- On FOR reduce production lexpr -> lexpr MINUS lexpr
--- On EQUAL reduce production lexpr -> lexpr MINUS lexpr
--- On EQ reduce production lexpr -> lexpr MINUS lexpr
--- On EOF reduce production lexpr -> lexpr MINUS lexpr
--- On ENSURES reduce production lexpr -> lexpr MINUS lexpr
--- On ELSE reduce production lexpr -> lexpr MINUS lexpr
--- On DOTDOT reduce production lexpr -> lexpr MINUS lexpr
--- On DECREASES reduce production lexpr -> lexpr MINUS lexpr
--- On COMMA reduce production lexpr -> lexpr MINUS lexpr
--- On COLON reduce production lexpr -> lexpr MINUS lexpr
--- On ASSIGNS reduce production lexpr -> lexpr MINUS lexpr
--- On AND reduce production lexpr -> lexpr MINUS lexpr
+-- On VARIANT THEN RSQUARE RPAR RBRACE QUESTION PLUS OR NE MINUS LT LOOP_ASSIGNS LE IMPLIES IFF GT GE FOR EQUAL EQ EOF ENSURES ELSE DOTDOT DECREASES COMMA COLON ASSIGNS AND
+--   reduce production lexpr -> lexpr MINUS lexpr
 
 State 100:
 ## Known stack suffix:
@@ -2328,25 +2098,8 @@ lexpr -> lexpr . QUESTION lexpr COLON lexpr [ VARIANT THEN STAR SLASH RSQUARE RP
 -- On AND shift to state 110
 -- On relation shift to state 90
 ## Reductions:
--- On VARIANT reduce production lexpr -> lexpr OR lexpr
--- On THEN reduce production lexpr -> lexpr OR lexpr
--- On RSQUARE reduce production lexpr -> lexpr OR lexpr
--- On RPAR reduce production lexpr -> lexpr OR lexpr
--- On RBRACE reduce production lexpr -> lexpr OR lexpr
--- On OR reduce production lexpr -> lexpr OR lexpr
--- On LOOP_ASSIGNS reduce production lexpr -> lexpr OR lexpr
--- On IMPLIES reduce production lexpr -> lexpr OR lexpr
--- On IFF reduce production lexpr -> lexpr OR lexpr
--- On FOR reduce production lexpr -> lexpr OR lexpr
--- On EQUAL reduce production lexpr -> lexpr OR lexpr
--- On EOF reduce production lexpr -> lexpr OR lexpr
--- On ENSURES reduce production lexpr -> lexpr OR lexpr
--- On ELSE reduce production lexpr -> lexpr OR lexpr
--- On DOTDOT reduce production lexpr -> lexpr OR lexpr
--- On DECREASES reduce production lexpr -> lexpr OR lexpr
--- On COMMA reduce production lexpr -> lexpr OR lexpr
--- On COLON reduce production lexpr -> lexpr OR lexpr
--- On ASSIGNS reduce production lexpr -> lexpr OR lexpr
+-- On VARIANT THEN RSQUARE RPAR RBRACE OR LOOP_ASSIGNS IMPLIES IFF FOR EQUAL EOF ENSURES ELSE DOTDOT DECREASES COMMA COLON ASSIGNS
+--   reduce production lexpr -> lexpr OR lexpr
 
 State 104:
 ## Known stack suffix:
@@ -2474,26 +2227,8 @@ lexpr -> lexpr . QUESTION lexpr COLON lexpr [ VARIANT THEN STAR SLASH RSQUARE RP
 -- On ARROW shift to state 88
 -- On relation shift to state 90
 ## Reductions:
--- On VARIANT reduce production lexpr -> lexpr AND lexpr
--- On THEN reduce production lexpr -> lexpr AND lexpr
--- On RSQUARE reduce production lexpr -> lexpr AND lexpr
--- On RPAR reduce production lexpr -> lexpr AND lexpr
--- On RBRACE reduce production lexpr -> lexpr AND lexpr
--- On OR reduce production lexpr -> lexpr AND lexpr
--- On LOOP_ASSIGNS reduce production lexpr -> lexpr AND lexpr
--- On IMPLIES reduce production lexpr -> lexpr AND lexpr
--- On IFF reduce production lexpr -> lexpr AND lexpr
--- On FOR reduce production lexpr -> lexpr AND lexpr
--- On EQUAL reduce production lexpr -> lexpr AND lexpr
--- On EOF reduce production lexpr -> lexpr AND lexpr
--- On ENSURES reduce production lexpr -> lexpr AND lexpr
--- On ELSE reduce production lexpr -> lexpr AND lexpr
--- On DOTDOT reduce production lexpr -> lexpr AND lexpr
--- On DECREASES reduce production lexpr -> lexpr AND lexpr
--- On COMMA reduce production lexpr -> lexpr AND lexpr
--- On COLON reduce production lexpr -> lexpr AND lexpr
--- On ASSIGNS reduce production lexpr -> lexpr AND lexpr
--- On AND reduce production lexpr -> lexpr AND lexpr
+-- On VARIANT THEN RSQUARE RPAR RBRACE OR LOOP_ASSIGNS IMPLIES IFF FOR EQUAL EOF ENSURES ELSE DOTDOT DECREASES COMMA COLON ASSIGNS AND
+--   reduce production lexpr -> lexpr AND lexpr
 
 State 112:
 ## Known stack suffix:
@@ -2571,22 +2306,8 @@ lexpr -> lexpr . QUESTION lexpr COLON lexpr [ VARIANT THEN STAR SLASH RSQUARE RP
 -- On AND shift to state 110
 -- On relation shift to state 90
 ## Reductions:
--- On VARIANT reduce production lexpr -> lexpr IMPLIES lexpr
--- On THEN reduce production lexpr -> lexpr IMPLIES lexpr
--- On RSQUARE reduce production lexpr -> lexpr IMPLIES lexpr
--- On RPAR reduce production lexpr -> lexpr IMPLIES lexpr
--- On RBRACE reduce production lexpr -> lexpr IMPLIES lexpr
--- On LOOP_ASSIGNS reduce production lexpr -> lexpr IMPLIES lexpr
--- On FOR reduce production lexpr -> lexpr IMPLIES lexpr
--- On EQUAL reduce production lexpr -> lexpr IMPLIES lexpr
--- On EOF reduce production lexpr -> lexpr IMPLIES lexpr
--- On ENSURES reduce production lexpr -> lexpr IMPLIES lexpr
--- On ELSE reduce production lexpr -> lexpr IMPLIES lexpr
--- On DOTDOT reduce production lexpr -> lexpr IMPLIES lexpr
--- On DECREASES reduce production lexpr -> lexpr IMPLIES lexpr
--- On COMMA reduce production lexpr -> lexpr IMPLIES lexpr
--- On COLON reduce production lexpr -> lexpr IMPLIES lexpr
--- On ASSIGNS reduce production lexpr -> lexpr IMPLIES lexpr
+-- On VARIANT THEN RSQUARE RPAR RBRACE LOOP_ASSIGNS FOR EQUAL EOF ENSURES ELSE DOTDOT DECREASES COMMA COLON ASSIGNS
+--   reduce production lexpr -> lexpr IMPLIES lexpr
 
 State 114:
 ## Known stack suffix:
@@ -2664,22 +2385,8 @@ lexpr -> lexpr . QUESTION lexpr COLON lexpr [ VARIANT THEN STAR SLASH RSQUARE RP
 -- On AND shift to state 110
 -- On relation shift to state 90
 ## Reductions:
--- On VARIANT reduce production lexpr -> lexpr IFF lexpr
--- On THEN reduce production lexpr -> lexpr IFF lexpr
--- On RSQUARE reduce production lexpr -> lexpr IFF lexpr
--- On RPAR reduce production lexpr -> lexpr IFF lexpr
--- On RBRACE reduce production lexpr -> lexpr IFF lexpr
--- On LOOP_ASSIGNS reduce production lexpr -> lexpr IFF lexpr
--- On FOR reduce production lexpr -> lexpr IFF lexpr
--- On EQUAL reduce production lexpr -> lexpr IFF lexpr
--- On EOF reduce production lexpr -> lexpr IFF lexpr
--- On ENSURES reduce production lexpr -> lexpr IFF lexpr
--- On ELSE reduce production lexpr -> lexpr IFF lexpr
--- On DOTDOT reduce production lexpr -> lexpr IFF lexpr
--- On DECREASES reduce production lexpr -> lexpr IFF lexpr
--- On COMMA reduce production lexpr -> lexpr IFF lexpr
--- On COLON reduce production lexpr -> lexpr IFF lexpr
--- On ASSIGNS reduce production lexpr -> lexpr IFF lexpr
+-- On VARIANT THEN RSQUARE RPAR RBRACE LOOP_ASSIGNS FOR EQUAL EOF ENSURES ELSE DOTDOT DECREASES COMMA COLON ASSIGNS
+--   reduce production lexpr -> lexpr IFF lexpr
 
 State 116:
 ## Known stack suffix:
@@ -2753,26 +2460,8 @@ lexpr -> lexpr QUESTION lexpr COLON lexpr . [ VARIANT THEN STAR SLASH RSQUARE RP
 -- On ARROW shift to state 88
 -- On relation shift to state 90
 ## Reductions:
--- On VARIANT reduce production lexpr -> lexpr QUESTION lexpr COLON lexpr
--- On THEN reduce production lexpr -> lexpr QUESTION lexpr COLON lexpr
--- On RSQUARE reduce production lexpr -> lexpr QUESTION lexpr COLON lexpr
--- On RPAR reduce production lexpr -> lexpr QUESTION lexpr COLON lexpr
--- On RBRACE reduce production lexpr -> lexpr QUESTION lexpr COLON lexpr
--- On OR reduce production lexpr -> lexpr QUESTION lexpr COLON lexpr
--- On LOOP_ASSIGNS reduce production lexpr -> lexpr QUESTION lexpr COLON lexpr
--- On IMPLIES reduce production lexpr -> lexpr QUESTION lexpr COLON lexpr
--- On IFF reduce production lexpr -> lexpr QUESTION lexpr COLON lexpr
--- On FOR reduce production lexpr -> lexpr QUESTION lexpr COLON lexpr
--- On EQUAL reduce production lexpr -> lexpr QUESTION lexpr COLON lexpr
--- On EOF reduce production lexpr -> lexpr QUESTION lexpr COLON lexpr
--- On ENSURES reduce production lexpr -> lexpr QUESTION lexpr COLON lexpr
--- On ELSE reduce production lexpr -> lexpr QUESTION lexpr COLON lexpr
--- On DOTDOT reduce production lexpr -> lexpr QUESTION lexpr COLON lexpr
--- On DECREASES reduce production lexpr -> lexpr QUESTION lexpr COLON lexpr
--- On COMMA reduce production lexpr -> lexpr QUESTION lexpr COLON lexpr
--- On COLON reduce production lexpr -> lexpr QUESTION lexpr COLON lexpr
--- On ASSIGNS reduce production lexpr -> lexpr QUESTION lexpr COLON lexpr
--- On AND reduce production lexpr -> lexpr QUESTION lexpr COLON lexpr
+-- On VARIANT THEN RSQUARE RPAR RBRACE OR LOOP_ASSIGNS IMPLIES IFF FOR EQUAL EOF ENSURES ELSE DOTDOT DECREASES COMMA COLON ASSIGNS AND
+--   reduce production lexpr -> lexpr QUESTION lexpr COLON lexpr
 
 State 118:
 ## Known stack suffix:
@@ -2818,7 +2507,8 @@ lexpr_option -> lexpr . [ DOTDOT ]
 -- On AND shift to state 110
 -- On relation shift to state 90
 ## Reductions:
--- On DOTDOT reduce production lexpr_option -> lexpr
+-- On DOTDOT
+--   reduce production lexpr_option -> lexpr
 
 State 119:
 ## Known stack suffix:
@@ -3048,22 +2738,8 @@ lexpr -> lexpr . QUESTION lexpr COLON lexpr [ VARIANT THEN STAR SLASH RSQUARE RP
 -- On AND shift to state 110
 -- On relation shift to state 90
 ## Reductions:
--- On VARIANT reduce production lexpr -> EXISTS ne_parameters SEMICOLON lexpr
--- On THEN reduce production lexpr -> EXISTS ne_parameters SEMICOLON lexpr
--- On RSQUARE reduce production lexpr -> EXISTS ne_parameters SEMICOLON lexpr
--- On RPAR reduce production lexpr -> EXISTS ne_parameters SEMICOLON lexpr
--- On RBRACE reduce production lexpr -> EXISTS ne_parameters SEMICOLON lexpr
--- On LOOP_ASSIGNS reduce production lexpr -> EXISTS ne_parameters SEMICOLON lexpr
--- On FOR reduce production lexpr -> EXISTS ne_parameters SEMICOLON lexpr
--- On EQUAL reduce production lexpr -> EXISTS ne_parameters SEMICOLON lexpr
--- On EOF reduce production lexpr -> EXISTS ne_parameters SEMICOLON lexpr
--- On ENSURES reduce production lexpr -> EXISTS ne_parameters SEMICOLON lexpr
--- On ELSE reduce production lexpr -> EXISTS ne_parameters SEMICOLON lexpr
--- On DOTDOT reduce production lexpr -> EXISTS ne_parameters SEMICOLON lexpr
--- On DECREASES reduce production lexpr -> EXISTS ne_parameters SEMICOLON lexpr
--- On COMMA reduce production lexpr -> EXISTS ne_parameters SEMICOLON lexpr
--- On COLON reduce production lexpr -> EXISTS ne_parameters SEMICOLON lexpr
--- On ASSIGNS reduce production lexpr -> EXISTS ne_parameters SEMICOLON lexpr
+-- On VARIANT THEN RSQUARE RPAR RBRACE LOOP_ASSIGNS FOR EQUAL EOF ENSURES ELSE DOTDOT DECREASES COMMA COLON ASSIGNS
+--   reduce production lexpr -> EXISTS ne_parameters SEMICOLON lexpr
 
 State 129:
 ## Known stack suffix:
@@ -3107,22 +2783,8 @@ lexpr -> lexpr . QUESTION lexpr COLON lexpr [ VARIANT THEN STAR SLASH RSQUARE RP
 -- On AND shift to state 110
 -- On relation shift to state 90
 ## Reductions:
--- On VARIANT reduce production lexpr -> FORALL ne_parameters SEMICOLON lexpr
--- On THEN reduce production lexpr -> FORALL ne_parameters SEMICOLON lexpr
--- On RSQUARE reduce production lexpr -> FORALL ne_parameters SEMICOLON lexpr
--- On RPAR reduce production lexpr -> FORALL ne_parameters SEMICOLON lexpr
--- On RBRACE reduce production lexpr -> FORALL ne_parameters SEMICOLON lexpr
--- On LOOP_ASSIGNS reduce production lexpr -> FORALL ne_parameters SEMICOLON lexpr
--- On FOR reduce production lexpr -> FORALL ne_parameters SEMICOLON lexpr
--- On EQUAL reduce production lexpr -> FORALL ne_parameters SEMICOLON lexpr
--- On EOF reduce production lexpr -> FORALL ne_parameters SEMICOLON lexpr
--- On ENSURES reduce production lexpr -> FORALL ne_parameters SEMICOLON lexpr
--- On ELSE reduce production lexpr -> FORALL ne_parameters SEMICOLON lexpr
--- On DOTDOT reduce production lexpr -> FORALL ne_parameters SEMICOLON lexpr
--- On DECREASES reduce production lexpr -> FORALL ne_parameters SEMICOLON lexpr
--- On COMMA reduce production lexpr -> FORALL ne_parameters SEMICOLON lexpr
--- On COLON reduce production lexpr -> FORALL ne_parameters SEMICOLON lexpr
--- On ASSIGNS reduce production lexpr -> FORALL ne_parameters SEMICOLON lexpr
+-- On VARIANT THEN RSQUARE RPAR RBRACE LOOP_ASSIGNS FOR EQUAL EOF ENSURES ELSE DOTDOT DECREASES COMMA COLON ASSIGNS
+--   reduce production lexpr -> FORALL ne_parameters SEMICOLON lexpr
 
 State 130:
 ## Known stack suffix:
@@ -3379,7 +3041,8 @@ ne_lexpr_list -> lexpr . COMMA ne_lexpr_list [ RPAR ]
 -- On AND shift to state 110
 -- On relation shift to state 90
 ## Reductions:
--- On RPAR reduce production ne_lexpr_list -> lexpr
+-- On RPAR
+--   reduce production ne_lexpr_list -> lexpr
 
 State 140:
 ## Known stack suffix:
@@ -3501,22 +3164,8 @@ lexpr -> IDENTIFIER COLONCOLON lexpr . [ VARIANT THEN STAR SLASH RSQUARE RPAR RB
 -- On AND shift to state 110
 -- On relation shift to state 90
 ## Reductions:
--- On VARIANT reduce production lexpr -> IDENTIFIER COLONCOLON lexpr
--- On THEN reduce production lexpr -> IDENTIFIER COLONCOLON lexpr
--- On RSQUARE reduce production lexpr -> IDENTIFIER COLONCOLON lexpr
--- On RPAR reduce production lexpr -> IDENTIFIER COLONCOLON lexpr
--- On RBRACE reduce production lexpr -> IDENTIFIER COLONCOLON lexpr
--- On LOOP_ASSIGNS reduce production lexpr -> IDENTIFIER COLONCOLON lexpr
--- On FOR reduce production lexpr -> IDENTIFIER COLONCOLON lexpr
--- On EQUAL reduce production lexpr -> IDENTIFIER COLONCOLON lexpr
--- On EOF reduce production lexpr -> IDENTIFIER COLONCOLON lexpr
--- On ENSURES reduce production lexpr -> IDENTIFIER COLONCOLON lexpr
--- On ELSE reduce production lexpr -> IDENTIFIER COLONCOLON lexpr
--- On DOTDOT reduce production lexpr -> IDENTIFIER COLONCOLON lexpr
--- On DECREASES reduce production lexpr -> IDENTIFIER COLONCOLON lexpr
--- On COMMA reduce production lexpr -> IDENTIFIER COLONCOLON lexpr
--- On COLON reduce production lexpr -> IDENTIFIER COLONCOLON lexpr
--- On ASSIGNS reduce production lexpr -> IDENTIFIER COLONCOLON lexpr
+-- On VARIANT THEN RSQUARE RPAR RBRACE LOOP_ASSIGNS FOR EQUAL EOF ENSURES ELSE DOTDOT DECREASES COMMA COLON ASSIGNS
+--   reduce production lexpr -> IDENTIFIER COLONCOLON lexpr
 
 State 144:
 ## Known stack suffix:
@@ -3712,26 +3361,8 @@ lexpr -> lexpr . QUESTION lexpr COLON lexpr [ VARIANT THEN STAR SLASH RSQUARE RP
 -- On ARROW shift to state 88
 -- On relation shift to state 90
 ## Reductions:
--- On VARIANT reduce production lexpr -> IF lexpr THEN lexpr ELSE lexpr
--- On THEN reduce production lexpr -> IF lexpr THEN lexpr ELSE lexpr
--- On RSQUARE reduce production lexpr -> IF lexpr THEN lexpr ELSE lexpr
--- On RPAR reduce production lexpr -> IF lexpr THEN lexpr ELSE lexpr
--- On RBRACE reduce production lexpr -> IF lexpr THEN lexpr ELSE lexpr
--- On OR reduce production lexpr -> IF lexpr THEN lexpr ELSE lexpr
--- On LOOP_ASSIGNS reduce production lexpr -> IF lexpr THEN lexpr ELSE lexpr
--- On IMPLIES reduce production lexpr -> IF lexpr THEN lexpr ELSE lexpr
--- On IFF reduce production lexpr -> IF lexpr THEN lexpr ELSE lexpr
--- On FOR reduce production lexpr -> IF lexpr THEN lexpr ELSE lexpr
--- On EQUAL reduce production lexpr -> IF lexpr THEN lexpr ELSE lexpr
--- On EOF reduce production lexpr -> IF lexpr THEN lexpr ELSE lexpr
--- On ENSURES reduce production lexpr -> IF lexpr THEN lexpr ELSE lexpr
--- On ELSE reduce production lexpr -> IF lexpr THEN lexpr ELSE lexpr
--- On DOTDOT reduce production lexpr -> IF lexpr THEN lexpr ELSE lexpr
--- On DECREASES reduce production lexpr -> IF lexpr THEN lexpr ELSE lexpr
--- On COMMA reduce production lexpr -> IF lexpr THEN lexpr ELSE lexpr
--- On COLON reduce production lexpr -> IF lexpr THEN lexpr ELSE lexpr
--- On ASSIGNS reduce production lexpr -> IF lexpr THEN lexpr ELSE lexpr
--- On AND reduce production lexpr -> IF lexpr THEN lexpr ELSE lexpr
+-- On VARIANT THEN RSQUARE RPAR RBRACE OR LOOP_ASSIGNS IMPLIES IFF FOR EQUAL EOF ENSURES ELSE DOTDOT DECREASES COMMA COLON ASSIGNS AND
+--   reduce production lexpr -> IF lexpr THEN lexpr ELSE lexpr
 
 State 149:
 ## Known stack suffix:
@@ -3804,38 +3435,8 @@ lexpr -> LPAR logic_type_not_id RPAR lexpr . [ VARIANT THEN STAR SLASH RSQUARE R
 -- On ARROW shift to state 88
 -- On relation shift to state 90
 ## Reductions:
--- On VARIANT reduce production lexpr -> LPAR logic_type_not_id RPAR lexpr
--- On THEN reduce production lexpr -> LPAR logic_type_not_id RPAR lexpr
--- On STAR reduce production lexpr -> LPAR logic_type_not_id RPAR lexpr
--- On SLASH reduce production lexpr -> LPAR logic_type_not_id RPAR lexpr
--- On RSQUARE reduce production lexpr -> LPAR logic_type_not_id RPAR lexpr
--- On RPAR reduce production lexpr -> LPAR logic_type_not_id RPAR lexpr
--- On RBRACE reduce production lexpr -> LPAR logic_type_not_id RPAR lexpr
--- On QUESTION reduce production lexpr -> LPAR logic_type_not_id RPAR lexpr
--- On PLUS reduce production lexpr -> LPAR logic_type_not_id RPAR lexpr
--- On PERCENT reduce production lexpr -> LPAR logic_type_not_id RPAR lexpr
--- On OR reduce production lexpr -> LPAR logic_type_not_id RPAR lexpr
--- On NE reduce production lexpr -> LPAR logic_type_not_id RPAR lexpr
--- On MINUS reduce production lexpr -> LPAR logic_type_not_id RPAR lexpr
--- On LT reduce production lexpr -> LPAR logic_type_not_id RPAR lexpr
--- On LOOP_ASSIGNS reduce production lexpr -> LPAR logic_type_not_id RPAR lexpr
--- On LE reduce production lexpr -> LPAR logic_type_not_id RPAR lexpr
--- On IMPLIES reduce production lexpr -> LPAR logic_type_not_id RPAR lexpr
--- On IFF reduce production lexpr -> LPAR logic_type_not_id RPAR lexpr
--- On GT reduce production lexpr -> LPAR logic_type_not_id RPAR lexpr
--- On GE reduce production lexpr -> LPAR logic_type_not_id RPAR lexpr
--- On FOR reduce production lexpr -> LPAR logic_type_not_id RPAR lexpr
--- On EQUAL reduce production lexpr -> LPAR logic_type_not_id RPAR lexpr
--- On EQ reduce production lexpr -> LPAR logic_type_not_id RPAR lexpr
--- On EOF reduce production lexpr -> LPAR logic_type_not_id RPAR lexpr
--- On ENSURES reduce production lexpr -> LPAR logic_type_not_id RPAR lexpr
--- On ELSE reduce production lexpr -> LPAR logic_type_not_id RPAR lexpr
--- On DOTDOT reduce production lexpr -> LPAR logic_type_not_id RPAR lexpr
--- On DECREASES reduce production lexpr -> LPAR logic_type_not_id RPAR lexpr
--- On COMMA reduce production lexpr -> LPAR logic_type_not_id RPAR lexpr
--- On COLON reduce production lexpr -> LPAR logic_type_not_id RPAR lexpr
--- On ASSIGNS reduce production lexpr -> LPAR logic_type_not_id RPAR lexpr
--- On AND reduce production lexpr -> LPAR logic_type_not_id RPAR lexpr
+-- On VARIANT THEN STAR SLASH RSQUARE RPAR RBRACE QUESTION PLUS PERCENT OR NE MINUS LT LOOP_ASSIGNS LE IMPLIES IFF GT GE FOR EQUAL EQ EOF ENSURES ELSE DOTDOT DECREASES COMMA COLON ASSIGNS AND
+--   reduce production lexpr -> LPAR logic_type_not_id RPAR lexpr
 
 State 152:
 ## Known stack suffix:
@@ -3913,41 +3514,8 @@ lexpr -> LPAR lexpr RPAR . lexpr [ VARIANT THEN STAR SLASH RSQUARE RPAR RBRACE Q
 -- On AMP shift to state 76
 -- On lexpr shift to state 154
 ## Reductions:
--- On VARIANT reduce production lexpr -> LPAR lexpr RPAR
--- On THEN reduce production lexpr -> LPAR lexpr RPAR
--- On STAR reduce production lexpr -> LPAR lexpr RPAR
--- On SLASH reduce production lexpr -> LPAR lexpr RPAR
--- On RSQUARE reduce production lexpr -> LPAR lexpr RPAR
--- On RPAR reduce production lexpr -> LPAR lexpr RPAR
--- On RBRACE reduce production lexpr -> LPAR lexpr RPAR
--- On QUESTION reduce production lexpr -> LPAR lexpr RPAR
--- On PLUS reduce production lexpr -> LPAR lexpr RPAR
--- On PERCENT reduce production lexpr -> LPAR lexpr RPAR
--- On OR reduce production lexpr -> LPAR lexpr RPAR
--- On NE reduce production lexpr -> LPAR lexpr RPAR
--- On MINUS reduce production lexpr -> LPAR lexpr RPAR
--- On LT reduce production lexpr -> LPAR lexpr RPAR
--- On LSQUARE reduce production lexpr -> LPAR lexpr RPAR
--- On LOOP_ASSIGNS reduce production lexpr -> LPAR lexpr RPAR
--- On LE reduce production lexpr -> LPAR lexpr RPAR
--- On IMPLIES reduce production lexpr -> LPAR lexpr RPAR
--- On IFF reduce production lexpr -> LPAR lexpr RPAR
--- On GT reduce production lexpr -> LPAR lexpr RPAR
--- On GE reduce production lexpr -> LPAR lexpr RPAR
--- On FOR reduce production lexpr -> LPAR lexpr RPAR
--- On EQUAL reduce production lexpr -> LPAR lexpr RPAR
--- On EQ reduce production lexpr -> LPAR lexpr RPAR
--- On EOF reduce production lexpr -> LPAR lexpr RPAR
--- On ENSURES reduce production lexpr -> LPAR lexpr RPAR
--- On ELSE reduce production lexpr -> LPAR lexpr RPAR
--- On DOTDOT reduce production lexpr -> LPAR lexpr RPAR
--- On DOT reduce production lexpr -> LPAR lexpr RPAR
--- On DECREASES reduce production lexpr -> LPAR lexpr RPAR
--- On COMMA reduce production lexpr -> LPAR lexpr RPAR
--- On COLON reduce production lexpr -> LPAR lexpr RPAR
--- On ASSIGNS reduce production lexpr -> LPAR lexpr RPAR
--- On ARROW reduce production lexpr -> LPAR lexpr RPAR
--- On AND reduce production lexpr -> LPAR lexpr RPAR
+-- On VARIANT THEN STAR SLASH RSQUARE RPAR RBRACE QUESTION PLUS PERCENT OR NE MINUS LT LSQUARE LOOP_ASSIGNS LE IMPLIES IFF GT GE FOR EQUAL EQ EOF ENSURES ELSE DOTDOT DOT DECREASES COMMA COLON ASSIGNS ARROW AND
+--   reduce production lexpr -> LPAR lexpr RPAR
 
 State 154:
 ## Known stack suffix:
@@ -3975,38 +3543,8 @@ lexpr -> LPAR lexpr RPAR lexpr . [ VARIANT THEN STAR SLASH RSQUARE RPAR RBRACE Q
 -- On ARROW shift to state 88
 -- On relation shift to state 90
 ## Reductions:
--- On VARIANT reduce production lexpr -> LPAR lexpr RPAR lexpr
--- On THEN reduce production lexpr -> LPAR lexpr RPAR lexpr
--- On STAR reduce production lexpr -> LPAR lexpr RPAR lexpr
--- On SLASH reduce production lexpr -> LPAR lexpr RPAR lexpr
--- On RSQUARE reduce production lexpr -> LPAR lexpr RPAR lexpr
--- On RPAR reduce production lexpr -> LPAR lexpr RPAR lexpr
--- On RBRACE reduce production lexpr -> LPAR lexpr RPAR lexpr
--- On QUESTION reduce production lexpr -> LPAR lexpr RPAR lexpr
--- On PLUS reduce production lexpr -> LPAR lexpr RPAR lexpr
--- On PERCENT reduce production lexpr -> LPAR lexpr RPAR lexpr
--- On OR reduce production lexpr -> LPAR lexpr RPAR lexpr
--- On NE reduce production lexpr -> LPAR lexpr RPAR lexpr
--- On MINUS reduce production lexpr -> LPAR lexpr RPAR lexpr
--- On LT reduce production lexpr -> LPAR lexpr RPAR lexpr
--- On LOOP_ASSIGNS reduce production lexpr -> LPAR lexpr RPAR lexpr
--- On LE reduce production lexpr -> LPAR lexpr RPAR lexpr
--- On IMPLIES reduce production lexpr -> LPAR lexpr RPAR lexpr
--- On IFF reduce production lexpr -> LPAR lexpr RPAR lexpr
--- On GT reduce production lexpr -> LPAR lexpr RPAR lexpr
--- On GE reduce production lexpr -> LPAR lexpr RPAR lexpr
--- On FOR reduce production lexpr -> LPAR lexpr RPAR lexpr
--- On EQUAL reduce production lexpr -> LPAR lexpr RPAR lexpr
--- On EQ reduce production lexpr -> LPAR lexpr RPAR lexpr
--- On EOF reduce production lexpr -> LPAR lexpr RPAR lexpr
--- On ENSURES reduce production lexpr -> LPAR lexpr RPAR lexpr
--- On ELSE reduce production lexpr -> LPAR lexpr RPAR lexpr
--- On DOTDOT reduce production lexpr -> LPAR lexpr RPAR lexpr
--- On DECREASES reduce production lexpr -> LPAR lexpr RPAR lexpr
--- On COMMA reduce production lexpr -> LPAR lexpr RPAR lexpr
--- On COLON reduce production lexpr -> LPAR lexpr RPAR lexpr
--- On ASSIGNS reduce production lexpr -> LPAR lexpr RPAR lexpr
--- On AND reduce production lexpr -> LPAR lexpr RPAR lexpr
+-- On VARIANT THEN STAR SLASH RSQUARE RPAR RBRACE QUESTION PLUS PERCENT OR NE MINUS LT LOOP_ASSIGNS LE IMPLIES IFF GT GE FOR EQUAL EQ EOF ENSURES ELSE DOTDOT DECREASES COMMA COLON ASSIGNS AND
+--   reduce production lexpr -> LPAR lexpr RPAR lexpr
 
 State 155:
 ## Known stack suffix:
@@ -4034,38 +3572,8 @@ lexpr -> lexpr . QUESTION lexpr COLON lexpr [ VARIANT THEN STAR SLASH RSQUARE RP
 -- On ARROW shift to state 88
 -- On relation shift to state 90
 ## Reductions:
--- On VARIANT reduce production lexpr -> MINUS lexpr
--- On THEN reduce production lexpr -> MINUS lexpr
--- On STAR reduce production lexpr -> MINUS lexpr
--- On SLASH reduce production lexpr -> MINUS lexpr
--- On RSQUARE reduce production lexpr -> MINUS lexpr
--- On RPAR reduce production lexpr -> MINUS lexpr
--- On RBRACE reduce production lexpr -> MINUS lexpr
--- On QUESTION reduce production lexpr -> MINUS lexpr
--- On PLUS reduce production lexpr -> MINUS lexpr
--- On PERCENT reduce production lexpr -> MINUS lexpr
--- On OR reduce production lexpr -> MINUS lexpr
--- On NE reduce production lexpr -> MINUS lexpr
--- On MINUS reduce production lexpr -> MINUS lexpr
--- On LT reduce production lexpr -> MINUS lexpr
--- On LOOP_ASSIGNS reduce production lexpr -> MINUS lexpr
--- On LE reduce production lexpr -> MINUS lexpr
--- On IMPLIES reduce production lexpr -> MINUS lexpr
--- On IFF reduce production lexpr -> MINUS lexpr
--- On GT reduce production lexpr -> MINUS lexpr
--- On GE reduce production lexpr -> MINUS lexpr
--- On FOR reduce production lexpr -> MINUS lexpr
--- On EQUAL reduce production lexpr -> MINUS lexpr
--- On EQ reduce production lexpr -> MINUS lexpr
--- On EOF reduce production lexpr -> MINUS lexpr
--- On ENSURES reduce production lexpr -> MINUS lexpr
--- On ELSE reduce production lexpr -> MINUS lexpr
--- On DOTDOT reduce production lexpr -> MINUS lexpr
--- On DECREASES reduce production lexpr -> MINUS lexpr
--- On COMMA reduce production lexpr -> MINUS lexpr
--- On COLON reduce production lexpr -> MINUS lexpr
--- On ASSIGNS reduce production lexpr -> MINUS lexpr
--- On AND reduce production lexpr -> MINUS lexpr
+-- On VARIANT THEN STAR SLASH RSQUARE RPAR RBRACE QUESTION PLUS PERCENT OR NE MINUS LT LOOP_ASSIGNS LE IMPLIES IFF GT GE FOR EQUAL EQ EOF ENSURES ELSE DOTDOT DECREASES COMMA COLON ASSIGNS AND
+--   reduce production lexpr -> MINUS lexpr
 
 State 156:
 ## Known stack suffix:
@@ -4105,26 +3613,8 @@ lexpr -> lexpr . QUESTION lexpr COLON lexpr [ VARIANT THEN STAR SLASH RSQUARE RP
 -- On ARROW shift to state 88
 -- On relation shift to state 90
 ## Reductions:
--- On VARIANT reduce production lexpr -> NOT lexpr
--- On THEN reduce production lexpr -> NOT lexpr
--- On RSQUARE reduce production lexpr -> NOT lexpr
--- On RPAR reduce production lexpr -> NOT lexpr
--- On RBRACE reduce production lexpr -> NOT lexpr
--- On OR reduce production lexpr -> NOT lexpr
--- On LOOP_ASSIGNS reduce production lexpr -> NOT lexpr
--- On IMPLIES reduce production lexpr -> NOT lexpr
--- On IFF reduce production lexpr -> NOT lexpr
--- On FOR reduce production lexpr -> NOT lexpr
--- On EQUAL reduce production lexpr -> NOT lexpr
--- On EOF reduce production lexpr -> NOT lexpr
--- On ENSURES reduce production lexpr -> NOT lexpr
--- On ELSE reduce production lexpr -> NOT lexpr
--- On DOTDOT reduce production lexpr -> NOT lexpr
--- On DECREASES reduce production lexpr -> NOT lexpr
--- On COMMA reduce production lexpr -> NOT lexpr
--- On COLON reduce production lexpr -> NOT lexpr
--- On ASSIGNS reduce production lexpr -> NOT lexpr
--- On AND reduce production lexpr -> NOT lexpr
+-- On VARIANT THEN RSQUARE RPAR RBRACE OR LOOP_ASSIGNS IMPLIES IFF FOR EQUAL EOF ENSURES ELSE DOTDOT DECREASES COMMA COLON ASSIGNS AND
+--   reduce production lexpr -> NOT lexpr
 
 State 157:
 ## Known stack suffix:
@@ -4205,38 +3695,8 @@ lexpr -> lexpr . QUESTION lexpr COLON lexpr [ VARIANT THEN STAR SLASH RSQUARE RP
 -- On ARROW shift to state 88
 -- On relation shift to state 90
 ## Reductions:
--- On VARIANT reduce production lexpr -> PLUS lexpr
--- On THEN reduce production lexpr -> PLUS lexpr
--- On STAR reduce production lexpr -> PLUS lexpr
--- On SLASH reduce production lexpr -> PLUS lexpr
--- On RSQUARE reduce production lexpr -> PLUS lexpr
--- On RPAR reduce production lexpr -> PLUS lexpr
--- On RBRACE reduce production lexpr -> PLUS lexpr
--- On QUESTION reduce production lexpr -> PLUS lexpr
--- On PLUS reduce production lexpr -> PLUS lexpr
--- On PERCENT reduce production lexpr -> PLUS lexpr
--- On OR reduce production lexpr -> PLUS lexpr
--- On NE reduce production lexpr -> PLUS lexpr
--- On MINUS reduce production lexpr -> PLUS lexpr
--- On LT reduce production lexpr -> PLUS lexpr
--- On LOOP_ASSIGNS reduce production lexpr -> PLUS lexpr
--- On LE reduce production lexpr -> PLUS lexpr
--- On IMPLIES reduce production lexpr -> PLUS lexpr
--- On IFF reduce production lexpr -> PLUS lexpr
--- On GT reduce production lexpr -> PLUS lexpr
--- On GE reduce production lexpr -> PLUS lexpr
--- On FOR reduce production lexpr -> PLUS lexpr
--- On EQUAL reduce production lexpr -> PLUS lexpr
--- On EQ reduce production lexpr -> PLUS lexpr
--- On EOF reduce production lexpr -> PLUS lexpr
--- On ENSURES reduce production lexpr -> PLUS lexpr
--- On ELSE reduce production lexpr -> PLUS lexpr
--- On DOTDOT reduce production lexpr -> PLUS lexpr
--- On DECREASES reduce production lexpr -> PLUS lexpr
--- On COMMA reduce production lexpr -> PLUS lexpr
--- On COLON reduce production lexpr -> PLUS lexpr
--- On ASSIGNS reduce production lexpr -> PLUS lexpr
--- On AND reduce production lexpr -> PLUS lexpr
+-- On VARIANT THEN STAR SLASH RSQUARE RPAR RBRACE QUESTION PLUS PERCENT OR NE MINUS LT LOOP_ASSIGNS LE IMPLIES IFF GT GE FOR EQUAL EQ EOF ENSURES ELSE DOTDOT DECREASES COMMA COLON ASSIGNS AND
+--   reduce production lexpr -> PLUS lexpr
 
 State 160:
 ## Known stack suffix:
@@ -4395,38 +3855,8 @@ lexpr -> lexpr . QUESTION lexpr COLON lexpr [ VARIANT THEN STAR SLASH RSQUARE RP
 -- On ARROW shift to state 88
 -- On relation shift to state 90
 ## Reductions:
--- On VARIANT reduce production lexpr -> STAR lexpr
--- On THEN reduce production lexpr -> STAR lexpr
--- On STAR reduce production lexpr -> STAR lexpr
--- On SLASH reduce production lexpr -> STAR lexpr
--- On RSQUARE reduce production lexpr -> STAR lexpr
--- On RPAR reduce production lexpr -> STAR lexpr
--- On RBRACE reduce production lexpr -> STAR lexpr
--- On QUESTION reduce production lexpr -> STAR lexpr
--- On PLUS reduce production lexpr -> STAR lexpr
--- On PERCENT reduce production lexpr -> STAR lexpr
--- On OR reduce production lexpr -> STAR lexpr
--- On NE reduce production lexpr -> STAR lexpr
--- On MINUS reduce production lexpr -> STAR lexpr
--- On LT reduce production lexpr -> STAR lexpr
--- On LOOP_ASSIGNS reduce production lexpr -> STAR lexpr
--- On LE reduce production lexpr -> STAR lexpr
--- On IMPLIES reduce production lexpr -> STAR lexpr
--- On IFF reduce production lexpr -> STAR lexpr
--- On GT reduce production lexpr -> STAR lexpr
--- On GE reduce production lexpr -> STAR lexpr
--- On FOR reduce production lexpr -> STAR lexpr
--- On EQUAL reduce production lexpr -> STAR lexpr
--- On EQ reduce production lexpr -> STAR lexpr
--- On EOF reduce production lexpr -> STAR lexpr
--- On ENSURES reduce production lexpr -> STAR lexpr
--- On ELSE reduce production lexpr -> STAR lexpr
--- On DOTDOT reduce production lexpr -> STAR lexpr
--- On DECREASES reduce production lexpr -> STAR lexpr
--- On COMMA reduce production lexpr -> STAR lexpr
--- On COLON reduce production lexpr -> STAR lexpr
--- On ASSIGNS reduce production lexpr -> STAR lexpr
--- On AND reduce production lexpr -> STAR lexpr
+-- On VARIANT THEN STAR SLASH RSQUARE RPAR RBRACE QUESTION PLUS PERCENT OR NE MINUS LT LOOP_ASSIGNS LE IMPLIES IFF GT GE FOR EQUAL EQ EOF ENSURES ELSE DOTDOT DECREASES COMMA COLON ASSIGNS AND
+--   reduce production lexpr -> STAR lexpr
 
 State 165:
 ## Known stack suffix:
@@ -4863,7 +4293,8 @@ lexpr -> lexpr . QUESTION lexpr COLON lexpr [ STAR SLASH QUESTION PLUS PERCENT O
 -- On AND shift to state 110
 -- On relation shift to state 90
 ## Reductions:
--- On EQUAL reduce production ghost_lvalue -> lexpr
+-- On EQUAL
+--   reduce production ghost_lvalue -> lexpr
 
 State 178:
 ## Known stack suffix:
@@ -4950,7 +4381,8 @@ lexpr -> lexpr . QUESTION lexpr COLON lexpr [ STAR SLASH QUESTION PLUS PERCENT O
 -- On AND shift to state 110
 -- On relation shift to state 90
 ## Reductions:
--- On EOF reduce production annotation -> SET ghost_lvalue EQUAL lexpr
+-- On EOF
+--   reduce production annotation -> SET ghost_lvalue EQUAL lexpr
 
 State 181:
 ## Known stack suffix:
@@ -5028,10 +4460,8 @@ pre_condition -> REQUIRES lexpr . [ EOF ENSURES DECREASES ASSIGNS ]
 -- On AND shift to state 110
 -- On relation shift to state 90
 ## Reductions:
--- On EOF reduce production pre_condition -> REQUIRES lexpr
--- On ENSURES reduce production pre_condition -> REQUIRES lexpr
--- On DECREASES reduce production pre_condition -> REQUIRES lexpr
--- On ASSIGNS reduce production pre_condition -> REQUIRES lexpr
+-- On EOF ENSURES DECREASES ASSIGNS
+--   reduce production pre_condition -> REQUIRES lexpr
 
 State 183:
 ## Known stack suffix:
@@ -5080,7 +4510,8 @@ decl -> PREDICATE IDENTIFIER LPAR . parameters RPAR LBRACE lexpr RBRACE [ EOF ]
 -- On logic_type_not_id shift to state 57
 -- On logic_type shift to state 59
 ## Reductions:
--- On RPAR reduce production parameters ->
+-- On RPAR
+--   reduce production parameters ->
 
 State 186:
 ## Known stack suffix:
@@ -5104,7 +4535,8 @@ decl -> PREDICATE IDENTIFIER LPAR parameters RPAR . LBRACE lexpr RBRACE [ EOF ]
 -- On READS shift to state 188
 -- On LBRACE shift to state 194
 ## Reductions:
--- On EOF reduce production decl -> PREDICATE IDENTIFIER LPAR parameters RPAR
+-- On EOF
+--   reduce production decl -> PREDICATE IDENTIFIER LPAR parameters RPAR
 
 State 188:
 ## Known stack suffix:
@@ -5160,10 +4592,8 @@ locations -> location . COMMA locations [ VARIANT EOF ENSURES DECREASES ]
 ## Transitions:
 -- On COMMA shift to state 191
 ## Reductions:
--- On VARIANT reduce production locations -> location
--- On EOF reduce production locations -> location
--- On ENSURES reduce production locations -> location
--- On DECREASES reduce production locations -> location
+-- On VARIANT EOF ENSURES DECREASES
+--   reduce production locations -> location
 
 State 191:
 ## Known stack suffix:
@@ -5252,11 +4682,8 @@ location -> lexpr . [ VARIANT EOF ENSURES DECREASES COMMA ]
 -- On AND shift to state 110
 -- On relation shift to state 90
 ## Reductions:
--- On VARIANT reduce production location -> lexpr
--- On EOF reduce production location -> lexpr
--- On ENSURES reduce production location -> lexpr
--- On DECREASES reduce production location -> lexpr
--- On COMMA reduce production location -> lexpr
+-- On VARIANT EOF ENSURES DECREASES COMMA
+--   reduce production location -> lexpr
 
 State 194:
 ## Known stack suffix:
@@ -5480,7 +4907,8 @@ decl -> LOGIC logic_type IDENTIFIER LPAR . parameters RPAR LBRACE lexpr RBRACE [
 -- On logic_type_not_id shift to state 57
 -- On logic_type shift to state 59
 ## Reductions:
--- On RPAR reduce production parameters ->
+-- On RPAR
+--   reduce production parameters ->
 
 State 205:
 ## Known stack suffix:
@@ -5504,7 +4932,8 @@ decl -> LOGIC logic_type IDENTIFIER LPAR parameters RPAR . LBRACE lexpr RBRACE [
 -- On READS shift to state 207
 -- On LBRACE shift to state 209
 ## Reductions:
--- On EOF reduce production decl -> LOGIC logic_type IDENTIFIER LPAR parameters RPAR
+-- On EOF
+--   reduce production decl -> LOGIC logic_type IDENTIFIER LPAR parameters RPAR
 
 State 207:
 ## Known stack suffix:
@@ -5704,28 +5133,8 @@ lexpr -> IDENTIFIER . COLONCOLON lexpr [ VARIANT STAR SLASH QUESTION PLUS PERCEN
 -- On COLONCOLON shift to state 142
 -- On COLON shift to state 216
 ## Reductions:
--- On VARIANT reduce production lexpr -> IDENTIFIER
--- On STAR reduce production lexpr -> IDENTIFIER
--- On SLASH reduce production lexpr -> IDENTIFIER
--- On QUESTION reduce production lexpr -> IDENTIFIER
--- On PLUS reduce production lexpr -> IDENTIFIER
--- On PERCENT reduce production lexpr -> IDENTIFIER
--- On OR reduce production lexpr -> IDENTIFIER
--- On NE reduce production lexpr -> IDENTIFIER
--- On MINUS reduce production lexpr -> IDENTIFIER
--- On LT reduce production lexpr -> IDENTIFIER
--- On LSQUARE reduce production lexpr -> IDENTIFIER
--- On LOOP_ASSIGNS reduce production lexpr -> IDENTIFIER
--- On LE reduce production lexpr -> IDENTIFIER
--- On IMPLIES reduce production lexpr -> IDENTIFIER
--- On IFF reduce production lexpr -> IDENTIFIER
--- On GT reduce production lexpr -> IDENTIFIER
--- On GE reduce production lexpr -> IDENTIFIER
--- On EQ reduce production lexpr -> IDENTIFIER
--- On EOF reduce production lexpr -> IDENTIFIER
--- On DOT reduce production lexpr -> IDENTIFIER
--- On ARROW reduce production lexpr -> IDENTIFIER
--- On AND reduce production lexpr -> IDENTIFIER
+-- On VARIANT STAR SLASH QUESTION PLUS PERCENT OR NE MINUS LT LSQUARE LOOP_ASSIGNS LE IMPLIES IFF GT GE EQ EOF DOT ARROW AND
+--   reduce production lexpr -> IDENTIFIER
 
 State 216:
 ## Known stack suffix:
@@ -5803,7 +5212,8 @@ lexpr -> lexpr . QUESTION lexpr COLON lexpr [ STAR SLASH QUESTION PLUS PERCENT O
 -- On AND shift to state 110
 -- On relation shift to state 90
 ## Reductions:
--- On EOF reduce production decl -> INVARIANT IDENTIFIER COLON lexpr
+-- On EOF
+--   reduce production decl -> INVARIANT IDENTIFIER COLON lexpr
 
 State 218:
 ## Known stack suffix:
@@ -5847,9 +5257,8 @@ lexpr -> lexpr . QUESTION lexpr COLON lexpr [ VARIANT STAR SLASH QUESTION PLUS P
 -- On AND shift to state 110
 -- On relation shift to state 90
 ## Reductions:
--- On VARIANT reduce production invariant -> INVARIANT lexpr
--- On LOOP_ASSIGNS reduce production invariant -> INVARIANT lexpr
--- On EOF reduce production invariant -> INVARIANT lexpr
+-- On VARIANT LOOP_ASSIGNS EOF
+--   reduce production invariant -> INVARIANT lexpr
 
 State 219:
 ## Known stack suffix:
@@ -5931,7 +5340,8 @@ init_declarator_list -> init_declarator_list . COMMA init_declarator [ EOF COMMA
 ## Transitions:
 -- On COMMA shift to state 227
 ## Reductions:
--- On EOF reduce production ghost_decl -> GHOST type_specifier init_declarator_list
+-- On EOF
+--   reduce production ghost_decl -> GHOST type_specifier init_declarator_list
 
 State 227:
 ## Known stack suffix:
@@ -5964,9 +5374,8 @@ direct_declarator -> direct_declarator . LSQUARE RSQUARE [ LSQUARE EQUAL EOF COM
 ## Transitions:
 -- On LSQUARE shift to state 230
 ## Reductions:
--- On EQUAL reduce production declarator -> direct_declarator
--- On EOF reduce production declarator -> direct_declarator
--- On COMMA reduce production declarator -> direct_declarator
+-- On EQUAL EOF COMMA
+--   reduce production declarator -> direct_declarator
 
 State 230:
 ## Known stack suffix:
@@ -6075,8 +5484,8 @@ init_declarator -> declarator . EQUAL c_initializer [ EOF COMMA ]
 ## Transitions:
 -- On EQUAL shift to state 235
 ## Reductions:
--- On EOF reduce production init_declarator -> declarator
--- On COMMA reduce production init_declarator -> declarator
+-- On EOF COMMA
+--   reduce production init_declarator -> declarator
 
 State 235:
 ## Known stack suffix:
@@ -6194,9 +5603,8 @@ lexpr -> lexpr . QUESTION lexpr COLON lexpr [ STAR SLASH RBRACE QUESTION PLUS PE
 -- On AND shift to state 110
 -- On relation shift to state 90
 ## Reductions:
--- On RBRACE reduce production c_initializer -> lexpr
--- On EOF reduce production c_initializer -> lexpr
--- On COMMA reduce production c_initializer -> lexpr
+-- On RBRACE EOF COMMA
+--   reduce production c_initializer -> lexpr
 
 State 238:
 ## Known stack suffix:
@@ -6396,7 +5804,8 @@ lexpr -> lexpr . QUESTION lexpr COLON lexpr [ STAR SLASH QUESTION PLUS PERCENT O
 -- On AND shift to state 110
 -- On relation shift to state 90
 ## Reductions:
--- On EOF reduce production decl -> AXIOM IDENTIFIER COLON lexpr
+-- On EOF
+--   reduce production decl -> AXIOM IDENTIFIER COLON lexpr
 
 State 250:
 ## Known stack suffix:
@@ -6474,7 +5883,8 @@ lexpr -> lexpr . QUESTION lexpr COLON lexpr [ STAR SLASH QUESTION PLUS PERCENT O
 -- On AND shift to state 110
 -- On relation shift to state 90
 ## Reductions:
--- On EOF reduce production annotation -> ASSERT lexpr
+-- On EOF
+--   reduce production annotation -> ASSERT lexpr
 
 State 252:
 ## Known stack suffix:
@@ -6494,9 +5904,8 @@ spec -> pre_condition . effects post_condition decreases [ EOF ]
 -- On ASSIGNS shift to state 254
 -- On effects shift to state 257
 ## Reductions:
--- On EOF reduce production effects ->
--- On ENSURES reduce production effects ->
--- On DECREASES reduce production effects ->
+-- On EOF ENSURES DECREASES
+--   reduce production effects ->
 
 State 254:
 ## Known stack suffix:
@@ -6563,8 +5972,8 @@ spec -> pre_condition effects . post_condition decreases [ EOF ]
 -- On ENSURES shift to state 258
 -- On post_condition shift to state 260
 ## Reductions:
--- On EOF reduce production post_condition ->
--- On DECREASES reduce production post_condition ->
+-- On EOF DECREASES
+--   reduce production post_condition ->
 
 State 258:
 ## Known stack suffix:
@@ -6642,8 +6051,8 @@ post_condition -> ENSURES lexpr . [ EOF DECREASES ]
 -- On AND shift to state 110
 -- On relation shift to state 90
 ## Reductions:
--- On EOF reduce production post_condition -> ENSURES lexpr
--- On DECREASES reduce production post_condition -> ENSURES lexpr
+-- On EOF DECREASES
+--   reduce production post_condition -> ENSURES lexpr
 
 State 260:
 ## Known stack suffix:
@@ -6654,7 +6063,8 @@ spec -> pre_condition effects post_condition . decreases [ EOF ]
 -- On DECREASES shift to state 261
 -- On decreases shift to state 267
 ## Reductions:
--- On EOF reduce production decreases ->
+-- On EOF
+--   reduce production decreases ->
 
 State 261:
 ## Known stack suffix:
@@ -6745,7 +6155,8 @@ variant -> VARIANT lexpr . [ EOF ]
 -- On AND shift to state 110
 -- On relation shift to state 90
 ## Reductions:
--- On EOF reduce production variant -> VARIANT lexpr
+-- On EOF
+--   reduce production variant -> VARIANT lexpr
 
 State 264:
 ## Known stack suffix:
@@ -6791,8 +6202,10 @@ loop_annot -> ne_loop_effects . [ EOF ]
 loop_effects -> ne_loop_effects . [ VARIANT ]
 ## Transitions:
 ## Reductions:
--- On VARIANT reduce production loop_effects -> ne_loop_effects
--- On EOF reduce production loop_annot -> ne_loop_effects
+-- On EOF
+--   reduce production loop_annot -> ne_loop_effects
+-- On VARIANT
+--   reduce production loop_effects -> ne_loop_effects
 
 State 269:
 ## Known stack suffix:
@@ -6833,8 +6246,8 @@ loop_annot -> invariant . loop_effects [ EOF ]
 -- On ne_loop_effects shift to state 273
 -- On loop_effects shift to state 274
 ## Reductions:
--- On VARIANT reduce production loop_effects ->
--- On EOF reduce production loop_effects ->
+-- On VARIANT EOF
+--   reduce production loop_effects ->
 
 State 273:
 ## Known stack suffix:
@@ -6855,7 +6268,8 @@ loop_annot -> invariant loop_effects . [ EOF ]
 -- On VARIANT shift to state 262
 -- On variant shift to state 275
 ## Reductions:
--- On EOF reduce production loop_annot -> invariant loop_effects
+-- On EOF
+--   reduce production loop_annot -> invariant loop_effects
 
 State 275:
 ## Known stack suffix:

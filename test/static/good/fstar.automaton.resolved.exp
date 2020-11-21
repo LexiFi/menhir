@@ -30,12 +30,10 @@ inputFragment' -> . inputFragment [ # ]
 -- On decl shift to state 481
 -- On assumeTag shift to state 471
 ## Reductions:
--- On VAL reduce production qualifiers ->
--- On TYPE reduce production qualifiers ->
--- On NEW_EFFECT reduce production qualifiers ->
--- On MODULE reduce production maybe_pragma_light ->
--- On EOF reduce production maybe_pragma_light ->
--- On EFFECT reduce production qualifiers ->
+-- On MODULE EOF
+--   reduce production maybe_pragma_light ->
+-- On VAL TYPE NEW_EFFECT EFFECT
+--   reduce production qualifiers ->
 
 State 1:
 ## Known stack suffix:
@@ -344,7 +342,8 @@ projectionLHS -> PERCENT_LBRACK . semiColonTermList RBRACK [ WITH VAL UNDERSCORE
 -- On aqual shift to state 221
 -- On appTerm shift to state 214
 ## Reductions:
--- On RBRACK reduce production semiColonTermList ->
+-- On RBRACK
+--   reduce production semiColonTermList ->
 
 State 16:
 ## Known stack suffix:
@@ -438,39 +437,8 @@ noSeqTerm -> REQUIRES . label_opt typ [ WITH VAL TYPE TOTAL THEN SUB_EFFECT SUBT
 -- On DOLLAR shift to state 18
 -- On label_opt shift to state 20
 ## Reductions:
--- On UNDERSCORE reduce production label_opt ->
--- On UINT8 reduce production label_opt ->
--- On TVAR reduce production label_opt ->
--- On TRUE reduce production label_opt ->
--- On TILDE reduce production label_opt ->
--- On STRING reduce production label_opt ->
--- On PLUS_OP reduce production label_opt ->
--- On PERCENT_LBRACK reduce production label_opt ->
--- On NAME reduce production label_opt ->
--- On MINUS_OP reduce production label_opt ->
--- On LPAREN_RPAREN reduce production label_opt ->
--- On LPAREN reduce production label_opt ->
--- On LENS_PAREN_LEFT reduce production label_opt ->
--- On LBRACK_BAR reduce production label_opt ->
--- On LBRACK reduce production label_opt ->
--- On LBRACE reduce production label_opt ->
--- On INT64 reduce production label_opt ->
--- On INT32 reduce production label_opt ->
--- On INT reduce production label_opt ->
--- On IEEE64 reduce production label_opt ->
--- On IDENT reduce production label_opt ->
--- On HASH reduce production label_opt ->
--- On FUN reduce production label_opt ->
--- On FORALL reduce production label_opt ->
--- On FALSE reduce production label_opt ->
--- On EXISTS reduce production label_opt ->
--- On EQUALS reduce production label_opt ->
--- On CHAR reduce production label_opt ->
--- On BYTEARRAY reduce production label_opt ->
--- On BEGIN reduce production label_opt ->
--- On BANG_LBRACE reduce production label_opt ->
--- On BANG reduce production label_opt ->
--- On ASSERT reduce production label_opt ->
+-- On UNDERSCORE UINT8 TVAR TRUE TILDE STRING PLUS_OP PERCENT_LBRACK NAME MINUS_OP LPAREN_RPAREN LPAREN LENS_PAREN_LEFT LBRACK_BAR LBRACK LBRACE INT64 INT32 INT IEEE64 IDENT HASH FUN FORALL FALSE EXISTS EQUALS CHAR BYTEARRAY BEGIN BANG_LBRACE BANG ASSERT
+--   reduce production label_opt ->
 
 State 18:
 ## Known stack suffix:
@@ -880,7 +848,8 @@ projectionLHS -> LBRACK_BAR . semiColonTermList BAR_RBRACK [ WITH VAL UNDERSCORE
 -- On aqual shift to state 221
 -- On appTerm shift to state 214
 ## Reductions:
--- On BAR_RBRACK reduce production semiColonTermList ->
+-- On BAR_RBRACK
+--   reduce production semiColonTermList ->
 
 State 27:
 ## Known stack suffix:
@@ -975,27 +944,10 @@ noSeqTerm -> LET . recopt letbinding letbindings IN term [ WITH VAL TYPE TOTAL T
 -- On recopt shift to state 30
 -- On maybeFocus shift to state 329
 ## Reductions:
--- On UNDERSCORE reduce production recopt ->
--- On UINT8 reduce production recopt ->
--- On TVAR reduce production recopt ->
--- On TRUE reduce production recopt ->
--- On STRING reduce production recopt ->
--- On REC reduce production maybeFocus ->
--- On NAME reduce production recopt ->
--- On LPAREN_RPAREN reduce production recopt ->
--- On LPAREN reduce production recopt ->
--- On LENS_PAREN_LEFT reduce production recopt ->
--- On LBRACK reduce production recopt ->
--- On LBRACE reduce production recopt ->
--- On INT64 reduce production recopt ->
--- On INT32 reduce production recopt ->
--- On INT reduce production recopt ->
--- On IEEE64 reduce production recopt ->
--- On IDENT reduce production recopt ->
--- On HASH reduce production recopt ->
--- On FALSE reduce production recopt ->
--- On CHAR reduce production recopt ->
--- On BYTEARRAY reduce production recopt ->
+-- On REC
+--   reduce production maybeFocus ->
+-- On UNDERSCORE UINT8 TVAR TRUE STRING NAME LPAREN_RPAREN LPAREN LENS_PAREN_LEFT LBRACK LBRACE INT64 INT32 INT IEEE64 IDENT HASH FALSE CHAR BYTEARRAY
+--   reduce production recopt ->
 
 State 29:
 ## Known stack suffix:
@@ -1177,7 +1129,8 @@ nonTvarPattern2 -> LBRACK . patternListSemiColon RBRACK [ WHEN UNDERSCORE UINT8 
 -- On atomicPattern shift to state 75
 -- On appPattern shift to state 89
 ## Reductions:
--- On RBRACK reduce production patternListSemiColon ->
+-- On RBRACK
+--   reduce production patternListSemiColon ->
 
 State 35:
 ## Known stack suffix:
@@ -1429,7 +1382,8 @@ recordPattern -> lid EQUALS pattern . moreFieldPatterns [ RBRACE ]
 -- On SEMICOLON shift to state 58
 -- On moreFieldPatterns shift to state 86
 ## Reductions:
--- On RBRACE reduce production moreFieldPatterns ->
+-- On RBRACE
+--   reduce production moreFieldPatterns ->
 
 State 58:
 ## Known stack suffix:
@@ -1504,7 +1458,8 @@ moreFieldPatterns -> SEMICOLON lid EQUALS pattern . moreFieldPatterns [ RBRACE ]
 -- On SEMICOLON shift to state 58
 -- On moreFieldPatterns shift to state 62
 ## Reductions:
--- On RBRACE reduce production moreFieldPatterns ->
+-- On RBRACE
+--   reduce production moreFieldPatterns ->
 
 State 62:
 ## Known stack suffix:
@@ -1542,60 +1497,8 @@ namepath -> name . DOT namepath [ WHEN VAL UNDERSCORE UINT8 TYPE TVAR TRUE TOTAL
 ## Transitions:
 -- On DOT shift to state 66
 ## Reductions:
--- On WHEN reduce production namepath -> name
--- On VAL reduce production namepath -> name
--- On UNDERSCORE reduce production namepath -> name
--- On UINT8 reduce production namepath -> name
--- On TYPE reduce production namepath -> name
--- On TVAR reduce production namepath -> name
--- On TRUE reduce production namepath -> name
--- On TOTAL reduce production namepath -> name
--- On SUB_EFFECT reduce production namepath -> name
--- On STRING reduce production namepath -> name
--- On SQUIGGLY_RARROW reduce production namepath -> name
--- On SEMICOLON_SEMICOLON reduce production namepath -> name
--- On SEMICOLON reduce production namepath -> name
--- On RPAREN reduce production namepath -> name
--- On RBRACK reduce production namepath -> name
--- On RBRACE reduce production namepath -> name
--- On RARROW reduce production namepath -> name
--- On PRIVATE reduce production namepath -> name
--- On PRAGMA_SET_OPTIONS reduce production namepath -> name
--- On PRAGMA_RESET_OPTIONS reduce production namepath -> name
--- On OPEN reduce production namepath -> name
--- On OPAQUE reduce production namepath -> name
--- On NEW_EFFECT reduce production namepath -> name
--- On NAME reduce production namepath -> name
--- On MODULE reduce production namepath -> name
--- On LPAREN_RPAREN reduce production namepath -> name
--- On LPAREN reduce production namepath -> name
--- On LOGIC reduce production namepath -> name
--- On LET reduce production namepath -> name
--- On LENS_PAREN_RIGHT reduce production namepath -> name
--- On LENS_PAREN_LEFT reduce production namepath -> name
--- On LBRACK reduce production namepath -> name
--- On LBRACE reduce production namepath -> name
--- On KIND reduce production namepath -> name
--- On INT64 reduce production namepath -> name
--- On INT32 reduce production namepath -> name
--- On INT reduce production namepath -> name
--- On IEEE64 reduce production namepath -> name
--- On IDENT reduce production namepath -> name
--- On HASH reduce production namepath -> name
--- On FALSE reduce production namepath -> name
--- On EXCEPTION reduce production namepath -> name
--- On EQUALS reduce production namepath -> name
--- On EOF reduce production namepath -> name
--- On END reduce production namepath -> name
--- On EFFECT reduce production namepath -> name
--- On DEFAULT reduce production namepath -> name
--- On COMMA reduce production namepath -> name
--- On COLON_COLON reduce production namepath -> name
--- On COLON reduce production namepath -> name
--- On CHAR reduce production namepath -> name
--- On BYTEARRAY reduce production namepath -> name
--- On BAR reduce production namepath -> name
--- On ASSUME reduce production namepath -> name
+-- On WHEN VAL UNDERSCORE UINT8 TYPE TVAR TRUE TOTAL SUB_EFFECT STRING SQUIGGLY_RARROW SEMICOLON_SEMICOLON SEMICOLON RPAREN RBRACK RBRACE RARROW PRIVATE PRAGMA_SET_OPTIONS PRAGMA_RESET_OPTIONS OPEN OPAQUE NEW_EFFECT NAME MODULE LPAREN_RPAREN LPAREN LOGIC LET LENS_PAREN_RIGHT LENS_PAREN_LEFT LBRACK LBRACE KIND INT64 INT32 INT IEEE64 IDENT HASH FALSE EXCEPTION EQUALS EOF END EFFECT DEFAULT COMMA COLON_COLON COLON CHAR BYTEARRAY BAR ASSUME
+--   reduce production namepath -> name
 
 State 66:
 ## Known stack suffix:
@@ -1626,15 +1529,8 @@ tuplePattern -> listPattern . patternListComma [ WHEN SQUIGGLY_RARROW SEMICOLON 
 -- On COMMA shift to state 69
 -- On patternListComma shift to state 84
 ## Reductions:
--- On WHEN reduce production patternListComma ->
--- On SQUIGGLY_RARROW reduce production patternListComma ->
--- On SEMICOLON reduce production patternListComma ->
--- On RPAREN reduce production patternListComma ->
--- On RBRACE reduce production patternListComma ->
--- On RARROW reduce production patternListComma ->
--- On EQUALS reduce production patternListComma ->
--- On COLON reduce production patternListComma ->
--- On BAR reduce production patternListComma ->
+-- On WHEN SQUIGGLY_RARROW SEMICOLON RPAREN RBRACE RARROW EQUALS COLON BAR
+--   reduce production patternListComma ->
 
 State 69:
 ## Known stack suffix:
@@ -1684,16 +1580,8 @@ patternListComma -> COMMA listPattern . patternListComma [ WHEN SQUIGGLY_RARROW 
 -- On COMMA shift to state 69
 -- On patternListComma shift to state 71
 ## Reductions:
--- On WHEN reduce production patternListComma ->
--- On SQUIGGLY_RARROW reduce production patternListComma ->
--- On SEMICOLON reduce production patternListComma ->
--- On RPAREN reduce production patternListComma ->
--- On RBRACE reduce production patternListComma ->
--- On RARROW reduce production patternListComma ->
--- On LENS_PAREN_RIGHT reduce production patternListComma ->
--- On EQUALS reduce production patternListComma ->
--- On COLON reduce production patternListComma ->
--- On BAR reduce production patternListComma ->
+-- On WHEN SQUIGGLY_RARROW SEMICOLON RPAREN RBRACE RARROW LENS_PAREN_RIGHT EQUALS COLON BAR
+--   reduce production patternListComma ->
 
 State 71:
 ## Known stack suffix:
@@ -1768,19 +1656,8 @@ appPattern -> atomicPattern . atomicPatterns [ WHEN SQUIGGLY_RARROW SEMICOLON RP
 -- On atomicPattern2 shift to state 74
 -- On atomicPattern shift to state 77
 ## Reductions:
--- On WHEN reduce production atomicPatterns ->
--- On SQUIGGLY_RARROW reduce production atomicPatterns ->
--- On SEMICOLON reduce production atomicPatterns ->
--- On RPAREN reduce production atomicPatterns ->
--- On RBRACK reduce production atomicPatterns ->
--- On RBRACE reduce production atomicPatterns ->
--- On RARROW reduce production atomicPatterns ->
--- On LENS_PAREN_RIGHT reduce production atomicPatterns ->
--- On EQUALS reduce production atomicPatterns ->
--- On COMMA reduce production atomicPatterns ->
--- On COLON_COLON reduce production atomicPatterns ->
--- On COLON reduce production atomicPatterns ->
--- On BAR reduce production atomicPatterns ->
+-- On WHEN SQUIGGLY_RARROW SEMICOLON RPAREN RBRACK RBRACE RARROW LENS_PAREN_RIGHT EQUALS COMMA COLON_COLON COLON BAR
+--   reduce production atomicPatterns ->
 
 State 76:
 ## Known stack suffix:
@@ -1828,19 +1705,8 @@ atomicPatterns -> atomicPattern . atomicPatterns [ WHEN SQUIGGLY_RARROW SEMICOLO
 -- On atomicPattern2 shift to state 74
 -- On atomicPattern shift to state 77
 ## Reductions:
--- On WHEN reduce production atomicPatterns ->
--- On SQUIGGLY_RARROW reduce production atomicPatterns ->
--- On SEMICOLON reduce production atomicPatterns ->
--- On RPAREN reduce production atomicPatterns ->
--- On RBRACK reduce production atomicPatterns ->
--- On RBRACE reduce production atomicPatterns ->
--- On RARROW reduce production atomicPatterns ->
--- On LENS_PAREN_RIGHT reduce production atomicPatterns ->
--- On EQUALS reduce production atomicPatterns ->
--- On COMMA reduce production atomicPatterns ->
--- On COLON_COLON reduce production atomicPatterns ->
--- On COLON reduce production atomicPatterns ->
--- On BAR reduce production atomicPatterns ->
+-- On WHEN SQUIGGLY_RARROW SEMICOLON RPAREN RBRACK RBRACE RARROW LENS_PAREN_RIGHT EQUALS COMMA COLON_COLON COLON BAR
+--   reduce production atomicPatterns ->
 
 State 78:
 ## Known stack suffix:
@@ -1860,17 +1726,8 @@ listPattern -> appPattern . consPattern [ WHEN SQUIGGLY_RARROW SEMICOLON RPAREN 
 -- On COLON_COLON shift to state 80
 -- On consPattern shift to state 83
 ## Reductions:
--- On WHEN reduce production consPattern ->
--- On SQUIGGLY_RARROW reduce production consPattern ->
--- On SEMICOLON reduce production consPattern ->
--- On RPAREN reduce production consPattern ->
--- On RBRACE reduce production consPattern ->
--- On RARROW reduce production consPattern ->
--- On LENS_PAREN_RIGHT reduce production consPattern ->
--- On EQUALS reduce production consPattern ->
--- On COMMA reduce production consPattern ->
--- On COLON reduce production consPattern ->
--- On BAR reduce production consPattern ->
+-- On WHEN SQUIGGLY_RARROW SEMICOLON RPAREN RBRACE RARROW LENS_PAREN_RIGHT EQUALS COMMA COLON BAR
+--   reduce production consPattern ->
 
 State 80:
 ## Known stack suffix:
@@ -1919,17 +1776,8 @@ consPattern -> COLON_COLON appPattern . consPattern [ WHEN SQUIGGLY_RARROW SEMIC
 -- On COLON_COLON shift to state 80
 -- On consPattern shift to state 82
 ## Reductions:
--- On WHEN reduce production consPattern ->
--- On SQUIGGLY_RARROW reduce production consPattern ->
--- On SEMICOLON reduce production consPattern ->
--- On RPAREN reduce production consPattern ->
--- On RBRACE reduce production consPattern ->
--- On RARROW reduce production consPattern ->
--- On LENS_PAREN_RIGHT reduce production consPattern ->
--- On EQUALS reduce production consPattern ->
--- On COMMA reduce production consPattern ->
--- On COLON reduce production consPattern ->
--- On BAR reduce production consPattern ->
+-- On WHEN SQUIGGLY_RARROW SEMICOLON RPAREN RBRACE RARROW LENS_PAREN_RIGHT EQUALS COMMA COLON BAR
+--   reduce production consPattern ->
 
 State 82:
 ## Known stack suffix:
@@ -2003,7 +1851,8 @@ patternListSemiColon -> appPattern . patternListSemiColonRest [ RBRACK ]
 -- On SEMICOLON shift to state 90
 -- On patternListSemiColonRest shift to state 93
 ## Reductions:
--- On RBRACK reduce production patternListSemiColonRest ->
+-- On RBRACK
+--   reduce production patternListSemiColonRest ->
 
 State 90:
 ## Known stack suffix:
@@ -2052,7 +1901,8 @@ patternListSemiColonRest -> SEMICOLON appPattern . patternListSemiColonRest [ RB
 -- On SEMICOLON shift to state 90
 -- On patternListSemiColonRest shift to state 92
 ## Reductions:
--- On RBRACK reduce production patternListSemiColonRest ->
+-- On RBRACK
+--   reduce production patternListSemiColonRest ->
 
 State 92:
 ## Known stack suffix:
@@ -2129,7 +1979,8 @@ nonTvarPattern2 -> LENS_PAREN_LEFT listPattern COMMA listPattern . patternListCo
 -- On COMMA shift to state 69
 -- On patternListComma shift to state 97
 ## Reductions:
--- On LENS_PAREN_RIGHT reduce production patternListComma ->
+-- On LENS_PAREN_RIGHT
+--   reduce production patternListComma ->
 
 State 97:
 ## Known stack suffix:
@@ -2166,30 +2017,10 @@ atomicPattern2 -> nonTvarPattern2 . [ UNDERSCORE UINT8 TVAR TRUE STRING RPAREN N
 nonTvarPattern -> nonTvarPattern2 . [ COLON ]
 ## Transitions:
 ## Reductions:
--- On UNDERSCORE reduce production atomicPattern2 -> nonTvarPattern2
--- On UINT8 reduce production atomicPattern2 -> nonTvarPattern2
--- On TVAR reduce production atomicPattern2 -> nonTvarPattern2
--- On TRUE reduce production atomicPattern2 -> nonTvarPattern2
--- On STRING reduce production atomicPattern2 -> nonTvarPattern2
--- On RPAREN reduce production atomicPattern2 -> nonTvarPattern2
--- On NAME reduce production atomicPattern2 -> nonTvarPattern2
--- On LPAREN_RPAREN reduce production atomicPattern2 -> nonTvarPattern2
--- On LPAREN reduce production atomicPattern2 -> nonTvarPattern2
--- On LENS_PAREN_LEFT reduce production atomicPattern2 -> nonTvarPattern2
--- On LBRACK reduce production atomicPattern2 -> nonTvarPattern2
--- On LBRACE reduce production atomicPattern2 -> nonTvarPattern2
--- On INT64 reduce production atomicPattern2 -> nonTvarPattern2
--- On INT32 reduce production atomicPattern2 -> nonTvarPattern2
--- On INT reduce production atomicPattern2 -> nonTvarPattern2
--- On IEEE64 reduce production atomicPattern2 -> nonTvarPattern2
--- On IDENT reduce production atomicPattern2 -> nonTvarPattern2
--- On HASH reduce production atomicPattern2 -> nonTvarPattern2
--- On FALSE reduce production atomicPattern2 -> nonTvarPattern2
--- On COMMA reduce production atomicPattern2 -> nonTvarPattern2
--- On COLON_COLON reduce production atomicPattern2 -> nonTvarPattern2
--- On COLON reduce production nonTvarPattern -> nonTvarPattern2
--- On CHAR reduce production atomicPattern2 -> nonTvarPattern2
--- On BYTEARRAY reduce production atomicPattern2 -> nonTvarPattern2
+-- On UNDERSCORE UINT8 TVAR TRUE STRING RPAREN NAME LPAREN_RPAREN LPAREN LENS_PAREN_LEFT LBRACK LBRACE INT64 INT32 INT IEEE64 IDENT HASH FALSE COMMA COLON_COLON CHAR BYTEARRAY
+--   reduce production atomicPattern2 -> nonTvarPattern2
+-- On COLON
+--   reduce production nonTvarPattern -> nonTvarPattern2
 
 State 101:
 ## Known stack suffix:
@@ -2355,7 +2186,8 @@ projectionLHS -> LBRACK . semiColonTermList RBRACK [ WITH VAL UNDERSCORE UINT8 T
 -- On aqual shift to state 221
 -- On appTerm shift to state 214
 ## Reductions:
--- On RBRACK reduce production semiColonTermList ->
+-- On RBRACK
+--   reduce production semiColonTermList ->
 
 State 104:
 ## Known stack suffix:
@@ -2584,26 +2416,8 @@ noSeqTerm -> FUNCTION . firstPatternBranch patternBranches [ WITH VAL TYPE TOTAL
 -- On maybeBar shift to state 110
 -- On firstPatternBranch shift to state 273
 ## Reductions:
--- On UNDERSCORE reduce production maybeBar ->
--- On UINT8 reduce production maybeBar ->
--- On TVAR reduce production maybeBar ->
--- On TRUE reduce production maybeBar ->
--- On STRING reduce production maybeBar ->
--- On NAME reduce production maybeBar ->
--- On LPAREN_RPAREN reduce production maybeBar ->
--- On LPAREN reduce production maybeBar ->
--- On LENS_PAREN_LEFT reduce production maybeBar ->
--- On LBRACK reduce production maybeBar ->
--- On LBRACE reduce production maybeBar ->
--- On INT64 reduce production maybeBar ->
--- On INT32 reduce production maybeBar ->
--- On INT reduce production maybeBar ->
--- On IEEE64 reduce production maybeBar ->
--- On IDENT reduce production maybeBar ->
--- On HASH reduce production maybeBar ->
--- On FALSE reduce production maybeBar ->
--- On CHAR reduce production maybeBar ->
--- On BYTEARRAY reduce production maybeBar ->
+-- On UNDERSCORE UINT8 TVAR TRUE STRING NAME LPAREN_RPAREN LPAREN LENS_PAREN_LEFT LBRACK LBRACE INT64 INT32 INT IEEE64 IDENT HASH FALSE CHAR BYTEARRAY
+--   reduce production maybeBar ->
 
 State 109:
 ## Known stack suffix:
@@ -2665,9 +2479,8 @@ disjunctivePattern -> pattern . BAR disjunctivePattern [ WHEN SQUIGGLY_RARROW RA
 ## Transitions:
 -- On BAR shift to state 112
 ## Reductions:
--- On WHEN reduce production disjunctivePattern -> pattern
--- On SQUIGGLY_RARROW reduce production disjunctivePattern -> pattern
--- On RARROW reduce production disjunctivePattern -> pattern
+-- On WHEN SQUIGGLY_RARROW RARROW
+--   reduce production disjunctivePattern -> pattern
 
 State 112:
 ## Known stack suffix:
@@ -2729,8 +2542,8 @@ firstPatternBranch -> maybeBar disjunctivePattern . maybeWhen maybeFocusArrow te
 -- On WHEN shift to state 115
 -- On maybeWhen shift to state 154
 ## Reductions:
--- On SQUIGGLY_RARROW reduce production maybeWhen ->
--- On RARROW reduce production maybeWhen ->
+-- On SQUIGGLY_RARROW RARROW
+--   reduce production maybeWhen ->
 
 State 115:
 ## Known stack suffix:
@@ -2814,7 +2627,8 @@ projectionLHS -> BANG_LBRACE . commaTermList RBRACE [ WITH VAL UNDERSCORE UINT8 
 -- On atomicTerm shift to state 142
 -- On appTerm shift to state 148
 ## Reductions:
--- On RBRACE reduce production commaTermList ->
+-- On RBRACE
+--   reduce production commaTermList ->
 
 State 117:
 ## Known stack suffix:
@@ -2893,86 +2707,8 @@ maybeFieldProjections -> maybeFieldProjections . DOT ident [ WITH VAL UNDERSCORE
 ## Transitions:
 -- On DOT shift to state 122
 ## Reductions:
--- On WITH reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On VAL reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On UNDERSCORE reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On UINT8 reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On TYP_APP_GREATER reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On TYPE reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On TVAR reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On TRUE reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On TOTAL reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On THEN reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On SUB_EFFECT reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On SUBTYPE reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On SUBKIND reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On STRING reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On STAR reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On SQUIGGLY_RARROW reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On SEMICOLON_SEMICOLON reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On SEMICOLON reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On RPAREN reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On RBRACK reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On RBRACE reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On RARROW reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On PRIVATE reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On PRAGMA_SET_OPTIONS reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On PRAGMA_RESET_OPTIONS reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On PLUS_OP reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On PERCENT_LBRACK reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On OPEN reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On OPAQUE reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On NEW_EFFECT reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On NAME reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On MODULE reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On MINUS_OP reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On LPAREN_RPAREN reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On LPAREN reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On LOGIC reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On LET reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On LENS_PAREN_RIGHT reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On LENS_PAREN_LEFT reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On LBRACK_BAR reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On LBRACK reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On LBRACE reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On KIND reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On INT64 reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On INT32 reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On INT reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On IN reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On IMPLIES reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On IFF reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On IEEE64 reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On IDENT reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On HASH reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On FALSE reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On EXCEPTION reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On EQUALS reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On EOF reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On END reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On ELSE reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On EFFECT reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On DIV_MOD_OP reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On DISJUNCTION reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On DEFAULT reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On CUSTOM_OP reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On CONJUNCTION reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On COMMA reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On COLON_EQUALS reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On COLON_COLON reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On CHAR reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On BYTEARRAY reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On BEGIN reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On BAR_RBRACK reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On BAR_BAR reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On BAR reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On BANG_LBRACE reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On BANG reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On ASSUME reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On ASSERT reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On AND reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On AMP_AMP reduce production atomicTerm -> projectionLHS maybeFieldProjections
--- On AMP reduce production atomicTerm -> projectionLHS maybeFieldProjections
+-- On WITH VAL UNDERSCORE UINT8 TYP_APP_GREATER TYPE TVAR TRUE TOTAL THEN SUB_EFFECT SUBTYPE SUBKIND STRING STAR SQUIGGLY_RARROW SEMICOLON_SEMICOLON SEMICOLON RPAREN RBRACK RBRACE RARROW PRIVATE PRAGMA_SET_OPTIONS PRAGMA_RESET_OPTIONS PLUS_OP PERCENT_LBRACK OPEN OPAQUE NEW_EFFECT NAME MODULE MINUS_OP LPAREN_RPAREN LPAREN LOGIC LET LENS_PAREN_RIGHT LENS_PAREN_LEFT LBRACK_BAR LBRACK LBRACE KIND INT64 INT32 INT IN IMPLIES IFF IEEE64 IDENT HASH FALSE EXCEPTION EQUALS EOF END ELSE EFFECT DIV_MOD_OP DISJUNCTION DEFAULT CUSTOM_OP CONJUNCTION COMMA COLON_EQUALS COLON_COLON CHAR BYTEARRAY BEGIN BAR_RBRACK BAR_BAR BAR BANG_LBRACE BANG ASSUME ASSERT AND AMP_AMP AMP
+--   reduce production atomicTerm -> projectionLHS maybeFieldProjections
 
 State 122:
 ## Known stack suffix:
@@ -3002,87 +2738,8 @@ eitherpath -> name . maybeMorePath [ WITH VAL UNDERSCORE UINT8 TYP_APP_LESS TYP_
 -- On DOT shift to state 125
 -- On maybeMorePath shift to state 128
 ## Reductions:
--- On WITH reduce production maybeMorePath ->
--- On VAL reduce production maybeMorePath ->
--- On UNDERSCORE reduce production maybeMorePath ->
--- On UINT8 reduce production maybeMorePath ->
--- On TYP_APP_LESS reduce production maybeMorePath ->
--- On TYP_APP_GREATER reduce production maybeMorePath ->
--- On TYPE reduce production maybeMorePath ->
--- On TVAR reduce production maybeMorePath ->
--- On TRUE reduce production maybeMorePath ->
--- On TOTAL reduce production maybeMorePath ->
--- On THEN reduce production maybeMorePath ->
--- On SUB_EFFECT reduce production maybeMorePath ->
--- On SUBTYPE reduce production maybeMorePath ->
--- On SUBKIND reduce production maybeMorePath ->
--- On STRING reduce production maybeMorePath ->
--- On STAR reduce production maybeMorePath ->
--- On SQUIGGLY_RARROW reduce production maybeMorePath ->
--- On SEMICOLON_SEMICOLON reduce production maybeMorePath ->
--- On SEMICOLON reduce production maybeMorePath ->
--- On RPAREN reduce production maybeMorePath ->
--- On RBRACK reduce production maybeMorePath ->
--- On RBRACE reduce production maybeMorePath ->
--- On RARROW reduce production maybeMorePath ->
--- On PRIVATE reduce production maybeMorePath ->
--- On PRAGMA_SET_OPTIONS reduce production maybeMorePath ->
--- On PRAGMA_RESET_OPTIONS reduce production maybeMorePath ->
--- On PLUS_OP reduce production maybeMorePath ->
--- On PERCENT_LBRACK reduce production maybeMorePath ->
--- On OPEN reduce production maybeMorePath ->
--- On OPAQUE reduce production maybeMorePath ->
--- On NEW_EFFECT reduce production maybeMorePath ->
--- On NAME reduce production maybeMorePath ->
--- On MODULE reduce production maybeMorePath ->
--- On MINUS_OP reduce production maybeMorePath ->
--- On LPAREN_RPAREN reduce production maybeMorePath ->
--- On LPAREN reduce production maybeMorePath ->
--- On LOGIC reduce production maybeMorePath ->
--- On LET reduce production maybeMorePath ->
--- On LENS_PAREN_RIGHT reduce production maybeMorePath ->
--- On LENS_PAREN_LEFT reduce production maybeMorePath ->
--- On LBRACK_BAR reduce production maybeMorePath ->
--- On LBRACK reduce production maybeMorePath ->
--- On LBRACE reduce production maybeMorePath ->
--- On KIND reduce production maybeMorePath ->
--- On INT64 reduce production maybeMorePath ->
--- On INT32 reduce production maybeMorePath ->
--- On INT reduce production maybeMorePath ->
--- On IN reduce production maybeMorePath ->
--- On IMPLIES reduce production maybeMorePath ->
--- On IFF reduce production maybeMorePath ->
--- On IEEE64 reduce production maybeMorePath ->
--- On IDENT reduce production maybeMorePath ->
--- On HASH reduce production maybeMorePath ->
--- On FALSE reduce production maybeMorePath ->
--- On EXCEPTION reduce production maybeMorePath ->
--- On EQUALS reduce production maybeMorePath ->
--- On EOF reduce production maybeMorePath ->
--- On END reduce production maybeMorePath ->
--- On ELSE reduce production maybeMorePath ->
--- On EFFECT reduce production maybeMorePath ->
--- On DIV_MOD_OP reduce production maybeMorePath ->
--- On DISJUNCTION reduce production maybeMorePath ->
--- On DEFAULT reduce production maybeMorePath ->
--- On CUSTOM_OP reduce production maybeMorePath ->
--- On CONJUNCTION reduce production maybeMorePath ->
--- On COMMA reduce production maybeMorePath ->
--- On COLON_EQUALS reduce production maybeMorePath ->
--- On COLON_COLON reduce production maybeMorePath ->
--- On CHAR reduce production maybeMorePath ->
--- On BYTEARRAY reduce production maybeMorePath ->
--- On BEGIN reduce production maybeMorePath ->
--- On BAR_RBRACK reduce production maybeMorePath ->
--- On BAR_BAR reduce production maybeMorePath ->
--- On BAR reduce production maybeMorePath ->
--- On BANG_LBRACE reduce production maybeMorePath ->
--- On BANG reduce production maybeMorePath ->
--- On ASSUME reduce production maybeMorePath ->
--- On ASSERT reduce production maybeMorePath ->
--- On AND reduce production maybeMorePath ->
--- On AMP_AMP reduce production maybeMorePath ->
--- On AMP reduce production maybeMorePath ->
+-- On WITH VAL UNDERSCORE UINT8 TYP_APP_LESS TYP_APP_GREATER TYPE TVAR TRUE TOTAL THEN SUB_EFFECT SUBTYPE SUBKIND STRING STAR SQUIGGLY_RARROW SEMICOLON_SEMICOLON SEMICOLON RPAREN RBRACK RBRACE RARROW PRIVATE PRAGMA_SET_OPTIONS PRAGMA_RESET_OPTIONS PLUS_OP PERCENT_LBRACK OPEN OPAQUE NEW_EFFECT NAME MODULE MINUS_OP LPAREN_RPAREN LPAREN LOGIC LET LENS_PAREN_RIGHT LENS_PAREN_LEFT LBRACK_BAR LBRACK LBRACE KIND INT64 INT32 INT IN IMPLIES IFF IEEE64 IDENT HASH FALSE EXCEPTION EQUALS EOF END ELSE EFFECT DIV_MOD_OP DISJUNCTION DEFAULT CUSTOM_OP CONJUNCTION COMMA COLON_EQUALS COLON_COLON CHAR BYTEARRAY BEGIN BAR_RBRACK BAR_BAR BAR BANG_LBRACE BANG ASSUME ASSERT AND AMP_AMP AMP
+--   reduce production maybeMorePath ->
 
 State 125:
 ## Known stack suffix:
@@ -3142,87 +2799,8 @@ projectionLHS -> eitherQname . maybeInsts [ WITH VAL UNDERSCORE UINT8 TYP_APP_GR
 -- On TYP_APP_LESS shift to state 131
 -- On maybeInsts shift to state 138
 ## Reductions:
--- On WITH reduce production maybeInsts ->
--- On VAL reduce production maybeInsts ->
--- On UNDERSCORE reduce production maybeInsts ->
--- On UINT8 reduce production maybeInsts ->
--- On TYP_APP_GREATER reduce production maybeInsts ->
--- On TYPE reduce production maybeInsts ->
--- On TVAR reduce production maybeInsts ->
--- On TRUE reduce production maybeInsts ->
--- On TOTAL reduce production maybeInsts ->
--- On THEN reduce production maybeInsts ->
--- On SUB_EFFECT reduce production maybeInsts ->
--- On SUBTYPE reduce production maybeInsts ->
--- On SUBKIND reduce production maybeInsts ->
--- On STRING reduce production maybeInsts ->
--- On STAR reduce production maybeInsts ->
--- On SQUIGGLY_RARROW reduce production maybeInsts ->
--- On SEMICOLON_SEMICOLON reduce production maybeInsts ->
--- On SEMICOLON reduce production maybeInsts ->
--- On RPAREN reduce production maybeInsts ->
--- On RBRACK reduce production maybeInsts ->
--- On RBRACE reduce production maybeInsts ->
--- On RARROW reduce production maybeInsts ->
--- On PRIVATE reduce production maybeInsts ->
--- On PRAGMA_SET_OPTIONS reduce production maybeInsts ->
--- On PRAGMA_RESET_OPTIONS reduce production maybeInsts ->
--- On PLUS_OP reduce production maybeInsts ->
--- On PERCENT_LBRACK reduce production maybeInsts ->
--- On OPEN reduce production maybeInsts ->
--- On OPAQUE reduce production maybeInsts ->
--- On NEW_EFFECT reduce production maybeInsts ->
--- On NAME reduce production maybeInsts ->
--- On MODULE reduce production maybeInsts ->
--- On MINUS_OP reduce production maybeInsts ->
--- On LPAREN_RPAREN reduce production maybeInsts ->
--- On LPAREN reduce production maybeInsts ->
--- On LOGIC reduce production maybeInsts ->
--- On LET reduce production maybeInsts ->
--- On LENS_PAREN_RIGHT reduce production maybeInsts ->
--- On LENS_PAREN_LEFT reduce production maybeInsts ->
--- On LBRACK_BAR reduce production maybeInsts ->
--- On LBRACK reduce production maybeInsts ->
--- On LBRACE reduce production maybeInsts ->
--- On KIND reduce production maybeInsts ->
--- On INT64 reduce production maybeInsts ->
--- On INT32 reduce production maybeInsts ->
--- On INT reduce production maybeInsts ->
--- On IN reduce production maybeInsts ->
--- On IMPLIES reduce production maybeInsts ->
--- On IFF reduce production maybeInsts ->
--- On IEEE64 reduce production maybeInsts ->
--- On IDENT reduce production maybeInsts ->
--- On HASH reduce production maybeInsts ->
--- On FALSE reduce production maybeInsts ->
--- On EXCEPTION reduce production maybeInsts ->
--- On EQUALS reduce production maybeInsts ->
--- On EOF reduce production maybeInsts ->
--- On END reduce production maybeInsts ->
--- On ELSE reduce production maybeInsts ->
--- On EFFECT reduce production maybeInsts ->
--- On DOT reduce production maybeInsts ->
--- On DIV_MOD_OP reduce production maybeInsts ->
--- On DISJUNCTION reduce production maybeInsts ->
--- On DEFAULT reduce production maybeInsts ->
--- On CUSTOM_OP reduce production maybeInsts ->
--- On CONJUNCTION reduce production maybeInsts ->
--- On COMMA reduce production maybeInsts ->
--- On COLON_EQUALS reduce production maybeInsts ->
--- On COLON_COLON reduce production maybeInsts ->
--- On CHAR reduce production maybeInsts ->
--- On BYTEARRAY reduce production maybeInsts ->
--- On BEGIN reduce production maybeInsts ->
--- On BAR_RBRACK reduce production maybeInsts ->
--- On BAR_BAR reduce production maybeInsts ->
--- On BAR reduce production maybeInsts ->
--- On BANG_LBRACE reduce production maybeInsts ->
--- On BANG reduce production maybeInsts ->
--- On ASSUME reduce production maybeInsts ->
--- On ASSERT reduce production maybeInsts ->
--- On AND reduce production maybeInsts ->
--- On AMP_AMP reduce production maybeInsts ->
--- On AMP reduce production maybeInsts ->
+-- On WITH VAL UNDERSCORE UINT8 TYP_APP_GREATER TYPE TVAR TRUE TOTAL THEN SUB_EFFECT SUBTYPE SUBKIND STRING STAR SQUIGGLY_RARROW SEMICOLON_SEMICOLON SEMICOLON RPAREN RBRACK RBRACE RARROW PRIVATE PRAGMA_SET_OPTIONS PRAGMA_RESET_OPTIONS PLUS_OP PERCENT_LBRACK OPEN OPAQUE NEW_EFFECT NAME MODULE MINUS_OP LPAREN_RPAREN LPAREN LOGIC LET LENS_PAREN_RIGHT LENS_PAREN_LEFT LBRACK_BAR LBRACK LBRACE KIND INT64 INT32 INT IN IMPLIES IFF IEEE64 IDENT HASH FALSE EXCEPTION EQUALS EOF END ELSE EFFECT DOT DIV_MOD_OP DISJUNCTION DEFAULT CUSTOM_OP CONJUNCTION COMMA COLON_EQUALS COLON_COLON CHAR BYTEARRAY BEGIN BAR_RBRACK BAR_BAR BAR BANG_LBRACE BANG ASSUME ASSERT AND AMP_AMP AMP
+--   reduce production maybeInsts ->
 
 State 131:
 ## Known stack suffix:
@@ -3301,7 +2879,8 @@ targs -> atomicTerm . COMMA targs [ TYP_APP_GREATER ]
 ## Transitions:
 -- On COMMA shift to state 136
 ## Reductions:
--- On TYP_APP_GREATER reduce production targs -> atomicTerm
+-- On TYP_APP_GREATER
+--   reduce production targs -> atomicTerm
 
 State 136:
 ## Known stack suffix:
@@ -3399,84 +2978,10 @@ appTerm -> atomicTerm . hashAtomicTerms [ WITH VAL TYPE TOTAL THEN SUB_EFFECT SU
 -- On maybeHash shift to state 144
 -- On hashAtomicTerms shift to state 147
 ## Reductions:
--- On WITH reduce production hashAtomicTerms ->
--- On VAL reduce production hashAtomicTerms ->
--- On UNDERSCORE reduce production maybeHash ->
--- On UINT8 reduce production maybeHash ->
--- On TYPE reduce production hashAtomicTerms ->
--- On TVAR reduce production maybeHash ->
--- On TRUE reduce production maybeHash ->
--- On TOTAL reduce production hashAtomicTerms ->
--- On THEN reduce production hashAtomicTerms ->
--- On SUB_EFFECT reduce production hashAtomicTerms ->
--- On SUBTYPE reduce production hashAtomicTerms ->
--- On SUBKIND reduce production hashAtomicTerms ->
--- On STRING reduce production maybeHash ->
--- On STAR reduce production hashAtomicTerms ->
--- On SQUIGGLY_RARROW reduce production hashAtomicTerms ->
--- On SEMICOLON_SEMICOLON reduce production hashAtomicTerms ->
--- On SEMICOLON reduce production hashAtomicTerms ->
--- On RPAREN reduce production hashAtomicTerms ->
--- On RBRACK reduce production hashAtomicTerms ->
--- On RBRACE reduce production hashAtomicTerms ->
--- On RARROW reduce production hashAtomicTerms ->
--- On PRIVATE reduce production hashAtomicTerms ->
--- On PRAGMA_SET_OPTIONS reduce production hashAtomicTerms ->
--- On PRAGMA_RESET_OPTIONS reduce production hashAtomicTerms ->
--- On PLUS_OP reduce production hashAtomicTerms ->
--- On PERCENT_LBRACK reduce production maybeHash ->
--- On OPEN reduce production hashAtomicTerms ->
--- On OPAQUE reduce production hashAtomicTerms ->
--- On NEW_EFFECT reduce production hashAtomicTerms ->
--- On NAME reduce production maybeHash ->
--- On MODULE reduce production hashAtomicTerms ->
--- On MINUS_OP reduce production hashAtomicTerms ->
--- On LPAREN_RPAREN reduce production maybeHash ->
--- On LPAREN reduce production maybeHash ->
--- On LOGIC reduce production hashAtomicTerms ->
--- On LET reduce production hashAtomicTerms ->
--- On LENS_PAREN_RIGHT reduce production hashAtomicTerms ->
--- On LENS_PAREN_LEFT reduce production maybeHash ->
--- On LBRACK_BAR reduce production maybeHash ->
--- On LBRACK reduce production maybeHash ->
--- On LBRACE reduce production hashAtomicTerms ->
--- On KIND reduce production hashAtomicTerms ->
--- On INT64 reduce production maybeHash ->
--- On INT32 reduce production maybeHash ->
--- On INT reduce production maybeHash ->
--- On IN reduce production hashAtomicTerms ->
--- On IMPLIES reduce production hashAtomicTerms ->
--- On IFF reduce production hashAtomicTerms ->
--- On IEEE64 reduce production maybeHash ->
--- On IDENT reduce production maybeHash ->
--- On FALSE reduce production maybeHash ->
--- On EXCEPTION reduce production hashAtomicTerms ->
--- On EQUALS reduce production hashAtomicTerms ->
--- On EOF reduce production hashAtomicTerms ->
--- On END reduce production hashAtomicTerms ->
--- On ELSE reduce production hashAtomicTerms ->
--- On EFFECT reduce production hashAtomicTerms ->
--- On DIV_MOD_OP reduce production hashAtomicTerms ->
--- On DISJUNCTION reduce production hashAtomicTerms ->
--- On DEFAULT reduce production hashAtomicTerms ->
--- On CUSTOM_OP reduce production hashAtomicTerms ->
--- On CONJUNCTION reduce production hashAtomicTerms ->
--- On COMMA reduce production hashAtomicTerms ->
--- On COLON_EQUALS reduce production hashAtomicTerms ->
--- On COLON_COLON reduce production hashAtomicTerms ->
--- On CHAR reduce production maybeHash ->
--- On BYTEARRAY reduce production maybeHash ->
--- On BEGIN reduce production maybeHash ->
--- On BAR_RBRACK reduce production hashAtomicTerms ->
--- On BAR_BAR reduce production hashAtomicTerms ->
--- On BAR reduce production hashAtomicTerms ->
--- On BANG_LBRACE reduce production maybeHash ->
--- On BANG reduce production maybeHash ->
--- On ASSUME reduce production hashAtomicTerms ->
--- On ASSERT reduce production maybeHash ->
--- On AND reduce production hashAtomicTerms ->
--- On AMP_AMP reduce production hashAtomicTerms ->
--- On AMP reduce production hashAtomicTerms ->
+-- On WITH VAL TYPE TOTAL THEN SUB_EFFECT SUBTYPE SUBKIND STAR SQUIGGLY_RARROW SEMICOLON_SEMICOLON SEMICOLON RPAREN RBRACK RBRACE RARROW PRIVATE PRAGMA_SET_OPTIONS PRAGMA_RESET_OPTIONS PLUS_OP OPEN OPAQUE NEW_EFFECT MODULE MINUS_OP LOGIC LET LENS_PAREN_RIGHT LBRACE KIND IN IMPLIES IFF EXCEPTION EQUALS EOF END ELSE EFFECT DIV_MOD_OP DISJUNCTION DEFAULT CUSTOM_OP CONJUNCTION COMMA COLON_EQUALS COLON_COLON BAR_RBRACK BAR_BAR BAR ASSUME AND AMP_AMP AMP
+--   reduce production hashAtomicTerms ->
+-- On UNDERSCORE UINT8 TVAR TRUE STRING PERCENT_LBRACK NAME LPAREN_RPAREN LPAREN LENS_PAREN_LEFT LBRACK_BAR LBRACK INT64 INT32 INT IEEE64 IDENT FALSE CHAR BYTEARRAY BEGIN BANG_LBRACE BANG ASSERT
+--   reduce production maybeHash ->
 
 State 143:
 ## Known stack suffix:
@@ -3537,84 +3042,10 @@ hashAtomicTerms -> maybeHash atomicTerm . hashAtomicTerms [ WITH VAL TYPE TOTAL 
 -- On maybeHash shift to state 144
 -- On hashAtomicTerms shift to state 146
 ## Reductions:
--- On WITH reduce production hashAtomicTerms ->
--- On VAL reduce production hashAtomicTerms ->
--- On UNDERSCORE reduce production maybeHash ->
--- On UINT8 reduce production maybeHash ->
--- On TYPE reduce production hashAtomicTerms ->
--- On TVAR reduce production maybeHash ->
--- On TRUE reduce production maybeHash ->
--- On TOTAL reduce production hashAtomicTerms ->
--- On THEN reduce production hashAtomicTerms ->
--- On SUB_EFFECT reduce production hashAtomicTerms ->
--- On SUBTYPE reduce production hashAtomicTerms ->
--- On SUBKIND reduce production hashAtomicTerms ->
--- On STRING reduce production maybeHash ->
--- On STAR reduce production hashAtomicTerms ->
--- On SQUIGGLY_RARROW reduce production hashAtomicTerms ->
--- On SEMICOLON_SEMICOLON reduce production hashAtomicTerms ->
--- On SEMICOLON reduce production hashAtomicTerms ->
--- On RPAREN reduce production hashAtomicTerms ->
--- On RBRACK reduce production hashAtomicTerms ->
--- On RBRACE reduce production hashAtomicTerms ->
--- On RARROW reduce production hashAtomicTerms ->
--- On PRIVATE reduce production hashAtomicTerms ->
--- On PRAGMA_SET_OPTIONS reduce production hashAtomicTerms ->
--- On PRAGMA_RESET_OPTIONS reduce production hashAtomicTerms ->
--- On PLUS_OP reduce production hashAtomicTerms ->
--- On PERCENT_LBRACK reduce production maybeHash ->
--- On OPEN reduce production hashAtomicTerms ->
--- On OPAQUE reduce production hashAtomicTerms ->
--- On NEW_EFFECT reduce production hashAtomicTerms ->
--- On NAME reduce production maybeHash ->
--- On MODULE reduce production hashAtomicTerms ->
--- On MINUS_OP reduce production hashAtomicTerms ->
--- On LPAREN_RPAREN reduce production maybeHash ->
--- On LPAREN reduce production maybeHash ->
--- On LOGIC reduce production hashAtomicTerms ->
--- On LET reduce production hashAtomicTerms ->
--- On LENS_PAREN_RIGHT reduce production hashAtomicTerms ->
--- On LENS_PAREN_LEFT reduce production maybeHash ->
--- On LBRACK_BAR reduce production maybeHash ->
--- On LBRACK reduce production maybeHash ->
--- On LBRACE reduce production hashAtomicTerms ->
--- On KIND reduce production hashAtomicTerms ->
--- On INT64 reduce production maybeHash ->
--- On INT32 reduce production maybeHash ->
--- On INT reduce production maybeHash ->
--- On IN reduce production hashAtomicTerms ->
--- On IMPLIES reduce production hashAtomicTerms ->
--- On IFF reduce production hashAtomicTerms ->
--- On IEEE64 reduce production maybeHash ->
--- On IDENT reduce production maybeHash ->
--- On FALSE reduce production maybeHash ->
--- On EXCEPTION reduce production hashAtomicTerms ->
--- On EQUALS reduce production hashAtomicTerms ->
--- On EOF reduce production hashAtomicTerms ->
--- On END reduce production hashAtomicTerms ->
--- On ELSE reduce production hashAtomicTerms ->
--- On EFFECT reduce production hashAtomicTerms ->
--- On DIV_MOD_OP reduce production hashAtomicTerms ->
--- On DISJUNCTION reduce production hashAtomicTerms ->
--- On DEFAULT reduce production hashAtomicTerms ->
--- On CUSTOM_OP reduce production hashAtomicTerms ->
--- On CONJUNCTION reduce production hashAtomicTerms ->
--- On COMMA reduce production hashAtomicTerms ->
--- On COLON_EQUALS reduce production hashAtomicTerms ->
--- On COLON_COLON reduce production hashAtomicTerms ->
--- On CHAR reduce production maybeHash ->
--- On BYTEARRAY reduce production maybeHash ->
--- On BEGIN reduce production maybeHash ->
--- On BAR_RBRACK reduce production hashAtomicTerms ->
--- On BAR_BAR reduce production hashAtomicTerms ->
--- On BAR reduce production hashAtomicTerms ->
--- On BANG_LBRACE reduce production maybeHash ->
--- On BANG reduce production maybeHash ->
--- On ASSUME reduce production hashAtomicTerms ->
--- On ASSERT reduce production maybeHash ->
--- On AND reduce production hashAtomicTerms ->
--- On AMP_AMP reduce production hashAtomicTerms ->
--- On AMP reduce production hashAtomicTerms ->
+-- On WITH VAL TYPE TOTAL THEN SUB_EFFECT SUBTYPE SUBKIND STAR SQUIGGLY_RARROW SEMICOLON_SEMICOLON SEMICOLON RPAREN RBRACK RBRACE RARROW PRIVATE PRAGMA_SET_OPTIONS PRAGMA_RESET_OPTIONS PLUS_OP OPEN OPAQUE NEW_EFFECT MODULE MINUS_OP LOGIC LET LENS_PAREN_RIGHT LBRACE KIND IN IMPLIES IFF EXCEPTION EQUALS EOF END ELSE EFFECT DIV_MOD_OP DISJUNCTION DEFAULT CUSTOM_OP CONJUNCTION COMMA COLON_EQUALS COLON_COLON BAR_RBRACK BAR_BAR BAR ASSUME AND AMP_AMP AMP
+--   reduce production hashAtomicTerms ->
+-- On UNDERSCORE UINT8 TVAR TRUE STRING PERCENT_LBRACK NAME LPAREN_RPAREN LPAREN LENS_PAREN_LEFT LBRACK_BAR LBRACK INT64 INT32 INT IEEE64 IDENT FALSE CHAR BYTEARRAY BEGIN BANG_LBRACE BANG ASSERT
+--   reduce production maybeHash ->
 
 State 146:
 ## Known stack suffix:
@@ -3643,7 +3074,8 @@ commaTermList -> appTerm . moreCommaTerms [ RBRACE ]
 -- On COMMA shift to state 149
 -- On moreCommaTerms shift to state 152
 ## Reductions:
--- On RBRACE reduce production moreCommaTerms ->
+-- On RBRACE
+--   reduce production moreCommaTerms ->
 
 State 149:
 ## Known stack suffix:
@@ -3695,7 +3127,8 @@ moreCommaTerms -> COMMA appTerm . moreCommaTerms [ RBRACE ]
 -- On COMMA shift to state 149
 -- On moreCommaTerms shift to state 151
 ## Reductions:
--- On RBRACE reduce production moreCommaTerms ->
+-- On RBRACE
+--   reduce production moreCommaTerms ->
 
 State 151:
 ## Known stack suffix:
@@ -3910,7 +3343,8 @@ simpleTerm -> FUN atomicPattern . atomicPatterns funArrow term [ WITH VAL TYPE T
 -- On atomicPattern2 shift to state 74
 -- On atomicPattern shift to state 77
 ## Reductions:
--- On RARROW reduce production atomicPatterns ->
+-- On RARROW
+--   reduce production atomicPatterns ->
 
 State 160:
 ## Known stack suffix:
@@ -4028,7 +3462,8 @@ typ -> FORALL . binders DOT qpat noSeqTerm [ WITH VAL TYPE TOTAL THEN SUB_EFFECT
 -- On binders shift to state 264
 -- On binder shift to state 256
 ## Reductions:
--- On DOT reduce production binders ->
+-- On DOT
+--   reduce production binders ->
 
 State 164:
 ## Known stack suffix:
@@ -4040,7 +3475,8 @@ binder -> LPAREN . aqual_opt ident COLON typ refineOpt RPAREN [ VAL TYPE TVAR TO
 -- On EQUALS shift to state 166
 -- On aqual_opt shift to state 167
 ## Reductions:
--- On IDENT reduce production aqual_opt ->
+-- On IDENT
+--   reduce production aqual_opt ->
 
 State 165:
 ## Known stack suffix:
@@ -4166,7 +3602,8 @@ typ -> EXISTS . binders DOT qpat noSeqTerm [ WITH VAL TYPE TOTAL THEN SUB_EFFECT
 -- On binders shift to state 173
 -- On binder shift to state 256
 ## Reductions:
--- On DOT reduce production binders ->
+-- On DOT
+--   reduce production binders ->
 
 State 171:
 ## Known stack suffix:
@@ -4204,47 +3641,8 @@ typ -> EXISTS binders DOT . qpat noSeqTerm [ WITH VAL TYPE TOTAL THEN SUB_EFFECT
 -- On LBRACE_COLON_PATTERN shift to state 175
 -- On qpat shift to state 182
 ## Reductions:
--- On UNDERSCORE reduce production qpat ->
--- On UINT8 reduce production qpat ->
--- On TVAR reduce production qpat ->
--- On TRY reduce production qpat ->
--- On TRUE reduce production qpat ->
--- On TILDE reduce production qpat ->
--- On STRING reduce production qpat ->
--- On REQUIRES reduce production qpat ->
--- On PLUS_OP reduce production qpat ->
--- On PERCENT_LBRACK reduce production qpat ->
--- On NAME reduce production qpat ->
--- On MINUS_OP reduce production qpat ->
--- On MATCH reduce production qpat ->
--- On LPAREN_RPAREN reduce production qpat ->
--- On LPAREN reduce production qpat ->
--- On LET reduce production qpat ->
--- On LENS_PAREN_LEFT reduce production qpat ->
--- On LBRACK_BAR reduce production qpat ->
--- On LBRACK reduce production qpat ->
--- On LBRACE reduce production qpat ->
--- On INT64 reduce production qpat ->
--- On INT32 reduce production qpat ->
--- On INT reduce production qpat ->
--- On IF reduce production qpat ->
--- On IEEE64 reduce production qpat ->
--- On IDENT reduce production qpat ->
--- On HASH reduce production qpat ->
--- On FUNCTION reduce production qpat ->
--- On FUN reduce production qpat ->
--- On FORALL reduce production qpat ->
--- On FALSE reduce production qpat ->
--- On EXISTS reduce production qpat ->
--- On EQUALS reduce production qpat ->
--- On ENSURES reduce production qpat ->
--- On CHAR reduce production qpat ->
--- On BYTEARRAY reduce production qpat ->
--- On BEGIN reduce production qpat ->
--- On BANG_LBRACE reduce production qpat ->
--- On BANG reduce production qpat ->
--- On ASSUME reduce production qpat ->
--- On ASSERT reduce production qpat ->
+-- On UNDERSCORE UINT8 TVAR TRY TRUE TILDE STRING REQUIRES PLUS_OP PERCENT_LBRACK NAME MINUS_OP MATCH LPAREN_RPAREN LPAREN LET LENS_PAREN_LEFT LBRACK_BAR LBRACK LBRACE INT64 INT32 INT IF IEEE64 IDENT HASH FUNCTION FUN FORALL FALSE EXISTS EQUALS ENSURES CHAR BYTEARRAY BEGIN BANG_LBRACE BANG ASSUME ASSERT
+--   reduce production qpat ->
 
 State 175:
 ## Known stack suffix:
@@ -4296,7 +3694,8 @@ qpat -> LBRACE_COLON_PATTERN appTerm . morePats RBRACE [ UNDERSCORE UINT8 TVAR T
 -- On SEMICOLON shift to state 177
 -- On morePats shift to state 180
 ## Reductions:
--- On RBRACE reduce production morePats ->
+-- On RBRACE
+--   reduce production morePats ->
 
 State 177:
 ## Known stack suffix:
@@ -4348,7 +3747,8 @@ morePats -> SEMICOLON appTerm . morePats [ RBRACE ]
 -- On SEMICOLON shift to state 177
 -- On morePats shift to state 179
 ## Reductions:
--- On RBRACE reduce production morePats ->
+-- On RBRACE
+--   reduce production morePats ->
 
 State 179:
 ## Known stack suffix:
@@ -4477,39 +3877,8 @@ noSeqTerm -> ENSURES . label_opt typ [ WITH VAL TYPE TOTAL THEN SUB_EFFECT SUBTY
 -- On DOLLAR shift to state 18
 -- On label_opt shift to state 185
 ## Reductions:
--- On UNDERSCORE reduce production label_opt ->
--- On UINT8 reduce production label_opt ->
--- On TVAR reduce production label_opt ->
--- On TRUE reduce production label_opt ->
--- On TILDE reduce production label_opt ->
--- On STRING reduce production label_opt ->
--- On PLUS_OP reduce production label_opt ->
--- On PERCENT_LBRACK reduce production label_opt ->
--- On NAME reduce production label_opt ->
--- On MINUS_OP reduce production label_opt ->
--- On LPAREN_RPAREN reduce production label_opt ->
--- On LPAREN reduce production label_opt ->
--- On LENS_PAREN_LEFT reduce production label_opt ->
--- On LBRACK_BAR reduce production label_opt ->
--- On LBRACK reduce production label_opt ->
--- On LBRACE reduce production label_opt ->
--- On INT64 reduce production label_opt ->
--- On INT32 reduce production label_opt ->
--- On INT reduce production label_opt ->
--- On IEEE64 reduce production label_opt ->
--- On IDENT reduce production label_opt ->
--- On HASH reduce production label_opt ->
--- On FUN reduce production label_opt ->
--- On FORALL reduce production label_opt ->
--- On FALSE reduce production label_opt ->
--- On EXISTS reduce production label_opt ->
--- On EQUALS reduce production label_opt ->
--- On CHAR reduce production label_opt ->
--- On BYTEARRAY reduce production label_opt ->
--- On BEGIN reduce production label_opt ->
--- On BANG_LBRACE reduce production label_opt ->
--- On BANG reduce production label_opt ->
--- On ASSERT reduce production label_opt ->
+-- On UNDERSCORE UINT8 TVAR TRUE TILDE STRING PLUS_OP PERCENT_LBRACK NAME MINUS_OP LPAREN_RPAREN LPAREN LENS_PAREN_LEFT LBRACK_BAR LBRACK LBRACE INT64 INT32 INT IEEE64 IDENT HASH FUN FORALL FALSE EXISTS EQUALS CHAR BYTEARRAY BEGIN BANG_LBRACE BANG ASSERT
+--   reduce production label_opt ->
 
 State 185:
 ## Known stack suffix:
@@ -4593,58 +3962,8 @@ starDivModTerm -> unaryTerm . DIV_MOD_OP starDivModTerm [ WITH VAL TYPE TOTAL TH
 ## Transitions:
 -- On DIV_MOD_OP shift to state 187
 ## Reductions:
--- On WITH reduce production refinementTerm -> unaryTerm
--- On VAL reduce production refinementTerm -> unaryTerm
--- On TYPE reduce production refinementTerm -> unaryTerm
--- On TOTAL reduce production refinementTerm -> unaryTerm
--- On THEN reduce production refinementTerm -> unaryTerm
--- On SUB_EFFECT reduce production refinementTerm -> unaryTerm
--- On SUBTYPE reduce production refinementTerm -> unaryTerm
--- On SUBKIND reduce production refinementTerm -> unaryTerm
--- On STAR reduce production refinementTerm -> unaryTerm
--- On SEMICOLON_SEMICOLON reduce production refinementTerm -> unaryTerm
--- On SEMICOLON reduce production refinementTerm -> unaryTerm
--- On RPAREN reduce production refinementTerm -> unaryTerm
--- On RBRACK reduce production refinementTerm -> unaryTerm
--- On RBRACE reduce production refinementTerm -> unaryTerm
--- On RARROW reduce production refinementTerm -> unaryTerm
--- On PRIVATE reduce production refinementTerm -> unaryTerm
--- On PRAGMA_SET_OPTIONS reduce production refinementTerm -> unaryTerm
--- On PRAGMA_RESET_OPTIONS reduce production refinementTerm -> unaryTerm
--- On PLUS_OP reduce production refinementTerm -> unaryTerm
--- On OPEN reduce production refinementTerm -> unaryTerm
--- On OPAQUE reduce production refinementTerm -> unaryTerm
--- On NEW_EFFECT reduce production refinementTerm -> unaryTerm
--- On MODULE reduce production refinementTerm -> unaryTerm
--- On MINUS_OP reduce production refinementTerm -> unaryTerm
--- On LOGIC reduce production refinementTerm -> unaryTerm
--- On LET reduce production refinementTerm -> unaryTerm
--- On LENS_PAREN_RIGHT reduce production refinementTerm -> unaryTerm
--- On LBRACE reduce production refinementTerm -> unaryTerm
--- On KIND reduce production refinementTerm -> unaryTerm
--- On IN reduce production refinementTerm -> unaryTerm
--- On IMPLIES reduce production refinementTerm -> unaryTerm
--- On IFF reduce production refinementTerm -> unaryTerm
--- On EXCEPTION reduce production refinementTerm -> unaryTerm
--- On EQUALS reduce production refinementTerm -> unaryTerm
--- On EOF reduce production refinementTerm -> unaryTerm
--- On END reduce production refinementTerm -> unaryTerm
--- On ELSE reduce production refinementTerm -> unaryTerm
--- On EFFECT reduce production refinementTerm -> unaryTerm
--- On DISJUNCTION reduce production refinementTerm -> unaryTerm
--- On DEFAULT reduce production refinementTerm -> unaryTerm
--- On CUSTOM_OP reduce production refinementTerm -> unaryTerm
--- On CONJUNCTION reduce production refinementTerm -> unaryTerm
--- On COMMA reduce production refinementTerm -> unaryTerm
--- On COLON_EQUALS reduce production refinementTerm -> unaryTerm
--- On COLON_COLON reduce production refinementTerm -> unaryTerm
--- On BAR_RBRACK reduce production refinementTerm -> unaryTerm
--- On BAR_BAR reduce production refinementTerm -> unaryTerm
--- On BAR reduce production refinementTerm -> unaryTerm
--- On ASSUME reduce production refinementTerm -> unaryTerm
--- On AND reduce production refinementTerm -> unaryTerm
--- On AMP_AMP reduce production refinementTerm -> unaryTerm
--- On AMP reduce production refinementTerm -> unaryTerm
+-- On WITH VAL TYPE TOTAL THEN SUB_EFFECT SUBTYPE SUBKIND STAR SEMICOLON_SEMICOLON SEMICOLON RPAREN RBRACK RBRACE RARROW PRIVATE PRAGMA_SET_OPTIONS PRAGMA_RESET_OPTIONS PLUS_OP OPEN OPAQUE NEW_EFFECT MODULE MINUS_OP LOGIC LET LENS_PAREN_RIGHT LBRACE KIND IN IMPLIES IFF EXCEPTION EQUALS EOF END ELSE EFFECT DISJUNCTION DEFAULT CUSTOM_OP CONJUNCTION COMMA COLON_EQUALS COLON_COLON BAR_RBRACK BAR_BAR BAR ASSUME AND AMP_AMP AMP
+--   reduce production refinementTerm -> unaryTerm
 
 State 187:
 ## Known stack suffix:
@@ -4712,57 +4031,8 @@ starDivModTerm -> refinementTerm . [ WITH VAL TYPE TOTAL THEN SUB_EFFECT SUBTYPE
 ## Transitions:
 -- On STAR shift to state 190
 ## Reductions:
--- On WITH reduce production starDivModTerm -> refinementTerm
--- On VAL reduce production starDivModTerm -> refinementTerm
--- On TYPE reduce production starDivModTerm -> refinementTerm
--- On TOTAL reduce production starDivModTerm -> refinementTerm
--- On THEN reduce production starDivModTerm -> refinementTerm
--- On SUB_EFFECT reduce production starDivModTerm -> refinementTerm
--- On SUBTYPE reduce production starDivModTerm -> refinementTerm
--- On SUBKIND reduce production starDivModTerm -> refinementTerm
--- On SEMICOLON_SEMICOLON reduce production starDivModTerm -> refinementTerm
--- On SEMICOLON reduce production starDivModTerm -> refinementTerm
--- On RPAREN reduce production starDivModTerm -> refinementTerm
--- On RBRACK reduce production starDivModTerm -> refinementTerm
--- On RBRACE reduce production starDivModTerm -> refinementTerm
--- On RARROW reduce production starDivModTerm -> refinementTerm
--- On PRIVATE reduce production starDivModTerm -> refinementTerm
--- On PRAGMA_SET_OPTIONS reduce production starDivModTerm -> refinementTerm
--- On PRAGMA_RESET_OPTIONS reduce production starDivModTerm -> refinementTerm
--- On PLUS_OP reduce production starDivModTerm -> refinementTerm
--- On OPEN reduce production starDivModTerm -> refinementTerm
--- On OPAQUE reduce production starDivModTerm -> refinementTerm
--- On NEW_EFFECT reduce production starDivModTerm -> refinementTerm
--- On MODULE reduce production starDivModTerm -> refinementTerm
--- On MINUS_OP reduce production starDivModTerm -> refinementTerm
--- On LOGIC reduce production starDivModTerm -> refinementTerm
--- On LET reduce production starDivModTerm -> refinementTerm
--- On LENS_PAREN_RIGHT reduce production starDivModTerm -> refinementTerm
--- On LBRACE reduce production starDivModTerm -> refinementTerm
--- On KIND reduce production starDivModTerm -> refinementTerm
--- On IN reduce production starDivModTerm -> refinementTerm
--- On IMPLIES reduce production starDivModTerm -> refinementTerm
--- On IFF reduce production starDivModTerm -> refinementTerm
--- On EXCEPTION reduce production starDivModTerm -> refinementTerm
--- On EQUALS reduce production starDivModTerm -> refinementTerm
--- On EOF reduce production starDivModTerm -> refinementTerm
--- On END reduce production starDivModTerm -> refinementTerm
--- On ELSE reduce production starDivModTerm -> refinementTerm
--- On EFFECT reduce production starDivModTerm -> refinementTerm
--- On DISJUNCTION reduce production starDivModTerm -> refinementTerm
--- On DEFAULT reduce production starDivModTerm -> refinementTerm
--- On CUSTOM_OP reduce production starDivModTerm -> refinementTerm
--- On CONJUNCTION reduce production starDivModTerm -> refinementTerm
--- On COMMA reduce production starDivModTerm -> refinementTerm
--- On COLON_EQUALS reduce production starDivModTerm -> refinementTerm
--- On COLON_COLON reduce production starDivModTerm -> refinementTerm
--- On BAR_RBRACK reduce production starDivModTerm -> refinementTerm
--- On BAR_BAR reduce production starDivModTerm -> refinementTerm
--- On BAR reduce production starDivModTerm -> refinementTerm
--- On ASSUME reduce production starDivModTerm -> refinementTerm
--- On AND reduce production starDivModTerm -> refinementTerm
--- On AMP_AMP reduce production starDivModTerm -> refinementTerm
--- On AMP reduce production starDivModTerm -> refinementTerm
+-- On WITH VAL TYPE TOTAL THEN SUB_EFFECT SUBTYPE SUBKIND SEMICOLON_SEMICOLON SEMICOLON RPAREN RBRACK RBRACE RARROW PRIVATE PRAGMA_SET_OPTIONS PRAGMA_RESET_OPTIONS PLUS_OP OPEN OPAQUE NEW_EFFECT MODULE MINUS_OP LOGIC LET LENS_PAREN_RIGHT LBRACE KIND IN IMPLIES IFF EXCEPTION EQUALS EOF END ELSE EFFECT DISJUNCTION DEFAULT CUSTOM_OP CONJUNCTION COMMA COLON_EQUALS COLON_COLON BAR_RBRACK BAR_BAR BAR ASSUME AND AMP_AMP AMP
+--   reduce production starDivModTerm -> refinementTerm
 
 State 190:
 ## Known stack suffix:
@@ -4831,86 +4101,8 @@ refinementTerm -> ident . COLON appTerm LBRACE formula RBRACE [ WITH VAL TYPE TO
 ## Transitions:
 -- On COLON shift to state 193
 ## Reductions:
--- On WITH reduce production eitherpath -> ident
--- On VAL reduce production eitherpath -> ident
--- On UNDERSCORE reduce production eitherpath -> ident
--- On UINT8 reduce production eitherpath -> ident
--- On TYP_APP_LESS reduce production eitherpath -> ident
--- On TYPE reduce production eitherpath -> ident
--- On TVAR reduce production eitherpath -> ident
--- On TRUE reduce production eitherpath -> ident
--- On TOTAL reduce production eitherpath -> ident
--- On THEN reduce production eitherpath -> ident
--- On SUB_EFFECT reduce production eitherpath -> ident
--- On SUBTYPE reduce production eitherpath -> ident
--- On SUBKIND reduce production eitherpath -> ident
--- On STRING reduce production eitherpath -> ident
--- On STAR reduce production eitherpath -> ident
--- On SEMICOLON_SEMICOLON reduce production eitherpath -> ident
--- On SEMICOLON reduce production eitherpath -> ident
--- On RPAREN reduce production eitherpath -> ident
--- On RBRACK reduce production eitherpath -> ident
--- On RBRACE reduce production eitherpath -> ident
--- On RARROW reduce production eitherpath -> ident
--- On PRIVATE reduce production eitherpath -> ident
--- On PRAGMA_SET_OPTIONS reduce production eitherpath -> ident
--- On PRAGMA_RESET_OPTIONS reduce production eitherpath -> ident
--- On PLUS_OP reduce production eitherpath -> ident
--- On PERCENT_LBRACK reduce production eitherpath -> ident
--- On OPEN reduce production eitherpath -> ident
--- On OPAQUE reduce production eitherpath -> ident
--- On NEW_EFFECT reduce production eitherpath -> ident
--- On NAME reduce production eitherpath -> ident
--- On MODULE reduce production eitherpath -> ident
--- On MINUS_OP reduce production eitherpath -> ident
--- On LPAREN_RPAREN reduce production eitherpath -> ident
--- On LPAREN reduce production eitherpath -> ident
--- On LOGIC reduce production eitherpath -> ident
--- On LET reduce production eitherpath -> ident
--- On LENS_PAREN_RIGHT reduce production eitherpath -> ident
--- On LENS_PAREN_LEFT reduce production eitherpath -> ident
--- On LBRACK_BAR reduce production eitherpath -> ident
--- On LBRACK reduce production eitherpath -> ident
--- On LBRACE reduce production eitherpath -> ident
--- On KIND reduce production eitherpath -> ident
--- On INT64 reduce production eitherpath -> ident
--- On INT32 reduce production eitherpath -> ident
--- On INT reduce production eitherpath -> ident
--- On IN reduce production eitherpath -> ident
--- On IMPLIES reduce production eitherpath -> ident
--- On IFF reduce production eitherpath -> ident
--- On IEEE64 reduce production eitherpath -> ident
--- On IDENT reduce production eitherpath -> ident
--- On HASH reduce production eitherpath -> ident
--- On FALSE reduce production eitherpath -> ident
--- On EXCEPTION reduce production eitherpath -> ident
--- On EQUALS reduce production eitherpath -> ident
--- On EOF reduce production eitherpath -> ident
--- On END reduce production eitherpath -> ident
--- On ELSE reduce production eitherpath -> ident
--- On EFFECT reduce production eitherpath -> ident
--- On DOT reduce production eitherpath -> ident
--- On DIV_MOD_OP reduce production eitherpath -> ident
--- On DISJUNCTION reduce production eitherpath -> ident
--- On DEFAULT reduce production eitherpath -> ident
--- On CUSTOM_OP reduce production eitherpath -> ident
--- On CONJUNCTION reduce production eitherpath -> ident
--- On COMMA reduce production eitherpath -> ident
--- On COLON_EQUALS reduce production eitherpath -> ident
--- On COLON_COLON reduce production eitherpath -> ident
--- On CHAR reduce production eitherpath -> ident
--- On BYTEARRAY reduce production eitherpath -> ident
--- On BEGIN reduce production eitherpath -> ident
--- On BAR_RBRACK reduce production eitherpath -> ident
--- On BAR_BAR reduce production eitherpath -> ident
--- On BAR reduce production eitherpath -> ident
--- On BANG_LBRACE reduce production eitherpath -> ident
--- On BANG reduce production eitherpath -> ident
--- On ASSUME reduce production eitherpath -> ident
--- On ASSERT reduce production eitherpath -> ident
--- On AND reduce production eitherpath -> ident
--- On AMP_AMP reduce production eitherpath -> ident
--- On AMP reduce production eitherpath -> ident
+-- On WITH VAL UNDERSCORE UINT8 TYP_APP_LESS TYPE TVAR TRUE TOTAL THEN SUB_EFFECT SUBTYPE SUBKIND STRING STAR SEMICOLON_SEMICOLON SEMICOLON RPAREN RBRACK RBRACE RARROW PRIVATE PRAGMA_SET_OPTIONS PRAGMA_RESET_OPTIONS PLUS_OP PERCENT_LBRACK OPEN OPAQUE NEW_EFFECT NAME MODULE MINUS_OP LPAREN_RPAREN LPAREN LOGIC LET LENS_PAREN_RIGHT LENS_PAREN_LEFT LBRACK_BAR LBRACK LBRACE KIND INT64 INT32 INT IN IMPLIES IFF IEEE64 IDENT HASH FALSE EXCEPTION EQUALS EOF END ELSE EFFECT DOT DIV_MOD_OP DISJUNCTION DEFAULT CUSTOM_OP CONJUNCTION COMMA COLON_EQUALS COLON_COLON CHAR BYTEARRAY BEGIN BAR_RBRACK BAR_BAR BAR BANG_LBRACE BANG ASSUME ASSERT AND AMP_AMP AMP
+--   reduce production eitherpath -> ident
 
 State 193:
 ## Known stack suffix:
@@ -4963,57 +4155,8 @@ refinementTerm -> ident COLON appTerm . LBRACE formula RBRACE [ WITH VAL TYPE TO
 ## Transitions:
 -- On LBRACE shift to state 195
 ## Reductions:
--- On WITH reduce production refinementTerm -> ident COLON appTerm
--- On VAL reduce production refinementTerm -> ident COLON appTerm
--- On TYPE reduce production refinementTerm -> ident COLON appTerm
--- On TOTAL reduce production refinementTerm -> ident COLON appTerm
--- On THEN reduce production refinementTerm -> ident COLON appTerm
--- On SUB_EFFECT reduce production refinementTerm -> ident COLON appTerm
--- On SUBTYPE reduce production refinementTerm -> ident COLON appTerm
--- On SUBKIND reduce production refinementTerm -> ident COLON appTerm
--- On STAR reduce production refinementTerm -> ident COLON appTerm
--- On SEMICOLON_SEMICOLON reduce production refinementTerm -> ident COLON appTerm
--- On SEMICOLON reduce production refinementTerm -> ident COLON appTerm
--- On RPAREN reduce production refinementTerm -> ident COLON appTerm
--- On RBRACK reduce production refinementTerm -> ident COLON appTerm
--- On RBRACE reduce production refinementTerm -> ident COLON appTerm
--- On RARROW reduce production refinementTerm -> ident COLON appTerm
--- On PRIVATE reduce production refinementTerm -> ident COLON appTerm
--- On PRAGMA_SET_OPTIONS reduce production refinementTerm -> ident COLON appTerm
--- On PRAGMA_RESET_OPTIONS reduce production refinementTerm -> ident COLON appTerm
--- On PLUS_OP reduce production refinementTerm -> ident COLON appTerm
--- On OPEN reduce production refinementTerm -> ident COLON appTerm
--- On OPAQUE reduce production refinementTerm -> ident COLON appTerm
--- On NEW_EFFECT reduce production refinementTerm -> ident COLON appTerm
--- On MODULE reduce production refinementTerm -> ident COLON appTerm
--- On MINUS_OP reduce production refinementTerm -> ident COLON appTerm
--- On LOGIC reduce production refinementTerm -> ident COLON appTerm
--- On LET reduce production refinementTerm -> ident COLON appTerm
--- On LENS_PAREN_RIGHT reduce production refinementTerm -> ident COLON appTerm
--- On KIND reduce production refinementTerm -> ident COLON appTerm
--- On IN reduce production refinementTerm -> ident COLON appTerm
--- On IMPLIES reduce production refinementTerm -> ident COLON appTerm
--- On IFF reduce production refinementTerm -> ident COLON appTerm
--- On EXCEPTION reduce production refinementTerm -> ident COLON appTerm
--- On EQUALS reduce production refinementTerm -> ident COLON appTerm
--- On EOF reduce production refinementTerm -> ident COLON appTerm
--- On END reduce production refinementTerm -> ident COLON appTerm
--- On ELSE reduce production refinementTerm -> ident COLON appTerm
--- On EFFECT reduce production refinementTerm -> ident COLON appTerm
--- On DISJUNCTION reduce production refinementTerm -> ident COLON appTerm
--- On DEFAULT reduce production refinementTerm -> ident COLON appTerm
--- On CUSTOM_OP reduce production refinementTerm -> ident COLON appTerm
--- On CONJUNCTION reduce production refinementTerm -> ident COLON appTerm
--- On COMMA reduce production refinementTerm -> ident COLON appTerm
--- On COLON_EQUALS reduce production refinementTerm -> ident COLON appTerm
--- On COLON_COLON reduce production refinementTerm -> ident COLON appTerm
--- On BAR_RBRACK reduce production refinementTerm -> ident COLON appTerm
--- On BAR_BAR reduce production refinementTerm -> ident COLON appTerm
--- On BAR reduce production refinementTerm -> ident COLON appTerm
--- On ASSUME reduce production refinementTerm -> ident COLON appTerm
--- On AND reduce production refinementTerm -> ident COLON appTerm
--- On AMP_AMP reduce production refinementTerm -> ident COLON appTerm
--- On AMP reduce production refinementTerm -> ident COLON appTerm
+-- On WITH VAL TYPE TOTAL THEN SUB_EFFECT SUBTYPE SUBKIND STAR SEMICOLON_SEMICOLON SEMICOLON RPAREN RBRACK RBRACE RARROW PRIVATE PRAGMA_SET_OPTIONS PRAGMA_RESET_OPTIONS PLUS_OP OPEN OPAQUE NEW_EFFECT MODULE MINUS_OP LOGIC LET LENS_PAREN_RIGHT KIND IN IMPLIES IFF EXCEPTION EQUALS EOF END ELSE EFFECT DISJUNCTION DEFAULT CUSTOM_OP CONJUNCTION COMMA COLON_EQUALS COLON_COLON BAR_RBRACK BAR_BAR BAR ASSUME AND AMP_AMP AMP
+--   reduce production refinementTerm -> ident COLON appTerm
 
 State 195:
 ## Known stack suffix:
@@ -5183,48 +4326,8 @@ tmOr -> tmOr . BAR_BAR tmAnd [ WITH VAL TYPE TOTAL THEN SUB_EFFECT SUBTYPE SUBKI
 ## Transitions:
 -- On BAR_BAR shift to state 202
 ## Reductions:
--- On WITH reduce production tmEq -> tmOr
--- On VAL reduce production tmEq -> tmOr
--- On TYPE reduce production tmEq -> tmOr
--- On TOTAL reduce production tmEq -> tmOr
--- On THEN reduce production tmEq -> tmOr
--- On SUB_EFFECT reduce production tmEq -> tmOr
--- On SUBTYPE reduce production tmEq -> tmOr
--- On SUBKIND reduce production tmEq -> tmOr
--- On SEMICOLON_SEMICOLON reduce production tmEq -> tmOr
--- On SEMICOLON reduce production tmEq -> tmOr
--- On RPAREN reduce production tmEq -> tmOr
--- On RBRACK reduce production tmEq -> tmOr
--- On RBRACE reduce production tmEq -> tmOr
--- On PRIVATE reduce production tmEq -> tmOr
--- On PRAGMA_SET_OPTIONS reduce production tmEq -> tmOr
--- On PRAGMA_RESET_OPTIONS reduce production tmEq -> tmOr
--- On OPEN reduce production tmEq -> tmOr
--- On OPAQUE reduce production tmEq -> tmOr
--- On NEW_EFFECT reduce production tmEq -> tmOr
--- On MODULE reduce production tmEq -> tmOr
--- On LOGIC reduce production tmEq -> tmOr
--- On LET reduce production tmEq -> tmOr
--- On LENS_PAREN_RIGHT reduce production tmEq -> tmOr
--- On LBRACE reduce production tmEq -> tmOr
--- On KIND reduce production tmEq -> tmOr
--- On IN reduce production tmEq -> tmOr
--- On IMPLIES reduce production tmEq -> tmOr
--- On IFF reduce production tmEq -> tmOr
--- On EXCEPTION reduce production tmEq -> tmOr
--- On EOF reduce production tmEq -> tmOr
--- On END reduce production tmEq -> tmOr
--- On ELSE reduce production tmEq -> tmOr
--- On EFFECT reduce production tmEq -> tmOr
--- On DISJUNCTION reduce production tmEq -> tmOr
--- On DEFAULT reduce production tmEq -> tmOr
--- On CONJUNCTION reduce production tmEq -> tmOr
--- On COMMA reduce production tmEq -> tmOr
--- On COLON_EQUALS reduce production tmEq -> tmOr
--- On BAR_RBRACK reduce production tmEq -> tmOr
--- On BAR reduce production tmEq -> tmOr
--- On ASSUME reduce production tmEq -> tmOr
--- On AND reduce production tmEq -> tmOr
+-- On WITH VAL TYPE TOTAL THEN SUB_EFFECT SUBTYPE SUBKIND SEMICOLON_SEMICOLON SEMICOLON RPAREN RBRACK RBRACE PRIVATE PRAGMA_SET_OPTIONS PRAGMA_RESET_OPTIONS OPEN OPAQUE NEW_EFFECT MODULE LOGIC LET LENS_PAREN_RIGHT LBRACE KIND IN IMPLIES IFF EXCEPTION EOF END ELSE EFFECT DISJUNCTION DEFAULT CONJUNCTION COMMA COLON_EQUALS BAR_RBRACK BAR ASSUME AND
+--   reduce production tmEq -> tmOr
 
 State 202:
 ## Known stack suffix:
@@ -5304,49 +4407,8 @@ tmOr -> tmOr BAR_BAR tmAnd . [ WITH VAL TYPE TOTAL THEN SUB_EFFECT SUBTYPE SUBKI
 ## Transitions:
 -- On AMP_AMP shift to state 205
 ## Reductions:
--- On WITH reduce production tmOr -> tmOr BAR_BAR tmAnd
--- On VAL reduce production tmOr -> tmOr BAR_BAR tmAnd
--- On TYPE reduce production tmOr -> tmOr BAR_BAR tmAnd
--- On TOTAL reduce production tmOr -> tmOr BAR_BAR tmAnd
--- On THEN reduce production tmOr -> tmOr BAR_BAR tmAnd
--- On SUB_EFFECT reduce production tmOr -> tmOr BAR_BAR tmAnd
--- On SUBTYPE reduce production tmOr -> tmOr BAR_BAR tmAnd
--- On SUBKIND reduce production tmOr -> tmOr BAR_BAR tmAnd
--- On SEMICOLON_SEMICOLON reduce production tmOr -> tmOr BAR_BAR tmAnd
--- On SEMICOLON reduce production tmOr -> tmOr BAR_BAR tmAnd
--- On RPAREN reduce production tmOr -> tmOr BAR_BAR tmAnd
--- On RBRACK reduce production tmOr -> tmOr BAR_BAR tmAnd
--- On RBRACE reduce production tmOr -> tmOr BAR_BAR tmAnd
--- On PRIVATE reduce production tmOr -> tmOr BAR_BAR tmAnd
--- On PRAGMA_SET_OPTIONS reduce production tmOr -> tmOr BAR_BAR tmAnd
--- On PRAGMA_RESET_OPTIONS reduce production tmOr -> tmOr BAR_BAR tmAnd
--- On OPEN reduce production tmOr -> tmOr BAR_BAR tmAnd
--- On OPAQUE reduce production tmOr -> tmOr BAR_BAR tmAnd
--- On NEW_EFFECT reduce production tmOr -> tmOr BAR_BAR tmAnd
--- On MODULE reduce production tmOr -> tmOr BAR_BAR tmAnd
--- On LOGIC reduce production tmOr -> tmOr BAR_BAR tmAnd
--- On LET reduce production tmOr -> tmOr BAR_BAR tmAnd
--- On LENS_PAREN_RIGHT reduce production tmOr -> tmOr BAR_BAR tmAnd
--- On LBRACE reduce production tmOr -> tmOr BAR_BAR tmAnd
--- On KIND reduce production tmOr -> tmOr BAR_BAR tmAnd
--- On IN reduce production tmOr -> tmOr BAR_BAR tmAnd
--- On IMPLIES reduce production tmOr -> tmOr BAR_BAR tmAnd
--- On IFF reduce production tmOr -> tmOr BAR_BAR tmAnd
--- On EXCEPTION reduce production tmOr -> tmOr BAR_BAR tmAnd
--- On EOF reduce production tmOr -> tmOr BAR_BAR tmAnd
--- On END reduce production tmOr -> tmOr BAR_BAR tmAnd
--- On ELSE reduce production tmOr -> tmOr BAR_BAR tmAnd
--- On EFFECT reduce production tmOr -> tmOr BAR_BAR tmAnd
--- On DISJUNCTION reduce production tmOr -> tmOr BAR_BAR tmAnd
--- On DEFAULT reduce production tmOr -> tmOr BAR_BAR tmAnd
--- On CONJUNCTION reduce production tmOr -> tmOr BAR_BAR tmAnd
--- On COMMA reduce production tmOr -> tmOr BAR_BAR tmAnd
--- On COLON_EQUALS reduce production tmOr -> tmOr BAR_BAR tmAnd
--- On BAR_RBRACK reduce production tmOr -> tmOr BAR_BAR tmAnd
--- On BAR_BAR reduce production tmOr -> tmOr BAR_BAR tmAnd
--- On BAR reduce production tmOr -> tmOr BAR_BAR tmAnd
--- On ASSUME reduce production tmOr -> tmOr BAR_BAR tmAnd
--- On AND reduce production tmOr -> tmOr BAR_BAR tmAnd
+-- On WITH VAL TYPE TOTAL THEN SUB_EFFECT SUBTYPE SUBKIND SEMICOLON_SEMICOLON SEMICOLON RPAREN RBRACK RBRACE PRIVATE PRAGMA_SET_OPTIONS PRAGMA_RESET_OPTIONS OPEN OPAQUE NEW_EFFECT MODULE LOGIC LET LENS_PAREN_RIGHT LBRACE KIND IN IMPLIES IFF EXCEPTION EOF END ELSE EFFECT DISJUNCTION DEFAULT CONJUNCTION COMMA COLON_EQUALS BAR_RBRACK BAR_BAR BAR ASSUME AND
+--   reduce production tmOr -> tmOr BAR_BAR tmAnd
 
 State 205:
 ## Known stack suffix:
@@ -5511,55 +4573,8 @@ plusOp -> minusOp . [ WITH VAL TYPE TOTAL THEN SUB_EFFECT SUBTYPE SUBKIND SEMICO
 -- On PLUS_OP shift to state 212
 -- On MINUS_OP shift to state 215
 ## Reductions:
--- On WITH reduce production plusOp -> minusOp
--- On VAL reduce production plusOp -> minusOp
--- On TYPE reduce production plusOp -> minusOp
--- On TOTAL reduce production plusOp -> minusOp
--- On THEN reduce production plusOp -> minusOp
--- On SUB_EFFECT reduce production plusOp -> minusOp
--- On SUBTYPE reduce production plusOp -> minusOp
--- On SUBKIND reduce production plusOp -> minusOp
--- On SEMICOLON_SEMICOLON reduce production plusOp -> minusOp
--- On SEMICOLON reduce production plusOp -> minusOp
--- On RPAREN reduce production plusOp -> minusOp
--- On RBRACK reduce production plusOp -> minusOp
--- On RBRACE reduce production plusOp -> minusOp
--- On RARROW reduce production plusOp -> minusOp
--- On PRIVATE reduce production plusOp -> minusOp
--- On PRAGMA_SET_OPTIONS reduce production plusOp -> minusOp
--- On PRAGMA_RESET_OPTIONS reduce production plusOp -> minusOp
--- On OPEN reduce production plusOp -> minusOp
--- On OPAQUE reduce production plusOp -> minusOp
--- On NEW_EFFECT reduce production plusOp -> minusOp
--- On MODULE reduce production plusOp -> minusOp
--- On LOGIC reduce production plusOp -> minusOp
--- On LET reduce production plusOp -> minusOp
--- On LENS_PAREN_RIGHT reduce production plusOp -> minusOp
--- On LBRACE reduce production plusOp -> minusOp
--- On KIND reduce production plusOp -> minusOp
--- On IN reduce production plusOp -> minusOp
--- On IMPLIES reduce production plusOp -> minusOp
--- On IFF reduce production plusOp -> minusOp
--- On EXCEPTION reduce production plusOp -> minusOp
--- On EQUALS reduce production plusOp -> minusOp
--- On EOF reduce production plusOp -> minusOp
--- On END reduce production plusOp -> minusOp
--- On ELSE reduce production plusOp -> minusOp
--- On EFFECT reduce production plusOp -> minusOp
--- On DISJUNCTION reduce production plusOp -> minusOp
--- On DEFAULT reduce production plusOp -> minusOp
--- On CUSTOM_OP reduce production plusOp -> minusOp
--- On CONJUNCTION reduce production plusOp -> minusOp
--- On COMMA reduce production plusOp -> minusOp
--- On COLON_EQUALS reduce production plusOp -> minusOp
--- On COLON_COLON reduce production plusOp -> minusOp
--- On BAR_RBRACK reduce production plusOp -> minusOp
--- On BAR_BAR reduce production plusOp -> minusOp
--- On BAR reduce production plusOp -> minusOp
--- On ASSUME reduce production plusOp -> minusOp
--- On AND reduce production plusOp -> minusOp
--- On AMP_AMP reduce production plusOp -> minusOp
--- On AMP reduce production plusOp -> minusOp
+-- On WITH VAL TYPE TOTAL THEN SUB_EFFECT SUBTYPE SUBKIND SEMICOLON_SEMICOLON SEMICOLON RPAREN RBRACK RBRACE RARROW PRIVATE PRAGMA_SET_OPTIONS PRAGMA_RESET_OPTIONS OPEN OPAQUE NEW_EFFECT MODULE LOGIC LET LENS_PAREN_RIGHT LBRACE KIND IN IMPLIES IFF EXCEPTION EQUALS EOF END ELSE EFFECT DISJUNCTION DEFAULT CUSTOM_OP CONJUNCTION COMMA COLON_EQUALS COLON_COLON BAR_RBRACK BAR_BAR BAR ASSUME AND AMP_AMP AMP
+--   reduce production plusOp -> minusOp
 
 State 212:
 ## Known stack suffix:
@@ -5694,54 +4709,10 @@ product -> dtupleTerm . [ WITH VAL TYPE TOTAL THEN SUB_EFFECT SUBTYPE SUBKIND SE
 productDomain -> dtupleTerm . [ RARROW ]
 ## Transitions:
 ## Reductions:
--- On WITH reduce production product -> dtupleTerm
--- On VAL reduce production product -> dtupleTerm
--- On TYPE reduce production product -> dtupleTerm
--- On TOTAL reduce production product -> dtupleTerm
--- On THEN reduce production product -> dtupleTerm
--- On SUB_EFFECT reduce production product -> dtupleTerm
--- On SUBTYPE reduce production product -> dtupleTerm
--- On SUBKIND reduce production product -> dtupleTerm
--- On SEMICOLON_SEMICOLON reduce production product -> dtupleTerm
--- On SEMICOLON reduce production product -> dtupleTerm
--- On RPAREN reduce production product -> dtupleTerm
--- On RBRACK reduce production product -> dtupleTerm
--- On RBRACE reduce production product -> dtupleTerm
--- On RARROW reduce production productDomain -> dtupleTerm
--- On PRIVATE reduce production product -> dtupleTerm
--- On PRAGMA_SET_OPTIONS reduce production product -> dtupleTerm
--- On PRAGMA_RESET_OPTIONS reduce production product -> dtupleTerm
--- On OPEN reduce production product -> dtupleTerm
--- On OPAQUE reduce production product -> dtupleTerm
--- On NEW_EFFECT reduce production product -> dtupleTerm
--- On MODULE reduce production product -> dtupleTerm
--- On LOGIC reduce production product -> dtupleTerm
--- On LET reduce production product -> dtupleTerm
--- On LENS_PAREN_RIGHT reduce production product -> dtupleTerm
--- On LBRACE reduce production product -> dtupleTerm
--- On KIND reduce production product -> dtupleTerm
--- On IN reduce production product -> dtupleTerm
--- On IMPLIES reduce production product -> dtupleTerm
--- On IFF reduce production product -> dtupleTerm
--- On EXCEPTION reduce production product -> dtupleTerm
--- On EQUALS reduce production product -> dtupleTerm
--- On EOF reduce production product -> dtupleTerm
--- On END reduce production product -> dtupleTerm
--- On ELSE reduce production product -> dtupleTerm
--- On EFFECT reduce production product -> dtupleTerm
--- On DISJUNCTION reduce production product -> dtupleTerm
--- On DEFAULT reduce production product -> dtupleTerm
--- On CUSTOM_OP reduce production product -> dtupleTerm
--- On CONJUNCTION reduce production product -> dtupleTerm
--- On COMMA reduce production product -> dtupleTerm
--- On COLON_EQUALS reduce production product -> dtupleTerm
--- On COLON_COLON reduce production product -> dtupleTerm
--- On BAR_RBRACK reduce production product -> dtupleTerm
--- On BAR_BAR reduce production product -> dtupleTerm
--- On BAR reduce production product -> dtupleTerm
--- On ASSUME reduce production product -> dtupleTerm
--- On AND reduce production product -> dtupleTerm
--- On AMP_AMP reduce production product -> dtupleTerm
+-- On WITH VAL TYPE TOTAL THEN SUB_EFFECT SUBTYPE SUBKIND SEMICOLON_SEMICOLON SEMICOLON RPAREN RBRACK RBRACE PRIVATE PRAGMA_SET_OPTIONS PRAGMA_RESET_OPTIONS OPEN OPAQUE NEW_EFFECT MODULE LOGIC LET LENS_PAREN_RIGHT LBRACE KIND IN IMPLIES IFF EXCEPTION EQUALS EOF END ELSE EFFECT DISJUNCTION DEFAULT CUSTOM_OP CONJUNCTION COMMA COLON_EQUALS COLON_COLON BAR_RBRACK BAR_BAR BAR ASSUME AND AMP_AMP
+--   reduce production product -> dtupleTerm
+-- On RARROW
+--   reduce production productDomain -> dtupleTerm
 
 State 218:
 ## Known stack suffix:
@@ -5752,54 +4723,8 @@ dtupleTerm -> arithTerm . [ WITH VAL TYPE TOTAL THEN SUB_EFFECT SUBTYPE SUBKIND 
 ## Transitions:
 -- On AMP shift to state 219
 ## Reductions:
--- On WITH reduce production dtupleTerm -> arithTerm
--- On VAL reduce production dtupleTerm -> arithTerm
--- On TYPE reduce production dtupleTerm -> arithTerm
--- On TOTAL reduce production dtupleTerm -> arithTerm
--- On THEN reduce production dtupleTerm -> arithTerm
--- On SUB_EFFECT reduce production dtupleTerm -> arithTerm
--- On SUBTYPE reduce production dtupleTerm -> arithTerm
--- On SUBKIND reduce production dtupleTerm -> arithTerm
--- On SEMICOLON_SEMICOLON reduce production dtupleTerm -> arithTerm
--- On SEMICOLON reduce production dtupleTerm -> arithTerm
--- On RPAREN reduce production dtupleTerm -> arithTerm
--- On RBRACK reduce production dtupleTerm -> arithTerm
--- On RBRACE reduce production dtupleTerm -> arithTerm
--- On RARROW reduce production dtupleTerm -> arithTerm
--- On PRIVATE reduce production dtupleTerm -> arithTerm
--- On PRAGMA_SET_OPTIONS reduce production dtupleTerm -> arithTerm
--- On PRAGMA_RESET_OPTIONS reduce production dtupleTerm -> arithTerm
--- On OPEN reduce production dtupleTerm -> arithTerm
--- On OPAQUE reduce production dtupleTerm -> arithTerm
--- On NEW_EFFECT reduce production dtupleTerm -> arithTerm
--- On MODULE reduce production dtupleTerm -> arithTerm
--- On LOGIC reduce production dtupleTerm -> arithTerm
--- On LET reduce production dtupleTerm -> arithTerm
--- On LENS_PAREN_RIGHT reduce production dtupleTerm -> arithTerm
--- On LBRACE reduce production dtupleTerm -> arithTerm
--- On KIND reduce production dtupleTerm -> arithTerm
--- On IN reduce production dtupleTerm -> arithTerm
--- On IMPLIES reduce production dtupleTerm -> arithTerm
--- On IFF reduce production dtupleTerm -> arithTerm
--- On EXCEPTION reduce production dtupleTerm -> arithTerm
--- On EQUALS reduce production dtupleTerm -> arithTerm
--- On EOF reduce production dtupleTerm -> arithTerm
--- On END reduce production dtupleTerm -> arithTerm
--- On ELSE reduce production dtupleTerm -> arithTerm
--- On EFFECT reduce production dtupleTerm -> arithTerm
--- On DISJUNCTION reduce production dtupleTerm -> arithTerm
--- On DEFAULT reduce production dtupleTerm -> arithTerm
--- On CUSTOM_OP reduce production dtupleTerm -> arithTerm
--- On CONJUNCTION reduce production dtupleTerm -> arithTerm
--- On COMMA reduce production dtupleTerm -> arithTerm
--- On COLON_EQUALS reduce production dtupleTerm -> arithTerm
--- On COLON_COLON reduce production dtupleTerm -> arithTerm
--- On BAR_RBRACK reduce production dtupleTerm -> arithTerm
--- On BAR_BAR reduce production dtupleTerm -> arithTerm
--- On BAR reduce production dtupleTerm -> arithTerm
--- On ASSUME reduce production dtupleTerm -> arithTerm
--- On AND reduce production dtupleTerm -> arithTerm
--- On AMP_AMP reduce production dtupleTerm -> arithTerm
+-- On WITH VAL TYPE TOTAL THEN SUB_EFFECT SUBTYPE SUBKIND SEMICOLON_SEMICOLON SEMICOLON RPAREN RBRACK RBRACE RARROW PRIVATE PRAGMA_SET_OPTIONS PRAGMA_RESET_OPTIONS OPEN OPAQUE NEW_EFFECT MODULE LOGIC LET LENS_PAREN_RIGHT LBRACE KIND IN IMPLIES IFF EXCEPTION EQUALS EOF END ELSE EFFECT DISJUNCTION DEFAULT CUSTOM_OP CONJUNCTION COMMA COLON_EQUALS COLON_COLON BAR_RBRACK BAR_BAR BAR ASSUME AND AMP_AMP
+--   reduce production dtupleTerm -> arithTerm
 
 State 219:
 ## Known stack suffix:
@@ -5932,52 +4857,8 @@ tmCons -> product . [ WITH VAL TYPE TOTAL THEN SUB_EFFECT SUBTYPE SUBKIND SEMICO
 ## Transitions:
 -- On COLON_COLON shift to state 224
 ## Reductions:
--- On WITH reduce production tmCons -> product
--- On VAL reduce production tmCons -> product
--- On TYPE reduce production tmCons -> product
--- On TOTAL reduce production tmCons -> product
--- On THEN reduce production tmCons -> product
--- On SUB_EFFECT reduce production tmCons -> product
--- On SUBTYPE reduce production tmCons -> product
--- On SUBKIND reduce production tmCons -> product
--- On SEMICOLON_SEMICOLON reduce production tmCons -> product
--- On SEMICOLON reduce production tmCons -> product
--- On RPAREN reduce production tmCons -> product
--- On RBRACK reduce production tmCons -> product
--- On RBRACE reduce production tmCons -> product
--- On PRIVATE reduce production tmCons -> product
--- On PRAGMA_SET_OPTIONS reduce production tmCons -> product
--- On PRAGMA_RESET_OPTIONS reduce production tmCons -> product
--- On OPEN reduce production tmCons -> product
--- On OPAQUE reduce production tmCons -> product
--- On NEW_EFFECT reduce production tmCons -> product
--- On MODULE reduce production tmCons -> product
--- On LOGIC reduce production tmCons -> product
--- On LET reduce production tmCons -> product
--- On LENS_PAREN_RIGHT reduce production tmCons -> product
--- On LBRACE reduce production tmCons -> product
--- On KIND reduce production tmCons -> product
--- On IN reduce production tmCons -> product
--- On IMPLIES reduce production tmCons -> product
--- On IFF reduce production tmCons -> product
--- On EXCEPTION reduce production tmCons -> product
--- On EQUALS reduce production tmCons -> product
--- On EOF reduce production tmCons -> product
--- On END reduce production tmCons -> product
--- On ELSE reduce production tmCons -> product
--- On EFFECT reduce production tmCons -> product
--- On DISJUNCTION reduce production tmCons -> product
--- On DEFAULT reduce production tmCons -> product
--- On CUSTOM_OP reduce production tmCons -> product
--- On CONJUNCTION reduce production tmCons -> product
--- On COMMA reduce production tmCons -> product
--- On COLON_EQUALS reduce production tmCons -> product
--- On BAR_RBRACK reduce production tmCons -> product
--- On BAR_BAR reduce production tmCons -> product
--- On BAR reduce production tmCons -> product
--- On ASSUME reduce production tmCons -> product
--- On AND reduce production tmCons -> product
--- On AMP_AMP reduce production tmCons -> product
+-- On WITH VAL TYPE TOTAL THEN SUB_EFFECT SUBTYPE SUBKIND SEMICOLON_SEMICOLON SEMICOLON RPAREN RBRACK RBRACE PRIVATE PRAGMA_SET_OPTIONS PRAGMA_RESET_OPTIONS OPEN OPAQUE NEW_EFFECT MODULE LOGIC LET LENS_PAREN_RIGHT LBRACE KIND IN IMPLIES IFF EXCEPTION EQUALS EOF END ELSE EFFECT DISJUNCTION DEFAULT CUSTOM_OP CONJUNCTION COMMA COLON_EQUALS BAR_RBRACK BAR_BAR BAR ASSUME AND AMP_AMP
+--   reduce production tmCons -> product
 
 State 224:
 ## Known stack suffix:
@@ -6057,50 +4938,8 @@ tmAnd -> tmAnd AMP_AMP cmpTerm . [ WITH VAL TYPE TOTAL THEN SUB_EFFECT SUBTYPE S
 -- On CUSTOM_OP shift to state 228
 -- On comparisonOp shift to state 229
 ## Reductions:
--- On WITH reduce production tmAnd -> tmAnd AMP_AMP cmpTerm
--- On VAL reduce production tmAnd -> tmAnd AMP_AMP cmpTerm
--- On TYPE reduce production tmAnd -> tmAnd AMP_AMP cmpTerm
--- On TOTAL reduce production tmAnd -> tmAnd AMP_AMP cmpTerm
--- On THEN reduce production tmAnd -> tmAnd AMP_AMP cmpTerm
--- On SUB_EFFECT reduce production tmAnd -> tmAnd AMP_AMP cmpTerm
--- On SUBTYPE reduce production tmAnd -> tmAnd AMP_AMP cmpTerm
--- On SUBKIND reduce production tmAnd -> tmAnd AMP_AMP cmpTerm
--- On SEMICOLON_SEMICOLON reduce production tmAnd -> tmAnd AMP_AMP cmpTerm
--- On SEMICOLON reduce production tmAnd -> tmAnd AMP_AMP cmpTerm
--- On RPAREN reduce production tmAnd -> tmAnd AMP_AMP cmpTerm
--- On RBRACK reduce production tmAnd -> tmAnd AMP_AMP cmpTerm
--- On RBRACE reduce production tmAnd -> tmAnd AMP_AMP cmpTerm
--- On PRIVATE reduce production tmAnd -> tmAnd AMP_AMP cmpTerm
--- On PRAGMA_SET_OPTIONS reduce production tmAnd -> tmAnd AMP_AMP cmpTerm
--- On PRAGMA_RESET_OPTIONS reduce production tmAnd -> tmAnd AMP_AMP cmpTerm
--- On OPEN reduce production tmAnd -> tmAnd AMP_AMP cmpTerm
--- On OPAQUE reduce production tmAnd -> tmAnd AMP_AMP cmpTerm
--- On NEW_EFFECT reduce production tmAnd -> tmAnd AMP_AMP cmpTerm
--- On MODULE reduce production tmAnd -> tmAnd AMP_AMP cmpTerm
--- On LOGIC reduce production tmAnd -> tmAnd AMP_AMP cmpTerm
--- On LET reduce production tmAnd -> tmAnd AMP_AMP cmpTerm
--- On LENS_PAREN_RIGHT reduce production tmAnd -> tmAnd AMP_AMP cmpTerm
--- On LBRACE reduce production tmAnd -> tmAnd AMP_AMP cmpTerm
--- On KIND reduce production tmAnd -> tmAnd AMP_AMP cmpTerm
--- On IN reduce production tmAnd -> tmAnd AMP_AMP cmpTerm
--- On IMPLIES reduce production tmAnd -> tmAnd AMP_AMP cmpTerm
--- On IFF reduce production tmAnd -> tmAnd AMP_AMP cmpTerm
--- On EXCEPTION reduce production tmAnd -> tmAnd AMP_AMP cmpTerm
--- On EOF reduce production tmAnd -> tmAnd AMP_AMP cmpTerm
--- On END reduce production tmAnd -> tmAnd AMP_AMP cmpTerm
--- On ELSE reduce production tmAnd -> tmAnd AMP_AMP cmpTerm
--- On EFFECT reduce production tmAnd -> tmAnd AMP_AMP cmpTerm
--- On DISJUNCTION reduce production tmAnd -> tmAnd AMP_AMP cmpTerm
--- On DEFAULT reduce production tmAnd -> tmAnd AMP_AMP cmpTerm
--- On CONJUNCTION reduce production tmAnd -> tmAnd AMP_AMP cmpTerm
--- On COMMA reduce production tmAnd -> tmAnd AMP_AMP cmpTerm
--- On COLON_EQUALS reduce production tmAnd -> tmAnd AMP_AMP cmpTerm
--- On BAR_RBRACK reduce production tmAnd -> tmAnd AMP_AMP cmpTerm
--- On BAR_BAR reduce production tmAnd -> tmAnd AMP_AMP cmpTerm
--- On BAR reduce production tmAnd -> tmAnd AMP_AMP cmpTerm
--- On ASSUME reduce production tmAnd -> tmAnd AMP_AMP cmpTerm
--- On AND reduce production tmAnd -> tmAnd AMP_AMP cmpTerm
--- On AMP_AMP reduce production tmAnd -> tmAnd AMP_AMP cmpTerm
+-- On WITH VAL TYPE TOTAL THEN SUB_EFFECT SUBTYPE SUBKIND SEMICOLON_SEMICOLON SEMICOLON RPAREN RBRACK RBRACE PRIVATE PRAGMA_SET_OPTIONS PRAGMA_RESET_OPTIONS OPEN OPAQUE NEW_EFFECT MODULE LOGIC LET LENS_PAREN_RIGHT LBRACE KIND IN IMPLIES IFF EXCEPTION EOF END ELSE EFFECT DISJUNCTION DEFAULT CONJUNCTION COMMA COLON_EQUALS BAR_RBRACK BAR_BAR BAR ASSUME AND AMP_AMP
+--   reduce production tmAnd -> tmAnd AMP_AMP cmpTerm
 
 State 227:
 ## Known stack suffix:
@@ -6198,50 +5037,8 @@ tmAnd -> cmpTerm . [ WITH VAL TYPE TOTAL THEN SUB_EFFECT SUBTYPE SUBKIND SEMICOL
 -- On CUSTOM_OP shift to state 228
 -- On comparisonOp shift to state 229
 ## Reductions:
--- On WITH reduce production tmAnd -> cmpTerm
--- On VAL reduce production tmAnd -> cmpTerm
--- On TYPE reduce production tmAnd -> cmpTerm
--- On TOTAL reduce production tmAnd -> cmpTerm
--- On THEN reduce production tmAnd -> cmpTerm
--- On SUB_EFFECT reduce production tmAnd -> cmpTerm
--- On SUBTYPE reduce production tmAnd -> cmpTerm
--- On SUBKIND reduce production tmAnd -> cmpTerm
--- On SEMICOLON_SEMICOLON reduce production tmAnd -> cmpTerm
--- On SEMICOLON reduce production tmAnd -> cmpTerm
--- On RPAREN reduce production tmAnd -> cmpTerm
--- On RBRACK reduce production tmAnd -> cmpTerm
--- On RBRACE reduce production tmAnd -> cmpTerm
--- On PRIVATE reduce production tmAnd -> cmpTerm
--- On PRAGMA_SET_OPTIONS reduce production tmAnd -> cmpTerm
--- On PRAGMA_RESET_OPTIONS reduce production tmAnd -> cmpTerm
--- On OPEN reduce production tmAnd -> cmpTerm
--- On OPAQUE reduce production tmAnd -> cmpTerm
--- On NEW_EFFECT reduce production tmAnd -> cmpTerm
--- On MODULE reduce production tmAnd -> cmpTerm
--- On LOGIC reduce production tmAnd -> cmpTerm
--- On LET reduce production tmAnd -> cmpTerm
--- On LENS_PAREN_RIGHT reduce production tmAnd -> cmpTerm
--- On LBRACE reduce production tmAnd -> cmpTerm
--- On KIND reduce production tmAnd -> cmpTerm
--- On IN reduce production tmAnd -> cmpTerm
--- On IMPLIES reduce production tmAnd -> cmpTerm
--- On IFF reduce production tmAnd -> cmpTerm
--- On EXCEPTION reduce production tmAnd -> cmpTerm
--- On EOF reduce production tmAnd -> cmpTerm
--- On END reduce production tmAnd -> cmpTerm
--- On ELSE reduce production tmAnd -> cmpTerm
--- On EFFECT reduce production tmAnd -> cmpTerm
--- On DISJUNCTION reduce production tmAnd -> cmpTerm
--- On DEFAULT reduce production tmAnd -> cmpTerm
--- On CONJUNCTION reduce production tmAnd -> cmpTerm
--- On COMMA reduce production tmAnd -> cmpTerm
--- On COLON_EQUALS reduce production tmAnd -> cmpTerm
--- On BAR_RBRACK reduce production tmAnd -> cmpTerm
--- On BAR_BAR reduce production tmAnd -> cmpTerm
--- On BAR reduce production tmAnd -> cmpTerm
--- On ASSUME reduce production tmAnd -> cmpTerm
--- On AND reduce production tmAnd -> cmpTerm
--- On AMP_AMP reduce production tmAnd -> cmpTerm
+-- On WITH VAL TYPE TOTAL THEN SUB_EFFECT SUBTYPE SUBKIND SEMICOLON_SEMICOLON SEMICOLON RPAREN RBRACK RBRACE PRIVATE PRAGMA_SET_OPTIONS PRAGMA_RESET_OPTIONS OPEN OPAQUE NEW_EFFECT MODULE LOGIC LET LENS_PAREN_RIGHT LBRACE KIND IN IMPLIES IFF EXCEPTION EOF END ELSE EFFECT DISJUNCTION DEFAULT CONJUNCTION COMMA COLON_EQUALS BAR_RBRACK BAR_BAR BAR ASSUME AND AMP_AMP
+--   reduce production tmAnd -> cmpTerm
 
 State 232:
 ## Known stack suffix:
@@ -6252,41 +5049,8 @@ tmIff -> tmImplies . [ WITH VAL TYPE TOTAL THEN SUB_EFFECT SUBTYPE SUBKIND SEMIC
 ## Transitions:
 -- On IFF shift to state 233
 ## Reductions:
--- On WITH reduce production tmIff -> tmImplies
--- On VAL reduce production tmIff -> tmImplies
--- On TYPE reduce production tmIff -> tmImplies
--- On TOTAL reduce production tmIff -> tmImplies
--- On THEN reduce production tmIff -> tmImplies
--- On SUB_EFFECT reduce production tmIff -> tmImplies
--- On SUBTYPE reduce production tmIff -> tmImplies
--- On SUBKIND reduce production tmIff -> tmImplies
--- On SEMICOLON_SEMICOLON reduce production tmIff -> tmImplies
--- On SEMICOLON reduce production tmIff -> tmImplies
--- On RPAREN reduce production tmIff -> tmImplies
--- On RBRACK reduce production tmIff -> tmImplies
--- On RBRACE reduce production tmIff -> tmImplies
--- On PRIVATE reduce production tmIff -> tmImplies
--- On PRAGMA_SET_OPTIONS reduce production tmIff -> tmImplies
--- On PRAGMA_RESET_OPTIONS reduce production tmIff -> tmImplies
--- On OPEN reduce production tmIff -> tmImplies
--- On OPAQUE reduce production tmIff -> tmImplies
--- On NEW_EFFECT reduce production tmIff -> tmImplies
--- On MODULE reduce production tmIff -> tmImplies
--- On LOGIC reduce production tmIff -> tmImplies
--- On LET reduce production tmIff -> tmImplies
--- On LBRACE reduce production tmIff -> tmImplies
--- On KIND reduce production tmIff -> tmImplies
--- On IN reduce production tmIff -> tmImplies
--- On EXCEPTION reduce production tmIff -> tmImplies
--- On EOF reduce production tmIff -> tmImplies
--- On END reduce production tmIff -> tmImplies
--- On ELSE reduce production tmIff -> tmImplies
--- On EFFECT reduce production tmIff -> tmImplies
--- On DEFAULT reduce production tmIff -> tmImplies
--- On BAR_RBRACK reduce production tmIff -> tmImplies
--- On BAR reduce production tmIff -> tmImplies
--- On ASSUME reduce production tmIff -> tmImplies
--- On AND reduce production tmIff -> tmImplies
+-- On WITH VAL TYPE TOTAL THEN SUB_EFFECT SUBTYPE SUBKIND SEMICOLON_SEMICOLON SEMICOLON RPAREN RBRACK RBRACE PRIVATE PRAGMA_SET_OPTIONS PRAGMA_RESET_OPTIONS OPEN OPAQUE NEW_EFFECT MODULE LOGIC LET LBRACE KIND IN EXCEPTION EOF END ELSE EFFECT DEFAULT BAR_RBRACK BAR ASSUME AND
+--   reduce production tmIff -> tmImplies
 
 State 233:
 ## Known stack suffix:
@@ -6376,46 +5140,8 @@ tupleN -> tmEq . COMMA tupleN [ WITH VAL TYPE TOTAL THEN SUB_EFFECT SUBTYPE SUBK
 -- On COMMA shift to state 236
 -- On COLON_EQUALS shift to state 239
 ## Reductions:
--- On WITH reduce production tupleN -> tmEq
--- On VAL reduce production tupleN -> tmEq
--- On TYPE reduce production tupleN -> tmEq
--- On TOTAL reduce production tupleN -> tmEq
--- On THEN reduce production tupleN -> tmEq
--- On SUB_EFFECT reduce production tupleN -> tmEq
--- On SUBTYPE reduce production tupleN -> tmEq
--- On SUBKIND reduce production tupleN -> tmEq
--- On SEMICOLON_SEMICOLON reduce production tupleN -> tmEq
--- On SEMICOLON reduce production tupleN -> tmEq
--- On RPAREN reduce production tupleN -> tmEq
--- On RBRACK reduce production tupleN -> tmEq
--- On RBRACE reduce production tupleN -> tmEq
--- On PRIVATE reduce production tupleN -> tmEq
--- On PRAGMA_SET_OPTIONS reduce production tupleN -> tmEq
--- On PRAGMA_RESET_OPTIONS reduce production tupleN -> tmEq
--- On OPEN reduce production tupleN -> tmEq
--- On OPAQUE reduce production tupleN -> tmEq
--- On NEW_EFFECT reduce production tupleN -> tmEq
--- On MODULE reduce production tupleN -> tmEq
--- On LOGIC reduce production tupleN -> tmEq
--- On LET reduce production tupleN -> tmEq
--- On LENS_PAREN_RIGHT reduce production tupleN -> tmEq
--- On LBRACE reduce production tupleN -> tmEq
--- On KIND reduce production tupleN -> tmEq
--- On IN reduce production tupleN -> tmEq
--- On IMPLIES reduce production tupleN -> tmEq
--- On IFF reduce production tupleN -> tmEq
--- On EXCEPTION reduce production tupleN -> tmEq
--- On EOF reduce production tupleN -> tmEq
--- On END reduce production tupleN -> tmEq
--- On ELSE reduce production tupleN -> tmEq
--- On EFFECT reduce production tupleN -> tmEq
--- On DISJUNCTION reduce production tupleN -> tmEq
--- On DEFAULT reduce production tupleN -> tmEq
--- On CONJUNCTION reduce production tupleN -> tmEq
--- On BAR_RBRACK reduce production tupleN -> tmEq
--- On BAR reduce production tupleN -> tmEq
--- On ASSUME reduce production tupleN -> tmEq
--- On AND reduce production tupleN -> tmEq
+-- On WITH VAL TYPE TOTAL THEN SUB_EFFECT SUBTYPE SUBKIND SEMICOLON_SEMICOLON SEMICOLON RPAREN RBRACK RBRACE PRIVATE PRAGMA_SET_OPTIONS PRAGMA_RESET_OPTIONS OPEN OPAQUE NEW_EFFECT MODULE LOGIC LET LENS_PAREN_RIGHT LBRACE KIND IN IMPLIES IFF EXCEPTION EOF END ELSE EFFECT DISJUNCTION DEFAULT CONJUNCTION BAR_RBRACK BAR ASSUME AND
+--   reduce production tupleN -> tmEq
 
 State 236:
 ## Known stack suffix:
@@ -6498,49 +5224,8 @@ tmOr -> tmAnd . [ WITH VAL TYPE TOTAL THEN SUB_EFFECT SUBTYPE SUBKIND SEMICOLON_
 ## Transitions:
 -- On AMP_AMP shift to state 205
 ## Reductions:
--- On WITH reduce production tmOr -> tmAnd
--- On VAL reduce production tmOr -> tmAnd
--- On TYPE reduce production tmOr -> tmAnd
--- On TOTAL reduce production tmOr -> tmAnd
--- On THEN reduce production tmOr -> tmAnd
--- On SUB_EFFECT reduce production tmOr -> tmAnd
--- On SUBTYPE reduce production tmOr -> tmAnd
--- On SUBKIND reduce production tmOr -> tmAnd
--- On SEMICOLON_SEMICOLON reduce production tmOr -> tmAnd
--- On SEMICOLON reduce production tmOr -> tmAnd
--- On RPAREN reduce production tmOr -> tmAnd
--- On RBRACK reduce production tmOr -> tmAnd
--- On RBRACE reduce production tmOr -> tmAnd
--- On PRIVATE reduce production tmOr -> tmAnd
--- On PRAGMA_SET_OPTIONS reduce production tmOr -> tmAnd
--- On PRAGMA_RESET_OPTIONS reduce production tmOr -> tmAnd
--- On OPEN reduce production tmOr -> tmAnd
--- On OPAQUE reduce production tmOr -> tmAnd
--- On NEW_EFFECT reduce production tmOr -> tmAnd
--- On MODULE reduce production tmOr -> tmAnd
--- On LOGIC reduce production tmOr -> tmAnd
--- On LET reduce production tmOr -> tmAnd
--- On LENS_PAREN_RIGHT reduce production tmOr -> tmAnd
--- On LBRACE reduce production tmOr -> tmAnd
--- On KIND reduce production tmOr -> tmAnd
--- On IN reduce production tmOr -> tmAnd
--- On IMPLIES reduce production tmOr -> tmAnd
--- On IFF reduce production tmOr -> tmAnd
--- On EXCEPTION reduce production tmOr -> tmAnd
--- On EOF reduce production tmOr -> tmAnd
--- On END reduce production tmOr -> tmAnd
--- On ELSE reduce production tmOr -> tmAnd
--- On EFFECT reduce production tmOr -> tmAnd
--- On DISJUNCTION reduce production tmOr -> tmAnd
--- On DEFAULT reduce production tmOr -> tmAnd
--- On CONJUNCTION reduce production tmOr -> tmAnd
--- On COMMA reduce production tmOr -> tmAnd
--- On COLON_EQUALS reduce production tmOr -> tmAnd
--- On BAR_RBRACK reduce production tmOr -> tmAnd
--- On BAR_BAR reduce production tmOr -> tmAnd
--- On BAR reduce production tmOr -> tmAnd
--- On ASSUME reduce production tmOr -> tmAnd
--- On AND reduce production tmOr -> tmAnd
+-- On WITH VAL TYPE TOTAL THEN SUB_EFFECT SUBTYPE SUBKIND SEMICOLON_SEMICOLON SEMICOLON RPAREN RBRACK RBRACE PRIVATE PRAGMA_SET_OPTIONS PRAGMA_RESET_OPTIONS OPEN OPAQUE NEW_EFFECT MODULE LOGIC LET LENS_PAREN_RIGHT LBRACE KIND IN IMPLIES IFF EXCEPTION EOF END ELSE EFFECT DISJUNCTION DEFAULT CONJUNCTION COMMA COLON_EQUALS BAR_RBRACK BAR_BAR BAR ASSUME AND
+--   reduce production tmOr -> tmAnd
 
 State 239:
 ## Known stack suffix:
@@ -6612,48 +5297,8 @@ tmOr -> tmOr . BAR_BAR tmAnd [ WITH VAL TYPE TOTAL THEN SUB_EFFECT SUBTYPE SUBKI
 ## Transitions:
 -- On BAR_BAR shift to state 202
 ## Reductions:
--- On WITH reduce production tmEq -> tmEq COLON_EQUALS tmOr
--- On VAL reduce production tmEq -> tmEq COLON_EQUALS tmOr
--- On TYPE reduce production tmEq -> tmEq COLON_EQUALS tmOr
--- On TOTAL reduce production tmEq -> tmEq COLON_EQUALS tmOr
--- On THEN reduce production tmEq -> tmEq COLON_EQUALS tmOr
--- On SUB_EFFECT reduce production tmEq -> tmEq COLON_EQUALS tmOr
--- On SUBTYPE reduce production tmEq -> tmEq COLON_EQUALS tmOr
--- On SUBKIND reduce production tmEq -> tmEq COLON_EQUALS tmOr
--- On SEMICOLON_SEMICOLON reduce production tmEq -> tmEq COLON_EQUALS tmOr
--- On SEMICOLON reduce production tmEq -> tmEq COLON_EQUALS tmOr
--- On RPAREN reduce production tmEq -> tmEq COLON_EQUALS tmOr
--- On RBRACK reduce production tmEq -> tmEq COLON_EQUALS tmOr
--- On RBRACE reduce production tmEq -> tmEq COLON_EQUALS tmOr
--- On PRIVATE reduce production tmEq -> tmEq COLON_EQUALS tmOr
--- On PRAGMA_SET_OPTIONS reduce production tmEq -> tmEq COLON_EQUALS tmOr
--- On PRAGMA_RESET_OPTIONS reduce production tmEq -> tmEq COLON_EQUALS tmOr
--- On OPEN reduce production tmEq -> tmEq COLON_EQUALS tmOr
--- On OPAQUE reduce production tmEq -> tmEq COLON_EQUALS tmOr
--- On NEW_EFFECT reduce production tmEq -> tmEq COLON_EQUALS tmOr
--- On MODULE reduce production tmEq -> tmEq COLON_EQUALS tmOr
--- On LOGIC reduce production tmEq -> tmEq COLON_EQUALS tmOr
--- On LET reduce production tmEq -> tmEq COLON_EQUALS tmOr
--- On LENS_PAREN_RIGHT reduce production tmEq -> tmEq COLON_EQUALS tmOr
--- On LBRACE reduce production tmEq -> tmEq COLON_EQUALS tmOr
--- On KIND reduce production tmEq -> tmEq COLON_EQUALS tmOr
--- On IN reduce production tmEq -> tmEq COLON_EQUALS tmOr
--- On IMPLIES reduce production tmEq -> tmEq COLON_EQUALS tmOr
--- On IFF reduce production tmEq -> tmEq COLON_EQUALS tmOr
--- On EXCEPTION reduce production tmEq -> tmEq COLON_EQUALS tmOr
--- On EOF reduce production tmEq -> tmEq COLON_EQUALS tmOr
--- On END reduce production tmEq -> tmEq COLON_EQUALS tmOr
--- On ELSE reduce production tmEq -> tmEq COLON_EQUALS tmOr
--- On EFFECT reduce production tmEq -> tmEq COLON_EQUALS tmOr
--- On DISJUNCTION reduce production tmEq -> tmEq COLON_EQUALS tmOr
--- On DEFAULT reduce production tmEq -> tmEq COLON_EQUALS tmOr
--- On CONJUNCTION reduce production tmEq -> tmEq COLON_EQUALS tmOr
--- On COMMA reduce production tmEq -> tmEq COLON_EQUALS tmOr
--- On COLON_EQUALS reduce production tmEq -> tmEq COLON_EQUALS tmOr
--- On BAR_RBRACK reduce production tmEq -> tmEq COLON_EQUALS tmOr
--- On BAR reduce production tmEq -> tmEq COLON_EQUALS tmOr
--- On ASSUME reduce production tmEq -> tmEq COLON_EQUALS tmOr
--- On AND reduce production tmEq -> tmEq COLON_EQUALS tmOr
+-- On WITH VAL TYPE TOTAL THEN SUB_EFFECT SUBTYPE SUBKIND SEMICOLON_SEMICOLON SEMICOLON RPAREN RBRACK RBRACE PRIVATE PRAGMA_SET_OPTIONS PRAGMA_RESET_OPTIONS OPEN OPAQUE NEW_EFFECT MODULE LOGIC LET LENS_PAREN_RIGHT LBRACE KIND IN IMPLIES IFF EXCEPTION EOF END ELSE EFFECT DISJUNCTION DEFAULT CONJUNCTION COMMA COLON_EQUALS BAR_RBRACK BAR ASSUME AND
+--   reduce production tmEq -> tmEq COLON_EQUALS tmOr
 
 State 241:
 ## Known stack suffix:
@@ -6666,42 +5311,8 @@ tmImplies -> tmDisjunction . [ WITH VAL TYPE TOTAL THEN SUB_EFFECT SUBTYPE SUBKI
 -- On IMPLIES shift to state 242
 -- On DISJUNCTION shift to state 247
 ## Reductions:
--- On WITH reduce production tmImplies -> tmDisjunction
--- On VAL reduce production tmImplies -> tmDisjunction
--- On TYPE reduce production tmImplies -> tmDisjunction
--- On TOTAL reduce production tmImplies -> tmDisjunction
--- On THEN reduce production tmImplies -> tmDisjunction
--- On SUB_EFFECT reduce production tmImplies -> tmDisjunction
--- On SUBTYPE reduce production tmImplies -> tmDisjunction
--- On SUBKIND reduce production tmImplies -> tmDisjunction
--- On SEMICOLON_SEMICOLON reduce production tmImplies -> tmDisjunction
--- On SEMICOLON reduce production tmImplies -> tmDisjunction
--- On RPAREN reduce production tmImplies -> tmDisjunction
--- On RBRACK reduce production tmImplies -> tmDisjunction
--- On RBRACE reduce production tmImplies -> tmDisjunction
--- On PRIVATE reduce production tmImplies -> tmDisjunction
--- On PRAGMA_SET_OPTIONS reduce production tmImplies -> tmDisjunction
--- On PRAGMA_RESET_OPTIONS reduce production tmImplies -> tmDisjunction
--- On OPEN reduce production tmImplies -> tmDisjunction
--- On OPAQUE reduce production tmImplies -> tmDisjunction
--- On NEW_EFFECT reduce production tmImplies -> tmDisjunction
--- On MODULE reduce production tmImplies -> tmDisjunction
--- On LOGIC reduce production tmImplies -> tmDisjunction
--- On LET reduce production tmImplies -> tmDisjunction
--- On LBRACE reduce production tmImplies -> tmDisjunction
--- On KIND reduce production tmImplies -> tmDisjunction
--- On IN reduce production tmImplies -> tmDisjunction
--- On IFF reduce production tmImplies -> tmDisjunction
--- On EXCEPTION reduce production tmImplies -> tmDisjunction
--- On EOF reduce production tmImplies -> tmDisjunction
--- On END reduce production tmImplies -> tmDisjunction
--- On ELSE reduce production tmImplies -> tmDisjunction
--- On EFFECT reduce production tmImplies -> tmDisjunction
--- On DEFAULT reduce production tmImplies -> tmDisjunction
--- On BAR_RBRACK reduce production tmImplies -> tmDisjunction
--- On BAR reduce production tmImplies -> tmDisjunction
--- On ASSUME reduce production tmImplies -> tmDisjunction
--- On AND reduce production tmImplies -> tmDisjunction
+-- On WITH VAL TYPE TOTAL THEN SUB_EFFECT SUBTYPE SUBKIND SEMICOLON_SEMICOLON SEMICOLON RPAREN RBRACK RBRACE PRIVATE PRAGMA_SET_OPTIONS PRAGMA_RESET_OPTIONS OPEN OPAQUE NEW_EFFECT MODULE LOGIC LET LBRACE KIND IN IFF EXCEPTION EOF END ELSE EFFECT DEFAULT BAR_RBRACK BAR ASSUME AND
+--   reduce production tmImplies -> tmDisjunction
 
 State 242:
 ## Known stack suffix:
@@ -6788,44 +5399,8 @@ tmDisjunction -> tmConjunction . [ WITH VAL TYPE TOTAL THEN SUB_EFFECT SUBTYPE S
 ## Transitions:
 -- On CONJUNCTION shift to state 245
 ## Reductions:
--- On WITH reduce production tmDisjunction -> tmConjunction
--- On VAL reduce production tmDisjunction -> tmConjunction
--- On TYPE reduce production tmDisjunction -> tmConjunction
--- On TOTAL reduce production tmDisjunction -> tmConjunction
--- On THEN reduce production tmDisjunction -> tmConjunction
--- On SUB_EFFECT reduce production tmDisjunction -> tmConjunction
--- On SUBTYPE reduce production tmDisjunction -> tmConjunction
--- On SUBKIND reduce production tmDisjunction -> tmConjunction
--- On SEMICOLON_SEMICOLON reduce production tmDisjunction -> tmConjunction
--- On SEMICOLON reduce production tmDisjunction -> tmConjunction
--- On RPAREN reduce production tmDisjunction -> tmConjunction
--- On RBRACK reduce production tmDisjunction -> tmConjunction
--- On RBRACE reduce production tmDisjunction -> tmConjunction
--- On PRIVATE reduce production tmDisjunction -> tmConjunction
--- On PRAGMA_SET_OPTIONS reduce production tmDisjunction -> tmConjunction
--- On PRAGMA_RESET_OPTIONS reduce production tmDisjunction -> tmConjunction
--- On OPEN reduce production tmDisjunction -> tmConjunction
--- On OPAQUE reduce production tmDisjunction -> tmConjunction
--- On NEW_EFFECT reduce production tmDisjunction -> tmConjunction
--- On MODULE reduce production tmDisjunction -> tmConjunction
--- On LOGIC reduce production tmDisjunction -> tmConjunction
--- On LET reduce production tmDisjunction -> tmConjunction
--- On LBRACE reduce production tmDisjunction -> tmConjunction
--- On KIND reduce production tmDisjunction -> tmConjunction
--- On IN reduce production tmDisjunction -> tmConjunction
--- On IMPLIES reduce production tmDisjunction -> tmConjunction
--- On IFF reduce production tmDisjunction -> tmConjunction
--- On EXCEPTION reduce production tmDisjunction -> tmConjunction
--- On EOF reduce production tmDisjunction -> tmConjunction
--- On END reduce production tmDisjunction -> tmConjunction
--- On ELSE reduce production tmDisjunction -> tmConjunction
--- On EFFECT reduce production tmDisjunction -> tmConjunction
--- On DISJUNCTION reduce production tmDisjunction -> tmConjunction
--- On DEFAULT reduce production tmDisjunction -> tmConjunction
--- On BAR_RBRACK reduce production tmDisjunction -> tmConjunction
--- On BAR reduce production tmDisjunction -> tmConjunction
--- On ASSUME reduce production tmDisjunction -> tmConjunction
--- On AND reduce production tmDisjunction -> tmConjunction
+-- On WITH VAL TYPE TOTAL THEN SUB_EFFECT SUBTYPE SUBKIND SEMICOLON_SEMICOLON SEMICOLON RPAREN RBRACK RBRACE PRIVATE PRAGMA_SET_OPTIONS PRAGMA_RESET_OPTIONS OPEN OPAQUE NEW_EFFECT MODULE LOGIC LET LBRACE KIND IN IMPLIES IFF EXCEPTION EOF END ELSE EFFECT DISJUNCTION DEFAULT BAR_RBRACK BAR ASSUME AND
+--   reduce production tmDisjunction -> tmConjunction
 
 State 245:
 ## Known stack suffix:
@@ -6974,44 +5549,8 @@ tmDisjunction -> tmDisjunction DISJUNCTION tmConjunction . [ WITH VAL TYPE TOTAL
 ## Transitions:
 -- On CONJUNCTION shift to state 245
 ## Reductions:
--- On WITH reduce production tmDisjunction -> tmDisjunction DISJUNCTION tmConjunction
--- On VAL reduce production tmDisjunction -> tmDisjunction DISJUNCTION tmConjunction
--- On TYPE reduce production tmDisjunction -> tmDisjunction DISJUNCTION tmConjunction
--- On TOTAL reduce production tmDisjunction -> tmDisjunction DISJUNCTION tmConjunction
--- On THEN reduce production tmDisjunction -> tmDisjunction DISJUNCTION tmConjunction
--- On SUB_EFFECT reduce production tmDisjunction -> tmDisjunction DISJUNCTION tmConjunction
--- On SUBTYPE reduce production tmDisjunction -> tmDisjunction DISJUNCTION tmConjunction
--- On SUBKIND reduce production tmDisjunction -> tmDisjunction DISJUNCTION tmConjunction
--- On SEMICOLON_SEMICOLON reduce production tmDisjunction -> tmDisjunction DISJUNCTION tmConjunction
--- On SEMICOLON reduce production tmDisjunction -> tmDisjunction DISJUNCTION tmConjunction
--- On RPAREN reduce production tmDisjunction -> tmDisjunction DISJUNCTION tmConjunction
--- On RBRACK reduce production tmDisjunction -> tmDisjunction DISJUNCTION tmConjunction
--- On RBRACE reduce production tmDisjunction -> tmDisjunction DISJUNCTION tmConjunction
--- On PRIVATE reduce production tmDisjunction -> tmDisjunction DISJUNCTION tmConjunction
--- On PRAGMA_SET_OPTIONS reduce production tmDisjunction -> tmDisjunction DISJUNCTION tmConjunction
--- On PRAGMA_RESET_OPTIONS reduce production tmDisjunction -> tmDisjunction DISJUNCTION tmConjunction
--- On OPEN reduce production tmDisjunction -> tmDisjunction DISJUNCTION tmConjunction
--- On OPAQUE reduce production tmDisjunction -> tmDisjunction DISJUNCTION tmConjunction
--- On NEW_EFFECT reduce production tmDisjunction -> tmDisjunction DISJUNCTION tmConjunction
--- On MODULE reduce production tmDisjunction -> tmDisjunction DISJUNCTION tmConjunction
--- On LOGIC reduce production tmDisjunction -> tmDisjunction DISJUNCTION tmConjunction
--- On LET reduce production tmDisjunction -> tmDisjunction DISJUNCTION tmConjunction
--- On LBRACE reduce production tmDisjunction -> tmDisjunction DISJUNCTION tmConjunction
--- On KIND reduce production tmDisjunction -> tmDisjunction DISJUNCTION tmConjunction
--- On IN reduce production tmDisjunction -> tmDisjunction DISJUNCTION tmConjunction
--- On IMPLIES reduce production tmDisjunction -> tmDisjunction DISJUNCTION tmConjunction
--- On IFF reduce production tmDisjunction -> tmDisjunction DISJUNCTION tmConjunction
--- On EXCEPTION reduce production tmDisjunction -> tmDisjunction DISJUNCTION tmConjunction
--- On EOF reduce production tmDisjunction -> tmDisjunction DISJUNCTION tmConjunction
--- On END reduce production tmDisjunction -> tmDisjunction DISJUNCTION tmConjunction
--- On ELSE reduce production tmDisjunction -> tmDisjunction DISJUNCTION tmConjunction
--- On EFFECT reduce production tmDisjunction -> tmDisjunction DISJUNCTION tmConjunction
--- On DISJUNCTION reduce production tmDisjunction -> tmDisjunction DISJUNCTION tmConjunction
--- On DEFAULT reduce production tmDisjunction -> tmDisjunction DISJUNCTION tmConjunction
--- On BAR_RBRACK reduce production tmDisjunction -> tmDisjunction DISJUNCTION tmConjunction
--- On BAR reduce production tmDisjunction -> tmDisjunction DISJUNCTION tmConjunction
--- On ASSUME reduce production tmDisjunction -> tmDisjunction DISJUNCTION tmConjunction
--- On AND reduce production tmDisjunction -> tmDisjunction DISJUNCTION tmConjunction
+-- On WITH VAL TYPE TOTAL THEN SUB_EFFECT SUBTYPE SUBKIND SEMICOLON_SEMICOLON SEMICOLON RPAREN RBRACK RBRACE PRIVATE PRAGMA_SET_OPTIONS PRAGMA_RESET_OPTIONS OPEN OPAQUE NEW_EFFECT MODULE LOGIC LET LBRACE KIND IN IMPLIES IFF EXCEPTION EOF END ELSE EFFECT DISJUNCTION DEFAULT BAR_RBRACK BAR ASSUME AND
+--   reduce production tmDisjunction -> tmDisjunction DISJUNCTION tmConjunction
 
 State 249:
 ## Known stack suffix:
@@ -7090,31 +5629,8 @@ binders -> binder . binders [ VAL TYPE TOTAL SUB_EFFECT SEMICOLON_SEMICOLON PRIV
 -- On binders shift to state 257
 -- On binder shift to state 256
 ## Reductions:
--- On VAL reduce production binders ->
--- On TYPE reduce production binders ->
--- On TOTAL reduce production binders ->
--- On SUB_EFFECT reduce production binders ->
--- On SEMICOLON_SEMICOLON reduce production binders ->
--- On PRIVATE reduce production binders ->
--- On PRAGMA_SET_OPTIONS reduce production binders ->
--- On PRAGMA_RESET_OPTIONS reduce production binders ->
--- On OPEN reduce production binders ->
--- On OPAQUE reduce production binders ->
--- On NEW_EFFECT reduce production binders ->
--- On MODULE reduce production binders ->
--- On LOGIC reduce production binders ->
--- On LET reduce production binders ->
--- On KIND reduce production binders ->
--- On EXCEPTION reduce production binders ->
--- On EQUALS reduce production binders ->
--- On EOF reduce production binders ->
--- On END reduce production binders ->
--- On EFFECT reduce production binders ->
--- On DOT reduce production binders ->
--- On DEFAULT reduce production binders ->
--- On COLON reduce production binders ->
--- On ASSUME reduce production binders ->
--- On AND reduce production binders ->
+-- On VAL TYPE TOTAL SUB_EFFECT SEMICOLON_SEMICOLON PRIVATE PRAGMA_SET_OPTIONS PRAGMA_RESET_OPTIONS OPEN OPAQUE NEW_EFFECT MODULE LOGIC LET KIND EXCEPTION EQUALS EOF END EFFECT DOT DEFAULT COLON ASSUME AND
+--   reduce production binders ->
 
 State 257:
 ## Known stack suffix:
@@ -7134,7 +5650,8 @@ binder -> LPAREN aqual_opt ident COLON typ . refineOpt RPAREN [ VAL TYPE TVAR TO
 -- On LBRACE shift to state 259
 -- On refineOpt shift to state 262
 ## Reductions:
--- On RPAREN reduce production refineOpt ->
+-- On RPAREN
+--   reduce production refineOpt ->
 
 State 259:
 ## Known stack suffix:
@@ -7273,47 +5790,8 @@ typ -> FORALL binders DOT . qpat noSeqTerm [ WITH VAL TYPE TOTAL THEN SUB_EFFECT
 -- On LBRACE_COLON_PATTERN shift to state 175
 -- On qpat shift to state 266
 ## Reductions:
--- On UNDERSCORE reduce production qpat ->
--- On UINT8 reduce production qpat ->
--- On TVAR reduce production qpat ->
--- On TRY reduce production qpat ->
--- On TRUE reduce production qpat ->
--- On TILDE reduce production qpat ->
--- On STRING reduce production qpat ->
--- On REQUIRES reduce production qpat ->
--- On PLUS_OP reduce production qpat ->
--- On PERCENT_LBRACK reduce production qpat ->
--- On NAME reduce production qpat ->
--- On MINUS_OP reduce production qpat ->
--- On MATCH reduce production qpat ->
--- On LPAREN_RPAREN reduce production qpat ->
--- On LPAREN reduce production qpat ->
--- On LET reduce production qpat ->
--- On LENS_PAREN_LEFT reduce production qpat ->
--- On LBRACK_BAR reduce production qpat ->
--- On LBRACK reduce production qpat ->
--- On LBRACE reduce production qpat ->
--- On INT64 reduce production qpat ->
--- On INT32 reduce production qpat ->
--- On INT reduce production qpat ->
--- On IF reduce production qpat ->
--- On IEEE64 reduce production qpat ->
--- On IDENT reduce production qpat ->
--- On HASH reduce production qpat ->
--- On FUNCTION reduce production qpat ->
--- On FUN reduce production qpat ->
--- On FORALL reduce production qpat ->
--- On FALSE reduce production qpat ->
--- On EXISTS reduce production qpat ->
--- On EQUALS reduce production qpat ->
--- On ENSURES reduce production qpat ->
--- On CHAR reduce production qpat ->
--- On BYTEARRAY reduce production qpat ->
--- On BEGIN reduce production qpat ->
--- On BANG_LBRACE reduce production qpat ->
--- On BANG reduce production qpat ->
--- On ASSUME reduce production qpat ->
--- On ASSERT reduce production qpat ->
+-- On UNDERSCORE UINT8 TVAR TRY TRUE TILDE STRING REQUIRES PLUS_OP PERCENT_LBRACK NAME MINUS_OP MATCH LPAREN_RPAREN LPAREN LET LENS_PAREN_LEFT LBRACK_BAR LBRACK LBRACE INT64 INT32 INT IF IEEE64 IDENT HASH FUNCTION FUN FORALL FALSE EXISTS EQUALS ENSURES CHAR BYTEARRAY BEGIN BANG_LBRACE BANG ASSUME ASSERT
+--   reduce production qpat ->
 
 State 266:
 ## Known stack suffix:
@@ -7424,40 +5902,8 @@ term -> noSeqTerm . SEMICOLON term [ WITH VAL TYPE TOTAL THEN SUB_EFFECT SUBTYPE
 ## Transitions:
 -- On SEMICOLON shift to state 270
 ## Reductions:
--- On WITH reduce production term -> noSeqTerm
--- On VAL reduce production term -> noSeqTerm
--- On TYPE reduce production term -> noSeqTerm
--- On TOTAL reduce production term -> noSeqTerm
--- On THEN reduce production term -> noSeqTerm
--- On SUB_EFFECT reduce production term -> noSeqTerm
--- On SUBTYPE reduce production term -> noSeqTerm
--- On SUBKIND reduce production term -> noSeqTerm
--- On SEMICOLON_SEMICOLON reduce production term -> noSeqTerm
--- On RPAREN reduce production term -> noSeqTerm
--- On RBRACK reduce production term -> noSeqTerm
--- On RBRACE reduce production term -> noSeqTerm
--- On PRIVATE reduce production term -> noSeqTerm
--- On PRAGMA_SET_OPTIONS reduce production term -> noSeqTerm
--- On PRAGMA_RESET_OPTIONS reduce production term -> noSeqTerm
--- On OPEN reduce production term -> noSeqTerm
--- On OPAQUE reduce production term -> noSeqTerm
--- On NEW_EFFECT reduce production term -> noSeqTerm
--- On MODULE reduce production term -> noSeqTerm
--- On LOGIC reduce production term -> noSeqTerm
--- On LET reduce production term -> noSeqTerm
--- On LBRACE reduce production term -> noSeqTerm
--- On KIND reduce production term -> noSeqTerm
--- On IN reduce production term -> noSeqTerm
--- On EXCEPTION reduce production term -> noSeqTerm
--- On EOF reduce production term -> noSeqTerm
--- On END reduce production term -> noSeqTerm
--- On ELSE reduce production term -> noSeqTerm
--- On EFFECT reduce production term -> noSeqTerm
--- On DEFAULT reduce production term -> noSeqTerm
--- On BAR_RBRACK reduce production term -> noSeqTerm
--- On BAR reduce production term -> noSeqTerm
--- On ASSUME reduce production term -> noSeqTerm
--- On AND reduce production term -> noSeqTerm
+-- On WITH VAL TYPE TOTAL THEN SUB_EFFECT SUBTYPE SUBKIND SEMICOLON_SEMICOLON RPAREN RBRACK RBRACE PRIVATE PRAGMA_SET_OPTIONS PRAGMA_RESET_OPTIONS OPEN OPAQUE NEW_EFFECT MODULE LOGIC LET LBRACE KIND IN EXCEPTION EOF END ELSE EFFECT DEFAULT BAR_RBRACK BAR ASSUME AND
+--   reduce production term -> noSeqTerm
 
 State 270:
 ## Known stack suffix:
@@ -7580,40 +6026,8 @@ patternBranches -> patternBranches . patternBranch [ WITH VAL TYPE TOTAL THEN SU
 -- On BAR shift to state 275
 -- On patternBranch shift to state 280
 ## Reductions:
--- On WITH reduce production noSeqTerm -> FUNCTION firstPatternBranch patternBranches
--- On VAL reduce production noSeqTerm -> FUNCTION firstPatternBranch patternBranches
--- On TYPE reduce production noSeqTerm -> FUNCTION firstPatternBranch patternBranches
--- On TOTAL reduce production noSeqTerm -> FUNCTION firstPatternBranch patternBranches
--- On THEN reduce production noSeqTerm -> FUNCTION firstPatternBranch patternBranches
--- On SUB_EFFECT reduce production noSeqTerm -> FUNCTION firstPatternBranch patternBranches
--- On SUBTYPE reduce production noSeqTerm -> FUNCTION firstPatternBranch patternBranches
--- On SUBKIND reduce production noSeqTerm -> FUNCTION firstPatternBranch patternBranches
--- On SEMICOLON_SEMICOLON reduce production noSeqTerm -> FUNCTION firstPatternBranch patternBranches
--- On SEMICOLON reduce production noSeqTerm -> FUNCTION firstPatternBranch patternBranches
--- On RPAREN reduce production noSeqTerm -> FUNCTION firstPatternBranch patternBranches
--- On RBRACK reduce production noSeqTerm -> FUNCTION firstPatternBranch patternBranches
--- On RBRACE reduce production noSeqTerm -> FUNCTION firstPatternBranch patternBranches
--- On PRIVATE reduce production noSeqTerm -> FUNCTION firstPatternBranch patternBranches
--- On PRAGMA_SET_OPTIONS reduce production noSeqTerm -> FUNCTION firstPatternBranch patternBranches
--- On PRAGMA_RESET_OPTIONS reduce production noSeqTerm -> FUNCTION firstPatternBranch patternBranches
--- On OPEN reduce production noSeqTerm -> FUNCTION firstPatternBranch patternBranches
--- On OPAQUE reduce production noSeqTerm -> FUNCTION firstPatternBranch patternBranches
--- On NEW_EFFECT reduce production noSeqTerm -> FUNCTION firstPatternBranch patternBranches
--- On MODULE reduce production noSeqTerm -> FUNCTION firstPatternBranch patternBranches
--- On LOGIC reduce production noSeqTerm -> FUNCTION firstPatternBranch patternBranches
--- On LET reduce production noSeqTerm -> FUNCTION firstPatternBranch patternBranches
--- On LBRACE reduce production noSeqTerm -> FUNCTION firstPatternBranch patternBranches
--- On KIND reduce production noSeqTerm -> FUNCTION firstPatternBranch patternBranches
--- On IN reduce production noSeqTerm -> FUNCTION firstPatternBranch patternBranches
--- On EXCEPTION reduce production noSeqTerm -> FUNCTION firstPatternBranch patternBranches
--- On EOF reduce production noSeqTerm -> FUNCTION firstPatternBranch patternBranches
--- On END reduce production noSeqTerm -> FUNCTION firstPatternBranch patternBranches
--- On ELSE reduce production noSeqTerm -> FUNCTION firstPatternBranch patternBranches
--- On EFFECT reduce production noSeqTerm -> FUNCTION firstPatternBranch patternBranches
--- On DEFAULT reduce production noSeqTerm -> FUNCTION firstPatternBranch patternBranches
--- On BAR_RBRACK reduce production noSeqTerm -> FUNCTION firstPatternBranch patternBranches
--- On ASSUME reduce production noSeqTerm -> FUNCTION firstPatternBranch patternBranches
--- On AND reduce production noSeqTerm -> FUNCTION firstPatternBranch patternBranches
+-- On WITH VAL TYPE TOTAL THEN SUB_EFFECT SUBTYPE SUBKIND SEMICOLON_SEMICOLON SEMICOLON RPAREN RBRACK RBRACE PRIVATE PRAGMA_SET_OPTIONS PRAGMA_RESET_OPTIONS OPEN OPAQUE NEW_EFFECT MODULE LOGIC LET LBRACE KIND IN EXCEPTION EOF END ELSE EFFECT DEFAULT BAR_RBRACK ASSUME AND
+--   reduce production noSeqTerm -> FUNCTION firstPatternBranch patternBranches
 
 State 275:
 ## Known stack suffix:
@@ -7666,8 +6080,8 @@ patternBranch -> BAR disjunctivePattern . maybeWhen maybeFocusArrow term [ WITH 
 -- On WHEN shift to state 115
 -- On maybeWhen shift to state 277
 ## Reductions:
--- On SQUIGGLY_RARROW reduce production maybeWhen ->
--- On RARROW reduce production maybeWhen ->
+-- On SQUIGGLY_RARROW RARROW
+--   reduce production maybeWhen ->
 
 State 277:
 ## Known stack suffix:
@@ -7883,40 +6297,8 @@ noSeqTerm -> IF noSeqTerm THEN noSeqTerm . [ WITH VAL TYPE TOTAL THEN SUB_EFFECT
 ## Transitions:
 -- On ELSE shift to state 284
 ## Reductions:
--- On WITH reduce production noSeqTerm -> IF noSeqTerm THEN noSeqTerm
--- On VAL reduce production noSeqTerm -> IF noSeqTerm THEN noSeqTerm
--- On TYPE reduce production noSeqTerm -> IF noSeqTerm THEN noSeqTerm
--- On TOTAL reduce production noSeqTerm -> IF noSeqTerm THEN noSeqTerm
--- On THEN reduce production noSeqTerm -> IF noSeqTerm THEN noSeqTerm
--- On SUB_EFFECT reduce production noSeqTerm -> IF noSeqTerm THEN noSeqTerm
--- On SUBTYPE reduce production noSeqTerm -> IF noSeqTerm THEN noSeqTerm
--- On SUBKIND reduce production noSeqTerm -> IF noSeqTerm THEN noSeqTerm
--- On SEMICOLON_SEMICOLON reduce production noSeqTerm -> IF noSeqTerm THEN noSeqTerm
--- On SEMICOLON reduce production noSeqTerm -> IF noSeqTerm THEN noSeqTerm
--- On RPAREN reduce production noSeqTerm -> IF noSeqTerm THEN noSeqTerm
--- On RBRACK reduce production noSeqTerm -> IF noSeqTerm THEN noSeqTerm
--- On RBRACE reduce production noSeqTerm -> IF noSeqTerm THEN noSeqTerm
--- On PRIVATE reduce production noSeqTerm -> IF noSeqTerm THEN noSeqTerm
--- On PRAGMA_SET_OPTIONS reduce production noSeqTerm -> IF noSeqTerm THEN noSeqTerm
--- On PRAGMA_RESET_OPTIONS reduce production noSeqTerm -> IF noSeqTerm THEN noSeqTerm
--- On OPEN reduce production noSeqTerm -> IF noSeqTerm THEN noSeqTerm
--- On OPAQUE reduce production noSeqTerm -> IF noSeqTerm THEN noSeqTerm
--- On NEW_EFFECT reduce production noSeqTerm -> IF noSeqTerm THEN noSeqTerm
--- On MODULE reduce production noSeqTerm -> IF noSeqTerm THEN noSeqTerm
--- On LOGIC reduce production noSeqTerm -> IF noSeqTerm THEN noSeqTerm
--- On LET reduce production noSeqTerm -> IF noSeqTerm THEN noSeqTerm
--- On LBRACE reduce production noSeqTerm -> IF noSeqTerm THEN noSeqTerm
--- On KIND reduce production noSeqTerm -> IF noSeqTerm THEN noSeqTerm
--- On IN reduce production noSeqTerm -> IF noSeqTerm THEN noSeqTerm
--- On EXCEPTION reduce production noSeqTerm -> IF noSeqTerm THEN noSeqTerm
--- On EOF reduce production noSeqTerm -> IF noSeqTerm THEN noSeqTerm
--- On END reduce production noSeqTerm -> IF noSeqTerm THEN noSeqTerm
--- On EFFECT reduce production noSeqTerm -> IF noSeqTerm THEN noSeqTerm
--- On DEFAULT reduce production noSeqTerm -> IF noSeqTerm THEN noSeqTerm
--- On BAR_RBRACK reduce production noSeqTerm -> IF noSeqTerm THEN noSeqTerm
--- On BAR reduce production noSeqTerm -> IF noSeqTerm THEN noSeqTerm
--- On ASSUME reduce production noSeqTerm -> IF noSeqTerm THEN noSeqTerm
--- On AND reduce production noSeqTerm -> IF noSeqTerm THEN noSeqTerm
+-- On WITH VAL TYPE TOTAL THEN SUB_EFFECT SUBTYPE SUBKIND SEMICOLON_SEMICOLON SEMICOLON RPAREN RBRACK RBRACE PRIVATE PRAGMA_SET_OPTIONS PRAGMA_RESET_OPTIONS OPEN OPAQUE NEW_EFFECT MODULE LOGIC LET LBRACE KIND IN EXCEPTION EOF END EFFECT DEFAULT BAR_RBRACK BAR ASSUME AND
+--   reduce production noSeqTerm -> IF noSeqTerm THEN noSeqTerm
 
 State 284:
 ## Known stack suffix:
@@ -8080,7 +6462,8 @@ recordExpRest -> WITH recordFieldAssignment . recordFieldAssignments [ RBRACE ]
 -- On SEMICOLON shift to state 293
 -- On recordFieldAssignments shift to state 299
 ## Reductions:
--- On RBRACE reduce production recordFieldAssignments ->
+-- On RBRACE
+--   reduce production recordFieldAssignments ->
 
 State 293:
 ## Known stack suffix:
@@ -8097,7 +6480,8 @@ recordFieldAssignments -> SEMICOLON . recordFieldAssignment recordFieldAssignmen
 -- On idpath shift to state 85
 -- On ident shift to state 42
 ## Reductions:
--- On RBRACE reduce production recordFieldAssignments -> SEMICOLON
+-- On RBRACE
+--   reduce production recordFieldAssignments -> SEMICOLON
 
 State 294:
 ## Known stack suffix:
@@ -8108,7 +6492,8 @@ recordFieldAssignments -> SEMICOLON recordFieldAssignment . recordFieldAssignmen
 -- On SEMICOLON shift to state 293
 -- On recordFieldAssignments shift to state 295
 ## Reductions:
--- On RBRACE reduce production recordFieldAssignments ->
+-- On RBRACE
+--   reduce production recordFieldAssignments ->
 
 State 295:
 ## Known stack suffix:
@@ -8295,7 +6680,8 @@ recordExpRest -> EQUALS simpleTerm . recordFieldAssignments [ RBRACE ]
 -- On SEMICOLON shift to state 293
 -- On recordFieldAssignments shift to state 302
 ## Reductions:
--- On RBRACE reduce production recordFieldAssignments ->
+-- On RBRACE
+--   reduce production recordFieldAssignments ->
 
 State 302:
 ## Known stack suffix:
@@ -8342,8 +6728,8 @@ semiColonTermList -> noSeqTerm . moreSemiColonTerms [ RBRACK BAR_RBRACK ]
 -- On SEMICOLON shift to state 307
 -- On moreSemiColonTerms shift to state 310
 ## Reductions:
--- On RBRACK reduce production moreSemiColonTerms ->
--- On BAR_RBRACK reduce production moreSemiColonTerms ->
+-- On RBRACK BAR_RBRACK
+--   reduce production moreSemiColonTerms ->
 
 State 307:
 ## Known stack suffix:
@@ -8427,8 +6813,8 @@ moreSemiColonTerms -> SEMICOLON . noSeqTerm moreSemiColonTerms [ RBRACK BAR_RBRA
 -- On aqual shift to state 221
 -- On appTerm shift to state 214
 ## Reductions:
--- On RBRACK reduce production moreSemiColonTerms -> SEMICOLON
--- On BAR_RBRACK reduce production moreSemiColonTerms -> SEMICOLON
+-- On RBRACK BAR_RBRACK
+--   reduce production moreSemiColonTerms -> SEMICOLON
 
 State 308:
 ## Known stack suffix:
@@ -8439,8 +6825,8 @@ moreSemiColonTerms -> SEMICOLON noSeqTerm . moreSemiColonTerms [ RBRACK BAR_RBRA
 -- On SEMICOLON shift to state 307
 -- On moreSemiColonTerms shift to state 309
 ## Reductions:
--- On RBRACK reduce production moreSemiColonTerms ->
--- On BAR_RBRACK reduce production moreSemiColonTerms ->
+-- On RBRACK BAR_RBRACK
+--   reduce production moreSemiColonTerms ->
 
 State 309:
 ## Known stack suffix:
@@ -8469,7 +6855,8 @@ ascriptionOrPattern -> nonTvarPattern COLON typ . refineOpt [ RPAREN ]
 -- On LBRACE shift to state 259
 -- On refineOpt shift to state 312
 ## Reductions:
--- On RPAREN reduce production refineOpt ->
+-- On RPAREN
+--   reduce production refineOpt ->
 
 State 312:
 ## Known stack suffix:
@@ -8507,7 +6894,8 @@ letbinding -> pattern . ascribeTypOpt EQUALS term [ VAL TYPE TOTAL SUB_EFFECT SE
 -- On COLON shift to state 316
 -- On ascribeTypOpt shift to state 318
 ## Reductions:
--- On EQUALS reduce production ascribeTypOpt ->
+-- On EQUALS
+--   reduce production ascribeTypOpt ->
 
 State 316:
 ## Known stack suffix:
@@ -8685,7 +7073,8 @@ noSeqTerm -> LET recopt letbinding . letbindings IN term [ WITH VAL TYPE TOTAL T
 -- On AND shift to state 322
 -- On letbindings shift to state 326
 ## Reductions:
--- On IN reduce production letbindings ->
+-- On IN
+--   reduce production letbindings ->
 
 State 322:
 ## Known stack suffix:
@@ -8696,26 +7085,8 @@ letbindings -> AND . maybeFocus letbinding letbindings [ VAL TYPE TOTAL SUB_EFFE
 -- On SQUIGGLY_RARROW shift to state 29
 -- On maybeFocus shift to state 323
 ## Reductions:
--- On UNDERSCORE reduce production maybeFocus ->
--- On UINT8 reduce production maybeFocus ->
--- On TVAR reduce production maybeFocus ->
--- On TRUE reduce production maybeFocus ->
--- On STRING reduce production maybeFocus ->
--- On NAME reduce production maybeFocus ->
--- On LPAREN_RPAREN reduce production maybeFocus ->
--- On LPAREN reduce production maybeFocus ->
--- On LENS_PAREN_LEFT reduce production maybeFocus ->
--- On LBRACK reduce production maybeFocus ->
--- On LBRACE reduce production maybeFocus ->
--- On INT64 reduce production maybeFocus ->
--- On INT32 reduce production maybeFocus ->
--- On INT reduce production maybeFocus ->
--- On IEEE64 reduce production maybeFocus ->
--- On IDENT reduce production maybeFocus ->
--- On HASH reduce production maybeFocus ->
--- On FALSE reduce production maybeFocus ->
--- On CHAR reduce production maybeFocus ->
--- On BYTEARRAY reduce production maybeFocus ->
+-- On UNDERSCORE UINT8 TVAR TRUE STRING NAME LPAREN_RPAREN LPAREN LENS_PAREN_LEFT LBRACK LBRACE INT64 INT32 INT IEEE64 IDENT HASH FALSE CHAR BYTEARRAY
+--   reduce production maybeFocus ->
 
 State 323:
 ## Known stack suffix:
@@ -8768,28 +7139,8 @@ letbindings -> AND maybeFocus letbinding . letbindings [ VAL TYPE TOTAL SUB_EFFE
 -- On AND shift to state 322
 -- On letbindings shift to state 325
 ## Reductions:
--- On VAL reduce production letbindings ->
--- On TYPE reduce production letbindings ->
--- On TOTAL reduce production letbindings ->
--- On SUB_EFFECT reduce production letbindings ->
--- On SEMICOLON_SEMICOLON reduce production letbindings ->
--- On PRIVATE reduce production letbindings ->
--- On PRAGMA_SET_OPTIONS reduce production letbindings ->
--- On PRAGMA_RESET_OPTIONS reduce production letbindings ->
--- On OPEN reduce production letbindings ->
--- On OPAQUE reduce production letbindings ->
--- On NEW_EFFECT reduce production letbindings ->
--- On MODULE reduce production letbindings ->
--- On LOGIC reduce production letbindings ->
--- On LET reduce production letbindings ->
--- On KIND reduce production letbindings ->
--- On IN reduce production letbindings ->
--- On EXCEPTION reduce production letbindings ->
--- On EOF reduce production letbindings ->
--- On END reduce production letbindings ->
--- On EFFECT reduce production letbindings ->
--- On DEFAULT reduce production letbindings ->
--- On ASSUME reduce production letbindings ->
+-- On VAL TYPE TOTAL SUB_EFFECT SEMICOLON_SEMICOLON PRIVATE PRAGMA_SET_OPTIONS PRAGMA_RESET_OPTIONS OPEN OPAQUE NEW_EFFECT MODULE LOGIC LET KIND IN EXCEPTION EOF END EFFECT DEFAULT ASSUME
+--   reduce production letbindings ->
 
 State 325:
 ## Known stack suffix:
@@ -8938,26 +7289,8 @@ noSeqTerm -> MATCH term WITH . firstPatternBranch patternBranches [ WITH VAL TYP
 -- On maybeBar shift to state 110
 -- On firstPatternBranch shift to state 333
 ## Reductions:
--- On UNDERSCORE reduce production maybeBar ->
--- On UINT8 reduce production maybeBar ->
--- On TVAR reduce production maybeBar ->
--- On TRUE reduce production maybeBar ->
--- On STRING reduce production maybeBar ->
--- On NAME reduce production maybeBar ->
--- On LPAREN_RPAREN reduce production maybeBar ->
--- On LPAREN reduce production maybeBar ->
--- On LENS_PAREN_LEFT reduce production maybeBar ->
--- On LBRACK reduce production maybeBar ->
--- On LBRACE reduce production maybeBar ->
--- On INT64 reduce production maybeBar ->
--- On INT32 reduce production maybeBar ->
--- On INT reduce production maybeBar ->
--- On IEEE64 reduce production maybeBar ->
--- On IDENT reduce production maybeBar ->
--- On HASH reduce production maybeBar ->
--- On FALSE reduce production maybeBar ->
--- On CHAR reduce production maybeBar ->
--- On BYTEARRAY reduce production maybeBar ->
+-- On UNDERSCORE UINT8 TVAR TRUE STRING NAME LPAREN_RPAREN LPAREN LENS_PAREN_LEFT LBRACK LBRACE INT64 INT32 INT IEEE64 IDENT HASH FALSE CHAR BYTEARRAY
+--   reduce production maybeBar ->
 
 State 333:
 ## Known stack suffix:
@@ -8979,40 +7312,8 @@ patternBranches -> patternBranches . patternBranch [ WITH VAL TYPE TOTAL THEN SU
 -- On BAR shift to state 275
 -- On patternBranch shift to state 280
 ## Reductions:
--- On WITH reduce production noSeqTerm -> MATCH term WITH firstPatternBranch patternBranches
--- On VAL reduce production noSeqTerm -> MATCH term WITH firstPatternBranch patternBranches
--- On TYPE reduce production noSeqTerm -> MATCH term WITH firstPatternBranch patternBranches
--- On TOTAL reduce production noSeqTerm -> MATCH term WITH firstPatternBranch patternBranches
--- On THEN reduce production noSeqTerm -> MATCH term WITH firstPatternBranch patternBranches
--- On SUB_EFFECT reduce production noSeqTerm -> MATCH term WITH firstPatternBranch patternBranches
--- On SUBTYPE reduce production noSeqTerm -> MATCH term WITH firstPatternBranch patternBranches
--- On SUBKIND reduce production noSeqTerm -> MATCH term WITH firstPatternBranch patternBranches
--- On SEMICOLON_SEMICOLON reduce production noSeqTerm -> MATCH term WITH firstPatternBranch patternBranches
--- On SEMICOLON reduce production noSeqTerm -> MATCH term WITH firstPatternBranch patternBranches
--- On RPAREN reduce production noSeqTerm -> MATCH term WITH firstPatternBranch patternBranches
--- On RBRACK reduce production noSeqTerm -> MATCH term WITH firstPatternBranch patternBranches
--- On RBRACE reduce production noSeqTerm -> MATCH term WITH firstPatternBranch patternBranches
--- On PRIVATE reduce production noSeqTerm -> MATCH term WITH firstPatternBranch patternBranches
--- On PRAGMA_SET_OPTIONS reduce production noSeqTerm -> MATCH term WITH firstPatternBranch patternBranches
--- On PRAGMA_RESET_OPTIONS reduce production noSeqTerm -> MATCH term WITH firstPatternBranch patternBranches
--- On OPEN reduce production noSeqTerm -> MATCH term WITH firstPatternBranch patternBranches
--- On OPAQUE reduce production noSeqTerm -> MATCH term WITH firstPatternBranch patternBranches
--- On NEW_EFFECT reduce production noSeqTerm -> MATCH term WITH firstPatternBranch patternBranches
--- On MODULE reduce production noSeqTerm -> MATCH term WITH firstPatternBranch patternBranches
--- On LOGIC reduce production noSeqTerm -> MATCH term WITH firstPatternBranch patternBranches
--- On LET reduce production noSeqTerm -> MATCH term WITH firstPatternBranch patternBranches
--- On LBRACE reduce production noSeqTerm -> MATCH term WITH firstPatternBranch patternBranches
--- On KIND reduce production noSeqTerm -> MATCH term WITH firstPatternBranch patternBranches
--- On IN reduce production noSeqTerm -> MATCH term WITH firstPatternBranch patternBranches
--- On EXCEPTION reduce production noSeqTerm -> MATCH term WITH firstPatternBranch patternBranches
--- On EOF reduce production noSeqTerm -> MATCH term WITH firstPatternBranch patternBranches
--- On END reduce production noSeqTerm -> MATCH term WITH firstPatternBranch patternBranches
--- On ELSE reduce production noSeqTerm -> MATCH term WITH firstPatternBranch patternBranches
--- On EFFECT reduce production noSeqTerm -> MATCH term WITH firstPatternBranch patternBranches
--- On DEFAULT reduce production noSeqTerm -> MATCH term WITH firstPatternBranch patternBranches
--- On BAR_RBRACK reduce production noSeqTerm -> MATCH term WITH firstPatternBranch patternBranches
--- On ASSUME reduce production noSeqTerm -> MATCH term WITH firstPatternBranch patternBranches
--- On AND reduce production noSeqTerm -> MATCH term WITH firstPatternBranch patternBranches
+-- On WITH VAL TYPE TOTAL THEN SUB_EFFECT SUBTYPE SUBKIND SEMICOLON_SEMICOLON SEMICOLON RPAREN RBRACK RBRACE PRIVATE PRAGMA_SET_OPTIONS PRAGMA_RESET_OPTIONS OPEN OPAQUE NEW_EFFECT MODULE LOGIC LET LBRACE KIND IN EXCEPTION EOF END ELSE EFFECT DEFAULT BAR_RBRACK ASSUME AND
+--   reduce production noSeqTerm -> MATCH term WITH firstPatternBranch patternBranches
 
 State 335:
 ## Known stack suffix:
@@ -9070,7 +7371,8 @@ projectionLHS -> LPAREN term . maybeWithSort RPAREN [ WITH VAL UNDERSCORE UINT8 
 -- On maybeWithSort shift to state 343
 -- On hasSort shift to state 345
 ## Reductions:
--- On RPAREN reduce production maybeWithSort ->
+-- On RPAREN
+--   reduce production maybeWithSort ->
 
 State 341:
 ## Known stack suffix:
@@ -9224,26 +7526,8 @@ noSeqTerm -> TRY term WITH . firstPatternBranch patternBranches [ WITH VAL TYPE 
 -- On maybeBar shift to state 110
 -- On firstPatternBranch shift to state 351
 ## Reductions:
--- On UNDERSCORE reduce production maybeBar ->
--- On UINT8 reduce production maybeBar ->
--- On TVAR reduce production maybeBar ->
--- On TRUE reduce production maybeBar ->
--- On STRING reduce production maybeBar ->
--- On NAME reduce production maybeBar ->
--- On LPAREN_RPAREN reduce production maybeBar ->
--- On LPAREN reduce production maybeBar ->
--- On LENS_PAREN_LEFT reduce production maybeBar ->
--- On LBRACK reduce production maybeBar ->
--- On LBRACE reduce production maybeBar ->
--- On INT64 reduce production maybeBar ->
--- On INT32 reduce production maybeBar ->
--- On INT reduce production maybeBar ->
--- On IEEE64 reduce production maybeBar ->
--- On IDENT reduce production maybeBar ->
--- On HASH reduce production maybeBar ->
--- On FALSE reduce production maybeBar ->
--- On CHAR reduce production maybeBar ->
--- On BYTEARRAY reduce production maybeBar ->
+-- On UNDERSCORE UINT8 TVAR TRUE STRING NAME LPAREN_RPAREN LPAREN LENS_PAREN_LEFT LBRACK LBRACE INT64 INT32 INT IEEE64 IDENT HASH FALSE CHAR BYTEARRAY
+--   reduce production maybeBar ->
 
 State 351:
 ## Known stack suffix:
@@ -9265,40 +7549,8 @@ patternBranches -> patternBranches . patternBranch [ WITH VAL TYPE TOTAL THEN SU
 -- On BAR shift to state 275
 -- On patternBranch shift to state 280
 ## Reductions:
--- On WITH reduce production noSeqTerm -> TRY term WITH firstPatternBranch patternBranches
--- On VAL reduce production noSeqTerm -> TRY term WITH firstPatternBranch patternBranches
--- On TYPE reduce production noSeqTerm -> TRY term WITH firstPatternBranch patternBranches
--- On TOTAL reduce production noSeqTerm -> TRY term WITH firstPatternBranch patternBranches
--- On THEN reduce production noSeqTerm -> TRY term WITH firstPatternBranch patternBranches
--- On SUB_EFFECT reduce production noSeqTerm -> TRY term WITH firstPatternBranch patternBranches
--- On SUBTYPE reduce production noSeqTerm -> TRY term WITH firstPatternBranch patternBranches
--- On SUBKIND reduce production noSeqTerm -> TRY term WITH firstPatternBranch patternBranches
--- On SEMICOLON_SEMICOLON reduce production noSeqTerm -> TRY term WITH firstPatternBranch patternBranches
--- On SEMICOLON reduce production noSeqTerm -> TRY term WITH firstPatternBranch patternBranches
--- On RPAREN reduce production noSeqTerm -> TRY term WITH firstPatternBranch patternBranches
--- On RBRACK reduce production noSeqTerm -> TRY term WITH firstPatternBranch patternBranches
--- On RBRACE reduce production noSeqTerm -> TRY term WITH firstPatternBranch patternBranches
--- On PRIVATE reduce production noSeqTerm -> TRY term WITH firstPatternBranch patternBranches
--- On PRAGMA_SET_OPTIONS reduce production noSeqTerm -> TRY term WITH firstPatternBranch patternBranches
--- On PRAGMA_RESET_OPTIONS reduce production noSeqTerm -> TRY term WITH firstPatternBranch patternBranches
--- On OPEN reduce production noSeqTerm -> TRY term WITH firstPatternBranch patternBranches
--- On OPAQUE reduce production noSeqTerm -> TRY term WITH firstPatternBranch patternBranches
--- On NEW_EFFECT reduce production noSeqTerm -> TRY term WITH firstPatternBranch patternBranches
--- On MODULE reduce production noSeqTerm -> TRY term WITH firstPatternBranch patternBranches
--- On LOGIC reduce production noSeqTerm -> TRY term WITH firstPatternBranch patternBranches
--- On LET reduce production noSeqTerm -> TRY term WITH firstPatternBranch patternBranches
--- On LBRACE reduce production noSeqTerm -> TRY term WITH firstPatternBranch patternBranches
--- On KIND reduce production noSeqTerm -> TRY term WITH firstPatternBranch patternBranches
--- On IN reduce production noSeqTerm -> TRY term WITH firstPatternBranch patternBranches
--- On EXCEPTION reduce production noSeqTerm -> TRY term WITH firstPatternBranch patternBranches
--- On EOF reduce production noSeqTerm -> TRY term WITH firstPatternBranch patternBranches
--- On END reduce production noSeqTerm -> TRY term WITH firstPatternBranch patternBranches
--- On ELSE reduce production noSeqTerm -> TRY term WITH firstPatternBranch patternBranches
--- On EFFECT reduce production noSeqTerm -> TRY term WITH firstPatternBranch patternBranches
--- On DEFAULT reduce production noSeqTerm -> TRY term WITH firstPatternBranch patternBranches
--- On BAR_RBRACK reduce production noSeqTerm -> TRY term WITH firstPatternBranch patternBranches
--- On ASSUME reduce production noSeqTerm -> TRY term WITH firstPatternBranch patternBranches
--- On AND reduce production noSeqTerm -> TRY term WITH firstPatternBranch patternBranches
+-- On WITH VAL TYPE TOTAL THEN SUB_EFFECT SUBTYPE SUBKIND SEMICOLON_SEMICOLON SEMICOLON RPAREN RBRACK RBRACE PRIVATE PRAGMA_SET_OPTIONS PRAGMA_RESET_OPTIONS OPEN OPAQUE NEW_EFFECT MODULE LOGIC LET LBRACE KIND IN EXCEPTION EOF END ELSE EFFECT DEFAULT BAR_RBRACK ASSUME AND
+--   reduce production noSeqTerm -> TRY term WITH firstPatternBranch patternBranches
 
 State 353:
 ## Known stack suffix:
@@ -9439,27 +7691,10 @@ decl2 -> LET . recopt letbinding letbindings [ VAL TYPE TOTAL SUB_EFFECT SEMICOL
 -- On recopt shift to state 368
 -- On maybeFocus shift to state 329
 ## Reductions:
--- On UNDERSCORE reduce production recopt ->
--- On UINT8 reduce production recopt ->
--- On TVAR reduce production recopt ->
--- On TRUE reduce production recopt ->
--- On STRING reduce production recopt ->
--- On REC reduce production maybeFocus ->
--- On NAME reduce production recopt ->
--- On LPAREN_RPAREN reduce production recopt ->
--- On LPAREN reduce production recopt ->
--- On LENS_PAREN_LEFT reduce production recopt ->
--- On LBRACK reduce production recopt ->
--- On LBRACE reduce production recopt ->
--- On INT64 reduce production recopt ->
--- On INT32 reduce production recopt ->
--- On INT reduce production recopt ->
--- On IEEE64 reduce production recopt ->
--- On IDENT reduce production recopt ->
--- On HASH reduce production recopt ->
--- On FALSE reduce production recopt ->
--- On CHAR reduce production recopt ->
--- On BYTEARRAY reduce production recopt ->
+-- On REC
+--   reduce production maybeFocus ->
+-- On UNDERSCORE UINT8 TVAR TRUE STRING NAME LPAREN_RPAREN LPAREN LENS_PAREN_LEFT LBRACK LBRACE INT64 INT32 INT IEEE64 IDENT HASH FALSE CHAR BYTEARRAY
+--   reduce production recopt ->
 
 State 368:
 ## Known stack suffix:
@@ -9512,27 +7747,8 @@ decl2 -> LET recopt letbinding . letbindings [ VAL TYPE TOTAL SUB_EFFECT SEMICOL
 -- On AND shift to state 322
 -- On letbindings shift to state 370
 ## Reductions:
--- On VAL reduce production letbindings ->
--- On TYPE reduce production letbindings ->
--- On TOTAL reduce production letbindings ->
--- On SUB_EFFECT reduce production letbindings ->
--- On SEMICOLON_SEMICOLON reduce production letbindings ->
--- On PRIVATE reduce production letbindings ->
--- On PRAGMA_SET_OPTIONS reduce production letbindings ->
--- On PRAGMA_RESET_OPTIONS reduce production letbindings ->
--- On OPEN reduce production letbindings ->
--- On OPAQUE reduce production letbindings ->
--- On NEW_EFFECT reduce production letbindings ->
--- On MODULE reduce production letbindings ->
--- On LOGIC reduce production letbindings ->
--- On LET reduce production letbindings ->
--- On KIND reduce production letbindings ->
--- On EXCEPTION reduce production letbindings ->
--- On EOF reduce production letbindings ->
--- On END reduce production letbindings ->
--- On EFFECT reduce production letbindings ->
--- On DEFAULT reduce production letbindings ->
--- On ASSUME reduce production letbindings ->
+-- On VAL TYPE TOTAL SUB_EFFECT SEMICOLON_SEMICOLON PRIVATE PRAGMA_SET_OPTIONS PRAGMA_RESET_OPTIONS OPEN OPAQUE NEW_EFFECT MODULE LOGIC LET KIND EXCEPTION EOF END EFFECT DEFAULT ASSUME
+--   reduce production letbindings ->
 
 State 370:
 ## Known stack suffix:
@@ -9567,7 +7783,8 @@ kind_abbrev -> KIND name . binders EQUALS kind [ VAL TYPE TOTAL SUB_EFFECT SEMIC
 -- On binders shift to state 373
 -- On binder shift to state 256
 ## Reductions:
--- On EQUALS reduce production binders ->
+-- On EQUALS
+--   reduce production binders ->
 
 State 373:
 ## Known stack suffix:
@@ -9673,27 +7890,8 @@ decl2 -> EXCEPTION name . of_typ [ VAL TYPE TOTAL SUB_EFFECT SEMICOLON_SEMICOLON
 -- On OF shift to state 379
 -- On of_typ shift to state 381
 ## Reductions:
--- On VAL reduce production of_typ ->
--- On TYPE reduce production of_typ ->
--- On TOTAL reduce production of_typ ->
--- On SUB_EFFECT reduce production of_typ ->
--- On SEMICOLON_SEMICOLON reduce production of_typ ->
--- On PRIVATE reduce production of_typ ->
--- On PRAGMA_SET_OPTIONS reduce production of_typ ->
--- On PRAGMA_RESET_OPTIONS reduce production of_typ ->
--- On OPEN reduce production of_typ ->
--- On OPAQUE reduce production of_typ ->
--- On NEW_EFFECT reduce production of_typ ->
--- On MODULE reduce production of_typ ->
--- On LOGIC reduce production of_typ ->
--- On LET reduce production of_typ ->
--- On KIND reduce production of_typ ->
--- On EXCEPTION reduce production of_typ ->
--- On EOF reduce production of_typ ->
--- On END reduce production of_typ ->
--- On EFFECT reduce production of_typ ->
--- On DEFAULT reduce production of_typ ->
--- On ASSUME reduce production of_typ ->
+-- On VAL TYPE TOTAL SUB_EFFECT SEMICOLON_SEMICOLON PRIVATE PRAGMA_SET_OPTIONS PRAGMA_RESET_OPTIONS OPEN OPAQUE NEW_EFFECT MODULE LOGIC LET KIND EXCEPTION EOF END EFFECT DEFAULT ASSUME
+--   reduce production of_typ ->
 
 State 379:
 ## Known stack suffix:
@@ -9803,17 +8001,10 @@ assumeTag -> ASSUME . [ NAME ]
 qualifier -> ASSUME . [ VAL TYPE TOTAL PRIVATE OPAQUE NEW_EFFECT LOGIC EFFECT DEFAULT ASSUME ]
 ## Transitions:
 ## Reductions:
--- On VAL reduce production qualifier -> ASSUME
--- On TYPE reduce production qualifier -> ASSUME
--- On TOTAL reduce production qualifier -> ASSUME
--- On PRIVATE reduce production qualifier -> ASSUME
--- On OPAQUE reduce production qualifier -> ASSUME
--- On NEW_EFFECT reduce production qualifier -> ASSUME
--- On NAME reduce production assumeTag -> ASSUME
--- On LOGIC reduce production qualifier -> ASSUME
--- On EFFECT reduce production qualifier -> ASSUME
--- On DEFAULT reduce production qualifier -> ASSUME
--- On ASSUME reduce production qualifier -> ASSUME
+-- On NAME
+--   reduce production assumeTag -> ASSUME
+-- On VAL TYPE TOTAL PRIVATE OPAQUE NEW_EFFECT LOGIC EFFECT DEFAULT ASSUME
+--   reduce production qualifier -> ASSUME
 
 State 384:
 ## Known stack suffix:
@@ -9963,27 +8154,8 @@ tycon -> qualifiers TYPE tyconDefinition . tyconDefinitions [ VAL TYPE TOTAL SUB
 -- On AND shift to state 392
 -- On tyconDefinitions shift to state 431
 ## Reductions:
--- On VAL reduce production tyconDefinitions ->
--- On TYPE reduce production tyconDefinitions ->
--- On TOTAL reduce production tyconDefinitions ->
--- On SUB_EFFECT reduce production tyconDefinitions ->
--- On SEMICOLON_SEMICOLON reduce production tyconDefinitions ->
--- On PRIVATE reduce production tyconDefinitions ->
--- On PRAGMA_SET_OPTIONS reduce production tyconDefinitions ->
--- On PRAGMA_RESET_OPTIONS reduce production tyconDefinitions ->
--- On OPEN reduce production tyconDefinitions ->
--- On OPAQUE reduce production tyconDefinitions ->
--- On NEW_EFFECT reduce production tyconDefinitions ->
--- On MODULE reduce production tyconDefinitions ->
--- On LOGIC reduce production tyconDefinitions ->
--- On LET reduce production tyconDefinitions ->
--- On KIND reduce production tyconDefinitions ->
--- On EXCEPTION reduce production tyconDefinitions ->
--- On EOF reduce production tyconDefinitions ->
--- On END reduce production tyconDefinitions ->
--- On EFFECT reduce production tyconDefinitions ->
--- On DEFAULT reduce production tyconDefinitions ->
--- On ASSUME reduce production tyconDefinitions ->
+-- On VAL TYPE TOTAL SUB_EFFECT SEMICOLON_SEMICOLON PRIVATE PRAGMA_SET_OPTIONS PRAGMA_RESET_OPTIONS OPEN OPAQUE NEW_EFFECT MODULE LOGIC LET KIND EXCEPTION EOF END EFFECT DEFAULT ASSUME
+--   reduce production tyconDefinitions ->
 
 State 392:
 ## Known stack suffix:
@@ -10008,27 +8180,8 @@ tyconDefinitions -> AND tyconDefinition . tyconDefinitions [ VAL TYPE TOTAL SUB_
 -- On AND shift to state 392
 -- On tyconDefinitions shift to state 394
 ## Reductions:
--- On VAL reduce production tyconDefinitions ->
--- On TYPE reduce production tyconDefinitions ->
--- On TOTAL reduce production tyconDefinitions ->
--- On SUB_EFFECT reduce production tyconDefinitions ->
--- On SEMICOLON_SEMICOLON reduce production tyconDefinitions ->
--- On PRIVATE reduce production tyconDefinitions ->
--- On PRAGMA_SET_OPTIONS reduce production tyconDefinitions ->
--- On PRAGMA_RESET_OPTIONS reduce production tyconDefinitions ->
--- On OPEN reduce production tyconDefinitions ->
--- On OPAQUE reduce production tyconDefinitions ->
--- On NEW_EFFECT reduce production tyconDefinitions ->
--- On MODULE reduce production tyconDefinitions ->
--- On LOGIC reduce production tyconDefinitions ->
--- On LET reduce production tyconDefinitions ->
--- On KIND reduce production tyconDefinitions ->
--- On EXCEPTION reduce production tyconDefinitions ->
--- On EOF reduce production tyconDefinitions ->
--- On END reduce production tyconDefinitions ->
--- On EFFECT reduce production tyconDefinitions ->
--- On DEFAULT reduce production tyconDefinitions ->
--- On ASSUME reduce production tyconDefinitions ->
+-- On VAL TYPE TOTAL SUB_EFFECT SEMICOLON_SEMICOLON PRIVATE PRAGMA_SET_OPTIONS PRAGMA_RESET_OPTIONS OPEN OPAQUE NEW_EFFECT MODULE LOGIC LET KIND EXCEPTION EOF END EFFECT DEFAULT ASSUME
+--   reduce production tyconDefinitions ->
 
 State 394:
 ## Known stack suffix:
@@ -10074,30 +8227,8 @@ tyconDefinition -> eitherName . typars ascribeKindOpt tyconDefn [ VAL TYPE TOTAL
 -- On binders shift to state 430
 -- On binder shift to state 256
 ## Reductions:
--- On VAL reduce production binders ->
--- On TYPE reduce production binders ->
--- On TOTAL reduce production binders ->
--- On SUB_EFFECT reduce production binders ->
--- On SEMICOLON_SEMICOLON reduce production binders ->
--- On PRIVATE reduce production binders ->
--- On PRAGMA_SET_OPTIONS reduce production binders ->
--- On PRAGMA_RESET_OPTIONS reduce production binders ->
--- On OPEN reduce production binders ->
--- On OPAQUE reduce production binders ->
--- On NEW_EFFECT reduce production binders ->
--- On MODULE reduce production binders ->
--- On LOGIC reduce production binders ->
--- On LET reduce production binders ->
--- On KIND reduce production binders ->
--- On EXCEPTION reduce production binders ->
--- On EQUALS reduce production binders ->
--- On EOF reduce production binders ->
--- On END reduce production binders ->
--- On EFFECT reduce production binders ->
--- On DEFAULT reduce production binders ->
--- On COLON reduce production binders ->
--- On ASSUME reduce production binders ->
--- On AND reduce production binders ->
+-- On VAL TYPE TOTAL SUB_EFFECT SEMICOLON_SEMICOLON PRIVATE PRAGMA_SET_OPTIONS PRAGMA_RESET_OPTIONS OPEN OPAQUE NEW_EFFECT MODULE LOGIC LET KIND EXCEPTION EQUALS EOF END EFFECT DEFAULT COLON ASSUME AND
+--   reduce production binders ->
 
 State 398:
 ## Known stack suffix:
@@ -10118,7 +8249,8 @@ tvars -> TVAR . COMMA tvars [ TYP_APP_GREATER ]
 ## Transitions:
 -- On COMMA shift to state 400
 ## Reductions:
--- On TYP_APP_GREATER reduce production tvars -> TVAR
+-- On TYP_APP_GREATER
+--   reduce production tvars -> TVAR
 
 State 400:
 ## Known stack suffix:
@@ -10166,29 +8298,8 @@ tyconDefinition -> eitherName typars . ascribeKindOpt tyconDefn [ VAL TYPE TOTAL
 -- On COLON shift to state 405
 -- On ascribeKindOpt shift to state 407
 ## Reductions:
--- On VAL reduce production ascribeKindOpt ->
--- On TYPE reduce production ascribeKindOpt ->
--- On TOTAL reduce production ascribeKindOpt ->
--- On SUB_EFFECT reduce production ascribeKindOpt ->
--- On SEMICOLON_SEMICOLON reduce production ascribeKindOpt ->
--- On PRIVATE reduce production ascribeKindOpt ->
--- On PRAGMA_SET_OPTIONS reduce production ascribeKindOpt ->
--- On PRAGMA_RESET_OPTIONS reduce production ascribeKindOpt ->
--- On OPEN reduce production ascribeKindOpt ->
--- On OPAQUE reduce production ascribeKindOpt ->
--- On NEW_EFFECT reduce production ascribeKindOpt ->
--- On MODULE reduce production ascribeKindOpt ->
--- On LOGIC reduce production ascribeKindOpt ->
--- On LET reduce production ascribeKindOpt ->
--- On KIND reduce production ascribeKindOpt ->
--- On EXCEPTION reduce production ascribeKindOpt ->
--- On EQUALS reduce production ascribeKindOpt ->
--- On EOF reduce production ascribeKindOpt ->
--- On END reduce production ascribeKindOpt ->
--- On EFFECT reduce production ascribeKindOpt ->
--- On DEFAULT reduce production ascribeKindOpt ->
--- On ASSUME reduce production ascribeKindOpt ->
--- On AND reduce production ascribeKindOpt ->
+-- On VAL TYPE TOTAL SUB_EFFECT SEMICOLON_SEMICOLON PRIVATE PRAGMA_SET_OPTIONS PRAGMA_RESET_OPTIONS OPEN OPAQUE NEW_EFFECT MODULE LOGIC LET KIND EXCEPTION EQUALS EOF END EFFECT DEFAULT ASSUME AND
+--   reduce production ascribeKindOpt ->
 
 State 405:
 ## Known stack suffix:
@@ -10266,28 +8377,8 @@ tyconDefinition -> eitherName typars ascribeKindOpt . tyconDefn [ VAL TYPE TOTAL
 -- On EQUALS shift to state 408
 -- On tyconDefn shift to state 428
 ## Reductions:
--- On VAL reduce production tyconDefn ->
--- On TYPE reduce production tyconDefn ->
--- On TOTAL reduce production tyconDefn ->
--- On SUB_EFFECT reduce production tyconDefn ->
--- On SEMICOLON_SEMICOLON reduce production tyconDefn ->
--- On PRIVATE reduce production tyconDefn ->
--- On PRAGMA_SET_OPTIONS reduce production tyconDefn ->
--- On PRAGMA_RESET_OPTIONS reduce production tyconDefn ->
--- On OPEN reduce production tyconDefn ->
--- On OPAQUE reduce production tyconDefn ->
--- On NEW_EFFECT reduce production tyconDefn ->
--- On MODULE reduce production tyconDefn ->
--- On LOGIC reduce production tyconDefn ->
--- On LET reduce production tyconDefn ->
--- On KIND reduce production tyconDefn ->
--- On EXCEPTION reduce production tyconDefn ->
--- On EOF reduce production tyconDefn ->
--- On END reduce production tyconDefn ->
--- On EFFECT reduce production tyconDefn ->
--- On DEFAULT reduce production tyconDefn ->
--- On ASSUME reduce production tyconDefn ->
--- On AND reduce production tyconDefn ->
+-- On VAL TYPE TOTAL SUB_EFFECT SEMICOLON_SEMICOLON PRIVATE PRAGMA_SET_OPTIONS PRAGMA_RESET_OPTIONS OPEN OPAQUE NEW_EFFECT MODULE LOGIC LET KIND EXCEPTION EOF END EFFECT DEFAULT ASSUME AND
+--   reduce production tyconDefn ->
 
 State 408:
 ## Known stack suffix:
@@ -10364,29 +8455,8 @@ tyconDefn -> EQUALS . constructors [ VAL TYPE TOTAL SUB_EFFECT SEMICOLON_SEMICOL
 -- On aqual shift to state 221
 -- On appTerm shift to state 214
 ## Reductions:
--- On VAL reduce production constructors ->
--- On TYPE reduce production constructors ->
--- On TOTAL reduce production constructors ->
--- On SUB_EFFECT reduce production constructors ->
--- On SEMICOLON_SEMICOLON reduce production constructors ->
--- On PRIVATE reduce production constructors ->
--- On PRAGMA_SET_OPTIONS reduce production constructors ->
--- On PRAGMA_RESET_OPTIONS reduce production constructors ->
--- On OPEN reduce production constructors ->
--- On OPAQUE reduce production constructors ->
--- On NEW_EFFECT reduce production constructors ->
--- On MODULE reduce production constructors ->
--- On LOGIC reduce production constructors ->
--- On LET reduce production constructors ->
--- On KIND reduce production constructors ->
--- On EXCEPTION reduce production constructors ->
--- On EOF reduce production constructors ->
--- On END reduce production constructors ->
--- On EFFECT reduce production constructors ->
--- On DEFAULT reduce production constructors ->
--- On BAR reduce production constructors ->
--- On ASSUME reduce production constructors ->
--- On AND reduce production constructors ->
+-- On VAL TYPE TOTAL SUB_EFFECT SEMICOLON_SEMICOLON PRIVATE PRAGMA_SET_OPTIONS PRAGMA_RESET_OPTIONS OPEN OPAQUE NEW_EFFECT MODULE LOGIC LET KIND EXCEPTION EOF END EFFECT DEFAULT BAR ASSUME AND
+--   reduce production constructors ->
 
 State 409:
 ## Known stack suffix:
@@ -10441,7 +8511,8 @@ tyconDefn -> EQUALS LBRACE recordFieldDecl . recordFields RBRACE [ VAL TYPE TOTA
 -- On SEMICOLON shift to state 411
 -- On recordFields shift to state 417
 ## Reductions:
--- On RBRACE reduce production recordFields ->
+-- On RBRACE
+--   reduce production recordFields ->
 
 State 411:
 ## Known stack suffix:
@@ -10454,7 +8525,8 @@ recordFields -> SEMICOLON . [ RBRACE ]
 -- On recordFieldDecl shift to state 412
 -- On ident shift to state 414
 ## Reductions:
--- On RBRACE reduce production recordFields -> SEMICOLON
+-- On RBRACE
+--   reduce production recordFields -> SEMICOLON
 
 State 412:
 ## Known stack suffix:
@@ -10465,7 +8537,8 @@ recordFields -> SEMICOLON recordFieldDecl . recordFields [ RBRACE ]
 -- On SEMICOLON shift to state 411
 -- On recordFields shift to state 413
 ## Reductions:
--- On RBRACE reduce production recordFields ->
+-- On RBRACE
+--   reduce production recordFields ->
 
 State 413:
 ## Known stack suffix:
@@ -10585,35 +8658,8 @@ recordFieldDecl -> ident . COLON tmTuple [ SEMICOLON RBRACE ]
 ## Transitions:
 -- On COLON shift to state 415
 ## Reductions:
--- On WITH reduce production eitherpath -> ident
--- On UNDERSCORE reduce production eitherpath -> ident
--- On UINT8 reduce production eitherpath -> ident
--- On TYP_APP_LESS reduce production eitherpath -> ident
--- On TVAR reduce production eitherpath -> ident
--- On TRUE reduce production eitherpath -> ident
--- On STRING reduce production eitherpath -> ident
--- On PERCENT_LBRACK reduce production eitherpath -> ident
--- On NAME reduce production eitherpath -> ident
--- On LPAREN_RPAREN reduce production eitherpath -> ident
--- On LPAREN reduce production eitherpath -> ident
--- On LENS_PAREN_LEFT reduce production eitherpath -> ident
--- On LBRACK_BAR reduce production eitherpath -> ident
--- On LBRACK reduce production eitherpath -> ident
--- On INT64 reduce production eitherpath -> ident
--- On INT32 reduce production eitherpath -> ident
--- On INT reduce production eitherpath -> ident
--- On IEEE64 reduce production eitherpath -> ident
--- On IDENT reduce production eitherpath -> ident
--- On HASH reduce production eitherpath -> ident
--- On FALSE reduce production eitherpath -> ident
--- On EQUALS reduce production eitherpath -> ident
--- On DOT reduce production eitherpath -> ident
--- On CHAR reduce production eitherpath -> ident
--- On BYTEARRAY reduce production eitherpath -> ident
--- On BEGIN reduce production eitherpath -> ident
--- On BANG_LBRACE reduce production eitherpath -> ident
--- On BANG reduce production eitherpath -> ident
--- On ASSERT reduce production eitherpath -> ident
+-- On WITH UNDERSCORE UINT8 TYP_APP_LESS TVAR TRUE STRING PERCENT_LBRACK NAME LPAREN_RPAREN LPAREN LENS_PAREN_LEFT LBRACK_BAR LBRACK INT64 INT32 INT IEEE64 IDENT HASH FALSE EQUALS DOT CHAR BYTEARRAY BEGIN BANG_LBRACE BANG ASSERT
+--   reduce production eitherpath -> ident
 
 State 420:
 ## Known stack suffix:
@@ -10634,28 +8680,8 @@ tyconDefn -> EQUALS constructors . [ VAL TYPE TOTAL SUB_EFFECT SEMICOLON_SEMICOL
 -- On BAR shift to state 422
 -- On constructorDecl shift to state 427
 ## Reductions:
--- On VAL reduce production tyconDefn -> EQUALS constructors
--- On TYPE reduce production tyconDefn -> EQUALS constructors
--- On TOTAL reduce production tyconDefn -> EQUALS constructors
--- On SUB_EFFECT reduce production tyconDefn -> EQUALS constructors
--- On SEMICOLON_SEMICOLON reduce production tyconDefn -> EQUALS constructors
--- On PRIVATE reduce production tyconDefn -> EQUALS constructors
--- On PRAGMA_SET_OPTIONS reduce production tyconDefn -> EQUALS constructors
--- On PRAGMA_RESET_OPTIONS reduce production tyconDefn -> EQUALS constructors
--- On OPEN reduce production tyconDefn -> EQUALS constructors
--- On OPAQUE reduce production tyconDefn -> EQUALS constructors
--- On NEW_EFFECT reduce production tyconDefn -> EQUALS constructors
--- On MODULE reduce production tyconDefn -> EQUALS constructors
--- On LOGIC reduce production tyconDefn -> EQUALS constructors
--- On LET reduce production tyconDefn -> EQUALS constructors
--- On KIND reduce production tyconDefn -> EQUALS constructors
--- On EXCEPTION reduce production tyconDefn -> EQUALS constructors
--- On EOF reduce production tyconDefn -> EQUALS constructors
--- On END reduce production tyconDefn -> EQUALS constructors
--- On EFFECT reduce production tyconDefn -> EQUALS constructors
--- On DEFAULT reduce production tyconDefn -> EQUALS constructors
--- On ASSUME reduce production tyconDefn -> EQUALS constructors
--- On AND reduce production tyconDefn -> EQUALS constructors
+-- On VAL TYPE TOTAL SUB_EFFECT SEMICOLON_SEMICOLON PRIVATE PRAGMA_SET_OPTIONS PRAGMA_RESET_OPTIONS OPEN OPAQUE NEW_EFFECT MODULE LOGIC LET KIND EXCEPTION EOF END EFFECT DEFAULT ASSUME AND
+--   reduce production tyconDefn -> EQUALS constructors
 
 State 422:
 ## Known stack suffix:
@@ -10679,29 +8705,8 @@ constructorDecl -> BAR name . of_typ [ VAL TYPE TOTAL SUB_EFFECT SEMICOLON_SEMIC
 -- On COLON shift to state 424
 -- On of_typ shift to state 426
 ## Reductions:
--- On VAL reduce production of_typ ->
--- On TYPE reduce production of_typ ->
--- On TOTAL reduce production of_typ ->
--- On SUB_EFFECT reduce production of_typ ->
--- On SEMICOLON_SEMICOLON reduce production of_typ ->
--- On PRIVATE reduce production of_typ ->
--- On PRAGMA_SET_OPTIONS reduce production of_typ ->
--- On PRAGMA_RESET_OPTIONS reduce production of_typ ->
--- On OPEN reduce production of_typ ->
--- On OPAQUE reduce production of_typ ->
--- On NEW_EFFECT reduce production of_typ ->
--- On MODULE reduce production of_typ ->
--- On LOGIC reduce production of_typ ->
--- On LET reduce production of_typ ->
--- On KIND reduce production of_typ ->
--- On EXCEPTION reduce production of_typ ->
--- On EOF reduce production of_typ ->
--- On END reduce production of_typ ->
--- On EFFECT reduce production of_typ ->
--- On DEFAULT reduce production of_typ ->
--- On BAR reduce production of_typ ->
--- On ASSUME reduce production of_typ ->
--- On AND reduce production of_typ ->
+-- On VAL TYPE TOTAL SUB_EFFECT SEMICOLON_SEMICOLON PRIVATE PRAGMA_SET_OPTIONS PRAGMA_RESET_OPTIONS OPEN OPAQUE NEW_EFFECT MODULE LOGIC LET KIND EXCEPTION EOF END EFFECT DEFAULT BAR ASSUME AND
+--   reduce production of_typ ->
 
 State 424:
 ## Known stack suffix:
@@ -10875,7 +8880,8 @@ new_effect -> LBRACE name . binders COLON kind WITH effect_decl more_effect_decl
 -- On binders shift to state 435
 -- On binder shift to state 256
 ## Reductions:
--- On COLON reduce production binders ->
+-- On COLON
+--   reduce production binders ->
 
 State 435:
 ## Known stack suffix:
@@ -11061,7 +9067,8 @@ new_effect -> LBRACE name binders COLON kind WITH effect_decl . more_effect_decl
 -- On SEMICOLON shift to state 443
 -- On more_effect_decls shift to state 446
 ## Reductions:
--- On RBRACE reduce production more_effect_decls ->
+-- On RBRACE
+--   reduce production more_effect_decls ->
 
 State 443:
 ## Known stack suffix:
@@ -11083,7 +9090,8 @@ more_effect_decls -> SEMICOLON effect_decl . more_effect_decls [ RBRACE ]
 -- On SEMICOLON shift to state 443
 -- On more_effect_decls shift to state 445
 ## Reductions:
--- On RBRACE reduce production more_effect_decls ->
+-- On RBRACE
+--   reduce production more_effect_decls ->
 
 State 445:
 ## Known stack suffix:
@@ -11135,7 +9143,8 @@ new_effect -> name . binders EQUALS simpleTerm [ VAL TYPE TOTAL SUB_EFFECT SEMIC
 -- On binders shift to state 450
 -- On binder shift to state 256
 ## Reductions:
--- On EQUALS reduce production binders ->
+-- On EQUALS
+--   reduce production binders ->
 
 State 450:
 ## Known stack suffix:
@@ -11263,10 +9272,8 @@ qualifiers -> qualifier . qualifiers [ VAL TYPE NEW_EFFECT EFFECT ]
 -- On qualifiers shift to state 457
 -- On qualifier shift to state 455
 ## Reductions:
--- On VAL reduce production qualifiers ->
--- On TYPE reduce production qualifiers ->
--- On NEW_EFFECT reduce production qualifiers ->
--- On EFFECT reduce production qualifiers ->
+-- On VAL TYPE NEW_EFFECT EFFECT
+--   reduce production qualifiers ->
 
 State 456:
 ## Known stack suffix:
@@ -11349,13 +9356,10 @@ modul -> MODULE qname . decls endopt [ MODULE EOF ]
 -- On decl shift to state 469
 -- On assumeTag shift to state 471
 ## Reductions:
--- On VAL reduce production qualifiers ->
--- On TYPE reduce production qualifiers ->
--- On NEW_EFFECT reduce production qualifiers ->
--- On MODULE reduce production decls ->
--- On EOF reduce production decls ->
--- On END reduce production decls ->
--- On EFFECT reduce production qualifiers ->
+-- On MODULE EOF END
+--   reduce production decls ->
+-- On VAL TYPE NEW_EFFECT EFFECT
+--   reduce production qualifiers ->
 
 State 462:
 ## Known stack suffix:
@@ -11467,8 +9471,8 @@ modul -> MODULE qname decls . endopt [ MODULE EOF ]
 -- On END shift to state 466
 -- On endopt shift to state 467
 ## Reductions:
--- On MODULE reduce production endopt ->
--- On EOF reduce production endopt ->
+-- On MODULE EOF
+--   reduce production endopt ->
 
 State 466:
 ## Known stack suffix:
@@ -11527,13 +9531,10 @@ decls -> decl . decls [ MODULE EOF END ]
 -- On decl shift to state 469
 -- On assumeTag shift to state 471
 ## Reductions:
--- On VAL reduce production qualifiers ->
--- On TYPE reduce production qualifiers ->
--- On NEW_EFFECT reduce production qualifiers ->
--- On MODULE reduce production decls ->
--- On EOF reduce production decls ->
--- On END reduce production decls ->
--- On EFFECT reduce production qualifiers ->
+-- On MODULE EOF END
+--   reduce production decls ->
+-- On VAL TYPE NEW_EFFECT EFFECT
+--   reduce production qualifiers ->
 
 State 470:
 ## Known stack suffix:
@@ -11742,11 +9743,10 @@ inputFragment -> decl . decls EOF [ # ]
 -- On decl shift to state 469
 -- On assumeTag shift to state 471
 ## Reductions:
--- On VAL reduce production qualifiers ->
--- On TYPE reduce production qualifiers ->
--- On NEW_EFFECT reduce production qualifiers ->
--- On EOF reduce production decls ->
--- On EFFECT reduce production qualifiers ->
+-- On EOF
+--   reduce production decls ->
+-- On VAL TYPE NEW_EFFECT EFFECT
+--   reduce production qualifiers ->
 
 State 482:
 ## Known stack suffix:

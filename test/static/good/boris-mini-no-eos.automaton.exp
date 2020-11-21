@@ -35,8 +35,8 @@ inst -> LIDENT . expr [ SEP LIDENT DOT ]
 -- On inst shift to state 4
 -- On expr shift to state 8
 ## Reductions:
--- On EOF reduce production expr -> LIDENT
--- On DOT reduce production expr -> LIDENT
+-- On EOF DOT
+--   reduce production expr -> LIDENT
 
 State 3:
 ## Known stack suffix:
@@ -50,10 +50,8 @@ inst -> LIDENT . expr [ DOT ]
 -- On inst shift to state 4
 -- On expr shift to state 8
 ## Reductions:
--- On SEP reduce production expr -> LIDENT
--- On LIDENT reduce production expr -> LIDENT
--- On EOF reduce production expr -> LIDENT
--- On DOT reduce production expr -> LIDENT
+-- On SEP LIDENT EOF DOT
+--   reduce production expr -> LIDENT
 ** Conflict on SEP LIDENT
 
 State 4:
@@ -87,10 +85,8 @@ inst -> expr . DOT [ DOT ]
 ## Transitions:
 -- On DOT shift to state 7
 ## Reductions:
--- On SEP reduce production expr -> inst DOT expr
--- On LIDENT reduce production expr -> inst DOT expr
--- On EOF reduce production expr -> inst DOT expr
--- On DOT reduce production expr -> inst DOT expr
+-- On SEP LIDENT EOF DOT
+--   reduce production expr -> inst DOT expr
 ** Conflict on DOT
 
 State 7:
@@ -101,11 +97,10 @@ expr -> expr DOT . [ SEP LIDENT EOF DOT ]
 inst -> expr DOT . [ DOT ]
 ## Transitions:
 ## Reductions:
--- On SEP reduce production expr -> expr DOT
--- On LIDENT reduce production expr -> expr DOT
--- On EOF reduce production expr -> expr DOT
--- On DOT reduce production expr -> expr DOT
--- On DOT reduce production inst -> expr DOT
+-- On SEP LIDENT EOF DOT
+--   reduce production expr -> expr DOT
+-- On DOT
+--   reduce production inst -> expr DOT
 ** Conflict on DOT
 
 State 8:
@@ -118,9 +113,8 @@ inst -> expr . DOT [ DOT ]
 ## Transitions:
 -- On DOT shift to state 7
 ## Reductions:
--- On SEP reduce production inst -> LIDENT expr
--- On LIDENT reduce production inst -> LIDENT expr
--- On DOT reduce production inst -> LIDENT expr
+-- On SEP LIDENT DOT
+--   reduce production inst -> LIDENT expr
 ** Conflict on DOT
 
 State 9:
@@ -146,9 +140,8 @@ inst -> SEP inst inst . [ SEP LIDENT DOT ]
 ## Transitions:
 -- On DOT shift to state 5
 ## Reductions:
--- On SEP reduce production inst -> SEP inst inst
--- On LIDENT reduce production inst -> SEP inst inst
--- On DOT reduce production inst -> SEP inst inst
+-- On SEP LIDENT DOT
+--   reduce production inst -> SEP inst inst
 ** Conflict on DOT
 
 State 11:
@@ -169,10 +162,10 @@ expr -> expr DOT . [ DOT ]
 inst -> expr DOT . [ SEP LIDENT DOT ]
 ## Transitions:
 ## Reductions:
--- On SEP reduce production inst -> expr DOT
--- On LIDENT reduce production inst -> expr DOT
--- On DOT reduce production expr -> expr DOT
--- On DOT reduce production inst -> expr DOT
+-- On DOT
+--   reduce production expr -> expr DOT
+-- On SEP LIDENT DOT
+--   reduce production inst -> expr DOT
 ** Conflict on DOT
 
 State 13:
@@ -194,7 +187,8 @@ State 14:
 debut -> expr EOF . [ # ]
 ## Transitions:
 ## Reductions:
--- On # reduce production debut -> expr EOF
+-- On #
+--   reduce production debut -> expr EOF
 
 State 15:
 ## Known stack suffix:
@@ -203,5 +197,6 @@ State 15:
 debut' -> debut . [ # ]
 ## Transitions:
 ## Reductions:
--- On # accept debut
+-- On #
+--   accept debut
 

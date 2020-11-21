@@ -48,7 +48,8 @@ main -> module_name . includes term_sections opt_preamble lexer opt_assocs gramm
 -- On include_list_rev shift to state 213
 -- On include_item shift to state 215
 ## Reductions:
--- On TokTerms reduce production includes ->
+-- On TokTerms
+--   reduce production includes ->
 
 State 5:
 ## Known stack suffix:
@@ -91,8 +92,8 @@ string_list_rev -> string_list . TokString [ TokTerms TokString TokInclude ]
 ## Transitions:
 -- On TokString shift to state 9
 ## Reductions:
--- On TokTerms reduce production include_item -> TokInclude string_list
--- On TokInclude reduce production include_item -> TokInclude string_list
+-- On TokTerms TokInclude
+--   reduce production include_item -> TokInclude string_list
 
 State 9:
 ## Known stack suffix:
@@ -175,7 +176,8 @@ term_option -> TokExtend TokString TokLeftBrace . opt_term_declarations TokRight
 -- On term_declaration shift to state 48
 -- On opt_term_declarations shift to state 49
 ## Reductions:
--- On TokRightBrace reduce production opt_term_declarations ->
+-- On TokRightBrace
+--   reduce production opt_term_declarations ->
 
 State 17:
 ## Known stack suffix:
@@ -209,8 +211,8 @@ syntax_terms -> syntax_term_list_rev . [ TokRightBrace TokDeclare ]
 ## Transitions:
 -- On TokComma shift to state 20
 ## Reductions:
--- On TokRightBrace reduce production syntax_terms -> syntax_term_list_rev
--- On TokDeclare reduce production syntax_terms -> syntax_term_list_rev
+-- On TokRightBrace TokDeclare
+--   reduce production syntax_terms -> syntax_term_list_rev
 
 State 20:
 ## Known stack suffix:
@@ -242,9 +244,8 @@ syntax_term -> st_identifier . TokLeftBrace opt_syntax_subterms TokRightBrace [ 
 ## Transitions:
 -- On TokLeftBrace shift to state 23
 ## Reductions:
--- On TokRightBrace reduce production syntax_term -> st_identifier
--- On TokDeclare reduce production syntax_term -> st_identifier
--- On TokComma reduce production syntax_term -> st_identifier
+-- On TokRightBrace TokDeclare TokComma
+--   reduce production syntax_term -> st_identifier
 
 State 23:
 ## Known stack suffix:
@@ -262,7 +263,8 @@ syntax_term -> st_identifier TokLeftBrace . opt_syntax_subterms TokRightBrace [ 
 -- On opt_syntax_subterms shift to state 38
 -- On identifier shift to state 34
 ## Reductions:
--- On TokRightBrace reduce production opt_syntax_subterms ->
+-- On TokRightBrace
+--   reduce production opt_syntax_subterms ->
 
 State 24:
 ## Known stack suffix:
@@ -291,7 +293,8 @@ syntax_subterms -> syntax_subterm_list . [ TokRightBrace ]
 ## Transitions:
 -- On TokSemi shift to state 27
 ## Reductions:
--- On TokRightBrace reduce production syntax_subterms -> syntax_subterm_list
+-- On TokRightBrace
+--   reduce production syntax_subterms -> syntax_subterm_list
 
 State 27:
 ## Known stack suffix:
@@ -334,8 +337,8 @@ syntax_subterm_base -> quoted_identifier . TokLeftBrack quoted_identifier TokRig
 ## Transitions:
 -- On TokLeftBrack shift to state 31
 ## Reductions:
--- On TokSemi reduce production syntax_subterm_base -> quoted_identifier
--- On TokRightBrace reduce production syntax_subterm_base -> quoted_identifier
+-- On TokSemi TokRightBrace
+--   reduce production syntax_subterm_base -> quoted_identifier
 
 State 31:
 ## Known stack suffix:
@@ -430,10 +433,8 @@ st_identifier -> identifier . TokLeftBrack param_type_id TokRightBrack [ TokRigh
 ## Transitions:
 -- On TokLeftBrack shift to state 41
 ## Reductions:
--- On TokRightBrace reduce production st_identifier -> identifier
--- On TokLeftBrace reduce production st_identifier -> identifier
--- On TokDeclare reduce production st_identifier -> identifier
--- On TokComma reduce production st_identifier -> identifier
+-- On TokRightBrace TokLeftBrace TokDeclare TokComma
+--   reduce production st_identifier -> identifier
 
 State 41:
 ## Known stack suffix:
@@ -491,7 +492,8 @@ term_declaration_list -> term_declaration_list . term_declaration [ TokRightBrac
 -- On TokDeclare shift to state 17
 -- On term_declaration shift to state 47
 ## Reductions:
--- On TokRightBrace reduce production opt_term_declarations -> term_declaration_list
+-- On TokRightBrace
+--   reduce production opt_term_declarations -> term_declaration_list
 
 State 47:
 ## Known stack suffix:
@@ -549,9 +551,8 @@ term_options -> term_option_list . [ TokTokens TokTerms TokLeftBrace ]
 -- On TokExtend shift to state 14
 -- On term_option shift to state 53
 ## Reductions:
--- On TokTokens reduce production term_options -> term_option_list
--- On TokTerms reduce production term_options -> term_option_list
--- On TokLeftBrace reduce production term_options -> term_option_list
+-- On TokTokens TokTerms TokLeftBrace
+--   reduce production term_options -> term_option_list
 
 State 53:
 ## Known stack suffix:
@@ -581,7 +582,8 @@ main -> module_name includes term_sections . opt_preamble lexer opt_assocs gramm
 -- On preamble shift to state 108
 -- On opt_preamble shift to state 109
 ## Reductions:
--- On TokTokens reduce production opt_preamble ->
+-- On TokTokens
+--   reduce production opt_preamble ->
 
 State 56:
 ## Known stack suffix:
@@ -603,7 +605,8 @@ preamble -> TokLeftBrace . new_rewrites TokRightBrace [ TokTokens ]
 -- On identifier shift to state 103
 -- On from shift to state 104
 ## Reductions:
--- On TokRightBrace reduce production new_rewrites ->
+-- On TokRightBrace
+--   reduce production new_rewrites ->
 
 State 57:
 ## Known stack suffix:
@@ -678,7 +681,8 @@ new_rewrites -> new_rewrite_list . [ TokRightBrace ]
 -- On identifier shift to state 103
 -- On from shift to state 104
 ## Reductions:
--- On TokRightBrace reduce production new_rewrites -> new_rewrite_list
+-- On TokRightBrace
+--   reduce production new_rewrites -> new_rewrite_list
 
 State 64:
 ## Known stack suffix:
@@ -698,8 +702,8 @@ modules_rev -> modules_rev . TokBang identifier [ TokLeftBrack TokLeftBrace TokB
 ## Transitions:
 -- On TokBang shift to state 66
 ## Reductions:
--- On TokLeftBrack reduce production module_identifier -> modules_rev
--- On TokLeftBrace reduce production module_identifier -> modules_rev
+-- On TokLeftBrack TokLeftBrace
+--   reduce production module_identifier -> modules_rev
 
 State 66:
 ## Known stack suffix:
@@ -731,7 +735,8 @@ simple_term -> module_identifier . term_params [ TokSemi TokRightBrace TokQuoted
 -- On term_params shift to state 83
 -- On opt_term_params shift to state 84
 ## Reductions:
--- On TokLeftBrace reduce production opt_term_params ->
+-- On TokLeftBrace
+--   reduce production opt_term_params ->
 
 State 69:
 ## Known stack suffix:
@@ -755,10 +760,8 @@ term_param -> TokString . [ TokString TokRightBrack TokInt TokId ]
 ## Transitions:
 -- On TokColon shift to state 71
 ## Reductions:
--- On TokString reduce production term_param -> TokString
--- On TokRightBrack reduce production term_param -> TokString
--- On TokInt reduce production term_param -> TokString
--- On TokId reduce production term_param -> TokString
+-- On TokString TokRightBrack TokInt TokId
+--   reduce production term_param -> TokString
 
 State 71:
 ## Known stack suffix:
@@ -788,10 +791,8 @@ term_param -> TokInt . [ TokString TokRightBrack TokInt TokId ]
 ## Transitions:
 -- On TokColon shift to state 74
 ## Reductions:
--- On TokString reduce production term_param -> TokInt
--- On TokRightBrack reduce production term_param -> TokInt
--- On TokInt reduce production term_param -> TokInt
--- On TokId reduce production term_param -> TokInt
+-- On TokString TokRightBrack TokInt TokId
+--   reduce production term_param -> TokInt
 
 State 74:
 ## Known stack suffix:
@@ -821,10 +822,8 @@ term_param -> TokId . [ TokString TokRightBrack TokInt TokId ]
 ## Transitions:
 -- On TokColon shift to state 77
 ## Reductions:
--- On TokString reduce production term_param -> TokId
--- On TokRightBrack reduce production term_param -> TokId
--- On TokInt reduce production term_param -> TokId
--- On TokId reduce production term_param -> TokId
+-- On TokString TokRightBrack TokInt TokId
+--   reduce production term_param -> TokId
 
 State 77:
 ## Known stack suffix:
@@ -893,17 +892,10 @@ opt_term_params -> term_params . [ TokLeftBrace ]
 simple_term -> module_identifier term_params . [ TokSemi TokRightBrace TokQuotedId TokQuestionMark TokPipe TokInt TokInline TokId TokEof TokArrow ]
 ## Transitions:
 ## Reductions:
--- On TokSemi reduce production simple_term -> module_identifier term_params
--- On TokRightBrace reduce production simple_term -> module_identifier term_params
--- On TokQuotedId reduce production simple_term -> module_identifier term_params
--- On TokQuestionMark reduce production simple_term -> module_identifier term_params
--- On TokPipe reduce production simple_term -> module_identifier term_params
--- On TokLeftBrace reduce production opt_term_params -> term_params
--- On TokInt reduce production simple_term -> module_identifier term_params
--- On TokInline reduce production simple_term -> module_identifier term_params
--- On TokId reduce production simple_term -> module_identifier term_params
--- On TokEof reduce production simple_term -> module_identifier term_params
--- On TokArrow reduce production simple_term -> module_identifier term_params
+-- On TokLeftBrace
+--   reduce production opt_term_params -> term_params
+-- On TokSemi TokRightBrace TokQuotedId TokQuestionMark TokPipe TokInt TokInline TokId TokEof TokArrow
+--   reduce production simple_term -> module_identifier term_params
 
 State 84:
 ## Known stack suffix:
@@ -937,7 +929,8 @@ subterms -> TokLeftBrace . opt_subterm_list_semi TokRightBrace [ TokSemi TokRigh
 -- On identifiers_with_comma shift to state 94
 -- On identifier shift to state 98
 ## Reductions:
--- On TokRightBrace reduce production opt_subterm_list_semi ->
+-- On TokRightBrace
+--   reduce production opt_subterm_list_semi ->
 
 State 86:
 ## Known stack suffix:
@@ -957,7 +950,8 @@ subterms_with_semi -> subterm_list_with_semi . [ TokRightBrace ]
 ## Transitions:
 -- On TokSemi shift to state 88
 ## Reductions:
--- On TokRightBrace reduce production subterms_with_semi -> subterm_list_with_semi
+-- On TokRightBrace
+--   reduce production subterms_with_semi -> subterm_list_with_semi
 
 State 88:
 ## Known stack suffix:
@@ -1006,7 +1000,8 @@ rev_identifier_list_with_comma -> rev_identifier_list_with_comma . TokComma iden
 ## Transitions:
 -- On TokComma shift to state 92
 ## Reductions:
--- On TokDot reduce production identifiers_with_comma -> rev_identifier_list_with_comma
+-- On TokDot
+--   reduce production identifiers_with_comma -> rev_identifier_list_with_comma
 
 State 92:
 ## Known stack suffix:
@@ -1079,11 +1074,10 @@ modules_rev -> identifier . [ TokLeftBrack TokLeftBrace TokBang ]
 rev_identifier_list_with_comma -> identifier . [ TokDot TokComma ]
 ## Transitions:
 ## Reductions:
--- On TokLeftBrack reduce production modules_rev -> identifier
--- On TokLeftBrace reduce production modules_rev -> identifier
--- On TokDot reduce production rev_identifier_list_with_comma -> identifier
--- On TokComma reduce production rev_identifier_list_with_comma -> identifier
--- On TokBang reduce production modules_rev -> identifier
+-- On TokLeftBrack TokLeftBrace TokBang
+--   reduce production modules_rev -> identifier
+-- On TokDot TokComma
+--   reduce production rev_identifier_list_with_comma -> identifier
 
 State 99:
 ## Known stack suffix:
@@ -1129,14 +1123,10 @@ from -> identifier . [ TokQuotedId TokQuestionMark TokInt TokId TokArrow ]
 modules_rev -> identifier . [ TokLeftBrack TokLeftBrace TokBang ]
 ## Transitions:
 ## Reductions:
--- On TokQuotedId reduce production from -> identifier
--- On TokQuestionMark reduce production from -> identifier
--- On TokLeftBrack reduce production modules_rev -> identifier
--- On TokLeftBrace reduce production modules_rev -> identifier
--- On TokInt reduce production from -> identifier
--- On TokId reduce production from -> identifier
--- On TokBang reduce production modules_rev -> identifier
--- On TokArrow reduce production from -> identifier
+-- On TokQuotedId TokQuestionMark TokInt TokId TokArrow
+--   reduce production from -> identifier
+-- On TokLeftBrack TokLeftBrace TokBang
+--   reduce production modules_rev -> identifier
 
 State 104:
 ## Known stack suffix:
@@ -1214,7 +1204,8 @@ lexer -> TokTokens . opt_lexer_options TokLeftBrace tokens TokRightBrace [ TokRi
 -- On lexer_option_list shift to state 143
 -- On lexer_option shift to state 145
 ## Reductions:
--- On TokLeftBrace reduce production opt_lexer_options ->
+-- On TokLeftBrace
+--   reduce production opt_lexer_options ->
 
 State 111:
 ## Known stack suffix:
@@ -1324,7 +1315,8 @@ token_body -> TokLeftBrace . token_term_matches TokRightBrace [ TokRightBrace To
 -- On from_list shift to state 129
 -- On from shift to state 131
 ## Reductions:
--- On TokRightBrace reduce production token_term_matches ->
+-- On TokRightBrace
+--   reduce production token_term_matches ->
 
 State 121:
 ## Known stack suffix:
@@ -1353,7 +1345,8 @@ token_term_matches -> term_match_list . [ TokRightBrace ]
 ## Transitions:
 -- On TokPipe shift to state 124
 ## Reductions:
--- On TokRightBrace reduce production token_term_matches -> term_match_list
+-- On TokRightBrace
+--   reduce production token_term_matches -> term_match_list
 
 State 124:
 ## Known stack suffix:
@@ -1438,7 +1431,8 @@ froms -> from_list . [ TokArrow ]
 -- On identifier shift to state 103
 -- On from shift to state 130
 ## Reductions:
--- On TokArrow reduce production froms -> from_list
+-- On TokArrow
+--   reduce production froms -> from_list
 
 State 130:
 ## Known stack suffix:
@@ -1542,7 +1536,8 @@ tokens -> token_list . [ TokRightBrace ]
 -- On TokId shift to state 134
 -- On token shift to state 141
 ## Reductions:
--- On TokRightBrace reduce production tokens -> token_list
+-- On TokRightBrace
+--   reduce production tokens -> token_list
 
 State 141:
 ## Known stack suffix:
@@ -1574,7 +1569,8 @@ opt_lexer_options -> lexer_option_list . [ TokLeftBrace ]
 -- On TokFirst shift to state 113
 -- On lexer_option shift to state 144
 ## Reductions:
--- On TokLeftBrace reduce production opt_lexer_options -> lexer_option_list
+-- On TokLeftBrace
+--   reduce production opt_lexer_options -> lexer_option_list
 
 State 144:
 ## Known stack suffix:
@@ -1607,7 +1603,8 @@ main -> module_name includes term_sections opt_preamble lexer . opt_assocs gramm
 -- On assoc_list shift to state 207
 -- On assoc shift to state 209
 ## Reductions:
--- On TokGrammar reduce production opt_assocs ->
+-- On TokGrammar
+--   reduce production opt_assocs ->
 
 State 147:
 ## Known stack suffix:
@@ -1631,13 +1628,8 @@ rev_identifier_list -> rev_identifier_list . identifier [ TokRightAssoc TokPrec 
 -- On TokId shift to state 2
 -- On identifier shift to state 149
 ## Reductions:
--- On TokRightAssoc reduce production identifiers -> rev_identifier_list
--- On TokPrec reduce production identifiers -> rev_identifier_list
--- On TokNonAssoc reduce production identifiers -> rev_identifier_list
--- On TokLeftBrace reduce production identifiers -> rev_identifier_list
--- On TokLeftAssoc reduce production identifiers -> rev_identifier_list
--- On TokGrammar reduce production identifiers -> rev_identifier_list
--- On TokDoubledArrow reduce production identifiers -> rev_identifier_list
+-- On TokRightAssoc TokPrec TokNonAssoc TokLeftBrace TokLeftAssoc TokGrammar TokDoubledArrow
+--   reduce production identifiers -> rev_identifier_list
 
 State 149:
 ## Known stack suffix:
@@ -1729,7 +1721,8 @@ grammar -> TokGrammar . opt_grammar_options TokLeftBrace rules TokRightBrace [ T
 -- On grammar_option_list shift to state 188
 -- On grammar_option shift to state 190
 ## Reductions:
--- On TokLeftBrace reduce production opt_grammar_options ->
+-- On TokLeftBrace
+--   reduce production opt_grammar_options ->
 
 State 158:
 ## Known stack suffix:
@@ -1815,8 +1808,8 @@ productions -> prod_body . [ TokRightBrace TokId ]
 -- On prod_list_prim shift to state 180
 -- On prod_list shift to state 181
 ## Reductions:
--- On TokRightBrace reduce production productions -> prod_body
--- On TokId reduce production productions -> prod_body
+-- On TokRightBrace TokId
+--   reduce production productions -> prod_body
 
 State 166:
 ## Known stack suffix:
@@ -1850,8 +1843,8 @@ prod_body -> identifiers . opt_prec TokDoubledArrow simple_term [ TokRightBrace 
 -- On TokPrec shift to state 169
 -- On opt_prec shift to state 171
 ## Reductions:
--- On TokLeftBrace reduce production opt_prec ->
--- On TokDoubledArrow reduce production opt_prec ->
+-- On TokLeftBrace TokDoubledArrow
+--   reduce production opt_prec ->
 
 State 169:
 ## Known stack suffix:
@@ -1905,7 +1898,8 @@ body -> TokLeftBrace . opt_term_matches TokRightBrace [ TokRightBrace TokPipe To
 -- On from_list shift to state 129
 -- On from shift to state 131
 ## Reductions:
--- On TokRightBrace reduce production opt_term_matches ->
+-- On TokRightBrace
+--   reduce production opt_term_matches ->
 
 State 173:
 ## Known stack suffix:
@@ -1916,7 +1910,8 @@ term_match_list -> term_match_list . TokPipe term_match [ TokRightBrace TokPipe 
 ## Transitions:
 -- On TokPipe shift to state 124
 ## Reductions:
--- On TokRightBrace reduce production opt_term_matches -> term_match_list
+-- On TokRightBrace
+--   reduce production opt_term_matches -> term_match_list
 
 State 174:
 ## Known stack suffix:
@@ -1999,8 +1994,8 @@ prods -> prod_list . [ TokRightBrace TokId ]
 -- On TokPipe shift to state 166
 -- On prod_list_prim shift to state 182
 ## Reductions:
--- On TokRightBrace reduce production prods -> prod_list
--- On TokId reduce production prods -> prod_list
+-- On TokRightBrace TokId
+--   reduce production prods -> prod_list
 
 State 182:
 ## Known stack suffix:
@@ -2039,7 +2034,8 @@ rules -> rule_list . [ TokRightBrace ]
 -- On TokId shift to state 162
 -- On rule shift to state 186
 ## Reductions:
--- On TokRightBrace reduce production rules -> rule_list
+-- On TokRightBrace
+--   reduce production rules -> rule_list
 
 State 186:
 ## Known stack suffix:
@@ -2069,7 +2065,8 @@ opt_grammar_options -> grammar_option_list . [ TokLeftBrace ]
 -- On TokStart shift to state 158
 -- On grammar_option shift to state 189
 ## Reductions:
--- On TokLeftBrace reduce production opt_grammar_options -> grammar_option_list
+-- On TokLeftBrace
+--   reduce production opt_grammar_options -> grammar_option_list
 
 State 189:
 ## Known stack suffix:
@@ -2100,8 +2097,8 @@ main -> module_name includes term_sections opt_preamble lexer opt_assocs grammar
 -- On rev_rewrites_section_list shift to state 197
 -- On opt_rewrites_section shift to state 199
 ## Reductions:
--- On TokInline reduce production opt_rewrites_section ->
--- On TokEof reduce production opt_rewrites_section ->
+-- On TokInline TokEof
+--   reduce production opt_rewrites_section ->
 
 State 192:
 ## Known stack suffix:
@@ -2132,7 +2129,8 @@ rewrites_section -> TokRewrites TokLeftBrace . new_rewrites TokRightBrace [ TokR
 -- On identifier shift to state 103
 -- On from shift to state 104
 ## Reductions:
--- On TokRightBrace reduce production new_rewrites ->
+-- On TokRightBrace
+--   reduce production new_rewrites ->
 
 State 194:
 ## Known stack suffix:
@@ -2171,8 +2169,8 @@ rev_rewrites_section_list -> rev_rewrites_section_list . rewrites_section [ TokR
 -- On TokRewrites shift to state 192
 -- On rewrites_section shift to state 198
 ## Reductions:
--- On TokInline reduce production opt_rewrites_section -> rev_rewrites_section_list
--- On TokEof reduce production opt_rewrites_section -> rev_rewrites_section_list
+-- On TokInline TokEof
+--   reduce production opt_rewrites_section -> rev_rewrites_section_list
 
 State 198:
 ## Known stack suffix:
@@ -2194,7 +2192,8 @@ main -> module_name includes term_sections opt_preamble lexer opt_assocs grammar
 -- On inline_form_list_rev shift to state 204
 -- On inline_form shift to state 206
 ## Reductions:
--- On TokEof reduce production opt_inline_forms ->
+-- On TokEof
+--   reduce production opt_inline_forms ->
 
 State 200:
 ## Known stack suffix:
@@ -2250,7 +2249,8 @@ opt_inline_forms -> inline_form_list_rev . [ TokEof ]
 -- On TokInline shift to state 200
 -- On inline_form shift to state 205
 ## Reductions:
--- On TokEof reduce production opt_inline_forms -> inline_form_list_rev
+-- On TokEof
+--   reduce production opt_inline_forms -> inline_form_list_rev
 
 State 205:
 ## Known stack suffix:
@@ -2282,7 +2282,8 @@ opt_assocs -> assoc_list . [ TokGrammar ]
 -- On TokLeftAssoc shift to state 154
 -- On assoc shift to state 208
 ## Reductions:
--- On TokGrammar reduce production opt_assocs -> assoc_list
+-- On TokGrammar
+--   reduce production opt_assocs -> assoc_list
 
 State 208:
 ## Known stack suffix:
@@ -2312,8 +2313,8 @@ term_sections -> term_section_list . [ TokTokens TokLeftBrace ]
 -- On TokTerms shift to state 12
 -- On term_section shift to state 211
 ## Reductions:
--- On TokTokens reduce production term_sections -> term_section_list
--- On TokLeftBrace reduce production term_sections -> term_section_list
+-- On TokTokens TokLeftBrace
+--   reduce production term_sections -> term_section_list
 
 State 211:
 ## Known stack suffix:
@@ -2343,7 +2344,8 @@ includes -> include_list_rev . [ TokTerms ]
 -- On TokInclude shift to state 5
 -- On include_item shift to state 214
 ## Reductions:
--- On TokTerms reduce production includes -> include_list_rev
+-- On TokTerms
+--   reduce production includes -> include_list_rev
 
 State 214:
 ## Known stack suffix:

@@ -240,7 +240,8 @@ simple_pattern -> LPAREN . pattern_list RPAREN [ UNDERSCORE TRUE RPAREN RBRACKET
 -- On pattern shift to state 37
 -- On constant shift to state 32
 ## Reductions:
--- On RPAREN reduce production pattern_list ->
+-- On RPAREN
+--   reduce production pattern_list ->
 
 State 20:
 ## Known stack suffix:
@@ -263,7 +264,8 @@ simple_pattern -> LBRACKET . pattern_list RBRACKET [ UNDERSCORE TRUE RPAREN RBRA
 -- On pattern shift to state 37
 -- On constant shift to state 32
 ## Reductions:
--- On RBRACKET reduce production pattern_list ->
+-- On RBRACKET
+--   reduce production pattern_list ->
 
 State 21:
 ## Known stack suffix:
@@ -287,12 +289,8 @@ simple_pattern -> IDENT . [ RPAREN RBRACKET EQGT EQ COMMA COLONCOLON ]
 -- On simple_pattern shift to state 34
 -- On constant shift to state 32
 ## Reductions:
--- On RPAREN reduce production simple_pattern -> IDENT
--- On RBRACKET reduce production simple_pattern -> IDENT
--- On EQGT reduce production simple_pattern -> IDENT
--- On EQ reduce production simple_pattern -> IDENT
--- On COMMA reduce production simple_pattern -> IDENT
--- On COLONCOLON reduce production simple_pattern -> IDENT
+-- On RPAREN RBRACKET EQGT EQ COMMA COLONCOLON
+--   reduce production simple_pattern -> IDENT
 
 State 22:
 ## Known stack suffix:
@@ -378,11 +376,8 @@ pattern -> simple_pattern . COLONCOLON pattern [ RPAREN RBRACKET EQGT EQ COMMA ]
 ## Transitions:
 -- On COLONCOLON shift to state 30
 ## Reductions:
--- On RPAREN reduce production pattern -> simple_pattern
--- On RBRACKET reduce production pattern -> simple_pattern
--- On EQGT reduce production pattern -> simple_pattern
--- On EQ reduce production pattern -> simple_pattern
--- On COMMA reduce production pattern -> simple_pattern
+-- On RPAREN RBRACKET EQGT EQ COMMA
+--   reduce production pattern -> simple_pattern
 
 State 30:
 ## Known stack suffix:
@@ -468,8 +463,8 @@ pattern_list -> pattern . comma_pattern_list [ RPAREN RBRACKET ]
 -- On COMMA shift to state 38
 -- On comma_pattern_list shift to state 41
 ## Reductions:
--- On RPAREN reduce production comma_pattern_list ->
--- On RBRACKET reduce production comma_pattern_list ->
+-- On RPAREN RBRACKET
+--   reduce production comma_pattern_list ->
 
 State 38:
 ## Known stack suffix:
@@ -501,8 +496,8 @@ comma_pattern_list -> COMMA pattern . comma_pattern_list [ RPAREN RBRACKET ]
 -- On COMMA shift to state 38
 -- On comma_pattern_list shift to state 40
 ## Reductions:
--- On RPAREN reduce production comma_pattern_list ->
--- On RBRACKET reduce production comma_pattern_list ->
+-- On RPAREN RBRACKET
+--   reduce production comma_pattern_list ->
 
 State 40:
 ## Known stack suffix:
@@ -564,8 +559,8 @@ var_typ_decl -> IDENT . COLON dtype [ VAL SORT IN FUN EOF DATATYPE ]
 -- On simple_pattern shift to state 34
 -- On constant shift to state 32
 ## Reductions:
--- On EQ reduce production simple_pattern -> IDENT
--- On COLONCOLON reduce production simple_pattern -> IDENT
+-- On EQ COLONCOLON
+--   reduce production simple_pattern -> IDENT
 
 State 45:
 ## Known stack suffix:
@@ -594,7 +589,8 @@ var_typ_decl -> IDENT COLON . dtype [ VAL SORT IN FUN EOF DATATYPE ]
 -- On exi_ivar_decls shift to state 167
 -- On dtype shift to state 189
 ## Reductions:
--- On DOT reduce production tvar_para ->
+-- On DOT
+--   reduce production tvar_para ->
 
 State 46:
 ## Known stack suffix:
@@ -647,7 +643,8 @@ metric -> LT . int_index_list GT [ EQGT ]
 -- On int_index shift to state 100
 -- On ident shift to state 77
 ## Reductions:
--- On GT reduce production int_index_list ->
+-- On GT
+--   reduce production int_index_list ->
 
 State 51:
 ## Known stack suffix:
@@ -753,11 +750,8 @@ int_index -> int_index . ind_aop2 int_index [ TIMES RPAREN RBRACKET RBRACE PLUS 
 -- On ind_aop2 shift to state 73
 -- On ind_aop1 shift to state 75
 ## Reductions:
--- On RPAREN reduce production index -> int_index
--- On RBRACKET reduce production index -> int_index
--- On RBRACE reduce production index -> int_index
--- On COMMA reduce production index -> int_index
--- On BAR reduce production index -> int_index
+-- On RPAREN RBRACKET RBRACE COMMA BAR
+--   reduce production index -> int_index
 
 State 58:
 ## Known stack suffix:
@@ -909,19 +903,8 @@ int_index -> int_index . ind_aop2 int_index [ TIMES RPAREN RBRACKET RBRACE PLUS 
 -- On ind_aop2 shift to state 73
 -- On ind_aop1 shift to state 75
 ## Reductions:
--- On RPAREN reduce production bool_index_seq -> int_index ind_bop2 int_index
--- On RBRACKET reduce production bool_index_seq -> int_index ind_bop2 int_index
--- On RBRACE reduce production bool_index_seq -> int_index ind_bop2 int_index
--- On LTGT reduce production bool_index_seq -> int_index ind_bop2 int_index
--- On LTEQ reduce production bool_index_seq -> int_index ind_bop2 int_index
--- On LT reduce production bool_index_seq -> int_index ind_bop2 int_index
--- On LOR reduce production bool_index_seq -> int_index ind_bop2 int_index
--- On LAND reduce production bool_index_seq -> int_index ind_bop2 int_index
--- On GTEQ reduce production bool_index_seq -> int_index ind_bop2 int_index
--- On GT reduce production bool_index_seq -> int_index ind_bop2 int_index
--- On EQ reduce production bool_index_seq -> int_index ind_bop2 int_index
--- On COMMA reduce production bool_index_seq -> int_index ind_bop2 int_index
--- On BAR reduce production bool_index_seq -> int_index ind_bop2 int_index
+-- On RPAREN RBRACKET RBRACE LTGT LTEQ LT LOR LAND GTEQ GT EQ COMMA BAR
+--   reduce production bool_index_seq -> int_index ind_bop2 int_index
 
 State 73:
 ## Known stack suffix:
@@ -980,23 +963,8 @@ int_index -> int_index . ind_aop2 int_index [ TIMES RPAREN RBRACKET RBRACE PLUS 
 -- On ind_aop2 shift to state 73
 -- On ind_aop1 shift to state 75
 ## Reductions:
--- On RPAREN reduce production int_index -> int_index ind_aop1 int_index
--- On RBRACKET reduce production int_index -> int_index ind_aop1 int_index
--- On RBRACE reduce production int_index -> int_index ind_aop1 int_index
--- On PLUS reduce production int_index -> int_index ind_aop1 int_index
--- On MINUS reduce production int_index -> int_index ind_aop1 int_index
--- On LTGT reduce production int_index -> int_index ind_aop1 int_index
--- On LTEQ reduce production int_index -> int_index ind_aop1 int_index
--- On LT reduce production int_index -> int_index ind_aop1 int_index
--- On LOR reduce production int_index -> int_index ind_aop1 int_index
--- On LAND reduce production int_index -> int_index ind_aop1 int_index
--- On GTEQ reduce production int_index -> int_index ind_aop1 int_index
--- On GT reduce production int_index -> int_index ind_aop1 int_index
--- On EQ reduce production int_index -> int_index ind_aop1 int_index
--- On COMMA reduce production int_index -> int_index ind_aop1 int_index
--- On BARBAR reduce production int_index -> int_index ind_aop1 int_index
--- On BAR reduce production int_index -> int_index ind_aop1 int_index
--- On AMPERAMPER reduce production int_index -> int_index ind_aop1 int_index
+-- On RPAREN RBRACKET RBRACE PLUS MINUS LTGT LTEQ LT LOR LAND GTEQ GT EQ COMMA BARBAR BAR AMPERAMPER
+--   reduce production int_index -> int_index ind_aop1 int_index
 
 State 77:
 ## Known stack suffix:
@@ -1007,26 +975,8 @@ simple_index -> ident . LPAREN open_comma_index_list [ TIMES RPAREN RBRACKET RBR
 ## Transitions:
 -- On LPAREN shift to state 78
 ## Reductions:
--- On TIMES reduce production simple_index -> ident
--- On RPAREN reduce production simple_index -> ident
--- On RBRACKET reduce production simple_index -> ident
--- On RBRACE reduce production simple_index -> ident
--- On PLUS reduce production simple_index -> ident
--- On PERCENT reduce production simple_index -> ident
--- On MINUS reduce production simple_index -> ident
--- On LTGT reduce production simple_index -> ident
--- On LTEQ reduce production simple_index -> ident
--- On LT reduce production simple_index -> ident
--- On LOR reduce production simple_index -> ident
--- On LAND reduce production simple_index -> ident
--- On GTEQ reduce production simple_index -> ident
--- On GT reduce production simple_index -> ident
--- On EQ reduce production simple_index -> ident
--- On DIV reduce production simple_index -> ident
--- On COMMA reduce production simple_index -> ident
--- On BARBAR reduce production simple_index -> ident
--- On BAR reduce production simple_index -> ident
--- On AMPERAMPER reduce production simple_index -> ident
+-- On TIMES RPAREN RBRACKET RBRACE PLUS PERCENT MINUS LTGT LTEQ LT LOR LAND GTEQ GT EQ DIV COMMA BARBAR BAR AMPERAMPER
+--   reduce production simple_index -> ident
 
 State 78:
 ## Known stack suffix:
@@ -1119,13 +1069,8 @@ bool_index_seq -> bool_index_seq . ind_bop2 int_index [ RPAREN RBRACKET RBRACE L
 -- On EQ shift to state 67
 -- On ind_bop2 shift to state 85
 ## Reductions:
--- On RPAREN reduce production bool_index -> bool_index_seq
--- On RBRACKET reduce production bool_index -> bool_index_seq
--- On RBRACE reduce production bool_index -> bool_index_seq
--- On LOR reduce production bool_index -> bool_index_seq
--- On LAND reduce production bool_index -> bool_index_seq
--- On COMMA reduce production bool_index -> bool_index_seq
--- On BAR reduce production bool_index -> bool_index_seq
+-- On RPAREN RBRACKET RBRACE LOR LAND COMMA BAR
+--   reduce production bool_index -> bool_index_seq
 
 State 85:
 ## Known stack suffix:
@@ -1160,19 +1105,8 @@ int_index -> int_index . ind_aop2 int_index [ TIMES RPAREN RBRACKET RBRACE PLUS 
 -- On ind_aop2 shift to state 73
 -- On ind_aop1 shift to state 75
 ## Reductions:
--- On RPAREN reduce production bool_index_seq -> bool_index_seq ind_bop2 int_index
--- On RBRACKET reduce production bool_index_seq -> bool_index_seq ind_bop2 int_index
--- On RBRACE reduce production bool_index_seq -> bool_index_seq ind_bop2 int_index
--- On LTGT reduce production bool_index_seq -> bool_index_seq ind_bop2 int_index
--- On LTEQ reduce production bool_index_seq -> bool_index_seq ind_bop2 int_index
--- On LT reduce production bool_index_seq -> bool_index_seq ind_bop2 int_index
--- On LOR reduce production bool_index_seq -> bool_index_seq ind_bop2 int_index
--- On LAND reduce production bool_index_seq -> bool_index_seq ind_bop2 int_index
--- On GTEQ reduce production bool_index_seq -> bool_index_seq ind_bop2 int_index
--- On GT reduce production bool_index_seq -> bool_index_seq ind_bop2 int_index
--- On EQ reduce production bool_index_seq -> bool_index_seq ind_bop2 int_index
--- On COMMA reduce production bool_index_seq -> bool_index_seq ind_bop2 int_index
--- On BAR reduce production bool_index_seq -> bool_index_seq ind_bop2 int_index
+-- On RPAREN RBRACKET RBRACE LTGT LTEQ LT LOR LAND GTEQ GT EQ COMMA BAR
+--   reduce production bool_index_seq -> bool_index_seq ind_bop2 int_index
 
 State 87:
 ## Known stack suffix:
@@ -1185,11 +1119,8 @@ index -> bool_index . [ RPAREN RBRACKET RBRACE COMMA BAR ]
 -- On LAND shift to state 89
 -- On ind_bop1 shift to state 90
 ## Reductions:
--- On RPAREN reduce production index -> bool_index
--- On RBRACKET reduce production index -> bool_index
--- On RBRACE reduce production index -> bool_index
--- On COMMA reduce production index -> bool_index
--- On BAR reduce production index -> bool_index
+-- On RPAREN RBRACKET RBRACE COMMA BAR
+--   reduce production index -> bool_index
 
 State 88:
 ## Known stack suffix:
@@ -1263,11 +1194,8 @@ bool_index -> bool_index ind_bop1 bool_index . [ RPAREN RBRACKET RBRACE LOR LAND
 -- On LAND shift to state 89
 -- On ind_bop1 shift to state 90
 ## Reductions:
--- On RPAREN reduce production bool_index -> bool_index ind_bop1 bool_index
--- On RBRACKET reduce production bool_index -> bool_index ind_bop1 bool_index
--- On RBRACE reduce production bool_index -> bool_index ind_bop1 bool_index
--- On COMMA reduce production bool_index -> bool_index ind_bop1 bool_index
--- On BAR reduce production bool_index -> bool_index ind_bop1 bool_index
+-- On RPAREN RBRACKET RBRACE COMMA BAR
+--   reduce production bool_index -> bool_index ind_bop1 bool_index
 
 State 93:
 ## Known stack suffix:
@@ -1357,7 +1285,8 @@ int_index_list -> int_index . comma_int_index_list [ GT ]
 -- On ind_aop1 shift to state 75
 -- On comma_int_index_list shift to state 104
 ## Reductions:
--- On GT reduce production comma_int_index_list ->
+-- On GT
+--   reduce production comma_int_index_list ->
 
 State 101:
 ## Known stack suffix:
@@ -1394,7 +1323,8 @@ int_index -> int_index . ind_aop2 int_index [ TIMES PLUS PERCENT MINUS GT DIV CO
 -- On ind_aop1 shift to state 75
 -- On comma_int_index_list shift to state 103
 ## Reductions:
--- On GT reduce production comma_int_index_list ->
+-- On GT
+--   reduce production comma_int_index_list ->
 
 State 103:
 ## Known stack suffix:
@@ -1444,7 +1374,8 @@ tvar_para -> LPAREN . open_tvar_para [ DOT ]
 -- On exi_ivar_decls shift to state 167
 -- On dtype shift to state 171
 ## Reductions:
--- On DOT reduce production tvar_para ->
+-- On DOT
+--   reduce production tvar_para ->
 
 State 106:
 ## Known stack suffix:
@@ -1496,8 +1427,8 @@ ivar_decls -> ivar_decl . [ RBRACKET RBRACE ]
 -- On COMMA shift to state 110
 -- On BAR shift to state 127
 ## Reductions:
--- On RBRACKET reduce production ivar_decls -> ivar_decl
--- On RBRACE reduce production ivar_decls -> ivar_decl
+-- On RBRACKET RBRACE
+--   reduce production ivar_decls -> ivar_decl
 
 State 110:
 ## Known stack suffix:
@@ -1558,23 +1489,8 @@ simple_index -> ident . LPAREN open_comma_index_list [ TIMES RBRACKET RBRACE PLU
 -- On LPAREN shift to state 78
 -- On COLON shift to state 115
 ## Reductions:
--- On TIMES reduce production simple_index -> ident
--- On RBRACKET reduce production simple_index -> ident
--- On RBRACE reduce production simple_index -> ident
--- On PLUS reduce production simple_index -> ident
--- On PERCENT reduce production simple_index -> ident
--- On MINUS reduce production simple_index -> ident
--- On LTGT reduce production simple_index -> ident
--- On LTEQ reduce production simple_index -> ident
--- On LT reduce production simple_index -> ident
--- On GTEQ reduce production simple_index -> ident
--- On GT reduce production simple_index -> ident
--- On EQ reduce production simple_index -> ident
--- On DIV reduce production simple_index -> ident
--- On COMMA reduce production simple_index -> ident
--- On BARBAR reduce production simple_index -> ident
--- On BAR reduce production simple_index -> ident
--- On AMPERAMPER reduce production simple_index -> ident
+-- On TIMES RBRACKET RBRACE PLUS PERCENT MINUS LTGT LTEQ LT GTEQ GT EQ DIV COMMA BARBAR BAR AMPERAMPER
+--   reduce production simple_index -> ident
 
 State 115:
 ## Known stack suffix:
@@ -1786,19 +1702,8 @@ simple_dtype -> INT . LBRACKET index COMMA index RBRACKET [ VAL TIMES SORT RPARE
 -- On LPAREN shift to state 133
 -- On LBRACKET shift to state 140
 ## Reductions:
--- On VAL reduce production simple_dtype -> INT
--- On TIMES reduce production simple_dtype -> INT
--- On SORT reduce production simple_dtype -> INT
--- On RPAREN reduce production simple_dtype -> INT
--- On MINUSGT reduce production simple_dtype -> INT
--- On IN reduce production simple_dtype -> INT
--- On IDENT reduce production simple_dtype -> INT
--- On FUN reduce production simple_dtype -> INT
--- On EOF reduce production simple_dtype -> INT
--- On DATATYPE reduce production simple_dtype -> INT
--- On COMMA reduce production simple_dtype -> INT
--- On BAR reduce production simple_dtype -> INT
--- On AND reduce production simple_dtype -> INT
+-- On VAL TIMES SORT RPAREN MINUSGT IN IDENT FUN EOF DATATYPE COMMA BAR AND
+--   reduce production simple_dtype -> INT
 
 State 133:
 ## Known stack suffix:
@@ -1984,19 +1889,8 @@ simple_dtype -> BOOL . LPAREN index RPAREN [ VAL TIMES SORT RPAREN MINUSGT LPARE
 ## Transitions:
 -- On LPAREN shift to state 148
 ## Reductions:
--- On VAL reduce production simple_dtype -> BOOL
--- On TIMES reduce production simple_dtype -> BOOL
--- On SORT reduce production simple_dtype -> BOOL
--- On RPAREN reduce production simple_dtype -> BOOL
--- On MINUSGT reduce production simple_dtype -> BOOL
--- On IN reduce production simple_dtype -> BOOL
--- On IDENT reduce production simple_dtype -> BOOL
--- On FUN reduce production simple_dtype -> BOOL
--- On EOF reduce production simple_dtype -> BOOL
--- On DATATYPE reduce production simple_dtype -> BOOL
--- On COMMA reduce production simple_dtype -> BOOL
--- On BAR reduce production simple_dtype -> BOOL
--- On AND reduce production simple_dtype -> BOOL
+-- On VAL TIMES SORT RPAREN MINUSGT IN IDENT FUN EOF DATATYPE COMMA BAR AND
+--   reduce production simple_dtype -> BOOL
 
 State 148:
 ## Known stack suffix:
@@ -2061,7 +1955,8 @@ dtype -> uni_ivar_decls . dtype [ VAL SORT RPAREN LPAREN IN FUN EOF DATATYPE COM
 -- On exi_ivar_decls shift to state 167
 -- On dtype shift to state 182
 ## Reductions:
--- On DOT reduce production tvar_para ->
+-- On DOT
+--   reduce production tvar_para ->
 
 State 152:
 ## Known stack suffix:
@@ -2099,7 +1994,8 @@ dtype -> tvar_para DOT . dtype [ VAL SORT RPAREN LPAREN IN FUN EOF DATATYPE COMM
 -- On exi_ivar_decls shift to state 167
 -- On dtype shift to state 181
 ## Reductions:
--- On DOT reduce production tvar_para ->
+-- On DOT
+--   reduce production tvar_para ->
 
 State 154:
 ## Known stack suffix:
@@ -2109,21 +2005,10 @@ simple_dtype -> tvar . [ VAL TIMES SORT RPAREN MINUSGT LPAREN IN IDENT FUN EOF D
 tvar_para -> tvar . [ DOT ]
 ## Transitions:
 ## Reductions:
--- On VAL reduce production simple_dtype -> tvar
--- On TIMES reduce production simple_dtype -> tvar
--- On SORT reduce production simple_dtype -> tvar
--- On RPAREN reduce production simple_dtype -> tvar
--- On MINUSGT reduce production simple_dtype -> tvar
--- On LPAREN reduce production simple_dtype -> tvar
--- On IN reduce production simple_dtype -> tvar
--- On IDENT reduce production simple_dtype -> tvar
--- On FUN reduce production simple_dtype -> tvar
--- On EOF reduce production simple_dtype -> tvar
--- On DOT reduce production tvar_para -> tvar
--- On DATATYPE reduce production simple_dtype -> tvar
--- On COMMA reduce production simple_dtype -> tvar
--- On BAR reduce production simple_dtype -> tvar
--- On AND reduce production simple_dtype -> tvar
+-- On VAL TIMES SORT RPAREN MINUSGT LPAREN IN IDENT FUN EOF DATATYPE COMMA BAR AND
+--   reduce production simple_dtype -> tvar
+-- On DOT
+--   reduce production tvar_para -> tvar
 
 State 155:
 ## Known stack suffix:
@@ -2134,17 +2019,8 @@ dtype -> tuple_dtype . MINUSGT dtype [ VAL SORT RPAREN LPAREN IN FUN EOF DATATYP
 ## Transitions:
 -- On MINUSGT shift to state 156
 ## Reductions:
--- On VAL reduce production dtype -> tuple_dtype
--- On SORT reduce production dtype -> tuple_dtype
--- On RPAREN reduce production dtype -> tuple_dtype
--- On LPAREN reduce production dtype -> tuple_dtype
--- On IN reduce production dtype -> tuple_dtype
--- On FUN reduce production dtype -> tuple_dtype
--- On EOF reduce production dtype -> tuple_dtype
--- On DATATYPE reduce production dtype -> tuple_dtype
--- On COMMA reduce production dtype -> tuple_dtype
--- On BAR reduce production dtype -> tuple_dtype
--- On AND reduce production dtype -> tuple_dtype
+-- On VAL SORT RPAREN LPAREN IN FUN EOF DATATYPE COMMA BAR AND
+--   reduce production dtype -> tuple_dtype
 
 State 156:
 ## Known stack suffix:
@@ -2173,7 +2049,8 @@ dtype -> tuple_dtype MINUSGT . dtype [ VAL SORT RPAREN LPAREN IN FUN EOF DATATYP
 -- On exi_ivar_decls shift to state 167
 -- On dtype shift to state 180
 ## Reductions:
--- On DOT reduce production tvar_para ->
+-- On DOT
+--   reduce production tvar_para ->
 
 State 157:
 ## Known stack suffix:
@@ -2184,19 +2061,8 @@ rev_tuple_dtype -> simple_dtype . [ VAL TIMES SORT RPAREN MINUSGT LPAREN IN FUN 
 ## Transitions:
 -- On IDENT shift to state 158
 ## Reductions:
--- On VAL reduce production rev_tuple_dtype -> simple_dtype
--- On TIMES reduce production rev_tuple_dtype -> simple_dtype
--- On SORT reduce production rev_tuple_dtype -> simple_dtype
--- On RPAREN reduce production rev_tuple_dtype -> simple_dtype
--- On MINUSGT reduce production rev_tuple_dtype -> simple_dtype
--- On LPAREN reduce production rev_tuple_dtype -> simple_dtype
--- On IN reduce production rev_tuple_dtype -> simple_dtype
--- On FUN reduce production rev_tuple_dtype -> simple_dtype
--- On EOF reduce production rev_tuple_dtype -> simple_dtype
--- On DATATYPE reduce production rev_tuple_dtype -> simple_dtype
--- On COMMA reduce production rev_tuple_dtype -> simple_dtype
--- On BAR reduce production rev_tuple_dtype -> simple_dtype
--- On AND reduce production rev_tuple_dtype -> simple_dtype
+-- On VAL TIMES SORT RPAREN MINUSGT LPAREN IN FUN EOF DATATYPE COMMA BAR AND
+--   reduce production rev_tuple_dtype -> simple_dtype
 
 State 158:
 ## Known stack suffix:
@@ -2216,18 +2082,8 @@ tuple_dtype -> rev_tuple_dtype . [ VAL SORT RPAREN MINUSGT LPAREN IN FUN EOF DAT
 ## Transitions:
 -- On TIMES shift to state 160
 ## Reductions:
--- On VAL reduce production tuple_dtype -> rev_tuple_dtype
--- On SORT reduce production tuple_dtype -> rev_tuple_dtype
--- On RPAREN reduce production tuple_dtype -> rev_tuple_dtype
--- On MINUSGT reduce production tuple_dtype -> rev_tuple_dtype
--- On LPAREN reduce production tuple_dtype -> rev_tuple_dtype
--- On IN reduce production tuple_dtype -> rev_tuple_dtype
--- On FUN reduce production tuple_dtype -> rev_tuple_dtype
--- On EOF reduce production tuple_dtype -> rev_tuple_dtype
--- On DATATYPE reduce production tuple_dtype -> rev_tuple_dtype
--- On COMMA reduce production tuple_dtype -> rev_tuple_dtype
--- On BAR reduce production tuple_dtype -> rev_tuple_dtype
--- On AND reduce production tuple_dtype -> rev_tuple_dtype
+-- On VAL SORT RPAREN MINUSGT LPAREN IN FUN EOF DATATYPE COMMA BAR AND
+--   reduce production tuple_dtype -> rev_tuple_dtype
 
 State 160:
 ## Known stack suffix:
@@ -2276,7 +2132,8 @@ simple_dtype -> LPAREN . dtype RPAREN [ VAL TIMES SORT RPAREN MINUSGT LPAREN IN 
 -- On exi_ivar_decls shift to state 167
 -- On dtype shift to state 171
 ## Reductions:
--- On DOT reduce production tvar_para ->
+-- On DOT
+--   reduce production tvar_para ->
 
 State 162:
 ## Known stack suffix:
@@ -2287,19 +2144,8 @@ simple_dtype -> named_dtype . LPAREN open_comma_index_list [ VAL TIMES SORT RPAR
 ## Transitions:
 -- On LPAREN shift to state 163
 ## Reductions:
--- On VAL reduce production simple_dtype -> named_dtype
--- On TIMES reduce production simple_dtype -> named_dtype
--- On SORT reduce production simple_dtype -> named_dtype
--- On RPAREN reduce production simple_dtype -> named_dtype
--- On MINUSGT reduce production simple_dtype -> named_dtype
--- On IN reduce production simple_dtype -> named_dtype
--- On IDENT reduce production simple_dtype -> named_dtype
--- On FUN reduce production simple_dtype -> named_dtype
--- On EOF reduce production simple_dtype -> named_dtype
--- On DATATYPE reduce production simple_dtype -> named_dtype
--- On COMMA reduce production simple_dtype -> named_dtype
--- On BAR reduce production simple_dtype -> named_dtype
--- On AND reduce production simple_dtype -> named_dtype
+-- On VAL TIMES SORT RPAREN MINUSGT IN IDENT FUN EOF DATATYPE COMMA BAR AND
+--   reduce production simple_dtype -> named_dtype
 
 State 163:
 ## Known stack suffix:
@@ -2365,7 +2211,8 @@ dtype -> metric EQGT . dtype [ VAL SORT RPAREN LPAREN IN FUN EOF DATATYPE COMMA 
 -- On exi_ivar_decls shift to state 167
 -- On dtype shift to state 170
 ## Reductions:
--- On DOT reduce production tvar_para ->
+-- On DOT
+--   reduce production tvar_para ->
 
 State 167:
 ## Known stack suffix:
@@ -2404,19 +2251,8 @@ simple_dtype -> exi_ivar_decls simple_dtype . [ VAL TIMES SORT RPAREN MINUSGT LP
 ## Transitions:
 -- On IDENT shift to state 158
 ## Reductions:
--- On VAL reduce production simple_dtype -> exi_ivar_decls simple_dtype
--- On TIMES reduce production simple_dtype -> exi_ivar_decls simple_dtype
--- On SORT reduce production simple_dtype -> exi_ivar_decls simple_dtype
--- On RPAREN reduce production simple_dtype -> exi_ivar_decls simple_dtype
--- On MINUSGT reduce production simple_dtype -> exi_ivar_decls simple_dtype
--- On LPAREN reduce production simple_dtype -> exi_ivar_decls simple_dtype
--- On IN reduce production simple_dtype -> exi_ivar_decls simple_dtype
--- On FUN reduce production simple_dtype -> exi_ivar_decls simple_dtype
--- On EOF reduce production simple_dtype -> exi_ivar_decls simple_dtype
--- On DATATYPE reduce production simple_dtype -> exi_ivar_decls simple_dtype
--- On COMMA reduce production simple_dtype -> exi_ivar_decls simple_dtype
--- On BAR reduce production simple_dtype -> exi_ivar_decls simple_dtype
--- On AND reduce production simple_dtype -> exi_ivar_decls simple_dtype
+-- On VAL TIMES SORT RPAREN MINUSGT LPAREN IN FUN EOF DATATYPE COMMA BAR AND
+--   reduce production simple_dtype -> exi_ivar_decls simple_dtype
 
 State 170:
 ## Known stack suffix:
@@ -2476,7 +2312,8 @@ open_comma_dtype_list -> COMMA . dtype LPAREN [ IDENT ]
 -- On exi_ivar_decls shift to state 167
 -- On dtype shift to state 174
 ## Reductions:
--- On DOT reduce production tvar_para ->
+-- On DOT
+--   reduce production tvar_para ->
 
 State 174:
 ## Known stack suffix:
@@ -2535,19 +2372,8 @@ rev_tuple_dtype -> rev_tuple_dtype TIMES simple_dtype . [ VAL TIMES SORT RPAREN 
 ## Transitions:
 -- On IDENT shift to state 158
 ## Reductions:
--- On VAL reduce production rev_tuple_dtype -> rev_tuple_dtype TIMES simple_dtype
--- On TIMES reduce production rev_tuple_dtype -> rev_tuple_dtype TIMES simple_dtype
--- On SORT reduce production rev_tuple_dtype -> rev_tuple_dtype TIMES simple_dtype
--- On RPAREN reduce production rev_tuple_dtype -> rev_tuple_dtype TIMES simple_dtype
--- On MINUSGT reduce production rev_tuple_dtype -> rev_tuple_dtype TIMES simple_dtype
--- On LPAREN reduce production rev_tuple_dtype -> rev_tuple_dtype TIMES simple_dtype
--- On IN reduce production rev_tuple_dtype -> rev_tuple_dtype TIMES simple_dtype
--- On FUN reduce production rev_tuple_dtype -> rev_tuple_dtype TIMES simple_dtype
--- On EOF reduce production rev_tuple_dtype -> rev_tuple_dtype TIMES simple_dtype
--- On DATATYPE reduce production rev_tuple_dtype -> rev_tuple_dtype TIMES simple_dtype
--- On COMMA reduce production rev_tuple_dtype -> rev_tuple_dtype TIMES simple_dtype
--- On BAR reduce production rev_tuple_dtype -> rev_tuple_dtype TIMES simple_dtype
--- On AND reduce production rev_tuple_dtype -> rev_tuple_dtype TIMES simple_dtype
+-- On VAL TIMES SORT RPAREN MINUSGT LPAREN IN FUN EOF DATATYPE COMMA BAR AND
+--   reduce production rev_tuple_dtype -> rev_tuple_dtype TIMES simple_dtype
 
 State 180:
 ## Known stack suffix:
@@ -2588,10 +2414,10 @@ tvar_para -> tvar . [ DOT ]
 -- On RPAREN shift to state 184
 -- On COMMA shift to state 185
 ## Reductions:
--- On TIMES reduce production simple_dtype -> tvar
--- On MINUSGT reduce production simple_dtype -> tvar
--- On IDENT reduce production simple_dtype -> tvar
--- On DOT reduce production tvar_para -> tvar
+-- On TIMES MINUSGT IDENT
+--   reduce production simple_dtype -> tvar
+-- On DOT
+--   reduce production tvar_para -> tvar
 
 State 184:
 ## Known stack suffix:
@@ -2678,12 +2504,8 @@ val_decls -> val_decl . [ VAL SORT IN FUN EOF DATATYPE ]
 ## Transitions:
 -- On AND shift to state 193
 ## Reductions:
--- On VAL reduce production val_decls -> val_decl
--- On SORT reduce production val_decls -> val_decl
--- On IN reduce production val_decls -> val_decl
--- On FUN reduce production val_decls -> val_decl
--- On EOF reduce production val_decls -> val_decl
--- On DATATYPE reduce production val_decls -> val_decl
+-- On VAL SORT IN FUN EOF DATATYPE
+--   reduce production val_decls -> val_decl
 
 State 193:
 ## Known stack suffix:
@@ -2800,7 +2622,8 @@ simple_exp -> LPAREN . exp COLON dtype RPAREN [ WITHTYPE VAL TRUE TIMES TILDE TH
 -- On constant shift to state 252
 -- On app_exp shift to state 253
 ## Reductions:
--- On RPAREN reduce production exp_list ->
+-- On RPAREN
+--   reduce production exp_list ->
 
 State 199:
 ## Known stack suffix:
@@ -2879,7 +2702,8 @@ decl -> FUN . fun_decls [ VAL SORT IN FUN EOF DATATYPE ]
 -- On fun_decls shift to state 278
 -- On fun_decl shift to state 279
 ## Reductions:
--- On IDENT reduce production tvar_para ->
+-- On IDENT
+--   reduce production tvar_para ->
 
 State 206:
 ## Known stack suffix:
@@ -2945,7 +2769,8 @@ fun_args -> simple_pattern . [ EQ ]
 -- On fun_args shift to state 210
 -- On constant shift to state 32
 ## Reductions:
--- On EQ reduce production fun_args -> simple_pattern
+-- On EQ
+--   reduce production fun_args -> simple_pattern
 
 State 210:
 ## Known stack suffix:
@@ -3017,7 +2842,8 @@ simple_exp -> LBRACKET . exp_list RBRACKET [ WITHTYPE VAL TRUE TIMES TILDE THEN 
 -- On constant shift to state 252
 -- On app_exp shift to state 253
 ## Reductions:
--- On RBRACKET reduce production exp_list ->
+-- On RBRACKET
+--   reduce production exp_list ->
 
 State 214:
 ## Known stack suffix:
@@ -3249,37 +3075,8 @@ case_clauses -> case_clause . [ WITHTYPE VAL TIMES THEN SORT RPAREN RBRACKET PLU
 ## Transitions:
 -- On BAR shift to state 228
 ## Reductions:
--- On WITHTYPE reduce production case_clauses -> case_clause
--- On VAL reduce production case_clauses -> case_clause
--- On TIMES reduce production case_clauses -> case_clause
--- On THEN reduce production case_clauses -> case_clause
--- On SORT reduce production case_clauses -> case_clause
--- On RPAREN reduce production case_clauses -> case_clause
--- On RBRACKET reduce production case_clauses -> case_clause
--- On PLUS reduce production case_clauses -> case_clause
--- On PERCENT reduce production case_clauses -> case_clause
--- On OF reduce production case_clauses -> case_clause
--- On MINUS reduce production case_clauses -> case_clause
--- On LTGT reduce production case_clauses -> case_clause
--- On LTEQ reduce production case_clauses -> case_clause
--- On LT reduce production case_clauses -> case_clause
--- On IN reduce production case_clauses -> case_clause
--- On GTEQ reduce production case_clauses -> case_clause
--- On GT reduce production case_clauses -> case_clause
--- On FUN reduce production case_clauses -> case_clause
--- On EQ reduce production case_clauses -> case_clause
--- On EOF reduce production case_clauses -> case_clause
--- On END reduce production case_clauses -> case_clause
--- On ELSE reduce production case_clauses -> case_clause
--- On DIV reduce production case_clauses -> case_clause
--- On DATATYPE reduce production case_clauses -> case_clause
--- On COMMA reduce production case_clauses -> case_clause
--- On COLONCOLON reduce production case_clauses -> case_clause
--- On COLON reduce production case_clauses -> case_clause
--- On BARBAR reduce production case_clauses -> case_clause
--- On APPEND reduce production case_clauses -> case_clause
--- On AND reduce production case_clauses -> case_clause
--- On AMPERAMPER reduce production case_clauses -> case_clause
+-- On WITHTYPE VAL TIMES THEN SORT RPAREN RBRACKET PLUS PERCENT OF MINUS LTGT LTEQ LT IN GTEQ GT FUN EQ EOF END ELSE DIV DATATYPE COMMA COLONCOLON COLON BARBAR APPEND AND AMPERAMPER
+--   reduce production case_clauses -> case_clause
 
 State 228:
 ## Known stack suffix:
@@ -3478,24 +3275,8 @@ exp -> exp exp_lop exp . [ WITHTYPE VAL TIMES THEN SORT RPAREN RBRACKET PLUS PER
 -- On exp_aop2 shift to state 248
 -- On exp_aop1 shift to state 250
 ## Reductions:
--- On WITHTYPE reduce production exp -> exp exp_lop exp
--- On VAL reduce production exp -> exp exp_lop exp
--- On THEN reduce production exp -> exp exp_lop exp
--- On SORT reduce production exp -> exp exp_lop exp
--- On RPAREN reduce production exp -> exp exp_lop exp
--- On RBRACKET reduce production exp -> exp exp_lop exp
--- On OF reduce production exp -> exp exp_lop exp
--- On IN reduce production exp -> exp exp_lop exp
--- On FUN reduce production exp -> exp exp_lop exp
--- On EQ reduce production exp -> exp exp_lop exp
--- On EOF reduce production exp -> exp exp_lop exp
--- On END reduce production exp -> exp exp_lop exp
--- On ELSE reduce production exp -> exp exp_lop exp
--- On DATATYPE reduce production exp -> exp exp_lop exp
--- On COMMA reduce production exp -> exp exp_lop exp
--- On COLON reduce production exp -> exp exp_lop exp
--- On BAR reduce production exp -> exp exp_lop exp
--- On AND reduce production exp -> exp exp_lop exp
+-- On WITHTYPE VAL THEN SORT RPAREN RBRACKET OF IN FUN EQ EOF END ELSE DATATYPE COMMA COLON BAR AND
+--   reduce production exp -> exp exp_lop exp
 
 State 244:
 ## Known stack suffix:
@@ -3547,31 +3328,8 @@ exp -> exp . exp_lop exp [ WITHTYPE VAL TIMES THEN SORT RPAREN RBRACKET PLUS PER
 -- On exp_aop2 shift to state 248
 -- On exp_aop1 shift to state 250
 ## Reductions:
--- On WITHTYPE reduce production exp -> exp exp_bop2 exp
--- On VAL reduce production exp -> exp exp_bop2 exp
--- On THEN reduce production exp -> exp exp_bop2 exp
--- On SORT reduce production exp -> exp exp_bop2 exp
--- On RPAREN reduce production exp -> exp exp_bop2 exp
--- On RBRACKET reduce production exp -> exp exp_bop2 exp
--- On OF reduce production exp -> exp exp_bop2 exp
--- On LTGT reduce production exp -> exp exp_bop2 exp
--- On LTEQ reduce production exp -> exp exp_bop2 exp
--- On LT reduce production exp -> exp exp_bop2 exp
--- On IN reduce production exp -> exp exp_bop2 exp
--- On GTEQ reduce production exp -> exp exp_bop2 exp
--- On GT reduce production exp -> exp exp_bop2 exp
--- On FUN reduce production exp -> exp exp_bop2 exp
--- On EQ reduce production exp -> exp exp_bop2 exp
--- On EOF reduce production exp -> exp exp_bop2 exp
--- On END reduce production exp -> exp exp_bop2 exp
--- On ELSE reduce production exp -> exp exp_bop2 exp
--- On DATATYPE reduce production exp -> exp exp_bop2 exp
--- On COMMA reduce production exp -> exp exp_bop2 exp
--- On COLON reduce production exp -> exp exp_bop2 exp
--- On BARBAR reduce production exp -> exp exp_bop2 exp
--- On BAR reduce production exp -> exp exp_bop2 exp
--- On AND reduce production exp -> exp exp_bop2 exp
--- On AMPERAMPER reduce production exp -> exp exp_bop2 exp
+-- On WITHTYPE VAL THEN SORT RPAREN RBRACKET OF LTGT LTEQ LT IN GTEQ GT FUN EQ EOF END ELSE DATATYPE COMMA COLON BARBAR BAR AND AMPERAMPER
+--   reduce production exp -> exp exp_bop2 exp
 
 State 246:
 ## Known stack suffix:
@@ -3628,26 +3386,8 @@ exp -> exp . exp_lop exp [ WITHTYPE VAL TIMES THEN SORT RPAREN RBRACKET PLUS PER
 -- On exp_aop2 shift to state 248
 -- On exp_aop1 shift to state 250
 ## Reductions:
--- On WITHTYPE reduce production exp -> exp exp_bop1 exp
--- On VAL reduce production exp -> exp exp_bop1 exp
--- On THEN reduce production exp -> exp exp_bop1 exp
--- On SORT reduce production exp -> exp exp_bop1 exp
--- On RPAREN reduce production exp -> exp exp_bop1 exp
--- On RBRACKET reduce production exp -> exp exp_bop1 exp
--- On OF reduce production exp -> exp exp_bop1 exp
--- On IN reduce production exp -> exp exp_bop1 exp
--- On FUN reduce production exp -> exp exp_bop1 exp
--- On EQ reduce production exp -> exp exp_bop1 exp
--- On EOF reduce production exp -> exp exp_bop1 exp
--- On END reduce production exp -> exp exp_bop1 exp
--- On ELSE reduce production exp -> exp exp_bop1 exp
--- On DATATYPE reduce production exp -> exp exp_bop1 exp
--- On COMMA reduce production exp -> exp exp_bop1 exp
--- On COLON reduce production exp -> exp exp_bop1 exp
--- On BARBAR reduce production exp -> exp exp_bop1 exp
--- On BAR reduce production exp -> exp exp_bop1 exp
--- On AND reduce production exp -> exp exp_bop1 exp
--- On AMPERAMPER reduce production exp -> exp exp_bop1 exp
+-- On WITHTYPE VAL THEN SORT RPAREN RBRACKET OF IN FUN EQ EOF END ELSE DATATYPE COMMA COLON BARBAR BAR AND AMPERAMPER
+--   reduce production exp -> exp exp_bop1 exp
 
 State 248:
 ## Known stack suffix:
@@ -3694,36 +3434,8 @@ exp -> exp . exp_lop exp [ WITHTYPE VAL TIMES THEN SORT RPAREN RBRACKET PLUS PER
 -- On exp_aop2 shift to state 248
 -- On exp_aop1 shift to state 250
 ## Reductions:
--- On WITHTYPE reduce production exp -> exp exp_aop2 exp
--- On VAL reduce production exp -> exp exp_aop2 exp
--- On TIMES reduce production exp -> exp exp_aop2 exp
--- On THEN reduce production exp -> exp exp_aop2 exp
--- On SORT reduce production exp -> exp exp_aop2 exp
--- On RPAREN reduce production exp -> exp exp_aop2 exp
--- On RBRACKET reduce production exp -> exp exp_aop2 exp
--- On PLUS reduce production exp -> exp exp_aop2 exp
--- On PERCENT reduce production exp -> exp exp_aop2 exp
--- On OF reduce production exp -> exp exp_aop2 exp
--- On MINUS reduce production exp -> exp exp_aop2 exp
--- On LTGT reduce production exp -> exp exp_aop2 exp
--- On LTEQ reduce production exp -> exp exp_aop2 exp
--- On LT reduce production exp -> exp exp_aop2 exp
--- On IN reduce production exp -> exp exp_aop2 exp
--- On GTEQ reduce production exp -> exp exp_aop2 exp
--- On GT reduce production exp -> exp exp_aop2 exp
--- On FUN reduce production exp -> exp exp_aop2 exp
--- On EQ reduce production exp -> exp exp_aop2 exp
--- On EOF reduce production exp -> exp exp_aop2 exp
--- On END reduce production exp -> exp exp_aop2 exp
--- On ELSE reduce production exp -> exp exp_aop2 exp
--- On DIV reduce production exp -> exp exp_aop2 exp
--- On DATATYPE reduce production exp -> exp exp_aop2 exp
--- On COMMA reduce production exp -> exp exp_aop2 exp
--- On COLON reduce production exp -> exp exp_aop2 exp
--- On BARBAR reduce production exp -> exp exp_aop2 exp
--- On BAR reduce production exp -> exp exp_aop2 exp
--- On AND reduce production exp -> exp exp_aop2 exp
--- On AMPERAMPER reduce production exp -> exp exp_aop2 exp
+-- On WITHTYPE VAL TIMES THEN SORT RPAREN RBRACKET PLUS PERCENT OF MINUS LTGT LTEQ LT IN GTEQ GT FUN EQ EOF END ELSE DIV DATATYPE COMMA COLON BARBAR BAR AND AMPERAMPER
+--   reduce production exp -> exp exp_aop2 exp
 
 State 250:
 ## Known stack suffix:
@@ -3773,33 +3485,8 @@ exp -> exp . exp_lop exp [ WITHTYPE VAL TIMES THEN SORT RPAREN RBRACKET PLUS PER
 -- On exp_aop2 shift to state 248
 -- On exp_aop1 shift to state 250
 ## Reductions:
--- On WITHTYPE reduce production exp -> exp exp_aop1 exp
--- On VAL reduce production exp -> exp exp_aop1 exp
--- On THEN reduce production exp -> exp exp_aop1 exp
--- On SORT reduce production exp -> exp exp_aop1 exp
--- On RPAREN reduce production exp -> exp exp_aop1 exp
--- On RBRACKET reduce production exp -> exp exp_aop1 exp
--- On PLUS reduce production exp -> exp exp_aop1 exp
--- On OF reduce production exp -> exp exp_aop1 exp
--- On MINUS reduce production exp -> exp exp_aop1 exp
--- On LTGT reduce production exp -> exp exp_aop1 exp
--- On LTEQ reduce production exp -> exp exp_aop1 exp
--- On LT reduce production exp -> exp exp_aop1 exp
--- On IN reduce production exp -> exp exp_aop1 exp
--- On GTEQ reduce production exp -> exp exp_aop1 exp
--- On GT reduce production exp -> exp exp_aop1 exp
--- On FUN reduce production exp -> exp exp_aop1 exp
--- On EQ reduce production exp -> exp exp_aop1 exp
--- On EOF reduce production exp -> exp exp_aop1 exp
--- On END reduce production exp -> exp exp_aop1 exp
--- On ELSE reduce production exp -> exp exp_aop1 exp
--- On DATATYPE reduce production exp -> exp exp_aop1 exp
--- On COMMA reduce production exp -> exp exp_aop1 exp
--- On COLON reduce production exp -> exp exp_aop1 exp
--- On BARBAR reduce production exp -> exp exp_aop1 exp
--- On BAR reduce production exp -> exp exp_aop1 exp
--- On AND reduce production exp -> exp exp_aop1 exp
--- On AMPERAMPER reduce production exp -> exp exp_aop1 exp
+-- On WITHTYPE VAL THEN SORT RPAREN RBRACKET PLUS OF MINUS LTGT LTEQ LT IN GTEQ GT FUN EQ EOF END ELSE DATATYPE COMMA COLON BARBAR BAR AND AMPERAMPER
+--   reduce production exp -> exp exp_aop1 exp
 
 State 252:
 ## Known stack suffix:
@@ -3831,38 +3518,8 @@ exp -> app_exp . [ WITHTYPE VAL TIMES THEN SORT RPAREN RBRACKET PLUS PERCENT OF 
 -- On simple_exp shift to state 254
 -- On constant shift to state 252
 ## Reductions:
--- On WITHTYPE reduce production exp -> app_exp
--- On VAL reduce production exp -> app_exp
--- On TIMES reduce production exp -> app_exp
--- On THEN reduce production exp -> app_exp
--- On SORT reduce production exp -> app_exp
--- On RPAREN reduce production exp -> app_exp
--- On RBRACKET reduce production exp -> app_exp
--- On PLUS reduce production exp -> app_exp
--- On PERCENT reduce production exp -> app_exp
--- On OF reduce production exp -> app_exp
--- On MINUS reduce production exp -> app_exp
--- On LTGT reduce production exp -> app_exp
--- On LTEQ reduce production exp -> app_exp
--- On LT reduce production exp -> app_exp
--- On IN reduce production exp -> app_exp
--- On GTEQ reduce production exp -> app_exp
--- On GT reduce production exp -> app_exp
--- On FUN reduce production exp -> app_exp
--- On EQ reduce production exp -> app_exp
--- On EOF reduce production exp -> app_exp
--- On END reduce production exp -> app_exp
--- On ELSE reduce production exp -> app_exp
--- On DIV reduce production exp -> app_exp
--- On DATATYPE reduce production exp -> app_exp
--- On COMMA reduce production exp -> app_exp
--- On COLONCOLON reduce production exp -> app_exp
--- On COLON reduce production exp -> app_exp
--- On BARBAR reduce production exp -> app_exp
--- On BAR reduce production exp -> app_exp
--- On APPEND reduce production exp -> app_exp
--- On AND reduce production exp -> app_exp
--- On AMPERAMPER reduce production exp -> app_exp
+-- On WITHTYPE VAL TIMES THEN SORT RPAREN RBRACKET PLUS PERCENT OF MINUS LTGT LTEQ LT IN GTEQ GT FUN EQ EOF END ELSE DIV DATATYPE COMMA COLONCOLON COLON BARBAR BAR APPEND AND AMPERAMPER
+--   reduce production exp -> app_exp
 
 State 254:
 ## Known stack suffix:
@@ -3904,24 +3561,8 @@ exp -> exp . exp_lop exp [ WITHTYPE VAL TIMES THEN SORT RPAREN RBRACKET PLUS PER
 -- On exp_aop2 shift to state 248
 -- On exp_aop1 shift to state 250
 ## Reductions:
--- On WITHTYPE reduce production case_clause -> pattern EQGT exp
--- On VAL reduce production case_clause -> pattern EQGT exp
--- On THEN reduce production case_clause -> pattern EQGT exp
--- On SORT reduce production case_clause -> pattern EQGT exp
--- On RPAREN reduce production case_clause -> pattern EQGT exp
--- On RBRACKET reduce production case_clause -> pattern EQGT exp
--- On OF reduce production case_clause -> pattern EQGT exp
--- On IN reduce production case_clause -> pattern EQGT exp
--- On FUN reduce production case_clause -> pattern EQGT exp
--- On EQ reduce production case_clause -> pattern EQGT exp
--- On EOF reduce production case_clause -> pattern EQGT exp
--- On END reduce production case_clause -> pattern EQGT exp
--- On ELSE reduce production case_clause -> pattern EQGT exp
--- On DATATYPE reduce production case_clause -> pattern EQGT exp
--- On COMMA reduce production case_clause -> pattern EQGT exp
--- On COLON reduce production case_clause -> pattern EQGT exp
--- On BAR reduce production case_clause -> pattern EQGT exp
--- On AND reduce production case_clause -> pattern EQGT exp
+-- On WITHTYPE VAL THEN SORT RPAREN RBRACKET OF IN FUN EQ EOF END ELSE DATATYPE COMMA COLON BAR AND
+--   reduce production case_clause -> pattern EQGT exp
 
 State 256:
 ## Known stack suffix:
@@ -4083,24 +3724,8 @@ exp -> IF exp THEN exp ELSE exp . [ WITHTYPE VAL TIMES THEN SORT RPAREN RBRACKET
 -- On exp_aop2 shift to state 248
 -- On exp_aop1 shift to state 250
 ## Reductions:
--- On WITHTYPE reduce production exp -> IF exp THEN exp ELSE exp
--- On VAL reduce production exp -> IF exp THEN exp ELSE exp
--- On THEN reduce production exp -> IF exp THEN exp ELSE exp
--- On SORT reduce production exp -> IF exp THEN exp ELSE exp
--- On RPAREN reduce production exp -> IF exp THEN exp ELSE exp
--- On RBRACKET reduce production exp -> IF exp THEN exp ELSE exp
--- On OF reduce production exp -> IF exp THEN exp ELSE exp
--- On IN reduce production exp -> IF exp THEN exp ELSE exp
--- On FUN reduce production exp -> IF exp THEN exp ELSE exp
--- On EQ reduce production exp -> IF exp THEN exp ELSE exp
--- On EOF reduce production exp -> IF exp THEN exp ELSE exp
--- On END reduce production exp -> IF exp THEN exp ELSE exp
--- On ELSE reduce production exp -> IF exp THEN exp ELSE exp
--- On DATATYPE reduce production exp -> IF exp THEN exp ELSE exp
--- On COMMA reduce production exp -> IF exp THEN exp ELSE exp
--- On COLON reduce production exp -> IF exp THEN exp ELSE exp
--- On BAR reduce production exp -> IF exp THEN exp ELSE exp
--- On AND reduce production exp -> IF exp THEN exp ELSE exp
+-- On WITHTYPE VAL THEN SORT RPAREN RBRACKET OF IN FUN EQ EOF END ELSE DATATYPE COMMA COLON BAR AND
+--   reduce production exp -> IF exp THEN exp ELSE exp
 
 State 262:
 ## Known stack suffix:
@@ -4154,7 +3779,8 @@ exp_list -> exp . comma_exp_list [ RBRACKET ]
 -- On exp_aop1 shift to state 250
 -- On comma_exp_list shift to state 268
 ## Reductions:
--- On RBRACKET reduce production comma_exp_list ->
+-- On RBRACKET
+--   reduce production comma_exp_list ->
 
 State 265:
 ## Known stack suffix:
@@ -4216,8 +3842,8 @@ exp -> exp . exp_lop exp [ TIMES RPAREN RBRACKET PLUS PERCENT MINUS LTGT LTEQ LT
 -- On exp_aop1 shift to state 250
 -- On comma_exp_list shift to state 267
 ## Reductions:
--- On RPAREN reduce production comma_exp_list ->
--- On RBRACKET reduce production comma_exp_list ->
+-- On RPAREN RBRACKET
+--   reduce production comma_exp_list ->
 
 State 267:
 ## Known stack suffix:
@@ -4269,15 +3895,8 @@ fun_decl_clause -> IDENT fun_args EQ exp . [ WITHTYPE VAL SORT IN FUN EOF DATATY
 -- On exp_aop2 shift to state 248
 -- On exp_aop1 shift to state 250
 ## Reductions:
--- On WITHTYPE reduce production fun_decl_clause -> IDENT fun_args EQ exp
--- On VAL reduce production fun_decl_clause -> IDENT fun_args EQ exp
--- On SORT reduce production fun_decl_clause -> IDENT fun_args EQ exp
--- On IN reduce production fun_decl_clause -> IDENT fun_args EQ exp
--- On FUN reduce production fun_decl_clause -> IDENT fun_args EQ exp
--- On EOF reduce production fun_decl_clause -> IDENT fun_args EQ exp
--- On DATATYPE reduce production fun_decl_clause -> IDENT fun_args EQ exp
--- On BAR reduce production fun_decl_clause -> IDENT fun_args EQ exp
--- On AND reduce production fun_decl_clause -> IDENT fun_args EQ exp
+-- On WITHTYPE VAL SORT IN FUN EOF DATATYPE BAR AND
+--   reduce production fun_decl_clause -> IDENT fun_args EQ exp
 
 State 270:
 ## Known stack suffix:
@@ -4288,13 +3907,8 @@ fun_decl -> tvar_para fun_decl_clauses . owithtype [ VAL SORT IN FUN EOF DATATYP
 -- On WITHTYPE shift to state 271
 -- On owithtype shift to state 273
 ## Reductions:
--- On VAL reduce production owithtype ->
--- On SORT reduce production owithtype ->
--- On IN reduce production owithtype ->
--- On FUN reduce production owithtype ->
--- On EOF reduce production owithtype ->
--- On DATATYPE reduce production owithtype ->
--- On AND reduce production owithtype ->
+-- On VAL SORT IN FUN EOF DATATYPE AND
+--   reduce production owithtype ->
 
 State 271:
 ## Known stack suffix:
@@ -4323,7 +3937,8 @@ owithtype -> WITHTYPE . dtype [ VAL SORT IN FUN EOF DATATYPE AND ]
 -- On exi_ivar_decls shift to state 167
 -- On dtype shift to state 272
 ## Reductions:
--- On DOT reduce production tvar_para ->
+-- On DOT
+--   reduce production tvar_para ->
 
 State 272:
 ## Known stack suffix:
@@ -4352,14 +3967,8 @@ fun_decl_clauses -> fun_decl_clause . [ WITHTYPE VAL SORT IN FUN EOF DATATYPE AN
 ## Transitions:
 -- On BAR shift to state 275
 ## Reductions:
--- On WITHTYPE reduce production fun_decl_clauses -> fun_decl_clause
--- On VAL reduce production fun_decl_clauses -> fun_decl_clause
--- On SORT reduce production fun_decl_clauses -> fun_decl_clause
--- On IN reduce production fun_decl_clauses -> fun_decl_clause
--- On FUN reduce production fun_decl_clauses -> fun_decl_clause
--- On EOF reduce production fun_decl_clauses -> fun_decl_clause
--- On DATATYPE reduce production fun_decl_clauses -> fun_decl_clause
--- On AND reduce production fun_decl_clauses -> fun_decl_clause
+-- On WITHTYPE VAL SORT IN FUN EOF DATATYPE AND
+--   reduce production fun_decl_clauses -> fun_decl_clause
 
 State 275:
 ## Known stack suffix:
@@ -4408,12 +4017,8 @@ fun_decls -> fun_decl . [ VAL SORT IN FUN EOF DATATYPE ]
 ## Transitions:
 -- On AND shift to state 280
 ## Reductions:
--- On VAL reduce production fun_decls -> fun_decl
--- On SORT reduce production fun_decls -> fun_decl
--- On IN reduce production fun_decls -> fun_decl
--- On FUN reduce production fun_decls -> fun_decl
--- On EOF reduce production fun_decls -> fun_decl
--- On DATATYPE reduce production fun_decls -> fun_decl
+-- On VAL SORT IN FUN EOF DATATYPE
+--   reduce production fun_decls -> fun_decl
 
 State 280:
 ## Known stack suffix:
@@ -4428,7 +4033,8 @@ fun_decls -> fun_decl AND . fun_decls [ VAL SORT IN FUN EOF DATATYPE ]
 -- On fun_decls shift to state 281
 -- On fun_decl shift to state 279
 ## Reductions:
--- On IDENT reduce production tvar_para ->
+-- On IDENT
+--   reduce production tvar_para ->
 
 State 281:
 ## Known stack suffix:
@@ -4452,7 +4058,8 @@ decl -> DATATYPE . union_decls [ VAL SORT IN FUN EOF DATATYPE ]
 -- On tvar_para shift to state 287
 -- On tvar shift to state 277
 ## Reductions:
--- On IDENT reduce production tvar_para ->
+-- On IDENT
+--   reduce production tvar_para ->
 
 State 283:
 ## Known stack suffix:
@@ -4472,12 +4079,8 @@ union_decls -> union_decl . [ VAL SORT IN FUN EOF DATATYPE ]
 ## Transitions:
 -- On AND shift to state 285
 ## Reductions:
--- On VAL reduce production union_decls -> union_decl
--- On SORT reduce production union_decls -> union_decl
--- On IN reduce production union_decls -> union_decl
--- On FUN reduce production union_decls -> union_decl
--- On EOF reduce production union_decls -> union_decl
--- On DATATYPE reduce production union_decls -> union_decl
+-- On VAL SORT IN FUN EOF DATATYPE
+--   reduce production union_decls -> union_decl
 
 State 285:
 ## Known stack suffix:
@@ -4492,7 +4095,8 @@ union_decls -> union_decl AND . union_decls [ VAL SORT IN FUN EOF DATATYPE ]
 -- On tvar_para shift to state 287
 -- On tvar shift to state 277
 ## Reductions:
--- On IDENT reduce production tvar_para ->
+-- On IDENT
+--   reduce production tvar_para ->
 
 State 286:
 ## Known stack suffix:
@@ -4521,7 +4125,8 @@ union_decl -> tvar_para IDENT . ud_sorts EQ union_field_decls [ VAL SORT IN FUN 
 -- On WITH shift to state 289
 -- On ud_sorts shift to state 297
 ## Reductions:
--- On EQ reduce production ud_sorts ->
+-- On EQ
+--   reduce production ud_sorts ->
 
 State 289:
 ## Known stack suffix:
@@ -4646,14 +4251,8 @@ union_field_decl -> IDENT . LPAREN open_comma_index_list dtype_opt [ VAL SORT IN
 -- On LPAREN shift to state 302
 -- On dtype_opt shift to state 305
 ## Reductions:
--- On VAL reduce production dtype_opt ->
--- On SORT reduce production dtype_opt ->
--- On IN reduce production dtype_opt ->
--- On FUN reduce production dtype_opt ->
--- On EOF reduce production dtype_opt ->
--- On DATATYPE reduce production dtype_opt ->
--- On BAR reduce production dtype_opt ->
--- On AND reduce production dtype_opt ->
+-- On VAL SORT IN FUN EOF DATATYPE BAR AND
+--   reduce production dtype_opt ->
 
 State 300:
 ## Known stack suffix:
@@ -4682,7 +4281,8 @@ dtype_opt -> OF . dtype [ VAL SORT IN FUN EOF DATATYPE BAR AND ]
 -- On exi_ivar_decls shift to state 167
 -- On dtype shift to state 301
 ## Reductions:
--- On DOT reduce production tvar_para ->
+-- On DOT
+--   reduce production tvar_para ->
 
 State 301:
 ## Known stack suffix:
@@ -4721,14 +4321,8 @@ union_field_decl -> IDENT LPAREN open_comma_index_list . dtype_opt [ VAL SORT IN
 -- On OF shift to state 300
 -- On dtype_opt shift to state 304
 ## Reductions:
--- On VAL reduce production dtype_opt ->
--- On SORT reduce production dtype_opt ->
--- On IN reduce production dtype_opt ->
--- On FUN reduce production dtype_opt ->
--- On EOF reduce production dtype_opt ->
--- On DATATYPE reduce production dtype_opt ->
--- On BAR reduce production dtype_opt ->
--- On AND reduce production dtype_opt ->
+-- On VAL SORT IN FUN EOF DATATYPE BAR AND
+--   reduce production dtype_opt ->
 
 State 304:
 ## Known stack suffix:
@@ -4766,13 +4360,8 @@ union_field_decls -> union_field_decl . [ VAL SORT IN FUN EOF DATATYPE AND ]
 ## Transitions:
 -- On BAR shift to state 308
 ## Reductions:
--- On VAL reduce production union_field_decls -> union_field_decl
--- On SORT reduce production union_field_decls -> union_field_decl
--- On IN reduce production union_field_decls -> union_field_decl
--- On FUN reduce production union_field_decls -> union_field_decl
--- On EOF reduce production union_field_decls -> union_field_decl
--- On DATATYPE reduce production union_field_decls -> union_field_decl
--- On AND reduce production union_field_decls -> union_field_decl
+-- On VAL SORT IN FUN EOF DATATYPE AND
+--   reduce production union_field_decls -> union_field_decl
 
 State 308:
 ## Known stack suffix:
@@ -4817,14 +4406,8 @@ union_field_decl -> uni_ivar_decls IDENT . LPAREN open_comma_index_list dtype_op
 -- On LPAREN shift to state 312
 -- On dtype_opt shift to state 315
 ## Reductions:
--- On VAL reduce production dtype_opt ->
--- On SORT reduce production dtype_opt ->
--- On IN reduce production dtype_opt ->
--- On FUN reduce production dtype_opt ->
--- On EOF reduce production dtype_opt ->
--- On DATATYPE reduce production dtype_opt ->
--- On BAR reduce production dtype_opt ->
--- On AND reduce production dtype_opt ->
+-- On VAL SORT IN FUN EOF DATATYPE BAR AND
+--   reduce production dtype_opt ->
 
 State 312:
 ## Known stack suffix:
@@ -4854,14 +4437,8 @@ union_field_decl -> uni_ivar_decls IDENT LPAREN open_comma_index_list . dtype_op
 -- On OF shift to state 300
 -- On dtype_opt shift to state 314
 ## Reductions:
--- On VAL reduce production dtype_opt ->
--- On SORT reduce production dtype_opt ->
--- On IN reduce production dtype_opt ->
--- On FUN reduce production dtype_opt ->
--- On EOF reduce production dtype_opt ->
--- On DATATYPE reduce production dtype_opt ->
--- On BAR reduce production dtype_opt ->
--- On AND reduce production dtype_opt ->
+-- On VAL SORT IN FUN EOF DATATYPE BAR AND
+--   reduce production dtype_opt ->
 
 State 314:
 ## Known stack suffix:
@@ -4973,8 +4550,8 @@ decls -> decl . [ IN EOF ]
 -- On decls shift to state 321
 -- On decl shift to state 320
 ## Reductions:
--- On IN reduce production decls -> decl
--- On EOF reduce production decls -> decl
+-- On IN EOF
+--   reduce production decls -> decl
 
 State 321:
 ## Known stack suffix:
@@ -5039,7 +4616,8 @@ simple_exp -> LPAREN exp . COLON dtype RPAREN [ WITHTYPE VAL TRUE TIMES TILDE TH
 -- On exp_aop1 shift to state 250
 -- On comma_exp_list shift to state 268
 ## Reductions:
--- On RPAREN reduce production comma_exp_list ->
+-- On RPAREN
+--   reduce production comma_exp_list ->
 
 State 325:
 ## Known stack suffix:
@@ -5068,7 +4646,8 @@ simple_exp -> LPAREN exp COLON . dtype RPAREN [ WITHTYPE VAL TRUE TIMES TILDE TH
 -- On exi_ivar_decls shift to state 167
 -- On dtype shift to state 326
 ## Reductions:
--- On DOT reduce production tvar_para ->
+-- On DOT
+--   reduce production tvar_para ->
 
 State 326:
 ## Known stack suffix:
@@ -5129,13 +4708,8 @@ val_decl -> pattern EQ exp . [ VAL SORT IN FUN EOF DATATYPE AND ]
 -- On exp_aop2 shift to state 248
 -- On exp_aop1 shift to state 250
 ## Reductions:
--- On VAL reduce production val_decl -> pattern EQ exp
--- On SORT reduce production val_decl -> pattern EQ exp
--- On IN reduce production val_decl -> pattern EQ exp
--- On FUN reduce production val_decl -> pattern EQ exp
--- On EOF reduce production val_decl -> pattern EQ exp
--- On DATATYPE reduce production val_decl -> pattern EQ exp
--- On AND reduce production val_decl -> pattern EQ exp
+-- On VAL SORT IN FUN EOF DATATYPE AND
+--   reduce production val_decl -> pattern EQ exp
 
 State 330:
 ## Known stack suffix:
@@ -5173,7 +4747,8 @@ var_typ_decl -> opname COLON . dtype [ VAL SORT IN FUN EOF DATATYPE ]
 -- On exi_ivar_decls shift to state 167
 -- On dtype shift to state 332
 ## Reductions:
--- On DOT reduce production tvar_para ->
+-- On DOT
+--   reduce production tvar_para ->
 
 State 332:
 ## Known stack suffix:

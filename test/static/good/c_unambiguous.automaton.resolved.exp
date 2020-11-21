@@ -132,11 +132,8 @@ pointer -> STAR . type_qualifier_list pointer [ RPAREN LPAREN LBRACK IDENTIFIER 
 -- On type_qualifier shift to state 14
 -- On pointer shift to state 15
 ## Reductions:
--- On RPAREN reduce production pointer -> STAR
--- On LPAREN reduce production pointer -> STAR
--- On LBRACK reduce production pointer -> STAR
--- On IDENTIFIER reduce production pointer -> STAR
--- On COMMA reduce production pointer -> STAR
+-- On RPAREN LPAREN LBRACK IDENTIFIER COMMA
+--   reduce production pointer -> STAR
 
 State 10:
 ## Known stack suffix:
@@ -161,11 +158,8 @@ type_qualifier_list -> type_qualifier_list . type_qualifier [ VOLATILE STAR RPAR
 -- On type_qualifier shift to state 12
 -- On pointer shift to state 13
 ## Reductions:
--- On RPAREN reduce production pointer -> STAR type_qualifier_list
--- On LPAREN reduce production pointer -> STAR type_qualifier_list
--- On LBRACK reduce production pointer -> STAR type_qualifier_list
--- On IDENTIFIER reduce production pointer -> STAR type_qualifier_list
--- On COMMA reduce production pointer -> STAR type_qualifier_list
+-- On RPAREN LPAREN LBRACK IDENTIFIER COMMA
+--   reduce production pointer -> STAR type_qualifier_list
 
 State 12:
 ## Known stack suffix:
@@ -278,32 +272,8 @@ direct_declarator -> direct_declarator . LPAREN RPAREN [ VOLATILE VOID UNSIGNED 
 -- On LPAREN shift to state 23
 -- On LBRACK shift to state 162
 ## Reductions:
--- On VOLATILE reduce production declarator -> pointer direct_declarator
--- On VOID reduce production declarator -> pointer direct_declarator
--- On UNSIGNED reduce production declarator -> pointer direct_declarator
--- On UNION reduce production declarator -> pointer direct_declarator
--- On TYPE_NAME reduce production declarator -> pointer direct_declarator
--- On TYPEDEF reduce production declarator -> pointer direct_declarator
--- On STRUCT reduce production declarator -> pointer direct_declarator
--- On STATIC reduce production declarator -> pointer direct_declarator
--- On SIGNED reduce production declarator -> pointer direct_declarator
--- On SHORT reduce production declarator -> pointer direct_declarator
--- On SEMICOLON reduce production declarator -> pointer direct_declarator
--- On RPAREN reduce production declarator -> pointer direct_declarator
--- On REGISTER reduce production declarator -> pointer direct_declarator
--- On LONG reduce production declarator -> pointer direct_declarator
--- On LBRACE reduce production declarator -> pointer direct_declarator
--- On INT reduce production declarator -> pointer direct_declarator
--- On FLOAT reduce production declarator -> pointer direct_declarator
--- On EXTERN reduce production declarator -> pointer direct_declarator
--- On EQUAL reduce production declarator -> pointer direct_declarator
--- On ENUM reduce production declarator -> pointer direct_declarator
--- On DOUBLE reduce production declarator -> pointer direct_declarator
--- On CONST reduce production declarator -> pointer direct_declarator
--- On COMMA reduce production declarator -> pointer direct_declarator
--- On COLON reduce production declarator -> pointer direct_declarator
--- On CHAR reduce production declarator -> pointer direct_declarator
--- On AUTO reduce production declarator -> pointer direct_declarator
+-- On VOLATILE VOID UNSIGNED UNION TYPE_NAME TYPEDEF STRUCT STATIC SIGNED SHORT SEMICOLON RPAREN REGISTER LONG LBRACE INT FLOAT EXTERN EQUAL ENUM DOUBLE CONST COMMA COLON CHAR AUTO
+--   reduce production declarator -> pointer direct_declarator
 
 State 23:
 ## Known stack suffix:
@@ -434,8 +404,8 @@ enumerator -> IDENTIFIER . EQUAL constant_expression [ RBRACE COMMA ]
 ## Transitions:
 -- On EQUAL shift to state 33
 ## Reductions:
--- On RBRACE reduce production enumerator -> IDENTIFIER
--- On COMMA reduce production enumerator -> IDENTIFIER
+-- On RBRACE COMMA
+--   reduce production enumerator -> IDENTIFIER
 
 State 33:
 ## Known stack suffix:
@@ -859,42 +829,8 @@ unary_expression -> postfix_expression . [ XOR_ASSIGN SUB_ASSIGN STAR SLASH SEMI
 -- On DOT shift to state 135
 -- On DEC_OP shift to state 137
 ## Reductions:
--- On XOR_ASSIGN reduce production unary_expression -> postfix_expression
--- On SUB_ASSIGN reduce production unary_expression -> postfix_expression
--- On STAR reduce production unary_expression -> postfix_expression
--- On SLASH reduce production unary_expression -> postfix_expression
--- On SEMICOLON reduce production unary_expression -> postfix_expression
--- On RPAREN reduce production unary_expression -> postfix_expression
--- On RIGHT_OP reduce production unary_expression -> postfix_expression
--- On RIGHT_ASSIGN reduce production unary_expression -> postfix_expression
--- On RBRACK reduce production unary_expression -> postfix_expression
--- On RBRACE reduce production unary_expression -> postfix_expression
--- On QUESTION reduce production unary_expression -> postfix_expression
--- On PLUS reduce production unary_expression -> postfix_expression
--- On PERCENT reduce production unary_expression -> postfix_expression
--- On OR_OP reduce production unary_expression -> postfix_expression
--- On OR_ASSIGN reduce production unary_expression -> postfix_expression
--- On NE_OP reduce production unary_expression -> postfix_expression
--- On MUL_ASSIGN reduce production unary_expression -> postfix_expression
--- On MOD_ASSIGN reduce production unary_expression -> postfix_expression
--- On MINUS reduce production unary_expression -> postfix_expression
--- On LT reduce production unary_expression -> postfix_expression
--- On LE_OP reduce production unary_expression -> postfix_expression
--- On LEFT_OP reduce production unary_expression -> postfix_expression
--- On LEFT_ASSIGN reduce production unary_expression -> postfix_expression
--- On HAT reduce production unary_expression -> postfix_expression
--- On GT reduce production unary_expression -> postfix_expression
--- On GE_OP reduce production unary_expression -> postfix_expression
--- On EQ_OP reduce production unary_expression -> postfix_expression
--- On EQUAL reduce production unary_expression -> postfix_expression
--- On DIV_ASSIGN reduce production unary_expression -> postfix_expression
--- On COMMA reduce production unary_expression -> postfix_expression
--- On COLON reduce production unary_expression -> postfix_expression
--- On BAR reduce production unary_expression -> postfix_expression
--- On AND_OP reduce production unary_expression -> postfix_expression
--- On AND_ASSIGN reduce production unary_expression -> postfix_expression
--- On AMPERSAND reduce production unary_expression -> postfix_expression
--- On ADD_ASSIGN reduce production unary_expression -> postfix_expression
+-- On XOR_ASSIGN SUB_ASSIGN STAR SLASH SEMICOLON RPAREN RIGHT_OP RIGHT_ASSIGN RBRACK RBRACE QUESTION PLUS PERCENT OR_OP OR_ASSIGN NE_OP MUL_ASSIGN MOD_ASSIGN MINUS LT LE_OP LEFT_OP LEFT_ASSIGN HAT GT GE_OP EQ_OP EQUAL DIV_ASSIGN COMMA COLON BAR AND_OP AND_ASSIGN AMPERSAND ADD_ASSIGN
+--   reduce production unary_expression -> postfix_expression
 
 State 53:
 ## Known stack suffix:
@@ -984,31 +920,8 @@ cast_expression -> unary_expression . [ STAR SLASH SEMICOLON RPAREN RIGHT_OP RBR
 -- On ADD_ASSIGN shift to state 68
 -- On assignment_operator shift to state 69
 ## Reductions:
--- On STAR reduce production cast_expression -> unary_expression
--- On SLASH reduce production cast_expression -> unary_expression
--- On SEMICOLON reduce production cast_expression -> unary_expression
--- On RPAREN reduce production cast_expression -> unary_expression
--- On RIGHT_OP reduce production cast_expression -> unary_expression
--- On RBRACK reduce production cast_expression -> unary_expression
--- On RBRACE reduce production cast_expression -> unary_expression
--- On QUESTION reduce production cast_expression -> unary_expression
--- On PLUS reduce production cast_expression -> unary_expression
--- On PERCENT reduce production cast_expression -> unary_expression
--- On OR_OP reduce production cast_expression -> unary_expression
--- On NE_OP reduce production cast_expression -> unary_expression
--- On MINUS reduce production cast_expression -> unary_expression
--- On LT reduce production cast_expression -> unary_expression
--- On LE_OP reduce production cast_expression -> unary_expression
--- On LEFT_OP reduce production cast_expression -> unary_expression
--- On HAT reduce production cast_expression -> unary_expression
--- On GT reduce production cast_expression -> unary_expression
--- On GE_OP reduce production cast_expression -> unary_expression
--- On EQ_OP reduce production cast_expression -> unary_expression
--- On COMMA reduce production cast_expression -> unary_expression
--- On COLON reduce production cast_expression -> unary_expression
--- On BAR reduce production cast_expression -> unary_expression
--- On AND_OP reduce production cast_expression -> unary_expression
--- On AMPERSAND reduce production cast_expression -> unary_expression
+-- On STAR SLASH SEMICOLON RPAREN RIGHT_OP RBRACK RBRACE QUESTION PLUS PERCENT OR_OP NE_OP MINUS LT LE_OP LEFT_OP HAT GT GE_OP EQ_OP COMMA COLON BAR AND_OP AMPERSAND
+--   reduce production cast_expression -> unary_expression
 
 State 58:
 ## Known stack suffix:
@@ -1158,24 +1071,8 @@ shift_expression -> shift_expression . RIGHT_OP additive_expression [ SEMICOLON 
 -- On RIGHT_OP shift to state 71
 -- On LEFT_OP shift to state 85
 ## Reductions:
--- On SEMICOLON reduce production relational_expression -> shift_expression
--- On RPAREN reduce production relational_expression -> shift_expression
--- On RBRACK reduce production relational_expression -> shift_expression
--- On RBRACE reduce production relational_expression -> shift_expression
--- On QUESTION reduce production relational_expression -> shift_expression
--- On OR_OP reduce production relational_expression -> shift_expression
--- On NE_OP reduce production relational_expression -> shift_expression
--- On LT reduce production relational_expression -> shift_expression
--- On LE_OP reduce production relational_expression -> shift_expression
--- On HAT reduce production relational_expression -> shift_expression
--- On GT reduce production relational_expression -> shift_expression
--- On GE_OP reduce production relational_expression -> shift_expression
--- On EQ_OP reduce production relational_expression -> shift_expression
--- On COMMA reduce production relational_expression -> shift_expression
--- On COLON reduce production relational_expression -> shift_expression
--- On BAR reduce production relational_expression -> shift_expression
--- On AND_OP reduce production relational_expression -> shift_expression
--- On AMPERSAND reduce production relational_expression -> shift_expression
+-- On SEMICOLON RPAREN RBRACK RBRACE QUESTION OR_OP NE_OP LT LE_OP HAT GT GE_OP EQ_OP COMMA COLON BAR AND_OP AMPERSAND
+--   reduce production relational_expression -> shift_expression
 
 State 71:
 ## Known stack suffix:
@@ -1218,28 +1115,8 @@ multiplicative_expression -> multiplicative_expression . PERCENT cast_expression
 -- On SLASH shift to state 75
 -- On PERCENT shift to state 77
 ## Reductions:
--- On SEMICOLON reduce production additive_expression -> multiplicative_expression
--- On RPAREN reduce production additive_expression -> multiplicative_expression
--- On RIGHT_OP reduce production additive_expression -> multiplicative_expression
--- On RBRACK reduce production additive_expression -> multiplicative_expression
--- On RBRACE reduce production additive_expression -> multiplicative_expression
--- On QUESTION reduce production additive_expression -> multiplicative_expression
--- On PLUS reduce production additive_expression -> multiplicative_expression
--- On OR_OP reduce production additive_expression -> multiplicative_expression
--- On NE_OP reduce production additive_expression -> multiplicative_expression
--- On MINUS reduce production additive_expression -> multiplicative_expression
--- On LT reduce production additive_expression -> multiplicative_expression
--- On LE_OP reduce production additive_expression -> multiplicative_expression
--- On LEFT_OP reduce production additive_expression -> multiplicative_expression
--- On HAT reduce production additive_expression -> multiplicative_expression
--- On GT reduce production additive_expression -> multiplicative_expression
--- On GE_OP reduce production additive_expression -> multiplicative_expression
--- On EQ_OP reduce production additive_expression -> multiplicative_expression
--- On COMMA reduce production additive_expression -> multiplicative_expression
--- On COLON reduce production additive_expression -> multiplicative_expression
--- On BAR reduce production additive_expression -> multiplicative_expression
--- On AND_OP reduce production additive_expression -> multiplicative_expression
--- On AMPERSAND reduce production additive_expression -> multiplicative_expression
+-- On SEMICOLON RPAREN RIGHT_OP RBRACK RBRACE QUESTION PLUS OR_OP NE_OP MINUS LT LE_OP LEFT_OP HAT GT GE_OP EQ_OP COMMA COLON BAR AND_OP AMPERSAND
+--   reduce production additive_expression -> multiplicative_expression
 
 State 73:
 ## Known stack suffix:
@@ -1366,26 +1243,8 @@ shift_expression -> shift_expression RIGHT_OP additive_expression . [ SEMICOLON 
 -- On PLUS shift to state 81
 -- On MINUS shift to state 83
 ## Reductions:
--- On SEMICOLON reduce production shift_expression -> shift_expression RIGHT_OP additive_expression
--- On RPAREN reduce production shift_expression -> shift_expression RIGHT_OP additive_expression
--- On RIGHT_OP reduce production shift_expression -> shift_expression RIGHT_OP additive_expression
--- On RBRACK reduce production shift_expression -> shift_expression RIGHT_OP additive_expression
--- On RBRACE reduce production shift_expression -> shift_expression RIGHT_OP additive_expression
--- On QUESTION reduce production shift_expression -> shift_expression RIGHT_OP additive_expression
--- On OR_OP reduce production shift_expression -> shift_expression RIGHT_OP additive_expression
--- On NE_OP reduce production shift_expression -> shift_expression RIGHT_OP additive_expression
--- On LT reduce production shift_expression -> shift_expression RIGHT_OP additive_expression
--- On LE_OP reduce production shift_expression -> shift_expression RIGHT_OP additive_expression
--- On LEFT_OP reduce production shift_expression -> shift_expression RIGHT_OP additive_expression
--- On HAT reduce production shift_expression -> shift_expression RIGHT_OP additive_expression
--- On GT reduce production shift_expression -> shift_expression RIGHT_OP additive_expression
--- On GE_OP reduce production shift_expression -> shift_expression RIGHT_OP additive_expression
--- On EQ_OP reduce production shift_expression -> shift_expression RIGHT_OP additive_expression
--- On COMMA reduce production shift_expression -> shift_expression RIGHT_OP additive_expression
--- On COLON reduce production shift_expression -> shift_expression RIGHT_OP additive_expression
--- On BAR reduce production shift_expression -> shift_expression RIGHT_OP additive_expression
--- On AND_OP reduce production shift_expression -> shift_expression RIGHT_OP additive_expression
--- On AMPERSAND reduce production shift_expression -> shift_expression RIGHT_OP additive_expression
+-- On SEMICOLON RPAREN RIGHT_OP RBRACK RBRACE QUESTION OR_OP NE_OP LT LE_OP LEFT_OP HAT GT GE_OP EQ_OP COMMA COLON BAR AND_OP AMPERSAND
+--   reduce production shift_expression -> shift_expression RIGHT_OP additive_expression
 
 State 81:
 ## Known stack suffix:
@@ -1427,28 +1286,8 @@ multiplicative_expression -> multiplicative_expression . PERCENT cast_expression
 -- On SLASH shift to state 75
 -- On PERCENT shift to state 77
 ## Reductions:
--- On SEMICOLON reduce production additive_expression -> additive_expression PLUS multiplicative_expression
--- On RPAREN reduce production additive_expression -> additive_expression PLUS multiplicative_expression
--- On RIGHT_OP reduce production additive_expression -> additive_expression PLUS multiplicative_expression
--- On RBRACK reduce production additive_expression -> additive_expression PLUS multiplicative_expression
--- On RBRACE reduce production additive_expression -> additive_expression PLUS multiplicative_expression
--- On QUESTION reduce production additive_expression -> additive_expression PLUS multiplicative_expression
--- On PLUS reduce production additive_expression -> additive_expression PLUS multiplicative_expression
--- On OR_OP reduce production additive_expression -> additive_expression PLUS multiplicative_expression
--- On NE_OP reduce production additive_expression -> additive_expression PLUS multiplicative_expression
--- On MINUS reduce production additive_expression -> additive_expression PLUS multiplicative_expression
--- On LT reduce production additive_expression -> additive_expression PLUS multiplicative_expression
--- On LE_OP reduce production additive_expression -> additive_expression PLUS multiplicative_expression
--- On LEFT_OP reduce production additive_expression -> additive_expression PLUS multiplicative_expression
--- On HAT reduce production additive_expression -> additive_expression PLUS multiplicative_expression
--- On GT reduce production additive_expression -> additive_expression PLUS multiplicative_expression
--- On GE_OP reduce production additive_expression -> additive_expression PLUS multiplicative_expression
--- On EQ_OP reduce production additive_expression -> additive_expression PLUS multiplicative_expression
--- On COMMA reduce production additive_expression -> additive_expression PLUS multiplicative_expression
--- On COLON reduce production additive_expression -> additive_expression PLUS multiplicative_expression
--- On BAR reduce production additive_expression -> additive_expression PLUS multiplicative_expression
--- On AND_OP reduce production additive_expression -> additive_expression PLUS multiplicative_expression
--- On AMPERSAND reduce production additive_expression -> additive_expression PLUS multiplicative_expression
+-- On SEMICOLON RPAREN RIGHT_OP RBRACK RBRACE QUESTION PLUS OR_OP NE_OP MINUS LT LE_OP LEFT_OP HAT GT GE_OP EQ_OP COMMA COLON BAR AND_OP AMPERSAND
+--   reduce production additive_expression -> additive_expression PLUS multiplicative_expression
 
 State 83:
 ## Known stack suffix:
@@ -1490,28 +1329,8 @@ multiplicative_expression -> multiplicative_expression . PERCENT cast_expression
 -- On SLASH shift to state 75
 -- On PERCENT shift to state 77
 ## Reductions:
--- On SEMICOLON reduce production additive_expression -> additive_expression MINUS multiplicative_expression
--- On RPAREN reduce production additive_expression -> additive_expression MINUS multiplicative_expression
--- On RIGHT_OP reduce production additive_expression -> additive_expression MINUS multiplicative_expression
--- On RBRACK reduce production additive_expression -> additive_expression MINUS multiplicative_expression
--- On RBRACE reduce production additive_expression -> additive_expression MINUS multiplicative_expression
--- On QUESTION reduce production additive_expression -> additive_expression MINUS multiplicative_expression
--- On PLUS reduce production additive_expression -> additive_expression MINUS multiplicative_expression
--- On OR_OP reduce production additive_expression -> additive_expression MINUS multiplicative_expression
--- On NE_OP reduce production additive_expression -> additive_expression MINUS multiplicative_expression
--- On MINUS reduce production additive_expression -> additive_expression MINUS multiplicative_expression
--- On LT reduce production additive_expression -> additive_expression MINUS multiplicative_expression
--- On LE_OP reduce production additive_expression -> additive_expression MINUS multiplicative_expression
--- On LEFT_OP reduce production additive_expression -> additive_expression MINUS multiplicative_expression
--- On HAT reduce production additive_expression -> additive_expression MINUS multiplicative_expression
--- On GT reduce production additive_expression -> additive_expression MINUS multiplicative_expression
--- On GE_OP reduce production additive_expression -> additive_expression MINUS multiplicative_expression
--- On EQ_OP reduce production additive_expression -> additive_expression MINUS multiplicative_expression
--- On COMMA reduce production additive_expression -> additive_expression MINUS multiplicative_expression
--- On COLON reduce production additive_expression -> additive_expression MINUS multiplicative_expression
--- On BAR reduce production additive_expression -> additive_expression MINUS multiplicative_expression
--- On AND_OP reduce production additive_expression -> additive_expression MINUS multiplicative_expression
--- On AMPERSAND reduce production additive_expression -> additive_expression MINUS multiplicative_expression
+-- On SEMICOLON RPAREN RIGHT_OP RBRACK RBRACE QUESTION PLUS OR_OP NE_OP MINUS LT LE_OP LEFT_OP HAT GT GE_OP EQ_OP COMMA COLON BAR AND_OP AMPERSAND
+--   reduce production additive_expression -> additive_expression MINUS multiplicative_expression
 
 State 85:
 ## Known stack suffix:
@@ -1552,26 +1371,8 @@ shift_expression -> shift_expression LEFT_OP additive_expression . [ SEMICOLON R
 -- On PLUS shift to state 81
 -- On MINUS shift to state 83
 ## Reductions:
--- On SEMICOLON reduce production shift_expression -> shift_expression LEFT_OP additive_expression
--- On RPAREN reduce production shift_expression -> shift_expression LEFT_OP additive_expression
--- On RIGHT_OP reduce production shift_expression -> shift_expression LEFT_OP additive_expression
--- On RBRACK reduce production shift_expression -> shift_expression LEFT_OP additive_expression
--- On RBRACE reduce production shift_expression -> shift_expression LEFT_OP additive_expression
--- On QUESTION reduce production shift_expression -> shift_expression LEFT_OP additive_expression
--- On OR_OP reduce production shift_expression -> shift_expression LEFT_OP additive_expression
--- On NE_OP reduce production shift_expression -> shift_expression LEFT_OP additive_expression
--- On LT reduce production shift_expression -> shift_expression LEFT_OP additive_expression
--- On LE_OP reduce production shift_expression -> shift_expression LEFT_OP additive_expression
--- On LEFT_OP reduce production shift_expression -> shift_expression LEFT_OP additive_expression
--- On HAT reduce production shift_expression -> shift_expression LEFT_OP additive_expression
--- On GT reduce production shift_expression -> shift_expression LEFT_OP additive_expression
--- On GE_OP reduce production shift_expression -> shift_expression LEFT_OP additive_expression
--- On EQ_OP reduce production shift_expression -> shift_expression LEFT_OP additive_expression
--- On COMMA reduce production shift_expression -> shift_expression LEFT_OP additive_expression
--- On COLON reduce production shift_expression -> shift_expression LEFT_OP additive_expression
--- On BAR reduce production shift_expression -> shift_expression LEFT_OP additive_expression
--- On AND_OP reduce production shift_expression -> shift_expression LEFT_OP additive_expression
--- On AMPERSAND reduce production shift_expression -> shift_expression LEFT_OP additive_expression
+-- On SEMICOLON RPAREN RIGHT_OP RBRACK RBRACE QUESTION OR_OP NE_OP LT LE_OP LEFT_OP HAT GT GE_OP EQ_OP COMMA COLON BAR AND_OP AMPERSAND
+--   reduce production shift_expression -> shift_expression LEFT_OP additive_expression
 
 State 87:
 ## Known stack suffix:
@@ -1588,20 +1389,8 @@ relational_expression -> relational_expression . GE_OP shift_expression [ SEMICO
 -- On GT shift to state 93
 -- On GE_OP shift to state 95
 ## Reductions:
--- On SEMICOLON reduce production equality_expression -> relational_expression
--- On RPAREN reduce production equality_expression -> relational_expression
--- On RBRACK reduce production equality_expression -> relational_expression
--- On RBRACE reduce production equality_expression -> relational_expression
--- On QUESTION reduce production equality_expression -> relational_expression
--- On OR_OP reduce production equality_expression -> relational_expression
--- On NE_OP reduce production equality_expression -> relational_expression
--- On HAT reduce production equality_expression -> relational_expression
--- On EQ_OP reduce production equality_expression -> relational_expression
--- On COMMA reduce production equality_expression -> relational_expression
--- On COLON reduce production equality_expression -> relational_expression
--- On BAR reduce production equality_expression -> relational_expression
--- On AND_OP reduce production equality_expression -> relational_expression
--- On AMPERSAND reduce production equality_expression -> relational_expression
+-- On SEMICOLON RPAREN RBRACK RBRACE QUESTION OR_OP NE_OP HAT EQ_OP COMMA COLON BAR AND_OP AMPERSAND
+--   reduce production equality_expression -> relational_expression
 
 State 88:
 ## Known stack suffix:
@@ -1643,24 +1432,8 @@ shift_expression -> shift_expression . RIGHT_OP additive_expression [ SEMICOLON 
 -- On RIGHT_OP shift to state 71
 -- On LEFT_OP shift to state 85
 ## Reductions:
--- On SEMICOLON reduce production relational_expression -> relational_expression LT shift_expression
--- On RPAREN reduce production relational_expression -> relational_expression LT shift_expression
--- On RBRACK reduce production relational_expression -> relational_expression LT shift_expression
--- On RBRACE reduce production relational_expression -> relational_expression LT shift_expression
--- On QUESTION reduce production relational_expression -> relational_expression LT shift_expression
--- On OR_OP reduce production relational_expression -> relational_expression LT shift_expression
--- On NE_OP reduce production relational_expression -> relational_expression LT shift_expression
--- On LT reduce production relational_expression -> relational_expression LT shift_expression
--- On LE_OP reduce production relational_expression -> relational_expression LT shift_expression
--- On HAT reduce production relational_expression -> relational_expression LT shift_expression
--- On GT reduce production relational_expression -> relational_expression LT shift_expression
--- On GE_OP reduce production relational_expression -> relational_expression LT shift_expression
--- On EQ_OP reduce production relational_expression -> relational_expression LT shift_expression
--- On COMMA reduce production relational_expression -> relational_expression LT shift_expression
--- On COLON reduce production relational_expression -> relational_expression LT shift_expression
--- On BAR reduce production relational_expression -> relational_expression LT shift_expression
--- On AND_OP reduce production relational_expression -> relational_expression LT shift_expression
--- On AMPERSAND reduce production relational_expression -> relational_expression LT shift_expression
+-- On SEMICOLON RPAREN RBRACK RBRACE QUESTION OR_OP NE_OP LT LE_OP HAT GT GE_OP EQ_OP COMMA COLON BAR AND_OP AMPERSAND
+--   reduce production relational_expression -> relational_expression LT shift_expression
 
 State 90:
 ## Known stack suffix:
@@ -1673,26 +1446,8 @@ shift_expression -> additive_expression . [ SEMICOLON RPAREN RIGHT_OP RBRACK RBR
 -- On PLUS shift to state 81
 -- On MINUS shift to state 83
 ## Reductions:
--- On SEMICOLON reduce production shift_expression -> additive_expression
--- On RPAREN reduce production shift_expression -> additive_expression
--- On RIGHT_OP reduce production shift_expression -> additive_expression
--- On RBRACK reduce production shift_expression -> additive_expression
--- On RBRACE reduce production shift_expression -> additive_expression
--- On QUESTION reduce production shift_expression -> additive_expression
--- On OR_OP reduce production shift_expression -> additive_expression
--- On NE_OP reduce production shift_expression -> additive_expression
--- On LT reduce production shift_expression -> additive_expression
--- On LE_OP reduce production shift_expression -> additive_expression
--- On LEFT_OP reduce production shift_expression -> additive_expression
--- On HAT reduce production shift_expression -> additive_expression
--- On GT reduce production shift_expression -> additive_expression
--- On GE_OP reduce production shift_expression -> additive_expression
--- On EQ_OP reduce production shift_expression -> additive_expression
--- On COMMA reduce production shift_expression -> additive_expression
--- On COLON reduce production shift_expression -> additive_expression
--- On BAR reduce production shift_expression -> additive_expression
--- On AND_OP reduce production shift_expression -> additive_expression
--- On AMPERSAND reduce production shift_expression -> additive_expression
+-- On SEMICOLON RPAREN RIGHT_OP RBRACK RBRACE QUESTION OR_OP NE_OP LT LE_OP LEFT_OP HAT GT GE_OP EQ_OP COMMA COLON BAR AND_OP AMPERSAND
+--   reduce production shift_expression -> additive_expression
 
 State 91:
 ## Known stack suffix:
@@ -1734,24 +1489,8 @@ shift_expression -> shift_expression . RIGHT_OP additive_expression [ SEMICOLON 
 -- On RIGHT_OP shift to state 71
 -- On LEFT_OP shift to state 85
 ## Reductions:
--- On SEMICOLON reduce production relational_expression -> relational_expression LE_OP shift_expression
--- On RPAREN reduce production relational_expression -> relational_expression LE_OP shift_expression
--- On RBRACK reduce production relational_expression -> relational_expression LE_OP shift_expression
--- On RBRACE reduce production relational_expression -> relational_expression LE_OP shift_expression
--- On QUESTION reduce production relational_expression -> relational_expression LE_OP shift_expression
--- On OR_OP reduce production relational_expression -> relational_expression LE_OP shift_expression
--- On NE_OP reduce production relational_expression -> relational_expression LE_OP shift_expression
--- On LT reduce production relational_expression -> relational_expression LE_OP shift_expression
--- On LE_OP reduce production relational_expression -> relational_expression LE_OP shift_expression
--- On HAT reduce production relational_expression -> relational_expression LE_OP shift_expression
--- On GT reduce production relational_expression -> relational_expression LE_OP shift_expression
--- On GE_OP reduce production relational_expression -> relational_expression LE_OP shift_expression
--- On EQ_OP reduce production relational_expression -> relational_expression LE_OP shift_expression
--- On COMMA reduce production relational_expression -> relational_expression LE_OP shift_expression
--- On COLON reduce production relational_expression -> relational_expression LE_OP shift_expression
--- On BAR reduce production relational_expression -> relational_expression LE_OP shift_expression
--- On AND_OP reduce production relational_expression -> relational_expression LE_OP shift_expression
--- On AMPERSAND reduce production relational_expression -> relational_expression LE_OP shift_expression
+-- On SEMICOLON RPAREN RBRACK RBRACE QUESTION OR_OP NE_OP LT LE_OP HAT GT GE_OP EQ_OP COMMA COLON BAR AND_OP AMPERSAND
+--   reduce production relational_expression -> relational_expression LE_OP shift_expression
 
 State 93:
 ## Known stack suffix:
@@ -1793,24 +1532,8 @@ shift_expression -> shift_expression . RIGHT_OP additive_expression [ SEMICOLON 
 -- On RIGHT_OP shift to state 71
 -- On LEFT_OP shift to state 85
 ## Reductions:
--- On SEMICOLON reduce production relational_expression -> relational_expression GT shift_expression
--- On RPAREN reduce production relational_expression -> relational_expression GT shift_expression
--- On RBRACK reduce production relational_expression -> relational_expression GT shift_expression
--- On RBRACE reduce production relational_expression -> relational_expression GT shift_expression
--- On QUESTION reduce production relational_expression -> relational_expression GT shift_expression
--- On OR_OP reduce production relational_expression -> relational_expression GT shift_expression
--- On NE_OP reduce production relational_expression -> relational_expression GT shift_expression
--- On LT reduce production relational_expression -> relational_expression GT shift_expression
--- On LE_OP reduce production relational_expression -> relational_expression GT shift_expression
--- On HAT reduce production relational_expression -> relational_expression GT shift_expression
--- On GT reduce production relational_expression -> relational_expression GT shift_expression
--- On GE_OP reduce production relational_expression -> relational_expression GT shift_expression
--- On EQ_OP reduce production relational_expression -> relational_expression GT shift_expression
--- On COMMA reduce production relational_expression -> relational_expression GT shift_expression
--- On COLON reduce production relational_expression -> relational_expression GT shift_expression
--- On BAR reduce production relational_expression -> relational_expression GT shift_expression
--- On AND_OP reduce production relational_expression -> relational_expression GT shift_expression
--- On AMPERSAND reduce production relational_expression -> relational_expression GT shift_expression
+-- On SEMICOLON RPAREN RBRACK RBRACE QUESTION OR_OP NE_OP LT LE_OP HAT GT GE_OP EQ_OP COMMA COLON BAR AND_OP AMPERSAND
+--   reduce production relational_expression -> relational_expression GT shift_expression
 
 State 95:
 ## Known stack suffix:
@@ -1852,24 +1575,8 @@ shift_expression -> shift_expression . RIGHT_OP additive_expression [ SEMICOLON 
 -- On RIGHT_OP shift to state 71
 -- On LEFT_OP shift to state 85
 ## Reductions:
--- On SEMICOLON reduce production relational_expression -> relational_expression GE_OP shift_expression
--- On RPAREN reduce production relational_expression -> relational_expression GE_OP shift_expression
--- On RBRACK reduce production relational_expression -> relational_expression GE_OP shift_expression
--- On RBRACE reduce production relational_expression -> relational_expression GE_OP shift_expression
--- On QUESTION reduce production relational_expression -> relational_expression GE_OP shift_expression
--- On OR_OP reduce production relational_expression -> relational_expression GE_OP shift_expression
--- On NE_OP reduce production relational_expression -> relational_expression GE_OP shift_expression
--- On LT reduce production relational_expression -> relational_expression GE_OP shift_expression
--- On LE_OP reduce production relational_expression -> relational_expression GE_OP shift_expression
--- On HAT reduce production relational_expression -> relational_expression GE_OP shift_expression
--- On GT reduce production relational_expression -> relational_expression GE_OP shift_expression
--- On GE_OP reduce production relational_expression -> relational_expression GE_OP shift_expression
--- On EQ_OP reduce production relational_expression -> relational_expression GE_OP shift_expression
--- On COMMA reduce production relational_expression -> relational_expression GE_OP shift_expression
--- On COLON reduce production relational_expression -> relational_expression GE_OP shift_expression
--- On BAR reduce production relational_expression -> relational_expression GE_OP shift_expression
--- On AND_OP reduce production relational_expression -> relational_expression GE_OP shift_expression
--- On AMPERSAND reduce production relational_expression -> relational_expression GE_OP shift_expression
+-- On SEMICOLON RPAREN RBRACK RBRACE QUESTION OR_OP NE_OP LT LE_OP HAT GT GE_OP EQ_OP COMMA COLON BAR AND_OP AMPERSAND
+--   reduce production relational_expression -> relational_expression GE_OP shift_expression
 
 State 97:
 ## Known stack suffix:
@@ -1882,12 +1589,8 @@ logical_or_expression -> logical_or_expression . OR_OP logical_and_expression [ 
 -- On QUESTION shift to state 98
 -- On OR_OP shift to state 123
 ## Reductions:
--- On SEMICOLON reduce production conditional_expression -> logical_or_expression
--- On RPAREN reduce production conditional_expression -> logical_or_expression
--- On RBRACK reduce production conditional_expression -> logical_or_expression
--- On RBRACE reduce production conditional_expression -> logical_or_expression
--- On COMMA reduce production conditional_expression -> logical_or_expression
--- On COLON reduce production conditional_expression -> logical_or_expression
+-- On SEMICOLON RPAREN RBRACK RBRACE COMMA COLON
+--   reduce production conditional_expression -> logical_or_expression
 
 State 98:
 ## Known stack suffix:
@@ -1937,14 +1640,8 @@ logical_or_expression -> logical_and_expression . [ SEMICOLON RPAREN RBRACK RBRA
 ## Transitions:
 -- On AND_OP shift to state 100
 ## Reductions:
--- On SEMICOLON reduce production logical_or_expression -> logical_and_expression
--- On RPAREN reduce production logical_or_expression -> logical_and_expression
--- On RBRACK reduce production logical_or_expression -> logical_and_expression
--- On RBRACE reduce production logical_or_expression -> logical_and_expression
--- On QUESTION reduce production logical_or_expression -> logical_and_expression
--- On OR_OP reduce production logical_or_expression -> logical_and_expression
--- On COMMA reduce production logical_or_expression -> logical_and_expression
--- On COLON reduce production logical_or_expression -> logical_and_expression
+-- On SEMICOLON RPAREN RBRACK RBRACE QUESTION OR_OP COMMA COLON
+--   reduce production logical_or_expression -> logical_and_expression
 
 State 100:
 ## Known stack suffix:
@@ -1989,15 +1686,8 @@ logical_and_expression -> logical_and_expression AND_OP inclusive_or_expression 
 ## Transitions:
 -- On BAR shift to state 102
 ## Reductions:
--- On SEMICOLON reduce production logical_and_expression -> logical_and_expression AND_OP inclusive_or_expression
--- On RPAREN reduce production logical_and_expression -> logical_and_expression AND_OP inclusive_or_expression
--- On RBRACK reduce production logical_and_expression -> logical_and_expression AND_OP inclusive_or_expression
--- On RBRACE reduce production logical_and_expression -> logical_and_expression AND_OP inclusive_or_expression
--- On QUESTION reduce production logical_and_expression -> logical_and_expression AND_OP inclusive_or_expression
--- On OR_OP reduce production logical_and_expression -> logical_and_expression AND_OP inclusive_or_expression
--- On COMMA reduce production logical_and_expression -> logical_and_expression AND_OP inclusive_or_expression
--- On COLON reduce production logical_and_expression -> logical_and_expression AND_OP inclusive_or_expression
--- On AND_OP reduce production logical_and_expression -> logical_and_expression AND_OP inclusive_or_expression
+-- On SEMICOLON RPAREN RBRACK RBRACE QUESTION OR_OP COMMA COLON AND_OP
+--   reduce production logical_and_expression -> logical_and_expression AND_OP inclusive_or_expression
 
 State 102:
 ## Known stack suffix:
@@ -2041,16 +1731,8 @@ inclusive_or_expression -> inclusive_or_expression BAR exclusive_or_expression .
 ## Transitions:
 -- On HAT shift to state 104
 ## Reductions:
--- On SEMICOLON reduce production inclusive_or_expression -> inclusive_or_expression BAR exclusive_or_expression
--- On RPAREN reduce production inclusive_or_expression -> inclusive_or_expression BAR exclusive_or_expression
--- On RBRACK reduce production inclusive_or_expression -> inclusive_or_expression BAR exclusive_or_expression
--- On RBRACE reduce production inclusive_or_expression -> inclusive_or_expression BAR exclusive_or_expression
--- On QUESTION reduce production inclusive_or_expression -> inclusive_or_expression BAR exclusive_or_expression
--- On OR_OP reduce production inclusive_or_expression -> inclusive_or_expression BAR exclusive_or_expression
--- On COMMA reduce production inclusive_or_expression -> inclusive_or_expression BAR exclusive_or_expression
--- On COLON reduce production inclusive_or_expression -> inclusive_or_expression BAR exclusive_or_expression
--- On BAR reduce production inclusive_or_expression -> inclusive_or_expression BAR exclusive_or_expression
--- On AND_OP reduce production inclusive_or_expression -> inclusive_or_expression BAR exclusive_or_expression
+-- On SEMICOLON RPAREN RBRACK RBRACE QUESTION OR_OP COMMA COLON BAR AND_OP
+--   reduce production inclusive_or_expression -> inclusive_or_expression BAR exclusive_or_expression
 
 State 104:
 ## Known stack suffix:
@@ -2095,18 +1777,8 @@ equality_expression -> equality_expression . NE_OP relational_expression [ SEMIC
 -- On NE_OP shift to state 106
 -- On EQ_OP shift to state 108
 ## Reductions:
--- On SEMICOLON reduce production and_expression -> equality_expression
--- On RPAREN reduce production and_expression -> equality_expression
--- On RBRACK reduce production and_expression -> equality_expression
--- On RBRACE reduce production and_expression -> equality_expression
--- On QUESTION reduce production and_expression -> equality_expression
--- On OR_OP reduce production and_expression -> equality_expression
--- On HAT reduce production and_expression -> equality_expression
--- On COMMA reduce production and_expression -> equality_expression
--- On COLON reduce production and_expression -> equality_expression
--- On BAR reduce production and_expression -> equality_expression
--- On AND_OP reduce production and_expression -> equality_expression
--- On AMPERSAND reduce production and_expression -> equality_expression
+-- On SEMICOLON RPAREN RBRACK RBRACE QUESTION OR_OP HAT COMMA COLON BAR AND_OP AMPERSAND
+--   reduce production and_expression -> equality_expression
 
 State 106:
 ## Known stack suffix:
@@ -2153,20 +1825,8 @@ relational_expression -> relational_expression . GE_OP shift_expression [ SEMICO
 -- On GT shift to state 93
 -- On GE_OP shift to state 95
 ## Reductions:
--- On SEMICOLON reduce production equality_expression -> equality_expression NE_OP relational_expression
--- On RPAREN reduce production equality_expression -> equality_expression NE_OP relational_expression
--- On RBRACK reduce production equality_expression -> equality_expression NE_OP relational_expression
--- On RBRACE reduce production equality_expression -> equality_expression NE_OP relational_expression
--- On QUESTION reduce production equality_expression -> equality_expression NE_OP relational_expression
--- On OR_OP reduce production equality_expression -> equality_expression NE_OP relational_expression
--- On NE_OP reduce production equality_expression -> equality_expression NE_OP relational_expression
--- On HAT reduce production equality_expression -> equality_expression NE_OP relational_expression
--- On EQ_OP reduce production equality_expression -> equality_expression NE_OP relational_expression
--- On COMMA reduce production equality_expression -> equality_expression NE_OP relational_expression
--- On COLON reduce production equality_expression -> equality_expression NE_OP relational_expression
--- On BAR reduce production equality_expression -> equality_expression NE_OP relational_expression
--- On AND_OP reduce production equality_expression -> equality_expression NE_OP relational_expression
--- On AMPERSAND reduce production equality_expression -> equality_expression NE_OP relational_expression
+-- On SEMICOLON RPAREN RBRACK RBRACE QUESTION OR_OP NE_OP HAT EQ_OP COMMA COLON BAR AND_OP AMPERSAND
+--   reduce production equality_expression -> equality_expression NE_OP relational_expression
 
 State 108:
 ## Known stack suffix:
@@ -2213,20 +1873,8 @@ relational_expression -> relational_expression . GE_OP shift_expression [ SEMICO
 -- On GT shift to state 93
 -- On GE_OP shift to state 95
 ## Reductions:
--- On SEMICOLON reduce production equality_expression -> equality_expression EQ_OP relational_expression
--- On RPAREN reduce production equality_expression -> equality_expression EQ_OP relational_expression
--- On RBRACK reduce production equality_expression -> equality_expression EQ_OP relational_expression
--- On RBRACE reduce production equality_expression -> equality_expression EQ_OP relational_expression
--- On QUESTION reduce production equality_expression -> equality_expression EQ_OP relational_expression
--- On OR_OP reduce production equality_expression -> equality_expression EQ_OP relational_expression
--- On NE_OP reduce production equality_expression -> equality_expression EQ_OP relational_expression
--- On HAT reduce production equality_expression -> equality_expression EQ_OP relational_expression
--- On EQ_OP reduce production equality_expression -> equality_expression EQ_OP relational_expression
--- On COMMA reduce production equality_expression -> equality_expression EQ_OP relational_expression
--- On COLON reduce production equality_expression -> equality_expression EQ_OP relational_expression
--- On BAR reduce production equality_expression -> equality_expression EQ_OP relational_expression
--- On AND_OP reduce production equality_expression -> equality_expression EQ_OP relational_expression
--- On AMPERSAND reduce production equality_expression -> equality_expression EQ_OP relational_expression
+-- On SEMICOLON RPAREN RBRACK RBRACE QUESTION OR_OP NE_OP HAT EQ_OP COMMA COLON BAR AND_OP AMPERSAND
+--   reduce production equality_expression -> equality_expression EQ_OP relational_expression
 
 State 110:
 ## Known stack suffix:
@@ -2237,17 +1885,8 @@ exclusive_or_expression -> exclusive_or_expression HAT and_expression . [ SEMICO
 ## Transitions:
 -- On AMPERSAND shift to state 111
 ## Reductions:
--- On SEMICOLON reduce production exclusive_or_expression -> exclusive_or_expression HAT and_expression
--- On RPAREN reduce production exclusive_or_expression -> exclusive_or_expression HAT and_expression
--- On RBRACK reduce production exclusive_or_expression -> exclusive_or_expression HAT and_expression
--- On RBRACE reduce production exclusive_or_expression -> exclusive_or_expression HAT and_expression
--- On QUESTION reduce production exclusive_or_expression -> exclusive_or_expression HAT and_expression
--- On OR_OP reduce production exclusive_or_expression -> exclusive_or_expression HAT and_expression
--- On HAT reduce production exclusive_or_expression -> exclusive_or_expression HAT and_expression
--- On COMMA reduce production exclusive_or_expression -> exclusive_or_expression HAT and_expression
--- On COLON reduce production exclusive_or_expression -> exclusive_or_expression HAT and_expression
--- On BAR reduce production exclusive_or_expression -> exclusive_or_expression HAT and_expression
--- On AND_OP reduce production exclusive_or_expression -> exclusive_or_expression HAT and_expression
+-- On SEMICOLON RPAREN RBRACK RBRACE QUESTION OR_OP HAT COMMA COLON BAR AND_OP
+--   reduce production exclusive_or_expression -> exclusive_or_expression HAT and_expression
 
 State 111:
 ## Known stack suffix:
@@ -2291,18 +1930,8 @@ equality_expression -> equality_expression . NE_OP relational_expression [ SEMIC
 -- On NE_OP shift to state 106
 -- On EQ_OP shift to state 108
 ## Reductions:
--- On SEMICOLON reduce production and_expression -> and_expression AMPERSAND equality_expression
--- On RPAREN reduce production and_expression -> and_expression AMPERSAND equality_expression
--- On RBRACK reduce production and_expression -> and_expression AMPERSAND equality_expression
--- On RBRACE reduce production and_expression -> and_expression AMPERSAND equality_expression
--- On QUESTION reduce production and_expression -> and_expression AMPERSAND equality_expression
--- On OR_OP reduce production and_expression -> and_expression AMPERSAND equality_expression
--- On HAT reduce production and_expression -> and_expression AMPERSAND equality_expression
--- On COMMA reduce production and_expression -> and_expression AMPERSAND equality_expression
--- On COLON reduce production and_expression -> and_expression AMPERSAND equality_expression
--- On BAR reduce production and_expression -> and_expression AMPERSAND equality_expression
--- On AND_OP reduce production and_expression -> and_expression AMPERSAND equality_expression
--- On AMPERSAND reduce production and_expression -> and_expression AMPERSAND equality_expression
+-- On SEMICOLON RPAREN RBRACK RBRACE QUESTION OR_OP HAT COMMA COLON BAR AND_OP AMPERSAND
+--   reduce production and_expression -> and_expression AMPERSAND equality_expression
 
 State 113:
 ## Known stack suffix:
@@ -2313,17 +1942,8 @@ exclusive_or_expression -> and_expression . [ SEMICOLON RPAREN RBRACK RBRACE QUE
 ## Transitions:
 -- On AMPERSAND shift to state 111
 ## Reductions:
--- On SEMICOLON reduce production exclusive_or_expression -> and_expression
--- On RPAREN reduce production exclusive_or_expression -> and_expression
--- On RBRACK reduce production exclusive_or_expression -> and_expression
--- On RBRACE reduce production exclusive_or_expression -> and_expression
--- On QUESTION reduce production exclusive_or_expression -> and_expression
--- On OR_OP reduce production exclusive_or_expression -> and_expression
--- On HAT reduce production exclusive_or_expression -> and_expression
--- On COMMA reduce production exclusive_or_expression -> and_expression
--- On COLON reduce production exclusive_or_expression -> and_expression
--- On BAR reduce production exclusive_or_expression -> and_expression
--- On AND_OP reduce production exclusive_or_expression -> and_expression
+-- On SEMICOLON RPAREN RBRACK RBRACE QUESTION OR_OP HAT COMMA COLON BAR AND_OP
+--   reduce production exclusive_or_expression -> and_expression
 
 State 114:
 ## Known stack suffix:
@@ -2334,16 +1954,8 @@ inclusive_or_expression -> exclusive_or_expression . [ SEMICOLON RPAREN RBRACK R
 ## Transitions:
 -- On HAT shift to state 104
 ## Reductions:
--- On SEMICOLON reduce production inclusive_or_expression -> exclusive_or_expression
--- On RPAREN reduce production inclusive_or_expression -> exclusive_or_expression
--- On RBRACK reduce production inclusive_or_expression -> exclusive_or_expression
--- On RBRACE reduce production inclusive_or_expression -> exclusive_or_expression
--- On QUESTION reduce production inclusive_or_expression -> exclusive_or_expression
--- On OR_OP reduce production inclusive_or_expression -> exclusive_or_expression
--- On COMMA reduce production inclusive_or_expression -> exclusive_or_expression
--- On COLON reduce production inclusive_or_expression -> exclusive_or_expression
--- On BAR reduce production inclusive_or_expression -> exclusive_or_expression
--- On AND_OP reduce production inclusive_or_expression -> exclusive_or_expression
+-- On SEMICOLON RPAREN RBRACK RBRACE QUESTION OR_OP COMMA COLON BAR AND_OP
+--   reduce production inclusive_or_expression -> exclusive_or_expression
 
 State 115:
 ## Known stack suffix:
@@ -2354,15 +1966,8 @@ logical_and_expression -> inclusive_or_expression . [ SEMICOLON RPAREN RBRACK RB
 ## Transitions:
 -- On BAR shift to state 102
 ## Reductions:
--- On SEMICOLON reduce production logical_and_expression -> inclusive_or_expression
--- On RPAREN reduce production logical_and_expression -> inclusive_or_expression
--- On RBRACK reduce production logical_and_expression -> inclusive_or_expression
--- On RBRACE reduce production logical_and_expression -> inclusive_or_expression
--- On QUESTION reduce production logical_and_expression -> inclusive_or_expression
--- On OR_OP reduce production logical_and_expression -> inclusive_or_expression
--- On COMMA reduce production logical_and_expression -> inclusive_or_expression
--- On COLON reduce production logical_and_expression -> inclusive_or_expression
--- On AND_OP reduce production logical_and_expression -> inclusive_or_expression
+-- On SEMICOLON RPAREN RBRACK RBRACE QUESTION OR_OP COMMA COLON AND_OP
+--   reduce production logical_and_expression -> inclusive_or_expression
 
 State 116:
 ## Known stack suffix:
@@ -2530,14 +2135,8 @@ logical_or_expression -> logical_or_expression OR_OP logical_and_expression . [ 
 ## Transitions:
 -- On AND_OP shift to state 100
 ## Reductions:
--- On SEMICOLON reduce production logical_or_expression -> logical_or_expression OR_OP logical_and_expression
--- On RPAREN reduce production logical_or_expression -> logical_or_expression OR_OP logical_and_expression
--- On RBRACK reduce production logical_or_expression -> logical_or_expression OR_OP logical_and_expression
--- On RBRACE reduce production logical_or_expression -> logical_or_expression OR_OP logical_and_expression
--- On QUESTION reduce production logical_or_expression -> logical_or_expression OR_OP logical_and_expression
--- On OR_OP reduce production logical_or_expression -> logical_or_expression OR_OP logical_and_expression
--- On COMMA reduce production logical_or_expression -> logical_or_expression OR_OP logical_and_expression
--- On COLON reduce production logical_or_expression -> logical_or_expression OR_OP logical_and_expression
+-- On SEMICOLON RPAREN RBRACK RBRACE QUESTION OR_OP COMMA COLON
+--   reduce production logical_or_expression -> logical_or_expression OR_OP logical_and_expression
 
 State 125:
 ## Known stack suffix:
@@ -2813,12 +2412,8 @@ specifier_qualifier_list -> type_specifier . [ STAR RPAREN LPAREN LBRACK IDENTIF
 -- On specifier_qualifier_list shift to state 177
 -- On enum_specifier shift to state 170
 ## Reductions:
--- On STAR reduce production specifier_qualifier_list -> type_specifier
--- On RPAREN reduce production specifier_qualifier_list -> type_specifier
--- On LPAREN reduce production specifier_qualifier_list -> type_specifier
--- On LBRACK reduce production specifier_qualifier_list -> type_specifier
--- On IDENTIFIER reduce production specifier_qualifier_list -> type_specifier
--- On COLON reduce production specifier_qualifier_list -> type_specifier
+-- On STAR RPAREN LPAREN LBRACK IDENTIFIER COLON
+--   reduce production specifier_qualifier_list -> type_specifier
 
 State 146:
 ## Known stack suffix:
@@ -2849,12 +2444,8 @@ specifier_qualifier_list -> type_qualifier . [ STAR RPAREN LPAREN LBRACK IDENTIF
 -- On specifier_qualifier_list shift to state 176
 -- On enum_specifier shift to state 170
 ## Reductions:
--- On STAR reduce production specifier_qualifier_list -> type_qualifier
--- On RPAREN reduce production specifier_qualifier_list -> type_qualifier
--- On LPAREN reduce production specifier_qualifier_list -> type_qualifier
--- On LBRACK reduce production specifier_qualifier_list -> type_qualifier
--- On IDENTIFIER reduce production specifier_qualifier_list -> type_qualifier
--- On COLON reduce production specifier_qualifier_list -> type_qualifier
+-- On STAR RPAREN LPAREN LBRACK IDENTIFIER COLON
+--   reduce production specifier_qualifier_list -> type_qualifier
 
 State 147:
 ## Known stack suffix:
@@ -3090,32 +2681,8 @@ direct_declarator -> direct_declarator . LPAREN RPAREN [ VOLATILE VOID UNSIGNED 
 -- On LPAREN shift to state 23
 -- On LBRACK shift to state 162
 ## Reductions:
--- On VOLATILE reduce production declarator -> direct_declarator
--- On VOID reduce production declarator -> direct_declarator
--- On UNSIGNED reduce production declarator -> direct_declarator
--- On UNION reduce production declarator -> direct_declarator
--- On TYPE_NAME reduce production declarator -> direct_declarator
--- On TYPEDEF reduce production declarator -> direct_declarator
--- On STRUCT reduce production declarator -> direct_declarator
--- On STATIC reduce production declarator -> direct_declarator
--- On SIGNED reduce production declarator -> direct_declarator
--- On SHORT reduce production declarator -> direct_declarator
--- On SEMICOLON reduce production declarator -> direct_declarator
--- On RPAREN reduce production declarator -> direct_declarator
--- On REGISTER reduce production declarator -> direct_declarator
--- On LONG reduce production declarator -> direct_declarator
--- On LBRACE reduce production declarator -> direct_declarator
--- On INT reduce production declarator -> direct_declarator
--- On FLOAT reduce production declarator -> direct_declarator
--- On EXTERN reduce production declarator -> direct_declarator
--- On EQUAL reduce production declarator -> direct_declarator
--- On ENUM reduce production declarator -> direct_declarator
--- On DOUBLE reduce production declarator -> direct_declarator
--- On CONST reduce production declarator -> direct_declarator
--- On COMMA reduce production declarator -> direct_declarator
--- On COLON reduce production declarator -> direct_declarator
--- On CHAR reduce production declarator -> direct_declarator
--- On AUTO reduce production declarator -> direct_declarator
+-- On VOLATILE VOID UNSIGNED UNION TYPE_NAME TYPEDEF STRUCT STATIC SIGNED SHORT SEMICOLON RPAREN REGISTER LONG LBRACE INT FLOAT EXTERN EQUAL ENUM DOUBLE CONST COMMA COLON CHAR AUTO
+--   reduce production declarator -> direct_declarator
 
 State 162:
 ## Known stack suffix:
@@ -3193,8 +2760,8 @@ struct_declarator -> declarator . COLON constant_expression [ SEMICOLON COMMA ]
 ## Transitions:
 -- On COLON shift to state 167
 ## Reductions:
--- On SEMICOLON reduce production struct_declarator -> declarator
--- On COMMA reduce production struct_declarator -> declarator
+-- On SEMICOLON COMMA
+--   reduce production struct_declarator -> declarator
 
 State 167:
 ## Known stack suffix:
@@ -3279,34 +2846,8 @@ struct_or_union_specifier -> struct_or_union IDENTIFIER . [ VOLATILE VOID UNSIGN
 ## Transitions:
 -- On LBRACE shift to state 173
 ## Reductions:
--- On VOLATILE reduce production struct_or_union_specifier -> struct_or_union IDENTIFIER
--- On VOID reduce production struct_or_union_specifier -> struct_or_union IDENTIFIER
--- On UNSIGNED reduce production struct_or_union_specifier -> struct_or_union IDENTIFIER
--- On UNION reduce production struct_or_union_specifier -> struct_or_union IDENTIFIER
--- On TYPE_NAME reduce production struct_or_union_specifier -> struct_or_union IDENTIFIER
--- On TYPEDEF reduce production struct_or_union_specifier -> struct_or_union IDENTIFIER
--- On STRUCT reduce production struct_or_union_specifier -> struct_or_union IDENTIFIER
--- On STATIC reduce production struct_or_union_specifier -> struct_or_union IDENTIFIER
--- On STAR reduce production struct_or_union_specifier -> struct_or_union IDENTIFIER
--- On SIGNED reduce production struct_or_union_specifier -> struct_or_union IDENTIFIER
--- On SHORT reduce production struct_or_union_specifier -> struct_or_union IDENTIFIER
--- On SEMICOLON reduce production struct_or_union_specifier -> struct_or_union IDENTIFIER
--- On RPAREN reduce production struct_or_union_specifier -> struct_or_union IDENTIFIER
--- On REGISTER reduce production struct_or_union_specifier -> struct_or_union IDENTIFIER
--- On LPAREN reduce production struct_or_union_specifier -> struct_or_union IDENTIFIER
--- On LONG reduce production struct_or_union_specifier -> struct_or_union IDENTIFIER
--- On LBRACK reduce production struct_or_union_specifier -> struct_or_union IDENTIFIER
--- On INT reduce production struct_or_union_specifier -> struct_or_union IDENTIFIER
--- On IDENTIFIER reduce production struct_or_union_specifier -> struct_or_union IDENTIFIER
--- On FLOAT reduce production struct_or_union_specifier -> struct_or_union IDENTIFIER
--- On EXTERN reduce production struct_or_union_specifier -> struct_or_union IDENTIFIER
--- On ENUM reduce production struct_or_union_specifier -> struct_or_union IDENTIFIER
--- On DOUBLE reduce production struct_or_union_specifier -> struct_or_union IDENTIFIER
--- On CONST reduce production struct_or_union_specifier -> struct_or_union IDENTIFIER
--- On COMMA reduce production struct_or_union_specifier -> struct_or_union IDENTIFIER
--- On COLON reduce production struct_or_union_specifier -> struct_or_union IDENTIFIER
--- On CHAR reduce production struct_or_union_specifier -> struct_or_union IDENTIFIER
--- On AUTO reduce production struct_or_union_specifier -> struct_or_union IDENTIFIER
+-- On VOLATILE VOID UNSIGNED UNION TYPE_NAME TYPEDEF STRUCT STATIC STAR SIGNED SHORT SEMICOLON RPAREN REGISTER LPAREN LONG LBRACK INT IDENTIFIER FLOAT EXTERN ENUM DOUBLE CONST COMMA COLON CHAR AUTO
+--   reduce production struct_or_union_specifier -> struct_or_union IDENTIFIER
 
 State 173:
 ## Known stack suffix:
@@ -3456,7 +2997,8 @@ type_name -> specifier_qualifier_list . abstract_declarator [ RPAREN ]
 -- On direct_abstract_declarator shift to state 211
 -- On abstract_declarator shift to state 222
 ## Reductions:
--- On RPAREN reduce production type_name -> specifier_qualifier_list
+-- On RPAREN
+--   reduce production type_name -> specifier_qualifier_list
 
 State 182:
 ## Known stack suffix:
@@ -3625,13 +3167,8 @@ declaration_specifiers -> type_specifier . declaration_specifiers [ STAR SEMICOL
 -- On enum_specifier shift to state 170
 -- On declaration_specifiers shift to state 194
 ## Reductions:
--- On STAR reduce production declaration_specifiers -> type_specifier
--- On SEMICOLON reduce production declaration_specifiers -> type_specifier
--- On RPAREN reduce production declaration_specifiers -> type_specifier
--- On LPAREN reduce production declaration_specifiers -> type_specifier
--- On LBRACK reduce production declaration_specifiers -> type_specifier
--- On IDENTIFIER reduce production declaration_specifiers -> type_specifier
--- On COMMA reduce production declaration_specifiers -> type_specifier
+-- On STAR SEMICOLON RPAREN LPAREN LBRACK IDENTIFIER COMMA
+--   reduce production declaration_specifiers -> type_specifier
 
 State 190:
 ## Known stack suffix:
@@ -3668,13 +3205,8 @@ declaration_specifiers -> type_qualifier . declaration_specifiers [ STAR SEMICOL
 -- On enum_specifier shift to state 170
 -- On declaration_specifiers shift to state 193
 ## Reductions:
--- On STAR reduce production declaration_specifiers -> type_qualifier
--- On SEMICOLON reduce production declaration_specifiers -> type_qualifier
--- On RPAREN reduce production declaration_specifiers -> type_qualifier
--- On LPAREN reduce production declaration_specifiers -> type_qualifier
--- On LBRACK reduce production declaration_specifiers -> type_qualifier
--- On IDENTIFIER reduce production declaration_specifiers -> type_qualifier
--- On COMMA reduce production declaration_specifiers -> type_qualifier
+-- On STAR SEMICOLON RPAREN LPAREN LBRACK IDENTIFIER COMMA
+--   reduce production declaration_specifiers -> type_qualifier
 
 State 191:
 ## Known stack suffix:
@@ -3711,13 +3243,8 @@ declaration_specifiers -> storage_class_specifier . declaration_specifiers [ STA
 -- On enum_specifier shift to state 170
 -- On declaration_specifiers shift to state 192
 ## Reductions:
--- On STAR reduce production declaration_specifiers -> storage_class_specifier
--- On SEMICOLON reduce production declaration_specifiers -> storage_class_specifier
--- On RPAREN reduce production declaration_specifiers -> storage_class_specifier
--- On LPAREN reduce production declaration_specifiers -> storage_class_specifier
--- On LBRACK reduce production declaration_specifiers -> storage_class_specifier
--- On IDENTIFIER reduce production declaration_specifiers -> storage_class_specifier
--- On COMMA reduce production declaration_specifiers -> storage_class_specifier
+-- On STAR SEMICOLON RPAREN LPAREN LBRACK IDENTIFIER COMMA
+--   reduce production declaration_specifiers -> storage_class_specifier
 
 State 192:
 ## Known stack suffix:
@@ -3757,7 +3284,8 @@ abstract_declarator -> pointer . direct_abstract_declarator [ RPAREN ]
 -- On LBRACK shift to state 184
 -- On direct_abstract_declarator shift to state 196
 ## Reductions:
--- On RPAREN reduce production abstract_declarator -> pointer
+-- On RPAREN
+--   reduce production abstract_declarator -> pointer
 
 State 196:
 ## Known stack suffix:
@@ -3772,8 +3300,8 @@ direct_abstract_declarator -> direct_abstract_declarator . LPAREN parameter_type
 -- On LPAREN shift to state 197
 -- On LBRACK shift to state 212
 ## Reductions:
--- On RPAREN reduce production abstract_declarator -> pointer direct_abstract_declarator
--- On COMMA reduce production abstract_declarator -> pointer direct_abstract_declarator
+-- On RPAREN COMMA
+--   reduce production abstract_declarator -> pointer direct_abstract_declarator
 
 State 197:
 ## Known stack suffix:
@@ -3852,7 +3380,8 @@ parameter_type_list -> parameter_list . COMMA ELLIPSIS [ RPAREN ]
 ## Transitions:
 -- On COMMA shift to state 202
 ## Reductions:
--- On RPAREN reduce production parameter_type_list -> parameter_list
+-- On RPAREN
+--   reduce production parameter_type_list -> parameter_list
 
 State 202:
 ## Known stack suffix:
@@ -3928,8 +3457,8 @@ parameter_declaration -> declaration_specifiers . [ RPAREN COMMA ]
 -- On declarator shift to state 220
 -- On abstract_declarator shift to state 221
 ## Reductions:
--- On RPAREN reduce production parameter_declaration -> declaration_specifiers
--- On COMMA reduce production parameter_declaration -> declaration_specifiers
+-- On RPAREN COMMA
+--   reduce production parameter_declaration -> declaration_specifiers
 
 State 206:
 ## Known stack suffix:
@@ -3996,8 +3525,8 @@ declarator -> pointer . direct_declarator [ RPAREN COMMA ]
 -- On direct_declarator shift to state 22
 -- On direct_abstract_declarator shift to state 196
 ## Reductions:
--- On RPAREN reduce production abstract_declarator -> pointer
--- On COMMA reduce production abstract_declarator -> pointer
+-- On RPAREN COMMA
+--   reduce production abstract_declarator -> pointer
 
 State 208:
 ## Known stack suffix:
@@ -4039,8 +3568,8 @@ direct_abstract_declarator -> direct_abstract_declarator . LPAREN parameter_type
 -- On LPAREN shift to state 197
 -- On LBRACK shift to state 212
 ## Reductions:
--- On RPAREN reduce production abstract_declarator -> direct_abstract_declarator
--- On COMMA reduce production abstract_declarator -> direct_abstract_declarator
+-- On RPAREN COMMA
+--   reduce production abstract_declarator -> direct_abstract_declarator
 
 State 212:
 ## Known stack suffix:
@@ -4265,34 +3794,8 @@ enum_specifier -> ENUM IDENTIFIER . [ VOLATILE VOID UNSIGNED UNION TYPE_NAME TYP
 ## Transitions:
 -- On LBRACE shift to state 233
 ## Reductions:
--- On VOLATILE reduce production enum_specifier -> ENUM IDENTIFIER
--- On VOID reduce production enum_specifier -> ENUM IDENTIFIER
--- On UNSIGNED reduce production enum_specifier -> ENUM IDENTIFIER
--- On UNION reduce production enum_specifier -> ENUM IDENTIFIER
--- On TYPE_NAME reduce production enum_specifier -> ENUM IDENTIFIER
--- On TYPEDEF reduce production enum_specifier -> ENUM IDENTIFIER
--- On STRUCT reduce production enum_specifier -> ENUM IDENTIFIER
--- On STATIC reduce production enum_specifier -> ENUM IDENTIFIER
--- On STAR reduce production enum_specifier -> ENUM IDENTIFIER
--- On SIGNED reduce production enum_specifier -> ENUM IDENTIFIER
--- On SHORT reduce production enum_specifier -> ENUM IDENTIFIER
--- On SEMICOLON reduce production enum_specifier -> ENUM IDENTIFIER
--- On RPAREN reduce production enum_specifier -> ENUM IDENTIFIER
--- On REGISTER reduce production enum_specifier -> ENUM IDENTIFIER
--- On LPAREN reduce production enum_specifier -> ENUM IDENTIFIER
--- On LONG reduce production enum_specifier -> ENUM IDENTIFIER
--- On LBRACK reduce production enum_specifier -> ENUM IDENTIFIER
--- On INT reduce production enum_specifier -> ENUM IDENTIFIER
--- On IDENTIFIER reduce production enum_specifier -> ENUM IDENTIFIER
--- On FLOAT reduce production enum_specifier -> ENUM IDENTIFIER
--- On EXTERN reduce production enum_specifier -> ENUM IDENTIFIER
--- On ENUM reduce production enum_specifier -> ENUM IDENTIFIER
--- On DOUBLE reduce production enum_specifier -> ENUM IDENTIFIER
--- On CONST reduce production enum_specifier -> ENUM IDENTIFIER
--- On COMMA reduce production enum_specifier -> ENUM IDENTIFIER
--- On COLON reduce production enum_specifier -> ENUM IDENTIFIER
--- On CHAR reduce production enum_specifier -> ENUM IDENTIFIER
--- On AUTO reduce production enum_specifier -> ENUM IDENTIFIER
+-- On VOLATILE VOID UNSIGNED UNION TYPE_NAME TYPEDEF STRUCT STATIC STAR SIGNED SHORT SEMICOLON RPAREN REGISTER LPAREN LONG LBRACK INT IDENTIFIER FLOAT EXTERN ENUM DOUBLE CONST COMMA COLON CHAR AUTO
+--   reduce production enum_specifier -> ENUM IDENTIFIER
 
 State 233:
 ## Known stack suffix:
@@ -5429,44 +4932,8 @@ primary_expression -> IDENTIFIER . [ XOR_ASSIGN SUB_ASSIGN STAR SLASH SEMICOLON 
 ## Transitions:
 -- On COLON shift to state 279
 ## Reductions:
--- On XOR_ASSIGN reduce production primary_expression -> IDENTIFIER
--- On SUB_ASSIGN reduce production primary_expression -> IDENTIFIER
--- On STAR reduce production primary_expression -> IDENTIFIER
--- On SLASH reduce production primary_expression -> IDENTIFIER
--- On SEMICOLON reduce production primary_expression -> IDENTIFIER
--- On RIGHT_OP reduce production primary_expression -> IDENTIFIER
--- On RIGHT_ASSIGN reduce production primary_expression -> IDENTIFIER
--- On QUESTION reduce production primary_expression -> IDENTIFIER
--- On PTR_OP reduce production primary_expression -> IDENTIFIER
--- On PLUS reduce production primary_expression -> IDENTIFIER
--- On PERCENT reduce production primary_expression -> IDENTIFIER
--- On OR_OP reduce production primary_expression -> IDENTIFIER
--- On OR_ASSIGN reduce production primary_expression -> IDENTIFIER
--- On NE_OP reduce production primary_expression -> IDENTIFIER
--- On MUL_ASSIGN reduce production primary_expression -> IDENTIFIER
--- On MOD_ASSIGN reduce production primary_expression -> IDENTIFIER
--- On MINUS reduce production primary_expression -> IDENTIFIER
--- On LT reduce production primary_expression -> IDENTIFIER
--- On LPAREN reduce production primary_expression -> IDENTIFIER
--- On LE_OP reduce production primary_expression -> IDENTIFIER
--- On LEFT_OP reduce production primary_expression -> IDENTIFIER
--- On LEFT_ASSIGN reduce production primary_expression -> IDENTIFIER
--- On LBRACK reduce production primary_expression -> IDENTIFIER
--- On INC_OP reduce production primary_expression -> IDENTIFIER
--- On HAT reduce production primary_expression -> IDENTIFIER
--- On GT reduce production primary_expression -> IDENTIFIER
--- On GE_OP reduce production primary_expression -> IDENTIFIER
--- On EQ_OP reduce production primary_expression -> IDENTIFIER
--- On EQUAL reduce production primary_expression -> IDENTIFIER
--- On DOT reduce production primary_expression -> IDENTIFIER
--- On DIV_ASSIGN reduce production primary_expression -> IDENTIFIER
--- On DEC_OP reduce production primary_expression -> IDENTIFIER
--- On COMMA reduce production primary_expression -> IDENTIFIER
--- On BAR reduce production primary_expression -> IDENTIFIER
--- On AND_OP reduce production primary_expression -> IDENTIFIER
--- On AND_ASSIGN reduce production primary_expression -> IDENTIFIER
--- On AMPERSAND reduce production primary_expression -> IDENTIFIER
--- On ADD_ASSIGN reduce production primary_expression -> IDENTIFIER
+-- On XOR_ASSIGN SUB_ASSIGN STAR SLASH SEMICOLON RIGHT_OP RIGHT_ASSIGN QUESTION PTR_OP PLUS PERCENT OR_OP OR_ASSIGN NE_OP MUL_ASSIGN MOD_ASSIGN MINUS LT LPAREN LE_OP LEFT_OP LEFT_ASSIGN LBRACK INC_OP HAT GT GE_OP EQ_OP EQUAL DOT DIV_ASSIGN DEC_OP COMMA BAR AND_OP AND_ASSIGN AMPERSAND ADD_ASSIGN
+--   reduce production primary_expression -> IDENTIFIER
 
 State 279:
 ## Known stack suffix:
@@ -5835,44 +5302,8 @@ primary_expression -> IDENTIFIER . [ XOR_ASSIGN SUB_ASSIGN STAR SLASH SEMICOLON 
 ## Transitions:
 -- On COLON shift to state 290
 ## Reductions:
--- On XOR_ASSIGN reduce production primary_expression -> IDENTIFIER
--- On SUB_ASSIGN reduce production primary_expression -> IDENTIFIER
--- On STAR reduce production primary_expression -> IDENTIFIER
--- On SLASH reduce production primary_expression -> IDENTIFIER
--- On SEMICOLON reduce production primary_expression -> IDENTIFIER
--- On RIGHT_OP reduce production primary_expression -> IDENTIFIER
--- On RIGHT_ASSIGN reduce production primary_expression -> IDENTIFIER
--- On QUESTION reduce production primary_expression -> IDENTIFIER
--- On PTR_OP reduce production primary_expression -> IDENTIFIER
--- On PLUS reduce production primary_expression -> IDENTIFIER
--- On PERCENT reduce production primary_expression -> IDENTIFIER
--- On OR_OP reduce production primary_expression -> IDENTIFIER
--- On OR_ASSIGN reduce production primary_expression -> IDENTIFIER
--- On NE_OP reduce production primary_expression -> IDENTIFIER
--- On MUL_ASSIGN reduce production primary_expression -> IDENTIFIER
--- On MOD_ASSIGN reduce production primary_expression -> IDENTIFIER
--- On MINUS reduce production primary_expression -> IDENTIFIER
--- On LT reduce production primary_expression -> IDENTIFIER
--- On LPAREN reduce production primary_expression -> IDENTIFIER
--- On LE_OP reduce production primary_expression -> IDENTIFIER
--- On LEFT_OP reduce production primary_expression -> IDENTIFIER
--- On LEFT_ASSIGN reduce production primary_expression -> IDENTIFIER
--- On LBRACK reduce production primary_expression -> IDENTIFIER
--- On INC_OP reduce production primary_expression -> IDENTIFIER
--- On HAT reduce production primary_expression -> IDENTIFIER
--- On GT reduce production primary_expression -> IDENTIFIER
--- On GE_OP reduce production primary_expression -> IDENTIFIER
--- On EQ_OP reduce production primary_expression -> IDENTIFIER
--- On EQUAL reduce production primary_expression -> IDENTIFIER
--- On DOT reduce production primary_expression -> IDENTIFIER
--- On DIV_ASSIGN reduce production primary_expression -> IDENTIFIER
--- On DEC_OP reduce production primary_expression -> IDENTIFIER
--- On COMMA reduce production primary_expression -> IDENTIFIER
--- On BAR reduce production primary_expression -> IDENTIFIER
--- On AND_OP reduce production primary_expression -> IDENTIFIER
--- On AND_ASSIGN reduce production primary_expression -> IDENTIFIER
--- On AMPERSAND reduce production primary_expression -> IDENTIFIER
--- On ADD_ASSIGN reduce production primary_expression -> IDENTIFIER
+-- On XOR_ASSIGN SUB_ASSIGN STAR SLASH SEMICOLON RIGHT_OP RIGHT_ASSIGN QUESTION PTR_OP PLUS PERCENT OR_OP OR_ASSIGN NE_OP MUL_ASSIGN MOD_ASSIGN MINUS LT LPAREN LE_OP LEFT_OP LEFT_ASSIGN LBRACK INC_OP HAT GT GE_OP EQ_OP EQUAL DOT DIV_ASSIGN DEC_OP COMMA BAR AND_OP AND_ASSIGN AMPERSAND ADD_ASSIGN
+--   reduce production primary_expression -> IDENTIFIER
 
 State 290:
 ## Known stack suffix:
@@ -6761,34 +6192,10 @@ iteration_statement(statement_dangerous) -> DO statement_dangerous WHILE LPAREN 
 iteration_statement(statement_safe) -> DO statement_dangerous WHILE LPAREN expression RPAREN SEMICOLON . [ ELSE ]
 ## Transitions:
 ## Reductions:
--- On WHILE reduce production iteration_statement(statement_dangerous) -> DO statement_dangerous WHILE LPAREN expression RPAREN SEMICOLON
--- On TILDE reduce production iteration_statement(statement_dangerous) -> DO statement_dangerous WHILE LPAREN expression RPAREN SEMICOLON
--- On SWITCH reduce production iteration_statement(statement_dangerous) -> DO statement_dangerous WHILE LPAREN expression RPAREN SEMICOLON
--- On STRING_LITERAL reduce production iteration_statement(statement_dangerous) -> DO statement_dangerous WHILE LPAREN expression RPAREN SEMICOLON
--- On STAR reduce production iteration_statement(statement_dangerous) -> DO statement_dangerous WHILE LPAREN expression RPAREN SEMICOLON
--- On SIZEOF reduce production iteration_statement(statement_dangerous) -> DO statement_dangerous WHILE LPAREN expression RPAREN SEMICOLON
--- On SEMICOLON reduce production iteration_statement(statement_dangerous) -> DO statement_dangerous WHILE LPAREN expression RPAREN SEMICOLON
--- On RETURN reduce production iteration_statement(statement_dangerous) -> DO statement_dangerous WHILE LPAREN expression RPAREN SEMICOLON
--- On RBRACE reduce production iteration_statement(statement_dangerous) -> DO statement_dangerous WHILE LPAREN expression RPAREN SEMICOLON
--- On PLUS reduce production iteration_statement(statement_dangerous) -> DO statement_dangerous WHILE LPAREN expression RPAREN SEMICOLON
--- On MINUS reduce production iteration_statement(statement_dangerous) -> DO statement_dangerous WHILE LPAREN expression RPAREN SEMICOLON
--- On LPAREN reduce production iteration_statement(statement_dangerous) -> DO statement_dangerous WHILE LPAREN expression RPAREN SEMICOLON
--- On LBRACE reduce production iteration_statement(statement_dangerous) -> DO statement_dangerous WHILE LPAREN expression RPAREN SEMICOLON
--- On INC_OP reduce production iteration_statement(statement_dangerous) -> DO statement_dangerous WHILE LPAREN expression RPAREN SEMICOLON
--- On IF reduce production iteration_statement(statement_dangerous) -> DO statement_dangerous WHILE LPAREN expression RPAREN SEMICOLON
--- On IDENTIFIER reduce production iteration_statement(statement_dangerous) -> DO statement_dangerous WHILE LPAREN expression RPAREN SEMICOLON
--- On GOTO reduce production iteration_statement(statement_dangerous) -> DO statement_dangerous WHILE LPAREN expression RPAREN SEMICOLON
--- On FOR reduce production iteration_statement(statement_dangerous) -> DO statement_dangerous WHILE LPAREN expression RPAREN SEMICOLON
--- On ELSE reduce production iteration_statement(statement_safe) -> DO statement_dangerous WHILE LPAREN expression RPAREN SEMICOLON
--- On DO reduce production iteration_statement(statement_dangerous) -> DO statement_dangerous WHILE LPAREN expression RPAREN SEMICOLON
--- On DEFAULT reduce production iteration_statement(statement_dangerous) -> DO statement_dangerous WHILE LPAREN expression RPAREN SEMICOLON
--- On DEC_OP reduce production iteration_statement(statement_dangerous) -> DO statement_dangerous WHILE LPAREN expression RPAREN SEMICOLON
--- On CONTINUE reduce production iteration_statement(statement_dangerous) -> DO statement_dangerous WHILE LPAREN expression RPAREN SEMICOLON
--- On CONSTANT reduce production iteration_statement(statement_dangerous) -> DO statement_dangerous WHILE LPAREN expression RPAREN SEMICOLON
--- On CASE reduce production iteration_statement(statement_dangerous) -> DO statement_dangerous WHILE LPAREN expression RPAREN SEMICOLON
--- On BREAK reduce production iteration_statement(statement_dangerous) -> DO statement_dangerous WHILE LPAREN expression RPAREN SEMICOLON
--- On BANG reduce production iteration_statement(statement_dangerous) -> DO statement_dangerous WHILE LPAREN expression RPAREN SEMICOLON
--- On AMPERSAND reduce production iteration_statement(statement_dangerous) -> DO statement_dangerous WHILE LPAREN expression RPAREN SEMICOLON
+-- On WHILE TILDE SWITCH STRING_LITERAL STAR SIZEOF SEMICOLON RETURN RBRACE PLUS MINUS LPAREN LBRACE INC_OP IF IDENTIFIER GOTO FOR DO DEFAULT DEC_OP CONTINUE CONSTANT CASE BREAK BANG AMPERSAND
+--   reduce production iteration_statement(statement_dangerous) -> DO statement_dangerous WHILE LPAREN expression RPAREN SEMICOLON
+-- On ELSE
+--   reduce production iteration_statement(statement_safe) -> DO statement_dangerous WHILE LPAREN expression RPAREN SEMICOLON
 
 State 333:
 ## Known stack suffix:
@@ -7012,34 +6419,10 @@ statement_dangerous -> jump_statement . [ WHILE TILDE SWITCH STRING_LITERAL STAR
 statement_safe -> jump_statement . [ ELSE ]
 ## Transitions:
 ## Reductions:
--- On WHILE reduce production statement_dangerous -> jump_statement
--- On TILDE reduce production statement_dangerous -> jump_statement
--- On SWITCH reduce production statement_dangerous -> jump_statement
--- On STRING_LITERAL reduce production statement_dangerous -> jump_statement
--- On STAR reduce production statement_dangerous -> jump_statement
--- On SIZEOF reduce production statement_dangerous -> jump_statement
--- On SEMICOLON reduce production statement_dangerous -> jump_statement
--- On RETURN reduce production statement_dangerous -> jump_statement
--- On RBRACE reduce production statement_dangerous -> jump_statement
--- On PLUS reduce production statement_dangerous -> jump_statement
--- On MINUS reduce production statement_dangerous -> jump_statement
--- On LPAREN reduce production statement_dangerous -> jump_statement
--- On LBRACE reduce production statement_dangerous -> jump_statement
--- On INC_OP reduce production statement_dangerous -> jump_statement
--- On IF reduce production statement_dangerous -> jump_statement
--- On IDENTIFIER reduce production statement_dangerous -> jump_statement
--- On GOTO reduce production statement_dangerous -> jump_statement
--- On FOR reduce production statement_dangerous -> jump_statement
--- On ELSE reduce production statement_safe -> jump_statement
--- On DO reduce production statement_dangerous -> jump_statement
--- On DEFAULT reduce production statement_dangerous -> jump_statement
--- On DEC_OP reduce production statement_dangerous -> jump_statement
--- On CONTINUE reduce production statement_dangerous -> jump_statement
--- On CONSTANT reduce production statement_dangerous -> jump_statement
--- On CASE reduce production statement_dangerous -> jump_statement
--- On BREAK reduce production statement_dangerous -> jump_statement
--- On BANG reduce production statement_dangerous -> jump_statement
--- On AMPERSAND reduce production statement_dangerous -> jump_statement
+-- On WHILE TILDE SWITCH STRING_LITERAL STAR SIZEOF SEMICOLON RETURN RBRACE PLUS MINUS LPAREN LBRACE INC_OP IF IDENTIFIER GOTO FOR DO DEFAULT DEC_OP CONTINUE CONSTANT CASE BREAK BANG AMPERSAND
+--   reduce production statement_dangerous -> jump_statement
+-- On ELSE
+--   reduce production statement_safe -> jump_statement
 
 State 342:
 ## Known stack suffix:
@@ -7058,34 +6441,10 @@ statement_dangerous -> expression_statement . [ WHILE TILDE SWITCH STRING_LITERA
 statement_safe -> expression_statement . [ ELSE ]
 ## Transitions:
 ## Reductions:
--- On WHILE reduce production statement_dangerous -> expression_statement
--- On TILDE reduce production statement_dangerous -> expression_statement
--- On SWITCH reduce production statement_dangerous -> expression_statement
--- On STRING_LITERAL reduce production statement_dangerous -> expression_statement
--- On STAR reduce production statement_dangerous -> expression_statement
--- On SIZEOF reduce production statement_dangerous -> expression_statement
--- On SEMICOLON reduce production statement_dangerous -> expression_statement
--- On RETURN reduce production statement_dangerous -> expression_statement
--- On RBRACE reduce production statement_dangerous -> expression_statement
--- On PLUS reduce production statement_dangerous -> expression_statement
--- On MINUS reduce production statement_dangerous -> expression_statement
--- On LPAREN reduce production statement_dangerous -> expression_statement
--- On LBRACE reduce production statement_dangerous -> expression_statement
--- On INC_OP reduce production statement_dangerous -> expression_statement
--- On IF reduce production statement_dangerous -> expression_statement
--- On IDENTIFIER reduce production statement_dangerous -> expression_statement
--- On GOTO reduce production statement_dangerous -> expression_statement
--- On FOR reduce production statement_dangerous -> expression_statement
--- On ELSE reduce production statement_safe -> expression_statement
--- On DO reduce production statement_dangerous -> expression_statement
--- On DEFAULT reduce production statement_dangerous -> expression_statement
--- On DEC_OP reduce production statement_dangerous -> expression_statement
--- On CONTINUE reduce production statement_dangerous -> expression_statement
--- On CONSTANT reduce production statement_dangerous -> expression_statement
--- On CASE reduce production statement_dangerous -> expression_statement
--- On BREAK reduce production statement_dangerous -> expression_statement
--- On BANG reduce production statement_dangerous -> expression_statement
--- On AMPERSAND reduce production statement_dangerous -> expression_statement
+-- On WHILE TILDE SWITCH STRING_LITERAL STAR SIZEOF SEMICOLON RETURN RBRACE PLUS MINUS LPAREN LBRACE INC_OP IF IDENTIFIER GOTO FOR DO DEFAULT DEC_OP CONTINUE CONSTANT CASE BREAK BANG AMPERSAND
+--   reduce production statement_dangerous -> expression_statement
+-- On ELSE
+--   reduce production statement_safe -> expression_statement
 
 State 344:
 ## Known stack suffix:
@@ -7095,34 +6454,10 @@ statement_dangerous -> compound_statement . [ WHILE TILDE SWITCH STRING_LITERAL 
 statement_safe -> compound_statement . [ ELSE ]
 ## Transitions:
 ## Reductions:
--- On WHILE reduce production statement_dangerous -> compound_statement
--- On TILDE reduce production statement_dangerous -> compound_statement
--- On SWITCH reduce production statement_dangerous -> compound_statement
--- On STRING_LITERAL reduce production statement_dangerous -> compound_statement
--- On STAR reduce production statement_dangerous -> compound_statement
--- On SIZEOF reduce production statement_dangerous -> compound_statement
--- On SEMICOLON reduce production statement_dangerous -> compound_statement
--- On RETURN reduce production statement_dangerous -> compound_statement
--- On RBRACE reduce production statement_dangerous -> compound_statement
--- On PLUS reduce production statement_dangerous -> compound_statement
--- On MINUS reduce production statement_dangerous -> compound_statement
--- On LPAREN reduce production statement_dangerous -> compound_statement
--- On LBRACE reduce production statement_dangerous -> compound_statement
--- On INC_OP reduce production statement_dangerous -> compound_statement
--- On IF reduce production statement_dangerous -> compound_statement
--- On IDENTIFIER reduce production statement_dangerous -> compound_statement
--- On GOTO reduce production statement_dangerous -> compound_statement
--- On FOR reduce production statement_dangerous -> compound_statement
--- On ELSE reduce production statement_safe -> compound_statement
--- On DO reduce production statement_dangerous -> compound_statement
--- On DEFAULT reduce production statement_dangerous -> compound_statement
--- On DEC_OP reduce production statement_dangerous -> compound_statement
--- On CONTINUE reduce production statement_dangerous -> compound_statement
--- On CONSTANT reduce production statement_dangerous -> compound_statement
--- On CASE reduce production statement_dangerous -> compound_statement
--- On BREAK reduce production statement_dangerous -> compound_statement
--- On BANG reduce production statement_dangerous -> compound_statement
--- On AMPERSAND reduce production statement_dangerous -> compound_statement
+-- On WHILE TILDE SWITCH STRING_LITERAL STAR SIZEOF SEMICOLON RETURN RBRACE PLUS MINUS LPAREN LBRACE INC_OP IF IDENTIFIER GOTO FOR DO DEFAULT DEC_OP CONTINUE CONSTANT CASE BREAK BANG AMPERSAND
+--   reduce production statement_dangerous -> compound_statement
+-- On ELSE
+--   reduce production statement_safe -> compound_statement
 
 State 345:
 ## Known stack suffix:
@@ -7618,8 +6953,8 @@ init_declarator -> declarator . EQUAL c_initializer [ SEMICOLON COMMA ]
 ## Transitions:
 -- On EQUAL shift to state 374
 ## Reductions:
--- On SEMICOLON reduce production init_declarator -> declarator
--- On COMMA reduce production init_declarator -> declarator
+-- On SEMICOLON COMMA
+--   reduce production init_declarator -> declarator
 
 State 374:
 ## Known stack suffix:
@@ -8127,8 +7462,8 @@ init_declarator -> declarator . EQUAL c_initializer [ SEMICOLON COMMA ]
 -- On declaration shift to state 390
 -- On compound_statement shift to state 398
 ## Reductions:
--- On SEMICOLON reduce production init_declarator -> declarator
--- On COMMA reduce production init_declarator -> declarator
+-- On SEMICOLON COMMA
+--   reduce production init_declarator -> declarator
 
 State 396:
 ## Known stack suffix:

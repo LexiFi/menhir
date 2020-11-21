@@ -16,8 +16,8 @@ bundle' -> . bundle [ # ]
 -- On bundle shift to state 26
 -- On api shift to state 27
 ## Reductions:
--- On PLUS reduce production loption(separated_nonempty_list(DOT,uident)) ->
--- On EQUALS reduce production loption(separated_nonempty_list(DOT,uident)) ->
+-- On PLUS EQUALS
+--   reduce production loption(separated_nonempty_list(DOT,uident)) ->
 
 State 1:
 ## Known stack suffix:
@@ -30,10 +30,10 @@ separated_nonempty_list(DOT,uident) -> UIDENT . DOT separated_nonempty_list(DOT,
 ## Transitions:
 -- On DOT shift to state 2
 ## Reductions:
--- On PLUS reduce production separated_nonempty_list(DOT,uident) -> UIDENT
--- On EQUALS reduce production separated_nonempty_list(DOT,uident) -> UIDENT
--- On EOF reduce production pat -> UIDENT
--- On COMMA reduce production pat -> UIDENT
+-- On EOF COMMA
+--   reduce production pat -> UIDENT
+-- On PLUS EQUALS
+--   reduce production separated_nonempty_list(DOT,uident) -> UIDENT
 
 State 2:
 ## Known stack suffix:
@@ -95,7 +95,8 @@ api -> PUBLIC LPAREN . mident RPAREN [ PLUS EQUALS ]
 -- On mident shift to state 11
 -- On loption(separated_nonempty_list(DOT,uident)) shift to state 13
 ## Reductions:
--- On RPAREN reduce production loption(separated_nonempty_list(DOT,uident)) ->
+-- On RPAREN
+--   reduce production loption(separated_nonempty_list(DOT,uident)) ->
 
 State 8:
 ## Known stack suffix:
@@ -106,9 +107,8 @@ separated_nonempty_list(DOT,uident) -> UIDENT . DOT separated_nonempty_list(DOT,
 ## Transitions:
 -- On DOT shift to state 9
 ## Reductions:
--- On RPAREN reduce production separated_nonempty_list(DOT,uident) -> UIDENT
--- On PLUS reduce production separated_nonempty_list(DOT,uident) -> UIDENT
--- On EQUALS reduce production separated_nonempty_list(DOT,uident) -> UIDENT
+-- On RPAREN PLUS EQUALS
+--   reduce production separated_nonempty_list(DOT,uident) -> UIDENT
 
 State 9:
 ## Known stack suffix:
@@ -186,8 +186,8 @@ pat -> UIDENT . DOT pat [ EOF COMMA ]
 ## Transitions:
 -- On DOT shift to state 17
 ## Reductions:
--- On EOF reduce production pat -> UIDENT
--- On COMMA reduce production pat -> UIDENT
+-- On EOF COMMA
+--   reduce production pat -> UIDENT
 
 State 17:
 ## Known stack suffix:
@@ -227,7 +227,8 @@ separated_nonempty_list(COMMA,pat) -> pat . COMMA separated_nonempty_list(COMMA,
 ## Transitions:
 -- On COMMA shift to state 21
 ## Reductions:
--- On EOF reduce production separated_nonempty_list(COMMA,pat) -> pat
+-- On EOF
+--   reduce production separated_nonempty_list(COMMA,pat) -> pat
 
 State 21:
 ## Known stack suffix:
@@ -295,7 +296,8 @@ separated_nonempty_list(PLUS,api) -> api . PLUS separated_nonempty_list(PLUS,api
 ## Transitions:
 -- On PLUS shift to state 28
 ## Reductions:
--- On EQUALS reduce production separated_nonempty_list(PLUS,api) -> api
+-- On EQUALS
+--   reduce production separated_nonempty_list(PLUS,api) -> api
 
 State 28:
 ## Known stack suffix:
@@ -311,8 +313,8 @@ separated_nonempty_list(PLUS,api) -> api PLUS . separated_nonempty_list(PLUS,api
 -- On loption(separated_nonempty_list(DOT,uident)) shift to state 13
 -- On api shift to state 27
 ## Reductions:
--- On PLUS reduce production loption(separated_nonempty_list(DOT,uident)) ->
--- On EQUALS reduce production loption(separated_nonempty_list(DOT,uident)) ->
+-- On PLUS EQUALS
+--   reduce production loption(separated_nonempty_list(DOT,uident)) ->
 
 State 29:
 ## Known stack suffix:
@@ -336,7 +338,8 @@ drop' -> . drop [ # ]
 -- On loption(separated_nonempty_list(COMMA,pat)) shift to state 32
 -- On drop shift to state 34
 ## Reductions:
--- On EOF reduce production loption(separated_nonempty_list(COMMA,pat)) ->
+-- On EOF
+--   reduce production loption(separated_nonempty_list(COMMA,pat)) ->
 
 State 31:
 ## Known stack suffix:
@@ -497,7 +500,8 @@ nonempty_list(warn_error) -> warn_error . nonempty_list(warn_error) [ EOF ]
 -- On nonempty_list(warn_error) shift to state 47
 -- On flag shift to state 48
 ## Reductions:
--- On EOF reduce production nonempty_list(warn_error) -> warn_error
+-- On EOF
+--   reduce production nonempty_list(warn_error) -> warn_error
 
 State 47:
 ## Known stack suffix:
@@ -527,10 +531,8 @@ range -> INT . DOT DOT INT [ PLUS MINUS EOF AT ]
 ## Transitions:
 -- On DOT shift to state 50
 ## Reductions:
--- On PLUS reduce production range -> INT
--- On MINUS reduce production range -> INT
--- On EOF reduce production range -> INT
--- On AT reduce production range -> INT
+-- On PLUS MINUS EOF AT
+--   reduce production range -> INT
 
 State 50:
 ## Known stack suffix:

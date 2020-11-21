@@ -47,7 +47,8 @@ program -> MODULE modname . semi imports block opt_ident DOT [ # ]
 -- On COMMA shift to state 6
 -- On semi shift to state 7
 ## Reductions:
--- On IDENT reduce production semi ->
+-- On IDENT
+--   reduce production semi ->
 
 State 5:
 ## Known stack suffix:
@@ -97,15 +98,8 @@ import -> name . ASSIGN IDENT [ error VAR TYPE PROCEDURE END CONST COMMA BEGIN A
 ## Transitions:
 -- On ASSIGN shift to state 10
 ## Reductions:
--- On error reduce production import -> name
--- On VAR reduce production import -> name
--- On TYPE reduce production import -> name
--- On PROCEDURE reduce production import -> name
--- On END reduce production import -> name
--- On CONST reduce production import -> name
--- On COMMA reduce production import -> name
--- On BEGIN reduce production import -> name
--- On ABSTRACT reduce production import -> name
+-- On error VAR TYPE PROCEDURE END CONST COMMA BEGIN ABSTRACT
+--   reduce production import -> name
 
 State 10:
 ## Known stack suffix:
@@ -136,14 +130,8 @@ program -> MODULE modname semi imports . block opt_ident DOT [ # ]
 -- On decls shift to state 15
 -- On block shift to state 397
 ## Reductions:
--- On error reduce production decls ->
--- On VAR reduce production decls ->
--- On TYPE reduce production decls ->
--- On PROCEDURE reduce production decls ->
--- On END reduce production decls ->
--- On CONST reduce production decls ->
--- On BEGIN reduce production decls ->
--- On ABSTRACT reduce production decls ->
+-- On error VAR TYPE PROCEDURE END CONST BEGIN ABSTRACT
+--   reduce production decls ->
 
 State 13:
 ## Known stack suffix:
@@ -183,7 +171,8 @@ decls -> decls . decl [ error VAR TYPE PROCEDURE END CONST BEGIN ABSTRACT ]
 -- On decl shift to state 306
 -- On body shift to state 395
 ## Reductions:
--- On END reduce production body ->
+-- On END
+--   reduce production body ->
 
 State 16:
 ## Known stack suffix:
@@ -226,10 +215,8 @@ defid -> IDENT . export [ RPAR EQUAL COMMA COLON ]
 -- On MINUS shift to state 21
 -- On export shift to state 22
 ## Reductions:
--- On RPAR reduce production export ->
--- On EQUAL reduce production export ->
--- On COMMA reduce production export ->
--- On COLON reduce production export ->
+-- On RPAR EQUAL COMMA COLON
+--   reduce production export ->
 
 State 20:
 ## Known stack suffix:
@@ -280,14 +267,8 @@ var_decls -> var_decl . var_decls [ error VAR TYPE PROCEDURE END CONST BEGIN ABS
 -- On defids shift to state 26
 -- On defid shift to state 55
 ## Reductions:
--- On error reduce production var_decls -> var_decl
--- On VAR reduce production var_decls -> var_decl
--- On TYPE reduce production var_decls -> var_decl
--- On PROCEDURE reduce production var_decls -> var_decl
--- On END reduce production var_decls -> var_decl
--- On CONST reduce production var_decls -> var_decl
--- On BEGIN reduce production var_decls -> var_decl
--- On ABSTRACT reduce production var_decls -> var_decl
+-- On error VAR TYPE PROCEDURE END CONST BEGIN ABSTRACT
+--   reduce production var_decls -> var_decl
 
 State 25:
 ## Known stack suffix:
@@ -324,7 +305,8 @@ var_decl -> defids COLON . typexpr semi [ error VAR TYPE PROCEDURE IDENT END CON
 -- On qualid shift to state 166
 -- On absmark shift to state 167
 ## Reductions:
--- On RECORD reduce production absmark ->
+-- On RECORD
+--   reduce production absmark ->
 
 State 28:
 ## Known stack suffix:
@@ -335,17 +317,8 @@ typexpr -> PROCEDURE . params [ error VAR TYPE SEMI PROCEDURE IDENT END CONST CO
 -- On LPAR shift to state 29
 -- On params shift to state 156
 ## Reductions:
--- On error reduce production params ->
--- On VAR reduce production params ->
--- On TYPE reduce production params ->
--- On SEMI reduce production params ->
--- On PROCEDURE reduce production params ->
--- On IDENT reduce production params ->
--- On END reduce production params ->
--- On CONST reduce production params ->
--- On COMMA reduce production params ->
--- On BEGIN reduce production params ->
--- On ABSTRACT reduce production params ->
+-- On error VAR TYPE SEMI PROCEDURE IDENT END CONST COMMA BEGIN ABSTRACT
+--   reduce production params ->
 
 State 29:
 ## Known stack suffix:
@@ -400,7 +373,8 @@ formal -> VAR defids COLON . typexpr [ VAR SEMI RPAR IDENT COMMA ]
 -- On qualid shift to state 124
 -- On absmark shift to state 125
 ## Reductions:
--- On RECORD reduce production absmark ->
+-- On RECORD
+--   reduce production absmark ->
 
 State 33:
 ## Known stack suffix:
@@ -411,12 +385,8 @@ typexpr -> PROCEDURE . params [ VAR SEMI RPAR IDENT END COMMA ]
 -- On LPAR shift to state 34
 -- On params shift to state 144
 ## Reductions:
--- On VAR reduce production params ->
--- On SEMI reduce production params ->
--- On RPAR reduce production params ->
--- On IDENT reduce production params ->
--- On END reduce production params ->
--- On COMMA reduce production params ->
+-- On VAR SEMI RPAR IDENT END COMMA
+--   reduce production params ->
 
 State 34:
 ## Known stack suffix:
@@ -443,12 +413,8 @@ params -> LPAR RPAR . result [ VAR SEMI RPAR IDENT END COMMA ]
 -- On COLON shift to state 36
 -- On result shift to state 41
 ## Reductions:
--- On VAR reduce production result ->
--- On SEMI reduce production result ->
--- On RPAR reduce production result ->
--- On IDENT reduce production result ->
--- On END reduce production result ->
--- On COMMA reduce production result ->
+-- On VAR SEMI RPAR IDENT END COMMA
+--   reduce production result ->
 
 State 36:
 ## Known stack suffix:
@@ -469,33 +435,8 @@ qualid -> IDENT . DOT IDENT [ VAR UPARROW TO THEN SUB STAR SEMI RPAR RELOP RBRAC
 ## Transitions:
 -- On DOT shift to state 38
 ## Reductions:
--- On VAR reduce production qualid -> IDENT
--- On UPARROW reduce production qualid -> IDENT
--- On TO reduce production qualid -> IDENT
--- On THEN reduce production qualid -> IDENT
--- On SUB reduce production qualid -> IDENT
--- On STAR reduce production qualid -> IDENT
--- On SEMI reduce production qualid -> IDENT
--- On RPAR reduce production qualid -> IDENT
--- On RELOP reduce production qualid -> IDENT
--- On RBRACE reduce production qualid -> IDENT
--- On PLUS reduce production qualid -> IDENT
--- On OF reduce production qualid -> IDENT
--- On MULOP reduce production qualid -> IDENT
--- On MINUS reduce production qualid -> IDENT
--- On LPAR reduce production qualid -> IDENT
--- On IS reduce production qualid -> IDENT
--- On IDENT reduce production qualid -> IDENT
--- On EQUAL reduce production qualid -> IDENT
--- On END reduce production qualid -> IDENT
--- On DOTDOT reduce production qualid -> IDENT
--- On DO reduce production qualid -> IDENT
--- On COMMA reduce production qualid -> IDENT
--- On COLON reduce production qualid -> IDENT
--- On BY reduce production qualid -> IDENT
--- On BUS reduce production qualid -> IDENT
--- On ASSIGN reduce production qualid -> IDENT
--- On ADDOP reduce production qualid -> IDENT
+-- On VAR UPARROW TO THEN SUB STAR SEMI RPAR RELOP RBRACE PLUS OF MULOP MINUS LPAR IS IDENT EQUAL END DOTDOT DO COMMA COLON BY BUS ASSIGN ADDOP
+--   reduce production qualid -> IDENT
 
 State 38:
 ## Known stack suffix:
@@ -551,12 +492,8 @@ params -> LPAR formals RPAR . result [ VAR SEMI RPAR IDENT END COMMA ]
 -- On COLON shift to state 36
 -- On result shift to state 44
 ## Reductions:
--- On VAR reduce production result ->
--- On SEMI reduce production result ->
--- On RPAR reduce production result ->
--- On IDENT reduce production result ->
--- On END reduce production result ->
--- On COMMA reduce production result ->
+-- On VAR SEMI RPAR IDENT END COMMA
+--   reduce production result ->
 
 State 44:
 ## Known stack suffix:
@@ -578,9 +515,10 @@ formals -> formal . semi formals [ RPAR ]
 -- On COMMA shift to state 6
 -- On semi shift to state 46
 ## Reductions:
--- On VAR reduce production semi ->
--- On RPAR reduce production formals -> formal
--- On IDENT reduce production semi ->
+-- On RPAR
+--   reduce production formals -> formal
+-- On VAR IDENT
+--   reduce production semi ->
 
 State 46:
 ## Known stack suffix:
@@ -631,7 +569,8 @@ formal -> defids COLON . typexpr [ VAR SEMI RPAR IDENT COMMA ]
 -- On qualid shift to state 124
 -- On absmark shift to state 125
 ## Reductions:
--- On RECORD reduce production absmark ->
+-- On RECORD
+--   reduce production absmark ->
 
 State 50:
 ## Known stack suffix:
@@ -659,7 +598,8 @@ typexpr -> POINTER TO . typexpr [ VAR SEMI RPAR IDENT END COMMA ]
 -- On qualid shift to state 124
 -- On absmark shift to state 125
 ## Reductions:
--- On RECORD reduce production absmark ->
+-- On RECORD
+--   reduce production absmark ->
 
 State 52:
 ## Known stack suffix:
@@ -699,8 +639,8 @@ defids -> defid . COMMA defids [ RPAR COLON ]
 ## Transitions:
 -- On COMMA shift to state 56
 ## Reductions:
--- On RPAR reduce production defids -> defid
--- On COLON reduce production defids -> defid
+-- On RPAR COLON
+--   reduce production defids -> defid
 
 State 56:
 ## Known stack suffix:
@@ -962,28 +902,8 @@ term -> term . STAR factor [ UPARROW TO THEN SUB STAR RPAR RELOP RBRACE PLUS OF 
 -- On STAR shift to state 73
 -- On MULOP shift to state 84
 ## Reductions:
--- On UPARROW reduce production simple -> term
--- On TO reduce production simple -> term
--- On THEN reduce production simple -> term
--- On SUB reduce production simple -> term
--- On RPAR reduce production simple -> term
--- On RELOP reduce production simple -> term
--- On RBRACE reduce production simple -> term
--- On PLUS reduce production simple -> term
--- On OF reduce production simple -> term
--- On MINUS reduce production simple -> term
--- On LPAR reduce production simple -> term
--- On IS reduce production simple -> term
--- On EQUAL reduce production simple -> term
--- On DOTDOT reduce production simple -> term
--- On DOT reduce production simple -> term
--- On DO reduce production simple -> term
--- On COMMA reduce production simple -> term
--- On COLON reduce production simple -> term
--- On BY reduce production simple -> term
--- On BUS reduce production simple -> term
--- On ASSIGN reduce production simple -> term
--- On ADDOP reduce production simple -> term
+-- On UPARROW TO THEN SUB RPAR RELOP RBRACE PLUS OF MINUS LPAR IS EQUAL DOTDOT DOT DO COMMA COLON BY BUS ASSIGN ADDOP
+--   reduce production simple -> term
 
 State 73:
 ## Known stack suffix:
@@ -1042,26 +962,8 @@ factor -> designator . [ UPARROW TO THEN SUB STAR RPAR RELOP RBRACE PLUS OF MULO
 -- On DOT shift to state 104
 -- On actuals shift to state 106
 ## Reductions:
--- On TO reduce production factor -> designator
--- On THEN reduce production factor -> designator
--- On STAR reduce production factor -> designator
--- On RPAR reduce production factor -> designator
--- On RELOP reduce production factor -> designator
--- On RBRACE reduce production factor -> designator
--- On PLUS reduce production factor -> designator
--- On OF reduce production factor -> designator
--- On MULOP reduce production factor -> designator
--- On MINUS reduce production factor -> designator
--- On IS reduce production factor -> designator
--- On EQUAL reduce production factor -> designator
--- On DOTDOT reduce production factor -> designator
--- On DO reduce production factor -> designator
--- On COMMA reduce production factor -> designator
--- On COLON reduce production factor -> designator
--- On BY reduce production factor -> designator
--- On BUS reduce production factor -> designator
--- On ASSIGN reduce production factor -> designator
--- On ADDOP reduce production factor -> designator
+-- On TO THEN STAR RPAR RELOP RBRACE PLUS OF MULOP MINUS IS EQUAL DOTDOT DO COMMA COLON BY BUS ASSIGN ADDOP
+--   reduce production factor -> designator
 
 State 77:
 ## Known stack suffix:
@@ -1120,24 +1022,8 @@ simple -> simple . ADDOP term [ UPARROW TO THEN SUB STAR RPAR RELOP RBRACE PLUS 
 -- On EQUAL shift to state 93
 -- On ADDOP shift to state 89
 ## Reductions:
--- On UPARROW reduce production expr -> simple
--- On TO reduce production expr -> simple
--- On THEN reduce production expr -> simple
--- On SUB reduce production expr -> simple
--- On STAR reduce production expr -> simple
--- On RPAR reduce production expr -> simple
--- On RBRACE reduce production expr -> simple
--- On OF reduce production expr -> simple
--- On MULOP reduce production expr -> simple
--- On LPAR reduce production expr -> simple
--- On DOTDOT reduce production expr -> simple
--- On DOT reduce production expr -> simple
--- On DO reduce production expr -> simple
--- On COMMA reduce production expr -> simple
--- On COLON reduce production expr -> simple
--- On BY reduce production expr -> simple
--- On BUS reduce production expr -> simple
--- On ASSIGN reduce production expr -> simple
+-- On UPARROW TO THEN SUB STAR RPAR RBRACE OF MULOP LPAR DOTDOT DOT DO COMMA COLON BY BUS ASSIGN
+--   reduce production expr -> simple
 
 State 80:
 ## Known stack suffix:
@@ -1178,27 +1064,8 @@ simple -> simple . ADDOP term [ UPARROW TO THEN SUB STAR RPAR RELOP RBRACE PLUS 
 -- On MINUS shift to state 87
 -- On ADDOP shift to state 89
 ## Reductions:
--- On UPARROW reduce production expr -> simple RELOP simple
--- On TO reduce production expr -> simple RELOP simple
--- On THEN reduce production expr -> simple RELOP simple
--- On SUB reduce production expr -> simple RELOP simple
--- On STAR reduce production expr -> simple RELOP simple
--- On RPAR reduce production expr -> simple RELOP simple
--- On RELOP reduce production expr -> simple RELOP simple
--- On RBRACE reduce production expr -> simple RELOP simple
--- On OF reduce production expr -> simple RELOP simple
--- On MULOP reduce production expr -> simple RELOP simple
--- On LPAR reduce production expr -> simple RELOP simple
--- On IS reduce production expr -> simple RELOP simple
--- On EQUAL reduce production expr -> simple RELOP simple
--- On DOTDOT reduce production expr -> simple RELOP simple
--- On DOT reduce production expr -> simple RELOP simple
--- On DO reduce production expr -> simple RELOP simple
--- On COMMA reduce production expr -> simple RELOP simple
--- On COLON reduce production expr -> simple RELOP simple
--- On BY reduce production expr -> simple RELOP simple
--- On BUS reduce production expr -> simple RELOP simple
--- On ASSIGN reduce production expr -> simple RELOP simple
+-- On UPARROW TO THEN SUB STAR RPAR RELOP RBRACE OF MULOP LPAR IS EQUAL DOTDOT DOT DO COMMA COLON BY BUS ASSIGN
+--   reduce production expr -> simple RELOP simple
 
 State 82:
 ## Known stack suffix:
@@ -1234,28 +1101,8 @@ term -> term . STAR factor [ UPARROW TO THEN SUB STAR RPAR RELOP RBRACE PLUS OF 
 -- On STAR shift to state 73
 -- On MULOP shift to state 84
 ## Reductions:
--- On UPARROW reduce production simple -> simple PLUS term
--- On TO reduce production simple -> simple PLUS term
--- On THEN reduce production simple -> simple PLUS term
--- On SUB reduce production simple -> simple PLUS term
--- On RPAR reduce production simple -> simple PLUS term
--- On RELOP reduce production simple -> simple PLUS term
--- On RBRACE reduce production simple -> simple PLUS term
--- On PLUS reduce production simple -> simple PLUS term
--- On OF reduce production simple -> simple PLUS term
--- On MINUS reduce production simple -> simple PLUS term
--- On LPAR reduce production simple -> simple PLUS term
--- On IS reduce production simple -> simple PLUS term
--- On EQUAL reduce production simple -> simple PLUS term
--- On DOTDOT reduce production simple -> simple PLUS term
--- On DOT reduce production simple -> simple PLUS term
--- On DO reduce production simple -> simple PLUS term
--- On COMMA reduce production simple -> simple PLUS term
--- On COLON reduce production simple -> simple PLUS term
--- On BY reduce production simple -> simple PLUS term
--- On BUS reduce production simple -> simple PLUS term
--- On ASSIGN reduce production simple -> simple PLUS term
--- On ADDOP reduce production simple -> simple PLUS term
+-- On UPARROW TO THEN SUB RPAR RELOP RBRACE PLUS OF MINUS LPAR IS EQUAL DOTDOT DOT DO COMMA COLON BY BUS ASSIGN ADDOP
+--   reduce production simple -> simple PLUS term
 
 State 84:
 ## Known stack suffix:
@@ -1331,28 +1178,8 @@ term -> term . STAR factor [ UPARROW TO THEN SUB STAR RPAR RELOP RBRACE PLUS OF 
 -- On STAR shift to state 73
 -- On MULOP shift to state 84
 ## Reductions:
--- On UPARROW reduce production simple -> simple MINUS term
--- On TO reduce production simple -> simple MINUS term
--- On THEN reduce production simple -> simple MINUS term
--- On SUB reduce production simple -> simple MINUS term
--- On RPAR reduce production simple -> simple MINUS term
--- On RELOP reduce production simple -> simple MINUS term
--- On RBRACE reduce production simple -> simple MINUS term
--- On PLUS reduce production simple -> simple MINUS term
--- On OF reduce production simple -> simple MINUS term
--- On MINUS reduce production simple -> simple MINUS term
--- On LPAR reduce production simple -> simple MINUS term
--- On IS reduce production simple -> simple MINUS term
--- On EQUAL reduce production simple -> simple MINUS term
--- On DOTDOT reduce production simple -> simple MINUS term
--- On DOT reduce production simple -> simple MINUS term
--- On DO reduce production simple -> simple MINUS term
--- On COMMA reduce production simple -> simple MINUS term
--- On COLON reduce production simple -> simple MINUS term
--- On BY reduce production simple -> simple MINUS term
--- On BUS reduce production simple -> simple MINUS term
--- On ASSIGN reduce production simple -> simple MINUS term
--- On ADDOP reduce production simple -> simple MINUS term
+-- On UPARROW TO THEN SUB RPAR RELOP RBRACE PLUS OF MINUS LPAR IS EQUAL DOTDOT DOT DO COMMA COLON BY BUS ASSIGN ADDOP
+--   reduce production simple -> simple MINUS term
 
 State 89:
 ## Known stack suffix:
@@ -1388,28 +1215,8 @@ term -> term . STAR factor [ UPARROW TO THEN SUB STAR RPAR RELOP RBRACE PLUS OF 
 -- On STAR shift to state 73
 -- On MULOP shift to state 84
 ## Reductions:
--- On UPARROW reduce production simple -> simple ADDOP term
--- On TO reduce production simple -> simple ADDOP term
--- On THEN reduce production simple -> simple ADDOP term
--- On SUB reduce production simple -> simple ADDOP term
--- On RPAR reduce production simple -> simple ADDOP term
--- On RELOP reduce production simple -> simple ADDOP term
--- On RBRACE reduce production simple -> simple ADDOP term
--- On PLUS reduce production simple -> simple ADDOP term
--- On OF reduce production simple -> simple ADDOP term
--- On MINUS reduce production simple -> simple ADDOP term
--- On LPAR reduce production simple -> simple ADDOP term
--- On IS reduce production simple -> simple ADDOP term
--- On EQUAL reduce production simple -> simple ADDOP term
--- On DOTDOT reduce production simple -> simple ADDOP term
--- On DOT reduce production simple -> simple ADDOP term
--- On DO reduce production simple -> simple ADDOP term
--- On COMMA reduce production simple -> simple ADDOP term
--- On COLON reduce production simple -> simple ADDOP term
--- On BY reduce production simple -> simple ADDOP term
--- On BUS reduce production simple -> simple ADDOP term
--- On ASSIGN reduce production simple -> simple ADDOP term
--- On ADDOP reduce production simple -> simple ADDOP term
+-- On UPARROW TO THEN SUB RPAR RELOP RBRACE PLUS OF MINUS LPAR IS EQUAL DOTDOT DOT DO COMMA COLON BY BUS ASSIGN ADDOP
+--   reduce production simple -> simple ADDOP term
 
 State 91:
 ## Known stack suffix:
@@ -1469,27 +1276,8 @@ simple -> simple . ADDOP term [ UPARROW TO THEN SUB STAR RPAR RELOP RBRACE PLUS 
 -- On MINUS shift to state 87
 -- On ADDOP shift to state 89
 ## Reductions:
--- On UPARROW reduce production expr -> simple EQUAL simple
--- On TO reduce production expr -> simple EQUAL simple
--- On THEN reduce production expr -> simple EQUAL simple
--- On SUB reduce production expr -> simple EQUAL simple
--- On STAR reduce production expr -> simple EQUAL simple
--- On RPAR reduce production expr -> simple EQUAL simple
--- On RELOP reduce production expr -> simple EQUAL simple
--- On RBRACE reduce production expr -> simple EQUAL simple
--- On OF reduce production expr -> simple EQUAL simple
--- On MULOP reduce production expr -> simple EQUAL simple
--- On LPAR reduce production expr -> simple EQUAL simple
--- On IS reduce production expr -> simple EQUAL simple
--- On EQUAL reduce production expr -> simple EQUAL simple
--- On DOTDOT reduce production expr -> simple EQUAL simple
--- On DOT reduce production expr -> simple EQUAL simple
--- On DO reduce production expr -> simple EQUAL simple
--- On COMMA reduce production expr -> simple EQUAL simple
--- On COLON reduce production expr -> simple EQUAL simple
--- On BY reduce production expr -> simple EQUAL simple
--- On BUS reduce production expr -> simple EQUAL simple
--- On ASSIGN reduce production expr -> simple EQUAL simple
+-- On UPARROW TO THEN SUB STAR RPAR RELOP RBRACE OF MULOP LPAR IS EQUAL DOTDOT DOT DO COMMA COLON BY BUS ASSIGN
+--   reduce production expr -> simple EQUAL simple
 
 State 95:
 ## Known stack suffix:
@@ -1500,29 +1288,8 @@ designator -> designator SUB exprs . [ UPARROW TO THEN SUB STAR RPAR RELOP RBRAC
 ## Transitions:
 -- On BUS shift to state 96
 ## Reductions:
--- On UPARROW reduce production designator -> designator SUB exprs
--- On TO reduce production designator -> designator SUB exprs
--- On THEN reduce production designator -> designator SUB exprs
--- On SUB reduce production designator -> designator SUB exprs
--- On STAR reduce production designator -> designator SUB exprs
--- On RPAR reduce production designator -> designator SUB exprs
--- On RELOP reduce production designator -> designator SUB exprs
--- On RBRACE reduce production designator -> designator SUB exprs
--- On PLUS reduce production designator -> designator SUB exprs
--- On OF reduce production designator -> designator SUB exprs
--- On MULOP reduce production designator -> designator SUB exprs
--- On MINUS reduce production designator -> designator SUB exprs
--- On LPAR reduce production designator -> designator SUB exprs
--- On IS reduce production designator -> designator SUB exprs
--- On EQUAL reduce production designator -> designator SUB exprs
--- On DOTDOT reduce production designator -> designator SUB exprs
--- On DOT reduce production designator -> designator SUB exprs
--- On DO reduce production designator -> designator SUB exprs
--- On COMMA reduce production designator -> designator SUB exprs
--- On COLON reduce production designator -> designator SUB exprs
--- On BY reduce production designator -> designator SUB exprs
--- On ASSIGN reduce production designator -> designator SUB exprs
--- On ADDOP reduce production designator -> designator SUB exprs
+-- On UPARROW TO THEN SUB STAR RPAR RELOP RBRACE PLUS OF MULOP MINUS LPAR IS EQUAL DOTDOT DOT DO COMMA COLON BY ASSIGN ADDOP
+--   reduce production designator -> designator SUB exprs
 
 State 96:
 ## Known stack suffix:
@@ -1542,29 +1309,8 @@ exprs -> expr . COMMA exprs [ UPARROW TO THEN SUB STAR RPAR RELOP RBRACE PLUS OF
 ## Transitions:
 -- On COMMA shift to state 98
 ## Reductions:
--- On UPARROW reduce production exprs -> expr
--- On TO reduce production exprs -> expr
--- On THEN reduce production exprs -> expr
--- On SUB reduce production exprs -> expr
--- On STAR reduce production exprs -> expr
--- On RPAR reduce production exprs -> expr
--- On RELOP reduce production exprs -> expr
--- On RBRACE reduce production exprs -> expr
--- On PLUS reduce production exprs -> expr
--- On OF reduce production exprs -> expr
--- On MULOP reduce production exprs -> expr
--- On MINUS reduce production exprs -> expr
--- On LPAR reduce production exprs -> expr
--- On IS reduce production exprs -> expr
--- On EQUAL reduce production exprs -> expr
--- On DOTDOT reduce production exprs -> expr
--- On DOT reduce production exprs -> expr
--- On DO reduce production exprs -> expr
--- On COLON reduce production exprs -> expr
--- On BY reduce production exprs -> expr
--- On BUS reduce production exprs -> expr
--- On ASSIGN reduce production exprs -> expr
--- On ADDOP reduce production exprs -> expr
+-- On UPARROW TO THEN SUB STAR RPAR RELOP RBRACE PLUS OF MULOP MINUS LPAR IS EQUAL DOTDOT DOT DO COLON BY BUS ASSIGN ADDOP
+--   reduce production exprs -> expr
 
 State 98:
 ## Known stack suffix:
@@ -1652,29 +1398,8 @@ actuals -> LPAR exprs . [ UPARROW TO THEN SUB STAR RPAR RELOP RBRACE PLUS OF MUL
 ## Transitions:
 -- On RPAR shift to state 103
 ## Reductions:
--- On UPARROW reduce production actuals -> LPAR exprs
--- On TO reduce production actuals -> LPAR exprs
--- On THEN reduce production actuals -> LPAR exprs
--- On SUB reduce production actuals -> LPAR exprs
--- On STAR reduce production actuals -> LPAR exprs
--- On RELOP reduce production actuals -> LPAR exprs
--- On RBRACE reduce production actuals -> LPAR exprs
--- On PLUS reduce production actuals -> LPAR exprs
--- On OF reduce production actuals -> LPAR exprs
--- On MULOP reduce production actuals -> LPAR exprs
--- On MINUS reduce production actuals -> LPAR exprs
--- On LPAR reduce production actuals -> LPAR exprs
--- On IS reduce production actuals -> LPAR exprs
--- On EQUAL reduce production actuals -> LPAR exprs
--- On DOTDOT reduce production actuals -> LPAR exprs
--- On DOT reduce production actuals -> LPAR exprs
--- On DO reduce production actuals -> LPAR exprs
--- On COMMA reduce production actuals -> LPAR exprs
--- On COLON reduce production actuals -> LPAR exprs
--- On BY reduce production actuals -> LPAR exprs
--- On BUS reduce production actuals -> LPAR exprs
--- On ASSIGN reduce production actuals -> LPAR exprs
--- On ADDOP reduce production actuals -> LPAR exprs
+-- On UPARROW TO THEN SUB STAR RELOP RBRACE PLUS OF MULOP MINUS LPAR IS EQUAL DOTDOT DOT DO COMMA COLON BY BUS ASSIGN ADDOP
+--   reduce production actuals -> LPAR exprs
 
 State 103:
 ## Known stack suffix:
@@ -1722,9 +1447,8 @@ element -> expr . DOTDOT expr [ RBRACE COMMA COLON ]
 ## Transitions:
 -- On DOTDOT shift to state 108
 ## Reductions:
--- On RBRACE reduce production element -> expr
--- On COMMA reduce production element -> expr
--- On COLON reduce production element -> expr
+-- On RBRACE COMMA COLON
+--   reduce production element -> expr
 
 State 108:
 ## Known stack suffix:
@@ -1789,8 +1513,8 @@ elements -> element . COMMA elements [ RBRACE COLON ]
 ## Transitions:
 -- On COMMA shift to state 113
 ## Reductions:
--- On RBRACE reduce production elements -> element
--- On COLON reduce production elements -> element
+-- On RBRACE COLON
+--   reduce production elements -> element
 
 State 113:
 ## Known stack suffix:
@@ -1841,28 +1565,8 @@ term -> term . STAR factor [ UPARROW TO THEN SUB STAR RPAR RELOP RBRACE PLUS OF 
 -- On STAR shift to state 73
 -- On MULOP shift to state 84
 ## Reductions:
--- On UPARROW reduce production simple -> MINUS term
--- On TO reduce production simple -> MINUS term
--- On THEN reduce production simple -> MINUS term
--- On SUB reduce production simple -> MINUS term
--- On RPAR reduce production simple -> MINUS term
--- On RELOP reduce production simple -> MINUS term
--- On RBRACE reduce production simple -> MINUS term
--- On PLUS reduce production simple -> MINUS term
--- On OF reduce production simple -> MINUS term
--- On MINUS reduce production simple -> MINUS term
--- On LPAR reduce production simple -> MINUS term
--- On IS reduce production simple -> MINUS term
--- On EQUAL reduce production simple -> MINUS term
--- On DOTDOT reduce production simple -> MINUS term
--- On DOT reduce production simple -> MINUS term
--- On DO reduce production simple -> MINUS term
--- On COMMA reduce production simple -> MINUS term
--- On COLON reduce production simple -> MINUS term
--- On BY reduce production simple -> MINUS term
--- On BUS reduce production simple -> MINUS term
--- On ASSIGN reduce production simple -> MINUS term
--- On ADDOP reduce production simple -> MINUS term
+-- On UPARROW TO THEN SUB RPAR RELOP RBRACE PLUS OF MINUS LPAR IS EQUAL DOTDOT DOT DO COMMA COLON BY BUS ASSIGN ADDOP
+--   reduce production simple -> MINUS term
 
 State 116:
 ## Known stack suffix:
@@ -1873,29 +1577,8 @@ factor -> LPAR expr . [ UPARROW TO THEN SUB STAR RPAR RELOP RBRACE PLUS OF MULOP
 ## Transitions:
 -- On RPAR shift to state 117
 ## Reductions:
--- On UPARROW reduce production factor -> LPAR expr
--- On TO reduce production factor -> LPAR expr
--- On THEN reduce production factor -> LPAR expr
--- On SUB reduce production factor -> LPAR expr
--- On STAR reduce production factor -> LPAR expr
--- On RELOP reduce production factor -> LPAR expr
--- On RBRACE reduce production factor -> LPAR expr
--- On PLUS reduce production factor -> LPAR expr
--- On OF reduce production factor -> LPAR expr
--- On MULOP reduce production factor -> LPAR expr
--- On MINUS reduce production factor -> LPAR expr
--- On LPAR reduce production factor -> LPAR expr
--- On IS reduce production factor -> LPAR expr
--- On EQUAL reduce production factor -> LPAR expr
--- On DOTDOT reduce production factor -> LPAR expr
--- On DOT reduce production factor -> LPAR expr
--- On DO reduce production factor -> LPAR expr
--- On COMMA reduce production factor -> LPAR expr
--- On COLON reduce production factor -> LPAR expr
--- On BY reduce production factor -> LPAR expr
--- On BUS reduce production factor -> LPAR expr
--- On ASSIGN reduce production factor -> LPAR expr
--- On ADDOP reduce production factor -> LPAR expr
+-- On UPARROW TO THEN SUB STAR RELOP RBRACE PLUS OF MULOP MINUS LPAR IS EQUAL DOTDOT DOT DO COMMA COLON BY BUS ASSIGN ADDOP
+--   reduce production factor -> LPAR expr
 
 State 117:
 ## Known stack suffix:
@@ -1926,28 +1609,8 @@ term -> term . STAR factor [ UPARROW TO THEN SUB STAR RPAR RELOP RBRACE PLUS OF 
 -- On STAR shift to state 73
 -- On MULOP shift to state 84
 ## Reductions:
--- On UPARROW reduce production simple -> PLUS term
--- On TO reduce production simple -> PLUS term
--- On THEN reduce production simple -> PLUS term
--- On SUB reduce production simple -> PLUS term
--- On RPAR reduce production simple -> PLUS term
--- On RELOP reduce production simple -> PLUS term
--- On RBRACE reduce production simple -> PLUS term
--- On PLUS reduce production simple -> PLUS term
--- On OF reduce production simple -> PLUS term
--- On MINUS reduce production simple -> PLUS term
--- On LPAR reduce production simple -> PLUS term
--- On IS reduce production simple -> PLUS term
--- On EQUAL reduce production simple -> PLUS term
--- On DOTDOT reduce production simple -> PLUS term
--- On DOT reduce production simple -> PLUS term
--- On DO reduce production simple -> PLUS term
--- On COMMA reduce production simple -> PLUS term
--- On COLON reduce production simple -> PLUS term
--- On BY reduce production simple -> PLUS term
--- On BUS reduce production simple -> PLUS term
--- On ASSIGN reduce production simple -> PLUS term
--- On ADDOP reduce production simple -> PLUS term
+-- On UPARROW TO THEN SUB RPAR RELOP RBRACE PLUS OF MINUS LPAR IS EQUAL DOTDOT DOT DO COMMA COLON BY BUS ASSIGN ADDOP
+--   reduce production simple -> PLUS term
 
 State 120:
 ## Known stack suffix:
@@ -1966,7 +1629,8 @@ typexpr -> ARRAY OF . typexpr [ VAR SEMI RPAR IDENT END COMMA ]
 -- On qualid shift to state 124
 -- On absmark shift to state 125
 ## Reductions:
--- On RECORD reduce production absmark ->
+-- On RECORD
+--   reduce production absmark ->
 
 State 121:
 ## Known stack suffix:
@@ -2022,9 +1686,8 @@ typexpr -> absmark RECORD . parent fields END [ VAR SEMI RPAR IDENT END COMMA ]
 -- On LPAR shift to state 127
 -- On parent shift to state 130
 ## Reductions:
--- On SEMI reduce production parent ->
--- On IDENT reduce production parent ->
--- On END reduce production parent ->
+-- On SEMI IDENT END
+--   reduce production parent ->
 
 State 127:
 ## Known stack suffix:
@@ -2067,8 +1730,8 @@ typexpr -> absmark RECORD parent . fields END [ VAR SEMI RPAR IDENT END COMMA ]
 -- On defids shift to state 136
 -- On defid shift to state 55
 ## Reductions:
--- On SEMI reduce production fieldlist ->
--- On END reduce production fieldlist ->
+-- On SEMI END
+--   reduce production fieldlist ->
 
 State 131:
 ## Known stack suffix:
@@ -2097,7 +1760,8 @@ fields -> fieldlist . SEMI fields [ END ]
 ## Transitions:
 -- On SEMI shift to state 134
 ## Reductions:
--- On END reduce production fields -> fieldlist
+-- On END
+--   reduce production fields -> fieldlist
 
 State 134:
 ## Known stack suffix:
@@ -2111,8 +1775,8 @@ fields -> fieldlist SEMI . fields [ END ]
 -- On defids shift to state 136
 -- On defid shift to state 55
 ## Reductions:
--- On SEMI reduce production fieldlist ->
--- On END reduce production fieldlist ->
+-- On SEMI END
+--   reduce production fieldlist ->
 
 State 135:
 ## Known stack suffix:
@@ -2149,7 +1813,8 @@ fieldlist -> defids COLON . typexpr [ SEMI END ]
 -- On qualid shift to state 124
 -- On absmark shift to state 125
 ## Reductions:
--- On RECORD reduce production absmark ->
+-- On RECORD
+--   reduce production absmark ->
 
 State 138:
 ## Known stack suffix:
@@ -2186,7 +1851,8 @@ typexpr -> ARRAY exprs OF . typexpr [ VAR SEMI RPAR IDENT END COMMA ]
 -- On qualid shift to state 124
 -- On absmark shift to state 125
 ## Reductions:
--- On RECORD reduce production absmark ->
+-- On RECORD
+--   reduce production absmark ->
 
 State 141:
 ## Known stack suffix:
@@ -2242,18 +1908,8 @@ params -> LPAR RPAR . result [ error VAR TYPE SEMI PROCEDURE IS IDENT END CONST 
 -- On COLON shift to state 147
 -- On result shift to state 152
 ## Reductions:
--- On error reduce production result ->
--- On VAR reduce production result ->
--- On TYPE reduce production result ->
--- On SEMI reduce production result ->
--- On PROCEDURE reduce production result ->
--- On IS reduce production result ->
--- On IDENT reduce production result ->
--- On END reduce production result ->
--- On CONST reduce production result ->
--- On COMMA reduce production result ->
--- On BEGIN reduce production result ->
--- On ABSTRACT reduce production result ->
+-- On error VAR TYPE SEMI PROCEDURE IS IDENT END CONST COMMA BEGIN ABSTRACT
+--   reduce production result ->
 
 State 147:
 ## Known stack suffix:
@@ -2274,45 +1930,8 @@ qualid -> IDENT . DOT IDENT [ error WITH WHILE VBAR VAR UPARROW UNTIL TYPE SUB S
 ## Transitions:
 -- On DOT shift to state 149
 ## Reductions:
--- On error reduce production qualid -> IDENT
--- On WITH reduce production qualid -> IDENT
--- On WHILE reduce production qualid -> IDENT
--- On VBAR reduce production qualid -> IDENT
--- On VAR reduce production qualid -> IDENT
--- On UPARROW reduce production qualid -> IDENT
--- On UNTIL reduce production qualid -> IDENT
--- On TYPE reduce production qualid -> IDENT
--- On SUB reduce production qualid -> IDENT
--- On STAR reduce production qualid -> IDENT
--- On SEMI reduce production qualid -> IDENT
--- On RPAR reduce production qualid -> IDENT
--- On RETURN reduce production qualid -> IDENT
--- On REPEAT reduce production qualid -> IDENT
--- On RELOP reduce production qualid -> IDENT
--- On PROCEDURE reduce production qualid -> IDENT
--- On PLUS reduce production qualid -> IDENT
--- On MULOP reduce production qualid -> IDENT
--- On MINUS reduce production qualid -> IDENT
--- On LPAR reduce production qualid -> IDENT
--- On LOOP reduce production qualid -> IDENT
--- On LOCAL reduce production qualid -> IDENT
--- On IS reduce production qualid -> IDENT
--- On IF reduce production qualid -> IDENT
--- On IDENT reduce production qualid -> IDENT
--- On FOR reduce production qualid -> IDENT
--- On EXIT reduce production qualid -> IDENT
--- On EQUAL reduce production qualid -> IDENT
--- On END reduce production qualid -> IDENT
--- On ELSIF reduce production qualid -> IDENT
--- On ELSE reduce production qualid -> IDENT
--- On CONST reduce production qualid -> IDENT
--- On COMMA reduce production qualid -> IDENT
--- On CASE reduce production qualid -> IDENT
--- On BUS reduce production qualid -> IDENT
--- On BEGIN reduce production qualid -> IDENT
--- On ASSIGN reduce production qualid -> IDENT
--- On ADDOP reduce production qualid -> IDENT
--- On ABSTRACT reduce production qualid -> IDENT
+-- On error WITH WHILE VBAR VAR UPARROW UNTIL TYPE SUB STAR SEMI RPAR RETURN REPEAT RELOP PROCEDURE PLUS MULOP MINUS LPAR LOOP LOCAL IS IF IDENT FOR EXIT EQUAL END ELSIF ELSE CONST COMMA CASE BUS BEGIN ASSIGN ADDOP ABSTRACT
+--   reduce production qualid -> IDENT
 
 State 149:
 ## Known stack suffix:
@@ -2368,18 +1987,8 @@ params -> LPAR formals RPAR . result [ error VAR TYPE SEMI PROCEDURE IS IDENT EN
 -- On COLON shift to state 147
 -- On result shift to state 155
 ## Reductions:
--- On error reduce production result ->
--- On VAR reduce production result ->
--- On TYPE reduce production result ->
--- On SEMI reduce production result ->
--- On PROCEDURE reduce production result ->
--- On IS reduce production result ->
--- On IDENT reduce production result ->
--- On END reduce production result ->
--- On CONST reduce production result ->
--- On COMMA reduce production result ->
--- On BEGIN reduce production result ->
--- On ABSTRACT reduce production result ->
+-- On error VAR TYPE SEMI PROCEDURE IS IDENT END CONST COMMA BEGIN ABSTRACT
+--   reduce production result ->
 
 State 155:
 ## Known stack suffix:
@@ -2425,7 +2034,8 @@ typexpr -> POINTER TO . typexpr [ error VAR TYPE SEMI PROCEDURE IDENT END CONST 
 -- On qualid shift to state 166
 -- On absmark shift to state 167
 ## Reductions:
--- On RECORD reduce production absmark ->
+-- On RECORD
+--   reduce production absmark ->
 
 State 159:
 ## Known stack suffix:
@@ -2503,7 +2113,8 @@ typexpr -> ARRAY OF . typexpr [ error VAR TYPE SEMI PROCEDURE IDENT END CONST CO
 -- On qualid shift to state 166
 -- On absmark shift to state 167
 ## Reductions:
--- On RECORD reduce production absmark ->
+-- On RECORD
+--   reduce production absmark ->
 
 State 164:
 ## Known stack suffix:
@@ -2550,9 +2161,8 @@ typexpr -> absmark RECORD . parent fields END [ error VAR TYPE SEMI PROCEDURE ID
 -- On LPAR shift to state 127
 -- On parent shift to state 169
 ## Reductions:
--- On SEMI reduce production parent ->
--- On IDENT reduce production parent ->
--- On END reduce production parent ->
+-- On SEMI IDENT END
+--   reduce production parent ->
 
 State 169:
 ## Known stack suffix:
@@ -2566,8 +2176,8 @@ typexpr -> absmark RECORD parent . fields END [ error VAR TYPE SEMI PROCEDURE ID
 -- On defids shift to state 136
 -- On defid shift to state 55
 ## Reductions:
--- On SEMI reduce production fieldlist ->
--- On END reduce production fieldlist ->
+-- On SEMI END
+--   reduce production fieldlist ->
 
 State 170:
 ## Known stack suffix:
@@ -2613,7 +2223,8 @@ typexpr -> ARRAY exprs OF . typexpr [ error VAR TYPE SEMI PROCEDURE IDENT END CO
 -- On qualid shift to state 166
 -- On absmark shift to state 167
 ## Reductions:
--- On RECORD reduce production absmark ->
+-- On RECORD
+--   reduce production absmark ->
 
 State 174:
 ## Known stack suffix:
@@ -2643,15 +2254,8 @@ var_decl -> defids COLON typexpr . semi [ error VAR TYPE PROCEDURE IDENT END CON
 -- On COMMA shift to state 178
 -- On semi shift to state 179
 ## Reductions:
--- On error reduce production semi ->
--- On VAR reduce production semi ->
--- On TYPE reduce production semi ->
--- On PROCEDURE reduce production semi ->
--- On IDENT reduce production semi ->
--- On END reduce production semi ->
--- On CONST reduce production semi ->
--- On BEGIN reduce production semi ->
--- On ABSTRACT reduce production semi ->
+-- On error VAR TYPE PROCEDURE IDENT END CONST BEGIN ABSTRACT
+--   reduce production semi ->
 
 State 177:
 ## Known stack suffix:
@@ -2713,14 +2317,8 @@ type_decls -> type_decl . type_decls [ error VAR TYPE PROCEDURE END CONST BEGIN 
 -- On type_decl shift to state 182
 -- On defid shift to state 184
 ## Reductions:
--- On error reduce production type_decls -> type_decl
--- On VAR reduce production type_decls -> type_decl
--- On TYPE reduce production type_decls -> type_decl
--- On PROCEDURE reduce production type_decls -> type_decl
--- On END reduce production type_decls -> type_decl
--- On CONST reduce production type_decls -> type_decl
--- On BEGIN reduce production type_decls -> type_decl
--- On ABSTRACT reduce production type_decls -> type_decl
+-- On error VAR TYPE PROCEDURE END CONST BEGIN ABSTRACT
+--   reduce production type_decls -> type_decl
 
 State 183:
 ## Known stack suffix:
@@ -2757,7 +2355,8 @@ type_decl -> defid EQUAL . typexpr semi [ error VAR TYPE PROCEDURE IDENT END CON
 -- On qualid shift to state 166
 -- On absmark shift to state 167
 ## Reductions:
--- On RECORD reduce production absmark ->
+-- On RECORD
+--   reduce production absmark ->
 
 State 186:
 ## Known stack suffix:
@@ -2769,15 +2368,8 @@ type_decl -> defid EQUAL typexpr . semi [ error VAR TYPE PROCEDURE IDENT END CON
 -- On COMMA shift to state 178
 -- On semi shift to state 187
 ## Reductions:
--- On error reduce production semi ->
--- On VAR reduce production semi ->
--- On TYPE reduce production semi ->
--- On PROCEDURE reduce production semi ->
--- On IDENT reduce production semi ->
--- On END reduce production semi ->
--- On CONST reduce production semi ->
--- On BEGIN reduce production semi ->
--- On ABSTRACT reduce production semi ->
+-- On error VAR TYPE PROCEDURE IDENT END CONST BEGIN ABSTRACT
+--   reduce production semi ->
 
 State 187:
 ## Known stack suffix:
@@ -2833,7 +2425,8 @@ decls -> decls . decl [ error VAR TYPE PROCEDURE END CONST BEGIN ABSTRACT ]
 -- On decl shift to state 306
 -- On body shift to state 373
 ## Reductions:
--- On END reduce production body ->
+-- On END
+--   reduce production body ->
 
 State 191:
 ## Known stack suffix:
@@ -3111,44 +2704,8 @@ term -> term . STAR factor [ error WITH WHILE VBAR VAR UPARROW UNTIL TYPE SUB ST
 -- On STAR shift to state 210
 -- On MULOP shift to state 217
 ## Reductions:
--- On error reduce production simple -> MINUS term
--- On WITH reduce production simple -> MINUS term
--- On WHILE reduce production simple -> MINUS term
--- On VBAR reduce production simple -> MINUS term
--- On VAR reduce production simple -> MINUS term
--- On UPARROW reduce production simple -> MINUS term
--- On UNTIL reduce production simple -> MINUS term
--- On TYPE reduce production simple -> MINUS term
--- On SUB reduce production simple -> MINUS term
--- On SEMI reduce production simple -> MINUS term
--- On RPAR reduce production simple -> MINUS term
--- On RETURN reduce production simple -> MINUS term
--- On REPEAT reduce production simple -> MINUS term
--- On RELOP reduce production simple -> MINUS term
--- On PROCEDURE reduce production simple -> MINUS term
--- On PLUS reduce production simple -> MINUS term
--- On MINUS reduce production simple -> MINUS term
--- On LPAR reduce production simple -> MINUS term
--- On LOOP reduce production simple -> MINUS term
--- On LOCAL reduce production simple -> MINUS term
--- On IS reduce production simple -> MINUS term
--- On IF reduce production simple -> MINUS term
--- On IDENT reduce production simple -> MINUS term
--- On FOR reduce production simple -> MINUS term
--- On EXIT reduce production simple -> MINUS term
--- On EQUAL reduce production simple -> MINUS term
--- On END reduce production simple -> MINUS term
--- On ELSIF reduce production simple -> MINUS term
--- On ELSE reduce production simple -> MINUS term
--- On DOT reduce production simple -> MINUS term
--- On CONST reduce production simple -> MINUS term
--- On COMMA reduce production simple -> MINUS term
--- On CASE reduce production simple -> MINUS term
--- On BUS reduce production simple -> MINUS term
--- On BEGIN reduce production simple -> MINUS term
--- On ASSIGN reduce production simple -> MINUS term
--- On ADDOP reduce production simple -> MINUS term
--- On ABSTRACT reduce production simple -> MINUS term
+-- On error WITH WHILE VBAR VAR UPARROW UNTIL TYPE SUB SEMI RPAR RETURN REPEAT RELOP PROCEDURE PLUS MINUS LPAR LOOP LOCAL IS IF IDENT FOR EXIT EQUAL END ELSIF ELSE DOT CONST COMMA CASE BUS BEGIN ASSIGN ADDOP ABSTRACT
+--   reduce production simple -> MINUS term
 
 State 210:
 ## Known stack suffix:
@@ -3207,42 +2764,8 @@ factor -> designator . [ error WITH WHILE VBAR VAR UPARROW UNTIL TYPE SUB STAR S
 -- On DOT shift to state 242
 -- On actuals shift to state 244
 ## Reductions:
--- On error reduce production factor -> designator
--- On WITH reduce production factor -> designator
--- On WHILE reduce production factor -> designator
--- On VBAR reduce production factor -> designator
--- On VAR reduce production factor -> designator
--- On UNTIL reduce production factor -> designator
--- On TYPE reduce production factor -> designator
--- On STAR reduce production factor -> designator
--- On SEMI reduce production factor -> designator
--- On RPAR reduce production factor -> designator
--- On RETURN reduce production factor -> designator
--- On REPEAT reduce production factor -> designator
--- On RELOP reduce production factor -> designator
--- On PROCEDURE reduce production factor -> designator
--- On PLUS reduce production factor -> designator
--- On MULOP reduce production factor -> designator
--- On MINUS reduce production factor -> designator
--- On LOOP reduce production factor -> designator
--- On LOCAL reduce production factor -> designator
--- On IS reduce production factor -> designator
--- On IF reduce production factor -> designator
--- On IDENT reduce production factor -> designator
--- On FOR reduce production factor -> designator
--- On EXIT reduce production factor -> designator
--- On EQUAL reduce production factor -> designator
--- On END reduce production factor -> designator
--- On ELSIF reduce production factor -> designator
--- On ELSE reduce production factor -> designator
--- On CONST reduce production factor -> designator
--- On COMMA reduce production factor -> designator
--- On CASE reduce production factor -> designator
--- On BUS reduce production factor -> designator
--- On BEGIN reduce production factor -> designator
--- On ASSIGN reduce production factor -> designator
--- On ADDOP reduce production factor -> designator
--- On ABSTRACT reduce production factor -> designator
+-- On error WITH WHILE VBAR VAR UNTIL TYPE STAR SEMI RPAR RETURN REPEAT RELOP PROCEDURE PLUS MULOP MINUS LOOP LOCAL IS IF IDENT FOR EXIT EQUAL END ELSIF ELSE CONST COMMA CASE BUS BEGIN ASSIGN ADDOP ABSTRACT
+--   reduce production factor -> designator
 
 State 214:
 ## Known stack suffix:
@@ -3293,44 +2816,8 @@ term -> term . STAR factor [ error WITH WHILE VBAR VAR UPARROW UNTIL TYPE SUB ST
 -- On STAR shift to state 210
 -- On MULOP shift to state 217
 ## Reductions:
--- On error reduce production simple -> term
--- On WITH reduce production simple -> term
--- On WHILE reduce production simple -> term
--- On VBAR reduce production simple -> term
--- On VAR reduce production simple -> term
--- On UPARROW reduce production simple -> term
--- On UNTIL reduce production simple -> term
--- On TYPE reduce production simple -> term
--- On SUB reduce production simple -> term
--- On SEMI reduce production simple -> term
--- On RPAR reduce production simple -> term
--- On RETURN reduce production simple -> term
--- On REPEAT reduce production simple -> term
--- On RELOP reduce production simple -> term
--- On PROCEDURE reduce production simple -> term
--- On PLUS reduce production simple -> term
--- On MINUS reduce production simple -> term
--- On LPAR reduce production simple -> term
--- On LOOP reduce production simple -> term
--- On LOCAL reduce production simple -> term
--- On IS reduce production simple -> term
--- On IF reduce production simple -> term
--- On IDENT reduce production simple -> term
--- On FOR reduce production simple -> term
--- On EXIT reduce production simple -> term
--- On EQUAL reduce production simple -> term
--- On END reduce production simple -> term
--- On ELSIF reduce production simple -> term
--- On ELSE reduce production simple -> term
--- On DOT reduce production simple -> term
--- On CONST reduce production simple -> term
--- On COMMA reduce production simple -> term
--- On CASE reduce production simple -> term
--- On BUS reduce production simple -> term
--- On BEGIN reduce production simple -> term
--- On ASSIGN reduce production simple -> term
--- On ADDOP reduce production simple -> term
--- On ABSTRACT reduce production simple -> term
+-- On error WITH WHILE VBAR VAR UPARROW UNTIL TYPE SUB SEMI RPAR RETURN REPEAT RELOP PROCEDURE PLUS MINUS LPAR LOOP LOCAL IS IF IDENT FOR EXIT EQUAL END ELSIF ELSE DOT CONST COMMA CASE BUS BEGIN ASSIGN ADDOP ABSTRACT
+--   reduce production simple -> term
 
 State 217:
 ## Known stack suffix:
@@ -3382,40 +2869,8 @@ simple -> simple . ADDOP term [ error WITH WHILE VBAR VAR UPARROW UNTIL TYPE SUB
 -- On EQUAL shift to state 231
 -- On ADDOP shift to state 227
 ## Reductions:
--- On error reduce production expr -> simple
--- On WITH reduce production expr -> simple
--- On WHILE reduce production expr -> simple
--- On VBAR reduce production expr -> simple
--- On VAR reduce production expr -> simple
--- On UPARROW reduce production expr -> simple
--- On UNTIL reduce production expr -> simple
--- On TYPE reduce production expr -> simple
--- On SUB reduce production expr -> simple
--- On STAR reduce production expr -> simple
--- On SEMI reduce production expr -> simple
--- On RPAR reduce production expr -> simple
--- On RETURN reduce production expr -> simple
--- On REPEAT reduce production expr -> simple
--- On PROCEDURE reduce production expr -> simple
--- On MULOP reduce production expr -> simple
--- On LPAR reduce production expr -> simple
--- On LOOP reduce production expr -> simple
--- On LOCAL reduce production expr -> simple
--- On IF reduce production expr -> simple
--- On IDENT reduce production expr -> simple
--- On FOR reduce production expr -> simple
--- On EXIT reduce production expr -> simple
--- On END reduce production expr -> simple
--- On ELSIF reduce production expr -> simple
--- On ELSE reduce production expr -> simple
--- On DOT reduce production expr -> simple
--- On CONST reduce production expr -> simple
--- On COMMA reduce production expr -> simple
--- On CASE reduce production expr -> simple
--- On BUS reduce production expr -> simple
--- On BEGIN reduce production expr -> simple
--- On ASSIGN reduce production expr -> simple
--- On ABSTRACT reduce production expr -> simple
+-- On error WITH WHILE VBAR VAR UPARROW UNTIL TYPE SUB STAR SEMI RPAR RETURN REPEAT PROCEDURE MULOP LPAR LOOP LOCAL IF IDENT FOR EXIT END ELSIF ELSE DOT CONST COMMA CASE BUS BEGIN ASSIGN ABSTRACT
+--   reduce production expr -> simple
 
 State 220:
 ## Known stack suffix:
@@ -3456,43 +2911,8 @@ simple -> simple . ADDOP term [ error WITH WHILE VBAR VAR UPARROW UNTIL TYPE SUB
 -- On MINUS shift to state 225
 -- On ADDOP shift to state 227
 ## Reductions:
--- On error reduce production expr -> simple RELOP simple
--- On WITH reduce production expr -> simple RELOP simple
--- On WHILE reduce production expr -> simple RELOP simple
--- On VBAR reduce production expr -> simple RELOP simple
--- On VAR reduce production expr -> simple RELOP simple
--- On UPARROW reduce production expr -> simple RELOP simple
--- On UNTIL reduce production expr -> simple RELOP simple
--- On TYPE reduce production expr -> simple RELOP simple
--- On SUB reduce production expr -> simple RELOP simple
--- On STAR reduce production expr -> simple RELOP simple
--- On SEMI reduce production expr -> simple RELOP simple
--- On RPAR reduce production expr -> simple RELOP simple
--- On RETURN reduce production expr -> simple RELOP simple
--- On REPEAT reduce production expr -> simple RELOP simple
--- On RELOP reduce production expr -> simple RELOP simple
--- On PROCEDURE reduce production expr -> simple RELOP simple
--- On MULOP reduce production expr -> simple RELOP simple
--- On LPAR reduce production expr -> simple RELOP simple
--- On LOOP reduce production expr -> simple RELOP simple
--- On LOCAL reduce production expr -> simple RELOP simple
--- On IS reduce production expr -> simple RELOP simple
--- On IF reduce production expr -> simple RELOP simple
--- On IDENT reduce production expr -> simple RELOP simple
--- On FOR reduce production expr -> simple RELOP simple
--- On EXIT reduce production expr -> simple RELOP simple
--- On EQUAL reduce production expr -> simple RELOP simple
--- On END reduce production expr -> simple RELOP simple
--- On ELSIF reduce production expr -> simple RELOP simple
--- On ELSE reduce production expr -> simple RELOP simple
--- On DOT reduce production expr -> simple RELOP simple
--- On CONST reduce production expr -> simple RELOP simple
--- On COMMA reduce production expr -> simple RELOP simple
--- On CASE reduce production expr -> simple RELOP simple
--- On BUS reduce production expr -> simple RELOP simple
--- On BEGIN reduce production expr -> simple RELOP simple
--- On ASSIGN reduce production expr -> simple RELOP simple
--- On ABSTRACT reduce production expr -> simple RELOP simple
+-- On error WITH WHILE VBAR VAR UPARROW UNTIL TYPE SUB STAR SEMI RPAR RETURN REPEAT RELOP PROCEDURE MULOP LPAR LOOP LOCAL IS IF IDENT FOR EXIT EQUAL END ELSIF ELSE DOT CONST COMMA CASE BUS BEGIN ASSIGN ABSTRACT
+--   reduce production expr -> simple RELOP simple
 
 State 222:
 ## Known stack suffix:
@@ -3528,44 +2948,8 @@ term -> term . STAR factor [ error WITH WHILE VBAR VAR UPARROW UNTIL TYPE SUB ST
 -- On STAR shift to state 210
 -- On MULOP shift to state 217
 ## Reductions:
--- On error reduce production simple -> simple PLUS term
--- On WITH reduce production simple -> simple PLUS term
--- On WHILE reduce production simple -> simple PLUS term
--- On VBAR reduce production simple -> simple PLUS term
--- On VAR reduce production simple -> simple PLUS term
--- On UPARROW reduce production simple -> simple PLUS term
--- On UNTIL reduce production simple -> simple PLUS term
--- On TYPE reduce production simple -> simple PLUS term
--- On SUB reduce production simple -> simple PLUS term
--- On SEMI reduce production simple -> simple PLUS term
--- On RPAR reduce production simple -> simple PLUS term
--- On RETURN reduce production simple -> simple PLUS term
--- On REPEAT reduce production simple -> simple PLUS term
--- On RELOP reduce production simple -> simple PLUS term
--- On PROCEDURE reduce production simple -> simple PLUS term
--- On PLUS reduce production simple -> simple PLUS term
--- On MINUS reduce production simple -> simple PLUS term
--- On LPAR reduce production simple -> simple PLUS term
--- On LOOP reduce production simple -> simple PLUS term
--- On LOCAL reduce production simple -> simple PLUS term
--- On IS reduce production simple -> simple PLUS term
--- On IF reduce production simple -> simple PLUS term
--- On IDENT reduce production simple -> simple PLUS term
--- On FOR reduce production simple -> simple PLUS term
--- On EXIT reduce production simple -> simple PLUS term
--- On EQUAL reduce production simple -> simple PLUS term
--- On END reduce production simple -> simple PLUS term
--- On ELSIF reduce production simple -> simple PLUS term
--- On ELSE reduce production simple -> simple PLUS term
--- On DOT reduce production simple -> simple PLUS term
--- On CONST reduce production simple -> simple PLUS term
--- On COMMA reduce production simple -> simple PLUS term
--- On CASE reduce production simple -> simple PLUS term
--- On BUS reduce production simple -> simple PLUS term
--- On BEGIN reduce production simple -> simple PLUS term
--- On ASSIGN reduce production simple -> simple PLUS term
--- On ADDOP reduce production simple -> simple PLUS term
--- On ABSTRACT reduce production simple -> simple PLUS term
+-- On error WITH WHILE VBAR VAR UPARROW UNTIL TYPE SUB SEMI RPAR RETURN REPEAT RELOP PROCEDURE PLUS MINUS LPAR LOOP LOCAL IS IF IDENT FOR EXIT EQUAL END ELSIF ELSE DOT CONST COMMA CASE BUS BEGIN ASSIGN ADDOP ABSTRACT
+--   reduce production simple -> simple PLUS term
 
 State 224:
 ## Known stack suffix:
@@ -3610,44 +2994,8 @@ term -> term . STAR factor [ error WITH WHILE VBAR VAR UPARROW UNTIL TYPE SUB ST
 -- On STAR shift to state 210
 -- On MULOP shift to state 217
 ## Reductions:
--- On error reduce production simple -> simple MINUS term
--- On WITH reduce production simple -> simple MINUS term
--- On WHILE reduce production simple -> simple MINUS term
--- On VBAR reduce production simple -> simple MINUS term
--- On VAR reduce production simple -> simple MINUS term
--- On UPARROW reduce production simple -> simple MINUS term
--- On UNTIL reduce production simple -> simple MINUS term
--- On TYPE reduce production simple -> simple MINUS term
--- On SUB reduce production simple -> simple MINUS term
--- On SEMI reduce production simple -> simple MINUS term
--- On RPAR reduce production simple -> simple MINUS term
--- On RETURN reduce production simple -> simple MINUS term
--- On REPEAT reduce production simple -> simple MINUS term
--- On RELOP reduce production simple -> simple MINUS term
--- On PROCEDURE reduce production simple -> simple MINUS term
--- On PLUS reduce production simple -> simple MINUS term
--- On MINUS reduce production simple -> simple MINUS term
--- On LPAR reduce production simple -> simple MINUS term
--- On LOOP reduce production simple -> simple MINUS term
--- On LOCAL reduce production simple -> simple MINUS term
--- On IS reduce production simple -> simple MINUS term
--- On IF reduce production simple -> simple MINUS term
--- On IDENT reduce production simple -> simple MINUS term
--- On FOR reduce production simple -> simple MINUS term
--- On EXIT reduce production simple -> simple MINUS term
--- On EQUAL reduce production simple -> simple MINUS term
--- On END reduce production simple -> simple MINUS term
--- On ELSIF reduce production simple -> simple MINUS term
--- On ELSE reduce production simple -> simple MINUS term
--- On DOT reduce production simple -> simple MINUS term
--- On CONST reduce production simple -> simple MINUS term
--- On COMMA reduce production simple -> simple MINUS term
--- On CASE reduce production simple -> simple MINUS term
--- On BUS reduce production simple -> simple MINUS term
--- On BEGIN reduce production simple -> simple MINUS term
--- On ASSIGN reduce production simple -> simple MINUS term
--- On ADDOP reduce production simple -> simple MINUS term
--- On ABSTRACT reduce production simple -> simple MINUS term
+-- On error WITH WHILE VBAR VAR UPARROW UNTIL TYPE SUB SEMI RPAR RETURN REPEAT RELOP PROCEDURE PLUS MINUS LPAR LOOP LOCAL IS IF IDENT FOR EXIT EQUAL END ELSIF ELSE DOT CONST COMMA CASE BUS BEGIN ASSIGN ADDOP ABSTRACT
+--   reduce production simple -> simple MINUS term
 
 State 227:
 ## Known stack suffix:
@@ -3683,44 +3031,8 @@ term -> term . STAR factor [ error WITH WHILE VBAR VAR UPARROW UNTIL TYPE SUB ST
 -- On STAR shift to state 210
 -- On MULOP shift to state 217
 ## Reductions:
--- On error reduce production simple -> simple ADDOP term
--- On WITH reduce production simple -> simple ADDOP term
--- On WHILE reduce production simple -> simple ADDOP term
--- On VBAR reduce production simple -> simple ADDOP term
--- On VAR reduce production simple -> simple ADDOP term
--- On UPARROW reduce production simple -> simple ADDOP term
--- On UNTIL reduce production simple -> simple ADDOP term
--- On TYPE reduce production simple -> simple ADDOP term
--- On SUB reduce production simple -> simple ADDOP term
--- On SEMI reduce production simple -> simple ADDOP term
--- On RPAR reduce production simple -> simple ADDOP term
--- On RETURN reduce production simple -> simple ADDOP term
--- On REPEAT reduce production simple -> simple ADDOP term
--- On RELOP reduce production simple -> simple ADDOP term
--- On PROCEDURE reduce production simple -> simple ADDOP term
--- On PLUS reduce production simple -> simple ADDOP term
--- On MINUS reduce production simple -> simple ADDOP term
--- On LPAR reduce production simple -> simple ADDOP term
--- On LOOP reduce production simple -> simple ADDOP term
--- On LOCAL reduce production simple -> simple ADDOP term
--- On IS reduce production simple -> simple ADDOP term
--- On IF reduce production simple -> simple ADDOP term
--- On IDENT reduce production simple -> simple ADDOP term
--- On FOR reduce production simple -> simple ADDOP term
--- On EXIT reduce production simple -> simple ADDOP term
--- On EQUAL reduce production simple -> simple ADDOP term
--- On END reduce production simple -> simple ADDOP term
--- On ELSIF reduce production simple -> simple ADDOP term
--- On ELSE reduce production simple -> simple ADDOP term
--- On DOT reduce production simple -> simple ADDOP term
--- On CONST reduce production simple -> simple ADDOP term
--- On COMMA reduce production simple -> simple ADDOP term
--- On CASE reduce production simple -> simple ADDOP term
--- On BUS reduce production simple -> simple ADDOP term
--- On BEGIN reduce production simple -> simple ADDOP term
--- On ASSIGN reduce production simple -> simple ADDOP term
--- On ADDOP reduce production simple -> simple ADDOP term
--- On ABSTRACT reduce production simple -> simple ADDOP term
+-- On error WITH WHILE VBAR VAR UPARROW UNTIL TYPE SUB SEMI RPAR RETURN REPEAT RELOP PROCEDURE PLUS MINUS LPAR LOOP LOCAL IS IF IDENT FOR EXIT EQUAL END ELSIF ELSE DOT CONST COMMA CASE BUS BEGIN ASSIGN ADDOP ABSTRACT
+--   reduce production simple -> simple ADDOP term
 
 State 229:
 ## Known stack suffix:
@@ -3780,43 +3092,8 @@ simple -> simple . ADDOP term [ error WITH WHILE VBAR VAR UPARROW UNTIL TYPE SUB
 -- On MINUS shift to state 225
 -- On ADDOP shift to state 227
 ## Reductions:
--- On error reduce production expr -> simple EQUAL simple
--- On WITH reduce production expr -> simple EQUAL simple
--- On WHILE reduce production expr -> simple EQUAL simple
--- On VBAR reduce production expr -> simple EQUAL simple
--- On VAR reduce production expr -> simple EQUAL simple
--- On UPARROW reduce production expr -> simple EQUAL simple
--- On UNTIL reduce production expr -> simple EQUAL simple
--- On TYPE reduce production expr -> simple EQUAL simple
--- On SUB reduce production expr -> simple EQUAL simple
--- On STAR reduce production expr -> simple EQUAL simple
--- On SEMI reduce production expr -> simple EQUAL simple
--- On RPAR reduce production expr -> simple EQUAL simple
--- On RETURN reduce production expr -> simple EQUAL simple
--- On REPEAT reduce production expr -> simple EQUAL simple
--- On RELOP reduce production expr -> simple EQUAL simple
--- On PROCEDURE reduce production expr -> simple EQUAL simple
--- On MULOP reduce production expr -> simple EQUAL simple
--- On LPAR reduce production expr -> simple EQUAL simple
--- On LOOP reduce production expr -> simple EQUAL simple
--- On LOCAL reduce production expr -> simple EQUAL simple
--- On IS reduce production expr -> simple EQUAL simple
--- On IF reduce production expr -> simple EQUAL simple
--- On IDENT reduce production expr -> simple EQUAL simple
--- On FOR reduce production expr -> simple EQUAL simple
--- On EXIT reduce production expr -> simple EQUAL simple
--- On EQUAL reduce production expr -> simple EQUAL simple
--- On END reduce production expr -> simple EQUAL simple
--- On ELSIF reduce production expr -> simple EQUAL simple
--- On ELSE reduce production expr -> simple EQUAL simple
--- On DOT reduce production expr -> simple EQUAL simple
--- On CONST reduce production expr -> simple EQUAL simple
--- On COMMA reduce production expr -> simple EQUAL simple
--- On CASE reduce production expr -> simple EQUAL simple
--- On BUS reduce production expr -> simple EQUAL simple
--- On BEGIN reduce production expr -> simple EQUAL simple
--- On ASSIGN reduce production expr -> simple EQUAL simple
--- On ABSTRACT reduce production expr -> simple EQUAL simple
+-- On error WITH WHILE VBAR VAR UPARROW UNTIL TYPE SUB STAR SEMI RPAR RETURN REPEAT RELOP PROCEDURE MULOP LPAR LOOP LOCAL IS IF IDENT FOR EXIT EQUAL END ELSIF ELSE DOT CONST COMMA CASE BUS BEGIN ASSIGN ABSTRACT
+--   reduce production expr -> simple EQUAL simple
 
 State 233:
 ## Known stack suffix:
@@ -3827,45 +3104,8 @@ designator -> designator SUB exprs . [ error WITH WHILE VBAR VAR UPARROW UNTIL T
 ## Transitions:
 -- On BUS shift to state 234
 ## Reductions:
--- On error reduce production designator -> designator SUB exprs
--- On WITH reduce production designator -> designator SUB exprs
--- On WHILE reduce production designator -> designator SUB exprs
--- On VBAR reduce production designator -> designator SUB exprs
--- On VAR reduce production designator -> designator SUB exprs
--- On UPARROW reduce production designator -> designator SUB exprs
--- On UNTIL reduce production designator -> designator SUB exprs
--- On TYPE reduce production designator -> designator SUB exprs
--- On SUB reduce production designator -> designator SUB exprs
--- On STAR reduce production designator -> designator SUB exprs
--- On SEMI reduce production designator -> designator SUB exprs
--- On RPAR reduce production designator -> designator SUB exprs
--- On RETURN reduce production designator -> designator SUB exprs
--- On REPEAT reduce production designator -> designator SUB exprs
--- On RELOP reduce production designator -> designator SUB exprs
--- On PROCEDURE reduce production designator -> designator SUB exprs
--- On PLUS reduce production designator -> designator SUB exprs
--- On MULOP reduce production designator -> designator SUB exprs
--- On MINUS reduce production designator -> designator SUB exprs
--- On LPAR reduce production designator -> designator SUB exprs
--- On LOOP reduce production designator -> designator SUB exprs
--- On LOCAL reduce production designator -> designator SUB exprs
--- On IS reduce production designator -> designator SUB exprs
--- On IF reduce production designator -> designator SUB exprs
--- On IDENT reduce production designator -> designator SUB exprs
--- On FOR reduce production designator -> designator SUB exprs
--- On EXIT reduce production designator -> designator SUB exprs
--- On EQUAL reduce production designator -> designator SUB exprs
--- On END reduce production designator -> designator SUB exprs
--- On ELSIF reduce production designator -> designator SUB exprs
--- On ELSE reduce production designator -> designator SUB exprs
--- On DOT reduce production designator -> designator SUB exprs
--- On CONST reduce production designator -> designator SUB exprs
--- On COMMA reduce production designator -> designator SUB exprs
--- On CASE reduce production designator -> designator SUB exprs
--- On BEGIN reduce production designator -> designator SUB exprs
--- On ASSIGN reduce production designator -> designator SUB exprs
--- On ADDOP reduce production designator -> designator SUB exprs
--- On ABSTRACT reduce production designator -> designator SUB exprs
+-- On error WITH WHILE VBAR VAR UPARROW UNTIL TYPE SUB STAR SEMI RPAR RETURN REPEAT RELOP PROCEDURE PLUS MULOP MINUS LPAR LOOP LOCAL IS IF IDENT FOR EXIT EQUAL END ELSIF ELSE DOT CONST COMMA CASE BEGIN ASSIGN ADDOP ABSTRACT
+--   reduce production designator -> designator SUB exprs
 
 State 234:
 ## Known stack suffix:
@@ -3885,45 +3125,8 @@ exprs -> expr . COMMA exprs [ error WITH WHILE VBAR VAR UPARROW UNTIL TYPE SUB S
 ## Transitions:
 -- On COMMA shift to state 236
 ## Reductions:
--- On error reduce production exprs -> expr
--- On WITH reduce production exprs -> expr
--- On WHILE reduce production exprs -> expr
--- On VBAR reduce production exprs -> expr
--- On VAR reduce production exprs -> expr
--- On UPARROW reduce production exprs -> expr
--- On UNTIL reduce production exprs -> expr
--- On TYPE reduce production exprs -> expr
--- On SUB reduce production exprs -> expr
--- On STAR reduce production exprs -> expr
--- On SEMI reduce production exprs -> expr
--- On RPAR reduce production exprs -> expr
--- On RETURN reduce production exprs -> expr
--- On REPEAT reduce production exprs -> expr
--- On RELOP reduce production exprs -> expr
--- On PROCEDURE reduce production exprs -> expr
--- On PLUS reduce production exprs -> expr
--- On MULOP reduce production exprs -> expr
--- On MINUS reduce production exprs -> expr
--- On LPAR reduce production exprs -> expr
--- On LOOP reduce production exprs -> expr
--- On LOCAL reduce production exprs -> expr
--- On IS reduce production exprs -> expr
--- On IF reduce production exprs -> expr
--- On IDENT reduce production exprs -> expr
--- On FOR reduce production exprs -> expr
--- On EXIT reduce production exprs -> expr
--- On EQUAL reduce production exprs -> expr
--- On END reduce production exprs -> expr
--- On ELSIF reduce production exprs -> expr
--- On ELSE reduce production exprs -> expr
--- On DOT reduce production exprs -> expr
--- On CONST reduce production exprs -> expr
--- On CASE reduce production exprs -> expr
--- On BUS reduce production exprs -> expr
--- On BEGIN reduce production exprs -> expr
--- On ASSIGN reduce production exprs -> expr
--- On ADDOP reduce production exprs -> expr
--- On ABSTRACT reduce production exprs -> expr
+-- On error WITH WHILE VBAR VAR UPARROW UNTIL TYPE SUB STAR SEMI RPAR RETURN REPEAT RELOP PROCEDURE PLUS MULOP MINUS LPAR LOOP LOCAL IS IF IDENT FOR EXIT EQUAL END ELSIF ELSE DOT CONST CASE BUS BEGIN ASSIGN ADDOP ABSTRACT
+--   reduce production exprs -> expr
 
 State 236:
 ## Known stack suffix:
@@ -4011,45 +3214,8 @@ actuals -> LPAR exprs . [ error WITH WHILE VBAR VAR UPARROW UNTIL TYPE SUB STAR 
 ## Transitions:
 -- On RPAR shift to state 241
 ## Reductions:
--- On error reduce production actuals -> LPAR exprs
--- On WITH reduce production actuals -> LPAR exprs
--- On WHILE reduce production actuals -> LPAR exprs
--- On VBAR reduce production actuals -> LPAR exprs
--- On VAR reduce production actuals -> LPAR exprs
--- On UPARROW reduce production actuals -> LPAR exprs
--- On UNTIL reduce production actuals -> LPAR exprs
--- On TYPE reduce production actuals -> LPAR exprs
--- On SUB reduce production actuals -> LPAR exprs
--- On STAR reduce production actuals -> LPAR exprs
--- On SEMI reduce production actuals -> LPAR exprs
--- On RETURN reduce production actuals -> LPAR exprs
--- On REPEAT reduce production actuals -> LPAR exprs
--- On RELOP reduce production actuals -> LPAR exprs
--- On PROCEDURE reduce production actuals -> LPAR exprs
--- On PLUS reduce production actuals -> LPAR exprs
--- On MULOP reduce production actuals -> LPAR exprs
--- On MINUS reduce production actuals -> LPAR exprs
--- On LPAR reduce production actuals -> LPAR exprs
--- On LOOP reduce production actuals -> LPAR exprs
--- On LOCAL reduce production actuals -> LPAR exprs
--- On IS reduce production actuals -> LPAR exprs
--- On IF reduce production actuals -> LPAR exprs
--- On IDENT reduce production actuals -> LPAR exprs
--- On FOR reduce production actuals -> LPAR exprs
--- On EXIT reduce production actuals -> LPAR exprs
--- On EQUAL reduce production actuals -> LPAR exprs
--- On END reduce production actuals -> LPAR exprs
--- On ELSIF reduce production actuals -> LPAR exprs
--- On ELSE reduce production actuals -> LPAR exprs
--- On DOT reduce production actuals -> LPAR exprs
--- On CONST reduce production actuals -> LPAR exprs
--- On COMMA reduce production actuals -> LPAR exprs
--- On CASE reduce production actuals -> LPAR exprs
--- On BUS reduce production actuals -> LPAR exprs
--- On BEGIN reduce production actuals -> LPAR exprs
--- On ASSIGN reduce production actuals -> LPAR exprs
--- On ADDOP reduce production actuals -> LPAR exprs
--- On ABSTRACT reduce production actuals -> LPAR exprs
+-- On error WITH WHILE VBAR VAR UPARROW UNTIL TYPE SUB STAR SEMI RETURN REPEAT RELOP PROCEDURE PLUS MULOP MINUS LPAR LOOP LOCAL IS IF IDENT FOR EXIT EQUAL END ELSIF ELSE DOT CONST COMMA CASE BUS BEGIN ASSIGN ADDOP ABSTRACT
+--   reduce production actuals -> LPAR exprs
 
 State 241:
 ## Known stack suffix:
@@ -4097,45 +3263,8 @@ factor -> LPAR expr . [ error WITH WHILE VBAR VAR UPARROW UNTIL TYPE SUB STAR SE
 ## Transitions:
 -- On RPAR shift to state 246
 ## Reductions:
--- On error reduce production factor -> LPAR expr
--- On WITH reduce production factor -> LPAR expr
--- On WHILE reduce production factor -> LPAR expr
--- On VBAR reduce production factor -> LPAR expr
--- On VAR reduce production factor -> LPAR expr
--- On UPARROW reduce production factor -> LPAR expr
--- On UNTIL reduce production factor -> LPAR expr
--- On TYPE reduce production factor -> LPAR expr
--- On SUB reduce production factor -> LPAR expr
--- On STAR reduce production factor -> LPAR expr
--- On SEMI reduce production factor -> LPAR expr
--- On RETURN reduce production factor -> LPAR expr
--- On REPEAT reduce production factor -> LPAR expr
--- On RELOP reduce production factor -> LPAR expr
--- On PROCEDURE reduce production factor -> LPAR expr
--- On PLUS reduce production factor -> LPAR expr
--- On MULOP reduce production factor -> LPAR expr
--- On MINUS reduce production factor -> LPAR expr
--- On LPAR reduce production factor -> LPAR expr
--- On LOOP reduce production factor -> LPAR expr
--- On LOCAL reduce production factor -> LPAR expr
--- On IS reduce production factor -> LPAR expr
--- On IF reduce production factor -> LPAR expr
--- On IDENT reduce production factor -> LPAR expr
--- On FOR reduce production factor -> LPAR expr
--- On EXIT reduce production factor -> LPAR expr
--- On EQUAL reduce production factor -> LPAR expr
--- On END reduce production factor -> LPAR expr
--- On ELSIF reduce production factor -> LPAR expr
--- On ELSE reduce production factor -> LPAR expr
--- On DOT reduce production factor -> LPAR expr
--- On CONST reduce production factor -> LPAR expr
--- On COMMA reduce production factor -> LPAR expr
--- On CASE reduce production factor -> LPAR expr
--- On BUS reduce production factor -> LPAR expr
--- On BEGIN reduce production factor -> LPAR expr
--- On ASSIGN reduce production factor -> LPAR expr
--- On ADDOP reduce production factor -> LPAR expr
--- On ABSTRACT reduce production factor -> LPAR expr
+-- On error WITH WHILE VBAR VAR UPARROW UNTIL TYPE SUB STAR SEMI RETURN REPEAT RELOP PROCEDURE PLUS MULOP MINUS LPAR LOOP LOCAL IS IF IDENT FOR EXIT EQUAL END ELSIF ELSE DOT CONST COMMA CASE BUS BEGIN ASSIGN ADDOP ABSTRACT
+--   reduce production factor -> LPAR expr
 
 State 246:
 ## Known stack suffix:
@@ -4166,44 +3295,8 @@ term -> term . STAR factor [ error WITH WHILE VBAR VAR UPARROW UNTIL TYPE SUB ST
 -- On STAR shift to state 210
 -- On MULOP shift to state 217
 ## Reductions:
--- On error reduce production simple -> PLUS term
--- On WITH reduce production simple -> PLUS term
--- On WHILE reduce production simple -> PLUS term
--- On VBAR reduce production simple -> PLUS term
--- On VAR reduce production simple -> PLUS term
--- On UPARROW reduce production simple -> PLUS term
--- On UNTIL reduce production simple -> PLUS term
--- On TYPE reduce production simple -> PLUS term
--- On SUB reduce production simple -> PLUS term
--- On SEMI reduce production simple -> PLUS term
--- On RPAR reduce production simple -> PLUS term
--- On RETURN reduce production simple -> PLUS term
--- On REPEAT reduce production simple -> PLUS term
--- On RELOP reduce production simple -> PLUS term
--- On PROCEDURE reduce production simple -> PLUS term
--- On PLUS reduce production simple -> PLUS term
--- On MINUS reduce production simple -> PLUS term
--- On LPAR reduce production simple -> PLUS term
--- On LOOP reduce production simple -> PLUS term
--- On LOCAL reduce production simple -> PLUS term
--- On IS reduce production simple -> PLUS term
--- On IF reduce production simple -> PLUS term
--- On IDENT reduce production simple -> PLUS term
--- On FOR reduce production simple -> PLUS term
--- On EXIT reduce production simple -> PLUS term
--- On EQUAL reduce production simple -> PLUS term
--- On END reduce production simple -> PLUS term
--- On ELSIF reduce production simple -> PLUS term
--- On ELSE reduce production simple -> PLUS term
--- On DOT reduce production simple -> PLUS term
--- On CONST reduce production simple -> PLUS term
--- On COMMA reduce production simple -> PLUS term
--- On CASE reduce production simple -> PLUS term
--- On BUS reduce production simple -> PLUS term
--- On BEGIN reduce production simple -> PLUS term
--- On ASSIGN reduce production simple -> PLUS term
--- On ADDOP reduce production simple -> PLUS term
--- On ABSTRACT reduce production simple -> PLUS term
+-- On error WITH WHILE VBAR VAR UPARROW UNTIL TYPE SUB SEMI RPAR RETURN REPEAT RELOP PROCEDURE PLUS MINUS LPAR LOOP LOCAL IS IF IDENT FOR EXIT EQUAL END ELSIF ELSE DOT CONST COMMA CASE BUS BEGIN ASSIGN ADDOP ABSTRACT
+--   reduce production simple -> PLUS term
 
 State 249:
 ## Known stack suffix:
@@ -4215,15 +3308,8 @@ const_decl -> defid EQUAL expr . semi [ error VAR TYPE PROCEDURE IDENT END CONST
 -- On COMMA shift to state 178
 -- On semi shift to state 250
 ## Reductions:
--- On error reduce production semi ->
--- On VAR reduce production semi ->
--- On TYPE reduce production semi ->
--- On PROCEDURE reduce production semi ->
--- On IDENT reduce production semi ->
--- On END reduce production semi ->
--- On CONST reduce production semi ->
--- On BEGIN reduce production semi ->
--- On ABSTRACT reduce production semi ->
+-- On error VAR TYPE PROCEDURE IDENT END CONST BEGIN ABSTRACT
+--   reduce production semi ->
 
 State 250:
 ## Known stack suffix:
@@ -4255,14 +3341,8 @@ const_decls -> const_decl . const_decls [ error VAR TYPE PROCEDURE END CONST BEG
 -- On const_decls shift to state 253
 -- On const_decl shift to state 252
 ## Reductions:
--- On error reduce production const_decls -> const_decl
--- On VAR reduce production const_decls -> const_decl
--- On TYPE reduce production const_decls -> const_decl
--- On PROCEDURE reduce production const_decls -> const_decl
--- On END reduce production const_decls -> const_decl
--- On CONST reduce production const_decls -> const_decl
--- On BEGIN reduce production const_decls -> const_decl
--- On ABSTRACT reduce production const_decls -> const_decl
+-- On error VAR TYPE PROCEDURE END CONST BEGIN ABSTRACT
+--   reduce production const_decls -> const_decl
 
 State 253:
 ## Known stack suffix:
@@ -4298,21 +3378,10 @@ stmts_b -> stmts_b . missing stmt1 [ error WITH WHILE VBAR UNTIL SEMI RETURN REP
 -- On SEMI shift to state 258
 -- On missing shift to state 259
 ## Reductions:
--- On WITH reduce production missing ->
--- On WHILE reduce production missing ->
--- On VBAR reduce production stmts -> stmts_b
--- On UNTIL reduce production stmts -> stmts_b
--- On RETURN reduce production missing ->
--- On REPEAT reduce production missing ->
--- On LOOP reduce production missing ->
--- On LOCAL reduce production missing ->
--- On IF reduce production missing ->
--- On FOR reduce production missing ->
--- On EXIT reduce production missing ->
--- On END reduce production stmts -> stmts_b
--- On ELSIF reduce production stmts -> stmts_b
--- On ELSE reduce production stmts -> stmts_b
--- On CASE reduce production missing ->
+-- On WITH WHILE RETURN REPEAT LOOP LOCAL IF FOR EXIT CASE
+--   reduce production missing ->
+-- On VBAR UNTIL END ELSIF ELSE
+--   reduce production stmts -> stmts_b
 
 State 256:
 ## Known stack suffix:
@@ -4392,7 +3461,8 @@ stmt1 -> WITH with_branches . else_part END [ error WITH WHILE VBAR UNTIL SEMI R
 -- On ELSE shift to state 263
 -- On else_part shift to state 361
 ## Reductions:
--- On END reduce production else_part ->
+-- On END
+--   reduce production else_part ->
 
 State 263:
 ## Known stack suffix:
@@ -4434,11 +3504,8 @@ stmts_b -> stmts_a . stmt1 [ error WITH WHILE VBAR UNTIL SEMI RETURN REPEAT LOOP
 -- On if_chain shift to state 346
 -- On designator shift to state 357
 ## Reductions:
--- On VBAR reduce production stmts -> stmts_a
--- On UNTIL reduce production stmts -> stmts_a
--- On END reduce production stmts -> stmts_a
--- On ELSIF reduce production stmts -> stmts_a
--- On ELSE reduce production stmts -> stmts_a
+-- On VBAR UNTIL END ELSIF ELSE
+--   reduce production stmts -> stmts_a
 
 State 265:
 ## Known stack suffix:
@@ -4574,23 +3641,8 @@ stmt1 -> RETURN . expr [ error WITH WHILE VBAR UNTIL SEMI RETURN REPEAT LOOP LOC
 -- On expr shift to state 275
 -- On designator shift to state 213
 ## Reductions:
--- On error reduce production stmt1 -> RETURN
--- On WITH reduce production stmt1 -> RETURN
--- On WHILE reduce production stmt1 -> RETURN
--- On VBAR reduce production stmt1 -> RETURN
--- On UNTIL reduce production stmt1 -> RETURN
--- On SEMI reduce production stmt1 -> RETURN
--- On RETURN reduce production stmt1 -> RETURN
--- On REPEAT reduce production stmt1 -> RETURN
--- On LOOP reduce production stmt1 -> RETURN
--- On LOCAL reduce production stmt1 -> RETURN
--- On IF reduce production stmt1 -> RETURN
--- On FOR reduce production stmt1 -> RETURN
--- On EXIT reduce production stmt1 -> RETURN
--- On END reduce production stmt1 -> RETURN
--- On ELSIF reduce production stmt1 -> RETURN
--- On ELSE reduce production stmt1 -> RETURN
--- On CASE reduce production stmt1 -> RETURN
+-- On error WITH WHILE VBAR UNTIL SEMI RETURN REPEAT LOOP LOCAL IF FOR EXIT END ELSIF ELSE CASE
+--   reduce production stmt1 -> RETURN
 
 State 275:
 ## Known stack suffix:
@@ -4716,7 +3768,8 @@ stmt1 -> LOCAL decls . body END [ error WITH WHILE VBAR UNTIL SEMI RETURN REPEAT
 -- On decl shift to state 306
 -- On body shift to state 307
 ## Reductions:
--- On END reduce production body ->
+-- On END
+--   reduce production body ->
 
 State 285:
 ## Known stack suffix:
@@ -4855,18 +3908,8 @@ defid -> IDENT . export [ error VAR TYPE SEMI PROCEDURE LPAR IS END CONST COMMA 
 -- On MINUS shift to state 300
 -- On export shift to state 301
 ## Reductions:
--- On error reduce production export ->
--- On VAR reduce production export ->
--- On TYPE reduce production export ->
--- On SEMI reduce production export ->
--- On PROCEDURE reduce production export ->
--- On LPAR reduce production export ->
--- On IS reduce production export ->
--- On END reduce production export ->
--- On CONST reduce production export ->
--- On COMMA reduce production export ->
--- On BEGIN reduce production export ->
--- On ABSTRACT reduce production export ->
+-- On error VAR TYPE SEMI PROCEDURE LPAR IS END CONST COMMA BEGIN ABSTRACT
+--   reduce production export ->
 
 State 299:
 ## Known stack suffix:
@@ -4904,16 +3947,8 @@ proc -> ABSTRACT PROCEDURE receiver defid . params semi [ error VAR TYPE PROCEDU
 -- On LPAR shift to state 29
 -- On params shift to state 303
 ## Reductions:
--- On error reduce production params ->
--- On VAR reduce production params ->
--- On TYPE reduce production params ->
--- On SEMI reduce production params ->
--- On PROCEDURE reduce production params ->
--- On END reduce production params ->
--- On CONST reduce production params ->
--- On COMMA reduce production params ->
--- On BEGIN reduce production params ->
--- On ABSTRACT reduce production params ->
+-- On error VAR TYPE SEMI PROCEDURE END CONST COMMA BEGIN ABSTRACT
+--   reduce production params ->
 
 State 303:
 ## Known stack suffix:
@@ -4925,14 +3960,8 @@ proc -> ABSTRACT PROCEDURE receiver defid params . semi [ error VAR TYPE PROCEDU
 -- On COMMA shift to state 178
 -- On semi shift to state 304
 ## Reductions:
--- On error reduce production semi ->
--- On VAR reduce production semi ->
--- On TYPE reduce production semi ->
--- On PROCEDURE reduce production semi ->
--- On END reduce production semi ->
--- On CONST reduce production semi ->
--- On BEGIN reduce production semi ->
--- On ABSTRACT reduce production semi ->
+-- On error VAR TYPE PROCEDURE END CONST BEGIN ABSTRACT
+--   reduce production semi ->
 
 State 304:
 ## Known stack suffix:
@@ -5161,7 +4190,8 @@ stmt1 -> FOR designator ASSIGN expr TO expr . by_part DO stmts END [ error WITH 
 -- On BY shift to state 321
 -- On by_part shift to state 323
 ## Reductions:
--- On DO reduce production by_part ->
+-- On DO
+--   reduce production by_part ->
 
 State 321:
 ## Known stack suffix:
@@ -5306,9 +4336,8 @@ stmt1 -> CASE error . case_arms else_part END [ error WITH WHILE VBAR UNTIL SEMI
 -- On case_arms shift to state 333
 -- On case_arm shift to state 336
 ## Reductions:
--- On VBAR reduce production case_arm ->
--- On END reduce production case_arm ->
--- On ELSE reduce production case_arm ->
+-- On VBAR END ELSE
+--   reduce production case_arm ->
 
 State 330:
 ## Known stack suffix:
@@ -5349,7 +4378,8 @@ stmt1 -> CASE error case_arms . else_part END [ error WITH WHILE VBAR UNTIL SEMI
 -- On ELSE shift to state 263
 -- On else_part shift to state 334
 ## Reductions:
--- On END reduce production else_part ->
+-- On END
+--   reduce production else_part ->
 
 State 334:
 ## Known stack suffix:
@@ -5378,8 +4408,8 @@ case_arms -> case_arm . VBAR case_arms [ END ELSE ]
 ## Transitions:
 -- On VBAR shift to state 337
 ## Reductions:
--- On END reduce production case_arms -> case_arm
--- On ELSE reduce production case_arms -> case_arm
+-- On END ELSE
+--   reduce production case_arms -> case_arm
 
 State 337:
 ## Known stack suffix:
@@ -5411,9 +4441,8 @@ case_arms -> case_arm VBAR . case_arms [ END ELSE ]
 -- On case_arms shift to state 338
 -- On case_arm shift to state 336
 ## Reductions:
--- On VBAR reduce production case_arm ->
--- On END reduce production case_arm ->
--- On ELSE reduce production case_arm ->
+-- On VBAR END ELSE
+--   reduce production case_arm ->
 
 State 338:
 ## Known stack suffix:
@@ -5463,9 +4492,8 @@ stmt1 -> CASE expr OF . case_arms else_part END [ error WITH WHILE VBAR UNTIL SE
 -- On case_arms shift to state 341
 -- On case_arm shift to state 336
 ## Reductions:
--- On VBAR reduce production case_arm ->
--- On END reduce production case_arm ->
--- On ELSE reduce production case_arm ->
+-- On VBAR END ELSE
+--   reduce production case_arm ->
 
 State 341:
 ## Known stack suffix:
@@ -5476,7 +4504,8 @@ stmt1 -> CASE expr OF case_arms . else_part END [ error WITH WHILE VBAR UNTIL SE
 -- On ELSE shift to state 263
 -- On else_part shift to state 342
 ## Reductions:
--- On END reduce production else_part ->
+-- On END
+--   reduce production else_part ->
 
 State 342:
 ## Known stack suffix:
@@ -5666,23 +4695,8 @@ stmt0 -> designator . [ error WITH WHILE VBAR UNTIL SEMI RETURN REPEAT LOOP LOCA
 -- On ASSIGN shift to state 358
 -- On actuals shift to state 244
 ## Reductions:
--- On error reduce production stmt0 -> designator
--- On WITH reduce production stmt0 -> designator
--- On WHILE reduce production stmt0 -> designator
--- On VBAR reduce production stmt0 -> designator
--- On UNTIL reduce production stmt0 -> designator
--- On SEMI reduce production stmt0 -> designator
--- On RETURN reduce production stmt0 -> designator
--- On REPEAT reduce production stmt0 -> designator
--- On LOOP reduce production stmt0 -> designator
--- On LOCAL reduce production stmt0 -> designator
--- On IF reduce production stmt0 -> designator
--- On FOR reduce production stmt0 -> designator
--- On EXIT reduce production stmt0 -> designator
--- On END reduce production stmt0 -> designator
--- On ELSIF reduce production stmt0 -> designator
--- On ELSE reduce production stmt0 -> designator
--- On CASE reduce production stmt0 -> designator
+-- On error WITH WHILE VBAR UNTIL SEMI RETURN REPEAT LOOP LOCAL IF FOR EXIT END ELSIF ELSE CASE
+--   reduce production stmt0 -> designator
 
 State 358:
 ## Known stack suffix:
@@ -5756,8 +4770,8 @@ with_branches -> with_branch . VBAR with_branches [ END ELSE ]
 ## Transitions:
 -- On VBAR shift to state 364
 ## Reductions:
--- On END reduce production with_branches -> with_branch
--- On ELSE reduce production with_branches -> with_branch
+-- On END ELSE
+--   reduce production with_branches -> with_branch
 
 State 364:
 ## Known stack suffix:
@@ -5874,16 +4888,8 @@ proc -> PROCEDURE error block . opt_ident semi [ error VAR TYPE PROCEDURE END CO
 -- On IDENT shift to state 376
 -- On opt_ident shift to state 377
 ## Reductions:
--- On error reduce production opt_ident ->
--- On VAR reduce production opt_ident ->
--- On TYPE reduce production opt_ident ->
--- On SEMI reduce production opt_ident ->
--- On PROCEDURE reduce production opt_ident ->
--- On END reduce production opt_ident ->
--- On CONST reduce production opt_ident ->
--- On COMMA reduce production opt_ident ->
--- On BEGIN reduce production opt_ident ->
--- On ABSTRACT reduce production opt_ident ->
+-- On error VAR TYPE SEMI PROCEDURE END CONST COMMA BEGIN ABSTRACT
+--   reduce production opt_ident ->
 
 State 376:
 ## Known stack suffix:
@@ -5904,14 +4910,8 @@ proc -> PROCEDURE error block opt_ident . semi [ error VAR TYPE PROCEDURE END CO
 -- On COMMA shift to state 178
 -- On semi shift to state 378
 ## Reductions:
--- On error reduce production semi ->
--- On VAR reduce production semi ->
--- On TYPE reduce production semi ->
--- On PROCEDURE reduce production semi ->
--- On END reduce production semi ->
--- On CONST reduce production semi ->
--- On BEGIN reduce production semi ->
--- On ABSTRACT reduce production semi ->
+-- On error VAR TYPE PROCEDURE END CONST BEGIN ABSTRACT
+--   reduce production semi ->
 
 State 378:
 ## Known stack suffix:
@@ -5941,16 +4941,8 @@ proc -> PROCEDURE receiver defid . params semi block opt_ident semi [ error VAR 
 -- On LPAR shift to state 29
 -- On params shift to state 381
 ## Reductions:
--- On error reduce production params ->
--- On VAR reduce production params ->
--- On TYPE reduce production params ->
--- On SEMI reduce production params ->
--- On PROCEDURE reduce production params ->
--- On END reduce production params ->
--- On CONST reduce production params ->
--- On COMMA reduce production params ->
--- On BEGIN reduce production params ->
--- On ABSTRACT reduce production params ->
+-- On error VAR TYPE SEMI PROCEDURE END CONST COMMA BEGIN ABSTRACT
+--   reduce production params ->
 
 State 381:
 ## Known stack suffix:
@@ -5962,14 +4954,8 @@ proc -> PROCEDURE receiver defid params . semi block opt_ident semi [ error VAR 
 -- On COMMA shift to state 178
 -- On semi shift to state 382
 ## Reductions:
--- On error reduce production semi ->
--- On VAR reduce production semi ->
--- On TYPE reduce production semi ->
--- On PROCEDURE reduce production semi ->
--- On END reduce production semi ->
--- On CONST reduce production semi ->
--- On BEGIN reduce production semi ->
--- On ABSTRACT reduce production semi ->
+-- On error VAR TYPE PROCEDURE END CONST BEGIN ABSTRACT
+--   reduce production semi ->
 
 State 382:
 ## Known stack suffix:
@@ -5991,16 +4977,8 @@ proc -> PROCEDURE receiver defid params semi block . opt_ident semi [ error VAR 
 -- On IDENT shift to state 376
 -- On opt_ident shift to state 384
 ## Reductions:
--- On error reduce production opt_ident ->
--- On VAR reduce production opt_ident ->
--- On TYPE reduce production opt_ident ->
--- On SEMI reduce production opt_ident ->
--- On PROCEDURE reduce production opt_ident ->
--- On END reduce production opt_ident ->
--- On CONST reduce production opt_ident ->
--- On COMMA reduce production opt_ident ->
--- On BEGIN reduce production opt_ident ->
--- On ABSTRACT reduce production opt_ident ->
+-- On error VAR TYPE SEMI PROCEDURE END CONST COMMA BEGIN ABSTRACT
+--   reduce production opt_ident ->
 
 State 384:
 ## Known stack suffix:
@@ -6012,14 +4990,8 @@ proc -> PROCEDURE receiver defid params semi block opt_ident . semi [ error VAR 
 -- On COMMA shift to state 178
 -- On semi shift to state 385
 ## Reductions:
--- On error reduce production semi ->
--- On VAR reduce production semi ->
--- On TYPE reduce production semi ->
--- On PROCEDURE reduce production semi ->
--- On END reduce production semi ->
--- On CONST reduce production semi ->
--- On BEGIN reduce production semi ->
--- On ABSTRACT reduce production semi ->
+-- On error VAR TYPE PROCEDURE END CONST BEGIN ABSTRACT
+--   reduce production semi ->
 
 State 385:
 ## Known stack suffix:
@@ -6040,17 +5012,8 @@ proc -> PROCEDURE defid . params IS STRING semi [ error VAR TYPE PROCEDURE END C
 -- On LPAR shift to state 29
 -- On params shift to state 387
 ## Reductions:
--- On error reduce production params ->
--- On VAR reduce production params ->
--- On TYPE reduce production params ->
--- On SEMI reduce production params ->
--- On PROCEDURE reduce production params ->
--- On IS reduce production params ->
--- On END reduce production params ->
--- On CONST reduce production params ->
--- On COMMA reduce production params ->
--- On BEGIN reduce production params ->
--- On ABSTRACT reduce production params ->
+-- On error VAR TYPE SEMI PROCEDURE IS END CONST COMMA BEGIN ABSTRACT
+--   reduce production params ->
 
 State 387:
 ## Known stack suffix:
@@ -6064,14 +5027,8 @@ proc -> PROCEDURE defid params . IS STRING semi [ error VAR TYPE PROCEDURE END C
 -- On COMMA shift to state 178
 -- On semi shift to state 391
 ## Reductions:
--- On error reduce production semi ->
--- On VAR reduce production semi ->
--- On TYPE reduce production semi ->
--- On PROCEDURE reduce production semi ->
--- On END reduce production semi ->
--- On CONST reduce production semi ->
--- On BEGIN reduce production semi ->
--- On ABSTRACT reduce production semi ->
+-- On error VAR TYPE PROCEDURE END CONST BEGIN ABSTRACT
+--   reduce production semi ->
 
 State 388:
 ## Known stack suffix:
@@ -6092,14 +5049,8 @@ proc -> PROCEDURE defid params IS STRING . semi [ error VAR TYPE PROCEDURE END C
 -- On COMMA shift to state 178
 -- On semi shift to state 390
 ## Reductions:
--- On error reduce production semi ->
--- On VAR reduce production semi ->
--- On TYPE reduce production semi ->
--- On PROCEDURE reduce production semi ->
--- On END reduce production semi ->
--- On CONST reduce production semi ->
--- On BEGIN reduce production semi ->
--- On ABSTRACT reduce production semi ->
+-- On error VAR TYPE PROCEDURE END CONST BEGIN ABSTRACT
+--   reduce production semi ->
 
 State 390:
 ## Known stack suffix:
@@ -6130,16 +5081,8 @@ proc -> PROCEDURE defid params semi block . opt_ident semi [ error VAR TYPE PROC
 -- On IDENT shift to state 376
 -- On opt_ident shift to state 393
 ## Reductions:
--- On error reduce production opt_ident ->
--- On VAR reduce production opt_ident ->
--- On TYPE reduce production opt_ident ->
--- On SEMI reduce production opt_ident ->
--- On PROCEDURE reduce production opt_ident ->
--- On END reduce production opt_ident ->
--- On CONST reduce production opt_ident ->
--- On COMMA reduce production opt_ident ->
--- On BEGIN reduce production opt_ident ->
--- On ABSTRACT reduce production opt_ident ->
+-- On error VAR TYPE SEMI PROCEDURE END CONST COMMA BEGIN ABSTRACT
+--   reduce production opt_ident ->
 
 State 393:
 ## Known stack suffix:
@@ -6151,14 +5094,8 @@ proc -> PROCEDURE defid params semi block opt_ident . semi [ error VAR TYPE PROC
 -- On COMMA shift to state 178
 -- On semi shift to state 394
 ## Reductions:
--- On error reduce production semi ->
--- On VAR reduce production semi ->
--- On TYPE reduce production semi ->
--- On PROCEDURE reduce production semi ->
--- On END reduce production semi ->
--- On CONST reduce production semi ->
--- On BEGIN reduce production semi ->
--- On ABSTRACT reduce production semi ->
+-- On error VAR TYPE PROCEDURE END CONST BEGIN ABSTRACT
+--   reduce production semi ->
 
 State 394:
 ## Known stack suffix:
@@ -6196,7 +5133,8 @@ program -> MODULE modname semi imports block . opt_ident DOT [ # ]
 -- On IDENT shift to state 398
 -- On opt_ident shift to state 399
 ## Reductions:
--- On DOT reduce production opt_ident ->
+-- On DOT
+--   reduce production opt_ident ->
 
 State 398:
 ## Known stack suffix:

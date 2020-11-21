@@ -508,7 +508,8 @@ b -> li . SEMICOL b [ RBRA ]
 ## Transitions:
 -- On SEMICOL shift to state 42
 ## Reductions:
--- On RBRA reduce production b -> li
+-- On RBRA
+--   reduce production b -> li
 
 State 42:
 ## Known stack suffix:
@@ -571,8 +572,8 @@ li -> exprl . COMMA li [ SEMICOL RBRA ]
 -- On MINUS shift to state 51
 -- On COMMA shift to state 53
 ## Reductions:
--- On SEMICOL reduce production li -> exprl
--- On RBRA reduce production li -> exprl
+-- On SEMICOL RBRA
+--   reduce production li -> exprl
 
 State 46:
 ## Known stack suffix:
@@ -611,15 +612,8 @@ exprl -> exprl TIMES exprl . [ TIMES SQUOTE SEMICOL RPAR RBRA PLUS MINUS LEQ GEQ
 -- On TIMES shift to state 46
 -- On SQUOTE shift to state 48
 ## Reductions:
--- On SEMICOL reduce production exprl -> exprl TIMES exprl
--- On RPAR reduce production exprl -> exprl TIMES exprl
--- On RBRA reduce production exprl -> exprl TIMES exprl
--- On PLUS reduce production exprl -> exprl TIMES exprl
--- On MINUS reduce production exprl -> exprl TIMES exprl
--- On LEQ reduce production exprl -> exprl TIMES exprl
--- On GEQ reduce production exprl -> exprl TIMES exprl
--- On EOF reduce production exprl -> exprl TIMES exprl
--- On COMMA reduce production exprl -> exprl TIMES exprl
+-- On SEMICOL RPAR RBRA PLUS MINUS LEQ GEQ EOF COMMA
+--   reduce production exprl -> exprl TIMES exprl
 
 State 48:
 ## Known stack suffix:
@@ -667,15 +661,8 @@ exprl -> exprl . TIMES exprl [ TIMES SQUOTE SEMICOL RPAR RBRA PLUS MINUS LEQ GEQ
 -- On TIMES shift to state 46
 -- On SQUOTE shift to state 48
 ## Reductions:
--- On SEMICOL reduce production exprl -> exprl PLUS exprl
--- On RPAR reduce production exprl -> exprl PLUS exprl
--- On RBRA reduce production exprl -> exprl PLUS exprl
--- On PLUS reduce production exprl -> exprl PLUS exprl
--- On MINUS reduce production exprl -> exprl PLUS exprl
--- On LEQ reduce production exprl -> exprl PLUS exprl
--- On GEQ reduce production exprl -> exprl PLUS exprl
--- On EOF reduce production exprl -> exprl PLUS exprl
--- On COMMA reduce production exprl -> exprl PLUS exprl
+-- On SEMICOL RPAR RBRA PLUS MINUS LEQ GEQ EOF COMMA
+--   reduce production exprl -> exprl PLUS exprl
 
 State 51:
 ## Known stack suffix:
@@ -714,15 +701,8 @@ exprl -> exprl . TIMES exprl [ TIMES SQUOTE SEMICOL RPAR RBRA PLUS MINUS LEQ GEQ
 -- On TIMES shift to state 46
 -- On SQUOTE shift to state 48
 ## Reductions:
--- On SEMICOL reduce production exprl -> exprl MINUS exprl
--- On RPAR reduce production exprl -> exprl MINUS exprl
--- On RBRA reduce production exprl -> exprl MINUS exprl
--- On PLUS reduce production exprl -> exprl MINUS exprl
--- On MINUS reduce production exprl -> exprl MINUS exprl
--- On LEQ reduce production exprl -> exprl MINUS exprl
--- On GEQ reduce production exprl -> exprl MINUS exprl
--- On EOF reduce production exprl -> exprl MINUS exprl
--- On COMMA reduce production exprl -> exprl MINUS exprl
+-- On SEMICOL RPAR RBRA PLUS MINUS LEQ GEQ EOF COMMA
+--   reduce production exprl -> exprl MINUS exprl
 
 State 53:
 ## Known stack suffix:
@@ -945,16 +925,8 @@ exprl -> exprl . TIMES exprl [ TIMES SQUOTE SEMICOL RPAR RBRA PLUS MINUS LEQ GEQ
 ## Transitions:
 -- On SQUOTE shift to state 48
 ## Reductions:
--- On TIMES reduce production exprl -> MINUS exprl
--- On SEMICOL reduce production exprl -> MINUS exprl
--- On RPAR reduce production exprl -> MINUS exprl
--- On RBRA reduce production exprl -> MINUS exprl
--- On PLUS reduce production exprl -> MINUS exprl
--- On MINUS reduce production exprl -> MINUS exprl
--- On LEQ reduce production exprl -> MINUS exprl
--- On GEQ reduce production exprl -> MINUS exprl
--- On EOF reduce production exprl -> MINUS exprl
--- On COMMA reduce production exprl -> MINUS exprl
+-- On TIMES SEMICOL RPAR RBRA PLUS MINUS LEQ GEQ EOF COMMA
+--   reduce production exprl -> MINUS exprl
 
 State 71:
 ## Known stack suffix:
@@ -1022,10 +994,8 @@ lmi -> exprl LEQ INT0 . EOF [ # ]
 ## Transitions:
 -- On EOF shift to state 75
 ## Reductions:
--- On TIMES reduce production f -> INT0
--- On SQUOTE reduce production f -> INT0
--- On PLUS reduce production f -> INT0
--- On MINUS reduce production f -> INT0
+-- On TIMES SQUOTE PLUS MINUS
+--   reduce production f -> INT0
 
 State 75:
 ## Known stack suffix:
@@ -1096,10 +1066,8 @@ lmi -> exprl GEQ INT0 . EOF [ # ]
 ## Transitions:
 -- On EOF shift to state 80
 ## Reductions:
--- On TIMES reduce production f -> INT0
--- On SQUOTE reduce production f -> INT0
--- On PLUS reduce production f -> INT0
--- On MINUS reduce production f -> INT0
+-- On TIMES SQUOTE PLUS MINUS
+--   reduce production f -> INT0
 
 State 80:
 ## Known stack suffix:
@@ -1195,16 +1163,8 @@ vm -> MID . HAT ncid [ TIMES RPAR PLUS MINUS MID LPAR LEQ HAT GEQ EOF COMMA ]
 ## Transitions:
 -- On HAT shift to state 87
 ## Reductions:
--- On TIMES reduce production vm -> MID
--- On RPAR reduce production vm -> MID
--- On PLUS reduce production vm -> MID
--- On MINUS reduce production vm -> MID
--- On MID reduce production vm -> MID
--- On LPAR reduce production vm -> MID
--- On LEQ reduce production vm -> MID
--- On GEQ reduce production vm -> MID
--- On EOF reduce production vm -> MID
--- On COMMA reduce production vm -> MID
+-- On TIMES RPAR PLUS MINUS MID LPAR LEQ GEQ EOF COMMA
+--   reduce production vm -> MID
 
 State 87:
 ## Known stack suffix:
@@ -1403,16 +1363,8 @@ monom -> monom . vm [ TIMES RPAR PLUS MINUS MID LPAR LEQ HAT GEQ EOF COMMA ]
 -- On MID shift to state 86
 -- On vm shift to state 102
 ## Reductions:
--- On TIMES reduce production exprs -> monom
--- On RPAR reduce production exprs -> monom
--- On PLUS reduce production exprs -> monom
--- On MINUS reduce production exprs -> monom
--- On LPAR reduce production exprs -> monom
--- On LEQ reduce production exprs -> monom
--- On HAT reduce production exprs -> monom
--- On GEQ reduce production exprs -> monom
--- On EOF reduce production exprs -> monom
--- On COMMA reduce production exprs -> monom
+-- On TIMES RPAR PLUS MINUS LPAR LEQ HAT GEQ EOF COMMA
+--   reduce production exprs -> monom
 
 State 102:
 ## Known stack suffix:
@@ -1434,16 +1386,8 @@ exprs -> f . [ TIMES RPAR PLUS MINUS LPAR LEQ HAT GEQ EOF COMMA ]
 -- On vm shift to state 100
 -- On monom shift to state 104
 ## Reductions:
--- On TIMES reduce production exprs -> f
--- On RPAR reduce production exprs -> f
--- On PLUS reduce production exprs -> f
--- On MINUS reduce production exprs -> f
--- On LPAR reduce production exprs -> f
--- On LEQ reduce production exprs -> f
--- On HAT reduce production exprs -> f
--- On GEQ reduce production exprs -> f
--- On EOF reduce production exprs -> f
--- On COMMA reduce production exprs -> f
+-- On TIMES RPAR PLUS MINUS LPAR LEQ HAT GEQ EOF COMMA
+--   reduce production exprs -> f
 
 State 104:
 ## Known stack suffix:
@@ -1455,16 +1399,8 @@ monom -> monom . vm [ TIMES RPAR PLUS MINUS MID LPAR LEQ HAT GEQ EOF COMMA ]
 -- On MID shift to state 86
 -- On vm shift to state 102
 ## Reductions:
--- On TIMES reduce production exprs -> f monom
--- On RPAR reduce production exprs -> f monom
--- On PLUS reduce production exprs -> f monom
--- On MINUS reduce production exprs -> f monom
--- On LPAR reduce production exprs -> f monom
--- On LEQ reduce production exprs -> f monom
--- On HAT reduce production exprs -> f monom
--- On GEQ reduce production exprs -> f monom
--- On EOF reduce production exprs -> f monom
--- On COMMA reduce production exprs -> f monom
+-- On TIMES RPAR PLUS MINUS LPAR LEQ HAT GEQ EOF COMMA
+--   reduce production exprs -> f monom
 
 State 105:
 ## Known stack suffix:
@@ -1520,13 +1456,8 @@ exprs -> exprs . LPAR l RPAR [ TIMES RPAR PLUS MINUS LPAR LEQ HAT GEQ EOF COMMA 
 -- On LPAR shift to state 108
 -- On HAT shift to state 116
 ## Reductions:
--- On RPAR reduce production exprs -> exprs TIMES exprs
--- On PLUS reduce production exprs -> exprs TIMES exprs
--- On MINUS reduce production exprs -> exprs TIMES exprs
--- On LEQ reduce production exprs -> exprs TIMES exprs
--- On GEQ reduce production exprs -> exprs TIMES exprs
--- On EOF reduce production exprs -> exprs TIMES exprs
--- On COMMA reduce production exprs -> exprs TIMES exprs
+-- On RPAR PLUS MINUS LEQ GEQ EOF COMMA
+--   reduce production exprs -> exprs TIMES exprs
 
 State 108:
 ## Known stack suffix:
@@ -1569,7 +1500,8 @@ l -> le . COMMA l [ RPAR ]
 ## Transitions:
 -- On COMMA shift to state 111
 ## Reductions:
--- On RPAR reduce production l -> le
+-- On RPAR
+--   reduce production l -> le
 
 State 111:
 ## Known stack suffix:
@@ -1620,8 +1552,8 @@ le -> exprs . [ RPAR COMMA ]
 -- On LPAR shift to state 108
 -- On HAT shift to state 116
 ## Reductions:
--- On RPAR reduce production le -> exprs
--- On COMMA reduce production le -> exprs
+-- On RPAR COMMA
+--   reduce production le -> exprs
 
 State 114:
 ## Known stack suffix:
@@ -1658,13 +1590,8 @@ exprs -> exprs . LPAR l RPAR [ TIMES RPAR PLUS MINUS LPAR LEQ HAT GEQ EOF COMMA 
 -- On LPAR shift to state 108
 -- On HAT shift to state 116
 ## Reductions:
--- On RPAR reduce production exprs -> exprs PLUS exprs
--- On PLUS reduce production exprs -> exprs PLUS exprs
--- On MINUS reduce production exprs -> exprs PLUS exprs
--- On LEQ reduce production exprs -> exprs PLUS exprs
--- On GEQ reduce production exprs -> exprs PLUS exprs
--- On EOF reduce production exprs -> exprs PLUS exprs
--- On COMMA reduce production exprs -> exprs PLUS exprs
+-- On RPAR PLUS MINUS LEQ GEQ EOF COMMA
+--   reduce production exprs -> exprs PLUS exprs
 
 State 116:
 ## Known stack suffix:
@@ -1725,13 +1652,8 @@ exprs -> exprs . LPAR l RPAR [ TIMES RPAR PLUS MINUS LPAR LEQ HAT GEQ EOF COMMA 
 -- On LPAR shift to state 108
 -- On HAT shift to state 116
 ## Reductions:
--- On RPAR reduce production exprs -> exprs MINUS exprs
--- On PLUS reduce production exprs -> exprs MINUS exprs
--- On MINUS reduce production exprs -> exprs MINUS exprs
--- On LEQ reduce production exprs -> exprs MINUS exprs
--- On GEQ reduce production exprs -> exprs MINUS exprs
--- On EOF reduce production exprs -> exprs MINUS exprs
--- On COMMA reduce production exprs -> exprs MINUS exprs
+-- On RPAR PLUS MINUS LEQ GEQ EOF COMMA
+--   reduce production exprs -> exprs MINUS exprs
 
 State 120:
 ## Known stack suffix:
@@ -1801,14 +1723,8 @@ exprs -> exprs . LPAR l RPAR [ TIMES RPAR PLUS MINUS LPAR LEQ HAT GEQ EOF COMMA 
 ## Transitions:
 -- On HAT shift to state 116
 ## Reductions:
--- On TIMES reduce production exprs -> MINUS exprs
--- On RPAR reduce production exprs -> MINUS exprs
--- On PLUS reduce production exprs -> MINUS exprs
--- On MINUS reduce production exprs -> MINUS exprs
--- On LEQ reduce production exprs -> MINUS exprs
--- On GEQ reduce production exprs -> MINUS exprs
--- On EOF reduce production exprs -> MINUS exprs
--- On COMMA reduce production exprs -> MINUS exprs
+-- On TIMES RPAR PLUS MINUS LEQ GEQ EOF COMMA
+--   reduce production exprs -> MINUS exprs
 
 State 126:
 ## Known stack suffix:
@@ -1848,14 +1764,8 @@ monom -> monom . vm [ TIMES RPAR PLUS MINUS MID LPAR HAT EOF COMMA ]
 -- On MID shift to state 86
 -- On vm shift to state 102
 ## Reductions:
--- On TIMES reduce production exprp -> monom
--- On RPAR reduce production exprp -> monom
--- On PLUS reduce production exprp -> monom
--- On MINUS reduce production exprp -> monom
--- On LPAR reduce production exprp -> monom
--- On HAT reduce production exprp -> monom
--- On EOF reduce production exprp -> monom
--- On COMMA reduce production exprp -> monom
+-- On TIMES RPAR PLUS MINUS LPAR HAT EOF COMMA
+--   reduce production exprp -> monom
 
 State 129:
 ## Known stack suffix:
@@ -1868,14 +1778,8 @@ exprp -> f . [ TIMES RPAR PLUS MINUS LPAR HAT EOF COMMA ]
 -- On vm shift to state 100
 -- On monom shift to state 130
 ## Reductions:
--- On TIMES reduce production exprp -> f
--- On RPAR reduce production exprp -> f
--- On PLUS reduce production exprp -> f
--- On MINUS reduce production exprp -> f
--- On LPAR reduce production exprp -> f
--- On HAT reduce production exprp -> f
--- On EOF reduce production exprp -> f
--- On COMMA reduce production exprp -> f
+-- On TIMES RPAR PLUS MINUS LPAR HAT EOF COMMA
+--   reduce production exprp -> f
 
 State 130:
 ## Known stack suffix:
@@ -1887,14 +1791,8 @@ monom -> monom . vm [ TIMES RPAR PLUS MINUS MID LPAR HAT EOF COMMA ]
 -- On MID shift to state 86
 -- On vm shift to state 102
 ## Reductions:
--- On TIMES reduce production exprp -> f monom
--- On RPAR reduce production exprp -> f monom
--- On PLUS reduce production exprp -> f monom
--- On MINUS reduce production exprp -> f monom
--- On LPAR reduce production exprp -> f monom
--- On HAT reduce production exprp -> f monom
--- On EOF reduce production exprp -> f monom
--- On COMMA reduce production exprp -> f monom
+-- On TIMES RPAR PLUS MINUS LPAR HAT EOF COMMA
+--   reduce production exprp -> f monom
 
 State 131:
 ## Known stack suffix:
@@ -1950,11 +1848,8 @@ exprp -> exprp . LPAR lp RPAR [ TIMES RPAR PLUS MINUS LPAR HAT EOF COMMA ]
 -- On LPAR shift to state 134
 -- On HAT shift to state 144
 ## Reductions:
--- On RPAR reduce production exprp -> exprp TIMES exprp
--- On PLUS reduce production exprp -> exprp TIMES exprp
--- On MINUS reduce production exprp -> exprp TIMES exprp
--- On EOF reduce production exprp -> exprp TIMES exprp
--- On COMMA reduce production exprp -> exprp TIMES exprp
+-- On RPAR PLUS MINUS EOF COMMA
+--   reduce production exprp -> exprp TIMES exprp
 
 State 134:
 ## Known stack suffix:
@@ -2015,7 +1910,8 @@ lp -> lep . COMMA lp [ RPAR ]
 ## Transitions:
 -- On COMMA shift to state 139
 ## Reductions:
--- On RPAR reduce production lp -> lep
+-- On RPAR
+--   reduce production lp -> lep
 
 State 139:
 ## Known stack suffix:
@@ -2066,8 +1962,8 @@ lep -> exprp . [ RPAR COMMA ]
 -- On LPAR shift to state 134
 -- On HAT shift to state 144
 ## Reductions:
--- On RPAR reduce production lep -> exprp
--- On COMMA reduce production lep -> exprp
+-- On RPAR COMMA
+--   reduce production lep -> exprp
 
 State 142:
 ## Known stack suffix:
@@ -2104,11 +2000,8 @@ exprp -> exprp . LPAR lp RPAR [ TIMES RPAR PLUS MINUS LPAR HAT EOF COMMA ]
 -- On LPAR shift to state 134
 -- On HAT shift to state 144
 ## Reductions:
--- On RPAR reduce production exprp -> exprp PLUS exprp
--- On PLUS reduce production exprp -> exprp PLUS exprp
--- On MINUS reduce production exprp -> exprp PLUS exprp
--- On EOF reduce production exprp -> exprp PLUS exprp
--- On COMMA reduce production exprp -> exprp PLUS exprp
+-- On RPAR PLUS MINUS EOF COMMA
+--   reduce production exprp -> exprp PLUS exprp
 
 State 144:
 ## Known stack suffix:
@@ -2169,11 +2062,8 @@ exprp -> exprp . LPAR lp RPAR [ TIMES RPAR PLUS MINUS LPAR HAT EOF COMMA ]
 -- On LPAR shift to state 134
 -- On HAT shift to state 144
 ## Reductions:
--- On RPAR reduce production exprp -> exprp MINUS exprp
--- On PLUS reduce production exprp -> exprp MINUS exprp
--- On MINUS reduce production exprp -> exprp MINUS exprp
--- On EOF reduce production exprp -> exprp MINUS exprp
--- On COMMA reduce production exprp -> exprp MINUS exprp
+-- On RPAR PLUS MINUS EOF COMMA
+--   reduce production exprp -> exprp MINUS exprp
 
 State 148:
 ## Known stack suffix:
@@ -2197,12 +2087,8 @@ exprp -> exprp . LPAR lp RPAR [ TIMES RPAR PLUS MINUS LPAR HAT EOF COMMA ]
 ## Transitions:
 -- On HAT shift to state 144
 ## Reductions:
--- On TIMES reduce production exprp -> MINUS exprp
--- On RPAR reduce production exprp -> MINUS exprp
--- On PLUS reduce production exprp -> MINUS exprp
--- On MINUS reduce production exprp -> MINUS exprp
--- On EOF reduce production exprp -> MINUS exprp
--- On COMMA reduce production exprp -> MINUS exprp
+-- On TIMES RPAR PLUS MINUS EOF COMMA
+--   reduce production exprp -> MINUS exprp
 
 State 150:
 ## Known stack suffix:

@@ -30,13 +30,8 @@ term -> LOWER_WORD . LEFT_PARENTHESIS args RIGHT_PARENTHESIS [ RIGHT_PARENTHESIS
 ## Transitions:
 -- On LEFT_PARENTHESIS shift to state 3
 ## Reductions:
--- On RIGHT_PARENTHESIS reduce production term -> LOWER_WORD
--- On OPERATOR reduce production term -> LOWER_WORD
--- On IF reduce production term -> LOWER_WORD
--- On EOI reduce production term -> LOWER_WORD
--- On DOT reduce production term -> LOWER_WORD
--- On COMMA reduce production term -> LOWER_WORD
--- On AGGR_EQUAL reduce production term -> LOWER_WORD
+-- On RIGHT_PARENTHESIS OPERATOR IF EOI DOT COMMA AGGR_EQUAL
+--   reduce production term -> LOWER_WORD
 
 State 3:
 ## Known stack suffix:
@@ -99,7 +94,8 @@ args -> subterm . COMMA args [ RIGHT_PARENTHESIS ]
 ## Transitions:
 -- On COMMA shift to state 9
 ## Reductions:
--- On RIGHT_PARENTHESIS reduce production args -> subterm
+-- On RIGHT_PARENTHESIS
+--   reduce production args -> subterm
 
 State 9:
 ## Known stack suffix:
@@ -198,11 +194,10 @@ atom -> term . [ EOI DOT COMMA # ]
 subterm -> term . [ OPERATOR AGGR_EQUAL ]
 ## Transitions:
 ## Reductions:
--- On OPERATOR reduce production subterm -> term
--- On EOI reduce production atom -> term
--- On DOT reduce production atom -> term
--- On COMMA reduce production atom -> term
--- On AGGR_EQUAL reduce production subterm -> term
+-- On EOI DOT COMMA
+--   reduce production atom -> term
+-- On OPERATOR AGGR_EQUAL
+--   reduce production subterm -> term
 
 State 17:
 ## Known stack suffix:
@@ -332,8 +327,8 @@ literals -> literal . COMMA literals [ EOI DOT ]
 ## Transitions:
 -- On COMMA shift to state 30
 ## Reductions:
--- On EOI reduce production literals -> literal
--- On DOT reduce production literals -> literal
+-- On EOI DOT
+--   reduce production literals -> literal
 
 State 30:
 ## Known stack suffix:
@@ -464,7 +459,8 @@ clauses -> clause . clauses [ EOI ]
 -- On clauses shift to state 42
 -- On clause shift to state 41
 ## Reductions:
--- On EOI reduce production clauses -> clause
+-- On EOI
+--   reduce production clauses -> clause
 
 State 42:
 ## Known stack suffix:

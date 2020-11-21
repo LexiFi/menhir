@@ -8,14 +8,8 @@ toplevelentries' -> . toplevelentries [ # ]
 -- On toplevelentries shift to state 3
 -- On list(EOL) shift to state 4
 ## Reductions:
--- On METADATA_ID reduce production list(EOL) ->
--- On LOCAL reduce production list(EOL) ->
--- On KW_TARGET reduce production list(EOL) ->
--- On KW_DEFINE reduce production list(EOL) ->
--- On KW_DECLARE reduce production list(EOL) ->
--- On KW_ATTRIBUTES reduce production list(EOL) ->
--- On GLOBAL reduce production list(EOL) ->
--- On EOF reduce production list(EOL) ->
+-- On METADATA_ID LOCAL KW_TARGET KW_DEFINE KW_DECLARE KW_ATTRIBUTES GLOBAL EOF
+--   reduce production list(EOL) ->
 
 State 1:
 ## Known stack suffix:
@@ -26,74 +20,8 @@ list(EOL) -> EOL . list(EOL) [ METADATA_ID LOCAL LCURLY LABEL KW_ZEXT KW_XOR KW_
 -- On EOL shift to state 1
 -- On list(EOL) shift to state 2
 ## Reductions:
--- On METADATA_ID reduce production list(EOL) ->
--- On LOCAL reduce production list(EOL) ->
--- On LCURLY reduce production list(EOL) ->
--- On LABEL reduce production list(EOL) ->
--- On KW_ZEXT reduce production list(EOL) ->
--- On KW_XOR reduce production list(EOL) ->
--- On KW_VAARG reduce production list(EOL) ->
--- On KW_UREM reduce production list(EOL) ->
--- On KW_UNREACHABLE reduce production list(EOL) ->
--- On KW_UITOFP reduce production list(EOL) ->
--- On KW_UDIV reduce production list(EOL) ->
--- On KW_TRUNC reduce production list(EOL) ->
--- On KW_TARGET reduce production list(EOL) ->
--- On KW_TAIL reduce production list(EOL) ->
--- On KW_SWITCH reduce production list(EOL) ->
--- On KW_SUB reduce production list(EOL) ->
--- On KW_STORE reduce production list(EOL) ->
--- On KW_SREM reduce production list(EOL) ->
--- On KW_SITOFP reduce production list(EOL) ->
--- On KW_SHUFFLEVECTOR reduce production list(EOL) ->
--- On KW_SHL reduce production list(EOL) ->
--- On KW_SEXT reduce production list(EOL) ->
--- On KW_SELECT reduce production list(EOL) ->
--- On KW_SDIV reduce production list(EOL) ->
--- On KW_RET reduce production list(EOL) ->
--- On KW_RESUME reduce production list(EOL) ->
--- On KW_PTRTOINT reduce production list(EOL) ->
--- On KW_PHI reduce production list(EOL) ->
--- On KW_OR reduce production list(EOL) ->
--- On KW_MUL reduce production list(EOL) ->
--- On KW_LSHR reduce production list(EOL) ->
--- On KW_LOAD reduce production list(EOL) ->
--- On KW_LANDINGPAD reduce production list(EOL) ->
--- On KW_INVOKE reduce production list(EOL) ->
--- On KW_INTTOPTR reduce production list(EOL) ->
--- On KW_INSERTVALUE reduce production list(EOL) ->
--- On KW_INSERTELEMENT reduce production list(EOL) ->
--- On KW_INDIRECTBR reduce production list(EOL) ->
--- On KW_INBOUNDS reduce production list(EOL) ->
--- On KW_ICMP reduce production list(EOL) ->
--- On KW_GETELEMENTPTR reduce production list(EOL) ->
--- On KW_FSUB reduce production list(EOL) ->
--- On KW_FREM reduce production list(EOL) ->
--- On KW_FPTRUNC reduce production list(EOL) ->
--- On KW_FPTOUI reduce production list(EOL) ->
--- On KW_FPTOSI reduce production list(EOL) ->
--- On KW_FPEXT reduce production list(EOL) ->
--- On KW_FMUL reduce production list(EOL) ->
--- On KW_FENCE reduce production list(EOL) ->
--- On KW_FDIV reduce production list(EOL) ->
--- On KW_FCMP reduce production list(EOL) ->
--- On KW_FADD reduce production list(EOL) ->
--- On KW_EXTRACTVALUE reduce production list(EOL) ->
--- On KW_EXTRACTELEMENT reduce production list(EOL) ->
--- On KW_DEFINE reduce production list(EOL) ->
--- On KW_DECLARE reduce production list(EOL) ->
--- On KW_CALL reduce production list(EOL) ->
--- On KW_BR reduce production list(EOL) ->
--- On KW_BITCAST reduce production list(EOL) ->
--- On KW_ATTRIBUTES reduce production list(EOL) ->
--- On KW_ATOMICRMW reduce production list(EOL) ->
--- On KW_ATOMICCMPXCHG reduce production list(EOL) ->
--- On KW_ASHR reduce production list(EOL) ->
--- On KW_AND reduce production list(EOL) ->
--- On KW_ALLOCA reduce production list(EOL) ->
--- On KW_ADD reduce production list(EOL) ->
--- On GLOBAL reduce production list(EOL) ->
--- On EOF reduce production list(EOL) ->
+-- On METADATA_ID LOCAL LCURLY LABEL KW_ZEXT KW_XOR KW_VAARG KW_UREM KW_UNREACHABLE KW_UITOFP KW_UDIV KW_TRUNC KW_TARGET KW_TAIL KW_SWITCH KW_SUB KW_STORE KW_SREM KW_SITOFP KW_SHUFFLEVECTOR KW_SHL KW_SEXT KW_SELECT KW_SDIV KW_RET KW_RESUME KW_PTRTOINT KW_PHI KW_OR KW_MUL KW_LSHR KW_LOAD KW_LANDINGPAD KW_INVOKE KW_INTTOPTR KW_INSERTVALUE KW_INSERTELEMENT KW_INDIRECTBR KW_INBOUNDS KW_ICMP KW_GETELEMENTPTR KW_FSUB KW_FREM KW_FPTRUNC KW_FPTOUI KW_FPTOSI KW_FPEXT KW_FMUL KW_FENCE KW_FDIV KW_FCMP KW_FADD KW_EXTRACTVALUE KW_EXTRACTELEMENT KW_DEFINE KW_DECLARE KW_CALL KW_BR KW_BITCAST KW_ATTRIBUTES KW_ATOMICRMW KW_ATOMICCMPXCHG KW_ASHR KW_AND KW_ALLOCA KW_ADD GLOBAL EOF
+--   reduce production list(EOL) ->
 
 State 2:
 ## Known stack suffix:
@@ -132,7 +60,8 @@ toplevelentries -> list(EOL) . list(terminated(toplevelentry,nonempty_list(EOL))
 -- On definition shift to state 552
 -- On declaration shift to state 553
 ## Reductions:
--- On EOF reduce production list(terminated(toplevelentry,nonempty_list(EOL))) ->
+-- On EOF
+--   reduce production list(terminated(toplevelentry,nonempty_list(EOL))) ->
 
 State 5:
 ## Known stack suffix:
@@ -193,7 +122,8 @@ metadata_node -> BANGLCURLY . loption(separated_nonempty_list(COMMA,metadata_val
 -- On metadata_value shift to state 77
 -- On loption(separated_nonempty_list(COMMA,metadata_value)) shift to state 80
 ## Reductions:
--- On RCURLY reduce production loption(separated_nonempty_list(COMMA,metadata_value)) ->
+-- On RCURLY
+--   reduce production loption(separated_nonempty_list(COMMA,metadata_value)) ->
 
 State 9:
 ## Known stack suffix:
@@ -221,7 +151,8 @@ typ -> LTLCURLY . loption(separated_nonempty_list(COMMA,typ)) RCURLYGT [ STAR RS
 -- On separated_nonempty_list(COMMA,typ) shift to state 32
 -- On loption(separated_nonempty_list(COMMA,typ)) shift to state 43
 ## Reductions:
--- On RCURLYGT reduce production loption(separated_nonempty_list(COMMA,typ)) ->
+-- On RCURLYGT
+--   reduce production loption(separated_nonempty_list(COMMA,typ)) ->
 
 State 10:
 ## Known stack suffix:
@@ -335,7 +266,8 @@ typ -> LCURLY . loption(separated_nonempty_list(COMMA,typ)) RCURLY [ STAR RSQUAR
 -- On separated_nonempty_list(COMMA,typ) shift to state 32
 -- On loption(separated_nonempty_list(COMMA,typ)) shift to state 37
 ## Reductions:
--- On RCURLY reduce production loption(separated_nonempty_list(COMMA,typ)) ->
+-- On RCURLY
+--   reduce production loption(separated_nonempty_list(COMMA,typ)) ->
 
 State 17:
 ## Known stack suffix:
@@ -458,9 +390,8 @@ typ -> typ . LPAREN loption(separated_nonempty_list(COMMA,typ)) RPAREN [ STAR RP
 -- On LPAREN shift to state 31
 -- On COMMA shift to state 35
 ## Reductions:
--- On RPAREN reduce production separated_nonempty_list(COMMA,typ) -> typ
--- On RCURLYGT reduce production separated_nonempty_list(COMMA,typ) -> typ
--- On RCURLY reduce production separated_nonempty_list(COMMA,typ) -> typ
+-- On RPAREN RCURLYGT RCURLY
+--   reduce production separated_nonempty_list(COMMA,typ) -> typ
 
 State 30:
 ## Known stack suffix:
@@ -497,7 +428,8 @@ typ -> typ LPAREN . loption(separated_nonempty_list(COMMA,typ)) RPAREN [ STAR RS
 -- On separated_nonempty_list(COMMA,typ) shift to state 32
 -- On loption(separated_nonempty_list(COMMA,typ)) shift to state 33
 ## Reductions:
--- On RPAREN reduce production loption(separated_nonempty_list(COMMA,typ)) ->
+-- On RPAREN
+--   reduce production loption(separated_nonempty_list(COMMA,typ)) ->
 
 State 32:
 ## Known stack suffix:
@@ -664,19 +596,8 @@ typ -> KW_METADATA . [ STAR LTLCURLY LT LSQUARE LPAREN LCURLY KW_ZEROINITIALIZER
 -- On BANGLCURLY shift to state 8
 -- On metadata_node shift to state 49
 ## Reductions:
--- On STAR reduce production typ -> KW_METADATA
--- On LTLCURLY reduce production typ -> KW_METADATA
--- On LT reduce production typ -> KW_METADATA
--- On LSQUARE reduce production typ -> KW_METADATA
--- On LPAREN reduce production typ -> KW_METADATA
--- On LCURLY reduce production typ -> KW_METADATA
--- On KW_ZEROINITIALIZER reduce production typ -> KW_METADATA
--- On KW_UNDEF reduce production typ -> KW_METADATA
--- On KW_TRUE reduce production typ -> KW_METADATA
--- On KW_NULL reduce production typ -> KW_METADATA
--- On KW_FALSE reduce production typ -> KW_METADATA
--- On INTEGER reduce production typ -> KW_METADATA
--- On FLOAT reduce production typ -> KW_METADATA
+-- On STAR LTLCURLY LT LSQUARE LPAREN LCURLY KW_ZEROINITIALIZER KW_UNDEF KW_TRUE KW_NULL KW_FALSE INTEGER FLOAT
+--   reduce production typ -> KW_METADATA
 
 State 47:
 ## Known stack suffix:
@@ -756,7 +677,8 @@ const -> LTLCURLY . loption(separated_nonempty_list(COMMA,tconst)) RCURLYGT [ RS
 -- On separated_nonempty_list(COMMA,tconst) shift to state 55
 -- On loption(separated_nonempty_list(COMMA,tconst)) shift to state 56
 ## Reductions:
--- On RCURLYGT reduce production loption(separated_nonempty_list(COMMA,tconst)) ->
+-- On RCURLYGT
+--   reduce production loption(separated_nonempty_list(COMMA,tconst)) ->
 
 State 52:
 ## Known stack suffix:
@@ -767,10 +689,8 @@ separated_nonempty_list(COMMA,tconst) -> tconst . COMMA separated_nonempty_list(
 ## Transitions:
 -- On COMMA shift to state 53
 ## Reductions:
--- On RSQUARE reduce production separated_nonempty_list(COMMA,tconst) -> tconst
--- On RCURLYGT reduce production separated_nonempty_list(COMMA,tconst) -> tconst
--- On RCURLY reduce production separated_nonempty_list(COMMA,tconst) -> tconst
--- On GT reduce production separated_nonempty_list(COMMA,tconst) -> tconst
+-- On RSQUARE RCURLYGT RCURLY GT
+--   reduce production separated_nonempty_list(COMMA,tconst) -> tconst
 
 State 53:
 ## Known stack suffix:
@@ -862,7 +782,8 @@ const -> LT . loption(separated_nonempty_list(COMMA,tconst)) GT [ RSQUARE RPAREN
 -- On separated_nonempty_list(COMMA,tconst) shift to state 55
 -- On loption(separated_nonempty_list(COMMA,tconst)) shift to state 59
 ## Reductions:
--- On GT reduce production loption(separated_nonempty_list(COMMA,tconst)) ->
+-- On GT
+--   reduce production loption(separated_nonempty_list(COMMA,tconst)) ->
 
 State 59:
 ## Known stack suffix:
@@ -909,7 +830,8 @@ const -> LSQUARE . loption(separated_nonempty_list(COMMA,tconst)) RSQUARE [ RSQU
 -- On separated_nonempty_list(COMMA,tconst) shift to state 55
 -- On loption(separated_nonempty_list(COMMA,tconst)) shift to state 62
 ## Reductions:
--- On RSQUARE reduce production loption(separated_nonempty_list(COMMA,tconst)) ->
+-- On RSQUARE
+--   reduce production loption(separated_nonempty_list(COMMA,tconst)) ->
 
 State 62:
 ## Known stack suffix:
@@ -956,7 +878,8 @@ const -> LCURLY . loption(separated_nonempty_list(COMMA,tconst)) RCURLY [ RSQUAR
 -- On separated_nonempty_list(COMMA,tconst) shift to state 55
 -- On loption(separated_nonempty_list(COMMA,tconst)) shift to state 65
 ## Reductions:
--- On RCURLY reduce production loption(separated_nonempty_list(COMMA,tconst)) ->
+-- On RCURLY
+--   reduce production loption(separated_nonempty_list(COMMA,tconst)) ->
 
 State 65:
 ## Known stack suffix:
@@ -1075,7 +998,8 @@ separated_nonempty_list(COMMA,metadata_value) -> metadata_value . COMMA separate
 ## Transitions:
 -- On COMMA shift to state 78
 ## Reductions:
--- On RCURLY reduce production separated_nonempty_list(COMMA,metadata_value) -> metadata_value
+-- On RCURLY
+--   reduce production separated_nonempty_list(COMMA,metadata_value) -> metadata_value
 
 State 78:
 ## Known stack suffix:
@@ -1152,7 +1076,8 @@ tle_metadata -> BANGLCURLY . loption(separated_nonempty_list(COMMA,METADATA_ID))
 -- On separated_nonempty_list(COMMA,METADATA_ID) shift to state 87
 -- On loption(separated_nonempty_list(COMMA,METADATA_ID)) shift to state 88
 ## Reductions:
--- On RCURLY reduce production loption(separated_nonempty_list(COMMA,METADATA_ID)) ->
+-- On RCURLY
+--   reduce production loption(separated_nonempty_list(COMMA,METADATA_ID)) ->
 
 State 84:
 ## Known stack suffix:
@@ -1163,7 +1088,8 @@ separated_nonempty_list(COMMA,METADATA_ID) -> METADATA_ID . COMMA separated_none
 ## Transitions:
 -- On COMMA shift to state 85
 ## Reductions:
--- On RCURLY reduce production separated_nonempty_list(COMMA,METADATA_ID) -> METADATA_ID
+-- On RCURLY
+--   reduce production separated_nonempty_list(COMMA,METADATA_ID) -> METADATA_ID
 
 State 85:
 ## Known stack suffix:
@@ -1274,7 +1200,8 @@ typ -> typ . LPAREN loption(separated_nonempty_list(COMMA,typ)) RPAREN [ STAR LP
 -- On STAR shift to state 30
 -- On LPAREN shift to state 31
 ## Reductions:
--- On EOL reduce production toplevelentry -> LOCAL EQ KW_TYPE typ
+-- On EOL
+--   reduce production toplevelentry -> LOCAL EQ KW_TYPE typ
 
 State 95:
 ## Known stack suffix:
@@ -1374,35 +1301,8 @@ definition -> KW_DEFINE . list(df_pre_attr) list(param_attr) typ GLOBAL LPAREN l
 -- On df_pre_attr shift to state 495
 -- On cconv shift to state 497
 ## Reductions:
--- On LTLCURLY reduce production list(df_pre_attr) ->
--- On LT reduce production list(df_pre_attr) ->
--- On LSQUARE reduce production list(df_pre_attr) ->
--- On LCURLY reduce production list(df_pre_attr) ->
--- On KW_ZEROEXT reduce production list(df_pre_attr) ->
--- On KW_X86_MMX reduce production list(df_pre_attr) ->
--- On KW_X86_FP80 reduce production list(df_pre_attr) ->
--- On KW_VOID reduce production list(df_pre_attr) ->
--- On KW_SRET reduce production list(df_pre_attr) ->
--- On KW_SIGNEXT reduce production list(df_pre_attr) ->
--- On KW_RETURNED reduce production list(df_pre_attr) ->
--- On KW_PPC_FP128 reduce production list(df_pre_attr) ->
--- On KW_OPAQUE reduce production list(df_pre_attr) ->
--- On KW_NONNULL reduce production list(df_pre_attr) ->
--- On KW_NOCAPTURE reduce production list(df_pre_attr) ->
--- On KW_NOALIAS reduce production list(df_pre_attr) ->
--- On KW_NEST reduce production list(df_pre_attr) ->
--- On KW_METADATA reduce production list(df_pre_attr) ->
--- On KW_LABEL reduce production list(df_pre_attr) ->
--- On KW_INREG reduce production list(df_pre_attr) ->
--- On KW_INALLOCA reduce production list(df_pre_attr) ->
--- On KW_HALF reduce production list(df_pre_attr) ->
--- On KW_FP128 reduce production list(df_pre_attr) ->
--- On KW_FLOAT reduce production list(df_pre_attr) ->
--- On KW_DOUBLE reduce production list(df_pre_attr) ->
--- On KW_DEREFERENCEABLE reduce production list(df_pre_attr) ->
--- On KW_BYVAL reduce production list(df_pre_attr) ->
--- On KW_ALIGN reduce production list(df_pre_attr) ->
--- On I reduce production list(df_pre_attr) ->
+-- On LTLCURLY LT LSQUARE LCURLY KW_ZEROEXT KW_X86_MMX KW_X86_FP80 KW_VOID KW_SRET KW_SIGNEXT KW_RETURNED KW_PPC_FP128 KW_OPAQUE KW_NONNULL KW_NOCAPTURE KW_NOALIAS KW_NEST KW_METADATA KW_LABEL KW_INREG KW_INALLOCA KW_HALF KW_FP128 KW_FLOAT KW_DOUBLE KW_DEREFERENCEABLE KW_BYVAL KW_ALIGN I
+--   reduce production list(df_pre_attr) ->
 
 State 103:
 ## Known stack suffix:
@@ -1624,22 +1524,8 @@ definition -> KW_DEFINE list(df_pre_attr) . list(param_attr) typ GLOBAL LPAREN l
 -- On param_attr shift to state 143
 -- On list(param_attr) shift to state 145
 ## Reductions:
--- On LTLCURLY reduce production list(param_attr) ->
--- On LT reduce production list(param_attr) ->
--- On LSQUARE reduce production list(param_attr) ->
--- On LCURLY reduce production list(param_attr) ->
--- On KW_X86_MMX reduce production list(param_attr) ->
--- On KW_X86_FP80 reduce production list(param_attr) ->
--- On KW_VOID reduce production list(param_attr) ->
--- On KW_PPC_FP128 reduce production list(param_attr) ->
--- On KW_OPAQUE reduce production list(param_attr) ->
--- On KW_METADATA reduce production list(param_attr) ->
--- On KW_LABEL reduce production list(param_attr) ->
--- On KW_HALF reduce production list(param_attr) ->
--- On KW_FP128 reduce production list(param_attr) ->
--- On KW_FLOAT reduce production list(param_attr) ->
--- On KW_DOUBLE reduce production list(param_attr) ->
--- On I reduce production list(param_attr) ->
+-- On LTLCURLY LT LSQUARE LCURLY KW_X86_MMX KW_X86_FP80 KW_VOID KW_PPC_FP128 KW_OPAQUE KW_METADATA KW_LABEL KW_HALF KW_FP128 KW_FLOAT KW_DOUBLE I
+--   reduce production list(param_attr) ->
 
 State 126:
 ## Known stack suffix:
@@ -1816,26 +1702,8 @@ list(param_attr) -> param_attr . list(param_attr) [ RPAREN LTLCURLY LT LSQUARE L
 -- On param_attr shift to state 143
 -- On list(param_attr) shift to state 144
 ## Reductions:
--- On RPAREN reduce production list(param_attr) ->
--- On LTLCURLY reduce production list(param_attr) ->
--- On LT reduce production list(param_attr) ->
--- On LSQUARE reduce production list(param_attr) ->
--- On LOCAL reduce production list(param_attr) ->
--- On LCURLY reduce production list(param_attr) ->
--- On KW_X86_MMX reduce production list(param_attr) ->
--- On KW_X86_FP80 reduce production list(param_attr) ->
--- On KW_VOID reduce production list(param_attr) ->
--- On KW_PPC_FP128 reduce production list(param_attr) ->
--- On KW_OPAQUE reduce production list(param_attr) ->
--- On KW_METADATA reduce production list(param_attr) ->
--- On KW_LABEL reduce production list(param_attr) ->
--- On KW_HALF reduce production list(param_attr) ->
--- On KW_FP128 reduce production list(param_attr) ->
--- On KW_FLOAT reduce production list(param_attr) ->
--- On KW_DOUBLE reduce production list(param_attr) ->
--- On I reduce production list(param_attr) ->
--- On GLOBAL reduce production list(param_attr) ->
--- On COMMA reduce production list(param_attr) ->
+-- On RPAREN LTLCURLY LT LSQUARE LOCAL LCURLY KW_X86_MMX KW_X86_FP80 KW_VOID KW_PPC_FP128 KW_OPAQUE KW_METADATA KW_LABEL KW_HALF KW_FP128 KW_FLOAT KW_DOUBLE I GLOBAL COMMA
+--   reduce production list(param_attr) ->
 
 State 144:
 ## Known stack suffix:
@@ -1920,7 +1788,8 @@ definition -> KW_DEFINE list(df_pre_attr) list(param_attr) typ GLOBAL LPAREN . l
 -- On loption(separated_nonempty_list(COMMA,df_arg)) shift to state 155
 -- On df_arg shift to state 490
 ## Reductions:
--- On RPAREN reduce production loption(separated_nonempty_list(COMMA,df_arg)) ->
+-- On RPAREN
+--   reduce production loption(separated_nonempty_list(COMMA,df_arg)) ->
 
 State 149:
 ## Known stack suffix:
@@ -1948,8 +1817,8 @@ typ -> typ . LPAREN loption(separated_nonempty_list(COMMA,typ)) RPAREN [ STAR LP
 -- On param_attr shift to state 143
 -- On list(param_attr) shift to state 150
 ## Reductions:
--- On LOCAL reduce production list(param_attr) ->
--- On GLOBAL reduce production list(param_attr) ->
+-- On LOCAL GLOBAL
+--   reduce production list(param_attr) ->
 
 State 150:
 ## Known stack suffix:
@@ -2055,8 +1924,8 @@ definition -> KW_DEFINE list(df_pre_attr) list(param_attr) typ GLOBAL LPAREN lop
 -- On df_post_attr shift to state 487
 -- On align shift to state 489
 ## Reductions:
--- On LCURLY reduce production list(df_post_attr) ->
--- On EOL reduce production list(df_post_attr) ->
+-- On LCURLY EOL
+--   reduce production list(df_post_attr) ->
 
 State 157:
 ## Known stack suffix:
@@ -2067,45 +1936,8 @@ fn_attr -> STRING . EQ STRING [ STRING RCURLY LCURLY KW_UWTABLE KW_UNNAMED_ADDR 
 ## Transitions:
 -- On EQ shift to state 158
 ## Reductions:
--- On STRING reduce production fn_attr -> STRING
--- On RCURLY reduce production fn_attr -> STRING
--- On LCURLY reduce production fn_attr -> STRING
--- On KW_UWTABLE reduce production fn_attr -> STRING
--- On KW_UNNAMED_ADDR reduce production fn_attr -> STRING
--- On KW_TO reduce production fn_attr -> STRING
--- On KW_SSPSTRONG reduce production fn_attr -> STRING
--- On KW_SSPREQ reduce production fn_attr -> STRING
--- On KW_SSP reduce production fn_attr -> STRING
--- On KW_SECTION reduce production fn_attr -> STRING
--- On KW_SANITIZE_THREAD reduce production fn_attr -> STRING
--- On KW_SANITIZE_MEMORY reduce production fn_attr -> STRING
--- On KW_SANITIZE_ADDRESS reduce production fn_attr -> STRING
--- On KW_RETURNS_TWICE reduce production fn_attr -> STRING
--- On KW_READONLY reduce production fn_attr -> STRING
--- On KW_READNONE reduce production fn_attr -> STRING
--- On KW_OPTSIZE reduce production fn_attr -> STRING
--- On KW_OPTNONE reduce production fn_attr -> STRING
--- On KW_NOUNWIND reduce production fn_attr -> STRING
--- On KW_NORETURN reduce production fn_attr -> STRING
--- On KW_NOREDZONE reduce production fn_attr -> STRING
--- On KW_NONLAZYBIND reduce production fn_attr -> STRING
--- On KW_NOINLINE reduce production fn_attr -> STRING
--- On KW_NOIMPLICITFLOAT reduce production fn_attr -> STRING
--- On KW_NODUPLICATE reduce production fn_attr -> STRING
--- On KW_NOBUILTIN reduce production fn_attr -> STRING
--- On KW_NAKED reduce production fn_attr -> STRING
--- On KW_MINSIZE reduce production fn_attr -> STRING
--- On KW_JUMPTABLE reduce production fn_attr -> STRING
--- On KW_INLINEHINT reduce production fn_attr -> STRING
--- On KW_GC reduce production fn_attr -> STRING
--- On KW_COLD reduce production fn_attr -> STRING
--- On KW_BUILTIN reduce production fn_attr -> STRING
--- On KW_ALWAYSINLINE reduce production fn_attr -> STRING
--- On KW_ALIGNSTACK reduce production fn_attr -> STRING
--- On KW_ALIGN reduce production fn_attr -> STRING
--- On KW_ADDRSPACE reduce production fn_attr -> STRING
--- On EOL reduce production fn_attr -> STRING
--- On ATTR_GRP_ID reduce production fn_attr -> STRING
+-- On STRING RCURLY LCURLY KW_UWTABLE KW_UNNAMED_ADDR KW_TO KW_SSPSTRONG KW_SSPREQ KW_SSP KW_SECTION KW_SANITIZE_THREAD KW_SANITIZE_MEMORY KW_SANITIZE_ADDRESS KW_RETURNS_TWICE KW_READONLY KW_READNONE KW_OPTSIZE KW_OPTNONE KW_NOUNWIND KW_NORETURN KW_NOREDZONE KW_NONLAZYBIND KW_NOINLINE KW_NOIMPLICITFLOAT KW_NODUPLICATE KW_NOBUILTIN KW_NAKED KW_MINSIZE KW_JUMPTABLE KW_INLINEHINT KW_GC KW_COLD KW_BUILTIN KW_ALWAYSINLINE KW_ALIGNSTACK KW_ALIGN KW_ADDRSPACE EOL ATTR_GRP_ID
+--   reduce production fn_attr -> STRING
 
 State 158:
 ## Known stack suffix:
@@ -2539,7 +2371,8 @@ definition -> KW_DEFINE list(df_pre_attr) list(param_attr) typ GLOBAL LPAREN lop
 -- On EOL shift to state 1
 -- On list(EOL) shift to state 206
 ## Reductions:
--- On LCURLY reduce production list(EOL) ->
+-- On LCURLY
+--   reduce production list(EOL) ->
 
 State 206:
 ## Known stack suffix:
@@ -2559,67 +2392,8 @@ definition -> KW_DEFINE list(df_pre_attr) list(param_attr) typ GLOBAL LPAREN lop
 -- On EOL shift to state 1
 -- On list(EOL) shift to state 208
 ## Reductions:
--- On LOCAL reduce production list(EOL) ->
--- On LABEL reduce production list(EOL) ->
--- On KW_ZEXT reduce production list(EOL) ->
--- On KW_XOR reduce production list(EOL) ->
--- On KW_VAARG reduce production list(EOL) ->
--- On KW_UREM reduce production list(EOL) ->
--- On KW_UNREACHABLE reduce production list(EOL) ->
--- On KW_UITOFP reduce production list(EOL) ->
--- On KW_UDIV reduce production list(EOL) ->
--- On KW_TRUNC reduce production list(EOL) ->
--- On KW_TAIL reduce production list(EOL) ->
--- On KW_SWITCH reduce production list(EOL) ->
--- On KW_SUB reduce production list(EOL) ->
--- On KW_STORE reduce production list(EOL) ->
--- On KW_SREM reduce production list(EOL) ->
--- On KW_SITOFP reduce production list(EOL) ->
--- On KW_SHUFFLEVECTOR reduce production list(EOL) ->
--- On KW_SHL reduce production list(EOL) ->
--- On KW_SEXT reduce production list(EOL) ->
--- On KW_SELECT reduce production list(EOL) ->
--- On KW_SDIV reduce production list(EOL) ->
--- On KW_RET reduce production list(EOL) ->
--- On KW_RESUME reduce production list(EOL) ->
--- On KW_PTRTOINT reduce production list(EOL) ->
--- On KW_PHI reduce production list(EOL) ->
--- On KW_OR reduce production list(EOL) ->
--- On KW_MUL reduce production list(EOL) ->
--- On KW_LSHR reduce production list(EOL) ->
--- On KW_LOAD reduce production list(EOL) ->
--- On KW_LANDINGPAD reduce production list(EOL) ->
--- On KW_INVOKE reduce production list(EOL) ->
--- On KW_INTTOPTR reduce production list(EOL) ->
--- On KW_INSERTVALUE reduce production list(EOL) ->
--- On KW_INSERTELEMENT reduce production list(EOL) ->
--- On KW_INDIRECTBR reduce production list(EOL) ->
--- On KW_INBOUNDS reduce production list(EOL) ->
--- On KW_ICMP reduce production list(EOL) ->
--- On KW_GETELEMENTPTR reduce production list(EOL) ->
--- On KW_FSUB reduce production list(EOL) ->
--- On KW_FREM reduce production list(EOL) ->
--- On KW_FPTRUNC reduce production list(EOL) ->
--- On KW_FPTOUI reduce production list(EOL) ->
--- On KW_FPTOSI reduce production list(EOL) ->
--- On KW_FPEXT reduce production list(EOL) ->
--- On KW_FMUL reduce production list(EOL) ->
--- On KW_FENCE reduce production list(EOL) ->
--- On KW_FDIV reduce production list(EOL) ->
--- On KW_FCMP reduce production list(EOL) ->
--- On KW_FADD reduce production list(EOL) ->
--- On KW_EXTRACTVALUE reduce production list(EOL) ->
--- On KW_EXTRACTELEMENT reduce production list(EOL) ->
--- On KW_CALL reduce production list(EOL) ->
--- On KW_BR reduce production list(EOL) ->
--- On KW_BITCAST reduce production list(EOL) ->
--- On KW_ATOMICRMW reduce production list(EOL) ->
--- On KW_ATOMICCMPXCHG reduce production list(EOL) ->
--- On KW_ASHR reduce production list(EOL) ->
--- On KW_AND reduce production list(EOL) ->
--- On KW_ALLOCA reduce production list(EOL) ->
--- On KW_ADD reduce production list(EOL) ->
--- On GLOBAL reduce production list(EOL) ->
+-- On LOCAL LABEL KW_ZEXT KW_XOR KW_VAARG KW_UREM KW_UNREACHABLE KW_UITOFP KW_UDIV KW_TRUNC KW_TAIL KW_SWITCH KW_SUB KW_STORE KW_SREM KW_SITOFP KW_SHUFFLEVECTOR KW_SHL KW_SEXT KW_SELECT KW_SDIV KW_RET KW_RESUME KW_PTRTOINT KW_PHI KW_OR KW_MUL KW_LSHR KW_LOAD KW_LANDINGPAD KW_INVOKE KW_INTTOPTR KW_INSERTVALUE KW_INSERTELEMENT KW_INDIRECTBR KW_INBOUNDS KW_ICMP KW_GETELEMENTPTR KW_FSUB KW_FREM KW_FPTRUNC KW_FPTOUI KW_FPTOSI KW_FPEXT KW_FMUL KW_FENCE KW_FDIV KW_FCMP KW_FADD KW_EXTRACTVALUE KW_EXTRACTELEMENT KW_CALL KW_BR KW_BITCAST KW_ATOMICRMW KW_ATOMICCMPXCHG KW_ASHR KW_AND KW_ALLOCA KW_ADD GLOBAL
+--   reduce production list(EOL) ->
 
 State 208:
 ## Known stack suffix:
@@ -2631,66 +2405,8 @@ definition -> KW_DEFINE list(df_pre_attr) list(param_attr) typ GLOBAL LPAREN lop
 -- On option(terminated(LABEL,nonempty_list(EOL))) shift to state 213
 -- On df_blocks shift to state 483
 ## Reductions:
--- On LOCAL reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_ZEXT reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_XOR reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_VAARG reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_UREM reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_UNREACHABLE reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_UITOFP reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_UDIV reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_TRUNC reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_TAIL reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_SWITCH reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_SUB reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_STORE reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_SREM reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_SITOFP reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_SHUFFLEVECTOR reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_SHL reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_SEXT reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_SELECT reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_SDIV reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_RET reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_RESUME reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_PTRTOINT reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_PHI reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_OR reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_MUL reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_LSHR reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_LOAD reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_LANDINGPAD reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_INVOKE reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_INTTOPTR reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_INSERTVALUE reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_INSERTELEMENT reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_INDIRECTBR reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_INBOUNDS reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_ICMP reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_GETELEMENTPTR reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_FSUB reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_FREM reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_FPTRUNC reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_FPTOUI reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_FPTOSI reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_FPEXT reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_FMUL reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_FENCE reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_FDIV reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_FCMP reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_FADD reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_EXTRACTVALUE reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_EXTRACTELEMENT reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_CALL reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_BR reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_BITCAST reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_ATOMICRMW reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_ATOMICCMPXCHG reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_ASHR reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_AND reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_ALLOCA reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On KW_ADD reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
--- On GLOBAL reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
+-- On LOCAL KW_ZEXT KW_XOR KW_VAARG KW_UREM KW_UNREACHABLE KW_UITOFP KW_UDIV KW_TRUNC KW_TAIL KW_SWITCH KW_SUB KW_STORE KW_SREM KW_SITOFP KW_SHUFFLEVECTOR KW_SHL KW_SEXT KW_SELECT KW_SDIV KW_RET KW_RESUME KW_PTRTOINT KW_PHI KW_OR KW_MUL KW_LSHR KW_LOAD KW_LANDINGPAD KW_INVOKE KW_INTTOPTR KW_INSERTVALUE KW_INSERTELEMENT KW_INDIRECTBR KW_INBOUNDS KW_ICMP KW_GETELEMENTPTR KW_FSUB KW_FREM KW_FPTRUNC KW_FPTOUI KW_FPTOSI KW_FPEXT KW_FMUL KW_FENCE KW_FDIV KW_FCMP KW_FADD KW_EXTRACTVALUE KW_EXTRACTELEMENT KW_CALL KW_BR KW_BITCAST KW_ATOMICRMW KW_ATOMICCMPXCHG KW_ASHR KW_AND KW_ALLOCA KW_ADD GLOBAL
+--   reduce production option(terminated(LABEL,nonempty_list(EOL))) ->
 
 State 209:
 ## Known stack suffix:
@@ -2712,74 +2428,8 @@ nonempty_list(EOL) -> EOL . nonempty_list(EOL) [ RCURLY METADATA_ID LOCAL LABEL 
 -- On EOL shift to state 210
 -- On nonempty_list(EOL) shift to state 211
 ## Reductions:
--- On RCURLY reduce production nonempty_list(EOL) -> EOL
--- On METADATA_ID reduce production nonempty_list(EOL) -> EOL
--- On LOCAL reduce production nonempty_list(EOL) -> EOL
--- On LABEL reduce production nonempty_list(EOL) -> EOL
--- On KW_ZEXT reduce production nonempty_list(EOL) -> EOL
--- On KW_XOR reduce production nonempty_list(EOL) -> EOL
--- On KW_VAARG reduce production nonempty_list(EOL) -> EOL
--- On KW_UREM reduce production nonempty_list(EOL) -> EOL
--- On KW_UNREACHABLE reduce production nonempty_list(EOL) -> EOL
--- On KW_UITOFP reduce production nonempty_list(EOL) -> EOL
--- On KW_UDIV reduce production nonempty_list(EOL) -> EOL
--- On KW_TRUNC reduce production nonempty_list(EOL) -> EOL
--- On KW_TARGET reduce production nonempty_list(EOL) -> EOL
--- On KW_TAIL reduce production nonempty_list(EOL) -> EOL
--- On KW_SWITCH reduce production nonempty_list(EOL) -> EOL
--- On KW_SUB reduce production nonempty_list(EOL) -> EOL
--- On KW_STORE reduce production nonempty_list(EOL) -> EOL
--- On KW_SREM reduce production nonempty_list(EOL) -> EOL
--- On KW_SITOFP reduce production nonempty_list(EOL) -> EOL
--- On KW_SHUFFLEVECTOR reduce production nonempty_list(EOL) -> EOL
--- On KW_SHL reduce production nonempty_list(EOL) -> EOL
--- On KW_SEXT reduce production nonempty_list(EOL) -> EOL
--- On KW_SELECT reduce production nonempty_list(EOL) -> EOL
--- On KW_SDIV reduce production nonempty_list(EOL) -> EOL
--- On KW_RET reduce production nonempty_list(EOL) -> EOL
--- On KW_RESUME reduce production nonempty_list(EOL) -> EOL
--- On KW_PTRTOINT reduce production nonempty_list(EOL) -> EOL
--- On KW_PHI reduce production nonempty_list(EOL) -> EOL
--- On KW_OR reduce production nonempty_list(EOL) -> EOL
--- On KW_MUL reduce production nonempty_list(EOL) -> EOL
--- On KW_LSHR reduce production nonempty_list(EOL) -> EOL
--- On KW_LOAD reduce production nonempty_list(EOL) -> EOL
--- On KW_LANDINGPAD reduce production nonempty_list(EOL) -> EOL
--- On KW_INVOKE reduce production nonempty_list(EOL) -> EOL
--- On KW_INTTOPTR reduce production nonempty_list(EOL) -> EOL
--- On KW_INSERTVALUE reduce production nonempty_list(EOL) -> EOL
--- On KW_INSERTELEMENT reduce production nonempty_list(EOL) -> EOL
--- On KW_INDIRECTBR reduce production nonempty_list(EOL) -> EOL
--- On KW_INBOUNDS reduce production nonempty_list(EOL) -> EOL
--- On KW_ICMP reduce production nonempty_list(EOL) -> EOL
--- On KW_GETELEMENTPTR reduce production nonempty_list(EOL) -> EOL
--- On KW_FSUB reduce production nonempty_list(EOL) -> EOL
--- On KW_FREM reduce production nonempty_list(EOL) -> EOL
--- On KW_FPTRUNC reduce production nonempty_list(EOL) -> EOL
--- On KW_FPTOUI reduce production nonempty_list(EOL) -> EOL
--- On KW_FPTOSI reduce production nonempty_list(EOL) -> EOL
--- On KW_FPEXT reduce production nonempty_list(EOL) -> EOL
--- On KW_FMUL reduce production nonempty_list(EOL) -> EOL
--- On KW_FENCE reduce production nonempty_list(EOL) -> EOL
--- On KW_FDIV reduce production nonempty_list(EOL) -> EOL
--- On KW_FCMP reduce production nonempty_list(EOL) -> EOL
--- On KW_FADD reduce production nonempty_list(EOL) -> EOL
--- On KW_EXTRACTVALUE reduce production nonempty_list(EOL) -> EOL
--- On KW_EXTRACTELEMENT reduce production nonempty_list(EOL) -> EOL
--- On KW_DEFINE reduce production nonempty_list(EOL) -> EOL
--- On KW_DECLARE reduce production nonempty_list(EOL) -> EOL
--- On KW_CALL reduce production nonempty_list(EOL) -> EOL
--- On KW_BR reduce production nonempty_list(EOL) -> EOL
--- On KW_BITCAST reduce production nonempty_list(EOL) -> EOL
--- On KW_ATTRIBUTES reduce production nonempty_list(EOL) -> EOL
--- On KW_ATOMICRMW reduce production nonempty_list(EOL) -> EOL
--- On KW_ATOMICCMPXCHG reduce production nonempty_list(EOL) -> EOL
--- On KW_ASHR reduce production nonempty_list(EOL) -> EOL
--- On KW_AND reduce production nonempty_list(EOL) -> EOL
--- On KW_ALLOCA reduce production nonempty_list(EOL) -> EOL
--- On KW_ADD reduce production nonempty_list(EOL) -> EOL
--- On GLOBAL reduce production nonempty_list(EOL) -> EOL
--- On EOF reduce production nonempty_list(EOL) -> EOL
+-- On RCURLY METADATA_ID LOCAL LABEL KW_ZEXT KW_XOR KW_VAARG KW_UREM KW_UNREACHABLE KW_UITOFP KW_UDIV KW_TRUNC KW_TARGET KW_TAIL KW_SWITCH KW_SUB KW_STORE KW_SREM KW_SITOFP KW_SHUFFLEVECTOR KW_SHL KW_SEXT KW_SELECT KW_SDIV KW_RET KW_RESUME KW_PTRTOINT KW_PHI KW_OR KW_MUL KW_LSHR KW_LOAD KW_LANDINGPAD KW_INVOKE KW_INTTOPTR KW_INSERTVALUE KW_INSERTELEMENT KW_INDIRECTBR KW_INBOUNDS KW_ICMP KW_GETELEMENTPTR KW_FSUB KW_FREM KW_FPTRUNC KW_FPTOUI KW_FPTOSI KW_FPEXT KW_FMUL KW_FENCE KW_FDIV KW_FCMP KW_FADD KW_EXTRACTVALUE KW_EXTRACTELEMENT KW_DEFINE KW_DECLARE KW_CALL KW_BR KW_BITCAST KW_ATTRIBUTES KW_ATOMICRMW KW_ATOMICCMPXCHG KW_ASHR KW_AND KW_ALLOCA KW_ADD GLOBAL EOF
+--   reduce production nonempty_list(EOL) -> EOL
 
 State 211:
 ## Known stack suffix:
@@ -2875,8 +2525,10 @@ df_blocks -> option(terminated(LABEL,nonempty_list(EOL))) . nonempty_list(termin
 -- On fbinop shift to state 464
 -- On conversion shift to state 477
 ## Reductions:
--- On KW_INBOUNDS reduce production option(KW_GETELEMENTPTR) ->
--- On KW_CALL reduce production option(KW_TAIL) ->
+-- On KW_INBOUNDS
+--   reduce production option(KW_GETELEMENTPTR) ->
+-- On KW_CALL
+--   reduce production option(KW_TAIL) ->
 
 State 214:
 ## Known stack suffix:
@@ -3117,23 +2769,8 @@ instr -> KW_SWITCH tvalue COMMA tident LSQUARE . option(EOL) list(switch_table_e
 -- On EOL shift to state 234
 -- On option(EOL) shift to state 235
 ## Reductions:
--- On RSQUARE reduce production option(EOL) ->
--- On LTLCURLY reduce production option(EOL) ->
--- On LT reduce production option(EOL) ->
--- On LSQUARE reduce production option(EOL) ->
--- On LCURLY reduce production option(EOL) ->
--- On KW_X86_MMX reduce production option(EOL) ->
--- On KW_X86_FP80 reduce production option(EOL) ->
--- On KW_VOID reduce production option(EOL) ->
--- On KW_PPC_FP128 reduce production option(EOL) ->
--- On KW_OPAQUE reduce production option(EOL) ->
--- On KW_METADATA reduce production option(EOL) ->
--- On KW_LABEL reduce production option(EOL) ->
--- On KW_HALF reduce production option(EOL) ->
--- On KW_FP128 reduce production option(EOL) ->
--- On KW_FLOAT reduce production option(EOL) ->
--- On KW_DOUBLE reduce production option(EOL) ->
--- On I reduce production option(EOL) ->
+-- On RSQUARE LTLCURLY LT LSQUARE LCURLY KW_X86_MMX KW_X86_FP80 KW_VOID KW_PPC_FP128 KW_OPAQUE KW_METADATA KW_LABEL KW_HALF KW_FP128 KW_FLOAT KW_DOUBLE I
+--   reduce production option(EOL) ->
 
 State 234:
 ## Known stack suffix:
@@ -3171,7 +2808,8 @@ instr -> KW_SWITCH tvalue COMMA tident LSQUARE option(EOL) . list(switch_table_e
 -- On switch_table_entry shift to state 240
 -- On list(switch_table_entry) shift to state 242
 ## Reductions:
--- On RSQUARE reduce production list(switch_table_entry) ->
+-- On RSQUARE
+--   reduce production list(switch_table_entry) ->
 
 State 236:
 ## Known stack suffix:
@@ -3217,23 +2855,8 @@ switch_table_entry -> tvalue COMMA tident . option(EOL) [ RSQUARE LTLCURLY LT LS
 -- On EOL shift to state 234
 -- On option(EOL) shift to state 239
 ## Reductions:
--- On RSQUARE reduce production option(EOL) ->
--- On LTLCURLY reduce production option(EOL) ->
--- On LT reduce production option(EOL) ->
--- On LSQUARE reduce production option(EOL) ->
--- On LCURLY reduce production option(EOL) ->
--- On KW_X86_MMX reduce production option(EOL) ->
--- On KW_X86_FP80 reduce production option(EOL) ->
--- On KW_VOID reduce production option(EOL) ->
--- On KW_PPC_FP128 reduce production option(EOL) ->
--- On KW_OPAQUE reduce production option(EOL) ->
--- On KW_METADATA reduce production option(EOL) ->
--- On KW_LABEL reduce production option(EOL) ->
--- On KW_HALF reduce production option(EOL) ->
--- On KW_FP128 reduce production option(EOL) ->
--- On KW_FLOAT reduce production option(EOL) ->
--- On KW_DOUBLE reduce production option(EOL) ->
--- On I reduce production option(EOL) ->
+-- On RSQUARE LTLCURLY LT LSQUARE LCURLY KW_X86_MMX KW_X86_FP80 KW_VOID KW_PPC_FP128 KW_OPAQUE KW_METADATA KW_LABEL KW_HALF KW_FP128 KW_FLOAT KW_DOUBLE I
+--   reduce production option(EOL) ->
 
 State 239:
 ## Known stack suffix:
@@ -3271,7 +2894,8 @@ list(switch_table_entry) -> switch_table_entry . list(switch_table_entry) [ RSQU
 -- On switch_table_entry shift to state 240
 -- On list(switch_table_entry) shift to state 241
 ## Reductions:
--- On RSQUARE reduce production list(switch_table_entry) ->
+-- On RSQUARE
+--   reduce production list(switch_table_entry) ->
 
 State 241:
 ## Known stack suffix:
@@ -3318,22 +2942,8 @@ instr -> KW_STORE . option(KW_VOLATILE) tvalue COMMA tident option(preceded(COMM
 -- On KW_VOLATILE shift to state 246
 -- On option(KW_VOLATILE) shift to state 247
 ## Reductions:
--- On LTLCURLY reduce production option(KW_VOLATILE) ->
--- On LT reduce production option(KW_VOLATILE) ->
--- On LSQUARE reduce production option(KW_VOLATILE) ->
--- On LCURLY reduce production option(KW_VOLATILE) ->
--- On KW_X86_MMX reduce production option(KW_VOLATILE) ->
--- On KW_X86_FP80 reduce production option(KW_VOLATILE) ->
--- On KW_VOID reduce production option(KW_VOLATILE) ->
--- On KW_PPC_FP128 reduce production option(KW_VOLATILE) ->
--- On KW_OPAQUE reduce production option(KW_VOLATILE) ->
--- On KW_METADATA reduce production option(KW_VOLATILE) ->
--- On KW_LABEL reduce production option(KW_VOLATILE) ->
--- On KW_HALF reduce production option(KW_VOLATILE) ->
--- On KW_FP128 reduce production option(KW_VOLATILE) ->
--- On KW_FLOAT reduce production option(KW_VOLATILE) ->
--- On KW_DOUBLE reduce production option(KW_VOLATILE) ->
--- On I reduce production option(KW_VOLATILE) ->
+-- On LTLCURLY LT LSQUARE LCURLY KW_X86_MMX KW_X86_FP80 KW_VOID KW_PPC_FP128 KW_OPAQUE KW_METADATA KW_LABEL KW_HALF KW_FP128 KW_FLOAT KW_DOUBLE I
+--   reduce production option(KW_VOLATILE) ->
 
 State 246:
 ## Known stack suffix:
@@ -3414,7 +3024,8 @@ instr -> KW_STORE option(KW_VOLATILE) tvalue COMMA tident . option(preceded(COMM
 -- On COMMA shift to state 251
 -- On option(preceded(COMMA,align)) shift to state 253
 ## Reductions:
--- On EOL reduce production option(preceded(COMMA,align)) ->
+-- On EOL
+--   reduce production option(preceded(COMMA,align)) ->
 
 State 251:
 ## Known stack suffix:
@@ -3733,22 +3344,10 @@ instr -> KW_RET KW_VOID . [ EOL ]
 typ -> KW_VOID . [ STAR LTLCURLY LT LSQUARE LPAREN LOCAL LCURLY KW_ZEROINITIALIZER KW_UNDEF KW_TRUE KW_NULL KW_FALSE INTEGER GLOBAL FLOAT ]
 ## Transitions:
 ## Reductions:
--- On STAR reduce production typ -> KW_VOID
--- On LTLCURLY reduce production typ -> KW_VOID
--- On LT reduce production typ -> KW_VOID
--- On LSQUARE reduce production typ -> KW_VOID
--- On LPAREN reduce production typ -> KW_VOID
--- On LOCAL reduce production typ -> KW_VOID
--- On LCURLY reduce production typ -> KW_VOID
--- On KW_ZEROINITIALIZER reduce production typ -> KW_VOID
--- On KW_UNDEF reduce production typ -> KW_VOID
--- On KW_TRUE reduce production typ -> KW_VOID
--- On KW_NULL reduce production typ -> KW_VOID
--- On KW_FALSE reduce production typ -> KW_VOID
--- On INTEGER reduce production typ -> KW_VOID
--- On GLOBAL reduce production typ -> KW_VOID
--- On FLOAT reduce production typ -> KW_VOID
--- On EOL reduce production instr -> KW_RET KW_VOID
+-- On EOL
+--   reduce production instr -> KW_RET KW_VOID
+-- On STAR LTLCURLY LT LSQUARE LPAREN LOCAL LCURLY KW_ZEROINITIALIZER KW_UNDEF KW_TRUE KW_NULL KW_FALSE INTEGER GLOBAL FLOAT
+--   reduce production typ -> KW_VOID
 
 State 273:
 ## Known stack suffix:
@@ -3951,7 +3550,8 @@ separated_nonempty_list(COMMA,phi_table_entry) -> phi_table_entry . COMMA separa
 ## Transitions:
 -- On COMMA shift to state 287
 ## Reductions:
--- On EOL reduce production separated_nonempty_list(COMMA,phi_table_entry) -> phi_table_entry
+-- On EOL
+--   reduce production separated_nonempty_list(COMMA,phi_table_entry) -> phi_table_entry
 
 State 287:
 ## Known stack suffix:
@@ -4009,22 +3609,8 @@ instr -> KW_LOAD . option(KW_VOLATILE) tvalue option(preceded(COMMA,align)) [ EO
 -- On KW_VOLATILE shift to state 246
 -- On option(KW_VOLATILE) shift to state 293
 ## Reductions:
--- On LTLCURLY reduce production option(KW_VOLATILE) ->
--- On LT reduce production option(KW_VOLATILE) ->
--- On LSQUARE reduce production option(KW_VOLATILE) ->
--- On LCURLY reduce production option(KW_VOLATILE) ->
--- On KW_X86_MMX reduce production option(KW_VOLATILE) ->
--- On KW_X86_FP80 reduce production option(KW_VOLATILE) ->
--- On KW_VOID reduce production option(KW_VOLATILE) ->
--- On KW_PPC_FP128 reduce production option(KW_VOLATILE) ->
--- On KW_OPAQUE reduce production option(KW_VOLATILE) ->
--- On KW_METADATA reduce production option(KW_VOLATILE) ->
--- On KW_LABEL reduce production option(KW_VOLATILE) ->
--- On KW_HALF reduce production option(KW_VOLATILE) ->
--- On KW_FP128 reduce production option(KW_VOLATILE) ->
--- On KW_FLOAT reduce production option(KW_VOLATILE) ->
--- On KW_DOUBLE reduce production option(KW_VOLATILE) ->
--- On I reduce production option(KW_VOLATILE) ->
+-- On LTLCURLY LT LSQUARE LCURLY KW_X86_MMX KW_X86_FP80 KW_VOID KW_PPC_FP128 KW_OPAQUE KW_METADATA KW_LABEL KW_HALF KW_FP128 KW_FLOAT KW_DOUBLE I
+--   reduce production option(KW_VOLATILE) ->
 
 State 293:
 ## Known stack suffix:
@@ -4061,7 +3647,8 @@ instr -> KW_LOAD option(KW_VOLATILE) tvalue . option(preceded(COMMA,align)) [ EO
 -- On COMMA shift to state 251
 -- On option(preceded(COMMA,align)) shift to state 295
 ## Reductions:
--- On EOL reduce production option(preceded(COMMA,align)) ->
+-- On EOL
+--   reduce production option(preceded(COMMA,align)) ->
 
 State 295:
 ## Known stack suffix:
@@ -4094,22 +3681,8 @@ instr -> KW_INVOKE . option(cconv) tident LPAREN loption(separated_nonempty_list
 -- On option(cconv) shift to state 298
 -- On cconv shift to state 316
 ## Reductions:
--- On LTLCURLY reduce production option(cconv) ->
--- On LT reduce production option(cconv) ->
--- On LSQUARE reduce production option(cconv) ->
--- On LCURLY reduce production option(cconv) ->
--- On KW_X86_MMX reduce production option(cconv) ->
--- On KW_X86_FP80 reduce production option(cconv) ->
--- On KW_VOID reduce production option(cconv) ->
--- On KW_PPC_FP128 reduce production option(cconv) ->
--- On KW_OPAQUE reduce production option(cconv) ->
--- On KW_METADATA reduce production option(cconv) ->
--- On KW_LABEL reduce production option(cconv) ->
--- On KW_HALF reduce production option(cconv) ->
--- On KW_FP128 reduce production option(cconv) ->
--- On KW_FLOAT reduce production option(cconv) ->
--- On KW_DOUBLE reduce production option(cconv) ->
--- On I reduce production option(cconv) ->
+-- On LTLCURLY LT LSQUARE LCURLY KW_X86_MMX KW_X86_FP80 KW_VOID KW_PPC_FP128 KW_OPAQUE KW_METADATA KW_LABEL KW_HALF KW_FP128 KW_FLOAT KW_DOUBLE I
+--   reduce production option(cconv) ->
 
 State 298:
 ## Known stack suffix:
@@ -4173,7 +3746,8 @@ instr -> KW_INVOKE option(cconv) tident LPAREN . loption(separated_nonempty_list
 -- On loption(separated_nonempty_list(COMMA,call_arg)) shift to state 304
 -- On call_arg shift to state 313
 ## Reductions:
--- On RPAREN reduce production loption(separated_nonempty_list(COMMA,call_arg)) ->
+-- On RPAREN
+--   reduce production loption(separated_nonempty_list(COMMA,call_arg)) ->
 
 State 301:
 ## Known stack suffix:
@@ -4269,7 +3843,8 @@ instr -> KW_INVOKE option(cconv) tident LPAREN loption(separated_nonempty_list(C
 -- On list(fn_attr) shift to state 306
 -- On fn_attr shift to state 311
 ## Reductions:
--- On KW_TO reduce production list(fn_attr) ->
+-- On KW_TO
+--   reduce production list(fn_attr) ->
 
 State 306:
 ## Known stack suffix:
@@ -4389,9 +3964,8 @@ list(fn_attr) -> fn_attr . list(fn_attr) [ RCURLY KW_TO EOL ]
 -- On list(fn_attr) shift to state 312
 -- On fn_attr shift to state 311
 ## Reductions:
--- On RCURLY reduce production list(fn_attr) ->
--- On KW_TO reduce production list(fn_attr) ->
--- On EOL reduce production list(fn_attr) ->
+-- On RCURLY KW_TO EOL
+--   reduce production list(fn_attr) ->
 
 State 312:
 ## Known stack suffix:
@@ -4411,7 +3985,8 @@ separated_nonempty_list(COMMA,call_arg) -> call_arg . COMMA separated_nonempty_l
 ## Transitions:
 -- On COMMA shift to state 314
 ## Reductions:
--- On RPAREN reduce production separated_nonempty_list(COMMA,call_arg) -> call_arg
+-- On RPAREN
+--   reduce production separated_nonempty_list(COMMA,call_arg) -> call_arg
 
 State 314:
 ## Known stack suffix:
@@ -4556,7 +4131,8 @@ separated_nonempty_list(COMMA,INTEGER) -> INTEGER . COMMA separated_nonempty_lis
 ## Transitions:
 -- On COMMA shift to state 324
 ## Reductions:
--- On EOL reduce production separated_nonempty_list(COMMA,INTEGER) -> INTEGER
+-- On EOL
+--   reduce production separated_nonempty_list(COMMA,INTEGER) -> INTEGER
 
 State 324:
 ## Known stack suffix:
@@ -4762,7 +4338,8 @@ instr -> KW_INDIRECTBR tvalue COMMA LSQUARE . loption(separated_nonempty_list(CO
 -- On separated_nonempty_list(COMMA,tident) shift to state 340
 -- On loption(separated_nonempty_list(COMMA,tident)) shift to state 341
 ## Reductions:
--- On RSQUARE reduce production loption(separated_nonempty_list(COMMA,tident)) ->
+-- On RSQUARE
+--   reduce production loption(separated_nonempty_list(COMMA,tident)) ->
 
 State 337:
 ## Known stack suffix:
@@ -4773,7 +4350,8 @@ separated_nonempty_list(COMMA,tident) -> tident . COMMA separated_nonempty_list(
 ## Transitions:
 -- On COMMA shift to state 338
 ## Reductions:
--- On RSQUARE reduce production separated_nonempty_list(COMMA,tident) -> tident
+-- On RSQUARE
+--   reduce production separated_nonempty_list(COMMA,tident) -> tident
 
 State 338:
 ## Known stack suffix:
@@ -5594,8 +5172,10 @@ tident -> typ ident . [ EOL ]
 value -> ident . [ COMMA ]
 ## Transitions:
 ## Reductions:
--- On EOL reduce production tident -> typ ident
--- On COMMA reduce production value -> ident
+-- On EOL
+--   reduce production tident -> typ ident
+-- On COMMA
+--   reduce production value -> ident
 
 State 403:
 ## Known stack suffix:
@@ -5768,7 +5348,8 @@ typ -> typ . LPAREN loption(separated_nonempty_list(COMMA,typ)) RPAREN [ STAR LP
 -- On COMMA shift to state 416
 -- On option(preceded(COMMA,alloca_opt)) shift to state 421
 ## Reductions:
--- On EOL reduce production option(preceded(COMMA,alloca_opt)) ->
+-- On EOL
+--   reduce production option(preceded(COMMA,alloca_opt)) ->
 
 State 416:
 ## Known stack suffix:
@@ -5808,7 +5389,8 @@ alloca_opt -> tvalue . option(preceded(COMMA,align)) [ EOL ]
 -- On COMMA shift to state 251
 -- On option(preceded(COMMA,align)) shift to state 418
 ## Reductions:
--- On EOL reduce production option(preceded(COMMA,align)) ->
+-- On EOL
+--   reduce production option(preceded(COMMA,align)) ->
 
 State 418:
 ## Known stack suffix:
@@ -5877,35 +5459,8 @@ instr -> option(KW_TAIL) KW_CALL . option(cconv) list(param_attr) tident LPAREN 
 -- On option(cconv) shift to state 425
 -- On cconv shift to state 316
 ## Reductions:
--- On LTLCURLY reduce production option(cconv) ->
--- On LT reduce production option(cconv) ->
--- On LSQUARE reduce production option(cconv) ->
--- On LCURLY reduce production option(cconv) ->
--- On KW_ZEROEXT reduce production option(cconv) ->
--- On KW_X86_MMX reduce production option(cconv) ->
--- On KW_X86_FP80 reduce production option(cconv) ->
--- On KW_VOID reduce production option(cconv) ->
--- On KW_SRET reduce production option(cconv) ->
--- On KW_SIGNEXT reduce production option(cconv) ->
--- On KW_RETURNED reduce production option(cconv) ->
--- On KW_PPC_FP128 reduce production option(cconv) ->
--- On KW_OPAQUE reduce production option(cconv) ->
--- On KW_NONNULL reduce production option(cconv) ->
--- On KW_NOCAPTURE reduce production option(cconv) ->
--- On KW_NOALIAS reduce production option(cconv) ->
--- On KW_NEST reduce production option(cconv) ->
--- On KW_METADATA reduce production option(cconv) ->
--- On KW_LABEL reduce production option(cconv) ->
--- On KW_INREG reduce production option(cconv) ->
--- On KW_INALLOCA reduce production option(cconv) ->
--- On KW_HALF reduce production option(cconv) ->
--- On KW_FP128 reduce production option(cconv) ->
--- On KW_FLOAT reduce production option(cconv) ->
--- On KW_DOUBLE reduce production option(cconv) ->
--- On KW_DEREFERENCEABLE reduce production option(cconv) ->
--- On KW_BYVAL reduce production option(cconv) ->
--- On KW_ALIGN reduce production option(cconv) ->
--- On I reduce production option(cconv) ->
+-- On LTLCURLY LT LSQUARE LCURLY KW_ZEROEXT KW_X86_MMX KW_X86_FP80 KW_VOID KW_SRET KW_SIGNEXT KW_RETURNED KW_PPC_FP128 KW_OPAQUE KW_NONNULL KW_NOCAPTURE KW_NOALIAS KW_NEST KW_METADATA KW_LABEL KW_INREG KW_INALLOCA KW_HALF KW_FP128 KW_FLOAT KW_DOUBLE KW_DEREFERENCEABLE KW_BYVAL KW_ALIGN I
+--   reduce production option(cconv) ->
 
 State 425:
 ## Known stack suffix:
@@ -5929,22 +5484,8 @@ instr -> option(KW_TAIL) KW_CALL option(cconv) . list(param_attr) tident LPAREN 
 -- On param_attr shift to state 143
 -- On list(param_attr) shift to state 426
 ## Reductions:
--- On LTLCURLY reduce production list(param_attr) ->
--- On LT reduce production list(param_attr) ->
--- On LSQUARE reduce production list(param_attr) ->
--- On LCURLY reduce production list(param_attr) ->
--- On KW_X86_MMX reduce production list(param_attr) ->
--- On KW_X86_FP80 reduce production list(param_attr) ->
--- On KW_VOID reduce production list(param_attr) ->
--- On KW_PPC_FP128 reduce production list(param_attr) ->
--- On KW_OPAQUE reduce production list(param_attr) ->
--- On KW_METADATA reduce production list(param_attr) ->
--- On KW_LABEL reduce production list(param_attr) ->
--- On KW_HALF reduce production list(param_attr) ->
--- On KW_FP128 reduce production list(param_attr) ->
--- On KW_FLOAT reduce production list(param_attr) ->
--- On KW_DOUBLE reduce production list(param_attr) ->
--- On I reduce production list(param_attr) ->
+-- On LTLCURLY LT LSQUARE LCURLY KW_X86_MMX KW_X86_FP80 KW_VOID KW_PPC_FP128 KW_OPAQUE KW_METADATA KW_LABEL KW_HALF KW_FP128 KW_FLOAT KW_DOUBLE I
+--   reduce production list(param_attr) ->
 
 State 426:
 ## Known stack suffix:
@@ -6008,7 +5549,8 @@ instr -> option(KW_TAIL) KW_CALL option(cconv) list(param_attr) tident LPAREN . 
 -- On loption(separated_nonempty_list(COMMA,call_arg)) shift to state 429
 -- On call_arg shift to state 313
 ## Reductions:
--- On RPAREN reduce production loption(separated_nonempty_list(COMMA,call_arg)) ->
+-- On RPAREN
+--   reduce production loption(separated_nonempty_list(COMMA,call_arg)) ->
 
 State 429:
 ## Known stack suffix:
@@ -6058,7 +5600,8 @@ instr -> option(KW_TAIL) KW_CALL option(cconv) list(param_attr) tident LPAREN lo
 -- On list(fn_attr) shift to state 431
 -- On fn_attr shift to state 311
 ## Reductions:
--- On EOL reduce production list(fn_attr) ->
+-- On EOL
+--   reduce production list(fn_attr) ->
 
 State 431:
 ## Known stack suffix:
@@ -6113,7 +5656,8 @@ instr -> option(KW_GETELEMENTPTR) KW_INBOUNDS tvalue . list(preceded(COMMA,tvalu
 -- On COMMA shift to state 435
 -- On list(preceded(COMMA,tvalue)) shift to state 438
 ## Reductions:
--- On EOL reduce production list(preceded(COMMA,tvalue)) ->
+-- On EOL
+--   reduce production list(preceded(COMMA,tvalue)) ->
 
 State 435:
 ## Known stack suffix:
@@ -6150,7 +5694,8 @@ list(preceded(COMMA,tvalue)) -> COMMA tvalue . list(preceded(COMMA,tvalue)) [ EO
 -- On COMMA shift to state 435
 -- On list(preceded(COMMA,tvalue)) shift to state 437
 ## Reductions:
--- On EOL reduce production list(preceded(COMMA,tvalue)) ->
+-- On EOL
+--   reduce production list(preceded(COMMA,tvalue)) ->
 
 State 437:
 ## Known stack suffix:
@@ -6179,7 +5724,8 @@ df_blocks -> option(terminated(LABEL,nonempty_list(EOL))) nonempty_list(terminat
 -- On LABEL shift to state 440
 -- On list(pair(terminated(LABEL,nonempty_list(EOL)),nonempty_list(terminated(instr,nonempty_list(EOL))))) shift to state 482
 ## Reductions:
--- On RCURLY reduce production list(pair(terminated(LABEL,nonempty_list(EOL)),nonempty_list(terminated(instr,nonempty_list(EOL))))) ->
+-- On RCURLY
+--   reduce production list(pair(terminated(LABEL,nonempty_list(EOL)),nonempty_list(terminated(instr,nonempty_list(EOL))))) ->
 
 State 440:
 ## Known stack suffix:
@@ -6267,8 +5813,10 @@ list(pair(terminated(LABEL,nonempty_list(EOL)),nonempty_list(terminated(instr,no
 -- On fbinop shift to state 464
 -- On conversion shift to state 477
 ## Reductions:
--- On KW_INBOUNDS reduce production option(KW_GETELEMENTPTR) ->
--- On KW_CALL reduce production option(KW_TAIL) ->
+-- On KW_INBOUNDS
+--   reduce production option(KW_GETELEMENTPTR) ->
+-- On KW_CALL
+--   reduce production option(KW_TAIL) ->
 
 State 442:
 ## Known stack suffix:
@@ -6279,7 +5827,8 @@ list(pair(terminated(LABEL,nonempty_list(EOL)),nonempty_list(terminated(instr,no
 -- On LABEL shift to state 440
 -- On list(pair(terminated(LABEL,nonempty_list(EOL)),nonempty_list(terminated(instr,nonempty_list(EOL))))) shift to state 443
 ## Reductions:
--- On RCURLY reduce production list(pair(terminated(LABEL,nonempty_list(EOL)),nonempty_list(terminated(instr,nonempty_list(EOL))))) ->
+-- On RCURLY
+--   reduce production list(pair(terminated(LABEL,nonempty_list(EOL)),nonempty_list(terminated(instr,nonempty_list(EOL))))) ->
 
 State 443:
 ## Known stack suffix:
@@ -6378,10 +5927,12 @@ nonempty_list(terminated(instr,nonempty_list(EOL))) -> instr nonempty_list(EOL) 
 -- On fbinop shift to state 464
 -- On conversion shift to state 477
 ## Reductions:
--- On RCURLY reduce production nonempty_list(terminated(instr,nonempty_list(EOL))) -> instr nonempty_list(EOL)
--- On LABEL reduce production nonempty_list(terminated(instr,nonempty_list(EOL))) -> instr nonempty_list(EOL)
--- On KW_INBOUNDS reduce production option(KW_GETELEMENTPTR) ->
--- On KW_CALL reduce production option(KW_TAIL) ->
+-- On RCURLY LABEL
+--   reduce production nonempty_list(terminated(instr,nonempty_list(EOL))) -> instr nonempty_list(EOL)
+-- On KW_INBOUNDS
+--   reduce production option(KW_GETELEMENTPTR) ->
+-- On KW_CALL
+--   reduce production option(KW_TAIL) ->
 
 State 446:
 ## Known stack suffix:
@@ -6476,8 +6027,10 @@ instr -> ident EQ . instr [ EOL ]
 -- On fbinop shift to state 464
 -- On conversion shift to state 477
 ## Reductions:
--- On KW_INBOUNDS reduce production option(KW_GETELEMENTPTR) ->
--- On KW_CALL reduce production option(KW_TAIL) ->
+-- On KW_INBOUNDS
+--   reduce production option(KW_GETELEMENTPTR) ->
+-- On KW_CALL
+--   reduce production option(KW_TAIL) ->
 
 State 449:
 ## Known stack suffix:
@@ -6497,23 +6050,8 @@ ibinop -> ibinop_nuw_nsw_opt . option(KW_NUW) option(KW_NSW) [ LTLCURLY LT LSQUA
 -- On KW_NUW shift to state 451
 -- On option(KW_NUW) shift to state 452
 ## Reductions:
--- On LTLCURLY reduce production option(KW_NUW) ->
--- On LT reduce production option(KW_NUW) ->
--- On LSQUARE reduce production option(KW_NUW) ->
--- On LCURLY reduce production option(KW_NUW) ->
--- On KW_X86_MMX reduce production option(KW_NUW) ->
--- On KW_X86_FP80 reduce production option(KW_NUW) ->
--- On KW_VOID reduce production option(KW_NUW) ->
--- On KW_PPC_FP128 reduce production option(KW_NUW) ->
--- On KW_OPAQUE reduce production option(KW_NUW) ->
--- On KW_NSW reduce production option(KW_NUW) ->
--- On KW_METADATA reduce production option(KW_NUW) ->
--- On KW_LABEL reduce production option(KW_NUW) ->
--- On KW_HALF reduce production option(KW_NUW) ->
--- On KW_FP128 reduce production option(KW_NUW) ->
--- On KW_FLOAT reduce production option(KW_NUW) ->
--- On KW_DOUBLE reduce production option(KW_NUW) ->
--- On I reduce production option(KW_NUW) ->
+-- On LTLCURLY LT LSQUARE LCURLY KW_X86_MMX KW_X86_FP80 KW_VOID KW_PPC_FP128 KW_OPAQUE KW_NSW KW_METADATA KW_LABEL KW_HALF KW_FP128 KW_FLOAT KW_DOUBLE I
+--   reduce production option(KW_NUW) ->
 
 State 451:
 ## Known stack suffix:
@@ -6533,22 +6071,8 @@ ibinop -> ibinop_nuw_nsw_opt option(KW_NUW) . option(KW_NSW) [ LTLCURLY LT LSQUA
 -- On KW_NSW shift to state 453
 -- On option(KW_NSW) shift to state 454
 ## Reductions:
--- On LTLCURLY reduce production option(KW_NSW) ->
--- On LT reduce production option(KW_NSW) ->
--- On LSQUARE reduce production option(KW_NSW) ->
--- On LCURLY reduce production option(KW_NSW) ->
--- On KW_X86_MMX reduce production option(KW_NSW) ->
--- On KW_X86_FP80 reduce production option(KW_NSW) ->
--- On KW_VOID reduce production option(KW_NSW) ->
--- On KW_PPC_FP128 reduce production option(KW_NSW) ->
--- On KW_OPAQUE reduce production option(KW_NSW) ->
--- On KW_METADATA reduce production option(KW_NSW) ->
--- On KW_LABEL reduce production option(KW_NSW) ->
--- On KW_HALF reduce production option(KW_NSW) ->
--- On KW_FP128 reduce production option(KW_NSW) ->
--- On KW_FLOAT reduce production option(KW_NSW) ->
--- On KW_DOUBLE reduce production option(KW_NSW) ->
--- On I reduce production option(KW_NSW) ->
+-- On LTLCURLY LT LSQUARE LCURLY KW_X86_MMX KW_X86_FP80 KW_VOID KW_PPC_FP128 KW_OPAQUE KW_METADATA KW_LABEL KW_HALF KW_FP128 KW_FLOAT KW_DOUBLE I
+--   reduce production option(KW_NSW) ->
 
 State 453:
 ## Known stack suffix:
@@ -6586,22 +6110,8 @@ ibinop -> ibinop_exact_opt . option(KW_EXACT) [ LTLCURLY LT LSQUARE LCURLY KW_X8
 -- On KW_EXACT shift to state 457
 -- On option(KW_EXACT) shift to state 458
 ## Reductions:
--- On LTLCURLY reduce production option(KW_EXACT) ->
--- On LT reduce production option(KW_EXACT) ->
--- On LSQUARE reduce production option(KW_EXACT) ->
--- On LCURLY reduce production option(KW_EXACT) ->
--- On KW_X86_MMX reduce production option(KW_EXACT) ->
--- On KW_X86_FP80 reduce production option(KW_EXACT) ->
--- On KW_VOID reduce production option(KW_EXACT) ->
--- On KW_PPC_FP128 reduce production option(KW_EXACT) ->
--- On KW_OPAQUE reduce production option(KW_EXACT) ->
--- On KW_METADATA reduce production option(KW_EXACT) ->
--- On KW_LABEL reduce production option(KW_EXACT) ->
--- On KW_HALF reduce production option(KW_EXACT) ->
--- On KW_FP128 reduce production option(KW_EXACT) ->
--- On KW_FLOAT reduce production option(KW_EXACT) ->
--- On KW_DOUBLE reduce production option(KW_EXACT) ->
--- On I reduce production option(KW_EXACT) ->
+-- On LTLCURLY LT LSQUARE LCURLY KW_X86_MMX KW_X86_FP80 KW_VOID KW_PPC_FP128 KW_OPAQUE KW_METADATA KW_LABEL KW_HALF KW_FP128 KW_FLOAT KW_DOUBLE I
+--   reduce production option(KW_EXACT) ->
 
 State 457:
 ## Known stack suffix:
@@ -6730,22 +6240,8 @@ instr -> fbinop . list(fast_math) typ value COMMA value [ EOL ]
 -- On list(fast_math) shift to state 470
 -- On fast_math shift to state 475
 ## Reductions:
--- On LTLCURLY reduce production list(fast_math) ->
--- On LT reduce production list(fast_math) ->
--- On LSQUARE reduce production list(fast_math) ->
--- On LCURLY reduce production list(fast_math) ->
--- On KW_X86_MMX reduce production list(fast_math) ->
--- On KW_X86_FP80 reduce production list(fast_math) ->
--- On KW_VOID reduce production list(fast_math) ->
--- On KW_PPC_FP128 reduce production list(fast_math) ->
--- On KW_OPAQUE reduce production list(fast_math) ->
--- On KW_METADATA reduce production list(fast_math) ->
--- On KW_LABEL reduce production list(fast_math) ->
--- On KW_HALF reduce production list(fast_math) ->
--- On KW_FP128 reduce production list(fast_math) ->
--- On KW_FLOAT reduce production list(fast_math) ->
--- On KW_DOUBLE reduce production list(fast_math) ->
--- On I reduce production list(fast_math) ->
+-- On LTLCURLY LT LSQUARE LCURLY KW_X86_MMX KW_X86_FP80 KW_VOID KW_PPC_FP128 KW_OPAQUE KW_METADATA KW_LABEL KW_HALF KW_FP128 KW_FLOAT KW_DOUBLE I
+--   reduce production list(fast_math) ->
 
 State 465:
 ## Known stack suffix:
@@ -6901,22 +6397,8 @@ list(fast_math) -> fast_math . list(fast_math) [ LTLCURLY LT LSQUARE LCURLY KW_X
 -- On list(fast_math) shift to state 476
 -- On fast_math shift to state 475
 ## Reductions:
--- On LTLCURLY reduce production list(fast_math) ->
--- On LT reduce production list(fast_math) ->
--- On LSQUARE reduce production list(fast_math) ->
--- On LCURLY reduce production list(fast_math) ->
--- On KW_X86_MMX reduce production list(fast_math) ->
--- On KW_X86_FP80 reduce production list(fast_math) ->
--- On KW_VOID reduce production list(fast_math) ->
--- On KW_PPC_FP128 reduce production list(fast_math) ->
--- On KW_OPAQUE reduce production list(fast_math) ->
--- On KW_METADATA reduce production list(fast_math) ->
--- On KW_LABEL reduce production list(fast_math) ->
--- On KW_HALF reduce production list(fast_math) ->
--- On KW_FP128 reduce production list(fast_math) ->
--- On KW_FLOAT reduce production list(fast_math) ->
--- On KW_DOUBLE reduce production list(fast_math) ->
--- On I reduce production list(fast_math) ->
+-- On LTLCURLY LT LSQUARE LCURLY KW_X86_MMX KW_X86_FP80 KW_VOID KW_PPC_FP128 KW_OPAQUE KW_METADATA KW_LABEL KW_HALF KW_FP128 KW_FLOAT KW_DOUBLE I
+--   reduce production list(fast_math) ->
 
 State 476:
 ## Known stack suffix:
@@ -7025,7 +6507,8 @@ typ -> typ . LPAREN loption(separated_nonempty_list(COMMA,typ)) RPAREN [ STAR LP
 -- On STAR shift to state 30
 -- On LPAREN shift to state 31
 ## Reductions:
--- On EOL reduce production instr -> conversion typ value KW_TO typ
+-- On EOL
+--   reduce production instr -> conversion typ value KW_TO typ
 
 State 482:
 ## Known stack suffix:
@@ -7094,13 +6577,8 @@ nonempty_list(fn_attr) -> fn_attr . nonempty_list(fn_attr) [ STRING LCURLY KW_UW
 -- On nonempty_list(fn_attr) shift to state 486
 -- On fn_attr shift to state 485
 ## Reductions:
--- On LCURLY reduce production nonempty_list(fn_attr) -> fn_attr
--- On KW_UNNAMED_ADDR reduce production nonempty_list(fn_attr) -> fn_attr
--- On KW_SECTION reduce production nonempty_list(fn_attr) -> fn_attr
--- On KW_GC reduce production nonempty_list(fn_attr) -> fn_attr
--- On KW_ALIGN reduce production nonempty_list(fn_attr) -> fn_attr
--- On KW_ADDRSPACE reduce production nonempty_list(fn_attr) -> fn_attr
--- On EOL reduce production nonempty_list(fn_attr) -> fn_attr
+-- On LCURLY KW_UNNAMED_ADDR KW_SECTION KW_GC KW_ALIGN KW_ADDRSPACE EOL
+--   reduce production nonempty_list(fn_attr) -> fn_attr
 
 State 486:
 ## Known stack suffix:
@@ -7159,8 +6637,8 @@ list(df_post_attr) -> df_post_attr . list(df_post_attr) [ LCURLY EOL ]
 -- On df_post_attr shift to state 487
 -- On align shift to state 489
 ## Reductions:
--- On LCURLY reduce production list(df_post_attr) ->
--- On EOL reduce production list(df_post_attr) ->
+-- On LCURLY EOL
+--   reduce production list(df_post_attr) ->
 
 State 488:
 ## Known stack suffix:
@@ -7189,7 +6667,8 @@ separated_nonempty_list(COMMA,df_arg) -> df_arg . COMMA separated_nonempty_list(
 ## Transitions:
 -- On COMMA shift to state 491
 ## Reductions:
--- On RPAREN reduce production separated_nonempty_list(COMMA,df_arg) -> df_arg
+-- On RPAREN
+--   reduce production separated_nonempty_list(COMMA,df_arg) -> df_arg
 
 State 491:
 ## Known stack suffix:
@@ -7278,35 +6757,8 @@ list(df_pre_attr) -> df_pre_attr . list(df_pre_attr) [ LTLCURLY LT LSQUARE LCURL
 -- On df_pre_attr shift to state 495
 -- On cconv shift to state 497
 ## Reductions:
--- On LTLCURLY reduce production list(df_pre_attr) ->
--- On LT reduce production list(df_pre_attr) ->
--- On LSQUARE reduce production list(df_pre_attr) ->
--- On LCURLY reduce production list(df_pre_attr) ->
--- On KW_ZEROEXT reduce production list(df_pre_attr) ->
--- On KW_X86_MMX reduce production list(df_pre_attr) ->
--- On KW_X86_FP80 reduce production list(df_pre_attr) ->
--- On KW_VOID reduce production list(df_pre_attr) ->
--- On KW_SRET reduce production list(df_pre_attr) ->
--- On KW_SIGNEXT reduce production list(df_pre_attr) ->
--- On KW_RETURNED reduce production list(df_pre_attr) ->
--- On KW_PPC_FP128 reduce production list(df_pre_attr) ->
--- On KW_OPAQUE reduce production list(df_pre_attr) ->
--- On KW_NONNULL reduce production list(df_pre_attr) ->
--- On KW_NOCAPTURE reduce production list(df_pre_attr) ->
--- On KW_NOALIAS reduce production list(df_pre_attr) ->
--- On KW_NEST reduce production list(df_pre_attr) ->
--- On KW_METADATA reduce production list(df_pre_attr) ->
--- On KW_LABEL reduce production list(df_pre_attr) ->
--- On KW_INREG reduce production list(df_pre_attr) ->
--- On KW_INALLOCA reduce production list(df_pre_attr) ->
--- On KW_HALF reduce production list(df_pre_attr) ->
--- On KW_FP128 reduce production list(df_pre_attr) ->
--- On KW_FLOAT reduce production list(df_pre_attr) ->
--- On KW_DOUBLE reduce production list(df_pre_attr) ->
--- On KW_DEREFERENCEABLE reduce production list(df_pre_attr) ->
--- On KW_BYVAL reduce production list(df_pre_attr) ->
--- On KW_ALIGN reduce production list(df_pre_attr) ->
--- On I reduce production list(df_pre_attr) ->
+-- On LTLCURLY LT LSQUARE LCURLY KW_ZEROEXT KW_X86_MMX KW_X86_FP80 KW_VOID KW_SRET KW_SIGNEXT KW_RETURNED KW_PPC_FP128 KW_OPAQUE KW_NONNULL KW_NOCAPTURE KW_NOALIAS KW_NEST KW_METADATA KW_LABEL KW_INREG KW_INALLOCA KW_HALF KW_FP128 KW_FLOAT KW_DOUBLE KW_DEREFERENCEABLE KW_BYVAL KW_ALIGN I
+--   reduce production list(df_pre_attr) ->
 
 State 496:
 ## Known stack suffix:
@@ -7348,22 +6800,8 @@ declaration -> KW_DECLARE . list(param_attr) typ GLOBAL LPAREN loption(separated
 -- On param_attr shift to state 143
 -- On list(param_attr) shift to state 499
 ## Reductions:
--- On LTLCURLY reduce production list(param_attr) ->
--- On LT reduce production list(param_attr) ->
--- On LSQUARE reduce production list(param_attr) ->
--- On LCURLY reduce production list(param_attr) ->
--- On KW_X86_MMX reduce production list(param_attr) ->
--- On KW_X86_FP80 reduce production list(param_attr) ->
--- On KW_VOID reduce production list(param_attr) ->
--- On KW_PPC_FP128 reduce production list(param_attr) ->
--- On KW_OPAQUE reduce production list(param_attr) ->
--- On KW_METADATA reduce production list(param_attr) ->
--- On KW_LABEL reduce production list(param_attr) ->
--- On KW_HALF reduce production list(param_attr) ->
--- On KW_FP128 reduce production list(param_attr) ->
--- On KW_FLOAT reduce production list(param_attr) ->
--- On KW_DOUBLE reduce production list(param_attr) ->
--- On I reduce production list(param_attr) ->
+-- On LTLCURLY LT LSQUARE LCURLY KW_X86_MMX KW_X86_FP80 KW_VOID KW_PPC_FP128 KW_OPAQUE KW_METADATA KW_LABEL KW_HALF KW_FP128 KW_FLOAT KW_DOUBLE I
+--   reduce production list(param_attr) ->
 
 State 499:
 ## Known stack suffix:
@@ -7439,7 +6877,8 @@ declaration -> KW_DECLARE list(param_attr) typ GLOBAL LPAREN . loption(separated
 -- On loption(separated_nonempty_list(COMMA,dc_arg)) shift to state 506
 -- On dc_arg shift to state 523
 ## Reductions:
--- On RPAREN reduce production loption(separated_nonempty_list(COMMA,dc_arg)) ->
+-- On RPAREN
+--   reduce production loption(separated_nonempty_list(COMMA,dc_arg)) ->
 
 State 503:
 ## Known stack suffix:
@@ -7467,8 +6906,8 @@ typ -> typ . LPAREN loption(separated_nonempty_list(COMMA,typ)) RPAREN [ STAR RP
 -- On param_attr shift to state 143
 -- On list(param_attr) shift to state 504
 ## Reductions:
--- On RPAREN reduce production list(param_attr) ->
--- On COMMA reduce production list(param_attr) ->
+-- On RPAREN COMMA
+--   reduce production list(param_attr) ->
 
 State 504:
 ## Known stack suffix:
@@ -7528,7 +6967,8 @@ declaration -> KW_DECLARE list(param_attr) typ GLOBAL LPAREN loption(separated_n
 -- On global_attr shift to state 520
 -- On dll_storage shift to state 522
 ## Reductions:
--- On EOL reduce production list(global_attr) ->
+-- On EOL
+--   reduce production list(global_attr) ->
 
 State 508:
 ## Known stack suffix:
@@ -7672,9 +7112,8 @@ list(global_attr) -> global_attr . list(global_attr) [ KW_GLOBAL KW_CONSTANT EOL
 -- On global_attr shift to state 520
 -- On dll_storage shift to state 522
 ## Reductions:
--- On KW_GLOBAL reduce production list(global_attr) ->
--- On KW_CONSTANT reduce production list(global_attr) ->
--- On EOL reduce production list(global_attr) ->
+-- On KW_GLOBAL KW_CONSTANT EOL
+--   reduce production list(global_attr) ->
 
 State 521:
 ## Known stack suffix:
@@ -7703,7 +7142,8 @@ separated_nonempty_list(COMMA,dc_arg) -> dc_arg . COMMA separated_nonempty_list(
 ## Transitions:
 -- On COMMA shift to state 524
 ## Reductions:
--- On RPAREN reduce production separated_nonempty_list(COMMA,dc_arg) -> dc_arg
+-- On RPAREN
+--   reduce production separated_nonempty_list(COMMA,dc_arg) -> dc_arg
 
 State 524:
 ## Known stack suffix:
@@ -7807,7 +7247,8 @@ toplevelentry -> KW_ATTRIBUTES ATTR_GRP_ID EQ LCURLY . list(fn_attr) RCURLY [ EO
 -- On list(fn_attr) shift to state 530
 -- On fn_attr shift to state 311
 ## Reductions:
--- On RCURLY reduce production list(fn_attr) ->
+-- On RCURLY
+--   reduce production list(fn_attr) ->
 
 State 530:
 ## Known stack suffix:
@@ -7867,8 +7308,8 @@ global_decl -> GLOBAL EQ . list(global_attr) global_is_constant typ option(const
 -- On global_attr shift to state 520
 -- On dll_storage shift to state 522
 ## Reductions:
--- On KW_GLOBAL reduce production list(global_attr) ->
--- On KW_CONSTANT reduce production list(global_attr) ->
+-- On KW_GLOBAL KW_CONSTANT
+--   reduce production list(global_attr) ->
 
 State 534:
 ## Known stack suffix:
@@ -7948,8 +7389,8 @@ typ -> typ . LPAREN loption(separated_nonempty_list(COMMA,typ)) RPAREN [ STAR LT
 -- On option(const) shift to state 539
 -- On const shift to state 547
 ## Reductions:
--- On EOL reduce production option(const) ->
--- On COMMA reduce production option(const) ->
+-- On EOL COMMA
+--   reduce production option(const) ->
 
 State 539:
 ## Known stack suffix:
@@ -7960,7 +7401,8 @@ global_decl -> GLOBAL EQ list(global_attr) global_is_constant typ option(const) 
 -- On COMMA shift to state 540
 -- On option(preceded(COMMA,separated_list(COMMA,global_attr))) shift to state 546
 ## Reductions:
--- On EOL reduce production option(preceded(COMMA,separated_list(COMMA,global_attr))) ->
+-- On EOL
+--   reduce production option(preceded(COMMA,separated_list(COMMA,global_attr))) ->
 
 State 540:
 ## Known stack suffix:
@@ -7994,7 +7436,8 @@ option(preceded(COMMA,separated_list(COMMA,global_attr))) -> COMMA . loption(sep
 -- On global_attr shift to state 543
 -- On dll_storage shift to state 522
 ## Reductions:
--- On EOL reduce production loption(separated_nonempty_list(COMMA,global_attr)) ->
+-- On EOL
+--   reduce production loption(separated_nonempty_list(COMMA,global_attr)) ->
 
 State 541:
 ## Known stack suffix:
@@ -8023,7 +7466,8 @@ separated_nonempty_list(COMMA,global_attr) -> global_attr . COMMA separated_none
 ## Transitions:
 -- On COMMA shift to state 544
 ## Reductions:
--- On EOL reduce production separated_nonempty_list(COMMA,global_attr) -> global_attr
+-- On EOL
+--   reduce production separated_nonempty_list(COMMA,global_attr) -> global_attr
 
 State 544:
 ## Known stack suffix:
@@ -8113,7 +7557,8 @@ list(terminated(toplevelentry,nonempty_list(EOL))) -> toplevelentry nonempty_lis
 -- On definition shift to state 552
 -- On declaration shift to state 553
 ## Reductions:
--- On EOF reduce production list(terminated(toplevelentry,nonempty_list(EOL))) ->
+-- On EOF
+--   reduce production list(terminated(toplevelentry,nonempty_list(EOL))) ->
 
 State 550:
 ## Known stack suffix:

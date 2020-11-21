@@ -114,8 +114,8 @@ top -> DEF IDENT . COMMA revidentseq COLON ty top [ # ]
 -- On LPAREN shift to state 10
 -- On COMMA shift to state 11
 ## Reductions:
--- On EQ reduce production letpat -> IDENT
--- On COLON reduce production letpat -> IDENT
+-- On EQ COLON
+--   reduce production letpat -> IDENT
 
 State 10:
 ## Known stack suffix:
@@ -495,19 +495,8 @@ tyarrow -> tyatom . ARROW tyarrow [ TYPE THEN SEMI RSQUARE RPAREN RCURLY INCLUDE
 ## Transitions:
 -- On ARROW shift to state 35
 ## Reductions:
--- On TYPE reduce production tyarrow -> tyatom
--- On THEN reduce production tyarrow -> tyatom
--- On SEMI reduce production tyarrow -> tyatom
--- On RSQUARE reduce production tyarrow -> tyatom
--- On RPAREN reduce production tyarrow -> tyatom
--- On RCURLY reduce production tyarrow -> tyatom
--- On INCLUDE reduce production tyarrow -> tyatom
--- On GREAT reduce production tyarrow -> tyatom
--- On EQ reduce production tyarrow -> tyatom
--- On EOF reduce production tyarrow -> tyatom
--- On DEF reduce production tyarrow -> tyatom
--- On DARROW reduce production tyarrow -> tyatom
--- On COMMA reduce production tyarrow -> tyatom
+-- On TYPE THEN SEMI RSQUARE RPAREN RCURLY INCLUDE GREAT EQ EOF DEF DARROW COMMA
+--   reduce production tyarrow -> tyatom
 
 State 35:
 ## Known stack suffix:
@@ -552,18 +541,8 @@ ty -> tyarrow . DARROW ty [ TYPE THEN SEMI RSQUARE RPAREN RCURLY INCLUDE GREAT E
 ## Transitions:
 -- On DARROW shift to state 38
 ## Reductions:
--- On TYPE reduce production ty -> tyarrow
--- On THEN reduce production ty -> tyarrow
--- On SEMI reduce production ty -> tyarrow
--- On RSQUARE reduce production ty -> tyarrow
--- On RPAREN reduce production ty -> tyarrow
--- On RCURLY reduce production ty -> tyarrow
--- On INCLUDE reduce production ty -> tyarrow
--- On GREAT reduce production ty -> tyarrow
--- On EQ reduce production ty -> tyarrow
--- On EOF reduce production ty -> tyarrow
--- On DEF reduce production ty -> tyarrow
--- On COMMA reduce production ty -> tyarrow
+-- On TYPE THEN SEMI RSQUARE RPAREN RCURLY INCLUDE GREAT EQ EOF DEF COMMA
+--   reduce production ty -> tyarrow
 
 State 38:
 ## Known stack suffix:
@@ -1184,21 +1163,8 @@ term -> SET DOT IDENT . op_atom_list_rev [ WITH TYPE THEN RSQUARE RPAREN RCURLY 
 -- On atom_list_rev shift to state 229
 -- On atom shift to state 231
 ## Reductions:
--- On WITH reduce production op_atom_list_rev ->
--- On TYPE reduce production op_atom_list_rev ->
--- On THEN reduce production op_atom_list_rev ->
--- On RSQUARE reduce production op_atom_list_rev ->
--- On RPAREN reduce production op_atom_list_rev ->
--- On RCURLY reduce production op_atom_list_rev ->
--- On OF reduce production op_atom_list_rev ->
--- On INCLUDE reduce production op_atom_list_rev ->
--- On EOF reduce production op_atom_list_rev ->
--- On END reduce production op_atom_list_rev ->
--- On ELSE reduce production op_atom_list_rev ->
--- On DEF reduce production op_atom_list_rev ->
--- On COMMA reduce production op_atom_list_rev ->
--- On BAR reduce production op_atom_list_rev ->
--- On ARROW reduce production op_atom_list_rev ->
+-- On WITH TYPE THEN RSQUARE RPAREN RCURLY OF INCLUDE EOF END ELSE DEF COMMA BAR ARROW
+--   reduce production op_atom_list_rev ->
 
 State 75:
 ## Known stack suffix:
@@ -1495,21 +1461,8 @@ term -> MAP DOT IDENT . op_atom_list_rev [ WITH TYPE THEN RSQUARE RPAREN RCURLY 
 -- On atom_list_rev shift to state 229
 -- On atom shift to state 231
 ## Reductions:
--- On WITH reduce production op_atom_list_rev ->
--- On TYPE reduce production op_atom_list_rev ->
--- On THEN reduce production op_atom_list_rev ->
--- On RSQUARE reduce production op_atom_list_rev ->
--- On RPAREN reduce production op_atom_list_rev ->
--- On RCURLY reduce production op_atom_list_rev ->
--- On OF reduce production op_atom_list_rev ->
--- On INCLUDE reduce production op_atom_list_rev ->
--- On EOF reduce production op_atom_list_rev ->
--- On END reduce production op_atom_list_rev ->
--- On ELSE reduce production op_atom_list_rev ->
--- On DEF reduce production op_atom_list_rev ->
--- On COMMA reduce production op_atom_list_rev ->
--- On BAR reduce production op_atom_list_rev ->
--- On ARROW reduce production op_atom_list_rev ->
+-- On WITH TYPE THEN RSQUARE RPAREN RCURLY OF INCLUDE EOF END ELSE DEF COMMA BAR ARROW
+--   reduce production op_atom_list_rev ->
 
 State 86:
 ## Known stack suffix:
@@ -2059,55 +2012,8 @@ op -> op . POLYEQUAL op [ WITH TYPE THEN SUB SQUOTE SEMI RSQUARE RPAREN RCURLY P
 ## Transitions:
 -- On SQUOTE shift to state 106
 ## Reductions:
--- On WITH reduce production op -> DOTSUB op
--- On TYPE reduce production op -> DOTSUB op
--- On THEN reduce production op -> DOTSUB op
--- On SUB reduce production op -> DOTSUB op
--- On SEMI reduce production op -> DOTSUB op
--- On RSQUARE reduce production op -> DOTSUB op
--- On RPAREN reduce production op -> DOTSUB op
--- On RCURLY reduce production op -> DOTSUB op
--- On POLYEQUAL reduce production op -> DOTSUB op
--- On PLUSPLUS reduce production op -> DOTSUB op
--- On OR reduce production op -> DOTSUB op
--- On OF reduce production op -> DOTSUB op
--- On NOTEQUAL reduce production op -> DOTSUB op
--- On MUL reduce production op -> DOTSUB op
--- On MOD reduce production op -> DOTSUB op
--- On LONGARROW reduce production op -> DOTSUB op
--- On LESSEQUAL reduce production op -> DOTSUB op
--- On LESS reduce production op -> DOTSUB op
--- On LEFTARROW reduce production op -> DOTSUB op
--- On INCLUDE reduce production op -> DOTSUB op
--- On GREATEQUAL reduce production op -> DOTSUB op
--- On GREAT reduce production op -> DOTSUB op
--- On EXP reduce production op -> DOTSUB op
--- On EQUAL reduce production op -> DOTSUB op
--- On EQSEMI reduce production op -> DOTSUB op
--- On EQ reduce production op -> DOTSUB op
--- On EOF reduce production op -> DOTSUB op
--- On END reduce production op -> DOTSUB op
--- On ELSE reduce production op -> DOTSUB op
--- On DOTSUB reduce production op -> DOTSUB op
--- On DOTNOTEQUAL reduce production op -> DOTSUB op
--- On DOTMUL reduce production op -> DOTSUB op
--- On DOTLESSEQUAL reduce production op -> DOTSUB op
--- On DOTLESS reduce production op -> DOTSUB op
--- On DOTGREATEQUAL reduce production op -> DOTSUB op
--- On DOTGREAT reduce production op -> DOTSUB op
--- On DOTEXP reduce production op -> DOTSUB op
--- On DOTEQUAL reduce production op -> DOTSUB op
--- On DOTDIV reduce production op -> DOTSUB op
--- On DOTADD reduce production op -> DOTSUB op
--- On DIV reduce production op -> DOTSUB op
--- On DEF reduce production op -> DOTSUB op
--- On CONS reduce production op -> DOTSUB op
--- On COMMA reduce production op -> DOTSUB op
--- On BAR reduce production op -> DOTSUB op
--- On ARROW reduce production op -> DOTSUB op
--- On APXEQ reduce production op -> DOTSUB op
--- On AND reduce production op -> DOTSUB op
--- On ADD reduce production op -> DOTSUB op
+-- On WITH TYPE THEN SUB SEMI RSQUARE RPAREN RCURLY POLYEQUAL PLUSPLUS OR OF NOTEQUAL MUL MOD LONGARROW LESSEQUAL LESS LEFTARROW INCLUDE GREATEQUAL GREAT EXP EQUAL EQSEMI EQ EOF END ELSE DOTSUB DOTNOTEQUAL DOTMUL DOTLESSEQUAL DOTLESS DOTGREATEQUAL DOTGREAT DOTEXP DOTEQUAL DOTDIV DOTADD DIV DEF CONS COMMA BAR ARROW APXEQ AND ADD
+--   reduce production op -> DOTSUB op
 
 State 106:
 ## Known stack suffix:
@@ -2152,56 +2058,8 @@ op -> app_left . [ WITH TYPE THEN SUB SQUOTE SEMI RSQUARE RPAREN RCURLY POLYEQUA
 -- On atom shift to state 111
 -- On app_right shift to state 112
 ## Reductions:
--- On WITH reduce production op -> app_left
--- On TYPE reduce production op -> app_left
--- On THEN reduce production op -> app_left
--- On SUB reduce production op -> app_left
--- On SQUOTE reduce production op -> app_left
--- On SEMI reduce production op -> app_left
--- On RSQUARE reduce production op -> app_left
--- On RPAREN reduce production op -> app_left
--- On RCURLY reduce production op -> app_left
--- On POLYEQUAL reduce production op -> app_left
--- On PLUSPLUS reduce production op -> app_left
--- On OR reduce production op -> app_left
--- On OF reduce production op -> app_left
--- On NOTEQUAL reduce production op -> app_left
--- On MUL reduce production op -> app_left
--- On MOD reduce production op -> app_left
--- On LONGARROW reduce production op -> app_left
--- On LESSEQUAL reduce production op -> app_left
--- On LESS reduce production op -> app_left
--- On LEFTARROW reduce production op -> app_left
--- On INCLUDE reduce production op -> app_left
--- On GREATEQUAL reduce production op -> app_left
--- On GREAT reduce production op -> app_left
--- On EXP reduce production op -> app_left
--- On EQUAL reduce production op -> app_left
--- On EQSEMI reduce production op -> app_left
--- On EQ reduce production op -> app_left
--- On EOF reduce production op -> app_left
--- On END reduce production op -> app_left
--- On ELSE reduce production op -> app_left
--- On DOTSUB reduce production op -> app_left
--- On DOTNOTEQUAL reduce production op -> app_left
--- On DOTMUL reduce production op -> app_left
--- On DOTLESSEQUAL reduce production op -> app_left
--- On DOTLESS reduce production op -> app_left
--- On DOTGREATEQUAL reduce production op -> app_left
--- On DOTGREAT reduce production op -> app_left
--- On DOTEXP reduce production op -> app_left
--- On DOTEQUAL reduce production op -> app_left
--- On DOTDIV reduce production op -> app_left
--- On DOTADD reduce production op -> app_left
--- On DIV reduce production op -> app_left
--- On DEF reduce production op -> app_left
--- On CONS reduce production op -> app_left
--- On COMMA reduce production op -> app_left
--- On BAR reduce production op -> app_left
--- On ARROW reduce production op -> app_left
--- On APXEQ reduce production op -> app_left
--- On AND reduce production op -> app_left
--- On ADD reduce production op -> app_left
+-- On WITH TYPE THEN SUB SQUOTE SEMI RSQUARE RPAREN RCURLY POLYEQUAL PLUSPLUS OR OF NOTEQUAL MUL MOD LONGARROW LESSEQUAL LESS LEFTARROW INCLUDE GREATEQUAL GREAT EXP EQUAL EQSEMI EQ EOF END ELSE DOTSUB DOTNOTEQUAL DOTMUL DOTLESSEQUAL DOTLESS DOTGREATEQUAL DOTGREAT DOTEXP DOTEQUAL DOTDIV DOTADD DIV DEF CONS COMMA BAR ARROW APXEQ AND ADD
+--   reduce production op -> app_left
 
 State 109:
 ## Known stack suffix:
@@ -2288,8 +2146,10 @@ letpat -> USCORE . [ COLON ]
 pat_atom -> USCORE . [ EQ ]
 ## Transitions:
 ## Reductions:
--- On EQ reduce production pat_atom -> USCORE
--- On COLON reduce production letpat -> USCORE
+-- On COLON
+--   reduce production letpat -> USCORE
+-- On EQ
+--   reduce production pat_atom -> USCORE
 
 State 115:
 ## Known stack suffix:
@@ -2668,43 +2528,8 @@ pat_op -> DOTSUB pat_op . [ SUB SQUOTE SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL 
 ## Transitions:
 -- On SQUOTE shift to state 138
 ## Reductions:
--- On SUB reduce production pat_op -> DOTSUB pat_op
--- On SEMI reduce production pat_op -> DOTSUB pat_op
--- On RSQUARE reduce production pat_op -> DOTSUB pat_op
--- On RPAREN reduce production pat_op -> DOTSUB pat_op
--- On PLUSPLUS reduce production pat_op -> DOTSUB pat_op
--- On OR reduce production pat_op -> DOTSUB pat_op
--- On NOTEQUAL reduce production pat_op -> DOTSUB pat_op
--- On MUL reduce production pat_op -> DOTSUB pat_op
--- On MOD reduce production pat_op -> DOTSUB pat_op
--- On LONGARROW reduce production pat_op -> DOTSUB pat_op
--- On LESSEQUAL reduce production pat_op -> DOTSUB pat_op
--- On LESS reduce production pat_op -> DOTSUB pat_op
--- On IF reduce production pat_op -> DOTSUB pat_op
--- On GREATEQUAL reduce production pat_op -> DOTSUB pat_op
--- On GREAT reduce production pat_op -> DOTSUB pat_op
--- On EXP reduce production pat_op -> DOTSUB pat_op
--- On EQUAL reduce production pat_op -> DOTSUB pat_op
--- On EQSEMI reduce production pat_op -> DOTSUB pat_op
--- On EQ reduce production pat_op -> DOTSUB pat_op
--- On DOTSUB reduce production pat_op -> DOTSUB pat_op
--- On DOTNOTEQUAL reduce production pat_op -> DOTSUB pat_op
--- On DOTMUL reduce production pat_op -> DOTSUB pat_op
--- On DOTLESSEQUAL reduce production pat_op -> DOTSUB pat_op
--- On DOTLESS reduce production pat_op -> DOTSUB pat_op
--- On DOTGREATEQUAL reduce production pat_op -> DOTSUB pat_op
--- On DOTGREAT reduce production pat_op -> DOTSUB pat_op
--- On DOTEXP reduce production pat_op -> DOTSUB pat_op
--- On DOTEQUAL reduce production pat_op -> DOTSUB pat_op
--- On DOTDIV reduce production pat_op -> DOTSUB pat_op
--- On DOTADD reduce production pat_op -> DOTSUB pat_op
--- On DIV reduce production pat_op -> DOTSUB pat_op
--- On CONS reduce production pat_op -> DOTSUB pat_op
--- On COMMA reduce production pat_op -> DOTSUB pat_op
--- On ARROW reduce production pat_op -> DOTSUB pat_op
--- On APXEQ reduce production pat_op -> DOTSUB pat_op
--- On AND reduce production pat_op -> DOTSUB pat_op
--- On ADD reduce production pat_op -> DOTSUB pat_op
+-- On SUB SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL MUL MOD LONGARROW LESSEQUAL LESS IF GREATEQUAL GREAT EXP EQUAL EQSEMI EQ DOTSUB DOTNOTEQUAL DOTMUL DOTLESSEQUAL DOTLESS DOTGREATEQUAL DOTGREAT DOTEXP DOTEQUAL DOTDIV DOTADD DIV CONS COMMA ARROW APXEQ AND ADD
+--   reduce production pat_op -> DOTSUB pat_op
 
 State 138:
 ## Known stack suffix:
@@ -2735,44 +2560,8 @@ pat_op -> pat_left . [ SUB SQUOTE SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL MUL M
 -- On ESCAPE shift to state 134
 -- On pat_atom shift to state 140
 ## Reductions:
--- On SUB reduce production pat_op -> pat_left
--- On SQUOTE reduce production pat_op -> pat_left
--- On SEMI reduce production pat_op -> pat_left
--- On RSQUARE reduce production pat_op -> pat_left
--- On RPAREN reduce production pat_op -> pat_left
--- On PLUSPLUS reduce production pat_op -> pat_left
--- On OR reduce production pat_op -> pat_left
--- On NOTEQUAL reduce production pat_op -> pat_left
--- On MUL reduce production pat_op -> pat_left
--- On MOD reduce production pat_op -> pat_left
--- On LONGARROW reduce production pat_op -> pat_left
--- On LESSEQUAL reduce production pat_op -> pat_left
--- On LESS reduce production pat_op -> pat_left
--- On IF reduce production pat_op -> pat_left
--- On GREATEQUAL reduce production pat_op -> pat_left
--- On GREAT reduce production pat_op -> pat_left
--- On EXP reduce production pat_op -> pat_left
--- On EQUAL reduce production pat_op -> pat_left
--- On EQSEMI reduce production pat_op -> pat_left
--- On EQ reduce production pat_op -> pat_left
--- On DOTSUB reduce production pat_op -> pat_left
--- On DOTNOTEQUAL reduce production pat_op -> pat_left
--- On DOTMUL reduce production pat_op -> pat_left
--- On DOTLESSEQUAL reduce production pat_op -> pat_left
--- On DOTLESS reduce production pat_op -> pat_left
--- On DOTGREATEQUAL reduce production pat_op -> pat_left
--- On DOTGREAT reduce production pat_op -> pat_left
--- On DOTEXP reduce production pat_op -> pat_left
--- On DOTEQUAL reduce production pat_op -> pat_left
--- On DOTDIV reduce production pat_op -> pat_left
--- On DOTADD reduce production pat_op -> pat_left
--- On DIV reduce production pat_op -> pat_left
--- On CONS reduce production pat_op -> pat_left
--- On COMMA reduce production pat_op -> pat_left
--- On ARROW reduce production pat_op -> pat_left
--- On APXEQ reduce production pat_op -> pat_left
--- On AND reduce production pat_op -> pat_left
--- On ADD reduce production pat_op -> pat_left
+-- On SUB SQUOTE SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL MUL MOD LONGARROW LESSEQUAL LESS IF GREATEQUAL GREAT EXP EQUAL EQSEMI EQ DOTSUB DOTNOTEQUAL DOTMUL DOTLESSEQUAL DOTLESS DOTGREATEQUAL DOTGREAT DOTEXP DOTEQUAL DOTDIV DOTADD DIV CONS COMMA ARROW APXEQ AND ADD
+--   reduce production pat_op -> pat_left
 
 State 140:
 ## Known stack suffix:
@@ -2922,11 +2711,8 @@ pat_op -> pat_op . SQUOTE [ SUB SQUOTE SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL 
 -- On AND shift to state 205
 -- On ADD shift to state 175
 ## Reductions:
--- On RSQUARE reduce production pat_cons -> pat_op
--- On RPAREN reduce production pat_cons -> pat_op
--- On IF reduce production pat_cons -> pat_op
--- On COMMA reduce production pat_cons -> pat_op
--- On ARROW reduce production pat_cons -> pat_op
+-- On RSQUARE RPAREN IF COMMA ARROW
+--   reduce production pat_cons -> pat_op
 
 State 147:
 ## Known stack suffix:
@@ -3001,36 +2787,8 @@ pat_op -> pat_op . SQUOTE [ SUB SQUOTE SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL 
 -- On DOTDIV shift to state 159
 -- On DIV shift to state 161
 ## Reductions:
--- On SUB reduce production pat_op -> pat_op SUB pat_op
--- On SEMI reduce production pat_op -> pat_op SUB pat_op
--- On RSQUARE reduce production pat_op -> pat_op SUB pat_op
--- On RPAREN reduce production pat_op -> pat_op SUB pat_op
--- On PLUSPLUS reduce production pat_op -> pat_op SUB pat_op
--- On OR reduce production pat_op -> pat_op SUB pat_op
--- On NOTEQUAL reduce production pat_op -> pat_op SUB pat_op
--- On LONGARROW reduce production pat_op -> pat_op SUB pat_op
--- On LESSEQUAL reduce production pat_op -> pat_op SUB pat_op
--- On LESS reduce production pat_op -> pat_op SUB pat_op
--- On IF reduce production pat_op -> pat_op SUB pat_op
--- On GREATEQUAL reduce production pat_op -> pat_op SUB pat_op
--- On GREAT reduce production pat_op -> pat_op SUB pat_op
--- On EQUAL reduce production pat_op -> pat_op SUB pat_op
--- On EQSEMI reduce production pat_op -> pat_op SUB pat_op
--- On EQ reduce production pat_op -> pat_op SUB pat_op
--- On DOTSUB reduce production pat_op -> pat_op SUB pat_op
--- On DOTNOTEQUAL reduce production pat_op -> pat_op SUB pat_op
--- On DOTLESSEQUAL reduce production pat_op -> pat_op SUB pat_op
--- On DOTLESS reduce production pat_op -> pat_op SUB pat_op
--- On DOTGREATEQUAL reduce production pat_op -> pat_op SUB pat_op
--- On DOTGREAT reduce production pat_op -> pat_op SUB pat_op
--- On DOTEQUAL reduce production pat_op -> pat_op SUB pat_op
--- On DOTADD reduce production pat_op -> pat_op SUB pat_op
--- On CONS reduce production pat_op -> pat_op SUB pat_op
--- On COMMA reduce production pat_op -> pat_op SUB pat_op
--- On ARROW reduce production pat_op -> pat_op SUB pat_op
--- On APXEQ reduce production pat_op -> pat_op SUB pat_op
--- On AND reduce production pat_op -> pat_op SUB pat_op
--- On ADD reduce production pat_op -> pat_op SUB pat_op
+-- On SUB SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL LONGARROW LESSEQUAL LESS IF GREATEQUAL GREAT EQUAL EQSEMI EQ DOTSUB DOTNOTEQUAL DOTLESSEQUAL DOTLESS DOTGREATEQUAL DOTGREAT DOTEQUAL DOTADD CONS COMMA ARROW APXEQ AND ADD
+--   reduce production pat_op -> pat_op SUB pat_op
 
 State 149:
 ## Known stack suffix:
@@ -3101,40 +2859,8 @@ pat_op -> pat_op . SQUOTE [ SUB SQUOTE SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL 
 -- On EXP shift to state 153
 -- On DOTEXP shift to state 155
 ## Reductions:
--- On SUB reduce production pat_op -> pat_op MUL pat_op
--- On SEMI reduce production pat_op -> pat_op MUL pat_op
--- On RSQUARE reduce production pat_op -> pat_op MUL pat_op
--- On RPAREN reduce production pat_op -> pat_op MUL pat_op
--- On PLUSPLUS reduce production pat_op -> pat_op MUL pat_op
--- On OR reduce production pat_op -> pat_op MUL pat_op
--- On NOTEQUAL reduce production pat_op -> pat_op MUL pat_op
--- On MUL reduce production pat_op -> pat_op MUL pat_op
--- On LONGARROW reduce production pat_op -> pat_op MUL pat_op
--- On LESSEQUAL reduce production pat_op -> pat_op MUL pat_op
--- On LESS reduce production pat_op -> pat_op MUL pat_op
--- On IF reduce production pat_op -> pat_op MUL pat_op
--- On GREATEQUAL reduce production pat_op -> pat_op MUL pat_op
--- On GREAT reduce production pat_op -> pat_op MUL pat_op
--- On EQUAL reduce production pat_op -> pat_op MUL pat_op
--- On EQSEMI reduce production pat_op -> pat_op MUL pat_op
--- On EQ reduce production pat_op -> pat_op MUL pat_op
--- On DOTSUB reduce production pat_op -> pat_op MUL pat_op
--- On DOTNOTEQUAL reduce production pat_op -> pat_op MUL pat_op
--- On DOTMUL reduce production pat_op -> pat_op MUL pat_op
--- On DOTLESSEQUAL reduce production pat_op -> pat_op MUL pat_op
--- On DOTLESS reduce production pat_op -> pat_op MUL pat_op
--- On DOTGREATEQUAL reduce production pat_op -> pat_op MUL pat_op
--- On DOTGREAT reduce production pat_op -> pat_op MUL pat_op
--- On DOTEQUAL reduce production pat_op -> pat_op MUL pat_op
--- On DOTDIV reduce production pat_op -> pat_op MUL pat_op
--- On DOTADD reduce production pat_op -> pat_op MUL pat_op
--- On DIV reduce production pat_op -> pat_op MUL pat_op
--- On CONS reduce production pat_op -> pat_op MUL pat_op
--- On COMMA reduce production pat_op -> pat_op MUL pat_op
--- On ARROW reduce production pat_op -> pat_op MUL pat_op
--- On APXEQ reduce production pat_op -> pat_op MUL pat_op
--- On AND reduce production pat_op -> pat_op MUL pat_op
--- On ADD reduce production pat_op -> pat_op MUL pat_op
+-- On SUB SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL MUL LONGARROW LESSEQUAL LESS IF GREATEQUAL GREAT EQUAL EQSEMI EQ DOTSUB DOTNOTEQUAL DOTMUL DOTLESSEQUAL DOTLESS DOTGREATEQUAL DOTGREAT DOTEQUAL DOTDIV DOTADD DIV CONS COMMA ARROW APXEQ AND ADD
+--   reduce production pat_op -> pat_op MUL pat_op
 
 State 151:
 ## Known stack suffix:
@@ -3204,41 +2930,8 @@ pat_op -> pat_op . SQUOTE [ SUB SQUOTE SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL 
 -- On EXP shift to state 153
 -- On DOTEXP shift to state 155
 ## Reductions:
--- On SUB reduce production pat_op -> pat_op MOD pat_op
--- On SEMI reduce production pat_op -> pat_op MOD pat_op
--- On RSQUARE reduce production pat_op -> pat_op MOD pat_op
--- On RPAREN reduce production pat_op -> pat_op MOD pat_op
--- On PLUSPLUS reduce production pat_op -> pat_op MOD pat_op
--- On OR reduce production pat_op -> pat_op MOD pat_op
--- On NOTEQUAL reduce production pat_op -> pat_op MOD pat_op
--- On MUL reduce production pat_op -> pat_op MOD pat_op
--- On MOD reduce production pat_op -> pat_op MOD pat_op
--- On LONGARROW reduce production pat_op -> pat_op MOD pat_op
--- On LESSEQUAL reduce production pat_op -> pat_op MOD pat_op
--- On LESS reduce production pat_op -> pat_op MOD pat_op
--- On IF reduce production pat_op -> pat_op MOD pat_op
--- On GREATEQUAL reduce production pat_op -> pat_op MOD pat_op
--- On GREAT reduce production pat_op -> pat_op MOD pat_op
--- On EQUAL reduce production pat_op -> pat_op MOD pat_op
--- On EQSEMI reduce production pat_op -> pat_op MOD pat_op
--- On EQ reduce production pat_op -> pat_op MOD pat_op
--- On DOTSUB reduce production pat_op -> pat_op MOD pat_op
--- On DOTNOTEQUAL reduce production pat_op -> pat_op MOD pat_op
--- On DOTMUL reduce production pat_op -> pat_op MOD pat_op
--- On DOTLESSEQUAL reduce production pat_op -> pat_op MOD pat_op
--- On DOTLESS reduce production pat_op -> pat_op MOD pat_op
--- On DOTGREATEQUAL reduce production pat_op -> pat_op MOD pat_op
--- On DOTGREAT reduce production pat_op -> pat_op MOD pat_op
--- On DOTEQUAL reduce production pat_op -> pat_op MOD pat_op
--- On DOTDIV reduce production pat_op -> pat_op MOD pat_op
--- On DOTADD reduce production pat_op -> pat_op MOD pat_op
--- On DIV reduce production pat_op -> pat_op MOD pat_op
--- On CONS reduce production pat_op -> pat_op MOD pat_op
--- On COMMA reduce production pat_op -> pat_op MOD pat_op
--- On ARROW reduce production pat_op -> pat_op MOD pat_op
--- On APXEQ reduce production pat_op -> pat_op MOD pat_op
--- On AND reduce production pat_op -> pat_op MOD pat_op
--- On ADD reduce production pat_op -> pat_op MOD pat_op
+-- On SUB SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL MUL MOD LONGARROW LESSEQUAL LESS IF GREATEQUAL GREAT EQUAL EQSEMI EQ DOTSUB DOTNOTEQUAL DOTMUL DOTLESSEQUAL DOTLESS DOTGREATEQUAL DOTGREAT DOTEQUAL DOTDIV DOTADD DIV CONS COMMA ARROW APXEQ AND ADD
+--   reduce production pat_op -> pat_op MOD pat_op
 
 State 153:
 ## Known stack suffix:
@@ -3306,43 +2999,8 @@ pat_op -> pat_op . SQUOTE [ SUB SQUOTE SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL 
 ## Transitions:
 -- On SQUOTE shift to state 138
 ## Reductions:
--- On SUB reduce production pat_op -> pat_op EXP pat_op
--- On SEMI reduce production pat_op -> pat_op EXP pat_op
--- On RSQUARE reduce production pat_op -> pat_op EXP pat_op
--- On RPAREN reduce production pat_op -> pat_op EXP pat_op
--- On PLUSPLUS reduce production pat_op -> pat_op EXP pat_op
--- On OR reduce production pat_op -> pat_op EXP pat_op
--- On NOTEQUAL reduce production pat_op -> pat_op EXP pat_op
--- On MUL reduce production pat_op -> pat_op EXP pat_op
--- On MOD reduce production pat_op -> pat_op EXP pat_op
--- On LONGARROW reduce production pat_op -> pat_op EXP pat_op
--- On LESSEQUAL reduce production pat_op -> pat_op EXP pat_op
--- On LESS reduce production pat_op -> pat_op EXP pat_op
--- On IF reduce production pat_op -> pat_op EXP pat_op
--- On GREATEQUAL reduce production pat_op -> pat_op EXP pat_op
--- On GREAT reduce production pat_op -> pat_op EXP pat_op
--- On EXP reduce production pat_op -> pat_op EXP pat_op
--- On EQUAL reduce production pat_op -> pat_op EXP pat_op
--- On EQSEMI reduce production pat_op -> pat_op EXP pat_op
--- On EQ reduce production pat_op -> pat_op EXP pat_op
--- On DOTSUB reduce production pat_op -> pat_op EXP pat_op
--- On DOTNOTEQUAL reduce production pat_op -> pat_op EXP pat_op
--- On DOTMUL reduce production pat_op -> pat_op EXP pat_op
--- On DOTLESSEQUAL reduce production pat_op -> pat_op EXP pat_op
--- On DOTLESS reduce production pat_op -> pat_op EXP pat_op
--- On DOTGREATEQUAL reduce production pat_op -> pat_op EXP pat_op
--- On DOTGREAT reduce production pat_op -> pat_op EXP pat_op
--- On DOTEXP reduce production pat_op -> pat_op EXP pat_op
--- On DOTEQUAL reduce production pat_op -> pat_op EXP pat_op
--- On DOTDIV reduce production pat_op -> pat_op EXP pat_op
--- On DOTADD reduce production pat_op -> pat_op EXP pat_op
--- On DIV reduce production pat_op -> pat_op EXP pat_op
--- On CONS reduce production pat_op -> pat_op EXP pat_op
--- On COMMA reduce production pat_op -> pat_op EXP pat_op
--- On ARROW reduce production pat_op -> pat_op EXP pat_op
--- On APXEQ reduce production pat_op -> pat_op EXP pat_op
--- On AND reduce production pat_op -> pat_op EXP pat_op
--- On ADD reduce production pat_op -> pat_op EXP pat_op
+-- On SUB SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL MUL MOD LONGARROW LESSEQUAL LESS IF GREATEQUAL GREAT EXP EQUAL EQSEMI EQ DOTSUB DOTNOTEQUAL DOTMUL DOTLESSEQUAL DOTLESS DOTGREATEQUAL DOTGREAT DOTEXP DOTEQUAL DOTDIV DOTADD DIV CONS COMMA ARROW APXEQ AND ADD
+--   reduce production pat_op -> pat_op EXP pat_op
 
 State 155:
 ## Known stack suffix:
@@ -3410,43 +3068,8 @@ pat_op -> pat_op . SQUOTE [ SUB SQUOTE SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL 
 ## Transitions:
 -- On SQUOTE shift to state 138
 ## Reductions:
--- On SUB reduce production pat_op -> pat_op DOTEXP pat_op
--- On SEMI reduce production pat_op -> pat_op DOTEXP pat_op
--- On RSQUARE reduce production pat_op -> pat_op DOTEXP pat_op
--- On RPAREN reduce production pat_op -> pat_op DOTEXP pat_op
--- On PLUSPLUS reduce production pat_op -> pat_op DOTEXP pat_op
--- On OR reduce production pat_op -> pat_op DOTEXP pat_op
--- On NOTEQUAL reduce production pat_op -> pat_op DOTEXP pat_op
--- On MUL reduce production pat_op -> pat_op DOTEXP pat_op
--- On MOD reduce production pat_op -> pat_op DOTEXP pat_op
--- On LONGARROW reduce production pat_op -> pat_op DOTEXP pat_op
--- On LESSEQUAL reduce production pat_op -> pat_op DOTEXP pat_op
--- On LESS reduce production pat_op -> pat_op DOTEXP pat_op
--- On IF reduce production pat_op -> pat_op DOTEXP pat_op
--- On GREATEQUAL reduce production pat_op -> pat_op DOTEXP pat_op
--- On GREAT reduce production pat_op -> pat_op DOTEXP pat_op
--- On EXP reduce production pat_op -> pat_op DOTEXP pat_op
--- On EQUAL reduce production pat_op -> pat_op DOTEXP pat_op
--- On EQSEMI reduce production pat_op -> pat_op DOTEXP pat_op
--- On EQ reduce production pat_op -> pat_op DOTEXP pat_op
--- On DOTSUB reduce production pat_op -> pat_op DOTEXP pat_op
--- On DOTNOTEQUAL reduce production pat_op -> pat_op DOTEXP pat_op
--- On DOTMUL reduce production pat_op -> pat_op DOTEXP pat_op
--- On DOTLESSEQUAL reduce production pat_op -> pat_op DOTEXP pat_op
--- On DOTLESS reduce production pat_op -> pat_op DOTEXP pat_op
--- On DOTGREATEQUAL reduce production pat_op -> pat_op DOTEXP pat_op
--- On DOTGREAT reduce production pat_op -> pat_op DOTEXP pat_op
--- On DOTEXP reduce production pat_op -> pat_op DOTEXP pat_op
--- On DOTEQUAL reduce production pat_op -> pat_op DOTEXP pat_op
--- On DOTDIV reduce production pat_op -> pat_op DOTEXP pat_op
--- On DOTADD reduce production pat_op -> pat_op DOTEXP pat_op
--- On DIV reduce production pat_op -> pat_op DOTEXP pat_op
--- On CONS reduce production pat_op -> pat_op DOTEXP pat_op
--- On COMMA reduce production pat_op -> pat_op DOTEXP pat_op
--- On ARROW reduce production pat_op -> pat_op DOTEXP pat_op
--- On APXEQ reduce production pat_op -> pat_op DOTEXP pat_op
--- On AND reduce production pat_op -> pat_op DOTEXP pat_op
--- On ADD reduce production pat_op -> pat_op DOTEXP pat_op
+-- On SUB SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL MUL MOD LONGARROW LESSEQUAL LESS IF GREATEQUAL GREAT EXP EQUAL EQSEMI EQ DOTSUB DOTNOTEQUAL DOTMUL DOTLESSEQUAL DOTLESS DOTGREATEQUAL DOTGREAT DOTEXP DOTEQUAL DOTDIV DOTADD DIV CONS COMMA ARROW APXEQ AND ADD
+--   reduce production pat_op -> pat_op DOTEXP pat_op
 
 State 157:
 ## Known stack suffix:
@@ -3517,40 +3140,8 @@ pat_op -> pat_op . SQUOTE [ SUB SQUOTE SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL 
 -- On EXP shift to state 153
 -- On DOTEXP shift to state 155
 ## Reductions:
--- On SUB reduce production pat_op -> pat_op DOTMUL pat_op
--- On SEMI reduce production pat_op -> pat_op DOTMUL pat_op
--- On RSQUARE reduce production pat_op -> pat_op DOTMUL pat_op
--- On RPAREN reduce production pat_op -> pat_op DOTMUL pat_op
--- On PLUSPLUS reduce production pat_op -> pat_op DOTMUL pat_op
--- On OR reduce production pat_op -> pat_op DOTMUL pat_op
--- On NOTEQUAL reduce production pat_op -> pat_op DOTMUL pat_op
--- On MUL reduce production pat_op -> pat_op DOTMUL pat_op
--- On LONGARROW reduce production pat_op -> pat_op DOTMUL pat_op
--- On LESSEQUAL reduce production pat_op -> pat_op DOTMUL pat_op
--- On LESS reduce production pat_op -> pat_op DOTMUL pat_op
--- On IF reduce production pat_op -> pat_op DOTMUL pat_op
--- On GREATEQUAL reduce production pat_op -> pat_op DOTMUL pat_op
--- On GREAT reduce production pat_op -> pat_op DOTMUL pat_op
--- On EQUAL reduce production pat_op -> pat_op DOTMUL pat_op
--- On EQSEMI reduce production pat_op -> pat_op DOTMUL pat_op
--- On EQ reduce production pat_op -> pat_op DOTMUL pat_op
--- On DOTSUB reduce production pat_op -> pat_op DOTMUL pat_op
--- On DOTNOTEQUAL reduce production pat_op -> pat_op DOTMUL pat_op
--- On DOTMUL reduce production pat_op -> pat_op DOTMUL pat_op
--- On DOTLESSEQUAL reduce production pat_op -> pat_op DOTMUL pat_op
--- On DOTLESS reduce production pat_op -> pat_op DOTMUL pat_op
--- On DOTGREATEQUAL reduce production pat_op -> pat_op DOTMUL pat_op
--- On DOTGREAT reduce production pat_op -> pat_op DOTMUL pat_op
--- On DOTEQUAL reduce production pat_op -> pat_op DOTMUL pat_op
--- On DOTDIV reduce production pat_op -> pat_op DOTMUL pat_op
--- On DOTADD reduce production pat_op -> pat_op DOTMUL pat_op
--- On DIV reduce production pat_op -> pat_op DOTMUL pat_op
--- On CONS reduce production pat_op -> pat_op DOTMUL pat_op
--- On COMMA reduce production pat_op -> pat_op DOTMUL pat_op
--- On ARROW reduce production pat_op -> pat_op DOTMUL pat_op
--- On APXEQ reduce production pat_op -> pat_op DOTMUL pat_op
--- On AND reduce production pat_op -> pat_op DOTMUL pat_op
--- On ADD reduce production pat_op -> pat_op DOTMUL pat_op
+-- On SUB SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL MUL LONGARROW LESSEQUAL LESS IF GREATEQUAL GREAT EQUAL EQSEMI EQ DOTSUB DOTNOTEQUAL DOTMUL DOTLESSEQUAL DOTLESS DOTGREATEQUAL DOTGREAT DOTEQUAL DOTDIV DOTADD DIV CONS COMMA ARROW APXEQ AND ADD
+--   reduce production pat_op -> pat_op DOTMUL pat_op
 
 State 159:
 ## Known stack suffix:
@@ -3621,40 +3212,8 @@ pat_op -> pat_op . SQUOTE [ SUB SQUOTE SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL 
 -- On EXP shift to state 153
 -- On DOTEXP shift to state 155
 ## Reductions:
--- On SUB reduce production pat_op -> pat_op DOTDIV pat_op
--- On SEMI reduce production pat_op -> pat_op DOTDIV pat_op
--- On RSQUARE reduce production pat_op -> pat_op DOTDIV pat_op
--- On RPAREN reduce production pat_op -> pat_op DOTDIV pat_op
--- On PLUSPLUS reduce production pat_op -> pat_op DOTDIV pat_op
--- On OR reduce production pat_op -> pat_op DOTDIV pat_op
--- On NOTEQUAL reduce production pat_op -> pat_op DOTDIV pat_op
--- On MUL reduce production pat_op -> pat_op DOTDIV pat_op
--- On LONGARROW reduce production pat_op -> pat_op DOTDIV pat_op
--- On LESSEQUAL reduce production pat_op -> pat_op DOTDIV pat_op
--- On LESS reduce production pat_op -> pat_op DOTDIV pat_op
--- On IF reduce production pat_op -> pat_op DOTDIV pat_op
--- On GREATEQUAL reduce production pat_op -> pat_op DOTDIV pat_op
--- On GREAT reduce production pat_op -> pat_op DOTDIV pat_op
--- On EQUAL reduce production pat_op -> pat_op DOTDIV pat_op
--- On EQSEMI reduce production pat_op -> pat_op DOTDIV pat_op
--- On EQ reduce production pat_op -> pat_op DOTDIV pat_op
--- On DOTSUB reduce production pat_op -> pat_op DOTDIV pat_op
--- On DOTNOTEQUAL reduce production pat_op -> pat_op DOTDIV pat_op
--- On DOTMUL reduce production pat_op -> pat_op DOTDIV pat_op
--- On DOTLESSEQUAL reduce production pat_op -> pat_op DOTDIV pat_op
--- On DOTLESS reduce production pat_op -> pat_op DOTDIV pat_op
--- On DOTGREATEQUAL reduce production pat_op -> pat_op DOTDIV pat_op
--- On DOTGREAT reduce production pat_op -> pat_op DOTDIV pat_op
--- On DOTEQUAL reduce production pat_op -> pat_op DOTDIV pat_op
--- On DOTDIV reduce production pat_op -> pat_op DOTDIV pat_op
--- On DOTADD reduce production pat_op -> pat_op DOTDIV pat_op
--- On DIV reduce production pat_op -> pat_op DOTDIV pat_op
--- On CONS reduce production pat_op -> pat_op DOTDIV pat_op
--- On COMMA reduce production pat_op -> pat_op DOTDIV pat_op
--- On ARROW reduce production pat_op -> pat_op DOTDIV pat_op
--- On APXEQ reduce production pat_op -> pat_op DOTDIV pat_op
--- On AND reduce production pat_op -> pat_op DOTDIV pat_op
--- On ADD reduce production pat_op -> pat_op DOTDIV pat_op
+-- On SUB SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL MUL LONGARROW LESSEQUAL LESS IF GREATEQUAL GREAT EQUAL EQSEMI EQ DOTSUB DOTNOTEQUAL DOTMUL DOTLESSEQUAL DOTLESS DOTGREATEQUAL DOTGREAT DOTEQUAL DOTDIV DOTADD DIV CONS COMMA ARROW APXEQ AND ADD
+--   reduce production pat_op -> pat_op DOTDIV pat_op
 
 State 161:
 ## Known stack suffix:
@@ -3725,40 +3284,8 @@ pat_op -> pat_op . SQUOTE [ SUB SQUOTE SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL 
 -- On EXP shift to state 153
 -- On DOTEXP shift to state 155
 ## Reductions:
--- On SUB reduce production pat_op -> pat_op DIV pat_op
--- On SEMI reduce production pat_op -> pat_op DIV pat_op
--- On RSQUARE reduce production pat_op -> pat_op DIV pat_op
--- On RPAREN reduce production pat_op -> pat_op DIV pat_op
--- On PLUSPLUS reduce production pat_op -> pat_op DIV pat_op
--- On OR reduce production pat_op -> pat_op DIV pat_op
--- On NOTEQUAL reduce production pat_op -> pat_op DIV pat_op
--- On MUL reduce production pat_op -> pat_op DIV pat_op
--- On LONGARROW reduce production pat_op -> pat_op DIV pat_op
--- On LESSEQUAL reduce production pat_op -> pat_op DIV pat_op
--- On LESS reduce production pat_op -> pat_op DIV pat_op
--- On IF reduce production pat_op -> pat_op DIV pat_op
--- On GREATEQUAL reduce production pat_op -> pat_op DIV pat_op
--- On GREAT reduce production pat_op -> pat_op DIV pat_op
--- On EQUAL reduce production pat_op -> pat_op DIV pat_op
--- On EQSEMI reduce production pat_op -> pat_op DIV pat_op
--- On EQ reduce production pat_op -> pat_op DIV pat_op
--- On DOTSUB reduce production pat_op -> pat_op DIV pat_op
--- On DOTNOTEQUAL reduce production pat_op -> pat_op DIV pat_op
--- On DOTMUL reduce production pat_op -> pat_op DIV pat_op
--- On DOTLESSEQUAL reduce production pat_op -> pat_op DIV pat_op
--- On DOTLESS reduce production pat_op -> pat_op DIV pat_op
--- On DOTGREATEQUAL reduce production pat_op -> pat_op DIV pat_op
--- On DOTGREAT reduce production pat_op -> pat_op DIV pat_op
--- On DOTEQUAL reduce production pat_op -> pat_op DIV pat_op
--- On DOTDIV reduce production pat_op -> pat_op DIV pat_op
--- On DOTADD reduce production pat_op -> pat_op DIV pat_op
--- On DIV reduce production pat_op -> pat_op DIV pat_op
--- On CONS reduce production pat_op -> pat_op DIV pat_op
--- On COMMA reduce production pat_op -> pat_op DIV pat_op
--- On ARROW reduce production pat_op -> pat_op DIV pat_op
--- On APXEQ reduce production pat_op -> pat_op DIV pat_op
--- On AND reduce production pat_op -> pat_op DIV pat_op
--- On ADD reduce production pat_op -> pat_op DIV pat_op
+-- On SUB SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL MUL LONGARROW LESSEQUAL LESS IF GREATEQUAL GREAT EQUAL EQSEMI EQ DOTSUB DOTNOTEQUAL DOTMUL DOTLESSEQUAL DOTLESS DOTGREATEQUAL DOTGREAT DOTEQUAL DOTDIV DOTADD DIV CONS COMMA ARROW APXEQ AND ADD
+--   reduce production pat_op -> pat_op DIV pat_op
 
 State 163:
 ## Known stack suffix:
@@ -3855,14 +3382,8 @@ pat_op -> pat_op . SQUOTE [ SUB SQUOTE SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL 
 -- On AND shift to state 205
 -- On ADD shift to state 175
 ## Reductions:
--- On SEMI reduce production pat_op -> pat_op SEMI pat_op
--- On RSQUARE reduce production pat_op -> pat_op SEMI pat_op
--- On RPAREN reduce production pat_op -> pat_op SEMI pat_op
--- On IF reduce production pat_op -> pat_op SEMI pat_op
--- On EQSEMI reduce production pat_op -> pat_op SEMI pat_op
--- On CONS reduce production pat_op -> pat_op SEMI pat_op
--- On COMMA reduce production pat_op -> pat_op SEMI pat_op
--- On ARROW reduce production pat_op -> pat_op SEMI pat_op
+-- On SEMI RSQUARE RPAREN IF EQSEMI CONS COMMA ARROW
+--   reduce production pat_op -> pat_op SEMI pat_op
 
 State 165:
 ## Known stack suffix:
@@ -3954,19 +3475,8 @@ pat_op -> pat_op . SQUOTE [ SUB SQUOTE SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL 
 -- On DIV shift to state 161
 -- On ADD shift to state 175
 ## Reductions:
--- On SEMI reduce production pat_op -> pat_op PLUSPLUS pat_op
--- On RSQUARE reduce production pat_op -> pat_op PLUSPLUS pat_op
--- On RPAREN reduce production pat_op -> pat_op PLUSPLUS pat_op
--- On PLUSPLUS reduce production pat_op -> pat_op PLUSPLUS pat_op
--- On OR reduce production pat_op -> pat_op PLUSPLUS pat_op
--- On IF reduce production pat_op -> pat_op PLUSPLUS pat_op
--- On EQSEMI reduce production pat_op -> pat_op PLUSPLUS pat_op
--- On EQ reduce production pat_op -> pat_op PLUSPLUS pat_op
--- On CONS reduce production pat_op -> pat_op PLUSPLUS pat_op
--- On COMMA reduce production pat_op -> pat_op PLUSPLUS pat_op
--- On ARROW reduce production pat_op -> pat_op PLUSPLUS pat_op
--- On APXEQ reduce production pat_op -> pat_op PLUSPLUS pat_op
--- On AND reduce production pat_op -> pat_op PLUSPLUS pat_op
+-- On SEMI RSQUARE RPAREN PLUSPLUS OR IF EQSEMI EQ CONS COMMA ARROW APXEQ AND
+--   reduce production pat_op -> pat_op PLUSPLUS pat_op
 
 State 167:
 ## Known stack suffix:
@@ -4051,26 +3561,8 @@ pat_op -> pat_op . SQUOTE [ SUB SQUOTE SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL 
 -- On DIV shift to state 161
 -- On ADD shift to state 175
 ## Reductions:
--- On SEMI reduce production pat_op -> pat_op NOTEQUAL pat_op
--- On RSQUARE reduce production pat_op -> pat_op NOTEQUAL pat_op
--- On RPAREN reduce production pat_op -> pat_op NOTEQUAL pat_op
--- On PLUSPLUS reduce production pat_op -> pat_op NOTEQUAL pat_op
--- On OR reduce production pat_op -> pat_op NOTEQUAL pat_op
--- On NOTEQUAL reduce production pat_op -> pat_op NOTEQUAL pat_op
--- On LONGARROW reduce production pat_op -> pat_op NOTEQUAL pat_op
--- On LESSEQUAL reduce production pat_op -> pat_op NOTEQUAL pat_op
--- On LESS reduce production pat_op -> pat_op NOTEQUAL pat_op
--- On IF reduce production pat_op -> pat_op NOTEQUAL pat_op
--- On GREATEQUAL reduce production pat_op -> pat_op NOTEQUAL pat_op
--- On GREAT reduce production pat_op -> pat_op NOTEQUAL pat_op
--- On EQUAL reduce production pat_op -> pat_op NOTEQUAL pat_op
--- On EQSEMI reduce production pat_op -> pat_op NOTEQUAL pat_op
--- On EQ reduce production pat_op -> pat_op NOTEQUAL pat_op
--- On CONS reduce production pat_op -> pat_op NOTEQUAL pat_op
--- On COMMA reduce production pat_op -> pat_op NOTEQUAL pat_op
--- On ARROW reduce production pat_op -> pat_op NOTEQUAL pat_op
--- On APXEQ reduce production pat_op -> pat_op NOTEQUAL pat_op
--- On AND reduce production pat_op -> pat_op NOTEQUAL pat_op
+-- On SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL LONGARROW LESSEQUAL LESS IF GREATEQUAL GREAT EQUAL EQSEMI EQ CONS COMMA ARROW APXEQ AND
+--   reduce production pat_op -> pat_op NOTEQUAL pat_op
 
 State 169:
 ## Known stack suffix:
@@ -4145,36 +3637,8 @@ pat_op -> pat_op . SQUOTE [ SUB SQUOTE SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL 
 -- On DOTDIV shift to state 159
 -- On DIV shift to state 161
 ## Reductions:
--- On SUB reduce production pat_op -> pat_op DOTSUB pat_op
--- On SEMI reduce production pat_op -> pat_op DOTSUB pat_op
--- On RSQUARE reduce production pat_op -> pat_op DOTSUB pat_op
--- On RPAREN reduce production pat_op -> pat_op DOTSUB pat_op
--- On PLUSPLUS reduce production pat_op -> pat_op DOTSUB pat_op
--- On OR reduce production pat_op -> pat_op DOTSUB pat_op
--- On NOTEQUAL reduce production pat_op -> pat_op DOTSUB pat_op
--- On LONGARROW reduce production pat_op -> pat_op DOTSUB pat_op
--- On LESSEQUAL reduce production pat_op -> pat_op DOTSUB pat_op
--- On LESS reduce production pat_op -> pat_op DOTSUB pat_op
--- On IF reduce production pat_op -> pat_op DOTSUB pat_op
--- On GREATEQUAL reduce production pat_op -> pat_op DOTSUB pat_op
--- On GREAT reduce production pat_op -> pat_op DOTSUB pat_op
--- On EQUAL reduce production pat_op -> pat_op DOTSUB pat_op
--- On EQSEMI reduce production pat_op -> pat_op DOTSUB pat_op
--- On EQ reduce production pat_op -> pat_op DOTSUB pat_op
--- On DOTSUB reduce production pat_op -> pat_op DOTSUB pat_op
--- On DOTNOTEQUAL reduce production pat_op -> pat_op DOTSUB pat_op
--- On DOTLESSEQUAL reduce production pat_op -> pat_op DOTSUB pat_op
--- On DOTLESS reduce production pat_op -> pat_op DOTSUB pat_op
--- On DOTGREATEQUAL reduce production pat_op -> pat_op DOTSUB pat_op
--- On DOTGREAT reduce production pat_op -> pat_op DOTSUB pat_op
--- On DOTEQUAL reduce production pat_op -> pat_op DOTSUB pat_op
--- On DOTADD reduce production pat_op -> pat_op DOTSUB pat_op
--- On CONS reduce production pat_op -> pat_op DOTSUB pat_op
--- On COMMA reduce production pat_op -> pat_op DOTSUB pat_op
--- On ARROW reduce production pat_op -> pat_op DOTSUB pat_op
--- On APXEQ reduce production pat_op -> pat_op DOTSUB pat_op
--- On AND reduce production pat_op -> pat_op DOTSUB pat_op
--- On ADD reduce production pat_op -> pat_op DOTSUB pat_op
+-- On SUB SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL LONGARROW LESSEQUAL LESS IF GREATEQUAL GREAT EQUAL EQSEMI EQ DOTSUB DOTNOTEQUAL DOTLESSEQUAL DOTLESS DOTGREATEQUAL DOTGREAT DOTEQUAL DOTADD CONS COMMA ARROW APXEQ AND ADD
+--   reduce production pat_op -> pat_op DOTSUB pat_op
 
 State 171:
 ## Known stack suffix:
@@ -4253,32 +3717,8 @@ pat_op -> pat_op . SQUOTE [ SUB SQUOTE SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL 
 -- On DIV shift to state 161
 -- On ADD shift to state 175
 ## Reductions:
--- On SEMI reduce production pat_op -> pat_op DOTNOTEQUAL pat_op
--- On RSQUARE reduce production pat_op -> pat_op DOTNOTEQUAL pat_op
--- On RPAREN reduce production pat_op -> pat_op DOTNOTEQUAL pat_op
--- On PLUSPLUS reduce production pat_op -> pat_op DOTNOTEQUAL pat_op
--- On OR reduce production pat_op -> pat_op DOTNOTEQUAL pat_op
--- On NOTEQUAL reduce production pat_op -> pat_op DOTNOTEQUAL pat_op
--- On LONGARROW reduce production pat_op -> pat_op DOTNOTEQUAL pat_op
--- On LESSEQUAL reduce production pat_op -> pat_op DOTNOTEQUAL pat_op
--- On LESS reduce production pat_op -> pat_op DOTNOTEQUAL pat_op
--- On IF reduce production pat_op -> pat_op DOTNOTEQUAL pat_op
--- On GREATEQUAL reduce production pat_op -> pat_op DOTNOTEQUAL pat_op
--- On GREAT reduce production pat_op -> pat_op DOTNOTEQUAL pat_op
--- On EQUAL reduce production pat_op -> pat_op DOTNOTEQUAL pat_op
--- On EQSEMI reduce production pat_op -> pat_op DOTNOTEQUAL pat_op
--- On EQ reduce production pat_op -> pat_op DOTNOTEQUAL pat_op
--- On DOTNOTEQUAL reduce production pat_op -> pat_op DOTNOTEQUAL pat_op
--- On DOTLESSEQUAL reduce production pat_op -> pat_op DOTNOTEQUAL pat_op
--- On DOTLESS reduce production pat_op -> pat_op DOTNOTEQUAL pat_op
--- On DOTGREATEQUAL reduce production pat_op -> pat_op DOTNOTEQUAL pat_op
--- On DOTGREAT reduce production pat_op -> pat_op DOTNOTEQUAL pat_op
--- On DOTEQUAL reduce production pat_op -> pat_op DOTNOTEQUAL pat_op
--- On CONS reduce production pat_op -> pat_op DOTNOTEQUAL pat_op
--- On COMMA reduce production pat_op -> pat_op DOTNOTEQUAL pat_op
--- On ARROW reduce production pat_op -> pat_op DOTNOTEQUAL pat_op
--- On APXEQ reduce production pat_op -> pat_op DOTNOTEQUAL pat_op
--- On AND reduce production pat_op -> pat_op DOTNOTEQUAL pat_op
+-- On SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL LONGARROW LESSEQUAL LESS IF GREATEQUAL GREAT EQUAL EQSEMI EQ DOTNOTEQUAL DOTLESSEQUAL DOTLESS DOTGREATEQUAL DOTGREAT DOTEQUAL CONS COMMA ARROW APXEQ AND
+--   reduce production pat_op -> pat_op DOTNOTEQUAL pat_op
 
 State 173:
 ## Known stack suffix:
@@ -4353,36 +3793,8 @@ pat_op -> pat_op . SQUOTE [ SUB SQUOTE SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL 
 -- On DOTDIV shift to state 159
 -- On DIV shift to state 161
 ## Reductions:
--- On SUB reduce production pat_op -> pat_op DOTADD pat_op
--- On SEMI reduce production pat_op -> pat_op DOTADD pat_op
--- On RSQUARE reduce production pat_op -> pat_op DOTADD pat_op
--- On RPAREN reduce production pat_op -> pat_op DOTADD pat_op
--- On PLUSPLUS reduce production pat_op -> pat_op DOTADD pat_op
--- On OR reduce production pat_op -> pat_op DOTADD pat_op
--- On NOTEQUAL reduce production pat_op -> pat_op DOTADD pat_op
--- On LONGARROW reduce production pat_op -> pat_op DOTADD pat_op
--- On LESSEQUAL reduce production pat_op -> pat_op DOTADD pat_op
--- On LESS reduce production pat_op -> pat_op DOTADD pat_op
--- On IF reduce production pat_op -> pat_op DOTADD pat_op
--- On GREATEQUAL reduce production pat_op -> pat_op DOTADD pat_op
--- On GREAT reduce production pat_op -> pat_op DOTADD pat_op
--- On EQUAL reduce production pat_op -> pat_op DOTADD pat_op
--- On EQSEMI reduce production pat_op -> pat_op DOTADD pat_op
--- On EQ reduce production pat_op -> pat_op DOTADD pat_op
--- On DOTSUB reduce production pat_op -> pat_op DOTADD pat_op
--- On DOTNOTEQUAL reduce production pat_op -> pat_op DOTADD pat_op
--- On DOTLESSEQUAL reduce production pat_op -> pat_op DOTADD pat_op
--- On DOTLESS reduce production pat_op -> pat_op DOTADD pat_op
--- On DOTGREATEQUAL reduce production pat_op -> pat_op DOTADD pat_op
--- On DOTGREAT reduce production pat_op -> pat_op DOTADD pat_op
--- On DOTEQUAL reduce production pat_op -> pat_op DOTADD pat_op
--- On DOTADD reduce production pat_op -> pat_op DOTADD pat_op
--- On CONS reduce production pat_op -> pat_op DOTADD pat_op
--- On COMMA reduce production pat_op -> pat_op DOTADD pat_op
--- On ARROW reduce production pat_op -> pat_op DOTADD pat_op
--- On APXEQ reduce production pat_op -> pat_op DOTADD pat_op
--- On AND reduce production pat_op -> pat_op DOTADD pat_op
--- On ADD reduce production pat_op -> pat_op DOTADD pat_op
+-- On SUB SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL LONGARROW LESSEQUAL LESS IF GREATEQUAL GREAT EQUAL EQSEMI EQ DOTSUB DOTNOTEQUAL DOTLESSEQUAL DOTLESS DOTGREATEQUAL DOTGREAT DOTEQUAL DOTADD CONS COMMA ARROW APXEQ AND ADD
+--   reduce production pat_op -> pat_op DOTADD pat_op
 
 State 175:
 ## Known stack suffix:
@@ -4457,36 +3869,8 @@ pat_op -> pat_op . SQUOTE [ SUB SQUOTE SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL 
 -- On DOTDIV shift to state 159
 -- On DIV shift to state 161
 ## Reductions:
--- On SUB reduce production pat_op -> pat_op ADD pat_op
--- On SEMI reduce production pat_op -> pat_op ADD pat_op
--- On RSQUARE reduce production pat_op -> pat_op ADD pat_op
--- On RPAREN reduce production pat_op -> pat_op ADD pat_op
--- On PLUSPLUS reduce production pat_op -> pat_op ADD pat_op
--- On OR reduce production pat_op -> pat_op ADD pat_op
--- On NOTEQUAL reduce production pat_op -> pat_op ADD pat_op
--- On LONGARROW reduce production pat_op -> pat_op ADD pat_op
--- On LESSEQUAL reduce production pat_op -> pat_op ADD pat_op
--- On LESS reduce production pat_op -> pat_op ADD pat_op
--- On IF reduce production pat_op -> pat_op ADD pat_op
--- On GREATEQUAL reduce production pat_op -> pat_op ADD pat_op
--- On GREAT reduce production pat_op -> pat_op ADD pat_op
--- On EQUAL reduce production pat_op -> pat_op ADD pat_op
--- On EQSEMI reduce production pat_op -> pat_op ADD pat_op
--- On EQ reduce production pat_op -> pat_op ADD pat_op
--- On DOTSUB reduce production pat_op -> pat_op ADD pat_op
--- On DOTNOTEQUAL reduce production pat_op -> pat_op ADD pat_op
--- On DOTLESSEQUAL reduce production pat_op -> pat_op ADD pat_op
--- On DOTLESS reduce production pat_op -> pat_op ADD pat_op
--- On DOTGREATEQUAL reduce production pat_op -> pat_op ADD pat_op
--- On DOTGREAT reduce production pat_op -> pat_op ADD pat_op
--- On DOTEQUAL reduce production pat_op -> pat_op ADD pat_op
--- On DOTADD reduce production pat_op -> pat_op ADD pat_op
--- On CONS reduce production pat_op -> pat_op ADD pat_op
--- On COMMA reduce production pat_op -> pat_op ADD pat_op
--- On ARROW reduce production pat_op -> pat_op ADD pat_op
--- On APXEQ reduce production pat_op -> pat_op ADD pat_op
--- On AND reduce production pat_op -> pat_op ADD pat_op
--- On ADD reduce production pat_op -> pat_op ADD pat_op
+-- On SUB SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL LONGARROW LESSEQUAL LESS IF GREATEQUAL GREAT EQUAL EQSEMI EQ DOTSUB DOTNOTEQUAL DOTLESSEQUAL DOTLESS DOTGREATEQUAL DOTGREAT DOTEQUAL DOTADD CONS COMMA ARROW APXEQ AND ADD
+--   reduce production pat_op -> pat_op ADD pat_op
 
 State 177:
 ## Known stack suffix:
@@ -4565,32 +3949,8 @@ pat_op -> pat_op . SQUOTE [ SUB SQUOTE SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL 
 -- On DIV shift to state 161
 -- On ADD shift to state 175
 ## Reductions:
--- On SEMI reduce production pat_op -> pat_op DOTLESSEQUAL pat_op
--- On RSQUARE reduce production pat_op -> pat_op DOTLESSEQUAL pat_op
--- On RPAREN reduce production pat_op -> pat_op DOTLESSEQUAL pat_op
--- On PLUSPLUS reduce production pat_op -> pat_op DOTLESSEQUAL pat_op
--- On OR reduce production pat_op -> pat_op DOTLESSEQUAL pat_op
--- On NOTEQUAL reduce production pat_op -> pat_op DOTLESSEQUAL pat_op
--- On LONGARROW reduce production pat_op -> pat_op DOTLESSEQUAL pat_op
--- On LESSEQUAL reduce production pat_op -> pat_op DOTLESSEQUAL pat_op
--- On LESS reduce production pat_op -> pat_op DOTLESSEQUAL pat_op
--- On IF reduce production pat_op -> pat_op DOTLESSEQUAL pat_op
--- On GREATEQUAL reduce production pat_op -> pat_op DOTLESSEQUAL pat_op
--- On GREAT reduce production pat_op -> pat_op DOTLESSEQUAL pat_op
--- On EQUAL reduce production pat_op -> pat_op DOTLESSEQUAL pat_op
--- On EQSEMI reduce production pat_op -> pat_op DOTLESSEQUAL pat_op
--- On EQ reduce production pat_op -> pat_op DOTLESSEQUAL pat_op
--- On DOTNOTEQUAL reduce production pat_op -> pat_op DOTLESSEQUAL pat_op
--- On DOTLESSEQUAL reduce production pat_op -> pat_op DOTLESSEQUAL pat_op
--- On DOTLESS reduce production pat_op -> pat_op DOTLESSEQUAL pat_op
--- On DOTGREATEQUAL reduce production pat_op -> pat_op DOTLESSEQUAL pat_op
--- On DOTGREAT reduce production pat_op -> pat_op DOTLESSEQUAL pat_op
--- On DOTEQUAL reduce production pat_op -> pat_op DOTLESSEQUAL pat_op
--- On CONS reduce production pat_op -> pat_op DOTLESSEQUAL pat_op
--- On COMMA reduce production pat_op -> pat_op DOTLESSEQUAL pat_op
--- On ARROW reduce production pat_op -> pat_op DOTLESSEQUAL pat_op
--- On APXEQ reduce production pat_op -> pat_op DOTLESSEQUAL pat_op
--- On AND reduce production pat_op -> pat_op DOTLESSEQUAL pat_op
+-- On SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL LONGARROW LESSEQUAL LESS IF GREATEQUAL GREAT EQUAL EQSEMI EQ DOTNOTEQUAL DOTLESSEQUAL DOTLESS DOTGREATEQUAL DOTGREAT DOTEQUAL CONS COMMA ARROW APXEQ AND
+--   reduce production pat_op -> pat_op DOTLESSEQUAL pat_op
 
 State 179:
 ## Known stack suffix:
@@ -4669,32 +4029,8 @@ pat_op -> pat_op . SQUOTE [ SUB SQUOTE SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL 
 -- On DIV shift to state 161
 -- On ADD shift to state 175
 ## Reductions:
--- On SEMI reduce production pat_op -> pat_op DOTLESS pat_op
--- On RSQUARE reduce production pat_op -> pat_op DOTLESS pat_op
--- On RPAREN reduce production pat_op -> pat_op DOTLESS pat_op
--- On PLUSPLUS reduce production pat_op -> pat_op DOTLESS pat_op
--- On OR reduce production pat_op -> pat_op DOTLESS pat_op
--- On NOTEQUAL reduce production pat_op -> pat_op DOTLESS pat_op
--- On LONGARROW reduce production pat_op -> pat_op DOTLESS pat_op
--- On LESSEQUAL reduce production pat_op -> pat_op DOTLESS pat_op
--- On LESS reduce production pat_op -> pat_op DOTLESS pat_op
--- On IF reduce production pat_op -> pat_op DOTLESS pat_op
--- On GREATEQUAL reduce production pat_op -> pat_op DOTLESS pat_op
--- On GREAT reduce production pat_op -> pat_op DOTLESS pat_op
--- On EQUAL reduce production pat_op -> pat_op DOTLESS pat_op
--- On EQSEMI reduce production pat_op -> pat_op DOTLESS pat_op
--- On EQ reduce production pat_op -> pat_op DOTLESS pat_op
--- On DOTNOTEQUAL reduce production pat_op -> pat_op DOTLESS pat_op
--- On DOTLESSEQUAL reduce production pat_op -> pat_op DOTLESS pat_op
--- On DOTLESS reduce production pat_op -> pat_op DOTLESS pat_op
--- On DOTGREATEQUAL reduce production pat_op -> pat_op DOTLESS pat_op
--- On DOTGREAT reduce production pat_op -> pat_op DOTLESS pat_op
--- On DOTEQUAL reduce production pat_op -> pat_op DOTLESS pat_op
--- On CONS reduce production pat_op -> pat_op DOTLESS pat_op
--- On COMMA reduce production pat_op -> pat_op DOTLESS pat_op
--- On ARROW reduce production pat_op -> pat_op DOTLESS pat_op
--- On APXEQ reduce production pat_op -> pat_op DOTLESS pat_op
--- On AND reduce production pat_op -> pat_op DOTLESS pat_op
+-- On SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL LONGARROW LESSEQUAL LESS IF GREATEQUAL GREAT EQUAL EQSEMI EQ DOTNOTEQUAL DOTLESSEQUAL DOTLESS DOTGREATEQUAL DOTGREAT DOTEQUAL CONS COMMA ARROW APXEQ AND
+--   reduce production pat_op -> pat_op DOTLESS pat_op
 
 State 181:
 ## Known stack suffix:
@@ -4773,32 +4109,8 @@ pat_op -> pat_op . SQUOTE [ SUB SQUOTE SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL 
 -- On DIV shift to state 161
 -- On ADD shift to state 175
 ## Reductions:
--- On SEMI reduce production pat_op -> pat_op DOTGREATEQUAL pat_op
--- On RSQUARE reduce production pat_op -> pat_op DOTGREATEQUAL pat_op
--- On RPAREN reduce production pat_op -> pat_op DOTGREATEQUAL pat_op
--- On PLUSPLUS reduce production pat_op -> pat_op DOTGREATEQUAL pat_op
--- On OR reduce production pat_op -> pat_op DOTGREATEQUAL pat_op
--- On NOTEQUAL reduce production pat_op -> pat_op DOTGREATEQUAL pat_op
--- On LONGARROW reduce production pat_op -> pat_op DOTGREATEQUAL pat_op
--- On LESSEQUAL reduce production pat_op -> pat_op DOTGREATEQUAL pat_op
--- On LESS reduce production pat_op -> pat_op DOTGREATEQUAL pat_op
--- On IF reduce production pat_op -> pat_op DOTGREATEQUAL pat_op
--- On GREATEQUAL reduce production pat_op -> pat_op DOTGREATEQUAL pat_op
--- On GREAT reduce production pat_op -> pat_op DOTGREATEQUAL pat_op
--- On EQUAL reduce production pat_op -> pat_op DOTGREATEQUAL pat_op
--- On EQSEMI reduce production pat_op -> pat_op DOTGREATEQUAL pat_op
--- On EQ reduce production pat_op -> pat_op DOTGREATEQUAL pat_op
--- On DOTNOTEQUAL reduce production pat_op -> pat_op DOTGREATEQUAL pat_op
--- On DOTLESSEQUAL reduce production pat_op -> pat_op DOTGREATEQUAL pat_op
--- On DOTLESS reduce production pat_op -> pat_op DOTGREATEQUAL pat_op
--- On DOTGREATEQUAL reduce production pat_op -> pat_op DOTGREATEQUAL pat_op
--- On DOTGREAT reduce production pat_op -> pat_op DOTGREATEQUAL pat_op
--- On DOTEQUAL reduce production pat_op -> pat_op DOTGREATEQUAL pat_op
--- On CONS reduce production pat_op -> pat_op DOTGREATEQUAL pat_op
--- On COMMA reduce production pat_op -> pat_op DOTGREATEQUAL pat_op
--- On ARROW reduce production pat_op -> pat_op DOTGREATEQUAL pat_op
--- On APXEQ reduce production pat_op -> pat_op DOTGREATEQUAL pat_op
--- On AND reduce production pat_op -> pat_op DOTGREATEQUAL pat_op
+-- On SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL LONGARROW LESSEQUAL LESS IF GREATEQUAL GREAT EQUAL EQSEMI EQ DOTNOTEQUAL DOTLESSEQUAL DOTLESS DOTGREATEQUAL DOTGREAT DOTEQUAL CONS COMMA ARROW APXEQ AND
+--   reduce production pat_op -> pat_op DOTGREATEQUAL pat_op
 
 State 183:
 ## Known stack suffix:
@@ -4877,32 +4189,8 @@ pat_op -> pat_op . SQUOTE [ SUB SQUOTE SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL 
 -- On DIV shift to state 161
 -- On ADD shift to state 175
 ## Reductions:
--- On SEMI reduce production pat_op -> pat_op DOTGREAT pat_op
--- On RSQUARE reduce production pat_op -> pat_op DOTGREAT pat_op
--- On RPAREN reduce production pat_op -> pat_op DOTGREAT pat_op
--- On PLUSPLUS reduce production pat_op -> pat_op DOTGREAT pat_op
--- On OR reduce production pat_op -> pat_op DOTGREAT pat_op
--- On NOTEQUAL reduce production pat_op -> pat_op DOTGREAT pat_op
--- On LONGARROW reduce production pat_op -> pat_op DOTGREAT pat_op
--- On LESSEQUAL reduce production pat_op -> pat_op DOTGREAT pat_op
--- On LESS reduce production pat_op -> pat_op DOTGREAT pat_op
--- On IF reduce production pat_op -> pat_op DOTGREAT pat_op
--- On GREATEQUAL reduce production pat_op -> pat_op DOTGREAT pat_op
--- On GREAT reduce production pat_op -> pat_op DOTGREAT pat_op
--- On EQUAL reduce production pat_op -> pat_op DOTGREAT pat_op
--- On EQSEMI reduce production pat_op -> pat_op DOTGREAT pat_op
--- On EQ reduce production pat_op -> pat_op DOTGREAT pat_op
--- On DOTNOTEQUAL reduce production pat_op -> pat_op DOTGREAT pat_op
--- On DOTLESSEQUAL reduce production pat_op -> pat_op DOTGREAT pat_op
--- On DOTLESS reduce production pat_op -> pat_op DOTGREAT pat_op
--- On DOTGREATEQUAL reduce production pat_op -> pat_op DOTGREAT pat_op
--- On DOTGREAT reduce production pat_op -> pat_op DOTGREAT pat_op
--- On DOTEQUAL reduce production pat_op -> pat_op DOTGREAT pat_op
--- On CONS reduce production pat_op -> pat_op DOTGREAT pat_op
--- On COMMA reduce production pat_op -> pat_op DOTGREAT pat_op
--- On ARROW reduce production pat_op -> pat_op DOTGREAT pat_op
--- On APXEQ reduce production pat_op -> pat_op DOTGREAT pat_op
--- On AND reduce production pat_op -> pat_op DOTGREAT pat_op
+-- On SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL LONGARROW LESSEQUAL LESS IF GREATEQUAL GREAT EQUAL EQSEMI EQ DOTNOTEQUAL DOTLESSEQUAL DOTLESS DOTGREATEQUAL DOTGREAT DOTEQUAL CONS COMMA ARROW APXEQ AND
+--   reduce production pat_op -> pat_op DOTGREAT pat_op
 
 State 185:
 ## Known stack suffix:
@@ -4981,32 +4269,8 @@ pat_op -> pat_op . SQUOTE [ SUB SQUOTE SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL 
 -- On DIV shift to state 161
 -- On ADD shift to state 175
 ## Reductions:
--- On SEMI reduce production pat_op -> pat_op DOTEQUAL pat_op
--- On RSQUARE reduce production pat_op -> pat_op DOTEQUAL pat_op
--- On RPAREN reduce production pat_op -> pat_op DOTEQUAL pat_op
--- On PLUSPLUS reduce production pat_op -> pat_op DOTEQUAL pat_op
--- On OR reduce production pat_op -> pat_op DOTEQUAL pat_op
--- On NOTEQUAL reduce production pat_op -> pat_op DOTEQUAL pat_op
--- On LONGARROW reduce production pat_op -> pat_op DOTEQUAL pat_op
--- On LESSEQUAL reduce production pat_op -> pat_op DOTEQUAL pat_op
--- On LESS reduce production pat_op -> pat_op DOTEQUAL pat_op
--- On IF reduce production pat_op -> pat_op DOTEQUAL pat_op
--- On GREATEQUAL reduce production pat_op -> pat_op DOTEQUAL pat_op
--- On GREAT reduce production pat_op -> pat_op DOTEQUAL pat_op
--- On EQUAL reduce production pat_op -> pat_op DOTEQUAL pat_op
--- On EQSEMI reduce production pat_op -> pat_op DOTEQUAL pat_op
--- On EQ reduce production pat_op -> pat_op DOTEQUAL pat_op
--- On DOTNOTEQUAL reduce production pat_op -> pat_op DOTEQUAL pat_op
--- On DOTLESSEQUAL reduce production pat_op -> pat_op DOTEQUAL pat_op
--- On DOTLESS reduce production pat_op -> pat_op DOTEQUAL pat_op
--- On DOTGREATEQUAL reduce production pat_op -> pat_op DOTEQUAL pat_op
--- On DOTGREAT reduce production pat_op -> pat_op DOTEQUAL pat_op
--- On DOTEQUAL reduce production pat_op -> pat_op DOTEQUAL pat_op
--- On CONS reduce production pat_op -> pat_op DOTEQUAL pat_op
--- On COMMA reduce production pat_op -> pat_op DOTEQUAL pat_op
--- On ARROW reduce production pat_op -> pat_op DOTEQUAL pat_op
--- On APXEQ reduce production pat_op -> pat_op DOTEQUAL pat_op
--- On AND reduce production pat_op -> pat_op DOTEQUAL pat_op
+-- On SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL LONGARROW LESSEQUAL LESS IF GREATEQUAL GREAT EQUAL EQSEMI EQ DOTNOTEQUAL DOTLESSEQUAL DOTLESS DOTGREATEQUAL DOTGREAT DOTEQUAL CONS COMMA ARROW APXEQ AND
+--   reduce production pat_op -> pat_op DOTEQUAL pat_op
 
 State 187:
 ## Known stack suffix:
@@ -5091,26 +4355,8 @@ pat_op -> pat_op . SQUOTE [ SUB SQUOTE SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL 
 -- On DIV shift to state 161
 -- On ADD shift to state 175
 ## Reductions:
--- On SEMI reduce production pat_op -> pat_op LONGARROW pat_op
--- On RSQUARE reduce production pat_op -> pat_op LONGARROW pat_op
--- On RPAREN reduce production pat_op -> pat_op LONGARROW pat_op
--- On PLUSPLUS reduce production pat_op -> pat_op LONGARROW pat_op
--- On OR reduce production pat_op -> pat_op LONGARROW pat_op
--- On NOTEQUAL reduce production pat_op -> pat_op LONGARROW pat_op
--- On LONGARROW reduce production pat_op -> pat_op LONGARROW pat_op
--- On LESSEQUAL reduce production pat_op -> pat_op LONGARROW pat_op
--- On LESS reduce production pat_op -> pat_op LONGARROW pat_op
--- On IF reduce production pat_op -> pat_op LONGARROW pat_op
--- On GREATEQUAL reduce production pat_op -> pat_op LONGARROW pat_op
--- On GREAT reduce production pat_op -> pat_op LONGARROW pat_op
--- On EQUAL reduce production pat_op -> pat_op LONGARROW pat_op
--- On EQSEMI reduce production pat_op -> pat_op LONGARROW pat_op
--- On EQ reduce production pat_op -> pat_op LONGARROW pat_op
--- On CONS reduce production pat_op -> pat_op LONGARROW pat_op
--- On COMMA reduce production pat_op -> pat_op LONGARROW pat_op
--- On ARROW reduce production pat_op -> pat_op LONGARROW pat_op
--- On APXEQ reduce production pat_op -> pat_op LONGARROW pat_op
--- On AND reduce production pat_op -> pat_op LONGARROW pat_op
+-- On SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL LONGARROW LESSEQUAL LESS IF GREATEQUAL GREAT EQUAL EQSEMI EQ CONS COMMA ARROW APXEQ AND
+--   reduce production pat_op -> pat_op LONGARROW pat_op
 
 State 189:
 ## Known stack suffix:
@@ -5195,26 +4441,8 @@ pat_op -> pat_op . SQUOTE [ SUB SQUOTE SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL 
 -- On DIV shift to state 161
 -- On ADD shift to state 175
 ## Reductions:
--- On SEMI reduce production pat_op -> pat_op LESSEQUAL pat_op
--- On RSQUARE reduce production pat_op -> pat_op LESSEQUAL pat_op
--- On RPAREN reduce production pat_op -> pat_op LESSEQUAL pat_op
--- On PLUSPLUS reduce production pat_op -> pat_op LESSEQUAL pat_op
--- On OR reduce production pat_op -> pat_op LESSEQUAL pat_op
--- On NOTEQUAL reduce production pat_op -> pat_op LESSEQUAL pat_op
--- On LONGARROW reduce production pat_op -> pat_op LESSEQUAL pat_op
--- On LESSEQUAL reduce production pat_op -> pat_op LESSEQUAL pat_op
--- On LESS reduce production pat_op -> pat_op LESSEQUAL pat_op
--- On IF reduce production pat_op -> pat_op LESSEQUAL pat_op
--- On GREATEQUAL reduce production pat_op -> pat_op LESSEQUAL pat_op
--- On GREAT reduce production pat_op -> pat_op LESSEQUAL pat_op
--- On EQUAL reduce production pat_op -> pat_op LESSEQUAL pat_op
--- On EQSEMI reduce production pat_op -> pat_op LESSEQUAL pat_op
--- On EQ reduce production pat_op -> pat_op LESSEQUAL pat_op
--- On CONS reduce production pat_op -> pat_op LESSEQUAL pat_op
--- On COMMA reduce production pat_op -> pat_op LESSEQUAL pat_op
--- On ARROW reduce production pat_op -> pat_op LESSEQUAL pat_op
--- On APXEQ reduce production pat_op -> pat_op LESSEQUAL pat_op
--- On AND reduce production pat_op -> pat_op LESSEQUAL pat_op
+-- On SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL LONGARROW LESSEQUAL LESS IF GREATEQUAL GREAT EQUAL EQSEMI EQ CONS COMMA ARROW APXEQ AND
+--   reduce production pat_op -> pat_op LESSEQUAL pat_op
 
 State 191:
 ## Known stack suffix:
@@ -5299,26 +4527,8 @@ pat_op -> pat_op . SQUOTE [ SUB SQUOTE SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL 
 -- On DIV shift to state 161
 -- On ADD shift to state 175
 ## Reductions:
--- On SEMI reduce production pat_op -> pat_op LESS pat_op
--- On RSQUARE reduce production pat_op -> pat_op LESS pat_op
--- On RPAREN reduce production pat_op -> pat_op LESS pat_op
--- On PLUSPLUS reduce production pat_op -> pat_op LESS pat_op
--- On OR reduce production pat_op -> pat_op LESS pat_op
--- On NOTEQUAL reduce production pat_op -> pat_op LESS pat_op
--- On LONGARROW reduce production pat_op -> pat_op LESS pat_op
--- On LESSEQUAL reduce production pat_op -> pat_op LESS pat_op
--- On LESS reduce production pat_op -> pat_op LESS pat_op
--- On IF reduce production pat_op -> pat_op LESS pat_op
--- On GREATEQUAL reduce production pat_op -> pat_op LESS pat_op
--- On GREAT reduce production pat_op -> pat_op LESS pat_op
--- On EQUAL reduce production pat_op -> pat_op LESS pat_op
--- On EQSEMI reduce production pat_op -> pat_op LESS pat_op
--- On EQ reduce production pat_op -> pat_op LESS pat_op
--- On CONS reduce production pat_op -> pat_op LESS pat_op
--- On COMMA reduce production pat_op -> pat_op LESS pat_op
--- On ARROW reduce production pat_op -> pat_op LESS pat_op
--- On APXEQ reduce production pat_op -> pat_op LESS pat_op
--- On AND reduce production pat_op -> pat_op LESS pat_op
+-- On SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL LONGARROW LESSEQUAL LESS IF GREATEQUAL GREAT EQUAL EQSEMI EQ CONS COMMA ARROW APXEQ AND
+--   reduce production pat_op -> pat_op LESS pat_op
 
 State 193:
 ## Known stack suffix:
@@ -5403,26 +4613,8 @@ pat_op -> pat_op . SQUOTE [ SUB SQUOTE SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL 
 -- On DIV shift to state 161
 -- On ADD shift to state 175
 ## Reductions:
--- On SEMI reduce production pat_op -> pat_op GREATEQUAL pat_op
--- On RSQUARE reduce production pat_op -> pat_op GREATEQUAL pat_op
--- On RPAREN reduce production pat_op -> pat_op GREATEQUAL pat_op
--- On PLUSPLUS reduce production pat_op -> pat_op GREATEQUAL pat_op
--- On OR reduce production pat_op -> pat_op GREATEQUAL pat_op
--- On NOTEQUAL reduce production pat_op -> pat_op GREATEQUAL pat_op
--- On LONGARROW reduce production pat_op -> pat_op GREATEQUAL pat_op
--- On LESSEQUAL reduce production pat_op -> pat_op GREATEQUAL pat_op
--- On LESS reduce production pat_op -> pat_op GREATEQUAL pat_op
--- On IF reduce production pat_op -> pat_op GREATEQUAL pat_op
--- On GREATEQUAL reduce production pat_op -> pat_op GREATEQUAL pat_op
--- On GREAT reduce production pat_op -> pat_op GREATEQUAL pat_op
--- On EQUAL reduce production pat_op -> pat_op GREATEQUAL pat_op
--- On EQSEMI reduce production pat_op -> pat_op GREATEQUAL pat_op
--- On EQ reduce production pat_op -> pat_op GREATEQUAL pat_op
--- On CONS reduce production pat_op -> pat_op GREATEQUAL pat_op
--- On COMMA reduce production pat_op -> pat_op GREATEQUAL pat_op
--- On ARROW reduce production pat_op -> pat_op GREATEQUAL pat_op
--- On APXEQ reduce production pat_op -> pat_op GREATEQUAL pat_op
--- On AND reduce production pat_op -> pat_op GREATEQUAL pat_op
+-- On SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL LONGARROW LESSEQUAL LESS IF GREATEQUAL GREAT EQUAL EQSEMI EQ CONS COMMA ARROW APXEQ AND
+--   reduce production pat_op -> pat_op GREATEQUAL pat_op
 
 State 195:
 ## Known stack suffix:
@@ -5507,26 +4699,8 @@ pat_op -> pat_op . SQUOTE [ SUB SQUOTE SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL 
 -- On DIV shift to state 161
 -- On ADD shift to state 175
 ## Reductions:
--- On SEMI reduce production pat_op -> pat_op GREAT pat_op
--- On RSQUARE reduce production pat_op -> pat_op GREAT pat_op
--- On RPAREN reduce production pat_op -> pat_op GREAT pat_op
--- On PLUSPLUS reduce production pat_op -> pat_op GREAT pat_op
--- On OR reduce production pat_op -> pat_op GREAT pat_op
--- On NOTEQUAL reduce production pat_op -> pat_op GREAT pat_op
--- On LONGARROW reduce production pat_op -> pat_op GREAT pat_op
--- On LESSEQUAL reduce production pat_op -> pat_op GREAT pat_op
--- On LESS reduce production pat_op -> pat_op GREAT pat_op
--- On IF reduce production pat_op -> pat_op GREAT pat_op
--- On GREATEQUAL reduce production pat_op -> pat_op GREAT pat_op
--- On GREAT reduce production pat_op -> pat_op GREAT pat_op
--- On EQUAL reduce production pat_op -> pat_op GREAT pat_op
--- On EQSEMI reduce production pat_op -> pat_op GREAT pat_op
--- On EQ reduce production pat_op -> pat_op GREAT pat_op
--- On CONS reduce production pat_op -> pat_op GREAT pat_op
--- On COMMA reduce production pat_op -> pat_op GREAT pat_op
--- On ARROW reduce production pat_op -> pat_op GREAT pat_op
--- On APXEQ reduce production pat_op -> pat_op GREAT pat_op
--- On AND reduce production pat_op -> pat_op GREAT pat_op
+-- On SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL LONGARROW LESSEQUAL LESS IF GREATEQUAL GREAT EQUAL EQSEMI EQ CONS COMMA ARROW APXEQ AND
+--   reduce production pat_op -> pat_op GREAT pat_op
 
 State 197:
 ## Known stack suffix:
@@ -5611,26 +4785,8 @@ pat_op -> pat_op . SQUOTE [ SUB SQUOTE SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL 
 -- On DIV shift to state 161
 -- On ADD shift to state 175
 ## Reductions:
--- On SEMI reduce production pat_op -> pat_op EQUAL pat_op
--- On RSQUARE reduce production pat_op -> pat_op EQUAL pat_op
--- On RPAREN reduce production pat_op -> pat_op EQUAL pat_op
--- On PLUSPLUS reduce production pat_op -> pat_op EQUAL pat_op
--- On OR reduce production pat_op -> pat_op EQUAL pat_op
--- On NOTEQUAL reduce production pat_op -> pat_op EQUAL pat_op
--- On LONGARROW reduce production pat_op -> pat_op EQUAL pat_op
--- On LESSEQUAL reduce production pat_op -> pat_op EQUAL pat_op
--- On LESS reduce production pat_op -> pat_op EQUAL pat_op
--- On IF reduce production pat_op -> pat_op EQUAL pat_op
--- On GREATEQUAL reduce production pat_op -> pat_op EQUAL pat_op
--- On GREAT reduce production pat_op -> pat_op EQUAL pat_op
--- On EQUAL reduce production pat_op -> pat_op EQUAL pat_op
--- On EQSEMI reduce production pat_op -> pat_op EQUAL pat_op
--- On EQ reduce production pat_op -> pat_op EQUAL pat_op
--- On CONS reduce production pat_op -> pat_op EQUAL pat_op
--- On COMMA reduce production pat_op -> pat_op EQUAL pat_op
--- On ARROW reduce production pat_op -> pat_op EQUAL pat_op
--- On APXEQ reduce production pat_op -> pat_op EQUAL pat_op
--- On AND reduce production pat_op -> pat_op EQUAL pat_op
+-- On SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL LONGARROW LESSEQUAL LESS IF GREATEQUAL GREAT EQUAL EQSEMI EQ CONS COMMA ARROW APXEQ AND
+--   reduce production pat_op -> pat_op EQUAL pat_op
 
 State 199:
 ## Known stack suffix:
@@ -5726,15 +4882,8 @@ pat_op -> pat_op . SQUOTE [ SUB SQUOTE SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL 
 -- On AND shift to state 205
 -- On ADD shift to state 175
 ## Reductions:
--- On SEMI reduce production pat_op -> pat_op OR pat_op
--- On RSQUARE reduce production pat_op -> pat_op OR pat_op
--- On RPAREN reduce production pat_op -> pat_op OR pat_op
--- On OR reduce production pat_op -> pat_op OR pat_op
--- On IF reduce production pat_op -> pat_op OR pat_op
--- On EQSEMI reduce production pat_op -> pat_op OR pat_op
--- On CONS reduce production pat_op -> pat_op OR pat_op
--- On COMMA reduce production pat_op -> pat_op OR pat_op
--- On ARROW reduce production pat_op -> pat_op OR pat_op
+-- On SEMI RSQUARE RPAREN OR IF EQSEMI CONS COMMA ARROW
+--   reduce production pat_op -> pat_op OR pat_op
 
 State 201:
 ## Known stack suffix:
@@ -5826,19 +4975,8 @@ pat_op -> pat_op . SQUOTE [ SUB SQUOTE SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL 
 -- On DIV shift to state 161
 -- On ADD shift to state 175
 ## Reductions:
--- On SEMI reduce production pat_op -> pat_op EQ pat_op
--- On RSQUARE reduce production pat_op -> pat_op EQ pat_op
--- On RPAREN reduce production pat_op -> pat_op EQ pat_op
--- On PLUSPLUS reduce production pat_op -> pat_op EQ pat_op
--- On OR reduce production pat_op -> pat_op EQ pat_op
--- On IF reduce production pat_op -> pat_op EQ pat_op
--- On EQSEMI reduce production pat_op -> pat_op EQ pat_op
--- On EQ reduce production pat_op -> pat_op EQ pat_op
--- On CONS reduce production pat_op -> pat_op EQ pat_op
--- On COMMA reduce production pat_op -> pat_op EQ pat_op
--- On ARROW reduce production pat_op -> pat_op EQ pat_op
--- On APXEQ reduce production pat_op -> pat_op EQ pat_op
--- On AND reduce production pat_op -> pat_op EQ pat_op
+-- On SEMI RSQUARE RPAREN PLUSPLUS OR IF EQSEMI EQ CONS COMMA ARROW APXEQ AND
+--   reduce production pat_op -> pat_op EQ pat_op
 
 State 203:
 ## Known stack suffix:
@@ -5930,19 +5068,8 @@ pat_op -> pat_op . SQUOTE [ SUB SQUOTE SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL 
 -- On DIV shift to state 161
 -- On ADD shift to state 175
 ## Reductions:
--- On SEMI reduce production pat_op -> pat_op APXEQ pat_op
--- On RSQUARE reduce production pat_op -> pat_op APXEQ pat_op
--- On RPAREN reduce production pat_op -> pat_op APXEQ pat_op
--- On PLUSPLUS reduce production pat_op -> pat_op APXEQ pat_op
--- On OR reduce production pat_op -> pat_op APXEQ pat_op
--- On IF reduce production pat_op -> pat_op APXEQ pat_op
--- On EQSEMI reduce production pat_op -> pat_op APXEQ pat_op
--- On EQ reduce production pat_op -> pat_op APXEQ pat_op
--- On CONS reduce production pat_op -> pat_op APXEQ pat_op
--- On COMMA reduce production pat_op -> pat_op APXEQ pat_op
--- On ARROW reduce production pat_op -> pat_op APXEQ pat_op
--- On APXEQ reduce production pat_op -> pat_op APXEQ pat_op
--- On AND reduce production pat_op -> pat_op APXEQ pat_op
+-- On SEMI RSQUARE RPAREN PLUSPLUS OR IF EQSEMI EQ CONS COMMA ARROW APXEQ AND
+--   reduce production pat_op -> pat_op APXEQ pat_op
 
 State 205:
 ## Known stack suffix:
@@ -6037,16 +5164,8 @@ pat_op -> pat_op . SQUOTE [ SUB SQUOTE SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL 
 -- On APXEQ shift to state 203
 -- On ADD shift to state 175
 ## Reductions:
--- On SEMI reduce production pat_op -> pat_op AND pat_op
--- On RSQUARE reduce production pat_op -> pat_op AND pat_op
--- On RPAREN reduce production pat_op -> pat_op AND pat_op
--- On OR reduce production pat_op -> pat_op AND pat_op
--- On IF reduce production pat_op -> pat_op AND pat_op
--- On EQSEMI reduce production pat_op -> pat_op AND pat_op
--- On CONS reduce production pat_op -> pat_op AND pat_op
--- On COMMA reduce production pat_op -> pat_op AND pat_op
--- On ARROW reduce production pat_op -> pat_op AND pat_op
--- On AND reduce production pat_op -> pat_op AND pat_op
+-- On SEMI RSQUARE RPAREN OR IF EQSEMI CONS COMMA ARROW AND
+--   reduce production pat_op -> pat_op AND pat_op
 
 State 207:
 ## Known stack suffix:
@@ -6143,14 +5262,8 @@ pat_op -> pat_op . SQUOTE [ SUB SQUOTE SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL 
 -- On AND shift to state 205
 -- On ADD shift to state 175
 ## Reductions:
--- On SEMI reduce production pat_op -> pat_op EQSEMI pat_op
--- On RSQUARE reduce production pat_op -> pat_op EQSEMI pat_op
--- On RPAREN reduce production pat_op -> pat_op EQSEMI pat_op
--- On IF reduce production pat_op -> pat_op EQSEMI pat_op
--- On EQSEMI reduce production pat_op -> pat_op EQSEMI pat_op
--- On CONS reduce production pat_op -> pat_op EQSEMI pat_op
--- On COMMA reduce production pat_op -> pat_op EQSEMI pat_op
--- On ARROW reduce production pat_op -> pat_op EQSEMI pat_op
+-- On SEMI RSQUARE RPAREN IF EQSEMI CONS COMMA ARROW
+--   reduce production pat_op -> pat_op EQSEMI pat_op
 
 State 209:
 ## Known stack suffix:
@@ -6257,32 +5370,8 @@ pat_op -> pat_op . SQUOTE [ SUB SQUOTE SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL 
 -- On DIV shift to state 161
 -- On ADD shift to state 175
 ## Reductions:
--- On SEMI reduce production pat_op -> NOT pat_op
--- On RSQUARE reduce production pat_op -> NOT pat_op
--- On RPAREN reduce production pat_op -> NOT pat_op
--- On PLUSPLUS reduce production pat_op -> NOT pat_op
--- On OR reduce production pat_op -> NOT pat_op
--- On NOTEQUAL reduce production pat_op -> NOT pat_op
--- On LONGARROW reduce production pat_op -> NOT pat_op
--- On LESSEQUAL reduce production pat_op -> NOT pat_op
--- On LESS reduce production pat_op -> NOT pat_op
--- On IF reduce production pat_op -> NOT pat_op
--- On GREATEQUAL reduce production pat_op -> NOT pat_op
--- On GREAT reduce production pat_op -> NOT pat_op
--- On EQUAL reduce production pat_op -> NOT pat_op
--- On EQSEMI reduce production pat_op -> NOT pat_op
--- On EQ reduce production pat_op -> NOT pat_op
--- On DOTNOTEQUAL reduce production pat_op -> NOT pat_op
--- On DOTLESSEQUAL reduce production pat_op -> NOT pat_op
--- On DOTLESS reduce production pat_op -> NOT pat_op
--- On DOTGREATEQUAL reduce production pat_op -> NOT pat_op
--- On DOTGREAT reduce production pat_op -> NOT pat_op
--- On DOTEQUAL reduce production pat_op -> NOT pat_op
--- On CONS reduce production pat_op -> NOT pat_op
--- On COMMA reduce production pat_op -> NOT pat_op
--- On ARROW reduce production pat_op -> NOT pat_op
--- On APXEQ reduce production pat_op -> NOT pat_op
--- On AND reduce production pat_op -> NOT pat_op
+-- On SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL LONGARROW LESSEQUAL LESS IF GREATEQUAL GREAT EQUAL EQSEMI EQ DOTNOTEQUAL DOTLESSEQUAL DOTLESS DOTGREATEQUAL DOTGREAT DOTEQUAL CONS COMMA ARROW APXEQ AND
+--   reduce production pat_op -> NOT pat_op
 
 State 214:
 ## Known stack suffix:
@@ -6324,43 +5413,8 @@ pat_op -> SUB pat_op . [ SUB SQUOTE SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL MUL
 ## Transitions:
 -- On SQUOTE shift to state 138
 ## Reductions:
--- On SUB reduce production pat_op -> SUB pat_op
--- On SEMI reduce production pat_op -> SUB pat_op
--- On RSQUARE reduce production pat_op -> SUB pat_op
--- On RPAREN reduce production pat_op -> SUB pat_op
--- On PLUSPLUS reduce production pat_op -> SUB pat_op
--- On OR reduce production pat_op -> SUB pat_op
--- On NOTEQUAL reduce production pat_op -> SUB pat_op
--- On MUL reduce production pat_op -> SUB pat_op
--- On MOD reduce production pat_op -> SUB pat_op
--- On LONGARROW reduce production pat_op -> SUB pat_op
--- On LESSEQUAL reduce production pat_op -> SUB pat_op
--- On LESS reduce production pat_op -> SUB pat_op
--- On IF reduce production pat_op -> SUB pat_op
--- On GREATEQUAL reduce production pat_op -> SUB pat_op
--- On GREAT reduce production pat_op -> SUB pat_op
--- On EXP reduce production pat_op -> SUB pat_op
--- On EQUAL reduce production pat_op -> SUB pat_op
--- On EQSEMI reduce production pat_op -> SUB pat_op
--- On EQ reduce production pat_op -> SUB pat_op
--- On DOTSUB reduce production pat_op -> SUB pat_op
--- On DOTNOTEQUAL reduce production pat_op -> SUB pat_op
--- On DOTMUL reduce production pat_op -> SUB pat_op
--- On DOTLESSEQUAL reduce production pat_op -> SUB pat_op
--- On DOTLESS reduce production pat_op -> SUB pat_op
--- On DOTGREATEQUAL reduce production pat_op -> SUB pat_op
--- On DOTGREAT reduce production pat_op -> SUB pat_op
--- On DOTEXP reduce production pat_op -> SUB pat_op
--- On DOTEQUAL reduce production pat_op -> SUB pat_op
--- On DOTDIV reduce production pat_op -> SUB pat_op
--- On DOTADD reduce production pat_op -> SUB pat_op
--- On DIV reduce production pat_op -> SUB pat_op
--- On CONS reduce production pat_op -> SUB pat_op
--- On COMMA reduce production pat_op -> SUB pat_op
--- On ARROW reduce production pat_op -> SUB pat_op
--- On APXEQ reduce production pat_op -> SUB pat_op
--- On AND reduce production pat_op -> SUB pat_op
--- On ADD reduce production pat_op -> SUB pat_op
+-- On SUB SEMI RSQUARE RPAREN PLUSPLUS OR NOTEQUAL MUL MOD LONGARROW LESSEQUAL LESS IF GREATEQUAL GREAT EXP EQUAL EQSEMI EQ DOTSUB DOTNOTEQUAL DOTMUL DOTLESSEQUAL DOTLESS DOTGREATEQUAL DOTGREAT DOTEXP DOTEQUAL DOTDIV DOTADD DIV CONS COMMA ARROW APXEQ AND ADD
+--   reduce production pat_op -> SUB pat_op
 
 State 215:
 ## Known stack suffix:
@@ -6403,8 +5457,10 @@ term -> DEF IDENT . COMMA revidentseq COLON ty SEMI term [ WITH TYPE THEN RSQUAR
 -- On LPAREN shift to state 10
 -- On COMMA shift to state 219
 ## Reductions:
--- On EQ reduce production pat_atom -> IDENT
--- On COLON reduce production letpat -> IDENT
+-- On COLON
+--   reduce production letpat -> IDENT
+-- On EQ
+--   reduce production pat_atom -> IDENT
 
 State 219:
 ## Known stack suffix:
@@ -6598,21 +5654,8 @@ term -> DAESOLVER DOT IDENT . op_atom_list_rev [ WITH TYPE THEN RSQUARE RPAREN R
 -- On atom_list_rev shift to state 229
 -- On atom shift to state 231
 ## Reductions:
--- On WITH reduce production op_atom_list_rev ->
--- On TYPE reduce production op_atom_list_rev ->
--- On THEN reduce production op_atom_list_rev ->
--- On RSQUARE reduce production op_atom_list_rev ->
--- On RPAREN reduce production op_atom_list_rev ->
--- On RCURLY reduce production op_atom_list_rev ->
--- On OF reduce production op_atom_list_rev ->
--- On INCLUDE reduce production op_atom_list_rev ->
--- On EOF reduce production op_atom_list_rev ->
--- On END reduce production op_atom_list_rev ->
--- On ELSE reduce production op_atom_list_rev ->
--- On DEF reduce production op_atom_list_rev ->
--- On COMMA reduce production op_atom_list_rev ->
--- On BAR reduce production op_atom_list_rev ->
--- On ARROW reduce production op_atom_list_rev ->
+-- On WITH TYPE THEN RSQUARE RPAREN RCURLY OF INCLUDE EOF END ELSE DEF COMMA BAR ARROW
+--   reduce production op_atom_list_rev ->
 
 State 228:
 ## Known stack suffix:
@@ -6646,21 +5689,8 @@ op_atom_list_rev -> atom_list_rev . [ WITH TYPE THEN RSQUARE RPAREN RCURLY OF IN
 -- On BEGIN shift to state 103
 -- On atom shift to state 230
 ## Reductions:
--- On WITH reduce production op_atom_list_rev -> atom_list_rev
--- On TYPE reduce production op_atom_list_rev -> atom_list_rev
--- On THEN reduce production op_atom_list_rev -> atom_list_rev
--- On RSQUARE reduce production op_atom_list_rev -> atom_list_rev
--- On RPAREN reduce production op_atom_list_rev -> atom_list_rev
--- On RCURLY reduce production op_atom_list_rev -> atom_list_rev
--- On OF reduce production op_atom_list_rev -> atom_list_rev
--- On INCLUDE reduce production op_atom_list_rev -> atom_list_rev
--- On EOF reduce production op_atom_list_rev -> atom_list_rev
--- On END reduce production op_atom_list_rev -> atom_list_rev
--- On ELSE reduce production op_atom_list_rev -> atom_list_rev
--- On DEF reduce production op_atom_list_rev -> atom_list_rev
--- On COMMA reduce production op_atom_list_rev -> atom_list_rev
--- On BAR reduce production op_atom_list_rev -> atom_list_rev
--- On ARROW reduce production op_atom_list_rev -> atom_list_rev
+-- On WITH TYPE THEN RSQUARE RPAREN RCURLY OF INCLUDE EOF END ELSE DEF COMMA BAR ARROW
+--   reduce production op_atom_list_rev -> atom_list_rev
 
 State 230:
 ## Known stack suffix:
@@ -6745,21 +5775,8 @@ term -> ARRAY DOT IDENT atom_list_rev . [ WITH TYPE THEN RSQUARE RPAREN RCURLY O
 -- On BEGIN shift to state 103
 -- On atom shift to state 230
 ## Reductions:
--- On WITH reduce production term -> ARRAY DOT IDENT atom_list_rev
--- On TYPE reduce production term -> ARRAY DOT IDENT atom_list_rev
--- On THEN reduce production term -> ARRAY DOT IDENT atom_list_rev
--- On RSQUARE reduce production term -> ARRAY DOT IDENT atom_list_rev
--- On RPAREN reduce production term -> ARRAY DOT IDENT atom_list_rev
--- On RCURLY reduce production term -> ARRAY DOT IDENT atom_list_rev
--- On OF reduce production term -> ARRAY DOT IDENT atom_list_rev
--- On INCLUDE reduce production term -> ARRAY DOT IDENT atom_list_rev
--- On EOF reduce production term -> ARRAY DOT IDENT atom_list_rev
--- On END reduce production term -> ARRAY DOT IDENT atom_list_rev
--- On ELSE reduce production term -> ARRAY DOT IDENT atom_list_rev
--- On DEF reduce production term -> ARRAY DOT IDENT atom_list_rev
--- On COMMA reduce production term -> ARRAY DOT IDENT atom_list_rev
--- On BAR reduce production term -> ARRAY DOT IDENT atom_list_rev
--- On ARROW reduce production term -> ARRAY DOT IDENT atom_list_rev
+-- On WITH TYPE THEN RSQUARE RPAREN RCURLY OF INCLUDE EOF END ELSE DEF COMMA BAR ARROW
+--   reduce production term -> ARRAY DOT IDENT atom_list_rev
 
 State 236:
 ## Known stack suffix:
@@ -7102,22 +6119,8 @@ op -> op . POLYEQUAL op [ WITH TYPE THEN SUB SQUOTE SEMI RSQUARE RPAREN RCURLY P
 -- On AND shift to state 314
 -- On ADD shift to state 278
 ## Reductions:
--- On WITH reduce production cons -> op
--- On TYPE reduce production cons -> op
--- On THEN reduce production cons -> op
--- On SEMI reduce production cons -> op
--- On RSQUARE reduce production cons -> op
--- On RPAREN reduce production cons -> op
--- On RCURLY reduce production cons -> op
--- On OF reduce production cons -> op
--- On INCLUDE reduce production cons -> op
--- On EOF reduce production cons -> op
--- On END reduce production cons -> op
--- On ELSE reduce production cons -> op
--- On DEF reduce production cons -> op
--- On COMMA reduce production cons -> op
--- On BAR reduce production cons -> op
--- On ARROW reduce production cons -> op
+-- On WITH TYPE THEN SEMI RSQUARE RPAREN RCURLY OF INCLUDE EOF END ELSE DEF COMMA BAR ARROW
+--   reduce production cons -> op
 
 State 254:
 ## Known stack suffix:
@@ -7200,48 +6203,8 @@ op -> op . POLYEQUAL op [ WITH TYPE THEN SUB SQUOTE SEMI RSQUARE RPAREN RCURLY P
 -- On DOTDIV shift to state 266
 -- On DIV shift to state 268
 ## Reductions:
--- On WITH reduce production op -> op SUB op
--- On TYPE reduce production op -> op SUB op
--- On THEN reduce production op -> op SUB op
--- On SUB reduce production op -> op SUB op
--- On SEMI reduce production op -> op SUB op
--- On RSQUARE reduce production op -> op SUB op
--- On RPAREN reduce production op -> op SUB op
--- On RCURLY reduce production op -> op SUB op
--- On POLYEQUAL reduce production op -> op SUB op
--- On PLUSPLUS reduce production op -> op SUB op
--- On OR reduce production op -> op SUB op
--- On OF reduce production op -> op SUB op
--- On NOTEQUAL reduce production op -> op SUB op
--- On LONGARROW reduce production op -> op SUB op
--- On LESSEQUAL reduce production op -> op SUB op
--- On LESS reduce production op -> op SUB op
--- On LEFTARROW reduce production op -> op SUB op
--- On INCLUDE reduce production op -> op SUB op
--- On GREATEQUAL reduce production op -> op SUB op
--- On GREAT reduce production op -> op SUB op
--- On EQUAL reduce production op -> op SUB op
--- On EQSEMI reduce production op -> op SUB op
--- On EQ reduce production op -> op SUB op
--- On EOF reduce production op -> op SUB op
--- On END reduce production op -> op SUB op
--- On ELSE reduce production op -> op SUB op
--- On DOTSUB reduce production op -> op SUB op
--- On DOTNOTEQUAL reduce production op -> op SUB op
--- On DOTLESSEQUAL reduce production op -> op SUB op
--- On DOTLESS reduce production op -> op SUB op
--- On DOTGREATEQUAL reduce production op -> op SUB op
--- On DOTGREAT reduce production op -> op SUB op
--- On DOTEQUAL reduce production op -> op SUB op
--- On DOTADD reduce production op -> op SUB op
--- On DEF reduce production op -> op SUB op
--- On CONS reduce production op -> op SUB op
--- On COMMA reduce production op -> op SUB op
--- On BAR reduce production op -> op SUB op
--- On ARROW reduce production op -> op SUB op
--- On APXEQ reduce production op -> op SUB op
--- On AND reduce production op -> op SUB op
--- On ADD reduce production op -> op SUB op
+-- On WITH TYPE THEN SUB SEMI RSQUARE RPAREN RCURLY POLYEQUAL PLUSPLUS OR OF NOTEQUAL LONGARROW LESSEQUAL LESS LEFTARROW INCLUDE GREATEQUAL GREAT EQUAL EQSEMI EQ EOF END ELSE DOTSUB DOTNOTEQUAL DOTLESSEQUAL DOTLESS DOTGREATEQUAL DOTGREAT DOTEQUAL DOTADD DEF CONS COMMA BAR ARROW APXEQ AND ADD
+--   reduce production op -> op SUB op
 
 State 256:
 ## Known stack suffix:
@@ -7320,52 +6283,8 @@ op -> op . POLYEQUAL op [ WITH TYPE THEN SUB SQUOTE SEMI RSQUARE RPAREN RCURLY P
 -- On EXP shift to state 260
 -- On DOTEXP shift to state 262
 ## Reductions:
--- On WITH reduce production op -> op MUL op
--- On TYPE reduce production op -> op MUL op
--- On THEN reduce production op -> op MUL op
--- On SUB reduce production op -> op MUL op
--- On SEMI reduce production op -> op MUL op
--- On RSQUARE reduce production op -> op MUL op
--- On RPAREN reduce production op -> op MUL op
--- On RCURLY reduce production op -> op MUL op
--- On POLYEQUAL reduce production op -> op MUL op
--- On PLUSPLUS reduce production op -> op MUL op
--- On OR reduce production op -> op MUL op
--- On OF reduce production op -> op MUL op
--- On NOTEQUAL reduce production op -> op MUL op
--- On MUL reduce production op -> op MUL op
--- On LONGARROW reduce production op -> op MUL op
--- On LESSEQUAL reduce production op -> op MUL op
--- On LESS reduce production op -> op MUL op
--- On LEFTARROW reduce production op -> op MUL op
--- On INCLUDE reduce production op -> op MUL op
--- On GREATEQUAL reduce production op -> op MUL op
--- On GREAT reduce production op -> op MUL op
--- On EQUAL reduce production op -> op MUL op
--- On EQSEMI reduce production op -> op MUL op
--- On EQ reduce production op -> op MUL op
--- On EOF reduce production op -> op MUL op
--- On END reduce production op -> op MUL op
--- On ELSE reduce production op -> op MUL op
--- On DOTSUB reduce production op -> op MUL op
--- On DOTNOTEQUAL reduce production op -> op MUL op
--- On DOTMUL reduce production op -> op MUL op
--- On DOTLESSEQUAL reduce production op -> op MUL op
--- On DOTLESS reduce production op -> op MUL op
--- On DOTGREATEQUAL reduce production op -> op MUL op
--- On DOTGREAT reduce production op -> op MUL op
--- On DOTEQUAL reduce production op -> op MUL op
--- On DOTDIV reduce production op -> op MUL op
--- On DOTADD reduce production op -> op MUL op
--- On DIV reduce production op -> op MUL op
--- On DEF reduce production op -> op MUL op
--- On CONS reduce production op -> op MUL op
--- On COMMA reduce production op -> op MUL op
--- On BAR reduce production op -> op MUL op
--- On ARROW reduce production op -> op MUL op
--- On APXEQ reduce production op -> op MUL op
--- On AND reduce production op -> op MUL op
--- On ADD reduce production op -> op MUL op
+-- On WITH TYPE THEN SUB SEMI RSQUARE RPAREN RCURLY POLYEQUAL PLUSPLUS OR OF NOTEQUAL MUL LONGARROW LESSEQUAL LESS LEFTARROW INCLUDE GREATEQUAL GREAT EQUAL EQSEMI EQ EOF END ELSE DOTSUB DOTNOTEQUAL DOTMUL DOTLESSEQUAL DOTLESS DOTGREATEQUAL DOTGREAT DOTEQUAL DOTDIV DOTADD DIV DEF CONS COMMA BAR ARROW APXEQ AND ADD
+--   reduce production op -> op MUL op
 
 State 258:
 ## Known stack suffix:
@@ -7443,53 +6362,8 @@ op -> op . POLYEQUAL op [ WITH TYPE THEN SUB SQUOTE SEMI RSQUARE RPAREN RCURLY P
 -- On EXP shift to state 260
 -- On DOTEXP shift to state 262
 ## Reductions:
--- On WITH reduce production op -> op MOD op
--- On TYPE reduce production op -> op MOD op
--- On THEN reduce production op -> op MOD op
--- On SUB reduce production op -> op MOD op
--- On SEMI reduce production op -> op MOD op
--- On RSQUARE reduce production op -> op MOD op
--- On RPAREN reduce production op -> op MOD op
--- On RCURLY reduce production op -> op MOD op
--- On POLYEQUAL reduce production op -> op MOD op
--- On PLUSPLUS reduce production op -> op MOD op
--- On OR reduce production op -> op MOD op
--- On OF reduce production op -> op MOD op
--- On NOTEQUAL reduce production op -> op MOD op
--- On MUL reduce production op -> op MOD op
--- On MOD reduce production op -> op MOD op
--- On LONGARROW reduce production op -> op MOD op
--- On LESSEQUAL reduce production op -> op MOD op
--- On LESS reduce production op -> op MOD op
--- On LEFTARROW reduce production op -> op MOD op
--- On INCLUDE reduce production op -> op MOD op
--- On GREATEQUAL reduce production op -> op MOD op
--- On GREAT reduce production op -> op MOD op
--- On EQUAL reduce production op -> op MOD op
--- On EQSEMI reduce production op -> op MOD op
--- On EQ reduce production op -> op MOD op
--- On EOF reduce production op -> op MOD op
--- On END reduce production op -> op MOD op
--- On ELSE reduce production op -> op MOD op
--- On DOTSUB reduce production op -> op MOD op
--- On DOTNOTEQUAL reduce production op -> op MOD op
--- On DOTMUL reduce production op -> op MOD op
--- On DOTLESSEQUAL reduce production op -> op MOD op
--- On DOTLESS reduce production op -> op MOD op
--- On DOTGREATEQUAL reduce production op -> op MOD op
--- On DOTGREAT reduce production op -> op MOD op
--- On DOTEQUAL reduce production op -> op MOD op
--- On DOTDIV reduce production op -> op MOD op
--- On DOTADD reduce production op -> op MOD op
--- On DIV reduce production op -> op MOD op
--- On DEF reduce production op -> op MOD op
--- On CONS reduce production op -> op MOD op
--- On COMMA reduce production op -> op MOD op
--- On BAR reduce production op -> op MOD op
--- On ARROW reduce production op -> op MOD op
--- On APXEQ reduce production op -> op MOD op
--- On AND reduce production op -> op MOD op
--- On ADD reduce production op -> op MOD op
+-- On WITH TYPE THEN SUB SEMI RSQUARE RPAREN RCURLY POLYEQUAL PLUSPLUS OR OF NOTEQUAL MUL MOD LONGARROW LESSEQUAL LESS LEFTARROW INCLUDE GREATEQUAL GREAT EQUAL EQSEMI EQ EOF END ELSE DOTSUB DOTNOTEQUAL DOTMUL DOTLESSEQUAL DOTLESS DOTGREATEQUAL DOTGREAT DOTEQUAL DOTDIV DOTADD DIV DEF CONS COMMA BAR ARROW APXEQ AND ADD
+--   reduce production op -> op MOD op
 
 State 260:
 ## Known stack suffix:
@@ -7565,55 +6439,8 @@ op -> op . POLYEQUAL op [ WITH TYPE THEN SUB SQUOTE SEMI RSQUARE RPAREN RCURLY P
 ## Transitions:
 -- On SQUOTE shift to state 106
 ## Reductions:
--- On WITH reduce production op -> op EXP op
--- On TYPE reduce production op -> op EXP op
--- On THEN reduce production op -> op EXP op
--- On SUB reduce production op -> op EXP op
--- On SEMI reduce production op -> op EXP op
--- On RSQUARE reduce production op -> op EXP op
--- On RPAREN reduce production op -> op EXP op
--- On RCURLY reduce production op -> op EXP op
--- On POLYEQUAL reduce production op -> op EXP op
--- On PLUSPLUS reduce production op -> op EXP op
--- On OR reduce production op -> op EXP op
--- On OF reduce production op -> op EXP op
--- On NOTEQUAL reduce production op -> op EXP op
--- On MUL reduce production op -> op EXP op
--- On MOD reduce production op -> op EXP op
--- On LONGARROW reduce production op -> op EXP op
--- On LESSEQUAL reduce production op -> op EXP op
--- On LESS reduce production op -> op EXP op
--- On LEFTARROW reduce production op -> op EXP op
--- On INCLUDE reduce production op -> op EXP op
--- On GREATEQUAL reduce production op -> op EXP op
--- On GREAT reduce production op -> op EXP op
--- On EXP reduce production op -> op EXP op
--- On EQUAL reduce production op -> op EXP op
--- On EQSEMI reduce production op -> op EXP op
--- On EQ reduce production op -> op EXP op
--- On EOF reduce production op -> op EXP op
--- On END reduce production op -> op EXP op
--- On ELSE reduce production op -> op EXP op
--- On DOTSUB reduce production op -> op EXP op
--- On DOTNOTEQUAL reduce production op -> op EXP op
--- On DOTMUL reduce production op -> op EXP op
--- On DOTLESSEQUAL reduce production op -> op EXP op
--- On DOTLESS reduce production op -> op EXP op
--- On DOTGREATEQUAL reduce production op -> op EXP op
--- On DOTGREAT reduce production op -> op EXP op
--- On DOTEXP reduce production op -> op EXP op
--- On DOTEQUAL reduce production op -> op EXP op
--- On DOTDIV reduce production op -> op EXP op
--- On DOTADD reduce production op -> op EXP op
--- On DIV reduce production op -> op EXP op
--- On DEF reduce production op -> op EXP op
--- On CONS reduce production op -> op EXP op
--- On COMMA reduce production op -> op EXP op
--- On BAR reduce production op -> op EXP op
--- On ARROW reduce production op -> op EXP op
--- On APXEQ reduce production op -> op EXP op
--- On AND reduce production op -> op EXP op
--- On ADD reduce production op -> op EXP op
+-- On WITH TYPE THEN SUB SEMI RSQUARE RPAREN RCURLY POLYEQUAL PLUSPLUS OR OF NOTEQUAL MUL MOD LONGARROW LESSEQUAL LESS LEFTARROW INCLUDE GREATEQUAL GREAT EXP EQUAL EQSEMI EQ EOF END ELSE DOTSUB DOTNOTEQUAL DOTMUL DOTLESSEQUAL DOTLESS DOTGREATEQUAL DOTGREAT DOTEXP DOTEQUAL DOTDIV DOTADD DIV DEF CONS COMMA BAR ARROW APXEQ AND ADD
+--   reduce production op -> op EXP op
 
 State 262:
 ## Known stack suffix:
@@ -7689,55 +6516,8 @@ op -> op . POLYEQUAL op [ WITH TYPE THEN SUB SQUOTE SEMI RSQUARE RPAREN RCURLY P
 ## Transitions:
 -- On SQUOTE shift to state 106
 ## Reductions:
--- On WITH reduce production op -> op DOTEXP op
--- On TYPE reduce production op -> op DOTEXP op
--- On THEN reduce production op -> op DOTEXP op
--- On SUB reduce production op -> op DOTEXP op
--- On SEMI reduce production op -> op DOTEXP op
--- On RSQUARE reduce production op -> op DOTEXP op
--- On RPAREN reduce production op -> op DOTEXP op
--- On RCURLY reduce production op -> op DOTEXP op
--- On POLYEQUAL reduce production op -> op DOTEXP op
--- On PLUSPLUS reduce production op -> op DOTEXP op
--- On OR reduce production op -> op DOTEXP op
--- On OF reduce production op -> op DOTEXP op
--- On NOTEQUAL reduce production op -> op DOTEXP op
--- On MUL reduce production op -> op DOTEXP op
--- On MOD reduce production op -> op DOTEXP op
--- On LONGARROW reduce production op -> op DOTEXP op
--- On LESSEQUAL reduce production op -> op DOTEXP op
--- On LESS reduce production op -> op DOTEXP op
--- On LEFTARROW reduce production op -> op DOTEXP op
--- On INCLUDE reduce production op -> op DOTEXP op
--- On GREATEQUAL reduce production op -> op DOTEXP op
--- On GREAT reduce production op -> op DOTEXP op
--- On EXP reduce production op -> op DOTEXP op
--- On EQUAL reduce production op -> op DOTEXP op
--- On EQSEMI reduce production op -> op DOTEXP op
--- On EQ reduce production op -> op DOTEXP op
--- On EOF reduce production op -> op DOTEXP op
--- On END reduce production op -> op DOTEXP op
--- On ELSE reduce production op -> op DOTEXP op
--- On DOTSUB reduce production op -> op DOTEXP op
--- On DOTNOTEQUAL reduce production op -> op DOTEXP op
--- On DOTMUL reduce production op -> op DOTEXP op
--- On DOTLESSEQUAL reduce production op -> op DOTEXP op
--- On DOTLESS reduce production op -> op DOTEXP op
--- On DOTGREATEQUAL reduce production op -> op DOTEXP op
--- On DOTGREAT reduce production op -> op DOTEXP op
--- On DOTEXP reduce production op -> op DOTEXP op
--- On DOTEQUAL reduce production op -> op DOTEXP op
--- On DOTDIV reduce production op -> op DOTEXP op
--- On DOTADD reduce production op -> op DOTEXP op
--- On DIV reduce production op -> op DOTEXP op
--- On DEF reduce production op -> op DOTEXP op
--- On CONS reduce production op -> op DOTEXP op
--- On COMMA reduce production op -> op DOTEXP op
--- On BAR reduce production op -> op DOTEXP op
--- On ARROW reduce production op -> op DOTEXP op
--- On APXEQ reduce production op -> op DOTEXP op
--- On AND reduce production op -> op DOTEXP op
--- On ADD reduce production op -> op DOTEXP op
+-- On WITH TYPE THEN SUB SEMI RSQUARE RPAREN RCURLY POLYEQUAL PLUSPLUS OR OF NOTEQUAL MUL MOD LONGARROW LESSEQUAL LESS LEFTARROW INCLUDE GREATEQUAL GREAT EXP EQUAL EQSEMI EQ EOF END ELSE DOTSUB DOTNOTEQUAL DOTMUL DOTLESSEQUAL DOTLESS DOTGREATEQUAL DOTGREAT DOTEXP DOTEQUAL DOTDIV DOTADD DIV DEF CONS COMMA BAR ARROW APXEQ AND ADD
+--   reduce production op -> op DOTEXP op
 
 State 264:
 ## Known stack suffix:
@@ -7816,52 +6596,8 @@ op -> op . POLYEQUAL op [ WITH TYPE THEN SUB SQUOTE SEMI RSQUARE RPAREN RCURLY P
 -- On EXP shift to state 260
 -- On DOTEXP shift to state 262
 ## Reductions:
--- On WITH reduce production op -> op DOTMUL op
--- On TYPE reduce production op -> op DOTMUL op
--- On THEN reduce production op -> op DOTMUL op
--- On SUB reduce production op -> op DOTMUL op
--- On SEMI reduce production op -> op DOTMUL op
--- On RSQUARE reduce production op -> op DOTMUL op
--- On RPAREN reduce production op -> op DOTMUL op
--- On RCURLY reduce production op -> op DOTMUL op
--- On POLYEQUAL reduce production op -> op DOTMUL op
--- On PLUSPLUS reduce production op -> op DOTMUL op
--- On OR reduce production op -> op DOTMUL op
--- On OF reduce production op -> op DOTMUL op
--- On NOTEQUAL reduce production op -> op DOTMUL op
--- On MUL reduce production op -> op DOTMUL op
--- On LONGARROW reduce production op -> op DOTMUL op
--- On LESSEQUAL reduce production op -> op DOTMUL op
--- On LESS reduce production op -> op DOTMUL op
--- On LEFTARROW reduce production op -> op DOTMUL op
--- On INCLUDE reduce production op -> op DOTMUL op
--- On GREATEQUAL reduce production op -> op DOTMUL op
--- On GREAT reduce production op -> op DOTMUL op
--- On EQUAL reduce production op -> op DOTMUL op
--- On EQSEMI reduce production op -> op DOTMUL op
--- On EQ reduce production op -> op DOTMUL op
--- On EOF reduce production op -> op DOTMUL op
--- On END reduce production op -> op DOTMUL op
--- On ELSE reduce production op -> op DOTMUL op
--- On DOTSUB reduce production op -> op DOTMUL op
--- On DOTNOTEQUAL reduce production op -> op DOTMUL op
--- On DOTMUL reduce production op -> op DOTMUL op
--- On DOTLESSEQUAL reduce production op -> op DOTMUL op
--- On DOTLESS reduce production op -> op DOTMUL op
--- On DOTGREATEQUAL reduce production op -> op DOTMUL op
--- On DOTGREAT reduce production op -> op DOTMUL op
--- On DOTEQUAL reduce production op -> op DOTMUL op
--- On DOTDIV reduce production op -> op DOTMUL op
--- On DOTADD reduce production op -> op DOTMUL op
--- On DIV reduce production op -> op DOTMUL op
--- On DEF reduce production op -> op DOTMUL op
--- On CONS reduce production op -> op DOTMUL op
--- On COMMA reduce production op -> op DOTMUL op
--- On BAR reduce production op -> op DOTMUL op
--- On ARROW reduce production op -> op DOTMUL op
--- On APXEQ reduce production op -> op DOTMUL op
--- On AND reduce production op -> op DOTMUL op
--- On ADD reduce production op -> op DOTMUL op
+-- On WITH TYPE THEN SUB SEMI RSQUARE RPAREN RCURLY POLYEQUAL PLUSPLUS OR OF NOTEQUAL MUL LONGARROW LESSEQUAL LESS LEFTARROW INCLUDE GREATEQUAL GREAT EQUAL EQSEMI EQ EOF END ELSE DOTSUB DOTNOTEQUAL DOTMUL DOTLESSEQUAL DOTLESS DOTGREATEQUAL DOTGREAT DOTEQUAL DOTDIV DOTADD DIV DEF CONS COMMA BAR ARROW APXEQ AND ADD
+--   reduce production op -> op DOTMUL op
 
 State 266:
 ## Known stack suffix:
@@ -7940,52 +6676,8 @@ op -> op . POLYEQUAL op [ WITH TYPE THEN SUB SQUOTE SEMI RSQUARE RPAREN RCURLY P
 -- On EXP shift to state 260
 -- On DOTEXP shift to state 262
 ## Reductions:
--- On WITH reduce production op -> op DOTDIV op
--- On TYPE reduce production op -> op DOTDIV op
--- On THEN reduce production op -> op DOTDIV op
--- On SUB reduce production op -> op DOTDIV op
--- On SEMI reduce production op -> op DOTDIV op
--- On RSQUARE reduce production op -> op DOTDIV op
--- On RPAREN reduce production op -> op DOTDIV op
--- On RCURLY reduce production op -> op DOTDIV op
--- On POLYEQUAL reduce production op -> op DOTDIV op
--- On PLUSPLUS reduce production op -> op DOTDIV op
--- On OR reduce production op -> op DOTDIV op
--- On OF reduce production op -> op DOTDIV op
--- On NOTEQUAL reduce production op -> op DOTDIV op
--- On MUL reduce production op -> op DOTDIV op
--- On LONGARROW reduce production op -> op DOTDIV op
--- On LESSEQUAL reduce production op -> op DOTDIV op
--- On LESS reduce production op -> op DOTDIV op
--- On LEFTARROW reduce production op -> op DOTDIV op
--- On INCLUDE reduce production op -> op DOTDIV op
--- On GREATEQUAL reduce production op -> op DOTDIV op
--- On GREAT reduce production op -> op DOTDIV op
--- On EQUAL reduce production op -> op DOTDIV op
--- On EQSEMI reduce production op -> op DOTDIV op
--- On EQ reduce production op -> op DOTDIV op
--- On EOF reduce production op -> op DOTDIV op
--- On END reduce production op -> op DOTDIV op
--- On ELSE reduce production op -> op DOTDIV op
--- On DOTSUB reduce production op -> op DOTDIV op
--- On DOTNOTEQUAL reduce production op -> op DOTDIV op
--- On DOTMUL reduce production op -> op DOTDIV op
--- On DOTLESSEQUAL reduce production op -> op DOTDIV op
--- On DOTLESS reduce production op -> op DOTDIV op
--- On DOTGREATEQUAL reduce production op -> op DOTDIV op
--- On DOTGREAT reduce production op -> op DOTDIV op
--- On DOTEQUAL reduce production op -> op DOTDIV op
--- On DOTDIV reduce production op -> op DOTDIV op
--- On DOTADD reduce production op -> op DOTDIV op
--- On DIV reduce production op -> op DOTDIV op
--- On DEF reduce production op -> op DOTDIV op
--- On CONS reduce production op -> op DOTDIV op
--- On COMMA reduce production op -> op DOTDIV op
--- On BAR reduce production op -> op DOTDIV op
--- On ARROW reduce production op -> op DOTDIV op
--- On APXEQ reduce production op -> op DOTDIV op
--- On AND reduce production op -> op DOTDIV op
--- On ADD reduce production op -> op DOTDIV op
+-- On WITH TYPE THEN SUB SEMI RSQUARE RPAREN RCURLY POLYEQUAL PLUSPLUS OR OF NOTEQUAL MUL LONGARROW LESSEQUAL LESS LEFTARROW INCLUDE GREATEQUAL GREAT EQUAL EQSEMI EQ EOF END ELSE DOTSUB DOTNOTEQUAL DOTMUL DOTLESSEQUAL DOTLESS DOTGREATEQUAL DOTGREAT DOTEQUAL DOTDIV DOTADD DIV DEF CONS COMMA BAR ARROW APXEQ AND ADD
+--   reduce production op -> op DOTDIV op
 
 State 268:
 ## Known stack suffix:
@@ -8064,52 +6756,8 @@ op -> op . POLYEQUAL op [ WITH TYPE THEN SUB SQUOTE SEMI RSQUARE RPAREN RCURLY P
 -- On EXP shift to state 260
 -- On DOTEXP shift to state 262
 ## Reductions:
--- On WITH reduce production op -> op DIV op
--- On TYPE reduce production op -> op DIV op
--- On THEN reduce production op -> op DIV op
--- On SUB reduce production op -> op DIV op
--- On SEMI reduce production op -> op DIV op
--- On RSQUARE reduce production op -> op DIV op
--- On RPAREN reduce production op -> op DIV op
--- On RCURLY reduce production op -> op DIV op
--- On POLYEQUAL reduce production op -> op DIV op
--- On PLUSPLUS reduce production op -> op DIV op
--- On OR reduce production op -> op DIV op
--- On OF reduce production op -> op DIV op
--- On NOTEQUAL reduce production op -> op DIV op
--- On MUL reduce production op -> op DIV op
--- On LONGARROW reduce production op -> op DIV op
--- On LESSEQUAL reduce production op -> op DIV op
--- On LESS reduce production op -> op DIV op
--- On LEFTARROW reduce production op -> op DIV op
--- On INCLUDE reduce production op -> op DIV op
--- On GREATEQUAL reduce production op -> op DIV op
--- On GREAT reduce production op -> op DIV op
--- On EQUAL reduce production op -> op DIV op
--- On EQSEMI reduce production op -> op DIV op
--- On EQ reduce production op -> op DIV op
--- On EOF reduce production op -> op DIV op
--- On END reduce production op -> op DIV op
--- On ELSE reduce production op -> op DIV op
--- On DOTSUB reduce production op -> op DIV op
--- On DOTNOTEQUAL reduce production op -> op DIV op
--- On DOTMUL reduce production op -> op DIV op
--- On DOTLESSEQUAL reduce production op -> op DIV op
--- On DOTLESS reduce production op -> op DIV op
--- On DOTGREATEQUAL reduce production op -> op DIV op
--- On DOTGREAT reduce production op -> op DIV op
--- On DOTEQUAL reduce production op -> op DIV op
--- On DOTDIV reduce production op -> op DIV op
--- On DOTADD reduce production op -> op DIV op
--- On DIV reduce production op -> op DIV op
--- On DEF reduce production op -> op DIV op
--- On CONS reduce production op -> op DIV op
--- On COMMA reduce production op -> op DIV op
--- On BAR reduce production op -> op DIV op
--- On ARROW reduce production op -> op DIV op
--- On APXEQ reduce production op -> op DIV op
--- On AND reduce production op -> op DIV op
--- On ADD reduce production op -> op DIV op
+-- On WITH TYPE THEN SUB SEMI RSQUARE RPAREN RCURLY POLYEQUAL PLUSPLUS OR OF NOTEQUAL MUL LONGARROW LESSEQUAL LESS LEFTARROW INCLUDE GREATEQUAL GREAT EQUAL EQSEMI EQ EOF END ELSE DOTSUB DOTNOTEQUAL DOTMUL DOTLESSEQUAL DOTLESS DOTGREATEQUAL DOTGREAT DOTEQUAL DOTDIV DOTADD DIV DEF CONS COMMA BAR ARROW APXEQ AND ADD
+--   reduce production op -> op DIV op
 
 State 270:
 ## Known stack suffix:
@@ -8202,38 +6850,8 @@ op -> op POLYEQUAL op . [ WITH TYPE THEN SUB SQUOTE SEMI RSQUARE RPAREN RCURLY P
 -- On DIV shift to state 268
 -- On ADD shift to state 278
 ## Reductions:
--- On WITH reduce production op -> op POLYEQUAL op
--- On TYPE reduce production op -> op POLYEQUAL op
--- On THEN reduce production op -> op POLYEQUAL op
--- On SEMI reduce production op -> op POLYEQUAL op
--- On RSQUARE reduce production op -> op POLYEQUAL op
--- On RPAREN reduce production op -> op POLYEQUAL op
--- On RCURLY reduce production op -> op POLYEQUAL op
--- On POLYEQUAL reduce production op -> op POLYEQUAL op
--- On PLUSPLUS reduce production op -> op POLYEQUAL op
--- On OR reduce production op -> op POLYEQUAL op
--- On OF reduce production op -> op POLYEQUAL op
--- On NOTEQUAL reduce production op -> op POLYEQUAL op
--- On LONGARROW reduce production op -> op POLYEQUAL op
--- On LESSEQUAL reduce production op -> op POLYEQUAL op
--- On LESS reduce production op -> op POLYEQUAL op
--- On LEFTARROW reduce production op -> op POLYEQUAL op
--- On INCLUDE reduce production op -> op POLYEQUAL op
--- On GREATEQUAL reduce production op -> op POLYEQUAL op
--- On GREAT reduce production op -> op POLYEQUAL op
--- On EQUAL reduce production op -> op POLYEQUAL op
--- On EQSEMI reduce production op -> op POLYEQUAL op
--- On EQ reduce production op -> op POLYEQUAL op
--- On EOF reduce production op -> op POLYEQUAL op
--- On END reduce production op -> op POLYEQUAL op
--- On ELSE reduce production op -> op POLYEQUAL op
--- On DEF reduce production op -> op POLYEQUAL op
--- On CONS reduce production op -> op POLYEQUAL op
--- On COMMA reduce production op -> op POLYEQUAL op
--- On BAR reduce production op -> op POLYEQUAL op
--- On ARROW reduce production op -> op POLYEQUAL op
--- On APXEQ reduce production op -> op POLYEQUAL op
--- On AND reduce production op -> op POLYEQUAL op
+-- On WITH TYPE THEN SEMI RSQUARE RPAREN RCURLY POLYEQUAL PLUSPLUS OR OF NOTEQUAL LONGARROW LESSEQUAL LESS LEFTARROW INCLUDE GREATEQUAL GREAT EQUAL EQSEMI EQ EOF END ELSE DEF CONS COMMA BAR ARROW APXEQ AND
+--   reduce production op -> op POLYEQUAL op
 
 State 272:
 ## Known stack suffix:
@@ -8316,48 +6934,8 @@ op -> op . POLYEQUAL op [ WITH TYPE THEN SUB SQUOTE SEMI RSQUARE RPAREN RCURLY P
 -- On DOTDIV shift to state 266
 -- On DIV shift to state 268
 ## Reductions:
--- On WITH reduce production op -> op DOTSUB op
--- On TYPE reduce production op -> op DOTSUB op
--- On THEN reduce production op -> op DOTSUB op
--- On SUB reduce production op -> op DOTSUB op
--- On SEMI reduce production op -> op DOTSUB op
--- On RSQUARE reduce production op -> op DOTSUB op
--- On RPAREN reduce production op -> op DOTSUB op
--- On RCURLY reduce production op -> op DOTSUB op
--- On POLYEQUAL reduce production op -> op DOTSUB op
--- On PLUSPLUS reduce production op -> op DOTSUB op
--- On OR reduce production op -> op DOTSUB op
--- On OF reduce production op -> op DOTSUB op
--- On NOTEQUAL reduce production op -> op DOTSUB op
--- On LONGARROW reduce production op -> op DOTSUB op
--- On LESSEQUAL reduce production op -> op DOTSUB op
--- On LESS reduce production op -> op DOTSUB op
--- On LEFTARROW reduce production op -> op DOTSUB op
--- On INCLUDE reduce production op -> op DOTSUB op
--- On GREATEQUAL reduce production op -> op DOTSUB op
--- On GREAT reduce production op -> op DOTSUB op
--- On EQUAL reduce production op -> op DOTSUB op
--- On EQSEMI reduce production op -> op DOTSUB op
--- On EQ reduce production op -> op DOTSUB op
--- On EOF reduce production op -> op DOTSUB op
--- On END reduce production op -> op DOTSUB op
--- On ELSE reduce production op -> op DOTSUB op
--- On DOTSUB reduce production op -> op DOTSUB op
--- On DOTNOTEQUAL reduce production op -> op DOTSUB op
--- On DOTLESSEQUAL reduce production op -> op DOTSUB op
--- On DOTLESS reduce production op -> op DOTSUB op
--- On DOTGREATEQUAL reduce production op -> op DOTSUB op
--- On DOTGREAT reduce production op -> op DOTSUB op
--- On DOTEQUAL reduce production op -> op DOTSUB op
--- On DOTADD reduce production op -> op DOTSUB op
--- On DEF reduce production op -> op DOTSUB op
--- On CONS reduce production op -> op DOTSUB op
--- On COMMA reduce production op -> op DOTSUB op
--- On BAR reduce production op -> op DOTSUB op
--- On ARROW reduce production op -> op DOTSUB op
--- On APXEQ reduce production op -> op DOTSUB op
--- On AND reduce production op -> op DOTSUB op
--- On ADD reduce production op -> op DOTSUB op
+-- On WITH TYPE THEN SUB SEMI RSQUARE RPAREN RCURLY POLYEQUAL PLUSPLUS OR OF NOTEQUAL LONGARROW LESSEQUAL LESS LEFTARROW INCLUDE GREATEQUAL GREAT EQUAL EQSEMI EQ EOF END ELSE DOTSUB DOTNOTEQUAL DOTLESSEQUAL DOTLESS DOTGREATEQUAL DOTGREAT DOTEQUAL DOTADD DEF CONS COMMA BAR ARROW APXEQ AND ADD
+--   reduce production op -> op DOTSUB op
 
 State 274:
 ## Known stack suffix:
@@ -8444,44 +7022,8 @@ op -> op . POLYEQUAL op [ WITH TYPE THEN SUB SQUOTE SEMI RSQUARE RPAREN RCURLY P
 -- On DIV shift to state 268
 -- On ADD shift to state 278
 ## Reductions:
--- On WITH reduce production op -> op DOTNOTEQUAL op
--- On TYPE reduce production op -> op DOTNOTEQUAL op
--- On THEN reduce production op -> op DOTNOTEQUAL op
--- On SEMI reduce production op -> op DOTNOTEQUAL op
--- On RSQUARE reduce production op -> op DOTNOTEQUAL op
--- On RPAREN reduce production op -> op DOTNOTEQUAL op
--- On RCURLY reduce production op -> op DOTNOTEQUAL op
--- On POLYEQUAL reduce production op -> op DOTNOTEQUAL op
--- On PLUSPLUS reduce production op -> op DOTNOTEQUAL op
--- On OR reduce production op -> op DOTNOTEQUAL op
--- On OF reduce production op -> op DOTNOTEQUAL op
--- On NOTEQUAL reduce production op -> op DOTNOTEQUAL op
--- On LONGARROW reduce production op -> op DOTNOTEQUAL op
--- On LESSEQUAL reduce production op -> op DOTNOTEQUAL op
--- On LESS reduce production op -> op DOTNOTEQUAL op
--- On LEFTARROW reduce production op -> op DOTNOTEQUAL op
--- On INCLUDE reduce production op -> op DOTNOTEQUAL op
--- On GREATEQUAL reduce production op -> op DOTNOTEQUAL op
--- On GREAT reduce production op -> op DOTNOTEQUAL op
--- On EQUAL reduce production op -> op DOTNOTEQUAL op
--- On EQSEMI reduce production op -> op DOTNOTEQUAL op
--- On EQ reduce production op -> op DOTNOTEQUAL op
--- On EOF reduce production op -> op DOTNOTEQUAL op
--- On END reduce production op -> op DOTNOTEQUAL op
--- On ELSE reduce production op -> op DOTNOTEQUAL op
--- On DOTNOTEQUAL reduce production op -> op DOTNOTEQUAL op
--- On DOTLESSEQUAL reduce production op -> op DOTNOTEQUAL op
--- On DOTLESS reduce production op -> op DOTNOTEQUAL op
--- On DOTGREATEQUAL reduce production op -> op DOTNOTEQUAL op
--- On DOTGREAT reduce production op -> op DOTNOTEQUAL op
--- On DOTEQUAL reduce production op -> op DOTNOTEQUAL op
--- On DEF reduce production op -> op DOTNOTEQUAL op
--- On CONS reduce production op -> op DOTNOTEQUAL op
--- On COMMA reduce production op -> op DOTNOTEQUAL op
--- On BAR reduce production op -> op DOTNOTEQUAL op
--- On ARROW reduce production op -> op DOTNOTEQUAL op
--- On APXEQ reduce production op -> op DOTNOTEQUAL op
--- On AND reduce production op -> op DOTNOTEQUAL op
+-- On WITH TYPE THEN SEMI RSQUARE RPAREN RCURLY POLYEQUAL PLUSPLUS OR OF NOTEQUAL LONGARROW LESSEQUAL LESS LEFTARROW INCLUDE GREATEQUAL GREAT EQUAL EQSEMI EQ EOF END ELSE DOTNOTEQUAL DOTLESSEQUAL DOTLESS DOTGREATEQUAL DOTGREAT DOTEQUAL DEF CONS COMMA BAR ARROW APXEQ AND
+--   reduce production op -> op DOTNOTEQUAL op
 
 State 276:
 ## Known stack suffix:
@@ -8564,48 +7106,8 @@ op -> op . POLYEQUAL op [ WITH TYPE THEN SUB SQUOTE SEMI RSQUARE RPAREN RCURLY P
 -- On DOTDIV shift to state 266
 -- On DIV shift to state 268
 ## Reductions:
--- On WITH reduce production op -> op DOTADD op
--- On TYPE reduce production op -> op DOTADD op
--- On THEN reduce production op -> op DOTADD op
--- On SUB reduce production op -> op DOTADD op
--- On SEMI reduce production op -> op DOTADD op
--- On RSQUARE reduce production op -> op DOTADD op
--- On RPAREN reduce production op -> op DOTADD op
--- On RCURLY reduce production op -> op DOTADD op
--- On POLYEQUAL reduce production op -> op DOTADD op
--- On PLUSPLUS reduce production op -> op DOTADD op
--- On OR reduce production op -> op DOTADD op
--- On OF reduce production op -> op DOTADD op
--- On NOTEQUAL reduce production op -> op DOTADD op
--- On LONGARROW reduce production op -> op DOTADD op
--- On LESSEQUAL reduce production op -> op DOTADD op
--- On LESS reduce production op -> op DOTADD op
--- On LEFTARROW reduce production op -> op DOTADD op
--- On INCLUDE reduce production op -> op DOTADD op
--- On GREATEQUAL reduce production op -> op DOTADD op
--- On GREAT reduce production op -> op DOTADD op
--- On EQUAL reduce production op -> op DOTADD op
--- On EQSEMI reduce production op -> op DOTADD op
--- On EQ reduce production op -> op DOTADD op
--- On EOF reduce production op -> op DOTADD op
--- On END reduce production op -> op DOTADD op
--- On ELSE reduce production op -> op DOTADD op
--- On DOTSUB reduce production op -> op DOTADD op
--- On DOTNOTEQUAL reduce production op -> op DOTADD op
--- On DOTLESSEQUAL reduce production op -> op DOTADD op
--- On DOTLESS reduce production op -> op DOTADD op
--- On DOTGREATEQUAL reduce production op -> op DOTADD op
--- On DOTGREAT reduce production op -> op DOTADD op
--- On DOTEQUAL reduce production op -> op DOTADD op
--- On DOTADD reduce production op -> op DOTADD op
--- On DEF reduce production op -> op DOTADD op
--- On CONS reduce production op -> op DOTADD op
--- On COMMA reduce production op -> op DOTADD op
--- On BAR reduce production op -> op DOTADD op
--- On ARROW reduce production op -> op DOTADD op
--- On APXEQ reduce production op -> op DOTADD op
--- On AND reduce production op -> op DOTADD op
--- On ADD reduce production op -> op DOTADD op
+-- On WITH TYPE THEN SUB SEMI RSQUARE RPAREN RCURLY POLYEQUAL PLUSPLUS OR OF NOTEQUAL LONGARROW LESSEQUAL LESS LEFTARROW INCLUDE GREATEQUAL GREAT EQUAL EQSEMI EQ EOF END ELSE DOTSUB DOTNOTEQUAL DOTLESSEQUAL DOTLESS DOTGREATEQUAL DOTGREAT DOTEQUAL DOTADD DEF CONS COMMA BAR ARROW APXEQ AND ADD
+--   reduce production op -> op DOTADD op
 
 State 278:
 ## Known stack suffix:
@@ -8688,48 +7190,8 @@ op -> op . POLYEQUAL op [ WITH TYPE THEN SUB SQUOTE SEMI RSQUARE RPAREN RCURLY P
 -- On DOTDIV shift to state 266
 -- On DIV shift to state 268
 ## Reductions:
--- On WITH reduce production op -> op ADD op
--- On TYPE reduce production op -> op ADD op
--- On THEN reduce production op -> op ADD op
--- On SUB reduce production op -> op ADD op
--- On SEMI reduce production op -> op ADD op
--- On RSQUARE reduce production op -> op ADD op
--- On RPAREN reduce production op -> op ADD op
--- On RCURLY reduce production op -> op ADD op
--- On POLYEQUAL reduce production op -> op ADD op
--- On PLUSPLUS reduce production op -> op ADD op
--- On OR reduce production op -> op ADD op
--- On OF reduce production op -> op ADD op
--- On NOTEQUAL reduce production op -> op ADD op
--- On LONGARROW reduce production op -> op ADD op
--- On LESSEQUAL reduce production op -> op ADD op
--- On LESS reduce production op -> op ADD op
--- On LEFTARROW reduce production op -> op ADD op
--- On INCLUDE reduce production op -> op ADD op
--- On GREATEQUAL reduce production op -> op ADD op
--- On GREAT reduce production op -> op ADD op
--- On EQUAL reduce production op -> op ADD op
--- On EQSEMI reduce production op -> op ADD op
--- On EQ reduce production op -> op ADD op
--- On EOF reduce production op -> op ADD op
--- On END reduce production op -> op ADD op
--- On ELSE reduce production op -> op ADD op
--- On DOTSUB reduce production op -> op ADD op
--- On DOTNOTEQUAL reduce production op -> op ADD op
--- On DOTLESSEQUAL reduce production op -> op ADD op
--- On DOTLESS reduce production op -> op ADD op
--- On DOTGREATEQUAL reduce production op -> op ADD op
--- On DOTGREAT reduce production op -> op ADD op
--- On DOTEQUAL reduce production op -> op ADD op
--- On DOTADD reduce production op -> op ADD op
--- On DEF reduce production op -> op ADD op
--- On CONS reduce production op -> op ADD op
--- On COMMA reduce production op -> op ADD op
--- On BAR reduce production op -> op ADD op
--- On ARROW reduce production op -> op ADD op
--- On APXEQ reduce production op -> op ADD op
--- On AND reduce production op -> op ADD op
--- On ADD reduce production op -> op ADD op
+-- On WITH TYPE THEN SUB SEMI RSQUARE RPAREN RCURLY POLYEQUAL PLUSPLUS OR OF NOTEQUAL LONGARROW LESSEQUAL LESS LEFTARROW INCLUDE GREATEQUAL GREAT EQUAL EQSEMI EQ EOF END ELSE DOTSUB DOTNOTEQUAL DOTLESSEQUAL DOTLESS DOTGREATEQUAL DOTGREAT DOTEQUAL DOTADD DEF CONS COMMA BAR ARROW APXEQ AND ADD
+--   reduce production op -> op ADD op
 
 State 280:
 ## Known stack suffix:
@@ -8816,44 +7278,8 @@ op -> op . POLYEQUAL op [ WITH TYPE THEN SUB SQUOTE SEMI RSQUARE RPAREN RCURLY P
 -- On DIV shift to state 268
 -- On ADD shift to state 278
 ## Reductions:
--- On WITH reduce production op -> op DOTLESSEQUAL op
--- On TYPE reduce production op -> op DOTLESSEQUAL op
--- On THEN reduce production op -> op DOTLESSEQUAL op
--- On SEMI reduce production op -> op DOTLESSEQUAL op
--- On RSQUARE reduce production op -> op DOTLESSEQUAL op
--- On RPAREN reduce production op -> op DOTLESSEQUAL op
--- On RCURLY reduce production op -> op DOTLESSEQUAL op
--- On POLYEQUAL reduce production op -> op DOTLESSEQUAL op
--- On PLUSPLUS reduce production op -> op DOTLESSEQUAL op
--- On OR reduce production op -> op DOTLESSEQUAL op
--- On OF reduce production op -> op DOTLESSEQUAL op
--- On NOTEQUAL reduce production op -> op DOTLESSEQUAL op
--- On LONGARROW reduce production op -> op DOTLESSEQUAL op
--- On LESSEQUAL reduce production op -> op DOTLESSEQUAL op
--- On LESS reduce production op -> op DOTLESSEQUAL op
--- On LEFTARROW reduce production op -> op DOTLESSEQUAL op
--- On INCLUDE reduce production op -> op DOTLESSEQUAL op
--- On GREATEQUAL reduce production op -> op DOTLESSEQUAL op
--- On GREAT reduce production op -> op DOTLESSEQUAL op
--- On EQUAL reduce production op -> op DOTLESSEQUAL op
--- On EQSEMI reduce production op -> op DOTLESSEQUAL op
--- On EQ reduce production op -> op DOTLESSEQUAL op
--- On EOF reduce production op -> op DOTLESSEQUAL op
--- On END reduce production op -> op DOTLESSEQUAL op
--- On ELSE reduce production op -> op DOTLESSEQUAL op
--- On DOTNOTEQUAL reduce production op -> op DOTLESSEQUAL op
--- On DOTLESSEQUAL reduce production op -> op DOTLESSEQUAL op
--- On DOTLESS reduce production op -> op DOTLESSEQUAL op
--- On DOTGREATEQUAL reduce production op -> op DOTLESSEQUAL op
--- On DOTGREAT reduce production op -> op DOTLESSEQUAL op
--- On DOTEQUAL reduce production op -> op DOTLESSEQUAL op
--- On DEF reduce production op -> op DOTLESSEQUAL op
--- On CONS reduce production op -> op DOTLESSEQUAL op
--- On COMMA reduce production op -> op DOTLESSEQUAL op
--- On BAR reduce production op -> op DOTLESSEQUAL op
--- On ARROW reduce production op -> op DOTLESSEQUAL op
--- On APXEQ reduce production op -> op DOTLESSEQUAL op
--- On AND reduce production op -> op DOTLESSEQUAL op
+-- On WITH TYPE THEN SEMI RSQUARE RPAREN RCURLY POLYEQUAL PLUSPLUS OR OF NOTEQUAL LONGARROW LESSEQUAL LESS LEFTARROW INCLUDE GREATEQUAL GREAT EQUAL EQSEMI EQ EOF END ELSE DOTNOTEQUAL DOTLESSEQUAL DOTLESS DOTGREATEQUAL DOTGREAT DOTEQUAL DEF CONS COMMA BAR ARROW APXEQ AND
+--   reduce production op -> op DOTLESSEQUAL op
 
 State 282:
 ## Known stack suffix:
@@ -8940,44 +7366,8 @@ op -> op . POLYEQUAL op [ WITH TYPE THEN SUB SQUOTE SEMI RSQUARE RPAREN RCURLY P
 -- On DIV shift to state 268
 -- On ADD shift to state 278
 ## Reductions:
--- On WITH reduce production op -> op DOTLESS op
--- On TYPE reduce production op -> op DOTLESS op
--- On THEN reduce production op -> op DOTLESS op
--- On SEMI reduce production op -> op DOTLESS op
--- On RSQUARE reduce production op -> op DOTLESS op
--- On RPAREN reduce production op -> op DOTLESS op
--- On RCURLY reduce production op -> op DOTLESS op
--- On POLYEQUAL reduce production op -> op DOTLESS op
--- On PLUSPLUS reduce production op -> op DOTLESS op
--- On OR reduce production op -> op DOTLESS op
--- On OF reduce production op -> op DOTLESS op
--- On NOTEQUAL reduce production op -> op DOTLESS op
--- On LONGARROW reduce production op -> op DOTLESS op
--- On LESSEQUAL reduce production op -> op DOTLESS op
--- On LESS reduce production op -> op DOTLESS op
--- On LEFTARROW reduce production op -> op DOTLESS op
--- On INCLUDE reduce production op -> op DOTLESS op
--- On GREATEQUAL reduce production op -> op DOTLESS op
--- On GREAT reduce production op -> op DOTLESS op
--- On EQUAL reduce production op -> op DOTLESS op
--- On EQSEMI reduce production op -> op DOTLESS op
--- On EQ reduce production op -> op DOTLESS op
--- On EOF reduce production op -> op DOTLESS op
--- On END reduce production op -> op DOTLESS op
--- On ELSE reduce production op -> op DOTLESS op
--- On DOTNOTEQUAL reduce production op -> op DOTLESS op
--- On DOTLESSEQUAL reduce production op -> op DOTLESS op
--- On DOTLESS reduce production op -> op DOTLESS op
--- On DOTGREATEQUAL reduce production op -> op DOTLESS op
--- On DOTGREAT reduce production op -> op DOTLESS op
--- On DOTEQUAL reduce production op -> op DOTLESS op
--- On DEF reduce production op -> op DOTLESS op
--- On CONS reduce production op -> op DOTLESS op
--- On COMMA reduce production op -> op DOTLESS op
--- On BAR reduce production op -> op DOTLESS op
--- On ARROW reduce production op -> op DOTLESS op
--- On APXEQ reduce production op -> op DOTLESS op
--- On AND reduce production op -> op DOTLESS op
+-- On WITH TYPE THEN SEMI RSQUARE RPAREN RCURLY POLYEQUAL PLUSPLUS OR OF NOTEQUAL LONGARROW LESSEQUAL LESS LEFTARROW INCLUDE GREATEQUAL GREAT EQUAL EQSEMI EQ EOF END ELSE DOTNOTEQUAL DOTLESSEQUAL DOTLESS DOTGREATEQUAL DOTGREAT DOTEQUAL DEF CONS COMMA BAR ARROW APXEQ AND
+--   reduce production op -> op DOTLESS op
 
 State 284:
 ## Known stack suffix:
@@ -9064,44 +7454,8 @@ op -> op . POLYEQUAL op [ WITH TYPE THEN SUB SQUOTE SEMI RSQUARE RPAREN RCURLY P
 -- On DIV shift to state 268
 -- On ADD shift to state 278
 ## Reductions:
--- On WITH reduce production op -> op DOTGREATEQUAL op
--- On TYPE reduce production op -> op DOTGREATEQUAL op
--- On THEN reduce production op -> op DOTGREATEQUAL op
--- On SEMI reduce production op -> op DOTGREATEQUAL op
--- On RSQUARE reduce production op -> op DOTGREATEQUAL op
--- On RPAREN reduce production op -> op DOTGREATEQUAL op
--- On RCURLY reduce production op -> op DOTGREATEQUAL op
--- On POLYEQUAL reduce production op -> op DOTGREATEQUAL op
--- On PLUSPLUS reduce production op -> op DOTGREATEQUAL op
--- On OR reduce production op -> op DOTGREATEQUAL op
--- On OF reduce production op -> op DOTGREATEQUAL op
--- On NOTEQUAL reduce production op -> op DOTGREATEQUAL op
--- On LONGARROW reduce production op -> op DOTGREATEQUAL op
--- On LESSEQUAL reduce production op -> op DOTGREATEQUAL op
--- On LESS reduce production op -> op DOTGREATEQUAL op
--- On LEFTARROW reduce production op -> op DOTGREATEQUAL op
--- On INCLUDE reduce production op -> op DOTGREATEQUAL op
--- On GREATEQUAL reduce production op -> op DOTGREATEQUAL op
--- On GREAT reduce production op -> op DOTGREATEQUAL op
--- On EQUAL reduce production op -> op DOTGREATEQUAL op
--- On EQSEMI reduce production op -> op DOTGREATEQUAL op
--- On EQ reduce production op -> op DOTGREATEQUAL op
--- On EOF reduce production op -> op DOTGREATEQUAL op
--- On END reduce production op -> op DOTGREATEQUAL op
--- On ELSE reduce production op -> op DOTGREATEQUAL op
--- On DOTNOTEQUAL reduce production op -> op DOTGREATEQUAL op
--- On DOTLESSEQUAL reduce production op -> op DOTGREATEQUAL op
--- On DOTLESS reduce production op -> op DOTGREATEQUAL op
--- On DOTGREATEQUAL reduce production op -> op DOTGREATEQUAL op
--- On DOTGREAT reduce production op -> op DOTGREATEQUAL op
--- On DOTEQUAL reduce production op -> op DOTGREATEQUAL op
--- On DEF reduce production op -> op DOTGREATEQUAL op
--- On CONS reduce production op -> op DOTGREATEQUAL op
--- On COMMA reduce production op -> op DOTGREATEQUAL op
--- On BAR reduce production op -> op DOTGREATEQUAL op
--- On ARROW reduce production op -> op DOTGREATEQUAL op
--- On APXEQ reduce production op -> op DOTGREATEQUAL op
--- On AND reduce production op -> op DOTGREATEQUAL op
+-- On WITH TYPE THEN SEMI RSQUARE RPAREN RCURLY POLYEQUAL PLUSPLUS OR OF NOTEQUAL LONGARROW LESSEQUAL LESS LEFTARROW INCLUDE GREATEQUAL GREAT EQUAL EQSEMI EQ EOF END ELSE DOTNOTEQUAL DOTLESSEQUAL DOTLESS DOTGREATEQUAL DOTGREAT DOTEQUAL DEF CONS COMMA BAR ARROW APXEQ AND
+--   reduce production op -> op DOTGREATEQUAL op
 
 State 286:
 ## Known stack suffix:
@@ -9188,44 +7542,8 @@ op -> op . POLYEQUAL op [ WITH TYPE THEN SUB SQUOTE SEMI RSQUARE RPAREN RCURLY P
 -- On DIV shift to state 268
 -- On ADD shift to state 278
 ## Reductions:
--- On WITH reduce production op -> op DOTGREAT op
--- On TYPE reduce production op -> op DOTGREAT op
--- On THEN reduce production op -> op DOTGREAT op
--- On SEMI reduce production op -> op DOTGREAT op
--- On RSQUARE reduce production op -> op DOTGREAT op
--- On RPAREN reduce production op -> op DOTGREAT op
--- On RCURLY reduce production op -> op DOTGREAT op
--- On POLYEQUAL reduce production op -> op DOTGREAT op
--- On PLUSPLUS reduce production op -> op DOTGREAT op
--- On OR reduce production op -> op DOTGREAT op
--- On OF reduce production op -> op DOTGREAT op
--- On NOTEQUAL reduce production op -> op DOTGREAT op
--- On LONGARROW reduce production op -> op DOTGREAT op
--- On LESSEQUAL reduce production op -> op DOTGREAT op
--- On LESS reduce production op -> op DOTGREAT op
--- On LEFTARROW reduce production op -> op DOTGREAT op
--- On INCLUDE reduce production op -> op DOTGREAT op
--- On GREATEQUAL reduce production op -> op DOTGREAT op
--- On GREAT reduce production op -> op DOTGREAT op
--- On EQUAL reduce production op -> op DOTGREAT op
--- On EQSEMI reduce production op -> op DOTGREAT op
--- On EQ reduce production op -> op DOTGREAT op
--- On EOF reduce production op -> op DOTGREAT op
--- On END reduce production op -> op DOTGREAT op
--- On ELSE reduce production op -> op DOTGREAT op
--- On DOTNOTEQUAL reduce production op -> op DOTGREAT op
--- On DOTLESSEQUAL reduce production op -> op DOTGREAT op
--- On DOTLESS reduce production op -> op DOTGREAT op
--- On DOTGREATEQUAL reduce production op -> op DOTGREAT op
--- On DOTGREAT reduce production op -> op DOTGREAT op
--- On DOTEQUAL reduce production op -> op DOTGREAT op
--- On DEF reduce production op -> op DOTGREAT op
--- On CONS reduce production op -> op DOTGREAT op
--- On COMMA reduce production op -> op DOTGREAT op
--- On BAR reduce production op -> op DOTGREAT op
--- On ARROW reduce production op -> op DOTGREAT op
--- On APXEQ reduce production op -> op DOTGREAT op
--- On AND reduce production op -> op DOTGREAT op
+-- On WITH TYPE THEN SEMI RSQUARE RPAREN RCURLY POLYEQUAL PLUSPLUS OR OF NOTEQUAL LONGARROW LESSEQUAL LESS LEFTARROW INCLUDE GREATEQUAL GREAT EQUAL EQSEMI EQ EOF END ELSE DOTNOTEQUAL DOTLESSEQUAL DOTLESS DOTGREATEQUAL DOTGREAT DOTEQUAL DEF CONS COMMA BAR ARROW APXEQ AND
+--   reduce production op -> op DOTGREAT op
 
 State 288:
 ## Known stack suffix:
@@ -9312,44 +7630,8 @@ op -> op . POLYEQUAL op [ WITH TYPE THEN SUB SQUOTE SEMI RSQUARE RPAREN RCURLY P
 -- On DIV shift to state 268
 -- On ADD shift to state 278
 ## Reductions:
--- On WITH reduce production op -> op DOTEQUAL op
--- On TYPE reduce production op -> op DOTEQUAL op
--- On THEN reduce production op -> op DOTEQUAL op
--- On SEMI reduce production op -> op DOTEQUAL op
--- On RSQUARE reduce production op -> op DOTEQUAL op
--- On RPAREN reduce production op -> op DOTEQUAL op
--- On RCURLY reduce production op -> op DOTEQUAL op
--- On POLYEQUAL reduce production op -> op DOTEQUAL op
--- On PLUSPLUS reduce production op -> op DOTEQUAL op
--- On OR reduce production op -> op DOTEQUAL op
--- On OF reduce production op -> op DOTEQUAL op
--- On NOTEQUAL reduce production op -> op DOTEQUAL op
--- On LONGARROW reduce production op -> op DOTEQUAL op
--- On LESSEQUAL reduce production op -> op DOTEQUAL op
--- On LESS reduce production op -> op DOTEQUAL op
--- On LEFTARROW reduce production op -> op DOTEQUAL op
--- On INCLUDE reduce production op -> op DOTEQUAL op
--- On GREATEQUAL reduce production op -> op DOTEQUAL op
--- On GREAT reduce production op -> op DOTEQUAL op
--- On EQUAL reduce production op -> op DOTEQUAL op
--- On EQSEMI reduce production op -> op DOTEQUAL op
--- On EQ reduce production op -> op DOTEQUAL op
--- On EOF reduce production op -> op DOTEQUAL op
--- On END reduce production op -> op DOTEQUAL op
--- On ELSE reduce production op -> op DOTEQUAL op
--- On DOTNOTEQUAL reduce production op -> op DOTEQUAL op
--- On DOTLESSEQUAL reduce production op -> op DOTEQUAL op
--- On DOTLESS reduce production op -> op DOTEQUAL op
--- On DOTGREATEQUAL reduce production op -> op DOTEQUAL op
--- On DOTGREAT reduce production op -> op DOTEQUAL op
--- On DOTEQUAL reduce production op -> op DOTEQUAL op
--- On DEF reduce production op -> op DOTEQUAL op
--- On CONS reduce production op -> op DOTEQUAL op
--- On COMMA reduce production op -> op DOTEQUAL op
--- On BAR reduce production op -> op DOTEQUAL op
--- On ARROW reduce production op -> op DOTEQUAL op
--- On APXEQ reduce production op -> op DOTEQUAL op
--- On AND reduce production op -> op DOTEQUAL op
+-- On WITH TYPE THEN SEMI RSQUARE RPAREN RCURLY POLYEQUAL PLUSPLUS OR OF NOTEQUAL LONGARROW LESSEQUAL LESS LEFTARROW INCLUDE GREATEQUAL GREAT EQUAL EQSEMI EQ EOF END ELSE DOTNOTEQUAL DOTLESSEQUAL DOTLESS DOTGREATEQUAL DOTGREAT DOTEQUAL DEF CONS COMMA BAR ARROW APXEQ AND
+--   reduce production op -> op DOTEQUAL op
 
 State 290:
 ## Known stack suffix:
@@ -9450,30 +7732,8 @@ op -> op . POLYEQUAL op [ WITH TYPE THEN SUB SQUOTE SEMI RSQUARE RPAREN RCURLY P
 -- On DIV shift to state 268
 -- On ADD shift to state 278
 ## Reductions:
--- On WITH reduce production op -> op PLUSPLUS op
--- On TYPE reduce production op -> op PLUSPLUS op
--- On THEN reduce production op -> op PLUSPLUS op
--- On SEMI reduce production op -> op PLUSPLUS op
--- On RSQUARE reduce production op -> op PLUSPLUS op
--- On RPAREN reduce production op -> op PLUSPLUS op
--- On RCURLY reduce production op -> op PLUSPLUS op
--- On PLUSPLUS reduce production op -> op PLUSPLUS op
--- On OR reduce production op -> op PLUSPLUS op
--- On OF reduce production op -> op PLUSPLUS op
--- On LEFTARROW reduce production op -> op PLUSPLUS op
--- On INCLUDE reduce production op -> op PLUSPLUS op
--- On EQSEMI reduce production op -> op PLUSPLUS op
--- On EQ reduce production op -> op PLUSPLUS op
--- On EOF reduce production op -> op PLUSPLUS op
--- On END reduce production op -> op PLUSPLUS op
--- On ELSE reduce production op -> op PLUSPLUS op
--- On DEF reduce production op -> op PLUSPLUS op
--- On CONS reduce production op -> op PLUSPLUS op
--- On COMMA reduce production op -> op PLUSPLUS op
--- On BAR reduce production op -> op PLUSPLUS op
--- On ARROW reduce production op -> op PLUSPLUS op
--- On APXEQ reduce production op -> op PLUSPLUS op
--- On AND reduce production op -> op PLUSPLUS op
+-- On WITH TYPE THEN SEMI RSQUARE RPAREN RCURLY PLUSPLUS OR OF LEFTARROW INCLUDE EQSEMI EQ EOF END ELSE DEF CONS COMMA BAR ARROW APXEQ AND
+--   reduce production op -> op PLUSPLUS op
 
 State 292:
 ## Known stack suffix:
@@ -9566,38 +7826,8 @@ op -> op . POLYEQUAL op [ WITH TYPE THEN SUB SQUOTE SEMI RSQUARE RPAREN RCURLY P
 -- On DIV shift to state 268
 -- On ADD shift to state 278
 ## Reductions:
--- On WITH reduce production op -> op NOTEQUAL op
--- On TYPE reduce production op -> op NOTEQUAL op
--- On THEN reduce production op -> op NOTEQUAL op
--- On SEMI reduce production op -> op NOTEQUAL op
--- On RSQUARE reduce production op -> op NOTEQUAL op
--- On RPAREN reduce production op -> op NOTEQUAL op
--- On RCURLY reduce production op -> op NOTEQUAL op
--- On POLYEQUAL reduce production op -> op NOTEQUAL op
--- On PLUSPLUS reduce production op -> op NOTEQUAL op
--- On OR reduce production op -> op NOTEQUAL op
--- On OF reduce production op -> op NOTEQUAL op
--- On NOTEQUAL reduce production op -> op NOTEQUAL op
--- On LONGARROW reduce production op -> op NOTEQUAL op
--- On LESSEQUAL reduce production op -> op NOTEQUAL op
--- On LESS reduce production op -> op NOTEQUAL op
--- On LEFTARROW reduce production op -> op NOTEQUAL op
--- On INCLUDE reduce production op -> op NOTEQUAL op
--- On GREATEQUAL reduce production op -> op NOTEQUAL op
--- On GREAT reduce production op -> op NOTEQUAL op
--- On EQUAL reduce production op -> op NOTEQUAL op
--- On EQSEMI reduce production op -> op NOTEQUAL op
--- On EQ reduce production op -> op NOTEQUAL op
--- On EOF reduce production op -> op NOTEQUAL op
--- On END reduce production op -> op NOTEQUAL op
--- On ELSE reduce production op -> op NOTEQUAL op
--- On DEF reduce production op -> op NOTEQUAL op
--- On CONS reduce production op -> op NOTEQUAL op
--- On COMMA reduce production op -> op NOTEQUAL op
--- On BAR reduce production op -> op NOTEQUAL op
--- On ARROW reduce production op -> op NOTEQUAL op
--- On APXEQ reduce production op -> op NOTEQUAL op
--- On AND reduce production op -> op NOTEQUAL op
+-- On WITH TYPE THEN SEMI RSQUARE RPAREN RCURLY POLYEQUAL PLUSPLUS OR OF NOTEQUAL LONGARROW LESSEQUAL LESS LEFTARROW INCLUDE GREATEQUAL GREAT EQUAL EQSEMI EQ EOF END ELSE DEF CONS COMMA BAR ARROW APXEQ AND
+--   reduce production op -> op NOTEQUAL op
 
 State 294:
 ## Known stack suffix:
@@ -9690,38 +7920,8 @@ op -> op . POLYEQUAL op [ WITH TYPE THEN SUB SQUOTE SEMI RSQUARE RPAREN RCURLY P
 -- On DIV shift to state 268
 -- On ADD shift to state 278
 ## Reductions:
--- On WITH reduce production op -> op LONGARROW op
--- On TYPE reduce production op -> op LONGARROW op
--- On THEN reduce production op -> op LONGARROW op
--- On SEMI reduce production op -> op LONGARROW op
--- On RSQUARE reduce production op -> op LONGARROW op
--- On RPAREN reduce production op -> op LONGARROW op
--- On RCURLY reduce production op -> op LONGARROW op
--- On POLYEQUAL reduce production op -> op LONGARROW op
--- On PLUSPLUS reduce production op -> op LONGARROW op
--- On OR reduce production op -> op LONGARROW op
--- On OF reduce production op -> op LONGARROW op
--- On NOTEQUAL reduce production op -> op LONGARROW op
--- On LONGARROW reduce production op -> op LONGARROW op
--- On LESSEQUAL reduce production op -> op LONGARROW op
--- On LESS reduce production op -> op LONGARROW op
--- On LEFTARROW reduce production op -> op LONGARROW op
--- On INCLUDE reduce production op -> op LONGARROW op
--- On GREATEQUAL reduce production op -> op LONGARROW op
--- On GREAT reduce production op -> op LONGARROW op
--- On EQUAL reduce production op -> op LONGARROW op
--- On EQSEMI reduce production op -> op LONGARROW op
--- On EQ reduce production op -> op LONGARROW op
--- On EOF reduce production op -> op LONGARROW op
--- On END reduce production op -> op LONGARROW op
--- On ELSE reduce production op -> op LONGARROW op
--- On DEF reduce production op -> op LONGARROW op
--- On CONS reduce production op -> op LONGARROW op
--- On COMMA reduce production op -> op LONGARROW op
--- On BAR reduce production op -> op LONGARROW op
--- On ARROW reduce production op -> op LONGARROW op
--- On APXEQ reduce production op -> op LONGARROW op
--- On AND reduce production op -> op LONGARROW op
+-- On WITH TYPE THEN SEMI RSQUARE RPAREN RCURLY POLYEQUAL PLUSPLUS OR OF NOTEQUAL LONGARROW LESSEQUAL LESS LEFTARROW INCLUDE GREATEQUAL GREAT EQUAL EQSEMI EQ EOF END ELSE DEF CONS COMMA BAR ARROW APXEQ AND
+--   reduce production op -> op LONGARROW op
 
 State 296:
 ## Known stack suffix:
@@ -9814,38 +8014,8 @@ op -> op . POLYEQUAL op [ WITH TYPE THEN SUB SQUOTE SEMI RSQUARE RPAREN RCURLY P
 -- On DIV shift to state 268
 -- On ADD shift to state 278
 ## Reductions:
--- On WITH reduce production op -> op LESSEQUAL op
--- On TYPE reduce production op -> op LESSEQUAL op
--- On THEN reduce production op -> op LESSEQUAL op
--- On SEMI reduce production op -> op LESSEQUAL op
--- On RSQUARE reduce production op -> op LESSEQUAL op
--- On RPAREN reduce production op -> op LESSEQUAL op
--- On RCURLY reduce production op -> op LESSEQUAL op
--- On POLYEQUAL reduce production op -> op LESSEQUAL op
--- On PLUSPLUS reduce production op -> op LESSEQUAL op
--- On OR reduce production op -> op LESSEQUAL op
--- On OF reduce production op -> op LESSEQUAL op
--- On NOTEQUAL reduce production op -> op LESSEQUAL op
--- On LONGARROW reduce production op -> op LESSEQUAL op
--- On LESSEQUAL reduce production op -> op LESSEQUAL op
--- On LESS reduce production op -> op LESSEQUAL op
--- On LEFTARROW reduce production op -> op LESSEQUAL op
--- On INCLUDE reduce production op -> op LESSEQUAL op
--- On GREATEQUAL reduce production op -> op LESSEQUAL op
--- On GREAT reduce production op -> op LESSEQUAL op
--- On EQUAL reduce production op -> op LESSEQUAL op
--- On EQSEMI reduce production op -> op LESSEQUAL op
--- On EQ reduce production op -> op LESSEQUAL op
--- On EOF reduce production op -> op LESSEQUAL op
--- On END reduce production op -> op LESSEQUAL op
--- On ELSE reduce production op -> op LESSEQUAL op
--- On DEF reduce production op -> op LESSEQUAL op
--- On CONS reduce production op -> op LESSEQUAL op
--- On COMMA reduce production op -> op LESSEQUAL op
--- On BAR reduce production op -> op LESSEQUAL op
--- On ARROW reduce production op -> op LESSEQUAL op
--- On APXEQ reduce production op -> op LESSEQUAL op
--- On AND reduce production op -> op LESSEQUAL op
+-- On WITH TYPE THEN SEMI RSQUARE RPAREN RCURLY POLYEQUAL PLUSPLUS OR OF NOTEQUAL LONGARROW LESSEQUAL LESS LEFTARROW INCLUDE GREATEQUAL GREAT EQUAL EQSEMI EQ EOF END ELSE DEF CONS COMMA BAR ARROW APXEQ AND
+--   reduce production op -> op LESSEQUAL op
 
 State 298:
 ## Known stack suffix:
@@ -9938,38 +8108,8 @@ op -> op . POLYEQUAL op [ WITH TYPE THEN SUB SQUOTE SEMI RSQUARE RPAREN RCURLY P
 -- On DIV shift to state 268
 -- On ADD shift to state 278
 ## Reductions:
--- On WITH reduce production op -> op LESS op
--- On TYPE reduce production op -> op LESS op
--- On THEN reduce production op -> op LESS op
--- On SEMI reduce production op -> op LESS op
--- On RSQUARE reduce production op -> op LESS op
--- On RPAREN reduce production op -> op LESS op
--- On RCURLY reduce production op -> op LESS op
--- On POLYEQUAL reduce production op -> op LESS op
--- On PLUSPLUS reduce production op -> op LESS op
--- On OR reduce production op -> op LESS op
--- On OF reduce production op -> op LESS op
--- On NOTEQUAL reduce production op -> op LESS op
--- On LONGARROW reduce production op -> op LESS op
--- On LESSEQUAL reduce production op -> op LESS op
--- On LESS reduce production op -> op LESS op
--- On LEFTARROW reduce production op -> op LESS op
--- On INCLUDE reduce production op -> op LESS op
--- On GREATEQUAL reduce production op -> op LESS op
--- On GREAT reduce production op -> op LESS op
--- On EQUAL reduce production op -> op LESS op
--- On EQSEMI reduce production op -> op LESS op
--- On EQ reduce production op -> op LESS op
--- On EOF reduce production op -> op LESS op
--- On END reduce production op -> op LESS op
--- On ELSE reduce production op -> op LESS op
--- On DEF reduce production op -> op LESS op
--- On CONS reduce production op -> op LESS op
--- On COMMA reduce production op -> op LESS op
--- On BAR reduce production op -> op LESS op
--- On ARROW reduce production op -> op LESS op
--- On APXEQ reduce production op -> op LESS op
--- On AND reduce production op -> op LESS op
+-- On WITH TYPE THEN SEMI RSQUARE RPAREN RCURLY POLYEQUAL PLUSPLUS OR OF NOTEQUAL LONGARROW LESSEQUAL LESS LEFTARROW INCLUDE GREATEQUAL GREAT EQUAL EQSEMI EQ EOF END ELSE DEF CONS COMMA BAR ARROW APXEQ AND
+--   reduce production op -> op LESS op
 
 State 300:
 ## Known stack suffix:
@@ -10062,38 +8202,8 @@ op -> op . POLYEQUAL op [ WITH TYPE THEN SUB SQUOTE SEMI RSQUARE RPAREN RCURLY P
 -- On DIV shift to state 268
 -- On ADD shift to state 278
 ## Reductions:
--- On WITH reduce production op -> op GREATEQUAL op
--- On TYPE reduce production op -> op GREATEQUAL op
--- On THEN reduce production op -> op GREATEQUAL op
--- On SEMI reduce production op -> op GREATEQUAL op
--- On RSQUARE reduce production op -> op GREATEQUAL op
--- On RPAREN reduce production op -> op GREATEQUAL op
--- On RCURLY reduce production op -> op GREATEQUAL op
--- On POLYEQUAL reduce production op -> op GREATEQUAL op
--- On PLUSPLUS reduce production op -> op GREATEQUAL op
--- On OR reduce production op -> op GREATEQUAL op
--- On OF reduce production op -> op GREATEQUAL op
--- On NOTEQUAL reduce production op -> op GREATEQUAL op
--- On LONGARROW reduce production op -> op GREATEQUAL op
--- On LESSEQUAL reduce production op -> op GREATEQUAL op
--- On LESS reduce production op -> op GREATEQUAL op
--- On LEFTARROW reduce production op -> op GREATEQUAL op
--- On INCLUDE reduce production op -> op GREATEQUAL op
--- On GREATEQUAL reduce production op -> op GREATEQUAL op
--- On GREAT reduce production op -> op GREATEQUAL op
--- On EQUAL reduce production op -> op GREATEQUAL op
--- On EQSEMI reduce production op -> op GREATEQUAL op
--- On EQ reduce production op -> op GREATEQUAL op
--- On EOF reduce production op -> op GREATEQUAL op
--- On END reduce production op -> op GREATEQUAL op
--- On ELSE reduce production op -> op GREATEQUAL op
--- On DEF reduce production op -> op GREATEQUAL op
--- On CONS reduce production op -> op GREATEQUAL op
--- On COMMA reduce production op -> op GREATEQUAL op
--- On BAR reduce production op -> op GREATEQUAL op
--- On ARROW reduce production op -> op GREATEQUAL op
--- On APXEQ reduce production op -> op GREATEQUAL op
--- On AND reduce production op -> op GREATEQUAL op
+-- On WITH TYPE THEN SEMI RSQUARE RPAREN RCURLY POLYEQUAL PLUSPLUS OR OF NOTEQUAL LONGARROW LESSEQUAL LESS LEFTARROW INCLUDE GREATEQUAL GREAT EQUAL EQSEMI EQ EOF END ELSE DEF CONS COMMA BAR ARROW APXEQ AND
+--   reduce production op -> op GREATEQUAL op
 
 State 302:
 ## Known stack suffix:
@@ -10186,38 +8296,8 @@ op -> op . POLYEQUAL op [ WITH TYPE THEN SUB SQUOTE SEMI RSQUARE RPAREN RCURLY P
 -- On DIV shift to state 268
 -- On ADD shift to state 278
 ## Reductions:
--- On WITH reduce production op -> op GREAT op
--- On TYPE reduce production op -> op GREAT op
--- On THEN reduce production op -> op GREAT op
--- On SEMI reduce production op -> op GREAT op
--- On RSQUARE reduce production op -> op GREAT op
--- On RPAREN reduce production op -> op GREAT op
--- On RCURLY reduce production op -> op GREAT op
--- On POLYEQUAL reduce production op -> op GREAT op
--- On PLUSPLUS reduce production op -> op GREAT op
--- On OR reduce production op -> op GREAT op
--- On OF reduce production op -> op GREAT op
--- On NOTEQUAL reduce production op -> op GREAT op
--- On LONGARROW reduce production op -> op GREAT op
--- On LESSEQUAL reduce production op -> op GREAT op
--- On LESS reduce production op -> op GREAT op
--- On LEFTARROW reduce production op -> op GREAT op
--- On INCLUDE reduce production op -> op GREAT op
--- On GREATEQUAL reduce production op -> op GREAT op
--- On GREAT reduce production op -> op GREAT op
--- On EQUAL reduce production op -> op GREAT op
--- On EQSEMI reduce production op -> op GREAT op
--- On EQ reduce production op -> op GREAT op
--- On EOF reduce production op -> op GREAT op
--- On END reduce production op -> op GREAT op
--- On ELSE reduce production op -> op GREAT op
--- On DEF reduce production op -> op GREAT op
--- On CONS reduce production op -> op GREAT op
--- On COMMA reduce production op -> op GREAT op
--- On BAR reduce production op -> op GREAT op
--- On ARROW reduce production op -> op GREAT op
--- On APXEQ reduce production op -> op GREAT op
--- On AND reduce production op -> op GREAT op
+-- On WITH TYPE THEN SEMI RSQUARE RPAREN RCURLY POLYEQUAL PLUSPLUS OR OF NOTEQUAL LONGARROW LESSEQUAL LESS LEFTARROW INCLUDE GREATEQUAL GREAT EQUAL EQSEMI EQ EOF END ELSE DEF CONS COMMA BAR ARROW APXEQ AND
+--   reduce production op -> op GREAT op
 
 State 304:
 ## Known stack suffix:
@@ -10310,38 +8390,8 @@ op -> op . POLYEQUAL op [ WITH TYPE THEN SUB SQUOTE SEMI RSQUARE RPAREN RCURLY P
 -- On DIV shift to state 268
 -- On ADD shift to state 278
 ## Reductions:
--- On WITH reduce production op -> op EQUAL op
--- On TYPE reduce production op -> op EQUAL op
--- On THEN reduce production op -> op EQUAL op
--- On SEMI reduce production op -> op EQUAL op
--- On RSQUARE reduce production op -> op EQUAL op
--- On RPAREN reduce production op -> op EQUAL op
--- On RCURLY reduce production op -> op EQUAL op
--- On POLYEQUAL reduce production op -> op EQUAL op
--- On PLUSPLUS reduce production op -> op EQUAL op
--- On OR reduce production op -> op EQUAL op
--- On OF reduce production op -> op EQUAL op
--- On NOTEQUAL reduce production op -> op EQUAL op
--- On LONGARROW reduce production op -> op EQUAL op
--- On LESSEQUAL reduce production op -> op EQUAL op
--- On LESS reduce production op -> op EQUAL op
--- On LEFTARROW reduce production op -> op EQUAL op
--- On INCLUDE reduce production op -> op EQUAL op
--- On GREATEQUAL reduce production op -> op EQUAL op
--- On GREAT reduce production op -> op EQUAL op
--- On EQUAL reduce production op -> op EQUAL op
--- On EQSEMI reduce production op -> op EQUAL op
--- On EQ reduce production op -> op EQUAL op
--- On EOF reduce production op -> op EQUAL op
--- On END reduce production op -> op EQUAL op
--- On ELSE reduce production op -> op EQUAL op
--- On DEF reduce production op -> op EQUAL op
--- On CONS reduce production op -> op EQUAL op
--- On COMMA reduce production op -> op EQUAL op
--- On BAR reduce production op -> op EQUAL op
--- On ARROW reduce production op -> op EQUAL op
--- On APXEQ reduce production op -> op EQUAL op
--- On AND reduce production op -> op EQUAL op
+-- On WITH TYPE THEN SEMI RSQUARE RPAREN RCURLY POLYEQUAL PLUSPLUS OR OF NOTEQUAL LONGARROW LESSEQUAL LESS LEFTARROW INCLUDE GREATEQUAL GREAT EQUAL EQSEMI EQ EOF END ELSE DEF CONS COMMA BAR ARROW APXEQ AND
+--   reduce production op -> op EQUAL op
 
 State 306:
 ## Known stack suffix:
@@ -10447,25 +8497,8 @@ op -> op . POLYEQUAL op [ WITH TYPE THEN SUB SQUOTE SEMI RSQUARE RPAREN RCURLY P
 -- On AND shift to state 314
 -- On ADD shift to state 278
 ## Reductions:
--- On WITH reduce production op -> op OR op
--- On TYPE reduce production op -> op OR op
--- On THEN reduce production op -> op OR op
--- On SEMI reduce production op -> op OR op
--- On RSQUARE reduce production op -> op OR op
--- On RPAREN reduce production op -> op OR op
--- On RCURLY reduce production op -> op OR op
--- On OR reduce production op -> op OR op
--- On OF reduce production op -> op OR op
--- On INCLUDE reduce production op -> op OR op
--- On EQSEMI reduce production op -> op OR op
--- On EOF reduce production op -> op OR op
--- On END reduce production op -> op OR op
--- On ELSE reduce production op -> op OR op
--- On DEF reduce production op -> op OR op
--- On CONS reduce production op -> op OR op
--- On COMMA reduce production op -> op OR op
--- On BAR reduce production op -> op OR op
--- On ARROW reduce production op -> op OR op
+-- On WITH TYPE THEN SEMI RSQUARE RPAREN RCURLY OR OF INCLUDE EQSEMI EOF END ELSE DEF CONS COMMA BAR ARROW
+--   reduce production op -> op OR op
 
 State 308:
 ## Known stack suffix:
@@ -10566,30 +8599,8 @@ op -> op . POLYEQUAL op [ WITH TYPE THEN SUB SQUOTE SEMI RSQUARE RPAREN RCURLY P
 -- On DIV shift to state 268
 -- On ADD shift to state 278
 ## Reductions:
--- On WITH reduce production op -> op LEFTARROW op
--- On TYPE reduce production op -> op LEFTARROW op
--- On THEN reduce production op -> op LEFTARROW op
--- On SEMI reduce production op -> op LEFTARROW op
--- On RSQUARE reduce production op -> op LEFTARROW op
--- On RPAREN reduce production op -> op LEFTARROW op
--- On RCURLY reduce production op -> op LEFTARROW op
--- On PLUSPLUS reduce production op -> op LEFTARROW op
--- On OR reduce production op -> op LEFTARROW op
--- On OF reduce production op -> op LEFTARROW op
--- On LEFTARROW reduce production op -> op LEFTARROW op
--- On INCLUDE reduce production op -> op LEFTARROW op
--- On EQSEMI reduce production op -> op LEFTARROW op
--- On EQ reduce production op -> op LEFTARROW op
--- On EOF reduce production op -> op LEFTARROW op
--- On END reduce production op -> op LEFTARROW op
--- On ELSE reduce production op -> op LEFTARROW op
--- On DEF reduce production op -> op LEFTARROW op
--- On CONS reduce production op -> op LEFTARROW op
--- On COMMA reduce production op -> op LEFTARROW op
--- On BAR reduce production op -> op LEFTARROW op
--- On ARROW reduce production op -> op LEFTARROW op
--- On APXEQ reduce production op -> op LEFTARROW op
--- On AND reduce production op -> op LEFTARROW op
+-- On WITH TYPE THEN SEMI RSQUARE RPAREN RCURLY PLUSPLUS OR OF LEFTARROW INCLUDE EQSEMI EQ EOF END ELSE DEF CONS COMMA BAR ARROW APXEQ AND
+--   reduce production op -> op LEFTARROW op
 
 State 310:
 ## Known stack suffix:
@@ -10690,30 +8701,8 @@ op -> op . POLYEQUAL op [ WITH TYPE THEN SUB SQUOTE SEMI RSQUARE RPAREN RCURLY P
 -- On DIV shift to state 268
 -- On ADD shift to state 278
 ## Reductions:
--- On WITH reduce production op -> op EQ op
--- On TYPE reduce production op -> op EQ op
--- On THEN reduce production op -> op EQ op
--- On SEMI reduce production op -> op EQ op
--- On RSQUARE reduce production op -> op EQ op
--- On RPAREN reduce production op -> op EQ op
--- On RCURLY reduce production op -> op EQ op
--- On PLUSPLUS reduce production op -> op EQ op
--- On OR reduce production op -> op EQ op
--- On OF reduce production op -> op EQ op
--- On LEFTARROW reduce production op -> op EQ op
--- On INCLUDE reduce production op -> op EQ op
--- On EQSEMI reduce production op -> op EQ op
--- On EQ reduce production op -> op EQ op
--- On EOF reduce production op -> op EQ op
--- On END reduce production op -> op EQ op
--- On ELSE reduce production op -> op EQ op
--- On DEF reduce production op -> op EQ op
--- On CONS reduce production op -> op EQ op
--- On COMMA reduce production op -> op EQ op
--- On BAR reduce production op -> op EQ op
--- On ARROW reduce production op -> op EQ op
--- On APXEQ reduce production op -> op EQ op
--- On AND reduce production op -> op EQ op
+-- On WITH TYPE THEN SEMI RSQUARE RPAREN RCURLY PLUSPLUS OR OF LEFTARROW INCLUDE EQSEMI EQ EOF END ELSE DEF CONS COMMA BAR ARROW APXEQ AND
+--   reduce production op -> op EQ op
 
 State 312:
 ## Known stack suffix:
@@ -10814,30 +8803,8 @@ op -> op . POLYEQUAL op [ WITH TYPE THEN SUB SQUOTE SEMI RSQUARE RPAREN RCURLY P
 -- On DIV shift to state 268
 -- On ADD shift to state 278
 ## Reductions:
--- On WITH reduce production op -> op APXEQ op
--- On TYPE reduce production op -> op APXEQ op
--- On THEN reduce production op -> op APXEQ op
--- On SEMI reduce production op -> op APXEQ op
--- On RSQUARE reduce production op -> op APXEQ op
--- On RPAREN reduce production op -> op APXEQ op
--- On RCURLY reduce production op -> op APXEQ op
--- On PLUSPLUS reduce production op -> op APXEQ op
--- On OR reduce production op -> op APXEQ op
--- On OF reduce production op -> op APXEQ op
--- On LEFTARROW reduce production op -> op APXEQ op
--- On INCLUDE reduce production op -> op APXEQ op
--- On EQSEMI reduce production op -> op APXEQ op
--- On EQ reduce production op -> op APXEQ op
--- On EOF reduce production op -> op APXEQ op
--- On END reduce production op -> op APXEQ op
--- On ELSE reduce production op -> op APXEQ op
--- On DEF reduce production op -> op APXEQ op
--- On CONS reduce production op -> op APXEQ op
--- On COMMA reduce production op -> op APXEQ op
--- On BAR reduce production op -> op APXEQ op
--- On ARROW reduce production op -> op APXEQ op
--- On APXEQ reduce production op -> op APXEQ op
--- On AND reduce production op -> op APXEQ op
+-- On WITH TYPE THEN SEMI RSQUARE RPAREN RCURLY PLUSPLUS OR OF LEFTARROW INCLUDE EQSEMI EQ EOF END ELSE DEF CONS COMMA BAR ARROW APXEQ AND
+--   reduce production op -> op APXEQ op
 
 State 314:
 ## Known stack suffix:
@@ -10942,26 +8909,8 @@ op -> op . POLYEQUAL op [ WITH TYPE THEN SUB SQUOTE SEMI RSQUARE RPAREN RCURLY P
 -- On APXEQ shift to state 312
 -- On ADD shift to state 278
 ## Reductions:
--- On WITH reduce production op -> op AND op
--- On TYPE reduce production op -> op AND op
--- On THEN reduce production op -> op AND op
--- On SEMI reduce production op -> op AND op
--- On RSQUARE reduce production op -> op AND op
--- On RPAREN reduce production op -> op AND op
--- On RCURLY reduce production op -> op AND op
--- On OR reduce production op -> op AND op
--- On OF reduce production op -> op AND op
--- On INCLUDE reduce production op -> op AND op
--- On EQSEMI reduce production op -> op AND op
--- On EOF reduce production op -> op AND op
--- On END reduce production op -> op AND op
--- On ELSE reduce production op -> op AND op
--- On DEF reduce production op -> op AND op
--- On CONS reduce production op -> op AND op
--- On COMMA reduce production op -> op AND op
--- On BAR reduce production op -> op AND op
--- On ARROW reduce production op -> op AND op
--- On AND reduce production op -> op AND op
+-- On WITH TYPE THEN SEMI RSQUARE RPAREN RCURLY OR OF INCLUDE EQSEMI EOF END ELSE DEF CONS COMMA BAR ARROW AND
+--   reduce production op -> op AND op
 
 State 316:
 ## Known stack suffix:
@@ -11068,24 +9017,8 @@ op -> op . POLYEQUAL op [ WITH TYPE THEN SUB SQUOTE SEMI RSQUARE RPAREN RCURLY P
 -- On AND shift to state 314
 -- On ADD shift to state 278
 ## Reductions:
--- On WITH reduce production op -> op EQSEMI op
--- On TYPE reduce production op -> op EQSEMI op
--- On THEN reduce production op -> op EQSEMI op
--- On SEMI reduce production op -> op EQSEMI op
--- On RSQUARE reduce production op -> op EQSEMI op
--- On RPAREN reduce production op -> op EQSEMI op
--- On RCURLY reduce production op -> op EQSEMI op
--- On OF reduce production op -> op EQSEMI op
--- On INCLUDE reduce production op -> op EQSEMI op
--- On EQSEMI reduce production op -> op EQSEMI op
--- On EOF reduce production op -> op EQSEMI op
--- On END reduce production op -> op EQSEMI op
--- On ELSE reduce production op -> op EQSEMI op
--- On DEF reduce production op -> op EQSEMI op
--- On CONS reduce production op -> op EQSEMI op
--- On COMMA reduce production op -> op EQSEMI op
--- On BAR reduce production op -> op EQSEMI op
--- On ARROW reduce production op -> op EQSEMI op
+-- On WITH TYPE THEN SEMI RSQUARE RPAREN RCURLY OF INCLUDE EQSEMI EOF END ELSE DEF CONS COMMA BAR ARROW
+--   reduce production op -> op EQSEMI op
 
 State 318:
 ## Known stack suffix:
@@ -11139,21 +9072,8 @@ semi_op -> cons . SEMI semi_op [ WITH TYPE THEN RSQUARE RPAREN RCURLY OF INCLUDE
 ## Transitions:
 -- On SEMI shift to state 321
 ## Reductions:
--- On WITH reduce production semi_op -> cons
--- On TYPE reduce production semi_op -> cons
--- On THEN reduce production semi_op -> cons
--- On RSQUARE reduce production semi_op -> cons
--- On RPAREN reduce production semi_op -> cons
--- On RCURLY reduce production semi_op -> cons
--- On OF reduce production semi_op -> cons
--- On INCLUDE reduce production semi_op -> cons
--- On EOF reduce production semi_op -> cons
--- On END reduce production semi_op -> cons
--- On ELSE reduce production semi_op -> cons
--- On DEF reduce production semi_op -> cons
--- On COMMA reduce production semi_op -> cons
--- On BAR reduce production semi_op -> cons
--- On ARROW reduce production semi_op -> cons
+-- On WITH TYPE THEN RSQUARE RPAREN RCURLY OF INCLUDE EOF END ELSE DEF COMMA BAR ARROW
+--   reduce production semi_op -> cons
 
 State 321:
 ## Known stack suffix:
@@ -11604,7 +9524,8 @@ parenparamlist -> revtmtyseq RPAREN . rettype [ EQ ]
 -- On ARROW shift to state 347
 -- On rettype shift to state 349
 ## Reductions:
--- On EQ reduce production rettype ->
+-- On EQ
+--   reduce production rettype ->
 
 State 345:
 ## Known stack suffix:
@@ -12362,7 +10283,8 @@ matchcases -> BAR pattern . op_guard ARROW term [ WITH TYPE THEN RSQUARE RPAREN 
 -- On IF shift to state 395
 -- On op_guard shift to state 397
 ## Reductions:
--- On ARROW reduce production op_guard ->
+-- On ARROW
+--   reduce production op_guard ->
 
 State 395:
 ## Known stack suffix:
@@ -12494,20 +10416,8 @@ term -> MATCH term WITH matchcases . [ WITH TYPE THEN RSQUARE RPAREN RCURLY OF I
 ## Transitions:
 -- On BAR shift to state 401
 ## Reductions:
--- On WITH reduce production term -> MATCH term WITH matchcases
--- On TYPE reduce production term -> MATCH term WITH matchcases
--- On THEN reduce production term -> MATCH term WITH matchcases
--- On RSQUARE reduce production term -> MATCH term WITH matchcases
--- On RPAREN reduce production term -> MATCH term WITH matchcases
--- On RCURLY reduce production term -> MATCH term WITH matchcases
--- On OF reduce production term -> MATCH term WITH matchcases
--- On INCLUDE reduce production term -> MATCH term WITH matchcases
--- On EOF reduce production term -> MATCH term WITH matchcases
--- On END reduce production term -> MATCH term WITH matchcases
--- On ELSE reduce production term -> MATCH term WITH matchcases
--- On DEF reduce production term -> MATCH term WITH matchcases
--- On COMMA reduce production term -> MATCH term WITH matchcases
--- On ARROW reduce production term -> MATCH term WITH matchcases
+-- On WITH TYPE THEN RSQUARE RPAREN RCURLY OF INCLUDE EOF END ELSE DEF COMMA ARROW
+--   reduce production term -> MATCH term WITH matchcases
 
 State 401:
 ## Known stack suffix:
@@ -12546,7 +10456,8 @@ matchcases -> matchcases BAR pattern . op_guard ARROW term [ WITH TYPE THEN RSQU
 -- On IF shift to state 395
 -- On op_guard shift to state 403
 ## Reductions:
--- On ARROW reduce production op_guard ->
+-- On ARROW
+--   reduce production op_guard ->
 
 State 403:
 ## Known stack suffix:
@@ -12661,43 +10572,8 @@ op -> app_left . [ SUB SQUOTE SEMI RPAREN POLYEQUAL PLUSPLUS OR NOTEQUAL MUL MOD
 -- On atom shift to state 111
 -- On app_right shift to state 112
 ## Reductions:
--- On SUB reduce production op -> app_left
--- On SQUOTE reduce production op -> app_left
--- On SEMI reduce production op -> app_left
--- On RPAREN reduce production op -> app_left
--- On POLYEQUAL reduce production op -> app_left
--- On PLUSPLUS reduce production op -> app_left
--- On OR reduce production op -> app_left
--- On NOTEQUAL reduce production op -> app_left
--- On MUL reduce production op -> app_left
--- On MOD reduce production op -> app_left
--- On LONGARROW reduce production op -> app_left
--- On LESSEQUAL reduce production op -> app_left
--- On LESS reduce production op -> app_left
--- On LEFTARROW reduce production op -> app_left
--- On GREATEQUAL reduce production op -> app_left
--- On GREAT reduce production op -> app_left
--- On EXP reduce production op -> app_left
--- On EQUAL reduce production op -> app_left
--- On EQSEMI reduce production op -> app_left
--- On EQ reduce production op -> app_left
--- On DOTSUB reduce production op -> app_left
--- On DOTNOTEQUAL reduce production op -> app_left
--- On DOTMUL reduce production op -> app_left
--- On DOTLESSEQUAL reduce production op -> app_left
--- On DOTLESS reduce production op -> app_left
--- On DOTGREATEQUAL reduce production op -> app_left
--- On DOTGREAT reduce production op -> app_left
--- On DOTEXP reduce production op -> app_left
--- On DOTEQUAL reduce production op -> app_left
--- On DOTDIV reduce production op -> app_left
--- On DOTADD reduce production op -> app_left
--- On DIV reduce production op -> app_left
--- On CONS reduce production op -> app_left
--- On COMMA reduce production op -> app_left
--- On APXEQ reduce production op -> app_left
--- On AND reduce production op -> app_left
--- On ADD reduce production op -> app_left
+-- On SUB SQUOTE SEMI RPAREN POLYEQUAL PLUSPLUS OR NOTEQUAL MUL MOD LONGARROW LESSEQUAL LESS LEFTARROW GREATEQUAL GREAT EXP EQUAL EQSEMI EQ DOTSUB DOTNOTEQUAL DOTMUL DOTLESSEQUAL DOTLESS DOTGREATEQUAL DOTGREAT DOTEXP DOTEQUAL DOTDIV DOTADD DIV CONS COMMA APXEQ AND ADD
+--   reduce production op -> app_left
 
 State 409:
 ## Known stack suffix:
@@ -12830,44 +10706,8 @@ op -> op . POLYEQUAL op [ WITH TYPE THEN SUB SQUOTE SEMI RSQUARE RPAREN RCURLY P
 -- On DIV shift to state 268
 -- On ADD shift to state 278
 ## Reductions:
--- On WITH reduce production op -> NOT op
--- On TYPE reduce production op -> NOT op
--- On THEN reduce production op -> NOT op
--- On SEMI reduce production op -> NOT op
--- On RSQUARE reduce production op -> NOT op
--- On RPAREN reduce production op -> NOT op
--- On RCURLY reduce production op -> NOT op
--- On POLYEQUAL reduce production op -> NOT op
--- On PLUSPLUS reduce production op -> NOT op
--- On OR reduce production op -> NOT op
--- On OF reduce production op -> NOT op
--- On NOTEQUAL reduce production op -> NOT op
--- On LONGARROW reduce production op -> NOT op
--- On LESSEQUAL reduce production op -> NOT op
--- On LESS reduce production op -> NOT op
--- On LEFTARROW reduce production op -> NOT op
--- On INCLUDE reduce production op -> NOT op
--- On GREATEQUAL reduce production op -> NOT op
--- On GREAT reduce production op -> NOT op
--- On EQUAL reduce production op -> NOT op
--- On EQSEMI reduce production op -> NOT op
--- On EQ reduce production op -> NOT op
--- On EOF reduce production op -> NOT op
--- On END reduce production op -> NOT op
--- On ELSE reduce production op -> NOT op
--- On DOTNOTEQUAL reduce production op -> NOT op
--- On DOTLESSEQUAL reduce production op -> NOT op
--- On DOTLESS reduce production op -> NOT op
--- On DOTGREATEQUAL reduce production op -> NOT op
--- On DOTGREAT reduce production op -> NOT op
--- On DOTEQUAL reduce production op -> NOT op
--- On DEF reduce production op -> NOT op
--- On CONS reduce production op -> NOT op
--- On COMMA reduce production op -> NOT op
--- On BAR reduce production op -> NOT op
--- On ARROW reduce production op -> NOT op
--- On APXEQ reduce production op -> NOT op
--- On AND reduce production op -> NOT op
+-- On WITH TYPE THEN SEMI RSQUARE RPAREN RCURLY POLYEQUAL PLUSPLUS OR OF NOTEQUAL LONGARROW LESSEQUAL LESS LEFTARROW INCLUDE GREATEQUAL GREAT EQUAL EQSEMI EQ EOF END ELSE DOTNOTEQUAL DOTLESSEQUAL DOTLESS DOTGREATEQUAL DOTGREAT DOTEQUAL DEF CONS COMMA BAR ARROW APXEQ AND
+--   reduce production op -> NOT op
 
 State 414:
 ## Known stack suffix:
@@ -13003,58 +10843,8 @@ app_left -> SPECIALIZE LPAREN atom . PARENAPP atom RPAREN [ WITH UINT UFLOAT TYP
 ## Transitions:
 -- On PARENAPP shift to state 424
 ## Reductions:
--- On UINT reduce production app_left -> atom
--- On UFLOAT reduce production app_left -> atom
--- On TRUE reduce production app_left -> atom
--- On SYMSTR reduce production app_left -> atom
--- On SUB reduce production app_left -> atom
--- On STRING reduce production app_left -> atom
--- On SQUOTE reduce production app_left -> atom
--- On SEMI reduce production app_left -> atom
--- On RPAREN reduce production app_left -> atom
--- On PRIMITIVE reduce production app_left -> atom
--- On POLYEQUAL reduce production app_left -> atom
--- On PLUSPLUS reduce production app_left -> atom
--- On OR reduce production app_left -> atom
--- On NOTEQUAL reduce production app_left -> atom
--- On MUL reduce production app_left -> atom
--- On MOD reduce production app_left -> atom
--- On METAAPP reduce production app_left -> atom
--- On LSQUARE reduce production app_left -> atom
--- On LPAREN reduce production app_left -> atom
--- On LONGARROW reduce production app_left -> atom
--- On LESSEQUAL reduce production app_left -> atom
--- On LESS reduce production app_left -> atom
--- On LEFTARROW reduce production app_left -> atom
--- On LCURLY reduce production app_left -> atom
--- On IDENT reduce production app_left -> atom
--- On GREATEQUAL reduce production app_left -> atom
--- On GREAT reduce production app_left -> atom
--- On FALSE reduce production app_left -> atom
--- On EXP reduce production app_left -> atom
--- On EQUAL reduce production app_left -> atom
--- On EQSEMI reduce production app_left -> atom
--- On EQ reduce production app_left -> atom
--- On DPRINTTYPE reduce production app_left -> atom
--- On DPRINT reduce production app_left -> atom
--- On DOTSUB reduce production app_left -> atom
--- On DOTNOTEQUAL reduce production app_left -> atom
--- On DOTMUL reduce production app_left -> atom
--- On DOTLESSEQUAL reduce production app_left -> atom
--- On DOTLESS reduce production app_left -> atom
--- On DOTGREATEQUAL reduce production app_left -> atom
--- On DOTGREAT reduce production app_left -> atom
--- On DOTEXP reduce production app_left -> atom
--- On DOTEQUAL reduce production app_left -> atom
--- On DOTDIV reduce production app_left -> atom
--- On DOTADD reduce production app_left -> atom
--- On DIV reduce production app_left -> atom
--- On CONS reduce production app_left -> atom
--- On COMMA reduce production app_left -> atom
--- On BEGIN reduce production app_left -> atom
--- On APXEQ reduce production app_left -> atom
--- On AND reduce production app_left -> atom
--- On ADD reduce production app_left -> atom
+-- On UINT UFLOAT TRUE SYMSTR SUB STRING SQUOTE SEMI RPAREN PRIMITIVE POLYEQUAL PLUSPLUS OR NOTEQUAL MUL MOD METAAPP LSQUARE LPAREN LONGARROW LESSEQUAL LESS LEFTARROW LCURLY IDENT GREATEQUAL GREAT FALSE EXP EQUAL EQSEMI EQ DPRINTTYPE DPRINT DOTSUB DOTNOTEQUAL DOTMUL DOTLESSEQUAL DOTLESS DOTGREATEQUAL DOTGREAT DOTEXP DOTEQUAL DOTDIV DOTADD DIV CONS COMMA BEGIN APXEQ AND ADD
+--   reduce production app_left -> atom
 
 State 424:
 ## Known stack suffix:
@@ -13211,55 +11001,8 @@ op -> op . POLYEQUAL op [ WITH TYPE THEN SUB SQUOTE SEMI RSQUARE RPAREN RCURLY P
 ## Transitions:
 -- On SQUOTE shift to state 106
 ## Reductions:
--- On WITH reduce production op -> SUB op
--- On TYPE reduce production op -> SUB op
--- On THEN reduce production op -> SUB op
--- On SUB reduce production op -> SUB op
--- On SEMI reduce production op -> SUB op
--- On RSQUARE reduce production op -> SUB op
--- On RPAREN reduce production op -> SUB op
--- On RCURLY reduce production op -> SUB op
--- On POLYEQUAL reduce production op -> SUB op
--- On PLUSPLUS reduce production op -> SUB op
--- On OR reduce production op -> SUB op
--- On OF reduce production op -> SUB op
--- On NOTEQUAL reduce production op -> SUB op
--- On MUL reduce production op -> SUB op
--- On MOD reduce production op -> SUB op
--- On LONGARROW reduce production op -> SUB op
--- On LESSEQUAL reduce production op -> SUB op
--- On LESS reduce production op -> SUB op
--- On LEFTARROW reduce production op -> SUB op
--- On INCLUDE reduce production op -> SUB op
--- On GREATEQUAL reduce production op -> SUB op
--- On GREAT reduce production op -> SUB op
--- On EXP reduce production op -> SUB op
--- On EQUAL reduce production op -> SUB op
--- On EQSEMI reduce production op -> SUB op
--- On EQ reduce production op -> SUB op
--- On EOF reduce production op -> SUB op
--- On END reduce production op -> SUB op
--- On ELSE reduce production op -> SUB op
--- On DOTSUB reduce production op -> SUB op
--- On DOTNOTEQUAL reduce production op -> SUB op
--- On DOTMUL reduce production op -> SUB op
--- On DOTLESSEQUAL reduce production op -> SUB op
--- On DOTLESS reduce production op -> SUB op
--- On DOTGREATEQUAL reduce production op -> SUB op
--- On DOTGREAT reduce production op -> SUB op
--- On DOTEXP reduce production op -> SUB op
--- On DOTEQUAL reduce production op -> SUB op
--- On DOTDIV reduce production op -> SUB op
--- On DOTADD reduce production op -> SUB op
--- On DIV reduce production op -> SUB op
--- On DEF reduce production op -> SUB op
--- On CONS reduce production op -> SUB op
--- On COMMA reduce production op -> SUB op
--- On BAR reduce production op -> SUB op
--- On ARROW reduce production op -> SUB op
--- On APXEQ reduce production op -> SUB op
--- On AND reduce production op -> SUB op
--- On ADD reduce production op -> SUB op
+-- On WITH TYPE THEN SUB SEMI RSQUARE RPAREN RCURLY POLYEQUAL PLUSPLUS OR OF NOTEQUAL MUL MOD LONGARROW LESSEQUAL LESS LEFTARROW INCLUDE GREATEQUAL GREAT EXP EQUAL EQSEMI EQ EOF END ELSE DOTSUB DOTNOTEQUAL DOTMUL DOTLESSEQUAL DOTLESS DOTGREATEQUAL DOTGREAT DOTEXP DOTEQUAL DOTDIV DOTADD DIV DEF CONS COMMA BAR ARROW APXEQ AND ADD
+--   reduce production op -> SUB op
 
 State 433:
 ## Known stack suffix:

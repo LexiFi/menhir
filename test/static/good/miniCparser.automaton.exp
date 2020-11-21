@@ -20,16 +20,8 @@ State 1:
 upath -> UIDENT . [ UIDENT STAR SEMI RPAREN LPAREN LIDENT EOF DOT COMMA COLON ]
 ## Transitions:
 ## Reductions:
--- On UIDENT reduce production upath -> UIDENT
--- On STAR reduce production upath -> UIDENT
--- On SEMI reduce production upath -> UIDENT
--- On RPAREN reduce production upath -> UIDENT
--- On LPAREN reduce production upath -> UIDENT
--- On LIDENT reduce production upath -> UIDENT
--- On EOF reduce production upath -> UIDENT
--- On DOT reduce production upath -> UIDENT
--- On COMMA reduce production upath -> UIDENT
--- On COLON reduce production upath -> UIDENT
+-- On UIDENT STAR SEMI RPAREN LPAREN LIDENT EOF DOT COMMA COLON
+--   reduce production upath -> UIDENT
 
 State 2:
 ## Known stack suffix:
@@ -39,13 +31,8 @@ modulexpr -> STRUCT . structure END [ SEMI RPAREN LPAREN EOF COLON ]
 ## Transitions:
 -- On structure shift to state 3
 ## Reductions:
--- On VOID reduce production structure ->
--- On UIDENT reduce production structure ->
--- On TYPEDEF reduce production structure ->
--- On MODULE reduce production structure ->
--- On INT reduce production structure ->
--- On FLOAT reduce production structure ->
--- On END reduce production structure ->
+-- On VOID UIDENT TYPEDEF MODULE INT FLOAT END
+--   reduce production structure ->
 
 State 3:
 ## Known stack suffix:
@@ -74,12 +61,8 @@ State 4:
 ctype -> VOID . [ UIDENT STAR RPAREN LPAREN LIDENT COMMA ]
 ## Transitions:
 ## Reductions:
--- On UIDENT reduce production ctype -> VOID
--- On STAR reduce production ctype -> VOID
--- On RPAREN reduce production ctype -> VOID
--- On LPAREN reduce production ctype -> VOID
--- On LIDENT reduce production ctype -> VOID
--- On COMMA reduce production ctype -> VOID
+-- On UIDENT STAR RPAREN LPAREN LIDENT COMMA
+--   reduce production ctype -> VOID
 
 State 5:
 ## Known stack suffix:
@@ -103,12 +86,8 @@ State 6:
 ctype -> INT . [ UIDENT STAR RPAREN LPAREN LIDENT COMMA ]
 ## Transitions:
 ## Reductions:
--- On UIDENT reduce production ctype -> INT
--- On STAR reduce production ctype -> INT
--- On RPAREN reduce production ctype -> INT
--- On LPAREN reduce production ctype -> INT
--- On LIDENT reduce production ctype -> INT
--- On COMMA reduce production ctype -> INT
+-- On UIDENT STAR RPAREN LPAREN LIDENT COMMA
+--   reduce production ctype -> INT
 
 State 7:
 ## Known stack suffix:
@@ -117,12 +96,8 @@ State 7:
 ctype -> FLOAT . [ UIDENT STAR RPAREN LPAREN LIDENT COMMA ]
 ## Transitions:
 ## Reductions:
--- On UIDENT reduce production ctype -> FLOAT
--- On STAR reduce production ctype -> FLOAT
--- On RPAREN reduce production ctype -> FLOAT
--- On LPAREN reduce production ctype -> FLOAT
--- On LIDENT reduce production ctype -> FLOAT
--- On COMMA reduce production ctype -> FLOAT
+-- On UIDENT STAR RPAREN LPAREN LIDENT COMMA
+--   reduce production ctype -> FLOAT
 
 State 8:
 ## Known stack suffix:
@@ -133,12 +108,8 @@ upath -> upath . DOT UIDENT [ UIDENT STAR RPAREN LPAREN LIDENT DOT COMMA ]
 ## Transitions:
 -- On DOT shift to state 9
 ## Reductions:
--- On UIDENT reduce production ctype -> upath
--- On STAR reduce production ctype -> upath
--- On RPAREN reduce production ctype -> upath
--- On LPAREN reduce production ctype -> upath
--- On LIDENT reduce production ctype -> upath
--- On COMMA reduce production ctype -> upath
+-- On UIDENT STAR RPAREN LPAREN LIDENT COMMA
+--   reduce production ctype -> upath
 
 State 9:
 ## Known stack suffix:
@@ -156,16 +127,8 @@ State 10:
 upath -> upath DOT UIDENT . [ UIDENT STAR SEMI RPAREN LPAREN LIDENT EOF DOT COMMA COLON ]
 ## Transitions:
 ## Reductions:
--- On UIDENT reduce production upath -> upath DOT UIDENT
--- On STAR reduce production upath -> upath DOT UIDENT
--- On SEMI reduce production upath -> upath DOT UIDENT
--- On RPAREN reduce production upath -> upath DOT UIDENT
--- On LPAREN reduce production upath -> upath DOT UIDENT
--- On LIDENT reduce production upath -> upath DOT UIDENT
--- On EOF reduce production upath -> upath DOT UIDENT
--- On DOT reduce production upath -> upath DOT UIDENT
--- On COMMA reduce production upath -> upath DOT UIDENT
--- On COLON reduce production upath -> upath DOT UIDENT
+-- On UIDENT STAR SEMI RPAREN LPAREN LIDENT EOF DOT COMMA COLON
+--   reduce production upath -> upath DOT UIDENT
 
 State 11:
 ## Known stack suffix:
@@ -183,13 +146,8 @@ State 12:
 structure_item -> TYPEDEF typedef SEMI . [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
 ## Transitions:
 ## Reductions:
--- On VOID reduce production structure_item -> TYPEDEF typedef SEMI
--- On UIDENT reduce production structure_item -> TYPEDEF typedef SEMI
--- On TYPEDEF reduce production structure_item -> TYPEDEF typedef SEMI
--- On MODULE reduce production structure_item -> TYPEDEF typedef SEMI
--- On INT reduce production structure_item -> TYPEDEF typedef SEMI
--- On FLOAT reduce production structure_item -> TYPEDEF typedef SEMI
--- On END reduce production structure_item -> TYPEDEF typedef SEMI
+-- On VOID UIDENT TYPEDEF MODULE INT FLOAT END
+--   reduce production structure_item -> TYPEDEF typedef SEMI
 
 State 13:
 ## Known stack suffix:
@@ -211,9 +169,8 @@ State 14:
 typedef_cont -> UIDENT . [ SEMI RPAREN LPAREN ]
 ## Transitions:
 ## Reductions:
--- On SEMI reduce production typedef_cont -> UIDENT
--- On RPAREN reduce production typedef_cont -> UIDENT
--- On LPAREN reduce production typedef_cont -> UIDENT
+-- On SEMI RPAREN LPAREN
+--   reduce production typedef_cont -> UIDENT
 
 State 15:
 ## Known stack suffix:
@@ -226,8 +183,8 @@ typedef_cont -> STAR . typedef_cont [ SEMI LPAREN ]
 -- On LPAREN shift to state 16
 -- On typedef_cont shift to state 18
 ## Reductions:
--- On UIDENT reduce production ctype -> ctype STAR
--- On STAR reduce production ctype -> ctype STAR
+-- On UIDENT STAR
+--   reduce production ctype -> ctype STAR
 ** Conflict on UIDENT
 
 State 16:
@@ -263,8 +220,8 @@ typedef_cont -> typedef_cont . LPAREN ty_params RPAREN [ SEMI RPAREN LPAREN ]
 ## Transitions:
 -- On LPAREN shift to state 19
 ## Reductions:
--- On SEMI reduce production typedef_cont -> STAR typedef_cont
--- On RPAREN reduce production typedef_cont -> STAR typedef_cont
+-- On SEMI RPAREN
+--   reduce production typedef_cont -> STAR typedef_cont
 
 State 19:
 ## Known stack suffix:
@@ -300,9 +257,8 @@ State 21:
 typedef_cont -> typedef_cont LPAREN ty_params RPAREN . [ SEMI RPAREN LPAREN ]
 ## Transitions:
 ## Reductions:
--- On SEMI reduce production typedef_cont -> typedef_cont LPAREN ty_params RPAREN
--- On RPAREN reduce production typedef_cont -> typedef_cont LPAREN ty_params RPAREN
--- On LPAREN reduce production typedef_cont -> typedef_cont LPAREN ty_params RPAREN
+-- On SEMI RPAREN LPAREN
+--   reduce production typedef_cont -> typedef_cont LPAREN ty_params RPAREN
 
 State 22:
 ## Known stack suffix:
@@ -326,8 +282,8 @@ State 23:
 ty_params -> ty_params COMMA ty_param . [ RPAREN COMMA ]
 ## Transitions:
 ## Reductions:
--- On RPAREN reduce production ty_params -> ty_params COMMA ty_param
--- On COMMA reduce production ty_params -> ty_params COMMA ty_param
+-- On RPAREN COMMA
+--   reduce production ty_params -> ty_params COMMA ty_param
 
 State 24:
 ## Known stack suffix:
@@ -340,8 +296,8 @@ ty_param -> ctype . LIDENT [ RPAREN COMMA ]
 -- On STAR shift to state 25
 -- On LIDENT shift to state 26
 ## Reductions:
--- On RPAREN reduce production ty_param -> ctype
--- On COMMA reduce production ty_param -> ctype
+-- On RPAREN COMMA
+--   reduce production ty_param -> ctype
 
 State 25:
 ## Known stack suffix:
@@ -350,10 +306,8 @@ State 25:
 ctype -> ctype STAR . [ STAR RPAREN LIDENT COMMA ]
 ## Transitions:
 ## Reductions:
--- On STAR reduce production ctype -> ctype STAR
--- On RPAREN reduce production ctype -> ctype STAR
--- On LIDENT reduce production ctype -> ctype STAR
--- On COMMA reduce production ctype -> ctype STAR
+-- On STAR RPAREN LIDENT COMMA
+--   reduce production ctype -> ctype STAR
 
 State 26:
 ## Known stack suffix:
@@ -362,8 +316,8 @@ State 26:
 ty_param -> ctype LIDENT . [ RPAREN COMMA ]
 ## Transitions:
 ## Reductions:
--- On RPAREN reduce production ty_param -> ctype LIDENT
--- On COMMA reduce production ty_param -> ctype LIDENT
+-- On RPAREN COMMA
+--   reduce production ty_param -> ctype LIDENT
 
 State 27:
 ## Known stack suffix:
@@ -372,8 +326,8 @@ State 27:
 ty_params -> ty_param . [ RPAREN COMMA ]
 ## Transitions:
 ## Reductions:
--- On RPAREN reduce production ty_params -> ty_param
--- On COMMA reduce production ty_params -> ty_param
+-- On RPAREN COMMA
+--   reduce production ty_params -> ty_param
 
 State 28:
 ## Known stack suffix:
@@ -393,9 +347,8 @@ State 29:
 typedef_cont -> LPAREN typedef_cont RPAREN . [ SEMI RPAREN LPAREN ]
 ## Transitions:
 ## Reductions:
--- On SEMI reduce production typedef_cont -> LPAREN typedef_cont RPAREN
--- On RPAREN reduce production typedef_cont -> LPAREN typedef_cont RPAREN
--- On LPAREN reduce production typedef_cont -> LPAREN typedef_cont RPAREN
+-- On SEMI RPAREN LPAREN
+--   reduce production typedef_cont -> LPAREN typedef_cont RPAREN
 
 State 30:
 ## Known stack suffix:
@@ -406,7 +359,8 @@ typedef_cont -> typedef_cont . LPAREN ty_params RPAREN [ SEMI LPAREN ]
 ## Transitions:
 -- On LPAREN shift to state 19
 ## Reductions:
--- On SEMI reduce production typedef -> ctype typedef_cont
+-- On SEMI
+--   reduce production typedef -> ctype typedef_cont
 
 State 31:
 ## Known stack suffix:
@@ -504,13 +458,8 @@ moduletype -> SIG . signature END [ SEMI RPAREN LPAREN EQUAL EOF COLON ]
 ## Transitions:
 -- On signature shift to state 40
 ## Reductions:
--- On VOID reduce production signature ->
--- On UIDENT reduce production signature ->
--- On TYPEDEF reduce production signature ->
--- On MODULE reduce production signature ->
--- On INT reduce production signature ->
--- On FLOAT reduce production signature ->
--- On END reduce production signature ->
+-- On VOID UIDENT TYPEDEF MODULE INT FLOAT END
+--   reduce production signature ->
 
 State 40:
 ## Known stack suffix:
@@ -557,10 +506,8 @@ upath -> UIDENT . [ UIDENT STAR LPAREN DOT ]
 ## Transitions:
 -- On SEMI shift to state 43
 ## Reductions:
--- On UIDENT reduce production upath -> UIDENT
--- On STAR reduce production upath -> UIDENT
--- On LPAREN reduce production upath -> UIDENT
--- On DOT reduce production upath -> UIDENT
+-- On UIDENT STAR LPAREN DOT
+--   reduce production upath -> UIDENT
 
 State 43:
 ## Known stack suffix:
@@ -569,13 +516,8 @@ State 43:
 signature_item -> TYPEDEF UIDENT SEMI . [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
 ## Transitions:
 ## Reductions:
--- On VOID reduce production signature_item -> TYPEDEF UIDENT SEMI
--- On UIDENT reduce production signature_item -> TYPEDEF UIDENT SEMI
--- On TYPEDEF reduce production signature_item -> TYPEDEF UIDENT SEMI
--- On MODULE reduce production signature_item -> TYPEDEF UIDENT SEMI
--- On INT reduce production signature_item -> TYPEDEF UIDENT SEMI
--- On FLOAT reduce production signature_item -> TYPEDEF UIDENT SEMI
--- On END reduce production signature_item -> TYPEDEF UIDENT SEMI
+-- On VOID UIDENT TYPEDEF MODULE INT FLOAT END
+--   reduce production signature_item -> TYPEDEF UIDENT SEMI
 
 State 44:
 ## Known stack suffix:
@@ -593,13 +535,8 @@ State 45:
 signature_item -> TYPEDEF typedef SEMI . [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
 ## Transitions:
 ## Reductions:
--- On VOID reduce production signature_item -> TYPEDEF typedef SEMI
--- On UIDENT reduce production signature_item -> TYPEDEF typedef SEMI
--- On TYPEDEF reduce production signature_item -> TYPEDEF typedef SEMI
--- On MODULE reduce production signature_item -> TYPEDEF typedef SEMI
--- On INT reduce production signature_item -> TYPEDEF typedef SEMI
--- On FLOAT reduce production signature_item -> TYPEDEF typedef SEMI
--- On END reduce production signature_item -> TYPEDEF typedef SEMI
+-- On VOID UIDENT TYPEDEF MODULE INT FLOAT END
+--   reduce production signature_item -> TYPEDEF typedef SEMI
 
 State 46:
 ## Known stack suffix:
@@ -710,12 +647,8 @@ State 56:
 moduletype -> FUNCTOR LPAREN UIDENT COLON moduletype RPAREN moduletype . [ SEMI RPAREN LPAREN EQUAL EOF COLON ]
 ## Transitions:
 ## Reductions:
--- On SEMI reduce production moduletype -> FUNCTOR LPAREN UIDENT COLON moduletype RPAREN moduletype
--- On RPAREN reduce production moduletype -> FUNCTOR LPAREN UIDENT COLON moduletype RPAREN moduletype
--- On LPAREN reduce production moduletype -> FUNCTOR LPAREN UIDENT COLON moduletype RPAREN moduletype
--- On EQUAL reduce production moduletype -> FUNCTOR LPAREN UIDENT COLON moduletype RPAREN moduletype
--- On EOF reduce production moduletype -> FUNCTOR LPAREN UIDENT COLON moduletype RPAREN moduletype
--- On COLON reduce production moduletype -> FUNCTOR LPAREN UIDENT COLON moduletype RPAREN moduletype
+-- On SEMI RPAREN LPAREN EQUAL EOF COLON
+--   reduce production moduletype -> FUNCTOR LPAREN UIDENT COLON moduletype RPAREN moduletype
 
 State 57:
 ## Known stack suffix:
@@ -733,12 +666,8 @@ State 58:
 moduletype -> LPAREN moduletype RPAREN . [ SEMI RPAREN LPAREN EQUAL EOF COLON ]
 ## Transitions:
 ## Reductions:
--- On SEMI reduce production moduletype -> LPAREN moduletype RPAREN
--- On RPAREN reduce production moduletype -> LPAREN moduletype RPAREN
--- On LPAREN reduce production moduletype -> LPAREN moduletype RPAREN
--- On EQUAL reduce production moduletype -> LPAREN moduletype RPAREN
--- On EOF reduce production moduletype -> LPAREN moduletype RPAREN
--- On COLON reduce production moduletype -> LPAREN moduletype RPAREN
+-- On SEMI RPAREN LPAREN EQUAL EOF COLON
+--   reduce production moduletype -> LPAREN moduletype RPAREN
 
 State 59:
 ## Known stack suffix:
@@ -756,13 +685,8 @@ State 60:
 signature_item -> MODULE UIDENT COLON moduletype SEMI . [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
 ## Transitions:
 ## Reductions:
--- On VOID reduce production signature_item -> MODULE UIDENT COLON moduletype SEMI
--- On UIDENT reduce production signature_item -> MODULE UIDENT COLON moduletype SEMI
--- On TYPEDEF reduce production signature_item -> MODULE UIDENT COLON moduletype SEMI
--- On MODULE reduce production signature_item -> MODULE UIDENT COLON moduletype SEMI
--- On INT reduce production signature_item -> MODULE UIDENT COLON moduletype SEMI
--- On FLOAT reduce production signature_item -> MODULE UIDENT COLON moduletype SEMI
--- On END reduce production signature_item -> MODULE UIDENT COLON moduletype SEMI
+-- On VOID UIDENT TYPEDEF MODULE INT FLOAT END
+--   reduce production signature_item -> MODULE UIDENT COLON moduletype SEMI
 
 State 61:
 ## Known stack suffix:
@@ -771,12 +695,8 @@ State 61:
 moduletype -> SIG signature END . [ SEMI RPAREN LPAREN EQUAL EOF COLON ]
 ## Transitions:
 ## Reductions:
--- On SEMI reduce production moduletype -> SIG signature END
--- On RPAREN reduce production moduletype -> SIG signature END
--- On LPAREN reduce production moduletype -> SIG signature END
--- On EQUAL reduce production moduletype -> SIG signature END
--- On EOF reduce production moduletype -> SIG signature END
--- On COLON reduce production moduletype -> SIG signature END
+-- On SEMI RPAREN LPAREN EQUAL EOF COLON
+--   reduce production moduletype -> SIG signature END
 
 State 62:
 ## Known stack suffix:
@@ -794,13 +714,8 @@ State 63:
 signature_item -> valuedecl SEMI . [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
 ## Transitions:
 ## Reductions:
--- On VOID reduce production signature_item -> valuedecl SEMI
--- On UIDENT reduce production signature_item -> valuedecl SEMI
--- On TYPEDEF reduce production signature_item -> valuedecl SEMI
--- On MODULE reduce production signature_item -> valuedecl SEMI
--- On INT reduce production signature_item -> valuedecl SEMI
--- On FLOAT reduce production signature_item -> valuedecl SEMI
--- On END reduce production signature_item -> valuedecl SEMI
+-- On VOID UIDENT TYPEDEF MODULE INT FLOAT END
+--   reduce production signature_item -> valuedecl SEMI
 
 State 64:
 ## Known stack suffix:
@@ -809,13 +724,8 @@ State 64:
 signature -> signature signature_item . [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
 ## Transitions:
 ## Reductions:
--- On VOID reduce production signature -> signature signature_item
--- On UIDENT reduce production signature -> signature signature_item
--- On TYPEDEF reduce production signature -> signature signature_item
--- On MODULE reduce production signature -> signature signature_item
--- On INT reduce production signature -> signature signature_item
--- On FLOAT reduce production signature -> signature signature_item
--- On END reduce production signature -> signature signature_item
+-- On VOID UIDENT TYPEDEF MODULE INT FLOAT END
+--   reduce production signature -> signature signature_item
 
 State 65:
 ## Known stack suffix:
@@ -841,8 +751,8 @@ valuedecl_cont -> STAR . valuedecl_cont [ SEMI LPAREN ]
 -- On LIDENT shift to state 69
 -- On valuedecl_cont shift to state 70
 ## Reductions:
--- On STAR reduce production ctype -> ctype STAR
--- On LIDENT reduce production ctype -> ctype STAR
+-- On STAR LIDENT
+--   reduce production ctype -> ctype STAR
 ** Conflict on LIDENT
 
 State 67:
@@ -876,9 +786,8 @@ State 69:
 valuedecl_cont -> LIDENT . [ SEMI RPAREN LPAREN ]
 ## Transitions:
 ## Reductions:
--- On SEMI reduce production valuedecl_cont -> LIDENT
--- On RPAREN reduce production valuedecl_cont -> LIDENT
--- On LPAREN reduce production valuedecl_cont -> LIDENT
+-- On SEMI RPAREN LPAREN
+--   reduce production valuedecl_cont -> LIDENT
 
 State 70:
 ## Known stack suffix:
@@ -889,8 +798,8 @@ valuedecl_cont -> valuedecl_cont . LPAREN ty_params RPAREN [ SEMI RPAREN LPAREN 
 ## Transitions:
 -- On LPAREN shift to state 71
 ## Reductions:
--- On SEMI reduce production valuedecl_cont -> STAR valuedecl_cont
--- On RPAREN reduce production valuedecl_cont -> STAR valuedecl_cont
+-- On SEMI RPAREN
+--   reduce production valuedecl_cont -> STAR valuedecl_cont
 
 State 71:
 ## Known stack suffix:
@@ -926,9 +835,8 @@ State 73:
 valuedecl_cont -> valuedecl_cont LPAREN ty_params RPAREN . [ SEMI RPAREN LPAREN ]
 ## Transitions:
 ## Reductions:
--- On SEMI reduce production valuedecl_cont -> valuedecl_cont LPAREN ty_params RPAREN
--- On RPAREN reduce production valuedecl_cont -> valuedecl_cont LPAREN ty_params RPAREN
--- On LPAREN reduce production valuedecl_cont -> valuedecl_cont LPAREN ty_params RPAREN
+-- On SEMI RPAREN LPAREN
+--   reduce production valuedecl_cont -> valuedecl_cont LPAREN ty_params RPAREN
 
 State 74:
 ## Known stack suffix:
@@ -948,9 +856,8 @@ State 75:
 valuedecl_cont -> LPAREN valuedecl_cont RPAREN . [ SEMI RPAREN LPAREN ]
 ## Transitions:
 ## Reductions:
--- On SEMI reduce production valuedecl_cont -> LPAREN valuedecl_cont RPAREN
--- On RPAREN reduce production valuedecl_cont -> LPAREN valuedecl_cont RPAREN
--- On LPAREN reduce production valuedecl_cont -> LPAREN valuedecl_cont RPAREN
+-- On SEMI RPAREN LPAREN
+--   reduce production valuedecl_cont -> LPAREN valuedecl_cont RPAREN
 
 State 76:
 ## Known stack suffix:
@@ -961,7 +868,8 @@ valuedecl_cont -> valuedecl_cont . LPAREN ty_params RPAREN [ SEMI LPAREN ]
 ## Transitions:
 -- On LPAREN shift to state 71
 ## Reductions:
--- On SEMI reduce production valuedecl -> ctype valuedecl_cont
+-- On SEMI
+--   reduce production valuedecl -> ctype valuedecl_cont
 
 State 77:
 ## Known stack suffix:
@@ -995,11 +903,8 @@ upath -> upath . DOT UIDENT [ SEMI RPAREN LPAREN EOF DOT COLON ]
 ## Transitions:
 -- On DOT shift to state 9
 ## Reductions:
--- On SEMI reduce production modulexpr -> upath
--- On RPAREN reduce production modulexpr -> upath
--- On LPAREN reduce production modulexpr -> upath
--- On EOF reduce production modulexpr -> upath
--- On COLON reduce production modulexpr -> upath
+-- On SEMI RPAREN LPAREN EOF COLON
+--   reduce production modulexpr -> upath
 
 State 80:
 ## Known stack suffix:
@@ -1011,11 +916,8 @@ modulexpr -> modulexpr . COLON moduletype [ SEMI RPAREN LPAREN EOF COLON ]
 ## Transitions:
 -- On COLON shift to state 81
 ## Reductions:
--- On SEMI reduce production modulexpr -> FUNCTOR LPAREN UIDENT COLON moduletype RPAREN modulexpr
--- On RPAREN reduce production modulexpr -> FUNCTOR LPAREN UIDENT COLON moduletype RPAREN modulexpr
--- On LPAREN reduce production modulexpr -> FUNCTOR LPAREN UIDENT COLON moduletype RPAREN modulexpr
--- On EOF reduce production modulexpr -> FUNCTOR LPAREN UIDENT COLON moduletype RPAREN modulexpr
--- On COLON reduce production modulexpr -> FUNCTOR LPAREN UIDENT COLON moduletype RPAREN modulexpr
+-- On SEMI RPAREN LPAREN EOF COLON
+--   reduce production modulexpr -> FUNCTOR LPAREN UIDENT COLON moduletype RPAREN modulexpr
 ** Conflict on COLON
 
 State 81:
@@ -1037,11 +939,8 @@ State 82:
 modulexpr -> modulexpr COLON moduletype . [ SEMI RPAREN LPAREN EOF COLON ]
 ## Transitions:
 ## Reductions:
--- On SEMI reduce production modulexpr -> modulexpr COLON moduletype
--- On RPAREN reduce production modulexpr -> modulexpr COLON moduletype
--- On LPAREN reduce production modulexpr -> modulexpr COLON moduletype
--- On EOF reduce production modulexpr -> modulexpr COLON moduletype
--- On COLON reduce production modulexpr -> modulexpr COLON moduletype
+-- On SEMI RPAREN LPAREN EOF COLON
+--   reduce production modulexpr -> modulexpr COLON moduletype
 
 State 83:
 ## Known stack suffix:
@@ -1063,11 +962,8 @@ State 84:
 modulexpr -> LPAREN modulexpr RPAREN . [ SEMI RPAREN LPAREN EOF COLON ]
 ## Transitions:
 ## Reductions:
--- On SEMI reduce production modulexpr -> LPAREN modulexpr RPAREN
--- On RPAREN reduce production modulexpr -> LPAREN modulexpr RPAREN
--- On LPAREN reduce production modulexpr -> LPAREN modulexpr RPAREN
--- On EOF reduce production modulexpr -> LPAREN modulexpr RPAREN
--- On COLON reduce production modulexpr -> LPAREN modulexpr RPAREN
+-- On SEMI RPAREN LPAREN EOF COLON
+--   reduce production modulexpr -> LPAREN modulexpr RPAREN
 
 State 85:
 ## Known stack suffix:
@@ -1103,11 +999,8 @@ State 87:
 modulexpr -> modulexpr LPAREN modulexpr RPAREN . [ SEMI RPAREN LPAREN EOF COLON ]
 ## Transitions:
 ## Reductions:
--- On SEMI reduce production modulexpr -> modulexpr LPAREN modulexpr RPAREN
--- On RPAREN reduce production modulexpr -> modulexpr LPAREN modulexpr RPAREN
--- On LPAREN reduce production modulexpr -> modulexpr LPAREN modulexpr RPAREN
--- On EOF reduce production modulexpr -> modulexpr LPAREN modulexpr RPAREN
--- On COLON reduce production modulexpr -> modulexpr LPAREN modulexpr RPAREN
+-- On SEMI RPAREN LPAREN EOF COLON
+--   reduce production modulexpr -> modulexpr LPAREN modulexpr RPAREN
 
 State 88:
 ## Known stack suffix:
@@ -1129,13 +1022,8 @@ State 89:
 structure_item -> MODULE UIDENT EQUAL modulexpr SEMI . [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
 ## Transitions:
 ## Reductions:
--- On VOID reduce production structure_item -> MODULE UIDENT EQUAL modulexpr SEMI
--- On UIDENT reduce production structure_item -> MODULE UIDENT EQUAL modulexpr SEMI
--- On TYPEDEF reduce production structure_item -> MODULE UIDENT EQUAL modulexpr SEMI
--- On MODULE reduce production structure_item -> MODULE UIDENT EQUAL modulexpr SEMI
--- On INT reduce production structure_item -> MODULE UIDENT EQUAL modulexpr SEMI
--- On FLOAT reduce production structure_item -> MODULE UIDENT EQUAL modulexpr SEMI
--- On END reduce production structure_item -> MODULE UIDENT EQUAL modulexpr SEMI
+-- On VOID UIDENT TYPEDEF MODULE INT FLOAT END
+--   reduce production structure_item -> MODULE UIDENT EQUAL modulexpr SEMI
 
 State 90:
 ## Known stack suffix:
@@ -1192,13 +1080,8 @@ State 94:
 structure_item -> MODULE UIDENT COLON moduletype EQUAL modulexpr SEMI . [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
 ## Transitions:
 ## Reductions:
--- On VOID reduce production structure_item -> MODULE UIDENT COLON moduletype EQUAL modulexpr SEMI
--- On UIDENT reduce production structure_item -> MODULE UIDENT COLON moduletype EQUAL modulexpr SEMI
--- On TYPEDEF reduce production structure_item -> MODULE UIDENT COLON moduletype EQUAL modulexpr SEMI
--- On MODULE reduce production structure_item -> MODULE UIDENT COLON moduletype EQUAL modulexpr SEMI
--- On INT reduce production structure_item -> MODULE UIDENT COLON moduletype EQUAL modulexpr SEMI
--- On FLOAT reduce production structure_item -> MODULE UIDENT COLON moduletype EQUAL modulexpr SEMI
--- On END reduce production structure_item -> MODULE UIDENT COLON moduletype EQUAL modulexpr SEMI
+-- On VOID UIDENT TYPEDEF MODULE INT FLOAT END
+--   reduce production structure_item -> MODULE UIDENT COLON moduletype EQUAL modulexpr SEMI
 
 State 95:
 ## Known stack suffix:
@@ -1207,11 +1090,8 @@ State 95:
 modulexpr -> STRUCT structure END . [ SEMI RPAREN LPAREN EOF COLON ]
 ## Transitions:
 ## Reductions:
--- On SEMI reduce production modulexpr -> STRUCT structure END
--- On RPAREN reduce production modulexpr -> STRUCT structure END
--- On LPAREN reduce production modulexpr -> STRUCT structure END
--- On EOF reduce production modulexpr -> STRUCT structure END
--- On COLON reduce production modulexpr -> STRUCT structure END
+-- On SEMI RPAREN LPAREN EOF COLON
+--   reduce production modulexpr -> STRUCT structure END
 
 State 96:
 ## Known stack suffix:
@@ -1220,13 +1100,8 @@ State 96:
 structure_item -> term . [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
 ## Transitions:
 ## Reductions:
--- On VOID reduce production structure_item -> term
--- On UIDENT reduce production structure_item -> term
--- On TYPEDEF reduce production structure_item -> term
--- On MODULE reduce production structure_item -> term
--- On INT reduce production structure_item -> term
--- On FLOAT reduce production structure_item -> term
--- On END reduce production structure_item -> term
+-- On VOID UIDENT TYPEDEF MODULE INT FLOAT END
+--   reduce production structure_item -> term
 
 State 97:
 ## Known stack suffix:
@@ -1235,13 +1110,8 @@ State 97:
 structure -> structure structure_item . [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
 ## Transitions:
 ## Reductions:
--- On VOID reduce production structure -> structure structure_item
--- On UIDENT reduce production structure -> structure structure_item
--- On TYPEDEF reduce production structure -> structure structure_item
--- On MODULE reduce production structure -> structure structure_item
--- On INT reduce production structure -> structure structure_item
--- On FLOAT reduce production structure -> structure structure_item
--- On END reduce production structure -> structure structure_item
+-- On VOID UIDENT TYPEDEF MODULE INT FLOAT END
+--   reduce production structure -> structure structure_item
 
 State 98:
 ## Known stack suffix:
@@ -1273,13 +1143,8 @@ State 100:
 term -> ctype LIDENT SEMI . [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
 ## Transitions:
 ## Reductions:
--- On VOID reduce production term -> ctype LIDENT SEMI
--- On UIDENT reduce production term -> ctype LIDENT SEMI
--- On TYPEDEF reduce production term -> ctype LIDENT SEMI
--- On MODULE reduce production term -> ctype LIDENT SEMI
--- On INT reduce production term -> ctype LIDENT SEMI
--- On FLOAT reduce production term -> ctype LIDENT SEMI
--- On END reduce production term -> ctype LIDENT SEMI
+-- On VOID UIDENT TYPEDEF MODULE INT FLOAT END
+--   reduce production term -> ctype LIDENT SEMI
 
 State 101:
 ## Known stack suffix:
@@ -1295,8 +1160,8 @@ term -> ctype LIDENT LPAREN . parameters RPAREN statement [ VOID UIDENT TYPEDEF 
 -- On parameters shift to state 102
 -- On ctype shift to state 188
 ## Reductions:
--- On RPAREN reduce production parameters ->
--- On COMMA reduce production parameters ->
+-- On RPAREN COMMA
+--   reduce production parameters ->
 
 State 102:
 ## Known stack suffix:
@@ -1402,23 +1267,8 @@ State 107:
 lpath -> LIDENT . [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
 ## Transitions:
 ## Reductions:
--- On STAR reduce production lpath -> LIDENT
--- On SLASH reduce production lpath -> LIDENT
--- On SEMI reduce production lpath -> LIDENT
--- On RPAREN reduce production lpath -> LIDENT
--- On RBRACKET reduce production lpath -> LIDENT
--- On PLUS reduce production lpath -> LIDENT
--- On MINUS reduce production lpath -> LIDENT
--- On LPAREN reduce production lpath -> LIDENT
--- On LESSEQUAL reduce production lpath -> LIDENT
--- On LESS reduce production lpath -> LIDENT
--- On LBRACKET reduce production lpath -> LIDENT
--- On GREATEREQUAL reduce production lpath -> LIDENT
--- On GREATER reduce production lpath -> LIDENT
--- On EQUALEQUAL reduce production lpath -> LIDENT
--- On EQUAL reduce production lpath -> LIDENT
--- On COMMA reduce production lpath -> LIDENT
--- On BANGEQUAL reduce production lpath -> LIDENT
+-- On STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL
+--   reduce production lpath -> LIDENT
 
 State 108:
 ## Known stack suffix:
@@ -1427,23 +1277,8 @@ State 108:
 expr -> INTCONST . [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
 ## Transitions:
 ## Reductions:
--- On STAR reduce production expr -> INTCONST
--- On SLASH reduce production expr -> INTCONST
--- On SEMI reduce production expr -> INTCONST
--- On RPAREN reduce production expr -> INTCONST
--- On RBRACKET reduce production expr -> INTCONST
--- On PLUS reduce production expr -> INTCONST
--- On MINUS reduce production expr -> INTCONST
--- On LPAREN reduce production expr -> INTCONST
--- On LESSEQUAL reduce production expr -> INTCONST
--- On LESS reduce production expr -> INTCONST
--- On LBRACKET reduce production expr -> INTCONST
--- On GREATEREQUAL reduce production expr -> INTCONST
--- On GREATER reduce production expr -> INTCONST
--- On EQUALEQUAL reduce production expr -> INTCONST
--- On EQUAL reduce production expr -> INTCONST
--- On COMMA reduce production expr -> INTCONST
--- On BANGEQUAL reduce production expr -> INTCONST
+-- On STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL
+--   reduce production expr -> INTCONST
 
 State 109:
 ## Known stack suffix:
@@ -1452,23 +1287,8 @@ State 109:
 expr -> FLOATCONST . [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
 ## Transitions:
 ## Reductions:
--- On STAR reduce production expr -> FLOATCONST
--- On SLASH reduce production expr -> FLOATCONST
--- On SEMI reduce production expr -> FLOATCONST
--- On RPAREN reduce production expr -> FLOATCONST
--- On RBRACKET reduce production expr -> FLOATCONST
--- On PLUS reduce production expr -> FLOATCONST
--- On MINUS reduce production expr -> FLOATCONST
--- On LPAREN reduce production expr -> FLOATCONST
--- On LESSEQUAL reduce production expr -> FLOATCONST
--- On LESS reduce production expr -> FLOATCONST
--- On LBRACKET reduce production expr -> FLOATCONST
--- On GREATEREQUAL reduce production expr -> FLOATCONST
--- On GREATER reduce production expr -> FLOATCONST
--- On EQUALEQUAL reduce production expr -> FLOATCONST
--- On EQUAL reduce production expr -> FLOATCONST
--- On COMMA reduce production expr -> FLOATCONST
--- On BANGEQUAL reduce production expr -> FLOATCONST
+-- On STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL
+--   reduce production expr -> FLOATCONST
 
 State 110:
 ## Known stack suffix:
@@ -1517,23 +1337,8 @@ State 113:
 lpath -> upath DOT LIDENT . [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
 ## Transitions:
 ## Reductions:
--- On STAR reduce production lpath -> upath DOT LIDENT
--- On SLASH reduce production lpath -> upath DOT LIDENT
--- On SEMI reduce production lpath -> upath DOT LIDENT
--- On RPAREN reduce production lpath -> upath DOT LIDENT
--- On RBRACKET reduce production lpath -> upath DOT LIDENT
--- On PLUS reduce production lpath -> upath DOT LIDENT
--- On MINUS reduce production lpath -> upath DOT LIDENT
--- On LPAREN reduce production lpath -> upath DOT LIDENT
--- On LESSEQUAL reduce production lpath -> upath DOT LIDENT
--- On LESS reduce production lpath -> upath DOT LIDENT
--- On LBRACKET reduce production lpath -> upath DOT LIDENT
--- On GREATEREQUAL reduce production lpath -> upath DOT LIDENT
--- On GREATER reduce production lpath -> upath DOT LIDENT
--- On EQUALEQUAL reduce production lpath -> upath DOT LIDENT
--- On EQUAL reduce production lpath -> upath DOT LIDENT
--- On COMMA reduce production lpath -> upath DOT LIDENT
--- On BANGEQUAL reduce production lpath -> upath DOT LIDENT
+-- On STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL
+--   reduce production lpath -> upath DOT LIDENT
 
 State 114:
 ## Known stack suffix:
@@ -1542,23 +1347,8 @@ State 114:
 expr -> lpath . [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
 ## Transitions:
 ## Reductions:
--- On STAR reduce production expr -> lpath
--- On SLASH reduce production expr -> lpath
--- On SEMI reduce production expr -> lpath
--- On RPAREN reduce production expr -> lpath
--- On RBRACKET reduce production expr -> lpath
--- On PLUS reduce production expr -> lpath
--- On MINUS reduce production expr -> lpath
--- On LPAREN reduce production expr -> lpath
--- On LESSEQUAL reduce production expr -> lpath
--- On LESS reduce production expr -> lpath
--- On LBRACKET reduce production expr -> lpath
--- On GREATEREQUAL reduce production expr -> lpath
--- On GREATER reduce production expr -> lpath
--- On EQUALEQUAL reduce production expr -> lpath
--- On EQUAL reduce production expr -> lpath
--- On COMMA reduce production expr -> lpath
--- On BANGEQUAL reduce production expr -> lpath
+-- On STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL
+--   reduce production expr -> lpath
 
 State 115:
 ## Known stack suffix:
@@ -1582,21 +1372,8 @@ expr -> expr . LBRACKET expr RBRACKET [ STAR SLASH SEMI RPAREN RBRACKET PLUS MIN
 -- On LPAREN shift to state 116
 -- On LBRACKET shift to state 123
 ## Reductions:
--- On STAR reduce production expr -> BANG expr
--- On SLASH reduce production expr -> BANG expr
--- On SEMI reduce production expr -> BANG expr
--- On RPAREN reduce production expr -> BANG expr
--- On RBRACKET reduce production expr -> BANG expr
--- On PLUS reduce production expr -> BANG expr
--- On MINUS reduce production expr -> BANG expr
--- On LESSEQUAL reduce production expr -> BANG expr
--- On LESS reduce production expr -> BANG expr
--- On GREATEREQUAL reduce production expr -> BANG expr
--- On GREATER reduce production expr -> BANG expr
--- On EQUALEQUAL reduce production expr -> BANG expr
--- On EQUAL reduce production expr -> BANG expr
--- On COMMA reduce production expr -> BANG expr
--- On BANGEQUAL reduce production expr -> BANG expr
+-- On STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LESSEQUAL LESS GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL
+--   reduce production expr -> BANG expr
 
 State 116:
 ## Known stack suffix:
@@ -1617,8 +1394,8 @@ expr -> expr LPAREN . expr_comma_list RPAREN [ STAR SLASH SEMI RPAREN RBRACKET P
 -- On expr_comma_list shift to state 117
 -- On expr shift to state 146
 ## Reductions:
--- On RPAREN reduce production expr_comma_list ->
--- On COMMA reduce production expr_comma_list ->
+-- On RPAREN COMMA
+--   reduce production expr_comma_list ->
 
 State 117:
 ## Known stack suffix:
@@ -1638,23 +1415,8 @@ State 118:
 expr -> expr LPAREN expr_comma_list RPAREN . [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
 ## Transitions:
 ## Reductions:
--- On STAR reduce production expr -> expr LPAREN expr_comma_list RPAREN
--- On SLASH reduce production expr -> expr LPAREN expr_comma_list RPAREN
--- On SEMI reduce production expr -> expr LPAREN expr_comma_list RPAREN
--- On RPAREN reduce production expr -> expr LPAREN expr_comma_list RPAREN
--- On RBRACKET reduce production expr -> expr LPAREN expr_comma_list RPAREN
--- On PLUS reduce production expr -> expr LPAREN expr_comma_list RPAREN
--- On MINUS reduce production expr -> expr LPAREN expr_comma_list RPAREN
--- On LPAREN reduce production expr -> expr LPAREN expr_comma_list RPAREN
--- On LESSEQUAL reduce production expr -> expr LPAREN expr_comma_list RPAREN
--- On LESS reduce production expr -> expr LPAREN expr_comma_list RPAREN
--- On LBRACKET reduce production expr -> expr LPAREN expr_comma_list RPAREN
--- On GREATEREQUAL reduce production expr -> expr LPAREN expr_comma_list RPAREN
--- On GREATER reduce production expr -> expr LPAREN expr_comma_list RPAREN
--- On EQUALEQUAL reduce production expr -> expr LPAREN expr_comma_list RPAREN
--- On EQUAL reduce production expr -> expr LPAREN expr_comma_list RPAREN
--- On COMMA reduce production expr -> expr LPAREN expr_comma_list RPAREN
--- On BANGEQUAL reduce production expr -> expr LPAREN expr_comma_list RPAREN
+-- On STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL
+--   reduce production expr -> expr LPAREN expr_comma_list RPAREN
 
 State 119:
 ## Known stack suffix:
@@ -1708,8 +1470,8 @@ expr_comma_list -> expr_comma_list COMMA expr . [ RPAREN COMMA ]
 -- On EQUAL shift to state 142
 -- On BANGEQUAL shift to state 144
 ## Reductions:
--- On RPAREN reduce production expr_comma_list -> expr_comma_list COMMA expr
--- On COMMA reduce production expr_comma_list -> expr_comma_list COMMA expr
+-- On RPAREN COMMA
+--   reduce production expr_comma_list -> expr_comma_list COMMA expr
 
 State 121:
 ## Known stack suffix:
@@ -1752,21 +1514,8 @@ expr -> expr . LBRACKET expr RBRACKET [ STAR SLASH SEMI RPAREN RBRACKET PLUS MIN
 -- On LPAREN shift to state 116
 -- On LBRACKET shift to state 123
 ## Reductions:
--- On STAR reduce production expr -> expr STAR expr
--- On SLASH reduce production expr -> expr STAR expr
--- On SEMI reduce production expr -> expr STAR expr
--- On RPAREN reduce production expr -> expr STAR expr
--- On RBRACKET reduce production expr -> expr STAR expr
--- On PLUS reduce production expr -> expr STAR expr
--- On MINUS reduce production expr -> expr STAR expr
--- On LESSEQUAL reduce production expr -> expr STAR expr
--- On LESS reduce production expr -> expr STAR expr
--- On GREATEREQUAL reduce production expr -> expr STAR expr
--- On GREATER reduce production expr -> expr STAR expr
--- On EQUALEQUAL reduce production expr -> expr STAR expr
--- On EQUAL reduce production expr -> expr STAR expr
--- On COMMA reduce production expr -> expr STAR expr
--- On BANGEQUAL reduce production expr -> expr STAR expr
+-- On STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LESSEQUAL LESS GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL
+--   reduce production expr -> expr STAR expr
 
 State 123:
 ## Known stack suffix:
@@ -1863,21 +1612,8 @@ expr -> expr . LBRACKET expr RBRACKET [ STAR SLASH SEMI RPAREN RBRACKET PLUS MIN
 -- On LPAREN shift to state 116
 -- On LBRACKET shift to state 123
 ## Reductions:
--- On STAR reduce production expr -> expr SLASH expr
--- On SLASH reduce production expr -> expr SLASH expr
--- On SEMI reduce production expr -> expr SLASH expr
--- On RPAREN reduce production expr -> expr SLASH expr
--- On RBRACKET reduce production expr -> expr SLASH expr
--- On PLUS reduce production expr -> expr SLASH expr
--- On MINUS reduce production expr -> expr SLASH expr
--- On LESSEQUAL reduce production expr -> expr SLASH expr
--- On LESS reduce production expr -> expr SLASH expr
--- On GREATEREQUAL reduce production expr -> expr SLASH expr
--- On GREATER reduce production expr -> expr SLASH expr
--- On EQUALEQUAL reduce production expr -> expr SLASH expr
--- On EQUAL reduce production expr -> expr SLASH expr
--- On COMMA reduce production expr -> expr SLASH expr
--- On BANGEQUAL reduce production expr -> expr SLASH expr
+-- On STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LESSEQUAL LESS GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL
+--   reduce production expr -> expr SLASH expr
 
 State 127:
 ## Known stack suffix:
@@ -1886,23 +1622,8 @@ State 127:
 expr -> expr LBRACKET expr RBRACKET . [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
 ## Transitions:
 ## Reductions:
--- On STAR reduce production expr -> expr LBRACKET expr RBRACKET
--- On SLASH reduce production expr -> expr LBRACKET expr RBRACKET
--- On SEMI reduce production expr -> expr LBRACKET expr RBRACKET
--- On RPAREN reduce production expr -> expr LBRACKET expr RBRACKET
--- On RBRACKET reduce production expr -> expr LBRACKET expr RBRACKET
--- On PLUS reduce production expr -> expr LBRACKET expr RBRACKET
--- On MINUS reduce production expr -> expr LBRACKET expr RBRACKET
--- On LPAREN reduce production expr -> expr LBRACKET expr RBRACKET
--- On LESSEQUAL reduce production expr -> expr LBRACKET expr RBRACKET
--- On LESS reduce production expr -> expr LBRACKET expr RBRACKET
--- On LBRACKET reduce production expr -> expr LBRACKET expr RBRACKET
--- On GREATEREQUAL reduce production expr -> expr LBRACKET expr RBRACKET
--- On GREATER reduce production expr -> expr LBRACKET expr RBRACKET
--- On EQUALEQUAL reduce production expr -> expr LBRACKET expr RBRACKET
--- On EQUAL reduce production expr -> expr LBRACKET expr RBRACKET
--- On COMMA reduce production expr -> expr LBRACKET expr RBRACKET
--- On BANGEQUAL reduce production expr -> expr LBRACKET expr RBRACKET
+-- On STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL
+--   reduce production expr -> expr LBRACKET expr RBRACKET
 
 State 128:
 ## Known stack suffix:
@@ -1947,19 +1668,8 @@ expr -> expr . LBRACKET expr RBRACKET [ STAR SLASH SEMI RPAREN RBRACKET PLUS MIN
 -- On LPAREN shift to state 116
 -- On LBRACKET shift to state 123
 ## Reductions:
--- On SEMI reduce production expr -> expr PLUS expr
--- On RPAREN reduce production expr -> expr PLUS expr
--- On RBRACKET reduce production expr -> expr PLUS expr
--- On PLUS reduce production expr -> expr PLUS expr
--- On MINUS reduce production expr -> expr PLUS expr
--- On LESSEQUAL reduce production expr -> expr PLUS expr
--- On LESS reduce production expr -> expr PLUS expr
--- On GREATEREQUAL reduce production expr -> expr PLUS expr
--- On GREATER reduce production expr -> expr PLUS expr
--- On EQUALEQUAL reduce production expr -> expr PLUS expr
--- On EQUAL reduce production expr -> expr PLUS expr
--- On COMMA reduce production expr -> expr PLUS expr
--- On BANGEQUAL reduce production expr -> expr PLUS expr
+-- On SEMI RPAREN RBRACKET PLUS MINUS LESSEQUAL LESS GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL
+--   reduce production expr -> expr PLUS expr
 
 State 130:
 ## Known stack suffix:
@@ -2004,19 +1714,8 @@ expr -> expr . LBRACKET expr RBRACKET [ STAR SLASH SEMI RPAREN RBRACKET PLUS MIN
 -- On LPAREN shift to state 116
 -- On LBRACKET shift to state 123
 ## Reductions:
--- On SEMI reduce production expr -> expr MINUS expr
--- On RPAREN reduce production expr -> expr MINUS expr
--- On RBRACKET reduce production expr -> expr MINUS expr
--- On PLUS reduce production expr -> expr MINUS expr
--- On MINUS reduce production expr -> expr MINUS expr
--- On LESSEQUAL reduce production expr -> expr MINUS expr
--- On LESS reduce production expr -> expr MINUS expr
--- On GREATEREQUAL reduce production expr -> expr MINUS expr
--- On GREATER reduce production expr -> expr MINUS expr
--- On EQUALEQUAL reduce production expr -> expr MINUS expr
--- On EQUAL reduce production expr -> expr MINUS expr
--- On COMMA reduce production expr -> expr MINUS expr
--- On BANGEQUAL reduce production expr -> expr MINUS expr
+-- On SEMI RPAREN RBRACKET PLUS MINUS LESSEQUAL LESS GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL
+--   reduce production expr -> expr MINUS expr
 
 State 132:
 ## Known stack suffix:
@@ -2063,17 +1762,8 @@ expr -> expr . LBRACKET expr RBRACKET [ STAR SLASH SEMI RPAREN RBRACKET PLUS MIN
 -- On LPAREN shift to state 116
 -- On LBRACKET shift to state 123
 ## Reductions:
--- On SEMI reduce production expr -> expr LESSEQUAL expr
--- On RPAREN reduce production expr -> expr LESSEQUAL expr
--- On RBRACKET reduce production expr -> expr LESSEQUAL expr
--- On LESSEQUAL reduce production expr -> expr LESSEQUAL expr
--- On LESS reduce production expr -> expr LESSEQUAL expr
--- On GREATEREQUAL reduce production expr -> expr LESSEQUAL expr
--- On GREATER reduce production expr -> expr LESSEQUAL expr
--- On EQUALEQUAL reduce production expr -> expr LESSEQUAL expr
--- On EQUAL reduce production expr -> expr LESSEQUAL expr
--- On COMMA reduce production expr -> expr LESSEQUAL expr
--- On BANGEQUAL reduce production expr -> expr LESSEQUAL expr
+-- On SEMI RPAREN RBRACKET LESSEQUAL LESS GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL
+--   reduce production expr -> expr LESSEQUAL expr
 
 State 134:
 ## Known stack suffix:
@@ -2120,17 +1810,8 @@ expr -> expr . LBRACKET expr RBRACKET [ STAR SLASH SEMI RPAREN RBRACKET PLUS MIN
 -- On LPAREN shift to state 116
 -- On LBRACKET shift to state 123
 ## Reductions:
--- On SEMI reduce production expr -> expr LESS expr
--- On RPAREN reduce production expr -> expr LESS expr
--- On RBRACKET reduce production expr -> expr LESS expr
--- On LESSEQUAL reduce production expr -> expr LESS expr
--- On LESS reduce production expr -> expr LESS expr
--- On GREATEREQUAL reduce production expr -> expr LESS expr
--- On GREATER reduce production expr -> expr LESS expr
--- On EQUALEQUAL reduce production expr -> expr LESS expr
--- On EQUAL reduce production expr -> expr LESS expr
--- On COMMA reduce production expr -> expr LESS expr
--- On BANGEQUAL reduce production expr -> expr LESS expr
+-- On SEMI RPAREN RBRACKET LESSEQUAL LESS GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL
+--   reduce production expr -> expr LESS expr
 
 State 136:
 ## Known stack suffix:
@@ -2177,17 +1858,8 @@ expr -> expr . LBRACKET expr RBRACKET [ STAR SLASH SEMI RPAREN RBRACKET PLUS MIN
 -- On LPAREN shift to state 116
 -- On LBRACKET shift to state 123
 ## Reductions:
--- On SEMI reduce production expr -> expr GREATEREQUAL expr
--- On RPAREN reduce production expr -> expr GREATEREQUAL expr
--- On RBRACKET reduce production expr -> expr GREATEREQUAL expr
--- On LESSEQUAL reduce production expr -> expr GREATEREQUAL expr
--- On LESS reduce production expr -> expr GREATEREQUAL expr
--- On GREATEREQUAL reduce production expr -> expr GREATEREQUAL expr
--- On GREATER reduce production expr -> expr GREATEREQUAL expr
--- On EQUALEQUAL reduce production expr -> expr GREATEREQUAL expr
--- On EQUAL reduce production expr -> expr GREATEREQUAL expr
--- On COMMA reduce production expr -> expr GREATEREQUAL expr
--- On BANGEQUAL reduce production expr -> expr GREATEREQUAL expr
+-- On SEMI RPAREN RBRACKET LESSEQUAL LESS GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL
+--   reduce production expr -> expr GREATEREQUAL expr
 
 State 138:
 ## Known stack suffix:
@@ -2234,17 +1906,8 @@ expr -> expr . LBRACKET expr RBRACKET [ STAR SLASH SEMI RPAREN RBRACKET PLUS MIN
 -- On LPAREN shift to state 116
 -- On LBRACKET shift to state 123
 ## Reductions:
--- On SEMI reduce production expr -> expr GREATER expr
--- On RPAREN reduce production expr -> expr GREATER expr
--- On RBRACKET reduce production expr -> expr GREATER expr
--- On LESSEQUAL reduce production expr -> expr GREATER expr
--- On LESS reduce production expr -> expr GREATER expr
--- On GREATEREQUAL reduce production expr -> expr GREATER expr
--- On GREATER reduce production expr -> expr GREATER expr
--- On EQUALEQUAL reduce production expr -> expr GREATER expr
--- On EQUAL reduce production expr -> expr GREATER expr
--- On COMMA reduce production expr -> expr GREATER expr
--- On BANGEQUAL reduce production expr -> expr GREATER expr
+-- On SEMI RPAREN RBRACKET LESSEQUAL LESS GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL
+--   reduce production expr -> expr GREATER expr
 
 State 140:
 ## Known stack suffix:
@@ -2295,13 +1958,8 @@ expr -> expr . LBRACKET expr RBRACKET [ STAR SLASH SEMI RPAREN RBRACKET PLUS MIN
 -- On GREATEREQUAL shift to state 136
 -- On GREATER shift to state 138
 ## Reductions:
--- On SEMI reduce production expr -> expr EQUALEQUAL expr
--- On RPAREN reduce production expr -> expr EQUALEQUAL expr
--- On RBRACKET reduce production expr -> expr EQUALEQUAL expr
--- On EQUALEQUAL reduce production expr -> expr EQUALEQUAL expr
--- On EQUAL reduce production expr -> expr EQUALEQUAL expr
--- On COMMA reduce production expr -> expr EQUALEQUAL expr
--- On BANGEQUAL reduce production expr -> expr EQUALEQUAL expr
+-- On SEMI RPAREN RBRACKET EQUALEQUAL EQUAL COMMA BANGEQUAL
+--   reduce production expr -> expr EQUALEQUAL expr
 
 State 142:
 ## Known stack suffix:
@@ -2355,10 +2013,8 @@ expr -> expr . LBRACKET expr RBRACKET [ STAR SLASH SEMI RPAREN RBRACKET PLUS MIN
 -- On EQUAL shift to state 142
 -- On BANGEQUAL shift to state 144
 ## Reductions:
--- On SEMI reduce production expr -> expr EQUAL expr
--- On RPAREN reduce production expr -> expr EQUAL expr
--- On RBRACKET reduce production expr -> expr EQUAL expr
--- On COMMA reduce production expr -> expr EQUAL expr
+-- On SEMI RPAREN RBRACKET COMMA
+--   reduce production expr -> expr EQUAL expr
 
 State 144:
 ## Known stack suffix:
@@ -2409,13 +2065,8 @@ expr -> expr . LBRACKET expr RBRACKET [ STAR SLASH SEMI RPAREN RBRACKET PLUS MIN
 -- On GREATEREQUAL shift to state 136
 -- On GREATER shift to state 138
 ## Reductions:
--- On SEMI reduce production expr -> expr BANGEQUAL expr
--- On RPAREN reduce production expr -> expr BANGEQUAL expr
--- On RBRACKET reduce production expr -> expr BANGEQUAL expr
--- On EQUALEQUAL reduce production expr -> expr BANGEQUAL expr
--- On EQUAL reduce production expr -> expr BANGEQUAL expr
--- On COMMA reduce production expr -> expr BANGEQUAL expr
--- On BANGEQUAL reduce production expr -> expr BANGEQUAL expr
+-- On SEMI RPAREN RBRACKET EQUALEQUAL EQUAL COMMA BANGEQUAL
+--   reduce production expr -> expr BANGEQUAL expr
 
 State 146:
 ## Known stack suffix:
@@ -2450,8 +2101,8 @@ expr_comma_list -> expr . [ RPAREN COMMA ]
 -- On EQUAL shift to state 142
 -- On BANGEQUAL shift to state 144
 ## Reductions:
--- On RPAREN reduce production expr_comma_list -> expr
--- On COMMA reduce production expr_comma_list -> expr
+-- On RPAREN COMMA
+--   reduce production expr_comma_list -> expr
 
 State 147:
 ## Known stack suffix:
@@ -2463,8 +2114,8 @@ upath -> upath . DOT UIDENT [ STAR RPAREN DOT ]
 ## Transitions:
 -- On DOT shift to state 112
 ## Reductions:
--- On STAR reduce production ctype -> upath
--- On RPAREN reduce production ctype -> upath
+-- On STAR RPAREN
+--   reduce production ctype -> upath
 
 State 148:
 ## Known stack suffix:
@@ -2508,23 +2159,8 @@ State 149:
 expr -> LPAREN expr RPAREN . [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
 ## Transitions:
 ## Reductions:
--- On STAR reduce production expr -> LPAREN expr RPAREN
--- On SLASH reduce production expr -> LPAREN expr RPAREN
--- On SEMI reduce production expr -> LPAREN expr RPAREN
--- On RPAREN reduce production expr -> LPAREN expr RPAREN
--- On RBRACKET reduce production expr -> LPAREN expr RPAREN
--- On PLUS reduce production expr -> LPAREN expr RPAREN
--- On MINUS reduce production expr -> LPAREN expr RPAREN
--- On LPAREN reduce production expr -> LPAREN expr RPAREN
--- On LESSEQUAL reduce production expr -> LPAREN expr RPAREN
--- On LESS reduce production expr -> LPAREN expr RPAREN
--- On LBRACKET reduce production expr -> LPAREN expr RPAREN
--- On GREATEREQUAL reduce production expr -> LPAREN expr RPAREN
--- On GREATER reduce production expr -> LPAREN expr RPAREN
--- On EQUALEQUAL reduce production expr -> LPAREN expr RPAREN
--- On EQUAL reduce production expr -> LPAREN expr RPAREN
--- On COMMA reduce production expr -> LPAREN expr RPAREN
--- On BANGEQUAL reduce production expr -> LPAREN expr RPAREN
+-- On STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL
+--   reduce production expr -> LPAREN expr RPAREN
 
 State 150:
 ## Known stack suffix:
@@ -2576,23 +2212,8 @@ expr -> expr . LBRACKET expr RBRACKET [ STAR SLASH SEMI RPAREN RBRACKET PLUS MIN
 expr -> LPAREN ctype RPAREN expr . [ STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL ]
 ## Transitions:
 ## Reductions:
--- On STAR reduce production expr -> LPAREN ctype RPAREN expr
--- On SLASH reduce production expr -> LPAREN ctype RPAREN expr
--- On SEMI reduce production expr -> LPAREN ctype RPAREN expr
--- On RPAREN reduce production expr -> LPAREN ctype RPAREN expr
--- On RBRACKET reduce production expr -> LPAREN ctype RPAREN expr
--- On PLUS reduce production expr -> LPAREN ctype RPAREN expr
--- On MINUS reduce production expr -> LPAREN ctype RPAREN expr
--- On LPAREN reduce production expr -> LPAREN ctype RPAREN expr
--- On LESSEQUAL reduce production expr -> LPAREN ctype RPAREN expr
--- On LESS reduce production expr -> LPAREN ctype RPAREN expr
--- On LBRACKET reduce production expr -> LPAREN ctype RPAREN expr
--- On GREATEREQUAL reduce production expr -> LPAREN ctype RPAREN expr
--- On GREATER reduce production expr -> LPAREN ctype RPAREN expr
--- On EQUALEQUAL reduce production expr -> LPAREN ctype RPAREN expr
--- On EQUAL reduce production expr -> LPAREN ctype RPAREN expr
--- On COMMA reduce production expr -> LPAREN ctype RPAREN expr
--- On BANGEQUAL reduce production expr -> LPAREN ctype RPAREN expr
+-- On STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LPAREN LESSEQUAL LESS LBRACKET GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL
+--   reduce production expr -> LPAREN ctype RPAREN expr
 
 State 153:
 ## Known stack suffix:
@@ -2616,21 +2237,8 @@ expr -> expr . LBRACKET expr RBRACKET [ STAR SLASH SEMI RPAREN RBRACKET PLUS MIN
 -- On LPAREN shift to state 116
 -- On LBRACKET shift to state 123
 ## Reductions:
--- On STAR reduce production expr -> MINUS expr
--- On SLASH reduce production expr -> MINUS expr
--- On SEMI reduce production expr -> MINUS expr
--- On RPAREN reduce production expr -> MINUS expr
--- On RBRACKET reduce production expr -> MINUS expr
--- On PLUS reduce production expr -> MINUS expr
--- On MINUS reduce production expr -> MINUS expr
--- On LESSEQUAL reduce production expr -> MINUS expr
--- On LESS reduce production expr -> MINUS expr
--- On GREATEREQUAL reduce production expr -> MINUS expr
--- On GREATER reduce production expr -> MINUS expr
--- On EQUALEQUAL reduce production expr -> MINUS expr
--- On EQUAL reduce production expr -> MINUS expr
--- On COMMA reduce production expr -> MINUS expr
--- On BANGEQUAL reduce production expr -> MINUS expr
+-- On STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LESSEQUAL LESS GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL
+--   reduce production expr -> MINUS expr
 
 State 154:
 ## Known stack suffix:
@@ -2654,21 +2262,8 @@ expr -> expr . LBRACKET expr RBRACKET [ STAR SLASH SEMI RPAREN RBRACKET PLUS MIN
 -- On LPAREN shift to state 116
 -- On LBRACKET shift to state 123
 ## Reductions:
--- On STAR reduce production expr -> STAR expr
--- On SLASH reduce production expr -> STAR expr
--- On SEMI reduce production expr -> STAR expr
--- On RPAREN reduce production expr -> STAR expr
--- On RBRACKET reduce production expr -> STAR expr
--- On PLUS reduce production expr -> STAR expr
--- On MINUS reduce production expr -> STAR expr
--- On LESSEQUAL reduce production expr -> STAR expr
--- On LESS reduce production expr -> STAR expr
--- On GREATEREQUAL reduce production expr -> STAR expr
--- On GREATER reduce production expr -> STAR expr
--- On EQUALEQUAL reduce production expr -> STAR expr
--- On EQUAL reduce production expr -> STAR expr
--- On COMMA reduce production expr -> STAR expr
--- On BANGEQUAL reduce production expr -> STAR expr
+-- On STAR SLASH SEMI RPAREN RBRACKET PLUS MINUS LESSEQUAL LESS GREATEREQUAL GREATER EQUALEQUAL EQUAL COMMA BANGEQUAL
+--   reduce production expr -> STAR expr
 
 State 155:
 ## Known stack suffix:
@@ -2731,27 +2326,8 @@ State 157:
 statement -> RETURN expr SEMI . [ VOID UIDENT TYPEDEF STAR RETURN RBRACE MODULE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT END ELSE BANG # ]
 ## Transitions:
 ## Reductions:
--- On VOID reduce production statement -> RETURN expr SEMI
--- On UIDENT reduce production statement -> RETURN expr SEMI
--- On TYPEDEF reduce production statement -> RETURN expr SEMI
--- On STAR reduce production statement -> RETURN expr SEMI
--- On RETURN reduce production statement -> RETURN expr SEMI
--- On RBRACE reduce production statement -> RETURN expr SEMI
--- On MODULE reduce production statement -> RETURN expr SEMI
--- On MINUS reduce production statement -> RETURN expr SEMI
--- On LPAREN reduce production statement -> RETURN expr SEMI
--- On LIDENT reduce production statement -> RETURN expr SEMI
--- On LBRACE reduce production statement -> RETURN expr SEMI
--- On INTCONST reduce production statement -> RETURN expr SEMI
--- On INT reduce production statement -> RETURN expr SEMI
--- On IF reduce production statement -> RETURN expr SEMI
--- On FOR reduce production statement -> RETURN expr SEMI
--- On FLOATCONST reduce production statement -> RETURN expr SEMI
--- On FLOAT reduce production statement -> RETURN expr SEMI
--- On END reduce production statement -> RETURN expr SEMI
--- On ELSE reduce production statement -> RETURN expr SEMI
--- On BANG reduce production statement -> RETURN expr SEMI
--- On # reduce production statement -> RETURN expr SEMI
+-- On VOID UIDENT TYPEDEF STAR RETURN RBRACE MODULE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT END ELSE BANG #
+--   reduce production statement -> RETURN expr SEMI
 ** End-of-stream conflict on VOID UIDENT TYPEDEF STAR RETURN RBRACE MODULE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT END ELSE BANG
 **   There is a tension between
 **   (1) reducing production statement -> RETURN expr SEMI
@@ -2766,22 +2342,8 @@ statement -> LBRACE . decl_list statement_list RBRACE [ VOID UIDENT TYPEDEF STAR
 ## Transitions:
 -- On decl_list shift to state 159
 ## Reductions:
--- On VOID reduce production decl_list ->
--- On UIDENT reduce production decl_list ->
--- On STAR reduce production decl_list ->
--- On RETURN reduce production decl_list ->
--- On RBRACE reduce production decl_list ->
--- On MINUS reduce production decl_list ->
--- On LPAREN reduce production decl_list ->
--- On LIDENT reduce production decl_list ->
--- On LBRACE reduce production decl_list ->
--- On INTCONST reduce production decl_list ->
--- On INT reduce production decl_list ->
--- On IF reduce production decl_list ->
--- On FOR reduce production decl_list ->
--- On FLOATCONST reduce production decl_list ->
--- On FLOAT reduce production decl_list ->
--- On BANG reduce production decl_list ->
+-- On VOID UIDENT STAR RETURN RBRACE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT BANG
+--   reduce production decl_list ->
 
 State 159:
 ## Known stack suffix:
@@ -2798,19 +2360,8 @@ statement -> LBRACE decl_list . statement_list RBRACE [ VOID UIDENT TYPEDEF STAR
 -- On statement_list shift to state 160
 -- On ctype shift to state 181
 ## Reductions:
--- On UIDENT reduce production statement_list ->
--- On STAR reduce production statement_list ->
--- On RETURN reduce production statement_list ->
--- On RBRACE reduce production statement_list ->
--- On MINUS reduce production statement_list ->
--- On LPAREN reduce production statement_list ->
--- On LIDENT reduce production statement_list ->
--- On LBRACE reduce production statement_list ->
--- On INTCONST reduce production statement_list ->
--- On IF reduce production statement_list ->
--- On FOR reduce production statement_list ->
--- On FLOATCONST reduce production statement_list ->
--- On BANG reduce production statement_list ->
+-- On UIDENT STAR RETURN RBRACE MINUS LPAREN LIDENT LBRACE INTCONST IF FOR FLOATCONST BANG
+--   reduce production statement_list ->
 ** Conflict on UIDENT
 
 State 160:
@@ -2846,27 +2397,8 @@ State 161:
 statement -> LBRACE decl_list statement_list RBRACE . [ VOID UIDENT TYPEDEF STAR RETURN RBRACE MODULE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT END ELSE BANG # ]
 ## Transitions:
 ## Reductions:
--- On VOID reduce production statement -> LBRACE decl_list statement_list RBRACE
--- On UIDENT reduce production statement -> LBRACE decl_list statement_list RBRACE
--- On TYPEDEF reduce production statement -> LBRACE decl_list statement_list RBRACE
--- On STAR reduce production statement -> LBRACE decl_list statement_list RBRACE
--- On RETURN reduce production statement -> LBRACE decl_list statement_list RBRACE
--- On RBRACE reduce production statement -> LBRACE decl_list statement_list RBRACE
--- On MODULE reduce production statement -> LBRACE decl_list statement_list RBRACE
--- On MINUS reduce production statement -> LBRACE decl_list statement_list RBRACE
--- On LPAREN reduce production statement -> LBRACE decl_list statement_list RBRACE
--- On LIDENT reduce production statement -> LBRACE decl_list statement_list RBRACE
--- On LBRACE reduce production statement -> LBRACE decl_list statement_list RBRACE
--- On INTCONST reduce production statement -> LBRACE decl_list statement_list RBRACE
--- On INT reduce production statement -> LBRACE decl_list statement_list RBRACE
--- On IF reduce production statement -> LBRACE decl_list statement_list RBRACE
--- On FOR reduce production statement -> LBRACE decl_list statement_list RBRACE
--- On FLOATCONST reduce production statement -> LBRACE decl_list statement_list RBRACE
--- On FLOAT reduce production statement -> LBRACE decl_list statement_list RBRACE
--- On END reduce production statement -> LBRACE decl_list statement_list RBRACE
--- On ELSE reduce production statement -> LBRACE decl_list statement_list RBRACE
--- On BANG reduce production statement -> LBRACE decl_list statement_list RBRACE
--- On # reduce production statement -> LBRACE decl_list statement_list RBRACE
+-- On VOID UIDENT TYPEDEF STAR RETURN RBRACE MODULE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT END ELSE BANG #
+--   reduce production statement -> LBRACE decl_list statement_list RBRACE
 ** End-of-stream conflict on VOID UIDENT TYPEDEF STAR RETURN RBRACE MODULE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT END ELSE BANG
 **   There is a tension between
 **   (1) reducing production statement -> LBRACE decl_list statement_list RBRACE
@@ -3166,27 +2698,8 @@ State 174:
 statement -> FOR LPAREN expr SEMI expr SEMI expr RPAREN statement . [ VOID UIDENT TYPEDEF STAR RETURN RBRACE MODULE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT END ELSE BANG # ]
 ## Transitions:
 ## Reductions:
--- On VOID reduce production statement -> FOR LPAREN expr SEMI expr SEMI expr RPAREN statement
--- On UIDENT reduce production statement -> FOR LPAREN expr SEMI expr SEMI expr RPAREN statement
--- On TYPEDEF reduce production statement -> FOR LPAREN expr SEMI expr SEMI expr RPAREN statement
--- On STAR reduce production statement -> FOR LPAREN expr SEMI expr SEMI expr RPAREN statement
--- On RETURN reduce production statement -> FOR LPAREN expr SEMI expr SEMI expr RPAREN statement
--- On RBRACE reduce production statement -> FOR LPAREN expr SEMI expr SEMI expr RPAREN statement
--- On MODULE reduce production statement -> FOR LPAREN expr SEMI expr SEMI expr RPAREN statement
--- On MINUS reduce production statement -> FOR LPAREN expr SEMI expr SEMI expr RPAREN statement
--- On LPAREN reduce production statement -> FOR LPAREN expr SEMI expr SEMI expr RPAREN statement
--- On LIDENT reduce production statement -> FOR LPAREN expr SEMI expr SEMI expr RPAREN statement
--- On LBRACE reduce production statement -> FOR LPAREN expr SEMI expr SEMI expr RPAREN statement
--- On INTCONST reduce production statement -> FOR LPAREN expr SEMI expr SEMI expr RPAREN statement
--- On INT reduce production statement -> FOR LPAREN expr SEMI expr SEMI expr RPAREN statement
--- On IF reduce production statement -> FOR LPAREN expr SEMI expr SEMI expr RPAREN statement
--- On FOR reduce production statement -> FOR LPAREN expr SEMI expr SEMI expr RPAREN statement
--- On FLOATCONST reduce production statement -> FOR LPAREN expr SEMI expr SEMI expr RPAREN statement
--- On FLOAT reduce production statement -> FOR LPAREN expr SEMI expr SEMI expr RPAREN statement
--- On END reduce production statement -> FOR LPAREN expr SEMI expr SEMI expr RPAREN statement
--- On ELSE reduce production statement -> FOR LPAREN expr SEMI expr SEMI expr RPAREN statement
--- On BANG reduce production statement -> FOR LPAREN expr SEMI expr SEMI expr RPAREN statement
--- On # reduce production statement -> FOR LPAREN expr SEMI expr SEMI expr RPAREN statement
+-- On VOID UIDENT TYPEDEF STAR RETURN RBRACE MODULE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT END ELSE BANG #
+--   reduce production statement -> FOR LPAREN expr SEMI expr SEMI expr RPAREN statement
 ** End-of-stream conflict on VOID UIDENT TYPEDEF STAR RETURN RBRACE MODULE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT END ELSE BANG
 **   There is a tension between
 **   (1) reducing production statement -> FOR LPAREN expr SEMI expr SEMI expr RPAREN statement
@@ -3235,27 +2748,8 @@ State 176:
 statement -> expr SEMI . [ VOID UIDENT TYPEDEF STAR RETURN RBRACE MODULE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT END ELSE BANG # ]
 ## Transitions:
 ## Reductions:
--- On VOID reduce production statement -> expr SEMI
--- On UIDENT reduce production statement -> expr SEMI
--- On TYPEDEF reduce production statement -> expr SEMI
--- On STAR reduce production statement -> expr SEMI
--- On RETURN reduce production statement -> expr SEMI
--- On RBRACE reduce production statement -> expr SEMI
--- On MODULE reduce production statement -> expr SEMI
--- On MINUS reduce production statement -> expr SEMI
--- On LPAREN reduce production statement -> expr SEMI
--- On LIDENT reduce production statement -> expr SEMI
--- On LBRACE reduce production statement -> expr SEMI
--- On INTCONST reduce production statement -> expr SEMI
--- On INT reduce production statement -> expr SEMI
--- On IF reduce production statement -> expr SEMI
--- On FOR reduce production statement -> expr SEMI
--- On FLOATCONST reduce production statement -> expr SEMI
--- On FLOAT reduce production statement -> expr SEMI
--- On END reduce production statement -> expr SEMI
--- On ELSE reduce production statement -> expr SEMI
--- On BANG reduce production statement -> expr SEMI
--- On # reduce production statement -> expr SEMI
+-- On VOID UIDENT TYPEDEF STAR RETURN RBRACE MODULE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT END ELSE BANG #
+--   reduce production statement -> expr SEMI
 ** End-of-stream conflict on VOID UIDENT TYPEDEF STAR RETURN RBRACE MODULE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT END ELSE BANG
 **   There is a tension between
 **   (1) reducing production statement -> expr SEMI
@@ -3271,27 +2765,8 @@ statement -> IF LPAREN expr RPAREN statement . [ VOID UIDENT TYPEDEF STAR RETURN
 ## Transitions:
 -- On ELSE shift to state 178
 ## Reductions:
--- On VOID reduce production statement -> IF LPAREN expr RPAREN statement
--- On UIDENT reduce production statement -> IF LPAREN expr RPAREN statement
--- On TYPEDEF reduce production statement -> IF LPAREN expr RPAREN statement
--- On STAR reduce production statement -> IF LPAREN expr RPAREN statement
--- On RETURN reduce production statement -> IF LPAREN expr RPAREN statement
--- On RBRACE reduce production statement -> IF LPAREN expr RPAREN statement
--- On MODULE reduce production statement -> IF LPAREN expr RPAREN statement
--- On MINUS reduce production statement -> IF LPAREN expr RPAREN statement
--- On LPAREN reduce production statement -> IF LPAREN expr RPAREN statement
--- On LIDENT reduce production statement -> IF LPAREN expr RPAREN statement
--- On LBRACE reduce production statement -> IF LPAREN expr RPAREN statement
--- On INTCONST reduce production statement -> IF LPAREN expr RPAREN statement
--- On INT reduce production statement -> IF LPAREN expr RPAREN statement
--- On IF reduce production statement -> IF LPAREN expr RPAREN statement
--- On FOR reduce production statement -> IF LPAREN expr RPAREN statement
--- On FLOATCONST reduce production statement -> IF LPAREN expr RPAREN statement
--- On FLOAT reduce production statement -> IF LPAREN expr RPAREN statement
--- On END reduce production statement -> IF LPAREN expr RPAREN statement
--- On ELSE reduce production statement -> IF LPAREN expr RPAREN statement
--- On BANG reduce production statement -> IF LPAREN expr RPAREN statement
--- On # reduce production statement -> IF LPAREN expr RPAREN statement
+-- On VOID UIDENT TYPEDEF STAR RETURN RBRACE MODULE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT END ELSE BANG #
+--   reduce production statement -> IF LPAREN expr RPAREN statement
 ** Conflict on ELSE
 ** End-of-stream conflict on VOID UIDENT TYPEDEF STAR RETURN RBRACE MODULE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT END ELSE BANG
 **   There is a tension between
@@ -3330,27 +2805,8 @@ State 179:
 statement -> IF LPAREN expr RPAREN statement ELSE statement . [ VOID UIDENT TYPEDEF STAR RETURN RBRACE MODULE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT END ELSE BANG # ]
 ## Transitions:
 ## Reductions:
--- On VOID reduce production statement -> IF LPAREN expr RPAREN statement ELSE statement
--- On UIDENT reduce production statement -> IF LPAREN expr RPAREN statement ELSE statement
--- On TYPEDEF reduce production statement -> IF LPAREN expr RPAREN statement ELSE statement
--- On STAR reduce production statement -> IF LPAREN expr RPAREN statement ELSE statement
--- On RETURN reduce production statement -> IF LPAREN expr RPAREN statement ELSE statement
--- On RBRACE reduce production statement -> IF LPAREN expr RPAREN statement ELSE statement
--- On MODULE reduce production statement -> IF LPAREN expr RPAREN statement ELSE statement
--- On MINUS reduce production statement -> IF LPAREN expr RPAREN statement ELSE statement
--- On LPAREN reduce production statement -> IF LPAREN expr RPAREN statement ELSE statement
--- On LIDENT reduce production statement -> IF LPAREN expr RPAREN statement ELSE statement
--- On LBRACE reduce production statement -> IF LPAREN expr RPAREN statement ELSE statement
--- On INTCONST reduce production statement -> IF LPAREN expr RPAREN statement ELSE statement
--- On INT reduce production statement -> IF LPAREN expr RPAREN statement ELSE statement
--- On IF reduce production statement -> IF LPAREN expr RPAREN statement ELSE statement
--- On FOR reduce production statement -> IF LPAREN expr RPAREN statement ELSE statement
--- On FLOATCONST reduce production statement -> IF LPAREN expr RPAREN statement ELSE statement
--- On FLOAT reduce production statement -> IF LPAREN expr RPAREN statement ELSE statement
--- On END reduce production statement -> IF LPAREN expr RPAREN statement ELSE statement
--- On ELSE reduce production statement -> IF LPAREN expr RPAREN statement ELSE statement
--- On BANG reduce production statement -> IF LPAREN expr RPAREN statement ELSE statement
--- On # reduce production statement -> IF LPAREN expr RPAREN statement ELSE statement
+-- On VOID UIDENT TYPEDEF STAR RETURN RBRACE MODULE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT END ELSE BANG #
+--   reduce production statement -> IF LPAREN expr RPAREN statement ELSE statement
 ** End-of-stream conflict on VOID UIDENT TYPEDEF STAR RETURN RBRACE MODULE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT END ELSE BANG
 **   There is a tension between
 **   (1) reducing production statement -> IF LPAREN expr RPAREN statement ELSE statement
@@ -3364,19 +2820,8 @@ State 180:
 statement_list -> statement_list statement . [ UIDENT STAR RETURN RBRACE MINUS LPAREN LIDENT LBRACE INTCONST IF FOR FLOATCONST BANG ]
 ## Transitions:
 ## Reductions:
--- On UIDENT reduce production statement_list -> statement_list statement
--- On STAR reduce production statement_list -> statement_list statement
--- On RETURN reduce production statement_list -> statement_list statement
--- On RBRACE reduce production statement_list -> statement_list statement
--- On MINUS reduce production statement_list -> statement_list statement
--- On LPAREN reduce production statement_list -> statement_list statement
--- On LIDENT reduce production statement_list -> statement_list statement
--- On LBRACE reduce production statement_list -> statement_list statement
--- On INTCONST reduce production statement_list -> statement_list statement
--- On IF reduce production statement_list -> statement_list statement
--- On FOR reduce production statement_list -> statement_list statement
--- On FLOATCONST reduce production statement_list -> statement_list statement
--- On BANG reduce production statement_list -> statement_list statement
+-- On UIDENT STAR RETURN RBRACE MINUS LPAREN LIDENT LBRACE INTCONST IF FOR FLOATCONST BANG
+--   reduce production statement_list -> statement_list statement
 
 State 181:
 ## Known stack suffix:
@@ -3405,22 +2850,8 @@ State 183:
 decl_list -> decl_list ctype LIDENT SEMI . [ VOID UIDENT STAR RETURN RBRACE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT BANG ]
 ## Transitions:
 ## Reductions:
--- On VOID reduce production decl_list -> decl_list ctype LIDENT SEMI
--- On UIDENT reduce production decl_list -> decl_list ctype LIDENT SEMI
--- On STAR reduce production decl_list -> decl_list ctype LIDENT SEMI
--- On RETURN reduce production decl_list -> decl_list ctype LIDENT SEMI
--- On RBRACE reduce production decl_list -> decl_list ctype LIDENT SEMI
--- On MINUS reduce production decl_list -> decl_list ctype LIDENT SEMI
--- On LPAREN reduce production decl_list -> decl_list ctype LIDENT SEMI
--- On LIDENT reduce production decl_list -> decl_list ctype LIDENT SEMI
--- On LBRACE reduce production decl_list -> decl_list ctype LIDENT SEMI
--- On INTCONST reduce production decl_list -> decl_list ctype LIDENT SEMI
--- On INT reduce production decl_list -> decl_list ctype LIDENT SEMI
--- On IF reduce production decl_list -> decl_list ctype LIDENT SEMI
--- On FOR reduce production decl_list -> decl_list ctype LIDENT SEMI
--- On FLOATCONST reduce production decl_list -> decl_list ctype LIDENT SEMI
--- On FLOAT reduce production decl_list -> decl_list ctype LIDENT SEMI
--- On BANG reduce production decl_list -> decl_list ctype LIDENT SEMI
+-- On VOID UIDENT STAR RETURN RBRACE MINUS LPAREN LIDENT LBRACE INTCONST INT IF FOR FLOATCONST FLOAT BANG
+--   reduce production decl_list -> decl_list ctype LIDENT SEMI
 
 State 184:
 ## Known stack suffix:
@@ -3429,13 +2860,8 @@ State 184:
 term -> ctype LIDENT LPAREN parameters RPAREN statement . [ VOID UIDENT TYPEDEF MODULE INT FLOAT END ]
 ## Transitions:
 ## Reductions:
--- On VOID reduce production term -> ctype LIDENT LPAREN parameters RPAREN statement
--- On UIDENT reduce production term -> ctype LIDENT LPAREN parameters RPAREN statement
--- On TYPEDEF reduce production term -> ctype LIDENT LPAREN parameters RPAREN statement
--- On MODULE reduce production term -> ctype LIDENT LPAREN parameters RPAREN statement
--- On INT reduce production term -> ctype LIDENT LPAREN parameters RPAREN statement
--- On FLOAT reduce production term -> ctype LIDENT LPAREN parameters RPAREN statement
--- On END reduce production term -> ctype LIDENT LPAREN parameters RPAREN statement
+-- On VOID UIDENT TYPEDEF MODULE INT FLOAT END
+--   reduce production term -> ctype LIDENT LPAREN parameters RPAREN statement
 
 State 185:
 ## Known stack suffix:
@@ -3469,8 +2895,8 @@ State 187:
 parameters -> parameters COMMA ctype LIDENT . [ RPAREN COMMA ]
 ## Transitions:
 ## Reductions:
--- On RPAREN reduce production parameters -> parameters COMMA ctype LIDENT
--- On COMMA reduce production parameters -> parameters COMMA ctype LIDENT
+-- On RPAREN COMMA
+--   reduce production parameters -> parameters COMMA ctype LIDENT
 
 State 188:
 ## Known stack suffix:
@@ -3490,8 +2916,8 @@ State 189:
 parameters -> ctype LIDENT . [ RPAREN COMMA ]
 ## Transitions:
 ## Reductions:
--- On RPAREN reduce production parameters -> ctype LIDENT
--- On COMMA reduce production parameters -> ctype LIDENT
+-- On RPAREN COMMA
+--   reduce production parameters -> ctype LIDENT
 
 State 190:
 ## Known stack suffix:
@@ -3513,7 +2939,8 @@ State 191:
 implementation -> modulexpr EOF . [ # ]
 ## Transitions:
 ## Reductions:
--- On # reduce production implementation -> modulexpr EOF
+-- On #
+--   reduce production implementation -> modulexpr EOF
 
 State 192:
 ## Known stack suffix:
@@ -3522,7 +2949,8 @@ State 192:
 implementation' -> implementation . [ # ]
 ## Transitions:
 ## Reductions:
--- On # accept implementation
+-- On #
+--   accept implementation
 
 State 193:
 ## Known stack suffix:
@@ -3575,7 +3003,8 @@ State 196:
 structure_item -> TYPEDEF typedef SEMI . [ # ]
 ## Transitions:
 ## Reductions:
--- On # reduce production structure_item -> TYPEDEF typedef SEMI
+-- On #
+--   reduce production structure_item -> TYPEDEF typedef SEMI
 
 State 197:
 ## Known stack suffix:
@@ -3632,7 +3061,8 @@ State 201:
 structure_item -> MODULE UIDENT EQUAL modulexpr SEMI . [ # ]
 ## Transitions:
 ## Reductions:
--- On # reduce production structure_item -> MODULE UIDENT EQUAL modulexpr SEMI
+-- On #
+--   reduce production structure_item -> MODULE UIDENT EQUAL modulexpr SEMI
 
 State 202:
 ## Known stack suffix:
@@ -3689,7 +3119,8 @@ State 206:
 structure_item -> MODULE UIDENT COLON moduletype EQUAL modulexpr SEMI . [ # ]
 ## Transitions:
 ## Reductions:
--- On # reduce production structure_item -> MODULE UIDENT COLON moduletype EQUAL modulexpr SEMI
+-- On #
+--   reduce production structure_item -> MODULE UIDENT COLON moduletype EQUAL modulexpr SEMI
 
 State 207:
 ## Known stack suffix:
@@ -3698,7 +3129,8 @@ State 207:
 phrase -> EOF . [ # ]
 ## Transitions:
 ## Reductions:
--- On # reduce production phrase -> EOF
+-- On #
+--   reduce production phrase -> EOF
 
 State 208:
 ## Known stack suffix:
@@ -3707,7 +3139,8 @@ State 208:
 structure_item -> term . [ # ]
 ## Transitions:
 ## Reductions:
--- On # reduce production structure_item -> term
+-- On #
+--   reduce production structure_item -> term
 
 State 209:
 ## Known stack suffix:
@@ -3716,7 +3149,8 @@ State 209:
 phrase -> structure_item . [ # ]
 ## Transitions:
 ## Reductions:
--- On # reduce production phrase -> structure_item
+-- On #
+--   reduce production phrase -> structure_item
 
 State 210:
 ## Known stack suffix:
@@ -3725,7 +3159,8 @@ State 210:
 phrase' -> phrase . [ # ]
 ## Transitions:
 ## Reductions:
--- On # accept phrase
+-- On #
+--   accept phrase
 
 State 211:
 ## Known stack suffix:
@@ -3757,7 +3192,8 @@ State 213:
 term -> ctype LIDENT SEMI . [ # ]
 ## Transitions:
 ## Reductions:
--- On # reduce production term -> ctype LIDENT SEMI
+-- On #
+--   reduce production term -> ctype LIDENT SEMI
 
 State 214:
 ## Known stack suffix:
@@ -3773,8 +3209,8 @@ term -> ctype LIDENT LPAREN . parameters RPAREN statement [ # ]
 -- On parameters shift to state 215
 -- On ctype shift to state 188
 ## Reductions:
--- On RPAREN reduce production parameters ->
--- On COMMA reduce production parameters ->
+-- On RPAREN COMMA
+--   reduce production parameters ->
 
 State 215:
 ## Known stack suffix:
@@ -3818,5 +3254,6 @@ State 217:
 term -> ctype LIDENT LPAREN parameters RPAREN statement . [ # ]
 ## Transitions:
 ## Reductions:
--- On # reduce production term -> ctype LIDENT LPAREN parameters RPAREN statement
+-- On #
+--   reduce production term -> ctype LIDENT LPAREN parameters RPAREN statement
 

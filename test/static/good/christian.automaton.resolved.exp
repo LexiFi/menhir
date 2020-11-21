@@ -19,7 +19,8 @@ moduleIdentifier -> Upper . definitiveIdentifier [ DEFINITIONS ]
 -- On LeftBrace shift to state 2
 -- On definitiveIdentifier shift to state 15
 ## Reductions:
--- On DEFINITIONS reduce production definitiveIdentifier ->
+-- On DEFINITIONS
+--   reduce production definitiveIdentifier ->
 
 State 2:
 ## Known stack suffix:
@@ -54,9 +55,8 @@ nameForm -> Lower . [ RightBrace Number Lower ]
 ## Transitions:
 -- On LeftParen shift to state 5
 ## Reductions:
--- On RightBrace reduce production nameForm -> Lower
--- On Number reduce production nameForm -> Lower
--- On Lower reduce production nameForm -> Lower
+-- On RightBrace Number Lower
+--   reduce production nameForm -> Lower
 
 State 5:
 ## Known stack suffix:
@@ -128,7 +128,8 @@ definitiveObjIdComponentList -> definitiveObjIdComponent . definitiveObjIdCompon
 -- On definitiveNumberForm shift to state 13
 -- On definitiveNameAndNumberForm shift to state 14
 ## Reductions:
--- On RightBrace reduce production definitiveObjIdComponentList -> definitiveObjIdComponent
+-- On RightBrace
+--   reduce production definitiveObjIdComponentList -> definitiveObjIdComponent
 
 State 12:
 ## Known stack suffix:
@@ -186,8 +187,8 @@ moduleDefinition -> moduleIdentifier DEFINITIONS . tagDefault extensionDefault A
 -- On AUTOMATIC shift to state 22
 -- On tagDefault shift to state 24
 ## Reductions:
--- On EXTENSIBILITY reduce production tagDefault ->
--- On Assignment reduce production tagDefault ->
+-- On EXTENSIBILITY Assignment
+--   reduce production tagDefault ->
 
 State 18:
 ## Known stack suffix:
@@ -252,7 +253,8 @@ moduleDefinition -> moduleIdentifier DEFINITIONS tagDefault . extensionDefault A
 -- On EXTENSIBILITY shift to state 25
 -- On extensionDefault shift to state 27
 ## Reductions:
--- On Assignment reduce production extensionDefault ->
+-- On Assignment
+--   reduce production extensionDefault ->
 
 State 25:
 ## Known stack suffix:
@@ -300,10 +302,10 @@ moduleDefinition -> moduleIdentifier DEFINITIONS tagDefault extensionDefault Ass
 -- On moduleBody shift to state 45
 -- On exports shift to state 47
 ## Reductions:
--- On Upper reduce production exports ->
--- On Lower reduce production exports ->
--- On IMPORTS reduce production exports ->
--- On END reduce production moduleBody ->
+-- On Upper Lower IMPORTS
+--   reduce production exports ->
+-- On END
+--   reduce production moduleBody ->
 
 State 30:
 ## Known stack suffix:
@@ -321,7 +323,8 @@ exports -> EXPORTS . ALL SemiColon [ Upper Lower IMPORTS ]
 -- On reference shift to state 40
 -- On parameterizedReference shift to state 43
 ## Reductions:
--- On SemiColon reduce production symbolsExported ->
+-- On SemiColon
+--   reduce production symbolsExported ->
 
 State 31:
 ## Known stack suffix:
@@ -386,7 +389,8 @@ symbolsExported -> symbolList . [ SemiColon ]
 ## Transitions:
 -- On Comma shift to state 38
 ## Reductions:
--- On SemiColon reduce production symbolsExported -> symbolList
+-- On SemiColon
+--   reduce production symbolsExported -> symbolList
 
 State 38:
 ## Known stack suffix:
@@ -420,9 +424,8 @@ symbol -> reference . [ SemiColon FROM Comma ]
 ## Transitions:
 -- On LeftBrace shift to state 41
 ## Reductions:
--- On SemiColon reduce production symbol -> reference
--- On FROM reduce production symbol -> reference
--- On Comma reduce production symbol -> reference
+-- On SemiColon FROM Comma
+--   reduce production symbol -> reference
 
 State 41:
 ## Known stack suffix:
@@ -487,8 +490,8 @@ moduleBody -> exports . imports assignmentList [ END ]
 -- On IMPORTS shift to state 48
 -- On imports shift to state 701
 ## Reductions:
--- On Upper reduce production imports ->
--- On Lower reduce production imports ->
+-- On Upper Lower
+--   reduce production imports ->
 
 State 48:
 ## Known stack suffix:
@@ -506,7 +509,8 @@ imports -> IMPORTS . symbolsImported SemiColon [ Upper Lower ]
 -- On reference shift to state 40
 -- On parameterizedReference shift to state 43
 ## Reductions:
--- On SemiColon reduce production symbolsImported ->
+-- On SemiColon
+--   reduce production symbolsImported ->
 
 State 49:
 ## Known stack suffix:
@@ -541,7 +545,8 @@ symbolsImported -> symbolsFromModuleList . [ SemiColon ]
 -- On reference shift to state 40
 -- On parameterizedReference shift to state 43
 ## Reductions:
--- On SemiColon reduce production symbolsImported -> symbolsFromModuleList
+-- On SemiColon
+--   reduce production symbolsImported -> symbolsFromModuleList
 
 State 52:
 ## Known stack suffix:
@@ -589,7 +594,8 @@ globalModuleReference -> Upper . assignedIdentifier [ Upper SemiColon Lower ]
 -- On definedValue shift to state 697
 -- On assignedIdentifier shift to state 698
 ## Reductions:
--- On SemiColon reduce production assignedIdentifier ->
+-- On SemiColon
+--   reduce production assignedIdentifier ->
 
 State 56:
 ## Known stack suffix:
@@ -626,14 +632,10 @@ definedValue -> Lower . [ Upper SemiColon RightParen RightBracket RightBrace Low
 simpleDefinedValue -> Lower . [ LeftBrace ]
 ## Transitions:
 ## Reductions:
--- On Upper reduce production definedValue -> Lower
--- On SemiColon reduce production definedValue -> Lower
--- On RightParen reduce production definedValue -> Lower
--- On RightBracket reduce production definedValue -> Lower
--- On RightBrace reduce production definedValue -> Lower
--- On Lower reduce production definedValue -> Lower
--- On LeftBrace reduce production simpleDefinedValue -> Lower
--- On Comma reduce production definedValue -> Lower
+-- On Upper SemiColon RightParen RightBracket RightBrace Lower Comma
+--   reduce production definedValue -> Lower
+-- On LeftBrace
+--   reduce production simpleDefinedValue -> Lower
 
 State 60:
 ## Known stack suffix:
@@ -676,11 +678,10 @@ simpleDefinedValue -> Lower . [ LeftBrace ]
 ## Transitions:
 -- On LeftParen shift to state 63
 ## Reductions:
--- On Upper reduce production definedValue -> Lower
--- On RightBrace reduce production definedValue -> Lower
--- On Number reduce production definedValue -> Lower
--- On Lower reduce production definedValue -> Lower
--- On LeftBrace reduce production simpleDefinedValue -> Lower
+-- On Upper RightBrace Number Lower
+--   reduce production definedValue -> Lower
+-- On LeftBrace
+--   reduce production simpleDefinedValue -> Lower
 
 State 63:
 ## Known stack suffix:
@@ -891,11 +892,10 @@ simpleDefinedType -> Upper . [ LeftBrace ]
 ## Transitions:
 -- On Dot shift to state 69
 ## Reductions:
--- On RightBrace reduce production definedType -> Upper
--- On LeftParen reduce production definedType -> Upper
--- On LeftBrace reduce production definedObjectSet -> Upper
--- On Comma reduce production definedType -> Upper
--- On Colon reduce production definedType -> Upper
+-- On LeftBrace
+--   reduce production definedObjectSet -> Upper
+-- On RightBrace LeftParen Comma Colon
+--   reduce production definedType -> Upper
 
 State 69:
 ## Known stack suffix:
@@ -920,28 +920,10 @@ externalObjectSetReference -> Upper Dot Upper . [ LeftBrace Dot ]
 externalTypeReference -> Upper Dot Upper . [ Upper UNIQUE UNION RightParen RightDoubleBracket RightBrace OPTIONAL Middle Lower LeftParen LeftBrace INTERSECTION EXCEPT END ENCODED DEFAULT Comma Colon Circumflex Bang Assignment ]
 ## Transitions:
 ## Reductions:
--- On Upper reduce production externalTypeReference -> Upper Dot Upper
--- On UNIQUE reduce production externalTypeReference -> Upper Dot Upper
--- On UNION reduce production externalTypeReference -> Upper Dot Upper
--- On RightParen reduce production externalTypeReference -> Upper Dot Upper
--- On RightDoubleBracket reduce production externalTypeReference -> Upper Dot Upper
--- On RightBrace reduce production externalTypeReference -> Upper Dot Upper
--- On OPTIONAL reduce production externalTypeReference -> Upper Dot Upper
--- On Middle reduce production externalTypeReference -> Upper Dot Upper
--- On Lower reduce production externalTypeReference -> Upper Dot Upper
--- On LeftParen reduce production externalTypeReference -> Upper Dot Upper
--- On LeftBrace reduce production externalTypeReference -> Upper Dot Upper
--- On INTERSECTION reduce production externalTypeReference -> Upper Dot Upper
--- On EXCEPT reduce production externalTypeReference -> Upper Dot Upper
--- On END reduce production externalTypeReference -> Upper Dot Upper
--- On ENCODED reduce production externalTypeReference -> Upper Dot Upper
--- On Dot reduce production externalObjectClassReference -> Upper Dot Upper
--- On DEFAULT reduce production externalTypeReference -> Upper Dot Upper
--- On Comma reduce production externalTypeReference -> Upper Dot Upper
--- On Colon reduce production externalTypeReference -> Upper Dot Upper
--- On Circumflex reduce production externalTypeReference -> Upper Dot Upper
--- On Bang reduce production externalTypeReference -> Upper Dot Upper
--- On Assignment reduce production externalTypeReference -> Upper Dot Upper
+-- On Dot
+--   reduce production externalObjectClassReference -> Upper Dot Upper
+-- On Upper UNIQUE UNION RightParen RightDoubleBracket RightBrace OPTIONAL Middle Lower LeftParen LeftBrace INTERSECTION EXCEPT END ENCODED DEFAULT Comma Colon Circumflex Bang Assignment
+--   reduce production externalTypeReference -> Upper Dot Upper
 
 State 71:
 ## Known stack suffix:
@@ -951,24 +933,10 @@ externalObjectReference -> Upper Dot Lower . [ UNION RightParen RightBrace Middl
 externalValueReference -> Upper Dot Lower . [ Upper UNION RightParen RightDoubleBracket RightBrace Number Middle Lower LessThan LeftBrace INTERSECTION EXCEPT END DoubleDot Comma Circumflex Bang ]
 ## Transitions:
 ## Reductions:
--- On Upper reduce production externalValueReference -> Upper Dot Lower
--- On UNION reduce production externalValueReference -> Upper Dot Lower
--- On RightParen reduce production externalValueReference -> Upper Dot Lower
--- On RightDoubleBracket reduce production externalValueReference -> Upper Dot Lower
--- On RightBrace reduce production externalValueReference -> Upper Dot Lower
--- On Number reduce production externalValueReference -> Upper Dot Lower
--- On Middle reduce production externalValueReference -> Upper Dot Lower
--- On Lower reduce production externalValueReference -> Upper Dot Lower
--- On LessThan reduce production externalValueReference -> Upper Dot Lower
--- On LeftBrace reduce production externalValueReference -> Upper Dot Lower
--- On INTERSECTION reduce production externalValueReference -> Upper Dot Lower
--- On EXCEPT reduce production externalValueReference -> Upper Dot Lower
--- On END reduce production externalValueReference -> Upper Dot Lower
--- On DoubleDot reduce production externalValueReference -> Upper Dot Lower
--- On Dot reduce production externalObjectReference -> Upper Dot Lower
--- On Comma reduce production externalValueReference -> Upper Dot Lower
--- On Circumflex reduce production externalValueReference -> Upper Dot Lower
--- On Bang reduce production externalValueReference -> Upper Dot Lower
+-- On Dot
+--   reduce production externalObjectReference -> Upper Dot Lower
+-- On Upper UNION RightParen RightDoubleBracket RightBrace Number Middle Lower LessThan LeftBrace INTERSECTION EXCEPT END DoubleDot Comma Circumflex Bang
+--   reduce production externalValueReference -> Upper Dot Lower
 
 State 72:
 ## Known stack suffix:
@@ -1300,11 +1268,8 @@ namedConstraint -> Lower . componentConstraint [ RightBrace Comma ]
 -- On constraint_x shift to state 91
 -- On componentConstraint shift to state 92
 ## Reductions:
--- On RightBrace reduce production valueConstraint ->
--- On PRESENT reduce production valueConstraint ->
--- On OPTIONAL reduce production valueConstraint ->
--- On Comma reduce production valueConstraint ->
--- On ABSENT reduce production valueConstraint ->
+-- On RightBrace PRESENT OPTIONAL Comma ABSENT
+--   reduce production valueConstraint ->
 
 State 86:
 ## Known stack suffix:
@@ -1317,8 +1282,8 @@ componentConstraint -> valueConstraint . presenceConstraint [ RightBrace Comma ]
 -- On ABSENT shift to state 89
 -- On presenceConstraint shift to state 90
 ## Reductions:
--- On RightBrace reduce production presenceConstraint ->
--- On Comma reduce production presenceConstraint ->
+-- On RightBrace Comma
+--   reduce production presenceConstraint ->
 
 State 87:
 ## Known stack suffix:
@@ -1421,7 +1386,8 @@ typeConstraints -> namedConstraint . Comma typeConstraints [ RightBrace ]
 ## Transitions:
 -- On Comma shift to state 98
 ## Reductions:
--- On RightBrace reduce production typeConstraints -> namedConstraint
+-- On RightBrace
+--   reduce production typeConstraints -> namedConstraint
 
 State 98:
 ## Known stack suffix:
@@ -1533,19 +1499,10 @@ simpleDefinedType -> Upper . [ LeftBrace ]
 ## Transitions:
 -- On Dot shift to state 109
 ## Reductions:
--- On UNION reduce production definedType -> Upper
--- On RightParen reduce production definedType -> Upper
--- On RightBrace reduce production definedType -> Upper
--- On Middle reduce production definedType -> Upper
--- On LeftParen reduce production definedType -> Upper
--- On LeftBrace reduce production definedObjectSet -> Upper
--- On INTERSECTION reduce production definedType -> Upper
--- On EXCEPT reduce production definedType -> Upper
--- On ENCODED reduce production definedType -> Upper
--- On Comma reduce production definedType -> Upper
--- On Colon reduce production definedType -> Upper
--- On Circumflex reduce production definedType -> Upper
--- On Bang reduce production definedType -> Upper
+-- On LeftBrace
+--   reduce production definedObjectSet -> Upper
+-- On UNION RightParen RightBrace Middle LeftParen INTERSECTION EXCEPT ENCODED Comma Colon Circumflex Bang
+--   reduce production definedType -> Upper
 
 State 109:
 ## Known stack suffix:
@@ -1570,23 +1527,10 @@ externalObjectSetReference -> Upper Dot Upper . [ UNION RightParen RightBrace Mi
 externalTypeReference -> Upper Dot Upper . [ UNION RightParen RightDoubleBracket RightBrace OPTIONAL Middle LeftParen LeftBrace INTERSECTION EXCEPT ENCODED DEFAULT Comma Colon Circumflex Bang ]
 ## Transitions:
 ## Reductions:
--- On UNION reduce production externalTypeReference -> Upper Dot Upper
--- On RightParen reduce production externalTypeReference -> Upper Dot Upper
--- On RightDoubleBracket reduce production externalTypeReference -> Upper Dot Upper
--- On RightBrace reduce production externalTypeReference -> Upper Dot Upper
--- On OPTIONAL reduce production externalTypeReference -> Upper Dot Upper
--- On Middle reduce production externalTypeReference -> Upper Dot Upper
--- On LeftParen reduce production externalTypeReference -> Upper Dot Upper
--- On LeftBrace reduce production externalTypeReference -> Upper Dot Upper
--- On INTERSECTION reduce production externalTypeReference -> Upper Dot Upper
--- On EXCEPT reduce production externalTypeReference -> Upper Dot Upper
--- On ENCODED reduce production externalTypeReference -> Upper Dot Upper
--- On Dot reduce production externalObjectClassReference -> Upper Dot Upper
--- On DEFAULT reduce production externalTypeReference -> Upper Dot Upper
--- On Comma reduce production externalTypeReference -> Upper Dot Upper
--- On Colon reduce production externalTypeReference -> Upper Dot Upper
--- On Circumflex reduce production externalTypeReference -> Upper Dot Upper
--- On Bang reduce production externalTypeReference -> Upper Dot Upper
+-- On Dot
+--   reduce production externalObjectClassReference -> Upper Dot Upper
+-- On UNION RightParen RightDoubleBracket RightBrace OPTIONAL Middle LeftParen LeftBrace INTERSECTION EXCEPT ENCODED DEFAULT Comma Colon Circumflex Bang
+--   reduce production externalTypeReference -> Upper Dot Upper
 
 State 111:
 ## Known stack suffix:
@@ -1719,27 +1663,10 @@ simpleDefinedType -> Upper . [ LeftBrace ]
 ## Transitions:
 -- On Dot shift to state 114
 ## Reductions:
--- On Upper reduce production definedType -> Upper
--- On UNIQUE reduce production definedType -> Upper
--- On UNION reduce production definedType -> Upper
--- On RightParen reduce production definedType -> Upper
--- On RightDoubleBracket reduce production definedType -> Upper
--- On RightBrace reduce production definedType -> Upper
--- On OPTIONAL reduce production definedType -> Upper
--- On Middle reduce production definedType -> Upper
--- On Lower reduce production definedType -> Upper
--- On LeftParen reduce production definedType -> Upper
--- On LeftBrace reduce production definedObjectSet -> Upper
--- On INTERSECTION reduce production definedType -> Upper
--- On EXCEPT reduce production definedType -> Upper
--- On END reduce production definedType -> Upper
--- On ENCODED reduce production definedType -> Upper
--- On DEFAULT reduce production definedType -> Upper
--- On Comma reduce production definedType -> Upper
--- On Colon reduce production definedType -> Upper
--- On Circumflex reduce production definedType -> Upper
--- On Bang reduce production definedType -> Upper
--- On Assignment reduce production definedType -> Upper
+-- On LeftBrace
+--   reduce production definedObjectSet -> Upper
+-- On Upper UNIQUE UNION RightParen RightDoubleBracket RightBrace OPTIONAL Middle Lower LeftParen INTERSECTION EXCEPT END ENCODED DEFAULT Comma Colon Circumflex Bang Assignment
+--   reduce production definedType -> Upper
 
 State 114:
 ## Known stack suffix:
@@ -1947,8 +1874,8 @@ selectionType -> Lower . LessThan type_x [ Upper UNIQUE UNION RightParen RightDo
 -- On booleanType shift to state 261
 -- On bitStringType shift to state 262
 ## Reductions:
--- On LeftBrace reduce production definedObject -> Lower
--- On Dot reduce production definedObject -> Lower
+-- On LeftBrace Dot
+--   reduce production definedObject -> Lower
 
 State 127:
 ## Known stack suffix:
@@ -1959,8 +1886,8 @@ selectionType -> Lower . LessThan type_x [ Upper UNIQUE UNION RightParen RightDo
 ## Transitions:
 -- On LessThan shift to state 128
 ## Reductions:
--- On LeftBrace reduce production definedObject -> Lower
--- On Dot reduce production definedObject -> Lower
+-- On LeftBrace Dot
+--   reduce production definedObject -> Lower
 
 State 128:
 ## Known stack suffix:
@@ -2065,9 +1992,8 @@ tag -> LeftBracket . class_x classNumber RightBracket [ VisibleString VideotexSt
 -- On APPLICATION shift to state 132
 -- On class_x shift to state 133
 ## Reductions:
--- On Upper reduce production class_x ->
--- On Number reduce production class_x ->
--- On Lower reduce production class_x ->
+-- On Upper Number Lower
+--   reduce production class_x ->
 
 State 130:
 ## Known stack suffix:
@@ -2138,25 +2064,10 @@ definedValue -> externalValueReference . [ Upper UNION SemiColon RightParen Righ
 simpleDefinedValue -> externalValueReference . [ LeftBrace ]
 ## Transitions:
 ## Reductions:
--- On Upper reduce production definedValue -> externalValueReference
--- On UNION reduce production definedValue -> externalValueReference
--- On SemiColon reduce production definedValue -> externalValueReference
--- On RightParen reduce production definedValue -> externalValueReference
--- On RightDoubleBracket reduce production definedValue -> externalValueReference
--- On RightBracket reduce production definedValue -> externalValueReference
--- On RightBrace reduce production definedValue -> externalValueReference
--- On Number reduce production definedValue -> externalValueReference
--- On Middle reduce production definedValue -> externalValueReference
--- On Lower reduce production definedValue -> externalValueReference
--- On LessThan reduce production definedValue -> externalValueReference
--- On LeftBrace reduce production simpleDefinedValue -> externalValueReference
--- On INTERSECTION reduce production definedValue -> externalValueReference
--- On EXCEPT reduce production definedValue -> externalValueReference
--- On END reduce production definedValue -> externalValueReference
--- On DoubleDot reduce production definedValue -> externalValueReference
--- On Comma reduce production definedValue -> externalValueReference
--- On Circumflex reduce production definedValue -> externalValueReference
--- On Bang reduce production definedValue -> externalValueReference
+-- On Upper UNION SemiColon RightParen RightDoubleBracket RightBracket RightBrace Number Middle Lower LessThan INTERSECTION EXCEPT END DoubleDot Comma Circumflex Bang
+--   reduce production definedValue -> externalValueReference
+-- On LeftBrace
+--   reduce production simpleDefinedValue -> externalValueReference
 
 State 137:
 ## Known stack suffix:
@@ -2203,26 +2114,8 @@ integerType -> INTEGER . LeftBrace namedNumberList RightBrace [ Upper UNIQUE UNI
 ## Transitions:
 -- On LeftBrace shift to state 142
 ## Reductions:
--- On Upper reduce production integerType -> INTEGER
--- On UNIQUE reduce production integerType -> INTEGER
--- On UNION reduce production integerType -> INTEGER
--- On RightParen reduce production integerType -> INTEGER
--- On RightDoubleBracket reduce production integerType -> INTEGER
--- On RightBrace reduce production integerType -> INTEGER
--- On OPTIONAL reduce production integerType -> INTEGER
--- On Middle reduce production integerType -> INTEGER
--- On Lower reduce production integerType -> INTEGER
--- On LeftParen reduce production integerType -> INTEGER
--- On INTERSECTION reduce production integerType -> INTEGER
--- On EXCEPT reduce production integerType -> INTEGER
--- On END reduce production integerType -> INTEGER
--- On ENCODED reduce production integerType -> INTEGER
--- On DEFAULT reduce production integerType -> INTEGER
--- On Comma reduce production integerType -> INTEGER
--- On Colon reduce production integerType -> INTEGER
--- On Circumflex reduce production integerType -> INTEGER
--- On Bang reduce production integerType -> INTEGER
--- On Assignment reduce production integerType -> INTEGER
+-- On Upper UNIQUE UNION RightParen RightDoubleBracket RightBrace OPTIONAL Middle Lower LeftParen INTERSECTION EXCEPT END ENCODED DEFAULT Comma Colon Circumflex Bang Assignment
+--   reduce production integerType -> INTEGER
 
 State 142:
 ## Known stack suffix:
@@ -2406,26 +2299,8 @@ externalObjectClassReference -> Upper . Dot Upper [ Upper UNIQUE UNION RightPare
 ## Transitions:
 -- On Dot shift to state 160
 ## Reductions:
--- On Upper reduce production definedObjectClass -> Upper
--- On UNIQUE reduce production definedObjectClass -> Upper
--- On UNION reduce production definedObjectClass -> Upper
--- On RightParen reduce production definedObjectClass -> Upper
--- On RightDoubleBracket reduce production definedObjectClass -> Upper
--- On RightBrace reduce production definedObjectClass -> Upper
--- On OPTIONAL reduce production definedObjectClass -> Upper
--- On Middle reduce production definedObjectClass -> Upper
--- On Lower reduce production definedObjectClass -> Upper
--- On LeftParen reduce production definedObjectClass -> Upper
--- On INTERSECTION reduce production definedObjectClass -> Upper
--- On EXCEPT reduce production definedObjectClass -> Upper
--- On END reduce production definedObjectClass -> Upper
--- On ENCODED reduce production definedObjectClass -> Upper
--- On DEFAULT reduce production definedObjectClass -> Upper
--- On Comma reduce production definedObjectClass -> Upper
--- On Colon reduce production definedObjectClass -> Upper
--- On Circumflex reduce production definedObjectClass -> Upper
--- On Bang reduce production definedObjectClass -> Upper
--- On Assignment reduce production definedObjectClass -> Upper
+-- On Upper UNIQUE UNION RightParen RightDoubleBracket RightBrace OPTIONAL Middle Lower LeftParen INTERSECTION EXCEPT END ENCODED DEFAULT Comma Colon Circumflex Bang Assignment
+--   reduce production definedObjectClass -> Upper
 
 State 160:
 ## Known stack suffix:
@@ -2559,8 +2434,8 @@ namedNumber -> Lower . LeftParen definedValue RightParen [ RightBrace Comma ]
 ## Transitions:
 -- On LeftParen shift to state 144
 ## Reductions:
--- On RightBrace reduce production enumerationItem -> Lower
--- On Comma reduce production enumerationItem -> Lower
+-- On RightBrace Comma
+--   reduce production enumerationItem -> Lower
 
 State 174:
 ## Known stack suffix:
@@ -2572,7 +2447,8 @@ enumerations -> rootEnumeration . Comma Ellipsis exceptionSpec Comma additionalE
 ## Transitions:
 -- On Comma shift to state 175
 ## Reductions:
--- On RightBrace reduce production enumerations -> rootEnumeration
+-- On RightBrace
+--   reduce production enumerations -> rootEnumeration
 
 State 175:
 ## Known stack suffix:
@@ -2594,8 +2470,8 @@ enumerations -> rootEnumeration Comma Ellipsis . exceptionSpec Comma additionalE
 -- On Bang shift to state 177
 -- On exceptionSpec shift to state 428
 ## Reductions:
--- On RightBrace reduce production exceptionSpec ->
--- On Comma reduce production exceptionSpec ->
+-- On RightBrace Comma
+--   reduce production exceptionSpec ->
 
 State 177:
 ## Known stack suffix:
@@ -2708,11 +2584,10 @@ simpleDefinedValue -> Lower . [ LeftBrace ]
 ## Transitions:
 -- On LessThan shift to state 128
 ## Reductions:
--- On RightParen reduce production definedValue -> Lower
--- On RightBrace reduce production definedValue -> Lower
--- On LeftBrace reduce production definedObject -> Lower
--- On Dot reduce production definedObject -> Lower
--- On Comma reduce production definedValue -> Lower
+-- On LeftBrace Dot
+--   reduce production definedObject -> Lower
+-- On RightParen RightBrace Comma
+--   reduce production definedValue -> Lower
 
 State 179:
 ## Known stack suffix:
@@ -2901,26 +2776,8 @@ bitStringType -> BIT STRING . LeftBrace namedBitList RightBrace [ Upper UNIQUE U
 ## Transitions:
 -- On LeftBrace shift to state 190
 ## Reductions:
--- On Upper reduce production bitStringType -> BIT STRING
--- On UNIQUE reduce production bitStringType -> BIT STRING
--- On UNION reduce production bitStringType -> BIT STRING
--- On RightParen reduce production bitStringType -> BIT STRING
--- On RightDoubleBracket reduce production bitStringType -> BIT STRING
--- On RightBrace reduce production bitStringType -> BIT STRING
--- On OPTIONAL reduce production bitStringType -> BIT STRING
--- On Middle reduce production bitStringType -> BIT STRING
--- On Lower reduce production bitStringType -> BIT STRING
--- On LeftParen reduce production bitStringType -> BIT STRING
--- On INTERSECTION reduce production bitStringType -> BIT STRING
--- On EXCEPT reduce production bitStringType -> BIT STRING
--- On END reduce production bitStringType -> BIT STRING
--- On ENCODED reduce production bitStringType -> BIT STRING
--- On DEFAULT reduce production bitStringType -> BIT STRING
--- On Comma reduce production bitStringType -> BIT STRING
--- On Colon reduce production bitStringType -> BIT STRING
--- On Circumflex reduce production bitStringType -> BIT STRING
--- On Bang reduce production bitStringType -> BIT STRING
--- On Assignment reduce production bitStringType -> BIT STRING
+-- On Upper UNIQUE UNION RightParen RightDoubleBracket RightBrace OPTIONAL Middle Lower LeftParen INTERSECTION EXCEPT END ENCODED DEFAULT Comma Colon Circumflex Bang Assignment
+--   reduce production bitStringType -> BIT STRING
 
 State 190:
 ## Known stack suffix:
@@ -3080,25 +2937,8 @@ namedType -> Lower type_x . [ Upper UNIQUE UNION RightParen RightDoubleBracket R
 -- On LeftParen shift to state 81
 -- On constraint_x shift to state 206
 ## Reductions:
--- On Upper reduce production namedType -> Lower type_x
--- On UNIQUE reduce production namedType -> Lower type_x
--- On UNION reduce production namedType -> Lower type_x
--- On RightParen reduce production namedType -> Lower type_x
--- On RightDoubleBracket reduce production namedType -> Lower type_x
--- On RightBrace reduce production namedType -> Lower type_x
--- On OPTIONAL reduce production namedType -> Lower type_x
--- On Middle reduce production namedType -> Lower type_x
--- On Lower reduce production namedType -> Lower type_x
--- On INTERSECTION reduce production namedType -> Lower type_x
--- On EXCEPT reduce production namedType -> Lower type_x
--- On END reduce production namedType -> Lower type_x
--- On ENCODED reduce production namedType -> Lower type_x
--- On DEFAULT reduce production namedType -> Lower type_x
--- On Comma reduce production namedType -> Lower type_x
--- On Colon reduce production namedType -> Lower type_x
--- On Circumflex reduce production namedType -> Lower type_x
--- On Bang reduce production namedType -> Lower type_x
--- On Assignment reduce production namedType -> Lower type_x
+-- On Upper UNIQUE UNION RightParen RightDoubleBracket RightBrace OPTIONAL Middle Lower INTERSECTION EXCEPT END ENCODED DEFAULT Comma Colon Circumflex Bang Assignment
+--   reduce production namedType -> Lower type_x
 
 State 206:
 ## Known stack suffix:
@@ -3334,25 +3174,8 @@ taggedType -> tag IMPLICIT type_x . [ Upper UNIQUE UNION RightParen RightDoubleB
 -- On LeftParen shift to state 81
 -- On constraint_x shift to state 206
 ## Reductions:
--- On Upper reduce production taggedType -> tag IMPLICIT type_x
--- On UNIQUE reduce production taggedType -> tag IMPLICIT type_x
--- On UNION reduce production taggedType -> tag IMPLICIT type_x
--- On RightParen reduce production taggedType -> tag IMPLICIT type_x
--- On RightDoubleBracket reduce production taggedType -> tag IMPLICIT type_x
--- On RightBrace reduce production taggedType -> tag IMPLICIT type_x
--- On OPTIONAL reduce production taggedType -> tag IMPLICIT type_x
--- On Middle reduce production taggedType -> tag IMPLICIT type_x
--- On Lower reduce production taggedType -> tag IMPLICIT type_x
--- On INTERSECTION reduce production taggedType -> tag IMPLICIT type_x
--- On EXCEPT reduce production taggedType -> tag IMPLICIT type_x
--- On END reduce production taggedType -> tag IMPLICIT type_x
--- On ENCODED reduce production taggedType -> tag IMPLICIT type_x
--- On DEFAULT reduce production taggedType -> tag IMPLICIT type_x
--- On Comma reduce production taggedType -> tag IMPLICIT type_x
--- On Colon reduce production taggedType -> tag IMPLICIT type_x
--- On Circumflex reduce production taggedType -> tag IMPLICIT type_x
--- On Bang reduce production taggedType -> tag IMPLICIT type_x
--- On Assignment reduce production taggedType -> tag IMPLICIT type_x
+-- On Upper UNIQUE UNION RightParen RightDoubleBracket RightBrace OPTIONAL Middle Lower INTERSECTION EXCEPT END ENCODED DEFAULT Comma Colon Circumflex Bang Assignment
+--   reduce production taggedType -> tag IMPLICIT type_x
 
 State 213:
 ## Known stack suffix:
@@ -3507,28 +3330,8 @@ separated_nonempty_list(Dot,primitiveFieldName) -> primitiveFieldName . Dot sepa
 ## Transitions:
 -- On Dot shift to state 229
 ## Reductions:
--- On Upper reduce production separated_nonempty_list(Dot,primitiveFieldName) -> primitiveFieldName
--- On UNIQUE reduce production separated_nonempty_list(Dot,primitiveFieldName) -> primitiveFieldName
--- On UNION reduce production separated_nonempty_list(Dot,primitiveFieldName) -> primitiveFieldName
--- On RightParen reduce production separated_nonempty_list(Dot,primitiveFieldName) -> primitiveFieldName
--- On RightDoubleBracket reduce production separated_nonempty_list(Dot,primitiveFieldName) -> primitiveFieldName
--- On RightBrace reduce production separated_nonempty_list(Dot,primitiveFieldName) -> primitiveFieldName
--- On OPTIONAL reduce production separated_nonempty_list(Dot,primitiveFieldName) -> primitiveFieldName
--- On Middle reduce production separated_nonempty_list(Dot,primitiveFieldName) -> primitiveFieldName
--- On Lower reduce production separated_nonempty_list(Dot,primitiveFieldName) -> primitiveFieldName
--- On LessThan reduce production separated_nonempty_list(Dot,primitiveFieldName) -> primitiveFieldName
--- On LeftParen reduce production separated_nonempty_list(Dot,primitiveFieldName) -> primitiveFieldName
--- On INTERSECTION reduce production separated_nonempty_list(Dot,primitiveFieldName) -> primitiveFieldName
--- On EXCEPT reduce production separated_nonempty_list(Dot,primitiveFieldName) -> primitiveFieldName
--- On END reduce production separated_nonempty_list(Dot,primitiveFieldName) -> primitiveFieldName
--- On ENCODED reduce production separated_nonempty_list(Dot,primitiveFieldName) -> primitiveFieldName
--- On DoubleDot reduce production separated_nonempty_list(Dot,primitiveFieldName) -> primitiveFieldName
--- On DEFAULT reduce production separated_nonempty_list(Dot,primitiveFieldName) -> primitiveFieldName
--- On Comma reduce production separated_nonempty_list(Dot,primitiveFieldName) -> primitiveFieldName
--- On Colon reduce production separated_nonempty_list(Dot,primitiveFieldName) -> primitiveFieldName
--- On Circumflex reduce production separated_nonempty_list(Dot,primitiveFieldName) -> primitiveFieldName
--- On Bang reduce production separated_nonempty_list(Dot,primitiveFieldName) -> primitiveFieldName
--- On Assignment reduce production separated_nonempty_list(Dot,primitiveFieldName) -> primitiveFieldName
+-- On Upper UNIQUE UNION RightParen RightDoubleBracket RightBrace OPTIONAL Middle Lower LessThan LeftParen INTERSECTION EXCEPT END ENCODED DoubleDot DEFAULT Comma Colon Circumflex Bang Assignment
+--   reduce production separated_nonempty_list(Dot,primitiveFieldName) -> primitiveFieldName
 
 State 229:
 ## Known stack suffix:
@@ -3668,27 +3471,10 @@ definedType -> externalTypeReference . [ Upper UNIQUE UNION RightParen RightDoub
 simpleDefinedType -> externalTypeReference . [ LeftBrace ]
 ## Transitions:
 ## Reductions:
--- On Upper reduce production definedType -> externalTypeReference
--- On UNIQUE reduce production definedType -> externalTypeReference
--- On UNION reduce production definedType -> externalTypeReference
--- On RightParen reduce production definedType -> externalTypeReference
--- On RightDoubleBracket reduce production definedType -> externalTypeReference
--- On RightBrace reduce production definedType -> externalTypeReference
--- On OPTIONAL reduce production definedType -> externalTypeReference
--- On Middle reduce production definedType -> externalTypeReference
--- On Lower reduce production definedType -> externalTypeReference
--- On LeftParen reduce production definedType -> externalTypeReference
--- On LeftBrace reduce production simpleDefinedType -> externalTypeReference
--- On INTERSECTION reduce production definedType -> externalTypeReference
--- On EXCEPT reduce production definedType -> externalTypeReference
--- On END reduce production definedType -> externalTypeReference
--- On ENCODED reduce production definedType -> externalTypeReference
--- On DEFAULT reduce production definedType -> externalTypeReference
--- On Comma reduce production definedType -> externalTypeReference
--- On Colon reduce production definedType -> externalTypeReference
--- On Circumflex reduce production definedType -> externalTypeReference
--- On Bang reduce production definedType -> externalTypeReference
--- On Assignment reduce production definedType -> externalTypeReference
+-- On Upper UNIQUE UNION RightParen RightDoubleBracket RightBrace OPTIONAL Middle Lower LeftParen INTERSECTION EXCEPT END ENCODED DEFAULT Comma Colon Circumflex Bang Assignment
+--   reduce production definedType -> externalTypeReference
+-- On LeftBrace
+--   reduce production simpleDefinedType -> externalTypeReference
 
 State 244:
 ## Known stack suffix:
@@ -3754,7 +3540,8 @@ referencedObjects -> definedObjectSet . [ Dot ]
 -- On LeftBrace shift to state 65
 -- On actualParameterList shift to state 251
 ## Reductions:
--- On Dot reduce production referencedObjects -> definedObjectSet
+-- On Dot
+--   reduce production referencedObjects -> definedObjectSet
 
 State 251:
 ## Known stack suffix:
@@ -3806,7 +3593,8 @@ referencedObjects -> definedObject . [ Dot ]
 -- On LeftBrace shift to state 65
 -- On actualParameterList shift to state 256
 ## Reductions:
--- On Dot reduce production referencedObjects -> definedObject
+-- On Dot
+--   reduce production referencedObjects -> definedObject
 
 State 256:
 ## Known stack suffix:
@@ -3973,25 +3761,8 @@ taggedType -> tag EXPLICIT type_x . [ Upper UNIQUE UNION RightParen RightDoubleB
 -- On LeftParen shift to state 81
 -- On constraint_x shift to state 206
 ## Reductions:
--- On Upper reduce production taggedType -> tag EXPLICIT type_x
--- On UNIQUE reduce production taggedType -> tag EXPLICIT type_x
--- On UNION reduce production taggedType -> tag EXPLICIT type_x
--- On RightParen reduce production taggedType -> tag EXPLICIT type_x
--- On RightDoubleBracket reduce production taggedType -> tag EXPLICIT type_x
--- On RightBrace reduce production taggedType -> tag EXPLICIT type_x
--- On OPTIONAL reduce production taggedType -> tag EXPLICIT type_x
--- On Middle reduce production taggedType -> tag EXPLICIT type_x
--- On Lower reduce production taggedType -> tag EXPLICIT type_x
--- On INTERSECTION reduce production taggedType -> tag EXPLICIT type_x
--- On EXCEPT reduce production taggedType -> tag EXPLICIT type_x
--- On END reduce production taggedType -> tag EXPLICIT type_x
--- On ENCODED reduce production taggedType -> tag EXPLICIT type_x
--- On DEFAULT reduce production taggedType -> tag EXPLICIT type_x
--- On Comma reduce production taggedType -> tag EXPLICIT type_x
--- On Colon reduce production taggedType -> tag EXPLICIT type_x
--- On Circumflex reduce production taggedType -> tag EXPLICIT type_x
--- On Bang reduce production taggedType -> tag EXPLICIT type_x
--- On Assignment reduce production taggedType -> tag EXPLICIT type_x
+-- On Upper UNIQUE UNION RightParen RightDoubleBracket RightBrace OPTIONAL Middle Lower INTERSECTION EXCEPT END ENCODED DEFAULT Comma Colon Circumflex Bang Assignment
+--   reduce production taggedType -> tag EXPLICIT type_x
 
 State 265:
 ## Known stack suffix:
@@ -4003,25 +3774,8 @@ taggedType -> tag type_x . [ Upper UNIQUE UNION RightParen RightDoubleBracket Ri
 -- On LeftParen shift to state 81
 -- On constraint_x shift to state 206
 ## Reductions:
--- On Upper reduce production taggedType -> tag type_x
--- On UNIQUE reduce production taggedType -> tag type_x
--- On UNION reduce production taggedType -> tag type_x
--- On RightParen reduce production taggedType -> tag type_x
--- On RightDoubleBracket reduce production taggedType -> tag type_x
--- On RightBrace reduce production taggedType -> tag type_x
--- On OPTIONAL reduce production taggedType -> tag type_x
--- On Middle reduce production taggedType -> tag type_x
--- On Lower reduce production taggedType -> tag type_x
--- On INTERSECTION reduce production taggedType -> tag type_x
--- On EXCEPT reduce production taggedType -> tag type_x
--- On END reduce production taggedType -> tag type_x
--- On ENCODED reduce production taggedType -> tag type_x
--- On DEFAULT reduce production taggedType -> tag type_x
--- On Comma reduce production taggedType -> tag type_x
--- On Colon reduce production taggedType -> tag type_x
--- On Circumflex reduce production taggedType -> tag type_x
--- On Bang reduce production taggedType -> tag type_x
--- On Assignment reduce production taggedType -> tag type_x
+-- On Upper UNIQUE UNION RightParen RightDoubleBracket RightBrace OPTIONAL Middle Lower INTERSECTION EXCEPT END ENCODED DEFAULT Comma Colon Circumflex Bang Assignment
+--   reduce production taggedType -> tag type_x
 
 State 266:
 ## Known stack suffix:
@@ -4032,7 +3786,8 @@ alternativeTypeLists -> rootAlternativeTypeList . Comma extensionAndException ex
 ## Transitions:
 -- On Comma shift to state 267
 ## Reductions:
--- On RightBrace reduce production alternativeTypeLists -> rootAlternativeTypeList
+-- On RightBrace
+--   reduce production alternativeTypeLists -> rootAlternativeTypeList
 
 State 267:
 ## Known stack suffix:
@@ -4054,8 +3809,8 @@ extensionAndException -> Ellipsis . exceptionSpec [ RightBrace Comma ]
 -- On Bang shift to state 177
 -- On exceptionSpec shift to state 269
 ## Reductions:
--- On RightBrace reduce production extensionAndException -> Ellipsis
--- On Comma reduce production extensionAndException -> Ellipsis
+-- On RightBrace Comma
+--   reduce production extensionAndException -> Ellipsis
 
 State 269:
 ## Known stack suffix:
@@ -4075,7 +3830,8 @@ alternativeTypeLists -> rootAlternativeTypeList Comma extensionAndException . ex
 -- On Comma shift to state 271
 -- On extensionAdditionAlternatives shift to state 287
 ## Reductions:
--- On RightBrace reduce production extensionAdditionAlternatives ->
+-- On RightBrace
+--   reduce production extensionAdditionAlternatives ->
 
 State 271:
 ## Known stack suffix:
@@ -4100,7 +3856,8 @@ extensionAdditionAlternativesGroup -> LeftDoubleBracket . versionNumber alternat
 -- On Number shift to state 273
 -- On versionNumber shift to state 275
 ## Reductions:
--- On Lower reduce production versionNumber ->
+-- On Lower
+--   reduce production versionNumber ->
 
 State 273:
 ## Known stack suffix:
@@ -4197,7 +3954,8 @@ extensionAdditionAlternativesList -> extensionAdditionAlternativesList . Comma e
 ## Transitions:
 -- On Comma shift to state 283
 ## Reductions:
--- On RightBrace reduce production extensionAdditionAlternatives -> Comma extensionAdditionAlternativesList
+-- On RightBrace
+--   reduce production extensionAdditionAlternatives -> Comma extensionAdditionAlternativesList
 
 State 283:
 ## Known stack suffix:
@@ -4248,7 +4006,8 @@ alternativeTypeLists -> rootAlternativeTypeList Comma extensionAndException exte
 -- On Comma shift to state 288
 -- On optionalExtensionMarker shift to state 290
 ## Reductions:
--- On RightBrace reduce production optionalExtensionMarker ->
+-- On RightBrace
+--   reduce production optionalExtensionMarker ->
 
 State 288:
 ## Known stack suffix:
@@ -4304,7 +4063,8 @@ rootAlternativeTypeList -> alternativeTypeList . [ RightBrace Comma ]
 ## Transitions:
 -- On Comma shift to state 279
 ## Reductions:
--- On RightBrace reduce production rootAlternativeTypeList -> alternativeTypeList
+-- On RightBrace
+--   reduce production rootAlternativeTypeList -> alternativeTypeList
 
 State 294:
 ## Known stack suffix:
@@ -4484,24 +4244,10 @@ nullType -> NULL . [ UNION RightParen RightBrace Middle LeftParen INTERSECTION E
 nullValue -> NULL . [ Upper UNION RightParen RightDoubleBracket RightBrace Middle Lower LessThan INTERSECTION EXCEPT END DoubleDot Comma Circumflex Bang ]
 ## Transitions:
 ## Reductions:
--- On Upper reduce production nullValue -> NULL
--- On UNION reduce production nullType -> NULL
--- On RightParen reduce production nullType -> NULL
--- On RightDoubleBracket reduce production nullValue -> NULL
--- On RightBrace reduce production nullType -> NULL
--- On Middle reduce production nullType -> NULL
--- On Lower reduce production nullValue -> NULL
--- On LessThan reduce production nullValue -> NULL
--- On LeftParen reduce production nullType -> NULL
--- On INTERSECTION reduce production nullType -> NULL
--- On EXCEPT reduce production nullType -> NULL
--- On END reduce production nullValue -> NULL
--- On ENCODED reduce production nullType -> NULL
--- On DoubleDot reduce production nullValue -> NULL
--- On Comma reduce production nullType -> NULL
--- On Colon reduce production nullType -> NULL
--- On Circumflex reduce production nullType -> NULL
--- On Bang reduce production nullType -> NULL
+-- On UNION RightParen RightBrace Middle LeftParen INTERSECTION EXCEPT ENCODED Comma Colon Circumflex Bang
+--   reduce production nullType -> NULL
+-- On Upper RightDoubleBracket Lower LessThan END DoubleDot
+--   reduce production nullValue -> NULL
 
 State 299:
 ## Known stack suffix:
@@ -4527,22 +4273,10 @@ simpleDefinedValue -> Lower . [ LeftBrace ]
 -- On LessThan shift to state 128
 -- On Colon shift to state 301
 ## Reductions:
--- On Upper reduce production definedValue -> Lower
--- On UNION reduce production definedValue -> Lower
--- On RightParen reduce production definedValue -> Lower
--- On RightDoubleBracket reduce production definedValue -> Lower
--- On RightBrace reduce production definedValue -> Lower
--- On Middle reduce production definedValue -> Lower
--- On Lower reduce production definedValue -> Lower
--- On LeftBrace reduce production definedObject -> Lower
--- On INTERSECTION reduce production definedValue -> Lower
--- On EXCEPT reduce production definedValue -> Lower
--- On END reduce production definedValue -> Lower
--- On DoubleDot reduce production definedValue -> Lower
--- On Dot reduce production definedObject -> Lower
--- On Comma reduce production definedValue -> Lower
--- On Circumflex reduce production definedValue -> Lower
--- On Bang reduce production definedValue -> Lower
+-- On LeftBrace Dot
+--   reduce production definedObject -> Lower
+-- On Upper UNION RightParen RightDoubleBracket RightBrace Middle Lower INTERSECTION EXCEPT END DoubleDot Comma Circumflex Bang
+--   reduce production definedValue -> Lower
 
 State 301:
 ## Known stack suffix:
@@ -4881,18 +4615,10 @@ signedNumber -> Number . [ UNION RightBrace Middle LessThan INTERSECTION EXCEPT 
 tableColumn -> Number . [ Comma ]
 ## Transitions:
 ## Reductions:
--- On Upper reduce production numberForm -> Number
--- On UNION reduce production signedNumber -> Number
--- On RightBrace reduce production signedNumber -> Number
--- On Number reduce production numberForm -> Number
--- On Middle reduce production signedNumber -> Number
--- On Lower reduce production numberForm -> Number
--- On LessThan reduce production signedNumber -> Number
--- On INTERSECTION reduce production signedNumber -> Number
--- On EXCEPT reduce production signedNumber -> Number
--- On DoubleDot reduce production signedNumber -> Number
--- On Comma reduce production signedNumber -> Number
--- On Circumflex reduce production signedNumber -> Number
+-- On Upper Number Lower
+--   reduce production numberForm -> Number
+-- On UNION RightBrace Middle LessThan INTERSECTION EXCEPT DoubleDot Comma Circumflex
+--   reduce production signedNumber -> Number
 
 State 305:
 ## Known stack suffix:
@@ -5046,15 +4772,10 @@ simpleDefinedValue -> Lower . [ LeftBrace ]
 -- On bitStringValue shift to state 351
 -- On bitStringType shift to state 262
 ## Reductions:
--- On UNION reduce production definedValue -> Lower
--- On RightBrace reduce production definedValue -> Lower
--- On Middle reduce production definedValue -> Lower
--- On INTERSECTION reduce production definedValue -> Lower
--- On EXCEPT reduce production definedValue -> Lower
--- On DoubleDot reduce production definedValue -> Lower
--- On Dot reduce production definedObject -> Lower
--- On Comma reduce production definedValue -> Lower
--- On Circumflex reduce production definedValue -> Lower
+-- On Dot
+--   reduce production definedObject -> Lower
+-- On UNION RightBrace Middle INTERSECTION EXCEPT DoubleDot Comma Circumflex
+--   reduce production definedValue -> Lower
 
 State 306:
 ## Known stack suffix:
@@ -5574,24 +5295,10 @@ valueFromObject -> referencedObjects Dot fieldName . [ Upper UNION RightParen Ri
 valueSetFromObjects -> referencedObjects Dot fieldName . [ RightParen LeftParen ENCODED Colon Bang ]
 ## Transitions:
 ## Reductions:
--- On Upper reduce production valueFromObject -> referencedObjects Dot fieldName
--- On UNION reduce production valueFromObject -> referencedObjects Dot fieldName
--- On RightParen reduce production valueFromObject -> referencedObjects Dot fieldName
--- On RightDoubleBracket reduce production valueFromObject -> referencedObjects Dot fieldName
--- On RightBrace reduce production valueFromObject -> referencedObjects Dot fieldName
--- On Middle reduce production valueFromObject -> referencedObjects Dot fieldName
--- On Lower reduce production valueFromObject -> referencedObjects Dot fieldName
--- On LessThan reduce production valueFromObject -> referencedObjects Dot fieldName
--- On LeftParen reduce production valueSetFromObjects -> referencedObjects Dot fieldName
--- On INTERSECTION reduce production valueFromObject -> referencedObjects Dot fieldName
--- On EXCEPT reduce production valueFromObject -> referencedObjects Dot fieldName
--- On END reduce production valueFromObject -> referencedObjects Dot fieldName
--- On ENCODED reduce production valueSetFromObjects -> referencedObjects Dot fieldName
--- On DoubleDot reduce production valueFromObject -> referencedObjects Dot fieldName
--- On Comma reduce production valueFromObject -> referencedObjects Dot fieldName
--- On Colon reduce production valueSetFromObjects -> referencedObjects Dot fieldName
--- On Circumflex reduce production valueFromObject -> referencedObjects Dot fieldName
--- On Bang reduce production valueFromObject -> referencedObjects Dot fieldName
+-- On Upper UNION RightParen RightDoubleBracket RightBrace Middle Lower LessThan INTERSECTION EXCEPT END DoubleDot Comma Circumflex Bang
+--   reduce production valueFromObject -> referencedObjects Dot fieldName
+-- On LeftParen ENCODED Colon
+--   reduce production valueSetFromObjects -> referencedObjects Dot fieldName
 
 State 332:
 ## Known stack suffix:
@@ -6066,7 +5773,8 @@ relativeOIDComponentsList -> relativeOIDComponents . relativeOIDComponentsList [
 -- On externalValueReference shift to state 136
 -- On definedValue shift to state 372
 ## Reductions:
--- On RightBrace reduce production relativeOIDComponentsList -> relativeOIDComponents
+-- On RightBrace
+--   reduce production relativeOIDComponentsList -> relativeOIDComponents
 
 State 368:
 ## Known stack suffix:
@@ -6078,11 +5786,10 @@ simpleDefinedValue -> Lower . [ LeftBrace ]
 ## Transitions:
 -- On LeftParen shift to state 63
 ## Reductions:
--- On Upper reduce production definedValue -> Lower
--- On RightBrace reduce production definedValue -> Lower
--- On Number reduce production definedValue -> Lower
--- On Lower reduce production definedValue -> Lower
--- On LeftBrace reduce production simpleDefinedValue -> Lower
+-- On Upper RightBrace Number Lower
+--   reduce production definedValue -> Lower
+-- On LeftBrace
+--   reduce production simpleDefinedValue -> Lower
 
 State 369:
 ## Known stack suffix:
@@ -6169,7 +5876,8 @@ objIdComponentsList -> objIdComponents . objIdComponentsList [ RightBrace ]
 -- On externalValueReference shift to state 136
 -- On definedValue shift to state 381
 ## Reductions:
--- On RightBrace reduce production objIdComponentsList -> objIdComponents
+-- On RightBrace
+--   reduce production objIdComponentsList -> objIdComponents
 
 State 377:
 ## Known stack suffix:
@@ -6592,15 +6300,8 @@ relativeOIDComponents -> definedValue . [ Upper RightBrace Number Lower ]
 -- On externalValueReference shift to state 136
 -- On definedValue shift to state 381
 ## Reductions:
--- On UNION reduce production referencedValue -> definedValue
--- On RightBrace reduce production referencedValue -> definedValue
--- On Middle reduce production referencedValue -> definedValue
--- On LessThan reduce production referencedValue -> definedValue
--- On INTERSECTION reduce production referencedValue -> definedValue
--- On EXCEPT reduce production referencedValue -> definedValue
--- On DoubleDot reduce production referencedValue -> definedValue
--- On Comma reduce production referencedValue -> definedValue
--- On Circumflex reduce production referencedValue -> definedValue
+-- On UNION RightBrace Middle LessThan INTERSECTION EXCEPT DoubleDot Comma Circumflex
+--   reduce production referencedValue -> definedValue
 
 State 406:
 ## Known stack suffix:
@@ -6830,7 +6531,8 @@ enumerations -> rootEnumeration Comma Ellipsis exceptionSpec . Comma additionalE
 ## Transitions:
 -- On Comma shift to state 429
 ## Reductions:
--- On RightBrace reduce production enumerations -> rootEnumeration Comma Ellipsis exceptionSpec
+-- On RightBrace
+--   reduce production enumerations -> rootEnumeration Comma Ellipsis exceptionSpec
 
 State 429:
 ## Known stack suffix:
@@ -6863,7 +6565,8 @@ enumeration -> enumerationItem . Comma enumeration [ RightBrace Comma ]
 ## Transitions:
 -- On Comma shift to state 432
 ## Reductions:
--- On RightBrace reduce production enumeration -> enumerationItem
+-- On RightBrace
+--   reduce production enumeration -> enumerationItem
 
 State 432:
 ## Known stack suffix:
@@ -6941,25 +6644,8 @@ selectionType -> Lower LessThan type_x . [ Upper UNIQUE UNION RightParen RightDo
 -- On LeftParen shift to state 81
 -- On constraint_x shift to state 206
 ## Reductions:
--- On Upper reduce production selectionType -> Lower LessThan type_x
--- On UNIQUE reduce production selectionType -> Lower LessThan type_x
--- On UNION reduce production selectionType -> Lower LessThan type_x
--- On RightParen reduce production selectionType -> Lower LessThan type_x
--- On RightDoubleBracket reduce production selectionType -> Lower LessThan type_x
--- On RightBrace reduce production selectionType -> Lower LessThan type_x
--- On OPTIONAL reduce production selectionType -> Lower LessThan type_x
--- On Middle reduce production selectionType -> Lower LessThan type_x
--- On Lower reduce production selectionType -> Lower LessThan type_x
--- On INTERSECTION reduce production selectionType -> Lower LessThan type_x
--- On EXCEPT reduce production selectionType -> Lower LessThan type_x
--- On END reduce production selectionType -> Lower LessThan type_x
--- On ENCODED reduce production selectionType -> Lower LessThan type_x
--- On DEFAULT reduce production selectionType -> Lower LessThan type_x
--- On Comma reduce production selectionType -> Lower LessThan type_x
--- On Colon reduce production selectionType -> Lower LessThan type_x
--- On Circumflex reduce production selectionType -> Lower LessThan type_x
--- On Bang reduce production selectionType -> Lower LessThan type_x
--- On Assignment reduce production selectionType -> Lower LessThan type_x
+-- On Upper UNIQUE UNION RightParen RightDoubleBracket RightBrace OPTIONAL Middle Lower INTERSECTION EXCEPT END ENCODED DEFAULT Comma Colon Circumflex Bang Assignment
+--   reduce production selectionType -> Lower LessThan type_x
 
 State 440:
 ## Known stack suffix:
@@ -6971,25 +6657,8 @@ sequenceOfType -> SEQUENCE OF type_x . [ Upper UNIQUE UNION RightParen RightDoub
 -- On LeftParen shift to state 81
 -- On constraint_x shift to state 206
 ## Reductions:
--- On Upper reduce production sequenceOfType -> SEQUENCE OF type_x
--- On UNIQUE reduce production sequenceOfType -> SEQUENCE OF type_x
--- On UNION reduce production sequenceOfType -> SEQUENCE OF type_x
--- On RightParen reduce production sequenceOfType -> SEQUENCE OF type_x
--- On RightDoubleBracket reduce production sequenceOfType -> SEQUENCE OF type_x
--- On RightBrace reduce production sequenceOfType -> SEQUENCE OF type_x
--- On OPTIONAL reduce production sequenceOfType -> SEQUENCE OF type_x
--- On Middle reduce production sequenceOfType -> SEQUENCE OF type_x
--- On Lower reduce production sequenceOfType -> SEQUENCE OF type_x
--- On INTERSECTION reduce production sequenceOfType -> SEQUENCE OF type_x
--- On EXCEPT reduce production sequenceOfType -> SEQUENCE OF type_x
--- On END reduce production sequenceOfType -> SEQUENCE OF type_x
--- On ENCODED reduce production sequenceOfType -> SEQUENCE OF type_x
--- On DEFAULT reduce production sequenceOfType -> SEQUENCE OF type_x
--- On Comma reduce production sequenceOfType -> SEQUENCE OF type_x
--- On Colon reduce production sequenceOfType -> SEQUENCE OF type_x
--- On Circumflex reduce production sequenceOfType -> SEQUENCE OF type_x
--- On Bang reduce production sequenceOfType -> SEQUENCE OF type_x
--- On Assignment reduce production sequenceOfType -> SEQUENCE OF type_x
+-- On Upper UNIQUE UNION RightParen RightDoubleBracket RightBrace OPTIONAL Middle Lower INTERSECTION EXCEPT END ENCODED DEFAULT Comma Colon Circumflex Bang Assignment
+--   reduce production sequenceOfType -> SEQUENCE OF type_x
 
 State 441:
 ## Known stack suffix:
@@ -7140,9 +6809,8 @@ constrainedType -> type_x . constraint_x [ RightDoubleBracket RightBrace LeftPar
 -- On LeftParen shift to state 81
 -- On constraint_x shift to state 206
 ## Reductions:
--- On RightDoubleBracket reduce production componentType -> COMPONENTS OF type_x
--- On RightBrace reduce production componentType -> COMPONENTS OF type_x
--- On Comma reduce production componentType -> COMPONENTS OF type_x
+-- On RightDoubleBracket RightBrace Comma
+--   reduce production componentType -> COMPONENTS OF type_x
 
 State 447:
 ## Known stack suffix:
@@ -7154,7 +6822,8 @@ componentTypeLists -> rootComponentTypeList . Comma extensionAndException extens
 ## Transitions:
 -- On Comma shift to state 448
 ## Reductions:
--- On RightBrace reduce production componentTypeLists -> rootComponentTypeList
+-- On RightBrace
+--   reduce production componentTypeLists -> rootComponentTypeList
 
 State 448:
 ## Known stack suffix:
@@ -7177,7 +6846,8 @@ componentTypeLists -> rootComponentTypeList Comma extensionAndException . extens
 -- On Comma shift to state 450
 -- On extensionAdditions shift to state 468
 ## Reductions:
--- On RightBrace reduce production extensionAdditions ->
+-- On RightBrace
+--   reduce production extensionAdditions ->
 
 State 450:
 ## Known stack suffix:
@@ -7204,8 +6874,8 @@ extensionAdditionGroup -> LeftDoubleBracket . versionNumber componentTypeList Ri
 -- On Number shift to state 273
 -- On versionNumber shift to state 452
 ## Reductions:
--- On Lower reduce production versionNumber ->
--- On COMPONENTS reduce production versionNumber ->
+-- On Lower COMPONENTS
+--   reduce production versionNumber ->
 
 State 452:
 ## Known stack suffix:
@@ -7231,9 +6901,8 @@ componentType -> namedType . DEFAULT value [ RightDoubleBracket RightBrace Comma
 -- On OPTIONAL shift to state 454
 -- On DEFAULT shift to state 455
 ## Reductions:
--- On RightDoubleBracket reduce production componentType -> namedType
--- On RightBrace reduce production componentType -> namedType
--- On Comma reduce production componentType -> namedType
+-- On RightDoubleBracket RightBrace Comma
+--   reduce production componentType -> namedType
 
 State 454:
 ## Known stack suffix:
@@ -7452,7 +7121,8 @@ extensionAdditions -> Comma extensionAdditionList . [ RightBrace Comma ]
 ## Transitions:
 -- On Comma shift to state 463
 ## Reductions:
--- On RightBrace reduce production extensionAdditions -> Comma extensionAdditionList
+-- On RightBrace
+--   reduce production extensionAdditions -> Comma extensionAdditionList
 
 State 463:
 ## Known stack suffix:
@@ -7516,7 +7186,8 @@ componentTypeLists -> rootComponentTypeList Comma extensionAndException extensio
 -- On optionalExtensionMarker shift to state 471
 -- On extensionEndMarker shift to state 472
 ## Reductions:
--- On RightBrace reduce production optionalExtensionMarker ->
+-- On RightBrace
+--   reduce production optionalExtensionMarker ->
 
 State 469:
 ## Known stack suffix:
@@ -7536,8 +7207,10 @@ extensionEndMarker -> Comma Ellipsis . [ Comma ]
 optionalExtensionMarker -> Comma Ellipsis . [ RightBrace ]
 ## Transitions:
 ## Reductions:
--- On RightBrace reduce production optionalExtensionMarker -> Comma Ellipsis
--- On Comma reduce production extensionEndMarker -> Comma Ellipsis
+-- On Comma
+--   reduce production extensionEndMarker -> Comma Ellipsis
+-- On RightBrace
+--   reduce production optionalExtensionMarker -> Comma Ellipsis
 
 State 471:
 ## Known stack suffix:
@@ -7589,7 +7262,8 @@ rootComponentTypeList -> componentTypeList . [ RightBrace Comma ]
 ## Transitions:
 -- On Comma shift to state 459
 ## Reductions:
--- On RightBrace reduce production rootComponentTypeList -> componentTypeList
+-- On RightBrace
+--   reduce production rootComponentTypeList -> componentTypeList
 
 State 476:
 ## Known stack suffix:
@@ -7603,7 +7277,8 @@ sequenceType -> SEQUENCE LeftBrace extensionAndException . optionalExtensionMark
 -- On optionalExtensionMarker shift to state 478
 -- On extensionAdditions shift to state 480
 ## Reductions:
--- On RightBrace reduce production optionalExtensionMarker ->
+-- On RightBrace
+--   reduce production optionalExtensionMarker ->
 
 State 477:
 ## Known stack suffix:
@@ -7652,7 +7327,8 @@ componentTypeLists -> extensionAndException extensionAdditions . optionalExtensi
 -- On optionalExtensionMarker shift to state 481
 -- On extensionEndMarker shift to state 482
 ## Reductions:
--- On RightBrace reduce production optionalExtensionMarker ->
+-- On RightBrace
+--   reduce production optionalExtensionMarker ->
 
 State 481:
 ## Known stack suffix:
@@ -7827,25 +7503,8 @@ typeWithConstraint -> SEQUENCE sizeConstraint OF type_x . [ Upper UNIQUE UNION R
 -- On LeftParen shift to state 81
 -- On constraint_x shift to state 206
 ## Reductions:
--- On Upper reduce production typeWithConstraint -> SEQUENCE sizeConstraint OF type_x
--- On UNIQUE reduce production typeWithConstraint -> SEQUENCE sizeConstraint OF type_x
--- On UNION reduce production typeWithConstraint -> SEQUENCE sizeConstraint OF type_x
--- On RightParen reduce production typeWithConstraint -> SEQUENCE sizeConstraint OF type_x
--- On RightDoubleBracket reduce production typeWithConstraint -> SEQUENCE sizeConstraint OF type_x
--- On RightBrace reduce production typeWithConstraint -> SEQUENCE sizeConstraint OF type_x
--- On OPTIONAL reduce production typeWithConstraint -> SEQUENCE sizeConstraint OF type_x
--- On Middle reduce production typeWithConstraint -> SEQUENCE sizeConstraint OF type_x
--- On Lower reduce production typeWithConstraint -> SEQUENCE sizeConstraint OF type_x
--- On INTERSECTION reduce production typeWithConstraint -> SEQUENCE sizeConstraint OF type_x
--- On EXCEPT reduce production typeWithConstraint -> SEQUENCE sizeConstraint OF type_x
--- On END reduce production typeWithConstraint -> SEQUENCE sizeConstraint OF type_x
--- On ENCODED reduce production typeWithConstraint -> SEQUENCE sizeConstraint OF type_x
--- On DEFAULT reduce production typeWithConstraint -> SEQUENCE sizeConstraint OF type_x
--- On Comma reduce production typeWithConstraint -> SEQUENCE sizeConstraint OF type_x
--- On Colon reduce production typeWithConstraint -> SEQUENCE sizeConstraint OF type_x
--- On Circumflex reduce production typeWithConstraint -> SEQUENCE sizeConstraint OF type_x
--- On Bang reduce production typeWithConstraint -> SEQUENCE sizeConstraint OF type_x
--- On Assignment reduce production typeWithConstraint -> SEQUENCE sizeConstraint OF type_x
+-- On Upper UNIQUE UNION RightParen RightDoubleBracket RightBrace OPTIONAL Middle Lower INTERSECTION EXCEPT END ENCODED DEFAULT Comma Colon Circumflex Bang Assignment
+--   reduce production typeWithConstraint -> SEQUENCE sizeConstraint OF type_x
 
 State 490:
 ## Known stack suffix:
@@ -7970,25 +7629,8 @@ typeWithConstraint -> SEQUENCE constraint_x OF type_x . [ Upper UNIQUE UNION Rig
 -- On LeftParen shift to state 81
 -- On constraint_x shift to state 206
 ## Reductions:
--- On Upper reduce production typeWithConstraint -> SEQUENCE constraint_x OF type_x
--- On UNIQUE reduce production typeWithConstraint -> SEQUENCE constraint_x OF type_x
--- On UNION reduce production typeWithConstraint -> SEQUENCE constraint_x OF type_x
--- On RightParen reduce production typeWithConstraint -> SEQUENCE constraint_x OF type_x
--- On RightDoubleBracket reduce production typeWithConstraint -> SEQUENCE constraint_x OF type_x
--- On RightBrace reduce production typeWithConstraint -> SEQUENCE constraint_x OF type_x
--- On OPTIONAL reduce production typeWithConstraint -> SEQUENCE constraint_x OF type_x
--- On Middle reduce production typeWithConstraint -> SEQUENCE constraint_x OF type_x
--- On Lower reduce production typeWithConstraint -> SEQUENCE constraint_x OF type_x
--- On INTERSECTION reduce production typeWithConstraint -> SEQUENCE constraint_x OF type_x
--- On EXCEPT reduce production typeWithConstraint -> SEQUENCE constraint_x OF type_x
--- On END reduce production typeWithConstraint -> SEQUENCE constraint_x OF type_x
--- On ENCODED reduce production typeWithConstraint -> SEQUENCE constraint_x OF type_x
--- On DEFAULT reduce production typeWithConstraint -> SEQUENCE constraint_x OF type_x
--- On Comma reduce production typeWithConstraint -> SEQUENCE constraint_x OF type_x
--- On Colon reduce production typeWithConstraint -> SEQUENCE constraint_x OF type_x
--- On Circumflex reduce production typeWithConstraint -> SEQUENCE constraint_x OF type_x
--- On Bang reduce production typeWithConstraint -> SEQUENCE constraint_x OF type_x
--- On Assignment reduce production typeWithConstraint -> SEQUENCE constraint_x OF type_x
+-- On Upper UNIQUE UNION RightParen RightDoubleBracket RightBrace OPTIONAL Middle Lower INTERSECTION EXCEPT END ENCODED DEFAULT Comma Colon Circumflex Bang Assignment
+--   reduce production typeWithConstraint -> SEQUENCE constraint_x OF type_x
 
 State 494:
 ## Known stack suffix:
@@ -8929,7 +8571,8 @@ objectSetSpec -> Ellipsis . Comma additionalElementSetSpec [ RightBrace ]
 ## Transitions:
 -- On Comma shift to state 507
 ## Reductions:
--- On RightBrace reduce production objectSetSpec -> Ellipsis
+-- On RightBrace
+--   reduce production objectSetSpec -> Ellipsis
 
 State 507:
 ## Known stack suffix:
@@ -9310,17 +8953,10 @@ lowerEndValue -> value . [ LessThan DoubleDot ]
 singleValue -> value . [ UNION RightParen RightBrace Middle INTERSECTION EXCEPT Comma Circumflex Bang ]
 ## Transitions:
 ## Reductions:
--- On UNION reduce production singleValue -> value
--- On RightParen reduce production singleValue -> value
--- On RightBrace reduce production singleValue -> value
--- On Middle reduce production singleValue -> value
--- On LessThan reduce production lowerEndValue -> value
--- On INTERSECTION reduce production singleValue -> value
--- On EXCEPT reduce production singleValue -> value
--- On DoubleDot reduce production lowerEndValue -> value
--- On Comma reduce production singleValue -> value
--- On Circumflex reduce production singleValue -> value
--- On Bang reduce production singleValue -> value
+-- On LessThan DoubleDot
+--   reduce production lowerEndValue -> value
+-- On UNION RightParen RightBrace Middle INTERSECTION EXCEPT Comma Circumflex Bang
+--   reduce production singleValue -> value
 
 State 513:
 ## Known stack suffix:
@@ -9334,15 +8970,8 @@ typeConstraint -> type_x . [ UNION RightParen RightBrace Middle INTERSECTION EXC
 -- On Colon shift to state 317
 -- On constraint_x shift to state 206
 ## Reductions:
--- On UNION reduce production typeConstraint -> type_x
--- On RightParen reduce production typeConstraint -> type_x
--- On RightBrace reduce production typeConstraint -> type_x
--- On Middle reduce production typeConstraint -> type_x
--- On INTERSECTION reduce production typeConstraint -> type_x
--- On EXCEPT reduce production typeConstraint -> type_x
--- On Comma reduce production typeConstraint -> type_x
--- On Circumflex reduce production typeConstraint -> type_x
--- On Bang reduce production typeConstraint -> type_x
+-- On UNION RightParen RightBrace Middle INTERSECTION EXCEPT Comma Circumflex Bang
+--   reduce production typeConstraint -> type_x
 
 State 514:
 ## Known stack suffix:
@@ -9421,19 +9050,10 @@ valueFromObject -> referencedObjects Dot fieldName . [ UNION RightParen RightBra
 valueSetFromObjects -> referencedObjects Dot fieldName . [ UNION RightParen RightBrace Middle LeftParen INTERSECTION EXCEPT Comma Colon Circumflex Bang ]
 ## Transitions:
 ## Reductions:
--- On UNION reduce production valueFromObject -> referencedObjects Dot fieldName
--- On RightParen reduce production valueFromObject -> referencedObjects Dot fieldName
--- On RightBrace reduce production valueFromObject -> referencedObjects Dot fieldName
--- On Middle reduce production valueFromObject -> referencedObjects Dot fieldName
--- On LessThan reduce production valueFromObject -> referencedObjects Dot fieldName
--- On LeftParen reduce production valueSetFromObjects -> referencedObjects Dot fieldName
--- On INTERSECTION reduce production valueFromObject -> referencedObjects Dot fieldName
--- On EXCEPT reduce production valueFromObject -> referencedObjects Dot fieldName
--- On DoubleDot reduce production valueFromObject -> referencedObjects Dot fieldName
--- On Comma reduce production valueFromObject -> referencedObjects Dot fieldName
--- On Colon reduce production valueSetFromObjects -> referencedObjects Dot fieldName
--- On Circumflex reduce production valueFromObject -> referencedObjects Dot fieldName
--- On Bang reduce production valueFromObject -> referencedObjects Dot fieldName
+-- On UNION RightParen RightBrace Middle LessThan INTERSECTION EXCEPT DoubleDot Comma Circumflex Bang
+--   reduce production valueFromObject -> referencedObjects Dot fieldName
+-- On LeftParen Colon
+--   reduce production valueSetFromObjects -> referencedObjects Dot fieldName
 
 State 521:
 ## Known stack suffix:
@@ -9461,16 +9081,10 @@ objectSetElements -> parameterizedObjectSet . [ UNION RightParen RightBrace Midd
 referencedObjects -> parameterizedObjectSet . [ Dot ]
 ## Transitions:
 ## Reductions:
--- On UNION reduce production objectSetElements -> parameterizedObjectSet
--- On RightParen reduce production objectSetElements -> parameterizedObjectSet
--- On RightBrace reduce production objectSetElements -> parameterizedObjectSet
--- On Middle reduce production objectSetElements -> parameterizedObjectSet
--- On INTERSECTION reduce production objectSetElements -> parameterizedObjectSet
--- On EXCEPT reduce production objectSetElements -> parameterizedObjectSet
--- On Dot reduce production referencedObjects -> parameterizedObjectSet
--- On Comma reduce production objectSetElements -> parameterizedObjectSet
--- On Circumflex reduce production objectSetElements -> parameterizedObjectSet
--- On Bang reduce production objectSetElements -> parameterizedObjectSet
+-- On UNION RightParen RightBrace Middle INTERSECTION EXCEPT Comma Circumflex Bang
+--   reduce production objectSetElements -> parameterizedObjectSet
+-- On Dot
+--   reduce production referencedObjects -> parameterizedObjectSet
 
 State 524:
 ## Known stack suffix:
@@ -9480,19 +9094,10 @@ object_x -> parameterizedObject . [ Upper UNION RightParen RightBrace Middle Low
 referencedObjects -> parameterizedObject . [ Dot ]
 ## Transitions:
 ## Reductions:
--- On Upper reduce production object_x -> parameterizedObject
--- On UNION reduce production object_x -> parameterizedObject
--- On RightParen reduce production object_x -> parameterizedObject
--- On RightBrace reduce production object_x -> parameterizedObject
--- On Middle reduce production object_x -> parameterizedObject
--- On Lower reduce production object_x -> parameterizedObject
--- On INTERSECTION reduce production object_x -> parameterizedObject
--- On EXCEPT reduce production object_x -> parameterizedObject
--- On END reduce production object_x -> parameterizedObject
--- On Dot reduce production referencedObjects -> parameterizedObject
--- On Comma reduce production object_x -> parameterizedObject
--- On Circumflex reduce production object_x -> parameterizedObject
--- On Bang reduce production object_x -> parameterizedObject
+-- On Upper UNION RightParen RightBrace Middle Lower INTERSECTION EXCEPT END Comma Circumflex Bang
+--   reduce production object_x -> parameterizedObject
+-- On Dot
+--   reduce production referencedObjects -> parameterizedObject
 
 State 525:
 ## Known stack suffix:
@@ -9548,7 +9153,8 @@ lowerEndPoint -> lowerEndValue . LessThan [ DoubleDot ]
 ## Transitions:
 -- On LessThan shift to state 531
 ## Reductions:
--- On DoubleDot reduce production lowerEndPoint -> lowerEndValue
+-- On DoubleDot
+--   reduce production lowerEndPoint -> lowerEndValue
 
 State 531:
 ## Known stack suffix:
@@ -10010,15 +9616,8 @@ containedSubtype -> includes type_x . [ UNION RightParen RightBrace Middle INTER
 -- On LeftParen shift to state 81
 -- On constraint_x shift to state 206
 ## Reductions:
--- On UNION reduce production containedSubtype -> includes type_x
--- On RightParen reduce production containedSubtype -> includes type_x
--- On RightBrace reduce production containedSubtype -> includes type_x
--- On Middle reduce production containedSubtype -> includes type_x
--- On INTERSECTION reduce production containedSubtype -> includes type_x
--- On EXCEPT reduce production containedSubtype -> includes type_x
--- On Comma reduce production containedSubtype -> includes type_x
--- On Circumflex reduce production containedSubtype -> includes type_x
--- On Bang reduce production containedSubtype -> includes type_x
+-- On UNION RightParen RightBrace Middle INTERSECTION EXCEPT Comma Circumflex Bang
+--   reduce production containedSubtype -> includes type_x
 
 State 543:
 ## Known stack suffix:
@@ -10040,16 +9639,10 @@ referencedObjects -> definedObjectSet . [ Dot ]
 -- On LeftBrace shift to state 65
 -- On actualParameterList shift to state 251
 ## Reductions:
--- On UNION reduce production objectSetElements -> definedObjectSet
--- On RightParen reduce production objectSetElements -> definedObjectSet
--- On RightBrace reduce production objectSetElements -> definedObjectSet
--- On Middle reduce production objectSetElements -> definedObjectSet
--- On INTERSECTION reduce production objectSetElements -> definedObjectSet
--- On EXCEPT reduce production objectSetElements -> definedObjectSet
--- On Dot reduce production referencedObjects -> definedObjectSet
--- On Comma reduce production objectSetElements -> definedObjectSet
--- On Circumflex reduce production objectSetElements -> definedObjectSet
--- On Bang reduce production objectSetElements -> definedObjectSet
+-- On UNION RightParen RightBrace Middle INTERSECTION EXCEPT Comma Circumflex Bang
+--   reduce production objectSetElements -> definedObjectSet
+-- On Dot
+--   reduce production referencedObjects -> definedObjectSet
 
 State 545:
 ## Known stack suffix:
@@ -10062,19 +9655,10 @@ referencedObjects -> definedObject . [ Dot ]
 -- On LeftBrace shift to state 65
 -- On actualParameterList shift to state 256
 ## Reductions:
--- On Upper reduce production object_x -> definedObject
--- On UNION reduce production object_x -> definedObject
--- On RightParen reduce production object_x -> definedObject
--- On RightBrace reduce production object_x -> definedObject
--- On Middle reduce production object_x -> definedObject
--- On Lower reduce production object_x -> definedObject
--- On INTERSECTION reduce production object_x -> definedObject
--- On EXCEPT reduce production object_x -> definedObject
--- On END reduce production object_x -> definedObject
--- On Dot reduce production referencedObjects -> definedObject
--- On Comma reduce production object_x -> definedObject
--- On Circumflex reduce production object_x -> definedObject
--- On Bang reduce production object_x -> definedObject
+-- On Upper UNION RightParen RightBrace Middle Lower INTERSECTION EXCEPT END Comma Circumflex Bang
+--   reduce production object_x -> definedObject
+-- On Dot
+--   reduce production referencedObjects -> definedObject
 
 State 546:
 ## Known stack suffix:
@@ -10111,12 +9695,10 @@ elementSetSpec -> unions . [ RightParen RightBrace Comma Bang ]
 uElems -> unions . [ UNION Middle ]
 ## Transitions:
 ## Reductions:
--- On UNION reduce production uElems -> unions
--- On RightParen reduce production elementSetSpec -> unions
--- On RightBrace reduce production elementSetSpec -> unions
--- On Middle reduce production uElems -> unions
--- On Comma reduce production elementSetSpec -> unions
--- On Bang reduce production elementSetSpec -> unions
+-- On RightParen RightBrace Comma Bang
+--   reduce production elementSetSpec -> unions
+-- On UNION Middle
+--   reduce production uElems -> unions
 
 State 550:
 ## Known stack suffix:
@@ -10326,14 +9908,10 @@ iElems -> intersections . [ INTERSECTION Circumflex ]
 unions -> uElems unionMark intersections . [ UNION RightParen RightBrace Middle Comma Bang ]
 ## Transitions:
 ## Reductions:
--- On UNION reduce production unions -> uElems unionMark intersections
--- On RightParen reduce production unions -> uElems unionMark intersections
--- On RightBrace reduce production unions -> uElems unionMark intersections
--- On Middle reduce production unions -> uElems unionMark intersections
--- On INTERSECTION reduce production iElems -> intersections
--- On Comma reduce production unions -> uElems unionMark intersections
--- On Circumflex reduce production iElems -> intersections
--- On Bang reduce production unions -> uElems unionMark intersections
+-- On INTERSECTION Circumflex
+--   reduce production iElems -> intersections
+-- On UNION RightParen RightBrace Middle Comma Bang
+--   reduce production unions -> uElems unionMark intersections
 
 State 555:
 ## Known stack suffix:
@@ -10578,15 +10156,10 @@ elems -> elements . [ EXCEPT ]
 intersectionElements -> elements . [ UNION RightParen RightBrace Middle INTERSECTION Comma Circumflex Bang ]
 ## Transitions:
 ## Reductions:
--- On UNION reduce production intersectionElements -> elements
--- On RightParen reduce production intersectionElements -> elements
--- On RightBrace reduce production intersectionElements -> elements
--- On Middle reduce production intersectionElements -> elements
--- On INTERSECTION reduce production intersectionElements -> elements
--- On EXCEPT reduce production elems -> elements
--- On Comma reduce production intersectionElements -> elements
--- On Circumflex reduce production intersectionElements -> elements
--- On Bang reduce production intersectionElements -> elements
+-- On EXCEPT
+--   reduce production elems -> elements
+-- On UNION RightParen RightBrace Middle INTERSECTION Comma Circumflex Bang
+--   reduce production intersectionElements -> elements
 
 State 564:
 ## Known stack suffix:
@@ -10596,14 +10169,10 @@ iElems -> intersections . [ INTERSECTION Circumflex ]
 unions -> intersections . [ UNION RightParen RightBrace Middle Comma Bang ]
 ## Transitions:
 ## Reductions:
--- On UNION reduce production unions -> intersections
--- On RightParen reduce production unions -> intersections
--- On RightBrace reduce production unions -> intersections
--- On Middle reduce production unions -> intersections
--- On INTERSECTION reduce production iElems -> intersections
--- On Comma reduce production unions -> intersections
--- On Circumflex reduce production iElems -> intersections
--- On Bang reduce production unions -> intersections
+-- On INTERSECTION Circumflex
+--   reduce production iElems -> intersections
+-- On UNION RightParen RightBrace Middle Comma Bang
+--   reduce production unions -> intersections
 
 State 565:
 ## Known stack suffix:
@@ -10632,15 +10201,12 @@ singleValue -> value . [ UNION RightBrace Middle INTERSECTION EXCEPT Comma Circu
 valueList -> value . [ RightBrace Comma ]
 ## Transitions:
 ## Reductions:
--- On UNION reduce production singleValue -> value
--- On RightBrace reduce production valueList -> value
--- On Middle reduce production singleValue -> value
--- On LessThan reduce production lowerEndValue -> value
--- On INTERSECTION reduce production singleValue -> value
--- On EXCEPT reduce production singleValue -> value
--- On DoubleDot reduce production lowerEndValue -> value
--- On Comma reduce production valueList -> value
--- On Circumflex reduce production singleValue -> value
+-- On LessThan DoubleDot
+--   reduce production lowerEndValue -> value
+-- On UNION Middle INTERSECTION EXCEPT Circumflex
+--   reduce production singleValue -> value
+-- On RightBrace Comma
+--   reduce production valueList -> value
 
 State 568:
 ## Known stack suffix:
@@ -10655,7 +10221,8 @@ objectSetSpec -> rootElementSetSpec . Comma Ellipsis Comma additionalElementSetS
 ## Transitions:
 -- On Comma shift to state 569
 ## Reductions:
--- On RightBrace reduce production elementSetSpecs -> rootElementSetSpec
+-- On RightBrace
+--   reduce production elementSetSpecs -> rootElementSetSpec
 
 State 569:
 ## Known stack suffix:
@@ -10680,7 +10247,8 @@ objectSetSpec -> rootElementSetSpec Comma Ellipsis . Comma additionalElementSetS
 ## Transitions:
 -- On Comma shift to state 571
 ## Reductions:
--- On RightBrace reduce production elementSetSpecs -> rootElementSetSpec Comma Ellipsis
+-- On RightBrace
+--   reduce production elementSetSpecs -> rootElementSetSpec Comma Ellipsis
 
 State 571:
 ## Known stack suffix:
@@ -10914,7 +10482,8 @@ separated_nonempty_list(Comma,fieldSetting) -> fieldSetting . Comma separated_no
 ## Transitions:
 -- On Comma shift to state 578
 ## Reductions:
--- On RightBrace reduce production separated_nonempty_list(Comma,fieldSetting) -> fieldSetting
+-- On RightBrace
+--   reduce production separated_nonempty_list(Comma,fieldSetting) -> fieldSetting
 
 State 578:
 ## Known stack suffix:
@@ -10995,8 +10564,8 @@ setting -> type_x . [ RightBrace Comma ]
 -- On Colon shift to state 317
 -- On constraint_x shift to state 206
 ## Reductions:
--- On RightBrace reduce production setting -> type_x
--- On Comma reduce production setting -> type_x
+-- On RightBrace Comma
+--   reduce production setting -> type_x
 
 State 586:
 ## Known stack suffix:
@@ -11045,10 +10614,10 @@ valueFromObject -> referencedObjects Dot fieldName . [ RightBrace Comma ]
 valueSetFromObjects -> referencedObjects Dot fieldName . [ RightBrace LeftParen Comma Colon ]
 ## Transitions:
 ## Reductions:
--- On RightBrace reduce production valueFromObject -> referencedObjects Dot fieldName
--- On LeftParen reduce production valueSetFromObjects -> referencedObjects Dot fieldName
--- On Comma reduce production valueFromObject -> referencedObjects Dot fieldName
--- On Colon reduce production valueSetFromObjects -> referencedObjects Dot fieldName
+-- On RightBrace Comma
+--   reduce production valueFromObject -> referencedObjects Dot fieldName
+-- On LeftParen Colon
+--   reduce production valueSetFromObjects -> referencedObjects Dot fieldName
 
 State 590:
 ## Known stack suffix:
@@ -11317,7 +10886,8 @@ objectSetSpec -> rootElementSetSpec . Comma Ellipsis Comma additionalElementSetS
 ## Transitions:
 -- On Comma shift to state 596
 ## Reductions:
--- On RightBrace reduce production objectSetSpec -> rootElementSetSpec
+-- On RightBrace
+--   reduce production objectSetSpec -> rootElementSetSpec
 
 State 596:
 ## Known stack suffix:
@@ -11338,7 +10908,8 @@ objectSetSpec -> rootElementSetSpec Comma Ellipsis . Comma additionalElementSetS
 ## Transitions:
 -- On Comma shift to state 598
 ## Reductions:
--- On RightBrace reduce production objectSetSpec -> rootElementSetSpec Comma Ellipsis
+-- On RightBrace
+--   reduce production objectSetSpec -> rootElementSetSpec Comma Ellipsis
 
 State 598:
 ## Known stack suffix:
@@ -11538,13 +11109,10 @@ referencedObjects -> definedObjectSet . [ Dot ]
 -- On LeftBrace shift to state 65
 -- On actualParameterList shift to state 251
 ## Reductions:
--- On UNION reduce production objectSetElements -> definedObjectSet
--- On Middle reduce production objectSetElements -> definedObjectSet
--- On INTERSECTION reduce production objectSetElements -> definedObjectSet
--- On EXCEPT reduce production objectSetElements -> definedObjectSet
--- On Dot reduce production referencedObjects -> definedObjectSet
--- On Comma reduce production objectSetElements -> definedObjectSet
--- On Circumflex reduce production objectSetElements -> definedObjectSet
+-- On UNION Middle INTERSECTION EXCEPT Comma Circumflex
+--   reduce production objectSetElements -> definedObjectSet
+-- On Dot
+--   reduce production referencedObjects -> definedObjectSet
 
 State 601:
 ## Known stack suffix:
@@ -11576,7 +11144,8 @@ atNotation -> AtDot . level componentIdList [ RightBrace Comma ]
 -- On Dot shift to state 604
 -- On level shift to state 606
 ## Reductions:
--- On Lower reduce production level ->
+-- On Lower
+--   reduce production level ->
 
 State 604:
 ## Known stack suffix:
@@ -11587,7 +11156,8 @@ level -> Dot . level [ Lower ]
 -- On Dot shift to state 604
 -- On level shift to state 605
 ## Reductions:
--- On Lower reduce production level ->
+-- On Lower
+--   reduce production level ->
 
 State 605:
 ## Known stack suffix:
@@ -11618,8 +11188,8 @@ separated_nonempty_list(Dot,Lower) -> Lower . Dot separated_nonempty_list(Dot,Lo
 ## Transitions:
 -- On Dot shift to state 608
 ## Reductions:
--- On RightBrace reduce production separated_nonempty_list(Dot,Lower) -> Lower
--- On Comma reduce production separated_nonempty_list(Dot,Lower) -> Lower
+-- On RightBrace Comma
+--   reduce production separated_nonempty_list(Dot,Lower) -> Lower
 
 State 608:
 ## Known stack suffix:
@@ -11705,7 +11275,8 @@ separated_nonempty_list(Comma,atNotation) -> atNotation . Comma separated_nonemp
 ## Transitions:
 -- On Comma shift to state 617
 ## Reductions:
--- On RightBrace reduce production separated_nonempty_list(Comma,atNotation) -> atNotation
+-- On RightBrace
+--   reduce production separated_nonempty_list(Comma,atNotation) -> atNotation
 
 State 617:
 ## Known stack suffix:
@@ -12043,8 +11614,8 @@ openTypeFieldVal -> type_x . Colon value [ UNION RightParen Middle LessThan INTE
 -- On Colon shift to state 317
 -- On constraint_x shift to state 206
 ## Reductions:
--- On RightParen reduce production contentsConstraint -> CONTAINING type_x
--- On Bang reduce production contentsConstraint -> CONTAINING type_x
+-- On RightParen Bang
+--   reduce production contentsConstraint -> CONTAINING type_x
 
 State 624:
 ## Known stack suffix:
@@ -12317,7 +11888,8 @@ userDefinedConstraint -> CONSTRAINED BY LeftBrace . loption(separated_nonempty_l
 -- On booleanType shift to state 261
 -- On bitStringType shift to state 262
 ## Reductions:
--- On RightBrace reduce production loption(separated_nonempty_list(Comma,userDefinedConstraintParameter)) ->
+-- On RightBrace
+--   reduce production loption(separated_nonempty_list(Comma,userDefinedConstraintParameter)) ->
 
 State 630:
 ## Known stack suffix:
@@ -12328,7 +11900,8 @@ separated_nonempty_list(Comma,userDefinedConstraintParameter) -> userDefinedCons
 ## Transitions:
 -- On Comma shift to state 631
 ## Reductions:
--- On RightBrace reduce production separated_nonempty_list(Comma,userDefinedConstraintParameter) -> userDefinedConstraintParameter
+-- On RightBrace
+--   reduce production separated_nonempty_list(Comma,userDefinedConstraintParameter) -> userDefinedConstraintParameter
 
 State 631:
 ## Known stack suffix:
@@ -12436,9 +12009,10 @@ userDefinedConstraintParameter -> type_x . [ RightBrace Comma ]
 -- On LeftParen shift to state 81
 -- On constraint_x shift to state 206
 ## Reductions:
--- On RightBrace reduce production userDefinedConstraintParameter -> type_x
--- On Comma reduce production userDefinedConstraintParameter -> type_x
--- On Colon reduce production governor -> type_x
+-- On Colon
+--   reduce production governor -> type_x
+-- On RightBrace Comma
+--   reduce production userDefinedConstraintParameter -> type_x
 
 State 633:
 ## Known stack suffix:
@@ -12657,9 +12231,10 @@ userDefinedConstraintParameter -> definedObjectClass . [ RightBrace Comma ]
 ## Transitions:
 -- On Dot shift to state 253
 ## Reductions:
--- On RightBrace reduce production userDefinedConstraintParameter -> definedObjectClass
--- On Comma reduce production userDefinedConstraintParameter -> definedObjectClass
--- On Colon reduce production governor -> definedObjectClass
+-- On Colon
+--   reduce production governor -> definedObjectClass
+-- On RightBrace Comma
+--   reduce production userDefinedConstraintParameter -> definedObjectClass
 
 State 641:
 ## Known stack suffix:
@@ -12734,9 +12309,8 @@ elementSetSpecs -> rootElementSetSpec . Comma Ellipsis Comma additionalElementSe
 ## Transitions:
 -- On Comma shift to state 649
 ## Reductions:
--- On RightParen reduce production elementSetSpecs -> rootElementSetSpec
--- On RightBrace reduce production elementSetSpecs -> rootElementSetSpec
--- On Bang reduce production elementSetSpecs -> rootElementSetSpec
+-- On RightParen RightBrace Bang
+--   reduce production elementSetSpecs -> rootElementSetSpec
 
 State 649:
 ## Known stack suffix:
@@ -12757,9 +12331,8 @@ elementSetSpecs -> rootElementSetSpec Comma Ellipsis . Comma additionalElementSe
 ## Transitions:
 -- On Comma shift to state 651
 ## Reductions:
--- On RightParen reduce production elementSetSpecs -> rootElementSetSpec Comma Ellipsis
--- On RightBrace reduce production elementSetSpecs -> rootElementSetSpec Comma Ellipsis
--- On Bang reduce production elementSetSpecs -> rootElementSetSpec Comma Ellipsis
+-- On RightParen RightBrace Bang
+--   reduce production elementSetSpecs -> rootElementSetSpec Comma Ellipsis
 
 State 651:
 ## Known stack suffix:
@@ -12991,7 +12564,8 @@ constraint_x -> LeftParen constraintSpec . exceptionSpec RightParen [ Upper UNIQ
 -- On Bang shift to state 177
 -- On exceptionSpec shift to state 658
 ## Reductions:
--- On RightParen reduce production exceptionSpec ->
+-- On RightParen
+--   reduce production exceptionSpec ->
 
 State 658:
 ## Known stack suffix:
@@ -13133,25 +12707,8 @@ setOfType -> SET OF type_x . [ Upper UNIQUE UNION RightParen RightDoubleBracket 
 -- On LeftParen shift to state 81
 -- On constraint_x shift to state 206
 ## Reductions:
--- On Upper reduce production setOfType -> SET OF type_x
--- On UNIQUE reduce production setOfType -> SET OF type_x
--- On UNION reduce production setOfType -> SET OF type_x
--- On RightParen reduce production setOfType -> SET OF type_x
--- On RightDoubleBracket reduce production setOfType -> SET OF type_x
--- On RightBrace reduce production setOfType -> SET OF type_x
--- On OPTIONAL reduce production setOfType -> SET OF type_x
--- On Middle reduce production setOfType -> SET OF type_x
--- On Lower reduce production setOfType -> SET OF type_x
--- On INTERSECTION reduce production setOfType -> SET OF type_x
--- On EXCEPT reduce production setOfType -> SET OF type_x
--- On END reduce production setOfType -> SET OF type_x
--- On ENCODED reduce production setOfType -> SET OF type_x
--- On DEFAULT reduce production setOfType -> SET OF type_x
--- On Comma reduce production setOfType -> SET OF type_x
--- On Colon reduce production setOfType -> SET OF type_x
--- On Circumflex reduce production setOfType -> SET OF type_x
--- On Bang reduce production setOfType -> SET OF type_x
--- On Assignment reduce production setOfType -> SET OF type_x
+-- On Upper UNIQUE UNION RightParen RightDoubleBracket RightBrace OPTIONAL Middle Lower INTERSECTION EXCEPT END ENCODED DEFAULT Comma Colon Circumflex Bang Assignment
+--   reduce production setOfType -> SET OF type_x
 
 State 664:
 ## Known stack suffix:
@@ -13203,7 +12760,8 @@ setType -> SET LeftBrace extensionAndException . optionalExtensionMarker RightBr
 -- On optionalExtensionMarker shift to state 668
 -- On extensionAdditions shift to state 480
 ## Reductions:
--- On RightBrace reduce production optionalExtensionMarker ->
+-- On RightBrace
+--   reduce production optionalExtensionMarker ->
 
 State 668:
 ## Known stack suffix:
@@ -13355,25 +12913,8 @@ typeWithConstraint -> SET sizeConstraint OF type_x . [ Upper UNIQUE UNION RightP
 -- On LeftParen shift to state 81
 -- On constraint_x shift to state 206
 ## Reductions:
--- On Upper reduce production typeWithConstraint -> SET sizeConstraint OF type_x
--- On UNIQUE reduce production typeWithConstraint -> SET sizeConstraint OF type_x
--- On UNION reduce production typeWithConstraint -> SET sizeConstraint OF type_x
--- On RightParen reduce production typeWithConstraint -> SET sizeConstraint OF type_x
--- On RightDoubleBracket reduce production typeWithConstraint -> SET sizeConstraint OF type_x
--- On RightBrace reduce production typeWithConstraint -> SET sizeConstraint OF type_x
--- On OPTIONAL reduce production typeWithConstraint -> SET sizeConstraint OF type_x
--- On Middle reduce production typeWithConstraint -> SET sizeConstraint OF type_x
--- On Lower reduce production typeWithConstraint -> SET sizeConstraint OF type_x
--- On INTERSECTION reduce production typeWithConstraint -> SET sizeConstraint OF type_x
--- On EXCEPT reduce production typeWithConstraint -> SET sizeConstraint OF type_x
--- On END reduce production typeWithConstraint -> SET sizeConstraint OF type_x
--- On ENCODED reduce production typeWithConstraint -> SET sizeConstraint OF type_x
--- On DEFAULT reduce production typeWithConstraint -> SET sizeConstraint OF type_x
--- On Comma reduce production typeWithConstraint -> SET sizeConstraint OF type_x
--- On Colon reduce production typeWithConstraint -> SET sizeConstraint OF type_x
--- On Circumflex reduce production typeWithConstraint -> SET sizeConstraint OF type_x
--- On Bang reduce production typeWithConstraint -> SET sizeConstraint OF type_x
--- On Assignment reduce production typeWithConstraint -> SET sizeConstraint OF type_x
+-- On Upper UNIQUE UNION RightParen RightDoubleBracket RightBrace OPTIONAL Middle Lower INTERSECTION EXCEPT END ENCODED DEFAULT Comma Colon Circumflex Bang Assignment
+--   reduce production typeWithConstraint -> SET sizeConstraint OF type_x
 
 State 675:
 ## Known stack suffix:
@@ -13498,25 +13039,8 @@ typeWithConstraint -> SET constraint_x OF type_x . [ Upper UNIQUE UNION RightPar
 -- On LeftParen shift to state 81
 -- On constraint_x shift to state 206
 ## Reductions:
--- On Upper reduce production typeWithConstraint -> SET constraint_x OF type_x
--- On UNIQUE reduce production typeWithConstraint -> SET constraint_x OF type_x
--- On UNION reduce production typeWithConstraint -> SET constraint_x OF type_x
--- On RightParen reduce production typeWithConstraint -> SET constraint_x OF type_x
--- On RightDoubleBracket reduce production typeWithConstraint -> SET constraint_x OF type_x
--- On RightBrace reduce production typeWithConstraint -> SET constraint_x OF type_x
--- On OPTIONAL reduce production typeWithConstraint -> SET constraint_x OF type_x
--- On Middle reduce production typeWithConstraint -> SET constraint_x OF type_x
--- On Lower reduce production typeWithConstraint -> SET constraint_x OF type_x
--- On INTERSECTION reduce production typeWithConstraint -> SET constraint_x OF type_x
--- On EXCEPT reduce production typeWithConstraint -> SET constraint_x OF type_x
--- On END reduce production typeWithConstraint -> SET constraint_x OF type_x
--- On ENCODED reduce production typeWithConstraint -> SET constraint_x OF type_x
--- On DEFAULT reduce production typeWithConstraint -> SET constraint_x OF type_x
--- On Comma reduce production typeWithConstraint -> SET constraint_x OF type_x
--- On Colon reduce production typeWithConstraint -> SET constraint_x OF type_x
--- On Circumflex reduce production typeWithConstraint -> SET constraint_x OF type_x
--- On Bang reduce production typeWithConstraint -> SET constraint_x OF type_x
--- On Assignment reduce production typeWithConstraint -> SET constraint_x OF type_x
+-- On Upper UNIQUE UNION RightParen RightDoubleBracket RightBrace OPTIONAL Middle Lower INTERSECTION EXCEPT END ENCODED DEFAULT Comma Colon Circumflex Bang Assignment
+--   reduce production typeWithConstraint -> SET constraint_x OF type_x
 
 State 679:
 ## Known stack suffix:
@@ -13557,8 +13081,8 @@ openTypeFieldVal -> type_x . Colon value [ RightBrace Comma ]
 -- On Colon shift to state 317
 -- On constraint_x shift to state 206
 ## Reductions:
--- On RightBrace reduce production actualParameter -> type_x
--- On Comma reduce production actualParameter -> type_x
+-- On RightBrace Comma
+--   reduce production actualParameter -> type_x
 
 State 683:
 ## Known stack suffix:
@@ -13605,8 +13129,8 @@ objectClassFieldType -> definedObjectClass . Dot fieldName [ RightBrace LeftPare
 ## Transitions:
 -- On Dot shift to state 253
 ## Reductions:
--- On RightBrace reduce production actualParameter -> definedObjectClass
--- On Comma reduce production actualParameter -> definedObjectClass
+-- On RightBrace Comma
+--   reduce production actualParameter -> definedObjectClass
 
 State 688:
 ## Known stack suffix:
@@ -13617,7 +13141,8 @@ separated_nonempty_list(Comma,actualParameter) -> actualParameter . Comma separa
 ## Transitions:
 -- On Comma shift to state 689
 ## Reductions:
--- On RightBrace reduce production separated_nonempty_list(Comma,actualParameter) -> actualParameter
+-- On RightBrace
+--   reduce production separated_nonempty_list(Comma,actualParameter) -> actualParameter
 
 State 689:
 ## Known stack suffix:
@@ -13834,7 +13359,8 @@ objectIdentifierValue -> LeftBrace definedValue . objIdComponentsList RightBrace
 -- On externalValueReference shift to state 136
 -- On definedValue shift to state 381
 ## Reductions:
--- On RightBrace reduce production objIdComponents -> definedValue
+-- On RightBrace
+--   reduce production objIdComponents -> definedValue
 
 State 696:
 ## Known stack suffix:
@@ -14123,11 +13649,12 @@ simpleDefinedType -> Upper . [ LeftBrace ]
 ## Transitions:
 -- On Dot shift to state 114
 ## Reductions:
--- On RightBrace reduce production reference -> Upper
--- On LeftParen reduce production definedType -> Upper
--- On LeftBrace reduce production definedObjectSet -> Upper
--- On Comma reduce production reference -> Upper
--- On Colon reduce production reference -> Upper
+-- On LeftBrace
+--   reduce production definedObjectSet -> Upper
+-- On LeftParen
+--   reduce production definedType -> Upper
+-- On RightBrace Comma Colon
+--   reduce production reference -> Upper
 
 State 705:
 ## Known stack suffix:
@@ -14139,11 +13666,10 @@ selectionType -> Lower . LessThan type_x [ LeftParen Colon ]
 ## Transitions:
 -- On LessThan shift to state 128
 ## Reductions:
--- On RightBrace reduce production reference -> Lower
--- On LeftBrace reduce production definedObject -> Lower
--- On Dot reduce production definedObject -> Lower
--- On Comma reduce production reference -> Lower
--- On Colon reduce production reference -> Lower
+-- On LeftBrace Dot
+--   reduce production definedObject -> Lower
+-- On RightBrace Comma Colon
+--   reduce production reference -> Lower
 
 State 706:
 ## Known stack suffix:
@@ -14155,7 +13681,8 @@ governor -> type_x . [ Colon ]
 -- On LeftParen shift to state 81
 -- On constraint_x shift to state 206
 ## Reductions:
--- On Colon reduce production governor -> type_x
+-- On Colon
+--   reduce production governor -> type_x
 
 State 707:
 ## Known stack suffix:
@@ -14193,7 +13720,8 @@ separated_nonempty_list(Comma,parameter) -> parameter . Comma separated_nonempty
 ## Transitions:
 -- On Comma shift to state 711
 ## Reductions:
--- On RightBrace reduce production separated_nonempty_list(Comma,parameter) -> parameter
+-- On RightBrace
+--   reduce production separated_nonempty_list(Comma,parameter) -> parameter
 
 State 711:
 ## Known stack suffix:
@@ -14350,9 +13878,10 @@ dummyGovernor -> dummyReference . [ Colon ]
 parameter -> dummyReference . [ RightBrace Comma ]
 ## Transitions:
 ## Reductions:
--- On RightBrace reduce production parameter -> dummyReference
--- On Comma reduce production parameter -> dummyReference
--- On Colon reduce production dummyGovernor -> dummyReference
+-- On Colon
+--   reduce production dummyGovernor -> dummyReference
+-- On RightBrace Comma
+--   reduce production parameter -> dummyReference
 
 State 718:
 ## Known stack suffix:
@@ -14372,7 +13901,8 @@ objectClassFieldType -> definedObjectClass . Dot fieldName [ LeftParen Colon ]
 ## Transitions:
 -- On Dot shift to state 253
 ## Reductions:
--- On Colon reduce production governor -> definedObjectClass
+-- On Colon
+--   reduce production governor -> definedObjectClass
 
 State 720:
 ## Known stack suffix:
@@ -14602,8 +14132,8 @@ variableTypeValueSetFieldSpec -> UpperField . fieldName option(valueSetOptionali
 -- On booleanType shift to state 261
 -- On bitStringType shift to state 262
 ## Reductions:
--- On RightBrace reduce production option(typeOptionalitySpec) ->
--- On Comma reduce production option(typeOptionalitySpec) ->
+-- On RightBrace Comma
+--   reduce production option(typeOptionalitySpec) ->
 
 State 724:
 ## Known stack suffix:
@@ -14716,8 +14246,8 @@ typeOptionalitySpec -> DEFAULT type_x . [ RightBrace Comma ]
 -- On LeftParen shift to state 81
 -- On constraint_x shift to state 206
 ## Reductions:
--- On RightBrace reduce production typeOptionalitySpec -> DEFAULT type_x
--- On Comma reduce production typeOptionalitySpec -> DEFAULT type_x
+-- On RightBrace Comma
+--   reduce production typeOptionalitySpec -> DEFAULT type_x
 
 State 727:
 ## Known stack suffix:
@@ -14733,8 +14263,8 @@ fixedTypeValueSetFieldSpec -> UpperField type_x . option(valueSetOptionalitySpec
 -- On option(valueSetOptionalitySpec) shift to state 733
 -- On constraint_x shift to state 206
 ## Reductions:
--- On RightBrace reduce production option(valueSetOptionalitySpec) ->
--- On Comma reduce production option(valueSetOptionalitySpec) ->
+-- On RightBrace Comma
+--   reduce production option(valueSetOptionalitySpec) ->
 
 State 728:
 ## Known stack suffix:
@@ -14988,8 +14518,8 @@ variableTypeValueSetFieldSpec -> UpperField fieldName . option(valueSetOptionali
 -- On valueSetOptionalitySpec shift to state 732
 -- On option(valueSetOptionalitySpec) shift to state 737
 ## Reductions:
--- On RightBrace reduce production option(valueSetOptionalitySpec) ->
--- On Comma reduce production option(valueSetOptionalitySpec) ->
+-- On RightBrace Comma
+--   reduce production option(valueSetOptionalitySpec) ->
 
 State 737:
 ## Known stack suffix:
@@ -15013,8 +14543,8 @@ objectSetFieldSpec -> UpperField definedObjectClass . option(objectSetOptionalit
 -- On option(objectSetOptionalitySpec) shift to state 743
 -- On objectSetOptionalitySpec shift to state 744
 ## Reductions:
--- On RightBrace reduce production option(objectSetOptionalitySpec) ->
--- On Comma reduce production option(objectSetOptionalitySpec) ->
+-- On RightBrace Comma
+--   reduce production option(objectSetOptionalitySpec) ->
 
 State 739:
 ## Known stack suffix:
@@ -15351,10 +14881,8 @@ fixedTypeValueFieldSpec -> LowerField type_x . option(UNIQUE) option(valueOption
 -- On option(UNIQUE) shift to state 748
 -- On constraint_x shift to state 206
 ## Reductions:
--- On RightBrace reduce production option(UNIQUE) ->
--- On OPTIONAL reduce production option(UNIQUE) ->
--- On DEFAULT reduce production option(UNIQUE) ->
--- On Comma reduce production option(UNIQUE) ->
+-- On RightBrace OPTIONAL DEFAULT Comma
+--   reduce production option(UNIQUE) ->
 
 State 747:
 ## Known stack suffix:
@@ -15376,8 +14904,8 @@ fixedTypeValueFieldSpec -> LowerField type_x option(UNIQUE) . option(valueOption
 -- On valueOptionalitySpec shift to state 752
 -- On option(valueOptionalitySpec) shift to state 753
 ## Reductions:
--- On RightBrace reduce production option(valueOptionalitySpec) ->
--- On Comma reduce production option(valueOptionalitySpec) ->
+-- On RightBrace Comma
+--   reduce production option(valueOptionalitySpec) ->
 
 State 749:
 ## Known stack suffix:
@@ -15566,8 +15094,8 @@ variableTypeValueFieldSpec -> LowerField fieldName . option(valueOptionalitySpec
 -- On valueOptionalitySpec shift to state 752
 -- On option(valueOptionalitySpec) shift to state 755
 ## Reductions:
--- On RightBrace reduce production option(valueOptionalitySpec) ->
--- On Comma reduce production option(valueOptionalitySpec) ->
+-- On RightBrace Comma
+--   reduce production option(valueOptionalitySpec) ->
 
 State 755:
 ## Known stack suffix:
@@ -15591,8 +15119,8 @@ objectFieldSpec -> LowerField definedObjectClass . option(objectOptionalitySpec)
 -- On option(objectOptionalitySpec) shift to state 768
 -- On objectOptionalitySpec shift to state 769
 ## Reductions:
--- On RightBrace reduce production option(objectOptionalitySpec) ->
--- On Comma reduce production option(objectOptionalitySpec) ->
+-- On RightBrace Comma
+--   reduce production option(objectOptionalitySpec) ->
 
 State 757:
 ## Known stack suffix:
@@ -15636,7 +15164,8 @@ externalObjectSetReference -> Upper . Dot Upper [ LeftBrace Dot ]
 ## Transitions:
 -- On Dot shift to state 760
 ## Reductions:
--- On LeftBrace reduce production definedObjectSet -> Upper
+-- On LeftBrace
+--   reduce production definedObjectSet -> Upper
 
 State 760:
 ## Known stack suffix:
@@ -15680,7 +15209,8 @@ defaultSyntax -> LeftBrace . loption(separated_nonempty_list(Comma,fieldSetting)
 -- On loption(separated_nonempty_list(Comma,fieldSetting)) shift to state 575
 -- On fieldSetting shift to state 577
 ## Reductions:
--- On RightBrace reduce production loption(separated_nonempty_list(Comma,fieldSetting)) ->
+-- On RightBrace
+--   reduce production loption(separated_nonempty_list(Comma,fieldSetting)) ->
 
 State 764:
 ## Known stack suffix:
@@ -15786,9 +15316,8 @@ objectClassDefn -> CLASS LeftBrace separated_nonempty_list(Comma,fieldSpec) Righ
 -- On withSyntaxSpec shift to state 792
 -- On option(withSyntaxSpec) shift to state 793
 ## Reductions:
--- On Upper reduce production option(withSyntaxSpec) ->
--- On Lower reduce production option(withSyntaxSpec) ->
--- On END reduce production option(withSyntaxSpec) ->
+-- On Upper Lower END
+--   reduce production option(withSyntaxSpec) ->
 
 State 775:
 ## Known stack suffix:
@@ -15884,7 +15413,8 @@ nonempty_list(tokenOrGroupSpec) -> tokenOrGroupSpec . nonempty_list(tokenOrGroup
 -- On nonempty_list(tokenOrGroupSpec) shift to state 785
 -- On literal shift to state 786
 ## Reductions:
--- On RightBrace reduce production nonempty_list(tokenOrGroupSpec) -> tokenOrGroupSpec
+-- On RightBrace
+--   reduce production nonempty_list(tokenOrGroupSpec) -> tokenOrGroupSpec
 
 State 782:
 ## Known stack suffix:
@@ -16039,7 +15569,8 @@ separated_nonempty_list(Comma,fieldSpec) -> fieldSpec . Comma separated_nonempty
 ## Transitions:
 -- On Comma shift to state 799
 ## Reductions:
--- On RightBrace reduce production separated_nonempty_list(Comma,fieldSpec) -> fieldSpec
+-- On RightBrace
+--   reduce production separated_nonempty_list(Comma,fieldSpec) -> fieldSpec
 
 State 799:
 ## Known stack suffix:
@@ -16079,9 +15610,8 @@ typeAssignment -> Upper Assignment type_x . [ Upper Lower END ]
 -- On LeftParen shift to state 81
 -- On constraint_x shift to state 206
 ## Reductions:
--- On Upper reduce production typeAssignment -> Upper Assignment type_x
--- On Lower reduce production typeAssignment -> Upper Assignment type_x
--- On END reduce production typeAssignment -> Upper Assignment type_x
+-- On Upper Lower END
+--   reduce production typeAssignment -> Upper Assignment type_x
 
 State 802:
 ## Known stack suffix:
@@ -16121,7 +15651,8 @@ referencedObjects -> definedObjectSet . [ Dot ]
 -- On LeftBrace shift to state 65
 -- On actualParameterList shift to state 806
 ## Reductions:
--- On Dot reduce production referencedObjects -> definedObjectSet
+-- On Dot
+--   reduce production referencedObjects -> definedObjectSet
 
 State 806:
 ## Known stack suffix:
@@ -16131,10 +15662,10 @@ parameterizedObjectClass -> definedObjectSet actualParameterList . [ Upper Lower
 parameterizedObjectSet -> definedObjectSet actualParameterList . [ Dot ]
 ## Transitions:
 ## Reductions:
--- On Upper reduce production parameterizedObjectClass -> definedObjectSet actualParameterList
--- On Lower reduce production parameterizedObjectClass -> definedObjectSet actualParameterList
--- On END reduce production parameterizedObjectClass -> definedObjectSet actualParameterList
--- On Dot reduce production parameterizedObjectSet -> definedObjectSet actualParameterList
+-- On Upper Lower END
+--   reduce production parameterizedObjectClass -> definedObjectSet actualParameterList
+-- On Dot
+--   reduce production parameterizedObjectSet -> definedObjectSet actualParameterList
 
 State 807:
 ## Known stack suffix:
@@ -16145,9 +15676,8 @@ objectClassFieldType -> definedObjectClass . Dot fieldName [ Upper Lower LeftPar
 ## Transitions:
 -- On Dot shift to state 253
 ## Reductions:
--- On Upper reduce production objectClass -> definedObjectClass
--- On Lower reduce production objectClass -> definedObjectClass
--- On END reduce production objectClass -> definedObjectClass
+-- On Upper Lower END
+--   reduce production objectClass -> definedObjectClass
 
 State 808:
 ## Known stack suffix:
@@ -16383,9 +15913,8 @@ parameterizedTypeAssignment -> Upper parameterList Assignment type_x . [ Upper L
 -- On LeftParen shift to state 81
 -- On constraint_x shift to state 206
 ## Reductions:
--- On Upper reduce production parameterizedTypeAssignment -> Upper parameterList Assignment type_x
--- On Lower reduce production parameterizedTypeAssignment -> Upper parameterList Assignment type_x
--- On END reduce production parameterizedTypeAssignment -> Upper parameterList Assignment type_x
+-- On Upper Lower END
+--   reduce production parameterizedTypeAssignment -> Upper parameterList Assignment type_x
 
 State 814:
 ## Known stack suffix:
@@ -17226,7 +16755,8 @@ moduleBody -> exports imports assignmentList . [ END ]
 -- On objectAssignment shift to state 850
 -- On assignment shift to state 852
 ## Reductions:
--- On END reduce production moduleBody -> exports imports assignmentList
+-- On END
+--   reduce production moduleBody -> exports imports assignmentList
 
 State 852:
 ## Known stack suffix:

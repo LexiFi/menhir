@@ -34,21 +34,8 @@ term -> PREFIX_IDENT . OPENPAR term COMMA term_list CLOSEPAR [ SEMICOLON POSTFIX
 -- On OPENPAR shift to state 3
 -- On term shift to state 21
 ## Reductions:
--- On SEMICOLON reduce production term -> PREFIX_IDENT
--- On POSTFIX_IDENT reduce production term -> PREFIX_IDENT
--- On OR reduce production term -> PREFIX_IDENT
--- On NE reduce production term -> PREFIX_IDENT
--- On LT reduce production term -> PREFIX_IDENT
--- On LE reduce production term -> PREFIX_IDENT
--- On INFIX_IDENT reduce production term -> PREFIX_IDENT
--- On GT reduce production term -> PREFIX_IDENT
--- On GE reduce production term -> PREFIX_IDENT
--- On EQ reduce production term -> PREFIX_IDENT
--- On EOF reduce production term -> PREFIX_IDENT
--- On COMMA reduce production term -> PREFIX_IDENT
--- On CLOSEPAR reduce production term -> PREFIX_IDENT
--- On ARROW reduce production term -> PREFIX_IDENT
--- On AND reduce production term -> PREFIX_IDENT
+-- On SEMICOLON POSTFIX_IDENT OR NE LT LE INFIX_IDENT GT GE EQ EOF COMMA CLOSEPAR ARROW AND
+--   reduce production term -> PREFIX_IDENT
 
 State 3:
 ## Known stack suffix:
@@ -123,20 +110,8 @@ term -> term INFIX_IDENT term . [ SEMICOLON POSTFIX_IDENT OR NE LT LE INFIX_IDEN
 ## Transitions:
 -- On POSTFIX_IDENT shift to state 6
 ## Reductions:
--- On SEMICOLON reduce production term -> term INFIX_IDENT term
--- On OR reduce production term -> term INFIX_IDENT term
--- On NE reduce production term -> term INFIX_IDENT term
--- On LT reduce production term -> term INFIX_IDENT term
--- On LE reduce production term -> term INFIX_IDENT term
--- On INFIX_IDENT reduce production term -> term INFIX_IDENT term
--- On GT reduce production term -> term INFIX_IDENT term
--- On GE reduce production term -> term INFIX_IDENT term
--- On EQ reduce production term -> term INFIX_IDENT term
--- On EOF reduce production term -> term INFIX_IDENT term
--- On COMMA reduce production term -> term INFIX_IDENT term
--- On CLOSEPAR reduce production term -> term INFIX_IDENT term
--- On ARROW reduce production term -> term INFIX_IDENT term
--- On AND reduce production term -> term INFIX_IDENT term
+-- On SEMICOLON OR NE LT LE INFIX_IDENT GT GE EQ EOF COMMA CLOSEPAR ARROW AND
+--   reduce production term -> term INFIX_IDENT term
 
 State 9:
 ## Known stack suffix:
@@ -191,7 +166,8 @@ term_list -> term . COMMA term_list [ CLOSEPAR ]
 -- On INFIX_IDENT shift to state 7
 -- On COMMA shift to state 14
 ## Reductions:
--- On CLOSEPAR reduce production term_list -> term
+-- On CLOSEPAR
+--   reduce production term_list -> term
 
 State 14:
 ## Known stack suffix:
@@ -272,20 +248,8 @@ term -> PREFIX_IDENT OPENPAR term COMMA term_list CLOSEPAR . [ SEMICOLON POSTFIX
 term -> OPENPAR term COMMA term_list CLOSEPAR . POSTFIX_IDENT [ SEMICOLON POSTFIX_IDENT OR NE LT LE INFIX_IDENT GT GE EQ EOF COMMA CLOSEPAR ARROW AND ]
 ## Transitions:
 ## Reductions:
--- On SEMICOLON reduce production term -> PREFIX_IDENT OPENPAR term COMMA term_list CLOSEPAR
--- On OR reduce production term -> PREFIX_IDENT OPENPAR term COMMA term_list CLOSEPAR
--- On NE reduce production term -> PREFIX_IDENT OPENPAR term COMMA term_list CLOSEPAR
--- On LT reduce production term -> PREFIX_IDENT OPENPAR term COMMA term_list CLOSEPAR
--- On LE reduce production term -> PREFIX_IDENT OPENPAR term COMMA term_list CLOSEPAR
--- On INFIX_IDENT reduce production term -> PREFIX_IDENT OPENPAR term COMMA term_list CLOSEPAR
--- On GT reduce production term -> PREFIX_IDENT OPENPAR term COMMA term_list CLOSEPAR
--- On GE reduce production term -> PREFIX_IDENT OPENPAR term COMMA term_list CLOSEPAR
--- On EQ reduce production term -> PREFIX_IDENT OPENPAR term COMMA term_list CLOSEPAR
--- On EOF reduce production term -> PREFIX_IDENT OPENPAR term COMMA term_list CLOSEPAR
--- On COMMA reduce production term -> PREFIX_IDENT OPENPAR term COMMA term_list CLOSEPAR
--- On CLOSEPAR reduce production term -> PREFIX_IDENT OPENPAR term COMMA term_list CLOSEPAR
--- On ARROW reduce production term -> PREFIX_IDENT OPENPAR term COMMA term_list CLOSEPAR
--- On AND reduce production term -> PREFIX_IDENT OPENPAR term COMMA term_list CLOSEPAR
+-- On SEMICOLON OR NE LT LE INFIX_IDENT GT GE EQ EOF COMMA CLOSEPAR ARROW AND
+--   reduce production term -> PREFIX_IDENT OPENPAR term COMMA term_list CLOSEPAR
 
 State 21:
 ## Known stack suffix:
@@ -334,8 +298,8 @@ term -> term . INFIX_IDENT term [ SEMICOLON POSTFIX_IDENT INFIX_IDENT EOF ]
 -- On POSTFIX_IDENT shift to state 6
 -- On INFIX_IDENT shift to state 7
 ## Reductions:
--- On SEMICOLON reduce production equation -> term EQ term
--- On EOF reduce production equation -> term EQ term
+-- On SEMICOLON EOF
+--   reduce production equation -> term EQ term
 
 State 25:
 ## Known stack suffix:
@@ -378,7 +342,8 @@ equation_set_eof' -> . equation_set_eof [ # ]
 -- On equation_set shift to state 30
 -- On equation shift to state 32
 ## Reductions:
--- On EOF reduce production equation_set ->
+-- On EOF
+--   reduce production equation_set ->
 
 State 29:
 ## Known stack suffix:
@@ -416,7 +381,8 @@ equation_set -> equation . SEMICOLON equation_set [ EOF ]
 ## Transitions:
 -- On SEMICOLON shift to state 33
 ## Reductions:
--- On EOF reduce production equation_set -> equation
+-- On EOF
+--   reduce production equation_set -> equation
 
 State 33:
 ## Known stack suffix:
@@ -431,7 +397,8 @@ equation_set -> equation SEMICOLON . equation_set [ EOF ]
 -- On equation_set shift to state 34
 -- On equation shift to state 32
 ## Reductions:
--- On EOF reduce production equation_set ->
+-- On EOF
+--   reduce production equation_set ->
 
 State 34:
 ## Known stack suffix:
@@ -583,10 +550,8 @@ term -> term . INFIX_IDENT term [ POSTFIX_IDENT OR INFIX_IDENT EOF CLOSEPAR AND 
 -- On POSTFIX_IDENT shift to state 6
 -- On INFIX_IDENT shift to state 7
 ## Reductions:
--- On OR reduce production formula -> term comp term
--- On EOF reduce production formula -> term comp term
--- On CLOSEPAR reduce production formula -> term comp term
--- On AND reduce production formula -> term comp term
+-- On OR EOF CLOSEPAR AND
+--   reduce production formula -> term comp term
 
 State 47:
 ## Known stack suffix:
@@ -659,9 +624,8 @@ formula -> formula OR formula . [ OR EOF CLOSEPAR AND ]
 ## Transitions:
 -- On AND shift to state 52
 ## Reductions:
--- On OR reduce production formula -> formula OR formula
--- On EOF reduce production formula -> formula OR formula
--- On CLOSEPAR reduce production formula -> formula OR formula
+-- On OR EOF CLOSEPAR
+--   reduce production formula -> formula OR formula
 
 State 52:
 ## Known stack suffix:
@@ -742,7 +706,8 @@ precedence_eof' -> . precedence_eof [ # ]
 -- On ordered_list shift to state 65
 -- On ident shift to state 68
 ## Reductions:
--- On EOF reduce production precedence ->
+-- On EOF
+--   reduce production precedence ->
 
 State 59:
 ## Known stack suffix:
@@ -807,7 +772,8 @@ precedence -> ordered_list . COMMA precedence [ EOF ]
 ## Transitions:
 -- On COMMA shift to state 66
 ## Reductions:
--- On EOF reduce production precedence -> ordered_list
+-- On EOF
+--   reduce production precedence -> ordered_list
 
 State 66:
 ## Known stack suffix:
@@ -822,7 +788,8 @@ precedence -> ordered_list COMMA . precedence [ EOF ]
 -- On ordered_list shift to state 65
 -- On ident shift to state 68
 ## Reductions:
--- On EOF reduce production precedence ->
+-- On EOF
+--   reduce production precedence ->
 
 State 67:
 ## Known stack suffix:
@@ -846,8 +813,8 @@ ordered_list -> ident . LT ordered_list [ EOF COMMA ]
 -- On GT shift to state 71
 -- On EQ shift to state 73
 ## Reductions:
--- On EOF reduce production ordered_list -> ident
--- On COMMA reduce production ordered_list -> ident
+-- On EOF COMMA
+--   reduce production ordered_list -> ident
 
 State 69:
 ## Known stack suffix:
@@ -929,7 +896,8 @@ rule_set_eof' -> . rule_set_eof [ # ]
 -- On rule_set shift to state 80
 -- On rule shift to state 82
 ## Reductions:
--- On EOF reduce production rule_set ->
+-- On EOF
+--   reduce production rule_set ->
 
 State 76:
 ## Known stack suffix:
@@ -967,8 +935,8 @@ term -> term . INFIX_IDENT term [ SEMICOLON POSTFIX_IDENT INFIX_IDENT EOF ]
 -- On POSTFIX_IDENT shift to state 6
 -- On INFIX_IDENT shift to state 7
 ## Reductions:
--- On SEMICOLON reduce production rule -> term ARROW term
--- On EOF reduce production rule -> term ARROW term
+-- On SEMICOLON EOF
+--   reduce production rule -> term ARROW term
 
 State 79:
 ## Known stack suffix:
@@ -1006,7 +974,8 @@ rule_set -> rule . SEMICOLON rule_set [ EOF ]
 ## Transitions:
 -- On SEMICOLON shift to state 83
 ## Reductions:
--- On EOF reduce production rule_set -> rule
+-- On EOF
+--   reduce production rule_set -> rule
 
 State 83:
 ## Known stack suffix:
@@ -1021,7 +990,8 @@ rule_set -> rule SEMICOLON . rule_set [ EOF ]
 -- On rule_set shift to state 84
 -- On rule shift to state 82
 ## Reductions:
--- On EOF reduce production rule_set ->
+-- On EOF
+--   reduce production rule_set ->
 
 State 84:
 ## Known stack suffix:
@@ -1046,7 +1016,8 @@ status_eof' -> . status_eof [ # ]
 -- On status shift to state 94
 -- On ident shift to state 89
 ## Reductions:
--- On EOF reduce production status ->
+-- On EOF
+--   reduce production status ->
 
 State 86:
 ## Known stack suffix:
@@ -1057,7 +1028,8 @@ status -> symbol_status . SEMICOLON status [ EOF ]
 ## Transitions:
 -- On SEMICOLON shift to state 87
 ## Reductions:
--- On EOF reduce production status -> symbol_status
+-- On EOF
+--   reduce production status -> symbol_status
 
 State 87:
 ## Known stack suffix:
@@ -1072,7 +1044,8 @@ status -> symbol_status SEMICOLON . status [ EOF ]
 -- On status shift to state 88
 -- On ident shift to state 89
 ## Reductions:
--- On EOF reduce production status ->
+-- On EOF
+--   reduce production status ->
 
 State 88:
 ## Known stack suffix:

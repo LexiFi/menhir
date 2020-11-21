@@ -8,12 +8,8 @@ parse_io_module' -> . parse_io_module [ # ]
 -- On parse_io_module shift to state 10
 -- On imports shift to state 11
 ## Reductions:
--- On Lvariable reduce production imports ->
--- On Lprimitive reduce production imports ->
--- On Llambda reduce production imports ->
--- On Lident reduce production imports ->
--- On Lexport reduce production imports ->
--- On Ldeclare reduce production imports ->
+-- On Lvariable Lprimitive Llambda Lident Lexport Ldeclare
+--   reduce production imports ->
 
 State 1:
 ## Known stack suffix:
@@ -33,7 +29,8 @@ imports -> Limport Lident . importlist Lperiod imports [ Lvariable Lprimitive Ll
 -- On Lcolon shift to state 3
 -- On importlist shift to state 7
 ## Reductions:
--- On Lperiod reduce production importlist ->
+-- On Lperiod
+--   reduce production importlist ->
 
 State 3:
 ## Known stack suffix:
@@ -44,7 +41,8 @@ importlist -> Lcolon . idlist [ Lperiod ]
 -- On Lident shift to state 4
 -- On idlist shift to state 6
 ## Reductions:
--- On Lperiod reduce production idlist ->
+-- On Lperiod
+--   reduce production idlist ->
 
 State 4:
 ## Known stack suffix:
@@ -55,11 +53,8 @@ idlist -> Lident . idlist [ Lstring Lsemi Lperiod Llpar Lint ]
 -- On Lident shift to state 4
 -- On idlist shift to state 5
 ## Reductions:
--- On Lstring reduce production idlist ->
--- On Lsemi reduce production idlist ->
--- On Lperiod reduce production idlist ->
--- On Llpar reduce production idlist ->
--- On Lint reduce production idlist ->
+-- On Lstring Lsemi Lperiod Llpar Lint
+--   reduce production idlist ->
 
 State 5:
 ## Known stack suffix:
@@ -97,12 +92,8 @@ imports -> Limport Lident importlist Lperiod . imports [ Lvariable Lprimitive Ll
 -- On Limport shift to state 1
 -- On imports shift to state 9
 ## Reductions:
--- On Lvariable reduce production imports ->
--- On Lprimitive reduce production imports ->
--- On Llambda reduce production imports ->
--- On Lident reduce production imports ->
--- On Lexport reduce production imports ->
--- On Ldeclare reduce production imports ->
+-- On Lvariable Lprimitive Llambda Lident Lexport Ldeclare
+--   reduce production imports ->
 
 State 9:
 ## Known stack suffix:
@@ -131,11 +122,8 @@ parse_io_module -> imports . export decll expr Lend [ # ]
 -- On Lexport shift to state 12
 -- On export shift to state 15
 ## Reductions:
--- On Lvariable reduce production export ->
--- On Lprimitive reduce production export ->
--- On Llambda reduce production export ->
--- On Lident reduce production export ->
--- On Ldeclare reduce production export ->
+-- On Lvariable Lprimitive Llambda Lident Ldeclare
+--   reduce production export ->
 
 State 12:
 ## Known stack suffix:
@@ -146,7 +134,8 @@ export -> Lexport . idlist Lperiod [ Lvariable Lprimitive Llambda Lident Ldeclar
 -- On Lident shift to state 4
 -- On idlist shift to state 13
 ## Reductions:
--- On Lperiod reduce production idlist ->
+-- On Lperiod
+--   reduce production idlist ->
 
 State 13:
 ## Known stack suffix:
@@ -177,8 +166,8 @@ parse_io_module -> imports export . decll expr Lend [ # ]
 -- On Ldeclare shift to state 60
 -- On decll shift to state 68
 ## Reductions:
--- On Llambda reduce production decll ->
--- On Lident reduce production decll ->
+-- On Llambda Lident
+--   reduce production decll ->
 
 State 16:
 ## Known stack suffix:
@@ -245,10 +234,8 @@ stmt -> Llambda . idlist stmttail [ Lrpar Lperiod Lend ]
 -- On Lident shift to state 4
 -- On idlist shift to state 22
 ## Reductions:
--- On Lstring reduce production idlist ->
--- On Lsemi reduce production idlist ->
--- On Llpar reduce production idlist ->
--- On Lint reduce production idlist ->
+-- On Lstring Lsemi Llpar Lint
+--   reduce production idlist ->
 
 State 22:
 ## Known stack suffix:
@@ -312,9 +299,8 @@ expr -> Lident . Lgetvar Lident stmttail [ Lrpar Lperiod Lend ]
 -- On paramlist shift to state 48
 -- On atom shift to state 36
 ## Reductions:
--- On Lrpar reduce production expr -> Lident
--- On Lperiod reduce production expr -> Lident
--- On Lend reduce production expr -> Lident
+-- On Lrpar Lperiod Lend
+--   reduce production expr -> Lident
 
 State 26:
 ## Known stack suffix:
@@ -491,9 +477,8 @@ paramlist -> patom . paramlisttail [ Lrpar Lperiod Lend ]
 -- On paramlisttail shift to state 47
 -- On atom shift to state 36
 ## Reductions:
--- On Lrpar reduce production paramlisttail ->
--- On Lperiod reduce production paramlisttail ->
--- On Lend reduce production paramlisttail ->
+-- On Lrpar Lperiod Lend
+--   reduce production paramlisttail ->
 
 State 42:
 ## Known stack suffix:
@@ -547,9 +532,8 @@ paramlisttail -> patom . paramlisttail [ Lrpar Lperiod Lend ]
 -- On paramlisttail shift to state 46
 -- On atom shift to state 36
 ## Reductions:
--- On Lrpar reduce production paramlisttail ->
--- On Lperiod reduce production paramlisttail ->
--- On Lend reduce production paramlisttail ->
+-- On Lrpar Lperiod Lend
+--   reduce production paramlisttail ->
 
 State 46:
 ## Known stack suffix:
@@ -634,8 +618,8 @@ decll -> Lvariable Lident Lcolon eatom Lperiod . decll [ Llambda Lident ]
 -- On Ldeclare shift to state 60
 -- On decll shift to state 67
 ## Reductions:
--- On Llambda reduce production decll ->
--- On Lident reduce production decll ->
+-- On Llambda Lident
+--   reduce production decll ->
 
 State 55:
 ## Known stack suffix:
@@ -684,8 +668,8 @@ decll -> Lprimitive Lident Lcolon Lident Lperiod . decll [ Llambda Lident ]
 -- On Ldeclare shift to state 60
 -- On decll shift to state 66
 ## Reductions:
--- On Llambda reduce production decll ->
--- On Lident reduce production decll ->
+-- On Llambda Lident
+--   reduce production decll ->
 
 State 60:
 ## Known stack suffix:
@@ -742,8 +726,8 @@ decll -> Ldeclare Lident Lcolon eatom Lperiod . decll [ Llambda Lident ]
 -- On Ldeclare shift to state 60
 -- On decll shift to state 65
 ## Reductions:
--- On Llambda reduce production decll ->
--- On Lident reduce production decll ->
+-- On Llambda Lident
+--   reduce production decll ->
 
 State 65:
 ## Known stack suffix:

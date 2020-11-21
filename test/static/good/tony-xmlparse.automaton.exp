@@ -11,11 +11,8 @@ document' -> . document [ # ]
 -- On misc shift to state 71
 -- On document shift to state 74
 ## Reductions:
--- On PIOPEN reduce production misc ->
--- On OPEN reduce production misc ->
--- On DTDOPEN reduce production misc ->
--- On COMMENT reduce production misc ->
--- On CHUNK reduce production misc ->
+-- On PIOPEN OPEN DTDOPEN COMMENT CHUNK
+--   reduce production misc ->
 
 State 1:
 ## Known stack suffix:
@@ -24,7 +21,8 @@ State 1:
 xmlopen -> XMLOPEN . [ VERSION ]
 ## Transitions:
 ## Reductions:
--- On VERSION reduce production xmlopen -> XMLOPEN
+-- On VERSION
+--   reduce production xmlopen -> XMLOPEN
 
 State 2:
 ## Known stack suffix:
@@ -62,9 +60,8 @@ State 5:
 version -> VERSION EQ STRING . [ XMLCLOSE STANDALONE ENCODING ]
 ## Transitions:
 ## Reductions:
--- On XMLCLOSE reduce production version -> VERSION EQ STRING
--- On STANDALONE reduce production version -> VERSION EQ STRING
--- On ENCODING reduce production version -> VERSION EQ STRING
+-- On XMLCLOSE STANDALONE ENCODING
+--   reduce production version -> VERSION EQ STRING
 
 State 6:
 ## Known stack suffix:
@@ -83,11 +80,8 @@ State 7:
 xmlclose -> XMLCLOSE . [ PIOPEN OPEN DTDOPEN COMMENT CHUNK ]
 ## Transitions:
 ## Reductions:
--- On PIOPEN reduce production xmlclose -> XMLCLOSE
--- On OPEN reduce production xmlclose -> XMLCLOSE
--- On DTDOPEN reduce production xmlclose -> XMLCLOSE
--- On COMMENT reduce production xmlclose -> XMLCLOSE
--- On CHUNK reduce production xmlclose -> XMLCLOSE
+-- On PIOPEN OPEN DTDOPEN COMMENT CHUNK
+--   reduce production xmlclose -> XMLCLOSE
 
 State 8:
 ## Known stack suffix:
@@ -96,11 +90,8 @@ State 8:
 xmldecl -> xmlopen xmlinfo xmlclose . [ PIOPEN OPEN DTDOPEN COMMENT CHUNK ]
 ## Transitions:
 ## Reductions:
--- On PIOPEN reduce production xmldecl -> xmlopen xmlinfo xmlclose
--- On OPEN reduce production xmldecl -> xmlopen xmlinfo xmlclose
--- On DTDOPEN reduce production xmldecl -> xmlopen xmlinfo xmlclose
--- On COMMENT reduce production xmldecl -> xmlopen xmlinfo xmlclose
--- On CHUNK reduce production xmldecl -> xmlopen xmlinfo xmlclose
+-- On PIOPEN OPEN DTDOPEN COMMENT CHUNK
+--   reduce production xmldecl -> xmlopen xmlinfo xmlclose
 
 State 9:
 ## Known stack suffix:
@@ -116,7 +107,8 @@ xmlinfo -> version . sddecl [ XMLCLOSE ]
 -- On sddecl shift to state 16
 -- On encoding shift to state 17
 ## Reductions:
--- On XMLCLOSE reduce production xmlinfo -> version
+-- On XMLCLOSE
+--   reduce production xmlinfo -> version
 
 State 10:
 ## Known stack suffix:
@@ -143,7 +135,8 @@ State 12:
 sddecl -> STANDALONE EQ STRING . [ XMLCLOSE ]
 ## Transitions:
 ## Reductions:
--- On XMLCLOSE reduce production sddecl -> STANDALONE EQ STRING
+-- On XMLCLOSE
+--   reduce production sddecl -> STANDALONE EQ STRING
 
 State 13:
 ## Known stack suffix:
@@ -170,8 +163,8 @@ State 15:
 encoding -> ENCODING EQ STRING . [ XMLCLOSE STANDALONE ]
 ## Transitions:
 ## Reductions:
--- On XMLCLOSE reduce production encoding -> ENCODING EQ STRING
--- On STANDALONE reduce production encoding -> ENCODING EQ STRING
+-- On XMLCLOSE STANDALONE
+--   reduce production encoding -> ENCODING EQ STRING
 
 State 16:
 ## Known stack suffix:
@@ -180,7 +173,8 @@ State 16:
 xmlinfo -> version sddecl . [ XMLCLOSE ]
 ## Transitions:
 ## Reductions:
--- On XMLCLOSE reduce production xmlinfo -> version sddecl
+-- On XMLCLOSE
+--   reduce production xmlinfo -> version sddecl
 
 State 17:
 ## Known stack suffix:
@@ -192,7 +186,8 @@ xmlinfo -> version encoding . [ XMLCLOSE ]
 -- On STANDALONE shift to state 10
 -- On sddecl shift to state 18
 ## Reductions:
--- On XMLCLOSE reduce production xmlinfo -> version encoding
+-- On XMLCLOSE
+--   reduce production xmlinfo -> version encoding
 
 State 18:
 ## Known stack suffix:
@@ -201,7 +196,8 @@ State 18:
 xmlinfo -> version encoding sddecl . [ XMLCLOSE ]
 ## Transitions:
 ## Reductions:
--- On XMLCLOSE reduce production xmlinfo -> version encoding sddecl
+-- On XMLCLOSE
+--   reduce production xmlinfo -> version encoding sddecl
 
 State 19:
 ## Known stack suffix:
@@ -212,11 +208,8 @@ prolog -> xmldecl . misc doctype misc [ OPEN ]
 ## Transitions:
 -- On misc shift to state 20
 ## Reductions:
--- On PIOPEN reduce production misc ->
--- On OPEN reduce production misc ->
--- On DTDOPEN reduce production misc ->
--- On COMMENT reduce production misc ->
--- On CHUNK reduce production misc ->
+-- On PIOPEN OPEN DTDOPEN COMMENT CHUNK
+--   reduce production misc ->
 
 State 20:
 ## Known stack suffix:
@@ -237,7 +230,8 @@ prolog -> xmldecl misc . doctype misc [ OPEN ]
 -- On dtdopen shift to state 30
 -- On doctype shift to state 42
 ## Reductions:
--- On OPEN reduce production prolog -> xmldecl misc
+-- On OPEN
+--   reduce production prolog -> xmldecl misc
 
 State 21:
 ## Known stack suffix:
@@ -246,8 +240,8 @@ State 21:
 piopen -> PIOPEN . [ WORD PICLOSE ]
 ## Transitions:
 ## Reductions:
--- On WORD reduce production piopen -> PIOPEN
--- On PICLOSE reduce production piopen -> PIOPEN
+-- On WORD PICLOSE
+--   reduce production piopen -> PIOPEN
 
 State 22:
 ## Known stack suffix:
@@ -256,7 +250,8 @@ State 22:
 dtdopen -> DTDOPEN . [ NAME ]
 ## Transitions:
 ## Reductions:
--- On NAME reduce production dtdopen -> DTDOPEN
+-- On NAME
+--   reduce production dtdopen -> DTDOPEN
 
 State 23:
 ## Known stack suffix:
@@ -265,12 +260,8 @@ State 23:
 misc -> misc COMMENT . [ PIOPEN OPEN EOF DTDOPEN COMMENT CHUNK ]
 ## Transitions:
 ## Reductions:
--- On PIOPEN reduce production misc -> misc COMMENT
--- On OPEN reduce production misc -> misc COMMENT
--- On EOF reduce production misc -> misc COMMENT
--- On DTDOPEN reduce production misc -> misc COMMENT
--- On COMMENT reduce production misc -> misc COMMENT
--- On CHUNK reduce production misc -> misc COMMENT
+-- On PIOPEN OPEN EOF DTDOPEN COMMENT CHUNK
+--   reduce production misc -> misc COMMENT
 
 State 24:
 ## Known stack suffix:
@@ -279,12 +270,8 @@ State 24:
 misc -> misc CHUNK . [ PIOPEN OPEN EOF DTDOPEN COMMENT CHUNK ]
 ## Transitions:
 ## Reductions:
--- On PIOPEN reduce production misc -> misc CHUNK
--- On OPEN reduce production misc -> misc CHUNK
--- On EOF reduce production misc -> misc CHUNK
--- On DTDOPEN reduce production misc -> misc CHUNK
--- On COMMENT reduce production misc -> misc CHUNK
--- On CHUNK reduce production misc -> misc CHUNK
+-- On PIOPEN OPEN EOF DTDOPEN COMMENT CHUNK
+--   reduce production misc -> misc CHUNK
 
 State 25:
 ## Known stack suffix:
@@ -294,8 +281,8 @@ pi -> piopen . picontent PICLOSE [ PIOPEN OPENSLASH OPEN EOF DTDOPEN COMMENT CHU
 ## Transitions:
 -- On picontent shift to state 26
 ## Reductions:
--- On WORD reduce production picontent ->
--- On PICLOSE reduce production picontent ->
+-- On WORD PICLOSE
+--   reduce production picontent ->
 
 State 26:
 ## Known stack suffix:
@@ -315,8 +302,8 @@ State 27:
 picontent -> picontent WORD . [ WORD PICLOSE ]
 ## Transitions:
 ## Reductions:
--- On WORD reduce production picontent -> picontent WORD
--- On PICLOSE reduce production picontent -> picontent WORD
+-- On WORD PICLOSE
+--   reduce production picontent -> picontent WORD
 
 State 28:
 ## Known stack suffix:
@@ -325,13 +312,8 @@ State 28:
 pi -> piopen picontent PICLOSE . [ PIOPEN OPENSLASH OPEN EOF DTDOPEN COMMENT CHUNK ]
 ## Transitions:
 ## Reductions:
--- On PIOPEN reduce production pi -> piopen picontent PICLOSE
--- On OPENSLASH reduce production pi -> piopen picontent PICLOSE
--- On OPEN reduce production pi -> piopen picontent PICLOSE
--- On EOF reduce production pi -> piopen picontent PICLOSE
--- On DTDOPEN reduce production pi -> piopen picontent PICLOSE
--- On COMMENT reduce production pi -> piopen picontent PICLOSE
--- On CHUNK reduce production pi -> piopen picontent PICLOSE
+-- On PIOPEN OPENSLASH OPEN EOF DTDOPEN COMMENT CHUNK
+--   reduce production pi -> piopen picontent PICLOSE
 
 State 29:
 ## Known stack suffix:
@@ -340,12 +322,8 @@ State 29:
 misc -> misc pi . [ PIOPEN OPEN EOF DTDOPEN COMMENT CHUNK ]
 ## Transitions:
 ## Reductions:
--- On PIOPEN reduce production misc -> misc pi
--- On OPEN reduce production misc -> misc pi
--- On EOF reduce production misc -> misc pi
--- On DTDOPEN reduce production misc -> misc pi
--- On COMMENT reduce production misc -> misc pi
--- On CHUNK reduce production misc -> misc pi
+-- On PIOPEN OPEN EOF DTDOPEN COMMENT CHUNK
+--   reduce production misc -> misc pi
 
 State 30:
 ## Known stack suffix:
@@ -366,8 +344,8 @@ doctype -> dtdopen NAME . ext markup dtdclose [ PIOPEN OPEN COMMENT CHUNK ]
 -- On PUBLIC shift to state 34
 -- On ext shift to state 37
 ## Reductions:
--- On error reduce production ext ->
--- On DTDCLOSE reduce production ext ->
+-- On error DTDCLOSE
+--   reduce production ext ->
 
 State 32:
 ## Known stack suffix:
@@ -385,8 +363,8 @@ State 33:
 ext -> SYSTEM STRING . [ error DTDCLOSE ]
 ## Transitions:
 ## Reductions:
--- On error reduce production ext -> SYSTEM STRING
--- On DTDCLOSE reduce production ext -> SYSTEM STRING
+-- On error DTDCLOSE
+--   reduce production ext -> SYSTEM STRING
 
 State 34:
 ## Known stack suffix:
@@ -413,8 +391,8 @@ State 36:
 ext -> PUBLIC STRING STRING . [ error DTDCLOSE ]
 ## Transitions:
 ## Reductions:
--- On error reduce production ext -> PUBLIC STRING STRING
--- On DTDCLOSE reduce production ext -> PUBLIC STRING STRING
+-- On error DTDCLOSE
+--   reduce production ext -> PUBLIC STRING STRING
 
 State 37:
 ## Known stack suffix:
@@ -425,7 +403,8 @@ doctype -> dtdopen NAME ext . markup dtdclose [ PIOPEN OPEN COMMENT CHUNK ]
 -- On error shift to state 38
 -- On markup shift to state 39
 ## Reductions:
--- On DTDCLOSE reduce production markup ->
+-- On DTDCLOSE
+--   reduce production markup ->
 
 State 38:
 ## Known stack suffix:
@@ -434,7 +413,8 @@ State 38:
 markup -> error . [ DTDCLOSE ]
 ## Transitions:
 ## Reductions:
--- On DTDCLOSE reduce production markup -> error
+-- On DTDCLOSE
+--   reduce production markup -> error
 
 State 39:
 ## Known stack suffix:
@@ -453,10 +433,8 @@ State 40:
 dtdclose -> DTDCLOSE . [ PIOPEN OPEN COMMENT CHUNK ]
 ## Transitions:
 ## Reductions:
--- On PIOPEN reduce production dtdclose -> DTDCLOSE
--- On OPEN reduce production dtdclose -> DTDCLOSE
--- On COMMENT reduce production dtdclose -> DTDCLOSE
--- On CHUNK reduce production dtdclose -> DTDCLOSE
+-- On PIOPEN OPEN COMMENT CHUNK
+--   reduce production dtdclose -> DTDCLOSE
 
 State 41:
 ## Known stack suffix:
@@ -465,10 +443,8 @@ State 41:
 doctype -> dtdopen NAME ext markup dtdclose . [ PIOPEN OPEN COMMENT CHUNK ]
 ## Transitions:
 ## Reductions:
--- On PIOPEN reduce production doctype -> dtdopen NAME ext markup dtdclose
--- On OPEN reduce production doctype -> dtdopen NAME ext markup dtdclose
--- On COMMENT reduce production doctype -> dtdopen NAME ext markup dtdclose
--- On CHUNK reduce production doctype -> dtdopen NAME ext markup dtdclose
+-- On PIOPEN OPEN COMMENT CHUNK
+--   reduce production doctype -> dtdopen NAME ext markup dtdclose
 
 State 42:
 ## Known stack suffix:
@@ -478,10 +454,8 @@ prolog -> xmldecl misc doctype . misc [ OPEN ]
 ## Transitions:
 -- On misc shift to state 43
 ## Reductions:
--- On PIOPEN reduce production misc ->
--- On OPEN reduce production misc ->
--- On COMMENT reduce production misc ->
--- On CHUNK reduce production misc ->
+-- On PIOPEN OPEN COMMENT CHUNK
+--   reduce production misc ->
 
 State 43:
 ## Known stack suffix:
@@ -498,7 +472,8 @@ prolog -> xmldecl misc doctype misc . [ OPEN ]
 -- On piopen shift to state 25
 -- On pi shift to state 29
 ## Reductions:
--- On OPEN reduce production prolog -> xmldecl misc doctype misc
+-- On OPEN
+--   reduce production prolog -> xmldecl misc doctype misc
 
 State 44:
 ## Known stack suffix:
@@ -521,9 +496,8 @@ State 45:
 opn -> OPEN . [ SLASHCLOSE NAME CLOSE ]
 ## Transitions:
 ## Reductions:
--- On SLASHCLOSE reduce production opn -> OPEN
--- On NAME reduce production opn -> OPEN
--- On CLOSE reduce production opn -> OPEN
+-- On SLASHCLOSE NAME CLOSE
+--   reduce production opn -> OPEN
 
 State 46:
 ## Known stack suffix:
@@ -533,10 +507,8 @@ document -> prolog topelement . misc EOF [ # ]
 ## Transitions:
 -- On misc shift to state 47
 ## Reductions:
--- On PIOPEN reduce production misc ->
--- On EOF reduce production misc ->
--- On COMMENT reduce production misc ->
--- On CHUNK reduce production misc ->
+-- On PIOPEN EOF COMMENT CHUNK
+--   reduce production misc ->
 
 State 47:
 ## Known stack suffix:
@@ -562,7 +534,8 @@ State 48:
 document -> prolog topelement misc EOF . [ # ]
 ## Transitions:
 ## Reductions:
--- On # reduce production document -> prolog topelement misc EOF
+-- On #
+--   reduce production document -> prolog topelement misc EOF
 
 State 49:
 ## Known stack suffix:
@@ -572,11 +545,8 @@ element -> sTag . content eTag [ PIOPEN OPENSLASH OPEN EOF COMMENT CHUNK ]
 ## Transitions:
 -- On content shift to state 50
 ## Reductions:
--- On PIOPEN reduce production content ->
--- On OPENSLASH reduce production content ->
--- On OPEN reduce production content ->
--- On COMMENT reduce production content ->
--- On CHUNK reduce production content ->
+-- On PIOPEN OPENSLASH OPEN COMMENT CHUNK
+--   reduce production content ->
 
 State 50:
 ## Known stack suffix:
@@ -610,7 +580,8 @@ State 51:
 opnslash -> OPENSLASH . [ CLOSE ]
 ## Transitions:
 ## Reductions:
--- On CLOSE reduce production opnslash -> OPENSLASH
+-- On CLOSE
+--   reduce production opnslash -> OPENSLASH
 
 State 52:
 ## Known stack suffix:
@@ -619,11 +590,8 @@ State 52:
 content -> content COMMENT . [ PIOPEN OPENSLASH OPEN COMMENT CHUNK ]
 ## Transitions:
 ## Reductions:
--- On PIOPEN reduce production content -> content COMMENT
--- On OPENSLASH reduce production content -> content COMMENT
--- On OPEN reduce production content -> content COMMENT
--- On COMMENT reduce production content -> content COMMENT
--- On CHUNK reduce production content -> content COMMENT
+-- On PIOPEN OPENSLASH OPEN COMMENT CHUNK
+--   reduce production content -> content COMMENT
 
 State 53:
 ## Known stack suffix:
@@ -632,11 +600,8 @@ State 53:
 content -> content CHUNK . [ PIOPEN OPENSLASH OPEN COMMENT CHUNK ]
 ## Transitions:
 ## Reductions:
--- On PIOPEN reduce production content -> content CHUNK
--- On OPENSLASH reduce production content -> content CHUNK
--- On OPEN reduce production content -> content CHUNK
--- On COMMENT reduce production content -> content CHUNK
--- On CHUNK reduce production content -> content CHUNK
+-- On PIOPEN OPENSLASH OPEN COMMENT CHUNK
+--   reduce production content -> content CHUNK
 
 State 54:
 ## Known stack suffix:
@@ -645,11 +610,8 @@ State 54:
 content -> content pi . [ PIOPEN OPENSLASH OPEN COMMENT CHUNK ]
 ## Transitions:
 ## Reductions:
--- On PIOPEN reduce production content -> content pi
--- On OPENSLASH reduce production content -> content pi
--- On OPEN reduce production content -> content pi
--- On COMMENT reduce production content -> content pi
--- On CHUNK reduce production content -> content pi
+-- On PIOPEN OPENSLASH OPEN COMMENT CHUNK
+--   reduce production content -> content pi
 
 State 55:
 ## Known stack suffix:
@@ -668,12 +630,8 @@ State 56:
 cls -> CLOSE . [ PIOPEN OPENSLASH OPEN EOF COMMENT CHUNK ]
 ## Transitions:
 ## Reductions:
--- On PIOPEN reduce production cls -> CLOSE
--- On OPENSLASH reduce production cls -> CLOSE
--- On OPEN reduce production cls -> CLOSE
--- On EOF reduce production cls -> CLOSE
--- On COMMENT reduce production cls -> CLOSE
--- On CHUNK reduce production cls -> CLOSE
+-- On PIOPEN OPENSLASH OPEN EOF COMMENT CHUNK
+--   reduce production cls -> CLOSE
 
 State 57:
 ## Known stack suffix:
@@ -682,12 +640,8 @@ State 57:
 eTag -> opnslash cls . [ PIOPEN OPENSLASH OPEN EOF COMMENT CHUNK ]
 ## Transitions:
 ## Reductions:
--- On PIOPEN reduce production eTag -> opnslash cls
--- On OPENSLASH reduce production eTag -> opnslash cls
--- On OPEN reduce production eTag -> opnslash cls
--- On EOF reduce production eTag -> opnslash cls
--- On COMMENT reduce production eTag -> opnslash cls
--- On CHUNK reduce production eTag -> opnslash cls
+-- On PIOPEN OPENSLASH OPEN EOF COMMENT CHUNK
+--   reduce production eTag -> opnslash cls
 
 State 58:
 ## Known stack suffix:
@@ -698,9 +652,8 @@ sTag -> opn . attributes cls [ PIOPEN OPENSLASH OPEN COMMENT CHUNK ]
 ## Transitions:
 -- On attributes shift to state 59
 ## Reductions:
--- On SLASHCLOSE reduce production attributes ->
--- On NAME reduce production attributes ->
--- On CLOSE reduce production attributes ->
+-- On SLASHCLOSE NAME CLOSE
+--   reduce production attributes ->
 
 State 59:
 ## Known stack suffix:
@@ -725,12 +678,8 @@ State 60:
 slashcls -> SLASHCLOSE . [ PIOPEN OPENSLASH OPEN EOF COMMENT CHUNK ]
 ## Transitions:
 ## Reductions:
--- On PIOPEN reduce production slashcls -> SLASHCLOSE
--- On OPENSLASH reduce production slashcls -> SLASHCLOSE
--- On OPEN reduce production slashcls -> SLASHCLOSE
--- On EOF reduce production slashcls -> SLASHCLOSE
--- On COMMENT reduce production slashcls -> SLASHCLOSE
--- On CHUNK reduce production slashcls -> SLASHCLOSE
+-- On PIOPEN OPENSLASH OPEN EOF COMMENT CHUNK
+--   reduce production slashcls -> SLASHCLOSE
 
 State 61:
 ## Known stack suffix:
@@ -757,9 +706,8 @@ State 63:
 attribute -> NAME EQ STRING . [ SLASHCLOSE NAME CLOSE ]
 ## Transitions:
 ## Reductions:
--- On SLASHCLOSE reduce production attribute -> NAME EQ STRING
--- On NAME reduce production attribute -> NAME EQ STRING
--- On CLOSE reduce production attribute -> NAME EQ STRING
+-- On SLASHCLOSE NAME CLOSE
+--   reduce production attribute -> NAME EQ STRING
 
 State 64:
 ## Known stack suffix:
@@ -768,12 +716,8 @@ State 64:
 emptyElemTag -> opn attributes slashcls . [ PIOPEN OPENSLASH OPEN EOF COMMENT CHUNK ]
 ## Transitions:
 ## Reductions:
--- On PIOPEN reduce production emptyElemTag -> opn attributes slashcls
--- On OPENSLASH reduce production emptyElemTag -> opn attributes slashcls
--- On OPEN reduce production emptyElemTag -> opn attributes slashcls
--- On EOF reduce production emptyElemTag -> opn attributes slashcls
--- On COMMENT reduce production emptyElemTag -> opn attributes slashcls
--- On CHUNK reduce production emptyElemTag -> opn attributes slashcls
+-- On PIOPEN OPENSLASH OPEN EOF COMMENT CHUNK
+--   reduce production emptyElemTag -> opn attributes slashcls
 
 State 65:
 ## Known stack suffix:
@@ -782,11 +726,8 @@ State 65:
 sTag -> opn attributes cls . [ PIOPEN OPENSLASH OPEN COMMENT CHUNK ]
 ## Transitions:
 ## Reductions:
--- On PIOPEN reduce production sTag -> opn attributes cls
--- On OPENSLASH reduce production sTag -> opn attributes cls
--- On OPEN reduce production sTag -> opn attributes cls
--- On COMMENT reduce production sTag -> opn attributes cls
--- On CHUNK reduce production sTag -> opn attributes cls
+-- On PIOPEN OPENSLASH OPEN COMMENT CHUNK
+--   reduce production sTag -> opn attributes cls
 
 State 66:
 ## Known stack suffix:
@@ -795,9 +736,8 @@ State 66:
 attributes -> attributes attribute . [ SLASHCLOSE NAME CLOSE ]
 ## Transitions:
 ## Reductions:
--- On SLASHCLOSE reduce production attributes -> attributes attribute
--- On NAME reduce production attributes -> attributes attribute
--- On CLOSE reduce production attributes -> attributes attribute
+-- On SLASHCLOSE NAME CLOSE
+--   reduce production attributes -> attributes attribute
 
 State 67:
 ## Known stack suffix:
@@ -806,12 +746,8 @@ State 67:
 element -> emptyElemTag . [ PIOPEN OPENSLASH OPEN EOF COMMENT CHUNK ]
 ## Transitions:
 ## Reductions:
--- On PIOPEN reduce production element -> emptyElemTag
--- On OPENSLASH reduce production element -> emptyElemTag
--- On OPEN reduce production element -> emptyElemTag
--- On EOF reduce production element -> emptyElemTag
--- On COMMENT reduce production element -> emptyElemTag
--- On CHUNK reduce production element -> emptyElemTag
+-- On PIOPEN OPENSLASH OPEN EOF COMMENT CHUNK
+--   reduce production element -> emptyElemTag
 
 State 68:
 ## Known stack suffix:
@@ -820,11 +756,8 @@ State 68:
 content -> content element . [ PIOPEN OPENSLASH OPEN COMMENT CHUNK ]
 ## Transitions:
 ## Reductions:
--- On PIOPEN reduce production content -> content element
--- On OPENSLASH reduce production content -> content element
--- On OPEN reduce production content -> content element
--- On COMMENT reduce production content -> content element
--- On CHUNK reduce production content -> content element
+-- On PIOPEN OPENSLASH OPEN COMMENT CHUNK
+--   reduce production content -> content element
 
 State 69:
 ## Known stack suffix:
@@ -833,12 +766,8 @@ State 69:
 element -> sTag content eTag . [ PIOPEN OPENSLASH OPEN EOF COMMENT CHUNK ]
 ## Transitions:
 ## Reductions:
--- On PIOPEN reduce production element -> sTag content eTag
--- On OPENSLASH reduce production element -> sTag content eTag
--- On OPEN reduce production element -> sTag content eTag
--- On EOF reduce production element -> sTag content eTag
--- On COMMENT reduce production element -> sTag content eTag
--- On CHUNK reduce production element -> sTag content eTag
+-- On PIOPEN OPENSLASH OPEN EOF COMMENT CHUNK
+--   reduce production element -> sTag content eTag
 
 State 70:
 ## Known stack suffix:
@@ -847,10 +776,8 @@ State 70:
 topelement -> element . [ PIOPEN EOF COMMENT CHUNK ]
 ## Transitions:
 ## Reductions:
--- On PIOPEN reduce production topelement -> element
--- On EOF reduce production topelement -> element
--- On COMMENT reduce production topelement -> element
--- On CHUNK reduce production topelement -> element
+-- On PIOPEN EOF COMMENT CHUNK
+--   reduce production topelement -> element
 
 State 71:
 ## Known stack suffix:
@@ -871,7 +798,8 @@ prolog -> misc . [ OPEN ]
 -- On dtdopen shift to state 30
 -- On doctype shift to state 72
 ## Reductions:
--- On OPEN reduce production prolog -> misc
+-- On OPEN
+--   reduce production prolog -> misc
 
 State 72:
 ## Known stack suffix:
@@ -881,10 +809,8 @@ prolog -> misc doctype . misc [ OPEN ]
 ## Transitions:
 -- On misc shift to state 73
 ## Reductions:
--- On PIOPEN reduce production misc ->
--- On OPEN reduce production misc ->
--- On COMMENT reduce production misc ->
--- On CHUNK reduce production misc ->
+-- On PIOPEN OPEN COMMENT CHUNK
+--   reduce production misc ->
 
 State 73:
 ## Known stack suffix:
@@ -901,7 +827,8 @@ prolog -> misc doctype misc . [ OPEN ]
 -- On piopen shift to state 25
 -- On pi shift to state 29
 ## Reductions:
--- On OPEN reduce production prolog -> misc doctype misc
+-- On OPEN
+--   reduce production prolog -> misc doctype misc
 
 State 74:
 ## Known stack suffix:
@@ -910,5 +837,6 @@ State 74:
 document' -> document . [ # ]
 ## Transitions:
 ## Reductions:
--- On # accept document
+-- On #
+--   accept document
 

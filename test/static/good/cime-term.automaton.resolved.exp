@@ -21,12 +21,8 @@ term -> PREFIX_IDENT . OPENPAR term_list CLOSEPAR [ SEMICOLON INFIX_IDENT EOF CO
 ## Transitions:
 -- On OPENPAR shift to state 2
 ## Reductions:
--- On SEMICOLON reduce production term -> PREFIX_IDENT
--- On INFIX_IDENT reduce production term -> PREFIX_IDENT
--- On EOF reduce production term -> PREFIX_IDENT
--- On COMMA reduce production term -> PREFIX_IDENT
--- On CLOSEPAR reduce production term -> PREFIX_IDENT
--- On ARROW reduce production term -> PREFIX_IDENT
+-- On SEMICOLON INFIX_IDENT EOF COMMA CLOSEPAR ARROW
+--   reduce production term -> PREFIX_IDENT
 
 State 2:
 ## Known stack suffix:
@@ -149,7 +145,8 @@ term_list -> term . COMMA term_list [ CLOSEPAR ]
 -- On INFIX_IDENT shift to state 8
 -- On COMMA shift to state 10
 ## Reductions:
--- On CLOSEPAR reduce production term_list -> term
+-- On CLOSEPAR
+--   reduce production term_list -> term
 
 State 13:
 ## Known stack suffix:
@@ -160,12 +157,8 @@ term -> OPENPAR term CLOSEPAR . POSTFIX_IDENT [ SEMICOLON INFIX_IDENT EOF COMMA 
 ## Transitions:
 -- On POSTFIX_IDENT shift to state 14
 ## Reductions:
--- On SEMICOLON reduce production term -> OPENPAR term CLOSEPAR
--- On INFIX_IDENT reduce production term -> OPENPAR term CLOSEPAR
--- On EOF reduce production term -> OPENPAR term CLOSEPAR
--- On COMMA reduce production term -> OPENPAR term CLOSEPAR
--- On CLOSEPAR reduce production term -> OPENPAR term CLOSEPAR
--- On ARROW reduce production term -> OPENPAR term CLOSEPAR
+-- On SEMICOLON INFIX_IDENT EOF COMMA CLOSEPAR ARROW
+--   reduce production term -> OPENPAR term CLOSEPAR
 
 State 14:
 ## Known stack suffix:
@@ -225,8 +218,8 @@ term -> term . INFIX_IDENT term [ SEMICOLON INFIX_IDENT EOF ]
 ## Transitions:
 -- On INFIX_IDENT shift to state 8
 ## Reductions:
--- On SEMICOLON reduce production rule -> term ARROW term
--- On EOF reduce production rule -> term ARROW term
+-- On SEMICOLON EOF
+--   reduce production rule -> term ARROW term
 
 State 20:
 ## Known stack suffix:
@@ -264,7 +257,8 @@ rule_set -> rule . SEMICOLON rule_set [ EOF ]
 ## Transitions:
 -- On SEMICOLON shift to state 24
 ## Reductions:
--- On EOF reduce production rule_set -> rule
+-- On EOF
+--   reduce production rule_set -> rule
 
 State 24:
 ## Known stack suffix:

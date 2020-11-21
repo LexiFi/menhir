@@ -9,7 +9,8 @@ precedence_eof' -> . precedence_eof [ # ]
 -- On precedence shift to state 9
 -- On ordered_list shift to state 11
 ## Reductions:
--- On EOF reduce production precedence ->
+-- On EOF
+--   reduce production precedence ->
 
 State 1:
 ## Known stack suffix:
@@ -24,8 +25,8 @@ ordered_list -> IDENT . LT ordered_list [ EOF COMMA ]
 -- On GT shift to state 4
 -- On EQ shift to state 6
 ## Reductions:
--- On EOF reduce production ordered_list -> IDENT
--- On COMMA reduce production ordered_list -> IDENT
+-- On EOF COMMA
+--   reduce production ordered_list -> IDENT
 
 State 2:
 ## Known stack suffix:
@@ -44,8 +45,8 @@ State 3:
 ordered_list -> IDENT LT ordered_list . [ EOF COMMA ]
 ## Transitions:
 ## Reductions:
--- On EOF reduce production ordered_list -> IDENT LT ordered_list
--- On COMMA reduce production ordered_list -> IDENT LT ordered_list
+-- On EOF COMMA
+--   reduce production ordered_list -> IDENT LT ordered_list
 
 State 4:
 ## Known stack suffix:
@@ -64,8 +65,8 @@ State 5:
 ordered_list -> IDENT GT ordered_list . [ EOF COMMA ]
 ## Transitions:
 ## Reductions:
--- On EOF reduce production ordered_list -> IDENT GT ordered_list
--- On COMMA reduce production ordered_list -> IDENT GT ordered_list
+-- On EOF COMMA
+--   reduce production ordered_list -> IDENT GT ordered_list
 
 State 6:
 ## Known stack suffix:
@@ -84,8 +85,8 @@ State 7:
 ordered_list -> IDENT EQ ordered_list . [ EOF COMMA ]
 ## Transitions:
 ## Reductions:
--- On EOF reduce production ordered_list -> IDENT EQ ordered_list
--- On COMMA reduce production ordered_list -> IDENT EQ ordered_list
+-- On EOF COMMA
+--   reduce production ordered_list -> IDENT EQ ordered_list
 
 State 8:
 ## Known stack suffix:
@@ -94,7 +95,8 @@ State 8:
 precedence_eof' -> precedence_eof . [ # ]
 ## Transitions:
 ## Reductions:
--- On # accept precedence_eof
+-- On #
+--   accept precedence_eof
 
 State 9:
 ## Known stack suffix:
@@ -112,7 +114,8 @@ State 10:
 precedence_eof -> precedence EOF . [ # ]
 ## Transitions:
 ## Reductions:
--- On # reduce production precedence_eof -> precedence EOF
+-- On #
+--   reduce production precedence_eof -> precedence EOF
 
 State 11:
 ## Known stack suffix:
@@ -123,7 +126,8 @@ precedence -> ordered_list . COMMA precedence [ EOF ]
 ## Transitions:
 -- On COMMA shift to state 12
 ## Reductions:
--- On EOF reduce production precedence -> ordered_list
+-- On EOF
+--   reduce production precedence -> ordered_list
 
 State 12:
 ## Known stack suffix:
@@ -135,7 +139,8 @@ precedence -> ordered_list COMMA . precedence [ EOF ]
 -- On precedence shift to state 13
 -- On ordered_list shift to state 11
 ## Reductions:
--- On EOF reduce production precedence ->
+-- On EOF
+--   reduce production precedence ->
 
 State 13:
 ## Known stack suffix:
@@ -144,7 +149,8 @@ State 13:
 precedence -> ordered_list COMMA precedence . [ EOF ]
 ## Transitions:
 ## Reductions:
--- On EOF reduce production precedence -> ordered_list COMMA precedence
+-- On EOF
+--   reduce production precedence -> ordered_list COMMA precedence
 
 State 14:
 ## Known stack suffix:
@@ -160,8 +166,10 @@ rule_set_eof' -> . rule_set_eof [ # ]
 -- On rule shift to state 31
 -- On factor shift to state 19
 ## Reductions:
--- On EOF reduce production rule_set ->
--- On ARROW reduce production word ->
+-- On EOF
+--   reduce production rule_set ->
+-- On ARROW
+--   reduce production word ->
 
 State 15:
 ## Known stack suffix:
@@ -174,7 +182,8 @@ factor -> LPAR . word RPAR [ SEMICOLON RPAR POWER LPAR IDENT EOF ARROW ]
 -- On word shift to state 17
 -- On factor shift to state 19
 ## Reductions:
--- On RPAR reduce production word ->
+-- On RPAR
+--   reduce production word ->
 
 State 16:
 ## Known stack suffix:
@@ -183,13 +192,8 @@ State 16:
 factor -> IDENT . [ SEMICOLON RPAR POWER LPAR IDENT EOF ARROW ]
 ## Transitions:
 ## Reductions:
--- On SEMICOLON reduce production factor -> IDENT
--- On RPAR reduce production factor -> IDENT
--- On POWER reduce production factor -> IDENT
--- On LPAR reduce production factor -> IDENT
--- On IDENT reduce production factor -> IDENT
--- On EOF reduce production factor -> IDENT
--- On ARROW reduce production factor -> IDENT
+-- On SEMICOLON RPAR POWER LPAR IDENT EOF ARROW
+--   reduce production factor -> IDENT
 
 State 17:
 ## Known stack suffix:
@@ -207,13 +211,8 @@ State 18:
 factor -> LPAR word RPAR . [ SEMICOLON RPAR POWER LPAR IDENT EOF ARROW ]
 ## Transitions:
 ## Reductions:
--- On SEMICOLON reduce production factor -> LPAR word RPAR
--- On RPAR reduce production factor -> LPAR word RPAR
--- On POWER reduce production factor -> LPAR word RPAR
--- On LPAR reduce production factor -> LPAR word RPAR
--- On IDENT reduce production factor -> LPAR word RPAR
--- On EOF reduce production factor -> LPAR word RPAR
--- On ARROW reduce production factor -> LPAR word RPAR
+-- On SEMICOLON RPAR POWER LPAR IDENT EOF ARROW
+--   reduce production factor -> LPAR word RPAR
 
 State 19:
 ## Known stack suffix:
@@ -228,10 +227,8 @@ word -> factor . word [ SEMICOLON RPAR EOF ARROW ]
 -- On word shift to state 24
 -- On factor shift to state 19
 ## Reductions:
--- On SEMICOLON reduce production word ->
--- On RPAR reduce production word ->
--- On EOF reduce production word ->
--- On ARROW reduce production word ->
+-- On SEMICOLON RPAR EOF ARROW
+--   reduce production word ->
 
 State 20:
 ## Known stack suffix:
@@ -251,13 +248,8 @@ State 21:
 expo -> INT . [ SEMICOLON RPAR POWER LPAR IDENT EOF ARROW ]
 ## Transitions:
 ## Reductions:
--- On SEMICOLON reduce production expo -> INT
--- On RPAR reduce production expo -> INT
--- On POWER reduce production expo -> INT
--- On LPAR reduce production expo -> INT
--- On IDENT reduce production expo -> INT
--- On EOF reduce production expo -> INT
--- On ARROW reduce production expo -> INT
+-- On SEMICOLON RPAR POWER LPAR IDENT EOF ARROW
+--   reduce production expo -> INT
 
 State 22:
 ## Known stack suffix:
@@ -266,13 +258,8 @@ State 22:
 expo -> IDENT . [ SEMICOLON RPAR POWER LPAR IDENT EOF ARROW ]
 ## Transitions:
 ## Reductions:
--- On SEMICOLON reduce production expo -> IDENT
--- On RPAR reduce production expo -> IDENT
--- On POWER reduce production expo -> IDENT
--- On LPAR reduce production expo -> IDENT
--- On IDENT reduce production expo -> IDENT
--- On EOF reduce production expo -> IDENT
--- On ARROW reduce production expo -> IDENT
+-- On SEMICOLON RPAR POWER LPAR IDENT EOF ARROW
+--   reduce production expo -> IDENT
 
 State 23:
 ## Known stack suffix:
@@ -281,13 +268,8 @@ State 23:
 factor -> factor POWER expo . [ SEMICOLON RPAR POWER LPAR IDENT EOF ARROW ]
 ## Transitions:
 ## Reductions:
--- On SEMICOLON reduce production factor -> factor POWER expo
--- On RPAR reduce production factor -> factor POWER expo
--- On POWER reduce production factor -> factor POWER expo
--- On LPAR reduce production factor -> factor POWER expo
--- On IDENT reduce production factor -> factor POWER expo
--- On EOF reduce production factor -> factor POWER expo
--- On ARROW reduce production factor -> factor POWER expo
+-- On SEMICOLON RPAR POWER LPAR IDENT EOF ARROW
+--   reduce production factor -> factor POWER expo
 
 State 24:
 ## Known stack suffix:
@@ -296,10 +278,8 @@ State 24:
 word -> factor word . [ SEMICOLON RPAR EOF ARROW ]
 ## Transitions:
 ## Reductions:
--- On SEMICOLON reduce production word -> factor word
--- On RPAR reduce production word -> factor word
--- On EOF reduce production word -> factor word
--- On ARROW reduce production word -> factor word
+-- On SEMICOLON RPAR EOF ARROW
+--   reduce production word -> factor word
 
 State 25:
 ## Known stack suffix:
@@ -321,8 +301,8 @@ rule -> word ARROW . word [ SEMICOLON EOF ]
 -- On word shift to state 27
 -- On factor shift to state 19
 ## Reductions:
--- On SEMICOLON reduce production word ->
--- On EOF reduce production word ->
+-- On SEMICOLON EOF
+--   reduce production word ->
 
 State 27:
 ## Known stack suffix:
@@ -331,8 +311,8 @@ State 27:
 rule -> word ARROW word . [ SEMICOLON EOF ]
 ## Transitions:
 ## Reductions:
--- On SEMICOLON reduce production rule -> word ARROW word
--- On EOF reduce production rule -> word ARROW word
+-- On SEMICOLON EOF
+--   reduce production rule -> word ARROW word
 
 State 28:
 ## Known stack suffix:
@@ -341,7 +321,8 @@ State 28:
 rule_set_eof' -> rule_set_eof . [ # ]
 ## Transitions:
 ## Reductions:
--- On # accept rule_set_eof
+-- On #
+--   accept rule_set_eof
 
 State 29:
 ## Known stack suffix:
@@ -359,7 +340,8 @@ State 30:
 rule_set_eof -> rule_set EOF . [ # ]
 ## Transitions:
 ## Reductions:
--- On # reduce production rule_set_eof -> rule_set EOF
+-- On #
+--   reduce production rule_set_eof -> rule_set EOF
 
 State 31:
 ## Known stack suffix:
@@ -370,7 +352,8 @@ rule_set -> rule . SEMICOLON rule_set [ EOF ]
 ## Transitions:
 -- On SEMICOLON shift to state 32
 ## Reductions:
--- On EOF reduce production rule_set -> rule
+-- On EOF
+--   reduce production rule_set -> rule
 
 State 32:
 ## Known stack suffix:
@@ -385,8 +368,10 @@ rule_set -> rule SEMICOLON . rule_set [ EOF ]
 -- On rule shift to state 31
 -- On factor shift to state 19
 ## Reductions:
--- On EOF reduce production rule_set ->
--- On ARROW reduce production word ->
+-- On EOF
+--   reduce production rule_set ->
+-- On ARROW
+--   reduce production word ->
 
 State 33:
 ## Known stack suffix:
@@ -395,7 +380,8 @@ State 33:
 rule_set -> rule SEMICOLON rule_set . [ EOF ]
 ## Transitions:
 ## Reductions:
--- On EOF reduce production rule_set -> rule SEMICOLON rule_set
+-- On EOF
+--   reduce production rule_set -> rule SEMICOLON rule_set
 
 State 34:
 ## Known stack suffix:
@@ -409,7 +395,8 @@ word_eof' -> . word_eof [ # ]
 -- On word shift to state 36
 -- On factor shift to state 19
 ## Reductions:
--- On EOF reduce production word ->
+-- On EOF
+--   reduce production word ->
 
 State 35:
 ## Known stack suffix:
@@ -418,7 +405,8 @@ State 35:
 word_eof' -> word_eof . [ # ]
 ## Transitions:
 ## Reductions:
--- On # accept word_eof
+-- On #
+--   accept word_eof
 
 State 36:
 ## Known stack suffix:
@@ -436,5 +424,6 @@ State 37:
 word_eof -> word EOF . [ # ]
 ## Transitions:
 ## Reductions:
--- On # reduce production word_eof -> word EOF
+-- On #
+--   reduce production word_eof -> word EOF
 

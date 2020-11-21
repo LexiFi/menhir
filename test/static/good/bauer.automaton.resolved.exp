@@ -12,7 +12,8 @@ clauses' -> . clauses [ # ]
 -- On clauses shift to state 18
 -- On clause shift to state 19
 ## Reductions:
--- On EOF reduce production loption(separated_nonempty_list(DOT,clause)) ->
+-- On EOF
+--   reduce production loption(separated_nonempty_list(DOT,clause)) ->
 
 State 1:
 ## Known stack suffix:
@@ -33,11 +34,8 @@ term -> IDENTIFIER . option(params) [ RPARENT INFERS EOF DOT COMMA ]
 -- On params shift to state 10
 -- On option(params) shift to state 11
 ## Reductions:
--- On RPARENT reduce production option(params) ->
--- On INFERS reduce production option(params) ->
--- On EOF reduce production option(params) ->
--- On DOT reduce production option(params) ->
--- On COMMA reduce production option(params) ->
+-- On RPARENT INFERS EOF DOT COMMA
+--   reduce production option(params) ->
 
 State 3:
 ## Known stack suffix:
@@ -51,7 +49,8 @@ params -> LPARENT . loption(separated_nonempty_list(COMMA,term)) RPARENT [ RPARE
 -- On separated_nonempty_list(COMMA,term) shift to state 7
 -- On loption(separated_nonempty_list(COMMA,term)) shift to state 8
 ## Reductions:
--- On RPARENT reduce production loption(separated_nonempty_list(COMMA,term)) ->
+-- On RPARENT
+--   reduce production loption(separated_nonempty_list(COMMA,term)) ->
 
 State 4:
 ## Known stack suffix:
@@ -62,9 +61,8 @@ separated_nonempty_list(COMMA,term) -> term . COMMA separated_nonempty_list(COMM
 ## Transitions:
 -- On COMMA shift to state 5
 ## Reductions:
--- On RPARENT reduce production separated_nonempty_list(COMMA,term) -> term
--- On EOF reduce production separated_nonempty_list(COMMA,term) -> term
--- On DOT reduce production separated_nonempty_list(COMMA,term) -> term
+-- On RPARENT EOF DOT
+--   reduce production separated_nonempty_list(COMMA,term) -> term
 
 State 5:
 ## Known stack suffix:
@@ -141,8 +139,8 @@ clause -> term . [ EOF DOT ]
 ## Transitions:
 -- On INFERS shift to state 13
 ## Reductions:
--- On EOF reduce production clause -> term
--- On DOT reduce production clause -> term
+-- On EOF DOT
+--   reduce production clause -> term
 
 State 13:
 ## Known stack suffix:
@@ -156,8 +154,8 @@ clause -> term INFERS . loption(separated_nonempty_list(COMMA,term)) [ EOF DOT ]
 -- On separated_nonempty_list(COMMA,term) shift to state 7
 -- On loption(separated_nonempty_list(COMMA,term)) shift to state 14
 ## Reductions:
--- On EOF reduce production loption(separated_nonempty_list(COMMA,term)) ->
--- On DOT reduce production loption(separated_nonempty_list(COMMA,term)) ->
+-- On EOF DOT
+--   reduce production loption(separated_nonempty_list(COMMA,term)) ->
 
 State 14:
 ## Known stack suffix:
@@ -213,7 +211,8 @@ separated_nonempty_list(DOT,clause) -> clause . DOT separated_nonempty_list(DOT,
 ## Transitions:
 -- On DOT shift to state 20
 ## Reductions:
--- On EOF reduce production separated_nonempty_list(DOT,clause) -> clause
+-- On EOF
+--   reduce production separated_nonempty_list(DOT,clause) -> clause
 
 State 20:
 ## Known stack suffix:

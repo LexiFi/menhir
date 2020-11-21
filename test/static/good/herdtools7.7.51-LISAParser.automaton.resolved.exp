@@ -17,7 +17,8 @@ instr_option_seq' -> . instr_option_seq [ # ]
 -- On instr_option shift to state 89
 -- On instr shift to state 87
 ## Reductions:
--- On SEMI reduce production instr_option ->
+-- On SEMI
+--   reduce production instr_option ->
 
 State 1:
 ## Known stack suffix:
@@ -28,13 +29,8 @@ instr -> WRITE . annot_list_option addr_op reg_or_imm [ SEMI PIPE # ]
 -- On LBRAC shift to state 2
 -- On annot_list_option shift to state 14
 ## Reductions:
--- On WRITE reduce production annot_list_option ->
--- On SYMB_REG reduce production annot_list_option ->
--- On REG reduce production annot_list_option ->
--- On READ reduce production annot_list_option ->
--- On NAME reduce production annot_list_option ->
--- On FENCE reduce production annot_list_option ->
--- On BRANCH reduce production annot_list_option ->
+-- On WRITE SYMB_REG REG READ NAME FENCE BRANCH
+--   reduce production annot_list_option ->
 
 State 2:
 ## Known stack suffix:
@@ -51,7 +47,8 @@ annot_list_option -> LBRAC . name_list RBRAC [ WRITE SYMB_REG SEMI REG READ PIPE
 -- On name_list shift to state 9
 -- On name shift to state 11
 ## Reductions:
--- On RBRAC reduce production name_list ->
+-- On RBRAC
+--   reduce production name_list ->
 
 State 3:
 ## Known stack suffix:
@@ -134,8 +131,8 @@ name_list_ne -> name . [ RBRACE RBRAC ]
 ## Transitions:
 -- On COMMA shift to state 12
 ## Reductions:
--- On RBRACE reduce production name_list_ne -> name
--- On RBRAC reduce production name_list_ne -> name
+-- On RBRACE RBRAC
+--   reduce production name_list_ne -> name
 
 State 12:
 ## Known stack suffix:
@@ -207,12 +204,8 @@ addr_op -> reg_or_addr . PLUS reg_or_imm [ SYMB_REG SEMI REG PIPE NUM META # ]
 ## Transitions:
 -- On PLUS shift to state 18
 ## Reductions:
--- On SYMB_REG reduce production addr_op -> reg_or_addr
--- On SEMI reduce production addr_op -> reg_or_addr
--- On REG reduce production addr_op -> reg_or_addr
--- On PIPE reduce production addr_op -> reg_or_addr
--- On NUM reduce production addr_op -> reg_or_addr
--- On META reduce production addr_op -> reg_or_addr
+-- On SYMB_REG SEMI REG PIPE NUM META
+--   reduce production addr_op -> reg_or_addr
 
 State 18:
 ## Known stack suffix:
@@ -325,8 +318,8 @@ instr -> RMW . annot_list_option reg operation addr_op [ SEMI PIPE # ]
 -- On LBRAC shift to state 2
 -- On annot_list_option shift to state 29
 ## Reductions:
--- On SYMB_REG reduce production annot_list_option ->
--- On REG reduce production annot_list_option ->
+-- On SYMB_REG REG
+--   reduce production annot_list_option ->
 
 State 29:
 ## Known stack suffix:
@@ -754,8 +747,8 @@ instr -> READ . annot_list_option reg addr_op [ SEMI PIPE # ]
 -- On LBRAC shift to state 2
 -- On annot_list_option shift to state 58
 ## Reductions:
--- On SYMB_REG reduce production annot_list_option ->
--- On REG reduce production annot_list_option ->
+-- On SYMB_REG REG
+--   reduce production annot_list_option ->
 
 State 58:
 ## Known stack suffix:
@@ -823,8 +816,8 @@ instr_option -> NAME COLON . instr_option [ SEMI PIPE # ]
 -- On instr_option shift to state 86
 -- On instr shift to state 87
 ## Reductions:
--- On SEMI reduce production instr_option ->
--- On PIPE reduce production instr_option ->
+-- On SEMI PIPE
+--   reduce production instr_option ->
 
 State 63:
 ## Known stack suffix:
@@ -879,9 +872,8 @@ instr -> FENCE . annot_list_option fence_labels_option [ SEMI PIPE # ]
 -- On LBRAC shift to state 2
 -- On annot_list_option shift to state 67
 ## Reductions:
--- On SEMI reduce production annot_list_option ->
--- On PIPE reduce production annot_list_option ->
--- On LBRACE reduce production annot_list_option ->
+-- On SEMI PIPE LBRACE
+--   reduce production annot_list_option ->
 
 State 67:
 ## Known stack suffix:
@@ -892,8 +884,8 @@ instr -> FENCE annot_list_option . fence_labels_option [ SEMI PIPE # ]
 -- On LBRACE shift to state 68
 -- On fence_labels_option shift to state 75
 ## Reductions:
--- On SEMI reduce production fence_labels_option ->
--- On PIPE reduce production fence_labels_option ->
+-- On SEMI PIPE
+--   reduce production fence_labels_option ->
 
 State 68:
 ## Known stack suffix:
@@ -911,7 +903,8 @@ fence_labels_option -> LBRACE . name_set RBRACE LBRACE name_set RBRACE [ SEMI PI
 -- On name_list shift to state 74
 -- On name shift to state 11
 ## Reductions:
--- On RBRACE reduce production name_list ->
+-- On RBRACE
+--   reduce production name_list ->
 
 State 69:
 ## Known stack suffix:
@@ -947,7 +940,8 @@ fence_labels_option -> LBRACE name_set RBRACE LBRACE . name_set RBRACE [ SEMI PI
 -- On name_list shift to state 74
 -- On name shift to state 11
 ## Reductions:
--- On RBRACE reduce production name_list ->
+-- On RBRACE
+--   reduce production name_list ->
 
 State 72:
 ## Known stack suffix:
@@ -1045,9 +1039,8 @@ instr -> BRANCH . annot_list_option NAME [ SEMI PIPE # ]
 -- On LBRAC shift to state 2
 -- On annot_list_option shift to state 82
 ## Reductions:
--- On SYMB_REG reduce production annot_list_option ->
--- On REG reduce production annot_list_option ->
--- On NAME reduce production annot_list_option ->
+-- On SYMB_REG REG NAME
+--   reduce production annot_list_option ->
 
 State 82:
 ## Known stack suffix:
@@ -1145,7 +1138,8 @@ instr_option_seq -> instr_option SEMI . instr_option_seq [ # ]
 -- On instr_option shift to state 89
 -- On instr shift to state 87
 ## Reductions:
--- On SEMI reduce production instr_option ->
+-- On SEMI
+--   reduce production instr_option ->
 
 State 91:
 ## Known stack suffix:
@@ -1166,7 +1160,8 @@ main' -> . main [ # ]
 -- On semi_opt shift to state 94
 -- On main shift to state 136
 ## Reductions:
--- On PROC reduce production semi_opt ->
+-- On PROC
+--   reduce production semi_opt ->
 
 State 93:
 ## Known stack suffix:
@@ -1246,8 +1241,8 @@ main -> semi_opt proc_list . iol_list scopes_and_memory_map EOF [ # ]
 -- On instr_option shift to state 133
 -- On instr shift to state 87
 ## Reductions:
--- On SEMI reduce production instr_option ->
--- On PIPE reduce production instr_option ->
+-- On SEMI PIPE
+--   reduce production instr_option ->
 
 State 100:
 ## Known stack suffix:
@@ -1259,8 +1254,8 @@ main -> semi_opt proc_list iol_list . scopes_and_memory_map EOF [ # ]
 -- On scopes_and_memory_map shift to state 117
 -- On scope_option shift to state 119
 ## Reductions:
--- On REGIONS reduce production scope_option ->
--- On EOF reduce production scope_option ->
+-- On REGIONS EOF
+--   reduce production scope_option ->
 
 State 101:
 ## Known stack suffix:
@@ -1308,7 +1303,8 @@ scope_tree -> LPAR NAME . proc_list_sc RPAR [ RPAR REGIONS LPAR EOF ]
 -- On proc_list_sc shift to state 111
 -- On proc shift to state 113
 ## Reductions:
--- On RPAR reduce production proc_list_sc ->
+-- On RPAR
+--   reduce production proc_list_sc ->
 
 State 105:
 ## Known stack suffix:
@@ -1357,9 +1353,8 @@ scope_tree_list -> scope_tree . scope_tree_list [ RPAR REGIONS EOF ]
 -- On scope_tree_list shift to state 110
 -- On scope_tree shift to state 109
 ## Reductions:
--- On RPAR reduce production scope_tree_list -> scope_tree
--- On REGIONS reduce production scope_tree_list -> scope_tree
--- On EOF reduce production scope_tree_list -> scope_tree
+-- On RPAR REGIONS EOF
+--   reduce production scope_tree_list -> scope_tree
 
 State 110:
 ## Known stack suffix:
@@ -1399,7 +1394,8 @@ proc_list_sc -> proc . proc_list_sc [ RPAR ]
 -- On proc_list_sc shift to state 114
 -- On proc shift to state 113
 ## Reductions:
--- On RPAR reduce production proc_list_sc ->
+-- On RPAR
+--   reduce production proc_list_sc ->
 
 State 114:
 ## Known stack suffix:
@@ -1455,7 +1451,8 @@ scopes_and_memory_map -> scope_option . memory_map_option [ EOF ]
 -- On REGIONS shift to state 120
 -- On memory_map_option shift to state 129
 ## Reductions:
--- On EOF reduce production memory_map_option ->
+-- On EOF
+--   reduce production memory_map_option ->
 
 State 120:
 ## Known stack suffix:
@@ -1476,7 +1473,8 @@ memory_map_option -> REGIONS COLON . memory_map [ EOF ]
 -- On memory_map_atom shift to state 125
 -- On memory_map shift to state 128
 ## Reductions:
--- On EOF reduce production memory_map ->
+-- On EOF
+--   reduce production memory_map ->
 
 State 122:
 ## Known stack suffix:
@@ -1514,7 +1512,8 @@ memory_map -> memory_map_atom . [ EOF ]
 ## Transitions:
 -- On COMMA shift to state 126
 ## Reductions:
--- On EOF reduce production memory_map -> memory_map_atom
+-- On EOF
+--   reduce production memory_map -> memory_map_atom
 
 State 126:
 ## Known stack suffix:
@@ -1526,7 +1525,8 @@ memory_map -> memory_map_atom COMMA . memory_map [ EOF ]
 -- On memory_map_atom shift to state 125
 -- On memory_map shift to state 127
 ## Reductions:
--- On EOF reduce production memory_map ->
+-- On EOF
+--   reduce production memory_map ->
 
 State 127:
 ## Known stack suffix:
@@ -1586,11 +1586,10 @@ iol_list -> instr_option_list SEMI . iol_list [ SCOPES REGIONS EOF ]
 -- On instr_option shift to state 133
 -- On instr shift to state 87
 ## Reductions:
--- On SEMI reduce production instr_option ->
--- On SCOPES reduce production iol_list -> instr_option_list SEMI
--- On REGIONS reduce production iol_list -> instr_option_list SEMI
--- On PIPE reduce production instr_option ->
--- On EOF reduce production iol_list -> instr_option_list SEMI
+-- On SEMI PIPE
+--   reduce production instr_option ->
+-- On SCOPES REGIONS EOF
+--   reduce production iol_list -> instr_option_list SEMI
 
 State 132:
 ## Known stack suffix:
@@ -1610,7 +1609,8 @@ instr_option_list -> instr_option . PIPE instr_option_list [ SEMI ]
 ## Transitions:
 -- On PIPE shift to state 134
 ## Reductions:
--- On SEMI reduce production instr_option_list -> instr_option
+-- On SEMI
+--   reduce production instr_option_list -> instr_option
 
 State 134:
 ## Known stack suffix:
@@ -1631,8 +1631,8 @@ instr_option_list -> instr_option PIPE . instr_option_list [ SEMI ]
 -- On instr_option shift to state 133
 -- On instr shift to state 87
 ## Reductions:
--- On SEMI reduce production instr_option ->
--- On PIPE reduce production instr_option ->
+-- On SEMI PIPE
+--   reduce production instr_option ->
 
 State 135:
 ## Known stack suffix:

@@ -274,9 +274,8 @@ type_ -> ident . LBRACKET enums RBRACKET [ EQ EOL COMMA ]
 ## Transitions:
 -- On LBRACKET shift to state 29
 ## Reductions:
--- On EQ reduce production type_ -> ident
--- On EOL reduce production type_ -> ident
--- On COMMA reduce production type_ -> ident
+-- On EQ EOL COMMA
+--   reduce production type_ -> ident
 
 State 29:
 ## Known stack suffix:
@@ -298,7 +297,8 @@ enums -> ident . COMMA enums [ RBRACKET ]
 ## Transitions:
 -- On COMMA shift to state 31
 ## Reductions:
--- On RBRACKET reduce production enums -> ident
+-- On RBRACKET
+--   reduce production enums -> ident
 
 State 31:
 ## Known stack suffix:
@@ -351,7 +351,8 @@ typedecl_top' -> . typedecl_top [ # ]
 -- On typedecl shift to state 82
 -- On ident shift to state 41
 ## Reductions:
--- On EOL reduce production typedecl ->
+-- On EOL
+--   reduce production typedecl ->
 
 State 36:
 ## Known stack suffix:
@@ -380,7 +381,8 @@ typedecl_ne -> typedecl_ . COMMA typedecl_ne [ EOL ]
 ## Transitions:
 -- On COMMA shift to state 39
 ## Reductions:
--- On EOL reduce production typedecl_ne -> typedecl_
+-- On EOL
+--   reduce production typedecl_ne -> typedecl_
 
 State 39:
 ## Known stack suffix:
@@ -434,8 +436,8 @@ typedecl_ -> ident COLON type_ . EQ LBRACKET typed_value RBRACKET [ EOL COMMA ]
 ## Transitions:
 -- On EQ shift to state 44
 ## Reductions:
--- On EOL reduce production typedecl_ -> ident COLON type_
--- On COMMA reduce production typedecl_ -> ident COLON type_
+-- On EOL COMMA
+--   reduce production typedecl_ -> ident COLON type_
 
 State 44:
 ## Known stack suffix:
@@ -471,7 +473,8 @@ typedecl_ -> ident COLON type_ EQ LBRACKET . typed_value RBRACKET [ EOL COMMA ]
 -- On ident shift to state 80
 -- On and_formula_ntriv shift to state 81
 ## Reductions:
--- On RBRACKET reduce production typed_value ->
+-- On RBRACKET
+--   reduce production typed_value ->
 
 State 46:
 ## Known stack suffix:
@@ -499,11 +502,10 @@ int -> POSINT . [ RBRACKET ]
 pkgname -> POSINT . [ RELOP PIPE EQ COMMA ]
 ## Transitions:
 ## Reductions:
--- On RELOP reduce production pkgname -> POSINT
--- On RBRACKET reduce production int -> POSINT
--- On PIPE reduce production pkgname -> POSINT
--- On EQ reduce production pkgname -> POSINT
--- On COMMA reduce production pkgname -> POSINT
+-- On RBRACKET
+--   reduce production int -> POSINT
+-- On RELOP PIPE EQ COMMA
+--   reduce production pkgname -> POSINT
 
 State 49:
 ## Known stack suffix:
@@ -513,11 +515,10 @@ pkgname -> PKGNAME . [ RELOP PIPE EQ COMMA ]
 vpkg_ntriv -> PKGNAME . [ RBRACKET ]
 ## Transitions:
 ## Reductions:
--- On RELOP reduce production pkgname -> PKGNAME
--- On RBRACKET reduce production vpkg_ntriv -> PKGNAME
--- On PIPE reduce production pkgname -> PKGNAME
--- On EQ reduce production pkgname -> PKGNAME
--- On COMMA reduce production pkgname -> PKGNAME
+-- On RELOP PIPE EQ COMMA
+--   reduce production pkgname -> PKGNAME
+-- On RBRACKET
+--   reduce production vpkg_ntriv -> PKGNAME
 
 State 50:
 ## Known stack suffix:
@@ -527,11 +528,10 @@ int -> NEGINT . [ RBRACKET ]
 pkgname -> NEGINT . [ RELOP PIPE EQ COMMA ]
 ## Transitions:
 ## Reductions:
--- On RELOP reduce production pkgname -> NEGINT
--- On RBRACKET reduce production int -> NEGINT
--- On PIPE reduce production pkgname -> NEGINT
--- On EQ reduce production pkgname -> NEGINT
--- On COMMA reduce production pkgname -> NEGINT
+-- On RBRACKET
+--   reduce production int -> NEGINT
+-- On RELOP PIPE EQ COMMA
+--   reduce production pkgname -> NEGINT
 
 State 51:
 ## Known stack suffix:
@@ -541,11 +541,10 @@ ident -> IDENT . [ RBRACKET ]
 pkgname -> IDENT . [ RELOP PIPE EQ COMMA ]
 ## Transitions:
 ## Reductions:
--- On RELOP reduce production pkgname -> IDENT
--- On RBRACKET reduce production ident -> IDENT
--- On PIPE reduce production pkgname -> IDENT
--- On EQ reduce production pkgname -> IDENT
--- On COMMA reduce production pkgname -> IDENT
+-- On RBRACKET
+--   reduce production ident -> IDENT
+-- On RELOP PIPE EQ COMMA
+--   reduce production pkgname -> IDENT
 
 State 52:
 ## Known stack suffix:
@@ -575,7 +574,8 @@ or_formula_ntriv -> vpkg . PIPE or_formula [ RBRACKET ]
 ## Transitions:
 -- On PIPE shift to state 55
 ## Reductions:
--- On COMMA reduce production or_formula -> vpkg
+-- On COMMA
+--   reduce production or_formula -> vpkg
 
 State 55:
 ## Known stack suffix:
@@ -602,9 +602,8 @@ or_formula -> vpkg . PIPE or_formula [ RBRACKET EOL COMMA ]
 ## Transitions:
 -- On PIPE shift to state 57
 ## Reductions:
--- On RBRACKET reduce production or_formula -> vpkg
--- On EOL reduce production or_formula -> vpkg
--- On COMMA reduce production or_formula -> vpkg
+-- On RBRACKET EOL COMMA
+--   reduce production or_formula -> vpkg
 
 State 57:
 ## Known stack suffix:
@@ -632,10 +631,8 @@ vpkg -> pkgname . relop version [ RBRACKET PIPE EOL COMMA ]
 -- On EQ shift to state 60
 -- On relop shift to state 61
 ## Reductions:
--- On RBRACKET reduce production vpkg -> pkgname
--- On PIPE reduce production vpkg -> pkgname
--- On EOL reduce production vpkg -> pkgname
--- On COMMA reduce production vpkg -> pkgname
+-- On RBRACKET PIPE EOL COMMA
+--   reduce production vpkg -> pkgname
 
 State 59:
 ## Known stack suffix:
@@ -700,8 +697,10 @@ or_formula -> vpkg PIPE or_formula . [ COMMA ]
 or_formula_ntriv -> vpkg PIPE or_formula . [ RBRACKET ]
 ## Transitions:
 ## Reductions:
--- On RBRACKET reduce production or_formula_ntriv -> vpkg PIPE or_formula
--- On COMMA reduce production or_formula -> vpkg PIPE or_formula
+-- On COMMA
+--   reduce production or_formula -> vpkg PIPE or_formula
+-- On RBRACKET
+--   reduce production or_formula_ntriv -> vpkg PIPE or_formula
 
 State 66:
 ## Known stack suffix:
@@ -742,8 +741,8 @@ vpkg_ntriv -> pkgname . relop version [ RBRACKET ]
 -- On EQ shift to state 60
 -- On relop shift to state 70
 ## Reductions:
--- On PIPE reduce production vpkg -> pkgname
--- On COMMA reduce production vpkg -> pkgname
+-- On PIPE COMMA
+--   reduce production vpkg -> pkgname
 
 State 70:
 ## Known stack suffix:
@@ -764,9 +763,10 @@ vpkg -> pkgname relop version . [ PIPE COMMA ]
 vpkg_ntriv -> pkgname relop version . [ RBRACKET ]
 ## Transitions:
 ## Reductions:
--- On RBRACKET reduce production vpkg_ntriv -> pkgname relop version
--- On PIPE reduce production vpkg -> pkgname relop version
--- On COMMA reduce production vpkg -> pkgname relop version
+-- On PIPE COMMA
+--   reduce production vpkg -> pkgname relop version
+-- On RBRACKET
+--   reduce production vpkg_ntriv -> pkgname relop version
 
 State 72:
 ## Known stack suffix:
@@ -811,8 +811,8 @@ and_formula -> or_formula . COMMA and_formula [ RBRACKET EOL ]
 ## Transitions:
 -- On COMMA shift to state 76
 ## Reductions:
--- On RBRACKET reduce production and_formula -> or_formula
--- On EOL reduce production and_formula -> or_formula
+-- On RBRACKET EOL
+--   reduce production and_formula -> or_formula
 
 State 76:
 ## Known stack suffix:
@@ -1025,7 +1025,8 @@ vpkglist_top' -> . vpkglist_top [ # ]
 -- On vpkg shift to state 100
 -- On pkgname shift to state 58
 ## Reductions:
--- On EOL reduce production vpkglist ->
+-- On EOL
+--   reduce production vpkglist ->
 
 State 96:
 ## Known stack suffix:
@@ -1072,7 +1073,8 @@ vpkglist_ne -> vpkg . COMMA vpkglist_ne [ EOL ]
 ## Transitions:
 -- On COMMA shift to state 101
 ## Reductions:
--- On EOL reduce production vpkglist_ne -> vpkg
+-- On EOL
+--   reduce production vpkglist_ne -> vpkg
 
 State 101:
 ## Known stack suffix:

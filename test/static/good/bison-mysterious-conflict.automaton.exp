@@ -20,9 +20,10 @@ name -> ID . [ COMMA COLON ]
 typ -> ID . [ ID ]
 ## Transitions:
 ## Reductions:
--- On ID reduce production typ -> ID
--- On COMMA reduce production name -> ID
--- On COLON reduce production name -> ID
+-- On COMMA COLON
+--   reduce production name -> ID
+-- On ID
+--   reduce production typ -> ID
 
 State 2:
 ## Known stack suffix:
@@ -31,7 +32,8 @@ State 2:
 param_spec -> typ . [ ID ]
 ## Transitions:
 ## Reductions:
--- On ID reduce production param_spec -> typ
+-- On ID
+--   reduce production param_spec -> typ
 
 State 3:
 ## Known stack suffix:
@@ -59,8 +61,8 @@ State 5:
 typ -> ID . [ ID COMMA ]
 ## Transitions:
 ## Reductions:
--- On ID reduce production typ -> ID
--- On COMMA reduce production typ -> ID
+-- On ID COMMA
+--   reduce production typ -> ID
 
 State 6:
 ## Known stack suffix:
@@ -69,7 +71,8 @@ State 6:
 param_spec -> separated_nonempty_list(COMMA,name) COLON typ . [ ID ]
 ## Transitions:
 ## Reductions:
--- On ID reduce production param_spec -> separated_nonempty_list(COMMA,name) COLON typ
+-- On ID
+--   reduce production param_spec -> separated_nonempty_list(COMMA,name) COLON typ
 
 State 7:
 ## Known stack suffix:
@@ -91,8 +94,10 @@ name -> ID . [ COLON ]
 typ -> ID . [ COMMA ]
 ## Transitions:
 ## Reductions:
--- On COMMA reduce production typ -> ID
--- On COLON reduce production name -> ID
+-- On COLON
+--   reduce production name -> ID
+-- On COMMA
+--   reduce production typ -> ID
 
 State 9:
 ## Known stack suffix:
@@ -101,7 +106,8 @@ State 9:
 return_spec -> typ . [ COMMA ]
 ## Transitions:
 ## Reductions:
--- On COMMA reduce production return_spec -> typ
+-- On COMMA
+--   reduce production return_spec -> typ
 
 State 10:
 ## Known stack suffix:
@@ -119,7 +125,8 @@ State 11:
 def -> param_spec return_spec COMMA . [ # ]
 ## Transitions:
 ## Reductions:
--- On # reduce production def -> param_spec return_spec COMMA
+-- On #
+--   reduce production def -> param_spec return_spec COMMA
 
 State 12:
 ## Known stack suffix:
@@ -147,7 +154,8 @@ State 14:
 return_spec -> name COLON typ . [ COMMA ]
 ## Transitions:
 ## Reductions:
--- On COMMA reduce production return_spec -> name COLON typ
+-- On COMMA
+--   reduce production return_spec -> name COLON typ
 
 State 15:
 ## Known stack suffix:
@@ -158,7 +166,8 @@ separated_nonempty_list(COMMA,name) -> name . COMMA separated_nonempty_list(COMM
 ## Transitions:
 -- On COMMA shift to state 16
 ## Reductions:
--- On COLON reduce production separated_nonempty_list(COMMA,name) -> name
+-- On COLON
+--   reduce production separated_nonempty_list(COMMA,name) -> name
 
 State 16:
 ## Known stack suffix:
@@ -178,8 +187,8 @@ State 17:
 name -> ID . [ COMMA COLON ]
 ## Transitions:
 ## Reductions:
--- On COMMA reduce production name -> ID
--- On COLON reduce production name -> ID
+-- On COMMA COLON
+--   reduce production name -> ID
 
 State 18:
 ## Known stack suffix:
@@ -188,7 +197,8 @@ State 18:
 separated_nonempty_list(COMMA,name) -> name COMMA separated_nonempty_list(COMMA,name) . [ COLON ]
 ## Transitions:
 ## Reductions:
--- On COLON reduce production separated_nonempty_list(COMMA,name) -> name COMMA separated_nonempty_list(COMMA,name)
+-- On COLON
+--   reduce production separated_nonempty_list(COMMA,name) -> name COMMA separated_nonempty_list(COMMA,name)
 
 State 19:
 ## Known stack suffix:
@@ -197,5 +207,6 @@ State 19:
 def' -> def . [ # ]
 ## Transitions:
 ## Reductions:
--- On # accept def
+-- On #
+--   accept def
 

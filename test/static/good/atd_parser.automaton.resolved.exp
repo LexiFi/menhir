@@ -9,9 +9,8 @@ full_module' -> . full_module [ # ]
 -- On asection shift to state 13
 -- On annot shift to state 15
 ## Reductions:
--- On error reduce production annot ->
--- On TYPE reduce production annot ->
--- On EOF reduce production annot ->
+-- On error TYPE EOF
+--   reduce production annot ->
 
 State 1:
 ## Known stack suffix:
@@ -45,8 +44,8 @@ asection -> LT LIDENT . afield_list error [ error TYPE STAR SEMICOLON OF LT LIDE
 -- On afield_list shift to state 7
 -- On afield shift to state 10
 ## Reductions:
--- On error reduce production afield_list ->
--- On GT reduce production afield_list ->
+-- On error GT
+--   reduce production afield_list ->
 
 State 4:
 ## Known stack suffix:
@@ -57,9 +56,8 @@ afield -> LIDENT . [ error LIDENT GT ]
 ## Transitions:
 -- On EQ shift to state 5
 ## Reductions:
--- On error reduce production afield -> LIDENT
--- On LIDENT reduce production afield -> LIDENT
--- On GT reduce production afield -> LIDENT
+-- On error LIDENT GT
+--   reduce production afield -> LIDENT
 
 State 5:
 ## Known stack suffix:
@@ -118,8 +116,8 @@ afield_list -> afield . afield_list [ error GT ]
 -- On afield_list shift to state 11
 -- On afield shift to state 10
 ## Reductions:
--- On error reduce production afield_list ->
--- On GT reduce production afield_list ->
+-- On error GT
+--   reduce production afield_list ->
 
 State 11:
 ## Known stack suffix:
@@ -149,20 +147,8 @@ annot -> asection . annot [ error TYPE STAR SEMICOLON OF LIDENT EQ EOF COMMA COL
 -- On asection shift to state 13
 -- On annot shift to state 14
 ## Reductions:
--- On error reduce production annot ->
--- On TYPE reduce production annot ->
--- On STAR reduce production annot ->
--- On SEMICOLON reduce production annot ->
--- On OF reduce production annot ->
--- On LIDENT reduce production annot ->
--- On EQ reduce production annot ->
--- On EOF reduce production annot ->
--- On COMMA reduce production annot ->
--- On COLON reduce production annot ->
--- On CL_PAREN reduce production annot ->
--- On CL_CURL reduce production annot ->
--- On CL_BRACK reduce production annot ->
--- On BAR reduce production annot ->
+-- On error TYPE STAR SEMICOLON OF LIDENT EQ EOF COMMA COLON CL_PAREN CL_CURL CL_BRACK BAR
+--   reduce production annot ->
 
 State 14:
 ## Known stack suffix:
@@ -209,7 +195,8 @@ module_item -> TYPE . error [ error TYPE EOF ]
 -- On OP_PAREN shift to state 20
 -- On type_param shift to state 27
 ## Reductions:
--- On LIDENT reduce production type_param ->
+-- On LIDENT
+--   reduce production type_param ->
 
 State 18:
 ## Known stack suffix:
@@ -249,8 +236,8 @@ type_var_list -> TIDENT . [ error CL_PAREN ]
 ## Transitions:
 -- On COMMA shift to state 22
 ## Reductions:
--- On error reduce production type_var_list -> TIDENT
--- On CL_PAREN reduce production type_var_list -> TIDENT
+-- On error CL_PAREN
+--   reduce production type_var_list -> TIDENT
 
 State 22:
 ## Known stack suffix:
@@ -323,8 +310,8 @@ module_item -> TYPE type_param LIDENT . annot error [ error TYPE EOF ]
 -- On asection shift to state 13
 -- On annot shift to state 29
 ## Reductions:
--- On error reduce production annot ->
--- On EQ reduce production annot ->
+-- On error EQ
+--   reduce production annot ->
 
 State 29:
 ## Known stack suffix:
@@ -363,7 +350,8 @@ module_item -> TYPE type_param LIDENT annot EQ . error [ error TYPE EOF ]
 -- On type_expr shift to state 141
 -- On type_args shift to state 60
 ## Reductions:
--- On LIDENT reduce production type_args ->
+-- On LIDENT
+--   reduce production type_args ->
 
 State 32:
 ## Known stack suffix:
@@ -407,10 +395,12 @@ type_expr -> OP_PAREN . cartesian_product error [ error TYPE STAR SEMICOLON LIDE
 -- On annot_expr shift to state 138
 -- On annot shift to state 131
 ## Reductions:
--- On error reduce production cartesian_product ->
--- On LIDENT reduce production type_args ->
--- On COLON reduce production annot ->
--- On CL_PAREN reduce production cartesian_product ->
+-- On COLON
+--   reduce production annot ->
+-- On error CL_PAREN
+--   reduce production cartesian_product ->
+-- On LIDENT
+--   reduce production type_args ->
 
 State 35:
 ## Known stack suffix:
@@ -445,10 +435,12 @@ type_expr -> OP_PAREN . cartesian_product error [ STAR LIDENT COMMA CL_PAREN ]
 -- On annot_expr shift to state 121
 -- On annot shift to state 131
 ## Reductions:
--- On error reduce production cartesian_product ->
--- On LIDENT reduce production type_args ->
--- On COLON reduce production annot ->
--- On CL_PAREN reduce production cartesian_product ->
+-- On COLON
+--   reduce production annot ->
+-- On error CL_PAREN
+--   reduce production cartesian_product ->
+-- On LIDENT
+--   reduce production type_args ->
 
 State 37:
 ## Known stack suffix:
@@ -527,7 +519,8 @@ field -> INHERIT . type_expr [ error SEMICOLON CL_CURL ]
 -- On type_expr shift to state 84
 -- On type_args shift to state 60
 ## Reductions:
--- On LIDENT reduce production type_args ->
+-- On LIDENT
+--   reduce production type_args ->
 
 State 44:
 ## Known stack suffix:
@@ -557,17 +550,8 @@ type_expr -> OP_CURL CL_CURL . annot [ error TYPE STAR SEMICOLON LIDENT EOF COMM
 -- On asection shift to state 13
 -- On annot shift to state 46
 ## Reductions:
--- On error reduce production annot ->
--- On TYPE reduce production annot ->
--- On STAR reduce production annot ->
--- On SEMICOLON reduce production annot ->
--- On LIDENT reduce production annot ->
--- On EOF reduce production annot ->
--- On COMMA reduce production annot ->
--- On CL_PAREN reduce production annot ->
--- On CL_CURL reduce production annot ->
--- On CL_BRACK reduce production annot ->
--- On BAR reduce production annot ->
+-- On error TYPE STAR SEMICOLON LIDENT EOF COMMA CL_PAREN CL_CURL CL_BRACK BAR
+--   reduce production annot ->
 
 State 46:
 ## Known stack suffix:
@@ -590,8 +574,8 @@ field -> field_name . annot error [ error SEMICOLON CL_CURL ]
 -- On asection shift to state 13
 -- On annot shift to state 48
 ## Reductions:
--- On error reduce production annot ->
--- On COLON reduce production annot ->
+-- On error COLON
+--   reduce production annot ->
 
 State 48:
 ## Known stack suffix:
@@ -630,7 +614,8 @@ field -> field_name annot COLON . error [ error SEMICOLON CL_CURL ]
 -- On type_expr shift to state 76
 -- On type_args shift to state 60
 ## Reductions:
--- On LIDENT reduce production type_args ->
+-- On LIDENT
+--   reduce production type_args ->
 
 State 51:
 ## Known stack suffix:
@@ -670,10 +655,8 @@ variant -> UIDENT . annot OF error [ error CL_BRACK BAR ]
 -- On asection shift to state 13
 -- On annot shift to state 54
 ## Reductions:
--- On error reduce production annot ->
--- On OF reduce production annot ->
--- On CL_BRACK reduce production annot ->
--- On BAR reduce production annot ->
+-- On error OF CL_BRACK BAR
+--   reduce production annot ->
 
 State 54:
 ## Known stack suffix:
@@ -685,9 +668,8 @@ variant -> UIDENT annot . OF error [ error CL_BRACK BAR ]
 ## Transitions:
 -- On OF shift to state 55
 ## Reductions:
--- On error reduce production variant -> UIDENT annot
--- On CL_BRACK reduce production variant -> UIDENT annot
--- On BAR reduce production variant -> UIDENT annot
+-- On error CL_BRACK BAR
+--   reduce production variant -> UIDENT annot
 
 State 55:
 ## Known stack suffix:
@@ -705,7 +687,8 @@ variant -> UIDENT annot OF . error [ error CL_BRACK BAR ]
 -- On type_expr shift to state 59
 -- On type_args shift to state 60
 ## Reductions:
--- On LIDENT reduce production type_args ->
+-- On LIDENT
+--   reduce production type_args ->
 
 State 56:
 ## Known stack suffix:
@@ -726,17 +709,8 @@ type_expr -> type_inst . annot [ error TYPE STAR SEMICOLON LIDENT EOF COMMA CL_P
 -- On asection shift to state 13
 -- On annot shift to state 58
 ## Reductions:
--- On error reduce production annot ->
--- On TYPE reduce production annot ->
--- On STAR reduce production annot ->
--- On SEMICOLON reduce production annot ->
--- On LIDENT reduce production annot ->
--- On EOF reduce production annot ->
--- On COMMA reduce production annot ->
--- On CL_PAREN reduce production annot ->
--- On CL_CURL reduce production annot ->
--- On CL_BRACK reduce production annot ->
--- On BAR reduce production annot ->
+-- On error TYPE STAR SEMICOLON LIDENT EOF COMMA CL_PAREN CL_CURL CL_BRACK BAR
+--   reduce production annot ->
 
 State 58:
 ## Known stack suffix:
@@ -755,10 +729,10 @@ type_args -> type_expr . [ LIDENT ]
 variant -> UIDENT annot OF type_expr . [ error CL_BRACK BAR ]
 ## Transitions:
 ## Reductions:
--- On error reduce production variant -> UIDENT annot OF type_expr
--- On LIDENT reduce production type_args -> type_expr
--- On CL_BRACK reduce production variant -> UIDENT annot OF type_expr
--- On BAR reduce production variant -> UIDENT annot OF type_expr
+-- On LIDENT
+--   reduce production type_args -> type_expr
+-- On error CL_BRACK BAR
+--   reduce production variant -> UIDENT annot OF type_expr
 
 State 60:
 ## Known stack suffix:
@@ -792,7 +766,8 @@ variant -> INHERIT . type_expr [ error CL_BRACK BAR ]
 -- On type_expr shift to state 63
 -- On type_args shift to state 60
 ## Reductions:
--- On LIDENT reduce production type_args ->
+-- On LIDENT
+--   reduce production type_args ->
 
 State 63:
 ## Known stack suffix:
@@ -802,10 +777,10 @@ type_args -> type_expr . [ LIDENT ]
 variant -> INHERIT type_expr . [ error CL_BRACK BAR ]
 ## Transitions:
 ## Reductions:
--- On error reduce production variant -> INHERIT type_expr
--- On LIDENT reduce production type_args -> type_expr
--- On CL_BRACK reduce production variant -> INHERIT type_expr
--- On BAR reduce production variant -> INHERIT type_expr
+-- On LIDENT
+--   reduce production type_args -> type_expr
+-- On error CL_BRACK BAR
+--   reduce production variant -> INHERIT type_expr
 
 State 64:
 ## Known stack suffix:
@@ -817,17 +792,8 @@ type_expr -> OP_BRACK CL_BRACK . annot [ error TYPE STAR SEMICOLON LIDENT EOF CO
 -- On asection shift to state 13
 -- On annot shift to state 65
 ## Reductions:
--- On error reduce production annot ->
--- On TYPE reduce production annot ->
--- On STAR reduce production annot ->
--- On SEMICOLON reduce production annot ->
--- On LIDENT reduce production annot ->
--- On EOF reduce production annot ->
--- On COMMA reduce production annot ->
--- On CL_PAREN reduce production annot ->
--- On CL_CURL reduce production annot ->
--- On CL_BRACK reduce production annot ->
--- On BAR reduce production annot ->
+-- On error TYPE STAR SEMICOLON LIDENT EOF COMMA CL_PAREN CL_CURL CL_BRACK BAR
+--   reduce production annot ->
 
 State 65:
 ## Known stack suffix:
@@ -868,8 +834,8 @@ variant_list0 -> variant . [ error CL_BRACK ]
 ## Transitions:
 -- On BAR shift to state 69
 ## Reductions:
--- On error reduce production variant_list0 -> variant
--- On CL_BRACK reduce production variant_list0 -> variant
+-- On error CL_BRACK
+--   reduce production variant_list0 -> variant
 
 State 69:
 ## Known stack suffix:
@@ -931,17 +897,8 @@ type_expr -> OP_BRACK variant_list CL_BRACK . annot [ error TYPE STAR SEMICOLON 
 -- On asection shift to state 13
 -- On annot shift to state 75
 ## Reductions:
--- On error reduce production annot ->
--- On TYPE reduce production annot ->
--- On STAR reduce production annot ->
--- On SEMICOLON reduce production annot ->
--- On LIDENT reduce production annot ->
--- On EOF reduce production annot ->
--- On COMMA reduce production annot ->
--- On CL_PAREN reduce production annot ->
--- On CL_CURL reduce production annot ->
--- On CL_BRACK reduce production annot ->
--- On BAR reduce production annot ->
+-- On error TYPE STAR SEMICOLON LIDENT EOF COMMA CL_PAREN CL_CURL CL_BRACK BAR
+--   reduce production annot ->
 
 State 75:
 ## Known stack suffix:
@@ -960,10 +917,10 @@ field -> field_name annot COLON type_expr . [ error SEMICOLON CL_CURL ]
 type_args -> type_expr . [ LIDENT ]
 ## Transitions:
 ## Reductions:
--- On error reduce production field -> field_name annot COLON type_expr
--- On SEMICOLON reduce production field -> field_name annot COLON type_expr
--- On LIDENT reduce production type_args -> type_expr
--- On CL_CURL reduce production field -> field_name annot COLON type_expr
+-- On error SEMICOLON CL_CURL
+--   reduce production field -> field_name annot COLON type_expr
+-- On LIDENT
+--   reduce production type_args -> type_expr
 
 State 77:
 ## Known stack suffix:
@@ -995,17 +952,8 @@ type_expr -> OP_CURL field_list CL_CURL . annot [ error TYPE STAR SEMICOLON LIDE
 -- On asection shift to state 13
 -- On annot shift to state 80
 ## Reductions:
--- On error reduce production annot ->
--- On TYPE reduce production annot ->
--- On STAR reduce production annot ->
--- On SEMICOLON reduce production annot ->
--- On LIDENT reduce production annot ->
--- On EOF reduce production annot ->
--- On COMMA reduce production annot ->
--- On CL_PAREN reduce production annot ->
--- On CL_CURL reduce production annot ->
--- On CL_BRACK reduce production annot ->
--- On BAR reduce production annot ->
+-- On error TYPE STAR SEMICOLON LIDENT EOF COMMA CL_PAREN CL_CURL CL_BRACK BAR
+--   reduce production annot ->
 
 State 80:
 ## Known stack suffix:
@@ -1026,8 +974,8 @@ field_list -> field . [ error CL_CURL ]
 ## Transitions:
 -- On SEMICOLON shift to state 82
 ## Reductions:
--- On error reduce production field_list -> field
--- On CL_CURL reduce production field_list -> field
+-- On error CL_CURL
+--   reduce production field_list -> field
 
 State 82:
 ## Known stack suffix:
@@ -1044,8 +992,8 @@ field_list -> field SEMICOLON . [ error CL_CURL ]
 -- On field_list shift to state 83
 -- On field shift to state 81
 ## Reductions:
--- On error reduce production field_list -> field SEMICOLON
--- On CL_CURL reduce production field_list -> field SEMICOLON
+-- On error CL_CURL
+--   reduce production field_list -> field SEMICOLON
 
 State 83:
 ## Known stack suffix:
@@ -1064,10 +1012,10 @@ field -> INHERIT type_expr . [ error SEMICOLON CL_CURL ]
 type_args -> type_expr . [ LIDENT ]
 ## Transitions:
 ## Reductions:
--- On error reduce production field -> INHERIT type_expr
--- On SEMICOLON reduce production field -> INHERIT type_expr
--- On LIDENT reduce production type_args -> type_expr
--- On CL_CURL reduce production field -> INHERIT type_expr
+-- On error SEMICOLON CL_CURL
+--   reduce production field -> INHERIT type_expr
+-- On LIDENT
+--   reduce production type_args -> type_expr
 
 State 85:
 ## Known stack suffix:
@@ -1079,10 +1027,8 @@ type_expr -> OP_CURL CL_CURL . annot [ STAR LIDENT COMMA CL_PAREN ]
 -- On asection shift to state 92
 -- On annot shift to state 94
 ## Reductions:
--- On STAR reduce production annot ->
--- On LIDENT reduce production annot ->
--- On COMMA reduce production annot ->
--- On CL_PAREN reduce production annot ->
+-- On STAR LIDENT COMMA CL_PAREN
+--   reduce production annot ->
 
 State 86:
 ## Known stack suffix:
@@ -1116,8 +1062,8 @@ asection -> LT LIDENT . afield_list error [ STAR LT LIDENT COMMA COLON CL_PAREN 
 -- On afield_list shift to state 89
 -- On afield shift to state 10
 ## Reductions:
--- On error reduce production afield_list ->
--- On GT reduce production afield_list ->
+-- On error GT
+--   reduce production afield_list ->
 
 State 89:
 ## Known stack suffix:
@@ -1158,11 +1104,8 @@ annot -> asection . annot [ STAR LIDENT COMMA COLON CL_PAREN ]
 -- On asection shift to state 92
 -- On annot shift to state 93
 ## Reductions:
--- On STAR reduce production annot ->
--- On LIDENT reduce production annot ->
--- On COMMA reduce production annot ->
--- On COLON reduce production annot ->
--- On CL_PAREN reduce production annot ->
+-- On STAR LIDENT COMMA COLON CL_PAREN
+--   reduce production annot ->
 
 State 93:
 ## Known stack suffix:
@@ -1212,10 +1155,8 @@ type_expr -> OP_CURL field_list CL_CURL . annot [ STAR LIDENT COMMA CL_PAREN ]
 -- On asection shift to state 92
 -- On annot shift to state 98
 ## Reductions:
--- On STAR reduce production annot ->
--- On LIDENT reduce production annot ->
--- On COMMA reduce production annot ->
--- On CL_PAREN reduce production annot ->
+-- On STAR LIDENT COMMA CL_PAREN
+--   reduce production annot ->
 
 State 98:
 ## Known stack suffix:
@@ -1253,10 +1194,8 @@ type_expr -> OP_BRACK CL_BRACK . annot [ STAR LIDENT COMMA CL_PAREN ]
 -- On asection shift to state 92
 -- On annot shift to state 101
 ## Reductions:
--- On STAR reduce production annot ->
--- On LIDENT reduce production annot ->
--- On COMMA reduce production annot ->
--- On CL_PAREN reduce production annot ->
+-- On STAR LIDENT COMMA CL_PAREN
+--   reduce production annot ->
 
 State 101:
 ## Known stack suffix:
@@ -1297,10 +1236,8 @@ type_expr -> OP_BRACK variant_list CL_BRACK . annot [ STAR LIDENT COMMA CL_PAREN
 -- On asection shift to state 92
 -- On annot shift to state 105
 ## Reductions:
--- On STAR reduce production annot ->
--- On LIDENT reduce production annot ->
--- On COMMA reduce production annot ->
--- On CL_PAREN reduce production annot ->
+-- On STAR LIDENT COMMA CL_PAREN
+--   reduce production annot ->
 
 State 105:
 ## Known stack suffix:
@@ -1321,10 +1258,8 @@ type_expr -> type_inst . annot [ STAR LIDENT COMMA CL_PAREN ]
 -- On asection shift to state 92
 -- On annot shift to state 107
 ## Reductions:
--- On STAR reduce production annot ->
--- On LIDENT reduce production annot ->
--- On COMMA reduce production annot ->
--- On CL_PAREN reduce production annot ->
+-- On STAR LIDENT COMMA CL_PAREN
+--   reduce production annot ->
 
 State 107:
 ## Known stack suffix:
@@ -1346,9 +1281,10 @@ type_args -> type_expr . [ LIDENT ]
 ## Transitions:
 -- On COMMA shift to state 109
 ## Reductions:
--- On STAR reduce production annot_expr -> type_expr
--- On LIDENT reduce production type_args -> type_expr
--- On CL_PAREN reduce production annot_expr -> type_expr
+-- On STAR CL_PAREN
+--   reduce production annot_expr -> type_expr
+-- On LIDENT
+--   reduce production type_args -> type_expr
 
 State 109:
 ## Known stack suffix:
@@ -1366,7 +1302,8 @@ type_arg_list -> type_expr COMMA . type_expr [ error CL_PAREN ]
 -- On type_args shift to state 60
 -- On type_arg_list shift to state 111
 ## Reductions:
--- On LIDENT reduce production type_args ->
+-- On LIDENT
+--   reduce production type_args ->
 
 State 110:
 ## Known stack suffix:
@@ -1379,9 +1316,10 @@ type_args -> type_expr . [ LIDENT ]
 ## Transitions:
 -- On COMMA shift to state 109
 ## Reductions:
--- On error reduce production type_arg_list -> type_expr COMMA type_expr
--- On LIDENT reduce production type_args -> type_expr
--- On CL_PAREN reduce production type_arg_list -> type_expr COMMA type_expr
+-- On error CL_PAREN
+--   reduce production type_arg_list -> type_expr COMMA type_expr
+-- On LIDENT
+--   reduce production type_args -> type_expr
 
 State 111:
 ## Known stack suffix:
@@ -1469,10 +1407,8 @@ type_expr -> OP_PAREN cartesian_product CL_PAREN . annot [ STAR LIDENT COMMA CL_
 -- On asection shift to state 92
 -- On annot shift to state 120
 ## Reductions:
--- On STAR reduce production annot ->
--- On LIDENT reduce production annot ->
--- On COMMA reduce production annot ->
--- On CL_PAREN reduce production annot ->
+-- On STAR LIDENT COMMA CL_PAREN
+--   reduce production annot ->
 
 State 120:
 ## Known stack suffix:
@@ -1515,10 +1451,12 @@ cartesian_product -> annot_expr STAR . annot_expr [ error CL_PAREN ]
 -- On annot_expr shift to state 125
 -- On annot shift to state 126
 ## Reductions:
--- On error reduce production cartesian_product ->
--- On LIDENT reduce production type_args ->
--- On COLON reduce production annot ->
--- On CL_PAREN reduce production cartesian_product ->
+-- On COLON
+--   reduce production annot ->
+-- On error CL_PAREN
+--   reduce production cartesian_product ->
+-- On LIDENT
+--   reduce production type_args ->
 
 State 123:
 ## Known stack suffix:
@@ -1528,10 +1466,10 @@ annot_expr -> type_expr . [ error STAR CL_PAREN ]
 type_args -> type_expr . [ LIDENT ]
 ## Transitions:
 ## Reductions:
--- On error reduce production annot_expr -> type_expr
--- On STAR reduce production annot_expr -> type_expr
--- On LIDENT reduce production type_args -> type_expr
--- On CL_PAREN reduce production annot_expr -> type_expr
+-- On error STAR CL_PAREN
+--   reduce production annot_expr -> type_expr
+-- On LIDENT
+--   reduce production type_args -> type_expr
 
 State 124:
 ## Known stack suffix:
@@ -1552,8 +1490,8 @@ cartesian_product -> annot_expr STAR annot_expr . [ error CL_PAREN ]
 ## Transitions:
 -- On STAR shift to state 122
 ## Reductions:
--- On error reduce production cartesian_product -> annot_expr STAR annot_expr
--- On CL_PAREN reduce production cartesian_product -> annot_expr STAR annot_expr
+-- On error CL_PAREN
+--   reduce production cartesian_product -> annot_expr STAR annot_expr
 
 State 126:
 ## Known stack suffix:
@@ -1578,7 +1516,8 @@ annot_expr -> annot COLON . type_expr [ error STAR CL_PAREN ]
 -- On type_expr shift to state 128
 -- On type_args shift to state 60
 ## Reductions:
--- On LIDENT reduce production type_args ->
+-- On LIDENT
+--   reduce production type_args ->
 
 State 128:
 ## Known stack suffix:
@@ -1588,10 +1527,10 @@ annot_expr -> annot COLON type_expr . [ error STAR CL_PAREN ]
 type_args -> type_expr . [ LIDENT ]
 ## Transitions:
 ## Reductions:
--- On error reduce production annot_expr -> annot COLON type_expr
--- On STAR reduce production annot_expr -> annot COLON type_expr
--- On LIDENT reduce production type_args -> type_expr
--- On CL_PAREN reduce production annot_expr -> annot COLON type_expr
+-- On error STAR CL_PAREN
+--   reduce production annot_expr -> annot COLON type_expr
+-- On LIDENT
+--   reduce production type_args -> type_expr
 
 State 129:
 ## Known stack suffix:
@@ -1603,10 +1542,8 @@ type_expr -> OP_PAREN annot_expr CL_PAREN . annot [ STAR LIDENT COMMA CL_PAREN ]
 -- On asection shift to state 92
 -- On annot shift to state 130
 ## Reductions:
--- On STAR reduce production annot ->
--- On LIDENT reduce production annot ->
--- On COMMA reduce production annot ->
--- On CL_PAREN reduce production annot ->
+-- On STAR LIDENT COMMA CL_PAREN
+--   reduce production annot ->
 
 State 130:
 ## Known stack suffix:
@@ -1640,7 +1577,8 @@ annot_expr -> annot COLON . type_expr [ STAR CL_PAREN ]
 -- On type_expr shift to state 133
 -- On type_args shift to state 112
 ## Reductions:
--- On LIDENT reduce production type_args ->
+-- On LIDENT
+--   reduce production type_args ->
 
 State 133:
 ## Known stack suffix:
@@ -1650,9 +1588,10 @@ annot_expr -> annot COLON type_expr . [ STAR CL_PAREN ]
 type_args -> type_expr . [ LIDENT ]
 ## Transitions:
 ## Reductions:
--- On STAR reduce production annot_expr -> annot COLON type_expr
--- On LIDENT reduce production type_args -> type_expr
--- On CL_PAREN reduce production annot_expr -> annot COLON type_expr
+-- On STAR CL_PAREN
+--   reduce production annot_expr -> annot COLON type_expr
+-- On LIDENT
+--   reduce production type_args -> type_expr
 
 State 134:
 ## Known stack suffix:
@@ -1684,17 +1623,8 @@ type_expr -> OP_PAREN cartesian_product CL_PAREN . annot [ error TYPE STAR SEMIC
 -- On asection shift to state 13
 -- On annot shift to state 137
 ## Reductions:
--- On error reduce production annot ->
--- On TYPE reduce production annot ->
--- On STAR reduce production annot ->
--- On SEMICOLON reduce production annot ->
--- On LIDENT reduce production annot ->
--- On EOF reduce production annot ->
--- On COMMA reduce production annot ->
--- On CL_PAREN reduce production annot ->
--- On CL_CURL reduce production annot ->
--- On CL_BRACK reduce production annot ->
--- On BAR reduce production annot ->
+-- On error TYPE STAR SEMICOLON LIDENT EOF COMMA CL_PAREN CL_CURL CL_BRACK BAR
+--   reduce production annot ->
 
 State 137:
 ## Known stack suffix:
@@ -1727,17 +1657,8 @@ type_expr -> OP_PAREN annot_expr CL_PAREN . annot [ error TYPE STAR SEMICOLON LI
 -- On asection shift to state 13
 -- On annot shift to state 140
 ## Reductions:
--- On error reduce production annot ->
--- On TYPE reduce production annot ->
--- On STAR reduce production annot ->
--- On SEMICOLON reduce production annot ->
--- On LIDENT reduce production annot ->
--- On EOF reduce production annot ->
--- On COMMA reduce production annot ->
--- On CL_PAREN reduce production annot ->
--- On CL_CURL reduce production annot ->
--- On CL_BRACK reduce production annot ->
--- On BAR reduce production annot ->
+-- On error TYPE STAR SEMICOLON LIDENT EOF COMMA CL_PAREN CL_CURL CL_BRACK BAR
+--   reduce production annot ->
 
 State 140:
 ## Known stack suffix:
@@ -1756,10 +1677,10 @@ module_item -> TYPE type_param LIDENT annot EQ type_expr . [ error TYPE EOF ]
 type_args -> type_expr . [ LIDENT ]
 ## Transitions:
 ## Reductions:
--- On error reduce production module_item -> TYPE type_param LIDENT annot EQ type_expr
--- On TYPE reduce production module_item -> TYPE type_param LIDENT annot EQ type_expr
--- On LIDENT reduce production type_args -> type_expr
--- On EOF reduce production module_item -> TYPE type_param LIDENT annot EQ type_expr
+-- On error TYPE EOF
+--   reduce production module_item -> TYPE type_param LIDENT annot EQ type_expr
+-- On LIDENT
+--   reduce production type_args -> type_expr
 
 State 142:
 ## Known stack suffix:

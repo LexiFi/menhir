@@ -102,8 +102,8 @@ attr_val -> s_or_i . COLON s_or_i [ RPAR COMMA ]
 ## Transitions:
 -- On COLON shift to state 10
 ## Reductions:
--- On RPAR reduce production attr_val -> s_or_i
--- On COMMA reduce production attr_val -> s_or_i
+-- On RPAR COMMA
+--   reduce production attr_val -> s_or_i
 
 State 10:
 ## Known stack suffix:
@@ -536,14 +536,8 @@ expr -> expr . DIV expr [ SEMI RPAR RCURLY PLUS MULT MINUS KW_DEFINE_GROUP KW_DE
 -- On MULT shift to state 49
 -- On DIV shift to state 51
 ## Reductions:
--- On SEMI reduce production expr -> expr PLUS expr
--- On RPAR reduce production expr -> expr PLUS expr
--- On RCURLY reduce production expr -> expr PLUS expr
--- On PLUS reduce production expr -> expr PLUS expr
--- On MINUS reduce production expr -> expr PLUS expr
--- On KW_DEFINE_GROUP reduce production expr -> expr PLUS expr
--- On KW_DEFINE reduce production expr -> expr PLUS expr
--- On ID reduce production expr -> expr PLUS expr
+-- On SEMI RPAR RCURLY PLUS MINUS KW_DEFINE_GROUP KW_DEFINE ID
+--   reduce production expr -> expr PLUS expr
 
 State 49:
 ## Known stack suffix:
@@ -626,14 +620,8 @@ expr -> expr . DIV expr [ SEMI RPAR RCURLY PLUS MULT MINUS KW_DEFINE_GROUP KW_DE
 -- On MULT shift to state 49
 -- On DIV shift to state 51
 ## Reductions:
--- On SEMI reduce production expr -> expr MINUS expr
--- On RPAR reduce production expr -> expr MINUS expr
--- On RCURLY reduce production expr -> expr MINUS expr
--- On PLUS reduce production expr -> expr MINUS expr
--- On MINUS reduce production expr -> expr MINUS expr
--- On KW_DEFINE_GROUP reduce production expr -> expr MINUS expr
--- On KW_DEFINE reduce production expr -> expr MINUS expr
--- On ID reduce production expr -> expr MINUS expr
+-- On SEMI RPAR RCURLY PLUS MINUS KW_DEFINE_GROUP KW_DEFINE ID
+--   reduce production expr -> expr MINUS expr
 
 State 55:
 ## Known stack suffix:
@@ -694,11 +682,8 @@ expr -> expr . DIV expr [ SEMI RCURLY PLUS MULT MINUS KW_DEFINE_GROUP KW_DEFINE 
 -- On MINUS shift to state 53
 -- On DIV shift to state 51
 ## Reductions:
--- On SEMI reduce production attr_val_expr -> expr
--- On RCURLY reduce production attr_val_expr -> expr
--- On KW_DEFINE_GROUP reduce production attr_val_expr -> expr
--- On KW_DEFINE reduce production attr_val_expr -> expr
--- On ID reduce production attr_val_expr -> expr
+-- On SEMI RCURLY KW_DEFINE_GROUP KW_DEFINE ID
+--   reduce production attr_val_expr -> expr
 
 State 60:
 ## Known stack suffix:
@@ -737,10 +722,8 @@ simple_attr -> ID COLON attr_val_expr . [ RCURLY KW_DEFINE_GROUP KW_DEFINE ID ]
 ## Transitions:
 -- On SEMI shift to state 63
 ## Reductions:
--- On RCURLY reduce production simple_attr -> ID COLON attr_val_expr
--- On KW_DEFINE_GROUP reduce production simple_attr -> ID COLON attr_val_expr
--- On KW_DEFINE reduce production simple_attr -> ID COLON attr_val_expr
--- On ID reduce production simple_attr -> ID COLON attr_val_expr
+-- On RCURLY KW_DEFINE_GROUP KW_DEFINE ID
+--   reduce production simple_attr -> ID COLON attr_val_expr
 
 State 63:
 ## Known stack suffix:
@@ -810,10 +793,8 @@ simple_attr -> head . [ RCURLY KW_DEFINE_GROUP KW_DEFINE ID ]
 -- On SEMI shift to state 69
 -- On LCURLY shift to state 70
 ## Reductions:
--- On RCURLY reduce production simple_attr -> head
--- On KW_DEFINE_GROUP reduce production simple_attr -> head
--- On KW_DEFINE reduce production simple_attr -> head
--- On ID reduce production simple_attr -> head
+-- On RCURLY KW_DEFINE_GROUP KW_DEFINE ID
+--   reduce production simple_attr -> head
 
 State 69:
 ## Known stack suffix:

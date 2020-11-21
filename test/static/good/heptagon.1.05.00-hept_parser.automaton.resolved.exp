@@ -9,14 +9,8 @@ interface' -> . interface [ # ]
 -- On list(opens) shift to state 8
 -- On interface shift to state 389
 ## Reductions:
--- On VAL reduce production list(opens) ->
--- On UNSAFE reduce production list(opens) ->
--- On TYPE reduce production list(opens) ->
--- On NODE reduce production list(opens) ->
--- On FUN reduce production list(opens) ->
--- On EXTERNAL reduce production list(opens) ->
--- On EOF reduce production list(opens) ->
--- On CONST reduce production list(opens) ->
+-- On VAL UNSAFE TYPE NODE FUN EXTERNAL EOF CONST
+--   reduce production list(opens) ->
 
 State 1:
 ## Known stack suffix:
@@ -46,16 +40,8 @@ opens -> OPEN modul . [ VAL UNSAFE TYPE PRAGMA OPEN NODE FUN EXTERNAL EOF CONST 
 ## Transitions:
 -- On DOT shift to state 4
 ## Reductions:
--- On VAL reduce production opens -> OPEN modul
--- On UNSAFE reduce production opens -> OPEN modul
--- On TYPE reduce production opens -> OPEN modul
--- On PRAGMA reduce production opens -> OPEN modul
--- On OPEN reduce production opens -> OPEN modul
--- On NODE reduce production opens -> OPEN modul
--- On FUN reduce production opens -> OPEN modul
--- On EXTERNAL reduce production opens -> OPEN modul
--- On EOF reduce production opens -> OPEN modul
--- On CONST reduce production opens -> OPEN modul
+-- On VAL UNSAFE TYPE PRAGMA OPEN NODE FUN EXTERNAL EOF CONST
+--   reduce production opens -> OPEN modul
 
 State 4:
 ## Known stack suffix:
@@ -85,15 +71,8 @@ list(opens) -> opens . list(opens) [ VAL UNSAFE TYPE PRAGMA NODE FUN EXTERNAL EO
 -- On opens shift to state 6
 -- On list(opens) shift to state 7
 ## Reductions:
--- On VAL reduce production list(opens) ->
--- On UNSAFE reduce production list(opens) ->
--- On TYPE reduce production list(opens) ->
--- On PRAGMA reduce production list(opens) ->
--- On NODE reduce production list(opens) ->
--- On FUN reduce production list(opens) ->
--- On EXTERNAL reduce production list(opens) ->
--- On EOF reduce production list(opens) ->
--- On CONST reduce production list(opens) ->
+-- On VAL UNSAFE TYPE PRAGMA NODE FUN EXTERNAL EOF CONST
+--   reduce production list(opens) ->
 
 State 7:
 ## Known stack suffix:
@@ -119,11 +98,10 @@ interface -> list(opens) . list(interface_desc) EOF [ # ]
 -- On extern shift to state 318
 -- On const_dec shift to state 388
 ## Reductions:
--- On VAL reduce production extern ->
--- On UNSAFE reduce production extern ->
--- On NODE reduce production extern ->
--- On FUN reduce production extern ->
--- On EOF reduce production list(interface_desc) ->
+-- On VAL UNSAFE NODE FUN
+--   reduce production extern ->
+-- On EOF
+--   reduce production list(interface_desc) ->
 
 State 9:
 ## Known stack suffix:
@@ -148,15 +126,8 @@ type_dec -> TYPE IDENT . EQUAL struct_ty_desc [ VAL UNSAFE TYPE PRAGMA NODE FUN 
 ## Transitions:
 -- On EQUAL shift to state 11
 ## Reductions:
--- On VAL reduce production type_dec -> TYPE IDENT
--- On UNSAFE reduce production type_dec -> TYPE IDENT
--- On TYPE reduce production type_dec -> TYPE IDENT
--- On PRAGMA reduce production type_dec -> TYPE IDENT
--- On NODE reduce production type_dec -> TYPE IDENT
--- On FUN reduce production type_dec -> TYPE IDENT
--- On EXTERNAL reduce production type_dec -> TYPE IDENT
--- On EOF reduce production type_dec -> TYPE IDENT
--- On CONST reduce production type_dec -> TYPE IDENT
+-- On VAL UNSAFE TYPE PRAGMA NODE FUN EXTERNAL EOF CONST
+--   reduce production type_dec -> TYPE IDENT
 
 State 11:
 ## Known stack suffix:
@@ -411,8 +382,8 @@ ty_ident -> ty_ident . POWER simple_exp [ SEMICOL RBRACE POWER ]
 ## Transitions:
 -- On POWER shift to state 35
 ## Reductions:
--- On SEMICOL reduce production label_ty -> IDENT COLON ty_ident
--- On RBRACE reduce production label_ty -> IDENT COLON ty_ident
+-- On SEMICOL RBRACE
+--   reduce production label_ty -> IDENT COLON ty_ident
 
 State 35:
 ## Known stack suffix:
@@ -1023,7 +994,8 @@ infx -> SUBTRACTIVE . [ RPAREN ]
 -- On _exp shift to state 122
 -- On _const shift to state 123
 ## Reductions:
--- On RPAREN reduce production infx -> SUBTRACTIVE
+-- On RPAREN
+--   reduce production infx -> SUBTRACTIVE
 
 State 55:
 ## Known stack suffix:
@@ -1211,7 +1183,8 @@ infx -> PREFIX . [ RPAREN ]
 -- On _exp shift to state 122
 -- On _const shift to state 123
 ## Reductions:
--- On RPAREN reduce production infx -> PREFIX
+-- On RPAREN
+--   reduce production infx -> PREFIX
 
 State 59:
 ## Known stack suffix:
@@ -1264,7 +1237,8 @@ node_name -> INLINED qualname . call_params [ LPAREN ]
 -- On DOUBLE_LESS shift to state 64
 -- On call_params shift to state 221
 ## Reductions:
--- On LPAREN reduce production call_params ->
+-- On LPAREN
+--   reduce production call_params ->
 
 State 64:
 ## Known stack suffix:
@@ -1367,70 +1341,10 @@ _simple_exp -> IDENT . [ WITH WHENOT WHEN VAR VAL UNTIL UNSAFE UNLESS TYPE THEN 
 ident -> IDENT . [ LPAREN DOUBLE_LESS ]
 ## Transitions:
 ## Reductions:
--- On WITH reduce production _simple_exp -> IDENT
--- On WHENOT reduce production _simple_exp -> IDENT
--- On WHEN reduce production _simple_exp -> IDENT
--- On VAR reduce production _simple_exp -> IDENT
--- On VAL reduce production _simple_exp -> IDENT
--- On UNTIL reduce production _simple_exp -> IDENT
--- On UNSAFE reduce production _simple_exp -> IDENT
--- On UNLESS reduce production _simple_exp -> IDENT
--- On TYPE reduce production _simple_exp -> IDENT
--- On THEN reduce production _simple_exp -> IDENT
--- On TEL reduce production _simple_exp -> IDENT
--- On SUBTRACTIVE reduce production _simple_exp -> IDENT
--- On STATE reduce production _simple_exp -> IDENT
--- On STAR reduce production _simple_exp -> IDENT
--- On SEMICOL reduce production _simple_exp -> IDENT
--- On RPAREN_GREATER reduce production _simple_exp -> IDENT
--- On RPAREN reduce production _simple_exp -> IDENT
--- On REACHABLE reduce production _simple_exp -> IDENT
--- On RBRACKET reduce production _simple_exp -> IDENT
--- On RBRACE reduce production _simple_exp -> IDENT
--- On PRAGMA reduce production _simple_exp -> IDENT
--- On POWER reduce production _simple_exp -> IDENT
--- On OR reduce production _simple_exp -> IDENT
--- On ON reduce production _simple_exp -> IDENT
--- On NODE reduce production _simple_exp -> IDENT
--- On LPAREN reduce production ident -> IDENT
--- On LET reduce production _simple_exp -> IDENT
--- On LESS_GREATER reduce production _simple_exp -> IDENT
--- On LESSRBRACKET reduce production _simple_exp -> IDENT
--- On LBRACKETGREATER reduce production _simple_exp -> IDENT
--- On LBRACKET reduce production _simple_exp -> IDENT
--- On INFIX4 reduce production _simple_exp -> IDENT
--- On INFIX3 reduce production _simple_exp -> IDENT
--- On INFIX2 reduce production _simple_exp -> IDENT
--- On INFIX1 reduce production _simple_exp -> IDENT
--- On INFIX0 reduce production _simple_exp -> IDENT
--- On FUN reduce production _simple_exp -> IDENT
--- On FBY reduce production _simple_exp -> IDENT
--- On EXTERNAL reduce production _simple_exp -> IDENT
--- On EVERY reduce production _simple_exp -> IDENT
--- On EQUAL reduce production _simple_exp -> IDENT
--- On EOF reduce production _simple_exp -> IDENT
--- On ENFORCE reduce production _simple_exp -> IDENT
--- On END reduce production _simple_exp -> IDENT
--- On ELSE reduce production _simple_exp -> IDENT
--- On DOUBLE_LESS reduce production ident -> IDENT
--- On DOUBLE_GREATER reduce production _simple_exp -> IDENT
--- On DOUBLE_DOT reduce production _simple_exp -> IDENT
--- On DOT reduce production _simple_exp -> IDENT
--- On DONE reduce production _simple_exp -> IDENT
--- On DO reduce production _simple_exp -> IDENT
--- On DEFAULT reduce production _simple_exp -> IDENT
--- On Constructor reduce production _simple_exp -> IDENT
--- On CONTINUE reduce production _simple_exp -> IDENT
--- On CONST reduce production _simple_exp -> IDENT
--- On COMMA reduce production _simple_exp -> IDENT
--- On COLONCOLON reduce production _simple_exp -> IDENT
--- On BOOL reduce production _simple_exp -> IDENT
--- On BAR reduce production _simple_exp -> IDENT
--- On ATTRACTIVE reduce production _simple_exp -> IDENT
--- On ARROW reduce production _simple_exp -> IDENT
--- On AROBASE reduce production _simple_exp -> IDENT
--- On AND reduce production _simple_exp -> IDENT
--- On AMPERSAND reduce production _simple_exp -> IDENT
+-- On WITH WHENOT WHEN VAR VAL UNTIL UNSAFE UNLESS TYPE THEN TEL SUBTRACTIVE STATE STAR SEMICOL RPAREN_GREATER RPAREN REACHABLE RBRACKET RBRACE PRAGMA POWER OR ON NODE LET LESS_GREATER LESSRBRACKET LBRACKETGREATER LBRACKET INFIX4 INFIX3 INFIX2 INFIX1 INFIX0 FUN FBY EXTERNAL EVERY EQUAL EOF ENFORCE END ELSE DOUBLE_GREATER DOUBLE_DOT DOT DONE DO DEFAULT Constructor CONTINUE CONST COMMA COLONCOLON BOOL BAR ATTRACTIVE ARROW AROBASE AND AMPERSAND
+--   reduce production _simple_exp -> IDENT
+-- On LPAREN DOUBLE_LESS
+--   reduce production ident -> IDENT
 
 State 67:
 ## Known stack suffix:
@@ -1467,75 +1381,10 @@ constructor -> Constructor . [ WITH WHENOT WHEN VAR VAL UNTIL UNSAFE UNLESS TYPE
 modul -> Constructor . [ DOT ]
 ## Transitions:
 ## Reductions:
--- On WITH reduce production constructor -> Constructor
--- On WHENOT reduce production constructor -> Constructor
--- On WHEN reduce production constructor -> Constructor
--- On VAR reduce production constructor -> Constructor
--- On VAL reduce production constructor -> Constructor
--- On UNTIL reduce production constructor -> Constructor
--- On UNSAFE reduce production constructor -> Constructor
--- On UNLESS reduce production constructor -> Constructor
--- On TYPE reduce production constructor -> Constructor
--- On THEN reduce production constructor -> Constructor
--- On TEL reduce production constructor -> Constructor
--- On SUBTRACTIVE reduce production constructor -> Constructor
--- On STRING reduce production constructor -> Constructor
--- On STATE reduce production constructor -> Constructor
--- On STAR reduce production constructor -> Constructor
--- On SEMICOL reduce production constructor -> Constructor
--- On RPAREN_GREATER reduce production constructor -> Constructor
--- On RPAREN reduce production constructor -> Constructor
--- On REACHABLE reduce production constructor -> Constructor
--- On RBRACKET reduce production constructor -> Constructor
--- On RBRACE reduce production constructor -> Constructor
--- On PRAGMA reduce production constructor -> Constructor
--- On POWER reduce production constructor -> Constructor
--- On OR reduce production constructor -> Constructor
--- On ON reduce production constructor -> Constructor
--- On NODE reduce production constructor -> Constructor
--- On LPAREN reduce production constructor -> Constructor
--- On LET reduce production constructor -> Constructor
--- On LESS_GREATER reduce production constructor -> Constructor
--- On LESSRBRACKET reduce production constructor -> Constructor
--- On LBRACKETGREATER reduce production constructor -> Constructor
--- On LBRACKET reduce production constructor -> Constructor
--- On LBRACE reduce production constructor -> Constructor
--- On INT reduce production constructor -> Constructor
--- On INFIX4 reduce production constructor -> Constructor
--- On INFIX3 reduce production constructor -> Constructor
--- On INFIX2 reduce production constructor -> Constructor
--- On INFIX1 reduce production constructor -> Constructor
--- On INFIX0 reduce production constructor -> Constructor
--- On IDENT reduce production constructor -> Constructor
--- On FUN reduce production constructor -> Constructor
--- On FLOAT reduce production constructor -> Constructor
--- On FBY reduce production constructor -> Constructor
--- On EXTERNAL reduce production constructor -> Constructor
--- On EVERY reduce production constructor -> Constructor
--- On EQUAL reduce production constructor -> Constructor
--- On EOF reduce production constructor -> Constructor
--- On ENFORCE reduce production constructor -> Constructor
--- On END reduce production constructor -> Constructor
--- On ELSE reduce production constructor -> Constructor
--- On DOUBLE_GREATER reduce production constructor -> Constructor
--- On DOUBLE_DOT reduce production constructor -> Constructor
--- On DOT reduce production modul -> Constructor
--- On DONE reduce production constructor -> Constructor
--- On DO reduce production constructor -> Constructor
--- On DEFAULT reduce production constructor -> Constructor
--- On Constructor reduce production constructor -> Constructor
--- On CONTINUE reduce production constructor -> Constructor
--- On CONST reduce production constructor -> Constructor
--- On COMMA reduce production constructor -> Constructor
--- On COLONCOLON reduce production constructor -> Constructor
--- On BOOL reduce production constructor -> Constructor
--- On BAR reduce production constructor -> Constructor
--- On ATTRACTIVE reduce production constructor -> Constructor
--- On AT reduce production constructor -> Constructor
--- On ARROW reduce production constructor -> Constructor
--- On AROBASE reduce production constructor -> Constructor
--- On AND reduce production constructor -> Constructor
--- On AMPERSAND reduce production constructor -> Constructor
+-- On WITH WHENOT WHEN VAR VAL UNTIL UNSAFE UNLESS TYPE THEN TEL SUBTRACTIVE STRING STATE STAR SEMICOL RPAREN_GREATER RPAREN REACHABLE RBRACKET RBRACE PRAGMA POWER OR ON NODE LPAREN LET LESS_GREATER LESSRBRACKET LBRACKETGREATER LBRACKET LBRACE INT INFIX4 INFIX3 INFIX2 INFIX1 INFIX0 IDENT FUN FLOAT FBY EXTERNAL EVERY EQUAL EOF ENFORCE END ELSE DOUBLE_GREATER DOUBLE_DOT DONE DO DEFAULT Constructor CONTINUE CONST COMMA COLONCOLON BOOL BAR ATTRACTIVE AT ARROW AROBASE AND AMPERSAND
+--   reduce production constructor -> Constructor
+-- On DOT
+--   reduce production modul -> Constructor
 
 State 71:
 ## Known stack suffix:
@@ -1567,63 +1416,8 @@ exp -> simple_exp . [ WITH WHENOT WHEN VAR VAL UNTIL UNSAFE UNLESS TYPE THEN TEL
 -- On trunc_indexes shift to state 212
 -- On indexes shift to state 213
 ## Reductions:
--- On WITH reduce production exp -> simple_exp
--- On WHENOT reduce production exp -> simple_exp
--- On WHEN reduce production exp -> simple_exp
--- On VAR reduce production exp -> simple_exp
--- On VAL reduce production exp -> simple_exp
--- On UNTIL reduce production exp -> simple_exp
--- On UNSAFE reduce production exp -> simple_exp
--- On UNLESS reduce production exp -> simple_exp
--- On TYPE reduce production exp -> simple_exp
--- On THEN reduce production exp -> simple_exp
--- On TEL reduce production exp -> simple_exp
--- On SUBTRACTIVE reduce production exp -> simple_exp
--- On STATE reduce production exp -> simple_exp
--- On STAR reduce production exp -> simple_exp
--- On SEMICOL reduce production exp -> simple_exp
--- On RPAREN_GREATER reduce production exp -> simple_exp
--- On RPAREN reduce production exp -> simple_exp
--- On REACHABLE reduce production exp -> simple_exp
--- On RBRACKET reduce production exp -> simple_exp
--- On RBRACE reduce production exp -> simple_exp
--- On PRAGMA reduce production exp -> simple_exp
--- On POWER reduce production exp -> simple_exp
--- On OR reduce production exp -> simple_exp
--- On ON reduce production exp -> simple_exp
--- On NODE reduce production exp -> simple_exp
--- On LET reduce production exp -> simple_exp
--- On LESS_GREATER reduce production exp -> simple_exp
--- On LESSRBRACKET reduce production exp -> simple_exp
--- On INFIX4 reduce production exp -> simple_exp
--- On INFIX3 reduce production exp -> simple_exp
--- On INFIX2 reduce production exp -> simple_exp
--- On INFIX1 reduce production exp -> simple_exp
--- On INFIX0 reduce production exp -> simple_exp
--- On FUN reduce production exp -> simple_exp
--- On EXTERNAL reduce production exp -> simple_exp
--- On EVERY reduce production exp -> simple_exp
--- On EQUAL reduce production exp -> simple_exp
--- On EOF reduce production exp -> simple_exp
--- On ENFORCE reduce production exp -> simple_exp
--- On END reduce production exp -> simple_exp
--- On ELSE reduce production exp -> simple_exp
--- On DOUBLE_GREATER reduce production exp -> simple_exp
--- On DOUBLE_DOT reduce production exp -> simple_exp
--- On DONE reduce production exp -> simple_exp
--- On DO reduce production exp -> simple_exp
--- On DEFAULT reduce production exp -> simple_exp
--- On Constructor reduce production exp -> simple_exp
--- On CONTINUE reduce production exp -> simple_exp
--- On CONST reduce production exp -> simple_exp
--- On COMMA reduce production exp -> simple_exp
--- On COLONCOLON reduce production exp -> simple_exp
--- On BOOL reduce production exp -> simple_exp
--- On BAR reduce production exp -> simple_exp
--- On ATTRACTIVE reduce production exp -> simple_exp
--- On AROBASE reduce production exp -> simple_exp
--- On AND reduce production exp -> simple_exp
--- On AMPERSAND reduce production exp -> simple_exp
+-- On WITH WHENOT WHEN VAR VAL UNTIL UNSAFE UNLESS TYPE THEN TEL SUBTRACTIVE STATE STAR SEMICOL RPAREN_GREATER RPAREN REACHABLE RBRACKET RBRACE PRAGMA POWER OR ON NODE LET LESS_GREATER LESSRBRACKET INFIX4 INFIX3 INFIX2 INFIX1 INFIX0 FUN EXTERNAL EVERY EQUAL EOF ENFORCE END ELSE DOUBLE_GREATER DOUBLE_DOT DONE DO DEFAULT Constructor CONTINUE CONST COMMA COLONCOLON BOOL BAR ATTRACTIVE AROBASE AND AMPERSAND
+--   reduce production exp -> simple_exp
 
 State 73:
 ## Known stack suffix:
@@ -1681,7 +1475,8 @@ node_name -> qualname . call_params [ LPAREN ]
 -- On DOUBLE_LESS shift to state 64
 -- On call_params shift to state 75
 ## Reductions:
--- On LPAREN reduce production call_params ->
+-- On LPAREN
+--   reduce production call_params ->
 
 State 75:
 ## Known stack suffix:
@@ -1700,70 +1495,10 @@ _const -> qualified(ident) . [ WITH WHENOT WHEN VAR VAL UNTIL UNSAFE UNLESS TYPE
 qualname -> qualified(ident) . [ LPAREN DOUBLE_LESS ]
 ## Transitions:
 ## Reductions:
--- On WITH reduce production _const -> qualified(ident)
--- On WHENOT reduce production _const -> qualified(ident)
--- On WHEN reduce production _const -> qualified(ident)
--- On VAR reduce production _const -> qualified(ident)
--- On VAL reduce production _const -> qualified(ident)
--- On UNTIL reduce production _const -> qualified(ident)
--- On UNSAFE reduce production _const -> qualified(ident)
--- On UNLESS reduce production _const -> qualified(ident)
--- On TYPE reduce production _const -> qualified(ident)
--- On THEN reduce production _const -> qualified(ident)
--- On TEL reduce production _const -> qualified(ident)
--- On SUBTRACTIVE reduce production _const -> qualified(ident)
--- On STATE reduce production _const -> qualified(ident)
--- On STAR reduce production _const -> qualified(ident)
--- On SEMICOL reduce production _const -> qualified(ident)
--- On RPAREN_GREATER reduce production _const -> qualified(ident)
--- On RPAREN reduce production _const -> qualified(ident)
--- On REACHABLE reduce production _const -> qualified(ident)
--- On RBRACKET reduce production _const -> qualified(ident)
--- On RBRACE reduce production _const -> qualified(ident)
--- On PRAGMA reduce production _const -> qualified(ident)
--- On POWER reduce production _const -> qualified(ident)
--- On OR reduce production _const -> qualified(ident)
--- On ON reduce production _const -> qualified(ident)
--- On NODE reduce production _const -> qualified(ident)
--- On LPAREN reduce production qualname -> qualified(ident)
--- On LET reduce production _const -> qualified(ident)
--- On LESS_GREATER reduce production _const -> qualified(ident)
--- On LESSRBRACKET reduce production _const -> qualified(ident)
--- On LBRACKETGREATER reduce production _const -> qualified(ident)
--- On LBRACKET reduce production _const -> qualified(ident)
--- On INFIX4 reduce production _const -> qualified(ident)
--- On INFIX3 reduce production _const -> qualified(ident)
--- On INFIX2 reduce production _const -> qualified(ident)
--- On INFIX1 reduce production _const -> qualified(ident)
--- On INFIX0 reduce production _const -> qualified(ident)
--- On FUN reduce production _const -> qualified(ident)
--- On FBY reduce production _const -> qualified(ident)
--- On EXTERNAL reduce production _const -> qualified(ident)
--- On EVERY reduce production _const -> qualified(ident)
--- On EQUAL reduce production _const -> qualified(ident)
--- On EOF reduce production _const -> qualified(ident)
--- On ENFORCE reduce production _const -> qualified(ident)
--- On END reduce production _const -> qualified(ident)
--- On ELSE reduce production _const -> qualified(ident)
--- On DOUBLE_LESS reduce production qualname -> qualified(ident)
--- On DOUBLE_GREATER reduce production _const -> qualified(ident)
--- On DOUBLE_DOT reduce production _const -> qualified(ident)
--- On DOT reduce production _const -> qualified(ident)
--- On DONE reduce production _const -> qualified(ident)
--- On DO reduce production _const -> qualified(ident)
--- On DEFAULT reduce production _const -> qualified(ident)
--- On Constructor reduce production _const -> qualified(ident)
--- On CONTINUE reduce production _const -> qualified(ident)
--- On CONST reduce production _const -> qualified(ident)
--- On COMMA reduce production _const -> qualified(ident)
--- On COLONCOLON reduce production _const -> qualified(ident)
--- On BOOL reduce production _const -> qualified(ident)
--- On BAR reduce production _const -> qualified(ident)
--- On ATTRACTIVE reduce production _const -> qualified(ident)
--- On ARROW reduce production _const -> qualified(ident)
--- On AROBASE reduce production _const -> qualified(ident)
--- On AND reduce production _const -> qualified(ident)
--- On AMPERSAND reduce production _const -> qualified(ident)
+-- On WITH WHENOT WHEN VAR VAL UNTIL UNSAFE UNLESS TYPE THEN TEL SUBTRACTIVE STATE STAR SEMICOL RPAREN_GREATER RPAREN REACHABLE RBRACKET RBRACE PRAGMA POWER OR ON NODE LET LESS_GREATER LESSRBRACKET LBRACKETGREATER LBRACKET INFIX4 INFIX3 INFIX2 INFIX1 INFIX0 FUN FBY EXTERNAL EVERY EQUAL EOF ENFORCE END ELSE DOUBLE_GREATER DOUBLE_DOT DOT DONE DO DEFAULT Constructor CONTINUE CONST COMMA COLONCOLON BOOL BAR ATTRACTIVE ARROW AROBASE AND AMPERSAND
+--   reduce production _const -> qualified(ident)
+-- On LPAREN DOUBLE_LESS
+--   reduce production qualname -> qualified(ident)
 
 State 77:
 ## Known stack suffix:
@@ -1830,7 +1565,8 @@ _exp -> node_name LPAREN . exps RPAREN [ WITH WHENOT WHEN VAR VAL UNTIL UNSAFE U
 -- On _exp shift to state 122
 -- On _const shift to state 123
 ## Reductions:
--- On RPAREN reduce production exps ->
+-- On RPAREN
+--   reduce production exps ->
 
 State 80:
 ## Known stack suffix:
@@ -2021,8 +1757,8 @@ array_exp_list -> exp . COMMA array_exp_list [ RBRACKET DOUBLE_GREATER ]
 -- On AND shift to state 134
 -- On AMPERSAND shift to state 136
 ## Reductions:
--- On RBRACKET reduce production array_exp_list -> exp
--- On DOUBLE_GREATER reduce production array_exp_list -> exp
+-- On RBRACKET DOUBLE_GREATER
+--   reduce production array_exp_list -> exp
 
 State 90:
 ## Known stack suffix:
@@ -2236,59 +1972,8 @@ _exp -> exp . AROBASE exp [ WITH WHENOT WHEN VAR VAL UNTIL UNSAFE UNLESS TYPE TH
 -- On INFIX4 shift to state 117
 -- On INFIX3 shift to state 124
 ## Reductions:
--- On WITH reduce production _exp -> exp SUBTRACTIVE exp
--- On WHENOT reduce production _exp -> exp SUBTRACTIVE exp
--- On WHEN reduce production _exp -> exp SUBTRACTIVE exp
--- On VAR reduce production _exp -> exp SUBTRACTIVE exp
--- On VAL reduce production _exp -> exp SUBTRACTIVE exp
--- On UNTIL reduce production _exp -> exp SUBTRACTIVE exp
--- On UNSAFE reduce production _exp -> exp SUBTRACTIVE exp
--- On UNLESS reduce production _exp -> exp SUBTRACTIVE exp
--- On TYPE reduce production _exp -> exp SUBTRACTIVE exp
--- On THEN reduce production _exp -> exp SUBTRACTIVE exp
--- On TEL reduce production _exp -> exp SUBTRACTIVE exp
--- On SUBTRACTIVE reduce production _exp -> exp SUBTRACTIVE exp
--- On STATE reduce production _exp -> exp SUBTRACTIVE exp
--- On SEMICOL reduce production _exp -> exp SUBTRACTIVE exp
--- On RPAREN_GREATER reduce production _exp -> exp SUBTRACTIVE exp
--- On RPAREN reduce production _exp -> exp SUBTRACTIVE exp
--- On REACHABLE reduce production _exp -> exp SUBTRACTIVE exp
--- On RBRACKET reduce production _exp -> exp SUBTRACTIVE exp
--- On RBRACE reduce production _exp -> exp SUBTRACTIVE exp
--- On PRAGMA reduce production _exp -> exp SUBTRACTIVE exp
--- On OR reduce production _exp -> exp SUBTRACTIVE exp
--- On ON reduce production _exp -> exp SUBTRACTIVE exp
--- On NODE reduce production _exp -> exp SUBTRACTIVE exp
--- On LET reduce production _exp -> exp SUBTRACTIVE exp
--- On LESS_GREATER reduce production _exp -> exp SUBTRACTIVE exp
--- On LESSRBRACKET reduce production _exp -> exp SUBTRACTIVE exp
--- On INFIX2 reduce production _exp -> exp SUBTRACTIVE exp
--- On INFIX1 reduce production _exp -> exp SUBTRACTIVE exp
--- On INFIX0 reduce production _exp -> exp SUBTRACTIVE exp
--- On FUN reduce production _exp -> exp SUBTRACTIVE exp
--- On EXTERNAL reduce production _exp -> exp SUBTRACTIVE exp
--- On EVERY reduce production _exp -> exp SUBTRACTIVE exp
--- On EQUAL reduce production _exp -> exp SUBTRACTIVE exp
--- On EOF reduce production _exp -> exp SUBTRACTIVE exp
--- On ENFORCE reduce production _exp -> exp SUBTRACTIVE exp
--- On END reduce production _exp -> exp SUBTRACTIVE exp
--- On ELSE reduce production _exp -> exp SUBTRACTIVE exp
--- On DOUBLE_GREATER reduce production _exp -> exp SUBTRACTIVE exp
--- On DOUBLE_DOT reduce production _exp -> exp SUBTRACTIVE exp
--- On DONE reduce production _exp -> exp SUBTRACTIVE exp
--- On DO reduce production _exp -> exp SUBTRACTIVE exp
--- On DEFAULT reduce production _exp -> exp SUBTRACTIVE exp
--- On Constructor reduce production _exp -> exp SUBTRACTIVE exp
--- On CONTINUE reduce production _exp -> exp SUBTRACTIVE exp
--- On CONST reduce production _exp -> exp SUBTRACTIVE exp
--- On COMMA reduce production _exp -> exp SUBTRACTIVE exp
--- On COLONCOLON reduce production _exp -> exp SUBTRACTIVE exp
--- On BOOL reduce production _exp -> exp SUBTRACTIVE exp
--- On BAR reduce production _exp -> exp SUBTRACTIVE exp
--- On ATTRACTIVE reduce production _exp -> exp SUBTRACTIVE exp
--- On AROBASE reduce production _exp -> exp SUBTRACTIVE exp
--- On AND reduce production _exp -> exp SUBTRACTIVE exp
--- On AMPERSAND reduce production _exp -> exp SUBTRACTIVE exp
+-- On WITH WHENOT WHEN VAR VAL UNTIL UNSAFE UNLESS TYPE THEN TEL SUBTRACTIVE STATE SEMICOL RPAREN_GREATER RPAREN REACHABLE RBRACKET RBRACE PRAGMA OR ON NODE LET LESS_GREATER LESSRBRACKET INFIX2 INFIX1 INFIX0 FUN EXTERNAL EVERY EQUAL EOF ENFORCE END ELSE DOUBLE_GREATER DOUBLE_DOT DONE DO DEFAULT Constructor CONTINUE CONST COMMA COLONCOLON BOOL BAR ATTRACTIVE AROBASE AND AMPERSAND
+--   reduce production _exp -> exp SUBTRACTIVE exp
 
 State 106:
 ## Known stack suffix:
@@ -2363,61 +2048,8 @@ _exp -> exp . AROBASE exp [ WITH WHENOT WHEN VAR VAL UNTIL UNSAFE UNLESS TYPE TH
 -- On POWER shift to state 108
 -- On INFIX4 shift to state 117
 ## Reductions:
--- On WITH reduce production _exp -> exp STAR exp
--- On WHENOT reduce production _exp -> exp STAR exp
--- On WHEN reduce production _exp -> exp STAR exp
--- On VAR reduce production _exp -> exp STAR exp
--- On VAL reduce production _exp -> exp STAR exp
--- On UNTIL reduce production _exp -> exp STAR exp
--- On UNSAFE reduce production _exp -> exp STAR exp
--- On UNLESS reduce production _exp -> exp STAR exp
--- On TYPE reduce production _exp -> exp STAR exp
--- On THEN reduce production _exp -> exp STAR exp
--- On TEL reduce production _exp -> exp STAR exp
--- On SUBTRACTIVE reduce production _exp -> exp STAR exp
--- On STATE reduce production _exp -> exp STAR exp
--- On STAR reduce production _exp -> exp STAR exp
--- On SEMICOL reduce production _exp -> exp STAR exp
--- On RPAREN_GREATER reduce production _exp -> exp STAR exp
--- On RPAREN reduce production _exp -> exp STAR exp
--- On REACHABLE reduce production _exp -> exp STAR exp
--- On RBRACKET reduce production _exp -> exp STAR exp
--- On RBRACE reduce production _exp -> exp STAR exp
--- On PRAGMA reduce production _exp -> exp STAR exp
--- On OR reduce production _exp -> exp STAR exp
--- On ON reduce production _exp -> exp STAR exp
--- On NODE reduce production _exp -> exp STAR exp
--- On LET reduce production _exp -> exp STAR exp
--- On LESS_GREATER reduce production _exp -> exp STAR exp
--- On LESSRBRACKET reduce production _exp -> exp STAR exp
--- On INFIX3 reduce production _exp -> exp STAR exp
--- On INFIX2 reduce production _exp -> exp STAR exp
--- On INFIX1 reduce production _exp -> exp STAR exp
--- On INFIX0 reduce production _exp -> exp STAR exp
--- On FUN reduce production _exp -> exp STAR exp
--- On EXTERNAL reduce production _exp -> exp STAR exp
--- On EVERY reduce production _exp -> exp STAR exp
--- On EQUAL reduce production _exp -> exp STAR exp
--- On EOF reduce production _exp -> exp STAR exp
--- On ENFORCE reduce production _exp -> exp STAR exp
--- On END reduce production _exp -> exp STAR exp
--- On ELSE reduce production _exp -> exp STAR exp
--- On DOUBLE_GREATER reduce production _exp -> exp STAR exp
--- On DOUBLE_DOT reduce production _exp -> exp STAR exp
--- On DONE reduce production _exp -> exp STAR exp
--- On DO reduce production _exp -> exp STAR exp
--- On DEFAULT reduce production _exp -> exp STAR exp
--- On Constructor reduce production _exp -> exp STAR exp
--- On CONTINUE reduce production _exp -> exp STAR exp
--- On CONST reduce production _exp -> exp STAR exp
--- On COMMA reduce production _exp -> exp STAR exp
--- On COLONCOLON reduce production _exp -> exp STAR exp
--- On BOOL reduce production _exp -> exp STAR exp
--- On BAR reduce production _exp -> exp STAR exp
--- On ATTRACTIVE reduce production _exp -> exp STAR exp
--- On AROBASE reduce production _exp -> exp STAR exp
--- On AND reduce production _exp -> exp STAR exp
--- On AMPERSAND reduce production _exp -> exp STAR exp
+-- On WITH WHENOT WHEN VAR VAL UNTIL UNSAFE UNLESS TYPE THEN TEL SUBTRACTIVE STATE STAR SEMICOL RPAREN_GREATER RPAREN REACHABLE RBRACKET RBRACE PRAGMA OR ON NODE LET LESS_GREATER LESSRBRACKET INFIX3 INFIX2 INFIX1 INFIX0 FUN EXTERNAL EVERY EQUAL EOF ENFORCE END ELSE DOUBLE_GREATER DOUBLE_DOT DONE DO DEFAULT Constructor CONTINUE CONST COMMA COLONCOLON BOOL BAR ATTRACTIVE AROBASE AND AMPERSAND
+--   reduce production _exp -> exp STAR exp
 
 State 108:
 ## Known stack suffix:
@@ -2558,8 +2190,8 @@ field_exp -> qualname EQUAL exp . [ SEMICOL RBRACE ]
 -- On AND shift to state 134
 -- On AMPERSAND shift to state 136
 ## Reductions:
--- On SEMICOL reduce production field_exp -> qualname EQUAL exp
--- On RBRACE reduce production field_exp -> qualname EQUAL exp
+-- On SEMICOL RBRACE
+--   reduce production field_exp -> qualname EQUAL exp
 
 State 113:
 ## Known stack suffix:
@@ -2646,49 +2278,8 @@ _exp -> exp . AROBASE exp [ WITH WHENOT WHEN VAR VAL UNTIL UNSAFE UNLESS TYPE TH
 -- On AND shift to state 134
 -- On AMPERSAND shift to state 136
 ## Reductions:
--- On WITH reduce production _exp -> exp OR exp
--- On VAR reduce production _exp -> exp OR exp
--- On VAL reduce production _exp -> exp OR exp
--- On UNTIL reduce production _exp -> exp OR exp
--- On UNSAFE reduce production _exp -> exp OR exp
--- On UNLESS reduce production _exp -> exp OR exp
--- On TYPE reduce production _exp -> exp OR exp
--- On THEN reduce production _exp -> exp OR exp
--- On TEL reduce production _exp -> exp OR exp
--- On STATE reduce production _exp -> exp OR exp
--- On SEMICOL reduce production _exp -> exp OR exp
--- On RPAREN_GREATER reduce production _exp -> exp OR exp
--- On RPAREN reduce production _exp -> exp OR exp
--- On REACHABLE reduce production _exp -> exp OR exp
--- On RBRACKET reduce production _exp -> exp OR exp
--- On RBRACE reduce production _exp -> exp OR exp
--- On PRAGMA reduce production _exp -> exp OR exp
--- On OR reduce production _exp -> exp OR exp
--- On ON reduce production _exp -> exp OR exp
--- On NODE reduce production _exp -> exp OR exp
--- On LET reduce production _exp -> exp OR exp
--- On LESSRBRACKET reduce production _exp -> exp OR exp
--- On FUN reduce production _exp -> exp OR exp
--- On EXTERNAL reduce production _exp -> exp OR exp
--- On EVERY reduce production _exp -> exp OR exp
--- On EOF reduce production _exp -> exp OR exp
--- On ENFORCE reduce production _exp -> exp OR exp
--- On END reduce production _exp -> exp OR exp
--- On ELSE reduce production _exp -> exp OR exp
--- On DOUBLE_GREATER reduce production _exp -> exp OR exp
--- On DOUBLE_DOT reduce production _exp -> exp OR exp
--- On DONE reduce production _exp -> exp OR exp
--- On DO reduce production _exp -> exp OR exp
--- On DEFAULT reduce production _exp -> exp OR exp
--- On Constructor reduce production _exp -> exp OR exp
--- On CONTINUE reduce production _exp -> exp OR exp
--- On CONST reduce production _exp -> exp OR exp
--- On COMMA reduce production _exp -> exp OR exp
--- On COLONCOLON reduce production _exp -> exp OR exp
--- On BOOL reduce production _exp -> exp OR exp
--- On BAR reduce production _exp -> exp OR exp
--- On ATTRACTIVE reduce production _exp -> exp OR exp
--- On AROBASE reduce production _exp -> exp OR exp
+-- On WITH VAR VAL UNTIL UNSAFE UNLESS TYPE THEN TEL STATE SEMICOL RPAREN_GREATER RPAREN REACHABLE RBRACKET RBRACE PRAGMA OR ON NODE LET LESSRBRACKET FUN EXTERNAL EVERY EOF ENFORCE END ELSE DOUBLE_GREATER DOUBLE_DOT DONE DO DEFAULT Constructor CONTINUE CONST COMMA COLONCOLON BOOL BAR ATTRACTIVE AROBASE
+--   reduce production _exp -> exp OR exp
 
 State 115:
 ## Known stack suffix:
@@ -2770,54 +2361,8 @@ _exp -> exp . AROBASE exp [ WITH WHENOT WHEN VAR VAL UNTIL UNSAFE UNLESS TYPE TH
 -- On INFIX2 shift to state 126
 -- On INFIX1 shift to state 128
 ## Reductions:
--- On WITH reduce production _exp -> exp LESS_GREATER exp
--- On VAR reduce production _exp -> exp LESS_GREATER exp
--- On VAL reduce production _exp -> exp LESS_GREATER exp
--- On UNTIL reduce production _exp -> exp LESS_GREATER exp
--- On UNSAFE reduce production _exp -> exp LESS_GREATER exp
--- On UNLESS reduce production _exp -> exp LESS_GREATER exp
--- On TYPE reduce production _exp -> exp LESS_GREATER exp
--- On THEN reduce production _exp -> exp LESS_GREATER exp
--- On TEL reduce production _exp -> exp LESS_GREATER exp
--- On STATE reduce production _exp -> exp LESS_GREATER exp
--- On SEMICOL reduce production _exp -> exp LESS_GREATER exp
--- On RPAREN_GREATER reduce production _exp -> exp LESS_GREATER exp
--- On RPAREN reduce production _exp -> exp LESS_GREATER exp
--- On REACHABLE reduce production _exp -> exp LESS_GREATER exp
--- On RBRACKET reduce production _exp -> exp LESS_GREATER exp
--- On RBRACE reduce production _exp -> exp LESS_GREATER exp
--- On PRAGMA reduce production _exp -> exp LESS_GREATER exp
--- On OR reduce production _exp -> exp LESS_GREATER exp
--- On ON reduce production _exp -> exp LESS_GREATER exp
--- On NODE reduce production _exp -> exp LESS_GREATER exp
--- On LET reduce production _exp -> exp LESS_GREATER exp
--- On LESS_GREATER reduce production _exp -> exp LESS_GREATER exp
--- On LESSRBRACKET reduce production _exp -> exp LESS_GREATER exp
--- On INFIX0 reduce production _exp -> exp LESS_GREATER exp
--- On FUN reduce production _exp -> exp LESS_GREATER exp
--- On EXTERNAL reduce production _exp -> exp LESS_GREATER exp
--- On EVERY reduce production _exp -> exp LESS_GREATER exp
--- On EQUAL reduce production _exp -> exp LESS_GREATER exp
--- On EOF reduce production _exp -> exp LESS_GREATER exp
--- On ENFORCE reduce production _exp -> exp LESS_GREATER exp
--- On END reduce production _exp -> exp LESS_GREATER exp
--- On ELSE reduce production _exp -> exp LESS_GREATER exp
--- On DOUBLE_GREATER reduce production _exp -> exp LESS_GREATER exp
--- On DOUBLE_DOT reduce production _exp -> exp LESS_GREATER exp
--- On DONE reduce production _exp -> exp LESS_GREATER exp
--- On DO reduce production _exp -> exp LESS_GREATER exp
--- On DEFAULT reduce production _exp -> exp LESS_GREATER exp
--- On Constructor reduce production _exp -> exp LESS_GREATER exp
--- On CONTINUE reduce production _exp -> exp LESS_GREATER exp
--- On CONST reduce production _exp -> exp LESS_GREATER exp
--- On COMMA reduce production _exp -> exp LESS_GREATER exp
--- On COLONCOLON reduce production _exp -> exp LESS_GREATER exp
--- On BOOL reduce production _exp -> exp LESS_GREATER exp
--- On BAR reduce production _exp -> exp LESS_GREATER exp
--- On ATTRACTIVE reduce production _exp -> exp LESS_GREATER exp
--- On AROBASE reduce production _exp -> exp LESS_GREATER exp
--- On AND reduce production _exp -> exp LESS_GREATER exp
--- On AMPERSAND reduce production _exp -> exp LESS_GREATER exp
+-- On WITH VAR VAL UNTIL UNSAFE UNLESS TYPE THEN TEL STATE SEMICOL RPAREN_GREATER RPAREN REACHABLE RBRACKET RBRACE PRAGMA OR ON NODE LET LESS_GREATER LESSRBRACKET INFIX0 FUN EXTERNAL EVERY EQUAL EOF ENFORCE END ELSE DOUBLE_GREATER DOUBLE_DOT DONE DO DEFAULT Constructor CONTINUE CONST COMMA COLONCOLON BOOL BAR ATTRACTIVE AROBASE AND AMPERSAND
+--   reduce production _exp -> exp LESS_GREATER exp
 
 State 117:
 ## Known stack suffix:
@@ -2891,62 +2436,8 @@ _exp -> exp . AROBASE exp [ WITH WHENOT WHEN VAR VAL UNTIL UNSAFE UNLESS TYPE TH
 ## Transitions:
 -- On POWER shift to state 108
 ## Reductions:
--- On WITH reduce production _exp -> exp INFIX4 exp
--- On WHENOT reduce production _exp -> exp INFIX4 exp
--- On WHEN reduce production _exp -> exp INFIX4 exp
--- On VAR reduce production _exp -> exp INFIX4 exp
--- On VAL reduce production _exp -> exp INFIX4 exp
--- On UNTIL reduce production _exp -> exp INFIX4 exp
--- On UNSAFE reduce production _exp -> exp INFIX4 exp
--- On UNLESS reduce production _exp -> exp INFIX4 exp
--- On TYPE reduce production _exp -> exp INFIX4 exp
--- On THEN reduce production _exp -> exp INFIX4 exp
--- On TEL reduce production _exp -> exp INFIX4 exp
--- On SUBTRACTIVE reduce production _exp -> exp INFIX4 exp
--- On STATE reduce production _exp -> exp INFIX4 exp
--- On STAR reduce production _exp -> exp INFIX4 exp
--- On SEMICOL reduce production _exp -> exp INFIX4 exp
--- On RPAREN_GREATER reduce production _exp -> exp INFIX4 exp
--- On RPAREN reduce production _exp -> exp INFIX4 exp
--- On REACHABLE reduce production _exp -> exp INFIX4 exp
--- On RBRACKET reduce production _exp -> exp INFIX4 exp
--- On RBRACE reduce production _exp -> exp INFIX4 exp
--- On PRAGMA reduce production _exp -> exp INFIX4 exp
--- On OR reduce production _exp -> exp INFIX4 exp
--- On ON reduce production _exp -> exp INFIX4 exp
--- On NODE reduce production _exp -> exp INFIX4 exp
--- On LET reduce production _exp -> exp INFIX4 exp
--- On LESS_GREATER reduce production _exp -> exp INFIX4 exp
--- On LESSRBRACKET reduce production _exp -> exp INFIX4 exp
--- On INFIX4 reduce production _exp -> exp INFIX4 exp
--- On INFIX3 reduce production _exp -> exp INFIX4 exp
--- On INFIX2 reduce production _exp -> exp INFIX4 exp
--- On INFIX1 reduce production _exp -> exp INFIX4 exp
--- On INFIX0 reduce production _exp -> exp INFIX4 exp
--- On FUN reduce production _exp -> exp INFIX4 exp
--- On EXTERNAL reduce production _exp -> exp INFIX4 exp
--- On EVERY reduce production _exp -> exp INFIX4 exp
--- On EQUAL reduce production _exp -> exp INFIX4 exp
--- On EOF reduce production _exp -> exp INFIX4 exp
--- On ENFORCE reduce production _exp -> exp INFIX4 exp
--- On END reduce production _exp -> exp INFIX4 exp
--- On ELSE reduce production _exp -> exp INFIX4 exp
--- On DOUBLE_GREATER reduce production _exp -> exp INFIX4 exp
--- On DOUBLE_DOT reduce production _exp -> exp INFIX4 exp
--- On DONE reduce production _exp -> exp INFIX4 exp
--- On DO reduce production _exp -> exp INFIX4 exp
--- On DEFAULT reduce production _exp -> exp INFIX4 exp
--- On Constructor reduce production _exp -> exp INFIX4 exp
--- On CONTINUE reduce production _exp -> exp INFIX4 exp
--- On CONST reduce production _exp -> exp INFIX4 exp
--- On COMMA reduce production _exp -> exp INFIX4 exp
--- On COLONCOLON reduce production _exp -> exp INFIX4 exp
--- On BOOL reduce production _exp -> exp INFIX4 exp
--- On BAR reduce production _exp -> exp INFIX4 exp
--- On ATTRACTIVE reduce production _exp -> exp INFIX4 exp
--- On AROBASE reduce production _exp -> exp INFIX4 exp
--- On AND reduce production _exp -> exp INFIX4 exp
--- On AMPERSAND reduce production _exp -> exp INFIX4 exp
+-- On WITH WHENOT WHEN VAR VAL UNTIL UNSAFE UNLESS TYPE THEN TEL SUBTRACTIVE STATE STAR SEMICOL RPAREN_GREATER RPAREN REACHABLE RBRACKET RBRACE PRAGMA OR ON NODE LET LESS_GREATER LESSRBRACKET INFIX4 INFIX3 INFIX2 INFIX1 INFIX0 FUN EXTERNAL EVERY EQUAL EOF ENFORCE END ELSE DOUBLE_GREATER DOUBLE_DOT DONE DO DEFAULT Constructor CONTINUE CONST COMMA COLONCOLON BOOL BAR ATTRACTIVE AROBASE AND AMPERSAND
+--   reduce production _exp -> exp INFIX4 exp
 
 State 119:
 ## Known stack suffix:
@@ -3066,61 +2557,8 @@ _exp -> exp . AROBASE exp [ WITH WHENOT WHEN VAR VAL UNTIL UNSAFE UNLESS TYPE TH
 -- On POWER shift to state 108
 -- On INFIX4 shift to state 117
 ## Reductions:
--- On WITH reduce production _exp -> exp INFIX3 exp
--- On WHENOT reduce production _exp -> exp INFIX3 exp
--- On WHEN reduce production _exp -> exp INFIX3 exp
--- On VAR reduce production _exp -> exp INFIX3 exp
--- On VAL reduce production _exp -> exp INFIX3 exp
--- On UNTIL reduce production _exp -> exp INFIX3 exp
--- On UNSAFE reduce production _exp -> exp INFIX3 exp
--- On UNLESS reduce production _exp -> exp INFIX3 exp
--- On TYPE reduce production _exp -> exp INFIX3 exp
--- On THEN reduce production _exp -> exp INFIX3 exp
--- On TEL reduce production _exp -> exp INFIX3 exp
--- On SUBTRACTIVE reduce production _exp -> exp INFIX3 exp
--- On STATE reduce production _exp -> exp INFIX3 exp
--- On STAR reduce production _exp -> exp INFIX3 exp
--- On SEMICOL reduce production _exp -> exp INFIX3 exp
--- On RPAREN_GREATER reduce production _exp -> exp INFIX3 exp
--- On RPAREN reduce production _exp -> exp INFIX3 exp
--- On REACHABLE reduce production _exp -> exp INFIX3 exp
--- On RBRACKET reduce production _exp -> exp INFIX3 exp
--- On RBRACE reduce production _exp -> exp INFIX3 exp
--- On PRAGMA reduce production _exp -> exp INFIX3 exp
--- On OR reduce production _exp -> exp INFIX3 exp
--- On ON reduce production _exp -> exp INFIX3 exp
--- On NODE reduce production _exp -> exp INFIX3 exp
--- On LET reduce production _exp -> exp INFIX3 exp
--- On LESS_GREATER reduce production _exp -> exp INFIX3 exp
--- On LESSRBRACKET reduce production _exp -> exp INFIX3 exp
--- On INFIX3 reduce production _exp -> exp INFIX3 exp
--- On INFIX2 reduce production _exp -> exp INFIX3 exp
--- On INFIX1 reduce production _exp -> exp INFIX3 exp
--- On INFIX0 reduce production _exp -> exp INFIX3 exp
--- On FUN reduce production _exp -> exp INFIX3 exp
--- On EXTERNAL reduce production _exp -> exp INFIX3 exp
--- On EVERY reduce production _exp -> exp INFIX3 exp
--- On EQUAL reduce production _exp -> exp INFIX3 exp
--- On EOF reduce production _exp -> exp INFIX3 exp
--- On ENFORCE reduce production _exp -> exp INFIX3 exp
--- On END reduce production _exp -> exp INFIX3 exp
--- On ELSE reduce production _exp -> exp INFIX3 exp
--- On DOUBLE_GREATER reduce production _exp -> exp INFIX3 exp
--- On DOUBLE_DOT reduce production _exp -> exp INFIX3 exp
--- On DONE reduce production _exp -> exp INFIX3 exp
--- On DO reduce production _exp -> exp INFIX3 exp
--- On DEFAULT reduce production _exp -> exp INFIX3 exp
--- On Constructor reduce production _exp -> exp INFIX3 exp
--- On CONTINUE reduce production _exp -> exp INFIX3 exp
--- On CONST reduce production _exp -> exp INFIX3 exp
--- On COMMA reduce production _exp -> exp INFIX3 exp
--- On COLONCOLON reduce production _exp -> exp INFIX3 exp
--- On BOOL reduce production _exp -> exp INFIX3 exp
--- On BAR reduce production _exp -> exp INFIX3 exp
--- On ATTRACTIVE reduce production _exp -> exp INFIX3 exp
--- On AROBASE reduce production _exp -> exp INFIX3 exp
--- On AND reduce production _exp -> exp INFIX3 exp
--- On AMPERSAND reduce production _exp -> exp INFIX3 exp
+-- On WITH WHENOT WHEN VAR VAL UNTIL UNSAFE UNLESS TYPE THEN TEL SUBTRACTIVE STATE STAR SEMICOL RPAREN_GREATER RPAREN REACHABLE RBRACKET RBRACE PRAGMA OR ON NODE LET LESS_GREATER LESSRBRACKET INFIX3 INFIX2 INFIX1 INFIX0 FUN EXTERNAL EVERY EQUAL EOF ENFORCE END ELSE DOUBLE_GREATER DOUBLE_DOT DONE DO DEFAULT Constructor CONTINUE CONST COMMA COLONCOLON BOOL BAR ATTRACTIVE AROBASE AND AMPERSAND
+--   reduce production _exp -> exp INFIX3 exp
 
 State 126:
 ## Known stack suffix:
@@ -3197,59 +2635,8 @@ _exp -> exp . AROBASE exp [ WITH WHENOT WHEN VAR VAL UNTIL UNSAFE UNLESS TYPE TH
 -- On INFIX4 shift to state 117
 -- On INFIX3 shift to state 124
 ## Reductions:
--- On WITH reduce production _exp -> exp INFIX2 exp
--- On WHENOT reduce production _exp -> exp INFIX2 exp
--- On WHEN reduce production _exp -> exp INFIX2 exp
--- On VAR reduce production _exp -> exp INFIX2 exp
--- On VAL reduce production _exp -> exp INFIX2 exp
--- On UNTIL reduce production _exp -> exp INFIX2 exp
--- On UNSAFE reduce production _exp -> exp INFIX2 exp
--- On UNLESS reduce production _exp -> exp INFIX2 exp
--- On TYPE reduce production _exp -> exp INFIX2 exp
--- On THEN reduce production _exp -> exp INFIX2 exp
--- On TEL reduce production _exp -> exp INFIX2 exp
--- On SUBTRACTIVE reduce production _exp -> exp INFIX2 exp
--- On STATE reduce production _exp -> exp INFIX2 exp
--- On SEMICOL reduce production _exp -> exp INFIX2 exp
--- On RPAREN_GREATER reduce production _exp -> exp INFIX2 exp
--- On RPAREN reduce production _exp -> exp INFIX2 exp
--- On REACHABLE reduce production _exp -> exp INFIX2 exp
--- On RBRACKET reduce production _exp -> exp INFIX2 exp
--- On RBRACE reduce production _exp -> exp INFIX2 exp
--- On PRAGMA reduce production _exp -> exp INFIX2 exp
--- On OR reduce production _exp -> exp INFIX2 exp
--- On ON reduce production _exp -> exp INFIX2 exp
--- On NODE reduce production _exp -> exp INFIX2 exp
--- On LET reduce production _exp -> exp INFIX2 exp
--- On LESS_GREATER reduce production _exp -> exp INFIX2 exp
--- On LESSRBRACKET reduce production _exp -> exp INFIX2 exp
--- On INFIX2 reduce production _exp -> exp INFIX2 exp
--- On INFIX1 reduce production _exp -> exp INFIX2 exp
--- On INFIX0 reduce production _exp -> exp INFIX2 exp
--- On FUN reduce production _exp -> exp INFIX2 exp
--- On EXTERNAL reduce production _exp -> exp INFIX2 exp
--- On EVERY reduce production _exp -> exp INFIX2 exp
--- On EQUAL reduce production _exp -> exp INFIX2 exp
--- On EOF reduce production _exp -> exp INFIX2 exp
--- On ENFORCE reduce production _exp -> exp INFIX2 exp
--- On END reduce production _exp -> exp INFIX2 exp
--- On ELSE reduce production _exp -> exp INFIX2 exp
--- On DOUBLE_GREATER reduce production _exp -> exp INFIX2 exp
--- On DOUBLE_DOT reduce production _exp -> exp INFIX2 exp
--- On DONE reduce production _exp -> exp INFIX2 exp
--- On DO reduce production _exp -> exp INFIX2 exp
--- On DEFAULT reduce production _exp -> exp INFIX2 exp
--- On Constructor reduce production _exp -> exp INFIX2 exp
--- On CONTINUE reduce production _exp -> exp INFIX2 exp
--- On CONST reduce production _exp -> exp INFIX2 exp
--- On COMMA reduce production _exp -> exp INFIX2 exp
--- On COLONCOLON reduce production _exp -> exp INFIX2 exp
--- On BOOL reduce production _exp -> exp INFIX2 exp
--- On BAR reduce production _exp -> exp INFIX2 exp
--- On ATTRACTIVE reduce production _exp -> exp INFIX2 exp
--- On AROBASE reduce production _exp -> exp INFIX2 exp
--- On AND reduce production _exp -> exp INFIX2 exp
--- On AMPERSAND reduce production _exp -> exp INFIX2 exp
+-- On WITH WHENOT WHEN VAR VAL UNTIL UNSAFE UNLESS TYPE THEN TEL SUBTRACTIVE STATE SEMICOL RPAREN_GREATER RPAREN REACHABLE RBRACKET RBRACE PRAGMA OR ON NODE LET LESS_GREATER LESSRBRACKET INFIX2 INFIX1 INFIX0 FUN EXTERNAL EVERY EQUAL EOF ENFORCE END ELSE DOUBLE_GREATER DOUBLE_DOT DONE DO DEFAULT Constructor CONTINUE CONST COMMA COLONCOLON BOOL BAR ATTRACTIVE AROBASE AND AMPERSAND
+--   reduce production _exp -> exp INFIX2 exp
 
 State 128:
 ## Known stack suffix:
@@ -3331,54 +2718,8 @@ _exp -> exp . AROBASE exp [ WITH WHENOT WHEN VAR VAL UNTIL UNSAFE UNLESS TYPE TH
 -- On INFIX2 shift to state 126
 -- On INFIX1 shift to state 128
 ## Reductions:
--- On WITH reduce production _exp -> exp INFIX1 exp
--- On VAR reduce production _exp -> exp INFIX1 exp
--- On VAL reduce production _exp -> exp INFIX1 exp
--- On UNTIL reduce production _exp -> exp INFIX1 exp
--- On UNSAFE reduce production _exp -> exp INFIX1 exp
--- On UNLESS reduce production _exp -> exp INFIX1 exp
--- On TYPE reduce production _exp -> exp INFIX1 exp
--- On THEN reduce production _exp -> exp INFIX1 exp
--- On TEL reduce production _exp -> exp INFIX1 exp
--- On STATE reduce production _exp -> exp INFIX1 exp
--- On SEMICOL reduce production _exp -> exp INFIX1 exp
--- On RPAREN_GREATER reduce production _exp -> exp INFIX1 exp
--- On RPAREN reduce production _exp -> exp INFIX1 exp
--- On REACHABLE reduce production _exp -> exp INFIX1 exp
--- On RBRACKET reduce production _exp -> exp INFIX1 exp
--- On RBRACE reduce production _exp -> exp INFIX1 exp
--- On PRAGMA reduce production _exp -> exp INFIX1 exp
--- On OR reduce production _exp -> exp INFIX1 exp
--- On ON reduce production _exp -> exp INFIX1 exp
--- On NODE reduce production _exp -> exp INFIX1 exp
--- On LET reduce production _exp -> exp INFIX1 exp
--- On LESS_GREATER reduce production _exp -> exp INFIX1 exp
--- On LESSRBRACKET reduce production _exp -> exp INFIX1 exp
--- On INFIX0 reduce production _exp -> exp INFIX1 exp
--- On FUN reduce production _exp -> exp INFIX1 exp
--- On EXTERNAL reduce production _exp -> exp INFIX1 exp
--- On EVERY reduce production _exp -> exp INFIX1 exp
--- On EQUAL reduce production _exp -> exp INFIX1 exp
--- On EOF reduce production _exp -> exp INFIX1 exp
--- On ENFORCE reduce production _exp -> exp INFIX1 exp
--- On END reduce production _exp -> exp INFIX1 exp
--- On ELSE reduce production _exp -> exp INFIX1 exp
--- On DOUBLE_GREATER reduce production _exp -> exp INFIX1 exp
--- On DOUBLE_DOT reduce production _exp -> exp INFIX1 exp
--- On DONE reduce production _exp -> exp INFIX1 exp
--- On DO reduce production _exp -> exp INFIX1 exp
--- On DEFAULT reduce production _exp -> exp INFIX1 exp
--- On Constructor reduce production _exp -> exp INFIX1 exp
--- On CONTINUE reduce production _exp -> exp INFIX1 exp
--- On CONST reduce production _exp -> exp INFIX1 exp
--- On COMMA reduce production _exp -> exp INFIX1 exp
--- On COLONCOLON reduce production _exp -> exp INFIX1 exp
--- On BOOL reduce production _exp -> exp INFIX1 exp
--- On BAR reduce production _exp -> exp INFIX1 exp
--- On ATTRACTIVE reduce production _exp -> exp INFIX1 exp
--- On AROBASE reduce production _exp -> exp INFIX1 exp
--- On AND reduce production _exp -> exp INFIX1 exp
--- On AMPERSAND reduce production _exp -> exp INFIX1 exp
+-- On WITH VAR VAL UNTIL UNSAFE UNLESS TYPE THEN TEL STATE SEMICOL RPAREN_GREATER RPAREN REACHABLE RBRACKET RBRACE PRAGMA OR ON NODE LET LESS_GREATER LESSRBRACKET INFIX0 FUN EXTERNAL EVERY EQUAL EOF ENFORCE END ELSE DOUBLE_GREATER DOUBLE_DOT DONE DO DEFAULT Constructor CONTINUE CONST COMMA COLONCOLON BOOL BAR ATTRACTIVE AROBASE AND AMPERSAND
+--   reduce production _exp -> exp INFIX1 exp
 
 State 130:
 ## Known stack suffix:
@@ -3460,54 +2801,8 @@ _exp -> exp . AROBASE exp [ WITH WHENOT WHEN VAR VAL UNTIL UNSAFE UNLESS TYPE TH
 -- On INFIX2 shift to state 126
 -- On INFIX1 shift to state 128
 ## Reductions:
--- On WITH reduce production _exp -> exp INFIX0 exp
--- On VAR reduce production _exp -> exp INFIX0 exp
--- On VAL reduce production _exp -> exp INFIX0 exp
--- On UNTIL reduce production _exp -> exp INFIX0 exp
--- On UNSAFE reduce production _exp -> exp INFIX0 exp
--- On UNLESS reduce production _exp -> exp INFIX0 exp
--- On TYPE reduce production _exp -> exp INFIX0 exp
--- On THEN reduce production _exp -> exp INFIX0 exp
--- On TEL reduce production _exp -> exp INFIX0 exp
--- On STATE reduce production _exp -> exp INFIX0 exp
--- On SEMICOL reduce production _exp -> exp INFIX0 exp
--- On RPAREN_GREATER reduce production _exp -> exp INFIX0 exp
--- On RPAREN reduce production _exp -> exp INFIX0 exp
--- On REACHABLE reduce production _exp -> exp INFIX0 exp
--- On RBRACKET reduce production _exp -> exp INFIX0 exp
--- On RBRACE reduce production _exp -> exp INFIX0 exp
--- On PRAGMA reduce production _exp -> exp INFIX0 exp
--- On OR reduce production _exp -> exp INFIX0 exp
--- On ON reduce production _exp -> exp INFIX0 exp
--- On NODE reduce production _exp -> exp INFIX0 exp
--- On LET reduce production _exp -> exp INFIX0 exp
--- On LESS_GREATER reduce production _exp -> exp INFIX0 exp
--- On LESSRBRACKET reduce production _exp -> exp INFIX0 exp
--- On INFIX0 reduce production _exp -> exp INFIX0 exp
--- On FUN reduce production _exp -> exp INFIX0 exp
--- On EXTERNAL reduce production _exp -> exp INFIX0 exp
--- On EVERY reduce production _exp -> exp INFIX0 exp
--- On EQUAL reduce production _exp -> exp INFIX0 exp
--- On EOF reduce production _exp -> exp INFIX0 exp
--- On ENFORCE reduce production _exp -> exp INFIX0 exp
--- On END reduce production _exp -> exp INFIX0 exp
--- On ELSE reduce production _exp -> exp INFIX0 exp
--- On DOUBLE_GREATER reduce production _exp -> exp INFIX0 exp
--- On DOUBLE_DOT reduce production _exp -> exp INFIX0 exp
--- On DONE reduce production _exp -> exp INFIX0 exp
--- On DO reduce production _exp -> exp INFIX0 exp
--- On DEFAULT reduce production _exp -> exp INFIX0 exp
--- On Constructor reduce production _exp -> exp INFIX0 exp
--- On CONTINUE reduce production _exp -> exp INFIX0 exp
--- On CONST reduce production _exp -> exp INFIX0 exp
--- On COMMA reduce production _exp -> exp INFIX0 exp
--- On COLONCOLON reduce production _exp -> exp INFIX0 exp
--- On BOOL reduce production _exp -> exp INFIX0 exp
--- On BAR reduce production _exp -> exp INFIX0 exp
--- On ATTRACTIVE reduce production _exp -> exp INFIX0 exp
--- On AROBASE reduce production _exp -> exp INFIX0 exp
--- On AND reduce production _exp -> exp INFIX0 exp
--- On AMPERSAND reduce production _exp -> exp INFIX0 exp
+-- On WITH VAR VAL UNTIL UNSAFE UNLESS TYPE THEN TEL STATE SEMICOL RPAREN_GREATER RPAREN REACHABLE RBRACKET RBRACE PRAGMA OR ON NODE LET LESS_GREATER LESSRBRACKET INFIX0 FUN EXTERNAL EVERY EQUAL EOF ENFORCE END ELSE DOUBLE_GREATER DOUBLE_DOT DONE DO DEFAULT Constructor CONTINUE CONST COMMA COLONCOLON BOOL BAR ATTRACTIVE AROBASE AND AMPERSAND
+--   reduce production _exp -> exp INFIX0 exp
 
 State 132:
 ## Known stack suffix:
@@ -3589,54 +2884,8 @@ _exp -> exp . AROBASE exp [ WITH WHENOT WHEN VAR VAL UNTIL UNSAFE UNLESS TYPE TH
 -- On INFIX2 shift to state 126
 -- On INFIX1 shift to state 128
 ## Reductions:
--- On WITH reduce production _exp -> exp EQUAL exp
--- On VAR reduce production _exp -> exp EQUAL exp
--- On VAL reduce production _exp -> exp EQUAL exp
--- On UNTIL reduce production _exp -> exp EQUAL exp
--- On UNSAFE reduce production _exp -> exp EQUAL exp
--- On UNLESS reduce production _exp -> exp EQUAL exp
--- On TYPE reduce production _exp -> exp EQUAL exp
--- On THEN reduce production _exp -> exp EQUAL exp
--- On TEL reduce production _exp -> exp EQUAL exp
--- On STATE reduce production _exp -> exp EQUAL exp
--- On SEMICOL reduce production _exp -> exp EQUAL exp
--- On RPAREN_GREATER reduce production _exp -> exp EQUAL exp
--- On RPAREN reduce production _exp -> exp EQUAL exp
--- On REACHABLE reduce production _exp -> exp EQUAL exp
--- On RBRACKET reduce production _exp -> exp EQUAL exp
--- On RBRACE reduce production _exp -> exp EQUAL exp
--- On PRAGMA reduce production _exp -> exp EQUAL exp
--- On OR reduce production _exp -> exp EQUAL exp
--- On ON reduce production _exp -> exp EQUAL exp
--- On NODE reduce production _exp -> exp EQUAL exp
--- On LET reduce production _exp -> exp EQUAL exp
--- On LESS_GREATER reduce production _exp -> exp EQUAL exp
--- On LESSRBRACKET reduce production _exp -> exp EQUAL exp
--- On INFIX0 reduce production _exp -> exp EQUAL exp
--- On FUN reduce production _exp -> exp EQUAL exp
--- On EXTERNAL reduce production _exp -> exp EQUAL exp
--- On EVERY reduce production _exp -> exp EQUAL exp
--- On EQUAL reduce production _exp -> exp EQUAL exp
--- On EOF reduce production _exp -> exp EQUAL exp
--- On ENFORCE reduce production _exp -> exp EQUAL exp
--- On END reduce production _exp -> exp EQUAL exp
--- On ELSE reduce production _exp -> exp EQUAL exp
--- On DOUBLE_GREATER reduce production _exp -> exp EQUAL exp
--- On DOUBLE_DOT reduce production _exp -> exp EQUAL exp
--- On DONE reduce production _exp -> exp EQUAL exp
--- On DO reduce production _exp -> exp EQUAL exp
--- On DEFAULT reduce production _exp -> exp EQUAL exp
--- On Constructor reduce production _exp -> exp EQUAL exp
--- On CONTINUE reduce production _exp -> exp EQUAL exp
--- On CONST reduce production _exp -> exp EQUAL exp
--- On COMMA reduce production _exp -> exp EQUAL exp
--- On COLONCOLON reduce production _exp -> exp EQUAL exp
--- On BOOL reduce production _exp -> exp EQUAL exp
--- On BAR reduce production _exp -> exp EQUAL exp
--- On ATTRACTIVE reduce production _exp -> exp EQUAL exp
--- On AROBASE reduce production _exp -> exp EQUAL exp
--- On AND reduce production _exp -> exp EQUAL exp
--- On AMPERSAND reduce production _exp -> exp EQUAL exp
+-- On WITH VAR VAL UNTIL UNSAFE UNLESS TYPE THEN TEL STATE SEMICOL RPAREN_GREATER RPAREN REACHABLE RBRACKET RBRACE PRAGMA OR ON NODE LET LESS_GREATER LESSRBRACKET INFIX0 FUN EXTERNAL EVERY EQUAL EOF ENFORCE END ELSE DOUBLE_GREATER DOUBLE_DOT DONE DO DEFAULT Constructor CONTINUE CONST COMMA COLONCOLON BOOL BAR ATTRACTIVE AROBASE AND AMPERSAND
+--   reduce production _exp -> exp EQUAL exp
 
 State 134:
 ## Known stack suffix:
@@ -3721,51 +2970,8 @@ _exp -> exp . AROBASE exp [ WITH WHENOT WHEN VAR VAL UNTIL UNSAFE UNLESS TYPE TH
 -- On INFIX0 shift to state 130
 -- On EQUAL shift to state 132
 ## Reductions:
--- On WITH reduce production _exp -> exp AND exp
--- On VAR reduce production _exp -> exp AND exp
--- On VAL reduce production _exp -> exp AND exp
--- On UNTIL reduce production _exp -> exp AND exp
--- On UNSAFE reduce production _exp -> exp AND exp
--- On UNLESS reduce production _exp -> exp AND exp
--- On TYPE reduce production _exp -> exp AND exp
--- On THEN reduce production _exp -> exp AND exp
--- On TEL reduce production _exp -> exp AND exp
--- On STATE reduce production _exp -> exp AND exp
--- On SEMICOL reduce production _exp -> exp AND exp
--- On RPAREN_GREATER reduce production _exp -> exp AND exp
--- On RPAREN reduce production _exp -> exp AND exp
--- On REACHABLE reduce production _exp -> exp AND exp
--- On RBRACKET reduce production _exp -> exp AND exp
--- On RBRACE reduce production _exp -> exp AND exp
--- On PRAGMA reduce production _exp -> exp AND exp
--- On OR reduce production _exp -> exp AND exp
--- On ON reduce production _exp -> exp AND exp
--- On NODE reduce production _exp -> exp AND exp
--- On LET reduce production _exp -> exp AND exp
--- On LESSRBRACKET reduce production _exp -> exp AND exp
--- On FUN reduce production _exp -> exp AND exp
--- On EXTERNAL reduce production _exp -> exp AND exp
--- On EVERY reduce production _exp -> exp AND exp
--- On EOF reduce production _exp -> exp AND exp
--- On ENFORCE reduce production _exp -> exp AND exp
--- On END reduce production _exp -> exp AND exp
--- On ELSE reduce production _exp -> exp AND exp
--- On DOUBLE_GREATER reduce production _exp -> exp AND exp
--- On DOUBLE_DOT reduce production _exp -> exp AND exp
--- On DONE reduce production _exp -> exp AND exp
--- On DO reduce production _exp -> exp AND exp
--- On DEFAULT reduce production _exp -> exp AND exp
--- On Constructor reduce production _exp -> exp AND exp
--- On CONTINUE reduce production _exp -> exp AND exp
--- On CONST reduce production _exp -> exp AND exp
--- On COMMA reduce production _exp -> exp AND exp
--- On COLONCOLON reduce production _exp -> exp AND exp
--- On BOOL reduce production _exp -> exp AND exp
--- On BAR reduce production _exp -> exp AND exp
--- On ATTRACTIVE reduce production _exp -> exp AND exp
--- On AROBASE reduce production _exp -> exp AND exp
--- On AND reduce production _exp -> exp AND exp
--- On AMPERSAND reduce production _exp -> exp AND exp
+-- On WITH VAR VAL UNTIL UNSAFE UNLESS TYPE THEN TEL STATE SEMICOL RPAREN_GREATER RPAREN REACHABLE RBRACKET RBRACE PRAGMA OR ON NODE LET LESSRBRACKET FUN EXTERNAL EVERY EOF ENFORCE END ELSE DOUBLE_GREATER DOUBLE_DOT DONE DO DEFAULT Constructor CONTINUE CONST COMMA COLONCOLON BOOL BAR ATTRACTIVE AROBASE AND AMPERSAND
+--   reduce production _exp -> exp AND exp
 
 State 136:
 ## Known stack suffix:
@@ -3850,51 +3056,8 @@ _exp -> exp . AROBASE exp [ WITH WHENOT WHEN VAR VAL UNTIL UNSAFE UNLESS TYPE TH
 -- On INFIX0 shift to state 130
 -- On EQUAL shift to state 132
 ## Reductions:
--- On WITH reduce production _exp -> exp AMPERSAND exp
--- On VAR reduce production _exp -> exp AMPERSAND exp
--- On VAL reduce production _exp -> exp AMPERSAND exp
--- On UNTIL reduce production _exp -> exp AMPERSAND exp
--- On UNSAFE reduce production _exp -> exp AMPERSAND exp
--- On UNLESS reduce production _exp -> exp AMPERSAND exp
--- On TYPE reduce production _exp -> exp AMPERSAND exp
--- On THEN reduce production _exp -> exp AMPERSAND exp
--- On TEL reduce production _exp -> exp AMPERSAND exp
--- On STATE reduce production _exp -> exp AMPERSAND exp
--- On SEMICOL reduce production _exp -> exp AMPERSAND exp
--- On RPAREN_GREATER reduce production _exp -> exp AMPERSAND exp
--- On RPAREN reduce production _exp -> exp AMPERSAND exp
--- On REACHABLE reduce production _exp -> exp AMPERSAND exp
--- On RBRACKET reduce production _exp -> exp AMPERSAND exp
--- On RBRACE reduce production _exp -> exp AMPERSAND exp
--- On PRAGMA reduce production _exp -> exp AMPERSAND exp
--- On OR reduce production _exp -> exp AMPERSAND exp
--- On ON reduce production _exp -> exp AMPERSAND exp
--- On NODE reduce production _exp -> exp AMPERSAND exp
--- On LET reduce production _exp -> exp AMPERSAND exp
--- On LESSRBRACKET reduce production _exp -> exp AMPERSAND exp
--- On FUN reduce production _exp -> exp AMPERSAND exp
--- On EXTERNAL reduce production _exp -> exp AMPERSAND exp
--- On EVERY reduce production _exp -> exp AMPERSAND exp
--- On EOF reduce production _exp -> exp AMPERSAND exp
--- On ENFORCE reduce production _exp -> exp AMPERSAND exp
--- On END reduce production _exp -> exp AMPERSAND exp
--- On ELSE reduce production _exp -> exp AMPERSAND exp
--- On DOUBLE_GREATER reduce production _exp -> exp AMPERSAND exp
--- On DOUBLE_DOT reduce production _exp -> exp AMPERSAND exp
--- On DONE reduce production _exp -> exp AMPERSAND exp
--- On DO reduce production _exp -> exp AMPERSAND exp
--- On DEFAULT reduce production _exp -> exp AMPERSAND exp
--- On Constructor reduce production _exp -> exp AMPERSAND exp
--- On CONTINUE reduce production _exp -> exp AMPERSAND exp
--- On CONST reduce production _exp -> exp AMPERSAND exp
--- On COMMA reduce production _exp -> exp AMPERSAND exp
--- On COLONCOLON reduce production _exp -> exp AMPERSAND exp
--- On BOOL reduce production _exp -> exp AMPERSAND exp
--- On BAR reduce production _exp -> exp AMPERSAND exp
--- On ATTRACTIVE reduce production _exp -> exp AMPERSAND exp
--- On AROBASE reduce production _exp -> exp AMPERSAND exp
--- On AND reduce production _exp -> exp AMPERSAND exp
--- On AMPERSAND reduce production _exp -> exp AMPERSAND exp
+-- On WITH VAR VAL UNTIL UNSAFE UNLESS TYPE THEN TEL STATE SEMICOL RPAREN_GREATER RPAREN REACHABLE RBRACKET RBRACE PRAGMA OR ON NODE LET LESSRBRACKET FUN EXTERNAL EVERY EOF ENFORCE END ELSE DOUBLE_GREATER DOUBLE_DOT DONE DO DEFAULT Constructor CONTINUE CONST COMMA COLONCOLON BOOL BAR ATTRACTIVE AROBASE AND AMPERSAND
+--   reduce production _exp -> exp AMPERSAND exp
 
 State 138:
 ## Known stack suffix:
@@ -3983,47 +3146,8 @@ _exp -> exp AROBASE exp . [ WITH WHENOT WHEN VAR VAL UNTIL UNSAFE UNLESS TYPE TH
 -- On AND shift to state 134
 -- On AMPERSAND shift to state 136
 ## Reductions:
--- On WITH reduce production _exp -> exp AROBASE exp
--- On VAR reduce production _exp -> exp AROBASE exp
--- On VAL reduce production _exp -> exp AROBASE exp
--- On UNTIL reduce production _exp -> exp AROBASE exp
--- On UNSAFE reduce production _exp -> exp AROBASE exp
--- On UNLESS reduce production _exp -> exp AROBASE exp
--- On TYPE reduce production _exp -> exp AROBASE exp
--- On THEN reduce production _exp -> exp AROBASE exp
--- On TEL reduce production _exp -> exp AROBASE exp
--- On STATE reduce production _exp -> exp AROBASE exp
--- On SEMICOL reduce production _exp -> exp AROBASE exp
--- On RPAREN_GREATER reduce production _exp -> exp AROBASE exp
--- On RPAREN reduce production _exp -> exp AROBASE exp
--- On REACHABLE reduce production _exp -> exp AROBASE exp
--- On RBRACKET reduce production _exp -> exp AROBASE exp
--- On RBRACE reduce production _exp -> exp AROBASE exp
--- On PRAGMA reduce production _exp -> exp AROBASE exp
--- On ON reduce production _exp -> exp AROBASE exp
--- On NODE reduce production _exp -> exp AROBASE exp
--- On LET reduce production _exp -> exp AROBASE exp
--- On LESSRBRACKET reduce production _exp -> exp AROBASE exp
--- On FUN reduce production _exp -> exp AROBASE exp
--- On EXTERNAL reduce production _exp -> exp AROBASE exp
--- On EVERY reduce production _exp -> exp AROBASE exp
--- On EOF reduce production _exp -> exp AROBASE exp
--- On ENFORCE reduce production _exp -> exp AROBASE exp
--- On END reduce production _exp -> exp AROBASE exp
--- On ELSE reduce production _exp -> exp AROBASE exp
--- On DOUBLE_GREATER reduce production _exp -> exp AROBASE exp
--- On DOUBLE_DOT reduce production _exp -> exp AROBASE exp
--- On DONE reduce production _exp -> exp AROBASE exp
--- On DO reduce production _exp -> exp AROBASE exp
--- On DEFAULT reduce production _exp -> exp AROBASE exp
--- On Constructor reduce production _exp -> exp AROBASE exp
--- On CONTINUE reduce production _exp -> exp AROBASE exp
--- On CONST reduce production _exp -> exp AROBASE exp
--- On COMMA reduce production _exp -> exp AROBASE exp
--- On COLONCOLON reduce production _exp -> exp AROBASE exp
--- On BOOL reduce production _exp -> exp AROBASE exp
--- On BAR reduce production _exp -> exp AROBASE exp
--- On ATTRACTIVE reduce production _exp -> exp AROBASE exp
+-- On WITH VAR VAL UNTIL UNSAFE UNLESS TYPE THEN TEL STATE SEMICOL RPAREN_GREATER RPAREN REACHABLE RBRACKET RBRACE PRAGMA ON NODE LET LESSRBRACKET FUN EXTERNAL EVERY EOF ENFORCE END ELSE DOUBLE_GREATER DOUBLE_DOT DONE DO DEFAULT Constructor CONTINUE CONST COMMA COLONCOLON BOOL BAR ATTRACTIVE
+--   reduce production _exp -> exp AROBASE exp
 
 State 140:
 ## Known stack suffix:
@@ -4084,7 +3208,8 @@ field_exp_list -> field_exp . SEMICOL field_exp_list [ RBRACE ]
 ## Transitions:
 -- On SEMICOL shift to state 146
 ## Reductions:
--- On RBRACE reduce production field_exp_list -> field_exp
+-- On RBRACE
+--   reduce production field_exp_list -> field_exp
 
 State 146:
 ## Known stack suffix:
@@ -4132,62 +3257,8 @@ separated_nonempty_list(POWER,simple_exp) -> simple_exp . POWER separated_nonemp
 -- On POWER shift to state 150
 -- On DOT shift to state 153
 ## Reductions:
--- On WITH reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On WHENOT reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On WHEN reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On VAR reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On VAL reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On UNTIL reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On UNSAFE reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On UNLESS reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On TYPE reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On THEN reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On TEL reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On SUBTRACTIVE reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On STATE reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On STAR reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On SEMICOL reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On RPAREN_GREATER reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On RPAREN reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On REACHABLE reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On RBRACKET reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On RBRACE reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On PRAGMA reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On OR reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On ON reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On NODE reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On LET reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On LESS_GREATER reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On LESSRBRACKET reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On INFIX4 reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On INFIX3 reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On INFIX2 reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On INFIX1 reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On INFIX0 reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On FUN reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On EXTERNAL reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On EVERY reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On EQUAL reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On EOF reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On ENFORCE reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On END reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On ELSE reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On DOUBLE_GREATER reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On DOUBLE_DOT reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On DONE reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On DO reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On DEFAULT reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On Constructor reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On CONTINUE reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On CONST reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On COMMA reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On COLONCOLON reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On BOOL reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On BAR reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On ATTRACTIVE reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On AROBASE reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On AND reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
--- On AMPERSAND reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
+-- On WITH WHENOT WHEN VAR VAL UNTIL UNSAFE UNLESS TYPE THEN TEL SUBTRACTIVE STATE STAR SEMICOL RPAREN_GREATER RPAREN REACHABLE RBRACKET RBRACE PRAGMA OR ON NODE LET LESS_GREATER LESSRBRACKET INFIX4 INFIX3 INFIX2 INFIX1 INFIX0 FUN EXTERNAL EVERY EQUAL EOF ENFORCE END ELSE DOUBLE_GREATER DOUBLE_DOT DONE DO DEFAULT Constructor CONTINUE CONST COMMA COLONCOLON BOOL BAR ATTRACTIVE AROBASE AND AMPERSAND
+--   reduce production separated_nonempty_list(POWER,simple_exp) -> simple_exp
 
 State 150:
 ## Known stack suffix:
@@ -4351,7 +3422,8 @@ separated_nonempty_list(COMMA,simple_exp) -> simple_exp . COMMA separated_nonemp
 -- On DOT shift to state 153
 -- On COMMA shift to state 161
 ## Reductions:
--- On DOUBLE_GREATER reduce production separated_nonempty_list(COMMA,simple_exp) -> simple_exp
+-- On DOUBLE_GREATER
+--   reduce production separated_nonempty_list(COMMA,simple_exp) -> simple_exp
 
 State 161:
 ## Known stack suffix:
@@ -4529,7 +3601,8 @@ _exp -> iterator DOUBLE_LESS separated_nonempty_list(COMMA,simple_exp) DOUBLE_GR
 -- On LESS_LPAREN shift to state 171
 -- On delim_slist(COMMA,LESS_LPAREN,RPAREN_GREATER,exp) shift to state 177
 ## Reductions:
--- On LPAREN reduce production delim_slist(COMMA,LESS_LPAREN,RPAREN_GREATER,exp) ->
+-- On LPAREN
+--   reduce production delim_slist(COMMA,LESS_LPAREN,RPAREN_GREATER,exp) ->
 
 State 171:
 ## Known stack suffix:
@@ -4577,7 +3650,8 @@ delim_slist(COMMA,LESS_LPAREN,RPAREN_GREATER,exp) -> LESS_LPAREN . slist(COMMA,e
 -- On _exp shift to state 122
 -- On _const shift to state 123
 ## Reductions:
--- On RPAREN_GREATER reduce production slist(COMMA,exp) ->
+-- On RPAREN_GREATER
+--   reduce production slist(COMMA,exp) ->
 
 State 172:
 ## Known stack suffix:
@@ -4640,7 +3714,8 @@ slist(COMMA,exp) -> exp . COMMA slist(COMMA,exp) [ RPAREN_GREATER ]
 -- On AND shift to state 134
 -- On AMPERSAND shift to state 136
 ## Reductions:
--- On RPAREN_GREATER reduce production slist(COMMA,exp) -> exp
+-- On RPAREN_GREATER
+--   reduce production slist(COMMA,exp) -> exp
 
 State 175:
 ## Known stack suffix:
@@ -4688,7 +3763,8 @@ slist(COMMA,exp) -> exp COMMA . slist(COMMA,exp) [ RPAREN_GREATER ]
 -- On _exp shift to state 122
 -- On _const shift to state 123
 ## Reductions:
--- On RPAREN_GREATER reduce production slist(COMMA,exp) ->
+-- On RPAREN_GREATER
+--   reduce production slist(COMMA,exp) ->
 
 State 176:
 ## Known stack suffix:
@@ -4755,7 +3831,8 @@ _exp -> iterator DOUBLE_LESS separated_nonempty_list(COMMA,simple_exp) DOUBLE_GR
 -- On _exp shift to state 122
 -- On _const shift to state 123
 ## Reductions:
--- On RPAREN reduce production exps ->
+-- On RPAREN
+--   reduce production exps ->
 
 State 179:
 ## Known stack suffix:
@@ -4819,7 +3896,8 @@ nonmtexps -> exp . COMMA nonmtexps [ RPAREN ]
 -- On AMPERSAND shift to state 136
 -- On opt_comma shift to state 184
 ## Reductions:
--- On RPAREN reduce production opt_comma ->
+-- On RPAREN
+--   reduce production opt_comma ->
 
 State 182:
 ## Known stack suffix:
@@ -4868,7 +3946,8 @@ opt_comma -> COMMA . [ RPAREN ]
 -- On _exp shift to state 122
 -- On _const shift to state 123
 ## Reductions:
--- On RPAREN reduce production opt_comma -> COMMA
+-- On RPAREN
+--   reduce production opt_comma -> COMMA
 
 State 183:
 ## Known stack suffix:
@@ -4897,7 +3976,8 @@ _exp -> iterator DOUBLE_LESS separated_nonempty_list(COMMA,simple_exp) DOUBLE_GR
 -- On LESS_LPAREN shift to state 171
 -- On delim_slist(COMMA,LESS_LPAREN,RPAREN_GREATER,exp) shift to state 186
 ## Reductions:
--- On LPAREN reduce production delim_slist(COMMA,LESS_LPAREN,RPAREN_GREATER,exp) ->
+-- On LPAREN
+--   reduce production delim_slist(COMMA,LESS_LPAREN,RPAREN_GREATER,exp) ->
 
 State 186:
 ## Known stack suffix:
@@ -4955,7 +4035,8 @@ _exp -> iterator DOUBLE_LESS separated_nonempty_list(COMMA,simple_exp) DOUBLE_GR
 -- On _exp shift to state 122
 -- On _const shift to state 123
 ## Reductions:
--- On RPAREN reduce production exps ->
+-- On RPAREN
+--   reduce production exps ->
 
 State 188:
 ## Known stack suffix:
@@ -5047,63 +4128,8 @@ trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET . trunc_indexes [ WITH WHENOT 
 -- On LBRACKETGREATER shift to state 73
 -- On trunc_indexes shift to state 194
 ## Reductions:
--- On WITH reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On WHENOT reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On WHEN reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On VAR reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On VAL reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On UNTIL reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On UNSAFE reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On UNLESS reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On TYPE reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On THEN reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On TEL reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On SUBTRACTIVE reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On STATE reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On STAR reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On SEMICOL reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On RPAREN_GREATER reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On RPAREN reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On REACHABLE reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On RBRACKET reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On RBRACE reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On PRAGMA reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On POWER reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On OR reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On ON reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On NODE reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On LET reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On LESS_GREATER reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On LESSRBRACKET reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On INFIX4 reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On INFIX3 reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On INFIX2 reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On INFIX1 reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On INFIX0 reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On FUN reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On EXTERNAL reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On EVERY reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On EQUAL reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On EOF reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On ENFORCE reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On END reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On ELSE reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On DOUBLE_GREATER reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On DOUBLE_DOT reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On DONE reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On DO reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On DEFAULT reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On Constructor reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On CONTINUE reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On CONST reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On COMMA reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On COLONCOLON reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On BOOL reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On BAR reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On ATTRACTIVE reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On AROBASE reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On AND reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
--- On AMPERSAND reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
+-- On WITH WHENOT WHEN VAR VAL UNTIL UNSAFE UNLESS TYPE THEN TEL SUBTRACTIVE STATE STAR SEMICOL RPAREN_GREATER RPAREN REACHABLE RBRACKET RBRACE PRAGMA POWER OR ON NODE LET LESS_GREATER LESSRBRACKET INFIX4 INFIX3 INFIX2 INFIX1 INFIX0 FUN EXTERNAL EVERY EQUAL EOF ENFORCE END ELSE DOUBLE_GREATER DOUBLE_DOT DONE DO DEFAULT Constructor CONTINUE CONST COMMA COLONCOLON BOOL BAR ATTRACTIVE AROBASE AND AMPERSAND
+--   reduce production trunc_indexes -> LBRACKETGREATER exp LESSRBRACKET
 
 State 194:
 ## Known stack suffix:
@@ -5218,63 +4244,8 @@ indexes -> LBRACKET exp RBRACKET . indexes [ WITH WHENOT WHEN VAR VAL UNTIL UNSA
 -- On LBRACKET shift to state 198
 -- On indexes shift to state 200
 ## Reductions:
--- On WITH reduce production indexes -> LBRACKET exp RBRACKET
--- On WHENOT reduce production indexes -> LBRACKET exp RBRACKET
--- On WHEN reduce production indexes -> LBRACKET exp RBRACKET
--- On VAR reduce production indexes -> LBRACKET exp RBRACKET
--- On VAL reduce production indexes -> LBRACKET exp RBRACKET
--- On UNTIL reduce production indexes -> LBRACKET exp RBRACKET
--- On UNSAFE reduce production indexes -> LBRACKET exp RBRACKET
--- On UNLESS reduce production indexes -> LBRACKET exp RBRACKET
--- On TYPE reduce production indexes -> LBRACKET exp RBRACKET
--- On THEN reduce production indexes -> LBRACKET exp RBRACKET
--- On TEL reduce production indexes -> LBRACKET exp RBRACKET
--- On SUBTRACTIVE reduce production indexes -> LBRACKET exp RBRACKET
--- On STATE reduce production indexes -> LBRACKET exp RBRACKET
--- On STAR reduce production indexes -> LBRACKET exp RBRACKET
--- On SEMICOL reduce production indexes -> LBRACKET exp RBRACKET
--- On RPAREN_GREATER reduce production indexes -> LBRACKET exp RBRACKET
--- On RPAREN reduce production indexes -> LBRACKET exp RBRACKET
--- On REACHABLE reduce production indexes -> LBRACKET exp RBRACKET
--- On RBRACKET reduce production indexes -> LBRACKET exp RBRACKET
--- On RBRACE reduce production indexes -> LBRACKET exp RBRACKET
--- On PRAGMA reduce production indexes -> LBRACKET exp RBRACKET
--- On POWER reduce production indexes -> LBRACKET exp RBRACKET
--- On OR reduce production indexes -> LBRACKET exp RBRACKET
--- On ON reduce production indexes -> LBRACKET exp RBRACKET
--- On NODE reduce production indexes -> LBRACKET exp RBRACKET
--- On LET reduce production indexes -> LBRACKET exp RBRACKET
--- On LESS_GREATER reduce production indexes -> LBRACKET exp RBRACKET
--- On LESSRBRACKET reduce production indexes -> LBRACKET exp RBRACKET
--- On INFIX4 reduce production indexes -> LBRACKET exp RBRACKET
--- On INFIX3 reduce production indexes -> LBRACKET exp RBRACKET
--- On INFIX2 reduce production indexes -> LBRACKET exp RBRACKET
--- On INFIX1 reduce production indexes -> LBRACKET exp RBRACKET
--- On INFIX0 reduce production indexes -> LBRACKET exp RBRACKET
--- On FUN reduce production indexes -> LBRACKET exp RBRACKET
--- On EXTERNAL reduce production indexes -> LBRACKET exp RBRACKET
--- On EVERY reduce production indexes -> LBRACKET exp RBRACKET
--- On EQUAL reduce production indexes -> LBRACKET exp RBRACKET
--- On EOF reduce production indexes -> LBRACKET exp RBRACKET
--- On ENFORCE reduce production indexes -> LBRACKET exp RBRACKET
--- On END reduce production indexes -> LBRACKET exp RBRACKET
--- On ELSE reduce production indexes -> LBRACKET exp RBRACKET
--- On DOUBLE_GREATER reduce production indexes -> LBRACKET exp RBRACKET
--- On DOUBLE_DOT reduce production indexes -> LBRACKET exp RBRACKET
--- On DONE reduce production indexes -> LBRACKET exp RBRACKET
--- On DO reduce production indexes -> LBRACKET exp RBRACKET
--- On DEFAULT reduce production indexes -> LBRACKET exp RBRACKET
--- On Constructor reduce production indexes -> LBRACKET exp RBRACKET
--- On CONTINUE reduce production indexes -> LBRACKET exp RBRACKET
--- On CONST reduce production indexes -> LBRACKET exp RBRACKET
--- On COMMA reduce production indexes -> LBRACKET exp RBRACKET
--- On COLONCOLON reduce production indexes -> LBRACKET exp RBRACKET
--- On BOOL reduce production indexes -> LBRACKET exp RBRACKET
--- On BAR reduce production indexes -> LBRACKET exp RBRACKET
--- On ATTRACTIVE reduce production indexes -> LBRACKET exp RBRACKET
--- On AROBASE reduce production indexes -> LBRACKET exp RBRACKET
--- On AND reduce production indexes -> LBRACKET exp RBRACKET
--- On AMPERSAND reduce production indexes -> LBRACKET exp RBRACKET
+-- On WITH WHENOT WHEN VAR VAL UNTIL UNSAFE UNLESS TYPE THEN TEL SUBTRACTIVE STATE STAR SEMICOL RPAREN_GREATER RPAREN REACHABLE RBRACKET RBRACE PRAGMA POWER OR ON NODE LET LESS_GREATER LESSRBRACKET INFIX4 INFIX3 INFIX2 INFIX1 INFIX0 FUN EXTERNAL EVERY EQUAL EOF ENFORCE END ELSE DOUBLE_GREATER DOUBLE_DOT DONE DO DEFAULT Constructor CONTINUE CONST COMMA COLONCOLON BOOL BAR ATTRACTIVE AROBASE AND AMPERSAND
+--   reduce production indexes -> LBRACKET exp RBRACKET
 
 State 198:
 ## Known stack suffix:
@@ -5546,62 +4517,8 @@ _exp -> exp . AROBASE exp [ WITH WHENOT WHEN VAR VAL UNTIL UNSAFE UNLESS TYPE TH
 ## Transitions:
 -- On POWER shift to state 108
 ## Reductions:
--- On WITH reduce production _exp -> simple_exp FBY exp
--- On WHENOT reduce production _exp -> simple_exp FBY exp
--- On WHEN reduce production _exp -> simple_exp FBY exp
--- On VAR reduce production _exp -> simple_exp FBY exp
--- On VAL reduce production _exp -> simple_exp FBY exp
--- On UNTIL reduce production _exp -> simple_exp FBY exp
--- On UNSAFE reduce production _exp -> simple_exp FBY exp
--- On UNLESS reduce production _exp -> simple_exp FBY exp
--- On TYPE reduce production _exp -> simple_exp FBY exp
--- On THEN reduce production _exp -> simple_exp FBY exp
--- On TEL reduce production _exp -> simple_exp FBY exp
--- On SUBTRACTIVE reduce production _exp -> simple_exp FBY exp
--- On STATE reduce production _exp -> simple_exp FBY exp
--- On STAR reduce production _exp -> simple_exp FBY exp
--- On SEMICOL reduce production _exp -> simple_exp FBY exp
--- On RPAREN_GREATER reduce production _exp -> simple_exp FBY exp
--- On RPAREN reduce production _exp -> simple_exp FBY exp
--- On REACHABLE reduce production _exp -> simple_exp FBY exp
--- On RBRACKET reduce production _exp -> simple_exp FBY exp
--- On RBRACE reduce production _exp -> simple_exp FBY exp
--- On PRAGMA reduce production _exp -> simple_exp FBY exp
--- On OR reduce production _exp -> simple_exp FBY exp
--- On ON reduce production _exp -> simple_exp FBY exp
--- On NODE reduce production _exp -> simple_exp FBY exp
--- On LET reduce production _exp -> simple_exp FBY exp
--- On LESS_GREATER reduce production _exp -> simple_exp FBY exp
--- On LESSRBRACKET reduce production _exp -> simple_exp FBY exp
--- On INFIX4 reduce production _exp -> simple_exp FBY exp
--- On INFIX3 reduce production _exp -> simple_exp FBY exp
--- On INFIX2 reduce production _exp -> simple_exp FBY exp
--- On INFIX1 reduce production _exp -> simple_exp FBY exp
--- On INFIX0 reduce production _exp -> simple_exp FBY exp
--- On FUN reduce production _exp -> simple_exp FBY exp
--- On EXTERNAL reduce production _exp -> simple_exp FBY exp
--- On EVERY reduce production _exp -> simple_exp FBY exp
--- On EQUAL reduce production _exp -> simple_exp FBY exp
--- On EOF reduce production _exp -> simple_exp FBY exp
--- On ENFORCE reduce production _exp -> simple_exp FBY exp
--- On END reduce production _exp -> simple_exp FBY exp
--- On ELSE reduce production _exp -> simple_exp FBY exp
--- On DOUBLE_GREATER reduce production _exp -> simple_exp FBY exp
--- On DOUBLE_DOT reduce production _exp -> simple_exp FBY exp
--- On DONE reduce production _exp -> simple_exp FBY exp
--- On DO reduce production _exp -> simple_exp FBY exp
--- On DEFAULT reduce production _exp -> simple_exp FBY exp
--- On Constructor reduce production _exp -> simple_exp FBY exp
--- On CONTINUE reduce production _exp -> simple_exp FBY exp
--- On CONST reduce production _exp -> simple_exp FBY exp
--- On COMMA reduce production _exp -> simple_exp FBY exp
--- On COLONCOLON reduce production _exp -> simple_exp FBY exp
--- On BOOL reduce production _exp -> simple_exp FBY exp
--- On BAR reduce production _exp -> simple_exp FBY exp
--- On ATTRACTIVE reduce production _exp -> simple_exp FBY exp
--- On AROBASE reduce production _exp -> simple_exp FBY exp
--- On AND reduce production _exp -> simple_exp FBY exp
--- On AMPERSAND reduce production _exp -> simple_exp FBY exp
+-- On WITH WHENOT WHEN VAR VAL UNTIL UNSAFE UNLESS TYPE THEN TEL SUBTRACTIVE STATE STAR SEMICOL RPAREN_GREATER RPAREN REACHABLE RBRACKET RBRACE PRAGMA OR ON NODE LET LESS_GREATER LESSRBRACKET INFIX4 INFIX3 INFIX2 INFIX1 INFIX0 FUN EXTERNAL EVERY EQUAL EOF ENFORCE END ELSE DOUBLE_GREATER DOUBLE_DOT DONE DO DEFAULT Constructor CONTINUE CONST COMMA COLONCOLON BOOL BAR ATTRACTIVE AROBASE AND AMPERSAND
+--   reduce production _exp -> simple_exp FBY exp
 
 State 206:
 ## Known stack suffix:
@@ -5716,48 +4633,8 @@ _exp -> exp . AROBASE exp [ WITH WHENOT WHEN VAR VAL UNTIL UNSAFE UNLESS TYPE TH
 -- On AND shift to state 134
 -- On AMPERSAND shift to state 136
 ## Reductions:
--- On WITH reduce production _exp -> simple_exp DOT indexes DEFAULT exp
--- On VAR reduce production _exp -> simple_exp DOT indexes DEFAULT exp
--- On VAL reduce production _exp -> simple_exp DOT indexes DEFAULT exp
--- On UNTIL reduce production _exp -> simple_exp DOT indexes DEFAULT exp
--- On UNSAFE reduce production _exp -> simple_exp DOT indexes DEFAULT exp
--- On UNLESS reduce production _exp -> simple_exp DOT indexes DEFAULT exp
--- On TYPE reduce production _exp -> simple_exp DOT indexes DEFAULT exp
--- On THEN reduce production _exp -> simple_exp DOT indexes DEFAULT exp
--- On TEL reduce production _exp -> simple_exp DOT indexes DEFAULT exp
--- On STATE reduce production _exp -> simple_exp DOT indexes DEFAULT exp
--- On SEMICOL reduce production _exp -> simple_exp DOT indexes DEFAULT exp
--- On RPAREN_GREATER reduce production _exp -> simple_exp DOT indexes DEFAULT exp
--- On RPAREN reduce production _exp -> simple_exp DOT indexes DEFAULT exp
--- On REACHABLE reduce production _exp -> simple_exp DOT indexes DEFAULT exp
--- On RBRACKET reduce production _exp -> simple_exp DOT indexes DEFAULT exp
--- On RBRACE reduce production _exp -> simple_exp DOT indexes DEFAULT exp
--- On PRAGMA reduce production _exp -> simple_exp DOT indexes DEFAULT exp
--- On ON reduce production _exp -> simple_exp DOT indexes DEFAULT exp
--- On NODE reduce production _exp -> simple_exp DOT indexes DEFAULT exp
--- On LET reduce production _exp -> simple_exp DOT indexes DEFAULT exp
--- On LESSRBRACKET reduce production _exp -> simple_exp DOT indexes DEFAULT exp
--- On FUN reduce production _exp -> simple_exp DOT indexes DEFAULT exp
--- On EXTERNAL reduce production _exp -> simple_exp DOT indexes DEFAULT exp
--- On EVERY reduce production _exp -> simple_exp DOT indexes DEFAULT exp
--- On EOF reduce production _exp -> simple_exp DOT indexes DEFAULT exp
--- On ENFORCE reduce production _exp -> simple_exp DOT indexes DEFAULT exp
--- On END reduce production _exp -> simple_exp DOT indexes DEFAULT exp
--- On ELSE reduce production _exp -> simple_exp DOT indexes DEFAULT exp
--- On DOUBLE_GREATER reduce production _exp -> simple_exp DOT indexes DEFAULT exp
--- On DOUBLE_DOT reduce production _exp -> simple_exp DOT indexes DEFAULT exp
--- On DONE reduce production _exp -> simple_exp DOT indexes DEFAULT exp
--- On DO reduce production _exp -> simple_exp DOT indexes DEFAULT exp
--- On DEFAULT reduce production _exp -> simple_exp DOT indexes DEFAULT exp
--- On Constructor reduce production _exp -> simple_exp DOT indexes DEFAULT exp
--- On CONTINUE reduce production _exp -> simple_exp DOT indexes DEFAULT exp
--- On CONST reduce production _exp -> simple_exp DOT indexes DEFAULT exp
--- On COMMA reduce production _exp -> simple_exp DOT indexes DEFAULT exp
--- On COLONCOLON reduce production _exp -> simple_exp DOT indexes DEFAULT exp
--- On BOOL reduce production _exp -> simple_exp DOT indexes DEFAULT exp
--- On BAR reduce production _exp -> simple_exp DOT indexes DEFAULT exp
--- On ATTRACTIVE reduce production _exp -> simple_exp DOT indexes DEFAULT exp
--- On AROBASE reduce production _exp -> simple_exp DOT indexes DEFAULT exp
+-- On WITH VAR VAL UNTIL UNSAFE UNLESS TYPE THEN TEL STATE SEMICOL RPAREN_GREATER RPAREN REACHABLE RBRACKET RBRACE PRAGMA ON NODE LET LESSRBRACKET FUN EXTERNAL EVERY EOF ENFORCE END ELSE DOUBLE_GREATER DOUBLE_DOT DONE DO DEFAULT Constructor CONTINUE CONST COMMA COLONCOLON BOOL BAR ATTRACTIVE AROBASE
+--   reduce production _exp -> simple_exp DOT indexes DEFAULT exp
 
 State 210:
 ## Known stack suffix:
@@ -5845,48 +4722,8 @@ _exp -> exp . AROBASE exp [ WITH WHENOT WHEN VAR VAL UNTIL UNSAFE UNLESS TYPE TH
 -- On AND shift to state 134
 -- On AMPERSAND shift to state 136
 ## Reductions:
--- On WITH reduce production _exp -> simple_exp ARROW exp
--- On VAR reduce production _exp -> simple_exp ARROW exp
--- On VAL reduce production _exp -> simple_exp ARROW exp
--- On UNTIL reduce production _exp -> simple_exp ARROW exp
--- On UNSAFE reduce production _exp -> simple_exp ARROW exp
--- On UNLESS reduce production _exp -> simple_exp ARROW exp
--- On TYPE reduce production _exp -> simple_exp ARROW exp
--- On THEN reduce production _exp -> simple_exp ARROW exp
--- On TEL reduce production _exp -> simple_exp ARROW exp
--- On STATE reduce production _exp -> simple_exp ARROW exp
--- On SEMICOL reduce production _exp -> simple_exp ARROW exp
--- On RPAREN_GREATER reduce production _exp -> simple_exp ARROW exp
--- On RPAREN reduce production _exp -> simple_exp ARROW exp
--- On REACHABLE reduce production _exp -> simple_exp ARROW exp
--- On RBRACKET reduce production _exp -> simple_exp ARROW exp
--- On RBRACE reduce production _exp -> simple_exp ARROW exp
--- On PRAGMA reduce production _exp -> simple_exp ARROW exp
--- On ON reduce production _exp -> simple_exp ARROW exp
--- On NODE reduce production _exp -> simple_exp ARROW exp
--- On LET reduce production _exp -> simple_exp ARROW exp
--- On LESSRBRACKET reduce production _exp -> simple_exp ARROW exp
--- On FUN reduce production _exp -> simple_exp ARROW exp
--- On EXTERNAL reduce production _exp -> simple_exp ARROW exp
--- On EVERY reduce production _exp -> simple_exp ARROW exp
--- On EOF reduce production _exp -> simple_exp ARROW exp
--- On ENFORCE reduce production _exp -> simple_exp ARROW exp
--- On END reduce production _exp -> simple_exp ARROW exp
--- On ELSE reduce production _exp -> simple_exp ARROW exp
--- On DOUBLE_GREATER reduce production _exp -> simple_exp ARROW exp
--- On DOUBLE_DOT reduce production _exp -> simple_exp ARROW exp
--- On DONE reduce production _exp -> simple_exp ARROW exp
--- On DO reduce production _exp -> simple_exp ARROW exp
--- On DEFAULT reduce production _exp -> simple_exp ARROW exp
--- On Constructor reduce production _exp -> simple_exp ARROW exp
--- On CONTINUE reduce production _exp -> simple_exp ARROW exp
--- On CONST reduce production _exp -> simple_exp ARROW exp
--- On COMMA reduce production _exp -> simple_exp ARROW exp
--- On COLONCOLON reduce production _exp -> simple_exp ARROW exp
--- On BOOL reduce production _exp -> simple_exp ARROW exp
--- On BAR reduce production _exp -> simple_exp ARROW exp
--- On ATTRACTIVE reduce production _exp -> simple_exp ARROW exp
--- On AROBASE reduce production _exp -> simple_exp ARROW exp
+-- On WITH VAR VAL UNTIL UNSAFE UNLESS TYPE THEN TEL STATE SEMICOL RPAREN_GREATER RPAREN REACHABLE RBRACKET RBRACE PRAGMA ON NODE LET LESSRBRACKET FUN EXTERNAL EVERY EOF ENFORCE END ELSE DOUBLE_GREATER DOUBLE_DOT DONE DO DEFAULT Constructor CONTINUE CONST COMMA COLONCOLON BOOL BAR ATTRACTIVE AROBASE
+--   reduce production _exp -> simple_exp ARROW exp
 
 State 212:
 ## Known stack suffix:
@@ -6124,48 +4961,8 @@ _exp -> exp . AROBASE exp [ WITH WHENOT WHEN VAR VAL UNTIL UNSAFE UNLESS TYPE TH
 -- On AND shift to state 134
 -- On AMPERSAND shift to state 136
 ## Reductions:
--- On WITH reduce production _exp -> IF exp THEN exp ELSE exp
--- On VAR reduce production _exp -> IF exp THEN exp ELSE exp
--- On VAL reduce production _exp -> IF exp THEN exp ELSE exp
--- On UNTIL reduce production _exp -> IF exp THEN exp ELSE exp
--- On UNSAFE reduce production _exp -> IF exp THEN exp ELSE exp
--- On UNLESS reduce production _exp -> IF exp THEN exp ELSE exp
--- On TYPE reduce production _exp -> IF exp THEN exp ELSE exp
--- On THEN reduce production _exp -> IF exp THEN exp ELSE exp
--- On TEL reduce production _exp -> IF exp THEN exp ELSE exp
--- On STATE reduce production _exp -> IF exp THEN exp ELSE exp
--- On SEMICOL reduce production _exp -> IF exp THEN exp ELSE exp
--- On RPAREN_GREATER reduce production _exp -> IF exp THEN exp ELSE exp
--- On RPAREN reduce production _exp -> IF exp THEN exp ELSE exp
--- On REACHABLE reduce production _exp -> IF exp THEN exp ELSE exp
--- On RBRACKET reduce production _exp -> IF exp THEN exp ELSE exp
--- On RBRACE reduce production _exp -> IF exp THEN exp ELSE exp
--- On PRAGMA reduce production _exp -> IF exp THEN exp ELSE exp
--- On ON reduce production _exp -> IF exp THEN exp ELSE exp
--- On NODE reduce production _exp -> IF exp THEN exp ELSE exp
--- On LET reduce production _exp -> IF exp THEN exp ELSE exp
--- On LESSRBRACKET reduce production _exp -> IF exp THEN exp ELSE exp
--- On FUN reduce production _exp -> IF exp THEN exp ELSE exp
--- On EXTERNAL reduce production _exp -> IF exp THEN exp ELSE exp
--- On EVERY reduce production _exp -> IF exp THEN exp ELSE exp
--- On EOF reduce production _exp -> IF exp THEN exp ELSE exp
--- On ENFORCE reduce production _exp -> IF exp THEN exp ELSE exp
--- On END reduce production _exp -> IF exp THEN exp ELSE exp
--- On ELSE reduce production _exp -> IF exp THEN exp ELSE exp
--- On DOUBLE_GREATER reduce production _exp -> IF exp THEN exp ELSE exp
--- On DOUBLE_DOT reduce production _exp -> IF exp THEN exp ELSE exp
--- On DONE reduce production _exp -> IF exp THEN exp ELSE exp
--- On DO reduce production _exp -> IF exp THEN exp ELSE exp
--- On DEFAULT reduce production _exp -> IF exp THEN exp ELSE exp
--- On Constructor reduce production _exp -> IF exp THEN exp ELSE exp
--- On CONTINUE reduce production _exp -> IF exp THEN exp ELSE exp
--- On CONST reduce production _exp -> IF exp THEN exp ELSE exp
--- On COMMA reduce production _exp -> IF exp THEN exp ELSE exp
--- On COLONCOLON reduce production _exp -> IF exp THEN exp ELSE exp
--- On BOOL reduce production _exp -> IF exp THEN exp ELSE exp
--- On BAR reduce production _exp -> IF exp THEN exp ELSE exp
--- On ATTRACTIVE reduce production _exp -> IF exp THEN exp ELSE exp
--- On AROBASE reduce production _exp -> IF exp THEN exp ELSE exp
+-- On WITH VAR VAL UNTIL UNSAFE UNLESS TYPE THEN TEL STATE SEMICOL RPAREN_GREATER RPAREN REACHABLE RBRACKET RBRACE PRAGMA ON NODE LET LESSRBRACKET FUN EXTERNAL EVERY EOF ENFORCE END ELSE DOUBLE_GREATER DOUBLE_DOT DONE DO DEFAULT Constructor CONTINUE CONST COMMA COLONCOLON BOOL BAR ATTRACTIVE AROBASE
+--   reduce production _exp -> IF exp THEN exp ELSE exp
 
 State 219:
 ## Known stack suffix:
@@ -6267,7 +5064,8 @@ infx -> NOT . [ RPAREN ]
 -- On _exp shift to state 122
 -- On _const shift to state 123
 ## Reductions:
--- On RPAREN reduce production infx -> NOT
+-- On RPAREN
+--   reduce production infx -> NOT
 
 State 224:
 ## Known stack suffix:
@@ -6295,62 +5093,8 @@ _exp -> exp . AROBASE exp [ WITH WHENOT WHEN VAR VAL UNTIL UNSAFE UNLESS TYPE TH
 ## Transitions:
 -- On POWER shift to state 108
 ## Reductions:
--- On WITH reduce production _exp -> NOT exp
--- On WHENOT reduce production _exp -> NOT exp
--- On WHEN reduce production _exp -> NOT exp
--- On VAR reduce production _exp -> NOT exp
--- On VAL reduce production _exp -> NOT exp
--- On UNTIL reduce production _exp -> NOT exp
--- On UNSAFE reduce production _exp -> NOT exp
--- On UNLESS reduce production _exp -> NOT exp
--- On TYPE reduce production _exp -> NOT exp
--- On THEN reduce production _exp -> NOT exp
--- On TEL reduce production _exp -> NOT exp
--- On SUBTRACTIVE reduce production _exp -> NOT exp
--- On STATE reduce production _exp -> NOT exp
--- On STAR reduce production _exp -> NOT exp
--- On SEMICOL reduce production _exp -> NOT exp
--- On RPAREN_GREATER reduce production _exp -> NOT exp
--- On RPAREN reduce production _exp -> NOT exp
--- On REACHABLE reduce production _exp -> NOT exp
--- On RBRACKET reduce production _exp -> NOT exp
--- On RBRACE reduce production _exp -> NOT exp
--- On PRAGMA reduce production _exp -> NOT exp
--- On OR reduce production _exp -> NOT exp
--- On ON reduce production _exp -> NOT exp
--- On NODE reduce production _exp -> NOT exp
--- On LET reduce production _exp -> NOT exp
--- On LESS_GREATER reduce production _exp -> NOT exp
--- On LESSRBRACKET reduce production _exp -> NOT exp
--- On INFIX4 reduce production _exp -> NOT exp
--- On INFIX3 reduce production _exp -> NOT exp
--- On INFIX2 reduce production _exp -> NOT exp
--- On INFIX1 reduce production _exp -> NOT exp
--- On INFIX0 reduce production _exp -> NOT exp
--- On FUN reduce production _exp -> NOT exp
--- On EXTERNAL reduce production _exp -> NOT exp
--- On EVERY reduce production _exp -> NOT exp
--- On EQUAL reduce production _exp -> NOT exp
--- On EOF reduce production _exp -> NOT exp
--- On ENFORCE reduce production _exp -> NOT exp
--- On END reduce production _exp -> NOT exp
--- On ELSE reduce production _exp -> NOT exp
--- On DOUBLE_GREATER reduce production _exp -> NOT exp
--- On DOUBLE_DOT reduce production _exp -> NOT exp
--- On DONE reduce production _exp -> NOT exp
--- On DO reduce production _exp -> NOT exp
--- On DEFAULT reduce production _exp -> NOT exp
--- On Constructor reduce production _exp -> NOT exp
--- On CONTINUE reduce production _exp -> NOT exp
--- On CONST reduce production _exp -> NOT exp
--- On COMMA reduce production _exp -> NOT exp
--- On COLONCOLON reduce production _exp -> NOT exp
--- On BOOL reduce production _exp -> NOT exp
--- On BAR reduce production _exp -> NOT exp
--- On ATTRACTIVE reduce production _exp -> NOT exp
--- On AROBASE reduce production _exp -> NOT exp
--- On AND reduce production _exp -> NOT exp
--- On AMPERSAND reduce production _exp -> NOT exp
+-- On WITH WHENOT WHEN VAR VAL UNTIL UNSAFE UNLESS TYPE THEN TEL SUBTRACTIVE STATE STAR SEMICOL RPAREN_GREATER RPAREN REACHABLE RBRACKET RBRACE PRAGMA OR ON NODE LET LESS_GREATER LESSRBRACKET INFIX4 INFIX3 INFIX2 INFIX1 INFIX0 FUN EXTERNAL EVERY EQUAL EOF ENFORCE END ELSE DOUBLE_GREATER DOUBLE_DOT DONE DO DEFAULT Constructor CONTINUE CONST COMMA COLONCOLON BOOL BAR ATTRACTIVE AROBASE AND AMPERSAND
+--   reduce production _exp -> NOT exp
 
 State 225:
 ## Known stack suffix:
@@ -6417,7 +5161,8 @@ tuple_exp -> exp . COMMA tuple_exp [ RPAREN ]
 -- On AMPERSAND shift to state 136
 -- On ct_annot shift to state 251
 ## Reductions:
--- On RPAREN reduce production ct_annot ->
+-- On RPAREN
+--   reduce production ct_annot ->
 
 State 228:
 ## Known stack suffix:
@@ -6463,9 +5208,10 @@ ck -> on_ck . [ ONOT ON ]
 ct_annot -> ON on_ck . [ RPAREN ]
 ## Transitions:
 ## Reductions:
--- On RPAREN reduce production ct_annot -> ON on_ck
--- On ONOT reduce production ck -> on_ck
--- On ON reduce production ck -> on_ck
+-- On ONOT ON
+--   reduce production ck -> on_ck
+-- On RPAREN
+--   reduce production ct_annot -> ON on_ck
 
 State 232:
 ## Known stack suffix:
@@ -6695,7 +5441,8 @@ tuple_exp -> exp . COMMA tuple_exp [ RPAREN ]
 -- On AND shift to state 134
 -- On AMPERSAND shift to state 136
 ## Reductions:
--- On RPAREN reduce production tuple_exp -> exp COMMA exp
+-- On RPAREN
+--   reduce production tuple_exp -> exp COMMA exp
 
 State 248:
 ## Known stack suffix:
@@ -6736,7 +5483,8 @@ on_ck -> ck . ON constructor_or_bool LPAREN IDENT RPAREN [ RPAREN ONOT ON ]
 -- On ONOT shift to state 237
 -- On ON shift to state 239
 ## Reductions:
--- On RPAREN reduce production ct_annot -> COLONCOLON ck
+-- On RPAREN
+--   reduce production ct_annot -> COLONCOLON ck
 
 State 251:
 ## Known stack suffix:
@@ -6764,9 +5512,10 @@ _simple_exp -> IDENT . [ WITH DOT ]
 ident -> IDENT . [ EQUAL ]
 ## Transitions:
 ## Reductions:
--- On WITH reduce production _simple_exp -> IDENT
--- On EQUAL reduce production ident -> IDENT
--- On DOT reduce production _simple_exp -> IDENT
+-- On WITH DOT
+--   reduce production _simple_exp -> IDENT
+-- On EQUAL
+--   reduce production ident -> IDENT
 
 State 254:
 ## Known stack suffix:
@@ -6918,9 +5667,10 @@ _const -> qualified(ident) . [ WITH DOT ]
 qualname -> qualified(ident) . [ EQUAL ]
 ## Transitions:
 ## Reductions:
--- On WITH reduce production _const -> qualified(ident)
--- On EQUAL reduce production qualname -> qualified(ident)
--- On DOT reduce production _const -> qualified(ident)
+-- On WITH DOT
+--   reduce production _const -> qualified(ident)
+-- On EQUAL
+--   reduce production qualname -> qualified(ident)
 
 State 262:
 ## Known stack suffix:
@@ -6967,7 +5717,8 @@ array_exp_list -> exp . COMMA array_exp_list [ RBRACKET ]
 -- On AND shift to state 134
 -- On AMPERSAND shift to state 136
 ## Reductions:
--- On RBRACKET reduce production array_exp_list -> exp
+-- On RBRACKET
+--   reduce production array_exp_list -> exp
 
 State 263:
 ## Known stack suffix:
@@ -7121,31 +5872,10 @@ _const -> BOOL . [ WHENOT WHEN SUBTRACTIVE STAR RPAREN POWER OR ON LESS_GREATER 
 constructor_or_bool -> BOOL . [ ARROW ]
 ## Transitions:
 ## Reductions:
--- On WHENOT reduce production _const -> BOOL
--- On WHEN reduce production _const -> BOOL
--- On SUBTRACTIVE reduce production _const -> BOOL
--- On STAR reduce production _const -> BOOL
--- On RPAREN reduce production _const -> BOOL
--- On POWER reduce production _const -> BOOL
--- On OR reduce production _const -> BOOL
--- On ON reduce production _const -> BOOL
--- On LESS_GREATER reduce production _const -> BOOL
--- On LBRACKETGREATER reduce production _const -> BOOL
--- On LBRACKET reduce production _const -> BOOL
--- On INFIX4 reduce production _const -> BOOL
--- On INFIX3 reduce production _const -> BOOL
--- On INFIX2 reduce production _const -> BOOL
--- On INFIX1 reduce production _const -> BOOL
--- On INFIX0 reduce production _const -> BOOL
--- On FBY reduce production _const -> BOOL
--- On EQUAL reduce production _const -> BOOL
--- On DOT reduce production _const -> BOOL
--- On COMMA reduce production _const -> BOOL
--- On COLONCOLON reduce production _const -> BOOL
--- On ARROW reduce production constructor_or_bool -> BOOL
--- On AROBASE reduce production _const -> BOOL
--- On AND reduce production _const -> BOOL
--- On AMPERSAND reduce production _const -> BOOL
+-- On WHENOT WHEN SUBTRACTIVE STAR RPAREN POWER OR ON LESS_GREATER LBRACKETGREATER LBRACKET INFIX4 INFIX3 INFIX2 INFIX1 INFIX0 FBY EQUAL DOT COMMA COLONCOLON AROBASE AND AMPERSAND
+--   reduce production _const -> BOOL
+-- On ARROW
+--   reduce production constructor_or_bool -> BOOL
 
 State 270:
 ## Known stack suffix:
@@ -7262,31 +5992,10 @@ _const -> constructor . [ WHENOT WHEN SUBTRACTIVE STAR RPAREN POWER OR ON LESS_G
 constructor_or_bool -> constructor . [ ARROW ]
 ## Transitions:
 ## Reductions:
--- On WHENOT reduce production _const -> constructor
--- On WHEN reduce production _const -> constructor
--- On SUBTRACTIVE reduce production _const -> constructor
--- On STAR reduce production _const -> constructor
--- On RPAREN reduce production _const -> constructor
--- On POWER reduce production _const -> constructor
--- On OR reduce production _const -> constructor
--- On ON reduce production _const -> constructor
--- On LESS_GREATER reduce production _const -> constructor
--- On LBRACKETGREATER reduce production _const -> constructor
--- On LBRACKET reduce production _const -> constructor
--- On INFIX4 reduce production _const -> constructor
--- On INFIX3 reduce production _const -> constructor
--- On INFIX2 reduce production _const -> constructor
--- On INFIX1 reduce production _const -> constructor
--- On INFIX0 reduce production _const -> constructor
--- On FBY reduce production _const -> constructor
--- On EQUAL reduce production _const -> constructor
--- On DOT reduce production _const -> constructor
--- On COMMA reduce production _const -> constructor
--- On COLONCOLON reduce production _const -> constructor
--- On ARROW reduce production constructor_or_bool -> constructor
--- On AROBASE reduce production _const -> constructor
--- On AND reduce production _const -> constructor
--- On AMPERSAND reduce production _const -> constructor
+-- On WHENOT WHEN SUBTRACTIVE STAR RPAREN POWER OR ON LESS_GREATER LBRACKETGREATER LBRACKET INFIX4 INFIX3 INFIX2 INFIX1 INFIX0 FBY EQUAL DOT COMMA COLONCOLON AROBASE AND AMPERSAND
+--   reduce production _const -> constructor
+-- On ARROW
+--   reduce production constructor_or_bool -> constructor
 
 State 275:
 ## Known stack suffix:
@@ -7324,63 +6033,8 @@ merge_handlers -> simple_exp simple_exp . [ WITH WHENOT WHEN VAR VAL UNTIL UNSAF
 ## Transitions:
 -- On DOT shift to state 153
 ## Reductions:
--- On WITH reduce production merge_handlers -> simple_exp simple_exp
--- On WHENOT reduce production merge_handlers -> simple_exp simple_exp
--- On WHEN reduce production merge_handlers -> simple_exp simple_exp
--- On VAR reduce production merge_handlers -> simple_exp simple_exp
--- On VAL reduce production merge_handlers -> simple_exp simple_exp
--- On UNTIL reduce production merge_handlers -> simple_exp simple_exp
--- On UNSAFE reduce production merge_handlers -> simple_exp simple_exp
--- On UNLESS reduce production merge_handlers -> simple_exp simple_exp
--- On TYPE reduce production merge_handlers -> simple_exp simple_exp
--- On THEN reduce production merge_handlers -> simple_exp simple_exp
--- On TEL reduce production merge_handlers -> simple_exp simple_exp
--- On SUBTRACTIVE reduce production merge_handlers -> simple_exp simple_exp
--- On STATE reduce production merge_handlers -> simple_exp simple_exp
--- On STAR reduce production merge_handlers -> simple_exp simple_exp
--- On SEMICOL reduce production merge_handlers -> simple_exp simple_exp
--- On RPAREN_GREATER reduce production merge_handlers -> simple_exp simple_exp
--- On RPAREN reduce production merge_handlers -> simple_exp simple_exp
--- On REACHABLE reduce production merge_handlers -> simple_exp simple_exp
--- On RBRACKET reduce production merge_handlers -> simple_exp simple_exp
--- On RBRACE reduce production merge_handlers -> simple_exp simple_exp
--- On PRAGMA reduce production merge_handlers -> simple_exp simple_exp
--- On POWER reduce production merge_handlers -> simple_exp simple_exp
--- On OR reduce production merge_handlers -> simple_exp simple_exp
--- On ON reduce production merge_handlers -> simple_exp simple_exp
--- On NODE reduce production merge_handlers -> simple_exp simple_exp
--- On LET reduce production merge_handlers -> simple_exp simple_exp
--- On LESS_GREATER reduce production merge_handlers -> simple_exp simple_exp
--- On LESSRBRACKET reduce production merge_handlers -> simple_exp simple_exp
--- On INFIX4 reduce production merge_handlers -> simple_exp simple_exp
--- On INFIX3 reduce production merge_handlers -> simple_exp simple_exp
--- On INFIX2 reduce production merge_handlers -> simple_exp simple_exp
--- On INFIX1 reduce production merge_handlers -> simple_exp simple_exp
--- On INFIX0 reduce production merge_handlers -> simple_exp simple_exp
--- On FUN reduce production merge_handlers -> simple_exp simple_exp
--- On EXTERNAL reduce production merge_handlers -> simple_exp simple_exp
--- On EVERY reduce production merge_handlers -> simple_exp simple_exp
--- On EQUAL reduce production merge_handlers -> simple_exp simple_exp
--- On EOF reduce production merge_handlers -> simple_exp simple_exp
--- On ENFORCE reduce production merge_handlers -> simple_exp simple_exp
--- On END reduce production merge_handlers -> simple_exp simple_exp
--- On ELSE reduce production merge_handlers -> simple_exp simple_exp
--- On DOUBLE_GREATER reduce production merge_handlers -> simple_exp simple_exp
--- On DOUBLE_DOT reduce production merge_handlers -> simple_exp simple_exp
--- On DONE reduce production merge_handlers -> simple_exp simple_exp
--- On DO reduce production merge_handlers -> simple_exp simple_exp
--- On DEFAULT reduce production merge_handlers -> simple_exp simple_exp
--- On Constructor reduce production merge_handlers -> simple_exp simple_exp
--- On CONTINUE reduce production merge_handlers -> simple_exp simple_exp
--- On CONST reduce production merge_handlers -> simple_exp simple_exp
--- On COMMA reduce production merge_handlers -> simple_exp simple_exp
--- On COLONCOLON reduce production merge_handlers -> simple_exp simple_exp
--- On BOOL reduce production merge_handlers -> simple_exp simple_exp
--- On BAR reduce production merge_handlers -> simple_exp simple_exp
--- On ATTRACTIVE reduce production merge_handlers -> simple_exp simple_exp
--- On AROBASE reduce production merge_handlers -> simple_exp simple_exp
--- On AND reduce production merge_handlers -> simple_exp simple_exp
--- On AMPERSAND reduce production merge_handlers -> simple_exp simple_exp
+-- On WITH WHENOT WHEN VAR VAL UNTIL UNSAFE UNLESS TYPE THEN TEL SUBTRACTIVE STATE STAR SEMICOL RPAREN_GREATER RPAREN REACHABLE RBRACKET RBRACE PRAGMA POWER OR ON NODE LET LESS_GREATER LESSRBRACKET INFIX4 INFIX3 INFIX2 INFIX1 INFIX0 FUN EXTERNAL EVERY EQUAL EOF ENFORCE END ELSE DOUBLE_GREATER DOUBLE_DOT DONE DO DEFAULT Constructor CONTINUE CONST COMMA COLONCOLON BOOL BAR ATTRACTIVE AROBASE AND AMPERSAND
+--   reduce production merge_handlers -> simple_exp simple_exp
 
 State 277:
 ## Known stack suffix:
@@ -7411,63 +6065,8 @@ nonempty_list(merge_handler) -> merge_handler . nonempty_list(merge_handler) [ W
 -- On nonempty_list(merge_handler) shift to state 281
 -- On merge_handler shift to state 279
 ## Reductions:
--- On WITH reduce production nonempty_list(merge_handler) -> merge_handler
--- On WHENOT reduce production nonempty_list(merge_handler) -> merge_handler
--- On WHEN reduce production nonempty_list(merge_handler) -> merge_handler
--- On VAR reduce production nonempty_list(merge_handler) -> merge_handler
--- On VAL reduce production nonempty_list(merge_handler) -> merge_handler
--- On UNTIL reduce production nonempty_list(merge_handler) -> merge_handler
--- On UNSAFE reduce production nonempty_list(merge_handler) -> merge_handler
--- On UNLESS reduce production nonempty_list(merge_handler) -> merge_handler
--- On TYPE reduce production nonempty_list(merge_handler) -> merge_handler
--- On THEN reduce production nonempty_list(merge_handler) -> merge_handler
--- On TEL reduce production nonempty_list(merge_handler) -> merge_handler
--- On SUBTRACTIVE reduce production nonempty_list(merge_handler) -> merge_handler
--- On STATE reduce production nonempty_list(merge_handler) -> merge_handler
--- On STAR reduce production nonempty_list(merge_handler) -> merge_handler
--- On SEMICOL reduce production nonempty_list(merge_handler) -> merge_handler
--- On RPAREN_GREATER reduce production nonempty_list(merge_handler) -> merge_handler
--- On RPAREN reduce production nonempty_list(merge_handler) -> merge_handler
--- On REACHABLE reduce production nonempty_list(merge_handler) -> merge_handler
--- On RBRACKET reduce production nonempty_list(merge_handler) -> merge_handler
--- On RBRACE reduce production nonempty_list(merge_handler) -> merge_handler
--- On PRAGMA reduce production nonempty_list(merge_handler) -> merge_handler
--- On POWER reduce production nonempty_list(merge_handler) -> merge_handler
--- On OR reduce production nonempty_list(merge_handler) -> merge_handler
--- On ON reduce production nonempty_list(merge_handler) -> merge_handler
--- On NODE reduce production nonempty_list(merge_handler) -> merge_handler
--- On LET reduce production nonempty_list(merge_handler) -> merge_handler
--- On LESS_GREATER reduce production nonempty_list(merge_handler) -> merge_handler
--- On LESSRBRACKET reduce production nonempty_list(merge_handler) -> merge_handler
--- On INFIX4 reduce production nonempty_list(merge_handler) -> merge_handler
--- On INFIX3 reduce production nonempty_list(merge_handler) -> merge_handler
--- On INFIX2 reduce production nonempty_list(merge_handler) -> merge_handler
--- On INFIX1 reduce production nonempty_list(merge_handler) -> merge_handler
--- On INFIX0 reduce production nonempty_list(merge_handler) -> merge_handler
--- On FUN reduce production nonempty_list(merge_handler) -> merge_handler
--- On EXTERNAL reduce production nonempty_list(merge_handler) -> merge_handler
--- On EVERY reduce production nonempty_list(merge_handler) -> merge_handler
--- On EQUAL reduce production nonempty_list(merge_handler) -> merge_handler
--- On EOF reduce production nonempty_list(merge_handler) -> merge_handler
--- On ENFORCE reduce production nonempty_list(merge_handler) -> merge_handler
--- On END reduce production nonempty_list(merge_handler) -> merge_handler
--- On ELSE reduce production nonempty_list(merge_handler) -> merge_handler
--- On DOUBLE_GREATER reduce production nonempty_list(merge_handler) -> merge_handler
--- On DOUBLE_DOT reduce production nonempty_list(merge_handler) -> merge_handler
--- On DONE reduce production nonempty_list(merge_handler) -> merge_handler
--- On DO reduce production nonempty_list(merge_handler) -> merge_handler
--- On DEFAULT reduce production nonempty_list(merge_handler) -> merge_handler
--- On Constructor reduce production nonempty_list(merge_handler) -> merge_handler
--- On CONTINUE reduce production nonempty_list(merge_handler) -> merge_handler
--- On CONST reduce production nonempty_list(merge_handler) -> merge_handler
--- On COMMA reduce production nonempty_list(merge_handler) -> merge_handler
--- On COLONCOLON reduce production nonempty_list(merge_handler) -> merge_handler
--- On BOOL reduce production nonempty_list(merge_handler) -> merge_handler
--- On BAR reduce production nonempty_list(merge_handler) -> merge_handler
--- On ATTRACTIVE reduce production nonempty_list(merge_handler) -> merge_handler
--- On AROBASE reduce production nonempty_list(merge_handler) -> merge_handler
--- On AND reduce production nonempty_list(merge_handler) -> merge_handler
--- On AMPERSAND reduce production nonempty_list(merge_handler) -> merge_handler
+-- On WITH WHENOT WHEN VAR VAL UNTIL UNSAFE UNLESS TYPE THEN TEL SUBTRACTIVE STATE STAR SEMICOL RPAREN_GREATER RPAREN REACHABLE RBRACKET RBRACE PRAGMA POWER OR ON NODE LET LESS_GREATER LESSRBRACKET INFIX4 INFIX3 INFIX2 INFIX1 INFIX0 FUN EXTERNAL EVERY EQUAL EOF ENFORCE END ELSE DOUBLE_GREATER DOUBLE_DOT DONE DO DEFAULT Constructor CONTINUE CONST COMMA COLONCOLON BOOL BAR ATTRACTIVE AROBASE AND AMPERSAND
+--   reduce production nonempty_list(merge_handler) -> merge_handler
 
 State 280:
 ## Known stack suffix:
@@ -7518,62 +6117,8 @@ _exp -> exp . AROBASE exp [ WITH WHENOT WHEN VAR VAL UNTIL UNSAFE UNLESS TYPE TH
 ## Transitions:
 -- On POWER shift to state 108
 ## Reductions:
--- On WITH reduce production _exp -> PRE exp
--- On WHENOT reduce production _exp -> PRE exp
--- On WHEN reduce production _exp -> PRE exp
--- On VAR reduce production _exp -> PRE exp
--- On VAL reduce production _exp -> PRE exp
--- On UNTIL reduce production _exp -> PRE exp
--- On UNSAFE reduce production _exp -> PRE exp
--- On UNLESS reduce production _exp -> PRE exp
--- On TYPE reduce production _exp -> PRE exp
--- On THEN reduce production _exp -> PRE exp
--- On TEL reduce production _exp -> PRE exp
--- On SUBTRACTIVE reduce production _exp -> PRE exp
--- On STATE reduce production _exp -> PRE exp
--- On STAR reduce production _exp -> PRE exp
--- On SEMICOL reduce production _exp -> PRE exp
--- On RPAREN_GREATER reduce production _exp -> PRE exp
--- On RPAREN reduce production _exp -> PRE exp
--- On REACHABLE reduce production _exp -> PRE exp
--- On RBRACKET reduce production _exp -> PRE exp
--- On RBRACE reduce production _exp -> PRE exp
--- On PRAGMA reduce production _exp -> PRE exp
--- On OR reduce production _exp -> PRE exp
--- On ON reduce production _exp -> PRE exp
--- On NODE reduce production _exp -> PRE exp
--- On LET reduce production _exp -> PRE exp
--- On LESS_GREATER reduce production _exp -> PRE exp
--- On LESSRBRACKET reduce production _exp -> PRE exp
--- On INFIX4 reduce production _exp -> PRE exp
--- On INFIX3 reduce production _exp -> PRE exp
--- On INFIX2 reduce production _exp -> PRE exp
--- On INFIX1 reduce production _exp -> PRE exp
--- On INFIX0 reduce production _exp -> PRE exp
--- On FUN reduce production _exp -> PRE exp
--- On EXTERNAL reduce production _exp -> PRE exp
--- On EVERY reduce production _exp -> PRE exp
--- On EQUAL reduce production _exp -> PRE exp
--- On EOF reduce production _exp -> PRE exp
--- On ENFORCE reduce production _exp -> PRE exp
--- On END reduce production _exp -> PRE exp
--- On ELSE reduce production _exp -> PRE exp
--- On DOUBLE_GREATER reduce production _exp -> PRE exp
--- On DOUBLE_DOT reduce production _exp -> PRE exp
--- On DONE reduce production _exp -> PRE exp
--- On DO reduce production _exp -> PRE exp
--- On DEFAULT reduce production _exp -> PRE exp
--- On Constructor reduce production _exp -> PRE exp
--- On CONTINUE reduce production _exp -> PRE exp
--- On CONST reduce production _exp -> PRE exp
--- On COMMA reduce production _exp -> PRE exp
--- On COLONCOLON reduce production _exp -> PRE exp
--- On BOOL reduce production _exp -> PRE exp
--- On BAR reduce production _exp -> PRE exp
--- On ATTRACTIVE reduce production _exp -> PRE exp
--- On AROBASE reduce production _exp -> PRE exp
--- On AND reduce production _exp -> PRE exp
--- On AMPERSAND reduce production _exp -> PRE exp
+-- On WITH WHENOT WHEN VAR VAL UNTIL UNSAFE UNLESS TYPE THEN TEL SUBTRACTIVE STATE STAR SEMICOL RPAREN_GREATER RPAREN REACHABLE RBRACKET RBRACE PRAGMA OR ON NODE LET LESS_GREATER LESSRBRACKET INFIX4 INFIX3 INFIX2 INFIX1 INFIX0 FUN EXTERNAL EVERY EQUAL EOF ENFORCE END ELSE DOUBLE_GREATER DOUBLE_DOT DONE DO DEFAULT Constructor CONTINUE CONST COMMA COLONCOLON BOOL BAR ATTRACTIVE AROBASE AND AMPERSAND
+--   reduce production _exp -> PRE exp
 
 State 283:
 ## Known stack suffix:
@@ -7777,26 +6322,8 @@ ty_ident -> ty_ident POWER simple_exp . [ WHEN VAL UNSAFE TYPE SEMICOL RPAREN RB
 ## Transitions:
 -- On DOT shift to state 153
 ## Reductions:
--- On WHEN reduce production ty_ident -> ty_ident POWER simple_exp
--- On VAL reduce production ty_ident -> ty_ident POWER simple_exp
--- On UNSAFE reduce production ty_ident -> ty_ident POWER simple_exp
--- On TYPE reduce production ty_ident -> ty_ident POWER simple_exp
--- On SEMICOL reduce production ty_ident -> ty_ident POWER simple_exp
--- On RPAREN reduce production ty_ident -> ty_ident POWER simple_exp
--- On RBRACE reduce production ty_ident -> ty_ident POWER simple_exp
--- On PRAGMA reduce production ty_ident -> ty_ident POWER simple_exp
--- On POWER reduce production ty_ident -> ty_ident POWER simple_exp
--- On ON reduce production ty_ident -> ty_ident POWER simple_exp
--- On NODE reduce production ty_ident -> ty_ident POWER simple_exp
--- On FUN reduce production ty_ident -> ty_ident POWER simple_exp
--- On EXTERNAL reduce production ty_ident -> ty_ident POWER simple_exp
--- On EQUAL reduce production ty_ident -> ty_ident POWER simple_exp
--- On EOF reduce production ty_ident -> ty_ident POWER simple_exp
--- On DOUBLE_GREATER reduce production ty_ident -> ty_ident POWER simple_exp
--- On CONST reduce production ty_ident -> ty_ident POWER simple_exp
--- On COLONCOLON reduce production ty_ident -> ty_ident POWER simple_exp
--- On BAR reduce production ty_ident -> ty_ident POWER simple_exp
--- On AT reduce production ty_ident -> ty_ident POWER simple_exp
+-- On WHEN VAL UNSAFE TYPE SEMICOL RPAREN RBRACE PRAGMA POWER ON NODE FUN EXTERNAL EQUAL EOF DOUBLE_GREATER CONST COLONCOLON BAR AT
+--   reduce production ty_ident -> ty_ident POWER simple_exp
 
 State 290:
 ## Known stack suffix:
@@ -7834,7 +6361,8 @@ label_ty_list -> label_ty . SEMICOL label_ty_list [ RBRACE ]
 ## Transitions:
 -- On SEMICOL shift to state 294
 ## Reductions:
--- On RBRACE reduce production label_ty_list -> label_ty
+-- On RBRACE
+--   reduce production label_ty_list -> label_ty
 
 State 294:
 ## Known stack suffix:
@@ -7866,16 +6394,10 @@ modul -> Constructor . [ DOT ]
 ## Transitions:
 -- On BAR shift to state 297
 ## Reductions:
--- On VAL reduce production enum_ty_desc -> Constructor
--- On UNSAFE reduce production enum_ty_desc -> Constructor
--- On TYPE reduce production enum_ty_desc -> Constructor
--- On PRAGMA reduce production enum_ty_desc -> Constructor
--- On NODE reduce production enum_ty_desc -> Constructor
--- On FUN reduce production enum_ty_desc -> Constructor
--- On EXTERNAL reduce production enum_ty_desc -> Constructor
--- On EOF reduce production enum_ty_desc -> Constructor
--- On DOT reduce production modul -> Constructor
--- On CONST reduce production enum_ty_desc -> Constructor
+-- On VAL UNSAFE TYPE PRAGMA NODE FUN EXTERNAL EOF CONST
+--   reduce production enum_ty_desc -> Constructor
+-- On DOT
+--   reduce production modul -> Constructor
 
 State 297:
 ## Known stack suffix:
@@ -7897,15 +6419,8 @@ enum_ty_desc -> Constructor . BAR enum_ty_desc [ VAL UNSAFE TYPE PRAGMA NODE FUN
 ## Transitions:
 -- On BAR shift to state 297
 ## Reductions:
--- On VAL reduce production enum_ty_desc -> Constructor
--- On UNSAFE reduce production enum_ty_desc -> Constructor
--- On TYPE reduce production enum_ty_desc -> Constructor
--- On PRAGMA reduce production enum_ty_desc -> Constructor
--- On NODE reduce production enum_ty_desc -> Constructor
--- On FUN reduce production enum_ty_desc -> Constructor
--- On EXTERNAL reduce production enum_ty_desc -> Constructor
--- On EOF reduce production enum_ty_desc -> Constructor
--- On CONST reduce production enum_ty_desc -> Constructor
+-- On VAL UNSAFE TYPE PRAGMA NODE FUN EXTERNAL EOF CONST
+--   reduce production enum_ty_desc -> Constructor
 
 State 299:
 ## Known stack suffix:
@@ -7952,15 +6467,8 @@ type_dec -> TYPE IDENT EQUAL ty_ident . [ VAL UNSAFE TYPE PRAGMA NODE FUN EXTERN
 ## Transitions:
 -- On POWER shift to state 35
 ## Reductions:
--- On VAL reduce production type_dec -> TYPE IDENT EQUAL ty_ident
--- On UNSAFE reduce production type_dec -> TYPE IDENT EQUAL ty_ident
--- On TYPE reduce production type_dec -> TYPE IDENT EQUAL ty_ident
--- On PRAGMA reduce production type_dec -> TYPE IDENT EQUAL ty_ident
--- On NODE reduce production type_dec -> TYPE IDENT EQUAL ty_ident
--- On FUN reduce production type_dec -> TYPE IDENT EQUAL ty_ident
--- On EXTERNAL reduce production type_dec -> TYPE IDENT EQUAL ty_ident
--- On EOF reduce production type_dec -> TYPE IDENT EQUAL ty_ident
--- On CONST reduce production type_dec -> TYPE IDENT EQUAL ty_ident
+-- On VAL UNSAFE TYPE PRAGMA NODE FUN EXTERNAL EOF CONST
+--   reduce production type_dec -> TYPE IDENT EQUAL ty_ident
 
 State 304:
 ## Known stack suffix:
@@ -8121,15 +6629,8 @@ const_dec -> CONST IDENT COLON ty_ident EQUAL exp . [ VAL UNSAFE TYPE PRAGMA NOD
 -- On AND shift to state 134
 -- On AMPERSAND shift to state 136
 ## Reductions:
--- On VAL reduce production const_dec -> CONST IDENT COLON ty_ident EQUAL exp
--- On UNSAFE reduce production const_dec -> CONST IDENT COLON ty_ident EQUAL exp
--- On TYPE reduce production const_dec -> CONST IDENT COLON ty_ident EQUAL exp
--- On PRAGMA reduce production const_dec -> CONST IDENT COLON ty_ident EQUAL exp
--- On NODE reduce production const_dec -> CONST IDENT COLON ty_ident EQUAL exp
--- On FUN reduce production const_dec -> CONST IDENT COLON ty_ident EQUAL exp
--- On EXTERNAL reduce production const_dec -> CONST IDENT COLON ty_ident EQUAL exp
--- On EOF reduce production const_dec -> CONST IDENT COLON ty_ident EQUAL exp
--- On CONST reduce production const_dec -> CONST IDENT COLON ty_ident EQUAL exp
+-- On VAL UNSAFE TYPE PRAGMA NODE FUN EXTERNAL EOF CONST
+--   reduce production const_dec -> CONST IDENT COLON ty_ident EQUAL exp
 
 State 313:
 ## Known stack suffix:
@@ -8173,11 +6674,10 @@ list(interface_desc) -> interface_desc . list(interface_desc) [ EOF ]
 -- On extern shift to state 318
 -- On const_dec shift to state 388
 ## Reductions:
--- On VAL reduce production extern ->
--- On UNSAFE reduce production extern ->
--- On NODE reduce production extern ->
--- On FUN reduce production extern ->
--- On EOF reduce production list(interface_desc) ->
+-- On VAL UNSAFE NODE FUN
+--   reduce production extern ->
+-- On EOF
+--   reduce production list(interface_desc) ->
 
 State 317:
 ## Known stack suffix:
@@ -8197,9 +6697,8 @@ interface_desc -> extern . unsafe val_or_empty node_or_fun ident node_params LPA
 -- On UNSAFE shift to state 319
 -- On unsafe shift to state 320
 ## Reductions:
--- On VAL reduce production unsafe ->
--- On NODE reduce production unsafe ->
--- On FUN reduce production unsafe ->
+-- On VAL NODE FUN
+--   reduce production unsafe ->
 
 State 319:
 ## Known stack suffix:
@@ -8219,8 +6718,8 @@ interface_desc -> extern unsafe . val_or_empty node_or_fun ident node_params LPA
 -- On VAL shift to state 321
 -- On val_or_empty shift to state 322
 ## Reductions:
--- On NODE reduce production val_or_empty ->
--- On FUN reduce production val_or_empty ->
+-- On NODE FUN
+--   reduce production val_or_empty ->
 
 State 321:
 ## Known stack suffix:
@@ -8280,7 +6779,8 @@ interface_desc -> extern unsafe val_or_empty node_or_fun ident . node_params LPA
 -- On DOUBLE_LESS shift to state 327
 -- On node_params shift to state 362
 ## Reductions:
--- On LPAREN reduce production node_params ->
+-- On LPAREN
+--   reduce production node_params ->
 
 State 327:
 ## Known stack suffix:
@@ -8303,7 +6803,8 @@ ident_list -> IDENT . COMMA ident_list [ COLON ]
 ## Transitions:
 -- On COMMA shift to state 329
 ## Reductions:
--- On COLON reduce production ident_list -> IDENT
+-- On COLON
+--   reduce production ident_list -> IDENT
 
 State 329:
 ## Known stack suffix:
@@ -8334,9 +6835,8 @@ nonmt_params -> param . SEMICOL nonmt_params [ RPAREN DOUBLE_GREATER BAR ]
 ## Transitions:
 -- On SEMICOL shift to state 332
 ## Reductions:
--- On RPAREN reduce production nonmt_params -> param
--- On DOUBLE_GREATER reduce production nonmt_params -> param
--- On BAR reduce production nonmt_params -> param
+-- On RPAREN DOUBLE_GREATER BAR
+--   reduce production nonmt_params -> param
 
 State 332:
 ## Known stack suffix:
@@ -8350,9 +6850,8 @@ nonmt_params -> param SEMICOL . nonmt_params [ RPAREN DOUBLE_GREATER BAR ]
 -- On nonmt_params shift to state 333
 -- On ident_list shift to state 334
 ## Reductions:
--- On RPAREN reduce production nonmt_params -> param SEMICOL
--- On DOUBLE_GREATER reduce production nonmt_params -> param SEMICOL
--- On BAR reduce production nonmt_params -> param SEMICOL
+-- On RPAREN DOUBLE_GREATER BAR
+--   reduce production nonmt_params -> param SEMICOL
 
 State 333:
 ## Known stack suffix:
@@ -8400,14 +6899,8 @@ ty_ident -> ty_ident . POWER simple_exp [ WHEN SEMICOL RPAREN POWER ON EQUAL DOU
 -- On POWER shift to state 35
 -- On AT shift to state 337
 ## Reductions:
--- On WHEN reduce production located_ty_ident -> ty_ident
--- On SEMICOL reduce production located_ty_ident -> ty_ident
--- On RPAREN reduce production located_ty_ident -> ty_ident
--- On ON reduce production located_ty_ident -> ty_ident
--- On EQUAL reduce production located_ty_ident -> ty_ident
--- On DOUBLE_GREATER reduce production located_ty_ident -> ty_ident
--- On COLONCOLON reduce production located_ty_ident -> ty_ident
--- On BAR reduce production located_ty_ident -> ty_ident
+-- On WHEN SEMICOL RPAREN ON EQUAL DOUBLE_GREATER COLONCOLON BAR
+--   reduce production located_ty_ident -> ty_ident
 
 State 337:
 ## Known stack suffix:
@@ -8438,10 +6931,8 @@ param -> ident_list COLON located_ty_ident . ck_annot [ SEMICOL RPAREN DOUBLE_GR
 -- On COLONCOLON shift to state 351
 -- On ck_annot shift to state 353
 ## Reductions:
--- On SEMICOL reduce production ck_annot ->
--- On RPAREN reduce production ck_annot ->
--- On DOUBLE_GREATER reduce production ck_annot ->
--- On BAR reduce production ck_annot ->
+-- On SEMICOL RPAREN DOUBLE_GREATER BAR
+--   reduce production ck_annot ->
 
 State 340:
 ## Known stack suffix:
@@ -8558,13 +7049,10 @@ ck -> on_ck . [ ONOT ON ]
 ck_annot -> ON on_ck . [ SEMICOL RPAREN EQUAL DOUBLE_GREATER BAR ]
 ## Transitions:
 ## Reductions:
--- On SEMICOL reduce production ck_annot -> ON on_ck
--- On RPAREN reduce production ck_annot -> ON on_ck
--- On ONOT reduce production ck -> on_ck
--- On ON reduce production ck -> on_ck
--- On EQUAL reduce production ck_annot -> ON on_ck
--- On DOUBLE_GREATER reduce production ck_annot -> ON on_ck
--- On BAR reduce production ck_annot -> ON on_ck
+-- On ONOT ON
+--   reduce production ck -> on_ck
+-- On SEMICOL RPAREN EQUAL DOUBLE_GREATER BAR
+--   reduce production ck_annot -> ON on_ck
 
 State 351:
 ## Known stack suffix:
@@ -8596,11 +7084,8 @@ on_ck -> ck . ON constructor_or_bool LPAREN IDENT RPAREN [ SEMICOL RPAREN ONOT O
 -- On ONOT shift to state 237
 -- On ON shift to state 239
 ## Reductions:
--- On SEMICOL reduce production ck_annot -> COLONCOLON ck
--- On RPAREN reduce production ck_annot -> COLONCOLON ck
--- On EQUAL reduce production ck_annot -> COLONCOLON ck
--- On DOUBLE_GREATER reduce production ck_annot -> COLONCOLON ck
--- On BAR reduce production ck_annot -> COLONCOLON ck
+-- On SEMICOL RPAREN EQUAL DOUBLE_GREATER BAR
+--   reduce production ck_annot -> COLONCOLON ck
 
 State 353:
 ## Known stack suffix:
@@ -8620,7 +7105,8 @@ node_params -> DOUBLE_LESS nonmt_params . constraints DOUBLE_GREATER [ LPAREN ]
 -- On BAR shift to state 355
 -- On constraints shift to state 360
 ## Reductions:
--- On DOUBLE_GREATER reduce production constraints ->
+-- On DOUBLE_GREATER
+--   reduce production constraints ->
 
 State 355:
 ## Known stack suffix:
@@ -8668,7 +7154,8 @@ constraints -> BAR . slist(SEMICOL,exp) [ DOUBLE_GREATER ]
 -- On _exp shift to state 122
 -- On _const shift to state 123
 ## Reductions:
--- On DOUBLE_GREATER reduce production slist(SEMICOL,exp) ->
+-- On DOUBLE_GREATER
+--   reduce production slist(SEMICOL,exp) ->
 
 State 356:
 ## Known stack suffix:
@@ -8722,7 +7209,8 @@ slist(SEMICOL,exp) -> exp . SEMICOL slist(SEMICOL,exp) [ DOUBLE_GREATER ]
 -- On AND shift to state 134
 -- On AMPERSAND shift to state 136
 ## Reductions:
--- On DOUBLE_GREATER reduce production slist(SEMICOL,exp) -> exp
+-- On DOUBLE_GREATER
+--   reduce production slist(SEMICOL,exp) -> exp
 
 State 358:
 ## Known stack suffix:
@@ -8770,7 +7258,8 @@ slist(SEMICOL,exp) -> exp SEMICOL . slist(SEMICOL,exp) [ DOUBLE_GREATER ]
 -- On _exp shift to state 122
 -- On _const shift to state 123
 ## Reductions:
--- On DOUBLE_GREATER reduce production slist(SEMICOL,exp) ->
+-- On DOUBLE_GREATER
+--   reduce production slist(SEMICOL,exp) ->
 
 State 359:
 ## Known stack suffix:
@@ -8828,7 +7317,8 @@ interface_desc -> extern unsafe val_or_empty node_or_fun ident node_params LPARE
 -- On located_ty_ident shift to state 385
 -- On ident shift to state 88
 ## Reductions:
--- On RPAREN reduce production params_signature ->
+-- On RPAREN
+--   reduce production params_signature ->
 
 State 364:
 ## Known stack suffix:
@@ -8840,8 +7330,8 @@ param_signature -> THREE_DOTS . sig_ck_annot [ SEMICOL RPAREN ]
 -- On COLONCOLON shift to state 367
 -- On sig_ck_annot shift to state 369
 ## Reductions:
--- On SEMICOL reduce production sig_ck_annot ->
--- On RPAREN reduce production sig_ck_annot ->
+-- On SEMICOL RPAREN
+--   reduce production sig_ck_annot ->
 
 State 365:
 ## Known stack suffix:
@@ -8869,10 +7359,10 @@ ck -> on_ck . [ ONOT ON ]
 sig_ck_annot -> ON on_ck . [ SEMICOL RPAREN ]
 ## Transitions:
 ## Reductions:
--- On SEMICOL reduce production sig_ck_annot -> ON on_ck
--- On RPAREN reduce production sig_ck_annot -> ON on_ck
--- On ONOT reduce production ck -> on_ck
--- On ON reduce production ck -> on_ck
+-- On ONOT ON
+--   reduce production ck -> on_ck
+-- On SEMICOL RPAREN
+--   reduce production sig_ck_annot -> ON on_ck
 
 State 367:
 ## Known stack suffix:
@@ -8904,8 +7394,8 @@ sig_ck_annot -> COLONCOLON ck . [ SEMICOL RPAREN ]
 -- On ONOT shift to state 237
 -- On ON shift to state 239
 ## Reductions:
--- On SEMICOL reduce production sig_ck_annot -> COLONCOLON ck
--- On RPAREN reduce production sig_ck_annot -> COLONCOLON ck
+-- On SEMICOL RPAREN
+--   reduce production sig_ck_annot -> COLONCOLON ck
 
 State 369:
 ## Known stack suffix:
@@ -8925,12 +7415,8 @@ param_signature -> IDENT . COLON located_ty_ident sig_ck_annot [ SEMICOL RPAREN 
 ## Transitions:
 -- On COLON shift to state 371
 ## Reductions:
--- On SEMICOL reduce production ident -> IDENT
--- On RPAREN reduce production ident -> IDENT
--- On POWER reduce production ident -> IDENT
--- On ON reduce production ident -> IDENT
--- On COLONCOLON reduce production ident -> IDENT
--- On AT reduce production ident -> IDENT
+-- On SEMICOL RPAREN POWER ON COLONCOLON AT
+--   reduce production ident -> IDENT
 
 State 371:
 ## Known stack suffix:
@@ -8959,8 +7445,8 @@ param_signature -> IDENT COLON located_ty_ident . sig_ck_annot [ SEMICOL RPAREN 
 -- On COLONCOLON shift to state 367
 -- On sig_ck_annot shift to state 373
 ## Reductions:
--- On SEMICOL reduce production sig_ck_annot ->
--- On RPAREN reduce production sig_ck_annot ->
+-- On SEMICOL RPAREN
+--   reduce production sig_ck_annot ->
 
 State 373:
 ## Known stack suffix:
@@ -9038,7 +7524,8 @@ interface_desc -> extern unsafe val_or_empty node_or_fun ident node_params LPARE
 -- On located_ty_ident shift to state 385
 -- On ident shift to state 88
 ## Reductions:
--- On RPAREN reduce production params_signature ->
+-- On RPAREN
+--   reduce production params_signature ->
 
 State 380:
 ## Known stack suffix:
@@ -9067,7 +7554,8 @@ nonmt_params_signature -> param_signature . SEMICOL nonmt_params_signature [ RPA
 ## Transitions:
 -- On SEMICOL shift to state 383
 ## Reductions:
--- On RPAREN reduce production nonmt_params_signature -> param_signature
+-- On RPAREN
+--   reduce production nonmt_params_signature -> param_signature
 
 State 383:
 ## Known stack suffix:
@@ -9108,8 +7596,8 @@ param_signature -> located_ty_ident . sig_ck_annot [ SEMICOL RPAREN ]
 -- On COLONCOLON shift to state 367
 -- On sig_ck_annot shift to state 386
 ## Reductions:
--- On SEMICOL reduce production sig_ck_annot ->
--- On RPAREN reduce production sig_ck_annot ->
+-- On SEMICOL RPAREN
+--   reduce production sig_ck_annot ->
 
 State 386:
 ## Known stack suffix:
@@ -9158,13 +7646,8 @@ program' -> . program [ # ]
 -- On opens shift to state 6
 -- On list(opens) shift to state 392
 ## Reductions:
--- On UNSAFE reduce production list(opens) ->
--- On TYPE reduce production list(opens) ->
--- On PRAGMA reduce production list(opens) ->
--- On NODE reduce production list(opens) ->
--- On FUN reduce production list(opens) ->
--- On EOF reduce production list(opens) ->
--- On CONST reduce production list(opens) ->
+-- On UNSAFE TYPE PRAGMA NODE FUN EOF CONST
+--   reduce production list(opens) ->
 
 State 391:
 ## Known stack suffix:
@@ -9192,9 +7675,10 @@ program -> list(opens) . list(program_desc) EOF [ # ]
 -- On list(program_desc) shift to state 557
 -- On const_dec shift to state 556
 ## Reductions:
--- On NODE reduce production unsafe ->
--- On FUN reduce production unsafe ->
--- On EOF reduce production list(program_desc) ->
+-- On EOF
+--   reduce production list(program_desc) ->
+-- On NODE FUN
+--   reduce production unsafe ->
 
 State 393:
 ## Known stack suffix:
@@ -9236,7 +7720,8 @@ node_dec -> unsafe node_or_fun ident . node_params LPAREN in_params RPAREN retur
 -- On DOUBLE_LESS shift to state 327
 -- On node_params shift to state 397
 ## Reductions:
--- On LPAREN reduce production node_params ->
+-- On LPAREN
+--   reduce production node_params ->
 
 State 397:
 ## Known stack suffix:
@@ -9260,7 +7745,8 @@ node_dec -> unsafe node_or_fun ident node_params LPAREN . in_params RPAREN retur
 -- On in_params shift to state 401
 -- On ident_list shift to state 334
 ## Reductions:
--- On RPAREN reduce production params ->
+-- On RPAREN
+--   reduce production params ->
 
 State 399:
 ## Known stack suffix:
@@ -9322,7 +7808,8 @@ node_dec -> unsafe node_or_fun ident node_params LPAREN in_params RPAREN returns
 -- On nonmt_out_params shift to state 551
 -- On ident_list shift to state 415
 ## Reductions:
--- On RPAREN reduce production out_params ->
+-- On RPAREN
+--   reduce production out_params ->
 
 State 405:
 ## Known stack suffix:
@@ -9374,9 +7861,8 @@ var_last -> LAST IDENT COLON located_ty_ident . ck_annot [ SEMICOL RPAREN ]
 -- On COLONCOLON shift to state 351
 -- On ck_annot shift to state 409
 ## Reductions:
--- On SEMICOL reduce production ck_annot ->
--- On RPAREN reduce production ck_annot ->
--- On EQUAL reduce production ck_annot ->
+-- On SEMICOL RPAREN EQUAL
+--   reduce production ck_annot ->
 
 State 409:
 ## Known stack suffix:
@@ -9387,8 +7873,8 @@ var_last -> LAST IDENT COLON located_ty_ident ck_annot . [ SEMICOL RPAREN ]
 ## Transitions:
 -- On EQUAL shift to state 410
 ## Reductions:
--- On SEMICOL reduce production var_last -> LAST IDENT COLON located_ty_ident ck_annot
--- On RPAREN reduce production var_last -> LAST IDENT COLON located_ty_ident ck_annot
+-- On SEMICOL RPAREN
+--   reduce production var_last -> LAST IDENT COLON located_ty_ident ck_annot
 
 State 410:
 ## Known stack suffix:
@@ -9477,8 +7963,8 @@ var_last -> LAST IDENT COLON located_ty_ident ck_annot EQUAL exp . [ SEMICOL RPA
 -- On AND shift to state 134
 -- On AMPERSAND shift to state 136
 ## Reductions:
--- On SEMICOL reduce production var_last -> LAST IDENT COLON located_ty_ident ck_annot EQUAL exp
--- On RPAREN reduce production var_last -> LAST IDENT COLON located_ty_ident ck_annot EQUAL exp
+-- On SEMICOL RPAREN
+--   reduce production var_last -> LAST IDENT COLON located_ty_ident ck_annot EQUAL exp
 
 State 412:
 ## Known stack suffix:
@@ -9490,7 +7976,8 @@ nonmt_out_params -> var_last . SEMICOL nonmt_out_params [ RPAREN ]
 ## Transitions:
 -- On SEMICOL shift to state 413
 ## Reductions:
--- On RPAREN reduce production nonmt_out_params -> var_last
+-- On RPAREN
+--   reduce production nonmt_out_params -> var_last
 
 State 413:
 ## Known stack suffix:
@@ -9505,7 +7992,8 @@ nonmt_out_params -> var_last SEMICOL . nonmt_out_params [ RPAREN ]
 -- On nonmt_out_params shift to state 414
 -- On ident_list shift to state 415
 ## Reductions:
--- On RPAREN reduce production nonmt_out_params -> var_last SEMICOL
+-- On RPAREN
+--   reduce production nonmt_out_params -> var_last SEMICOL
 
 State 414:
 ## Known stack suffix:
@@ -9553,8 +8041,8 @@ var_last -> ident_list COLON located_ty_ident . ck_annot [ SEMICOL RPAREN ]
 -- On COLONCOLON shift to state 351
 -- On ck_annot shift to state 418
 ## Reductions:
--- On SEMICOL reduce production ck_annot ->
--- On RPAREN reduce production ck_annot ->
+-- On SEMICOL RPAREN
+--   reduce production ck_annot ->
 
 State 418:
 ## Known stack suffix:
@@ -9583,9 +8071,8 @@ node_dec -> unsafe node_or_fun ident node_params LPAREN in_params RPAREN returns
 -- On SEMICOL shift to state 421
 -- On opt_semicolon shift to state 422
 ## Reductions:
--- On VAR reduce production opt_semicolon ->
--- On LET reduce production opt_semicolon ->
--- On CONTRACT reduce production opt_semicolon ->
+-- On VAR LET CONTRACT
+--   reduce production opt_semicolon ->
 
 State 421:
 ## Known stack suffix:
@@ -9605,8 +8092,8 @@ node_dec -> unsafe node_or_fun ident node_params LPAREN in_params RPAREN returns
 -- On CONTRACT shift to state 423
 -- On contract shift to state 547
 ## Reductions:
--- On VAR reduce production contract ->
--- On LET reduce production contract ->
+-- On VAR LET
+--   reduce production contract ->
 
 State 423:
 ## Known stack suffix:
@@ -9619,10 +8106,8 @@ contract -> CONTRACT . opt_block opt_assume nonempty_list(objective) opt_with [ 
 -- On opt_block shift to state 528
 -- On block(LET) shift to state 545
 ## Reductions:
--- On REACHABLE reduce production opt_block ->
--- On ENFORCE reduce production opt_block ->
--- On ATTRACTIVE reduce production opt_block ->
--- On ASSUME reduce production opt_block ->
+-- On REACHABLE ENFORCE ATTRACTIVE ASSUME
+--   reduce production opt_block ->
 
 State 424:
 ## Known stack suffix:
@@ -9660,9 +8145,8 @@ loc_params -> var_last SEMICOL . loc_params [ LET IN DO ]
 -- On loc_params shift to state 427
 -- On ident_list shift to state 415
 ## Reductions:
--- On LET reduce production loc_params -> var_last SEMICOL
--- On IN reduce production loc_params -> var_last SEMICOL
--- On DO reduce production loc_params -> var_last SEMICOL
+-- On LET IN DO
+--   reduce production loc_params -> var_last SEMICOL
 
 State 427:
 ## Known stack suffix:
@@ -9704,7 +8188,8 @@ block(LET) -> VAR loc_params LET . equs [ TEL ]
 -- On adelim_slist(COMMA,LPAREN,RPAREN,pat) shift to state 463
 -- On _equ shift to state 482
 ## Reductions:
--- On TEL reduce production equs ->
+-- On TEL
+--   reduce production equs ->
 
 State 430:
 ## Known stack suffix:
@@ -9795,8 +8280,8 @@ _exp -> exp . AROBASE exp [ WHENOT WHEN SUBTRACTIVE STAR POWER OR LESS_GREATER I
 -- On AMPERSAND shift to state 136
 -- On opt_bar shift to state 433
 ## Reductions:
--- On Constructor reduce production opt_bar ->
--- On BOOL reduce production opt_bar ->
+-- On Constructor BOOL
+--   reduce production opt_bar ->
 
 State 432:
 ## Known stack suffix:
@@ -9922,12 +8407,8 @@ block(DO) -> VAR loc_params DO . equs [ UNTIL UNLESS STATE END DEFAULT BAR ]
 -- On adelim_slist(COMMA,LPAREN,RPAREN,pat) shift to state 463
 -- On _equ shift to state 482
 ## Reductions:
--- On UNTIL reduce production equs ->
--- On UNLESS reduce production equs ->
--- On STATE reduce production equs ->
--- On END reduce production equs ->
--- On DEFAULT reduce production equs ->
--- On BAR reduce production equs ->
+-- On UNTIL UNLESS STATE END DEFAULT BAR
+--   reduce production equs ->
 
 State 442:
 ## Known stack suffix:
@@ -9953,7 +8434,8 @@ _equ -> RESET . sblock(IN) EVERY exp [ UNTIL UNLESS TEL STATE SEMICOL EVERY END 
 -- On adelim_slist(COMMA,LPAREN,RPAREN,pat) shift to state 463
 -- On _equ shift to state 482
 ## Reductions:
--- On EVERY reduce production equs ->
+-- On EVERY
+--   reduce production equs ->
 
 State 443:
 ## Known stack suffix:
@@ -9999,10 +8481,8 @@ sblock(IN) -> VAR loc_params IN . equs [ EVERY END ELSE DONE ]
 -- On adelim_slist(COMMA,LPAREN,RPAREN,pat) shift to state 463
 -- On _equ shift to state 482
 ## Reductions:
--- On EVERY reduce production equs ->
--- On END reduce production equs ->
--- On ELSE reduce production equs ->
--- On DONE reduce production equs ->
+-- On EVERY END ELSE DONE
+--   reduce production equs ->
 
 State 446:
 ## Known stack suffix:
@@ -10014,30 +8494,8 @@ _equ -> PRESENT . opt_bar present_handlers DEFAULT DO sblock(IN) END [ UNTIL UNL
 -- On BAR shift to state 432
 -- On opt_bar shift to state 447
 ## Reductions:
--- On SUBTRACTIVE reduce production opt_bar ->
--- On STRING reduce production opt_bar ->
--- On SPLIT reduce production opt_bar ->
--- On REINIT reduce production opt_bar ->
--- On PREFIX reduce production opt_bar ->
--- On PRE reduce production opt_bar ->
--- On NOT reduce production opt_bar ->
--- On MERGE reduce production opt_bar ->
--- On MAPI reduce production opt_bar ->
--- On MAPFOLD reduce production opt_bar ->
--- On MAP reduce production opt_bar ->
--- On LPAREN reduce production opt_bar ->
--- On LBRACKET reduce production opt_bar ->
--- On LBRACE reduce production opt_bar ->
--- On LAST reduce production opt_bar ->
--- On INT reduce production opt_bar ->
--- On INLINED reduce production opt_bar ->
--- On IF reduce production opt_bar ->
--- On IDENT reduce production opt_bar ->
--- On FOLDI reduce production opt_bar ->
--- On FOLD reduce production opt_bar ->
--- On FLOAT reduce production opt_bar ->
--- On Constructor reduce production opt_bar ->
--- On BOOL reduce production opt_bar ->
+-- On SUBTRACTIVE STRING SPLIT REINIT PREFIX PRE NOT MERGE MAPI MAPFOLD MAP LPAREN LBRACKET LBRACE LAST INT INLINED IF IDENT FOLDI FOLD FLOAT Constructor BOOL
+--   reduce production opt_bar ->
 
 State 447:
 ## Known stack suffix:
@@ -10143,7 +8601,8 @@ _equ -> PRESENT opt_bar present_handlers DEFAULT DO . sblock(IN) END [ UNTIL UNL
 -- On adelim_slist(COMMA,LPAREN,RPAREN,pat) shift to state 463
 -- On _equ shift to state 482
 ## Reductions:
--- On END reduce production equs ->
+-- On END
+--   reduce production equs ->
 
 State 452:
 ## Known stack suffix:
@@ -10234,7 +8693,8 @@ optsnlist(COMMA,pat) -> pat . COMMA optsnlist(COMMA,pat) [ RPAREN ]
 ## Transitions:
 -- On COMMA shift to state 461
 ## Reductions:
--- On RPAREN reduce production optsnlist(COMMA,pat) -> pat
+-- On RPAREN
+--   reduce production optsnlist(COMMA,pat) -> pat
 
 State 461:
 ## Known stack suffix:
@@ -10250,7 +8710,8 @@ optsnlist(COMMA,pat) -> pat COMMA . optsnlist(COMMA,pat) [ RPAREN ]
 -- On optsnlist(COMMA,pat) shift to state 462
 -- On adelim_slist(COMMA,LPAREN,RPAREN,pat) shift to state 463
 ## Reductions:
--- On RPAREN reduce production optsnlist(COMMA,pat) -> pat COMMA
+-- On RPAREN
+--   reduce production optsnlist(COMMA,pat) -> pat COMMA
 
 State 462:
 ## Known stack suffix:
@@ -10401,7 +8862,8 @@ _equ -> IF exp THEN . sblock(IN) ELSE sblock(IN) END [ UNTIL UNLESS TEL STATE SE
 -- On adelim_slist(COMMA,LPAREN,RPAREN,pat) shift to state 463
 -- On _equ shift to state 482
 ## Reductions:
--- On ELSE reduce production equs ->
+-- On ELSE
+--   reduce production equs ->
 
 State 469:
 ## Known stack suffix:
@@ -10427,7 +8889,8 @@ _equ -> DO . sblock(IN) DONE [ UNTIL UNLESS TEL STATE SEMICOL EVERY END ELSE DON
 -- On adelim_slist(COMMA,LPAREN,RPAREN,pat) shift to state 463
 -- On _equ shift to state 482
 ## Reductions:
--- On DONE reduce production equs ->
+-- On DONE
+--   reduce production equs ->
 
 State 470:
 ## Known stack suffix:
@@ -10482,12 +8945,8 @@ block(DO) -> DO . equs [ UNTIL UNLESS STATE END DEFAULT BAR ]
 -- On adelim_slist(COMMA,LPAREN,RPAREN,pat) shift to state 463
 -- On _equ shift to state 482
 ## Reductions:
--- On UNTIL reduce production equs ->
--- On UNLESS reduce production equs ->
--- On STATE reduce production equs ->
--- On END reduce production equs ->
--- On DEFAULT reduce production equs ->
--- On BAR reduce production equs ->
+-- On UNTIL UNLESS STATE END DEFAULT BAR
+--   reduce production equs ->
 
 State 474:
 ## Known stack suffix:
@@ -10585,17 +9044,8 @@ _exp -> exp . AROBASE exp [ WHENOT WHEN UNTIL UNLESS TEL SUBTRACTIVE STATE STAR 
 -- On AND shift to state 134
 -- On AMPERSAND shift to state 136
 ## Reductions:
--- On UNTIL reduce production _equ -> pat EQUAL exp
--- On UNLESS reduce production _equ -> pat EQUAL exp
--- On TEL reduce production _equ -> pat EQUAL exp
--- On STATE reduce production _equ -> pat EQUAL exp
--- On SEMICOL reduce production _equ -> pat EQUAL exp
--- On EVERY reduce production _equ -> pat EQUAL exp
--- On END reduce production _equ -> pat EQUAL exp
--- On ELSE reduce production _equ -> pat EQUAL exp
--- On DONE reduce production _equ -> pat EQUAL exp
--- On DEFAULT reduce production _equ -> pat EQUAL exp
--- On BAR reduce production _equ -> pat EQUAL exp
+-- On UNTIL UNLESS TEL STATE SEMICOL EVERY END ELSE DONE DEFAULT BAR
+--   reduce production _equ -> pat EQUAL exp
 
 State 477:
 ## Known stack suffix:
@@ -10625,16 +9075,8 @@ optsnlist(SEMICOL,equ) -> equ . SEMICOL optsnlist(SEMICOL,equ) [ UNTIL UNLESS TE
 ## Transitions:
 -- On SEMICOL shift to state 480
 ## Reductions:
--- On UNTIL reduce production optsnlist(SEMICOL,equ) -> equ
--- On UNLESS reduce production optsnlist(SEMICOL,equ) -> equ
--- On TEL reduce production optsnlist(SEMICOL,equ) -> equ
--- On STATE reduce production optsnlist(SEMICOL,equ) -> equ
--- On EVERY reduce production optsnlist(SEMICOL,equ) -> equ
--- On END reduce production optsnlist(SEMICOL,equ) -> equ
--- On ELSE reduce production optsnlist(SEMICOL,equ) -> equ
--- On DONE reduce production optsnlist(SEMICOL,equ) -> equ
--- On DEFAULT reduce production optsnlist(SEMICOL,equ) -> equ
--- On BAR reduce production optsnlist(SEMICOL,equ) -> equ
+-- On UNTIL UNLESS TEL STATE EVERY END ELSE DONE DEFAULT BAR
+--   reduce production optsnlist(SEMICOL,equ) -> equ
 
 State 480:
 ## Known stack suffix:
@@ -10658,16 +9100,8 @@ optsnlist(SEMICOL,equ) -> equ SEMICOL . optsnlist(SEMICOL,equ) [ UNTIL UNLESS TE
 -- On adelim_slist(COMMA,LPAREN,RPAREN,pat) shift to state 463
 -- On _equ shift to state 482
 ## Reductions:
--- On UNTIL reduce production optsnlist(SEMICOL,equ) -> equ SEMICOL
--- On UNLESS reduce production optsnlist(SEMICOL,equ) -> equ SEMICOL
--- On TEL reduce production optsnlist(SEMICOL,equ) -> equ SEMICOL
--- On STATE reduce production optsnlist(SEMICOL,equ) -> equ SEMICOL
--- On EVERY reduce production optsnlist(SEMICOL,equ) -> equ SEMICOL
--- On END reduce production optsnlist(SEMICOL,equ) -> equ SEMICOL
--- On ELSE reduce production optsnlist(SEMICOL,equ) -> equ SEMICOL
--- On DONE reduce production optsnlist(SEMICOL,equ) -> equ SEMICOL
--- On DEFAULT reduce production optsnlist(SEMICOL,equ) -> equ SEMICOL
--- On BAR reduce production optsnlist(SEMICOL,equ) -> equ SEMICOL
+-- On UNTIL UNLESS TEL STATE EVERY END ELSE DONE DEFAULT BAR
+--   reduce production optsnlist(SEMICOL,equ) -> equ SEMICOL
 
 State 481:
 ## Known stack suffix:
@@ -10696,9 +9130,8 @@ automaton_handler -> STATE Constructor block(DO) . opt_until_escapes opt_unless_
 -- On UNTIL shift to state 484
 -- On opt_until_escapes shift to state 495
 ## Reductions:
--- On UNLESS reduce production opt_until_escapes ->
--- On STATE reduce production opt_until_escapes ->
--- On END reduce production opt_until_escapes ->
+-- On UNLESS STATE END
+--   reduce production opt_until_escapes ->
 
 State 484:
 ## Known stack suffix:
@@ -10709,30 +9142,8 @@ opt_until_escapes -> UNTIL . opt_bar escapes [ UNLESS STATE END ]
 -- On BAR shift to state 432
 -- On opt_bar shift to state 485
 ## Reductions:
--- On SUBTRACTIVE reduce production opt_bar ->
--- On STRING reduce production opt_bar ->
--- On SPLIT reduce production opt_bar ->
--- On REINIT reduce production opt_bar ->
--- On PREFIX reduce production opt_bar ->
--- On PRE reduce production opt_bar ->
--- On NOT reduce production opt_bar ->
--- On MERGE reduce production opt_bar ->
--- On MAPI reduce production opt_bar ->
--- On MAPFOLD reduce production opt_bar ->
--- On MAP reduce production opt_bar ->
--- On LPAREN reduce production opt_bar ->
--- On LBRACKET reduce production opt_bar ->
--- On LBRACE reduce production opt_bar ->
--- On LAST reduce production opt_bar ->
--- On INT reduce production opt_bar ->
--- On INLINED reduce production opt_bar ->
--- On IF reduce production opt_bar ->
--- On IDENT reduce production opt_bar ->
--- On FOLDI reduce production opt_bar ->
--- On FOLD reduce production opt_bar ->
--- On FLOAT reduce production opt_bar ->
--- On Constructor reduce production opt_bar ->
--- On BOOL reduce production opt_bar ->
+-- On SUBTRACTIVE STRING SPLIT REINIT PREFIX PRE NOT MERGE MAPI MAPFOLD MAP LPAREN LBRACKET LBRACE LAST INT INLINED IF IDENT FOLDI FOLD FLOAT Constructor BOOL
+--   reduce production opt_bar ->
 
 State 485:
 ## Known stack suffix:
@@ -10872,9 +9283,8 @@ opt_until_escapes -> UNTIL opt_bar escapes . [ UNLESS STATE END ]
 ## Transitions:
 -- On BAR shift to state 492
 ## Reductions:
--- On UNLESS reduce production opt_until_escapes -> UNTIL opt_bar escapes
--- On STATE reduce production opt_until_escapes -> UNTIL opt_bar escapes
--- On END reduce production opt_until_escapes -> UNTIL opt_bar escapes
+-- On UNLESS STATE END
+--   reduce production opt_until_escapes -> UNTIL opt_bar escapes
 
 State 492:
 ## Known stack suffix:
@@ -10950,8 +9360,8 @@ automaton_handler -> STATE Constructor block(DO) opt_until_escapes . opt_unless_
 -- On UNLESS shift to state 496
 -- On opt_unless_escapes shift to state 499
 ## Reductions:
--- On STATE reduce production opt_unless_escapes ->
--- On END reduce production opt_unless_escapes ->
+-- On STATE END
+--   reduce production opt_unless_escapes ->
 
 State 496:
 ## Known stack suffix:
@@ -10962,30 +9372,8 @@ opt_unless_escapes -> UNLESS . opt_bar escapes [ STATE END ]
 -- On BAR shift to state 432
 -- On opt_bar shift to state 497
 ## Reductions:
--- On SUBTRACTIVE reduce production opt_bar ->
--- On STRING reduce production opt_bar ->
--- On SPLIT reduce production opt_bar ->
--- On REINIT reduce production opt_bar ->
--- On PREFIX reduce production opt_bar ->
--- On PRE reduce production opt_bar ->
--- On NOT reduce production opt_bar ->
--- On MERGE reduce production opt_bar ->
--- On MAPI reduce production opt_bar ->
--- On MAPFOLD reduce production opt_bar ->
--- On MAP reduce production opt_bar ->
--- On LPAREN reduce production opt_bar ->
--- On LBRACKET reduce production opt_bar ->
--- On LBRACE reduce production opt_bar ->
--- On LAST reduce production opt_bar ->
--- On INT reduce production opt_bar ->
--- On INLINED reduce production opt_bar ->
--- On IF reduce production opt_bar ->
--- On IDENT reduce production opt_bar ->
--- On FOLDI reduce production opt_bar ->
--- On FOLD reduce production opt_bar ->
--- On FLOAT reduce production opt_bar ->
--- On Constructor reduce production opt_bar ->
--- On BOOL reduce production opt_bar ->
+-- On SUBTRACTIVE STRING SPLIT REINIT PREFIX PRE NOT MERGE MAPI MAPFOLD MAP LPAREN LBRACKET LBRACE LAST INT INLINED IF IDENT FOLDI FOLD FLOAT Constructor BOOL
+--   reduce production opt_bar ->
 
 State 497:
 ## Known stack suffix:
@@ -11044,8 +9432,8 @@ opt_unless_escapes -> UNLESS opt_bar escapes . [ STATE END ]
 ## Transitions:
 -- On BAR shift to state 492
 ## Reductions:
--- On STATE reduce production opt_unless_escapes -> UNLESS opt_bar escapes
--- On END reduce production opt_unless_escapes -> UNLESS opt_bar escapes
+-- On STATE END
+--   reduce production opt_unless_escapes -> UNLESS opt_bar escapes
 
 State 499:
 ## Known stack suffix:
@@ -11155,7 +9543,8 @@ _equ -> IF exp THEN sblock(IN) ELSE . sblock(IN) END [ UNTIL UNLESS TEL STATE SE
 -- On adelim_slist(COMMA,LPAREN,RPAREN,pat) shift to state 463
 -- On _equ shift to state 482
 ## Reductions:
--- On END reduce production equs ->
+-- On END
+--   reduce production equs ->
 
 State 509:
 ## Known stack suffix:
@@ -11417,17 +9806,8 @@ _exp -> exp . AROBASE exp [ WHENOT WHEN UNTIL UNLESS TEL SUBTRACTIVE STATE STAR 
 -- On AND shift to state 134
 -- On AMPERSAND shift to state 136
 ## Reductions:
--- On UNTIL reduce production _equ -> RESET sblock(IN) EVERY exp
--- On UNLESS reduce production _equ -> RESET sblock(IN) EVERY exp
--- On TEL reduce production _equ -> RESET sblock(IN) EVERY exp
--- On STATE reduce production _equ -> RESET sblock(IN) EVERY exp
--- On SEMICOL reduce production _equ -> RESET sblock(IN) EVERY exp
--- On EVERY reduce production _equ -> RESET sblock(IN) EVERY exp
--- On END reduce production _equ -> RESET sblock(IN) EVERY exp
--- On ELSE reduce production _equ -> RESET sblock(IN) EVERY exp
--- On DONE reduce production _equ -> RESET sblock(IN) EVERY exp
--- On DEFAULT reduce production _equ -> RESET sblock(IN) EVERY exp
--- On BAR reduce production _equ -> RESET sblock(IN) EVERY exp
+-- On UNTIL UNLESS TEL STATE SEMICOL EVERY END ELSE DONE DEFAULT BAR
+--   reduce production _equ -> RESET sblock(IN) EVERY exp
 
 State 522:
 ## Known stack suffix:
@@ -11487,7 +9867,8 @@ block(LET) -> LET . equs [ TEL ]
 -- On adelim_slist(COMMA,LPAREN,RPAREN,pat) shift to state 463
 -- On _equ shift to state 482
 ## Reductions:
--- On TEL reduce production equs ->
+-- On TEL
+--   reduce production equs ->
 
 State 527:
 ## Known stack suffix:
@@ -11507,9 +9888,8 @@ contract -> CONTRACT opt_block . opt_assume nonempty_list(objective) opt_with [ 
 -- On ASSUME shift to state 529
 -- On opt_assume shift to state 531
 ## Reductions:
--- On REACHABLE reduce production opt_assume ->
--- On ENFORCE reduce production opt_assume ->
--- On ATTRACTIVE reduce production opt_assume ->
+-- On REACHABLE ENFORCE ATTRACTIVE
+--   reduce production opt_assume ->
 
 State 529:
 ## Known stack suffix:
@@ -11598,9 +9978,8 @@ opt_assume -> ASSUME exp . [ REACHABLE ENFORCE ATTRACTIVE ]
 -- On AND shift to state 134
 -- On AMPERSAND shift to state 136
 ## Reductions:
--- On REACHABLE reduce production opt_assume -> ASSUME exp
--- On ENFORCE reduce production opt_assume -> ASSUME exp
--- On ATTRACTIVE reduce production opt_assume -> ASSUME exp
+-- On REACHABLE ENFORCE ATTRACTIVE
+--   reduce production opt_assume -> ASSUME exp
 
 State 531:
 ## Known stack suffix:
@@ -11730,12 +10109,8 @@ objective -> objective_kind exp . [ WITH VAR REACHABLE LET ENFORCE ATTRACTIVE ]
 -- On AND shift to state 134
 -- On AMPERSAND shift to state 136
 ## Reductions:
--- On WITH reduce production objective -> objective_kind exp
--- On VAR reduce production objective -> objective_kind exp
--- On REACHABLE reduce production objective -> objective_kind exp
--- On LET reduce production objective -> objective_kind exp
--- On ENFORCE reduce production objective -> objective_kind exp
--- On ATTRACTIVE reduce production objective -> objective_kind exp
+-- On WITH VAR REACHABLE LET ENFORCE ATTRACTIVE
+--   reduce production objective -> objective_kind exp
 
 State 537:
 ## Known stack suffix:
@@ -11751,9 +10126,8 @@ nonempty_list(objective) -> objective . nonempty_list(objective) [ WITH VAR LET 
 -- On objective shift to state 537
 -- On nonempty_list(objective) shift to state 538
 ## Reductions:
--- On WITH reduce production nonempty_list(objective) -> objective
--- On VAR reduce production nonempty_list(objective) -> objective
--- On LET reduce production nonempty_list(objective) -> objective
+-- On WITH VAR LET
+--   reduce production nonempty_list(objective) -> objective
 
 State 538:
 ## Known stack suffix:
@@ -11773,8 +10147,8 @@ contract -> CONTRACT opt_block opt_assume nonempty_list(objective) . opt_with [ 
 -- On WITH shift to state 540
 -- On opt_with shift to state 544
 ## Reductions:
--- On VAR reduce production opt_with ->
--- On LET reduce production opt_with ->
+-- On VAR LET
+--   reduce production opt_with ->
 
 State 540:
 ## Known stack suffix:
@@ -11797,7 +10171,8 @@ opt_with -> WITH LPAREN . params RPAREN [ VAR LET ]
 -- On nonmt_params shift to state 400
 -- On ident_list shift to state 334
 ## Reductions:
--- On RPAREN reduce production params ->
+-- On RPAREN
+--   reduce production params ->
 
 State 542:
 ## Known stack suffix:
@@ -11873,13 +10248,8 @@ node_dec -> unsafe node_or_fun ident node_params LPAREN in_params RPAREN returns
 -- On SEMICOL shift to state 421
 -- On opt_semicolon shift to state 550
 ## Reductions:
--- On UNSAFE reduce production opt_semicolon ->
--- On TYPE reduce production opt_semicolon ->
--- On PRAGMA reduce production opt_semicolon ->
--- On NODE reduce production opt_semicolon ->
--- On FUN reduce production opt_semicolon ->
--- On EOF reduce production opt_semicolon ->
--- On CONST reduce production opt_semicolon ->
+-- On UNSAFE TYPE PRAGMA NODE FUN EOF CONST
+--   reduce production opt_semicolon ->
 
 State 550:
 ## Known stack suffix:
@@ -11925,9 +10295,10 @@ list(program_desc) -> program_desc . list(program_desc) [ EOF ]
 -- On list(program_desc) shift to state 555
 -- On const_dec shift to state 556
 ## Reductions:
--- On NODE reduce production unsafe ->
--- On FUN reduce production unsafe ->
--- On EOF reduce production list(program_desc) ->
+-- On EOF
+--   reduce production list(program_desc) ->
+-- On NODE FUN
+--   reduce production unsafe ->
 
 State 554:
 ## Known stack suffix:

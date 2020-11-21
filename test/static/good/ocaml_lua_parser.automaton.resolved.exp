@@ -10,20 +10,8 @@ prog' -> . prog [ # ]
 -- On chunk shift to state 211
 -- On OSC shift to state 20
 ## Reductions:
--- On WHILE reduce production OSC ->
--- On RETURN reduce production OSC ->
--- On REPEAT reduce production OSC ->
--- On LPAR reduce production OSC ->
--- On LOCAL reduce production OSC ->
--- On IF reduce production OSC ->
--- On IDENT reduce production OSC ->
--- On GOTO reduce production OSC ->
--- On FUNCTION reduce production OSC ->
--- On FOR reduce production OSC ->
--- On EOF reduce production OSC ->
--- On DO reduce production OSC ->
--- On DCOLON reduce production OSC ->
--- On BREAK reduce production OSC ->
+-- On WHILE RETURN REPEAT LPAR LOCAL IF IDENT GOTO FUNCTION FOR EOF DO DCOLON BREAK
+--   reduce production OSC ->
 
 State 1:
 ## Known stack suffix:
@@ -64,11 +52,8 @@ statlist -> statlist . stat OSC [ WHILE UNTIL RETURN REPEAT LPAR LOCAL IF IDENT 
 -- On functioncall shift to state 209
 -- On bracket shift to state 200
 ## Reductions:
--- On UNTIL reduce production chunk -> statlist
--- On EOF reduce production chunk -> statlist
--- On END reduce production chunk -> statlist
--- On ELSEIF reduce production chunk -> statlist
--- On ELSE reduce production chunk -> statlist
+-- On UNTIL EOF END ELSEIF ELSE
+--   reduce production chunk -> statlist
 
 State 3:
 ## Known stack suffix:
@@ -338,20 +323,8 @@ funcbody -> LPAR RPAR . block END [ WHILE UNTIL THEN SEMI RPAR RETURN REPEAT RCB
 -- On block shift to state 18
 -- On OSC shift to state 20
 ## Reductions:
--- On WHILE reduce production OSC ->
--- On RETURN reduce production OSC ->
--- On REPEAT reduce production OSC ->
--- On LPAR reduce production OSC ->
--- On LOCAL reduce production OSC ->
--- On IF reduce production OSC ->
--- On IDENT reduce production OSC ->
--- On GOTO reduce production OSC ->
--- On FUNCTION reduce production OSC ->
--- On FOR reduce production OSC ->
--- On END reduce production OSC ->
--- On DO reduce production OSC ->
--- On DCOLON reduce production OSC ->
--- On BREAK reduce production OSC ->
+-- On WHILE RETURN REPEAT LPAR LOCAL IF IDENT GOTO FUNCTION FOR END DO DCOLON BREAK
+--   reduce production OSC ->
 
 State 17:
 ## Known stack suffix:
@@ -419,20 +392,8 @@ funcbody -> LPAR parlist RPAR . block END [ WHILE UNTIL THEN SEMI RPAR RETURN RE
 -- On block shift to state 24
 -- On OSC shift to state 20
 ## Reductions:
--- On WHILE reduce production OSC ->
--- On RETURN reduce production OSC ->
--- On REPEAT reduce production OSC ->
--- On LPAR reduce production OSC ->
--- On LOCAL reduce production OSC ->
--- On IF reduce production OSC ->
--- On IDENT reduce production OSC ->
--- On GOTO reduce production OSC ->
--- On FUNCTION reduce production OSC ->
--- On FOR reduce production OSC ->
--- On END reduce production OSC ->
--- On DO reduce production OSC ->
--- On DCOLON reduce production OSC ->
--- On BREAK reduce production OSC ->
+-- On WHILE RETURN REPEAT LPAR LOCAL IF IDENT GOTO FUNCTION FOR END DO DCOLON BREAK
+--   reduce production OSC ->
 
 State 24:
 ## Known stack suffix:
@@ -462,7 +423,8 @@ parlist -> namelist . COMMA ELLIPSIS [ RPAR ]
 ## Transitions:
 -- On COMMA shift to state 27
 ## Reductions:
--- On RPAR reduce production parlist -> namelist
+-- On RPAR
+--   reduce production parlist -> namelist
 
 State 27:
 ## Known stack suffix:
@@ -549,44 +511,8 @@ var -> var . key [ WHILE UNTIL THEN STR_CONST SEMI RPAR RETURN REPEAT RCB RB PLU
 -- On key shift to state 98
 -- On args shift to state 99
 ## Reductions:
--- On WHILE reduce production exp -> var
--- On UNTIL reduce production exp -> var
--- On THEN reduce production exp -> var
--- On SEMI reduce production exp -> var
--- On RPAR reduce production exp -> var
--- On RETURN reduce production exp -> var
--- On REPEAT reduce production exp -> var
--- On RCB reduce production exp -> var
--- On RB reduce production exp -> var
--- On PLUS reduce production exp -> var
--- On OR reduce production exp -> var
--- On NE reduce production exp -> var
--- On MULT reduce production exp -> var
--- On MOD reduce production exp -> var
--- On MINUS reduce production exp -> var
--- On LT reduce production exp -> var
--- On LOCAL reduce production exp -> var
--- On LE reduce production exp -> var
--- On IF reduce production exp -> var
--- On IDENT reduce production exp -> var
--- On GT reduce production exp -> var
--- On GOTO reduce production exp -> var
--- On GE reduce production exp -> var
--- On FUNCTION reduce production exp -> var
--- On FOR reduce production exp -> var
--- On EQ reduce production exp -> var
--- On EOF reduce production exp -> var
--- On END reduce production exp -> var
--- On ELSEIF reduce production exp -> var
--- On ELSE reduce production exp -> var
--- On DO reduce production exp -> var
--- On DIV reduce production exp -> var
--- On DCOLON reduce production exp -> var
--- On COMMA reduce production exp -> var
--- On CAT reduce production exp -> var
--- On CARAT reduce production exp -> var
--- On BREAK reduce production exp -> var
--- On AND reduce production exp -> var
+-- On WHILE UNTIL THEN SEMI RPAR RETURN REPEAT RCB RB PLUS OR NE MULT MOD MINUS LT LOCAL LE IF IDENT GT GOTO GE FUNCTION FOR EQ EOF END ELSEIF ELSE DO DIV DCOLON COMMA CAT CARAT BREAK AND
+--   reduce production exp -> var
 
 State 35:
 ## Known stack suffix:
@@ -691,44 +617,8 @@ var -> functioncall . key [ WHILE UNTIL THEN STR_CONST SEMI RPAR RETURN REPEAT R
 -- On key shift to state 88
 -- On args shift to state 89
 ## Reductions:
--- On WHILE reduce production exp -> functioncall
--- On UNTIL reduce production exp -> functioncall
--- On THEN reduce production exp -> functioncall
--- On SEMI reduce production exp -> functioncall
--- On RPAR reduce production exp -> functioncall
--- On RETURN reduce production exp -> functioncall
--- On REPEAT reduce production exp -> functioncall
--- On RCB reduce production exp -> functioncall
--- On RB reduce production exp -> functioncall
--- On PLUS reduce production exp -> functioncall
--- On OR reduce production exp -> functioncall
--- On NE reduce production exp -> functioncall
--- On MULT reduce production exp -> functioncall
--- On MOD reduce production exp -> functioncall
--- On MINUS reduce production exp -> functioncall
--- On LT reduce production exp -> functioncall
--- On LOCAL reduce production exp -> functioncall
--- On LE reduce production exp -> functioncall
--- On IF reduce production exp -> functioncall
--- On IDENT reduce production exp -> functioncall
--- On GT reduce production exp -> functioncall
--- On GOTO reduce production exp -> functioncall
--- On GE reduce production exp -> functioncall
--- On FUNCTION reduce production exp -> functioncall
--- On FOR reduce production exp -> functioncall
--- On EQ reduce production exp -> functioncall
--- On EOF reduce production exp -> functioncall
--- On END reduce production exp -> functioncall
--- On ELSEIF reduce production exp -> functioncall
--- On ELSE reduce production exp -> functioncall
--- On DO reduce production exp -> functioncall
--- On DIV reduce production exp -> functioncall
--- On DCOLON reduce production exp -> functioncall
--- On COMMA reduce production exp -> functioncall
--- On CAT reduce production exp -> functioncall
--- On CARAT reduce production exp -> functioncall
--- On BREAK reduce production exp -> functioncall
--- On AND reduce production exp -> functioncall
+-- On WHILE UNTIL THEN SEMI RPAR RETURN REPEAT RCB RB PLUS OR NE MULT MOD MINUS LT LOCAL LE IF IDENT GT GOTO GE FUNCTION FOR EQ EOF END ELSEIF ELSE DO DIV DCOLON COMMA CAT CARAT BREAK AND
+--   reduce production exp -> functioncall
 
 State 43:
 ## Known stack suffix:
@@ -858,41 +748,8 @@ exp -> exp . CARAT exp [ WHILE UNTIL THEN SEMI RPAR RETURN REPEAT RCB RB PLUS OR
 -- On DIV shift to state 63
 -- On CARAT shift to state 50
 ## Reductions:
--- On WHILE reduce production exp -> exp PLUS exp
--- On UNTIL reduce production exp -> exp PLUS exp
--- On THEN reduce production exp -> exp PLUS exp
--- On SEMI reduce production exp -> exp PLUS exp
--- On RPAR reduce production exp -> exp PLUS exp
--- On RETURN reduce production exp -> exp PLUS exp
--- On REPEAT reduce production exp -> exp PLUS exp
--- On RCB reduce production exp -> exp PLUS exp
--- On RB reduce production exp -> exp PLUS exp
--- On PLUS reduce production exp -> exp PLUS exp
--- On OR reduce production exp -> exp PLUS exp
--- On NE reduce production exp -> exp PLUS exp
--- On MINUS reduce production exp -> exp PLUS exp
--- On LT reduce production exp -> exp PLUS exp
--- On LPAR reduce production exp -> exp PLUS exp
--- On LOCAL reduce production exp -> exp PLUS exp
--- On LE reduce production exp -> exp PLUS exp
--- On IF reduce production exp -> exp PLUS exp
--- On IDENT reduce production exp -> exp PLUS exp
--- On GT reduce production exp -> exp PLUS exp
--- On GOTO reduce production exp -> exp PLUS exp
--- On GE reduce production exp -> exp PLUS exp
--- On FUNCTION reduce production exp -> exp PLUS exp
--- On FOR reduce production exp -> exp PLUS exp
--- On EQ reduce production exp -> exp PLUS exp
--- On EOF reduce production exp -> exp PLUS exp
--- On END reduce production exp -> exp PLUS exp
--- On ELSEIF reduce production exp -> exp PLUS exp
--- On ELSE reduce production exp -> exp PLUS exp
--- On DO reduce production exp -> exp PLUS exp
--- On DCOLON reduce production exp -> exp PLUS exp
--- On COMMA reduce production exp -> exp PLUS exp
--- On CAT reduce production exp -> exp PLUS exp
--- On BREAK reduce production exp -> exp PLUS exp
--- On AND reduce production exp -> exp PLUS exp
+-- On WHILE UNTIL THEN SEMI RPAR RETURN REPEAT RCB RB PLUS OR NE MINUS LT LPAR LOCAL LE IF IDENT GT GOTO GE FUNCTION FOR EQ EOF END ELSEIF ELSE DO DCOLON COMMA CAT BREAK AND
+--   reduce production exp -> exp PLUS exp
 
 State 48:
 ## Known stack suffix:
@@ -944,44 +801,8 @@ exp -> exp . CARAT exp [ WHILE UNTIL THEN SEMI RPAR RETURN REPEAT RCB RB PLUS OR
 ## Transitions:
 -- On CARAT shift to state 50
 ## Reductions:
--- On WHILE reduce production exp -> exp MULT exp
--- On UNTIL reduce production exp -> exp MULT exp
--- On THEN reduce production exp -> exp MULT exp
--- On SEMI reduce production exp -> exp MULT exp
--- On RPAR reduce production exp -> exp MULT exp
--- On RETURN reduce production exp -> exp MULT exp
--- On REPEAT reduce production exp -> exp MULT exp
--- On RCB reduce production exp -> exp MULT exp
--- On RB reduce production exp -> exp MULT exp
--- On PLUS reduce production exp -> exp MULT exp
--- On OR reduce production exp -> exp MULT exp
--- On NE reduce production exp -> exp MULT exp
--- On MULT reduce production exp -> exp MULT exp
--- On MOD reduce production exp -> exp MULT exp
--- On MINUS reduce production exp -> exp MULT exp
--- On LT reduce production exp -> exp MULT exp
--- On LPAR reduce production exp -> exp MULT exp
--- On LOCAL reduce production exp -> exp MULT exp
--- On LE reduce production exp -> exp MULT exp
--- On IF reduce production exp -> exp MULT exp
--- On IDENT reduce production exp -> exp MULT exp
--- On GT reduce production exp -> exp MULT exp
--- On GOTO reduce production exp -> exp MULT exp
--- On GE reduce production exp -> exp MULT exp
--- On FUNCTION reduce production exp -> exp MULT exp
--- On FOR reduce production exp -> exp MULT exp
--- On EQ reduce production exp -> exp MULT exp
--- On EOF reduce production exp -> exp MULT exp
--- On END reduce production exp -> exp MULT exp
--- On ELSEIF reduce production exp -> exp MULT exp
--- On ELSE reduce production exp -> exp MULT exp
--- On DO reduce production exp -> exp MULT exp
--- On DIV reduce production exp -> exp MULT exp
--- On DCOLON reduce production exp -> exp MULT exp
--- On COMMA reduce production exp -> exp MULT exp
--- On CAT reduce production exp -> exp MULT exp
--- On BREAK reduce production exp -> exp MULT exp
--- On AND reduce production exp -> exp MULT exp
+-- On WHILE UNTIL THEN SEMI RPAR RETURN REPEAT RCB RB PLUS OR NE MULT MOD MINUS LT LPAR LOCAL LE IF IDENT GT GOTO GE FUNCTION FOR EQ EOF END ELSEIF ELSE DO DIV DCOLON COMMA CAT BREAK AND
+--   reduce production exp -> exp MULT exp
 
 State 50:
 ## Known stack suffix:
@@ -1033,44 +854,8 @@ exp -> exp CARAT exp . [ WHILE UNTIL THEN SEMI RPAR RETURN REPEAT RCB RB PLUS OR
 ## Transitions:
 -- On CARAT shift to state 50
 ## Reductions:
--- On WHILE reduce production exp -> exp CARAT exp
--- On UNTIL reduce production exp -> exp CARAT exp
--- On THEN reduce production exp -> exp CARAT exp
--- On SEMI reduce production exp -> exp CARAT exp
--- On RPAR reduce production exp -> exp CARAT exp
--- On RETURN reduce production exp -> exp CARAT exp
--- On REPEAT reduce production exp -> exp CARAT exp
--- On RCB reduce production exp -> exp CARAT exp
--- On RB reduce production exp -> exp CARAT exp
--- On PLUS reduce production exp -> exp CARAT exp
--- On OR reduce production exp -> exp CARAT exp
--- On NE reduce production exp -> exp CARAT exp
--- On MULT reduce production exp -> exp CARAT exp
--- On MOD reduce production exp -> exp CARAT exp
--- On MINUS reduce production exp -> exp CARAT exp
--- On LT reduce production exp -> exp CARAT exp
--- On LPAR reduce production exp -> exp CARAT exp
--- On LOCAL reduce production exp -> exp CARAT exp
--- On LE reduce production exp -> exp CARAT exp
--- On IF reduce production exp -> exp CARAT exp
--- On IDENT reduce production exp -> exp CARAT exp
--- On GT reduce production exp -> exp CARAT exp
--- On GOTO reduce production exp -> exp CARAT exp
--- On GE reduce production exp -> exp CARAT exp
--- On FUNCTION reduce production exp -> exp CARAT exp
--- On FOR reduce production exp -> exp CARAT exp
--- On EQ reduce production exp -> exp CARAT exp
--- On EOF reduce production exp -> exp CARAT exp
--- On END reduce production exp -> exp CARAT exp
--- On ELSEIF reduce production exp -> exp CARAT exp
--- On ELSE reduce production exp -> exp CARAT exp
--- On DO reduce production exp -> exp CARAT exp
--- On DIV reduce production exp -> exp CARAT exp
--- On DCOLON reduce production exp -> exp CARAT exp
--- On COMMA reduce production exp -> exp CARAT exp
--- On CAT reduce production exp -> exp CARAT exp
--- On BREAK reduce production exp -> exp CARAT exp
--- On AND reduce production exp -> exp CARAT exp
+-- On WHILE UNTIL THEN SEMI RPAR RETURN REPEAT RCB RB PLUS OR NE MULT MOD MINUS LT LPAR LOCAL LE IF IDENT GT GOTO GE FUNCTION FOR EQ EOF END ELSEIF ELSE DO DIV DCOLON COMMA CAT BREAK AND
+--   reduce production exp -> exp CARAT exp
 
 State 52:
 ## Known stack suffix:
@@ -1091,44 +876,8 @@ var -> bracket . key [ WHILE UNTIL THEN STR_CONST SEMI RPAR RETURN REPEAT RCB RB
 -- On key shift to state 59
 -- On args shift to state 60
 ## Reductions:
--- On WHILE reduce production primary -> bracket
--- On UNTIL reduce production primary -> bracket
--- On THEN reduce production primary -> bracket
--- On SEMI reduce production primary -> bracket
--- On RPAR reduce production primary -> bracket
--- On RETURN reduce production primary -> bracket
--- On REPEAT reduce production primary -> bracket
--- On RCB reduce production primary -> bracket
--- On RB reduce production primary -> bracket
--- On PLUS reduce production primary -> bracket
--- On OR reduce production primary -> bracket
--- On NE reduce production primary -> bracket
--- On MULT reduce production primary -> bracket
--- On MOD reduce production primary -> bracket
--- On MINUS reduce production primary -> bracket
--- On LT reduce production primary -> bracket
--- On LOCAL reduce production primary -> bracket
--- On LE reduce production primary -> bracket
--- On IF reduce production primary -> bracket
--- On IDENT reduce production primary -> bracket
--- On GT reduce production primary -> bracket
--- On GOTO reduce production primary -> bracket
--- On GE reduce production primary -> bracket
--- On FUNCTION reduce production primary -> bracket
--- On FOR reduce production primary -> bracket
--- On EQ reduce production primary -> bracket
--- On EOF reduce production primary -> bracket
--- On END reduce production primary -> bracket
--- On ELSEIF reduce production primary -> bracket
--- On ELSE reduce production primary -> bracket
--- On DO reduce production primary -> bracket
--- On DIV reduce production primary -> bracket
--- On DCOLON reduce production primary -> bracket
--- On COMMA reduce production primary -> bracket
--- On CAT reduce production primary -> bracket
--- On CARAT reduce production primary -> bracket
--- On BREAK reduce production primary -> bracket
--- On AND reduce production primary -> bracket
+-- On WHILE UNTIL THEN SEMI RPAR RETURN REPEAT RCB RB PLUS OR NE MULT MOD MINUS LT LOCAL LE IF IDENT GT GOTO GE FUNCTION FOR EQ EOF END ELSEIF ELSE DO DIV DCOLON COMMA CAT CARAT BREAK AND
+--   reduce production primary -> bracket
 
 State 53:
 ## Known stack suffix:
@@ -1258,44 +1007,8 @@ exp -> exp . CARAT exp [ WHILE UNTIL THEN SEMI RPAR RETURN REPEAT RCB RB PLUS OR
 ## Transitions:
 -- On CARAT shift to state 50
 ## Reductions:
--- On WHILE reduce production exp -> exp MOD exp
--- On UNTIL reduce production exp -> exp MOD exp
--- On THEN reduce production exp -> exp MOD exp
--- On SEMI reduce production exp -> exp MOD exp
--- On RPAR reduce production exp -> exp MOD exp
--- On RETURN reduce production exp -> exp MOD exp
--- On REPEAT reduce production exp -> exp MOD exp
--- On RCB reduce production exp -> exp MOD exp
--- On RB reduce production exp -> exp MOD exp
--- On PLUS reduce production exp -> exp MOD exp
--- On OR reduce production exp -> exp MOD exp
--- On NE reduce production exp -> exp MOD exp
--- On MULT reduce production exp -> exp MOD exp
--- On MOD reduce production exp -> exp MOD exp
--- On MINUS reduce production exp -> exp MOD exp
--- On LT reduce production exp -> exp MOD exp
--- On LPAR reduce production exp -> exp MOD exp
--- On LOCAL reduce production exp -> exp MOD exp
--- On LE reduce production exp -> exp MOD exp
--- On IF reduce production exp -> exp MOD exp
--- On IDENT reduce production exp -> exp MOD exp
--- On GT reduce production exp -> exp MOD exp
--- On GOTO reduce production exp -> exp MOD exp
--- On GE reduce production exp -> exp MOD exp
--- On FUNCTION reduce production exp -> exp MOD exp
--- On FOR reduce production exp -> exp MOD exp
--- On EQ reduce production exp -> exp MOD exp
--- On EOF reduce production exp -> exp MOD exp
--- On END reduce production exp -> exp MOD exp
--- On ELSEIF reduce production exp -> exp MOD exp
--- On ELSE reduce production exp -> exp MOD exp
--- On DO reduce production exp -> exp MOD exp
--- On DIV reduce production exp -> exp MOD exp
--- On DCOLON reduce production exp -> exp MOD exp
--- On COMMA reduce production exp -> exp MOD exp
--- On CAT reduce production exp -> exp MOD exp
--- On BREAK reduce production exp -> exp MOD exp
--- On AND reduce production exp -> exp MOD exp
+-- On WHILE UNTIL THEN SEMI RPAR RETURN REPEAT RCB RB PLUS OR NE MULT MOD MINUS LT LPAR LOCAL LE IF IDENT GT GOTO GE FUNCTION FOR EQ EOF END ELSEIF ELSE DO DIV DCOLON COMMA CAT BREAK AND
+--   reduce production exp -> exp MOD exp
 
 State 63:
 ## Known stack suffix:
@@ -1347,44 +1060,8 @@ exp -> exp . CARAT exp [ WHILE UNTIL THEN SEMI RPAR RETURN REPEAT RCB RB PLUS OR
 ## Transitions:
 -- On CARAT shift to state 50
 ## Reductions:
--- On WHILE reduce production exp -> exp DIV exp
--- On UNTIL reduce production exp -> exp DIV exp
--- On THEN reduce production exp -> exp DIV exp
--- On SEMI reduce production exp -> exp DIV exp
--- On RPAR reduce production exp -> exp DIV exp
--- On RETURN reduce production exp -> exp DIV exp
--- On REPEAT reduce production exp -> exp DIV exp
--- On RCB reduce production exp -> exp DIV exp
--- On RB reduce production exp -> exp DIV exp
--- On PLUS reduce production exp -> exp DIV exp
--- On OR reduce production exp -> exp DIV exp
--- On NE reduce production exp -> exp DIV exp
--- On MULT reduce production exp -> exp DIV exp
--- On MOD reduce production exp -> exp DIV exp
--- On MINUS reduce production exp -> exp DIV exp
--- On LT reduce production exp -> exp DIV exp
--- On LPAR reduce production exp -> exp DIV exp
--- On LOCAL reduce production exp -> exp DIV exp
--- On LE reduce production exp -> exp DIV exp
--- On IF reduce production exp -> exp DIV exp
--- On IDENT reduce production exp -> exp DIV exp
--- On GT reduce production exp -> exp DIV exp
--- On GOTO reduce production exp -> exp DIV exp
--- On GE reduce production exp -> exp DIV exp
--- On FUNCTION reduce production exp -> exp DIV exp
--- On FOR reduce production exp -> exp DIV exp
--- On EQ reduce production exp -> exp DIV exp
--- On EOF reduce production exp -> exp DIV exp
--- On END reduce production exp -> exp DIV exp
--- On ELSEIF reduce production exp -> exp DIV exp
--- On ELSE reduce production exp -> exp DIV exp
--- On DO reduce production exp -> exp DIV exp
--- On DIV reduce production exp -> exp DIV exp
--- On DCOLON reduce production exp -> exp DIV exp
--- On COMMA reduce production exp -> exp DIV exp
--- On CAT reduce production exp -> exp DIV exp
--- On BREAK reduce production exp -> exp DIV exp
--- On AND reduce production exp -> exp DIV exp
+-- On WHILE UNTIL THEN SEMI RPAR RETURN REPEAT RCB RB PLUS OR NE MULT MOD MINUS LT LPAR LOCAL LE IF IDENT GT GOTO GE FUNCTION FOR EQ EOF END ELSEIF ELSE DO DIV DCOLON COMMA CAT BREAK AND
+--   reduce production exp -> exp DIV exp
 
 State 65:
 ## Known stack suffix:
@@ -1449,31 +1126,8 @@ exp -> exp . CARAT exp [ WHILE UNTIL THEN SEMI RPAR RETURN REPEAT RCB RB PLUS OR
 -- On CARAT shift to state 50
 -- On AND shift to state 83
 ## Reductions:
--- On WHILE reduce production exp -> exp OR exp
--- On UNTIL reduce production exp -> exp OR exp
--- On THEN reduce production exp -> exp OR exp
--- On SEMI reduce production exp -> exp OR exp
--- On RPAR reduce production exp -> exp OR exp
--- On RETURN reduce production exp -> exp OR exp
--- On REPEAT reduce production exp -> exp OR exp
--- On RCB reduce production exp -> exp OR exp
--- On RB reduce production exp -> exp OR exp
--- On OR reduce production exp -> exp OR exp
--- On LPAR reduce production exp -> exp OR exp
--- On LOCAL reduce production exp -> exp OR exp
--- On IF reduce production exp -> exp OR exp
--- On IDENT reduce production exp -> exp OR exp
--- On GOTO reduce production exp -> exp OR exp
--- On FUNCTION reduce production exp -> exp OR exp
--- On FOR reduce production exp -> exp OR exp
--- On EOF reduce production exp -> exp OR exp
--- On END reduce production exp -> exp OR exp
--- On ELSEIF reduce production exp -> exp OR exp
--- On ELSE reduce production exp -> exp OR exp
--- On DO reduce production exp -> exp OR exp
--- On DCOLON reduce production exp -> exp OR exp
--- On COMMA reduce production exp -> exp OR exp
--- On BREAK reduce production exp -> exp OR exp
+-- On WHILE UNTIL THEN SEMI RPAR RETURN REPEAT RCB RB OR LPAR LOCAL IF IDENT GOTO FUNCTION FOR EOF END ELSEIF ELSE DO DCOLON COMMA BREAK
+--   reduce production exp -> exp OR exp
 
 State 67:
 ## Known stack suffix:
@@ -1531,38 +1185,8 @@ exp -> exp . CARAT exp [ WHILE UNTIL THEN SEMI RPAR RETURN REPEAT RCB RB PLUS OR
 -- On CAT shift to state 71
 -- On CARAT shift to state 50
 ## Reductions:
--- On WHILE reduce production exp -> exp NE exp
--- On UNTIL reduce production exp -> exp NE exp
--- On THEN reduce production exp -> exp NE exp
--- On SEMI reduce production exp -> exp NE exp
--- On RPAR reduce production exp -> exp NE exp
--- On RETURN reduce production exp -> exp NE exp
--- On REPEAT reduce production exp -> exp NE exp
--- On RCB reduce production exp -> exp NE exp
--- On RB reduce production exp -> exp NE exp
--- On OR reduce production exp -> exp NE exp
--- On NE reduce production exp -> exp NE exp
--- On LT reduce production exp -> exp NE exp
--- On LPAR reduce production exp -> exp NE exp
--- On LOCAL reduce production exp -> exp NE exp
--- On LE reduce production exp -> exp NE exp
--- On IF reduce production exp -> exp NE exp
--- On IDENT reduce production exp -> exp NE exp
--- On GT reduce production exp -> exp NE exp
--- On GOTO reduce production exp -> exp NE exp
--- On GE reduce production exp -> exp NE exp
--- On FUNCTION reduce production exp -> exp NE exp
--- On FOR reduce production exp -> exp NE exp
--- On EQ reduce production exp -> exp NE exp
--- On EOF reduce production exp -> exp NE exp
--- On END reduce production exp -> exp NE exp
--- On ELSEIF reduce production exp -> exp NE exp
--- On ELSE reduce production exp -> exp NE exp
--- On DO reduce production exp -> exp NE exp
--- On DCOLON reduce production exp -> exp NE exp
--- On COMMA reduce production exp -> exp NE exp
--- On BREAK reduce production exp -> exp NE exp
--- On AND reduce production exp -> exp NE exp
+-- On WHILE UNTIL THEN SEMI RPAR RETURN REPEAT RCB RB OR NE LT LPAR LOCAL LE IF IDENT GT GOTO GE FUNCTION FOR EQ EOF END ELSEIF ELSE DO DCOLON COMMA BREAK AND
+--   reduce production exp -> exp NE exp
 
 State 69:
 ## Known stack suffix:
@@ -1617,41 +1241,8 @@ exp -> exp . CARAT exp [ WHILE UNTIL THEN SEMI RPAR RETURN REPEAT RCB RB PLUS OR
 -- On DIV shift to state 63
 -- On CARAT shift to state 50
 ## Reductions:
--- On WHILE reduce production exp -> exp MINUS exp
--- On UNTIL reduce production exp -> exp MINUS exp
--- On THEN reduce production exp -> exp MINUS exp
--- On SEMI reduce production exp -> exp MINUS exp
--- On RPAR reduce production exp -> exp MINUS exp
--- On RETURN reduce production exp -> exp MINUS exp
--- On REPEAT reduce production exp -> exp MINUS exp
--- On RCB reduce production exp -> exp MINUS exp
--- On RB reduce production exp -> exp MINUS exp
--- On PLUS reduce production exp -> exp MINUS exp
--- On OR reduce production exp -> exp MINUS exp
--- On NE reduce production exp -> exp MINUS exp
--- On MINUS reduce production exp -> exp MINUS exp
--- On LT reduce production exp -> exp MINUS exp
--- On LPAR reduce production exp -> exp MINUS exp
--- On LOCAL reduce production exp -> exp MINUS exp
--- On LE reduce production exp -> exp MINUS exp
--- On IF reduce production exp -> exp MINUS exp
--- On IDENT reduce production exp -> exp MINUS exp
--- On GT reduce production exp -> exp MINUS exp
--- On GOTO reduce production exp -> exp MINUS exp
--- On GE reduce production exp -> exp MINUS exp
--- On FUNCTION reduce production exp -> exp MINUS exp
--- On FOR reduce production exp -> exp MINUS exp
--- On EQ reduce production exp -> exp MINUS exp
--- On EOF reduce production exp -> exp MINUS exp
--- On END reduce production exp -> exp MINUS exp
--- On ELSEIF reduce production exp -> exp MINUS exp
--- On ELSE reduce production exp -> exp MINUS exp
--- On DO reduce production exp -> exp MINUS exp
--- On DCOLON reduce production exp -> exp MINUS exp
--- On COMMA reduce production exp -> exp MINUS exp
--- On CAT reduce production exp -> exp MINUS exp
--- On BREAK reduce production exp -> exp MINUS exp
--- On AND reduce production exp -> exp MINUS exp
+-- On WHILE UNTIL THEN SEMI RPAR RETURN REPEAT RCB RB PLUS OR NE MINUS LT LPAR LOCAL LE IF IDENT GT GOTO GE FUNCTION FOR EQ EOF END ELSEIF ELSE DO DCOLON COMMA CAT BREAK AND
+--   reduce production exp -> exp MINUS exp
 
 State 71:
 ## Known stack suffix:
@@ -1709,38 +1300,8 @@ exp -> exp . CARAT exp [ WHILE UNTIL THEN SEMI RPAR RETURN REPEAT RCB RB PLUS OR
 -- On CAT shift to state 71
 -- On CARAT shift to state 50
 ## Reductions:
--- On WHILE reduce production exp -> exp CAT exp
--- On UNTIL reduce production exp -> exp CAT exp
--- On THEN reduce production exp -> exp CAT exp
--- On SEMI reduce production exp -> exp CAT exp
--- On RPAR reduce production exp -> exp CAT exp
--- On RETURN reduce production exp -> exp CAT exp
--- On REPEAT reduce production exp -> exp CAT exp
--- On RCB reduce production exp -> exp CAT exp
--- On RB reduce production exp -> exp CAT exp
--- On OR reduce production exp -> exp CAT exp
--- On NE reduce production exp -> exp CAT exp
--- On LT reduce production exp -> exp CAT exp
--- On LPAR reduce production exp -> exp CAT exp
--- On LOCAL reduce production exp -> exp CAT exp
--- On LE reduce production exp -> exp CAT exp
--- On IF reduce production exp -> exp CAT exp
--- On IDENT reduce production exp -> exp CAT exp
--- On GT reduce production exp -> exp CAT exp
--- On GOTO reduce production exp -> exp CAT exp
--- On GE reduce production exp -> exp CAT exp
--- On FUNCTION reduce production exp -> exp CAT exp
--- On FOR reduce production exp -> exp CAT exp
--- On EQ reduce production exp -> exp CAT exp
--- On EOF reduce production exp -> exp CAT exp
--- On END reduce production exp -> exp CAT exp
--- On ELSEIF reduce production exp -> exp CAT exp
--- On ELSE reduce production exp -> exp CAT exp
--- On DO reduce production exp -> exp CAT exp
--- On DCOLON reduce production exp -> exp CAT exp
--- On COMMA reduce production exp -> exp CAT exp
--- On BREAK reduce production exp -> exp CAT exp
--- On AND reduce production exp -> exp CAT exp
+-- On WHILE UNTIL THEN SEMI RPAR RETURN REPEAT RCB RB OR NE LT LPAR LOCAL LE IF IDENT GT GOTO GE FUNCTION FOR EQ EOF END ELSEIF ELSE DO DCOLON COMMA BREAK AND
+--   reduce production exp -> exp CAT exp
 
 State 73:
 ## Known stack suffix:
@@ -1798,38 +1359,8 @@ exp -> exp . CARAT exp [ WHILE UNTIL THEN SEMI RPAR RETURN REPEAT RCB RB PLUS OR
 -- On CAT shift to state 71
 -- On CARAT shift to state 50
 ## Reductions:
--- On WHILE reduce production exp -> exp LT exp
--- On UNTIL reduce production exp -> exp LT exp
--- On THEN reduce production exp -> exp LT exp
--- On SEMI reduce production exp -> exp LT exp
--- On RPAR reduce production exp -> exp LT exp
--- On RETURN reduce production exp -> exp LT exp
--- On REPEAT reduce production exp -> exp LT exp
--- On RCB reduce production exp -> exp LT exp
--- On RB reduce production exp -> exp LT exp
--- On OR reduce production exp -> exp LT exp
--- On NE reduce production exp -> exp LT exp
--- On LT reduce production exp -> exp LT exp
--- On LPAR reduce production exp -> exp LT exp
--- On LOCAL reduce production exp -> exp LT exp
--- On LE reduce production exp -> exp LT exp
--- On IF reduce production exp -> exp LT exp
--- On IDENT reduce production exp -> exp LT exp
--- On GT reduce production exp -> exp LT exp
--- On GOTO reduce production exp -> exp LT exp
--- On GE reduce production exp -> exp LT exp
--- On FUNCTION reduce production exp -> exp LT exp
--- On FOR reduce production exp -> exp LT exp
--- On EQ reduce production exp -> exp LT exp
--- On EOF reduce production exp -> exp LT exp
--- On END reduce production exp -> exp LT exp
--- On ELSEIF reduce production exp -> exp LT exp
--- On ELSE reduce production exp -> exp LT exp
--- On DO reduce production exp -> exp LT exp
--- On DCOLON reduce production exp -> exp LT exp
--- On COMMA reduce production exp -> exp LT exp
--- On BREAK reduce production exp -> exp LT exp
--- On AND reduce production exp -> exp LT exp
+-- On WHILE UNTIL THEN SEMI RPAR RETURN REPEAT RCB RB OR NE LT LPAR LOCAL LE IF IDENT GT GOTO GE FUNCTION FOR EQ EOF END ELSEIF ELSE DO DCOLON COMMA BREAK AND
+--   reduce production exp -> exp LT exp
 
 State 75:
 ## Known stack suffix:
@@ -1887,38 +1418,8 @@ exp -> exp . CARAT exp [ WHILE UNTIL THEN SEMI RPAR RETURN REPEAT RCB RB PLUS OR
 -- On CAT shift to state 71
 -- On CARAT shift to state 50
 ## Reductions:
--- On WHILE reduce production exp -> exp LE exp
--- On UNTIL reduce production exp -> exp LE exp
--- On THEN reduce production exp -> exp LE exp
--- On SEMI reduce production exp -> exp LE exp
--- On RPAR reduce production exp -> exp LE exp
--- On RETURN reduce production exp -> exp LE exp
--- On REPEAT reduce production exp -> exp LE exp
--- On RCB reduce production exp -> exp LE exp
--- On RB reduce production exp -> exp LE exp
--- On OR reduce production exp -> exp LE exp
--- On NE reduce production exp -> exp LE exp
--- On LT reduce production exp -> exp LE exp
--- On LPAR reduce production exp -> exp LE exp
--- On LOCAL reduce production exp -> exp LE exp
--- On LE reduce production exp -> exp LE exp
--- On IF reduce production exp -> exp LE exp
--- On IDENT reduce production exp -> exp LE exp
--- On GT reduce production exp -> exp LE exp
--- On GOTO reduce production exp -> exp LE exp
--- On GE reduce production exp -> exp LE exp
--- On FUNCTION reduce production exp -> exp LE exp
--- On FOR reduce production exp -> exp LE exp
--- On EQ reduce production exp -> exp LE exp
--- On EOF reduce production exp -> exp LE exp
--- On END reduce production exp -> exp LE exp
--- On ELSEIF reduce production exp -> exp LE exp
--- On ELSE reduce production exp -> exp LE exp
--- On DO reduce production exp -> exp LE exp
--- On DCOLON reduce production exp -> exp LE exp
--- On COMMA reduce production exp -> exp LE exp
--- On BREAK reduce production exp -> exp LE exp
--- On AND reduce production exp -> exp LE exp
+-- On WHILE UNTIL THEN SEMI RPAR RETURN REPEAT RCB RB OR NE LT LPAR LOCAL LE IF IDENT GT GOTO GE FUNCTION FOR EQ EOF END ELSEIF ELSE DO DCOLON COMMA BREAK AND
+--   reduce production exp -> exp LE exp
 
 State 77:
 ## Known stack suffix:
@@ -1976,38 +1477,8 @@ exp -> exp . CARAT exp [ WHILE UNTIL THEN SEMI RPAR RETURN REPEAT RCB RB PLUS OR
 -- On CAT shift to state 71
 -- On CARAT shift to state 50
 ## Reductions:
--- On WHILE reduce production exp -> exp GT exp
--- On UNTIL reduce production exp -> exp GT exp
--- On THEN reduce production exp -> exp GT exp
--- On SEMI reduce production exp -> exp GT exp
--- On RPAR reduce production exp -> exp GT exp
--- On RETURN reduce production exp -> exp GT exp
--- On REPEAT reduce production exp -> exp GT exp
--- On RCB reduce production exp -> exp GT exp
--- On RB reduce production exp -> exp GT exp
--- On OR reduce production exp -> exp GT exp
--- On NE reduce production exp -> exp GT exp
--- On LT reduce production exp -> exp GT exp
--- On LPAR reduce production exp -> exp GT exp
--- On LOCAL reduce production exp -> exp GT exp
--- On LE reduce production exp -> exp GT exp
--- On IF reduce production exp -> exp GT exp
--- On IDENT reduce production exp -> exp GT exp
--- On GT reduce production exp -> exp GT exp
--- On GOTO reduce production exp -> exp GT exp
--- On GE reduce production exp -> exp GT exp
--- On FUNCTION reduce production exp -> exp GT exp
--- On FOR reduce production exp -> exp GT exp
--- On EQ reduce production exp -> exp GT exp
--- On EOF reduce production exp -> exp GT exp
--- On END reduce production exp -> exp GT exp
--- On ELSEIF reduce production exp -> exp GT exp
--- On ELSE reduce production exp -> exp GT exp
--- On DO reduce production exp -> exp GT exp
--- On DCOLON reduce production exp -> exp GT exp
--- On COMMA reduce production exp -> exp GT exp
--- On BREAK reduce production exp -> exp GT exp
--- On AND reduce production exp -> exp GT exp
+-- On WHILE UNTIL THEN SEMI RPAR RETURN REPEAT RCB RB OR NE LT LPAR LOCAL LE IF IDENT GT GOTO GE FUNCTION FOR EQ EOF END ELSEIF ELSE DO DCOLON COMMA BREAK AND
+--   reduce production exp -> exp GT exp
 
 State 79:
 ## Known stack suffix:
@@ -2065,38 +1536,8 @@ exp -> exp . CARAT exp [ WHILE UNTIL THEN SEMI RPAR RETURN REPEAT RCB RB PLUS OR
 -- On CAT shift to state 71
 -- On CARAT shift to state 50
 ## Reductions:
--- On WHILE reduce production exp -> exp GE exp
--- On UNTIL reduce production exp -> exp GE exp
--- On THEN reduce production exp -> exp GE exp
--- On SEMI reduce production exp -> exp GE exp
--- On RPAR reduce production exp -> exp GE exp
--- On RETURN reduce production exp -> exp GE exp
--- On REPEAT reduce production exp -> exp GE exp
--- On RCB reduce production exp -> exp GE exp
--- On RB reduce production exp -> exp GE exp
--- On OR reduce production exp -> exp GE exp
--- On NE reduce production exp -> exp GE exp
--- On LT reduce production exp -> exp GE exp
--- On LPAR reduce production exp -> exp GE exp
--- On LOCAL reduce production exp -> exp GE exp
--- On LE reduce production exp -> exp GE exp
--- On IF reduce production exp -> exp GE exp
--- On IDENT reduce production exp -> exp GE exp
--- On GT reduce production exp -> exp GE exp
--- On GOTO reduce production exp -> exp GE exp
--- On GE reduce production exp -> exp GE exp
--- On FUNCTION reduce production exp -> exp GE exp
--- On FOR reduce production exp -> exp GE exp
--- On EQ reduce production exp -> exp GE exp
--- On EOF reduce production exp -> exp GE exp
--- On END reduce production exp -> exp GE exp
--- On ELSEIF reduce production exp -> exp GE exp
--- On ELSE reduce production exp -> exp GE exp
--- On DO reduce production exp -> exp GE exp
--- On DCOLON reduce production exp -> exp GE exp
--- On COMMA reduce production exp -> exp GE exp
--- On BREAK reduce production exp -> exp GE exp
--- On AND reduce production exp -> exp GE exp
+-- On WHILE UNTIL THEN SEMI RPAR RETURN REPEAT RCB RB OR NE LT LPAR LOCAL LE IF IDENT GT GOTO GE FUNCTION FOR EQ EOF END ELSEIF ELSE DO DCOLON COMMA BREAK AND
+--   reduce production exp -> exp GE exp
 
 State 81:
 ## Known stack suffix:
@@ -2154,38 +1595,8 @@ exp -> exp . CARAT exp [ WHILE UNTIL THEN SEMI RPAR RETURN REPEAT RCB RB PLUS OR
 -- On CAT shift to state 71
 -- On CARAT shift to state 50
 ## Reductions:
--- On WHILE reduce production exp -> exp EQ exp
--- On UNTIL reduce production exp -> exp EQ exp
--- On THEN reduce production exp -> exp EQ exp
--- On SEMI reduce production exp -> exp EQ exp
--- On RPAR reduce production exp -> exp EQ exp
--- On RETURN reduce production exp -> exp EQ exp
--- On REPEAT reduce production exp -> exp EQ exp
--- On RCB reduce production exp -> exp EQ exp
--- On RB reduce production exp -> exp EQ exp
--- On OR reduce production exp -> exp EQ exp
--- On NE reduce production exp -> exp EQ exp
--- On LT reduce production exp -> exp EQ exp
--- On LPAR reduce production exp -> exp EQ exp
--- On LOCAL reduce production exp -> exp EQ exp
--- On LE reduce production exp -> exp EQ exp
--- On IF reduce production exp -> exp EQ exp
--- On IDENT reduce production exp -> exp EQ exp
--- On GT reduce production exp -> exp EQ exp
--- On GOTO reduce production exp -> exp EQ exp
--- On GE reduce production exp -> exp EQ exp
--- On FUNCTION reduce production exp -> exp EQ exp
--- On FOR reduce production exp -> exp EQ exp
--- On EQ reduce production exp -> exp EQ exp
--- On EOF reduce production exp -> exp EQ exp
--- On END reduce production exp -> exp EQ exp
--- On ELSEIF reduce production exp -> exp EQ exp
--- On ELSE reduce production exp -> exp EQ exp
--- On DO reduce production exp -> exp EQ exp
--- On DCOLON reduce production exp -> exp EQ exp
--- On COMMA reduce production exp -> exp EQ exp
--- On BREAK reduce production exp -> exp EQ exp
--- On AND reduce production exp -> exp EQ exp
+-- On WHILE UNTIL THEN SEMI RPAR RETURN REPEAT RCB RB OR NE LT LPAR LOCAL LE IF IDENT GT GOTO GE FUNCTION FOR EQ EOF END ELSEIF ELSE DO DCOLON COMMA BREAK AND
+--   reduce production exp -> exp EQ exp
 
 State 83:
 ## Known stack suffix:
@@ -2249,32 +1660,8 @@ exp -> exp . CARAT exp [ WHILE UNTIL THEN SEMI RPAR RETURN REPEAT RCB RB PLUS OR
 -- On CAT shift to state 71
 -- On CARAT shift to state 50
 ## Reductions:
--- On WHILE reduce production exp -> exp AND exp
--- On UNTIL reduce production exp -> exp AND exp
--- On THEN reduce production exp -> exp AND exp
--- On SEMI reduce production exp -> exp AND exp
--- On RPAR reduce production exp -> exp AND exp
--- On RETURN reduce production exp -> exp AND exp
--- On REPEAT reduce production exp -> exp AND exp
--- On RCB reduce production exp -> exp AND exp
--- On RB reduce production exp -> exp AND exp
--- On OR reduce production exp -> exp AND exp
--- On LPAR reduce production exp -> exp AND exp
--- On LOCAL reduce production exp -> exp AND exp
--- On IF reduce production exp -> exp AND exp
--- On IDENT reduce production exp -> exp AND exp
--- On GOTO reduce production exp -> exp AND exp
--- On FUNCTION reduce production exp -> exp AND exp
--- On FOR reduce production exp -> exp AND exp
--- On EOF reduce production exp -> exp AND exp
--- On END reduce production exp -> exp AND exp
--- On ELSEIF reduce production exp -> exp AND exp
--- On ELSE reduce production exp -> exp AND exp
--- On DO reduce production exp -> exp AND exp
--- On DCOLON reduce production exp -> exp AND exp
--- On COMMA reduce production exp -> exp AND exp
--- On BREAK reduce production exp -> exp AND exp
--- On AND reduce production exp -> exp AND exp
+-- On WHILE UNTIL THEN SEMI RPAR RETURN REPEAT RCB RB OR LPAR LOCAL IF IDENT GOTO FUNCTION FOR EOF END ELSEIF ELSE DO DCOLON COMMA BREAK AND
+--   reduce production exp -> exp AND exp
 
 State 85:
 ## Known stack suffix:
@@ -2410,27 +1797,8 @@ explist -> explist COMMA exp . [ WHILE UNTIL SEMI RPAR RETURN REPEAT LPAR LOCAL 
 -- On CARAT shift to state 50
 -- On AND shift to state 83
 ## Reductions:
--- On WHILE reduce production explist -> explist COMMA exp
--- On UNTIL reduce production explist -> explist COMMA exp
--- On SEMI reduce production explist -> explist COMMA exp
--- On RPAR reduce production explist -> explist COMMA exp
--- On RETURN reduce production explist -> explist COMMA exp
--- On REPEAT reduce production explist -> explist COMMA exp
--- On LPAR reduce production explist -> explist COMMA exp
--- On LOCAL reduce production explist -> explist COMMA exp
--- On IF reduce production explist -> explist COMMA exp
--- On IDENT reduce production explist -> explist COMMA exp
--- On GOTO reduce production explist -> explist COMMA exp
--- On FUNCTION reduce production explist -> explist COMMA exp
--- On FOR reduce production explist -> explist COMMA exp
--- On EOF reduce production explist -> explist COMMA exp
--- On END reduce production explist -> explist COMMA exp
--- On ELSEIF reduce production explist -> explist COMMA exp
--- On ELSE reduce production explist -> explist COMMA exp
--- On DO reduce production explist -> explist COMMA exp
--- On DCOLON reduce production explist -> explist COMMA exp
--- On COMMA reduce production explist -> explist COMMA exp
--- On BREAK reduce production explist -> explist COMMA exp
+-- On WHILE UNTIL SEMI RPAR RETURN REPEAT LPAR LOCAL IF IDENT GOTO FUNCTION FOR EOF END ELSEIF ELSE DO DCOLON COMMA BREAK
+--   reduce production explist -> explist COMMA exp
 
 State 94:
 ## Known stack suffix:
@@ -2469,27 +1837,8 @@ explist -> exp . [ WHILE UNTIL SEMI RPAR RETURN REPEAT LPAR LOCAL IF IDENT GOTO 
 -- On CARAT shift to state 50
 -- On AND shift to state 83
 ## Reductions:
--- On WHILE reduce production explist -> exp
--- On UNTIL reduce production explist -> exp
--- On SEMI reduce production explist -> exp
--- On RPAR reduce production explist -> exp
--- On RETURN reduce production explist -> exp
--- On REPEAT reduce production explist -> exp
--- On LPAR reduce production explist -> exp
--- On LOCAL reduce production explist -> exp
--- On IF reduce production explist -> exp
--- On IDENT reduce production explist -> exp
--- On GOTO reduce production explist -> exp
--- On FUNCTION reduce production explist -> exp
--- On FOR reduce production explist -> exp
--- On EOF reduce production explist -> exp
--- On END reduce production explist -> exp
--- On ELSEIF reduce production explist -> exp
--- On ELSE reduce production explist -> exp
--- On DO reduce production explist -> exp
--- On DCOLON reduce production explist -> exp
--- On COMMA reduce production explist -> exp
--- On BREAK reduce production explist -> exp
+-- On WHILE UNTIL SEMI RPAR RETURN REPEAT LPAR LOCAL IF IDENT GOTO FUNCTION FOR EOF END ELSEIF ELSE DO DCOLON COMMA BREAK
+--   reduce production explist -> exp
 
 State 95:
 ## Known stack suffix:
@@ -2564,44 +1913,8 @@ exp -> HASH exp . [ WHILE UNTIL THEN SEMI RPAR RETURN REPEAT RCB RB PLUS OR NE M
 ## Transitions:
 -- On CARAT shift to state 50
 ## Reductions:
--- On WHILE reduce production exp -> HASH exp
--- On UNTIL reduce production exp -> HASH exp
--- On THEN reduce production exp -> HASH exp
--- On SEMI reduce production exp -> HASH exp
--- On RPAR reduce production exp -> HASH exp
--- On RETURN reduce production exp -> HASH exp
--- On REPEAT reduce production exp -> HASH exp
--- On RCB reduce production exp -> HASH exp
--- On RB reduce production exp -> HASH exp
--- On PLUS reduce production exp -> HASH exp
--- On OR reduce production exp -> HASH exp
--- On NE reduce production exp -> HASH exp
--- On MULT reduce production exp -> HASH exp
--- On MOD reduce production exp -> HASH exp
--- On MINUS reduce production exp -> HASH exp
--- On LT reduce production exp -> HASH exp
--- On LPAR reduce production exp -> HASH exp
--- On LOCAL reduce production exp -> HASH exp
--- On LE reduce production exp -> HASH exp
--- On IF reduce production exp -> HASH exp
--- On IDENT reduce production exp -> HASH exp
--- On GT reduce production exp -> HASH exp
--- On GOTO reduce production exp -> HASH exp
--- On GE reduce production exp -> HASH exp
--- On FUNCTION reduce production exp -> HASH exp
--- On FOR reduce production exp -> HASH exp
--- On EQ reduce production exp -> HASH exp
--- On EOF reduce production exp -> HASH exp
--- On END reduce production exp -> HASH exp
--- On ELSEIF reduce production exp -> HASH exp
--- On ELSE reduce production exp -> HASH exp
--- On DO reduce production exp -> HASH exp
--- On DIV reduce production exp -> HASH exp
--- On DCOLON reduce production exp -> HASH exp
--- On COMMA reduce production exp -> HASH exp
--- On CAT reduce production exp -> HASH exp
--- On BREAK reduce production exp -> HASH exp
--- On AND reduce production exp -> HASH exp
+-- On WHILE UNTIL THEN SEMI RPAR RETURN REPEAT RCB RB PLUS OR NE MULT MOD MINUS LT LPAR LOCAL LE IF IDENT GT GOTO GE FUNCTION FOR EQ EOF END ELSEIF ELSE DO DIV DCOLON COMMA CAT BREAK AND
+--   reduce production exp -> HASH exp
 
 State 101:
 ## Known stack suffix:
@@ -2715,9 +2028,8 @@ field -> LB exp RB ASSIGN exp . [ SEMI RCB COMMA ]
 -- On CARAT shift to state 50
 -- On AND shift to state 83
 ## Reductions:
--- On SEMI reduce production field -> LB exp RB ASSIGN exp
--- On RCB reduce production field -> LB exp RB ASSIGN exp
--- On COMMA reduce production field -> LB exp RB ASSIGN exp
+-- On SEMI RCB COMMA
+--   reduce production field -> LB exp RB ASSIGN exp
 
 State 105:
 ## Known stack suffix:
@@ -2728,30 +2040,8 @@ var -> ident . [ STR_CONST SEMI RCB PLUS OR NE MULT MOD MINUS LT LPAR LE LCB LB 
 ## Transitions:
 -- On ASSIGN shift to state 106
 ## Reductions:
--- On STR_CONST reduce production var -> ident
--- On SEMI reduce production var -> ident
--- On RCB reduce production var -> ident
--- On PLUS reduce production var -> ident
--- On OR reduce production var -> ident
--- On NE reduce production var -> ident
--- On MULT reduce production var -> ident
--- On MOD reduce production var -> ident
--- On MINUS reduce production var -> ident
--- On LT reduce production var -> ident
--- On LPAR reduce production var -> ident
--- On LE reduce production var -> ident
--- On LCB reduce production var -> ident
--- On LB reduce production var -> ident
--- On GT reduce production var -> ident
--- On GE reduce production var -> ident
--- On EQ reduce production var -> ident
--- On DOT reduce production var -> ident
--- On DIV reduce production var -> ident
--- On COMMA reduce production var -> ident
--- On COLON reduce production var -> ident
--- On CAT reduce production var -> ident
--- On CARAT reduce production var -> ident
--- On AND reduce production var -> ident
+-- On STR_CONST SEMI RCB PLUS OR NE MULT MOD MINUS LT LPAR LE LCB LB GT GE EQ DOT DIV COMMA COLON CAT CARAT AND
+--   reduce production var -> ident
 
 State 106:
 ## Known stack suffix:
@@ -2817,9 +2107,8 @@ field -> ident ASSIGN exp . [ SEMI RCB COMMA ]
 -- On CARAT shift to state 50
 -- On AND shift to state 83
 ## Reductions:
--- On SEMI reduce production field -> ident ASSIGN exp
--- On RCB reduce production field -> ident ASSIGN exp
--- On COMMA reduce production field -> ident ASSIGN exp
+-- On SEMI RCB COMMA
+--   reduce production field -> ident ASSIGN exp
 
 State 108:
 ## Known stack suffix:
@@ -2833,7 +2122,8 @@ fields -> fields . fieldsep field [ SEMI RCB COMMA ]
 -- On COMMA shift to state 110
 -- On fieldsep shift to state 111
 ## Reductions:
--- On RCB reduce production fieldlist -> fields
+-- On RCB
+--   reduce production fieldlist -> fields
 
 State 109:
 ## Known stack suffix:
@@ -2882,7 +2172,8 @@ fields -> fields fieldsep . field [ SEMI RCB COMMA ]
 -- On exp shift to state 113
 -- On bracket shift to state 52
 ## Reductions:
--- On RCB reduce production fieldlist -> fields fieldsep
+-- On RCB
+--   reduce production fieldlist -> fields fieldsep
 
 State 112:
 ## Known stack suffix:
@@ -2930,9 +2221,8 @@ field -> exp . [ SEMI RCB COMMA ]
 -- On CARAT shift to state 50
 -- On AND shift to state 83
 ## Reductions:
--- On SEMI reduce production field -> exp
--- On RCB reduce production field -> exp
--- On COMMA reduce production field -> exp
+-- On SEMI RCB COMMA
+--   reduce production field -> exp
 
 State 114:
 ## Known stack suffix:
@@ -3032,44 +2322,8 @@ exp -> MINUS exp . [ WHILE UNTIL THEN SEMI RPAR RETURN REPEAT RCB RB PLUS OR NE 
 ## Transitions:
 -- On CARAT shift to state 50
 ## Reductions:
--- On WHILE reduce production exp -> MINUS exp
--- On UNTIL reduce production exp -> MINUS exp
--- On THEN reduce production exp -> MINUS exp
--- On SEMI reduce production exp -> MINUS exp
--- On RPAR reduce production exp -> MINUS exp
--- On RETURN reduce production exp -> MINUS exp
--- On REPEAT reduce production exp -> MINUS exp
--- On RCB reduce production exp -> MINUS exp
--- On RB reduce production exp -> MINUS exp
--- On PLUS reduce production exp -> MINUS exp
--- On OR reduce production exp -> MINUS exp
--- On NE reduce production exp -> MINUS exp
--- On MULT reduce production exp -> MINUS exp
--- On MOD reduce production exp -> MINUS exp
--- On MINUS reduce production exp -> MINUS exp
--- On LT reduce production exp -> MINUS exp
--- On LPAR reduce production exp -> MINUS exp
--- On LOCAL reduce production exp -> MINUS exp
--- On LE reduce production exp -> MINUS exp
--- On IF reduce production exp -> MINUS exp
--- On IDENT reduce production exp -> MINUS exp
--- On GT reduce production exp -> MINUS exp
--- On GOTO reduce production exp -> MINUS exp
--- On GE reduce production exp -> MINUS exp
--- On FUNCTION reduce production exp -> MINUS exp
--- On FOR reduce production exp -> MINUS exp
--- On EQ reduce production exp -> MINUS exp
--- On EOF reduce production exp -> MINUS exp
--- On END reduce production exp -> MINUS exp
--- On ELSEIF reduce production exp -> MINUS exp
--- On ELSE reduce production exp -> MINUS exp
--- On DO reduce production exp -> MINUS exp
--- On DIV reduce production exp -> MINUS exp
--- On DCOLON reduce production exp -> MINUS exp
--- On COMMA reduce production exp -> MINUS exp
--- On CAT reduce production exp -> MINUS exp
--- On BREAK reduce production exp -> MINUS exp
--- On AND reduce production exp -> MINUS exp
+-- On WHILE UNTIL THEN SEMI RPAR RETURN REPEAT RCB RB PLUS OR NE MULT MOD MINUS LT LPAR LOCAL LE IF IDENT GT GOTO GE FUNCTION FOR EQ EOF END ELSEIF ELSE DO DIV DCOLON COMMA CAT BREAK AND
+--   reduce production exp -> MINUS exp
 
 State 120:
 ## Known stack suffix:
@@ -3094,44 +2348,8 @@ exp -> NOT exp . [ WHILE UNTIL THEN SEMI RPAR RETURN REPEAT RCB RB PLUS OR NE MU
 ## Transitions:
 -- On CARAT shift to state 50
 ## Reductions:
--- On WHILE reduce production exp -> NOT exp
--- On UNTIL reduce production exp -> NOT exp
--- On THEN reduce production exp -> NOT exp
--- On SEMI reduce production exp -> NOT exp
--- On RPAR reduce production exp -> NOT exp
--- On RETURN reduce production exp -> NOT exp
--- On REPEAT reduce production exp -> NOT exp
--- On RCB reduce production exp -> NOT exp
--- On RB reduce production exp -> NOT exp
--- On PLUS reduce production exp -> NOT exp
--- On OR reduce production exp -> NOT exp
--- On NE reduce production exp -> NOT exp
--- On MULT reduce production exp -> NOT exp
--- On MOD reduce production exp -> NOT exp
--- On MINUS reduce production exp -> NOT exp
--- On LT reduce production exp -> NOT exp
--- On LPAR reduce production exp -> NOT exp
--- On LOCAL reduce production exp -> NOT exp
--- On LE reduce production exp -> NOT exp
--- On IF reduce production exp -> NOT exp
--- On IDENT reduce production exp -> NOT exp
--- On GT reduce production exp -> NOT exp
--- On GOTO reduce production exp -> NOT exp
--- On GE reduce production exp -> NOT exp
--- On FUNCTION reduce production exp -> NOT exp
--- On FOR reduce production exp -> NOT exp
--- On EQ reduce production exp -> NOT exp
--- On EOF reduce production exp -> NOT exp
--- On END reduce production exp -> NOT exp
--- On ELSEIF reduce production exp -> NOT exp
--- On ELSE reduce production exp -> NOT exp
--- On DO reduce production exp -> NOT exp
--- On DIV reduce production exp -> NOT exp
--- On DCOLON reduce production exp -> NOT exp
--- On COMMA reduce production exp -> NOT exp
--- On CAT reduce production exp -> NOT exp
--- On BREAK reduce production exp -> NOT exp
--- On AND reduce production exp -> NOT exp
+-- On WHILE UNTIL THEN SEMI RPAR RETURN REPEAT RCB RB PLUS OR NE MULT MOD MINUS LT LPAR LOCAL LE IF IDENT GT GOTO GE FUNCTION FOR EQ EOF END ELSEIF ELSE DO DIV DCOLON COMMA CAT BREAK AND
+--   reduce production exp -> NOT exp
 
 State 121:
 ## Known stack suffix:
@@ -3184,20 +2402,8 @@ stat -> WHILE exp DO . block END [ WHILE UNTIL SEMI RETURN REPEAT LPAR LOCAL IF 
 -- On block shift to state 123
 -- On OSC shift to state 20
 ## Reductions:
--- On WHILE reduce production OSC ->
--- On RETURN reduce production OSC ->
--- On REPEAT reduce production OSC ->
--- On LPAR reduce production OSC ->
--- On LOCAL reduce production OSC ->
--- On IF reduce production OSC ->
--- On IDENT reduce production OSC ->
--- On GOTO reduce production OSC ->
--- On FUNCTION reduce production OSC ->
--- On FOR reduce production OSC ->
--- On END reduce production OSC ->
--- On DO reduce production OSC ->
--- On DCOLON reduce production OSC ->
--- On BREAK reduce production OSC ->
+-- On WHILE RETURN REPEAT LPAR LOCAL IF IDENT GOTO FUNCTION FOR END DO DCOLON BREAK
+--   reduce production OSC ->
 
 State 123:
 ## Known stack suffix:
@@ -3245,12 +2451,8 @@ retstat -> RETURN . explist [ UNTIL SEMI EOF END ELSEIF ELSE ]
 -- On exp shift to state 94
 -- On bracket shift to state 52
 ## Reductions:
--- On UNTIL reduce production retstat -> RETURN
--- On SEMI reduce production retstat -> RETURN
--- On EOF reduce production retstat -> RETURN
--- On END reduce production retstat -> RETURN
--- On ELSEIF reduce production retstat -> RETURN
--- On ELSE reduce production retstat -> RETURN
+-- On UNTIL SEMI EOF END ELSEIF ELSE
+--   reduce production retstat -> RETURN
 
 State 126:
 ## Known stack suffix:
@@ -3261,12 +2463,8 @@ retstat -> RETURN explist . [ UNTIL SEMI EOF END ELSEIF ELSE ]
 ## Transitions:
 -- On COMMA shift to state 92
 ## Reductions:
--- On UNTIL reduce production retstat -> RETURN explist
--- On SEMI reduce production retstat -> RETURN explist
--- On EOF reduce production retstat -> RETURN explist
--- On END reduce production retstat -> RETURN explist
--- On ELSEIF reduce production retstat -> RETURN explist
--- On ELSE reduce production retstat -> RETURN explist
+-- On UNTIL SEMI EOF END ELSEIF ELSE
+--   reduce production retstat -> RETURN explist
 
 State 127:
 ## Known stack suffix:
@@ -3280,20 +2478,8 @@ stat -> REPEAT . block UNTIL exp [ WHILE UNTIL SEMI RETURN REPEAT LPAR LOCAL IF 
 -- On block shift to state 128
 -- On OSC shift to state 20
 ## Reductions:
--- On WHILE reduce production OSC ->
--- On UNTIL reduce production OSC ->
--- On RETURN reduce production OSC ->
--- On REPEAT reduce production OSC ->
--- On LPAR reduce production OSC ->
--- On LOCAL reduce production OSC ->
--- On IF reduce production OSC ->
--- On IDENT reduce production OSC ->
--- On GOTO reduce production OSC ->
--- On FUNCTION reduce production OSC ->
--- On FOR reduce production OSC ->
--- On DO reduce production OSC ->
--- On DCOLON reduce production OSC ->
--- On BREAK reduce production OSC ->
+-- On WHILE UNTIL RETURN REPEAT LPAR LOCAL IF IDENT GOTO FUNCTION FOR DO DCOLON BREAK
+--   reduce production OSC ->
 
 State 128:
 ## Known stack suffix:
@@ -3368,25 +2554,8 @@ stat -> REPEAT block UNTIL exp . [ WHILE UNTIL SEMI RETURN REPEAT LPAR LOCAL IF 
 -- On CARAT shift to state 50
 -- On AND shift to state 83
 ## Reductions:
--- On WHILE reduce production stat -> REPEAT block UNTIL exp
--- On UNTIL reduce production stat -> REPEAT block UNTIL exp
--- On SEMI reduce production stat -> REPEAT block UNTIL exp
--- On RETURN reduce production stat -> REPEAT block UNTIL exp
--- On REPEAT reduce production stat -> REPEAT block UNTIL exp
--- On LPAR reduce production stat -> REPEAT block UNTIL exp
--- On LOCAL reduce production stat -> REPEAT block UNTIL exp
--- On IF reduce production stat -> REPEAT block UNTIL exp
--- On IDENT reduce production stat -> REPEAT block UNTIL exp
--- On GOTO reduce production stat -> REPEAT block UNTIL exp
--- On FUNCTION reduce production stat -> REPEAT block UNTIL exp
--- On FOR reduce production stat -> REPEAT block UNTIL exp
--- On EOF reduce production stat -> REPEAT block UNTIL exp
--- On END reduce production stat -> REPEAT block UNTIL exp
--- On ELSEIF reduce production stat -> REPEAT block UNTIL exp
--- On ELSE reduce production stat -> REPEAT block UNTIL exp
--- On DO reduce production stat -> REPEAT block UNTIL exp
--- On DCOLON reduce production stat -> REPEAT block UNTIL exp
--- On BREAK reduce production stat -> REPEAT block UNTIL exp
+-- On WHILE UNTIL SEMI RETURN REPEAT LPAR LOCAL IF IDENT GOTO FUNCTION FOR EOF END ELSEIF ELSE DO DCOLON BREAK
+--   reduce production stat -> REPEAT block UNTIL exp
 
 State 131:
 ## Known stack suffix:
@@ -3442,25 +2611,8 @@ stat -> LOCAL namelist . ASSIGN explist [ WHILE UNTIL SEMI RETURN REPEAT LPAR LO
 -- On COMMA shift to state 136
 -- On ASSIGN shift to state 137
 ## Reductions:
--- On WHILE reduce production stat -> LOCAL namelist
--- On UNTIL reduce production stat -> LOCAL namelist
--- On SEMI reduce production stat -> LOCAL namelist
--- On RETURN reduce production stat -> LOCAL namelist
--- On REPEAT reduce production stat -> LOCAL namelist
--- On LPAR reduce production stat -> LOCAL namelist
--- On LOCAL reduce production stat -> LOCAL namelist
--- On IF reduce production stat -> LOCAL namelist
--- On IDENT reduce production stat -> LOCAL namelist
--- On GOTO reduce production stat -> LOCAL namelist
--- On FUNCTION reduce production stat -> LOCAL namelist
--- On FOR reduce production stat -> LOCAL namelist
--- On EOF reduce production stat -> LOCAL namelist
--- On END reduce production stat -> LOCAL namelist
--- On ELSEIF reduce production stat -> LOCAL namelist
--- On ELSE reduce production stat -> LOCAL namelist
--- On DO reduce production stat -> LOCAL namelist
--- On DCOLON reduce production stat -> LOCAL namelist
--- On BREAK reduce production stat -> LOCAL namelist
+-- On WHILE UNTIL SEMI RETURN REPEAT LPAR LOCAL IF IDENT GOTO FUNCTION FOR EOF END ELSEIF ELSE DO DCOLON BREAK
+--   reduce production stat -> LOCAL namelist
 
 State 136:
 ## Known stack suffix:
@@ -3509,25 +2661,8 @@ stat -> LOCAL namelist ASSIGN explist . [ WHILE UNTIL SEMI RETURN REPEAT LPAR LO
 ## Transitions:
 -- On COMMA shift to state 92
 ## Reductions:
--- On WHILE reduce production stat -> LOCAL namelist ASSIGN explist
--- On UNTIL reduce production stat -> LOCAL namelist ASSIGN explist
--- On SEMI reduce production stat -> LOCAL namelist ASSIGN explist
--- On RETURN reduce production stat -> LOCAL namelist ASSIGN explist
--- On REPEAT reduce production stat -> LOCAL namelist ASSIGN explist
--- On LPAR reduce production stat -> LOCAL namelist ASSIGN explist
--- On LOCAL reduce production stat -> LOCAL namelist ASSIGN explist
--- On IF reduce production stat -> LOCAL namelist ASSIGN explist
--- On IDENT reduce production stat -> LOCAL namelist ASSIGN explist
--- On GOTO reduce production stat -> LOCAL namelist ASSIGN explist
--- On FUNCTION reduce production stat -> LOCAL namelist ASSIGN explist
--- On FOR reduce production stat -> LOCAL namelist ASSIGN explist
--- On EOF reduce production stat -> LOCAL namelist ASSIGN explist
--- On END reduce production stat -> LOCAL namelist ASSIGN explist
--- On ELSEIF reduce production stat -> LOCAL namelist ASSIGN explist
--- On ELSE reduce production stat -> LOCAL namelist ASSIGN explist
--- On DO reduce production stat -> LOCAL namelist ASSIGN explist
--- On DCOLON reduce production stat -> LOCAL namelist ASSIGN explist
--- On BREAK reduce production stat -> LOCAL namelist ASSIGN explist
+-- On WHILE UNTIL SEMI RETURN REPEAT LPAR LOCAL IF IDENT GOTO FUNCTION FOR EOF END ELSEIF ELSE DO DCOLON BREAK
+--   reduce production stat -> LOCAL namelist ASSIGN explist
 
 State 139:
 ## Known stack suffix:
@@ -3616,22 +2751,8 @@ stat -> IF exp THEN . block elseifps ELSE block END [ WHILE UNTIL SEMI RETURN RE
 -- On block shift to state 142
 -- On OSC shift to state 20
 ## Reductions:
--- On WHILE reduce production OSC ->
--- On RETURN reduce production OSC ->
--- On REPEAT reduce production OSC ->
--- On LPAR reduce production OSC ->
--- On LOCAL reduce production OSC ->
--- On IF reduce production OSC ->
--- On IDENT reduce production OSC ->
--- On GOTO reduce production OSC ->
--- On FUNCTION reduce production OSC ->
--- On FOR reduce production OSC ->
--- On END reduce production OSC ->
--- On ELSEIF reduce production OSC ->
--- On ELSE reduce production OSC ->
--- On DO reduce production OSC ->
--- On DCOLON reduce production OSC ->
--- On BREAK reduce production OSC ->
+-- On WHILE RETURN REPEAT LPAR LOCAL IF IDENT GOTO FUNCTION FOR END ELSEIF ELSE DO DCOLON BREAK
+--   reduce production OSC ->
 
 State 142:
 ## Known stack suffix:
@@ -3736,22 +2857,8 @@ elseifp -> ELSEIF exp THEN . block [ END ELSEIF ELSE ]
 -- On block shift to state 147
 -- On OSC shift to state 20
 ## Reductions:
--- On WHILE reduce production OSC ->
--- On RETURN reduce production OSC ->
--- On REPEAT reduce production OSC ->
--- On LPAR reduce production OSC ->
--- On LOCAL reduce production OSC ->
--- On IF reduce production OSC ->
--- On IDENT reduce production OSC ->
--- On GOTO reduce production OSC ->
--- On FUNCTION reduce production OSC ->
--- On FOR reduce production OSC ->
--- On END reduce production OSC ->
--- On ELSEIF reduce production OSC ->
--- On ELSE reduce production OSC ->
--- On DO reduce production OSC ->
--- On DCOLON reduce production OSC ->
--- On BREAK reduce production OSC ->
+-- On WHILE RETURN REPEAT LPAR LOCAL IF IDENT GOTO FUNCTION FOR END ELSEIF ELSE DO DCOLON BREAK
+--   reduce production OSC ->
 
 State 147:
 ## Known stack suffix:
@@ -3774,20 +2881,8 @@ stat -> IF exp THEN block ELSE . block END [ WHILE UNTIL SEMI RETURN REPEAT LPAR
 -- On block shift to state 149
 -- On OSC shift to state 20
 ## Reductions:
--- On WHILE reduce production OSC ->
--- On RETURN reduce production OSC ->
--- On REPEAT reduce production OSC ->
--- On LPAR reduce production OSC ->
--- On LOCAL reduce production OSC ->
--- On IF reduce production OSC ->
--- On IDENT reduce production OSC ->
--- On GOTO reduce production OSC ->
--- On FUNCTION reduce production OSC ->
--- On FOR reduce production OSC ->
--- On END reduce production OSC ->
--- On DO reduce production OSC ->
--- On DCOLON reduce production OSC ->
--- On BREAK reduce production OSC ->
+-- On WHILE RETURN REPEAT LPAR LOCAL IF IDENT GOTO FUNCTION FOR END DO DCOLON BREAK
+--   reduce production OSC ->
 
 State 149:
 ## Known stack suffix:
@@ -3842,20 +2937,8 @@ stat -> IF exp THEN block elseifps ELSE . block END [ WHILE UNTIL SEMI RETURN RE
 -- On block shift to state 154
 -- On OSC shift to state 20
 ## Reductions:
--- On WHILE reduce production OSC ->
--- On RETURN reduce production OSC ->
--- On REPEAT reduce production OSC ->
--- On LPAR reduce production OSC ->
--- On LOCAL reduce production OSC ->
--- On IF reduce production OSC ->
--- On IDENT reduce production OSC ->
--- On GOTO reduce production OSC ->
--- On FUNCTION reduce production OSC ->
--- On FOR reduce production OSC ->
--- On END reduce production OSC ->
--- On DO reduce production OSC ->
--- On DCOLON reduce production OSC ->
--- On BREAK reduce production OSC ->
+-- On WHILE RETURN REPEAT LPAR LOCAL IF IDENT GOTO FUNCTION FOR END DO DCOLON BREAK
+--   reduce production OSC ->
 
 State 154:
 ## Known stack suffix:
@@ -3963,7 +3046,8 @@ funcname -> fname . COLON ident [ LPAR ]
 -- On DOT shift to state 165
 -- On COLON shift to state 167
 ## Reductions:
--- On LPAR reduce production funcname -> fname
+-- On LPAR
+--   reduce production funcname -> fname
 
 State 165:
 ## Known stack suffix:
@@ -4078,20 +3162,8 @@ stat -> FOR namelist IN explist DO . block END [ WHILE UNTIL SEMI RETURN REPEAT 
 -- On block shift to state 174
 -- On OSC shift to state 20
 ## Reductions:
--- On WHILE reduce production OSC ->
--- On RETURN reduce production OSC ->
--- On REPEAT reduce production OSC ->
--- On LPAR reduce production OSC ->
--- On LOCAL reduce production OSC ->
--- On IF reduce production OSC ->
--- On IDENT reduce production OSC ->
--- On GOTO reduce production OSC ->
--- On FUNCTION reduce production OSC ->
--- On FOR reduce production OSC ->
--- On END reduce production OSC ->
--- On DO reduce production OSC ->
--- On DCOLON reduce production OSC ->
--- On BREAK reduce production OSC ->
+-- On WHILE RETURN REPEAT LPAR LOCAL IF IDENT GOTO FUNCTION FOR END DO DCOLON BREAK
+--   reduce production OSC ->
 
 State 174:
 ## Known stack suffix:
@@ -4121,8 +3193,8 @@ stat -> FOR ident . ASSIGN exp COMMA exp COMMA exp DO block END [ WHILE UNTIL SE
 ## Transitions:
 -- On ASSIGN shift to state 177
 ## Reductions:
--- On IN reduce production namelist -> ident
--- On COMMA reduce production namelist -> ident
+-- On IN COMMA
+--   reduce production namelist -> ident
 
 State 177:
 ## Known stack suffix:
@@ -4273,20 +3345,8 @@ stat -> FOR ident ASSIGN exp COMMA exp DO . block END [ WHILE UNTIL SEMI RETURN 
 -- On block shift to state 182
 -- On OSC shift to state 20
 ## Reductions:
--- On WHILE reduce production OSC ->
--- On RETURN reduce production OSC ->
--- On REPEAT reduce production OSC ->
--- On LPAR reduce production OSC ->
--- On LOCAL reduce production OSC ->
--- On IF reduce production OSC ->
--- On IDENT reduce production OSC ->
--- On GOTO reduce production OSC ->
--- On FUNCTION reduce production OSC ->
--- On FOR reduce production OSC ->
--- On END reduce production OSC ->
--- On DO reduce production OSC ->
--- On DCOLON reduce production OSC ->
--- On BREAK reduce production OSC ->
+-- On WHILE RETURN REPEAT LPAR LOCAL IF IDENT GOTO FUNCTION FOR END DO DCOLON BREAK
+--   reduce production OSC ->
 
 State 182:
 ## Known stack suffix:
@@ -4384,20 +3444,8 @@ stat -> FOR ident ASSIGN exp COMMA exp COMMA exp DO . block END [ WHILE UNTIL SE
 -- On block shift to state 187
 -- On OSC shift to state 20
 ## Reductions:
--- On WHILE reduce production OSC ->
--- On RETURN reduce production OSC ->
--- On REPEAT reduce production OSC ->
--- On LPAR reduce production OSC ->
--- On LOCAL reduce production OSC ->
--- On IF reduce production OSC ->
--- On IDENT reduce production OSC ->
--- On GOTO reduce production OSC ->
--- On FUNCTION reduce production OSC ->
--- On FOR reduce production OSC ->
--- On END reduce production OSC ->
--- On DO reduce production OSC ->
--- On DCOLON reduce production OSC ->
--- On BREAK reduce production OSC ->
+-- On WHILE RETURN REPEAT LPAR LOCAL IF IDENT GOTO FUNCTION FOR END DO DCOLON BREAK
+--   reduce production OSC ->
 
 State 187:
 ## Known stack suffix:
@@ -4429,20 +3477,8 @@ stat -> DO . block END [ WHILE UNTIL SEMI RETURN REPEAT LPAR LOCAL IF IDENT GOTO
 -- On block shift to state 190
 -- On OSC shift to state 20
 ## Reductions:
--- On WHILE reduce production OSC ->
--- On RETURN reduce production OSC ->
--- On REPEAT reduce production OSC ->
--- On LPAR reduce production OSC ->
--- On LOCAL reduce production OSC ->
--- On IF reduce production OSC ->
--- On IDENT reduce production OSC ->
--- On GOTO reduce production OSC ->
--- On FUNCTION reduce production OSC ->
--- On FOR reduce production OSC ->
--- On END reduce production OSC ->
--- On DO reduce production OSC ->
--- On DCOLON reduce production OSC ->
--- On BREAK reduce production OSC ->
+-- On WHILE RETURN REPEAT LPAR LOCAL IF IDENT GOTO FUNCTION FOR END DO DCOLON BREAK
+--   reduce production OSC ->
 
 State 190:
 ## Known stack suffix:
@@ -4543,8 +3579,8 @@ varlist -> varlist COMMA var . [ COMMA ASSIGN ]
 -- On key shift to state 98
 -- On args shift to state 99
 ## Reductions:
--- On COMMA reduce production varlist -> varlist COMMA var
--- On ASSIGN reduce production varlist -> varlist COMMA var
+-- On COMMA ASSIGN
+--   reduce production varlist -> varlist COMMA var
 
 State 199:
 ## Known stack suffix:
@@ -4621,25 +3657,8 @@ stat -> varlist ASSIGN explist . [ WHILE UNTIL SEMI RETURN REPEAT LPAR LOCAL IF 
 ## Transitions:
 -- On COMMA shift to state 92
 ## Reductions:
--- On WHILE reduce production stat -> varlist ASSIGN explist
--- On UNTIL reduce production stat -> varlist ASSIGN explist
--- On SEMI reduce production stat -> varlist ASSIGN explist
--- On RETURN reduce production stat -> varlist ASSIGN explist
--- On REPEAT reduce production stat -> varlist ASSIGN explist
--- On LPAR reduce production stat -> varlist ASSIGN explist
--- On LOCAL reduce production stat -> varlist ASSIGN explist
--- On IF reduce production stat -> varlist ASSIGN explist
--- On IDENT reduce production stat -> varlist ASSIGN explist
--- On GOTO reduce production stat -> varlist ASSIGN explist
--- On FUNCTION reduce production stat -> varlist ASSIGN explist
--- On FOR reduce production stat -> varlist ASSIGN explist
--- On EOF reduce production stat -> varlist ASSIGN explist
--- On END reduce production stat -> varlist ASSIGN explist
--- On ELSEIF reduce production stat -> varlist ASSIGN explist
--- On ELSE reduce production stat -> varlist ASSIGN explist
--- On DO reduce production stat -> varlist ASSIGN explist
--- On DCOLON reduce production stat -> varlist ASSIGN explist
--- On BREAK reduce production stat -> varlist ASSIGN explist
+-- On WHILE UNTIL SEMI RETURN REPEAT LPAR LOCAL IF IDENT GOTO FUNCTION FOR EOF END ELSEIF ELSE DO DCOLON BREAK
+--   reduce production stat -> varlist ASSIGN explist
 
 State 203:
 ## Known stack suffix:
@@ -4660,8 +3679,8 @@ varlist -> var . [ COMMA ASSIGN ]
 -- On key shift to state 98
 -- On args shift to state 99
 ## Reductions:
--- On COMMA reduce production varlist -> var
--- On ASSIGN reduce production varlist -> var
+-- On COMMA ASSIGN
+--   reduce production varlist -> var
 
 State 204:
 ## Known stack suffix:
@@ -4672,24 +3691,8 @@ statlist -> statlist stat . OSC [ WHILE UNTIL RETURN REPEAT LPAR LOCAL IF IDENT 
 -- On SEMI shift to state 1
 -- On OSC shift to state 205
 ## Reductions:
--- On WHILE reduce production OSC ->
--- On UNTIL reduce production OSC ->
--- On RETURN reduce production OSC ->
--- On REPEAT reduce production OSC ->
--- On LPAR reduce production OSC ->
--- On LOCAL reduce production OSC ->
--- On IF reduce production OSC ->
--- On IDENT reduce production OSC ->
--- On GOTO reduce production OSC ->
--- On FUNCTION reduce production OSC ->
--- On FOR reduce production OSC ->
--- On EOF reduce production OSC ->
--- On END reduce production OSC ->
--- On ELSEIF reduce production OSC ->
--- On ELSE reduce production OSC ->
--- On DO reduce production OSC ->
--- On DCOLON reduce production OSC ->
--- On BREAK reduce production OSC ->
+-- On WHILE UNTIL RETURN REPEAT LPAR LOCAL IF IDENT GOTO FUNCTION FOR EOF END ELSEIF ELSE DO DCOLON BREAK
+--   reduce production OSC ->
 
 State 205:
 ## Known stack suffix:
@@ -4709,11 +3712,8 @@ chunk -> statlist retstat . OSC [ UNTIL EOF END ELSEIF ELSE ]
 -- On SEMI shift to state 1
 -- On OSC shift to state 207
 ## Reductions:
--- On UNTIL reduce production OSC ->
--- On EOF reduce production OSC ->
--- On END reduce production OSC ->
--- On ELSEIF reduce production OSC ->
--- On ELSE reduce production OSC ->
+-- On UNTIL EOF END ELSEIF ELSE
+--   reduce production OSC ->
 
 State 207:
 ## Known stack suffix:
@@ -4752,24 +3752,8 @@ var -> functioncall . key [ STR_CONST LPAR LCB LB DOT COMMA COLON ASSIGN ]
 -- On key shift to state 88
 -- On args shift to state 89
 ## Reductions:
--- On WHILE reduce production stat -> functioncall
--- On UNTIL reduce production stat -> functioncall
--- On SEMI reduce production stat -> functioncall
--- On RETURN reduce production stat -> functioncall
--- On REPEAT reduce production stat -> functioncall
--- On LOCAL reduce production stat -> functioncall
--- On IF reduce production stat -> functioncall
--- On IDENT reduce production stat -> functioncall
--- On GOTO reduce production stat -> functioncall
--- On FUNCTION reduce production stat -> functioncall
--- On FOR reduce production stat -> functioncall
--- On EOF reduce production stat -> functioncall
--- On END reduce production stat -> functioncall
--- On ELSEIF reduce production stat -> functioncall
--- On ELSE reduce production stat -> functioncall
--- On DO reduce production stat -> functioncall
--- On DCOLON reduce production stat -> functioncall
--- On BREAK reduce production stat -> functioncall
+-- On WHILE UNTIL SEMI RETURN REPEAT LOCAL IF IDENT GOTO FUNCTION FOR EOF END ELSEIF ELSE DO DCOLON BREAK
+--   reduce production stat -> functioncall
 
 State 210:
 ## Known stack suffix:

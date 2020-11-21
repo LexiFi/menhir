@@ -34,9 +34,8 @@ field -> FIELD EOL . linecont [ FIELD EOL EOF # ]
 -- On CONT shift to state 3
 -- On linecont shift to state 6
 ## Reductions:
--- On FIELD reduce production field -> FIELD EOL
--- On EOL reduce production field -> FIELD EOL
--- On EOF reduce production field -> FIELD EOL
+-- On FIELD EOL EOF
+--   reduce production field -> FIELD EOL
 
 State 3:
 ## Known stack suffix:
@@ -58,9 +57,8 @@ linecont -> CONT EOL . linecont [ FIELD EOL EOF # ]
 -- On CONT shift to state 3
 -- On linecont shift to state 5
 ## Reductions:
--- On FIELD reduce production linecont -> CONT EOL
--- On EOL reduce production linecont -> CONT EOL
--- On EOF reduce production linecont -> CONT EOL
+-- On FIELD EOL EOF
+--   reduce production linecont -> CONT EOL
 
 State 5:
 ## Known stack suffix:
@@ -90,8 +88,8 @@ eols -> EOL . eols [ FIELD EOF # ]
 -- On EOL shift to state 7
 -- On eols shift to state 8
 ## Reductions:
--- On FIELD reduce production eols -> EOL
--- On EOF reduce production eols -> EOL
+-- On FIELD EOF
+--   reduce production eols -> EOL
 
 State 8:
 ## Known stack suffix:
@@ -174,8 +172,8 @@ fields -> field . fields [ EOL EOF ]
 -- On fields shift to state 16
 -- On field shift to state 15
 ## Reductions:
--- On EOL reduce production fields -> field
--- On EOF reduce production fields -> field
+-- On EOL EOF
+--   reduce production fields -> field
 
 State 16:
 ## Known stack suffix:

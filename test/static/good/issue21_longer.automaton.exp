@@ -20,10 +20,10 @@ infix_term -> NUMERAL . [ INFIXOP0 ]
 infix_term_ -> NUMERAL . [ IN EOF AND ]
 ## Transitions:
 ## Reductions:
--- On INFIXOP0 reduce production infix_term -> NUMERAL
--- On IN reduce production infix_term_ -> NUMERAL
--- On EOF reduce production infix_term_ -> NUMERAL
--- On AND reduce production infix_term_ -> NUMERAL
+-- On INFIXOP0
+--   reduce production infix_term -> NUMERAL
+-- On IN EOF AND
+--   reduce production infix_term_ -> NUMERAL
 
 State 2:
 ## Known stack suffix:
@@ -107,9 +107,8 @@ State 9:
 infix_term -> NUMERAL . [ IN EOF AND ]
 ## Transitions:
 ## Reductions:
--- On IN reduce production infix_term -> NUMERAL
--- On EOF reduce production infix_term -> NUMERAL
--- On AND reduce production infix_term -> NUMERAL
+-- On IN EOF AND
+--   reduce production infix_term -> NUMERAL
 
 State 10:
 ## Known stack suffix:
@@ -140,9 +139,8 @@ State 12:
 term -> LET NAME EQUAL infix_term IN term . [ IN EOF AND ]
 ## Transitions:
 ## Reductions:
--- On IN reduce production term -> LET NAME EQUAL infix_term IN term
--- On EOF reduce production term -> LET NAME EQUAL infix_term IN term
--- On AND reduce production term -> LET NAME EQUAL infix_term IN term
+-- On IN EOF AND
+--   reduce production term -> LET NAME EQUAL infix_term IN term
 
 State 13:
 ## Known stack suffix:
@@ -151,9 +149,8 @@ State 13:
 term -> infix_term_ . [ IN EOF AND ]
 ## Transitions:
 ## Reductions:
--- On IN reduce production term -> infix_term_
--- On EOF reduce production term -> infix_term_
--- On AND reduce production term -> infix_term_
+-- On IN EOF AND
+--   reduce production term -> infix_term_
 
 State 14:
 ## Known stack suffix:
@@ -181,9 +178,8 @@ State 16:
 infix_term_ -> infix_term INFIXOP0 infix_term . [ IN EOF AND ]
 ## Transitions:
 ## Reductions:
--- On IN reduce production infix_term_ -> infix_term INFIXOP0 infix_term
--- On EOF reduce production infix_term_ -> infix_term INFIXOP0 infix_term
--- On AND reduce production infix_term_ -> infix_term INFIXOP0 infix_term
+-- On IN EOF AND
+--   reduce production infix_term_ -> infix_term INFIXOP0 infix_term
 
 State 17:
 ## Known stack suffix:
@@ -192,8 +188,8 @@ State 17:
 recursive_clause -> NAME EQUAL term . [ IN AND ]
 ## Transitions:
 ## Reductions:
--- On IN reduce production recursive_clause -> NAME EQUAL term
--- On AND reduce production recursive_clause -> NAME EQUAL term
+-- On IN AND
+--   reduce production recursive_clause -> NAME EQUAL term
 
 State 18:
 ## Known stack suffix:
@@ -224,9 +220,8 @@ State 20:
 term -> LET REC separated_nonempty_list(AND,recursive_clause) IN term . [ IN EOF AND ]
 ## Transitions:
 ## Reductions:
--- On IN reduce production term -> LET REC separated_nonempty_list(AND,recursive_clause) IN term
--- On EOF reduce production term -> LET REC separated_nonempty_list(AND,recursive_clause) IN term
--- On AND reduce production term -> LET REC separated_nonempty_list(AND,recursive_clause) IN term
+-- On IN EOF AND
+--   reduce production term -> LET REC separated_nonempty_list(AND,recursive_clause) IN term
 
 State 21:
 ## Known stack suffix:
@@ -237,7 +232,8 @@ separated_nonempty_list(AND,recursive_clause) -> recursive_clause . AND separate
 ## Transitions:
 -- On AND shift to state 22
 ## Reductions:
--- On IN reduce production separated_nonempty_list(AND,recursive_clause) -> recursive_clause
+-- On IN
+--   reduce production separated_nonempty_list(AND,recursive_clause) -> recursive_clause
 
 State 22:
 ## Known stack suffix:
@@ -257,7 +253,8 @@ State 23:
 separated_nonempty_list(AND,recursive_clause) -> recursive_clause AND separated_nonempty_list(AND,recursive_clause) . [ IN ]
 ## Transitions:
 ## Reductions:
--- On IN reduce production separated_nonempty_list(AND,recursive_clause) -> recursive_clause AND separated_nonempty_list(AND,recursive_clause)
+-- On IN
+--   reduce production separated_nonempty_list(AND,recursive_clause) -> recursive_clause AND separated_nonempty_list(AND,recursive_clause)
 
 State 24:
 ## Known stack suffix:
@@ -291,9 +288,10 @@ infix_term -> NUMERAL . [ INFIXOP0 IN ]
 infix_term_ -> NUMERAL . [ EOF ]
 ## Transitions:
 ## Reductions:
--- On INFIXOP0 reduce production infix_term -> NUMERAL
--- On IN reduce production infix_term -> NUMERAL
--- On EOF reduce production infix_term_ -> NUMERAL
+-- On INFIXOP0 IN
+--   reduce production infix_term -> NUMERAL
+-- On EOF
+--   reduce production infix_term_ -> NUMERAL
 
 State 27:
 ## Known stack suffix:
@@ -311,7 +309,8 @@ State 28:
 commandline -> LET NAME EQUAL term EOF . [ # ]
 ## Transitions:
 ## Reductions:
--- On # reduce production commandline -> LET NAME EQUAL term EOF
+-- On #
+--   reduce production commandline -> LET NAME EQUAL term EOF
 
 State 29:
 ## Known stack suffix:
@@ -340,7 +339,8 @@ State 31:
 commandline -> term EOF . [ # ]
 ## Transitions:
 ## Reductions:
--- On # reduce production commandline -> term EOF
+-- On #
+--   reduce production commandline -> term EOF
 
 State 32:
 ## Known stack suffix:
@@ -349,5 +349,6 @@ State 32:
 commandline' -> commandline . [ # ]
 ## Transitions:
 ## Reductions:
--- On # accept commandline
+-- On #
+--   accept commandline
 

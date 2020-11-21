@@ -70,7 +70,8 @@ kind -> STAR . ARROW kind [ EQUAL ]
 ## Transitions:
 -- On ARROW shift to state 7
 ## Reductions:
--- On EQUAL reduce production kind -> STAR
+-- On EQUAL
+--   reduce production kind -> STAR
 
 State 7:
 ## Known stack suffix:
@@ -130,11 +131,8 @@ algebraic_datatype_definition -> UID COLON . scheme [ TYPE LET IN EOF BAR AND ]
 -- On scheme shift to state 19
 -- On forall shift to state 20
 ## Reductions:
--- On REF reduce production forall ->
--- On LPAREN reduce production forall ->
--- On LID reduce production forall ->
--- On LBRACE reduce production forall ->
--- On BACKSLASH reduce production forall ->
+-- On REF LPAREN LID LBRACE BACKSLASH
+--   reduce production forall ->
 
 State 13:
 ## Known stack suffix:
@@ -185,8 +183,8 @@ quantifiers -> quantifier . quantifiers [ RBRACKET DOT ]
 -- On quantifiers shift to state 18
 -- On quantifier shift to state 17
 ## Reductions:
--- On RBRACKET reduce production quantifiers -> quantifier
--- On DOT reduce production quantifiers -> quantifier
+-- On RBRACKET DOT
+--   reduce production quantifiers -> quantifier
 
 State 18:
 ## Known stack suffix:
@@ -305,12 +303,8 @@ type00 -> LID . [ STAR RBRACE LPAREN LID LBRACE ARROW ]
 ## Transitions:
 -- On COLON shift to state 26
 ## Reductions:
--- On STAR reduce production type00 -> LID
--- On RBRACE reduce production type00 -> LID
--- On LPAREN reduce production type00 -> LID
--- On LID reduce production type00 -> LID
--- On LBRACE reduce production type00 -> LID
--- On ARROW reduce production type00 -> LID
+-- On STAR RBRACE LPAREN LID LBRACE ARROW
+--   reduce production type00 -> LID
 
 State 26:
 ## Known stack suffix:
@@ -370,23 +364,8 @@ type00s -> type00 . type00s [ TYPE STAR SEMI RPAREN RBRACE LET IN EQUAL EOF DOT 
 -- On type00s shift to state 30
 -- On type00 shift to state 29
 ## Reductions:
--- On TYPE reduce production type00s -> type00
--- On STAR reduce production type00s -> type00
--- On SEMI reduce production type00s -> type00
--- On RPAREN reduce production type00s -> type00
--- On RBRACE reduce production type00s -> type00
--- On LET reduce production type00s -> type00
--- On IN reduce production type00s -> type00
--- On EQUAL reduce production type00s -> type00
--- On EOF reduce production type00s -> type00
--- On DOT reduce production type00s -> type00
--- On DARROW reduce production type00s -> type00
--- On COMMA reduce production type00s -> type00
--- On COLON reduce production type00s -> type00
--- On COERCE reduce production type00s -> type00
--- On BAR reduce production type00s -> type00
--- On ARROW reduce production type00s -> type00
--- On AND reduce production type00s -> type00
+-- On TYPE STAR SEMI RPAREN RBRACE LET IN EQUAL EOF DOT DARROW COMMA COLON COERCE BAR ARROW AND
+--   reduce production type00s -> type00
 
 State 30:
 ## Known stack suffix:
@@ -424,21 +403,8 @@ type2 -> type10 . [ TYPE SEMI RPAREN RBRACE LET IN EQUAL EOF DOT DARROW COMMA CO
 ## Transitions:
 -- On ARROW shift to state 34
 ## Reductions:
--- On TYPE reduce production type2 -> type10
--- On SEMI reduce production type2 -> type10
--- On RPAREN reduce production type2 -> type10
--- On RBRACE reduce production type2 -> type10
--- On LET reduce production type2 -> type10
--- On IN reduce production type2 -> type10
--- On EQUAL reduce production type2 -> type10
--- On EOF reduce production type2 -> type10
--- On DOT reduce production type2 -> type10
--- On DARROW reduce production type2 -> type10
--- On COMMA reduce production type2 -> type10
--- On COLON reduce production type2 -> type10
--- On COERCE reduce production type2 -> type10
--- On BAR reduce production type2 -> type10
--- On AND reduce production type2 -> type10
+-- On TYPE SEMI RPAREN RBRACE LET IN EQUAL EOF DOT DARROW COMMA COLON COERCE BAR AND
+--   reduce production type2 -> type10
 
 State 34:
 ## Known stack suffix:
@@ -478,22 +444,8 @@ star_types -> type1 . [ TYPE SEMI RPAREN RBRACE LET IN EQUAL EOF DOT DARROW COMM
 ## Transitions:
 -- On STAR shift to state 37
 ## Reductions:
--- On TYPE reduce production star_types -> type1
--- On SEMI reduce production star_types -> type1
--- On RPAREN reduce production star_types -> type1
--- On RBRACE reduce production star_types -> type1
--- On LET reduce production star_types -> type1
--- On IN reduce production star_types -> type1
--- On EQUAL reduce production star_types -> type1
--- On EOF reduce production star_types -> type1
--- On DOT reduce production star_types -> type1
--- On DARROW reduce production star_types -> type1
--- On COMMA reduce production star_types -> type1
--- On COLON reduce production star_types -> type1
--- On COERCE reduce production star_types -> type1
--- On BAR reduce production star_types -> type1
--- On ARROW reduce production star_types -> type1
--- On AND reduce production star_types -> type1
+-- On TYPE SEMI RPAREN RBRACE LET IN EQUAL EOF DOT DARROW COMMA COLON COERCE BAR ARROW AND
+--   reduce production star_types -> type1
 
 State 37:
 ## Known stack suffix:
@@ -686,7 +638,8 @@ types -> typ . COMMA types [ RPAREN ]
 ## Transitions:
 -- On COMMA shift to state 54
 ## Reductions:
--- On RPAREN reduce production types -> typ
+-- On RPAREN
+--   reduce production types -> typ
 
 State 54:
 ## Known stack suffix:
@@ -755,11 +708,8 @@ algebraic_datatype_definitions -> algebraic_datatype_definition . BAR algebraic_
 ## Transitions:
 -- On BAR shift to state 60
 ## Reductions:
--- On TYPE reduce production algebraic_datatype_definitions -> algebraic_datatype_definition
--- On LET reduce production algebraic_datatype_definitions -> algebraic_datatype_definition
--- On IN reduce production algebraic_datatype_definitions -> algebraic_datatype_definition
--- On EOF reduce production algebraic_datatype_definitions -> algebraic_datatype_definition
--- On AND reduce production algebraic_datatype_definitions -> algebraic_datatype_definition
+-- On TYPE LET IN EOF AND
+--   reduce production algebraic_datatype_definitions -> algebraic_datatype_definition
 
 State 60:
 ## Known stack suffix:
@@ -790,10 +740,8 @@ type_definitions -> type_definitions . AND type_definition [ TYPE LET IN EOF AND
 ## Transitions:
 -- On AND shift to state 63
 ## Reductions:
--- On TYPE reduce production binding -> TYPE type_definitions
--- On LET reduce production binding -> TYPE type_definitions
--- On IN reduce production binding -> TYPE type_definitions
--- On EOF reduce production binding -> TYPE type_definitions
+-- On TYPE LET IN EOF
+--   reduce production binding -> TYPE type_definitions
 
 State 63:
 ## Known stack suffix:
@@ -836,12 +784,8 @@ binding -> LET . REC value_definitions [ TYPE LET IN EOF ]
 -- On value_definition shift to state 292
 -- On forall shift to state 71
 ## Reductions:
--- On WILD reduce production forall ->
--- On UID reduce production forall ->
--- On LPAREN reduce production forall ->
--- On LID reduce production forall ->
--- On INTEGER reduce production forall ->
--- On CHAR reduce production forall ->
+-- On WILD UID LPAREN LID INTEGER CHAR
+--   reduce production forall ->
 
 State 67:
 ## Known stack suffix:
@@ -854,12 +798,8 @@ binding -> LET REC . value_definitions [ TYPE LET IN EOF ]
 -- On value_definition shift to state 292
 -- On forall shift to state 71
 ## Reductions:
--- On WILD reduce production forall ->
--- On UID reduce production forall ->
--- On LPAREN reduce production forall ->
--- On LID reduce production forall ->
--- On INTEGER reduce production forall ->
--- On CHAR reduce production forall ->
+-- On WILD UID LPAREN LID INTEGER CHAR
+--   reduce production forall ->
 
 State 68:
 ## Known stack suffix:
@@ -870,10 +810,8 @@ value_definitions -> value_definitions . AND value_definition [ TYPE LET IN EOF 
 ## Transitions:
 -- On AND shift to state 69
 ## Reductions:
--- On TYPE reduce production binding -> LET REC value_definitions
--- On LET reduce production binding -> LET REC value_definitions
--- On IN reduce production binding -> LET REC value_definitions
--- On EOF reduce production binding -> LET REC value_definitions
+-- On TYPE LET IN EOF
+--   reduce production binding -> LET REC value_definitions
 
 State 69:
 ## Known stack suffix:
@@ -885,12 +823,8 @@ value_definitions -> value_definitions AND . value_definition [ TYPE LET IN EOF 
 -- On value_definition shift to state 70
 -- On forall shift to state 71
 ## Reductions:
--- On WILD reduce production forall ->
--- On UID reduce production forall ->
--- On LPAREN reduce production forall ->
--- On LID reduce production forall ->
--- On INTEGER reduce production forall ->
--- On CHAR reduce production forall ->
+-- On WILD UID LPAREN LID INTEGER CHAR
+--   reduce production forall ->
 
 State 70:
 ## Known stack suffix:
@@ -935,20 +869,8 @@ pattern0 -> UID . localvars [ WILD UID RPAREN LPAREN LID INTEGER EQUAL DOT DARRO
 -- On LBRACKET shift to state 74
 -- On localvars shift to state 77
 ## Reductions:
--- On WILD reduce production pattern0 -> UID
--- On UID reduce production pattern0 -> UID
--- On RPAREN reduce production pattern0 -> UID
--- On LPAREN reduce production pattern0 -> UID
--- On LID reduce production pattern0 -> UID
--- On INTEGER reduce production pattern0 -> UID
--- On EQUAL reduce production pattern0 -> UID
--- On DOT reduce production pattern0 -> UID
--- On DARROW reduce production pattern0 -> UID
--- On COMMA reduce production pattern0 -> UID
--- On COLON reduce production pattern0 -> UID
--- On CHAR reduce production pattern0 -> UID
--- On BAR reduce production pattern0 -> UID
--- On ANDC reduce production pattern0 -> UID
+-- On WILD UID RPAREN LPAREN LID INTEGER EQUAL DOT DARROW COMMA COLON CHAR BAR ANDC
+--   reduce production pattern0 -> UID
 
 State 74:
 ## Known stack suffix:
@@ -1031,13 +953,8 @@ pattern10 -> UID . localvars pattern1s [ RPAREN DOT DARROW COMMA COLON BAR ANDC 
 -- On pattern0 shift to state 84
 -- On localvars shift to state 86
 ## Reductions:
--- On RPAREN reduce production pattern0 -> UID
--- On DOT reduce production pattern0 -> UID
--- On DARROW reduce production pattern0 -> UID
--- On COMMA reduce production pattern0 -> UID
--- On COLON reduce production pattern0 -> UID
--- On BAR reduce production pattern0 -> UID
--- On ANDC reduce production pattern0 -> UID
+-- On RPAREN DOT DARROW COMMA COLON BAR ANDC
+--   reduce production pattern0 -> UID
 
 State 80:
 ## Known stack suffix:
@@ -1091,13 +1008,8 @@ pattern1s -> pattern0 . pattern1s [ RPAREN DOT DARROW COMMA COLON BAR ANDC ]
 -- On pattern1s shift to state 85
 -- On pattern0 shift to state 84
 ## Reductions:
--- On RPAREN reduce production pattern1s -> pattern0
--- On DOT reduce production pattern1s -> pattern0
--- On DARROW reduce production pattern1s -> pattern0
--- On COMMA reduce production pattern1s -> pattern0
--- On COLON reduce production pattern1s -> pattern0
--- On BAR reduce production pattern1s -> pattern0
--- On ANDC reduce production pattern1s -> pattern0
+-- On RPAREN DOT DARROW COMMA COLON BAR ANDC
+--   reduce production pattern1s -> pattern0
 
 State 85:
 ## Known stack suffix:
@@ -1124,13 +1036,8 @@ pattern10 -> UID localvars . pattern1s [ RPAREN DOT DARROW COMMA COLON BAR ANDC 
 -- On pattern1s shift to state 87
 -- On pattern0 shift to state 84
 ## Reductions:
--- On RPAREN reduce production pattern0 -> UID localvars
--- On DOT reduce production pattern0 -> UID localvars
--- On DARROW reduce production pattern0 -> UID localvars
--- On COMMA reduce production pattern0 -> UID localvars
--- On COLON reduce production pattern0 -> UID localvars
--- On BAR reduce production pattern0 -> UID localvars
--- On ANDC reduce production pattern0 -> UID localvars
+-- On RPAREN DOT DARROW COMMA COLON BAR ANDC
+--   reduce production pattern0 -> UID localvars
 
 State 87:
 ## Known stack suffix:
@@ -1159,13 +1066,8 @@ pattern2 -> LID . AS pattern2 [ RPAREN DOT DARROW COMMA COLON ]
 ## Transitions:
 -- On AS shift to state 90
 ## Reductions:
--- On RPAREN reduce production pattern0 -> LID
--- On DOT reduce production pattern0 -> LID
--- On DARROW reduce production pattern0 -> LID
--- On COMMA reduce production pattern0 -> LID
--- On COLON reduce production pattern0 -> LID
--- On BAR reduce production pattern0 -> LID
--- On ANDC reduce production pattern0 -> LID
+-- On RPAREN DOT DARROW COMMA COLON BAR ANDC
+--   reduce production pattern0 -> LID
 
 State 90:
 ## Known stack suffix:
@@ -1205,11 +1107,8 @@ pattern1 -> pattern10 . ANDC pattern1 [ RPAREN DOT DARROW COMMA COLON ]
 -- On BAR shift to state 93
 -- On ANDC shift to state 96
 ## Reductions:
--- On RPAREN reduce production pattern1 -> pattern10
--- On DOT reduce production pattern1 -> pattern10
--- On DARROW reduce production pattern1 -> pattern10
--- On COMMA reduce production pattern1 -> pattern10
--- On COLON reduce production pattern1 -> pattern10
+-- On RPAREN DOT DARROW COMMA COLON
+--   reduce production pattern1 -> pattern10
 
 State 93:
 ## Known stack suffix:
@@ -1290,10 +1189,8 @@ pattern3 -> pattern3 . COLON typ [ RPAREN DOT DARROW COMMA COLON ]
 ## Transitions:
 -- On COLON shift to state 100
 ## Reductions:
--- On RPAREN reduce production pattern -> pattern3
--- On DOT reduce production pattern -> pattern3
--- On DARROW reduce production pattern -> pattern3
--- On COMMA reduce production pattern -> pattern3
+-- On RPAREN DOT DARROW COMMA
+--   reduce production pattern -> pattern3
 
 State 100:
 ## Known stack suffix:
@@ -1402,7 +1299,8 @@ patterns -> pattern . COMMA patterns [ RPAREN ]
 ## Transitions:
 -- On COMMA shift to state 109
 ## Reductions:
--- On RPAREN reduce production patterns -> pattern
+-- On RPAREN
+--   reduce production patterns -> pattern
 
 State 109:
 ## Known stack suffix:
@@ -1727,7 +1625,8 @@ expression0 -> LBRACE . record_bindings RBRACE [ WITH UID TYPE SEMI RPAREN RBRAC
 -- On record_bindings shift to state 180
 -- On record_binding shift to state 182
 ## Reductions:
--- On RBRACE reduce production record_bindings ->
+-- On RBRACE
+--   reduce production record_bindings ->
 
 State 126:
 ## Known stack suffix:
@@ -1999,32 +1898,8 @@ expression50 -> expression50 . DOT LID [ WITH UID TYPE SEMI RPAREN RBRACE LPAREN
 ## Transitions:
 -- On DOT shift to state 143
 ## Reductions:
--- On WITH reduce production expression100 -> expression50
--- On UID reduce production expression100 -> expression50
--- On TYPE reduce production expression100 -> expression50
--- On SEMI reduce production expression100 -> expression50
--- On RPAREN reduce production expression100 -> expression50
--- On RBRACE reduce production expression100 -> expression50
--- On LPAREN reduce production expression100 -> expression50
--- On LONGID reduce production expression100 -> expression50
--- On LID reduce production expression100 -> expression50
--- On LET reduce production expression100 -> expression50
--- On LBRACE reduce production expression100 -> expression50
--- On INTEGER reduce production expression100 -> expression50
--- On INFIXOP4 reduce production expression100 -> expression50
--- On INFIXOP3 reduce production expression100 -> expression50
--- On INFIXOP2 reduce production expression100 -> expression50
--- On INFIXOP1 reduce production expression100 -> expression50
--- On INFIXOP0 reduce production expression100 -> expression50
--- On IN reduce production expression100 -> expression50
--- On EQUAL reduce production expression100 -> expression50
--- On EOF reduce production expression100 -> expression50
--- On END reduce production expression100 -> expression50
--- On COMMA reduce production expression100 -> expression50
--- On CHAR reduce production expression100 -> expression50
--- On BAR reduce production expression100 -> expression50
--- On ASSERT_FALSE reduce production expression100 -> expression50
--- On AND reduce production expression100 -> expression50
+-- On WITH UID TYPE SEMI RPAREN RBRACE LPAREN LONGID LID LET LBRACE INTEGER INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF END COMMA CHAR BAR ASSERT_FALSE AND
+--   reduce production expression100 -> expression50
 
 State 143:
 ## Known stack suffix:
@@ -2045,33 +1920,8 @@ expression50 -> expression50 DOT LID . [ WITH UID TYPE SEMI RPAREN RBRACE LPAREN
 ## Transitions:
 -- On LEFTARROW shift to state 145
 ## Reductions:
--- On WITH reduce production expression50 -> expression50 DOT LID
--- On UID reduce production expression50 -> expression50 DOT LID
--- On TYPE reduce production expression50 -> expression50 DOT LID
--- On SEMI reduce production expression50 -> expression50 DOT LID
--- On RPAREN reduce production expression50 -> expression50 DOT LID
--- On RBRACE reduce production expression50 -> expression50 DOT LID
--- On LPAREN reduce production expression50 -> expression50 DOT LID
--- On LONGID reduce production expression50 -> expression50 DOT LID
--- On LID reduce production expression50 -> expression50 DOT LID
--- On LET reduce production expression50 -> expression50 DOT LID
--- On LBRACE reduce production expression50 -> expression50 DOT LID
--- On INTEGER reduce production expression50 -> expression50 DOT LID
--- On INFIXOP4 reduce production expression50 -> expression50 DOT LID
--- On INFIXOP3 reduce production expression50 -> expression50 DOT LID
--- On INFIXOP2 reduce production expression50 -> expression50 DOT LID
--- On INFIXOP1 reduce production expression50 -> expression50 DOT LID
--- On INFIXOP0 reduce production expression50 -> expression50 DOT LID
--- On IN reduce production expression50 -> expression50 DOT LID
--- On EQUAL reduce production expression50 -> expression50 DOT LID
--- On EOF reduce production expression50 -> expression50 DOT LID
--- On END reduce production expression50 -> expression50 DOT LID
--- On DOT reduce production expression50 -> expression50 DOT LID
--- On COMMA reduce production expression50 -> expression50 DOT LID
--- On CHAR reduce production expression50 -> expression50 DOT LID
--- On BAR reduce production expression50 -> expression50 DOT LID
--- On ASSERT_FALSE reduce production expression50 -> expression50 DOT LID
--- On AND reduce production expression50 -> expression50 DOT LID
+-- On WITH UID TYPE SEMI RPAREN RBRACE LPAREN LONGID LID LET LBRACE INTEGER INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF END DOT COMMA CHAR BAR ASSERT_FALSE AND
+--   reduce production expression50 -> expression50 DOT LID
 
 State 145:
 ## Known stack suffix:
@@ -2104,32 +1954,8 @@ expression50 -> expression50 . DOT LID [ WITH UID TYPE SEMI RPAREN RBRACE LPAREN
 ## Transitions:
 -- On DOT shift to state 147
 ## Reductions:
--- On WITH reduce production expression100 -> expression50
--- On UID reduce production expression100 -> expression50
--- On TYPE reduce production expression100 -> expression50
--- On SEMI reduce production expression100 -> expression50
--- On RPAREN reduce production expression100 -> expression50
--- On RBRACE reduce production expression100 -> expression50
--- On LPAREN reduce production expression100 -> expression50
--- On LONGID reduce production expression100 -> expression50
--- On LID reduce production expression100 -> expression50
--- On LET reduce production expression100 -> expression50
--- On LBRACE reduce production expression100 -> expression50
--- On INTEGER reduce production expression100 -> expression50
--- On INFIXOP4 reduce production expression100 -> expression50
--- On INFIXOP3 reduce production expression100 -> expression50
--- On INFIXOP2 reduce production expression100 -> expression50
--- On INFIXOP1 reduce production expression100 -> expression50
--- On INFIXOP0 reduce production expression100 -> expression50
--- On IN reduce production expression100 -> expression50
--- On EQUAL reduce production expression100 -> expression50
--- On EOF reduce production expression100 -> expression50
--- On END reduce production expression100 -> expression50
--- On COMMA reduce production expression100 -> expression50
--- On CHAR reduce production expression100 -> expression50
--- On BAR reduce production expression100 -> expression50
--- On ASSERT_FALSE reduce production expression100 -> expression50
--- On AND reduce production expression100 -> expression50
+-- On WITH UID TYPE SEMI RPAREN RBRACE LPAREN LONGID LID LET LBRACE INTEGER INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF END COMMA CHAR BAR ASSERT_FALSE AND
+--   reduce production expression100 -> expression50
 
 State 147:
 ## Known stack suffix:
@@ -2166,18 +1992,8 @@ expression300 -> expression50 DOT LID LEFTARROW expression100 . [ WITH TYPE SEMI
 -- On ASSERT_FALSE shift to state 137
 -- On expression0 shift to state 150
 ## Reductions:
--- On WITH reduce production expression300 -> expression50 DOT LID LEFTARROW expression100
--- On TYPE reduce production expression300 -> expression50 DOT LID LEFTARROW expression100
--- On SEMI reduce production expression300 -> expression50 DOT LID LEFTARROW expression100
--- On RPAREN reduce production expression300 -> expression50 DOT LID LEFTARROW expression100
--- On RBRACE reduce production expression300 -> expression50 DOT LID LEFTARROW expression100
--- On LET reduce production expression300 -> expression50 DOT LID LEFTARROW expression100
--- On IN reduce production expression300 -> expression50 DOT LID LEFTARROW expression100
--- On EOF reduce production expression300 -> expression50 DOT LID LEFTARROW expression100
--- On END reduce production expression300 -> expression50 DOT LID LEFTARROW expression100
--- On COMMA reduce production expression300 -> expression50 DOT LID LEFTARROW expression100
--- On BAR reduce production expression300 -> expression50 DOT LID LEFTARROW expression100
--- On AND reduce production expression300 -> expression50 DOT LID LEFTARROW expression100
+-- On WITH TYPE SEMI RPAREN RBRACE LET IN EOF END COMMA BAR AND
+--   reduce production expression300 -> expression50 DOT LID LEFTARROW expression100
 
 State 150:
 ## Known stack suffix:
@@ -2206,33 +2022,8 @@ expression10 -> expression0 . ASSIGN expression0 [ WITH UID TYPE SEMI RPAREN RBR
 ## Transitions:
 -- On ASSIGN shift to state 153
 ## Reductions:
--- On WITH reduce production expression10 -> expression0
--- On UID reduce production expression10 -> expression0
--- On TYPE reduce production expression10 -> expression0
--- On SEMI reduce production expression10 -> expression0
--- On RPAREN reduce production expression10 -> expression0
--- On RBRACE reduce production expression10 -> expression0
--- On LPAREN reduce production expression10 -> expression0
--- On LONGID reduce production expression10 -> expression0
--- On LID reduce production expression10 -> expression0
--- On LET reduce production expression10 -> expression0
--- On LBRACE reduce production expression10 -> expression0
--- On INTEGER reduce production expression10 -> expression0
--- On INFIXOP4 reduce production expression10 -> expression0
--- On INFIXOP3 reduce production expression10 -> expression0
--- On INFIXOP2 reduce production expression10 -> expression0
--- On INFIXOP1 reduce production expression10 -> expression0
--- On INFIXOP0 reduce production expression10 -> expression0
--- On IN reduce production expression10 -> expression0
--- On EQUAL reduce production expression10 -> expression0
--- On EOF reduce production expression10 -> expression0
--- On END reduce production expression10 -> expression0
--- On DOT reduce production expression10 -> expression0
--- On COMMA reduce production expression10 -> expression0
--- On CHAR reduce production expression10 -> expression0
--- On BAR reduce production expression10 -> expression0
--- On ASSERT_FALSE reduce production expression10 -> expression0
--- On AND reduce production expression10 -> expression0
+-- On WITH UID TYPE SEMI RPAREN RBRACE LPAREN LONGID LID LET LBRACE INTEGER INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF END DOT COMMA CHAR BAR ASSERT_FALSE AND
+--   reduce production expression10 -> expression0
 
 State 153:
 ## Known stack suffix:
@@ -2278,17 +2069,8 @@ expression400 -> expression300 . [ WITH TYPE RPAREN RBRACE LET IN EOF END COMMA 
 ## Transitions:
 -- On SEMI shift to state 157
 ## Reductions:
--- On WITH reduce production expression400 -> expression300
--- On TYPE reduce production expression400 -> expression300
--- On RPAREN reduce production expression400 -> expression300
--- On RBRACE reduce production expression400 -> expression300
--- On LET reduce production expression400 -> expression300
--- On IN reduce production expression400 -> expression300
--- On EOF reduce production expression400 -> expression300
--- On END reduce production expression400 -> expression300
--- On COMMA reduce production expression400 -> expression300
--- On BAR reduce production expression400 -> expression300
--- On AND reduce production expression400 -> expression300
+-- On WITH TYPE RPAREN RBRACE LET IN EOF END COMMA BAR AND
+--   reduce production expression400 -> expression300
 
 State 157:
 ## Known stack suffix:
@@ -2350,18 +2132,8 @@ expression300 -> expression200 . [ WITH TYPE SEMI RPAREN RBRACE LET IN EOF END C
 -- On INFIXOP0 shift to state 169
 -- On EQUAL shift to state 171
 ## Reductions:
--- On WITH reduce production expression300 -> expression200
--- On TYPE reduce production expression300 -> expression200
--- On SEMI reduce production expression300 -> expression200
--- On RPAREN reduce production expression300 -> expression200
--- On RBRACE reduce production expression300 -> expression200
--- On LET reduce production expression300 -> expression200
--- On IN reduce production expression300 -> expression200
--- On EOF reduce production expression300 -> expression200
--- On END reduce production expression300 -> expression200
--- On COMMA reduce production expression300 -> expression200
--- On BAR reduce production expression300 -> expression200
--- On AND reduce production expression300 -> expression200
+-- On WITH TYPE SEMI RPAREN RBRACE LET IN EOF END COMMA BAR AND
+--   reduce production expression300 -> expression200
 
 State 160:
 ## Known stack suffix:
@@ -2400,23 +2172,8 @@ expression200 -> expression200 . EQUAL expression200 [ WITH TYPE SEMI RPAREN RBR
 ## Transitions:
 -- On INFIXOP4 shift to state 160
 ## Reductions:
--- On WITH reduce production expression200 -> expression200 INFIXOP4 expression200
--- On TYPE reduce production expression200 -> expression200 INFIXOP4 expression200
--- On SEMI reduce production expression200 -> expression200 INFIXOP4 expression200
--- On RPAREN reduce production expression200 -> expression200 INFIXOP4 expression200
--- On RBRACE reduce production expression200 -> expression200 INFIXOP4 expression200
--- On LET reduce production expression200 -> expression200 INFIXOP4 expression200
--- On INFIXOP3 reduce production expression200 -> expression200 INFIXOP4 expression200
--- On INFIXOP2 reduce production expression200 -> expression200 INFIXOP4 expression200
--- On INFIXOP1 reduce production expression200 -> expression200 INFIXOP4 expression200
--- On INFIXOP0 reduce production expression200 -> expression200 INFIXOP4 expression200
--- On IN reduce production expression200 -> expression200 INFIXOP4 expression200
--- On EQUAL reduce production expression200 -> expression200 INFIXOP4 expression200
--- On EOF reduce production expression200 -> expression200 INFIXOP4 expression200
--- On END reduce production expression200 -> expression200 INFIXOP4 expression200
--- On COMMA reduce production expression200 -> expression200 INFIXOP4 expression200
--- On BAR reduce production expression200 -> expression200 INFIXOP4 expression200
--- On AND reduce production expression200 -> expression200 INFIXOP4 expression200
+-- On WITH TYPE SEMI RPAREN RBRACE LET INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF END COMMA BAR AND
+--   reduce production expression200 -> expression200 INFIXOP4 expression200
 
 State 162:
 ## Known stack suffix:
@@ -2435,24 +2192,8 @@ expression200 -> expression100 . [ WITH TYPE SEMI RPAREN RBRACE LET INFIXOP4 INF
 -- On ASSERT_FALSE shift to state 137
 -- On expression0 shift to state 150
 ## Reductions:
--- On WITH reduce production expression200 -> expression100
--- On TYPE reduce production expression200 -> expression100
--- On SEMI reduce production expression200 -> expression100
--- On RPAREN reduce production expression200 -> expression100
--- On RBRACE reduce production expression200 -> expression100
--- On LET reduce production expression200 -> expression100
--- On INFIXOP4 reduce production expression200 -> expression100
--- On INFIXOP3 reduce production expression200 -> expression100
--- On INFIXOP2 reduce production expression200 -> expression100
--- On INFIXOP1 reduce production expression200 -> expression100
--- On INFIXOP0 reduce production expression200 -> expression100
--- On IN reduce production expression200 -> expression100
--- On EQUAL reduce production expression200 -> expression100
--- On EOF reduce production expression200 -> expression100
--- On END reduce production expression200 -> expression100
--- On COMMA reduce production expression200 -> expression100
--- On BAR reduce production expression200 -> expression100
--- On AND reduce production expression200 -> expression100
+-- On WITH TYPE SEMI RPAREN RBRACE LET INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF END COMMA BAR AND
+--   reduce production expression200 -> expression100
 
 State 163:
 ## Known stack suffix:
@@ -2491,23 +2232,8 @@ expression200 -> expression200 . EQUAL expression200 [ WITH TYPE SEMI RPAREN RBR
 ## Transitions:
 -- On INFIXOP4 shift to state 160
 ## Reductions:
--- On WITH reduce production expression200 -> expression200 INFIXOP3 expression200
--- On TYPE reduce production expression200 -> expression200 INFIXOP3 expression200
--- On SEMI reduce production expression200 -> expression200 INFIXOP3 expression200
--- On RPAREN reduce production expression200 -> expression200 INFIXOP3 expression200
--- On RBRACE reduce production expression200 -> expression200 INFIXOP3 expression200
--- On LET reduce production expression200 -> expression200 INFIXOP3 expression200
--- On INFIXOP3 reduce production expression200 -> expression200 INFIXOP3 expression200
--- On INFIXOP2 reduce production expression200 -> expression200 INFIXOP3 expression200
--- On INFIXOP1 reduce production expression200 -> expression200 INFIXOP3 expression200
--- On INFIXOP0 reduce production expression200 -> expression200 INFIXOP3 expression200
--- On IN reduce production expression200 -> expression200 INFIXOP3 expression200
--- On EQUAL reduce production expression200 -> expression200 INFIXOP3 expression200
--- On EOF reduce production expression200 -> expression200 INFIXOP3 expression200
--- On END reduce production expression200 -> expression200 INFIXOP3 expression200
--- On COMMA reduce production expression200 -> expression200 INFIXOP3 expression200
--- On BAR reduce production expression200 -> expression200 INFIXOP3 expression200
--- On AND reduce production expression200 -> expression200 INFIXOP3 expression200
+-- On WITH TYPE SEMI RPAREN RBRACE LET INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF END COMMA BAR AND
+--   reduce production expression200 -> expression200 INFIXOP3 expression200
 
 State 165:
 ## Known stack suffix:
@@ -2547,22 +2273,8 @@ expression200 -> expression200 . EQUAL expression200 [ WITH TYPE SEMI RPAREN RBR
 -- On INFIXOP4 shift to state 160
 -- On INFIXOP3 shift to state 163
 ## Reductions:
--- On WITH reduce production expression200 -> expression200 INFIXOP2 expression200
--- On TYPE reduce production expression200 -> expression200 INFIXOP2 expression200
--- On SEMI reduce production expression200 -> expression200 INFIXOP2 expression200
--- On RPAREN reduce production expression200 -> expression200 INFIXOP2 expression200
--- On RBRACE reduce production expression200 -> expression200 INFIXOP2 expression200
--- On LET reduce production expression200 -> expression200 INFIXOP2 expression200
--- On INFIXOP2 reduce production expression200 -> expression200 INFIXOP2 expression200
--- On INFIXOP1 reduce production expression200 -> expression200 INFIXOP2 expression200
--- On INFIXOP0 reduce production expression200 -> expression200 INFIXOP2 expression200
--- On IN reduce production expression200 -> expression200 INFIXOP2 expression200
--- On EQUAL reduce production expression200 -> expression200 INFIXOP2 expression200
--- On EOF reduce production expression200 -> expression200 INFIXOP2 expression200
--- On END reduce production expression200 -> expression200 INFIXOP2 expression200
--- On COMMA reduce production expression200 -> expression200 INFIXOP2 expression200
--- On BAR reduce production expression200 -> expression200 INFIXOP2 expression200
--- On AND reduce production expression200 -> expression200 INFIXOP2 expression200
+-- On WITH TYPE SEMI RPAREN RBRACE LET INFIXOP2 INFIXOP1 INFIXOP0 IN EQUAL EOF END COMMA BAR AND
+--   reduce production expression200 -> expression200 INFIXOP2 expression200
 
 State 167:
 ## Known stack suffix:
@@ -2604,20 +2316,8 @@ expression200 -> expression200 . EQUAL expression200 [ WITH TYPE SEMI RPAREN RBR
 -- On INFIXOP2 shift to state 165
 -- On INFIXOP1 shift to state 167
 ## Reductions:
--- On WITH reduce production expression200 -> expression200 INFIXOP1 expression200
--- On TYPE reduce production expression200 -> expression200 INFIXOP1 expression200
--- On SEMI reduce production expression200 -> expression200 INFIXOP1 expression200
--- On RPAREN reduce production expression200 -> expression200 INFIXOP1 expression200
--- On RBRACE reduce production expression200 -> expression200 INFIXOP1 expression200
--- On LET reduce production expression200 -> expression200 INFIXOP1 expression200
--- On INFIXOP0 reduce production expression200 -> expression200 INFIXOP1 expression200
--- On IN reduce production expression200 -> expression200 INFIXOP1 expression200
--- On EQUAL reduce production expression200 -> expression200 INFIXOP1 expression200
--- On EOF reduce production expression200 -> expression200 INFIXOP1 expression200
--- On END reduce production expression200 -> expression200 INFIXOP1 expression200
--- On COMMA reduce production expression200 -> expression200 INFIXOP1 expression200
--- On BAR reduce production expression200 -> expression200 INFIXOP1 expression200
--- On AND reduce production expression200 -> expression200 INFIXOP1 expression200
+-- On WITH TYPE SEMI RPAREN RBRACE LET INFIXOP0 IN EQUAL EOF END COMMA BAR AND
+--   reduce production expression200 -> expression200 INFIXOP1 expression200
 
 State 169:
 ## Known stack suffix:
@@ -2659,20 +2359,8 @@ expression200 -> expression200 . EQUAL expression200 [ WITH TYPE SEMI RPAREN RBR
 -- On INFIXOP2 shift to state 165
 -- On INFIXOP1 shift to state 167
 ## Reductions:
--- On WITH reduce production expression200 -> expression200 INFIXOP0 expression200
--- On TYPE reduce production expression200 -> expression200 INFIXOP0 expression200
--- On SEMI reduce production expression200 -> expression200 INFIXOP0 expression200
--- On RPAREN reduce production expression200 -> expression200 INFIXOP0 expression200
--- On RBRACE reduce production expression200 -> expression200 INFIXOP0 expression200
--- On LET reduce production expression200 -> expression200 INFIXOP0 expression200
--- On INFIXOP0 reduce production expression200 -> expression200 INFIXOP0 expression200
--- On IN reduce production expression200 -> expression200 INFIXOP0 expression200
--- On EQUAL reduce production expression200 -> expression200 INFIXOP0 expression200
--- On EOF reduce production expression200 -> expression200 INFIXOP0 expression200
--- On END reduce production expression200 -> expression200 INFIXOP0 expression200
--- On COMMA reduce production expression200 -> expression200 INFIXOP0 expression200
--- On BAR reduce production expression200 -> expression200 INFIXOP0 expression200
--- On AND reduce production expression200 -> expression200 INFIXOP0 expression200
+-- On WITH TYPE SEMI RPAREN RBRACE LET INFIXOP0 IN EQUAL EOF END COMMA BAR AND
+--   reduce production expression200 -> expression200 INFIXOP0 expression200
 
 State 171:
 ## Known stack suffix:
@@ -2714,20 +2402,8 @@ expression200 -> expression200 EQUAL expression200 . [ WITH TYPE SEMI RPAREN RBR
 -- On INFIXOP2 shift to state 165
 -- On INFIXOP1 shift to state 167
 ## Reductions:
--- On WITH reduce production expression200 -> expression200 EQUAL expression200
--- On TYPE reduce production expression200 -> expression200 EQUAL expression200
--- On SEMI reduce production expression200 -> expression200 EQUAL expression200
--- On RPAREN reduce production expression200 -> expression200 EQUAL expression200
--- On RBRACE reduce production expression200 -> expression200 EQUAL expression200
--- On LET reduce production expression200 -> expression200 EQUAL expression200
--- On INFIXOP0 reduce production expression200 -> expression200 EQUAL expression200
--- On IN reduce production expression200 -> expression200 EQUAL expression200
--- On EQUAL reduce production expression200 -> expression200 EQUAL expression200
--- On EOF reduce production expression200 -> expression200 EQUAL expression200
--- On END reduce production expression200 -> expression200 EQUAL expression200
--- On COMMA reduce production expression200 -> expression200 EQUAL expression200
--- On BAR reduce production expression200 -> expression200 EQUAL expression200
--- On AND reduce production expression200 -> expression200 EQUAL expression200
+-- On WITH TYPE SEMI RPAREN RBRACE LET INFIXOP0 IN EQUAL EOF END COMMA BAR AND
+--   reduce production expression200 -> expression200 EQUAL expression200
 
 State 173:
 ## Known stack suffix:
@@ -2842,7 +2518,8 @@ record_bindings -> record_binding . AND record_bindings [ RBRACE ]
 ## Transitions:
 -- On AND shift to state 183
 ## Reductions:
--- On RBRACE reduce production record_bindings -> record_binding
+-- On RBRACE
+--   reduce production record_bindings -> record_binding
 
 State 183:
 ## Known stack suffix:
@@ -2854,7 +2531,8 @@ record_bindings -> record_binding AND . record_bindings [ RBRACE ]
 -- On record_bindings shift to state 184
 -- On record_binding shift to state 182
 ## Reductions:
--- On RBRACE reduce production record_bindings ->
+-- On RBRACE
+--   reduce production record_bindings ->
 
 State 184:
 ## Known stack suffix:
@@ -3085,7 +2763,8 @@ expression0 -> LBRACE . record_bindings RBRACE [ error UID SEMI RPAREN LPAREN LO
 -- On record_bindings shift to state 202
 -- On record_binding shift to state 182
 ## Reductions:
--- On RBRACE reduce production record_bindings ->
+-- On RBRACE
+--   reduce production record_bindings ->
 
 State 202:
 ## Known stack suffix:
@@ -3333,25 +3012,8 @@ expression50 -> expression50 . DOT LID [ error UID SEMI RPAREN LPAREN LONGID LID
 ## Transitions:
 -- On DOT shift to state 219
 ## Reductions:
--- On error reduce production expression100 -> expression50
--- On UID reduce production expression100 -> expression50
--- On SEMI reduce production expression100 -> expression50
--- On RPAREN reduce production expression100 -> expression50
--- On LPAREN reduce production expression100 -> expression50
--- On LONGID reduce production expression100 -> expression50
--- On LID reduce production expression100 -> expression50
--- On LBRACE reduce production expression100 -> expression50
--- On INTEGER reduce production expression100 -> expression50
--- On INFIXOP4 reduce production expression100 -> expression50
--- On INFIXOP3 reduce production expression100 -> expression50
--- On INFIXOP2 reduce production expression100 -> expression50
--- On INFIXOP1 reduce production expression100 -> expression50
--- On INFIXOP0 reduce production expression100 -> expression50
--- On EQUAL reduce production expression100 -> expression50
--- On COMMA reduce production expression100 -> expression50
--- On COLON reduce production expression100 -> expression50
--- On CHAR reduce production expression100 -> expression50
--- On ASSERT_FALSE reduce production expression100 -> expression50
+-- On error UID SEMI RPAREN LPAREN LONGID LID LBRACE INTEGER INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 EQUAL COMMA COLON CHAR ASSERT_FALSE
+--   reduce production expression100 -> expression50
 
 State 219:
 ## Known stack suffix:
@@ -3372,26 +3034,8 @@ expression50 -> expression50 DOT LID . [ error UID SEMI RPAREN LPAREN LONGID LID
 ## Transitions:
 -- On LEFTARROW shift to state 221
 ## Reductions:
--- On error reduce production expression50 -> expression50 DOT LID
--- On UID reduce production expression50 -> expression50 DOT LID
--- On SEMI reduce production expression50 -> expression50 DOT LID
--- On RPAREN reduce production expression50 -> expression50 DOT LID
--- On LPAREN reduce production expression50 -> expression50 DOT LID
--- On LONGID reduce production expression50 -> expression50 DOT LID
--- On LID reduce production expression50 -> expression50 DOT LID
--- On LBRACE reduce production expression50 -> expression50 DOT LID
--- On INTEGER reduce production expression50 -> expression50 DOT LID
--- On INFIXOP4 reduce production expression50 -> expression50 DOT LID
--- On INFIXOP3 reduce production expression50 -> expression50 DOT LID
--- On INFIXOP2 reduce production expression50 -> expression50 DOT LID
--- On INFIXOP1 reduce production expression50 -> expression50 DOT LID
--- On INFIXOP0 reduce production expression50 -> expression50 DOT LID
--- On EQUAL reduce production expression50 -> expression50 DOT LID
--- On DOT reduce production expression50 -> expression50 DOT LID
--- On COMMA reduce production expression50 -> expression50 DOT LID
--- On COLON reduce production expression50 -> expression50 DOT LID
--- On CHAR reduce production expression50 -> expression50 DOT LID
--- On ASSERT_FALSE reduce production expression50 -> expression50 DOT LID
+-- On error UID SEMI RPAREN LPAREN LONGID LID LBRACE INTEGER INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 EQUAL DOT COMMA COLON CHAR ASSERT_FALSE
+--   reduce production expression50 -> expression50 DOT LID
 
 State 221:
 ## Known stack suffix:
@@ -3424,25 +3068,8 @@ expression50 -> expression50 . DOT LID [ error UID SEMI RPAREN LPAREN LONGID LID
 ## Transitions:
 -- On DOT shift to state 223
 ## Reductions:
--- On error reduce production expression100 -> expression50
--- On UID reduce production expression100 -> expression50
--- On SEMI reduce production expression100 -> expression50
--- On RPAREN reduce production expression100 -> expression50
--- On LPAREN reduce production expression100 -> expression50
--- On LONGID reduce production expression100 -> expression50
--- On LID reduce production expression100 -> expression50
--- On LBRACE reduce production expression100 -> expression50
--- On INTEGER reduce production expression100 -> expression50
--- On INFIXOP4 reduce production expression100 -> expression50
--- On INFIXOP3 reduce production expression100 -> expression50
--- On INFIXOP2 reduce production expression100 -> expression50
--- On INFIXOP1 reduce production expression100 -> expression50
--- On INFIXOP0 reduce production expression100 -> expression50
--- On EQUAL reduce production expression100 -> expression50
--- On COMMA reduce production expression100 -> expression50
--- On COLON reduce production expression100 -> expression50
--- On CHAR reduce production expression100 -> expression50
--- On ASSERT_FALSE reduce production expression100 -> expression50
+-- On error UID SEMI RPAREN LPAREN LONGID LID LBRACE INTEGER INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 EQUAL COMMA COLON CHAR ASSERT_FALSE
+--   reduce production expression100 -> expression50
 
 State 223:
 ## Known stack suffix:
@@ -3479,11 +3106,8 @@ expression300 -> expression50 DOT LID LEFTARROW expression100 . [ error SEMI RPA
 -- On ASSERT_FALSE shift to state 213
 -- On expression0 shift to state 226
 ## Reductions:
--- On error reduce production expression300 -> expression50 DOT LID LEFTARROW expression100
--- On SEMI reduce production expression300 -> expression50 DOT LID LEFTARROW expression100
--- On RPAREN reduce production expression300 -> expression50 DOT LID LEFTARROW expression100
--- On COMMA reduce production expression300 -> expression50 DOT LID LEFTARROW expression100
--- On COLON reduce production expression300 -> expression50 DOT LID LEFTARROW expression100
+-- On error SEMI RPAREN COMMA COLON
+--   reduce production expression300 -> expression50 DOT LID LEFTARROW expression100
 
 State 226:
 ## Known stack suffix:
@@ -3512,26 +3136,8 @@ expression10 -> expression0 . ASSIGN expression0 [ error UID SEMI RPAREN LPAREN 
 ## Transitions:
 -- On ASSIGN shift to state 229
 ## Reductions:
--- On error reduce production expression10 -> expression0
--- On UID reduce production expression10 -> expression0
--- On SEMI reduce production expression10 -> expression0
--- On RPAREN reduce production expression10 -> expression0
--- On LPAREN reduce production expression10 -> expression0
--- On LONGID reduce production expression10 -> expression0
--- On LID reduce production expression10 -> expression0
--- On LBRACE reduce production expression10 -> expression0
--- On INTEGER reduce production expression10 -> expression0
--- On INFIXOP4 reduce production expression10 -> expression0
--- On INFIXOP3 reduce production expression10 -> expression0
--- On INFIXOP2 reduce production expression10 -> expression0
--- On INFIXOP1 reduce production expression10 -> expression0
--- On INFIXOP0 reduce production expression10 -> expression0
--- On EQUAL reduce production expression10 -> expression0
--- On DOT reduce production expression10 -> expression0
--- On COMMA reduce production expression10 -> expression0
--- On COLON reduce production expression10 -> expression0
--- On CHAR reduce production expression10 -> expression0
--- On ASSERT_FALSE reduce production expression10 -> expression0
+-- On error UID SEMI RPAREN LPAREN LONGID LID LBRACE INTEGER INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 EQUAL DOT COMMA COLON CHAR ASSERT_FALSE
+--   reduce production expression10 -> expression0
 
 State 229:
 ## Known stack suffix:
@@ -3577,10 +3183,8 @@ expression400 -> expression300 . [ error RPAREN COMMA COLON ]
 ## Transitions:
 -- On SEMI shift to state 233
 ## Reductions:
--- On error reduce production expression400 -> expression300
--- On RPAREN reduce production expression400 -> expression300
--- On COMMA reduce production expression400 -> expression300
--- On COLON reduce production expression400 -> expression300
+-- On error RPAREN COMMA COLON
+--   reduce production expression400 -> expression300
 
 State 233:
 ## Known stack suffix:
@@ -3642,11 +3246,8 @@ expression300 -> expression200 . [ error SEMI RPAREN COMMA COLON ]
 -- On INFIXOP0 shift to state 245
 -- On EQUAL shift to state 247
 ## Reductions:
--- On error reduce production expression300 -> expression200
--- On SEMI reduce production expression300 -> expression200
--- On RPAREN reduce production expression300 -> expression200
--- On COMMA reduce production expression300 -> expression200
--- On COLON reduce production expression300 -> expression200
+-- On error SEMI RPAREN COMMA COLON
+--   reduce production expression300 -> expression200
 
 State 236:
 ## Known stack suffix:
@@ -3685,16 +3286,8 @@ expression200 -> expression200 . EQUAL expression200 [ error SEMI RPAREN INFIXOP
 ## Transitions:
 -- On INFIXOP4 shift to state 236
 ## Reductions:
--- On error reduce production expression200 -> expression200 INFIXOP4 expression200
--- On SEMI reduce production expression200 -> expression200 INFIXOP4 expression200
--- On RPAREN reduce production expression200 -> expression200 INFIXOP4 expression200
--- On INFIXOP3 reduce production expression200 -> expression200 INFIXOP4 expression200
--- On INFIXOP2 reduce production expression200 -> expression200 INFIXOP4 expression200
--- On INFIXOP1 reduce production expression200 -> expression200 INFIXOP4 expression200
--- On INFIXOP0 reduce production expression200 -> expression200 INFIXOP4 expression200
--- On EQUAL reduce production expression200 -> expression200 INFIXOP4 expression200
--- On COMMA reduce production expression200 -> expression200 INFIXOP4 expression200
--- On COLON reduce production expression200 -> expression200 INFIXOP4 expression200
+-- On error SEMI RPAREN INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 EQUAL COMMA COLON
+--   reduce production expression200 -> expression200 INFIXOP4 expression200
 
 State 238:
 ## Known stack suffix:
@@ -3713,17 +3306,8 @@ expression200 -> expression100 . [ error SEMI RPAREN INFIXOP4 INFIXOP3 INFIXOP2 
 -- On ASSERT_FALSE shift to state 213
 -- On expression0 shift to state 226
 ## Reductions:
--- On error reduce production expression200 -> expression100
--- On SEMI reduce production expression200 -> expression100
--- On RPAREN reduce production expression200 -> expression100
--- On INFIXOP4 reduce production expression200 -> expression100
--- On INFIXOP3 reduce production expression200 -> expression100
--- On INFIXOP2 reduce production expression200 -> expression100
--- On INFIXOP1 reduce production expression200 -> expression100
--- On INFIXOP0 reduce production expression200 -> expression100
--- On EQUAL reduce production expression200 -> expression100
--- On COMMA reduce production expression200 -> expression100
--- On COLON reduce production expression200 -> expression100
+-- On error SEMI RPAREN INFIXOP4 INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 EQUAL COMMA COLON
+--   reduce production expression200 -> expression100
 
 State 239:
 ## Known stack suffix:
@@ -3762,16 +3346,8 @@ expression200 -> expression200 . EQUAL expression200 [ error SEMI RPAREN INFIXOP
 ## Transitions:
 -- On INFIXOP4 shift to state 236
 ## Reductions:
--- On error reduce production expression200 -> expression200 INFIXOP3 expression200
--- On SEMI reduce production expression200 -> expression200 INFIXOP3 expression200
--- On RPAREN reduce production expression200 -> expression200 INFIXOP3 expression200
--- On INFIXOP3 reduce production expression200 -> expression200 INFIXOP3 expression200
--- On INFIXOP2 reduce production expression200 -> expression200 INFIXOP3 expression200
--- On INFIXOP1 reduce production expression200 -> expression200 INFIXOP3 expression200
--- On INFIXOP0 reduce production expression200 -> expression200 INFIXOP3 expression200
--- On EQUAL reduce production expression200 -> expression200 INFIXOP3 expression200
--- On COMMA reduce production expression200 -> expression200 INFIXOP3 expression200
--- On COLON reduce production expression200 -> expression200 INFIXOP3 expression200
+-- On error SEMI RPAREN INFIXOP3 INFIXOP2 INFIXOP1 INFIXOP0 EQUAL COMMA COLON
+--   reduce production expression200 -> expression200 INFIXOP3 expression200
 
 State 241:
 ## Known stack suffix:
@@ -3811,15 +3387,8 @@ expression200 -> expression200 . EQUAL expression200 [ error SEMI RPAREN INFIXOP
 -- On INFIXOP4 shift to state 236
 -- On INFIXOP3 shift to state 239
 ## Reductions:
--- On error reduce production expression200 -> expression200 INFIXOP2 expression200
--- On SEMI reduce production expression200 -> expression200 INFIXOP2 expression200
--- On RPAREN reduce production expression200 -> expression200 INFIXOP2 expression200
--- On INFIXOP2 reduce production expression200 -> expression200 INFIXOP2 expression200
--- On INFIXOP1 reduce production expression200 -> expression200 INFIXOP2 expression200
--- On INFIXOP0 reduce production expression200 -> expression200 INFIXOP2 expression200
--- On EQUAL reduce production expression200 -> expression200 INFIXOP2 expression200
--- On COMMA reduce production expression200 -> expression200 INFIXOP2 expression200
--- On COLON reduce production expression200 -> expression200 INFIXOP2 expression200
+-- On error SEMI RPAREN INFIXOP2 INFIXOP1 INFIXOP0 EQUAL COMMA COLON
+--   reduce production expression200 -> expression200 INFIXOP2 expression200
 
 State 243:
 ## Known stack suffix:
@@ -3861,13 +3430,8 @@ expression200 -> expression200 . EQUAL expression200 [ error SEMI RPAREN INFIXOP
 -- On INFIXOP2 shift to state 241
 -- On INFIXOP1 shift to state 243
 ## Reductions:
--- On error reduce production expression200 -> expression200 INFIXOP1 expression200
--- On SEMI reduce production expression200 -> expression200 INFIXOP1 expression200
--- On RPAREN reduce production expression200 -> expression200 INFIXOP1 expression200
--- On INFIXOP0 reduce production expression200 -> expression200 INFIXOP1 expression200
--- On EQUAL reduce production expression200 -> expression200 INFIXOP1 expression200
--- On COMMA reduce production expression200 -> expression200 INFIXOP1 expression200
--- On COLON reduce production expression200 -> expression200 INFIXOP1 expression200
+-- On error SEMI RPAREN INFIXOP0 EQUAL COMMA COLON
+--   reduce production expression200 -> expression200 INFIXOP1 expression200
 
 State 245:
 ## Known stack suffix:
@@ -3909,13 +3473,8 @@ expression200 -> expression200 . EQUAL expression200 [ error SEMI RPAREN INFIXOP
 -- On INFIXOP2 shift to state 241
 -- On INFIXOP1 shift to state 243
 ## Reductions:
--- On error reduce production expression200 -> expression200 INFIXOP0 expression200
--- On SEMI reduce production expression200 -> expression200 INFIXOP0 expression200
--- On RPAREN reduce production expression200 -> expression200 INFIXOP0 expression200
--- On INFIXOP0 reduce production expression200 -> expression200 INFIXOP0 expression200
--- On EQUAL reduce production expression200 -> expression200 INFIXOP0 expression200
--- On COMMA reduce production expression200 -> expression200 INFIXOP0 expression200
--- On COLON reduce production expression200 -> expression200 INFIXOP0 expression200
+-- On error SEMI RPAREN INFIXOP0 EQUAL COMMA COLON
+--   reduce production expression200 -> expression200 INFIXOP0 expression200
 
 State 247:
 ## Known stack suffix:
@@ -3957,13 +3516,8 @@ expression200 -> expression200 EQUAL expression200 . [ error SEMI RPAREN INFIXOP
 -- On INFIXOP2 shift to state 241
 -- On INFIXOP1 shift to state 243
 ## Reductions:
--- On error reduce production expression200 -> expression200 EQUAL expression200
--- On SEMI reduce production expression200 -> expression200 EQUAL expression200
--- On RPAREN reduce production expression200 -> expression200 EQUAL expression200
--- On INFIXOP0 reduce production expression200 -> expression200 EQUAL expression200
--- On EQUAL reduce production expression200 -> expression200 EQUAL expression200
--- On COMMA reduce production expression200 -> expression200 EQUAL expression200
--- On COLON reduce production expression200 -> expression200 EQUAL expression200
+-- On error SEMI RPAREN INFIXOP0 EQUAL COMMA COLON
+--   reduce production expression200 -> expression200 EQUAL expression200
 
 State 249:
 ## Known stack suffix:
@@ -4137,7 +3691,8 @@ expressions -> expression . COMMA expressions [ RPAREN ]
 ## Transitions:
 -- On COMMA shift to state 262
 ## Reductions:
--- On RPAREN reduce production expressions -> expression
+-- On RPAREN
+--   reduce production expressions -> expression
 
 State 262:
 ## Known stack suffix:
@@ -4583,10 +4138,8 @@ value_definitions -> value_definitions . AND value_definition [ TYPE LET IN EOF 
 ## Transitions:
 -- On AND shift to state 69
 ## Reductions:
--- On TYPE reduce production binding -> LET value_definitions
--- On LET reduce production binding -> LET value_definitions
--- On IN reduce production binding -> LET value_definitions
--- On EOF reduce production binding -> LET value_definitions
+-- On TYPE LET IN EOF
+--   reduce production binding -> LET value_definitions
 
 State 294:
 ## Known stack suffix:

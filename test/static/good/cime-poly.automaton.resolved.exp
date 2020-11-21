@@ -157,16 +157,8 @@ expr -> expr . EXP INT [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQ
 -- On EXP shift to state 13
 -- On DIV shift to state 15
 ## Reductions:
--- On VERTICALBAR reduce production expr -> expr PLUS expr
--- On PLUS reduce production expr -> expr PLUS expr
--- On PARDROITE reduce production expr -> expr PLUS expr
--- On OR reduce production expr -> expr PLUS expr
--- On MINUS reduce production expr -> expr PLUS expr
--- On IMPLIES reduce production expr -> expr PLUS expr
--- On EQUIV reduce production expr -> expr PLUS expr
--- On EOF reduce production expr -> expr PLUS expr
--- On COMP reduce production expr -> expr PLUS expr
--- On AND reduce production expr -> expr PLUS expr
+-- On VERTICALBAR PLUS PARDROITE OR MINUS IMPLIES EQUIV EOF COMP AND
+--   reduce production expr -> expr PLUS expr
 
 State 11:
 ## Known stack suffix:
@@ -194,18 +186,8 @@ expr -> expr . EXP INT [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQ
 ## Transitions:
 -- On EXP shift to state 13
 ## Reductions:
--- On VERTICALBAR reduce production expr -> expr MULT expr
--- On PLUS reduce production expr -> expr MULT expr
--- On PARDROITE reduce production expr -> expr MULT expr
--- On OR reduce production expr -> expr MULT expr
--- On MULT reduce production expr -> expr MULT expr
--- On MINUS reduce production expr -> expr MULT expr
--- On IMPLIES reduce production expr -> expr MULT expr
--- On EQUIV reduce production expr -> expr MULT expr
--- On EOF reduce production expr -> expr MULT expr
--- On DIV reduce production expr -> expr MULT expr
--- On COMP reduce production expr -> expr MULT expr
--- On AND reduce production expr -> expr MULT expr
+-- On VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EQUIV EOF DIV COMP AND
+--   reduce production expr -> expr MULT expr
 
 State 13:
 ## Known stack suffix:
@@ -251,18 +233,8 @@ expr -> expr . EXP INT [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQ
 ## Transitions:
 -- On EXP shift to state 13
 ## Reductions:
--- On VERTICALBAR reduce production expr -> expr DIV expr
--- On PLUS reduce production expr -> expr DIV expr
--- On PARDROITE reduce production expr -> expr DIV expr
--- On OR reduce production expr -> expr DIV expr
--- On MULT reduce production expr -> expr DIV expr
--- On MINUS reduce production expr -> expr DIV expr
--- On IMPLIES reduce production expr -> expr DIV expr
--- On EQUIV reduce production expr -> expr DIV expr
--- On EOF reduce production expr -> expr DIV expr
--- On DIV reduce production expr -> expr DIV expr
--- On COMP reduce production expr -> expr DIV expr
--- On AND reduce production expr -> expr DIV expr
+-- On VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EQUIV EOF DIV COMP AND
+--   reduce production expr -> expr DIV expr
 
 State 17:
 ## Known stack suffix:
@@ -301,16 +273,8 @@ expr -> expr . EXP INT [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQ
 -- On EXP shift to state 13
 -- On DIV shift to state 15
 ## Reductions:
--- On VERTICALBAR reduce production expr -> expr MINUS expr
--- On PLUS reduce production expr -> expr MINUS expr
--- On PARDROITE reduce production expr -> expr MINUS expr
--- On OR reduce production expr -> expr MINUS expr
--- On MINUS reduce production expr -> expr MINUS expr
--- On IMPLIES reduce production expr -> expr MINUS expr
--- On EQUIV reduce production expr -> expr MINUS expr
--- On EOF reduce production expr -> expr MINUS expr
--- On COMP reduce production expr -> expr MINUS expr
--- On AND reduce production expr -> expr MINUS expr
+-- On VERTICALBAR PLUS PARDROITE OR MINUS IMPLIES EQUIV EOF COMP AND
+--   reduce production expr -> expr MINUS expr
 
 State 20:
 ## Known stack suffix:
@@ -325,18 +289,8 @@ expr -> expr . EXP INT [ VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EXP EQ
 ## Transitions:
 -- On EXP shift to state 13
 ## Reductions:
--- On VERTICALBAR reduce production expr -> MINUS expr
--- On PLUS reduce production expr -> MINUS expr
--- On PARDROITE reduce production expr -> MINUS expr
--- On OR reduce production expr -> MINUS expr
--- On MULT reduce production expr -> MINUS expr
--- On MINUS reduce production expr -> MINUS expr
--- On IMPLIES reduce production expr -> MINUS expr
--- On EQUIV reduce production expr -> MINUS expr
--- On EOF reduce production expr -> MINUS expr
--- On DIV reduce production expr -> MINUS expr
--- On COMP reduce production expr -> MINUS expr
--- On AND reduce production expr -> MINUS expr
+-- On VERTICALBAR PLUS PARDROITE OR MULT MINUS IMPLIES EQUIV EOF DIV COMP AND
+--   reduce production expr -> MINUS expr
 
 State 21:
 ## Known stack suffix:
@@ -358,7 +312,8 @@ id_list -> IDENT . id_list [ COMMA ]
 -- On IDENT shift to state 22
 -- On id_list shift to state 23
 ## Reductions:
--- On COMMA reduce production id_list -> IDENT
+-- On COMMA
+--   reduce production id_list -> IDENT
 
 State 23:
 ## Known stack suffix:
@@ -459,8 +414,8 @@ formula -> EXISTS id_list COMMA formula . [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 -- On EQUIV shift to state 46
 -- On AND shift to state 33
 ## Reductions:
--- On PARDROITE reduce production formula -> EXISTS id_list COMMA formula
--- On EOF reduce production formula -> EXISTS id_list COMMA formula
+-- On PARDROITE EOF
+--   reduce production formula -> EXISTS id_list COMMA formula
 
 State 31:
 ## Known stack suffix:
@@ -493,11 +448,8 @@ formula -> formula . EQUIV formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 ## Transitions:
 -- On AND shift to state 33
 ## Reductions:
--- On PARDROITE reduce production formula -> formula OR formula
--- On OR reduce production formula -> formula OR formula
--- On IMPLIES reduce production formula -> formula OR formula
--- On EQUIV reduce production formula -> formula OR formula
--- On EOF reduce production formula -> formula OR formula
+-- On PARDROITE OR IMPLIES EQUIV EOF
+--   reduce production formula -> formula OR formula
 
 State 33:
 ## Known stack suffix:
@@ -584,12 +536,8 @@ formula -> expr VERTICALBAR expr . [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 -- On EXP shift to state 13
 -- On DIV shift to state 15
 ## Reductions:
--- On PARDROITE reduce production formula -> expr VERTICALBAR expr
--- On OR reduce production formula -> expr VERTICALBAR expr
--- On IMPLIES reduce production formula -> expr VERTICALBAR expr
--- On EQUIV reduce production formula -> expr VERTICALBAR expr
--- On EOF reduce production formula -> expr VERTICALBAR expr
--- On AND reduce production formula -> expr VERTICALBAR expr
+-- On PARDROITE OR IMPLIES EQUIV EOF AND
+--   reduce production formula -> expr VERTICALBAR expr
 
 State 38:
 ## Known stack suffix:
@@ -626,12 +574,8 @@ formula -> expr COMP expr . COMP expr COMP expr [ PARDROITE OR IMPLIES EQUIV EOF
 -- On DIV shift to state 15
 -- On COMP shift to state 40
 ## Reductions:
--- On PARDROITE reduce production formula -> expr COMP expr
--- On OR reduce production formula -> expr COMP expr
--- On IMPLIES reduce production formula -> expr COMP expr
--- On EQUIV reduce production formula -> expr COMP expr
--- On EOF reduce production formula -> expr COMP expr
--- On AND reduce production formula -> expr COMP expr
+-- On PARDROITE OR IMPLIES EQUIV EOF AND
+--   reduce production formula -> expr COMP expr
 
 State 40:
 ## Known stack suffix:
@@ -666,12 +610,8 @@ formula -> expr COMP expr COMP expr . COMP expr [ PARDROITE OR IMPLIES EQUIV EOF
 -- On DIV shift to state 15
 -- On COMP shift to state 42
 ## Reductions:
--- On PARDROITE reduce production formula -> expr COMP expr COMP expr
--- On OR reduce production formula -> expr COMP expr COMP expr
--- On IMPLIES reduce production formula -> expr COMP expr COMP expr
--- On EQUIV reduce production formula -> expr COMP expr COMP expr
--- On EOF reduce production formula -> expr COMP expr COMP expr
--- On AND reduce production formula -> expr COMP expr COMP expr
+-- On PARDROITE OR IMPLIES EQUIV EOF AND
+--   reduce production formula -> expr COMP expr COMP expr
 
 State 42:
 ## Known stack suffix:
@@ -703,12 +643,8 @@ formula -> expr COMP expr COMP expr COMP expr . [ PARDROITE OR IMPLIES EQUIV EOF
 -- On EXP shift to state 13
 -- On DIV shift to state 15
 ## Reductions:
--- On PARDROITE reduce production formula -> expr COMP expr COMP expr COMP expr
--- On OR reduce production formula -> expr COMP expr COMP expr COMP expr
--- On IMPLIES reduce production formula -> expr COMP expr COMP expr COMP expr
--- On EQUIV reduce production formula -> expr COMP expr COMP expr COMP expr
--- On EOF reduce production formula -> expr COMP expr COMP expr COMP expr
--- On AND reduce production formula -> expr COMP expr COMP expr COMP expr
+-- On PARDROITE OR IMPLIES EQUIV EOF AND
+--   reduce production formula -> expr COMP expr COMP expr COMP expr
 
 State 44:
 ## Known stack suffix:
@@ -744,8 +680,8 @@ formula -> formula . EQUIV formula [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 -- On EQUIV shift to state 46
 -- On AND shift to state 33
 ## Reductions:
--- On PARDROITE reduce production formula -> formula IMPLIES formula
--- On EOF reduce production formula -> formula IMPLIES formula
+-- On PARDROITE EOF
+--   reduce production formula -> formula IMPLIES formula
 
 State 46:
 ## Known stack suffix:
@@ -781,8 +717,8 @@ formula -> formula EQUIV formula . [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 -- On EQUIV shift to state 46
 -- On AND shift to state 33
 ## Reductions:
--- On PARDROITE reduce production formula -> formula EQUIV formula
--- On EOF reduce production formula -> formula EQUIV formula
+-- On PARDROITE EOF
+--   reduce production formula -> formula EQUIV formula
 
 State 48:
 ## Known stack suffix:
@@ -799,8 +735,8 @@ formula -> FORALL id_list COMMA formula . [ PARDROITE OR IMPLIES EQUIV EOF AND ]
 -- On EQUIV shift to state 46
 -- On AND shift to state 33
 ## Reductions:
--- On PARDROITE reduce production formula -> FORALL id_list COMMA formula
--- On EOF reduce production formula -> FORALL id_list COMMA formula
+-- On PARDROITE EOF
+--   reduce production formula -> FORALL id_list COMMA formula
 
 State 49:
 ## Known stack suffix:

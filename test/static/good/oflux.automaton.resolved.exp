@@ -84,17 +84,12 @@ program -> code_list . [ ENDOFFILE END ]
 -- On atom_decl shift to state 247
 -- On assn shift to state 248
 ## Reductions:
--- On SEQUENCE reduce production external_opt ->
--- On READWRITE reduce production external_opt ->
--- On POOL reduce production external_opt ->
--- On NODE reduce production external_opt ->
--- On MODULE reduce production mod_modifier_list ->
--- On INSTANCE reduce production external_opt ->
--- On FREE reduce production external_opt ->
--- On EXCLUSIVE reduce production external_opt ->
--- On ENDOFFILE reduce production program -> code_list
--- On END reduce production program -> code_list
--- On CONDITION reduce production external_opt ->
+-- On SEQUENCE READWRITE POOL NODE INSTANCE FREE EXCLUSIVE CONDITION
+--   reduce production external_opt ->
+-- On MODULE
+--   reduce production mod_modifier_list ->
+-- On ENDOFFILE END
+--   reduce production program -> code_list
 
 State 5:
 ## Known stack suffix:
@@ -115,12 +110,8 @@ namespaced_ident -> IDENTIFIER . DOUBLECOLON namespaced_ident [ SEMI PIPE LEFT_P
 ## Transitions:
 -- On DOUBLECOLON shift to state 7
 ## Reductions:
--- On SEMI reduce production namespaced_ident -> IDENTIFIER
--- On PIPE reduce production namespaced_ident -> IDENTIFIER
--- On LEFT_PAREN reduce production namespaced_ident -> IDENTIFIER
--- On IDENTIFIER reduce production namespaced_ident -> IDENTIFIER
--- On BEGIN reduce production namespaced_ident -> IDENTIFIER
--- On AMPERSAND reduce production namespaced_ident -> IDENTIFIER
+-- On SEMI PIPE LEFT_PAREN IDENTIFIER BEGIN AMPERSAND
+--   reduce production namespaced_ident -> IDENTIFIER
 
 State 7:
 ## Known stack suffix:
@@ -229,7 +220,8 @@ guard_order_list -> ident . LESSTHAN guard_order_list [ SEMI ]
 ## Transitions:
 -- On LESSTHAN shift to state 16
 ## Reductions:
--- On SEMI reduce production guard_order_list -> ident LESSTHAN ident
+-- On SEMI
+--   reduce production guard_order_list -> ident LESSTHAN ident
 
 State 18:
 ## Known stack suffix:
@@ -340,8 +332,8 @@ assn -> IDENTIFIER EQUALS . namespaced_ident AMPERSAND par_ident_list [ SEMI ]
 -- On namespaced_ident shift to state 29
 -- On ident_list shift to state 35
 ## Reductions:
--- On SEMI reduce production ident_list ->
--- On PIPE reduce production ident_list ->
+-- On SEMI PIPE
+--   reduce production ident_list ->
 
 State 29:
 ## Known stack suffix:
@@ -352,8 +344,8 @@ ident_list -> namespaced_ident . [ SEMI PIPE ]
 ## Transitions:
 -- On AMPERSAND shift to state 30
 ## Reductions:
--- On SEMI reduce production ident_list -> namespaced_ident
--- On PIPE reduce production ident_list -> namespaced_ident
+-- On SEMI PIPE
+--   reduce production ident_list -> namespaced_ident
 
 State 30:
 ## Known stack suffix:
@@ -375,7 +367,8 @@ par_ident_list -> par_ident_list . AMPERSAND namespaced_ident [ SEMI AMPERSAND ]
 ## Transitions:
 -- On AMPERSAND shift to state 32
 ## Reductions:
--- On SEMI reduce production assn -> IDENTIFIER EQUALS namespaced_ident AMPERSAND par_ident_list
+-- On SEMI
+--   reduce production assn -> IDENTIFIER EQUALS namespaced_ident AMPERSAND par_ident_list
 
 State 32:
 ## Known stack suffix:
@@ -414,7 +407,8 @@ ident_list -> ident_list . PIPE namespaced_ident [ SEMI PIPE ]
 ## Transitions:
 -- On PIPE shift to state 36
 ## Reductions:
--- On SEMI reduce production assn -> IDENTIFIER EQUALS ident_list
+-- On SEMI
+--   reduce production assn -> IDENTIFIER EQUALS ident_list
 
 State 36:
 ## Known stack suffix:
@@ -504,8 +498,8 @@ assn -> IDENTIFIER COLON LEFT_SQ_BRACE comma_list RIGHT_SQ_BRACE EQUALS . ident_
 -- On namespaced_ident shift to state 45
 -- On ident_list shift to state 46
 ## Reductions:
--- On SEMI reduce production ident_list ->
--- On PIPE reduce production ident_list ->
+-- On SEMI PIPE
+--   reduce production ident_list ->
 
 State 45:
 ## Known stack suffix:
@@ -525,7 +519,8 @@ ident_list -> ident_list . PIPE namespaced_ident [ SEMI PIPE ]
 ## Transitions:
 -- On PIPE shift to state 36
 ## Reductions:
--- On SEMI reduce production assn -> IDENTIFIER COLON LEFT_SQ_BRACE comma_list RIGHT_SQ_BRACE EQUALS ident_list
+-- On SEMI
+--   reduce production assn -> IDENTIFIER COLON LEFT_SQ_BRACE comma_list RIGHT_SQ_BRACE EQUALS ident_list
 
 State 47:
 ## Known stack suffix:
@@ -594,7 +589,8 @@ err_def -> HANDLE ERROR . ident_list PIPE namespaced_ident SEMI [ TERMINATE STAT
 -- On namespaced_ident shift to state 45
 -- On ident_list shift to state 54
 ## Reductions:
--- On PIPE reduce production ident_list ->
+-- On PIPE
+--   reduce production ident_list ->
 
 State 54:
 ## Known stack suffix:
@@ -626,7 +622,8 @@ ident_list -> ident_list PIPE namespaced_ident . [ PIPE ]
 ## Transitions:
 -- On SEMI shift to state 57
 ## Reductions:
--- On PIPE reduce production ident_list -> ident_list PIPE namespaced_ident
+-- On PIPE
+--   reduce production ident_list -> ident_list PIPE namespaced_ident
 
 State 57:
 ## Known stack suffix:
@@ -733,8 +730,8 @@ main_fn -> source_or_initial_or_door namespaced_ident PIPE . ident_list SEMI [ T
 -- On namespaced_ident shift to state 45
 -- On ident_list shift to state 68
 ## Reductions:
--- On SEMI reduce production ident_list ->
--- On PIPE reduce production ident_list ->
+-- On SEMI PIPE
+--   reduce production ident_list ->
 
 State 68:
 ## Known stack suffix:
@@ -850,7 +847,8 @@ mod_modifier_list -> mod_modifier . mod_modifier_list [ MODULE ]
 -- On mod_modifier_list shift to state 80
 -- On mod_modifier shift to state 79
 ## Reductions:
--- On MODULE reduce production mod_modifier_list ->
+-- On MODULE
+--   reduce production mod_modifier_list ->
 
 State 80:
 ## Known stack suffix:
@@ -955,7 +953,8 @@ node_decl -> external_opt NODE . node_mod_list namespaced_ident arg_list ARROW n
 -- On ABSTRACT shift to state 92
 -- On node_mod_list shift to state 96
 ## Reductions:
--- On IDENTIFIER reduce production node_mod_list ->
+-- On IDENTIFIER
+--   reduce production node_mod_list ->
 
 State 90:
 ## Known stack suffix:
@@ -968,7 +967,8 @@ node_mod_list -> MUTABLE . node_mod_list [ IDENTIFIER ]
 -- On ABSTRACT shift to state 92
 -- On node_mod_list shift to state 95
 ## Reductions:
--- On IDENTIFIER reduce production node_mod_list ->
+-- On IDENTIFIER
+--   reduce production node_mod_list ->
 
 State 91:
 ## Known stack suffix:
@@ -981,7 +981,8 @@ node_mod_list -> DETACHED . node_mod_list [ IDENTIFIER ]
 -- On ABSTRACT shift to state 92
 -- On node_mod_list shift to state 94
 ## Reductions:
--- On IDENTIFIER reduce production node_mod_list ->
+-- On IDENTIFIER
+--   reduce production node_mod_list ->
 
 State 92:
 ## Known stack suffix:
@@ -994,7 +995,8 @@ node_mod_list -> ABSTRACT . node_mod_list [ IDENTIFIER ]
 -- On ABSTRACT shift to state 92
 -- On node_mod_list shift to state 93
 ## Reductions:
--- On IDENTIFIER reduce production node_mod_list ->
+-- On IDENTIFIER
+--   reduce production node_mod_list ->
 
 State 93:
 ## Known stack suffix:
@@ -1060,9 +1062,8 @@ arg_list -> LEFT_PAREN . typed_or_guardref_item_list RIGHT_PAREN [ ARROW ]
 -- On guardref_item shift to state 194
 -- On data_type shift to state 195
 ## Reductions:
--- On LEFT_PAREN reduce production type_mod_opt ->
--- On IDENTIFIER reduce production type_mod_opt ->
--- On BOOL reduce production type_mod_opt ->
+-- On LEFT_PAREN IDENTIFIER BOOL
+--   reduce production type_mod_opt ->
 
 State 99:
 ## Known stack suffix:
@@ -1091,7 +1092,8 @@ guardref_item -> GUARD IDENTIFIER . guardref_modifier_list LEFT_PAREN uninterpre
 -- On SLASH shift to state 102
 -- On guardref_modifier_list shift to state 111
 ## Reductions:
--- On LEFT_PAREN reduce production guardref_modifier_list ->
+-- On LEFT_PAREN
+--   reduce production guardref_modifier_list ->
 
 State 102:
 ## Known stack suffix:
@@ -1117,7 +1119,8 @@ guardref_modifier_list -> SLASH WRITE . guardref_modifier_list [ LEFT_PAREN ]
 -- On SLASH shift to state 102
 -- On guardref_modifier_list shift to state 104
 ## Reductions:
--- On LEFT_PAREN reduce production guardref_modifier_list ->
+-- On LEFT_PAREN
+--   reduce production guardref_modifier_list ->
 
 State 104:
 ## Known stack suffix:
@@ -1137,7 +1140,8 @@ guardref_modifier_list -> SLASH UPGRADEABLE . guardref_modifier_list [ LEFT_PARE
 -- On SLASH shift to state 102
 -- On guardref_modifier_list shift to state 106
 ## Reductions:
--- On LEFT_PAREN reduce production guardref_modifier_list ->
+-- On LEFT_PAREN
+--   reduce production guardref_modifier_list ->
 
 State 106:
 ## Known stack suffix:
@@ -1157,7 +1161,8 @@ guardref_modifier_list -> SLASH READ . guardref_modifier_list [ LEFT_PAREN ]
 -- On SLASH shift to state 102
 -- On guardref_modifier_list shift to state 108
 ## Reductions:
--- On LEFT_PAREN reduce production guardref_modifier_list ->
+-- On LEFT_PAREN
+--   reduce production guardref_modifier_list ->
 
 State 108:
 ## Known stack suffix:
@@ -1177,7 +1182,8 @@ guardref_modifier_list -> SLASH NULLOK . guardref_modifier_list [ LEFT_PAREN ]
 -- On SLASH shift to state 102
 -- On guardref_modifier_list shift to state 110
 ## Reductions:
--- On LEFT_PAREN reduce production guardref_modifier_list ->
+-- On LEFT_PAREN
+--   reduce production guardref_modifier_list ->
 
 State 110:
 ## Known stack suffix:
@@ -1229,8 +1235,8 @@ guardref_item -> GUARD IDENTIFIER guardref_modifier_list LEFT_PAREN . uninterpre
 -- On uninterpreted_cpp_code shift to state 148
 -- On ident shift to state 134
 ## Reductions:
--- On RIGHT_PAREN reduce production uninterpreted_cpp_code ->
--- On COMMA reduce production uninterpreted_cpp_code ->
+-- On RIGHT_PAREN COMMA
+--   reduce production uninterpreted_cpp_code ->
 
 State 113:
 ## Known stack suffix:
@@ -1489,7 +1495,8 @@ uninterpreted_cpp_code_fragment -> LEFT_SQ_BRACE . uninterpreted_cpp_code RIGHT_
 -- On uninterpreted_cpp_code shift to state 151
 -- On ident shift to state 134
 ## Reductions:
--- On RIGHT_SQ_BRACE reduce production uninterpreted_cpp_code ->
+-- On RIGHT_SQ_BRACE
+--   reduce production uninterpreted_cpp_code ->
 
 State 122:
 ## Known stack suffix:
@@ -1523,8 +1530,8 @@ uninterpreted_cpp_code_fragment -> LEFT_PAREN . uninterpreted_cpp_code_comma_lis
 -- On uninterpreted_cpp_code shift to state 148
 -- On ident shift to state 134
 ## Reductions:
--- On RIGHT_PAREN reduce production uninterpreted_cpp_code ->
--- On COMMA reduce production uninterpreted_cpp_code ->
+-- On RIGHT_PAREN COMMA
+--   reduce production uninterpreted_cpp_code ->
 
 State 123:
 ## Known stack suffix:
@@ -1966,9 +1973,8 @@ uninterpreted_cpp_code -> uninterpreted_cpp_code_fragment . uninterpreted_cpp_co
 -- On uninterpreted_cpp_code shift to state 145
 -- On ident shift to state 134
 ## Reductions:
--- On RIGHT_SQ_BRACE reduce production uninterpreted_cpp_code ->
--- On RIGHT_PAREN reduce production uninterpreted_cpp_code ->
--- On COMMA reduce production uninterpreted_cpp_code ->
+-- On RIGHT_SQ_BRACE RIGHT_PAREN COMMA
+--   reduce production uninterpreted_cpp_code ->
 
 State 145:
 ## Known stack suffix:
@@ -2006,7 +2012,8 @@ uninterpreted_cpp_code_comma_list -> uninterpreted_cpp_code . COMMA uninterprete
 ## Transitions:
 -- On COMMA shift to state 149
 ## Reductions:
--- On RIGHT_PAREN reduce production uninterpreted_cpp_code_comma_list -> uninterpreted_cpp_code
+-- On RIGHT_PAREN
+--   reduce production uninterpreted_cpp_code_comma_list -> uninterpreted_cpp_code
 
 State 149:
 ## Known stack suffix:
@@ -2040,8 +2047,8 @@ uninterpreted_cpp_code_comma_list -> uninterpreted_cpp_code COMMA . uninterprete
 -- On uninterpreted_cpp_code shift to state 148
 -- On ident shift to state 134
 ## Reductions:
--- On RIGHT_PAREN reduce production uninterpreted_cpp_code ->
--- On COMMA reduce production uninterpreted_cpp_code ->
+-- On RIGHT_PAREN COMMA
+--   reduce production uninterpreted_cpp_code ->
 
 State 150:
 ## Known stack suffix:
@@ -2151,9 +2158,8 @@ guardref_item -> GUARD IDENTIFIER guardref_modifier_list LEFT_PAREN uninterprete
 -- On AS shift to state 162
 -- On as_named_opt shift to state 164
 ## Reductions:
--- On RIGHT_PAREN reduce production as_named_opt ->
--- On IF reduce production as_named_opt ->
--- On COMMA reduce production as_named_opt ->
+-- On RIGHT_PAREN IF COMMA
+--   reduce production as_named_opt ->
 
 State 162:
 ## Known stack suffix:
@@ -2182,8 +2188,8 @@ guardref_item -> GUARD IDENTIFIER guardref_modifier_list LEFT_PAREN uninterprete
 -- On IF shift to state 165
 -- On if_condition_opt shift to state 167
 ## Reductions:
--- On RIGHT_PAREN reduce production if_condition_opt ->
--- On COMMA reduce production if_condition_opt ->
+-- On RIGHT_PAREN COMMA
+--   reduce production if_condition_opt ->
 
 State 165:
 ## Known stack suffix:
@@ -2216,8 +2222,8 @@ if_condition_opt -> IF . uninterpreted_cpp_code [ RIGHT_PAREN COMMA ]
 -- On uninterpreted_cpp_code shift to state 166
 -- On ident shift to state 134
 ## Reductions:
--- On RIGHT_PAREN reduce production uninterpreted_cpp_code ->
--- On COMMA reduce production uninterpreted_cpp_code ->
+-- On RIGHT_PAREN COMMA
+--   reduce production uninterpreted_cpp_code ->
 
 State 166:
 ## Known stack suffix:
@@ -2280,9 +2286,8 @@ typed_or_guardref_item_list -> typed_or_guardref_item_list COMMA . typed_or_guar
 -- On guardref_item shift to state 194
 -- On data_type shift to state 195
 ## Reductions:
--- On LEFT_PAREN reduce production type_mod_opt ->
--- On IDENTIFIER reduce production type_mod_opt ->
--- On BOOL reduce production type_mod_opt ->
+-- On LEFT_PAREN IDENTIFIER BOOL
+--   reduce production type_mod_opt ->
 
 State 172:
 ## Known stack suffix:
@@ -2324,9 +2329,8 @@ raw_data_type -> LEFT_PAREN . data_type RIGHT_PAREN [ STAR SEMI RIGHT_PAREN IDEN
 -- On type_mod_opt shift to state 174
 -- On data_type shift to state 176
 ## Reductions:
--- On LEFT_PAREN reduce production type_mod_opt ->
--- On IDENTIFIER reduce production type_mod_opt ->
--- On BOOL reduce production type_mod_opt ->
+-- On LEFT_PAREN IDENTIFIER BOOL
+--   reduce production type_mod_opt ->
 
 State 176:
 ## Known stack suffix:
@@ -2357,13 +2361,8 @@ raw_data_type -> IDENTIFIER . LESSTHAN template_item_list GREATERTHAN [ STAR SEM
 -- On LESSTHAN shift to state 179
 -- On DOUBLECOLON shift to state 187
 ## Reductions:
--- On STAR reduce production raw_data_type -> IDENTIFIER
--- On SEMI reduce production raw_data_type -> IDENTIFIER
--- On RIGHT_PAREN reduce production raw_data_type -> IDENTIFIER
--- On IDENTIFIER reduce production raw_data_type -> IDENTIFIER
--- On GREATERTHAN reduce production raw_data_type -> IDENTIFIER
--- On COMMA reduce production raw_data_type -> IDENTIFIER
--- On AMPERSAND reduce production raw_data_type -> IDENTIFIER
+-- On STAR SEMI RIGHT_PAREN IDENTIFIER GREATERTHAN COMMA AMPERSAND
+--   reduce production raw_data_type -> IDENTIFIER
 
 State 179:
 ## Known stack suffix:
@@ -2378,9 +2377,8 @@ raw_data_type -> IDENTIFIER LESSTHAN . template_item_list GREATERTHAN [ STAR SEM
 -- On template_item shift to state 186
 -- On data_type shift to state 185
 ## Reductions:
--- On LEFT_PAREN reduce production type_mod_opt ->
--- On IDENTIFIER reduce production type_mod_opt ->
--- On BOOL reduce production type_mod_opt ->
+-- On LEFT_PAREN IDENTIFIER BOOL
+--   reduce production type_mod_opt ->
 
 State 180:
 ## Known stack suffix:
@@ -2423,9 +2421,8 @@ template_item_list -> template_item_list COMMA . template_item [ GREATERTHAN COM
 -- On template_item shift to state 184
 -- On data_type shift to state 185
 ## Reductions:
--- On LEFT_PAREN reduce production type_mod_opt ->
--- On IDENTIFIER reduce production type_mod_opt ->
--- On BOOL reduce production type_mod_opt ->
+-- On LEFT_PAREN IDENTIFIER BOOL
+--   reduce production type_mod_opt ->
 
 State 184:
 ## Known stack suffix:
@@ -2505,11 +2502,8 @@ star_list -> star_list . AMPERSAND [ STAR SEMI RIGHT_PAREN IDENTIFIER GREATERTHA
 -- On STAR shift to state 192
 -- On AMPERSAND shift to state 193
 ## Reductions:
--- On SEMI reduce production data_type -> type_mod_opt raw_data_type star_list
--- On RIGHT_PAREN reduce production data_type -> type_mod_opt raw_data_type star_list
--- On IDENTIFIER reduce production data_type -> type_mod_opt raw_data_type star_list
--- On GREATERTHAN reduce production data_type -> type_mod_opt raw_data_type star_list
--- On COMMA reduce production data_type -> type_mod_opt raw_data_type star_list
+-- On SEMI RIGHT_PAREN IDENTIFIER GREATERTHAN COMMA
+--   reduce production data_type -> type_mod_opt raw_data_type star_list
 
 State 192:
 ## Known stack suffix:
@@ -2547,8 +2541,8 @@ typed_item -> data_type . IDENTIFIER [ RIGHT_PAREN COMMA ]
 ## Transitions:
 -- On IDENTIFIER shift to state 196
 ## Reductions:
--- On RIGHT_PAREN reduce production typed_item -> data_type
--- On COMMA reduce production typed_item -> data_type
+-- On RIGHT_PAREN COMMA
+--   reduce production typed_item -> data_type
 
 State 196:
 ## Known stack suffix:
@@ -2603,9 +2597,8 @@ simple_arg_list -> LEFT_PAREN . RIGHT_PAREN [ SEMI ARROW ]
 -- On type_mod_opt shift to state 174
 -- On data_type shift to state 195
 ## Reductions:
--- On LEFT_PAREN reduce production type_mod_opt ->
--- On IDENTIFIER reduce production type_mod_opt ->
--- On BOOL reduce production type_mod_opt ->
+-- On LEFT_PAREN IDENTIFIER BOOL
+--   reduce production type_mod_opt ->
 
 State 201:
 ## Known stack suffix:
@@ -2647,9 +2640,8 @@ typed_item_list -> typed_item_list COMMA . typed_item [ RIGHT_PAREN COMMA ]
 -- On type_mod_opt shift to state 174
 -- On data_type shift to state 195
 ## Reductions:
--- On LEFT_PAREN reduce production type_mod_opt ->
--- On IDENTIFIER reduce production type_mod_opt ->
--- On BOOL reduce production type_mod_opt ->
+-- On LEFT_PAREN IDENTIFIER BOOL
+--   reduce production type_mod_opt ->
 
 State 205:
 ## Known stack suffix:
@@ -2733,7 +2725,8 @@ mod_inst -> external_opt INSTANCE namespaced_ident IDENTIFIER . where_guard_inde
 -- On WHERE shift to state 214
 -- On where_guard_indentifications_opt shift to state 222
 ## Reductions:
--- On SEMI reduce production where_guard_indentifications_opt ->
+-- On SEMI
+--   reduce production where_guard_indentifications_opt ->
 
 State 214:
 ## Known stack suffix:
@@ -2791,7 +2784,8 @@ guard_indentification_list -> guard_identification . COMMA guard_indentification
 ## Transitions:
 -- On COMMA shift to state 220
 ## Reductions:
--- On SEMI reduce production guard_indentification_list -> guard_identification
+-- On SEMI
+--   reduce production guard_indentification_list -> guard_identification
 
 State 220:
 ## Known stack suffix:
@@ -2914,7 +2908,8 @@ atom_decl -> external_opt atom_type . atom_mod_opt_list namespaced_ident simple_
 -- On SLASH shift to state 233
 -- On atom_mod_opt_list shift to state 238
 ## Reductions:
--- On IDENTIFIER reduce production atom_mod_opt_list ->
+-- On IDENTIFIER
+--   reduce production atom_mod_opt_list ->
 
 State 233:
 ## Known stack suffix:
@@ -2954,7 +2949,8 @@ atom_mod_opt_list -> SLASH atom_mod . atom_mod_opt_list [ IDENTIFIER ]
 -- On SLASH shift to state 233
 -- On atom_mod_opt_list shift to state 237
 ## Reductions:
--- On IDENTIFIER reduce production atom_mod_opt_list ->
+-- On IDENTIFIER
+--   reduce production atom_mod_opt_list ->
 
 State 237:
 ## Known stack suffix:
@@ -3004,9 +3000,8 @@ atom_decl -> external_opt atom_type atom_mod_opt_list namespaced_ident simple_ar
 -- On type_mod_opt shift to state 174
 -- On data_type shift to state 242
 ## Reductions:
--- On LEFT_PAREN reduce production type_mod_opt ->
--- On IDENTIFIER reduce production type_mod_opt ->
--- On BOOL reduce production type_mod_opt ->
+-- On LEFT_PAREN IDENTIFIER BOOL
+--   reduce production type_mod_opt ->
 
 State 242:
 ## Known stack suffix:

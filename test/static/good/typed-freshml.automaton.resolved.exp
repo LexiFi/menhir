@@ -10,7 +10,8 @@ program' -> . program [ # ]
 -- On list(definition) shift to state 194
 -- On definition shift to state 196
 ## Reductions:
--- On EOF reduce production list(definition) ->
+-- On EOF
+--   reduce production list(definition) ->
 
 State 1:
 ## Known stack suffix:
@@ -30,7 +31,8 @@ definition -> TYPE ID . kind DEFEQ list(data_constructor_declaration) [ TYPE FUN
 -- On BINDS shift to state 3
 -- On kind shift to state 4
 ## Reductions:
--- On DEFEQ reduce production kind ->
+-- On DEFEQ
+--   reduce production kind ->
 
 State 3:
 ## Known stack suffix:
@@ -60,9 +62,8 @@ definition -> TYPE ID kind DEFEQ . list(data_constructor_declaration) [ TYPE FUN
 -- On list(data_constructor_declaration) shift to state 82
 -- On data_constructor_declaration shift to state 83
 ## Reductions:
--- On TYPE reduce production list(data_constructor_declaration) ->
--- On FUN reduce production list(data_constructor_declaration) ->
--- On EOF reduce production list(data_constructor_declaration) ->
+-- On TYPE FUN EOF
+--   reduce production list(data_constructor_declaration) ->
 
 State 6:
 ## Known stack suffix:
@@ -83,11 +84,8 @@ data_constructor_declaration -> BAR TAG . located(optional_layout) contraintes [
 -- On optional_layout shift to state 34
 -- On located(optional_layout) shift to state 35
 ## Reductions:
--- On WHERE reduce production optional_layout ->
--- On TYPE reduce production optional_layout ->
--- On FUN reduce production optional_layout ->
--- On EOF reduce production optional_layout ->
--- On BAR reduce production optional_layout ->
+-- On WHERE TYPE FUN EOF BAR
+--   reduce production optional_layout ->
 
 State 8:
 ## Known stack suffix:
@@ -173,13 +171,8 @@ typ -> ID . [ WHERE TYPE STAR RANGLE FUN EOF BAR ]
 ## Transitions:
 -- On COLON shift to state 13
 ## Reductions:
--- On WHERE reduce production typ -> ID
--- On TYPE reduce production typ -> ID
--- On STAR reduce production typ -> ID
--- On RANGLE reduce production typ -> ID
--- On FUN reduce production typ -> ID
--- On EOF reduce production typ -> ID
--- On BAR reduce production typ -> ID
+-- On WHERE TYPE STAR RANGLE FUN EOF BAR
+--   reduce production typ -> ID
 
 State 13:
 ## Known stack suffix:
@@ -330,12 +323,8 @@ separated_nonempty_list(STAR,located(atomic_layout)) -> located(atomic_layout) .
 ## Transitions:
 -- On STAR shift to state 28
 ## Reductions:
--- On WHERE reduce production separated_nonempty_list(STAR,located(atomic_layout)) -> located(atomic_layout)
--- On TYPE reduce production separated_nonempty_list(STAR,located(atomic_layout)) -> located(atomic_layout)
--- On RANGLE reduce production separated_nonempty_list(STAR,located(atomic_layout)) -> located(atomic_layout)
--- On FUN reduce production separated_nonempty_list(STAR,located(atomic_layout)) -> located(atomic_layout)
--- On EOF reduce production separated_nonempty_list(STAR,located(atomic_layout)) -> located(atomic_layout)
--- On BAR reduce production separated_nonempty_list(STAR,located(atomic_layout)) -> located(atomic_layout)
+-- On WHERE TYPE RANGLE FUN EOF BAR
+--   reduce production separated_nonempty_list(STAR,located(atomic_layout)) -> located(atomic_layout)
 
 State 28:
 ## Known stack suffix:
@@ -382,13 +371,10 @@ layout -> atomic_layout . [ WHERE TYPE RANGLE FUN EOF BAR ]
 located(atomic_layout) -> atomic_layout . [ STAR ]
 ## Transitions:
 ## Reductions:
--- On WHERE reduce production layout -> atomic_layout
--- On TYPE reduce production layout -> atomic_layout
--- On STAR reduce production located(atomic_layout) -> atomic_layout
--- On RANGLE reduce production layout -> atomic_layout
--- On FUN reduce production layout -> atomic_layout
--- On EOF reduce production layout -> atomic_layout
--- On BAR reduce production layout -> atomic_layout
+-- On WHERE TYPE RANGLE FUN EOF BAR
+--   reduce production layout -> atomic_layout
+-- On STAR
+--   reduce production located(atomic_layout) -> atomic_layout
 
 State 32:
 ## Known stack suffix:
@@ -427,10 +413,8 @@ data_constructor_declaration -> BAR TAG located(optional_layout) . contraintes [
 -- On list(preceded(WHERE,contrainte)) shift to state 80
 -- On contraintes shift to state 81
 ## Reductions:
--- On TYPE reduce production list(preceded(WHERE,contrainte)) ->
--- On FUN reduce production list(preceded(WHERE,contrainte)) ->
--- On EOF reduce production list(preceded(WHERE,contrainte)) ->
--- On BAR reduce production list(preceded(WHERE,contrainte)) ->
+-- On TYPE FUN EOF BAR
+--   reduce production list(preceded(WHERE,contrainte)) ->
 
 State 36:
 ## Known stack suffix:
@@ -625,17 +609,8 @@ boolean_expression -> boolean_expression CMPEQ boolean_expression . [ WHERE TYPE
 boolean_expression -> boolean_expression . BOR boolean_expression [ WHERE TYPE RPAR PRODUCES FUN EOF DEFEQ CMPEQ BOR BAR BAND ARROW ]
 ## Transitions:
 ## Reductions:
--- On WHERE reduce production boolean_expression -> boolean_expression CMPEQ boolean_expression
--- On TYPE reduce production boolean_expression -> boolean_expression CMPEQ boolean_expression
--- On RPAR reduce production boolean_expression -> boolean_expression CMPEQ boolean_expression
--- On PRODUCES reduce production boolean_expression -> boolean_expression CMPEQ boolean_expression
--- On FUN reduce production boolean_expression -> boolean_expression CMPEQ boolean_expression
--- On EOF reduce production boolean_expression -> boolean_expression CMPEQ boolean_expression
--- On DEFEQ reduce production boolean_expression -> boolean_expression CMPEQ boolean_expression
--- On BOR reduce production boolean_expression -> boolean_expression CMPEQ boolean_expression
--- On BAR reduce production boolean_expression -> boolean_expression CMPEQ boolean_expression
--- On BAND reduce production boolean_expression -> boolean_expression CMPEQ boolean_expression
--- On ARROW reduce production boolean_expression -> boolean_expression CMPEQ boolean_expression
+-- On WHERE TYPE RPAR PRODUCES FUN EOF DEFEQ BOR BAR BAND ARROW
+--   reduce production boolean_expression -> boolean_expression CMPEQ boolean_expression
 
 State 52:
 ## Known stack suffix:
@@ -663,16 +638,8 @@ boolean_expression -> boolean_expression BOR boolean_expression . [ WHERE TYPE R
 -- On CMPEQ shift to state 50
 -- On BAND shift to state 54
 ## Reductions:
--- On WHERE reduce production boolean_expression -> boolean_expression BOR boolean_expression
--- On TYPE reduce production boolean_expression -> boolean_expression BOR boolean_expression
--- On RPAR reduce production boolean_expression -> boolean_expression BOR boolean_expression
--- On PRODUCES reduce production boolean_expression -> boolean_expression BOR boolean_expression
--- On FUN reduce production boolean_expression -> boolean_expression BOR boolean_expression
--- On EOF reduce production boolean_expression -> boolean_expression BOR boolean_expression
--- On DEFEQ reduce production boolean_expression -> boolean_expression BOR boolean_expression
--- On BOR reduce production boolean_expression -> boolean_expression BOR boolean_expression
--- On BAR reduce production boolean_expression -> boolean_expression BOR boolean_expression
--- On ARROW reduce production boolean_expression -> boolean_expression BOR boolean_expression
+-- On WHERE TYPE RPAR PRODUCES FUN EOF DEFEQ BOR BAR ARROW
+--   reduce production boolean_expression -> boolean_expression BOR boolean_expression
 
 State 54:
 ## Known stack suffix:
@@ -699,17 +666,8 @@ boolean_expression -> boolean_expression . BOR boolean_expression [ WHERE TYPE R
 ## Transitions:
 -- On CMPEQ shift to state 50
 ## Reductions:
--- On WHERE reduce production boolean_expression -> boolean_expression BAND boolean_expression
--- On TYPE reduce production boolean_expression -> boolean_expression BAND boolean_expression
--- On RPAR reduce production boolean_expression -> boolean_expression BAND boolean_expression
--- On PRODUCES reduce production boolean_expression -> boolean_expression BAND boolean_expression
--- On FUN reduce production boolean_expression -> boolean_expression BAND boolean_expression
--- On EOF reduce production boolean_expression -> boolean_expression BAND boolean_expression
--- On DEFEQ reduce production boolean_expression -> boolean_expression BAND boolean_expression
--- On BOR reduce production boolean_expression -> boolean_expression BAND boolean_expression
--- On BAR reduce production boolean_expression -> boolean_expression BAND boolean_expression
--- On BAND reduce production boolean_expression -> boolean_expression BAND boolean_expression
--- On ARROW reduce production boolean_expression -> boolean_expression BAND boolean_expression
+-- On WHERE TYPE RPAR PRODUCES FUN EOF DEFEQ BOR BAR BAND ARROW
+--   reduce production boolean_expression -> boolean_expression BAND boolean_expression
 
 State 56:
 ## Known stack suffix:
@@ -722,17 +680,8 @@ boolean_expression -> BNOT boolean_expression . [ WHERE TYPE RPAR PRODUCES FUN E
 ## Transitions:
 -- On CMPEQ shift to state 50
 ## Reductions:
--- On WHERE reduce production boolean_expression -> BNOT boolean_expression
--- On TYPE reduce production boolean_expression -> BNOT boolean_expression
--- On RPAR reduce production boolean_expression -> BNOT boolean_expression
--- On PRODUCES reduce production boolean_expression -> BNOT boolean_expression
--- On FUN reduce production boolean_expression -> BNOT boolean_expression
--- On EOF reduce production boolean_expression -> BNOT boolean_expression
--- On DEFEQ reduce production boolean_expression -> BNOT boolean_expression
--- On BOR reduce production boolean_expression -> BNOT boolean_expression
--- On BAR reduce production boolean_expression -> BNOT boolean_expression
--- On BAND reduce production boolean_expression -> BNOT boolean_expression
--- On ARROW reduce production boolean_expression -> BNOT boolean_expression
+-- On WHERE TYPE RPAR PRODUCES FUN EOF DEFEQ BOR BAR BAND ARROW
+--   reduce production boolean_expression -> BNOT boolean_expression
 
 State 57:
 ## Known stack suffix:
@@ -825,18 +774,8 @@ set_expression -> set_expression . SETMINUS set_expression [ WHERE TYPE SUBSET S
 ## Transitions:
 -- On SETMINUS shift to state 65
 ## Reductions:
--- On WHERE reduce production set_expression -> set_expression SETUNION set_expression
--- On TYPE reduce production set_expression -> set_expression SETUNION set_expression
--- On SUBSET reduce production set_expression -> set_expression SETUNION set_expression
--- On SETUNION reduce production set_expression -> set_expression SETUNION set_expression
--- On RPAR reduce production set_expression -> set_expression SETUNION set_expression
--- On PRODUCES reduce production set_expression -> set_expression SETUNION set_expression
--- On FUN reduce production set_expression -> set_expression SETUNION set_expression
--- On EOF reduce production set_expression -> set_expression SETUNION set_expression
--- On DISJOINT reduce production set_expression -> set_expression SETUNION set_expression
--- On DEFEQ reduce production set_expression -> set_expression SETUNION set_expression
--- On CMPEQ reduce production set_expression -> set_expression SETUNION set_expression
--- On BAR reduce production set_expression -> set_expression SETUNION set_expression
+-- On WHERE TYPE SUBSET SETUNION RPAR PRODUCES FUN EOF DISJOINT DEFEQ CMPEQ BAR
+--   reduce production set_expression -> set_expression SETUNION set_expression
 
 State 65:
 ## Known stack suffix:
@@ -863,18 +802,8 @@ set_expression -> set_expression . SETMINUS set_expression [ WHERE TYPE SUBSET S
 set_expression -> set_expression SETMINUS set_expression . [ WHERE TYPE SUBSET SETUNION SETMINUS RPAR PRODUCES FUN EOF DISJOINT DEFEQ CMPEQ BAR ]
 ## Transitions:
 ## Reductions:
--- On WHERE reduce production set_expression -> set_expression SETMINUS set_expression
--- On TYPE reduce production set_expression -> set_expression SETMINUS set_expression
--- On SUBSET reduce production set_expression -> set_expression SETMINUS set_expression
--- On SETUNION reduce production set_expression -> set_expression SETMINUS set_expression
--- On RPAR reduce production set_expression -> set_expression SETMINUS set_expression
--- On PRODUCES reduce production set_expression -> set_expression SETMINUS set_expression
--- On FUN reduce production set_expression -> set_expression SETMINUS set_expression
--- On EOF reduce production set_expression -> set_expression SETMINUS set_expression
--- On DISJOINT reduce production set_expression -> set_expression SETMINUS set_expression
--- On DEFEQ reduce production set_expression -> set_expression SETMINUS set_expression
--- On CMPEQ reduce production set_expression -> set_expression SETMINUS set_expression
--- On BAR reduce production set_expression -> set_expression SETMINUS set_expression
+-- On WHERE TYPE SUBSET SETUNION RPAR PRODUCES FUN EOF DISJOINT DEFEQ CMPEQ BAR
+--   reduce production set_expression -> set_expression SETMINUS set_expression
 
 State 67:
 ## Known stack suffix:
@@ -955,13 +884,8 @@ set_expression -> set_expression . SETMINUS set_expression [ WHERE TYPE SETUNION
 -- On SETUNION shift to state 62
 -- On SETMINUS shift to state 65
 ## Reductions:
--- On WHERE reduce production set_constraint -> set_expression set_operator set_expression
--- On TYPE reduce production set_constraint -> set_expression set_operator set_expression
--- On PRODUCES reduce production set_constraint -> set_expression set_operator set_expression
--- On FUN reduce production set_constraint -> set_expression set_operator set_expression
--- On EOF reduce production set_constraint -> set_expression set_operator set_expression
--- On DEFEQ reduce production set_constraint -> set_expression set_operator set_expression
--- On BAR reduce production set_constraint -> set_expression set_operator set_expression
+-- On WHERE TYPE PRODUCES FUN EOF DEFEQ BAR
+--   reduce production set_constraint -> set_expression set_operator set_expression
 
 State 74:
 ## Known stack suffix:
@@ -981,12 +905,8 @@ list(preceded(WHERE,contrainte)) -> WHERE contrainte . list(preceded(WHERE,contr
 -- On WHERE shift to state 36
 -- On list(preceded(WHERE,contrainte)) shift to state 76
 ## Reductions:
--- On TYPE reduce production list(preceded(WHERE,contrainte)) ->
--- On PRODUCES reduce production list(preceded(WHERE,contrainte)) ->
--- On FUN reduce production list(preceded(WHERE,contrainte)) ->
--- On EOF reduce production list(preceded(WHERE,contrainte)) ->
--- On DEFEQ reduce production list(preceded(WHERE,contrainte)) ->
--- On BAR reduce production list(preceded(WHERE,contrainte)) ->
+-- On TYPE PRODUCES FUN EOF DEFEQ BAR
+--   reduce production list(preceded(WHERE,contrainte)) ->
 
 State 76:
 ## Known stack suffix:
@@ -1012,13 +932,8 @@ contrainte -> boolean_expression . ARROW set_constraint [ WHERE TYPE PRODUCES FU
 -- On BAND shift to state 54
 -- On ARROW shift to state 78
 ## Reductions:
--- On WHERE reduce production contrainte -> boolean_expression
--- On TYPE reduce production contrainte -> boolean_expression
--- On PRODUCES reduce production contrainte -> boolean_expression
--- On FUN reduce production contrainte -> boolean_expression
--- On EOF reduce production contrainte -> boolean_expression
--- On DEFEQ reduce production contrainte -> boolean_expression
--- On BAR reduce production contrainte -> boolean_expression
+-- On WHERE TYPE PRODUCES FUN EOF DEFEQ BAR
+--   reduce production contrainte -> boolean_expression
 
 State 78:
 ## Known stack suffix:
@@ -1083,9 +998,8 @@ list(data_constructor_declaration) -> data_constructor_declaration . list(data_c
 -- On list(data_constructor_declaration) shift to state 84
 -- On data_constructor_declaration shift to state 83
 ## Reductions:
--- On TYPE reduce production list(data_constructor_declaration) ->
--- On FUN reduce production list(data_constructor_declaration) ->
--- On EOF reduce production list(data_constructor_declaration) ->
+-- On TYPE FUN EOF
+--   reduce production list(data_constructor_declaration) ->
 
 State 84:
 ## Known stack suffix:
@@ -1145,11 +1059,8 @@ separated_nonempty_list(COMMA,ID) -> ID . COMMA separated_nonempty_list(COMMA,ID
 ## Transitions:
 -- On COMMA shift to state 90
 ## Reductions:
--- On WHERE reduce production separated_nonempty_list(COMMA,ID) -> ID
--- On PRODUCES reduce production separated_nonempty_list(COMMA,ID) -> ID
--- On IN reduce production separated_nonempty_list(COMMA,ID) -> ID
--- On EOF reduce production separated_nonempty_list(COMMA,ID) -> ID
--- On DEFEQ reduce production separated_nonempty_list(COMMA,ID) -> ID
+-- On WHERE PRODUCES IN EOF DEFEQ
+--   reduce production separated_nonempty_list(COMMA,ID) -> ID
 
 State 90:
 ## Known stack suffix:
@@ -1180,7 +1091,8 @@ specification -> ACCEPTS variables . contraintes PRODUCES variables contraintes 
 -- On list(preceded(WHERE,contrainte)) shift to state 80
 -- On contraintes shift to state 93
 ## Reductions:
--- On PRODUCES reduce production list(preceded(WHERE,contrainte)) ->
+-- On PRODUCES
+--   reduce production list(preceded(WHERE,contrainte)) ->
 
 State 93:
 ## Known stack suffix:
@@ -1213,8 +1125,8 @@ specification -> ACCEPTS variables contraintes PRODUCES variables . contraintes 
 -- On list(preceded(WHERE,contrainte)) shift to state 80
 -- On contraintes shift to state 96
 ## Reductions:
--- On EOF reduce production list(preceded(WHERE,contrainte)) ->
--- On DEFEQ reduce production list(preceded(WHERE,contrainte)) ->
+-- On EOF DEFEQ
+--   reduce production list(preceded(WHERE,contrainte)) ->
 
 State 96:
 ## Known stack suffix:
@@ -1295,20 +1207,8 @@ raw_atomic_expression -> TAG . lenient_parenthesized_tuple(atomic_expression) [ 
 -- On LPAR shift to state 102
 -- On lenient_parenthesized_tuple(atomic_expression) shift to state 191
 ## Reductions:
--- On TYPE reduce production lenient_parenthesized_tuple(atomic_expression) ->
--- On THEN reduce production lenient_parenthesized_tuple(atomic_expression) ->
--- On RPAR reduce production lenient_parenthesized_tuple(atomic_expression) ->
--- On OF reduce production lenient_parenthesized_tuple(atomic_expression) ->
--- On IN reduce production lenient_parenthesized_tuple(atomic_expression) ->
--- On FUN reduce production lenient_parenthesized_tuple(atomic_expression) ->
--- On EOF reduce production lenient_parenthesized_tuple(atomic_expression) ->
--- On END reduce production lenient_parenthesized_tuple(atomic_expression) ->
--- On ELSE reduce production lenient_parenthesized_tuple(atomic_expression) ->
--- On COMMA reduce production lenient_parenthesized_tuple(atomic_expression) ->
--- On CMPEQ reduce production lenient_parenthesized_tuple(atomic_expression) ->
--- On BOR reduce production lenient_parenthesized_tuple(atomic_expression) ->
--- On BAR reduce production lenient_parenthesized_tuple(atomic_expression) ->
--- On BAND reduce production lenient_parenthesized_tuple(atomic_expression) ->
+-- On TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND
+--   reduce production lenient_parenthesized_tuple(atomic_expression) ->
 
 State 102:
 ## Known stack suffix:
@@ -1445,7 +1345,8 @@ raw_expression -> LET TAG . lenient_parenthesized_tuple(pattern) DEFEQ expressio
 -- On LPAR shift to state 112
 -- On lenient_parenthesized_tuple(pattern) shift to state 126
 ## Reductions:
--- On DEFEQ reduce production lenient_parenthesized_tuple(pattern) ->
+-- On DEFEQ
+--   reduce production lenient_parenthesized_tuple(pattern) ->
 
 State 112:
 ## Known stack suffix:
@@ -1491,9 +1392,8 @@ raw_pattern -> TAG . lenient_parenthesized_tuple(pattern) [ RPAR COMMA ARROW ]
 -- On LPAR shift to state 112
 -- On lenient_parenthesized_tuple(pattern) shift to state 116
 ## Reductions:
--- On RPAR reduce production lenient_parenthesized_tuple(pattern) ->
--- On COMMA reduce production lenient_parenthesized_tuple(pattern) ->
--- On ARROW reduce production lenient_parenthesized_tuple(pattern) ->
+-- On RPAR COMMA ARROW
+--   reduce production lenient_parenthesized_tuple(pattern) ->
 
 State 116:
 ## Known stack suffix:
@@ -1558,8 +1458,8 @@ separated_nonempty_list(COMMA,pattern) -> pattern . COMMA separated_nonempty_lis
 ## Transitions:
 -- On COMMA shift to state 123
 ## Reductions:
--- On RPAR reduce production separated_nonempty_list(COMMA,pattern) -> pattern
--- On ARROW reduce production separated_nonempty_list(COMMA,pattern) -> pattern
+-- On RPAR ARROW
+--   reduce production separated_nonempty_list(COMMA,pattern) -> pattern
 
 State 123:
 ## Known stack suffix:
@@ -1690,21 +1590,10 @@ prefix_callee -> ID . [ LPAR ]
 raw_atomic_expression -> ID . [ TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND ]
 ## Transitions:
 ## Reductions:
--- On TYPE reduce production raw_atomic_expression -> ID
--- On THEN reduce production raw_atomic_expression -> ID
--- On RPAR reduce production raw_atomic_expression -> ID
--- On OF reduce production raw_atomic_expression -> ID
--- On LPAR reduce production prefix_callee -> ID
--- On IN reduce production raw_atomic_expression -> ID
--- On FUN reduce production raw_atomic_expression -> ID
--- On EOF reduce production raw_atomic_expression -> ID
--- On END reduce production raw_atomic_expression -> ID
--- On ELSE reduce production raw_atomic_expression -> ID
--- On COMMA reduce production raw_atomic_expression -> ID
--- On CMPEQ reduce production raw_atomic_expression -> ID
--- On BOR reduce production raw_atomic_expression -> ID
--- On BAR reduce production raw_atomic_expression -> ID
--- On BAND reduce production raw_atomic_expression -> ID
+-- On LPAR
+--   reduce production prefix_callee -> ID
+-- On TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND
+--   reduce production raw_atomic_expression -> ID
 
 State 131:
 ## Known stack suffix:
@@ -1925,20 +1814,10 @@ located(raw_atomic_expression) -> raw_atomic_expression . [ COMMA CMPEQ BOR BAND
 raw_expression -> raw_atomic_expression . [ TYPE THEN RPAR OF IN FUN EOF END ELSE BAR ]
 ## Transitions:
 ## Reductions:
--- On TYPE reduce production raw_expression -> raw_atomic_expression
--- On THEN reduce production raw_expression -> raw_atomic_expression
--- On RPAR reduce production raw_expression -> raw_atomic_expression
--- On OF reduce production raw_expression -> raw_atomic_expression
--- On IN reduce production raw_expression -> raw_atomic_expression
--- On FUN reduce production raw_expression -> raw_atomic_expression
--- On EOF reduce production raw_expression -> raw_atomic_expression
--- On END reduce production raw_expression -> raw_atomic_expression
--- On ELSE reduce production raw_expression -> raw_atomic_expression
--- On COMMA reduce production located(raw_atomic_expression) -> raw_atomic_expression
--- On CMPEQ reduce production located(raw_atomic_expression) -> raw_atomic_expression
--- On BOR reduce production located(raw_atomic_expression) -> raw_atomic_expression
--- On BAR reduce production raw_expression -> raw_atomic_expression
--- On BAND reduce production located(raw_atomic_expression) -> raw_atomic_expression
+-- On COMMA CMPEQ BOR BAND
+--   reduce production located(raw_atomic_expression) -> raw_atomic_expression
+-- On TYPE THEN RPAR OF IN FUN EOF END ELSE BAR
+--   reduce production raw_expression -> raw_atomic_expression
 
 State 145:
 ## Known stack suffix:
@@ -2041,16 +1920,8 @@ separated_nonempty_list(COMMA,atomic_expression) -> atomic_expression . COMMA se
 -- On BOR shift to state 157
 -- On BAND shift to state 159
 ## Reductions:
--- On TYPE reduce production separated_nonempty_list(COMMA,atomic_expression) -> atomic_expression
--- On THEN reduce production separated_nonempty_list(COMMA,atomic_expression) -> atomic_expression
--- On RPAR reduce production separated_nonempty_list(COMMA,atomic_expression) -> atomic_expression
--- On OF reduce production separated_nonempty_list(COMMA,atomic_expression) -> atomic_expression
--- On IN reduce production separated_nonempty_list(COMMA,atomic_expression) -> atomic_expression
--- On FUN reduce production separated_nonempty_list(COMMA,atomic_expression) -> atomic_expression
--- On EOF reduce production separated_nonempty_list(COMMA,atomic_expression) -> atomic_expression
--- On END reduce production separated_nonempty_list(COMMA,atomic_expression) -> atomic_expression
--- On ELSE reduce production separated_nonempty_list(COMMA,atomic_expression) -> atomic_expression
--- On BAR reduce production separated_nonempty_list(COMMA,atomic_expression) -> atomic_expression
+-- On TYPE THEN RPAR OF IN FUN EOF END ELSE BAR
+--   reduce production separated_nonempty_list(COMMA,atomic_expression) -> atomic_expression
 
 State 153:
 ## Known stack suffix:
@@ -2122,19 +1993,8 @@ raw_atomic_expression -> atomic_expression . BAND atomic_expression [ TYPE THEN 
 raw_atomic_expression -> atomic_expression . BOR atomic_expression [ TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA CMPEQ BOR BAR BAND ]
 ## Transitions:
 ## Reductions:
--- On TYPE reduce production raw_atomic_expression -> atomic_expression CMPEQ atomic_expression
--- On THEN reduce production raw_atomic_expression -> atomic_expression CMPEQ atomic_expression
--- On RPAR reduce production raw_atomic_expression -> atomic_expression CMPEQ atomic_expression
--- On OF reduce production raw_atomic_expression -> atomic_expression CMPEQ atomic_expression
--- On IN reduce production raw_atomic_expression -> atomic_expression CMPEQ atomic_expression
--- On FUN reduce production raw_atomic_expression -> atomic_expression CMPEQ atomic_expression
--- On EOF reduce production raw_atomic_expression -> atomic_expression CMPEQ atomic_expression
--- On END reduce production raw_atomic_expression -> atomic_expression CMPEQ atomic_expression
--- On ELSE reduce production raw_atomic_expression -> atomic_expression CMPEQ atomic_expression
--- On COMMA reduce production raw_atomic_expression -> atomic_expression CMPEQ atomic_expression
--- On BOR reduce production raw_atomic_expression -> atomic_expression CMPEQ atomic_expression
--- On BAR reduce production raw_atomic_expression -> atomic_expression CMPEQ atomic_expression
--- On BAND reduce production raw_atomic_expression -> atomic_expression CMPEQ atomic_expression
+-- On TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA BOR BAR BAND
+--   reduce production raw_atomic_expression -> atomic_expression CMPEQ atomic_expression
 
 State 157:
 ## Known stack suffix:
@@ -2173,18 +2033,8 @@ raw_atomic_expression -> atomic_expression BOR atomic_expression . [ TYPE THEN R
 -- On CMPEQ shift to state 155
 -- On BAND shift to state 159
 ## Reductions:
--- On TYPE reduce production raw_atomic_expression -> atomic_expression BOR atomic_expression
--- On THEN reduce production raw_atomic_expression -> atomic_expression BOR atomic_expression
--- On RPAR reduce production raw_atomic_expression -> atomic_expression BOR atomic_expression
--- On OF reduce production raw_atomic_expression -> atomic_expression BOR atomic_expression
--- On IN reduce production raw_atomic_expression -> atomic_expression BOR atomic_expression
--- On FUN reduce production raw_atomic_expression -> atomic_expression BOR atomic_expression
--- On EOF reduce production raw_atomic_expression -> atomic_expression BOR atomic_expression
--- On END reduce production raw_atomic_expression -> atomic_expression BOR atomic_expression
--- On ELSE reduce production raw_atomic_expression -> atomic_expression BOR atomic_expression
--- On COMMA reduce production raw_atomic_expression -> atomic_expression BOR atomic_expression
--- On BOR reduce production raw_atomic_expression -> atomic_expression BOR atomic_expression
--- On BAR reduce production raw_atomic_expression -> atomic_expression BOR atomic_expression
+-- On TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA BOR BAR
+--   reduce production raw_atomic_expression -> atomic_expression BOR atomic_expression
 
 State 159:
 ## Known stack suffix:
@@ -2222,19 +2072,8 @@ raw_atomic_expression -> atomic_expression . BOR atomic_expression [ TYPE THEN R
 ## Transitions:
 -- On CMPEQ shift to state 155
 ## Reductions:
--- On TYPE reduce production raw_atomic_expression -> atomic_expression BAND atomic_expression
--- On THEN reduce production raw_atomic_expression -> atomic_expression BAND atomic_expression
--- On RPAR reduce production raw_atomic_expression -> atomic_expression BAND atomic_expression
--- On OF reduce production raw_atomic_expression -> atomic_expression BAND atomic_expression
--- On IN reduce production raw_atomic_expression -> atomic_expression BAND atomic_expression
--- On FUN reduce production raw_atomic_expression -> atomic_expression BAND atomic_expression
--- On EOF reduce production raw_atomic_expression -> atomic_expression BAND atomic_expression
--- On END reduce production raw_atomic_expression -> atomic_expression BAND atomic_expression
--- On ELSE reduce production raw_atomic_expression -> atomic_expression BAND atomic_expression
--- On COMMA reduce production raw_atomic_expression -> atomic_expression BAND atomic_expression
--- On BOR reduce production raw_atomic_expression -> atomic_expression BAND atomic_expression
--- On BAR reduce production raw_atomic_expression -> atomic_expression BAND atomic_expression
--- On BAND reduce production raw_atomic_expression -> atomic_expression BAND atomic_expression
+-- On TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA BOR BAR BAND
+--   reduce production raw_atomic_expression -> atomic_expression BAND atomic_expression
 
 State 161:
 ## Known stack suffix:
@@ -2247,19 +2086,8 @@ raw_atomic_expression -> atomic_expression . BOR atomic_expression [ TYPE THEN R
 ## Transitions:
 -- On CMPEQ shift to state 155
 ## Reductions:
--- On TYPE reduce production raw_atomic_expression -> BNOT atomic_expression
--- On THEN reduce production raw_atomic_expression -> BNOT atomic_expression
--- On RPAR reduce production raw_atomic_expression -> BNOT atomic_expression
--- On OF reduce production raw_atomic_expression -> BNOT atomic_expression
--- On IN reduce production raw_atomic_expression -> BNOT atomic_expression
--- On FUN reduce production raw_atomic_expression -> BNOT atomic_expression
--- On EOF reduce production raw_atomic_expression -> BNOT atomic_expression
--- On END reduce production raw_atomic_expression -> BNOT atomic_expression
--- On ELSE reduce production raw_atomic_expression -> BNOT atomic_expression
--- On COMMA reduce production raw_atomic_expression -> BNOT atomic_expression
--- On BOR reduce production raw_atomic_expression -> BNOT atomic_expression
--- On BAR reduce production raw_atomic_expression -> BNOT atomic_expression
--- On BAND reduce production raw_atomic_expression -> BNOT atomic_expression
+-- On TYPE THEN RPAR OF IN FUN EOF END ELSE COMMA BOR BAR BAND
+--   reduce production raw_atomic_expression -> BNOT atomic_expression
 
 State 162:
 ## Known stack suffix:
@@ -2379,7 +2207,8 @@ nonempty_list(branch) -> branch . nonempty_list(branch) [ END ]
 -- On nonempty_list(branch) shift to state 171
 -- On branch shift to state 170
 ## Reductions:
--- On END reduce production nonempty_list(branch) -> branch
+-- On END
+--   reduce production nonempty_list(branch) -> branch
 
 State 171:
 ## Known stack suffix:
@@ -2556,7 +2385,8 @@ raw_expression -> LET variables . contraintes DEFEQ expression IN expression [ T
 -- On list(preceded(WHERE,contrainte)) shift to state 80
 -- On contraintes shift to state 182
 ## Reductions:
--- On DEFEQ reduce production list(preceded(WHERE,contrainte)) ->
+-- On DEFEQ
+--   reduce production list(preceded(WHERE,contrainte)) ->
 
 State 182:
 ## Known stack suffix:
@@ -2745,7 +2575,8 @@ list(definition) -> definition . list(definition) [ EOF ]
 -- On list(definition) shift to state 197
 -- On definition shift to state 196
 ## Reductions:
--- On EOF reduce production list(definition) ->
+-- On EOF
+--   reduce production list(definition) ->
 
 State 197:
 ## Known stack suffix:

@@ -68,7 +68,8 @@ p4program' -> . p4program [ # ]
 -- On annotation shift to state 331
 -- On actionDeclaration shift to state 975
 ## Reductions:
--- On END reduce production topDeclarationList ->
+-- On END
+--   reduce production topDeclarationList ->
 
 State 1:
 ## Known stack suffix:
@@ -403,8 +404,8 @@ tupleType -> TUPLE L_ANGLE . typeArgumentList R_ANGLE [ TYPE STATE R_PAREN R_ANG
 -- On dotPrefix shift to state 143
 -- On baseType shift to state 146
 ## Reductions:
--- On R_ANGLE reduce production separated_list_aux(COMMA,typeArg) ->
--- On COMMA reduce production separated_list_aux(COMMA,typeArg) ->
+-- On R_ANGLE COMMA
+--   reduce production separated_list_aux(COMMA,typeArg) ->
 
 State 18:
 ## Known stack suffix:
@@ -434,17 +435,8 @@ baseType -> INT . [ TYPE STATE R_PAREN R_ANGLE NAME L_PAREN KEY ENTRIES COMMA AP
 ## Transitions:
 -- On L_ANGLE shift to state 21
 ## Reductions:
--- On TYPE reduce production baseType -> INT
--- On STATE reduce production baseType -> INT
--- On R_PAREN reduce production baseType -> INT
--- On R_ANGLE reduce production baseType -> INT
--- On NAME reduce production baseType -> INT
--- On L_PAREN reduce production baseType -> INT
--- On KEY reduce production baseType -> INT
--- On ENTRIES reduce production baseType -> INT
--- On COMMA reduce production baseType -> INT
--- On APPLY reduce production baseType -> INT
--- On ACTIONS reduce production baseType -> INT
+-- On TYPE STATE R_PAREN R_ANGLE NAME L_PAREN KEY ENTRIES COMMA APPLY ACTIONS
+--   reduce production baseType -> INT
 
 State 21:
 ## Known stack suffix:
@@ -531,8 +523,8 @@ expression -> L_BRACE . expressionList R_BRACE [ SHL SEMICOLON R_PAREN R_BRACKET
 -- On expression shift to state 179
 -- On dotPrefix shift to state 91
 ## Reductions:
--- On R_BRACE reduce production separated_list_aux(COMMA,expression) ->
--- On COMMA reduce production separated_list_aux(COMMA,expression) ->
+-- On R_BRACE COMMA
+--   reduce production separated_list_aux(COMMA,expression) ->
 
 State 24:
 ## Known stack suffix:
@@ -727,7 +719,8 @@ namedType -> typeName . [ L_PAREN ]
 ## Transitions:
 -- On DOT shift to state 41
 ## Reductions:
--- On L_PAREN reduce production namedType -> typeName
+-- On L_PAREN
+--   reduce production namedType -> typeName
 
 State 41:
 ## Known stack suffix:
@@ -776,19 +769,8 @@ typeName -> prefixedType . [ TYPE STATE R_PAREN R_ANGLE NAME L_PAREN L_BRACKET K
 ## Transitions:
 -- On L_ANGLE shift to state 45
 ## Reductions:
--- On TYPE reduce production typeName -> prefixedType
--- On STATE reduce production typeName -> prefixedType
--- On R_PAREN reduce production typeName -> prefixedType
--- On R_ANGLE reduce production typeName -> prefixedType
--- On NAME reduce production typeName -> prefixedType
--- On L_PAREN reduce production typeName -> prefixedType
--- On L_BRACKET reduce production typeName -> prefixedType
--- On KEY reduce production typeName -> prefixedType
--- On ENTRIES reduce production typeName -> prefixedType
--- On DOT reduce production typeName -> prefixedType
--- On COMMA reduce production typeName -> prefixedType
--- On APPLY reduce production typeName -> prefixedType
--- On ACTIONS reduce production typeName -> prefixedType
+-- On TYPE STATE R_PAREN R_ANGLE NAME L_PAREN L_BRACKET KEY ENTRIES DOT COMMA APPLY ACTIONS
+--   reduce production typeName -> prefixedType
 
 State 45:
 ## Known stack suffix:
@@ -828,8 +810,8 @@ specializedType -> prefixedType L_ANGLE . typeArgumentList R_ANGLE [ TYPE STATE 
 -- On dotPrefix shift to state 143
 -- On baseType shift to state 146
 ## Reductions:
--- On R_ANGLE reduce production separated_list_aux(COMMA,typeArg) ->
--- On COMMA reduce production separated_list_aux(COMMA,typeArg) ->
+-- On R_ANGLE COMMA
+--   reduce production separated_list_aux(COMMA,typeArg) ->
 
 State 46:
 ## Known stack suffix:
@@ -868,17 +850,8 @@ baseType -> BIT . L_ANGLE L_PAREN expression R_PAREN R_ANGLE [ TYPE STATE R_PARE
 ## Transitions:
 -- On L_ANGLE shift to state 50
 ## Reductions:
--- On TYPE reduce production baseType -> BIT
--- On STATE reduce production baseType -> BIT
--- On R_PAREN reduce production baseType -> BIT
--- On R_ANGLE reduce production baseType -> BIT
--- On NAME reduce production baseType -> BIT
--- On L_PAREN reduce production baseType -> BIT
--- On KEY reduce production baseType -> BIT
--- On ENTRIES reduce production baseType -> BIT
--- On COMMA reduce production baseType -> BIT
--- On APPLY reduce production baseType -> BIT
--- On ACTIONS reduce production baseType -> BIT
+-- On TYPE STATE R_PAREN R_ANGLE NAME L_PAREN KEY ENTRIES COMMA APPLY ACTIONS
+--   reduce production baseType -> BIT
 
 State 50:
 ## Known stack suffix:
@@ -986,8 +959,8 @@ expression -> namedType L_PAREN . argumentList R_PAREN [ SHL SEMICOLON R_PAREN R
 -- On argumentList shift to state 158
 -- On argument shift to state 135
 ## Reductions:
--- On R_PAREN reduce production separated_list_aux(COMMA,argument) ->
--- On COMMA reduce production separated_list_aux(COMMA,argument) ->
+-- On R_PAREN COMMA
+--   reduce production separated_list_aux(COMMA,argument) ->
 
 State 55:
 ## Known stack suffix:
@@ -1009,11 +982,10 @@ name -> NAME TYPENAME . [ EQ ASSIGN ]
 prefixedType -> NAME TYPENAME . [ L_PAREN L_ANGLE DOT ]
 ## Transitions:
 ## Reductions:
--- On L_PAREN reduce production prefixedType -> NAME TYPENAME
--- On L_ANGLE reduce production prefixedType -> NAME TYPENAME
--- On EQ reduce production name -> NAME TYPENAME
--- On DOT reduce production prefixedType -> NAME TYPENAME
--- On ASSIGN reduce production name -> NAME TYPENAME
+-- On EQ ASSIGN
+--   reduce production name -> NAME TYPENAME
+-- On L_PAREN L_ANGLE DOT
+--   reduce production prefixedType -> NAME TYPENAME
 
 State 57:
 ## Known stack suffix:
@@ -1033,7 +1005,8 @@ separated_list_aux(COMMA,argument) -> separated_list_aux(COMMA,argument) . COMMA
 ## Transitions:
 -- On COMMA shift to state 59
 ## Reductions:
--- On R_PAREN reduce production petr4_separated_list(COMMA,argument) -> separated_list_aux(COMMA,argument)
+-- On R_PAREN
+--   reduce production petr4_separated_list(COMMA,argument) -> separated_list_aux(COMMA,argument)
 
 State 59:
 ## Known stack suffix:
@@ -1082,34 +1055,10 @@ expression -> nonTypeName . [ SHL R_PAREN R_BRACKET R_ANGLE QUESTION PLUS_SAT PL
 name -> nonTypeName . [ EQ ASSIGN ]
 ## Transitions:
 ## Reductions:
--- On SHL reduce production expression -> nonTypeName
--- On R_PAREN reduce production expression -> nonTypeName
--- On R_BRACKET reduce production expression -> nonTypeName
--- On R_ANGLE reduce production expression -> nonTypeName
--- On QUESTION reduce production expression -> nonTypeName
--- On PLUS_SAT reduce production expression -> nonTypeName
--- On PLUSPLUS reduce production expression -> nonTypeName
--- On PLUS reduce production expression -> nonTypeName
--- On OR reduce production expression -> nonTypeName
--- On NE reduce production expression -> nonTypeName
--- On MUL reduce production expression -> nonTypeName
--- On MOD reduce production expression -> nonTypeName
--- On MINUS_SAT reduce production expression -> nonTypeName
--- On MINUS reduce production expression -> nonTypeName
--- On L_PAREN reduce production expression -> nonTypeName
--- On L_BRACKET reduce production expression -> nonTypeName
--- On L_ANGLE reduce production expression -> nonTypeName
--- On LE reduce production expression -> nonTypeName
--- On GE reduce production expression -> nonTypeName
--- On EQ reduce production name -> nonTypeName
--- On DOT reduce production expression -> nonTypeName
--- On DIV reduce production expression -> nonTypeName
--- On COMMA reduce production expression -> nonTypeName
--- On BIT_XOR reduce production expression -> nonTypeName
--- On BIT_OR reduce production expression -> nonTypeName
--- On BIT_AND reduce production expression -> nonTypeName
--- On ASSIGN reduce production name -> nonTypeName
--- On AND reduce production expression -> nonTypeName
+-- On SHL R_PAREN R_BRACKET R_ANGLE QUESTION PLUS_SAT PLUSPLUS PLUS OR NE MUL MOD MINUS_SAT MINUS L_PAREN L_BRACKET L_ANGLE LE GE DOT DIV COMMA BIT_XOR BIT_OR BIT_AND AND
+--   reduce production expression -> nonTypeName
+-- On EQ ASSIGN
+--   reduce production name -> nonTypeName
 
 State 61:
 ## Known stack suffix:
@@ -1214,8 +1163,8 @@ expression -> expression . L_PAREN argumentList R_PAREN [ SHL R_PAREN R_ANGLE QU
 -- On BIT_AND shift to state 118
 -- On AND shift to state 126
 ## Reductions:
--- On R_PAREN reduce production argument -> name ASSIGN expression
--- On COMMA reduce production argument -> name ASSIGN expression
+-- On R_PAREN COMMA
+--   reduce production argument -> name ASSIGN expression
 
 State 64:
 ## Known stack suffix:
@@ -1298,27 +1247,8 @@ expression -> expression . L_PAREN argumentList R_PAREN [ SHL SEMICOLON R_PAREN 
 -- On DOT shift to state 87
 -- On DIV shift to state 89
 ## Reductions:
--- On SHL reduce production expression -> expression SHL expression
--- On SEMICOLON reduce production expression -> expression SHL expression
--- On R_PAREN reduce production expression -> expression SHL expression
--- On R_BRACKET reduce production expression -> expression SHL expression
--- On R_BRACE reduce production expression -> expression SHL expression
--- On R_ANGLE reduce production expression -> expression SHL expression
--- On RANGE reduce production expression -> expression SHL expression
--- On QUESTION reduce production expression -> expression SHL expression
--- On OR reduce production expression -> expression SHL expression
--- On NE reduce production expression -> expression SHL expression
--- On MASK reduce production expression -> expression SHL expression
--- On L_ANGLE reduce production expression -> expression SHL expression
--- On LE reduce production expression -> expression SHL expression
--- On GE reduce production expression -> expression SHL expression
--- On EQ reduce production expression -> expression SHL expression
--- On COMMA reduce production expression -> expression SHL expression
--- On COLON reduce production expression -> expression SHL expression
--- On BIT_XOR reduce production expression -> expression SHL expression
--- On BIT_OR reduce production expression -> expression SHL expression
--- On BIT_AND reduce production expression -> expression SHL expression
--- On AND reduce production expression -> expression SHL expression
+-- On SHL SEMICOLON R_PAREN R_BRACKET R_BRACE R_ANGLE RANGE QUESTION OR NE MASK L_ANGLE LE GE EQ COMMA COLON BIT_XOR BIT_OR BIT_AND AND
+--   reduce production expression -> expression SHL expression
 
 State 66:
 ## Known stack suffix:
@@ -1396,32 +1326,8 @@ expression -> expression . L_PAREN argumentList R_PAREN [ SHL SEMICOLON R_PAREN 
 -- On DOT shift to state 87
 -- On DIV shift to state 89
 ## Reductions:
--- On SHL reduce production expression -> expression PLUS_SAT expression
--- On SEMICOLON reduce production expression -> expression PLUS_SAT expression
--- On R_PAREN reduce production expression -> expression PLUS_SAT expression
--- On R_BRACKET reduce production expression -> expression PLUS_SAT expression
--- On R_BRACE reduce production expression -> expression PLUS_SAT expression
--- On R_ANGLE reduce production expression -> expression PLUS_SAT expression
--- On RANGE reduce production expression -> expression PLUS_SAT expression
--- On QUESTION reduce production expression -> expression PLUS_SAT expression
--- On PLUS_SAT reduce production expression -> expression PLUS_SAT expression
--- On PLUSPLUS reduce production expression -> expression PLUS_SAT expression
--- On PLUS reduce production expression -> expression PLUS_SAT expression
--- On OR reduce production expression -> expression PLUS_SAT expression
--- On NE reduce production expression -> expression PLUS_SAT expression
--- On MINUS_SAT reduce production expression -> expression PLUS_SAT expression
--- On MINUS reduce production expression -> expression PLUS_SAT expression
--- On MASK reduce production expression -> expression PLUS_SAT expression
--- On L_ANGLE reduce production expression -> expression PLUS_SAT expression
--- On LE reduce production expression -> expression PLUS_SAT expression
--- On GE reduce production expression -> expression PLUS_SAT expression
--- On EQ reduce production expression -> expression PLUS_SAT expression
--- On COMMA reduce production expression -> expression PLUS_SAT expression
--- On COLON reduce production expression -> expression PLUS_SAT expression
--- On BIT_XOR reduce production expression -> expression PLUS_SAT expression
--- On BIT_OR reduce production expression -> expression PLUS_SAT expression
--- On BIT_AND reduce production expression -> expression PLUS_SAT expression
--- On AND reduce production expression -> expression PLUS_SAT expression
+-- On SHL SEMICOLON R_PAREN R_BRACKET R_BRACE R_ANGLE RANGE QUESTION PLUS_SAT PLUSPLUS PLUS OR NE MINUS_SAT MINUS MASK L_ANGLE LE GE EQ COMMA COLON BIT_XOR BIT_OR BIT_AND AND
+--   reduce production expression -> expression PLUS_SAT expression
 
 State 68:
 ## Known stack suffix:
@@ -1496,35 +1402,8 @@ expression -> expression . L_PAREN argumentList R_PAREN [ SHL SEMICOLON R_PAREN 
 -- On L_BRACKET shift to state 80
 -- On DOT shift to state 87
 ## Reductions:
--- On SHL reduce production expression -> expression MUL expression
--- On SEMICOLON reduce production expression -> expression MUL expression
--- On R_PAREN reduce production expression -> expression MUL expression
--- On R_BRACKET reduce production expression -> expression MUL expression
--- On R_BRACE reduce production expression -> expression MUL expression
--- On R_ANGLE reduce production expression -> expression MUL expression
--- On RANGE reduce production expression -> expression MUL expression
--- On QUESTION reduce production expression -> expression MUL expression
--- On PLUS_SAT reduce production expression -> expression MUL expression
--- On PLUSPLUS reduce production expression -> expression MUL expression
--- On PLUS reduce production expression -> expression MUL expression
--- On OR reduce production expression -> expression MUL expression
--- On NE reduce production expression -> expression MUL expression
--- On MUL reduce production expression -> expression MUL expression
--- On MOD reduce production expression -> expression MUL expression
--- On MINUS_SAT reduce production expression -> expression MUL expression
--- On MINUS reduce production expression -> expression MUL expression
--- On MASK reduce production expression -> expression MUL expression
--- On L_ANGLE reduce production expression -> expression MUL expression
--- On LE reduce production expression -> expression MUL expression
--- On GE reduce production expression -> expression MUL expression
--- On EQ reduce production expression -> expression MUL expression
--- On DIV reduce production expression -> expression MUL expression
--- On COMMA reduce production expression -> expression MUL expression
--- On COLON reduce production expression -> expression MUL expression
--- On BIT_XOR reduce production expression -> expression MUL expression
--- On BIT_OR reduce production expression -> expression MUL expression
--- On BIT_AND reduce production expression -> expression MUL expression
--- On AND reduce production expression -> expression MUL expression
+-- On SHL SEMICOLON R_PAREN R_BRACKET R_BRACE R_ANGLE RANGE QUESTION PLUS_SAT PLUSPLUS PLUS OR NE MUL MOD MINUS_SAT MINUS MASK L_ANGLE LE GE EQ DIV COMMA COLON BIT_XOR BIT_OR BIT_AND AND
+--   reduce production expression -> expression MUL expression
 
 State 70:
 ## Known stack suffix:
@@ -1567,8 +1446,8 @@ expression -> expression L_PAREN . argumentList R_PAREN [ SHL SEMICOLON R_PAREN 
 -- On argumentList shift to state 155
 -- On argument shift to state 135
 ## Reductions:
--- On R_PAREN reduce production separated_list_aux(COMMA,argument) ->
--- On COMMA reduce production separated_list_aux(COMMA,argument) ->
+-- On R_PAREN COMMA
+--   reduce production separated_list_aux(COMMA,argument) ->
 
 State 71:
 ## Known stack suffix:
@@ -1637,8 +1516,8 @@ expression -> expression . L_PAREN argumentList R_PAREN [ SHL R_PAREN R_ANGLE QU
 -- On BIT_AND shift to state 118
 -- On AND shift to state 126
 ## Reductions:
--- On R_PAREN reduce production argument -> expression
--- On COMMA reduce production argument -> expression
+-- On R_PAREN COMMA
+--   reduce production argument -> expression
 
 State 73:
 ## Known stack suffix:
@@ -1763,23 +1642,8 @@ expression -> expression . L_PAREN argumentList R_PAREN [ SHL SEMICOLON R_PAREN 
 -- On BIT_OR shift to state 120
 -- On BIT_AND shift to state 118
 ## Reductions:
--- On SEMICOLON reduce production expression -> expression R_ANGLE R_ANGLE expression
--- On R_PAREN reduce production expression -> expression R_ANGLE R_ANGLE expression
--- On R_BRACKET reduce production expression -> expression R_ANGLE R_ANGLE expression
--- On R_BRACE reduce production expression -> expression R_ANGLE R_ANGLE expression
--- On R_ANGLE reduce production expression -> expression R_ANGLE R_ANGLE expression
--- On RANGE reduce production expression -> expression R_ANGLE R_ANGLE expression
--- On QUESTION reduce production expression -> expression R_ANGLE R_ANGLE expression
--- On OR reduce production expression -> expression R_ANGLE R_ANGLE expression
--- On NE reduce production expression -> expression R_ANGLE R_ANGLE expression
--- On MASK reduce production expression -> expression R_ANGLE R_ANGLE expression
--- On L_ANGLE reduce production expression -> expression R_ANGLE R_ANGLE expression
--- On LE reduce production expression -> expression R_ANGLE R_ANGLE expression
--- On GE reduce production expression -> expression R_ANGLE R_ANGLE expression
--- On EQ reduce production expression -> expression R_ANGLE R_ANGLE expression
--- On COMMA reduce production expression -> expression R_ANGLE R_ANGLE expression
--- On COLON reduce production expression -> expression R_ANGLE R_ANGLE expression
--- On AND reduce production expression -> expression R_ANGLE R_ANGLE expression
+-- On SEMICOLON R_PAREN R_BRACKET R_BRACE R_ANGLE RANGE QUESTION OR NE MASK L_ANGLE LE GE EQ COMMA COLON AND
+--   reduce production expression -> expression R_ANGLE R_ANGLE expression
 
 State 76:
 ## Known stack suffix:
@@ -1857,32 +1721,8 @@ expression -> expression . L_PAREN argumentList R_PAREN [ SHL SEMICOLON R_PAREN 
 -- On DOT shift to state 87
 -- On DIV shift to state 89
 ## Reductions:
--- On SHL reduce production expression -> expression PLUSPLUS expression
--- On SEMICOLON reduce production expression -> expression PLUSPLUS expression
--- On R_PAREN reduce production expression -> expression PLUSPLUS expression
--- On R_BRACKET reduce production expression -> expression PLUSPLUS expression
--- On R_BRACE reduce production expression -> expression PLUSPLUS expression
--- On R_ANGLE reduce production expression -> expression PLUSPLUS expression
--- On RANGE reduce production expression -> expression PLUSPLUS expression
--- On QUESTION reduce production expression -> expression PLUSPLUS expression
--- On PLUS_SAT reduce production expression -> expression PLUSPLUS expression
--- On PLUSPLUS reduce production expression -> expression PLUSPLUS expression
--- On PLUS reduce production expression -> expression PLUSPLUS expression
--- On OR reduce production expression -> expression PLUSPLUS expression
--- On NE reduce production expression -> expression PLUSPLUS expression
--- On MINUS_SAT reduce production expression -> expression PLUSPLUS expression
--- On MINUS reduce production expression -> expression PLUSPLUS expression
--- On MASK reduce production expression -> expression PLUSPLUS expression
--- On L_ANGLE reduce production expression -> expression PLUSPLUS expression
--- On LE reduce production expression -> expression PLUSPLUS expression
--- On GE reduce production expression -> expression PLUSPLUS expression
--- On EQ reduce production expression -> expression PLUSPLUS expression
--- On COMMA reduce production expression -> expression PLUSPLUS expression
--- On COLON reduce production expression -> expression PLUSPLUS expression
--- On BIT_XOR reduce production expression -> expression PLUSPLUS expression
--- On BIT_OR reduce production expression -> expression PLUSPLUS expression
--- On BIT_AND reduce production expression -> expression PLUSPLUS expression
--- On AND reduce production expression -> expression PLUSPLUS expression
+-- On SHL SEMICOLON R_PAREN R_BRACKET R_BRACE R_ANGLE RANGE QUESTION PLUS_SAT PLUSPLUS PLUS OR NE MINUS_SAT MINUS MASK L_ANGLE LE GE EQ COMMA COLON BIT_XOR BIT_OR BIT_AND AND
+--   reduce production expression -> expression PLUSPLUS expression
 
 State 78:
 ## Known stack suffix:
@@ -1957,35 +1797,8 @@ expression -> expression . L_PAREN argumentList R_PAREN [ SHL SEMICOLON R_PAREN 
 -- On L_BRACKET shift to state 80
 -- On DOT shift to state 87
 ## Reductions:
--- On SHL reduce production expression -> expression MOD expression
--- On SEMICOLON reduce production expression -> expression MOD expression
--- On R_PAREN reduce production expression -> expression MOD expression
--- On R_BRACKET reduce production expression -> expression MOD expression
--- On R_BRACE reduce production expression -> expression MOD expression
--- On R_ANGLE reduce production expression -> expression MOD expression
--- On RANGE reduce production expression -> expression MOD expression
--- On QUESTION reduce production expression -> expression MOD expression
--- On PLUS_SAT reduce production expression -> expression MOD expression
--- On PLUSPLUS reduce production expression -> expression MOD expression
--- On PLUS reduce production expression -> expression MOD expression
--- On OR reduce production expression -> expression MOD expression
--- On NE reduce production expression -> expression MOD expression
--- On MUL reduce production expression -> expression MOD expression
--- On MOD reduce production expression -> expression MOD expression
--- On MINUS_SAT reduce production expression -> expression MOD expression
--- On MINUS reduce production expression -> expression MOD expression
--- On MASK reduce production expression -> expression MOD expression
--- On L_ANGLE reduce production expression -> expression MOD expression
--- On LE reduce production expression -> expression MOD expression
--- On GE reduce production expression -> expression MOD expression
--- On EQ reduce production expression -> expression MOD expression
--- On DIV reduce production expression -> expression MOD expression
--- On COMMA reduce production expression -> expression MOD expression
--- On COLON reduce production expression -> expression MOD expression
--- On BIT_XOR reduce production expression -> expression MOD expression
--- On BIT_OR reduce production expression -> expression MOD expression
--- On BIT_AND reduce production expression -> expression MOD expression
--- On AND reduce production expression -> expression MOD expression
+-- On SHL SEMICOLON R_PAREN R_BRACKET R_BRACE R_ANGLE RANGE QUESTION PLUS_SAT PLUSPLUS PLUS OR NE MUL MOD MINUS_SAT MINUS MASK L_ANGLE LE GE EQ DIV COMMA COLON BIT_XOR BIT_OR BIT_AND AND
+--   reduce production expression -> expression MOD expression
 
 State 80:
 ## Known stack suffix:
@@ -2267,32 +2080,8 @@ expression -> expression . L_PAREN argumentList R_PAREN [ SHL SEMICOLON R_PAREN 
 -- On DOT shift to state 87
 -- On DIV shift to state 89
 ## Reductions:
--- On SHL reduce production expression -> expression PLUS expression
--- On SEMICOLON reduce production expression -> expression PLUS expression
--- On R_PAREN reduce production expression -> expression PLUS expression
--- On R_BRACKET reduce production expression -> expression PLUS expression
--- On R_BRACE reduce production expression -> expression PLUS expression
--- On R_ANGLE reduce production expression -> expression PLUS expression
--- On RANGE reduce production expression -> expression PLUS expression
--- On QUESTION reduce production expression -> expression PLUS expression
--- On PLUS_SAT reduce production expression -> expression PLUS expression
--- On PLUSPLUS reduce production expression -> expression PLUS expression
--- On PLUS reduce production expression -> expression PLUS expression
--- On OR reduce production expression -> expression PLUS expression
--- On NE reduce production expression -> expression PLUS expression
--- On MINUS_SAT reduce production expression -> expression PLUS expression
--- On MINUS reduce production expression -> expression PLUS expression
--- On MASK reduce production expression -> expression PLUS expression
--- On L_ANGLE reduce production expression -> expression PLUS expression
--- On LE reduce production expression -> expression PLUS expression
--- On GE reduce production expression -> expression PLUS expression
--- On EQ reduce production expression -> expression PLUS expression
--- On COMMA reduce production expression -> expression PLUS expression
--- On COLON reduce production expression -> expression PLUS expression
--- On BIT_XOR reduce production expression -> expression PLUS expression
--- On BIT_OR reduce production expression -> expression PLUS expression
--- On BIT_AND reduce production expression -> expression PLUS expression
--- On AND reduce production expression -> expression PLUS expression
+-- On SHL SEMICOLON R_PAREN R_BRACKET R_BRACE R_ANGLE RANGE QUESTION PLUS_SAT PLUSPLUS PLUS OR NE MINUS_SAT MINUS MASK L_ANGLE LE GE EQ COMMA COLON BIT_XOR BIT_OR BIT_AND AND
+--   reduce production expression -> expression PLUS expression
 
 State 87:
 ## Known stack suffix:
@@ -2396,35 +2185,8 @@ expression -> expression . L_PAREN argumentList R_PAREN [ SHL SEMICOLON R_PAREN 
 -- On L_BRACKET shift to state 80
 -- On DOT shift to state 87
 ## Reductions:
--- On SHL reduce production expression -> expression DIV expression
--- On SEMICOLON reduce production expression -> expression DIV expression
--- On R_PAREN reduce production expression -> expression DIV expression
--- On R_BRACKET reduce production expression -> expression DIV expression
--- On R_BRACE reduce production expression -> expression DIV expression
--- On R_ANGLE reduce production expression -> expression DIV expression
--- On RANGE reduce production expression -> expression DIV expression
--- On QUESTION reduce production expression -> expression DIV expression
--- On PLUS_SAT reduce production expression -> expression DIV expression
--- On PLUSPLUS reduce production expression -> expression DIV expression
--- On PLUS reduce production expression -> expression DIV expression
--- On OR reduce production expression -> expression DIV expression
--- On NE reduce production expression -> expression DIV expression
--- On MUL reduce production expression -> expression DIV expression
--- On MOD reduce production expression -> expression DIV expression
--- On MINUS_SAT reduce production expression -> expression DIV expression
--- On MINUS reduce production expression -> expression DIV expression
--- On MASK reduce production expression -> expression DIV expression
--- On L_ANGLE reduce production expression -> expression DIV expression
--- On LE reduce production expression -> expression DIV expression
--- On GE reduce production expression -> expression DIV expression
--- On EQ reduce production expression -> expression DIV expression
--- On DIV reduce production expression -> expression DIV expression
--- On COMMA reduce production expression -> expression DIV expression
--- On COLON reduce production expression -> expression DIV expression
--- On BIT_XOR reduce production expression -> expression DIV expression
--- On BIT_OR reduce production expression -> expression DIV expression
--- On BIT_AND reduce production expression -> expression DIV expression
--- On AND reduce production expression -> expression DIV expression
+-- On SHL SEMICOLON R_PAREN R_BRACKET R_BRACE R_ANGLE RANGE QUESTION PLUS_SAT PLUSPLUS PLUS OR NE MUL MOD MINUS_SAT MINUS MASK L_ANGLE LE GE EQ DIV COMMA COLON BIT_XOR BIT_OR BIT_AND AND
+--   reduce production expression -> expression DIV expression
 
 State 91:
 ## Known stack suffix:
@@ -2597,16 +2359,8 @@ expression -> expression . L_PAREN argumentList R_PAREN [ SHL SEMICOLON R_PAREN 
 -- On BIT_AND shift to state 118
 -- On AND shift to state 126
 ## Reductions:
--- On SEMICOLON reduce production expression -> expression OR expression
--- On R_PAREN reduce production expression -> expression OR expression
--- On R_BRACKET reduce production expression -> expression OR expression
--- On R_BRACE reduce production expression -> expression OR expression
--- On RANGE reduce production expression -> expression OR expression
--- On QUESTION reduce production expression -> expression OR expression
--- On OR reduce production expression -> expression OR expression
--- On MASK reduce production expression -> expression OR expression
--- On COMMA reduce production expression -> expression OR expression
--- On COLON reduce production expression -> expression OR expression
+-- On SEMICOLON R_PAREN R_BRACKET R_BRACE RANGE QUESTION OR MASK COMMA COLON
+--   reduce production expression -> expression OR expression
 
 State 100:
 ## Known stack suffix:
@@ -2697,19 +2451,8 @@ expression -> expression . L_PAREN argumentList R_PAREN [ SHL SEMICOLON R_PAREN 
 -- On BIT_OR shift to state 120
 -- On BIT_AND shift to state 118
 ## Reductions:
--- On SEMICOLON reduce production expression -> expression NE expression
--- On R_PAREN reduce production expression -> expression NE expression
--- On R_BRACKET reduce production expression -> expression NE expression
--- On R_BRACE reduce production expression -> expression NE expression
--- On RANGE reduce production expression -> expression NE expression
--- On QUESTION reduce production expression -> expression NE expression
--- On OR reduce production expression -> expression NE expression
--- On NE reduce production expression -> expression NE expression
--- On MASK reduce production expression -> expression NE expression
--- On EQ reduce production expression -> expression NE expression
--- On COMMA reduce production expression -> expression NE expression
--- On COLON reduce production expression -> expression NE expression
--- On AND reduce production expression -> expression NE expression
+-- On SEMICOLON R_PAREN R_BRACKET R_BRACE RANGE QUESTION OR NE MASK EQ COMMA COLON AND
+--   reduce production expression -> expression NE expression
 
 State 102:
 ## Known stack suffix:
@@ -2787,32 +2530,8 @@ expression -> expression . L_PAREN argumentList R_PAREN [ SHL SEMICOLON R_PAREN 
 -- On DOT shift to state 87
 -- On DIV shift to state 89
 ## Reductions:
--- On SHL reduce production expression -> expression MINUS_SAT expression
--- On SEMICOLON reduce production expression -> expression MINUS_SAT expression
--- On R_PAREN reduce production expression -> expression MINUS_SAT expression
--- On R_BRACKET reduce production expression -> expression MINUS_SAT expression
--- On R_BRACE reduce production expression -> expression MINUS_SAT expression
--- On R_ANGLE reduce production expression -> expression MINUS_SAT expression
--- On RANGE reduce production expression -> expression MINUS_SAT expression
--- On QUESTION reduce production expression -> expression MINUS_SAT expression
--- On PLUS_SAT reduce production expression -> expression MINUS_SAT expression
--- On PLUSPLUS reduce production expression -> expression MINUS_SAT expression
--- On PLUS reduce production expression -> expression MINUS_SAT expression
--- On OR reduce production expression -> expression MINUS_SAT expression
--- On NE reduce production expression -> expression MINUS_SAT expression
--- On MINUS_SAT reduce production expression -> expression MINUS_SAT expression
--- On MINUS reduce production expression -> expression MINUS_SAT expression
--- On MASK reduce production expression -> expression MINUS_SAT expression
--- On L_ANGLE reduce production expression -> expression MINUS_SAT expression
--- On LE reduce production expression -> expression MINUS_SAT expression
--- On GE reduce production expression -> expression MINUS_SAT expression
--- On EQ reduce production expression -> expression MINUS_SAT expression
--- On COMMA reduce production expression -> expression MINUS_SAT expression
--- On COLON reduce production expression -> expression MINUS_SAT expression
--- On BIT_XOR reduce production expression -> expression MINUS_SAT expression
--- On BIT_OR reduce production expression -> expression MINUS_SAT expression
--- On BIT_AND reduce production expression -> expression MINUS_SAT expression
--- On AND reduce production expression -> expression MINUS_SAT expression
+-- On SHL SEMICOLON R_PAREN R_BRACKET R_BRACE R_ANGLE RANGE QUESTION PLUS_SAT PLUSPLUS PLUS OR NE MINUS_SAT MINUS MASK L_ANGLE LE GE EQ COMMA COLON BIT_XOR BIT_OR BIT_AND AND
+--   reduce production expression -> expression MINUS_SAT expression
 
 State 104:
 ## Known stack suffix:
@@ -2890,32 +2609,8 @@ expression -> expression . L_PAREN argumentList R_PAREN [ SHL SEMICOLON R_PAREN 
 -- On DOT shift to state 87
 -- On DIV shift to state 89
 ## Reductions:
--- On SHL reduce production expression -> expression MINUS expression
--- On SEMICOLON reduce production expression -> expression MINUS expression
--- On R_PAREN reduce production expression -> expression MINUS expression
--- On R_BRACKET reduce production expression -> expression MINUS expression
--- On R_BRACE reduce production expression -> expression MINUS expression
--- On R_ANGLE reduce production expression -> expression MINUS expression
--- On RANGE reduce production expression -> expression MINUS expression
--- On QUESTION reduce production expression -> expression MINUS expression
--- On PLUS_SAT reduce production expression -> expression MINUS expression
--- On PLUSPLUS reduce production expression -> expression MINUS expression
--- On PLUS reduce production expression -> expression MINUS expression
--- On OR reduce production expression -> expression MINUS expression
--- On NE reduce production expression -> expression MINUS expression
--- On MINUS_SAT reduce production expression -> expression MINUS expression
--- On MINUS reduce production expression -> expression MINUS expression
--- On MASK reduce production expression -> expression MINUS expression
--- On L_ANGLE reduce production expression -> expression MINUS expression
--- On LE reduce production expression -> expression MINUS expression
--- On GE reduce production expression -> expression MINUS expression
--- On EQ reduce production expression -> expression MINUS expression
--- On COMMA reduce production expression -> expression MINUS expression
--- On COLON reduce production expression -> expression MINUS expression
--- On BIT_XOR reduce production expression -> expression MINUS expression
--- On BIT_OR reduce production expression -> expression MINUS expression
--- On BIT_AND reduce production expression -> expression MINUS expression
--- On AND reduce production expression -> expression MINUS expression
+-- On SHL SEMICOLON R_PAREN R_BRACKET R_BRACE R_ANGLE RANGE QUESTION PLUS_SAT PLUSPLUS PLUS OR NE MINUS_SAT MINUS MASK L_ANGLE LE GE EQ COMMA COLON BIT_XOR BIT_OR BIT_AND AND
+--   reduce production expression -> expression MINUS expression
 
 State 106:
 ## Known stack suffix:
@@ -2976,9 +2671,8 @@ expression -> ERROR . DOT member [ SHL SEMICOLON R_PAREN R_BRACKET R_BRACE R_ANG
 ## Transitions:
 -- On DOT shift to state 27
 ## Reductions:
--- On R_PAREN reduce production baseType -> ERROR
--- On R_ANGLE reduce production baseType -> ERROR
--- On COMMA reduce production baseType -> ERROR
+-- On R_PAREN R_ANGLE COMMA
+--   reduce production baseType -> ERROR
 
 State 108:
 ## Known stack suffix:
@@ -3010,10 +2704,10 @@ typeRef -> typeName . [ R_PAREN R_ANGLE COMMA ]
 -- On L_BRACKET shift to state 111
 -- On DOT shift to state 41
 ## Reductions:
--- On R_PAREN reduce production typeRef -> typeName
--- On R_ANGLE reduce production typeRef -> typeName
--- On L_PAREN reduce production namedType -> typeName
--- On COMMA reduce production typeRef -> typeName
+-- On L_PAREN
+--   reduce production namedType -> typeName
+-- On R_PAREN R_ANGLE COMMA
+--   reduce production typeRef -> typeName
 
 State 111:
 ## Known stack suffix:
@@ -3205,23 +2899,8 @@ expression -> expression . L_PAREN argumentList R_PAREN [ SHL SEMICOLON R_PAREN 
 -- On BIT_OR shift to state 120
 -- On BIT_AND shift to state 118
 ## Reductions:
--- On SEMICOLON reduce production expression -> expression LE expression
--- On R_PAREN reduce production expression -> expression LE expression
--- On R_BRACKET reduce production expression -> expression LE expression
--- On R_BRACE reduce production expression -> expression LE expression
--- On R_ANGLE reduce production expression -> expression LE expression
--- On RANGE reduce production expression -> expression LE expression
--- On QUESTION reduce production expression -> expression LE expression
--- On OR reduce production expression -> expression LE expression
--- On NE reduce production expression -> expression LE expression
--- On MASK reduce production expression -> expression LE expression
--- On L_ANGLE reduce production expression -> expression LE expression
--- On LE reduce production expression -> expression LE expression
--- On GE reduce production expression -> expression LE expression
--- On EQ reduce production expression -> expression LE expression
--- On COMMA reduce production expression -> expression LE expression
--- On COLON reduce production expression -> expression LE expression
--- On AND reduce production expression -> expression LE expression
+-- On SEMICOLON R_PAREN R_BRACKET R_BRACE R_ANGLE RANGE QUESTION OR NE MASK L_ANGLE LE GE EQ COMMA COLON AND
+--   reduce production expression -> expression LE expression
 
 State 116:
 ## Known stack suffix:
@@ -3306,25 +2985,8 @@ expression -> expression . L_PAREN argumentList R_PAREN [ SHL SEMICOLON R_PAREN 
 -- On DIV shift to state 89
 -- On BIT_AND shift to state 118
 ## Reductions:
--- On SEMICOLON reduce production expression -> expression BIT_XOR expression
--- On R_PAREN reduce production expression -> expression BIT_XOR expression
--- On R_BRACKET reduce production expression -> expression BIT_XOR expression
--- On R_BRACE reduce production expression -> expression BIT_XOR expression
--- On R_ANGLE reduce production expression -> expression BIT_XOR expression
--- On RANGE reduce production expression -> expression BIT_XOR expression
--- On QUESTION reduce production expression -> expression BIT_XOR expression
--- On OR reduce production expression -> expression BIT_XOR expression
--- On NE reduce production expression -> expression BIT_XOR expression
--- On MASK reduce production expression -> expression BIT_XOR expression
--- On L_ANGLE reduce production expression -> expression BIT_XOR expression
--- On LE reduce production expression -> expression BIT_XOR expression
--- On GE reduce production expression -> expression BIT_XOR expression
--- On EQ reduce production expression -> expression BIT_XOR expression
--- On COMMA reduce production expression -> expression BIT_XOR expression
--- On COLON reduce production expression -> expression BIT_XOR expression
--- On BIT_XOR reduce production expression -> expression BIT_XOR expression
--- On BIT_OR reduce production expression -> expression BIT_XOR expression
--- On AND reduce production expression -> expression BIT_XOR expression
+-- On SEMICOLON R_PAREN R_BRACKET R_BRACE R_ANGLE RANGE QUESTION OR NE MASK L_ANGLE LE GE EQ COMMA COLON BIT_XOR BIT_OR AND
+--   reduce production expression -> expression BIT_XOR expression
 
 State 118:
 ## Known stack suffix:
@@ -3408,26 +3070,8 @@ expression -> expression . L_PAREN argumentList R_PAREN [ SHL SEMICOLON R_PAREN 
 -- On DOT shift to state 87
 -- On DIV shift to state 89
 ## Reductions:
--- On SEMICOLON reduce production expression -> expression BIT_AND expression
--- On R_PAREN reduce production expression -> expression BIT_AND expression
--- On R_BRACKET reduce production expression -> expression BIT_AND expression
--- On R_BRACE reduce production expression -> expression BIT_AND expression
--- On R_ANGLE reduce production expression -> expression BIT_AND expression
--- On RANGE reduce production expression -> expression BIT_AND expression
--- On QUESTION reduce production expression -> expression BIT_AND expression
--- On OR reduce production expression -> expression BIT_AND expression
--- On NE reduce production expression -> expression BIT_AND expression
--- On MASK reduce production expression -> expression BIT_AND expression
--- On L_ANGLE reduce production expression -> expression BIT_AND expression
--- On LE reduce production expression -> expression BIT_AND expression
--- On GE reduce production expression -> expression BIT_AND expression
--- On EQ reduce production expression -> expression BIT_AND expression
--- On COMMA reduce production expression -> expression BIT_AND expression
--- On COLON reduce production expression -> expression BIT_AND expression
--- On BIT_XOR reduce production expression -> expression BIT_AND expression
--- On BIT_OR reduce production expression -> expression BIT_AND expression
--- On BIT_AND reduce production expression -> expression BIT_AND expression
--- On AND reduce production expression -> expression BIT_AND expression
+-- On SEMICOLON R_PAREN R_BRACKET R_BRACE R_ANGLE RANGE QUESTION OR NE MASK L_ANGLE LE GE EQ COMMA COLON BIT_XOR BIT_OR BIT_AND AND
+--   reduce production expression -> expression BIT_AND expression
 
 State 120:
 ## Known stack suffix:
@@ -3513,24 +3157,8 @@ expression -> expression . L_PAREN argumentList R_PAREN [ SHL SEMICOLON R_PAREN 
 -- On BIT_XOR shift to state 116
 -- On BIT_AND shift to state 118
 ## Reductions:
--- On SEMICOLON reduce production expression -> expression BIT_OR expression
--- On R_PAREN reduce production expression -> expression BIT_OR expression
--- On R_BRACKET reduce production expression -> expression BIT_OR expression
--- On R_BRACE reduce production expression -> expression BIT_OR expression
--- On R_ANGLE reduce production expression -> expression BIT_OR expression
--- On RANGE reduce production expression -> expression BIT_OR expression
--- On QUESTION reduce production expression -> expression BIT_OR expression
--- On OR reduce production expression -> expression BIT_OR expression
--- On NE reduce production expression -> expression BIT_OR expression
--- On MASK reduce production expression -> expression BIT_OR expression
--- On L_ANGLE reduce production expression -> expression BIT_OR expression
--- On LE reduce production expression -> expression BIT_OR expression
--- On GE reduce production expression -> expression BIT_OR expression
--- On EQ reduce production expression -> expression BIT_OR expression
--- On COMMA reduce production expression -> expression BIT_OR expression
--- On COLON reduce production expression -> expression BIT_OR expression
--- On BIT_OR reduce production expression -> expression BIT_OR expression
--- On AND reduce production expression -> expression BIT_OR expression
+-- On SEMICOLON R_PAREN R_BRACKET R_BRACE R_ANGLE RANGE QUESTION OR NE MASK L_ANGLE LE GE EQ COMMA COLON BIT_OR AND
+--   reduce production expression -> expression BIT_OR expression
 
 State 122:
 ## Known stack suffix:
@@ -3617,23 +3245,8 @@ expression -> expression . L_PAREN argumentList R_PAREN [ SHL SEMICOLON R_PAREN 
 -- On BIT_OR shift to state 120
 -- On BIT_AND shift to state 118
 ## Reductions:
--- On SEMICOLON reduce production expression -> expression GE expression
--- On R_PAREN reduce production expression -> expression GE expression
--- On R_BRACKET reduce production expression -> expression GE expression
--- On R_BRACE reduce production expression -> expression GE expression
--- On R_ANGLE reduce production expression -> expression GE expression
--- On RANGE reduce production expression -> expression GE expression
--- On QUESTION reduce production expression -> expression GE expression
--- On OR reduce production expression -> expression GE expression
--- On NE reduce production expression -> expression GE expression
--- On MASK reduce production expression -> expression GE expression
--- On L_ANGLE reduce production expression -> expression GE expression
--- On LE reduce production expression -> expression GE expression
--- On GE reduce production expression -> expression GE expression
--- On EQ reduce production expression -> expression GE expression
--- On COMMA reduce production expression -> expression GE expression
--- On COLON reduce production expression -> expression GE expression
--- On AND reduce production expression -> expression GE expression
+-- On SEMICOLON R_PAREN R_BRACKET R_BRACE R_ANGLE RANGE QUESTION OR NE MASK L_ANGLE LE GE EQ COMMA COLON AND
+--   reduce production expression -> expression GE expression
 
 State 124:
 ## Known stack suffix:
@@ -3724,19 +3337,8 @@ expression -> expression . L_PAREN argumentList R_PAREN [ SHL SEMICOLON R_PAREN 
 -- On BIT_OR shift to state 120
 -- On BIT_AND shift to state 118
 ## Reductions:
--- On SEMICOLON reduce production expression -> expression EQ expression
--- On R_PAREN reduce production expression -> expression EQ expression
--- On R_BRACKET reduce production expression -> expression EQ expression
--- On R_BRACE reduce production expression -> expression EQ expression
--- On RANGE reduce production expression -> expression EQ expression
--- On QUESTION reduce production expression -> expression EQ expression
--- On OR reduce production expression -> expression EQ expression
--- On NE reduce production expression -> expression EQ expression
--- On MASK reduce production expression -> expression EQ expression
--- On EQ reduce production expression -> expression EQ expression
--- On COMMA reduce production expression -> expression EQ expression
--- On COLON reduce production expression -> expression EQ expression
--- On AND reduce production expression -> expression EQ expression
+-- On SEMICOLON R_PAREN R_BRACKET R_BRACE RANGE QUESTION OR NE MASK EQ COMMA COLON AND
+--   reduce production expression -> expression EQ expression
 
 State 126:
 ## Known stack suffix:
@@ -3829,17 +3431,8 @@ expression -> expression . L_PAREN argumentList R_PAREN [ SHL SEMICOLON R_PAREN 
 -- On BIT_OR shift to state 120
 -- On BIT_AND shift to state 118
 ## Reductions:
--- On SEMICOLON reduce production expression -> expression AND expression
--- On R_PAREN reduce production expression -> expression AND expression
--- On R_BRACKET reduce production expression -> expression AND expression
--- On R_BRACE reduce production expression -> expression AND expression
--- On RANGE reduce production expression -> expression AND expression
--- On QUESTION reduce production expression -> expression AND expression
--- On OR reduce production expression -> expression AND expression
--- On MASK reduce production expression -> expression AND expression
--- On COMMA reduce production expression -> expression AND expression
--- On COLON reduce production expression -> expression AND expression
--- On AND reduce production expression -> expression AND expression
+-- On SEMICOLON R_PAREN R_BRACKET R_BRACE RANGE QUESTION OR MASK COMMA COLON AND
+--   reduce production expression -> expression AND expression
 
 State 128:
 ## Known stack suffix:
@@ -3858,10 +3451,10 @@ namedType -> specializedType . [ L_PAREN ]
 typeRef -> specializedType . [ R_PAREN R_ANGLE COMMA ]
 ## Transitions:
 ## Reductions:
--- On R_PAREN reduce production typeRef -> specializedType
--- On R_ANGLE reduce production typeRef -> specializedType
--- On L_PAREN reduce production namedType -> specializedType
--- On COMMA reduce production typeRef -> specializedType
+-- On L_PAREN
+--   reduce production namedType -> specializedType
+-- On R_PAREN R_ANGLE COMMA
+--   reduce production typeRef -> specializedType
 
 State 130:
 ## Known stack suffix:
@@ -3924,8 +3517,8 @@ expression -> expression L_ANGLE realTypeArgumentList R_ANGLE L_PAREN . argument
 -- On argumentList shift to state 133
 -- On argument shift to state 135
 ## Reductions:
--- On R_PAREN reduce production separated_list_aux(COMMA,argument) ->
--- On COMMA reduce production separated_list_aux(COMMA,argument) ->
+-- On R_PAREN COMMA
+--   reduce production separated_list_aux(COMMA,argument) ->
 
 State 133:
 ## Known stack suffix:
@@ -4008,16 +3601,8 @@ typeRef -> typeName . [ TYPE STATE R_ANGLE NAME L_PAREN KEY ENTRIES COMMA APPLY 
 ## Transitions:
 -- On L_BRACKET shift to state 111
 ## Reductions:
--- On TYPE reduce production typeRef -> typeName
--- On STATE reduce production typeRef -> typeName
--- On R_ANGLE reduce production typeRef -> typeName
--- On NAME reduce production typeRef -> typeName
--- On L_PAREN reduce production typeRef -> typeName
--- On KEY reduce production typeRef -> typeName
--- On ENTRIES reduce production typeRef -> typeName
--- On COMMA reduce production typeRef -> typeName
--- On APPLY reduce production typeRef -> typeName
--- On ACTIONS reduce production typeRef -> typeName
+-- On TYPE STATE R_ANGLE NAME L_PAREN KEY ENTRIES COMMA APPLY ACTIONS
+--   reduce production typeRef -> typeName
 
 State 139:
 ## Known stack suffix:
@@ -4150,23 +3735,8 @@ expression -> expression . L_PAREN argumentList R_PAREN [ SHL SEMICOLON R_PAREN 
 -- On BIT_OR shift to state 120
 -- On BIT_AND shift to state 118
 ## Reductions:
--- On SEMICOLON reduce production expression -> expression L_ANGLE expression
--- On R_PAREN reduce production expression -> expression L_ANGLE expression
--- On R_BRACKET reduce production expression -> expression L_ANGLE expression
--- On R_BRACE reduce production expression -> expression L_ANGLE expression
--- On R_ANGLE reduce production expression -> expression L_ANGLE expression
--- On RANGE reduce production expression -> expression L_ANGLE expression
--- On QUESTION reduce production expression -> expression L_ANGLE expression
--- On OR reduce production expression -> expression L_ANGLE expression
--- On NE reduce production expression -> expression L_ANGLE expression
--- On MASK reduce production expression -> expression L_ANGLE expression
--- On L_ANGLE reduce production expression -> expression L_ANGLE expression
--- On LE reduce production expression -> expression L_ANGLE expression
--- On GE reduce production expression -> expression L_ANGLE expression
--- On EQ reduce production expression -> expression L_ANGLE expression
--- On COMMA reduce production expression -> expression L_ANGLE expression
--- On COLON reduce production expression -> expression L_ANGLE expression
--- On AND reduce production expression -> expression L_ANGLE expression
+-- On SEMICOLON R_PAREN R_BRACKET R_BRACE R_ANGLE RANGE QUESTION OR NE MASK L_ANGLE LE GE EQ COMMA COLON AND
+--   reduce production expression -> expression L_ANGLE expression
 
 State 149:
 ## Known stack suffix:
@@ -4261,15 +3831,8 @@ expression -> expression . L_PAREN argumentList R_PAREN [ SHL SEMICOLON R_PAREN 
 -- On BIT_AND shift to state 118
 -- On AND shift to state 126
 ## Reductions:
--- On SEMICOLON reduce production expression -> expression QUESTION expression COLON expression
--- On R_PAREN reduce production expression -> expression QUESTION expression COLON expression
--- On R_BRACKET reduce production expression -> expression QUESTION expression COLON expression
--- On R_BRACE reduce production expression -> expression QUESTION expression COLON expression
--- On RANGE reduce production expression -> expression QUESTION expression COLON expression
--- On QUESTION reduce production expression -> expression QUESTION expression COLON expression
--- On MASK reduce production expression -> expression QUESTION expression COLON expression
--- On COMMA reduce production expression -> expression QUESTION expression COLON expression
--- On COLON reduce production expression -> expression QUESTION expression COLON expression
+-- On SEMICOLON R_PAREN R_BRACKET R_BRACE RANGE QUESTION MASK COMMA COLON
+--   reduce production expression -> expression QUESTION expression COLON expression
 
 State 151:
 ## Known stack suffix:
@@ -4425,23 +3988,8 @@ expression -> expression . L_PAREN argumentList R_PAREN [ SHL SEMICOLON R_PAREN 
 -- On BIT_OR shift to state 120
 -- On BIT_AND shift to state 118
 ## Reductions:
--- On SEMICOLON reduce production expression -> expression R_ANGLE expression
--- On R_PAREN reduce production expression -> expression R_ANGLE expression
--- On R_BRACKET reduce production expression -> expression R_ANGLE expression
--- On R_BRACE reduce production expression -> expression R_ANGLE expression
--- On R_ANGLE reduce production expression -> expression R_ANGLE expression
--- On RANGE reduce production expression -> expression R_ANGLE expression
--- On QUESTION reduce production expression -> expression R_ANGLE expression
--- On OR reduce production expression -> expression R_ANGLE expression
--- On NE reduce production expression -> expression R_ANGLE expression
--- On MASK reduce production expression -> expression R_ANGLE expression
--- On L_ANGLE reduce production expression -> expression R_ANGLE expression
--- On LE reduce production expression -> expression R_ANGLE expression
--- On GE reduce production expression -> expression R_ANGLE expression
--- On EQ reduce production expression -> expression R_ANGLE expression
--- On COMMA reduce production expression -> expression R_ANGLE expression
--- On COLON reduce production expression -> expression R_ANGLE expression
--- On AND reduce production expression -> expression R_ANGLE expression
+-- On SEMICOLON R_PAREN R_BRACKET R_BRACE R_ANGLE RANGE QUESTION OR NE MASK L_ANGLE LE GE EQ COMMA COLON AND
+--   reduce production expression -> expression R_ANGLE expression
 
 State 155:
 ## Known stack suffix:
@@ -4620,7 +4168,8 @@ separated_list_aux(COMMA,typeArg) -> separated_list_aux(COMMA,typeArg) . COMMA t
 ## Transitions:
 -- On COMMA shift to state 169
 ## Reductions:
--- On R_ANGLE reduce production petr4_separated_list(COMMA,typeArg) -> separated_list_aux(COMMA,typeArg)
+-- On R_ANGLE
+--   reduce production petr4_separated_list(COMMA,typeArg) -> separated_list_aux(COMMA,typeArg)
 
 State 169:
 ## Known stack suffix:
@@ -4713,35 +4262,8 @@ expression -> expression . L_PAREN argumentList R_PAREN [ SHL SEMICOLON R_PAREN 
 -- On L_BRACKET shift to state 80
 -- On DOT shift to state 87
 ## Reductions:
--- On SHL reduce production expression -> COMPLEMENT expression
--- On SEMICOLON reduce production expression -> COMPLEMENT expression
--- On R_PAREN reduce production expression -> COMPLEMENT expression
--- On R_BRACKET reduce production expression -> COMPLEMENT expression
--- On R_BRACE reduce production expression -> COMPLEMENT expression
--- On R_ANGLE reduce production expression -> COMPLEMENT expression
--- On RANGE reduce production expression -> COMPLEMENT expression
--- On QUESTION reduce production expression -> COMPLEMENT expression
--- On PLUS_SAT reduce production expression -> COMPLEMENT expression
--- On PLUSPLUS reduce production expression -> COMPLEMENT expression
--- On PLUS reduce production expression -> COMPLEMENT expression
--- On OR reduce production expression -> COMPLEMENT expression
--- On NE reduce production expression -> COMPLEMENT expression
--- On MUL reduce production expression -> COMPLEMENT expression
--- On MOD reduce production expression -> COMPLEMENT expression
--- On MINUS_SAT reduce production expression -> COMPLEMENT expression
--- On MINUS reduce production expression -> COMPLEMENT expression
--- On MASK reduce production expression -> COMPLEMENT expression
--- On L_ANGLE reduce production expression -> COMPLEMENT expression
--- On LE reduce production expression -> COMPLEMENT expression
--- On GE reduce production expression -> COMPLEMENT expression
--- On EQ reduce production expression -> COMPLEMENT expression
--- On DIV reduce production expression -> COMPLEMENT expression
--- On COMMA reduce production expression -> COMPLEMENT expression
--- On COLON reduce production expression -> COMPLEMENT expression
--- On BIT_XOR reduce production expression -> COMPLEMENT expression
--- On BIT_OR reduce production expression -> COMPLEMENT expression
--- On BIT_AND reduce production expression -> COMPLEMENT expression
--- On AND reduce production expression -> COMPLEMENT expression
+-- On SHL SEMICOLON R_PAREN R_BRACKET R_BRACE R_ANGLE RANGE QUESTION PLUS_SAT PLUSPLUS PLUS OR NE MUL MOD MINUS_SAT MINUS MASK L_ANGLE LE GE EQ DIV COMMA COLON BIT_XOR BIT_OR BIT_AND AND
+--   reduce production expression -> COMPLEMENT expression
 
 State 173:
 ## Known stack suffix:
@@ -4752,9 +4274,8 @@ separated_list_aux(COMMA,expression) -> separated_list_aux(COMMA,expression) . C
 ## Transitions:
 -- On COMMA shift to state 174
 ## Reductions:
--- On R_PAREN reduce production petr4_separated_list(COMMA,expression) -> separated_list_aux(COMMA,expression)
--- On R_BRACKET reduce production petr4_separated_list(COMMA,expression) -> separated_list_aux(COMMA,expression)
--- On R_BRACE reduce production petr4_separated_list(COMMA,expression) -> separated_list_aux(COMMA,expression)
+-- On R_PAREN R_BRACKET R_BRACE
+--   reduce production petr4_separated_list(COMMA,expression) -> separated_list_aux(COMMA,expression)
 
 State 174:
 ## Known stack suffix:
@@ -4850,10 +4371,8 @@ separated_list_aux(COMMA,expression) -> separated_list_aux(COMMA,expression) COM
 -- On BIT_AND shift to state 118
 -- On AND shift to state 126
 ## Reductions:
--- On R_PAREN reduce production separated_list_aux(COMMA,expression) -> separated_list_aux(COMMA,expression) COMMA expression
--- On R_BRACKET reduce production separated_list_aux(COMMA,expression) -> separated_list_aux(COMMA,expression) COMMA expression
--- On R_BRACE reduce production separated_list_aux(COMMA,expression) -> separated_list_aux(COMMA,expression) COMMA expression
--- On COMMA reduce production separated_list_aux(COMMA,expression) -> separated_list_aux(COMMA,expression) COMMA expression
+-- On R_PAREN R_BRACKET R_BRACE COMMA
+--   reduce production separated_list_aux(COMMA,expression) -> separated_list_aux(COMMA,expression) COMMA expression
 
 State 176:
 ## Known stack suffix:
@@ -4940,10 +4459,8 @@ separated_list_aux(COMMA,expression) -> expression . [ R_PAREN R_BRACKET R_BRACE
 -- On BIT_AND shift to state 118
 -- On AND shift to state 126
 ## Reductions:
--- On R_PAREN reduce production separated_list_aux(COMMA,expression) -> expression
--- On R_BRACKET reduce production separated_list_aux(COMMA,expression) -> expression
--- On R_BRACE reduce production separated_list_aux(COMMA,expression) -> expression
--- On COMMA reduce production separated_list_aux(COMMA,expression) -> expression
+-- On R_PAREN R_BRACKET R_BRACE COMMA
+--   reduce production separated_list_aux(COMMA,expression) -> expression
 
 State 180:
 ## Known stack suffix:
@@ -5141,35 +4658,8 @@ expression -> expression . L_PAREN argumentList R_PAREN [ SHL SEMICOLON R_PAREN 
 -- On L_BRACKET shift to state 80
 -- On DOT shift to state 87
 ## Reductions:
--- On SHL reduce production expression -> L_PAREN typeRef R_PAREN expression
--- On SEMICOLON reduce production expression -> L_PAREN typeRef R_PAREN expression
--- On R_PAREN reduce production expression -> L_PAREN typeRef R_PAREN expression
--- On R_BRACKET reduce production expression -> L_PAREN typeRef R_PAREN expression
--- On R_BRACE reduce production expression -> L_PAREN typeRef R_PAREN expression
--- On R_ANGLE reduce production expression -> L_PAREN typeRef R_PAREN expression
--- On RANGE reduce production expression -> L_PAREN typeRef R_PAREN expression
--- On QUESTION reduce production expression -> L_PAREN typeRef R_PAREN expression
--- On PLUS_SAT reduce production expression -> L_PAREN typeRef R_PAREN expression
--- On PLUSPLUS reduce production expression -> L_PAREN typeRef R_PAREN expression
--- On PLUS reduce production expression -> L_PAREN typeRef R_PAREN expression
--- On OR reduce production expression -> L_PAREN typeRef R_PAREN expression
--- On NE reduce production expression -> L_PAREN typeRef R_PAREN expression
--- On MUL reduce production expression -> L_PAREN typeRef R_PAREN expression
--- On MOD reduce production expression -> L_PAREN typeRef R_PAREN expression
--- On MINUS_SAT reduce production expression -> L_PAREN typeRef R_PAREN expression
--- On MINUS reduce production expression -> L_PAREN typeRef R_PAREN expression
--- On MASK reduce production expression -> L_PAREN typeRef R_PAREN expression
--- On L_ANGLE reduce production expression -> L_PAREN typeRef R_PAREN expression
--- On LE reduce production expression -> L_PAREN typeRef R_PAREN expression
--- On GE reduce production expression -> L_PAREN typeRef R_PAREN expression
--- On EQ reduce production expression -> L_PAREN typeRef R_PAREN expression
--- On DIV reduce production expression -> L_PAREN typeRef R_PAREN expression
--- On COMMA reduce production expression -> L_PAREN typeRef R_PAREN expression
--- On COLON reduce production expression -> L_PAREN typeRef R_PAREN expression
--- On BIT_XOR reduce production expression -> L_PAREN typeRef R_PAREN expression
--- On BIT_OR reduce production expression -> L_PAREN typeRef R_PAREN expression
--- On BIT_AND reduce production expression -> L_PAREN typeRef R_PAREN expression
--- On AND reduce production expression -> L_PAREN typeRef R_PAREN expression
+-- On SHL SEMICOLON R_PAREN R_BRACKET R_BRACE R_ANGLE RANGE QUESTION PLUS_SAT PLUSPLUS PLUS OR NE MUL MOD MINUS_SAT MINUS MASK L_ANGLE LE GE EQ DIV COMMA COLON BIT_XOR BIT_OR BIT_AND AND
+--   reduce production expression -> L_PAREN typeRef R_PAREN expression
 
 State 190:
 ## Known stack suffix:
@@ -5277,35 +4767,8 @@ expression -> expression . L_PAREN argumentList R_PAREN [ SHL SEMICOLON R_PAREN 
 -- On L_BRACKET shift to state 80
 -- On DOT shift to state 87
 ## Reductions:
--- On SHL reduce production expression -> MINUS expression
--- On SEMICOLON reduce production expression -> MINUS expression
--- On R_PAREN reduce production expression -> MINUS expression
--- On R_BRACKET reduce production expression -> MINUS expression
--- On R_BRACE reduce production expression -> MINUS expression
--- On R_ANGLE reduce production expression -> MINUS expression
--- On RANGE reduce production expression -> MINUS expression
--- On QUESTION reduce production expression -> MINUS expression
--- On PLUS_SAT reduce production expression -> MINUS expression
--- On PLUSPLUS reduce production expression -> MINUS expression
--- On PLUS reduce production expression -> MINUS expression
--- On OR reduce production expression -> MINUS expression
--- On NE reduce production expression -> MINUS expression
--- On MUL reduce production expression -> MINUS expression
--- On MOD reduce production expression -> MINUS expression
--- On MINUS_SAT reduce production expression -> MINUS expression
--- On MINUS reduce production expression -> MINUS expression
--- On MASK reduce production expression -> MINUS expression
--- On L_ANGLE reduce production expression -> MINUS expression
--- On LE reduce production expression -> MINUS expression
--- On GE reduce production expression -> MINUS expression
--- On EQ reduce production expression -> MINUS expression
--- On DIV reduce production expression -> MINUS expression
--- On COMMA reduce production expression -> MINUS expression
--- On COLON reduce production expression -> MINUS expression
--- On BIT_XOR reduce production expression -> MINUS expression
--- On BIT_OR reduce production expression -> MINUS expression
--- On BIT_AND reduce production expression -> MINUS expression
--- On AND reduce production expression -> MINUS expression
+-- On SHL SEMICOLON R_PAREN R_BRACKET R_BRACE R_ANGLE RANGE QUESTION PLUS_SAT PLUSPLUS PLUS OR NE MUL MOD MINUS_SAT MINUS MASK L_ANGLE LE GE EQ DIV COMMA COLON BIT_XOR BIT_OR BIT_AND AND
+--   reduce production expression -> MINUS expression
 
 State 193:
 ## Known stack suffix:
@@ -5344,35 +4807,8 @@ expression -> expression . L_PAREN argumentList R_PAREN [ SHL SEMICOLON R_PAREN 
 -- On L_BRACKET shift to state 80
 -- On DOT shift to state 87
 ## Reductions:
--- On SHL reduce production expression -> NOT expression
--- On SEMICOLON reduce production expression -> NOT expression
--- On R_PAREN reduce production expression -> NOT expression
--- On R_BRACKET reduce production expression -> NOT expression
--- On R_BRACE reduce production expression -> NOT expression
--- On R_ANGLE reduce production expression -> NOT expression
--- On RANGE reduce production expression -> NOT expression
--- On QUESTION reduce production expression -> NOT expression
--- On PLUS_SAT reduce production expression -> NOT expression
--- On PLUSPLUS reduce production expression -> NOT expression
--- On PLUS reduce production expression -> NOT expression
--- On OR reduce production expression -> NOT expression
--- On NE reduce production expression -> NOT expression
--- On MUL reduce production expression -> NOT expression
--- On MOD reduce production expression -> NOT expression
--- On MINUS_SAT reduce production expression -> NOT expression
--- On MINUS reduce production expression -> NOT expression
--- On MASK reduce production expression -> NOT expression
--- On L_ANGLE reduce production expression -> NOT expression
--- On LE reduce production expression -> NOT expression
--- On GE reduce production expression -> NOT expression
--- On EQ reduce production expression -> NOT expression
--- On DIV reduce production expression -> NOT expression
--- On COMMA reduce production expression -> NOT expression
--- On COLON reduce production expression -> NOT expression
--- On BIT_XOR reduce production expression -> NOT expression
--- On BIT_OR reduce production expression -> NOT expression
--- On BIT_AND reduce production expression -> NOT expression
--- On AND reduce production expression -> NOT expression
+-- On SHL SEMICOLON R_PAREN R_BRACKET R_BRACE R_ANGLE RANGE QUESTION PLUS_SAT PLUSPLUS PLUS OR NE MUL MOD MINUS_SAT MINUS MASK L_ANGLE LE GE EQ DIV COMMA COLON BIT_XOR BIT_OR BIT_AND AND
+--   reduce production expression -> NOT expression
 
 State 194:
 ## Known stack suffix:
@@ -5411,35 +4847,8 @@ expression -> expression . L_PAREN argumentList R_PAREN [ SHL SEMICOLON R_PAREN 
 -- On L_BRACKET shift to state 80
 -- On DOT shift to state 87
 ## Reductions:
--- On SHL reduce production expression -> PLUS expression
--- On SEMICOLON reduce production expression -> PLUS expression
--- On R_PAREN reduce production expression -> PLUS expression
--- On R_BRACKET reduce production expression -> PLUS expression
--- On R_BRACE reduce production expression -> PLUS expression
--- On R_ANGLE reduce production expression -> PLUS expression
--- On RANGE reduce production expression -> PLUS expression
--- On QUESTION reduce production expression -> PLUS expression
--- On PLUS_SAT reduce production expression -> PLUS expression
--- On PLUSPLUS reduce production expression -> PLUS expression
--- On PLUS reduce production expression -> PLUS expression
--- On OR reduce production expression -> PLUS expression
--- On NE reduce production expression -> PLUS expression
--- On MUL reduce production expression -> PLUS expression
--- On MOD reduce production expression -> PLUS expression
--- On MINUS_SAT reduce production expression -> PLUS expression
--- On MINUS reduce production expression -> PLUS expression
--- On MASK reduce production expression -> PLUS expression
--- On L_ANGLE reduce production expression -> PLUS expression
--- On LE reduce production expression -> PLUS expression
--- On GE reduce production expression -> PLUS expression
--- On EQ reduce production expression -> PLUS expression
--- On DIV reduce production expression -> PLUS expression
--- On COMMA reduce production expression -> PLUS expression
--- On COLON reduce production expression -> PLUS expression
--- On BIT_XOR reduce production expression -> PLUS expression
--- On BIT_OR reduce production expression -> PLUS expression
--- On BIT_AND reduce production expression -> PLUS expression
--- On AND reduce production expression -> PLUS expression
+-- On SHL SEMICOLON R_PAREN R_BRACKET R_BRACE R_ANGLE RANGE QUESTION PLUS_SAT PLUSPLUS PLUS OR NE MUL MOD MINUS_SAT MINUS MASK L_ANGLE LE GE EQ DIV COMMA COLON BIT_XOR BIT_OR BIT_AND AND
+--   reduce production expression -> PLUS expression
 
 State 195:
 ## Known stack suffix:
@@ -5667,7 +5076,8 @@ petr4_list(structField) -> list_aux(structField) . [ R_BRACE ]
 -- On annotations shift to state 327
 -- On annotation shift to state 331
 ## Reductions:
--- On R_BRACE reduce production petr4_list(structField) -> list_aux(structField)
+-- On R_BRACE
+--   reduce production petr4_list(structField) -> list_aux(structField)
 
 State 207:
 ## Known stack suffix:
@@ -5800,9 +5210,8 @@ petr4_list(annotationToken) -> list_aux(annotationToken) . [ R_PAREN PRAGMA_END 
 -- On ABSTRACT shift to state 294
 -- On annotationToken shift to state 295
 ## Reductions:
--- On R_PAREN reduce production petr4_list(annotationToken) -> list_aux(annotationToken)
--- On PRAGMA_END reduce production petr4_list(annotationToken) -> list_aux(annotationToken)
--- On L_PAREN reduce production petr4_list(annotationToken) -> list_aux(annotationToken)
+-- On R_PAREN PRAGMA_END L_PAREN
+--   reduce production petr4_list(annotationToken) -> list_aux(annotationToken)
 
 State 211:
 ## Known stack suffix:
@@ -6666,43 +6075,8 @@ annotation -> AT name . L_BRACKET kvList R_BRACKET [ VOID VARBIT VALUESET TYPEDE
 -- On L_PAREN shift to state 304
 -- On L_BRACKET shift to state 307
 ## Reductions:
--- On VOID reduce production annotation -> AT name
--- On VARBIT reduce production annotation -> AT name
--- On VALUESET reduce production annotation -> AT name
--- On TYPEDEF reduce production annotation -> AT name
--- On TYPE reduce production annotation -> AT name
--- On TUPLE reduce production annotation -> AT name
--- On TABLE reduce production annotation -> AT name
--- On STRUCT reduce production annotation -> AT name
--- On STRING reduce production annotation -> AT name
--- On STATE reduce production annotation -> AT name
--- On SEMICOLON reduce production annotation -> AT name
--- On PRAGMA reduce production annotation -> AT name
--- On PARSER reduce production annotation -> AT name
--- On PACKAGE reduce production annotation -> AT name
--- On OUT reduce production annotation -> AT name
--- On NAME reduce production annotation -> AT name
--- On L_BRACE reduce production annotation -> AT name
--- On KEY reduce production annotation -> AT name
--- On INT reduce production annotation -> AT name
--- On INOUT reduce production annotation -> AT name
--- On IN reduce production annotation -> AT name
--- On HEADER_UNION reduce production annotation -> AT name
--- On HEADER reduce production annotation -> AT name
--- On EXTERN reduce production annotation -> AT name
--- On ERROR reduce production annotation -> AT name
--- On ENUM reduce production annotation -> AT name
--- On ENTRIES reduce production annotation -> AT name
--- On DOT reduce production annotation -> AT name
--- On CONTROL reduce production annotation -> AT name
--- On CONST reduce production annotation -> AT name
--- On BOOL reduce production annotation -> AT name
--- On BIT reduce production annotation -> AT name
--- On AT reduce production annotation -> AT name
--- On APPLY reduce production annotation -> AT name
--- On ACTIONS reduce production annotation -> AT name
--- On ACTION reduce production annotation -> AT name
--- On ABSTRACT reduce production annotation -> AT name
+-- On VOID VARBIT VALUESET TYPEDEF TYPE TUPLE TABLE STRUCT STRING STATE SEMICOLON PRAGMA PARSER PACKAGE OUT NAME L_BRACE KEY INT INOUT IN HEADER_UNION HEADER EXTERN ERROR ENUM ENTRIES DOT CONTROL CONST BOOL BIT AT APPLY ACTIONS ACTION ABSTRACT
+--   reduce production annotation -> AT name
 
 State 304:
 ## Known stack suffix:
@@ -6780,8 +6154,8 @@ annotation -> AT name L_BRACKET . kvList R_BRACKET [ VOID VARBIT VALUESET TYPEDE
 -- On expression shift to state 179
 -- On dotPrefix shift to state 91
 ## Reductions:
--- On R_BRACKET reduce production separated_list_aux(COMMA,expression) ->
--- On COMMA reduce production separated_list_aux(COMMA,expression) ->
+-- On R_BRACKET COMMA
+--   reduce production separated_list_aux(COMMA,expression) ->
 
 State 308:
 ## Known stack suffix:
@@ -6792,7 +6166,8 @@ separated_nonempty_list_aux(COMMA,kvPair) -> separated_nonempty_list_aux(COMMA,k
 ## Transitions:
 -- On COMMA shift to state 309
 ## Reductions:
--- On R_BRACKET reduce production petr4_separated_nonempty_list(COMMA,kvPair) -> separated_nonempty_list_aux(COMMA,kvPair)
+-- On R_BRACKET
+--   reduce production petr4_separated_nonempty_list(COMMA,kvPair) -> separated_nonempty_list_aux(COMMA,kvPair)
 
 State 309:
 ## Known stack suffix:
@@ -6917,8 +6292,8 @@ kvPair -> name EQ expression . [ R_BRACKET COMMA ]
 -- On BIT_AND shift to state 118
 -- On AND shift to state 126
 ## Reductions:
--- On R_BRACKET reduce production kvPair -> name EQ expression
--- On COMMA reduce production kvPair -> name EQ expression
+-- On R_BRACKET COMMA
+--   reduce production kvPair -> name EQ expression
 
 State 313:
 ## Known stack suffix:
@@ -7049,41 +6424,8 @@ petr4_nonempty_list(annotation) -> nonempty_list_aux(annotation) . [ VOID VARBIT
 -- On AT shift to state 302
 -- On annotation shift to state 326
 ## Reductions:
--- On VOID reduce production petr4_nonempty_list(annotation) -> nonempty_list_aux(annotation)
--- On VARBIT reduce production petr4_nonempty_list(annotation) -> nonempty_list_aux(annotation)
--- On VALUESET reduce production petr4_nonempty_list(annotation) -> nonempty_list_aux(annotation)
--- On TYPEDEF reduce production petr4_nonempty_list(annotation) -> nonempty_list_aux(annotation)
--- On TYPE reduce production petr4_nonempty_list(annotation) -> nonempty_list_aux(annotation)
--- On TUPLE reduce production petr4_nonempty_list(annotation) -> nonempty_list_aux(annotation)
--- On TABLE reduce production petr4_nonempty_list(annotation) -> nonempty_list_aux(annotation)
--- On STRUCT reduce production petr4_nonempty_list(annotation) -> nonempty_list_aux(annotation)
--- On STRING reduce production petr4_nonempty_list(annotation) -> nonempty_list_aux(annotation)
--- On STATE reduce production petr4_nonempty_list(annotation) -> nonempty_list_aux(annotation)
--- On SEMICOLON reduce production petr4_nonempty_list(annotation) -> nonempty_list_aux(annotation)
--- On PARSER reduce production petr4_nonempty_list(annotation) -> nonempty_list_aux(annotation)
--- On PACKAGE reduce production petr4_nonempty_list(annotation) -> nonempty_list_aux(annotation)
--- On OUT reduce production petr4_nonempty_list(annotation) -> nonempty_list_aux(annotation)
--- On NAME reduce production petr4_nonempty_list(annotation) -> nonempty_list_aux(annotation)
--- On L_BRACE reduce production petr4_nonempty_list(annotation) -> nonempty_list_aux(annotation)
--- On KEY reduce production petr4_nonempty_list(annotation) -> nonempty_list_aux(annotation)
--- On INT reduce production petr4_nonempty_list(annotation) -> nonempty_list_aux(annotation)
--- On INOUT reduce production petr4_nonempty_list(annotation) -> nonempty_list_aux(annotation)
--- On IN reduce production petr4_nonempty_list(annotation) -> nonempty_list_aux(annotation)
--- On HEADER_UNION reduce production petr4_nonempty_list(annotation) -> nonempty_list_aux(annotation)
--- On HEADER reduce production petr4_nonempty_list(annotation) -> nonempty_list_aux(annotation)
--- On EXTERN reduce production petr4_nonempty_list(annotation) -> nonempty_list_aux(annotation)
--- On ERROR reduce production petr4_nonempty_list(annotation) -> nonempty_list_aux(annotation)
--- On ENUM reduce production petr4_nonempty_list(annotation) -> nonempty_list_aux(annotation)
--- On ENTRIES reduce production petr4_nonempty_list(annotation) -> nonempty_list_aux(annotation)
--- On DOT reduce production petr4_nonempty_list(annotation) -> nonempty_list_aux(annotation)
--- On CONTROL reduce production petr4_nonempty_list(annotation) -> nonempty_list_aux(annotation)
--- On CONST reduce production petr4_nonempty_list(annotation) -> nonempty_list_aux(annotation)
--- On BOOL reduce production petr4_nonempty_list(annotation) -> nonempty_list_aux(annotation)
--- On BIT reduce production petr4_nonempty_list(annotation) -> nonempty_list_aux(annotation)
--- On APPLY reduce production petr4_nonempty_list(annotation) -> nonempty_list_aux(annotation)
--- On ACTIONS reduce production petr4_nonempty_list(annotation) -> nonempty_list_aux(annotation)
--- On ACTION reduce production petr4_nonempty_list(annotation) -> nonempty_list_aux(annotation)
--- On ABSTRACT reduce production petr4_nonempty_list(annotation) -> nonempty_list_aux(annotation)
+-- On VOID VARBIT VALUESET TYPEDEF TYPE TUPLE TABLE STRUCT STRING STATE SEMICOLON PARSER PACKAGE OUT NAME L_BRACE KEY INT INOUT IN HEADER_UNION HEADER EXTERN ERROR ENUM ENTRIES DOT CONTROL CONST BOOL BIT APPLY ACTIONS ACTION ABSTRACT
+--   reduce production petr4_nonempty_list(annotation) -> nonempty_list_aux(annotation)
 
 State 326:
 ## Known stack suffix:
@@ -7414,7 +6756,8 @@ separated_nonempty_list_aux(COMMA,__anonymous_1) -> separated_nonempty_list_aux(
 ## Transitions:
 -- On COMMA shift to state 353
 ## Reductions:
--- On R_BRACE reduce production petr4_separated_nonempty_list(COMMA,__anonymous_1) -> separated_nonempty_list_aux(COMMA,__anonymous_1)
+-- On R_BRACE
+--   reduce production petr4_separated_nonempty_list(COMMA,__anonymous_1) -> separated_nonempty_list_aux(COMMA,__anonymous_1)
 
 State 353:
 ## Known stack suffix:
@@ -7548,8 +6891,8 @@ specifiedIdentifier -> name ASSIGN expression . [ R_BRACE COMMA ]
 -- On BIT_AND shift to state 118
 -- On AND shift to state 126
 ## Reductions:
--- On R_BRACE reduce production specifiedIdentifier -> name ASSIGN expression
--- On COMMA reduce production specifiedIdentifier -> name ASSIGN expression
+-- On R_BRACE COMMA
+--   reduce production specifiedIdentifier -> name ASSIGN expression
 
 State 358:
 ## Known stack suffix:
@@ -7600,7 +6943,8 @@ separated_nonempty_list_aux(COMMA,__anonymous_0) -> separated_nonempty_list_aux(
 ## Transitions:
 -- On COMMA shift to state 362
 ## Reductions:
--- On R_BRACE reduce production petr4_separated_nonempty_list(COMMA,__anonymous_0) -> separated_nonempty_list_aux(COMMA,__anonymous_0)
+-- On R_BRACE
+--   reduce production petr4_separated_nonempty_list(COMMA,__anonymous_0) -> separated_nonempty_list_aux(COMMA,__anonymous_0)
 
 State 362:
 ## Known stack suffix:
@@ -8313,7 +7657,8 @@ topDeclarationList -> SEMICOLON . topDeclarationList [ END ]
 -- On annotation shift to state 331
 -- On actionDeclaration shift to state 975
 ## Reductions:
--- On END reduce production topDeclarationList ->
+-- On END
+--   reduce production topDeclarationList ->
 
 State 415:
 ## Known stack suffix:
@@ -8344,7 +7689,8 @@ parserTypeDeclaration -> PARSER push_name . optTypeParameters L_PAREN parameterL
 -- On L_ANGLE shift to state 417
 -- On optTypeParameters shift to state 425
 ## Reductions:
--- On L_PAREN reduce production optTypeParameters ->
+-- On L_PAREN
+--   reduce production optTypeParameters ->
 
 State 417:
 ## Known stack suffix:
@@ -8367,8 +7713,8 @@ optTypeParameters -> L_ANGLE . petr4_separated_list(COMMA,typeParameter) R_ANGLE
 -- On nonTypeName shift to state 35
 -- On name shift to state 422
 ## Reductions:
--- On R_ANGLE reduce production separated_list_aux(COMMA,typeParameter) ->
--- On COMMA reduce production separated_list_aux(COMMA,typeParameter) ->
+-- On R_ANGLE COMMA
+--   reduce production separated_list_aux(COMMA,typeParameter) ->
 
 State 418:
 ## Known stack suffix:
@@ -8388,7 +7734,8 @@ separated_list_aux(COMMA,typeParameter) -> separated_list_aux(COMMA,typeParamete
 ## Transitions:
 -- On COMMA shift to state 420
 ## Reductions:
--- On R_ANGLE reduce production petr4_separated_list(COMMA,typeParameter) -> separated_list_aux(COMMA,typeParameter)
+-- On R_ANGLE
+--   reduce production petr4_separated_list(COMMA,typeParameter) -> separated_list_aux(COMMA,typeParameter)
 
 State 420:
 ## Known stack suffix:
@@ -8476,17 +7823,10 @@ parserTypeDeclaration -> PARSER push_name optTypeParameters L_PAREN . parameterL
 -- On annotations shift to state 438
 -- On annotation shift to state 331
 ## Reductions:
--- On VARBIT reduce production direction ->
--- On TUPLE reduce production direction ->
--- On STRING reduce production direction ->
--- On R_PAREN reduce production separated_list_aux(COMMA,parameter) ->
--- On NAME reduce production direction ->
--- On INT reduce production direction ->
--- On ERROR reduce production direction ->
--- On DOT reduce production direction ->
--- On COMMA reduce production separated_list_aux(COMMA,parameter) ->
--- On BOOL reduce production direction ->
--- On BIT reduce production direction ->
+-- On VARBIT TUPLE STRING NAME INT ERROR DOT BOOL BIT
+--   reduce production direction ->
+-- On R_PAREN COMMA
+--   reduce production separated_list_aux(COMMA,parameter) ->
 
 State 427:
 ## Known stack suffix:
@@ -8524,7 +7864,8 @@ separated_list_aux(COMMA,parameter) -> separated_list_aux(COMMA,parameter) . COM
 ## Transitions:
 -- On COMMA shift to state 431
 ## Reductions:
--- On R_PAREN reduce production petr4_separated_list(COMMA,parameter) -> separated_list_aux(COMMA,parameter)
+-- On R_PAREN
+--   reduce production petr4_separated_list(COMMA,parameter) -> separated_list_aux(COMMA,parameter)
 
 State 431:
 ## Known stack suffix:
@@ -8544,15 +7885,8 @@ separated_list_aux(COMMA,parameter) -> separated_list_aux(COMMA,parameter) COMMA
 -- On annotations shift to state 438
 -- On annotation shift to state 331
 ## Reductions:
--- On VARBIT reduce production direction ->
--- On TUPLE reduce production direction ->
--- On STRING reduce production direction ->
--- On NAME reduce production direction ->
--- On INT reduce production direction ->
--- On ERROR reduce production direction ->
--- On DOT reduce production direction ->
--- On BOOL reduce production direction ->
--- On BIT reduce production direction ->
+-- On VARBIT TUPLE STRING NAME INT ERROR DOT BOOL BIT
+--   reduce production direction ->
 
 State 432:
 ## Known stack suffix:
@@ -8618,8 +7952,8 @@ parameter -> direction typeRef name . ASSIGN expression [ R_PAREN COMMA ]
 ## Transitions:
 -- On ASSIGN shift to state 436
 ## Reductions:
--- On R_PAREN reduce production parameter -> direction typeRef name
--- On COMMA reduce production parameter -> direction typeRef name
+-- On R_PAREN COMMA
+--   reduce production parameter -> direction typeRef name
 
 State 436:
 ## Known stack suffix:
@@ -8715,8 +8049,8 @@ parameter -> direction typeRef name ASSIGN expression . [ R_PAREN COMMA ]
 -- On BIT_AND shift to state 118
 -- On AND shift to state 126
 ## Reductions:
--- On R_PAREN reduce production parameter -> direction typeRef name ASSIGN expression
--- On COMMA reduce production parameter -> direction typeRef name ASSIGN expression
+-- On R_PAREN COMMA
+--   reduce production parameter -> direction typeRef name ASSIGN expression
 
 State 438:
 ## Known stack suffix:
@@ -8730,15 +8064,8 @@ parameter -> annotations . direction typeRef name ASSIGN expression [ R_PAREN CO
 -- On IN shift to state 429
 -- On direction shift to state 439
 ## Reductions:
--- On VARBIT reduce production direction ->
--- On TUPLE reduce production direction ->
--- On STRING reduce production direction ->
--- On NAME reduce production direction ->
--- On INT reduce production direction ->
--- On ERROR reduce production direction ->
--- On DOT reduce production direction ->
--- On BOOL reduce production direction ->
--- On BIT reduce production direction ->
+-- On VARBIT TUPLE STRING NAME INT ERROR DOT BOOL BIT
+--   reduce production direction ->
 
 State 439:
 ## Known stack suffix:
@@ -8795,8 +8122,8 @@ parameter -> annotations direction typeRef name . ASSIGN expression [ R_PAREN CO
 ## Transitions:
 -- On ASSIGN shift to state 442
 ## Reductions:
--- On R_PAREN reduce production parameter -> annotations direction typeRef name
--- On COMMA reduce production parameter -> annotations direction typeRef name
+-- On R_PAREN COMMA
+--   reduce production parameter -> annotations direction typeRef name
 
 State 442:
 ## Known stack suffix:
@@ -8892,8 +8219,8 @@ parameter -> annotations direction typeRef name ASSIGN expression . [ R_PAREN CO
 -- On BIT_AND shift to state 118
 -- On AND shift to state 126
 ## Reductions:
--- On R_PAREN reduce production parameter -> annotations direction typeRef name ASSIGN expression
--- On COMMA reduce production parameter -> annotations direction typeRef name ASSIGN expression
+-- On R_PAREN COMMA
+--   reduce production parameter -> annotations direction typeRef name ASSIGN expression
 
 State 444:
 ## Known stack suffix:
@@ -8969,7 +8296,8 @@ packageTypeDeclaration -> PACKAGE push_name . optTypeParameters L_PAREN paramete
 -- On L_ANGLE shift to state 417
 -- On optTypeParameters shift to state 451
 ## Reductions:
--- On L_PAREN reduce production optTypeParameters ->
+-- On L_PAREN
+--   reduce production optTypeParameters ->
 
 State 451:
 ## Known stack suffix:
@@ -9001,17 +8329,10 @@ packageTypeDeclaration -> PACKAGE push_name optTypeParameters L_PAREN . paramete
 -- On annotations shift to state 438
 -- On annotation shift to state 331
 ## Reductions:
--- On VARBIT reduce production direction ->
--- On TUPLE reduce production direction ->
--- On STRING reduce production direction ->
--- On R_PAREN reduce production separated_list_aux(COMMA,parameter) ->
--- On NAME reduce production direction ->
--- On INT reduce production direction ->
--- On ERROR reduce production direction ->
--- On DOT reduce production direction ->
--- On COMMA reduce production separated_list_aux(COMMA,parameter) ->
--- On BOOL reduce production direction ->
--- On BIT reduce production direction ->
+-- On VARBIT TUPLE STRING NAME INT ERROR DOT BOOL BIT
+--   reduce production direction ->
+-- On R_PAREN COMMA
+--   reduce production separated_list_aux(COMMA,parameter) ->
 
 State 453:
 ## Known stack suffix:
@@ -9128,16 +8449,10 @@ nonTypeName -> varName . [ L_PAREN L_BRACE L_ANGLE ]
 typeOrVoid -> varName . [ TYPE STATE NAME KEY ENTRIES APPLY ACTIONS ]
 ## Transitions:
 ## Reductions:
--- On TYPE reduce production typeOrVoid -> varName
--- On STATE reduce production typeOrVoid -> varName
--- On NAME reduce production typeOrVoid -> varName
--- On L_PAREN reduce production nonTypeName -> varName
--- On L_BRACE reduce production nonTypeName -> varName
--- On L_ANGLE reduce production nonTypeName -> varName
--- On KEY reduce production typeOrVoid -> varName
--- On ENTRIES reduce production typeOrVoid -> varName
--- On APPLY reduce production typeOrVoid -> varName
--- On ACTIONS reduce production typeOrVoid -> varName
+-- On L_PAREN L_BRACE L_ANGLE
+--   reduce production nonTypeName -> varName
+-- On TYPE STATE NAME KEY ENTRIES APPLY ACTIONS
+--   reduce production typeOrVoid -> varName
 
 State 461:
 ## Known stack suffix:
@@ -9186,7 +8501,8 @@ functionPrototype -> typeOrVoid name push_scope . optTypeParameters L_PAREN para
 -- On L_ANGLE shift to state 417
 -- On optTypeParameters shift to state 465
 ## Reductions:
--- On L_PAREN reduce production optTypeParameters ->
+-- On L_PAREN
+--   reduce production optTypeParameters ->
 
 State 465:
 ## Known stack suffix:
@@ -9218,17 +8534,10 @@ functionPrototype -> typeOrVoid name push_scope optTypeParameters L_PAREN . para
 -- On annotations shift to state 438
 -- On annotation shift to state 331
 ## Reductions:
--- On VARBIT reduce production direction ->
--- On TUPLE reduce production direction ->
--- On STRING reduce production direction ->
--- On R_PAREN reduce production separated_list_aux(COMMA,parameter) ->
--- On NAME reduce production direction ->
--- On INT reduce production direction ->
--- On ERROR reduce production direction ->
--- On DOT reduce production direction ->
--- On COMMA reduce production separated_list_aux(COMMA,parameter) ->
--- On BOOL reduce production direction ->
--- On BIT reduce production direction ->
+-- On VARBIT TUPLE STRING NAME INT ERROR DOT BOOL BIT
+--   reduce production direction ->
+-- On R_PAREN COMMA
+--   reduce production separated_list_aux(COMMA,parameter) ->
 
 State 467:
 ## Known stack suffix:
@@ -9257,7 +8566,8 @@ externDeclaration -> EXTERN push_externName . optTypeParameters L_BRACE petr4_li
 -- On L_ANGLE shift to state 417
 -- On optTypeParameters shift to state 470
 ## Reductions:
--- On L_BRACE reduce production optTypeParameters ->
+-- On L_BRACE
+--   reduce production optTypeParameters ->
 
 State 470:
 ## Known stack suffix:
@@ -9353,7 +8663,8 @@ petr4_list(methodPrototype) -> list_aux(methodPrototype) . [ R_BRACE ]
 -- On annotations shift to state 492
 -- On annotation shift to state 331
 ## Reductions:
--- On R_BRACE reduce production petr4_list(methodPrototype) -> list_aux(methodPrototype)
+-- On R_BRACE
+--   reduce production petr4_list(methodPrototype) -> list_aux(methodPrototype)
 
 State 476:
 ## Known stack suffix:
@@ -9375,16 +8686,10 @@ name -> NAME TYPENAME . [ L_PAREN ]
 prefixedType -> NAME TYPENAME . [ TYPE STATE NAME L_BRACKET L_ANGLE KEY ENTRIES APPLY ACTIONS ]
 ## Transitions:
 ## Reductions:
--- On TYPE reduce production prefixedType -> NAME TYPENAME
--- On STATE reduce production prefixedType -> NAME TYPENAME
--- On NAME reduce production prefixedType -> NAME TYPENAME
--- On L_PAREN reduce production name -> NAME TYPENAME
--- On L_BRACKET reduce production prefixedType -> NAME TYPENAME
--- On L_ANGLE reduce production prefixedType -> NAME TYPENAME
--- On KEY reduce production prefixedType -> NAME TYPENAME
--- On ENTRIES reduce production prefixedType -> NAME TYPENAME
--- On APPLY reduce production prefixedType -> NAME TYPENAME
--- On ACTIONS reduce production prefixedType -> NAME TYPENAME
+-- On L_PAREN
+--   reduce production name -> NAME TYPENAME
+-- On TYPE STATE NAME L_BRACKET L_ANGLE KEY ENTRIES APPLY ACTIONS
+--   reduce production prefixedType -> NAME TYPENAME
 
 State 478:
 ## Known stack suffix:
@@ -9482,17 +8787,10 @@ methodPrototype -> name L_PAREN . parameterList R_PAREN SEMICOLON [ VOID VARBIT 
 -- On annotations shift to state 438
 -- On annotation shift to state 331
 ## Reductions:
--- On VARBIT reduce production direction ->
--- On TUPLE reduce production direction ->
--- On STRING reduce production direction ->
--- On R_PAREN reduce production separated_list_aux(COMMA,parameter) ->
--- On NAME reduce production direction ->
--- On INT reduce production direction ->
--- On ERROR reduce production direction ->
--- On DOT reduce production direction ->
--- On COMMA reduce production separated_list_aux(COMMA,parameter) ->
--- On BOOL reduce production direction ->
--- On BIT reduce production direction ->
+-- On VARBIT TUPLE STRING NAME INT ERROR DOT BOOL BIT
+--   reduce production direction ->
+-- On R_PAREN COMMA
+--   reduce production separated_list_aux(COMMA,parameter) ->
 
 State 485:
 ## Known stack suffix:
@@ -9686,17 +8984,10 @@ methodPrototype -> annotations name L_PAREN . parameterList R_PAREN SEMICOLON [ 
 -- On annotations shift to state 438
 -- On annotation shift to state 331
 ## Reductions:
--- On VARBIT reduce production direction ->
--- On TUPLE reduce production direction ->
--- On STRING reduce production direction ->
--- On R_PAREN reduce production separated_list_aux(COMMA,parameter) ->
--- On NAME reduce production direction ->
--- On INT reduce production direction ->
--- On ERROR reduce production direction ->
--- On DOT reduce production direction ->
--- On COMMA reduce production separated_list_aux(COMMA,parameter) ->
--- On BOOL reduce production direction ->
--- On BIT reduce production direction ->
+-- On VARBIT TUPLE STRING NAME INT ERROR DOT BOOL BIT
+--   reduce production direction ->
+-- On R_PAREN COMMA
+--   reduce production separated_list_aux(COMMA,parameter) ->
 
 State 499:
 ## Known stack suffix:
@@ -9808,14 +9099,8 @@ errorDeclaration -> ERROR . L_BRACE identifierList R_BRACE [ VOID VARBIT TYPEDEF
 ## Transitions:
 -- On L_BRACE shift to state 511
 ## Reductions:
--- On TYPE reduce production baseType -> ERROR
--- On STATE reduce production baseType -> ERROR
--- On NAME reduce production baseType -> ERROR
--- On L_PAREN reduce production baseType -> ERROR
--- On KEY reduce production baseType -> ERROR
--- On ENTRIES reduce production baseType -> ERROR
--- On APPLY reduce production baseType -> ERROR
--- On ACTIONS reduce production baseType -> ERROR
+-- On TYPE STATE NAME L_PAREN KEY ENTRIES APPLY ACTIONS
+--   reduce production baseType -> ERROR
 
 State 511:
 ## Known stack suffix:
@@ -9886,7 +9171,8 @@ controlTypeDeclaration -> CONTROL push_name . optTypeParameters L_PAREN paramete
 -- On L_ANGLE shift to state 417
 -- On optTypeParameters shift to state 516
 ## Reductions:
--- On L_PAREN reduce production optTypeParameters ->
+-- On L_PAREN
+--   reduce production optTypeParameters ->
 
 State 516:
 ## Known stack suffix:
@@ -9918,17 +9204,10 @@ controlTypeDeclaration -> CONTROL push_name optTypeParameters L_PAREN . paramete
 -- On annotations shift to state 438
 -- On annotation shift to state 331
 ## Reductions:
--- On VARBIT reduce production direction ->
--- On TUPLE reduce production direction ->
--- On STRING reduce production direction ->
--- On R_PAREN reduce production separated_list_aux(COMMA,parameter) ->
--- On NAME reduce production direction ->
--- On INT reduce production direction ->
--- On ERROR reduce production direction ->
--- On DOT reduce production direction ->
--- On COMMA reduce production separated_list_aux(COMMA,parameter) ->
--- On BOOL reduce production direction ->
--- On BIT reduce production direction ->
+-- On VARBIT TUPLE STRING NAME INT ERROR DOT BOOL BIT
+--   reduce production direction ->
+-- On R_PAREN COMMA
+--   reduce production separated_list_aux(COMMA,parameter) ->
 
 State 518:
 ## Known stack suffix:
@@ -10114,7 +9393,8 @@ initialValue -> expression . [ SEMICOLON ]
 -- On BIT_AND shift to state 118
 -- On AND shift to state 126
 ## Reductions:
--- On SEMICOLON reduce production initialValue -> expression
+-- On SEMICOLON
+--   reduce production initialValue -> expression
 
 State 527:
 ## Known stack suffix:
@@ -10165,17 +9445,10 @@ actionDeclaration -> ACTION name L_PAREN . parameterList R_PAREN blockStatement 
 -- On annotations shift to state 438
 -- On annotation shift to state 331
 ## Reductions:
--- On VARBIT reduce production direction ->
--- On TUPLE reduce production direction ->
--- On STRING reduce production direction ->
--- On R_PAREN reduce production separated_list_aux(COMMA,parameter) ->
--- On NAME reduce production direction ->
--- On INT reduce production direction ->
--- On ERROR reduce production direction ->
--- On DOT reduce production direction ->
--- On COMMA reduce production separated_list_aux(COMMA,parameter) ->
--- On BOOL reduce production direction ->
--- On BIT reduce production direction ->
+-- On VARBIT TUPLE STRING NAME INT ERROR DOT BOOL BIT
+--   reduce production direction ->
+-- On R_PAREN COMMA
+--   reduce production separated_list_aux(COMMA,parameter) ->
 
 State 530:
 ## Known stack suffix:
@@ -10313,7 +9586,8 @@ petr4_list(statementOrDeclaration) -> list_aux(statementOrDeclaration) . [ R_BRA
 -- On annotations shift to state 659
 -- On annotation shift to state 331
 ## Reductions:
--- On R_BRACE reduce production petr4_list(statementOrDeclaration) -> list_aux(statementOrDeclaration)
+-- On R_BRACE
+--   reduce production petr4_list(statementOrDeclaration) -> list_aux(statementOrDeclaration)
 
 State 538:
 ## Known stack suffix:
@@ -10490,7 +9764,8 @@ petr4_list(switchCase) -> list_aux(switchCase) . [ R_BRACE ]
 -- On nonTypeName shift to state 35
 -- On name shift to state 558
 ## Reductions:
--- On R_BRACE reduce production petr4_list(switchCase) -> list_aux(switchCase)
+-- On R_BRACE
+--   reduce production petr4_list(switchCase) -> list_aux(switchCase)
 
 State 547:
 ## Known stack suffix:
@@ -10527,15 +9802,8 @@ switchCase -> switchLabel COLON . [ TYPE STATE R_BRACE NAME KEY ENTRIES DEFAULT 
 -- On annotations shift to state 551
 -- On annotation shift to state 331
 ## Reductions:
--- On TYPE reduce production switchCase -> switchLabel COLON
--- On STATE reduce production switchCase -> switchLabel COLON
--- On R_BRACE reduce production switchCase -> switchLabel COLON
--- On NAME reduce production switchCase -> switchLabel COLON
--- On KEY reduce production switchCase -> switchLabel COLON
--- On ENTRIES reduce production switchCase -> switchLabel COLON
--- On DEFAULT reduce production switchCase -> switchLabel COLON
--- On APPLY reduce production switchCase -> switchLabel COLON
--- On ACTIONS reduce production switchCase -> switchLabel COLON
+-- On TYPE STATE R_BRACE NAME KEY ENTRIES DEFAULT APPLY ACTIONS
+--   reduce production switchCase -> switchLabel COLON
 
 State 550:
 ## Known stack suffix:
@@ -10987,8 +10255,8 @@ directApplication -> typeName DOT APPLY L_PAREN . argumentList R_PAREN SEMICOLON
 -- On argumentList shift to state 574
 -- On argument shift to state 135
 ## Reductions:
--- On R_PAREN reduce production separated_list_aux(COMMA,argument) ->
--- On COMMA reduce production separated_list_aux(COMMA,argument) ->
+-- On R_PAREN COMMA
+--   reduce production separated_list_aux(COMMA,argument) ->
 
 State 574:
 ## Known stack suffix:
@@ -11035,31 +10303,8 @@ conditionalStatement -> IF L_PAREN expression R_PAREN statement . [ VARBIT TYPE 
 ## Transitions:
 -- On ELSE shift to state 579
 ## Reductions:
--- On VARBIT reduce production conditionalStatement -> IF L_PAREN expression R_PAREN statement
--- On TYPE reduce production conditionalStatement -> IF L_PAREN expression R_PAREN statement
--- On TUPLE reduce production conditionalStatement -> IF L_PAREN expression R_PAREN statement
--- On SWITCH reduce production conditionalStatement -> IF L_PAREN expression R_PAREN statement
--- On STRING reduce production conditionalStatement -> IF L_PAREN expression R_PAREN statement
--- On STATE reduce production conditionalStatement -> IF L_PAREN expression R_PAREN statement
--- On SEMICOLON reduce production conditionalStatement -> IF L_PAREN expression R_PAREN statement
--- On R_BRACE reduce production conditionalStatement -> IF L_PAREN expression R_PAREN statement
--- On RETURN reduce production conditionalStatement -> IF L_PAREN expression R_PAREN statement
--- On PRAGMA reduce production conditionalStatement -> IF L_PAREN expression R_PAREN statement
--- On NAME reduce production conditionalStatement -> IF L_PAREN expression R_PAREN statement
--- On L_BRACE reduce production conditionalStatement -> IF L_PAREN expression R_PAREN statement
--- On KEY reduce production conditionalStatement -> IF L_PAREN expression R_PAREN statement
--- On INT reduce production conditionalStatement -> IF L_PAREN expression R_PAREN statement
--- On IF reduce production conditionalStatement -> IF L_PAREN expression R_PAREN statement
--- On EXIT reduce production conditionalStatement -> IF L_PAREN expression R_PAREN statement
--- On ERROR reduce production conditionalStatement -> IF L_PAREN expression R_PAREN statement
--- On ENTRIES reduce production conditionalStatement -> IF L_PAREN expression R_PAREN statement
--- On DOT reduce production conditionalStatement -> IF L_PAREN expression R_PAREN statement
--- On CONST reduce production conditionalStatement -> IF L_PAREN expression R_PAREN statement
--- On BOOL reduce production conditionalStatement -> IF L_PAREN expression R_PAREN statement
--- On BIT reduce production conditionalStatement -> IF L_PAREN expression R_PAREN statement
--- On AT reduce production conditionalStatement -> IF L_PAREN expression R_PAREN statement
--- On APPLY reduce production conditionalStatement -> IF L_PAREN expression R_PAREN statement
--- On ACTIONS reduce production conditionalStatement -> IF L_PAREN expression R_PAREN statement
+-- On VARBIT TYPE TUPLE SWITCH STRING STATE SEMICOLON R_BRACE RETURN PRAGMA NAME L_BRACE KEY INT IF EXIT ERROR ENTRIES DOT CONST BOOL BIT AT APPLY ACTIONS
+--   reduce production conditionalStatement -> IF L_PAREN expression R_PAREN statement
 
 State 579:
 ## Known stack suffix:
@@ -11210,8 +10455,8 @@ assignmentOrMethodCallStatement -> lvalue L_PAREN . argumentList R_PAREN SEMICOL
 -- On argumentList shift to state 587
 -- On argument shift to state 135
 ## Reductions:
--- On R_PAREN reduce production separated_list_aux(COMMA,argument) ->
--- On COMMA reduce production separated_list_aux(COMMA,argument) ->
+-- On R_PAREN COMMA
+--   reduce production separated_list_aux(COMMA,argument) ->
 
 State 587:
 ## Known stack suffix:
@@ -11491,8 +10736,8 @@ assignmentOrMethodCallStatement -> lvalue L_ANGLE . typeArgumentList R_ANGLE L_P
 -- On dotPrefix shift to state 143
 -- On baseType shift to state 146
 ## Reductions:
--- On R_ANGLE reduce production separated_list_aux(COMMA,typeArg) ->
--- On COMMA reduce production separated_list_aux(COMMA,typeArg) ->
+-- On R_ANGLE COMMA
+--   reduce production separated_list_aux(COMMA,typeArg) ->
 
 State 597:
 ## Known stack suffix:
@@ -11553,8 +10798,8 @@ assignmentOrMethodCallStatement -> lvalue L_ANGLE typeArgumentList R_ANGLE L_PAR
 -- On argumentList shift to state 600
 -- On argument shift to state 135
 ## Reductions:
--- On R_PAREN reduce production separated_list_aux(COMMA,argument) ->
--- On COMMA reduce production separated_list_aux(COMMA,argument) ->
+-- On R_PAREN COMMA
+--   reduce production separated_list_aux(COMMA,argument) ->
 
 State 600:
 ## Known stack suffix:
@@ -11893,8 +11138,8 @@ instantiation -> typeRef L_PAREN . argumentList R_PAREN name ASSIGN objInitializ
 -- On argumentList shift to state 621
 -- On argument shift to state 135
 ## Reductions:
--- On R_PAREN reduce production separated_list_aux(COMMA,argument) ->
--- On COMMA reduce production separated_list_aux(COMMA,argument) ->
+-- On R_PAREN COMMA
+--   reduce production separated_list_aux(COMMA,argument) ->
 
 State 621:
 ## Known stack suffix:
@@ -12023,7 +11268,8 @@ petr4_list(objDeclaration) -> list_aux(objDeclaration) . [ R_BRACE ]
 -- On annotations shift to state 637
 -- On annotation shift to state 331
 ## Reductions:
--- On R_BRACE reduce production petr4_list(objDeclaration) -> list_aux(objDeclaration)
+-- On R_BRACE
+--   reduce production petr4_list(objDeclaration) -> list_aux(objDeclaration)
 
 State 630:
 ## Known stack suffix:
@@ -12035,13 +11281,8 @@ typeOrVoid -> typeRef . [ TYPE STATE NAME KEY ENTRIES APPLY ACTIONS ]
 ## Transitions:
 -- On L_PAREN shift to state 620
 ## Reductions:
--- On TYPE reduce production typeOrVoid -> typeRef
--- On STATE reduce production typeOrVoid -> typeRef
--- On NAME reduce production typeOrVoid -> typeRef
--- On KEY reduce production typeOrVoid -> typeRef
--- On ENTRIES reduce production typeOrVoid -> typeRef
--- On APPLY reduce production typeOrVoid -> typeRef
--- On ACTIONS reduce production typeOrVoid -> typeRef
+-- On TYPE STATE NAME KEY ENTRIES APPLY ACTIONS
+--   reduce production typeOrVoid -> typeRef
 
 State 631:
 ## Known stack suffix:
@@ -12183,8 +11424,8 @@ instantiation -> annotations typeRef L_PAREN . argumentList R_PAREN name ASSIGN 
 -- On argumentList shift to state 640
 -- On argument shift to state 135
 ## Reductions:
--- On R_PAREN reduce production separated_list_aux(COMMA,argument) ->
--- On COMMA reduce production separated_list_aux(COMMA,argument) ->
+-- On R_PAREN COMMA
+--   reduce production separated_list_aux(COMMA,argument) ->
 
 State 640:
 ## Known stack suffix:
@@ -12291,7 +11532,8 @@ variableDeclaration -> typeRef name . optInitialValue SEMICOLON [ VARBIT VALUESE
 -- On ASSIGN shift to state 650
 -- On optInitialValue shift to state 652
 ## Reductions:
--- On SEMICOLON reduce production optInitialValue ->
+-- On SEMICOLON
+--   reduce production optInitialValue ->
 
 State 650:
 ## Known stack suffix:
@@ -12368,14 +11610,8 @@ typeRef -> typeName . [ TYPE STATE NAME L_PAREN KEY ENTRIES APPLY ACTIONS ]
 -- On L_BRACKET shift to state 111
 -- On DOT shift to state 571
 ## Reductions:
--- On TYPE reduce production typeRef -> typeName
--- On STATE reduce production typeRef -> typeName
--- On NAME reduce production typeRef -> typeName
--- On L_PAREN reduce production typeRef -> typeName
--- On KEY reduce production typeRef -> typeName
--- On ENTRIES reduce production typeRef -> typeName
--- On APPLY reduce production typeRef -> typeName
--- On ACTIONS reduce production typeRef -> typeName
+-- On TYPE STATE NAME L_PAREN KEY ENTRIES APPLY ACTIONS
+--   reduce production typeRef -> typeName
 
 State 655:
 ## Known stack suffix:
@@ -12583,7 +11819,8 @@ variableDeclaration -> annotations typeRef name . optInitialValue SEMICOLON [ VA
 -- On ASSIGN shift to state 650
 -- On optInitialValue shift to state 668
 ## Reductions:
--- On SEMICOLON reduce production optInitialValue ->
+-- On SEMICOLON
+--   reduce production optInitialValue ->
 
 State 668:
 ## Known stack suffix:
@@ -12708,7 +11945,8 @@ topDeclarationList -> topDeclaration . topDeclarationList [ END ]
 -- On annotation shift to state 331
 -- On actionDeclaration shift to state 975
 ## Reductions:
--- On END reduce production topDeclarationList ->
+-- On END
+--   reduce production topDeclarationList ->
 
 State 675:
 ## Known stack suffix:
@@ -12730,8 +11968,10 @@ typeDeclaration -> parserTypeDeclaration . pop_scope SEMICOLON [ VOID VARBIT TYP
 -- On pop_scope shift to state 680
 -- On optConstructorParameters shift to state 682
 ## Reductions:
--- On SEMICOLON reduce production pop_scope ->
--- On L_BRACE reduce production optConstructorParameters ->
+-- On L_BRACE
+--   reduce production optConstructorParameters ->
+-- On SEMICOLON
+--   reduce production pop_scope ->
 
 State 677:
 ## Known stack suffix:
@@ -12754,17 +11994,10 @@ optConstructorParameters -> L_PAREN . parameterList R_PAREN [ L_BRACE ]
 -- On annotations shift to state 438
 -- On annotation shift to state 331
 ## Reductions:
--- On VARBIT reduce production direction ->
--- On TUPLE reduce production direction ->
--- On STRING reduce production direction ->
--- On R_PAREN reduce production separated_list_aux(COMMA,parameter) ->
--- On NAME reduce production direction ->
--- On INT reduce production direction ->
--- On ERROR reduce production direction ->
--- On DOT reduce production direction ->
--- On COMMA reduce production separated_list_aux(COMMA,parameter) ->
--- On BOOL reduce production direction ->
--- On BIT reduce production direction ->
+-- On VARBIT TUPLE STRING NAME INT ERROR DOT BOOL BIT
+--   reduce production direction ->
+-- On R_PAREN COMMA
+--   reduce production separated_list_aux(COMMA,parameter) ->
 
 State 678:
 ## Known stack suffix:
@@ -13401,7 +12634,8 @@ parserState -> STATE push_name L_BRACE petr4_list(parserStatement) . transitionS
 -- On TRANSITION shift to state 712
 -- On transitionStatement shift to state 748
 ## Reductions:
--- On R_BRACE reduce production transitionStatement ->
+-- On R_BRACE
+--   reduce production transitionStatement ->
 
 State 712:
 ## Known stack suffix:
@@ -13472,8 +12706,8 @@ selectExpression -> SELECT L_PAREN . expressionList R_PAREN L_BRACE petr4_list(s
 -- On expression shift to state 179
 -- On dotPrefix shift to state 91
 ## Reductions:
--- On R_PAREN reduce production separated_list_aux(COMMA,expression) ->
--- On COMMA reduce production separated_list_aux(COMMA,expression) ->
+-- On R_PAREN COMMA
+--   reduce production separated_list_aux(COMMA,expression) ->
 
 State 715:
 ## Known stack suffix:
@@ -13564,7 +12798,8 @@ petr4_list(selectCase) -> list_aux(selectCase) . [ R_BRACE ]
 -- On expression shift to state 728
 -- On dotPrefix shift to state 91
 ## Reductions:
--- On R_BRACE reduce production petr4_list(selectCase) -> list_aux(selectCase)
+-- On R_BRACE
+--   reduce production petr4_list(selectCase) -> list_aux(selectCase)
 
 State 721:
 ## Known stack suffix:
@@ -13705,8 +12940,10 @@ separated_atLeastTwo_list_aux(COMMA,simpleKeysetExpression) -> separated_nonempt
 separated_nonempty_list_aux(COMMA,simpleKeysetExpression) -> separated_nonempty_list_aux(COMMA,simpleKeysetExpression) COMMA simpleKeysetExpression . [ COMMA ]
 ## Transitions:
 ## Reductions:
--- On R_PAREN reduce production separated_atLeastTwo_list_aux(COMMA,simpleKeysetExpression) -> separated_nonempty_list_aux(COMMA,simpleKeysetExpression) COMMA simpleKeysetExpression
--- On COMMA reduce production separated_nonempty_list_aux(COMMA,simpleKeysetExpression) -> separated_nonempty_list_aux(COMMA,simpleKeysetExpression) COMMA simpleKeysetExpression
+-- On R_PAREN
+--   reduce production separated_atLeastTwo_list_aux(COMMA,simpleKeysetExpression) -> separated_nonempty_list_aux(COMMA,simpleKeysetExpression) COMMA simpleKeysetExpression
+-- On COMMA
+--   reduce production separated_nonempty_list_aux(COMMA,simpleKeysetExpression) -> separated_nonempty_list_aux(COMMA,simpleKeysetExpression) COMMA simpleKeysetExpression
 
 State 728:
 ## Known stack suffix:
@@ -13770,9 +13007,8 @@ simpleKeysetExpression -> expression . RANGE expression [ R_PAREN COMMA COLON ]
 -- On BIT_AND shift to state 118
 -- On AND shift to state 126
 ## Reductions:
--- On R_PAREN reduce production simpleKeysetExpression -> expression
--- On COMMA reduce production simpleKeysetExpression -> expression
--- On COLON reduce production simpleKeysetExpression -> expression
+-- On R_PAREN COMMA COLON
+--   reduce production simpleKeysetExpression -> expression
 
 State 729:
 ## Known stack suffix:
@@ -13868,9 +13104,8 @@ simpleKeysetExpression -> expression RANGE expression . [ R_PAREN COMMA COLON ]
 -- On BIT_AND shift to state 118
 -- On AND shift to state 126
 ## Reductions:
--- On R_PAREN reduce production simpleKeysetExpression -> expression RANGE expression
--- On COMMA reduce production simpleKeysetExpression -> expression RANGE expression
--- On COLON reduce production simpleKeysetExpression -> expression RANGE expression
+-- On R_PAREN COMMA COLON
+--   reduce production simpleKeysetExpression -> expression RANGE expression
 
 State 731:
 ## Known stack suffix:
@@ -13966,9 +13201,8 @@ simpleKeysetExpression -> expression MASK expression . [ R_PAREN COMMA COLON ]
 -- On BIT_AND shift to state 118
 -- On AND shift to state 126
 ## Reductions:
--- On R_PAREN reduce production simpleKeysetExpression -> expression MASK expression
--- On COMMA reduce production simpleKeysetExpression -> expression MASK expression
--- On COLON reduce production simpleKeysetExpression -> expression MASK expression
+-- On R_PAREN COMMA COLON
+--   reduce production simpleKeysetExpression -> expression MASK expression
 
 State 733:
 ## Known stack suffix:
@@ -14061,7 +13295,8 @@ simpleKeysetExpression -> expression . RANGE expression [ COMMA ]
 -- On BIT_AND shift to state 118
 -- On AND shift to state 126
 ## Reductions:
--- On COMMA reduce production simpleKeysetExpression -> expression
+-- On COMMA
+--   reduce production simpleKeysetExpression -> expression
 
 State 737:
 ## Known stack suffix:
@@ -14250,8 +13485,8 @@ petr4_list(parserStatement) -> list_aux(parserStatement) . [ TRANSITION R_BRACE 
 -- On annotations shift to state 762
 -- On annotation shift to state 331
 ## Reductions:
--- On TRANSITION reduce production petr4_list(parserStatement) -> list_aux(parserStatement)
--- On R_BRACE reduce production petr4_list(parserStatement) -> list_aux(parserStatement)
+-- On TRANSITION R_BRACE
+--   reduce production petr4_list(parserStatement) -> list_aux(parserStatement)
 
 State 752:
 ## Known stack suffix:
@@ -14512,7 +13747,8 @@ petr4_nonempty_list(parserState) -> nonempty_list_aux(parserState) . [ R_BRACE ]
 -- On annotations shift to state 776
 -- On annotation shift to state 331
 ## Reductions:
--- On R_BRACE reduce production petr4_nonempty_list(parserState) -> nonempty_list_aux(parserState)
+-- On R_BRACE
+--   reduce production petr4_nonempty_list(parserState) -> nonempty_list_aux(parserState)
 
 State 775:
 ## Known stack suffix:
@@ -14581,7 +13817,8 @@ parserState -> annotations STATE push_name L_BRACE petr4_list(parserStatement) .
 -- On TRANSITION shift to state 712
 -- On transitionStatement shift to state 781
 ## Reductions:
--- On R_BRACE reduce production transitionStatement ->
+-- On R_BRACE
+--   reduce production transitionStatement ->
 
 State 781:
 ## Known stack suffix:
@@ -15254,8 +14491,10 @@ typeDeclaration -> controlTypeDeclaration . pop_scope SEMICOLON [ VOID VARBIT TY
 -- On pop_scope shift to state 821
 -- On optConstructorParameters shift to state 823
 ## Reductions:
--- On SEMICOLON reduce production pop_scope ->
--- On L_BRACE reduce production optConstructorParameters ->
+-- On L_BRACE
+--   reduce production optConstructorParameters ->
+-- On SEMICOLON
+--   reduce production pop_scope ->
 
 State 821:
 ## Known stack suffix:
@@ -15398,7 +14637,8 @@ petr4_list(controlLocalDeclaration) -> list_aux(controlLocalDeclaration) . [ APP
 -- On annotation shift to state 331
 -- On actionDeclaration shift to state 929
 ## Reductions:
--- On APPLY reduce production petr4_list(controlLocalDeclaration) -> list_aux(controlLocalDeclaration)
+-- On APPLY
+--   reduce production petr4_list(controlLocalDeclaration) -> list_aux(controlLocalDeclaration)
 
 State 832:
 ## Known stack suffix:
@@ -15569,7 +14809,8 @@ petr4_list(keyElement) -> list_aux(keyElement) . [ R_BRACE ]
 -- On expression shift to state 845
 -- On dotPrefix shift to state 91
 ## Reductions:
--- On R_BRACE reduce production petr4_list(keyElement) -> list_aux(keyElement)
+-- On R_BRACE
+--   reduce production petr4_list(keyElement) -> list_aux(keyElement)
 
 State 844:
 ## Known stack suffix:
@@ -15819,7 +15060,8 @@ petr4_list(entry) -> list_aux(entry) . [ R_BRACE ]
 -- On entry shift to state 874
 -- On dotPrefix shift to state 91
 ## Reductions:
--- On R_BRACE reduce production petr4_list(entry) -> list_aux(entry)
+-- On R_BRACE
+--   reduce production petr4_list(entry) -> list_aux(entry)
 
 State 859:
 ## Known stack suffix:
@@ -15867,9 +15109,8 @@ actionRef -> name . L_PAREN argumentList R_PAREN [ SEMICOLON PRAGMA AT ]
 ## Transitions:
 -- On L_PAREN shift to state 862
 ## Reductions:
--- On SEMICOLON reduce production actionRef -> name
--- On PRAGMA reduce production actionRef -> name
--- On AT reduce production actionRef -> name
+-- On SEMICOLON PRAGMA AT
+--   reduce production actionRef -> name
 
 State 862:
 ## Known stack suffix:
@@ -15912,8 +15153,8 @@ actionRef -> name L_PAREN . argumentList R_PAREN [ SEMICOLON PRAGMA AT ]
 -- On argumentList shift to state 863
 -- On argument shift to state 135
 ## Reductions:
--- On R_PAREN reduce production separated_list_aux(COMMA,argument) ->
--- On COMMA reduce production separated_list_aux(COMMA,argument) ->
+-- On R_PAREN COMMA
+--   reduce production separated_list_aux(COMMA,argument) ->
 
 State 863:
 ## Known stack suffix:
@@ -15962,9 +15203,8 @@ actionRef -> annotations name . L_PAREN argumentList R_PAREN [ SEMICOLON PRAGMA 
 ## Transitions:
 -- On L_PAREN shift to state 867
 ## Reductions:
--- On SEMICOLON reduce production actionRef -> annotations name
--- On PRAGMA reduce production actionRef -> annotations name
--- On AT reduce production actionRef -> annotations name
+-- On SEMICOLON PRAGMA AT
+--   reduce production actionRef -> annotations name
 
 State 867:
 ## Known stack suffix:
@@ -16007,8 +15247,8 @@ actionRef -> annotations name L_PAREN . argumentList R_PAREN [ SEMICOLON PRAGMA 
 -- On argumentList shift to state 868
 -- On argument shift to state 135
 ## Reductions:
--- On R_PAREN reduce production separated_list_aux(COMMA,argument) ->
--- On COMMA reduce production separated_list_aux(COMMA,argument) ->
+-- On R_PAREN COMMA
+--   reduce production separated_list_aux(COMMA,argument) ->
 
 State 868:
 ## Known stack suffix:
@@ -16225,7 +15465,8 @@ tableProperty -> ACTIONS ASSIGN L_BRACE . actionList R_BRACE [ TYPE STATE R_BRAC
 -- On actionRef shift to state 889
 -- On actionList shift to state 890
 ## Reductions:
--- On R_BRACE reduce production actionList ->
+-- On R_BRACE
+--   reduce production actionList ->
 
 State 886:
 ## Known stack suffix:
@@ -16263,7 +15504,8 @@ separated_nonempty_list_aux(SEMICOLON,actionRef) -> separated_nonempty_list_aux(
 -- On annotation shift to state 331
 -- On actionRef shift to state 888
 ## Reductions:
--- On R_BRACE reduce production actionList -> separated_nonempty_list_aux(SEMICOLON,actionRef) SEMICOLON
+-- On R_BRACE
+--   reduce production actionList -> separated_nonempty_list_aux(SEMICOLON,actionRef) SEMICOLON
 
 State 888:
 ## Known stack suffix:
@@ -16361,7 +15603,8 @@ petr4_nonempty_list(tableProperty) -> nonempty_list_aux(tableProperty) . [ R_BRA
 -- On annotations shift to state 902
 -- On annotation shift to state 331
 ## Reductions:
--- On R_BRACE reduce production petr4_nonempty_list(tableProperty) -> nonempty_list_aux(tableProperty)
+-- On R_BRACE
+--   reduce production petr4_nonempty_list(tableProperty) -> nonempty_list_aux(tableProperty)
 
 State 897:
 ## Known stack suffix:
@@ -16794,17 +16037,10 @@ actionDeclaration -> annotations ACTION name L_PAREN . parameterList R_PAREN blo
 -- On annotations shift to state 438
 -- On annotation shift to state 331
 ## Reductions:
--- On VARBIT reduce production direction ->
--- On TUPLE reduce production direction ->
--- On STRING reduce production direction ->
--- On R_PAREN reduce production separated_list_aux(COMMA,parameter) ->
--- On NAME reduce production direction ->
--- On INT reduce production direction ->
--- On ERROR reduce production direction ->
--- On DOT reduce production direction ->
--- On COMMA reduce production separated_list_aux(COMMA,parameter) ->
--- On BOOL reduce production direction ->
--- On BIT reduce production direction ->
+-- On VARBIT TUPLE STRING NAME INT ERROR DOT BOOL BIT
+--   reduce production direction ->
+-- On R_PAREN COMMA
+--   reduce production separated_list_aux(COMMA,parameter) ->
 
 State 926:
 ## Known stack suffix:
@@ -17180,7 +16416,8 @@ parserTypeDeclaration -> annotations PARSER push_name . optTypeParameters L_PARE
 -- On L_ANGLE shift to state 417
 -- On optTypeParameters shift to state 949
 ## Reductions:
--- On L_PAREN reduce production optTypeParameters ->
+-- On L_PAREN
+--   reduce production optTypeParameters ->
 
 State 949:
 ## Known stack suffix:
@@ -17212,17 +16449,10 @@ parserTypeDeclaration -> annotations PARSER push_name optTypeParameters L_PAREN 
 -- On annotations shift to state 438
 -- On annotation shift to state 331
 ## Reductions:
--- On VARBIT reduce production direction ->
--- On TUPLE reduce production direction ->
--- On STRING reduce production direction ->
--- On R_PAREN reduce production separated_list_aux(COMMA,parameter) ->
--- On NAME reduce production direction ->
--- On INT reduce production direction ->
--- On ERROR reduce production direction ->
--- On DOT reduce production direction ->
--- On COMMA reduce production separated_list_aux(COMMA,parameter) ->
--- On BOOL reduce production direction ->
--- On BIT reduce production direction ->
+-- On VARBIT TUPLE STRING NAME INT ERROR DOT BOOL BIT
+--   reduce production direction ->
+-- On R_PAREN COMMA
+--   reduce production separated_list_aux(COMMA,parameter) ->
 
 State 951:
 ## Known stack suffix:
@@ -17271,7 +16501,8 @@ packageTypeDeclaration -> annotations PACKAGE push_name . optTypeParameters L_PA
 -- On L_ANGLE shift to state 417
 -- On optTypeParameters shift to state 955
 ## Reductions:
--- On L_PAREN reduce production optTypeParameters ->
+-- On L_PAREN
+--   reduce production optTypeParameters ->
 
 State 955:
 ## Known stack suffix:
@@ -17303,17 +16534,10 @@ packageTypeDeclaration -> annotations PACKAGE push_name optTypeParameters L_PARE
 -- On annotations shift to state 438
 -- On annotation shift to state 331
 ## Reductions:
--- On VARBIT reduce production direction ->
--- On TUPLE reduce production direction ->
--- On STRING reduce production direction ->
--- On R_PAREN reduce production separated_list_aux(COMMA,parameter) ->
--- On NAME reduce production direction ->
--- On INT reduce production direction ->
--- On ERROR reduce production direction ->
--- On DOT reduce production direction ->
--- On COMMA reduce production separated_list_aux(COMMA,parameter) ->
--- On BOOL reduce production direction ->
--- On BIT reduce production direction ->
+-- On VARBIT TUPLE STRING NAME INT ERROR DOT BOOL BIT
+--   reduce production direction ->
+-- On R_PAREN COMMA
+--   reduce production separated_list_aux(COMMA,parameter) ->
 
 State 957:
 ## Known stack suffix:
@@ -17382,7 +16606,8 @@ externDeclaration -> annotations EXTERN push_externName . optTypeParameters L_BR
 -- On L_ANGLE shift to state 417
 -- On optTypeParameters shift to state 961
 ## Reductions:
--- On L_BRACE reduce production optTypeParameters ->
+-- On L_BRACE
+--   reduce production optTypeParameters ->
 
 State 961:
 ## Known stack suffix:
@@ -17489,7 +16714,8 @@ controlTypeDeclaration -> annotations CONTROL push_name . optTypeParameters L_PA
 -- On L_ANGLE shift to state 417
 -- On optTypeParameters shift to state 971
 ## Reductions:
--- On L_PAREN reduce production optTypeParameters ->
+-- On L_PAREN
+--   reduce production optTypeParameters ->
 
 State 971:
 ## Known stack suffix:
@@ -17521,17 +16747,10 @@ controlTypeDeclaration -> annotations CONTROL push_name optTypeParameters L_PARE
 -- On annotations shift to state 438
 -- On annotation shift to state 331
 ## Reductions:
--- On VARBIT reduce production direction ->
--- On TUPLE reduce production direction ->
--- On STRING reduce production direction ->
--- On R_PAREN reduce production separated_list_aux(COMMA,parameter) ->
--- On NAME reduce production direction ->
--- On INT reduce production direction ->
--- On ERROR reduce production direction ->
--- On DOT reduce production direction ->
--- On COMMA reduce production separated_list_aux(COMMA,parameter) ->
--- On BOOL reduce production direction ->
--- On BIT reduce production direction ->
+-- On VARBIT TUPLE STRING NAME INT ERROR DOT BOOL BIT
+--   reduce production direction ->
+-- On R_PAREN COMMA
+--   reduce production separated_list_aux(COMMA,parameter) ->
 
 State 973:
 ## Known stack suffix:
@@ -18998,7 +18217,8 @@ variableDeclaration -> typeRef name . optInitialValue SEMICOLON [ # ]
 -- On ASSIGN shift to state 650
 -- On optInitialValue shift to state 1085
 ## Reductions:
--- On SEMICOLON reduce production optInitialValue ->
+-- On SEMICOLON
+--   reduce production optInitialValue ->
 
 State 1085:
 ## Known stack suffix:
@@ -19071,7 +18291,8 @@ variableDeclaration -> annotations typeRef name . optInitialValue SEMICOLON [ # 
 -- On ASSIGN shift to state 650
 -- On optInitialValue shift to state 1090
 ## Reductions:
--- On SEMICOLON reduce production optInitialValue ->
+-- On SEMICOLON
+--   reduce production optInitialValue ->
 
 State 1090:
 ## Known stack suffix:

@@ -308,7 +308,8 @@ fof_tuple -> LEFT_BRACKET . loption(separated_nonempty_list(COMMA,fof_logic_form
 -- On atomic_formula shift to state 69
 -- On atomic_defined_word shift to state 51
 ## Reductions:
--- On RIGHT_BRACKET reduce production loption(separated_nonempty_list(COMMA,fof_logic_formula)) ->
+-- On RIGHT_BRACKET
+--   reduce production loption(separated_nonempty_list(COMMA,fof_logic_formula)) ->
 
 State 16:
 ## Known stack suffix:
@@ -547,20 +548,8 @@ system_term -> system_functor . LEFT_PAREN arguments RIGHT_PAREN [ XOR VLINE RIG
 ## Transitions:
 -- On LEFT_PAREN shift to state 30
 ## Reductions:
--- On XOR reduce production system_constant -> system_functor
--- On VLINE reduce production system_constant -> system_functor
--- On RIGHT_PAREN reduce production system_constant -> system_functor
--- On RIGHT_BRACKET reduce production system_constant -> system_functor
--- On NOT_EQUAL reduce production system_constant -> system_functor
--- On NOTVLINE reduce production system_constant -> system_functor
--- On NOTAND reduce production system_constant -> system_functor
--- On LEFT_IMPLY reduce production system_constant -> system_functor
--- On IMPLY reduce production system_constant -> system_functor
--- On EQUIV reduce production system_constant -> system_functor
--- On EQUAL reduce production system_constant -> system_functor
--- On EOI reduce production system_constant -> system_functor
--- On COMMA reduce production system_constant -> system_functor
--- On AND reduce production system_constant -> system_functor
+-- On XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY EQUIV EQUAL EOI COMMA AND
+--   reduce production system_constant -> system_functor
 
 State 30:
 ## Known stack suffix:
@@ -610,8 +599,8 @@ separated_nonempty_list(COMMA,term) -> term . COMMA separated_nonempty_list(COMM
 ## Transitions:
 -- On COMMA shift to state 32
 ## Reductions:
--- On RIGHT_PAREN reduce production separated_nonempty_list(COMMA,term) -> term
--- On RIGHT_BRACKET reduce production separated_nonempty_list(COMMA,term) -> term
+-- On RIGHT_PAREN RIGHT_BRACKET
+--   reduce production separated_nonempty_list(COMMA,term) -> term
 
 State 32:
 ## Known stack suffix:
@@ -780,20 +769,8 @@ defined_plain_term -> defined_functor . LEFT_PAREN arguments RIGHT_PAREN [ XOR V
 ## Transitions:
 -- On LEFT_PAREN shift to state 44
 ## Reductions:
--- On XOR reduce production defined_constant -> defined_functor
--- On VLINE reduce production defined_constant -> defined_functor
--- On RIGHT_PAREN reduce production defined_constant -> defined_functor
--- On RIGHT_BRACKET reduce production defined_constant -> defined_functor
--- On NOT_EQUAL reduce production defined_constant -> defined_functor
--- On NOTVLINE reduce production defined_constant -> defined_functor
--- On NOTAND reduce production defined_constant -> defined_functor
--- On LEFT_IMPLY reduce production defined_constant -> defined_functor
--- On IMPLY reduce production defined_constant -> defined_functor
--- On EQUIV reduce production defined_constant -> defined_functor
--- On EQUAL reduce production defined_constant -> defined_functor
--- On EOI reduce production defined_constant -> defined_functor
--- On COMMA reduce production defined_constant -> defined_functor
--- On AND reduce production defined_constant -> defined_functor
+-- On XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY EQUIV EQUAL EOI COMMA AND
+--   reduce production defined_constant -> defined_functor
 
 State 44:
 ## Known stack suffix:
@@ -878,21 +855,10 @@ functor_ -> atomic_word . [ LEFT_PAREN ]
 plain_term -> atomic_word . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY EQUIV EQUAL EOI COMMA AND ]
 ## Transitions:
 ## Reductions:
--- On XOR reduce production plain_term -> atomic_word
--- On VLINE reduce production plain_term -> atomic_word
--- On RIGHT_PAREN reduce production plain_term -> atomic_word
--- On RIGHT_BRACKET reduce production plain_term -> atomic_word
--- On NOT_EQUAL reduce production plain_term -> atomic_word
--- On NOTVLINE reduce production plain_term -> atomic_word
--- On NOTAND reduce production plain_term -> atomic_word
--- On LEFT_PAREN reduce production functor_ -> atomic_word
--- On LEFT_IMPLY reduce production plain_term -> atomic_word
--- On IMPLY reduce production plain_term -> atomic_word
--- On EQUIV reduce production plain_term -> atomic_word
--- On EQUAL reduce production plain_term -> atomic_word
--- On EOI reduce production plain_term -> atomic_word
--- On COMMA reduce production plain_term -> atomic_word
--- On AND reduce production plain_term -> atomic_word
+-- On LEFT_PAREN
+--   reduce production functor_ -> atomic_word
+-- On XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY EQUIV EQUAL EOI COMMA AND
+--   reduce production plain_term -> atomic_word
 
 State 50:
 ## Known stack suffix:
@@ -1020,20 +986,10 @@ atomic_formula -> function_term . [ XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE
 term -> function_term . [ NOT_EQUAL EQUAL ]
 ## Transitions:
 ## Reductions:
--- On XOR reduce production atomic_formula -> function_term
--- On VLINE reduce production atomic_formula -> function_term
--- On RIGHT_PAREN reduce production atomic_formula -> function_term
--- On RIGHT_BRACKET reduce production atomic_formula -> function_term
--- On NOT_EQUAL reduce production term -> function_term
--- On NOTVLINE reduce production atomic_formula -> function_term
--- On NOTAND reduce production atomic_formula -> function_term
--- On LEFT_IMPLY reduce production atomic_formula -> function_term
--- On IMPLY reduce production atomic_formula -> function_term
--- On EQUIV reduce production atomic_formula -> function_term
--- On EQUAL reduce production term -> function_term
--- On EOI reduce production atomic_formula -> function_term
--- On COMMA reduce production atomic_formula -> function_term
--- On AND reduce production atomic_formula -> function_term
+-- On XOR VLINE RIGHT_PAREN RIGHT_BRACKET NOTVLINE NOTAND LEFT_IMPLY IMPLY EQUIV EOI COMMA AND
+--   reduce production atomic_formula -> function_term
+-- On NOT_EQUAL EQUAL
+--   reduce production term -> function_term
 
 State 61:
 ## Known stack suffix:
@@ -1168,8 +1124,8 @@ raw_typed_variable(tff_unary_type) -> raw_variable . COLUMN tff_unary_type [ RIG
 ## Transitions:
 -- On COLUMN shift to state 71
 ## Reductions:
--- On RIGHT_BRACKET reduce production raw_typed_variable(tff_unary_type) -> raw_variable
--- On COMMA reduce production raw_typed_variable(tff_unary_type) -> raw_variable
+-- On RIGHT_BRACKET COMMA
+--   reduce production raw_typed_variable(tff_unary_type) -> raw_variable
 
 State 71:
 ## Known stack suffix:
@@ -1289,11 +1245,8 @@ tff_atom_type -> type_const . LEFT_PAREN separated_nonempty_list(COMMA,tff_type)
 ## Transitions:
 -- On LEFT_PAREN shift to state 80
 ## Reductions:
--- On STAR reduce production tff_atom_type -> type_const
--- On RIGHT_PAREN reduce production tff_atom_type -> type_const
--- On RIGHT_BRACKET reduce production tff_atom_type -> type_const
--- On COMMA reduce production tff_atom_type -> type_const
--- On ARROW reduce production tff_atom_type -> type_const
+-- On STAR RIGHT_PAREN RIGHT_BRACKET COMMA ARROW
+--   reduce production tff_atom_type -> type_const
 
 State 80:
 ## Known stack suffix:
@@ -1326,8 +1279,8 @@ tff_type -> tff_unary_type . ARROW tff_unary_type [ RIGHT_PAREN COMMA ]
 ## Transitions:
 -- On ARROW shift to state 82
 ## Reductions:
--- On RIGHT_PAREN reduce production tff_type -> tff_unary_type
--- On COMMA reduce production tff_type -> tff_unary_type
+-- On RIGHT_PAREN COMMA
+--   reduce production tff_type -> tff_unary_type
 
 State 82:
 ## Known stack suffix:
@@ -1376,11 +1329,8 @@ raw_ty_variable -> raw_variable . [ STAR RIGHT_PAREN RIGHT_BRACKET COMMA ARROW ]
 ## Transitions:
 -- On COLUMN shift to state 86
 ## Reductions:
--- On STAR reduce production raw_ty_variable -> raw_variable
--- On RIGHT_PAREN reduce production raw_ty_variable -> raw_variable
--- On RIGHT_BRACKET reduce production raw_ty_variable -> raw_variable
--- On COMMA reduce production raw_ty_variable -> raw_variable
--- On ARROW reduce production raw_ty_variable -> raw_variable
+-- On STAR RIGHT_PAREN RIGHT_BRACKET COMMA ARROW
+--   reduce production raw_ty_variable -> raw_variable
 
 State 86:
 ## Known stack suffix:
@@ -1418,7 +1368,8 @@ separated_nonempty_list(COMMA,tff_type) -> tff_type . COMMA separated_nonempty_l
 ## Transitions:
 -- On COMMA shift to state 90
 ## Reductions:
--- On RIGHT_PAREN reduce production separated_nonempty_list(COMMA,tff_type) -> tff_type
+-- On RIGHT_PAREN
+--   reduce production separated_nonempty_list(COMMA,tff_type) -> tff_type
 
 State 90:
 ## Known stack suffix:
@@ -1526,7 +1477,8 @@ ty_args -> tff_unary_type . STAR ty_args [ RIGHT_PAREN ]
 -- On STAR shift to state 99
 -- On ARROW shift to state 82
 ## Reductions:
--- On RIGHT_PAREN reduce production tff_type -> tff_unary_type
+-- On RIGHT_PAREN
+--   reduce production tff_type -> tff_unary_type
 
 State 99:
 ## Known stack suffix:
@@ -1569,7 +1521,8 @@ ty_args -> tff_unary_type . STAR ty_args [ RIGHT_PAREN ]
 ## Transitions:
 -- On STAR shift to state 99
 ## Reductions:
--- On RIGHT_PAREN reduce production ty_args -> tff_unary_type STAR tff_unary_type
+-- On RIGHT_PAREN
+--   reduce production ty_args -> tff_unary_type STAR tff_unary_type
 
 State 102:
 ## Known stack suffix:
@@ -1607,7 +1560,8 @@ separated_nonempty_list(COMMA,raw_typed_variable(tff_unary_type)) -> raw_typed_v
 ## Transitions:
 -- On COMMA shift to state 106
 ## Reductions:
--- On RIGHT_BRACKET reduce production separated_nonempty_list(COMMA,raw_typed_variable(tff_unary_type)) -> raw_typed_variable(tff_unary_type)
+-- On RIGHT_BRACKET
+--   reduce production separated_nonempty_list(COMMA,raw_typed_variable(tff_unary_type)) -> raw_typed_variable(tff_unary_type)
 
 State 106:
 ## Known stack suffix:
@@ -1852,7 +1806,8 @@ separated_nonempty_list(COMMA,fof_logic_formula) -> fof_logic_formula . COMMA se
 -- On AND shift to state 119
 -- On binary_connective shift to state 120
 ## Reductions:
--- On RIGHT_BRACKET reduce production separated_nonempty_list(COMMA,fof_logic_formula) -> fof_logic_formula
+-- On RIGHT_BRACKET
+--   reduce production separated_nonempty_list(COMMA,fof_logic_formula) -> fof_logic_formula
 
 State 126:
 ## Known stack suffix:
@@ -1986,9 +1941,8 @@ fof_logic_formula -> fof_logic_formula . binary_connective fof_unitary_formula [
 -- On AND shift to state 119
 -- On binary_connective shift to state 120
 ## Reductions:
--- On RIGHT_PAREN reduce production fof_formula -> fof_logic_formula
--- On EOI reduce production fof_formula -> fof_logic_formula
--- On COMMA reduce production fof_formula -> fof_logic_formula
+-- On RIGHT_PAREN EOI COMMA
+--   reduce production fof_formula -> fof_logic_formula
 
 State 135:
 ## Known stack suffix:
@@ -2145,7 +2099,8 @@ separated_nonempty_list(VLINE,answer_tuple) -> answer_tuple . VLINE separated_no
 ## Transitions:
 -- On VLINE shift to state 146
 ## Reductions:
--- On RIGHT_BRACKET reduce production separated_nonempty_list(VLINE,answer_tuple) -> answer_tuple
+-- On RIGHT_BRACKET
+--   reduce production separated_nonempty_list(VLINE,answer_tuple) -> answer_tuple
 
 State 146:
 ## Known stack suffix:
@@ -2949,19 +2904,8 @@ thf_formula -> thf_apply_term . [ XOR VLINE RIGHT_PAREN NOT_EQUAL NOTVLINE NOTAN
 ## Transitions:
 -- On AT shift to state 197
 ## Reductions:
--- On XOR reduce production thf_formula -> thf_apply_term
--- On VLINE reduce production thf_formula -> thf_apply_term
--- On RIGHT_PAREN reduce production thf_formula -> thf_apply_term
--- On NOT_EQUAL reduce production thf_formula -> thf_apply_term
--- On NOTVLINE reduce production thf_formula -> thf_apply_term
--- On NOTAND reduce production thf_formula -> thf_apply_term
--- On LEFT_IMPLY reduce production thf_formula -> thf_apply_term
--- On IMPLY reduce production thf_formula -> thf_apply_term
--- On EQUIV reduce production thf_formula -> thf_apply_term
--- On EQUAL reduce production thf_formula -> thf_apply_term
--- On EOI reduce production thf_formula -> thf_apply_term
--- On COMMA reduce production thf_formula -> thf_apply_term
--- On AND reduce production thf_formula -> thf_apply_term
+-- On XOR VLINE RIGHT_PAREN NOT_EQUAL NOTVLINE NOTAND LEFT_IMPLY IMPLY EQUIV EQUAL EOI COMMA AND
+--   reduce production thf_formula -> thf_apply_term
 
 State 197:
 ## Known stack suffix:
@@ -3013,8 +2957,8 @@ raw_typed_variable(thf_type) -> raw_variable . COLUMN thf_type [ RIGHT_BRACKET C
 ## Transitions:
 -- On COLUMN shift to state 200
 ## Reductions:
--- On RIGHT_BRACKET reduce production raw_typed_variable(thf_type) -> raw_variable
--- On COMMA reduce production raw_typed_variable(thf_type) -> raw_variable
+-- On RIGHT_BRACKET COMMA
+--   reduce production raw_typed_variable(thf_type) -> raw_variable
 
 State 200:
 ## Known stack suffix:
@@ -3076,9 +3020,8 @@ thf_type -> thf_unary_type . ARROW thf_type [ RIGHT_PAREN RIGHT_BRACKET COMMA ]
 ## Transitions:
 -- On ARROW shift to state 204
 ## Reductions:
--- On RIGHT_PAREN reduce production thf_type -> thf_unary_type
--- On RIGHT_BRACKET reduce production thf_type -> thf_unary_type
--- On COMMA reduce production thf_type -> thf_unary_type
+-- On RIGHT_PAREN RIGHT_BRACKET COMMA
+--   reduce production thf_type -> thf_unary_type
 
 State 204:
 ## Known stack suffix:
@@ -3164,7 +3107,8 @@ separated_nonempty_list(COMMA,raw_typed_variable(thf_type)) -> raw_typed_variabl
 ## Transitions:
 -- On COMMA shift to state 212
 ## Reductions:
--- On RIGHT_BRACKET reduce production separated_nonempty_list(COMMA,raw_typed_variable(thf_type)) -> raw_typed_variable(thf_type)
+-- On RIGHT_BRACKET
+--   reduce production separated_nonempty_list(COMMA,raw_typed_variable(thf_type)) -> raw_typed_variable(thf_type)
 
 State 212:
 ## Known stack suffix:
@@ -3490,7 +3434,8 @@ toplevel_form(role_as_goal) -> THF LEFT_PAREN name COMMA role_as_goal COMMA thf_
 -- On binary_connective shift to state 194
 -- On annotations shift to state 256
 ## Reductions:
--- On RIGHT_PAREN reduce production annotations ->
+-- On RIGHT_PAREN
+--   reduce production annotations ->
 
 State 235:
 ## Known stack suffix:
@@ -3512,7 +3457,8 @@ annotations -> COMMA . loption(separated_nonempty_list(COMMA,general_term)) [ RI
 -- On general_data shift to state 248
 -- On atomic_word shift to state 251
 ## Reductions:
--- On RIGHT_PAREN reduce production loption(separated_nonempty_list(COMMA,general_term)) ->
+-- On RIGHT_PAREN
+--   reduce production loption(separated_nonempty_list(COMMA,general_term)) ->
 
 State 236:
 ## Known stack suffix:
@@ -3543,7 +3489,8 @@ general_list -> LEFT_BRACKET . loption(separated_nonempty_list(COMMA,general_ter
 -- On general_data shift to state 248
 -- On atomic_word shift to state 251
 ## Reductions:
--- On RIGHT_BRACKET reduce production loption(separated_nonempty_list(COMMA,general_term)) ->
+-- On RIGHT_BRACKET
+--   reduce production loption(separated_nonempty_list(COMMA,general_term)) ->
 
 State 238:
 ## Known stack suffix:
@@ -3599,8 +3546,8 @@ separated_nonempty_list(COMMA,general_term) -> general_term . COMMA separated_no
 ## Transitions:
 -- On COMMA shift to state 244
 ## Reductions:
--- On RIGHT_PAREN reduce production separated_nonempty_list(COMMA,general_term) -> general_term
--- On RIGHT_BRACKET reduce production separated_nonempty_list(COMMA,general_term) -> general_term
+-- On RIGHT_PAREN RIGHT_BRACKET
+--   reduce production separated_nonempty_list(COMMA,general_term) -> general_term
 
 State 244:
 ## Known stack suffix:
@@ -3658,9 +3605,8 @@ general_term -> general_data . COLUMN general_term [ RIGHT_PAREN RIGHT_BRACKET C
 ## Transitions:
 -- On COLUMN shift to state 249
 ## Reductions:
--- On RIGHT_PAREN reduce production general_term -> general_data
--- On RIGHT_BRACKET reduce production general_term -> general_data
--- On COMMA reduce production general_term -> general_data
+-- On RIGHT_PAREN RIGHT_BRACKET COMMA
+--   reduce production general_term -> general_data
 
 State 249:
 ## Known stack suffix:
@@ -3699,10 +3645,8 @@ general_function -> atomic_word . LEFT_PAREN separated_nonempty_list(COMMA,gener
 ## Transitions:
 -- On LEFT_PAREN shift to state 252
 ## Reductions:
--- On RIGHT_PAREN reduce production general_data -> atomic_word
--- On RIGHT_BRACKET reduce production general_data -> atomic_word
--- On COMMA reduce production general_data -> atomic_word
--- On COLUMN reduce production general_data -> atomic_word
+-- On RIGHT_PAREN RIGHT_BRACKET COMMA COLUMN
+--   reduce production general_data -> atomic_word
 
 State 252:
 ## Known stack suffix:
@@ -3896,8 +3840,8 @@ thf_formula -> thf_formula . binary_connective thf_unitary_formula [ XOR VLINE R
 -- On AND shift to state 119
 -- On binary_connective shift to state 194
 ## Reductions:
--- On RIGHT_PAREN reduce production thf_def -> atomic_word EQUAL thf_formula
--- On COMMA reduce production thf_def -> atomic_word EQUAL thf_formula
+-- On RIGHT_PAREN COMMA
+--   reduce production thf_def -> atomic_word EQUAL thf_formula
 
 State 267:
 ## Known stack suffix:
@@ -3908,7 +3852,8 @@ statement -> THF LEFT_PAREN name COMMA role_as_def COMMA thf_def . annotations R
 -- On COMMA shift to state 235
 -- On annotations shift to state 268
 ## Reductions:
--- On RIGHT_PAREN reduce production annotations ->
+-- On RIGHT_PAREN
+--   reduce production annotations ->
 
 State 268:
 ## Known stack suffix:
@@ -4095,7 +4040,8 @@ separated_nonempty_list(COMMA,raw_ty_variable) -> raw_ty_variable . COMMA separa
 ## Transitions:
 -- On COMMA shift to state 284
 ## Reductions:
--- On RIGHT_BRACKET reduce production separated_nonempty_list(COMMA,raw_ty_variable) -> raw_ty_variable
+-- On RIGHT_BRACKET
+--   reduce production separated_nonempty_list(COMMA,raw_ty_variable) -> raw_ty_variable
 
 State 284:
 ## Known stack suffix:
@@ -4195,7 +4141,8 @@ statement -> THF LEFT_PAREN name COMMA role_as_decl COMMA type_decl(thf_type) . 
 -- On COMMA shift to state 235
 -- On annotations shift to state 293
 ## Reductions:
--- On RIGHT_PAREN reduce production annotations ->
+-- On RIGHT_PAREN
+--   reduce production annotations ->
 
 State 293:
 ## Known stack suffix:
@@ -4291,7 +4238,8 @@ toplevel_form(role_as_axiom) -> THF LEFT_PAREN name COMMA role_as_axiom COMMA th
 -- On binary_connective shift to state 194
 -- On annotations shift to state 299
 ## Reductions:
--- On RIGHT_PAREN reduce production annotations ->
+-- On RIGHT_PAREN
+--   reduce production annotations ->
 
 State 299:
 ## Known stack suffix:
@@ -4455,7 +4403,8 @@ toplevel_form(role_as_goal) -> TFF LEFT_PAREN name COMMA role_as_goal COMMA tff_
 -- On COMMA shift to state 235
 -- On annotations shift to state 310
 ## Reductions:
--- On RIGHT_PAREN reduce production annotations ->
+-- On RIGHT_PAREN
+--   reduce production annotations ->
 
 State 310:
 ## Known stack suffix:
@@ -4719,7 +4668,8 @@ statement -> TFF LEFT_PAREN name COMMA role_as_decl COMMA type_decl(tff_type) . 
 -- On COMMA shift to state 235
 -- On annotations shift to state 333
 ## Reductions:
--- On RIGHT_PAREN reduce production annotations ->
+-- On RIGHT_PAREN
+--   reduce production annotations ->
 
 State 333:
 ## Known stack suffix:
@@ -4821,7 +4771,8 @@ toplevel_form(role_as_axiom) -> TFF LEFT_PAREN name COMMA role_as_axiom COMMA tf
 -- On COMMA shift to state 235
 -- On annotations shift to state 339
 ## Reductions:
--- On RIGHT_PAREN reduce production annotations ->
+-- On RIGHT_PAREN
+--   reduce production annotations ->
 
 State 339:
 ## Known stack suffix:
@@ -4914,7 +4865,8 @@ statement -> INCLUDE LEFT_PAREN SINGLE_QUOTED COMMA . name_list RIGHT_PAREN DOT 
 -- On loption(separated_nonempty_list(COMMA,name)) shift to state 355
 -- On atomic_word shift to state 302
 ## Reductions:
--- On RIGHT_PAREN reduce production loption(separated_nonempty_list(COMMA,name)) ->
+-- On RIGHT_PAREN
+--   reduce production loption(separated_nonempty_list(COMMA,name)) ->
 
 State 348:
 ## Known stack suffix:
@@ -4961,7 +4913,8 @@ separated_nonempty_list(COMMA,name) -> name . COMMA separated_nonempty_list(COMM
 ## Transitions:
 -- On COMMA shift to state 353
 ## Reductions:
--- On RIGHT_PAREN reduce production separated_nonempty_list(COMMA,name) -> name
+-- On RIGHT_PAREN
+--   reduce production separated_nonempty_list(COMMA,name) -> name
 
 State 353:
 ## Known stack suffix:
@@ -5114,7 +5067,8 @@ toplevel_form(role_as_goal) -> FOF LEFT_PAREN name COMMA role_as_goal COMMA fof_
 -- On COMMA shift to state 235
 -- On annotations shift to state 363
 ## Reductions:
--- On RIGHT_PAREN reduce production annotations ->
+-- On RIGHT_PAREN
+--   reduce production annotations ->
 
 State 363:
 ## Known stack suffix:
@@ -5215,7 +5169,8 @@ toplevel_form(role_as_axiom) -> FOF LEFT_PAREN name COMMA role_as_axiom COMMA fo
 -- On COMMA shift to state 235
 -- On annotations shift to state 369
 ## Reductions:
--- On RIGHT_PAREN reduce production annotations ->
+-- On RIGHT_PAREN
+--   reduce production annotations ->
 
 State 369:
 ## Known stack suffix:
@@ -5457,8 +5412,8 @@ separated_nonempty_list(VLINE,literal) -> literal . VLINE separated_nonempty_lis
 ## Transitions:
 -- On VLINE shift to state 383
 ## Reductions:
--- On RIGHT_PAREN reduce production separated_nonempty_list(VLINE,literal) -> literal
--- On COMMA reduce production separated_nonempty_list(VLINE,literal) -> literal
+-- On RIGHT_PAREN COMMA
+--   reduce production separated_nonempty_list(VLINE,literal) -> literal
 
 State 383:
 ## Known stack suffix:
@@ -5557,7 +5512,8 @@ toplevel_form(role_as_goal) -> CNF LEFT_PAREN name COMMA role_as_goal COMMA cnf_
 -- On COMMA shift to state 235
 -- On annotations shift to state 390
 ## Reductions:
--- On RIGHT_PAREN reduce production annotations ->
+-- On RIGHT_PAREN
+--   reduce production annotations ->
 
 State 390:
 ## Known stack suffix:
@@ -5650,7 +5606,8 @@ toplevel_form(role_as_axiom) -> CNF LEFT_PAREN name COMMA role_as_axiom COMMA cn
 -- On COMMA shift to state 235
 -- On annotations shift to state 396
 ## Reductions:
--- On RIGHT_PAREN reduce production annotations ->
+-- On RIGHT_PAREN
+--   reduce production annotations ->
 
 State 396:
 ## Known stack suffix:
@@ -5742,7 +5699,8 @@ parse_statement_list' -> . parse_statement_list [ # ]
 -- On parse_statement_list shift to state 501
 -- On list(statement) shift to state 502
 ## Reductions:
--- On EOI reduce production list(statement) ->
+-- On EOI
+--   reduce production list(statement) ->
 
 State 405:
 ## Known stack suffix:
@@ -5879,7 +5837,8 @@ toplevel_form(role_as_goal) -> THF LEFT_PAREN name COMMA role_as_goal COMMA thf_
 -- On binary_connective shift to state 194
 -- On annotations shift to state 413
 ## Reductions:
--- On RIGHT_PAREN reduce production annotations ->
+-- On RIGHT_PAREN
+--   reduce production annotations ->
 
 State 413:
 ## Known stack suffix:
@@ -5939,7 +5898,8 @@ statement -> THF LEFT_PAREN name COMMA role_as_def COMMA thf_def . annotations R
 -- On COMMA shift to state 235
 -- On annotations shift to state 419
 ## Reductions:
--- On RIGHT_PAREN reduce production annotations ->
+-- On RIGHT_PAREN
+--   reduce production annotations ->
 
 State 419:
 ## Known stack suffix:
@@ -6000,7 +5960,8 @@ statement -> THF LEFT_PAREN name COMMA role_as_decl COMMA type_decl(thf_type) . 
 -- On COMMA shift to state 235
 -- On annotations shift to state 425
 ## Reductions:
--- On RIGHT_PAREN reduce production annotations ->
+-- On RIGHT_PAREN
+--   reduce production annotations ->
 
 State 425:
 ## Known stack suffix:
@@ -6096,7 +6057,8 @@ toplevel_form(role_as_axiom) -> THF LEFT_PAREN name COMMA role_as_axiom COMMA th
 -- On binary_connective shift to state 194
 -- On annotations shift to state 431
 ## Reductions:
--- On RIGHT_PAREN reduce production annotations ->
+-- On RIGHT_PAREN
+--   reduce production annotations ->
 
 State 431:
 ## Known stack suffix:
@@ -6251,7 +6213,8 @@ toplevel_form(role_as_goal) -> TFF LEFT_PAREN name COMMA role_as_goal COMMA tff_
 -- On COMMA shift to state 235
 -- On annotations shift to state 441
 ## Reductions:
--- On RIGHT_PAREN reduce production annotations ->
+-- On RIGHT_PAREN
+--   reduce production annotations ->
 
 State 441:
 ## Known stack suffix:
@@ -6312,7 +6275,8 @@ statement -> TFF LEFT_PAREN name COMMA role_as_decl COMMA type_decl(tff_type) . 
 -- On COMMA shift to state 235
 -- On annotations shift to state 447
 ## Reductions:
--- On RIGHT_PAREN reduce production annotations ->
+-- On RIGHT_PAREN
+--   reduce production annotations ->
 
 State 447:
 ## Known stack suffix:
@@ -6414,7 +6378,8 @@ toplevel_form(role_as_axiom) -> TFF LEFT_PAREN name COMMA role_as_axiom COMMA tf
 -- On COMMA shift to state 235
 -- On annotations shift to state 453
 ## Reductions:
--- On RIGHT_PAREN reduce production annotations ->
+-- On RIGHT_PAREN
+--   reduce production annotations ->
 
 State 453:
 ## Known stack suffix:
@@ -6507,7 +6472,8 @@ statement -> INCLUDE LEFT_PAREN SINGLE_QUOTED COMMA . name_list RIGHT_PAREN DOT 
 -- On loption(separated_nonempty_list(COMMA,name)) shift to state 355
 -- On atomic_word shift to state 302
 ## Reductions:
--- On RIGHT_PAREN reduce production loption(separated_nonempty_list(COMMA,name)) ->
+-- On RIGHT_PAREN
+--   reduce production loption(separated_nonempty_list(COMMA,name)) ->
 
 State 462:
 ## Known stack suffix:
@@ -6655,7 +6621,8 @@ toplevel_form(role_as_goal) -> FOF LEFT_PAREN name COMMA role_as_goal COMMA fof_
 -- On COMMA shift to state 235
 -- On annotations shift to state 472
 ## Reductions:
--- On RIGHT_PAREN reduce production annotations ->
+-- On RIGHT_PAREN
+--   reduce production annotations ->
 
 State 472:
 ## Known stack suffix:
@@ -6756,7 +6723,8 @@ toplevel_form(role_as_axiom) -> FOF LEFT_PAREN name COMMA role_as_axiom COMMA fo
 -- On COMMA shift to state 235
 -- On annotations shift to state 478
 ## Reductions:
--- On RIGHT_PAREN reduce production annotations ->
+-- On RIGHT_PAREN
+--   reduce production annotations ->
 
 State 478:
 ## Known stack suffix:
@@ -6896,7 +6864,8 @@ toplevel_form(role_as_goal) -> CNF LEFT_PAREN name COMMA role_as_goal COMMA cnf_
 -- On COMMA shift to state 235
 -- On annotations shift to state 488
 ## Reductions:
--- On RIGHT_PAREN reduce production annotations ->
+-- On RIGHT_PAREN
+--   reduce production annotations ->
 
 State 488:
 ## Known stack suffix:
@@ -6989,7 +6958,8 @@ toplevel_form(role_as_axiom) -> CNF LEFT_PAREN name COMMA role_as_axiom COMMA cn
 -- On COMMA shift to state 235
 -- On annotations shift to state 494
 ## Reductions:
--- On RIGHT_PAREN reduce production annotations ->
+-- On RIGHT_PAREN
+--   reduce production annotations ->
 
 State 494:
 ## Known stack suffix:
@@ -7053,7 +7023,8 @@ list(statement) -> statement . list(statement) [ EOI ]
 -- On statement shift to state 499
 -- On list(statement) shift to state 500
 ## Reductions:
--- On EOI reduce production list(statement) ->
+-- On EOI
+--   reduce production list(statement) ->
 
 State 500:
 ## Known stack suffix:

@@ -9,7 +9,8 @@ program' -> . program [ # ]
 -- On program shift to state 41
 -- On my_list(type_decl) shift to state 42
 ## Reductions:
--- On FSM reduce production my_list(type_decl) ->
+-- On FSM
+--   reduce production my_list(type_decl) ->
 
 State 1:
 ## Known stack suffix:
@@ -57,16 +58,8 @@ typ -> TYINT . option(int_range) [ TYPE SHARED SEMICOLON RPAREN OUTPUT INPUT GT 
 -- On option(int_range) shift to state 25
 -- On int_range shift to state 26
 ## Reductions:
--- On TYPE reduce production option(int_range) ->
--- On SHARED reduce production option(int_range) ->
--- On SEMICOLON reduce production option(int_range) ->
--- On RPAREN reduce production option(int_range) ->
--- On OUTPUT reduce production option(int_range) ->
--- On INPUT reduce production option(int_range) ->
--- On GT reduce production option(int_range) ->
--- On FSM reduce production option(int_range) ->
--- On EQUAL reduce production option(int_range) ->
--- On COMMA reduce production option(int_range) ->
+-- On TYPE SHARED SEMICOLON RPAREN OUTPUT INPUT GT FSM EQUAL COMMA
+--   reduce production option(int_range) ->
 
 State 5:
 ## Known stack suffix:
@@ -191,11 +184,8 @@ type_index_expr -> type_index_expr . MOD type_index_expr [ TIMES RPAREN PLUS MOD
 -- On MOD shift to state 15
 -- On DIV shift to state 17
 ## Reductions:
--- On RPAREN reduce production type_index_expr -> type_index_expr PLUS type_index_expr
--- On PLUS reduce production type_index_expr -> type_index_expr PLUS type_index_expr
--- On MINUS reduce production type_index_expr -> type_index_expr PLUS type_index_expr
--- On GT reduce production type_index_expr -> type_index_expr PLUS type_index_expr
--- On DOTDOT reduce production type_index_expr -> type_index_expr PLUS type_index_expr
+-- On RPAREN PLUS MINUS GT DOTDOT
+--   reduce production type_index_expr -> type_index_expr PLUS type_index_expr
 
 State 15:
 ## Known stack suffix:
@@ -276,11 +266,8 @@ type_index_expr -> type_index_expr . MOD type_index_expr [ TIMES RPAREN PLUS MOD
 -- On MOD shift to state 15
 -- On DIV shift to state 17
 ## Reductions:
--- On RPAREN reduce production type_index_expr -> type_index_expr MINUS type_index_expr
--- On PLUS reduce production type_index_expr -> type_index_expr MINUS type_index_expr
--- On MINUS reduce production type_index_expr -> type_index_expr MINUS type_index_expr
--- On GT reduce production type_index_expr -> type_index_expr MINUS type_index_expr
--- On DOTDOT reduce production type_index_expr -> type_index_expr MINUS type_index_expr
+-- On RPAREN PLUS MINUS GT DOTDOT
+--   reduce production type_index_expr -> type_index_expr MINUS type_index_expr
 
 State 21:
 ## Known stack suffix:
@@ -396,7 +383,8 @@ braced(my_separated_list(COMMA,UID)) -> LBRACE . my_separated_list(COMMA,UID) RB
 -- On my_separated_nonempty_list(COMMA,UID) shift to state 34
 -- On my_separated_list(COMMA,UID) shift to state 35
 ## Reductions:
--- On RBRACE reduce production my_separated_list(COMMA,UID) ->
+-- On RBRACE
+--   reduce production my_separated_list(COMMA,UID) ->
 
 State 31:
 ## Known stack suffix:
@@ -407,8 +395,8 @@ my_separated_nonempty_list(COMMA,UID) -> UID . COMMA my_separated_nonempty_list(
 ## Transitions:
 -- On COMMA shift to state 32
 ## Reductions:
--- On SEMICOLON reduce production my_separated_nonempty_list(COMMA,UID) -> UID
--- On RBRACE reduce production my_separated_nonempty_list(COMMA,UID) -> UID
+-- On SEMICOLON RBRACE
+--   reduce production my_separated_nonempty_list(COMMA,UID) -> UID
 
 State 32:
 ## Known stack suffix:
@@ -484,7 +472,8 @@ my_list(type_decl) -> type_decl . my_list(type_decl) [ FSM ]
 -- On type_decl shift to state 39
 -- On my_list(type_decl) shift to state 40
 ## Reductions:
--- On FSM reduce production my_list(type_decl) ->
+-- On FSM
+--   reduce production my_list(type_decl) ->
 
 State 40:
 ## Known stack suffix:
@@ -563,7 +552,8 @@ fsm_model -> FSM MODEL id . optional(params) LPAREN my_separated_list(COMMA,io) 
 -- On params shift to state 58
 -- On optional(params) shift to state 59
 ## Reductions:
--- On LPAREN reduce production optional(params) ->
+-- On LPAREN
+--   reduce production optional(params) ->
 
 State 48:
 ## Known stack suffix:
@@ -576,7 +566,8 @@ params -> LT . my_separated_list(COMMA,param) GT [ LPAREN ]
 -- On my_separated_nonempty_list(COMMA,param) shift to state 55
 -- On my_separated_list(COMMA,param) shift to state 56
 ## Reductions:
--- On GT reduce production my_separated_list(COMMA,param) ->
+-- On GT
+--   reduce production my_separated_list(COMMA,param) ->
 
 State 49:
 ## Known stack suffix:
@@ -618,7 +609,8 @@ my_separated_nonempty_list(COMMA,param) -> param . COMMA my_separated_nonempty_l
 ## Transitions:
 -- On COMMA shift to state 53
 ## Reductions:
--- On GT reduce production my_separated_nonempty_list(COMMA,param) -> param
+-- On GT
+--   reduce production my_separated_nonempty_list(COMMA,param) -> param
 
 State 53:
 ## Known stack suffix:
@@ -698,7 +690,8 @@ fsm_model -> FSM MODEL id optional(params) LPAREN . my_separated_list(COMMA,io) 
 -- On my_separated_list(COMMA,io) shift to state 71
 -- On io shift to state 179
 ## Reductions:
--- On RPAREN reduce production my_separated_list(COMMA,io) ->
+-- On RPAREN
+--   reduce production my_separated_list(COMMA,io) ->
 
 State 61:
 ## Known stack suffix:
@@ -843,7 +836,8 @@ fsm_model -> FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RP
 -- On my_separated_nonempty_list(COMMA,UID) shift to state 34
 -- On my_separated_list(COMMA,UID) shift to state 76
 ## Reductions:
--- On SEMICOLON reduce production my_separated_list(COMMA,UID) ->
+-- On SEMICOLON
+--   reduce production my_separated_list(COMMA,UID) ->
 
 State 76:
 ## Known stack suffix:
@@ -864,7 +858,8 @@ fsm_model -> FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RP
 -- On vars shift to state 89
 -- On optional(vars) shift to state 90
 ## Reductions:
--- On TRANS reduce production optional(vars) ->
+-- On TRANS
+--   reduce production optional(vars) ->
 
 State 78:
 ## Known stack suffix:
@@ -886,7 +881,8 @@ vars -> VARS COLON . loption(separated_nonempty_list(COMMA,var)) SEMICOLON [ TRA
 -- On separated_nonempty_list(COMMA,var) shift to state 86
 -- On loption(separated_nonempty_list(COMMA,var)) shift to state 87
 ## Reductions:
--- On SEMICOLON reduce production loption(separated_nonempty_list(COMMA,var)) ->
+-- On SEMICOLON
+--   reduce production loption(separated_nonempty_list(COMMA,var)) ->
 
 State 80:
 ## Known stack suffix:
@@ -928,7 +924,8 @@ separated_nonempty_list(COMMA,var) -> var . COMMA separated_nonempty_list(COMMA,
 ## Transitions:
 -- On COMMA shift to state 84
 ## Reductions:
--- On SEMICOLON reduce production separated_nonempty_list(COMMA,var) -> var
+-- On SEMICOLON
+--   reduce production separated_nonempty_list(COMMA,var) -> var
 
 State 84:
 ## Known stack suffix:
@@ -1016,8 +1013,10 @@ fsm_model -> FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RP
 -- On my_separated_nonempty_list(COMMA,transition) shift to state 168
 -- On my_separated_list(COMMA,transition) shift to state 169
 ## Reductions:
--- On UID reduce production prio ->
--- On SEMICOLON reduce production my_separated_list(COMMA,transition) ->
+-- On SEMICOLON
+--   reduce production my_separated_list(COMMA,transition) ->
+-- On UID
+--   reduce production prio ->
 
 State 93:
 ## Known stack suffix:
@@ -1037,7 +1036,8 @@ my_separated_nonempty_list(COMMA,transition) -> transition . COMMA my_separated_
 ## Transitions:
 -- On COMMA shift to state 95
 ## Reductions:
--- On SEMICOLON reduce production my_separated_nonempty_list(COMMA,transition) -> transition
+-- On SEMICOLON
+--   reduce production my_separated_nonempty_list(COMMA,transition) -> transition
 
 State 95:
 ## Known stack suffix:
@@ -1050,7 +1050,8 @@ my_separated_nonempty_list(COMMA,transition) -> transition COMMA . my_separated_
 -- On prio shift to state 96
 -- On my_separated_nonempty_list(COMMA,transition) shift to state 167
 ## Reductions:
--- On UID reduce production prio ->
+-- On UID
+--   reduce production prio ->
 
 State 96:
 ## Known stack suffix:
@@ -1089,8 +1090,8 @@ condition -> LID . DOT separated_nonempty_list(DOT,guard) [ BAR ARROW_END ]
 ## Transitions:
 -- On DOT shift to state 100
 ## Reductions:
--- On BAR reduce production condition -> LID
--- On ARROW_END reduce production condition -> LID
+-- On BAR ARROW_END
+--   reduce production condition -> LID
 
 State 100:
 ## Known stack suffix:
@@ -1347,21 +1348,8 @@ expr -> expr . QMARK expr COLON expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUA
 -- On MOD shift to state 116
 -- On DIV shift to state 118
 ## Reductions:
--- On SEMICOLON reduce production expr -> expr PLUS expr
--- On RPAREN reduce production expr -> expr PLUS expr
--- On QMARK reduce production expr -> expr PLUS expr
--- On PLUS reduce production expr -> expr PLUS expr
--- On NOTEQUAL reduce production expr -> expr PLUS expr
--- On MINUS reduce production expr -> expr PLUS expr
--- On LTE reduce production expr -> expr PLUS expr
--- On LT reduce production expr -> expr PLUS expr
--- On GTE reduce production expr -> expr PLUS expr
--- On GT reduce production expr -> expr PLUS expr
--- On EQUAL reduce production expr -> expr PLUS expr
--- On DOT reduce production expr -> expr PLUS expr
--- On COLON reduce production expr -> expr PLUS expr
--- On BAR reduce production expr -> expr PLUS expr
--- On ARROW_END reduce production expr -> expr PLUS expr
+-- On SEMICOLON RPAREN QMARK PLUS NOTEQUAL MINUS LTE LT GTE GT EQUAL DOT COLON BAR ARROW_END
+--   reduce production expr -> expr PLUS expr
 
 State 116:
 ## Known stack suffix:
@@ -1477,19 +1465,8 @@ expr -> expr . QMARK expr COLON expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUA
 -- On MINUS shift to state 122
 -- On DIV shift to state 118
 ## Reductions:
--- On SEMICOLON reduce production expr -> expr NOTEQUAL expr
--- On RPAREN reduce production expr -> expr NOTEQUAL expr
--- On QMARK reduce production expr -> expr NOTEQUAL expr
--- On NOTEQUAL reduce production expr -> expr NOTEQUAL expr
--- On LTE reduce production expr -> expr NOTEQUAL expr
--- On LT reduce production expr -> expr NOTEQUAL expr
--- On GTE reduce production expr -> expr NOTEQUAL expr
--- On GT reduce production expr -> expr NOTEQUAL expr
--- On EQUAL reduce production expr -> expr NOTEQUAL expr
--- On DOT reduce production expr -> expr NOTEQUAL expr
--- On COLON reduce production expr -> expr NOTEQUAL expr
--- On BAR reduce production expr -> expr NOTEQUAL expr
--- On ARROW_END reduce production expr -> expr NOTEQUAL expr
+-- On SEMICOLON RPAREN QMARK NOTEQUAL LTE LT GTE GT EQUAL DOT COLON BAR ARROW_END
+--   reduce production expr -> expr NOTEQUAL expr
 
 State 122:
 ## Known stack suffix:
@@ -1529,21 +1506,8 @@ expr -> expr . QMARK expr COLON expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUA
 -- On MOD shift to state 116
 -- On DIV shift to state 118
 ## Reductions:
--- On SEMICOLON reduce production expr -> expr MINUS expr
--- On RPAREN reduce production expr -> expr MINUS expr
--- On QMARK reduce production expr -> expr MINUS expr
--- On PLUS reduce production expr -> expr MINUS expr
--- On NOTEQUAL reduce production expr -> expr MINUS expr
--- On MINUS reduce production expr -> expr MINUS expr
--- On LTE reduce production expr -> expr MINUS expr
--- On LT reduce production expr -> expr MINUS expr
--- On GTE reduce production expr -> expr MINUS expr
--- On GT reduce production expr -> expr MINUS expr
--- On EQUAL reduce production expr -> expr MINUS expr
--- On DOT reduce production expr -> expr MINUS expr
--- On COLON reduce production expr -> expr MINUS expr
--- On BAR reduce production expr -> expr MINUS expr
--- On ARROW_END reduce production expr -> expr MINUS expr
+-- On SEMICOLON RPAREN QMARK PLUS NOTEQUAL MINUS LTE LT GTE GT EQUAL DOT COLON BAR ARROW_END
+--   reduce production expr -> expr MINUS expr
 
 State 124:
 ## Known stack suffix:
@@ -1585,19 +1549,8 @@ expr -> expr . QMARK expr COLON expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUA
 -- On MINUS shift to state 122
 -- On DIV shift to state 118
 ## Reductions:
--- On SEMICOLON reduce production expr -> expr LTE expr
--- On RPAREN reduce production expr -> expr LTE expr
--- On QMARK reduce production expr -> expr LTE expr
--- On NOTEQUAL reduce production expr -> expr LTE expr
--- On LTE reduce production expr -> expr LTE expr
--- On LT reduce production expr -> expr LTE expr
--- On GTE reduce production expr -> expr LTE expr
--- On GT reduce production expr -> expr LTE expr
--- On EQUAL reduce production expr -> expr LTE expr
--- On DOT reduce production expr -> expr LTE expr
--- On COLON reduce production expr -> expr LTE expr
--- On BAR reduce production expr -> expr LTE expr
--- On ARROW_END reduce production expr -> expr LTE expr
+-- On SEMICOLON RPAREN QMARK NOTEQUAL LTE LT GTE GT EQUAL DOT COLON BAR ARROW_END
+--   reduce production expr -> expr LTE expr
 
 State 126:
 ## Known stack suffix:
@@ -1639,19 +1592,8 @@ expr -> expr . QMARK expr COLON expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUA
 -- On MINUS shift to state 122
 -- On DIV shift to state 118
 ## Reductions:
--- On SEMICOLON reduce production expr -> expr LT expr
--- On RPAREN reduce production expr -> expr LT expr
--- On QMARK reduce production expr -> expr LT expr
--- On NOTEQUAL reduce production expr -> expr LT expr
--- On LTE reduce production expr -> expr LT expr
--- On LT reduce production expr -> expr LT expr
--- On GTE reduce production expr -> expr LT expr
--- On GT reduce production expr -> expr LT expr
--- On EQUAL reduce production expr -> expr LT expr
--- On DOT reduce production expr -> expr LT expr
--- On COLON reduce production expr -> expr LT expr
--- On BAR reduce production expr -> expr LT expr
--- On ARROW_END reduce production expr -> expr LT expr
+-- On SEMICOLON RPAREN QMARK NOTEQUAL LTE LT GTE GT EQUAL DOT COLON BAR ARROW_END
+--   reduce production expr -> expr LT expr
 
 State 128:
 ## Known stack suffix:
@@ -1693,19 +1635,8 @@ expr -> expr . QMARK expr COLON expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUA
 -- On MINUS shift to state 122
 -- On DIV shift to state 118
 ## Reductions:
--- On SEMICOLON reduce production expr -> expr GTE expr
--- On RPAREN reduce production expr -> expr GTE expr
--- On QMARK reduce production expr -> expr GTE expr
--- On NOTEQUAL reduce production expr -> expr GTE expr
--- On LTE reduce production expr -> expr GTE expr
--- On LT reduce production expr -> expr GTE expr
--- On GTE reduce production expr -> expr GTE expr
--- On GT reduce production expr -> expr GTE expr
--- On EQUAL reduce production expr -> expr GTE expr
--- On DOT reduce production expr -> expr GTE expr
--- On COLON reduce production expr -> expr GTE expr
--- On BAR reduce production expr -> expr GTE expr
--- On ARROW_END reduce production expr -> expr GTE expr
+-- On SEMICOLON RPAREN QMARK NOTEQUAL LTE LT GTE GT EQUAL DOT COLON BAR ARROW_END
+--   reduce production expr -> expr GTE expr
 
 State 130:
 ## Known stack suffix:
@@ -1747,19 +1678,8 @@ expr -> expr . QMARK expr COLON expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUA
 -- On MINUS shift to state 122
 -- On DIV shift to state 118
 ## Reductions:
--- On SEMICOLON reduce production expr -> expr GT expr
--- On RPAREN reduce production expr -> expr GT expr
--- On QMARK reduce production expr -> expr GT expr
--- On NOTEQUAL reduce production expr -> expr GT expr
--- On LTE reduce production expr -> expr GT expr
--- On LT reduce production expr -> expr GT expr
--- On GTE reduce production expr -> expr GT expr
--- On GT reduce production expr -> expr GT expr
--- On EQUAL reduce production expr -> expr GT expr
--- On DOT reduce production expr -> expr GT expr
--- On COLON reduce production expr -> expr GT expr
--- On BAR reduce production expr -> expr GT expr
--- On ARROW_END reduce production expr -> expr GT expr
+-- On SEMICOLON RPAREN QMARK NOTEQUAL LTE LT GTE GT EQUAL DOT COLON BAR ARROW_END
+--   reduce production expr -> expr GT expr
 
 State 132:
 ## Known stack suffix:
@@ -1801,19 +1721,8 @@ expr -> expr . QMARK expr COLON expr [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUA
 -- On MINUS shift to state 122
 -- On DIV shift to state 118
 ## Reductions:
--- On SEMICOLON reduce production expr -> expr EQUAL expr
--- On RPAREN reduce production expr -> expr EQUAL expr
--- On QMARK reduce production expr -> expr EQUAL expr
--- On NOTEQUAL reduce production expr -> expr EQUAL expr
--- On LTE reduce production expr -> expr EQUAL expr
--- On LT reduce production expr -> expr EQUAL expr
--- On GTE reduce production expr -> expr EQUAL expr
--- On GT reduce production expr -> expr EQUAL expr
--- On EQUAL reduce production expr -> expr EQUAL expr
--- On DOT reduce production expr -> expr EQUAL expr
--- On COLON reduce production expr -> expr EQUAL expr
--- On BAR reduce production expr -> expr EQUAL expr
--- On ARROW_END reduce production expr -> expr EQUAL expr
+-- On SEMICOLON RPAREN QMARK NOTEQUAL LTE LT GTE GT EQUAL DOT COLON BAR ARROW_END
+--   reduce production expr -> expr EQUAL expr
 
 State 134:
 ## Known stack suffix:
@@ -1861,12 +1770,8 @@ expr -> expr QMARK expr COLON expr . [ TIMES SEMICOLON RPAREN QMARK PLUS NOTEQUA
 -- On EQUAL shift to state 132
 -- On DIV shift to state 118
 ## Reductions:
--- On SEMICOLON reduce production expr -> expr QMARK expr COLON expr
--- On RPAREN reduce production expr -> expr QMARK expr COLON expr
--- On DOT reduce production expr -> expr QMARK expr COLON expr
--- On COLON reduce production expr -> expr QMARK expr COLON expr
--- On BAR reduce production expr -> expr QMARK expr COLON expr
--- On ARROW_END reduce production expr -> expr QMARK expr COLON expr
+-- On SEMICOLON RPAREN DOT COLON BAR ARROW_END
+--   reduce production expr -> expr QMARK expr COLON expr
 
 State 136:
 ## Known stack suffix:
@@ -1895,8 +1800,8 @@ separated_nonempty_list(DOT,guard) -> guard . DOT separated_nonempty_list(DOT,gu
 ## Transitions:
 -- On DOT shift to state 139
 ## Reductions:
--- On BAR reduce production separated_nonempty_list(DOT,guard) -> guard
--- On ARROW_END reduce production separated_nonempty_list(DOT,guard) -> guard
+-- On BAR ARROW_END
+--   reduce production separated_nonempty_list(DOT,guard) -> guard
 
 State 139:
 ## Known stack suffix:
@@ -2005,16 +1910,10 @@ guard_expr -> expr NOTEQUAL expr . [ DOT BAR ARROW_END ]
 -- On MINUS shift to state 122
 -- On DIV shift to state 118
 ## Reductions:
--- On QMARK reduce production expr -> expr NOTEQUAL expr
--- On NOTEQUAL reduce production expr -> expr NOTEQUAL expr
--- On LTE reduce production expr -> expr NOTEQUAL expr
--- On LT reduce production expr -> expr NOTEQUAL expr
--- On GTE reduce production expr -> expr NOTEQUAL expr
--- On GT reduce production expr -> expr NOTEQUAL expr
--- On EQUAL reduce production expr -> expr NOTEQUAL expr
--- On DOT reduce production guard_expr -> expr NOTEQUAL expr
--- On BAR reduce production guard_expr -> expr NOTEQUAL expr
--- On ARROW_END reduce production guard_expr -> expr NOTEQUAL expr
+-- On QMARK NOTEQUAL LTE LT GTE GT EQUAL
+--   reduce production expr -> expr NOTEQUAL expr
+-- On DOT BAR ARROW_END
+--   reduce production guard_expr -> expr NOTEQUAL expr
 
 State 144:
 ## Known stack suffix:
@@ -2058,16 +1957,10 @@ guard_expr -> expr LTE expr . [ DOT BAR ARROW_END ]
 -- On MINUS shift to state 122
 -- On DIV shift to state 118
 ## Reductions:
--- On QMARK reduce production expr -> expr LTE expr
--- On NOTEQUAL reduce production expr -> expr LTE expr
--- On LTE reduce production expr -> expr LTE expr
--- On LT reduce production expr -> expr LTE expr
--- On GTE reduce production expr -> expr LTE expr
--- On GT reduce production expr -> expr LTE expr
--- On EQUAL reduce production expr -> expr LTE expr
--- On DOT reduce production guard_expr -> expr LTE expr
--- On BAR reduce production guard_expr -> expr LTE expr
--- On ARROW_END reduce production guard_expr -> expr LTE expr
+-- On QMARK NOTEQUAL LTE LT GTE GT EQUAL
+--   reduce production expr -> expr LTE expr
+-- On DOT BAR ARROW_END
+--   reduce production guard_expr -> expr LTE expr
 
 State 146:
 ## Known stack suffix:
@@ -2111,16 +2004,10 @@ guard_expr -> expr LT expr . [ DOT BAR ARROW_END ]
 -- On MINUS shift to state 122
 -- On DIV shift to state 118
 ## Reductions:
--- On QMARK reduce production expr -> expr LT expr
--- On NOTEQUAL reduce production expr -> expr LT expr
--- On LTE reduce production expr -> expr LT expr
--- On LT reduce production expr -> expr LT expr
--- On GTE reduce production expr -> expr LT expr
--- On GT reduce production expr -> expr LT expr
--- On EQUAL reduce production expr -> expr LT expr
--- On DOT reduce production guard_expr -> expr LT expr
--- On BAR reduce production guard_expr -> expr LT expr
--- On ARROW_END reduce production guard_expr -> expr LT expr
+-- On QMARK NOTEQUAL LTE LT GTE GT EQUAL
+--   reduce production expr -> expr LT expr
+-- On DOT BAR ARROW_END
+--   reduce production guard_expr -> expr LT expr
 
 State 148:
 ## Known stack suffix:
@@ -2164,16 +2051,10 @@ guard_expr -> expr GTE expr . [ DOT BAR ARROW_END ]
 -- On MINUS shift to state 122
 -- On DIV shift to state 118
 ## Reductions:
--- On QMARK reduce production expr -> expr GTE expr
--- On NOTEQUAL reduce production expr -> expr GTE expr
--- On LTE reduce production expr -> expr GTE expr
--- On LT reduce production expr -> expr GTE expr
--- On GTE reduce production expr -> expr GTE expr
--- On GT reduce production expr -> expr GTE expr
--- On EQUAL reduce production expr -> expr GTE expr
--- On DOT reduce production guard_expr -> expr GTE expr
--- On BAR reduce production guard_expr -> expr GTE expr
--- On ARROW_END reduce production guard_expr -> expr GTE expr
+-- On QMARK NOTEQUAL LTE LT GTE GT EQUAL
+--   reduce production expr -> expr GTE expr
+-- On DOT BAR ARROW_END
+--   reduce production guard_expr -> expr GTE expr
 
 State 150:
 ## Known stack suffix:
@@ -2217,16 +2098,10 @@ guard_expr -> expr GT expr . [ DOT BAR ARROW_END ]
 -- On MINUS shift to state 122
 -- On DIV shift to state 118
 ## Reductions:
--- On QMARK reduce production expr -> expr GT expr
--- On NOTEQUAL reduce production expr -> expr GT expr
--- On LTE reduce production expr -> expr GT expr
--- On LT reduce production expr -> expr GT expr
--- On GTE reduce production expr -> expr GT expr
--- On GT reduce production expr -> expr GT expr
--- On EQUAL reduce production expr -> expr GT expr
--- On DOT reduce production guard_expr -> expr GT expr
--- On BAR reduce production guard_expr -> expr GT expr
--- On ARROW_END reduce production guard_expr -> expr GT expr
+-- On QMARK NOTEQUAL LTE LT GTE GT EQUAL
+--   reduce production expr -> expr GT expr
+-- On DOT BAR ARROW_END
+--   reduce production guard_expr -> expr GT expr
 
 State 152:
 ## Known stack suffix:
@@ -2270,16 +2145,10 @@ guard_expr -> expr EQUAL expr . [ DOT BAR ARROW_END ]
 -- On MINUS shift to state 122
 -- On DIV shift to state 118
 ## Reductions:
--- On QMARK reduce production expr -> expr EQUAL expr
--- On NOTEQUAL reduce production expr -> expr EQUAL expr
--- On LTE reduce production expr -> expr EQUAL expr
--- On LT reduce production expr -> expr EQUAL expr
--- On GTE reduce production expr -> expr EQUAL expr
--- On GT reduce production expr -> expr EQUAL expr
--- On EQUAL reduce production expr -> expr EQUAL expr
--- On DOT reduce production guard_expr -> expr EQUAL expr
--- On BAR reduce production guard_expr -> expr EQUAL expr
--- On ARROW_END reduce production guard_expr -> expr EQUAL expr
+-- On QMARK NOTEQUAL LTE LT GTE GT EQUAL
+--   reduce production expr -> expr EQUAL expr
+-- On DOT BAR ARROW_END
+--   reduce production guard_expr -> expr EQUAL expr
 
 State 154:
 ## Known stack suffix:
@@ -2291,7 +2160,8 @@ transition -> prio UID ARROW_START condition . optional(actions) ARROW_END UID [
 -- On optional(actions) shift to state 163
 -- On actions shift to state 166
 ## Reductions:
--- On ARROW_END reduce production optional(actions) ->
+-- On ARROW_END
+--   reduce production optional(actions) ->
 
 State 155:
 ## Known stack suffix:
@@ -2313,8 +2183,8 @@ action -> LID . COLEQ expr [ SEMICOLON ARROW_END ]
 ## Transitions:
 -- On COLEQ shift to state 157
 ## Reductions:
--- On SEMICOLON reduce production action -> LID
--- On ARROW_END reduce production action -> LID
+-- On SEMICOLON ARROW_END
+--   reduce production action -> LID
 
 State 157:
 ## Known stack suffix:
@@ -2363,8 +2233,8 @@ expr -> expr . QMARK expr COLON expr [ TIMES SEMICOLON QMARK PLUS NOTEQUAL MOD M
 -- On EQUAL shift to state 132
 -- On DIV shift to state 118
 ## Reductions:
--- On SEMICOLON reduce production action -> LID COLEQ expr
--- On ARROW_END reduce production action -> LID COLEQ expr
+-- On SEMICOLON ARROW_END
+--   reduce production action -> LID COLEQ expr
 
 State 159:
 ## Known stack suffix:
@@ -2384,7 +2254,8 @@ separated_nonempty_list(SEMICOLON,action) -> action . SEMICOLON separated_nonemp
 ## Transitions:
 -- On SEMICOLON shift to state 161
 ## Reductions:
--- On ARROW_END reduce production separated_nonempty_list(SEMICOLON,action) -> action
+-- On ARROW_END
+--   reduce production separated_nonempty_list(SEMICOLON,action) -> action
 
 State 161:
 ## Known stack suffix:
@@ -2498,7 +2369,8 @@ fsm_model -> FSM MODEL id optional(params) LPAREN my_separated_list(COMMA,io) RP
 -- On itransition shift to state 176
 -- On actions shift to state 166
 ## Reductions:
--- On ARROW_END reduce production optional(actions) ->
+-- On ARROW_END
+--   reduce production optional(actions) ->
 
 State 173:
 ## Known stack suffix:
@@ -2563,7 +2435,8 @@ my_separated_nonempty_list(COMMA,io) -> io . COMMA my_separated_nonempty_list(CO
 ## Transitions:
 -- On COMMA shift to state 180
 ## Reductions:
--- On RPAREN reduce production my_separated_nonempty_list(COMMA,io) -> io
+-- On RPAREN
+--   reduce production my_separated_nonempty_list(COMMA,io) -> io
 
 State 180:
 ## Known stack suffix:
@@ -2759,7 +2632,8 @@ paren(separated_list(COMMA,value_change)) -> LPAREN . loption(separated_nonempty
 -- On separated_nonempty_list(COMMA,value_change) shift to state 207
 -- On loption(separated_nonempty_list(COMMA,value_change)) shift to state 208
 ## Reductions:
--- On RPAREN reduce production loption(separated_nonempty_list(COMMA,value_change)) ->
+-- On RPAREN
+--   reduce production loption(separated_nonempty_list(COMMA,value_change)) ->
 
 State 198:
 ## Known stack suffix:
@@ -2829,7 +2703,8 @@ separated_nonempty_list(COMMA,value_change) -> value_change . COMMA separated_no
 ## Transitions:
 -- On COMMA shift to state 205
 ## Reductions:
--- On RPAREN reduce production separated_nonempty_list(COMMA,value_change) -> value_change
+-- On RPAREN
+--   reduce production separated_nonempty_list(COMMA,value_change) -> value_change
 
 State 205:
 ## Known stack suffix:
@@ -2907,7 +2782,8 @@ paren(separated_list(COMMA,INT)) -> LPAREN . loption(separated_nonempty_list(COM
 -- On separated_nonempty_list(COMMA,INT) shift to state 216
 -- On loption(separated_nonempty_list(COMMA,INT)) shift to state 217
 ## Reductions:
--- On RPAREN reduce production loption(separated_nonempty_list(COMMA,INT)) ->
+-- On RPAREN
+--   reduce production loption(separated_nonempty_list(COMMA,INT)) ->
 
 State 213:
 ## Known stack suffix:
@@ -2918,8 +2794,8 @@ separated_nonempty_list(COMMA,INT) -> INT . COMMA separated_nonempty_list(COMMA,
 ## Transitions:
 -- On COMMA shift to state 214
 ## Reductions:
--- On RPAREN reduce production separated_nonempty_list(COMMA,INT) -> INT
--- On GT reduce production separated_nonempty_list(COMMA,INT) -> INT
+-- On RPAREN GT
+--   reduce production separated_nonempty_list(COMMA,INT) -> INT
 
 State 214:
 ## Known stack suffix:
@@ -3108,7 +2984,8 @@ fsm_inst -> FSM id EQUAL id . opt_inst_params paren(separated_list(COMMA,id)) [ 
 -- On LT shift to state 234
 -- On opt_inst_params shift to state 237
 ## Reductions:
--- On LPAREN reduce production opt_inst_params ->
+-- On LPAREN
+--   reduce production opt_inst_params ->
 
 State 234:
 ## Known stack suffix:
@@ -3160,7 +3037,8 @@ paren(separated_list(COMMA,id)) -> LPAREN . loption(separated_nonempty_list(COMM
 -- On loption(separated_nonempty_list(COMMA,id)) shift to state 240
 -- On id shift to state 242
 ## Reductions:
--- On RPAREN reduce production loption(separated_nonempty_list(COMMA,id)) ->
+-- On RPAREN
+--   reduce production loption(separated_nonempty_list(COMMA,id)) ->
 
 State 239:
 ## Known stack suffix:
@@ -3198,7 +3076,8 @@ separated_nonempty_list(COMMA,id) -> id . COMMA separated_nonempty_list(COMMA,id
 ## Transitions:
 -- On COMMA shift to state 243
 ## Reductions:
--- On RPAREN reduce production separated_nonempty_list(COMMA,id) -> id
+-- On RPAREN
+--   reduce production separated_nonempty_list(COMMA,id) -> id
 
 State 243:
 ## Known stack suffix:
@@ -3259,7 +3138,8 @@ my_nonempty_list(fsm_inst) -> fsm_inst . my_nonempty_list(fsm_inst) [ EOF ]
 -- On my_nonempty_list(fsm_inst) shift to state 249
 -- On fsm_inst shift to state 248
 ## Reductions:
--- On EOF reduce production my_nonempty_list(fsm_inst) -> fsm_inst
+-- On EOF
+--   reduce production my_nonempty_list(fsm_inst) -> fsm_inst
 
 State 249:
 ## Known stack suffix:
@@ -3283,7 +3163,8 @@ my_nonempty_list(global) -> global . my_nonempty_list(global) [ FSM ]
 -- On my_nonempty_list(global) shift to state 251
 -- On global shift to state 250
 ## Reductions:
--- On FSM reduce production my_nonempty_list(global) -> global
+-- On FSM
+--   reduce production my_nonempty_list(global) -> global
 
 State 251:
 ## Known stack suffix:
@@ -3305,9 +3186,8 @@ my_nonempty_list(fsm_model) -> fsm_model . my_nonempty_list(fsm_model) [ SHARED 
 -- On my_nonempty_list(fsm_model) shift to state 253
 -- On fsm_model shift to state 252
 ## Reductions:
--- On SHARED reduce production my_nonempty_list(fsm_model) -> fsm_model
--- On OUTPUT reduce production my_nonempty_list(fsm_model) -> fsm_model
--- On INPUT reduce production my_nonempty_list(fsm_model) -> fsm_model
+-- On SHARED OUTPUT INPUT
+--   reduce production my_nonempty_list(fsm_model) -> fsm_model
 
 State 253:
 ## Known stack suffix:

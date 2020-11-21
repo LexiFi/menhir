@@ -13,7 +13,8 @@ doc_822' -> . doc_822 [ # ]
 -- On eols shift to state 17
 -- On doc_822 shift to state 19
 ## Reductions:
--- On # reduce production stanzas ->
+-- On #
+--   reduce production stanzas ->
 ** End-of-stream conflict on FIELD EOL
 **   There is a tension between
 **   (1) reducing production stanzas ->
@@ -40,10 +41,8 @@ field -> FIELD EOL . linecont [ FIELD EOL EOF # ]
 -- On CONT shift to state 3
 -- On linecont shift to state 6
 ## Reductions:
--- On FIELD reduce production field -> FIELD EOL
--- On EOL reduce production field -> FIELD EOL
--- On EOF reduce production field -> FIELD EOL
--- On # reduce production field -> FIELD EOL
+-- On FIELD EOL EOF #
+--   reduce production field -> FIELD EOL
 ** End-of-stream conflict on FIELD EOL EOF CONT
 **   There is a tension between
 **   (1) reducing production field -> FIELD EOL
@@ -70,10 +69,8 @@ linecont -> CONT EOL . linecont [ FIELD EOL EOF # ]
 -- On CONT shift to state 3
 -- On linecont shift to state 5
 ## Reductions:
--- On FIELD reduce production linecont -> CONT EOL
--- On EOL reduce production linecont -> CONT EOL
--- On EOF reduce production linecont -> CONT EOL
--- On # reduce production linecont -> CONT EOL
+-- On FIELD EOL EOF #
+--   reduce production linecont -> CONT EOL
 ** End-of-stream conflict on FIELD EOL EOF CONT
 **   There is a tension between
 **   (1) reducing production linecont -> CONT EOL
@@ -87,10 +84,8 @@ State 5:
 linecont -> CONT EOL linecont . [ FIELD EOL EOF # ]
 ## Transitions:
 ## Reductions:
--- On FIELD reduce production linecont -> CONT EOL linecont
--- On EOL reduce production linecont -> CONT EOL linecont
--- On EOF reduce production linecont -> CONT EOL linecont
--- On # reduce production linecont -> CONT EOL linecont
+-- On FIELD EOL EOF #
+--   reduce production linecont -> CONT EOL linecont
 ** End-of-stream conflict on FIELD EOL EOF
 **   There is a tension between
 **   (1) reducing production linecont -> CONT EOL linecont
@@ -104,10 +99,8 @@ State 6:
 field -> FIELD EOL linecont . [ FIELD EOL EOF # ]
 ## Transitions:
 ## Reductions:
--- On FIELD reduce production field -> FIELD EOL linecont
--- On EOL reduce production field -> FIELD EOL linecont
--- On EOF reduce production field -> FIELD EOL linecont
--- On # reduce production field -> FIELD EOL linecont
+-- On FIELD EOL EOF #
+--   reduce production field -> FIELD EOL linecont
 ** End-of-stream conflict on FIELD EOL EOF
 **   There is a tension between
 **   (1) reducing production field -> FIELD EOL linecont
@@ -124,9 +117,8 @@ eols -> EOL . eols [ FIELD EOF # ]
 -- On EOL shift to state 7
 -- On eols shift to state 8
 ## Reductions:
--- On FIELD reduce production eols -> EOL
--- On EOF reduce production eols -> EOL
--- On # reduce production eols -> EOL
+-- On FIELD EOF #
+--   reduce production eols -> EOL
 ** End-of-stream conflict on FIELD EOL EOF
 **   There is a tension between
 **   (1) reducing production eols -> EOL
@@ -140,9 +132,8 @@ State 8:
 eols -> EOL eols . [ FIELD EOF # ]
 ## Transitions:
 ## Reductions:
--- On FIELD reduce production eols -> EOL eols
--- On EOF reduce production eols -> EOL eols
--- On # reduce production eols -> EOL eols
+-- On FIELD EOF #
+--   reduce production eols -> EOL eols
 ** End-of-stream conflict on FIELD EOF
 **   There is a tension between
 **   (1) reducing production eols -> EOL eols
@@ -156,7 +147,8 @@ State 9:
 doc_822 -> stanzas . [ # ]
 ## Transitions:
 ## Reductions:
--- On # reduce production doc_822 -> stanzas
+-- On #
+--   reduce production doc_822 -> stanzas
 
 State 10:
 ## Known stack suffix:
@@ -177,7 +169,8 @@ State 11:
 stanzas -> stanza EOF . [ # ]
 ## Transitions:
 ## Reductions:
--- On # reduce production stanzas -> stanza EOF
+-- On #
+--   reduce production stanzas -> stanza EOF
 
 State 12:
 ## Known stack suffix:
@@ -191,7 +184,8 @@ stanzas -> stanza eols . stanzas [ # ]
 -- On fields shift to state 14
 -- On field shift to state 15
 ## Reductions:
--- On # reduce production stanzas ->
+-- On #
+--   reduce production stanzas ->
 ** End-of-stream conflict on FIELD
 **   There is a tension between
 **   (1) reducing production stanzas ->
@@ -205,7 +199,8 @@ State 13:
 stanzas -> stanza eols stanzas . [ # ]
 ## Transitions:
 ## Reductions:
--- On # reduce production stanzas -> stanza eols stanzas
+-- On #
+--   reduce production stanzas -> stanza eols stanzas
 
 State 14:
 ## Known stack suffix:
@@ -214,8 +209,8 @@ State 14:
 stanza -> fields . [ EOL EOF ]
 ## Transitions:
 ## Reductions:
--- On EOL reduce production stanza -> fields
--- On EOF reduce production stanza -> fields
+-- On EOL EOF
+--   reduce production stanza -> fields
 
 State 15:
 ## Known stack suffix:
@@ -228,8 +223,8 @@ fields -> field . fields [ EOL EOF ]
 -- On fields shift to state 16
 -- On field shift to state 15
 ## Reductions:
--- On EOL reduce production fields -> field
--- On EOF reduce production fields -> field
+-- On EOL EOF
+--   reduce production fields -> field
 
 State 16:
 ## Known stack suffix:
@@ -238,8 +233,8 @@ State 16:
 fields -> field fields . [ EOL EOF ]
 ## Transitions:
 ## Reductions:
--- On EOL reduce production fields -> field fields
--- On EOF reduce production fields -> field fields
+-- On EOL EOF
+--   reduce production fields -> field fields
 
 State 17:
 ## Known stack suffix:
@@ -253,7 +248,8 @@ doc_822 -> eols . stanzas [ # ]
 -- On fields shift to state 14
 -- On field shift to state 15
 ## Reductions:
--- On # reduce production stanzas ->
+-- On #
+--   reduce production stanzas ->
 ** End-of-stream conflict on FIELD
 **   There is a tension between
 **   (1) reducing production stanzas ->
@@ -267,7 +263,8 @@ State 18:
 doc_822 -> eols stanzas . [ # ]
 ## Transitions:
 ## Reductions:
--- On # reduce production doc_822 -> eols stanzas
+-- On #
+--   reduce production doc_822 -> eols stanzas
 
 State 19:
 ## Known stack suffix:
@@ -276,7 +273,8 @@ State 19:
 doc_822' -> doc_822 . [ # ]
 ## Transitions:
 ## Reductions:
--- On # accept doc_822
+-- On #
+--   accept doc_822
 
 State 20:
 ## Known stack suffix:
@@ -301,7 +299,8 @@ State 21:
 stanza_822 -> EOF . [ # ]
 ## Transitions:
 ## Reductions:
--- On # reduce production stanza_822 -> EOF
+-- On #
+--   reduce production stanza_822 -> EOF
 
 State 22:
 ## Known stack suffix:
@@ -310,7 +309,8 @@ State 22:
 stanza_822' -> stanza_822 . [ # ]
 ## Transitions:
 ## Reductions:
--- On # accept stanza_822
+-- On #
+--   accept stanza_822
 
 State 23:
 ## Known stack suffix:
@@ -319,7 +319,8 @@ State 23:
 stanza_822 -> stanza . [ # ]
 ## Transitions:
 ## Reductions:
--- On # reduce production stanza_822 -> stanza
+-- On #
+--   reduce production stanza_822 -> stanza
 
 State 24:
 ## Known stack suffix:
@@ -328,7 +329,8 @@ State 24:
 stanza -> fields . [ # ]
 ## Transitions:
 ## Reductions:
--- On # reduce production stanza -> fields
+-- On #
+--   reduce production stanza -> fields
 
 State 25:
 ## Known stack suffix:
@@ -341,7 +343,8 @@ fields -> field . fields [ # ]
 -- On fields shift to state 26
 -- On field shift to state 25
 ## Reductions:
--- On # reduce production fields -> field
+-- On #
+--   reduce production fields -> field
 ** End-of-stream conflict on FIELD
 **   There is a tension between
 **   (1) reducing production fields -> field
@@ -355,7 +358,8 @@ State 26:
 fields -> field fields . [ # ]
 ## Transitions:
 ## Reductions:
--- On # reduce production fields -> field fields
+-- On #
+--   reduce production fields -> field fields
 
 State 27:
 ## Known stack suffix:
@@ -378,7 +382,8 @@ State 28:
 stanza_822 -> eols EOF . [ # ]
 ## Transitions:
 ## Reductions:
--- On # reduce production stanza_822 -> eols EOF
+-- On #
+--   reduce production stanza_822 -> eols EOF
 
 State 29:
 ## Known stack suffix:
@@ -387,5 +392,6 @@ State 29:
 stanza_822 -> eols stanza . [ # ]
 ## Transitions:
 ## Reductions:
--- On # reduce production stanza_822 -> eols stanza
+-- On #
+--   reduce production stanza_822 -> eols stanza
 

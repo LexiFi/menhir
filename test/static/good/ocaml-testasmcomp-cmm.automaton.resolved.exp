@@ -21,17 +21,8 @@ fundecl -> LPAREN . FUNCTION STRING LPAREN params RPAREN sequence RPAREN [ # ]
 -- On FUNCTION shift to state 2
 -- On datalist shift to state 192
 ## Reductions:
--- On STRING reduce production datalist ->
--- On SKIP reduce production datalist ->
--- On RPAREN reduce production datalist ->
--- On KSTRING reduce production datalist ->
--- On INTCONST reduce production datalist ->
--- On INT reduce production datalist ->
--- On HALF reduce production datalist ->
--- On FLOAT reduce production datalist ->
--- On BYTE reduce production datalist ->
--- On ALIGN reduce production datalist ->
--- On ADDR reduce production datalist ->
+-- On STRING SKIP RPAREN KSTRING INTCONST INT HALF FLOAT BYTE ALIGN ADDR
+--   reduce production datalist ->
 
 State 2:
 ## Known stack suffix:
@@ -61,7 +52,8 @@ fundecl -> LPAREN FUNCTION STRING LPAREN . params RPAREN sequence RPAREN [ # ]
 -- On params shift to state 16
 -- On oneparam shift to state 190
 ## Reductions:
--- On RPAREN reduce production params ->
+-- On RPAREN
+--   reduce production params ->
 
 State 5:
 ## Known stack suffix:
@@ -141,8 +133,8 @@ machtype -> componentlist . [ RPAREN IDENT ]
 ## Transitions:
 -- On STAR shift to state 13
 ## Reductions:
--- On RPAREN reduce production machtype -> componentlist
--- On IDENT reduce production machtype -> componentlist
+-- On RPAREN IDENT
+--   reduce production machtype -> componentlist
 
 State 13:
 ## Known stack suffix:
@@ -441,9 +433,8 @@ sequence -> expr . [ WITH RPAREN CASE ]
 -- On sequence shift to state 33
 -- On expr shift to state 32
 ## Reductions:
--- On WITH reduce production sequence -> expr
--- On RPAREN reduce production sequence -> expr
--- On CASE reduce production sequence -> expr
+-- On WITH RPAREN CASE
+--   reduce production sequence -> expr
 
 State 33:
 ## Known stack suffix:
@@ -572,7 +563,8 @@ expr -> LPAREN SWITCH INTCONST expr . caselist RPAREN [ WITH UNIT STRING RPAREN 
 -- On onecase shift to state 48
 -- On caselist shift to state 51
 ## Reductions:
--- On RPAREN reduce production caselist ->
+-- On RPAREN
+--   reduce production caselist ->
 
 State 44:
 ## Known stack suffix:
@@ -604,14 +596,8 @@ onecase -> CASE INTCONST COLON . [ STRING POINTER LPAREN LBRACKET INTCONST IDENT
 -- On CASE shift to state 44
 -- On onecase shift to state 47
 ## Reductions:
--- On STRING reduce production onecase -> CASE INTCONST COLON
--- On POINTER reduce production onecase -> CASE INTCONST COLON
--- On LPAREN reduce production onecase -> CASE INTCONST COLON
--- On LBRACKET reduce production onecase -> CASE INTCONST COLON
--- On INTCONST reduce production onecase -> CASE INTCONST COLON
--- On IDENT reduce production onecase -> CASE INTCONST COLON
--- On FLOATCONST reduce production onecase -> CASE INTCONST COLON
--- On EXIT reduce production onecase -> CASE INTCONST COLON
+-- On STRING POINTER LPAREN LBRACKET INTCONST IDENT FLOATCONST EXIT
+--   reduce production onecase -> CASE INTCONST COLON
 
 State 47:
 ## Known stack suffix:
@@ -650,7 +636,8 @@ caselist -> onecase sequence . caselist [ RPAREN ]
 -- On onecase shift to state 48
 -- On caselist shift to state 50
 ## Reductions:
--- On RPAREN reduce production caselist ->
+-- On RPAREN
+--   reduce production caselist ->
 
 State 50:
 ## Known stack suffix:
@@ -1111,7 +1098,8 @@ letdef -> LPAREN . letdefmult RPAREN [ STRING POINTER LPAREN LBRACKET INTCONST I
 -- On oneletdef shift to state 97
 -- On letdefmult shift to state 99
 ## Reductions:
--- On RPAREN reduce production letdefmult ->
+-- On RPAREN
+--   reduce production letdefmult ->
 
 State 95:
 ## Known stack suffix:
@@ -1149,7 +1137,8 @@ letdefmult -> oneletdef . letdefmult [ RPAREN ]
 -- On oneletdef shift to state 97
 -- On letdefmult shift to state 98
 ## Reductions:
--- On RPAREN reduce production letdefmult ->
+-- On RPAREN
+--   reduce production letdefmult ->
 
 State 98:
 ## Known stack suffix:
@@ -2234,7 +2223,8 @@ params -> oneparam . params [ RPAREN ]
 -- On params shift to state 191
 -- On oneparam shift to state 190
 ## Reductions:
--- On RPAREN reduce production params ->
+-- On RPAREN
+--   reduce production params ->
 
 State 191:
 ## Known stack suffix:

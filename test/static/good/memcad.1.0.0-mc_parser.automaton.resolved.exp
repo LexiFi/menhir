@@ -200,8 +200,8 @@ memcad_command -> T_sel_merge T_lparen . c_var_list T_rparen [ # ]
 -- On c_var_list shift to state 19
 -- On c_var shift to state 23
 ## Reductions:
--- On T_rparen reduce production c_var_list ->
--- On T_comma reduce production c_var_list ->
+-- On T_rparen T_comma
+--   reduce production c_var_list ->
 
 State 19:
 ## Known stack suffix:
@@ -345,7 +345,8 @@ memcad_command -> T_output_dot T_lparen . var_name_list T_pipe var_name_list T_r
 -- On V_string shift to state 34
 -- On var_name_list shift to state 37
 ## Reductions:
--- On T_pipe reduce production var_name_list ->
+-- On T_pipe
+--   reduce production var_name_list ->
 
 State 34:
 ## Known stack suffix:
@@ -356,8 +357,8 @@ var_name_list -> V_string . T_comma var_name_list [ T_rparen T_pipe ]
 ## Transitions:
 -- On T_comma shift to state 35
 ## Reductions:
--- On T_rparen reduce production var_name_list -> V_string
--- On T_pipe reduce production var_name_list -> V_string
+-- On T_rparen T_pipe
+--   reduce production var_name_list -> V_string
 
 State 35:
 ## Known stack suffix:
@@ -368,8 +369,8 @@ var_name_list -> V_string T_comma . var_name_list [ T_rparen T_pipe ]
 -- On V_string shift to state 34
 -- On var_name_list shift to state 36
 ## Reductions:
--- On T_rparen reduce production var_name_list ->
--- On T_pipe reduce production var_name_list ->
+-- On T_rparen T_pipe
+--   reduce production var_name_list ->
 
 State 36:
 ## Known stack suffix:
@@ -398,7 +399,8 @@ memcad_command -> T_output_dot T_lparen var_name_list T_pipe . var_name_list T_r
 -- On V_string shift to state 34
 -- On var_name_list shift to state 39
 ## Reductions:
--- On T_rparen reduce production var_name_list ->
+-- On T_rparen
+--   reduce production var_name_list ->
 
 State 39:
 ## Known stack suffix:
@@ -473,8 +475,8 @@ memcad_command -> T_force_live T_lparen . c_var_list T_rparen [ # ]
 -- On c_var_list shift to state 47
 -- On c_var shift to state 23
 ## Reductions:
--- On T_rparen reduce production c_var_list ->
--- On T_comma reduce production c_var_list ->
+-- On T_rparen T_comma
+--   reduce production c_var_list ->
 
 State 47:
 ## Known stack suffix:
@@ -515,7 +517,8 @@ memcad_command -> T_decl_setvars T_lparen . setvars T_rparen [ # ]
 -- On setvars shift to state 52
 -- On setvar shift to state 54
 ## Reductions:
--- On T_rparen reduce production setvars ->
+-- On T_rparen
+--   reduce production setvars ->
 
 State 51:
 ## Known stack suffix:
@@ -553,7 +556,8 @@ setvars -> setvar . T_comma setvars [ T_rparen ]
 ## Transitions:
 -- On T_comma shift to state 55
 ## Reductions:
--- On T_rparen reduce production setvars -> setvar
+-- On T_rparen
+--   reduce production setvars -> setvar
 
 State 55:
 ## Known stack suffix:
@@ -565,7 +569,8 @@ setvars -> setvar T_comma . setvars [ T_rparen ]
 -- On setvars shift to state 56
 -- On setvar shift to state 54
 ## Reductions:
--- On T_rparen reduce production setvars ->
+-- On T_rparen
+--   reduce production setvars ->
 
 State 56:
 ## Known stack suffix:
@@ -598,7 +603,8 @@ memcad_command -> T_check_setexprs T_lparen . set_exprs T_rparen [ # ]
 -- On c_var shift to state 8
 -- On c_lval shift to state 73
 ## Reductions:
--- On T_rparen reduce production set_exprs ->
+-- On T_rparen
+--   reduce production set_exprs ->
 
 State 59:
 ## Known stack suffix:
@@ -608,10 +614,10 @@ c_var -> V_string . [ T_setin T_arrow ]
 setvar -> V_string . [ T_subseteq T_equal ]
 ## Transitions:
 ## Reductions:
--- On T_subseteq reduce production setvar -> V_string
--- On T_setin reduce production c_var -> V_string
--- On T_equal reduce production setvar -> V_string
--- On T_arrow reduce production c_var -> V_string
+-- On T_setin T_arrow
+--   reduce production c_var -> V_string
+-- On T_subseteq T_equal
+--   reduce production setvar -> V_string
 
 State 60:
 ## Known stack suffix:
@@ -723,7 +729,8 @@ set_exprs -> set_expr . T_comma set_exprs [ T_rparen ]
 ## Transitions:
 -- On T_comma shift to state 71
 ## Reductions:
--- On T_rparen reduce production set_exprs -> set_expr
+-- On T_rparen
+--   reduce production set_exprs -> set_expr
 
 State 71:
 ## Known stack suffix:
@@ -738,7 +745,8 @@ set_exprs -> set_expr T_comma . set_exprs [ T_rparen ]
 -- On c_var shift to state 8
 -- On c_lval shift to state 73
 ## Reductions:
--- On T_rparen reduce production set_exprs ->
+-- On T_rparen
+--   reduce production set_exprs ->
 
 State 72:
 ## Known stack suffix:
@@ -838,7 +846,8 @@ memcad_command -> T_check_segment T_lparen c_lval T_comma indname . indparams T_
 -- On T_comma shift to state 82
 -- On indparams shift to state 98
 ## Reductions:
--- On T_seg reduce production indparams ->
+-- On T_seg
+--   reduce production indparams ->
 
 State 82:
 ## Known stack suffix:
@@ -862,7 +871,8 @@ indparams -> T_comma T_lbrack . lparams T_pipe lparams T_pipe lparams_set T_rbra
 -- On c_var shift to state 8
 -- On c_lval shift to state 88
 ## Reductions:
--- On T_pipe reduce production lparams ->
+-- On T_pipe
+--   reduce production lparams ->
 
 State 84:
 ## Known stack suffix:
@@ -882,7 +892,8 @@ lparams -> param . T_comma lparams [ T_pipe ]
 ## Transitions:
 -- On T_comma shift to state 86
 ## Reductions:
--- On T_pipe reduce production lparams -> param
+-- On T_pipe
+--   reduce production lparams -> param
 
 State 86:
 ## Known stack suffix:
@@ -897,7 +908,8 @@ lparams -> param T_comma . lparams [ T_pipe ]
 -- On c_var shift to state 8
 -- On c_lval shift to state 88
 ## Reductions:
--- On T_pipe reduce production lparams ->
+-- On T_pipe
+--   reduce production lparams ->
 
 State 87:
 ## Known stack suffix:
@@ -917,9 +929,8 @@ param -> c_lval . [ T_rparen T_pipe T_comma ]
 ## Transitions:
 -- On T_arrow shift to state 11
 ## Reductions:
--- On T_rparen reduce production param -> c_lval
--- On T_pipe reduce production param -> c_lval
--- On T_comma reduce production param -> c_lval
+-- On T_rparen T_pipe T_comma
+--   reduce production param -> c_lval
 
 State 89:
 ## Known stack suffix:
@@ -943,7 +954,8 @@ indparams -> T_comma T_lbrack lparams T_pipe . lparams T_pipe lparams_set T_rbra
 -- On c_var shift to state 8
 -- On c_lval shift to state 88
 ## Reductions:
--- On T_pipe reduce production lparams ->
+-- On T_pipe
+--   reduce production lparams ->
 
 State 91:
 ## Known stack suffix:
@@ -964,7 +976,8 @@ indparams -> T_comma T_lbrack lparams T_pipe lparams T_pipe . lparams_set T_rbra
 -- On setvar shift to state 93
 -- On lparams_set shift to state 96
 ## Reductions:
--- On T_rbrack reduce production lparams_set ->
+-- On T_rbrack
+--   reduce production lparams_set ->
 
 State 93:
 ## Known stack suffix:
@@ -975,7 +988,8 @@ lparams_set -> setvar . T_comma lparams_set [ T_rbrack ]
 ## Transitions:
 -- On T_comma shift to state 94
 ## Reductions:
--- On T_rbrack reduce production lparams_set -> setvar
+-- On T_rbrack
+--   reduce production lparams_set -> setvar
 
 State 94:
 ## Known stack suffix:
@@ -987,7 +1001,8 @@ lparams_set -> setvar T_comma . lparams_set [ T_rbrack ]
 -- On setvar shift to state 93
 -- On lparams_set shift to state 95
 ## Reductions:
--- On T_rbrack reduce production lparams_set ->
+-- On T_rbrack
+--   reduce production lparams_set ->
 
 State 95:
 ## Known stack suffix:
@@ -1066,7 +1081,8 @@ memcad_command -> T_check_segment T_lparen c_lval T_comma indname indparams T_se
 -- On T_comma shift to state 82
 -- On indparams shift to state 103
 ## Reductions:
--- On T_rparen reduce production indparams ->
+-- On T_rparen
+--   reduce production indparams ->
 
 State 103:
 ## Known stack suffix:
@@ -1149,7 +1165,8 @@ memcad_command -> T_check_inductive T_lparen c_lval T_comma indname . indparams 
 -- On T_comma shift to state 82
 -- On indparams shift to state 111
 ## Reductions:
--- On T_rparen reduce production indparams ->
+-- On T_rparen
+--   reduce production indparams ->
 
 State 111:
 ## Known stack suffix:
@@ -1226,7 +1243,8 @@ memcad_command -> T_assume T_lparen . num_exprs T_rparen [ # ]
 -- On c_var shift to state 8
 -- On c_lval shift to state 124
 ## Reductions:
--- On T_rparen reduce production num_exprs ->
+-- On T_rparen
+--   reduce production num_exprs ->
 
 State 119:
 ## Known stack suffix:
@@ -1255,7 +1273,8 @@ num_exprs -> num_expr . T_comma num_exprs [ T_rparen ]
 ## Transitions:
 -- On T_comma shift to state 122
 ## Reductions:
--- On T_rparen reduce production num_exprs -> num_expr
+-- On T_rparen
+--   reduce production num_exprs -> num_expr
 
 State 122:
 ## Known stack suffix:
@@ -1269,7 +1288,8 @@ num_exprs -> num_expr T_comma . num_exprs [ T_rparen ]
 -- On c_var shift to state 8
 -- On c_lval shift to state 124
 ## Reductions:
--- On T_rparen reduce production num_exprs ->
+-- On T_rparen
+--   reduce production num_exprs ->
 
 State 123:
 ## Known stack suffix:
@@ -1491,7 +1511,8 @@ memcad_command -> T_add_setexprs T_lparen . set_exprs T_rparen [ # ]
 -- On c_var shift to state 8
 -- On c_lval shift to state 73
 ## Reductions:
--- On T_rparen reduce production set_exprs ->
+-- On T_rparen
+--   reduce production set_exprs ->
 
 State 143:
 ## Known stack suffix:
@@ -1561,7 +1582,8 @@ memcad_command -> T_add_segment T_lparen c_lval T_comma indname . indparams T_se
 -- On T_comma shift to state 82
 -- On indparams shift to state 150
 ## Reductions:
--- On T_seg reduce production indparams ->
+-- On T_seg
+--   reduce production indparams ->
 
 State 150:
 ## Known stack suffix:
@@ -1613,7 +1635,8 @@ memcad_command -> T_add_segment T_lparen c_lval T_comma indname indparams T_seg 
 -- On T_comma shift to state 82
 -- On indparams shift to state 155
 ## Reductions:
--- On T_rparen reduce production indparams ->
+-- On T_rparen
+--   reduce production indparams ->
 
 State 155:
 ## Known stack suffix:
@@ -1683,7 +1706,8 @@ memcad_command -> T_add_inductive T_lparen c_lval T_comma indname . indparams T_
 -- On T_comma shift to state 82
 -- On indparams shift to state 162
 ## Reductions:
--- On T_rparen reduce production indparams ->
+-- On T_rparen
+--   reduce production indparams ->
 
 State 162:
 ## Known stack suffix:

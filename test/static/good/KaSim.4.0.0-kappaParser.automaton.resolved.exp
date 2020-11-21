@@ -49,7 +49,8 @@ effect -> TRACK . pattern boolean [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 -- On mod_agent shift to state 8
 -- On agent_expression shift to state 62
 ## Reductions:
--- On ID reduce production mod_agent ->
+-- On ID
+--   reduce production mod_agent ->
 
 State 3:
 ## Known stack suffix:
@@ -73,7 +74,8 @@ pattern -> OP_PAR . pattern CL_PAR [ UNTIL TRUE SEMICOLON REPEAT PIPE NEWLINE KA
 -- On mod_agent shift to state 8
 -- On agent_expression shift to state 62
 ## Reductions:
--- On ID reduce production mod_agent ->
+-- On ID
+--   reduce production mod_agent ->
 
 State 5:
 ## Known stack suffix:
@@ -142,7 +144,8 @@ agent_expression -> mod_agent ID OP_PAR . interface_expression CL_PAR [ UNTIL TR
 -- On port_expression shift to state 57
 -- On interface_expression shift to state 60
 ## Reductions:
--- On CL_PAR reduce production interface_expression ->
+-- On CL_PAR
+--   reduce production interface_expression ->
 
 State 12:
 ## Known stack suffix:
@@ -165,11 +168,8 @@ port_expression -> ID . counter_test [ COMMA CL_PAR ]
 -- On internal_state shift to state 26
 -- On counter_test shift to state 51
 ## Reductions:
--- On KAPPA_WLD reduce production internal_state ->
--- On KAPPA_LNK reduce production internal_state ->
--- On DIV reduce production internal_state ->
--- On COMMA reduce production internal_state ->
--- On CL_PAR reduce production internal_state ->
+-- On KAPPA_WLD KAPPA_LNK DIV COMMA CL_PAR
+--   reduce production internal_state ->
 
 State 13:
 ## Known stack suffix:
@@ -287,11 +287,8 @@ internal_state -> KAPPA_MRK . internal_state [ KAPPA_WLD KAPPA_LNK DIV COMMA CL_
 -- On KAPPA_MRK shift to state 24
 -- On internal_state shift to state 25
 ## Reductions:
--- On KAPPA_WLD reduce production internal_state ->
--- On KAPPA_LNK reduce production internal_state ->
--- On DIV reduce production internal_state ->
--- On COMMA reduce production internal_state ->
--- On CL_PAR reduce production internal_state ->
+-- On KAPPA_WLD KAPPA_LNK DIV COMMA CL_PAR
+--   reduce production internal_state ->
 
 State 25:
 ## Known stack suffix:
@@ -318,8 +315,8 @@ port_expression -> ID internal_state . DIV KAPPA_MRK link_state link_state_mod [
 -- On link_state shift to state 49
 -- On a_link_state shift to state 46
 ## Reductions:
--- On COMMA reduce production link_state_mod ->
--- On CL_PAR reduce production link_state_mod ->
+-- On COMMA CL_PAR
+--   reduce production link_state_mod ->
 
 State 27:
 ## Known stack suffix:
@@ -448,8 +445,8 @@ port_expression -> ID internal_state DIV KAPPA_MRK . link_state link_state_mod [
 -- On link_state shift to state 44
 -- On a_link_state shift to state 46
 ## Reductions:
--- On COMMA reduce production link_state_mod ->
--- On CL_PAR reduce production link_state_mod ->
+-- On COMMA CL_PAR
+--   reduce production link_state_mod ->
 
 State 39:
 ## Known stack suffix:
@@ -510,8 +507,8 @@ port_expression -> ID internal_state DIV KAPPA_MRK link_state . link_state_mod [
 -- On DIV shift to state 39
 -- On link_state_mod shift to state 45
 ## Reductions:
--- On COMMA reduce production link_state_mod ->
--- On CL_PAR reduce production link_state_mod ->
+-- On COMMA CL_PAR
+--   reduce production link_state_mod ->
 
 State 45:
 ## Known stack suffix:
@@ -534,9 +531,8 @@ link_state -> a_link_state . [ DIV COMMA CL_PAR ]
 -- On link_state shift to state 47
 -- On a_link_state shift to state 46
 ## Reductions:
--- On DIV reduce production link_state -> a_link_state
--- On COMMA reduce production link_state -> a_link_state
--- On CL_PAR reduce production link_state -> a_link_state
+-- On DIV COMMA CL_PAR
+--   reduce production link_state -> a_link_state
 
 State 47:
 ## Known stack suffix:
@@ -565,8 +561,8 @@ port_expression -> ID internal_state link_state . link_state_mod [ COMMA CL_PAR 
 -- On DIV shift to state 39
 -- On link_state_mod shift to state 50
 ## Reductions:
--- On COMMA reduce production link_state_mod ->
--- On CL_PAR reduce production link_state_mod ->
+-- On COMMA CL_PAR
+--   reduce production link_state_mod ->
 
 State 50:
 ## Known stack suffix:
@@ -587,8 +583,8 @@ port_expression -> ID counter_test . [ COMMA CL_PAR ]
 ## Transitions:
 -- On PLUS shift to state 52
 ## Reductions:
--- On COMMA reduce production port_expression -> ID counter_test
--- On CL_PAR reduce production port_expression -> ID counter_test
+-- On COMMA CL_PAR
+--   reduce production port_expression -> ID counter_test
 
 State 52:
 ## Known stack suffix:
@@ -647,7 +643,8 @@ interface_expression -> port_expression . [ CL_PAR ]
 ## Transitions:
 -- On COMMA shift to state 58
 ## Reductions:
--- On CL_PAR reduce production interface_expression -> port_expression
+-- On CL_PAR
+--   reduce production interface_expression -> port_expression
 
 State 58:
 ## Known stack suffix:
@@ -659,7 +656,8 @@ interface_expression -> port_expression COMMA . interface_expression [ CL_PAR ]
 -- On port_expression shift to state 57
 -- On interface_expression shift to state 59
 ## Reductions:
--- On CL_PAR reduce production interface_expression ->
+-- On CL_PAR
+--   reduce production interface_expression ->
 
 State 59:
 ## Known stack suffix:
@@ -697,17 +695,8 @@ pattern -> agent_expression . [ UNTIL TRUE SEMICOLON REPEAT PIPE NEWLINE KAPPA_R
 ## Transitions:
 -- On COMMA shift to state 63
 ## Reductions:
--- On UNTIL reduce production pattern -> agent_expression
--- On TRUE reduce production pattern -> agent_expression
--- On SEMICOLON reduce production pattern -> agent_expression
--- On REPEAT reduce production pattern -> agent_expression
--- On PIPE reduce production pattern -> agent_expression
--- On NEWLINE reduce production pattern -> agent_expression
--- On KAPPA_RAR reduce production pattern -> agent_expression
--- On KAPPA_LRAR reduce production pattern -> agent_expression
--- On FALSE reduce production pattern -> agent_expression
--- On EOF reduce production pattern -> agent_expression
--- On CL_PAR reduce production pattern -> agent_expression
+-- On UNTIL TRUE SEMICOLON REPEAT PIPE NEWLINE KAPPA_RAR KAPPA_LRAR FALSE EOF CL_PAR
+--   reduce production pattern -> agent_expression
 
 State 63:
 ## Known stack suffix:
@@ -722,7 +711,8 @@ pattern -> agent_expression COMMA . pattern [ UNTIL TRUE SEMICOLON REPEAT PIPE N
 -- On mod_agent shift to state 8
 -- On agent_expression shift to state 62
 ## Reductions:
--- On ID reduce production mod_agent ->
+-- On ID
+--   reduce production mod_agent ->
 
 State 64:
 ## Known stack suffix:
@@ -829,12 +819,8 @@ effect -> STOP . print_expr [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 -- On mid_alg_expr shift to state 167
 -- On constant shift to state 113
 ## Reductions:
--- On UNTIL reduce production print_expr ->
--- On SEMICOLON reduce production print_expr ->
--- On REPEAT reduce production print_expr ->
--- On NEWLINE reduce production print_expr ->
--- On EOF reduce production print_expr ->
--- On CL_PAR reduce production print_expr ->
+-- On UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR
+--   reduce production print_expr ->
 
 State 72:
 ## Known stack suffix:
@@ -1005,7 +991,8 @@ non_empty_mixture -> ID OP_PAR . interface_expression CL_PAR COMMA pattern [ UNT
 -- On port_expression shift to state 57
 -- On interface_expression shift to state 81
 ## Reductions:
--- On CL_PAR reduce production interface_expression ->
+-- On CL_PAR
+--   reduce production interface_expression ->
 
 State 81:
 ## Known stack suffix:
@@ -1026,15 +1013,8 @@ non_empty_mixture -> ID OP_PAR interface_expression CL_PAR . COMMA pattern [ UNT
 ## Transitions:
 -- On COMMA shift to state 83
 ## Reductions:
--- On UNTIL reduce production non_empty_mixture -> ID OP_PAR interface_expression CL_PAR
--- On TRUE reduce production non_empty_mixture -> ID OP_PAR interface_expression CL_PAR
--- On SEMICOLON reduce production non_empty_mixture -> ID OP_PAR interface_expression CL_PAR
--- On REPEAT reduce production non_empty_mixture -> ID OP_PAR interface_expression CL_PAR
--- On PIPE reduce production non_empty_mixture -> ID OP_PAR interface_expression CL_PAR
--- On NEWLINE reduce production non_empty_mixture -> ID OP_PAR interface_expression CL_PAR
--- On FALSE reduce production non_empty_mixture -> ID OP_PAR interface_expression CL_PAR
--- On EOF reduce production non_empty_mixture -> ID OP_PAR interface_expression CL_PAR
--- On CL_PAR reduce production non_empty_mixture -> ID OP_PAR interface_expression CL_PAR
+-- On UNTIL TRUE SEMICOLON REPEAT PIPE NEWLINE FALSE EOF CL_PAR
+--   reduce production non_empty_mixture -> ID OP_PAR interface_expression CL_PAR
 
 State 83:
 ## Known stack suffix:
@@ -1049,7 +1029,8 @@ non_empty_mixture -> ID OP_PAR interface_expression CL_PAR COMMA . pattern [ UNT
 -- On mod_agent shift to state 8
 -- On agent_expression shift to state 62
 ## Reductions:
--- On ID reduce production mod_agent ->
+-- On ID
+--   reduce production mod_agent ->
 
 State 84:
 ## Known stack suffix:
@@ -1797,56 +1778,8 @@ mid_alg_expr -> mid_alg_expr . MODULO mid_alg_expr [ UNTIL TYPE TRUE TMAX TIME T
 -- On MODULO shift to state 126
 -- On DIV shift to state 128
 ## Reductions:
--- On UNTIL reduce production mid_alg_expr -> MINUS mid_alg_expr
--- On TYPE reduce production mid_alg_expr -> MINUS mid_alg_expr
--- On TRUE reduce production mid_alg_expr -> MINUS mid_alg_expr
--- On TMAX reduce production mid_alg_expr -> MINUS mid_alg_expr
--- On TIME reduce production mid_alg_expr -> MINUS mid_alg_expr
--- On THEN reduce production mid_alg_expr -> MINUS mid_alg_expr
--- On TAN reduce production mid_alg_expr -> MINUS mid_alg_expr
--- On STRING reduce production mid_alg_expr -> MINUS mid_alg_expr
--- On SQRT reduce production mid_alg_expr -> MINUS mid_alg_expr
--- On SMALLER reduce production mid_alg_expr -> MINUS mid_alg_expr
--- On SINUS reduce production mid_alg_expr -> MINUS mid_alg_expr
--- On SET reduce production mid_alg_expr -> MINUS mid_alg_expr
--- On SEMICOLON reduce production mid_alg_expr -> MINUS mid_alg_expr
--- On REPEAT reduce production mid_alg_expr -> MINUS mid_alg_expr
--- On PLUS reduce production mid_alg_expr -> MINUS mid_alg_expr
--- On PIPE reduce production mid_alg_expr -> MINUS mid_alg_expr
--- On OR reduce production mid_alg_expr -> MINUS mid_alg_expr
--- On OP_PAR reduce production mid_alg_expr -> MINUS mid_alg_expr
--- On OP_CUR reduce production mid_alg_expr -> MINUS mid_alg_expr
--- On NULL_EVENT reduce production mid_alg_expr -> MINUS mid_alg_expr
--- On NEWLINE reduce production mid_alg_expr -> MINUS mid_alg_expr
--- On MINUS reduce production mid_alg_expr -> MINUS mid_alg_expr
--- On MIN reduce production mid_alg_expr -> MINUS mid_alg_expr
--- On MAX reduce production mid_alg_expr -> MINUS mid_alg_expr
--- On LOG reduce production mid_alg_expr -> MINUS mid_alg_expr
--- On LABEL reduce production mid_alg_expr -> MINUS mid_alg_expr
--- On KAPPA_RAR reduce production mid_alg_expr -> MINUS mid_alg_expr
--- On KAPPA_LRAR reduce production mid_alg_expr -> MINUS mid_alg_expr
--- On INT reduce production mid_alg_expr -> MINUS mid_alg_expr
--- On INFINITY reduce production mid_alg_expr -> MINUS mid_alg_expr
--- On ID reduce production mid_alg_expr -> MINUS mid_alg_expr
--- On GREATER reduce production mid_alg_expr -> MINUS mid_alg_expr
--- On FLOAT reduce production mid_alg_expr -> MINUS mid_alg_expr
--- On FALSE reduce production mid_alg_expr -> MINUS mid_alg_expr
--- On EXPONENT reduce production mid_alg_expr -> MINUS mid_alg_expr
--- On EVENT reduce production mid_alg_expr -> MINUS mid_alg_expr
--- On EQUAL reduce production mid_alg_expr -> MINUS mid_alg_expr
--- On EOF reduce production mid_alg_expr -> MINUS mid_alg_expr
--- On EMAX reduce production mid_alg_expr -> MINUS mid_alg_expr
--- On ELSE reduce production mid_alg_expr -> MINUS mid_alg_expr
--- On DOT reduce production mid_alg_expr -> MINUS mid_alg_expr
--- On DO reduce production mid_alg_expr -> MINUS mid_alg_expr
--- On DIFF reduce production mid_alg_expr -> MINUS mid_alg_expr
--- On CPUTIME reduce production mid_alg_expr -> MINUS mid_alg_expr
--- On COSINUS reduce production mid_alg_expr -> MINUS mid_alg_expr
--- On COMMA reduce production mid_alg_expr -> MINUS mid_alg_expr
--- On CL_PAR reduce production mid_alg_expr -> MINUS mid_alg_expr
--- On CL_CUR reduce production mid_alg_expr -> MINUS mid_alg_expr
--- On AND reduce production mid_alg_expr -> MINUS mid_alg_expr
--- On ABS reduce production mid_alg_expr -> MINUS mid_alg_expr
+-- On UNTIL TYPE TRUE TMAX TIME THEN TAN STRING SQRT SMALLER SINUS SET SEMICOLON REPEAT PLUS PIPE OR OP_PAR OP_CUR NULL_EVENT NEWLINE MINUS MIN MAX LOG LABEL KAPPA_RAR KAPPA_LRAR INT INFINITY ID GREATER FLOAT FALSE EXPONENT EVENT EQUAL EOF EMAX ELSE DOT DO DIFF CPUTIME COSINUS COMMA CL_PAR CL_CUR AND ABS
+--   reduce production mid_alg_expr -> MINUS mid_alg_expr
 
 State 122:
 ## Known stack suffix:
@@ -1898,59 +1831,8 @@ mid_alg_expr -> mid_alg_expr . MODULO mid_alg_expr [ UNTIL TYPE TRUE TMAX TIME T
 ## Transitions:
 -- On POW shift to state 122
 ## Reductions:
--- On UNTIL reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
--- On TYPE reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
--- On TRUE reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
--- On TMAX reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
--- On TIME reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
--- On THEN reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
--- On TAN reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
--- On STRING reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
--- On SQRT reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
--- On SMALLER reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
--- On SINUS reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
--- On SET reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
--- On SEMICOLON reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
--- On REPEAT reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
--- On PLUS reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
--- On PIPE reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
--- On OR reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
--- On OP_PAR reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
--- On OP_CUR reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
--- On NULL_EVENT reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
--- On NEWLINE reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
--- On MULT reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
--- On MODULO reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
--- On MINUS reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
--- On MIN reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
--- On MAX reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
--- On LOG reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
--- On LABEL reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
--- On KAPPA_RAR reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
--- On KAPPA_LRAR reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
--- On INT reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
--- On INFINITY reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
--- On ID reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
--- On GREATER reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
--- On FLOAT reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
--- On FALSE reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
--- On EXPONENT reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
--- On EVENT reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
--- On EQUAL reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
--- On EOF reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
--- On EMAX reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
--- On ELSE reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
--- On DOT reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
--- On DO reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
--- On DIV reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
--- On DIFF reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
--- On CPUTIME reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
--- On COSINUS reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
--- On COMMA reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
--- On CL_PAR reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
--- On CL_CUR reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
--- On AND reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
--- On ABS reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
+-- On UNTIL TYPE TRUE TMAX TIME THEN TAN STRING SQRT SMALLER SINUS SET SEMICOLON REPEAT PLUS PIPE OR OP_PAR OP_CUR NULL_EVENT NEWLINE MULT MODULO MINUS MIN MAX LOG LABEL KAPPA_RAR KAPPA_LRAR INT INFINITY ID GREATER FLOAT FALSE EXPONENT EVENT EQUAL EOF EMAX ELSE DOT DO DIV DIFF CPUTIME COSINUS COMMA CL_PAR CL_CUR AND ABS
+--   reduce production mid_alg_expr -> mid_alg_expr POW mid_alg_expr
 
 State 124:
 ## Known stack suffix:
@@ -2003,58 +1885,8 @@ mid_alg_expr -> mid_alg_expr . MODULO mid_alg_expr [ UNTIL TYPE TRUE TMAX TIME T
 -- On POW shift to state 122
 -- On MODULO shift to state 126
 ## Reductions:
--- On UNTIL reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
--- On TYPE reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
--- On TRUE reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
--- On TMAX reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
--- On TIME reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
--- On THEN reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
--- On TAN reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
--- On STRING reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
--- On SQRT reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
--- On SMALLER reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
--- On SINUS reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
--- On SET reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
--- On SEMICOLON reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
--- On REPEAT reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
--- On PLUS reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
--- On PIPE reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
--- On OR reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
--- On OP_PAR reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
--- On OP_CUR reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
--- On NULL_EVENT reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
--- On NEWLINE reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
--- On MULT reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
--- On MINUS reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
--- On MIN reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
--- On MAX reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
--- On LOG reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
--- On LABEL reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
--- On KAPPA_RAR reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
--- On KAPPA_LRAR reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
--- On INT reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
--- On INFINITY reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
--- On ID reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
--- On GREATER reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
--- On FLOAT reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
--- On FALSE reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
--- On EXPONENT reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
--- On EVENT reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
--- On EQUAL reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
--- On EOF reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
--- On EMAX reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
--- On ELSE reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
--- On DOT reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
--- On DO reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
--- On DIV reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
--- On DIFF reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
--- On CPUTIME reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
--- On COSINUS reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
--- On COMMA reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
--- On CL_PAR reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
--- On CL_CUR reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
--- On AND reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
--- On ABS reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
+-- On UNTIL TYPE TRUE TMAX TIME THEN TAN STRING SQRT SMALLER SINUS SET SEMICOLON REPEAT PLUS PIPE OR OP_PAR OP_CUR NULL_EVENT NEWLINE MULT MINUS MIN MAX LOG LABEL KAPPA_RAR KAPPA_LRAR INT INFINITY ID GREATER FLOAT FALSE EXPONENT EVENT EQUAL EOF EMAX ELSE DOT DO DIV DIFF CPUTIME COSINUS COMMA CL_PAR CL_CUR AND ABS
+--   reduce production mid_alg_expr -> mid_alg_expr MULT mid_alg_expr
 
 State 126:
 ## Known stack suffix:
@@ -2106,59 +1938,8 @@ mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr . [ UNTIL TYPE TRUE TMAX TIME T
 ## Transitions:
 -- On POW shift to state 122
 ## Reductions:
--- On UNTIL reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
--- On TYPE reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
--- On TRUE reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
--- On TMAX reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
--- On TIME reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
--- On THEN reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
--- On TAN reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
--- On STRING reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
--- On SQRT reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
--- On SMALLER reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
--- On SINUS reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
--- On SET reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
--- On SEMICOLON reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
--- On REPEAT reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
--- On PLUS reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
--- On PIPE reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
--- On OR reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
--- On OP_PAR reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
--- On OP_CUR reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
--- On NULL_EVENT reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
--- On NEWLINE reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
--- On MULT reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
--- On MODULO reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
--- On MINUS reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
--- On MIN reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
--- On MAX reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
--- On LOG reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
--- On LABEL reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
--- On KAPPA_RAR reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
--- On KAPPA_LRAR reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
--- On INT reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
--- On INFINITY reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
--- On ID reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
--- On GREATER reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
--- On FLOAT reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
--- On FALSE reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
--- On EXPONENT reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
--- On EVENT reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
--- On EQUAL reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
--- On EOF reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
--- On EMAX reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
--- On ELSE reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
--- On DOT reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
--- On DO reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
--- On DIV reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
--- On DIFF reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
--- On CPUTIME reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
--- On COSINUS reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
--- On COMMA reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
--- On CL_PAR reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
--- On CL_CUR reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
--- On AND reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
--- On ABS reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
+-- On UNTIL TYPE TRUE TMAX TIME THEN TAN STRING SQRT SMALLER SINUS SET SEMICOLON REPEAT PLUS PIPE OR OP_PAR OP_CUR NULL_EVENT NEWLINE MULT MODULO MINUS MIN MAX LOG LABEL KAPPA_RAR KAPPA_LRAR INT INFINITY ID GREATER FLOAT FALSE EXPONENT EVENT EQUAL EOF EMAX ELSE DOT DO DIV DIFF CPUTIME COSINUS COMMA CL_PAR CL_CUR AND ABS
+--   reduce production mid_alg_expr -> mid_alg_expr MODULO mid_alg_expr
 
 State 128:
 ## Known stack suffix:
@@ -2211,58 +1992,8 @@ mid_alg_expr -> mid_alg_expr . MODULO mid_alg_expr [ UNTIL TYPE TRUE TMAX TIME T
 -- On POW shift to state 122
 -- On MODULO shift to state 126
 ## Reductions:
--- On UNTIL reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
--- On TYPE reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
--- On TRUE reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
--- On TMAX reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
--- On TIME reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
--- On THEN reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
--- On TAN reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
--- On STRING reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
--- On SQRT reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
--- On SMALLER reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
--- On SINUS reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
--- On SET reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
--- On SEMICOLON reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
--- On REPEAT reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
--- On PLUS reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
--- On PIPE reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
--- On OR reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
--- On OP_PAR reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
--- On OP_CUR reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
--- On NULL_EVENT reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
--- On NEWLINE reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
--- On MULT reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
--- On MINUS reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
--- On MIN reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
--- On MAX reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
--- On LOG reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
--- On LABEL reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
--- On KAPPA_RAR reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
--- On KAPPA_LRAR reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
--- On INT reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
--- On INFINITY reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
--- On ID reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
--- On GREATER reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
--- On FLOAT reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
--- On FALSE reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
--- On EXPONENT reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
--- On EVENT reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
--- On EQUAL reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
--- On EOF reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
--- On EMAX reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
--- On ELSE reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
--- On DOT reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
--- On DO reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
--- On DIV reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
--- On DIFF reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
--- On CPUTIME reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
--- On COSINUS reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
--- On COMMA reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
--- On CL_PAR reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
--- On CL_CUR reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
--- On AND reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
--- On ABS reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
+-- On UNTIL TYPE TRUE TMAX TIME THEN TAN STRING SQRT SMALLER SINUS SET SEMICOLON REPEAT PLUS PIPE OR OP_PAR OP_CUR NULL_EVENT NEWLINE MULT MINUS MIN MAX LOG LABEL KAPPA_RAR KAPPA_LRAR INT INFINITY ID GREATER FLOAT FALSE EXPONENT EVENT EQUAL EOF EMAX ELSE DOT DO DIV DIFF CPUTIME COSINUS COMMA CL_PAR CL_CUR AND ABS
+--   reduce production mid_alg_expr -> mid_alg_expr DIV mid_alg_expr
 
 State 130:
 ## Known stack suffix:
@@ -2301,28 +2032,8 @@ mid_alg_expr -> mid_alg_expr . MODULO mid_alg_expr [ UNTIL TYPE THEN SMALLER SET
 -- On MINUS shift to state 135
 -- On DIV shift to state 128
 ## Reductions:
--- On UNTIL reduce production alg_expr -> mid_alg_expr
--- On TYPE reduce production alg_expr -> mid_alg_expr
--- On THEN reduce production alg_expr -> mid_alg_expr
--- On SMALLER reduce production alg_expr -> mid_alg_expr
--- On SET reduce production alg_expr -> mid_alg_expr
--- On SEMICOLON reduce production alg_expr -> mid_alg_expr
--- On REPEAT reduce production alg_expr -> mid_alg_expr
--- On OR reduce production alg_expr -> mid_alg_expr
--- On OP_PAR reduce production alg_expr -> mid_alg_expr
--- On OP_CUR reduce production alg_expr -> mid_alg_expr
--- On NEWLINE reduce production alg_expr -> mid_alg_expr
--- On ID reduce production alg_expr -> mid_alg_expr
--- On GREATER reduce production alg_expr -> mid_alg_expr
--- On EQUAL reduce production alg_expr -> mid_alg_expr
--- On EOF reduce production alg_expr -> mid_alg_expr
--- On ELSE reduce production alg_expr -> mid_alg_expr
--- On DO reduce production alg_expr -> mid_alg_expr
--- On DIFF reduce production alg_expr -> mid_alg_expr
--- On COMMA reduce production alg_expr -> mid_alg_expr
--- On CL_PAR reduce production alg_expr -> mid_alg_expr
--- On CL_CUR reduce production alg_expr -> mid_alg_expr
--- On AND reduce production alg_expr -> mid_alg_expr
+-- On UNTIL TYPE THEN SMALLER SET SEMICOLON REPEAT OR OP_PAR OP_CUR NEWLINE ID GREATER EQUAL EOF ELSE DO DIFF COMMA CL_PAR CL_CUR AND
+--   reduce production alg_expr -> mid_alg_expr
 
 State 133:
 ## Known stack suffix:
@@ -2377,56 +2088,8 @@ mid_alg_expr -> mid_alg_expr . MODULO mid_alg_expr [ UNTIL TYPE TRUE TMAX TIME T
 -- On MODULO shift to state 126
 -- On DIV shift to state 128
 ## Reductions:
--- On UNTIL reduce production mid_alg_expr -> mid_alg_expr PLUS mid_alg_expr
--- On TYPE reduce production mid_alg_expr -> mid_alg_expr PLUS mid_alg_expr
--- On TRUE reduce production mid_alg_expr -> mid_alg_expr PLUS mid_alg_expr
--- On TMAX reduce production mid_alg_expr -> mid_alg_expr PLUS mid_alg_expr
--- On TIME reduce production mid_alg_expr -> mid_alg_expr PLUS mid_alg_expr
--- On THEN reduce production mid_alg_expr -> mid_alg_expr PLUS mid_alg_expr
--- On TAN reduce production mid_alg_expr -> mid_alg_expr PLUS mid_alg_expr
--- On STRING reduce production mid_alg_expr -> mid_alg_expr PLUS mid_alg_expr
--- On SQRT reduce production mid_alg_expr -> mid_alg_expr PLUS mid_alg_expr
--- On SMALLER reduce production mid_alg_expr -> mid_alg_expr PLUS mid_alg_expr
--- On SINUS reduce production mid_alg_expr -> mid_alg_expr PLUS mid_alg_expr
--- On SET reduce production mid_alg_expr -> mid_alg_expr PLUS mid_alg_expr
--- On SEMICOLON reduce production mid_alg_expr -> mid_alg_expr PLUS mid_alg_expr
--- On REPEAT reduce production mid_alg_expr -> mid_alg_expr PLUS mid_alg_expr
--- On PLUS reduce production mid_alg_expr -> mid_alg_expr PLUS mid_alg_expr
--- On PIPE reduce production mid_alg_expr -> mid_alg_expr PLUS mid_alg_expr
--- On OR reduce production mid_alg_expr -> mid_alg_expr PLUS mid_alg_expr
--- On OP_PAR reduce production mid_alg_expr -> mid_alg_expr PLUS mid_alg_expr
--- On OP_CUR reduce production mid_alg_expr -> mid_alg_expr PLUS mid_alg_expr
--- On NULL_EVENT reduce production mid_alg_expr -> mid_alg_expr PLUS mid_alg_expr
--- On NEWLINE reduce production mid_alg_expr -> mid_alg_expr PLUS mid_alg_expr
--- On MINUS reduce production mid_alg_expr -> mid_alg_expr PLUS mid_alg_expr
--- On MIN reduce production mid_alg_expr -> mid_alg_expr PLUS mid_alg_expr
--- On MAX reduce production mid_alg_expr -> mid_alg_expr PLUS mid_alg_expr
--- On LOG reduce production mid_alg_expr -> mid_alg_expr PLUS mid_alg_expr
--- On LABEL reduce production mid_alg_expr -> mid_alg_expr PLUS mid_alg_expr
--- On KAPPA_RAR reduce production mid_alg_expr -> mid_alg_expr PLUS mid_alg_expr
--- On KAPPA_LRAR reduce production mid_alg_expr -> mid_alg_expr PLUS mid_alg_expr
--- On INT reduce production mid_alg_expr -> mid_alg_expr PLUS mid_alg_expr
--- On INFINITY reduce production mid_alg_expr -> mid_alg_expr PLUS mid_alg_expr
--- On ID reduce production mid_alg_expr -> mid_alg_expr PLUS mid_alg_expr
--- On GREATER reduce production mid_alg_expr -> mid_alg_expr PLUS mid_alg_expr
--- On FLOAT reduce production mid_alg_expr -> mid_alg_expr PLUS mid_alg_expr
--- On FALSE reduce production mid_alg_expr -> mid_alg_expr PLUS mid_alg_expr
--- On EXPONENT reduce production mid_alg_expr -> mid_alg_expr PLUS mid_alg_expr
--- On EVENT reduce production mid_alg_expr -> mid_alg_expr PLUS mid_alg_expr
--- On EQUAL reduce production mid_alg_expr -> mid_alg_expr PLUS mid_alg_expr
--- On EOF reduce production mid_alg_expr -> mid_alg_expr PLUS mid_alg_expr
--- On EMAX reduce production mid_alg_expr -> mid_alg_expr PLUS mid_alg_expr
--- On ELSE reduce production mid_alg_expr -> mid_alg_expr PLUS mid_alg_expr
--- On DOT reduce production mid_alg_expr -> mid_alg_expr PLUS mid_alg_expr
--- On DO reduce production mid_alg_expr -> mid_alg_expr PLUS mid_alg_expr
--- On DIFF reduce production mid_alg_expr -> mid_alg_expr PLUS mid_alg_expr
--- On CPUTIME reduce production mid_alg_expr -> mid_alg_expr PLUS mid_alg_expr
--- On COSINUS reduce production mid_alg_expr -> mid_alg_expr PLUS mid_alg_expr
--- On COMMA reduce production mid_alg_expr -> mid_alg_expr PLUS mid_alg_expr
--- On CL_PAR reduce production mid_alg_expr -> mid_alg_expr PLUS mid_alg_expr
--- On CL_CUR reduce production mid_alg_expr -> mid_alg_expr PLUS mid_alg_expr
--- On AND reduce production mid_alg_expr -> mid_alg_expr PLUS mid_alg_expr
--- On ABS reduce production mid_alg_expr -> mid_alg_expr PLUS mid_alg_expr
+-- On UNTIL TYPE TRUE TMAX TIME THEN TAN STRING SQRT SMALLER SINUS SET SEMICOLON REPEAT PLUS PIPE OR OP_PAR OP_CUR NULL_EVENT NEWLINE MINUS MIN MAX LOG LABEL KAPPA_RAR KAPPA_LRAR INT INFINITY ID GREATER FLOAT FALSE EXPONENT EVENT EQUAL EOF EMAX ELSE DOT DO DIFF CPUTIME COSINUS COMMA CL_PAR CL_CUR AND ABS
+--   reduce production mid_alg_expr -> mid_alg_expr PLUS mid_alg_expr
 
 State 135:
 ## Known stack suffix:
@@ -2481,56 +2144,8 @@ mid_alg_expr -> mid_alg_expr . MODULO mid_alg_expr [ UNTIL TYPE TRUE TMAX TIME T
 -- On MODULO shift to state 126
 -- On DIV shift to state 128
 ## Reductions:
--- On UNTIL reduce production mid_alg_expr -> mid_alg_expr MINUS mid_alg_expr
--- On TYPE reduce production mid_alg_expr -> mid_alg_expr MINUS mid_alg_expr
--- On TRUE reduce production mid_alg_expr -> mid_alg_expr MINUS mid_alg_expr
--- On TMAX reduce production mid_alg_expr -> mid_alg_expr MINUS mid_alg_expr
--- On TIME reduce production mid_alg_expr -> mid_alg_expr MINUS mid_alg_expr
--- On THEN reduce production mid_alg_expr -> mid_alg_expr MINUS mid_alg_expr
--- On TAN reduce production mid_alg_expr -> mid_alg_expr MINUS mid_alg_expr
--- On STRING reduce production mid_alg_expr -> mid_alg_expr MINUS mid_alg_expr
--- On SQRT reduce production mid_alg_expr -> mid_alg_expr MINUS mid_alg_expr
--- On SMALLER reduce production mid_alg_expr -> mid_alg_expr MINUS mid_alg_expr
--- On SINUS reduce production mid_alg_expr -> mid_alg_expr MINUS mid_alg_expr
--- On SET reduce production mid_alg_expr -> mid_alg_expr MINUS mid_alg_expr
--- On SEMICOLON reduce production mid_alg_expr -> mid_alg_expr MINUS mid_alg_expr
--- On REPEAT reduce production mid_alg_expr -> mid_alg_expr MINUS mid_alg_expr
--- On PLUS reduce production mid_alg_expr -> mid_alg_expr MINUS mid_alg_expr
--- On PIPE reduce production mid_alg_expr -> mid_alg_expr MINUS mid_alg_expr
--- On OR reduce production mid_alg_expr -> mid_alg_expr MINUS mid_alg_expr
--- On OP_PAR reduce production mid_alg_expr -> mid_alg_expr MINUS mid_alg_expr
--- On OP_CUR reduce production mid_alg_expr -> mid_alg_expr MINUS mid_alg_expr
--- On NULL_EVENT reduce production mid_alg_expr -> mid_alg_expr MINUS mid_alg_expr
--- On NEWLINE reduce production mid_alg_expr -> mid_alg_expr MINUS mid_alg_expr
--- On MINUS reduce production mid_alg_expr -> mid_alg_expr MINUS mid_alg_expr
--- On MIN reduce production mid_alg_expr -> mid_alg_expr MINUS mid_alg_expr
--- On MAX reduce production mid_alg_expr -> mid_alg_expr MINUS mid_alg_expr
--- On LOG reduce production mid_alg_expr -> mid_alg_expr MINUS mid_alg_expr
--- On LABEL reduce production mid_alg_expr -> mid_alg_expr MINUS mid_alg_expr
--- On KAPPA_RAR reduce production mid_alg_expr -> mid_alg_expr MINUS mid_alg_expr
--- On KAPPA_LRAR reduce production mid_alg_expr -> mid_alg_expr MINUS mid_alg_expr
--- On INT reduce production mid_alg_expr -> mid_alg_expr MINUS mid_alg_expr
--- On INFINITY reduce production mid_alg_expr -> mid_alg_expr MINUS mid_alg_expr
--- On ID reduce production mid_alg_expr -> mid_alg_expr MINUS mid_alg_expr
--- On GREATER reduce production mid_alg_expr -> mid_alg_expr MINUS mid_alg_expr
--- On FLOAT reduce production mid_alg_expr -> mid_alg_expr MINUS mid_alg_expr
--- On FALSE reduce production mid_alg_expr -> mid_alg_expr MINUS mid_alg_expr
--- On EXPONENT reduce production mid_alg_expr -> mid_alg_expr MINUS mid_alg_expr
--- On EVENT reduce production mid_alg_expr -> mid_alg_expr MINUS mid_alg_expr
--- On EQUAL reduce production mid_alg_expr -> mid_alg_expr MINUS mid_alg_expr
--- On EOF reduce production mid_alg_expr -> mid_alg_expr MINUS mid_alg_expr
--- On EMAX reduce production mid_alg_expr -> mid_alg_expr MINUS mid_alg_expr
--- On ELSE reduce production mid_alg_expr -> mid_alg_expr MINUS mid_alg_expr
--- On DOT reduce production mid_alg_expr -> mid_alg_expr MINUS mid_alg_expr
--- On DO reduce production mid_alg_expr -> mid_alg_expr MINUS mid_alg_expr
--- On DIFF reduce production mid_alg_expr -> mid_alg_expr MINUS mid_alg_expr
--- On CPUTIME reduce production mid_alg_expr -> mid_alg_expr MINUS mid_alg_expr
--- On COSINUS reduce production mid_alg_expr -> mid_alg_expr MINUS mid_alg_expr
--- On COMMA reduce production mid_alg_expr -> mid_alg_expr MINUS mid_alg_expr
--- On CL_PAR reduce production mid_alg_expr -> mid_alg_expr MINUS mid_alg_expr
--- On CL_CUR reduce production mid_alg_expr -> mid_alg_expr MINUS mid_alg_expr
--- On AND reduce production mid_alg_expr -> mid_alg_expr MINUS mid_alg_expr
--- On ABS reduce production mid_alg_expr -> mid_alg_expr MINUS mid_alg_expr
+-- On UNTIL TYPE TRUE TMAX TIME THEN TAN STRING SQRT SMALLER SINUS SET SEMICOLON REPEAT PLUS PIPE OR OP_PAR OP_CUR NULL_EVENT NEWLINE MINUS MIN MAX LOG LABEL KAPPA_RAR KAPPA_LRAR INT INFINITY ID GREATER FLOAT FALSE EXPONENT EVENT EQUAL EOF EMAX ELSE DOT DO DIFF CPUTIME COSINUS COMMA CL_PAR CL_CUR AND ABS
+--   reduce production mid_alg_expr -> mid_alg_expr MINUS mid_alg_expr
 
 State 137:
 ## Known stack suffix:
@@ -2656,12 +2271,8 @@ bool_expr -> bool_expr OR bool_expr . [ THEN SET OR NEWLINE EOF DO CL_PAR AND ]
 -- On THEN shift to state 138
 -- On AND shift to state 142
 ## Reductions:
--- On SET reduce production bool_expr -> bool_expr OR bool_expr
--- On OR reduce production bool_expr -> bool_expr OR bool_expr
--- On NEWLINE reduce production bool_expr -> bool_expr OR bool_expr
--- On EOF reduce production bool_expr -> bool_expr OR bool_expr
--- On DO reduce production bool_expr -> bool_expr OR bool_expr
--- On CL_PAR reduce production bool_expr -> bool_expr OR bool_expr
+-- On SET OR NEWLINE EOF DO CL_PAR
+--   reduce production bool_expr -> bool_expr OR bool_expr
 
 State 142:
 ## Known stack suffix:
@@ -2716,13 +2327,8 @@ bool_expr -> bool_expr . OR bool_expr [ THEN SET OR NEWLINE EOF DO CL_PAR AND ]
 ## Transitions:
 -- On THEN shift to state 138
 ## Reductions:
--- On SET reduce production bool_expr -> bool_expr AND bool_expr
--- On OR reduce production bool_expr -> bool_expr AND bool_expr
--- On NEWLINE reduce production bool_expr -> bool_expr AND bool_expr
--- On EOF reduce production bool_expr -> bool_expr AND bool_expr
--- On DO reduce production bool_expr -> bool_expr AND bool_expr
--- On CL_PAR reduce production bool_expr -> bool_expr AND bool_expr
--- On AND reduce production bool_expr -> bool_expr AND bool_expr
+-- On SET OR NEWLINE EOF DO CL_PAR AND
+--   reduce production bool_expr -> bool_expr AND bool_expr
 
 State 144:
 ## Known stack suffix:
@@ -2898,14 +2504,8 @@ bool_expr -> alg_expr . DIFF alg_expr [ THEN OR AND ]
 -- On EQUAL shift to state 150
 -- On DIFF shift to state 152
 ## Reductions:
--- On THEN reduce production bool_expr -> alg_expr GREATER alg_expr
--- On SET reduce production bool_expr -> alg_expr GREATER alg_expr
--- On OR reduce production bool_expr -> alg_expr GREATER alg_expr
--- On NEWLINE reduce production bool_expr -> alg_expr GREATER alg_expr
--- On EOF reduce production bool_expr -> alg_expr GREATER alg_expr
--- On DO reduce production bool_expr -> alg_expr GREATER alg_expr
--- On CL_PAR reduce production bool_expr -> alg_expr GREATER alg_expr
--- On AND reduce production bool_expr -> alg_expr GREATER alg_expr
+-- On THEN SET OR NEWLINE EOF DO CL_PAR AND
+--   reduce production bool_expr -> alg_expr GREATER alg_expr
 
 State 150:
 ## Known stack suffix:
@@ -2964,14 +2564,8 @@ bool_expr -> alg_expr . DIFF alg_expr [ THEN OR AND ]
 -- On EQUAL shift to state 150
 -- On DIFF shift to state 152
 ## Reductions:
--- On THEN reduce production bool_expr -> alg_expr EQUAL alg_expr
--- On SET reduce production bool_expr -> alg_expr EQUAL alg_expr
--- On OR reduce production bool_expr -> alg_expr EQUAL alg_expr
--- On NEWLINE reduce production bool_expr -> alg_expr EQUAL alg_expr
--- On EOF reduce production bool_expr -> alg_expr EQUAL alg_expr
--- On DO reduce production bool_expr -> alg_expr EQUAL alg_expr
--- On CL_PAR reduce production bool_expr -> alg_expr EQUAL alg_expr
--- On AND reduce production bool_expr -> alg_expr EQUAL alg_expr
+-- On THEN SET OR NEWLINE EOF DO CL_PAR AND
+--   reduce production bool_expr -> alg_expr EQUAL alg_expr
 
 State 152:
 ## Known stack suffix:
@@ -3030,14 +2624,8 @@ bool_expr -> alg_expr DIFF alg_expr . [ THEN SET OR NEWLINE EOF DO CL_PAR AND ]
 -- On EQUAL shift to state 150
 -- On DIFF shift to state 152
 ## Reductions:
--- On THEN reduce production bool_expr -> alg_expr DIFF alg_expr
--- On SET reduce production bool_expr -> alg_expr DIFF alg_expr
--- On OR reduce production bool_expr -> alg_expr DIFF alg_expr
--- On NEWLINE reduce production bool_expr -> alg_expr DIFF alg_expr
--- On EOF reduce production bool_expr -> alg_expr DIFF alg_expr
--- On DO reduce production bool_expr -> alg_expr DIFF alg_expr
--- On CL_PAR reduce production bool_expr -> alg_expr DIFF alg_expr
--- On AND reduce production bool_expr -> alg_expr DIFF alg_expr
+-- On THEN SET OR NEWLINE EOF DO CL_PAR AND
+--   reduce production bool_expr -> alg_expr DIFF alg_expr
 
 State 154:
 ## Known stack suffix:
@@ -3063,14 +2651,8 @@ bool_expr -> alg_expr . DIFF alg_expr [ THEN OR AND ]
 -- On EQUAL shift to state 150
 -- On DIFF shift to state 152
 ## Reductions:
--- On THEN reduce production bool_expr -> alg_expr SMALLER alg_expr
--- On SET reduce production bool_expr -> alg_expr SMALLER alg_expr
--- On OR reduce production bool_expr -> alg_expr SMALLER alg_expr
--- On NEWLINE reduce production bool_expr -> alg_expr SMALLER alg_expr
--- On EOF reduce production bool_expr -> alg_expr SMALLER alg_expr
--- On DO reduce production bool_expr -> alg_expr SMALLER alg_expr
--- On CL_PAR reduce production bool_expr -> alg_expr SMALLER alg_expr
--- On AND reduce production bool_expr -> alg_expr SMALLER alg_expr
+-- On THEN SET OR NEWLINE EOF DO CL_PAR AND
+--   reduce production bool_expr -> alg_expr SMALLER alg_expr
 
 State 156:
 ## Known stack suffix:
@@ -3204,18 +2786,8 @@ nonempty_print_expr -> STRING . DOT nonempty_print_expr [ UNTIL TRUE STRING SMAL
 ## Transitions:
 -- On DOT shift to state 165
 ## Reductions:
--- On UNTIL reduce production nonempty_print_expr -> STRING
--- On TRUE reduce production nonempty_print_expr -> STRING
--- On STRING reduce production nonempty_print_expr -> STRING
--- On SMALLER reduce production nonempty_print_expr -> STRING
--- On SEMICOLON reduce production nonempty_print_expr -> STRING
--- On REPEAT reduce production nonempty_print_expr -> STRING
--- On NEWLINE reduce production nonempty_print_expr -> STRING
--- On ID reduce production nonempty_print_expr -> STRING
--- On GREATER reduce production nonempty_print_expr -> STRING
--- On FALSE reduce production nonempty_print_expr -> STRING
--- On EOF reduce production nonempty_print_expr -> STRING
--- On CL_PAR reduce production nonempty_print_expr -> STRING
+-- On UNTIL TRUE STRING SMALLER SEMICOLON REPEAT NEWLINE ID GREATER FALSE EOF CL_PAR
+--   reduce production nonempty_print_expr -> STRING
 
 State 165:
 ## Known stack suffix:
@@ -3285,18 +2857,8 @@ nonempty_print_expr -> mid_alg_expr . DOT nonempty_print_expr [ UNTIL TRUE STRIN
 -- On DOT shift to state 168
 -- On DIV shift to state 128
 ## Reductions:
--- On UNTIL reduce production nonempty_print_expr -> mid_alg_expr
--- On TRUE reduce production nonempty_print_expr -> mid_alg_expr
--- On STRING reduce production nonempty_print_expr -> mid_alg_expr
--- On SMALLER reduce production nonempty_print_expr -> mid_alg_expr
--- On SEMICOLON reduce production nonempty_print_expr -> mid_alg_expr
--- On REPEAT reduce production nonempty_print_expr -> mid_alg_expr
--- On NEWLINE reduce production nonempty_print_expr -> mid_alg_expr
--- On ID reduce production nonempty_print_expr -> mid_alg_expr
--- On GREATER reduce production nonempty_print_expr -> mid_alg_expr
--- On FALSE reduce production nonempty_print_expr -> mid_alg_expr
--- On EOF reduce production nonempty_print_expr -> mid_alg_expr
--- On CL_PAR reduce production nonempty_print_expr -> mid_alg_expr
+-- On UNTIL TRUE STRING SMALLER SEMICOLON REPEAT NEWLINE ID GREATER FALSE EOF CL_PAR
+--   reduce production nonempty_print_expr -> mid_alg_expr
 
 State 168:
 ## Known stack suffix:
@@ -3479,12 +3041,8 @@ effect -> SNAPSHOT . print_expr [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 -- On mid_alg_expr shift to state 167
 -- On constant shift to state 113
 ## Reductions:
--- On UNTIL reduce production print_expr ->
--- On SEMICOLON reduce production print_expr ->
--- On REPEAT reduce production print_expr ->
--- On NEWLINE reduce production print_expr ->
--- On EOF reduce production print_expr ->
--- On CL_PAR reduce production print_expr ->
+-- On UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR
+--   reduce production print_expr ->
 
 State 178:
 ## Known stack suffix:
@@ -3610,7 +3168,8 @@ effect -> PRINTF . print_expr SMALLER print_expr GREATER [ UNTIL SEMICOLON REPEA
 -- On mid_alg_expr shift to state 167
 -- On constant shift to state 113
 ## Reductions:
--- On SMALLER reduce production print_expr ->
+-- On SMALLER
+--   reduce production print_expr ->
 
 State 184:
 ## Known stack suffix:
@@ -3659,7 +3218,8 @@ effect -> PRINTF print_expr SMALLER . print_expr GREATER [ UNTIL SEMICOLON REPEA
 -- On mid_alg_expr shift to state 167
 -- On constant shift to state 113
 ## Reductions:
--- On GREATER reduce production print_expr ->
+-- On GREATER
+--   reduce production print_expr ->
 
 State 186:
 ## Known stack suffix:
@@ -3857,12 +3417,8 @@ effect -> ID LAR alg_expr . [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 -- On EQUAL shift to state 150
 -- On DIFF shift to state 152
 ## Reductions:
--- On UNTIL reduce production effect -> ID LAR alg_expr
--- On SEMICOLON reduce production effect -> ID LAR alg_expr
--- On REPEAT reduce production effect -> ID LAR alg_expr
--- On NEWLINE reduce production effect -> ID LAR alg_expr
--- On EOF reduce production effect -> ID LAR alg_expr
--- On CL_PAR reduce production effect -> ID LAR alg_expr
+-- On UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR
+--   reduce production effect -> ID LAR alg_expr
 
 State 197:
 ## Known stack suffix:
@@ -4093,12 +3649,8 @@ effect -> ASSIGN LABEL alg_expr . [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 -- On EQUAL shift to state 150
 -- On DIFF shift to state 152
 ## Reductions:
--- On UNTIL reduce production effect -> ASSIGN LABEL alg_expr
--- On SEMICOLON reduce production effect -> ASSIGN LABEL alg_expr
--- On REPEAT reduce production effect -> ASSIGN LABEL alg_expr
--- On NEWLINE reduce production effect -> ASSIGN LABEL alg_expr
--- On EOF reduce production effect -> ASSIGN LABEL alg_expr
--- On CL_PAR reduce production effect -> ASSIGN LABEL alg_expr
+-- On UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR
+--   reduce production effect -> ASSIGN LABEL alg_expr
 
 State 209:
 ## Known stack suffix:
@@ -4157,12 +3709,8 @@ effect -> ASSIGN ID alg_expr . [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 -- On EQUAL shift to state 150
 -- On DIFF shift to state 152
 ## Reductions:
--- On UNTIL reduce production effect -> ASSIGN ID alg_expr
--- On SEMICOLON reduce production effect -> ASSIGN ID alg_expr
--- On REPEAT reduce production effect -> ASSIGN ID alg_expr
--- On NEWLINE reduce production effect -> ASSIGN ID alg_expr
--- On EOF reduce production effect -> ASSIGN ID alg_expr
--- On CL_PAR reduce production effect -> ASSIGN ID alg_expr
+-- On UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR
+--   reduce production effect -> ASSIGN ID alg_expr
 
 State 211:
 ## Known stack suffix:
@@ -4214,9 +3762,10 @@ effect -> APPLY small_alg_expr . rule_content [ UNTIL SEMICOLON REPEAT NEWLINE E
 -- On mod_agent shift to state 8
 -- On agent_expression shift to state 62
 ## Reductions:
--- On KAPPA_RAR reduce production token_expr ->
--- On KAPPA_LRAR reduce production token_expr ->
--- On ID reduce production mod_agent ->
+-- On ID
+--   reduce production mod_agent ->
+-- On KAPPA_RAR KAPPA_LRAR
+--   reduce production token_expr ->
 
 State 213:
 ## Known stack suffix:
@@ -4378,14 +3927,8 @@ sum_token -> alg_expr TYPE ID . PLUS sum_token [ UNTIL SEMICOLON REPEAT NEWLINE 
 ## Transitions:
 -- On PLUS shift to state 221
 ## Reductions:
--- On UNTIL reduce production sum_token -> alg_expr TYPE ID
--- On SEMICOLON reduce production sum_token -> alg_expr TYPE ID
--- On REPEAT reduce production sum_token -> alg_expr TYPE ID
--- On NEWLINE reduce production sum_token -> alg_expr TYPE ID
--- On KAPPA_RAR reduce production sum_token -> alg_expr TYPE ID
--- On KAPPA_LRAR reduce production sum_token -> alg_expr TYPE ID
--- On EOF reduce production sum_token -> alg_expr TYPE ID
--- On CL_PAR reduce production sum_token -> alg_expr TYPE ID
+-- On UNTIL SEMICOLON REPEAT NEWLINE KAPPA_RAR KAPPA_LRAR EOF CL_PAR
+--   reduce production sum_token -> alg_expr TYPE ID
 
 State 221:
 ## Known stack suffix:
@@ -4469,14 +4012,8 @@ sum_token -> alg_expr ID . PLUS sum_token [ UNTIL SEMICOLON REPEAT NEWLINE KAPPA
 ## Transitions:
 -- On PLUS shift to state 225
 ## Reductions:
--- On UNTIL reduce production sum_token -> alg_expr ID
--- On SEMICOLON reduce production sum_token -> alg_expr ID
--- On REPEAT reduce production sum_token -> alg_expr ID
--- On NEWLINE reduce production sum_token -> alg_expr ID
--- On KAPPA_RAR reduce production sum_token -> alg_expr ID
--- On KAPPA_LRAR reduce production sum_token -> alg_expr ID
--- On EOF reduce production sum_token -> alg_expr ID
--- On CL_PAR reduce production sum_token -> alg_expr ID
+-- On UNTIL SEMICOLON REPEAT NEWLINE KAPPA_RAR KAPPA_LRAR EOF CL_PAR
+--   reduce production sum_token -> alg_expr ID
 
 State 225:
 ## Known stack suffix:
@@ -4538,14 +4075,10 @@ rule_content -> PIPE sum_token . [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 token_expr -> PIPE sum_token . [ KAPPA_RAR KAPPA_LRAR ]
 ## Transitions:
 ## Reductions:
--- On UNTIL reduce production rule_content -> PIPE sum_token
--- On SEMICOLON reduce production rule_content -> PIPE sum_token
--- On REPEAT reduce production rule_content -> PIPE sum_token
--- On NEWLINE reduce production rule_content -> PIPE sum_token
--- On KAPPA_RAR reduce production token_expr -> PIPE sum_token
--- On KAPPA_LRAR reduce production token_expr -> PIPE sum_token
--- On EOF reduce production rule_content -> PIPE sum_token
--- On CL_PAR reduce production rule_content -> PIPE sum_token
+-- On UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR
+--   reduce production rule_content -> PIPE sum_token
+-- On KAPPA_RAR KAPPA_LRAR
+--   reduce production token_expr -> PIPE sum_token
 
 State 228:
 ## Known stack suffix:
@@ -4593,13 +4126,10 @@ rule_content -> token_expr arrow . token_expr [ UNTIL SEMICOLON REPEAT NEWLINE E
 -- On mod_agent shift to state 8
 -- On agent_expression shift to state 62
 ## Reductions:
--- On UNTIL reduce production token_expr ->
--- On SEMICOLON reduce production token_expr ->
--- On REPEAT reduce production token_expr ->
--- On NEWLINE reduce production token_expr ->
--- On ID reduce production mod_agent ->
--- On EOF reduce production token_expr ->
--- On CL_PAR reduce production token_expr ->
+-- On ID
+--   reduce production mod_agent ->
+-- On UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR
+--   reduce production token_expr ->
 
 State 232:
 ## Known stack suffix:
@@ -4673,12 +4203,8 @@ rule_content -> token_expr arrow pattern . token_expr [ UNTIL SEMICOLON REPEAT N
 -- On PIPE shift to state 232
 -- On token_expr shift to state 236
 ## Reductions:
--- On UNTIL reduce production token_expr ->
--- On SEMICOLON reduce production token_expr ->
--- On REPEAT reduce production token_expr ->
--- On NEWLINE reduce production token_expr ->
--- On EOF reduce production token_expr ->
--- On CL_PAR reduce production token_expr ->
+-- On UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR
+--   reduce production token_expr ->
 
 State 236:
 ## Known stack suffix:
@@ -4709,14 +4235,8 @@ rule_content -> pattern . token_expr [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR
 -- On PIPE shift to state 232
 -- On token_expr shift to state 239
 ## Reductions:
--- On UNTIL reduce production token_expr ->
--- On SEMICOLON reduce production token_expr ->
--- On REPEAT reduce production token_expr ->
--- On NEWLINE reduce production token_expr ->
--- On KAPPA_RAR reduce production token_expr ->
--- On KAPPA_LRAR reduce production token_expr ->
--- On EOF reduce production token_expr ->
--- On CL_PAR reduce production token_expr ->
+-- On UNTIL SEMICOLON REPEAT NEWLINE KAPPA_RAR KAPPA_LRAR EOF CL_PAR
+--   reduce production token_expr ->
 
 State 239:
 ## Known stack suffix:
@@ -4730,12 +4250,8 @@ rule_content -> pattern token_expr . [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR
 -- On KAPPA_LRAR shift to state 230
 -- On arrow shift to state 240
 ## Reductions:
--- On UNTIL reduce production rule_content -> pattern token_expr
--- On SEMICOLON reduce production rule_content -> pattern token_expr
--- On REPEAT reduce production rule_content -> pattern token_expr
--- On NEWLINE reduce production rule_content -> pattern token_expr
--- On EOF reduce production rule_content -> pattern token_expr
--- On CL_PAR reduce production rule_content -> pattern token_expr
+-- On UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR
+--   reduce production rule_content -> pattern token_expr
 
 State 240:
 ## Known stack suffix:
@@ -4753,13 +4269,10 @@ rule_content -> pattern token_expr arrow . token_expr [ UNTIL SEMICOLON REPEAT N
 -- On mod_agent shift to state 8
 -- On agent_expression shift to state 62
 ## Reductions:
--- On UNTIL reduce production token_expr ->
--- On SEMICOLON reduce production token_expr ->
--- On REPEAT reduce production token_expr ->
--- On NEWLINE reduce production token_expr ->
--- On ID reduce production mod_agent ->
--- On EOF reduce production token_expr ->
--- On CL_PAR reduce production token_expr ->
+-- On ID
+--   reduce production mod_agent ->
+-- On UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR
+--   reduce production token_expr ->
 
 State 241:
 ## Known stack suffix:
@@ -4779,12 +4292,8 @@ rule_content -> pattern token_expr arrow pattern . token_expr [ UNTIL SEMICOLON 
 -- On PIPE shift to state 232
 -- On token_expr shift to state 243
 ## Reductions:
--- On UNTIL reduce production token_expr ->
--- On SEMICOLON reduce production token_expr ->
--- On REPEAT reduce production token_expr ->
--- On NEWLINE reduce production token_expr ->
--- On EOF reduce production token_expr ->
--- On CL_PAR reduce production token_expr ->
+-- On UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR
+--   reduce production token_expr ->
 
 State 243:
 ## Known stack suffix:
@@ -4822,11 +4331,8 @@ effect_list -> effect . SEMICOLON effect_list [ UNTIL REPEAT NEWLINE EOF CL_PAR 
 ## Transitions:
 -- On SEMICOLON shift to state 247
 ## Reductions:
--- On UNTIL reduce production effect_list -> effect
--- On REPEAT reduce production effect_list -> effect
--- On NEWLINE reduce production effect_list -> effect
--- On EOF reduce production effect_list -> effect
--- On CL_PAR reduce production effect_list -> effect
+-- On UNTIL REPEAT NEWLINE EOF CL_PAR
+--   reduce production effect_list -> effect
 
 State 247:
 ## Known stack suffix:
@@ -5055,9 +4561,10 @@ start_rule' -> . start_rule [ # ]
 -- On instruction shift to state 397
 -- On agent_expression shift to state 344
 ## Reductions:
--- On KAPPA_RAR reduce production token_expr ->
--- On KAPPA_LRAR reduce production token_expr ->
--- On ID reduce production mod_agent ->
+-- On ID
+--   reduce production mod_agent ->
+-- On KAPPA_RAR KAPPA_LRAR
+--   reduce production token_expr ->
 
 State 262:
 ## Known stack suffix:
@@ -5099,7 +4606,8 @@ instruction -> SIGNATURE . error [ NEWLINE EOF ]
 -- On mod_agent shift to state 8
 -- On agent_expression shift to state 267
 ## Reductions:
--- On ID reduce production mod_agent ->
+-- On ID
+--   reduce production mod_agent ->
 
 State 266:
 ## Known stack suffix:
@@ -5187,8 +4695,8 @@ instruction -> PLOT alg_expr . [ NEWLINE EOF ]
 -- On EQUAL shift to state 150
 -- On DIFF shift to state 152
 ## Reductions:
--- On NEWLINE reduce production instruction -> PLOT alg_expr
--- On EOF reduce production instruction -> PLOT alg_expr
+-- On NEWLINE EOF
+--   reduce production instruction -> PLOT alg_expr
 
 State 271:
 ## Known stack suffix:
@@ -5307,10 +4815,10 @@ rule_content -> PIPE sum_token . [ error AT ]
 token_expr -> PIPE sum_token . [ KAPPA_RAR KAPPA_LRAR ]
 ## Transitions:
 ## Reductions:
--- On error reduce production rule_content -> PIPE sum_token
--- On KAPPA_RAR reduce production token_expr -> PIPE sum_token
--- On KAPPA_LRAR reduce production token_expr -> PIPE sum_token
--- On AT reduce production rule_content -> PIPE sum_token
+-- On error AT
+--   reduce production rule_content -> PIPE sum_token
+-- On KAPPA_RAR KAPPA_LRAR
+--   reduce production token_expr -> PIPE sum_token
 
 State 276:
 ## Known stack suffix:
@@ -5352,10 +4860,8 @@ sum_token -> alg_expr TYPE ID . PLUS sum_token [ error KAPPA_RAR KAPPA_LRAR AT ]
 ## Transitions:
 -- On PLUS shift to state 279
 ## Reductions:
--- On error reduce production sum_token -> alg_expr TYPE ID
--- On KAPPA_RAR reduce production sum_token -> alg_expr TYPE ID
--- On KAPPA_LRAR reduce production sum_token -> alg_expr TYPE ID
--- On AT reduce production sum_token -> alg_expr TYPE ID
+-- On error KAPPA_RAR KAPPA_LRAR AT
+--   reduce production sum_token -> alg_expr TYPE ID
 
 State 279:
 ## Known stack suffix:
@@ -5418,10 +4924,8 @@ sum_token -> alg_expr ID . PLUS sum_token [ error KAPPA_RAR KAPPA_LRAR AT ]
 ## Transitions:
 -- On PLUS shift to state 282
 ## Reductions:
--- On error reduce production sum_token -> alg_expr ID
--- On KAPPA_RAR reduce production sum_token -> alg_expr ID
--- On KAPPA_LRAR reduce production sum_token -> alg_expr ID
--- On AT reduce production sum_token -> alg_expr ID
+-- On error KAPPA_RAR KAPPA_LRAR AT
+--   reduce production sum_token -> alg_expr ID
 
 State 282:
 ## Known stack suffix:
@@ -5486,33 +4990,8 @@ instruction -> PERT . perturbation_declaration [ NEWLINE EOF ]
 -- On perturbation_declaration shift to state 293
 -- On perturbation_alarm shift to state 294
 ## Reductions:
--- On TRUE reduce production perturbation_alarm ->
--- On TMAX reduce production perturbation_alarm ->
--- On TIME reduce production perturbation_alarm ->
--- On TAN reduce production perturbation_alarm ->
--- On SQRT reduce production perturbation_alarm ->
--- On SINUS reduce production perturbation_alarm ->
--- On PIPE reduce production perturbation_alarm ->
--- On OP_PAR reduce production perturbation_alarm ->
--- On NULL_EVENT reduce production perturbation_alarm ->
--- On NOT reduce production perturbation_alarm ->
--- On MINUS reduce production perturbation_alarm ->
--- On MIN reduce production perturbation_alarm ->
--- On MAX reduce production perturbation_alarm ->
--- On LOG reduce production perturbation_alarm ->
--- On LABEL reduce production perturbation_alarm ->
--- On INT reduce production perturbation_alarm ->
--- On INFINITY reduce production perturbation_alarm ->
--- On ID reduce production perturbation_alarm ->
--- On FLOAT reduce production perturbation_alarm ->
--- On FALSE reduce production perturbation_alarm ->
--- On EXPONENT reduce production perturbation_alarm ->
--- On EVENT reduce production perturbation_alarm ->
--- On EMAX reduce production perturbation_alarm ->
--- On DO reduce production perturbation_alarm ->
--- On CPUTIME reduce production perturbation_alarm ->
--- On COSINUS reduce production perturbation_alarm ->
--- On ABS reduce production perturbation_alarm ->
+-- On TRUE TMAX TIME TAN SQRT SINUS PIPE OP_PAR NULL_EVENT NOT MINUS MIN MAX LOG LABEL INT INFINITY ID FLOAT FALSE EXPONENT EVENT EMAX DO CPUTIME COSINUS ABS
+--   reduce production perturbation_alarm ->
 
 State 285:
 ## Known stack suffix:
@@ -5658,8 +5137,8 @@ perturbation_declaration -> REPEAT bool_expr DO effect_list UNTIL bool_expr . [ 
 -- On OR shift to state 140
 -- On AND shift to state 142
 ## Reductions:
--- On NEWLINE reduce production perturbation_declaration -> REPEAT bool_expr DO effect_list UNTIL bool_expr
--- On EOF reduce production perturbation_declaration -> REPEAT bool_expr DO effect_list UNTIL bool_expr
+-- On NEWLINE EOF
+--   reduce production perturbation_declaration -> REPEAT bool_expr DO effect_list UNTIL bool_expr
 
 State 291:
 ## Known stack suffix:
@@ -5769,8 +5248,8 @@ perturbation_declaration -> perturbation_alarm DO effect_list . perturbation_pos
 -- On REPEAT shift to state 299
 -- On perturbation_post shift to state 301
 ## Reductions:
--- On NEWLINE reduce production perturbation_post ->
--- On EOF reduce production perturbation_post ->
+-- On NEWLINE EOF
+--   reduce production perturbation_post ->
 
 State 297:
 ## Known stack suffix:
@@ -5827,8 +5306,8 @@ perturbation_post -> UNTIL bool_expr . [ NEWLINE EOF ]
 -- On OR shift to state 140
 -- On AND shift to state 142
 ## Reductions:
--- On NEWLINE reduce production perturbation_post -> UNTIL bool_expr
--- On EOF reduce production perturbation_post -> UNTIL bool_expr
+-- On NEWLINE EOF
+--   reduce production perturbation_post -> UNTIL bool_expr
 
 State 299:
 ## Known stack suffix:
@@ -5885,8 +5364,8 @@ perturbation_post -> REPEAT bool_expr . [ NEWLINE EOF ]
 -- On OR shift to state 140
 -- On AND shift to state 142
 ## Reductions:
--- On NEWLINE reduce production perturbation_post -> REPEAT bool_expr
--- On EOF reduce production perturbation_post -> REPEAT bool_expr
+-- On NEWLINE EOF
+--   reduce production perturbation_post -> REPEAT bool_expr
 
 State 301:
 ## Known stack suffix:
@@ -5979,8 +5458,8 @@ perturbation_declaration -> perturbation_alarm bool_expr DO effect_list . pertur
 -- On REPEAT shift to state 299
 -- On perturbation_post shift to state 307
 ## Reductions:
--- On NEWLINE reduce production perturbation_post ->
--- On EOF reduce production perturbation_post ->
+-- On NEWLINE EOF
+--   reduce production perturbation_post ->
 
 State 307:
 ## Known stack suffix:
@@ -6004,7 +5483,8 @@ pattern -> OP_PAR . pattern CL_PAR [ error PIPE KAPPA_RAR KAPPA_LRAR AT ]
 -- On mod_agent shift to state 8
 -- On agent_expression shift to state 62
 ## Reductions:
--- On ID reduce production mod_agent ->
+-- On ID
+--   reduce production mod_agent ->
 
 State 309:
 ## Known stack suffix:
@@ -6100,18 +5580,8 @@ variable -> ID . [ SMALLER POW PLUS NEWLINE MULT MODULO MINUS GREATER EQUAL EOF 
 ## Transitions:
 -- On OP_PAR shift to state 80
 ## Reductions:
--- On SMALLER reduce production variable -> ID
--- On POW reduce production variable -> ID
--- On PLUS reduce production variable -> ID
--- On NEWLINE reduce production variable -> ID
--- On MULT reduce production variable -> ID
--- On MODULO reduce production variable -> ID
--- On MINUS reduce production variable -> ID
--- On GREATER reduce production variable -> ID
--- On EQUAL reduce production variable -> ID
--- On EOF reduce production variable -> ID
--- On DIV reduce production variable -> ID
--- On DIFF reduce production variable -> ID
+-- On SMALLER POW PLUS NEWLINE MULT MODULO MINUS GREATER EQUAL EOF DIV DIFF
+--   reduce production variable -> ID
 
 State 315:
 ## Known stack suffix:
@@ -6137,8 +5607,8 @@ variable_declaration -> LABEL alg_expr . [ NEWLINE EOF ]
 -- On EQUAL shift to state 150
 -- On DIFF shift to state 152
 ## Reductions:
--- On NEWLINE reduce production variable_declaration -> LABEL alg_expr
--- On EOF reduce production variable_declaration -> LABEL alg_expr
+-- On NEWLINE EOF
+--   reduce production variable_declaration -> LABEL alg_expr
 
 State 317:
 ## Known stack suffix:
@@ -6197,8 +5667,8 @@ variable_declaration -> ID alg_expr . [ NEWLINE EOF ]
 -- On EQUAL shift to state 150
 -- On DIFF shift to state 152
 ## Reductions:
--- On NEWLINE reduce production variable_declaration -> ID alg_expr
--- On EOF reduce production variable_declaration -> ID alg_expr
+-- On NEWLINE EOF
+--   reduce production variable_declaration -> ID alg_expr
 
 State 319:
 ## Known stack suffix:
@@ -6241,9 +5711,10 @@ newline -> NEWLINE . start_rule [ # ]
 -- On instruction shift to state 397
 -- On agent_expression shift to state 344
 ## Reductions:
--- On KAPPA_RAR reduce production token_expr ->
--- On KAPPA_LRAR reduce production token_expr ->
--- On ID reduce production mod_agent ->
+-- On ID
+--   reduce production mod_agent ->
+-- On KAPPA_RAR KAPPA_LRAR
+--   reduce production token_expr ->
 
 State 321:
 ## Known stack suffix:
@@ -6284,9 +5755,10 @@ start_rule -> LABEL . EQUAL alg_expr newline [ # ]
 -- On mod_agent shift to state 338
 -- On agent_expression shift to state 344
 ## Reductions:
--- On KAPPA_RAR reduce production token_expr ->
--- On KAPPA_LRAR reduce production token_expr ->
--- On ID reduce production mod_agent ->
+-- On ID
+--   reduce production mod_agent ->
+-- On KAPPA_RAR KAPPA_LRAR
+--   reduce production token_expr ->
 
 State 324:
 ## Known stack suffix:
@@ -6413,9 +5885,10 @@ rule_content -> token_expr arrow . token_expr [ error AT ]
 -- On mod_agent shift to state 338
 -- On agent_expression shift to state 344
 ## Reductions:
--- On error reduce production token_expr ->
--- On ID reduce production mod_agent ->
--- On AT reduce production token_expr ->
+-- On ID
+--   reduce production mod_agent ->
+-- On error AT
+--   reduce production token_expr ->
 
 State 332:
 ## Known stack suffix:
@@ -6498,8 +5971,8 @@ rule_content -> token_expr arrow pattern . token_expr [ error AT ]
 -- On PIPE shift to state 332
 -- On token_expr shift to state 337
 ## Reductions:
--- On error reduce production token_expr ->
--- On AT reduce production token_expr ->
+-- On error AT
+--   reduce production token_expr ->
 
 State 337:
 ## Known stack suffix:
@@ -6550,7 +6023,8 @@ agent_expression -> mod_agent ID OP_PAR . interface_expression CL_PAR [ error PI
 -- On port_expression shift to state 57
 -- On interface_expression shift to state 342
 ## Reductions:
--- On CL_PAR reduce production interface_expression ->
+-- On CL_PAR
+--   reduce production interface_expression ->
 
 State 342:
 ## Known stack suffix:
@@ -6579,11 +6053,8 @@ pattern -> agent_expression . [ error PIPE KAPPA_RAR KAPPA_LRAR AT ]
 ## Transitions:
 -- On COMMA shift to state 345
 ## Reductions:
--- On error reduce production pattern -> agent_expression
--- On PIPE reduce production pattern -> agent_expression
--- On KAPPA_RAR reduce production pattern -> agent_expression
--- On KAPPA_LRAR reduce production pattern -> agent_expression
--- On AT reduce production pattern -> agent_expression
+-- On error PIPE KAPPA_RAR KAPPA_LRAR AT
+--   reduce production pattern -> agent_expression
 
 State 345:
 ## Known stack suffix:
@@ -6598,7 +6069,8 @@ pattern -> agent_expression COMMA . pattern [ error PIPE KAPPA_RAR KAPPA_LRAR AT
 -- On mod_agent shift to state 338
 -- On agent_expression shift to state 344
 ## Reductions:
--- On ID reduce production mod_agent ->
+-- On ID
+--   reduce production mod_agent ->
 
 State 346:
 ## Known stack suffix:
@@ -6693,9 +6165,8 @@ birate -> AT . rate COMMA rate [ NEWLINE EOF ]
 -- On bool_expr shift to state 139
 -- On alg_expr shift to state 361
 ## Reductions:
--- On NEWLINE reduce production rate ->
--- On EOF reduce production rate ->
--- On COMMA reduce production rate ->
+-- On NEWLINE EOF COMMA
+--   reduce production rate ->
 
 State 352:
 ## Known stack suffix:
@@ -6775,8 +6246,8 @@ bool_expr -> alg_expr . DIFF alg_expr [ THEN OR AND ]
 -- On EQUAL shift to state 150
 -- On DIFF shift to state 152
 ## Reductions:
--- On CL_PAR reduce production alg_with_radius -> alg_expr
--- On CL_CUR reduce production alg_with_radius -> alg_expr
+-- On CL_PAR CL_CUR
+--   reduce production alg_with_radius -> alg_expr
 
 State 356:
 ## Known stack suffix:
@@ -6835,8 +6306,8 @@ bool_expr -> alg_expr . DIFF alg_expr [ THEN OR AND ]
 -- On EQUAL shift to state 150
 -- On DIFF shift to state 152
 ## Reductions:
--- On CL_PAR reduce production alg_with_radius -> alg_expr TYPE alg_expr
--- On CL_CUR reduce production alg_with_radius -> alg_expr TYPE alg_expr
+-- On CL_PAR CL_CUR
+--   reduce production alg_with_radius -> alg_expr TYPE alg_expr
 
 State 358:
 ## Known stack suffix:
@@ -6847,8 +6318,8 @@ birate -> AT rate . COMMA rate [ NEWLINE EOF ]
 ## Transitions:
 -- On COMMA shift to state 359
 ## Reductions:
--- On NEWLINE reduce production birate -> AT rate
--- On EOF reduce production birate -> AT rate
+-- On NEWLINE EOF
+--   reduce production birate -> AT rate
 
 State 359:
 ## Known stack suffix:
@@ -6893,8 +6364,8 @@ birate -> AT rate COMMA . rate [ NEWLINE EOF ]
 -- On bool_expr shift to state 139
 -- On alg_expr shift to state 361
 ## Reductions:
--- On NEWLINE reduce production rate ->
--- On EOF reduce production rate ->
+-- On NEWLINE EOF
+--   reduce production rate ->
 
 State 360:
 ## Known stack suffix:
@@ -6925,9 +6396,8 @@ rate -> alg_expr . OP_CUR CL_CUR [ NEWLINE EOF COMMA ]
 -- On EQUAL shift to state 150
 -- On DIFF shift to state 152
 ## Reductions:
--- On NEWLINE reduce production rate -> alg_expr
--- On EOF reduce production rate -> alg_expr
--- On COMMA reduce production rate -> alg_expr
+-- On NEWLINE EOF COMMA
+--   reduce production rate -> alg_expr
 
 State 362:
 ## Known stack suffix:
@@ -7082,10 +6552,8 @@ rule_content -> pattern . token_expr [ error AT ]
 -- On PIPE shift to state 332
 -- On token_expr shift to state 371
 ## Reductions:
--- On error reduce production token_expr ->
--- On KAPPA_RAR reduce production token_expr ->
--- On KAPPA_LRAR reduce production token_expr ->
--- On AT reduce production token_expr ->
+-- On error KAPPA_RAR KAPPA_LRAR AT
+--   reduce production token_expr ->
 
 State 371:
 ## Known stack suffix:
@@ -7099,8 +6567,8 @@ rule_content -> pattern token_expr . [ error AT ]
 -- On KAPPA_LRAR shift to state 330
 -- On arrow shift to state 372
 ## Reductions:
--- On error reduce production rule_content -> pattern token_expr
--- On AT reduce production rule_content -> pattern token_expr
+-- On error AT
+--   reduce production rule_content -> pattern token_expr
 
 State 372:
 ## Known stack suffix:
@@ -7118,9 +6586,10 @@ rule_content -> pattern token_expr arrow . token_expr [ error AT ]
 -- On mod_agent shift to state 338
 -- On agent_expression shift to state 344
 ## Reductions:
--- On error reduce production token_expr ->
--- On ID reduce production mod_agent ->
--- On AT reduce production token_expr ->
+-- On ID
+--   reduce production mod_agent ->
+-- On error AT
+--   reduce production token_expr ->
 
 State 373:
 ## Known stack suffix:
@@ -7140,8 +6609,8 @@ rule_content -> pattern token_expr arrow pattern . token_expr [ error AT ]
 -- On PIPE shift to state 332
 -- On token_expr shift to state 375
 ## Reductions:
--- On error reduce production token_expr ->
--- On AT reduce production token_expr ->
+-- On error AT
+--   reduce production token_expr ->
 
 State 375:
 ## Known stack suffix:
@@ -7215,18 +6684,8 @@ variable -> ID . [ SMALLER POW PLUS OP_PAR MULT MODULO MINUS ID GREATER EQUAL DI
 ## Transitions:
 -- On LAR shift to state 379
 ## Reductions:
--- On SMALLER reduce production variable -> ID
--- On POW reduce production variable -> ID
--- On PLUS reduce production variable -> ID
--- On OP_PAR reduce production variable -> ID
--- On MULT reduce production variable -> ID
--- On MODULO reduce production variable -> ID
--- On MINUS reduce production variable -> ID
--- On ID reduce production variable -> ID
--- On GREATER reduce production variable -> ID
--- On EQUAL reduce production variable -> ID
--- On DIV reduce production variable -> ID
--- On DIFF reduce production variable -> ID
+-- On SMALLER POW PLUS OP_PAR MULT MODULO MINUS ID GREATER EQUAL DIV DIFF
+--   reduce production variable -> ID
 
 State 379:
 ## Known stack suffix:
@@ -7285,8 +6744,8 @@ init_declaration -> ID LAR alg_expr . [ NEWLINE EOF ]
 -- On EQUAL shift to state 150
 -- On DIFF shift to state 152
 ## Reductions:
--- On NEWLINE reduce production init_declaration -> ID LAR alg_expr
--- On EOF reduce production init_declaration -> ID LAR alg_expr
+-- On NEWLINE EOF
+--   reduce production init_declaration -> ID LAR alg_expr
 
 State 381:
 ## Known stack suffix:
@@ -7356,8 +6815,8 @@ non_empty_mixture -> ID . OP_PAR interface_expression CL_PAR COMMA pattern [ NEW
 ## Transitions:
 -- On OP_PAR shift to state 80
 ## Reductions:
--- On NEWLINE reduce production init_declaration -> alg_expr ID
--- On EOF reduce production init_declaration -> alg_expr ID
+-- On NEWLINE EOF
+--   reduce production init_declaration -> alg_expr ID
 
 State 387:
 ## Known stack suffix:
@@ -7397,8 +6856,8 @@ value_list -> STRING . value_list [ NEWLINE EOF ]
 -- On STRING shift to state 390
 -- On value_list shift to state 391
 ## Reductions:
--- On NEWLINE reduce production value_list -> STRING
--- On EOF reduce production value_list -> STRING
+-- On NEWLINE EOF
+--   reduce production value_list -> STRING
 
 State 391:
 ## Known stack suffix:
