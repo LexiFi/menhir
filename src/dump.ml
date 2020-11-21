@@ -14,6 +14,13 @@
 open Printf
 open Grammar
 
+module Make (Default : sig
+
+  val has_default_reduction:
+    Lr1.node -> (Production.index * TerminalSet.t) option
+
+end) = struct
+
 let dump_node out print_stack_symbols node =
 
   (* Print the state number. *)
@@ -43,20 +50,37 @@ let dump_node out print_stack_symbols node =
 
   (* Print the reductions. *)
 
-  (* One might wish to group all symbols that
-     lead to reducing a common production. *)
+  begin match Default.has_default_reduction node with
+  | Some (prod, toks) ->
+      (* There is a default reduction. *)
+      (* Because end-of-stream conflicts have been resolved, either [toks]
+         is the singleton set that contains just the token [#], or it is
+         a set of ordinary terminal symbols. In the former case, Menhir
+         reduces without even asking for the next token; in the latter case,
+         it first reads the next token, then reduces without looking at it. *)
+      assert (
+        TerminalSet.equal toks (TerminalSet.singleton Terminal.sharp) ||
+        not (TerminalSet.mem Terminal.sharp toks)
+      );
+      let keyword =
+        if TerminalSet.mem Terminal.sharp toks then "Without" else "After"
+      in
+      fprintf out "## Default reduction:\n";
+      fprintf out "-- %s reading the next token, %s\n"
+        keyword (Production.describe false prod);
 
-  fprintf out "## Reductions:\n";
-  TerminalMap.iter (fun tok prods ->
-    List.iter (fun prod ->
-      fprintf out "-- On %s " (Terminal.print tok);
-      match Production.classify prod with
-      | Some nt ->
-          fprintf out "accept %s\n" (Nonterminal.print false nt)
-      | None ->
-          fprintf out "reduce production %s\n" (Production.print prod)
-    ) prods
-  ) (Lr1.reductions node);
+  | None ->
+      (* There is no default reduction. *)
+      (* One might wish to group all symbols that
+         lead to reducing a common production. *)
+      fprintf out "## Reductions:\n";
+      TerminalMap.iter (fun tok prods ->
+        List.iter (fun prod ->
+          fprintf out "-- On %s " (Terminal.print tok);
+          fprintf out "%s\n" (Production.describe false prod)
+        ) prods
+      ) (Lr1.reductions node);
+  end;
 
   (* Print the conflicts. *)
 
@@ -81,7 +105,7 @@ let dump_node out print_stack_symbols node =
        **   (1) %s\n\
        **   without even requesting a lookahead token, and\n\
        **   (2) testing whether the lookahead token is a member of the above set.\n"
-      (Production.describe prod)
+      (Production.describe true prod)
 
   end;
 
@@ -95,3 +119,5 @@ let dump filename =
   Lr1.iter (dump_node out SS.print_stack_symbols);
   close_out out;
   Time.tick "Dumping the LR(1) automaton"
+
+end

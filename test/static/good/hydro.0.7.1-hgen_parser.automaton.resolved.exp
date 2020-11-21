@@ -55,10 +55,8 @@ State 3:
 ## LR(1) items:
 string_lit -> STRING_LITERAL string_lit . [ RDBRACK RBRACK COMMA ]
 ## Transitions:
-## Reductions:
--- On RDBRACK reduce production string_lit -> STRING_LITERAL string_lit
--- On RBRACK reduce production string_lit -> STRING_LITERAL string_lit
--- On COMMA reduce production string_lit -> STRING_LITERAL string_lit
+## Default reduction:
+-- After reading the next token, reduce production string_lit -> STRING_LITERAL string_lit
 
 State 4:
 ## Known stack suffix:
@@ -89,9 +87,8 @@ State 6:
 ## LR(1) items:
 string_list -> string_lit COMMA string_list . [ RDBRACK RBRACK ]
 ## Transitions:
-## Reductions:
--- On RDBRACK reduce production string_list -> string_lit COMMA string_list
--- On RBRACK reduce production string_list -> string_lit COMMA string_list
+## Default reduction:
+-- After reading the next token, reduce production string_list -> string_lit COMMA string_list
 
 State 7:
 ## Known stack suffix:
@@ -108,21 +105,8 @@ State 8:
 ## LR(1) items:
 global_meta_data -> LDBRACK string_list RDBRACK . [ RBRACE LDBRACK LBRACK K_STRUCT K_SEQUENCE K_MODULE K_LOCAL K_INTERFACE K_EXCEPTION K_ENUM K_DICTIONARY K_CONST K_CLASS EOF ]
 ## Transitions:
-## Reductions:
--- On RBRACE reduce production global_meta_data -> LDBRACK string_list RDBRACK
--- On LDBRACK reduce production global_meta_data -> LDBRACK string_list RDBRACK
--- On LBRACK reduce production global_meta_data -> LDBRACK string_list RDBRACK
--- On K_STRUCT reduce production global_meta_data -> LDBRACK string_list RDBRACK
--- On K_SEQUENCE reduce production global_meta_data -> LDBRACK string_list RDBRACK
--- On K_MODULE reduce production global_meta_data -> LDBRACK string_list RDBRACK
--- On K_LOCAL reduce production global_meta_data -> LDBRACK string_list RDBRACK
--- On K_INTERFACE reduce production global_meta_data -> LDBRACK string_list RDBRACK
--- On K_EXCEPTION reduce production global_meta_data -> LDBRACK string_list RDBRACK
--- On K_ENUM reduce production global_meta_data -> LDBRACK string_list RDBRACK
--- On K_DICTIONARY reduce production global_meta_data -> LDBRACK string_list RDBRACK
--- On K_CONST reduce production global_meta_data -> LDBRACK string_list RDBRACK
--- On K_CLASS reduce production global_meta_data -> LDBRACK string_list RDBRACK
--- On EOF reduce production global_meta_data -> LDBRACK string_list RDBRACK
+## Default reduction:
+-- After reading the next token, reduce production global_meta_data -> LDBRACK string_list RDBRACK
 
 State 9:
 ## Known stack suffix:
@@ -150,29 +134,8 @@ State 11:
 ## LR(1) items:
 meta_data_opt -> LBRACK string_list RBRACK . [ K_VOID K_STRUCT K_STRING K_SHORT K_SEQUENCE K_MODULE K_LONG K_LOCAL K_INTERFACE K_INT K_IDEMPOTENT K_FLOAT K_EXCEPTION K_ENUM K_DOUBLE K_DICTIONARY K_CONST K_CLASS K_BYTE K_BOOL IDENT DCOLON ]
 ## Transitions:
-## Reductions:
--- On K_VOID reduce production meta_data_opt -> LBRACK string_list RBRACK
--- On K_STRUCT reduce production meta_data_opt -> LBRACK string_list RBRACK
--- On K_STRING reduce production meta_data_opt -> LBRACK string_list RBRACK
--- On K_SHORT reduce production meta_data_opt -> LBRACK string_list RBRACK
--- On K_SEQUENCE reduce production meta_data_opt -> LBRACK string_list RBRACK
--- On K_MODULE reduce production meta_data_opt -> LBRACK string_list RBRACK
--- On K_LONG reduce production meta_data_opt -> LBRACK string_list RBRACK
--- On K_LOCAL reduce production meta_data_opt -> LBRACK string_list RBRACK
--- On K_INTERFACE reduce production meta_data_opt -> LBRACK string_list RBRACK
--- On K_INT reduce production meta_data_opt -> LBRACK string_list RBRACK
--- On K_IDEMPOTENT reduce production meta_data_opt -> LBRACK string_list RBRACK
--- On K_FLOAT reduce production meta_data_opt -> LBRACK string_list RBRACK
--- On K_EXCEPTION reduce production meta_data_opt -> LBRACK string_list RBRACK
--- On K_ENUM reduce production meta_data_opt -> LBRACK string_list RBRACK
--- On K_DOUBLE reduce production meta_data_opt -> LBRACK string_list RBRACK
--- On K_DICTIONARY reduce production meta_data_opt -> LBRACK string_list RBRACK
--- On K_CONST reduce production meta_data_opt -> LBRACK string_list RBRACK
--- On K_CLASS reduce production meta_data_opt -> LBRACK string_list RBRACK
--- On K_BYTE reduce production meta_data_opt -> LBRACK string_list RBRACK
--- On K_BOOL reduce production meta_data_opt -> LBRACK string_list RBRACK
--- On IDENT reduce production meta_data_opt -> LBRACK string_list RBRACK
--- On DCOLON reduce production meta_data_opt -> LBRACK string_list RBRACK
+## Default reduction:
+-- After reading the next token, reduce production meta_data_opt -> LBRACK string_list RBRACK
 
 State 12:
 ## Known stack suffix:
@@ -180,8 +143,8 @@ State 12:
 ## LR(1) items:
 start' -> start . [ # ]
 ## Transitions:
-## Reductions:
--- On # accept start
+## Default reduction:
+-- Without reading the next token, accept start
 
 State 13:
 ## Known stack suffix:
@@ -285,9 +248,8 @@ State 18:
 ## LR(1) items:
 defs -> global_meta_data defs . [ RBRACE EOF ]
 ## Transitions:
-## Reductions:
--- On RBRACE reduce production defs -> global_meta_data defs
--- On EOF reduce production defs -> global_meta_data defs
+## Default reduction:
+-- After reading the next token, reduce production defs -> global_meta_data defs
 
 State 19:
 ## Known stack suffix:
@@ -330,9 +292,8 @@ State 21:
 ## LR(1) items:
 defs -> def SEMI defs . [ RBRACE EOF ]
 ## Transitions:
-## Reductions:
--- On RBRACE reduce production defs -> def SEMI defs
--- On EOF reduce production defs -> def SEMI defs
+## Default reduction:
+-- After reading the next token, reduce production defs -> def SEMI defs
 
 State 22:
 ## Known stack suffix:
@@ -349,8 +310,8 @@ State 23:
 ## LR(1) items:
 def -> meta_data_opt K_MODULE IDENT LBRACE defs RBRACE . [ SEMI ]
 ## Transitions:
-## Reductions:
--- On SEMI reduce production def -> meta_data_opt K_MODULE IDENT LBRACE defs RBRACE
+## Default reduction:
+-- After reading the next token, reduce production def -> meta_data_opt K_MODULE IDENT LBRACE defs RBRACE
 
 State 24:
 ## Known stack suffix:
@@ -358,14 +319,8 @@ State 24:
 ## LR(1) items:
 local_flag -> K_LOCAL . [ K_STRUCT K_SEQUENCE K_INTERFACE K_EXCEPTION K_ENUM K_DICTIONARY K_CLASS ]
 ## Transitions:
-## Reductions:
--- On K_STRUCT reduce production local_flag -> K_LOCAL
--- On K_SEQUENCE reduce production local_flag -> K_LOCAL
--- On K_INTERFACE reduce production local_flag -> K_LOCAL
--- On K_EXCEPTION reduce production local_flag -> K_LOCAL
--- On K_ENUM reduce production local_flag -> K_LOCAL
--- On K_DICTIONARY reduce production local_flag -> K_LOCAL
--- On K_CLASS reduce production local_flag -> K_LOCAL
+## Default reduction:
+-- After reading the next token, reduce production local_flag -> K_LOCAL
 
 State 25:
 ## Known stack suffix:
@@ -431,8 +386,8 @@ State 29:
 ## LR(1) items:
 const_value -> STRING_LITERAL . [ SEMI ]
 ## Transitions:
-## Reductions:
--- On SEMI reduce production const_value -> STRING_LITERAL
+## Default reduction:
+-- After reading the next token, reduce production const_value -> STRING_LITERAL
 
 State 30:
 ## Known stack suffix:
@@ -440,8 +395,8 @@ State 30:
 ## LR(1) items:
 const_value -> K_TRUE . [ SEMI ]
 ## Transitions:
-## Reductions:
--- On SEMI reduce production const_value -> K_TRUE
+## Default reduction:
+-- After reading the next token, reduce production const_value -> K_TRUE
 
 State 31:
 ## Known stack suffix:
@@ -449,8 +404,8 @@ State 31:
 ## LR(1) items:
 const_value -> K_FALSE . [ SEMI ]
 ## Transitions:
-## Reductions:
--- On SEMI reduce production const_value -> K_FALSE
+## Default reduction:
+-- After reading the next token, reduce production const_value -> K_FALSE
 
 State 32:
 ## Known stack suffix:
@@ -458,8 +413,8 @@ State 32:
 ## LR(1) items:
 const_value -> INT_LITERAL . [ SEMI ]
 ## Transitions:
-## Reductions:
--- On SEMI reduce production const_value -> INT_LITERAL
+## Default reduction:
+-- After reading the next token, reduce production const_value -> INT_LITERAL
 
 State 33:
 ## Known stack suffix:
@@ -494,14 +449,8 @@ State 35:
 ## LR(1) items:
 rel_name -> IDENT DCOLON rel_name . [ SEMI RANGLE LBRACE K_IMPLEMENTS IDENT COMMA ASTERISK ]
 ## Transitions:
-## Reductions:
--- On SEMI reduce production rel_name -> IDENT DCOLON rel_name
--- On RANGLE reduce production rel_name -> IDENT DCOLON rel_name
--- On LBRACE reduce production rel_name -> IDENT DCOLON rel_name
--- On K_IMPLEMENTS reduce production rel_name -> IDENT DCOLON rel_name
--- On IDENT reduce production rel_name -> IDENT DCOLON rel_name
--- On COMMA reduce production rel_name -> IDENT DCOLON rel_name
--- On ASTERISK reduce production rel_name -> IDENT DCOLON rel_name
+## Default reduction:
+-- After reading the next token, reduce production rel_name -> IDENT DCOLON rel_name
 
 State 36:
 ## Known stack suffix:
@@ -509,8 +458,8 @@ State 36:
 ## LR(1) items:
 const_value -> FLOAT_LITERAL . [ SEMI ]
 ## Transitions:
-## Reductions:
--- On SEMI reduce production const_value -> FLOAT_LITERAL
+## Default reduction:
+-- After reading the next token, reduce production const_value -> FLOAT_LITERAL
 
 State 37:
 ## Known stack suffix:
@@ -528,14 +477,8 @@ State 38:
 ## LR(1) items:
 name -> DCOLON rel_name . [ SEMI RANGLE LBRACE K_IMPLEMENTS IDENT COMMA ASTERISK ]
 ## Transitions:
-## Reductions:
--- On SEMI reduce production name -> DCOLON rel_name
--- On RANGLE reduce production name -> DCOLON rel_name
--- On LBRACE reduce production name -> DCOLON rel_name
--- On K_IMPLEMENTS reduce production name -> DCOLON rel_name
--- On IDENT reduce production name -> DCOLON rel_name
--- On COMMA reduce production name -> DCOLON rel_name
--- On ASTERISK reduce production name -> DCOLON rel_name
+## Default reduction:
+-- After reading the next token, reduce production name -> DCOLON rel_name
 
 State 39:
 ## Known stack suffix:
@@ -543,14 +486,8 @@ State 39:
 ## LR(1) items:
 name -> rel_name . [ SEMI RANGLE LBRACE K_IMPLEMENTS IDENT COMMA ASTERISK ]
 ## Transitions:
-## Reductions:
--- On SEMI reduce production name -> rel_name
--- On RANGLE reduce production name -> rel_name
--- On LBRACE reduce production name -> rel_name
--- On K_IMPLEMENTS reduce production name -> rel_name
--- On IDENT reduce production name -> rel_name
--- On COMMA reduce production name -> rel_name
--- On ASTERISK reduce production name -> rel_name
+## Default reduction:
+-- After reading the next token, reduce production name -> rel_name
 
 State 40:
 ## Known stack suffix:
@@ -558,8 +495,8 @@ State 40:
 ## LR(1) items:
 const_value -> name . [ SEMI ]
 ## Transitions:
-## Reductions:
--- On SEMI reduce production const_value -> name
+## Default reduction:
+-- After reading the next token, reduce production const_value -> name
 
 State 41:
 ## Known stack suffix:
@@ -567,8 +504,8 @@ State 41:
 ## LR(1) items:
 def -> meta_data_opt K_CONST typ IDENT EQUAL const_value . [ SEMI ]
 ## Transitions:
-## Reductions:
--- On SEMI reduce production def -> meta_data_opt K_CONST typ IDENT EQUAL const_value
+## Default reduction:
+-- After reading the next token, reduce production def -> meta_data_opt K_CONST typ IDENT EQUAL const_value
 
 State 42:
 ## Known stack suffix:
@@ -598,10 +535,8 @@ State 43:
 ## LR(1) items:
 typ_name -> K_VOID . [ RANGLE IDENT COMMA ]
 ## Transitions:
-## Reductions:
--- On RANGLE reduce production typ_name -> K_VOID
--- On IDENT reduce production typ_name -> K_VOID
--- On COMMA reduce production typ_name -> K_VOID
+## Default reduction:
+-- After reading the next token, reduce production typ_name -> K_VOID
 
 State 44:
 ## Known stack suffix:
@@ -609,10 +544,8 @@ State 44:
 ## LR(1) items:
 typ_name -> K_STRING . [ RANGLE IDENT COMMA ]
 ## Transitions:
-## Reductions:
--- On RANGLE reduce production typ_name -> K_STRING
--- On IDENT reduce production typ_name -> K_STRING
--- On COMMA reduce production typ_name -> K_STRING
+## Default reduction:
+-- After reading the next token, reduce production typ_name -> K_STRING
 
 State 45:
 ## Known stack suffix:
@@ -620,10 +553,8 @@ State 45:
 ## LR(1) items:
 typ_name -> K_SHORT . [ RANGLE IDENT COMMA ]
 ## Transitions:
-## Reductions:
--- On RANGLE reduce production typ_name -> K_SHORT
--- On IDENT reduce production typ_name -> K_SHORT
--- On COMMA reduce production typ_name -> K_SHORT
+## Default reduction:
+-- After reading the next token, reduce production typ_name -> K_SHORT
 
 State 46:
 ## Known stack suffix:
@@ -631,10 +562,8 @@ State 46:
 ## LR(1) items:
 typ_name -> K_LONG . [ RANGLE IDENT COMMA ]
 ## Transitions:
-## Reductions:
--- On RANGLE reduce production typ_name -> K_LONG
--- On IDENT reduce production typ_name -> K_LONG
--- On COMMA reduce production typ_name -> K_LONG
+## Default reduction:
+-- After reading the next token, reduce production typ_name -> K_LONG
 
 State 47:
 ## Known stack suffix:
@@ -642,10 +571,8 @@ State 47:
 ## LR(1) items:
 typ_name -> K_INT . [ RANGLE IDENT COMMA ]
 ## Transitions:
-## Reductions:
--- On RANGLE reduce production typ_name -> K_INT
--- On IDENT reduce production typ_name -> K_INT
--- On COMMA reduce production typ_name -> K_INT
+## Default reduction:
+-- After reading the next token, reduce production typ_name -> K_INT
 
 State 48:
 ## Known stack suffix:
@@ -653,10 +580,8 @@ State 48:
 ## LR(1) items:
 typ_name -> K_FLOAT . [ RANGLE IDENT COMMA ]
 ## Transitions:
-## Reductions:
--- On RANGLE reduce production typ_name -> K_FLOAT
--- On IDENT reduce production typ_name -> K_FLOAT
--- On COMMA reduce production typ_name -> K_FLOAT
+## Default reduction:
+-- After reading the next token, reduce production typ_name -> K_FLOAT
 
 State 49:
 ## Known stack suffix:
@@ -664,10 +589,8 @@ State 49:
 ## LR(1) items:
 typ_name -> K_DOUBLE . [ RANGLE IDENT COMMA ]
 ## Transitions:
-## Reductions:
--- On RANGLE reduce production typ_name -> K_DOUBLE
--- On IDENT reduce production typ_name -> K_DOUBLE
--- On COMMA reduce production typ_name -> K_DOUBLE
+## Default reduction:
+-- After reading the next token, reduce production typ_name -> K_DOUBLE
 
 State 50:
 ## Known stack suffix:
@@ -675,10 +598,8 @@ State 50:
 ## LR(1) items:
 typ_name -> K_BYTE . [ RANGLE IDENT COMMA ]
 ## Transitions:
-## Reductions:
--- On RANGLE reduce production typ_name -> K_BYTE
--- On IDENT reduce production typ_name -> K_BYTE
--- On COMMA reduce production typ_name -> K_BYTE
+## Default reduction:
+-- After reading the next token, reduce production typ_name -> K_BYTE
 
 State 51:
 ## Known stack suffix:
@@ -686,10 +607,8 @@ State 51:
 ## LR(1) items:
 typ_name -> K_BOOL . [ RANGLE IDENT COMMA ]
 ## Transitions:
-## Reductions:
--- On RANGLE reduce production typ_name -> K_BOOL
--- On IDENT reduce production typ_name -> K_BOOL
--- On COMMA reduce production typ_name -> K_BOOL
+## Default reduction:
+-- After reading the next token, reduce production typ_name -> K_BOOL
 
 State 52:
 ## Known stack suffix:
@@ -697,10 +616,8 @@ State 52:
 ## LR(1) items:
 typ -> meta_data_opt typ_name . [ RANGLE IDENT COMMA ]
 ## Transitions:
-## Reductions:
--- On RANGLE reduce production typ -> meta_data_opt typ_name
--- On IDENT reduce production typ -> meta_data_opt typ_name
--- On COMMA reduce production typ -> meta_data_opt typ_name
+## Default reduction:
+-- After reading the next token, reduce production typ -> meta_data_opt typ_name
 
 State 53:
 ## Known stack suffix:
@@ -721,10 +638,8 @@ State 54:
 ## LR(1) items:
 typ_name -> name ASTERISK . [ RANGLE IDENT COMMA ]
 ## Transitions:
-## Reductions:
--- On RANGLE reduce production typ_name -> name ASTERISK
--- On IDENT reduce production typ_name -> name ASTERISK
--- On COMMA reduce production typ_name -> name ASTERISK
+## Default reduction:
+-- After reading the next token, reduce production typ_name -> name ASTERISK
 
 State 55:
 ## Known stack suffix:
@@ -816,20 +731,8 @@ State 61:
 ## LR(1) items:
 data_member -> typ IDENT SEMI . [ RBRACE LBRACK K_VOID K_STRING K_SHORT K_LONG K_INT K_FLOAT K_DOUBLE K_BYTE K_BOOL IDENT DCOLON ]
 ## Transitions:
-## Reductions:
--- On RBRACE reduce production data_member -> typ IDENT SEMI
--- On LBRACK reduce production data_member -> typ IDENT SEMI
--- On K_VOID reduce production data_member -> typ IDENT SEMI
--- On K_STRING reduce production data_member -> typ IDENT SEMI
--- On K_SHORT reduce production data_member -> typ IDENT SEMI
--- On K_LONG reduce production data_member -> typ IDENT SEMI
--- On K_INT reduce production data_member -> typ IDENT SEMI
--- On K_FLOAT reduce production data_member -> typ IDENT SEMI
--- On K_DOUBLE reduce production data_member -> typ IDENT SEMI
--- On K_BYTE reduce production data_member -> typ IDENT SEMI
--- On K_BOOL reduce production data_member -> typ IDENT SEMI
--- On IDENT reduce production data_member -> typ IDENT SEMI
--- On DCOLON reduce production data_member -> typ IDENT SEMI
+## Default reduction:
+-- After reading the next token, reduce production data_member -> typ IDENT SEMI
 
 State 62:
 ## Known stack suffix:
@@ -846,8 +749,8 @@ State 63:
 ## LR(1) items:
 struct_def_opt -> LBRACE struct_members RBRACE . [ SEMI ]
 ## Transitions:
-## Reductions:
--- On SEMI reduce production struct_def_opt -> LBRACE struct_members RBRACE
+## Default reduction:
+-- After reading the next token, reduce production struct_def_opt -> LBRACE struct_members RBRACE
 
 State 64:
 ## Known stack suffix:
@@ -880,8 +783,8 @@ State 65:
 ## LR(1) items:
 struct_members -> data_member struct_members . [ RBRACE ]
 ## Transitions:
-## Reductions:
--- On RBRACE reduce production struct_members -> data_member struct_members
+## Default reduction:
+-- After reading the next token, reduce production struct_members -> data_member struct_members
 
 State 66:
 ## Known stack suffix:
@@ -889,8 +792,8 @@ State 66:
 ## LR(1) items:
 def -> meta_data_opt local_flag K_STRUCT IDENT struct_def_opt . [ SEMI ]
 ## Transitions:
-## Reductions:
--- On SEMI reduce production def -> meta_data_opt local_flag K_STRUCT IDENT struct_def_opt
+## Default reduction:
+-- After reading the next token, reduce production def -> meta_data_opt local_flag K_STRUCT IDENT struct_def_opt
 
 State 67:
 ## Known stack suffix:
@@ -947,8 +850,8 @@ State 71:
 ## LR(1) items:
 def -> meta_data_opt local_flag K_SEQUENCE LANGLE typ RANGLE IDENT . [ SEMI ]
 ## Transitions:
-## Reductions:
--- On SEMI reduce production def -> meta_data_opt local_flag K_SEQUENCE LANGLE typ RANGLE IDENT
+## Default reduction:
+-- After reading the next token, reduce production def -> meta_data_opt local_flag K_SEQUENCE LANGLE typ RANGLE IDENT
 
 State 72:
 ## Known stack suffix:
@@ -991,8 +894,8 @@ State 75:
 ## LR(1) items:
 intf_extends_clause_opt -> K_EXTENDS name_list . [ LBRACE ]
 ## Transitions:
-## Reductions:
--- On LBRACE reduce production intf_extends_clause_opt -> K_EXTENDS name_list
+## Default reduction:
+-- After reading the next token, reduce production intf_extends_clause_opt -> K_EXTENDS name_list
 
 State 76:
 ## Known stack suffix:
@@ -1025,9 +928,8 @@ State 78:
 ## LR(1) items:
 name_list -> name COMMA name_list . [ SEMI LBRACE ]
 ## Transitions:
-## Reductions:
--- On SEMI reduce production name_list -> name COMMA name_list
--- On LBRACE reduce production name_list -> name COMMA name_list
+## Default reduction:
+-- After reading the next token, reduce production name_list -> name COMMA name_list
 
 State 79:
 ## Known stack suffix:
@@ -1140,19 +1042,8 @@ State 85:
 ## LR(1) items:
 out_flag -> K_OUT . [ LBRACK K_VOID K_STRING K_SHORT K_LONG K_INT K_FLOAT K_DOUBLE K_BYTE K_BOOL IDENT DCOLON ]
 ## Transitions:
-## Reductions:
--- On LBRACK reduce production out_flag -> K_OUT
--- On K_VOID reduce production out_flag -> K_OUT
--- On K_STRING reduce production out_flag -> K_OUT
--- On K_SHORT reduce production out_flag -> K_OUT
--- On K_LONG reduce production out_flag -> K_OUT
--- On K_INT reduce production out_flag -> K_OUT
--- On K_FLOAT reduce production out_flag -> K_OUT
--- On K_DOUBLE reduce production out_flag -> K_OUT
--- On K_BYTE reduce production out_flag -> K_OUT
--- On K_BOOL reduce production out_flag -> K_OUT
--- On IDENT reduce production out_flag -> K_OUT
--- On DCOLON reduce production out_flag -> K_OUT
+## Default reduction:
+-- After reading the next token, reduce production out_flag -> K_OUT
 
 State 86:
 ## Known stack suffix:
@@ -1160,8 +1051,8 @@ State 86:
 ## LR(1) items:
 params -> params1 . [ RPAREN ]
 ## Transitions:
-## Reductions:
--- On RPAREN reduce production params -> params1
+## Default reduction:
+-- After reading the next token, reduce production params -> params1
 
 State 87:
 ## Known stack suffix:
@@ -1202,8 +1093,8 @@ State 90:
 ## LR(1) items:
 throws_clause_opt -> K_THROWS name_list . [ SEMI ]
 ## Transitions:
-## Reductions:
--- On SEMI reduce production throws_clause_opt -> K_THROWS name_list
+## Default reduction:
+-- After reading the next token, reduce production throws_clause_opt -> K_THROWS name_list
 
 State 91:
 ## Known stack suffix:
@@ -1220,21 +1111,8 @@ State 92:
 ## LR(1) items:
 operation_member -> op_typ IDENT LPAREN params RPAREN throws_clause_opt SEMI . [ RBRACE LBRACK K_VOID K_STRING K_SHORT K_LONG K_INT K_IDEMPOTENT K_FLOAT K_DOUBLE K_BYTE K_BOOL IDENT DCOLON ]
 ## Transitions:
-## Reductions:
--- On RBRACE reduce production operation_member -> op_typ IDENT LPAREN params RPAREN throws_clause_opt SEMI
--- On LBRACK reduce production operation_member -> op_typ IDENT LPAREN params RPAREN throws_clause_opt SEMI
--- On K_VOID reduce production operation_member -> op_typ IDENT LPAREN params RPAREN throws_clause_opt SEMI
--- On K_STRING reduce production operation_member -> op_typ IDENT LPAREN params RPAREN throws_clause_opt SEMI
--- On K_SHORT reduce production operation_member -> op_typ IDENT LPAREN params RPAREN throws_clause_opt SEMI
--- On K_LONG reduce production operation_member -> op_typ IDENT LPAREN params RPAREN throws_clause_opt SEMI
--- On K_INT reduce production operation_member -> op_typ IDENT LPAREN params RPAREN throws_clause_opt SEMI
--- On K_IDEMPOTENT reduce production operation_member -> op_typ IDENT LPAREN params RPAREN throws_clause_opt SEMI
--- On K_FLOAT reduce production operation_member -> op_typ IDENT LPAREN params RPAREN throws_clause_opt SEMI
--- On K_DOUBLE reduce production operation_member -> op_typ IDENT LPAREN params RPAREN throws_clause_opt SEMI
--- On K_BYTE reduce production operation_member -> op_typ IDENT LPAREN params RPAREN throws_clause_opt SEMI
--- On K_BOOL reduce production operation_member -> op_typ IDENT LPAREN params RPAREN throws_clause_opt SEMI
--- On IDENT reduce production operation_member -> op_typ IDENT LPAREN params RPAREN throws_clause_opt SEMI
--- On DCOLON reduce production operation_member -> op_typ IDENT LPAREN params RPAREN throws_clause_opt SEMI
+## Default reduction:
+-- After reading the next token, reduce production operation_member -> op_typ IDENT LPAREN params RPAREN throws_clause_opt SEMI
 
 State 93:
 ## Known stack suffix:
@@ -1277,8 +1155,8 @@ State 95:
 ## LR(1) items:
 params1 -> param COMMA params1 . [ RPAREN ]
 ## Transitions:
-## Reductions:
--- On RPAREN reduce production params1 -> param COMMA params1
+## Default reduction:
+-- After reading the next token, reduce production params1 -> param COMMA params1
 
 State 96:
 ## Known stack suffix:
@@ -1317,9 +1195,8 @@ State 98:
 ## LR(1) items:
 param -> out_flag typ IDENT . [ RPAREN COMMA ]
 ## Transitions:
-## Reductions:
--- On RPAREN reduce production param -> out_flag typ IDENT
--- On COMMA reduce production param -> out_flag typ IDENT
+## Default reduction:
+-- After reading the next token, reduce production param -> out_flag typ IDENT
 
 State 99:
 ## Known stack suffix:
@@ -1348,18 +1225,8 @@ State 100:
 ## LR(1) items:
 idempotent_flag -> K_IDEMPOTENT . [ K_VOID K_STRING K_SHORT K_LONG K_INT K_FLOAT K_DOUBLE K_BYTE K_BOOL IDENT DCOLON ]
 ## Transitions:
-## Reductions:
--- On K_VOID reduce production idempotent_flag -> K_IDEMPOTENT
--- On K_STRING reduce production idempotent_flag -> K_IDEMPOTENT
--- On K_SHORT reduce production idempotent_flag -> K_IDEMPOTENT
--- On K_LONG reduce production idempotent_flag -> K_IDEMPOTENT
--- On K_INT reduce production idempotent_flag -> K_IDEMPOTENT
--- On K_FLOAT reduce production idempotent_flag -> K_IDEMPOTENT
--- On K_DOUBLE reduce production idempotent_flag -> K_IDEMPOTENT
--- On K_BYTE reduce production idempotent_flag -> K_IDEMPOTENT
--- On K_BOOL reduce production idempotent_flag -> K_IDEMPOTENT
--- On IDENT reduce production idempotent_flag -> K_IDEMPOTENT
--- On DCOLON reduce production idempotent_flag -> K_IDEMPOTENT
+## Default reduction:
+-- After reading the next token, reduce production idempotent_flag -> K_IDEMPOTENT
 
 State 101:
 ## Known stack suffix:
@@ -1389,8 +1256,8 @@ State 102:
 ## LR(1) items:
 op_typ -> meta_data_opt idempotent_flag typ_name . [ IDENT ]
 ## Transitions:
-## Reductions:
--- On IDENT reduce production op_typ -> meta_data_opt idempotent_flag typ_name
+## Default reduction:
+-- After reading the next token, reduce production op_typ -> meta_data_opt idempotent_flag typ_name
 
 State 103:
 ## Known stack suffix:
@@ -1398,8 +1265,8 @@ State 103:
 ## LR(1) items:
 intf_members -> operation_member intf_members . [ RBRACE ]
 ## Transitions:
-## Reductions:
--- On RBRACE reduce production intf_members -> operation_member intf_members
+## Default reduction:
+-- After reading the next token, reduce production intf_members -> operation_member intf_members
 
 State 104:
 ## Known stack suffix:
@@ -1416,8 +1283,8 @@ State 105:
 ## LR(1) items:
 intf_def_opt -> intf_extends_clause_opt LBRACE intf_members RBRACE . [ SEMI ]
 ## Transitions:
-## Reductions:
--- On SEMI reduce production intf_def_opt -> intf_extends_clause_opt LBRACE intf_members RBRACE
+## Default reduction:
+-- After reading the next token, reduce production intf_def_opt -> intf_extends_clause_opt LBRACE intf_members RBRACE
 
 State 106:
 ## Known stack suffix:
@@ -1425,8 +1292,8 @@ State 106:
 ## LR(1) items:
 def -> meta_data_opt local_flag K_INTERFACE IDENT intf_def_opt . [ SEMI ]
 ## Transitions:
-## Reductions:
--- On SEMI reduce production def -> meta_data_opt local_flag K_INTERFACE IDENT intf_def_opt
+## Default reduction:
+-- After reading the next token, reduce production def -> meta_data_opt local_flag K_INTERFACE IDENT intf_def_opt
 
 State 107:
 ## Known stack suffix:
@@ -1468,9 +1335,8 @@ State 110:
 ## LR(1) items:
 single_extends_clause_opt -> K_EXTENDS name . [ LBRACE K_IMPLEMENTS ]
 ## Transitions:
-## Reductions:
--- On LBRACE reduce production single_extends_clause_opt -> K_EXTENDS name
--- On K_IMPLEMENTS reduce production single_extends_clause_opt -> K_EXTENDS name
+## Default reduction:
+-- After reading the next token, reduce production single_extends_clause_opt -> K_EXTENDS name
 
 State 111:
 ## Known stack suffix:
@@ -1521,8 +1387,8 @@ State 114:
 ## LR(1) items:
 exn_def_opt -> single_extends_clause_opt LBRACE exn_members RBRACE . [ SEMI ]
 ## Transitions:
-## Reductions:
--- On SEMI reduce production exn_def_opt -> single_extends_clause_opt LBRACE exn_members RBRACE
+## Default reduction:
+-- After reading the next token, reduce production exn_def_opt -> single_extends_clause_opt LBRACE exn_members RBRACE
 
 State 115:
 ## Known stack suffix:
@@ -1555,8 +1421,8 @@ State 116:
 ## LR(1) items:
 exn_members -> data_member exn_members . [ RBRACE ]
 ## Transitions:
-## Reductions:
--- On RBRACE reduce production exn_members -> data_member exn_members
+## Default reduction:
+-- After reading the next token, reduce production exn_members -> data_member exn_members
 
 State 117:
 ## Known stack suffix:
@@ -1564,8 +1430,8 @@ State 117:
 ## LR(1) items:
 def -> meta_data_opt local_flag K_EXCEPTION IDENT exn_def_opt . [ SEMI ]
 ## Transitions:
-## Reductions:
--- On SEMI reduce production def -> meta_data_opt local_flag K_EXCEPTION IDENT exn_def_opt
+## Default reduction:
+-- After reading the next token, reduce production def -> meta_data_opt local_flag K_EXCEPTION IDENT exn_def_opt
 
 State 118:
 ## Known stack suffix:
@@ -1622,8 +1488,8 @@ State 123:
 ## LR(1) items:
 enum_list -> IDENT COMMA enum_list . [ RBRACE ]
 ## Transitions:
-## Reductions:
--- On RBRACE reduce production enum_list -> IDENT COMMA enum_list
+## Default reduction:
+-- After reading the next token, reduce production enum_list -> IDENT COMMA enum_list
 
 State 124:
 ## Known stack suffix:
@@ -1640,8 +1506,8 @@ State 125:
 ## LR(1) items:
 def -> meta_data_opt local_flag K_ENUM IDENT LBRACE enum_list RBRACE . [ SEMI ]
 ## Transitions:
-## Reductions:
--- On SEMI reduce production def -> meta_data_opt local_flag K_ENUM IDENT LBRACE enum_list RBRACE
+## Default reduction:
+-- After reading the next token, reduce production def -> meta_data_opt local_flag K_ENUM IDENT LBRACE enum_list RBRACE
 
 State 126:
 ## Known stack suffix:
@@ -1729,8 +1595,8 @@ State 132:
 ## LR(1) items:
 def -> meta_data_opt local_flag K_DICTIONARY LANGLE typ COMMA typ RANGLE IDENT . [ SEMI ]
 ## Transitions:
-## Reductions:
--- On SEMI reduce production def -> meta_data_opt local_flag K_DICTIONARY LANGLE typ COMMA typ RANGLE IDENT
+## Default reduction:
+-- After reading the next token, reduce production def -> meta_data_opt local_flag K_DICTIONARY LANGLE typ COMMA typ RANGLE IDENT
 
 State 133:
 ## Known stack suffix:
@@ -1785,8 +1651,8 @@ State 137:
 ## LR(1) items:
 implements_clause_opt -> K_IMPLEMENTS name_list . [ LBRACE ]
 ## Transitions:
-## Reductions:
--- On LBRACE reduce production implements_clause_opt -> K_IMPLEMENTS name_list
+## Default reduction:
+-- After reading the next token, reduce production implements_clause_opt -> K_IMPLEMENTS name_list
 
 State 138:
 ## Known stack suffix:
@@ -1850,21 +1716,8 @@ State 142:
 ## LR(1) items:
 data_or_operation_cont -> SEMI . [ RBRACE LBRACK K_VOID K_STRING K_SHORT K_LONG K_INT K_IDEMPOTENT K_FLOAT K_DOUBLE K_BYTE K_BOOL IDENT DCOLON ]
 ## Transitions:
-## Reductions:
--- On RBRACE reduce production data_or_operation_cont -> SEMI
--- On LBRACK reduce production data_or_operation_cont -> SEMI
--- On K_VOID reduce production data_or_operation_cont -> SEMI
--- On K_STRING reduce production data_or_operation_cont -> SEMI
--- On K_SHORT reduce production data_or_operation_cont -> SEMI
--- On K_LONG reduce production data_or_operation_cont -> SEMI
--- On K_INT reduce production data_or_operation_cont -> SEMI
--- On K_IDEMPOTENT reduce production data_or_operation_cont -> SEMI
--- On K_FLOAT reduce production data_or_operation_cont -> SEMI
--- On K_DOUBLE reduce production data_or_operation_cont -> SEMI
--- On K_BYTE reduce production data_or_operation_cont -> SEMI
--- On K_BOOL reduce production data_or_operation_cont -> SEMI
--- On IDENT reduce production data_or_operation_cont -> SEMI
--- On DCOLON reduce production data_or_operation_cont -> SEMI
+## Default reduction:
+-- After reading the next token, reduce production data_or_operation_cont -> SEMI
 
 State 143:
 ## Known stack suffix:
@@ -1927,21 +1780,8 @@ State 147:
 ## LR(1) items:
 data_or_operation_cont -> LPAREN params RPAREN throws_clause_opt SEMI . [ RBRACE LBRACK K_VOID K_STRING K_SHORT K_LONG K_INT K_IDEMPOTENT K_FLOAT K_DOUBLE K_BYTE K_BOOL IDENT DCOLON ]
 ## Transitions:
-## Reductions:
--- On RBRACE reduce production data_or_operation_cont -> LPAREN params RPAREN throws_clause_opt SEMI
--- On LBRACK reduce production data_or_operation_cont -> LPAREN params RPAREN throws_clause_opt SEMI
--- On K_VOID reduce production data_or_operation_cont -> LPAREN params RPAREN throws_clause_opt SEMI
--- On K_STRING reduce production data_or_operation_cont -> LPAREN params RPAREN throws_clause_opt SEMI
--- On K_SHORT reduce production data_or_operation_cont -> LPAREN params RPAREN throws_clause_opt SEMI
--- On K_LONG reduce production data_or_operation_cont -> LPAREN params RPAREN throws_clause_opt SEMI
--- On K_INT reduce production data_or_operation_cont -> LPAREN params RPAREN throws_clause_opt SEMI
--- On K_IDEMPOTENT reduce production data_or_operation_cont -> LPAREN params RPAREN throws_clause_opt SEMI
--- On K_FLOAT reduce production data_or_operation_cont -> LPAREN params RPAREN throws_clause_opt SEMI
--- On K_DOUBLE reduce production data_or_operation_cont -> LPAREN params RPAREN throws_clause_opt SEMI
--- On K_BYTE reduce production data_or_operation_cont -> LPAREN params RPAREN throws_clause_opt SEMI
--- On K_BOOL reduce production data_or_operation_cont -> LPAREN params RPAREN throws_clause_opt SEMI
--- On IDENT reduce production data_or_operation_cont -> LPAREN params RPAREN throws_clause_opt SEMI
--- On DCOLON reduce production data_or_operation_cont -> LPAREN params RPAREN throws_clause_opt SEMI
+## Default reduction:
+-- After reading the next token, reduce production data_or_operation_cont -> LPAREN params RPAREN throws_clause_opt SEMI
 
 State 148:
 ## Known stack suffix:
@@ -1949,21 +1789,8 @@ State 148:
 ## LR(1) items:
 data_or_operation_member -> op_typ IDENT data_or_operation_cont . [ RBRACE LBRACK K_VOID K_STRING K_SHORT K_LONG K_INT K_IDEMPOTENT K_FLOAT K_DOUBLE K_BYTE K_BOOL IDENT DCOLON ]
 ## Transitions:
-## Reductions:
--- On RBRACE reduce production data_or_operation_member -> op_typ IDENT data_or_operation_cont
--- On LBRACK reduce production data_or_operation_member -> op_typ IDENT data_or_operation_cont
--- On K_VOID reduce production data_or_operation_member -> op_typ IDENT data_or_operation_cont
--- On K_STRING reduce production data_or_operation_member -> op_typ IDENT data_or_operation_cont
--- On K_SHORT reduce production data_or_operation_member -> op_typ IDENT data_or_operation_cont
--- On K_LONG reduce production data_or_operation_member -> op_typ IDENT data_or_operation_cont
--- On K_INT reduce production data_or_operation_member -> op_typ IDENT data_or_operation_cont
--- On K_IDEMPOTENT reduce production data_or_operation_member -> op_typ IDENT data_or_operation_cont
--- On K_FLOAT reduce production data_or_operation_member -> op_typ IDENT data_or_operation_cont
--- On K_DOUBLE reduce production data_or_operation_member -> op_typ IDENT data_or_operation_cont
--- On K_BYTE reduce production data_or_operation_member -> op_typ IDENT data_or_operation_cont
--- On K_BOOL reduce production data_or_operation_member -> op_typ IDENT data_or_operation_cont
--- On IDENT reduce production data_or_operation_member -> op_typ IDENT data_or_operation_cont
--- On DCOLON reduce production data_or_operation_member -> op_typ IDENT data_or_operation_cont
+## Default reduction:
+-- After reading the next token, reduce production data_or_operation_member -> op_typ IDENT data_or_operation_cont
 
 State 149:
 ## Known stack suffix:
@@ -1971,21 +1798,8 @@ State 149:
 ## LR(1) items:
 class_member -> data_or_operation_member . [ RBRACE LBRACK K_VOID K_STRING K_SHORT K_LONG K_INT K_IDEMPOTENT K_FLOAT K_DOUBLE K_BYTE K_BOOL IDENT DCOLON ]
 ## Transitions:
-## Reductions:
--- On RBRACE reduce production class_member -> data_or_operation_member
--- On LBRACK reduce production class_member -> data_or_operation_member
--- On K_VOID reduce production class_member -> data_or_operation_member
--- On K_STRING reduce production class_member -> data_or_operation_member
--- On K_SHORT reduce production class_member -> data_or_operation_member
--- On K_LONG reduce production class_member -> data_or_operation_member
--- On K_INT reduce production class_member -> data_or_operation_member
--- On K_IDEMPOTENT reduce production class_member -> data_or_operation_member
--- On K_FLOAT reduce production class_member -> data_or_operation_member
--- On K_DOUBLE reduce production class_member -> data_or_operation_member
--- On K_BYTE reduce production class_member -> data_or_operation_member
--- On K_BOOL reduce production class_member -> data_or_operation_member
--- On IDENT reduce production class_member -> data_or_operation_member
--- On DCOLON reduce production class_member -> data_or_operation_member
+## Default reduction:
+-- After reading the next token, reduce production class_member -> data_or_operation_member
 
 State 150:
 ## Known stack suffix:
@@ -2002,8 +1816,8 @@ State 151:
 ## LR(1) items:
 class_def_opt -> single_extends_clause_opt implements_clause_opt LBRACE class_members RBRACE . [ SEMI ]
 ## Transitions:
-## Reductions:
--- On SEMI reduce production class_def_opt -> single_extends_clause_opt implements_clause_opt LBRACE class_members RBRACE
+## Default reduction:
+-- After reading the next token, reduce production class_def_opt -> single_extends_clause_opt implements_clause_opt LBRACE class_members RBRACE
 
 State 152:
 ## Known stack suffix:
@@ -2038,8 +1852,8 @@ State 153:
 ## LR(1) items:
 class_members -> class_member class_members . [ RBRACE ]
 ## Transitions:
-## Reductions:
--- On RBRACE reduce production class_members -> class_member class_members
+## Default reduction:
+-- After reading the next token, reduce production class_members -> class_member class_members
 
 State 154:
 ## Known stack suffix:
@@ -2047,8 +1861,8 @@ State 154:
 ## LR(1) items:
 def -> meta_data_opt local_flag K_CLASS IDENT class_def_opt . [ SEMI ]
 ## Transitions:
-## Reductions:
--- On SEMI reduce production def -> meta_data_opt local_flag K_CLASS IDENT class_def_opt
+## Default reduction:
+-- After reading the next token, reduce production def -> meta_data_opt local_flag K_CLASS IDENT class_def_opt
 
 State 155:
 ## Known stack suffix:
@@ -2065,6 +1879,6 @@ State 156:
 ## LR(1) items:
 start -> defs EOF . [ # ]
 ## Transitions:
-## Reductions:
--- On # reduce production start -> defs EOF
+## Default reduction:
+-- Without reading the next token, reduce production start -> defs EOF
 

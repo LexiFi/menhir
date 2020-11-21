@@ -18,7 +18,8 @@
 
 let () =
   if Settings.dump_resolved then
-    Dump.dump (Settings.base ^ ".automaton.resolved")
+    let module D = Dump.Make(Default) in
+    D.dump (Settings.base ^ ".automaton.resolved")
 
 (* Let [Interpret] handle the command line options [--interpret],
    [--interpret-error], [--compile-errors], [--compare-errors]. *)

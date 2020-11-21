@@ -13,6 +13,19 @@
 
 (* [dump filename] writes a description of the LR(1) automaton to the
    file [filename]. This function can be invoked either before or after
-   conflicts have been resolved and extra reductions have been added. *)
+   conflicts have been resolved and extra reductions have been added.
+   In both cases, information about the automaton is provided by the
+   modules Grammar and Lr1. *)
 
-val dump: string -> unit
+open Grammar
+
+module Make (Default : sig
+
+  val has_default_reduction:
+    Lr1.node -> (Production.index * TerminalSet.t) option
+
+end) : sig
+
+  val dump: string -> unit
+
+end

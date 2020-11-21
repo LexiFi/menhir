@@ -25,7 +25,12 @@ let () =
 
 let () =
   if Settings.dump then
-    Dump.dump (Settings.base ^ ".automaton")
+    (* The default reductions have not been decided yet at this point. *)
+    let module Default = struct
+      let has_default_reduction _node = None
+    end in
+    let module D = Dump.Make(Default) in
+    D.dump (Settings.base ^ ".automaton")
 
 (* -------------------------------------------------------------------------- *)
 (* Explaining shift actions. *)

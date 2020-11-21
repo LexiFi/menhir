@@ -844,12 +844,14 @@ module Production = struct
     else
       Printf.sprintf "%s -> %s" (Nonterminal.print false nt) (Symbol.printao 0 rhs)
 
-  let describe prod =
+  let describe gerund prod =
     match classify prod with
     | Some nt ->
-        Printf.sprintf "accepting %s" (Nonterminal.print false nt)
+        let ending = if gerund then "ing" else "" in
+        Printf.sprintf "accept%s %s" ending (Nonterminal.print false nt)
     | None ->
-        Printf.sprintf "reducing production %s" (print prod)
+        let ending = if gerund then "ing" else "e" in
+        Printf.sprintf "reduc%s production %s" ending (print prod)
 
   (* Tabulation and sum. *)
 
