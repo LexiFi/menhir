@@ -713,7 +713,7 @@ module NodeSet = struct
      argument and its result when a logical equality holds. We wrap it
      so as to obtain this property. *)
 
-  let[@inline] leq_join s1 s2 =
+  let leq_join s1 s2 =
     if subset s1 s2 then s2 else union s1 s2
 
 end
