@@ -15,3 +15,5 @@
 open Sigs
 
 include PROPERTY with type property = bool
+include SEMI_LATTICE with type property := bool
+include MINIMAL_SEMI_LATTICE with type property := bool
