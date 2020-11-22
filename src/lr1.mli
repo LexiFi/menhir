@@ -13,17 +13,33 @@
 
 open Grammar
 
-(* This module constructs an LR(1) automaton by following Pager's
-   method, that is, by merging states on the fly when they are found
-   to be (weakly) compatible. *)
+(* This module first constructs an LR(1) automaton by using an appropriate
+   construction method (LALR, Pager, canonical).
+   Then, this automaton is further transformed (in place), in three steps:
 
-(* Shift/reduce conflicts are silently resolved when (and only when)
-   that is allowed in a clean way by user-specified priorities. This
-   includes shift/reduce/reduce conflicts when (and only when) there
-   is agreement that the shift action should be preferred. Conflicts
-   that cannot be silently resolved in this phase will be reported,
-   explained, and arbitrarily resolved immediately before code
-   generation. *)
+   1. Silent conflict resolution (without warnings),
+      following the user's precedence declarations.
+      This is done immediately.
+      This can remove transitions and reductions.
+
+   2. Default conflict resolution (with warnings),
+      following a fixed default policy.
+      This is done via an explicit call to [default_conflict_resolution()].
+      This can remove reductions.
+
+   3. Addition of extra reductions,
+      following the user's [%on_error_reduce] declarations.
+      This is done via an explicit call to [extra_reductions()].
+
+   Conflicts are explained after step 1, and before steps 2 and 3.
+   This is the main reason why these steps are separate. *)
+
+(* During step 1, shift/reduce conflicts are silently resolved if (and only
+   if) that is allowed in a clean way by user-specified priorities. This
+   includes multi-way shift/reduce/reduce conflicts if (and only if) there is
+   agreement that the shift action should be preferred. Conflicts that cannot
+   be silently resolved in this phase are reported, explained, then
+   arbitrarily resolved in step 2. *)
 
 (* ------------------------------------------------------------------------- *)
 (* Accessors. *)

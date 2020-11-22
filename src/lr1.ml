@@ -14,27 +14,6 @@
 open Grammar
 open LR1Sigs
 
-(* This module first constructs an LR(1) automaton by using an appropriate
-   construction method (LALR, Pager, canonical).
-   Then, this automaton is further transformed (in place), in three steps:
-
-   - Silent conflict resolution (without warnings),
-     following the user's precedence declarations.
-     This is done immediately.
-     This can remove transitions and reductions.
-
-   - Default conflict resolution (with warnings),
-     following a fixed default policy.
-     This is done via an explicit call to [default_conflict_resolution()].
-     This can remove reductions.
-
-   - Addition of extra reductions,
-     following the user's [%on_error_reduce] declarations.
-     This is done via an explicit call to [extra_reductions()].
-
-   Conflicts are explained after step 1, and before steps 2 and 3.
-   This is the main reason why these steps are separate. *)
-
 (* -------------------------------------------------------------------------- *)
 
 (* Run the SLR(1) check first. *)
