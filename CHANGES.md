@@ -1,19 +1,20 @@
 # Changes
 
-## 2020/11/21
+## 2020/11/22
 
 * The new command line switch `--dump-resolved` writes a description of the
-  automaton to the file `.automaton.resolved` *after* conflicts have been
-  resolved and extra reductions have been introduced. This file also shows
-  which states have a default reduction.
+  automaton to the file `.automaton.resolved` after all conflicts have been
+  resolved and after extra reductions have been introduced. This file also
+  shows which states have a default reduction.
 
 * The command line switch `--dump` writes a description of the automaton to
-  the file `.automaton` *before* conflicts have been resolved and extra
-  reductions have been introduced. This behavior is unchanged. The manner in
-  which end-of-stream conflicts are displayed in this file has been improved.
+  the file `.automaton` after benign conflicts have been silently resolved,
+  but *before* severe conflicts are resolved and before extra reductions are
+  introduced. (This behavior is unchanged.) The manner in which end-of-stream
+  conflicts are displayed in this file has been improved.
 
-* In the file `.automaton.resolved`, the reduction table in each state is now
-  presented in a much more compact and readable way.
+* In the files `.automaton` and `.automaton.resolved`, the reduction table in
+  each state is now presented in a much more compact and readable way.
 
 * In the files `.automaton` and `.automaton.resolved`, the known suffix of the
   stack in each state is now explicitly shown. (Although it can be deduced
