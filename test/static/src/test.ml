@@ -214,7 +214,9 @@ let menhir (impose_timeout : bool) base flags =
       (* We must use a [system] action. *)
       let command =
         sprintf
-          "timeout %d %%{bin:menhir}%s || echo 'TIMEOUT after %d seconds.'"
+          "timeout %d %%{bin:menhir}%s || \
+           (status=$?; if (( $status == 124 )) ; then \
+             echo 'TIMEOUT after %d seconds.' ; fi; exit $status)"
             threshold
             (show_list (menhir_args base flags))
             threshold
