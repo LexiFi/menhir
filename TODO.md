@@ -113,11 +113,6 @@
 * Preserve the directory name in the `#` directives that we emit.
   (Not sure if this is necessary.)
 
-## Scripts
-
-* In `make data`, the message `TIMEOUT after 60 seconds` should be printed
-  only if the exit code is 124.
-
 ## Installation
 
 * `generate-printers` should not be a demo but a tool, and should be
