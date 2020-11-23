@@ -89,9 +89,9 @@
 * Implement `--merge-errors` which merges two `.messages` files. When there
   are two messages for the same state, if one of them is the default message
   `<YOUR SYNTAX ERROR MESSAGE HERE>`, then it should be discarded; otherwise a
-  conflict should be signaled.
-
-  recognizing the default message as irrelevant.
+  conflict should be signaled. In fact, this is very much like `--compare-errors`,
+  except that instead of complaining when a state has either no message or two
+  distinct messages, we fix these problems.
   (Gabriel Scherer.)
 
 * Allow writing `%token FOO [@unused]`.
