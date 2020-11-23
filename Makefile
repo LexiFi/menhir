@@ -55,8 +55,8 @@ data: test
 	  echo "name,mode,terminals,nonterminals,lr0states,lr1states,lr1time" > analysis/data.csv && \
 	  directory=_build/default/test/static/src && \
 	  successful=0 && timedout=0 && \
-	  for timings in $$directory/*.out.timings ; do \
-	    name=$${timings%.out.timings} ; \
+	  for timings in $$directory/*.timings ; do \
+	    name=$${timings%.timings} ; \
 	    out=$$name.out ; \
 	    name=`basename $$name` ; \
 	    if grep --quiet "TIMEOUT after" $$out ; then \
