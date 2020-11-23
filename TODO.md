@@ -86,9 +86,11 @@
 * Could `--compile-errors` warn statically about uses of `$i` that are
   out of range?
 
-* Implement --copy-errors to copy error messages from one .messages
-  file to another (for those states that exist in both files).
-  Or --merge-errors which merges two .messages file,
+* Implement `--merge-errors` which merges two `.messages` files. When there
+  are two messages for the same state, if one of them is the default message
+  `<YOUR SYNTAX ERROR MESSAGE HERE>`, then it should be discarded; otherwise a
+  conflict should be signaled.
+
   recognizing the default message as irrelevant.
   (Gabriel Scherer.)
 
