@@ -52,9 +52,3 @@ let or_comment_filter_map f = function
       Some (f s)
   | Comment _ ->
       None
-
-let unThing = function
-  | Thing x ->
-      [ x ]
-  | Comment _ ->
-      []
