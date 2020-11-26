@@ -26,14 +26,21 @@ type delimiter =
 type message =
   string
 
-(* A run is a series of sentences or comments,
-   followed with a delimiter (at least one blank line; comments),
-   followed with an error message. *)
+(* A run is a series of sentences or comments, followed with a delimiter
+   (composed at least one blank line and possibly comments), followed with an
+   error message. *)
 
-type run =
-  located_sentence or_comment list *
-  delimiter *
-  message
+type 'sentence run = {
+  (* A list of sentences. *)
+  elements: 'sentence or_comment list;
+  (* A delimiter. *)
+  delimiter: delimiter;
+  (* A message. *)
+  message: message;
+}
+
+type located_run =
+  located_sentence run
 
 (* A targeted sentence is a located sentence together with the target into
    which it leads. A target tells us which state a sentence leads to, as well
@@ -48,21 +55,14 @@ let target2state (s, _spurious) =
 type maybe_targeted_sentence =
   located_sentence * target option
 
+type maybe_targeted_run =
+  maybe_targeted_sentence run
+
 type targeted_sentence =
   located_sentence * target
 
-(* A targeted run is a series of targeted sentences or comments together with
-   an error message. *)
-
-type maybe_targeted_run =
-  maybe_targeted_sentence or_comment list *
-  delimiter *
-  message
-
 type targeted_run =
-  targeted_sentence or_comment list *
-  delimiter *
-  message
+  targeted_sentence run
 
 (* --------------------------------------------------------------------------- *)
 
@@ -304,7 +304,7 @@ let print_messages_item (nt, sentence, target) : unit =
 
 let write_run : maybe_targeted_run or_comment -> unit =
   function
-  | Thing (sentences_or_comments, delimiter, message) ->
+  | Thing run ->
       (* First, print every sentence and human comment. *)
       List.iter (fun sentence_or_comment ->
         match sentence_or_comment with
@@ -314,12 +314,12 @@ let write_run : maybe_targeted_run or_comment -> unit =
             print_messages_auto (nt, toks, target)
         | Comment c ->
             print_string c
-      ) sentences_or_comments;
+      ) run.elements;
       (* Then, print the delimiter, which must begin with a blank line
          and may include comments. *)
-      print_string delimiter;
+      print_string run.delimiter;
       (* Then, print the error message. *)
-      print_string message
+      print_string run.message
       (* No need for another blank line. It will be printed as part of a
          separate [Comment]. *)
   | Comment comments ->
@@ -365,20 +365,16 @@ let target_sentence
       (* success: *)
       (fun _nt _terminals target -> Some target)
 
-let target_run_1 signal : run -> maybe_targeted_run =
-  fun (sentences, delimiter, message) ->
-    List.map (or_comment_map (target_sentence signal)) sentences,
-    delimiter,
-    message
+let target_run_1 signal (run : located_run) : maybe_targeted_run =
+  { run with elements =
+      List.map (or_comment_map (target_sentence signal)) run.elements }
 
-let target_run_2 : maybe_targeted_run -> targeted_run =
-  fun (sentences, delimiter, message) ->
-    let aux (x, y) = (x, Misc.unSome y) in
-    List.map (or_comment_map aux) sentences,
-    delimiter,
-    message
+let target_run_2 (run : maybe_targeted_run) : targeted_run =
+  let aux (x, y) = (x, Misc.unSome y) in
+  { run with elements =
+      List.map (or_comment_map aux) run.elements }
 
-let target_runs : run or_comment list -> targeted_run or_comment list =
+let target_runs : located_run or_comment list -> targeted_run or_comment list =
   fun runs ->
     let c = Error.new_category() in
     let signal = Error.signal c in
@@ -414,19 +410,19 @@ let setup () : unit -> sentence option =
 
 (* Display an informational message about the contents of a [.messages] file.  *)
 
-let stats (runs : run or_comment list) =
+let stats (runs : located_run or_comment list) =
   (* [s] counts the sample input sentences. [m] counts the error messages. *)
   let s = ref 0
   and m = ref 0 in
   List.iter (function
-  | Thing (sentences, _, _) ->
+  | Thing { elements; _ } ->
       incr m;
       List.iter (function
       | Thing _ ->
           incr s
       | Comment _ ->
           ()
-      ) sentences
+      ) elements
   | Comment _ ->
       ()
   ) runs;
@@ -443,7 +439,7 @@ let stats (runs : run or_comment list) =
    two runs can contain comments, which we wish to preserve when performing
    [--update-errors]. *)
 
-let read_messages filename : run or_comment list =
+let read_messages filename : located_run or_comment list =
   let open Segment in
   (* Read and segment the file. *)
   let segments : (tag * string * Lexing.lexbuf) list = segment filename in
@@ -463,15 +459,15 @@ let read_messages filename : run or_comment list =
             Error.error
               [Positions.cpos lexbuf]
               "ill-formed sentence."
-        | sentences ->
+        | elements ->
             (* In principle, we should now find a segment of whitespace
                followed with a segment of text. By construction, the two
                kinds of segments alternate. *)
             match segments with
-            | (Whitespace, comments, _) ::
+            | (Whitespace, delimiter, _) ::
               (Segment, message, _) ::
               segments ->
-                let run : run = sentences, comments, message in
+                let run = { elements; delimiter; message } in
                 loop (Thing run :: accu) segments
             | []
             | [ _ ] ->
@@ -495,10 +491,9 @@ let read_messages filename : run or_comment list =
 
 let foreach_targeted_sentence f accu (runs : targeted_run or_comment list) =
   List.fold_left (or_comment_fold (fun accu run ->
-    let (targeted_sentences_and_comments, _, message) = run in
     List.fold_left (or_comment_fold (fun accu sentence ->
-      f accu sentence message
-    )) accu targeted_sentences_and_comments
+      f accu sentence run.message
+    )) accu run.elements
   )) accu runs
 
 (* --------------------------------------------------------------------------- *)
@@ -552,15 +547,15 @@ let compile_runs filename (runs : targeted_run or_comment list) : unit =
      the user, who can then produce a generic error message. *)
   } in
   let branches =
-    List.fold_left (or_comment_fold (fun branches (sentences_and_states, _, message) ->
+    List.fold_left (or_comment_fold (fun branches run ->
       (* Create an or-pattern for these states. *)
       let states = Misc.filter_map (or_comment_filter_map (fun (_, target) ->
         let s = target2state target in
         pint (Lr1.number s)
-      )) sentences_and_states in
+      )) run.elements in
       (* Map all these states to this message. *)
       { branchpat = POr states;
-        branchbody = EStringConst message } :: branches
+        branchbody = EStringConst run.message } :: branches
     )) [ default ] runs
   in
   let messagedef = {
@@ -638,7 +633,7 @@ let () =
   Settings.compile_errors |> Option.iter (fun filename ->
 
     (* Read the file. *)
-    let runs : run or_comment list = read_messages filename in
+    let runs : located_run or_comment list = read_messages filename in
 
     (* Convert every sentence to a state number. We signal an error if a
        sentence does not end in an error, as expected. *)
@@ -727,7 +722,7 @@ let () =
   Settings.update_errors |> Option.iter (fun filename ->
 
     (* Read the file. *)
-    let runs : run or_comment list = read_messages filename in
+    let runs : located_run or_comment list = read_messages filename in
 
     (* Convert every sentence to a state number. Warn, but do not
        fail, if a sentence does not end in an error, as it should. *)
@@ -765,14 +760,13 @@ let () =
   Settings.echo_errors |> Option.iter (fun filename ->
 
     (* Read the file. *)
-    let runs : run or_comment list = read_messages filename in
+    let runs : located_run or_comment list = read_messages filename in
 
     (* Echo. *)
     List.iter (or_comment_iter (fun run ->
-      let (sentences : located_sentence or_comment list), _, _ = run in
       List.iter (or_comment_iter (fun (_, sentence) ->
         print_string (print_sentence sentence)
-      )) sentences
+      )) run.elements
     )) runs;
 
     exit 0
