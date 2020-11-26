@@ -665,26 +665,34 @@ let () =
 
 let compare_errors filename1 filename2 =
 
-  (* Read and convert both files, as above. *)
+  (* Read both files. *)
+
   let runs1 = read_messages filename1
   and runs2 = read_messages filename2 in
   let runs1 = target_runs runs1
   and runs2 = target_runs runs2 in (* could ignore errors here *)
-  let table1 = message_table false runs1
-  and table2 = message_table false runs2 in
+
+  (* Convert the right-hand file to a table for quick lookup. *)
+
+  (* There is no need to convert the left-hand file. In fact, not
+     converting it to a table allows us to produce error messages
+     in an order that respects the left-hand file. *)
+
+  let table2 = message_table false runs2 in
 
   (* Check that the domain of [table1] is a subset of the domain of
      [table2]. *)
   Error.with_new_category (fun c ->
 
-    table1 |> Lr1.NodeMap.iter (fun s (sentence1, _) ->
+    foreach_targeted_sentence (fun () (sentence1, target1) _message1 ->
+      let s = target2state target1 in
       if not (Lr1.NodeMap.mem s table2) then
         let poss1 = fst sentence1 in
         Error.signal c poss1
           "this sentence leads to an error in state %d.\n\
            No sentence that leads to this state exists in \"%s\"."
           (Lr1.number s) filename2
-    );
+    ) () runs1;
 
     (* Check that [table1] is a subset of [table2], that is, for every state
        [s] in the domain of [table1], [s] is mapped by [table1] and [table2]
@@ -693,9 +701,10 @@ let compare_errors filename1 filename2 =
        allows using [--list-errors] and [--compare-errors] in conjunction to
        ensure that a [.messages] file is complete, without seeing warnings
        about different messages. *)
-    table1 |> Lr1.NodeMap.iter (fun s (sentence1, message1) ->
+    foreach_targeted_sentence (fun () (sentence1, target1) message1 ->
       if message1 <> default_message then
         try
+          let s = target2state target1 in
           let sentence2, message2 = Lr1.NodeMap.find s table2 in
           if message1 <> message2 then
             let poss1 = fst sentence1
@@ -706,7 +715,7 @@ let compare_errors filename1 filename2 =
               (Lr1.number s) filename1 filename2
         with Not_found ->
           ()
-    )
+    ) () runs1
 
   )
 
