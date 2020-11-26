@@ -83,4 +83,5 @@ rule lex = parse
   | ':'
       { COLON }
   | _
-      { error2 lexbuf "unexpected character." }
+      { error2 lexbuf "unexpected character.\n\
+                       (I believe I am reading a sentence, but may be off.)" }
