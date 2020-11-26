@@ -672,11 +672,12 @@ let () =
     let runs1 = read_messages filename1
     and runs2 = read_messages filename2 in
     let runs1 = target_runs runs1
-    and runs2 = target_runs runs2 in (* here, it would be OK to ignore errors *)
+    and runs2 = target_runs runs2 in (* could ignore errors here *)
     let table1 = message_table false runs1
     and table2 = message_table false runs2 in
 
-    (* Check that the domain of [table1] is a subset of the domain of [table2]. *)
+    (* Check that the domain of [table1] is a subset of the domain of
+       [table2]. *)
     let c = Error.new_category() in
     table1 |> Lr1.NodeMap.iter (fun s ((poss1, _), _) ->
       if not (Lr1.NodeMap.mem s table2) then
