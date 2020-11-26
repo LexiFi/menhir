@@ -688,13 +688,14 @@ let compare_errors filename1 filename2 =
 
       (* 1. Check that the target state [s] appears in [table2]. *)
 
-      if not (Lr1.NodeMap.mem s table2) then begin
-        let poss1 = fst sentence1 in
-        Error.signal c poss1
-          "this sentence leads to an error in state %d.\n\
-           No sentence that leads to this state exists in \"%s\"."
-          (Lr1.number s) filename2
-      end;
+      match Lr1.NodeMap.find s table2 with
+
+      | exception Not_found ->
+          let poss1 = fst sentence1 in
+          Error.signal c poss1
+            "this sentence leads to an error in state %d.\n\
+             No sentence that leads to this state exists in \"%s\"."
+            (Lr1.number s) filename2
 
       (* 2. Check that [s] is mapped by [table1] and [table2] to the same
          error message. As an exception, if the message found in [table1] is
@@ -703,19 +704,15 @@ let compare_errors filename1 filename2 =
          that a [.messages] file is complete, without seeing warnings about
          different messages. *)
 
-      if message1 <> default_message then begin
-        try
-          let sentence2, message2 = Lr1.NodeMap.find s table2 in
-          if message1 <> message2 then
+      | sentence2, message2 ->
+          if message1 <> default_message && message1 <> message2 then begin
             let poss1 = fst sentence1
             and poss2 = fst sentence2 in
             Error.warning (poss1 @ poss2)
               "these sentences lead to an error in state %d.\n\
                The corresponding messages in \"%s\" and \"%s\" differ."
               (Lr1.number s) filename1 filename2
-        with Not_found ->
-          ()
-      end
+          end
 
     end () runs1
   end
