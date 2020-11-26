@@ -679,8 +679,9 @@ let () =
     (* Check that the domain of [table1] is a subset of the domain of
        [table2]. *)
     let c = Error.new_category() in
-    table1 |> Lr1.NodeMap.iter (fun s ((poss1, _), _) ->
+    table1 |> Lr1.NodeMap.iter (fun s (sentence1, _) ->
       if not (Lr1.NodeMap.mem s table2) then
+        let poss1 = fst sentence1 in
         Error.signal c poss1
           "this sentence leads to an error in state %d.\n\
            No sentence that leads to this state exists in \"%s\"."
@@ -694,11 +695,13 @@ let () =
        allows using [--list-errors] and [--compare-errors] in conjunction to
        ensure that a [.messages] file is complete, without seeing warnings
        about different messages. *)
-    table1 |> Lr1.NodeMap.iter (fun s ((poss1, _), message1) ->
+    table1 |> Lr1.NodeMap.iter (fun s (sentence1, message1) ->
       if message1 <> default_message then
         try
-          let (poss2, _), message2 = Lr1.NodeMap.find s table2 in
+          let sentence2, message2 = Lr1.NodeMap.find s table2 in
           if message1 <> message2 then
+            let poss1 = fst sentence1
+            and poss2 = fst sentence2 in
             Error.warning (poss1 @ poss2)
               "these sentences lead to an error in state %d.\n\
                The corresponding messages in \"%s\" and \"%s\" differ."
