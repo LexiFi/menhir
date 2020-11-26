@@ -375,16 +375,17 @@ let target_run_2 (run : maybe_targeted_run) : targeted_run =
       List.map (or_comment_map aux) run.elements }
 
 let target_runs : located_run or_comment list -> targeted_run or_comment list =
-  fun runs ->
-    let c = Error.new_category() in
-    let signal = Error.signal c in
-    (* Interpret all sentences, possibly displaying multiple errors. *)
-    let runs = List.map (or_comment_map (target_run_1 signal)) runs in
-    (* Abort if an error occurred. *)
-    Error.exit_if c;
-    (* Remove the options introduced by the first phase above. *)
-    let runs = List.map (or_comment_map target_run_2) runs in
-    runs
+fun runs ->
+  (* Interpret all sentences, possibly displaying multiple errors.
+     At the end of this phase, abort if an error occurred. *)
+  let runs =
+    Error.with_new_category (fun c ->
+      let signal = Error.signal c in
+      List.map (or_comment_map (target_run_1 signal)) runs
+    )
+  in
+  (* Remove the options introduced by the first phase above. *)
+  List.map (or_comment_map target_run_2) runs
 
 (* --------------------------------------------------------------------------- *)
 
@@ -507,8 +508,7 @@ let message_table
     (runs : targeted_run or_comment list)
   : (located_sentence * message) Lr1.NodeMap.t =
 
-  let c = Error.new_category() in
-  let table =
+  Error.with_new_category (fun c ->
     foreach_targeted_sentence (fun table (sentence2, target) message ->
       let s = target2state target in
       match Lr1.NodeMap.find s table with
@@ -521,9 +521,7 @@ let message_table
       | exception Not_found ->
           Lr1.NodeMap.add s (sentence2, message) table
     ) Lr1.NodeMap.empty runs
-  in
-  Error.exit_if c;
-  table
+  )
 
 (* --------------------------------------------------------------------------- *)
 
@@ -665,20 +663,20 @@ let () =
    state that appears on the left-hand side appears on the right-hand side as
    well. *)
 
-let () =
-  Settings.compare_errors |> Option.iter (fun (filename1, filename2) ->
+let compare_errors filename1 filename2 =
 
-    (* Read and convert both files, as above. *)
-    let runs1 = read_messages filename1
-    and runs2 = read_messages filename2 in
-    let runs1 = target_runs runs1
-    and runs2 = target_runs runs2 in (* could ignore errors here *)
-    let table1 = message_table false runs1
-    and table2 = message_table false runs2 in
+  (* Read and convert both files, as above. *)
+  let runs1 = read_messages filename1
+  and runs2 = read_messages filename2 in
+  let runs1 = target_runs runs1
+  and runs2 = target_runs runs2 in (* could ignore errors here *)
+  let table1 = message_table false runs1
+  and table2 = message_table false runs2 in
 
-    (* Check that the domain of [table1] is a subset of the domain of
-       [table2]. *)
-    let c = Error.new_category() in
+  (* Check that the domain of [table1] is a subset of the domain of
+     [table2]. *)
+  Error.with_new_category (fun c ->
+
     table1 |> Lr1.NodeMap.iter (fun s (sentence1, _) ->
       if not (Lr1.NodeMap.mem s table2) then
         let poss1 = fst sentence1 in
@@ -708,11 +706,14 @@ let () =
               (Lr1.number s) filename1 filename2
         with Not_found ->
           ()
-    );
+    )
 
-    Error.exit_if c;
+  )
+
+let () =
+  Settings.compare_errors |> Option.iter (fun (filename1, filename2) ->
+    compare_errors filename1 filename2;
     exit 0
-
   )
 
 (* --------------------------------------------------------------------------- *)
