@@ -483,7 +483,7 @@ let unthingify_parameter rules thing =
      if StringMap.mem symbol rules then Some param else None
 
 let unthingify_attribute_declaration rules (params, attrs) =
-  (Misc.map_opt (unthingify_parameter rules) params, attrs)
+  (Misc.filter_map (unthingify_parameter rules) params, attrs)
 
 let unthingify_attribute_declarations rules decls =
   List.map (unthingify_attribute_declaration rules) decls

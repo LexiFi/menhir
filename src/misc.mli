@@ -124,9 +124,9 @@ val normalize: string -> string
 
 val postincrement: int ref -> int
 
-(* [map_opt f l] returns the list of [y]s such that [f x = Some y] where [x]
+(* [filter_map f l] returns the list of [y]s such that [f x = Some y] where [x]
    is in [l], preserving the order of elements of [l]. *)
-val map_opt : ('a -> 'b option) -> 'a list -> 'b list
+val filter_map : ('a -> 'b option) -> 'a list -> 'b list
 
 (* [new_encode_decode capacity] creates a new service for assigning unique
    integer codes to strings. [capacity] is the initial capacity of the
