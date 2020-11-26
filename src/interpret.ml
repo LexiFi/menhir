@@ -64,13 +64,6 @@ type targeted_run =
   delimiter *
   message
 
-(* A filtered targeted run is a series of targeted sentences together with an
-   error message. (The comments have been filtered out.) *)
-
-type filtered_targeted_run =
-  targeted_sentence list *
-  message
-
 (* --------------------------------------------------------------------------- *)
 
 (* Display and debugging. *)
@@ -385,30 +378,17 @@ let target_run_2 : maybe_targeted_run -> targeted_run =
     delimiter,
     message
 
-let target_runs : run list -> targeted_run list =
+let target_runs : run or_comment list -> targeted_run or_comment list =
   fun runs ->
     let c = Error.new_category() in
     let signal = Error.signal c in
     (* Interpret all sentences, possibly displaying multiple errors. *)
-    let runs = List.map (target_run_1 signal) runs in
+    let runs = List.map (or_comment_map (target_run_1 signal)) runs in
     (* Abort if an error occurred. *)
     Error.exit_if c;
     (* Remove the options introduced by the first phase above. *)
-    let runs = List.map target_run_2 runs in
+    let runs = List.map (or_comment_map target_run_2) runs in
     runs
-
-(* --------------------------------------------------------------------------- *)
-
-(* [filter_things] filters out the comments in a list of things or comments. *)
-
-let filter_things : 'a or_comment list -> 'a list =
-  fun things -> List.flatten (List.map unThing things)
-
-(* [filter_run] filters out the comments within a run. *)
-
-let filter_run : targeted_run -> filtered_targeted_run =
-  fun (sentences, _, message) ->
-    filter_things sentences, message
 
 (* --------------------------------------------------------------------------- *)
 
@@ -508,28 +488,43 @@ let read_messages filename : run or_comment list =
 
 (* --------------------------------------------------------------------------- *)
 
+(* [foreach_targeted_sentence f accu runs] iterates over the targeted
+   sentences in the list [runs]. The function [f] receives the current
+   accumulator, a targeted sentence, and the corresponding message, and
+   must return an updated accumulator. *)
+
+let foreach_targeted_sentence f accu (runs : targeted_run or_comment list) =
+  List.fold_left (or_comment_fold (fun accu run ->
+    let (targeted_sentences_and_comments, _, message) = run in
+    List.fold_left (or_comment_fold (fun accu sentence ->
+      f accu sentence message
+    )) accu targeted_sentences_and_comments
+  )) accu runs
+
+(* --------------------------------------------------------------------------- *)
+
 (* [message_table] converts a list of targeted runs to a table (a mapping) of
    states to located sentences and messages. Optionally, it can detect that
    two sentences lead to the same state, and report an error. *)
 
-let message_table (detect_redundancy : bool) (runs : filtered_targeted_run list)
+let message_table
+    (detect_redundancy : bool)
+    (runs : targeted_run or_comment list)
   : (located_sentence * message) Lr1.NodeMap.t =
 
   let c = Error.new_category() in
   let table =
-    List.fold_left (fun table (sentences_and_states, message) ->
-      List.fold_left (fun table (sentence2, target) ->
-        let s = target2state target in
-        match Lr1.NodeMap.find s table with
-        | sentence1, _ ->
-            if detect_redundancy then
-              Error.signal c (fst sentence1 @ fst sentence2)
-                   "these sentences both cause an error in state %d."
-                   (Lr1.number s);
-            table
-        | exception Not_found ->
-            Lr1.NodeMap.add s (sentence2, message) table
-      ) table sentences_and_states
+    foreach_targeted_sentence (fun table (sentence2, target) message ->
+      let s = target2state target in
+      match Lr1.NodeMap.find s table with
+      | sentence1, _ ->
+          if detect_redundancy then
+            Error.signal c (fst sentence1 @ fst sentence2)
+                 "these sentences both cause an error in state %d."
+                 (Lr1.number s);
+          table
+      | exception Not_found ->
+          Lr1.NodeMap.add s (sentence2, message) table
     ) Lr1.NodeMap.empty runs
   in
   Error.exit_if c;
@@ -541,7 +536,7 @@ let message_table (detect_redundancy : bool) (runs : filtered_targeted_run list)
    a mapping of state numbers to error messages. The code is sent to the
    standard output channel. *)
 
-let compile_runs filename (runs : filtered_targeted_run list) : unit =
+let compile_runs filename (runs : targeted_run or_comment list) : unit =
 
   (* We wish to produce a function that maps a state number to a message.
      By convention, we call this function [message]. *)
@@ -557,16 +552,16 @@ let compile_runs filename (runs : filtered_targeted_run list) : unit =
      the user, who can then produce a generic error message. *)
   } in
   let branches =
-    List.fold_left (fun branches (sentences_and_states, message) ->
+    List.fold_left (or_comment_fold (fun branches (sentences_and_states, _, message) ->
       (* Create an or-pattern for these states. *)
-      let states = List.map (fun (_, target) ->
+      let states = Misc.filter_map (or_comment_filter_map (fun (_, target) ->
         let s = target2state target in
         pint (Lr1.number s)
-      ) sentences_and_states in
+      )) sentences_and_states in
       (* Map all these states to this message. *)
       { branchpat = POr states;
         branchbody = EStringConst message } :: branches
-    ) [ default ] runs
+    )) [ default ] runs
   in
   let messagedef = {
     valpublic = true;
@@ -644,15 +639,10 @@ let () =
 
     (* Read the file. *)
     let runs : run or_comment list = read_messages filename in
-    (* Drop the comments in between two runs. *)
-    let runs : run list = filter_things runs in
 
     (* Convert every sentence to a state number. We signal an error if a
        sentence does not end in an error, as expected. *)
-    let runs : targeted_run list = target_runs runs in
-
-    (* Remove comments within the runs. *)
-    let runs : filtered_targeted_run list = List.map filter_run runs in
+    let runs : targeted_run or_comment list = target_runs runs in
 
     (* Build a mapping of states to located sentences. This allows us to
        detect if two sentences lead to the same state. *)
@@ -686,12 +676,8 @@ let () =
     (* Read and convert both files, as above. *)
     let runs1 = read_messages filename1
     and runs2 = read_messages filename2 in
-    let runs1 = filter_things runs1
-    and runs2 = filter_things runs2 in
     let runs1 = target_runs runs1
     and runs2 = target_runs runs2 in (* here, it would be OK to ignore errors *)
-    let runs1 = List.map filter_run runs1
-    and runs2 = List.map filter_run runs2 in
     let table1 = message_table false runs1
     and table2 = message_table false runs2 in
 

@@ -35,11 +35,23 @@ let or_comment_iter f = function
   | Comment _ ->
       ()
 
+let or_comment_fold f accu = function
+  | Thing s ->
+      f accu s
+  | Comment _ ->
+      accu
+
 let or_comment_map f = function
   | Thing s ->
       Thing (f s)
   | Comment c ->
       Comment c
+
+let or_comment_filter_map f = function
+  | Thing s ->
+      Some (f s)
+  | Comment _ ->
+      None
 
 let unThing = function
   | Thing x ->
