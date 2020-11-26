@@ -261,6 +261,12 @@ let compare_errors =
 let add_compare_errors filename =
   compare_errors := filename :: !compare_errors
 
+let merge_errors =
+  ref []
+
+let add_merge_errors filename =
+  merge_errors := filename :: !merge_errors
+
 let update_errors =
   ref None
 
@@ -324,6 +330,7 @@ let options = Arg.align [
   "--log-automaton", Arg.Set_int logA, "<level> Log information about the automaton";
   "--log-code", Arg.Set_int logC, "<level> Log information about the generated code";
   "--log-grammar", Arg.Set_int logG, "<level> Log information about the grammar";
+  "--merge-errors", Arg.String add_merge_errors, "<filename> (used twice) Merge two .messages files";
   "--no-code-inlining", Arg.Clear code_inlining, " (undocumented)";
   "--no-dollars", Arg.Unit (fun () -> dollars := DollarsDisallowed), " Disallow $i in semantic actions";
   "--no-inline", Arg.Clear inline, " Ignore the %inline keyword";
@@ -566,6 +573,18 @@ let compare_errors =
          --compare-errors <filename1> --compare-errors <filename2>.\n";
       exit 1
 
+let merge_errors =
+  match !merge_errors with
+  | [] ->
+      None
+  | [ filename2; filename1 ] -> (* LIFO *)
+      Some (filename1, filename2)
+  | _ ->
+      eprintf
+        "To merge two .messages files, please use:\n\
+         --merge-errors <filename1> --merge-errors <filename2>.\n";
+      exit 1
+
 let update_errors =
   !update_errors
 
@@ -594,6 +613,7 @@ let skipping_parser_generation =
   interpret_error ||
   list_errors ||
   compare_errors <> None ||
+  merge_errors <> None ||
   update_errors <> None ||
   echo_errors <> None ||
   false
