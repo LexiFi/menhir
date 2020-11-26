@@ -440,6 +440,9 @@ let stats (runs : located_run or_comment list) =
    two runs can contain comments, which we wish to preserve when performing
    [--update-errors]. *)
 
+let mkcomment c accu =
+  if String.length c = 0 then accu else Comment c :: accu
+
 let read_messages filename : located_run or_comment list =
   let open Segment in
   (* Read and segment the file. *)
@@ -452,7 +455,7 @@ let read_messages filename : located_run or_comment list =
     | [] ->
         List.rev accu
     | (Whitespace, comments, _) :: segments ->
-         loop (Comment comments :: accu) segments
+        loop (mkcomment comments accu) segments
     | (Segment, _, lexbuf) :: segments ->
         (* Read a series of located sentences. *)
         match SentenceParser.entry SentenceLexer.lex lexbuf with
