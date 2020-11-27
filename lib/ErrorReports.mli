@@ -70,3 +70,9 @@ val compress: string -> string
    text is too long, a fragment in the middle is replaced with an ellipsis. *)
 
 val shorten: int -> string -> string
+
+(* [expand f text] searches [text] for occurrences of [$k], where [k]
+   is a nonnegative integer literal, and replaces each such occurrence
+   with the string [f k]. *)
+
+val expand: (int -> string) -> string -> string

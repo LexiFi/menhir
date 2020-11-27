@@ -130,4 +130,35 @@ let shorten k text =
     "..." ^
     String.sub text (n - k) k
 
-(* -------------------------------------------------------------------------- *)
+let is_digit c =
+  let c = Char.code c in
+  Char.code '0' <= c && c <= Char.code '9'
+
+exception Copy
+
+let expand f text =
+  let n = String.length text in
+  let b = Buffer.create n in
+  let rec loop i =
+    if i < n then begin
+      let c, i = text.[i], i + 1 in
+      loop (
+        try
+          if c <> '$' then raise Copy;
+          let j = ref i in
+          while !j < n && is_digit text.[!j] do incr j done;
+          if i = !j then raise Copy;
+          let k = int_of_string (String.sub text i (!j - i)) in
+          Buffer.add_string b (f k);
+          !j
+        with Copy ->
+          (* We reach this point if either [c] is not '$' or [c] is '$'
+             but is not followed by an integer literal. *)
+          Buffer.add_char b c;
+          i
+      )
+    end
+    else
+      Buffer.contents b
+  in
+  loop 0
