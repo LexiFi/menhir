@@ -28,7 +28,7 @@ and token = parse
 | [' ' '\t']
     { token lexbuf }
 | '\n'
-    { EOL }
+    { MenhirLib.LexerUtil.newline lexbuf; token lexbuf }
 | ['0'-'9']+ as i
     { INT (int_of_string i) }
 | '+'
@@ -43,6 +43,7 @@ and token = parse
     { LPAREN }
 | ')'
     { RPAREN }
+| eof
+    { EOF }
 | _
     { raise (Error (Printf.sprintf "At offset %d: unexpected character.\n" (Lexing.lexeme_start lexbuf))) }
-

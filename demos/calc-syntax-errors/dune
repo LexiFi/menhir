@@ -75,9 +75,8 @@
 
 (rule
   (with-outputs-to calc01.out
-  (with-stdin-from calc01.in
-    (run ./calc.exe)
-  ))
+    (run ./calc.exe %{dep:calc01.in})
+  )
 )
 
 (rule
@@ -87,9 +86,8 @@
 
 (rule
   (with-outputs-to calc02.out
-  (with-stdin-from calc02.in
-    (run ./calc.exe)
-  ))
+    (run ./calc.exe %{dep:calc02.in})
+  )
 )
 
 (rule
@@ -99,9 +97,8 @@
 
 (rule
   (with-outputs-to calc03.out
-  (with-stdin-from calc03.in
-    (run ./calc.exe)
-  ))
+    (run ./calc.exe %{dep:calc03.in})
+  )
 )
 
 (rule
@@ -111,9 +108,8 @@
 
 (rule
   (with-outputs-to calc04.out
-  (with-stdin-from calc04.in
-    (run ./calc.exe)
-  ))
+    (run ./calc.exe %{dep:calc04.in})
+  )
 )
 
 (rule
@@ -123,12 +119,22 @@
 
 (rule
   (with-outputs-to calc05.out
-  (with-stdin-from calc05.in
-    (run ./calc.exe)
-  ))
+    (run ./calc.exe %{dep:calc05.in})
+  )
 )
 
 (rule
   (alias test)
   (action (diff calc05.exp calc05.out))
+)
+
+(rule
+  (with-outputs-to calc06.out
+    (run ./calc.exe %{dep:calc06.in})
+  )
+)
+
+(rule
+  (alias test)
+  (action (diff calc06.exp calc06.out))
 )

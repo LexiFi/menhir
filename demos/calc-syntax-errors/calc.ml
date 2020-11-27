@@ -74,10 +74,9 @@ let fail text buffer (checkpoint : int I.checkpoint) =
 
 (* [process text] runs the parser. *)
 
-let process (text : string) =
-  (* Allocate and initialize a lexing buffer. *)
-  let lexbuf = Lexing.from_string text in
-  let lexbuf = L.init "<standard input>" lexbuf in
+let process filename =
+  (* Read the file; allocate and initialize a lexing buffer. *)
+  let text, lexbuf = L.read filename in
   (* Wrap the lexer and lexbuf together into a supplier, that is, a
      function of type [unit -> token * position * position]. *)
   let supplier = I.lexer_lexbuf_to_supplier Lexer.token lexbuf in
@@ -94,23 +93,9 @@ let process (text : string) =
   | Lexer.Error msg ->
       eprintf "%s%!" msg
 
-(* -------------------------------------------------------------------------- *)
+(* In this demo, instead of reading one line at a time as in the other demos,
+   we read all of our input in one go. This allows multi-line arithmetic
+   expressions. We take a file name on the command line. *)
 
-(* The rest of the code is as in the other demos. *)
-
-let process (optional_line : string option) =
-  match optional_line with
-  | None ->
-      ()
-  | Some text ->
-      process text
-
-let rec repeat channel =
-  (* Attempt to read one line. *)
-  let optional_line, continue = Lexer.line channel in
-  process optional_line;
-  if continue then
-    repeat channel
-
-   let () =
-   repeat (from_channel stdin)
+let () =
+  process Sys.argv.(1)

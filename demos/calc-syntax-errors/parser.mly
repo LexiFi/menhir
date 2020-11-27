@@ -1,7 +1,7 @@
 %token <int> INT
 %token PLUS MINUS TIMES DIV
 %token LPAREN RPAREN
-%token EOL
+%token EOF
 
 %left PLUS MINUS        /* lowest precedence */
 %left TIMES DIV         /* medium precedence */
@@ -14,7 +14,7 @@
 %%
 
 main:
-| e = expr EOL
+| e = expr EOF
     { e }
 
 expr:
