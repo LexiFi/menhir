@@ -3,11 +3,14 @@
 ## 2020/12/XX
 
 * The module `MenhirLib.ErrorReports` is extended with new functions:
-  `wrap_supplier`, `extract`, `sanitize`, `compress`, `shorten`.
+  `wrap_supplier`, `extract`, `sanitize`, `compress`, `shorten`, `expand`.
 
 * The new module `MenhirLib.LexerUtil` offers a few functions that help
   reading a file, setting up a lexing buffer, printing source code positions,
   etc.
+
+* The new demo `calc-syntax-errors` demonstrates how to produce customized
+  syntax error messages.
 
 ## 2020/11/22
 
