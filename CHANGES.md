@@ -1,5 +1,14 @@
 # Changes
 
+## 2020/12/XX
+
+* The module `MenhirLib.ErrorReports` is extended with new functions:
+  `wrap_supplier`, `extract`, `sanitize`, `compress`, `shorten`.
+
+* The new module `MenhirLib.LexerUtil` offers a few functions that help
+  reading a file, setting up a lexing buffer, printing source code positions,
+  etc.
+
 ## 2020/11/22
 
 * The new command line switch `--dump-resolved` writes a description of the
