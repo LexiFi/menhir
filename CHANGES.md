@@ -10,7 +10,15 @@
   etc.
 
 * The new demo `calc-syntax-errors` demonstrates how to produce customized
-  syntax error messages.
+  syntax error messages. The kind of messages that this little parser can
+  produce are shown by the expected-output files
+  [calc01.in](demos/calc-syntax-errors/calc01.in),
+  [calc02.in](demos/calc-syntax-errors/calc02.in),
+  [calc03.in](demos/calc-syntax-errors/calc03.in),
+  [calc04.in](demos/calc-syntax-errors/calc04.in),
+  [calc05.in](demos/calc-syntax-errors/calc05.in),
+  [calc06.in](demos/calc-syntax-errors/calc06.in),
+  [calc07.in](demos/calc-syntax-errors/calc07.in).
 
 * The new command `--merge-errors` merges two `.messages` files. It can be
   useful when two or more users have independently produced partial
