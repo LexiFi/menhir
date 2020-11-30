@@ -23,3 +23,6 @@ fails and produces the expected output.
 Some tests involve multiple files. By convention, if several files have the
 same name up to a numeric suffix, then they belong in a single group and
 should be fed together to Menhir.
+
+The subdirectory `merge/` contains a few tests of the `--merge-errors`
+facility.
