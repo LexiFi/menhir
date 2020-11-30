@@ -12,6 +12,11 @@
 * The new demo `calc-syntax-errors` demonstrates how to produce customized
   syntax error messages.
 
+* The new command `--merge-errors` merges two `.messages` files. It can be
+  useful when two or more users have independently produced partial
+  `.messages` files and wish to combine their work.
+  (Suggested by Gabriel Scherer and François Bobot.)
+
 ## 2020/11/22
 
 * The new command line switch `--dump-resolved` writes a description of the
