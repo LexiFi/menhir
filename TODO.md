@@ -68,9 +68,6 @@
   (Always parenthesize production groups that share a semantic action?)
   (Or just disallow them?)
 
-* Move more parts of the module `ErrorReports` from CompCert to MenhirLib.
-  In `show`, might want to apply `shorten` to the output of `f`.
-
 * Complete the implementation of `--only-preprocess-for-ocamlyacc`.
   Currently, the position keywords (`$startpos`, etc.) are not supported.
   Translate them to calls to the `Parsing` module.
@@ -80,19 +77,6 @@
   but `--only-preprocess` produces it.
   Should we avoid producing it?
   Should we check that it is not used?
-
-* `--compile-errors` could warn about messages that are wider than 80 columns.
-
-* Could `--compile-errors` warn statically about uses of `$i` that are
-  out of range?
-
-* Implement `--merge-errors` which merges two `.messages` files. When there
-  are two messages for the same state, if one of them is the default message
-  `<YOUR SYNTAX ERROR MESSAGE HERE>`, then it should be discarded; otherwise a
-  conflict should be signaled. In fact, this is very much like `--compare-errors`,
-  except that instead of complaining when a state has either no message or two
-  distinct messages, we fix these problems.
-  (Gabriel Scherer.)
 
 * Allow writing `%token FOO [@unused]`.
   This should be equivalent to passing `--unused-token FOO`
