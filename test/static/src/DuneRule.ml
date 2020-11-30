@@ -1,0 +1,72 @@
+open PrintSExp
+
+let up =
+  Filename.parent_dir_name
+
+let (/) =
+  Filename.concat
+
+(* Constructing a standard [make]-like rule. *)
+
+let target (targets : string list) =
+  let keyword = if List.length targets = 1 then "target" else "targets" in
+  L (atom keyword :: atoms targets)
+
+let rule (targets : string list) (deps : string list) (action : sexp) =
+  L[A"rule";
+    target targets;
+    L(A"deps" :: atoms deps);
+    L[A"action"; action]
+  ]
+
+(* Constructing a phony rule, that is, a rule whose target is an alias. *)
+
+let phony (alias : string) (action : sexp) =
+  L[A"rule";
+    L[A"alias"; A alias];
+    L[A"action"; action]
+  ]
+
+(* Constructing a diff action. *)
+
+let diff (expected : string) (actual : string) =
+  L[A"diff"; A expected; A actual]
+
+(* Redirecting the output channels of an action towards a file. *)
+
+(* At the time of writing (2.7.1), dune has a bug that causes it to send
+   an ill-formed command to the shell if both stdout and stderr are
+   redirected to the same file. *)
+
+let redirect_stdout filename action =
+  L[A"with-stdout-to"; A filename; action]
+
+let redirect_stderr filename action =
+  L[A"with-stderr-to"; A filename; action]
+
+let redirect_both filename action =
+  L[A"with-outputs-to"; A filename; action]
+
+(* Changing the working directory of an action. *)
+
+let chdir directory action =
+  L[A"chdir"; A directory; action]
+
+(* Expressing the fact that an action is expected to fail. *)
+
+let expecting_failure action =
+  L[A"with-accepted-exit-codes"; L[A"not"; A"0"]; action]
+
+let possibly_expecting_failure positive action =
+  if positive then action else expecting_failure action
+    (* If [positive] is true, which means that this is a positive test,
+       then the action *is not* expected to fail. If [positive] is false,
+       which means that this is a negative test, then the action *is*
+       expected to fail. *)
+
+(* Constructing a target that is an alias for a conjunction of targets. *)
+
+let alias target deps =
+  L[A"alias";
+    L[A"name"; A target];
+    Lnewline(A"deps" :: List.map (fun dep -> L[A"alias"; A dep]) deps)]

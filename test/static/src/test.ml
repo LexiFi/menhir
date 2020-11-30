@@ -11,15 +11,8 @@ open Array
 open List
 open Printf
 open Auxiliary
-
-(* (Unused.)
-let up =
-  Filename.parent_dir_name
-let (/) =
-  Filename.concat
-let (//) directory filenames =
-  map (fun filename -> directory/filename) filenames
- *)
+open PrintSExp
+open DuneRule
 
 (* -------------------------------------------------------------------------- *)
 
@@ -86,90 +79,6 @@ type input =
   | PositiveTest of filename list
 
 type inputs = input list
-
-(* -------------------------------------------------------------------------- *)
-
-(* An S-expression printer. *)
-
-type sexp =
-  | A of string
-  | L of sexp list
-  | Lnewline of sexp list
-
-let atom sexp =
-  A sexp
-
-let atoms =
-  map atom
-
-let rec print ppf = function
-  | A s ->
-      Format.pp_print_string ppf s
-  | L es ->
-      Format.fprintf ppf "@[<2>(%a)@]" print_list es
-  | Lnewline es ->
-      Format.fprintf ppf "@[<v 2>(%a)@]" print_list es
-
-and print_list ppf es =
-  Format.pp_print_list ~pp_sep:Format.pp_print_space print ppf es
-
-let show_list es =
-  let ppf = Format.str_formatter in
-  List.iter (fun e ->
-    Format.fprintf ppf " ";
-    print ppf e
-  ) es;
-  Format.flush_str_formatter()
-
-let print sexp =
-  Format.printf "@[<v>%a@,@]" print sexp;
-  Format.print_newline()
-
-(* -------------------------------------------------------------------------- *)
-
-(* Constructing a standard [make]-like rule. *)
-
-let target (targets : string list) =
-  let keyword = if length targets = 1 then "target" else "targets" in
-  L (atom keyword :: atoms targets)
-
-let rule (targets : string list) (deps : string list) (action : sexp) =
-  L[A"rule";
-    target targets;
-    L(A"deps" :: atoms deps);
-    L[A"action"; action]
-  ]
-
-(* Constructing a phony rule, that is, a rule whose target is an alias. *)
-
-let phony (alias : string) (action : sexp) =
-  L[A"rule";
-    L[A"alias"; A alias];
-    L[A"action"; action]
-  ]
-
-(* Constructing a diff action. *)
-
-let diff (expected : string) (actual : string) =
-  L[A"diff"; A expected; A actual]
-
-(* Redirecting the output channels of an action towards a file. *)
-
-let redirect filename action =
-  L[A"with-outputs-to"; A filename; action]
-
-(* Changing the working directory of an action. *)
-
-let _chdir directory action =
-  L[A"chdir"; A directory; action]
-
-(* Expressing the fact that an action is expected to fail. *)
-
-let expecting_failure action =
-  L[A"with-accepted-exit-codes"; L[A"not"; A"0"]; action]
-
-let possibly_expecting_failure positive action =
-  if positive then action else expecting_failure action
 
 (* -------------------------------------------------------------------------- *)
 
@@ -247,7 +156,7 @@ let run positive basenames outputs flags =
   print (rule
     outputs
     (mlys basenames)
-    (redirect output (
+    (redirect_both output (
       possibly_expecting_failure positive (
         menhir positive (base basenames) flags
   ))))
@@ -345,10 +254,7 @@ let run (inputs : inputs) =
   iter process inputs;
   let ids = map id inputs in
   let ids = sort_uniq compare ids in
-  print
-    (L[A"alias";
-       L[A"name"; A"test"];
-       Lnewline(A"deps" :: map (fun id -> L[A"alias"; A id]) ids)])
+  print (alias "test" ids)
 
 (* -------------------------------------------------------------------------- *)
 
