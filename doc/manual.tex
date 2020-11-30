@@ -3880,26 +3880,52 @@ declaration is complete, then at this point, a semicolon is expected''.
 \subsection{A working example}
 \label{sec:errors:example}
 
-The CompCert verified compiler offers a real-world example of this approach to
-error handling. The ``pre-parser'' is where syntax errors are detected: see
+The demo \distrib{demos/calc-syntax-errors} illustrates this approach to error
+handling. It is based on the demo \distrib{demos/calc}, which involves a very
+simple grammar of arithmetic expressions. Compared with \distrib{demos/calc},
+one \donerrorreduce declaration is added so as to reduce the number of error
+states. There remain just 9~error states, for which we write 5~distinct syntax
+error messages. These messages are stored in the file
+\distrib{demos/calc-syntax-errors/parserMessages.messages}.
+%
+The file \distrib{demos/calc-syntax-errors/dune} instructs the build system to
+check this file for correctness, irredundancy and completeness and to compile
+this file into an OCaml module \verb+parserMessages.ml+.
+%
+This OCaml module contains a single function, \verb+ParserMessages.messages+,
+which maps a state number to a diagnostic message. It is called from the main
+module, \distrib{demos/calc-syntax-errors/calc.ml}.
+%
+There, we use the facilities offered by the module
+\menhirliberrorreports to print a full syntax error message,
+which includes the precise location of the error as well as
+the diagnostic message returned by
+the function \verb+ParserMessages.messages+.
+%
+As icing on the cake, we allow the diagnostic message to contain placeholders
+of the form
+\verb+$i+, where \verb+i+ is an integer constant, understood as a 0-based
+index into the parser's stack. We replace such a placeholder with the fragment
+of the source text that corresponds to this stack entry.
+%
+A number of expected-output files demonstrate the kind of syntax error
+messages that we produce; see for instance
+\distrib{demos/calc-syntax-errors/calc03.exp} and
+\distrib{demos/calc-syntax-errors/calc07.exp}.
+
+The CompCert verified compiler offers another real-world example. The
+``pre-parser'' is where syntax errors are detected: see
 \compcertgithubfile{cparser/pre\_parser.mly}.
 % (The pre-parser is also in charge of distinguishing type names versus variable
 % names, but that is an independent issue.)
-A database of erroneous input sentences and (templates for) diagnostic messages is stored in
-\compcertgithubfile{cparser/handcrafted.messages}. It is compiled, using \ocompileerrors,
-to an \ocaml file named \texttt{cparser/pre\_parser\_messages.ml}. The
-function \verb+Pre_parser_messages.message+, which maps a state number to (a template for) a
-diagnostic message, is called from
-\compcertgithubfile{cparser/ErrorReports.ml},
-where we construct and display a full-fledged diagnostic message.
-
-In CompCert, we allow a template for a diagnostic message to contain the
-special form \verb+$i+, where \verb+i+ is an integer constant, understood as
-an index into the parser's stack. The code
-in \compcertgithubfile{cparser/ErrorReports.ml} automatically replaces this
-special form with the fragment of the source text that corresponds to this
-stack entry. This mechanism is not built into \menhir; it is implemented in
-CompCert using \menhir's incremental API.
+A database of erroneous input sentences and (templates for) diagnostic
+messages is stored in \compcertgithubfile{cparser/handcrafted.messages}.
+% It is compiled, using \ocompileerrors, to an \ocaml file named
+% \texttt{cparser/pre\_parser\_messages.ml}. The function
+% \verb+Pre_parser_messages.message+, which maps a state number to (a template
+% for) a diagnostic message, is called from
+% \compcertgithubfile{cparser/ErrorReports.ml}, where we construct and display a
+% full-fledged diagnostic message.
 
 % ------------------------------------------------------------------------------
 
