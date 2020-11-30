@@ -1,4 +1,4 @@
-# [make all] compiles the test script.
+# [make all] compiles the test scripts.
 
 .PHONY: all
 all:

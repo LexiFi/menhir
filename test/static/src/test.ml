@@ -23,8 +23,8 @@ module Settings = struct
 let extra : string list ref =
   ref []
 
-let polarity : bool ref =
-  ref true
+let kind : string ref =
+  ref "good"
 
 let source : string ref =
   ref "."
@@ -33,10 +33,10 @@ let usage =
   sprintf "Usage: %s <options> <directory>\n" argv.(0)
 
 let spec = Arg.align [
-  "--extra-flags",     Arg.String (fun flag -> extra := flag :: !extra),
-                       "<string> specify extra flags for Menhir";
-  "--polarity",        Arg.Bool ((:=) polarity),
-                       "<bool> is this is a positive or negative test suite?";
+  "--extra-flags", Arg.String (fun flag -> extra := flag :: !extra),
+                     "<string> specify extra flags for Menhir";
+  "--kind",        Arg.String ((:=) kind),
+                     "<string> what kind of test is this? good/bad/merge";
 ]
 
 let () =
@@ -45,8 +45,8 @@ let () =
 let extra : string list =
   rev !extra
 
-let polarity =
-  !polarity
+let kind =
+  !kind
 
 let source =
   !source
@@ -121,16 +121,13 @@ let menhir (impose_timeout : bool) base flags =
   match impose_timeout, threshold with
   | true, Some threshold ->
       (* We must use a [system] action. *)
-      let command =
-        sprintf
-          "timeout %d %%{bin:menhir}%s || \
-           (status=$?; if (( $status == 124 )) ; then \
-             echo 'TIMEOUT after %d seconds.' ; fi; exit $status)"
-            threshold
-            (show_list (menhir_args base flags))
-            threshold
-      in
-      L[A"system"; A (sprintf "\"%s\"" command)]
+      system
+        "timeout %d %%{bin:menhir}%s || \
+         (status=$?; if (( $status == 124 )) ; then \
+           echo 'TIMEOUT after %d seconds.' ; fi; exit $status)"
+          threshold
+          (show_list (menhir_args base flags))
+          threshold
   | _, _ ->
       (* We can use a [run] action. *)
       L(A"run" :: A"menhir" :: menhir_args base flags)
@@ -258,24 +255,31 @@ let run (inputs : inputs) =
 
 (* -------------------------------------------------------------------------- *)
 
-(* Main. *)
+(* Printing a header. *)
+
+let header () =
+  print_endline
+    ";; This file has been auto-generated. Please do not edit it.\n\
+     ;; Instead, edit [test.ml] and run [make depend].\n"
+
+(* -------------------------------------------------------------------------- *)
+
+(* Handling tests in good/ and bad/. *)
 
 (* Menhir can accept several .mly files at once. By convention, if several
    files have the same name up to a numeric suffix, then they belong in a
    single group and should be fed together to Menhir. *)
 
 let tag basenames =
-  if Settings.polarity then
-    PositiveTest basenames
-  else
-    NegativeTest basenames
+  match Settings.kind with
+  | "good" ->
+      PositiveTest basenames
+  | "bad" ->
+      NegativeTest basenames
+  | _ ->
+      assert false
 
-let () =
-  print_endline
-    ";; This file has been auto-generated. Please do not edit it.\n\
-     ;; Instead, edit [test.ml] and run [make depend].\n"
-  ;
-
+let good_or_bad () =
      readdir Settings.source
   |> to_list
   |> filter (has_suffix ".mly")
@@ -284,3 +288,56 @@ let () =
   |> groups equal_up_to_numeric_suffix
   |> map tag
   |> run
+
+(* -------------------------------------------------------------------------- *)
+
+(* Handling tests in merge/. *)
+
+(* The number of tests is currently hardcoded here, and they have a fixed
+   naming convention. *)
+
+let n = 8
+
+let merge mly lhs rhs out exp =
+  print (rule [] [] (
+    redirect_stdout out (
+      (* We must use a [system] action because we pipe Menhir's output through
+         sed in order to remove the auto-generated comments. *)
+      system
+        "%%{bin:menhir} %%{dep:%s} \\\n        \
+         --merge-errors %%{dep:%s} \\\n        \
+         --merge-errors %%{dep:%s} \\\n        \
+        | sed -e '/^##/d'"
+          mly lhs rhs
+    )
+  ));
+  print (phony "test" (diff exp out))
+
+let merge () =
+     List.init n (fun i -> i + 1)
+  |> List.iter (fun i ->
+     let mly = "parser.mly"
+     and lhs = sprintf "lhs%02d.messages" i
+     and rhs = sprintf "rhs%02d.messages" i
+     and out = sprintf "merged%02d.out" i
+     and exp = sprintf "merged%02d.exp" i in
+     merge mly lhs rhs out exp
+  )
+
+(* -------------------------------------------------------------------------- *)
+
+(* Main. *)
+
+let () =
+  header()
+
+let () =
+  match Settings.kind with
+  | "good"
+  | "bad" ->
+      good_or_bad()
+  | "merge" ->
+      merge()
+  | _ ->
+      eprintf "--kind must be followed with good, bad, or merge.\n";
+      exit 1

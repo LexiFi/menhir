@@ -1,3 +1,4 @@
+open Printf
 open PrintSExp
 
 let up =
@@ -13,11 +14,17 @@ let target (targets : string list) =
   L (atom keyword :: atoms targets)
 
 let rule (targets : string list) (deps : string list) (action : sexp) =
-  L[A"rule";
-    target targets;
-    L(A"deps" :: atoms deps);
-    L[A"action"; action]
-  ]
+  (* If the lists [targets] and [deps] are both empty, then we produce
+     an "inferred rule", where dune infers the dependencies and targets.
+     In that case, the "action" keyword is omitted. *)
+  if targets = [] && deps = [] then
+    L[A"rule"; action]
+  else
+    L[A"rule";
+      target targets;
+      L(A"deps" :: atoms deps);
+      L[A"action"; action]
+    ]
 
 (* Constructing a phony rule, that is, a rule whose target is an alias. *)
 
@@ -31,6 +38,14 @@ let phony (alias : string) (action : sexp) =
 
 let diff (expected : string) (actual : string) =
   L[A"diff"; A expected; A actual]
+
+(* Constructing a system action. *)
+
+let system command =
+  L[A"system"; A (sprintf "\"%s\"" command)]
+
+let system format =
+  ksprintf system format
 
 (* Redirecting the output channels of an action towards a file. *)
 
