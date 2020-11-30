@@ -236,6 +236,12 @@ causes some information about the grammar to be logged to the standard error
 channel. When \nt{level} is 2, the \emph{nullable}, \emph{FIRST}, and
 \emph{FOLLOW} tables are displayed.
 
+\docswitch{\omergeerrors \nt{filename1} \omergeerrors \nt{filename2}} Two such
+switches must always be used in conjunction so as to specify the names of two
+\messages files, \nt{filename1} and \nt{filename2}. This command causes
+\menhir to merge these two \messages files and print the result on the
+standard output channel. For more information, see \sref{sec:errors:new}.
+
 \docswitch{\onodollars} This switch disallows the use of positional keywords
 of the form \kw{\$i}.
 
@@ -3361,25 +3367,28 @@ should not be used.
 \subsection{The \messages file format}
 \label{sec:messages:format}
 
-A \messages file is a text file. Comment lines, which begin with a \verb+#+
-character, are ignored everywhere. As is evident in the following description,
-blank lines are significant: they are used as separators between entries and
-within an entry.
+\paragraph{Definition}
 
-A~\messages file is composed of a list of entries. Two entries are separated
-by one or more blank lines. Each entry consists of one or more input
-sentences, followed with one or more blank lines, followed with a message. The
-syntax of an input sentence is described in \sref{sec:sentences}. A message is
-arbitrary text, but cannot contain a blank line. We stress that there cannot
-be a blank line between two sentences (if there is one, \menhir becomes confused
-and may complain about some word not being ``a known non-terminal symbol'').
+A \messages file is a text file. It is composed of a list of entries. Each
+entry consists of one or more input sentences, followed with one or more blank
+lines, followed with a message. Two entries are separated by one or more blank
+lines. The syntax of an input sentence is described in \sref{sec:sentences}.
+A~message is an arbitrary piece of text, but cannot cannot a blank line.
+
+Blank lines are significant: they are used as separators, both between
+entries, and (within an entry) between the sentences and the message. Thus,
+there cannot be a blank line between two sentences. (If there is one, \menhir
+becomes confused and may complain about some word not being ``a known
+non-terminal symbol''). There also cannot be a blank line inside a message.
 
 \begin{figure}
 \begin{verbatim}
 grammar: TYPE UID
+# This hand-written comment concerns just the sentence above.
 grammar: TYPE OCAMLTYPE UID PREC
+# This hand-written comment concerns just the sentence above.
 
-# A (handwritten) comment.
+# This hand-written comment concerns both sentences above.
 
 Ill-formed declaration.
 Examples of well-formed declarations:
@@ -3403,6 +3412,8 @@ grammar: TYPE UID
 ## The known suffix of the stack is as follows:
 ## TYPE
 ##
+# This hand-written comment concerns just the sentence above.
+#
 grammar: TYPE OCAMLTYPE UID PREC
 ##
 ## Ends in an error in state: 5.
@@ -3415,8 +3426,9 @@ grammar: TYPE OCAMLTYPE UID PREC
 ## The known suffix of the stack is as follows:
 ## symbol
 ##
+# This hand-written comment concerns just the sentence above.
 
-# A (handwritten) comment.
+# This hand-written comment concerns both sentences above.
 
 Ill-formed declaration.
 Examples of well-formed declarations:
@@ -3431,6 +3443,24 @@ As an example, \fref{fig:messages:entry} shows a valid entry, taken
 from \menhir's own \messages file. This entry contains two input sentences,
 which lead to errors in two distinct states. A single message is associated
 with these two error states.
+
+\paragraph{Comments}
+
+Comment lines, which begin with a \verb+#+ character, are ignored everywhere.
+However, users who wish to take advantage of \menhir's facility for merging
+two \messages files (\sref{sec:messages:merge}) should follow certain
+conventions regarding the placement of comments:
+\begin{itemize}
+\item If a comment concerns a specific sentence and should remain attached
+  to this sentence, then it must immediately follow this sentence
+  (without a blank line in between).
+\item If a comment concerns all sentences in an entry, then it should appear
+  between the sentences and the message, with blank lines in between.
+\item One should avoid placing comments between two entries, as the merging
+  algorithm will not be able to handle them in a satisfactory way.
+\end{itemize}
+
+\paragraph{Auto-generated comments}
 
 Several commands, described next (\sref{sec:messages:tools}),
 produce \messages files where each input sentence is followed with an
@@ -3487,24 +3517,30 @@ Ideally, the set of input sentences in a \messages file should be correct
 is, no two sentences lead to the same error state), and complete (that is,
 every error state is reached by some sentence).
 
-Correctness and irredundancy are checked by the
-command \ocompileerrors \nt{filename}, where \nt{filename} is the name of
-a \messages file. This command fails if a sentence does not cause an error at
-all, or causes an error too early. It also fails if two sentences lead to the
-same error state.
+\paragraph{Verifying correctness and irredundancy}
+
+The correctness and irredundancy of a \messages file are checked by supplying
+\ocompileerrors \nt{filename} on the command line, where \nt{filename} is the
+name of the \messages file. (These arguments must be supplied in addition to
+the other usual arguments, such as the name of the \mly file.) This command
+fails if a sentence does not cause an error at all, or causes an error too
+early. It also fails if two sentences lead to the same error state.
 %
 If the file is correct and irredundant, then (as its name suggests) this
 command compiles the \messages file down to an \ocaml function, whose code
 is printed on the standard output channel. This function, named \verb+message+,
 has type \verb+int -> string+, and maps a state number to a message. It
 raises the exception \verb+Not_found+ if its argument is not the number of
-a state for which a message has been defined.
+a state for which a message has been defined. If the set of input sentences
+is complete, then it cannot raise \verb+Not_found+.
 
-Completeness is checked via the commands \olisterrors and
-\ocompareerrors. The former produces, from scratch, a complete
-set of input sentences, that is, a set of input sentences that reaches all
-error states. The latter compares two sets of sentences (more precisely,
-the two underlying sets of error states) for inclusion.
+\paragraph{Verifying completeness}
+
+The completeness of a \messages file is checked via the commands \olisterrors
+and \ocompareerrors. The former produces, from scratch, a complete set of
+input sentences, that is, a set of input sentences that reaches all error
+states. The latter compares two sets of sentences (more precisely, the two
+underlying sets of error states) for inclusion.
 
 The command \olisterrors first computes all possible ways of causing an error.
 From this information, it deduces a list of all error states, that is, all
@@ -3536,15 +3572,45 @@ compare \nt{filename1} and \nt{filename2}.
 
 In the case of a grammar that evolves fairly often, it can take significant
 human time and effort to update the \messages file and ensure correctness,
-irredundancy, and completeness. A way of reducing this effort is to abandon
+irredundancy, and completeness. A tempting way of reducing this effort is to abandon
 completeness. This implies that the auto-generated \verb+message+ function can
 raise \verb+Not_found+ and that a generic ``syntax error'' message must be
 produced in that case. We prefer to discourage this approach, as it implies
 that the end user is exposed to a mixture of specific and generic syntax error
 messages, and there is no guarantee that the specific (hand-written) messages
-will appear in \emph{all} situations where there are expected to appear.
+will appear in \emph{all} situations where they are expected to appear.
 Instead, we recommend waiting for the grammar to become stable and enforcing
 completeness.
+
+\paragraph{Merging \messages files}
+\label{sec:messages:merge}
+
+The command \omergeerrors \nt{filename1} \omergeerrors \nt{filename2} attempts
+to merge the \messages files \nt{filename1} and \nt{filename2}, and prints the
+result on the standard output channel. This command can be useful if two users
+have worked independently and each of them has produced a \messages file that
+covers a subset of all error states. The merging algorithm works roughly as
+follows:
+%
+\begin{itemize}
+\item All entries in \nt{filename2} are preserved literally.
+\item An entry in \nt{filename1} that contains the dummy message
+  \verb+<YOUR SYNTAX ERROR MESSAGE HERE>+ is ignored.
+\item An entry in \nt{filename1} that leads to a state for which
+  there is no entry in \nt{filename2} is copied to \nt{filename2}.
+\item An entry in \nt{filename1} that leads to a state for which
+  there is also an entry in \nt{filename2}, with a distinct message,
+  gives rise to a conflict. It is inserted into \nt{filename2}
+  together with a comment that signals the conflict.
+\end{itemize}
+%
+The algorithm is asymmetric: the content of \nt{filename1} is inserted into or
+appended to \nt{filename2}. For this reason, if one of the files is a large
+``reference'' file and the other file is a small ``delta'', then it is
+recommended to provide the ``delta'' as \nt{filename1} and the ``reference''
+as \nt{filename2}.
+
+\paragraph{Other commands}
 
 The command \oupdateerrors \nt{filename} is used to update the auto-generated
 comments in the \messages file \nt{filename}. It is typically used after a
