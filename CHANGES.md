@@ -16,12 +16,12 @@
   Incorrect Input | Error Message
   --------------- | -------------
   [calc01.in](demos/calc-syntax-errors/calc01.in) | [calc01.exp](demos/calc-syntax-errors/calc01.exp)
-  [calc02.in](demos/calc-syntax-errors/calc02.in) | [calc01.exp](demos/calc-syntax-errors/calc01.exp)
-  [calc03.in](demos/calc-syntax-errors/calc03.in) | [calc01.exp](demos/calc-syntax-errors/calc01.exp)
-  [calc04.in](demos/calc-syntax-errors/calc04.in) | [calc01.exp](demos/calc-syntax-errors/calc01.exp)
-  [calc05.in](demos/calc-syntax-errors/calc05.in) | [calc01.exp](demos/calc-syntax-errors/calc01.exp)
-  [calc06.in](demos/calc-syntax-errors/calc06.in) | [calc01.exp](demos/calc-syntax-errors/calc01.exp)
-  [calc07.in](demos/calc-syntax-errors/calc07.in) | [calc01.exp](demos/calc-syntax-errors/calc01.exp)
+  [calc02.in](demos/calc-syntax-errors/calc02.in) | [calc02.exp](demos/calc-syntax-errors/calc02.exp)
+  [calc03.in](demos/calc-syntax-errors/calc03.in) | [calc03.exp](demos/calc-syntax-errors/calc03.exp)
+  [calc04.in](demos/calc-syntax-errors/calc04.in) | [calc04.exp](demos/calc-syntax-errors/calc04.exp)
+  [calc05.in](demos/calc-syntax-errors/calc05.in) | [calc05.exp](demos/calc-syntax-errors/calc05.exp)
+  [calc06.in](demos/calc-syntax-errors/calc06.in) | [calc06.exp](demos/calc-syntax-errors/calc06.exp)
+  [calc07.in](demos/calc-syntax-errors/calc07.in) | [calc07.exp](demos/calc-syntax-errors/calc07.exp)
 
 * The new command `--merge-errors` merges two `.messages` files. It can be
   useful when two or more users have independently produced partial
