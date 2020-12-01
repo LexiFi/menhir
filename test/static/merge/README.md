@@ -14,3 +14,5 @@ Test number | Situation
 06          | The left-hand file provides messages for two sentences that already appear in a group in the right-hand file.
 07          | The right-hand file provides messages for two sentences that already appear in a group in the left-hand file (so the group must be split).
 08          | Different groups, different default messages, different missing messages on either side.
+09          | Both files include sentences that mention nonexistent tokens.
+10          | Both files include sentences that do not lead to an error state.
