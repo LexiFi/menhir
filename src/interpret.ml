@@ -39,9 +39,6 @@ type 'sentence run = {
   message: message;
 }
 
-type located_run =
-  located_sentence run
-
 (* A targeted sentence is a located sentence together with the target into
    which it leads. A target tells us which state a sentence leads to, as well
    as which spurious reductions are performed at the end. *)
@@ -51,12 +48,6 @@ type target =
 
 let target2state (s, _spurious) =
   s
-
-type maybe_targeted_sentence =
-  located_sentence * target option
-
-type maybe_targeted_run =
-  maybe_targeted_sentence run
 
 type targeted_sentence =
   located_sentence * target
@@ -240,50 +231,43 @@ let default_message =
 module SS = StackSymbols.Run()
 
 (* [print_messages_auto] displays just the sentence and the auto-generated
-   comments. [otarget] may be [None], in which case the auto-generated comment
-   is just a warning that this sentence does not end in an error. *)
+   comments. *)
 
-let print_messages_auto (nt, sentence, otarget) : unit =
+let print_messages_auto (nt, sentence, target) : unit =
   (* Print the sentence, followed with auto-generated comments. *)
   print_string (print_sentence (Some nt, sentence));
-  match (otarget : target option) with
-  | None ->
+  let (s', spurious) = target in
+  Printf.printf
+    "##\n\
+     ## Ends in an error in state: %d.\n\
+     ##\n\
+     %s##\n"
+    (Lr1.number s')
+    (* [Lr0.print] or [Lr0.print_closure] could be used here. The latter
+       could sometimes be helpful, but is usually intolerably verbose. *)
+    (Lr0.print "## " (Lr1.state s'))
+  ;
+  Printf.printf
+    "## The known suffix of the stack is as follows:\n\
+     ##%s\n\
+     ##\n"
+    (SS.print_stack_symbols s')
+  ;
+  if spurious <> [] then begin
+    Printf.printf
+      "## WARNING: This example involves spurious reductions.\n\
+       ## This implies that, although the LR(1) items shown above provide an\n\
+       ## accurate view of the past (what has been recognized so far), they\n\
+       ## may provide an INCOMPLETE view of the future (what was expected next).\n"
+    ;
+    List.iter (fun (s, prod) ->
       Printf.printf
-        "##\n\
-         ## WARNING: This sentence does NOT end with a syntax error, as it should.\n\
-         ##\n"
-  | Some (s', spurious) ->
-      Printf.printf
-        "##\n\
-         ## Ends in an error in state: %d.\n\
-         ##\n\
-         %s##\n"
-        (Lr1.number s')
-        (* [Lr0.print] or [Lr0.print_closure] could be used here. The latter
-           could sometimes be helpful, but is usually intolerably verbose. *)
-        (Lr0.print "## " (Lr1.state s'))
-      ;
-      Printf.printf
-        "## The known suffix of the stack is as follows:\n\
-         ##%s\n\
-         ##\n"
-        (SS.print_stack_symbols s')
-      ;
-      if spurious <> [] then begin
-        Printf.printf
-          "## WARNING: This example involves spurious reductions.\n\
-           ## This implies that, although the LR(1) items shown above provide an\n\
-           ## accurate view of the past (what has been recognized so far), they\n\
-           ## may provide an INCOMPLETE view of the future (what was expected next).\n"
-        ;
-        List.iter (fun (s, prod) ->
-          Printf.printf
-            "## In state %d, spurious reduction of production %s\n"
-            (Lr1.number s)
-            (Production.print prod)
-        ) spurious;
-        Printf.printf "##\n"
-      end
+        "## In state %d, spurious reduction of production %s\n"
+        (Lr1.number s)
+        (Production.print prod)
+    ) spurious;
+    Printf.printf "##\n"
+  end
 
 (* [print_messages_item] displays one data item. The item is of the form [nt,
    sentence, target], which means that beginning at the start symbol [nt], the
@@ -293,7 +277,7 @@ let print_messages_auto (nt, sentence, otarget) : unit =
 
 let print_messages_item (nt, sentence, target) : unit =
   (* Print the sentence, followed with auto-generated comments. *)
-  print_messages_auto (nt, sentence, Some target);
+  print_messages_auto (nt, sentence, target);
   (* Then, print a proposed error message, between two blank lines. *)
   Printf.printf "\n%s\n" default_message
 
@@ -302,7 +286,7 @@ let print_messages_item (nt, sentence, target) : unit =
 (* [write_run run] writes a run into a new [.messages] file. Manually-written
    comments are preserved. New auto-generated comments are produced. *)
 
-let write_run : maybe_targeted_run or_comment -> unit =
+let write_run : targeted_run or_comment -> unit =
   function
   | Thing run ->
       (* First, print every sentence and human comment. *)
@@ -326,16 +310,6 @@ let write_run : maybe_targeted_run or_comment -> unit =
       (* Must begin with a blank line. *)
       print_string comments
 
-let untarget_sentence (sentence, target) =
-  (sentence, Some target)
-
-let untarget_run (run : targeted_run) : maybe_targeted_run =
-  { run with elements =
-      List.map (or_comment_map untarget_sentence) run.elements }
-
-let write_targeted_run (run : targeted_run or_comment) =
-  write_run (or_comment_map untarget_run run)
-
 (* --------------------------------------------------------------------------- *)
 
 (* [interpret_error] interprets a sentence, expecting it to end in an error.
@@ -354,55 +328,12 @@ let interpret_error sentence =
 
 (* --------------------------------------------------------------------------- *)
 
-(* [target_sentence] interprets a (located) sentence, expecting it to end in
-   an error, computes the state in which the error is obtained, and constructs
-   a targeted sentence. *)
-
-let target_sentence
-    (signal : Positions.positions -> ('a, out_channel, unit, unit) format4 -> 'a)
-  : located_sentence -> maybe_targeted_sentence =
-  fun (poss, sentence) ->
-    (poss, sentence),
-    interpret_error_aux false poss sentence
-      (* failure: *)
-      (fun msg ->
-        signal poss
-          "this sentence does not end with a syntax error, as it should.\n%s"
-          msg
-        ;
-        None
-      )
-      (* success: *)
-      (fun _nt _terminals target -> Some target)
-
-let target_run_1 signal (run : located_run) : maybe_targeted_run =
-  { run with elements =
-      List.map (or_comment_map (target_sentence signal)) run.elements }
-
-let target_run_2 (run : maybe_targeted_run) : targeted_run =
-  let aux (x, y) = (x, Misc.unSome y) in
-  { run with elements =
-      List.map (or_comment_map aux) run.elements }
-
-let target_runs : located_run or_comment list -> targeted_run or_comment list =
-fun runs ->
-  (* Interpret all sentences, possibly displaying multiple errors.
-     At the end of this phase, abort if an error occurred. *)
-  let runs =
-    Error.with_new_category (fun c ->
-      let signal = Error.signal c in
-      List.map (or_comment_map (target_run_1 signal)) runs
-    )
-  in
-  (* Remove the options introduced by the first phase above. *)
-  List.map (or_comment_map target_run_2) runs
-
-(* --------------------------------------------------------------------------- *)
-
 (* The lexer [SentenceLexer] produces sentences that contain raw symbols,
    that is, strings that are not yet known to represent valid nonterminal
    or terminal symbols. This check is performed here. It either succeeds
    or signals an error in the category [c] and raises [Invalid]. *)
+
+(* We also check that every sentence leads to an error state. *)
 
 exception Invalid
 
@@ -438,15 +369,26 @@ let validate_sentence c (sentence : raw_sentence) : sentence =
 let validate_optional_sentence c =
   Option.map (validate_sentence c)
 
-let validate_located_sentence c (positions, sentence) : located_sentence =
-  positions, validate_sentence c sentence
+let validate_located_sentence c (poss, sentence) : targeted_sentence =
+  (* First, validate every symbol. *)
+  let sentence = validate_sentence c sentence in
+  (* Then, check that this sentence leads to an error state. *)
+  interpret_error_aux false poss sentence
+    (* failure: *)
+    (fun msg ->
+       Error.signal c poss
+         "this sentence does not end with a syntax error, as it should:\n%s"
+         msg;
+       raise Invalid)
+    (* success: *)
+    (fun _nt _terminals target -> (poss, sentence), target)
 
 (* [validate_entry] validates a list of located sentences or comments,
    as returned by [SentenceParser.entry]. If a sentence contains an
    error, then an error message is emitted, this sentence is removed
    from the list, and the validation process continues. *)
 
-let validate_entry c entry : located_sentence or_comment list =
+let validate_entry c entry : targeted_sentence or_comment list =
   Misc.filter_map (function
   | Thing sentence ->
       begin try
@@ -489,7 +431,7 @@ let setup () : unit -> sentence option =
 
 (* Display an informational message about the contents of a [.messages] file.  *)
 
-let stats (runs : located_run or_comment list) =
+let stats (runs : targeted_run or_comment list) =
   (* [s] counts the sample input sentences. [m] counts the error messages. *)
   let s = ref 0
   and m = ref 0 in
@@ -518,14 +460,16 @@ let stats (runs : located_run or_comment list) =
    two runs can contain comments, which we wish to preserve when performing
    [--update-errors]. *)
 
+(* Sentences that do not pass validation are removed (and error messages are
+   emitted). If one or more validation errors have occurred and if [strict]
+   is [true], then we stop at the end. *)
+
 let mkcomment c accu =
   if String.length c = 0 then accu else Comment c :: accu
 
-let dummy =
-  Error.new_category()
-
-let read_messages filename : located_run or_comment list =
+let read_messages strict filename : targeted_run or_comment list =
   let open Segment in
+  let c = Error.new_category() in
   (* Read and segment the file. *)
   let segments : (tag * string * Lexing.lexbuf) list = segment filename in
   (* Process the segments, two by two. We expect one segment to contain
@@ -550,7 +494,7 @@ let read_messages filename : located_run or_comment list =
                removed (and error messages are emitted). In an effort to
                be robust, we continue. If there remain zero sentences,
                then this entry is removed entirely. *)
-            let elements = validate_entry dummy elements in
+            let elements = validate_entry c elements in
             (* In principle, we should now find a segment of whitespace
                followed with a segment of text. By construction, the two
                kinds of segments alternate. *)
@@ -576,7 +520,9 @@ let read_messages filename : located_run or_comment list =
                    two kinds of segments. *)
                 assert false
   in
-  stats (loop [] segments)
+  let runs = stats (loop [] segments) in
+  if strict then Error.exit_if c;
+  runs
 
 (* --------------------------------------------------------------------------- *)
 
@@ -725,12 +671,10 @@ let () =
 let () =
   Settings.compile_errors |> Option.iter (fun filename ->
 
-    (* Read the file. *)
-    let runs : located_run or_comment list = read_messages filename in
-
-    (* Convert every sentence to a state number. We signal an error if a
-       sentence does not end in an error, as expected. *)
-    let runs : targeted_run or_comment list = target_runs runs in
+    (* Read the file. Compute the target state of every sentence. Stop if a
+       sentence does not end in an error state, as expected. *)
+    let strict = true in
+    let runs : targeted_run or_comment list = read_messages strict filename in
 
     (* Build a mapping of states to located sentences. This allows us to
        detect if two sentences lead to the same state. *)
@@ -762,10 +706,9 @@ let compare_errors filename1 filename2 =
 
   (* Read both files. *)
 
-  let runs1 = read_messages filename1
-  and runs2 = read_messages filename2 in
-  let runs1 = target_runs runs1
-  and runs2 = target_runs runs2 in (* could ignore errors here *)
+  let strict = false in
+  let runs1 = read_messages strict filename1
+  and runs2 = read_messages strict filename2 in
 
   (* Convert the right-hand file to a table for quick lookup. *)
 
@@ -1037,10 +980,9 @@ let rec space (xs : 'a or_comment list) : 'a or_comment list =
 
 let merge_errors filename1 filename2 =
 
-  let runs1 = read_messages filename1
-  and runs2 = read_messages filename2 in
-  let runs1 = target_runs runs1
-  and runs2 = target_runs runs2 in
+  let strict = false in
+  let runs1 = read_messages strict filename1
+  and runs2 = read_messages strict filename2 in
 
   (* Remove the default runs on the right-hand side whose target state also
      appears on the left-hand side. We lose no information in doing so. *)
@@ -1172,7 +1114,7 @@ let merge_errors filename1 filename2 =
 
   (* Print. *)
 
-  List.iter write_targeted_run (space runs)
+  List.iter write_run (space runs)
 
 let () =
   Settings.merge_errors |> Option.iter (fun (filename1, filename2) ->
@@ -1191,13 +1133,8 @@ let () =
   Settings.update_errors |> Option.iter (fun filename ->
 
     (* Read the file. *)
-    let runs : located_run or_comment list = read_messages filename in
-
-    (* Convert every sentence to a state number. Warn, but do not
-       fail, if a sentence does not end in an error, as it should. *)
-    let runs : maybe_targeted_run or_comment list =
-      List.map (or_comment_map (target_run_1 Error.warning)) runs
-    in
+    let strict = false in
+    let runs : targeted_run or_comment list = read_messages strict filename in
 
     (* We might wish to detect if two sentences lead to the same state. We
        might also wish to detect if this set of sentences is incomplete,
@@ -1229,11 +1166,12 @@ let () =
   Settings.echo_errors |> Option.iter (fun filename ->
 
     (* Read the file. *)
-    let runs : located_run or_comment list = read_messages filename in
+    let strict = false in
+    let runs : targeted_run or_comment list = read_messages strict filename in
 
     (* Echo. *)
     List.iter (or_comment_iter (fun run ->
-      List.iter (or_comment_iter (fun (_, sentence) ->
+      List.iter (or_comment_iter (fun ((_, sentence), _target) ->
         print_string (print_sentence sentence)
       )) run.elements
     )) runs;
