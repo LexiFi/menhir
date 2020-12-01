@@ -83,6 +83,9 @@ Proof. by rewrite /cast -Eqdep_dec.eq_rect_eq_dec. Qed.
 CoInductive buffer : Type :=
   Buf_cons { buf_head : token; buf_tail : buffer }.
 
+(* Note: Coq 8.12.0 wants a Declare Scope command,
+   but this breaks compatibility with Coq < 8.10.
+   Declare Scope buffer_scope. *)
 Delimit Scope buffer_scope with buf.
 Bind Scope buffer_scope with buffer.
 
