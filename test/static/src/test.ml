@@ -298,9 +298,10 @@ let good_or_bad () =
 
 let n = 9
 
-let merge mly lhs rhs out exp =
+let merge mly lhs rhs out err exp =
   print (rule [] [] (
     redirect_stdout out (
+    redirect_stderr err (
       not_expecting_failure (
         (* We must use a [system] action because we pipe Menhir's output through
            sed in order to remove the auto-generated comments. [set -o pipefail]
@@ -312,7 +313,7 @@ let merge mly lhs rhs out exp =
            --merge-errors %%{dep:%s} \\\n        \
           | sed -e '/^##/d'"
             mly lhs rhs
-  ))));
+  )))));
   print (phony "test" (diff exp out))
 
 let merge () =
@@ -322,8 +323,9 @@ let merge () =
      and lhs = sprintf "lhs%02d.messages" i
      and rhs = sprintf "rhs%02d.messages" i
      and out = sprintf "merged%02d.out" i
+     and err = sprintf "merged%02d.err" i
      and exp = sprintf "merged%02d.exp" i in
-     merge mly lhs rhs out exp
+     merge mly lhs rhs out err exp
   )
 
 (* -------------------------------------------------------------------------- *)
