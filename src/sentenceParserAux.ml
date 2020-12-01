@@ -13,11 +13,8 @@
 
 open Grammar
 
-type terminals =
-  Terminal.t list
-
 type sentence =
-  Nonterminal.t option * terminals
+  Nonterminal.t option * Terminal.t list
 
 type located_sentence =
   Positions.positions * sentence
