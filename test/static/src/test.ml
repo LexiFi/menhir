@@ -298,7 +298,7 @@ let good_or_bad () =
 
 let n = 10
 
-let merge mly lhs rhs out err exp =
+let merge mly lhs rhs out err xout xerr =
   print (rule [] [] (
     redirect_stdout out (
     redirect_stderr err (
@@ -314,7 +314,8 @@ let merge mly lhs rhs out err exp =
           | sed -e '/^##/d'"
             mly lhs rhs
   )))));
-  print (phony "test" (diff exp out))
+  print (phony "test" (diff xout out));
+  print (phony "test" (diff xerr err))
 
 let merge () =
      List.init n (fun i -> i + 1)
@@ -324,8 +325,9 @@ let merge () =
      and rhs = sprintf "rhs%02d.messages" i
      and out = sprintf "merged%02d.out" i
      and err = sprintf "merged%02d.err" i
-     and exp = sprintf "merged%02d.exp" i in
-     merge mly lhs rhs out err exp
+     and xout = sprintf "merged%02d.xout" i
+     and xerr = sprintf "merged%02d.xerr" i in
+     merge mly lhs rhs out err xout xerr
   )
 
 (* -------------------------------------------------------------------------- *)
