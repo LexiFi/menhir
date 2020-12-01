@@ -115,9 +115,13 @@ let exit_if category =
 
 let with_new_category f =
   let c = new_category() in
-  let y = f c in
-  exit_if c;
-  y
+  match f c with
+  | y ->
+      exit_if c;
+      y
+  | exception e ->
+      exit_if c;
+      raise e
 
 (* ---------------------------------------------------------------------------- *)
 
