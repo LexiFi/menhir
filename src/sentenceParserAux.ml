@@ -13,6 +13,21 @@
 
 open Grammar
 
+type raw_symbol =
+  string * Lexing.position * Lexing.position
+
+type raw_nonterminal =
+  raw_symbol
+
+type raw_terminal =
+  raw_symbol
+
+type raw_sentence =
+  raw_nonterminal option * raw_terminal list
+
+type located_raw_sentence =
+  Positions.positions * raw_sentence
+
 type sentence =
   Nonterminal.t option * Terminal.t list
 

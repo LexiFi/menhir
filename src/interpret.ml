@@ -399,8 +399,75 @@ fun runs ->
 
 (* --------------------------------------------------------------------------- *)
 
+(* The lexer [SentenceLexer] produces sentences that contain raw symbols,
+   that is, strings that are not yet known to represent valid nonterminal
+   or terminal symbols. This check is performed here. It either succeeds
+   or signals an error in the category [c] and raises [Invalid]. *)
+
+exception Invalid
+
+let validate_nonterminal_symbol c (lid, startpos, endpos) =
+  match Nonterminal.lookup lid with
+  | exception Not_found ->
+      Error.signal c [Positions.import (startpos, endpos)]
+        "\"%s\" is not a known non-terminal symbol." lid;
+      raise Invalid
+  | nt ->
+      (* TODO [Grammar] should export a way of testing whether a symbol is start *)
+      if StringSet.mem lid Front.grammar.BasicSyntax.start_symbols then
+        nt
+      else begin
+        Error.signal c [Positions.import (startpos, endpos)]
+          "\"%s\" is not a start symbol." lid;
+        raise Invalid
+      end
+
+let validate_terminal_symbol c (uid, startpos, endpos) =
+  try
+    Terminal.lookup uid
+  with Not_found ->
+    Error.signal c [Positions.import (startpos, endpos)]
+      "\"%s\" is not a known terminal symbol." uid;
+    raise Invalid
+
+let validate_sentence c (sentence : raw_sentence) : sentence =
+  let (nto, terminals) = sentence in
+  Option.map (validate_nonterminal_symbol c) nto,
+  List.map (validate_terminal_symbol c) terminals
+
+let validate_optional_sentence c =
+  Option.map (validate_sentence c)
+
+let validate_located_sentence c (positions, sentence) : located_sentence =
+  positions, validate_sentence c sentence
+
+(* [validate_entry] validates a list of located sentences or comments,
+   as returned by [SentenceParser.entry]. If a sentence contains an
+   error, then an error message is emitted, this sentence is removed
+   from the list, and the validation process continues. *)
+
+let validate_entry c entry : located_sentence or_comment list =
+  Misc.filter_map (function
+  | Thing sentence ->
+      begin try
+        Some (Thing (validate_located_sentence c sentence))
+      with Invalid ->
+        None
+      end
+  | Comment c ->
+      Some (Comment c)
+  ) entry
+
+(* This wrapper causes Menhir to exit if at least one error was signaled
+   during validation of [x] by [validate]. *)
+
+let strictly validate x =
+  Error.with_new_category (fun c -> validate c x)
+
+(* --------------------------------------------------------------------------- *)
+
 (* [setup()] returns a function [read] which reads one sentence from the
-   standard input channel. *)
+   standard input channel and immediately validates it. *)
 
 let setup () : unit -> sentence option =
 
@@ -409,10 +476,11 @@ let setup () : unit -> sentence option =
   lexbuf.lex_curr_p <- { lexbuf.lex_curr_p with pos_fname = "(stdin)" };
 
   let read () =
-    try
-      SentenceParser.optional_sentence SentenceLexer.lex lexbuf
-    with Parsing.Parse_error ->
-      Error.error (Positions.lexbuf lexbuf) "ill-formed input sentence."
+    match SentenceParser.optional_sentence SentenceLexer.lex lexbuf with
+    | exception Parsing.Parse_error ->
+        Error.error (Positions.lexbuf lexbuf) "ill-formed input sentence."
+    | osentence ->
+        strictly validate_optional_sentence osentence
   in
 
   read
@@ -453,6 +521,9 @@ let stats (runs : located_run or_comment list) =
 let mkcomment c accu =
   if String.length c = 0 then accu else Comment c :: accu
 
+let dummy =
+  Error.new_category()
+
 let read_messages filename : located_run or_comment list =
   let open Segment in
   (* Read and segment the file. *)
@@ -474,6 +545,12 @@ let read_messages filename : located_run or_comment list =
               [Positions.cpos lexbuf]
               "ill-formed sentence."
         | elements ->
+            (* [elements] is a list of located raw sentences or comments.
+               Validate it. Any sentences that do not pass validation are
+               removed (and error messages are emitted). In an effort to
+               be robust, we continue. If there remain zero sentences,
+               then this entry is removed entirely. *)
+            let elements = validate_entry dummy elements in
             (* In principle, we should now find a segment of whitespace
                followed with a segment of text. By construction, the two
                kinds of segments alternate. *)
@@ -481,8 +558,13 @@ let read_messages filename : located_run or_comment list =
             | (Whitespace, delimiter, _) ::
               (Segment, message, _) ::
               segments ->
-                let run = { elements; delimiter; message } in
-                loop (Thing run :: accu) segments
+                if elements = [] then
+                  (* There remain zero sentences. Skip this entry. *)
+                  loop accu segments
+                else
+                  (* Accumulate this entry. *)
+                  let run = { elements; delimiter; message } in
+                  loop (Thing run :: accu) segments
             | []
             | [ _ ] ->
                 Error.error
