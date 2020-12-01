@@ -250,7 +250,7 @@ let id input =
 let run (inputs : inputs) =
   iter process inputs;
   let ids = map id inputs in
-  let ids = sort_uniq compare ids in
+  let ids = sort_uniq Stdlib.compare ids in
   print (alias "test" ids)
 
 (* -------------------------------------------------------------------------- *)
@@ -284,7 +284,7 @@ let good_or_bad () =
   |> to_list
   |> filter (has_suffix ".mly")
   |> map Filename.chop_extension
-  |> sort compare
+  |> sort Stdlib.compare
   |> groups equal_up_to_numeric_suffix
   |> map tag
   |> run
