@@ -1,6 +1,6 @@
 # Changes
 
-## 2020/12/XX
+## 2020/12/01
 
 * The module `MenhirLib.ErrorReports` is extended with new functions:
   `wrap_supplier`, `extract`, `sanitize`, `compress`, `shorten`, `expand`.
@@ -27,6 +27,13 @@
   useful when two or more users have independently produced partial
   `.messages` files and wish to combine their work.
   (Suggested by Gabriel Scherer and François Bobot.)
+
+* The commands that read `.messages` files have been hardened so as to
+  tolerate situations where a sentence mentions a nonexistent symbol or does
+  not lead to an error state. When such a sentence is encountered, an error
+  message is produced on the standard error channel; then, this sentence is
+  ignored and processing continues. (As an exception, the command
+  `--compile-errors` refuses to proceed in the presence of such sentences.)
 
 ## 2020/11/22
 
