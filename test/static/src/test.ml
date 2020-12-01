@@ -296,21 +296,23 @@ let good_or_bad () =
 (* The number of tests is currently hardcoded here, and they have a fixed
    naming convention. *)
 
-let n = 8
+let n = 9
 
 let merge mly lhs rhs out exp =
   print (rule [] [] (
     redirect_stdout out (
-      (* We must use a [system] action because we pipe Menhir's output through
-         sed in order to remove the auto-generated comments. *)
-      system
-        "%%{bin:menhir} %%{dep:%s} \\\n        \
-         --merge-errors %%{dep:%s} \\\n        \
-         --merge-errors %%{dep:%s} \\\n        \
-        | sed -e '/^##/d'"
-          mly lhs rhs
-    )
-  ));
+      not_expecting_failure (
+        (* We must use a [system] action because we pipe Menhir's output through
+           sed in order to remove the auto-generated comments. [set -o pipefail]
+           forces the pipeline to fail if Menhir fails. *)
+        system
+          "set -o pipefail &&        \\\n        \
+           %%{bin:menhir} %%{dep:%s} \\\n        \
+           --merge-errors %%{dep:%s} \\\n        \
+           --merge-errors %%{dep:%s} \\\n        \
+          | sed -e '/^##/d'"
+            mly lhs rhs
+  ))));
   print (phony "test" (diff exp out))
 
 let merge () =

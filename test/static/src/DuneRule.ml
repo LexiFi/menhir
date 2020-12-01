@@ -72,8 +72,11 @@ let chdir directory action =
 let expecting_failure action =
   L[A"with-accepted-exit-codes"; L[A"not"; A"0"]; action]
 
+let not_expecting_failure action =
+  L[A"with-accepted-exit-codes"; A"0"; action]
+
 let possibly_expecting_failure positive action =
-  if positive then action else expecting_failure action
+  if positive then not_expecting_failure action else expecting_failure action
     (* If [positive] is true, which means that this is a positive test,
        then the action *is not* expected to fail. If [positive] is false,
        which means that this is a negative test, then the action *is*
