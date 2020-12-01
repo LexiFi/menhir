@@ -26,21 +26,7 @@ type delimiter =
 type message =
   string
 
-(* A run is a series of sentences or comments, followed with a delimiter
-   (composed at least one blank line and possibly comments), followed with an
-   error message. *)
-
-type 'sentence run = {
-  (* A list of sentences. *)
-  elements: 'sentence or_comment list;
-  (* A delimiter. *)
-  delimiter: delimiter;
-  (* A message. *)
-  message: message;
-}
-
-(* A targeted sentence is a located sentence together with the target into
-   which it leads. A target tells us which state a sentence leads to, as well
+(* A target tells us which state a sentence leads to, as well
    as which spurious reductions are performed at the end. *)
 
 type target =
@@ -49,11 +35,24 @@ type target =
 let target2state (s, _spurious) =
   s
 
+(* A targeted sentence is a located sentence together with the target into
+   which it leads.  *)
+
 type targeted_sentence =
   located_sentence * target
 
-type targeted_run =
-  targeted_sentence run
+(* A run is a series of targeted sentences or comments, followed with a
+   delimiter (composed at least one blank line and possibly comments),
+   followed with an error message. *)
+
+type run = {
+  (* A list of sentences. *)
+  elements: targeted_sentence or_comment list;
+  (* A delimiter. *)
+  delimiter: delimiter;
+  (* A message. *)
+  message: message;
+}
 
 (* --------------------------------------------------------------------------- *)
 
@@ -286,7 +285,7 @@ let print_messages_item (nt, sentence, target) : unit =
 (* [write_run run] writes a run into a new [.messages] file. Manually-written
    comments are preserved. New auto-generated comments are produced. *)
 
-let write_run : targeted_run or_comment -> unit =
+let write_run : run or_comment -> unit =
   function
   | Thing run ->
       (* First, print every sentence and human comment. *)
@@ -431,7 +430,7 @@ let setup () : unit -> sentence option =
 
 (* Display an informational message about the contents of a [.messages] file.  *)
 
-let stats (runs : targeted_run or_comment list) =
+let stats (runs : run or_comment list) =
   (* [s] counts the sample input sentences. [m] counts the error messages. *)
   let s = ref 0
   and m = ref 0 in
@@ -467,7 +466,7 @@ let stats (runs : targeted_run or_comment list) =
 let mkcomment c accu =
   if String.length c = 0 then accu else Comment c :: accu
 
-let read_messages strict filename : targeted_run or_comment list =
+let read_messages strict filename : run or_comment list =
   let open Segment in
   let c = Error.new_category() in
   (* Read and segment the file. *)
@@ -531,7 +530,7 @@ let read_messages strict filename : targeted_run or_comment list =
    accumulator, a targeted sentence, and the corresponding message, and
    must return an updated accumulator. *)
 
-let foreach_targeted_sentence f accu (runs : targeted_run or_comment list) =
+let foreach_targeted_sentence f accu (runs : run or_comment list) =
   List.fold_left (or_comment_fold (fun accu run ->
     List.fold_left (or_comment_fold (fun accu sentence ->
       f accu sentence run.message
@@ -546,7 +545,7 @@ let foreach_targeted_sentence f accu (runs : targeted_run or_comment list) =
 
 let message_table
     (detect_redundancy : bool)
-    (runs : targeted_run or_comment list)
+    (runs : run or_comment list)
   : (located_sentence * message) Lr1.NodeMap.t =
 
   Error.with_new_category (fun c ->
@@ -570,7 +569,7 @@ let message_table
    a mapping of state numbers to error messages. The code is sent to the
    standard output channel. *)
 
-let compile_runs filename (runs : targeted_run or_comment list) : unit =
+let compile_runs filename (runs : run or_comment list) : unit =
 
   (* We wish to produce a function that maps a state number to a message.
      By convention, we call this function [message]. *)
@@ -674,7 +673,7 @@ let () =
     (* Read the file. Compute the target state of every sentence. Stop if a
        sentence does not end in an error state, as expected. *)
     let strict = true in
-    let runs : targeted_run or_comment list = read_messages strict filename in
+    let runs : run or_comment list = read_messages strict filename in
 
     (* Build a mapping of states to located sentences. This allows us to
        detect if two sentences lead to the same state. *)
@@ -829,7 +828,7 @@ let toplevel_comment filename =
    run that consists of a single sentence and a default message. If so, it
    additionally tests whether the sentence's target state satisfies [p]. *)
 
-let is_default_run (p : Lr1.node -> bool) (run : targeted_run) =
+let is_default_run (p : Lr1.node -> bool) (run : run) =
   run.message = default_message &&
   let sentences : targeted_sentence list =
     List.fold_left (or_comment_fold (fun xs x -> x :: xs)) [] run.elements
@@ -848,7 +847,7 @@ let is_default_run (p : Lr1.node -> bool) (run : targeted_run) =
    comments, so it is not a problem to lose these comments when the run
    is removed. *)
 
-let rec remove_default_runs p (runs : targeted_run or_comment list) =
+let rec remove_default_runs p (runs : run or_comment list) =
   match runs with
   | [] ->
       []
@@ -862,7 +861,7 @@ let rec remove_default_runs p (runs : targeted_run or_comment list) =
 
 (* [keep_default_runs] keeps from the list [runs] just the default runs. *)
 
-let keep_default_runs (runs : targeted_run or_comment list) =
+let keep_default_runs (runs : run or_comment list) =
   List.flatten (List.map (function
   | Comment _ ->
       []
@@ -875,7 +874,7 @@ let keep_default_runs (runs : targeted_run or_comment list) =
 
 (* [targets run] is the set of target states of a run. *)
 
-let targets (run : targeted_run) : Lr1.NodeSet.t =
+let targets (run : run) : Lr1.NodeSet.t =
   List.fold_left (or_comment_fold (fun states (_, target) ->
     let s = target2state target in
     Lr1.NodeSet.add s states
@@ -886,9 +885,9 @@ let targets (run : targeted_run) : Lr1.NodeSet.t =
    states. *)
 
 let insert_runs
-    (inserts : targeted_run or_comment list Lr1.NodeMap.t)
-    (runs : targeted_run or_comment list)
-  : targeted_run or_comment list =
+    (inserts : run or_comment list Lr1.NodeMap.t)
+    (runs : run or_comment list)
+  : run or_comment list =
 
   let emit, emitted = Q.create() in
   runs |> List.iter begin function
@@ -1004,15 +1003,15 @@ let merge_errors filename1 filename2 =
   and runs2 = remove_default_runs (fun _ -> true) runs2 in
 
   (* Use [append] when a run must be appended at the end. *)
-  let (append : targeted_run or_comment -> unit), appended =
+  let (append : run or_comment -> unit), appended =
     Q.create()
   in
 
   (* Use [insert] when a run must be inserted at a specific point. *)
-  let inserts : targeted_run or_comment list Lr1.NodeMap.t ref =
+  let inserts : run or_comment list Lr1.NodeMap.t ref =
     ref Lr1.NodeMap.empty in
 
-  let insert (s : Lr1.node) (newer : targeted_run or_comment list) =
+  let insert (s : Lr1.node) (newer : run or_comment list) =
     let earlier =  try Lr1.NodeMap.find s !inserts with Not_found -> [] in
     inserts := Lr1.NodeMap.add s (earlier @ newer) !inserts
   in
@@ -1134,7 +1133,7 @@ let () =
 
     (* Read the file. *)
     let strict = false in
-    let runs : targeted_run or_comment list = read_messages strict filename in
+    let runs : run or_comment list = read_messages strict filename in
 
     (* We might wish to detect if two sentences lead to the same state. We
        might also wish to detect if this set of sentences is incomplete,
@@ -1167,7 +1166,7 @@ let () =
 
     (* Read the file. *)
     let strict = false in
-    let runs : targeted_run or_comment list = read_messages strict filename in
+    let runs : run or_comment list = read_messages strict filename in
 
     (* Echo. *)
     List.iter (or_comment_iter (fun run ->
