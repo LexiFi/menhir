@@ -913,7 +913,7 @@ let insert_runs
 
 let rec gather_followers (xs : 'a or_comment list) : ('a * comment list) list =
   match xs with
-  | Comment _ :: _xs ->
+  | Comment _ :: xs ->
       (* If there is a leading comment, ignore it. I believe that in a list
          of sentences, our current lexer never produces a leading comment.
          Indeed, a leading comment would be considered part of the previous
