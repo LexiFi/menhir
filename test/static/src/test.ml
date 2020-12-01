@@ -296,7 +296,7 @@ let good_or_bad () =
 (* The number of tests is currently hardcoded here, and they have a fixed
    naming convention. *)
 
-let n = 9
+let n = 10
 
 let merge mly lhs rhs out err exp =
   print (rule [] [] (

@@ -118,3 +118,16 @@
 
 (rule (alias test) (action (diff merged09.exp merged09.out)))
 
+(rule
+  (with-stdout-to merged10.out
+    (with-stderr-to merged10.err
+      (with-accepted-exit-codes 0
+        (system
+          "set -o pipefail &&        \
+        %{bin:menhir} %{dep:parser.mly} \
+        --merge-errors %{dep:lhs10.messages} \
+        --merge-errors %{dep:rhs10.messages} \
+        | sed -e '/^##/d'")))))
+
+(rule (alias test) (action (diff merged10.exp merged10.out)))
+
