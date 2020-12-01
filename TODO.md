@@ -1,5 +1,33 @@
 # TODO
 
+## Preparations for upcoming work on the back-end
+
+* Add a `--dump-invariant` option that shows (in the file
+  `.automaton.resolved`) what is known about the content
+  of the stack in each state.
+
+* Add a `--dump-reduction-targets` option that shows (in the file
+  `.automaton.resolved`) the set of states to which each reduction
+  may lead. Are there many cases where this set is a singleton?
+  Are there many cases where the reduction target is determined by
+  the knowledge of the production and current state, but not by
+  the knowledge of the current state alone?
+
+* Add a `--dump-represented` option that shows (in the file
+  `.automaton.resolved`) what states are represented.
+
+* In some (not all) of the tests in `test/static/good/`,
+  compare the generated `.ml` and `.mli` files against
+  a reference.
+
+* Build a performance test suite. For this purpose, use a small number of
+  well-chosen parsers (among which OCaml and CompCert C) for which we have a
+  large amount of well-formed input data. Store tokens in memory ahead of time
+  so as to eliminate the cost of lexical analysis. Use unit semantic actions
+  so as to eliminate the cost of semantic actions. Parse each file multiple
+  times in the same process so as to diminish the influence of GC effects.
+  Arrange to *not* blow up the size of the repository with the input data.
+
 ## Automaton
 
 * Although `StackSymbols` computes a known suffix of the stack that is
