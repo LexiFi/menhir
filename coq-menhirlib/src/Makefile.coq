@@ -11,7 +11,7 @@ SHELL := /usr/bin/env bash
 #
 #
 # This Makefile relies on the following variables:
-# ROOTDIR    (default: `pwd`)
+# ROOTDIR    (default: .)
 # COQBIN     (default: empty)
 # COQINCLUDE (default: empty)
 # VV         (default: *.v)
@@ -22,17 +22,8 @@ SHELL := /usr/bin/env bash
 # VERBOSE    (default: undefined)
 #            (if defined, commands are displayed)
 
-# We usually refer to the .v files using relative paths (such as Foo.v)
-# but [coqdep -R] produces dependencies that refer to absolute paths
-# (such as /bar/Foo.v). This confuses [make], which does not recognize
-# that these files are the same. As a result, [make] does not respect
-# the dependencies.
-
-# We fix this by using ABSOLUTE PATHS EVERYWHERE. The paths used in targets,
-# in -R options, etc., must be absolute paths.
-
 ifndef ROOTDIR
-	ROOTDIR := $(shell pwd)
+	ROOTDIR := .
 endif
 
 ifndef VV
