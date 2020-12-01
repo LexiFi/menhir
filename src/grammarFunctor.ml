@@ -116,8 +116,11 @@ module Nonterminal = struct
           (n - start) start
       )
 
-  let is_start nt =
+  let is_internal_start nt =
     nt < start
+
+  let is_user_start nt =
+    StringSet.mem name.(nt) grammar.start_symbols
 
   let print normalize nt =
     if normalize then
@@ -152,7 +155,7 @@ module Nonterminal = struct
     Misc.foldij start n f accu
 
   let ocamltype nt =
-    assert (not (is_start nt));
+    assert (not (is_internal_start nt));
     try
       Some (StringMap.find (print false nt) grammar.types)
     with Not_found ->
@@ -1267,7 +1270,7 @@ end) = struct
   let () =
     let sharp = P.terminal Terminal.sharp in
     for nt = 0 to Nonterminal.start - 1 do
-      assert (Nonterminal.is_start nt);
+      assert (Nonterminal.is_internal_start nt);
       (* Add # to FOLLOW(nt). *)
       S.record_ConVar sharp nt
     done

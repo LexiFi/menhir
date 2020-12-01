@@ -343,8 +343,7 @@ let validate_nonterminal_symbol c (lid, startpos, endpos) =
         "\"%s\" is not a known non-terminal symbol." lid;
       raise Invalid
   | nt ->
-      (* TODO [Grammar] should export a way of testing whether a symbol is start *)
-      if StringSet.mem lid Front.grammar.BasicSyntax.start_symbols then
+      if Nonterminal.is_user_start nt then
         nt
       else begin
         Error.signal c [Positions.import (startpos, endpos)]

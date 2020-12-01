@@ -110,10 +110,16 @@ module Nonterminal : sig
 
   val positions: t -> Positions.t list
 
-  (* This tells whether a non-terminal symbol is one of the start
-     symbols. *)
+  (* [is_user_start nt] tells whether the nonterminal symbol [nt]
+     is one of the start symbols that the user knows about. *)
 
-  val is_start: t -> bool
+  val is_user_start: t -> bool
+
+  (* [is_internal_start nt] tells whether the nonterminal symbol [nt]
+     is one of the internal start symbols, that is, one of the new
+     symbols [S'] that are created for each user start symbol [S]. *)
+
+  val is_internal_start: t -> bool
 
   (* [attributes nt] is the list of attributes attached with the nonterminal
      symbol [nt]. *)
