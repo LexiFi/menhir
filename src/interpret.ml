@@ -501,7 +501,7 @@ let read_messages strict filename : run or_comment list =
             | (Whitespace, delimiter, _) ::
               (Segment, message, _) ::
               segments ->
-                if elements = [] then
+                if count_things elements = 0 then
                   (* There remain zero sentences. Skip this entry. *)
                   loop accu segments
                 else

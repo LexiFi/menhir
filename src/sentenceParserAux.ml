@@ -64,3 +64,12 @@ let or_comment_filter_map f = function
       Some (f s)
   | Comment _ ->
       None
+
+let or_comment_count accu = function
+  | Thing _ ->
+      accu + 1
+  | Comment _ ->
+      accu
+
+let count_things (xs : 'a or_comment list) =
+  List.fold_left or_comment_count 0 xs
