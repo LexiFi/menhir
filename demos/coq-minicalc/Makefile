@@ -14,6 +14,4 @@ endif
 
 .PHONY: clean
 clean::
-	@ rm -f Parser.v
-	@ rm -f Makefile.coq Makefile.coq.conf
-	@ rm -f .*.aux
+	@ rm -f `cat .gitignore`
