@@ -21,6 +21,10 @@ let () =
     let module D = Dump.Make(Default) in
     D.dump (Settings.base ^ ".automaton.resolved")
 
+let () =
+  if Settings.automaton_graph then
+    AutomatonGraph.print_automaton_graph()
+
 (* Let [Interpret] handle the command line options [--interpret],
    [--interpret-error], [--compile-errors], [--compare-errors]. *)
 

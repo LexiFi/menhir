@@ -74,6 +74,9 @@ let dump_resolved =
 let reference_graph =
   ref false
 
+let automaton_graph =
+  ref false
+
 let trace =
   ref false
 
@@ -296,6 +299,7 @@ let dollars =
    in [doc/manual.tex] and the man page in [doc/menhir.1]. *)
 
 let options = Arg.align [
+  "--automaton-graph", Arg.Set automaton_graph, " (undocumented)";
   "--base", Arg.Set_string base, "<basename> Specifies a base name for the output file(s)";
   "--canonical", Arg.Unit (fun () -> construction_mode := ModeCanonical), " Construct a canonical Knuth LR(1) automaton";
   "--cmly", Arg.Set cmly, " Write a .cmly file";
@@ -467,6 +471,9 @@ let dump_resolved =
 
 let reference_graph =
   !reference_graph
+
+let automaton_graph =
+  !automaton_graph
 
 let trace =
   !trace

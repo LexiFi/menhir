@@ -55,6 +55,10 @@ val dump_resolved: bool
 
 val reference_graph: bool
 
+(* Whether the automaton's graph should be dumped. *)
+
+val automaton_graph: bool
+
 (* Whether tracing instructions should be generated. *)
 
 val trace: bool
