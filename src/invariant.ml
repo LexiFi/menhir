@@ -87,6 +87,9 @@ module StateVector = struct
   let truncate =
     MenhirLib.General.take
 
+  let print v =
+    Misc.separated_list_to_string Lr1.NodeSet.print "; " (List.rev v)
+
 end
 
 open StateVector
@@ -160,6 +163,27 @@ let production_states : Production.index -> property =
     Lr1.NodeSet.fold (fun node accu ->
       leq_join (truncate height (stack_states node)) accu
     ) sites bottom
+  )
+
+(* ------------------------------------------------------------------------ *)
+(* If requested, print the information that has been computed above. *)
+
+let () =
+  Error.logC 3 (fun f ->
+    Lr1.iter (fun node ->
+      Printf.fprintf f "stack(%s) = %s\n"
+        (Lr1.print node)
+        (print (stack_states node))
+    )
+  )
+
+let () =
+  Error.logC 3 (fun f ->
+    Production.iterx (fun prod ->
+      Printf.fprintf f "stack when reducing %s = %s\n"
+        (Production.print prod)
+        (print (production_states prod))
+    )
   )
 
 (* ------------------------------------------------------------------------ *)
@@ -308,8 +332,8 @@ let () =
 let () =
   Error.logC 3 (fun f ->
     Lr1.iter (fun node ->
-      Printf.fprintf f "represented(%d) = %b\n"
-        (Lr1.number node) (represented node)
+      Printf.fprintf f "represented(%s) = %b\n"
+        (Lr1.print node) (represented node)
     )
   )
 
