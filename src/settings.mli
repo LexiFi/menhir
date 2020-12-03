@@ -51,9 +51,9 @@ val dump: bool
 
 val dump_resolved: bool
 
-(* Whether the grammar's dependence graph should be dumped. *)
+(* Whether the grammar's reference graph should be dumped. *)
 
-val graph: bool
+val reference_graph: bool
 
 (* Whether tracing instructions should be generated. *)
 

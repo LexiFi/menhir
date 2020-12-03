@@ -71,7 +71,7 @@ let dump =
 let dump_resolved =
   ref false
 
-let graph =
+let reference_graph =
   ref false
 
 let trace =
@@ -316,7 +316,6 @@ let options = Arg.align [
   "--explain", Arg.Set explain, " Explain conflicts in <basename>.conflicts";
   "--external-tokens", Arg.String codeonly, "<module> Import token type definition from <module>";
   "--fixed-exception", Arg.Set fixedexc, " Declares Error = Parsing.Parse_error";
-  "--graph", Arg.Set graph, " Write a dependency graph to a .dot file";
   "--infer", Arg.Unit enable_infer, " Invoke ocamlc to do type inference";
   "--infer-protocol-supported", Arg.Unit (fun () -> exit 0), " Stop with exit code 0";
   "--infer-write-query", Arg.String enable_write_query, "<filename> Write mock .ml file";
@@ -349,6 +348,7 @@ let options = Arg.align [
                           " Print grammar with unit actions & tokens";
   "--only-tokens", Arg.Unit tokentypeonly, " Generate token type definition only, no code";
   "--raw-depend", Arg.Unit enable_raw_depend, " Invoke ocamldep and echo its raw output";
+  "--reference-graph", Arg.Set reference_graph, " (undocumented)";
   "--stdlib", Arg.String ignore, "<directory> Ignored (deprecated)";
   "--strict", Arg.Set strict, " Warnings about the grammar are errors";
   "--suggest-comp-flags", Arg.Unit (fun () -> suggestion := SuggestCompFlags),
@@ -465,8 +465,8 @@ let dump =
 let dump_resolved =
   !dump_resolved
 
-let graph =
-  !graph
+let reference_graph =
+  !reference_graph
 
 let trace =
   !trace

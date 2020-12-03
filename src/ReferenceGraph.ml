@@ -13,7 +13,7 @@
 
 open Grammar
 
-let print_dependency_graph() =
+let print_reference_graph() =
 
   (* Allocate. *)
 
@@ -62,4 +62,3 @@ let print_dependency_graph() =
   let f = open_out (Settings.base ^ ".dot") in
   P.print f;
   close_out f
-

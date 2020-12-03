@@ -17,8 +17,8 @@ open Grammar
 (* I suppose now is as good a time as any to do this. *)
 
 let () =
-  if Settings.graph then
-    DependencyGraph.print_dependency_graph()
+  if Settings.reference_graph then
+    ReferenceGraph.print_reference_graph()
 
 (* -------------------------------------------------------------------------- *)
 (* If [--dump] is present, honor it before performing conflict resolution. *)
