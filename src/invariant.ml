@@ -303,6 +303,16 @@ let () =
     Printf.fprintf f "%d out of %d states are represented.\n" count Lr1.n
   )
 
+(* If requested, show a detailed table of which states are represented. *)
+
+let () =
+  Error.logC 3 (fun f ->
+    Lr1.iter (fun node ->
+      Printf.fprintf f "represented(%d) = %b\n"
+        (Lr1.number node) (represented node)
+    )
+  )
+
 (* ------------------------------------------------------------------------ *)
 (* Accessors for information about the stack. *)
 
