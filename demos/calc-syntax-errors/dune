@@ -98,6 +98,17 @@
 ;; Tests.
 
 (rule
+  (with-outputs-to calc00.out
+  (with-accepted-exit-codes 0
+    (run ./calc.exe %{dep:calc00.in})
+)))
+
+(rule
+  (alias test)
+  (action (diff calc00.exp calc00.out))
+)
+
+(rule
   (with-outputs-to calc01.out
   (with-accepted-exit-codes 1
     (run ./calc.exe %{dep:calc01.in})
