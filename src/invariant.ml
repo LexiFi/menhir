@@ -60,35 +60,41 @@ end
 module StateSetVector = struct
 
   type property =
-    Lr1.NodeSet.t list
+    Lr1.NodeSet.t array
+
+  let bottom height =
+    Array.make height Lr1.NodeSet.empty
 
   let empty =
-    []
+    [||]
 
-  let rec leq_join v1 v2 =
-    match v1, v2 with
-    | [], [] ->
-        []
-    | states1 :: vtail1, states2 :: vtail2 ->
-        let states = Lr1.NodeSet.leq_join states1 states2
-        and vtail = leq_join vtail1 vtail2 in
-        if states2 == states && vtail2 == vtail then
-          v2
-        else
-          states :: vtail
-    | _, _ ->
-        (* Because all heights are known ahead of time, we are able
-           to (and careful to) compare only vectors of equal length. *)
-        assert false
+  let leq_join v1 v2 =
+    let n = Array.length v1 in
+    (* Because all heights are known ahead of time, we are able (and careful)
+       to compare only vectors of equal length. *)
+    assert (n = Array.length v2);
+    let v = Array.init n (fun i -> Lr1.NodeSet.leq_join v1.(i) v2.(i)) in
+    if Misc.array_for_all2 (==) v2 v then v2 else v
 
   let push v x =
-    x :: v
+    (* Push [x] onto the right end of [v]. *)
+    let n = Array.length v in
+    Array.init (n+1) (fun i -> if i < n then v.(i) else x)
 
-  let truncate =
-    MenhirLib.General.take
+  let truncate k v =
+    (* Keep a suffix of length [k] of [v]. *)
+    let n = Array.length v in
+    Array.sub v (n-k) k
 
   let print v =
-    Misc.separated_list_to_string Lr1.NodeSet.print "; " (List.rev v)
+    Misc.separated_list_to_string Lr1.NodeSet.print "; " (Array.to_list v)
+
+  let iter =
+    Array.iter
+
+  let get =
+    (* The index 0 corresponds to the cell that lies deepest in the stack. *)
+    Array.get
 
 end
 
@@ -159,10 +165,9 @@ let production_states : Production.index -> property =
   Production.tabulate (fun prod ->
     let sites = Lr1.production_where prod in
     let height = Production.length prod in
-    let bottom = Misc.list_make height Lr1.NodeSet.empty in
     Lr1.NodeSet.fold (fun node accu ->
       leq_join (truncate height (stack_states node)) accu
-    ) sites bottom
+    ) sites (bottom height)
   )
 
 (* ------------------------------------------------------------------------ *)
@@ -235,7 +240,7 @@ let represents states =
 (* Enforce condition (1) above. *)
 
 let share (v : property) =
-  List.iter (fun states ->
+  StateSetVector.iter (fun states ->
     let dummy = UnionFind.fresh false in
     Lr1.NodeSet.iter (fun state ->
       UnionFind.union dummy (represented state)
@@ -284,7 +289,7 @@ let handlers states =
 let () =
   Lr1.iter (fun node ->
     let v = stack_states node in
-    List.iter (fun states ->
+    StateSetVector.iter (fun states ->
       if Lr1.NodeSet.cardinal states >= 2 && handlers states then
         represents states
     ) v
@@ -300,7 +305,7 @@ let () =
       if length = 0 then
         Lr1.NodeSet.iter represent sites
       else
-        let states = List.nth (production_states prod) (length - 1) in
+        let states = StateSetVector.get (production_states prod) 0 in
         represents states
   )
 
@@ -353,27 +358,34 @@ type word =
 (* This auxiliary function converts a stack-as-an-array (top of stack
    at the right end) to a stack-as-a-list (top of stack at list head). *)
 
-let convert a =
+let _convert a =
   let n = Array.length a in
   let rec loop i accu =
     if i = n then accu else loop (i + 1) (a.(i) :: accu)
   in
   loop 0 []
 
+(* This auxiliary function converts a pair of stacks-as-arrays to a
+   stack-as-a-list-of-pairs. *)
+
+let convert2 a b =
+  let n = Array.length a in
+  assert (n = Array.length b);
+  let rec loop i accu =
+    if i = n then accu else loop (i + 1) ((a.(i), b.(i)) :: accu)
+  in
+  loop 0 []
+
 (* [stack s] describes the stack when the automaton is in state [s]. *)
 
 let stack node : word =
-  List.combine
-    (convert (stack_symbols node))
-    (stack_states node)
+  convert2 (stack_symbols node) (stack_states node)
 
 (* [prodstack prod] describes the stack when production [prod] is about to be
    reduced. *)
 
 let prodstack prod : word =
-  List.combine
-    (convert (Production.rhs prod))
-    (production_states prod)
+  convert2 (Production.rhs prod) (production_states prod)
 
 (* [gotostack nt] is the structure of the stack when a shift
    transition over nonterminal [nt] is about to be taken. It
