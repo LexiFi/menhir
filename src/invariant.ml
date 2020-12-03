@@ -57,7 +57,7 @@ end
 
 (* Vectors of sets of states. *)
 
-module StateVector = struct
+module StateSetVector = struct
 
   type property =
     Lr1.NodeSet.t list
@@ -92,7 +92,7 @@ module StateVector = struct
 
 end
 
-open StateVector
+open StateSetVector
 
 (* Define the data flow graph. *)
 
@@ -100,7 +100,7 @@ module G = struct
 
   type variable = Lr1.node
 
-  type property = StateVector.property
+  type property = StateSetVector.property
 
   (* At each start state of the automaton, the stack is empty. *)
 
@@ -133,7 +133,7 @@ let stack_states : Lr1.node -> property option =
       (Fix.Glue.ArraysAsImperativeMaps(Key))
       (Key)
   in
-  let module F = Fix.DataFlow.Run(M)(StateVector)(G) in
+  let module F = Fix.DataFlow.Run(M)(StateSetVector)(G) in
   F.solution
 
 (* If every state is reachable, then the least fixed point must be non-[None]
