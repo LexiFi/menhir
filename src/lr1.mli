@@ -53,6 +53,7 @@ module Node : Set.OrderedType with type t = node
 module NodeSet : sig
   include Set.S with type elt = node
   val leq_join: t -> t -> t
+  val print: t -> string
 end
 
 module NodeMap : Map.S with type key = node
@@ -79,6 +80,10 @@ val nt_of_entry: node -> Nonterminal.t
 
 val n: int
 val number: node -> int
+
+(* A state is printed simply as its number. *)
+
+val print: node -> string
 
 (* This provides access to the LR(1) state that a node stands for. *)
 

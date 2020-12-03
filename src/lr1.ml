@@ -466,6 +466,9 @@ let () =
 let number node =
   node
 
+let print node =
+  Printf.sprintf "%d" (number node)
+
 let entry =
   ProductionMap.map transport Raw.entry
 
@@ -694,6 +697,11 @@ module NodeSet = struct
 
   let leq_join s1 s2 =
     if subset s1 s2 then s2 else union s1 s2
+
+  let print s =
+    Printf.sprintf "{ %s }" (
+      Misc.separated_iter_to_string print ", " (fun f -> iter f s)
+    )
 
 end
 
