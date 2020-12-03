@@ -2,13 +2,7 @@
 
 ## Preparations for upcoming work on the back-end
 
-* Add a `--dump-invariant` option that shows (in the file
-  `.automaton.resolved`) what is known about the content
-  of the stack in each state.
-
-* Add a `--dump-reduction-targets` option that shows (in the file
-  `.automaton.resolved`) the set of states to which each reduction
-  may lead. Are there many cases where this set is a singleton?
+* Are there many cases where the set of target states of a reduction is a singleton?
   Are there many cases where the reduction target is determined by
   the knowledge of the production and current state, but not by
   the knowledge of the current state alone?
