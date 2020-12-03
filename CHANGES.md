@@ -1,5 +1,16 @@
 # Changes
 
+## 2020/12/XX
+
+* Update the demo `calc-syntax-errors` to show how to compile a parser both
+  via the code back-end and via the table back-end, so as to obtain both
+  optimal performance and good error messages.
+
+* Rename the undocumented option `--graph` to `--reference-graph`.
+
+* Add an undocumented option `--automaton-graph` which produces an
+  (incomplete) graphical representation of the LR(1) automaton.
+
 ## 2020/12/01
 
 * The module `MenhirLib.ErrorReports` is extended with new functions:
