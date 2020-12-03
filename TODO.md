@@ -13,9 +13,6 @@
   the knowledge of the production and current state, but not by
   the knowledge of the current state alone?
 
-* Add a `--dump-represented` option that shows (in the file
-  `.automaton.resolved`) what states are represented.
-
 * Build a performance test suite. For this purpose, use a small number of
   well-chosen parsers (among which OCaml and CompCert C) for which we have a
   large amount of well-formed input data. Store tokens in memory ahead of time
