@@ -2,6 +2,8 @@
 
 ## Preparations for upcoming work on the back-end
 
+* Invariant: redefine the type [word] as an array, or a pair of arrays.
+
 * Are there many cases where the set of target states of a reduction is a singleton?
   Are there many cases where the reduction target is determined by
   the knowledge of the production and current state, but not by
