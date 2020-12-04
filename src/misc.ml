@@ -417,5 +417,15 @@ let array_for_all2 p l1 l2 =
     else false in
   loop 0
 
+let array_fold_left2 f accu a1 a2 =
+  let n1 = Array.length a1
+  and n2 = Array.length a2 in
+  if n1 <> n2 then invalid_arg "Array.fold_left2";
+  let accu = ref accu in
+  for i = 0 to n1 - 1 do
+    accu := f !accu (Array.unsafe_get a1 i) (Array.unsafe_get a2 i)
+  done;
+  !accu
+
 let rec list_make n x =
   if n = 0 then [] else x :: list_make (n - 1) x
