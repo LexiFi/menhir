@@ -72,24 +72,6 @@ val prodstack: Production.index -> word
 
 val gotostack: Nonterminal.t -> word
 
-(* [rewind s] explains how to rewind the stack when dealing with an
-   error in state [s]. It produces an instruction to either die
-   (because no state on the stack can handle errors) or pop a suffix
-   of the stack. In the latter case, one reaches a state that is
-   either represented (its identity is physically stored in the
-   bottommost cell that is popped) or unrepresented (its identity is
-   statically known). *)
-
-type instruction =
-  | Die
-  | DownTo of word * state
-
-and state =
-  | Represented
-  | UnRepresented of Lr1.node
-
-val rewind: Lr1.node -> instruction
-
 (* ------------------------------------------------------------------------- *)
 (* Information about which states and positions need to physically
    exist on the stack. *)
@@ -104,15 +86,6 @@ val represented: Lr1.node -> bool
 
 val startp: Symbol.t -> bool
 val endp: Symbol.t -> bool
-
-(* ------------------------------------------------------------------------- *)
-(* Information about error handling. *)
-
-(* [errorpeeker s] tells whether state [s] can potentially peek at an
-   error. This is the case if, in state [s], an error token may be on
-   the stream. *)
-
-val errorpeeker: Lr1.node -> bool
 
 (* ------------------------------------------------------------------------- *)
 (* Miscellaneous. *)

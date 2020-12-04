@@ -61,6 +61,7 @@ module StateSetVector = struct
 
   type property =
     Lr1.NodeSet.t array
+    (* The index 0 corresponds to the cell that lies deepest in the stack. *)
 
   let bottom height =
     Array.make height Lr1.NodeSet.empty
@@ -94,10 +95,6 @@ module StateSetVector = struct
 
   let iter =
     Array.iter
-
-  let get =
-    (* The index 0 corresponds to the cell that lies deepest in the stack. *)
-    Array.get
 
 end
 
@@ -210,17 +207,7 @@ let () =
 
    (2) If a state [s] has an outgoing transition along nonterminal
    symbol [nt], and if the [goto] table for symbol [nt] has more than
-   one target, then state [s] is represented.
-
-   (3) If a stack cell contains more than one state and if at least
-   one of these states is able to handle the [error] token, then these
-   states are represented.
-
-   (4) If the semantic action associated with a production mentions
-   the [$syntaxerror] keyword, then the state that is being reduced to
-   (that is, the state that initiated the recognition of this
-   production) is represented. (Indeed, it will be passed as an
-   argument to [errorcase].) *)
+   one target, then state [s] is represented. *)
 
 (* Data. *)
 
@@ -236,9 +223,6 @@ let represented state =
 
 let represent state =
   UnionFind.set (represented state) true
-
-let represents states =
-  represent (Lr1.NodeSet.choose states)
 
 (* Enforce condition (1) above. *)
 
@@ -271,45 +255,6 @@ let () =
       Lr1.targets (fun () sources _ ->
         List.iter represent sources
       ) () (Symbol.N nt)
-  )
-
-(* Enforce condition (3) above. *)
-
-let handler state =
-  try
-    let _ = SymbolMap.find (Symbol.T Terminal.error) (Lr1.transitions state) in
-    true
-  with Not_found ->
-    try
-      let _ = TerminalMap.lookup Terminal.error (Lr1.reductions state) in
-      true
-    with Not_found ->
-      false
-
-let handlers states =
-  Lr1.NodeSet.exists handler states
-
-let () =
-  Lr1.iter (fun node ->
-    let v = stack_states node in
-    StateSetVector.iter (fun states ->
-      if Lr1.NodeSet.cardinal states >= 2 && handlers states then
-        represents states
-    ) v
-  )
-
-(* Enforce condition (4) above. *)
-
-let () =
-  Production.iterx (fun prod ->
-    if Action.has_syntaxerror (Production.action prod) then
-      let sites = Lr1.production_where prod in
-      let length = Production.length prod in
-      if length = 0 then
-        Lr1.NodeSet.iter represent sites
-      else
-        let states = StateSetVector.get (production_states prod) 0 in
-        represents states
   )
 
 (* Define accessors. *)
@@ -415,76 +360,6 @@ let fold_top f accu w =
       accu
   | (symbol, states) :: _ ->
       f (representeds states) symbol
-
-(* ------------------------------------------------------------------------ *)
-(* Explain how the stack should be deconstructed when an error is
-   found.
-
-   We sometimes have a choice as too how many stack cells should be
-   popped. Indeed, several cells in the known suffix of the stack may
-   physically hold a state. If neither of these states handles errors,
-   then we could jump to either. (Indeed, if we jump to one that's
-   nearer, it will in turn pop further stack cells and jump to one
-   that's farther.) In the interests of code size, we should pop as
-   few stack cells as possible. So, we jump to the topmost represented
-   state in the known suffix. *)
-
-type state =
-  | Represented
-  | UnRepresented of Lr1.node
-
-type instruction =
-  | Die
-  | DownTo of word * state
-
-let rewind node : instruction =
-  let w = stack node in
-
-  let rec rewind w =
-    match w with
-    | [] ->
-
-        (* I believe that every stack description either is definite
-           (that is, ends with [TailEmpty]) or contains at least one
-           represented state. Thus, if we find an empty [w], this
-           means that the stack is definitely empty. *)
-
-        Die
-
-    | ((_, states) as cell) :: w ->
-
-        if representeds states then
-
-          (* Here is a represented state. We will pop this
-             cell and no more. *)
-
-          DownTo ([ cell ], Represented)
-
-        else if handlers states then begin
-
-          (* Here is an unrepresented state that can handle
-             errors. The cell must hold a singleton set of states, so
-             we know which state to jump to, even though it isn't
-             represented. *)
-
-          assert (Lr1.NodeSet.cardinal states = 1);
-          let state = Lr1.NodeSet.choose states in
-          DownTo ([ cell ], UnRepresented state)
-
-        end
-        else
-
-          (* Here is an unrepresented state that does not handle
-             errors. Pop this cell and look further. *)
-
-          match rewind w with
-          | Die ->
-              Die
-          | DownTo (w, st) ->
-              DownTo (cell :: w, st)
-
-  in
-  rewind w
 
 (* ------------------------------------------------------------------------ *)
 
@@ -687,46 +562,6 @@ let universal symbol =
   Lr1.fold (fun universal s ->
     universal && (if represented s then SymbolMap.mem symbol (Lr1.transitions s) else true)
   ) true
-
-(* ------------------------------------------------------------------------ *)
-(* Discover which states can peek at an error. These are the states
-   where an error token may be on the stream. These are the states
-   that are targets of a reduce action on [error]. *)
-
-(* 2012/08/25 I am optimizing this code, whose original version I found had
-   quadratic complexity. The problem is as follows. We can easily iterate over
-   all states to find which states [s] have a reduce action on error. What we
-   must find out, then, is into which state [t] this reduce action takes us.
-   This is not easy to predict, as it depends on the contents of the stack.
-   The original code used an overapproximation, as follows: if the reduction
-   concerns a production whose head symbol is [nt], then all of the states
-   that have an incoming transition labeled [nt] are potential targets. The
-   new version of the code below relies on the same approximation, but uses
-   two successive loops instead of two nested loops. *)
-
-let errorpeekers =
-  (* First compute a set of symbols [nt]... *)
-  let nts : SymbolSet.t =
-    Lr1.fold (fun nts node ->
-      try
-        let prods = TerminalMap.lookup Terminal.error (Lr1.reductions node) in
-        let prod = Misc.single prods in
-        let nt = Production.nt prod in
-        SymbolSet.add (Symbol.N nt) nts
-      with Not_found ->
-        nts
-    ) SymbolSet.empty
-  in
-  (* ... then compute the set of all target states of all transitions
-     labeled by some symbol in the set [nt]. *)
-  SymbolSet.fold (fun nt errorpeekers ->
-    Lr1.targets (fun errorpeekers _ target ->
-      Lr1.NodeSet.add target errorpeekers
-    ) errorpeekers nt
-  ) nts Lr1.NodeSet.empty
-
-let errorpeeker node =
-  Lr1.NodeSet.mem node errorpeekers
 
 (* ------------------------------------------------------------------------ *)
 

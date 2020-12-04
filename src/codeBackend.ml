@@ -44,9 +44,7 @@ open Interface
    current token is to be discarded, the [discard] function is invoked. It
    discards the current token, invokes the lexer to obtain a new token, and
    returns an updated environment. When we only wish to peek at the current
-   token, without discarding it, we simply read [env.token]. (We have to be
-   careful in cases where the current lookahead token might be [error],
-   since, in those cases, [env.token] is meaningless; see below.)
+   token, without discarding it, we simply read [env.token].
 
    Once the lookahead token is obtained, [run] performs a case analysis of
    the lookahead token. Each branch performs one of the following. In shift
@@ -54,7 +52,7 @@ open Interface
    appropriate parameters, typically the current stack plus the information
    that should go into the new top stack cell (a state, a semantic value,
    locations).  In reduce branches, a [reduce] function is invoked. In the
-   default branch, error handling is initiated (see below).
+   default branch, a failure is reported.
 
    The [reduce] function associated with production [prod] pops as
    many stack cells as necessary, retrieving semantic values and the
@@ -125,56 +123,6 @@ let () =
         "The code back-end does not support --strategy simplified.\n\
          Please use either --strategy legacy or --table."
 
-(* ------------------------------------------------------------------------ *)
-(* Here is a description of our error handling mechanism.
-
-   With every state [s], we associate an [error] function.
-
-   If [s] is willing to act when the lookahead token is [error], then
-   this function tells how. This includes *both* shift *and* reduce
-   actions. (For some reason, yacc/ocamlyacc/mule/bison can only shift
-   on [error].)
-
-   If [s] is unable to act when the lookahead token is [error], then
-   this function pops a stack cell, extracts a state [s'] out of it,
-   and transfers control, via a global [errorcase] dispatch function,
-   to the [error] function associated with [s']. (Because some stack
-   cells do not physically hold a state, this description is somewhat
-   simpler than the truth, but that's the idea.)
-
-   When an error is detected in state [s], then (see [initiate]) the [error]
-   function associated with [s] is invoked. Immediately before invoking the
-   [error] function, the flag [env.error] is set.  By convention, this means
-   that the current token is discarded and replaced with an [error] token. The
-   [error] token transparently inherits the positions associated with the
-   underlying concrete token.
-
-   Whenever we attempt to consult the current token, we check whether
-   [env.error] is set and, if that is the case, resume error handling
-   by calling the [error] function associated with the current state.
-   This allows a series of reductions to correctly take place when the
-   lookahead token is [error]. In many states, though, it is possible
-   to statically prove that [env.error] cannot be set. In that case,
-   we produce a lookup of [env.token] without checking [env.error].
-
-   The flag [env.error] is cleared when a token is shifted.
-
-   States with default reductions perform a reduction regardless of
-   the current lookahead token, which can be either [error] or a
-   regular token.
-
-   A question that bothered me for a while was, when unwinding the
-   stack, do we stop at a state that has a default reduction? Should
-   it be considered able to handle the error token? I now believe that
-   the answer is, this cannot happen. Indeed, if a state has a default
-   reduction, then, whenever it is entered, reduction is performed and
-   that state is exited, which means that it is never pushed onto the
-   stack. So, it is fine to consider that a state with a default
-   reduction is unable to handle errors.
-
-   I note that a state that can handle [error] and has a default
-   reduction must in fact have a reduction action on [error]. *)
-
 (* The variable that holds the environment. This is a parameter of all
    functions. *)
 
@@ -215,15 +163,10 @@ let goto nt =
 let reduce prod =
   prefix (Printf.sprintf "reduce%d" (Production.p2i prod))
 
-(* The [errorcase] function. *)
+(* The [error] function. *)
 
-let errorcase =
-  prefix "errorcase"
-
-(* The [error] function associated with a state [s]. *)
-
-let error s =
-  prefix (Printf.sprintf "error%d" (Lr1.number s))
+let error =
+  prefix "error"
 
 (* The constant associated with a state [s]. *)
 
@@ -264,9 +207,6 @@ let flexbuf =
 let ftoken =
   prefix "token"
 
-let ferror =
-  prefix "error"
-
 (* The type variable that represents the stack tail. *)
 
 let tvtail =
@@ -297,12 +237,6 @@ let magic e : expr =
 
 let nomagic e =
   e
-
-(* The following assertion checks that [env.error] is [false]. *)
-
-let assertnoerror : pattern * expr =
-  PUnit,
-  EApp (EVar "assert", [ EApp (EVar "not", [ ERecordAccess (EVar env, ferror) ]) ])
 
 let trace (format : string) (args : expr list) : (pattern * expr) list =
   if Settings.trace then
@@ -523,17 +457,9 @@ let envtypedef = {
       field false flexbuf tlexbuf;
 
       (* The last token that was read from the lexer. This is the
-         head of the token stream, unless [env.error] is set. *)
+         head of the token stream. *)
 
       field false ftoken ttoken;
-
-      (* A flag which tells whether we currently have an [error] token
-         at the head of the stream. When this flag is set, the head
-         of the token stream is the [error] token, and the contents of
-         the [token] field is irrelevant. The token following [error]
-         is obtained by invoking the lexer again. *)
-
-      field true ferror tbool;
 
     ];
   typeconstraint = None
@@ -646,45 +572,6 @@ let reducetypescheme prod =
     )
   )
 
-(* The type of the [errorcase] function. The shape of the stack is
-   unknown, and is determined by examining the state parameter. *)
-
-let errorcasetypescheme =
-  auto2scheme (marrow [ tenv; ttail; tstate ] tresult)
-
-(* The type of the [error] function. The shape of the stack is the
-   one associated with state [s]. *)
-
-let errortypescheme s =
-  auto2scheme ( marrow [ tenv; stacktype s ] tresult)
-
-(* ------------------------------------------------------------------------ *)
-(* Code production preliminaries. *)
-
-(* This flag will be set to [true] if we ever raise the [Error]
-   exception. This happens when we unwind the entire stack without
-   finding a state that can handle errors. *)
-
-let can_die =
-  ref false
-
-(* A code pattern for an exception handling construct where both alternatives
-   are in tail position. Concrete syntax in OCaml 4.02 is [match e with x ->
-   e1 | exception Error -> e2]. Earlier versions of OCaml do not support this
-   construct. We continue to emulate it using a combination of [try/with],
-   [match/with], and an [option] value. It is used only in a very rare case
-   anyway. *)
-
-let letunless e x e1 e2 =
-  EMatch (
-    ETry (
-      EData ("Some", [ e ]),
-      [ { branchpat = PData (excdef.excname, []); branchbody = EData ("None", []) } ]
-    ),
-    [ { branchpat = PData ("Some", [ PVar x ]); branchbody = e1 };
-      { branchpat = PData ("None", []); branchbody = e2 } ]
-  )
-
 (* ------------------------------------------------------------------------ *)
 (* Calling conventions. *)
 
@@ -731,20 +618,6 @@ let reducecellparams prod i holds_state symbol =
   elementif holds_state (if i = 0 then PVar state else PWildcard) @
   symvalt symbol semvpat @
   elementif (Invariant.startp symbol) (PVar (Printf.sprintf "_startpos_%s_" ids.(i)))
-
-(* The contents of a stack cell, exposed as individual parameters,
-   again. The choice of identifiers is suitable for use in the
-   definition of [error]. *)
-
-let errorcellparams (i, pat) holds_state symbol _ =
-  i + 1,
-  ptuple (
-    pat ::
-    elementif (Invariant.endp symbol) PWildcard @
-    elementif holds_state (if i = 0 then PVar state else PWildcard) @
-    symval symbol PWildcard @
-    elementif (Invariant.startp symbol) PWildcard
-  )
 
 (* Calls to [run]. *)
 
@@ -796,27 +669,10 @@ let gotoparams var nt =
 let call_goto nt =
   EApp (EVar (goto nt), gotoparams var nt)
 
-(* Calls to [errorcase]. *)
-
-let errorcaseparams magic var =
-  [ var env; magic (var stack); var state ]
-
-let call_errorcase =
-  EApp (EVar errorcase, errorcaseparams magic var)
-
 (* Calls to [error]. *)
 
-let errorparams magic var =
-  [ var env; magic (var stack) ]
-
-let call_error magic s =
-  EApp (EVar (error s), errorparams magic var)
-
-let call_error_via_errorcase magic s = (* TEMPORARY document *)
-  if Invariant.represented s then
-    EApp (EVar errorcase, [ var env; magic (var stack); estatecon s ])
-  else
-    call_error magic s
+let call_error =
+  EApp (EVar error, [ EUnit ])
 
 (* Calls to [assertfalse]. *)
 
@@ -825,15 +681,6 @@ let call_assertfalse =
 
 (* ------------------------------------------------------------------------ *)
 (* Code production for the automaton functions. *)
-
-(* Count how many states actually can peek at an error token. This
-   figure is, in general, inferior or equal to the number of states at
-   which [Invariant.errorpeeker] is true, because some of these states
-   have a default reduction and will not consult the lookahead
-   token. *)
-
-let errorpeekers =
-  ref 0
 
 (* Code for calling the reduction function for token [prod] upon
    finding a token within [toks]. This produces a branch, to be
@@ -968,21 +815,9 @@ let gettoken s defred e =
   | Some (Symbol.N _), None ->
 
       (* There is no default reduction. Peek at the first input token,
-         without taking it off the input stream. This is normally done
-         by reading [env.token], unless the token might be [error]:
-         then, we check [env.error] first. *)
+         without taking it off the input stream. *)
 
-      if Invariant.errorpeeker s then begin
-        incr errorpeekers;
-        EIfThenElse (
-          ERecordAccess (EVar env, ferror),
-          tracecomment "Resuming error handling" (call_error_via_errorcase magic s),
-          blet ([ PVar token, ERecordAccess (EVar env, ftoken) ], e)
-        )
-      end
-      else
-        blet ([ assertnoerror;
-                PVar token, ERecordAccess (EVar env, ftoken) ], e)
+      blet ([ PVar token, ERecordAccess (EVar env, ftoken) ], e)
 
 (* This produces the header of a [run] function. *)
 
@@ -1002,46 +837,6 @@ let defaultreductioncomment toks e =
     "Reducing without looking ahead at ",
     tokspat toks,
     e
-  )
-
-(* This produces some bookkeeping code that is used when initiating error
-   handling. We set the flag [env.error]. By convention, the field [env.token]
-   becomes meaningless and one considers that the first token on the input
-   stream is [error]. As a result, the next peek at the lookahead token will
-   cause error handling to be resumed. The next call to [discard] will take
-   the [error] token off the input stream and clear [env.error]. *)
-
-(* It seems convenient for [env.error] to be a mutable field, as this allows
-   us to generate compact code. Re-allocating the whole record would produce
-   less compact code. And speed is not an issue in this error-handling code. *)
-
-let errorbookkeeping e =
-  tracecomment
-    "Initiating error handling"
-    (blet (
-      [ PUnit, ERecordWrite (EVar env, ferror, etrue) ],
-      e
-    ))
-
-(* This code is used to indicate that a new error has been detected in
-   state [s].
-
-   If I am correct, [env.error] is never set here. Indeed, that would mean
-   that we first found an error, and then signaled another error before
-   being able to shift the first error token. My understanding is that this
-   cannot happen: when the first error is signaled, we end up at a state
-   that is willing to handle the error token, by a series of reductions
-   followed by a shift.
-
-   We initiate error handling by first performing the standard bookkeeping
-   described above, then transferring control to the [error] function
-   associated with [s]. *)
-
-let initiate s =
-
-  blet (
-    [ assertnoerror ],
-    errorbookkeeping (call_error_via_errorcase magic s)
   )
 
 (* This produces the body of the [run] function for state [s]. *)
@@ -1069,14 +864,8 @@ let rundef s : valdef =
 
   | None ->
 
-      (* If this state is willing to act on the error token, ignore
-         that -- this is taken care of elsewhere. *)
-
-      let transitions =
-        SymbolMap.remove (Symbol.T Terminal.error) (Lr1.transitions s)
-      and reductions =
-        TerminalMap.remove Terminal.error (Lr1.reductions s)
-      in
+      let transitions = Lr1.transitions s
+      and reductions = Lr1.reductions s in
 
       (* Construct the main case analysis that determines what action
          should be taken next.
@@ -1109,7 +898,7 @@ let rundef s : valdef =
         if TerminalSet.subset TerminalSet.universe covered then
           branches
         else
-          branches @ [ { branchpat = PWildcard; branchbody = initiate s } ]
+          branches @ [ { branchpat = PWildcard; branchbody = call_error } ]
       in
 
       (* Finally, construct the code for [run]. The former pushes things
@@ -1223,8 +1012,7 @@ let reducebody prod =
   (* If this production is one of the start productions, then reducing
      it means accepting the input. In that case, we return a final
      semantic value and stop. Otherwise, we transfer control to the
-     [goto] function, unless the semantic action raises [Error], in
-     which case we transfer control to [errorcase]. *)
+     [goto] function. *)
 
   if Production.is_start prod then
 
@@ -1250,13 +1038,6 @@ let reducebody prod =
         (pat, EVar stack) ::
         unitbindings @
         posbindings action,
-
-        (* If the semantic action is susceptible of raising [Error],
-           use a [let/unless] construct, otherwise use [let]. *)
-
-        if Action.has_syntaxerror action then
-          letunless act semv (call_goto nt) (errorbookkeeping call_errorcase)
-        else
           blet ([ PVar semv, act ], call_goto nt)
       ))
 
@@ -1356,119 +1137,21 @@ let gotodef nt = {
     EAnnot (EFun (gotoparams pvar nt, gotopushcell nt (gotobody nt)), gototypescheme nt)
 }
 
-(* ------------------------------------------------------------------------ *)
-(* Code production for the error handling functions. *)
+(* This is the [error] function. It raises an exception. *)
 
-(* This is the body of the [error] function associated with state [s]. *)
-
-let handle s e =
-  tracecomment (Printf.sprintf "Handling error in state %d" (Lr1.number s)) e
-
-let errorbody s =
-  try
-    let s' = SymbolMap.find (Symbol.T Terminal.error) (Lr1.transitions s) in
-
-    (* There is a shift transition on error. *)
-
-    handle s (
-      shiftbranchbody s Terminal.error s'
-    )
-
-  with Not_found ->
-    try
-      let prods = TerminalMap.lookup Terminal.error (Lr1.reductions s) in
-      let prod = Misc.single prods in
-
-      (* There is a reduce transition on error. If shiftreduce
-         optimization is enabled for this production, then we must pop
-         an extra cell for [reduce]'s calling convention to be met. *)
-
-      let extrapop e =
-        if shiftreduce prod then
-          let pat =
-            ptuple (PVar stack :: Invariant.fold_top (runcellparams pvar) [] (Invariant.stack s))
-          in
-          blet ([ pat, EVar stack ], e)
-        else
-          e
-      in
-
-      handle s (
-        extrapop (
-          call_reduce prod s
-        )
-      )
-
-    with Not_found ->
-
-      (* This state is unable to handle errors. Pop the stack to find
-         a state that does handle errors, a state that can further pop
-         the stack, or die. *)
-
-      match Invariant.rewind s with
-      | Invariant.Die ->
-          can_die := true;
-          ERaise errorval
-      | Invariant.DownTo (w, st) ->
-          let _, pat = Invariant.fold errorcellparams (0, PVar stack) w in
-          blet (
-            [ pat, EVar stack ],
-            match st with
-            | Invariant.Represented ->
-                call_errorcase
-            | Invariant.UnRepresented s ->
-                call_error magic s
-          )
-
-(* This is the [error] function associated with state [s]. *)
-
-let errordef s = {
+let errordef = {
   valpublic =
     false;
   valpat =
-    PVar (error s);
+    PVar error;
   valval =
-    EAnnot (
-      EFun (
-        errorparams nomagic pvar,
-        errorbody s
-      ),
-      errortypescheme s
+    EFun (
+      [ PUnit ],
+      tracecomment "Initiating error handling" (
+        ERaise errorval
+      )
     )
 }
-
-(* This is the [errorcase] function. It examines its state parameter
-   and dispatches control to an appropriate [error] function. *)
-
-let errorcasedef =
-  let branches =
-    Lr1.fold (fun branches s ->
-      if Invariant.represented s then
-        {
-          branchpat  = pstatecon s;
-          branchbody = EApp (EVar (error s), [ EVar env; EMagic (EVar stack) ])
-        } :: branches
-      else
-        branches
-    ) []
-  in
-  {
-    valpublic =
-      false;
-    valpat =
-      PVar errorcase;
-    valval =
-      EAnnot (
-        EFun (
-          errorcaseparams nomagic pvar,
-          EMatch (
-            EVar state,
-            branches
-          )
-        ),
-        errorcasetypescheme
-      )
-  }
 
 (* ------------------------------------------------------------------------ *)
 (* Code production for the entry points. *)
@@ -1512,7 +1195,6 @@ let entrydef s =
                   (flexer, EVar lexer);
                   (flexbuf, EVar lexbuf);
                   (ftoken, EMagic EUnit);
-                  (ferror, efalse)
                 ])
             ],
             EMagic (EApp (EVar (run s), [ EVar env; initial_stack ]))
@@ -1559,7 +1241,6 @@ let printtokendef =
    query the lexer for a new one. The code queries the lexer for a new
    token and stores it into [env.token], overwriting the previous
    token. It also stores the start and positions of the new token.
-   Last, [env.error] is cleared.
 
    We use the lexer's [lex_start_p] and [lex_curr_p] fields to extract
    the start and end positions of the token that we just read. In
@@ -1591,7 +1272,6 @@ let discardbody =
         flexer, EVar lexer;
         flexbuf, EVar lexbuf;
         ftoken, EVar token;
-        ferror, efalse
       ]
     )
   )
@@ -1628,7 +1308,7 @@ let program =
         entrydef s :: defs
       ) Lr1.entry (
       Lr1.fold (fun defs s ->
-        rundef s :: errordef s :: defs
+        rundef s :: defs
       ) (
       Nonterminal.foldx (fun nt defs ->
         gotodef nt :: defs
@@ -1637,7 +1317,7 @@ let program =
           defs
         else
           reducedef prod :: defs
-      ) [ discarddef; printtokendef; assertfalsedef; errorcasedef ])))
+      ) [ discarddef; printtokendef; assertfalsedef; errordef ])))
     ) ::
 
     SIStretch grammar.postludes ::
@@ -1646,17 +1326,6 @@ let program =
 
 (* ------------------------------------------------------------------------ *)
 (* We are done! *)
-
-let () =
-  Error.logC 1 (fun f ->
-    Printf.fprintf f
-       "%d out of %d states can peek at an error.\n"
-       !errorpeekers Lr1.n)
-
-let () =
-  if not !can_die then
-    Error.logC 1 (fun f -> Printf.fprintf f
-      "The generated parser cannot raise Error.\n")
 
 let () =
   Time.tick "Producing abstract syntax"
