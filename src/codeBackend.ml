@@ -819,7 +819,7 @@ let call_error_via_errorcase magic s = (* TEMPORARY document *)
 (* Calls to [assertfalse]. *)
 
 let call_assertfalse =
-  EApp (EVar assertfalse, [ EVar "()" ])
+  EApp (EVar assertfalse, [ EUnit ])
 
 (* ------------------------------------------------------------------------ *)
 (* Code production for the automaton functions. *)
