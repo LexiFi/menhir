@@ -73,8 +73,5 @@ val from_stretch: Stretch.t -> t
 (** [from_il_expr] converts an [IL] expression into a semantic action. *)
 val from_il_expr: IL.expr -> t
 
-(** Test whether the keyword [$syntaxerror] is used in the action. *)
-val has_syntaxerror: t -> bool
-
 (** Test whether the keyword [$endpos($0)] is used in the action. *)
 val has_beforeend: t -> bool

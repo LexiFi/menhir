@@ -165,8 +165,5 @@ let filenames action =
 let keywords action =
   action.keywords
 
-let has_syntaxerror action =
-  KeywordSet.mem SyntaxError (keywords action)
-
 let has_beforeend action =
   KeywordSet.mem (Position (Before, WhereEnd, FlavorPosition)) action.keywords
