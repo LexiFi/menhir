@@ -87,7 +87,10 @@ module StateSetVector = struct
     Array.sub v (n-k) k
 
   let print v =
-    Misc.separated_list_to_string Lr1.NodeSet.print "; " (Array.to_list v)
+    if Array.length v = 0 then
+      "epsilon"
+    else
+      Misc.separated_list_to_string Lr1.NodeSet.print "; " (Array.to_list v)
 
   let iter =
     Array.iter
