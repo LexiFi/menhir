@@ -293,47 +293,26 @@ let () =
 (* ------------------------------------------------------------------------ *)
 (* Accessors for information about the stack. *)
 
-(* We describe a stack prefix as a list of cells, where each cell is a pair
-   of a symbol and a set of states. The top of the stack is the head of the
-   list. *)
-
-type cell =
-    Symbol.t * Lr1.NodeSet.t
+(* We describe a stack prefix as a pair of a vector of symbols and a vector
+   of sets of states. The index 0 in these vectors correspond to the deepest
+   cell in the stack. *)
 
 type word =
-    cell list
+  Symbol.t array * StateSetVector.property
 
-(* This auxiliary function converts a stack-as-an-array (top of stack
-   at the right end) to a stack-as-a-list (top of stack at list head). *)
-
-let _convert a =
-  let n = Array.length a in
-  let rec loop i accu =
-    if i = n then accu else loop (i + 1) (a.(i) :: accu)
-  in
-  loop 0 []
-
-(* This auxiliary function converts a pair of stacks-as-arrays to a
-   stack-as-a-list-of-pairs. *)
-
-let convert2 a b =
-  let n = Array.length a in
-  assert (n = Array.length b);
-  let rec loop i accu =
-    if i = n then accu else loop (i + 1) ((a.(i), b.(i)) :: accu)
-  in
-  loop 0 []
+let singleton symbol states =
+  [| symbol |], [| states |]
 
 (* [stack s] describes the stack when the automaton is in state [s]. *)
 
 let stack node : word =
-  convert2 (stack_symbols node) (stack_states node)
+  stack_symbols node, stack_states node
 
 (* [prodstack prod] describes the stack when production [prod] is about to be
    reduced. *)
 
 let prodstack prod : word =
-  convert2 (Production.rhs prod) (production_states prod)
+  Production.rhs prod, production_states prod
 
 (* [gotostack nt] is the structure of the stack when a shift
    transition over nonterminal [nt] is about to be taken. It
@@ -346,20 +325,23 @@ let gotostack : Nonterminal.t -> word =
         List.fold_right Lr1.NodeSet.add sources accu
       ) Lr1.NodeSet.empty (Symbol.N nt)
     in
-    [ Symbol.N nt, sources ]
+    singleton (Symbol.N nt) sources
   )
 
-let fold f accu w =
-  List.fold_right (fun (symbol, states) accu ->
+let fold f accu (symbols, v) =
+  Misc.array_fold_left2 (fun accu symbol states ->
     f accu (representeds states) symbol states
-  ) w accu
+  ) accu symbols v
 
-let fold_top f accu w =
-  match w with
-  | [] ->
-      accu
-  | (symbol, states) :: _ ->
-      f (representeds states) symbol
+let fold_top f accu (symbols, v) =
+  let n = Array.length symbols in
+  assert (n = Array.length v);
+  if n = 0 then
+    accu
+  else
+    let symbol = symbols.(n-1)
+    and states = v.(n-1) in
+    f (representeds states) symbol
 
 (* ------------------------------------------------------------------------ *)
 
