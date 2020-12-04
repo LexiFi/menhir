@@ -2,10 +2,20 @@
 
 ## Preparations for upcoming work on the back-end
 
-* Are there many cases where the set of target states of a reduction is a singleton?
-  Are there many cases where the reduction target is determined by
-  the knowledge of the production and current state, but not by
-  the knowledge of the current state alone?
+* A missed optimization in the current code back-end: reducing an epsilon
+  production goes through a generic `reduce` function, thus forgetting the
+  identity of the current state, and through a generic `goto` function, which
+  performs a case analysis to rediscover this information. Specializing the
+  `reduce` function per state, for epsilon productions only, would avoid this
+  inefficiency. (One should ideally avoid duplicating semantic actions,
+  though.)
+
+* The code back-end currently does not exploit the fact that the target state
+  of a reduction is sometimes statically known (that is, determined either by
+  the production alone, or by the production and current state). Taking this
+  into account could allow us to avoid going through the generic `goto`
+  function in some cases. This in turn could allow us to decrease the set
+  of states that must be represented.
 
 * Build a performance test suite. For this purpose, use a small number of
   well-chosen parsers (among which OCaml and CompCert C) for which we have a
