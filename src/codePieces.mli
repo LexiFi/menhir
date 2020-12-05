@@ -22,12 +22,6 @@ open Grammar
 
 (* Naming conventions. *)
 
-(* The variable that holds the environment. This is a parameter to all
-   functions. We do not make it a global variable because we wish to
-   preserve re-entrancy. *)
-
-val env : string
-
 (* A variable used to hold a semantic value. *)
 
 val semv : string

@@ -39,13 +39,6 @@ open Interface
    cell's contents are passed as extra parameters, and it is [run]'s
    responsibility to allocate that cell.
 
-   (When [run] is the target of a shift transition, the position
-   parameters [startp] and [endp] are redundant with the [env]
-   parameter, because they are always equal to [env.startp] and
-   [env.endp]. However, this does not appear to make a great
-   difference in terms of code size, and makes our life easier, so we
-   do not attempt to eliminate this redundancy.)
-
    The first thing in [run] is to discard a token, if the state was entered
    through a shift transition, and to peek at the lookahead token. When the
    current token is to be discarded, the [discard] function is invoked. It
@@ -166,6 +159,12 @@ open Interface
 
    I note that a state that can handle [error] and has a default
    reduction must in fact have a reduction action on [error]. *)
+
+(* The variable that holds the environment. This is a parameter of all
+   functions. *)
+
+let env =
+   prefix "env"
 
 (* The type of environments. *)
 

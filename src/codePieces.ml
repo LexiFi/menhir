@@ -28,13 +28,6 @@ open Grammar
 let ntvar nt =
   Infer.ntvar (Nonterminal.print true nt)
 
-(* The variable that holds the environment. This is a parameter to all
-   functions. We do not make it a global variable because we wish to
-   preserve re-entrancy. *)
-
-let env =
-   prefix "env"
-
 (* A variable used to hold a semantic value. *)
 
 let semv =

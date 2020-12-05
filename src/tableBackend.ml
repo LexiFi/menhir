@@ -200,9 +200,8 @@ let reducecellcasts prod i symbol casts =
 let endpos_of_top_stack_cell =
   ERecordAccess(EVar stack, fendp)
 
-(* This is the body of the [reduce] function associated with
-   production [prod]. It assumes that the variables [env] and [stack]
-   have been bound. *)
+(* This is the body of the [reduce] function associated with production
+   [prod]. It assumes that the variable [stack] is bound. *)
 
 let reducebody prod =
 
@@ -284,7 +283,11 @@ let reducebody prod =
     )
   )
 
+(* This is the body of the semantic action associated with production
+   [prod]. It takes just one parameter, namely the environment [env]. *)
+
 let semantic_action prod =
+  let env = prefix "env" in
   EFun (
     [ PVar env ],
 
