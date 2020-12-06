@@ -32,7 +32,8 @@
 (rule (target K3Parser.opp.out) (deps K3Parser.mly)
   (action
     (with-outputs-to K3Parser.opp.out
-      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess %{read-lines:K3Parser.flags} %{deps})))))
 
 (rule (alias K3Parser) (action (diff K3Parser.opp.exp K3Parser.opp.out)))
 
@@ -44,7 +45,7 @@
     (with-outputs-to K3Parser.out
       (with-accepted-exit-codes 0
         (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
-          --timings-to K3Parser.timings %{deps})))))
+          --timings-to K3Parser.timings %{read-lines:K3Parser.flags} %{deps})))))
 
 (rule (alias K3Parser) (action (diff K3Parser.exp K3Parser.out)))
 
@@ -61,7 +62,9 @@
   (deps KaSim.4.0.0-kappaParser.mly)
   (action
     (with-outputs-to KaSim.4.0.0-kappaParser.opp.out
-      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess
+          %{read-lines:KaSim.4.0.0-kappaParser.flags} %{deps})))))
 
 (rule (alias KaSim.4.0.0-kappaParser)
   (action
@@ -76,7 +79,8 @@
     (with-outputs-to KaSim.4.0.0-kappaParser.out
       (with-accepted-exit-codes 0
         (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
-          --timings-to KaSim.4.0.0-kappaParser.timings %{deps})))))
+          --timings-to KaSim.4.0.0-kappaParser.timings
+          %{read-lines:KaSim.4.0.0-kappaParser.flags} %{deps})))))
 
 (rule (alias KaSim.4.0.0-kappaParser)
   (action (diff KaSim.4.0.0-kappaParser.exp KaSim.4.0.0-kappaParser.out)))
@@ -99,7 +103,9 @@
 (rule (target KaSim.4.0.0-kparser4.opp.out) (deps KaSim.4.0.0-kparser4.mly)
   (action
     (with-outputs-to KaSim.4.0.0-kparser4.opp.out
-      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess
+          %{read-lines:KaSim.4.0.0-kparser4.flags} %{deps})))))
 
 (rule (alias KaSim.4.0.0-kparser4)
   (action (diff KaSim.4.0.0-kparser4.opp.exp KaSim.4.0.0-kparser4.opp.out)))
@@ -113,7 +119,8 @@
     (with-outputs-to KaSim.4.0.0-kparser4.out
       (with-accepted-exit-codes 0
         (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
-          --timings-to KaSim.4.0.0-kparser4.timings %{deps})))))
+          --timings-to KaSim.4.0.0-kparser4.timings
+          %{read-lines:KaSim.4.0.0-kparser4.flags} %{deps})))))
 
 (rule (alias KaSim.4.0.0-kparser4)
   (action (diff KaSim.4.0.0-kparser4.exp KaSim.4.0.0-kparser4.out)))
@@ -163,7 +170,8 @@
 (rule (target alphaCaml.opp.out) (deps alphaCaml.mly)
   (action
     (with-outputs-to alphaCaml.opp.out
-      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess %{read-lines:alphaCaml.flags} %{deps})))))
 
 (rule (alias alphaCaml) (action (diff alphaCaml.opp.exp alphaCaml.opp.out)))
 
@@ -175,7 +183,8 @@
     (with-outputs-to alphaCaml.out
       (with-accepted-exit-codes 0
         (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
-          --timings-to alphaCaml.timings %{deps})))))
+          --timings-to alphaCaml.timings %{read-lines:alphaCaml.flags}
+          %{deps})))))
 
 (rule (alias alphaCaml) (action (diff alphaCaml.exp alphaCaml.out)))
 
@@ -578,7 +587,8 @@
 (rule (target atd_parser.opp.out) (deps atd_parser.mly)
   (action
     (with-outputs-to atd_parser.opp.out
-      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess %{read-lines:atd_parser.flags} %{deps})))))
 
 (rule (alias atd_parser)
   (action (diff atd_parser.opp.exp atd_parser.opp.out)))
@@ -591,7 +601,8 @@
     (with-outputs-to atd_parser.out
       (with-accepted-exit-codes 0
         (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
-          --timings-to atd_parser.timings %{deps})))))
+          --timings-to atd_parser.timings %{read-lines:atd_parser.flags}
+          %{deps})))))
 
 (rule (alias atd_parser) (action (diff atd_parser.exp atd_parser.out)))
 
@@ -1192,7 +1203,8 @@
 (rule (target bran.opp.out) (deps bran.mly)
   (action
     (with-outputs-to bran.opp.out
-      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess %{read-lines:bran.flags} %{deps})))))
 
 (rule (alias bran) (action (diff bran.opp.exp bran.opp.out)))
 
@@ -1204,7 +1216,7 @@
     (with-outputs-to bran.out
       (with-accepted-exit-codes 0
         (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
-          --timings-to bran.timings %{deps})))))
+          --timings-to bran.timings %{read-lines:bran.flags} %{deps})))))
 
 (rule (alias bran) (action (diff bran.exp bran.out)))
 
@@ -1466,7 +1478,9 @@
   (deps camltemplate.1.0.2-ctParser.mly)
   (action
     (with-outputs-to camltemplate.1.0.2-ctParser.opp.out
-      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess
+          %{read-lines:camltemplate.1.0.2-ctParser.flags} %{deps})))))
 
 (rule (alias camltemplate.1.0.2-ctParser)
   (action
@@ -1484,7 +1498,8 @@
     (with-outputs-to camltemplate.1.0.2-ctParser.out
       (with-accepted-exit-codes 0
         (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
-          --timings-to camltemplate.1.0.2-ctParser.timings %{deps})))))
+          --timings-to camltemplate.1.0.2-ctParser.timings
+          %{read-lines:camltemplate.1.0.2-ctParser.flags} %{deps})))))
 
 (rule (alias camltemplate.1.0.2-ctParser)
   (action
@@ -1686,7 +1701,9 @@
 (rule (target cil-cparser.opp.out) (deps cil-cparser.mly)
   (action
     (with-outputs-to cil-cparser.opp.out
-      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess %{read-lines:cil-cparser.flags}
+          %{deps})))))
 
 (rule (alias cil-cparser)
   (action (diff cil-cparser.opp.exp cil-cparser.opp.out)))
@@ -1699,7 +1716,8 @@
     (with-outputs-to cil-cparser.out
       (with-accepted-exit-codes 0
         (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
-          --timings-to cil-cparser.timings %{deps})))))
+          --timings-to cil-cparser.timings %{read-lines:cil-cparser.flags}
+          %{deps})))))
 
 (rule (alias cil-cparser) (action (diff cil-cparser.exp cil-cparser.out)))
 
@@ -2335,7 +2353,9 @@
 (rule (target coercion-mini.opp.out) (deps coercion-mini.mly)
   (action
     (with-outputs-to coercion-mini.opp.out
-      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess %{read-lines:coercion-mini.flags}
+          %{deps})))))
 
 (rule (alias coercion-mini)
   (action (diff coercion-mini.opp.exp coercion-mini.opp.out)))
@@ -2349,7 +2369,8 @@
     (with-outputs-to coercion-mini.out
       (with-accepted-exit-codes 0
         (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
-          --timings-to coercion-mini.timings %{deps})))))
+          --timings-to coercion-mini.timings
+          %{read-lines:coercion-mini.flags} %{deps})))))
 
 (rule (alias coercion-mini)
   (action (diff coercion-mini.exp coercion-mini.out)))
@@ -2721,7 +2742,9 @@
   (deps cppo_ocamlbuild.1.6.0-cppo_parser.mly)
   (action
     (with-outputs-to cppo_ocamlbuild.1.6.0-cppo_parser.opp.out
-      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess
+          %{read-lines:cppo_ocamlbuild.1.6.0-cppo_parser.flags} %{deps})))))
 
 (rule (alias cppo_ocamlbuild.1.6.0-cppo_parser)
   (action
@@ -2739,7 +2762,8 @@
     (with-outputs-to cppo_ocamlbuild.1.6.0-cppo_parser.out
       (with-accepted-exit-codes 0
         (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
-          --timings-to cppo_ocamlbuild.1.6.0-cppo_parser.timings %{deps})))))
+          --timings-to cppo_ocamlbuild.1.6.0-cppo_parser.timings
+          %{read-lines:cppo_ocamlbuild.1.6.0-cppo_parser.flags} %{deps})))))
 
 (rule (alias cppo_ocamlbuild.1.6.0-cppo_parser)
   (action
@@ -3313,7 +3337,8 @@
 (rule (target dule.opp.out) (deps dule.mly)
   (action
     (with-outputs-to dule.opp.out
-      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess %{read-lines:dule.flags} %{deps})))))
 
 (rule (alias dule) (action (diff dule.opp.exp dule.opp.out)))
 
@@ -3325,7 +3350,7 @@
     (with-outputs-to dule.out
       (with-accepted-exit-codes 0
         (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
-          --timings-to dule.timings %{deps})))))
+          --timings-to dule.timings %{read-lines:dule.flags} %{deps})))))
 
 (rule (alias dule) (action (diff dule.exp dule.out)))
 
@@ -3737,7 +3762,8 @@
 (rule (target filiot.opp.out) (deps filiot.mly)
   (action
     (with-outputs-to filiot.opp.out
-      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess %{read-lines:filiot.flags} %{deps})))))
 
 (rule (alias filiot) (action (diff filiot.opp.exp filiot.opp.out)))
 
@@ -3749,7 +3775,7 @@
     (with-outputs-to filiot.out
       (with-accepted-exit-codes 0
         (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
-          --timings-to filiot.timings %{deps})))))
+          --timings-to filiot.timings %{read-lines:filiot.flags} %{deps})))))
 
 (rule (alias filiot) (action (diff filiot.exp filiot.out)))
 
@@ -3763,7 +3789,8 @@
 (rule (target flowcaml.opp.out) (deps flowcaml.mly)
   (action
     (with-outputs-to flowcaml.opp.out
-      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess %{read-lines:flowcaml.flags} %{deps})))))
 
 (rule (alias flowcaml) (action (diff flowcaml.opp.exp flowcaml.opp.out)))
 
@@ -3775,7 +3802,7 @@
     (with-outputs-to flowcaml.out
       (with-accepted-exit-codes 0
         (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
-          --timings-to flowcaml.timings %{deps})))))
+          --timings-to flowcaml.timings %{read-lines:flowcaml.flags} %{deps})))))
 
 (rule (alias flowcaml) (action (diff flowcaml.exp flowcaml.out)))
 
@@ -3978,7 +4005,9 @@
 (rule (target framac-cparser.opp.out) (deps framac-cparser.mly)
   (action
     (with-outputs-to framac-cparser.opp.out
-      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess %{read-lines:framac-cparser.flags}
+          %{deps})))))
 
 (rule (alias framac-cparser)
   (action (diff framac-cparser.opp.exp framac-cparser.opp.out)))
@@ -3992,7 +4021,8 @@
     (with-outputs-to framac-cparser.out
       (with-accepted-exit-codes 0
         (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
-          --timings-to framac-cparser.timings %{deps})))))
+          --timings-to framac-cparser.timings
+          %{read-lines:framac-cparser.flags} %{deps})))))
 
 (rule (alias framac-cparser)
   (action (diff framac-cparser.exp framac-cparser.out)))
@@ -4050,7 +4080,8 @@
 (rule (target fsharp.opp.out) (deps fsharp.mly)
   (action
     (with-outputs-to fsharp.opp.out
-      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess %{read-lines:fsharp.flags} %{deps})))))
 
 (rule (alias fsharp) (action (diff fsharp.opp.exp fsharp.opp.out)))
 
@@ -4062,7 +4093,7 @@
     (with-outputs-to fsharp.out
       (with-accepted-exit-codes 0
         (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
-          --timings-to fsharp.timings %{deps})))))
+          --timings-to fsharp.timings %{read-lines:fsharp.flags} %{deps})))))
 
 (rule (alias fsharp) (action (diff fsharp.exp fsharp.out)))
 
@@ -4282,7 +4313,8 @@
 (rule (target godiva.opp.out) (deps godiva.mly)
   (action
     (with-outputs-to godiva.opp.out
-      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess %{read-lines:godiva.flags} %{deps})))))
 
 (rule (alias godiva) (action (diff godiva.opp.exp godiva.opp.out)))
 
@@ -4294,7 +4326,7 @@
     (with-outputs-to godiva.out
       (with-accepted-exit-codes 0
         (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
-          --timings-to godiva.timings %{deps})))))
+          --timings-to godiva.timings %{read-lines:godiva.flags} %{deps})))))
 
 (rule (alias godiva) (action (diff godiva.exp godiva.out)))
 
@@ -4308,7 +4340,8 @@
 (rule (target gromit.opp.out) (deps gromit.mly)
   (action
     (with-outputs-to gromit.opp.out
-      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess %{read-lines:gromit.flags} %{deps})))))
 
 (rule (alias gromit) (action (diff gromit.opp.exp gromit.opp.out)))
 
@@ -4320,7 +4353,7 @@
     (with-outputs-to gromit.out
       (with-accepted-exit-codes 0
         (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
-          --timings-to gromit.timings %{deps})))))
+          --timings-to gromit.timings %{read-lines:gromit.flags} %{deps})))))
 
 (rule (alias gromit) (action (diff gromit.exp gromit.out)))
 
@@ -4861,7 +4894,8 @@
 (rule (target htparser.opp.out) (deps htparser.mly)
   (action
     (with-outputs-to htparser.opp.out
-      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess %{read-lines:htparser.flags} %{deps})))))
 
 (rule (alias htparser) (action (diff htparser.opp.exp htparser.opp.out)))
 
@@ -4873,7 +4907,7 @@
     (with-outputs-to htparser.out
       (with-accepted-exit-codes 0
         (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
-          --timings-to htparser.timings %{deps})))))
+          --timings-to htparser.timings %{read-lines:htparser.flags} %{deps})))))
 
 (rule (alias htparser) (action (diff htparser.exp htparser.out)))
 
@@ -5505,7 +5539,8 @@
 (rule (target jasmc.opp.out) (deps jasmc.mly)
   (action
     (with-outputs-to jasmc.opp.out
-      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess %{read-lines:jasmc.flags} %{deps})))))
 
 (rule (alias jasmc) (action (diff jasmc.opp.exp jasmc.opp.out)))
 
@@ -5517,7 +5552,7 @@
     (with-outputs-to jasmc.out
       (with-accepted-exit-codes 0
         (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
-          --timings-to jasmc.timings %{deps})))))
+          --timings-to jasmc.timings %{read-lines:jasmc.flags} %{deps})))))
 
 (rule (alias jasmc) (action (diff jasmc.exp jasmc.out)))
 
@@ -5558,7 +5593,9 @@
   (deps jingoo.1.2.9-jg_parser.mly)
   (action
     (with-outputs-to jingoo.1.2.9-jg_parser.opp.out
-      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess
+          %{read-lines:jingoo.1.2.9-jg_parser.flags} %{deps})))))
 
 (rule (alias jingoo.1.2.9-jg_parser)
   (action
@@ -5573,7 +5610,8 @@
     (with-outputs-to jingoo.1.2.9-jg_parser.out
       (with-accepted-exit-codes 0
         (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
-          --timings-to jingoo.1.2.9-jg_parser.timings %{deps})))))
+          --timings-to jingoo.1.2.9-jg_parser.timings
+          %{read-lines:jingoo.1.2.9-jg_parser.flags} %{deps})))))
 
 (rule (alias jingoo.1.2.9-jg_parser)
   (action (diff jingoo.1.2.9-jg_parser.exp jingoo.1.2.9-jg_parser.out)))
@@ -5622,7 +5660,8 @@
 (rule (target jocaml.opp.out) (deps jocaml.mly)
   (action
     (with-outputs-to jocaml.opp.out
-      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess %{read-lines:jocaml.flags} %{deps})))))
 
 (rule (alias jocaml) (action (diff jocaml.opp.exp jocaml.opp.out)))
 
@@ -5634,7 +5673,7 @@
     (with-outputs-to jocaml.out
       (with-accepted-exit-codes 0
         (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
-          --timings-to jocaml.timings %{deps})))))
+          --timings-to jocaml.timings %{read-lines:jocaml.flags} %{deps})))))
 
 (rule (alias jocaml) (action (diff jocaml.exp jocaml.out)))
 
@@ -5681,7 +5720,9 @@
 (rule (target jocaml-new-parser.opp.out) (deps jocaml-new-parser.mly)
   (action
     (with-outputs-to jocaml-new-parser.opp.out
-      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess %{read-lines:jocaml-new-parser.flags}
+          %{deps})))))
 
 (rule (alias jocaml-new-parser)
   (action (diff jocaml-new-parser.opp.exp jocaml-new-parser.opp.out)))
@@ -5695,7 +5736,8 @@
     (with-outputs-to jocaml-new-parser.out
       (with-accepted-exit-codes 0
         (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
-          --timings-to jocaml-new-parser.timings %{deps})))))
+          --timings-to jocaml-new-parser.timings
+          %{read-lines:jocaml-new-parser.flags} %{deps})))))
 
 (rule (alias jocaml-new-parser)
   (action (diff jocaml-new-parser.exp jocaml-new-parser.out)))
@@ -6500,7 +6542,9 @@
   (deps logtk.0.8.1-parse_theory.mly)
   (action
     (with-outputs-to logtk.0.8.1-parse_theory.opp.out
-      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess
+          %{read-lines:logtk.0.8.1-parse_theory.flags} %{deps})))))
 
 (rule (alias logtk.0.8.1-parse_theory)
   (action
@@ -6515,7 +6559,8 @@
     (with-outputs-to logtk.0.8.1-parse_theory.out
       (with-accepted-exit-codes 0
         (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
-          --timings-to logtk.0.8.1-parse_theory.timings %{deps})))))
+          --timings-to logtk.0.8.1-parse_theory.timings
+          %{read-lines:logtk.0.8.1-parse_theory.flags} %{deps})))))
 
 (rule (alias logtk.0.8.1-parse_theory)
   (action (diff logtk.0.8.1-parse_theory.exp logtk.0.8.1-parse_theory.out)))
@@ -6733,7 +6778,8 @@
 (rule (target macrodown.opp.out) (deps macrodown.mly)
   (action
     (with-outputs-to macrodown.opp.out
-      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess %{read-lines:macrodown.flags} %{deps})))))
 
 (rule (alias macrodown) (action (diff macrodown.opp.exp macrodown.opp.out)))
 
@@ -6745,7 +6791,8 @@
     (with-outputs-to macrodown.out
       (with-accepted-exit-codes 0
         (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
-          --timings-to macrodown.timings %{deps})))))
+          --timings-to macrodown.timings %{read-lines:macrodown.flags}
+          %{deps})))))
 
 (rule (alias macrodown) (action (diff macrodown.exp macrodown.out)))
 
@@ -7144,7 +7191,8 @@
 (rule (target metaocaml.opp.out) (deps metaocaml.mly)
   (action
     (with-outputs-to metaocaml.opp.out
-      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess %{read-lines:metaocaml.flags} %{deps})))))
 
 (rule (alias metaocaml) (action (diff metaocaml.opp.exp metaocaml.opp.out)))
 
@@ -7156,7 +7204,8 @@
     (with-outputs-to metaocaml.out
       (with-accepted-exit-codes 0
         (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
-          --timings-to metaocaml.timings %{deps})))))
+          --timings-to metaocaml.timings %{read-lines:metaocaml.flags}
+          %{deps})))))
 
 (rule (alias metaocaml) (action (diff metaocaml.exp metaocaml.out)))
 
@@ -7650,7 +7699,8 @@
 (rule (target nexus.opp.out) (deps nexus.mly)
   (action
     (with-outputs-to nexus.opp.out
-      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess %{read-lines:nexus.flags} %{deps})))))
 
 (rule (alias nexus) (action (diff nexus.opp.exp nexus.opp.out)))
 
@@ -7662,7 +7712,7 @@
     (with-outputs-to nexus.out
       (with-accepted-exit-codes 0
         (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
-          --timings-to nexus.timings %{deps})))))
+          --timings-to nexus.timings %{read-lines:nexus.flags} %{deps})))))
 
 (rule (alias nexus) (action (diff nexus.exp nexus.out)))
 
@@ -7676,7 +7726,9 @@
 (rule (target nml-ip-parser.opp.out) (deps nml-ip-parser.mly)
   (action
     (with-outputs-to nml-ip-parser.opp.out
-      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess %{read-lines:nml-ip-parser.flags}
+          %{deps})))))
 
 (rule (alias nml-ip-parser)
   (action (diff nml-ip-parser.opp.exp nml-ip-parser.opp.out)))
@@ -7690,7 +7742,8 @@
     (with-outputs-to nml-ip-parser.out
       (with-accepted-exit-codes 0
         (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
-          --timings-to nml-ip-parser.timings %{deps})))))
+          --timings-to nml-ip-parser.timings
+          %{read-lines:nml-ip-parser.flags} %{deps})))))
 
 (rule (alias nml-ip-parser)
   (action (diff nml-ip-parser.exp nml-ip-parser.out)))
@@ -7778,7 +7831,9 @@
 (rule (target nunchaku.0.6-Parser.opp.out) (deps nunchaku.0.6-Parser.mly)
   (action
     (with-outputs-to nunchaku.0.6-Parser.opp.out
-      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess %{read-lines:nunchaku.0.6-Parser.flags}
+          %{deps})))))
 
 (rule (alias nunchaku.0.6-Parser)
   (action (diff nunchaku.0.6-Parser.opp.exp nunchaku.0.6-Parser.opp.out)))
@@ -7792,7 +7847,8 @@
     (with-outputs-to nunchaku.0.6-Parser.out
       (with-accepted-exit-codes 0
         (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
-          --timings-to nunchaku.0.6-Parser.timings %{deps})))))
+          --timings-to nunchaku.0.6-Parser.timings
+          %{read-lines:nunchaku.0.6-Parser.flags} %{deps})))))
 
 (rule (alias nunchaku.0.6-Parser)
   (action (diff nunchaku.0.6-Parser.exp nunchaku.0.6-Parser.out)))
@@ -7814,7 +7870,9 @@
   (deps nunchaku.0.6-TPTP_parser.mly)
   (action
     (with-outputs-to nunchaku.0.6-TPTP_parser.opp.out
-      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess
+          %{read-lines:nunchaku.0.6-TPTP_parser.flags} %{deps})))))
 
 (rule (alias nunchaku.0.6-TPTP_parser)
   (action
@@ -7829,7 +7887,8 @@
     (with-outputs-to nunchaku.0.6-TPTP_parser.out
       (with-accepted-exit-codes 0
         (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
-          --timings-to nunchaku.0.6-TPTP_parser.timings %{deps})))))
+          --timings-to nunchaku.0.6-TPTP_parser.timings
+          %{read-lines:nunchaku.0.6-TPTP_parser.flags} %{deps})))))
 
 (rule (alias nunchaku.0.6-TPTP_parser)
   (action (diff nunchaku.0.6-TPTP_parser.exp nunchaku.0.6-TPTP_parser.out)))
@@ -7853,7 +7912,9 @@
   (deps nunchaku.0.6-Tip_parser.mly)
   (action
     (with-outputs-to nunchaku.0.6-Tip_parser.opp.out
-      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess
+          %{read-lines:nunchaku.0.6-Tip_parser.flags} %{deps})))))
 
 (rule (alias nunchaku.0.6-Tip_parser)
   (action
@@ -7868,7 +7929,8 @@
     (with-outputs-to nunchaku.0.6-Tip_parser.out
       (with-accepted-exit-codes 0
         (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
-          --timings-to nunchaku.0.6-Tip_parser.timings %{deps})))))
+          --timings-to nunchaku.0.6-Tip_parser.timings
+          %{read-lines:nunchaku.0.6-Tip_parser.flags} %{deps})))))
 
 (rule (alias nunchaku.0.6-Tip_parser)
   (action (diff nunchaku.0.6-Tip_parser.exp nunchaku.0.6-Tip_parser.out)))
@@ -7891,7 +7953,8 @@
 (rule (target obc.opp.out) (deps obc.mly)
   (action
     (with-outputs-to obc.opp.out
-      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess %{read-lines:obc.flags} %{deps})))))
 
 (rule (alias obc) (action (diff obc.opp.exp obc.opp.out)))
 
@@ -7903,7 +7966,7 @@
     (with-outputs-to obc.out
       (with-accepted-exit-codes 0
         (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
-          --timings-to obc.timings %{deps})))))
+          --timings-to obc.timings %{read-lines:obc.flags} %{deps})))))
 
 (rule (alias obc) (action (diff obc.exp obc.out)))
 
@@ -8459,7 +8522,9 @@
   (deps octavius.1.2.0-octParser.mly)
   (action
     (with-outputs-to octavius.1.2.0-octParser.opp.out
-      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess
+          %{read-lines:octavius.1.2.0-octParser.flags} %{deps})))))
 
 (rule (alias octavius.1.2.0-octParser)
   (action
@@ -8474,7 +8539,8 @@
     (with-outputs-to octavius.1.2.0-octParser.out
       (with-accepted-exit-codes 0
         (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
-          --timings-to octavius.1.2.0-octParser.timings %{deps})))))
+          --timings-to octavius.1.2.0-octParser.timings
+          %{read-lines:octavius.1.2.0-octParser.flags} %{deps})))))
 
 (rule (alias octavius.1.2.0-octParser)
   (action (diff octavius.1.2.0-octParser.exp octavius.1.2.0-octParser.out)))
@@ -8816,7 +8882,9 @@
   (deps opam-doc.0.9.3-info_parser.mly)
   (action
     (with-outputs-to opam-doc.0.9.3-info_parser.opp.out
-      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess
+          %{read-lines:opam-doc.0.9.3-info_parser.flags} %{deps})))))
 
 (rule (alias opam-doc.0.9.3-info_parser)
   (action
@@ -8833,7 +8901,8 @@
     (with-outputs-to opam-doc.0.9.3-info_parser.out
       (with-accepted-exit-codes 0
         (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
-          --timings-to opam-doc.0.9.3-info_parser.timings %{deps})))))
+          --timings-to opam-doc.0.9.3-info_parser.timings
+          %{read-lines:opam-doc.0.9.3-info_parser.flags} %{deps})))))
 
 (rule (alias opam-doc.0.9.3-info_parser)
   (action
@@ -9332,7 +9401,8 @@
 (rule (target partest.opp.out) (deps partest.mly)
   (action
     (with-outputs-to partest.opp.out
-      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess %{read-lines:partest.flags} %{deps})))))
 
 (rule (alias partest) (action (diff partest.opp.exp partest.opp.out)))
 
@@ -9344,7 +9414,7 @@
     (with-outputs-to partest.out
       (with-accepted-exit-codes 0
         (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
-          --timings-to partest.timings %{deps})))))
+          --timings-to partest.timings %{read-lines:partest.flags} %{deps})))))
 
 (rule (alias partest) (action (diff partest.exp partest.out)))
 
@@ -9480,7 +9550,8 @@
 (rule (target photos.opp.out) (deps photos.mly)
   (action
     (with-outputs-to photos.opp.out
-      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess %{read-lines:photos.flags} %{deps})))))
 
 (rule (alias photos) (action (diff photos.opp.exp photos.opp.out)))
 
@@ -9492,7 +9563,7 @@
     (with-outputs-to photos.out
       (with-accepted-exit-codes 0
         (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
-          --timings-to photos.timings %{deps})))))
+          --timings-to photos.timings %{read-lines:photos.flags} %{deps})))))
 
 (rule (alias photos) (action (diff photos.exp photos.out)))
 
@@ -10049,7 +10120,9 @@
   (deps reason.3.3.7-reason_parser.mly)
   (action
     (with-outputs-to reason.3.3.7-reason_parser.opp.out
-      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess
+          %{read-lines:reason.3.3.7-reason_parser.flags} %{deps})))))
 
 (rule (alias reason.3.3.7-reason_parser)
   (action
@@ -10066,7 +10139,8 @@
     (with-outputs-to reason.3.3.7-reason_parser.out
       (with-accepted-exit-codes 0
         (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
-          --timings-to reason.3.3.7-reason_parser.timings %{deps})))))
+          --timings-to reason.3.3.7-reason_parser.timings
+          %{read-lines:reason.3.3.7-reason_parser.flags} %{deps})))))
 
 (rule (alias reason.3.3.7-reason_parser)
   (action
@@ -10090,7 +10164,9 @@
 (rule (target reason_parser.opp.out) (deps reason_parser.mly)
   (action
     (with-outputs-to reason_parser.opp.out
-      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess %{read-lines:reason_parser.flags}
+          %{deps})))))
 
 (rule (alias reason_parser)
   (action (diff reason_parser.opp.exp reason_parser.opp.out)))
@@ -10104,7 +10180,8 @@
     (with-outputs-to reason_parser.out
       (with-accepted-exit-codes 0
         (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
-          --timings-to reason_parser.timings %{deps})))))
+          --timings-to reason_parser.timings
+          %{read-lines:reason_parser.flags} %{deps})))))
 
 (rule (alias reason_parser)
   (action (diff reason_parser.exp reason_parser.out)))
@@ -10193,7 +10270,9 @@
 (rule (target rml.1.09.05-parser.opp.out) (deps rml.1.09.05-parser.mly)
   (action
     (with-outputs-to rml.1.09.05-parser.opp.out
-      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess %{read-lines:rml.1.09.05-parser.flags}
+          %{deps})))))
 
 (rule (alias rml.1.09.05-parser)
   (action (diff rml.1.09.05-parser.opp.exp rml.1.09.05-parser.opp.out)))
@@ -10207,7 +10286,8 @@
     (with-outputs-to rml.1.09.05-parser.out
       (with-accepted-exit-codes 0
         (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
-          --timings-to rml.1.09.05-parser.timings %{deps})))))
+          --timings-to rml.1.09.05-parser.timings
+          %{read-lines:rml.1.09.05-parser.flags} %{deps})))))
 
 (rule (alias rml.1.09.05-parser)
   (action (diff rml.1.09.05-parser.exp rml.1.09.05-parser.out)))
@@ -10228,7 +10308,9 @@
 (rule (target ruby18_parser.opp.out) (deps ruby18_parser.mly)
   (action
     (with-outputs-to ruby18_parser.opp.out
-      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess %{read-lines:ruby18_parser.flags}
+          %{deps})))))
 
 (rule (alias ruby18_parser)
   (action (diff ruby18_parser.opp.exp ruby18_parser.opp.out)))
@@ -10242,7 +10324,8 @@
     (with-outputs-to ruby18_parser.out
       (with-accepted-exit-codes 0
         (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
-          --timings-to ruby18_parser.timings %{deps})))))
+          --timings-to ruby18_parser.timings
+          %{read-lines:ruby18_parser.flags} %{deps})))))
 
 (rule (alias ruby18_parser)
   (action (diff ruby18_parser.exp ruby18_parser.out)))
@@ -10261,7 +10344,8 @@
 (rule (target sage.opp.out) (deps sage.mly)
   (action
     (with-outputs-to sage.opp.out
-      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess %{read-lines:sage.flags} %{deps})))))
 
 (rule (alias sage) (action (diff sage.opp.exp sage.opp.out)))
 
@@ -10273,7 +10357,7 @@
     (with-outputs-to sage.out
       (with-accepted-exit-codes 0
         (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
-          --timings-to sage.timings %{deps})))))
+          --timings-to sage.timings %{read-lines:sage.flags} %{deps})))))
 
 (rule (alias sage) (action (diff sage.exp sage.out)))
 
@@ -11021,7 +11105,9 @@
 (rule (target tony-xmlparse.opp.out) (deps tony-xmlparse.mly)
   (action
     (with-outputs-to tony-xmlparse.opp.out
-      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess %{read-lines:tony-xmlparse.flags}
+          %{deps})))))
 
 (rule (alias tony-xmlparse)
   (action (diff tony-xmlparse.opp.exp tony-xmlparse.opp.out)))
@@ -11035,7 +11121,8 @@
     (with-outputs-to tony-xmlparse.out
       (with-accepted-exit-codes 0
         (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
-          --timings-to tony-xmlparse.timings %{deps})))))
+          --timings-to tony-xmlparse.timings
+          %{read-lines:tony-xmlparse.flags} %{deps})))))
 
 (rule (alias tony-xmlparse)
   (action (diff tony-xmlparse.exp tony-xmlparse.out)))
@@ -11239,7 +11326,8 @@
 (rule (target unigram.opp.out) (deps unigram.mly)
   (action
     (with-outputs-to unigram.opp.out
-      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess %{read-lines:unigram.flags} %{deps})))))
 
 (rule (alias unigram) (action (diff unigram.opp.exp unigram.opp.out)))
 
@@ -11251,7 +11339,7 @@
     (with-outputs-to unigram.out
       (with-accepted-exit-codes 0
         (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
-          --timings-to unigram.timings %{deps})))))
+          --timings-to unigram.timings %{read-lines:unigram.flags} %{deps})))))
 
 (rule (alias unigram) (action (diff unigram.exp unigram.out)))
 
@@ -11934,7 +12022,9 @@
   (deps zipperposition.1.5-Parse_dk.mly)
   (action
     (with-outputs-to zipperposition.1.5-Parse_dk.opp.out
-      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess
+          %{read-lines:zipperposition.1.5-Parse_dk.flags} %{deps})))))
 
 (rule (alias zipperposition.1.5-Parse_dk)
   (action
@@ -11952,7 +12042,8 @@
     (with-outputs-to zipperposition.1.5-Parse_dk.out
       (with-accepted-exit-codes 0
         (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
-          --timings-to zipperposition.1.5-Parse_dk.timings %{deps})))))
+          --timings-to zipperposition.1.5-Parse_dk.timings
+          %{read-lines:zipperposition.1.5-Parse_dk.flags} %{deps})))))
 
 (rule (alias zipperposition.1.5-Parse_dk)
   (action
@@ -11977,7 +12068,9 @@
   (deps zipperposition.1.5-Parse_tptp.mly)
   (action
     (with-outputs-to zipperposition.1.5-Parse_tptp.opp.out
-      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess
+          %{read-lines:zipperposition.1.5-Parse_tptp.flags} %{deps})))))
 
 (rule (alias zipperposition.1.5-Parse_tptp)
   (action
@@ -11995,7 +12088,8 @@
     (with-outputs-to zipperposition.1.5-Parse_tptp.out
       (with-accepted-exit-codes 0
         (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
-          --timings-to zipperposition.1.5-Parse_tptp.timings %{deps})))))
+          --timings-to zipperposition.1.5-Parse_tptp.timings
+          %{read-lines:zipperposition.1.5-Parse_tptp.flags} %{deps})))))
 
 (rule (alias zipperposition.1.5-Parse_tptp)
   (action
@@ -12021,7 +12115,9 @@
   (deps zipperposition.1.5-Parse_zf.mly)
   (action
     (with-outputs-to zipperposition.1.5-Parse_zf.opp.out
-      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess
+          %{read-lines:zipperposition.1.5-Parse_zf.flags} %{deps})))))
 
 (rule (alias zipperposition.1.5-Parse_zf)
   (action
@@ -12039,7 +12135,8 @@
     (with-outputs-to zipperposition.1.5-Parse_zf.out
       (with-accepted-exit-codes 0
         (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
-          --timings-to zipperposition.1.5-Parse_zf.timings %{deps})))))
+          --timings-to zipperposition.1.5-Parse_zf.timings
+          %{read-lines:zipperposition.1.5-Parse_zf.flags} %{deps})))))
 
 (rule (alias zipperposition.1.5-Parse_zf)
   (action
@@ -12064,7 +12161,9 @@
   (deps zipperposition.1.5-Tip_parser.mly)
   (action
     (with-outputs-to zipperposition.1.5-Tip_parser.opp.out
-      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess
+          %{read-lines:zipperposition.1.5-Tip_parser.flags} %{deps})))))
 
 (rule (alias zipperposition.1.5-Tip_parser)
   (action
@@ -12082,7 +12181,8 @@
     (with-outputs-to zipperposition.1.5-Tip_parser.out
       (with-accepted-exit-codes 0
         (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
-          --timings-to zipperposition.1.5-Tip_parser.timings %{deps})))))
+          --timings-to zipperposition.1.5-Tip_parser.timings
+          %{read-lines:zipperposition.1.5-Tip_parser.flags} %{deps})))))
 
 (rule (alias zipperposition.1.5-Tip_parser)
   (action
