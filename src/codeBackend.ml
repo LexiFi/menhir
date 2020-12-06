@@ -185,11 +185,6 @@ let assertfalse =
 let discard =
   prefix "discard"
 
-(* The [initenv] function. *)
-
-let initenv =
-  prefix "init"
-
 (* The [run] function associated with a state [s]. *)
 
 let run s =
@@ -914,12 +909,12 @@ let runpushcellunless shiftreduce s e =
    The parameter [defred] tells which default reduction, if any, we
    are about to perform. *)
 
-(* 2014/12/06 New convention regarding initial states (i.e., states
-   which have no incoming symbol). The function [initenv] does not
-   invoke the lexer, so the [run] function for an initial state must
-   do it. (Except in the very special case where the initial state
-   has a default reduction on [#] -- this means the grammar recognizes
-   only the empty word. We have ruled out this case.) *)
+(* 2014/12/06 New convention regarding initial states (i.e., states which have
+   no incoming symbol). We donot invoke the lexer when we construct the
+   initial environment, so the [run] function for an initial state must do it.
+   (Except in the very special case where the initial state has a default
+   reduction on [#] -- this means the grammar recognizes only the empty word.
+   We have ruled out this case.) *)
 
 let gettoken s defred e =
   match Lr1.incoming_symbol s, defred with
@@ -1483,6 +1478,10 @@ let errorcasedef =
    a sentinel cell with a valid [endp] field at offset 1. For simplicity, we
    always create a sentinel cell. *)
 
+(* When we allocate a fresh parser environment, the [token] field receives a
+   dummy value. It will be overwritten by the first call to [run], which will
+   invoke [discard]. This allows us to invoke the lexer in just one place. *)
+
 let entrydef s =
   let nt = Item.startnt (Lr1.start2item s) in
   let lexer = "lexer"
@@ -1496,15 +1495,23 @@ let entrydef s =
   {
     valpublic = true;
     valpat = PVar (Nonterminal.print true nt);
-    valval = EAnnot (
-               EFun ( [ PVar lexer; PVar lexbuf ],
-                 blet (
-                   [ PVar env, EApp (EVar initenv, [ EVar lexer; EVar lexbuf ]) ],
-                   EMagic (EApp (EVar (run s), [ EVar env; initial_stack ]))
-                 )
-               ),
-               entrytypescheme Front.grammar (Nonterminal.print true nt)
-             )
+    valval =
+      EAnnot (
+        EFun ( [ PVar lexer; PVar lexbuf ],
+          blet (
+            [ PVar env,
+                ERecord ([
+                  (flexer, EVar lexer);
+                  (flexbuf, EVar lexbuf);
+                  (ftoken, EMagic EUnit);
+                  (ferror, efalse)
+                ])
+            ],
+            EMagic (EApp (EVar (run s), [ EVar env; initial_stack ]))
+          )
+        ),
+        entrytypescheme Front.grammar (Nonterminal.print true nt)
+      )
   }
 
 (* ------------------------------------------------------------------------ *)
@@ -1590,38 +1597,6 @@ let discarddef = {
       (arrow tenv tenv)
 }
 
-(* This is [initenv], used to allocate a fresh parser environment.
-   It fills in all fields in a straightforward way. The [token]
-   field receives a dummy value. It will be overwritten by the
-   first call to [run], which will invoke [discard]. This allows
-   us to invoke the lexer in just one place. *)
-
-let initenvdef =
-  let lexer = "lexer"
-  and lexbuf = "lexbuf" in
-  {
-    valpublic = false;
-    valpat = PVar initenv;
-    valval =
-      annotate (
-        EFun ( [ PVar lexer; PVar lexbuf ],
-          blet (
-            (* We do not have a dummy token at hand, so we forge one. *)
-            (* It will be overwritten by the first call to the lexer. *)
-            [ PVar token, EMagic EUnit ],
-            ERecord ([
-              (flexer, EVar lexer);
-              (flexbuf, EVar lexbuf);
-              (ftoken, EVar token);
-              (ferror, efalse)
-            ]
-            )
-          )
-        )
-       )
-       (marrow [ tlexer; tlexbuf ] tenv)
-  }
-
 (* ------------------------------------------------------------------------ *)
 (* Here is complete code for the parser. *)
 
@@ -1654,7 +1629,7 @@ let program =
           defs
         else
           reducedef prod :: defs
-      ) [ discarddef; initenvdef; printtokendef; assertfalsedef; errorcasedef ])))
+      ) [ discarddef; printtokendef; assertfalsedef; errorcasedef ])))
     ) ::
 
     SIStretch grammar.postludes ::

@@ -37,7 +37,12 @@ and _menhir_state =
 
 let rec main : (Lexing.lexbuf -> token) -> Lexing.lexbuf -> (int) =
   fun lexer lexbuf ->
-    let _menhir_env = _menhir_init lexer lexbuf in
+    let _menhir_env = {
+      _menhir_lexer = lexer;
+      _menhir_lexbuf = lexbuf;
+      _menhir_token = Obj.magic ();
+      _menhir_error = false;
+    } in
     Obj.magic (_menhir_run0 _menhir_env ((), _menhir_env._menhir_lexbuf.Lexing.lex_curr_p))
 
 and _menhir_run11 : _menhir_env -> 'ttv_tail * _menhir_state * (int) -> 'ttv_return =
@@ -211,7 +216,7 @@ and _menhir_error3 : _menhir_env -> ('ttv_tail * _menhir_state) * _menhir_state 
 and _menhir_run2 : _menhir_env -> 'ttv_tail -> _menhir_state -> (
 # 1 "demos/calc-mini/parser.mly"
        (int)
-# 215 "demos/calc-mini/parser.ml"
+# 220 "demos/calc-mini/parser.ml"
 ) -> 'ttv_return =
   fun _menhir_env _menhir_stack _menhir_s _v ->
     (* State 2: *)
@@ -223,7 +228,7 @@ and _menhir_run2 : _menhir_env -> 'ttv_tail -> _menhir_state -> (
 and _menhir_error2 : _menhir_env -> 'ttv_tail * _menhir_state * (
 # 1 "demos/calc-mini/parser.mly"
        (int)
-# 227 "demos/calc-mini/parser.ml"
+# 232 "demos/calc-mini/parser.ml"
 ) -> 'ttv_return =
   fun _menhir_env _menhir_stack ->
     let (_menhir_stack, _menhir_s, _) = _menhir_stack in
@@ -301,7 +306,7 @@ and _menhir_reduce5 : _menhir_env -> 'ttv_tail * _menhir_state * (int) -> 'ttv_r
     let _v : (int) = 
 # 15 "demos/calc-mini/parser.mly"
     ( e )
-# 305 "demos/calc-mini/parser.ml"
+# 310 "demos/calc-mini/parser.ml"
      in
     _menhir_goto_main _menhir_env _menhir_stack _menhir_s _v
 
@@ -313,7 +318,7 @@ and _menhir_reduce4 : _menhir_env -> (('ttv_tail * _menhir_state * (int))) * _me
     let _v : (int) = 
 # 25 "demos/calc-mini/parser.mly"
     ( e1 * e2 )
-# 317 "demos/calc-mini/parser.ml"
+# 322 "demos/calc-mini/parser.ml"
      in
     _menhir_goto_expr _menhir_env _menhir_stack _menhir_s _v
 
@@ -325,7 +330,7 @@ and _menhir_reduce3 : _menhir_env -> (('ttv_tail * _menhir_state * (int))) * _me
     let _v : (int) = 
 # 23 "demos/calc-mini/parser.mly"
     ( e1 + e2 )
-# 329 "demos/calc-mini/parser.ml"
+# 334 "demos/calc-mini/parser.ml"
      in
     _menhir_goto_expr _menhir_env _menhir_stack _menhir_s _v
 
@@ -338,25 +343,25 @@ and _menhir_reduce2 : _menhir_env -> ('ttv_tail * _menhir_state) * _menhir_state
     let _v : (int) = 
 # 21 "demos/calc-mini/parser.mly"
     ( e )
-# 342 "demos/calc-mini/parser.ml"
+# 347 "demos/calc-mini/parser.ml"
      in
     _menhir_goto_expr _menhir_env _menhir_stack _menhir_s _v
 
 and _menhir_reduce1 : _menhir_env -> 'ttv_tail -> _menhir_state -> (
 # 1 "demos/calc-mini/parser.mly"
        (int)
-# 349 "demos/calc-mini/parser.ml"
+# 354 "demos/calc-mini/parser.ml"
 ) -> 'ttv_return =
   fun _menhir_env _menhir_stack _menhir_s (i : (
 # 1 "demos/calc-mini/parser.mly"
        (int)
-# 354 "demos/calc-mini/parser.ml"
+# 359 "demos/calc-mini/parser.ml"
   )) ->
     (* Reducing production expr -> INT *)
     let _v : (int) = 
 # 19 "demos/calc-mini/parser.mly"
     ( i )
-# 360 "demos/calc-mini/parser.ml"
+# 365 "demos/calc-mini/parser.ml"
      in
     _menhir_goto_expr _menhir_env _menhir_stack _menhir_s _v
 
@@ -370,16 +375,6 @@ and _menhir_discard : _menhir_env -> _menhir_env =
     let lexer = _menhir_env._menhir_lexer in
     let lexbuf = _menhir_env._menhir_lexbuf in
     let _tok = lexer lexbuf in
-    {
-      _menhir_lexer = lexer;
-      _menhir_lexbuf = lexbuf;
-      _menhir_token = _tok;
-      _menhir_error = false;
-    }
-
-and _menhir_init : (Lexing.lexbuf -> token) -> Lexing.lexbuf -> _menhir_env =
-  fun lexer lexbuf ->
-    let _tok = Obj.magic () in
     {
       _menhir_lexer = lexer;
       _menhir_lexbuf = lexbuf;
@@ -423,4 +418,4 @@ and _menhir_errorcase : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return
 # 269 "<standard.mly>"
   
 
-# 427 "demos/calc-mini/parser.ml"
+# 422 "demos/calc-mini/parser.ml"
