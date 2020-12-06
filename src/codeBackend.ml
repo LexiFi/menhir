@@ -493,13 +493,6 @@ let tlexer =
 
 (* This is the type of parser environments. *)
 
-let field modifiable name t =
-  {
-    modifiable = modifiable;
-    fieldname = name;
-    fieldtype = type2scheme t
-  }
-
 let envtypedef = {
   typename = tcenv;
   typeparams = [];

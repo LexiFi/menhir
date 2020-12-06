@@ -121,7 +121,10 @@ val interface_to_structure: interface -> structure
 
 (* Constructing a named module type together with a list of "with type"
    constraints. *)
-val with_types: IL.with_kind -> string -> (string list * string * IL.typ) list -> IL.module_type
+val with_types: with_kind -> string -> (string list * string * typ) list -> module_type
 
 (* Functor applications. *)
-val mapp: IL.modexpr -> IL.modexpr list -> IL.modexpr
+val mapp: modexpr -> modexpr list -> modexpr
+
+(* Record fields. *)
+val field: bool -> string -> typ -> fielddef

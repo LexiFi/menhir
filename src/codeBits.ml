@@ -313,3 +313,10 @@ let mapp me1 me2 =
 
 let mapp me1 mes2 =
   List.fold_left mapp me1 mes2
+
+let field modifiable name t =
+  {
+    modifiable = modifiable;
+    fieldname = name;
+    fieldtype = type2scheme t
+  }
