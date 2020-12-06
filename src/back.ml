@@ -78,16 +78,22 @@ let () =
     write B.program;
     Interface.write Front.grammar ()
   end
-  else if Settings.coq then begin
-    let module B = CoqBackend.Run (struct end) in
-    let filename = Settings.base ^ ".v" in
-    let f = open_out filename in
-    B.write_all f
-  end
   else begin
-    let module B = CodeBackend.Run (struct end) in
-    write (CodeInliner.inline B.program);
-    Interface.write Front.grammar ()
+    if Grammar.grammar_uses_error_token then
+      Error.error []
+        "this grammar uses the error token, which is deprecated.\n\
+         For now, please use --table."
+    else if Settings.coq then begin
+      let module B = CoqBackend.Run (struct end) in
+      let filename = Settings.base ^ ".v" in
+      let f = open_out filename in
+      B.write_all f
+    end
+    else begin
+      let module B = CodeBackend.Run (struct end) in
+      write (CodeInliner.inline B.program);
+      Interface.write Front.grammar ()
+    end
   end
 
 let () =
