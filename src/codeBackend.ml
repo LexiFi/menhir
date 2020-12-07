@@ -26,18 +26,15 @@ open Interface
 (* ------------------------------------------------------------------------ *)
 (* Here is a description of our code generation mechanism.
 
-   Every internal function that we produce is parameterized by the
-   parser environment [env], which contains (pointers to) the lexer,
-   the lexing buffer, and the last token that was read. (We allow
-   this environment to be represented either as a record of three
-   fields or as three separate variables.) No global variables
-   are exploited, so our parsers are reentrant. The functions that we
-   export do not expect an environment as a parameter; they create a
-   fresh one when invoked.
+   Every internal function that we produce is parameterized by the lexer,
+   the lexing buffer, and the last token that was read. (We refer to them
+   collectively as the environment.) No global variables are exploited,
+   so our parsers are reentrant. The functions that we export do not expect
+   an environment as a parameter; they create a fresh one when invoked.
 
    Every state [s] is translated to a [run] function. To a first
-   approximation, the only parameter of the [run] function, besides [env],
-   is the stack. However, in some cases (consult the predicate [runpushes]),
+   approximation, the only parameter of the [run] function, besides the
+   environment, is the stack. However, in some cases (see [runpushes]),
    the top stack cell is not yet allocated when [run s] is called. The
    cell's contents are passed as extra parameters, and it is [run]'s
    responsibility to allocate that cell.
@@ -45,9 +42,7 @@ open Interface
    The first thing in [run] is to discard a token, if the state was entered
    through a shift transition, and to peek at the lookahead token. When the
    current token is to be discarded, the [discard] function is invoked. It
-   discards the current token, invokes the lexer to obtain a new token, and
-   returns an updated environment. When we only wish to peek at the current
-   token, without discarding it, we simply read [env.token].
+   discards the current token, invokes the lexer, and returns a new token.
 
    Once the lookahead token is obtained, [run] performs a case analysis of
    the lookahead token. Each branch performs one of the following. In shift
@@ -92,8 +87,8 @@ open Interface
 
    For each start symbol [nt], an entry point function, named after
    [nt], is generated. Its parameters are a lexer and a lexing buffer.
-   The function allocates and initializes a parser environment and
-   transfers control to the appropriate [run] function.
+   The function initializes the environment and transfers control to
+   the appropriate [run] function.
 
    Our functions are grouped into one huge [let rec] definition. The
    inliner, implemented as a separate module, will inline functions
@@ -243,118 +238,88 @@ let auto2scheme t =
 (* The environment contains the lexer, the lexing buffer, and the last token
    that was read from the lexer (that is, the head of the token stream). *)
 
-(* The environment is represented either as a variable [env] whose type is an
-   record of several fields, or as several separate variables. In either case,
-   they are parameters of all generated functions. *)
+(* As of 2020/12/07, the environment is represented as three separate
+   variables, which are parameters of all generated functions. On our
+   performance micro-benchmark, compared with our previous representation
+   (where the environment was an immutable record of three fields), this
+   decreases the parsing time from 12 to 11 seconds per billion tokens, and
+   reduces our heap allocation rate from 8.2 to 4.2 words per token on
+   average. The impact on execution time is relatively small, but we do save
+   exactly one record allocation per token, that is, 4 words per token. *)
 
-(* As of 2014/12/12, the environment record is immutable and is re-allocated
-   instead of updated. Perhaps surprisingly, this makes the code TWICE FASTER
-   overall. The write barrier is really costly! *)
+(* Before 2014/12/12, the environment record was mutable and was updated when
+   a new token was read. Perhaps surprisingly, that was TWICE SLOWER overall.
+   The write barrier is really costly! *)
 
 module Env = struct
 
-  (* The variable that holds the environment. *)
+  (* The variables that hold the environment. *)
 
-  let env =
-    prefix "env"
-
-  let params =
-    [ env ]
-
-  (* The type of environments. *)
-
-  let tcenv =
-    env
-
-  let tenv =
-    TypApp (tcenv, [])
-
-  (* Constructing an arrow type [env -> _]. *)
-
-  let arrow_tenv codomain =
-    arrow tenv codomain
-
-  (* The fields of the environment record. *)
-
-  let flexer =
+  let lexer =
     prefix "lexer"
 
-  let flexbuf =
+  let lexbuf =
     prefix "lexbuf"
 
-  let ftoken =
+  let token =
     prefix "token"
 
-  (* The type of environments. *)
+  let params =
+    [ lexer; lexbuf; token ]
 
-  let typedef = {
-    typename = tcenv;
-    typeparams = [];
-    typerhs =
-      TDefRecord [
-        field false flexer tlexer;
-        field false flexbuf tlexbuf;
-        field false ftoken ttoken;
-      ];
-    typeconstraint = None
-  }
+  (* Constructing an arrow type [lexer -> lexbuf -> token -> _]. *)
+
+  let arrow_tenv codomain =
+    arrow tlexer (arrow tlexbuf (arrow ttoken codomain))
+
+  (* No toplevel type definition is needed. *)
 
   let typedefs =
-    [ typedef ]
+    []
 
   (* Constructing an initial environment. *)
 
-  (* This context relies on the free variables [lexer] and [lexbuf] and binds
-     the variable [env]. *)
+  (* This context relies on the free variables [_lexer] and [_lexbuf] and binds
+     the variables in the list [params]. *)
 
-  (* The [token] field receives a dummy value. It is overwritten by the first
-     call to [run], which invokes [discard]. This allows us to invoke the
-     lexer in just one place. *)
+  (* The [token] variable receives a dummy value. It is overwritten by the
+     first call to [run], which invokes [discard]. This allows us to invoke
+     the lexer in just one place. *)
 
-  let initenv lexer lexbuf (e : expr) : expr =
-    blet (
-      [ PVar env,
-          ERecord ([
-            (flexer, EVar lexer);
-            (flexbuf, EVar lexbuf);
-            (ftoken, EMagic EUnit); (* a dummy token *)
-          ])
-      ],
-      e
-    )
+  let initenv _lexer _lexbuf (e : expr) : expr =
+    blet ([
+      PVar lexer, EVar _lexer;
+      PVar lexbuf, EVar _lexbuf;
+      PVar token, EMagic EUnit; (* a dummy token *)
+    ],
+    e)
 
-  (* Accessing the [lexbuf] field. *)
+  (* Accessing [lexbuf]. *)
 
   let egetlexbuf =
-    ERecordAccess (EVar env, flexbuf)
+    EVar lexbuf
 
-  (* Accessing the [token] field. *)
+  (* Accessing [token]. *)
 
   let egettoken =
-    ERecordAccess (EVar env, ftoken)
+    EVar token
 
   (* The function [discard] takes a token off the input stream and queries the
-     lexer for a new one. The new token is stored in the field [env.token],
-     overwriting the previous token. *)
+     lexer for a new one. The new token is returned. *)
+
+  (* If [--trace] is set, then we want [discard] to exist as a function, in order
+     to share its code. Otherwise, we want to inline it. *)
 
   let discardbody =
-    let lexer, lexbuf, token = "lexer", "lexbuf", "token" in
     EFun (
-      [ PVar env ],
-      blet ([
-        PVar lexer, ERecordAccess (EVar env, flexer);
-        PVar lexbuf, ERecordAccess (EVar env, flexbuf);
-        PVar token, EApp (EVar lexer, [ EVar lexbuf ]);
-      ] @
+      [ PVar lexer; PVar lexbuf ],
+      blet (
+        [ PVar token, EApp (EVar lexer, [ EVar lexbuf ]) ] @
         trace "Lookahead token is now %s (%d-%d)"
-              [ EApp (EVar print_token, [ EVar token ]);
-                ERecordAccess (ERecordAccess (EVar lexbuf, "Lexing.lex_start_p"), "Lexing.pos_cnum");
-                ERecordAccess (ERecordAccess (EVar lexbuf, "Lexing.lex_curr_p"), "Lexing.pos_cnum") ],
-        ERecord [
-          flexer, EVar lexer;
-          flexbuf, EVar lexbuf;
-          ftoken, EVar token;
-        ]
+          [ EApp (EVar print_token, [ EVar token ]);
+            ERecordAccess (ERecordAccess (EVar lexbuf, "Lexing.lex_start_p"), "Lexing.pos_cnum");
+            ERecordAccess (ERecordAccess (EVar lexbuf, "Lexing.lex_curr_p"), "Lexing.pos_cnum") ],
+        EVar token
       )
     )
 
@@ -364,11 +329,20 @@ module Env = struct
     valval =
       annotate
         discardbody
-        (arrow tenv tenv)
+        (arrow tlexer (arrow tlexbuf ttoken))
   }
 
+  let fundefs =
+    if Settings.trace then
+      [ discarddef ]
+    else
+      []
+
   let ediscard (e : expr) : expr =
-      blet ([ PVar env, EApp (EVar discard, [ EVar env ])], e)
+    if Settings.trace then
+      blet ([ PVar token, EApp (EVar discard, [ EVar lexer; EVar lexbuf ])], e)
+    else
+      blet ([ PVar token, EApp (EVar lexer, [ EVar lexbuf ]) ], e)
 
 end
 
@@ -1237,8 +1211,7 @@ let errordef = {
 
 let entrydef s =
   let nt = Item.startnt (Lr1.start2item s) in
-  let lexer = "lexer"
-  and lexbuf = "lexbuf" in
+  let lexer, lexbuf = prefix "lexer", prefix "lexbuf" in
 
   let initial_stack =
     let initial_position = getendp in
@@ -1325,7 +1298,7 @@ let program =
           defs
         else
           reducedef prod :: defs
-      ) [ Env.discarddef; printtokendef; assertfalsedef; errordef ])))
+      ) (Env.fundefs @ [ printtokendef; assertfalsedef; errordef ]))))
     ) ::
 
     SIStretch grammar.postludes ::
