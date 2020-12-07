@@ -333,19 +333,12 @@ module Env = struct
   let egettoken =
     ERecordAccess (EVar env, ftoken)
 
-  let ediscard (e : expr) : expr =
-      blet ([ PVar env, EApp (EVar discard, [ EVar env ])], e)
-
-  let epeek (e : expr) : expr =
-    blet ([ PVar token, egettoken ], e)
-
   (* The function [discard] takes a token off the input stream and queries the
      lexer for a new one. The new token is stored in the field [env.token],
      overwriting the previous token. *)
 
   let discardbody =
-    let lexer = "lexer"
-    and lexbuf = "lexbuf" in
+    let lexer, lexbuf, token = "lexer", "lexbuf", "token" in
     EFun (
       [ PVar env ],
       blet ([
@@ -373,6 +366,9 @@ module Env = struct
         discardbody
         (arrow tenv tenv)
   }
+
+  let ediscard (e : expr) : expr =
+      blet ([ PVar env, EApp (EVar discard, [ EVar env ])], e)
 
 end
 
@@ -848,63 +844,46 @@ let runpushcellunless shiftreduce s e =
   else
     runpushcell s e
 
-(* This generates code for dealing with the lookahead token upon
-   entering the [run] function for state [s]. If [s] is the target of
-   a shift transition, then we must take the current token (which was
-   consumed in the shift transition) off the input stream. Whether [s]
-   was entered through a shift or a goto transition, we want to peek
-   at the next token, unless we are performing a default reduction.
-   The parameter [defred] tells which default reduction, if any, we
-   are about to perform. *)
+(* [maybe_discard s defred e] potentially generates a call to [discard] upon
+   entering the [run] function for state [s]. If [s] is the target of a shift
+   transition, then we must take the current token (which was consumed in the
+   shift transition) off the input stream and query the lexer for the next
+   token, unless the state [s] has a default reduction on [#], in which case
+   the lexer must not be queried. *)
 
 (* 2014/12/06 New convention regarding initial states (i.e., states which have
-   no incoming symbol). We donot invoke the lexer when we construct the
+   no incoming symbol). We do not invoke the lexer when we construct the
    initial environment, so the [run] function for an initial state must do it.
    (Except in the very special case where the initial state has a default
    reduction on [#] -- this means the grammar recognizes only the empty word.
    We have ruled out this case.) *)
 
-let gettoken s defred e =
-  match Lr1.incoming_symbol s, defred with
+let maybe_discard s defred e =
+  match Lr1.incoming_symbol s with
+  | None
+  | Some (Symbol.T _) ->
 
-  | (Some (Symbol.T _) | None), Some (_, toks)
-    when TerminalSet.mem Terminal.sharp toks ->
-      assert (TerminalSet.cardinal toks = 1);
+      (* The state [s] either is an initial or is entered through a shift
+         transition. *)
 
-      (* There is a default reduction on token [#]. We cannot
-         request the next token, since that might drive the
-         lexer off the end of the input stream, so we cannot
-         call [discard]. Do nothing. *)
+      begin match defred with
+      | Some (_, toks) when TerminalSet.mem Terminal.sharp toks ->
+          assert (TerminalSet.cardinal toks = 1);
+          (* There is a default reduction on token [#]. We cannot request the
+             next token, since that might drive the lexer off the end of the
+             input stream, so we do not call [discard]. *)
+          e
+      | _ ->
+          (* There is either no default reduction or a default reduction on
+             a set of tokens other than [#]. Call [discard]. *)
+          Env.ediscard e
+      end
 
+  | Some (Symbol.N _) ->
+
+      (* The state [s] is entered via a [goto] transition. Do not call
+         [discard]. *)
       e
-
-  | (Some (Symbol.T _) | None), Some _ ->
-
-      (* There is some other default reduction. Discard the first input token.
-         Do not bind the variable [token]. *)
-
-      Env.ediscard e
-
-  | (Some (Symbol.T _) | None), None ->
-
-      (* There is no default reduction. Discard the first input token and peek
-         at the next one; bind the variable [token] to it. *)
-
-      Env.ediscard (Env.epeek e)
-
-  | Some (Symbol.N _), Some _ ->
-
-      (* There is some default reduction. Do not peek at the input
-         token. *)
-
-      e
-
-  | Some (Symbol.N _), None ->
-
-      (* There is no default reduction. Peek at the first input token,
-         without taking it off the input stream. *)
-
-      Env.epeek e
 
 (* This produces the header of a [run] function. *)
 
@@ -941,7 +920,7 @@ let rundef s : valdef =
 
       runheader s (
         runpushcellunless (shiftreduce prod) s (
-          gettoken s defred (
+          maybe_discard s defred (
             defaultreductioncomment toks (
               call_reduce prod s
             )
@@ -994,9 +973,9 @@ let rundef s : valdef =
 
       runheader s (
         runpushcell s (
-          gettoken s None (
+          maybe_discard s None (
             EMatch (
-              EVar token,
+              Env.egettoken,
               branches
             )
           )

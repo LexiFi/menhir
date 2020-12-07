@@ -34,10 +34,6 @@ val stack: string
 
 val state: string
 
-(* A variable used to hold a token. *)
-
-val token: string
-
 (* Variables used to hold start and end positions. *)
 
 val beforeendp: string
