@@ -15,21 +15,21 @@ rm -f src/*.time
 
 # A loop with several test sizes.
 
-for size in 1000000 5000000 10000000 ; do
+for size in 5000000 ; do
   echo "Test size: $size"
 
   # echo Dry run:
   # $TIME -f "%U" src/code/gene.exe --size $size --dry-run
 
   # Run the code back-end.
-  echo Code back-end:
+  echo Running the code back-end...
   src/code/gene.exe --size $size > src/code.out 2> src/code.time
-  cat src/code.time
+  # cat src/code.time
 
   # Run the table back-end.
-  echo Table back-end:
+  echo Running the table back-end...
   src/table/gene.exe --size $size > src/table.out 2> src/table.time
-  cat src/table.time
+  # cat src/table.time
 
   # Avoid a gross mistake.
   if ! diff -q src/code.out src/table.out ; then
@@ -42,9 +42,9 @@ for size in 1000000 5000000 10000000 ; do
   fi
 
   # Run the ocamlyacc parser.
-  echo "ocamlyacc:"
+  echo Running ocamlyacc...
   src/ocamlyacc/gene.exe --size $size > src/ocamlyacc.out 2> src/ocamlyacc.time
-  cat src/ocamlyacc.time
+  # cat src/ocamlyacc.time
 
   # Avoid another mistake.
   if ! diff -q src/code.out src/ocamlyacc.out ; then
@@ -57,6 +57,7 @@ for size in 1000000 5000000 10000000 ; do
   fi
 
   # Compute some statistics.
+  echo
   ocaml speed.ml
 
 done

@@ -106,11 +106,22 @@ let () =
   (* Running the parser several times in succession (without re-generating the
      random data, and without explicitly invoking the GC between runs) should
      allow us to obtain slightly more stable timings. *)
-  let chrono = Time.fresh() in
-  Time.chrono chrono (fun () ->
-    for _run = 0 to !runs do
-      printf "%d\n%!"
-        (Parser.main lexer (new_lexbuf()))
-    done
-  );
-  Time.display stderr chrono
+  let gc1 = Gc.quick_stat () in
+  let times1 = Unix.times() in
+  for _run = 1 to !runs do
+    printf "%d\n%!"
+      (Parser.main lexer (new_lexbuf()))
+  done;
+  let times2 = Unix.times() in
+  let elapsed = times2.tms_utime -. times1.tms_utime in
+  let gc2 = Gc.quick_stat () in
+  let minor = gc2.minor_words -. gc1.minor_words
+  and major = gc2.major_words -. gc1.major_words
+  and promoted = gc2.promoted_words -. gc1.promoted_words in
+  let runs = float_of_int !runs in
+  eprintf "tokens: %d\n" (Array.length tokens);
+  eprintf "time: %f\n" (elapsed /. runs);
+  eprintf "minor: %f\n" (minor /. runs);
+  eprintf "major: %f\n" (major /. runs);
+  eprintf "promoted: %f\n" (promoted /. runs);
+  ()
