@@ -19,11 +19,15 @@
 
 * Build a performance test suite. For this purpose, use a small number of
   well-chosen parsers (among which OCaml and CompCert C) for which we have a
-  large amount of well-formed input data. Store tokens in memory ahead of time
-  so as to eliminate the cost of lexical analysis. Use unit semantic actions
-  so as to eliminate the cost of semantic actions. Parse each file multiple
-  times in the same process so as to diminish the influence of GC effects.
-  Arrange to *not* blow up the size of the repository with the input data.
+  large amount of well-formed input data. In one variant, try to measure just
+  the parsing time: store tokens in memory ahead of time so as to eliminate
+  the cost of lexical analysis; use unit semantic actions so as to eliminate
+  the cost of semantic actions. In another variant, use a normal lexer and
+  normal semantic actions (which build an AST). Parse each file multiple times
+  in the same process so as to diminish the influence of GC effects. Perhaps
+  use `perf` to measure not just time, but also a dynamic instruction
+  execution count, etc. Arrange to *not* blow up the size of the repository
+  with the input data.
 
 ## Automaton
 
