@@ -24,7 +24,7 @@ let read f =
 (* Printing a measurement. *)
 
 let print m =
-  out "Time : %.0f seconds per billion tokens.\n"
+  out "Time : %.1f seconds per billion tokens.\n"
     (m.time *. 1000000000.0 /. m.tokens);
   out "Space: %.1f words per token (minor) and %.1f words per token (major).\n"
     (m.minor /. m.tokens) (m.major /. m.tokens);
