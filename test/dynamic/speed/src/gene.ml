@@ -82,13 +82,12 @@ let () =
 
 let lexer lexbuf =
   let pos = lexbuf.lex_curr_pos in
-  if pos < Array.length tokens then begin
-    let token = tokens.(pos) in
-    lexbuf.lex_curr_pos <- pos + 1;
-    token
-  end
-  else
-    raise End_of_file
+  (* As long as we parse well-formed sequences of tokens, we cannot hit the
+     end of the array. *)
+  assert (pos < Array.length tokens);
+  let token = Array.unsafe_get tokens pos in
+  lexbuf.lex_curr_pos <- pos + 1;
+  token
 
 let new_lexbuf () =
   let lexbuf = from_string "" in
