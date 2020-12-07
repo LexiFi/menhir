@@ -1,6 +1,5 @@
 open Printf
 open Parser
-open Stream
 open Generator
 
 (* ---------------------------------------------------------------------------- *)
@@ -24,9 +23,6 @@ let print_token = function
       printf ")"
   | EOL ->
       printf "\n"
-
-let print_token_stream =
-  iter print_token
 
 (* ---------------------------------------------------------------------------- *)
 
@@ -76,7 +72,6 @@ open Lexing
 let tokens : token array =
   Random.init !seed;
   produce !size
-  |> to_array
 
 let () =
   Gc.major()
