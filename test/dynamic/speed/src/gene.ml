@@ -74,7 +74,7 @@ let tokens : token array =
   produce !size
 
 let () =
-  Gc.major()
+  Gc.full_major()
 
 let () =
   if !dry_run then
