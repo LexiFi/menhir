@@ -941,7 +941,7 @@ let extra =
    is preferable to every other (so priority plays a role). *)
 
 let prioritized =
-  ref 0
+  ref []
 
 (* The set of nonterminal symbols in the left-hand side of an extra reduction. *)
 
@@ -969,7 +969,8 @@ let extra_reductions_in_node node =
          with a reduction, update [extra] and [extra_nts]. *)
       let triggered = lazy (
         incr extra;
-        if List.length prods > 1 then incr prioritized;
+        if List.length prods > 1 then
+          prioritized := node :: !prioritized;
         extra_nts := NonterminalSet.add (Production.nt prod) !extra_nts
       ) in
       Terminal.iter_real (fun tok ->
@@ -988,13 +989,19 @@ let extra_reductions () =
       extra_reductions_in_node node
   );
   (* Info message. *)
-  if !extra > 0 then
+  if !extra > 0 then begin
     Error.logA 1 (fun f ->
       Printf.fprintf f "Extra reductions on error were added in %d states.\n"
         !extra;
       Printf.fprintf f "Priority played a role in %d of these states.\n"
-        !prioritized
+        (List.length !prioritized)
     );
+    Error.logA 2 (fun f ->
+      if !prioritized <> [] then
+        Printf.fprintf f "These states are %s.\n"
+          (NodeSet.print (NodeSet.of_list !prioritized))
+    )
+  end;
   (* Warn about useless %on_error_reduce declarations. *)
   OnErrorReduce.iter (fun nt ->
     if not (NonterminalSet.mem nt !extra_nts) then
