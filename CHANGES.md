@@ -11,6 +11,9 @@
 * Add an undocumented option `--automaton-graph` which produces an
   (incomplete) graphical representation of the LR(1) automaton.
 
+* At log level `--log-automaton 2`, Menhir now shows which states have a
+  conflict between multiple `%on_error_reduce` declarations.
+
 ## 2020/12/01
 
 * The module `MenhirLib.ErrorReports` is extended with new functions:
