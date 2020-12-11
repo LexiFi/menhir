@@ -259,6 +259,7 @@ module Terminal = struct
         tk_is_declared   = true;
         tk_position      = Positions.dummy;
         tk_attributes    = [];
+        tk_alias         = None;
       }
     in
     Array.init n (fun tok ->
