@@ -41,8 +41,8 @@ type symbol =
    case it is a token alias.
 
    Token aliases are eliminated by replacing them with the corresponding
-   terminal symbols very early on during the joining of the partial grammars
-   -- see the function [dealias_pg] in [PartialGrammar].
+   terminal symbols very early on during the joining of the partial grammars;
+   see the module [ExpandTokenAliases].
 
    In a complete grammar, there are no token aliases any longer. *)
 
