@@ -498,11 +498,16 @@ rule main = parse
     }
 | (uppercase identchar *) as id
     { UID (with_pos (cpos lexbuf) id) }
-(* Quoted strings, which are used as aliases for tokens.
-   For simplicity, we just disallow double quotes and backslash outright.
-   Given the use of terminal strings in grammars, this is fine. *)
-| ( "\"" ( [' ' - '~'] # ['"' '\\'] + ) "\"" ) as id
-    { QID (with_pos (cpos lexbuf) id) }
+(* Quoted strings are used as aliases for tokens. *)
+(* A quoted string is stored as is -- with the quotes
+   and with its escape sequences. *)
+| '"'
+    { let buffer = Buffer.create 16 in
+      let openingpos = lexeme_start_p lexbuf in
+      let content = record_string openingpos buffer lexbuf in
+      let id = Printf.sprintf "\"%s\"" content in
+      let pos = import (openingpos, lexbuf.lex_curr_p) in
+      QID (with_pos pos id) }
 | "//" [^ '\010' '\013']* newline (* skip C++ style comment *)
 | newline
     { new_line lexbuf; main lexbuf }
@@ -746,18 +751,39 @@ and ocamlcomment openingpos = parse
 
 and string openingpos = parse
 | '"'
-   { () }
+    { () }
 | '\\' newline
 | newline
-   { new_line lexbuf; string openingpos lexbuf }
+    { new_line lexbuf; string openingpos lexbuf }
 | '\\' _
-   (* Upon finding a backslash, skip the character that follows,
-      unless it is a newline. Pretty crude, but should work. *)
-   { string openingpos lexbuf }
+    (* Upon finding a backslash, skip the character that follows,
+       unless it is a newline. Pretty crude, but should work. *)
+    { string openingpos lexbuf }
 | eof
-   { error1 openingpos "unterminated OCaml string." }
+    { error1 openingpos "unterminated OCaml string." }
 | _
-   { string openingpos lexbuf }
+    { string openingpos lexbuf }
+
+(* ------------------------------------------------------------------------ *)
+
+(* Recording on OCaml string. (This is used for token aliases.) *)
+
+and record_string openingpos buffer = parse
+| '\"'
+    { Buffer.contents buffer }
+| ('\\' ['\\' '\'' '\"' 'n' 't' 'b' 'r' ' ']) as sequence
+    { (* This escape sequence is recognized as such, but not decoded. *)
+      Buffer.add_string buffer sequence;
+      record_string openingpos buffer lexbuf }
+| '\\' _
+    { error2 lexbuf "illegal backslash escape in string." }
+| newline
+    { error2 lexbuf "illegal newline in string." }
+| eof
+    { error1 openingpos "unterminated string." }
+| _ as c
+    { Buffer.add_char buffer c;
+      record_string openingpos buffer lexbuf }
 
 (* ------------------------------------------------------------------------ *)
 
