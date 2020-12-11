@@ -2,6 +2,9 @@
 
 ## 2020/12/XX
 
+* The new command line switch `--require-aliases` causes Menhir to check
+  that a token alias has been defined for every token.
+
 * Update the demo `calc-syntax-errors` to show how to compile a parser both
   via the code back-end and via the table back-end, so as to obtain both
   optimal performance and good error messages.
