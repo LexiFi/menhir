@@ -262,3 +262,8 @@ type dollars =
   | DollarsAllowed
 
 val dollars: dollars
+
+(* This flag requires every token to come with a token alias. If that is
+   not the case, warnings are emitted. *)
+
+val require_aliases : bool

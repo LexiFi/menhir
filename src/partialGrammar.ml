@@ -79,7 +79,7 @@ let join_declaration filename (grammar : grammar) decl =
             tk_position      = decl.position;
             tk_attributes    = attributes;
             tk_is_declared   = true;
-            tk_alias         = None
+            tk_alias         = alias;
           }
 
       in

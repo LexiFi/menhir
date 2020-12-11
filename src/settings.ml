@@ -295,6 +295,9 @@ type dollars =
 let dollars =
   ref DollarsAllowed
 
+let require_aliases =
+  ref false
+
 (* When new command line options are added, please update both the manual
    in [doc/manual.tex] and the man page in [doc/menhir.1]. *)
 
@@ -353,6 +356,7 @@ let options = Arg.align [
   "--only-tokens", Arg.Unit tokentypeonly, " Generate token type definition only, no code";
   "--raw-depend", Arg.Unit enable_raw_depend, " Invoke ocamldep and echo its raw output";
   "--reference-graph", Arg.Set reference_graph, " (undocumented)";
+  "--require-aliases", Arg.Set require_aliases, " Check that every token has a token alias";
   "--stdlib", Arg.String ignore, "<directory> Ignored (deprecated)";
   "--strict", Arg.Set strict, " Warnings about the grammar are errors";
   "--suggest-comp-flags", Arg.Unit (fun () -> suggestion := SuggestCompFlags),
@@ -606,6 +610,9 @@ let coq_lib_path =
 
 let dollars =
   !dollars
+
+let require_aliases =
+  !require_aliases
 
 let infer =
   !infer
