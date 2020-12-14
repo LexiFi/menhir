@@ -333,6 +333,20 @@ module Terminal = struct
   let every_token_has_an_alias =
     tokens_without_an_alias = []
 
+  let alias tok =
+    token_properties.(tok).tk_alias
+
+  let unquoted_alias tok =
+    alias tok |> Option.map (fun qid ->
+      assert (qid.[0] = '"');
+      (* Skip the opening quote and decode the remainder using the lexer
+         [decode_string]. *)
+      let qid = String.sub qid 1 (String.length qid - 1) in
+      let lexbuf = Lexing.from_string qid in
+      let buffer = Buffer.create 8 in
+      Lexer.decode_string buffer lexbuf
+  )
+
   (* If a token named [EOF] exists, then it is assumed to represent
      ocamllex's [eof] pattern. *)
 

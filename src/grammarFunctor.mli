@@ -231,6 +231,14 @@ module Terminal : sig
 
   val every_token_has_an_alias: bool
 
+  (* [alias t] is the token alias that has been defined by the user
+     for the terminal symbol [t], if there is one. It is a quoted
+     escaped string literal. [unquoted_alias t] is the same string,
+     deprived of its opening and closing quotes, and unescaped. *)
+
+  val alias: t -> string option
+  val unquoted_alias: t -> string option
+
   (* The sub-module [Word] offers an implementation of words (that is,
      sequences) of terminal symbols. It is used by [LRijkstra]. We
      make it a functor, because it has internal state (a hash table)
