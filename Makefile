@@ -124,7 +124,7 @@ versions:
 	  for v in $(VERSIONS) ; do \
 	    echo "(context (opam (switch $$v)))" ; \
 	  done) > dune-workspace.versions
-	@ dune build --workspace dune-workspace.versions @all # @test
+	@ dune build --workspace dune-workspace.versions @install # or: @all
 
 .PHONY: handiwork
 handiwork:
