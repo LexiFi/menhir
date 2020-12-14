@@ -54,7 +54,6 @@
   of the auto-comments, show this sentence in concrete syntax.
   Note that we already have a mechanism for assigning a concrete syntax
   to a token (namely, token aliases).
-  Add an option to check that every token carries an alias.
   Where else can we print tokens in concrete syntax?
   In conflict explanations?
 

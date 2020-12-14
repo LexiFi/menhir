@@ -603,6 +603,15 @@
 (rule (alias missing-percentpercent)
   (action (diff missing-percentpercent.exp missing-percentpercent.out)))
 
+(rule (target missing_token_alias.out) (deps missing_token_alias.mly)
+  (action
+    (with-outputs-to missing_token_alias.out
+      (with-accepted-exit-codes (not 0)
+        (run menhir %{read-lines:missing_token_alias.flags} %{deps})))))
+
+(rule (alias missing_token_alias)
+  (action (diff missing_token_alias.exp missing_token_alias.out)))
+
 (rule (target mixed.out) (deps mixed.mly)
   (action
     (with-outputs-to mixed.out
@@ -1467,6 +1476,7 @@
     (alias lots-of-errors-c)
     (alias lowercase-token)
     (alias missing-percentpercent)
+    (alias missing_token_alias)
     (alias mixed)
     (alias modifier)
     (alias multiple-precedence)
