@@ -226,6 +226,11 @@ module Terminal : sig
 
   val attributes: t -> Syntax.attribute list
 
+  (* [every_token_has_an_alias] is true if a token alias has been defined
+     by the user for every token. *)
+
+  val every_token_has_an_alias: bool
+
   (* The sub-module [Word] offers an implementation of words (that is,
      sequences) of terminal symbols. It is used by [LRijkstra]. We
      make it a functor, because it has internal state (a hash table)

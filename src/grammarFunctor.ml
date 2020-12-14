@@ -311,16 +311,27 @@ module Terminal = struct
       f i
     done
 
+  let tokens_without_an_alias =
+    let accu = ref [] in
+    iter_real begin fun tok ->
+      let properties = token_properties.(tok) in
+      if properties.tk_alias = None then
+        accu := tok :: !accu
+    end;
+    List.rev !accu
+
   let () =
     if verbose && Settings.require_aliases then
-      iter_real begin fun tok ->
+      tokens_without_an_alias |> List.iter begin fun tok ->
         let properties = token_properties.(tok) in
-        if properties.tk_alias = None then
-          let pos = properties.tk_position in
-          Error.grammar_warning [pos]
-            "no alias has been defined for the token %s."
-            (print tok)
+        let pos = properties.tk_position in
+        Error.grammar_warning [pos]
+          "no alias has been defined for the token %s."
+          (print tok)
       end
+
+  let every_token_has_an_alias =
+    tokens_without_an_alias = []
 
   (* If a token named [EOF] exists, then it is assumed to represent
      ocamllex's [eof] pattern. *)
