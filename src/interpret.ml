@@ -60,16 +60,24 @@ type run = {
 (* Display and debugging. *)
 
 let print_sentence (nto, terminals) : string =
-  let b = Buffer.create 128 in
-  Option.iter (fun nt ->
-    Printf.bprintf b "%s: " (Nonterminal.print false nt)
-  ) nto;
-  let separator = Misc.once "" " " in
-  List.iter (fun t ->
-    Printf.bprintf b "%s%s" (separator()) (Terminal.print t)
-  ) terminals;
-  Printf.bprintf b "\n";
-  Buffer.contents b
+  Misc.with_buffer 128 (fun b ->
+    Option.iter (fun nt ->
+      bprintf b "%s: " (Nonterminal.print false nt)
+    ) nto;
+    let separator = Misc.once "" " " in
+    List.iter (fun t ->
+      bprintf b "%s%s" (separator()) (Terminal.print t)
+    ) terminals;
+    bprintf b "\n";
+  )
+
+let print_concrete_sentence terminals : string =
+  Misc.with_buffer 128 (fun b ->
+    let separator = Misc.once "" " " in
+    List.iter (fun t ->
+      bprintf b "%s%s" (separator()) (Misc.unSome (Terminal.unquoted_alias t))
+    ) terminals
+  )
 
 (* --------------------------------------------------------------------------- *)
 
@@ -230,14 +238,32 @@ let default_message =
 
 module SS = StackSymbols.Run()
 
-(* [print_messages_auto] displays just the sentence and the auto-generated
-   comments. *)
+(* [print_messages_auto (nt, sentence, target)] displays the sentence
+   defined by [nt] and [sentence], leading to the state [target]. It
+   then displays a bunch of auto-generated comments. *)
 
 let print_messages_auto (nt, sentence, target) : unit =
-  (* Print the sentence, followed with auto-generated comments. *)
+
+  (* Print the sentence. *)
   print_string (print_sentence (Some nt, sentence));
+
+  (* If a token alias has been defined for every terminal symbol, then
+     we can convert this sentence into concrete syntax. Do so. We make
+     a few assumptions about the concrete syntax of the language:
+       1. It is permitted to insert one space between two tokens;
+       2. No token contains a newline character.
+     The name of the start symbol cannot be printed in a meaningful
+     manner, so it is omitted. *)
+  if Terminal.every_token_has_an_alias then
+    printf
+      "##\n\
+       ## Concrete syntax: %s\n"
+      (print_concrete_sentence sentence)
+  ;
+
+  (* Show which state this sentence leads to. *)
   let (s', spurious) = target in
-  Printf.printf
+  printf
     "##\n\
      ## Ends in an error in state: %d.\n\
      ##\n\
@@ -247,26 +273,32 @@ let print_messages_auto (nt, sentence, target) : unit =
        could sometimes be helpful, but is usually intolerably verbose. *)
     (Lr0.print "## " (Lr1.state s'))
   ;
-  Printf.printf
+
+  (* Show the known suffix of the stack in this state. *)
+  printf
     "## The known suffix of the stack is as follows:\n\
      ##%s\n\
      ##\n"
     (SS.print_stack_symbols s')
   ;
+
+  (* If interpreting this sentence causes spurious reductions (that is,
+     reductions that take place after the last terminal symbol has been
+     shifted), say so, and show them. *)
   if spurious <> [] then begin
-    Printf.printf
+    printf
       "## WARNING: This example involves spurious reductions.\n\
        ## This implies that, although the LR(1) items shown above provide an\n\
        ## accurate view of the past (what has been recognized so far), they\n\
        ## may provide an INCOMPLETE view of the future (what was expected next).\n"
     ;
     List.iter (fun (s, prod) ->
-      Printf.printf
+      printf
         "## In state %d, spurious reduction of production %s\n"
         (Lr1.number s)
         (Production.print prod)
     ) spurious;
-    Printf.printf "##\n"
+    printf "##\n"
   end
 
 (* [print_messages_item] displays one data item. The item is of the form [nt,
@@ -446,7 +478,7 @@ let stats (runs : run or_comment list) =
   | Comment _ ->
       ()
   ) runs;
-  Printf.eprintf
+  eprintf
     "Read %d sample input sentences and %d error messages.\n%!"
     !s !m;
   runs
@@ -602,9 +634,9 @@ let compile_runs filename (runs : run or_comment list) : unit =
     valval = EFun ([ PVar "s" ], EMatch (EVar "s", branches))
   } in
   let program = [
-    SIComment (Printf.sprintf
+    SIComment (sprintf
       "This file was auto-generated based on \"%s\"." filename);
-    SIComment (Printf.sprintf
+    SIComment (sprintf
       "Please note that the function [%s] can raise [Not_found]." name);
     SIValDefs (false,
       [ messagedef ]);
@@ -810,7 +842,7 @@ module Q = struct
 end
 
 let conflict_comment filename =
-  Printf.sprintf
+  sprintf
     "#@ WARNING:\n\
      #@ The following sentence has been copied from \"%s\".\n\
      #@ It is redundant with a sentence that appears earlier in this file,\n\
