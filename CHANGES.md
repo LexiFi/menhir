@@ -14,6 +14,10 @@
   syntax: `. This feature relies on the assumption that the concrete syntax
   allows separating two tokens with a space character.
 
+* The new command `--echo-errors-concrete` reads a `.messages` files and
+  echoes just the sentences and the `## Concrete syntax: ` auto-generated
+  comments.
+
 * Update the demo `calc-syntax-errors` to show how to compile a parser both
   via the code back-end and via the table back-end, so as to obtain both
   optimal performance and good error messages.
