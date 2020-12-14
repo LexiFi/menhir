@@ -126,13 +126,13 @@ versions:
 	  done) > dune-workspace.versions
 	@ dune build --workspace dune-workspace.versions @all # @test
 
-.PHONY: dune
-dune:
+.PHONY: handiwork
+handiwork:
 	@ current=`opam switch show` ; \
 	  for v in $(VERSIONS) ; do \
 	    opam switch $$v && \
 	    eval $$(opam env) && \
-	    opam install --yes dune.2.2.0 ; \
+	    opam install --yes sek ; \
 	  done ; \
 	  opam switch $$current
 
