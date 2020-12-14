@@ -282,6 +282,12 @@ let echo_errors =
 let set_echo_errors filename =
   echo_errors := Some filename
 
+let echo_errors_concrete =
+  ref None
+
+let set_echo_errors_concrete filename =
+  echo_errors_concrete := Some filename
+
 let cmly =
   ref false
 
@@ -319,6 +325,7 @@ let options = Arg.align [
   "--dump", Arg.Set dump, " Write an .automaton file";
   "--dump-resolved", Arg.Set dump_resolved, " Write an .automaton.resolved file";
   "--echo-errors", Arg.String set_echo_errors, "<filename> Echo the sentences in a .messages file";
+  "--echo-errors-concrete", Arg.String set_echo_errors_concrete, "<filename> Echo the sentences in a .messages file";
   "--error-recovery", Arg.Set recovery, " (no longer supported)";
   "--explain", Arg.Set explain, " Explain conflicts in <basename>.conflicts";
   "--external-tokens", Arg.String codeonly, "<module> Import token type definition from <module>";
@@ -601,6 +608,9 @@ let update_errors =
 
 let echo_errors =
   !echo_errors
+
+let echo_errors_concrete =
+  !echo_errors_concrete
 
 let cmly =
   !cmly

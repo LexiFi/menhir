@@ -244,6 +244,12 @@ val update_errors: string option
 
 val echo_errors: string option
 
+(* This flag causes Menhir to read the error message descriptions stored in
+   [filename] and echo the error sentences, including the concrete syntax
+   of each sentence, in an auto-comment. *)
+
+val echo_errors_concrete: string option
+
 (* This flag causes Menhir to produce a [.cmly] file, which contains a
    binary-format description of the grammar and automaton. *)
 

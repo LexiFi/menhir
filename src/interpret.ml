@@ -71,7 +71,7 @@ let print_sentence (nto, terminals) : string =
     bprintf b "\n";
   )
 
-let print_concrete_sentence terminals : string =
+let print_concrete_sentence (_nto, terminals) : string =
   Misc.with_buffer 128 (fun b ->
     let separator = Misc.once "" " " in
     List.iter (fun t ->
@@ -259,7 +259,7 @@ let print_messages_auto (nt, sentence, target) : unit =
     printf
       "##\n\
        ## Concrete syntax: %s\n"
-      (print_concrete_sentence sentence)
+      (print_concrete_sentence (Some nt, sentence))
   ;
 
   (* Show which state this sentence leads to. *)
@@ -1205,6 +1205,30 @@ let () =
     List.iter (or_comment_iter (fun run ->
       List.iter (or_comment_iter (fun ((_, sentence), _target) ->
         print_string (print_sentence sentence)
+      )) run.elements
+    )) runs;
+
+    exit 0
+  )
+
+(* [--echo-errors-concrete] works like [--echo-errors], except every sentence
+   is followed with an auto-generated comment that shows its concrete syntax. *)
+
+let () =
+  Settings.echo_errors_concrete |> Option.iter (fun filename ->
+
+    (* Read the file. *)
+    let strict = false in
+    let runs : run or_comment list = read_messages strict filename in
+
+    (* Echo. *)
+    List.iter (or_comment_iter (fun run ->
+      List.iter (or_comment_iter (fun ((_, sentence), _target) ->
+        print_string (print_sentence sentence);
+        if Terminal.every_token_has_an_alias then
+          printf
+            "## Concrete syntax: %s\n"
+            (print_concrete_sentence sentence)
       )) run.elements
     )) runs;
 
