@@ -800,8 +800,7 @@ and record_string openingpos buffer = parse
 
 and decode_string buffer = parse
 | '"'
-    { (* The final double quote is skipped. *)
-      Buffer.contents buffer }
+    { (* The final double quote is skipped. *) }
 | '\\' (['\\' '\'' '"' 'n' 't' 'b' 'r' ' '] as c)
     { Buffer.add_char buffer (char_for_backslash c);
       decode_string buffer lexbuf }

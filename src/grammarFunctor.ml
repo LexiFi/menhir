@@ -343,8 +343,7 @@ module Terminal = struct
          [decode_string]. *)
       let qid = String.sub qid 1 (String.length qid - 1) in
       let lexbuf = Lexing.from_string qid in
-      let buffer = Buffer.create 8 in
-      Lexer.decode_string buffer lexbuf
+      Misc.with_buffer 8 (fun b -> Lexer.decode_string b lexbuf)
   )
 
   (* If a token named [EOF] exists, then it is assumed to represent

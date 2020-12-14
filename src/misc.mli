@@ -40,6 +40,11 @@ val tabulate: int -> (int -> 'a) -> (int -> 'a)
 
 val sum: int -> (int -> int) -> int
 
+(* [with_buffer n f] creates a fresh buffer of size [n], passes it to [f],
+   and returns the final content of the buffer. *)
+
+val with_buffer: int -> (Buffer.t -> unit) -> string
+
 (* [separated_list_to_string printer sep l] converts [l] into a string
    representation built by using [printer] on each element and [sep] as
    a separator. *)

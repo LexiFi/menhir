@@ -46,22 +46,27 @@ let sum n (f : int -> int) : int =
   done;
   !sum
 
+let with_buffer n f =
+  let b = Buffer.create n in
+  f b;
+  Buffer.contents b
+
 type 'a iter = ('a -> unit) -> unit
 
 let separated_iter_to_string printer separator iter =
-  let b = Buffer.create 32 in
-  let first = ref true in
-  iter (fun x ->
-    if !first then begin
-      Buffer.add_string b (printer x);
-      first := false
-    end
-    else begin
-      Buffer.add_string b separator;
-      Buffer.add_string b (printer x)
-    end
-  );
-  Buffer.contents b
+  with_buffer 32 (fun b ->
+    let first = ref true in
+    iter (fun x ->
+      if !first then begin
+        Buffer.add_string b (printer x);
+        first := false
+      end
+      else begin
+        Buffer.add_string b separator;
+        Buffer.add_string b (printer x)
+      end
+    )
+  )
 
 let separated_list_to_string printer separator xs =
   separated_iter_to_string printer separator (fun f -> List.iter f xs)

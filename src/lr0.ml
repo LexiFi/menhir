@@ -304,14 +304,14 @@ let export (k, toksr) =
 (* Displaying a concrete state. *)
 
 let print_concrete leading (state : concretelr1state) =
-  let buffer = Buffer.create 1024 in
-  Item.Map.iter (fun item toks ->
-    Printf.bprintf buffer "%s%s [ %s ]\n"
-      leading
-      (Item.print item)
-      (TerminalSet.print toks)
-  ) state;
-  Buffer.contents buffer
+  Misc.with_buffer 1024 (fun buffer ->
+    Item.Map.iter (fun item toks ->
+      Printf.bprintf buffer "%s%s [ %s ]\n"
+        leading
+        (Item.print item)
+        (TerminalSet.print toks)
+    ) state
+  )
 
 (* Displaying a state. By default, only the kernel is displayed, not
    the closure. *)
