@@ -769,9 +769,9 @@ and string openingpos = parse
 (* Recording on OCaml string. (This is used for token aliases.) *)
 
 and record_string openingpos buffer = parse
-| '\"'
+| '"'
     { Buffer.contents buffer }
-| ('\\' ['\\' '\'' '\"' 'n' 't' 'b' 'r' ' ']) as sequence
+| ('\\' ['\\' '\'' '"' 'n' 't' 'b' 'r' ' ']) as sequence
     { (* This escape sequence is recognized as such, but not decoded. *)
       Buffer.add_string buffer sequence;
       record_string openingpos buffer lexbuf }
