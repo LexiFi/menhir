@@ -252,6 +252,7 @@ let print_messages_auto (nt, sentence, target) : unit =
      a few assumptions about the concrete syntax of the language:
        1. It is permitted to insert one space between two tokens;
        2. No token contains a newline character.
+          (Our lexer enforces this assumption.)
      The name of the start symbol cannot be printed in a meaningful
      manner, so it is omitted. *)
   if Terminal.every_token_has_an_alias then
