@@ -318,7 +318,7 @@ let options = Arg.align [
   "--coq", Arg.Set coq, " Generate a formally verified parser, in Coq";
   "--coq-lib-path", Arg.String (fun path -> coq_lib_path := Some path), "<path> How to qualify references to MenhirLib";
   "--coq-lib-no-path", Arg.Unit (fun () -> coq_lib_path := None), " Do *not* qualify references to MenhirLib";
-  "--coq-no-version-check", Arg.Set coq_no_version_check, " The generated parser will not check that the versions of Menhir and MenhirLib match.";
+  "--coq-no-version-check", Arg.Set coq_no_version_check, " Do not generate a version check.";
   "--coq-no-actions", Arg.Set coq_no_actions, " Ignore semantic actions in the Coq output";
   "--coq-no-complete", Arg.Set coq_no_complete, " Do not generate a proof of completeness";
   "--depend", Arg.Unit enable_depend, " Invoke ocamldep and display dependencies";
