@@ -13,6 +13,7 @@
 
 (* --------------------------------------------------------------------------- *)
 
+open Printf
 open Grammar
 open SentenceParserAux
 
@@ -175,7 +176,7 @@ let interpret ((_, toks) as sentence) : unit =
 
         (* Success. *)
 
-        Printf.printf "ACCEPT";
+        printf "ACCEPT";
         if Settings.interpret_show_cst then begin
           print_newline();
           Cst.show stdout cst
@@ -185,13 +186,13 @@ let interpret ((_, toks) as sentence) : unit =
 
         (* Parser failure. *)
 
-        Printf.printf "REJECT"
+        printf "REJECT"
 
   with EndOfStream ->
 
     (* Lexer failure. *)
 
-    Printf.printf "OVERSHOOT"
+    printf "OVERSHOOT"
 
   end;
   print_newline()
@@ -278,7 +279,7 @@ let print_messages_item (nt, sentence, target) : unit =
   (* Print the sentence, followed with auto-generated comments. *)
   print_messages_auto (nt, sentence, target);
   (* Then, print a proposed error message, between two blank lines. *)
-  Printf.printf "\n%s\n" default_message
+  printf "\n%s\n" default_message
 
 (* --------------------------------------------------------------------------- *)
 
@@ -635,7 +636,7 @@ module Run (X : sig end) = struct
 let () =
   if Settings.interpret then
     let read = setup() in
-    Printf.printf "Ready!\n%!";
+    printf "Ready!\n%!";
     while true do
       match read() with
       | None ->
@@ -817,7 +818,7 @@ let conflict_comment filename =
     filename
 
 let toplevel_comment filename =
-  Printf.sprintf
+  sprintf
     "#@ WARNING:\n\
      #@ The following comment has been copied from \"%s\".\n\
      #@ It may need to be proofread, updated, moved, or removed.\n"
