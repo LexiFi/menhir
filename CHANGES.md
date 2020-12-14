@@ -5,6 +5,15 @@
 * The new command line switch `--require-aliases` causes Menhir to check
   that a token alias has been defined for every token.
 
+* The escaped characters `\\`, `\'`, `\"`, `\n`, `\t`, `\b`, `\r`, `\ ` are
+  now accepted in token aliases.
+
+* If a token alias has been defined for every token, then, in every
+  `.messages` file produced by Menhir, every sentence is now followed by its
+  concrete syntax, in an auto-generated comment that begins with `## Concrete
+  syntax: `. This feature relies on the assumption that the concrete syntax
+  allows separating two tokens with a space character.
+
 * Update the demo `calc-syntax-errors` to show how to compile a parser both
   via the code back-end and via the table back-end, so as to obtain both
   optimal performance and good error messages.
