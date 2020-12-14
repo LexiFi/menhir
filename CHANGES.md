@@ -1,6 +1,6 @@
 # Changes
 
-## 2020/12/XX
+## 2020/12/14
 
 * The new command line switch `--require-aliases` causes Menhir to check
   that a token alias has been defined for every token.
@@ -15,12 +15,12 @@
   allows separating two tokens with a space character.
 
 * The new command `--echo-errors-concrete` reads a `.messages` files and
-  echoes just the sentences and the `## Concrete syntax: ` auto-generated
-  comments.
+  echoes every sentence, immediately followed with its `## Concrete syntax: `
+  auto-generated comment.
 
-* Update the demo `calc-syntax-errors` to show how to compile a parser both
-  via the code back-end and via the table back-end, so as to obtain both
-  optimal performance and good error messages.
+* Update the demo `calc-syntax-errors` to show how to compile a parser
+  simultaneously via the code back-end and via the table back-end, so as to
+  obtain both optimal performance and good error messages.
 
 * Rename the undocumented option `--graph` to `--reference-graph`.
 
