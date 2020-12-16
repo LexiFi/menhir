@@ -304,6 +304,18 @@ let dollars =
 let require_aliases =
   ref false
 
+let strategy =
+  ref `Legacy
+
+let set_strategy = function
+  | "legacy" ->
+      strategy := `Legacy
+  | "simplified" ->
+      strategy := `Simplified
+  | _ ->
+      eprintf "Error: --strategy should be followed with legacy | simplified.\n";
+      exit 1
+
 (* When new command line options are added, please update both the manual
    in [doc/manual.tex] and the man page in [doc/menhir.1]. *)
 
@@ -365,6 +377,7 @@ let options = Arg.align [
   "--reference-graph", Arg.Set reference_graph, " (undocumented)";
   "--require-aliases", Arg.Set require_aliases, " Check that every token has a token alias";
   "--stdlib", Arg.String ignore, "<directory> Ignored (deprecated)";
+  "--strategy", Arg.String set_strategy, "<strategy> Choose an error-handling strategy";
   "--strict", Arg.Set strict, " Warnings about the grammar are errors";
   "--suggest-comp-flags", Arg.Unit (fun () -> suggestion := SuggestCompFlags),
                           " Suggest compilation flags for ocaml{c,opt}";
@@ -623,6 +636,9 @@ let dollars =
 
 let require_aliases =
   !require_aliases
+
+let strategy =
+  !strategy
 
 let infer =
   !infer

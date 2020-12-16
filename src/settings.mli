@@ -273,3 +273,9 @@ val dollars: dollars
    not the case, warnings are emitted. *)
 
 val require_aliases : bool
+
+(* The error handling strategy that should be used by the code back-end, the
+   table back-end, and the reference interpreter. See [IncrementalEngine] for
+   an explanation of the available strategies. *)
+
+val strategy: [`Legacy | `Simplified]
