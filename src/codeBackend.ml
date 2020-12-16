@@ -111,6 +111,21 @@ open Interface
    that branch with a simple [assert false]. TEMPORARY do it *)
 
 (* ------------------------------------------------------------------------ *)
+
+(* At this time, the code back-end supports only the legacy error handling
+   strategy. It does not (yet?) support the simplified strategy. Let the
+   user know about this. *)
+
+let () =
+  match Settings.strategy with
+  | `Legacy ->
+      ()
+  | `Simplified ->
+      Error.error []
+        "The code back-end does not support --strategy simplified.\n\
+         Please use either --strategy legacy or --table."
+
+(* ------------------------------------------------------------------------ *)
 (* Here is a description of our error handling mechanism.
 
    With every state [s], we associate an [error] function.

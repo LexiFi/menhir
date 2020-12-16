@@ -687,9 +687,24 @@ let token2value =
 
 (* ------------------------------------------------------------------------ *)
 
-(* The client APIs invoke the interpreter with an appropriate start state.
-   The monolithic API calls [entry] (see [Engine]), while the incremental
-   API calls [start]. *)
+(* The client APIs invoke the interpreter with an appropriate start state. The
+   monolithic API uses the function [entry], which performs the entire parsing
+   process, while the incremental API relies on the function [start], which
+   returns just an initial checkpoint. Both functions are defined in
+   [lib/Engine.ml]. *)
+
+(* The function [entry] takes a [strategy] parameter, whose value is fixed at
+   compile time, based on [Settings.strategy]. For users of the incremental
+   API, the value of [Settings.strategy] is irrelevant; the functions [resume]
+   and [loop] offered by the incremental API take a [strategy] parameter at
+   runtime. *)
+
+let strategy =
+  match Settings.strategy with
+  | `Legacy ->
+      EData ("`Legacy", [])
+  | `Simplified ->
+      EData ("`Simplified", [])
 
 (* An entry point to the monolithic API. *)
 
@@ -704,6 +719,7 @@ let monolithic_entry_point state nt t =
         EMagic (
           EApp (
             EVar entry, [
+              strategy;
               EIntConst (Lr1.number state);
               EVar lexer;
               EVar lexbuf

@@ -614,9 +614,9 @@ module Make (T : TABLE) = struct
         (* The parser rejects this input. Raise an exception. *)
         raise Error
 
-  let entry (s : state) lexer lexbuf : semantic_value =
+  let entry strategy (s : state) lexer lexbuf : semantic_value =
     let initial = lexbuf.Lexing.lex_curr_p in
-    loop (lexer_lexbuf_to_supplier lexer lexbuf) (start s initial)
+    loop ~strategy (lexer_lexbuf_to_supplier lexer lexbuf) (start s initial)
 
   (* ------------------------------------------------------------------------ *)
 
