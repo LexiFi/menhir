@@ -295,6 +295,15 @@ missing alias gives rise to a warning (and, in \ostrict mode, to an error).
 \docswitch{\ostdlib \nt{directory}} This switch exists only for
 backwards compatibility and is ignored. It may be removed in the future.
 
+\docswitch{\ostrategy \nt{strategy}} This switch selects an error handling
+strategy, to be used by the code back-end, the table back-end, and the
+reference interpreter. The available strategies are \legacy and
+simplified. (However, at the time of writing, the code back-end does
+not yet support the simplified strategy.) When this switch is
+omitted, the \legacy strategy is used. The choice of a strategy
+matters only if the grammar uses the \error token. For more details, see
+\sref{sec:errors}.
+
 \docswitch{\ostrict} This switch causes several warnings about the grammar
 and about the automaton to be considered errors. This includes warnings about
 useless precedence declarations, non-terminal symbols that produce the empty
@@ -2532,6 +2541,10 @@ This API is ``monolithic'' in the sense that there is just one function, which
 does everything: it pulls tokens from the lexer, parses, and eventually
 returns a semantic value (or fails by throwing the exception \texttt{Error}).
 
+% We may wish to note that the behavior of the function \verb+main+
+% is influenced by the strategy that is chosen at compile time via
+% \ostrategy.
+
 % ------------------------------------------------------------------------------
 
 \subsection{Incremental API}
@@ -2699,6 +2712,7 @@ monolithic API.)
 
 \begin{verbatim}
   val resume:
+    ?strategy:[ `Legacy | `Simplified ] ->
     'a checkpoint ->
     'a checkpoint
 \end{verbatim}
@@ -2708,6 +2722,10 @@ parser has suspended itself with a checkpoint of the form
 \verb+AboutToReduce (env, prod)+ or \verb+HandlingError env+.
 This function expects just the previous checkpoint \verb+checkpoint+. It produces a new
 checkpoint. It does not raise any exception.
+%
+The optional argument \verb+strategy+ influences the manner in which
+\verb+resume+ deals with checkpoints of the form \verb+ErrorHandling _+. Its
+default value is \verb+`Legacy+. For more details, see \sref{sec:errors}.
 
 The incremental API subsumes the monolithic API. Indeed, \verb+main+ can be
 (and is in fact) implemented by first using
@@ -2748,7 +2766,9 @@ and \verb+resume+.
 %% val loop
 
 \begin{verbatim}
-  val loop: supplier -> 'a checkpoint -> 'a
+  val loop:
+    ?strategy:[ `Legacy | `Simplified ] ->
+    supplier -> 'a checkpoint -> 'a
 \end{verbatim}
 
 \verb+loop supplier checkpoint+ begins parsing from \verb+checkpoint+, reading
@@ -2757,6 +2777,10 @@ checkpoint of the form \verb+Accepted v+ or \verb+Rejected+. In the former
 case, it returns \verb+v+. In the latter case, it raises the
 exception \verb+Error+. (By the way, this is how we implement the monolithic
 API on top of the incremental API.)
+%
+The optional argument \verb+strategy+ influences the manner in which
+\verb+loop+ deals with checkpoints of the form \verb+ErrorHandling _+. Its
+default value is \verb+`Legacy+. For more details, see \sref{sec:errors}.
 
 \begin{verbatim}
   val loop_handle:
@@ -3273,6 +3297,7 @@ state (as determined by \verb+env+) has an outgoing transition labeled with
 
 \menhir's traditional error handling mechanism is considered deprecated: although
 it is still supported for the time being, it might be removed in the future.
+%
 We recommend setting up an error handling mechanism using the new tools
 offered by \menhir (\sref{sec:errors:new}).
 
@@ -3286,23 +3311,45 @@ by the lexical analyzer. Instead, when an error is detected, the current
 lookahead token is discarded and replaced with the \error token, which becomes
 the current lookahead token. At this point, the parser enters \emph{error
 handling} mode.
+%
+In error handling mode, the parser behaves as follows:
+\begin{itemize}
+\item If the current state has a shift action on the \error token, then this
+  action takes place. Under the \legacy strategy, the parser then
+  reads the next token and returns to normal mode. Under the
+  simplified strategy, it does \emph{not} request the next token, so
+  the current token remains \error, and the parser remains in error handling
+  mode.
+\item If the current state has a reduce action on the \error token, then this
+  action takes place. (This behavior differs from that of \yacc and
+  \ocamlyacc, which do not reduce on \error. It is somewhat unclear why not.)
+  The current token remains \error and the parser remains in error handling
+  mode.
+\item If the current state has no action on the \error token, then, under the
+  simplified strategy, the parser rejects the input. Under the
+  \legacy strategy, the parser pops a cell off its stack and remains
+  in error handling mode. If the stack is empty, then the parser rejects the
+  input.
+\end{itemize}
 
-In error handling mode, automaton states are popped off the automaton's stack
-until a state that can \emph{act} on \error is found. This includes
-\emph{both} shift \emph{and} reduce actions. (\yacc and \ocamlyacc do not
-trigger reduce actions on \error. It is somewhat unclear why this is so.)
+In the monolithic API, the parser rejects the input by raising the exception
+\texttt{Error}. This exception carries no information. The position of the
+error can be obtained by reading the lexical analyzer's environment record. In
+the incremental API, the parser rejects the input by returning the checkpoint
+\texttt{Rejected}.
 
-When a state that can reduce on \error is found, reduction is performed.
-Since the lookahead token is still \error, the automaton remains in error
-handling mode.
-
-When a state that can shift on \error is found, the \error token is shifted.
-At this point, the parser returns to normal mode.
-
-When no state that can act on \error is found on the automaton's stack, the
-parser stops and raises the exception \texttt{Error}. This exception carries
-no information. The position of the error can be obtained by reading the
-lexical analyzer's environment record.
+Which strategy should one choose? First, let us note that the difference
+between the strategies \legacy and \simplified matters only if the grammar
+uses the \error token. The following rule of thumb can be used to select
+between them:
+\begin{itemize}
+\item If the \error token is used only to catch an error and stop, then the
+  \simplified strategy should be preferred. (In this this restricted style,
+  the \error token always appears at the end of a production, whose semantic
+  action raises an exception.)
+\item If the \error token is used to survive an error and continue parsing,
+  then the legacy strategy should be selected.
+\end{itemize}
 
 \paragraph{Error recovery}
 
