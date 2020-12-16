@@ -1,5 +1,15 @@
 # Changes
 
+## 2020/12/16
+
+* The new command line switch `--strategy <strategy>` allows choosing an error
+  handling strategy between `legacy` and `simplified`. This matters only if
+  the grammar uses the `error` token. The `legacy` strategy yields Menhir's
+  traditional behavior. The `simplified` strategy should be preferred if the
+  `error` token is used only to catch an error and stop. (In this restricted
+  style, the `error` token always appears at the end of a production, whose
+  semantic action raises an exception.)
+
 ## 2020/12/14
 
 * The new command line switch `--require-aliases` causes Menhir to check
