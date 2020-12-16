@@ -94,7 +94,7 @@ module type INCREMENTAL_ENGINE = sig
 
   (* The optional argument [strategy] influences the manner in which [resume]
      deals with checkpoints of the form [ErrorHandling _]. Its default value
-     is [Legacy]. It can be briefly described as follows:
+     is [`Legacy]. It can be briefly described as follows:
 
      - If the [error] token is used only to report errors (that is, if the
        [error] token appears only at the end of a production, whose semantic
@@ -109,8 +109,7 @@ module type INCREMENTAL_ENGINE = sig
      More details on these strategies appear in the file [Engine.ml]. *)
 
   type strategy =
-    | Legacy
-    | Simplified
+    [ `Legacy | `Simplified ]
 
   val resume:
     ?strategy:strategy ->

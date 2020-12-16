@@ -122,8 +122,7 @@ module Make (T : TABLE) = struct
      the first [ErrorHandling] checkpoint appears. *)
 
   type strategy =
-    | Legacy
-    | Simplified
+    [ `Legacy | `Simplified ]
 
   (* ------------------------------------------------------------------------ *)
 
@@ -394,7 +393,7 @@ module Make (T : TABLE) = struct
        token. *)
 
     let please_discard =
-      match strategy with Legacy -> please_discard | Simplified -> false
+      match strategy with `Legacy -> please_discard | `Simplified -> false
     in
 
     shift env please_discard terminal value s'
@@ -413,9 +412,9 @@ module Make (T : TABLE) = struct
        announced. *)
 
     match strategy with
-    | Legacy ->
+    | `Legacy ->
         reduce env prod
-    | Simplified ->
+    | `Simplified ->
         announce_reduce env prod
 
   and error_fail ~strategy env =
@@ -428,9 +427,9 @@ module Make (T : TABLE) = struct
        when the goal is merely to produce a good syntax error message.) *)
 
     match strategy with
-    | Simplified ->
+    | `Simplified ->
         Rejected
-    | Legacy ->
+    | `Legacy ->
 
     (* Attempt to pop a stack cell. *)
 
@@ -543,7 +542,7 @@ module Make (T : TABLE) = struct
         invalid_arg "offer expects InputNeeded"
 
   let resume : 'a . ?strategy:strategy -> 'a checkpoint -> 'a checkpoint =
-  fun ?(strategy=Legacy) checkpoint ->
+  fun ?(strategy=`Legacy) checkpoint ->
     match checkpoint with
     | HandlingError env ->
         Obj.magic error ~strategy env
@@ -591,7 +590,7 @@ module Make (T : TABLE) = struct
      above. *)
 
   let rec loop : 'a . ?strategy:strategy -> supplier -> 'a checkpoint -> 'a =
-    fun ?(strategy=Legacy) read checkpoint ->
+    fun ?(strategy=`Legacy) read checkpoint ->
     match checkpoint with
     | InputNeeded _ ->
         (* The parser needs a token. Request one from the lexer,
