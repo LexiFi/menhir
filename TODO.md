@@ -171,6 +171,13 @@
 * Clean up the `calc-inspection` demo, which uses an undocumented/unfinished
   approach to error reporting.
 
+## Tests
+
+* In the reference interpreter, if the error handling strategy is
+  `simplified`, then, when reducing a production that involves the `error`
+  token, we could assume that the semantic action raises an exception,
+  and stop there. Do this, and add tests in `test/dynamic/semantics`.
+
 ## Major new features
 
 * Currently we warn about nonterminals that generate the empty language. Could
