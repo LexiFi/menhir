@@ -1,5 +1,11 @@
 # Changes
 
+## 2020/12/XX
+
+* Disallow the escape sequence `\n` in a token alias. It was allowed by
+  mistake. Disallowing it ensures that the `## Concrete syntax:` comments
+  generated as part of `.messages` files fit on a single line.
+
 ## 2020/12/16
 
 * The new command line switch `--strategy <strategy>` allows choosing an error
