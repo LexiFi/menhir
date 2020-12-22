@@ -684,6 +684,8 @@ let can_die =
    [match/with], and an [option] value. It is used only in a very rare case
    anyway. *)
 
+(* TEMPORARY either remove this or add support for [match with exception] *)
+
 let letunless e x e1 e2 =
   EMatch (
     ETry (
