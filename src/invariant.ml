@@ -626,7 +626,7 @@ let () =
 
   Lr1.iterx (fun s ->
     (* Let [sym] be the incoming symbol of state [s]. *)
-    let sym = Misc.unSome (Lr1.incoming_symbol s) in
+    let sym = Option.force (Lr1.incoming_symbol s) in
 
     (* Condition (1) in the long comment above (2015/11/11). If an epsilon
        production [prod] can be reduced in state [s], if its left-hand side

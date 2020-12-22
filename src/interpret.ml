@@ -75,7 +75,7 @@ let print_concrete_sentence (_nto, terminals) : string =
   Misc.with_buffer 128 (fun b ->
     let separator = Misc.once "" " " in
     List.iter (fun t ->
-      bprintf b "%s%s" (separator()) (Misc.unSome (Terminal.unquoted_alias t))
+      bprintf b "%s%s" (separator()) (Option.force (Terminal.unquoted_alias t))
     ) terminals
   )
 
