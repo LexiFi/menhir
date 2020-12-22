@@ -11,6 +11,12 @@
 (*                                                                            *)
 (******************************************************************************)
 
+let defined = function
+  | None ->
+      false
+  | Some _ ->
+      true
+
 let map f = function
   | None ->
       None
