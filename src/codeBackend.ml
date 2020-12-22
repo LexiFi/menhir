@@ -637,7 +637,8 @@ let gototypescheme nt =
 let reduce_expects_state_param prod =
   let nt = Production.nt prod in
   Production.length prod = 0 &&
-  Invariant.fold (fun _ holds_state _ _ -> holds_state) false (Invariant.gotostack nt)
+  Invariant.fold (fun _ holds_state _ _ -> holds_state)
+    false (Invariant.gotostack nt)
 
 (* The type of the [reduce] function. If shiftreduce optimization
    is performed for this production, then the top stack cell is
