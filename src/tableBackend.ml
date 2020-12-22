@@ -837,14 +837,14 @@ let terminal () =
     EFun ([ PVar t ],
       EMatch (EVar t,
         Terminal.mapx (fun tok ->
-          { branchpat = pint (Terminal.t2i tok);
-            branchbody = xsymbol (Symbol.T tok) }
+          branch
+            (pint (Terminal.t2i tok))
+            (xsymbol (Symbol.T tok))
         ) @ [
-          { branchpat = PWildcard;
-            branchbody =
-              EComment ("This terminal symbol does not exist.",
-                EApp (EVar "assert", [ efalse ])
-              ) }
+          branch
+            PWildcard
+            (EComment ("This terminal symbol does not exist.",
+                       EApp (EVar "assert", [ efalse ])))
         ]
       )
     )
@@ -863,14 +863,15 @@ let nonterminal () =
     EFun ([ PVar nt ],
       EMatch (EVar nt,
         Nonterminal.foldx (fun nt branches ->
-          { branchpat = pint (Nonterminal.n2i nt);
-            branchbody = xsymbol (Symbol.N nt) } :: branches
+          branch
+            (pint (Nonterminal.n2i nt))
+            (xsymbol (Symbol.N nt))
+          :: branches
         ) [
-          { branchpat = PWildcard;
-            branchbody =
-              EComment ("This nonterminal symbol does not exist.",
-                EApp (EVar "assert", [ efalse ])
-              ) }
+          branch
+            PWildcard
+            (EComment ("This nonterminal symbol does not exist.",
+                       EApp (EVar "assert", [ efalse ])))
         ]
       )
     )

@@ -320,3 +320,6 @@ let field modifiable name t =
     fieldname = name;
     fieldtype = type2scheme t
   }
+
+let branch branchpat branchbody =
+  { branchpat; branchbody }

@@ -128,3 +128,6 @@ val mapp: modexpr -> modexpr list -> modexpr
 
 (* Record fields. *)
 val field: bool -> string -> typ -> fielddef
+
+(* Branches. *)
+val branch: pattern -> expr -> branch

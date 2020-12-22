@@ -690,10 +690,10 @@ let letunless e x e1 e2 =
   EMatch (
     ETry (
       EData ("Some", [ e ]),
-      [ { branchpat = PData (excdef.excname, []); branchbody = EData ("None", []) } ]
+      [ branch (PData (excdef.excname, [])) (EData ("None", [])) ]
     ),
-    [ { branchpat = PData ("Some", [ PVar x ]); branchbody = e1 };
-      { branchpat = PData ("None", []); branchbody = e2 } ]
+    [ branch (PData ("Some", [ PVar x ])) e1 ;
+      branch (PData ("None", []))         e2 ]
   )
 
 (* ------------------------------------------------------------------------ *)
@@ -851,12 +851,7 @@ let errorpeekers =
    inserted in a [run] function for state [s]. *)
 
 let reducebranch toks prod s =
-  {
-    branchpat =
-      tokspat toks;
-    branchbody =
-      call_reduce prod s
-  }
+  branch (tokspat toks) (call_reduce prod s)
 
 (* Code for shifting from state [s] to state [s'] via the token [tok].
    This produces a branch, to be inserted in a [run] function for
@@ -896,12 +891,9 @@ let shiftbranchbody s tok s' =
 
 let shiftbranch s tok s' =
   assert (not (Terminal.pseudo tok));
-  {
-    branchpat =
-      PData (tokendata (Terminal.print tok), tokval tok (PVar semv));
-    branchbody =
-      shiftbranchbody s tok s'
-  }
+  branch
+    (PData (tokendata (Terminal.print tok), tokval tok (PVar semv)))
+    (shiftbranchbody s tok s')
 
 (* This generates code for pushing a new stack cell upon entering the
    [run] function for state [s]. *)
@@ -1120,7 +1112,7 @@ let rundef s : valdef =
         if TerminalSet.subset TerminalSet.universe covered then
           branches
         else
-          branches @ [ { branchpat = PWildcard; branchbody = initiate s } ]
+          branches @ [ branch PWildcard (initiate s) ]
       in
 
       (* Finally, construct the code for [run]. The former pushes things
@@ -1308,12 +1300,10 @@ let gotobody nt =
 
   let branches =
     Lr1.targets (fun branches sources target ->
-      {
-        branchpat =
-          pstatescon sources;
-        branchbody =
-          call_run target (runparams magic var target)
-      } :: branches
+      branch
+        (pstatescon sources)
+        (call_run target (runparams magic var target))
+      :: branches
     ) [] (Symbol.N nt)
   in
 
@@ -1347,10 +1337,7 @@ let gotobody nt =
          theoretically useless but helps avoid warnings if the
          compiler does not have GADTs. *)
 
-      let default = {
-        branchpat = PWildcard;
-        branchbody = call_assertfalse
-      } in
+      let default = branch PWildcard call_assertfalse in
       EMatch (
         EVar state,
         branches @ (if Invariant.universal (Symbol.N nt) then [] else [ default ])
@@ -1455,10 +1442,10 @@ let errorcasedef =
   let branches =
     Lr1.fold (fun branches s ->
       if Invariant.represented s then
-        {
-          branchpat  = pstatecon s;
-          branchbody = EApp (EVar (error s), [ EVar env; EMagic (EVar stack) ])
-        } :: branches
+        branch
+          (pstatecon s)
+          (EApp (EVar (error s), [ EVar env; EMagic (EVar stack) ]))
+        :: branches
       else
         branches
     ) []
