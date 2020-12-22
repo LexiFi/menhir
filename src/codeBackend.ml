@@ -298,15 +298,23 @@ let magic e : expr =
 let nomagic e =
   e
 
+let eassert e =
+  EApp (EVar "assert", [ e ])
+
 (* The following assertion checks that [env.error] is [false]. *)
 
 let assertnoerror : pattern * expr =
   PUnit,
-  EApp (EVar "assert", [ EApp (EVar "not", [ ERecordAccess (EVar env, ferror) ]) ])
+  eassert (EApp (EVar "not", [ ERecordAccess (EVar env, ferror) ]))
 
 let trace (format : string) (args : expr list) : (pattern * expr) list =
   if Settings.trace then
-    [ PUnit, EApp (EVar "Printf.fprintf", (EVar "stderr") :: (EStringConst (format ^"\n%!")) :: args) ]
+    [ PUnit,
+      EApp (EVar "Printf.fprintf",
+             (EVar "stderr") ::
+             (EStringConst (format ^ "\n%!")) ::
+             args
+           )]
   else
     []
 
@@ -433,8 +441,8 @@ let shiftreduce : Production.index -> bool =
        default reduction. *)
 
     Lr1.NodeSet.fold (fun s accu ->
-      accu && (match Default.has_default_reduction s with None -> false | Some _ -> true)
-           && (runpushes s)
+      accu && Option.defined (Default.has_default_reduction s)
+           && runpushes s
     ) (Lr1.production_where prod) true
 
   )
@@ -1539,7 +1547,7 @@ let assertfalsedef = {
                        [ EVar "stderr";
                          EStringConst "Internal failure -- please contact the parser generator's developers.\n%!" ]);
           ],
-          EApp (EVar "assert", [ efalse ])
+          eassert efalse
         )
       ),
       scheme [ "a" ] (arrow tunit (tvar "a"))
