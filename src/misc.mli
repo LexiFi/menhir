@@ -11,11 +11,6 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* Converting an option to a string, with [None] converted
-   to the empty string. *)
-
-val o2s: 'a option -> ('a -> string) -> string
-
 (* Projection out of a singleton list. *)
 
 val single: 'a list -> 'a
