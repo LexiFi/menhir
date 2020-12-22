@@ -307,14 +307,17 @@ let assertnoerror : pattern * expr =
   PUnit,
   eassert (EApp (EVar "not", [ ERecordAccess (EVar env, ferror) ]))
 
+let eprintf format args =
+  EApp (
+    EVar "Printf.fprintf",
+    (EVar "stderr") ::
+    (EStringConst (format ^ "\n%!")) ::
+    args
+  )
+
 let trace (format : string) (args : expr list) : (pattern * expr) list =
   if Settings.trace then
-    [ PUnit,
-      EApp (EVar "Printf.fprintf",
-             (EVar "stderr") ::
-             (EStringConst (format ^ "\n%!")) ::
-             args
-           )]
+    [ PUnit, eprintf format args ]
   else
     []
 
@@ -1526,17 +1529,17 @@ let entrydef s =
 (* This is [assertfalse], used when internal failure is detected.
    This should never happen if our tool is correct. *)
 
+let internal_failure =
+  "Internal failure -- please contact the parser generator's developers."
+
 let assertfalsedef = {
   valpublic = false;
   valpat = PVar assertfalse;
   valval =
     EAnnot (
       EFun ([ PUnit ],
-        blet ([
-            PUnit, EApp (EVar "Printf.fprintf",
-                       [ EVar "stderr";
-                         EStringConst "Internal failure -- please contact the parser generator's developers.\n%!" ]);
-          ],
+        blet (
+          [ PUnit, eprintf internal_failure []],
           eassert efalse
         )
       ),
