@@ -295,9 +295,6 @@ let pvar x : pattern =
 let magic e : expr =
   EMagic e
 
-let nomagic e =
-  e
-
 let eassert e =
   EApp (EVar "assert", [ e ])
 
@@ -714,12 +711,12 @@ let letunless e x e1 e2 =
 (* The contents of the top stack cell, exposed as individual parameters. The
    choice of identifiers is suitable for use in the definition of [run]. *)
 
-let runcellparams var stack =
+let runcellparams stack : xparams =
   Invariant.fold_top (fun holds_state symbol ->
-    if1 (Invariant.endp symbol) (var endp) @
-    if1 holds_state (var state) @
-    if1 (has_semv symbol) (var semv) @
-    if1 (Invariant.startp symbol) (var startp)
+    if1 (Invariant.endp symbol) (xvar endp) @
+    if1 holds_state (xvar state) @
+    if1 (has_semv symbol) (xvar semv) @
+    if1 (Invariant.startp symbol) (xvar startp)
   ) [] stack
 
 (* The contents of a stack cell, exposed as individual parameters, again.
@@ -758,10 +755,10 @@ let errorcellparams (i, pat) holds_state symbol _ =
 
 (* Calls to [run]. *)
 
-let runparams magic var s =
-  var env ::
-  magic (var stack) ::
-  ifn (runpushes s) (runcellparams var (Invariant.stack s))
+let runparams s : xparams =
+  xvar env ::
+  xmagic (xvar stack) ::
+  ifn (runpushes s) (runcellparams (Invariant.stack s))
 
 let call_run s actuals =
   EApp (EVar (run s), actuals)
@@ -785,12 +782,14 @@ let reduceparams prod =
 (* Calls to [reduce]. One must specify the production [prod] as well
    as the current state [s]. *)
 
+(* TEMPORARY use [let] bindings followed with [reduceparams], so as
+   to reduce duplication *)
 let call_reduce prod s =
   let actuals =
     (EVar env) ::
     (EMagic (EVar stack)) ::
     ifn (shiftreduce prod)
-      (runcellparams var (Invariant.stack s))
+      (xparams2exprs (runcellparams (Invariant.stack s)))
       (* compare with [runpushcell s] *) @
     if1 (reduce_expects_state_param prod) (estatecon s)
   in
@@ -798,35 +797,36 @@ let call_reduce prod s =
 
 (* Calls to [goto]. *)
 
-let gotoparams var nt =
-  var env ::
-  var stack ::
-  runcellparams var (Invariant.gotostack nt)
+let gotoparams nt : xparams =
+  xvar env ::
+  xvar stack ::
+  runcellparams (Invariant.gotostack nt)
 
 let call_goto nt =
-  EApp (EVar (goto nt), gotoparams var nt)
+  EApp (EVar (goto nt), xparams2exprs (gotoparams nt))
 
 (* Calls to [errorcase]. *)
 
-let errorcaseparams magic var =
-  [ var env; magic (var stack); var state ]
+let errorcaseparams : xparams =
+  [ xvar env; xmagic (xvar stack); xvar state ]
 
 let call_errorcase =
-  EApp (EVar errorcase, errorcaseparams magic var)
+  EApp (EVar errorcase, xparams2exprs errorcaseparams)
 
 (* Calls to [error]. *)
 
-let errorparams magic var =
-  [ var env; magic (var stack) ]
+let errorparams =
+  [ xvar env; xmagic (xvar stack) ]
 
-let call_error magic s =
-  EApp (EVar (error s), errorparams magic var)
+let call_error s =
+  EApp (EVar (error s), xparams2exprs errorparams)
 
-let call_error_via_errorcase magic s = (* TEMPORARY document *)
+let call_error_via_errorcase s = (* TEMPORARY document *)
   if Invariant.represented s then
     EApp (EVar errorcase, [ var env; magic (var stack); estatecon s ])
+      (* TEMPORARY use [let] binding and reduce duplication *)
   else
-    call_error magic s
+    call_error s
 
 (* Calls to [assertfalse]. *)
 
@@ -899,8 +899,8 @@ let shiftbranch s tok s' =
 
 let runpushcell s e =
   if runpushes s then
-    let contents = var stack :: runcellparams var (Invariant.stack s) in
-    mlet [ pvar stack ] [ etuple contents ] e
+    let contents = xvar stack :: runcellparams (Invariant.stack s) in
+    mlet [ pvar stack ] [ etuple (xparams2exprs contents) ] e
   else
     e
 
@@ -978,7 +978,7 @@ let gettoken s defred e =
         incr errorpeekers;
         EIfThenElse (
           ERecordAccess (EVar env, ferror),
-          tracecomment "Resuming error handling" (call_error_via_errorcase magic s),
+          tracecomment "Resuming error handling" (call_error_via_errorcase s),
           blet ([ PVar token, ERecordAccess (EVar env, ftoken) ], e)
         )
       end
@@ -994,7 +994,7 @@ let runheader s body =
   in {
     valpublic = false;
     valpat = PVar (run s);
-    valval = EAnnot (EFun (runparams nomagic pvar s, body), runtypescheme s)
+    valval = EAnnot (EFun (xparams2pats (runparams s), body), runtypescheme s)
   }
 
 (* This produces the comment attached with a default reduction. *)
@@ -1043,7 +1043,7 @@ let initiate s =
 
   blet (
     [ assertnoerror ],
-    errorbookkeeping (call_error_via_errorcase magic s)
+    errorbookkeeping (call_error_via_errorcase s)
   )
 
 (* This produces the body of the [run] function for state [s]. *)
@@ -1285,8 +1285,8 @@ let reducedef prod =
 
 let gotopushcell nt e =
   if gotopushes nt then
-    let contents = var stack :: runcellparams var (Invariant.gotostack nt) in
-    mlet [ pvar stack ] [ etuple contents ] e
+    let contents = xvar stack :: runcellparams (Invariant.gotostack nt) in
+    mlet [ pvar stack ] [ etuple (xparams2exprs contents) ] e
   else
     e
 
@@ -1301,7 +1301,7 @@ let gotobody nt =
     Lr1.targets (fun branches sources target ->
       branch
         (pstatescon sources)
-        (call_run target (runparams magic var target))
+        (call_run target (xparams2exprs (runparams target)))
       :: branches
     ) [] (Symbol.N nt)
   in
@@ -1350,7 +1350,7 @@ let gotodef nt = {
   valpat =
     PVar (goto nt);
   valval =
-    EAnnot (EFun (gotoparams pvar nt, gotopushcell nt (gotobody nt)), gototypescheme nt)
+    EAnnot (EFun (xparams2pats (gotoparams nt), gotopushcell nt (gotobody nt)), gototypescheme nt)
 }
 
 (* ------------------------------------------------------------------------ *)
@@ -1382,9 +1382,8 @@ let errorbody s =
 
       let extrapop e =
         if shiftreduce prod then
-          let pat =
-            ptuple (PVar stack :: runcellparams pvar (Invariant.stack s))
-          in
+          let contents = xvar stack :: runcellparams (Invariant.stack s) in
+          let pat = ptuple (xparams2pats contents) in
           blet ([ pat, EVar stack ], e)
         else
           e
@@ -1414,7 +1413,7 @@ let errorbody s =
             | Invariant.Represented ->
                 call_errorcase
             | Invariant.UnRepresented s ->
-                call_error magic s
+                call_error s
           )
 
 (* This is the [error] function associated with state [s]. *)
@@ -1427,7 +1426,7 @@ let errordef s = {
   valval =
     EAnnot (
       EFun (
-        errorparams nomagic pvar,
+        xparams2pats errorparams,
         errorbody s
       ),
       errortypescheme s
@@ -1457,7 +1456,7 @@ let errorcasedef =
     valval =
       EAnnot (
         EFun (
-          errorcaseparams nomagic pvar,
+          xparams2pats errorcaseparams,
           EMatch (
             EVar state,
             branches
