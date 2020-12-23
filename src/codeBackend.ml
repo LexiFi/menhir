@@ -1355,27 +1355,35 @@ let gotodef nt = {
 
 (* This is the body of the [error] function associated with state [s]. *)
 
+(* This code does not check whether the state [s] has a default reduction. It
+   is unclear whether this is intentional. See the corresponding comment in
+   MenhirLib.Engine. *)
+
 let handle s e =
   tracecomment (Printf.sprintf "Handling error in state %d" (Lr1.number s)) e
 
 let errorbody s =
-  try
-    let s' = SymbolMap.find (Symbol.T Terminal.error) (Lr1.transitions s) in
 
-    (* There is a shift transition on error. *)
+  match SymbolMap.find (Symbol.T Terminal.error) (Lr1.transitions s) with
 
-    handle s (
-      shiftbranchbody s Terminal.error s'
-    )
+  | s' ->
 
-  with Not_found ->
-    try
-      let prods = TerminalMap.lookup Terminal.error (Lr1.reductions s) in
+      (* There is a shift transition on error. *)
+
+      handle s (
+        shiftbranchbody s Terminal.error s'
+      )
+
+  | exception Not_found ->
+
+  match TerminalMap.lookup Terminal.error (Lr1.reductions s) with
+
+  | prods ->
       let prod = Misc.single prods in
 
-      (* There is a reduce transition on error. If shiftreduce
-         optimization is enabled for this production, then we must pop
-         an extra cell for [reduce]'s calling convention to be met. *)
+      (* There is a reduce transition on error. If shiftreduce optimization is
+         enabled for this production, then we must pop an extra cell for
+         [reduce]'s calling convention to be met. *)
 
       let extrapop e =
         if shiftreduce prod then
@@ -1392,7 +1400,7 @@ let errorbody s =
         )
       )
 
-    with Not_found ->
+  | exception Not_found ->
 
       (* This state is unable to handle errors. Pop the stack to find
          a state that does handle errors, a state that can further pop
