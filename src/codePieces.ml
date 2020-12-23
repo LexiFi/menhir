@@ -139,27 +139,13 @@ let symvalt symbol f =
   | _ ->
       assert false
 
-(* [symval symbol x] returns either the empty list or the singleton
-   list [[x]], depending on whether [symbol] carries a semantic
-   value. *)
-
-let symval symbol x =
-  match semvtype symbol with
-  | [] ->
-      []
-  | [ _t ] ->
-      [ x ]
-  | _ ->
-      assert false
-
-(* [tokval] is a version of [symval], specialized for terminal symbols. *)
-
-let tokval tok x =
-  symval (Symbol.T tok) x
-
 (* ------------------------------------------------------------------------ *)
 
 (* Patterns for tokens. *)
+
+(* TEMPORARY *)
+let tokval tok pat =
+  if1 (has_semv (Symbol.T tok)) pat
 
 (* [tokpat tok] is a pattern that matches the token [tok], without binding
    its semantic value. *)

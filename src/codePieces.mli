@@ -74,16 +74,6 @@ val has_semv : Symbol.t -> bool
 
 val symvalt : Symbol.t -> (typ -> 'a) -> 'a list
 
-(* [symval symbol x] returns either the empty list or the singleton
-   list [[x]], depending on whether [symbol] carries a semantic
-   value. *)
-
-val symval : Symbol.t -> 'a -> 'a list
-
-(* [tokval] is a version of [symval], specialized for terminal symbols. *)
-
-val tokval : Terminal.t -> 'a -> 'a list
-
 (* ------------------------------------------------------------------------ *)
 
 (* Patterns for tokens. *)

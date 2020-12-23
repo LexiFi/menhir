@@ -717,7 +717,7 @@ let letunless e x e1 e2 =
 let runcellparams var holds_state symbol =
   if1 (Invariant.endp symbol) (var endp) @
   if1 holds_state (var state) @
-  symval symbol (var semv) @
+  if1 (has_semv symbol) (var semv) @
   if1 (Invariant.startp symbol) (var startp)
 
 (* The contents of a stack cell, exposed as individual parameters, again.
@@ -756,7 +756,7 @@ let errorcellparams (i, pat) holds_state symbol _ =
     pat ::
     if1 (Invariant.endp symbol) PWildcard @
     if1 holds_state (if i = 0 then PVar state else PWildcard) @
-    symval symbol PWildcard @
+    if1 (has_semv symbol) PWildcard @
     if1 (Invariant.startp symbol) PWildcard
   )
 
@@ -881,7 +881,7 @@ let shiftbranchbody s tok s' =
       assert (Symbol.equal (Symbol.T tok) symbol);
       if1 (Invariant.endp symbol) getendp @
       if1 holds_state (estatecon s) @
-      tokval tok (EVar semv) @
+      if1 (has_semv (Symbol.T tok)) (EVar semv) @
       if1 (Invariant.startp symbol) getstartp
     ) [] (Invariant.stack s')
   in
