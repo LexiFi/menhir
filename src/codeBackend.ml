@@ -743,7 +743,7 @@ let reducecellparams prod i holds_state symbol =
 
   if1 (Invariant.endp symbol) (PVar (Printf.sprintf "_endpos_%s_" ids.(i))) @
   if1 holds_state (if i = 0 then PVar state else PWildcard) @
-  symvalt symbol semvpat @
+  List.map semvpat (semvtype symbol) @
   if1 (Invariant.startp symbol) (PVar (Printf.sprintf "_startpos_%s_" ids.(i)))
 
 (* The contents of a stack cell, exposed as individual parameters,

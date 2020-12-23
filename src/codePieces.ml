@@ -126,19 +126,6 @@ let has_semv symbol =
   | _ ->
       assert false
 
-(* [symvalt] returns the empty list if the symbol at hand carries no
-   semantic value and the singleton list [[f t]] if it carries a
-   semantic value of type [t]. *)
-
-let symvalt symbol f =
-  match semvtype symbol with
-  | [] ->
-      []
-  | [ t ] ->
-      [ f t ]
-  | _ ->
-      assert false
-
 (* ------------------------------------------------------------------------ *)
 
 (* Patterns for tokens. *)

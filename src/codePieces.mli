@@ -68,12 +68,6 @@ val semvtype : Symbol.t -> typ list
 
 val has_semv : Symbol.t -> bool
 
-(* [symvalt] returns the empty list if the symbol at hand carries no
-   semantic value and the singleton list [[f t]] if it carries a
-   semantic value of type [t]. *)
-
-val symvalt : Symbol.t -> (typ -> 'a) -> 'a list
-
 (* ------------------------------------------------------------------------ *)
 
 (* Patterns for tokens. *)
