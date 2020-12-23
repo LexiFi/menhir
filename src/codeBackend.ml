@@ -286,15 +286,6 @@ let tresult =
 (* ------------------------------------------------------------------------ *)
 (* Helpers for code production. *)
 
-let var x : expr =
-  EVar x
-
-let pvar x : pattern =
-  PVar x
-
-let magic e : expr =
-  EMagic e
-
 let eassert e =
   EApp (EVar "assert", [ e ])
 
@@ -821,9 +812,15 @@ let errorparams =
 let call_error s =
   EApp (EVar (error s), xparams2exprs errorparams)
 
-let call_error_via_errorcase s = (* TEMPORARY document *)
+(* We prefer to call [errorcase] rather than [error], when possible, and even
+   though [errorcase] itself calls [error], because this reduces the number of
+   call sites of the [error] functions and typically allows all of these
+   functions to be inlined into [errorcase]. This greatly reduces the number
+   of functions that we produce. *)
+
+let call_error s =
   if Invariant.represented s then
-    EApp (EVar errorcase, [ var env; magic (var stack); estatecon s ])
+    EApp (EVar errorcase, [ EVar env; EMagic (EVar stack); estatecon s ])
       (* TEMPORARY use [let] binding and reduce duplication *)
   else
     call_error s
@@ -891,7 +888,7 @@ let shiftbranchbody s tok s' =
 let shiftbranch s tok s' =
   assert (not (Terminal.pseudo tok));
   branch
-    (tokpat tok (pvar semv))
+    (tokpat tok (PVar semv))
     (shiftbranchbody s tok s')
 
 (* This generates code for pushing a new stack cell upon entering the
@@ -900,7 +897,7 @@ let shiftbranch s tok s' =
 let runpushcell s e =
   if runpushes s then
     let contents = xvar stack :: runcellparams (Invariant.stack s) in
-    mlet [ pvar stack ] [ etuple (xparams2exprs contents) ] e
+    mlet [ PVar stack ] [ etuple (xparams2exprs contents) ] e
   else
     e
 
@@ -978,7 +975,7 @@ let gettoken s defred e =
         incr errorpeekers;
         EIfThenElse (
           ERecordAccess (EVar env, ferror),
-          tracecomment "Resuming error handling" (call_error_via_errorcase s),
+          tracecomment "Resuming error handling" (call_error s),
           blet ([ PVar token, ERecordAccess (EVar env, ftoken) ], e)
         )
       end
@@ -1043,7 +1040,7 @@ let initiate s =
 
   blet (
     [ assertnoerror ],
-    errorbookkeeping (call_error_via_errorcase s)
+    errorbookkeeping (call_error s)
   )
 
 (* This produces the body of the [run] function for state [s]. *)
@@ -1286,7 +1283,7 @@ let reducedef prod =
 let gotopushcell nt e =
   if gotopushes nt then
     let contents = xvar stack :: runcellparams (Invariant.gotostack nt) in
-    mlet [ pvar stack ] [ etuple (xparams2exprs contents) ] e
+    mlet [ PVar stack ] [ etuple (xparams2exprs contents) ] e
   else
     e
 
