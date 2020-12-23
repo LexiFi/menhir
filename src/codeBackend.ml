@@ -1054,7 +1054,7 @@ let rundef s : valdef =
 
          If shiftreduce optimization is being performed, then no
          stack cell is allocated. The contents of the top stack
-         cell are passed do [reduce] as extra parameters. *)
+         cell are passed to [reduce] as extra parameters. *)
 
       runheader s (
         runpushcellunless (shiftreduce prod) s (
