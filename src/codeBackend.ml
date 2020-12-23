@@ -924,7 +924,7 @@ let runpushcellunless shiftreduce s e =
    are about to perform. *)
 
 (* 2014/12/06 New convention regarding initial states (i.e., states which have
-   no incoming symbol). We donot invoke the lexer when we construct the
+   no incoming symbol). We do not invoke the lexer when we construct the
    initial environment, so the [run] function for an initial state must do it.
    (Except in the very special case where the initial state has a default
    reduction on [#] -- this means the grammar recognizes only the empty word.
