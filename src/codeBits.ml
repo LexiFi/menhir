@@ -53,7 +53,7 @@ let listif condition xs =
   else
     []
 
-let elementif condition x =
+let if1 condition x =
   if condition then
     [ x ]
   else

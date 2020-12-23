@@ -584,10 +584,10 @@ let curryif flag t =
 let celltype tailtype holds_state symbol _ =
   TypTuple (
     tailtype ::
-    elementif (Invariant.endp symbol) tposition @
-    elementif holds_state tstate @
+    if1 (Invariant.endp symbol) tposition @
+    if1 holds_state tstate @
     semvtype symbol @
-    elementif (Invariant.startp symbol) tposition
+    if1 (Invariant.startp symbol) tposition
   )
 
 (* Types for stacks.
@@ -715,10 +715,10 @@ let letunless e x e1 e2 =
    identifiers is suitable for use in the definition of [run]. *)
 
 let runcellparams var holds_state symbol =
-  elementif (Invariant.endp symbol) (var endp) @
-  elementif holds_state (var state) @
+  if1 (Invariant.endp symbol) (var endp) @
+  if1 holds_state (var state) @
   symval symbol (var semv) @
-  elementif (Invariant.startp symbol) (var startp)
+  if1 (Invariant.startp symbol) (var startp)
 
 (* The contents of a stack cell, exposed as individual parameters, again.
    The choice of identifiers is suitable for use in the definition of a
@@ -741,10 +741,10 @@ let reducecellparams prod i holds_state symbol =
     PAnnot (PVar ids.(i), t)
   in
 
-  elementif (Invariant.endp symbol) (PVar (Printf.sprintf "_endpos_%s_" ids.(i))) @
-  elementif holds_state (if i = 0 then PVar state else PWildcard) @
+  if1 (Invariant.endp symbol) (PVar (Printf.sprintf "_endpos_%s_" ids.(i))) @
+  if1 holds_state (if i = 0 then PVar state else PWildcard) @
   symvalt symbol semvpat @
-  elementif (Invariant.startp symbol) (PVar (Printf.sprintf "_startpos_%s_" ids.(i)))
+  if1 (Invariant.startp symbol) (PVar (Printf.sprintf "_startpos_%s_" ids.(i)))
 
 (* The contents of a stack cell, exposed as individual parameters,
    again. The choice of identifiers is suitable for use in the
@@ -754,10 +754,10 @@ let errorcellparams (i, pat) holds_state symbol _ =
   i + 1,
   ptuple (
     pat ::
-    elementif (Invariant.endp symbol) PWildcard @
-    elementif holds_state (if i = 0 then PVar state else PWildcard) @
+    if1 (Invariant.endp symbol) PWildcard @
+    if1 holds_state (if i = 0 then PVar state else PWildcard) @
     symval symbol PWildcard @
-    elementif (Invariant.startp symbol) PWildcard
+    if1 (Invariant.startp symbol) PWildcard
   )
 
 (* Calls to [run]. *)
@@ -784,7 +784,7 @@ let reduceparams prod =
       (reducecellparams prod (Production.length prod - 1))
     [] (Invariant.prodstack prod)
   ) @
-  elementif (reduce_expects_state_param prod) (PVar state)
+  if1 (reduce_expects_state_param prod) (PVar state)
 
 (* Calls to [reduce]. One must specify the production [prod] as well
    as the current state [s]. *)
@@ -796,7 +796,7 @@ let call_reduce prod s =
     listif (shiftreduce prod)
       (Invariant.fold_top (runcellparams var) [] (Invariant.stack s))
       (* compare with [runpushcell s] *) @
-    elementif (reduce_expects_state_param prod) (estatecon s)
+    if1 (reduce_expects_state_param prod) (estatecon s)
   in
   EApp (EVar (reduce prod), actuals)
 
@@ -879,10 +879,10 @@ let shiftbranchbody s tok s' =
     (EMagic (EVar stack)) ::
     Invariant.fold_top (fun holds_state symbol ->
       assert (Symbol.equal (Symbol.T tok) symbol);
-      elementif (Invariant.endp symbol) getendp @
-      elementif holds_state (estatecon s) @
+      if1 (Invariant.endp symbol) getendp @
+      if1 holds_state (estatecon s) @
       tokval tok (EVar semv) @
-      elementif (Invariant.startp symbol) getstartp
+      if1 (Invariant.startp symbol) getstartp
     ) [] (Invariant.stack s')
   in
 
@@ -1204,17 +1204,17 @@ let reducebody prod =
 
   let posbindings action =
     let bind_startp = Invariant.startp symbol in
-    elementif (Action.has_beforeend action)
+    if1 (Action.has_beforeend action)
       ( extract beforeendp
       ) @
-    elementif bind_startp
+    if1 bind_startp
       ( if length > 0 then
           PVar startp,
           EVar (Printf.sprintf "_startpos_%s_" ids.(0))
         else
           extract startp
       ) @
-    elementif (Invariant.endp symbol)
+    if1 (Invariant.endp symbol)
       ( if length > 0 then
           PVar endp,
           EVar (Printf.sprintf "_endpos_%s_" ids.(length - 1))

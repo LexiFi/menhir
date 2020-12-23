@@ -30,7 +30,7 @@ val ptuple: pattern list -> pattern
    of course constructed even if the condition is false.) *)
 
 val listif: bool -> 'a list -> 'a list
-val elementif: bool -> 'a -> 'a list
+val if1: bool -> 'a -> 'a list
 
 (* A lazy version of [listif], where the list is constructed only
    if the condition is true. *)
