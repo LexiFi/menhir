@@ -711,14 +711,16 @@ let letunless e x e1 e2 =
    so we are able to access it at a fixed offset, provided we know that it
    exists. This is exploited when reducing an epsilon production. *)
 
-(* The contents of a stack cell, exposed as individual parameters. The choice of
-   identifiers is suitable for use in the definition of [run]. *)
+(* The contents of the top stack cell, exposed as individual parameters. The
+   choice of identifiers is suitable for use in the definition of [run]. *)
 
-let runcellparams var holds_state symbol =
-  if1 (Invariant.endp symbol) (var endp) @
-  if1 holds_state (var state) @
-  if1 (has_semv symbol) (var semv) @
-  if1 (Invariant.startp symbol) (var startp)
+let runcellparams var stack =
+  Invariant.fold_top (fun holds_state symbol ->
+    if1 (Invariant.endp symbol) (var endp) @
+    if1 holds_state (var state) @
+    if1 (has_semv symbol) (var semv) @
+    if1 (Invariant.startp symbol) (var startp)
+  ) [] stack
 
 (* The contents of a stack cell, exposed as individual parameters, again.
    The choice of identifiers is suitable for use in the definition of a
@@ -759,7 +761,7 @@ let errorcellparams (i, pat) holds_state symbol _ =
 let runparams magic var s =
   var env ::
   magic (var stack) ::
-  ifn (runpushes s) (Invariant.fold_top (runcellparams var) [] (Invariant.stack s))
+  ifn (runpushes s) (runcellparams var (Invariant.stack s))
 
 let call_run s actuals =
   EApp (EVar (run s), actuals)
@@ -788,7 +790,7 @@ let call_reduce prod s =
     (EVar env) ::
     (EMagic (EVar stack)) ::
     ifn (shiftreduce prod)
-      (Invariant.fold_top (runcellparams var) [] (Invariant.stack s))
+      (runcellparams var (Invariant.stack s))
       (* compare with [runpushcell s] *) @
     if1 (reduce_expects_state_param prod) (estatecon s)
   in
@@ -799,7 +801,7 @@ let call_reduce prod s =
 let gotoparams var nt =
   var env ::
   var stack ::
-  Invariant.fold_top (runcellparams var) [] (Invariant.gotostack nt)
+  runcellparams var (Invariant.gotostack nt)
 
 let call_goto nt =
   EApp (EVar (goto nt), gotoparams var nt)
@@ -897,7 +899,7 @@ let shiftbranch s tok s' =
 
 let runpushcell s e =
   if runpushes s then
-    let contents = var stack :: Invariant.fold_top (runcellparams var) [] (Invariant.stack s) in
+    let contents = var stack :: runcellparams var (Invariant.stack s) in
     mlet [ pvar stack ] [ etuple contents ] e
   else
     e
@@ -1283,7 +1285,7 @@ let reducedef prod =
 
 let gotopushcell nt e =
   if gotopushes nt then
-    let contents = var stack :: Invariant.fold_top (runcellparams var) [] (Invariant.gotostack nt) in
+    let contents = var stack :: runcellparams var (Invariant.gotostack nt) in
     mlet [ pvar stack ] [ etuple contents ] e
   else
     e
@@ -1381,7 +1383,7 @@ let errorbody s =
       let extrapop e =
         if shiftreduce prod then
           let pat =
-            ptuple (PVar stack :: Invariant.fold_top (runcellparams pvar) [] (Invariant.stack s))
+            ptuple (PVar stack :: runcellparams pvar (Invariant.stack s))
           in
           blet ([ pat, EVar stack ], e)
         else
