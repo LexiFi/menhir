@@ -417,17 +417,15 @@ let fold_top f accu w =
       f (representeds states) symbol
 
 (* ------------------------------------------------------------------------ *)
-(* Explain how the stack should be deconstructed when an error is
-   found.
+(* Explain how the stack should be deconstructed when an error is found.
 
-   We sometimes have a choice as too how many stack cells should be
-   popped. Indeed, several cells in the known suffix of the stack may
-   physically hold a state. If neither of these states handles errors,
-   then we could jump to either. (Indeed, if we jump to one that's
-   nearer, it will in turn pop further stack cells and jump to one
-   that's farther.) In the interests of code size, we should pop as
-   few stack cells as possible. So, we jump to the topmost represented
-   state in the known suffix. *)
+   We sometimes have a choice as to how many stack cells should be popped.
+   Indeed, several cells in the known suffix of the stack may physically hold
+   a state. If neither of these states handles errors, then we could jump to
+   either. (Indeed, if we jump to one that's nearer, it will in turn pop
+   further stack cells and jump to one that's farther.) In the interest of
+   code size, we should pop as few stack cells as possible. So, we jump to the
+   topmost represented state in the known suffix. *)
 
 type state =
   | Represented
