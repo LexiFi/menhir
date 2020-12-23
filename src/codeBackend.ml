@@ -730,20 +730,14 @@ let runcellparams var holds_state symbol =
 
 let reducecellparams prod i holds_state symbol =
   let ids = Production.identifiers prod in
-
-  (* The semantic value is bound to the variable [ids.(i)]. Its type is [t]. As
-     of 2016/03/11, we generate a type annotation. Indeed, because of our use of
-     [magic], the semantic value would otherwise have an unknown type; and, if
-     it is a function, the OCaml compiler could warn (incorrectly) that this
-     function does not use its argument. *)
-
-  let semvpat t =
-    PAnnot (PVar ids.(i), t)
-  in
-
   if1 (Invariant.endp symbol) (PVar (Printf.sprintf "_endpos_%s_" ids.(i))) @
   if1 holds_state (if i = 0 then PVar state else PWildcard) @
-  List.map semvpat (semvtype symbol) @
+  List.map (fun t -> PAnnot (PVar ids.(i), t)) (semvtype symbol) @
+    (* The semantic value is bound to the variable [ids.(i)]. Its type is [t]. As
+       of 2016/03/11, we generate a type annotation. Indeed, because of our use of
+       [magic], the semantic value would otherwise have an unknown type; and, if
+       it is a function, the OCaml compiler could warn (incorrectly) that this
+       function does not use its argument. *)
   if1 (Invariant.startp symbol) (PVar (Printf.sprintf "_startpos_%s_" ids.(i)))
 
 (* The contents of a stack cell, exposed as individual parameters,
