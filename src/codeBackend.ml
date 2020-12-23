@@ -895,7 +895,7 @@ let shiftbranchbody s tok s' =
 let shiftbranch s tok s' =
   assert (not (Terminal.pseudo tok));
   branch
-    (tokpatv tok)
+    (tokpat tok (pvar semv))
     (shiftbranchbody s tok s')
 
 (* This generates code for pushing a new stack cell upon entering the

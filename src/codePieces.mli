@@ -78,15 +78,10 @@ val symvalt : Symbol.t -> (typ -> 'a) -> 'a list
 
 (* Patterns for tokens. *)
 
-(* [tokpat tok] is a pattern that matches the token [tok], without binding
-   its semantic value. *)
+(* [tokpat tok pat] is a pattern that matches the token [tok] and binds
+   its semantic value (if it has one) to the pattern [pat]. *)
 
-val tokpat:  Terminal.t -> pattern
-
-(* [tokpatv tok] is a pattern that matches the token [tok], and binds
-   its semantic value, if it has one, to the variable [semv]. *)
-
-val tokpatv: Terminal.t -> pattern
+val tokpat:  Terminal.t -> pattern -> pattern
 
 (* [tokspat toks] is a pattern that matches any token in the set [toks],
    without binding its semantic value. *)

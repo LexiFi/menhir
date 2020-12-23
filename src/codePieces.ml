@@ -143,21 +143,12 @@ let symvalt symbol f =
 
 (* Patterns for tokens. *)
 
-(* TEMPORARY *)
-let tokval tok pat =
-  if1 (has_semv (Symbol.T tok)) pat
+(* [tokpat tok pat] is a pattern that matches the token [tok] and binds
+   its semantic value (if it has one) to the pattern [pat]. *)
 
-(* [tokpat tok] is a pattern that matches the token [tok], without binding
-   its semantic value. *)
-
-let tokpat tok =
-  PData (TokenType.tokendata (Terminal.print tok), tokval tok PWildcard)
-
-(* [tokpatv tok] is a pattern that matches the token [tok], and binds
-   its semantic value, if it has one, to the variable [semv]. *)
-
-let tokpatv tok =
-  PData (TokenType.tokendata (Terminal.print tok), tokval tok (PVar semv))
+let tokpat tok pat =
+  let data = TokenType.tokendata (Terminal.print tok) in
+  PData (data, if1 (has_semv (Symbol.T tok)) pat)
 
 (* [tokspat toks] is a pattern that matches any token in the set [toks],
    without binding its semantic value. *)
@@ -165,7 +156,7 @@ let tokpatv tok =
 let tokspat toks =
   POr (
     TerminalSet.fold (fun tok pats ->
-      tokpat tok :: pats
+      tokpat tok PWildcard :: pats
     ) toks []
   )
 
@@ -187,7 +178,7 @@ let destructuretokendef name codomain bindsemv branch = {
             if Terminal.pseudo tok then
               branches
             else
-              { branchpat = (if bindsemv then tokpatv else tokpat) tok;
+              { branchpat = tokpat tok (if bindsemv then PVar semv else PWildcard);
                 branchbody = branch tok } :: branches
           ) []
         )
