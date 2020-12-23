@@ -407,8 +407,7 @@ module Make (T : TABLE) = struct
 
     (* In the legacy strategy, we call [reduce] instead of [announce_reduce],
        apparently in an attempt to hide the reduction steps performed during
-       error handling. This seems inconsistent, as the default reduction steps
-       are still announced. In the simplified strategy, all reductions are
+       error handling. In the simplified strategy, all reductions steps are
        announced. *)
 
     match strategy with
