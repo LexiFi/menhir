@@ -64,6 +64,10 @@ val semvtypetok : Terminal.t -> typ list
 
 val semvtype : Symbol.t -> typ list
 
+(* [has_semv symbol] indicates whether [symbol] carries a semantic value. *)
+
+val has_semv : Symbol.t -> bool
+
 (* [symvalt] returns the empty list if the symbol at hand carries no
    semantic value and the singleton list [[f t]] if it carries a
    semantic value of type [t]. *)

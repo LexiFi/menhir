@@ -115,6 +115,17 @@ let semvtype = function
   | Symbol.N nt ->
       [ semvtypent nt ]
 
+(* [has_semv symbol] indicates whether [symbol] carries a semantic value. *)
+
+let has_semv symbol =
+  match semvtype symbol with
+  | [] ->
+      false
+  | [ _t ] ->
+      true
+  | _ ->
+      assert false
+
 (* [symvalt] returns the empty list if the symbol at hand carries no
    semantic value and the singleton list [[f t]] if it carries a
    semantic value of type [t]. *)
