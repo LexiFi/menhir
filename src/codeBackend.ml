@@ -865,6 +865,8 @@ let reducebranch toks prod s =
 
 let shiftbranchbody s tok s' =
 
+  (* TEMPORARY avoid redundancy with [runparams]; use [let] bindings *)
+
   (* Construct the actual parameters for [run s']. *)
 
   let actuals =
