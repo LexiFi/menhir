@@ -765,7 +765,7 @@ let errorcellparams (i, pat) holds_state symbol _ =
 let runparams magic var s =
   var env ::
   magic (var stack) ::
-  listif (runpushes s) (Invariant.fold_top (runcellparams var) [] (Invariant.stack s))
+  ifn (runpushes s) (Invariant.fold_top (runcellparams var) [] (Invariant.stack s))
 
 let call_run s actuals =
   EApp (EVar (run s), actuals)
@@ -779,7 +779,7 @@ let call_run s actuals =
 let reduceparams prod =
   PVar env ::
   PVar stack ::
-  listif (shiftreduce prod) (
+  ifn (shiftreduce prod) (
     Invariant.fold_top
       (reducecellparams prod (Production.length prod - 1))
     [] (Invariant.prodstack prod)
@@ -793,7 +793,7 @@ let call_reduce prod s =
   let actuals =
     (EVar env) ::
     (EMagic (EVar stack)) ::
-    listif (shiftreduce prod)
+    ifn (shiftreduce prod)
       (Invariant.fold_top (runcellparams var) [] (Invariant.stack s))
       (* compare with [runpushcell s] *) @
     if1 (reduce_expects_state_param prod) (estatecon s)

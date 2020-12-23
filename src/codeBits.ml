@@ -47,7 +47,7 @@ let ptuple = function
 
 (* A list subject to a condition. *)
 
-let listif condition xs =
+let ifn condition xs =
   if condition then
     xs
   else
@@ -59,7 +59,7 @@ let if1 condition x =
   else
     []
 
-let listiflazy condition xs =
+let ifnlazy condition xs =
   if condition then
     xs()
   else
