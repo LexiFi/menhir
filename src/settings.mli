@@ -286,3 +286,18 @@ val require_aliases : bool
    an explanation of the available strategies. *)
 
 val strategy: [`Legacy | `Simplified]
+
+(* The undocumented flag [--stacklang-dump] causes the StackLang program to be
+   printed. *)
+
+val stacklang_dump: bool
+
+(* The undocumented flag [--stacklang-graph] causes the StackLang program to be
+   dumped in the form of a control flow graph in the file [<basename>.dot]. *)
+
+val stacklang_graph: bool
+
+(* The undocumented flag [--stacklang-test] causes the StackLang program to be
+   tested (by comparison with the reference interpreter). *)
+
+val stacklang_test: bool
