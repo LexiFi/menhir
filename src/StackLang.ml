@@ -122,7 +122,7 @@ type cell_info = { typ: Stretch.ocamltype option
 type typed_block = { block: block
                    ; stack_type: cell_info array
                    ; final_type: IL.typ option
-                   ; needed_registers: string list 
+                   ; needed_registers: string list
                    ; has_case_tag: bool }
 
 and block =
@@ -198,7 +198,6 @@ type program = {cfg: cfg; entry: label Lr1.NodeMap.t; states: cell_info array Lr
 (* A few constructors. *)
 
 let vreg r = VReg r
-
 let vregs rs = List.map vreg rs
 
 (* A few accessors. *)
