@@ -73,6 +73,28 @@ let () =
 (* Construct and print the code using an appropriate back-end. *)
 
 let () =
+  if Settings.stacklang_dump
+  || Settings.stacklang_graph
+  || Settings.stacklang_test then
+  begin
+    let module SL = EmitStackLang.Run() in
+    let program = SL.program in
+    StackLangTraverse.wf program;
+    let program = StackLangTraverse.inline program in
+    StackLangTraverse.wf program;
+    if Settings.stacklang_dump then begin
+      StackLangPrinter.print stdout program;
+      StackLangTraverse.(print (measure program));
+    end;
+    if Settings.stacklang_graph then begin
+      StackLangGraph.print program;
+    end;
+    if Settings.stacklang_test then begin
+      StackLangTester.test program;
+    end;
+  end
+
+let () =
   if Settings.table then begin
     let module B = TableBackend.Run (struct end) in
     write B.program;
