@@ -28,7 +28,7 @@ let tokentypeonly () =
   token_type_mode := TokenTypeOnly
 
 let set_option ref value =
-  ref := Some value 
+  ref := Some value
 let is_uppercase_ascii c =
   c >= 'A' && c <= 'Z'
 
@@ -330,14 +330,14 @@ let stacklang_graph =
 let stacklang_test =
   ref false
 
-let provide_example = 
+let provide_example =
   ref ""
 
 let example_size =
   ref 1000
 
 let example_log =
-  ref false 
+  ref false
 
 let old_code_backend =
   ref false
@@ -724,7 +724,7 @@ let provide_example =
     None
   else Some s
 
-let provide_example_seed = 
+let provide_example_seed =
   !provide_example_seed
 
 let example_log =

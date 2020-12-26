@@ -20,27 +20,27 @@ let () =
   | None -> ()
   | Some name ->
       match Settings.provide_example_seed with
-      | None -> Random.self_init () 
+      | None -> Random.self_init ()
       | Some s -> Random.init s ;
       let budget = Settings.example_size in
-      let nt = 
+      let nt =
         let (_, node) = Grammar.ProductionMap.choose Lr1.entry in
         Lr1.nt_of_entry node
       in
-      let s = SentenceGenerator.sentence 
-                ~log:Settings.example_log 
+      let s = SentenceGenerator.sentence
+                ~log:Settings.example_log
                 nt
-                budget 
+                budget
       in
       let file = open_out name in
-      Array.iter ( fun terminal -> 
-        Printf.fprintf 
-          file 
-          "%s\n" 
+      Array.iter ( fun terminal ->
+        Printf.fprintf
+          file
+          "%s\n"
           (Grammar.Terminal.print terminal) ) s ;
       close_out file;
       exit 0
-      
+
 let () =
   if Settings.dump_resolved then
     let module D = Dump.Make (Default) in
@@ -85,7 +85,7 @@ let write program =
          menhir is invoked -- e.g. [menhir foo/bar.mly] and [cd foo && menhir
          bar.mly] will produce different files. Nevertheless, this seems
          useful/reasonable. *)
-      Some filename 
+      Some filename
   end) in
   P.program program
 
@@ -119,9 +119,9 @@ let () =
     if Settings.stacklang_dump then (
       StackLangPrinter.print stdout program ;
       StackLangTraverse.(print (measure program)) ) ;
-    if Settings.stacklang_graph then 
+    if Settings.stacklang_graph then
       StackLangGraph.print program ;
-    if Settings.stacklang_test then 
+    if Settings.stacklang_test then
       StackLangTester.test program ;
     let program = ILofStackLang.compile program in
     write program ;
