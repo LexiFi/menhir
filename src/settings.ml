@@ -319,6 +319,15 @@ let set_strategy = function
       eprintf "Error: --strategy should be followed with legacy | simplified.\n";
       exit 1
 
+let stacklang_dump =
+  ref false
+
+let stacklang_graph =
+  ref false
+
+let stacklang_test =
+  ref false
+
 (* When new command line options are added, please update both the manual
    in [doc/manual.tex] and the man page in [doc/menhir.1]. *)
 
@@ -382,6 +391,9 @@ let options = Arg.align [
   "--raw-depend", Arg.Unit enable_raw_depend, " Invoke ocamldep and echo its raw output";
   "--reference-graph", Arg.Set reference_graph, " (undocumented)";
   "--require-aliases", Arg.Set require_aliases, " Check that every token has a token alias";
+  "--stacklang-dump", Arg.Set stacklang_dump, " (undocumented)";
+  "--stacklang-graph", Arg.Set stacklang_graph, " (undocumented)";
+  "--stacklang-test", Arg.Set stacklang_test, " (undocumented)";
   "--stdlib", Arg.String ignore, "<directory> Ignored (deprecated)";
   "--strategy", Arg.String set_strategy, "<strategy> Choose an error-handling strategy";
   "--strict", Arg.Set strict, " Warnings about the grammar are errors";
@@ -678,3 +690,12 @@ let infer =
       IMNone
   | _ ->
       infer
+
+let stacklang_dump =
+  !stacklang_dump
+
+let stacklang_graph =
+  !stacklang_graph
+
+let stacklang_test =
+  !stacklang_test
