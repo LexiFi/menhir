@@ -206,7 +206,7 @@ module L = struct
     Production.iter (fun prod -> yield (Reduce prod)) ;
     Nonterminal.iterx (fun nt -> yield (Goto nt)) ;
     ()
-  
+
   (* -------------------------------------------------------------------------- *)
 
   (* Code for the [run] subroutine associated with the state [s]. *)
@@ -249,7 +249,7 @@ module L = struct
                                      if1 (must_push && holds_state) state
                                      @ if1 (Invariant.startp symbol && (not (is_start || must_read_positions)) && must_push) startp
                                      @ if1 (Invariant.endp symbol && not (is_start || must_read_positions)) endp )
-                                 [] 
+                                 []
                                  (Invariant.stack s) ) in
     set_needed needed_registers ;
     need_list needed_registers ;
@@ -361,17 +361,17 @@ module L = struct
        state. *)
     for i = n - 1 downto 0 do
       let cell_info = stack_type.(i) in
-      let pop_list = 
-        ( ( if1 
-              cell_info.hold_state 
+      let pop_list =
+        ( ( if1
+              cell_info.hold_state
               (if (i = 0) then PReg state else PWildcard) )
         @ if1 (cell_info.hold_semv) (PReg ids.(i))
         @ if1 (cell_info.hold_startpos) (PReg (startpos ids i))
-        @ if1 (cell_info.hold_endpos) (PReg (endpos ids i) ) ) 
+        @ if1 (cell_info.hold_endpos) (PReg (endpos ids i) ) )
       in
       if pop_list <> [] then
         pop ( PTuple pop_list ) ;
-      (* If there is no semantic value in the stack, then it is of type unit 
+      (* If there is no semantic value in the stack, then it is of type unit
          and we need to define it ourselves *)
       if not cell_info.hold_semv then
         def (PReg ids.(i)) VUnit
@@ -394,16 +394,16 @@ module L = struct
       if Action.has_beforeend action then move beforeendp endp ;
       let need_startpos = n = 0 || stack_type.(0).hold_startpos in
       let need_endpos = n = 0 || stack_type.(n - 1).hold_endpos in
-      if need_startpos then 
+      if need_startpos then
         move startp (if n = 0 then endp else startpos ids 0) ;
-      if need_endpos then 
+      if need_endpos then
         move endp (if n = 0 then endp else endpos ids (n - 1)) ;
       (* We now need the registers [lexer], [lexbuf], [token], [state],
          [startp], [endp], plus whatever registers are needed by the
          semantic action. *)
       (*need
         (List.fold_right RegisterSet.add
-           ( [lexer; lexbuf; token; state] 
+           ( [lexer; lexbuf; token; state]
              @ if1 need_startpos startp
              @ if1 need_endpos endp )
            (Action.vars action)) ; TODO restore *)
@@ -419,13 +419,13 @@ module L = struct
   let goto nt =
     (* The [run] subroutines that we call are reached via goto transitions,
        therefore do not query the lexer. This means that [token] is needed. *)
-    
-    let needed_registers = 
+
+    let needed_registers =
       [lexer ; lexbuf; token]
-      @ Invariant.fold_top 
+      @ Invariant.fold_top
           (fun holds_state symbol ->
              if1 holds_state state
-             @ if1 (CodePieces.has_semv symbol) semv 
+             @ if1 (CodePieces.has_semv symbol) semv
              @ if1 (Invariant.startp symbol) startp
              @ if1 (Invariant.endp symbol) endp)
           []
@@ -459,12 +459,12 @@ module L = struct
           @ if1 (Invariant.startp symbol) (startp)
           @ if1 (Invariant.endp symbol) (endp) )
       [state; semv; startp; endp] (Invariant.stack s)
-  
-  let stack_type_of_word word = 
+
+  let stack_type_of_word word =
     Array.of_list @@ List.rev
-    ( Invariant.fold 
+    ( Invariant.fold
         ( fun acc hold_state symbol _state_set ->
-           let typ = 
+           let typ =
              match symbol with
              | Symbol.T t -> Terminal.ocamltype t
              | Symbol.N nt -> Nonterminal.ocamltype nt
@@ -482,41 +482,41 @@ module L = struct
     (*Printf.printf "Stack type of goto %s\n" (Nonterminal.print false goto) ;
     stack_type_of_word (Invariant.gotostack goto)*)
     [||]
-  
+
   let stack_type_reduce production =
     let symbols = Grammar.Production.rhs production in
     let r = stack_type_of_word (Invariant.prodstack production) in
     assert ((Array.length r) = (Array.length symbols)) ;
     r
-  
+
   let stack_type_state state =
     stack_type_of_word @@ Invariant.stack state
-  
+
   let stack_type_run state =
     let st = stack_type_of_word (Invariant.stack state) in
     (*let st = Array.init (Array.length st) (fun i -> st.((Array.length st) - i - 1)) in*)
     let n_pushes = if runpushes state then 1 else 0 in
     let len = Array.length st in
     if len = 0 then [||] else Array.sub st 0 (len - n_pushes)
-  
+
     (*let symbols = SSymbols.stack_symbols state in
     let n_pushes = if runpushes state then 1 else 0 in
     let len = Array.length symbols in
     if len = 0 then [||] else Array.sub symbols 0 (len - n_pushes)*)
-    
+
   let has_semantic_value s =
     Invariant.fold_top
       (fun _ symbol ->
         CodePieces.has_semv symbol )
       false (Invariant.stack s)
-  
+
   let states =
     let states = ref Lr1.NodeMap.empty in
     Lr1.iter (fun s -> states := Lr1.NodeMap.add s (stack_type_state s) !states) ;
     !states
-  
-    
-  
+
+
+
   (* Code for all subroutines. *)
   let code label =
     match label with
@@ -560,11 +560,15 @@ end
 (* Build a StackLang program. *)
 
 module Run () = struct
+
   (* The program. *)
-  include Build (L)
+  include Build(L)
 
   (* A mapping of the start states to the program's entry labels. *)
-  let entry s = L.(print (Run s))
+  let entry s =
+    L.(print (Run s))
 
-  let () = Time.tick "Producing StackLang code"
+  let () =
+    Time.tick "Producing StackLang code"
+
 end
