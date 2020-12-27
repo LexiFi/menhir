@@ -14,8 +14,8 @@
 open Printf
 open Grammar
 let prefix = CodeBits.prefix
-let if1 = CodeBits.if1
-let ifn = CodeBits.ifn
+let if1 = MList.if1
+let ifn = MList.ifn
 let number = Lr1.number
 let numbers = List.map number
 open StackLang
@@ -509,8 +509,7 @@ let goto nt =
 
 (* Code for all subroutines. *)
 
-let code label =
-  match label with
+let code = function
   | Run s ->
       run s
   | Reduce prod ->
