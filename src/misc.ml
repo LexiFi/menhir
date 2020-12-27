@@ -423,3 +423,24 @@ let array_fold_left2 f accu a1 a2 =
 
 let rec list_make n x =
   if n = 0 then [] else x :: list_make (n - 1) x
+
+(* [digits n] computes how many decimal digits are involved in the
+   decimal representation of the integer [n]. *)
+
+let digits n =
+  let rec loop accu n =
+    if n < 10 then
+      accu + 1
+    else
+      loop (accu + 1) (n / 10)
+  in
+  loop 0 n
+
+(* [pad n s] pads the string [s] with zeroes in front so that its length
+   is [n]. *)
+
+let pad n s =
+  String.make (n - String.length s) '0' ^ s
+
+let padded_index n i =
+  pad (digits n) (Printf.sprintf "%d" i)
