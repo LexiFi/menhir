@@ -121,7 +121,7 @@ let syntaxerror pos : monster =
 
 (* We check that every [$i] is within range. Also, we forbid using [$i]
    when a producer has been given a name; this is bad style and may be
-   a mistake. (Plus, this simplies our life, as we rewrite [$i] to [_i],
+   a mistake. (Plus, this simplifies our life, as we rewrite [$i] to [_i],
    and we would have to rewrite it to a different identifier otherwise.) *)
 
 let check_dollar pos i : check = fun dollars producers ->
