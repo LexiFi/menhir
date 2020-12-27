@@ -100,6 +100,10 @@ val start2item: node -> Item.t
 
 val incoming_symbol: node -> Symbol.t option
 
+(* [is_start s] determines whether [s] is an initial state. *)
+
+val is_start: node -> bool
+
 (* This maps a node to its predecessors. *)
 
 val predecessors: node -> node list

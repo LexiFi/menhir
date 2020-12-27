@@ -517,6 +517,13 @@ let has_eos_conflict node =
 let incoming_symbol node =
   Lr0.incoming_symbol (Lr0.core (state node))
 
+let is_start node =
+  match incoming_symbol node with
+  | None ->
+      true
+  | Some _ ->
+      false
+
 (* -------------------------------------------------------------------------- *)
 
 (* Iteration over all nodes. *)
