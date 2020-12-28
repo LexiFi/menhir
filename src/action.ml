@@ -34,7 +34,7 @@ type t = {
 
 (* Constructors. *)
 
-let from_stretch s =
+let from_stretch _xs s =
   {
     expr      = IL.ETextual s;
     standard  = s.Stretch.stretch_filename = Settings.stdlib_filename;

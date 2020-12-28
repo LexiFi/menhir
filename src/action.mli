@@ -14,16 +14,20 @@
 open Keyword (* from sdk/ *)
 
 (* A semantic action is a piece of OCaml code together with information about
-   the Menhir keywords that appear in this code. The code can be represented
-   internally as a piece of text or (more generally) as an IL expression. *)
+   the free variables that appear in this code (which refer to semantic
+   values) and information about the keywords that appear in this code. The
+   code can be represented internally as a piece of text or (more generally)
+   as an IL expression. *)
 type t
 
 (* -------------------------------------------------------------------------- *)
 
 (* Constructors. *)
 
-(* [from_stretch s] builds an action out of a textual piece of code. *)
-val from_stretch: Stretch.t -> t
+(* [from_stretch xs s] builds an action out of a textual piece of code.
+   The set [xs] must contain all of the variables that occur free
+   in the semantic action and denote a semantic value. *)
+val from_stretch: StringSet.t -> Stretch.t -> t
 
 (* [from_il_expr] builds an action out of an IL expression. *)
 val from_il_expr: IL.expr -> t

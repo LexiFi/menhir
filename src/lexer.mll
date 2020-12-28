@@ -88,6 +88,9 @@ type monster = {
   (* This is the keyword, in abstract syntax. *)
   keyword: keyword option;
 
+  (* If this is a [$i] monster, then the identifier [_i] is stored here. *)
+  oid: string option;
+
 }
 
 and check =
@@ -114,8 +117,10 @@ let syntaxerror pos : monster =
     Bytes.blit_string source 0 content ofs (String.length source)
   and keyword =
     Some SyntaxError
+  and oid =
+    None
   in
-  { pos; check; transform; keyword }
+  { pos; check; transform; keyword; oid }
 
 (* ------------------------------------------------------------------------ *)
 
@@ -159,8 +164,10 @@ let dollar pos i : monster =
     overwrite content ofs '$' '_'
   and keyword =
     None
+  and oid =
+    Some (Printf.sprintf "_%d" i)
   in
-  { pos; check; transform; keyword }
+  { pos; check; transform; keyword; oid }
 
 (* ------------------------------------------------------------------------ *)
 
@@ -233,8 +240,10 @@ let position pos
   in
   let keyword =
     Some (Position (subject, where, flavor))
+  and oid =
+    None
   in
-  { pos; check; transform; keyword }
+  { pos; check; transform; keyword; oid }
 
 (* ------------------------------------------------------------------------ *)
 
@@ -248,6 +257,27 @@ let no_monsters monsters =
   | monster :: _ ->
       Error.error [monster.pos]
         "a Menhir keyword cannot be used in an OCaml header."
+
+(* ------------------------------------------------------------------------ *)
+
+(* Gathering all of the identifiers in an array of optional identifiers. *)
+
+let gather_oid xs oid =
+  match oid with
+  | Some x ->
+      StringSet.add x xs
+  | None ->
+      xs
+
+let gather_oids oids =
+  Array.fold_left gather_oid StringSet.empty oids
+
+(* Gathering all of the [oid] identifiers in a list of monsters. *)
+
+let gather_monsters monsters =
+  List.fold_left (fun xs monster ->
+    gather_oid xs monster.oid
+  ) StringSet.empty monsters
 
 (* ------------------------------------------------------------------------ *)
 
@@ -545,9 +575,20 @@ rule main = parse
         let closingpos, monsters = action false openingpos [] lexbuf in
         ACTION (
           fun dollars producers ->
+            (* Check that the monsters are well-formed. *)
             List.iter (fun monster -> monster.check dollars producers) monsters;
+            (* Gather all of the identifiers that the semantic action may use
+               to refer to a semantic value. This includes the identifiers
+               that are explicitly bound by the user (these appear in the
+               array [producers]) and the identifiers [_i] when the semantic
+               action uses [$i]. *)
+            let ids =
+              StringSet.union (gather_oids producers) (gather_monsters monsters)
+            in
+            (* Extract a stretch of text. *)
             let stretch = mk_stretch stretchpos closingpos true monsters in
-            Action.from_stretch stretch
+            (* Build a semantic action. *)
+            Action.from_stretch ids stretch
         )
       )
     }
