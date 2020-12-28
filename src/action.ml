@@ -23,9 +23,9 @@ type t = {
      combined into one; in that case, we take a conjunction. *)
   standard: bool;
 
-  (* The set of keywords that appear in this semantic action. They can be thought
-     of as free variables that refer to positions. They must be renamed during
-     inlining. *)
+  (* The set of keywords that appear in this semantic action. They can be
+     thought of as free variables that refer to positions. They must be
+     renamed during inlining. *)
   keywords  : KeywordSet.t;
 
 }
@@ -99,7 +99,8 @@ let define keyword keywords f action =
   assert (KeywordSet.mem keyword action.keywords);
   { action with
     expr     = f action.expr;
-    keywords = KeywordSet.union keywords (KeywordSet.remove keyword action.keywords)
+    keywords = KeywordSet.union
+                 keywords (KeywordSet.remove keyword action.keywords)
   }
 
 (* -------------------------------------------------------------------------- *)
