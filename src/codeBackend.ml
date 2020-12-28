@@ -710,6 +710,15 @@ let runcellparams stack : xparams =
     if1 (Invariant.startp symbol) (xvar startp)
   ) [] stack
 
+(* May the semantic action associated with production [prod] refer to the
+   variable [ids.(i)]? *)
+
+let action_may_refer_to_value prod i =
+  Production.is_start prod ||
+  let ids = Production.identifiers prod
+  and action = Production.action prod in
+  StringSet.mem ids.(i) (Action.free_vars action)
+
 (* The contents of a stack cell, exposed as individual parameters, again.
    The choice of identifiers is suitable for use in the definition of a
    [reduce] function.
@@ -720,14 +729,22 @@ let runcellparams stack : xparams =
 
 let reducecellparams prod i holds_state symbol =
   let ids = Production.identifiers prod in
+  (* The semantic value is bound to the variable [ids.(i)]. Its type is [t]. As
+     of 2016/03/11, we generate a type annotation. Indeed, because of our use of
+     [magic], the semantic value would otherwise have an unknown type; and, if
+     it is a function, the OCaml compiler could warn (incorrectly) that this
+     function does not use its argument. As of 2020/12/28, we use a wildcard
+     pattern if we can determine that the semantic action does not refer to
+     the variable [ids.(i)]. *)
+  let semvpat t =
+    if action_may_refer_to_value prod i then
+      PAnnot (PVar ids.(i), t)
+    else
+      PWildcard
+  in
   if1 (Invariant.endp symbol) (PVar (Printf.sprintf "_endpos_%s_" ids.(i))) @
   if1 holds_state (if i = 0 then PVar state else PWildcard) @
-  List.map (fun t -> PAnnot (PVar ids.(i), t)) (semvtype symbol) @
-    (* The semantic value is bound to the variable [ids.(i)]. Its type is [t]. As
-       of 2016/03/11, we generate a type annotation. Indeed, because of our use of
-       [magic], the semantic value would otherwise have an unknown type; and, if
-       it is a function, the OCaml compiler could warn (incorrectly) that this
-       function does not use its argument. *)
+  List.map semvpat (semvtype symbol) @
   if1 (Invariant.startp symbol) (PVar (Printf.sprintf "_startpos_%s_" ids.(i)))
 
 (* The contents of a stack cell, exposed as individual parameters,
