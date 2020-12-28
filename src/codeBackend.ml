@@ -1187,7 +1187,7 @@ let reducebody prod =
   let unitbindings =
     Misc.foldi length (fun i unitbindings ->
       match semvtype rhs.(i) with
-      | [] ->
+      | [] when action_may_refer_to_value prod i ->
           (PVar ids.(i), EUnit) :: unitbindings
       | _ ->
           unitbindings
