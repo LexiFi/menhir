@@ -224,7 +224,16 @@
   ambiguous. Nullable symbols must be taken into account. As soon as there
   exists a production of the form `A -> alpha B beta` where `alpha` and `beta`
   are nullable, add the production `A -> B`. Then, test whether there exists
-  a cycle of unit productions.
+  a cycle of unit productions. It has occurred to me that the absence of loops
+  may be a necessary condition to guarantee the termination of an LR parser. (If
+  there is a loop, then there will be a conflict, and solving this conflict
+  in favor of reduction could create an infinite sequence of reductions.) Check.
+
+* Make Menhir truly target-language-independent. Implement support for
+  back-ends other than OCaml and Coq. (That would require building the
+  lexer modularly, by combining a lexer for Menhir and a lexer for the
+  code inside the semantic action brackets.) (That would raise the issue
+  of type inference.)
 
 ## Documentation
 
