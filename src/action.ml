@@ -18,10 +18,10 @@ type t = {
   (* The code for this semantic action. *)
   expr: IL.expr;
 
-  (* The files where this semantic action originates. Via inlining,
-     several semantic actions can be combined into one, so there can
-     be several files. *)
-  filenames: string list;
+  (* This Boolean flag indicates whether this semantic action originates from
+     Menhir's standard library. Via inlining, several semantic actions can be
+     combined into one; in that case, we take a conjunction. *)
+  standard: bool;
 
   (* The set of keywords that appear in this semantic action. They can be thought
      of as free variables that refer to positions. They must be renamed during
@@ -34,13 +34,13 @@ type t = {
 
 let from_stretch s = {
   expr      = IL.ETextual s;
-  filenames = [ s.Stretch.stretch_filename ];
+  standard  = s.Stretch.stretch_filename = Settings.stdlib_filename;
   keywords  = KeywordSet.of_list s.Stretch.stretch_keywords
 }
 
 let from_il_expr e = {
   expr      = e;
-  filenames = [];
+  standard  = true;
   keywords  = KeywordSet.empty;
 }
 
@@ -63,7 +63,7 @@ let compose x a1 a2 =
   {
     expr      = CodeBits.blet ([ IL.PVar x, a1.expr ], a2.expr);
     keywords  = KeywordSet.union a1.keywords a2.keywords;
-    filenames = a1.filenames @ a2.filenames;
+    standard  = a1.standard && a2.standard;
   }
 
 (* Binding an OCaml pattern to an OCaml variable in a semantic action. *)
@@ -72,7 +72,7 @@ let bind p x a =
   {
     expr      = CodeBits.blet ([ p, IL.EVar x ], a.expr);
     keywords  = a.keywords;
-    filenames = a.filenames;
+    standard  = a.standard;
   }
 
 (* Substitutions, represented as association lists.
@@ -152,15 +152,15 @@ let rename f phi a =
 
   {
     expr      = expr;
-    filenames = a.filenames;
+    standard  = a.standard;
     keywords  = keywords;
   }
 
 let to_il_expr action =
   action.expr
 
-let filenames action =
-  action.filenames
+let is_standard action =
+  action.standard
 
 let keywords action =
   action.keywords

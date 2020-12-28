@@ -58,11 +58,9 @@ val rename:
     [IL.ETextual] and [IL.ELet] constructors. *)
 val to_il_expr: t -> IL.expr
 
-(** A semantic action might be the inlining of several others. The
-    filenames of the different parts are given by [filenames a]. This
-    can be used, for instance, to check whether all parts come from
-    the standard library. *)
-val filenames: t -> string list
+(** [is_standard a] indicates whether the semantic action [a] originates from
+    Menhir's standard library. *)
+val is_standard: t -> bool
 
 (** [keywords a] is the set of keywords used in the semantic action [a]. *)
 val keywords: t -> KeywordSet.t
