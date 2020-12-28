@@ -363,10 +363,7 @@ if_statement:
 
 do_while_statement:
   pi = T_DO body = statement _3 = T_WHILE _1 = T_LPAREN item = expression _3_inlined1 = T_RPAREN
-    {let condition =
-  let _3 = _3_inlined1 in
-                                                           ( item )
-in
+    {let condition =                                                          ( item ) in
     ( (J.Do_while_statement (body, condition), J.Pi pi) )}
 
 while_statement:
@@ -405,19 +402,13 @@ return_statement:
 
 with_statement:
   _1 = T_WITH _1_inlined1 = T_LPAREN item = expression _3_inlined1 = T_RPAREN _3 = statement
-    {let _2 =
-  let (_3, _1) = (_3_inlined1, _1_inlined1) in
-                                                           ( item )
-in
+    {let _2 =                                                          ( item ) in
                                               ( assert false )}
 
 switch_statement:
   pi = T_SWITCH _1 = T_LPAREN item = expression _3_inlined1 = T_RPAREN _3 = T_LCURLY x = list_case_clause_ y = option_pair_default_clause_list_case_clause___ _5 = T_RCURLY
     {let pair =     ( (x, y) ) in
-let subject =
-  let _3 = _3_inlined1 in
-                                                           ( item )
-in
+let subject =                                                          ( item ) in
    ( let switch = match pair with
        | cases, None ->
          J.Switch_statement (subject, cases, None, [])
@@ -438,7 +429,6 @@ try_statement:
 catch:
   _1 = T_CATCH _1_inlined1 = T_LPAREN item = variable _3 = T_RPAREN y = block
     {let pair =
-  let _1 = _1_inlined1 in
   let x =                                                          ( item ) in
       ( (x, y) )
 in
