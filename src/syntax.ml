@@ -178,8 +178,11 @@ and parameters =
 
 (* ------------------------------------------------------------------------ *)
 
-(* A producer is a pair of identifier and a parameter. In concrete syntax,
-   it could be [e = expr], for instance. It carries a number of attributes. *)
+(* A producer is a pair of identifier and a parameter. In concrete syntax, it
+   could be [e = expr], for instance. The identifier [e] is always present.
+   (A use of the keyword [$i] in a semantic action is turned by the lexer
+   and parser into a reference to an identifier [_i].) A producer carries
+   a number of attributes. *)
 
 and producer =
     identifier located * parameter * attributes
