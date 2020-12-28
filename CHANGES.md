@@ -6,6 +6,13 @@
   mistake. Disallowing it ensures that the `## Concrete syntax:` comments
   generated as part of `.messages` files fit on a single line.
 
+* Internal changes in the expansion of `%inline` symbols, eliminating certain
+  useless variable renamings that would appear in semantic actions after
+  expansion.
+
+* Internal changes in the code back-end, eliminating certain useless bindings
+  of variables to a unit value.
+
 ## 2020/12/16
 
 * The new command line switch `--strategy <strategy>` allows choosing an error
