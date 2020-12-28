@@ -29,7 +29,9 @@ type t
    in the semantic action and denote a semantic value. *)
 val from_stretch: StringSet.t -> Stretch.t -> t
 
-(* [from_il_expr] builds an action out of an IL expression. *)
+(* [from_il_expr] builds an action out of an IL expression. Not every IL
+   expression is accepted; only the expressions built by NewRuleSyntax are
+   accepted. *)
 val from_il_expr: IL.expr -> t
 
 (* [compose x a1 a2] builds the action [let x = a1 in a2]. This combinator is
@@ -37,7 +39,9 @@ val from_il_expr: IL.expr -> t
 val compose : string -> t -> t -> t
 
 (* [bind p x a] binds the OCaml pattern [p] to the OCaml variable [x] in the
-   semantic action [a]. Therefore, it builds the action [let p = x in a]. *)
+   semantic action [a]. Therefore, it builds the action [let p = x in a].
+   Not every IL pattern is accepted; only those built by NewRuleSyntax
+   are accepted. *)
 val bind: IL.pattern -> string -> t -> t
 
 (* -------------------------------------------------------------------------- *)
@@ -51,6 +55,10 @@ val to_il_expr: t -> IL.expr
    standard library. Via inlining, several actions can be combined into one;
    in that case, we take a conjunction *)
 val is_standard: t -> bool
+
+(* [free_vars a] is a superset of the free variables that may appear in the
+   action [a] to denote a semantic value. *)
+val free_vars: t -> StringSet.t
 
 (* [keywords a] is the set of keywords used in the action [a]. *)
 val keywords: t -> KeywordSet.t
