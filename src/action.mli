@@ -56,9 +56,9 @@ val to_il_expr: t -> IL.expr
    in that case, we take a conjunction *)
 val is_standard: t -> bool
 
-(* [free_vars a] is a superset of the free variables that may appear in the
+(* [semvars a] is a superset of the free variables that may appear in the
    action [a] to denote a semantic value. *)
-val free_vars: t -> StringSet.t
+val semvars: t -> StringSet.t
 
 (* [keywords a] is the set of keywords used in the action [a]. *)
 val keywords: t -> KeywordSet.t
@@ -75,7 +75,7 @@ val has_beforeend: t -> bool
    to the position keywords used in the action [a]. *)
 val posvars: t -> StringSet.t
 
-(* [vars a] is the union of [free_vars a] and [posvars a]. *)
+(* [vars a] is the union of [semvars a] and [posvars a]. *)
 val vars: t -> StringSet.t
 
 (* -------------------------------------------------------------------------- *)

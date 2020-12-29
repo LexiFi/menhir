@@ -717,7 +717,7 @@ let action_may_refer_to_value prod i =
   Production.is_start prod ||
   let ids = Production.identifiers prod
   and action = Production.action prod in
-  StringSet.mem ids.(i) (Action.free_vars action)
+  StringSet.mem ids.(i) (Action.semvars action)
 
 (* The contents of a stack cell, exposed as individual parameters, again.
    The choice of identifiers is suitable for use in the definition of a

@@ -25,7 +25,7 @@ type t = {
 
   (* A superset of the free variables that this semantic action can use in
      order to refer to a semantic value. *)
-  free_vars: StringSet.t;
+  semvars: StringSet.t;
 
   (* The set of keywords that appear in this semantic action. They can be
      thought of as free variables that refer to positions. They must be
@@ -42,7 +42,7 @@ let from_stretch xs s =
   {
     expr      = IL.ETextual s;
     standard  = s.Stretch.stretch_filename = Settings.stdlib_filename;
-    free_vars = xs;
+    semvars   = xs;
     keywords  = KeywordSet.of_list s.Stretch.stretch_keywords
   }
 
@@ -50,7 +50,7 @@ let rec from_il_expr e =
   {
     expr      = e;
     standard  = true;
-    free_vars = fv e;
+    semvars   = fv e;
     keywords  = KeywordSet.empty;
   }
 
@@ -88,7 +88,7 @@ let compose x a1 a2 =
      a semantic action is already parenthesized by the lexer. *)
   {
     expr      = CodeBits.blet ([ IL.PVar x, a1.expr ], a2.expr);
-    free_vars = StringSet.union a1.free_vars (StringSet.remove x a2.free_vars);
+    semvars   = StringSet.union a1.semvars (StringSet.remove x a2.semvars);
     keywords  = KeywordSet.union a1.keywords a2.keywords;
     standard  = a1.standard && a2.standard;
   }
@@ -98,7 +98,7 @@ let compose x a1 a2 =
 let rec bind p x a =
   {
     expr      = CodeBits.blet ([ p, IL.EVar x ], a.expr);
-    free_vars = StringSet.add x (StringSet.diff a.free_vars (bv p));
+    semvars   = StringSet.add x (StringSet.diff a.semvars (bv p));
     keywords  = a.keywords;
     standard  = a.standard;
   }
@@ -131,8 +131,8 @@ let to_il_expr action =
 let is_standard action =
   action.standard
 
-let free_vars action =
-  action.free_vars
+let semvars action =
+  action.semvars
 
 let keywords action =
   action.keywords
@@ -154,7 +154,7 @@ let posvars action =
   ) (keywords action) StringSet.empty
 
 let vars action =
-  StringSet.union (free_vars action) (posvars action)
+  StringSet.union (semvars action) (posvars action)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -165,7 +165,7 @@ let define keyword keywords f action =
   {
     expr      = f action.expr;
     standard  = action.standard;
-    free_vars = action.free_vars;
+    semvars   = action.semvars;
     keywords  = KeywordSet.union
                   keywords (KeywordSet.remove keyword action.keywords)
   }
@@ -260,15 +260,15 @@ let rename f phi a =
 
   let standard = a.standard in
 
-  (* Restrict [phi.semvar] to the set [a.free_vars], in order to avoid
+  (* Restrict [phi.semvar] to the set [a.semvars], in order to avoid
      generating [let] bindings that would be both useless and harmful:
      if [x] is not free in [e], then we do not want to generate
      [let x = x' in e], as suddenly [x'] would be free in this new
      expression. *)
-  let phi = restrict_semvar a.free_vars phi in
+  let phi = restrict_semvar a.semvars phi in
 
   (* Apply [phi.semvar] to the set of free variables. *)
-  let free_vars = StringSet.map (apply_semvar phi) a.free_vars in
+  let semvars = StringSet.map (apply_semvar phi) a.semvars in
 
   (* Construct a new semantic action, where [phi] is translated into
      a set of *simultaneous* [let] bindings. (We cannot use a series
@@ -277,4 +277,4 @@ let rename f phi a =
   let phi = List.map (fun (x, y) -> IL.PVar x, IL.EVar y) (bindings phi) in
   let expr = CodeBits.eletand (phi, a.expr) in
 
-  { expr; standard; free_vars; keywords }
+  { expr; standard; semvars; keywords }
