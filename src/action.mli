@@ -71,6 +71,13 @@ val has_syntaxerror: t -> bool
    the set [keywords a]. *)
 val has_beforeend: t -> bool
 
+(* [posvars a] is the set of conventional position variables that correspond
+   to the position keywords used in the action [a]. *)
+val posvars: t -> StringSet.t
+
+(* [vars a] is the union of [free_vars a] and [posvars a]. *)
+val vars: t -> StringSet.t
+
 (* -------------------------------------------------------------------------- *)
 
 (* Keyword expansion. *)

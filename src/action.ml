@@ -143,6 +143,19 @@ let has_syntaxerror action =
 let has_beforeend action =
   KeywordSet.mem (Position (Before, WhereEnd, FlavorPosition)) action.keywords
 
+let posvars action =
+  KeywordSet.fold (fun keyword accu ->
+    match keyword with
+    | SyntaxError ->
+        accu
+    | Position (s, w, f) ->
+        let x = Keyword.posvar s w f in
+        StringSet.add x accu
+  ) (keywords action) StringSet.empty
+
+let vars action =
+  StringSet.union (free_vars action) (posvars action)
+
 (* -------------------------------------------------------------------------- *)
 
 (* Defining a keyword in terms of other keywords. *)
