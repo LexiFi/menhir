@@ -77,13 +77,6 @@ let support_assoc l x =
     List.assoc x l
   with Not_found -> x
 
-let index (strings : string list) : int * string array * int StringMap.t =
-  let name = Array.of_list strings
-  and n, map = List.fold_left (fun (n, map) s ->
-    n+1, StringMap.add s n map
-  ) (0, StringMap.empty) strings in
-  n, name, map
-
 (* Turning an implicit list, stored using pointers through a hash
    table, into an explicit list. The head of the implicit list is
    not included in the explicit list. *)

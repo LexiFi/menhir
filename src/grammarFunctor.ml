@@ -30,6 +30,19 @@ end) () = struct
   open G
 
 (* ------------------------------------------------------------------------ *)
+
+(* [index] indexes a list of (distinct) strings, that is, assigns an
+   integer index to each string and builds mappings both ways between
+   strings and indices. *)
+
+let index (strings : string list) : int * string array * int StringMap.t =
+  let name = Array.of_list strings
+  and n, map = List.fold_left (fun (n, map) s ->
+    n+1, StringMap.add s n map
+  ) (0, StringMap.empty) strings in
+  n, name, map
+
+(* ------------------------------------------------------------------------ *)
 (* Precedence levels for tokens or pseudo-tokens alike. *)
 
 module TokPrecedence = struct
@@ -106,7 +119,7 @@ module Nonterminal = struct
     List.length new_start_nonterminals
 
   let (n : int), (name : string array), (map : int StringMap.t) =
-    Misc.index (new_start_nonterminals @ original_nonterminals)
+    index (new_start_nonterminals @ original_nonterminals)
 
   let () =
     if verbose then
@@ -226,7 +239,7 @@ module Terminal = struct
     | [] when verbose ->
         Error.error [] "no tokens have been declared."
     | _ ->
-        Misc.index ("error" :: tokens @ [ "#" ])
+        index ("error" :: tokens @ [ "#" ])
 
   let print tok =
     name.(tok)

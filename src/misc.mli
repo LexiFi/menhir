@@ -58,12 +58,6 @@ val inverse: 'a array -> ('a -> int)
 
 val support_assoc : ('a * 'a) list -> 'a -> 'a
 
-(* [index] indexes a list of (distinct) strings, that is, assigns an
-   integer index to each string and builds mappings both ways between
-   strings and indices. *)
-
-val index: string list -> int * string array * int StringMap.t
-
 (* Turning an implicit list, stored using pointers through a hash
    table, into an explicit list. The head of the implicit list is
    not included in the explicit list. *)
