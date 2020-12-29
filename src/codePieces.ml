@@ -57,13 +57,24 @@ let token =
 (* These names should agree with the printing function [Keyword.posvar]. *)
 
 let beforeendp =
-  "_endpos__0_"
+  Keyword.(posvar Before WhereEnd FlavorPosition)
+    (* "_endpos__0_" *)
 
 let startp =
-  "_startpos"
+  Keyword.(posvar Left WhereStart FlavorPosition)
+    (* "_startpos" *)
 
 let endp =
-  "_endpos"
+  Keyword.(posvar Left WhereEnd FlavorPosition)
+    (* "_endpos" *)
+
+let startpos ids i =
+  Keyword.(posvar (RightNamed ids.(i)) WhereStart FlavorPosition)
+    (* sprintf "_startpos_%s_" ids.(i) *)
+
+let endpos ids i =
+  Keyword.(posvar (RightNamed ids.(i)) WhereEnd FlavorPosition)
+    (* sprintf "_endpos_%s_" ids.(i) *)
 
 (* ------------------------------------------------------------------------ *)
 

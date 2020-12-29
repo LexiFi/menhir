@@ -43,6 +43,8 @@ val token: string
 val beforeendp: string
 val startp: string
 val endp: string
+val startpos: string array -> int -> string
+val endpos: string array -> int -> string
 
 (* ------------------------------------------------------------------------ *)
 
