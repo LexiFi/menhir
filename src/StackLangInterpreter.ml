@@ -234,7 +234,7 @@ let rec exec state block =
   | ICaseTag (r, branches) ->
       let tag = asTag (eval state.env (VReg r)) in
       exec_casetag state tag branches
-      
+
   | ITypedBlock {block; stack_type=_; final_type=_} ->
       exec state block
 
