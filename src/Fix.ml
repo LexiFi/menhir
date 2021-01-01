@@ -1,3 +1,16 @@
+(******************************************************************************)
+(*                                                                            *)
+(*                                   Menhir                                   *)
+(*                                                                            *)
+(*                       François Pottier, Inria Paris                        *)
+(*              Yann Régis-Gianas, PPS, Université Paris Diderot              *)
+(*                                                                            *)
+(*  Copyright Inria. All rights reserved. This file is distributed under the  *)
+(*  terms of the GNU General Public License version 2, as described in the    *)
+(*  file LICENSE.                                                             *)
+(*                                                                            *)
+(******************************************************************************)
+
 (* The library fix, which is found in the subdirectory fix/, has been
    renamed vendored_fix so as to prevent Dune from complaining about
    a conflict with a copy of fix that might be installed on the user's
