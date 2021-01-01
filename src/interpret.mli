@@ -27,3 +27,10 @@ open Grammar
 
 val print_messages_item:
   Nonterminal.t * Terminal.t list * ReferenceInterpreter.target -> unit
+
+(* [print_sentence (nto, terminals)] prints a sentence (given by an
+   optional start symbol and a sequence of terminal symbols) as a
+   space-separated list of symbolic token names. *)
+
+val print_sentence:
+  Nonterminal.t option * Terminal.t list -> string
