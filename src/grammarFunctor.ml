@@ -1584,6 +1584,13 @@ module Analysis = struct
   let attributes =
     grammar.gr_attributes
 
+  let minimal nt =
+    CompletedNatWitness.to_int (MINIMAL.nonterminal nt)
+
+  let minimal_prod prod i =
+    assert (0 <= i && i <= Production.length prod);
+    CompletedNatWitness.to_int (MINIMAL.production prod i)
+
 end
 
 (* ------------------------------------------------------------------------ *)
