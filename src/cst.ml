@@ -26,6 +26,27 @@ type cst =
   | CstNonTerminal of Production.index * cst array
   | CstError
 
+(* The fringe of a concrete syntax tree. *)
+
+let rec fringe cst accu =
+  match cst with
+  | CstTerminal tok ->
+      tok :: accu
+  | CstNonTerminal (_, csts) ->
+      fringe_rhs csts (Array.length csts) 0 accu
+  | CstError ->
+      (* Not sure if this is appropriate. *)
+      Terminal.error :: accu
+
+and fringe_rhs csts n i accu =
+  if i = n then
+    accu
+  else
+    fringe csts.(i) (fringe_rhs csts n (i + 1) accu)
+
+let fringe cst =
+  fringe cst []
+
 (* This is a (mostly) unambiguous printer for concrete syntax trees,
    in an sexp-like notation. *)
 
