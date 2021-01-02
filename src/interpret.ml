@@ -116,8 +116,8 @@ let stream (toks : Terminal.t list) : (lexbuf -> Terminal.t) * lexbuf =
   let lexer _lexbuf =
     match !toks with
     | tok :: more ->
-          toks := more;
-          tok
+        toks := more;
+        tok
     | [] ->
         match Terminal.eof with
         | Some eof ->
