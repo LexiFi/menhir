@@ -37,6 +37,8 @@ val print_sentence:
 
 (* [stream] turns a finite list of terminals into a stream of terminals,
    represented as a pair of a lexer and a lexing buffer, so as to be usable
-   with Menhir's traditional API. *)
+   with Menhir's traditional API. This lexer can raise [EndOfStream]. *)
+
+exception EndOfStream
 
 val stream: Terminal.t list -> (Lexing.lexbuf -> Terminal.t) * Lexing.lexbuf
