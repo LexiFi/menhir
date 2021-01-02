@@ -34,3 +34,9 @@ val print_messages_item:
 
 val print_sentence:
   Nonterminal.t option * Terminal.t list -> string
+
+(* [stream] turns a finite list of terminals into a stream of terminals,
+   represented as a pair of a lexer and a lexing buffer, so as to be usable
+   with Menhir's traditional API. *)
+
+val stream: Terminal.t list -> (Lexing.lexbuf -> Terminal.t) * Lexing.lexbuf
