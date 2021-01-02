@@ -255,7 +255,7 @@ let strategy =
 
 (* Define a palatable user entry point. *)
 
-let interpret log nt lexer lexbuf =
+let interpret nt log lexer lexbuf =
 
   (* Instantiate the LR engine. *)
 

@@ -174,7 +174,7 @@ let interpret ((_, toks) as sentence) : unit =
 
   let lexer, lexbuf = stream toks in
   begin match
-    ReferenceInterpreter.interpret Settings.trace nt lexer lexbuf
+    ReferenceInterpreter.interpret nt Settings.trace lexer lexbuf
   with
 
   | Some cst ->
