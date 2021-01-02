@@ -81,54 +81,53 @@ let print_concrete_sentence (_nto, terminals) : string =
 
 (* --------------------------------------------------------------------------- *)
 
-(* [stream] turns a finite list of terminals into a stream of terminals. *)
+(* [stream] turns a finite list of terminals into a stream of terminals,
+   represented as a pair of a lexer and a lexing buffer, so as to be usable
+   with Menhir's traditional API. *)
+
+(* A traditional lexer returns a token and updates the fields of the lexing
+   buffer with new positions. Here, we have no position information, so we
+   keep the dummy positions that exist at initialization time. *)
+
+(* When the finite list is exhausted, two plausible behaviors come to mind.
+
+   One behavior consists in raising an exception. In that case, we are
+   creating a finite stream, and it is up to the parser to not read past its
+   end.
+
+   Another behavior consists in returning a designated token. In that case, we
+   are creating an infinite, eventually constant, stream.
+
+   The choice between these two behaviors is somewhat arbitrary; furthermore,
+   in the second case, the choice of the designated token is arbitrary as
+   well. Here, we adopt the second behavior if and only if the grammar has an
+   EOF token, and we use EOF as the designated token. Again, this is
+   arbitrary, and could be changed in the future. *)
 
 exception EndOfStream
 
-let stream (toks : Terminal.t list) : unit -> Terminal.t * Lexing.position * Lexing.position =
+include struct open Lexing
+
+let stream (toks : Terminal.t list) : (lexbuf -> Terminal.t) * lexbuf =
   let toks = ref toks in
-  fun () ->
-
-    let tok =
-      match !toks with
-      | tok :: more ->
-
-          (* Take a token off the list, and return it. *)
-
+  let lexbuf = from_string "" in
+  lexbuf.lex_start_p <- dummy_pos;
+  lexbuf.lex_curr_p <- dummy_pos;
+  let lexer _lexbuf =
+    match !toks with
+    | tok :: more ->
           toks := more;
           tok
+    | [] ->
+        match Terminal.eof with
+        | Some eof ->
+            eof
+        | None ->
+            raise EndOfStream
+  in
+  lexer, lexbuf
 
-      | [] ->
-
-          (* The finite list has been exhausted. Here, two plausible behaviors
-             come to mind.
-
-             The first behavior consists in raising an exception. In that case,
-             we are creating a finite stream, and it is up to the parser to not
-             read past its end.
-
-             The second behavior consists in returning a designated token. In
-             that case, we are creating an infinite, eventually constant,
-             stream.
-
-             The choice between these two behaviors is somewhat arbitrary;
-             furthermore, in the second case, the choice of the designated
-             token is arbitrary as well. Here, we adopt the second behavior if
-             and only if the grammar has an EOF token, and we use EOF as the
-             designated token. Again, this is arbitrary, and could be changed
-             in the future. *)
-
-          match Terminal.eof with
-          | Some eof ->
-              eof
-          | None ->
-              raise EndOfStream
-
-    in
-
-    (* For now, return dummy positions. *)
-
-    tok, Lexing.dummy_pos, Lexing.dummy_pos
+end
 
 (* --------------------------------------------------------------------------- *)
 
@@ -173,34 +172,26 @@ let interpret ((_, toks) as sentence) : unit =
      to the user which outcomes correspond to which sentences (should multiple
      sentences be supplied). *)
 
-  begin try
-    match
-      MenhirLib.Convert.Simplified.traditional2revised
-        (ReferenceInterpreter.interpret Settings.trace nt)
-        (stream toks)
-    with
+  let lexer, lexbuf = stream toks in
+  begin match
+    ReferenceInterpreter.interpret Settings.trace nt lexer lexbuf
+  with
 
-    | Some cst ->
+  | Some cst ->
+      (* Success. *)
+      printf "ACCEPT";
+      if Settings.interpret_show_cst then begin
+        print_newline();
+        Cst.show stdout cst
+      end
 
-        (* Success. *)
+  | None ->
+      (* Parser failure. *)
+      printf "REJECT"
 
-        printf "ACCEPT";
-        if Settings.interpret_show_cst then begin
-          print_newline();
-          Cst.show stdout cst
-        end
-
-    | None ->
-
-        (* Parser failure. *)
-
-        printf "REJECT"
-
-  with EndOfStream ->
-
-    (* Lexer failure. *)
-
-    printf "OVERSHOOT"
+  | exception EndOfStream ->
+      (* Lexer failure. *)
+      printf "OVERSHOOT"
 
   end;
   print_newline()
