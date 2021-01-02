@@ -192,7 +192,9 @@
   using `void` as an actual parameter in parameterized definitions. This
   allows making extensible definitions and instantiating them with "no
   extension". Probably a `%void` annotation would be needed to indicate that a
-  symbol is intended to generate an empty language.
+  symbol is intended to generate an empty language. The symbols that generate
+  an empty language should be eliminated before testing for cycles, since
+  `void: void` is obviously a cycle.
 
 * Add a facility to produce a set of *valid* sentences that reach *every*
   reachable state of the automaton and exercise *every* reduction. This could
@@ -223,15 +225,13 @@
   See also Frédéric's email to François entitled `Menhir avec $loc`
   (2018/07/26).
 
-* Implement loop detection. If a grammar contains a loop (that is, a series of
-  productions of the form `A -> B -> C -> ... -> A`), then it is infinitely
-  ambiguous. Nullable symbols must be taken into account. As soon as there
-  exists a production of the form `A -> alpha B beta` where `alpha` and `beta`
-  are nullable, add the production `A -> B`. Then, test whether there exists
-  a cycle of unit productions. It has occurred to me that the absence of loops
-  may be a necessary condition to guarantee the termination of an LR parser. (If
-  there is a loop, then there will be a conflict, and solving this conflict
-  in favor of reduction could create an infinite sequence of reductions.) Check.
+* Implement loop detection, following Soisalon-Soininen and Tarhio. The
+  presence of a loop implies that the grammar is infinitely ambiguous
+  (provided all symbols are inhabited) and not LR(1). Furthermore, the absence
+  of loops is a necessary condition to guarantee the termination of an LR
+  parser. Note that the code that detects so-called epsilon-cycles in
+  `item.ml` recognizes a special case of `A =>+ A`, so it should be possible
+  to remove this code.
 
 * Make Menhir truly target-language-independent. Implement support for
   back-ends other than OCaml and Coq. (That would require building the
