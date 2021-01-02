@@ -393,7 +393,3 @@ we do not intend to act, for now.
   conservative? There may be situations where there is no reduce action
   in the table (because they were killed off by conflict resolution) yet
   this state is still capable of reducing this production.
-
-* Read Chen and Pager's paper, *An Extension Of The Unit Production
-  Elimination Algorithm*, and find out whether such an optimization
-  would be useful (beneficial) in the context of Menhir.
