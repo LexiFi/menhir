@@ -1,4 +1,4 @@
-(* This example is taken from Grun & Jacobs, second edition, p. 388. *)
+(* This example is taken from Grune & Jacobs, second edition, p. 388. *)
 
 (* The grammmar recognizes the language epsilon^n B C^n, that is,
    B C^n. It is not LR(1), because the number of reductions of
@@ -27,4 +27,3 @@ s:
 
 a:
         {} %prec reduce
-
