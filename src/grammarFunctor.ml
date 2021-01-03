@@ -775,9 +775,7 @@ module Production = struct
 
   let iternt nt f =
     let k, k' = ntprods.(nt) in
-    for prod = k to k' - 1 do
-      f prod
-    done
+    Misc.iterij k k' f
 
   let foldnt (nt : Nonterminal.t) (accu : 'a) (f : index -> 'a -> 'a) : 'a =
     let k, k' = ntprods.(nt) in
