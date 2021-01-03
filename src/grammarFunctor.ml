@@ -787,6 +787,10 @@ module Production = struct
     in
     loop accu k
 
+  let mapnt nt f =
+    let k, k' = ntprods.(nt) in
+    Misc.mapij k k' f
+
   (* This funny variant is lazy. If at some point [f] does not demand its
      second argument, then iteration stops. *)
   let foldnt_lazy (nt : Nonterminal.t) (f : index -> (unit -> 'a) -> 'a) (seed : 'a) : 'a =

@@ -460,6 +460,7 @@ module Production : sig
 
   val iternt: Nonterminal.t -> (index -> unit) -> unit
   val foldnt: Nonterminal.t -> 'a -> (index -> 'a -> 'a) -> 'a
+  val mapnt:  Nonterminal.t -> (index -> 'a) -> 'a list
 
   (* This allows determining whether a production is a start
      production. If it is a start production, the start symbol that it
