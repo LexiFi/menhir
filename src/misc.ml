@@ -94,15 +94,13 @@ let materialize (table : ('a, 'a option) Hashtbl.t) (x : 'a) : 'a list =
 (* [iteri] implements a [for] loop over integers, from 0 to
    [n-1]. *)
 
-let iteri n f =
-  for i = 0 to n - 1 do
-    f i
-  done
-
 let iterij i j f =
   for x = i to j - 1 do
     f x
   done
+
+let iteri n f =
+  iterij 0 n f
 
 (* [foldi] implements a [for] loop over integers, from 0 to [n-1],
    with an accumulator. [foldij] implements a [for] loop over
