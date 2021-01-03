@@ -106,14 +106,11 @@ let iteri n f =
    with an accumulator. [foldij] implements a [for] loop over
    integers, from [start] to [n-1], with an accumulator. *)
 
-let foldij start n f accu =
-  let rec loop i accu =
-    if i = n then
-      accu
-    else
-      loop (i+1) (f i accu)
-  in
-  loop start accu
+let rec foldij i j f accu =
+  if i < j then
+    foldij (i + 1) j f (f i accu)
+  else
+    accu
 
 let foldi n f accu =
   foldij 0 n f accu
