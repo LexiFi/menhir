@@ -785,17 +785,9 @@ module Production = struct
     let k, k' = ntprods.(nt) in
     Misc.mapij k k' f
 
-  (* This funny variant is lazy. If at some point [f] does not demand its
-     second argument, then iteration stops. *)
-  let foldnt_lazy (nt : Nonterminal.t) (f : index -> (unit -> 'a) -> 'a) (seed : 'a) : 'a =
+  let foldnt_lazy nt f accu =
     let k, k' = ntprods.(nt) in
-    let rec loop prod seed =
-      if prod < k' then
-        f prod (fun () -> loop (prod + 1) seed)
-      else
-        seed
-    in
-    loop k seed
+    Misc.foldij_lazy k k' f accu
 
   (* Accessors. *)
 
