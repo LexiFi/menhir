@@ -67,15 +67,24 @@ val materialize: ('a, 'a option) Hashtbl.t -> 'a -> 'a list
 (* [iteri] implements a [for] loop over integers, from 0 to
    [n-1]. *)
 
-val iteri: int -> (int -> unit) -> unit
+val iteri:         int -> (int -> unit) -> unit
 val iterij: int -> int -> (int -> unit) -> unit
 
-(* [foldi] implements a [for] loop over integers, from 0 to [n-1],
-   with an accumulator. [foldij] implements a [for] loop over
-   integers, from [start] to [n-1], with an accumulator. *)
+(* [foldij i j f accu] iterates on the semi-open interval [i, j),
+   with an accumulator. [foldij_lazy i j f accu] is analogous,
+   but is interruptible: if at some point the function [f] does
+   not demand its second argument, then iteration stops early.
+   [foldij] and [foldij_lazy] iterate in the same direction, from
+   left to right, but do not build the accumulator in the same way:
+   the calls to [f] are associated differently. (In that respect,
+   [foldij] is a left fold, while [foldij_lazy] is a right fold.) *)
 
-val foldi: int -> (int -> 'a -> 'a) -> 'a -> 'a
-val foldij: int -> int -> (int -> 'a -> 'a) -> 'a -> 'a
+(* [foldi] implements a [for] loop over integers, from 0 to [n-1],
+   with an accumulator. *)
+
+val foldi:              int -> (int ->          'a  -> 'a) -> 'a -> 'a
+val foldij:      int -> int -> (int ->          'a  -> 'a) -> 'a -> 'a
+val foldij_lazy: int -> int -> (int -> (unit -> 'a) -> 'a) -> 'a -> 'a
 
 (* [mapij start n f] produces the list [ f start; ... f (n-1) ]. *)
 

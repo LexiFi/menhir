@@ -102,10 +102,6 @@ let iterij i j f =
 let iteri n f =
   iterij 0 n f
 
-(* [foldi] implements a [for] loop over integers, from 0 to [n-1],
-   with an accumulator. [foldij] implements a [for] loop over
-   integers, from [start] to [n-1], with an accumulator. *)
-
 let rec foldij i j f accu =
   if i < j then
     foldij (i + 1) j f (f i accu)
@@ -114,6 +110,12 @@ let rec foldij i j f accu =
 
 let foldi n f accu =
   foldij 0 n f accu
+
+let rec foldij_lazy i j f accu =
+  if i < j then
+    f i (fun () -> foldij_lazy (i + 1) j f accu)
+  else
+    accu
 
 (* [mapij start n f] produces the list [ f start; ... f (n-1) ]. *)
 
