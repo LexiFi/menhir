@@ -777,15 +777,9 @@ module Production = struct
     let k, k' = ntprods.(nt) in
     Misc.iterij k k' f
 
-  let foldnt nt (f : index -> 'a -> 'a) accu =
+  let foldnt nt f accu =
     let k, k' = ntprods.(nt) in
-    let rec loop accu prod =
-      if prod < k' then
-        loop (f prod accu) (prod + 1)
-      else
-        accu
-    in
-    loop accu k
+    Misc.foldij k k' f accu
 
   let mapnt nt f =
     let k, k' = ntprods.(nt) in
