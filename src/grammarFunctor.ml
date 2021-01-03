@@ -777,7 +777,7 @@ module Production = struct
     let k, k' = ntprods.(nt) in
     Misc.iterij k k' f
 
-  let foldnt (nt : Nonterminal.t) (accu : 'a) (f : index -> 'a -> 'a) : 'a =
+  let foldnt nt (f : index -> 'a -> 'a) accu =
     let k, k' = ntprods.(nt) in
     let rec loop accu prod =
       if prod < k' then
