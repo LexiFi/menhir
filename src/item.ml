@@ -247,9 +247,9 @@ module Closure (L : Lookahead.S) = struct
           if pos < length then
             match rhs.(pos) with
             | Symbol.N nt ->
-                Production.foldnt nt (fun prod nodes ->
-                  (item2node (import (prod, 0))) :: nodes
-                ) []
+                Production.mapnt nt (fun prod ->
+                  item2node (import (prod, 0))
+                )
             | Symbol.T _ ->
                 []
           else
