@@ -99,6 +99,11 @@ let iteri n f =
     f i
   done
 
+let iterij i j f =
+  for x = i to j - 1 do
+    f x
+  done
+
 (* [foldi] implements a [for] loop over integers, from 0 to [n-1],
    with an accumulator. [foldij] implements a [for] loop over
    integers, from [start] to [n-1], with an accumulator. *)

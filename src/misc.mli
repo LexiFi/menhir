@@ -68,6 +68,7 @@ val materialize: ('a, 'a option) Hashtbl.t -> 'a -> 'a list
    [n-1]. *)
 
 val iteri: int -> (int -> unit) -> unit
+val iterij: int -> int -> (int -> unit) -> unit
 
 (* [foldi] implements a [for] loop over integers, from 0 to [n-1],
    with an accumulator. [foldij] implements a [for] loop over
