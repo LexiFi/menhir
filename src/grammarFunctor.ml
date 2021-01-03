@@ -845,6 +845,9 @@ module Production = struct
     with Not_found ->
       assert false (* [nt] is not a start symbol *)
 
+  let error_free prod =
+    Misc.array_for_all Symbol.non_error (rhs prod)
+
   (* Iteration. *)
 
   let init f =

@@ -479,6 +479,11 @@ module Production : sig
 
   val start: int
 
+  (* [error_free prod] returns [true] if the right-hand side of the
+     production [prod] does *not* contain the [error] pseudo-token. *)
+
+  val error_free: index -> bool
+
   (* This produces a string representation of a production. It should
      never be applied to a start production, as we do not wish users
      to become aware of the existence of these extra productions. *)
