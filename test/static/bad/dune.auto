@@ -167,6 +167,30 @@
 (rule (alias crazy_long_production)
   (action (diff crazy_long_production.exp crazy_long_production.out)))
 
+(rule (target cycle-length-one.out) (deps cycle-length-one.mly)
+  (action
+    (with-outputs-to cycle-length-one.out
+      (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
+
+(rule (alias cycle-length-one)
+  (action (diff cycle-length-one.exp cycle-length-one.out)))
+
+(rule (target cycle-length-three.out) (deps cycle-length-three.mly)
+  (action
+    (with-outputs-to cycle-length-three.out
+      (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
+
+(rule (alias cycle-length-three)
+  (action (diff cycle-length-three.exp cycle-length-three.out)))
+
+(rule (target cycle-length-two.out) (deps cycle-length-two.mly)
+  (action
+    (with-outputs-to cycle-length-two.out
+      (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
+
+(rule (alias cycle-length-two)
+  (action (diff cycle-length-two.exp cycle-length-two.out)))
+
 (rule (target cyclic-parameterized-definition.out)
   (deps cyclic-parameterized-definition.mly)
   (action
@@ -253,14 +277,6 @@
 
 (rule (alias either-public)
   (action (diff either-public.exp either-public.out)))
-
-(rule (target epsilon-cycle.out) (deps epsilon-cycle.mly)
-  (action
-    (with-outputs-to epsilon-cycle.out
-      (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
-
-(rule (alias epsilon-cycle)
-  (action (diff epsilon-cycle.exp epsilon-cycle.out)))
 
 (rule (target equals-expected.out) (deps equals-expected.mly)
   (action
@@ -1422,6 +1438,9 @@
     (alias constant-arity-in-multiple-def-1)
     (alias constant-inline-in-multiple-def-1)
     (alias crazy_long_production)
+    (alias cycle-length-one)
+    (alias cycle-length-three)
+    (alias cycle-length-two)
     (alias cyclic-parameterized-definition)
     (alias declaration-error-a)
     (alias declaration-error-b)
@@ -1432,7 +1451,6 @@
     (alias either-another-production)
     (alias either-another-rule)
     (alias either-public)
-    (alias epsilon-cycle)
     (alias equals-expected)
     (alias error-reserved)
     (alias expansion-capture)

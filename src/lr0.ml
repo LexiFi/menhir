@@ -17,6 +17,13 @@ module InfiniteArray =
   MenhirLib.InfiniteArray
 
 (* ------------------------------------------------------------------------ *)
+
+(* Perform loop detection before attempting to build the LR(0) automaton. *)
+
+module _ =
+  LoopDetection.Run()
+
+(* ------------------------------------------------------------------------ *)
 (* Symbolic lookahead information. *)
 
 (* A symbolic lookahead set consists of an actual concrete set of

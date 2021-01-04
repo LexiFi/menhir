@@ -74,12 +74,6 @@ let () =
 let equal (item1 : t) (item2: t) =
   item1 = item2
 
-(* Position. *)
-
-let positions (item : t) =
-  let prod, _ = export item in
-  Production.positions prod
-
 (* [def item] looks up the production associated with this item in the
    grammar and returns [prod, nt, rhs, pos, length], where [prod] is
    the production's index, [nt] and [rhs] represent the production,
@@ -258,86 +252,16 @@ module Closure (L : Lookahead.S) = struct
       ) mapping.(Production.p2i prod)
     )
 
-  (* Detect and reject cycles of transitions that transmit a lookahead
-     set.
+  (* We can be certain that there are no cycles of transitions that transmit a
+     lookahead set. This guarantees that we can traverse these transitions in
+     a topological order.
 
-     We need to ensure that there are no such cycles in order to be
-     able to traverse these transitions in topological order.
-
-     Each such cycle corresponds to a set of productions of the form
-     A1 -> A2, A2 -> A3, ..., An -> A1 (modulo nullable
-     trailers). Such cycles are unlikely to occur in realistic
-     grammars, so our current approach is to reject the grammar if
-     such a cycle exists. Actually, according to DeRemer and Pennello
-     (1982), such a cycle is exactly an includes cycle, and implies
-     that the grammar is not LR(k) for any k, unless A1, ..., An are
-     in fact uninhabited. In other words, this is a pathological
-     case. *)
-
-  (* Yes, indeed, this is called a cycle in Aho & Ullman's book,
-     and a loop in Grune & Jacobs' book. It is not difficult to
-     see that (provided all symbols are inhabited) the grammar
-     is infinitely ambiguous if and only if there is a loop. *)
-
-  module P = struct
-
-    type foo = node
-    type node = foo
-
-    let n =
-      !count
-
-    let index node =
-      node.num
-
-    let iter f =
-      Array.iter (fun nodes ->
-        Array.iter f nodes
-      ) mapping
-
-    let successors f node =
-      if node.epsilon_transmits then
-        List.iter f node.epsilon_transitions
-
-  end
-
-  module T = Tarjan.Run (P)
-
-  let cycle scc =
-    let items = List.map (fun node -> node.item) scc in
-    let positions = List.flatten (List.map positions items) in
-    let names = String.concat "\n" (List.map print items) in
-    Error.error
-      positions
-      "the grammar is ambiguous.\n\
-       The following items participate in an epsilon-cycle:\n\
-       %s" names
-
-  let () =
-     P.iter (fun node ->
-       let scc = T.scc node in
-       match scc with
-       | [] ->
-           ()
-       | [ node ] ->
-
-           (* This is a strongly connected component of one node. Check
-              whether it carries a self-loop. Forbidding self-loops is not
-              strictly required by the code that follows, but is consistent
-              with the fact that we forbid cycles of length greater than 1. *)
-
-           P.successors (fun successor ->
-             if successor.num = node.num then
-               cycle scc
-           ) node
-
-       | _ ->
-
-           (* This is a strongly connected component of at least two
-              elements. *)
-
-           cycle scc
-     )
+     Indeed, if there was such a cycle, then every item in this cycle would
+     have to be of the form A -> . B beta, where beta is nullable. DeRemer and
+     Pennello (1982) call this an includes cycle. An includes cycle is a
+     special case of a cycle, as defined by Aho and Ullman. The module
+     LoopDetection detects and rejects cycles, so we can be assured at this
+     point that no such cycle exists. *)
 
   (* Closure computation. *)
 
