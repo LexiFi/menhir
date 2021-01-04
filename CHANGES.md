@@ -206,7 +206,7 @@
 
 * Menhir is now built and installed by `dune`. This should make life easier
   for Menhir's developers: in particular, `make test` and `make speed` can be
-  run straight away and do not requiring installing Menhir first. This should
+  run straight away and do not require installing Menhir first. This should
   also make compilation much faster on multi-core machines. (Contributed by
   Nicolás Ojeda Bär, to whom many thanks are due.)
 
