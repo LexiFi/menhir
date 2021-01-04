@@ -173,8 +173,8 @@ let fail prod =
     (Production.print prod)
     (Symbol.print rhs.(0))
     (Symbol.print (Symbol.N nt))
-      (* Furthermore, this creates a shift/reduce conflict, which, if it were
-         resolved in favor of reduction, would cause the parser to diverge. *)
+      (* Furthermore, this creates a shift/reduce conflict, which (if resolved
+         in favor of reduction) can cause the parser to diverge. *)
 
 (* To detect hidden left recursion in linear time, we first compute the
    strongly connected components of the relation S. Then, we check every edge
@@ -206,5 +206,8 @@ let () =
   end
 
 (* -------------------------------------------------------------------------- *)
+
+let () =
+  Time.tick "Running loop detection"
 
 end (* Run *)
