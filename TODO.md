@@ -225,14 +225,6 @@
   See also Frédéric's email to François entitled `Menhir avec $loc`
   (2018/07/26).
 
-* Implement loop detection, following Soisalon-Soininen and Tarhio. The
-  presence of a loop implies that the grammar is infinitely ambiguous
-  (provided all symbols are inhabited) and not LR(1). Furthermore, the absence
-  of loops is a necessary condition to guarantee the termination of an LR
-  parser. Note that the code that detects so-called epsilon-cycles in
-  `item.ml` recognizes a special case of `A =>+ A`, so it should be possible
-  to remove this code.
-
 * Make Menhir truly target-language-independent. Implement support for
   back-ends other than OCaml and Coq. (That would require building the
   lexer modularly, by combining a lexer for Menhir and a lexer for the
