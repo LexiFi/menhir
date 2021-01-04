@@ -356,6 +356,24 @@
 (rule (alias forbidden-pos)
   (action (diff forbidden-pos.exp forbidden-pos.out)))
 
+(rule (target hidden-left-recursion-one.out)
+  (deps hidden-left-recursion-one.mly)
+  (action
+    (with-outputs-to hidden-left-recursion-one.out
+      (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
+
+(rule (alias hidden-left-recursion-one)
+  (action (diff hidden-left-recursion-one.exp hidden-left-recursion-one.out)))
+
+(rule (target hidden-left-recursion-two.out)
+  (deps hidden-left-recursion-two.mly)
+  (action
+    (with-outputs-to hidden-left-recursion-two.out
+      (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
+
+(rule (alias hidden-left-recursion-two)
+  (action (diff hidden-left-recursion-two.exp hidden-left-recursion-two.out)))
+
 (rule (target ill-formed-attribute.out) (deps ill-formed-attribute.mly)
   (action
     (with-outputs-to ill-formed-attribute.out
@@ -1461,6 +1479,8 @@
     (alias forbidden-dollar)
     (alias forbidden-dollar-bis)
     (alias forbidden-pos)
+    (alias hidden-left-recursion-one)
+    (alias hidden-left-recursion-two)
     (alias ill-formed-attribute)
     (alias ill-formed-prec)
     (alias ill-sorted-attribute)

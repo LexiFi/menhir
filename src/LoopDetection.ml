@@ -42,22 +42,41 @@ module Run () = struct
    check that a grammar is cycle-free, it suffices to check that the relation
    R is acyclic. *)
 
-(* Here is the relation R: *)
+(* The relation R is defined as follows. Upon first reading, take
+   [require_nullable_suffix] to be [true] and
+   [require_nonempty_prefix] to be [false]. *)
 
-let successors (yield : Nonterminal.t -> unit) (nt : Nonterminal.t) : unit =
+let nullable_suffix prod i =
+  let nullable, _ = Analysis.nullable_first_prod prod i in
+  nullable
+
+let successors
+  ~require_nullable_suffix
+  ~require_nonempty_prefix
+  (yield : Production.index -> Nonterminal.t -> unit)
+  (nt : Nonterminal.t) : unit
+=
   Production.iternt nt begin fun prod ->
+    let rhs = Production.rhs prod in
+    let n = Array.length rhs in
     let nullable_prefix = ref true in
-    Production.rhs prod |> Array.iteri begin fun i symbol ->
-      match symbol with
+    let i = ref 0 in
+    while !nullable_prefix && !i < n do
+      match rhs.(Misc.postincrement i) with
       | Symbol.T _   ->
           nullable_prefix := false
       | Symbol.N nt' ->
-          let nullable_suffix, _ = Analysis.nullable_first_prod prod (i + 1) in
-          if !nullable_prefix && nullable_suffix then
-            yield nt';
-          nullable_prefix := !nullable_prefix && Analysis.nullable nt'
-    end
+          if (not require_nullable_suffix || nullable_suffix prod !i)
+          && (not require_nonempty_prefix || !i > 1) then
+            yield prod nt';
+          nullable_prefix := Analysis.nullable nt'
+    done
   end
+
+(* This adapter hides [prod] from the user function [yield]. *)
+
+let adapt successors yield nt =
+  successors (fun _prod nt' -> yield nt') nt
 
 (* A detailed explanation of cycles whose length is greater than one. *)
 
@@ -89,20 +108,102 @@ let fail nts nt =
 
 (* To detect a cycle in a relation, we use the combinator [defensive_fix] that
    is provided by the library Fix. We define a function of type [Nonterminal.t
-   -> unit] that computes nothing but calls itself recursively according to the
-   pattern defined by the function [successors] above. Then, we evaluate this
-   function everywhere. If there is a cycle, it is detected and reported. *)
+   -> unit] that computes nothing but calls itself recursively according to
+   the pattern defined by the relation R. Then, we evaluate this function
+   everywhere. If there is a cycle, it is detected and reported. *)
 
 (* The claim that "a cyclic grammar is ambiguous" implicitly assumes that
    every nonterminal symbol is reachable and inhabited. *)
 
 let () =
   let module M = Fix.Memoize.ForType(Nonterminal) in
-  let check = M.defensive_fix successors in
+  let successors_R =
+    successors ~require_nullable_suffix:true ~require_nonempty_prefix:false
+    |> adapt
+  in
+  let check = M.defensive_fix successors_R in
   try
     Nonterminal.iter check
   with M.Cycle (nts, nt) ->
     fail nts nt
+
+(* -------------------------------------------------------------------------- *)
+
+(* Another anomaly that we wish to detect is hidden left recursion. In the
+   paper "Looping LR parsers" (1988), Soisalon-Soininen and Tarhio define
+   hidden left recursion (although they do not explicitly use this term)
+   and point out that: 1- a grammar that has hidden left recursion cannot
+   be LR(k) for any k, and (worse) 2- if the shift/reduce conflict that it
+   causes is resolved in favor in reduction, then the deterministic parser
+   that is constructed can diverge by entering an infinite sequence of
+   reductions. Conversely, they show if a grammar exhibits no cycle and
+   no hidden left recursion, then the parser must terminate, regardless of
+   how conflicts are resolved. *)
+
+(* One possible definition of hidden left recursion, given by Nederhof and
+   Sarbo in the paper "Increasing the Applicability of LR Parsing" (1993), is
+   the existence of a production A -> B alpha where B is nullable and alpha
+   expands (in zero or more steps) to A beta. *)
+
+(* Let us define a relation S as follows. A S B holds if and only if there is
+   a production A -> alpha B beta where alpha is nullable. This relation can
+   be viewed as the disjoint union of two smaller relations L and H, defined
+   as follows:
+
+   - A L B holds if and only if there is a production A ->       B beta;
+   - A H B holds if and only if there is a production A -> alpha B beta
+                             where alpha is nullable but is not epsilon.
+
+   A cycle in the relation L is fine: it represents ordinary left recursion.
+   A cycle that involves at least one H edge and any number of L and H edges,
+   however, denotes hidden left recursion. *)
+
+(* An error message. *)
+
+let fail prod =
+  let nt, rhs = Production.def prod in
+  let positions = Production.positions prod in
+  Error.error positions
+    "the grammar exhibits hidden left recursion: in the production\n\
+     %s,\n\
+     the nonterminal symbol %s is nullable,\n\
+     and the remainder of the right-hand side expands to a sentential form\n\
+     that begins with the nonterminal symbol %s.\n\
+     This implies that the grammar is not LR(k) for any k."
+    (Production.print prod)
+    (Symbol.print rhs.(0))
+    (Symbol.print (Symbol.N nt))
+      (* Furthermore, this creates a shift/reduce conflict, which, if it were
+         resolved in favor of reduction, would cause the parser to diverge. *)
+
+(* To detect hidden left recursion in linear time, we first compute the
+   strongly connected components of the relation S. Then, we check every edge
+   in the relation H. If the source and destination vertices of this edge lie
+   in the same component, then we have detected hidden left recursion. *)
+
+let () =
+  let module T = Tarjan.Run (struct
+    type node = Nonterminal.t
+    let n = Nonterminal.n
+    let index = Nonterminal.n2i
+    let iter = Nonterminal.iter
+    (* The relation S is computed as follows. *)
+    let successors =
+      successors ~require_nullable_suffix:false ~require_nonempty_prefix:false
+      |> adapt
+  end) in
+  (* The relation H is computed as follows. *)
+  let successors_H =
+    successors ~require_nullable_suffix:false ~require_nonempty_prefix:true in
+  (* Iterate on every edge in the relation H. *)
+  Nonterminal.iter begin fun nt ->
+    nt |> successors_H begin fun prod nt' ->
+      (* If the source vertex [nt] and the destination vertex [nt'] lie in
+         the same component, then we have detected hidden left recursion. *)
+      if T.representative nt = T.representative nt' then
+        fail prod
+    end
+  end
 
 (* -------------------------------------------------------------------------- *)
 

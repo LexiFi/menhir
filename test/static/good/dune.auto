@@ -6535,32 +6535,6 @@
     (diff logtk.0.8.1-parse_theory.conflicts.exp
       logtk.0.8.1-parse_theory.conflicts)))
 
-(rule (target loop.opp.out) (deps loop.mly)
-  (action
-    (with-outputs-to loop.opp.out
-      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
-
-(rule (alias loop) (action (diff loop.opp.exp loop.opp.out)))
-
-(rule
-  (targets loop.out loop.automaton loop.automaton.resolved loop.conflicts
-    loop.timings)
-  (deps loop.mly)
-  (action
-    (with-outputs-to loop.out
-      (with-accepted-exit-codes 0
-        (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
-          --timings-to loop.timings %{deps})))))
-
-(rule (alias loop) (action (diff loop.exp loop.out)))
-
-(rule (alias loop) (action (diff loop.automaton.exp loop.automaton)))
-
-(rule (alias loop)
-  (action (diff loop.automaton.resolved.exp loop.automaton.resolved)))
-
-(rule (alias loop) (action (diff loop.conflicts.exp loop.conflicts)))
-
 (rule (target lr-but-not-lalr.opp.out) (deps lr-but-not-lalr.mly)
   (action
     (with-outputs-to lr-but-not-lalr.opp.out
@@ -12358,7 +12332,6 @@
     (alias llparse)
     (alias logic_parser)
     (alias logtk.0.8.1-parse_theory)
-    (alias loop)
     (alias lr-but-not-lalr)
     (alias ltlparser)
     (alias lustre-v6.1.737-lv6parser)
