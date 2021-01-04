@@ -1,6 +1,6 @@
 # Changes
 
-## 2020/12/XX
+## 2021/01/XX
 
 * Menhir now detects and rejects grammars that have a cycle and grammars that
   exhibit hidden left recursion. A grammar has a cycle when a nonterminal
