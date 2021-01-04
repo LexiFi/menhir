@@ -78,6 +78,15 @@ let show_cycle nts nt =
     end
   end
 
+let fail nts nt =
+  let positions = List.flatten (List.map Nonterminal.positions nts) in
+  Error.error positions
+    "the grammar is cyclic:\n\
+     the nonterminal symbol %s expands to itself.\n%s\
+     A cyclic grammar is ambiguous."
+    (Nonterminal.print false nt)
+    (show_cycle nts nt)
+
 (* To detect a cycle in a relation, we use the combinator [defensive_fix] that
    is provided by the library Fix. We define a function of type [Nonterminal.t
    -> unit] that computes nothing but calls itself recursively according to the
@@ -93,13 +102,7 @@ let () =
   try
     Nonterminal.iter check
   with M.Cycle (nts, nt) ->
-    let positions = List.flatten (List.map Nonterminal.positions nts) in
-    Error.error positions
-      "the grammar is cyclic:\n\
-       the nonterminal symbol %s expands to itself.\n%s\
-       A cyclic grammar is ambiguous."
-      (Nonterminal.print false nt)
-      (show_cycle nts nt)
+    fail nts nt
 
 (* -------------------------------------------------------------------------- *)
 
