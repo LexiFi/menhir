@@ -139,11 +139,6 @@ module Closure (L : Lookahead.S) = struct
 
   type node = {
 
-      (* Nodes are sequentially numbered so as to allow applying
-         Tarjan's algorithm (below). *)
-
-      num: int;
-
       (* Each node is associated with an item. *)
 
       item: t;
@@ -181,9 +176,6 @@ module Closure (L : Lookahead.S) = struct
   (* Allocate one graph node per item and build a mapping of
      items to nodes. *)
 
-  let count =
-    ref 0
-
   let mapping : node array array =
     Array.make Production.n [||]
 
@@ -198,8 +190,6 @@ module Closure (L : Lookahead.S) = struct
       mapping.(Production.p2i prod) <- Array.init (length+1) (fun pos ->
 
         let item = import (prod, pos) in
-        let num = !count in
-        count := num + 1;
 
         (* The lookahead set transmitted through an epsilon
            transition is the FIRST set of the remainder of
@@ -216,7 +206,6 @@ module Closure (L : Lookahead.S) = struct
         in
 
         {
-          num = num;
           item = item;
           epsilon_constant = constant;
           epsilon_transmits = transmits;
