@@ -2,6 +2,16 @@
 
 ## 2020/12/XX
 
+* Menhir now detects and rejects grammars that have a cycle and grammars that
+  exhibit hidden left recursion. A grammar has a cycle when a nonterminal
+  symbol `A` expands (in one or more steps) to itself. This implies that the
+  grammar is ambiguous. A grammar has hidden left recursion when a nonterminal
+  symbol `A` expands (in one step) to `B beta`, where `B` expands (in zero or
+  more steps) to nothing and `beta` expands (in zero or more steps) to `A
+  ...`. This implies that the grammar is not in the class *LR(k)* for any
+  value of *k*. Both of these anomalies create a shift/reduce conflict which,
+  if resolved in favor of reduction, leads to a nonterminating parser.
+
 * Disallow the escape sequence `\n` in a token alias. It was allowed by
   mistake. Disallowing it ensures that the `## Concrete syntax:` comments
   generated as part of `.messages` files fit on a single line.
