@@ -509,7 +509,8 @@ let goto nt =
 
 (* Code for all subroutines. *)
 
-let code = function
+let code label =
+  match label with
   | Run s ->
       run s
   | Reduce prod ->
