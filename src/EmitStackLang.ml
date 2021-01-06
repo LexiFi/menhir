@@ -36,7 +36,9 @@ let log format =
 (* [must_read_positions_upon_entering s] determines whether the start and end
    positions of the current token should be read from [lexbuf] upon entering
    the state [s]. This is the case if and only if [s] is entered via a shift
-   transition. *)
+   transition. (Otherwise, [startp] and [endp] are already defined.) We need
+   them in that case because [run] pushes a new cell when entered through a
+   shift transition. *)
 
 let must_read_positions_upon_entering s =
   match Lr1.incoming_symbol s with
@@ -74,6 +76,76 @@ let must_query_lexer_upon_entering s =
              reduction on a set of tokens that does not contain [#].
              The lexer must be queried for the next token. *)
           true
+
+(* -------------------------------------------------------------------------- *)
+
+(* When a "goto" transition (that is, a transition labeled with a nonterminal
+   symbol) is taken, a new cell must be pushed onto the stack. Two possible
+   placements come to mind for the PUSH instruction:
+
+   - One convention, "goto pushes", is to place this instruction in the [goto]
+     subroutine, prior to the case analysis whose branches contain jumps
+     to [run] subroutines.
+
+   - Another convention, "run pushes", is to place this instruction at the
+     beginning of [run]. *)
+
+(* With "goto pushes", we emit one PUSH instruction per nonterminal symbol,
+   whereas with "run pushes", we emit one such instruction per state whose
+   incoming symbol is a nonterminal symbol. For each terminal symbol [nt],
+   there is usually more than one state whose incoming symbol is [nt]. Thus,
+   "goto pushes" is more economical in terms of code size.
+
+   "run pushes" could be viewed as the composition of "goto pushes" with an
+   optimization phase where PUSH instructions are moved into [case]
+   instructions and past [jump] instructions. However, this optimization could
+   be somewhat painful to implement and costly, as it requires every
+   predecessor of the jump target to exhibit a similar [push] instruction. So,
+   if "run pushes" is what is desired, then we prefer to produce the desired
+   code directly. *)
+
+(* Even if one wishes to optimize for code size, "run pushes" remains
+   interesting in the case where every [run] subroutine of interest contains a
+   POP instruction. Indeed, in that case, the PUSH and POP instructions cancel
+   out, so there is no cost in code size for choosing "run pushes", while there
+   is a gain in speed. *)
+
+(* [every_run_pops nt] tests whether every state whose incoming symbol is [nt]
+   performs a default reduction of a non-epsilon production. This condition
+   ensures that the [run] subroutine for every such state contains a POP
+   instruction. *)
+
+let every_run_pops nt =
+  Lr1.targets (fun accu _ target ->
+    accu &&
+    match Default.has_default_reduction target with
+    | Some (prod, _) ->
+        Production.length prod > 0
+    | None -> false
+  ) true (Symbol.N nt)
+
+(* As suggested above, if we are trying to optimize for code size, then we
+   choose "goto pushes", except in those places where "run pushes" entails
+   no penalty. Otherwise, we choose "run pushes" everywhere. *)
+
+let gotopushes : Nonterminal.t -> bool =
+  if Settings.optimize_for_code_size then
+    Nonterminal.tabulate (fun nt -> not (every_run_pops nt))
+  else
+    fun _nt -> false
+
+let runpushes s =
+  match Lr1.incoming_symbol s with
+  | Some (Symbol.T _) ->
+      true
+  | None ->
+      false
+  | Some (Symbol.N nt) ->
+      (* There is a jump from a [goto] subroutine to a [run] subroutine.
+         Exactly one of them must be in charge of pushing a new cell. Thus,
+         [runpushes s] must be [true] if and only if [gotopushes nt] is
+         [false]. *)
+      not (gotopushes nt)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -155,25 +227,44 @@ let run s =
 
   let must_read_positions = must_read_positions_upon_entering s in
 
+  (* Determine whether a new cell must be pushed onto the stack. *)
+
+  let must_push = runpushes s in
+
+  (* A sanity check: [must_read_positions] implies [must_push]. Indeed,
+     the sole reason why we read these positions is that we must push
+     a new cell. *)
+
+  (* The reverse implication is not true. If this state is entered via
+     a goto transition, then [must_push] may be true or false, whereas
+     [must_read_positions] is false. *)
+
+  assert (not must_read_positions || must_push);
+
   (* Determine whether the lexer should be queried for the next token. *)
 
   let must_query_lexer = must_query_lexer_upon_entering s in
 
   (* At this point, the registers [lexer] and [lexbuf] are definitely needed.
      The register [token] is needed unless we are about to query the lexer for
-     a new token. The registers [state] and [semv] are needed unless this is
-     an initial state. The registers [startp] and [endp] are needed unless
-     this is an initial state or we are about to read these positions from
-     [lexbuf]. *)
+     a new token. The registers [state] and [semv] are needed if we are
+     expected to push a cell onto the stack. The registers [startp] and [endp]
+     are needed unless this is an initial state or we are about to read these
+     positions from [lexbuf]. (Actually, more precisely, [startp] is not needed
+     if [must_push] is false. [endp] may still be needed even in that case.) *)
 
-  (* Note that [state] does not contain the state [s]; instead, it contains a
-     predecessor state. *)
+  (* Note that it is not essential that the list of needed registers be tight.
+     This list could contain registers which are in fact not needed. It is
+     good practice to keep it as tight as possible, though, as this documents
+     the code that we produce (and allows us to benefit from a runtime
+     well-formedness test). *)
 
   need_list (
     lexer :: lexbuf ::
     if1 (not must_query_lexer) token @
-    ifn (not is_start) [state; semv] @
-    ifn (not (is_start || must_read_positions)) [startp; endp] @
+    ifn must_push [state; semv] @
+    if1 (not (is_start || must_read_positions) && must_push) startp @
+    if1 (not (is_start || must_read_positions)) endp @
     []
   );
 
@@ -188,9 +279,12 @@ let run s =
     prim endp (PrimOCamlFieldAccess (lexbuf, "Lexing.lex_curr_p"))
   end;
 
-  (* If this is not an initial state, push a new cell onto the stack. *)
+  (* Note that [state] does not contain the state [s]; instead, it contains a
+     predecessor state. *)
 
-  if not is_start then
+  (* If [run] is expected to push a new cell onto the stack, do so now. *)
+
+  if must_push then
     push (VTuple (vregs [ state; semv; startp; endp ]));
 
   (* Define the current state to be [s]. *)
@@ -383,10 +477,17 @@ let reduce prod =
 
 let goto nt =
 
-  (* The [run] functions that we call are reached via goto transitions,
+  (* The [run] subroutines that we call are reached via goto transitions,
      therefore do not query the lexer. This means that [token] is needed. *)
 
   need_list [ lexer; lexbuf; token; state; semv; startp; endp ];
+
+  (* If it is up to this [goto] subroutine to push a new cell onto the stack,
+     then do so now. If not, then it will be done by the [run] subroutine to
+     which we are about to jump. *)
+
+  if gotopushes nt then
+    push (VTuple (vregs [ state; semv; startp; endp ]));
 
   (* Perform a case analysis on the current state [state]. In each branch,
      jump to an appropriate new state. There is no default branch. Although a
@@ -408,7 +509,8 @@ let goto nt =
 
 (* Code for all subroutines. *)
 
-let code = function
+let code label =
+  match label with
   | Run s ->
       run s
   | Reduce prod ->
