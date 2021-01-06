@@ -203,6 +203,9 @@ let interpret_show_cst =
 let interpret_error =
   ref false
 
+let optimization_level =
+  ref 0
+
 let table =
   ref false
 
@@ -405,6 +408,7 @@ let options = Arg.align [
   "-lg", Arg.Set_int logG, " Synonymous with --log-grammar";
   "-la", Arg.Set_int logA, " Synonymous with --log-automaton";
   "-lc", Arg.Set_int logC, " Synonymous with --log-code";
+  "-O", Arg.Set_int optimization_level, " (0|1) Set optimization level";
   "-t", Arg.Set table, " Synonymous with --table";
   "-v", Arg.Unit v, " Synonymous with --dump --explain";
 ]
@@ -546,6 +550,12 @@ let interpret_show_cst =
 
 let interpret_error =
   !interpret_error
+
+let optimization_level =
+  !optimization_level
+
+let optimize_for_code_size =
+  optimization_level = 0
 
 let table =
   !table
