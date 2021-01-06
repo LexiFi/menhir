@@ -166,6 +166,13 @@ val interpret_show_cst : bool
 
 val interpret_error : bool
 
+(* The setting -O allows choosing an optimization level. At the moment, -O 0
+   (which is the default) means "optimize for code size", while -O 1 means
+   "optimize for speed". This concerns the code back-end only. *)
+
+val optimization_level: int
+val optimize_for_code_size: bool
+
 (* Whether to use the table-based back-end ([true]) or the code-based
    back-end ([false]). *)
 
