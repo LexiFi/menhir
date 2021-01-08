@@ -20,8 +20,9 @@ module InfiniteArray =
 
 (* Perform loop detection before attempting to build the LR(0) automaton. *)
 
-module _ =
-  LoopDetection.Run()
+let () =
+  let module L = LoopDetection.Run() in
+  ()
 
 (* ------------------------------------------------------------------------ *)
 (* Symbolic lookahead information. *)
