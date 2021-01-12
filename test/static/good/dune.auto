@@ -10346,6 +10346,36 @@
 (rule (alias self_ground)
   (action (diff self_ground.conflicts.exp self_ground.conflicts)))
 
+(rule (target sexpParser.opp.out) (deps sexpParser.mly)
+  (action
+    (with-outputs-to sexpParser.opp.out
+      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+
+(rule (alias sexpParser)
+  (action (diff sexpParser.opp.exp sexpParser.opp.out)))
+
+(rule
+  (targets sexpParser.out sexpParser.automaton sexpParser.automaton.resolved
+    sexpParser.conflicts sexpParser.timings)
+  (deps sexpParser.mly)
+  (action
+    (with-outputs-to sexpParser.out
+      (with-accepted-exit-codes 0
+        (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
+          --timings-to sexpParser.timings %{deps})))))
+
+(rule (alias sexpParser) (action (diff sexpParser.exp sexpParser.out)))
+
+(rule (alias sexpParser)
+  (action (diff sexpParser.automaton.exp sexpParser.automaton)))
+
+(rule (alias sexpParser)
+  (action
+    (diff sexpParser.automaton.resolved.exp sexpParser.automaton.resolved)))
+
+(rule (alias sexpParser)
+  (action (diff sexpParser.conflicts.exp sexpParser.conflicts)))
+
 (rule (target sibylfs-lem.0.4.0-parser.opp.out)
   (deps sibylfs-lem.0.4.0-parser.mly)
   (action
@@ -12449,6 +12479,7 @@
     (alias scilabParser)
     (alias self)
     (alias self_ground)
+    (alias sexpParser)
     (alias sibylfs-lem.0.4.0-parser)
     (alias simnml)
     (alias simple-if-conflict)
