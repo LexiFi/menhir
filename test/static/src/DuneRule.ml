@@ -47,6 +47,11 @@ let system command =
 let system format =
   ksprintf system format
 
+(* Redirecting the input channel of an action. *)
+
+let redirect_stdin filename action =
+  L[A"with-stdin-from"; A filename; action]
+
 (* Redirecting the output channels of an action towards a file. *)
 
 (* At the time of writing (2.7.1), dune has a bug that causes it to send
