@@ -254,7 +254,7 @@ let rec compile_block env =
                       {
                         branchpat =
                           T.POr
-                            (List.map (fun tag -> T.p_int_const tag) tag_list);
+                            (List.map (fun tag -> T.PVar (Printf.sprintf "%d" tag)) tag_list);
                         branchbody = compile_block env block;
                       })
               tagpat_block_list ))
