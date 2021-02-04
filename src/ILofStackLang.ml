@@ -205,10 +205,13 @@ let rec compile_block env =
                               match Grammar.Terminal.ocamltype terminal with
                               | None -> []
                               | Some _ -> [ T.PVar register ] );
-                        branchbody = 
-                        match Grammar.Terminal.ocamltype terminal with
-                        | None -> T.ELet ([T.PVar register, T.EUnit], compile_block env block)
-                        | Some _ -> compile_block env block;
+                        branchbody =
+                          ( match Grammar.Terminal.ocamltype terminal with
+                          | None ->
+                              T.ELet
+                                ( [ (T.PVar register, T.EUnit) ],
+                                  compile_block env block )
+                          | Some _ -> compile_block env block );
                       }
                 | TokMultiple terminals ->
                     T.
@@ -254,12 +257,19 @@ let rec compile_block env =
                       {
                         branchpat =
                           T.POr
-                            (List.map (fun tag -> T.PVar (Printf.sprintf "%d" tag)) tag_list);
+                            (List.map
+                               (fun tag -> T.PVar (Printf.sprintf "%d" tag))
+                               tag_list);
                         branchbody = compile_block env block;
                       })
-              tagpat_block_list ))
-
-let entries (S.{ cfg; entry } : S.program) = Lr1.NodeMap.map
+              tagpat_block_list
+            @ [
+                T.
+                  {
+                    branchpat = T.PWildcard;
+                    branchbody = T.EApp (T.EVar "assert", [ T.EVar "false" ]);
+                  };
+              ] ))
 
 let compile (S.{ cfg; entry } : S.program) =
   let env = get_env cfg in
@@ -268,6 +278,35 @@ let compile (S.{ cfg; entry } : S.program) =
       (fun _ label acc -> StringSet.add label acc)
       entry StringSet.empty
   in
+
+  (*[ SIFunctor (grammar.parameters,
+
+      mbasics grammar @
+
+      SITypeDefs [ envtypedef; statetypedef ] ::
+
+      SIStretch grammar.preludes ::
+
+      SIValDefs (true,
+        ProductionMap.fold (fun _ s defs ->
+          entrydef s :: defs
+        ) Lr1.entry (
+        Lr1.fold (fun defs s ->
+          rundef s :: errordef s :: defs
+        ) (
+        Nonterminal.foldx (fun nt defs ->
+          gotodef nt :: defs
+        ) (Production.fold (fun prod defs ->
+          if Lr1.NodeSet.is_empty (Lr1.production_where prod) then
+            defs
+          else
+            reducedef prod :: defs
+        ) [ discarddef; printtokendef; assertfalsedef; errorcasedef ])))
+      ) ::
+
+      SIStretch grammar.postludes ::
+
+    [])] *)
   T.
     [
       SIFunctor
