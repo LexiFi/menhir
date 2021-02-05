@@ -18,6 +18,14 @@ let fstack = prefix "stack"
 
 let discard = prefix "discard"
 
+let statecon s = dataprefix (Printf.sprintf "State%d" s)
+
+let estatecon s = T.EData (statecon s, [])
+
+let pstatecon s = T.PData (statecon s, [])
+
+let pstatescon ss = T.POr (List.map pstatecon ss)
+
 let discarddef =
   T.
     {
@@ -73,8 +81,6 @@ let tcstate = prefix "state"
 
 (*let tstate = T.TypApp (tcstate, [])*)
 
-let statecon s = dataprefix (Printf.sprintf "State%d" (Lr1.number s))
-
 let statetypedef =
   T.
     {
@@ -84,9 +90,10 @@ let statetypedef =
         TDefSum
           (Lr1.fold
              (fun defs s ->
-               if Invariant.represented s then
+               (* TODO : restore the condition *)
+               if (*Invariant.represented s*) true then
                  {
-                   dataname = statecon s;
+                   dataname = statecon @@ Lr1.number s;
                    datavalparams = [];
                    datatypeparams = None;
                  }
@@ -115,7 +122,7 @@ let rec compile_pattern = function
   | S.PTuple li -> T.PTuple (List.map compile_pattern li)
 
 let rec compile_value = function
-  | S.VTag tag -> T.EIntConst tag
+  | S.VTag tag -> estatecon tag
   | S.VReg register -> T.EVar register
   | S.VTuple value_list -> T.ETuple (List.map compile_value value_list)
 
@@ -127,60 +134,114 @@ let compile_primitive = function
   | S.PrimOCamlDummyPos -> T.EVar "Lexing.dummy_pos"
   | S.PrimOCamlAction action -> Action.to_il_expr action
 
-let rec compile_block env =
-  S.(
-    function
+let compile_block env =
+  let rec compile_ICaseToken register tokpat_block_list block_option =
+    T.EMatch
+      ( T.EVar register,
+        List.map
+          (fun (tokpat, block) ->
+            match tokpat with
+            | S.TokSingle (terminal, register) ->
+                T.
+                  {
+                    branchpat = CodePieces.tokpat terminal (T.PVar register);
+                    branchbody =
+                      ( match Grammar.Terminal.ocamltype terminal with
+                      | None ->
+                          T.ELet
+                            ([ (T.PVar register, T.EUnit) ], compile_block block)
+                      | Some _ -> compile_block block );
+                  }
+            | S.TokMultiple terminals ->
+                T.
+                  {
+                    branchpat =
+                      T.POr
+                        (List.map
+                           (fun terminal ->
+                             CodePieces.tokpat terminal T.PWildcard)
+                           (Grammar.TerminalSet.elements terminals));
+                    branchbody = compile_block block;
+                  })
+          tokpat_block_list
+        @
+        match block_option with
+        | None -> []
+        | Some block ->
+            [ T.{ branchpat = T.PWildcard; branchbody = compile_block block } ]
+      )
+  and compile_ICaseTag register tagpat_block_list =
+    T.EMatch
+      ( T.EVar register,
+        List.map
+          (fun (tagpat, block) ->
+            let (S.TagMultiple tag_list) = tagpat in
+            T.
+              {
+                branchpat = pstatescon tag_list;
+                branchbody = compile_block block;
+              })
+          tagpat_block_list
+        @ [
+            (* TODO : remove this *)
+            T.
+              {
+                branchpat = T.PWildcard;
+                branchbody = T.EApp (T.EVar "assert", [ T.EVar "false" ]);
+              };
+          ] )
+  and compile_block = function
     (* [INeed] is a special pseudo-instruction that is expected to appear at
        least at the beginning of every block. (It can also be used inside a
        block.) It indicates which registers are expected to be defined at this
        point, and it un-defines any registers that are not explicitly listed. *)
-    | INeed (_registers, block) -> compile_block env block
+    | S.INeed (_registers, block) -> compile_block block
     (* [IPush] pushes a value onto the stack. [IPop] pops a value off the stack.
        [IDef] can be viewed as a sequence of a push and a pop. It can be used to
        move data between registers or to load a value into a register. *)
-    | IPush (value, block) ->
+    | S.IPush (value, block) ->
         T.ELet
           ( [ (T.PVar fstack, T.ETuple [ T.EVar fstack; compile_value value ]) ],
-            compile_block env block )
-    | IPop (pattern, block) ->
+            compile_block block )
+    | S.IPop (pattern, block) ->
         T.ELet
           ( [
               ( T.PTuple [ T.PVar fstack; compile_pattern pattern ],
                 T.EVar fstack );
             ],
-            compile_block env block )
-    | IDef (pattern, value, block) ->
+            compile_block block )
+    | S.IDef (pattern, value, block) ->
         T.ELet
           ( [ (compile_pattern pattern, compile_value value) ],
-            compile_block env block )
+            compile_block block )
     (* [IPrim] invokes a primitive operation and stores its result in a
        register. *)
-    | IPrim (register, primitive, block) ->
+    | S.IPrim (register, primitive, block) ->
         T.ELet
           ( [ (T.PVar register, compile_primitive primitive) ],
-            compile_block env block )
+            compile_block block )
     (* [ITrace] logs a message on [stderr]. *)
-    | ITrace (message, block) ->
+    | S.ITrace (message, block) ->
         T.ELet
           ( [
               ( T.PVar "_",
                 T.EApp (T.EVar "Printf.eprintf", [ T.EStringConst message ]) );
             ],
-            compile_block env block )
+            compile_block block )
     (* [IComment] is a comment. *)
-    | IComment (comment, block) -> T.EComment (comment, compile_block env block)
+    | S.IComment (comment, block) -> T.EComment (comment, compile_block block)
     (* Group 2: Instructions with zero successor. *)
 
     (* [IDie] causes an abrupt termination of the program. It is translated
        into OCaml by raising the exception [Error]. *)
-    | IDie -> T.ERaise (T.EVar "Error")
+    | S.IDie -> T.ERaise (T.EVar "_eRR")
     (* [IReturn] causes the normal termination of the program. A value read
        from a register is returned. *)
-    | IReturn register -> T.EVar register
+    | S.IReturn register -> T.EVar register
     (* [IJump] causes a jump to a block identified by its label. The registers
        that are needed by the destination block must form a subset of the
        registers that are defined at the point of the jump. *)
-    | IJump label ->
+    | S.IJump label ->
         T.EApp
           ( T.EVar label,
             e_common_args
@@ -190,86 +251,16 @@ let rec compile_block env =
     (* [ICaseToken] performs a case analysis on a token (which is held in a
        register). It carries a list of branches, each of which is guarded by
        a pattern, and an optional default branch. *)
-    | ICaseToken (register, tokpat_block_list, block_option) ->
-        T.EMatch
-          ( T.EVar register,
-            List.map
-              (fun (tokpat, block) ->
-                match tokpat with
-                | TokSingle (terminal, register) ->
-                    T.
-                      {
-                        branchpat =
-                          T.PData
-                            ( Grammar.Terminal.print terminal,
-                              match Grammar.Terminal.ocamltype terminal with
-                              | None -> []
-                              | Some _ -> [ T.PVar register ] );
-                        branchbody =
-                          ( match Grammar.Terminal.ocamltype terminal with
-                          | None ->
-                              T.ELet
-                                ( [ (T.PVar register, T.EUnit) ],
-                                  compile_block env block )
-                          | Some _ -> compile_block env block );
-                      }
-                | TokMultiple terminals ->
-                    T.
-                      {
-                        branchpat =
-                          T.POr
-                            (List.map
-                               (fun terminal ->
-                                 T.PData
-                                   ( Grammar.Terminal.print terminal,
-                                     match
-                                       Grammar.Terminal.ocamltype terminal
-                                     with
-                                     | None -> []
-                                     | Some _ -> [ T.PWildcard ] ))
-                               (Grammar.TerminalSet.elements terminals));
-                        branchbody = compile_block env block;
-                      })
-              tokpat_block_list
-            @
-            match block_option with
-            | None -> []
-            | Some block ->
-                [
-                  T.
-                    {
-                      branchpat = T.PWildcard;
-                      branchbody = compile_block env block;
-                    };
-                ] )
+    | S.ICaseToken (register, tokpat_block_list, block_option) ->
+        compile_ICaseToken register tokpat_block_list block_option
     (* [ICaseTag] performs a case analysis on a tag (which is held in a
        register). It carries a list of branches, each of which is guarded by a
        pattern. There is no default branch; it is up to the user to ensure that
        the case analysis is exhaustive. *)
-    | ICaseTag (register, tagpat_block_list) ->
-        T.EMatch
-          ( T.EVar register,
-            List.map
-              (fun (tagpat, block) ->
-                match tagpat with
-                | TagMultiple tag_list ->
-                    T.
-                      {
-                        branchpat =
-                          T.POr
-                            (List.map
-                               (fun tag -> T.PVar (Printf.sprintf "%d" tag))
-                               tag_list);
-                        branchbody = compile_block env block;
-                      })
-              tagpat_block_list
-            @ [
-                T.
-                  {
-                    branchpat = T.PWildcard;
-                    branchbody = T.EApp (T.EVar "assert", [ T.EVar "false" ]);
-                  };
-              ] ))
+    | S.ICaseTag (register, tagpat_block_list) ->
+        compile_ICaseTag register tagpat_block_list
+  in
+  compile_block
 
 let compile (S.{ cfg; entry } : S.program) =
   let env = get_env cfg in
@@ -278,35 +269,6 @@ let compile (S.{ cfg; entry } : S.program) =
       (fun _ label acc -> StringSet.add label acc)
       entry StringSet.empty
   in
-
-  (*[ SIFunctor (grammar.parameters,
-
-      mbasics grammar @
-
-      SITypeDefs [ envtypedef; statetypedef ] ::
-
-      SIStretch grammar.preludes ::
-
-      SIValDefs (true,
-        ProductionMap.fold (fun _ s defs ->
-          entrydef s :: defs
-        ) Lr1.entry (
-        Lr1.fold (fun defs s ->
-          rundef s :: errordef s :: defs
-        ) (
-        Nonterminal.foldx (fun nt defs ->
-          gotodef nt :: defs
-        ) (Production.fold (fun prod defs ->
-          if Lr1.NodeSet.is_empty (Lr1.production_where prod) then
-            defs
-          else
-            reducedef prod :: defs
-        ) [ discarddef; printtokendef; assertfalsedef; errorcasedef ])))
-      ) ::
-
-      SIStretch grammar.postludes ::
-
-    [])] *)
   T.
     [
       SIFunctor
