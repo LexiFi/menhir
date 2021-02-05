@@ -200,15 +200,20 @@ let compile_block env =
        [IDef] can be viewed as a sequence of a push and a pop. It can be used to
        move data between registers or to load a value into a register. *)
     | S.IPush (value, block) ->
+        let value =
+          match compile_value value with T.ETuple li -> li | _ -> assert false
+        in
         T.ELet
-          ( [ (T.PVar fstack, T.ETuple [ T.EVar fstack; compile_value value ]) ],
+          ( [ (T.PVar fstack, T.ETuple (T.EVar fstack :: value)) ],
             compile_block block )
     | S.IPop (pattern, block) ->
+        let pattern =
+          match compile_pattern pattern with
+          | T.PTuple li -> li
+          | _ -> assert false
+        in
         T.ELet
-          ( [
-              ( T.PTuple [ T.PVar fstack; compile_pattern pattern ],
-                T.EVar fstack );
-            ],
+          ( [ (T.PTuple (T.PVar fstack :: pattern), T.EVar fstack) ],
             compile_block block )
     | S.IDef (pattern, value, block) ->
         T.ELet
