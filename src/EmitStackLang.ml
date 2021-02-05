@@ -341,7 +341,7 @@ let run s =
              its semantic value. *)
           branch (TokSingle (tok, semv)) begin fun () ->
             (* Log that we are shifting. *)
-            log "Shifting (%s) to state %d\n"
+            log "Shifting (%s) to state %d"
               (Terminal.print tok) (number s');
             (* The subroutine [run s'] does not need the current token [token]
                and is responsible for obtaining its start and end positions
