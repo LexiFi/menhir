@@ -127,7 +127,7 @@ let entry_comment entry_labels label =
   else
     empty
 
-let labeled_block entry_labels (label, b) =
+let labeled_block entry_labels (label, {block=b; stack_type=_}) =
   entry_comment entry_labels label ^^
   string label ^^ colon ^^ nest 2 (block b) ^^ nl ^^ nl
 

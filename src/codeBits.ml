@@ -127,9 +127,15 @@ let tvar x : typ =
 let scheme qs t =
   {
     quantifiers = qs;
-    body = t
+    body = t;
+    locally_abstract = false
   }
-
+let local_scheme qs t =
+    {
+      quantifiers = qs;
+      body = t;
+      locally_abstract = true;
+    }
 (* Building a type scheme with no quantifiers out of a type. *)
 
 let type2scheme t =

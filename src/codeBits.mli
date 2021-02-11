@@ -56,6 +56,8 @@ val tvar: string -> typ
 (* Building a type scheme. *)
 
 val scheme: string list -> typ -> typescheme
+val local_scheme: string list -> typ -> typescheme
+
 val type2scheme: typ -> typescheme
 
 (* Constraining an expression to have a (monomorphic) type. *)

@@ -90,7 +90,6 @@ let semvtypent nt =
       (* [nt] has unknown type. If we have run [Infer], then this
          can't happen. However, running type inference is only an
          option, so we still have to deal with that case. *)
-
       ntvar nt
 
   | Some ocamltype ->

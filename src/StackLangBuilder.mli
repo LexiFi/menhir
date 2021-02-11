@@ -44,6 +44,12 @@ end
 
 (* The following imperative API can be used by the function [code] above. *)
 
+
+(**
+Set the type of the whole block
+*)
+val set_type: IL.typ array -> unit
+
 (* Each of the functions in the first group extends a code block that is
    currently under construction. Each of the functions in the second group
    ends the construction of the block. Each of the functions in the third

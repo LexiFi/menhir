@@ -108,6 +108,9 @@ and typ =
   (* Textual OCaml type. *)
   | TypTextual of Stretch.ocamltype
 
+  (* Type name *)
+  | TypName of string 
+
   (* Type variable, without its leading quote. Can also be "_". *)
   | TypVar of string
 
@@ -125,6 +128,7 @@ and typescheme = {
   (* Universal quantifiers, without leading quotes. *)
   quantifiers: string list;
 
+  locally_abstract: bool;
   (* Body. *)
   body: typ;
 

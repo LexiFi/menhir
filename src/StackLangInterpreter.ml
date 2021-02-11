@@ -223,7 +223,7 @@ let rec exec state block =
       Some () (* accept *)
 
   | IJump label ->
-      let block = lookup label state.program.cfg in
+      let block = (lookup label state.program.cfg).block in
       exec state block
 
   | ICaseToken (r, branches, odefault) ->

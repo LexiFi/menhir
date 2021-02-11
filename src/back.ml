@@ -100,7 +100,7 @@ let () =
     let module SL = EmitStackLang.Run () in
     let program = SL.program in
     let program = ILofStackLang.compile program in
-    write (CodeInliner.inline program);
+    write program;
     Interface.write Front.grammar ()
 
 let () = Time.tick "Printing"
