@@ -153,6 +153,12 @@ let inline_valdefs (defs : valdef list) : valdef list =
         match typ with
         | TypTextual _ ->
             typ
+        | TypName n ->
+          begin try
+            TypName (List.assoc n mapping)
+          with Not_found ->
+            typ
+          end
         | TypVar v ->
             begin try
               TypVar (List.assoc v mapping)
