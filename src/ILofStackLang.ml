@@ -326,7 +326,7 @@ let compile_block env =
     (* [IReturn] causes the normal termination of the program. A value read
        from a register is returned. *)
     | S.IReturn register ->
-        T.EVar register
+        T.EMagic (T.EVar register)
     (* [IJump] causes a jump to a block identified by its label. The registers
        that are needed by the destination block must form a subset of the
        registers that are defined at the point of the jump. *)
@@ -394,7 +394,7 @@ let compile (S.{cfg; entry} : S.program) =
                 , StringMap.fold
                     (fun _ block acc -> block :: acc)
                     (StringMap.mapi
-                       (fun name (t_block) ->
+                       (fun name t_block ->
                          { valpublic= StringSet.mem name entries
                          ; valpat= T.PVar name
                          ; valval=

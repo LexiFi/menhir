@@ -13,6 +13,7 @@
 
 open Printf
 open Grammar
+
 module SSymbols = StackSymbols.Run ()
 
 let prefix = CodeBits.prefix
@@ -119,7 +120,7 @@ let must_query_lexer_upon_entering s =
    ensures that the [run] subroutine for every such state contains a POP
    instruction. *)
 
-let every_run_pops nt =
+(* let every_run_pops nt =
   Lr1.targets
     (fun accu _ target ->
       accu
@@ -129,16 +130,18 @@ let every_run_pops nt =
           Production.length prod > 0
       | None ->
           false)
-    true (Symbol.N nt)
+    true (Symbol.N nt) *)
 
 (* As suggested above, if we are trying to optimize for code size, then we
    choose "goto pushes", except in those places where "run pushes" entails
    no penalty. Otherwise, we choose "run pushes" everywhere. *)
 
-let gotopushes : Nonterminal.t -> bool =
+let gotopushes : Nonterminal.t -> bool = fun _ -> false
+
+(*
   if Settings.optimize_for_code_size then
     Nonterminal.tabulate (fun nt -> not (every_run_pops nt))
-  else fun _nt -> false
+  else fun _nt -> false *)
 
 let runpushes s =
   match Lr1.incoming_symbol s with
@@ -413,22 +416,27 @@ module L = struct
 
   (* -------------------------------------------------------------------------- *)
 
-(* Code for all subroutines. *)
-  
-let stack_type_goto _ =
-      [||]
+  (* Code for all subroutines. *)
 
-let stack_type_reduce production  =
-   let symbols = Grammar.Production.rhs production in
-   let types = Array.map CodePieces.semvtype symbols in
-   Array.map (function [] -> IL.TypName "unit" | x -> IL.TypTuple x) types
-let stack_type_run state =
-   let symbols = SSymbols.stack_symbols state in
-   let n_pushes = if runpushes state then 1 else 0 in
-   let types = Array.map CodePieces.semvtype symbols in
-   Array.map (function [] -> IL.TypName "unit" | x -> IL.TypTuple x)
-             (Array.sub types 0 (Array.length types - n_pushes)) 
-let code label =
+  let stack_type_goto _ = [||]
+
+  let stack_type_reduce production =
+    let symbols = Grammar.Production.rhs production in
+    let types = Array.map CodePieces.semvtype symbols in
+    Array.map
+      (function [] -> IL.TypName "unit" | [x] -> x | x -> IL.TypTuple x)
+      types
+
+  let stack_type_run state =
+    let symbols = SSymbols.stack_symbols state in
+    let n_pushes = if runpushes state then 1 else 0 in
+    let types = Array.map CodePieces.semvtype symbols in
+    Array.map
+      (function [] -> IL.TypName "unit" | [x] -> x | x -> IL.TypTuple x)
+      (let len = Array.length types in
+       if len = 0 then [||] else Array.sub types 0 (len - n_pushes))
+
+  let code label =
     match label with
     | Run s ->
         set_type (stack_type_run s) ;
@@ -442,7 +450,7 @@ let code label =
 
   (* The entry points. *)
 
-let entry =
+  let entry =
     ProductionMap.fold
       (fun _prod s accu -> Lr1.NodeMap.add s (Run s) accu)
       Lr1.entry Lr1.NodeMap.empty

@@ -170,13 +170,13 @@ let case_tag r cases =
   cases def_branch ;
   let branches = List.rev !branches in
   current := saved ;
-  match branches with
+  (*match branches with
   | [(_pat, block)] ->
       (* TODO : check if it really works, it could delete type info. *)
       (* If there is only one branch, then there is no need to generate a
          case instruction; we eliminate it on the fly. *)
       close block
-  | _ ->
+  | _ ->*)
       close (ICaseTag (r, branches))
 
 module Build (L : sig

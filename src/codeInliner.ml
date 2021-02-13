@@ -204,7 +204,8 @@ let inline_valdefs (defs : valdef list) : valdef list =
     assert (List.length actuals = List.length formals);
     match oscheme with
     | Some scheme
-      when not Front.ocaml_types_have_been_checked ->
+      when (not Front.ocaml_types_have_been_checked) 
+           && not scheme.locally_abstract  ->
 
         let formals, body = annotate formals body (instance scheme) in
         mlet formals actuals body
