@@ -100,6 +100,7 @@ let () =
     let module SL = EmitStackLang.Run () in
     let program = SL.program in
     let program = ILofStackLang.compile program in
+    let program = CodeInliner.inline program in
     write program;
     Interface.write Front.grammar ()
 
