@@ -6,6 +6,10 @@ IFS=$' \n\t'
 
 MENHIR_ROOT=$(pwd)
 
+# We use GNU time under the name gtime if available, otherwise time.
+
+TIME=$(if command -v gtime >/dev/null ; then echo gtime ; else echo time ; fi)
+
 # We use a dedicated opam switch where it is permitted to uninstall/reinstall
 # Menhir.
 
@@ -43,7 +47,7 @@ if git status --porcelain | grep -v compile-ocaml ; then
 
 execute () {
   echo "$1" > .command
-  if gtime --format "%e" -o .time bash -c "$1" >log.out 2>log.err ; then
+  if $TIME --format "%e" -o .time bash -c "$1" >log.out 2>log.err ; then
     echo " $(cat .time) seconds." ;
   else
     echo " failure."
