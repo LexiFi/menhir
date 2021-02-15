@@ -22,10 +22,13 @@ eval $(opam env --set-switch --switch test-menhir)
 
 # Uninstall Menhir if it is installed.
 
+# We are not sure whether it was installed via opam or directly
+# via [make install], so we try both uninstallation methods.
+
 echo "Removing menhir if already installed..."
 #   read -p "Can I remove it [Enter/^C]?" -n 1 -r ;
 (opam remove menhir || /bin/true) >/dev/null 2>&1
-make unpin > /dev/null 2>&1
+make -C $MENHIR_ROOT uninstall >/dev/null 2>&1
 
 # Check if everything has been committed.
 # This seems required for [opam pin] to work properly.
@@ -72,6 +75,10 @@ echo -n "Testing OCaml..."
 execute "make -C testsuite parallel"
 
 # Install Menhir.
+
+# We install it via [make install] rather than via [opam pin ...]
+# because [make install] is likely to be much faster (especially
+# if Menhir has already been compiled in its working directory).
 
 echo -n "Installing Menhir..."
 execute "make -C $MENHIR_ROOT install"
