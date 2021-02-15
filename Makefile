@@ -49,16 +49,19 @@ test:
 # On MacOS, we require gsed instead of sed.
 SED=$(shell if [[ "$$OSTYPE" == "darwin"* ]] ; then echo gsed ; else echo sed ; fi)
 
+DATA := analysis/data.csv
+
 .PHONY: data
 data: test
 	@ echo "Collecting data (using $(SED))..." && \
-	  echo "name,mode,terminals,nonterminals,lr0states,lr1states,lr1time" > analysis/data.csv && \
-	  directory=_build/default/test/static/src && \
+	  echo "name,mode,terminals,nonterminals,lr0states,lr1states,lr1time" > $(DATA) && \
+	  directory=_build/default/test/static/good && \
 	  successful=0 && timedout=0 && \
 	  for timings in $$directory/*.timings ; do \
 	    name=$${timings%.timings} ; \
 	    out=$$name.out ; \
 	    name=`basename $$name` ; \
+	    echo "Processing $${name}..." ; \
 	    if grep --quiet "TIMEOUT after" $$out ; then \
 	      ((timedout++)) ; \
 	    else \
@@ -69,13 +72,14 @@ data: test
 	      lr0states=`$(SED) -n -e "s/^Built an LR(0) automaton with \([0-9]\+\) states./\1/p" $$out` ; \
 	      lr1states=`$(SED) -n -e "s/^Built an LR(1) automaton with \([0-9]\+\) states./\1/p" $$out` ; \
 	      lr1time=`$(SED) -n -e "s/^Construction of the LR(1) automaton: \(.*\)s/\1/p" $$timings` ; \
-	      echo "$$name,$$mode,$$terminals,$$nonterminals,$$lr0states,$$lr1states,$$lr1time" >> analysis/data.csv ; \
+	      echo "$$name,$$mode,$$terminals,$$nonterminals,$$lr0states,$$lr1states,$$lr1time" >> $(DATA) ; \
 	    fi \
 	  done && \
-	echo "$$successful successful tests; $$timedout timed out tests."
+	echo "$$successful successful tests; $$timedout timed out tests." ; \
+	echo "The results have been written to $(DATA)."
 
 clean::
-	@ rm -f analysis/data.csv
+	@ rm -f $(DATA)
 
 # [make plot] uses Rscript to plot the data extracted by [make data].
 
