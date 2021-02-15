@@ -269,6 +269,9 @@ WWW     := www
 # running [make pin]. (You may wish to run [make pin] in a dedicated switch,
 # so as to avoid clobbering your regular installation of Menhir.)
 
+# You may also wish to run [./compile-ocaml.sh], which checks that Menhir is
+# able to compile OCaml. This test requires about 3 minutes.
+
 .PHONY: release
 release:
 # Check if this is the master branch.
