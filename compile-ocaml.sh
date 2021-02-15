@@ -2,7 +2,8 @@
 set -euo pipefail
 IFS=$' \n\t'
 
-# This script compiles and tests OCaml using the current version of Menhir.
+# This script compiles OCaml using the current version of Menhir
+# and verifies that it behaves exactly as expected.
 
 MENHIR_ROOT=$(pwd)
 
@@ -74,9 +75,13 @@ execute "./configure"
 
 echo -n "Compiling OCaml..."
 execute "make -j"
+# ls -l --full-time ocamlc
 
-echo -n "Testing OCaml..."
-execute "make -C testsuite parallel"
+if false ; then
+  echo -n "Testing OCaml..."
+  execute "make -C testsuite parallel"
+  execute "make -C testsuite clean"
+fi
 
 # Install Menhir.
 
@@ -105,16 +110,33 @@ execute "make list-all-asts | xargs git add && git commit -m 'Build all ASTs.'"
 
 # Compile OCaml (again).
 
+# Cleaning up first should be unnecessary, but let's make sure the
+# compiler is correctly reconstructed from scratch.
+
+echo -n "Cleaning up..."
+execute "make clean"
+
 echo -n "Compiling OCaml..."
 execute "make -j"
+# ls -l --full-time ocamlc
 
-echo -n "Testing OCaml..."
-execute "make -C testsuite parallel"
+if false ; then
+  echo -n "Testing OCaml..."
+  execute "make -C testsuite parallel"
+fi
 
-# Compare the ASTs produced by the current parser with the snapshot.
+# Reconstruct all ASTs.
+
+# Removing them first should be unnecessary, but let's make sure they
+# are correctly reconstructed from scratch.
+
+echo -n "Removing previous ASTs..."
+execute "make list-all-asts | xargs rm -f"
 
 echo -n "Constructing ASTs for all source files..."
 execute "make -j build-all-asts"
+
+# Compare the ASTs produced by the current parser with the snapshot.
 
 rm -f .command .time log.{err,out}
 
