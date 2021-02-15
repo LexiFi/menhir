@@ -38,6 +38,13 @@ export CDPATH=
 test:
 	@ dune build --display short @test
 
+# [make mono] runs [make test] with a single core. This may produce more
+# reliable timing data, to be used subsequently by [make data].
+
+.PHONY: mono
+mono:
+	@ dune build --display short @test -j1
+
 # [make data] extracts statistics and performance data out of the files
 # produced by [make test]. Be careful: the timing data is definitely not high
 # quality, because every test is run only once and because the tests are run
