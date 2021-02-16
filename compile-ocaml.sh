@@ -2,8 +2,8 @@
 set -euo pipefail
 IFS=$' \n\t'
 
-# This script compiles OCaml using the current version of Menhir
-# and verifies that it behaves exactly as expected.
+# This script compiles OCaml using the current version of Menhir and verifies
+# that it behaves exactly as expected.
 
 MENHIR_ROOT=$(pwd)
 
@@ -45,7 +45,7 @@ if git status --porcelain | grep -v compile-ocaml ; then
 execute () {
   echo "$1" > .command
   T="$(date +%s)"
-  if $1 >log.out 2>log.err ; then
+  if eval "$1" >log.out 2>log.err ; then
     T="$(($(date +%s)-T))"
     echo " $T seconds." ;
   else
@@ -75,7 +75,7 @@ execute "./configure"
 
 echo -n "Compiling OCaml..."
 execute "make -j"
-# ls -l --full-time ocamlc
+ls -l ocamlc
 
 if false ; then
   echo -n "Testing OCaml..."
@@ -91,10 +91,18 @@ fi
 # faster (especially if Menhir has already been compiled in its
 # working directory). Unfortunately, I have seen dune (2.8.2) become
 # confused and install files partly in one switch, partly in another,
-# so perhaps installing [opam] is preferable. I am not sure yet. TODO
+# so perhaps installing via [opam pin ...] is preferable.
 
 echo -n "Installing Menhir..."
-execute "make -C $MENHIR_ROOT install"
+
+if true ; then
+  # Installation via opam.
+  execute "make -C $MENHIR_ROOT pin"
+else
+  # Installation via [make install].
+  execute "make -C $MENHIR_ROOT install"
+fi
+ls -l `which menhir`
 
 # Re-compile OCaml's parser using Menhir.
 
@@ -122,7 +130,7 @@ execute "make clean"
 
 echo -n "Compiling OCaml..."
 execute "make -j"
-# ls -l --full-time ocamlc
+ls -l ocamlc
 
 if false ; then
   echo -n "Testing OCaml..."
