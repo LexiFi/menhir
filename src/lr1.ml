@@ -526,6 +526,24 @@ let is_start node =
 
 (* -------------------------------------------------------------------------- *)
 
+(* With each start production [S' -> S], exactly two states are
+   associated: a start state, which contains the item [S' -> . S [#]],
+   and an exit state, which contains the item [S' -> S . [#]]. *)
+
+(* The following function recognizes these two states and returns the
+   corresponding start symbol [S]. *)
+
+let is_start_or_exit node =
+  let items = Lr0.items (Lr0.core (state node)) in
+  if Item.Set.cardinal items = 1 then
+    let item = Item.Set.choose items in
+    let prod, _, _, _, _ = Item.def item in
+    Production.classify prod
+  else
+    None
+
+(* -------------------------------------------------------------------------- *)
+
 (* Iteration over all nodes. *)
 
 let fold f accu =
