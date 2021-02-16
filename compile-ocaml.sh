@@ -46,6 +46,9 @@ if git status --porcelain | grep -v compile-ocaml ; then
 
 # This functions runs a command silently, and prints its execution time.
 
+# TODO avoid using bash -c; use the "time" builtin
+# (faster; transmits environment variables)
+
 execute () {
   echo "$1" > .command
   if $TIME --format "%e" -o .time bash -c "$1" >log.out 2>log.err ; then
@@ -87,9 +90,13 @@ fi
 
 # Install Menhir.
 
-# We install it via [make install] rather than via [opam pin ...]
-# because [make install] is likely to be much faster (especially
-# if Menhir has already been compiled in its working directory).
+# Should we install Menhir via [make install] or via [opam]?
+
+# [make install], which invokes [dune install], is likely to be much
+# faster (especially if Menhir has already been compiled in its
+# working directory). Unfortunately, I have seen dune (2.8.2) become
+# confused and install files partly in one switch, partly in another,
+# so perhaps installing [opam] is preferable. I am not sure yet. TODO
 
 echo -n "Installing Menhir..."
 execute "make -C $MENHIR_ROOT install"
