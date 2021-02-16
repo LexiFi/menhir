@@ -7,10 +7,6 @@ IFS=$' \n\t'
 
 MENHIR_ROOT=$(pwd)
 
-# We use GNU time under the name gtime if available, otherwise time.
-
-TIME=$(if command -v gtime >/dev/null ; then echo gtime ; else echo time ; fi)
-
 # We use a dedicated opam switch where it is permitted to uninstall/reinstall
 # Menhir.
 
@@ -44,15 +40,14 @@ if git status --porcelain | grep -v compile-ocaml ; then
   exit 1 ;
   fi
 
-# This functions runs a command silently, and prints its execution time.
-
-# TODO avoid using bash -c; use the "time" builtin
-# (faster; transmits environment variables)
+# This function runs a command silently, and prints its execution time.
 
 execute () {
   echo "$1" > .command
-  if $TIME --format "%e" -o .time bash -c "$1" >log.out 2>log.err ; then
-    echo " $(cat .time) seconds." ;
+  T="$(date +%s)"
+  if $1 >log.out 2>log.err ; then
+    T="$(($(date +%s)-T))"
+    echo " $T seconds." ;
   else
     code=$?
     echo " failure."
@@ -147,7 +142,7 @@ execute "make -j build-all-asts"
 
 # Compare the ASTs produced by the current parser with the snapshot.
 
-rm -f .command .time log.{err,out}
+rm -f .command log.{err,out}
 
 if git diff --exit-code >/dev/null ; then
   echo "Success: the original parser and the recompiled parser agree."
