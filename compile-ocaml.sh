@@ -2,14 +2,10 @@
 set -euo pipefail
 IFS=$' \n\t'
 
-# This script compiles OCaml using the current version of Menhir
-# and verifies that it behaves exactly as expected.
+# This script compiles OCaml using the current version of Menhir and verifies
+# that it behaves exactly as expected.
 
 MENHIR_ROOT=$(pwd)
-
-# We use GNU time under the name gtime if available, otherwise time.
-
-TIME=$(if command -v gtime >/dev/null ; then echo gtime ; else echo time ; fi)
 
 # We use a dedicated opam switch where it is permitted to uninstall/reinstall
 # Menhir.
@@ -18,7 +14,7 @@ if opam switch list | grep 'test-menhir' >/dev/null ; then
   echo "The switch test-menhir already exists." ;
 else
   echo "Creating switch test-menhir..." ;
-  opam switch create test-menhir 4.11.1 ;
+  opam switch create test-menhir ocaml-system.4.11.1 ;
   echo "Installing required packages..." ;
   opam install --yes dune ;
 fi
@@ -32,7 +28,7 @@ eval $(opam env --set-switch --switch test-menhir)
 
 echo "Removing menhir if already installed..."
 #   read -p "Can I remove it [Enter/^C]?" -n 1 -r ;
-(opam remove menhir || /bin/true) >/dev/null 2>&1
+(opam remove menhir menhirLib menhirSdk || /bin/true) >/dev/null 2>&1
 make -C $MENHIR_ROOT uninstall >/dev/null 2>&1
 
 # Check if everything has been committed.
@@ -44,15 +40,19 @@ if git status --porcelain | grep -v compile-ocaml ; then
   exit 1 ;
   fi
 
-# This functions runs a command silently, and prints its execution time.
+# This function runs a command silently, and prints its execution time.
 
 execute () {
   echo "$1" > .command
-  if $TIME --format "%e" -o .time bash -c "$1" >log.out 2>log.err ; then
-    echo " $(cat .time) seconds." ;
+  T="$(date +%s)"
+  if eval "$1" >log.out 2>log.err ; then
+    T="$(($(date +%s)-T))"
+    echo " $T seconds." ;
   else
+    code=$?
     echo " failure."
     cat log.err
+    exit $code
   fi
 }
 
@@ -75,7 +75,7 @@ execute "./configure"
 
 echo -n "Compiling OCaml..."
 execute "make -j"
-# ls -l --full-time ocamlc
+ls -l ocamlc
 
 if false ; then
   echo -n "Testing OCaml..."
@@ -85,12 +85,24 @@ fi
 
 # Install Menhir.
 
-# We install it via [make install] rather than via [opam pin ...]
-# because [make install] is likely to be much faster (especially
-# if Menhir has already been compiled in its working directory).
+# Should we install Menhir via [make install] or via [opam]?
+
+# [make install], which invokes [dune install], is likely to be much
+# faster (especially if Menhir has already been compiled in its
+# working directory). Unfortunately, I have seen dune (2.8.2) become
+# confused and install files partly in one switch, partly in another,
+# so perhaps installing via [opam pin ...] is preferable.
 
 echo -n "Installing Menhir..."
-execute "make -C $MENHIR_ROOT install"
+
+if true ; then
+  # Installation via opam.
+  execute "make -C $MENHIR_ROOT pin"
+else
+  # Installation via [make install].
+  execute "make -C $MENHIR_ROOT install"
+fi
+ls -l `which menhir`
 
 # Re-compile OCaml's parser using Menhir.
 
@@ -118,7 +130,7 @@ execute "make clean"
 
 echo -n "Compiling OCaml..."
 execute "make -j"
-# ls -l --full-time ocamlc
+ls -l ocamlc
 
 if false ; then
   echo -n "Testing OCaml..."
@@ -138,7 +150,7 @@ execute "make -j build-all-asts"
 
 # Compare the ASTs produced by the current parser with the snapshot.
 
-rm -f .command .time log.{err,out}
+rm -f .command log.{err,out}
 
 if git diff --exit-code >/dev/null ; then
   echo "Success: the original parser and the recompiled parser agree."
