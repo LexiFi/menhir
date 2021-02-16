@@ -39,9 +39,9 @@ let p_common_args = [(*T.PVar flexer; T.PVar flexbuf;*) T.PVar fstack]
 (* The type of environments. *)
 let tcstack = prefix "stack"
 
-let typ_stack_app tail_type types =
+let typ_stack_app tail_type final_type types =
   Array.fold_left
-    (fun tail sem_type -> T.TypApp (tcstack, [tail; sem_type]))
+    (fun tail sem_type -> T.TypApp (tcstack, [tail; sem_type; final_type]))
     tail_type types
 
 (* This is the type of states. Only states that are represented are
@@ -55,12 +55,12 @@ let tcstate = prefix "state"
 let stacktypedef =
   T.
     { typename= tcstack
-    ; typeparams= ["tail"; "semantic"]
+    ; typeparams= ["tail"; "semantic"; "final"]
     ; typerhs=
         TAbbrev
           (T.TypTuple
              [ T.TypVar "tail"
-             ; T.TypApp (tcstate, [T.TypVar "tail"])
+             ; T.TypApp (tcstate, [T.TypVar "tail"; T.TypVar "final"])
              ; T.TypVar "semantic"
              ; T.TypName "Lexing.position"
              ; T.TypName "Lexing.position" ])
@@ -69,8 +69,15 @@ let stacktypedef =
 let tag_types = Array.make Lr1.n (Obj.magic ())
 
 let statetypedef =
+  let final_type s =
+    match Lr1.is_start_or_exit s with
+    | None ->
+        T.TypVar "final"
+    | Some (nonterminal : Grammar.Nonterminal.t) ->
+        T.TypTextual (Grammar.Nonterminal.ocamltype_of_start_symbol nonterminal)
+  in
   let type_of_tag s =
-    let f tail_name =
+    let f tail_name final =
       let word = Invariant.stack s in
       Invariant.fold
         (fun typ_tail _ symbol _ ->
@@ -78,18 +85,20 @@ let statetypedef =
             match semvtype symbol with
             | [] ->
                 T.TypName "unit"
+            | [ty] ->
+                ty
             | li ->
                 T.TypTuple li
           in
-          T.TypApp (tcstack, [typ_tail; typ_semantic]))
+          T.TypApp (tcstack, [typ_tail; typ_semantic; final]))
         (T.TypName tail_name) word
     in
     tag_types.(Lr1.number s) <- f ;
-    f "'tail"
+    f "'tail" (final_type s)
   in
   T.
     { typename= tcstate
-    ; typeparams= ["tail"]
+    ; typeparams= ["tail"; "final"]
     ; typerhs=
         TDefSum
           (Lr1.fold
@@ -98,7 +107,12 @@ let statetypedef =
                if (*Invariant.represented s*) true then
                  { dataname= statecon @@ Lr1.number s
                  ; datavalparams= []
-                 ; datatypeparams= Some [type_of_tag s] }
+                 ; datatypeparams= Some [type_of_tag s; final_type s]
+                 ; comment=
+                     Some
+                       ( ( " Know stack symbols : "
+                         ^ SSymbols.print_stack_symbols s )
+                       ^ " " ) }
                  :: defs
                else defs)
              [])
@@ -145,49 +159,6 @@ let grammar = Front.grammar
 
 type block_info = {needed_registers: string list}
 
-(*let stack_type (cfg : S.typed_block StringMap.t) label =
-  let n_pops block =
-    let rec aux (i : int) = function
-      | S.INeed (_registers, block) ->
-          aux i block
-      | S.IPush (_value, block) ->
-          aux (i - 1) block
-      | S.IPop (_pattern, block) ->
-          aux (i + 1) block
-      | S.IDef (_pattern, _value, block) ->
-          aux i block
-      | S.IPrim (_register, _primitive, block) ->
-          aux i block
-      | S.ITrace (_message, block) ->
-          aux i block
-      | S.IComment (_comment, block) ->
-          aux i block
-      | S.IDie | S.IReturn _ | S.IJump _ | S.ICaseTag _ ->
-          i
-      | S.ICaseToken (_register, tokpat_block_list, _block_option) ->
-          let li = List.map (fun (_, block) -> aux i block) tokpat_block_list in
-          list_max compare li
-    in
-    aux 0 block
-  in
-  let block = StringMap.find label cfg in
-  let n_pops = n_pops S.(block.block) in
-  ( ( match S.(block.info) with
-    | S.InfGoto _ ->
-        T.TypName "tail"
-    | S.InfReduce production ->
-        let symbols = Grammar.Production.rhs production in
-        let types = Array.map semvtype symbols in
-        assert (n_pops >= 0) ;
-        typ_stack_app (T.TypName "tail") types
-    | S.InfRun node ->
-        assert (n_pops <= 0) ;
-        let symbols = SSymbols.stack_symbols node in
-        let types = Array.map semvtype symbols in
-        typ_stack_app (T.TypName "tail")
-          (Array.sub types 0 (Array.length types + n_pops)) )
-  , n_pops )
-*)
 let get_env block_map =
   StringMap.mapi
     (fun _label -> function
@@ -326,7 +297,7 @@ let compile_block env =
     (* [IReturn] causes the normal termination of the program. A value read
        from a register is returned. *)
     | S.IReturn register ->
-        T.EMagic (T.EVar register)
+        T.EVar register
     (* [IJump] causes a jump to a block identified by its label. The registers
        that are needed by the destination block must form a subset of the
        registers that are defined at the point of the jump. *)
@@ -357,11 +328,25 @@ let compile_block env =
 
 let function_type name block env =
   let env_current = StringMap.find name env in
+  let final =
+    match S.(block.final_type) with
+    | None ->
+        T.TypName "final"
+    | Some typ ->
+        typ
+  in
   T.
-    { quantifiers= ["tail"]
+    { quantifiers=
+        ( match S.(block.final_type) with
+        | None ->
+            ["tail"; "final"]
+        | Some _ ->
+            ["tail"] )
     ; locally_abstract= true
     ; body=
-        (let typ_tail = typ_stack_app (T.TypName "tail") S.(block.stack_type) in
+        (let typ_tail =
+           typ_stack_app (T.TypName "tail") final S.(block.stack_type)
+         in
          marrow
            ( typ_tail
            :: List.map
@@ -369,11 +354,11 @@ let function_type name block env =
                   (*| s when s = fstack ->
                       T.TypName "tail"*)
                   | s when s = fstate ->
-                      T.TypApp (tcstate, [typ_tail])
+                      T.TypApp (tcstate, [typ_tail; final])
                   | _ ->
                       T.TypVar "_")
                 env_current.needed_registers )
-           (T.TypVar "_")) }
+           final) }
 
 let compile (S.{cfg; entry} : S.program) =
   let env = get_env cfg in

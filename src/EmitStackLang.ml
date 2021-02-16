@@ -439,13 +439,27 @@ module L = struct
   let code label =
     match label with
     | Run s ->
-        set_type (stack_type_run s) ;
+        ( match Lr1.is_start_or_exit s with
+        | None ->
+            ()
+        | Some nonterminal ->
+            set_final_type
+              (IL.TypTextual (Nonterminal.ocamltype_of_start_symbol nonterminal))
+        ) ;
+        set_stack_type (stack_type_run s) ;
         run s
     | Reduce prod ->
-        set_type (stack_type_reduce prod) ;
+        ( match Grammar.Production.classify prod with
+        | None ->
+            ()
+        | Some nonterminal ->
+            set_final_type
+              (IL.TypTextual (Nonterminal.ocamltype_of_start_symbol nonterminal))
+        ) ;
+        set_stack_type (stack_type_reduce prod) ;
         reduce prod
     | Goto nt ->
-        set_type (stack_type_goto nt) ;
+        set_stack_type (stack_type_goto nt) ;
         goto nt
 
   (* The entry points. *)

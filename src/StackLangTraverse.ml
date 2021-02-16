@@ -244,7 +244,7 @@ let rec inline_block cfg degree block =
 
 let inline_cfg degree (cfg : typed_block RegisterMap.t) : cfg =
   LabelMap.fold
-    (fun label {block; stack_type} accu ->
+    (fun label {block; stack_type; final_type} accu ->
       match LabelMap.find label degree with
       | exception Not_found ->
           (* An unreachable label. *)
@@ -253,7 +253,7 @@ let inline_cfg degree (cfg : typed_block RegisterMap.t) : cfg =
           assert (d > 0) ;
           if d = 1 then accu
           else
-            LabelMap.add label {block= inline_block cfg degree block; stack_type} accu)
+            LabelMap.add label {block= inline_block cfg degree block; stack_type; final_type} accu)
     cfg LabelMap.empty
 
 let inline degree {cfg; entry} : program = {cfg= inline_cfg degree cfg; entry}

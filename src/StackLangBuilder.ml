@@ -21,12 +21,15 @@ let compose f g x = f (g x)
 type state = Idle | Open of (block -> block) | Closed of block
 
 let current : state ref = ref Idle
-let current_type : IL.typ array option ref = ref None
+let current_stack_type : IL.typ array option ref = ref None
+let current_final_type : IL.typ option ref = ref None
+
 let typed_exec (body : unit -> unit) =
   current := Open identity ;
-  current_type := None ;
+  current_stack_type := None ;
+  current_final_type := None ;
   body () ;
-  match !current, !current_type with
+  match !current, !current_stack_type with
   | Idle, _ ->
       (* This cannot happen, I think. *)
       assert false
@@ -40,9 +43,11 @@ let typed_exec (body : unit -> unit) =
     *)
     assert false
   | Closed block, Some stack_type ->
+      let final_type = !current_final_type in
       current := Idle ;
-      current_type := None ;
-      { block ; stack_type }
+      current_stack_type := None ;
+      current_final_type := None ;
+      { block ; stack_type ; final_type }
 
 let exec (body : unit -> unit) =
   current := Open identity ;
@@ -94,8 +99,12 @@ let close i =
          construction. *)
       assert false
 
-let set_type typ = 
-  current_type := Some typ
+let set_stack_type typ = 
+  current_stack_type := Some typ
+
+
+let set_final_type typ = 
+    current_final_type := Some typ
 let need rs = extend (fun block -> INeed (rs, block))
 
 let need_list rs = need (RegisterSet.of_list rs)
