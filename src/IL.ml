@@ -101,6 +101,8 @@ and datadef = {
        [None] if this is an ordinary ADT. *)
     datatypeparams: typ list option;
 
+    comment: string option;
+
   }
 
 and typ =
@@ -128,7 +130,9 @@ and typescheme = {
   (* Universal quantifiers, without leading quotes. *)
   quantifiers: string list;
 
+  (* whether the quantifiers are locally abstract or not *)
   locally_abstract: bool;
+
   (* Body. *)
   body: typ;
 

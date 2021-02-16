@@ -170,7 +170,7 @@ type block_info =
 | InfGoto of Grammar.Nonterminal.t
 
 
-type typed_block = {block: block; stack_type: IL.typ array}
+type typed_block = {block: block; stack_type: IL.typ array; final_type: IL.typ option}
 
 type cfg = typed_block LabelMap.t
 

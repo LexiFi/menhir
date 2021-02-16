@@ -426,7 +426,9 @@ struct
   (* A data constructor definition. *)
 
   let datadef typename f def =
-    fprintf f "  | %s" def.dataname;
+    ( match def.comment with
+      | Some comment -> fprintf f "  (*%s*)\n  | %s" comment def.dataname
+      | None         -> fprintf f "  | %s" def.dataname);
     match (def.datavalparams, def.datatypeparams) with
     | [], None ->
         (* | A *)
