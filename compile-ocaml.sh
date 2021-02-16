@@ -51,8 +51,10 @@ execute () {
   if $TIME --format "%e" -o .time bash -c "$1" >log.out 2>log.err ; then
     echo " $(cat .time) seconds." ;
   else
+    code=$?
     echo " failure."
     cat log.err
+    exit $code
   fi
 }
 
