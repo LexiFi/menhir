@@ -32,7 +32,7 @@ eval $(opam env --set-switch --switch test-menhir)
 
 echo "Removing menhir if already installed..."
 #   read -p "Can I remove it [Enter/^C]?" -n 1 -r ;
-(opam remove menhir || /bin/true) >/dev/null 2>&1
+(opam remove menhir menhirLib menhirSdk || /bin/true) >/dev/null 2>&1
 make -C $MENHIR_ROOT uninstall >/dev/null 2>&1
 
 # Check if everything has been committed.
