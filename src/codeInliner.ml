@@ -177,16 +177,49 @@ let inline_valdefs (defs : valdef list) : valdef list =
 
   (* Destructuring a type annotation. *)
 
-  let rec annotate formals body typ =
-    match formals, typ with
-    | [], _ ->
+  let annotate formals body scheme =
+    let rec is_quantified typ =
+      match typ with
+      | IL.TypTextual _ -> false
+      | IL.TypTuple li -> List.exists (is_quantified) li
+      | IL.TypVar name -> 
+        (not scheme.locally_abstract) 
+        && List.exists ((=) name) scheme.quantifiers
+      | IL.TypName name -> 
+        (scheme.locally_abstract) 
+        || List.exists ((=) name) scheme.quantifiers
+      | IL.TypArrow (t1, t2) -> 
+        (is_quantified t1) || (is_quantified t2)
+      | IL.TypApp (cons, args) -> 
+        (List.exists ((=) cons) scheme.quantifiers) 
+        || List.exists (is_quantified) args
+    in
+    let typ = instance scheme in
+    let rec aux formals body typ =
+    if scheme.locally_abstract then
+      ( match formals, typ with
+        | [], _ ->
+          let is_quantified = is_quantified typ in  
+          [], if is_quantified then body else CodeBits.annotate body typ
+        | formal :: formals, TypArrow (targ, tres) ->
+          let is_quantified = is_quantified targ in
+          let formals, body = aux formals body tres in
+          (if is_quantified then formal else PAnnot (formal, targ)) :: formals, body
+        | _ :: _, _ ->
+          (* Type annotation has insufficient arity. *)
+          assert false  )
+    else
+    ( match formals, typ with
+      | [], _ ->
         [], CodeBits.annotate body typ
-    | formal :: formals, TypArrow (targ, tres) ->
-        let formals, body = annotate formals body tres in
+      | formal :: formals, TypArrow (targ, tres) ->
+        let formals, body = aux formals body tres in
         PAnnot (formal, targ) :: formals, body
-    | _ :: _, _ ->
+      | _ :: _, _ ->
         (* Type annotation has insufficient arity. *)
-        assert false
+        assert false)
+    in
+    aux formals body typ
   in
 
   (* The heart of the inliner: rewriting a function call to a [let]
@@ -204,12 +237,10 @@ let inline_valdefs (defs : valdef list) : valdef list =
     assert (List.length actuals = List.length formals);
     match oscheme with
     | Some scheme
-      when (not Front.ocaml_types_have_been_checked) 
-           && not scheme.locally_abstract  ->
-
-        let formals, body = annotate formals body (instance scheme) in
+      (* TODO : restore *)
+      (* when (not Front.ocaml_types_have_been_checked) *) ->
+        let formals, body = annotate formals body scheme in
         mlet formals actuals body
-
     | _ ->
         mlet formals actuals body
   in
