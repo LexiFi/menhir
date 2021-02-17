@@ -36,7 +36,7 @@ open StackLangBuilder
 
 let log format =
   Printf.ksprintf
-    (fun s -> if Settings.trace then trace s else comment s)
+    (fun s -> if Settings.trace then trace (s ^ "\n") else comment s)
     format
 
 (* -------------------------------------------------------------------------- *)
@@ -249,7 +249,7 @@ module L = struct
       @ if1 (not (is_start || must_read_positions)) endp
       @ [] ) ;
     (* Log that we are entering state [s]. *)
-    log "State %d:\n" (number s) ;
+    log "State %d:" (number s) ;
     (* If necessary, read the positions of the current token from [lexbuf]. *)
     if must_read_positions then (
       prim startp (PrimOCamlFieldAccess (lexbuf, "Lexing.lex_start_p")) ;
@@ -365,13 +365,13 @@ module L = struct
        execution of the program. *)
     if Production.is_start prod then (
       assert (n = 1) ;
-      log "Accepting\n" ;
+      log "Accepting" ;
       return ids.(0)
       (* If this is not a start production, then it has a semantic action. *) )
     else
       let action = Production.action prod in
       (* Log that we are reducing production [prod]. *)
-      log "Reducing production %s\n" (Production.print prod) ;
+      log "Reducing production %s" (Production.print prod) ;
       (* Define [beforeendp], if needed by the semantic action. Define
          [startp] and [endp], which may be needed by the semantic action,
          and are later needed by [goto]. *)

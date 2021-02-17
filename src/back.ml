@@ -60,7 +60,7 @@ let write program =
          menhir is invoked -- e.g. [menhir foo/bar.mly] and [cd foo && menhir
          bar.mly] will produce different files. Nevertheless, this seems
          useful/reasonable. *)
-      Some filename
+      Some filename 
   end) in
   P.program program
 
@@ -100,7 +100,7 @@ let () =
     let module SL = EmitStackLang.Run () in
     let program = SL.program in
     let program = ILofStackLang.compile program in
-    (*let program = CodeInliner.inline program in*)
+    let program = CodeInliner.inline program in
     write program;
     Interface.write Front.grammar ()
 
