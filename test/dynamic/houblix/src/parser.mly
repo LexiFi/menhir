@@ -31,12 +31,15 @@
 %}
 
 %start<AST.t> program
-%start<AST.definition> definition
+%start<AST.definition> definition_eof
 %%
 
 program:
 | definitions = list(located(definition)) EOF { definitions }
 | e=located(error)                            { Error.error "parsing" e.position "Syntax error." }
+
+definition_eof:
+| def = terminated(definition, EOF) { def }
 
 definition:
 | val_def = value_definition          { val_def              }
