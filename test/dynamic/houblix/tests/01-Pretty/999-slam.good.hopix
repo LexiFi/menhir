@@ -1,0 +1,126 @@
+/* /* /* */ /* */ /* /* */ */ */ /* /* */ /* */ /* /* */ */ */ /* */ /* */ ** */
+/******************************************************************************/
+/*                     THE HOPIX PARSING GREAT SLAM                           */
+/******************************************************************************/
+/* /* /* */ /* */ /* /* */ */ */ /* /* */ /* */ /* /* */ */ */ /* */ /* */ ** */
+
+let x = 0
+
+let f = \x -> x
+
+fun g x = x
+
+fun h (x, y) = x + i y
+and i z = h (z, z)
+
+fun arithmetic (x, y, z) =
+    x + y * z + (x + y) * z + z * (x + y)
+
+let some_Int = 12345
+let some_other_Int = 0xCAFEBABE
+let some_other_other_Int = 0b00010101001010
+let yet_another_Int = 0o73210
+
+let some_char = 'a'
+let some_other_char = '\064'
+let some_other_other_char = '\0xaa'
+let yet_another_char = '\t'
+
+let some_String =
+  "N'oubliez pas, car votre vie en d\233pend. Ne clignez pas des yeux. N'y pensez m\234me pas. Clignez et vous \234tes morts. Ils sont rapides, bien plus rapides que vous ne le croyez. Ne leur tournez pas le dos. Ne regardez pas ailleurs. Et surtout, ne clignez pas. Bonne chance."
+
+let some_other_String =
+  "\n\n\t Le Docteur : Vous avez d\233truit l'inscription la plus ancienne de l'univers.\n\n\t River Song : Tu m'y as oblig\233e, tu ne r\233pondais pas au t\233l\233phone.\n\nOups\b\r\n"
+
+let yet_another_String = "Say \"Hello!\""
+
+type int_list = INil | ICons (int, int_list)
+
+type list<`a> =
+| Nil
+| Cons (`a, list<`a>)
+
+type llist<`a> =
+| LNil
+| LCons (`a, unit -> llist<`a>)
+
+type marthe_exp =
+| EInt (int)
+| EAdd (marthe_exp, marthe_exp)
+| ESum (marthe_exp, marthe_exp)
+| EVar (string)
+| ESum (string, marthe_exp, marthe_exp, marthe_exp)
+
+type box = { what_s_in_the_box : int }
+
+type person = { name : string, age : int }
+
+type closure <`env, `a, `b> = { code : `env * `a -> `b, env : `env }
+
+type container_functions<`e, `c, `b> = {
+   map   : (`e -> `a) * `c -> `c,
+   fold  : (`e -> unit) * `c -> unit,
+   weird : `e -> `c * `e -> `b
+}
+
+let id
+: [`a] `a -> `a
+= \x -> x
+
+let id_int = id <int>
+
+let stable = id <int> (37)
+
+let compose
+: [`a `b `c] (`a -> `b) * (`b -> `c) -> (`a -> `c)
+= \(f, g) -> \x -> (f (g x) : `c)
+
+let id_id_id = compose <int, int, int> (id, id)
+
+let id_id_id_2 = compose <int -> int, int -> int, int -> int> (id, id)
+
+let an_empty_list = Nil<int>
+
+let a_cool_list = Cons<int> (1, Cons <int> (1, an_empty_list))
+
+let a_person = { name = "Luke", age = 28 }
+
+let a_name = a_person.name
+
+let main =
+    start_with_this (0);
+    do_that ("foo", "bar");
+    conclude (0)
+
+let computation =
+    let y = 42;
+    let z = 13;
+    compute (0)
+
+fun : [`a] list<`a> -> int
+len l = switch (l) {
+| Nil<`a> -> 0
+| Cons<`a> (x, xs) -> 1 + len<`a> (xs)
+}
+
+fun fact n =
+  if (n =? 0) { 1 }
+  else { if (n =? 1) { 1 }
+  else { if (n =? 2) { 2 }
+  else { fact (n - 1) * n } } }
+
+fun ifact n =
+  let accu = ref 1;
+  let k = ref n;
+  while (!k >? 0) {
+    accu := !accu * !k;
+    k := !k - 1
+  };
+  !accu
+
+fun ifact2 (n) =
+  let accu = ref 1;
+  for k in (1 to n) {
+     accu := !accu * k
+  };
+  !accu

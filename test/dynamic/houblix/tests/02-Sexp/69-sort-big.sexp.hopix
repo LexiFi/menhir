@@ -1,0 +1,74 @@
+fun concat (l1, l2) =
+  switch (l1) {
+  | N -> l2
+  | C (x, xs) -> C (x, concat (xs, l2))
+  }
+
+let l = C (1, C (2, N))
+let l = concat (l, l)
+let l = concat (l, l)
+let l = concat (l, l)
+let l = concat (l, l)
+let l = concat (l, l)
+let l = concat (l, l)
+
+fun len (l) =
+  switch (l) {
+  | N -> 0
+  | C (x, xs) -> 1 + len (xs)
+  }
+
+fun sorted (l) =
+  switch (l) {
+  | N | C (_, N) -> true
+  | C (x, C (y, _) & l) -> x <=? y && sorted (l)
+  }
+
+let l2 = C (1, C (2, C (6, C (7, N))))
+
+let l3 = C (-1, C (2, C (6, C (70, N))))
+
+let l4 = C (-1, C (20, C (6, C (70, N))))
+
+fun not (b) = if (b) { false } else { true }
+
+fun sort (l) =
+    switch (l) {
+    | N -> N
+    | C (x, xs) -> switch (pivot (x, xs)) {
+      | (l1, l2) ->
+        let l1 = sort (l1);
+	let l2 = sort (l2);
+        concat (l1, C (x, l2))
+      }
+    }
+and pivot (x, l) =
+    switch (l) {
+    | N ->
+      (N, N)
+    | C (y, ys) ->
+      switch (pivot (x, ys)) {
+      | (l1, l2) ->
+         if (y >? x) { (l1,  C (y, l2)) } else { (C (y, l1), l2) }
+      }
+    }
+
+fun print (l) =
+    switch (l) {
+    | N -> print_string ("\n")
+    | C (x, xs) -> print_int (x); print_string (" "); print (xs)
+    }
+
+fun show (l) =
+    print (l);
+    l
+
+fun generate (accu, n) =
+    if (n =? 0) { accu } else { generate (C (n, accu), n - 1) }
+
+let r =
+  sorted (sort (generate (N, 500)))
+
+let test =
+  print_string ("This test is ");
+  print_string (if (r) { "OK!\n" } else { "KO!\n" })
