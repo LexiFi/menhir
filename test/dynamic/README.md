@@ -18,6 +18,12 @@ The following tests are currently performed:
   `ocamlyacc` and by Menhir's code back-end and table back-end. (This test
   always succeeds.)
 
+* The subdirectory `houblix` contains a parser for a complex ML-like language.
+  The parser is compiled using the code back-end, and its output is compared
+  against a reference. Both pretty printed outputs and s-expression outputs
+  are compared. The s-expression output offers the advantage of comparing the
+  complete AST, positions included.
+
 These tests are normally run by typing `make test` in the root directory.
 
 Because the speed test is time-consuming, as an exception, it is run by typing
