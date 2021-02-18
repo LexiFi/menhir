@@ -1,0 +1,19 @@
+(rule
+ (target all.results)
+ (mode (promote))
+ (deps
+  (source_tree 01-Pretty)
+  (source_tree 02-Sexp)
+  (source_tree 03-Sexpbis)
+  (file ../src/houblix.exe)
+  (file Makefile))
+ (action
+  (run make all.results EXE=../src/houblix.exe)))
+
+(rule
+ (alias test)
+ (deps
+  (file all.results.expected)
+  (file all.results))
+ (action
+  (diff all.results.expected all.results)))

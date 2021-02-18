@@ -1,5 +1,3 @@
-EXE?=../../../../_build/default/test/dynamic/houblix/src/houblix.exe
-
 FOLDERS=\
 	01-Pretty.results \
 	02-Sexp.results \
@@ -19,9 +17,6 @@ test: clean
 	@$(MAKE) -s all
 
 FAKE:
-
-$(EXE): FAKE
-	@cd ../../../.. && dune build --display=quiet
 
 all.results: $(FOLDERS)
 	@cat $^ > $@
@@ -45,9 +40,8 @@ all.results: $(FOLDERS)
 		echo -e "\e[31m[KO] `basename $@ .score`\e[0m"; \
 		diff -uwB $^; exit 0; \
 	fi
-
-%.output: %.parsing.hopix $(EXE)
+%.output: %.parsing.hopix
 	@$(EXE) --pretty $< >$@ 2>&1; exit 0
 
-%.output: %.sexp.hopix $(EXE)
+%.output: %.sexp.hopix
 	@$(EXE) --sexp $< >$@ 2>&1; exit 0
