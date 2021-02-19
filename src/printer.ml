@@ -223,6 +223,9 @@ struct
         fprintf f "%a%t%a"
           (exprk AllButLetFunTryMatch)
           e1 seminl (exprlet k pes) e2
+    | (PVar id1, EAnnot ((EFun _ as e1), ts1)) :: pes ->
+        fprintf f "let %s : %a = %a in%t%a" id1 
+          scheme ts1 expr e1 nl (exprlet k pes) e2
     | (PVar id1, EAnnot (e1, ts1)) :: pes ->
         (* TEMPORARY current ocaml does not support type schemes here; drop quantifiers, if any *)
         fprintf f "let %s : %a = %a in%t%a" id1 typ ts1.body
@@ -246,11 +249,11 @@ struct
     if member e k then
       match e with
       | EComment (c, e) ->
-          if Settings.comment then fprintf f "(* %s *)%t%a" c nl (exprk k) e
+          if Settings.comment then fprintf f "(* %S *)%t%a" c nl (exprk k) e
           else exprk k f e
       | EPatComment (s, p, e) ->
           if Settings.comment then
-            fprintf f "(* %s%a *)%t%a" s pat p nl (exprk k) e
+            fprintf f "(* %S%a *)%t%a" s pat p nl (exprk k) e
           else exprk k f e
       | ELet (pes, e2) -> exprlet k pes f e2
       | ERecordWrite (e1, field, e2) ->
@@ -293,6 +296,8 @@ struct
       | ETuple [] -> assert false
       | ETuple [ e ] -> atom f e
       | ETuple (_ :: _ :: _ as es) -> fprintf f "(%a)" (seplist app comma) es
+      | EAnnot (EFun _ as e, s) ->
+          fprintf f "(%a : %a)" app e scheme s
       | EAnnot (e, s) ->
           (* TEMPORARY current ocaml does not support type schemes here; drop quantifiers, if any *)
           fprintf f "(%a : %a)" app e typ s.body
@@ -427,7 +432,7 @@ struct
 
   let datadef typename f def =
     ( match def.comment with
-      | Some comment -> fprintf f "  (*%s*)\n  | %s" comment def.dataname
+      | Some comment -> fprintf f "  (*%S*)\n  | %s" comment def.dataname
       | None         -> fprintf f "  | %s" def.dataname);
     match (def.datavalparams, def.datatypeparams) with
     | [], None ->

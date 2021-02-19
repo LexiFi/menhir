@@ -133,3 +133,5 @@ val field: bool -> string -> typ -> fielddef
 
 (* Branches. *)
 val branch: pattern -> expr -> branch
+
+val fresh_name : unit -> string

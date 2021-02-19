@@ -118,6 +118,7 @@ let rec wf_block cfg label rs block =
   | ICaseTag (r, branches) ->
       wf_reg label rs r ;
       List.iter (branch_iter (wf_block cfg label rs)) branches
+  | ITypedBlock ({block; stack_type=_; final_type=_}) -> wf_block cfg label rs block
 
 and wf_branch cfg label rs (tokpat, block) =
   let rs =
@@ -168,6 +169,8 @@ let rec successors yield block =
       Option.iter (successors yield) oblock
   | ICaseTag (_, branches) ->
       List.iter (branch_iter (successors yield)) branches
+  | ITypedBlock ({block; stack_type=_; final_type=_}) -> 
+      successors yield block
 
 (* -------------------------------------------------------------------------- *)
 
@@ -232,7 +235,11 @@ let rec inline_block cfg degree block =
       (* If the target label's in-degree is 1, follow the indirection;
          otherwise, keep the [jump] instruction. *)
       if lookup label degree = 1 then
-        inline_block cfg degree (lookup label cfg).block
+        let typed_block = (lookup label cfg) in
+        ITypedBlock { block = (inline_block cfg degree typed_block.block)
+                    ; stack_type = typed_block.stack_type
+                    ; final_type = typed_block.final_type 
+                    ; needed_registers = typed_block.needed_registers }
       else IJump label
   | ICaseToken (r, branches, odefault) ->
       ICaseToken
@@ -241,10 +248,15 @@ let rec inline_block cfg degree block =
         , Option.map (inline_block cfg degree) odefault )
   | ICaseTag (r, branches) ->
       ICaseTag (r, List.map (branch_map (inline_block cfg degree)) branches)
+  | ITypedBlock ({ block
+                 ; stack_type=_
+                 ; final_type=_
+                 ; needed_registers=_ }) -> 
+      inline_block cfg degree block
 
 let inline_cfg degree (cfg : typed_block RegisterMap.t) : cfg =
   LabelMap.fold
-    (fun label {block; stack_type; final_type} accu ->
+    (fun label {block; stack_type; final_type; needed_registers} accu ->
       match LabelMap.find label degree with
       | exception Not_found ->
           (* An unreachable label. *)
@@ -253,7 +265,12 @@ let inline_cfg degree (cfg : typed_block RegisterMap.t) : cfg =
           assert (d > 0) ;
           if d = 1 then accu
           else
-            LabelMap.add label {block= inline_block cfg degree block; stack_type; final_type} accu)
+            LabelMap.add label 
+                         { block= inline_block cfg degree block
+                         ; stack_type
+                         ; final_type
+                         ; needed_registers } 
+                         accu  )
     cfg LabelMap.empty
 
 let inline degree {cfg; entry} : program = {cfg= inline_cfg degree cfg; entry}
@@ -356,6 +373,8 @@ let rec measure_block m block =
       m.total <- m.total + 1 ;
       m.casetag <- m.casetag + 1 ;
       List.iter (branch_iter (measure_block m)) branches
+  | ITypedBlock ({block; stack_type=_; final_type=_}) -> 
+    measure_block m block
 
 let measure program =
   let m = zero () in

@@ -77,7 +77,7 @@ let () =
   then (
     let module SL = EmitStackLang.Run () in
     let program = SL.program in
-    StackLangTraverse.wf program;
+   StackLangTraverse.wf program;
     let program = StackLangTraverse.inline program in
     StackLangTraverse.wf program;
     if Settings.stacklang_dump then (
@@ -98,9 +98,9 @@ let () =
     B.write_all f
   else
     let module SL = EmitStackLang.Run () in
-    let program = SL.program in
+    let program = StackLangTraverse.inline SL.program in
     let program = ILofStackLang.compile program in
-    let program = CodeInliner.inline program in
+    (* let program = CodeInliner.inline program in *)
     write program;
     Interface.write Front.grammar ()
 
