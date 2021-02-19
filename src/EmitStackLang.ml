@@ -242,12 +242,13 @@ module L = struct
        good practice to keep it as tight as possible, though, as this documents
        the code that we produce (and allows us to benefit from a runtime
        well-formedness test). *)
-    need_list
-      ( (lexer :: lexbuf :: if1 (not must_query_lexer) token)
+    let needed_registers = ( (lexer :: lexbuf :: if1 (not must_query_lexer) token)
       @ ifn must_push [state; semv]
       @ if1 ((not (is_start || must_read_positions)) && must_push) startp
       @ if1 (not (is_start || must_read_positions)) endp
-      @ [] ) ;
+      @ [] ) in
+    set_needed needed_registers ;
+    need_list needed_registers ;
     (* Log that we are entering state [s]. *)
     log "State %d:" (number s) ;
     (* If necessary, read the positions of the current token from [lexbuf]. *)
@@ -344,10 +345,11 @@ module L = struct
       Action.has_beforeend action
     in
     (* Thus, we initially need the following registers. *)
-    need_list
-      ( (lexer :: lexbuf :: token :: if1 is_epsilon state)
-      @ if1 (is_epsilon || has_beforeend) endp
-      @ [] ) ;
+    let needed_registers = ( (lexer :: lexbuf :: token :: if1 is_epsilon state)
+                           @ if1 (is_epsilon || has_beforeend) endp
+                           @ [] ) in
+    set_needed needed_registers ;
+    need_list needed_registers ;
     (* Pop [n] stack cells and store their content in suitable registers.
        The state stored in the bottom cell (the one that is popped last)
        is stored in the register [state] and thus becomes the new current
@@ -398,6 +400,7 @@ module L = struct
     (* The [run] subroutines that we call are reached via goto transitions,
        therefore do not query the lexer. This means that [token] is needed. *)
     need_list [lexer; lexbuf; token; state; semv; startp; endp] ;
+    set_needed [lexer; lexbuf; token; state; semv; startp; endp] ;
     (* If it is up to this [goto] subroutine to push a new cell onto the stack,
        then do so now. If not, then it will be done by the [run] subroutine to
        which we are about to jump. *)

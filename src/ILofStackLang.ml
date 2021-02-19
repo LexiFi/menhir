@@ -1,5 +1,6 @@
 module S = StackLang
 module T = IL
+open T
 open CodePieces
 open CodeBits
 
@@ -17,31 +18,28 @@ let discard = prefix "discard"
 
 let statecon s = dataprefix (Printf.sprintf "State%d" s)
 
-let estatecon s = T.EData (statecon s, [])
+let estatecon s = EData (statecon s, [])
 
-let pstatecon s = T.PData (statecon s, [])
+let pstatecon s = PData (statecon s, [])
 
-let pstatescon ss = T.POr (List.map pstatecon ss)
+let pstatescon ss = POr (List.map pstatecon ss)
 
 let discarddef =
-  T.
-    { valpublic= false
-    ; valpat= PVar discard
-    ; valval=
-        T.EFun
-          ( [T.PVar flexer; T.PVar flexbuf]
-          , T.EApp (T.EVar flexer, [T.EVar flexbuf]) ) }
+  { valpublic= false
+  ; valpat= PVar discard
+  ; valval=
+      EFun ([PVar flexer; PVar flexbuf], EApp (EVar flexer, [EVar flexbuf])) }
 
-let e_common_args = [(*T.EVar flexer; T.EVar flexbuf;*) T.EVar fstack]
+let e_common_args = [(*EVar flexer; EVar flexbuf;*) EVar fstack]
 
-let p_common_args = [(*T.PVar flexer; T.PVar flexbuf;*) T.PVar fstack]
+let p_common_args = [(*PVar flexer; PVar flexbuf;*) PVar fstack]
 
 (* The type of environments. *)
 let tcstack = prefix "stack"
 
 let typ_stack_app tail_type final_type types =
   Array.fold_left
-    (fun tail sem_type -> T.TypApp (tcstack, [tail; sem_type; final_type]))
+    (fun tail sem_type -> TypApp (tcstack, [tail; sem_type; final_type]))
     tail_type types
 
 (* This is the type of states. Only states that are represented are
@@ -50,21 +48,20 @@ let typ_stack_app tail_type final_type types =
 
 let tcstate = prefix "state"
 
-(*let tstate = T.TypApp (tcstate, [])*)
+(*let tstate = TypApp (tcstate, [])*)
 
 let stacktypedef =
-  T.
-    { typename= tcstack
-    ; typeparams= ["tail"; "semantic"; "final"]
-    ; typerhs=
-        TAbbrev
-          (T.TypTuple
-             [ T.TypVar "tail"
-             ; T.TypApp (tcstate, [T.TypVar "tail"; T.TypVar "final"])
-             ; T.TypVar "semantic"
-             ; T.TypName "Lexing.position"
-             ; T.TypName "Lexing.position" ])
-    ; typeconstraint= None }
+  { typename= tcstack
+  ; typeparams= ["tail"; "semantic"; "final"]
+  ; typerhs=
+      TAbbrev
+        (TypTuple
+           [ TypVar "tail"
+           ; TypApp (tcstate, [TypVar "tail"; TypVar "final"])
+           ; TypVar "semantic"
+           ; TypName "Lexing.position"
+           ; TypName "Lexing.position" ])
+  ; typeconstraint= None }
 
 let tag_types = Array.make Lr1.n (Obj.magic ())
 
@@ -72,9 +69,9 @@ let statetypedef =
   let final_type s =
     match Lr1.is_start_or_exit s with
     | None ->
-        T.TypVar "final"
+        TypVar "final"
     | Some (nonterminal : Grammar.Nonterminal.t) ->
-        T.TypTextual (Grammar.Nonterminal.ocamltype_of_start_symbol nonterminal)
+        TypTextual (Grammar.Nonterminal.ocamltype_of_start_symbol nonterminal)
   in
   let type_of_tag s =
     let f tail_name final =
@@ -84,39 +81,38 @@ let statetypedef =
           let typ_semantic =
             match semvtype symbol with
             | [] ->
-                T.TypName "unit"
+                TypName "unit"
             | [ty] ->
                 ty
             | li ->
-                T.TypTuple li
+                TypTuple li
           in
-          T.TypApp (tcstack, [typ_tail; typ_semantic; final]))
-        (T.TypName tail_name) word
+          TypApp (tcstack, [typ_tail; typ_semantic; final]))
+        (TypName tail_name) word
     in
     tag_types.(Lr1.number s) <- f ;
     f "'tail" (final_type s)
   in
-  T.
-    { typename= tcstate
-    ; typeparams= ["tail"; "final"]
-    ; typerhs=
-        TDefSum
-          (Lr1.fold
-             (fun defs s ->
-               (* TODO : restore the condition *)
-               if (*Invariant.represented s*) true then
-                 { dataname= statecon @@ Lr1.number s
-                 ; datavalparams= []
-                 ; datatypeparams= Some [type_of_tag s; final_type s]
-                 ; comment=
-                     Some
-                       ( ( " Know stack symbols : "
-                         ^ SSymbols.print_stack_symbols s )
-                       ^ " " ) }
-                 :: defs
-               else defs)
-             [])
-    ; typeconstraint= None }
+  { typename= tcstate
+  ; typeparams= ["tail"; "final"]
+  ; typerhs=
+      TDefSum
+        (Lr1.fold
+           (fun defs s ->
+             (* TODO : restore the condition *)
+             if (*Invariant.represented s*) true then
+               { dataname= statecon @@ Lr1.number s
+               ; datavalparams= []
+               ; datatypeparams= Some [type_of_tag s; final_type s]
+               ; comment=
+                   Some
+                     ( ( " Know stack symbols : "
+                       ^ SSymbols.print_stack_symbols s )
+                     ^ " " ) }
+               :: defs
+             else defs)
+           [])
+  ; typeconstraint= None }
 
 (*type s_program = S.program*)
 
@@ -147,256 +143,269 @@ let entrydef s =
     prefix (Printf.sprintf "run_%s" (Misc.padded_index Lr1.n (Lr1.number s)))
   in
   let nt = Item.startnt (Lr1.start2item s) in
-  T.
-    { valpublic= true
-    ; valpat= PVar (Grammar.Nonterminal.print true nt)
-    ; valval=
-        EFun
-          ( [PVar flexer; PVar flexbuf]
-          , EApp (EVar (run s), [EUnit; EVar flexbuf; EVar flexer]) ) }
+  { valpublic= true
+  ; valpat= PVar (Grammar.Nonterminal.print true nt)
+  ; valval=
+      EFun
+        ( [PVar flexer; PVar flexbuf]
+        , EApp (EVar (run s), [EUnit; EVar flexer; EVar flexbuf]) ) }
 
 let grammar = Front.grammar
 
-type block_info = {needed_registers: string list}
-
-let get_env block_map =
-  StringMap.mapi
-    (fun _label -> function
-      | S.{block= S.INeed (registers, _block); stack_type= _} ->
-          {needed_registers= StringSet.elements registers} | _ -> assert false)
-    block_map
+let function_type block =
+  let final =
+    match S.(block.final_type) with None -> TypName "final" | Some typ -> typ
+  in
+  { quantifiers=
+      ( match S.(block.final_type) with
+      | None ->
+          ["tail"; "final"]
+      | Some _ ->
+          ["tail"] )
+  ; locally_abstract= true
+  ; body=
+      (let typ_tail =
+         typ_stack_app (TypName "tail") final S.(block.stack_type)
+       in
+       marrow
+         ( typ_tail
+         :: List.map
+              (function
+                (*| s when s = fstack ->
+                    TypName "tail"*)
+                | s when s = fstate ->
+                    TypApp (tcstate, [typ_tail; final])
+                | _ ->
+                    TypVar "_")
+              S.(block.needed_registers) )
+         final) }
 
 let rec compile_pattern = function
   | S.PWildcard ->
-      T.PWildcard
+      PWildcard
   | S.PReg x ->
-      T.PVar x
+      PVar x
   | S.PTuple li ->
-      T.PTuple (List.map compile_pattern li)
+      PTuple (List.map compile_pattern li)
 
 let rec compile_value = function
   | S.VTag tag ->
       estatecon tag
   | S.VReg register ->
-      T.EVar register
+      EVar register
   | S.VTuple value_list ->
-      T.ETuple (List.map compile_value value_list)
+      ETuple (List.map compile_value value_list)
 
 let compile_primitive = function
   | S.PrimOCamlCall (f, args) ->
-      T.EApp (T.EVar f, List.map (fun arg -> T.EVar arg) args)
+      EApp (EVar f, List.map (fun arg -> EVar arg) args)
   | S.PrimOCamlFieldAccess (record, field) ->
-      T.ERecordAccess (T.EVar record, field)
+      ERecordAccess (EVar record, field)
   | S.PrimOCamlDummyPos ->
-      T.EVar "Lexing.dummy_pos"
+      EVar "Lexing.dummy_pos"
   | S.PrimOCamlAction action ->
       Action.to_il_expr action
 
-let compile_block env =
+let rec compile_block (cfg : StackLang.typed_block StringMap.t) =
   let rec compile_ICaseToken register tokpat_block_list block_option =
-    T.EMatch
-      ( T.EVar register
+    EMatch
+      ( EVar register
       , List.map
           (fun (tokpat, block) ->
             match tokpat with
             | S.TokSingle (terminal, register) ->
-                T.
-                  { branchpat= CodePieces.tokpat terminal (T.PVar register)
-                  ; branchbody=
-                      ( match Grammar.Terminal.ocamltype terminal with
-                      | None ->
-                          T.ELet
-                            ([(T.PVar register, T.EUnit)], compile_block block)
-                      | Some _ ->
-                          compile_block block ) }
+                { branchpat= CodePieces.tokpat terminal (PVar register)
+                ; branchbody=
+                    ( match Grammar.Terminal.ocamltype terminal with
+                    | None ->
+                        ELet ([(PVar register, EUnit)], compile_block block)
+                    | Some _ ->
+                        compile_block block ) }
             | S.TokMultiple terminals ->
-                T.
-                  { branchpat=
-                      T.POr
-                        (List.map
-                           (fun terminal ->
-                             CodePieces.tokpat terminal T.PWildcard)
-                           (Grammar.TerminalSet.elements terminals))
-                  ; branchbody= compile_block block })
+                { branchpat=
+                    POr
+                      (List.map
+                         (fun terminal -> CodePieces.tokpat terminal PWildcard)
+                         (Grammar.TerminalSet.elements terminals))
+                ; branchbody= compile_block block })
           tokpat_block_list
         @
         match block_option with
         | None ->
             []
         | Some block ->
-            [T.{branchpat= T.PWildcard; branchbody= compile_block block}] )
+            [{branchpat= PWildcard; branchbody= compile_block block}] )
   and compile_ICaseTag register tagpat_block_list =
-    T.EMatch
-      ( T.EVar register
+    EMatch
+      ( EVar register
       , ( List.concat
         @@ List.map
              (fun (tagpat, block) ->
                let (S.TagMultiple tag_list) = tagpat in
                List.map
                  (fun tag ->
-                   T.
-                     { branchpat= pstatescon [tag]
-                     ; branchbody= compile_block block })
+                   {branchpat= pstatescon [tag]; branchbody= compile_block block})
                  tag_list)
              tagpat_block_list )
         @ [ (* TODO : remove this *)
-            T.
-              { branchpat= T.PWildcard
-              ; branchbody= T.EApp (T.EVar "assert", [T.EVar "false"]) } ] )
-  and compile_block = function
-    (* [INeed] is a special pseudo-instruction that is expected to appear at
-       least at the beginning of every block. (It can also be used inside a
-       block.) It indicates which registers are expected to be defined at this
-       point, and it un-defines any registers that are not explicitly listed. *)
-    | S.INeed (_registers, block) ->
-        compile_block block
-    (* [IPush] pushes a value onto the stack. [IPop] pops a value off the stack.
-       [IDef] can be viewed as a sequence of a push and a pop. It can be used to
-       move data between registers or to load a value into a register. *)
-    | S.IPush (value, block) ->
-        let value =
-          match compile_value value with T.ETuple li -> li | _ -> assert false
-        in
-        T.ELet
-          ( [(T.PVar fstack, T.ETuple (T.EVar fstack :: value))]
-          , compile_block block )
-    | S.IPop (pattern, block) ->
-        let pattern =
-          match compile_pattern pattern with
-          | T.PTuple li ->
-              li
-          | _ ->
-              assert false
-        in
-        T.ELet
-          ( [(T.PTuple (T.PVar fstack :: pattern), T.EVar fstack)]
-          , compile_block block )
-    | S.IDef (pattern, value, block) ->
-        T.ELet
-          ([(compile_pattern pattern, compile_value value)], compile_block block)
-    (* [IPrim] invokes a primitive operation and stores its result in a
-       register. *)
-    | S.IPrim (register, primitive, block) ->
-        T.ELet
-          ([(T.PVar register, compile_primitive primitive)], compile_block block)
-    (* [ITrace] logs a message on [stderr]. *)
-    | S.ITrace (message, block) ->
-        T.ELet
-          ( [ ( T.PVar "_"
-              , T.EApp (T.EVar "Printf.eprintf", [T.EStringConst message]) ) ]
-          , compile_block block )
-    (* [IComment] is a comment. *)
-    | S.IComment (comment, block) ->
-        T.EComment (comment, compile_block block)
-    (* Group 2: Instructions with zero successor. *)
+            { branchpat= PWildcard
+            ; branchbody= EApp (EVar "assert", [EVar "false"]) } ] )
+  and compile_block =
+    S.(
+      function
+      (* [INeed] is a special pseudo-instruction that is expected to appear at
+         least at the beginning of every block. (It can also be used inside a
+         block.) It indicates which registers are expected to be defined at this
+         point, and it un-defines any registers that are not explicitly listed. *)
+      | S.INeed (_registers, block) ->
+          compile_block block
+      (* [IPush] pushes a value onto the stack. [IPop] pops a value off the stack.
+         [IDef] can be viewed as a sequence of a push and a pop. It can be used to
+         move data between registers or to load a value into a register. *)
+      | S.IPush (value, block) ->
+          let value =
+            match compile_value value with ETuple li -> li | _ -> assert false
+          in
+          ELet
+            ([(PVar fstack, ETuple (EVar fstack :: value))], compile_block block)
+      | S.IPop (pattern, block) ->
+          let pattern =
+            match compile_pattern pattern with
+            | T.PTuple li ->
+                li
+            | _ ->
+                assert false
+          in
+          ELet
+            ( [(T.PTuple (PVar fstack :: pattern), EVar fstack)]
+            , compile_block block )
+      | S.IDef (pattern, value, block) ->
+          ELet
+            ( [(compile_pattern pattern, compile_value value)]
+            , compile_block block )
+      (* [IPrim] invokes a primitive operation and stores its result in a
+         register. *)
+      | S.IPrim (register, primitive, block) ->
+          ELet
+            ([(PVar register, compile_primitive primitive)], compile_block block)
+      (* [ITrace] logs a message on [stderr]. *)
+      | S.ITrace (message, block) ->
+          ELet
+            ( [(PVar "_", EApp (EVar "Printf.eprintf", [EStringConst message]))]
+            , compile_block block )
+      (* [IComment] is a comment. *)
+      | S.IComment (comment, block) ->
+          EComment (comment, compile_block block)
+      (* Group 2: Instructions with zero successor. *)
 
-    (* [IDie] causes an abrupt termination of the program. It is translated
-       into OCaml by raising the exception [Error]. *)
-    | S.IDie ->
-        T.ERaise (T.EVar "_eRR")
-    (* [IReturn] causes the normal termination of the program. A value read
-       from a register is returned. *)
-    | S.IReturn register ->
-        T.EVar register
-    (* [IJump] causes a jump to a block identified by its label. The registers
-       that are needed by the destination block must form a subset of the
-       registers that are defined at the point of the jump. *)
-    | S.IJump label ->
-        T.EApp
-          ( T.EVar label
-          , e_common_args
-            @ List.map
-                (fun s -> T.EVar s)
-                (StringMap.find label env).needed_registers )
-    (* Group 3: Case analysis instructions. *)
+      (* [IDie] causes an abrupt termination of the program. It is translated
+         into OCaml by raising the exception [Error]. *)
+      | S.IDie ->
+          ERaise (EVar "_eRR")
+      (* [IReturn] causes the normal termination of the program. A value read
+         from a register is returned. *)
+      | S.IReturn register ->
+          EVar register
+      (* [IJump] causes a jump to a block identified by its label. The registers
+         that are needed by the destination block must form a subset of the
+         registers that are defined at the point of the jump. *)
+      | S.IJump label ->
+          EApp
+            ( EVar label
+            , e_common_args
+              @ List.map
+                  (fun s -> EVar s)
+                  S.((StringMap.find label cfg).needed_registers) )
+      (* Group 3: Case analysis instructions. *)
 
-    (* [ICaseToken] performs a case analysis on a token (which is held in a
-       register). It carries a list of branches, each of which is guarded by
-       a pattern, and an optional default branch. *)
-    | S.ICaseToken (register, tokpat_block_list, block_option) ->
-        compile_ICaseToken register tokpat_block_list block_option
-    (* [ICaseTag] performs a case analysis on a tag (which is held in a
-       register). It carries a list of branches, each of which is guarded by a
-       pattern. There is no default branch; it is up to the user to ensure that
-       the case analysis is exhaustive. *)
-    | S.ICaseTag (register, tagpat_block_list) ->
-        compile_ICaseTag register tagpat_block_list
+      (* [ICaseToken] performs a case analysis on a token (which is held in a
+         register). It carries a list of branches, each of which is guarded by
+         a pattern, and an optional default branch. *)
+      | S.ICaseToken (register, tokpat_block_list, block_option) ->
+          compile_ICaseToken register tokpat_block_list block_option
+      (* [ICaseTag] performs a case analysis on a tag (which is held in a
+         register). It carries a list of branches, each of which is guarded by a
+         pattern. There is no default branch; it is up to the user to ensure that
+         the case analysis is exhaustive. *)
+      | S.ICaseTag (register, tagpat_block_list) ->
+          compile_ICaseTag register tagpat_block_list
+      | S.ITypedBlock ({needed_registers} as t_block) ->
+          let block_name = fresh_name () in
+          ELet
+            ( [(PVar block_name, compile_function t_block cfg)]
+            , EApp
+                ( EVar block_name
+                , e_common_args @ List.map (fun s -> EVar s) needed_registers )
+            )
+      (*match final_type with
+        | None ->
+            EComment
+              ( "Typed block with no final type"
+              , ELet
+                  ( [ ( T.PVar fstack
+                      , EAnnot
+                          ( EVar fstack
+                          , { quantifiers= []
+                            ; locally_abstract= false
+                            ; body=
+                                typ_stack_app (TypVar "tail") (TypVar "final")
+                                  stack_type } ) ) ]
+                  , compile_block block ) )
+        | Some final_type ->
+            EComment
+              ( "Typed block with final type"
+              , ELet
+                  ( [ ( T.PVar fstack
+                      , EAnnot
+                          ( EVar fstack
+                          , { quantifiers= []
+                            ; locally_abstract= false
+                            ; body=
+                                typ_stack_app (TypVar "tail") final_type
+                                  stack_type } ) ) ]
+                  , EAnnot
+                      ( compile_block block
+                      , { quantifiers= []
+                        ; locally_abstract= false
+                        ; body= final_type } ) ) )*))
   in
   compile_block
 
+and compile_function t_block cfg =
+  EAnnot
+    ( EFun
+        ( p_common_args @ List.map (fun s -> PVar s) S.(t_block.needed_registers)
+        , compile_block cfg S.(t_block.block) )
+    , function_type t_block )
+
 (* returns the number of pushes, and if found, the corresponding state *)
 
-let function_type name block env =
-  let env_current = StringMap.find name env in
-  let final =
-    match S.(block.final_type) with
-    | None ->
-        T.TypName "final"
-    | Some typ ->
-        typ
-  in
-  T.
-    { quantifiers=
-        ( match S.(block.final_type) with
-        | None ->
-            ["tail"; "final"]
-        | Some _ ->
-            ["tail"] )
-    ; locally_abstract= true
-    ; body=
-        (let typ_tail =
-           typ_stack_app (T.TypName "tail") final S.(block.stack_type)
-         in
-         marrow
-           ( typ_tail
-           :: List.map
-                (function
-                  (*| s when s = fstack ->
-                      T.TypName "tail"*)
-                  | s when s = fstate ->
-                      T.TypApp (tcstate, [typ_tail; final])
-                  | _ ->
-                      T.TypVar "_")
-                env_current.needed_registers )
-           final) }
-
 let compile (S.{cfg; entry} : S.program) =
-  let env = get_env cfg in
   let entries =
     Lr1.NodeMap.fold
       (fun _ label acc -> StringSet.add label acc)
       entry StringSet.empty
   in
-  T.
-    [ SIFunctor
-        ( grammar.parameters
-        , mbasics grammar
-          @ [ SITypeDefs [stacktypedef; statetypedef]
-            ; SIStretch grammar.preludes
-            ; SIValDefs (false, [discarddef])
-            ; SIValDefs
-                ( true
-                , StringMap.fold
-                    (fun _ block acc -> block :: acc)
-                    (StringMap.mapi
-                       (fun name t_block ->
-                         { valpublic= StringSet.mem name entries
-                         ; valpat= T.PVar name
-                         ; valval=
-                             T.EAnnot
-                               ( EFun
-                                   ( p_common_args
-                                     @ List.map
-                                         (fun s -> T.PVar s)
-                                         (StringMap.find name env)
-                                           .needed_registers
-                                   , compile_block env S.(t_block.block) )
-                               , function_type name t_block env ) })
-                       cfg)
-                    [] )
-            ; SIValDefs
-                ( false
-                , Grammar.ProductionMap.fold
-                    (fun _ s defs -> entrydef s :: defs)
-                    Lr1.entry [] )
-            ; SIStretch grammar.postludes ] ) ]
+  [ SIFunctor
+      ( grammar.parameters
+      , mbasics grammar
+        @ [ SITypeDefs [stacktypedef; statetypedef]
+          ; SIStretch grammar.preludes
+          ; SIValDefs (false, [discarddef])
+          ; SIValDefs
+              ( true
+              , StringMap.fold
+                  (fun _ block acc -> block :: acc)
+                  (StringMap.mapi
+                     (fun name t_block ->
+                       { valpublic= StringSet.mem name entries
+                       ; valpat= PVar name
+                       ; valval= compile_function t_block cfg })
+                     cfg)
+                  [] )
+          ; SIValDefs
+              ( false
+              , Grammar.ProductionMap.fold
+                  (fun _ s defs -> entrydef s :: defs)
+                  Lr1.entry [] )
+          ; SIStretch grammar.postludes ] ) ]

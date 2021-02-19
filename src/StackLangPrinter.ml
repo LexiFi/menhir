@@ -120,6 +120,8 @@ let rec block b =
       concat (map branch (
         map (fun (pat, b) -> (tagpat pat, block b)) branches
       ))
+  | ITypedBlock ({block=b; stack_type=_; final_type=_}) -> 
+      nl ^^ string "TYPED " ^^ block b
 
 let entry_comment entry_labels label =
   if LabelSet.mem label entry_labels then
