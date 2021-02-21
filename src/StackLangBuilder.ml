@@ -23,15 +23,18 @@ type state = Idle | Open of (block -> block) | Closed of block
 let current : state ref = ref Idle
 let current_stack_type : IL.typ array option ref = ref None
 let current_final_type : IL.typ option ref = ref None
-
 let current_needed : string list option ref = ref None
+
+let current_has_case_tag : bool ref = ref false
 
 let typed_exec (body : unit -> unit) =
   current := Open identity ;
   current_stack_type := None ;
   current_final_type := None ;
   current_needed := None ;
+  current_has_case_tag := false ;
   body () ;
+  let has_case_tag = !current_has_case_tag in
   match !current, !current_stack_type, !current_needed  with
   | Idle, _, _ ->
       (* This cannot happen, I think. *)
@@ -51,7 +54,8 @@ let typed_exec (body : unit -> unit) =
       current_stack_type := None ;
       current_final_type := None ;
       current_needed := None ;
-      { block ; stack_type ; final_type ; needed_registers }
+      current_has_case_tag := false ;
+      { block ; stack_type ; final_type ; needed_registers ; has_case_tag }
 
 let exec (body : unit -> unit) =
   current := Open identity ;
@@ -181,6 +185,7 @@ let case_token r cases =
   close (ICaseToken (r, branches, default))
 
 let case_tag r cases =
+  current_has_case_tag := true ;
   let saved = !current in
   let branches = ref [] in
   let def_branch pat body = branches := (pat, exec body) :: !branches in

@@ -114,7 +114,8 @@ type tagpat = TagMultiple of tag list
 type typed_block = { block: block
                    ; stack_type: IL.typ array
                    ; final_type: IL.typ option
-                   ; needed_registers: string list }
+                   ; needed_registers: string list 
+                   ; has_case_tag: bool }
 
 and block =
   (* Group 1: Instructions with exactly one successor. *)

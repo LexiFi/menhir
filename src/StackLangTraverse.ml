@@ -236,10 +236,8 @@ let rec inline_block cfg degree block =
          otherwise, keep the [jump] instruction. *)
       if lookup label degree = 1 then
         let typed_block = (lookup label cfg) in
-        ITypedBlock { block = (inline_block cfg degree typed_block.block)
-                    ; stack_type = typed_block.stack_type
-                    ; final_type = typed_block.final_type 
-                    ; needed_registers = typed_block.needed_registers }
+        ITypedBlock { typed_block with    
+                      block = (inline_block cfg degree typed_block.block) }
       else IJump label
   | ICaseToken (r, branches, odefault) ->
       ICaseToken
@@ -256,7 +254,9 @@ let rec inline_block cfg degree block =
 
 let inline_cfg degree (cfg : typed_block RegisterMap.t) : cfg =
   LabelMap.fold
-    (fun label {block; stack_type; final_type; needed_registers} accu ->
+    (fun label { block ; stack_type
+               ; final_type ; needed_registers
+               ; has_case_tag } accu ->
       match LabelMap.find label degree with
       | exception Not_found ->
           (* An unreachable label. *)
@@ -269,7 +269,8 @@ let inline_cfg degree (cfg : typed_block RegisterMap.t) : cfg =
                          { block= inline_block cfg degree block
                          ; stack_type
                          ; final_type
-                         ; needed_registers } 
+                         ; needed_registers
+                         ; has_case_tag } 
                          accu  )
     cfg LabelMap.empty
 
