@@ -206,7 +206,7 @@ let compile_primitive = function
   | S.PrimOCamlAction action ->
       Action.to_il_expr action
 
-let rec compile_block (cfg : StackLang.typed_block StringMap.t) =
+let rec compile_block (cfg : StackLang.typed_block StringMap.t) t_block =
   let rec compile_ICaseToken register tokpat_block_list block_option =
     EMatch
       ( EVar register
@@ -218,23 +218,23 @@ let rec compile_block (cfg : StackLang.typed_block StringMap.t) =
                 ; branchbody=
                     ( match Grammar.Terminal.ocamltype terminal with
                     | None ->
-                        ELet ([(PVar register, EUnit)], compile_block block)
+                        ELet ([(PVar register, EUnit)], compile_block_aux block)
                     | Some _ ->
-                        compile_block block ) }
+                        compile_block_aux block ) }
             | S.TokMultiple terminals ->
                 { branchpat=
                     POr
                       (List.map
                          (fun terminal -> CodePieces.tokpat terminal PWildcard)
                          (Grammar.TerminalSet.elements terminals))
-                ; branchbody= compile_block block })
+                ; branchbody= compile_block_aux block })
           tokpat_block_list
         @
         match block_option with
         | None ->
             []
         | Some block ->
-            [{branchpat= PWildcard; branchbody= compile_block block}] )
+            [{branchpat= PWildcard; branchbody= compile_block_aux block}] )
   and compile_ICaseTag register tagpat_block_list =
     EMatch
       ( EVar register
@@ -244,13 +244,14 @@ let rec compile_block (cfg : StackLang.typed_block StringMap.t) =
                let (S.TagMultiple tag_list) = tagpat in
                List.map
                  (fun tag ->
-                   {branchpat= pstatescon [tag]; branchbody= compile_block block})
+                   { branchpat= pstatescon [tag]
+                   ; branchbody= compile_block_aux block })
                  tag_list)
              tagpat_block_list )
         @ [ (* TODO : remove this *)
             { branchpat= PWildcard
             ; branchbody= EApp (EVar "assert", [EVar "false"]) } ] )
-  and compile_block =
+  and compile_block_aux =
     S.(
       function
       (* [INeed] is a special pseudo-instruction that is expected to appear at
@@ -258,7 +259,7 @@ let rec compile_block (cfg : StackLang.typed_block StringMap.t) =
          block.) It indicates which registers are expected to be defined at this
          point, and it un-defines any registers that are not explicitly listed. *)
       | S.INeed (_registers, block) ->
-          compile_block block
+          compile_block_aux block
       (* [IPush] pushes a value onto the stack. [IPop] pops a value off the stack.
          [IDef] can be viewed as a sequence of a push and a pop. It can be used to
          move data between registers or to load a value into a register. *)
@@ -267,7 +268,8 @@ let rec compile_block (cfg : StackLang.typed_block StringMap.t) =
             match compile_value value with ETuple li -> li | _ -> assert false
           in
           ELet
-            ([(PVar fstack, ETuple (EVar fstack :: value))], compile_block block)
+            ( [(PVar fstack, ETuple (EVar fstack :: value))]
+            , compile_block_aux block )
       | S.IPop (pattern, block) ->
           let pattern =
             match compile_pattern pattern with
@@ -278,24 +280,25 @@ let rec compile_block (cfg : StackLang.typed_block StringMap.t) =
           in
           ELet
             ( [(T.PTuple (PVar fstack :: pattern), EVar fstack)]
-            , compile_block block )
+            , compile_block_aux block )
       | S.IDef (pattern, value, block) ->
           ELet
             ( [(compile_pattern pattern, compile_value value)]
-            , compile_block block )
+            , compile_block_aux block )
       (* [IPrim] invokes a primitive operation and stores its result in a
          register. *)
       | S.IPrim (register, primitive, block) ->
           ELet
-            ([(PVar register, compile_primitive primitive)], compile_block block)
+            ( [(PVar register, compile_primitive primitive)]
+            , compile_block_aux block )
       (* [ITrace] logs a message on [stderr]. *)
       | S.ITrace (message, block) ->
           ELet
             ( [(PVar "_", EApp (EVar "Printf.eprintf", [EStringConst message]))]
-            , compile_block block )
+            , compile_block_aux block )
       (* [IComment] is a comment. *)
       | S.IComment (comment, block) ->
-          EComment (comment, compile_block block)
+          EComment (comment, compile_block_aux block)
       (* Group 2: Instructions with zero successor. *)
 
       (* [IDie] causes an abrupt termination of the program. It is translated
@@ -304,8 +307,14 @@ let rec compile_block (cfg : StackLang.typed_block StringMap.t) =
           ERaise (EVar "_eRR")
       (* [IReturn] causes the normal termination of the program. A value read
          from a register is returned. *)
-      | S.IReturn register ->
-          EVar register
+      | S.IReturn register -> (
+        match S.(t_block.final_type) with
+        | None ->
+            EVar register
+        | Some body ->
+            EAnnot
+              (EVar register, {quantifiers= []; locally_abstract= false; body})
+        )
       (* [IJump] causes a jump to a block identified by its label. The registers
          that are needed by the destination block must form a subset of the
          registers that are defined at the point of the jump. *)
@@ -329,53 +338,24 @@ let rec compile_block (cfg : StackLang.typed_block StringMap.t) =
          the case analysis is exhaustive. *)
       | S.ICaseTag (register, tagpat_block_list) ->
           compile_ICaseTag register tagpat_block_list
-      | S.ITypedBlock ({needed_registers} as t_block) ->
-          let block_name = fresh_name () in
-          ELet
-            ( [(PVar block_name, compile_function t_block cfg)]
-            , EApp
-                ( EVar block_name
-                , e_common_args @ List.map (fun s -> EVar s) needed_registers )
-            )
-      (*match final_type with
-        | None ->
-            EComment
-              ( "Typed block with no final type"
-              , ELet
-                  ( [ ( T.PVar fstack
-                      , EAnnot
-                          ( EVar fstack
-                          , { quantifiers= []
-                            ; locally_abstract= false
-                            ; body=
-                                typ_stack_app (TypVar "tail") (TypVar "final")
-                                  stack_type } ) ) ]
-                  , compile_block block ) )
-        | Some final_type ->
-            EComment
-              ( "Typed block with final type"
-              , ELet
-                  ( [ ( T.PVar fstack
-                      , EAnnot
-                          ( EVar fstack
-                          , { quantifiers= []
-                            ; locally_abstract= false
-                            ; body=
-                                typ_stack_app (TypVar "tail") final_type
-                                  stack_type } ) ) ]
-                  , EAnnot
-                      ( compile_block block
-                      , { quantifiers= []
-                        ; locally_abstract= false
-                        ; body= final_type } ) ) )*))
+      | S.ITypedBlock ({needed_registers; has_case_tag} as t_block) ->
+          if has_case_tag then
+            let block_name = fresh_name () in
+            ELet
+              ( [(PVar block_name, compile_function t_block cfg)]
+              , EApp
+                  ( EVar block_name
+                  , e_common_args @ List.map (fun s -> EVar s) needed_registers
+                  ) )
+          else compile_block cfg t_block)
   in
-  compile_block
+  compile_block_aux S.(t_block.block)
 
 and compile_function t_block cfg =
   EAnnot
     ( EFun
         ( p_common_args @ List.map (fun s -> PVar s) S.(t_block.needed_registers)
-        , compile_block cfg S.(t_block.block) )
+        , compile_block cfg t_block )
     , function_type t_block )
 
 (* returns the number of pushes, and if found, the corresponding state *)
