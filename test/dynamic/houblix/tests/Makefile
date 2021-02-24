@@ -20,7 +20,7 @@ FAKE:
 
 all.results: $(FOLDERS)
 	@cat $^ > $@
-	@echo -ne "\033[1mTotal: "
+	@echo -ne "\033[1mHoublix Total: "
 	@cat $@ | cut -d: -f2 | \
 		awk -F "/" \
 		'{ score += $$1; all += $$2 } END { print score "/" all }'
@@ -35,7 +35,7 @@ all.results: $(FOLDERS)
 %.score: %.output %.expected
 	@diff -uwB $^ 1>/dev/null 2>&1 && echo 1 > $@ || echo 0 > $@
 	@if [ `cat $@` -ne 0 ]; then \
-		echo -e "\e[32m[OK] `basename $@ .score`\e[0m"; \
+		true; \
 	else \
 		echo -e "\e[31m[KO] `basename $@ .score`\e[0m"; \
 		diff -uwB $^; exit 0; \
