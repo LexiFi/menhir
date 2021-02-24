@@ -168,6 +168,9 @@ and expr =
   (* Local definitions. This is a nested sequence of [let]
      definitions. *)
   | ELet of (pattern * expr) list * expr
+  (* Local definitions with an annotation. This is a nested sequence of [let]
+     definitions. *)
+  | EInlinedLet of (pattern * expr) list * expr
 
   (* Case analysis. *)
   | EMatch of expr * branch list
