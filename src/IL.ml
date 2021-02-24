@@ -101,6 +101,8 @@ and datadef = {
        [None] if this is an ordinary ADT. *)
     datatypeparams: typ list option;
 
+    comment: string option;
+
   }
 
 and typ =
@@ -128,7 +130,9 @@ and typescheme = {
   (* Universal quantifiers, without leading quotes. *)
   quantifiers: string list;
 
+  (* whether the quantifiers are locally abstract or not *)
   locally_abstract: bool;
+
   (* Body. *)
   body: typ;
 
@@ -164,6 +168,9 @@ and expr =
   (* Local definitions. This is a nested sequence of [let]
      definitions. *)
   | ELet of (pattern * expr) list * expr
+  (* Local definitions with an annotation. This is a nested sequence of [let]
+     definitions. *)
+  | EInlinedLet of (pattern * expr) list * expr
 
   (* Case analysis. *)
   | EMatch of expr * branch list

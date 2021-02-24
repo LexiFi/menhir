@@ -13,6 +13,7 @@
 
 open Printf
 open Grammar
+
 module SSymbols = StackSymbols.Run ()
 
 let prefix = CodeBits.prefix
@@ -35,7 +36,7 @@ open StackLangBuilder
 
 let log format =
   Printf.ksprintf
-    (fun s -> if Settings.trace then trace s else comment s)
+    (fun s -> if Settings.trace then trace (s ^ "\n") else comment s)
     format
 
 (* -------------------------------------------------------------------------- *)
@@ -119,7 +120,7 @@ let must_query_lexer_upon_entering s =
    ensures that the [run] subroutine for every such state contains a POP
    instruction. *)
 
-let every_run_pops nt =
+(* let every_run_pops nt =
   Lr1.targets
     (fun accu _ target ->
       accu
@@ -129,16 +130,18 @@ let every_run_pops nt =
           Production.length prod > 0
       | None ->
           false)
-    true (Symbol.N nt)
+    true (Symbol.N nt) *)
 
 (* As suggested above, if we are trying to optimize for code size, then we
    choose "goto pushes", except in those places where "run pushes" entails
    no penalty. Otherwise, we choose "run pushes" everywhere. *)
 
-let gotopushes : Nonterminal.t -> bool =
+let gotopushes : Nonterminal.t -> bool = fun _ -> false
+
+(*
   if Settings.optimize_for_code_size then
     Nonterminal.tabulate (fun nt -> not (every_run_pops nt))
-  else fun _nt -> false
+  else fun _nt -> false *)
 
 let runpushes s =
   match Lr1.incoming_symbol s with
@@ -239,14 +242,15 @@ module L = struct
        good practice to keep it as tight as possible, though, as this documents
        the code that we produce (and allows us to benefit from a runtime
        well-formedness test). *)
-    need_list
-      ( (lexer :: lexbuf :: if1 (not must_query_lexer) token)
+    let needed_registers = ( (lexer :: lexbuf :: if1 (not must_query_lexer) token)
       @ ifn must_push [state; semv]
       @ if1 ((not (is_start || must_read_positions)) && must_push) startp
       @ if1 (not (is_start || must_read_positions)) endp
-      @ [] ) ;
+      @ [] ) in
+    set_needed needed_registers ;
+    need_list needed_registers ;
     (* Log that we are entering state [s]. *)
-    log "State %d:\n" (number s) ;
+    log "State %d:" (number s) ;
     (* If necessary, read the positions of the current token from [lexbuf]. *)
     if must_read_positions then (
       prim startp (PrimOCamlFieldAccess (lexbuf, "Lexing.lex_start_p")) ;
@@ -341,10 +345,11 @@ module L = struct
       Action.has_beforeend action
     in
     (* Thus, we initially need the following registers. *)
-    need_list
-      ( (lexer :: lexbuf :: token :: if1 is_epsilon state)
-      @ if1 (is_epsilon || has_beforeend) endp
-      @ [] ) ;
+    let needed_registers = ( (lexer :: lexbuf :: token :: if1 is_epsilon state)
+                           @ if1 (is_epsilon || has_beforeend) endp
+                           @ [] ) in
+    set_needed needed_registers ;
+    need_list needed_registers ;
     (* Pop [n] stack cells and store their content in suitable registers.
        The state stored in the bottom cell (the one that is popped last)
        is stored in the register [state] and thus becomes the new current
@@ -362,13 +367,13 @@ module L = struct
        execution of the program. *)
     if Production.is_start prod then (
       assert (n = 1) ;
-      log "Accepting\n" ;
+      log "Accepting" ;
       return ids.(0)
       (* If this is not a start production, then it has a semantic action. *) )
     else
       let action = Production.action prod in
       (* Log that we are reducing production [prod]. *)
-      log "Reducing production %s\n" (Production.print prod) ;
+      log "Reducing production %s" (Production.print prod) ;
       (* Define [beforeendp], if needed by the semantic action. Define
          [startp] and [endp], which may be needed by the semantic action,
          and are later needed by [goto]. *)
@@ -395,6 +400,7 @@ module L = struct
     (* The [run] subroutines that we call are reached via goto transitions,
        therefore do not query the lexer. This means that [token] is needed. *)
     need_list [lexer; lexbuf; token; state; semv; startp; endp] ;
+    set_needed [lexer; lexbuf; token; state; semv; startp; endp] ;
     (* If it is up to this [goto] subroutine to push a new cell onto the stack,
        then do so now. If not, then it will be done by the [run] subroutine to
        which we are about to jump. *)
@@ -413,36 +419,55 @@ module L = struct
 
   (* -------------------------------------------------------------------------- *)
 
-(* Code for all subroutines. *)
-  
-let stack_type_goto _ =
-      [||]
+  (* Code for all subroutines. *)
 
-let stack_type_reduce production  =
-   let symbols = Grammar.Production.rhs production in
-   let types = Array.map CodePieces.semvtype symbols in
-   Array.map (function [] -> IL.TypName "unit" | x -> IL.TypTuple x) types
-let stack_type_run state =
-   let symbols = SSymbols.stack_symbols state in
-   let n_pushes = if runpushes state then 1 else 0 in
-   let types = Array.map CodePieces.semvtype symbols in
-   Array.map (function [] -> IL.TypName "unit" | x -> IL.TypTuple x)
-             (Array.sub types 0 (Array.length types - n_pushes)) 
-let code label =
+  let stack_type_goto _ = [||]
+
+  let stack_type_reduce production =
+    let symbols = Grammar.Production.rhs production in
+    let types = Array.map CodePieces.semvtype symbols in
+    Array.map
+      (function [] -> IL.TypName "unit" | [x] -> x | x -> IL.TypTuple x)
+      types
+
+  let stack_type_run state =
+    let symbols = SSymbols.stack_symbols state in
+    let n_pushes = if runpushes state then 1 else 0 in
+    let types = Array.map CodePieces.semvtype symbols in
+    Array.map
+      (function [] -> IL.TypName "unit" | [x] -> x | x -> IL.TypTuple x)
+      (let len = Array.length types in
+       if len = 0 then [||] else Array.sub types 0 (len - n_pushes))
+
+  let code label =
     match label with
     | Run s ->
-        set_type (stack_type_run s) ;
+        ( match Lr1.is_start_or_exit s with
+        | None ->
+            ()
+        | Some nonterminal ->
+            set_final_type
+              (IL.TypTextual (Nonterminal.ocamltype_of_start_symbol nonterminal))
+        ) ;
+        set_stack_type (stack_type_run s) ;
         run s
     | Reduce prod ->
-        set_type (stack_type_reduce prod) ;
+        ( match Grammar.Production.classify prod with
+        | None ->
+            ()
+        | Some nonterminal ->
+            set_final_type
+              (IL.TypTextual (Nonterminal.ocamltype_of_start_symbol nonterminal))
+        ) ;
+        set_stack_type (stack_type_reduce prod) ;
         reduce prod
     | Goto nt ->
-        set_type (stack_type_goto nt) ;
+        set_stack_type (stack_type_goto nt) ;
         goto nt
 
   (* The entry points. *)
 
-let entry =
+  let entry =
     ProductionMap.fold
       (fun _prod s accu -> Lr1.NodeMap.add s (Run s) accu)
       Lr1.entry Lr1.NodeMap.empty

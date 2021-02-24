@@ -329,3 +329,10 @@ let field modifiable name t =
 
 let branch branchpat branchbody =
   { branchpat; branchbody }
+
+let fresh_name =
+  let i = ref 0 in
+  fun () ->
+    let n = !i in
+    i := !i + 1;
+    prefix (Printf.sprintf "fresh_name_%i" n)

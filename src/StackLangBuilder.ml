@@ -21,28 +21,41 @@ let compose f g x = f (g x)
 type state = Idle | Open of (block -> block) | Closed of block
 
 let current : state ref = ref Idle
-let current_type : IL.typ array option ref = ref None
+let current_stack_type : IL.typ array option ref = ref None
+let current_final_type : IL.typ option ref = ref None
+let current_needed : string list option ref = ref None
+
+let current_has_case_tag : bool ref = ref false
+
 let typed_exec (body : unit -> unit) =
   current := Open identity ;
-  current_type := None ;
+  current_stack_type := None ;
+  current_final_type := None ;
+  current_needed := None ;
+  current_has_case_tag := false ;
   body () ;
-  match !current, !current_type with
-  | Idle, _ ->
+  let has_case_tag = !current_has_case_tag in
+  match !current, !current_stack_type, !current_needed  with
+  | Idle, _, _ ->
       (* This cannot happen, I think. *)
       assert false
-  | Open _, _ ->
+  | Open _, _, _ ->
       (* The user has misused our API: a block has been opened and has not
          been properly ended by calling [die], [return], [jump], or a case
          analysis construction. *)
       assert false
-  | _, None ->
+  | _, None, _ | _, _, None   ->
     (* The user must specifiy the type of a block
     *)
     assert false
-  | Closed block, Some stack_type ->
+  | Closed block, Some stack_type, Some needed_registers ->
+      let final_type = !current_final_type in
       current := Idle ;
-      current_type := None ;
-      { block ; stack_type }
+      current_stack_type := None ;
+      current_final_type := None ;
+      current_needed := None ;
+      current_has_case_tag := false ;
+      { block ; stack_type ; final_type ; needed_registers ; has_case_tag }
 
 let exec (body : unit -> unit) =
   current := Open identity ;
@@ -94,8 +107,14 @@ let close i =
          construction. *)
       assert false
 
-let set_type typ = 
-  current_type := Some typ
+let set_stack_type typ = 
+  current_stack_type := Some typ
+
+let set_final_type typ = 
+    current_final_type := Some typ
+
+let set_needed needed =
+  current_needed := Some needed
 let need rs = extend (fun block -> INeed (rs, block))
 
 let need_list rs = need (RegisterSet.of_list rs)
@@ -103,6 +122,8 @@ let need_list rs = need (RegisterSet.of_list rs)
 let push v = extend (fun block -> IPush (v, block))
 
 let pop p = extend (fun block -> IPop (p, block))
+
+(*let typ stack_type final_type = extend (fun block -> ITypedBlock {block; stack_type; final_type})*)
 
 let def p v =
   (* In order to avoid unnecessary clutter, we eliminate a definition of
@@ -164,19 +185,20 @@ let case_token r cases =
   close (ICaseToken (r, branches, default))
 
 let case_tag r cases =
+  current_has_case_tag := true ;
   let saved = !current in
   let branches = ref [] in
   let def_branch pat body = branches := (pat, exec body) :: !branches in
   cases def_branch ;
   let branches = List.rev !branches in
   current := saved ;
-  match branches with
+  (*match branches with
   | [(_pat, block)] ->
       (* TODO : check if it really works, it could delete type info. *)
       (* If there is only one branch, then there is no need to generate a
          case instruction; we eliminate it on the fly. *)
       close block
-  | _ ->
+  | _ ->*)
       close (ICaseTag (r, branches))
 
 module Build (L : sig

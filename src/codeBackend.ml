@@ -471,7 +471,7 @@ module Run (T : sig end) = struct
           (Lr1.fold
              (fun defs s ->
                if Invariant.represented s then
-                 {dataname= statecon s; datavalparams= []; datatypeparams= None}
+                 {dataname= statecon s; datavalparams= []; datatypeparams= None; comment=None}
                  :: defs
                else defs)
              [])

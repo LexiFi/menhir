@@ -111,8 +111,13 @@ type tagpat = TagMultiple of tag list
    instructions can have more than successor (this is where several tree
    branches become separate), and the control instructions have no successor
    (this is where a tree branch ends). *)
+type typed_block = { block: block
+                   ; stack_type: IL.typ array
+                   ; final_type: IL.typ option
+                   ; needed_registers: string list 
+                   ; has_case_tag: bool }
 
-type block =
+and block =
   (* Group 1: Instructions with exactly one successor. *)
 
   (* [INeed] is a special pseudo-instruction that is expected to appear at
@@ -156,6 +161,9 @@ type block =
      pattern. There is no default branch; it is up to the user to ensure that
      the case analysis is exhaustive. *)
   | ICaseTag of register * (tagpat * block) list
+  (*
+   Block with type information *)
+  | ITypedBlock of typed_block
 
 (* -------------------------------------------------------------------------- *)
 
@@ -168,9 +176,6 @@ type block_info =
 | InfRun of Lr1.node
 | InfReduce of Grammar.Production.index
 | InfGoto of Grammar.Nonterminal.t
-
-
-type typed_block = {block: block; stack_type: IL.typ array}
 
 type cfg = typed_block LabelMap.t
 
