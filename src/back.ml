@@ -98,10 +98,21 @@ let () =
     B.write_all f
   else
     let module SL = EmitStackLang.Run () in
-    let program = StackLangTraverse.inline SL.program in
+    let program = SL.program in
+   StackLangTraverse.wf program ;
+    let program = StackLangTraverse.inline program in
+    StackLangTraverse.wf program ;
+    let program = StackLangTraverse.optimize program in
+    (*StackLangTraverse.wf program ;*)
+    if Settings.stacklang_dump then (
+      StackLangPrinter.print stdout program ;
+      StackLangTraverse.(print (measure program)) ) ;
+    if Settings.stacklang_graph then 
+      StackLangGraph.print program ;
+    if Settings.stacklang_test then 
+      StackLangTester.test program ;
     let program = ILofStackLang.compile program in
-    let program = CodeInliner.inline program in 
-    write program;
+    write program ;
     Interface.write Front.grammar ()
 
 let () = Time.tick "Printing"

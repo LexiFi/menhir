@@ -106,7 +106,7 @@ let statetypedef =
                ; datatypeparams= Some [type_of_tag s; final_type s]
                ; comment=
                    Some
-                     ( ( " Know stack symbols : "
+                     ( ( " Known stack symbols : "
                        ^ SSymbols.print_stack_symbols s )
                      ^ " " ) }
                :: defs
@@ -234,7 +234,8 @@ let rec compile_block (cfg : StackLang.typed_block StringMap.t) t_block =
         | None ->
             []
         | Some block ->
-            [{branchpat= PWildcard; branchbody= compile_block_aux block}] )
+            [{ branchpat = PWildcard
+             ; branchbody = compile_block_aux block }] )
   and compile_ICaseTag register tagpat_block_list =
     EMatch
       ( EVar register
@@ -341,7 +342,7 @@ let rec compile_block (cfg : StackLang.typed_block StringMap.t) t_block =
       | S.ITypedBlock ({needed_registers; has_case_tag} as t_block) ->
           if has_case_tag then
             let block_name = fresh_name () in
-            ELet
+            EInlinedLet
               ( [(PVar block_name, compile_function t_block cfg)]
               , EApp
                   ( EVar block_name

@@ -186,14 +186,14 @@ struct
         | AllButLetFunTryMatchSeq | OnlyAppOrAtom | OnlyAtom ->
             false
         | _ -> true )
-    | ELet ([], e) -> member e k
+    | ELet ([], e) | EInlinedLet ([], e)-> member e k
     | ELet ((PUnit, _) :: _, _) -> (
         match k with
         | AllButSeq | AllButFunTryMatchSeq | AllButLetFunTryMatchSeq
         | AllButIfThenSeq | OnlyAppOrAtom | OnlyAtom ->
             false
         | _ -> true )
-    | ELet (_ :: _, _) -> (
+    | ELet (_ :: _, _) | EInlinedLet (_ :: _, _) ->  (
         match k with
         | AllButLetFunTryMatch | AllButLetFunTryMatchSeq | OnlyAppOrAtom
         | OnlyAtom ->
@@ -238,7 +238,28 @@ struct
           (exprlet k pes) e2
     | (p1, e1) :: pes ->
         fprintf f "let %a = %a in%t%a" pat p1 expr e1 nl (exprlet k pes) e2
-
+  and exprinlinedlet k pes f e2 =
+    match pes with
+    | [] -> exprk k f e2
+    | (PUnit, e1) :: pes ->
+        fprintf f "%a%t%a"
+          (exprk AllButLetFunTryMatch)
+          e1 seminl (exprlet k pes) e2
+    | (PVar id1, EAnnot ((EFun _ as e1), ts1)) :: pes ->
+        fprintf f "let %s : %a = %a [@@inline always] in%t%a" id1 
+          scheme ts1 expr e1 nl (exprlet k pes) e2
+    | (PVar id1, EAnnot (e1, ts1)) :: pes ->
+        (* TEMPORARY current ocaml does not support type schemes here; drop quantifiers, if any *)
+        fprintf f "let %s : %a = %a [@@inline always] in%t%a" id1 typ ts1.body
+          (* scheme ts1 *) expr e1 nl (exprlet k pes) e2
+    | (PVar id1, EFun (ps1, e1)) :: pes ->
+        fprintf f "let %s%a = %a [@@inline always] in%t%t%a" id1 (list pat0 space) ps1
+          (indent 2 expr) e1 nl nl (exprlet k pes) e2
+    | (p1, (ELet _ as e1)) :: pes ->
+        fprintf f "let %a =%a%t[@@inline always] in%t%a" pat p1 (indent 2 expr) e1 nl nl
+          (exprlet k pes) e2
+    | (p1, e1) :: pes ->
+        fprintf f "let %a = %a [@@inline always] in%t%a" pat p1 expr e1 nl (exprlet k pes) e2
   and atom f e = exprk OnlyAtom f e
 
   and app f e = exprk OnlyAppOrAtom f e
@@ -256,6 +277,7 @@ struct
             fprintf f "(* %S%a *)%t%a" s pat p nl (exprk k) e
           else exprk k f e
       | ELet (pes, e2) -> exprlet k pes f e2
+      | EInlinedLet (pes, e2) -> exprinlinedlet k pes f e2
       | ERecordWrite (e1, field, e2) ->
           fprintf f "%a.%s <- %a" atom e1 field (exprk (andNotSeq k)) e2
       | EMatch (_, []) -> assert false
