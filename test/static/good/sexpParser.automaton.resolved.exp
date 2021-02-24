@@ -1,0 +1,476 @@
+State 0:
+## Known stack suffix:
+##
+## LR(1) items:
+sexp' -> . sexp [ # ]
+## Transitions:
+-- On STRING shift to state 1
+-- On PLUS shift to state 2
+-- On MINUS shift to state 3
+-- On ID shift to state 5
+-- On EOF shift to state 6
+-- On BRA shift to state 7
+-- On AT shift to state 33
+-- On sexpr shift to state 37
+-- On sexp shift to state 38
+-- On option(PLUS) shift to state 35
+## Reductions:
+-- On INT
+--   reduce production option(PLUS) ->
+
+State 1:
+## Known stack suffix:
+## STRING
+## LR(1) items:
+sexpr -> STRING . [ # ]
+## Transitions:
+## Default reduction:
+-- Without reading the next token, reduce production sexpr -> STRING
+
+State 2:
+## Known stack suffix:
+## PLUS
+## LR(1) items:
+option(PLUS) -> PLUS . [ INT ]
+## Transitions:
+## Default reduction:
+-- After reading the next token, reduce production option(PLUS) -> PLUS
+
+State 3:
+## Known stack suffix:
+## MINUS
+## LR(1) items:
+sexpr -> MINUS . INT [ # ]
+## Transitions:
+-- On INT shift to state 4
+## Reductions:
+
+State 4:
+## Known stack suffix:
+## MINUS INT
+## LR(1) items:
+sexpr -> MINUS INT . [ # ]
+## Transitions:
+## Default reduction:
+-- Without reading the next token, reduce production sexpr -> MINUS INT
+
+State 5:
+## Known stack suffix:
+## ID
+## LR(1) items:
+sexpr -> ID . [ # ]
+## Transitions:
+## Default reduction:
+-- Without reading the next token, reduce production sexpr -> ID
+
+State 6:
+## Known stack suffix:
+## EOF
+## LR(1) items:
+sexp -> EOF . [ # ]
+## Transitions:
+## Default reduction:
+-- Without reading the next token, reduce production sexp -> EOF
+
+State 7:
+## Known stack suffix:
+## BRA
+## LR(1) items:
+sexpr -> BRA . list(sexpr) KET [ # ]
+sexpr -> BRA . list(sexpr) DOT pairs KET [ # ]
+## Transitions:
+-- On STRING shift to state 8
+-- On PLUS shift to state 2
+-- On MINUS shift to state 9
+-- On ID shift to state 11
+-- On BRA shift to state 12
+-- On AT shift to state 13
+-- On sexpr shift to state 17
+-- On option(PLUS) shift to state 15
+-- On list(sexpr) shift to state 28
+## Reductions:
+-- On KET DOT
+--   reduce production list(sexpr) ->
+-- On INT
+--   reduce production option(PLUS) ->
+
+State 8:
+## Known stack suffix:
+## STRING
+## LR(1) items:
+sexpr -> STRING . [ STRING PLUS MINUS KET INT ID DOT BRA AT ]
+## Transitions:
+## Default reduction:
+-- After reading the next token, reduce production sexpr -> STRING
+
+State 9:
+## Known stack suffix:
+## MINUS
+## LR(1) items:
+sexpr -> MINUS . INT [ STRING PLUS MINUS KET INT ID DOT BRA AT ]
+## Transitions:
+-- On INT shift to state 10
+## Reductions:
+
+State 10:
+## Known stack suffix:
+## MINUS INT
+## LR(1) items:
+sexpr -> MINUS INT . [ STRING PLUS MINUS KET INT ID DOT BRA AT ]
+## Transitions:
+## Default reduction:
+-- After reading the next token, reduce production sexpr -> MINUS INT
+
+State 11:
+## Known stack suffix:
+## ID
+## LR(1) items:
+sexpr -> ID . [ STRING PLUS MINUS KET INT ID DOT BRA AT ]
+## Transitions:
+## Default reduction:
+-- After reading the next token, reduce production sexpr -> ID
+
+State 12:
+## Known stack suffix:
+## BRA
+## LR(1) items:
+sexpr -> BRA . list(sexpr) KET [ STRING PLUS MINUS KET INT ID DOT BRA AT ]
+sexpr -> BRA . list(sexpr) DOT pairs KET [ STRING PLUS MINUS KET INT ID DOT BRA AT ]
+## Transitions:
+-- On STRING shift to state 8
+-- On PLUS shift to state 2
+-- On MINUS shift to state 9
+-- On ID shift to state 11
+-- On BRA shift to state 12
+-- On AT shift to state 13
+-- On sexpr shift to state 17
+-- On option(PLUS) shift to state 15
+-- On list(sexpr) shift to state 19
+## Reductions:
+-- On KET DOT
+--   reduce production list(sexpr) ->
+-- On INT
+--   reduce production option(PLUS) ->
+
+State 13:
+## Known stack suffix:
+## AT
+## LR(1) items:
+sexpr -> AT . sexpr [ STRING PLUS MINUS KET INT ID DOT BRA AT ]
+## Transitions:
+-- On STRING shift to state 8
+-- On PLUS shift to state 2
+-- On MINUS shift to state 9
+-- On ID shift to state 11
+-- On BRA shift to state 12
+-- On AT shift to state 13
+-- On sexpr shift to state 14
+-- On option(PLUS) shift to state 15
+## Reductions:
+-- On INT
+--   reduce production option(PLUS) ->
+
+State 14:
+## Known stack suffix:
+## AT sexpr
+## LR(1) items:
+sexpr -> AT sexpr . [ STRING PLUS MINUS KET INT ID DOT BRA AT ]
+## Transitions:
+## Default reduction:
+-- After reading the next token, reduce production sexpr -> AT sexpr
+
+State 15:
+## Known stack suffix:
+## option(PLUS)
+## LR(1) items:
+sexpr -> option(PLUS) . INT [ STRING PLUS MINUS KET INT ID DOT BRA AT ]
+## Transitions:
+-- On INT shift to state 16
+## Reductions:
+
+State 16:
+## Known stack suffix:
+## option(PLUS) INT
+## LR(1) items:
+sexpr -> option(PLUS) INT . [ STRING PLUS MINUS KET INT ID DOT BRA AT ]
+## Transitions:
+## Default reduction:
+-- After reading the next token, reduce production sexpr -> option(PLUS) INT
+
+State 17:
+## Known stack suffix:
+## sexpr
+## LR(1) items:
+list(sexpr) -> sexpr . list(sexpr) [ KET DOT ]
+## Transitions:
+-- On STRING shift to state 8
+-- On PLUS shift to state 2
+-- On MINUS shift to state 9
+-- On ID shift to state 11
+-- On BRA shift to state 12
+-- On AT shift to state 13
+-- On sexpr shift to state 17
+-- On option(PLUS) shift to state 15
+-- On list(sexpr) shift to state 18
+## Reductions:
+-- On KET DOT
+--   reduce production list(sexpr) ->
+-- On INT
+--   reduce production option(PLUS) ->
+
+State 18:
+## Known stack suffix:
+## sexpr list(sexpr)
+## LR(1) items:
+list(sexpr) -> sexpr list(sexpr) . [ KET DOT ]
+## Transitions:
+## Default reduction:
+-- After reading the next token, reduce production list(sexpr) -> sexpr list(sexpr)
+
+State 19:
+## Known stack suffix:
+## BRA list(sexpr)
+## LR(1) items:
+sexpr -> BRA list(sexpr) . KET [ STRING PLUS MINUS KET INT ID DOT BRA AT ]
+sexpr -> BRA list(sexpr) . DOT pairs KET [ STRING PLUS MINUS KET INT ID DOT BRA AT ]
+## Transitions:
+-- On KET shift to state 20
+-- On DOT shift to state 21
+## Reductions:
+
+State 20:
+## Known stack suffix:
+## BRA list(sexpr) KET
+## LR(1) items:
+sexpr -> BRA list(sexpr) KET . [ STRING PLUS MINUS KET INT ID DOT BRA AT ]
+## Transitions:
+## Default reduction:
+-- After reading the next token, reduce production sexpr -> BRA list(sexpr) KET
+
+State 21:
+## Known stack suffix:
+## BRA list(sexpr) DOT
+## LR(1) items:
+sexpr -> BRA list(sexpr) DOT . pairs KET [ STRING PLUS MINUS KET INT ID DOT BRA AT ]
+## Transitions:
+-- On STRING shift to state 8
+-- On PLUS shift to state 2
+-- On MINUS shift to state 9
+-- On ID shift to state 11
+-- On BRA shift to state 12
+-- On AT shift to state 13
+-- On sexpr shift to state 22
+-- On pairs shift to state 23
+-- On option(PLUS) shift to state 15
+-- On list(sexpr) shift to state 25
+## Reductions:
+-- On DOT
+--   reduce production list(sexpr) ->
+-- On INT
+--   reduce production option(PLUS) ->
+
+State 22:
+## Known stack suffix:
+## sexpr
+## LR(1) items:
+list(sexpr) -> sexpr . list(sexpr) [ DOT ]
+pairs -> sexpr . [ KET ]
+## Transitions:
+-- On STRING shift to state 8
+-- On PLUS shift to state 2
+-- On MINUS shift to state 9
+-- On ID shift to state 11
+-- On BRA shift to state 12
+-- On AT shift to state 13
+-- On sexpr shift to state 17
+-- On option(PLUS) shift to state 15
+-- On list(sexpr) shift to state 18
+## Reductions:
+-- On DOT
+--   reduce production list(sexpr) ->
+-- On INT
+--   reduce production option(PLUS) ->
+-- On KET
+--   reduce production pairs -> sexpr
+
+State 23:
+## Known stack suffix:
+## BRA list(sexpr) DOT pairs
+## LR(1) items:
+sexpr -> BRA list(sexpr) DOT pairs . KET [ STRING PLUS MINUS KET INT ID DOT BRA AT ]
+## Transitions:
+-- On KET shift to state 24
+## Reductions:
+
+State 24:
+## Known stack suffix:
+## BRA list(sexpr) DOT pairs KET
+## LR(1) items:
+sexpr -> BRA list(sexpr) DOT pairs KET . [ STRING PLUS MINUS KET INT ID DOT BRA AT ]
+## Transitions:
+## Default reduction:
+-- After reading the next token, reduce production sexpr -> BRA list(sexpr) DOT pairs KET
+
+State 25:
+## Known stack suffix:
+## list(sexpr)
+## LR(1) items:
+pairs -> list(sexpr) . DOT pairs [ KET ]
+## Transitions:
+-- On DOT shift to state 26
+## Reductions:
+
+State 26:
+## Known stack suffix:
+## list(sexpr) DOT
+## LR(1) items:
+pairs -> list(sexpr) DOT . pairs [ KET ]
+## Transitions:
+-- On STRING shift to state 8
+-- On PLUS shift to state 2
+-- On MINUS shift to state 9
+-- On ID shift to state 11
+-- On BRA shift to state 12
+-- On AT shift to state 13
+-- On sexpr shift to state 22
+-- On pairs shift to state 27
+-- On option(PLUS) shift to state 15
+-- On list(sexpr) shift to state 25
+## Reductions:
+-- On DOT
+--   reduce production list(sexpr) ->
+-- On INT
+--   reduce production option(PLUS) ->
+
+State 27:
+## Known stack suffix:
+## list(sexpr) DOT pairs
+## LR(1) items:
+pairs -> list(sexpr) DOT pairs . [ KET ]
+## Transitions:
+## Default reduction:
+-- After reading the next token, reduce production pairs -> list(sexpr) DOT pairs
+
+State 28:
+## Known stack suffix:
+## BRA list(sexpr)
+## LR(1) items:
+sexpr -> BRA list(sexpr) . KET [ # ]
+sexpr -> BRA list(sexpr) . DOT pairs KET [ # ]
+## Transitions:
+-- On KET shift to state 29
+-- On DOT shift to state 30
+## Reductions:
+
+State 29:
+## Known stack suffix:
+## BRA list(sexpr) KET
+## LR(1) items:
+sexpr -> BRA list(sexpr) KET . [ # ]
+## Transitions:
+## Default reduction:
+-- Without reading the next token, reduce production sexpr -> BRA list(sexpr) KET
+
+State 30:
+## Known stack suffix:
+## BRA list(sexpr) DOT
+## LR(1) items:
+sexpr -> BRA list(sexpr) DOT . pairs KET [ # ]
+## Transitions:
+-- On STRING shift to state 8
+-- On PLUS shift to state 2
+-- On MINUS shift to state 9
+-- On ID shift to state 11
+-- On BRA shift to state 12
+-- On AT shift to state 13
+-- On sexpr shift to state 22
+-- On pairs shift to state 31
+-- On option(PLUS) shift to state 15
+-- On list(sexpr) shift to state 25
+## Reductions:
+-- On DOT
+--   reduce production list(sexpr) ->
+-- On INT
+--   reduce production option(PLUS) ->
+
+State 31:
+## Known stack suffix:
+## BRA list(sexpr) DOT pairs
+## LR(1) items:
+sexpr -> BRA list(sexpr) DOT pairs . KET [ # ]
+## Transitions:
+-- On KET shift to state 32
+## Reductions:
+
+State 32:
+## Known stack suffix:
+## BRA list(sexpr) DOT pairs KET
+## LR(1) items:
+sexpr -> BRA list(sexpr) DOT pairs KET . [ # ]
+## Transitions:
+## Default reduction:
+-- Without reading the next token, reduce production sexpr -> BRA list(sexpr) DOT pairs KET
+
+State 33:
+## Known stack suffix:
+## AT
+## LR(1) items:
+sexpr -> AT . sexpr [ # ]
+## Transitions:
+-- On STRING shift to state 1
+-- On PLUS shift to state 2
+-- On MINUS shift to state 3
+-- On ID shift to state 5
+-- On BRA shift to state 7
+-- On AT shift to state 33
+-- On sexpr shift to state 34
+-- On option(PLUS) shift to state 35
+## Reductions:
+-- On INT
+--   reduce production option(PLUS) ->
+
+State 34:
+## Known stack suffix:
+## AT sexpr
+## LR(1) items:
+sexpr -> AT sexpr . [ # ]
+## Transitions:
+## Default reduction:
+-- Without reading the next token, reduce production sexpr -> AT sexpr
+
+State 35:
+## Known stack suffix:
+## option(PLUS)
+## LR(1) items:
+sexpr -> option(PLUS) . INT [ # ]
+## Transitions:
+-- On INT shift to state 36
+## Reductions:
+
+State 36:
+## Known stack suffix:
+## option(PLUS) INT
+## LR(1) items:
+sexpr -> option(PLUS) INT . [ # ]
+## Transitions:
+## Default reduction:
+-- Without reading the next token, reduce production sexpr -> option(PLUS) INT
+
+State 37:
+## Known stack suffix:
+## sexpr
+## LR(1) items:
+sexp -> sexpr . [ # ]
+## Transitions:
+## Default reduction:
+-- Without reading the next token, reduce production sexp -> sexpr
+
+State 38:
+## Known stack suffix:
+## sexp
+## LR(1) items:
+sexp' -> sexp . [ # ]
+## Transitions:
+## Default reduction:
+-- Without reading the next token, accept sexp
+

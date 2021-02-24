@@ -296,24 +296,30 @@ let good_or_bad () =
 (* The number of tests is currently hardcoded here, and they have a fixed
    naming convention. *)
 
+(* We wish to we pipe Menhir's output through sed in order to remove the
+   auto-generated comments. We need this process to fail if Menhir fails.
+   We could use a pipe and [set -o pipefail], but this is specific to
+   bash. Instead, we go through a temporary file. *)
+
 let n = 10
 
 let merge mly lhs rhs out err xout xerr =
+  let tmp = sprintf "%s.tmp" out in
   print (rule [] [] (
-    redirect_stdout out (
+    redirect_stdout tmp (
     redirect_stderr err (
       not_expecting_failure (
-        (* We must use a [system] action because we pipe Menhir's output through
-           sed in order to remove the auto-generated comments. [set -o pipefail]
-           forces the pipeline to fail if Menhir fails. *)
         system
-          "set -o pipefail &&        \\\n        \
-           %%{bin:menhir} %%{dep:%s} \\\n        \
+          "%%{bin:menhir} %%{dep:%s} \\\n        \
            --merge-errors %%{dep:%s} \\\n        \
-           --merge-errors %%{dep:%s} \\\n        \
-          | sed -e '/^##/d'"
+           --merge-errors %%{dep:%s}"
             mly lhs rhs
   )))));
+  print (rule [] [] (
+    redirect_stdin tmp (
+    redirect_stdout out (
+      system "sed -e '/^##/d'"
+  ))));
   print (phony "test" (diff xout out));
   print (phony "test" (diff xerr err))
 

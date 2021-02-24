@@ -38,6 +38,13 @@ export CDPATH=
 test:
 	@ dune build --display short @test
 
+# [make mono] runs [make test] with a single core. This may produce more
+# reliable timing data, to be used subsequently by [make data].
+
+.PHONY: mono
+mono:
+	@ dune build --display short @test -j1
+
 # [make data] extracts statistics and performance data out of the files
 # produced by [make test]. Be careful: the timing data is definitely not high
 # quality, because every test is run only once and because the tests are run
@@ -49,16 +56,19 @@ test:
 # On MacOS, we require gsed instead of sed.
 SED=$(shell if [[ "$$OSTYPE" == "darwin"* ]] ; then echo gsed ; else echo sed ; fi)
 
+DATA := analysis/data.csv
+
 .PHONY: data
 data: test
 	@ echo "Collecting data (using $(SED))..." && \
-	  echo "name,mode,terminals,nonterminals,lr0states,lr1states,lr1time" > analysis/data.csv && \
-	  directory=_build/default/test/static/src && \
+	  echo "name,mode,terminals,nonterminals,lr0states,lr1states,lr1time" > $(DATA) && \
+	  directory=_build/default/test/static/good && \
 	  successful=0 && timedout=0 && \
 	  for timings in $$directory/*.timings ; do \
 	    name=$${timings%.timings} ; \
 	    out=$$name.out ; \
 	    name=`basename $$name` ; \
+	    echo "Processing $${name}..." ; \
 	    if grep --quiet "TIMEOUT after" $$out ; then \
 	      ((timedout++)) ; \
 	    else \
@@ -69,13 +79,14 @@ data: test
 	      lr0states=`$(SED) -n -e "s/^Built an LR(0) automaton with \([0-9]\+\) states./\1/p" $$out` ; \
 	      lr1states=`$(SED) -n -e "s/^Built an LR(1) automaton with \([0-9]\+\) states./\1/p" $$out` ; \
 	      lr1time=`$(SED) -n -e "s/^Construction of the LR(1) automaton: \(.*\)s/\1/p" $$timings` ; \
-	      echo "$$name,$$mode,$$terminals,$$nonterminals,$$lr0states,$$lr1states,$$lr1time" >> analysis/data.csv ; \
+	      echo "$$name,$$mode,$$terminals,$$nonterminals,$$lr0states,$$lr1states,$$lr1time" >> $(DATA) ; \
 	    fi \
 	  done && \
-	echo "$$successful successful tests; $$timedout timed out tests."
+	echo "$$successful successful tests; $$timedout timed out tests." ; \
+	echo "The results have been written to $(DATA)."
 
 clean::
-	@ rm -f analysis/data.csv
+	@ rm -f $(DATA)
 
 # [make plot] uses Rscript to plot the data extracted by [make data].
 
@@ -257,6 +268,9 @@ WWW     := www
 # sure that they are in the right ballpark. Finally, test the opam package by
 # running [make pin]. (You may wish to run [make pin] in a dedicated switch,
 # so as to avoid clobbering your regular installation of Menhir.)
+
+# You may also wish to run [./compile-ocaml.sh], which checks that Menhir is
+# able to compile OCaml. This test requires about 3 minutes.
 
 .PHONY: release
 release:

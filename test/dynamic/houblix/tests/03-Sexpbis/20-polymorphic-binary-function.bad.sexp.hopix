@@ -1,0 +1,23 @@
+fun : [`a `b] (`a -> `b) * `a -> `b
+    apply ((f : `a -> `b), (x : `a)) = f (x)
+
+fun : [`a `b `c] (`a -> `b -> `c) -> (`a * `b -> `c)
+    curry (f : `a -> `b -> `c) =
+    fun : `a * `b -> `c
+        fc ((x :`a), (y : `b)) = (f (x)) (y);
+    fc
+
+fun : [`a `b `c] (`a * `b -> `c) -> (`b -> `a -> `c)
+    uncurry  (f : `a * `b -> `c) =
+    fun : `a -> `b -> `c
+      fu (x : `a) =
+      (fun : `b -> `c
+       g (y : `b) = f (x, y);
+      g);
+    fu
+
+fun : int -> int
+   id_int (x : int) = x
+
+let main : int =
+   (curry<int -> int, int, int> (uncurry<int -> int, int, int> (apply<int, int>))) (id_int, 37)
