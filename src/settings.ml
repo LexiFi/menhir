@@ -328,6 +328,18 @@ let stacklang_graph =
 let stacklang_test =
   ref false
 
+let provide_example = 
+  ref ""
+
+let example_size =
+  ref 1000
+
+let example_log =
+  ref false 
+
+let old_code_backend =
+  ref false
+  
 (* When new command line options are added, please update both the manual
    in [doc/manual.tex] and the man page in [doc/menhir.1]. *)
 
@@ -351,6 +363,8 @@ let options = Arg.align [
   "--echo-errors", Arg.String set_echo_errors, "<filename> Echo the sentences in a .messages file";
   "--echo-errors-concrete", Arg.String set_echo_errors_concrete, "<filename> Echo the sentences in a .messages file";
   "--error-recovery", Arg.Set recovery, " (no longer supported)";
+  "--example-log", Arg.Set example_log, " Log information about example generation";
+  "--example-size", Arg.Set_int example_size, (Printf.sprintf "<size> Sets the size of the example. Default %d" (!example_size));
   "--explain", Arg.Set explain, " Explain conflicts in <basename>.conflicts";
   "--external-tokens", Arg.String codeonly, "<module> Import token type definition from <module>";
   "--fixed-exception", Arg.Set fixedexc, " Declares Error = Parsing.Parse_error";
@@ -374,8 +388,10 @@ let options = Arg.align [
   "--no-pager", Arg.Unit (fun () -> if !construction_mode = ModePager then construction_mode := ModeInclusionOnly), " (undocumented)";
   "--no-prefix", Arg.Set noprefix, " (undocumented)";
   "--no-stdlib", Arg.Set no_stdlib, " Do not load the standard library";
+  "--provide-example", Arg.Set_string provide_example, "<filename> Write an example of a valid token list. If set no other action will be taken.";
   "--ocamlc", Arg.Set_string ocamlc, "<command> Specifies how ocamlc should be invoked";
   "--ocamldep", Arg.Set_string ocamldep, "<command> Specifies how ocamldep should be invoked";
+  "--old-code-backend", Arg.Set old_code_backend, "(undocumented)";
   "--only-preprocess", Arg.Unit (fun () -> preprocess_mode := PMOnlyPreprocess PrintNormal),
                        " Print grammar and exit";
   "--only-preprocess-for-ocamlyacc", Arg.Unit (fun () -> preprocess_mode := PMOnlyPreprocess PrintForOCamlyacc),
@@ -696,3 +712,17 @@ let stacklang_graph =
 
 let stacklang_test =
   !stacklang_test
+
+let provide_example =
+  let s = !provide_example in
+  if String.equal "" s then
+    None
+  else Some s
+
+let example_log =
+  !example_log
+let example_size =
+  !example_size
+
+let old_code_backend =
+  !old_code_backend

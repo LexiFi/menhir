@@ -301,3 +301,11 @@ val stacklang_graph: bool
    tested (by comparison with the reference interpreter). *)
 
 val stacklang_test: bool
+
+val provide_example: string option
+
+val example_size: int
+
+val example_log: bool
+
+val old_code_backend: bool

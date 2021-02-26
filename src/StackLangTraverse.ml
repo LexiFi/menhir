@@ -572,6 +572,7 @@ let inline_tags program =
                              (Substitution.remove substitution pattern)
                              block )
         | IJump reg ->
+            (* TODO tighten to INEED *)
             Substitution.restore_defs substitution (IJump reg)
         | ITypedBlock ({has_case_tag=true} as t_block) ->
             Substitution.restore_defs

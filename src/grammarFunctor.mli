@@ -579,6 +579,8 @@ module Analysis : sig
      [minimal_prod prod i] is the minimal size of a sentence generated
      by the suffix of the production [prod] defined by the offset [i]. *)
 
+  (*val maximal: Nonterminal.t -> int CompletedNatWitness.t
+  val maximal_prod: Production.index -> int -> int CompletedNatWitness.t*)
   val minimal: Nonterminal.t -> int
   val minimal_prod: Production.index -> int -> int
 

@@ -1224,6 +1224,25 @@ module MINIMAL =
       let epsilon = epsilon
      end)
 
+(*module MAXIMAL =
+  GenericAnalysis
+    ( struct
+        include CompletedNatWitness
+         type property = Terminal.t t
+         let bottom = epsilon
+      end ) 
+    ( struct
+        open CompletedNatWitness
+        (* A terminal symbol has length 1. *)
+        let terminal = singleton
+        (* The length of an alternative is the maximum length of any branch. *)
+        let disjunction = max_lazy
+        (* The length of a sequence is the sum of the lengths of the members. *)
+        let conjunction _ = add_lazy
+        (* The epsilon sequence has length 0. *)
+        let epsilon = epsilon
+      end )*)
+
 (* ------------------------------------------------------------------------ *)
 
 let () =
@@ -1581,6 +1600,10 @@ module Analysis = struct
   let minimal_prod prod i =
     assert (0 <= i && i <= Production.length prod);
     CompletedNatWitness.to_int (MINIMAL.production prod i)
+
+  (*let maximal_prod prod i =
+    assert (0 <= i && i <= Production.length prod);
+    MAXIMAL.production prod i*)
 
 end
 

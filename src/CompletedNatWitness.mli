@@ -33,11 +33,22 @@ val epsilon: 'a t
 val singleton: 'a -> 'a t
 
 val min: 'a t -> 'a t -> 'a t
+val max: 'a t -> 'a t -> 'a t
 val add: 'a t -> 'a t -> 'a t
+val sub: 'a t -> int -> 'a t
 
 val min_lazy: 'a t -> (unit -> 'a t) -> 'a t
+val max_lazy: 'a t -> (unit -> 'a t) -> 'a t
 val add_lazy: 'a t -> (unit -> 'a t) -> 'a t
 
 val print: ('a -> string) -> 'a t -> string
 val to_int: 'a t -> int
 val extract: 'a t -> 'a list
+
+val compare: 'a t -> 'a t -> int
+
+val (<): 'a t -> 'a t -> bool
+val (<=): 'a t -> 'a t -> bool
+val (>): 'a t -> 'a t -> bool
+val (>=): 'a t -> 'a t -> bool
+
