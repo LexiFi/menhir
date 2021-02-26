@@ -292,10 +292,10 @@ module Run (T : sig end) = struct
      two fields in the [env] record, which should be a good thing, as it
      implies less frequent minor collections. *)
 
-  let getstartp =
+  let _getstartp =
     ERecordAccess (ERecordAccess (EVar env, flexbuf), "Lexing.lex_start_p")
 
-  let getendp =
+  let _getendp =
     ERecordAccess (ERecordAccess (EVar env, flexbuf), "Lexing.lex_curr_p")
 (* ------------------------------------------------------------------------ *)
   (* Accessing the positions of the current token. *)

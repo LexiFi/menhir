@@ -47,7 +47,21 @@ let min p1 p2 =
   | p, Infinity
   | Infinity, p ->
       p
+let max p1 p2 =
+  match p1, p2 with
+  | Finite (i1, _), Finite (i2, _) ->
+      if i1 < i2 then p2 else p1
+  | _, Infinity
+  | Infinity, _ ->
+      Infinity
 
+let max_lazy p1 p2 =
+  match p1 with
+  | Infinity ->
+      p1
+  | _ ->
+      max p1 (p2())
+      
 let min_lazy p1 p2 =
   match p1 with
   | Finite (0, _) ->
@@ -60,6 +74,13 @@ let add p1 p2 =
   | Finite (i1, xs1), Finite (i2, xs2) ->
       Finite (i1 + i2, Seq.append xs1 xs2)
   | _, _ ->
+      Infinity
+
+let sub p1 i2 =
+  match p1 with
+  | Finite (i1, xs1)->
+      Finite (i1 - i2, xs1)
+  | Infinity ->
       Infinity
 
 let add_lazy p1 p2 =
@@ -93,3 +114,22 @@ let extract p =
       Seq.elements xs
   | Infinity ->
       assert false
+
+let compare p1 p2 =
+  match p1, p2 with
+  | Infinity, Infinity -> 0
+  | Infinity, _ -> 1
+  | _, Infinity -> -1
+  | Finite(n1, _), Finite(n2, _) -> compare n1 n2
+
+let (<) p1 p2 =
+  compare p1 p2 < 0
+
+let (<=) p1 p2 =
+  compare p1 p2 <= 0
+
+let (>) p1 p2 =
+  compare p1 p2 > 0
+
+let (>=) p1 p2 =
+  compare p1 p2 >= 0

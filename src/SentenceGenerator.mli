@@ -26,3 +26,6 @@ open Feat.Enum
    not part of the grammar. *)
 
 val sentences: Nonterminal.t -> Terminal.t list enum
+
+val sentence: ?log:bool -> Nonterminal.t -> int -> Terminal.t array
+

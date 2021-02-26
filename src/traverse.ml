@@ -88,7 +88,7 @@ class virtual ['env] map = object (self)
           self#efun env ps e
       | EApp (e, es) ->
           self#eapp env e es
-      | ELet (bs, e) ->
+      | ELet (bs, e) | EInlinedLet(bs, e) ->
           self#elet env bs e
       | EMatch (e, bs) ->
           self#ematch env e bs
@@ -368,7 +368,7 @@ class virtual ['env, 'a] fold = object (self)
         self#efun env accu ps e
     | EApp (e, es) ->
         self#eapp env accu e es
-    | ELet (bs, e) ->
+    | ELet (bs, e) | EInlinedLet(bs, e) ->
         self#elet env accu bs e
     | EMatch (e, bs) ->
         self#ematch env accu e bs

@@ -1,0 +1,80 @@
+(rule
+ (deps
+  (file parser.mly))
+ (mode (fallback))
+ (targets sentence_1000.tokens)
+ (action
+  (run menhir parser.mly --provide-example sentence_1000.tokens)))
+
+(rule
+ (deps
+  (file parser.mly))
+ (mode (fallback))
+ (targets sentence_100000.tokens)
+ (action
+  (run
+   menhir
+   parser.mly
+   --provide-example
+   sentence_100000.tokens
+   --example-size
+   100000)))
+
+(rule
+ (deps
+  (file parser.mly))
+ (mode (fallback))
+ (targets sentence_200000.tokens)
+ (action
+  (run
+   menhir
+   parser.mly
+   --provide-example
+   sentence_200000.tokens
+   --example-size
+   200000)))
+
+(rule
+ (deps
+  (file parser.mly))
+ (mode (fallback))
+ (targets sentence_200000_2.tokens)
+ (action
+  (run
+   menhir
+   parser.mly
+   --provide-example
+   sentence_200000_2.tokens
+   --example-size
+   200000)))
+
+(rule
+ (deps
+  (file parser.mly))
+ (mode (fallback))
+ (targets sentence_200000_3.tokens)
+ (action
+  (run
+   menhir
+   parser.mly
+   --provide-example
+   sentence_200000_3.tokens
+   --example-size
+   200000)))
+
+(rule
+ (alias speed)
+ (deps
+  code/houblix.exe
+  table/houblix.exe
+  old_code/houblix.exe
+  sentence_1000.tokens
+  sentence_200000.tokens
+  sentence_200000_2.tokens
+  sentence_200000_3.tokens
+  ../speed.sh
+  ../speed.ml)
+ (action
+  (chdir
+   ..
+   (run bash speed.sh))))

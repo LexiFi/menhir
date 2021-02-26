@@ -15,7 +15,30 @@
 
 (* The automaton is now frozen and will no longer be modified. It is
    time to dump a new description of it, if requested by the user. *)
-
+let () =
+  match Settings.provide_example with
+  | None -> ()
+  | Some name ->
+      Random.self_init () ;
+      let budget = Settings.example_size in
+      let nt = 
+        let (_, node) = Grammar.ProductionMap.choose Lr1.entry in
+        Lr1.nt_of_entry node
+      in
+      let s = SentenceGenerator.sentence 
+                ~log:Settings.example_log 
+                nt
+                budget 
+      in
+      let file = open_out name in
+      Array.iter ( fun terminal -> 
+        Printf.fprintf 
+          file 
+          "%s\n" 
+          (Grammar.Terminal.print terminal) ) s ;
+      close_out file;
+      exit 0
+      
 let () =
   if Settings.dump_resolved then
     let module D = Dump.Make (Default) in
@@ -96,6 +119,10 @@ let () =
     let filename = Settings.base ^ ".v" in
     let f = open_out filename in
     B.write_all f
+  else if Settings.old_code_backend then
+    ( write ( let module C = CodeBackend.Run() in
+              CodeInliner.inline C.program ) ;
+    Interface.write Front.grammar () )
   else
     let module SL = EmitStackLang.Run () in
     let program = SL.program in
@@ -116,3 +143,4 @@ let () =
     Interface.write Front.grammar ()
 
 let () = Time.tick "Printing"
+
