@@ -35,6 +35,9 @@ let print m =
 
 let code =
   read "src/code.time"
+
+let old_code =
+  read "src/old_code.time"
 let table =
   read "src/table.time"
 let ocamlyacc =
@@ -43,19 +46,24 @@ let ocamlyacc =
 (* Display a comparison. *)
 
 let () =
+  out " ----- Calc benchmark ----- \n" ;
   out "Code back-end:\n";
   print code;
+  out "Old code back-end:\n";
+  print old_code;
   out "Table back-end:\n";
   print table;
   out "ocamlyacc:\n";
   print ocamlyacc;
 
-  out "The table back-end is %.1f times slower than the code back-end.\n"
+  out "The table back-end   is %.1f times slower than the code back-end.\n"
     (table.time /. code.time);
-  out "ocamlyacc          is %.1f times slower than the code back-end.\n"
+  out "ocamlyacc            is %.1f times slower than the code back-end.\n"
     (ocamlyacc.time /. code.time);
-  out "ocamlyacc          is %.1f times faster than the table back-end.\n"
+  out "ocamlyacc            is %.1f times faster than the table back-end.\n"
     (table.time /. ocamlyacc.time);
+  out "The new code backend is %.1f times faster than the old code back-end.\n"
+  (old_code.time /. code.time);
   out "\n";
 
   out "The table back-end allocates %.1f times more memory \
