@@ -27,6 +27,8 @@ let token_type_mode =
 let tokentypeonly () =
   token_type_mode := TokenTypeOnly
 
+let set_option ref value =
+  ref := Some value 
 let is_uppercase_ascii c =
   c >= 'A' && c <= 'Z'
 
@@ -339,7 +341,9 @@ let example_log =
 
 let old_code_backend =
   ref false
-  
+
+let provide_example_seed =
+  ref None
 (* When new command line options are added, please update both the manual
    in [doc/manual.tex] and the man page in [doc/menhir.1]. *)
 
@@ -389,6 +393,7 @@ let options = Arg.align [
   "--no-prefix", Arg.Set noprefix, " (undocumented)";
   "--no-stdlib", Arg.Set no_stdlib, " Do not load the standard library";
   "--provide-example", Arg.Set_string provide_example, "<filename> Write an example of a valid token list. If set no other action will be taken.";
+  "--provide-example-seed", Arg.Int (set_option provide_example_seed), "<interger> Set the for random generation. If unset, a different value will be used each time.";
   "--ocamlc", Arg.Set_string ocamlc, "<command> Specifies how ocamlc should be invoked";
   "--ocamldep", Arg.Set_string ocamldep, "<command> Specifies how ocamldep should be invoked";
   "--old-code-backend", Arg.Set old_code_backend, "(undocumented)";
@@ -718,6 +723,9 @@ let provide_example =
   if String.equal "" s then
     None
   else Some s
+
+let provide_example_seed = 
+  !provide_example_seed
 
 let example_log =
   !example_log

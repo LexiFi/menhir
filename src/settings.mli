@@ -304,6 +304,8 @@ val stacklang_test: bool
 
 val provide_example: string option
 
+val provide_example_seed: int option
+
 val example_size: int
 
 val example_log: bool
