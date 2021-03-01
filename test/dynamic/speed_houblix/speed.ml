@@ -58,7 +58,7 @@ let read f =
 (* Printing a measurement. *)
 
 let print m =
-  out  "Time : %.1f seconds per billion tokens.\n"
+  out "Time : %.1f seconds per billion tokens.\n"
     (m.time *. 1000000000.0 /. m.tokens) ;
   out "Space: %.2f words per token (minor) and %.2f words per token (major).\n"
     (m.minor /. m.tokens) (m.major /. m.tokens) ;
@@ -101,7 +101,7 @@ let () =
     (m.table.time /. m.code.time) ;
   out "\n" ;
   out
-    "The table back-end allocates %.1f times more memory than the new code \
+    "The old code back-end allocates %.1f times more memory than the new code \
      back-end.\n"
-    (m.table.minor /. m.code.minor) ;
+    (m.old_code.minor /. m.code.minor) ;
   flush stdout

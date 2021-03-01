@@ -15,7 +15,7 @@ let seed = ref 61112962
 
 (* [--runs] allows the desired number of runs to be set via the command line. *)
 
-let runs = ref 10
+let runs = ref 100
 
 (* [--size] allows the size of the randomly-generated expression to be
    set via the command line. *)
