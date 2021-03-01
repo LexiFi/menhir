@@ -17,27 +17,27 @@ rm -f src/*.time
 
 for file in src/*.tokens ; do
   echo "Test file: $file"
-
+  base=${file%.tokens};
   # echo Dry run:
   # $TIME -f "%U" src/code/gene.exe --size $size --dry-run
 
   # Run the code back-end.
   echo Running the code back-end...
-  src/code/houblix.exe --input $file > src/code.out 2> src/code.time
+  src/code/houblix.exe --input $file > $base.code.out 2> $base.code.time
   # cat src/code.time
 
   # Run the code back-end.
   echo Running the old code back-end...
-  src/old_code/houblix.exe --input $file > src/old_code.out 2> src/old_code.time
+  src/old_code/houblix.exe --input $file > $base.old_code.out 2> $base.old_code.time
   # cat src/code.time
 
   # Run the table back-end.
   echo Running the table back-end...
-  src/table/houblix.exe --input $file > src/table.out 2> src/table.time
+  src/table/houblix.exe --input $file > $base.table.out 2> $base.table.time
   # cat src/table.time
 
   # Avoid a gross mistake.
-  if ! diff -q src/code.out src/table.out ; then
+  if ! diff -q $base.code.out $base.table.out ; then
     echo CAUTION: the code and table back-ends disagree!
     echo Code:
     cat src/code.out
@@ -47,7 +47,7 @@ for file in src/*.tokens ; do
   fi
   
   # Avoid a gross mistake.
-  if ! diff -q src/code.out src/old_code.out ; then
+  if ! diff -q $base.code.out $base.old_code.out ; then
     echo CAUTION: the code and old code back-ends disagree!
     echo Code:
     cat src/code.out
@@ -71,8 +71,7 @@ for file in src/*.tokens ; do
   #  exit 1
   #fi
 
-  # Compute some statistics.
+done
+# Compute some statistics.
   echo
   ocaml speed.ml
-
-done

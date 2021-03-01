@@ -19,7 +19,9 @@ let () =
   match Settings.provide_example with
   | None -> ()
   | Some name ->
-      Random.self_init () ;
+      match Settings.provide_example_seed with
+      | None -> Random.self_init () 
+      | Some s -> Random.init s ;
       let budget = Settings.example_size in
       let nt = 
         let (_, node) = Grammar.ProductionMap.choose Lr1.entry in
