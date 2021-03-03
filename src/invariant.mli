@@ -121,3 +121,19 @@ val errorpeeker: Lr1.node -> bool
    outgoing transition along [symbol]. *)
 
 val universal: Symbol.t -> bool
+
+(* ------------------------------------------------------------------------- *)
+(* More information about the stack. *)
+
+module Long : sig
+
+  (* [Long.stack s] is the known suffix of the stack in state [s], presented
+     as an array of symbols, where the rightmost end of the array represents
+     the top of the stack (just as in the right-hand side of a production).
+     This known suffix is as long as possible, based on an analysis of the
+     automaton; it is possibly longer than the suffix obtained by [stack s],
+     whose length is always the maximum position of the items in state [s]. *)
+
+  val stack: Lr1.node -> Symbol.t array
+
+end
