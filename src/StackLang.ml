@@ -25,29 +25,38 @@
 
 (* A register is identified by its name. *)
 
-type register = string
+type register =
+  string
 
-module RegisterSet = StringSet
-module RegisterMap = StringMap
+module RegisterSet =
+  StringSet
 
-type registers = RegisterSet.t
+module RegisterMap =
+  StringMap
+
+type registers =
+  RegisterSet.t
 
 (* A tag is an integer value. A tag can be used to encode a state of an LR
    automaton. *)
 
-type tag = int
+type tag =
+  int
 
 (* A code label is identified by its name. *)
 
-type label = string
+type label =
+  string
 
 (* A terminal symbol. *)
 
-type terminal = Grammar.Terminal.t
+type terminal =
+  Grammar.Terminal.t
 
 (* A set of terminal symbols. *)
 
-type terminals = Grammar.TerminalSet.t
+type terminals =
+  Grammar.TerminalSet.t
 
 (* -------------------------------------------------------------------------- *)
 
@@ -60,7 +69,10 @@ type value = VTag of tag | VReg of register | VTuple of value list | VUnit
    popped off the stack. Patterns include wildcards, registers, and tuples
    of patterns. *)
 
-type pattern = PWildcard | PReg of register | PTuple of pattern list
+type pattern =
+  | PWildcard
+  | PReg of register
+  | PTuple of pattern list
 
 (* -------------------------------------------------------------------------- *)
 
@@ -78,9 +90,11 @@ type primitive =
   | PrimOCamlDummyPos
   | PrimOCamlAction of action
 
-and field = string
+and field =
+  string
 
-and action = Action.t
+and action =
+  Action.t
 
 (* -------------------------------------------------------------------------- *)
 
@@ -94,14 +108,17 @@ and action = Action.t
    pattern [TokSingle (tok, r)] writes a unit semantic value into the register
    [r]. *)
 
-type tokpat = TokSingle of terminal * register | TokMultiple of terminals
+type tokpat =
+  | TokSingle of terminal * register
+  | TokMultiple of terminals
 
 (* -------------------------------------------------------------------------- *)
 
 (* In a case analysis on a tag, each branch is guarded by a pattern that
    selects a set of tags. There is no default branch. *)
 
-type tagpat = TagMultiple of tag list
+type tagpat =
+  | TagMultiple of tag list
 
 (* -------------------------------------------------------------------------- *)
 
@@ -198,18 +215,20 @@ type program = {cfg: cfg; entry: label Lr1.NodeMap.t; states: cell_info array Lr
 (* A few constructors. *)
 
 let vreg r = VReg r
-
 let vregs rs = List.map vreg rs
 
 (* A few accessors. *)
 
 let lookup label map =
-  try LabelMap.find label map with Not_found -> assert false
+  try
+    LabelMap.find label map
+  with Not_found ->
+    assert false
 
 let entry_labels program =
-  Lr1.NodeMap.fold
-    (fun _s label accu -> LabelSet.add label accu)
-    program.entry LabelSet.empty
+  Lr1.NodeMap.fold (fun _s label accu ->
+    LabelSet.add label accu
+  ) program.entry LabelSet.empty
 
 (* We assume that every labeled block in a well-formed control flow graph
    begins with an [INeed] instruction that determines which registers are

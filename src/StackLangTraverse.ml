@@ -24,9 +24,11 @@ let fresh_int =
 let suffix name i =
   Printf.sprintf "%s_%i" name i
 
-let branch_iter f (_pat, block) = f block
+let branch_iter f (_pat, block) = 
+  f block
 
-let branch_map f (pat, block) = (pat, f block)
+let branch_map f (pat, block) = 
+  (pat, f block)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -36,16 +38,22 @@ let branch_map f (pat, block) = (pat, f block)
 let wf_regs label rs rs' =
   (* Check that [rs'] is a subset of [rs]. *)
   let stray = RegisterSet.diff rs' rs in
-  if not (RegisterSet.is_empty stray) then (
-    eprintf "StackLang: in block %s, reference to undefined register%s:\n  %s\n"
+  if not (RegisterSet.is_empty stray) then begin
+    eprintf
+      "StackLang: in block %s, reference to undefined register%s:\n  %s\n"
       label
       (if RegisterSet.cardinal stray > 1 then "s" else "")
-      (RegisterSet.print stray) ;
-    eprintf "StackLang: the following registers are defined:\n  %s\n"
-      (RegisterSet.print rs) ;
-    exit 1 )
+      (RegisterSet.print stray)
+    ;
+    eprintf
+      "StackLang: the following registers are defined:\n  %s\n"
+      (RegisterSet.print rs)
+    ;
+    exit 1
+  end
 
-let wf_reg label rs r = wf_regs label rs (RegisterSet.singleton r)
+let wf_reg label rs r =
+  wf_regs label rs (RegisterSet.singleton r)
 
 let rec wf_value label rs v =
   match v with
@@ -63,7 +71,7 @@ let rec def rs p =
       rs
   | PReg r ->
       (* Check that no name is bound twice by a pattern. *)
-      assert (not (RegisterSet.mem r rs)) ;
+      assert (not (RegisterSet.mem r rs));
       RegisterSet.add r rs
   | PTuple ps ->
       List.fold_left def rs ps
@@ -93,26 +101,27 @@ let wf_prim label rs p =
 let rec wf_block cfg label rs block =
   match block with
   | INeed (rs', block) ->
-      wf_regs label rs rs' ;
+      wf_regs label rs rs';
       (* A [need] instruction undefines the registers that it does not
          mention, so we continue with [rs']. *)
       let rs = rs' in
       wf_block cfg label rs block
   | IPush (v, block) ->
-      wf_value label rs v ;
+      wf_value label rs v;
       wf_block cfg label rs block
   | IPop (p, block) ->
       let rs = def rs p in
       wf_block cfg label rs block
   | IDef (p, v, block) ->
-      wf_value label rs v ;
+      wf_value label rs v;
       let rs = def rs p in
       wf_block cfg label rs block
   | IPrim (r, p, block) ->
-      wf_prim label rs p ;
+      wf_prim label rs p;
       let rs = def rs (PReg r) in
       wf_block cfg label rs block
-  | ITrace (_, block) | IComment (_, block) ->
+  | ITrace (_, block)
+  | IComment (_, block) ->
       wf_block cfg label rs block
   | IDie ->
       ()
@@ -153,7 +162,7 @@ let wf_block (cfg : cfg) label ({block} as t_block) =
    undefined registers. *)
 
 let wf program =
-  LabelMap.iter (wf_block program.cfg) program.cfg ;
+  LabelMap.iter (wf_block program.cfg) program.cfg;
   Time.tick "Checking the StackLang code for well-formedness"
 
 (* -------------------------------------------------------------------------- *)
@@ -192,9 +201,11 @@ let rec successors yield block =
    cannot be inlined by the function [inline] that follows. *)
 
 let in_degree program =
+
   (* Initialize a queue and a map of labels to degrees. *)
-  let queue : label Queue.t = Queue.create ()
+  let queue  : label Queue.t = Queue.create()
   and degree : int LabelMap.t ref = ref LabelMap.empty in
+
   (* [tick label] increments the degree associated with [label]. If its
      previous degree was zero, then [label] is enqueued for exploration. *)
   let tick label =
@@ -293,52 +304,54 @@ let inline degree {cfg; entry; states} : program = {cfg= inline_cfg degree cfg; 
 
 let inline program =
   let program = inline (in_degree program) program in
-  Time.tick "Inlining in StackLang" ;
+  Time.tick "Inlining in StackLang";
   program
 
 (* -------------------------------------------------------------------------- *)
 
 (* Measuring the size of a StackLang program. *)
 
-type measure =
-  { mutable push: int
-  ; mutable pop: int
-  ; mutable def: int
-  ; mutable prim: int
-  ; mutable trace: int
-  ; mutable die: int
-  ; mutable return: int
-  ; mutable jump: int
-  ; mutable casetoken: int
-  ; mutable casetag: int
-  ; mutable total: int }
+type measure = {
+  mutable push: int;
+  mutable pop: int;
+  mutable def: int;
+  mutable prim: int;
+  mutable trace: int;
+  mutable die: int;
+  mutable return: int;
+  mutable jump: int;
+  mutable casetoken: int;
+  mutable casetag: int;
+  mutable total: int;
+}
 
-let zero () =
-  { push= 0
-  ; pop= 0
-  ; def= 0
-  ; prim= 0
-  ; trace= 0
-  ; die= 0
-  ; return= 0
-  ; jump= 0
-  ; casetoken= 0
-  ; casetag= 0
-  ; total= 0 }
+let zero () = {
+  push = 0;
+  pop = 0;
+  def = 0;
+  prim = 0;
+  trace = 0;
+  die = 0;
+  return = 0;
+  jump = 0;
+  casetoken = 0;
+  casetag = 0;
+  total = 0;
+}
 
 let print m =
   let pad i = Misc.padded_index m.total i in
-  printf "PUSH    %s\n" (pad m.push) ;
-  printf "POP     %s\n" (pad m.pop) ;
-  printf "DEF     %s\n" (pad m.def) ;
-  printf "PRIM    %s\n" (pad m.prim) ;
-  printf "TRCE    %s\n" (pad m.trace) ;
-  printf "DIE     %s\n" (pad m.die) ;
-  printf "RET     %s\n" (pad m.return) ;
-  printf "JUMP    %s\n" (pad m.jump) ;
-  printf "CASEtok %s\n" (pad m.casetoken) ;
-  printf "CASEtag %s\n" (pad m.casetag) ;
-  printf "total   %s\n" (pad m.total) ;
+  printf "PUSH    %s\n" (pad m.push);
+  printf "POP     %s\n" (pad m.pop);
+  printf "DEF     %s\n" (pad m.def);
+  printf "PRIM    %s\n" (pad m.prim);
+  printf "TRCE    %s\n" (pad m.trace);
+  printf "DIE     %s\n" (pad m.die);
+  printf "RET     %s\n" (pad m.return);
+  printf "JUMP    %s\n" (pad m.jump);
+  printf "CASEtok %s\n" (pad m.casetoken);
+  printf "CASEtag %s\n" (pad m.casetag);
+  printf "total   %s\n" (pad m.total);
   ()
 
 let rec measure_block m block =
@@ -346,24 +359,24 @@ let rec measure_block m block =
   | INeed (_, block) ->
       measure_block m block
   | IPush (_, block) ->
-      m.total <- m.total + 1 ;
-      m.push <- m.push + 1 ;
+      m.total <- m.total + 1;
+      m.push <- m.push + 1;
       measure_block m block
   | IPop (_, block) ->
-      m.total <- m.total + 1 ;
-      m.pop <- m.pop + 1 ;
+      m.total <- m.total + 1;
+      m.pop <- m.pop + 1;
       measure_block m block
   | IDef (_, _, block) ->
-      m.total <- m.total + 1 ;
-      m.def <- m.def + 1 ;
+      m.total <- m.total + 1;
+      m.def <- m.def + 1;
       measure_block m block
   | IPrim (_, _, block) ->
-      m.total <- m.total + 1 ;
-      m.prim <- m.prim + 1 ;
+      m.total <- m.total + 1;
+      m.prim <- m.prim + 1;
       measure_block m block
   | ITrace (_, block) ->
-      m.total <- m.total + 1 ;
-      m.trace <- m.trace + 1 ;
+      m.total <- m.total + 1;
+      m.trace <- m.trace + 1;
       measure_block m block
   | IComment (_, block) ->
       measure_block m block

@@ -128,25 +128,32 @@ let pop p = extend (fun block -> IPop (p, block))
 let def p v =
   (* In order to avoid unnecessary clutter, we eliminate a definition of
      the form [def x = x] on the fly. *)
-  match (p, v) with
+  match p, v with
   | PReg dst, VReg src when dst = src ->
       ()
   | _, _ ->
       extend (fun block -> IDef (p, v, block))
 
-let move dst src = def (PReg dst) (VReg src)
+let move dst src =
+  def (PReg dst) (VReg src)
 
-let prim r p = extend (fun block -> IPrim (r, p, block))
+let prim r p =
+  extend (fun block -> IPrim (r, p, block))
 
-let trace s = extend (fun block -> ITrace (s, block))
+let trace s =
+  extend (fun block -> ITrace (s, block))
 
-let comment s = extend (fun block -> IComment (s, block))
+let comment s =
+  extend (fun block -> IComment (s, block))
 
-let die () = close IDie
+let die () =
+  close IDie
 
-let return r = close (IReturn r)
+let return r =
+  close (IReturn r)
 
-let jump l = close (IJump l)
+let jump l =
+  close (IJump l)
 
 let tokens tokpat =
   match tokpat with
@@ -167,15 +174,15 @@ let case_token r cases =
   (* Save the block under construction. *)
   let saved = !current in
   (* Create a growing list of branches. *)
-  let branches, default = (ref [], ref None) in
+  let branches, default = ref [], ref None in
   (* Define a function that creates a new branch. *)
   let def_branch pat body = branches := (pat, exec body) :: !branches in
   (* Define a function that creates the default branch. *)
   let def_default body = default := Some (exec body) in
   (* Give the user access to these functions. *)
-  cases def_branch def_default ;
+  cases def_branch def_default;
   (* Retrieve the branches that have been constructed. *)
-  let branches, default = (List.rev !branches, !default) in
+  let branches, default = List.rev !branches, !default in
   (* If the branches cover all terminal symbols, then there is no need
      for a default branch; drop it. *)
   let default = if exhaustive branches then None else default in
