@@ -80,7 +80,7 @@ let unit_stack_typedef =
            ; TypName "Lexing.position" ])
   ; typeconstraint= None }*)
 
-let statetypedef =
+let statetypedef states =
   let final_type s =
     match Lr1.is_start_or_exit s with
     | None ->
@@ -88,30 +88,9 @@ let statetypedef =
     | Some (nonterminal : Grammar.Nonterminal.t) ->
         TypTextual (Grammar.Nonterminal.ocamltype_of_start_symbol nonterminal)
   in
-  let stack_type_of_word word =
-    Array.of_list
-    @@ List.rev
-         (Invariant.fold
-            (fun acc hold_state symbol _ ->
-              let typ =
-                match symbol with
-                | Grammar.Symbol.T t ->
-                    Grammar.Terminal.ocamltype t
-                | Grammar.Symbol.N nt ->
-                    Grammar.Nonterminal.ocamltype nt
-              in
-              S.
-                { typ
-                ; hold_state
-                ; hold_semv= typ <> None
-                ; hold_startpos= Invariant.startp symbol
-                ; hold_endpos= Invariant.endp symbol }
-              :: acc)
-            [] word)
-  in
   let type_of_tag s =
     typ_stack_app (TypVar "tail") (final_type s)
-      (stack_type_of_word @@ Invariant.stack s)
+      (Lr1.NodeMap.find s states)
   in
   { typename= tcstate
   ; typeparams= ["tail"; "final"]
@@ -401,7 +380,7 @@ and compile_function t_block cfg =
 
 (* returns the number of pushes, and if found, the corresponding state *)
 
-let compile (S.{cfg; entry} : S.program) =
+let compile (S.{cfg; entry; states} : S.program) =
   let entries =
     Lr1.NodeMap.fold
       (fun _ label acc -> StringSet.add label acc)
@@ -410,7 +389,7 @@ let compile (S.{cfg; entry} : S.program) =
   [ SIFunctor
       ( grammar.parameters
       , mbasics grammar
-        @ [ SITypeDefs [statetypedef]
+        @ [ SITypeDefs [statetypedef states]
           ; SIStretch grammar.preludes
           ; SIValDefs (false, [discarddef])
           ; SIValDefs

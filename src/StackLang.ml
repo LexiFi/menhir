@@ -191,7 +191,7 @@ type cfg = typed_block LabelMap.t
    marked as entry points. There is in fact a mapping of the LR(1) start
    states to entry points. *)
 
-type program = {cfg: cfg; entry: label Lr1.NodeMap.t}
+type program = {cfg: cfg; entry: label Lr1.NodeMap.t; states: cell_info array Lr1.NodeMap.t}
 
 (* -------------------------------------------------------------------------- *)
 
