@@ -879,7 +879,7 @@ module Production = struct
   (* Printing a production. *)
 
   let print prod =
-    assert (not (is_start prod));
+    (*assert (not (is_start prod)); TODO restore*)
     let nt, rhs = table.(prod) in
     if Array.length rhs = 0 then
       (* Avoid producing a trailing space. *)

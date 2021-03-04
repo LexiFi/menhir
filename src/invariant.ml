@@ -210,7 +210,7 @@ let () =
 
    (2) If a state [s] has an outgoing transition along nonterminal
    symbol [nt], and if the [goto] table for symbol [nt] has more than
-   one target, then state [s] is represented.
+   one target, then state [s] is represented. (TODO change)
 
    (3) If a stack cell contains more than one state and if at least
    one of these states is able to handle the [error] token, then these
@@ -263,11 +263,16 @@ let () =
 let () =
   Nonterminal.iter (fun nt ->
     let count =
+      (* Counting distinct targets *)
       Lr1.targets (fun count _ _ ->
         count + 1
       ) 0 (Symbol.N nt)
     in
-    if count > 1 then
+    if Nonterminal.print false nt = "RPAREN " then
+      Printf.printf "\n\nFOOO : %s; count=%i\n\n" (Nonterminal.print false nt) count ;
+    (*if count = 0 then
+      Printf.printf "\n\nFOOO : %s\n\n" (Nonterminal.print false nt) ;*)
+    if count >= 1 then
       Lr1.targets (fun () sources _ ->
         List.iter represent sources
       ) () (Symbol.N nt)
@@ -415,7 +420,15 @@ let fold_top f accu w =
       accu
   | (symbol, states) :: _ ->
       f (representeds states) symbol
-
+(*
+let rec fold_bot f accu w =
+  match w with
+  | [] ->
+      accu
+  | [symbol, states] -> f (representeds states) symbol
+  | _ :: ws ->
+      fold_bot f accu ws
+*)
 (* ------------------------------------------------------------------------ *)
 (* Explain how the stack should be deconstructed when an error is found.
 

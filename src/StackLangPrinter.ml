@@ -33,6 +33,7 @@ let rec value v =
       register r
   | VTuple vs ->
       OCaml.tuple (map value vs)
+  | VUnit -> label "UNIT"
 
 let rec pattern p =
   match p with

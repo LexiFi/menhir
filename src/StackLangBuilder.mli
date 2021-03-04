@@ -48,7 +48,7 @@ end
 (**
 Set the type of the whole block
 *)
-val set_stack_type: IL.typ array -> unit
+val set_stack_type: cell_info array -> unit
 val set_final_type: IL.typ -> unit
 val set_needed: register list -> unit
 

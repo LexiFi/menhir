@@ -54,7 +54,7 @@ type terminals = Grammar.TerminalSet.t
 (* A value is a piece of data that can be pushed onto the stack. Values
    include tags, data loaded from a register, and tuples of values. *)
 
-type value = VTag of tag | VReg of register | VTuple of value list
+type value = VTag of tag | VReg of register | VTuple of value list | VUnit
 
 (* A pattern describes how to decompose and store a piece of data that is
    popped off the stack. Patterns include wildcards, registers, and tuples
@@ -111,8 +111,16 @@ type tagpat = TagMultiple of tag list
    instructions can have more than successor (this is where several tree
    branches become separate), and the control instructions have no successor
    (this is where a tree branch ends). *)
+
+type cell_info = { typ: Stretch.ocamltype option
+                 (* ; possible_states: Lr1.NodeSet.t *)
+                 ; hold_semv: bool
+                 ; hold_state: bool
+                 ; hold_startpos: bool
+                 ; hold_endpos: bool }
+
 type typed_block = { block: block
-                   ; stack_type: IL.typ array
+                   ; stack_type: cell_info array
                    ; final_type: IL.typ option
                    ; needed_registers: string list 
                    ; has_case_tag: bool }
@@ -207,4 +215,4 @@ let entry_labels program =
    begins with an [INeed] instruction that determines which registers are
    defined upon entry to this block. *)
 
-let needed block = match block with INeed (rs, _) -> rs | _ -> assert false
+let needed t_block = RegisterSet.of_list t_block.needed_registers
