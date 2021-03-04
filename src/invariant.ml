@@ -42,7 +42,9 @@ let stack_height (node : Lr1.node) : int =
    waste of time. Hence, as of 2012/08/25, the height of the stack prefix and
    the symbols that it contains are predicted (see above), and the least fixed
    point computation is used only to populate these prefixes of predictable
-   length with state information. *)
+   length with state information. As of 2021/03/03, the submodule [Long] at
+   the end of this file computes this richer invariant. (However, it computes
+   symbols only, not sets of states.) *)
 
 (* By the way, this least fixed point analysis remains the most costly
    computation throughout this module. *)
@@ -54,6 +56,11 @@ module Key = struct
   let n = Lr1.n
   let encode = Lr1.number
 end
+
+module KeyMap =
+  Fix.Glue.InjectMinimalImperativeMaps
+    (Fix.Glue.ArraysAsImperativeMaps(Key))
+    (Key)
 
 (* Vectors of sets of states. *)
 
@@ -137,12 +144,7 @@ end
 (* Compute the least fixed point. *)
 
 let stack_states : Lr1.node -> property option =
-  let module M =
-    Fix.Glue.InjectMinimalImperativeMaps
-      (Fix.Glue.ArraysAsImperativeMaps(Key))
-      (Key)
-  in
-  let module F = Fix.DataFlow.Run(M)(StateSetVector)(G) in
+  let module F = Fix.DataFlow.Run(KeyMap)(StateSetVector)(G) in
   F.solution
 
 (* If every state is reachable, then the least fixed point must be non-[None]
@@ -746,3 +748,128 @@ let errorpeeker node =
 
 let () =
   Time.tick "Constructing the invariant"
+
+(* ------------------------------------------------------------------------ *)
+
+(* The submodule [Long] computes the known suffix of the stack in each state,
+   as a vector of symbols, and it computes a suffix that is as long as
+   possible, in contrast with the above code, which computes a suffix whose
+   length is predicted by the function [stack_height]. *)
+
+module Long = struct
+
+let debug = true
+
+(* Vectors of symbols. *)
+
+module SymbolVector = struct
+
+  (* As in the right-hand side of a production, the top of the stack
+     is the right end of the array. *)
+
+  type property =
+    Symbol.t array
+
+  let empty =
+    [||]
+
+  let truncate k v =
+    (* Keep a suffix of length [k] of [v]. *)
+    let n = Array.length v in
+    Array.sub v (n-k) k
+
+  (* Given two arrays [v1] and [v2] of lengths [n1] and [n2], the function
+     call [lcs v1 v2 n1 n2 (min n1 n2) 0] computes the greatest [k] such that
+     [truncate k v1] and [truncate k v2] are equal. *)
+
+  let rec lcs v1 v2 n1 n2 n k =
+    (* [n] is [min n1 n2]. *)
+    if k = n || v1.(n1 - 1 - k) <> v2.(n2 - 1 - k) then k
+    else lcs v1 v2 n1 n2 n (k + 1)
+
+  let leq_join v1 v2 =
+    let n1 = Array.length v1
+    and n2 = Array.length v2 in
+    let n = min n1 n2 in
+    let k = lcs v1 v2 n1 n2 n 0 in
+    if debug then assert (truncate k v1 = truncate k v2);
+    if k = n2 then v2
+    else if k = n1 then v1
+    else truncate k v1
+
+  let push v x =
+    (* Push [x] onto the right end of [v]. *)
+    let n = Array.length v in
+    Array.init (n+1) (fun i -> if i < n then v.(i) else x)
+
+  let print v =
+    if Array.length v = 0 then
+      "epsilon"
+    else
+      Misc.separated_list_to_string Symbol.print "; " (Array.to_list v)
+
+end
+
+open SymbolVector
+
+(* Define the data flow graph. *)
+
+module G = struct
+
+  type variable = Lr1.node
+
+  type property = SymbolVector.property
+
+  (* At each start state of the automaton, the stack is empty. *)
+
+  let foreach_root contribute =
+    Lr1.entry |> ProductionMap.iter (fun _prod root ->
+      assert (stack_height root = 0);
+      contribute root empty
+    )
+
+  (* The edges of the data flow graph are the transitions of the automaton. *)
+
+  let foreach_successor source stack contribute =
+    Lr1.transitions source |> SymbolMap.iter (fun symbol target ->
+      (* The contribution of [source], through this edge, to [target], is the
+         stack at [source], extended with a new cell for this transition. *)
+      contribute target (push stack symbol)
+    )
+
+end
+
+(* Compute the least fixed point. *)
+
+let stack : Lr1.node -> property option =
+  let module F = Fix.DataFlow.Run(KeyMap)(SymbolVector)(G) in
+  F.solution
+
+(* If every state is reachable, then the least fixed point must be non-[None]
+   everywhere, so we may view it as a function that produces a vector of
+   symbols. *)
+
+let stack (node : Lr1.node) : property =
+  match stack node with
+  | None ->
+      (* apparently this node is unreachable *)
+      assert false
+  | Some v ->
+      v
+
+(* ------------------------------------------------------------------------ *)
+(* If requested, print the information that has been computed above. *)
+
+let () =
+  Error.logC 3 (fun f ->
+    Lr1.iter (fun node ->
+      Printf.fprintf f "longstack(%s) = %s\n"
+        (Lr1.print node)
+        (print (stack node))
+    )
+  )
+
+end (* module Long *)
+
+let () =
+  Time.tick "Constructing the long invariant"
