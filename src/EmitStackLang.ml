@@ -199,11 +199,10 @@ let run_pushlist s : string list =
         @ if1 (Invariant.endp symbol) (endp) )
     [state; semv; startp; endp] (Invariant.stack s)
 
-let stack_type_of_word log word = 
+let stack_type_of_word word = 
   Array.of_list @@ List.rev
   ( Invariant.fold 
-      ( fun acc hold_state symbol state_set ->
-         Printf.printf "  %s\n" (Symbol.print symbol) ;
+      ( fun acc hold_state symbol _state_set ->
          let typ = 
            match symbol with
            | Symbol.T t -> Terminal.ocamltype t
@@ -212,16 +211,9 @@ let stack_type_of_word log word =
          let hold_semv = typ <> None in
          let hold_startpos = Invariant.startp symbol in
          let hold_endpos = Invariant.endp symbol in
-         if log then
-         (Printf.printf "    State set : [%s]\n" (String.concat "; " (List.map Lr1.print (Lr1.NodeSet.elements state_set))) ;
-         Printf.printf "    hold_state=%s, hold_semv=%s, hold_starp=%s, hold_endp=%s\n" 
-                       (Bool.to_string hold_state) 
-                       (Bool.to_string hold_semv)
-                       (Bool.to_string hold_startpos)
-                       (Bool.to_string hold_endpos) ); 
          { typ
          ; hold_state
-         ; hold_semv = typ <> None
+         ; hold_semv
          ; hold_startpos
          ; hold_endpos } :: acc )
       [] word )
@@ -231,16 +223,14 @@ let stack_type_goto _goto =
   [||]
 
 let stack_type_reduce production =
-  Printf.printf "Stack type of reduce %s\n" (Production.print production) ;
   let symbols = Grammar.Production.rhs production in
-  let r = stack_type_of_word true (Invariant.prodstack production) in
+  let r = stack_type_of_word (Invariant.prodstack production) in
   assert ((Array.length r) = (Array.length symbols)) ;
   r
 
 
 let stack_type_run state =
-  Printf.printf "Stack type of run %s\n" (Lr1.print state) ;
-  let st = stack_type_of_word false (Invariant.stack state) in
+  let st = stack_type_of_word (Invariant.stack state) in
   (*let st = Array.init (Array.length st) (fun i -> st.((Array.length st) - i - 1)) in*)
   let n_pushes = if runpushes state then 1 else 0 in
   let len = Array.length st in

@@ -112,10 +112,8 @@ let () =
   else
     let module SL = EmitStackLang.Run () in
     let program = SL.program in
-    StackLangPrinter.print stdout program ;
     StackLangTraverse.wf program ;
     let program = StackLangTraverse.inline program in
-    StackLangTraverse.wf program ;
     let program = StackLangTraverse.optimize program in
     StackLangTraverse.wf program ;
     if Settings.stacklang_dump then (
