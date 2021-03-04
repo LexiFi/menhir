@@ -211,6 +211,9 @@ module Build (L : sig
   val code : label -> unit
 
   val entry : label Lr1.NodeMap.t
+
+  val states : cell_info array Lr1.NodeMap.t
+
 end) =
 struct
   open L
@@ -228,7 +231,7 @@ struct
 
   let entry = Lr1.NodeMap.map print entry
 
-  let program = {cfg; entry}
+  let program = {cfg; entry; states}
 end
 
 (* Build *)

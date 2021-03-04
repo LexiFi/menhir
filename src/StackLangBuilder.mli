@@ -33,6 +33,9 @@ module Build (L : sig
   val code: label -> unit
   (* A family of entry labels. *)
   val entry: label Lr1.NodeMap.t
+
+  val states: cell_info array Lr1.NodeMap.t
+  
 end) : sig
 
   (* A StackLang program. *)

@@ -285,7 +285,7 @@ let inline_cfg degree (cfg : typed_block RegisterMap.t) : cfg =
                          accu  )
     cfg LabelMap.empty
 
-let inline degree {cfg; entry} : program = {cfg= inline_cfg degree cfg; entry}
+let inline degree {cfg; entry; states} : program = {cfg= inline_cfg degree cfg; entry; states}
 
 (* [inline program] transforms the program [program] by removing every
    unreachable block and by inlining away every (non-entry) label whose
