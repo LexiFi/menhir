@@ -99,6 +99,8 @@ val rewind: Lr1.node -> instruction
 
 val represented: Lr1.node -> bool
 
+val n_represented: int
+
 (* [startp symbol] and [endp symbol] tell whether start or end
    positions must be recorded for symbol [symbol]. *)
 

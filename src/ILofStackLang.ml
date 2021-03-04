@@ -120,7 +120,7 @@ let statetypedef =
         (Lr1.fold
            (fun defs s ->
              (* TODO : restore the condition *)
-             if (*Invariant.represented s*) true then
+             if Invariant.represented s then
                { dataname= statecon @@ Lr1.number s
                ; datavalparams= []
                ; datatypeparams= Some [type_of_tag s; final_type s]
@@ -205,7 +205,8 @@ let rec compile_pattern = function
       PWildcard
   | S.PReg x ->
       PVar x
-  | S.PTuple [] -> assert false
+  | S.PTuple [] ->
+      assert false
   | S.PTuple li ->
       PTuple (List.map compile_pattern li)
 
@@ -261,19 +262,24 @@ let rec compile_block (cfg : StackLang.typed_block StringMap.t) t_block =
   and compile_ICaseTag register tagpat_block_list =
     EMatch
       ( EVar register
-      , ( List.concat
-        @@ List.map
-             (fun (tagpat, block) ->
-               let (S.TagMultiple tag_list) = tagpat in
-               List.map
-                 (fun tag ->
-                   { branchpat= pstatescon [tag]
-                   ; branchbody= compile_block_aux block })
-                 tag_list)
-             tagpat_block_list )
-        @ [ (* TODO : remove this *)
-            { branchpat= PWildcard
-            ; branchbody= EApp (EVar "assert", [EVar "false"]) } ] )
+      , let branches =
+          List.concat
+          @@ List.map
+               (fun (tagpat, block) ->
+                 let (S.TagMultiple tag_list) = tagpat in
+                 List.map
+                   (fun tag ->
+                     { branchpat= pstatescon [tag]
+                     ; branchbody= compile_block_aux block })
+                   tag_list)
+               tagpat_block_list
+        in
+        if List.length branches = Invariant.n_represented then branches
+        else
+          branches
+          @ [ (* TODO : remove this *)
+              { branchpat= PWildcard
+              ; branchbody= EApp (EVar "assert", [EVar "false"]) } ] )
   and compile_block_aux =
     S.(
       function

@@ -322,6 +322,9 @@ let () =
 let represented state =
   UnionFind.get (represented state)
 
+let n_represented =
+  Lr1.sum (fun s -> if represented s then 1 else 0)
+
 let representeds states =
   if Lr1.NodeSet.is_empty states then
     assert false
