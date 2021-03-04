@@ -35,22 +35,27 @@ let e_common_args = [(*EVar flexer; EVar flexbuf;*) EVar fstack]
 let p_common_args = [(*PVar flexer; PVar flexbuf;*) PVar fstack]
 
 (* The type of environments. *)
-let tcstack = prefix "stack"
+let tcstate = prefix "state"
 
-let typ_stack_app tail_type final_type types =
-  Array.fold_left
-    (fun tail sem_type -> TypApp (tcstack, [tail; sem_type; final_type]))
-    tail_type types
+let typ_stack_app tail_type final_type cells =
+  let cell_typ (tail : typ)
+      S.{typ; hold_semv= _; hold_state; hold_startpos; hold_endpos} =
+    TypTuple
+      ( [tail]
+      @ if1 hold_state (TypApp (tcstate, [tail; final_type]))
+      @ (match typ with None -> [] | Some typ -> [TypTextual typ])
+      @ if1 hold_startpos (TypName "Lexing.position")
+      @ if1 hold_endpos (TypName "Lexing.position") )
+  in
+  Array.fold_left cell_typ tail_type cells
 
 (* This is the type of states. Only states that are represented are
    declared. *)
 (* The type of states. *)
 
-let tcstate = prefix "state"
-
 (*let tstate = TypApp (tcstate, [])*)
 
-let stacktypedef =
+(*let stack_typedef =
   { typename= tcstack
   ; typeparams= ["tail"; "semantic"; "final"]
   ; typerhs=
@@ -63,7 +68,17 @@ let stacktypedef =
            ; TypName "Lexing.position" ])
   ; typeconstraint= None }
 
-let tag_types = Array.make Lr1.n (Obj.magic ())
+let unit_stack_typedef =
+  { typename= tcustack
+  ; typeparams= ["tail"; "final"]
+  ; typerhs=
+      TAbbrev
+        (TypTuple
+           [ TypVar "tail"
+           ; TypApp (tcstate, [TypVar "tail"; TypVar "final"])
+           ; TypName "Lexing.position"
+           ; TypName "Lexing.position" ])
+  ; typeconstraint= None }*)
 
 let statetypedef =
   let final_type s =
@@ -73,25 +88,30 @@ let statetypedef =
     | Some (nonterminal : Grammar.Nonterminal.t) ->
         TypTextual (Grammar.Nonterminal.ocamltype_of_start_symbol nonterminal)
   in
+  let stack_type_of_word word =
+    Array.of_list
+    @@ List.rev
+         (Invariant.fold
+            (fun acc hold_state symbol _ ->
+              let typ =
+                match symbol with
+                | Grammar.Symbol.T t ->
+                    Grammar.Terminal.ocamltype t
+                | Grammar.Symbol.N nt ->
+                    Grammar.Nonterminal.ocamltype nt
+              in
+              S.
+                { typ
+                ; hold_state
+                ; hold_semv= typ <> None
+                ; hold_startpos= Invariant.startp symbol
+                ; hold_endpos= Invariant.endp symbol }
+              :: acc)
+            [] word)
+  in
   let type_of_tag s =
-    let f tail_name final =
-      let word = Invariant.stack s in
-      Invariant.fold
-        (fun typ_tail _ symbol _ ->
-          let typ_semantic =
-            match semvtype symbol with
-            | [] ->
-                TypName "unit"
-            | [ty] ->
-                ty
-            | li ->
-                TypTuple li
-          in
-          TypApp (tcstack, [typ_tail; typ_semantic; final]))
-        (TypName tail_name) word
-    in
-    tag_types.(Lr1.number s) <- f ;
-    f "'tail" (final_type s)
+    typ_stack_app (TypVar "tail") (final_type s)
+      (stack_type_of_word @@ Invariant.stack s)
   in
   { typename= tcstate
   ; typeparams= ["tail"; "final"]
@@ -185,6 +205,7 @@ let rec compile_pattern = function
       PWildcard
   | S.PReg x ->
       PVar x
+  | S.PTuple [] -> assert false
   | S.PTuple li ->
       PTuple (List.map compile_pattern li)
 
@@ -195,6 +216,8 @@ let rec compile_value = function
       EVar register
   | S.VTuple value_list ->
       ETuple (List.map compile_value value_list)
+  | S.VUnit ->
+      EUnit
 
 let compile_primitive = function
   | S.PrimOCamlCall (f, args) ->
@@ -234,8 +257,7 @@ let rec compile_block (cfg : StackLang.typed_block StringMap.t) t_block =
         | None ->
             []
         | Some block ->
-            [{ branchpat = PWildcard
-             ; branchbody = compile_block_aux block }] )
+            [{branchpat= PWildcard; branchbody= compile_block_aux block}] )
   and compile_ICaseTag register tagpat_block_list =
     EMatch
       ( EVar register
@@ -264,24 +286,36 @@ let rec compile_block (cfg : StackLang.typed_block StringMap.t) t_block =
       (* [IPush] pushes a value onto the stack. [IPop] pops a value off the stack.
          [IDef] can be viewed as a sequence of a push and a pop. It can be used to
          move data between registers or to load a value into a register. *)
-      | S.IPush (value, block) ->
-          let value =
-            match compile_value value with ETuple li -> li | _ -> assert false
-          in
-          ELet
-            ( [(PVar fstack, ETuple (EVar fstack :: value))]
-            , compile_block_aux block )
-      | S.IPop (pattern, block) ->
-          let pattern =
-            match compile_pattern pattern with
-            | T.PTuple li ->
-                li
-            | _ ->
-                assert false
-          in
-          ELet
-            ( [(T.PTuple (PVar fstack :: pattern), EVar fstack)]
-            , compile_block_aux block )
+      | S.IPush (value, block) -> (
+        match value with
+        | S.VTuple [] ->
+            compile_block_aux block
+        | _ ->
+            let value =
+              match compile_value value with
+              | ETuple li ->
+                  li
+              | _ ->
+                  assert false
+            in
+            ELet
+              ( [(PVar fstack, ETuple (EVar fstack :: value))]
+              , compile_block_aux block ) )
+      | S.IPop (pattern, block) -> (
+        match pattern with
+        | S.PTuple [] ->
+            compile_block_aux block
+        | _ ->
+            let pattern =
+              match compile_pattern pattern with
+              | T.PTuple li ->
+                  li
+              | _ ->
+                  assert false
+            in
+            ELet
+              ( [(T.PTuple (PVar fstack :: pattern), EVar fstack)]
+              , compile_block_aux block ) )
       | S.IDef (pattern, value, block) ->
           ELet
             ( [(compile_pattern pattern, compile_value value)]
@@ -370,7 +404,7 @@ let compile (S.{cfg; entry} : S.program) =
   [ SIFunctor
       ( grammar.parameters
       , mbasics grammar
-        @ [ SITypeDefs [stacktypedef; statetypedef]
+        @ [ SITypeDefs [statetypedef]
           ; SIStretch grammar.preludes
           ; SIValDefs (false, [discarddef])
           ; SIValDefs

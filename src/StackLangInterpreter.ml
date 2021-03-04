@@ -92,6 +92,7 @@ let rec eval (env : env) (v : value) : gvalue =
       end
   | VTuple vs ->
       GVTuple (map (eval env) vs)
+  | VUnit -> GVDummy
 
 (* Matching a ground value [gv] against a pattern [p] extends the environment
    with new bindings. *)

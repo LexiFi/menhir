@@ -21,7 +21,7 @@ let compose f g x = f (g x)
 type state = Idle | Open of (block -> block) | Closed of block
 
 let current : state ref = ref Idle
-let current_stack_type : IL.typ array option ref = ref None
+let current_stack_type : cell_info array option ref = ref None
 let current_final_type : IL.typ option ref = ref None
 let current_needed : string list option ref = ref None
 
