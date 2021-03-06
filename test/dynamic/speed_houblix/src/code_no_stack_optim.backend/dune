@@ -1,0 +1,17 @@
+(copy_files# ../*.ml)
+
+(copy_files ../*.mll)
+
+(copy_files ../parser.mly)
+
+(ocamllex simple_lexer)
+
+(menhir
+ (modules parser)
+ (flags --no-stack-optimization))
+
+(executable
+ (name houblix)
+ (libraries str pprint menhirLib sexplib unix sek)
+ (preprocess
+  (pps ppx_sexp_conv)))

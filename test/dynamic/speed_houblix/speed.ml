@@ -34,19 +34,7 @@ let ( / ) m n =
   ; major= m.major /. n
   ; promoted= m.promoted /. n }
 
-type measurement_agg =
-  {code: measurement; old_code: measurement; table: measurement}
-
-let ( + ) m m' =
-  { code= m.code + m'.code
-  ; old_code= m.old_code + m'.old_code
-  ; table= m.table + m'.table }
-
-let ( / ) m n = {code= m.code / n; old_code= m.old_code / n; table= m.table / n}
-
-let zero = {code= zero; old_code= zero; table= zero}
-
-let average ms = List.fold_left ( + ) zero ms / float_of_int (List.length ms)
+let average ml = List.fold_left ( + ) zero ml / (float_of_int @@ List.length ml)
 
 let read f =
   let c = Scanning.from_file f in
@@ -65,43 +53,38 @@ let print m =
   out "\n" ;
   ()
 
-let bases =
+let backends =
   List.sort_uniq compare
     (List.map Filename.remove_extension
        (List.map
-          (fun s -> Filename.chop_suffix s ".time")
+          (fun s -> Filename.chop_suffix (Filename.basename s) ".time")
           (List.filter
-             (fun s -> Filename.check_suffix s ".time")
+             (fun s -> Filename.check_suffix s ".backend")
              (Array.to_list (Sys.readdir "src")))))
 
 (* Read three measurements performed by separate processes. *)
-let m =
+let m backend =
+  let time_suffix = backend ^ ".time" in
+  let bases =
+    List.sort_uniq compare
+      (List.map Filename.remove_extension
+         (List.map
+            (fun s -> Filename.chop_suffix s time_suffix)
+            (List.filter
+               (fun s -> Filename.check_suffix s time_suffix)
+               (Array.to_list (Sys.readdir "src")))))
+  in
   average
-    (List.map
-       (fun base ->
-         let code = read (sprintf "src/%s.code.time" base) in
-         let table = read (sprintf "src/%s.table.time" base) in
-         let old_code = read (sprintf "src/%s.old_code.time" base) in
-         {code; old_code; table})
-       bases)
+    (List.map (fun base -> read (sprintf "src/%s.%s.time" base backend)) bases)
 
 (* Display a comparison. *)
 
 let () =
   out " ----- Houblix benchmark ----- \n" ;
-  out "Code back-end:\n" ;
-  print m.code ;
-  out "Old code back-end:\n" ;
-  print m.old_code ;
-  out "Table back-end:\n" ;
-  print m.table ;
-  out "The old code back-end is %.1f times slower than the new code back-end.\n"
-    (m.old_code.time /. m.code.time) ;
-  out "The table back-end is %.1f times slower than the new code back-end.\n"
-    (m.table.time /. m.code.time) ;
-  out "\n" ;
-  out
-    "The old code back-end allocates %.1f times more memory than the new code \
-     back-end.\n"
-    (m.old_code.minor /. m.code.minor) ;
+  List.iter
+    (fun backend ->
+      let m = m backend in
+      out "%s back-end:\n" backend ;
+      print m)
+    backends ;
   flush stdout

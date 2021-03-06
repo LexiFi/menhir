@@ -211,7 +211,7 @@ module L = struct
 
   (* Code for the [run] subroutine associated with the state [s]. *)
 
-  let run s has_semantic_value push_list =
+  let run s represent_state needlist push_list =
     (* Determine whether this is an initial state. *)
     let is_start = Lr1.is_start s in
     (* Determine whether the start and end positions of the current token
@@ -242,17 +242,9 @@ module L = struct
        good practice to keep it as tight as possible, though, as this documents
        the code that we produce (and allows us to benefit from a runtime
        well-formedness test). *)
-    let needed_registers = ( (lexer :: lexbuf :: if1 (not must_query_lexer) token)
-                             @ if1 (must_push && has_semantic_value) semv
-                             @ Invariant.fold_top
-                                 ( fun holds_state symbol ->
-                                     if1 (must_push && holds_state) state
-                                     @ if1 (Invariant.startp symbol && (not (is_start || must_read_positions)) && must_push) startp
-                                     @ if1 (Invariant.endp symbol && not (is_start || must_read_positions)) endp )
-                                 [] 
-                                 (Invariant.stack s) ) in
-    set_needed needed_registers ;
-    need_list needed_registers ;
+    
+    set_needed needlist ;
+    need_list needlist ;
     (* Log that we are entering state [s]. *)
     log "State %d:" (number s) ;
     (* If necessary, read the positions of the current token from [lexbuf]. *)
@@ -263,10 +255,11 @@ module L = struct
        predecessor state. *)
 
     (* If [run] is expected to push a new cell onto the stack, do so now. *)
-    if must_push && push_list <> [] then
+    if must_push  && push_list <> [] then
       push (VTuple (vregs push_list)) ;
     (* Define the current state to be [s]. *)
-    def (PReg state) (VTag (number s)) ;
+    if represent_state then
+      def (PReg state) (VTag (number s)) ;
     (* If necessary, query the lexer for the next token, and rebind [token].
        This is done by calling [discard], a global function that is defined
        directly in IL code, outside StackLang. *)
@@ -333,7 +326,7 @@ module L = struct
   let reduce stack_type prod =
     (* The array [ids] lists the identifiers that are bound by this production.
        These identifiers can be referred to by the semantic action. *)
-    let ids = Production.identifiers prod and n = Production.length prod in
+    let ids = Production.identifiers prod and n = Array.length stack_type in
     assert (Array.length ids = n) ;
     (* The register [state] is defined by a [pop] instruction that follows,
        unless this is an epsilon production, in which case [state] is needed
@@ -416,27 +409,17 @@ module L = struct
 
   (* Code for the [goto] subroutine associated with nonterminal symbol [nt]. *)
 
-  let goto nt =
+  let goto nt needlist pushlist =
     (* The [run] subroutines that we call are reached via goto transitions,
        therefore do not query the lexer. This means that [token] is needed. *)
-    
-    let needed_registers = 
-      [lexer ; lexbuf; token]
-      @ Invariant.fold_top 
-          (fun holds_state symbol ->
-             if1 holds_state state
-             @ if1 (CodePieces.has_semv symbol) semv 
-             @ if1 (Invariant.startp symbol) startp
-             @ if1 (Invariant.endp symbol) endp)
-          []
-          (Invariant.gotostack nt)
-    in
-    need_list needed_registers ;
-    set_needed needed_registers ;
+          
+    need_list needlist ;
+    set_needed needlist ;
     (* If it is up to this [goto] subroutine to push a new cell onto the stack,
        then do so now. If not, then it will be done by the [run] subroutine to
        which we are about to jump. *)
-    if gotopushes nt then push (VTuple (vregs [state; semv; startp; endp])) ;
+    (* TODO : restore *)
+    if gotopushes nt then push (VTuple (vregs pushlist)) ;
     (* Perform a case analysis on the current state [state]. In each branch,
        jump to an appropriate new state. There is no default branch. Although a
        default branch may need to be later added in order to avoid a warning
@@ -450,15 +433,80 @@ module L = struct
           () (Symbol.N nt))
 
   (* -------------------------------------------------------------------------- *)
+  let optimize_stack = Settings.optimize_stack
+  
+  let has_semantic_value s =
+    if optimize_stack then
+      Invariant.fold_top
+        (fun _ symbol ->
+          CodePieces.has_semv symbol )
+        false (Invariant.stack s)
+    else true
+
+  (* Values needed by the goto associated to Nonterminal [nt] *)
+  let goto_needlist nt =
+    [lexer ; lexbuf; token]
+      @ ( if optimize_stack then 
+            Invariant.fold_top 
+              (fun holds_state symbol ->
+                if1 holds_state state
+                @ if1 (CodePieces.has_semv symbol) semv 
+                @ if1 (Invariant.startp symbol) startp
+                @ if1 (Invariant.endp symbol) endp)
+              []
+              (Invariant.gotostack nt) 
+          else [state; semv; startp; endp] )
+  
+  let run_needlist s = 
+    let is_start = Lr1.is_start s in
+    (* Determine whether the start and end positions of the current token
+       should be read from [lexbuf]. *)
+    let must_read_positions = must_read_positions_upon_entering s in
+    (* Determine whether a new cell must be pushed onto the stack. *)
+    let must_push = runpushes s in
+    let must_query_lexer = must_query_lexer_upon_entering s in
+    ( (lexer :: lexbuf :: if1 (not must_query_lexer) token)
+    @ if1 (must_push && has_semantic_value s) semv
+    @ ( if optimize_stack then
+          Invariant.fold_top
+            ( fun holds_state symbol ->
+                if1 (must_push && holds_state) state
+                @ if1 
+                    (Invariant.startp symbol && (not (is_start || must_read_positions)) && must_push)
+                    startp
+                @ if1 
+                    (Invariant.endp symbol && not (is_start || must_read_positions))
+                    endp )
+        [] 
+        (Invariant.stack s)
+      else ( if1 must_push state
+           @ if1 (not (is_start || must_read_positions) && must_push) startp
+           @ if1 (not (is_start || must_read_positions)) endp ) ) )
+
+  (* Values pushed on the stack by the run routine associated to state [s].
+     Only used if [runpushes s] is true. *)
+
+  let goto_pushlist nt =
+    if optimize_stack then
+      Invariant.fold_top
+        ( fun holds_state symbol ->
+            if1 holds_state state
+            @ if1 (CodePieces.has_semv symbol) semv
+            @ if1 (Invariant.startp symbol) startp
+            @ if1 (Invariant.endp symbol) endp )
+        [state; semv; startp; endp] (Invariant.gotostack nt)
+    else [state; semv; startp; endp]
 
   let run_pushlist s : string list =
-    Invariant.fold_top
-      ( fun holds_state symbol ->
-          if1 holds_state state
-          @ if1 (CodePieces.has_semv symbol) (semv)
-          @ if1 (Invariant.startp symbol) (startp)
-          @ if1 (Invariant.endp symbol) (endp) )
-      [state; semv; startp; endp] (Invariant.stack s)
+    if optimize_stack then
+      Invariant.fold_top
+        ( fun holds_state symbol ->
+            if1 holds_state state
+            @ if1 (CodePieces.has_semv symbol) semv
+            @ if1 (Invariant.startp symbol) startp
+            @ if1 (Invariant.endp symbol) endp )
+        [state; semv; startp; endp] (Invariant.stack s)
+    else [state; semv; startp; endp]
   
   let stack_type_of_word word = 
     Array.of_list @@ List.rev
@@ -469,14 +517,29 @@ module L = struct
              | Symbol.T t -> Terminal.ocamltype t
              | Symbol.N nt -> Nonterminal.ocamltype nt
            in
-           let hold_semv = typ <> None in
-           let hold_startpos = Invariant.startp symbol in
-           let hold_endpos = Invariant.endp symbol in
-           { typ
-           ; hold_state
-           ; hold_semv
-           ; hold_startpos
-           ; hold_endpos } :: acc )
+           let cell = 
+             ( if optimize_stack then
+                 let hold_semv = typ <> None in
+                 let hold_startpos = Invariant.startp symbol in
+                 let hold_endpos = Invariant.endp symbol in
+                 { typ
+                 ; hold_state
+                 ; hold_semv
+                 ; hold_startpos
+                 ; hold_endpos }
+               else 
+                 { typ
+                 ; hold_state=true
+                 ; hold_semv=true
+                 ; hold_startpos=true
+                 ; hold_endpos=true } )
+            in
+            (* match cell with
+            | { hold_state=false
+              ; hold_semv=false
+              ; hold_startpos=false
+              ; hold_endpos=false ; _ } -> acc
+            | _ -> *)cell :: acc )
         [] word )
   let stack_type_goto _goto =
     (*Printf.printf "Stack type of goto %s\n" (Nonterminal.print false goto) ;
@@ -486,7 +549,7 @@ module L = struct
   let stack_type_reduce production =
     let symbols = Grammar.Production.rhs production in
     let r = stack_type_of_word (Invariant.prodstack production) in
-    assert ((Array.length r) = (Array.length symbols)) ;
+    assert (optimize_stack || (Array.length r) = (Array.length symbols)) ;
     r
   
   let stack_type_state state =
@@ -503,19 +566,14 @@ module L = struct
     let n_pushes = if runpushes state then 1 else 0 in
     let len = Array.length symbols in
     if len = 0 then [||] else Array.sub symbols 0 (len - n_pushes)*)
-    
-  let has_semantic_value s =
-    Invariant.fold_top
-      (fun _ symbol ->
-        CodePieces.has_semv symbol )
-      false (Invariant.stack s)
   
   let states =
     let states = ref Lr1.NodeMap.empty in
-    Lr1.iter (fun s -> states := Lr1.NodeMap.add s (stack_type_state s) !states) ;
+    Lr1.iter 
+    (fun s -> 
+      if (not optimize_stack) || Invariant.represented s then
+        states := Lr1.NodeMap.add s (stack_type_state s) !states) ;
     !states
-  
-    
   
   (* Code for all subroutines. *)
   let code label =
@@ -529,7 +587,11 @@ module L = struct
               (IL.TypTextual (Nonterminal.ocamltype_of_start_symbol nonterminal))
         ) ;
         set_stack_type (stack_type_run s) ;
-        run s (has_semantic_value s) (run_pushlist s)
+        run 
+          s
+          ((not optimize_stack) || Invariant.represented s)
+          (run_needlist s)
+          (run_pushlist s)
     | Reduce prod ->
         ( match Grammar.Production.classify prod with
         | None ->
@@ -543,7 +605,7 @@ module L = struct
         reduce stack_type prod
     | Goto nt ->
         set_stack_type (stack_type_goto nt) ;
-        goto nt
+        goto nt (goto_needlist nt) (goto_pushlist nt)
 
   (* The entry points. *)
 

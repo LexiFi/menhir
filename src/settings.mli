@@ -311,3 +311,7 @@ val example_size: int
 val example_log: bool
 
 val old_code_backend: bool
+
+val optimize_stack: bool
+
+val commute_pushes: bool

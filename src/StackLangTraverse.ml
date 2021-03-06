@@ -512,6 +512,34 @@ let block_map f = function
         ITypedBlock ({ t_block
                     with block = f t_block.block })
 
+                  
+let pop_type stack_type =
+  if stack_type = [||] then
+    [||]
+  else
+    let n = ref ((Array.length stack_type) - 1) in
+    while 
+      !n >= 0 
+      && ( let cell = stack_type.(!n) in
+           not ( cell.hold_semv
+                 || cell.hold_state
+                 || cell.hold_startpos
+                 || cell.hold_endpos )) 
+    do
+      n := !n - 1 
+    done ;
+    if !n < 0 then
+      [||]
+    else 
+      Array.sub stack_type 0 !n
+
+let pop_n_types stack_type n = 
+  let r = ref stack_type in
+  for _=1 to n do
+    r := pop_type !r
+  done;
+  !r
+
 module Substitution :
 sig
     type t
@@ -524,6 +552,9 @@ sig
 
     (** [remove s pattern] remove every rule of the shape [r -> _] for every [r] a register occuring in [pattern] *)
     val remove : t -> pattern -> t
+
+    (** [remove s pattern] remove every rule of the shape [r -> _] for every [r] a register occuring in [pattern] *)
+    val remove_val : t -> value -> t
 
     (** [substitute s value] apply to rules of the substitution [s] to [value] recursively *)
     val substitute : t -> value -> value
@@ -554,6 +585,12 @@ struct
         | PReg reg -> RegisterMap.remove reg substitution
         | PWildcard -> substitution
         | PTuple li -> List.fold_left remove substitution li
+
+    let rec remove_val substitution value =
+      match value with
+      | VReg reg -> RegisterMap.remove reg substitution
+      | VTag _ | VUnit -> substitution
+      | VTuple li -> List.fold_left remove_val substitution li
     let rec substitute substitution =
     function
     | VReg register ->
@@ -621,11 +658,10 @@ let inline_tags program =
               substitution
               (needed (StringMap.find reg program.cfg))
               (IJump reg)
-        | ITypedBlock ({has_case_tag=true} as t_block) ->
-            Substitution.restore_defs
-              substitution
-              ( ITypedBlock { t_block
-                              with block = aux Substitution.empty t_block.block } )
+        | ICaseTag (reg, branches) ->
+          Substitution.restore_defs
+            substitution
+            ( ICaseTag (reg, branches) )
         | _ -> block_map (aux substitution) block
 
     in
@@ -696,9 +732,9 @@ let commute_pushes program =
                so you may think that we need to generate new substition rules from it, 
                but there is no need because we only keep the pop if there is no push that can conflict with it. *)
             (match push_list with
-             | [] -> IPop (pattern, aux [] substitution block)
+             | [] -> IPop (pattern, aux [] (Substitution.remove substitution pattern) block)
              | value :: push_list ->
-                 IDef(pattern, value, aux push_list substitution block))
+                 IDef(pattern, value, aux push_list (Substitution.remove substitution pattern) block))
         | IDef (pattern, value', block) ->
             (* As explained above, for every conflict between the definition and a push currently commuting, 
                we add a new substitution rule *)
@@ -776,18 +812,19 @@ let commute_pushes program =
                          ( fun (tagpat, block) ->
                              (tagpat, aux push_list substitution block) )
                          branches )
-        | ITypedBlock ({stack_type} as t_block) ->
+        | ITypedBlock ({stack_type; (*has_case_tag=false*)} as t_block) ->
             (* We alter the type information according to the number of commuting pushes :
                Every push that is commuting removes a known stack symbol *)
             ITypedBlock ({ t_block
                            with block = aux push_list substitution t_block.block
-                           ;    stack_type = Array.sub
-                                               stack_type
-                                               0
-                                               ( max 
-                                                   0 
-                                                   ( (Array.length stack_type) 
-                                                   - (List.length push_list) ) ) })
+                           ;    stack_type = pop_n_types stack_type (List.length push_list) })
+        (*| ITypedBlock ({stack_type; has_case_tag=true} as t_block) ->
+        (* We alter the type information according to the number of commuting pushes :
+            Every push that is commuting removes a known stack symbol *)
+            restore_pushes 
+              push_list
+              ( ITypedBlock ({ t_block
+                               with block = aux [] Substitution.empty t_block.block }) )*)
         in
       { program
         with cfg =
@@ -842,17 +879,15 @@ let count_pushes program =
 
 let optimize program =
     let original_count = count_pushes program in
-    let program = inline_tags program in
-    (*print_endline "Before commute" ;
-    StackLangPrinter.print stdout program ;*)
-    let program = commute_pushes program in
-    (* print_endline "After commute" ;
-    StackLangPrinter.print stdout program ; *)
-
-    let commuted_count = count_pushes program in
-    (*assert (original_count = commuted_count) ;*)
-    Printf.printf
-      "Original pushes count : %d\n\
-       Commuted pushes count : %d \n"
-       original_count commuted_count ;
-    program
+    if Settings.commute_pushes then
+      ( let program = inline_tags program in
+        let program = commute_pushes program in
+        let commuted_count = count_pushes program in
+        if Settings.stacklang_dump then
+          Printf.printf
+            "Original pushes count : %d\n\
+            Commuted pushes count : %d \n"
+            original_count commuted_count ;
+        program ) 
+    else
+      program

@@ -347,6 +347,12 @@ let provide_example_seed =
 (* When new command line options are added, please update both the manual
    in [doc/manual.tex] and the man page in [doc/menhir.1]. *)
 
+let no_stack_optimization = 
+  ref false
+
+let no_push_commute =
+  ref false
+
 let options = Arg.align [
   "--automaton-graph", Arg.Set automaton_graph, " (undocumented)";
   "--base", Arg.Set_string base, "<basename> Specifies a base name for the output file(s)";
@@ -386,11 +392,13 @@ let options = Arg.align [
   "--log-code", Arg.Set_int logC, "<level> Log information about the generated code";
   "--log-grammar", Arg.Set_int logG, "<level> Log information about the grammar";
   "--merge-errors", Arg.String add_merge_errors, "<filename> (used twice) Merge two .messages files";
+  "--no-stack-optimization", Arg.Set no_stack_optimization, "(undocumented)";
   "--no-code-inlining", Arg.Clear code_inlining, " (undocumented)";
   "--no-dollars", Arg.Unit (fun () -> dollars := DollarsDisallowed), " Disallow $i in semantic actions";
   "--no-inline", Arg.Clear inline, " Ignore the %inline keyword";
   "--no-pager", Arg.Unit (fun () -> if !construction_mode = ModePager then construction_mode := ModeInclusionOnly), " (undocumented)";
   "--no-prefix", Arg.Set noprefix, " (undocumented)";
+  "--no-push-commute", Arg.Set no_push_commute, " (undocumented)";
   "--no-stdlib", Arg.Set no_stdlib, " Do not load the standard library";
   "--provide-example", Arg.Set_string provide_example, "<filename> Write an example of a valid token list. If set no other action will be taken.";
   "--provide-example-seed", Arg.Int (set_option provide_example_seed), "<interger> Set the for random generation. If unset, a different value will be used each time.";
@@ -734,3 +742,9 @@ let example_size =
 
 let old_code_backend =
   !old_code_backend
+
+let optimize_stack =
+  not !no_stack_optimization
+
+let commute_pushes =
+  not !no_push_commute
