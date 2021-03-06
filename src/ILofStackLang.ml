@@ -39,11 +39,12 @@ let tcstate = prefix "state"
 
 let typ_stack_app tail_type final_type cells =
   let cell_typ (tail : typ)
-      S.{typ; hold_semv= _; hold_state; hold_startpos; hold_endpos} =
+      S.{typ; hold_semv; hold_state; hold_startpos; hold_endpos} =
     TypTuple
       ( [tail]
       @ if1 hold_state (TypApp (tcstate, [tail; final_type]))
-      @ (match typ with None -> [] | Some typ -> [TypTextual typ])
+      @ if1 hold_semv
+          (match typ with None -> TypName "unit" | Some typ -> TypTextual typ)
       @ if1 hold_startpos (TypName "Lexing.position")
       @ if1 hold_endpos (TypName "Lexing.position") )
   in
@@ -88,29 +89,25 @@ let statetypedef states =
     | Some (nonterminal : Grammar.Nonterminal.t) ->
         TypTextual (Grammar.Nonterminal.ocamltype_of_start_symbol nonterminal)
   in
-  let type_of_tag s =
-    typ_stack_app (TypVar "tail") (final_type s)
-      (Lr1.NodeMap.find s states)
+  let type_of_tag s cells =
+    typ_stack_app (TypVar "tail") (final_type s) cells
   in
   { typename= tcstate
   ; typeparams= ["tail"; "final"]
   ; typerhs=
       TDefSum
-        (Lr1.fold
-           (fun defs s ->
+        (Lr1.NodeMap.fold
+           (fun s cells defs ->
              (* TODO : restore the condition *)
-             if Invariant.represented s then
-               { dataname= statecon @@ Lr1.number s
-               ; datavalparams= []
-               ; datatypeparams= Some [type_of_tag s; final_type s]
-               ; comment=
-                   Some
-                     ( ( " Known stack symbols : "
-                       ^ SSymbols.print_stack_symbols s )
-                     ^ " " ) }
-               :: defs
-             else defs)
-           [])
+             { dataname= statecon @@ Lr1.number s
+             ; datavalparams= []
+             ; datatypeparams= Some [type_of_tag s cells; final_type s]
+             ; comment=
+                 Some
+                   ( (" Known stack symbols : " ^ SSymbols.print_stack_symbols s)
+                   ^ " " ) }
+             :: defs)
+           states [])
   ; typeconstraint= None }
 
 (*type s_program = S.program*)
@@ -301,10 +298,14 @@ let rec compile_block (cfg : StackLang.typed_block StringMap.t) t_block =
             ELet
               ( [(T.PTuple (PVar fstack :: pattern), EVar fstack)]
               , compile_block_aux block ) )
-      | S.IDef (pattern, value, block) ->
-          ELet
-            ( [(compile_pattern pattern, compile_value value)]
-            , compile_block_aux block )
+      | S.IDef (pattern, value, block) -> (
+        match pattern with
+        | S.PTuple [] ->
+            compile_block_aux block
+        | _ ->
+            ELet
+              ( [(compile_pattern pattern, compile_value value)]
+              , compile_block_aux block ) )
       (* [IPrim] invokes a primitive operation and stores its result in a
          register. *)
       | S.IPrim (register, primitive, block) ->
