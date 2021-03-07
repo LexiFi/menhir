@@ -346,6 +346,15 @@ let rec compile_block (cfg : StackLang.typed_block StringMap.t) t_block =
               @ List.map
                   (fun s -> EVar s)
                   S.((StringMap.find label cfg).needed_registers) )
+      | S.ISubstitutedJump (label, substitution) ->
+          EApp
+            ( EVar label
+            , e_common_args
+              @ List.map
+                  (fun s ->
+                    compile_value
+                      (Substitution.apply substitution (S.VReg s)))
+                  S.((StringMap.find label cfg).needed_registers) )
       (* Group 3: Case analysis instructions. *)
 
       (* [ICaseToken] performs a case analysis on a token (which is held in a

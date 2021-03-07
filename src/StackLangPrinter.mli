@@ -13,4 +13,8 @@
 
 (* This module offers a pretty-printer for StackLang. *)
 
+val print_value: out_channel -> StackLang.value -> unit
+
+val print_substitution: out_channel -> StackLang.substitution -> unit
+
 val print: out_channel -> StackLang.program -> unit

@@ -21,44 +21,33 @@
 
 (* -------------------------------------------------------------------------- *)
 
-
-
 (* Basic type definitions. *)
 
 (* A register is identified by its name. *)
 
-type register =
-  string
+type register = string
 
-module RegisterSet =
-  StringSet
+module RegisterSet = StringSet
+module RegisterMap = StringMap
 
-module RegisterMap =
-  StringMap
-
-type registers =
-  RegisterSet.t
+type registers = RegisterSet.t
 
 (* A tag is an integer value. A tag can be used to encode a state of an LR
    automaton. *)
 
-type tag =
-  int
+type tag = int
 
 (* A code label is identified by its name. *)
 
-type label =
-  string
+type label = string
 
 (* A terminal symbol. *)
 
-type terminal =
-  Grammar.Terminal.t
+type terminal = Grammar.Terminal.t
 
 (* A set of terminal symbols. *)
 
-type terminals =
-  Grammar.TerminalSet.t
+type terminals = Grammar.TerminalSet.t
 
 (* -------------------------------------------------------------------------- *)
 
@@ -71,13 +60,8 @@ type value = VTag of tag | VReg of register | VTuple of value list | VUnit
    popped off the stack. Patterns include wildcards, registers, and tuples
    of patterns. *)
 
-type pattern =
-  | PWildcard
-  | PReg of register
-  | PTuple of pattern list
+type pattern = PWildcard | PReg of register | PTuple of pattern list
 
-
-  
 (* -------------------------------------------------------------------------- *)
 
 (* A primitive operation involves the execution of some OCaml code. The
@@ -94,11 +78,9 @@ type primitive =
   | PrimOCamlDummyPos
   | PrimOCamlAction of action
 
-and field =
-  string
+and field = string
 
-and action =
-  Action.t
+and action = Action.t
 
 (* -------------------------------------------------------------------------- *)
 
@@ -112,95 +94,18 @@ and action =
    pattern [TokSingle (tok, r)] writes a unit semantic value into the register
    [r]. *)
 
-type tokpat =
-  | TokSingle of terminal * register
-  | TokMultiple of terminals
+type tokpat = TokSingle of terminal * register | TokMultiple of terminals
 
 (* -------------------------------------------------------------------------- *)
 
 (* In a case analysis on a tag, each branch is guarded by a pattern that
    selects a set of tags. There is no default branch. *)
 
-type tagpat =
-  | TagMultiple of tag list
+type tagpat = TagMultiple of tag list
 
 (* -------------------------------------------------------------------------- *)
 
-(* This module provides a API to specifie substitutions of registers by values.
-   This is useful to inline values or rename them without generating a lot of defs before every jump. *)
-module Substitution_ = struct
-    type t = value RegisterMap.t
-
-    let empty = RegisterMap.empty
-    let add register value map = 
-        RegisterMap.add register value map
-        (* match value with 
-        | VReg register' when register = register' -> map
-        | _ -> RegisterMap.add register value map *)
-
-    let rec remove substitution pattern =
-        match pattern with
-        | PReg reg -> RegisterMap.remove reg substitution
-        | PWildcard -> substitution
-        | PTuple li -> List.fold_left remove substitution li
-    let rec apply substitution =
-    function
-    | VReg register ->
-        Option.value
-          (RegisterMap.find_opt register substitution)
-          ~default:(VReg register)
-    | VTuple li -> VTuple (List.map (apply substitution) li)
-    | v -> v
-
-    let rec apply_pattern substitution =
-      function
-      | PReg register ->
-            (match RegisterMap.find_opt register substitution with
-            | Some (VReg reg) -> PReg reg
-            | Some _ -> failwith "Could not transform value into pattern"
-            | None -> PReg register)
-      | PTuple li -> PTuple ( List.map 
-                                (apply_pattern substitution) 
-                                li )
-      | v -> v
-
-    let apply_registers substitution (registers:registers)=
-        let rec add_value set =
-          function 
-          | VUnit | VTag _ -> set
-          | VReg reg -> RegisterSet.add reg set
-          | VTuple li -> List.fold_left (add_value) set li
-        in
-        RegisterSet.fold
-          ( fun reg acc -> 
-              let v = RegisterMap.find_opt reg substitution in
-              match v with
-              | None -> acc
-              | Some v -> add_value acc v )
-          registers
-          RegisterSet.empty
-
-   let fold : (register -> value -> 'b -> 'b) -> t -> 'b -> 'b = RegisterMap.fold
-
-   
-   let compose s1 s2 =
-      (* 
-      for every rule [x->y] in s1, we return a rule [x->s2(y)]
-      *)
-      let s =
-        fold 
-          ( fun register value map ->
-              add register (apply s2 value) map) 
-          empty s1
-      in
-      RegisterMap.merge 
-        ( fun _reg v v2 -> 
-            match v, v2 with
-            | None, v2 -> v2
-            | v, None -> v
-            | Some _, Some _ -> v2 ) 
-        s s2
-end
+type substitution
 
 (* A block is a tree-shaped collection of instructions. (In classic compiler
    terminology, it could be known as an extended basic block.) The simplest
@@ -209,18 +114,19 @@ end
    branches become separate), and the control instructions have no successor
    (this is where a tree branch ends). *)
 
-type cell_info = { typ: Stretch.ocamltype option
-                 (* ; possible_states: Lr1.NodeSet.t *)
-                 ; hold_semv: bool
-                 ; hold_state: bool
-                 ; hold_startpos: bool
-                 ; hold_endpos: bool }
+type cell_info =
+  { typ: Stretch.ocamltype option (* ; possible_states: Lr1.NodeSet.t *)
+  ; hold_semv: bool
+  ; hold_state: bool
+  ; hold_startpos: bool
+  ; hold_endpos: bool }
 
-type typed_block = { block: block
-                   ; stack_type: cell_info array
-                   ; final_type: IL.typ option
-                   ; needed_registers: string list 
-                   ; has_case_tag: bool }
+type typed_block =
+  { block: block
+  ; stack_type: cell_info array
+  ; final_type: IL.typ option
+  ; needed_registers: string list
+  ; has_case_tag: bool }
 
 and block =
   (* Group 1: Instructions with exactly one successor. *)
@@ -255,8 +161,7 @@ and block =
      that are needed by the destination block must form a subset of the
      registers that are defined at the point of the jump. *)
   | IJump of label
-
-  | ISubstitutedJump of label * Substitution_.t
+  | ISubstitutedJump of label * substitution
   (* Group 3: Case analysis instructions. *)
 
   (* [ICaseToken] performs a case analysis on a token (which is held in a
@@ -280,9 +185,9 @@ module LabelSet = StringSet
 module LabelMap = StringMap
 
 type block_info =
-| InfRun of Lr1.node
-| InfReduce of Grammar.Production.index
-| InfGoto of Grammar.Nonterminal.t
+  | InfRun of Lr1.node
+  | InfReduce of Grammar.Production.index
+  | InfGoto of Grammar.Nonterminal.t
 
 type cfg = typed_block LabelMap.t
 
@@ -290,55 +195,69 @@ type cfg = typed_block LabelMap.t
    marked as entry points. There is in fact a mapping of the LR(1) start
    states to entry points. *)
 
-type program = {cfg: cfg; entry: label Lr1.NodeMap.t; states: cell_info array Lr1.NodeMap.t}
+type program =
+  {cfg: cfg; entry: label Lr1.NodeMap.t; states: cell_info array Lr1.NodeMap.t}
 
 (* -------------------------------------------------------------------------- *)
 
 (* A few constructors. *)
 
-let vreg r = VReg r
-let vregs rs = List.map vreg rs
+val vreg : string -> value
+
+val vregs : string list -> value list
 
 (* A few accessors. *)
 
-let lookup label map =
-  try
-    LabelMap.find label map
-  with Not_found ->
-    assert false
+val lookup : field -> 'a LabelMap.t -> 'a
 
-let entry_labels program =
-  Lr1.NodeMap.fold (fun _s label accu ->
-    LabelSet.add label accu
-  ) program.entry LabelSet.empty
+val entry_labels : program -> registers
 
 (* We assume that every labeled block in a well-formed control flow graph
    begins with an [INeed] instruction that determines which registers are
    defined upon entry to this block. *)
 
-let needed t_block = RegisterSet.of_list t_block.needed_registers
+val needed : typed_block -> RegisterSet.t
 
-module Substitution = struct
-    include Substitution_
-    let restore_defs substitution block =
-        RegisterMap.fold
-            (fun register value block ->
-               IDef(PReg register, value, block) )
-            substitution
-            block
-    let tight_restore_defs substitution registers block =
-      RegisterSet.fold
-          (fun register block ->
-              let value = apply substitution (VReg register) in
-              if value = VReg register then
-                block
-              else
-                IDef(PReg register, value, block) )
-          registers
-          block
+(* This module provides a API to specifie substitutions of registers by values.
+   This is useful to inline values or rename them without generating a lot of defs before every jump. *)
+module Substitution : sig
+  type t = substitution
+
+  val empty : t
+  (** empty substitution *)
+
+  val add : register -> value -> t -> t
+  (** [add register value s] adds a rule [register -> value] to [s]*)
+
+  val remove : t -> pattern -> t
+  (** [remove s pattern] remove every rule of the shape [r -> _] for every [r] a register occuring in [pattern] *)
+
+  val apply : t -> value -> value
+  (** [substitute s value] apply to rules of the substitution [s] to [value] recursively.
+      If no rule is found for a register [x], it behaves as if [x -> x] was a rule. *)
+
+  val apply_pattern : t -> pattern -> pattern
+  (** [substitute s pattern] apply the rules of the substitution [s] to [pattern] recursively.
+           It assumes that every relevant rule has shape [_ -> VReg(_)] *)
+
+  val apply_registers : t -> registers -> registers
+  (** Apply the substitution to a register set *)
+
+  val restore_defs : t -> block -> block
+  (** [restore_defs s block] generate a definition block with a definition [let x = y] for every rule [x -> y] in [s]*)
+
+  val tight_restore_defs : t -> registers -> block -> block
+  (** [tight_restore_defs s registers block] generate a definition block with a definition 
+            [let x = y] for every rule [x -> y] in [s] such that [x] is in [registers] *)
+
+  val fold : (register -> value -> 'a -> 'a) -> t -> 'a -> 'a
+  (** Fold over every rule. *)
+
+  val compose : t -> t -> t
+  (** [merge s1 s2] returns a substitution [s] such that :
+      for every pair of rules [x -> y], [x -> z] in s1, s2
+        if there is no rule [y -> w] in [s1], then [x -> z] is in s,
+      and for every rule [x -> y] in [s1], [x -> apply s2 y] is in [s], 
+      and for every pair of rules [x -> x], [x -> y] in s1, s2, [x -> y] is in [s]. *)
 
 end
-
-type substitution = Substitution.t
-
-
