@@ -103,6 +103,7 @@ clean::
 .PHONY: speed
 speed:
 	@ dune build --force --no-buffer @speed
+	@ dune build --force --no-buffer @speed_houblix
 
 # [make versions] compiles and tests Menhir under many versions of
 # OCaml, whose list is specified below.
