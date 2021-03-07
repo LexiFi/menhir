@@ -16,6 +16,8 @@ open PPrint
 open Grammar
 open StackLang
 
+let nl =
+  hardline
 let register =
   string
 
@@ -34,6 +36,13 @@ let rec value v =
   | VTuple vs ->
       OCaml.tuple (map value vs)
   | VUnit -> label "UNIT"
+
+let substitution substitution =
+  Substitution.fold 
+    ( fun reg value' acc ->
+        nl ^^ (register reg) ^^ string " -> " ^^ (value value') ^^ acc )
+    substitution
+    empty
 
 let rec pattern p =
   match p with
@@ -74,9 +83,6 @@ let tagpat pat =
       |> flow (break 1 ^^ bar ^^ space)
       |> group
 
-let nl =
-  hardline
-
 let branch (guard, body) =
   nl ^^ bar ^^ space ^^ group (guard ^^ string " ->" ^^ nest 4 body)
 
@@ -110,6 +116,8 @@ let rec block b =
       nl ^^ string "RET  " ^^ register r
   | IJump l ->
       nl ^^ string "JUMP " ^^ label l
+  | ISubstitutedJump (l, sub) ->
+      nl ^^ substitution sub ^^ nl ^^ string "SJUMP " ^^ label l
   | ICaseToken (r, branches, default) ->
       nl ^^ string "CASE " ^^ register r ^^ string " OF" ^^
       concat (map branch (
@@ -142,3 +150,9 @@ let program program =
 
 let print f prog =
   ToChannel.pretty 0.8 80 f (program prog)
+
+let print_value f v =
+  ToChannel.pretty 0.8 80 f (value v)
+
+let print_substitution f s =
+  ToChannel.pretty 0.8 80 f (substitution s)

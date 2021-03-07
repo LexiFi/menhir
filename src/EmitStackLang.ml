@@ -120,7 +120,7 @@ let must_query_lexer_upon_entering s =
    ensures that the [run] subroutine for every such state contains a POP
    instruction. *)
 
-(* let every_run_pops nt =
+let every_run_pops nt =
   Lr1.targets
     (fun accu _ target ->
       accu
@@ -130,18 +130,16 @@ let must_query_lexer_upon_entering s =
           Production.length prod > 0
       | None ->
           false)
-    true (Symbol.N nt) *)
+    true (Symbol.N nt)
 
 (* As suggested above, if we are trying to optimize for code size, then we
    choose "goto pushes", except in those places where "run pushes" entails
    no penalty. Otherwise, we choose "run pushes" everywhere. *)
 
-let gotopushes : Nonterminal.t -> bool = fun _ -> false
-
-(*
+let gotopushes : Nonterminal.t -> bool = (*fun _ -> false*)
   if Settings.optimize_for_code_size then
     Nonterminal.tabulate (fun nt -> not (every_run_pops nt))
-  else fun _nt -> false *)
+  else fun _nt -> false 
 
 let runpushes s =
   match Lr1.incoming_symbol s with
