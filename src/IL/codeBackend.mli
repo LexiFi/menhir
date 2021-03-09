@@ -11,8 +11,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* The (code-based) code generator. *)
-
+(** The (old) (code-based) code generator. *)
 module Run (T : sig end) : sig
 
   val program: IL.program

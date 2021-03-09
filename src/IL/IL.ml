@@ -13,8 +13,7 @@
 
 open Positions
 
-(* Abstract syntax of the language used for code production. *)
-
+(** Abstract syntax of the language used for code production. *)
 type interface =
   interface_item list
 
