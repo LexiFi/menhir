@@ -164,6 +164,11 @@ module Substitution_ = struct
                                 li )
       | v -> v
 
+    let apply_reg substitution reg =
+      match RegisterMap.find_opt reg substitution with
+      | None -> reg
+      | Some VReg reg -> reg
+      | Some _ -> raise (Invalid_argument "apply_reg")
     let apply_registers substitution (registers:registers)=
         let rec add_value set =
           function 

@@ -231,6 +231,8 @@ module Substitution : sig
   (** [substitute s pattern] apply the rules of the substitution [s] to [pattern] recursively.
            It assumes that every relevant rule has shape [_ -> VReg(_)] *)
 
+  val apply_reg : t -> register -> register
+
   val apply_registers : t -> registers -> registers
   (** Apply the substitution to a register set *)
 
