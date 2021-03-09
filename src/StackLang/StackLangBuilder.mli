@@ -17,28 +17,31 @@ open StackLang
 
 (* -------------------------------------------------------------------------- *)
 
-(* A program is built by invoking the functor [Build]. The following data
+(** A program is built by invoking the functor [Build]. The following data
    must be provided: *)
-
 module Build (L : sig
-  (* A type of code labels (not necessarily strings). *)
+  (** A type of code labels (not necessarily strings). *)
   type label
-  (* An injection of labels into strings. *)
+
+  (** An injection of labels into strings. *)
   val print: label -> string
-  (* A way of iterating over all labels. *)
+
+  (** A way of iterating over all labels. *)
   val iter: (label -> unit) -> unit
-  (* A mapping of labels to code. The function call [code label] is expected
+
+  (** A mapping of labels to code. The function call [code label] is expected
      to use the imperative API below to build the code block that corresponds
      to label [label]. *)
   val code: label -> unit
-  (* A family of entry labels. *)
+
+  (** A family of entry labels. *)
   val entry: label Lr1.NodeMap.t
 
   val states: cell_info array Lr1.NodeMap.t
 
 end) : sig
 
-  (* A StackLang program. *)
+  (** A StackLang program. *)
   val program: program
 
 end
