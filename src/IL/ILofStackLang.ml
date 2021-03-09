@@ -7,10 +7,10 @@ open CodeBits
 module SSymbols = StackSymbols.Run ()
 
 (* Name used for the tail type variable. *)
-let tctail = prefix "tail"
+let tctail = "t" ^ prefix "tail"
 
 (* Name used for the final type variable. *)
-let tcfinal = prefix "final"
+let tcfinal = "t" ^ prefix "final"
 
 let flexer = prefix "lexer"
 
