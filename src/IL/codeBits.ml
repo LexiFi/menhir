@@ -78,17 +78,17 @@ let tbool =
 (* The integer type. *)
 
 let tint =
-  TypApp ("int", [])
+  TypName"int"
 
 (* The string type. *)
 
 let tstring =
-  TypApp ("string", [])
+  TypName"string"
 
 (* The exception type. *)
 
 let texn =
-  TypApp ("exn", [])
+  TypName "exn"
 
 (* The type of pairs. *)
 
@@ -98,7 +98,7 @@ let tpair typ1 typ2 =
 (* The type of lexer positions. *)
 
 let tposition =
-  TypApp ("Lexing.position", [])
+  TypName "Lexing.position"
 
 (* The type of the $loc and $sloc keywords. *)
 

@@ -6,6 +6,12 @@ open CodeBits
 
 module SSymbols = StackSymbols.Run ()
 
+(* Name used for the tail type variable. *)
+let tctail = prefix "tail"
+
+(* Name used for the final type variable. *)
+let tcfinal = prefix "final"
+
 let flexer = prefix "lexer"
 
 let flexbuf = prefix "lexbuf"
@@ -44,56 +50,27 @@ let typ_stack_app tail_type final_type cells =
       ( [tail]
       @ if1 hold_state (TypApp (tcstate, [tail; final_type]))
       @ if1 hold_semv
-          (match typ with None -> TypName "unit" | Some typ -> TypTextual typ)
-      @ if1 hold_startpos (TypName "Lexing.position")
-      @ if1 hold_endpos (TypName "Lexing.position") )
+          (match typ with None -> tunit | Some typ -> TypTextual typ)
+      @ if1 hold_startpos tposition
+      @ if1 hold_endpos tposition )
   in
   Array.fold_left cell_typ tail_type cells
 
-(* This is the type of states. Only states that are represented are
-   declared. *)
-(* The type of states. *)
-
-(*let tstate = TypApp (tcstate, [])*)
-
-(*let stack_typedef =
-  { typename= tcstack
-  ; typeparams= ["tail"; "semantic"; "final"]
-  ; typerhs=
-      TAbbrev
-        (TypTuple
-           [ TypVar "tail"
-           ; TypApp (tcstate, [TypVar "tail"; TypVar "final"])
-           ; TypVar "semantic"
-           ; TypName "Lexing.position"
-           ; TypName "Lexing.position" ])
-  ; typeconstraint= None }
-
-let unit_stack_typedef =
-  { typename= tcustack
-  ; typeparams= ["tail"; "final"]
-  ; typerhs=
-      TAbbrev
-        (TypTuple
-           [ TypVar "tail"
-           ; TypApp (tcstate, [TypVar "tail"; TypVar "final"])
-           ; TypName "Lexing.position"
-           ; TypName "Lexing.position" ])
-  ; typeconstraint= None }*)
-
+(* type definition for states *)
 let statetypedef states =
   let final_type s =
+    (* The final return type is only known for the start and end states. *)
     match Lr1.is_start_or_exit s with
     | None ->
-        TypVar "final"
+        TypVar tcfinal
     | Some (nonterminal : Grammar.Nonterminal.t) ->
         TypTextual (Grammar.Nonterminal.ocamltype_of_start_symbol nonterminal)
   in
   let type_of_tag s cells =
-    typ_stack_app (TypVar "tail") (final_type s) cells
+    typ_stack_app (TypVar tctail) (final_type s) cells
   in
   { typename= tcstate
-  ; typeparams= ["tail"; "final"]
+  ; typeparams= [tctail; tcfinal]
   ; typerhs=
       TDefSum
         (Lr1.NodeMap.fold
@@ -150,25 +127,23 @@ let grammar = Front.grammar
 
 let function_type block =
   let final =
-    match S.(block.final_type) with None -> TypName "final" | Some typ -> typ
+    match S.(block.final_type) with None -> TypName tcfinal | Some typ -> typ
   in
   { quantifiers=
       ( match S.(block.final_type) with
       | None ->
-          ["tail"; "final"]
+          [tctail; tcfinal]
       | Some _ ->
-          ["tail"] )
+          [tctail] )
   ; locally_abstract= true
   ; body=
       (let typ_tail =
-         typ_stack_app (TypName "tail") final S.(block.stack_type)
+         typ_stack_app (TypName tctail) final S.(block.stack_type)
        in
        marrow
          ( typ_tail
          :: List.map
               (function
-                (*| s when s = fstack ->
-                    TypName "tail"*)
                 | s when s = fstate ->
                     TypApp (tcstate, [typ_tail; final])
                 | _ ->
@@ -259,15 +234,8 @@ let rec compile_block (cfg : StackLang.typed_block StringMap.t) t_block =
   and compile_block_aux =
     S.(
       function
-      (* [INeed] is a special pseudo-instruction that is expected to appear at
-         least at the beginning of every block. (It can also be used inside a
-         block.) It indicates which registers are expected to be defined at this
-         point, and it un-defines any registers that are not explicitly listed. *)
       | S.INeed (_registers, block) ->
           compile_block_aux block
-      (* [IPush] pushes a value onto the stack. [IPop] pops a value off the stack.
-         [IDef] can be viewed as a sequence of a push and a pop. It can be used to
-         move data between registers or to load a value into a register. *)
       | S.IPush (value, block) -> (
         match value with
         | S.VTuple [] ->
@@ -306,28 +274,18 @@ let rec compile_block (cfg : StackLang.typed_block StringMap.t) t_block =
             ELet
               ( [(compile_pattern pattern, compile_value value)]
               , compile_block_aux block ) )
-      (* [IPrim] invokes a primitive operation and stores its result in a
-         register. *)
       | S.IPrim (register, primitive, block) ->
           ELet
             ( [(PVar register, compile_primitive primitive)]
             , compile_block_aux block )
-      (* [ITrace] logs a message on [stderr]. *)
       | S.ITrace (message, block) ->
           ELet
             ( [(PVar "_", EApp (EVar "Printf.eprintf", [EStringConst message]))]
             , compile_block_aux block )
-      (* [IComment] is a comment. *)
       | S.IComment (comment, block) ->
           EComment (comment, compile_block_aux block)
-      (* Group 2: Instructions with zero successor. *)
-
-      (* [IDie] causes an abrupt termination of the program. It is translated
-         into OCaml by raising the exception [Error]. *)
       | S.IDie ->
           ERaise (EVar "_eRR")
-      (* [IReturn] causes the normal termination of the program. A value read
-         from a register is returned. *)
       | S.IReturn register -> (
         match S.(t_block.final_type) with
         | None ->
@@ -336,9 +294,6 @@ let rec compile_block (cfg : StackLang.typed_block StringMap.t) t_block =
             EAnnot
               (EVar register, {quantifiers= []; locally_abstract= false; body})
         )
-      (* [IJump] causes a jump to a block identified by its label. The registers
-         that are needed by the destination block must form a subset of the
-         registers that are defined at the point of the jump. *)
       | S.IJump label ->
           EApp
             ( EVar label
@@ -352,23 +307,16 @@ let rec compile_block (cfg : StackLang.typed_block StringMap.t) t_block =
             , e_common_args
               @ List.map
                   (fun s ->
-                    compile_value
-                      (Substitution.apply substitution (S.VReg s)))
+                    compile_value (Substitution.apply substitution (S.VReg s)))
                   S.((StringMap.find label cfg).needed_registers) )
-      (* Group 3: Case analysis instructions. *)
-
-      (* [ICaseToken] performs a case analysis on a token (which is held in a
-         register). It carries a list of branches, each of which is guarded by
-         a pattern, and an optional default branch. *)
       | S.ICaseToken (register, tokpat_block_list, block_option) ->
           compile_ICaseToken register tokpat_block_list block_option
-      (* [ICaseTag] performs a case analysis on a tag (which is held in a
-         register). It carries a list of branches, each of which is guarded by a
-         pattern. There is no default branch; it is up to the user to ensure that
-         the case analysis is exhaustive. *)
       | S.ICaseTag (register, tagpat_block_list) ->
           compile_ICaseTag register tagpat_block_list
       | S.ITypedBlock ({needed_registers; has_case_tag} as t_block) ->
+          (* If a typed block contains a match on tags, then we need to make it
+             an inlined function call : it is not possible to inline it
+             ourselve, because of GADT shenanigans.*)
           if has_case_tag then
             let block_name = fresh_name () in
             EInlinedLet
@@ -387,8 +335,6 @@ and compile_function t_block cfg =
         ( p_common_args @ List.map (fun s -> PVar s) S.(t_block.needed_registers)
         , compile_block cfg t_block )
     , function_type t_block )
-
-(* returns the number of pushes, and if found, the corresponding state *)
 
 let compile (S.{cfg; entry; states} : S.program) =
   let entries =
