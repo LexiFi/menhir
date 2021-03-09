@@ -28,6 +28,33 @@ let branch_iter f (_pat, block) = f block
 
 let branch_map f (pat, block) = (pat, f block)
 
+let block_map f = function
+  | INeed (registers, block) ->
+      INeed(registers, f block)
+  | IPush (value, block) ->
+      IPush(value, f block)
+  | IPop (register, block) ->
+      IPop(register, f block)
+  | IDef (pattern, value, block) ->
+      IDef (pattern, value, f block)
+  | IPrim (register, primitive, block) ->
+      IPrim (register, primitive, f block)
+  | ITrace (register, block) ->
+      ITrace (register, f block)
+  | IComment (comment, block) ->
+      IComment (comment, f block)
+  | ((IDie | IReturn _ | IJump _ | ISubstitutedJump _ ) as end_block) ->
+      end_block
+  | ICaseToken (reg, branches, odefault) ->
+      ICaseToken ( reg
+                 , List.map (branch_map f) branches
+                 , Option.map f odefault )
+  | ICaseTag (reg, branches) ->
+      ICaseTag ( reg
+               , List.map (branch_map f) branches )
+  | ITypedBlock t_block ->
+      ITypedBlock ({ t_block with block = f t_block.block })
+
 (* -------------------------------------------------------------------------- *)
 
 (* Checking that a StackLang program contains no references to undefined
@@ -228,24 +255,6 @@ let in_degree program =
 
 let rec inline_block cfg degree block =
   match block with
-  | INeed (rs, block) ->
-      INeed (rs, inline_block cfg degree block)
-  | IPush (v, block) ->
-      IPush (v, inline_block cfg degree block)
-  | IPop (p, block) ->
-      IPop (p, inline_block cfg degree block)
-  | IDef (p, v, block) ->
-      IDef (p, v, inline_block cfg degree block)
-  | IPrim (r, p, block) ->
-      IPrim (r, p, inline_block cfg degree block)
-  | ITrace (s, block) ->
-      ITrace (s, inline_block cfg degree block)
-  | IComment (s, block) ->
-      IComment (s, inline_block cfg degree block)
-  | IDie ->
-      IDie
-  | IReturn r ->
-      IReturn r
   | IJump label ->
       (* If the target label's in-degree is 1, follow the indirection;
          otherwise, keep the [jump] instruction. *)
@@ -265,18 +274,7 @@ let rec inline_block cfg degree block =
           (ITypedBlock { typed_block with
                         block = (inline_block cfg degree typed_block.block) })
       else ISubstitutedJump(label, substitution)
-  | ICaseToken (r, branches, odefault) ->
-      ICaseToken
-        ( r
-        , List.map (branch_map (inline_block cfg degree)) branches
-        , Option.map (inline_block cfg degree) odefault )
-  | ICaseTag (r, branches) ->
-      ICaseTag (r, List.map (branch_map (inline_block cfg degree)) branches)
-  | ITypedBlock ({ block
-                 ; stack_type=_
-                 ; final_type=_
-                 ; needed_registers=_ }) ->
-      inline_block cfg degree block
+  | block -> block_map (inline_block cfg degree) block
 
 let inline_cfg degree (cfg : typed_block RegisterMap.t) : cfg =
   LabelMap.fold
@@ -300,7 +298,8 @@ let inline_cfg degree (cfg : typed_block RegisterMap.t) : cfg =
                          accu  )
     cfg LabelMap.empty
 
-let inline degree {cfg; entry; states} : program = {cfg= inline_cfg degree cfg; entry; states}
+let inline degree {cfg; entry; states} : program =
+  {cfg= inline_cfg degree cfg; entry; states}
 
 (* [inline program] transforms the program [program] by removing every
    unreachable block and by inlining away every (non-entry) label whose
@@ -847,58 +846,60 @@ let commute_pushes program =
 
 
 let count_pushes program =
-    let rec aux block i =
-        match block with
-        | INeed (_, block) ->
-            aux block i
-        | IPush (_, block) ->
-            aux block (i+1)
-        | IPop (_, block) ->
-            aux block i
-        | IDef (_, _, block) ->
-            aux block i
-        | IPrim (_, _, block) ->
-            aux block i
-        | ITrace (_, block) ->
-            aux block i
-        | IComment (_, block) ->
-            aux block i
-        | IDie | IReturn _ | IJump _ | ISubstitutedJump _  ->
-            i
-        | ICaseToken (_, branches, _)  ->
-            ( List.fold_left
-               (+)
-               0
-               (List.map
-                  ( fun (_, block) ->
-                      aux block i )
-                  branches ) ) / (List.length branches)
-        | ICaseTag (_, branches) ->
-            ( List.fold_left
-               (+)
-               0
-               (List.map
-                  ( fun (_, block) ->
-                      aux block i )
-                  branches ) ) / (List.length branches)
-        | ITypedBlock {block} ->
-            aux block i
-    in
-    RegisterMap.fold (fun _ {block} acc -> acc + aux block 0 ) program.cfg 0
+  let rec aux block i =
+      match block with
+      | INeed (_, block) ->
+          aux block i
+      | IPush (_, block) ->
+          aux block (i+1)
+      | IPop (_, block) ->
+          aux block i
+      | IDef (_, _, block) ->
+          aux block i
+      | IPrim (_, _, block) ->
+          aux block i
+      | ITrace (_, block) ->
+          aux block i
+      | IComment (_, block) ->
+          aux block i
+      | IDie | IReturn _ | IJump _ | ISubstitutedJump _  ->
+          i
+      | ICaseToken (_, branches, _)  ->
+          ( List.fold_left
+              (+)
+              0
+              (List.map
+                ( fun (_, block) ->
+                    aux block i )
+                branches ) ) / (List.length branches)
+      | ICaseTag (_, branches) ->
+          ( List.fold_left
+              (+)
+              0
+              (List.map
+                ( fun (_, block) ->
+                    aux block i )
+                branches ) ) / (List.length branches)
+      | ITypedBlock {block} ->
+          aux block i
+  in
+  RegisterMap.fold (fun _ {block} acc -> acc + aux block 0 ) program.cfg 0
 
+(** remove definitions of shape [x = x], or shape [_ = x] *)
 let remove_useless_defs program =
   let rec aux block =
     match block with
-    | IDef (pattern, value, block) when is_pattern_equivalent_to_value pattern value ->
+    | IDef (pattern, value, block)
+      when is_pattern_equivalent_to_value pattern value ->
         aux block
     | _ -> block_map aux block
   in
   { program
-  with cfg =
-    RegisterMap.map
-      ( fun t_block -> { t_block
-                          with block = aux t_block.block } )
-      program.cfg }
+    with cfg =
+      RegisterMap.map
+        ( fun t_block -> { t_block
+                           with block = aux t_block.block } )
+        program.cfg }
 let optimize program =
     let original_count = count_pushes program in
     if Settings.commute_pushes then
