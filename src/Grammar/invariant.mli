@@ -138,4 +138,8 @@ module Long : sig
 
   val stack: Lr1.node -> Symbol.t array
 
+  val gotostack : Nonterminal.t -> Symbol.t array
+
+  val prodstack : Production.index -> Symbol.t array
+
 end

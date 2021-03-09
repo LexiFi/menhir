@@ -857,6 +857,26 @@ let stack (node : Lr1.node) : property =
   | Some v ->
       v
 
+let extend_stack s =
+  let sa = Array.of_list s in
+  if sa = [||] then [||]
+  else
+    let (_symbol, stateset) = sa.((Array.length sa) - 1) in
+    Array.append (Array.map fst sa)
+      ( Option.force 
+          ( Lr1.NodeSet.fold 
+              ( fun node (acc: Symbol.t array option) ->
+                  match acc with
+                  | None -> Some (stack node)
+                  | Some s -> Some (leq_join (stack node) s) ) 
+              stateset None ) )
+
+let gotostack nt =
+  extend_stack @@ gotostack nt 
+
+let prodstack prod =
+  extend_stack @@ prodstack prod
+
 (* ------------------------------------------------------------------------ *)
 (* If requested, print the information that has been computed above. *)
 
