@@ -23,8 +23,7 @@
 
 (* Basic type definitions. *)
 
-(* A register is identified by its name. *)
-
+(** A register is identified by its name. *)
 type register = string
 
 module RegisterSet = StringSet
@@ -32,46 +31,39 @@ module RegisterMap = StringMap
 
 type registers = RegisterSet.t
 
-(* A tag is an integer value. A tag can be used to encode a state of an LR
+(** A tag is an integer value. A tag can be used to encode a state of an LR
    automaton. *)
-
 type tag = int
 
-(* A code label is identified by its name. *)
-
+(** A code label is identified by its name. *)
 type label = string
 
-(* A terminal symbol. *)
-
+(** A terminal symbol. *)
 type terminal = Grammar.Terminal.t
 
-(* A set of terminal symbols. *)
-
+(** A set of terminal symbols. *)
 type terminals = Grammar.TerminalSet.t
 
 (* -------------------------------------------------------------------------- *)
 
-(* A value is a piece of data that can be pushed onto the stack. Values
+(** A value is a piece of data that can be pushed onto the stack. Values
    include tags, data loaded from a register, and tuples of values. *)
-
 type value = VTag of tag | VReg of register | VTuple of value list | VUnit
 
-(* A pattern describes how to decompose and store a piece of data that is
+(** A pattern describes how to decompose and store a piece of data that is
    popped off the stack. Patterns include wildcards, registers, and tuples
    of patterns. *)
-
 type pattern = PWildcard | PReg of register | PTuple of pattern list
 
 (* -------------------------------------------------------------------------- *)
 
-(* A primitive operation involves the execution of some OCaml code. The
+(** A primitive operation involves the execution of some OCaml code. The
    primitive operations include OCaml function calls, read accesses to an
-   OCaml record, accesses to a dummy position, and semantic actions. *)
+   OCaml record, accesses to a dummy position, and semantic actions. 
 
-(* The set of registers read by a semantic action [a] is [Action.vars a].
+   The set of registers read by a semantic action [a] is [Action.vars a].
    By convention, in front in every semantic action, we generate an
    [INeed] instruction so as to make this requirement explicit. *)
-
 type primitive =
   | PrimOCamlCall of string * register list
   | PrimOCamlFieldAccess of register * field
@@ -84,36 +76,29 @@ and action = Action.t
 
 (* -------------------------------------------------------------------------- *)
 
-(* In a case analysis on a token, each branch is guarded by a pattern that
+(** In a case analysis on a token, each branch is guarded by a pattern that
    either selects a single terminal symbol (and stores its semantic value
    in a register) or selects multiple terminal symbols (and ignores their
    semantic value). There can also be a default branch, which is guarded
-   by a wildcard pattern; that is implicit. *)
+   by a wildcard pattern; that is implicit.
 
-(* If the terminal symbol [tok] does not carry a semantic value, then the
+   If the terminal symbol [tok] does not carry a semantic value, then the
    pattern [TokSingle (tok, r)] writes a unit semantic value into the register
    [r]. *)
-
 type tokpat = TokSingle of terminal * register | TokMultiple of terminals
 
 (* -------------------------------------------------------------------------- *)
 
-(* In a case analysis on a tag, each branch is guarded by a pattern that
+(** In a case analysis on a tag, each branch is guarded by a pattern that
    selects a set of tags. There is no default branch. *)
-
 type tagpat = TagMultiple of tag list
 
 (* -------------------------------------------------------------------------- *)
 
+(** Abstract type. Function to use it are found in the [Substitution] module *)
 type substitution
 
-(* A block is a tree-shaped collection of instructions. (In classic compiler
-   terminology, it could be known as an extended basic block.) The simplest
-   instructions have exactly one successor. However, the case analysis
-   instructions can have more than successor (this is where several tree
-   branches become separate), and the control instructions have no successor
-   (this is where a tree branch ends). *)
-
+(** Type representing a stack cell *)
 type cell_info =
   { typ: Stretch.ocamltype option (* ; possible_states: Lr1.NodeSet.t *)
   ; hold_semv: bool
@@ -121,14 +106,13 @@ type cell_info =
   ; hold_startpos: bool
   ; hold_endpos: bool }
 
-type typed_block =
-  { block: block
-  ; stack_type: cell_info array
-  ; final_type: IL.typ option
-  ; needed_registers: string list
-  ; has_case_tag: bool }
-
-and block =
+(** A block is a tree-shaped collection of instructions. (In classic compiler
+   terminology, it could be known as an extended basic block.) The simplest
+   instructions have exactly one successor. However, the case analysis
+   instructions can have more than successor (this is where several tree
+   branches become separate), and the control instructions have no successor
+   (this is where a tree branch ends). *)
+type block =
   (* Group 1: Instructions with exactly one successor. *)
 
   (* [INeed] is a special pseudo-instruction that is expected to appear at
@@ -177,6 +161,17 @@ and block =
    Block with type information *)
   | ITypedBlock of typed_block
 
+(** A typed block is a block annotated with information :
+    The known suffixes of the stack, the final type returned by the block, the
+    needed registers, and whether there is a match on tags inside the block. *)
+and typed_block =
+{ block: block
+; stack_type: cell_info array
+; final_type: IL.typ option
+; needed_registers: string list
+; has_case_tag: bool }
+
+
 (* -------------------------------------------------------------------------- *)
 
 (* A control flow graph is a mapping of code labels to blocks. *)
@@ -191,10 +186,9 @@ type block_info =
 
 type cfg = typed_block LabelMap.t
 
-(* A complete program is a control flow graph where some labels have been
+(** A complete program is a control flow graph where some labels have been
    marked as entry points. There is in fact a mapping of the LR(1) start
    states to entry points. *)
-
 type program =
   {cfg: cfg; entry: label Lr1.NodeMap.t; states: cell_info array Lr1.NodeMap.t}
 
@@ -212,13 +206,10 @@ val lookup : field -> 'a LabelMap.t -> 'a
 
 val entry_labels : program -> registers
 
-(* We assume that every labeled block in a well-formed control flow graph
-   begins with an [INeed] instruction that determines which registers are
-   defined upon entry to this block. *)
-
+(** Returns the set of needed registers from a typed block. *)
 val needed : typed_block -> RegisterSet.t
 
-(* This module provides a API to specifie substitutions of registers by values.
+(** This module provides a API to specifie substitutions of registers by values.
    This is useful to inline values or rename them without generating a lot of defs before every jump. *)
 module Substitution : sig
   type t = substitution

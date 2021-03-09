@@ -13,9 +13,8 @@
 
 open StackLang
 
-(* [print program] dumps the control flow graph of the StackLang program
+(** [print program] dumps the control flow graph of the StackLang program
    [program] to the file [<basename>.dot]. The vertices are the basic blocks
    and the edges are the jumps between them. If there are multiple jumps from
    one block to another, then only one edge is shown. *)
-
 val print: program -> unit
