@@ -408,21 +408,17 @@ module L = struct
   (* Code for the [goto] subroutine associated with nonterminal symbol [nt]. *)
 
   let goto nt needlist pushlist =
-    (* The [run] subroutines that we call are reached via goto transitions,
-       therefore do not query the lexer. This means that [token] is needed. *)
           
     need_list needlist ;
     set_needed needlist ;
     (* If it is up to this [goto] subroutine to push a new cell onto the stack,
        then do so now. If not, then it will be done by the [run] subroutine to
        which we are about to jump. *)
-    (* TODO : restore *)
     if gotopushes nt then push (VTuple (vregs pushlist)) ;
     (* Perform a case analysis on the current state [state]. In each branch,
        jump to an appropriate new state. There is no default branch. Although a
        default branch may need to be later added in order to avoid a warning
        from the OCaml compiler, this default branch is dead. *)
-    (* _ -> . *)
     case_tag state (fun branch ->
         Lr1.targets
           (fun () sources target ->
@@ -432,7 +428,7 @@ module L = struct
 
   (* -------------------------------------------------------------------------- *)
   let optimize_stack = Settings.optimize_stack
-  
+
   let has_semantic_value s =
     if optimize_stack then
       Invariant.fold_top
@@ -443,6 +439,8 @@ module L = struct
 
   (* Values needed by the goto associated to Nonterminal [nt] *)
   let goto_needlist nt =
+    (* The [run] subroutines that we call are reached via goto transitions,
+       therefore do not query the lexer. This means that [token] is needed. *)
     [lexer ; lexbuf; token]
       @ ( if optimize_stack then 
             Invariant.fold_top 
@@ -455,6 +453,7 @@ module L = struct
               (Invariant.gotostack nt) 
           else [state; semv; startp; endp] )
   
+  (** List of values needed by run routine associated to state [s]*)
   let run_needlist s = 
     let is_start = Lr1.is_start s in
     (* Determine whether the start and end positions of the current token
@@ -470,10 +469,13 @@ module L = struct
             ( fun holds_state symbol ->
                 if1 (must_push && holds_state) state
                 @ if1 
-                    (Invariant.startp symbol && (not (is_start || must_read_positions)) && must_push)
+                    (  Invariant.startp symbol 
+                    && (not (is_start || must_read_positions))
+                    && must_push )
                     startp
                 @ if1 
-                    (Invariant.endp symbol && not (is_start || must_read_positions))
+                    (  Invariant.endp symbol
+                    && not (is_start || must_read_positions) )
                     endp )
         [] 
         (Invariant.stack s)
@@ -481,9 +483,10 @@ module L = struct
            @ if1 (not (is_start || must_read_positions) && must_push) startp
            @ if1 (not (is_start || must_read_positions)) endp ) ) )
 
-  (* Values pushed on the stack by the run routine associated to state [s].
-     Only used if [runpushes s] is true. *)
+  
 
+  (** Values pushed on the stack by the goto routine associated to nonterminal [nt].
+      Only used if [gotopushes nt] is true. *)
   let goto_pushlist nt =
     if optimize_stack then
       Invariant.fold_top
@@ -495,6 +498,8 @@ module L = struct
         [state; semv; startp; endp] (Invariant.gotostack nt)
     else [state; semv; startp; endp]
 
+  (** Values pushed on the stack by the run routine associated to state [s].
+     Only used if [runpushes s] is true. *)
   let run_pushlist s : string list =
     if optimize_stack then
       Invariant.fold_top
@@ -517,14 +522,11 @@ module L = struct
            in
            let cell = 
              ( if optimize_stack then
-                 let hold_semv = typ <> None in
-                 let hold_startpos = Invariant.startp symbol in
-                 let hold_endpos = Invariant.endp symbol in
                  { typ
                  ; hold_state
-                 ; hold_semv
-                 ; hold_startpos
-                 ; hold_endpos }
+                 ; hold_semv = typ <> None 
+                 ; hold_startpos = Invariant.startp symbol 
+                 ; hold_endpos = Invariant.endp symbol }
                else 
                  { typ
                  ; hold_state=true
@@ -532,16 +534,18 @@ module L = struct
                  ; hold_startpos=true
                  ; hold_endpos=true } )
             in
+            (* Uncommenting this would filter empty cells. 
+               We do not want to do that, 
+               it would disturb the run and reduce functions.  *)
             (* match cell with
             | { hold_state=false
               ; hold_semv=false
               ; hold_startpos=false
               ; hold_endpos=false ; _ } -> acc
-            | _ -> *)cell :: acc )
+            | _ -> *)
+            cell :: acc )
         [] word )
-  let stack_type_goto _goto =
-    (*Printf.printf "Stack type of goto %s\n" (Nonterminal.print false goto) ;
-    stack_type_of_word (Invariant.gotostack goto)*)
+  let stack_type_goto _nt =
     [||]
   
   let stack_type_reduce production =
@@ -555,16 +559,10 @@ module L = struct
   
   let stack_type_run state =
     let st = stack_type_of_word (Invariant.stack state) in
-    (*let st = Array.init (Array.length st) (fun i -> st.((Array.length st) - i - 1)) in*)
     let n_pushes = if runpushes state then 1 else 0 in
     let len = Array.length st in
     if len = 0 then [||] else Array.sub st 0 (len - n_pushes)
-  
-    (*let symbols = SSymbols.stack_symbols state in
-    let n_pushes = if runpushes state then 1 else 0 in
-    let len = Array.length symbols in
-    if len = 0 then [||] else Array.sub symbols 0 (len - n_pushes)*)
-  
+    
   let states =
     let states = ref Lr1.NodeMap.empty in
     Lr1.iter 
@@ -578,12 +576,11 @@ module L = struct
     match label with
     | Run s ->
         ( match Lr1.is_start_or_exit s with
-        | None ->
-            ()
-        | Some nonterminal ->
-            set_final_type
-              (IL.TypTextual (Nonterminal.ocamltype_of_start_symbol nonterminal))
-        ) ;
+          | None ->
+              ()
+          | Some nonterminal ->
+              set_final_type
+                (IL.TypTextual (Nonterminal.ocamltype_of_start_symbol nonterminal)) ) ;
         set_stack_type (stack_type_run s) ;
         run 
           s
@@ -592,12 +589,11 @@ module L = struct
           (run_pushlist s)
     | Reduce prod ->
         ( match Grammar.Production.classify prod with
-        | None ->
-            ()
-        | Some nonterminal ->
-            set_final_type
-              (IL.TypTextual (Nonterminal.ocamltype_of_start_symbol nonterminal))
-        ) ;
+          | None ->
+              ()
+          | Some nonterminal ->
+              set_final_type
+                (IL.TypTextual (Nonterminal.ocamltype_of_start_symbol nonterminal)) ) ;
         let stack_type = stack_type_reduce prod in
         set_stack_type stack_type ;
         reduce stack_type prod
