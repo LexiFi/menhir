@@ -1,9 +1,17 @@
 # Changes
 
+## 2021/03/10
+
+* Replace `Require Omega` with `Require ZArith`
+  so as to guarantee compatibility with Coq 8.13.
+
+* Change `Hint` to `Global Hint` in several places,
+  so as to avoid warnings with Coq 8.13.
+
 ## 2020/05/03
 
-* Import ListNotations wherever it is necessary so that we do not rely
-  on it being exported by Program.
+* Import `ListNotations` wherever it is necessary so that we do not rely
+  on it being exported by `Program`.
 
 ## 2019/09/24
 
