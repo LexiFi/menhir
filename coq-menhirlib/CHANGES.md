@@ -3,7 +3,7 @@
 ## 2021/03/10
 
 * Replace `Require Omega` with `Require ZArith`
-  so as to guarantee compatibility with Coq 8.13.
+  so as to guarantee compatibility with Coq 8.14.
 
 * Change `Hint` to `Global Hint` in several places,
   so as to avoid warnings with Coq 8.13.
