@@ -1434,6 +1434,13 @@
 (rule (alias use_pseudo_token)
   (action (diff use_pseudo_token.exp use_pseudo_token.out)))
 
+(rule (target wktxt_parser.out) (deps wktxt_parser.mly)
+  (action
+    (with-outputs-to wktxt_parser.out
+      (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
+
+(rule (alias wktxt_parser) (action (diff wktxt_parser.exp wktxt_parser.out)))
+
 (alias (name test)
   (deps
     (alias a-rule-is-expected)
@@ -1605,5 +1612,6 @@
     (alias unspecified-start-type)
     (alias uppercase-start)
     (alias use-index-not-id)
-    (alias use_pseudo_token)))
+    (alias use_pseudo_token)
+    (alias wktxt_parser)))
 
