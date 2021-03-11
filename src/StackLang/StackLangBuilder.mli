@@ -38,7 +38,7 @@ module Build (L : sig
   val entry: label Lr1.NodeMap.t
 
   val states: cell_info array Lr1.NodeMap.t
-  
+
 end) : sig
 
   (** A StackLang program. *)

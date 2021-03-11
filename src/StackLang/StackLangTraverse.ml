@@ -24,10 +24,10 @@ let fresh_int =
 let suffix name i =
   Printf.sprintf "%s_%i" name i
 
-let branch_iter f (_pat, block) = 
+let branch_iter f (_pat, block) =
   f block
 
-let branch_map f (pat, block) = 
+let branch_map f (pat, block) =
   (pat, f block)
 
 let block_map f = function
@@ -45,7 +45,7 @@ let block_map f = function
       ITrace (register, f block)
   | IComment (comment, block) ->
       IComment (comment, f block)
-  | ((IDie | IReturn _ | IJump _ | ISubstitutedJump _ ) as end_block) -> 
+  | ((IDie | IReturn _ | IJump _ | ISubstitutedJump _ ) as end_block) ->
       end_block
   | ICaseToken (reg, branches, odefault) ->
       ICaseToken ( reg
@@ -159,7 +159,7 @@ let rec wf_block cfg label rs block =
          is defined here. *)
       wf_regs label rs (needed (lookup label' cfg))
   | ISubstitutedJump (label', substitution) ->
-      wf_regs label rs ( Substitution.apply_registers 
+      wf_regs label rs ( Substitution.apply_registers
                            substitution
                            (needed (lookup label' cfg)) )
   | ICaseToken (r, branches, odefault) ->
@@ -309,7 +309,7 @@ let inline_cfg degree (cfg : typed_block RegisterMap.t) : cfg =
                          accu  )
     cfg LabelMap.empty
 
-let inline degree {cfg; entry; states} : program = 
+let inline degree {cfg; entry; states} : program =
   {cfg= inline_cfg degree cfg; entry; states}
 
 (* [inline program] transforms the program [program] by removing every
@@ -474,7 +474,7 @@ let rec intersection pattern value =
         RegisterSet.empty
         ( List.map
             ( fun pattern ->
-                intersection pattern value ) 
+                intersection pattern value )
             li_pat )
   | _, _ -> RegisterSet.empty
 
@@ -484,28 +484,33 @@ let rec value_refers_to_register register value =
     when register = register' -> true
   | VTuple li -> List.exists (value_refers_to_register register) li
   | _ -> false
-                  
+
+
+(** Remove a cell from a stack type. *)
 let pop_type stack_type =
   if stack_type = [||] then
     [||]
   else
+    (*
+
+    Array.sub stack_type 0 ((Array.length stack_type) - 1) *)
     let n = ref ((Array.length stack_type) - 1) in
-    while 
-      !n >= 0 
+    while
+      !n >= 0
       && ( let cell = stack_type.(!n) in
            not ( cell.hold_semv
                  || cell.hold_state
                  || cell.hold_startpos
-                 || cell.hold_endpos )) 
+                 || cell.hold_endpos ))
     do
-      n := !n - 1 
+      n := !n - 1
     done ;
     if !n < 0 then
       [||]
-    else 
+    else
       Array.sub stack_type 0 !n
 
-let pop_n_types stack_type n = 
+let pop_n_types stack_type n =
   let r = ref stack_type in
   for _=1 to n do
     r := pop_type !r
@@ -540,8 +545,8 @@ let inline_tags program =
       | ICaseTag (reg, branches) ->
         Substitution.restore_defs
           substitution
-          ( ICaseTag ( reg, List.map 
-                              ( fun (tagpat, block) -> 
+          ( ICaseTag ( reg, List.map
+                              ( fun (tagpat, block) ->
                                   tagpat, aux Substitution.empty block )
                               branches ) )
       | _ -> block_map (aux substitution) block
@@ -573,28 +578,28 @@ let update_substitution substitution pattern values =
   let add_intersection pattern substitution value =
     RegisterSet.fold (
             fun register substitution ->
-            Substitution.add 
-                register 
-                (VReg (suffix register (fresh_int () ))) 
-                substitution ) 
-        (intersection pattern value) substitution 
+            Substitution.add
+                register
+                (VReg (suffix register (fresh_int () )))
+                substitution )
+        (intersection pattern value) substitution
   in
-  let substitution = 
-      List.fold_left 
+  let substitution =
+      List.fold_left
       (add_intersection pattern)
-      substitution 
-      values 
+      substitution
+      values
   in
   substitution
 let commute_pushes program =
-  let rec aux (push_list: value list) substitution = 
-    (* [push_list] is the list of pushes that we need to restore, 
+  let rec aux (push_list: value list) substitution =
+    (* [push_list] is the list of pushes that we need to restore,
         and hopefully cancel out with a pop.
-        Every time there is a definition of a new value, 
-      in order to not disturb the pushes, 
-      if the pattern is in conflict with one of the pushed value, 
+        Every time there is a definition of a new value,
+      in order to not disturb the pushes,
+      if the pattern is in conflict with one of the pushed value,
       we change the name of the culprit register, and we save the change in a [Substitution.t].
-      In subsequent code, every time we refer to a register, 
+      In subsequent code, every time we refer to a register,
       we use the name from the substitution's right-hand side. *)
     function
     | INeed (_registers, block) ->
@@ -602,37 +607,37 @@ let commute_pushes program =
         aux push_list substitution block
     | IPush (value, block) ->
         (* We push the substituted name *)
-        IComment 
+        IComment
           ( sprintf "Commuted push of %s" (string_of_value value)
-          , aux 
-              ( ( Substitution.apply 
-                    substitution 
-                    value ) :: push_list ) 
-              substitution 
+          , aux
+              ( ( Substitution.apply
+                    substitution
+                    value ) :: push_list )
+              substitution
               block )
     | IPop (pattern, block) ->
         (* A pop is a special kind of definition, so you may think that we need
-           to generate new substition rules from it, but there is no need 
-           because we only keep the pop if there is no push that can conflict 
-           with it. 
-           The pattern we pop into is authoritative and we remove it from the 
+           to generate new substition rules from it, but there is no need
+           because we only keep the pop if there is no push that can conflict
+           with it.
+           The pattern we pop into is authoritative and we remove it from the
            substitution *)
         ( match push_list with
-          | [] -> 
+          | [] ->
               IPop ( pattern
                    , aux [] (Substitution.remove substitution pattern) block )
           | value :: push_list ->
               IDef ( pattern
                    , value
-                   , aux 
+                   , aux
                        push_list
-                       (Substitution.remove substitution pattern) 
+                       (Substitution.remove substitution pattern)
                        block ) )
     | IDef (pattern, value', block) ->
-        (* As explained above, for every conflict between the definition and a 
+        (* As explained above, for every conflict between the definition and a
            push currently commuting, we add a new substitution rule *)
         (* Currently, the value is raw, we need to apply the substitution to it
-           in order for it to refer to the correct definition. *)   
+           in order for it to refer to the correct definition. *)
         let value' = Substitution.apply substitution value' in
         let substitution = update_substitution substitution pattern push_list in
         IDef ( Substitution.apply_pattern substitution pattern
@@ -642,14 +647,14 @@ let commute_pushes program =
       (* A primitive is a like def except it has a simple register instead of a
          pattern *)
       let register' =
-        if List.exists 
-              (value_refers_to_register register) 
+        if List.exists
+              (value_refers_to_register register)
               push_list then
           suffix register (fresh_int () )
         else register
       in
-      let substitution = 
-        Substitution.add register (VReg register') substitution 
+      let substitution =
+        Substitution.add register (VReg register') substitution
       in
       IPrim(register', primitive, aux push_list substitution block)
     | ITrace (register, block) ->
@@ -663,40 +668,40 @@ let commute_pushes program =
     | IJump j ->
         (* We first restore the pushes we failed to eliminate, then we restore
            every value to its original name, so that the jump does not fail. *)
-        restore_pushes 
-          push_list 
+        restore_pushes
+          push_list
           ( Substitution.tight_restore_defs
               substitution
               (needed (StringMap.find j program.cfg))
               (IJump j) )
     | ISubstitutedJump (label, substitution') ->
         (* This case is quite tricky.
-           A substituted jump is a jump, but with a built-in substitution to 
-           be able to change the name of the parameters without restoring the 
-           definitions before the jumps. *)      
+           A substituted jump is a jump, but with a built-in substitution to
+           be able to change the name of the parameters without restoring the
+           definitions before the jumps. *)
         restore_pushes
           push_list
           ( ISubstitutedJump ( label
-                              , Substitution.compose 
+                              , Substitution.compose
                                   substitution
                                   substitution' ) )
     | ICaseToken (reg, branches, odefault) ->
         ICaseToken ( reg
                    , List.map
-                       ( function 
-                         (* Every [TokSingle] introduces a definition of a 
+                       ( function
+                         (* Every [TokSingle] introduces a definition of a
                             register. *)
-                         | TokSingle (tok , register'), block -> 
+                         | TokSingle (tok , register'), block ->
                              let new_register =
-                               if List.exists 
-                                    (value_refers_to_register register') 
+                               if List.exists
+                                    (value_refers_to_register register')
                                     push_list then
                                  suffix register' (fresh_int () )
                                else register'
                              in
-                             let substitution = Substitution.add 
-                                                  register' 
-                                                  (VReg new_register) 
+                             let substitution = Substitution.add
+                                                  register'
+                                                  (VReg new_register)
                                                   substitution
                              in
                               ( TokSingle (tok, new_register)
@@ -715,21 +720,21 @@ let commute_pushes program =
                      (branch_map (aux push_list substitution))
                      branches )
     | ITypedBlock ({stack_type} as t_block) ->
-        (* We alter the type information according to the number of commuting 
+        (* We alter the type information according to the number of commuting
            pushes : Every push that is commuting removes a known stack symbol *)
         ITypedBlock ({ t_block
                        with block = aux push_list substitution t_block.block
                      ;      stack_type =
-                              pop_n_types stack_type (List.length push_list) })    
+                              pop_n_types stack_type (List.length push_list) })
     in
     { program
       with cfg =
       RegisterMap.map
-          ( fun t_block -> 
+          ( fun t_block ->
               { t_block
                 with block = aux [] Substitution.empty t_block.block } )
           program.cfg }
-  
+
 
 let count_pushes program =
   let rec aux block i =
@@ -775,7 +780,7 @@ let count_pushes program =
 let remove_useless_defs program =
   let rec aux block =
     match block with
-    | IDef (pattern, value, block) 
+    | IDef (pattern, value, block)
       when is_pattern_equivalent_to_value pattern value ->
         aux block
     | _ -> block_map aux block
@@ -798,6 +803,6 @@ let optimize program =
                 "Original pushes count : %d\n\
                 Commuted pushes count : %d \n"
                 original_count commuted_count ;
-            program ) 
+            program )
         else
           program )

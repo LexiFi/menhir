@@ -226,7 +226,7 @@ let rec exec state block =
   | IJump label ->
       let block = (lookup label state.program.cfg).block in
       exec state block
-  
+
   | ISubstitutedJump (label, substitution) ->
     exec state (Substitution.restore_defs substitution (IJump label))
 
@@ -237,7 +237,7 @@ let rec exec state block =
   | ICaseTag (r, branches) ->
       let tag = asTag (eval state.env (VReg r)) in
       exec_casetag state tag branches
-      
+
   | ITypedBlock {block; stack_type=_; final_type=_} ->
       exec state block
 

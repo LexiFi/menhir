@@ -77,7 +77,7 @@ type pattern =
   | PTuple of pattern list
 
 
-  
+
 (* -------------------------------------------------------------------------- *)
 
 (* A primitive operation involves the execution of some OCaml code. The
@@ -132,9 +132,9 @@ module Substitution_ = struct
     type t = value RegisterMap.t
 
     let empty = RegisterMap.empty
-    let add register value map = 
+    let add register value map =
         RegisterMap.add register value map
-        (* match value with 
+        (* match value with
         | VReg register' when register = register' -> map
         | _ -> RegisterMap.add register value map *)
 
@@ -159,8 +159,8 @@ module Substitution_ = struct
             | Some (VReg reg) -> PReg reg
             | Some _ -> failwith "Could not transform value into pattern"
             | None -> PReg register)
-      | PTuple li -> PTuple ( List.map 
-                                (apply_pattern substitution) 
+      | PTuple li -> PTuple ( List.map
+                                (apply_pattern substitution)
                                 li )
       | v -> v
 
@@ -171,13 +171,13 @@ module Substitution_ = struct
       | Some _ -> raise (Invalid_argument "apply_reg")
     let apply_registers substitution (registers:registers)=
         let rec add_value set =
-          function 
+          function
           | VUnit | VTag _ -> set
           | VReg reg -> RegisterSet.add reg set
           | VTuple li -> List.fold_left (add_value) set li
         in
         RegisterSet.fold
-          ( fun reg acc -> 
+          ( fun reg acc ->
               let v = RegisterMap.find_opt reg substitution in
               match v with
               | None -> acc
@@ -187,23 +187,23 @@ module Substitution_ = struct
 
    let fold : (register -> value -> 'b -> 'b) -> t -> 'b -> 'b = RegisterMap.fold
 
-   
+
    let compose s1 s2 =
-      (* 
+      (*
       for every rule [x->y] in s1, we return a rule [x->s2(y)]
       *)
       let s =
-        fold 
+        fold
           ( fun register value map ->
-              add register (apply s2 value) map) 
+              add register (apply s2 value) map)
           empty s1
       in
-      RegisterMap.merge 
-        ( fun _reg v v2 -> 
+      RegisterMap.merge
+        ( fun _reg v v2 ->
             match v, v2 with
             | None, v2 -> v2
             | v, None -> v
-            | Some _, Some _ -> v2 ) 
+            | Some _, Some _ -> v2 )
         s s2
 end
 
@@ -224,7 +224,7 @@ type cell_info = { typ: Stretch.ocamltype option
 type typed_block = { block: block
                    ; stack_type: cell_info array
                    ; final_type: IL.typ option
-                   ; needed_registers: string list 
+                   ; needed_registers: string list
                    ; has_case_tag: bool }
 
 and block =

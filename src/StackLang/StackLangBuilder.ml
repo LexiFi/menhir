@@ -72,7 +72,7 @@ let exec (body : unit -> unit) =
   | Closed block ->
       current := Idle ;
       block
-      
+
 
 let extend g =
   match !current with
@@ -107,10 +107,10 @@ let close i =
          construction. *)
       assert false
 
-let set_stack_type typ = 
+let set_stack_type typ =
   current_stack_type := Some typ
 
-let set_final_type typ = 
+let set_final_type typ =
     current_final_type := Some typ
 
 let set_needed needed =
@@ -225,7 +225,7 @@ end) =
 struct
   open L
 
-  let code (label : label) = 
+  let code (label : label) =
     typed_exec (fun () -> code label)
 
 
