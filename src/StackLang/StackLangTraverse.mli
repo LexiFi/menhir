@@ -38,7 +38,7 @@ val print: measure -> unit
 val get_args_map: block RegisterMap.t -> register list RegisterMap.t
 
 
-(** [optimize program] perform optimization on program and return a transformed 
-    version with the same semantic. 
+(** [optimize program] perform optimization on program and return a transformed
+    version with the same semantic.
     The specific nature of the optimizations depend on the [Settings] module. *)
 val optimize: program -> program

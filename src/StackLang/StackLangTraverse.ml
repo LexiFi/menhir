@@ -517,6 +517,9 @@ let pop_type stack_type =
   if stack_type = [||] then
     [||]
   else
+    (*
+
+    Array.sub stack_type 0 ((Array.length stack_type) - 1) *)
     let n = ref ((Array.length stack_type) - 1) in
     while
       !n >= 0

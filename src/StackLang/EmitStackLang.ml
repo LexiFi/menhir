@@ -275,7 +275,11 @@ module L = struct
     Nonterminal.iterx (fun nt -> yield (Goto nt)) ;
     ()
 
+<<<<<<< HEAD
   (* -------------------------------------------------------------------------- *)
+=======
+  (* ------------------------------------------------------------------------ *)
+>>>>>>> c1ea3325 (cleanup (trailing whitespace included))
 
   (* Code for the [run] subroutine associated with the state [s]. *)
 
@@ -358,9 +362,10 @@ module L = struct
     | Some (prod, _) ->
         jump (Reduce prod)
     | None ->
-        (* If the state [s] has no default reduction, then perform a case analysis
-           of the current token [token]. The branches involve (shift) transitions,
-           reductions, and (possibly) a default branch that triggers an error. *)
+        (* If the state [s] has no default reduction, then perform a case
+           analysis of the current token [token]. The branches involve (shift)
+           transitions, reductions, and (possibly) a default branch that
+           triggers an error. *)
         case_token token (fun branch default ->
             (* Transitions. *)
             Lr1.transitions s
@@ -370,18 +375,19 @@ module L = struct
                    | Symbol.T tok ->
                        (* A transition of [s] along [tok] to [s']. *)
                        assert (not (Terminal.pseudo tok)) ;
-                       (* Use a pattern that recognizes the token [tok] and binds [semv] to
-                          its semantic value. *)
+                       (* Use a pattern that recognizes the token [tok] and
+                          binds [semv] to its semantic value. *)
                        branch
                          (TokSingle (tok, semv))
                          (fun () ->
                            (* Log that we are shifting. *)
                            log "Shifting (%s) to state %d" (Terminal.print tok)
                              (number s') ;
-                           (* The subroutine [run s'] does not need the current token [token]
-                              and is responsible for obtaining its start and end positions
-                              [startp] and [endp] from [lexbuf], so, besides [lexer] and
-                              [lexbuf], we transmit only the registers [state] and [semv]. *)
+                           (* The subroutine [run s'] does not need the current
+                              token [token] and is responsible for obtaining its
+                              start and end positions [startp] and [endp] from
+                              [lexbuf], so, besides [lexer] and [lexbuf], we
+                              transmit only the registers [state] and [semv]. *)
                            jump (Run s'))
                    | Symbol.N _ ->
                        ()) ;
@@ -395,7 +401,7 @@ module L = struct
             (* A default branch. *)
             default die)
 
-  (* -------------------------------------------------------------------------- *)
+  (* ------------------------------------------------------------------------ *)
 
   (* Code for the [reduce] subroutine associated with production [prod]. *)
 
@@ -481,7 +487,7 @@ module L = struct
       (* Execute a goto transition. *)
       jump (Goto (Production.nt prod))
 
-  (* -------------------------------------------------------------------------- *)
+  (* ------------------------------------------------------------------------ *)
 
   (* Code for the [goto] subroutine associated with nonterminal symbol [nt]. *)
 
@@ -513,11 +519,13 @@ module L = struct
     case_tag state (fun branch ->
         Lr1.targets
           (fun () sources target ->
-            (* If the current state is a member of [sources], jump to [target]. *)
-            branch (TagMultiple (numbers sources)) (fun () -> jump (Run target)))
+          (* If the current state is a member of [sources], jump to [target]. *)
+            branch
+              (TagMultiple (numbers sources))
+              (fun () -> jump (Run target)))
           () (Symbol.N nt))
 
-  (* -------------------------------------------------------------------------- *)
+  (* ------------------------------------------------------------------------ *)
   let optimize_stack = Settings.optimize_stack
 
   let has_semantic_value s =
@@ -572,8 +580,8 @@ module L = struct
 
 
 
-  (** Values pushed on the stack by the goto routine associated to nonterminal [nt].
-      Only used if [gotopushes nt] is true. *)
+  (** Values pushed on the stack by the goto routine associated to nonterminal
+      [nt]. Only used if [gotopushes nt] is true. *)
   let goto_pushlist nt =
     if optimize_stack then
       Invariant.fold_top
@@ -678,7 +686,8 @@ module L = struct
               ()
           | Some nonterminal ->
               set_final_type
-                (IL.TypTextual (Nonterminal.ocamltype_of_start_symbol nonterminal)) ) ;
+                (IL.TypTextual
+                   (Nonterminal.ocamltype_of_start_symbol nonterminal)) ) ;
         set_stack_type (stack_type_run s) ;
         run
           s
@@ -691,7 +700,8 @@ module L = struct
               ()
           | Some nonterminal ->
               set_final_type
-                (IL.TypTextual (Nonterminal.ocamltype_of_start_symbol nonterminal)) ) ;
+                ( IL.TypTextual
+                    (Nonterminal.ocamltype_of_start_symbol nonterminal) ) ) ;
         let stack_type = stack_type_reduce prod in
         set_stack_type stack_type ;
         reduce stack_type prod

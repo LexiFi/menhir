@@ -59,7 +59,7 @@ type pattern = PWildcard | PReg of register | PTuple of pattern list
 
 (** A primitive operation involves the execution of some OCaml code. The
    primitive operations include OCaml function calls, read accesses to an
-   OCaml record, accesses to a dummy position, and semantic actions. 
+   OCaml record, accesses to a dummy position, and semantic actions.
 
    The set of registers read by a semantic action [a] is [Action.vars a].
    By convention, in front in every semantic action, we generate an
@@ -240,7 +240,7 @@ module Substitution : sig
   (** [restore_defs s block] generate a definition block with a definition [let x = y] for every rule [x -> y] in [s]*)
 
   val tight_restore_defs : t -> registers -> block -> block
-  (** [tight_restore_defs s registers block] generate a definition block with a definition 
+  (** [tight_restore_defs s registers block] generate a definition block with a definition
             [let x = y] for every rule [x -> y] in [s] such that [x] is in [registers] *)
 
   val fold : (register -> value -> 'a -> 'a) -> t -> 'a -> 'a
@@ -250,7 +250,7 @@ module Substitution : sig
   (** [merge s1 s2] returns a substitution [s] such that :
       for every pair of rules [x -> y], [x -> z] in s1, s2
         if there is no rule [y -> w] in [s1], then [x -> z] is in s,
-      and for every rule [x -> y] in [s1], [x -> apply s2 y] is in [s], 
+      and for every rule [x -> y] in [s1], [x -> apply s2 y] is in [s],
       and for every pair of rules [x -> x], [x -> y] in s1, s2, [x -> y] is in [s]. *)
 
 end

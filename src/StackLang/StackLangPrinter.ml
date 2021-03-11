@@ -38,7 +38,7 @@ let rec value v =
   | VUnit -> label "UNIT"
 
 let substitution substitution =
-  Substitution.fold 
+  Substitution.fold
     ( fun reg value' acc ->
         nl ^^ (register reg) ^^ string " -> " ^^ (value value') ^^ acc )
     substitution
