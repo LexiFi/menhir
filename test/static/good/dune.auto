@@ -1544,6 +1544,32 @@
     (diff camomile.1.0.1-colParser.conflicts.exp
       camomile.1.0.1-colParser.conflicts)))
 
+(rule (target catala.opp.out) (deps catala.mly)
+  (action
+    (with-outputs-to catala.opp.out
+      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+
+(rule (alias catala) (action (diff catala.opp.exp catala.opp.out)))
+
+(rule
+  (targets catala.out catala.automaton catala.automaton.resolved
+    catala.conflicts catala.timings)
+  (deps catala.mly)
+  (action
+    (with-outputs-to catala.out
+      (with-accepted-exit-codes 0
+        (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
+          --timings-to catala.timings %{deps})))))
+
+(rule (alias catala) (action (diff catala.exp catala.out)))
+
+(rule (alias catala) (action (diff catala.automaton.exp catala.automaton)))
+
+(rule (alias catala)
+  (action (diff catala.automaton.resolved.exp catala.automaton.resolved)))
+
+(rule (alias catala) (action (diff catala.conflicts.exp catala.conflicts)))
+
 (rule (target ccss.1.6-parser.opp.out) (deps ccss.1.6-parser.mly)
   (action
     (with-outputs-to ccss.1.6-parser.opp.out
@@ -12213,6 +12239,7 @@
     (alias calc-new-syntax)
     (alias camltemplate.1.0.2-ctParser)
     (alias camomile.1.0.1-colParser)
+    (alias catala)
     (alias ccss.1.6-parser)
     (alias charrua-client.0.9-dhcp_parser)
     (alias christian)
