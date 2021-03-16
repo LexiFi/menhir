@@ -128,6 +128,7 @@ VERSIONS := \
   4.09.0+bytecode-only \
   4.10.0 \
   4.11.1 \
+  4.12.0 \
 
 .PHONY: versions
 versions:
