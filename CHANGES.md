@@ -1,5 +1,9 @@
 # Changes
 
+## 2021/03/XX
+
+* Mention the demo [coq-minicalc](demos/coq-minicalc) in the manual.
+
 ## 2021/03/10
 
 * Menhir now detects and rejects grammars that have a cycle and grammars that
