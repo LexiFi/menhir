@@ -1,9 +1,8 @@
 MENHIR            := menhir
 MENHIRFLAGS       := --coq
-COQINCLUDES       :=
 
 Makefile.coq:
-	coq_makefile -o Makefile.coq Lexer.v MiniCalc.v Parser.v $(COQINCLUDES)
+	coq_makefile -f _CoqProject -o Makefile.coq
 
 Parser.v : Parser.vy
 	$(MENHIR) $(MENHIRFLAGS) $<

@@ -1,4 +1,5 @@
-Require Import Parser Lexer List String PeanoNat.
+Require Import List String PeanoNat.
+From MiniCalc Require Import Parser Lexer.
 Import MenhirLibParser.Inter.
 Open Scope string_scope.
 

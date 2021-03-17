@@ -2,7 +2,7 @@
 (** Hand-written lexer for natural numbers, idents, parens and + - * / *)
 
 Require Import BinNat Ascii String.
-Require Import Parser.
+From MiniCalc Require Import Parser.
 Import MenhirLibParser.Inter.
 Open Scope char_scope.
 Open Scope bool_scope.
