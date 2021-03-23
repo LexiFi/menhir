@@ -1570,6 +1570,152 @@
 
 (rule (alias catala) (action (diff catala.conflicts.exp catala.conflicts)))
 
+(rule (target cca_cpp.opp.out) (deps cca_cpp.mly)
+  (action
+    (with-outputs-to cca_cpp.opp.out
+      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+
+(rule (alias cca_cpp) (action (diff cca_cpp.opp.exp cca_cpp.opp.out)))
+
+(rule
+  (targets cca_cpp.out cca_cpp.automaton cca_cpp.automaton.resolved
+    cca_cpp.conflicts cca_cpp.timings)
+  (deps cca_cpp.mly)
+  (action
+    (with-outputs-to cca_cpp.out
+      (with-accepted-exit-codes 0
+        (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
+          --timings-to cca_cpp.timings %{deps})))))
+
+(rule (alias cca_cpp) (action (diff cca_cpp.exp cca_cpp.out)))
+
+(rule (alias cca_cpp)
+  (action (diff cca_cpp.automaton.exp cca_cpp.automaton)))
+
+(rule (alias cca_cpp)
+  (action (diff cca_cpp.automaton.resolved.exp cca_cpp.automaton.resolved)))
+
+(rule (alias cca_cpp)
+  (action (diff cca_cpp.conflicts.exp cca_cpp.conflicts)))
+
+(rule (target cca_fortran.opp.out) (deps cca_fortran.mly)
+  (action
+    (with-outputs-to cca_fortran.opp.out
+      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+
+(rule (alias cca_fortran)
+  (action (diff cca_fortran.opp.exp cca_fortran.opp.out)))
+
+(rule
+  (targets cca_fortran.out cca_fortran.automaton
+    cca_fortran.automaton.resolved cca_fortran.conflicts cca_fortran.timings)
+  (deps cca_fortran.mly)
+  (action
+    (with-outputs-to cca_fortran.out
+      (with-accepted-exit-codes 0
+        (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
+          --timings-to cca_fortran.timings %{deps})))))
+
+(rule (alias cca_fortran) (action (diff cca_fortran.exp cca_fortran.out)))
+
+(rule (alias cca_fortran)
+  (action (diff cca_fortran.automaton.exp cca_fortran.automaton)))
+
+(rule (alias cca_fortran)
+  (action
+    (diff cca_fortran.automaton.resolved.exp cca_fortran.automaton.resolved)))
+
+(rule (alias cca_fortran)
+  (action (diff cca_fortran.conflicts.exp cca_fortran.conflicts)))
+
+(rule (target cca_java.opp.out) (deps cca_java.mly)
+  (action
+    (with-outputs-to cca_java.opp.out
+      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+
+(rule (alias cca_java) (action (diff cca_java.opp.exp cca_java.opp.out)))
+
+(rule
+  (targets cca_java.out cca_java.automaton cca_java.automaton.resolved
+    cca_java.conflicts cca_java.timings)
+  (deps cca_java.mly)
+  (action
+    (with-outputs-to cca_java.out
+      (with-accepted-exit-codes 0
+        (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
+          --timings-to cca_java.timings %{deps})))))
+
+(rule (alias cca_java) (action (diff cca_java.exp cca_java.out)))
+
+(rule (alias cca_java)
+  (action (diff cca_java.automaton.exp cca_java.automaton)))
+
+(rule (alias cca_java)
+  (action (diff cca_java.automaton.resolved.exp cca_java.automaton.resolved)))
+
+(rule (alias cca_java)
+  (action (diff cca_java.conflicts.exp cca_java.conflicts)))
+
+(rule (target cca_python.opp.out) (deps cca_python.mly)
+  (action
+    (with-outputs-to cca_python.opp.out
+      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+
+(rule (alias cca_python)
+  (action (diff cca_python.opp.exp cca_python.opp.out)))
+
+(rule
+  (targets cca_python.out cca_python.automaton cca_python.automaton.resolved
+    cca_python.conflicts cca_python.timings)
+  (deps cca_python.mly)
+  (action
+    (with-outputs-to cca_python.out
+      (with-accepted-exit-codes 0
+        (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
+          --timings-to cca_python.timings %{deps})))))
+
+(rule (alias cca_python) (action (diff cca_python.exp cca_python.out)))
+
+(rule (alias cca_python)
+  (action (diff cca_python.automaton.exp cca_python.automaton)))
+
+(rule (alias cca_python)
+  (action
+    (diff cca_python.automaton.resolved.exp cca_python.automaton.resolved)))
+
+(rule (alias cca_python)
+  (action (diff cca_python.conflicts.exp cca_python.conflicts)))
+
+(rule (target cca_verilog.opp.out) (deps cca_verilog.mly)
+  (action
+    (with-outputs-to cca_verilog.opp.out
+      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+
+(rule (alias cca_verilog)
+  (action (diff cca_verilog.opp.exp cca_verilog.opp.out)))
+
+(rule
+  (targets cca_verilog.out cca_verilog.automaton
+    cca_verilog.automaton.resolved cca_verilog.conflicts cca_verilog.timings)
+  (deps cca_verilog.mly)
+  (action
+    (with-outputs-to cca_verilog.out
+      (with-accepted-exit-codes 0
+        (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
+          --timings-to cca_verilog.timings %{deps})))))
+
+(rule (alias cca_verilog) (action (diff cca_verilog.exp cca_verilog.out)))
+
+(rule (alias cca_verilog)
+  (action (diff cca_verilog.automaton.exp cca_verilog.automaton)))
+
+(rule (alias cca_verilog)
+  (action
+    (diff cca_verilog.automaton.resolved.exp cca_verilog.automaton.resolved)))
+
+(rule (alias cca_verilog)
+  (action (diff cca_verilog.conflicts.exp cca_verilog.conflicts)))
+
 (rule (target ccss.1.6-parser.opp.out) (deps ccss.1.6-parser.mly)
   (action
     (with-outputs-to ccss.1.6-parser.opp.out
@@ -12240,6 +12386,11 @@
     (alias camltemplate.1.0.2-ctParser)
     (alias camomile.1.0.1-colParser)
     (alias catala)
+    (alias cca_cpp)
+    (alias cca_fortran)
+    (alias cca_java)
+    (alias cca_python)
+    (alias cca_verilog)
     (alias ccss.1.6-parser)
     (alias charrua-client.0.9-dhcp_parser)
     (alias christian)
