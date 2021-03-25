@@ -14,42 +14,54 @@ type measurement =
     minor: float
   ; (* number of words allocated in major heap *)
     major: float
-  ; promoted: float }
+  ; promoted: float
+  ; ast: float }
 
 (* Reading a measurement produced by src/gene.ml. *)
 
-let zero = {tokens= 0.; time= 0.; minor= 0.; major= 0.; promoted= 0.}
+let zero = {tokens= 0.; time= 0.; minor= 0.; major= 0.; promoted= 0.; ast= 0.}
 
 let ( + ) m m' =
   { tokens= m.tokens +. m'.tokens
   ; time= m.time +. m'.time
   ; minor= m.minor +. m'.minor
   ; major= m.major +. m'.major
-  ; promoted= m.promoted +. m'.promoted }
+  ; promoted= m.promoted +. m'.promoted
+  ; ast= m.ast +. m'.ast }
 
 let ( / ) m n =
   { tokens= m.tokens /. n
   ; time= m.time /. n
   ; minor= m.minor /. n
   ; major= m.major /. n
-  ; promoted= m.promoted /. n }
+  ; promoted= m.promoted /. n
+  ; ast= m.ast /. n }
 
 let average ml = List.fold_left ( + ) zero ml / (float_of_int @@ List.length ml)
 
 let read f =
   let c = Scanning.from_file f in
-  Scanf.bscanf c "tokens: %f\ntime: %f\nminor: %f\nmajor: %f\npromoted: %f\n"
-    (fun tokens time minor major promoted ->
-      Scanning.close_in c ;
-      {tokens; time; minor; major; promoted})
+  try
+    Scanf.bscanf c
+      "tokens: %f\ntime: %f\nminor: %f\nmajor: %f\npromoted: %f\nast: %f\n"
+      (fun tokens time minor major promoted ast ->
+        Scanning.close_in c ;
+        {tokens; time; minor; major; promoted; ast})
+  with Scanf.Scan_failure _ ->
+    eprintf "File %s does not conform to expected format." f ;
+    exit 1
 
 (* Printing a measurement. *)
 
 let print m =
   out "Time : %.1f seconds per billion tokens.\n"
     (m.time *. 1000000000.0 /. m.tokens) ;
-  out "Space: %.2f words per token (minor) and %.2f words per token (major).\n"
+  out "Space: %.2f words per token (minor) and %.2f words per token (major)\n"
     (m.minor /. m.tokens) (m.major /. m.tokens) ;
+  out "A total of %.3f words per tokens were allocated\n"
+    ((m.minor +. m.major -. m.promoted) /. m.tokens) ;
+  out "Among these %.2f words per token were used for the AST.\n"
+    (m.ast /. m.tokens) ;
   out "\n" ;
   ()
 

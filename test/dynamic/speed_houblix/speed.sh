@@ -19,7 +19,7 @@ for file in src/*.tokens ; do
   echo "Test file: $file"
   base=${file%.tokens};
   for backend_folder in src/*.backend ; do
-    
+
     backend2=${backend_folder%.backend};
     backend=${backend2:4};
     echo "Running the $backend back-end..."

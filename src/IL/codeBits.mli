@@ -70,6 +70,10 @@ val pat2var: pattern -> string
    functions construct a nested sequence of [let] definitions. *)
 val blet: (pattern * expr) list * expr -> expr
 
+(** Building an inlined [let] construct, with on-the-fly simplification.
+    These two functions construct a nested sequence of [let] definitions. *)
+val bilet: (pattern * expr) list * expr -> expr
+
 (** See [blet]. *)
 val mlet: pattern list -> expr list -> expr -> expr
 
@@ -112,6 +116,7 @@ val marrow: typ list -> typ -> typ
 val prefix: string -> string
 val dataprefix: string -> string
 val tvprefix: string -> string
+val tprefix: string -> string
 
 (** Converting an interface to a structure. Only exception and type definitions
    go through. *)
@@ -131,3 +136,16 @@ val field: bool -> string -> typ -> fielddef
 val branch: pattern -> expr -> branch
 
 val fresh_name : unit -> string
+
+(** Variable *)
+val evar: string -> expr
+
+(** Variables *)
+val evars: string list -> expr list
+
+
+(** Pattern variable *)
+val pvar: string -> pattern
+
+(** Pattern variables *)
+val pvars: string list -> pattern list

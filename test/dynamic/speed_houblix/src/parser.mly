@@ -2,17 +2,17 @@
 
   open AST
   open Position
-  
+
   let list_of_list_option o =
-    match o with 
+    match o with
     | Some l -> l
     | None -> []
 
-  let add_backtick s = 
+  let add_backtick s =
     "`" ^ s ^ "`"
 
   let binop_name binop =
-    Id(add_backtick 
+    Id(add_backtick
         (match binop with
         | PLUS                -> "+"
         | MINUS               -> "-"
@@ -80,8 +80,8 @@
 
 %token         LANGLE
 %token         RANGLE
-%token         LBRACK 
-%token         RBRACK 
+%token         LBRACK
+%token         RBRACK
 %token         LPAR
 %token         RPAR
 %token         LCBRACK
@@ -99,39 +99,39 @@ program:
 definition:
 | val_def = value_definition          { val_def              }
 | type_def = define_type              { type_def             }
-| EXTERN id=located(identifier) COLON 
+| EXTERN id=located(identifier) COLON
          s=located(type_scheme)       { DeclareExtern(id, s) }
 
-%public identifier:
+identifier:
 | id=LOWERCASE_ID { Id(id) }
 
-%public %inline located(X): 
+%inline located(X):
   x=X { Position.with_poss $startpos $endpos x }
 
-%public separated_twolong_list(SEP, ELE):
+separated_twolong_list(SEP, ELE):
  e1=ELE SEP l=separated_nonempty_list(SEP, ELE) { e1 :: l }
 
-%public twolong_list(ELE):
+twolong_list(ELE):
  e1=ELE l=nonempty_list(ELE) { e1 :: l }
 
 value_definition:
 | v = vdefinition { DefineValue v }
 
 vdefinition:
-| LET LPAR  id=located(identifier) 
-        s=preceded(COLON, located(type_scheme)) 
+| LET LPAR  id=located(identifier)
+        s=preceded(COLON, located(type_scheme))
       RPAR
   EQUAL e=located(expr)                                 { SimpleValue(id, Some s, e) }
-| LET   id=located(identifier) 
+| LET   id=located(identifier)
   EQUAL e=located(expr)                                 { SimpleValue(id, None, e) }
 | d = function_definitions                              { d                     }
 
 simple_vdefinition:
-| LET LPAR  id=located(identifier) 
-        s=preceded(COLON, located(type_scheme)) 
+| LET LPAR  id=located(identifier)
+        s=preceded(COLON, located(type_scheme))
       RPAR
   EQUAL e=located(nodef_expr)                                 { SimpleValue(id, Some s, e) }
-| LET   id=located(identifier) 
+| LET   id=located(identifier)
   EQUAL e=located(nodef_expr)                                 { SimpleValue(id, None, e) }
 | d = function_definitions                              { d                     }
 
@@ -139,17 +139,17 @@ function_definitions:
 | FUN l=separated_nonempty_list(AND, function_definition) { RecFunctions(l) }
 
 function_definition:
-| s=option(preceded(COLON, located(type_scheme))) 
-  id=located(identifier) 
-  arg = located(pattern) EQUAL 
+| s=option(preceded(COLON, located(type_scheme)))
+  id=located(identifier)
+  arg = located(pattern) EQUAL
   e=located(expr)                                 { (id, s, FunctionDefinition(arg, e)) }
 (*
 simple_function_definitions:
 | FUN l=separated_nonempty_list(AND, simple_function_definition) { RecFunctions(l) }
 simple_function_definition:
-| s=option(preceded(COLON, located(type_scheme))) 
-  id=located(identifier) 
-  arg=located(pattern) EQUAL 
+| s=option(preceded(COLON, located(type_scheme)))
+  id=located(identifier)
+  arg=located(pattern) EQUAL
   e=located(nodef_expr)                           { (id, s, FunctionDefinition(arg, e)) }*)
 
 
@@ -161,9 +161,9 @@ simple_function_definition:
 nodef_expr:
 | e=binop_prio_0_expr                      { e                                    }
 | e=control_structure                      { e                                    }
-| LPAR BACKSLASH arg=located(pattern) ARROW 
+| LPAR BACKSLASH arg=located(pattern) ARROW
             body=located(nodef_expr) RPAR      { Fun(FunctionDefinition(arg, body))   }
-| LPAR e1=located(binop_prio_0_expr) COLONEQUAL 
+| LPAR e1=located(binop_prio_0_expr) COLONEQUAL
   e2=located(binop_prio_0_expr) RPAR            { Assign(e1, e2)                       }
 
 binop_prio_0_expr:
@@ -191,17 +191,17 @@ ref_deref_expr:
 atomic_expr:
 | r = record                            { r                    }
 | t = tuple                             { t                    }
-| LPAR e=located(atomic_expr) DOT 
+| LPAR e=located(atomic_expr) DOT
   l=located(label) RPAR                      { Field(e, l)          }
 | LPAR e=expr RPAR                      { e                    }
-| LPAR e=located(expr) 
-       COLON 
-       t=located(type_) 
+| LPAR e=located(expr)
+       COLON
+       t=located(type_)
   RPAR                                  { TypeAnnotation(e, t) }
 | v=variable                            { v                    }
 | l=located(literal)                    { Literal l            }
-| LPAR const=located(constructor) 
-  type_args=option(type_argument_apply) 
+| LPAR const=located(constructor)
+  type_args=option(type_argument_apply)
   args=ioption(constructor_arguments) RPAR   { Tagged(const, type_args, list_of_list_option args) }
 
 %inline constructor_arguments:
@@ -211,13 +211,13 @@ atomic_expr:
 | LPAR  l = separated_twolong_list(COMMA, located(binop_prio_0_expr)) RPAR { Tuple(l) }
 
 %inline variable:
-| id = located(identifier) 
+| id = located(identifier)
   types=option(type_argument_apply) { Variable (id, types) }
 
 %inline record:
-| LCBRACK 
-    l=separated_nonempty_list(COMMA, record_expr_member) 
-  RCBRACK 
+| LCBRACK
+    l=separated_nonempty_list(COMMA, record_expr_member)
+  RCBRACK
   types=option(type_argument_apply)                      { Record(l, types) }
 
 
@@ -271,39 +271,39 @@ atomic_pattern:
   targs=option(type_argument_apply)
   l=option(
       delimited(
-        LPAR, 
-        separated_nonempty_list(COMMA, located(pattern)), 
+        LPAR,
+        separated_nonempty_list(COMMA, located(pattern)),
         RPAR))                                            { PTaggedValue(c, targs, list_of_list_option l) }
 | UNDERSCORE                                              { PWildcard                                     }
 | id = located(identifier)                                { PVariable id                                  }
 | lit = located(literal)                                  { PLiteral lit                                  }
-| LCBRACK  
-    l=separated_nonempty_list(COMMA, record_pattern) 
-  RCBRACK 
+| LCBRACK
+    l=separated_nonempty_list(COMMA, record_pattern)
+  RCBRACK
   t = option(type_argument_apply)                         { PRecord(l, t)                                 }
 
 
 
 
 control_structure:
-| IF LPAR cond=located(expr) RPAR 
-  LCBRACK body1=located(expr) RCBRACK 
-  ELSE 
+| IF LPAR cond=located(expr) RPAR
+  LCBRACK body1=located(expr) RCBRACK
+  ELSE
   LCBRACK body2=located(expr) RCBRACK    { IfThenElse(cond, body1, body2) }
-| FOR     id=located(identifier) IN 
-  LPAR    e1=located(expr) 
-    TO    e2=located(expr) 
+| FOR     id=located(identifier) IN
+  LPAR    e1=located(expr)
+    TO    e2=located(expr)
   RPAR
   LCBRACK body=located(expr) RCBRACK     { For(id, e1, e2, body)                 }
 
-| WHILE LPAR cond=located(expr) RPAR 
+| WHILE LPAR cond=located(expr) RPAR
   LCBRACK    body=located(expr) RCBRACK  { While(cond, body)                     }
-| DO LCBRACK body=located(expr) RCBRACK 
-  WHILE LPAR cond=located(expr) RPAR     { Sequence([ body 
+| DO LCBRACK body=located(expr) RCBRACK
+  WHILE LPAR cond=located(expr) RPAR     { Sequence([ body
                                                     ; { value=While(cond, body)
                                                       ; position=body.position }
                                                     ])                           }
-| SWITCH LPAR cond=located(expr) RPAR 
+| SWITCH LPAR cond=located(expr) RPAR
   LCBRACK     cases=switch_cases RCBRACK { Case(cond, cases)                     }
 
 switch_cases:
@@ -314,21 +314,21 @@ switch_branch:
 
 
 %public type_argument_apply:
-(* according to spec, this should be 
+(* according to spec, this should be
 | LANGLE args = separated_nonempty_list(COMMA, located(type_)) RANGLE { args }
 Is not because of test 47-instanciation.bad *)
 | LANGLE args = separated_list(COMMA, located(type_)) RANGLE { args }
 
 %public type_scheme:
-| l = option(delimited(LBRACK, nonempty_list(located(type_variable)), RBRACK)) 
+| l = option(delimited(LBRACK, nonempty_list(located(type_variable)), RBRACK))
   t = located(type_)                                                           { ForallTy(list_of_list_option l, t) }
 
 %public %inline constructor:
 | id = UPPERCASE_ID { KId id }
 
 %public define_type:
-| TYPE id=located(type_constructor) 
-  args=option(type_argument_declaration) EQUAL 
+| TYPE id=located(type_constructor)
+  args=option(type_argument_declaration) EQUAL
   t=type_definition                            { DefineType(id, list_of_list_option args, t) }
 
 %public label:
@@ -336,20 +336,20 @@ Is not because of test 47-instanciation.bad *)
 
 %public type_:
 | t = simple_type     { t               }
-| LPAR t1 = located(type_) 
-  ARROW 
+| LPAR t1 = located(type_)
+  ARROW
   t2 = located(type_) RPAR { TyArrow(t1, t2) }
 
 simple_type:
 | t = very_simple_type                                        { t          }
 | LPAR l = separated_twolong_list(STAR, located(very_simple_type)) RPAR { TyTuple(l) }
- 
+
 very_simple_type:
 | LPAR t = type_ RPAR              { t                                    }
 | var = type_variable              { TyVar var                            }
-| con = type_constructor 
+| con = type_constructor
   args=option(type_argument_apply) { TyCon(con, list_of_list_option args) }
- 
+
 type_argument_declaration:
 | LANGLE args = separated_nonempty_list(COMMA, located(type_variable)) RANGLE { args }
 
@@ -358,11 +358,11 @@ type_definition:
 | LCBRACK l=separated_nonempty_list(COMMA, record_def) RCBRACK                  { DefineRecordType l }
 
 record_def:
-| label=located(label) COLON 
+| label=located(label) COLON
   ty=located(type_)          { (label, ty) }
 
 sum_type_constructor_definition:
-| c=located(constructor) 
+| c=located(constructor)
   args=option(sum_type_constructor_arg_list) { (c, list_of_list_option args) }
 
 sum_type_constructor_arg_list:

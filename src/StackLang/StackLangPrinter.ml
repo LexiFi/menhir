@@ -40,7 +40,7 @@ let rec value v =
 let substitution substitution =
   Substitution.fold
     ( fun reg value' acc ->
-        nl ^^ (register reg) ^^ string " -> " ^^ (value value') ^^ acc )
+        nl ^^ (register reg) ^^ string " := " ^^ (value value') ^^ acc )
     substitution
     empty
 
@@ -56,11 +56,16 @@ let rec pattern p =
 let primitive p =
   match p with
   | PrimOCamlCall (f, rs) ->
-      string f ^^ concat (map (fun r -> space ^^ register r) rs)
+      string f ^^ concat (map (fun r -> space ^^ value r) rs)
   | PrimOCamlFieldAccess (r, f) ->
       utf8format "%s.%s" r f
   | PrimOCamlDummyPos ->
       utf8format "<dummy position>"
+  | PrimSubstOcamlAction (subst, _) ->
+    string "("
+    ^^ substitution subst
+    ^^ utf8format "<semantic action>"
+    ^^ string ")"
   | PrimOCamlAction _ ->
       utf8format "<semantic action>"
 
@@ -92,7 +97,7 @@ let rec block b =
       let rs = RegisterSet.elements rs in
       nl ^^ string "NEED " ^^ separate (comma ^^ space) (map register rs) ^^
       block b
-  | IPush (v, b) ->
+  | IPush (v, _, b) ->
       nl ^^ string "PUSH " ^^ value v ^^
       block b
   | IPop (p, b) ->
@@ -112,12 +117,13 @@ let rec block b =
       block b
   | IDie ->
       nl ^^ string "DIE"
-  | IReturn r ->
-      nl ^^ string "RET  " ^^ register r
+  | IReturn v ->
+      nl ^^ string "RET  " ^^ value v
   | IJump l ->
       nl ^^ string "JUMP " ^^ label l
   | ISubstitutedJump (l, sub) ->
-      nl ^^ substitution sub ^^ nl ^^ string "SJUMP " ^^ label l
+      nl ^^ string "SUBST" ^^ substitution sub ^^
+      nl ^^ string "JUMP " ^^ label l
   | ICaseToken (r, branches, default) ->
       nl ^^ string "CASE " ^^ register r ^^ string " OF" ^^
       concat (map branch (
@@ -129,8 +135,12 @@ let rec block b =
       concat (map branch (
         map (fun (pat, b) -> (tagpat pat, block b)) branches
       ))
-  | ITypedBlock ({block=b; stack_type=_; final_type=_}) ->
-      nl ^^ string "TYPED " ^^ block b
+  | ITypedBlock ({block=b; stack_type=_; final_type=_; needed_registers=rs}) ->
+      let rs = RegisterSet.elements rs in
+      nl
+      ^^ string "TYPED "
+      ^^ separate (comma ^^ space) (map register rs)
+      ^^ block b
 
 let entry_comment entry_labels label =
   if LabelSet.mem label entry_labels then
@@ -156,3 +166,6 @@ let print_value f v =
 
 let print_substitution f s =
   ToChannel.pretty 0.8 80 f (substitution s)
+
+let print_block f b =
+  ToChannel.pretty 0.8 80 f (block b)
