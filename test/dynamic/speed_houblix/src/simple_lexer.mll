@@ -5,7 +5,7 @@
 
 
 (*
- 
+
 
   let get_char_quoted s =
     let s' = String.sub s 1 (String.length (s - 2))
@@ -49,8 +49,8 @@ rule token = parse
   | "ARROW"               { ARROW               }
   | "LPAR"                { LPAR                }
   | "RPAR"                { RPAR                }
-  | "LBRACK"              { LBRACK              } 
-  | "RBRACK"              { RBRACK              } 
+  | "LBRACK"              { LBRACK              }
+  | "RBRACK"              { RBRACK              }
   | "PIPEPIPE"            { PIPEPIPE            }
   | "EQUALQUESTION"       { EQUALQUESTION       }
   | "LANGLEEQUALQUESTION" { LANGLEEQUALQUESTION }

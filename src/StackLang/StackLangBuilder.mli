@@ -35,7 +35,7 @@ module Build (L : sig
   val code: label -> unit
 
   (** A family of entry labels. *)
-  val entry: label Lr1.NodeMap.t
+  val entry: string StringMap.t
 
   val states: cell_info array Lr1.NodeMap.t
 
@@ -68,7 +68,7 @@ val set_needed: register list -> unit
 
 val need: registers -> unit
 val need_list: register list -> unit
-val push: value -> unit
+val push: value -> cell_info -> unit
 val pop: pattern -> unit
 val def: pattern -> value -> unit
 val prim: register -> primitive -> unit
@@ -82,7 +82,7 @@ val move: register -> register -> unit
 (* Group 2: Instructions with zero successor. *)
 
 val die: unit -> unit
-val return: register -> unit
+val return: value -> unit
 val jump: label -> unit
 
 (* Group 3: Case analysis instructions. *)

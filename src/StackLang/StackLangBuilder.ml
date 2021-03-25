@@ -23,7 +23,7 @@ type state = Idle | Open of (block -> block) | Closed of block
 let current : state ref = ref Idle
 let current_stack_type : cell_info array option ref = ref None
 let current_final_type : IL.typ option ref = ref None
-let current_needed : string list option ref = ref None
+let current_needed : RegisterSet.t option ref = ref None
 
 let current_has_case_tag : bool ref = ref false
 
@@ -55,7 +55,12 @@ let typed_exec (body : unit -> unit) =
       current_final_type := None ;
       current_needed := None ;
       current_has_case_tag := false ;
-      { block ; stack_type ; final_type ; needed_registers ; has_case_tag }
+      { block
+      ; stack_type
+      ; final_type
+      ; needed_registers
+      ; has_case_tag
+      ; state_register= "_menhir_s"}
 
 let exec (body : unit -> unit) =
   current := Open identity ;
@@ -114,12 +119,12 @@ let set_final_type typ =
     current_final_type := Some typ
 
 let set_needed needed =
-  current_needed := Some needed
+  current_needed := Some (RegisterSet.of_list needed)
 let need rs = extend (fun block -> INeed (rs, block))
 
 let need_list rs = need (RegisterSet.of_list rs)
 
-let push v = extend (fun block -> IPush (v, block))
+let push v cell = extend (fun block -> IPush (v, cell, block))
 
 let pop p = extend (fun block -> IPop (p, block))
 
@@ -210,7 +215,7 @@ module Build (L : sig
 
   val code : label -> unit
 
-  val entry : label Lr1.NodeMap.t
+  val entry : string StringMap.t
 
   val states : cell_info array Lr1.NodeMap.t
 
@@ -229,7 +234,7 @@ struct
 
   let cfg = !cfg
 
-  let entry = Lr1.NodeMap.map print entry
+  let entry = entry
 
   let program = {cfg; entry; states}
 end

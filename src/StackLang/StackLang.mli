@@ -44,6 +44,9 @@ type terminal = Grammar.Terminal.t
 (** A set of terminal symbols. *)
 type terminals = Grammar.TerminalSet.t
 
+(** Abstract type. Function to use it are found in the [Substitution] module *)
+type substitution
+
 (* -------------------------------------------------------------------------- *)
 
 (** A value is a piece of data that can be pushed onto the stack. Values
@@ -65,10 +68,12 @@ type pattern = PWildcard | PReg of register | PTuple of pattern list
    By convention, in front in every semantic action, we generate an
    [INeed] instruction so as to make this requirement explicit. *)
 type primitive =
-  | PrimOCamlCall of string * register list
+  | PrimOCamlCall of string * value list
   | PrimOCamlFieldAccess of register * field
   | PrimOCamlDummyPos
   | PrimOCamlAction of action
+  | PrimSubstOcamlAction of substitution * action
+
 
 and field = string
 
@@ -95,9 +100,6 @@ type tagpat = TagMultiple of tag list
 
 (* -------------------------------------------------------------------------- *)
 
-(** Abstract type. Function to use it are found in the [Substitution] module *)
-type substitution
-
 (** Type representing a stack cell *)
 type cell_info =
   { typ: Stretch.ocamltype option (* ; possible_states: Lr1.NodeSet.t *)
@@ -123,7 +125,7 @@ type block =
   (* [IPush] pushes a value onto the stack. [IPop] pops a value off the stack.
      [IDef] can be viewed as a sequence of a push and a pop. It can be used to
      move data between registers or to load a value into a register. *)
-  | IPush of value * block
+  | IPush of value * cell_info * block
   | IPop of pattern * block
   | IDef of pattern * value * block
   (* [IPrim] invokes a primitive operation and stores its result in a
@@ -138,9 +140,9 @@ type block =
   (* [IDie] causes an abrupt termination of the program. It is translated
      into OCaml by raising the exception [Error]. *)
   | IDie
-  (* [IReturn] causes the normal termination of the program. A value read
-     from a register is returned. *)
-  | IReturn of register
+  (* [IReturn] causes the normal termination of the program. A value is
+     returned. *)
+  | IReturn of value
   (* [IJump] causes a jump to a block identified by its label. The registers
      that are needed by the destination block must form a subset of the
      registers that are defined at the point of the jump. *)
@@ -167,8 +169,9 @@ type block =
 and typed_block =
 { block: block
 ; stack_type: cell_info array
+; state_register: register
 ; final_type: IL.typ option
-; needed_registers: string list
+; needed_registers: RegisterSet.t
 ; has_case_tag: bool }
 
 
@@ -190,7 +193,7 @@ type cfg = typed_block LabelMap.t
    marked as entry points. There is in fact a mapping of the LR(1) start
    states to entry points. *)
 type program =
-  {cfg: cfg; entry: label Lr1.NodeMap.t; states: cell_info array Lr1.NodeMap.t}
+  {cfg: cfg; entry: string StringMap.t; states: cell_info array Lr1.NodeMap.t}
 
 (* -------------------------------------------------------------------------- *)
 
@@ -209,48 +212,78 @@ val entry_labels : program -> registers
 (** Returns the set of needed registers from a typed block. *)
 val needed : typed_block -> RegisterSet.t
 
-(** This module provides a API to specifie substitutions of registers by values.
-   This is useful to inline values or rename them without generating a lot of defs before every jump. *)
+(** Returns the set of register that appear in a value *)
+val value_registers : value -> registers
+
+(** This module provides an API to specifie substitutions of registers by
+    values. This is useful to inline values or rename them without generating a
+    lot of defs before every jump. *)
 module Substitution : sig
+
+  (** The type of substitutions. *)
   type t = substitution
 
-  val empty : t
   (** empty substitution *)
+  val empty : t
 
-  val add : register -> value -> t -> t
-  (** [add register value s] adds a rule [register -> value] to [s]*)
+  (** [extend reg value s] extends [s] with a rule [reg := value].
+      [restore_defs (extend reg value s) block] is equivalent to
+      [restore_defs s (IDef(PReg reg, value, block))].
+      *)
+  val extend: register -> value -> t -> t
 
+  (*val authoritative_extend: register -> value -> t -> t
+
+  val authoritative_extend_pattern: t -> pattern -> value -> t*)
+
+  val extend_pattern: t -> pattern -> value -> t
+
+
+  (** [remove s pattern] remove every rule of the shape [r := _] for every [r] a
+      register occuring in [pattern] *)
   val remove : t -> pattern -> t
-  (** [remove s pattern] remove every rule of the shape [r -> _] for every [r] a register occuring in [pattern] *)
 
+  val remove_registers : t -> RegisterSet.t -> t
+
+  val remove_value : t -> value -> t
+
+  (** [apply s value] apply to rules of the substitution [s] to [value]
+      recursively.
+      [IReturn (apply s value)] is equivalent to
+      [restore_defs s (IReturn value)]. *)
   val apply : t -> value -> value
-  (** [substitute s value] apply to rules of the substitution [s] to [value] recursively.
-      If no rule is found for a register [x], it behaves as if [x -> x] was a rule. *)
 
+  (** [substitute s pattern] apply the rules of the substitution [s] to
+      [pattern] recursively. It assumes that every relevant rule has shape
+      [_ := VReg(_)]. *)
   val apply_pattern : t -> pattern -> pattern
-  (** [substitute s pattern] apply the rules of the substitution [s] to [pattern] recursively.
-           It assumes that every relevant rule has shape [_ -> VReg(_)] *)
 
+  (** [apply_reg s reg] if [apply s (VReg reg)] returns a value of shape
+      [VReg reg'], returns [reg']. Fails if it is not the case. *)
   val apply_reg : t -> register -> register
 
+  (** [apply_registers s regs] returns the set of register [reg'] such that
+      there exists [reg] in [regs] such that [reg'] is referred to in
+      [apply s reg]. *)
   val apply_registers : t -> registers -> registers
-  (** Apply the substitution to a register set *)
 
+  (** [restore_defs s block] generate a definition block with a definition
+      [let x = y] for every rule [x := y] in [s].
+      The order is not guaranteed : however the interface of this module is
+      carefully constructed to maintain the same invariants as regular
+      definitions. *)
   val restore_defs : t -> block -> block
-  (** [restore_defs s block] generate a definition block with a definition [let x = y] for every rule [x -> y] in [s]*)
 
-  val tight_restore_defs : t -> registers -> block -> block
   (** [tight_restore_defs s registers block] generate a definition block with a definition
-            [let x = y] for every rule [x -> y] in [s] such that [x] is in [registers] *)
+            [let x = y] for every rule [x := y] in [s] such that [x] is in [registers] *)
+  val tight_restore_defs : t -> registers -> block -> block
 
-  val fold : (register -> value -> 'a -> 'a) -> t -> 'a -> 'a
   (** Fold over every rule. *)
+  val fold : (register -> value -> 'a -> 'a) -> t -> 'a -> 'a
 
+  (** [compose s1 s2] returns a substitution [s] such that :
+      [restore_defs s1 (restore_defs s2 block)] is equivalent to
+      [restore_defs s block] *)
   val compose : t -> t -> t
-  (** [merge s1 s2] returns a substitution [s] such that :
-      for every pair of rules [x -> y], [x -> z] in s1, s2
-        if there is no rule [y -> w] in [s1], then [x -> z] is in s,
-      and for every rule [x -> y] in [s1], [x -> apply s2 y] is in [s],
-      and for every pair of rules [x -> x], [x -> y] in s1, s2, [x -> y] is in [s]. *)
 
 end

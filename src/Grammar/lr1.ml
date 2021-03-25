@@ -466,6 +466,9 @@ let () =
 let number node =
   node
 
+let node_of_number number =
+  number
+
 let print node =
   Printf.sprintf "%d" (number node)
 

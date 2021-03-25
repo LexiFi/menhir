@@ -18,3 +18,5 @@ val print_value: out_channel -> StackLang.value -> unit
 val print_substitution: out_channel -> StackLang.substitution -> unit
 
 val print: out_channel -> StackLang.program -> unit
+
+val print_block: out_channel -> StackLang.block -> unit

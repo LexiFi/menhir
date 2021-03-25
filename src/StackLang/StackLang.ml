@@ -21,8 +21,6 @@
 
 (* -------------------------------------------------------------------------- *)
 
-
-
 (* Basic type definitions. *)
 
 (* A register is identified by its name. *)
@@ -77,10 +75,11 @@ type pattern = PWildcard | PReg of register | PTuple of pattern list
    [INeed] instruction so as to make this requirement explicit. *)
 
 type primitive =
-  | PrimOCamlCall of string * register list
+  | PrimOCamlCall of string * value list
   | PrimOCamlFieldAccess of register * field
   | PrimOCamlDummyPos
   | PrimOCamlAction of action
+  | PrimSubstOcamlAction of value RegisterMap.t * action
 
 and field = string
 
@@ -109,87 +108,6 @@ type tagpat = TagMultiple of tag list
 
 (* -------------------------------------------------------------------------- *)
 
-(* This module provides a API to specifie substitutions of registers by values.
-   This is useful to inline values or rename them without generating a lot of defs before every jump. *)
-module Substitution_ = struct
-    type t = value RegisterMap.t
-
-    let empty = RegisterMap.empty
-    let add register value map =
-        RegisterMap.add register value map
-        (* match value with
-        | VReg register' when register = register' -> map
-        | _ -> RegisterMap.add register value map *)
-
-    let rec remove substitution pattern =
-        match pattern with
-        | PReg reg -> RegisterMap.remove reg substitution
-        | PWildcard -> substitution
-        | PTuple li -> List.fold_left remove substitution li
-    let rec apply substitution =
-    function
-    | VReg register ->
-        Option.value
-          (RegisterMap.find_opt register substitution)
-          ~default:(VReg register)
-    | VTuple li -> VTuple (List.map (apply substitution) li)
-    | v -> v
-
-    let rec apply_pattern substitution =
-      function
-      | PReg register ->
-            (match RegisterMap.find_opt register substitution with
-            | Some (VReg reg) -> PReg reg
-            | Some _ -> failwith "Could not transform value into pattern"
-            | None -> PReg register)
-      | PTuple li -> PTuple ( List.map
-                                (apply_pattern substitution)
-                                li )
-      | v -> v
-
-    let apply_reg substitution reg =
-      match RegisterMap.find_opt reg substitution with
-      | None -> reg
-      | Some VReg reg -> reg
-      | Some _ -> raise (Invalid_argument "apply_reg")
-    let apply_registers substitution (registers:registers)=
-        let rec add_value set =
-          function
-          | VUnit | VTag _ -> set
-          | VReg reg -> RegisterSet.add reg set
-          | VTuple li -> List.fold_left (add_value) set li
-        in
-        RegisterSet.fold
-          ( fun reg acc ->
-              let v = RegisterMap.find_opt reg substitution in
-              match v with
-              | None -> acc
-              | Some v -> add_value acc v )
-          registers
-          RegisterSet.empty
-
-   let fold : (register -> value -> 'b -> 'b) -> t -> 'b -> 'b = RegisterMap.fold
-
-
-   let compose s1 s2 =
-      (*
-      for every rule [x->y] in s1, we return a rule [x->s2(y)]
-      *)
-      let s =
-        fold
-          ( fun register value map ->
-              add register (apply s2 value) map)
-          empty s1
-      in
-      RegisterMap.merge
-        ( fun _reg v v2 ->
-            match v, v2 with
-            | None, v2 -> v2
-            | v, None -> v
-            | Some _, Some _ -> v2 )
-        s s2
-end
-
 (* A block is a tree-shaped collection of instructions. (In classic compiler
    terminology, it could be known as an extended basic block.) The simplest
    instructions have exactly one successor. However, the case analysis
@@ -197,18 +115,20 @@ end
    branches become separate), and the control instructions have no successor
    (this is where a tree branch ends). *)
 
-type cell_info = { typ: Stretch.ocamltype option
-                 (* ; possible_states: Lr1.NodeSet.t *)
-                 ; hold_semv: bool
-                 ; hold_state: bool
-                 ; hold_startpos: bool
-                 ; hold_endpos: bool }
+type cell_info =
+  { typ: Stretch.ocamltype option (* ; possible_states: Lr1.NodeSet.t *)
+  ; hold_semv: bool
+  ; hold_state: bool
+  ; hold_startpos: bool
+  ; hold_endpos: bool }
 
-type typed_block = { block: block
-                   ; stack_type: cell_info array
-                   ; final_type: IL.typ option
-                   ; needed_registers: string list
-                   ; has_case_tag: bool }
+type typed_block =
+  { block: block
+  ; stack_type: cell_info array
+  ; state_register: register
+  ; final_type: IL.typ option
+  ; needed_registers: RegisterSet.t
+  ; has_case_tag: bool }
 
 and block =
   (* Group 1: Instructions with exactly one successor. *)
@@ -221,7 +141,7 @@ and block =
   (* [IPush] pushes a value onto the stack. [IPop] pops a value off the stack.
      [IDef] can be viewed as a sequence of a push and a pop. It can be used to
      move data between registers or to load a value into a register. *)
-  | IPush of value * block
+  | IPush of value * cell_info * block
   | IPop of pattern * block
   | IDef of pattern * value * block
   (* [IPrim] invokes a primitive operation and stores its result in a
@@ -236,15 +156,14 @@ and block =
   (* [IDie] causes an abrupt termination of the program. It is translated
      into OCaml by raising the exception [Error]. *)
   | IDie
-  (* [IReturn] causes the normal termination of the program. A value read
-     from a register is returned. *)
-  | IReturn of register
+  (* [IReturn] causes the normal termination of the program. A value is
+     returned. *)
+  | IReturn of value
   (* [IJump] causes a jump to a block identified by its label. The registers
      that are needed by the destination block must form a subset of the
      registers that are defined at the point of the jump. *)
   | IJump of label
-
-  | ISubstitutedJump of label * Substitution_.t
+  | ISubstitutedJump of label * value RegisterMap.t
   (* Group 3: Case analysis instructions. *)
 
   (* [ICaseToken] performs a case analysis on a token (which is held in a
@@ -256,8 +175,7 @@ and block =
      pattern. There is no default branch; it is up to the user to ensure that
      the case analysis is exhaustive. *)
   | ICaseTag of register * (tagpat * block) list
-  (*
-   Block with type information *)
+  (* Block with type information *)
   | ITypedBlock of typed_block
 
 (* -------------------------------------------------------------------------- *)
@@ -268,9 +186,9 @@ module LabelSet = StringSet
 module LabelMap = StringMap
 
 type block_info =
-| InfRun of Lr1.node
-| InfReduce of Grammar.Production.index
-| InfGoto of Grammar.Nonterminal.t
+  | InfRun of Lr1.node
+  | InfReduce of Grammar.Production.index
+  | InfGoto of Grammar.Nonterminal.t
 
 type cfg = typed_block LabelMap.t
 
@@ -278,13 +196,15 @@ type cfg = typed_block LabelMap.t
    marked as entry points. There is in fact a mapping of the LR(1) start
    states to entry points. *)
 
-type program = {cfg: cfg; entry: label Lr1.NodeMap.t; states: cell_info array Lr1.NodeMap.t}
+type program =
+  {cfg: cfg; entry: string StringMap.t; states: cell_info array Lr1.NodeMap.t}
 
 (* -------------------------------------------------------------------------- *)
 
 (* A few constructors. *)
 
 let vreg r = VReg r
+
 let vregs rs = List.map vreg rs
 
 (* A few accessors. *)
@@ -301,29 +221,129 @@ let entry_labels program =
    begins with an [INeed] instruction that determines which registers are
    defined upon entry to this block. *)
 
-let needed t_block = RegisterSet.of_list t_block.needed_registers
+let needed t_block = t_block.needed_registers
 
+let rec value_registers = function
+  | VReg reg ->
+      RegisterSet.singleton reg
+  | VTuple li ->
+      List.fold_left RegisterSet.union RegisterSet.empty
+        (List.map value_registers li)
+  | _ ->
+      RegisterSet.empty
+
+(* This module provides a API to specifie substitutions of registers by values.
+   This is useful to inline values or rename them without generating a lot of
+   defs before every jump. *)
 module Substitution = struct
-    include Substitution_
-    let restore_defs substitution block =
-        RegisterMap.fold
-            (fun register value block ->
-               IDef(PReg register, value, block) )
-            substitution
-            block
-    let tight_restore_defs substitution registers block =
-      RegisterSet.fold
-          (fun register block ->
-              let value = apply substitution (VReg register) in
-              if value = VReg register then
-                block
-              else
-                IDef(PReg register, value, block) )
-          registers
-          block
+  type t = value RegisterMap.t
 
+  let empty = RegisterMap.empty
+
+  let rec apply substitution = function
+    | VReg register ->
+        Option.value
+          (RegisterMap.find_opt register substitution)
+          ~default:(VReg register)
+    | VTuple li ->
+        VTuple (List.map (apply substitution) li)
+    | v ->
+        v
+
+  let add reg value map =
+    (*RegisterMap.add register value map*)
+    match value with
+    | VReg reg' when reg = reg' ->
+        map
+    | _ ->
+        RegisterMap.add reg value map
+
+  let rec remove substitution pattern =
+    match pattern with
+    | PReg reg ->
+        RegisterMap.remove reg substitution
+    | PWildcard ->
+        substitution
+    | PTuple li ->
+        List.fold_left remove substitution li
+
+  let remove_registers substitution registers =
+    RegisterSet.fold RegisterMap.remove registers substitution
+
+  let remove_value substitution value =
+    remove_registers substitution @@ value_registers value
+
+  let rec apply_pattern substitution = function
+    | PReg register -> (
+      match RegisterMap.find_opt register substitution with
+      | Some (VReg reg) ->
+          PReg reg
+      | Some _ ->
+          failwith "Substitution : could not transform value into pattern"
+      | None ->
+          PReg register )
+    | PTuple li ->
+        PTuple (List.map (apply_pattern substitution) li)
+    | v ->
+        v
+
+  let apply_reg substitution reg =
+    match RegisterMap.find_opt reg substitution with
+    | None ->
+        reg
+    | Some (VReg reg) ->
+        reg
+    | Some _ ->
+        raise (Invalid_argument "apply_reg")
+
+  let apply_registers substitution (registers : registers) =
+    let rec add_value set = function
+      | VUnit | VTag _ ->
+          set
+      | VReg reg ->
+          RegisterSet.add reg set
+      | VTuple li ->
+          List.fold_left add_value set li
+    in
+    RegisterSet.fold
+      (fun reg acc ->
+        let v = RegisterMap.find_opt reg substitution in
+        match v with
+        | None ->
+            RegisterSet.add reg acc
+        | Some v ->
+            add_value acc v)
+      registers RegisterSet.empty
+
+  let fold = RegisterMap.fold
+
+  let extend reg value map = add reg (apply map value) map
+
+  let rec extend_pattern map pattern value =
+    match (pattern, value) with
+    | PWildcard, _ ->
+        map
+    | PReg reg, value ->
+        extend reg value map
+    | PTuple pli, VTuple vli ->
+        List.fold_left2 extend_pattern map pli vli
+    | _ ->
+        assert false
+
+  let compose s1 s2 = fold (fun reg value s -> extend reg value s) s2 s1
+
+  let restore_defs substitution block =
+    RegisterMap.fold
+      (fun register value block -> IDef (PReg register, value, block))
+      substitution block
+
+  let tight_restore_defs substitution registers block =
+    RegisterSet.fold
+      (fun register block ->
+        let value = apply substitution (VReg register) in
+        if value = VReg register then block
+        else IDef (PReg register, value, block))
+      registers block
 end
 
 type substitution = Substitution.t
-
-

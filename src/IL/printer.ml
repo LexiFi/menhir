@@ -224,7 +224,7 @@ struct
           (exprk AllButLetFunTryMatch)
           e1 seminl (exprlet k pes) e2
     | (PVar id1, EAnnot ((EFun _ as e1), ts1)) :: pes ->
-        fprintf f "let %s : %a = %a in%t%a" id1 
+        fprintf f "let %s : %a = %a in%t%a" id1
           scheme ts1 expr e1 nl (exprlet k pes) e2
     | (PVar id1, EAnnot (e1, ts1)) :: pes ->
         (* TEMPORARY current ocaml does not support type schemes here; drop quantifiers, if any *)
@@ -239,27 +239,29 @@ struct
     | (p1, e1) :: pes ->
         fprintf f "let %a = %a in%t%a" pat p1 expr e1 nl (exprlet k pes) e2
   and exprinlinedlet k pes f e2 =
+    (* TODO : stop duplication *)
+    let let_s = "let[@local]" in
     match pes with
     | [] -> exprk k f e2
     | (PUnit, e1) :: pes ->
         fprintf f "%a%t%a"
           (exprk AllButLetFunTryMatch)
-          e1 seminl (exprlet k pes) e2
+          e1 seminl (exprinlinedlet k pes) e2
     | (PVar id1, EAnnot ((EFun _ as e1), ts1)) :: pes ->
-        fprintf f "let %s : %a = %a [@@inline always] in%t%a" id1 
-          scheme ts1 expr e1 nl (exprlet k pes) e2
+        fprintf f "%s %s : %a = %a in%t%a" let_s id1
+          scheme ts1 expr e1 nl (exprinlinedlet k pes) e2
     | (PVar id1, EAnnot (e1, ts1)) :: pes ->
         (* TEMPORARY current ocaml does not support type schemes here; drop quantifiers, if any *)
-        fprintf f "let %s : %a = %a [@@inline always] in%t%a" id1 typ ts1.body
-          (* scheme ts1 *) expr e1 nl (exprlet k pes) e2
+        fprintf f "%s %s : %a = %a in%t%a" let_s id1 typ ts1.body
+          (* scheme ts1 *) expr e1 nl (exprinlinedlet k pes) e2
     | (PVar id1, EFun (ps1, e1)) :: pes ->
-        fprintf f "let %s%a = %a [@@inline always] in%t%t%a" id1 (list pat0 space) ps1
-          (indent 2 expr) e1 nl nl (exprlet k pes) e2
+        fprintf f "%s %s%a = %a in%t%t%a" let_s id1 (list pat0 space) ps1
+          (indent 2 expr) e1 nl nl (exprinlinedlet k pes) e2
     | (p1, (ELet _ as e1)) :: pes ->
-        fprintf f "let %a =%a%t[@@inline always] in%t%a" pat p1 (indent 2 expr) e1 nl nl
-          (exprlet k pes) e2
+        fprintf f "%s %a =%a%tin%t%a" let_s pat p1 (indent 2 expr) e1 nl nl
+          (exprinlinedlet k pes) e2
     | (p1, e1) :: pes ->
-        fprintf f "let %a = %a [@@inline always] in%t%a" pat p1 expr e1 nl (exprlet k pes) e2
+        fprintf f "%s %a = %a in%t%a" let_s pat p1 expr e1 nl (exprinlinedlet k pes) e2
   and atom f e = exprk OnlyAtom f e
 
   and app f e = exprk OnlyAppOrAtom f e

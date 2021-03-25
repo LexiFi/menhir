@@ -180,6 +180,17 @@ let blet (bindings, body) =
   | _, _ ->
       ELet (bindings, body)
 
+let bilet (bindings, body) =
+  let bindings = simplify bindings in
+  match bindings, body with
+  | [], _ ->
+      body
+  | [ PVar x1, e ], EVar x2 when x1 = x2 ->
+      (* Reduce [let x = e in x] to just [e]. *)
+      e
+  | _, _ ->
+      EInlinedLet (bindings, body)
+
 let mlet formals actuals body =
   blet (List.combine formals actuals, body)
 
@@ -286,6 +297,12 @@ let tvprefix name =
   else
     "ttv_" ^ name
 
+let tprefix name =
+  if Settings.noprefix then
+    name
+  else
+    "t_menhir_" ^ name
+
 (* ------------------------------------------------------------------------ *)
 
 (* Converting an interface to a structure. Only exception and type definitions
@@ -336,3 +353,13 @@ let fresh_name =
     let n = !i in
     i := !i + 1;
     prefix (Printf.sprintf "fresh_name_%i" n)
+
+let evar s =
+  EVar s
+
+let evars = List.map evar
+
+let pvar s =
+  PVar s
+
+let pvars = List.map pvar

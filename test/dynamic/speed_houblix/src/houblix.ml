@@ -93,16 +93,21 @@ let () =
   (* Running the parser several times in succession (without re-generating the
      random data, and without explicitly invoking the GC between runs) should
      allow us to obtain slightly more stable timings. *)
+  printf "Going to perform %d runs\n" (!runs) ;
   let gc1 = Gc.quick_stat () in
   let times1 = Unix.times () in
-  for run = 1 to !runs do
-    printf "%d\n%!"
-      (let _ = Parser.program lexer (new_lexbuf ()) in
-       run)
+  for run = 1 to !runs - 1 do
+    ignore (Parser.program lexer (new_lexbuf ())) ;
+    printf "%d\n%!" run
   done ;
+  let ast =
+    let ast = Parser.program lexer (new_lexbuf ()) in
+    printf "%d\n%!" !runs ; ast
+  in
   let times2 = Unix.times () in
   let elapsed = times2.tms_utime -. times1.tms_utime in
   let gc2 = Gc.quick_stat () in
+  let ast_size = float_of_int (Obj.reachable_words (Obj.repr ast) * !runs) in
   let minor = gc2.minor_words -. gc1.minor_words
   and major = gc2.major_words -. gc1.major_words
   and promoted = gc2.promoted_words -. gc1.promoted_words in
@@ -112,4 +117,4 @@ let () =
   eprintf "minor: %f\n" (minor /. runs) ;
   eprintf "major: %f\n" (major /. runs) ;
   eprintf "promoted: %f\n" (promoted /. runs) ;
-  ()
+  eprintf "ast: %f\n" (ast_size /. runs)
