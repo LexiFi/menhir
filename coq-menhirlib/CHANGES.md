@@ -1,5 +1,15 @@
 # Changes
 
+## 2021/04/XX
+
+* The types returned by the parsing functions, `parse_result` and 
+  `step_result` have been extended to carry additional information 
+  returned during failure. `Fail_pr` (resp. `Fail_sr`) is now an 
+  abbreviation for `Fail_pr_full _ _` (resp. `Fail_sr_full _ _`), and 
+  `Fail_pr_full` (resp. `Fail_sr_full`) contains a payload of the 
+  parser's state and the most recent token when the failure occurred. 
+  This makes possible basic error reporting with Menhir generated Coq parsers.
+
 ## 2021/03/10
 
 * Replace `Require Omega` with `Require ZArith`
