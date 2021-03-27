@@ -4087,7 +4087,7 @@ state~\verb+init+. We omit the details here.)
 %
 \begin{verbatim}
   Inductive parse_result :=
-  | Fail_pr:    parse_result
+  | Fail_pr_full: state -> token -> parse_result
   | Timeout_pr: parse_result
   | Parsed_pr:
       symbol_semantic_type (NT (start_nt init)) ->
@@ -4095,14 +4095,18 @@ state~\verb+init+. We omit the details here.)
       parse_result.
 \end{verbatim}
 
-The outcome \verb+Fail_pr+ means that parsing has failed because of a syntax
-error. (If the completeness of the parser with respect to the grammar has been
-proved, this implies that the input is invalid). The outcome \verb+Timeout_pr+
-means that the fuel has been exhausted. Of course, this cannot happen if the
-parser was given an infinite amount of fuel, as suggested above. The outcome
-\verb+Parsed_pr+ means that the parser has succeeded in parsing a prefix of
-the input stream. It carries the semantic value that has been constructed for
-this prefix, as well as the remainder of the input stream.
+The outcome \verb+Fail_pr_full+ means that parsing has failed because of a syntax 
+error. (If the completeness of the parser with respect to the grammar has been 
+proved, this implies that the input is invalid). It contains two pieces of information: 
+the state of the parser and the token which caused the error. These are provided for 
+error reporting, if desired. It is important to note that, even though they should be correct, 
+the validity of these two pieces of information is not certified by either the correctness 
+or the completeness theorem. For more discussion on this, see \sref{sec:coq:errmsg}.
+The outcome \verb+Timeout_pr+ means that the fuel has been exhausted. 
+Of course, this cannot happen if the parser was given an infinite amount of fuel, 
+as suggested above. The outcome \verb+Parsed_pr+ means that the parser has 
+succeeded in parsing a prefix of the input stream. It carries the semantic value 
+that has been constructed for this prefix, as well as the remainder of the input stream.
 
 For each entry point \verb+entry+ of the grammar, \menhir generates a
 parsing function \verb+entry+, whose type is
@@ -4166,6 +4170,30 @@ The CompCert verified compiler~\cite{compcert,compcert-github} offers a
 real-world example. There, see in particular the directory
 \compcertgithubfile{cparser}.
 
+\subsection{Error messaging options for Coq mode}
+\label{sec:coq:errmsg}
+Users of the Coq mode have several options for providing error messages from the parser.
+If they wish, they can follow the pattern of CompCert and use Menhir's incremental mode for
+a \textit{non-verified} separate parser (\sref{sec:errors:example}). This may also aid in parsing
+languages (such as C) that need a lexical feedback loop for correct parsing. 
+
+A similar option is available in \distrib{demos/calc-syntax-errors}, where a second parser is used after the 
+first to determine errors.
+
+The \verb+Fail_pr_full+ parse result provides the third and simplest option. By including both
+state and token information, it is possible to construct meaningful error messages with a small amount
+of work. A function \verb+N_of_state+ is provided in the \verb+Aut+ module which takes in a state and
+returns the state number. While this is not as powerful as the advanced error handling enabled by the 
+incremental API for non-verified parsers, this does allow interoperability with the existing \messages 
+files and tooling, described in \sref{sec:messages:format} and \sref{sec:messages:tools}. This allows
+error messaging without a second parser. An example is provided in \distrib{demos/coq-syntax-errors}.
+
+Note that the extra information carried by \verb+Fail_pr_full+ (and in the related \verb+Fail_sr_full+ used
+internally) is not verified. They are provided for convenience, but not with proofs of their correctness.
+
+Users who wish to ignore this extra information can use the abbreviated notation provided, \verb+Fail_pr+ and 
+\verb+Fail_sr+, as used in the statements of the parser theorems. (These are only available in Coq code,
+such as in \distrib{demos/coq-minicalc}, not in extracted OCaml). 
 % ------------------------------------------------------------------------------
 
 \section{Building grammarware on top of \menhir}
