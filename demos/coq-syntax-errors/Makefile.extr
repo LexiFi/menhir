@@ -1,0 +1,40 @@
+OCAMLC=ocamlc
+OCAMLOPT=ocamlopt
+OCAMLDEP=ocamldep
+OCAMLLEX=ocamllex -q
+INCLUDES= -I extraction/  # all relevant -I options here
+OCAMLFLAGS=$(INCLUDES)    # add other options for ocamlc here
+OCAMLOPTFLAGS=$(INCLUDES) # add other options for ocamlopt here
+
+REQS = extraction/Datatypes.cmo extraction/Specif.cmo extraction/Decimal.cmo extraction/Hexadecimal.cmo extraction/Numeral.cmo extraction/Bool.cmo extraction/PeanoNat.cmo extraction/Equalities.cmo extraction/Orders.cmo extraction/OrdersTac.cmo extraction/OrderedType.cmo extraction/Nat.cmo extraction/BinNums.cmo extraction/BinPosDef.cmo extraction/BinPos.cmo extraction/Alphabet.cmo extraction/List.cmo extraction/Grammar.cmo extraction/Automaton.cmo extraction/Interpreter_correct.cmo extraction/BinNat.cmo extraction/BinInt.cmo extraction/Int.cmo extraction/OrdersAlt.cmo extraction/Basics.cmo extraction/OrdersFacts.cmo extraction/MSetInterface.cmo extraction/MSetAVL.cmo extraction/FSetAVL.cmo extraction/FMapList.cmo extraction/FMapAVL.cmo extraction/Validator_complete.cmo extraction/Interpreter_complete.cmo extraction/Validator_safe.cmo extraction/Interpreter.cmo extraction/Main.cmo extraction/Parser.cmo extraction/ExtrOcamlIntConv.cmo lexer.cmo ParserMessages.cmo calc.cmo
+
+calc: $(REQS)
+	@ ocamlfind $(OCAMLC) -o calc -package menhirLib -linkpkg $(OCAMLFLAGS) $(REQS)
+	@ echo "Linking calc"
+
+calc.cmo: calc.ml
+	ocamlfind $(OCAMLC) $(OCAMLFLAGS) -c -package menhirLib -linkpkg $<
+
+# Common rules
+.SUFFIXES: .ml .mli .cmo .cmi .cmx
+
+.ml.cmo:
+		$(OCAMLC) $(OCAMLFLAGS) -c $<
+
+.mli.cmi:
+		$(OCAMLC) $(OCAMLFLAGS) -c $<
+
+.ml.cmx:
+		$(OCAMLOPT) $(OCAMLOPTFLAGS) -c $<
+
+%.ml: %.mll
+		$(OCAMLLEX) $<
+
+
+# Dependencies
+.depend: extraction/Parser.ml calc.ml
+		$(OCAMLDEP) $(INCLUDES) extraction/*.mli extraction/*.ml > .depend
+		$(OCAMLDEP) $(INCLUDES) calc.ml >> .depend
+
+
+include .depend
