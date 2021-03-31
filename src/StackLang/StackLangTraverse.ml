@@ -15,8 +15,11 @@ open Printf
 open StackLang
 open StackLangUtils
 module Subst = Substitution
+open NamingConventions
 
 (* -------------------------------------------------------------------------- *)
+
+let state_reg = state
 
 (* Checking that a StackLang program contains no references to undefined
    registers. *)
@@ -276,7 +279,7 @@ let measure program =
 
 let rec detect_def_state pattern value =
   match (pattern, value) with
-  | PReg "_menhir_s", VTag tag ->
+  | PReg reg, VTag tag when reg = state ->
       Some tag
   | PTuple p_li, VTuple v_li ->
       Option.first_value (List.map2 detect_def_state p_li v_li)
@@ -284,7 +287,7 @@ let rec detect_def_state pattern value =
       None
 
 let rec pattern_shadow_state = function
-  | PReg "_menhir_s" ->
+  | PReg reg when reg = state ->
       true
   | PTuple li ->
       List.exists pattern_shadow_state li
@@ -333,12 +336,6 @@ let wt_t_block program label t_block =
     wt_cells_arrays block reason (Array.rev_of_list known_cells) needed_cells
   in
   (* TODO : document and make this display *)
-  let _enrich_known_cells_with_state_knowledge known_cells tag =
-    let state_known_cells = (lookup_tag tag states).known_cells in
-    if Array.length state_known_cells > List.length known_cells then
-      Array.rev_to_list state_known_cells
-    else known_cells
-  in
   let rec wt_block known_cells state = function
     (* These blocks do not care about the state of the stack *)
     | INeed (_, block)
@@ -360,17 +357,17 @@ let wt_t_block program label t_block =
           let state = if pattern_shadow_state pattern then None else state in
           wt_block known_cells state block )
     | IDef (pattern, value, block) ->
-        let known_cells, state =
+        let state =
           match detect_def_state pattern value with
           | None ->
-              (known_cells, state)
+              state
           | Some tag ->
-              ((*enrich_known_cells_with_state_knowledge*) known_cells (*tag*), Some tag)
+              Some tag
         in
         wt_block known_cells state block
     | IJump label as block ->
         let target = lookup label cfg in
-        ( if RegisterSet.mem "_menhir_s" target.needed_registers then
+        ( if RegisterSet.mem state_reg target.needed_registers then
           (* This check that the stack is compatible with the state we are passing
              to the routine. This is only needed if we are actually passing a
              state*)
@@ -389,8 +386,8 @@ let wt_t_block program label t_block =
         (* Same as above, except that there are multiple ways for the state to
            have a value. *)
         let target = lookup label cfg in
-        ( if RegisterSet.mem "_menhir_s" target.needed_registers then
-          match (Subst.apply subst (VReg "_menhir_s"), state) with
+        ( if RegisterSet.mem state_reg target.needed_registers then
+          match (Subst.apply subst (VReg state_reg), state) with
           | VTag _, Some _ ->
               assert false
           | VTag tag, None | _, Some tag ->

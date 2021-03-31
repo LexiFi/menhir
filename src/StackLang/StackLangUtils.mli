@@ -40,4 +40,8 @@ val state_info_intersection: state_info IntMap.t -> tag list -> state_info
 (** Remove empty cells from an array of cell information. *)
 val filter_stack: cell_info array -> cell_info array
 
+val longest_known_cells: cell_info array list -> cell_info array
+
 val test: unit -> unit
+
+val is_pattern_equivalent_to_value: pattern -> value -> bool

@@ -147,6 +147,23 @@ let filter_stack stack =
              true)
        (Array.to_list stack))
 
+let longest_known_cells stack_types =
+  List.hd
+  @@ List.sort
+       (fun s1 s2 -> -compare (Array.length s1) (Array.length s2))
+       stack_types
+
+let rec is_pattern_equivalent_to_value pattern value =
+  match (pattern, value) with
+  | PWildcard, _ ->
+      true
+  | PReg regp, VReg regv when regp = regv ->
+      true
+  | PTuple li_pat, VTuple li_val when List.length li_pat = List.length li_val ->
+      List.for_all2 is_pattern_equivalent_to_value li_pat li_val
+  | _, _ ->
+      false
+
 (* -------------------------------------------------------------------------- *)
 (* Testing *)
 
@@ -154,6 +171,25 @@ let build_cell hold_state hold_semv hold_startpos hold_endpos =
   {typ= None; hold_state; hold_semv; hold_startpos; hold_endpos}
 
 let empty_cell = build_cell false false false false
+
+let test_is_pattern_equivalent_to_value () =
+  assert (
+    is_pattern_equivalent_to_value PWildcard
+      (VTuple [VTag 1; VReg "a"; VTuple [VTag 1; VReg "b"]]) ) ;
+  assert (
+    is_pattern_equivalent_to_value
+      (PTuple [PWildcard; PReg "a"; PTuple [PWildcard; PReg "b"]])
+      (VTuple [VTag 1; VReg "a"; VTuple [VTag 1; VReg "b"]]) ) ;
+  assert (
+    not
+    @@ is_pattern_equivalent_to_value
+         (PTuple [PWildcard; PReg "a"; PTuple [PReg "c"; PReg "b"]])
+         (VTuple [VTag 1; VReg "a"; VTuple [VTag 1; VReg "b"]]) ) ;
+  assert (
+    not
+    @@ is_pattern_equivalent_to_value
+         (PTuple [PWildcard; PReg "a"; PTuple [PReg "b"]])
+         (VTuple [VTag 1; VReg "a"; VTuple [VTag 1; VReg "b"]]) )
 
 let test_cells_intersection () =
   (* check that [cells_intersection a a = a] *)
@@ -209,4 +245,7 @@ let test_filter_stack () =
        ; build_cell false false true false
        ; build_cell false false true true |] )
 
-let test () = test_filter_stack () ; test_cells_intersection ()
+let test () =
+  test_is_pattern_equivalent_to_value () ;
+  test_filter_stack () ;
+  test_cells_intersection ()

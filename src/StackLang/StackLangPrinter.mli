@@ -24,3 +24,7 @@ val print_block: out_channel -> StackLang.block -> unit
 val print_known_cells: out_channel -> StackLang.cell_info array -> unit
 
 val print_states: out_channel -> StackLang.state_info StackLang.TagMap.t -> unit
+
+val pattern_to_string: StackLang.pattern -> string
+
+val value_to_string: StackLang.value -> string
