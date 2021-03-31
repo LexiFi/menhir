@@ -29,6 +29,8 @@ type register = string
 
 module RegisterSet = StringSet
 module RegisterMap = StringMap
+module TagMap = IntMap
+module TagSet = IntSet
 
 type registers = RegisterSet.t
 
@@ -120,11 +122,14 @@ type cell_info =
   ; hold_startpos: bool
   ; hold_endpos: bool }
 
+type state_info =
+  {known_cells: cell_info array; sfinal_type: Stretch.ocamltype option}
+
 type typed_block =
   { block: block
   ; stack_type: cell_info array
   ; state_register: register
-  ; final_type: IL.typ option
+  ; final_type: Stretch.ocamltype option
   ; needed_registers: RegisterSet.t
   ; has_case_tag: bool }
 
@@ -183,49 +188,13 @@ and block =
 module LabelSet = StringSet
 module LabelMap = StringMap
 
-type block_info =
-  | InfRun of Lr1.node
-  | InfReduce of Grammar.Production.index
-  | InfGoto of Grammar.Nonterminal.t
-
 type cfg = typed_block LabelMap.t
 
 (* A complete program is a control flow graph where some labels have been
    marked as entry points. There is in fact a mapping of the LR(1) start
    states to entry points. *)
 
-type program =
-  {cfg: cfg; entry: string StringMap.t; states: cell_info array Lr1.NodeMap.t}
-
-(* -------------------------------------------------------------------------- *)
-
-(* A few constructors. *)
-
-let vreg r = VReg r
-
-let vregs rs = List.map vreg rs
-
-(* A few accessors. *)
-
-let lookup label map =
-  try LabelMap.find label map with Not_found -> assert false
-
-let entry_labels program = StringMap.domain program.entry
-
-(* We assume that every labeled block in a well-formed control flow graph
-   begins with an [INeed] instruction that determines which registers are
-   defined upon entry to this block. *)
-
-let needed t_block = t_block.needed_registers
-
-let rec value_registers = function
-  | VReg reg ->
-      RegisterSet.singleton reg
-  | VTuple li ->
-      List.fold_left RegisterSet.union RegisterSet.empty
-        (List.map value_registers li)
-  | _ ->
-      RegisterSet.empty
+type program = {cfg: cfg; entry: string StringMap.t; states: state_info TagMap.t}
 
 (* This module provides a API to specifie substitutions of registers by values.
    This is useful to inline values or rename them without generating a lot of
@@ -265,8 +234,13 @@ module Substitution = struct
   let remove_registers substitution registers =
     RegisterSet.fold RegisterMap.remove registers substitution
 
-  let remove_value substitution value =
-    remove_registers substitution @@ value_registers value
+  let rec remove_value substitution = function
+    | VReg reg ->
+        remove substitution (PReg reg)
+    | VTuple li ->
+        List.fold_left remove_value substitution li
+    | _ ->
+        substitution
 
   let rec apply_pattern substitution = function
     | PReg register -> (

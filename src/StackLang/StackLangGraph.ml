@@ -13,6 +13,7 @@
 
 open Dot
 open StackLang
+open StackLangUtils
 
 (* [uniq] transforms an arbitrary [iter] function into one that produces each
    element at most once. *)
@@ -34,7 +35,7 @@ let print program =
     let name label = label
 
     let successors (f : ?style:style -> label:string -> vertex -> unit) label =
-      uniq StackLangTraverse.successors (fun target -> f ~label:"" target) (lookup label program.cfg).block
+      uniq StackLangUtils.successors (fun target -> f ~label:"" target) (lookup label program.cfg).block
 
 
     let iter (f : ?shape:shape -> ?style:style -> label:string -> vertex -> unit) =

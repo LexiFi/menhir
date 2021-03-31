@@ -45,26 +45,6 @@ let ptuple = function
   | ps ->
       PTuple ps
 
-(* A list subject to a condition. *)
-
-let ifn condition xs =
-  if condition then
-    xs
-  else
-    []
-
-let if1 condition x =
-  if condition then
-    [ x ]
-  else
-    []
-
-let ifnlazy condition xs =
-  if condition then
-    xs()
-  else
-    []
-
 (* The unit type. *)
 
 let tunit =

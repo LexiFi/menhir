@@ -44,6 +44,42 @@ let substitution substitution =
     substitution
     empty
 
+let ocamltype =
+  function
+  | Stretch.Inferred typ -> string typ
+  | Stretch.(Declared {stretch_content}) -> string stretch_content
+
+let cell_info {typ; hold_semv; hold_state; hold_startpos; hold_endpos} =
+  string "["
+  ^^ (match typ with None -> string "." | Some typ -> ocamltype typ  )
+  ^^ tag (Bool.to_int hold_semv)
+  ^^ tag (Bool.to_int hold_state)
+  ^^ tag (Bool.to_int hold_startpos)
+  ^^ tag (Bool.to_int hold_endpos)
+  ^^ string "]"
+
+
+let known_cells known_cells=
+  Array.fold_left
+    (fun doc cell -> doc ^^ cell_info cell)
+    empty
+    known_cells
+
+let state_info {known_cells=kn; sfinal_type} =
+  nl ^^ string "Known_cells: " ^^ known_cells kn ^^
+  nl ^^ string "Final type: " ^^ PPrintOCaml.option ocamltype sfinal_type
+
+let states states =
+  string "States :"
+  ^^ nest 2 ( TagMap.fold
+                ( fun t si doc ->
+                    nl
+                    ^^ string "State "
+                    ^^ tag t
+                    ^^ nest 2 (state_info si)
+                    ^^ doc )
+                states empty )
+
 let rec pattern p =
   match p with
   | PWildcard ->
@@ -135,11 +171,18 @@ let rec block b =
       concat (map branch (
         map (fun (pat, b) -> (tagpat pat, block b)) branches
       ))
-  | ITypedBlock ({block=b; stack_type=_; final_type=_; needed_registers=rs}) ->
+  | ITypedBlock ({block=b; stack_type; needed_registers=rs}) ->
       let rs = RegisterSet.elements rs in
       nl
-      ^^ string "TYPED "
+      ^^ string "TYPED {"
+      ^^ nl
+      ^^ string "  Known cells : "
+      ^^ known_cells stack_type
+      ^^ nl
+      ^^ string "  Needed registers :"
       ^^ separate (comma ^^ space) (map register rs)
+      ^^ nl
+      ^^ string "}"
       ^^ block b
 
 let entry_comment entry_labels label =
@@ -153,19 +196,28 @@ let labeled_block entry_labels (label, {block=b; stack_type=_}) =
   string label ^^ colon ^^ nest 2 (block b) ^^ nl ^^ nl
 
 let program program =
-  program.cfg
+  states program.states ^^
+  (program.cfg
   |> LabelMap.bindings
-  |> map (labeled_block (entry_labels program))
-  |> concat
+  |> map (labeled_block (StringMap.domain program.entry))
+  |> concat)
 
+let to_channel =
+  ToChannel.pretty 0.8 80
 let print f prog =
-  ToChannel.pretty 0.8 80 f (program prog)
+  to_channel f (program prog)
 
 let print_value f v =
-  ToChannel.pretty 0.8 80 f (value v)
+  to_channel f (value v)
 
 let print_substitution f s =
-  ToChannel.pretty 0.8 80 f (substitution s)
+  to_channel f (substitution s)
 
 let print_block f b =
-  ToChannel.pretty 0.8 80 f (block b)
+  to_channel f (block b)
+
+let print_known_cells f ks =
+  to_channel f (known_cells ks)
+
+let print_states f s =
+  to_channel f (states s)

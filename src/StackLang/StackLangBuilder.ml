@@ -22,7 +22,7 @@ type state = Idle | Open of (block -> block) | Closed of block
 
 let current : state ref = ref Idle
 let current_stack_type : cell_info array option ref = ref None
-let current_final_type : IL.typ option ref = ref None
+let current_final_type : Stretch.ocamltype option ref = ref None
 let current_needed : RegisterSet.t option ref = ref None
 
 let current_has_case_tag : bool ref = ref false
@@ -224,7 +224,7 @@ module Build (L : sig
 
   val entry : string StringMap.t
 
-  val states : cell_info array Lr1.NodeMap.t
+  val states : state_info TagMap.t
 
 end) =
 struct

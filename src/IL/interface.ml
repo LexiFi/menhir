@@ -157,7 +157,7 @@ let incremental_api grammar () : interface =
     MTSigEnd (
       IIComment "The incremental API." ::
       IIInclude (incremental_engine()) ::
-      ifnlazy Settings.inspection (inspection_api grammar)
+      List.ifnlazy Settings.inspection (inspection_api grammar)
     )
   ) ::
 
@@ -172,7 +172,7 @@ let incremental_api grammar () : interface =
 let interface grammar = [
   IIFunctor (grammar.parameters,
     monolithic_api grammar @
-    ifnlazy Settings.table (incremental_api grammar)
+    List.ifnlazy Settings.table (incremental_api grammar)
   )
 ]
 

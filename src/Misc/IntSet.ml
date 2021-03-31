@@ -11,46 +11,8 @@
 (*                                                                            *)
 (******************************************************************************)
 
-let defined = function None -> false | Some _ -> true
+include Set.Make (Int)
 
-let map f = function None -> None | Some x -> Some (f x)
-
-let iter f o = match o with None -> () | Some x -> f x
-
-let fold f o accu = match o with None -> accu | Some x -> f x accu
-
-let force = function Some x -> x | None -> assert false
-
-let project = function
-  | Some x ->
-      x
-  | None ->
-      (* Presumably, an error message has already been printed. *)
-      exit 1
-
-let equal equal o1 o2 =
-  match (o1, o2) with
-  | None, None ->
-      true
-  | Some x1, Some x2 ->
-      equal x1 x2
-  | None, Some _ | Some _, None ->
-      false
-
-let hash hash = function Some x -> hash x | None -> Hashtbl.hash None
-
-let value o ~default = match o with Some x -> x | None -> default
-
-let rec first_value =
-function
-  | Some e :: _ ->
-      Some e
-  | None :: li ->
-      first_value li
-  | [] ->
-      None
-
-let simplify =
-    function
-    | None -> None
-    | Some o -> o
+(* [map] appears in OCaml 4.04. *)
+let map f xs =
+  fold (fun x accu -> add (f x) accu) xs empty
