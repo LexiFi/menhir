@@ -13,6 +13,7 @@
 
 open Dot
 open StackLang
+open StackLangUtils
 
 (* [uniq] transforms an arbitrary [iter] function into one that produces each
    element at most once. *)

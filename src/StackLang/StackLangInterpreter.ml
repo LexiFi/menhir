@@ -18,6 +18,7 @@ open Lexing
 open Printf
 open Grammar
 open StackLang
+open StackLangUtils
 
 (* -------------------------------------------------------------------------- *)
 

@@ -13,6 +13,7 @@
 
 open Printf
 open StackLang
+open StackLangUtils
 module Subst = Substitution
 
 let fresh_int =
@@ -58,7 +59,7 @@ let block_map f = function
 (* Checking that a StackLang program contains no references to undefined
    registers. *)
 
-let wf_regs cfg label rs rs' =
+let wf_regs cfg label block rs rs' =
   (* Check that [rs'] is a subset of [rs]. *)
   let stray = RegisterSet.diff rs' rs in
   if not (RegisterSet.is_empty stray) then (
@@ -69,7 +70,9 @@ let wf_regs cfg label rs rs' =
     eprintf "StackLang: the following registers are defined:\n  %s\n"
       (RegisterSet.print rs) ;
     eprintf "Block :" ;
-    StackLangPrinter.print_block stderr (StringMap.find label cfg).block ;
+    StackLangPrinter.print_block stderr block ;
+    eprintf "\nContext :" ;
+    StackLangPrinter.print_block stderr (lookup label cfg).block ;
     exit 1 )
 
 let wf_regs_jump cfg label label_jump rs rs' =
@@ -91,9 +94,9 @@ let rec wf_value label rs v =
   | VTag _ ->
       ()
   | VReg r ->
-      wf_reg cfg label rs r
+      wf_reg cfg label block rs r
   | VTuple vs ->
-      List.iter (wf_value cfg label rs) vs
+      List.iter (wf_value cfg label block rs) vs
   | VUnit ->
       ()
 
@@ -113,12 +116,12 @@ let def rs p =
      plus the registers defined by the pattern [p]. *)
   RegisterSet.union rs (def RegisterSet.empty p)
 
-let wf_prim cfg label rs p =
+let wf_prim cfg label block rs p =
   match p with
   | PrimOCamlCall (_, args) ->
-      List.iter (wf_value cfg label rs) args
+      List.iter (wf_value cfg label block rs) args
   | PrimOCamlFieldAccess (r, _) ->
-      wf_reg cfg label rs r
+      wf_reg cfg label block rs r
   | PrimOCamlDummyPos ->
       ()
   | PrimOCamlAction _ ->
@@ -159,23 +162,23 @@ let rec wf_block cfg label rs block =
   | IDie ->
       ()
   | IReturn v ->
-      wf_value cfg label rs v
+      wf_value cfg label (IReturn v) rs v
   | IJump label' ->
       (* Check that every register that is needed at the destination label
          is defined here. *)
       wf_regs_jump cfg label label' rs (needed (lookup label' cfg))
   | ISubstitutedJump (label', substitution) ->
-      wf_regs cfg label rs
+      wf_regs_jump cfg label label' rs
         (Subst.apply_registers substitution (needed (lookup label' cfg)))
   | ICaseToken (r, branches, odefault) ->
-      wf_reg cfg label rs r ;
+      wf_reg cfg label (ICaseToken (r, branches, odefault)) rs r ;
       List.iter (wf_branch cfg label rs) branches ;
       Option.iter (wf_block cfg label rs) odefault
   | ICaseTag (r, branches) ->
-      wf_reg cfg label rs r ;
+      wf_reg cfg label (ICaseTag (r, branches)) rs r ;
       List.iter (branch_iter (wf_block cfg label rs)) branches
-  | ITypedBlock {block; stack_type= _; final_type= _; needed_registers= rs'} ->
-      wf_regs cfg label rs rs' ;
+  | ITypedBlock ({block; needed_registers= rs'} as t_block) ->
+      wf_regs cfg label (ITypedBlock t_block) rs rs' ;
       (* A [need] instruction undefines the registers that it does not
          mention, so we continue with [rs']. *)
       let rs = rs' in
@@ -205,123 +208,6 @@ let wf_t_block (cfg : cfg) label {block; needed_registers} =
 let wf program =
   LabelMap.iter (wf_block program.cfg) program.cfg ;
   Time.tick "Checking the StackLang code for well-formedness"
-
-(* -------------------------------------------------------------------------- *)
-
-(* [successors yield block] applies the function [yield] in turn to every
-   label that is the target of a [jump] instruction in the block [block]. *)
-
-let rec successors yield block =
-  match block with
-  | INeed (_, block)
-  | IPush (_, _, block)
-  | IPop (_, block)
-  | IDef (_, _, block)
-  | IPrim (_, _, block)
-  | ITrace (_, block)
-  | IComment (_, block) ->
-      successors yield block
-  | IDie | IReturn _ ->
-      ()
-  | IJump label | ISubstitutedJump (label, _) ->
-      yield label
-  | ICaseToken (_, branches, oblock) ->
-      List.iter (branch_iter (successors yield)) branches ;
-      Option.iter (successors yield) oblock
-  | ICaseTag (_, branches) ->
-      List.iter (branch_iter (successors yield)) branches
-  | ITypedBlock {block; stack_type= _; final_type= _} ->
-      successors yield block
-
-(* -------------------------------------------------------------------------- *)
-
-(* [in_degree program] computes the in-degree of every label in the program
-   [program]. It returns a table that maps every reachable label to its
-   in-degree. Unreachable labels do not appear in the table. The entry labels
-   artifically receive an in-degree of at least 2; this ensures that they
-   cannot be inlined by the function [inline] that follows. *)
-
-let in_degree program =
-  (* Initialize a queue and a map of labels to degrees. *)
-  let queue : label Queue.t = Queue.create ()
-  and degree : int LabelMap.t ref = ref LabelMap.empty in
-  (* [tick label] increments the degree associated with [label]. If its
-     previous degree was zero, then [label] is enqueued for exploration. *)
-  let tick label =
-    let d =
-      try LabelMap.find label !degree
-      with Not_found -> Queue.add label queue ; 0
-    in
-    degree := LabelMap.add label (d + 1) !degree
-  in
-  (* [visit () label] examines the block at address [label]. *)
-  let visit () label = successors tick (lookup label program.cfg).block in
-  (* Initialize the queue with the entry labels. Process the queue until it
-     becomes empty. Return the final table. *)
-  StringMap.iter
-    (fun _s label ->
-      Queue.add label queue ;
-      degree := LabelMap.add label 2 !degree)
-    program.entry ;
-  Misc.qfold visit () queue ;
-  !degree
-
-(* -------------------------------------------------------------------------- *)
-
-(* [inline degree program] transforms the program [program] by removing every
-   unreachable block and by inlining every block whose in-degree is 1. It is
-   assumed that every entry label has an in-degree of at least 2. *)
-
-let rec inline_block cfg degree block =
-  match block with
-  | IJump label ->
-      (* If the target label's in-degree is 1, follow the indirection;
-         otherwise, keep the [jump] instruction. *)
-      if lookup label degree = 1 then
-        let typed_block = lookup label cfg in
-        ITypedBlock
-          {typed_block with block= inline_block cfg degree typed_block.block}
-      else IJump label
-  | ISubstitutedJump (label, substitution) ->
-      (* If the target label's in-degree is 1, follow the indirection;
-         otherwise, keep the [jump] instruction. *)
-      if lookup label degree = 1 then
-        let typed_block = lookup label cfg in
-        Subst.tight_restore_defs substitution (needed typed_block)
-          (ITypedBlock
-             {typed_block with block= inline_block cfg degree typed_block.block})
-      else ISubstitutedJump (label, substitution)
-  | block ->
-      block_map (inline_block cfg degree) block
-
-let inline_cfg degree (cfg : typed_block RegisterMap.t) : cfg =
-  LabelMap.fold
-    (fun label ({block} as t_block) accu ->
-      match LabelMap.find label degree with
-      | exception Not_found ->
-          (* An unreachable label. *)
-          accu
-      | d ->
-          assert (d > 0) ;
-          if d = 1 then accu
-          else
-            LabelMap.add label
-              {t_block with block= inline_block cfg degree block}
-              accu)
-    cfg LabelMap.empty
-
-let inline degree ({cfg; entry; states} as program) : program =
-  if Settings.code_inlining then {cfg= inline_cfg degree cfg; entry; states}
-  else program
-
-(* [inline program] transforms the program [program] by removing every
-   unreachable block and by inlining away every (non-entry) label whose
-   in-degree is 1. *)
-
-let inline program =
-  let program = inline (in_degree program) program in
-  Time.tick "Inlining in StackLang" ;
-  program
 
 (* -------------------------------------------------------------------------- *)
 
@@ -419,6 +305,23 @@ let measure program =
   let m = zero () in
   LabelMap.iter (fun _ block -> measure_block m block.block) program.cfg ;
   m
+
+let rec detect_def_state pattern value =
+  match (pattern, value) with
+  | PReg "_menhir_s", VTag tag ->
+      Some tag
+  | PTuple p_li, VTuple v_li ->
+      Option.first_value (List.map2 detect_def_state p_li v_li)
+  | _ ->
+      None
+
+let rec pattern_shadow_state = function
+  | PReg "_menhir_s" ->
+      true
+  | PTuple li ->
+      List.exists pattern_shadow_state li
+  | _ ->
+      false
 
 let get_args_map block_map =
   StringMap.map
@@ -725,105 +628,15 @@ let _inline_tags program =
     | block ->
         block_map (aux subst) block
   in
-  { program with
-    cfg=
-      RegisterMap.map
-        (fun t_block -> {t_block with block= aux Subst.empty t_block.block})
-        program.cfg }
-
-let restore_pushes push_list block =
-  List.fold_left
-    (fun block (value, cell, id) ->
-      IComment (sprintf "Restoring push_%i" id, IPush (value, cell, block)))
-    block push_list
-
-let rec string_of_value value =
-  match value with
-  | VTag t ->
-      string_of_int t
-  | VReg s ->
-      s
-  | VTuple li ->
-      "(" ^ String.concat ", " (List.map string_of_value li) ^ ")"
-  | VUnit ->
-      "()"
-
-let rec string_of_pattern pattern =
-  match pattern with
-  | PReg s ->
-      s
-  | PTuple li ->
-      "(" ^ String.concat ", " (List.map string_of_pattern li) ^ ")"
-  | PWildcard ->
-      "_"
-
-(** Add fresh name in [substitution] for every register that is part of the
-   intersection of [values] and [pattern] *)
-let _update_substitution subst pattern values =
-  (* Add a new rule to the substitution for every element of the intersection
-     of [pattern] and [value] *)
-  let add_intersection pattern subst value =
-    RegisterSet.fold
-      (fun reg subst ->
-        let reg' = suffix reg (fresh_int ()) in
-        Subst.extend reg (VReg reg') subst)
-      (intersection pattern value)
-      subst
+  let wt_cells block reason known_cells needed_cells =
+    wt_cells_arrays block reason (Array.rev_of_list known_cells) needed_cells
   in
-  List.fold_left (add_intersection pattern) subst values
-
-let rec needed_value = function
-  | VReg reg ->
-      RegisterSet.singleton reg
-  | VTag _ | VUnit ->
-      RegisterSet.empty
-  | VTuple li ->
-      List.fold_left RegisterSet.union RegisterSet.empty
-        (List.map needed_value li)
-
-let rec value_need_state = function
-  | VReg reg when reg = fstate ->
-      true
-  | VTuple li ->
-      List.exists value_need_state li
-  | _ ->
-      false
-
-let subst_call subst (f, args) = (f, List.map (Subst.apply subst) args)
-
-let cells_intersection cells1 cells2 =
-  let len1 = Array.length cells1 in
-  let len2 = Array.length cells2 in
-  let i = ref 0 in
-  while
-    let i = !i in
-    i < len1 && i < len2 && cells1.(i) = cells2.(i)
-  do
-    i := !i + 1
-  done ;
-  Array.sub cells1 0 !i
-
-let cells_list_intersection cellss =
-  match cellss with
-  | cells :: cellss ->
-      List.fold_left cells_intersection cells cellss
-  | [] ->
-      assert false
-
-let stack_type_intersection states taglist =
-  cells_list_intersection
-    (List.map
-       (fun tag ->
-         let s = Lr1.node_of_number tag in
-         Lr1.NodeMap.find s states)
-       taglist)
-
-let ( >>> ) f g x = f (g x)
-
-let commute_pushes_t_block program t_block =
-  let cfg = program.cfg in
-  let pushes_conflit_with_reg pushes reg =
-    List.exists (value_refers_to_register reg) pushes
+  (* TODO : document and make this display *)
+  let _enrich_known_cells_with_state_knowledge known_cells tag =
+    let state_known_cells = (lookup_tag tag states).known_cells in
+    if Array.length state_known_cells > List.length known_cells then
+      Array.rev_to_list state_known_cells
+    else known_cells
   in
   substitution
 let commute_pushes program =

@@ -13,20 +13,18 @@
 
 open Printf
 open Grammar
+open Infix
 
 module SSymbols = StackSymbols.Run ()
 
 let prefix = CodeBits.prefix
-
-let if1 = CodeBits.if1
-
-(*let ifn = CodeBits.ifn*)
 
 let number = Lr1.number
 
 let numbers = List.map number
 
 open StackLang
+open StackLangUtils
 open StackLangBuilder
 
 (* -------------------------------------------------------------------------- *)
@@ -424,8 +422,8 @@ module L = struct
     in
     (* Thus, we initially need the following registers. *)
     let _needed_registers =
-      (lexer :: lexbuf :: token :: if1 is_epsilon state)
-      @ if1 (is_epsilon || has_beforeend) endp
+      (lexer :: lexbuf :: token :: List.if1 is_epsilon state)
+      @ List.if1 (is_epsilon || has_beforeend) endp
     in
     set_needed needlist ;
     (* need_list needlist ; *)
@@ -436,10 +434,10 @@ module L = struct
     for i = n - 1 downto 0 do
       let cell_info = stack_type.(i) in
       let pop_list =
-        if1 cell_info.hold_state (if i = 0 then PReg state else PWildcard)
-        @ if1 cell_info.hold_semv (PReg ids.(i))
-        @ if1 cell_info.hold_startpos (PReg (startpos ids i))
-        @ if1 cell_info.hold_endpos (PReg (endpos ids i))
+        List.if1 cell_info.hold_state (if i = 0 then PReg state else PWildcard)
+        @ List.if1 cell_info.hold_semv (PReg ids.(i))
+        @ List.if1 cell_info.hold_startpos (PReg (startpos ids i))
+        @ List.if1 cell_info.hold_endpos (PReg (endpos ids i))
       in
       if pop_list <> [] then pop (PTuple pop_list) ;
       (* If there is no semantic value in the stack, then it is of type unit
@@ -476,8 +474,8 @@ module L = struct
       (*need
         (List.fold_right RegisterSet.add
            ( [lexer; lexbuf; token; state]
-             @ if1 need_startpos startp
-             @ if1 need_endpos endp )
+             @ List.if1 need_startpos startp
+             @ List.if1 need_endpos endp )
            (Action.vars action)) ; TODO restore *)
       (* Execute the semantic action. Store its result in [semv]. *)
       prim semv (PrimOCamlAction action) ;
@@ -609,10 +607,10 @@ module L = struct
     if optimize_stack then
       Invariant.fold_top
         (fun holds_state symbol ->
-          if1 holds_state state
-          @ if1 (CodePieces.has_semv symbol) semv
-          @ if1 (Invariant.startp symbol) startp
-          @ if1 (Invariant.endp symbol) endp)
+          List.if1 holds_state state
+          @ List.if1 (CodePieces.has_semv symbol) semv
+          @ List.if1 (Invariant.startp symbol) startp
+          @ List.if1 (Invariant.endp symbol) endp)
         [] (Invariant.gotostack nt)
     else [state; semv; startp; endp]
 
@@ -651,18 +649,19 @@ module L = struct
       top_stack_type (Invariant.gotostack nt)
     in
     let pushlist =
-      if1 hold_state state @ if1 hold_semv semv @ if1 hold_startpos startp
-      @ if1 hold_endpos endp
+      List.if1 hold_state state @ List.if1 hold_semv semv
+      @ List.if1 hold_startpos startp
+      @ List.if1 hold_endpos endp
     in
     (pushlist, cell)
 
   (*if optimize_stack then
       Invariant.fold_top
         (fun holds_state symbol ->
-          if1 holds_state state
-          @ if1 (CodePieces.has_semv symbol) semv
-          @ if1 (Invariant.startp symbol) startp
-          @ if1 (Invariant.endp symbol) endp)
+          List.if1 holds_state state
+          @ List.if1 (CodePieces.has_semv symbol) semv
+          @ List.if1 (Invariant.startp symbol) startp
+          @ List.if1 (Invariant.endp symbol) endp)
         [state; semv; startp; endp]
         (Invariant.gotostack nt)
     else [state; semv; startp; endp]*)
@@ -741,11 +740,20 @@ module L = struct
       false (Invariant.stack s)
 
   let states =
-    let states = ref Lr1.NodeMap.empty in
+    let states = ref TagMap.empty in
     Lr1.iter (fun s ->
         if (not optimize_stack) || Invariant.represented s then
-          states :=
-            Lr1.NodeMap.add s (filter_stack @@ stack_type_state s) !states) ;
+          states
+          @:= TagMap.add (Lr1.number s)
+                { known_cells= filter_stack @@ stack_type_state s
+                ; sfinal_type=
+                    ( match Lr1.is_start_or_exit s with
+                    | None ->
+                        None
+                    | Some nonterminal ->
+                        Some
+                          (Grammar.Nonterminal.ocamltype_of_start_symbol
+                             nonterminal) ) }) ;
     !states
 
 
@@ -758,8 +766,7 @@ module L = struct
         | None ->
             ()
         | Some nonterminal ->
-            set_final_type
-              (IL.TypTextual (Nonterminal.ocamltype_of_start_symbol nonterminal))
+            set_final_type (Nonterminal.ocamltype_of_start_symbol nonterminal)
         ) ;
         set_stack_type @@ filter_stack @@ stack_type_run s ;
         let pushlist, cell = run_pushlist s in
@@ -771,8 +778,7 @@ module L = struct
         | None ->
             ()
         | Some nonterminal ->
-            set_final_type
-              (IL.TypTextual (Nonterminal.ocamltype_of_start_symbol nonterminal))
+            set_final_type (Nonterminal.ocamltype_of_start_symbol nonterminal)
         ) ;
         let stack_type = stack_type_reduce prod in
         set_stack_type @@ filter_stack stack_type ;

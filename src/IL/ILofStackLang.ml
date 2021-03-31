@@ -4,6 +4,7 @@ open T
 open CodePieces
 open CodeBits
 open Printf
+open StackLangUtils
 module Subst = S.Substitution
 
 module SSymbols = StackSymbols.Run ()
@@ -49,25 +50,6 @@ let base_tcstack = "stack"
 
 let nth_bit x n = x land (1 lsl n) <> 0
 
-let cells_intersection cells1 cells2 =
-  let len1 = Array.length cells1 in
-  let len2 = Array.length cells2 in
-  let i = ref 0 in
-  while
-    let i = !i in
-    i < len1 && i < len2 && cells1.(i) = cells2.(i)
-  do
-    i := !i + 1
-  done ;
-  Array.sub cells1 0 !i
-
-let cellss_intersection cellss =
-  match cellss with
-  | cells :: cellss ->
-      List.fold_left cells_intersection cells cellss
-  | [] ->
-      assert false
-
 let tcstack_of_int n =
   (* [binary_print size () x] return the binary representation of [x] in a
      string of size [size] *)
@@ -103,16 +85,16 @@ let stacktypeabbrevdefs =
         let hold_startpos = nth_bit i 2 in
         let hold_endpos = nth_bit i 3 in
         { typename= tcstack_of_int i
-        ; typeparams= ["tail"] @ if1 hold_semv "semantic" @ ["final"]
+        ; typeparams= ["tail"] @ List.if1 hold_semv "semantic" @ ["final"]
         ; typerhs=
             TAbbrev
               (TypTuple
                  ( [TypVar "tail"]
-                 @ if1 hold_state
+                 @ List.if1 hold_state
                      (TypApp (tcstate, [TypVar "tail"; TypVar "final"]))
-                 @ if1 hold_semv (TypVar "semantic")
-                 @ if1 hold_startpos (TypName "Lexing.position")
-                 @ if1 hold_endpos (TypName "Lexing.position") ))
+                 @ List.if1 hold_semv (TypVar "semantic")
+                 @ List.if1 hold_startpos (TypName "Lexing.position")
+                 @ List.if1 hold_endpos (TypName "Lexing.position") ))
         ; typeconstraint= None })
       numbers
   in
@@ -133,7 +115,7 @@ let stack_type_of_cell_info tail final =
         TypApp
           ( tcstack hold_state hold_semv hold_startpos hold_endpos
           , [tail]
-            @ if1 hold_semv
+            @ List.if1 hold_semv
                 (match typ with None -> tunit | Some typ -> TypTextual typ)
             @ [final] ))
 
@@ -144,68 +126,35 @@ let typ_stack_app tail_type final_type cells =
   let cell_typ tail cell = stack_type_of_cell_info tail final_type cell in
   Array.fold_left cell_typ tail_type cells
 
-let final_type_of_state default s =
-  (* The final return type is only known for the start and end states. *)
-  match Lr1.is_start_or_exit s with
-  | None ->
-      default
-  | Some (nonterminal : Grammar.Nonterminal.t) ->
-      TypTextual (Grammar.Nonterminal.ocamltype_of_start_symbol nonterminal)
-
-let _final_type_of_state_tag default tag =
-  final_type_of_state default (Lr1.node_of_number tag)
-
 (* type definition for states *)
 let statetypedef states =
   { typename= tcstate
   ; typeparams= [tctail; tcfinal]
   ; typerhs=
       TDefSum
-        (Lr1.NodeMap.fold
-           (fun s cells defs ->
-             let final_type = final_type_of_state (TypVar tcfinal) s in
-             { dataname= statecon @@ Lr1.number s
+        (S.TagMap.fold
+           (fun tag S.{known_cells; sfinal_type} defs ->
+             let final_type =
+               match sfinal_type with
+               | None ->
+                   TypVar tcfinal
+               | Some typ ->
+                   TypTextual typ
+             in
+             { dataname= statecon tag
              ; datavalparams= []
              ; datatypeparams=
                  Some
-                   [typ_stack_app (TypVar tctail) final_type cells; final_type]
+                   [ typ_stack_app (TypVar tctail) final_type known_cells
+                   ; final_type ]
              ; comment=
-                 Some
-                   (sprintf " Known stack symbols : %s "
-                      (SSymbols.print_stack_symbols s)) }
+                 None
+                 (* Some
+                    (sprintf " Known stack symbols : %s "
+                       (SSymbols.print_stack_symbols s)) } *) }
              :: defs)
            states [])
   ; typeconstraint= None }
-
-let _best_typ_state tail_type final_type states taglist =
-  let final_type =
-    final_type_of_state final_type (Lr1.node_of_number @@ List.hd taglist)
-  in
-  let cells =
-    cellss_intersection
-      (List.map
-         (fun tag ->
-           let state = Lr1.node_of_number tag in
-           Lr1.NodeMap.find state states)
-         taglist)
-  in
-  TypApp (tcstate, [typ_stack_app tail_type final_type cells; final_type])
-
-let _best_typ_stack tail_type final_type states taglist =
-  let final_type =
-    final_type_of_state final_type (Lr1.node_of_number @@ List.hd taglist)
-  in
-  let cells =
-    cellss_intersection
-      (List.map
-         (fun tag ->
-           let state = Lr1.node_of_number tag in
-           Lr1.NodeMap.find state states)
-         taglist)
-  in
-  typ_stack_app tail_type final_type cells
-
-(*type s_program = S.program*)
 
 open BasicSyntax
 
@@ -239,7 +188,7 @@ let entrydef name call cfg =
 
 let function_type S.{final_type; stack_type; needed_registers; state_register} =
   let final =
-    match final_type with None -> TypName tcfinal | Some typ -> typ
+    match final_type with None -> TypName tcfinal | Some typ -> TypTextual typ
   in
   { quantifiers=
       (match final_type with None -> [tctail; tcfinal] | Some _ -> [tctail])
@@ -308,7 +257,7 @@ let rec compile_t_block (program : S.program) t_block =
     | None ->
         TypName tcfinal
     | Some typ ->
-        typ
+        TypTextual typ
   in
   let rec compile_block = function
     | S.INeed (registers, block) ->
@@ -373,14 +322,14 @@ let rec compile_t_block (program : S.program) t_block =
         EApp
           ( EVar label
           , e_common_args @ evars @@ S.RegisterSet.elements
-            @@ S.needed (StringMap.find label cfg) )
+            @@ needed (StringMap.find label cfg) )
     | S.ISubstitutedJump (label, substitution) ->
         EApp
           ( EVar label
           , e_common_args
             @ List.map
                 (fun s -> compile_value (Subst.apply substitution (S.VReg s)))
-                (S.RegisterSet.elements @@ S.needed @@ StringMap.find label cfg)
+                (S.RegisterSet.elements @@ needed @@ StringMap.find label cfg)
           )
     | S.ICaseToken (register, tokpat_block_list, block_option) ->
         compile_ICaseToken register tokpat_block_list block_option
@@ -470,7 +419,7 @@ let rec compile_t_block (program : S.program) t_block =
                   { branchpat= PWildcard
                   ; branchbody= EApp (EVar "assert", [EVar "false"]) } ] ) )
   and compile_ITypedBlock = function
-    | S.({has_case_tag= _} as t_block) ->
+    | S.({has_case_tag= true} as t_block) ->
         (* If a typed block contains a match on tags, then we need to make it
            an inlined function call : it is not possible to inline it
            ourselves, because of GADT shenanigans.*)
@@ -480,10 +429,10 @@ let rec compile_t_block (program : S.program) t_block =
               , compile_function (*~quantify_final:false*) t_block program ) ]
           , EApp
               ( EVar block_name
-              , e_common_args @ evars @@ StringSet.elements @@ S.needed t_block
-              ) )
-    (*| t_block ->
-        compile_t_block program t_block*)
+              , e_common_args @ evars @@ StringSet.elements @@ needed t_block )
+          )
+    | t_block ->
+        compile_t_block program t_block
   in
   let S.{block; stack_type; state_register; final_type; needed_registers} =
     t_block
@@ -500,7 +449,7 @@ let rec compile_t_block (program : S.program) t_block =
 and compile_function t_block (program : S.program) =
   EAnnot
     ( EFun
-        ( p_common_args @ pvars @@ S.RegisterSet.elements @@ S.needed t_block
+        ( p_common_args @ pvars @@ S.RegisterSet.elements @@ needed t_block
         , compile_t_block program t_block )
     , function_type t_block )
 

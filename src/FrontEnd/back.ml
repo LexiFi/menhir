@@ -15,6 +15,7 @@
 
 (* The automaton is now frozen and will no longer be modified. It is
    time to dump a new description of it, if requested by the user. *)
+
 let () =
   match Settings.provide_example with
   | None -> ()
@@ -113,9 +114,10 @@ let () =
     let module SL = EmitStackLang.Run () in
     let program = SL.program in
     StackLangTraverse.wf program ;
-    let program = StackLangTraverse.inline program in
-    let program = StackLangTraverse.optimize program in
+    let program = StackLangInline.inline program in
+    let program = StackLangTransform.optimize program in
     StackLangTraverse.wf program ;
+    StackLangTraverse.wt program ;
     if Settings.stacklang_dump then (
       StackLangPrinter.print stdout program ;
       StackLangTraverse.(print (measure program)) ) ;

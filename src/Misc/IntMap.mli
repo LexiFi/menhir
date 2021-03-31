@@ -11,46 +11,28 @@
 (*                                                                            *)
 (******************************************************************************)
 
-let defined = function None -> false | Some _ -> true
+include Map.S with type key = int
 
-let map f = function None -> None | Some x -> Some (f x)
+(* [cardinal m] is the cardinal of the map [m]. *)
 
-let iter f o = match o with None -> () | Some x -> f x
+val cardinal : 'a t -> int
 
-let fold f o accu = match o with None -> accu | Some x -> f x accu
+(* [restrict s m] restricts the domain of the map [m] to (its
+   intersection with) the set [s]. *)
 
-let force = function Some x -> x | None -> assert false
+val restrict: IntSet.t -> 'a t -> 'a t
 
-let project = function
-  | Some x ->
-      x
-  | None ->
-      (* Presumably, an error message has already been printed. *)
-      exit 1
+(* [filter pred m] restricts the domain of the map [m] to
+   (key, value) couples that verify [pred]. *)
 
-let equal equal o1 o2 =
-  match (o1, o2) with
-  | None, None ->
-      true
-  | Some x1, Some x2 ->
-      equal x1 x2
-  | None, Some _ | Some _, None ->
-      false
+val filter: (int -> 'a -> bool) -> 'a t -> 'a t
 
-let hash hash = function Some x -> hash x | None -> Hashtbl.hash None
+(* [domain m] returns the domain of the map [m]. *)
 
-let value o ~default = match o with Some x -> x | None -> default
+val domain: 'a t -> IntSet.t
 
-let rec first_value =
-function
-  | Some e :: _ ->
-      Some e
-  | None :: li ->
-      first_value li
-  | [] ->
-      None
+(* [multiple_add k v m] adds the key-value pair [k, v] to the map [m],
+   which maps keys to *lists* of values. The list currently associated
+   with [k] is extended with the value [v]. *)
 
-let simplify =
-    function
-    | None -> None
-    | Some o -> o
+val multiple_add: key -> 'a -> 'a list t -> 'a list t

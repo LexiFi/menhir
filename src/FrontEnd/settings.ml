@@ -347,10 +347,13 @@ let provide_example_seed =
 (* When new command line options are added, please update both the manual
    in [doc/manual.tex] and the man page in [doc/menhir.1]. *)
 
-let no_stack_optimization = 
+let no_stack_optimization =
   ref false
 
 let no_push_commute =
+  ref false
+
+let unit_test =
   ref false
 
 let options = Arg.align [
@@ -437,6 +440,7 @@ let options = Arg.align [
   "--timings", Arg.Unit (fun () -> timings := Some stderr), " Output internal timings to stderr";
   "--timings-to", Arg.String (fun filename -> timings := Some (open_out filename)), "<filename> Output internal timings to <filename>";
   "--trace", Arg.Set trace, " Generate tracing instructions";
+  "--unit-test", Arg.Set unit_test, "(undocumented)";
   "--unused-precedence-levels", Arg.Set ignore_all_unused_precedence_levels, " Do not warn about unused precedence levels";
   "--unused-token", Arg.String ignore_unused_token, "<token> Do not warn that <token> is unused";
   "--unused-tokens", Arg.Set ignore_all_unused_tokens, " Do not warn about any unused token";
@@ -503,6 +507,9 @@ let () =
 (* ------------------------------------------------------------------------- *)
 (* Export the settings. *)
 
+let unit_test =
+  !unit_test
+
 let stdlib_filename =
   "<standard.mly>"
 
@@ -518,7 +525,8 @@ let base =
     | [ filename ] ->
         Filename.chop_suffix filename (if !coq then ".vy" else ".mly")
     | _ ->
-        fprintf stderr "Error: you must specify --base when providing multiple input files.\n";
+        fprintf stderr
+          "Error: you must specify --base when providing multiple input files.\n";
         exit 1
   else
     !base
@@ -699,6 +707,7 @@ let infer =
    and dependency nightmares. *)
 
 let skipping_parser_generation =
+  unit_test ||
   coq ||
   compile_errors <> None ||
   interpret_error ||

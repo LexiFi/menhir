@@ -37,7 +37,7 @@ module Build (L : sig
   (** A family of entry labels. *)
   val entry: string StringMap.t
 
-  val states: cell_info array Lr1.NodeMap.t
+  val states: state_info TagMap.t
 
 end) : sig
 
@@ -55,7 +55,7 @@ end
 Set the type of the whole block
 *)
 val set_stack_type: cell_info array -> unit
-val set_final_type: IL.typ -> unit
+val set_final_type: Stretch.ocamltype -> unit
 val set_needed: register list -> unit
 
 (* Each of the functions in the first group extends a code block that is

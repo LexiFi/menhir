@@ -11,46 +11,29 @@
 (*                                                                            *)
 (******************************************************************************)
 
-let defined = function None -> false | Some _ -> true
+include Map.Make (Int)
 
-let map f = function None -> None | Some x -> Some (f x)
+let cardinal s =
+  fold (fun _ _ x -> x + 1) s 0
 
-let iter f o = match o with None -> () | Some x -> f x
+let filter pred map =
+  fold (fun key value map ->
+          if pred key value then
+            add key value map
+          else
+            map) map empty
 
-let fold f o accu = match o with None -> accu | Some x -> f x accu
+let restrict domain map =
+  filter (fun k _ -> IntSet.mem k domain) map
 
-let force = function Some x -> x | None -> assert false
+let domain map =
+  fold (fun key _ acu -> IntSet.add key acu) map IntSet.empty
 
-let project = function
-  | Some x ->
-      x
-  | None ->
-      (* Presumably, an error message has already been printed. *)
-      exit 1
-
-let equal equal o1 o2 =
-  match (o1, o2) with
-  | None, None ->
-      true
-  | Some x1, Some x2 ->
-      equal x1 x2
-  | None, Some _ | Some _, None ->
-      false
-
-let hash hash = function Some x -> hash x | None -> Hashtbl.hash None
-
-let value o ~default = match o with Some x -> x | None -> default
-
-let rec first_value =
-function
-  | Some e :: _ ->
-      Some e
-  | None :: li ->
-      first_value li
-  | [] ->
-      None
-
-let simplify =
-    function
-    | None -> None
-    | Some o -> o
+let multiple_add k v m =
+  let vs =
+    try
+      find k m
+    with Not_found ->
+      []
+  in
+  add k (v :: vs) m

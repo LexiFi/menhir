@@ -107,10 +107,10 @@ let test program nt =
   while !count < n && !size < threshold do
     let sentences = sentences !size in
     let k = length sentences in
-    if Z.leq k (Z.of_int m) then begin
+    if (Z.leq k) (Z.of_int m) then begin
       (* There are at most [m] sentences of this size; test all of them. *)
       foreach sentences (test program nt);
-      count := !count + (Z.to_int k)
+      count := !count + ( Z.to_int k)
     end
     else begin
       (* There are more than [m] sentences of this size; test a sample. *)

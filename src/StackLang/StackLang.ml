@@ -29,6 +29,8 @@ type register = string
 
 module RegisterSet = StringSet
 module RegisterMap = StringMap
+module TagMap = IntMap
+module TagSet = IntSet
 
 type registers = RegisterSet.t
 
@@ -122,11 +124,14 @@ type cell_info =
   ; hold_startpos: bool
   ; hold_endpos: bool }
 
+type state_info =
+  {known_cells: cell_info array; sfinal_type: Stretch.ocamltype option}
+
 type typed_block =
   { block: block
   ; stack_type: cell_info array
   ; state_register: register
-  ; final_type: IL.typ option
+  ; final_type: Stretch.ocamltype option
   ; needed_registers: RegisterSet.t
   ; has_case_tag: bool }
 
@@ -184,11 +189,6 @@ and block =
 
 module LabelSet = StringSet
 module LabelMap = StringMap
-
-type block_info =
-  | InfRun of Lr1.node
-  | InfReduce of Grammar.Production.index
-  | InfGoto of Grammar.Nonterminal.t
 
 type cfg = typed_block LabelMap.t
 
@@ -270,8 +270,13 @@ module Substitution = struct
   let remove_registers substitution registers =
     RegisterSet.fold RegisterMap.remove registers substitution
 
-  let remove_value substitution value =
-    remove_registers substitution @@ value_registers value
+  let rec remove_value substitution = function
+    | VReg reg ->
+        remove substitution (PReg reg)
+    | VTuple li ->
+        List.fold_left remove_value substitution li
+    | _ ->
+        substitution
 
   let rec apply_pattern substitution = function
     | PReg register -> (

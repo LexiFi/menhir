@@ -28,6 +28,8 @@ type register = string
 
 module RegisterSet = StringSet
 module RegisterMap = StringMap
+module TagMap = IntMap
+module TagSet = IntSet
 
 type registers = RegisterSet.t
 
@@ -108,6 +110,8 @@ type cell_info =
   ; hold_startpos: bool
   ; hold_endpos: bool }
 
+type state_info = {known_cells: cell_info array; sfinal_type: Stretch.ocamltype option}
+
 (** A block is a tree-shaped collection of instructions. (In classic compiler
    terminology, it could be known as an extended basic block.) The simplest
    instructions have exactly one successor. However, the case analysis
@@ -170,7 +174,7 @@ and typed_block =
 { block: block
 ; stack_type: cell_info array
 ; state_register: register
-; final_type: IL.typ option
+; final_type: Stretch.ocamltype option
 ; needed_registers: RegisterSet.t
 ; has_case_tag: bool }
 
@@ -182,42 +186,18 @@ and typed_block =
 module LabelSet = StringSet
 module LabelMap = StringMap
 
-type block_info =
-  | InfRun of Lr1.node
-  | InfReduce of Grammar.Production.index
-  | InfGoto of Grammar.Nonterminal.t
-
 type cfg = typed_block LabelMap.t
 
 (** A complete program is a control flow graph where some labels have been
    marked as entry points. There is in fact a mapping of the LR(1) start
    states to entry points. *)
 type program =
-  {cfg: cfg; entry: string StringMap.t; states: cell_info array Lr1.NodeMap.t}
+  {cfg: cfg; entry: string StringMap.t; states: state_info TagMap.t}
 
 (* -------------------------------------------------------------------------- *)
 
-(* A few constructors. *)
-
-val vreg : string -> value
-
-val vregs : string list -> value list
-
-(* A few accessors. *)
-
-val lookup : field -> 'a LabelMap.t -> 'a
-
-val entry_labels : program -> registers
-
-(** Returns the set of needed registers from a typed block. *)
-val needed : typed_block -> RegisterSet.t
-
-(** Returns the set of register that appear in a value *)
-val value_registers : value -> registers
-
 (** This module provides an API to specifie substitutions of registers by
-    values. This is useful to inline values or rename them without generating a
-    lot of defs before every jump. *)
+    values. *)
 module Substitution : sig
 
   (** The type of substitutions. *)
@@ -232,19 +212,20 @@ module Substitution : sig
       *)
   val extend: register -> value -> t -> t
 
-  (*val authoritative_extend: register -> value -> t -> t
-
-  val authoritative_extend_pattern: t -> pattern -> value -> t*)
-
+  (** [extend s pattern value] return [s'] such that [restore_defs s' block] is
+      equivalent to [restore_defs s (IDef(pattern, value, block))]. *)
   val extend_pattern: t -> pattern -> value -> t
-
 
   (** [remove s pattern] remove every rule of the shape [r := _] for every [r] a
       register occuring in [pattern] *)
   val remove : t -> pattern -> t
 
-  val remove_registers : t -> RegisterSet.t -> t
+  (** [remove s regs] For every [r] in [regs], remove every rule of shape
+      [r := _] from s *)
+  val remove_registers : t -> registers -> t
 
+  (** [remove s value] For every [r] referred by [value], remove every rule of
+      shape [r := _] from s. *)
   val remove_value : t -> value -> t
 
   (** [apply s value] apply to rules of the substitution [s] to [value]
