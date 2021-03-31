@@ -906,7 +906,8 @@ module Make (T : TABLE) = struct
        stack has an appropriate shape). We currently have no means of
        performing such a check. *)
     if not (T.may_reduce env.current prod) then
-      invalid_arg "force_reduction: this reduction is not permitted in this state"
+      invalid_arg
+         "force_reduction: this reduction is not permitted in this state"
     else begin
       (* We do not expose the start productions to the user, so this cannot be
          a start production. Hence, it has a semantic action. *)
