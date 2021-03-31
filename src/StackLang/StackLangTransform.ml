@@ -2,6 +2,7 @@ open Printf
 open StackLang
 open StackLangUtils
 module Subst = Substitution
+open NamingConventions
 open Infix
 
 let fresh_int =
@@ -9,70 +10,27 @@ let fresh_int =
   fun () -> n += 1 ; !n
 
 let fstt (e, _, _) = e
+let state_reg = state
 
 let suffix name i = Printf.sprintf "%s_%i" name i
 
-let fstate = "_menhir_s"
-
-let rec is_pattern_equivalent_to_value pattern value =
-  match (pattern, value) with
-  | PWildcard, _ ->
-      true
-  | PReg reg_pat, VReg reg_val when reg_pat = reg_val ->
-      true
-  | PTuple li_pat, VTuple li_val when List.length li_pat = List.length li_val ->
-      List.for_all2 is_pattern_equivalent_to_value li_pat li_val
-  | _, _ ->
-      false
-
 (** [pop_n_cells stack_type n] return a new stack_type, with [n] top cells
-    removed. Asserts that every popped cell is not empty. *)
+    removed. *)
 let pop_n_cells stack_type n =
   let length = Array.length stack_type in
   let new_length = max (length - n) 0 in
-  (*let new_start = length - new_length in*)
-  (*let n = length - new_length in*)
-  (*Array.iter
-    (fun cell ->
-      assert (
-        cell.hold_semv || cell.hold_state || cell.hold_startpos
-        || cell.hold_endpos ))
-    (Array.sub stack_type new_length n) ;*)
   Array.sub stack_type 0 new_length
 
 let restore_pushes push_list block =
   List.fold_left
     (fun block (value, cell, id) ->
-      IComment (sprintf "Restoring push_%i" id, IPush (value, cell, block)))
+      let comment = sprintf "Restoring push_%i" id in
+      let block = IPush (value, cell, block) in
+      IComment (comment, block))
     block push_list
 
-let rec string_of_value value =
-  match value with
-  | VTag t ->
-      string_of_int t
-  | VReg s ->
-      s
-  | VTuple li ->
-      "(" ^ String.concat ", " (List.map string_of_value li) ^ ")"
-  | VUnit ->
-      "()"
-
-let rec string_of_pattern pattern =
-  match pattern with
-  | PReg s ->
-      s
-  | PTuple li ->
-      "(" ^ String.concat ", " (List.map string_of_pattern li) ^ ")"
-  | PWildcard ->
-      "_"
-
-let subst_call subst (f, args) = (f, List.map (Subst.apply subst) args)
-
-let longest_stack_type stack_types =
-  List.hd
-  @@ List.sort
-       (fun s1 s2 -> -compare (Array.length s1) (Array.length s2))
-       stack_types
+(** Apply the substitution to the arguments of a PrimOcamlCall. *)
+let subst_prim_call subst (f, args) = (f, List.map (Subst.apply subst) args)
 
 let find_tagpat_branch branches tag =
   List.find
@@ -95,18 +53,24 @@ let commute_pushes_t_block program t_block =
   in
   let cancelled_pop = ref 0 in
   let eliminated_branches = ref 0 in
-  let rec commute_pushes_block pushes subst final_type
-      (known_cells : cell_info array) =
+  let rec commute_pushes_block pushes subst final_type known_cells =
     (* [push_list] is the list of pushes that we need to restore, and hopefully
-       cancel out with a pop. Every time there is a definition of a new value,
-       in order to not disturb the pushes, if the pattern is in conflict with
-       one of the pushed value, we change the name of the culprit register, and
-       we save the change in a [Subst.t]. In subsequent code, every time
-       we refer to a register, we use the name from the substitution's
-       right-hand side.
-       The code produced by [aux pushes substitution block] should be
+       cancel out with a pop. Every definition is inlined in order to make it
+       impossible that a commuted pushes refers to a shadowed definition.
+       There should be no definition in the resulting code. Registers are still
+       refered to, but their value only ever change by performing an
+       ISubstitutedJump.
+       The code produced by [aux pushes substitution block] is
        equivalent to
-       [restore_pushes pushes (Subst.restore_defs substitution block)] *)
+       [restore_pushes pushes (Subst.restore_defs substitution block)].
+       The arguments [final_type] and [known_cells] are used along the way to
+       modify correctly the ITypedBlock.
+       [final_type] starts as None, and if we go through a state were the final
+       type is known, it is instanciated. If instanciated it is never changed,
+       and replaces the [final_type] field of every ITypedBlock along the way.
+       [known_cells] should be initialized to an array of the known cells.
+       Then a cell is popped when a pop cannot be cancelled, and it is enriched
+       with more information when matching on a type. *)
     function
     | INeed (registers, block) ->
         let block' =
@@ -119,15 +83,18 @@ let commute_pushes_t_block program t_block =
         in
         INeed (registers, block')
     | IPush (value, cell, block) ->
-        (* We push the substituted name *)
+        (*  *)
         let id = fresh_int () in
         let block' =
           commute_pushes_block
             ((Subst.apply subst value, cell, id) :: pushes)
             subst final_type known_cells block
         in
-        IComment
-          (sprintf "Commuting push_%i %s" id (string_of_value value), block')
+        let comment =
+          sprintf "Commuting push_%i %s" id
+            (StackLangPrinter.value_to_string value)
+        in
+        IComment (comment, block')
     | IPop (pattern, block) -> (
       (* A pop is a special kind of definition, so you may think that we need
          to generate new substition rules from it, but there is no need
@@ -145,41 +112,37 @@ let commute_pushes_t_block program t_block =
           in
           IPop (pattern, block')
       | (value, _cell, id) :: push_list ->
+          (* We remove every register refered in the value from the
+             substitution, because we need to access the value as it was when
+             pushed, and add that to the substitution. *)
+          let subst = Subst.remove_value subst value in
+          let subst = Subst.extend_pattern subst pattern value in
+          (* We have cancelled a pop ! *)
           cancelled_pop += 1 ;
-          let block' =
-            commute_pushes_block push_list
-              (Subst.extend_pattern
-                 (Subst.remove_value subst value)
-                 pattern value)
-              final_type known_cells block
+          let block =
+            commute_pushes_block push_list subst final_type known_cells block
           in
-          IComment
-            ( sprintf "Cancelled push_%i %s with pop %s" id
-                (string_of_value value)
-                (string_of_pattern pattern)
-            , (*IDef
-                ( pattern
-                , value
-                , aux push_list (Subst.remove subst pattern) block ) *)
-              block' ) )
+          let comment =
+            sprintf "Cancelled push_%i %s with pop %s" id
+              (StackLangPrinter.value_to_string value)
+              (StackLangPrinter.pattern_to_string pattern)
+          in
+          IComment (comment, block) )
     | IDef (pattern, value, block) ->
         (* As explained above, for every conflict between the definition and a
            push currently commuting, we add a new substitution rule
            We do not want to shadow definition useful for the push train *)
+        let subst = Subst.extend_pattern subst pattern value in
         (* Currently, the value is raw, we need to apply the substitution to it
            in order for it to refer to the correct definition. *)
-        (*let value' = Subst.apply subst value' in
-          let subst = update_substitution subst pattern (List.map fst pushes) in
-          IDef (Subst.apply_pattern subst pattern, value', aux pushes subst block)*)
-        let subst = Subst.extend_pattern subst pattern value in
         let value' = Subst.apply subst value in
         let block' =
           commute_pushes_block pushes subst final_type known_cells block
         in
         IComment
           ( sprintf "Inlining def : %s = %s"
-              (string_of_pattern pattern)
-              (string_of_value value')
+              (StackLangPrinter.pattern_to_string pattern)
+              (StackLangPrinter.value_to_string value')
           , block' )
     | IPrim (reg, prim, block) ->
         (* A primitive is a like def except it has a simple register instead of a
@@ -198,7 +161,7 @@ let commute_pushes_t_block program t_block =
         let prim =
           match prim with
           | PrimOCamlCall (f, args) ->
-              let f, args = subst_call subst (f, args) in
+              let f, args = subst_prim_call subst (f, args) in
               PrimOCamlCall (f, args)
           | PrimSubstOcamlAction (subst', action) ->
               PrimSubstOcamlAction (Subst.compose subst subst', action)
@@ -249,7 +212,7 @@ let commute_pushes_t_block program t_block =
         let branch_aux (TagMultiple taglist, block) =
           let state_info = state_info_intersection program.states taglist in
           let known_cells =
-            longest_stack_type [known_cells; state_info.known_cells]
+            longest_known_cells [known_cells; state_info.known_cells]
           in
           let subst, pushes =
             match taglist with
@@ -278,10 +241,10 @@ let commute_pushes_t_block program t_block =
     (* We alter the type information according to the number of commuting
        pushes : Every push that is commuting removes a known stack symbol *)
     let state =
-      match Subst.apply subst (VReg fstate) with
+      match Subst.apply subst (VReg state_reg) with
       | VTag tag ->
           Some tag
-      | VReg reg when reg = fstate ->
+      | VReg reg when reg = state_reg ->
           None
       | _ ->
           assert false
@@ -300,7 +263,7 @@ let commute_pushes_t_block program t_block =
         (needed_registers_pushes pushes)
         (Subst.apply_registers subst needed_registers)
     in
-    let need_state = RegisterSet.mem fstate needed_registers in
+    let need_state = RegisterSet.mem state_reg needed_registers in
     let push_n = List.length pushes in
     let stack_types =
       (pop_n_cells stack_type push_n :: List.if1 (not need_state) known_cells)
@@ -311,7 +274,7 @@ let commute_pushes_t_block program t_block =
       | None ->
           []
     in
-    let stack_type = longest_stack_type stack_types in
+    let stack_type = longest_known_cells stack_types in
     let block = commute_pushes_block pushes subst final_type stack_type block in
     ITypedBlock
       { t_block with

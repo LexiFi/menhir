@@ -204,11 +204,23 @@ let program program =
 
 let to_channel =
   ToChannel.pretty 0.8 80
+
+let to_string doc =
+  let buffer = Buffer.create 10 in
+  ToBuffer.pretty 0.8 80 buffer doc ;
+  Bytes.to_string @@ Buffer.to_bytes buffer
+
 let print f prog =
   to_channel f (program prog)
 
 let print_value f v =
   to_channel f (value v)
+
+let value_to_string v =
+  to_string (value v)
+
+let pattern_to_string p =
+  to_string (pattern p)
 
 let print_substitution f s =
   to_channel f (substitution s)

@@ -15,6 +15,7 @@ open Printf
 open StackLang
 open StackLangUtils
 module Subst = Substitution
+open NamingConventions
 
 let fresh_int =
   let n = ref (-1) in
@@ -55,6 +56,8 @@ let block_map f = function
       ITypedBlock {t_block with block= f t_block.block}
 
 (* -------------------------------------------------------------------------- *)
+
+let state_reg = state
 
 (* Checking that a StackLang program contains no references to undefined
    registers. *)
@@ -308,7 +311,7 @@ let measure program =
 
 let rec detect_def_state pattern value =
   match (pattern, value) with
-  | PReg "_menhir_s", VTag tag ->
+  | PReg reg, VTag tag when reg = state ->
       Some tag
   | PTuple p_li, VTuple v_li ->
       Option.first_value (List.map2 detect_def_state p_li v_li)
@@ -316,7 +319,7 @@ let rec detect_def_state pattern value =
       None
 
 let rec pattern_shadow_state = function
-  | PReg "_menhir_s" ->
+  | PReg reg when reg = state ->
       true
   | PTuple li ->
       List.exists pattern_shadow_state li

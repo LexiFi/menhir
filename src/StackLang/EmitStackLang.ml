@@ -17,8 +17,6 @@ open Infix
 
 module SSymbols = StackSymbols.Run ()
 
-let prefix = CodeBits.prefix
-
 let number = Lr1.number
 
 let numbers = List.map number
@@ -26,6 +24,7 @@ let numbers = List.map number
 open StackLang
 open StackLangUtils
 open StackLangBuilder
+open NamingConventions
 
 (* -------------------------------------------------------------------------- *)
 
@@ -231,9 +230,10 @@ let lexer, lexbuf = (prefix "lexer", prefix "lexbuf")
 
 let required = [lexer; lexbuf]
 
+(*
 let token, state, semv, beforeendp, startp, endp, startpos, endpos =
   CodePieces.(token, state, semv, beforeendp, startp, endp, startpos, endpos)
-
+*)
 let discard = prefix "discard"
 
 (* -------------------------------------------------------------------------- *)
