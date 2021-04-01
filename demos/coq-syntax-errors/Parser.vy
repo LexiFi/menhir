@@ -33,7 +33,7 @@ parse_expr : p_expr EOF       { $1 }
 
 p_atom :
 | NUM                         { Ast.Num (fst $1) }
-| LPAREN p_expr RPAREN        { $2 } 
+| LPAREN p_expr RPAREN        { $2 }
 
 p_expr :
 | p_factor                    { $1 }

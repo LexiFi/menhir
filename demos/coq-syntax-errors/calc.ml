@@ -12,10 +12,12 @@ let run filename =
     let loop t = Buf_cons (t, Lazy.from_fun compute_buffer) in
     loop (Lexer.token lexbuf)
   in
-  Parser.parse_expr (ExtrOcamlIntConv.nat_of_int 20) (Lazy.from_fun compute_buffer)
+  Parser.parse_expr
+    (ExtrOcamlIntConv.nat_of_int 20)
+    (Lazy.from_fun compute_buffer)
 
 (* very simple evaluation of our expressions *)
-let rec eval ast = 
+let rec eval ast =
   match ast with
   | Num s -> int_of_string s
   | Add (a,b) -> (eval a) + (eval b)
@@ -24,7 +26,7 @@ let rec eval ast =
   | Div (a,b) -> (eval a) / (eval b)
 
 (* ------- Error Message Code ------- *)
-(* retrive location information from our tokens, 
+(* retrive location information from our tokens,
  * provided by lexer
 *)
 let position token =
@@ -50,7 +52,7 @@ let format token =
 let state_num s =
   let coq_num = Parser.Aut.coq_N_of_state s in
   let state = ExtrOcamlIntConv.int_of_n coq_num
-  in 
+  in
   state
 
 let handle_syntax_error state token =
@@ -60,7 +62,7 @@ let handle_syntax_error state token =
   (* Show the token causing the error. *)
   let indication = sprintf "Syntax error at '%s'.\n" (format token) in
   (* Fetch an error message from the database. *)
-  let message = ParserMessages.message (state_num state) in 
+  let message = ParserMessages.message (state_num state) in
   (* Show these three components. *)
   eprintf "%s%s%s%!" location indication message;
   exit 1
@@ -69,10 +71,13 @@ let handle_syntax_error state token =
 (* Similar to calc-syntax-errors, we take a file name on the command line. *)
 let () =
   let filename = Sys.argv.(1) in
-  let p = 
+  let p =
     match (run filename) with
-    | Parser.MenhirLibParser.Inter.Fail_pr_full (state, token) -> handle_syntax_error state token
-    | Parser.MenhirLibParser.Inter.Timeout_pr -> assert false
-    | Parser.MenhirLibParser.Inter.Parsed_pr (ast, _) ->  ast 
+    | Parser.MenhirLibParser.Inter.Fail_pr_full (state, token) ->
+        handle_syntax_error state token
+    | Parser.MenhirLibParser.Inter.Timeout_pr ->
+        assert false
+    | Parser.MenhirLibParser.Inter.Parsed_pr (ast, _) ->
+        ast
   in
   Printf.printf "%d\n" (eval p)

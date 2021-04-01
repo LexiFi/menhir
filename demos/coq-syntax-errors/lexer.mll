@@ -1,7 +1,7 @@
 {
   open Lexing
   open Parser
-  
+
   let get_position lexbuf = (lexbuf.lex_start_p, lexbuf.lex_curr_p)
 
   exception Error of string
@@ -13,7 +13,7 @@ rule token = parse
     { token lexbuf }
 | '\n'
     { new_line lexbuf; token lexbuf }
-| ['0'-'9']+ 
+| ['0'-'9']+
     { NUM ((lexeme lexbuf), (get_position lexbuf)) }
 | '+'
     { ADD (get_position lexbuf) }
@@ -30,4 +30,5 @@ rule token = parse
 | eof
     { EOF (get_position lexbuf) }
 | _
-    { raise (Error (Printf.sprintf "At offset %d: unexpected character.\n" (Lexing.lexeme_start lexbuf))) }
+    { raise (Error (Printf.sprintf "At offset %d: unexpected character.\n"
+     (Lexing.lexeme_start lexbuf))) }
