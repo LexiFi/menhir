@@ -39,57 +39,6 @@ let branch_iter f (_pat, block) = f block
 
 let branch_map f (pat, block) = (pat, f block)
 
-let block_map f = function
-  | INeed (regs, block) ->
-      INeed (regs, f block)
-  | IPush (value, cell, block) ->
-      IPush (value, cell, f block)
-  | IPop (reg, block) ->
-      IPop (reg, f block)
-  | IDef (pat, value, block) ->
-      IDef (pat, value, f block)
-  | IPrim (reg, prim, block) ->
-      IPrim (reg, prim, f block)
-  | ITrace (reg, block) ->
-      ITrace (reg, f block)
-  | IComment (comment, block) ->
-      IComment (comment, f block)
-  | (IDie | IReturn _ | IJump _ | ISubstitutedJump _) as end_block ->
-      end_block
-  | ICaseToken (reg, branches, odefault) ->
-      ICaseToken (reg, List.map (branch_map f) branches, Option.map f odefault)
-  | ICaseTag (reg, branches) ->
-      ICaseTag (reg, List.map (branch_map f) branches)
-  | ITypedBlock t_block ->
-      ITypedBlock {t_block with block= f t_block.block}
-
-(* -------------------------------------------------------------------------- *)
-
-(* [successors yield block] applies the function [yield] in turn to every
-   label that is the target of a [jump] instruction in the block [block]. *)
-
-let rec successors yield block =
-  match block with
-  | INeed (_, block)
-  | IPush (_, _, block)
-  | IPop (_, block)
-  | IDef (_, _, block)
-  | IPrim (_, _, block)
-  | ITrace (_, block)
-  | IComment (_, block) ->
-      successors yield block
-  | IDie | IReturn _ ->
-      ()
-  | IJump label | ISubstitutedJump (label, _) ->
-      yield label
-  | ICaseToken (_, branches, oblock) ->
-      List.iter (branch_iter (successors yield)) branches ;
-      Option.iter (successors yield) oblock
-  | ICaseTag (_, branches) ->
-      List.iter (branch_iter (successors yield)) branches
-  | ITypedBlock {block; stack_type= _; final_type= _} ->
-      successors yield block
-
 let rec value_refers_to_register register value =
   match value with
   | VReg register' when register = register' ->
@@ -163,6 +112,7 @@ let rec is_pattern_equivalent_to_value pattern value =
       List.for_all2 is_pattern_equivalent_to_value li_pat li_val
   | _, _ ->
       false
+
 
 (* -------------------------------------------------------------------------- *)
 (* Testing *)

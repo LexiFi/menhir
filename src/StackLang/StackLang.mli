@@ -171,12 +171,12 @@ type block =
     The known suffixes of the stack, the final type returned by the block, the
     needed registers, and whether there is a match on tags inside the block. *)
 and typed_block =
-{ block: block
-; stack_type: cell_info array
-; state_register: register
-; final_type: Stretch.ocamltype option
-; needed_registers: RegisterSet.t
-; has_case_tag: bool }
+  { block: block
+  ; stack_type: cell_info array
+  ; name: string option
+  ; final_type: Stretch.ocamltype option
+  ; needed_registers: RegisterSet.t
+  ; has_case_tag: bool }
 
 
 (* -------------------------------------------------------------------------- *)

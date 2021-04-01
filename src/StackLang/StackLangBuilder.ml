@@ -60,7 +60,7 @@ let typed_exec (body : unit -> unit) =
       ; final_type
       ; needed_registers
       ; has_case_tag
-      ; state_register= "_menhir_s"}
+      ; name= None}
 
 let exec (body : unit -> unit) =
   current := Open identity ;

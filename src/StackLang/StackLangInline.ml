@@ -1,7 +1,6 @@
 open StackLang
 open StackLangUtils
 open Infix
-
 module Subst = Substitution
 
 (* -------------------------------------------------------------------------- *)
@@ -26,7 +25,7 @@ let in_degree program =
     degree @:= LabelMap.add label (d + 1)
   in
   (* [visit () label] examines the block at address [label]. *)
-  let visit () label = successors tick (lookup label program.cfg).block in
+  let visit () label = Block.successors tick (lookup label program.cfg).block in
   (* Initialize the queue with the entry labels. Process the queue until it
      becomes empty. Return the final table. *)
   StringMap.iter
@@ -51,7 +50,9 @@ let rec inline_block cfg degree block =
       if lookup label degree = 1 then
         let typed_block = lookup label cfg in
         ITypedBlock
-          {typed_block with block= inline_block cfg degree typed_block.block}
+          { typed_block with
+            block= inline_block cfg degree typed_block.block
+          ; name= Some ("inlined_" ^ label) }
       else IJump label
   | ISubstitutedJump (label, substitution) ->
       (* If the target label's in-degree is 1, follow the indirection;
@@ -60,10 +61,12 @@ let rec inline_block cfg degree block =
         let typed_block = lookup label cfg in
         Subst.tight_restore_defs substitution (needed typed_block)
           (ITypedBlock
-             {typed_block with block= inline_block cfg degree typed_block.block})
+             { typed_block with
+               block= inline_block cfg degree typed_block.block
+             ; name= Some ("inlined_" ^ label) })
       else ISubstitutedJump (label, substitution)
   | block ->
-      block_map (inline_block cfg degree) block
+      Block.map (inline_block cfg degree) block
 
 let inline_cfg degree (cfg : typed_block RegisterMap.t) : cfg =
   LabelMap.fold

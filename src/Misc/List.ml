@@ -24,3 +24,6 @@ let ifnlazy condition xs =
     xs()
   else
     []
+
+let sum li =
+  fold_left (+) 0 li
