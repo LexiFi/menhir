@@ -301,12 +301,15 @@ let rec measure_block m block =
       m.total <- m.total + 1 ;
       m.casetag <- m.casetag + 1 ;
       List.iter (branch_iter (measure_block m)) branches
-  | ITypedBlock {block; stack_type= _; final_type= _} ->
+  | ITypedBlock {block} ->
       measure_block m block
+
+let measure_t_block measure {block} =
+  measure_block measure block
 
 let measure program =
   let m = zero () in
-  LabelMap.iter (fun _ block -> measure_block m block.block) program.cfg ;
+  Program.iter (fun _ -> measure_t_block m) program ;
   m
 
 let rec detect_def_state pattern value =

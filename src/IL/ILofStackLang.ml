@@ -186,7 +186,7 @@ let entrydef name call cfg =
             (marrow [arrow tlexbuf (TypName "token"); tlexbuf] (TypName "_")) )
   }
 
-let function_type S.{final_type; stack_type; needed_registers; state_register} =
+let function_type S.{final_type; stack_type; needed_registers} =
   let final =
     match final_type with None -> TypName tcfinal | Some typ -> TypTextual typ
   in
@@ -199,7 +199,7 @@ let function_type S.{final_type; stack_type; needed_registers; state_register} =
          ( typ_tail
          :: List.map
               (function
-                | s when s = state_register ->
+                | s when s = state ->
                     TypApp (tcstate, [typ_tail; final])
                 | _ ->
                     TypVar "_")
@@ -265,32 +265,25 @@ let rec compile_t_block (program : S.program) t_block =
           ( sprintf "Needed registers : { %s }"
               (String.concat "; " (StringSet.elements registers))
           , compile_block block )
-    | S.IPush (value, _cell, block) -> (
-      match value with
-      | S.VTuple [] ->
-          compile_block block
-      | _ ->
-          let value =
-            match compile_value value with ETuple li -> li | _ -> assert false
-          in
-          ELet
-            ([(PVar fstack, ETuple (EVar fstack :: value))], compile_block block)
-      )
-    | S.IPop (pattern, block) -> (
-      match pattern with
-      | S.PTuple [] ->
-          compile_block block
-      | _ ->
-          let pattern =
-            match compile_pattern pattern with
-            | T.PTuple li ->
-                li
-            | _ ->
-                assert false
-          in
-          ELet
-            ( [(T.PTuple (PVar fstack :: pattern), EVar fstack)]
-            , compile_block block ) )
+    | S.IPush (value, _cell, block) ->
+        assert (value <> S.VTuple []) ;
+        let value =
+          match compile_value value with ETuple li -> li | _ -> assert false
+        in
+        ELet
+          ([(PVar fstack, ETuple (EVar fstack :: value))], compile_block block)
+    | S.IPop (pattern, block) ->
+        assert (pattern <> S.PTuple []) ;
+        let pattern =
+          match compile_pattern pattern with
+          | T.PTuple li ->
+              li
+          | _ ->
+              assert false
+        in
+        ELet
+          ( [(T.PTuple (PVar fstack :: pattern), EVar fstack)]
+          , compile_block block )
     | S.IDef (pattern, value, block) -> (
       match pattern with
       | S.PTuple [] ->
@@ -316,7 +309,7 @@ let rec compile_t_block (program : S.program) t_block =
     | S.IReturn value ->
         (* If there is a known final type, we need to annotate the return value
            with it. It is unclear why, but if we dont, the program may fail to
-           type.*)
+           type. *)
         EAnnot (compile_value value, type2scheme final_type)
     | S.IJump label ->
         EApp
@@ -366,85 +359,84 @@ let rec compile_t_block (program : S.program) t_block =
         | Some block ->
             [{branchpat= PWildcard; branchbody= compile_block block}] )
   and compile_ICaseTag register tagpat_block_list =
-    let branches =
-      List.map
-        (fun (tagpat, block) ->
-          let (S.TagMultiple tag_list) = tagpat in
-          match tag_list with
-          | [] ->
-              assert false
-          | [tag] ->
-              ( None
-              , [{branchpat= pstatescon [tag]; branchbody= compile_block block}]
-              )
-          | _ -> (
-            match block with
-            | S.ITypedBlock (S.{needed_registers} as t_block) ->
-                let name = fresh_name () in
-                let f = compile_function t_block program in
-                ( Some (PVar name, f)
-                , (*[ { branchpat= pstatescon tag_list
-                    ; branchbody= compile_block_aux block } ] ))*)
-                  List.map
-                    (fun tag ->
-                      { branchpat= pstatescon [tag]
-                      ; branchbody=
-                          EApp
-                            ( EVar name
-                            , e_common_args @ evars
-                              @@ StringSet.elements needed_registers ) })
-                    tag_list )
-            | (S.IJump _ | S.ISubstitutedJump _) as block ->
-                ( None
-                , List.map
-                    (fun tag ->
-                      { branchpat= pstatescon [tag]
-                      ; branchbody= compile_block block })
-                    tag_list )
-            | _ ->
-                failwith "cannot find t_block" ))
-        tagpat_block_list
+    (* For a given branch, return an optionnal prelude to be inserted before the
+       match and the code for the branch *)
+    let aux_branch (S.TagMultiple tag_list, block) =
+      match tag_list with
+      (* Or-pattern cannot be empty *)
+      | [] ->
+          assert false
+      (* If the Or-pattern contains only one element, then no action is to be taken *)
+      | [tag] ->
+          ( None
+          , [{branchpat= pstatescon [tag]; branchbody= compile_block block}] )
+      | _ -> (
+        match block with
+        | S.ITypedBlock (S.{needed_registers; name} as t_block) ->
+            let name =
+              match name with None -> fresh_name () | Some name -> name
+            in
+            let f = compile_function t_block program in
+            let vargs =
+              e_common_args @ evars @@ StringSet.elements needed_registers
+            in
+            let call_f = EApp (EVar name, vargs) in
+            (* We do not duplicate the code, and instead use the same local
+               function for every subroutine. *)
+            let tag_aux tag =
+              {branchpat= pstatescon [tag]; branchbody= call_f}
+            in
+            ( Some (PVar name, f)
+            , (*[ { branchpat= pstatescon tag_list
+                ; branchbody= compile_block_aux block } ] ))*)
+              List.map tag_aux tag_list )
+        | (S.IJump _ | S.ISubstitutedJump _) as block ->
+            (* We duplicate this code that is very short. *)
+            let expr = compile_block block in
+            ( None
+            , List.map
+                (fun tag -> {branchpat= pstatescon [tag]; branchbody= expr})
+                tag_list )
+        | _ ->
+            failwith "cannot find t_block" )
     in
-    let prelude, branches = List.split branches in
-    let prelude = List.filter_map Fun.id prelude in
+    let branches = List.map aux_branch tagpat_block_list in
+    let preludes, branches = List.split branches in
+    (* Only keep preludes that exists *)
+    let preludes = List.filter_map Fun.id preludes in
+    (* Make the nested Or-patterns into toplevel ones. The code was already
+       duplicated in order for this to work. *)
     let branches = List.concat branches in
-    EInlinedLet
-      ( prelude
-      , EMatch
-          ( EVar register
-          , if List.length branches = Invariant.n_represented then branches
-            else
-              branches
-              @ [ (* TODO : remove this *)
-                  { branchpat= PWildcard
-                  ; branchbody= EApp (EVar "assert", [EVar "false"]) } ] ) )
+    (* Add a default branch except if every represented state is matched on. *)
+    let branches =
+      if List.length branches = Invariant.n_represented then branches
+      else
+        branches
+        @ [ (* TODO : remove this *)
+            { branchpat= PWildcard
+            ; branchbody= EApp (EVar "assert", [EVar "false"]) } ]
+    in
+    EInlinedLet (preludes, EMatch (EVar register, branches))
   and compile_ITypedBlock = function
-    | S.({has_case_tag= true} as t_block) ->
+    | S.({has_case_tag= true; name} as t_block) ->
         (* If a typed block contains a match on tags, then we need to make it
            an inlined function call : it is not possible to inline it
            ourselves, because of GADT shenanigans.*)
-        let block_name = fresh_name () in
+        let block_name =
+          match name with None -> fresh_name () | Some name -> name
+        in
+        let func = EVar block_name in
+        let args =
+          e_common_args @ evars @@ StringSet.elements @@ needed t_block
+        in
         EInlinedLet
-          ( [ ( PVar block_name
-              , compile_function (*~quantify_final:false*) t_block program ) ]
-          , EApp
-              ( EVar block_name
-              , e_common_args @ evars @@ StringSet.elements @@ needed t_block )
-          )
+          ( [(PVar block_name, compile_function t_block program)]
+          , EComment ("Not inlined because of case tag", EApp (func, args)) )
     | t_block ->
         compile_t_block program t_block
   in
-  let S.{block; stack_type; state_register; final_type; needed_registers} =
-    t_block
-  in
-  EComment
-    ( sprintf "Typed block : stack_type=%i, state_register=%s, final_type=%s"
-        (Array.length stack_type) state_register
-        (match final_type with None -> "None" | Some _ -> "Some")
-    , EComment
-        ( sprintf "Needed registers : { %s }"
-            (String.concat "; " (StringSet.elements needed_registers))
-        , compile_block block ) )
+  let S.{block} = t_block in
+  compile_block block
 
 and compile_function t_block (program : S.program) =
   EAnnot

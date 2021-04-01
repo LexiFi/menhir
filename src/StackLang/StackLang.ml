@@ -130,7 +130,7 @@ type state_info =
 type typed_block =
   { block: block
   ; stack_type: cell_info array
-  ; state_register: register
+  ; name: string option
   ; final_type: Stretch.ocamltype option
   ; needed_registers: RegisterSet.t
   ; has_case_tag: bool }

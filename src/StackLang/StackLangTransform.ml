@@ -10,6 +10,7 @@ let fresh_int =
   fun () -> n += 1 ; !n
 
 let fstt (e, _, _) = e
+
 let state_reg = state
 
 let suffix name i = Printf.sprintf "%s_%i" name i
@@ -341,55 +342,107 @@ let count_pushes program =
     match block with
     | IPush (_, _, block) ->
         aux (i + 1) block
-    | INeed (_, block)
-    | IPop (_, block)
-    | IDef (_, _, block)
-    | IPrim (_, _, block)
-    | ITrace (_, block)
-    | ITypedBlock {block}
-    | IComment (_, block) ->
-        aux i block
-    | IDie | IReturn _ | IJump _ | ISubstitutedJump _ ->
-        i
-    | ICaseToken (_, branches, _) -> (
-      match branches with
-      | [] ->
-          0
-      | _ :: _ ->
-          List.fold_left ( + ) 0 (List.map (branch_iter (aux i)) branches)
-          / List.length branches )
-    | ICaseTag (_, branches) -> (
-      match branches with
-      | [] ->
-          0
-      | _ :: _ ->
-          List.fold_left ( + ) 0 (List.map (branch_iter (aux i)) branches)
-          / List.length branches )
+    | block ->
+        Block.iter (aux i) (fun li -> List.sum li / List.length li) i block
   in
   RegisterMap.fold (fun _ {block} acc -> acc + aux 0 block) program.cfg 0
+
+let rec tighten_def = function
+  | PReg preg, VReg vreg when preg = vreg ->
+      None
+  | PReg preg, VReg vreg ->
+      Some (PReg preg, VReg vreg)
+  | PWildcard, _ ->
+      None
+  | PTuple pli, VTuple vli when List.length pli = List.length vli -> (
+    match List.filter_map tighten_def (List.combine pli vli) with
+    | [] ->
+        None
+    | li ->
+        let pli, vli = List.split li in
+        Some (PTuple pli, VTuple vli) )
+  | pattern, value ->
+      Some (pattern, value)
 
 (** remove definitions of shape [x = x], or shape [_ = x] *)
 let remove_useless_defs program =
   let rec aux block =
     match block with
-    | IDef (pattern, value, block)
-      when is_pattern_equivalent_to_value pattern value ->
-        aux block
+    | IDef (pattern, value, block) -> (
+        let tightened_def = tighten_def (pattern, value) in
+        match tightened_def with
+        | None ->
+            aux block
+        | Some (pattern, value) ->
+            IDef (pattern, value, aux block) )
     | _ ->
-        block_map aux block
+        Block.map aux block
   in
-  { program with
-    cfg=
-      RegisterMap.map
-        (fun t_block -> {t_block with block= aux t_block.block})
-        program.cfg }
+  Program.map (fun t_block -> {t_block with block= aux t_block.block}) program
+
+let compute_has_case_tag_t_block t_block =
+  let rec compute_has_case_tag_block = function
+    | INeed (regs, block) ->
+        let block', hct = compute_has_case_tag_block block in
+        (INeed (regs, block'), hct)
+    | IPush (value, cell, block) ->
+        let block', hct = compute_has_case_tag_block block in
+        (IPush (value, cell, block'), hct)
+    | IPop (reg, block) ->
+        let block', hct = compute_has_case_tag_block block in
+        (IPop (reg, block'), hct)
+    | IDef (pat, value, block) ->
+        let block', hct = compute_has_case_tag_block block in
+        (IDef (pat, value, block'), hct)
+    | IPrim (reg, prim, block) ->
+        let block', hct = compute_has_case_tag_block block in
+        (IPrim (reg, prim, block'), hct)
+    | ITrace (reg, block) ->
+        let block', hct = compute_has_case_tag_block block in
+        (ITrace (reg, block'), hct)
+    | IComment (comment, block) ->
+        let block', hct = compute_has_case_tag_block block in
+        (IComment (comment, block'), hct)
+    | (IDie | IReturn _ | IJump _ | ISubstitutedJump (_, _)) as block ->
+        (block, false)
+    | ICaseToken (reg, branches, odefault) ->
+        let branches =
+          List.map
+            (fun (tokpat, block) ->
+              let block, hct = compute_has_case_tag_block block in
+              ((tokpat, block), hct))
+            branches
+        in
+        let branches, hcts = List.split branches in
+        let hct = List.exists Fun.id hcts in
+        (ICaseToken (reg, branches, odefault), hct)
+    | ICaseTag (reg, branches) ->
+        let branches =
+          List.map
+            (fun (tokpat, block) ->
+              let block, _hct = compute_has_case_tag_block block in
+              (tokpat, block))
+            branches
+        in
+        (ICaseTag (reg, branches), true)
+    | ITypedBlock t_block ->
+        let {block} = t_block in
+        let block, has_case_tag = compute_has_case_tag_block block in
+        (ITypedBlock {t_block with block; has_case_tag}, false)
+  in
+  let {block} = t_block in
+  let block, has_case_tag = compute_has_case_tag_block block in
+  {t_block with block; has_case_tag}
+
+let compute_has_case_tag program =
+  Program.map compute_has_case_tag_t_block program
 
 let optimize program =
   let original_count = count_pushes program in
   remove_useless_defs
     ( if Settings.commute_pushes then (
       (*let program = inline_tags program in*)
-      let program = commute_pushes program in
+      let program = compute_has_case_tag @@ commute_pushes program in
       let commuted_count = count_pushes program in
       if Settings.stacklang_dump then
         Printf.printf
