@@ -3,11 +3,13 @@
 ## 2021/04/XX
 
 * Mention the demo [coq-minicalc](demos/coq-minicalc) in the manual.
-* Parsers generated with the Coq mode now has support for non-certified basic 
-  error reporting without an additional parser. This is supported thanks to an 
-  extension of the return type parse_result in the coq-menhirlib library and thanks 
-  to the new generated helper function `Aut.N_of_state`.` See the new demo 
-  `coq-syntax-errors` and the updated manual for more.
+
+* Parsers generated with the Coq mode now have support for non-certified basic
+  error reporting without an additional parser. This is supported thanks to an
+  extension of the return type `parse_result` in the coq-menhirlib library and
+  thanks to the new generated helper function `Aut.N_of_state`. See the new
+  demo `coq-syntax-errors` and the updated manual for more details.
+  (Contributed by Brian Ward.)
 
 ## 2021/03/10
 
