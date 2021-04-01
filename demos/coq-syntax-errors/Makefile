@@ -15,7 +15,7 @@ all: Parser.v ParserMessages.ml extraction/Parser.ml
 
 .PHONY: test
 test: all
-	dune build --force --display short @test
+	dune build --force --display short @essai
 
 # [make clean] cleans up just this demo.
 
