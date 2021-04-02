@@ -3,7 +3,12 @@ open StackLangUtils
 open Infix
 module Subst = Substitution
 
+let max_degree = 2
+
 (* -------------------------------------------------------------------------- *)
+
+let lookup_degree label degree =
+  match LabelMap.find label degree with exception Not_found -> 0 | d -> d
 
 (* [in_degree program] computes the in-degree of every label in the program
    [program]. It returns a table that maps every reachable label to its
@@ -31,61 +36,63 @@ let in_degree program =
   StringMap.iter
     (fun _s label ->
       Queue.add label queue ;
-      degree @:= LabelMap.add label 2)
+      degree @:= LabelMap.add label max_int)
     program.entry ;
   Misc.qfold visit () queue ;
   !degree
 
 (* -------------------------------------------------------------------------- *)
 
-(* [inline degree program] transforms the program [program] by removing every
+(** [inline degree program] transforms the program [program] by removing every
    unreachable block and by inlining every block whose in-degree is 1. It is
    assumed that every entry label has an in-degree of at least 2. *)
-
-let rec inline_block cfg degree block =
+let rec inline_block cfg degree labels block =
   match block with
-  | IJump label ->
+  | IJump label
+    when (not @@ LabelSet.mem label labels)
+         && lookup_degree label degree <= max_degree ->
       (* If the target label's in-degree is 1, follow the indirection;
          otherwise, keep the [jump] instruction. *)
-      if lookup label degree = 1 then
-        let typed_block = lookup label cfg in
-        ITypedBlock
-          { typed_block with
-            block= inline_block cfg degree typed_block.block
-          ; name= Some ("inlined_" ^ label) }
-      else IJump label
-  | ISubstitutedJump (label, substitution) ->
+      let typed_block = lookup label cfg in
+      let labels = LabelSet.add label labels in
+      ITypedBlock
+        { typed_block with
+          block= inline_block cfg degree labels typed_block.block
+        ; name= Some ("inlined_" ^ label) }
+  | ISubstitutedJump (label, substitution)
+    when (not @@ LabelSet.mem label labels)
+         && lookup_degree label degree <= max_degree ->
       (* If the target label's in-degree is 1, follow the indirection;
          otherwise, keep the [jump] instruction. *)
-      if lookup label degree = 1 then
-        let typed_block = lookup label cfg in
-        Subst.tight_restore_defs substitution (needed typed_block)
-          (ITypedBlock
-             { typed_block with
-               block= inline_block cfg degree typed_block.block
-             ; name= Some ("inlined_" ^ label) })
-      else ISubstitutedJump (label, substitution)
+      let typed_block = lookup label cfg in
+      let labels = LabelSet.add label labels in
+      Subst.tight_restore_defs substitution (needed typed_block)
+        (ITypedBlock
+           { typed_block with
+             block= inline_block cfg degree labels typed_block.block
+           ; name= Some ("inlined_" ^ label) })
   | block ->
-      Block.map (inline_block cfg degree) block
+      Block.map (inline_block cfg degree labels) block
 
-let inline_cfg degree (cfg : typed_block RegisterMap.t) : cfg =
-  LabelMap.fold
-    (fun label ({block} as t_block) accu ->
+let inline_t_block cfg degree label t_block =
+  let {block} = t_block in
+  {t_block with block= inline_block cfg degree (LabelSet.singleton label) block}
+
+let remove_unused program =
+  let degree = in_degree program in
+  Program.filter
+    (fun label _ ->
       match LabelMap.find label degree with
-      | exception Not_found ->
-          (* An unreachable label. *)
-          accu
+      | (exception Not_found) | 0 ->
+          false
       | d ->
           assert (d > 0) ;
-          if d = 1 then accu
-          else
-            LabelMap.add label
-              {t_block with block= inline_block cfg degree block}
-              accu)
-    cfg LabelMap.empty
+          true)
+    program
 
-let inline degree ({cfg; entry; states} as program) : program =
-  if Settings.code_inlining then {cfg= inline_cfg degree cfg; entry; states}
+let inline degree ({cfg} as program) : program =
+  if Settings.code_inlining then
+    remove_unused (Program.mapi (inline_t_block cfg degree) program)
   else program
 
 (* [inline program] transforms the program [program] by removing every

@@ -1,6 +1,11 @@
+open StackLang
 
-type t = StackLang.program
+type t = program
 
-val map: (StackLang.typed_block -> StackLang.typed_block) -> t -> t
+val map : (typed_block -> typed_block) -> t -> t
 
-val iter: (StackLang.register -> StackLang.typed_block -> unit) -> t -> unit
+val mapi : (register -> typed_block -> typed_block) -> t -> t
+
+val iter : (register -> typed_block -> unit) -> t -> unit
+
+val filter : (register -> typed_block -> bool) -> t -> t
