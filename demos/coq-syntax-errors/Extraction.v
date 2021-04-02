@@ -11,6 +11,7 @@ Extract Inlined Constant Parser.Ast.string => "String.t".
 Extract Constant Parser.Ast.loc => "Lexing.position * Lexing.position".
 
 Set Extraction AccessOpaque.
+Set Warnings "-extraction-opaque-accessed".
 
 Cd "extraction".
 
