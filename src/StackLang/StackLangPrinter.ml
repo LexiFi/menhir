@@ -222,6 +222,9 @@ let value_to_string v =
 let pattern_to_string p =
   to_string (pattern p)
 
+let known_cells_to_string kc =
+  to_string (known_cells kc)
+
 let print_substitution f s =
   to_channel f (substitution s)
 

@@ -304,8 +304,7 @@ let rec measure_block m block =
   | ITypedBlock {block} ->
       measure_block m block
 
-let measure_t_block measure {block} =
-  measure_block measure block
+let measure_t_block measure {block} = measure_block measure block
 
 let measure program =
   let m = zero () in

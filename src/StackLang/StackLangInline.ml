@@ -3,7 +3,7 @@ open StackLangUtils
 open Infix
 module Subst = Substitution
 
-let max_degree = 2
+let max_degree = 5
 
 (* -------------------------------------------------------------------------- *)
 
