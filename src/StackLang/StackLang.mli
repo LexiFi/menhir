@@ -29,7 +29,11 @@ type register = string
 module RegisterSet = StringSet
 module RegisterMap = StringMap
 module TagMap = IntMap
-module TagSet = IntSet
+module TagSet : sig
+  include module type of IntSet
+  val all: t
+  val to_string: t -> string
+end
 
 type registers = RegisterSet.t
 

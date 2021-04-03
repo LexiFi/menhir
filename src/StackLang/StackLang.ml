@@ -30,7 +30,20 @@ type register = string
 module RegisterSet = StringSet
 module RegisterMap = StringMap
 module TagMap = IntMap
-module TagSet = IntSet
+
+module TagSet = struct
+  include IntSet
+
+  let all = of_list (List.init (Lr1.n + 1) Fun.id)
+
+  let mem i set =
+    let b = mem i set in
+    if set == all && not b then failwith "[mem i all] returned false" else b
+
+  let to_string set =
+    Printf.sprintf "{%s}"
+      (String.concat "; " (List.map string_of_int (elements set)))
+end
 
 type registers = RegisterSet.t
 

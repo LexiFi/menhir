@@ -11,20 +11,24 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* This module offers a pretty-printer for StackLang. *)
+(* This module offers a pretty-printer for  *)
 
-val print_value: out_channel -> StackLang.value -> unit
+open StackLang
 
-val print_substitution: out_channel -> StackLang.substitution -> unit
+val print_value: out_channel -> value -> unit
 
-val print: out_channel -> StackLang.program -> unit
+val print_substitution: out_channel -> substitution -> unit
 
-val print_block: out_channel -> StackLang.block -> unit
+val print: out_channel -> program -> unit
 
-val print_known_cells: out_channel -> StackLang.cell_info array -> unit
+val print_block: out_channel -> block -> unit
 
-val print_states: out_channel -> StackLang.state_info StackLang.TagMap.t -> unit
+val print_known_cells: out_channel -> cell_info array -> unit
 
-val pattern_to_string: StackLang.pattern -> string
+val print_states: out_channel -> state_info TagMap.t -> unit
 
-val value_to_string: StackLang.value -> string
+val pattern_to_string: pattern -> string
+
+val value_to_string: value -> string
+
+val known_cells_to_string: cell_info array -> register

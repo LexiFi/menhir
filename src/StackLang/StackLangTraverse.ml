@@ -272,8 +272,7 @@ let rec measure_block m block =
   | ITypedBlock {block} ->
       measure_block m block
 
-let measure_t_block measure {block} =
-  measure_block measure block
+let measure_t_block measure {block} = measure_block measure block
 
 let measure program =
   let m = zero () in
@@ -339,26 +338,26 @@ let wt_t_block program label t_block =
     wt_cells_arrays block reason (Array.rev_of_list known_cells) needed_cells
   in
   (* TODO : document and make this display *)
-  let rec wt_block known_cells state = function
+  let rec wt_block (known_cells : 'a) (extra_known_cells : 'a) state = function
     (* These blocks do not care about the state of the stack *)
     | INeed (_, block)
     | IPrim (_, _, block)
     | ITrace (_, block)
     | IComment (_, block) ->
-        wt_block known_cells state block
+        wt_block known_cells extra_known_cells state block
     (* Always well-typed *)
     | IDie | IReturn _ ->
         ()
     | IPush (_, cell, block) ->
-        wt_block (cell :: known_cells) state block
+        wt_block (cell :: known_cells) extra_known_cells state block
     | IPop (pattern, block) -> (
-      match known_cells with
-      | [] ->
+      match known_cells, extra_known_cells with
+      | [], _ | _, [] ->
           assert false
-      | _ :: known_cells ->
+      | _ :: known_cells, _ :: extra_known_cells ->
           (* If the state is shadowed, then it becomes unknown. *)
           let state = if pattern_shadow_state pattern then None else state in
-          wt_block known_cells state block )
+          wt_block known_cells extra_known_cells state block )
     | IDef (pattern, value, block) ->
         let state =
           match detect_def_state pattern value with
@@ -367,7 +366,7 @@ let wt_t_block program label t_block =
           | Some tag ->
               Some tag
         in
-        wt_block known_cells state block
+        wt_block known_cells extra_known_cells state block
     | IJump label as block ->
         let target = lookup label cfg in
         ( if RegisterSet.mem state_reg target.needed_registers then
@@ -400,31 +399,34 @@ let wt_t_block program label t_block =
               () ) ;
         wt_cells block "subst jump" known_cells target.stack_type
     | ICaseToken (_, branches, odefault) ->
-        List.iter (branch_iter (wt_block known_cells state)) branches ;
-        Option.iter (wt_block known_cells state) odefault
+        List.iter
+          (branch_iter (wt_block known_cells extra_known_cells state))
+          branches ;
+        Option.iter (wt_block known_cells extra_known_cells state) odefault
     | ICaseTag (_, branches) ->
-        aux_icase_tag known_cells state branches
+        aux_icase_tag known_cells extra_known_cells state branches
     | ITypedBlock {block; stack_type} as this_block ->
         (* We check that the stack has at least the number of known cells that
            the type annotation expect. *)
         wt_cells this_block "typed block" known_cells stack_type ;
         let known_cells = Array.rev_to_list stack_type in
-        wt_block known_cells state block
-  and aux_icase_tag known_cells state branches =
+        wt_block known_cells extra_known_cells state block
+  and aux_icase_tag _known_cells extra_known_cells state branches =
     let branch_aux (TagMultiple taglist, block) =
       (* By matching on the state, we discover state information.
          We can enrich the known cells with theses. *)
       let state_known_cells =
         Array.rev_to_list (state_info_intersection states taglist).known_cells
       in
-      let known_cells = known_cells @ state_known_cells in
+      let known_cells = extra_known_cells @ state_known_cells in
       (* We are matching on a state, therefore state is always needed,
          and we can discard these values. *)
-      wt_block known_cells state block
+      wt_block known_cells extra_known_cells state block
     in
     List.iter branch_aux branches
   in
   let {block; stack_type} = t_block in
-  wt_block (Array.rev_to_list stack_type) None block
+  let known_cells = Array.rev_to_list stack_type in
+  wt_block known_cells known_cells None block
 
 let wt program = Program.iter (wt_t_block program) program

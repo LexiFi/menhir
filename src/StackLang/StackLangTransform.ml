@@ -2,7 +2,6 @@ open Printf
 open StackLang
 open StackLangUtils
 module Subst = Substitution
-open NamingConventions
 open Infix
 
 let fresh_int =
@@ -10,8 +9,6 @@ let fresh_int =
   fun () -> n += 1 ; !n
 
 let fstt (e, _, _) = e
-
-let state_reg = state
 
 let suffix name i = Printf.sprintf "%s_%i" name i
 
@@ -40,6 +37,12 @@ let find_tagpat_branch branches tag =
 
 let pushcell_apply subst (value, cell, id) = (Subst.apply subst value, cell, id)
 
+(* let enrich_known_cells_with_state_info known_cells possible_states states =
+  let state_known_cells =
+    (state_info_intersection states possible_states).known_cells
+  in
+  Array.append known_cells state_known_cells *)
+
 let needed_registers_pushes pushes =
   List.fold_left
     (fun needed_registers (value, _, _) ->
@@ -54,7 +57,8 @@ let commute_pushes_t_block program t_block =
   in
   let cancelled_pop = ref 0 in
   let eliminated_branches = ref 0 in
-  let rec commute_pushes_block pushes subst final_type known_cells =
+  let rec commute_pushes_block pushes subst final_type known_cells
+      extra_known_cells possible_states =
     (* [push_list] is the list of pushes that we need to restore, and hopefully
        cancel out with a pop. Every definition is inlined in order to make it
        impossible that a commuted pushes refers to a shadowed definition.
@@ -71,11 +75,23 @@ let commute_pushes_t_block program t_block =
        and replaces the [final_type] field of every ITypedBlock along the way.
        [known_cells] should be initialized to an array of the known cells.
        Then a cell is popped when a pop cannot be cancelled, and it is enriched
-       with more information when matching on a type. *)
+       with more information when matching on a type.
+       [extra_knowns_cells] contains the known cells that we did not discover by
+       matching on ["_menhir_state"]. It is kept as-is most of the time, but if
+       there is a pop we do not cancel, then it is set to [known_cells] (after
+       popping the top cell). This is needed, because a pop makes the state
+       unknown and synchronised with ["_menhir_s"].needed_registers
+       [possible_states] contains the possible values of ["_menhir_s"].
+       It is used to filter useless (and in some cases, ill-typed) branches from
+       casetag.
+       Inlining a definition of shape ["_menhir_s = i"] will not affect it,
+       because if we have such a definition, we will not match on ["_menhir_s"].
+      *)
     function
     | INeed (registers, block) ->
         let block' =
-          commute_pushes_block pushes subst final_type known_cells block
+          commute_pushes_block pushes subst final_type known_cells
+            extra_known_cells possible_states block
         in
         let registers =
           RegisterSet.union
@@ -89,7 +105,7 @@ let commute_pushes_t_block program t_block =
         let block' =
           commute_pushes_block
             ((Subst.apply subst value, cell, id) :: pushes)
-            subst final_type known_cells block
+            subst final_type known_cells extra_known_cells possible_states block
         in
         let comment =
           sprintf "Commuting push_%i %s" id
@@ -105,11 +121,18 @@ let commute_pushes_t_block program t_block =
       match pushes with
       | [] ->
           assert (known_cells <> [||]) ;
+          (* We lose a known cell here *)
           let known_cells = pop_n_cells known_cells 1 in
+          (* However, since we popped the state from the stack, it is now in
+             sync with the stack. Therefore, no information we have was
+             discovered by inspecting the stack  *)
+          let extra_known_cells =
+            known_cells
+          in
           let block' =
             commute_pushes_block []
               (Subst.remove subst pattern)
-              final_type known_cells block
+              final_type known_cells extra_known_cells TagSet.all block
           in
           IPop (pattern, block')
       | (value, _cell, id) :: push_list ->
@@ -121,7 +144,8 @@ let commute_pushes_t_block program t_block =
           (* We have cancelled a pop ! *)
           cancelled_pop += 1 ;
           let block =
-            commute_pushes_block push_list subst final_type known_cells block
+            commute_pushes_block push_list subst final_type known_cells
+              extra_known_cells possible_states block
           in
           let comment =
             sprintf "Cancelled push_%i %s with pop %s" id
@@ -138,7 +162,8 @@ let commute_pushes_t_block program t_block =
            in order for it to refer to the correct definition. *)
         let value' = Subst.apply subst value in
         let block' =
-          commute_pushes_block pushes subst final_type known_cells block
+          commute_pushes_block pushes subst final_type known_cells
+            extra_known_cells possible_states block
         in
         IComment
           ( sprintf "Inlining def : %s = %s"
@@ -157,7 +182,8 @@ let commute_pushes_t_block program t_block =
           Subst.extend reg (VReg reg') (Subst.remove subst (PReg reg'))
         in
         let block =
-          commute_pushes_block pushes subst' final_type known_cells block
+          commute_pushes_block pushes subst' final_type known_cells
+            extra_known_cells possible_states block
         in
         let prim =
           match prim with
@@ -174,12 +200,14 @@ let commute_pushes_t_block program t_block =
         IPrim (reg', prim, block)
     | ITrace (register, block) ->
         let block' =
-          commute_pushes_block pushes subst final_type known_cells block
+          commute_pushes_block pushes subst final_type known_cells
+            extra_known_cells possible_states block
         in
         ITrace (register, block')
     | IComment (comment, block) ->
         let block =
-          commute_pushes_block pushes subst final_type known_cells block
+          commute_pushes_block pushes subst final_type known_cells
+            extra_known_cells possible_states block
         in
         IComment (comment, block)
     | IDie ->
@@ -199,90 +227,97 @@ let commute_pushes_t_block program t_block =
         aux_jump pushes subst label
     | ICaseToken (reg, branches, odefault) ->
         aux_case_token pushes subst reg branches odefault final_type known_cells
+          extra_known_cells possible_states
     | ICaseTag (reg, branches) ->
-        aux_icase_tag pushes subst final_type known_cells reg branches
+        aux_icase_tag pushes subst final_type known_cells extra_known_cells
+          possible_states reg branches
     | ITypedBlock t_block ->
-        aux_itblock pushes subst final_type known_cells t_block
-  and aux_icase_tag pushes subst final_type known_cells reg branches =
+        aux_itblock pushes subst final_type known_cells extra_known_cells
+          possible_states t_block
+  and aux_icase_tag pushes subst final_type known_cells extra_known_cells
+      possible_states reg branches =
     match Subst.apply subst (VReg reg) with
     | VTag tag ->
         let block = snd @@ find_tagpat_branch branches tag in
         eliminated_branches += (List.length branches - 1) ;
-        commute_pushes_block pushes subst final_type known_cells block
+        let comment =
+          sprintf "Eliminated case tag. Possible states : %s"
+            (TagSet.to_string possible_states)
+        in
+        IComment
+          ( comment
+          , commute_pushes_block pushes subst final_type known_cells
+              extra_known_cells possible_states block )
     | VReg reg ->
         let branch_aux (TagMultiple taglist, block) =
-          let state_info = state_info_intersection program.states taglist in
-          let known_cells =
-            longest_known_cells [known_cells; state_info.known_cells]
+          let taglist' =
+            List.filter (fun tag -> TagSet.mem tag possible_states) taglist
           in
-          let subst, pushes =
-            match taglist with
-            | [tag] ->
-                ( Subst.extend reg (VTag tag) subst
-                , let tmp_subst = Subst.extend reg (VTag tag) Subst.empty in
-                  List.map (pushcell_apply tmp_subst) pushes )
-            | _ ->
-                (subst, pushes)
-          in
-          (* We are matching on a state, therefore state is always needed,
-             and we can discard these values. *)
-          let block =
-            commute_pushes_block pushes subst final_type known_cells block
-          in
-          (TagMultiple taglist, block)
+          match taglist' with
+          | [] ->
+              None
+          | _ :: _ ->
+              Some
+                (let state_info =
+                   state_info_intersection program.states taglist'
+                 in
+                 let known_cells =
+                   Array.append state_info.known_cells extra_known_cells
+                 in
+                 let subst, pushes =
+                   match taglist' with
+                   | [tag] ->
+                       ( Subst.extend reg (VTag tag) subst
+                       , let tmp_subst =
+                           Subst.extend reg (VTag tag) Subst.empty
+                         in
+                         List.map (pushcell_apply tmp_subst) pushes )
+                   | _ ->
+                       (subst, pushes)
+                 in
+                 (* We are matching on a state, therefore state is always needed,
+                    and we can discard these values. *)
+                 let possible_states = TagSet.of_list taglist' in
+                 (* let comment =
+                      sprintf "Possible states : %s, Old taglist : [%s]"
+                        (TagSet.to_string possible_states)
+                        (String.concat "; " (List.map string_of_int taglist'))
+                    in *)
+                 let block =
+                   commute_pushes_block pushes subst final_type known_cells
+                     extra_known_cells possible_states block
+                 in
+                 (TagMultiple taglist', block))
         in
-        let branches = List.map branch_aux branches in
+        let branches = List.filter_map branch_aux branches in
         ICaseTag (Subst.apply_reg subst reg, branches)
     | _ ->
         assert false
-  and aux_itblock pushes subst final_type known_cells t_block =
-    let {block; stack_type; needed_registers; final_type= t_block_final_type} =
-      t_block
-    in
-    (* We alter the type information according to the number of commuting
-       pushes : Every push that is commuting removes a known stack symbol *)
-    let state =
-      match Subst.apply subst (VReg state_reg) with
-      | VTag tag ->
-          Some tag
-      | VReg reg when reg = state_reg ->
-          None
-      | _ ->
-          assert false
-    in
-    let state_info =
-      Option.map (fun tag -> lookup_tag tag program.states) state
-    in
-    let state_final_type =
-      Option.simplify @@ Option.map (fun info -> info.sfinal_type) state_info
-    in
-    let final_type =
-      Option.first_value [final_type; state_final_type; t_block_final_type]
-    in
+  and aux_itblock pushes subst final_type known_cells extra_known_cells
+      possible_states t_block =
+    let {block; needed_registers; final_type= tb_final_type} = t_block in
     let needed_registers =
       RegisterSet.union
         (needed_registers_pushes pushes)
         (Subst.apply_registers subst needed_registers)
     in
-    let need_state = RegisterSet.mem state_reg needed_registers in
-    let push_n = List.length pushes in
-    let stack_types =
-      (pop_n_cells stack_type push_n :: List.if1 (not need_state) known_cells)
-      @
-      match state_info with
-      | Some {known_cells} ->
-          [pop_n_cells known_cells push_n]
-      | None ->
-          []
+    let final_type = Option.first_value [final_type; tb_final_type] in
+    let block =
+      commute_pushes_block pushes subst final_type known_cells extra_known_cells
+        possible_states block
     in
-    let stack_type = longest_known_cells stack_types in
-    let block = commute_pushes_block pushes subst final_type stack_type block in
+    let comment =
+      sprintf "Known cells : %s, Extra known cells : %s, Possibles states : %s"
+        (StackLangPrinter.known_cells_to_string known_cells)
+        (StackLangPrinter.known_cells_to_string extra_known_cells)
+        (TagSet.to_string possible_states)
+    in
     ITypedBlock
       { t_block with
-        block= IComment (sprintf "need_state=%b" need_state, block)
+        block= IComment (comment, block)
       ; final_type
       ; needed_registers
-      ; stack_type }
+      ; stack_type= known_cells }
   and aux_jump pushes subst label =
     (* Raw registers needed by the block we jump to. *)
     let needed_registers = needed (lookup label cfg) in
@@ -297,10 +332,11 @@ let commute_pushes_t_block program t_block =
          ( sprintf "Needed registers : %s"
              (String.concat " " (RegisterSet.elements needed_registers))
          , ISubstitutedJump (label, subst) ))
-  and aux_case_token pushes subst reg branches odefault final_type known_cells =
+  and aux_case_token pushes subst reg branches odefault final_type known_cells
+      extra_known_cells (possible_states : TagSet.t) =
     let aux_branch = function
       (* Every [TokSingle] introduces a definition of a register. *)
-      | TokSingle (tok, reg'), block ->
+      | TokSingle (tok, reg'), (block : block) ->
           let reg'' =
             if pushes_conflit_with_reg (List.map fstt pushes) reg' then
               suffix reg' (fresh_int ())
@@ -308,13 +344,15 @@ let commute_pushes_t_block program t_block =
           in
           let subst = Subst.extend reg' (VReg reg'') subst in
           let block' =
-            commute_pushes_block pushes subst final_type known_cells block
+            commute_pushes_block pushes subst final_type known_cells
+              extra_known_cells possible_states block
           in
           (TokSingle (tok, reg''), block')
       (* [TokMultiple] does not introduce new definitions *)
       | TokMultiple terminals, block ->
           let block' =
-            commute_pushes_block pushes subst final_type known_cells block
+            commute_pushes_block pushes subst final_type known_cells
+              extra_known_cells possible_states block
           in
           (TokMultiple terminals, block')
     in
@@ -323,11 +361,15 @@ let commute_pushes_t_block program t_block =
       ( reg
       , branches
       , Option.map
-          (commute_pushes_block pushes subst final_type known_cells)
+          (commute_pushes_block pushes subst final_type known_cells
+             extra_known_cells possible_states)
           odefault )
   in
   let {block; stack_type} = t_block in
-  let candidate = commute_pushes_block [] Subst.empty None stack_type block in
+  let candidate =
+    commute_pushes_block [] Subst.empty None stack_type stack_type TagSet.all
+      block
+  in
   { t_block with
     block=
       ( if !cancelled_pop > 0 || !eliminated_branches > 0 then candidate
@@ -337,7 +379,7 @@ let commute_pushes program =
   { program with
     cfg= RegisterMap.map (commute_pushes_t_block program) program.cfg }
 
-let count_pushes program =
+let _count_pushes program =
   let rec aux i block =
     match block with
     | IPush (_, _, block) ->
@@ -438,17 +480,17 @@ let compute_has_case_tag program =
   Program.map compute_has_case_tag_t_block program
 
 let optimize program =
-  let original_count = count_pushes program in
+  (* let original_count = count_pushes program in *)
   remove_useless_defs
-    ( if Settings.commute_pushes then (
+    ( if Settings.commute_pushes then
       (*let program = inline_tags program in*)
       let program = compute_has_case_tag @@ commute_pushes program in
-      let commuted_count = count_pushes program in
-      if Settings.stacklang_dump then
-        Printf.printf
-          "Original pushes count : %d\nCommuted pushes count : %d \n"
-          original_count commuted_count ;
-      program )
+      (* let commuted_count = count_pushes program in
+         if Settings.stacklang_dump then
+           Printf.printf
+             "Original pushes count : %d\nCommuted pushes count : %d \n"
+             original_count commuted_count ; *)
+      program
     else program )
 
 let test () =
