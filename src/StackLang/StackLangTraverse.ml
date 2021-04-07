@@ -328,6 +328,8 @@ let rec pattern_shadow_state = function
   | _ ->
       false
 
+let _value_refers_to_state value = RegisterSet.mem state (value_registers value)
+
 let get_args_map block_map =
   StringMap.map
     (function

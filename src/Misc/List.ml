@@ -1,5 +1,5 @@
 include Stdlib.List
-
+(* TODO : same as array *)
 
 (** A list subject to a condition. (Be careful, though: the list is
    of course constructed even if the condition is false.) *)

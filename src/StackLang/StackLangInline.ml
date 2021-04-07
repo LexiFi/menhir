@@ -80,15 +80,7 @@ let inline_t_block cfg degree label t_block =
 
 let remove_unused program =
   let degree = in_degree program in
-  Program.filter
-    (fun label _ ->
-      match LabelMap.find label degree with
-      | (exception Not_found) | 0 ->
-          false
-      | d ->
-          assert (d > 0) ;
-          true)
-    program
+  Program.filter (fun label _ -> lookup_degree label degree > 0) program
 
 let inline degree ({cfg} as program) : program =
   if Settings.code_inlining then
