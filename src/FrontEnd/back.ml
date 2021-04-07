@@ -117,7 +117,7 @@ let () =
     let program = StackLangInline.inline program in
     let program = StackLangTransform.optimize program in
     StackLangTraverse.wf program ;
-    (* StackLangTraverse.wt program ; *)
+    StackLangTraverse.wt program ;
     if Settings.stacklang_dump then (
       StackLangPrinter.print stdout program ;
       StackLangTraverse.(print (measure program)) ) ;

@@ -296,6 +296,8 @@ let rec pattern_shadow_state = function
   | _ ->
       false
 
+let _value_refers_to_state value = RegisterSet.mem state (value_registers value)
+
 let get_args_map block_map =
   StringMap.map
     (function
@@ -308,7 +310,7 @@ let get_args_map block_map =
 let wt_t_block program label t_block =
   let cfg = program.cfg in
   let states = program.states in
-  let wt_cells_arrays block reason known_cells needed_cells =
+  let wt_cells block reason known_cells needed_cells =
     let fail message =
       eprintf "\nWhile checking %s, in block %s : %s\n" reason label message ;
       eprintf "Known cells :" ;
@@ -334,11 +336,14 @@ let wt_t_block program label t_block =
         fail @@ sprintf "Enough cells are known, but their content differ."
     done
   in
-  let wt_cells block reason known_cells needed_cells =
-    wt_cells_arrays block reason (Array.rev_of_list known_cells) needed_cells
-  in
-  (* TODO : document and make this display *)
-  let rec wt_block (known_cells : 'a) (extra_known_cells : 'a) state = function
+  (*
+  [known_cells]: cells we can pop and pass through a typed_block and a jump
+  [extra_known_cells]: when we match on a state, known_cells become
+    [extra_known_cells @ state_known_cells]
+    TODO : better description of what the information is, instead of what it does
+  *)
+  let rec wt_block (known_cells : cell_info array)
+      (extra_known_cells : cell_info array) state = function
     (* These blocks do not care about the state of the stack *)
     | INeed (_, block)
     | IPrim (_, _, block)
@@ -348,23 +353,24 @@ let wt_t_block program label t_block =
     (* Always well-typed *)
     | IDie | IReturn _ ->
         ()
-    | IPush (_, cell, block) ->
-        wt_block (cell :: known_cells) extra_known_cells state block
-    | IPop (pattern, block) -> (
-      match known_cells, extra_known_cells with
-      | [], _ | _, [] ->
-          assert false
-      | _ :: known_cells, _ :: extra_known_cells ->
-          (* If the state is shadowed, then it becomes unknown. *)
-          let state = if pattern_shadow_state pattern then None else state in
-          wt_block known_cells extra_known_cells state block )
+    | IPush (_value, cell, block) ->
+        wt_block
+          (Array.push known_cells cell)
+          (Array.push extra_known_cells cell)
+          state block
+    | IPop (pattern, block) ->
+        assert (known_cells <> [||]) ;
+        let known_cells = Array.pop known_cells in
+        (* If the state is shadowed, then it becomes unknown. *)
+        let state = if pattern_shadow_state pattern then None else state in
+        wt_block known_cells [||] state block
     | IDef (pattern, value, block) ->
-        let state =
+        let state, extra_known_cells =
           match detect_def_state pattern value with
           | None ->
-              state
+              (state, extra_known_cells)
           | Some tag ->
-              Some tag
+              (Some tag, [||])
         in
         wt_block known_cells extra_known_cells state block
     | IJump label as block ->
@@ -373,10 +379,11 @@ let wt_t_block program label t_block =
           (* This check that the stack is compatible with the state we are passing
              to the routine. This is only needed if we are actually passing a
              state*)
+          (* assert (extra_known_cells = [||]) ; *)
           match state with
           | Some tag ->
-              wt_cells_arrays block "state sync"
-                (lookup_tag tag states).known_cells target.stack_type
+              wt_cells block "state sync" (lookup_tag tag states).known_cells
+                target.stack_type
           | None ->
               (* If the state is unknown, we cannot check that the stack is
                  compatible with it. *)
@@ -390,10 +397,10 @@ let wt_t_block program label t_block =
         let target = lookup label cfg in
         ( if RegisterSet.mem state_reg target.needed_registers then
           match (Subst.apply subst (VReg state_reg), state) with
-          | VTag _, Some _ ->
+          | VTag tag, Some tag' when tag <> tag' ->
               assert false
-          | VTag tag, None | _, Some tag ->
-              wt_cells_arrays block "subst state sync"
+          | VTag tag, _ | _, Some tag ->
+              wt_cells block "subst state sync"
                 (lookup_tag tag states).known_cells target.stack_type
           | _, None ->
               () ) ;
@@ -409,16 +416,18 @@ let wt_t_block program label t_block =
         (* We check that the stack has at least the number of known cells that
            the type annotation expect. *)
         wt_cells this_block "typed block" known_cells stack_type ;
-        let known_cells = Array.rev_to_list stack_type in
+        (* Inside the typed block, we are only allowed to use the cell from the
+           annotation. *)
+        let known_cells = stack_type in
         wt_block known_cells extra_known_cells state block
   and aux_icase_tag _known_cells extra_known_cells state branches =
     let branch_aux (TagMultiple taglist, block) =
       (* By matching on the state, we discover state information.
          We can enrich the known cells with theses. *)
-      let state_known_cells =
-        Array.rev_to_list (state_info_intersection states taglist).known_cells
+      let known_cells =
+        Array.append (state_info_intersection states taglist).known_cells
+          extra_known_cells
       in
-      let known_cells = extra_known_cells @ state_known_cells in
       (* We are matching on a state, therefore state is always needed,
          and we can discard these values. *)
       wt_block known_cells extra_known_cells state block
@@ -426,7 +435,6 @@ let wt_t_block program label t_block =
     List.iter branch_aux branches
   in
   let {block; stack_type} = t_block in
-  let known_cells = Array.rev_to_list stack_type in
-  wt_block known_cells known_cells None block
+  wt_block stack_type [||] None block
 
 let wt program = Program.iter (wt_t_block program) program
