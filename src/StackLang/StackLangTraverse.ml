@@ -57,12 +57,34 @@ let block_map f = function
 
 (* -------------------------------------------------------------------------- *)
 
+let exit =
+  if Settings.unit_test then fun i -> failwith (string_of_int i) else exit
+
+let stderr = if Settings.unit_test then open_out "/dev/null" else stderr
+
+let eprintf format = fprintf stderr format
+
+let print_context program block context =
+  eprintf "\nBlock :" ;
+  StackLangPrinter.print_block stderr block ;
+  eprintf "\nContext :" ;
+  StackLangPrinter.print_block stderr (ITypedBlock (lookup context program.cfg))
+
+let print_context_with_states program block context =
+  eprintf "\nBlock :" ;
+  StackLangPrinter.print_block stderr block ;
+  eprintf "\nContext :" ;
+  StackLangPrinter.print_block stderr (ITypedBlock (lookup context program.cfg)) ;
+  eprintf "\n" ;
+  StackLangPrinter.print_states stderr program.states ;
+  eprintf "\n"
+
 let state_reg = state
 
 (* Checking that a StackLang program contains no references to undefined
    registers. *)
 
-let wf_regs cfg label block rs rs' =
+let wf_regs program label block rs rs' =
   (* Check that [rs'] is a subset of [rs]. *)
   let stray = RegisterSet.diff rs' rs in
   if not (RegisterSet.is_empty stray) then (
@@ -72,13 +94,11 @@ let wf_regs cfg label block rs rs' =
       (RegisterSet.print stray) ;
     eprintf "StackLang: the following registers are defined:\n  %s\n"
       (RegisterSet.print rs) ;
-    eprintf "Block :" ;
-    StackLangPrinter.print_block stderr block ;
-    eprintf "\nContext :" ;
-    StackLangPrinter.print_block stderr (lookup label cfg).block ;
+    print_context program block label ;
     exit 1 )
 
-let wf_regs_jump cfg label label_jump rs rs' =
+let wf_regs_jump program label label_jump rs rs' =
+  let {cfg} = program in
   (* Check that [rs'] is a subset of [rs]. *)
   let stray = RegisterSet.diff rs' rs in
   if not (RegisterSet.is_empty stray) then (
@@ -138,7 +158,8 @@ let wf_prim cfg label block rs p =
    blocks. [label] is the label of the current block and is used only as part
    of error messages. *)
 
-let rec wf_block cfg label rs block =
+let rec wf_block program label rs block =
+  let {cfg} = program in
   match block with
   | INeed (rs', block) ->
       wf_regs label rs rs' ;
@@ -151,41 +172,41 @@ let rec wf_block cfg label rs block =
       wf_block cfg label rs block
   | IPop (p, block) ->
       let rs = def rs p in
-      wf_block cfg label rs block
+      wf_block program label rs block
   | IDef (p, v, block) ->
       wf_value label rs v ;
       let rs = def rs p in
-      wf_block cfg label rs block
+      wf_block program label rs block
   | IPrim (r, p, block) ->
       wf_prim label rs p ;
       let rs = def rs (PReg r) in
-      wf_block cfg label rs block
+      wf_block program label rs block
   | ITrace (_, block) | IComment (_, block) ->
-      wf_block cfg label rs block
+      wf_block program label rs block
   | IDie ->
       ()
   | IReturn v ->
-      wf_value cfg label (IReturn v) rs v
+      wf_value program label (IReturn v) rs v
   | IJump label' ->
       (* Check that every register that is needed at the destination label
          is defined here. *)
-      wf_regs_jump cfg label label' rs (needed (lookup label' cfg))
+      wf_regs_jump program label label' rs (needed (lookup label' cfg))
   | ISubstitutedJump (label', substitution) ->
-      wf_regs_jump cfg label label' rs
+      wf_regs_jump program label label' rs
         (Subst.apply_registers substitution (needed (lookup label' cfg)))
   | ICaseToken (r, branches, odefault) ->
-      wf_reg cfg label (ICaseToken (r, branches, odefault)) rs r ;
-      List.iter (wf_branch cfg label rs) branches ;
-      Option.iter (wf_block cfg label rs) odefault
+      wf_reg program label (ICaseToken (r, branches, odefault)) rs r ;
+      List.iter (wf_branch program label rs) branches ;
+      Option.iter (wf_block program label rs) odefault
   | ICaseTag (r, branches) ->
-      wf_reg cfg label (ICaseTag (r, branches)) rs r ;
-      List.iter (branch_iter (wf_block cfg label rs)) branches
+      wf_reg program label (ICaseTag (r, branches)) rs r ;
+      List.iter (branch_iter (wf_block program label rs)) branches
   | ITypedBlock ({block; needed_registers= rs'} as t_block) ->
-      wf_regs cfg label (ITypedBlock t_block) rs rs' ;
+      wf_regs program label (ITypedBlock t_block) rs rs' ;
       (* A [need] instruction undefines the registers that it does not
          mention, so we continue with [rs']. *)
       let rs = rs' in
-      wf_block cfg label rs block
+      wf_block program label rs block
 
 and wf_branch cfg label rs (tokpat, block) =
   let rs =
@@ -202,8 +223,8 @@ and wf_branch cfg label rs (tokpat, block) =
    with an [INeed] instruction and use this instruction serves as a reference
    to find out which registers are initially defined. *)
 
-let wf_t_block (cfg : cfg) label {block; needed_registers} =
-  wf_block cfg label needed_registers block
+let wf_t_block program label {block; needed_registers} =
+  wf_block program label needed_registers block
 
 (* [wf program] checks that the program [program] contains no references to
    undefined registers. *)

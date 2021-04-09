@@ -31,3 +31,5 @@ val measure: program -> measure
 val print: measure -> unit
 
 val get_args_map: block RegisterMap.t -> register list RegisterMap.t
+
+val test: unit -> unit

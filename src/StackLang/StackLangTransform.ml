@@ -248,6 +248,9 @@ let commute_pushes_t_block program t_block =
             | _ ->
                 (subst, pushes)
           in
+          let final_type =
+            Option.first_value [state_info.sfinal_type; final_type]
+          in
           let block =
             commute_pushes_block pushes subst final_type known_cells block
           in
@@ -333,11 +336,13 @@ let commute_pushes_t_block program t_block =
       else block ) }
 
 let remove_dead_branches_t_block t_block =
-  let rec remove_dead_branches_block possible_states = function
-    | IPop (pattern, block) ->
+  let rec remove_dead_branches_block possible_states block =
+    Block.map
+      (remove_dead_branches_block possible_states)
+      ~pop:(fun pattern block ->
         let block = remove_dead_branches_block TagSet.all block in
-        IPop (pattern, block)
-    | ICaseTag (reg, branches) ->
+        (pattern, block))
+      ~case_tag:(fun reg branches ->
         let branch_aux (TagMultiple taglist, block) =
           let taglist' =
             List.filter (fun tag -> TagSet.mem tag possible_states) taglist
@@ -352,9 +357,8 @@ let remove_dead_branches_t_block t_block =
                  (TagMultiple taglist', block))
         in
         let branches = List.filter_map branch_aux branches in
-        ICaseTag (reg, branches)
-    | block ->
-        Block.map (remove_dead_branches_block possible_states) block
+        (reg, branches))
+      block
   in
   let {block} = t_block in
   {t_block with block= remove_dead_branches_block TagSet.all block}
