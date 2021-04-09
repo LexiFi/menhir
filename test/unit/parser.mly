@@ -1,7 +1,6 @@
 %token <int> INT
 %token PLUS MINUS TIMES DIV
 %token LPAREN RPAREN
-%token COMMA
 %token EOL
 
 %left PLUS MINUS        /* lowest precedence */
@@ -31,6 +30,4 @@ expr:
 | MINUS e = expr %prec UMINUS
     { - e }
 
-expr_list:
-| e1=expr COMMA e2=expr EOL { e1, e2 }
 

@@ -113,14 +113,8 @@ let rec is_pattern_equivalent_to_value pattern value =
   | _, _ ->
       false
 
-
 (* -------------------------------------------------------------------------- *)
 (* Testing *)
-
-let build_cell hold_state hold_semv hold_startpos hold_endpos =
-  {typ= None; hold_state; hold_semv; hold_startpos; hold_endpos}
-
-let empty_cell = build_cell false false false false
 
 let test_is_pattern_equivalent_to_value () =
   assert (
@@ -145,55 +139,55 @@ let test_cells_intersection () =
   (* check that [cells_intersection a a = a] *)
   assert (
     cells_intersection
-      [| build_cell true false false false
-       ; build_cell false false true false
-       ; empty_cell
-       ; build_cell false false true true |]
-      [| build_cell true false false false
-       ; build_cell false false true false
-       ; empty_cell
-       ; build_cell false false true true |]
-    = [| build_cell true false false false
-       ; build_cell false false true false
-       ; empty_cell
-       ; build_cell false false true true |] ) ;
+      [| Cell.make true false false false
+       ; Cell.make false false true false
+       ; Cell.empty
+       ; Cell.make false false true true |]
+      [| Cell.make true false false false
+       ; Cell.make false false true false
+       ; Cell.empty
+       ; Cell.make false false true true |]
+    = [| Cell.make true false false false
+       ; Cell.make false false true false
+       ; Cell.empty
+       ; Cell.make false false true true |] ) ;
   (* check that if [a] is a suffix of [b] then [cells_intersection a b = a]*)
   assert (
     cells_intersection
-      [| build_cell true false false false
-       ; build_cell false false true false
-       ; empty_cell
-       ; build_cell false false true true |]
-      [|empty_cell; build_cell false false true true|]
-    = [|empty_cell; build_cell false false true true|] ) ;
+      [| Cell.make true false false false
+       ; Cell.make false false true false
+       ; Cell.empty
+       ; Cell.make false false true true |]
+      [|Cell.empty; Cell.make false false true true|]
+    = [|Cell.empty; Cell.make false false true true|] ) ;
   (* check that if the biggest common suffix of [a] and [b] is [ [||] ] then,
      [cells_intersection a b = [||]]*)
   assert (
     cells_intersection
-      [| build_cell true false false false
-       ; build_cell false false true false
-       ; empty_cell
-       ; build_cell false false true true
-       ; build_cell false false true true |]
-      [| build_cell true false false false
-       ; build_cell false false true false
-       ; empty_cell
-       ; build_cell false false true true
-       ; build_cell true true false false |]
+      [| Cell.make true false false false
+       ; Cell.make false false true false
+       ; Cell.empty
+       ; Cell.make false false true true
+       ; Cell.make false false true true |]
+      [| Cell.make true false false false
+       ; Cell.make false false true false
+       ; Cell.empty
+       ; Cell.make false false true true
+       ; Cell.make true true false false |]
     = [||] )
 
 let test_filter_stack () =
-  assert (filter_stack [|empty_cell|] = [||]) ;
-  assert (filter_stack [|empty_cell; empty_cell; empty_cell|] = [||]) ;
+  assert (filter_stack [|Cell.empty|] = [||]) ;
+  assert (filter_stack [|Cell.empty; Cell.empty; Cell.empty|] = [||]) ;
   assert (
     filter_stack
-      [| build_cell true false false false
-       ; build_cell false false true false
-       ; empty_cell
-       ; build_cell false false true true |]
-    = [| build_cell true false false false
-       ; build_cell false false true false
-       ; build_cell false false true true |] )
+      [| Cell.make true false false false
+       ; Cell.make false false true false
+       ; Cell.empty
+       ; Cell.make false false true true |]
+    = [| Cell.make true false false false
+       ; Cell.make false false true false
+       ; Cell.make false false true true |] )
 
 let test () =
   test_is_pattern_equivalent_to_value () ;

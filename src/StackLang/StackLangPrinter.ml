@@ -171,10 +171,11 @@ let rec block b =
       concat (map branch (
         map (fun (pat, b) -> (tagpat pat, block b)) branches
       ))
-  | ITypedBlock ({block=b; stack_type; needed_registers=rs}) ->
+  | ITypedBlock ({block=b; stack_type; needed_registers=rs; final_type}) ->
       let rs = RegisterSet.elements rs in
       nl
-      ^^ string "TYPED {"
+      ^^ string "TYPED { "
+      ^^ string "Final type :" ^^ optional ocamltype final_type
       ^^ nl
       ^^ string "  Known cells : "
       ^^ known_cells stack_type

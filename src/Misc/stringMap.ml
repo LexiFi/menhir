@@ -37,3 +37,7 @@ let multiple_add k v m =
       []
   in
   add k (v :: vs) m
+
+let of_list li =
+  let r = empty in
+  List.fold_left (fun map (key, value) -> add key value map) r li
