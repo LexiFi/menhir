@@ -127,7 +127,16 @@ let tagpat pat =
 let branch (guard, body) =
   nl ^^ bar ^^ space ^^ group (guard ^^ string " ->" ^^ nest 4 body)
 
-let rec block b =
+let rec typed_block ({block=b; stack_type; needed_registers=rs; final_type}) =
+    let rs = RegisterSet.elements rs in
+    nl ^^ string "TYPED { "
+    ^^ string "Final type :" ^^ optional ocamltype final_type
+    ^^ nl ^^ string "  Known cells : " ^^ known_cells stack_type
+    ^^ nl ^^ string "  Needed registers :"
+    ^^ separate (comma ^^ space) (map register rs)
+    ^^ nl ^^ string "}"
+    ^^ block b
+and block b =
   match b with
   | INeed (rs, b) ->
       let rs = RegisterSet.elements rs in
@@ -203,37 +212,53 @@ let program program =
   |> map (labeled_block (StringMap.domain program.entry))
   |> concat)
 
-let to_channel =
-  ToChannel.pretty 0.8 80
+let to_channel f channel args =
+  let doc = f args in
+  ToChannel.pretty 0.8 80 channel doc
 
-let to_string doc =
+let to_string f arg =
+  let doc = f arg in
   let buffer = Buffer.create 10 in
   ToBuffer.pretty 0.8 80 buffer doc ;
   Bytes.to_string @@ Buffer.to_bytes buffer
 
-let print f prog =
-  to_channel f (program prog)
+let print =
+  to_channel program
 
-let print_value f v =
-  to_channel f (value v)
+let print_value =
+  to_channel value
+let value_to_string =
+  to_string value
 
-let value_to_string v =
-  to_string (value v)
+let print_pattern =
+  to_channel pattern
+let pattern_to_string =
+  to_string pattern
 
-let pattern_to_string p =
-  to_string (pattern p)
+let print_substitution =
+  to_channel substitution
+let substitution_to_string  =
+  to_string substitution
 
-let known_cells_to_string kc =
-  to_string (known_cells kc)
+let print_block =
+  to_channel block
+let block_to_string =
+  to_string block
 
-let print_substitution f s =
-  to_channel f (substitution s)
+let print_tblock =
+  to_channel typed_block
+let tblock_to_string =
+  to_string typed_block
 
-let print_block f b =
-  to_channel f (block b)
+let print_known_cells =
+  to_channel known_cells
+let known_cells_to_string =
+  to_string known_cells
 
-let print_known_cells f ks =
-  to_channel f (known_cells ks)
+let print_states =
+  to_channel states
+let states_to_string =
+  to_string states
 
-let print_states f s =
-  to_channel f (states s)
+let to_string =
+  to_string program

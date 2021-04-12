@@ -57,34 +57,23 @@ let block_map f = function
 
 (* -------------------------------------------------------------------------- *)
 
-let exit =
-  if Settings.unit_test then fun i -> failwith (string_of_int i) else exit
+exception
+  StackLangError of
+    { context: typed_block
+    ; culprit: block
+    ; message: string
+    ; jumping_to: label option
+    ; states: state_info TagMap.t option }
 
-let stderr = if Settings.unit_test then open_out "/dev/null" else stderr
-
-let eprintf format = fprintf stderr format
-
-let print_context program block context =
-  eprintf "\nBlock :" ;
-  StackLangPrinter.print_block stderr block ;
-  eprintf "\nContext :" ;
-  StackLangPrinter.print_block stderr (ITypedBlock (lookup context program.cfg))
-
-let print_context_with_states program block context =
-  eprintf "\nBlock :" ;
-  StackLangPrinter.print_block stderr block ;
-  eprintf "\nContext :" ;
-  StackLangPrinter.print_block stderr (ITypedBlock (lookup context program.cfg)) ;
-  eprintf "\n" ;
-  StackLangPrinter.print_states stderr program.states ;
-  eprintf "\n"
+let fail ?jumping_to ?states context culprit message =
+  raise (StackLangError {context; culprit; message; jumping_to; states})
 
 let state_reg = state
 
 (* Checking that a StackLang program contains no references to undefined
    registers. *)
 
-let wf_regs program label block rs rs' =
+let wf_regs program label ?jumping_to block rs rs' =
   (* Check that [rs'] is a subset of [rs]. *)
   let stray = RegisterSet.diff rs' rs in
   if not (RegisterSet.is_empty stray) then (
@@ -190,9 +179,10 @@ let rec wf_block program label rs block =
   | IJump label' ->
       (* Check that every register that is needed at the destination label
          is defined here. *)
-      wf_regs_jump program label label' rs (needed (lookup label' cfg))
+      wf_regs program label ~jumping_to:label' block rs
+        (needed (lookup label' cfg))
   | ISubstitutedJump (label', substitution) ->
-      wf_regs_jump program label label' rs
+      wf_regs program label ~jumping_to:label' block rs
         (Subst.apply_registers substitution (needed (lookup label' cfg)))
   | ICaseToken (r, branches, odefault) ->
       wf_reg program label (ICaseToken (r, branches, odefault)) rs r ;
@@ -223,7 +213,7 @@ and wf_branch cfg label rs (tokpat, block) =
    with an [INeed] instruction and use this instruction serves as a reference
    to find out which registers are initially defined. *)
 
-let wf_t_block program label {block; needed_registers} =
+let wf_routine program label {block; needed_registers} =
   wf_block program label needed_registers block
 
 (* [wf program] checks that the program [program] contains no references to
@@ -331,6 +321,9 @@ let measure program =
   let m = zero () in
   Program.iter (fun _ -> measure_t_block m) program ;
   m
+
+(* -------------------------------------------------------------------------- *)
+(* Utility functions used bellow. *)
 
 let rec detect_def_state pattern value =
   match (pattern, value) with
