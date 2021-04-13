@@ -24,6 +24,10 @@ for size in 5000000 ; do
   # Run the code back-end.
   echo Running the code back-end...
   src/code/gene.exe --size $size > src/code.out 2> src/code.time
+
+  # Run the code back-end.
+  echo Running the code back-end...
+  src/old_code/gene.exe --size $size > src/old_code.out 2> src/old_code.time
   # cat src/code.time
 
   # Run the table back-end.
@@ -38,6 +42,16 @@ for size in 5000000 ; do
     cat src/code.out
     echo Table:
     cat src/table.out
+    exit 1
+  fi
+
+  # Avoid a gross mistake.
+  if ! diff -q src/code.out src/old_code.out ; then
+    echo CAUTION: the new and old code back-ends disagree!
+    echo New:
+    cat src/code.out
+    echo Old:
+    cat src/old_code.out
     exit 1
   fi
 
