@@ -59,33 +59,29 @@ let commute_pushes_t_block program t_block =
   let eliminated_branches = ref 0 in
   let rec commute_pushes_block pushes subst final_type known_cells =
     (* [push_list] is the list of pushes that we need to restore, and hopefully
-       cancel out with a pop. Every definition is inlined in order to make it
-       impossible that a commuted pushes refers to a shadowed definition.
-       There should be no definition in the resulting code. Registers are still
-       refered to, but their value only ever change by performing an
-       ISubstitutedJump.
-       The code produced by [aux pushes substitution block] is
-       equivalent to
+       cancel out with a pop.
+       Every definition is inlined in order to make it impossible that a
+       commuted pushes refers to a shadowed definition. There should be no
+       definition in the resulting code. Registers are still refered to, but
+       their value only ever change by performing an ISubstitutedJump, or with
+       primitive calls that can not be inlined.
+       The code produced by [aux pushes substitution block] is equivalent to
        [restore_pushes pushes (Subst.restore_defs substitution block)].
        The arguments [final_type] and [known_cells] are used along the way to
        modify correctly the ITypedBlock.
-       [final_type] starts as None, and if we go through a state were the final
-       type is known, it is instanciated. If instanciated it is never changed,
-       and replaces the [final_type] field of every ITypedBlock along the way.
-       [known_cells] should be initialized to an array of the known cells.
-       Then a cell is popped when a pop cannot be cancelled, and it is enriched
-       with more information when matching on a type.
-       [extra_knowns_cells] contains the known cells that we did not discover by
-       matching on ["_menhir_state"]. It is kept as-is most of the time, but if
-       there is a pop we do not cancel, then it is set to [known_cells] (after
-       popping the top cell). This is needed, because a pop makes the state
-       unknown and synchronised with ["_menhir_s"].needed_registers
+       [final_type] starts as the routine's final type, and if we go through a
+       state were the final type is known, it is instanciated.
+       If instanciated it is never changed, and replaces the [final_type] field
+       of every ITypedBlock along the way.
+       [known_cells] starts as the routine's stack type.
+       When a pop cannot be cancelled, a cell is removed from [known_cells].
+       It is enriched with more information when matching on a type.
        [possible_states] contains the possible values of ["_menhir_s"].
        It is used to filter useless (and in some cases, ill-typed) branches from
        casetag.
        Inlining a definition of shape ["_menhir_s = i"] will not affect it,
-       because if we have such a definition, we will not match on ["_menhir_s"].
-    *)
+       because if we have such a definition, we will not match on ["_menhir_s"],
+        as it is defined as ill-typed by [StackLangTraverse.wt]. *)
     function
     | INeed (registers, block) ->
         let block' =
@@ -287,19 +283,7 @@ let commute_pushes_t_block program t_block =
       ; needed_registers
       ; stack_type= known_cells }
   and aux_jump pushes subst label =
-    (* Raw registers needed by the block we jump to. *)
-    let needed_registers = needed (lookup label cfg) in
-    (* We apply the substitution. *)
-    let needed_registers = Subst.apply_registers subst needed_registers in
-    (* We add the registers needed by the pushes we are restoring. *)
-    let needed_registers =
-      RegisterSet.union needed_registers (needed_registers_pushes pushes)
-    in
-    restore_pushes pushes
-      (IComment
-         ( sprintf "Needed registers : %s"
-             (String.concat " " (RegisterSet.elements needed_registers))
-         , ISubstitutedJump (label, subst) ))
+    restore_pushes pushes (Block.substituted_jump label subst)
   and aux_case_token pushes subst reg branches odefault final_type known_cells =
     let aux_branch = function
       (* Every [TokSingle] introduces a definition of a register. *)
@@ -330,7 +314,9 @@ let commute_pushes_t_block program t_block =
           odefault )
   in
   let {block; stack_type; final_type} = t_block in
-  let candidate = commute_pushes_block [] Subst.empty final_type stack_type block in
+  let candidate =
+    commute_pushes_block [] Subst.empty final_type stack_type block
+  in
   { t_block with
     block=
       ( if !cancelled_pop > 0 || !eliminated_branches > 0 then candidate
@@ -368,16 +354,6 @@ let remove_dead_branches = Program.map remove_dead_branches_t_block
 
 let commute_pushes program =
   remove_dead_branches @@ Program.map (commute_pushes_t_block program) program
-
-let _count_pushes program =
-  let rec aux i block =
-    match block with
-    | IPush (_, _, block) ->
-        aux (i + 1) block
-    | block ->
-        Block.iter (aux i) (fun li -> List.sum li / List.length li) i block
-  in
-  RegisterMap.fold (fun _ {block} acc -> acc + aux 0 block) program.cfg 0
 
 let rec tighten_def = function
   | PReg preg, VReg vreg when preg = vreg ->

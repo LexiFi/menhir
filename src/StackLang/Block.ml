@@ -160,7 +160,9 @@ let return value = IReturn value
 
 let jump label = IJump label
 
-let substituted_jump label subst = ISubstitutedJump (label, subst)
+let substituted_jump label subst =
+  if subst = Substitution.empty then IJump label
+  else ISubstitutedJump (label, subst)
 
 let case_token ?default register branches =
   ICaseToken (register, branches, default)
