@@ -13,6 +13,14 @@
 
 open StackLang
 
+exception
+  StackLangError of
+    { context: typed_block
+    ; culprit: block
+    ; message: string
+    ; jumping_to: label option
+    ; states: state_info TagMap.t option }
+
 (** [wf program] checks that the program [program] contains no references to
    undefined registers. This check is in principle unnecessary, but can be a
    useful debugging aid. *)

@@ -242,9 +242,10 @@ let commute_pushes_t_block program t_block =
             | [tag] ->
                 (* In this case, we can inline the state value inside the
                    pushes. *)
-                ( Subst.extend reg (VTag tag) subst
-                , let tmp_subst = Subst.extend reg (VTag tag) Subst.empty in
-                  List.map (pushcell_apply tmp_subst) pushes )
+                let subst = Subst.extend reg (VTag tag) subst in
+                let tmp_subst = Subst.singleton reg (VTag tag) in
+                let pushes = List.map (pushcell_apply tmp_subst) pushes in
+                (subst, pushes)
             | _ ->
                 (subst, pushes)
           in
@@ -328,8 +329,8 @@ let commute_pushes_t_block program t_block =
           (commute_pushes_block pushes subst final_type known_cells)
           odefault )
   in
-  let {block; stack_type} = t_block in
-  let candidate = commute_pushes_block [] Subst.empty None stack_type block in
+  let {block; stack_type; final_type} = t_block in
+  let candidate = commute_pushes_block [] Subst.empty final_type stack_type block in
   { t_block with
     block=
       ( if !cancelled_pop > 0 || !eliminated_branches > 0 then candidate
