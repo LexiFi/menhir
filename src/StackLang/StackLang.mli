@@ -192,11 +192,13 @@ module LabelMap = StringMap
 
 type cfg = typed_block LabelMap.t
 
+type states = state_info TagMap.t
+
 (** A complete program is a control flow graph where some labels have been
    marked as entry points. There is in fact a mapping of the LR(1) start
    states to entry points. *)
 type program =
-  {cfg: cfg; entry: string StringMap.t; states: state_info TagMap.t}
+  {cfg: cfg; entry: string StringMap.t; states: states}
 
 (* -------------------------------------------------------------------------- *)
 
@@ -209,6 +211,9 @@ module Substitution : sig
 
   (** empty substitution *)
   val empty : t
+
+  (** Singleton substitution *)
+  val singleton: register -> value -> t
 
   (** [extend reg value s] extends [s] with a rule [reg := value].
       [restore_defs (extend reg value s) block] is equivalent to

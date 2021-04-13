@@ -203,11 +203,13 @@ module LabelMap = StringMap
 
 type cfg = typed_block LabelMap.t
 
+type states = state_info TagMap.t
+
 (* A complete program is a control flow graph where some labels have been
    marked as entry points. There is in fact a mapping of the LR(1) start
    states to entry points. *)
 
-type program = {cfg: cfg; entry: string StringMap.t; states: state_info TagMap.t}
+type program = {cfg: cfg; entry: string StringMap.t; states: states}
 
 (* This module provides a API to specifie substitutions of registers by values.
    This is useful to inline values or rename them without generating a lot of
@@ -216,6 +218,9 @@ module Substitution = struct
   type t = value RegisterMap.t
 
   let empty = RegisterMap.empty
+
+  let singleton register value =
+    RegisterMap.singleton register value
 
   let rec apply substitution = function
     | VReg register ->

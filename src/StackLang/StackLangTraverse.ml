@@ -372,6 +372,16 @@ let wt_knowncells_routine program label t_block =
         fail @@ sprintf "Enough cells are known, but their content differ."
     done
   in
+  let check_state_sync block known_cells expected_cells tag =
+    (* Check that we have enough cells to assert that the state is  *)
+    check_cells block "state sync" known_cells
+      (lookup_tag tag states).known_cells ;
+    check_cells block "state sync" (lookup_tag tag states).known_cells
+      expected_cells
+  in
+  let check_state_sync block known_cells expected_cells =
+    Option.iter (check_state_sync block known_cells expected_cells)
+  in
   (*
   [known_cells]: cells we can pop and pass through a typed_block and a jump
   [extra_known_cells]: Cells on top of the information carried by the state.
@@ -409,21 +419,11 @@ let wt_knowncells_routine program label t_block =
         wtkc_block known_cells extra_known_cells state block)
       ~jump:(fun label ->
         let target = lookup label cfg in
-        ( if RegisterSet.mem state_reg target.needed_registers then
-          (* This check that the stack is compatible with the state we are passing
-             to the routine. This is only needed if we are actually passing a
-             state*)
-          (* assert (extra_known_cells = [||]) ; *)
-          match state with
-          | Some tag ->
-              check_cells block "state sync" known_cells
-                (lookup_tag tag states).known_cells ;
-              check_cells block "state sync" (lookup_tag tag states).known_cells
-                target.stack_type
-          | None ->
-              (* If the state is unknown, we cannot check that the stack is
-                 compatible with it. *)
-              () ) ;
+        if RegisterSet.mem state_reg target.needed_registers then
+          (* This checks that the stack is compatible with the state we are
+             passing to the routine. This is only needed if we are actually
+             passing a state *)
+          check_state_sync block known_cells target.stack_type state ;
         (* We check that the stack has at least the amount of cells the target
            routine expects *)
         check_cells block "jump" known_cells target.stack_type)
@@ -454,10 +454,16 @@ let wt_knowncells_routine program label t_block =
           wtkc_block known_cells extra_known_cells state block
         in
         List.iter branch_aux branches)
-      ~typed_block:(fun {block= block'; stack_type} ->
+      ~typed_block:(fun {block= block'; stack_type; needed_registers} ->
         (* We check that the stack has at least the number of known cells that
            the type annotation expect. *)
         check_cells block "typed block" known_cells stack_type ;
+        let state =
+          if RegisterSet.mem state_reg needed_registers then (
+            check_state_sync block known_cells stack_type state ;
+            None )
+          else state
+        in
         (* Inside the typed block, we are only allowed to use the cell from the
            annotation. *)
         let known_cells = stack_type in
@@ -625,6 +631,47 @@ let good2 =
           ; name= None
           ; needed_registers= RegisterSet.empty
           ; block= case_tag state_reg [[0; 1] => jump "f"] } ) ]
+  in
+  {cfg; entry= StringMap.empty; states}
+
+let good_sync =
+  let c_cell = Cell.make ~typ:(Stretch.Inferred "c") true true false false in
+  let b_cell = Cell.make ~typ:(Stretch.Inferred "b") true true false false in
+  let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
+  let states =
+    TagMap.of_list
+      [ (0, {sfinal_type= None; known_cells= [|a_cell; b_cell|]})
+      ; (1, {sfinal_type= None; known_cells= [|c_cell|]})
+      ; (2, {sfinal_type= None; known_cells= [||]}) ]
+  in
+  let cfg =
+    LabelMap.of_list
+      [ ( "f"
+        , { stack_type= [||]
+          ; final_type= None
+          ; has_case_tag= true
+          ; name= None
+          ; needed_registers= RegisterSet.of_list [state_reg]
+          ; block=
+              case_tag state_reg
+                [ [0]
+                  => pop (PTuple [PReg "b"; PReg state_reg])
+                     @@ pop (PReg "a") @@ die
+                ; [1] => pop (PReg "c") @@ die
+                ; [2] => die ] } )
+      ; ( "g"
+        , { stack_type= [||]
+          ; final_type= None
+          ; has_case_tag= false
+          ; name= None
+          ; needed_registers= RegisterSet.empty
+          ; block=
+              (PReg state_reg := VTag 0)
+              @@ (PReg "b" := VUnit)
+              @@ push VUnit a_cell @@ push (VReg "b") b_cell
+              @@ typed_block [||]
+                   (RegisterSet.singleton state_reg)
+                   false (jump "f") } ) ]
   in
   {cfg; entry= StringMap.empty; states}
 
@@ -892,6 +939,7 @@ let assert_fails f =
 let test_wt () =
   wt good1 ;
   wt good2 ;
+  wt good_sync ;
   (* TODO EMILE : Add a check such that the program below does not type. *)
   assert_fails (fun () -> wt bad_shadow_state) ;
   assert_fails (fun () -> wt bad_pop) ;
