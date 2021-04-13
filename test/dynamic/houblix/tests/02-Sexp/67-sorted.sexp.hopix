@@ -1,0 +1,45 @@
+fun concat (l1, l2) =
+  switch (l1) {
+  | N -> l2
+  | C (x, xs) -> C (x, concat (xs, l2))
+  }
+
+let l = C (1, C (2, N))
+let l = concat (l, l)
+let l = concat (l, l)
+let l = concat (l, l)
+let l = concat (l, l)
+let l = concat (l, l)
+let l = concat (l, l)
+
+fun len (l) =
+  switch (l) {
+  | N -> 0
+  | C (x, xs) -> 1 + len (xs)
+  }
+
+fun sorted (l) =
+  switch (l) {
+  | N | C (_, N) -> true
+  | C (x, C (y, _) & l) -> x <=? y && sorted (l)
+  }
+
+let l2 = C (1, C (2, C (6, C (7, N))))
+
+let l3 = C (-1, C (2, C (6, C (70, N))))
+
+let l4 = C (-1, C (20, C (6, C (70, N))))
+
+fun not (b) = if (b) { false } else { true }
+
+let r =
+  not (sorted (l)) &&
+  sorted (l2) &&
+  sorted (l3) &&
+  not (sorted (l4))
+
+let test =
+  print_string ("This test is ");
+  print_string (if (r) { "OK!\n" } else { "KO!\n" })
+
+

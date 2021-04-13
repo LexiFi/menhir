@@ -1,0 +1,21 @@
+(executable
+  (name houblix)
+  (libraries str pprint menhirLib sexplib)
+  (modules_without_implementation hopixSyntacticSugar)
+  (preprocess (pps ppx_sexp_conv))
+)
+
+(ocamllex lexer)
+
+(menhir
+  (modules parserTokens)
+  (flags --only-tokens)
+)
+
+(menhir
+  (modules parser parserTypes parserTokens parserExpr)
+  (merge_into parser)
+  (infer true)
+  (flags   
+    --external-tokens ParserTokens 
+    --explain ))
