@@ -33,52 +33,39 @@ open Grammar
 (* ------------------------------------------------------------------------- *)
 (* A representation of stack shapes. *)
 
-(* A word is a representation of a stack or stack suffix. *)
-
+(** A word is a representation of a stack or stack suffix. *)
 type word
 
-(* [fold] folds over a word. At each cell, [f] is applied to the
+(** [fold] folds over a word. At each cell, [f] is applied to the
    accumulator, to a Boolean flag that tells whether the cell holds a
    state, to the set of possible states of the cell, and to the symbol
    associated with the cell. The stack is visited from bottom to top. *)
-
 val fold: ('a -> bool -> Symbol.t -> Lr1.NodeSet.t -> 'a) -> 'a -> word -> 'a
 
-(* [fold_top f accu s] is analogous to [fold], but only folds over the
+(** [fold_top f accu s] is analogous to [fold], but only folds over the
    top stack cell, if there is one, so that [f] is either not invoked
    at all or invoked just once. *)
-
 val fold_top: (bool -> Symbol.t -> 'a) -> 'a -> word -> 'a
 
 (* ------------------------------------------------------------------------- *)
 (* Information about the stack. *)
 
-(* [stack s] is the structure of the stack at state [s]. *)
-
+(** [stack s] is the structure of the stack at state [s]. *)
 val stack: Lr1.node -> word
 
-(* [prodstack prod] is the structure of the stack when production
-   [prod] is about to be reduced. *)
+(** [prodstack prod] is the structure of the stack when production
+   [prod] is about to be reduced.
 
-(* Until 2020/11/20, it was forbidden to call this function if production
+   Until 2020/11/20, it was forbidden to call this function if production
    [prod] is never reduced. It is now possible to do so. In that case, it
    returns a word where every cell contains an empty set of states. *)
-
 val prodstack: Production.index -> word
 
-(* [gotostack nt] is the structure of the stack when a shift
+(** [gotostack nt] is the structure of the stack when a shift
    transition over nonterminal [nt] is about to be taken. It
    consists of just one cell. *)
-
 val gotostack: Nonterminal.t -> word
 
-(* [rewind s] explains how to rewind the stack when dealing with an
-   error in state [s]. It produces an instruction to either die
-   (because no state on the stack can handle errors) or pop a suffix
-   of the stack. In the latter case, one reaches a state that is
-   either represented (its identity is physically stored in the
-   bottommost cell that is popped) or unrepresented (its identity is
-   statically known). *)
 
 type instruction =
   | Die
@@ -87,37 +74,59 @@ type instruction =
 and state =
   | Represented
   | UnRepresented of Lr1.node
-
+(** [rewind s] explains how to rewind the stack when dealing with an
+   error in state [s]. It produces an instruction to either die
+   (because no state on the stack can handle errors) or pop a suffix
+   of the stack. In the latter case, one reaches a state that is
+   either represented (its identity is physically stored in the
+   bottommost cell that is popped) or unrepresented (its identity is
+   statically known). *)
 val rewind: Lr1.node -> instruction
 
 (* ------------------------------------------------------------------------- *)
 (* Information about which states and positions need to physically
    exist on the stack. *)
 
-(* [represented s] tells whether state [s] must have an explicit
+(** [represented s] tells whether state [s] must have an explicit
    representation, that is, whether it is pushed onto the stack. *)
-
 val represented: Lr1.node -> bool
 
-(* [startp symbol] and [endp symbol] tell whether start or end
-   positions must be recorded for symbol [symbol]. *)
+val n_represented: int
 
+(** [startp symbol] and [endp symbol] tell whether start or end
+   positions must be recorded for symbol [symbol]. *)
 val startp: Symbol.t -> bool
 val endp: Symbol.t -> bool
 
 (* ------------------------------------------------------------------------- *)
 (* Information about error handling. *)
 
-(* [errorpeeker s] tells whether state [s] can potentially peek at an
+(** [errorpeeker s] tells whether state [s] can potentially peek at an
    error. This is the case if, in state [s], an error token may be on
    the stream. *)
-
 val errorpeeker: Lr1.node -> bool
 
 (* ------------------------------------------------------------------------- *)
 (* Miscellaneous. *)
 
-(* [universal symbol] tells whether every represented state has an
+(** [universal symbol] tells whether every represented state has an
    outgoing transition along [symbol]. *)
-
 val universal: Symbol.t -> bool
+
+(* ------------------------------------------------------------------------- *)
+(** More information about the stack. *)
+module Long : sig
+
+  (** [Long.stack s] is the known suffix of the stack in state [s], presented
+     as an array of symbols, where the rightmost end of the array represents
+     the top of the stack (just as in the right-hand side of a production).
+     This known suffix is as long as possible, based on an analysis of the
+     automaton; it is possibly longer than the suffix obtained by [stack s],
+     whose length is always the maximum position of the items in state [s]. *)
+  val stack: Lr1.node -> Symbol.t array
+
+  val gotostack : Nonterminal.t -> Symbol.t array
+
+  val prodstack : Production.index -> Symbol.t array
+
+end

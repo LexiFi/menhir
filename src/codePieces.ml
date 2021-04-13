@@ -90,7 +90,6 @@ let semvtypent nt =
       (* [nt] has unknown type. If we have run [Infer], then this
          can't happen. However, running type inference is only an
          option, so we still have to deal with that case. *)
-
       ntvar nt
 
   | Some ocamltype ->
@@ -146,7 +145,7 @@ let has_semv symbol =
 
 let tokpat tok pat =
   let data = TokenType.tokendata (Terminal.print tok) in
-  PData (data, if1 (has_semv (Symbol.T tok)) pat)
+  PData (data, MList.if1 (has_semv (Symbol.T tok)) pat)
 
 (* [tokspat toks] is a pattern that matches any token in the set [toks],
    without binding its semantic value. *)

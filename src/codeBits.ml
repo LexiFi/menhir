@@ -45,26 +45,6 @@ let ptuple = function
   | ps ->
       PTuple ps
 
-(* A list subject to a condition. *)
-
-let ifn condition xs =
-  if condition then
-    xs
-  else
-    []
-
-let if1 condition x =
-  if condition then
-    [ x ]
-  else
-    []
-
-let ifnlazy condition xs =
-  if condition then
-    xs()
-  else
-    []
-
 (* The unit type. *)
 
 let tunit =
@@ -78,17 +58,17 @@ let tbool =
 (* The integer type. *)
 
 let tint =
-  TypApp ("int", [])
+  TypName"int"
 
 (* The string type. *)
 
 let tstring =
-  TypApp ("string", [])
+  TypName"string"
 
 (* The exception type. *)
 
 let texn =
-  TypApp ("exn", [])
+  TypName "exn"
 
 (* The type of pairs. *)
 
@@ -98,7 +78,7 @@ let tpair typ1 typ2 =
 (* The type of lexer positions. *)
 
 let tposition =
-  TypApp ("Lexing.position", [])
+  TypName "Lexing.position"
 
 (* The type of the $loc and $sloc keywords. *)
 
@@ -127,9 +107,15 @@ let tvar x : typ =
 let scheme qs t =
   {
     quantifiers = qs;
-    body = t
+    body = t;
+    locally_abstract = false
   }
-
+let local_scheme qs t =
+    {
+      quantifiers = qs;
+      body = t;
+      locally_abstract = true;
+    }
 (* Building a type scheme with no quantifiers out of a type. *)
 
 let type2scheme t =
@@ -173,6 +159,17 @@ let blet (bindings, body) =
       e
   | _, _ ->
       ELet (bindings, body)
+
+let bilet (bindings, body) =
+  let bindings = simplify bindings in
+  match bindings, body with
+  | [], _ ->
+      body
+  | [ PVar x1, e ], EVar x2 when x1 = x2 ->
+      (* Reduce [let x = e in x] to just [e]. *)
+      e
+  | _, _ ->
+      EInlinedLet (bindings, body)
 
 let mlet formals actuals body =
   blet (List.combine formals actuals, body)
@@ -280,6 +277,12 @@ let tvprefix name =
   else
     "ttv_" ^ name
 
+let tprefix name =
+  if Settings.noprefix then
+    name
+  else
+    "t_menhir_" ^ name
+
 (* ------------------------------------------------------------------------ *)
 
 (* Converting an interface to a structure. Only exception and type definitions
@@ -323,3 +326,20 @@ let field modifiable name t =
 
 let branch branchpat branchbody =
   { branchpat; branchbody }
+
+let fresh_name =
+  let i = ref 0 in
+  fun () ->
+    let n = !i in
+    i := !i + 1;
+    prefix (Printf.sprintf "fresh_name_%i" n)
+
+let evar s =
+  EVar s
+
+let evars = List.map evar
+
+let pvar s =
+  PVar s
+
+let pvars = List.map pvar

@@ -11,17 +11,20 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* This module creates a StackLang program, based on information about the
-   grammar and about the LR(1) automaton that is extracted from the modules
-   Grammar, Lr1, and Default. *)
+open Lexing
+open Grammar
+open StackLang
 
-module Run () : sig
-  val program: StackLang.program
-  val entry: Lr1.node -> StackLang.label
-end
+(* This module offers an interpreter for the intermediate language StackLang. *)
 
-(* These are registers that must be defined (with dummy values) in the initial
-   runtime environment in StackLangInterpreter. This is not very pretty, but
-   works. It is used as part of our testing infrastructure for StackLang. *)
-
-val required: StackLang.register list
+(** The parameters are a StackLang program, a start label, a Boolean flag that
+   tells whether a trace should be produced on the standard error channel, a
+   lexer, and a lexing buffer. The interpreter either succeeds or fails. It
+   returns nothing beyond this single bit of information. *)
+val interpret:
+  (* program: *) program ->
+  (* entry:   *) label ->
+  (* trace:   *) bool ->
+  (* lexer:   *) (lexbuf -> Terminal.t) ->
+  (* lexbuf:  *) lexbuf ->
+                 unit option

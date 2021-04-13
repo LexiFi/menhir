@@ -11,11 +11,15 @@
 (*                                                                            *)
 (******************************************************************************)
 
-open StackLang
+(** This module creates a StackLang program, based on information about the
+   grammar and about the LR(1) automaton that is extracted from the modules
+   Grammar, Lr1, and Default. *)
+module Run () : sig
+  val program: StackLang.program
+  val entry: Lr1.node -> StackLang.label
+end
 
-(* [print program] dumps the control flow graph of the StackLang program
-   [program] to the file [<basename>.dot]. The vertices are the basic blocks
-   and the edges are the jumps between them. If there are multiple jumps from
-   one block to another, then only one edge is shown. *)
-
-val print: program -> unit
+(** These are registers that must be defined (with dummy values) in the initial
+   runtime environment in StackLangInterpreter. This is not very pretty, but
+   works. It is used as part of our testing infrastructure for StackLang. *)
+val required: StackLang.register list

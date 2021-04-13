@@ -17,25 +17,13 @@
 open Positions
 open IL
 
-(* A smart constructor for [PVarLocated]. *)
-
+(** A smart constructor for [PVarLocated]. *)
 val pvarlocated: string located -> pattern
 
 (* Tuples. *)
 
 val etuple: expr list -> expr
 val ptuple: pattern list -> pattern
-
-(* A list subject to a condition. (Be careful, though: the list is
-   of course constructed even if the condition is false.) *)
-
-val ifn: bool -> 'a list -> 'a list
-val if1: bool -> 'a -> 'a list
-
-(* A lazy version of [ifn], where the list is constructed only
-   if the condition is true. *)
-
-val ifnlazy: bool -> (unit -> 'a list) -> 'a list
 
 (* Standard types. *)
 
@@ -49,40 +37,42 @@ val tlocation: typ
 val tlexbuf: typ
 val tobj : typ
 
-(* Building a type variable. *)
-
+(** Building a type variable. *)
 val tvar: string -> typ
 
-(* Building a type scheme. *)
-
+(** Building a type scheme. *)
 val scheme: string list -> typ -> typescheme
+
+(** Building a locally abstract type scheme. *)
+val local_scheme: string list -> typ -> typescheme
+
 val type2scheme: typ -> typescheme
 
-(* Constraining an expression to have a (monomorphic) type. *)
-
+(** Constraining an expression to have a (monomorphic) type. *)
 val annotate: expr -> typ -> expr
 
-(* Projecting out of a [PVar] pattern. *)
-
+(** Projecting out of a [PVar] pattern. *)
 val pat2var: pattern -> string
 
-(* Building a [let] construct, with on-the-fly simplification. These two
+(** Building a [let] construct, with on-the-fly simplification. These two
    functions construct a nested sequence of [let] definitions. *)
-
 val blet: (pattern * expr) list * expr -> expr
+
+(** Building an inlined [let] construct, with on-the-fly simplification.
+    These two functions construct a nested sequence of [let] definitions. *)
+val bilet: (pattern * expr) list * expr -> expr
+
+(** See [blet]. *)
 val mlet: pattern list -> expr list -> expr -> expr
 
-(* Simulating a [let/and] construct. *)
-
+(** Simulating a [let/and] construct. *)
 val eletand: (pattern * expr) list * expr -> expr
 
-(* [eraisenotfound] is an expression that raises [Not_found]. *)
-
+(** [eraisenotfound] is an expression that raises [Not_found]. *)
 val eraisenotfound: expr
 
-(* [bottom] is an expression that has every type. Its semantics is
-   irrelevant. *)
-
+(** [bottom] is an expression that has every type. Its semantics is
+    irrelevant. *)
 val bottom: expr
 
 (* Boolean constants. *)
@@ -114,20 +104,36 @@ val marrow: typ list -> typ -> typ
 val prefix: string -> string
 val dataprefix: string -> string
 val tvprefix: string -> string
+val tprefix: string -> string
 
-(* Converting an interface to a structure. Only exception and type definitions
+(** Converting an interface to a structure. Only exception and type definitions
    go through. *)
 val interface_to_structure: interface -> structure
 
-(* Constructing a named module type together with a list of "with type"
+(** Constructing a named module type together with a list of "with type"
    constraints. *)
 val with_types: with_kind -> string -> (string list * string * typ) list -> module_type
 
-(* Functor applications. *)
+(** Functor applications. *)
 val mapp: modexpr -> modexpr list -> modexpr
 
-(* Record fields. *)
+(** Record fields. *)
 val field: bool -> string -> typ -> fielddef
 
-(* Branches. *)
+(** Branches. *)
 val branch: pattern -> expr -> branch
+
+val fresh_name : unit -> string
+
+(** Variable *)
+val evar: string -> expr
+
+(** Variables *)
+val evars: string list -> expr list
+
+
+(** Pattern variable *)
+val pvar: string -> pattern
+
+(** Pattern variables *)
+val pvars: string list -> pattern list

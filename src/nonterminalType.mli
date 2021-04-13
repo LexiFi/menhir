@@ -14,25 +14,22 @@
 (* This module deals with the definition of the type that describes the
    nonterminal symbols. *)
 
-(* This is the conventional name of the [nonterminal] GADT. This is an indexed
+(** This is the conventional name of the [nonterminal] GADT. This is an indexed
    type (i.e., it has one type parameter). Its data constructors carry zero
    value arguments. *)
-
 val tcnonterminalgadt: string
 val tnonterminalgadt: IL.typ -> IL.typ
 
-(* [tnonterminalgadtdata nt] is the conventional name of the data constructor
+(** [tnonterminalgadtdata nt] is the conventional name of the data constructor
    associated with the non-terminal symbol [nt]. *)
-
 val tnonterminalgadtdata: string -> string
 
-(* This is the definition of the [nonterminal] GADT, for use by the code
+(** This is the definition of the [nonterminal] GADT, for use by the code
    generators. This definition can be constructed only if the type of every
    nonterminal symbol is known, either because the user has provided this
    information, or because [--infer] has been set and inference has been
    performed already. This definition is produced only in [--inspection]
    mode. *)
-
 val nonterminalgadtdef: BasicSyntax.grammar -> IL.interface
 
 (* When in [--(raw-)depend] mode, we are asked to produce a mock [.mli] file

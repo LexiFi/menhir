@@ -28,27 +28,23 @@
    then the token type and the token GADT are defined as abbreviations for
    [M.token] and ['a M.terminal]. *)
 
-(* The conventional name of the [token] type, for use by the code
+(** The conventional name of the [token] type, for use by the code
    generators. *)
-
 val ttoken: IL.typ
 
-(* [tokendata] maps the name of a token to a data constructor of the [token]
+(** [tokendata] maps the name of a token to a data constructor of the [token]
    type. (If [--external-tokens] is set, then it prefixes its argument with an
    appropriate OCaml module name. Otherwise, it is the identity.) *)
-
 val tokendata: string -> string
 
-(* The conventional name of the [terminal] type, a.k.a. the token GADT. This
+(** The conventional name of the [terminal] type, a.k.a. the token GADT. This
    is an indexed type (i.e., it has one type parameter). Its data constructors
    carry zero value arguments. *)
-
 val tctokengadt: string
 val ttokengadt: IL.typ -> IL.typ
 
-(* [tokengadtdata] maps the name of a token to a data constructor of the token
+(** [tokengadtdata] maps the name of a token to a data constructor of the token
    GADT. *)
-
 val tokengadtdata: string -> string
 
 (* The definitions of the token type and of the token GADT, for use by the
@@ -57,9 +53,8 @@ val tokengadtdata: string -> string
 val tokentypedef: BasicSyntax.grammar -> IL.interface
 val tokengadtdef: BasicSyntax.grammar -> IL.interface
 
-(* If [--only-tokens] is set, then [produce_tokentypes] writes the type
+(** If [--only-tokens] is set, then [produce_tokentypes] writes the type
    definitions to the [.ml] and [.mli] files and stops Menhir. Otherwise,
    it does nothing. *)
-
 val produce_tokentypes: BasicSyntax.grammar -> unit
 

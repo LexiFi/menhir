@@ -11,29 +11,30 @@
 (*                                                                            *)
 (******************************************************************************)
 
+(* This module offers a pretty-printer for  *)
+
 open StackLang
 
-(* [successors yield block] applies the function [yield] in turn to every
-   label that is the target of a [jump] instruction in the block [block]. *)
+val print: out_channel -> program -> unit
+val to_string: program -> string
 
-val successors: (label -> unit) -> block -> unit
+val print_value: out_channel -> value -> unit
+val value_to_string: value -> string
 
-(* [wf program] checks that the program [program] contains no references to
-   undefined registers. This check is in principle unnecessary, but can be a
-   useful debugging aid. *)
+val print_substitution: out_channel -> substitution -> unit
+val substitution_to_string: substitution -> string
 
-val wf: program -> unit
+val print_tblock: out_channel -> typed_block -> unit
+val tblock_to_string: typed_block -> string
 
-(* [inline program] transforms the program [program] by removing every
-   unreachable block and by inlining away every (non-entry) label whose
-   in-degree is 1. *)
+val print_block: out_channel -> block -> unit
+val block_to_string: block -> string
 
-val inline: program -> program
+val print_known_cells: out_channel -> cell_info array -> unit
+val known_cells_to_string: cell_info array -> register
 
-(* [measure program] computes instruction counts for the program [program].
-   [print_measure m] prints this information. It is intended to be used for
-   debugging and engineering purposes. *)
+val print_states: out_channel -> state_info TagMap.t -> unit
+val states_to_string: state_info TagMap.t -> string
 
-type measure
-val measure: program -> measure
-val print: measure -> unit
+val print_pattern: out_channel -> pattern -> unit
+val pattern_to_string: pattern -> string

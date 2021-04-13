@@ -13,8 +13,7 @@
 
 open Positions
 
-(* Abstract syntax of the language used for code production. *)
-
+(** Abstract syntax of the language used for code production. *)
 type interface =
   interface_item list
 
@@ -101,12 +100,17 @@ and datadef = {
        [None] if this is an ordinary ADT. *)
     datatypeparams: typ list option;
 
+    comment: string option;
+
   }
 
 and typ =
 
   (* Textual OCaml type. *)
   | TypTextual of Stretch.ocamltype
+
+  (* Type name *)
+  | TypName of string 
 
   (* Type variable, without its leading quote. Can also be "_". *)
   | TypVar of string
@@ -124,6 +128,9 @@ and typescheme = {
 
   (* Universal quantifiers, without leading quotes. *)
   quantifiers: string list;
+
+  (* whether the quantifiers are locally abstract or not *)
+  locally_abstract: bool;
 
   (* Body. *)
   body: typ;
@@ -160,6 +167,9 @@ and expr =
   (* Local definitions. This is a nested sequence of [let]
      definitions. *)
   | ELet of (pattern * expr) list * expr
+  (* Local definitions with an annotation. This is a nested sequence of [let]
+     definitions. *)
+  | EInlinedLet of (pattern * expr) list * expr
 
   (* Case analysis. *)
   | EMatch of expr * branch list

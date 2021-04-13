@@ -63,7 +63,8 @@ let test program nt sentence =
       (Interpret.print_sentence (Some nt, sentence));
   (* These are the two interpreters that we compare. *)
   let reference = ReferenceInterpreter.interpret nt in
-  let label = Lr1.NodeMap.find (Lr1.entry_of_nt nt) program.entry in
+  let entry_name = Grammar.Nonterminal.print true nt in
+  let label = StringMap.find entry_name program.entry in
   let candidate = StackLangInterpreter.interpret program label in
   (* Run each of them. *)
   if debug then eprintf "StackLangTester: Running the reference interpreter...";
@@ -106,10 +107,10 @@ let test program nt =
   while !count < n && !size < threshold do
     let sentences = sentences !size in
     let k = length sentences in
-    if Z.leq k (Z.of_int m) then begin
+    if (Z.leq k) (Z.of_int m) then begin
       (* There are at most [m] sentences of this size; test all of them. *)
       foreach sentences (test program nt);
-      count := !count + (Z.to_int k)
+      count := !count + ( Z.to_int k)
     end
     else begin
       (* There are more than [m] sentences of this size; test a sample. *)

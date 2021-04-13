@@ -11,38 +11,30 @@
 (*                                                                            *)
 (******************************************************************************)
 
-open Dot
-open StackLang
+include Map.S with type key = int
 
-(* [uniq] transforms an arbitrary [iter] function into one that produces each
-   element at most once. *)
+(* [cardinal m] is the cardinal of the map [m]. *)
 
-let uniq iter =
-  let encountered = ref LabelSet.empty in
-  fun yield ->
-    iter begin fun label ->
-      if not (StringSet.mem label !encountered) then begin
-        encountered := StringSet.add label !encountered;
-        yield label
-      end
-    end
+val cardinal : 'a t -> int
 
-let print program =
-  let module P = Dot.Print(struct
+(* [restrict s m] restricts the domain of the map [m] to (its
+   intersection with) the set [s]. *)
 
-    type vertex = label
-    let name label = label
+val restrict: IntSet.t -> 'a t -> 'a t
 
-    let successors (f : ?style:style -> label:string -> vertex -> unit) label =
-      lookup label program.cfg
-      |> uniq StackLangTraverse.successors (fun target -> f ~label:"" target)
+(* [filter pred m] restricts the domain of the map [m] to
+   (key, value) couples that verify [pred]. *)
 
-    let iter (f : ?shape:shape -> ?style:style -> label:string -> vertex -> unit) =
-      program.cfg |> LabelMap.iter begin fun label _block ->
-        f ~shape:Box ~label label
-      end
+val filter: (int -> 'a -> bool) -> 'a t -> 'a t
 
-  end) in
-  let f = open_out (Settings.base ^ ".dot") in
-  P.print f;
-  close_out f
+(* [domain m] returns the domain of the map [m]. *)
+
+val domain: 'a t -> IntSet.t
+
+(* [multiple_add k v m] adds the key-value pair [k, v] to the map [m],
+   which maps keys to *lists* of values. The list currently associated
+   with [k] is extended with the value [v]. *)
+
+val multiple_add: key -> 'a -> 'a list t -> 'a list t
+
+val of_list: (key * 'a) list -> 'a t
