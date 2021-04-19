@@ -1,6 +1,6 @@
 # Changes
 
-## 2021/04/XX
+## 2021/04/19
 
 * Mention the demo [coq-minicalc](demos/coq-minicalc) in the manual.
 
