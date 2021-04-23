@@ -322,3 +322,11 @@ val stacklang_graph: bool
    tested (by comparison with the reference interpreter). *)
 
 val stacklang_test: bool
+
+val old_code_backend: bool
+
+val optimize_stack: bool
+
+val commute_pushes: bool
+
+val unit_test: bool

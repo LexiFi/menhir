@@ -360,6 +360,18 @@ let stacklang_graph =
 let stacklang_test =
   ref false
 
+let old_code_backend =
+  ref false
+
+let no_stack_optimization =
+  ref false
+
+let no_push_commute =
+  ref false
+
+let unit_test =
+  ref false
+
 (* When new command line options are added, please update both the manual
    in [doc/manual.tex] and the man page in [doc/menhir.1]. *)
 
@@ -403,14 +415,17 @@ let options = Arg.align [
   "--log-code", Arg.Set_int logC, "<level> Log information about the generated code";
   "--log-grammar", Arg.Set_int logG, "<level> Log information about the grammar";
   "--merge-errors", Arg.String add_merge_errors, "<filename> (used twice) Merge two .messages files";
+  "--no-stack-optimization", Arg.Set no_stack_optimization, "(undocumented)";
   "--no-code-inlining", Arg.Clear code_inlining, " (undocumented)";
   "--no-dollars", Arg.Unit (fun () -> dollars := DollarsDisallowed), " Disallow $i in semantic actions";
   "--no-inline", Arg.Clear inline, " Ignore the %inline keyword";
   "--no-pager", Arg.Unit (fun () -> if !construction_mode = ModePager then construction_mode := ModeInclusionOnly), " (undocumented)";
   "--no-prefix", Arg.Set noprefix, " (undocumented)";
+  "--no-push-commute", Arg.Set no_push_commute, " (undocumented)";
   "--no-stdlib", Arg.Set no_stdlib, " Do not load the standard library";
   "--ocamlc", Arg.Set_string ocamlc, "<command> Specifies how ocamlc should be invoked";
   "--ocamldep", Arg.Set_string ocamldep, "<command> Specifies how ocamldep should be invoked";
+  "--old-code-backend", Arg.Set old_code_backend, "(undocumented)";
   "--only-preprocess", Arg.Unit (fun () -> preprocess_mode := PMOnlyPreprocess PrintNormal),
                        " Print grammar and exit";
   "--only-preprocess-for-ocamlyacc", Arg.Unit (fun () -> preprocess_mode := PMOnlyPreprocess PrintForOCamlyacc),
@@ -452,6 +467,7 @@ let options = Arg.align [
   "--timings", Arg.Unit (fun () -> timings := Some stderr), " Output internal timings to stderr";
   "--timings-to", Arg.String (fun filename -> timings := Some (open_out filename)), "<filename> Output internal timings to <filename>";
   "--trace", Arg.Set trace, " Generate tracing instructions";
+  "--unit-test", Arg.Set unit_test, "(undocumented)";
   "--unused-precedence-levels", Arg.Set ignore_all_unused_precedence_levels, " Do not warn about unused precedence levels";
   "--unused-token", Arg.String ignore_unused_token, "<token> Do not warn that <token> is unused";
   "--unused-tokens", Arg.Set ignore_all_unused_tokens, " Do not warn about any unused token";
@@ -518,6 +534,9 @@ let () =
 (* ------------------------------------------------------------------------- *)
 (* Export the settings. *)
 
+let unit_test =
+  !unit_test
+
 let stdlib_filename =
   "<standard.mly>"
 
@@ -533,7 +552,8 @@ let base =
     | [ filename ] ->
         Filename.chop_suffix filename (if !coq then ".vy" else ".mly")
     | _ ->
-        fprintf stderr "Error: you must specify --base when providing multiple input files.\n";
+        fprintf stderr
+          "Error: you must specify --base when providing multiple input files.\n";
         exit 1
   else
     !base
@@ -732,6 +752,7 @@ let infer =
    and dependency nightmares. *)
 
 let skipping_parser_generation =
+  unit_test ||
   coq ||
   compile_errors <> None ||
   interpret_error ||
@@ -758,3 +779,12 @@ let stacklang_graph =
 
 let stacklang_test =
   !stacklang_test
+
+let old_code_backend =
+  !old_code_backend
+
+let optimize_stack =
+  not !no_stack_optimization
+
+let commute_pushes =
+  not !no_push_commute
