@@ -354,8 +354,7 @@ let wt_knowncells_routine program label t_block =
     let fail message =
       let message =
         sprintf
-          "\n\
-           While checking %s, in block %s : %s\n\
+          "While checking %s, in block %s : %s\n\
            Known cells : %s\n\
            Needed cells : %s" reason label message
           (StackLangPrinter.known_cells_to_string known_cells)
@@ -393,14 +392,14 @@ let wt_knowncells_routine program label t_block =
       (wtkc_block known_cells extra_known_cells state)
       ~push:(fun _value cell block ->
         wtkc_block
-          (Array.push known_cells cell)
-          (Array.push extra_known_cells cell)
+          (MArray.push known_cells cell)
+          (MArray.push extra_known_cells cell)
           state block)
       ~pop:(fun pattern block' ->
         ( if known_cells = [||] then
           let message = "Tried to pop unknown cell" in
           fail t_block block message ) ;
-        let known_cells = Array.pop known_cells in
+        let known_cells = MArray.pop known_cells in
         (* If the state is shadowed, then it becomes unknown. *)
         let state = if pattern_shadow_state pattern then None else state in
         wtkc_block known_cells [||] state block')

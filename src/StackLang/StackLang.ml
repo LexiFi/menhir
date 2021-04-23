@@ -32,7 +32,7 @@ module RegisterMap = StringMap
 module TagMap = IntMap
 
 module TagSet = struct
-  include IntSet
+  include Set.Make(Int)
 
   let all = of_list (List.init (Lr1.n + 1) Fun.id)
 

@@ -85,16 +85,16 @@ let stacktypeabbrevdefs =
         let hold_startpos = nth_bit i 2 in
         let hold_endpos = nth_bit i 3 in
         { typename= tcstack_of_int i
-        ; typeparams= ["tail"] @ List.if1 hold_semv "semantic" @ ["final"]
+        ; typeparams= ["tail"] @ MList.if1 hold_semv "semantic" @ ["final"]
         ; typerhs=
             TAbbrev
               (TypTuple
                  ( [TypVar "tail"]
-                 @ List.if1 hold_state
+                 @ MList.if1 hold_state
                      (TypApp (tcstate, [TypVar "tail"; TypVar "final"]))
-                 @ List.if1 hold_semv (TypVar "semantic")
-                 @ List.if1 hold_startpos (TypName "Lexing.position")
-                 @ List.if1 hold_endpos (TypName "Lexing.position") ))
+                 @ MList.if1 hold_semv (TypVar "semantic")
+                 @ MList.if1 hold_startpos (TypName "Lexing.position")
+                 @ MList.if1 hold_endpos (TypName "Lexing.position") ))
         ; typeconstraint= None })
       numbers
   in
@@ -115,7 +115,7 @@ let stack_type_of_cell_info tail final =
         TypApp
           ( tcstack hold_state hold_semv hold_startpos hold_endpos
           , [tail]
-            @ List.if1 hold_semv
+            @ MList.if1 hold_semv
                 (match typ with None -> tunit | Some typ -> TypTextual typ)
             @ [final] ))
 

@@ -23,12 +23,6 @@ let filter pred map =
           else
             map) map empty
 
-let restrict domain map =
-  filter (fun k _ -> IntSet.mem k domain) map
-
-let domain map =
-  fold (fun key _ acu -> IntSet.add key acu) map IntSet.empty
-
 let multiple_add k v m =
   let vs =
     try

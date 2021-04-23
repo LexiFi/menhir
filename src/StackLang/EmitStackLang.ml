@@ -339,8 +339,8 @@ module L = struct
     in
     (* Thus, we initially need the following registers. *)
     let _needed_registers =
-      (lexer :: lexbuf :: token :: List.if1 is_epsilon state)
-      @ List.if1 (is_epsilon || has_beforeend) endp
+      (lexer :: lexbuf :: token :: MList.if1 is_epsilon state)
+      @ MList.if1 (is_epsilon || has_beforeend) endp
     in
     set_needed needlist ;
     (* need_list needlist ; *)
@@ -351,10 +351,10 @@ module L = struct
     for i = n - 1 downto 0 do
       let cell_info = stack_type.(i) in
       let pop_list =
-        List.if1 cell_info.hold_state (if i = 0 then PReg state else PWildcard)
-        @ List.if1 cell_info.hold_semv (PReg ids.(i))
-        @ List.if1 cell_info.hold_startpos (PReg (startpos ids i))
-        @ List.if1 cell_info.hold_endpos (PReg (endpos ids i))
+        MList.if1 cell_info.hold_state (if i = 0 then PReg state else PWildcard)
+        @ MList.if1 cell_info.hold_semv (PReg ids.(i))
+        @ MList.if1 cell_info.hold_startpos (PReg (startpos ids i))
+        @ MList.if1 cell_info.hold_endpos (PReg (endpos ids i))
       in
       if pop_list <> [] then pop (PTuple pop_list) ;
       (* If there is no semantic value in the stack, then it is of type unit
@@ -510,10 +510,10 @@ module L = struct
     if optimize_stack then
       Invariant.fold_top
         (fun holds_state symbol ->
-          List.if1 holds_state state
-          @ List.if1 (CodePieces.has_semv symbol) semv
-          @ List.if1 (Invariant.startp symbol) startp
-          @ List.if1 (Invariant.endp symbol) endp)
+          MList.if1 holds_state state
+          @ MList.if1 (CodePieces.has_semv symbol) semv
+          @ MList.if1 (Invariant.startp symbol) startp
+          @ MList.if1 (Invariant.endp symbol) endp)
         [] (Invariant.gotostack nt)
     else [state; semv; startp; endp]
 
@@ -526,26 +526,26 @@ module L = struct
     (* Determine whether a new cell must be pushed onto the stack. *)
     let must_push = runpushes s in
     let must_query_lexer = must_query_lexer_upon_entering s in
-    (lexer :: lexbuf :: List.if1 (not must_query_lexer) token)
-    @ List.if1 (must_push && has_semantic_value s) semv
+    (lexer :: lexbuf :: MList.if1 (not must_query_lexer) token)
+    @ MList.if1 (must_push && has_semantic_value s) semv
     @
     if optimize_stack then
       Invariant.fold_top
         (fun holds_state symbol ->
-          List.if1 (must_push && holds_state) state
-          @ List.if1
+          MList.if1 (must_push && holds_state) state
+          @ MList.if1
               ( Invariant.startp symbol
               && (not (is_start || must_read_positions))
               && must_push )
               startp
-          @ List.if1
+          @ MList.if1
               (Invariant.endp symbol && not (is_start || must_read_positions))
               endp)
         [] (Invariant.stack s)
     else
-      List.if1 must_push state
-      @ List.if1 ((not (is_start || must_read_positions)) && must_push) startp
-      @ List.if1 (not (is_start || must_read_positions)) endp
+      MList.if1 must_push state
+      @ MList.if1 ((not (is_start || must_read_positions)) && must_push) startp
+      @ MList.if1 (not (is_start || must_read_positions)) endp
 
   let reduce_successor_need_startpos prod =
     (not @@ Production.is_start prod)
@@ -566,8 +566,8 @@ module L = struct
       Action.has_beforeend action
     in
     if optimize_stack then
-      [lexer; lexbuf; token] @ List.if1 is_epsilon state
-      @ List.if1
+      [lexer; lexbuf; token] @ MList.if1 is_epsilon state
+      @ MList.if1
           ( (not @@ Production.is_start prod)
           && ( is_epsilon
                && ( goto_needendpos (Production.nt prod)
@@ -575,8 +575,8 @@ module L = struct
              || has_beforeend ) )
           endp
     else
-      [lexer; lexbuf; token] @ List.if1 is_epsilon state
-      @ List.if1 (is_epsilon || has_beforeend) endp
+      [lexer; lexbuf; token] @ MList.if1 is_epsilon state
+      @ MList.if1 (is_epsilon || has_beforeend) endp
 
   (** Values pushed on the stack by the goto routine associated to nonterminal
       [nt]. Only used if [gotopushes nt] is true. *)
@@ -585,9 +585,9 @@ module L = struct
       top_stack_type (Invariant.gotostack nt)
     in
     let pushlist =
-      List.if1 hold_state state @ List.if1 hold_semv semv
-      @ List.if1 hold_startpos startp
-      @ List.if1 hold_endpos endp
+      MList.if1 hold_state state @ MList.if1 hold_semv semv
+      @ MList.if1 hold_startpos startp
+      @ MList.if1 hold_endpos endp
     in
     (pushlist, cell)
 
@@ -609,9 +609,9 @@ module L = struct
       top_stack_type (Invariant.stack s)
     in
     let pushlist =
-      List.if1 hold_state state @ List.if1 hold_semv semv
-      @ List.if1 hold_startpos startp
-      @ List.if1 hold_endpos endp
+      MList.if1 hold_state state @ MList.if1 hold_semv semv
+      @ MList.if1 hold_startpos startp
+      @ MList.if1 hold_endpos endp
     in
     (pushlist, cell)
 

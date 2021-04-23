@@ -20,16 +20,10 @@ val cardinal : 'a t -> int
 (* [restrict s m] restricts the domain of the map [m] to (its
    intersection with) the set [s]. *)
 
-val restrict: IntSet.t -> 'a t -> 'a t
-
 (* [filter pred m] restricts the domain of the map [m] to
    (key, value) couples that verify [pred]. *)
 
 val filter: (int -> 'a -> bool) -> 'a t -> 'a t
-
-(* [domain m] returns the domain of the map [m]. *)
-
-val domain: 'a t -> IntSet.t
 
 (* [multiple_add k v m] adds the key-value pair [k, v] to the map [m],
    which maps keys to *lists* of values. The list currently associated

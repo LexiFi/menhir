@@ -2,7 +2,7 @@ let run () =
   if Settings.unit_test then (
     print_endline "Starting unit tests" ;
     flush_all () ;
-    Array.test () ;
+    MArray.test () ;
     StackLangUtils.test () ;
     StackLangTransform.test () ;
     StackLangTraverse.test () ;

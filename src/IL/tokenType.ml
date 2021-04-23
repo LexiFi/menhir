@@ -163,7 +163,7 @@ let produce_tokentypes grammar =
 
       let i =
         tokentypedef grammar @
-        List.ifnlazy Settings.inspection (fun () ->
+        MList.ifnlazy Settings.inspection (fun () ->
           tokengadtdef grammar
         )
       in

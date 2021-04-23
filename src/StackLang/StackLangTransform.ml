@@ -51,9 +51,8 @@ let needed_registers_pushes pushes =
     RegisterSet.empty pushes
 
 let commute_pushes_t_block program t_block =
-  let cfg = program.cfg in
   let pushes_conflit_with_reg pushes reg =
-    List.exists (value_refers_to_register reg) pushes
+    MList.exists (value_refers_to_register reg) pushes
   in
   let cancelled_pop = ref 0 in
   let eliminated_branches = ref 0 in

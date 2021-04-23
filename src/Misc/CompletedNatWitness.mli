@@ -35,7 +35,6 @@ val singleton: 'a -> 'a t
 val min: 'a t -> 'a t -> 'a t
 val max: 'a t -> 'a t -> 'a t
 val add: 'a t -> 'a t -> 'a t
-val sub: 'a t -> int -> 'a t
 
 val min_lazy: 'a t -> (unit -> 'a t) -> 'a t
 val max_lazy: 'a t -> (unit -> 'a t) -> 'a t
@@ -51,4 +50,6 @@ val (<): 'a t -> 'a t -> bool
 val (<=): 'a t -> 'a t -> bool
 val (>): 'a t -> 'a t -> bool
 val (>=): 'a t -> 'a t -> bool
+
+val discard_witness: 'a t -> CompletedNat.t
 
