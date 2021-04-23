@@ -104,6 +104,15 @@ val incoming_symbol: node -> Symbol.t option
 
 val is_start: node -> bool
 
+(* With each start production [S' -> S], exactly two states are
+   associated: a start state, which contains the item [S' -> . S [#]],
+   and an exit state, which contains the item [S' -> S . [#]]. *)
+
+(* [is_start_or_exit node] determines whether [node] is one of these
+   two states and, if so, returns the corresponding start symbol [S]. *)
+
+val is_start_or_exit: node -> Nonterminal.t option
+
 (* This maps a node to its predecessors. *)
 
 val predecessors: node -> node list

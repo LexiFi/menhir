@@ -2,7 +2,7 @@
 (** Hand-written lexer for natural numbers, idents, parens and + - * / *)
 
 Require Import BinNat Ascii String.
-Require Import Parser.
+From MiniCalc Require Import Parser.
 Import MenhirLibParser.Inter.
 Open Scope char_scope.
 Open Scope bool_scope.
@@ -24,7 +24,7 @@ Fixpoint ntail n s :=
 Definition ascii_eqb c c' := (N_of_ascii c =? N_of_ascii c')%N.
 Definition ascii_leb c c' := (N_of_ascii c <=? N_of_ascii c')%N.
 
-Infix "=?" := ascii_eqb : char_scope.
+Infix "=?" := ascii_eqb : char_scope. (* Not needed in Coq >= 8.10, I think. *)
 Infix "<=?" := ascii_leb : char_scope.
 
 Definition is_digit c := (("0" <=? c) && (c <=? "9"))%char.

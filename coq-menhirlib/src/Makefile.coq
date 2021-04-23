@@ -193,7 +193,7 @@ clean::
 	  (cd $$d && \
 	     rm -f *~ && \
 	     rm -f .*.aux && \
-	     rm -f *.{vo,vio,vq,v.d,aux,glob,cache,crashcoqide} && \
+	     rm -f *.{vo,vos,vok,vio,vq,v.d,aux,glob,cache,crashcoqide} && \
 	     rm -rf *.coq-native *.coqide && \
 	     true) ; \
 	done
