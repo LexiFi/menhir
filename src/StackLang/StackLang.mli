@@ -30,7 +30,7 @@ module RegisterSet = StringSet
 module RegisterMap = StringMap
 module TagMap = IntMap
 module TagSet : sig
-  include module type of IntSet
+  include module type of Set.Make(Int)
   val all: t
   val to_string: t -> string
 end

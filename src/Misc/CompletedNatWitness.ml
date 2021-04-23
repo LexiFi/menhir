@@ -61,7 +61,7 @@ let max_lazy p1 p2 =
       p1
   | _ ->
       max p1 (p2())
-      
+
 let min_lazy p1 p2 =
   match p1 with
   | Finite (0, _) ->
@@ -74,13 +74,6 @@ let add p1 p2 =
   | Finite (i1, xs1), Finite (i2, xs2) ->
       Finite (i1 + i2, Seq.append xs1 xs2)
   | _, _ ->
-      Infinity
-
-let sub p1 i2 =
-  match p1 with
-  | Finite (i1, xs1)->
-      Finite (i1 - i2, xs1)
-  | Infinity ->
       Infinity
 
 let add_lazy p1 p2 =
@@ -133,3 +126,8 @@ let (>) p1 p2 =
 
 let (>=) p1 p2 =
   compare p1 p2 >= 0
+
+let discard_witness =
+  function
+  | Finite(i, _) -> CompletedNat.Finite i
+  | Infinity -> CompletedNat.Infinity

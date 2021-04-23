@@ -1,16 +1,3 @@
-(******************************************************************************)
-(*                                                                            *)
-(*                                   Menhir                                   *)
-(*                                                                            *)
-(*                       François Pottier, Inria Paris                        *)
-(*              Yann Régis-Gianas, PPS, Université Paris Diderot              *)
-(*                                                                            *)
-(*  Copyright Inria. All rights reserved. This file is distributed under the  *)
-(*  terms of the GNU General Public License version 2, as described in the    *)
-(*  file LICENSE.                                                             *)
-(*                                                                            *)
-(******************************************************************************)
-
 open Grammar
 open Cst
 open Feat.IFSeq (* empty, ++, map, bigsum *)
@@ -218,86 +205,38 @@ let maximal nt =
   let visited_nt = ref NonterminalSet.empty in
   let visited_prods = ref ProductionSet.empty in
   let rec aux_symbol symbol =
-    if SymbolSet.mem symbol !visited_symbols then CompletedNatWitness.Infinity
+    if SymbolSet.mem symbol !visited_symbols then CompletedNat.Infinity
     else (
       visited_symbols := SymbolSet.add symbol !visited_symbols ;
       match symbol with
       | Symbol.N nt ->
           aux_nt nt
-      | Symbol.T t ->
-          CompletedNatWitness.singleton t )
+      | Symbol.T _ ->
+          CompletedNat.one )
   and aux_prod prod =
-    if ProductionSet.mem prod !visited_prods then CompletedNatWitness.Infinity
+    if ProductionSet.mem prod !visited_prods then CompletedNat.Infinity
     else (
       visited_prods := ProductionSet.add prod !visited_prods ;
       let symbols = Production.rhs prod in
       Array.fold_left
         (fun acc symbol ->
-          CompletedNatWitness.add_lazy acc (fun () -> aux_symbol symbol))
-        CompletedNatWitness.epsilon symbols )
+          CompletedNat.add_lazy acc (fun () -> aux_symbol symbol))
+        CompletedNat.zero symbols )
   and aux_nt nt =
-    if NonterminalSet.mem nt !visited_nt then CompletedNatWitness.Infinity
+    if NonterminalSet.mem nt !visited_nt then CompletedNat.Infinity
     else (
       visited_nt := NonterminalSet.add nt !visited_nt ;
       Production.foldnt nt
-        (fun prod acc ->
-          CompletedNatWitness.max_lazy acc (fun () -> aux_prod prod))
-        CompletedNatWitness.epsilon )
+        (fun prod acc -> CompletedNat.max_lazy acc (fun () -> aux_prod prod))
+        CompletedNat.zero )
   in
   aux_nt nt
-
-(* Do not use : stack overflows *)
-let bounded_maximal budget nt =
-  let of_int i = if i >= budget then None else Some i in
-  let add n1 n2 =
-    match (n1, n2) with
-    | None, _ | _, None ->
-        None
-    | Some i1, Some i2 ->
-        let r = i1 + i2 in
-        of_int r
-  in
-  let add_lazy n1 n2 =
-    match n1 with None -> None | Some _ -> add n1 (n2 ())
-  in
-  let max n1 n2 =
-    match (n1, n2) with
-    | None, Some i | Some i, None ->
-        of_int i
-    | None, None ->
-        None
-    | Some i, Some i' ->
-        Some (max i i')
-  in
-  let max_lazy n1 n2 =
-    match n1 with Some i when i = budget -> Some i | _ -> max n1 (n2 ())
-  in
-  let rec aux_symbol symbol =
-    match symbol with Symbol.N nt -> aux_nt nt | Symbol.T _ -> of_int 1
-  and aux_prod prod =
-    let symbols = Production.rhs prod in
-    Array.fold_left
-      (fun acc symbol -> add_lazy acc (fun () -> aux_symbol symbol))
-      (of_int 0) symbols
-  and aux_nt nt =
-    Production.foldnt nt
-      (fun prod acc -> max_lazy acc (fun () -> aux_prod prod))
-      (of_int 0)
-  in
-  Option.force @@ aux_nt nt
-
-(* Do not use : stack overflows *)
-let _bounded_maximal_symbol budget = function
-  | Symbol.N nt ->
-      bounded_maximal budget nt
-  | Symbol.T _ ->
-      if budget < 1 then 0 else 1
 
 let maximal_symbol = function
   | Symbol.N nt ->
       maximal nt
   | Symbol.T _ ->
-      CompletedNatWitness.Finite (1, Seq.empty)
+      CompletedNat.one
 
 let sentence ?(log = false) nt budget : Terminal.t array =
   let log = if log then Printf.eprintf "%s" else ignore in
@@ -314,9 +253,9 @@ let sentence ?(log = false) nt budget : Terminal.t array =
          (Nonterminal.print false nt)
          budget
          ( match maximal nt with
-         | CompletedNatWitness.Infinity ->
+         | CompletedNat.Infinity ->
              "Infinite"
-         | CompletedNatWitness.Finite (i, _) ->
+         | CompletedNat.Finite i ->
              string_of_int i )
          (Analysis.minimal nt) ;
     (* A list of possible choices *)
@@ -336,9 +275,8 @@ let sentence ?(log = false) nt budget : Terminal.t array =
           let max_cost =
             Array.fold_left
               (fun n symbol ->
-                CompletedNatWitness.add_lazy n (fun () -> maximal_symbol symbol))
-              (CompletedNatWitness.Finite (0, Seq.empty))
-              symbols
+                CompletedNat.add_lazy n (fun () -> maximal_symbol symbol))
+              CompletedNat.zero symbols
           in
           let min_cost =
             Array.fold_left
@@ -357,8 +295,7 @@ let sentence ?(log = false) nt budget : Terminal.t array =
       Array.of_list
         (List.filter
            (fun (_, (max_price, min_price)) ->
-             min_price <= budget
-             && CompletedNatWitness.(max_price >= Finite (budget, Seq.empty)))
+             min_price <= budget && CompletedNat.(max_price >= Finite budget))
            priced_choices)
     in
     (* Reasonable choices are choices such that we will not go over budget.
@@ -409,10 +346,8 @@ let sentence ?(log = false) nt budget : Terminal.t array =
               | Symbol.T _ ->
                   true
               | Symbol.N _ ->
-                  CompletedNatWitness.(
-                    compare
-                      (Finite (minimal_costs.(i), Seq.empty))
-                      maximal_costs.(i))
+                  CompletedNat.(
+                    compare (Finite minimal_costs.(i)) maximal_costs.(i))
                   >= 0
             in
             if r then count_maxed_out := !count_maxed_out + 1 ;
@@ -435,10 +370,9 @@ let sentence ?(log = false) nt budget : Terminal.t array =
               let maximal_cost = maximal_costs.(i) in
               (* We never give more budget to a symbol than it can handle. *)
               let actual_increase =
-                CompletedNatWitness.(
+                CompletedNat.(
                   to_int
-                  @@ min
-                       (Finite (desired_increase, Seq.empty))
+                  @@ min (Finite desired_increase)
                        (sub maximal_cost current_cost))
               in
               (* If we did not allocate all of our budget to the symbol,

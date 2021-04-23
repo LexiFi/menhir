@@ -535,9 +535,9 @@ module Run (T : sig end) = struct
 
   let celltype tailtype holds_state symbol _ =
     TypTuple
-      ( (tailtype :: List.if1 (Invariant.endp symbol) tposition)
-      @ List.if1 holds_state tstate @ semvtype symbol
-      @ List.if1 (Invariant.startp symbol) tposition )
+      ( (tailtype :: MList.if1 (Invariant.endp symbol) tposition)
+      @ MList.if1 holds_state tstate @ semvtype symbol
+      @ MList.if1 (Invariant.startp symbol) tposition )
 
   (* Types for stacks.
 
@@ -651,10 +651,10 @@ module Run (T : sig end) = struct
   let runcellparams stack : xparams =
     Invariant.fold_top
       (fun holds_state symbol ->
-        List.if1 (Invariant.endp symbol) (xvar endp)
-        @ List.if1 holds_state (xvar state)
-        @ List.if1 (has_semv symbol) (xvar semv)
-        @ List.if1 (Invariant.startp symbol) (xvar startp))
+        MList.if1 (Invariant.endp symbol) (xvar endp)
+        @ MList.if1 holds_state (xvar state)
+        @ MList.if1 (has_semv symbol) (xvar semv)
+        @ MList.if1 (Invariant.startp symbol) (xvar startp))
       [] stack
 
   (* May the semantic action associated with production [prod] refer to the
@@ -687,10 +687,10 @@ module Run (T : sig end) = struct
       if action_may_refer_to_value prod i then PAnnot (PVar ids.(i), t)
       else PWildcard
     in
-    List.if1 (Invariant.endp symbol) (PVar (Printf.sprintf "_endpos_%s_" ids.(i)))
-    @ List.if1 holds_state (if i = 0 then PVar state else PWildcard)
-    @ List.map semvpat (semvtype symbol)
-    @ List.if1 (Invariant.startp symbol)
+    MList.if1 (Invariant.endp symbol) (PVar (Printf.sprintf "_endpos_%s_" ids.(i)))
+    @ MList.if1 holds_state (if i = 0 then PVar state else PWildcard)
+    @ MList.map semvpat (semvtype symbol)
+    @ MList.if1 (Invariant.startp symbol)
         (PVar (Printf.sprintf "_startpos_%s_" ids.(i)))
 
   (* The contents of a stack cell, exposed as individual parameters,
@@ -700,17 +700,17 @@ module Run (T : sig end) = struct
   let errorcellparams (i, pat) holds_state symbol _ =
     ( i + 1
     , ptuple
-        ( (pat :: List.if1 (Invariant.endp symbol) PWildcard)
-        @ List.if1 holds_state (if i = 0 then PVar state else PWildcard)
-        @ List.if1 (has_semv symbol) PWildcard
-        @ List.if1 (Invariant.startp symbol) PWildcard ) )
+        ( (pat :: MList.if1 (Invariant.endp symbol) PWildcard)
+        @ MList.if1 holds_state (if i = 0 then PVar state else PWildcard)
+        @ MList.if1 (has_semv symbol) PWildcard
+        @ MList.if1 (Invariant.startp symbol) PWildcard ) )
 
   (* Calls to [run]. *)
 
   let runparams s : xparams =
     xvar env
     :: xmagic (xvar stack)
-    :: List.ifn (runpushes s) (runcellparams (Invariant.stack s))
+    :: MList.ifn (runpushes s) (runcellparams (Invariant.stack s))
 
   let call_run s actuals = EApp (EVar (run s), actuals)
 
@@ -722,11 +722,11 @@ module Run (T : sig end) = struct
 
   let reduceparams prod =
     PVar env :: PVar stack
-    :: List.ifn (shiftreduce prod)
+    :: MList.ifn (shiftreduce prod)
          (Invariant.fold_top
             (reducecellparams prod (Production.length prod - 1))
             [] (Invariant.prodstack prod))
-    @ List.if1 (reduce_expects_state_param prod) (PVar state)
+    @ MList.if1 (reduce_expects_state_param prod) (PVar state)
 
   (* Calls to [reduce]. One must specify the production [prod] as well
      as the current state [s]. *)
@@ -736,10 +736,10 @@ module Run (T : sig end) = struct
   let call_reduce prod s =
     let actuals =
       EVar env :: EMagic (EVar stack)
-      :: List.ifn (shiftreduce prod)
+      :: MList.ifn (shiftreduce prod)
            (xparams2exprs (runcellparams (Invariant.stack s)))
       (* compare with [runpushcell s] *)
-      @ List.if1 (reduce_expects_state_param prod) (estatecon s)
+      @ MList.if1 (reduce_expects_state_param prod) (estatecon s)
     in
     EApp (EVar (reduce prod), actuals)
 
@@ -818,10 +818,10 @@ module Run (T : sig end) = struct
       :: Invariant.fold_top
            (fun holds_state symbol ->
              assert (Symbol.equal (Symbol.T tok) symbol) ;
-             List.if1 (Invariant.endp symbol) getendp
-             @ List.if1 holds_state (estatecon s)
-             @ List.if1 (has_semv (Symbol.T tok)) (EVar semv)
-             @ List.if1 (Invariant.startp symbol) getstartp)
+             MList.if1 (Invariant.endp symbol) getendp
+             @ MList.if1 holds_state (estatecon s)
+             @ MList.if1 (has_semv (Symbol.T tok)) (EVar semv)
+             @ MList.if1 (Invariant.startp symbol) getstartp)
            [] (Invariant.stack s')
     in
     (* Call [run s']. *)
@@ -1066,12 +1066,12 @@ module Run (T : sig end) = struct
     let symbol = Symbol.N nt in
     let posbindings action =
       let bind_startp = Invariant.startp symbol in
-      List.if1 (Action.has_beforeend action) (extract beforeendp)
-      @ List.if1 bind_startp
+      MList.if1 (Action.has_beforeend action) (extract beforeendp)
+      @ MList.if1 bind_startp
           ( if length > 0 then
             (PVar startp, EVar (Printf.sprintf "_startpos_%s_" ids.(0)))
           else extract startp )
-      @ List.if1 (Invariant.endp symbol)
+      @ MList.if1 (Invariant.endp symbol)
           ( if length > 0 then
             (PVar endp, EVar (Printf.sprintf "_endpos_%s_" ids.(length - 1)))
           else if bind_startp then (PVar endp, EVar startp)

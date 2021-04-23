@@ -422,8 +422,8 @@ module L = struct
     in
     (* Thus, we initially need the following registers. *)
     let _needed_registers =
-      (lexer :: lexbuf :: token :: List.if1 is_epsilon state)
-      @ List.if1 (is_epsilon || has_beforeend) endp
+      (lexer :: lexbuf :: token :: MList.if1 is_epsilon state)
+      @ MList.if1 (is_epsilon || has_beforeend) endp
     in
     set_needed needlist ;
     (* need_list needlist ; *)
@@ -434,10 +434,10 @@ module L = struct
     for i = n - 1 downto 0 do
       let cell_info = stack_type.(i) in
       let pop_list =
-        List.if1 cell_info.hold_state (if i = 0 then PReg state else PWildcard)
-        @ List.if1 cell_info.hold_semv (PReg ids.(i))
-        @ List.if1 cell_info.hold_startpos (PReg (startpos ids i))
-        @ List.if1 cell_info.hold_endpos (PReg (endpos ids i))
+        MList.if1 cell_info.hold_state (if i = 0 then PReg state else PWildcard)
+        @ MList.if1 cell_info.hold_semv (PReg ids.(i))
+        @ MList.if1 cell_info.hold_startpos (PReg (startpos ids i))
+        @ MList.if1 cell_info.hold_endpos (PReg (endpos ids i))
       in
       if pop_list <> [] then pop (PTuple pop_list) ;
       (* If there is no semantic value in the stack, then it is of type unit
@@ -607,10 +607,10 @@ module L = struct
     if optimize_stack then
       Invariant.fold_top
         (fun holds_state symbol ->
-          List.if1 holds_state state
-          @ List.if1 (CodePieces.has_semv symbol) semv
-          @ List.if1 (Invariant.startp symbol) startp
-          @ List.if1 (Invariant.endp symbol) endp)
+          MList.if1 holds_state state
+          @ MList.if1 (CodePieces.has_semv symbol) semv
+          @ MList.if1 (Invariant.startp symbol) startp
+          @ MList.if1 (Invariant.endp symbol) endp)
         [] (Invariant.gotostack nt)
     else [state; semv; startp; endp]
 
@@ -649,9 +649,9 @@ module L = struct
       top_stack_type (Invariant.gotostack nt)
     in
     let pushlist =
-      List.if1 hold_state state @ List.if1 hold_semv semv
-      @ List.if1 hold_startpos startp
-      @ List.if1 hold_endpos endp
+      MList.if1 hold_state state @ MList.if1 hold_semv semv
+      @ MList.if1 hold_startpos startp
+      @ MList.if1 hold_endpos endp
     in
     (pushlist, cell)
 

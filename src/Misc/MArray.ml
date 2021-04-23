@@ -1,12 +1,11 @@
-include Stdlib.Array
+include Array
 
-(* TODO : make it work with old versions of caml that do not have Stdlib *)
 let rev a =
   let n = length a in
   if n = 0 then [||]
   else
     let r = make n (get a 0) in
-    for i = 0 to n - 1 do
+    for i = 0 to n - 2 do
       set r i (get a (n - i - 1))
     done ;
     r
@@ -32,6 +31,8 @@ let push a v =
 let rev_to_list a = fold_left (fun li e -> e :: li) [] a
 
 let test () =
+  assert (pop [|1; 2; 3; 4|] = [|1; 2; 3|]) ;
+  assert (push [|1; 2; 3|] 4 = [|1; 2; 3; 4|]) ;
   assert (rev [|1; 2; 3; 4|] = [|4; 3; 2; 1|]) ;
   assert (rev_of_list [1; 2; 3; 4; 5] = [|5; 4; 3; 2; 1|]) ;
   assert (rev_to_list [|1; 2; 3; 4; 5|] = [5; 4; 3; 2; 1])

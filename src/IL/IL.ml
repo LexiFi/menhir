@@ -110,7 +110,7 @@ and typ =
   | TypTextual of Stretch.ocamltype
 
   (* Type name *)
-  | TypName of string 
+  | TypName of string
 
   (* Type variable, without its leading quote. Can also be "_". *)
   | TypVar of string
@@ -167,8 +167,8 @@ and expr =
   (* Local definitions. This is a nested sequence of [let]
      definitions. *)
   | ELet of (pattern * expr) list * expr
-  (* Local definitions with an annotation. This is a nested sequence of [let]
-     definitions. *)
+  (* Local definitions with an annotation. This is a nested sequence of
+     [let[@local]] definitions. *)
   | EInlinedLet of (pattern * expr) list * expr
 
   (* Case analysis. *)
