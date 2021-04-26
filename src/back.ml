@@ -44,38 +44,38 @@ let () =
 
 let () =
   if Settings.dump_resolved then
-    let module D = Dump.Make(Default) in
+    let module D = Dump.Make (Default) in
     D.dump (Settings.base ^ ".automaton.resolved")
 
 let () =
-  if Settings.automaton_graph then
-    AutomatonGraph.print_automaton_graph()
+  if Settings.automaton_graph then AutomatonGraph.print_automaton_graph ()
 
 (* Let [Interpret] handle the command line options [--interpret],
    [--interpret-error], [--compile-errors], [--compare-errors]. *)
 
-let () =
-  Interpret.run()
+let () = Interpret.run ()
 
 (* If [--list-errors] is set, produce a list of erroneous input sentences, then stop. *)
 
 let () =
-  if Settings.list_errors then begin
-    let module L = LRijkstra.Run(struct
+  if Settings.list_errors then
+    let module L = LRijkstra.Run (struct
       (* Undocumented: if [--log-automaton 2] is set, be verbose. *)
       let verbose = Settings.logA >= 2
+
       (* For my own purposes, LRijkstra can print one line of statistics to a .csv file. *)
       let statistics = if false then Some "lr.csv" else None
     end) in
     exit 0
-  end
 
 (* Define an .ml file writer . *)
 
 let write program =
   let module P = Printer.Make (struct
     let filename = Settings.base ^ ".ml"
+
     let f = open_out filename
+
     let locate_stretches =
       (* 2017/05/09: always include line number directives in generated .ml
          files. Indeed, they affect the semantics of [assert] instructions
@@ -92,51 +92,39 @@ let write program =
 
 (* If requested, generate a .cmly file. *)
 
-let () =
-  if Settings.cmly then
-    Cmly_write.write (Settings.base ^ ".cmly")
+let () = if Settings.cmly then Cmly_write.write (Settings.base ^ ".cmly")
 
 (* Construct and print the code using an appropriate back-end. *)
 
 let () =
-  if Settings.stacklang_dump
-  || Settings.stacklang_graph
-  || Settings.stacklang_test then
-  begin
-    let module SL = EmitStackLang.Run() in
+  if
+    Settings.stacklang_dump || Settings.stacklang_graph
+    || Settings.stacklang_test
+  then (
+    let module SL = EmitStackLang.Run () in
     let program = SL.program in
-    StackLangTraverse.wf program;
+    StackLangTraverse.wf program ;
     let program = StackLangTraverse.inline program in
-    StackLangTraverse.wf program;
-    if Settings.stacklang_dump then begin
-      StackLangPrinter.print stdout program;
-      StackLangTraverse.(print (measure program));
-    end;
-    if Settings.stacklang_graph then begin
-      StackLangGraph.print program;
-    end;
-    if Settings.stacklang_test then begin
-      StackLangTester.test program;
-    end;
-  end
+    StackLangTraverse.wf program ;
+    if Settings.stacklang_dump then (
+      StackLangPrinter.print stdout program ;
+      StackLangTraverse.(print (measure program)) ) ;
+    if Settings.stacklang_graph then StackLangGraph.print program ;
+    if Settings.stacklang_test then StackLangTester.test program )
 
 let () =
-  if Settings.table then begin
-    let module B = TableBackend.Run (struct end) in
-    write B.program;
-    Interface.write Front.grammar ()
-  end
-  else if Settings.coq then begin
-    let module B = CoqBackend.Run (struct end) in
+  if Settings.table then (
+    let module B = TableBackend.Run () in
+    write B.program ;
+    Interface.write Front.grammar () )
+  else if Settings.coq then
+    let module B = CoqBackend.Run () in
     let filename = Settings.base ^ ".v" in
     let f = open_out filename in
     B.write_all f
-  end
-  else begin
-    let module B = CodeBackend.Run (struct end) in
-    write (CodeInliner.inline B.program);
+  else
+    let module B = CodeBackend.Run () in
+    write (CodeInliner.inline B.program) ;
     Interface.write Front.grammar ()
-  end
 
-let () =
-  Time.tick "Printing"
+let () = Time.tick "Printing"
