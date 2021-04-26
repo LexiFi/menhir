@@ -35,8 +35,7 @@ let print program =
     let name label = label
 
     let successors (f : ?style:style -> label:string -> vertex -> unit) label =
-      uniq StackLangTraverse.successors (fun target -> f ~label:"" target)
-        (lookup label program.cfg).block
+      uniq Block.successors (fun target -> f ~label:"" target) (lookup label program.cfg).block
 
 
     let iter (f : ?shape:shape -> ?style:style -> label:string -> vertex -> unit) =

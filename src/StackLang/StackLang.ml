@@ -77,8 +77,6 @@ type value = VTag of tag | VReg of register | VTuple of value list | VUnit
 
 type pattern = PWildcard | PReg of register | PTuple of pattern list
 
-
-
 (* -------------------------------------------------------------------------- *)
 
 (* A primitive operation involves the execution of some OCaml code. The
@@ -211,41 +209,7 @@ type states = state_info TagMap.t
    marked as entry points. There is in fact a mapping of the LR(1) start
    states to entry points. *)
 
-type program =
-  {cfg: cfg; entry: string StringMap.t; states: cell_info array Lr1.NodeMap.t}
-
-(* -------------------------------------------------------------------------- *)
-
-(* A few constructors. *)
-
-let vreg r = VReg r
-
-let vregs rs = List.map vreg rs
-
-(* A few accessors. *)
-
-let lookup label map =
-  try LabelMap.find label map with Not_found -> assert false
-
-let entry_labels program =
-  Lr1.NodeMap.fold
-    (fun _s label accu -> LabelSet.add label accu)
-    program.entry LabelSet.empty
-
-(* We assume that every labeled block in a well-formed control flow graph
-   begins with an [INeed] instruction that determines which registers are
-   defined upon entry to this block. *)
-
-let needed t_block = t_block.needed_registers
-
-let rec value_registers = function
-  | VReg reg ->
-      RegisterSet.singleton reg
-  | VTuple li ->
-      List.fold_left RegisterSet.union RegisterSet.empty
-        (List.map value_registers li)
-  | _ ->
-      RegisterSet.empty
+type program = {cfg: cfg; entry: string StringMap.t; states: states}
 
 (* This module provides a API to specifie substitutions of registers by values.
    This is useful to inline values or rename them without generating a lot of
