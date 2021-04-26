@@ -319,6 +319,9 @@ let set_strategy = function
 (* When new command line options are added, please update both the manual
    in [doc/manual.tex] and the man page in [doc/menhir.1]. *)
 
+(* Please note that there is a very short length limit on the explanations
+   here, since the output of [menhir -help] must fit in 80 columns. *)
+
 let options = Arg.align [
   "--automaton-graph", Arg.Set automaton_graph, " (undocumented)";
   "--base", Arg.Set_string base, "<basename> Specifies a base name for the output file(s)";
