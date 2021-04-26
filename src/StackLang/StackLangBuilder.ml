@@ -133,25 +133,32 @@ let pop p = extend (fun block -> IPop (p, block))
 let def p v =
   (* In order to avoid unnecessary clutter, we eliminate a definition of
      the form [def x = x] on the fly. *)
-  match (p, v) with
+  match p, v with
   | PReg dst, VReg src when dst = src ->
       ()
   | _, _ ->
       extend (fun block -> IDef (p, v, block))
 
-let move dst src = def (PReg dst) (VReg src)
+let move dst src =
+  def (PReg dst) (VReg src)
 
-let prim r p = extend (fun block -> IPrim (r, p, block))
+let prim r p =
+  extend (fun block -> IPrim (r, p, block))
 
-let trace s = extend (fun block -> ITrace (s, block))
+let trace s =
+  extend (fun block -> ITrace (s, block))
 
-let comment s = extend (fun block -> IComment (s, block))
+let comment s =
+  extend (fun block -> IComment (s, block))
 
-let die () = close IDie
+let die () =
+  close IDie
 
-let return r = close (IReturn r)
+let return r =
+  close (IReturn r)
 
-let jump l = close (IJump l)
+let jump l =
+  close (IJump l)
 
 let tokens tokpat =
   match tokpat with
