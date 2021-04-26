@@ -13,8 +13,9 @@
 
 open Positions
 
-(* Abstract syntax of the language used for code production. *)
+type binding_locality = BUsual | BLocal
 
+(** Abstract syntax of the language used for code production. *)
 type interface =
   interface_item list
 
@@ -101,6 +102,8 @@ and datadef = {
        [None] if this is an ordinary ADT. *)
     datatypeparams: typ list option;
 
+    comment: string option;
+
   }
 
 and typ =
@@ -124,6 +127,9 @@ and typescheme = {
 
   (* Universal quantifiers, without leading quotes. *)
   quantifiers: string list;
+
+  (* whether the quantifiers are locally abstract or not *)
+  locally_abstract: bool;
 
   (* Body. *)
   body: typ;
@@ -158,8 +164,8 @@ and expr =
   | EApp of expr * expr list
 
   (* Local definitions. This is a nested sequence of [let]
-     definitions. *)
-  | ELet of (pattern * expr) list * expr
+     definitions, or [let[@local]] if [binding_locality] is [BLocal] . *)
+  | ELet of binding_locality * (pattern * expr) list * expr
 
   (* Case analysis. *)
   | EMatch of expr * branch list

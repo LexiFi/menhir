@@ -297,14 +297,11 @@ let semantic_action prod =
        an epsilon production. Otherwise, the variable [state] will be
        bound by the pattern produced by [reducecellparams] above. *)
 
-    ELet (
-
-      [ PVar stack, ERecordAccess (EVar env, fstack) ] @
-        (if Production.length prod = 0 then [ PVar state, ERecordAccess (EVar env, fcurrent) ] else []),
-
-      reducebody prod
-
-    )
+    ELet ( BUsual
+         , [ PVar stack, ERecordAccess (EVar env, fstack) ] @
+           ( MList.if1 (Production.length prod = 0)
+               (PVar state, ERecordAccess (EVar env, fcurrent)) )
+         , reducebody prod )
   )
 
 (* Export the number of start productions. *)
@@ -1056,7 +1053,7 @@ let program =
       SIModuleDef (ti, MApp (MVar make_engine, MVar et)) ::
       SIInclude (MVar ti) ::
 
-      ifnlazy Settings.inspection (fun () ->
+      MList.ifnlazy Settings.inspection (fun () ->
 
         (* Define the internal sub-module [symbols], which contains type
            definitions. Then, include this sub-module. This sub-module is used
