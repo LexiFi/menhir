@@ -280,12 +280,13 @@ val stacklang_test: bool
    backend that does not have gadts. *)
 val old_code_backend: bool
 
-(** The undocumented flag [--no-stack-optimization] disables stack optimisations.*)
+(** The undocumented flag [--no-stack-optimization] disables stack optimisations. *)
 val optimize_stack: bool
 
-(** The undocumented flag [--no-stack-optimization] disables stack optimisations.*)
+(** The undocumented flag [--no-push-commute] disables the commutation of PUSH
+   instructions in StackLang. *)
 val commute_pushes: bool
 
-(** The undocumented flag [--unit-test] makes menhir run its unit test instead of
+(** The undocumented flag [--unit-test] makes menhir run its unit tests instead of
    its usual behavior. *)
 val unit_test: bool
