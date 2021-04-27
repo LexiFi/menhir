@@ -415,17 +415,17 @@ let options = Arg.align [
   "--log-code", Arg.Set_int logC, "<level> Log information about the generated code";
   "--log-grammar", Arg.Set_int logG, "<level> Log information about the grammar";
   "--merge-errors", Arg.String add_merge_errors, "<filename> (used twice) Merge two .messages files";
-  "--no-stack-optimization", Arg.Set no_stack_optimization, "(undocumented)";
   "--no-code-inlining", Arg.Clear code_inlining, " (undocumented)";
   "--no-dollars", Arg.Unit (fun () -> dollars := DollarsDisallowed), " Disallow $i in semantic actions";
   "--no-inline", Arg.Clear inline, " Ignore the %inline keyword";
   "--no-pager", Arg.Unit (fun () -> if !construction_mode = ModePager then construction_mode := ModeInclusionOnly), " (undocumented)";
   "--no-prefix", Arg.Set noprefix, " (undocumented)";
   "--no-push-commute", Arg.Set no_push_commute, " (undocumented)";
+  "--no-stack-optimization", Arg.Set no_stack_optimization, " (undocumented)";
   "--no-stdlib", Arg.Set no_stdlib, " Do not load the standard library";
   "--ocamlc", Arg.Set_string ocamlc, "<command> Specifies how ocamlc should be invoked";
   "--ocamldep", Arg.Set_string ocamldep, "<command> Specifies how ocamldep should be invoked";
-  "--old-code-backend", Arg.Set old_code_backend, "(undocumented)";
+  "--old-code-backend", Arg.Set old_code_backend, " (undocumented)";
   "--only-preprocess", Arg.Unit (fun () -> preprocess_mode := PMOnlyPreprocess PrintNormal),
                        " Print grammar and exit";
   "--only-preprocess-for-ocamlyacc", Arg.Unit (fun () -> preprocess_mode := PMOnlyPreprocess PrintForOCamlyacc),
@@ -467,7 +467,7 @@ let options = Arg.align [
   "--timings", Arg.Unit (fun () -> timings := Some stderr), " Output internal timings to stderr";
   "--timings-to", Arg.String (fun filename -> timings := Some (open_out filename)), "<filename> Output internal timings to <filename>";
   "--trace", Arg.Set trace, " Generate tracing instructions";
-  "--unit-test", Arg.Set unit_test, "(undocumented)";
+  "--unit-test", Arg.Set unit_test, " (undocumented)";
   "--unused-precedence-levels", Arg.Set ignore_all_unused_precedence_levels, " Do not warn about unused precedence levels";
   "--unused-token", Arg.String ignore_unused_token, "<token> Do not warn that <token> is unused";
   "--unused-tokens", Arg.Set ignore_all_unused_tokens, " Do not warn about any unused token";
