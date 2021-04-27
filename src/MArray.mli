@@ -18,7 +18,7 @@ val pop : 'a t -> 'a t
     [push [|1; 2; 3|] 4 = [|1; 2; 3; 4|]] *)
 val push : 'a t -> 'a -> 'a t
 
-(** Convert an array to list with the list head being the end of the array.
+(** Convert an array to a list with the list head being the end of the array.
     [rev_to_list [|1; 2; 3; 4; 5|] = [5; 4; 3; 2; 1]] *)
 val rev_to_list : 'a t -> 'a list
 
