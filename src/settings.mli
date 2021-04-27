@@ -256,13 +256,13 @@ val stacklang_graph: bool
    tested (by comparison with the reference interpreter). *)
 val stacklang_test: bool
 
-(** The undocumented flag [--provide-example output] make menhir output an
+(** The undocumented flag [--provide-example output] makes menhir output an
    example of a sequence of tokens that is accepted by the grammar (not
    necessarily by the automaton) to the file [output]. Nothing else is done if
    set. *)
 val provide_example: string option
 
-(** The undocumented flag [--provide-example-seed] sets seed used for random
+(** The undocumented flag [--provide-example-seed] sets the seed used for random
    generation of the example. *)
 val provide_example_seed: int option
 
@@ -278,12 +278,13 @@ val example_log: bool
    backend that does not have gadts. *)
 val old_code_backend: bool
 
-(** The undocumented flag [--no-stack-optimization] disables stack optimisations.*)
+(** The undocumented flag [--no-stack-optimization] disables stack optimisations. *)
 val optimize_stack: bool
 
-(** The undocumented flag [--no-stack-optimization] disables stack optimisations.*)
+(** The undocumented flag [--no-push-commute] disables the commutation of PUSH
+   instructions in StackLang. *)
 val commute_pushes: bool
 
-(** The undocumented flag [--unit-test] makes menhir run its unit test instead of
+(** The undocumented flag [--unit-test] makes menhir run its unit tests instead of
    its usual behavior. *)
 val unit_test: bool
