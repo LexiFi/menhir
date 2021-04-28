@@ -36,3 +36,5 @@ val domain: 'a t -> StringSet.t
    with [k] is extended with the value [v]. *)
 
 val multiple_add: key -> 'a -> 'a list t -> 'a list t
+
+val of_list: (key * 'a) list -> 'a t
