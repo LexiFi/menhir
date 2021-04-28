@@ -20,3 +20,5 @@ val project: 'a option -> 'a (* careful: calls [exit 1] in case of failure *)
 val equal: ('a -> 'b -> bool) -> 'a option -> 'b option -> bool
 val hash: ('a -> int) -> 'a option -> int
 val value: 'a option -> default:'a -> 'a
+val first_value: 'a option list -> 'a option
+val simplify: 'a option option -> 'a option
