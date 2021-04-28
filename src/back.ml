@@ -11,7 +11,12 @@
 (*                                                                            *)
 (******************************************************************************)
 
+open Printf
+
 (* Driver for the back-end. *)
+
+(* The automaton is now frozen and will no longer be modified. It is
+   time to dump a new description of it, if requested by the user. *)
 
 let () =
   match Settings.provide_example with
@@ -38,9 +43,6 @@ let () =
           s ;
         close_out file ;
         exit 0 )
-
-(* The automaton is now frozen and will no longer be modified. It is
-   time to dump a new description of it, if requested by the user. *)
 
 let () =
   if Settings.dump_resolved then
@@ -94,23 +96,31 @@ let write program =
 
 let () = if Settings.cmly then Cmly_write.write (Settings.base ^ ".cmly")
 
-(* Construct and print the code using an appropriate back-end. *)
+let handle_stacklang_error program
+    StackLangTraverse.{context; culprit; message; state_relevance} =
+  let open StackLang in
+  let open StackLangUtils in
+  let states = StackLang.(program.states) in
+  let cfg = StackLang.(program.cfg) in
+  eprintf "\n%s\n" message ;
+  eprintf "Culprit :\n" ;
+  StackLangPrinter.print_block stderr culprit ;
+  eprintf "\nContext :\n" ;
+  let context = lookup context cfg in
+  StackLangPrinter.print_tblock stderr context ;
+  ( match culprit with
+  | IJump label ->
+      eprintf "\nWhile jumping to %s \n" label ;
+      let block = lookup label cfg in
+      StackLangPrinter.print_tblock stderr block
+  | _ ->
+      () ) ;
+  if state_relevance then (
+    eprintf "\nStates:\n" ;
+    StackLangPrinter.print_states stderr states ) ;
+  exit 1
 
-let () =
-  if
-    Settings.stacklang_dump || Settings.stacklang_graph
-    || Settings.stacklang_test
-  then (
-    let module SL = EmitStackLang.Run () in
-    let program = SL.program in
-    StackLangTraverse.wf program ;
-    let program = StackLangTraverse.inline program in
-    StackLangTraverse.wf program ;
-    if Settings.stacklang_dump then (
-      StackLangPrinter.print stdout program ;
-      StackLangTraverse.(print (measure program)) ) ;
-    if Settings.stacklang_graph then StackLangGraph.print program ;
-    if Settings.stacklang_test then StackLangTester.test program )
+(* Construct and print the code using an appropriate back-end. *)
 
 let () =
   if Settings.table then (
@@ -122,9 +132,33 @@ let () =
     let filename = Settings.base ^ ".v" in
     let f = open_out filename in
     B.write_all f
+  else if Settings.old_code_backend then (
+    write
+      (let module C = CodeBackend.Run () in
+      CodeInliner.inline C.program) ;
+    Interface.write Front.grammar () )
   else
-    let module B = CodeBackend.Run () in
-    write (CodeInliner.inline B.program) ;
+    let module SL = EmitStackLang.Run () in
+    let program = SL.program in
+    ( try
+        StackLangTraverse.wf program ;
+        StackLangTraverse.wt program
+      with StackLangTraverse.StackLangError e ->
+        handle_stacklang_error program e ) ;
+    let program = StackLangInline.inline program in
+    (* let program = StackLangTransform.optimize program in *)
+    ( try
+        StackLangTraverse.wf program ;
+        StackLangTraverse.wt program
+      with StackLangTraverse.StackLangError e ->
+        handle_stacklang_error program e ) ;
+    if Settings.stacklang_dump then (
+      StackLangPrinter.print stdout program ;
+      StackLangTraverse.(print (measure program)) ) ;
+    if Settings.stacklang_graph then StackLangGraph.print program ;
+    if Settings.stacklang_test then StackLangTester.test program ;
+    let program = ILofStackLang.compile program in
+    write program ;
     Interface.write Front.grammar ()
 
 let () = Time.tick "Printing"

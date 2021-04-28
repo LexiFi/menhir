@@ -30,9 +30,16 @@ let push a v =
 
 let rev_to_list a = fold_left (fun li e -> e :: li) [] a
 
+let suffix a n =
+  let l = length a in
+  sub a (l - n) n
+
 let test () =
   assert (pop [|1; 2; 3; 4|] = [|1; 2; 3|]) ;
   assert (push [|1; 2; 3|] 4 = [|1; 2; 3; 4|]) ;
   assert (rev [|1; 2; 3; 4|] = [|4; 3; 2; 1|]) ;
   assert (rev_of_list [1; 2; 3; 4; 5] = [|5; 4; 3; 2; 1|]) ;
-  assert (rev_to_list [|1; 2; 3; 4; 5|] = [5; 4; 3; 2; 1])
+  assert (rev_to_list [|1; 2; 3; 4; 5|] = [5; 4; 3; 2; 1]) ;
+  assert (suffix [|1; 2; 3; 4; 5|] 0 = [||]) ;
+  assert (suffix [|1; 2; 3; 4; 5|] 3 = [|3; 4; 5|]) ;
+  assert (suffix [|1; 2; 3; 4; 5|] 5 = [|1; 2; 3; 4; 5|])
