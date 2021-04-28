@@ -17,25 +17,31 @@ open StackLang
 
 (* -------------------------------------------------------------------------- *)
 
-(* A program is built by invoking the functor [Build]. The following data
+(** A program is built by invoking the functor [Build]. The following data
    must be provided: *)
-
 module Build (L : sig
-  (* A type of code labels (not necessarily strings). *)
+  (** A type of code labels (not necessarily strings). *)
   type label
-  (* An injection of labels into strings. *)
+
+  (** An injection of labels into strings. *)
   val print: label -> string
-  (* A way of iterating over all labels. *)
+
+  (** A way of iterating over all labels. *)
   val iter: (label -> unit) -> unit
-  (* A mapping of labels to code. The function call [code label] is expected
+
+  (** A mapping of labels to code. The function call [code label] is expected
      to use the imperative API below to build the code block that corresponds
      to label [label]. *)
   val code: label -> unit
-  (* A family of entry labels. *)
-  val entry: label Lr1.NodeMap.t
+
+  (** A family of entry labels. *)
+  val entry: string StringMap.t
+
+  val states: state_info TagMap.t
+
 end) : sig
 
-  (* A StackLang program. *)
+  (** A StackLang program. *)
   val program: program
 
 end
@@ -43,6 +49,16 @@ end
 (* -------------------------------------------------------------------------- *)
 
 (* The following imperative API can be used by the function [code] above. *)
+
+
+(** Set the stack type of the routine *)
+val set_stack_type: cell_info array -> unit
+
+(** Set the final type of the ro1utine *)
+val set_final_type: Stretch.ocamltype -> unit
+
+(** Set the needed registers of the routine *)
+val set_needed: register list -> unit
 
 (* Each of the functions in the first group extends a code block that is
    currently under construction. Each of the functions in the second group
@@ -54,7 +70,7 @@ end
 
 val need: registers -> unit
 val need_list: register list -> unit
-val push: value -> unit
+val push: value -> cell_info -> unit
 val pop: pattern -> unit
 val def: pattern -> value -> unit
 val prim: register -> primitive -> unit
@@ -68,7 +84,7 @@ val move: register -> register -> unit
 (* Group 2: Instructions with zero successor. *)
 
 val die: unit -> unit
-val return: register -> unit
+val return: value -> unit
 val jump: label -> unit
 
 (* Group 3: Case analysis instructions. *)

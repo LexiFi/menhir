@@ -27,10 +27,54 @@ type state =
 
 let current : state ref =
   ref Idle
+let current_stack_type : cell_info array option ref =
+  ref None
+let current_final_type : Stretch.ocamltype option ref =
+  ref None
+let current_needed : RegisterSet.t option ref =
+  ref None
 
-let exec (body : unit -> unit) : block =
-  current := Open identity;
-  body();
+let current_has_case_tag : bool ref =
+  ref false
+
+let typed_exec (body : unit -> unit) =
+  current := Open identity ;
+  current_stack_type := None ;
+  current_final_type := None ;
+  current_needed := None ;
+  current_has_case_tag := false ;
+  body () ;
+  let has_case_tag = !current_has_case_tag in
+  match !current, !current_stack_type, !current_needed  with
+  | Idle, _, _ ->
+      (* This cannot happen, I think. *)
+      assert false
+  | Open _, _, _ ->
+      (* The user has misused our API: a block has been opened and has not
+         been properly ended by calling [die], [return], [jump], or a case
+         analysis construction. *)
+      assert false
+  | _, None, _ | _, _, None   ->
+    (* The user must specifiy the type of a block
+    *)
+    assert false
+  | Closed block, Some stack_type, Some needed_registers ->
+      let final_type = !current_final_type in
+      current := Idle ;
+      current_stack_type := None ;
+      current_final_type := None ;
+      current_needed := None ;
+      current_has_case_tag := false ;
+      { block
+      ; stack_type
+      ; final_type
+      ; needed_registers
+      ; has_case_tag
+      ; name= None}
+
+let exec (body : unit -> unit) =
+  current := Open identity ;
+  body () ;
   match !current with
   | Idle ->
       (* This cannot happen, I think. *)
@@ -43,6 +87,7 @@ let exec (body : unit -> unit) : block =
   | Closed block ->
       current := Idle;
       block
+
 
 let extend g =
   match !current with
@@ -77,14 +122,22 @@ let close i =
          construction. *)
       assert false
 
+let set_stack_type typ =
+  current_stack_type := Some typ
+
+let set_final_type typ =
+    current_final_type := Some typ
+
+let set_needed needed =
+  current_needed := Some (RegisterSet.of_list needed)
 let need rs =
   extend (fun block -> INeed (rs, block))
 
 let need_list rs =
   need (RegisterSet.of_list rs)
 
-let push v =
-  extend (fun block -> IPush (v, block))
+let push v cell =
+  extend (fun block -> IPush (v, cell, block))
 
 let pop p =
   extend (fun block -> IPop (p, block))
@@ -131,6 +184,7 @@ let tokens branches =
     TerminalSet.union accu (tokens tokpat)
   ) TerminalSet.empty branches
 
+
 let exhaustive branches =
   TerminalSet.subset TerminalSet.universe (tokens branches)
 
@@ -156,33 +210,32 @@ let case_token r cases =
   close (ICaseToken (r, branches, default))
 
 let case_tag r cases =
+  current_has_case_tag := true;
   let saved = !current in
   let branches = ref [] in
   let def_branch pat body = branches := (pat, exec body) :: !branches in
   cases def_branch;
   let branches = List.rev !branches in
   current := saved;
-  match branches with
-  | [ (_pat, block) ] ->
-      (* If there is only one branch, then there is no need to generate a
-         case instruction; we eliminate it on the fly. *)
-      close block
-  | _ ->
-      close (ICaseTag (r, branches))
+  (* There used to be an optimisation that does not perform the match if there
+     is only one branch. However this does not work : we need to uncover type
+     information here *)
+  close (ICaseTag (r, branches))
 
 module Build (L : sig
   type label
   val print: label -> string
   val iter: (label -> unit) -> unit
   val code: label -> unit
-  val entry: label Lr1.NodeMap.t
-end)
-= struct
-
+  val entry: string StringMap.t
+  val states: state_info TagMap.t
+end) =
+struct
   open L
 
-  let code (label : label) : block =
-    exec (fun () -> code label)
+  let code (label : label) =
+    typed_exec (fun () -> code label)
+
 
   let cfg =
     ref LabelMap.empty
@@ -192,13 +245,13 @@ end)
       cfg := LabelMap.add (print label) (code label) !cfg
     )
 
+
   let cfg =
     !cfg
 
   let entry =
-    Lr1.NodeMap.map print entry
+    L.entry
 
   let program =
-    { cfg; entry }
-
+    {cfg; entry; states}
 end (* Build *)

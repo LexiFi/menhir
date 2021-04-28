@@ -16,6 +16,8 @@ open PPrint
 open Grammar
 open StackLang
 
+let nl =
+  hardline
 let register =
   string
 
@@ -33,6 +35,50 @@ let rec value v =
       register r
   | VTuple vs ->
       OCaml.tuple (map value vs)
+  | VUnit -> label "UNIT"
+
+let substitution substitution =
+  Substitution.fold
+    ( fun reg value' acc ->
+        nl ^^ (register reg) ^^ string " := " ^^ (value value') ^^ acc )
+    substitution
+    empty
+
+let ocamltype =
+  function
+  | Stretch.Inferred typ -> string typ
+  | Stretch.(Declared {stretch_content}) -> string stretch_content
+
+let cell_info {typ; hold_semv; hold_state; hold_startpos; hold_endpos} =
+  string "["
+  ^^ (match typ with None -> string "." | Some typ -> ocamltype typ  )
+  ^^ tag (Bool.to_int hold_semv)
+  ^^ tag (Bool.to_int hold_state)
+  ^^ tag (Bool.to_int hold_startpos)
+  ^^ tag (Bool.to_int hold_endpos)
+  ^^ string "]"
+
+
+let known_cells known_cells=
+  Array.fold_left
+    (fun doc cell -> doc ^^ cell_info cell)
+    empty
+    known_cells
+
+let state_info {known_cells=kn; sfinal_type} =
+  nl ^^ string "Known_cells: " ^^ known_cells kn ^^
+  nl ^^ string "Final type: " ^^ PPrintOCaml.option ocamltype sfinal_type
+
+let states states =
+  string "States :"
+  ^^ nest 2 ( TagMap.fold
+                ( fun t si doc ->
+                    nl
+                    ^^ string "State "
+                    ^^ tag t
+                    ^^ nest 2 (state_info si)
+                    ^^ doc )
+                states empty )
 
 let rec pattern p =
   match p with
@@ -46,11 +92,16 @@ let rec pattern p =
 let primitive p =
   match p with
   | PrimOCamlCall (f, rs) ->
-      string f ^^ concat (map (fun r -> space ^^ register r) rs)
+      string f ^^ concat (map (fun r -> space ^^ value r) rs)
   | PrimOCamlFieldAccess (r, f) ->
       utf8format "%s.%s" r f
   | PrimOCamlDummyPos ->
       utf8format "<dummy position>"
+  | PrimSubstOcamlAction (subst, _) ->
+    string "("
+    ^^ substitution subst
+    ^^ utf8format "<semantic action>"
+    ^^ string ")"
   | PrimOCamlAction _ ->
       utf8format "<semantic action>"
 
@@ -73,19 +124,25 @@ let tagpat pat =
       |> flow (break 1 ^^ bar ^^ space)
       |> group
 
-let nl =
-  hardline
-
 let branch (guard, body) =
   nl ^^ bar ^^ space ^^ group (guard ^^ string " ->" ^^ nest 4 body)
 
-let rec block b =
+let rec typed_block ({block=b; stack_type; needed_registers=rs; final_type}) =
+    let rs = RegisterSet.elements rs in
+    nl ^^ string "TYPED { "
+    ^^ string "Final type :" ^^ optional ocamltype final_type
+    ^^ nl ^^ string "  Known cells : " ^^ known_cells stack_type
+    ^^ nl ^^ string "  Needed registers :"
+    ^^ separate (comma ^^ space) (map register rs)
+    ^^ nl ^^ string "}"
+    ^^ block b
+and block b =
   match b with
   | INeed (rs, b) ->
       let rs = RegisterSet.elements rs in
       nl ^^ string "NEED " ^^ separate (comma ^^ space) (map register rs) ^^
       block b
-  | IPush (v, b) ->
+  | IPush (v, _, b) ->
       nl ^^ string "PUSH " ^^ value v ^^
       block b
   | IPop (p, b) ->
@@ -105,9 +162,12 @@ let rec block b =
       block b
   | IDie ->
       nl ^^ string "DIE"
-  | IReturn r ->
-      nl ^^ string "RET  " ^^ register r
+  | IReturn v ->
+      nl ^^ string "RET  " ^^ value v
   | IJump l ->
+      nl ^^ string "JUMP " ^^ label l
+  | ISubstitutedJump (l, sub) ->
+      nl ^^ string "SUBST" ^^ substitution sub ^^
       nl ^^ string "JUMP " ^^ label l
   | ICaseToken (r, branches, default) ->
       nl ^^ string "CASE " ^^ register r ^^ string " OF" ^^
@@ -120,6 +180,20 @@ let rec block b =
       concat (map branch (
         map (fun (pat, b) -> (tagpat pat, block b)) branches
       ))
+  | ITypedBlock ({block=b; stack_type; needed_registers=rs; final_type}) ->
+      let rs = RegisterSet.elements rs in
+      nl
+      ^^ string "TYPED { "
+      ^^ string "Final type :" ^^ optional ocamltype final_type
+      ^^ nl
+      ^^ string "  Known cells : "
+      ^^ known_cells stack_type
+      ^^ nl
+      ^^ string "  Needed registers :"
+      ^^ separate (comma ^^ space) (map register rs)
+      ^^ nl
+      ^^ string "}"
+      ^^ block b
 
 let entry_comment entry_labels label =
   if LabelSet.mem label entry_labels then
@@ -127,15 +201,64 @@ let entry_comment entry_labels label =
   else
     empty
 
-let labeled_block entry_labels (label, b) =
+let labeled_block entry_labels (label, {block=b; stack_type=_}) =
   entry_comment entry_labels label ^^
   string label ^^ colon ^^ nest 2 (block b) ^^ nl ^^ nl
 
 let program program =
-  program.cfg
+  states program.states ^^
+  (program.cfg
   |> LabelMap.bindings
-  |> map (labeled_block (entry_labels program))
-  |> concat
+  |> map (labeled_block (StringMap.domain program.entry))
+  |> concat)
 
-let print f prog =
-  ToChannel.pretty 0.8 80 f (program prog)
+let to_channel f channel args =
+  let doc = f args in
+  ToChannel.pretty 0.8 80 channel doc
+
+let to_string f arg =
+  let doc = f arg in
+  let buffer = Buffer.create 10 in
+  ToBuffer.pretty 0.8 80 buffer doc ;
+  Bytes.to_string @@ Buffer.to_bytes buffer
+
+let print =
+  to_channel program
+
+let print_value =
+  to_channel value
+let value_to_string =
+  to_string value
+
+let print_pattern =
+  to_channel pattern
+let pattern_to_string =
+  to_string pattern
+
+let print_substitution =
+  to_channel substitution
+let substitution_to_string  =
+  to_string substitution
+
+let print_block =
+  to_channel block
+let block_to_string =
+  to_string block
+
+let print_tblock =
+  to_channel typed_block
+let tblock_to_string =
+  to_string typed_block
+
+let print_known_cells =
+  to_channel known_cells
+let known_cells_to_string =
+  to_string known_cells
+
+let print_states =
+  to_channel states
+let states_to_string =
+  to_string states
+
+let to_string =
+  to_string program

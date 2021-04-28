@@ -18,6 +18,7 @@ open Lexing
 open Printf
 open Grammar
 open StackLang
+open StackLangUtils
 
 (* -------------------------------------------------------------------------- *)
 
@@ -92,6 +93,7 @@ let rec eval (env : env) (v : value) : gvalue =
       end
   | VTuple vs ->
       GVTuple (map (eval env) vs)
+  | VUnit -> GVDummy
 
 (* Matching a ground value [gv] against a pattern [p] extends the environment
    with new bindings. *)
@@ -154,7 +156,7 @@ let exec_prim state p =
   | PrimOCamlDummyPos ->
       (* A position is replaced with a dummy value. *)
       GVDummy
-  | PrimOCamlAction _ ->
+  | PrimOCamlAction _ | PrimSubstOcamlAction _ ->
       (* A semantic value is replaced with a dummy value. *)
       GVDummy
 
@@ -188,7 +190,7 @@ let rec exec state block =
       state.env <- Env.restrict required state.env;
       exec state block
 
-  | IPush (v, block) ->
+  | IPush (v, _, block) ->
       let gv = eval state.env v in
       state.stack <- gv :: state.stack;
       exec state block
@@ -218,13 +220,16 @@ let rec exec state block =
   | IDie ->
       None (* reject *)
 
-  | IReturn r ->
-      let _gv = eval state.env (VReg r) in
+  | IReturn v ->
+      let _gv = eval state.env v in
       Some () (* accept *)
 
   | IJump label ->
-      let block = lookup label state.program.cfg in
+      let block = (lookup label state.program.cfg).block in
       exec state block
+
+  | ISubstitutedJump (label, substitution) ->
+    exec state (Substitution.restore_defs substitution (IJump label))
 
   | ICaseToken (r, branches, odefault) ->
       let tok = asToken (eval state.env (VReg r)) in
@@ -233,6 +238,9 @@ let rec exec state block =
   | ICaseTag (r, branches) ->
       let tag = asTag (eval state.env (VReg r)) in
       exec_casetag state tag branches
+
+  | ITypedBlock {block; stack_type=_; final_type=_} ->
+      exec state block
 
 and exec_casetoken state tok branches odefault =
   match branches, odefault with
