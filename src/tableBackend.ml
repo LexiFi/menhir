@@ -1053,7 +1053,7 @@ let program =
       SIModuleDef (ti, MApp (MVar make_engine, MVar et)) ::
       SIInclude (MVar ti) ::
 
-      ifnlazy Settings.inspection (fun () ->
+      MList.ifnlazy Settings.inspection (fun () ->
 
         (* Define the internal sub-module [symbols], which contains type
            definitions. Then, include this sub-module. This sub-module is used

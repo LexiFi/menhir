@@ -146,7 +146,7 @@ let has_semv symbol =
 
 let tokpat tok pat =
   let data = TokenType.tokendata (Terminal.print tok) in
-  PData (data, if1 (has_semv (Symbol.T tok)) pat)
+  PData (data, MList.if1 (has_semv (Symbol.T tok)) pat)
 
 (* [tokspat toks] is a pattern that matches any token in the set [toks],
    without binding its semantic value. *)
