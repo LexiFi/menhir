@@ -11,8 +11,8 @@
 (*                                                                            *)
 (******************************************************************************)
 
- (* This module discovers information about the shape and content of the stack
-    in each of the automaton's states. *)
+(* This module discovers information about the shape and content of the stack
+   in each of the automaton's states. *)
 
 open Grammar
 module C = Conflict (* artificial dependency; ensures that [Conflict] runs first *)
@@ -212,7 +212,7 @@ let () =
 
    (2) If a state [s] has an outgoing transition along nonterminal
    symbol [nt], and if the [goto] table for symbol [nt] has more than
-   one target, then state [s] is represented.
+   one target, then state [s] is represented. (TODO change)
 
    (3) If a stack cell contains more than one state and if at least
    one of these states is able to handle the [error] token, then these
@@ -265,11 +265,16 @@ let () =
 let () =
   Nonterminal.iter (fun nt ->
     let count =
+      (* Counting distinct targets *)
       Lr1.targets (fun count _ _ ->
         count + 1
       ) 0 (Symbol.N nt)
     in
-    if count > 1 then
+    if Nonterminal.print false nt = "RPAREN " then
+      Printf.printf "\n\nFOOO : %s; count=%i\n\n" (Nonterminal.print false nt) count ;
+    (*if count = 0 then
+      Printf.printf "\n\nFOOO : %s\n\n" (Nonterminal.print false nt) ;*)
+    if count >= 1 then
       Lr1.targets (fun () sources _ ->
         List.iter represent sources
       ) () (Symbol.N nt)
@@ -318,6 +323,9 @@ let () =
 
 let represented state =
   UnionFind.get (represented state)
+
+let n_represented =
+  Lr1.sum (fun s -> if represented s then 1 else 0)
 
 let representeds states =
   if Lr1.NodeSet.is_empty states then
@@ -417,7 +425,15 @@ let fold_top f accu w =
       accu
   | (symbol, states) :: _ ->
       f (representeds states) symbol
-
+(*
+let rec fold_bot f accu w =
+  match w with
+  | [] ->
+      accu
+  | [symbol, states] -> f (representeds states) symbol
+  | _ :: ws ->
+      fold_bot f accu ws
+*)
 (* ------------------------------------------------------------------------ *)
 (* Explain how the stack should be deconstructed when an error is found.
 
@@ -840,6 +856,26 @@ let stack (node : Lr1.node) : property =
       assert false
   | Some v ->
       v
+
+let extend_stack s =
+  let sa = Array.of_list s in
+  if sa = [||] then [||]
+  else
+    let (_symbol, stateset) = sa.((Array.length sa) - 1) in
+    Array.append (Array.map fst sa)
+      ( Option.force
+          ( Lr1.NodeSet.fold
+              ( fun node (acc: Symbol.t array option) ->
+                  match acc with
+                  | None -> Some (stack node)
+                  | Some s -> Some (leq_join (stack node) s) )
+              stateset None ) )
+
+let gotostack nt =
+  extend_stack @@ gotostack nt
+
+let prodstack prod =
+  extend_stack @@ prodstack prod
 
 (* ------------------------------------------------------------------------ *)
 (* If requested, print the information that has been computed above. *)
