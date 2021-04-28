@@ -236,7 +236,9 @@ let program grammar =
   let def = {
     valpublic = true;
     valpat = PTuple ps;
-    valval = ELet (bindings1 @ bindings2, annotate bottom (TypTuple ts))
+    valval = ELet ( BUsual
+                  , bindings1 @ bindings2
+                  , annotate bottom (TypTuple ts))
   }
   in
 
