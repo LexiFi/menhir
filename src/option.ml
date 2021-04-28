@@ -72,3 +72,14 @@ let value o ~default =
       x
   | None ->
       default
+
+let rec first_value = function
+| Some e :: _ ->
+    Some e
+| None :: li ->
+    first_value li
+| [] ->
+    None
+
+let simplify = function None -> None | Some o -> o
+
