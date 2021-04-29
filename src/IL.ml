@@ -13,8 +13,13 @@
 
 open Positions
 
-(* Abstract syntax of the language used for code production. *)
+(**An OCaml [let] construct can carry an attribute. [BUsual] means no
+   attribute, whereas [BLocal] represents the attribute [@local], which tells
+   the OCaml compiler that an auxiliary function should be viewed as a local
+   jump target and should not be treated as a normal function. *)
+type binding_locality = BUsual | BLocal
 
+(** Abstract syntax of the language used for code production. *)
 type interface =
   interface_item list
 
@@ -101,6 +106,9 @@ and datadef = {
        [None] if this is an ordinary ADT. *)
     datatypeparams: typ list option;
 
+    (* A comment about this data constructor. *)
+    comment: string option;
+
   }
 
 and typ =
@@ -124,6 +132,11 @@ and typescheme = {
 
   (* Universal quantifiers, without leading quotes. *)
   quantifiers: string list;
+
+  (* Whether the quantifiers are locally abstract. An OCaml locally
+     abstract type is bound by [type a] and referred to as [a]. An
+     ordinary type variable is bound by ['a] and referred to as ['a]. *)
+  locally_abstract: bool;
 
   (* Body. *)
   body: typ;
@@ -157,9 +170,9 @@ and expr =
   (* Function call. *)
   | EApp of expr * expr list
 
-  (* Local definitions. This is a nested sequence of [let]
+  (* Local definitions. This is a nested sequence of [let] or [let[@local]]
      definitions. *)
-  | ELet of (pattern * expr) list * expr
+  | ELet of binding_locality * (pattern * expr) list * expr
 
   (* Case analysis. *)
   | EMatch of expr * branch list

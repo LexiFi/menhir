@@ -58,7 +58,8 @@ let nonterminalgadtdef grammar =
         {
           dataname = tnonterminalgadtdata nt;
           datavalparams = [];
-          datatypeparams = Some [ index ]
+          datatypeparams = Some [ index ];
+          comment = None;
         }
       ) (nonterminals grammar)
 
