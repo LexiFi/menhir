@@ -27,6 +27,9 @@ let pvarlocated id =
   else
     PVarLocated id
 
+let tname name =
+  TypApp (name, [])
+
 (* Tuples. *)
 
 let etuple = function
@@ -45,50 +48,30 @@ let ptuple = function
   | ps ->
       PTuple ps
 
-(* A list subject to a condition. *)
-
-let ifn condition xs =
-  if condition then
-    xs
-  else
-    []
-
-let if1 condition x =
-  if condition then
-    [ x ]
-  else
-    []
-
-let ifnlazy condition xs =
-  if condition then
-    xs()
-  else
-    []
-
 (* The unit type. *)
 
 let tunit =
-  TypApp ("unit", [])
+  tname "unit"
 
 (* The Boolean type. *)
 
 let tbool =
-  TypApp ("bool", [])
+  tname "bool"
 
 (* The integer type. *)
 
 let tint =
-  TypApp ("int", [])
+  tname "int"
 
 (* The string type. *)
 
 let tstring =
-  TypApp ("string", [])
+  tname "string"
 
 (* The exception type. *)
 
 let texn =
-  TypApp ("exn", [])
+  tname "exn"
 
 (* The type of pairs. *)
 
@@ -98,7 +81,7 @@ let tpair typ1 typ2 =
 (* The type of lexer positions. *)
 
 let tposition =
-  TypApp ("Lexing.position", [])
+  tname "Lexing.position"
 
 (* The type of the $loc and $sloc keywords. *)
 
@@ -110,12 +93,12 @@ let tlocation =
 (* The type of lexer buffers. *)
 
 let tlexbuf =
-  TypApp ("Lexing.lexbuf", [])
+  tname "Lexing.lexbuf"
 
 (* The type of untyped semantic values. *)
 
 let tobj =
-  TypApp ("Obj.t", [])
+  tname "Obj.t"
 
 (* Building a type variable. *)
 
@@ -127,9 +110,15 @@ let tvar x : typ =
 let scheme qs t =
   {
     quantifiers = qs;
-    body = t
+    body = t;
+    locally_abstract = false
   }
-
+let local_scheme qs t =
+    {
+      quantifiers = qs;
+      body = t;
+      locally_abstract = true;
+    }
 (* Building a type scheme with no quantifiers out of a type. *)
 
 let type2scheme t =
@@ -147,7 +136,7 @@ let pat2var = function
       assert false
 
 (* [simplify] removes bindings of the form [let v = v in ...] and
-   [let _ = v in ...]. *)
+  [let _ = v in ...]. *)
 
 let rec simplify = function
   | [] ->
@@ -163,7 +152,7 @@ let rec simplify = function
 
 (* Building a [let] construct, with on-the-fly simplification. *)
 
-let blet (bindings, body) =
+let blet ?(local=false) (bindings, body) =
   let bindings = simplify bindings in
   match bindings, body with
   | [], _ ->
@@ -172,15 +161,17 @@ let blet (bindings, body) =
       (* Reduce [let x = e in x] to just [e]. *)
       e
   | _, _ ->
-      ELet (bindings, body)
+      let locality = if local then BLocal else BUsual in
+      ELet (locality, bindings, body)
 
-let mlet formals actuals body =
-  blet (List.combine formals actuals, body)
+let mlet ?(local=false) formals actuals body =
+  blet ~local (List.combine formals actuals, body)
 
 (* Simulating a [let/and] construct using tuples. *)
 
-let eletand (bindings, body) =
+let eletand ?(local=false) (bindings, body) =
   let bindings = simplify bindings in
+  let locality = if local then BLocal else BUsual in
   match bindings, body with
   | [], _ ->
       (* special case: zero bindings *)
@@ -190,11 +181,11 @@ let eletand (bindings, body) =
       e
   | [ _ ], _ ->
       (* special case: one binding *)
-      ELet (bindings, body)
+      ELet (locality, bindings, body)
   | _ :: _ :: _, _ ->
       (* general case: at least two bindings *)
       let pats, exprs = List.split bindings in
-      ELet ([ PTuple pats, ETuple exprs ], body)
+      ELet (locality, [ PTuple pats, ETuple exprs ], body)
 
 (* [eraisenotfound] is an expression that raises [Not_found]. *)
 
@@ -202,7 +193,7 @@ let eraisenotfound =
   ERaise (EData ("Not_found", []))
 
 (* [bottom] is an expression that has every type. Its semantics is
-   irrelevant. *)
+  irrelevant. *)
 
 let bottom =
   eraisenotfound
@@ -280,6 +271,12 @@ let tvprefix name =
   else
     "ttv_" ^ name
 
+let tprefix name =
+  if Settings.noprefix then
+    name
+  else
+    "t_menhir_" ^ name
+
 (* ------------------------------------------------------------------------ *)
 
 (* Converting an interface to a structure. Only exception and type definitions
@@ -323,3 +320,20 @@ let field modifiable name t =
 
 let branch branchpat branchbody =
   { branchpat; branchbody }
+
+let fresh_name =
+  let i = ref 0 in
+  fun () ->
+    let n = !i in
+    i := !i + 1;
+    prefix (Printf.sprintf "fresh_name_%i" n)
+
+let evar s =
+  EVar s
+
+let evars = List.map evar
+
+let pvar s =
+  PVar s
+
+let pvars = List.map pvar

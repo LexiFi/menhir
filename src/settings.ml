@@ -395,6 +395,7 @@ let options = Arg.align [
   "--log-code", Arg.Set_int logC, "<level> Log information about the generated code";
   "--log-grammar", Arg.Set_int logG, "<level> Log information about the grammar";
   "--merge-errors", Arg.String add_merge_errors, "<filename> (used twice) Merge two .messages files";
+  "--no-stack-optimization", Arg.Set no_stack_optimization, "(undocumented)";
   "--no-code-inlining", Arg.Clear code_inlining, " (undocumented)";
   "--no-dollars", Arg.Unit (fun () -> dollars := DollarsDisallowed), " Disallow $i in semantic actions";
   "--no-inline", Arg.Clear inline, " Ignore the %inline keyword";
@@ -403,6 +404,8 @@ let options = Arg.align [
   "--no-push-commute", Arg.Set no_push_commute, " (undocumented)";
   "--no-stack-optimization", Arg.Set no_stack_optimization, " (undocumented)";
   "--no-stdlib", Arg.Set no_stdlib, " Do not load the standard library";
+  "--provide-example", Arg.Set_string provide_example, "(undocumented)";
+  "--provide-example-seed", Arg.Int (set_option provide_example_seed), "(undocumented)";
   "--ocamlc", Arg.Set_string ocamlc, "<command> Specifies how ocamlc should be invoked";
   "--ocamldep", Arg.Set_string ocamldep, "<command> Specifies how ocamldep should be invoked";
   "--old-code-backend", Arg.Set old_code_backend, " (undocumented)";

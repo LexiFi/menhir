@@ -11,14 +11,6 @@
 (*                                                                            *)
 (******************************************************************************)
 
-val defined: 'a option -> bool
-val map: ('a -> 'b) -> 'a option -> 'b option
-val iter: ('a -> unit) -> 'a option -> unit
-val fold: ('a -> 'b -> 'b) -> 'a option -> 'b -> 'b
-val force: 'a option -> 'a
-val project: 'a option -> 'a (* careful: calls [exit 1] in case of failure *)
-val equal: ('a -> 'b -> bool) -> 'a option -> 'b option -> bool
-val hash: ('a -> int) -> 'a option -> int
-val value: 'a option -> default:'a -> 'a
-val first_value: 'a option list -> 'a option
-val simplify: 'a option option -> 'a option
+include Map.S with type key = int
+
+val of_list: (key * 'a) list -> 'a t

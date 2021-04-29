@@ -11,14 +11,39 @@
 (*                                                                            *)
 (******************************************************************************)
 
-val defined: 'a option -> bool
-val map: ('a -> 'b) -> 'a option -> 'b option
-val iter: ('a -> unit) -> 'a option -> unit
-val fold: ('a -> 'b -> 'b) -> 'a option -> 'b -> 'b
-val force: 'a option -> 'a
-val project: 'a option -> 'a (* careful: calls [exit 1] in case of failure *)
-val equal: ('a -> 'b -> bool) -> 'a option -> 'b option -> bool
-val hash: ('a -> int) -> 'a option -> int
-val value: 'a option -> default:'a -> 'a
-val first_value: 'a option list -> 'a option
-val simplify: 'a option option -> 'a option
+open Dot
+open StackLang
+open StackLangUtils
+
+(* [uniq] transforms an arbitrary [iter] function into one that produces each
+   element at most once. *)
+
+let uniq iter =
+  let encountered = ref LabelSet.empty in
+  fun yield ->
+    iter begin fun label ->
+      if not (StringSet.mem label !encountered) then begin
+        encountered := StringSet.add label !encountered;
+        yield label
+      end
+    end
+
+let print program =
+  let module P = Dot.Print(struct
+
+    type vertex = label
+    let name label = label
+
+    let successors (f : ?style:style -> label:string -> vertex -> unit) label =
+      uniq Block.successors (fun target -> f ~label:"" target) (lookup label program.cfg).block
+
+
+    let iter (f : ?shape:shape -> ?style:style -> label:string -> vertex -> unit) =
+      program.cfg |> LabelMap.iter begin fun label _block ->
+        f ~shape:Box ~label label
+      end
+
+  end) in
+  let f = open_out (Settings.base ^ ".dot") in
+  P.print f;
+  close_out f

@@ -11,38 +11,30 @@
 (*                                                                            *)
 (******************************************************************************)
 
-open Dot
+(* This module offers a pretty-printer for  *)
+
 open StackLang
 
-(* [uniq] transforms an arbitrary [iter] function into one that produces each
-   element at most once. *)
+val print: out_channel -> program -> unit
+val to_string: program -> string
 
-let uniq iter =
-  let encountered = ref LabelSet.empty in
-  fun yield ->
-    iter begin fun label ->
-      if not (StringSet.mem label !encountered) then begin
-        encountered := StringSet.add label !encountered;
-        yield label
-      end
-    end
+val print_value: out_channel -> value -> unit
+val value_to_string: value -> string
 
-let print program =
-  let module P = Dot.Print(struct
+val print_substitution: out_channel -> substitution -> unit
+val substitution_to_string: substitution -> string
 
-    type vertex = label
-    let name label = label
+val print_tblock: out_channel -> typed_block -> unit
+val tblock_to_string: typed_block -> string
 
-    let successors (f : ?style:style -> label:string -> vertex -> unit) label =
-      lookup label program.cfg
-      |> uniq StackLangTraverse.successors (fun target -> f ~label:"" target)
+val print_block: out_channel -> block -> unit
+val block_to_string: block -> string
 
-    let iter (f : ?shape:shape -> ?style:style -> label:string -> vertex -> unit) =
-      program.cfg |> LabelMap.iter begin fun label _block ->
-        f ~shape:Box ~label label
-      end
+val print_known_cells: out_channel -> cell_info array -> unit
+val known_cells_to_string: cell_info array -> register
 
-  end) in
-  let f = open_out (Settings.base ^ ".dot") in
-  P.print f;
-  close_out f
+val print_states: out_channel -> state_info TagMap.t -> unit
+val states_to_string: state_info TagMap.t -> string
+
+val print_pattern: out_channel -> pattern -> unit
+val pattern_to_string: pattern -> string
