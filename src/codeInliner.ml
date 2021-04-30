@@ -141,6 +141,10 @@ let inline_valdefs (defs : valdef list) : valdef list =
 
   (* Taking a fresh instance of a type scheme. Ugly. *)
 
+  (* At this time, this function does not support locally abstract type
+     schemes. It would be possible to support them, keeping in mind that
+     in that case one must look for [TypApp] nodes, not [TyVar] nodes. *)
+
   let instance =
     let count = ref 0 in
     let fresh tv =
@@ -148,6 +152,7 @@ let inline_valdefs (defs : valdef list) : valdef list =
       tv, Printf.sprintf "freshtv%d" !count
     in
     fun scheme ->
+      assert (not scheme.locally_abstract);
       let mapping = List.map fresh scheme.quantifiers in
       let rec sub typ =
         match typ with
@@ -169,7 +174,8 @@ let inline_valdefs (defs : valdef list) : valdef list =
       sub scheme.body
   in
 
-  (* Destructuring a type annotation. *)
+  (* Destructuring a type annotation [typ] on a lambda-abstraction
+     [fun formals -> body]. *)
 
   let rec annotate formals body typ =
     match formals, typ with
@@ -186,19 +192,19 @@ let inline_valdefs (defs : valdef list) : valdef list =
   (* The heart of the inliner: rewriting a function call to a [let]
      expression.
 
-     If there was a type annotation at the function definition site, it is
-     dropped, provided the semantic actions have been type-checked. Otherwise,
-     it is kept, because, due to the presence of [EMagic] expressions in the
-     code, dropping a type annotation could cause an ill-typed program to
-     become apparently well-typed. Keeping a type annotation requires taking a
-     fresh instance of the type scheme, because OCaml doesn't have support for
-     locally and existentially bound type variables. Yuck. *)
+     If there was a type annotation at the function definition site,
+     it is kept always (2021/04/30). In the presence of [EMagic],
+     dropping a type annotation could cause an ill-typed program to
+     become apparently well-typed.
+
+     Keeping the type annotation requires taking a fresh instance of
+     the type scheme, because OCaml doesn't have support for locally
+     and existentially bound type variables. Yuck. *)
 
   let inline formals actuals body oscheme =
     assert (List.length actuals = List.length formals);
     match oscheme with
-    | Some scheme
-      when not Front.ocaml_types_have_been_checked ->
+    | Some scheme ->
 
         let formals, body = annotate formals body (instance scheme) in
         mlet formals actuals body
