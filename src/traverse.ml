@@ -88,8 +88,8 @@ class virtual ['env] map = object (self)
           self#efun env ps e
       | EApp (e, es) ->
           self#eapp env e es
-      | ELet (bs, e) ->
-          self#elet env bs e
+      | ELet (local, bs, e) ->
+          self#elet env local bs e
       | EMatch (e, bs) ->
           self#ematch env e bs
       | EIfThen (e, e1) ->
@@ -153,13 +153,13 @@ class virtual ['env] map = object (self)
     else
       EApp (e', es')
 
-  method elet env bs e =
+  method elet env local bs e =
     let env, bs' = self#bindings env bs in
     let e' = self#expr env e in
     if bs == bs' && e == e' then
       raise NoChange
     else
-      ELet (bs', e')
+      ELet (local, bs', e')
 
   method ematch env e bs =
     let e' = self#expr env e
@@ -368,7 +368,7 @@ class virtual ['env, 'a] fold = object (self)
         self#efun env accu ps e
     | EApp (e, es) ->
         self#eapp env accu e es
-    | ELet (bs, e) ->
+    | ELet (_, bs, e) ->
         self#elet env accu bs e
     | EMatch (e, bs) ->
         self#ematch env accu e bs

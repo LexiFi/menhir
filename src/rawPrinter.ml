@@ -100,14 +100,18 @@ and print_trees f = function
 (* ------------------------------------------------------------------------- *)
 (* Expression-to-tree converter. *)
 
+let locality = function
+  | BLocal -> "[@local]"
+  | BUsual -> ""
+
 let rec expr e =
   match e with
   | EComment (c, e) ->
       node "comment" [ string c; expr e ]
   | EPatComment (s, p, e) ->
       node "patcomment" [ string s; pat p; expr e ]
-  | ELet (pes, e2) ->
-      node "let" ( patexprs pes @ [ expr e2 ])
+  | ELet (local, pes, e2) ->
+      node ("let" ^ locality local) ( patexprs pes @ [ expr e2 ])
   | ERecordWrite (e1, field, e2) ->
       node "recordwrite" [ expr e1; string field; expr e2 ]
   | EMatch (e, brs) ->
