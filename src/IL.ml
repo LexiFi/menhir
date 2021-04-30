@@ -133,9 +133,11 @@ and typescheme = {
   (* Universal quantifiers, without leading quotes. *)
   quantifiers: string list;
 
-  (* Whether the quantifiers are locally abstract. An OCaml locally
-     abstract type is bound by [type a] and referred to as [a]. An
-     ordinary type variable is bound by ['a] and referred to as ['a]. *)
+  (* Whether the quantifiers are locally abstract. An OCaml locally abstract
+     type is bound by [type a] and referred to as [a]. Such a reference is
+     internally represented as a [TypApp] node. An ordinary type variable is
+     bound by ['a] and referred to as ['a]. Such a reference is internally
+     represented as a [TypVar] node. *)
   locally_abstract: bool;
 
   (* Body. *)
