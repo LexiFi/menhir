@@ -126,8 +126,17 @@ let type2scheme t =
 
 (* Constraining an expression to have a (monomorphic) type. *)
 
-let annotate e t =
-  EAnnot (e, type2scheme t)
+(* The transformations that we perform on the fly are intended to improve
+   readability. *)
+
+let rec annotate e t =
+  match e with
+  | EComment (c, e) ->
+      EComment (c, annotate e t)
+  | ELet (local, bs, e) ->
+      ELet (local, bs, annotate e t)
+  | _ ->
+      EAnnot (e, type2scheme t)
 
 let pat2var = function
   | PVar x ->
