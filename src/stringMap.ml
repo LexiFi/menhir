@@ -37,3 +37,6 @@ let multiple_add k v m =
       []
   in
   add k (v :: vs) m
+
+let of_list xs =
+  List.fold_left (fun m (x, v) -> add x v m) empty xs
