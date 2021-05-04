@@ -1,7 +1,6 @@
 open StackLang
 open StackLangUtils
 open Infix
-module Subst = Substitution
 
 let max_degree = 5
 
@@ -48,29 +47,18 @@ let in_degree program =
    assumed that every entry label has an in-degree of at least 2. *)
 let rec inline_block cfg degree labels block =
   match block with
-  | IJump label
+  | IJump (bindings, label)
     when (not @@ LabelSet.mem label labels)
          && lookup_degree label degree <= max_degree ->
       (* If the target label's in-degree is 1, follow the indirection;
          otherwise, keep the [jump] instruction. *)
       let typed_block = lookup label cfg in
       let labels = LabelSet.add label labels in
-      ITypedBlock
-        { typed_block with
-          block= inline_block cfg degree labels typed_block.block
-        ; name= Some ("inlined_" ^ label) }
-  | ISubstitutedJump (label, substitution)
-    when (not @@ LabelSet.mem label labels)
-         && lookup_degree label degree <= max_degree ->
-      (* If the target label's in-degree is 1, follow the indirection;
-         otherwise, keep the [jump] instruction. *)
-      let typed_block = lookup label cfg in
-      let labels = LabelSet.add label labels in
-      Subst.tight_restore_defs substitution (needed typed_block)
-        (ITypedBlock
-           { typed_block with
-             block= inline_block cfg degree labels typed_block.block
-           ; name= Some ("inlined_" ^ label) })
+      IDef( bindings
+          , ITypedBlock
+              { typed_block with
+                block= inline_block cfg degree labels typed_block.block
+              ; name= Some ("inlined_" ^ label) })
   | block ->
       Block.map (inline_block cfg degree labels) block
 

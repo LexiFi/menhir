@@ -22,4 +22,8 @@ val push : 'a t -> 'a -> 'a t
     [rev_to_list [|1; 2; 3; 4; 5|] = [5; 4; 3; 2; 1]] *)
 val rev_to_list : 'a t -> 'a list
 
+(** [suffix a n] return the suffix of [a] of length [n]
+    [suffix [|1; 2; 3; 4; 5|] 3 = [|3; 4; 5|]] *)
+val suffix : 'a t -> int -> 'a t
+
 val test : unit -> unit

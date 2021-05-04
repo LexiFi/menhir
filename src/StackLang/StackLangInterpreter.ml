@@ -113,6 +113,11 @@ let rec bind p gv (env : env) : env =
   | PTuple _, _ ->
       error "tuple pattern cannot match a value that is not a tuple"
 
+
+
+let binds =
+  Bindings.fold (fun r v env -> bind (PReg r) (eval env v) env)
+
 (* -------------------------------------------------------------------------- *)
 
 (* The interpreter's state is as follows. *)
@@ -159,7 +164,6 @@ let exec_prim state p =
   | PrimOCamlAction _ ->
       (* A semantic value is replaced with a dummy value. *)
       GVDummy
-  | _ -> assert false (*TODO : cleanu*)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -201,11 +205,9 @@ let rec exec state block =
       state.env <- bind p gv state.env;
       exec state block
 
-  | IDef (p, v, block) ->
-      let gv = eval state.env v in
-      state.env <- bind p gv state.env;
+  | IDef (bindings, block) ->
+      state.env <- binds bindings state.env ;
       exec state block
-
   | IPrim (r, p, block) ->
       let gv = exec_prim state p in
       state.env <- bind (PReg r) gv state.env;
@@ -225,12 +227,10 @@ let rec exec state block =
       let _gv = eval state.env v in
       Some () (* accept *)
 
-  | IJump label ->
+  | IJump (bindings, label) ->
+      state.env <- binds bindings state.env ;
       let block = (lookup label state.program.cfg).block in
       exec state block
-
-  | ISubstitutedJump (label, substitution) ->
-    exec state (Substitution.restore_defs substitution (IJump label))
 
   | ICaseToken (r, branches, odefault) ->
       let tok = asToken (eval state.env (VReg r)) in
@@ -279,4 +279,4 @@ let interpret program label trace lexer lexbuf =
     ) EmitStackLang.required Env.empty
   and stack = [] in
   let state = { trace; lexer; lexbuf; program; env; stack } in
-  exec state (IJump label)
+  exec state (Block.jump label)

@@ -242,8 +242,8 @@ module L = struct
     log "State %d:" (number s) ;
     (* If necessary, read the positions of the current token from [lexbuf]. *)
     if must_read_positions then (
-      prim startp (PrimOCamlFieldAccess (lexbuf, "Lexing.lex_start_p")) ;
-      prim endp (PrimOCamlFieldAccess (lexbuf, "Lexing.lex_curr_p")) ) ;
+      prim startp (PrimOCamlFieldAccess (VReg lexbuf, "Lexing.lex_start_p")) ;
+      prim endp (PrimOCamlFieldAccess (VReg lexbuf, "Lexing.lex_curr_p")) ) ;
     (* Note that [state] does not contain the state [s]; instead, it contains a
        predecessor state. *)
 
@@ -395,7 +395,7 @@ module L = struct
              @ List.if1 need_endpos endp )
            (Action.vars action)) ; TODO restore *)
       (* Execute the semantic action. Store its result in [semv]. *)
-      prim semv (PrimOCamlAction action) ;
+      prim semv (Block.Prim.action action) ;
       (* Execute a goto transition. *)
       jump (Goto (Production.nt prod))
 

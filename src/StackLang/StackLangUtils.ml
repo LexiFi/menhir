@@ -26,15 +26,6 @@ let entry_labels program = StringMap.domain program.entry
 
 let needed t_block = t_block.needed_registers
 
-let rec value_registers = function
-  | VReg reg ->
-      RegisterSet.singleton reg
-  | VTuple li ->
-      List.fold_left RegisterSet.union RegisterSet.empty
-        (List.map value_registers li)
-  | _ ->
-      RegisterSet.empty
-
 let branch_iter f (_pat, block) = f block
 
 let branch_map f (pat, block) = (pat, f block)

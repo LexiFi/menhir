@@ -1,19 +1,23 @@
 open StackLang
 open StackLangUtils
 
+let id2 a b = (a, b)
+
+let ignore2 _ _ = ()
+
 type t = block
 
 let iter f aggregate terminate = function
   | INeed (_, block)
   | IPush (_, _, block)
   | IPop (_, block)
-  | IDef (_, _, block)
+  | IDef (_, block)
   | IPrim (_, _, block)
   | ITrace (_, block)
   | IComment (_, block)
   | ITypedBlock {block} ->
       f block
-  | IDie | IReturn _ | IJump _ | ISubstitutedJump _ ->
+  | IDie | IReturn _ | IJump _ ->
       terminate
   | ICaseToken (_reg, branches, odefault) ->
       aggregate
@@ -22,14 +26,13 @@ let iter f aggregate terminate = function
   | ICaseTag (_reg, branches) ->
       aggregate @@ List.map (branch_iter f) branches
 
-let map f ?(need = fun regs b -> (regs, f b))
-    ?(push = fun value pattern b -> (value, pattern, f b))
+let map f ?(need = fun registers b -> (registers, f b))
+    ?(push = fun value cell b -> (value, cell, f b))
     ?(pop = fun pattern b -> (pattern, f b))
-    ?(def = fun pattern value b -> (pattern, value, f b))
+    ?(def = fun bindings b -> (bindings, f b))
     ?(prim = fun reg pr b -> (reg, pr, f b)) ?(trace = fun reg b -> (reg, f b))
     ?(comment = fun content b -> (content, f b)) ?(die = fun () -> ())
-    ?(return = Fun.id) ?(jump = Fun.id)
-    ?(substituted_jump = fun label subst -> (label, subst))
+    ?(return = Fun.id) ?(jump = id2)
     ?(case_token =
       fun reg branches odefault ->
         (reg, List.map (branch_map f) branches, Option.map f odefault))
@@ -45,9 +48,9 @@ let map f ?(need = fun regs b -> (regs, f b))
   | IPop (reg, block) ->
       let reg, block = pop reg block in
       IPop (reg, block)
-  | IDef (pat, value, block) ->
-      let pat, value, block = def pat value block in
-      IDef (pat, value, block)
+  | IDef (bindings, block) ->
+      let bindings, block = def bindings block in
+      IDef (bindings, block)
   | IPrim (reg, pr, block) ->
       let reg, pr, block = prim reg pr block in
       IPrim (reg, pr, block)
@@ -61,11 +64,9 @@ let map f ?(need = fun regs b -> (regs, f b))
       die () ; IDie
   | IReturn value ->
       IReturn (return value)
-  | IJump label ->
-      IJump (jump label)
-  | ISubstitutedJump (label, subst) ->
-      let label, subst = substituted_jump label subst in
-      ISubstitutedJump (label, subst)
+  | IJump (bindings, label) ->
+      let bindings, label = jump bindings label in
+      IJump (bindings, label)
   | ICaseToken (reg, branches, odefault) ->
       let reg, branches, odefault = case_token reg branches odefault in
       ICaseToken (reg, branches, odefault)
@@ -76,10 +77,10 @@ let map f ?(need = fun regs b -> (regs, f b))
       ITypedBlock (typed_block t_block)
 
 let iter_unit (f : t -> unit) ?(need = fun _ b -> f b)
-    ?(push = fun _ _ b -> f b) ?(pop = fun _ b -> f b) ?(def = fun _ _ b -> f b)
+    ?(push = fun _ _ b -> f b) ?(pop = fun _ b -> f b) ?(def = fun _ b -> f b)
     ?(prim = fun _ _ b -> f b) ?(trace = fun _ b -> f b)
     ?(comment = fun _ b -> f b) ?(die = fun () -> ()) ?(return = ignore)
-    ?(jump = ignore) ?(substituted_jump = fun _ -> ignore)
+    ?(jump = ignore2)
     ?(case_token =
       fun _ branches odefault ->
         List.iter (branch_iter f) branches ;
@@ -92,8 +93,8 @@ let iter_unit (f : t -> unit) ?(need = fun _ b -> f b)
       push value cell block
   | IPop (reg, block) ->
       pop reg block
-  | IDef (pat, value, block) ->
-      def pat value block
+  | IDef (bindings, block) ->
+      def bindings block
   | IPrim (reg, pr, block) ->
       prim reg pr block
   | ITrace (reg, block) ->
@@ -104,10 +105,8 @@ let iter_unit (f : t -> unit) ?(need = fun _ b -> f b)
       die ()
   | IReturn value ->
       return value
-  | IJump label ->
-      jump label
-  | ISubstitutedJump (label, subst) ->
-      substituted_jump label subst
+  | IJump (bindings, label) ->
+      jump bindings label
   | ICaseToken (reg, branches, odefault) ->
       case_token reg branches odefault
   | ICaseTag (reg, branches) ->
@@ -125,14 +124,14 @@ let rec successors yield block =
   | INeed (_, block)
   | IPush (_, _, block)
   | IPop (_, block)
-  | IDef (_, _, block)
+  | IDef (_, block)
   | IPrim (_, _, block)
   | ITrace (_, block)
   | IComment (_, block) ->
       successors yield block
   | IDie | IReturn _ ->
       ()
-  | IJump label | ISubstitutedJump (label, _) ->
+  | IJump (_, label) ->
       yield label
   | ICaseToken (_, branches, oblock) ->
       List.iter (branch_iter (successors yield)) branches ;
@@ -148,7 +147,11 @@ let push value cell block = IPush (value, cell, block)
 
 let pop pattern block = IPop (pattern, block)
 
-let def pattern value block = IDef (pattern, value, block)
+let sdef pattern value block =
+  let bindings = Bindings.simple pattern value in
+  IDef (bindings, block)
+
+let def bindings block = IDef (bindings, block)
 
 let prim register primitive block = IPrim (register, primitive, block)
 
@@ -158,11 +161,7 @@ let die = IDie
 
 let return value = IReturn value
 
-let jump label = IJump label
-
-let substituted_jump label subst =
-  if subst = Substitution.empty then IJump label
-  else ISubstitutedJump (label, subst)
+let jump ?(bindings = Bindings.empty) label = IJump (bindings, label)
 
 let case_token ?default register branches =
   ICaseToken (register, branches, default)
@@ -173,3 +172,10 @@ let typed_block stack_type needed_registers has_case_tag ?final_type ?name block
     =
   ITypedBlock
     {stack_type; needed_registers; has_case_tag; final_type; name; block}
+
+module Prim = struct
+  type t = primitive
+
+  let action ?(bindings = Bindings.empty) action =
+    PrimOCamlAction (bindings, action)
+end

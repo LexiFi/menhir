@@ -137,7 +137,7 @@ let def p v =
   | PReg dst, VReg src when dst = src ->
       ()
   | _, _ ->
-      extend (fun block -> IDef (p, v, block))
+      extend (fun block -> Block.sdef p v block)
 
 let move dst src =
   def (PReg dst) (VReg src)
@@ -158,7 +158,7 @@ let return r =
   close (IReturn r)
 
 let jump l =
-  close (IJump l)
+  close (Block.jump l)
 
 let tokens tokpat =
   match tokpat with

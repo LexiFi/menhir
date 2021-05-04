@@ -1,7 +1,6 @@
 open Printf
 open StackLang
 open StackLangUtils
-module Subst = Substitution
 open Infix
 
 let fresh_int =
@@ -27,15 +26,13 @@ let restore_pushes push_list block =
       IComment (comment, block))
     block push_list
 
-(** Apply the substitution to the arguments of a PrimOcamlCall. *)
-let subst_prim_call subst (f, args) = (f, List.map (Subst.apply subst) args)
-
 let find_tagpat_branch branches tag =
   List.find
     (fun (TagMultiple taglist, _) -> List.exists (( = ) tag) taglist)
     branches
 
-let pushcell_apply subst (value, cell, id) = (Subst.apply subst value, cell, id)
+let pushcell_apply binds (value, cell, id) =
+  (Bindings.apply binds value, cell, id)
 
 (* let enrich_known_cells_with_state_info known_cells possible_states states =
   let state_known_cells =
@@ -46,7 +43,7 @@ let pushcell_apply subst (value, cell, id) = (Subst.apply subst value, cell, id)
 let needed_registers_pushes pushes =
   List.fold_left
     (fun needed_registers (value, _, _) ->
-      let value_registers = value_registers value in
+      let value_registers = Value.registers value in
       RegisterSet.union needed_registers value_registers)
     RegisterSet.empty pushes
 
@@ -56,7 +53,7 @@ let commute_pushes_t_block program t_block =
   in
   let cancelled_pop = ref 0 in
   let eliminated_branches = ref 0 in
-  let rec commute_pushes_block pushes subst final_type known_cells =
+  let rec commute_pushes_block pushes bindings final_type known_cells =
     (* [push_list] is the list of pushes that we need to restore, and hopefully
        cancel out with a pop.
        Every definition is inlined in order to make it impossible that a
@@ -65,7 +62,7 @@ let commute_pushes_t_block program t_block =
        their value only ever change by performing an ISubstitutedJump, or with
        primitive calls that can not be inlined.
        The code produced by [aux pushes substitution block] is equivalent to
-       [restore_pushes pushes (Subst.restore_defs substitution block)].
+       [restore_pushes pushes (Bindings.restore_defs substitution block)].
        The arguments [final_type] and [known_cells] are used along the way to
        modify correctly the ITypedBlock.
        [final_type] starts as the routine's final type, and if we go through a
@@ -84,12 +81,12 @@ let commute_pushes_t_block program t_block =
     function
     | INeed (registers, block) ->
         let block' =
-          commute_pushes_block pushes subst final_type known_cells block
+          commute_pushes_block pushes bindings final_type known_cells block
         in
         let registers =
           RegisterSet.union
             (needed_registers_pushes pushes)
-            (Subst.apply_registers subst registers)
+            (Bindings.apply_registers bindings registers)
         in
         INeed (registers, block')
     | IPush (value, cell, block) ->
@@ -97,8 +94,8 @@ let commute_pushes_t_block program t_block =
         let id = fresh_int () in
         let block' =
           commute_pushes_block
-            ((Subst.apply subst value, cell, id) :: pushes)
-            subst final_type known_cells block
+            ((Bindings.apply bindings value, cell, id) :: pushes)
+            bindings final_type known_cells block
         in
         let comment =
           sprintf "Commuting push_%i %s" id
@@ -121,7 +118,7 @@ let commute_pushes_t_block program t_block =
              discovered by inspecting the stack *)
           let block' =
             commute_pushes_block []
-              (Subst.remove subst pattern)
+              (Bindings.remove bindings pattern)
               final_type known_cells block
           in
           IPop (pattern, block')
@@ -129,8 +126,8 @@ let commute_pushes_t_block program t_block =
           (* We remove every register refered in the value from the
              substitution, because we need to access the value as it was when
              pushed, and add that to the substitution. *)
-          let subst = Subst.remove_value subst value in
-          let subst = Subst.extend_pattern subst pattern value in
+          let subst = Bindings.remove_value bindings value in
+          let subst = Bindings.extend_pattern subst pattern value in
           (* We have cancelled a pop ! *)
           cancelled_pop += 1 ;
           let block =
@@ -142,21 +139,17 @@ let commute_pushes_t_block program t_block =
               (StackLangPrinter.pattern_to_string pattern)
           in
           IComment (comment, block) )
-    | IDef (pattern, value, block) ->
+    | IDef (bindings', block) ->
         (* As explained above, for every conflict between the definition and a
            push currently commuting, we add a new substitution rule
            We do not want to shadow definition useful for the push train *)
-        let subst = Subst.extend_pattern subst pattern value in
-        (* Currently, the value is raw, we need to apply the substitution to it
-           in order for it to refer to the correct definition. *)
-        let value' = Subst.apply subst value in
+        let bindings = Bindings.compose bindings bindings' in
         let block =
-          commute_pushes_block pushes subst final_type known_cells block
+          commute_pushes_block pushes bindings final_type known_cells block
         in
         IComment
-          ( sprintf "Inlining def : %s = %s"
-              (StackLangPrinter.pattern_to_string pattern)
-              (StackLangPrinter.value_to_string value')
+          ( sprintf "Inlining def : %s"
+              (StackLangPrinter.bindings_to_string bindings')
           , block )
     | IPrim (reg, prim, block) ->
         (* A primitive is a like def except it has a simple register instead of a
@@ -167,7 +160,7 @@ let commute_pushes_t_block program t_block =
           else reg
         in
         let subst' =
-          Subst.extend reg (VReg reg') (Subst.remove subst (PReg reg'))
+          Bindings.extend reg (VReg reg') (Bindings.remove bindings (PReg reg'))
         in
         let block =
           commute_pushes_block pushes subst' final_type known_cells block
@@ -175,24 +168,22 @@ let commute_pushes_t_block program t_block =
         let prim =
           match prim with
           | PrimOCamlCall (f, args) ->
-              let f, args = subst_prim_call subst (f, args) in
+              let args = List.map (Bindings.apply bindings) args in
               PrimOCamlCall (f, args)
-          | PrimSubstOcamlAction (subst', action) ->
-              PrimSubstOcamlAction (Subst.compose subst subst', action)
-          | PrimOCamlAction action ->
-              PrimSubstOcamlAction (subst, action)
+          | PrimOCamlAction (bindings', action) ->
+              PrimOCamlAction (Bindings.compose bindings bindings', action)
           | prim ->
               prim
         in
         IPrim (reg', prim, block)
     | ITrace (register, block) ->
         let block' =
-          commute_pushes_block pushes subst final_type known_cells block
+          commute_pushes_block pushes bindings final_type known_cells block
         in
         ITrace (register, block')
     | IComment (comment, block) ->
         let block =
-          commute_pushes_block pushes subst final_type known_cells block
+          commute_pushes_block pushes bindings final_type known_cells block
         in
         IComment (comment, block)
     | IDie ->
@@ -200,24 +191,19 @@ let commute_pushes_t_block program t_block =
         IDie
     | IReturn v ->
         cancelled_pop += List.length pushes ;
-        IReturn (Subst.apply subst v)
-    | IJump label ->
-        aux_jump pushes subst label
-    | ISubstitutedJump (label, subst') ->
-        (* This case is quite tricky.
-           A substituted jump is a jump, but with a built-in substitution to
-           be able to change the name of the parameters without restoring the
-           definitions before the jumps. *)
-        let subst = Subst.compose subst subst' in
-        aux_jump pushes subst label
+        IReturn (Bindings.apply bindings v)
+    | IJump (bindings', label) ->
+        let bindings = Bindings.compose bindings bindings' in
+        aux_jump pushes bindings label
     | ICaseToken (reg, branches, odefault) ->
-        aux_case_token pushes subst reg branches odefault final_type known_cells
+        aux_case_token pushes bindings reg branches odefault final_type
+          known_cells
     | ICaseTag (reg, branches) ->
-        aux_icase_tag pushes subst final_type known_cells reg branches
+        aux_icase_tag pushes bindings final_type known_cells reg branches
     | ITypedBlock t_block ->
-        aux_itblock pushes subst final_type known_cells t_block
-  and aux_icase_tag pushes subst final_type known_cells reg branches =
-    match Subst.apply subst (VReg reg) with
+        aux_itblock pushes bindings final_type known_cells t_block
+  and aux_icase_tag pushes bindings final_type known_cells reg branches =
+    match Bindings.apply bindings (VReg reg) with
     | VTag tag ->
         (* If the value of the state is known, then we remove the match. *)
         let block = snd @@ find_tagpat_branch branches tag in
@@ -225,7 +211,7 @@ let commute_pushes_t_block program t_block =
         let comment = "Eliminated case tag" in
         IComment
           ( comment
-          , commute_pushes_block pushes subst final_type known_cells block )
+          , commute_pushes_block pushes bindings final_type known_cells block )
     | VReg reg ->
         let branch_aux (TagMultiple taglist, block) =
           let state_info = state_info_intersection program.states taglist in
@@ -237,12 +223,12 @@ let commute_pushes_t_block program t_block =
             | [tag] ->
                 (* In this case, we can inline the state value inside the
                    pushes. *)
-                let subst = Subst.extend reg (VTag tag) subst in
-                let tmp_subst = Subst.singleton reg (VTag tag) in
+                let subst = Bindings.extend reg (VTag tag) bindings in
+                let tmp_subst = Bindings.singleton reg (VTag tag) in
                 let pushes = List.map (pushcell_apply tmp_subst) pushes in
                 (subst, pushes)
             | _ ->
-                (subst, pushes)
+                (bindings, pushes)
           in
           let final_type =
             Option.first_value [state_info.sfinal_type; final_type]
@@ -253,7 +239,7 @@ let commute_pushes_t_block program t_block =
           (TagMultiple taglist, block)
         in
         let branches = List.map branch_aux branches in
-        ICaseTag (Subst.apply_reg subst reg, branches)
+        ICaseTag (Bindings.apply_reg bindings reg, branches)
     | _ ->
         assert false
   and aux_itblock pushes subst final_type known_cells t_block =
@@ -264,7 +250,7 @@ let commute_pushes_t_block program t_block =
     let needed_registers =
       RegisterSet.union
         (needed_registers_pushes pushes)
-        (Subst.apply_registers subst needed_registers)
+        (Bindings.apply_registers subst needed_registers)
     in
     let final_type = Option.first_value [final_type; tb_final_type] in
     let known_cells = longest_known_cells [stack_type; known_cells] in
@@ -281,8 +267,8 @@ let commute_pushes_t_block program t_block =
       ; final_type
       ; needed_registers
       ; stack_type= known_cells }
-  and aux_jump pushes subst label =
-    restore_pushes pushes (Block.substituted_jump label subst)
+  and aux_jump pushes bindings label =
+    restore_pushes pushes (Block.jump ~bindings label)
   and aux_case_token pushes subst reg branches odefault final_type known_cells =
     let aux_branch = function
       (* Every [TokSingle] introduces a definition of a register. *)
@@ -292,7 +278,7 @@ let commute_pushes_t_block program t_block =
               suffix reg' (fresh_int ())
             else reg'
           in
-          let subst = Subst.extend reg' (VReg reg'') subst in
+          let subst = Bindings.extend reg' (VReg reg'') subst in
           let block' =
             commute_pushes_block pushes subst final_type known_cells block
           in
@@ -314,7 +300,7 @@ let commute_pushes_t_block program t_block =
   in
   let {block; stack_type; final_type} = t_block in
   let candidate =
-    commute_pushes_block [] Subst.empty final_type stack_type block
+    commute_pushes_block [] Bindings.empty final_type stack_type block
   in
   { t_block with
     block=
@@ -354,34 +340,12 @@ let remove_dead_branches = Program.map remove_dead_branches_t_block
 let commute_pushes program =
   remove_dead_branches @@ Program.map (commute_pushes_t_block program) program
 
-let rec tighten_def = function
-  | PReg preg, VReg vreg when preg = vreg ->
-      None
-  | PReg preg, VReg vreg ->
-      Some (PReg preg, VReg vreg)
-  | PWildcard, _ ->
-      None
-  | PTuple pli, VTuple vli when List.length pli = List.length vli -> (
-    match List.filter_map tighten_def (List.combine pli vli) with
-    | [] ->
-        None
-    | li ->
-        let pli, vli = List.split li in
-        Some (PTuple pli, VTuple vli) )
-  | pattern, value ->
-      Some (pattern, value)
-
 (** remove definitions of shape [x = x], or shape [_ = x] *)
 let remove_useless_defs program =
   let rec aux block =
     match block with
-    | IDef (pattern, value, block) -> (
-        let tightened_def = tighten_def (pattern, value) in
-        match tightened_def with
-        | None ->
-            aux block
-        | Some (pattern, value) ->
-            IDef (pattern, value, aux block) )
+    | IDef (binds, block) when binds = Bindings.empty ->
+        aux block
     | _ ->
         Block.map aux block
   in
@@ -398,9 +362,9 @@ let compute_has_case_tag_t_block t_block =
     | IPop (reg, block) ->
         let block', hct = compute_has_case_tag_block block in
         (IPop (reg, block'), hct)
-    | IDef (pat, value, block) ->
+    | IDef (bindings, block) ->
         let block', hct = compute_has_case_tag_block block in
-        (IDef (pat, value, block'), hct)
+        (IDef (bindings, block'), hct)
     | IPrim (reg, prim, block) ->
         let block', hct = compute_has_case_tag_block block in
         (IPrim (reg, prim, block'), hct)
@@ -410,7 +374,7 @@ let compute_has_case_tag_t_block t_block =
     | IComment (comment, block) ->
         let block', hct = compute_has_case_tag_block block in
         (IComment (comment, block'), hct)
-    | (IDie | IReturn _ | IJump _ | ISubstitutedJump (_, _)) as block ->
+    | (IDie | IReturn _ | IJump _) as block ->
         (block, false)
     | ICaseToken (reg, branches, odefault) ->
         let branches =

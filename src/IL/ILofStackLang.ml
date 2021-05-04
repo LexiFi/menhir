@@ -5,7 +5,6 @@ open CodePieces
 open CodeBits
 open Printf
 open StackLangUtils
-module Subst = S.Substitution
 
 module SSymbols = StackSymbols.Run ()
 
@@ -226,28 +225,28 @@ let rec compile_value = function
   | S.VUnit ->
       EUnit
 
+let compile_bindings bindings expr =
+  blet
+    ( Bindings.fold
+        (fun reg value defs -> (PVar reg, compile_value value) :: defs)
+        bindings []
+    , expr )
+
 let compile_primitive = function
   | S.PrimOCamlCall (f, args) ->
       EApp (EVar f, List.map (fun arg -> compile_value arg) args)
   | S.PrimOCamlFieldAccess (record, field) ->
-      ERecordAccess (EVar record, field)
+      ERecordAccess (compile_value record, field)
   | S.PrimOCamlDummyPos ->
       EVar "Lexing.dummy_pos"
-  | S.PrimOCamlAction action ->
-      Action.to_il_expr action
-  | S.PrimSubstOcamlAction (subst, action) ->
+  | S.PrimOCamlAction (bindings, action) ->
+      (* TODO EMILE : restore restriction to if
+                     StringSet.mem reg (Action.semvars action)
+                     || StringSet.mem reg (Action.posvars action)*)
       EComment
         ( "Restoring definitions"
-        , blet
-            ( Subst.fold
-                (fun reg value defs ->
-                  if
-                    StringSet.mem reg (Action.semvars action)
-                    || StringSet.mem reg (Action.posvars action)
-                  then (PVar reg, compile_value value) :: defs
-                  else defs)
-                subst []
-            , EComment ("End of restore", Action.to_il_expr action) ) )
+        , compile_bindings bindings
+            (EComment ("End of restore", Action.to_il_expr action)) )
 
 let rec compile_t_block (program : S.program) t_block =
   let cfg = S.(program.cfg) in
@@ -281,17 +280,11 @@ let rec compile_t_block (program : S.program) t_block =
           | _ ->
               assert false
         in
-        ELet
+        blet
           ( [(T.PTuple (PVar fstack :: pattern), EVar fstack)]
           , compile_block block )
-    | S.IDef (pattern, value, block) -> (
-      match pattern with
-      | S.PTuple [] ->
-          compile_block block
-      | _ ->
-          ELet
-            ( [(compile_pattern pattern, compile_value value)]
-            , compile_block block ) )
+    | S.IDef (bindings, block) ->
+        compile_bindings bindings @@ compile_block block
     | S.IPrim (register, primitive, block) ->
         EComment
           ( "Primitive"
@@ -311,17 +304,12 @@ let rec compile_t_block (program : S.program) t_block =
            with it. It is unclear why, but if we dont, the program may fail to
            type. *)
         EAnnot (compile_value value, type2scheme final_type)
-    | S.IJump label ->
-        EApp
-          ( EVar label
-          , e_common_args @ evars @@ S.RegisterSet.elements
-            @@ needed (StringMap.find label cfg) )
-    | S.ISubstitutedJump (label, substitution) ->
+    | S.IJump (bindings, label) ->
         EApp
           ( EVar label
           , e_common_args
             @ List.map
-                (fun s -> compile_value (Subst.apply substitution (S.VReg s)))
+                (fun s -> compile_value (Bindings.apply bindings (S.VReg s)))
                 (S.RegisterSet.elements @@ needed @@ StringMap.find label cfg)
           )
     | S.ICaseToken (register, tokpat_block_list, block_option) ->
@@ -390,7 +378,7 @@ let rec compile_t_block (program : S.program) t_block =
             , (*[ { branchpat= pstatescon tag_list
                 ; branchbody= compile_block_aux block } ] ))*)
               List.map tag_aux tag_list )
-        | (S.IJump _ | S.ISubstitutedJump _) as block ->
+        | S.IJump _ as block ->
             (* We duplicate this code that is very short. *)
             let expr = compile_block block in
             ( None
