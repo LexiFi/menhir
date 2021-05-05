@@ -110,3 +110,6 @@ let codomain bindings =
   List.fold_left
     (fun regset value -> RegisterSet.union (Value.registers value) regset)
     RegisterSet.empty values
+
+let restrict bindings registers =
+  RegisterMap.filter (fun reg _ -> RegisterSet.mem reg registers) bindings

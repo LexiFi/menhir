@@ -118,7 +118,7 @@ let set_stack_type typ =
 let set_final_type typ =
     current_final_type := Some typ
 
-let set_needed needed =
+let need_routine needed =
   current_needed := Some (RegisterSet.of_list needed)
 let need rs = extend (fun block -> INeed (rs, block))
 

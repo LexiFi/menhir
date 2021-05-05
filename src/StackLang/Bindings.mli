@@ -68,3 +68,4 @@ val values : t -> value list
 
 val codomain : t -> registers
 
+val restrict : t -> registers -> t

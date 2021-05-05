@@ -132,13 +132,10 @@ let rec wf_block program label rs block =
       ()
   | IReturn v ->
       wf_value v
-  | IJump (bindings, label') ->
+  | IJump label' ->
       (* Check that every register that is needed at the destination label
          is defined here. *)
-      let nrs =
-        Bindings.apply_registers bindings (needed (lookup label' cfg))
-      in
-      wf_regs nrs
+      wf_regs (needed (lookup label' cfg))
   | ICaseToken (r, branches, odefault) ->
       wf_reg program label (ICaseToken (r, branches, odefault)) rs r ;
       List.iter (wf_branch program label rs) branches ;
@@ -410,13 +407,9 @@ let wt_knowncells_routine program label t_block =
            this function into not raising an error when it should. *)
         let sync = update_sync_with_bindings bindings sync in
         wtkc_block known_cells sync block)
-      ~jump:(fun bindings label ->
-        let sync = update_sync_with_bindings bindings sync in
+      ~jump:(fun label ->
         let target = lookup label cfg in
-        let needed_registers =
-          Bindings.apply_registers bindings target.needed_registers
-        in
-        if RegisterSet.mem state_reg needed_registers then
+        if RegisterSet.mem state_reg target.needed_registers then
           (* This checks that the stack is compatible with the state we are
              passing to the routine. This is only needed if we are actually
              passing a state *)
@@ -493,7 +486,7 @@ let well_final_typed_routine program label t_block =
             fail t_block block "Tried to return with final type unknown"
         | Some _ ->
             ())
-      ~jump:(fun _ label ->
+      ~jump:(fun label ->
         let target = lookup label cfg in
         match target.final_type with
         | Some _ as final_type' ->

@@ -13,7 +13,7 @@ val map :
   -> ?comment:(field -> t -> field * t)
   -> ?die:(unit -> unit)
   -> ?return:(value -> value)
-  -> ?jump:(bindings -> field -> bindings * field)
+  -> ?jump:(field -> field)
   -> ?case_token:
        (   field
         -> (tokpat * t) list
@@ -40,7 +40,7 @@ val iter_unit :
   -> ?comment:(field -> t -> unit)
   -> ?die:(unit -> unit)
   -> ?return:(value -> unit)
-  -> ?jump:(bindings -> field -> unit)
+  -> ?jump:(field -> unit)
   -> ?case_token:(field -> (tokpat * t) list -> t option -> unit)
   -> ?case_tag:(field -> (tagpat * t) list -> unit)
   -> ?typed_block:(typed_block -> unit)
@@ -75,7 +75,7 @@ val die : t
 
 val return : value -> t
 
-val jump : ?bindings:bindings -> label -> t
+val jump : label -> t
 
 val case_token : ?default:t -> register -> (tokpat * t) list -> t
 

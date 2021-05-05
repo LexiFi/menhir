@@ -80,15 +80,16 @@ let commute_pushes_t_block program t_block =
         as it is defined as ill-typed by [StackLangTraverse.wt]. *)
     function
     | INeed (registers, block) ->
-        let block' =
-          commute_pushes_block pushes bindings final_type known_cells block
-        in
         let registers =
           RegisterSet.union
             (needed_registers_pushes pushes)
             (Bindings.apply_registers bindings registers)
         in
-        INeed (registers, block')
+        let bindings = Bindings.restrict bindings registers in
+        let block =
+          commute_pushes_block pushes bindings final_type known_cells block
+        in
+        INeed (registers, block)
     | IPush (value, cell, block) ->
         (*  *)
         let id = fresh_int () in
@@ -126,12 +127,12 @@ let commute_pushes_t_block program t_block =
           (* We remove every register refered in the value from the
              substitution, because we need to access the value as it was when
              pushed, and add that to the substitution. *)
-          let subst = Bindings.remove_value bindings value in
-          let subst = Bindings.extend_pattern subst pattern value in
+          let bindings = Bindings.remove_value bindings value in
+          let bindings = Bindings.extend_pattern bindings pattern value in
           (* We have cancelled a pop ! *)
           cancelled_pop += 1 ;
           let block =
-            commute_pushes_block push_list subst final_type known_cells block
+            commute_pushes_block push_list bindings final_type known_cells block
           in
           let comment =
             sprintf "Cancelled push_%i %s with pop %s" id
@@ -147,10 +148,12 @@ let commute_pushes_t_block program t_block =
         let block =
           commute_pushes_block pushes bindings final_type known_cells block
         in
-        IComment
-          ( sprintf "Inlining def : %s"
-              (StackLangPrinter.bindings_to_string bindings')
-          , block )
+        if bindings' <> Bindings.empty then
+          IComment
+            ( sprintf "Inlining def : %s"
+                (StackLangPrinter.bindings_to_string bindings')
+            , block )
+        else block
     | IPrim (reg, prim, block) ->
         (* A primitive is a like def except it has a simple register instead of a
            pattern *)
@@ -192,15 +195,15 @@ let commute_pushes_t_block program t_block =
     | IReturn v ->
         cancelled_pop += List.length pushes ;
         IReturn (Bindings.apply bindings v)
-    | IJump (bindings', label) ->
-        let bindings = Bindings.compose bindings bindings' in
+    | IJump label ->
         aux_jump pushes bindings label
     | ICaseToken (reg, branches, odefault) ->
         aux_case_token pushes bindings reg branches odefault final_type
           known_cells
     | ICaseTag (reg, branches) ->
         aux_icase_tag pushes bindings final_type known_cells reg branches
-    | ITypedBlock t_block ->
+    | ITypedBlock ({needed_registers} as t_block) ->
+        let bindings = Bindings.restrict bindings needed_registers in
         aux_itblock pushes bindings final_type known_cells t_block
   and aux_icase_tag pushes bindings final_type known_cells reg branches =
     match Bindings.apply bindings (VReg reg) with
@@ -268,7 +271,7 @@ let commute_pushes_t_block program t_block =
       ; needed_registers
       ; stack_type= known_cells }
   and aux_jump pushes bindings label =
-    restore_pushes pushes (Block.jump ~bindings label)
+    restore_pushes pushes (Block.def bindings @@ Block.jump label)
   and aux_case_token pushes subst reg branches odefault final_type known_cells =
     let aux_branch = function
       (* Every [TokSingle] introduces a definition of a register. *)

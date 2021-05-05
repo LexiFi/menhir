@@ -236,7 +236,7 @@ module L = struct
        good practice to keep it as tight as possible, though, as this documents
        the code that we produce (and allows us to benefit from a runtime
        well-formedness test). *)
-    set_needed needlist ;
+    need_routine needlist ;
     (* need_list needlist ; *)
     (* Log that we are entering state [s]. *)
     log "State %d:" (number s) ;
@@ -342,7 +342,7 @@ module L = struct
       (lexer :: lexbuf :: token :: MList.if1 is_epsilon state)
       @ MList.if1 (is_epsilon || has_beforeend) endp
     in
-    set_needed needlist ;
+    need_routine needlist ;
     (* need_list needlist ; *)
     (* Pop [n] stack cells and store their content in suitable registers.
        The state stored in the bottom cell (the one that is popped last)
@@ -404,8 +404,7 @@ module L = struct
   (* Code for the [goto] subroutine associated with nonterminal symbol [nt]. *)
 
   let goto nt needlist pushlist cell =
-    need_list needlist ;
-    set_needed needlist ;
+    need_routine needlist ;
     (* If it is up to this [goto] subroutine to push a new cell onto the stack,
        then do so now. If not, then it will be done by the [run] subroutine to
        which we are about to jump. *)

@@ -56,7 +56,7 @@ Set the type of the whole block
 *)
 val set_stack_type: cell_info array -> unit
 val set_final_type: Stretch.ocamltype -> unit
-val set_needed: register list -> unit
+val need_routine: register list -> unit
 
 (* Each of the functions in the first group extends a code block that is
    currently under construction. Each of the functions in the second group

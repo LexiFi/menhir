@@ -112,8 +112,8 @@ type block =
   | IReturn of value
       (** [IReturn] causes the normal termination of the program. A value is
           returned. *)
-  | IJump of bindings * label
-      (** [IJump] causes a jump to a block identified by its label. The
+  | IJump of label
+      (** [IJump] causes a jump to a routine identified by its label. The
           registers that are needed by the destination block must form a subset
           of the registers that are defined at the point of the jump. *)
   (* Group 3: Case analysis instructions. *)

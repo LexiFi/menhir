@@ -162,9 +162,8 @@ and block b =
       nl ^^ string "DIE"
   | IReturn v ->
       nl ^^ string "RET  " ^^ value v
-  | IJump (bs, l) ->
-
-      nl ^^ string "JUMP " ^^ bindings bs ^^ label l
+  | IJump l ->
+      nl ^^ string "JUMP " ^^ label l
   | ICaseToken (r, branches, default) ->
       nl ^^ string "CASE " ^^ register r ^^ string " OF" ^^
       concat (map branch (

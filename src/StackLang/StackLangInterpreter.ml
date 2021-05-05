@@ -227,8 +227,7 @@ let rec exec state block =
       let _gv = eval state.env v in
       Some () (* accept *)
 
-  | IJump (bindings, label) ->
-      state.env <- binds bindings state.env ;
+  | IJump label ->
       let block = (lookup label state.program.cfg).block in
       exec state block
 

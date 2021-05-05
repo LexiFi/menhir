@@ -215,222 +215,239 @@ let rec compile_pattern = function
   | S.PTuple li ->
       PTuple (List.map compile_pattern li)
 
-let rec compile_value = function
+let rec compile_value bindings value =
+  match Bindings.apply bindings value with
   | S.VTag tag ->
       estatecon tag
   | S.VReg register ->
       EVar register
   | S.VTuple value_list ->
-      ETuple (List.map compile_value value_list)
+      ETuple (List.map (compile_value bindings) value_list)
   | S.VUnit ->
       EUnit
 
 let compile_bindings bindings expr =
   blet
     ( Bindings.fold
-        (fun reg value defs -> (PVar reg, compile_value value) :: defs)
+        (fun reg value defs -> (PVar reg, compile_value bindings value) :: defs)
         bindings []
     , expr )
 
-let compile_primitive = function
+let compile_primitive bindings = function
   | S.PrimOCamlCall (f, args) ->
-      EApp (EVar f, List.map (fun arg -> compile_value arg) args)
+      EApp (EVar f, List.map (fun arg -> compile_value bindings arg) args)
   | S.PrimOCamlFieldAccess (record, field) ->
-      ERecordAccess (compile_value record, field)
+      ERecordAccess (compile_value bindings record, field)
   | S.PrimOCamlDummyPos ->
       EVar "Lexing.dummy_pos"
-  | S.PrimOCamlAction (bindings, action) ->
-      (* TODO EMILE : restore restriction to if
-                     StringSet.mem reg (Action.semvars action)
-                     || StringSet.mem reg (Action.posvars action)*)
+  | S.PrimOCamlAction (bindings', action) ->
+      let needed =
+        S.RegisterSet.union (Action.semvars action) (Action.posvars action)
+      in
+      let bindings = Bindings.compose bindings bindings' in
+      let bindings = Bindings.restrict bindings needed in
       EComment
         ( "Restoring definitions"
         , compile_bindings bindings
             (EComment ("End of restore", Action.to_il_expr action)) )
 
-let rec compile_t_block (program : S.program) t_block =
-  let cfg = S.(program.cfg) in
-  (* let states = S.(program.states) in *)
-  let final_type =
-    match S.(t_block.final_type) with
-    | None ->
-        TypName tcfinal
-    | Some typ ->
-        TypTextual typ
-  in
-  let rec compile_block = function
-    | S.INeed (registers, block) ->
-        EComment
-          ( sprintf "Needed registers : { %s }"
-              (String.concat "; " (StringSet.elements registers))
-          , compile_block block )
-    | S.IPush (value, _cell, block) ->
-        assert (value <> S.VTuple []) ;
-        let value =
-          match compile_value value with ETuple li -> li | _ -> assert false
-        in
-        ELet
-          ([(PVar fstack, ETuple (EVar fstack :: value))], compile_block block)
-    | S.IPop (pattern, block) ->
-        assert (pattern <> S.PTuple []) ;
-        let pattern =
-          match compile_pattern pattern with
-          | T.PTuple li ->
-              li
-          | _ ->
-              assert false
-        in
-        blet
-          ( [(T.PTuple (PVar fstack :: pattern), EVar fstack)]
-          , compile_block block )
-    | S.IDef (bindings, block) ->
-        compile_bindings bindings @@ compile_block block
-    | S.IPrim (register, primitive, block) ->
-        EComment
-          ( "Primitive"
-          , ELet
-              ( [(PVar register, compile_primitive primitive)]
-              , compile_block block ) )
-    | S.ITrace (message, block) ->
-        ELet
-          ( [(PVar "_", EApp (EVar "Printf.eprintf", [EStringConst message]))]
-          , compile_block block )
-    | S.IComment (comment, block) ->
-        EComment (comment, compile_block block)
-    | S.IDie ->
-        ERaise (EVar "_eRR")
-    | S.IReturn value ->
-        (* If there is a known final type, we need to annotate the return value
-           with it. It is unclear why, but if we dont, the program may fail to
-           type. *)
-        EAnnot (compile_value value, type2scheme final_type)
-    | S.IJump (bindings, label) ->
-        EApp
-          ( EVar label
-          , e_common_args
-            @ List.map
-                (fun s -> compile_value (Bindings.apply bindings (S.VReg s)))
-                (S.RegisterSet.elements @@ needed @@ StringMap.find label cfg)
-          )
-    | S.ICaseToken (register, tokpat_block_list, block_option) ->
-        compile_ICaseToken register tokpat_block_list block_option
-    | S.ICaseTag (register, tagpat_block_list) ->
-        compile_ICaseTag register tagpat_block_list
-    | S.ITypedBlock t_block ->
-        compile_ITypedBlock t_block
-  and compile_ICaseToken register tokpat_block_list block_option =
-    EMatch
-      ( EVar register
-      , List.map
-          (fun (tokpat, block) ->
-            match tokpat with
-            | S.TokSingle (terminal, register) ->
-                { branchpat= CodePieces.tokpat terminal (PVar register)
-                ; branchbody=
-                    ( match Grammar.Terminal.ocamltype terminal with
-                    | None ->
-                        ELet ([(PVar register, EUnit)], compile_block block)
-                    | Some _ ->
-                        compile_block block ) }
-            | S.TokMultiple terminals ->
-                { branchpat=
-                    POr
-                      (List.map
-                         (fun terminal -> CodePieces.tokpat terminal PWildcard)
-                         (Grammar.TerminalSet.elements terminals))
-                ; branchbody= compile_block block })
-          tokpat_block_list
-        @
-        match block_option with
-        | None ->
-            []
-        | Some block ->
-            [{branchpat= PWildcard; branchbody= compile_block block}] )
-  and compile_ICaseTag register tagpat_block_list =
-    (* For a given branch, return an optionnal prelude to be inserted before the
-       match and the code for the branch *)
-    let aux_branch (S.TagMultiple tag_list, block) =
-      match tag_list with
-      (* Or-pattern cannot be empty *)
-      | [] ->
-          assert false
-      (* If the Or-pattern contains only one element, then no action is to be taken *)
-      | [tag] ->
-          ( None
-          , [{branchpat= pstatescon [tag]; branchbody= compile_block block}] )
-      | _ -> (
-        match block with
-        | S.ITypedBlock (S.{needed_registers; name} as t_block) ->
-            let name =
-              match name with None -> fresh_name () | Some name -> name
-            in
-            let f = compile_function t_block program in
-            let vargs =
-              e_common_args @ evars @@ StringSet.elements needed_registers
-            in
-            let call_f = EApp (EVar name, vargs) in
-            (* We do not duplicate the code, and instead use the same local
-               function for every subroutine. *)
-            let tag_aux tag =
-              {branchpat= pstatescon [tag]; branchbody= call_f}
-            in
-            ( Some (PVar name, f)
-            , (*[ { branchpat= pstatescon tag_list
-                ; branchbody= compile_block_aux block } ] ))*)
-              List.map tag_aux tag_list )
-        | S.IJump _ as block ->
-            (* We duplicate this code that is very short. *)
-            let expr = compile_block block in
-            ( None
-            , List.map
-                (fun tag -> {branchpat= pstatescon [tag]; branchbody= expr})
-                tag_list )
-        | _ ->
-            failwith "cannot find t_block" )
-    in
-    let branches = List.map aux_branch tagpat_block_list in
-    let preludes, branches = List.split branches in
-    (* Only keep preludes that exists *)
-    let preludes = List.filter_map Fun.id preludes in
-    (* Make the nested Or-patterns into toplevel ones. The code was already
-       duplicated in order for this to work. *)
-    let branches = List.concat branches in
-    (* Add a default branch except if every represented state is matched on. *)
-    let branches =
-      if List.length branches = Invariant.n_represented then branches
-      else
-        branches
-        @ [ (* TODO : remove this *)
-            { branchpat= PWildcard
-            ; branchbody= EApp (EVar "assert", [EVar "false"]) } ]
-    in
-    EInlinedLet (preludes, EMatch (EVar register, branches))
-  and compile_ITypedBlock = function
-    | S.({has_case_tag= true; name} as t_block) ->
-        (* If a typed block contains a match on tags, then we need to make it
-           an inlined function call : it is not possible to inline it
-           ourselves, because of GADT shenanigans.*)
-        let block_name =
-          match name with None -> fresh_name () | Some name -> name
-        in
-        let func = EVar block_name in
-        let args =
-          e_common_args @ evars @@ StringSet.elements @@ needed t_block
-        in
-        EInlinedLet
-          ( [(PVar block_name, compile_function t_block program)]
-          , EComment ("Not inlined because of case tag", EApp (func, args)) )
-    | t_block ->
-        compile_t_block program t_block
-  in
+let compile_final_type = function
+  | None ->
+      TypName tcfinal
+  | Some typ ->
+      TypTextual typ
+
+let rec compile_routine (program : S.program) t_block =
+  let final_type = compile_final_type S.(t_block.final_type) in
   let S.{block} = t_block in
-  compile_block block
+  compile_block program Bindings.empty final_type block
+
+and compile_block program bindings final_type =
+  let cfg = S.(program.cfg) in
+  let compile_block = compile_block program in
+  function
+  | S.INeed (registers, block) ->
+      let bindings = Bindings.restrict bindings registers in
+      EComment
+        ( sprintf "Needed registers : { %s }"
+            (String.concat "; " (StringSet.elements registers))
+        , compile_block bindings final_type block )
+  | S.IPush (value, _cell, block) ->
+      assert (value <> S.VTuple []) ;
+      let value =
+        match compile_value bindings value with
+        | ETuple li ->
+            li
+        | _ ->
+            assert false
+      in
+      ELet
+        ( [(PVar fstack, ETuple (EVar fstack :: value))]
+        , compile_block bindings final_type block )
+  | S.IPop (pattern, block) ->
+      assert (pattern <> S.PTuple []) ;
+      let pattern =
+        match compile_pattern pattern with
+        | T.PTuple li ->
+            li
+        | _ ->
+            assert false
+      in
+      blet
+        ( [(T.PTuple (PVar fstack :: pattern), EVar fstack)]
+        , compile_block bindings final_type block )
+  | S.IDef (bindings', block) ->
+      let bindings = Bindings.compose bindings bindings' in
+      compile_block bindings final_type block
+  | S.IPrim (register, primitive, block) ->
+      EComment
+        ( "Primitive"
+        , ELet
+            ( [(PVar register, compile_primitive bindings primitive)]
+            , compile_block bindings final_type block ) )
+  | S.ITrace (message, block) ->
+      ELet
+        ( [(PVar "_", EApp (EVar "Printf.eprintf", [EStringConst message]))]
+        , compile_block bindings final_type block )
+  | S.IComment (comment, block) ->
+      EComment (comment, compile_block bindings final_type block)
+  | S.IDie ->
+      ERaise (EVar "_eRR")
+  | S.IReturn value ->
+      (* If there is a known final type, we need to annotate the return value
+         with it. It is unclear why, but if we dont, the program may fail to
+         type. *)
+      EAnnot (compile_value bindings value, type2scheme final_type)
+  | S.IJump label ->
+      EApp
+        ( EVar label
+        , e_common_args
+          @ List.map
+              (fun s -> compile_value bindings (S.VReg s))
+              (S.RegisterSet.elements @@ needed @@ StringMap.find label cfg) )
+  | S.ICaseToken (register, tokpat_block_list, block_option) ->
+      compile_ICaseToken program bindings final_type register tokpat_block_list
+        block_option
+  | S.ICaseTag (register, tagpat_block_list) ->
+      compile_ICaseTag program bindings final_type register tagpat_block_list
+  | S.ITypedBlock t_block ->
+      compile_ITypedBlock program bindings t_block
+
+and compile_ICaseToken program bindings final_type register tokpat_block_list
+    block_option =
+  EMatch
+    ( EVar register
+    , List.map
+        (fun (tokpat, block) ->
+          match tokpat with
+          | S.TokSingle (terminal, register) ->
+              { branchpat= CodePieces.tokpat terminal (PVar register)
+              ; branchbody=
+                  ( match Grammar.Terminal.ocamltype terminal with
+                  | None ->
+                      ELet
+                        ( [(PVar register, EUnit)]
+                        , compile_block program bindings final_type block )
+                  | Some _ ->
+                      compile_block program bindings final_type block ) }
+          | S.TokMultiple terminals ->
+              { branchpat=
+                  POr
+                    (List.map
+                       (fun terminal -> CodePieces.tokpat terminal PWildcard)
+                       (Grammar.TerminalSet.elements terminals))
+              ; branchbody= compile_block program bindings final_type block })
+        tokpat_block_list
+      @
+      match block_option with
+      | None ->
+          []
+      | Some block ->
+          [ { branchpat= PWildcard
+            ; branchbody= compile_block program bindings final_type block } ] )
+
+and compile_ICaseTag program bindings final_type register tagpat_block_list =
+  (* For a given branch, return an optionnal prelude to be inserted before the
+     match and the code for the branch *)
+  let aux_branch (S.TagMultiple tag_list, block) =
+    match tag_list with
+    (* Or-pattern cannot be empty *)
+    | [] ->
+        assert false
+    (* If the Or-pattern contains only one element, then no action is to be taken *)
+    | [tag] ->
+        ( None
+        , [ { branchpat= pstatescon [tag]
+            ; branchbody= compile_block program bindings final_type block } ] )
+    | _ -> (
+      match block with
+      | S.ITypedBlock (S.{needed_registers; name} as t_block) ->
+          let name =
+            match name with None -> fresh_name () | Some name -> name
+          in
+          let f = compile_function t_block program in
+          let regs = StringSet.elements needed_registers in
+          let regs = List.map (fun reg -> S.VReg reg) regs in
+          let vargs = e_common_args @ List.map (compile_value bindings) regs in
+          let call_f = EApp (EVar name, vargs) in
+          (* We do not duplicate the code, and instead use the same local
+             function for every subroutine. *)
+          let tag_aux tag = {branchpat= pstatescon [tag]; branchbody= call_f} in
+          (Some (PVar name, f), List.map tag_aux tag_list)
+      | S.IJump _ as block ->
+          (* We duplicate this code that is very short. *)
+          let expr = compile_block program bindings final_type block in
+          ( None
+          , List.map
+              (fun tag -> {branchpat= pstatescon [tag]; branchbody= expr})
+              tag_list )
+      | b ->
+          StackLangPrinter.print_block stderr b ;
+          failwith "cannot find t_block" )
+  in
+  let branches = List.map aux_branch tagpat_block_list in
+  let preludes, branches = List.split branches in
+  (* Only keep preludes that exists *)
+  let preludes = List.filter_map Fun.id preludes in
+  (* Make the nested Or-patterns into toplevel ones. The code was already
+     duplicated in order for this to work. *)
+  let branches = List.concat branches in
+  (* Add a default branch except if every represented state is matched on. *)
+  let branches =
+    if List.length branches = Invariant.n_represented then branches
+    else
+      branches
+      @ [ (* TODO : remove this *)
+          { branchpat= PWildcard
+          ; branchbody= EApp (EVar "assert", [EVar "false"]) } ]
+  in
+  EInlinedLet (preludes, EMatch (EVar register, branches))
+
+and compile_ITypedBlock program bindings = function
+  | S.({has_case_tag= true; name; needed_registers} as t_block) ->
+      (* If a typed block contains a match on tags, then we need to make it
+         an inlined function call : it is not possible to inline it
+         ourselves, because of GADT shenanigans.*)
+      let block_name =
+        match name with None -> fresh_name () | Some name -> name
+      in
+      let func = EVar block_name in
+      let regs = StringSet.elements needed_registers in
+      let sargs = List.map (fun reg -> S.VReg reg) regs in
+      let args = e_common_args @ List.map (compile_value bindings) sargs in
+      EInlinedLet
+        ( [(PVar block_name, compile_function t_block program)]
+        , EComment ("Not inlined because of case tag", EApp (func, args)) )
+  | S.{block; needed_registers; final_type} ->
+      let bindings = Bindings.restrict bindings needed_registers in
+      let final_type = compile_final_type final_type in
+      compile_block program bindings final_type block
 
 and compile_function t_block (program : S.program) =
   EAnnot
     ( EFun
         ( p_common_args @ pvars @@ S.RegisterSet.elements @@ needed t_block
-        , compile_t_block program t_block )
+        , compile_routine program t_block )
     , function_type t_block )
 
 let compile (S.({cfg; entry; states} as program) : S.program) =
