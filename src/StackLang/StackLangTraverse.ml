@@ -18,23 +18,20 @@ open NamingConventions
 
 (* -------------------------------------------------------------------------- *)
 
-exception
-  StackLangError of
-    { context: typed_block
-    ; culprit: block
-    ; message: string
-    ; jumping_to: label option
-    ; states: state_info TagMap.t option }
+type error =
+  {context: label; culprit: block; message: string; state_relevance: bool}
 
-let fail ?jumping_to ?states context culprit message =
-  raise (StackLangError {context; culprit; message; jumping_to; states})
+exception StackLangError of error
+
+let fail ?(state_relevance = false) context culprit message =
+  raise (StackLangError {context; culprit; message; state_relevance})
 
 let state_reg = state
 
 (* Checking that a StackLang program contains no references to undefined
    registers. *)
 
-let wf_regs program label ?jumping_to block rs rs' =
+let wf_regs label block rs rs' =
   (* Check that [rs'] is a subset of [rs]. *)
   let stray = RegisterSet.diff rs' rs in
   if not (RegisterSet.is_empty stray) then
@@ -48,20 +45,18 @@ let wf_regs program label ?jumping_to block rs rs' =
         (if RegisterSet.cardinal stray > 1 then "s" else "")
         (RegisterSet.print stray) (RegisterSet.print rs)
     in
-    let context = lookup label program.cfg in
-    fail ?jumping_to context block message
+    fail label block message
 
-let wf_reg program label block rs r =
-  wf_regs program label block rs (RegisterSet.singleton r)
+let wf_reg label block rs r = wf_regs label block rs (RegisterSet.singleton r)
 
-let rec wf_value cfg label block rs v =
+let rec wf_value label block rs v =
   match v with
   | VTag _ ->
       ()
   | VReg r ->
-      wf_reg cfg label block rs r
+      wf_reg label block rs r
   | VTuple vs ->
-      List.iter (wf_value cfg label block rs) vs
+      List.iter (wf_value label block rs) vs
   | VUnit ->
       ()
 
@@ -81,12 +76,12 @@ let def rs p =
      plus the registers defined by the pattern [p]. *)
   RegisterSet.union rs (def RegisterSet.empty p)
 
-let wf_prim cfg label block rs p =
+let wf_prim label block rs p =
   match p with
   | PrimOCamlCall (_, args) ->
-      List.iter (wf_value cfg label block rs) args
+      List.iter (wf_value label block rs) args
   | PrimOCamlFieldAccess (v, _) ->
-      wf_value cfg label block rs v
+      wf_value label block rs v
   | PrimOCamlDummyPos ->
       ()
   | PrimOCamlAction _ ->
@@ -100,9 +95,9 @@ let wf_prim cfg label block rs p =
 
 let rec wf_block program label rs block =
   let {cfg} = program in
-  let wf_regs = wf_regs program label block rs in
-  let wf_value = wf_value program label block rs in
-  let wf_prim = wf_prim program label block rs in
+  let wf_regs = wf_regs label block rs in
+  let wf_value = wf_value label block rs in
+  let wf_prim = wf_prim label block rs in
   match block with
   | INeed (rs', block) ->
       wf_regs rs' ;
@@ -137,11 +132,11 @@ let rec wf_block program label rs block =
          is defined here. *)
       wf_regs (needed (lookup label' cfg))
   | ICaseToken (r, branches, odefault) ->
-      wf_reg program label (ICaseToken (r, branches, odefault)) rs r ;
+      wf_reg label (ICaseToken (r, branches, odefault)) rs r ;
       List.iter (wf_branch program label rs) branches ;
       Option.iter (wf_block program label rs) odefault
   | ICaseTag (r, branches) ->
-      wf_reg program label (ICaseTag (r, branches)) rs r ;
+      wf_reg label (ICaseTag (r, branches)) rs r ;
       List.iter (branch_iter (wf_block program label rs)) branches
   | ITypedBlock {block; needed_registers= rs'} ->
       wf_regs rs' ;
@@ -320,7 +315,7 @@ let update_sync_with_bindings bindings sync =
   | _ ->
       assert false
 
-let wt_knowncells_routine program label t_block =
+let wt_knowncells_routine program label (t_block : typed_block) =
   let cfg = program.cfg in
   let states = program.states in
   let fail_sync block =
@@ -330,7 +325,7 @@ let wt_knowncells_routine program label t_block =
          block %s."
         label
     in
-    fail t_block block message
+    fail label block message
   in
   let check_cells block reason known_cells needed_cells =
     let fail message =
@@ -342,7 +337,7 @@ let wt_knowncells_routine program label t_block =
           (StackLangPrinter.known_cells_to_string known_cells)
           (StackLangPrinter.known_cells_to_string needed_cells)
       in
-      fail ~states t_block block message
+      fail ~state_relevance:true label block message
     in
     let l1 = Array.length known_cells in
     let l2 = Array.length needed_cells in
@@ -364,7 +359,7 @@ let wt_knowncells_routine program label t_block =
     | Unsynced tag ->
         check_state_sync block known_cells expected_cells tag
     | Synced n when n <> 0 ->
-        fail ~states t_block block
+        fail ~state_relevance:true label block
           (sprintf
              "State in sync with %i deep cell when jumping or going in a typed \
               block."
@@ -395,7 +390,7 @@ let wt_knowncells_routine program label t_block =
       ~pop:(fun pattern block' ->
         ( if known_cells = [||] then
           let message = "Tried to pop unknown cell" in
-          fail t_block block message ) ;
+          fail label block message ) ;
         let known_cells = MArray.pop known_cells in
         (* If the state is shadowed, then it becomes unknown. *)
         let sync = if pattern_shadow_state pattern then Unsynced 0 else sync in
@@ -456,7 +451,7 @@ let well_known_cells_typed program =
 (* -------------------------------------------------------------------------- *)
 (* Well-typedness with regard to knownledge of the final type. *)
 
-let well_final_typed_routine program label t_block =
+let well_final_typed_routine program label (t_block : typed_block) =
   let {cfg; states} = program in
   let check_final_types reason computed_final_type expected_final_type block =
     let fail () =
@@ -468,7 +463,7 @@ let well_final_typed_routine program label t_block =
           (match computed_final_type with None -> "None" | Some _typ -> "Some")
           (match expected_final_type with None -> "None" | Some _typ -> "Some")
       in
-      fail ~states t_block block message
+      fail ~state_relevance:true label block message
     in
     if computed_final_type <> expected_final_type then fail ()
   in
@@ -483,7 +478,7 @@ let well_final_typed_routine program label t_block =
       ~return:(fun _value ->
         match final_type with
         | None ->
-            fail t_block block "Tried to return with final type unknown"
+            fail label block "Tried to return with final type unknown"
         | Some _ ->
             ())
       ~jump:(fun label ->

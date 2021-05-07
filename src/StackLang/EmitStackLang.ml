@@ -202,225 +202,6 @@ module L = struct
 
   (* ------------------------------------------------------------------------ *)
 
-  (* Code for the [run] subroutine associated with the state [s].
-     represent_state tell whether to gener*)
-
-  let run s represent_state needlist push_list push_cell =
-    (* Determine whether this is an initial state. *)
-    let is_start = Lr1.is_start s in
-    (* Determine whether the start and end positions of the current token
-       should be read from [lexbuf]. *)
-    let must_read_positions = must_read_positions_upon_entering s in
-    (* Determine whether a new cell must be pushed onto the stack. *)
-    let must_push = runpushes s in
-    (* A sanity check: [must_read_positions] implies [must_push]. Indeed,
-       the sole reason why we read these positions is that we must push
-       a new cell. *)
-
-    (* The reverse implication is not true. If this state is entered via
-       a goto transition, then [must_push] may be true or false, whereas
-       [must_read_positions] is false. *)
-    assert ((not must_read_positions) || must_push) ;
-    (* Determine whether the lexer should be queried for the next token. *)
-    let must_query_lexer = must_query_lexer_upon_entering s in
-    (* At this point, the registers [lexer] and [lexbuf] are definitely needed.
-       The register [token] is needed unless we are about to query the lexer for
-       a new token. The registers [state] and [semv] are needed if we are
-       expected to push a cell onto the stack. The registers [startp] and [endp]
-       are needed unless this is an initial state or we are about to read these
-       positions from [lexbuf]. (Actually, more precisely, [startp] is not needed
-       if [must_push] is false. [endp] may still be needed even in that case.) *)
-
-    (* Note that it is not essential that the list of needed registers be tight.
-       This list could contain registers which are in fact not needed. It is
-       good practice to keep it as tight as possible, though, as this documents
-       the code that we produce (and allows us to benefit from a runtime
-       well-formedness test). *)
-    need_routine needlist ;
-    (* need_list needlist ; *)
-    (* Log that we are entering state [s]. *)
-    log "State %d:" (number s) ;
-    (* If necessary, read the positions of the current token from [lexbuf]. *)
-    if must_read_positions then (
-      prim startp (PrimOCamlFieldAccess (VReg lexbuf, "Lexing.lex_start_p")) ;
-      prim endp (PrimOCamlFieldAccess (VReg lexbuf, "Lexing.lex_curr_p")) ) ;
-    (* Note that [state] does not contain the state [s]; instead, it contains a
-       predecessor state. *)
-
-    (* If [run] is expected to push a new cell onto the stack, do so now. *)
-    if must_push && push_list <> [] then
-      push (VTuple (vregs push_list)) push_cell ;
-    (* Define the current state to be [s]. *)
-    if represent_state then def (PReg state) (VTag (number s)) ;
-    (* If necessary, query the lexer for the next token, and rebind [token].
-       This is done by calling [discard], a global function that is defined
-       directly in IL code, outside StackLang. *)
-    if must_query_lexer then
-      prim token (PrimOCamlCall (discard, [VReg lexer; VReg lexbuf])) ;
-    (* If this is a start state, define [endp], in case it is needed later on.
-       This is unlikely, yet it may be needed if the start state can reduce a
-       production whose semantic action uses the keyword [$endpos($0)]. *)
-    if is_start then prim endp PrimOCamlDummyPos ;
-    (* At this point, the registers [lexer], [lexbuf], and [token] are defined,
-       and are needed in the future, except perhaps in the very special case
-       where this state has a default reduction on [#]. The registers [state]
-       and [endp] are defined, and are needed in the future if the code that
-       lies ahead of us involves a jump to a [reduce] subroutine that needs
-       these registers. The registers [semv] and [startp] are not needed. *)
-    (*need_list [lexer; lexbuf; token; state; endp] ;*)
-    (* If the state [s] has a default reduction of production [prod], then jump
-       to the subroutine that reduces this production. *)
-    match Default.has_default_reduction s with
-    | Some (prod, _) ->
-        jump (Reduce prod)
-    | None ->
-        (* If the state [s] has no default reduction, then perform a case
-           analysis of the current token [token]. The branches involve (shift)
-           transitions, reductions, and (possibly) a default branch that
-           triggers an error. *)
-        case_token token (fun branch default ->
-            (* Transitions. *)
-            Lr1.transitions s
-            |> SymbolMap.remove (Symbol.T Terminal.error)
-            |> SymbolMap.iter (fun symbol s' ->
-                   match symbol with
-                   | Symbol.T tok ->
-                       (* A transition of [s] along [tok] to [s']. *)
-                       assert (not (Terminal.pseudo tok)) ;
-                       (* Use a pattern that recognizes the token [tok] and
-                          binds [semv] to its semantic value. *)
-                       branch
-                         (TokSingle (tok, semv))
-                         (fun () ->
-                           (* Log that we are shifting. *)
-                           log "Shifting (%s) to state %d" (Terminal.print tok)
-                             (number s') ;
-                           (* The subroutine [run s'] does not need the current
-                              token [token] and is responsible for obtaining its
-                              start and end positions [startp] and [endp] from
-                              [lexbuf], so, besides [lexer] and [lexbuf], we
-                              transmit only the registers [state] and [semv]. *)
-                           jump (Run s'))
-                   | Symbol.N _ ->
-                       ()) ;
-            (* Reductions. *)
-            Lr1.reductions s
-            |> TerminalMap.remove Terminal.error
-            |> Lr0.invert
-            |> ProductionMap.iter (fun prod toks ->
-                   (* A reduction of [prod] on every token in the set [toks]. *)
-                   branch (TokMultiple toks) (fun () -> jump (Reduce prod))) ;
-            (* A default branch. *)
-            default die)
-
-  (* ------------------------------------------------------------------------ *)
-
-  (* Code for the [reduce] subroutine associated with production [prod]. *)
-
-  let reduce stack_type prod needlist successor_need_startpos
-      successor_need_endpos =
-    (* The array [ids] lists the identifiers that are bound by this production.
-       These identifiers can be referred to by the semantic action. *)
-    let ids = Production.identifiers prod and n = Array.length stack_type in
-    assert (Array.length ids = n) ;
-    (* The register [state] is defined by a [pop] instruction that follows,
-       unless this is an epsilon production, in which case [state] is needed
-       (i.e., it must be provided by the caller). *)
-    let is_epsilon = n = 0 in
-    (* The register [endp] is also defined by the instructions that follow,
-       unless this is an epsilon production or the semantic action refers to
-       [beforeendp] -- in either of these cases, [endp] is needed (i.e., it must
-       be provided by the caller). *)
-    let has_beforeend =
-      (not (Production.is_start prod))
-      &&
-      let action = Production.action prod in
-      Action.has_beforeend action
-    in
-    (* Thus, we initially need the following registers. *)
-    let _needed_registers =
-      (lexer :: lexbuf :: token :: MList.if1 is_epsilon state)
-      @ MList.if1 (is_epsilon || has_beforeend) endp
-    in
-    need_routine needlist ;
-    (* need_list needlist ; *)
-    (* Pop [n] stack cells and store their content in suitable registers.
-       The state stored in the bottom cell (the one that is popped last)
-       is stored in the register [state] and thus becomes the new current
-       state. *)
-    for i = n - 1 downto 0 do
-      let cell_info = stack_type.(i) in
-      let pop_list =
-        MList.if1 cell_info.hold_state (if i = 0 then PReg state else PWildcard)
-        @ MList.if1 cell_info.hold_semv (PReg ids.(i))
-        @ MList.if1 cell_info.hold_startpos (PReg (startpos ids i))
-        @ MList.if1 cell_info.hold_endpos (PReg (endpos ids i))
-      in
-      if pop_list <> [] then pop (PTuple pop_list) ;
-      (* If there is no semantic value in the stack, then it is of type unit
-         and we need to define it ourselves *)
-      if not cell_info.hold_semv then def (PReg ids.(i)) VUnit
-    done ;
-    (* If this is a start production, then reducing this production means
-       accepting. This is done via a [return] instruction, which ends the
-       execution of the program. *)
-    if Production.is_start prod then (
-      assert (n = 1) ;
-      log "Accepting" ;
-      return (VReg ids.(0))
-      (* If this is not a start production, then it has a semantic action. *) )
-    else
-      let action = Production.action prod in
-      (* Log that we are reducing production [prod]. *)
-      log "Reducing production %s" (Production.print prod) ;
-      (* Define [beforeendp], if needed by the semantic action. Define
-         [startp] and [endp], which may be needed by the semantic action,
-         and are later needed by [goto]. *)
-      if Action.has_beforeend action then move beforeendp endp ;
-      let need_startpos =
-        successor_need_startpos && (is_epsilon || stack_type.(0).hold_startpos)
-      in
-      let need_endpos =
-        successor_need_endpos && (is_epsilon || stack_type.(n - 1).hold_endpos)
-      in
-      if need_startpos then move startp (if n = 0 then endp else startpos ids 0) ;
-      if need_endpos then move endp (if n = 0 then endp else endpos ids (n - 1)) ;
-      (* We now need the registers [lexer], [lexbuf], [token], [state],
-         [startp], [endp], plus whatever registers are needed by the
-         semantic action. *)
-      (*need
-        (List.fold_right RegisterSet.add
-           ( [lexer; lexbuf; token; state]
-             @ List.if1 need_startpos startp
-             @ List.if1 need_endpos endp )
-           (Action.vars action)) ; TODO restore *)
-      (* Execute the semantic action. Store its result in [semv]. *)
-      prim semv (Block.Prim.action action) ;
-      (* Execute a goto transition. *)
-      jump (Goto (Production.nt prod))
-
-  (* ------------------------------------------------------------------------ *)
-
-  (* Code for the [goto] subroutine associated with nonterminal symbol [nt]. *)
-
-  let goto nt needlist pushlist cell =
-    need_routine needlist ;
-    (* If it is up to this [goto] subroutine to push a new cell onto the stack,
-       then do so now. If not, then it will be done by the [run] subroutine to
-       which we are about to jump. *)
-    if gotopushes nt then push (VTuple (vregs pushlist)) cell ;
-    (* Perform a case analysis on the current state [state]. In each branch,
-       jump to an appropriate new state. There is no default branch. Although a
-       default branch may need to be later added in order to avoid a warning
-       from the OCaml compiler, this default branch is dead. *)
-    case_tag state (fun branch ->
-        Lr1.targets
-          (fun () sources target ->
-            (* If the current state is a member of [sources], jump to [target]. *)
-            branch (TagMultiple (numbers sources)) (fun () -> jump (Run target)))
-          () (Symbol.N nt))
-
-  (* ------------------------------------------------------------------------ *)
   let optimize_stack = Settings.optimize_stack
 
   let top_stack_type word =
@@ -509,12 +290,15 @@ module L = struct
     if optimize_stack then
       Invariant.fold_top
         (fun holds_state symbol ->
-          MList.if1 holds_state state
-          @ MList.if1 (CodePieces.has_semv symbol) semv
-          @ MList.if1 (Invariant.startp symbol) startp
-          @ MList.if1 (Invariant.endp symbol) endp)
+          MList.(
+            if1 holds_state state
+            @ if1 (CodePieces.has_semv symbol) semv
+            @ if1 (Invariant.startp symbol) startp
+            @ if1 (Invariant.endp symbol) endp))
         [] (Invariant.gotostack nt)
     else [state; semv; startp; endp]
+
+  let run_represent_state s = (not optimize_stack) || Invariant.represented s
 
   (** List of values needed by run routine associated to state [s]*)
   let run_needlist s =
@@ -558,6 +342,10 @@ module L = struct
     let ids = Production.identifiers prod in
     let n = Array.length ids in
     let is_epsilon = n = 0 in
+    (* The register [endp] is also defined by the instructions that follow,
+       unless this is an epsilon production or the semantic action refers to
+       [beforeendp] -- in either of these cases, [endp] is needed (i.e., it must
+       be provided by the caller). *)
     let has_beforeend =
       (not (Production.is_start prod))
       &&
@@ -590,17 +378,6 @@ module L = struct
     in
     (pushlist, cell)
 
-  (*if optimize_stack then
-      Invariant.fold_top
-        (fun holds_state symbol ->
-          List.if1 holds_state state
-          @ List.if1 (CodePieces.has_semv symbol) semv
-          @ List.if1 (Invariant.startp symbol) startp
-          @ List.if1 (Invariant.endp symbol) endp)
-        [state; semv; startp; endp]
-        (Invariant.gotostack nt)
-    else [state; semv; startp; endp]*)
-
   (** Values pushed on the stack by the run routine associated to state [s].
      Only used if [runpushes s] is true. *)
   let run_pushlist s : string list * cell_info =
@@ -630,6 +407,221 @@ module L = struct
     let len = Array.length st in
     if len = 0 then [||] else Array.sub st 0 (len - n_pushes)
 
+  (* ------------------------------------------------------------------------ *)
+
+  (* Code for the [run] subroutine associated with the state [s].
+     represent_state tell whether to gener*)
+
+  let run s =
+    let represent_state = run_represent_state s in
+    (* Determine whether this is an initial state. *)
+    let is_start = Lr1.is_start s in
+    (* Determine whether the start and end positions of the current token
+       should be read from [lexbuf]. *)
+    let must_read_positions = must_read_positions_upon_entering s in
+    (* Determine whether a new cell must be pushed onto the stack. *)
+    let must_push = runpushes s in
+    (* A sanity check: [must_read_positions] implies [must_push]. Indeed,
+       the sole reason why we read these positions is that we must push
+       a new cell. *)
+
+    (* The reverse implication is not true. If this state is entered via
+       a goto transition, then [must_push] may be true or false, whereas
+       [must_read_positions] is false. *)
+    assert ((not must_read_positions) || must_push) ;
+    (* Determine whether the lexer should be queried for the next token. *)
+    let must_query_lexer = must_query_lexer_upon_entering s in
+    (* At this point, the registers [lexer] and [lexbuf] are definitely needed.
+       The register [token] is needed unless we are about to query the lexer for
+       a new token. The registers [state] and [semv] are needed if we are
+       expected to push a cell onto the stack. The registers [startp] and [endp]
+       are needed unless this is an initial state or we are about to read these
+       positions from [lexbuf]. (Actually, more precisely, [startp] is not needed
+       if [must_push] is false. [endp] may still be needed even in that case.) *)
+
+    (* Note that it is not essential that the list of needed registers be tight.
+       This list could contain registers which are in fact not needed. It is
+       good practice to keep it as tight as possible, though, as this documents
+       the code that we produce (and allows us to benefit from a runtime
+       well-formedness test). *)
+    routine_need (run_needlist s) ;
+    (* need_list needlist ; *)
+    (* Log that we are entering state [s]. *)
+    log "State %d:" (number s) ;
+    (* If necessary, read the positions of the current token from [lexbuf]. *)
+    if must_read_positions then (
+      prim startp (PrimOCamlFieldAccess (VReg lexbuf, "Lexing.lex_start_p")) ;
+      prim endp (PrimOCamlFieldAccess (VReg lexbuf, "Lexing.lex_curr_p")) ) ;
+    (* Note that [state] does not contain the state [s]; instead, it contains a
+       predecessor state. *)
+
+    (* If [run] is expected to push a new cell onto the stack, do so now. *)
+    ( if must_push then
+      let pushlist, pushcell = run_pushlist s in
+      if pushlist <> [] then push (VTuple (vregs pushlist)) pushcell ) ;
+    (* Define the current state to be [s]. *)
+    if represent_state then def (PReg state) (VTag (number s)) ;
+    (* If necessary, query the lexer for the next token, and rebind [token].
+       This is done by calling [discard], a global function that is defined
+       directly in IL code, outside StackLang. *)
+    if must_query_lexer then
+      prim token (PrimOCamlCall (discard, [VReg lexer; VReg lexbuf])) ;
+    (* If this is a start state, define [endp], in case it is needed later on.
+       This is unlikely, yet it may be needed if the start state can reduce a
+       production whose semantic action uses the keyword [$endpos($0)]. *)
+    if is_start then prim endp PrimOCamlDummyPos ;
+    (* At this point, the registers [lexer], [lexbuf], and [token] are defined,
+       and are needed in the future, except perhaps in the very special case
+       where this state has a default reduction on [#]. The registers [state]
+       and [endp] are defined, and are needed in the future if the code that
+       lies ahead of us involves a jump to a [reduce] subroutine that needs
+       these registers. The registers [semv] and [startp] are not needed. *)
+    (*need_list [lexer; lexbuf; token; state; endp] ;*)
+    (* If the state [s] has a default reduction of production [prod], then jump
+       to the subroutine that reduces this production. *)
+    match Default.has_default_reduction s with
+    | Some (prod, _) ->
+        jump (Reduce prod)
+    | None ->
+        (* If the state [s] has no default reduction, then perform a case
+           analysis of the current token [token]. The branches involve (shift)
+           transitions, reductions, and (possibly) a default branch that
+           triggers an error. *)
+        case_token token (fun branch default ->
+            (* Transitions. *)
+            Lr1.transitions s
+            |> SymbolMap.remove (Symbol.T Terminal.error)
+            |> SymbolMap.iter (fun symbol s' ->
+                   match symbol with
+                   | Symbol.T tok ->
+                       (* A transition of [s] along [tok] to [s']. *)
+                       assert (not (Terminal.pseudo tok)) ;
+                       (* Use a pattern that recognizes the token [tok] and
+                          binds [semv] to its semantic value. *)
+                       branch
+                         (TokSingle (tok, semv))
+                         (fun () ->
+                           (* Log that we are shifting. *)
+                           log "Shifting (%s) to state %d" (Terminal.print tok)
+                             (number s') ;
+                           (* The subroutine [run s'] does not need the current
+                              token [token] and is responsible for obtaining its
+                              start and end positions [startp] and [endp] from
+                              [lexbuf], so, besides [lexer] and [lexbuf], we
+                              transmit only the registers [state] and [semv]. *)
+                           jump (Run s'))
+                   | Symbol.N _ ->
+                       ()) ;
+            (* Reductions. *)
+            Lr1.reductions s
+            |> TerminalMap.remove Terminal.error
+            |> Lr0.invert
+            |> ProductionMap.iter (fun prod toks ->
+                   (* A reduction of [prod] on every token in the set [toks]. *)
+                   branch (TokMultiple toks) (fun () -> jump (Reduce prod))) ;
+            (* A default branch. *)
+            default die)
+
+  (* ------------------------------------------------------------------------ *)
+
+  (* Code for the [reduce] subroutine associated with production [prod]. *)
+
+  let reduce stack_type prod =
+    let successor_need_startpos = reduce_successor_need_startpos prod in
+    let successor_need_endpos = reduce_successor_need_endpos prod in
+    (* The array [ids] lists the identifiers that are bound by this production.
+       These identifiers can be referred to by the semantic action. *)
+    let ids = Production.identifiers prod and n = Array.length stack_type in
+    assert (Array.length ids = n) ;
+    (* The register [state] is defined by a [pop] instruction that follows,
+       unless this is an epsilon production, in which case [state] is needed
+       (i.e., it must be provided by the caller). *)
+    let is_epsilon = n = 0 in
+    (* The register [endp] is also defined by the instructions that follow,
+       unless this is an epsilon production or the semantic action refers to
+       [beforeendp] -- in either of these cases, [endp] is needed (i.e., it must
+       be provided by the caller). *)
+    let needlist = reduce_needlist prod in
+    routine_need needlist ;
+    (* need_list needlist ; *)
+    (* Pop [n] stack cells and store their content in suitable registers.
+       The state stored in the bottom cell (the one that is popped last)
+       is stored in the register [state] and thus becomes the new current
+       state. *)
+    for i = n - 1 downto 0 do
+      let cell_info = stack_type.(i) in
+      let pop_list =
+        MList.if1 cell_info.hold_state (if i = 0 then PReg state else PWildcard)
+        @ MList.if1 cell_info.hold_semv (PReg ids.(i))
+        @ MList.if1 cell_info.hold_startpos (PReg (startpos ids i))
+        @ MList.if1 cell_info.hold_endpos (PReg (endpos ids i))
+      in
+      if pop_list <> [] then pop (PTuple pop_list) ;
+      (* If there is no semantic value in the stack, then it is of type unit
+         and we need to define it ourselves *)
+      if not cell_info.hold_semv then def (PReg ids.(i)) VUnit
+    done ;
+    (* If this is a start production, then reducing this production means
+       accepting. This is done via a [return] instruction, which ends the
+       execution of the program. *)
+    if Production.is_start prod then (
+      assert (n = 1) ;
+      log "Accepting" ;
+      return (VReg ids.(0))
+      (* If this is not a start production, then it has a semantic action. *) )
+    else
+      let action = Production.action prod in
+      (* Log that we are reducing production [prod]. *)
+      log "Reducing production %s" (Production.print prod) ;
+      (* Define [beforeendp], if needed by the semantic action. Define
+         [startp] and [endp], which may be needed by the semantic action,
+         and are later needed by [goto]. *)
+      if Action.has_beforeend action then move beforeendp endp ;
+      let need_startpos =
+        successor_need_startpos && (is_epsilon || stack_type.(0).hold_startpos)
+      in
+      let need_endpos =
+        successor_need_endpos && (is_epsilon || stack_type.(n - 1).hold_endpos)
+      in
+      if need_startpos then move startp (if n = 0 then endp else startpos ids 0) ;
+      if need_endpos then move endp (if n = 0 then endp else endpos ids (n - 1)) ;
+      (* We now need the registers [lexer], [lexbuf], [token], [state],
+         [startp], [endp], plus whatever registers are needed by the
+         semantic action. *)
+      (*need
+        (List.fold_right RegisterSet.add
+           ( [lexer; lexbuf; token; state]
+             @ List.if1 need_startpos startp
+             @ List.if1 need_endpos endp )
+           (Action.vars action)) ; TODO restore *)
+      (* Execute the semantic action. Store its result in [semv]. *)
+      prim semv (Primitive.action action) ;
+      (* Execute a goto transition. *)
+      jump (Goto (Production.nt prod))
+
+  (* ------------------------------------------------------------------------ *)
+
+  (* Code for the [goto] subroutine associated with nonterminal symbol [nt]. *)
+
+  let goto nt needlist pushlist cell =
+    routine_need needlist ;
+    (* If it is up to this [goto] subroutine to push a new cell onto the stack,
+       then do so now. If not, then it will be done by the [run] subroutine to
+       which we are about to jump. *)
+    if gotopushes nt then push (VTuple (vregs pushlist)) cell ;
+    (* Perform a case analysis on the current state [state]. In each branch,
+       jump to an appropriate new state. There is no default branch. Although a
+       default branch may need to be later added in order to avoid a warning
+       from the OCaml compiler, this default branch is dead. *)
+    case_tag state (fun branch ->
+        Lr1.targets
+          (fun () sources target ->
+            (* If the current state is a member of [sources], jump to [target]. *)
+            branch (TagMultiple (numbers sources)) (fun () -> jump (Run target)))
+          () (Symbol.N nt))
+
+  (* ------------------------------------------------------------------------ *)
+
   let states =
     let states = ref TagMap.empty in
     Lr1.iter (fun s ->
@@ -651,31 +643,22 @@ module L = struct
   let code label =
     match label with
     | Run s ->
-        ( match Lr1.is_start_or_exit s with
-        | None ->
-            ()
-        | Some nonterminal ->
-            set_final_type (Nonterminal.ocamltype_of_start_symbol nonterminal)
-        ) ;
-        set_stack_type @@ filter_stack @@ stack_type_run s ;
-        let pushlist, cell = run_pushlist s in
+        Option.iter
+          (fun nonterminal ->
+            routine_final_type (Nonterminal.ocamltype_of_start_symbol nonterminal))
+          (Lr1.is_start_or_exit s) ;
+        routine_stack_type @@ filter_stack @@ stack_type_run s ;
         run s
-          ((not optimize_stack) || Invariant.represented s)
-          (run_needlist s) pushlist cell
     | Reduce prod ->
-        ( match Grammar.Production.classify prod with
-        | None ->
-            ()
-        | Some nonterminal ->
-            set_final_type (Nonterminal.ocamltype_of_start_symbol nonterminal)
-        ) ;
+        Option.iter
+          (fun nonterminal ->
+            routine_final_type (Nonterminal.ocamltype_of_start_symbol nonterminal))
+          (Grammar.Production.classify prod) ;
         let stack_type = stack_type_reduce prod in
-        set_stack_type @@ filter_stack stack_type ;
-        reduce stack_type prod (reduce_needlist prod)
-          (reduce_successor_need_startpos prod)
-          (reduce_successor_need_endpos prod)
+        routine_stack_type @@ filter_stack stack_type ;
+        reduce stack_type prod
     | Goto nt ->
-        set_stack_type @@ filter_stack @@ stack_type_goto nt ;
+        routine_stack_type @@ filter_stack @@ stack_type_goto nt ;
         let pushlist, cell = goto_pushlist nt in
         goto nt (goto_needlist nt) pushlist cell
 

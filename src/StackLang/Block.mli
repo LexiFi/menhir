@@ -90,8 +90,3 @@ val typed_block :
   -> t
   -> t
 
-module Prim : sig
-  type t = primitive
-
-  val action : ?bindings:bindings -> action -> t
-end

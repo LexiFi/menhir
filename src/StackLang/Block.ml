@@ -173,9 +173,3 @@ let typed_block stack_type needed_registers has_case_tag ?final_type ?name block
   ITypedBlock
     {stack_type; needed_registers; has_case_tag; final_type; name; block}
 
-module Prim = struct
-  type t = primitive
-
-  let action ?(bindings = Bindings.empty) action =
-    PrimOCamlAction (bindings, action)
-end
