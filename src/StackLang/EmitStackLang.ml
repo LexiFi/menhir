@@ -15,7 +15,9 @@ open Printf
 open Grammar
 
 let prefix = CodeBits.prefix
+
 let if1, ifn = MList.(if1, ifn)
+
 let number = Lr1.number
 
 let numbers = List.map number
