@@ -27,25 +27,28 @@ type state =
 
 let current : state ref =
   ref Idle
-let current_stack_type : cell_info array option ref =
-  ref None
-let current_final_type : Stretch.ocamltype option ref =
-  ref None
-let current_needed : RegisterSet.t option ref =
+
+let routine_stack_type : cell_info array option ref =
   ref None
 
-let current_has_case_tag : bool ref =
+let routine_final_type : Stretch.ocamltype option ref =
+  ref None
+
+let routine_needed : RegisterSet.t option ref =
+  ref None
+
+let routine_has_case_tag : bool ref =
   ref false
 
 let typed_exec (body : unit -> unit) =
   current := Open identity ;
-  current_stack_type := None ;
-  current_final_type := None ;
-  current_needed := None ;
-  current_has_case_tag := false ;
+  routine_stack_type := None ;
+  routine_final_type := None ;
+  routine_needed := None ;
+  routine_has_case_tag := false ;
   body () ;
-  let has_case_tag = !current_has_case_tag in
-  match !current, !current_stack_type, !current_needed  with
+  let has_case_tag = !routine_has_case_tag in
+  match (!current, !routine_stack_type, !routine_needed) with
   | Idle, _, _ ->
       (* This cannot happen, I think. *)
       assert false
@@ -54,23 +57,20 @@ let typed_exec (body : unit -> unit) =
          been properly ended by calling [die], [return], [jump], or a case
          analysis construction. *)
       assert false
-  | _, None, _ | _, _, None   ->
-    (* The user must specifiy the type of a block
-    *)
-    assert false
+  | _, None, _ ->
+      (* The user must specifiy the type of a block *)
+      assert false
+  | _, _, None ->
+      (* The user must specifiy the needed registers of a block *)
+      assert false
   | Closed block, Some stack_type, Some needed_registers ->
-      let final_type = !current_final_type in
+      let final_type = !routine_final_type in
       current := Idle ;
-      current_stack_type := None ;
-      current_final_type := None ;
-      current_needed := None ;
-      current_has_case_tag := false ;
-      { block
-      ; stack_type
-      ; final_type
-      ; needed_registers
-      ; has_case_tag
-      ; name= None}
+      routine_stack_type := None ;
+      routine_final_type := None ;
+      routine_needed := None ;
+      routine_has_case_tag := false ;
+      {block; stack_type; final_type; needed_registers; has_case_tag; name= None}
 
 let exec (body : unit -> unit) =
   current := Open identity ;
@@ -87,7 +87,6 @@ let exec (body : unit -> unit) =
   | Closed block ->
       current := Idle;
       block
-
 
 let extend g =
   match !current with
@@ -122,16 +121,17 @@ let close i =
          construction. *)
       assert false
 
-let set_stack_type typ =
-  current_stack_type := Some typ
+let routine_stack_type typ =
+  routine_stack_type := Some typ
 
-let set_final_type typ =
-    current_final_type := Some typ
+let routine_final_type typ =
+  routine_final_type := Some typ
 
-let set_needed needed =
-  current_needed := Some (RegisterSet.of_list needed)
-let need rs =
-  extend (fun block -> INeed (rs, block))
+let routine_need needed =
+  routine_needed := Some (RegisterSet.of_list needed)
+
+let need regs =
+  extend (fun block -> INeed (regs, block))
 
 let need_list rs =
   need (RegisterSet.of_list rs)
@@ -143,13 +143,7 @@ let pop p =
   extend (fun block -> IPop (p, block))
 
 let def p v =
-  (* In order to avoid unnecessary clutter, we eliminate a definition of
-     the form [def x = x] on the fly. *)
-  match p, v with
-  | PReg dst, VReg src when dst = src ->
-      ()
-  | _, _ ->
-      extend (fun block -> IDef (p, v, block))
+  extend (fun block -> Block.sdef p v block)
 
 let move dst src =
   def (PReg dst) (VReg src)
@@ -170,7 +164,7 @@ let return r =
   close (IReturn r)
 
 let jump l =
-  close (IJump l)
+  close (Block.jump l)
 
 let tokens tokpat =
   match tokpat with
@@ -210,16 +204,16 @@ let case_token r cases =
   close (ICaseToken (r, branches, default))
 
 let case_tag r cases =
-  current_has_case_tag := true;
+  routine_has_case_tag := true;
   let saved = !current in
   let branches = ref [] in
   let def_branch pat body = branches := (pat, exec body) :: !branches in
   cases def_branch;
   let branches = List.rev !branches in
-  current := saved;
   (* There used to be an optimisation that does not perform the match if there
      is only one branch. However this does not work : we need to uncover type
      information here *)
+  current := saved;
   close (ICaseTag (r, branches))
 
 module Build (L : sig
@@ -235,7 +229,6 @@ struct
 
   let code (label : label) =
     typed_exec (fun () -> code label)
-
 
   let cfg =
     ref LabelMap.empty

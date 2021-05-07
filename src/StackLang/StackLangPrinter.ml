@@ -37,11 +37,11 @@ let rec value v =
       OCaml.tuple (map value vs)
   | VUnit -> label "UNIT"
 
-let substitution substitution =
-  Substitution.fold
+let bindings bds =
+  Bindings.fold
     ( fun reg value' acc ->
-        nl ^^ (register reg) ^^ string " := " ^^ (value value') ^^ acc )
-    substitution
+        nl ^^ (register reg) ^^ string " <- " ^^ (value value') ^^ acc )
+    bds
     empty
 
 let ocamltype =
@@ -93,17 +93,15 @@ let primitive p =
   match p with
   | PrimOCamlCall (f, rs) ->
       string f ^^ concat (map (fun r -> space ^^ value r) rs)
-  | PrimOCamlFieldAccess (r, f) ->
-      utf8format "%s.%s" r f
+  | PrimOCamlFieldAccess (v, f) ->
+      value v ^^ dot ^^ string f
   | PrimOCamlDummyPos ->
       utf8format "<dummy position>"
-  | PrimSubstOcamlAction (subst, _) ->
-    string "("
-    ^^ substitution subst
-    ^^ utf8format "<semantic action>"
-    ^^ string ")"
-  | PrimOCamlAction _ ->
-      utf8format "<semantic action>"
+  | PrimOCamlAction (bs, _) ->
+      string "("
+      ^^ bindings bs
+      ^^ utf8format "<semantic action>"
+      ^^ string ")"
 
 let tokpat pat =
   match pat with
@@ -146,10 +144,10 @@ and block b =
       nl ^^ string "PUSH " ^^ value v ^^
       block b
   | IPop (p, b) ->
-      nl ^^ string "POP  " ^^ pattern p ^^
+      nl ^^ string "POP " ^^ pattern p ^^
       block b
-  | IDef (p, v, b) ->
-      nl ^^ string "DEF  " ^^ pattern p ^^ string " = " ^^ value v ^^
+  | IDef (bs, b) ->
+      nl ^^ string "DEF " ^^ bindings bs ^^
       block b
   | IPrim (r, p, b) ->
       nl ^^ string "PRIM " ^^ register r ^^ string " = " ^^ primitive p ^^
@@ -165,9 +163,6 @@ and block b =
   | IReturn v ->
       nl ^^ string "RET  " ^^ value v
   | IJump l ->
-      nl ^^ string "JUMP " ^^ label l
-  | ISubstitutedJump (l, sub) ->
-      nl ^^ string "SUBST" ^^ substitution sub ^^
       nl ^^ string "JUMP " ^^ label l
   | ICaseToken (r, branches, default) ->
       nl ^^ string "CASE " ^^ register r ^^ string " OF" ^^
@@ -235,10 +230,10 @@ let print_pattern =
 let pattern_to_string =
   to_string pattern
 
-let print_substitution =
-  to_channel substitution
-let substitution_to_string  =
-  to_string substitution
+let print_bindings =
+  to_channel bindings
+let bindings_to_string  =
+  to_string bindings
 
 let print_block =
   to_channel block

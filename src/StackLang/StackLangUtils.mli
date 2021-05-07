@@ -19,8 +19,6 @@ val entry_labels : program -> registers
 val needed : typed_block -> RegisterSet.t
 (** Returns the set of needed registers from a typed block. *)
 
-val value_registers : value -> registers
-(** Returns the set of register that appear in a value *)
 
 val branch_iter : ('a -> 'b) -> 'c * 'a -> 'b
 

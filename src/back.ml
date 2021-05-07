@@ -11,6 +11,8 @@
 (*                                                                            *)
 (******************************************************************************)
 
+open Printf
+
 (* Driver for the back-end. *)
 
 (* The automaton is now frozen and will no longer be modified. It is
@@ -94,6 +96,29 @@ let write program =
 
 let () = if Settings.cmly then Cmly_write.write (Settings.base ^ ".cmly")
 
+let handle_stacklang_error program
+    StackLangTraverse.{context; culprit; message; state_relevance} =
+  let open StackLang in
+  let open StackLangUtils in
+  let states = StackLang.(program.states) in
+  let cfg = StackLang.(program.cfg) in
+  eprintf "\n%s\n" message ;
+  eprintf "Culprit :\n" ;
+  StackLangPrinter.print_block stderr culprit ;
+  eprintf "\nContext :\n" ;
+  let context = lookup context cfg in
+  StackLangPrinter.print_tblock stderr context ;
+  ( match culprit with
+  | IJump label ->
+      eprintf "\nWhile jumping to %s \n" label ;
+      let block = lookup label cfg in
+      StackLangPrinter.print_tblock stderr block
+  | _ ->
+      () ) ;
+  if state_relevance then (
+    eprintf "\nStates:\n" ;
+    StackLangPrinter.print_states stderr states )
+
 (* Construct and print the code using an appropriate back-end. *)
 
 let () =
@@ -112,36 +137,27 @@ let () =
       CodeInliner.inline C.program) ;
     Interface.write Front.grammar () )
   else
-    (* try *)
-      let module SL = EmitStackLang.Run () in
-      let program = SL.program in
-      StackLangTraverse.wf program ;
-      let program = StackLangInline.inline program in
-      (* let program = StackLangTransform.optimize program in *)
-      StackLangTraverse.wf program ;
-      (* StackLangTraverse.wt program ; *)
-      if Settings.stacklang_dump then (
-        StackLangPrinter.print stdout program ;
-        StackLangTraverse.(print (measure program)) ) ;
-      if Settings.stacklang_graph then StackLangGraph.print program ;
-      if Settings.stacklang_test then StackLangTester.test program ;
-      let program = ILofStackLang.compile program in
-      write program ;
-      Interface.write Front.grammar ()
-    (* with
-    | StackLangTraverse.StackLangError
-        {culprit; context; message; jumping_to; states}
-    ->
-      eprintf "%s\n" message ;
-      eprintf "Culprit :\n" ;
-      StackLangPrinter.print_block stderr culprit ;
-      eprintf "\nContext :\n" ;
-      StackLangPrinter.print_tblock stderr context ;
-      Option.iter (fun label -> eprintf "While jumping to %s." label) jumping_to ;
-      Option.iter
-        (fun states ->
-          eprintf "\nStates:\n" ;
-          StackLangPrinter.print_states stderr states)
-        states *)
+    let module SL = EmitStackLang.Run () in
+    let program = SL.program in
+    ( try
+        StackLangTraverse.wf program ;
+        StackLangTraverse.wt program
+      with StackLangTraverse.StackLangError e ->
+        handle_stacklang_error program e ) ;
+    let program = StackLangInline.inline program in
+    let program = StackLangTransform.optimize program in
+    ( try
+        StackLangTraverse.wf program ;
+        StackLangTraverse.wt program
+      with StackLangTraverse.StackLangError e ->
+        handle_stacklang_error program e ) ;
+    if Settings.stacklang_dump then (
+      StackLangPrinter.print stdout program ;
+      StackLangTraverse.(print (measure program)) ) ;
+    if Settings.stacklang_graph then StackLangGraph.print program ;
+    if Settings.stacklang_test then StackLangTester.test program ;
+    let program = ILofStackLang.compile program in
+    write program ;
+    Interface.write Front.grammar ()
 
 let () = Time.tick "Printing"

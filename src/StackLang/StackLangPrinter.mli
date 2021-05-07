@@ -21,8 +21,8 @@ val to_string: program -> string
 val print_value: out_channel -> value -> unit
 val value_to_string: value -> string
 
-val print_substitution: out_channel -> substitution -> unit
-val substitution_to_string: substitution -> string
+val print_bindings: out_channel -> bindings -> unit
+val bindings_to_string: bindings -> string
 
 val print_tblock: out_channel -> typed_block -> unit
 val tblock_to_string: typed_block -> string

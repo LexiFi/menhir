@@ -13,32 +13,29 @@
 
 open StackLang
 
-exception
-  StackLangError of
-    { context: typed_block
-    ; culprit: block
-    ; message: string
-    ; jumping_to: label option
-    ; states: state_info TagMap.t option }
+type error =
+  {context: label; culprit: block; message: string; state_relevance: bool}
 
+exception StackLangError of error
+
+val wf : program -> unit
 (** [wf program] checks that the program [program] contains no references to
    undefined registers. This check is in principle unnecessary, but can be a
    useful debugging aid. *)
-val wf: program -> unit
 
+val wt : program -> unit
 (** [wt program] checks that no impossible pop is performed and that ITypedBlock
     have correct [stack_type] annotations. *)
-val wt: program -> unit
 
 type measure
 
+val measure : program -> measure
 (** [measure program] computes instruction counts for the program [program].
    [print_measure m] prints this information. It is intended to be used for
    debugging and engineering purposes. *)
-val measure: program -> measure
 
-val print: measure -> unit
+val print : measure -> unit
 
-val get_args_map: block RegisterMap.t -> register list RegisterMap.t
+val get_args_map : block RegisterMap.t -> register list RegisterMap.t
 
-val test: unit -> unit
+val test : unit -> unit
