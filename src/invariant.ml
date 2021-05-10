@@ -265,11 +265,16 @@ let () =
 let () =
   Nonterminal.iter (fun nt ->
     let count =
+      (* Counting distinct targets *)
       Lr1.targets (fun count _ _ ->
         count + 1
       ) 0 (Symbol.N nt)
     in
-    if count > 1 then
+    if Nonterminal.print false nt = "RPAREN " then
+      Printf.printf "\n\nFOOO : %s; count=%i\n\n" (Nonterminal.print false nt) count ;
+    (*if count = 0 then
+      Printf.printf "\n\nFOOO : %s\n\n" (Nonterminal.print false nt) ;*)
+    if count >= 1 then
       Lr1.targets (fun () sources _ ->
         List.iter represent sources
       ) () (Symbol.N nt)
