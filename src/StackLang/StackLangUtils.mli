@@ -25,7 +25,7 @@ val branch_map : ('a -> 'b) -> 'c * 'a -> 'c * 'b
 
 val value_refers_to_register : register -> value -> bool
 
-val state_info_intersection : state_info IntMap.t -> tag list -> state_info
+val state_info_intersection : state_info TagMap.t -> tag list -> state_info
 (** [state_info_intersection states tags] d *)
 
 val filter_stack : cell_info array -> cell_info array
