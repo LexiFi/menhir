@@ -54,7 +54,7 @@ val routine_stack_type : cell_info array -> unit
 val routine_final_type : Stretch.ocamltype -> unit
 (** Set the final type of the ro1utine *)
 
-val routine_need : register list -> unit
+val routine_need : registers -> unit
 (** Set the needed registers of the routine *)
 
 (* Each of the functions in the first group extends a code block that is

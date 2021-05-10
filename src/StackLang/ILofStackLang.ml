@@ -24,7 +24,7 @@ let fstack = prefix "stack"
 
 let discard = prefix "discard"
 
-let statecon s = dataprefix (sprintf "State%d" s)
+let statecon s = dataprefix (sprintf "State%s" (S.string_of_tag s))
 
 let estatecon s = EData (statecon s, [])
 

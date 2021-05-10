@@ -448,7 +448,7 @@ let wt_knowncells_routine program label (t_block : typed_block) =
           fail label block message );
         let known_cells = MArray.pop known_cells in
         (* If the state is shadowed, then it becomes unknown. *)
-        let sync = if pattern_shadow_state pattern then Unsynced 0 else sync in
+        let sync = if pattern_shadow_state pattern then Synced 0 else sync in
         wtkc_block known_cells sync block' )
       ~def:(fun bindings block ->
         (* If the state variable is redefined, then matching on the state will
@@ -595,15 +595,21 @@ let ( := ) pat value = Block.sdef pat value
 
 open Block
 
+let t0 = tag_of_int 0
+
+let t1 = tag_of_int 1
+
+let t2 = tag_of_int 2
+
 let good1 =
   let c_cell = Cell.make ~typ:(Stretch.Inferred "c") true true false false in
   let b_cell = Cell.make ~typ:(Stretch.Inferred "b") true true false false in
   let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
   let states =
     TagMap.of_list
-      [ (0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
-      ; (1, { sfinal_type = None; known_cells = [| c_cell |] })
-      ; (2, { sfinal_type = None; known_cells = [||] })
+      [ (t0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
+      ; (t1, { sfinal_type = None; known_cells = [| c_cell |] })
+      ; (t2, { sfinal_type = None; known_cells = [||] })
       ]
   in
   let cfg =
@@ -617,12 +623,12 @@ let good1 =
           ; block =
               case_tag
                 state_reg
-                [ [ 0 ]
+                [ [ t0 ]
                   => pop (PTuple [ PReg "b"; PReg state_reg ])
                      @@ pop (PReg "a")
                      @@ die
-                ; [ 1 ] => pop (PReg "c") @@ die
-                ; [ 2 ] => die
+                ; [ t1 ] => pop (PReg "c") @@ die
+                ; [ t2 ] => die
                 ]
           } )
       ; ( "g"
@@ -632,7 +638,7 @@ let good1 =
           ; name = None
           ; needed_registers = RegisterSet.empty
           ; block =
-              (PReg state_reg := VTag 0)
+              (PReg state_reg := VTag t0)
               @@ (PReg "b" := VUnit)
               @@ push (VReg "b") b_cell
               @@ jump "f"
@@ -648,9 +654,9 @@ let good2 =
   let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
   let states =
     TagMap.of_list
-      [ (0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
-      ; (1, { sfinal_type = None; known_cells = [| c_cell; b_cell |] })
-      ; (2, { sfinal_type = None; known_cells = [||] })
+      [ (t0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
+      ; (t1, { sfinal_type = None; known_cells = [| c_cell; b_cell |] })
+      ; (t2, { sfinal_type = None; known_cells = [||] })
       ]
   in
   let cfg =
@@ -669,7 +675,7 @@ let good2 =
           ; has_case_tag = false
           ; name = None
           ; needed_registers = RegisterSet.empty
-          ; block = case_tag state_reg [ [ 0; 1 ] => jump "f" ]
+          ; block = case_tag state_reg [ [ t0; t1 ] => jump "f" ]
           } )
       ]
   in
@@ -682,9 +688,9 @@ let good_sync =
   let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
   let states =
     TagMap.of_list
-      [ (0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
-      ; (1, { sfinal_type = None; known_cells = [| c_cell |] })
-      ; (2, { sfinal_type = None; known_cells = [||] })
+      [ (t0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
+      ; (t1, { sfinal_type = None; known_cells = [| c_cell |] })
+      ; (t2, { sfinal_type = None; known_cells = [||] })
       ]
   in
   let cfg =
@@ -698,12 +704,12 @@ let good_sync =
           ; block =
               case_tag
                 state_reg
-                [ [ 0 ]
+                [ [ t0 ]
                   => pop (PTuple [ PReg "b"; PReg state_reg ])
                      @@ pop (PReg "a")
                      @@ die
-                ; [ 1 ] => pop (PReg "c") @@ die
-                ; [ 2 ] => die
+                ; [ t1 ] => pop (PReg "c") @@ die
+                ; [ t2 ] => die
                 ]
           } )
       ; ( "g"
@@ -713,7 +719,7 @@ let good_sync =
           ; name = None
           ; needed_registers = RegisterSet.empty
           ; block =
-              (PReg state_reg := VTag 0)
+              (PReg state_reg := VTag t0)
               @@ (PReg "b" := VUnit)
               @@ push VUnit a_cell
               @@ push (VReg "b") b_cell
@@ -737,9 +743,9 @@ let bad_shadow_state =
   let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
   let states =
     TagMap.of_list
-      [ (0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
-      ; (1, { sfinal_type = None; known_cells = [| c_cell |] })
-      ; (2, { sfinal_type = None; known_cells = [||] })
+      [ (t0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
+      ; (t1, { sfinal_type = None; known_cells = [| c_cell |] })
+      ; (t2, { sfinal_type = None; known_cells = [||] })
       ]
   in
   let cfg =
@@ -751,15 +757,15 @@ let bad_shadow_state =
           ; name = None
           ; needed_registers = RegisterSet.of_list [ state_reg ]
           ; block =
-              (PReg state_reg := VTag 0)
+              (PReg state_reg := VTag t0)
               @@ case_tag
                    state_reg
-                   [ [ 0 ]
+                   [ [ t0 ]
                      => pop (PTuple [ PReg "b"; PReg state_reg ])
                         @@ pop (PReg "a")
                         @@ die
-                   ; [ 1 ] => pop (PReg "c") @@ die
-                   ; [ 2 ] => die
+                   ; [ t1 ] => pop (PReg "c") @@ die
+                   ; [ t2 ] => die
                    ]
           } )
       ; ( "g"
@@ -769,7 +775,7 @@ let bad_shadow_state =
           ; name = None
           ; needed_registers = RegisterSet.empty
           ; block =
-              (PReg state_reg := VTag 0)
+              (PReg state_reg := VTag t0)
               @@ (PReg "b" := VUnit)
               @@ push (VReg "b") b_cell
               @@ jump "f"
@@ -787,9 +793,9 @@ let bad_sync =
   let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
   let states =
     TagMap.of_list
-      [ (0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
-      ; (1, { sfinal_type = None; known_cells = [| c_cell |] })
-      ; (2, { sfinal_type = None; known_cells = [||] })
+      [ (t0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
+      ; (t1, { sfinal_type = None; known_cells = [| c_cell |] })
+      ; (t2, { sfinal_type = None; known_cells = [||] })
       ]
   in
   let cfg =
@@ -803,12 +809,12 @@ let bad_sync =
           ; block =
               case_tag
                 state_reg
-                [ [ 0 ]
+                [ [ t0 ]
                   => pop (PTuple [ PReg "b"; PReg state_reg ])
                      @@ pop (PReg "a")
                      @@ die
-                ; [ 1 ] => pop (PReg "c") @@ die
-                ; [ 2 ] => die
+                ; [ t1 ] => pop (PReg "c") @@ die
+                ; [ t2 ] => die
                 ]
           } )
       ; ( "g"
@@ -818,7 +824,7 @@ let bad_sync =
           ; name = None
           ; needed_registers = RegisterSet.empty
           ; block =
-              (PReg state_reg := VTag 0)
+              (PReg state_reg := VTag t0)
               @@ (PReg "b" := VUnit)
               @@ push (VReg "b") b_cell
               @@ jump "f"
@@ -835,9 +841,9 @@ let bad_pop =
   let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
   let states =
     TagMap.of_list
-      [ (0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
-      ; (1, { sfinal_type = None; known_cells = [| c_cell |] })
-      ; (2, { sfinal_type = None; known_cells = [||] })
+      [ (t0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
+      ; (t1, { sfinal_type = None; known_cells = [| c_cell |] })
+      ; (t2, { sfinal_type = None; known_cells = [||] })
       ]
   in
   let cfg =
@@ -851,13 +857,13 @@ let bad_pop =
           ; block =
               case_tag
                 state_reg
-                [ [ 0 ]
+                [ [ t0 ]
                   => pop (PTuple [ PReg "b"; PReg state_reg ])
                      @@ pop (PReg "a")
                      @@ pop (PReg "c")
                      @@ die
-                ; [ 1 ] => pop (PReg "c") die
-                ; [ 2 ] => die
+                ; [ t1 ] => pop (PReg "c") die
+                ; [ t2 ] => die
                 ]
           } )
       ; ( "g"
@@ -867,7 +873,7 @@ let bad_pop =
           ; name = None
           ; needed_registers = RegisterSet.empty
           ; block =
-              (PReg state_reg := VTag 0)
+              (PReg state_reg := VTag t0)
               @@ (PReg "b" := VUnit)
               @@ push (VReg "b") b_cell
               @@ jump "f"
@@ -883,9 +889,9 @@ let bad_push =
   let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
   let states =
     TagMap.of_list
-      [ (0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
-      ; (1, { sfinal_type = None; known_cells = [| c_cell |] })
-      ; (2, { sfinal_type = None; known_cells = [||] })
+      [ (t0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
+      ; (t1, { sfinal_type = None; known_cells = [| c_cell |] })
+      ; (t2, { sfinal_type = None; known_cells = [||] })
       ]
   in
   let cfg =
@@ -896,7 +902,7 @@ let bad_push =
           ; has_case_tag = false
           ; name = None
           ; needed_registers = RegisterSet.empty
-          ; block = push (VTuple [ VReg "b"; VTag 0 ]) b_cell @@ die
+          ; block = push (VTuple [ VReg "b"; VTag t0 ]) b_cell @@ die
           } )
       ]
   in
@@ -912,9 +918,9 @@ let bad_final =
   let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
   let states =
     TagMap.of_list
-      [ (0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
-      ; (1, { sfinal_type = None; known_cells = [| c_cell |] })
-      ; (2, { sfinal_type = None; known_cells = [||] })
+      [ (t0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
+      ; (t1, { sfinal_type = None; known_cells = [| c_cell |] })
+      ; (t2, { sfinal_type = None; known_cells = [||] })
       ]
   in
   let cfg =
@@ -926,7 +932,7 @@ let bad_final =
           ; name = None
           ; needed_registers = RegisterSet.empty
           ; block =
-              (PReg state_reg := VTag 0)
+              (PReg state_reg := VTag t0)
               @@ (PReg "b" := VUnit)
               @@ push (VReg "b") b_cell
               @@ typed_block
@@ -935,12 +941,12 @@ let bad_final =
                    true
                    (case_tag
                       state_reg
-                      [ [ 0 ]
+                      [ [ t0 ]
                         => pop (PTuple [ PReg "b"; PReg state_reg ])
                            @@ pop (PReg "a")
                            @@ return (VReg "a")
-                      ; [ 1 ] => pop (PReg "c") die
-                      ; [ 2 ] => die
+                      ; [ t1 ] => pop (PReg "c") die
+                      ; [ t2 ] => die
                       ] )
           } )
       ]
@@ -948,7 +954,7 @@ let bad_final =
   { cfg; entry = StringMap.empty; states }
 
 
-(* Illegal because in the [0] branch, we gain knowledge of the final type, but
+(* Illegal because in the [t0] branch, we gain knowledge of the final type, but
    this knowledge is discarded by the typed block that follows and then we
    return, which requires the discarded knowledge. *)
 let bad_final_2 =
@@ -958,9 +964,9 @@ let bad_final_2 =
   let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
   let states =
     TagMap.of_list
-      [ (0, { sfinal_type = Some a_type; known_cells = [| a_cell; b_cell |] })
-      ; (1, { sfinal_type = None; known_cells = [| c_cell |] })
-      ; (2, { sfinal_type = None; known_cells = [||] })
+      [ (t0, { sfinal_type = Some a_type; known_cells = [| a_cell; b_cell |] })
+      ; (t1, { sfinal_type = None; known_cells = [| c_cell |] })
+      ; (t2, { sfinal_type = None; known_cells = [||] })
       ]
   in
   let cfg =
@@ -974,7 +980,7 @@ let bad_final_2 =
           ; block =
               case_tag
                 state_reg
-                [ [ 0 ]
+                [ [ t0 ]
                   => typed_block
                        [||]
                        (RegisterSet.of_list [ state_reg ])
@@ -987,7 +993,7 @@ let bad_final_2 =
   { cfg; entry = StringMap.empty; states }
 
 
-(* Illegal because in the [0] branch of [g], we gain knowledge of the final type, but
+(* Illegal because in the [t0] branch of [g], we gain knowledge of the final type, but
    this knowledge is discarded by the typed block that follows and then we
    jump to [f], which requires the discarded knowledge. *)
 let bad_final_3 =
@@ -1014,7 +1020,7 @@ let bad_final_3 =
           ; block =
               case_tag
                 state_reg
-                [ [ 0 ]
+                [ [ t0 ]
                   => typed_block
                        [||]
                        (RegisterSet.of_list [ state_reg ])
@@ -1026,9 +1032,9 @@ let bad_final_3 =
   in
   let states =
     TagMap.of_list
-      [ (0, { sfinal_type = Some a_type; known_cells = [| a_cell; b_cell |] })
-      ; (1, { sfinal_type = None; known_cells = [| c_cell |] })
-      ; (2, { sfinal_type = None; known_cells = [||] })
+      [ (t0, { sfinal_type = Some a_type; known_cells = [| a_cell; b_cell |] })
+      ; (t1, { sfinal_type = None; known_cells = [| c_cell |] })
+      ; (t2, { sfinal_type = None; known_cells = [||] })
       ]
   in
   { cfg; entry = StringMap.empty; states }
@@ -1061,9 +1067,9 @@ let bad_final_4 =
   in
   let states =
     TagMap.of_list
-      [ (0, { sfinal_type = Some a_type; known_cells = [| a_cell; b_cell |] })
-      ; (1, { sfinal_type = None; known_cells = [| c_cell |] })
-      ; (2, { sfinal_type = None; known_cells = [||] })
+      [ (t0, { sfinal_type = Some a_type; known_cells = [| a_cell; b_cell |] })
+      ; (t1, { sfinal_type = None; known_cells = [| c_cell |] })
+      ; (t2, { sfinal_type = None; known_cells = [||] })
       ]
   in
   { cfg; entry = StringMap.empty; states }

@@ -253,7 +253,7 @@ and exec_casetag state tag branches =
   | _ :: branches ->
       exec_casetag state tag branches
   | [] ->
-      error "nonexhaustive case analysis on a tag (%d)" tag
+      error "nonexhaustive case analysis on a tag (%s)" (string_of_tag tag)
 
 
 (* -------------------------------------------------------------------------- *)
