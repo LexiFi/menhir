@@ -14,6 +14,6 @@
 (* The main program. *)
 
 (* Everything is in [Back]. *)
-
+let () = Test.run ()
 module B = Back (* artificial dependency *)
 
