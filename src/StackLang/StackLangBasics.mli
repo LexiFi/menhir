@@ -1,31 +1,30 @@
 type register = string
 
+(** A tag is an integer value. A tag can be used to encode a state of an LR
+   automaton. *)
+type tag
+
 module RegisterSet = StringSet
 module RegisterMap = StringMap
-module TagMap = MMap.Make (Int)
 
-module TagSet = struct
-  include Set.Make (Int)
+module TagMap : MMap.S with type key = tag
 
-  let all = of_list (List.init (Lr1.n + 1) Fun.id)
+module TagSet : sig
+  include Set.S with type elt = tag
 
-  let to_string set =
-    Printf.sprintf
-      "{%s}"
-      (String.concat "; " (List.map string_of_int (elements set)))
+  val all : t
+
+  val to_string : t -> string
 end
 
 type registers = RegisterSet.t
 
-(** A tag is an integer value. A tag can be used to encode a state of an LR
-   automaton. *)
-type tag = int
+val string_of_tag : tag -> string
 
-let string_of_tag = string_of_int
+val tag_of_node : Lr1.node -> tag
 
-let tag_of_node = Lr1.number
-
-let tag_of_int = Fun.id
+val tag_of_int : int -> tag
+(** Unsafe : only for testing purposes *)
 
 (** A code label is identified by its name. *)
 type label = string
