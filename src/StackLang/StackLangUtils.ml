@@ -17,7 +17,7 @@ let lookup label map =
 
 let lookup_tag tag states = TagMap.find tag states
 
-let lookup_state state states = lookup_tag (Lr1.number state) states
+let lookup_state state states = lookup_tag (tag_of_node state) states
 
 let entry_labels program = StringMap.domain program.entry
 
@@ -117,25 +117,27 @@ let rec is_pattern_equivalent_to_value pattern value =
 (* -------------------------------------------------------------------------- *)
 (* Testing *)
 
+let t1 = tag_of_int 1
+
 let test_is_pattern_equivalent_to_value () =
   assert (
     is_pattern_equivalent_to_value
       PWildcard
-      (VTuple [ VTag 1; VReg "a"; VTuple [ VTag 1; VReg "b" ] ]) );
+      (VTuple [ VTag t1; VReg "a"; VTuple [ VTag t1; VReg "b" ] ]) );
   assert (
     is_pattern_equivalent_to_value
       (PTuple [ PWildcard; PReg "a"; PTuple [ PWildcard; PReg "b" ] ])
-      (VTuple [ VTag 1; VReg "a"; VTuple [ VTag 1; VReg "b" ] ]) );
+      (VTuple [ VTag t1; VReg "a"; VTuple [ VTag t1; VReg "b" ] ]) );
   assert (
     not
     @@ is_pattern_equivalent_to_value
          (PTuple [ PWildcard; PReg "a"; PTuple [ PReg "c"; PReg "b" ] ])
-         (VTuple [ VTag 1; VReg "a"; VTuple [ VTag 1; VReg "b" ] ]) );
+         (VTuple [ VTag t1; VReg "a"; VTuple [ VTag t1; VReg "b" ] ]) );
   assert (
     not
     @@ is_pattern_equivalent_to_value
          (PTuple [ PWildcard; PReg "a"; PTuple [ PReg "b" ] ])
-         (VTuple [ VTag 1; VReg "a"; VTuple [ VTag 1; VReg "b" ] ]) )
+         (VTuple [ VTag t1; VReg "a"; VTuple [ VTag t1; VReg "b" ] ]) )
 
 
 let test_cells_intersection () =
