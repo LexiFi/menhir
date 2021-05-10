@@ -100,6 +100,9 @@
 
 ## Minor suggestions for enhancements
 
+* Let `--compare-errors` produce a list of error messages that is sorted
+  by location.
+
 * Would it make sense to *not* report conflicts on the `error` token?
   Or to report them but consider them acceptable even in `--strict` mode?
   (I think so. Or maybe distinguish `--strict` and `--strict-except-on-error`.)
