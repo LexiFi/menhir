@@ -101,42 +101,42 @@ type block =
      block. It indicates which registers are expected to be defined at this
      point, and it un-defines any registers that are not explicitly listed. *)
   | INeed of registers * block
-  (* [IPush] pushes a value onto the stack. [IPop] pops a value off the stack.
-     [IDef] can be viewed as a sequence of a push and a pop. It can be used to
-     move data between registers or to load a value into a register. *)
   | IPush of value * cell_info * block
-  | IPop of pattern * block
+      (** [IPush] pushes a value onto the stack. *)
+  | IPop of pattern * block  (** [IPop] pops a value off the stack. *)
   | IDef of bindings * block
-  (* [IPrim] invokes a primitive operation and stores its result in a register. *)
+      (** [IDef] can be viewed as a sequence of a push and a pop. It can be used
+          to move data between registers or to load a value into a register. *)
   | IPrim of register * primitive * block
-  (* [ITrace] logs a message on [stderr]. *)
-  | ITrace of string * block
-  (* [IComment] is a comment. *)
-  | IComment of string * block
+      (** [IPrim] invokes a primitive operation and stores its result in a
+          register. *)
+  | ITrace of string * block  (** [ITrace] logs a message on [stderr]. *)
+  | IComment of string * block  (** [IComment] is a comment. *)
   (* Group 2: Instructions with zero successor. *)
-  (* [IDie] causes an abrupt termination of the program. It is translated into
-     OCaml by raising the exception [Error]. *)
   | IDie
-  (* [IReturn] causes the normal termination of the program. A value is returned. *)
+      (** [IDie] causes an abrupt termination of the program. It is translated
+          into OCaml by raising the exception [Error]. *)
   | IReturn of value
-  (* [IJump] causes a jump to a routine identified by its label. The registers
-     that are needed by the destination block must form a subset of the
-     registers that are defined at the point of the jump. *)
+      (** [IReturn] causes the normal termination of the program. A value is
+          returned. *)
   | IJump of label
+      (** [IJump] causes a jump to a routine identified by its label. The
+          registers that are needed by the destination block must form a subset
+          of the registers that are defined at the point of the jump. *)
   (* Group 3: Case analysis instructions. *)
-  (* [ICaseToken] performs a case analysis on a token (which is held in a
-     register). It carries a list of branches, each of which is guarded by
-     a pattern, and an optional default branch. *)
   | ICaseToken of register * (tokpat * block) list * block option
-  (* [ICaseTag] performs a case analysis on a tag (which is held in a
-     register). It carries a list of branches, each of which is guarded by
-     a pattern. There is no default branch; it is up to the user to ensure
-     that the case analysis is exhaustive. *)
+      (** [ICaseToken] performs a case analysis on a token (which is held in a
+          register). It carries a list of branches, each of which is guarded by
+          a pattern, and an optional default branch. *)
   | ICaseTag of register * (tagpat * block) list
-  (* ITypedBlock introduces a typed block in the middle of a routine.
-     This is used to inline a routine in another without loosing type
-     information. *)
+      (** [ICaseTag] performs a case analysis on a tag (which is held in a
+          register). It carries a list of branches, each of which is guarded by
+          a pattern. There is no default branch; it is up to the user to ensure
+          that the case analysis is exhaustive. *)
   | ITypedBlock of typed_block
+      (** ITypedBlock introduces a typed block in the middle of a routine.
+          This is used to inline a routine in another without loosing type
+          information. *)
 
 (** A typed block is a block annotated with information :
     The known suffixes of the stack, the final type returned by the block, the
