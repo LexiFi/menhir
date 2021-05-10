@@ -17,14 +17,14 @@ open Infix
 
 module SSymbols = StackSymbols.Run ()
 
-let number = Lr1.number
-
-let numbers = List.map number
-
 open StackLang
 open StackLangUtils
 open StackLangBuilder
 open NamingConventions
+
+let tag = tag_of_node
+
+let tags = List.map tag
 
 (* -------------------------------------------------------------------------- *)
 
@@ -139,7 +139,6 @@ let every_run_pops nt =
    no penalty. Otherwise, we choose "run pushes" everywhere. *)
 
 let gotopushes : Nonterminal.t -> bool =
-  (*fun _ -> false*)
   if Settings.optimize_for_code_size
   then Nonterminal.tabulate (fun nt -> not (every_run_pops nt))
   else fun _nt -> false
@@ -207,19 +206,8 @@ let top_stack_type word =
         ; hold_startpos = Invariant.startp symbol
         ; hold_endpos = Invariant.endp symbol
         }
-      else
-        { typ
-        ; hold_state = true
-        ; hold_semv = true
-        ; hold_startpos = true
-        ; hold_endpos = true
-        } )
-    { typ = None
-    ; hold_state = true
-    ; hold_semv = true
-    ; hold_startpos = true
-    ; hold_endpos = true
-    }
+      else Cell.full typ )
+    (Cell.full None)
     word
 
 
@@ -278,10 +266,10 @@ let goto_needendpos nt =
 
 
 (* Values needed by the goto associated to Nonterminal [nt] *)
-let goto_needlist nt =
+let goto_need nt =
   (* The [run] subroutines that we call are reached via goto transitions,
      therefore do not query the lexer. This means that [token] is needed. *)
-  [ lexer; lexbuf; token ]
+  ( [ lexer; lexbuf; token ]
   @
   if optimize_stack
   then
@@ -294,13 +282,14 @@ let goto_needlist nt =
           @ if1 (Invariant.endp symbol) endp) )
       []
       (Invariant.gotostack nt)
-  else [ state; semv; startp; endp ]
+  else [ state; semv; startp; endp ] )
+  |> RegisterSet.of_list
 
 
 let run_represent_state s = (not optimize_stack) || Invariant.represented s
 
 (** List of values needed by run routine associated to state [s]*)
-let run_needlist s =
+let run_need s =
   let is_start = Lr1.is_start s in
   (* Determine whether the start and end positions of the current token
      should be read from [lexbuf]. *)
@@ -308,7 +297,7 @@ let run_needlist s =
   (* Determine whether a new cell must be pushed onto the stack. *)
   let must_push = runpushes s in
   let must_query_lexer = must_query_lexer_upon_entering s in
-  lexer :: lexbuf :: MList.if1 (not must_query_lexer) token
+  ( lexer :: lexbuf :: MList.if1 (not must_query_lexer) token
   @ MList.if1 (must_push && has_semantic_value s) semv
   @
   if optimize_stack
@@ -329,7 +318,8 @@ let run_needlist s =
   else
     MList.if1 must_push state
     @ MList.if1 ((not (is_start || must_read_positions)) && must_push) startp
-    @ MList.if1 (not (is_start || must_read_positions)) endp
+    @ MList.if1 (not (is_start || must_read_positions)) endp )
+  |> RegisterSet.of_list
 
 
 let reduce_successor_need_startpos prod =
@@ -342,7 +332,7 @@ let reduce_successor_need_endpos prod =
   && ((not optimize_stack) || goto_needendpos (Production.nt prod))
 
 
-let reduce_needlist prod =
+let reduce_need prod =
   let ids = Production.identifiers prod in
   let n = Array.length ids in
   let is_epsilon = n = 0 in
@@ -356,7 +346,7 @@ let reduce_needlist prod =
     let action = Production.action prod in
     Action.has_beforeend action
   in
-  if optimize_stack
+  ( if optimize_stack
   then
     [ lexer; lexbuf; token ]
     @ MList.if1 is_epsilon state
@@ -370,12 +360,13 @@ let reduce_needlist prod =
   else
     [ lexer; lexbuf; token ]
     @ MList.if1 is_epsilon state
-    @ MList.if1 (is_epsilon || has_beforeend) endp
+    @ MList.if1 (is_epsilon || has_beforeend) endp )
+  |> RegisterSet.of_list
 
 
 (** Values pushed on the stack by the goto routine associated to nonterminal
       [nt]. Only used if [gotopushes nt] is true. *)
-let goto_pushlist nt =
+let goto_pushtuple nt =
   let ({ hold_state; hold_semv; hold_startpos; hold_endpos } as cell) =
     top_stack_type (Invariant.gotostack nt)
   in
@@ -390,7 +381,7 @@ let goto_pushlist nt =
 
 (** Values pushed on the stack by the run routine associated to state [s].
      Only used if [runpushes s] is true. *)
-let run_pushlist s : string list * cell_info =
+let run_pushtuple s : string list * cell_info =
   let ({ hold_state; hold_semv; hold_startpos; hold_endpos } as cell) =
     top_stack_type (Invariant.stack s)
   in
@@ -458,7 +449,7 @@ module L = struct
         then
           states
           @:= TagMap.add
-                (Lr1.number s)
+                (tag s)
                 { known_cells = filter_stack @@ stack_type_state s
                 ; sfinal_type =
                     ( match Lr1.is_start_or_exit s with
@@ -514,10 +505,9 @@ module L = struct
        good practice to keep it as tight as possible, though, as this documents
        the code that we produce (and allows us to benefit from a runtime
        well-formedness test). *)
-    routine_need (run_needlist s);
-    (* need_list needlist ; *)
+    routine_need (run_need s);
     (* Log that we are entering state [s]. *)
-    log "State %d:" (number s);
+    log "State %d:" (Lr1.number s);
     (* If necessary, read the positions of the current token from [lexbuf]. *)
     if must_read_positions
     then (
@@ -530,10 +520,10 @@ module L = struct
     (* If [run] is expected to push a new cell onto the stack, do so now. *)
     ( if must_push
     then
-      let pushlist, pushcell = run_pushlist s in
+      let pushlist, pushcell = run_pushtuple s in
       if pushlist <> [] then push (VTuple (vregs pushlist)) pushcell );
     (* Define the current state to be [s]. *)
-    if represent_state then def (PReg state) (VTag (number s));
+    if represent_state then def (PReg state) (VTag (tag s));
     (* If necessary, query the lexer for the next token, and rebind [token].
        This is done by calling [discard], a global function that is defined
        directly in IL code, outside StackLang. *)
@@ -580,7 +570,7 @@ module L = struct
                            log
                              "Shifting (%s) to state %d"
                              (Terminal.print tok)
-                             (number s');
+                             (Lr1.number s');
                            (* The subroutine [run s'] does not need the current
                               token [token] and is responsible for obtaining its
                               start and end positions [startp] and [endp] from
@@ -624,9 +614,7 @@ module L = struct
        unless this is an epsilon production or the semantic action refers to
        [beforeendp] -- in either of these cases, [endp] is needed (i.e., it must
        be provided by the caller). *)
-    let needlist = reduce_needlist prod in
-    routine_need needlist;
-    (* need_list needlist ; *)
+    routine_need (reduce_need prod);
     (* Pop [n] stack cells and store their content in suitable registers.
        The state stored in the bottom cell (the one that is popped last)
        is stored in the register [state] and thus becomes the new current
@@ -673,12 +661,13 @@ module L = struct
       (* We now need the registers [lexer], [lexbuf], [token], [state],
          [startp], [endp], plus whatever registers are needed by the
          semantic action. *)
-      (*need
-        (List.fold_right RegisterSet.add
-           ( [lexer; lexbuf; token; state]
-             @ List.if1 need_startpos startp
-             @ List.if1 need_endpos endp )
-           (Action.vars action)) ; TODO restore *)
+      need
+        (List.fold_right
+           RegisterSet.add
+           ( [ lexer; lexbuf; token; state ]
+           @ MList.if1 need_startpos startp
+           @ MList.if1 need_endpos endp )
+           (Action.vars action) );
       (* Execute the semantic action. Store its result in [semv]. *)
       prim semv (Primitive.action action);
       (* Execute a goto transition. *)
@@ -689,23 +678,25 @@ module L = struct
 
   (* Code for the [goto] subroutine associated with nonterminal symbol [nt]. *)
 
-  let goto nt needlist pushlist cell =
-    routine_need needlist;
+  let goto nt =
+    routine_need (goto_need nt);
     (* If it is up to this [goto] subroutine to push a new cell onto the stack,
        then do so now. If not, then it will be done by the [run] subroutine to
        which we are about to jump. *)
-    if gotopushes nt then push (VTuple (vregs pushlist)) cell;
-
+    ( if gotopushes nt
+    then
+      let pushlist, cell = goto_pushtuple nt in
+      push (VTuple (vregs pushlist)) cell );
     (* Perform a case analysis on the current state [state]. In each branch,
        jump to an appropriate new state. There is no default branch. Although a
        default branch may need to be later added in order to avoid a warning
        from the OCaml compiler, this default branch is dead. *)
-    case_tag states state (fun branch ->
+    case_tag state (fun branch ->
         Lr1.targets
           (fun () sources target ->
             (* If the current state is a member of [sources], jump to [target]. *)
             branch
-              (TagMultiple (numbers sources))
+              (TagMultiple (tags sources))
               begin
                 fun () ->
                 jump (Run target)
@@ -736,8 +727,7 @@ module L = struct
         reduce stack_type prod
     | Goto nt ->
         routine_stack_type @@ filter_stack @@ stack_type_goto nt;
-        let pushlist, cell = goto_pushlist nt in
-        goto nt (goto_needlist nt) pushlist cell
+        goto nt
 
 
   (* The entry points. *)
