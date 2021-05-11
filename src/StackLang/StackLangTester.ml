@@ -15,8 +15,7 @@ open Printf
 open Grammar
 open StackLang
 
-let debug =
-  false
+let debug = false
 
 (* -------------------------------------------------------------------------- *)
 
@@ -35,6 +34,7 @@ let print_outcome = function
   | Overshoot ->
       "reads past the end of the input stream"
 
+
 (* -------------------------------------------------------------------------- *)
 
 (* [run interpret sentence] uses the interpreter [interpret] to parse the
@@ -49,6 +49,7 @@ let run interpret sentence : outcome =
       Rejected
   | exception Interpret.EndOfStream ->
       Overshoot
+
 
 (* -------------------------------------------------------------------------- *)
 
@@ -82,6 +83,7 @@ let test program nt sentence =
     exit 1
   end
 
+
 (* -------------------------------------------------------------------------- *)
 
 (* [test program nt sentence] tests the program [program] with the start
@@ -93,13 +95,13 @@ let test program nt sentence =
    guarantee that the grammar is capable of generating sentences of arbitrary
    sizes. *)
 
-let m, n, threshold = 100, 1000, 100
+let m, n, threshold = (100, 1000, 100)
 
 let test program nt =
   (* Sample sentences of increasing sizes, picking at most [m] sentences
      of each size, until a total of [n] sentences is reached or the size
      threshold is reached. *)
-  let count, size = ref 0, ref 0 in
+  let count, size = (ref 0, ref 0) in
   while !count < n && !size < threshold do
     for _ = 1 to m do
       let sentence = RandomSentenceGenerator.nonterminal nt !size in
@@ -109,8 +111,13 @@ let test program nt =
     incr size
   done;
   (* Log a success message. *)
-  if debug then
-    eprintf "StackLangTester: Tested %d sentences of length up to %d.\n" !count (!size - 1)
+  if debug
+  then
+    eprintf
+      "StackLangTester: Tested %d sentences of length up to %d.\n"
+      !count
+      (!size - 1)
+
 
 (* -------------------------------------------------------------------------- *)
 
@@ -118,10 +125,11 @@ let test program nt =
 
 let test program =
   (* For each start symbol [nt], test this entry point. *)
-  Lr1.entry |> ProductionMap.iter begin fun _prod s ->
-    let nt = Lr1.nt_of_entry s in
-    test program nt
-  end
+  Lr1.entry
+  |> ProductionMap.iter (fun _prod s ->
+         let nt = Lr1.nt_of_entry s in
+         test program nt )
+
 
 (* -------------------------------------------------------------------------- *)
 
@@ -129,6 +137,4 @@ let test program =
    then we skip this test, because the new code back-end does not
    yet have any error-handling code. *)
 
-let test program =
-  if not grammar_uses_error_token then
-    test program
+let test program = if not grammar_uses_error_token then test program
