@@ -14,11 +14,9 @@
 open Printf
 open StackLang
 
-let branch_iter f (_pat, block) =
-  f block
+let branch_iter f (_pat, block) = f block
 
-let branch_map f (pat, block) =
-  (pat, f block)
+let branch_map f (pat, block) = (pat, f block)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -28,22 +26,21 @@ let branch_map f (pat, block) =
 let wf_regs label rs rs' =
   (* Check that [rs'] is a subset of [rs]. *)
   let stray = RegisterSet.diff rs' rs in
-  if not (RegisterSet.is_empty stray) then begin
+  if not (RegisterSet.is_empty stray)
+  then begin
     eprintf
       "StackLang: in block %s, reference to undefined register%s:\n  %s\n"
       label
       (if RegisterSet.cardinal stray > 1 then "s" else "")
-      (RegisterSet.print stray)
-    ;
+      (RegisterSet.print stray);
     eprintf
       "StackLang: the following registers are defined:\n  %s\n"
-      (RegisterSet.print rs)
-    ;
+      (RegisterSet.print rs);
     exit 1
   end
 
-let wf_reg label rs r =
-  wf_regs label rs (RegisterSet.singleton r)
+
+let wf_reg label rs r = wf_regs label rs (RegisterSet.singleton r)
 
 let rec wf_value label rs v =
   match v with
@@ -53,6 +50,7 @@ let rec wf_value label rs v =
       wf_reg label rs r
   | VTuple vs ->
       List.iter (wf_value label rs) vs
+
 
 let rec def rs p =
   match p with
@@ -65,10 +63,12 @@ let rec def rs p =
   | PTuple ps ->
       List.fold_left def rs ps
 
+
 let def rs p =
   (* The newly defined registers are the previously defined registers
      plus the registers defined by the pattern [p]. *)
   RegisterSet.union rs (def RegisterSet.empty p)
+
 
 let wf_prim label rs p =
   match p with
@@ -80,6 +80,7 @@ let wf_prim label rs p =
       ()
   | PrimOCamlAction _ ->
       ()
+
 
 (* [wf_block cfg label rs block] checks that the block [block] does not refer
    to an undefined register, under the assumption that the registers [rs] are
@@ -109,8 +110,7 @@ let rec wf_block cfg label rs block =
       wf_prim label rs p;
       let rs = def rs (PReg r) in
       wf_block cfg label rs block
-  | ITrace (_, block)
-  | IComment (_, block) ->
+  | ITrace (_, block) | IComment (_, block) ->
       wf_block cfg label rs block
   | IDie ->
       ()
@@ -128,6 +128,7 @@ let rec wf_block cfg label rs block =
       wf_reg label rs r;
       List.iter (branch_iter (wf_block cfg label rs)) branches
 
+
 and wf_branch cfg label rs (tokpat, block) =
   let rs =
     match tokpat with
@@ -138,13 +139,13 @@ and wf_branch cfg label rs (tokpat, block) =
   in
   wf_block cfg label rs block
 
+
 (* [wf_block cfg label block] checks that the block [block] at address [label]
    does not refer to an undefined register. We assume that the block begins
    with an [INeed] instruction and use this instruction serves as a reference
    to find out which registers are initially defined. *)
 
-let wf_block cfg label block =
-  wf_block cfg label (needed block) block
+let wf_block cfg label block = wf_block cfg label (needed block) block
 
 (* [wf program] checks that the program [program] contains no references to
    undefined registers. *)
@@ -152,6 +153,7 @@ let wf_block cfg label block =
 let wf program =
   LabelMap.iter (wf_block program.cfg) program.cfg;
   Time.tick "Checking the StackLang code for well-formedness"
+
 
 (* -------------------------------------------------------------------------- *)
 
@@ -166,11 +168,10 @@ let rec successors yield block =
   | IDef (_, _, block)
   | IPrim (_, _, block)
   | ITrace (_, block)
-  | IComment (_, block)
-    -> successors yield block
-  | IDie
-  | IReturn _
-    -> ()
+  | IComment (_, block) ->
+      successors yield block
+  | IDie | IReturn _ ->
+      ()
   | IJump label ->
       yield label
   | ICaseToken (_, branches, oblock) ->
@@ -178,6 +179,7 @@ let rec successors yield block =
       Option.iter (successors yield) oblock
   | ICaseTag (_, branches) ->
       List.iter (branch_iter (successors yield)) branches
+
 
 (* -------------------------------------------------------------------------- *)
 
@@ -188,38 +190,35 @@ let rec successors yield block =
    cannot be inlined by the function [inline] that follows. *)
 
 let in_degree program =
-
   (* Initialize a queue and a map of labels to degrees. *)
-  let queue  : label Queue.t = Queue.create()
+  let queue : label Queue.t = Queue.create ()
   and degree : int LabelMap.t ref = ref LabelMap.empty in
 
   (* [tick label] increments the degree associated with [label]. If its
      previous degree was zero, then [label] is enqueued for exploration. *)
   let tick label =
     let d =
-      try
-        LabelMap.find label !degree
-      with Not_found ->
-        Queue.add label queue;
-        0
+      try LabelMap.find label !degree with
+      | Not_found ->
+          Queue.add label queue;
+          0
     in
     degree := LabelMap.add label (d + 1) !degree
   in
 
   (* [visit () label] examines the block at address [label]. *)
-  let visit () label =
-    lookup label program.cfg
-    |> successors tick
-  in
+  let visit () label = lookup label program.cfg |> successors tick in
 
   (* Initialize the queue with the entry labels. Process the queue until it
      becomes empty. Return the final table. *)
-  Lr1.NodeMap.iter (fun _s label ->
-    Queue.add label queue;
-    degree := LabelMap.add label 2 !degree
-  ) program.entry;
+  Lr1.NodeMap.iter
+    (fun _s label ->
+      Queue.add label queue;
+      degree := LabelMap.add label 2 !degree )
+    program.entry;
   Misc.qfold visit () queue;
   !degree
+
 
 (* -------------------------------------------------------------------------- *)
 
@@ -250,33 +249,35 @@ let rec inline_block cfg degree block =
   | IJump label ->
       (* If the target label's in-degree is 1, follow the indirection;
          otherwise, keep the [jump] instruction. *)
-      if lookup label degree = 1 then
-        inline_block cfg degree (lookup label cfg)
-      else
-        IJump label
+      if lookup label degree = 1
+      then inline_block cfg degree (lookup label cfg)
+      else IJump label
   | ICaseToken (r, branches, odefault) ->
-      ICaseToken (
-        r,
-        List.map (branch_map (inline_block cfg degree)) branches,
-        Option.map (inline_block cfg degree) odefault
-      )
+      ICaseToken
+        ( r
+        , List.map (branch_map (inline_block cfg degree)) branches
+        , Option.map (inline_block cfg degree) odefault )
   | ICaseTag (r, branches) ->
       ICaseTag (r, List.map (branch_map (inline_block cfg degree)) branches)
 
-let inline_cfg degree cfg =
-  LabelMap.fold (fun label block accu ->
-    match LabelMap.find label degree with
-    | exception Not_found ->
-        (* An unreachable label. *)
-        accu
-    | d ->
-        assert (d > 0);
-        if d = 1 then accu
-        else LabelMap.add label (inline_block cfg degree block) accu
-  ) cfg LabelMap.empty
 
-let inline degree { cfg; entry } =
-  { cfg = inline_cfg degree cfg; entry }
+let inline_cfg degree cfg =
+  LabelMap.fold
+    (fun label block accu ->
+      match LabelMap.find label degree with
+      | exception Not_found ->
+          (* An unreachable label. *)
+          accu
+      | d ->
+          assert (d > 0);
+          if d = 1
+          then accu
+          else LabelMap.add label (inline_block cfg degree block) accu )
+    cfg
+    LabelMap.empty
+
+
+let inline degree { cfg; entry } = { cfg = inline_cfg degree cfg; entry }
 
 (* [inline program] transforms the program [program] by removing every
    unreachable block and by inlining away every (non-entry) label whose
@@ -287,37 +288,39 @@ let inline program =
   Time.tick "Inlining in StackLang";
   program
 
+
 (* -------------------------------------------------------------------------- *)
 
 (* Measuring the size of a StackLang program. *)
 
-type measure = {
-  mutable push: int;
-  mutable pop: int;
-  mutable def: int;
-  mutable prim: int;
-  mutable trace: int;
-  mutable die: int;
-  mutable return: int;
-  mutable jump: int;
-  mutable casetoken: int;
-  mutable casetag: int;
-  mutable total: int;
-}
+type measure =
+  { mutable push : int
+  ; mutable pop : int
+  ; mutable def : int
+  ; mutable prim : int
+  ; mutable trace : int
+  ; mutable die : int
+  ; mutable return : int
+  ; mutable jump : int
+  ; mutable casetoken : int
+  ; mutable casetag : int
+  ; mutable total : int
+  }
 
-let zero () = {
-  push = 0;
-  pop = 0;
-  def = 0;
-  prim = 0;
-  trace = 0;
-  die = 0;
-  return = 0;
-  jump = 0;
-  casetoken = 0;
-  casetag = 0;
-  total = 0;
-}
+let zero () =
+  { push = 0
+  ; pop = 0
+  ; def = 0
+  ; prim = 0
+  ; trace = 0
+  ; die = 0
+  ; return = 0
+  ; jump = 0
+  ; casetoken = 0
+  ; casetag = 0
+  ; total = 0
+  }
+
 
 let print m =
   let pad i = Misc.padded_index m.total i in
@@ -333,6 +336,7 @@ let print m =
   printf "CASEtag %s\n" (pad m.casetag);
   printf "total   %s\n" (pad m.total);
   ()
+
 
 let rec measure_block m block =
   match block with
@@ -379,7 +383,8 @@ let rec measure_block m block =
       m.casetag <- m.casetag + 1;
       List.iter (branch_iter (measure_block m)) branches
 
+
 let measure program =
-  let m = zero() in
+  let m = zero () in
   LabelMap.iter (fun _ block -> measure_block m block) program.cfg;
   m

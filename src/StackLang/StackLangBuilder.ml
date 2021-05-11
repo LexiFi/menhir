@@ -14,23 +14,20 @@
 module TerminalSet = Grammar.TerminalSet
 open StackLang
 
-let identity x =
-  x
+let identity x = x
 
-let compose f g x =
-  f (g x)
+let compose f g x = f (g x)
 
 type state =
   | Idle
   | Open of (block -> block)
   | Closed of block
 
-let current : state ref =
-  ref Idle
+let current : state ref = ref Idle
 
 let exec (body : unit -> unit) : block =
   current := Open identity;
-  body();
+  body ();
   match !current with
   | Idle ->
       (* This cannot happen, I think. *)
@@ -43,6 +40,7 @@ let exec (body : unit -> unit) : block =
   | Closed block ->
       current := Idle;
       block
+
 
 let extend g =
   match !current with
@@ -59,6 +57,7 @@ let extend g =
          ended by calling [die], [return], [jump], or a case analysis
          construction. *)
       assert false
+
 
 let close i =
   match !current with
@@ -77,47 +76,38 @@ let close i =
          construction. *)
       assert false
 
-let need rs =
-  extend (fun block -> INeed (rs, block))
 
-let need_list rs =
-  need (RegisterSet.of_list rs)
+let need rs = extend (fun block -> INeed (rs, block))
 
-let push v =
-  extend (fun block -> IPush (v, block))
+let need_list rs = need (RegisterSet.of_list rs)
 
-let pop p =
-  extend (fun block -> IPop (p, block))
+let push v = extend (fun block -> IPush (v, block))
+
+let pop p = extend (fun block -> IPop (p, block))
 
 let def p v =
   (* In order to avoid unnecessary clutter, we eliminate a definition of
      the form [def x = x] on the fly. *)
-  match p, v with
+  match (p, v) with
   | PReg dst, VReg src when dst = src ->
       ()
   | _, _ ->
       extend (fun block -> IDef (p, v, block))
 
-let move dst src =
-  def (PReg dst) (VReg src)
 
-let prim r p =
-  extend (fun block -> IPrim (r, p, block))
+let move dst src = def (PReg dst) (VReg src)
 
-let trace s =
-  extend (fun block -> ITrace (s, block))
+let prim r p = extend (fun block -> IPrim (r, p, block))
 
-let comment s =
-  extend (fun block -> IComment (s, block))
+let trace s = extend (fun block -> ITrace (s, block))
 
-let die () =
-  close IDie
+let comment s = extend (fun block -> IComment (s, block))
 
-let return r =
-  close (IReturn r)
+let die () = close IDie
 
-let jump l =
-  close (IJump l)
+let return r = close (IReturn r)
+
+let jump l = close (IJump l)
 
 let tokens tokpat =
   match tokpat with
@@ -126,19 +116,23 @@ let tokens tokpat =
   | TokMultiple toks ->
       toks
 
+
 let tokens branches =
-  List.fold_left (fun accu (tokpat, _) ->
-    TerminalSet.union accu (tokens tokpat)
-  ) TerminalSet.empty branches
+  List.fold_left
+    (fun accu (tokpat, _) -> TerminalSet.union accu (tokens tokpat))
+    TerminalSet.empty
+    branches
+
 
 let exhaustive branches =
   TerminalSet.subset TerminalSet.universe (tokens branches)
+
 
 let case_token r cases =
   (* Save the block under construction. *)
   let saved = !current in
   (* Create a growing list of branches. *)
-  let branches, default = ref [], ref None in
+  let branches, default = (ref [], ref None) in
   (* Define a function that creates a new branch. *)
   let def_branch pat body = branches := (pat, exec body) :: !branches in
   (* Define a function that creates the default branch. *)
@@ -146,7 +140,7 @@ let case_token r cases =
   (* Give the user access to these functions. *)
   cases def_branch def_default;
   (* Retrieve the branches that have been constructed. *)
-  let branches, default = List.rev !branches, !default in
+  let branches, default = (List.rev !branches, !default) in
   (* If the branches cover all terminal symbols, then there is no need
      for a default branch; drop it. *)
   let default = if exhaustive branches then None else default in
@@ -154,6 +148,7 @@ let case_token r cases =
      [ICaseToken] instruction. *)
   current := saved;
   close (ICaseToken (r, branches, default))
+
 
 let case_tag r cases =
   let saved = !current in
@@ -170,35 +165,33 @@ let case_tag r cases =
   | _ ->
       close (ICaseTag (r, branches))
 
+
 module Build (L : sig
   type label
-  val print: label -> string
-  val iter: (label -> unit) -> unit
-  val code: label -> unit
-  val entry: label Lr1.NodeMap.t
-end)
-= struct
 
+  val print : label -> string
+
+  val iter : (label -> unit) -> unit
+
+  val code : label -> unit
+
+  val entry : label Lr1.NodeMap.t
+end) =
+struct
   open L
 
-  let code (label : label) : block =
-    exec (fun () -> code label)
+  let code (label : label) : block = exec (fun () -> code label)
 
-  let cfg =
-    ref LabelMap.empty
+  let cfg = ref LabelMap.empty
 
   let () =
-    iter (fun label ->
-      cfg := LabelMap.add (print label) (code label) !cfg
-    )
+    iter (fun label -> cfg := LabelMap.add (print label) (code label) !cfg)
 
-  let cfg =
-    !cfg
 
-  let entry =
-    Lr1.NodeMap.map print entry
+  let cfg = !cfg
 
-  let program =
-    { cfg; entry }
+  let entry = Lr1.NodeMap.map print entry
 
-end (* Build *)
+  let program = { cfg; entry }
+end
+(* Build *)
