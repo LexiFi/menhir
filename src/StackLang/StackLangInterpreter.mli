@@ -22,10 +22,10 @@ open StackLang
    lexer, and a lexing buffer. The interpreter either succeeds or fails. It
    returns nothing beyond this single bit of information. *)
 
-val interpret:
-  (* program: *) program ->
-  (* entry:   *) label ->
-  (* trace:   *) bool ->
-  (* lexer:   *) (lexbuf -> Terminal.t) ->
-  (* lexbuf:  *) lexbuf ->
-                 unit option
+val interpret :
+     (* program: *) program
+  -> (* entry:   *) label
+  -> (* trace:   *) bool
+  -> (* lexer:   *) (lexbuf -> Terminal.t)
+  -> (* lexbuf:  *) lexbuf
+  -> unit option
