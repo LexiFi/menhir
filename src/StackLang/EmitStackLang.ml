@@ -212,31 +212,30 @@ let top_stack_type word =
 
 
 let stack_type_of_word word =
-  Array.of_list
-  @@ List.rev
-       (Invariant.fold
-          (fun acc hold_state symbol _state_set ->
-            let typ =
-              match symbol with
-              | Symbol.T t ->
-                  Terminal.ocamltype t
-              | Symbol.N nt ->
-                  Nonterminal.ocamltype nt
-            in
-            let cell =
-              if optimize_stack
-              then
-                Cell.make
-                  ?typ
-                  hold_state
-                  (typ <> None)
-                  (Invariant.startp symbol)
-                  (Invariant.endp symbol)
-              else Cell.full typ
-            in
-            cell :: acc )
-          []
-          word )
+  MArray.rev_of_list
+    (Invariant.fold
+       (fun acc hold_state symbol _state_set ->
+         let typ =
+           match symbol with
+           | Symbol.T t ->
+               Terminal.ocamltype t
+           | Symbol.N nt ->
+               Nonterminal.ocamltype nt
+         in
+         let cell =
+           if optimize_stack
+           then
+             Cell.make
+               ?typ
+               hold_state
+               (typ <> None)
+               (Invariant.startp symbol)
+               (Invariant.endp symbol)
+           else Cell.full typ
+         in
+         cell :: acc )
+       []
+       word )
 
 
 let has_semantic_value s =
