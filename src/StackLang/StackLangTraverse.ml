@@ -355,71 +355,78 @@ let update_sync_with_bindings bindings sync =
       assert false
 
 
+let fail_sync label block =
+  let message =
+    sprintf
+      "While checking that there is no match on an out of sync state, in block \
+       %s."
+      label
+  in
+  fail label block message
+
+
+let check_cells label block reason known_cells needed_cells =
+  let fail message =
+    let message =
+      sprintf
+        "While checking %s, in block %s : %s\n\
+         Known cells : %s\n\
+         Needed cells : %s"
+        reason
+        label
+        message
+        (StackLangPrinter.known_cells_to_string known_cells)
+        (StackLangPrinter.known_cells_to_string needed_cells)
+    in
+    fail ~state_relevance:true label block message
+  in
+  let l1 = Array.length known_cells in
+  let l2 = Array.length needed_cells in
+  if l1 < l2
+  then fail @@ sprintf "Could discover %i known cells, but %i are needed." l1 l2;
+  for i = 1 to l2 do
+    if known_cells.(l1 - i) <> needed_cells.(l2 - i)
+    then fail @@ sprintf "Enough cells are known, but their content differ."
+  done
+
+
+let check_state_sync program label block known_cells expected_cells tag =
+  let states = program.states in
+  (* Check that we have enough cells to assert that the state is  *)
+  check_cells
+    label
+    block
+    "state sync"
+    known_cells
+    (lookup_tag tag states).known_cells;
+  check_cells
+    label
+    block
+    "state sync"
+    (lookup_tag tag states).known_cells
+    expected_cells
+
+
+let check_state_sync program label block known_cells expected_cells = function
+  | Unsynced tag ->
+      check_state_sync program label block known_cells expected_cells tag
+  | Synced n when n <> 0 ->
+      fail
+        ~state_relevance:true
+        label
+        block
+        (sprintf
+           "State in sync with %i deep cell when jumping or going in a typed \
+            block."
+           n )
+  | _ ->
+      ()
+
+
 let wt_knowncells_routine program label (t_block : typed_block) =
   let cfg = program.cfg in
   let states = program.states in
-  let fail_sync block =
-    let message =
-      sprintf
-        "While checking that there is no match on an out of sync state, in \
-         block %s."
-        label
-    in
-    fail label block message
-  in
-  let check_cells block reason known_cells needed_cells =
-    let fail message =
-      let message =
-        sprintf
-          "While checking %s, in block %s : %s\n\
-           Known cells : %s\n\
-           Needed cells : %s"
-          reason
-          label
-          message
-          (StackLangPrinter.known_cells_to_string known_cells)
-          (StackLangPrinter.known_cells_to_string needed_cells)
-      in
-      fail ~state_relevance:true label block message
-    in
-    let l1 = Array.length known_cells in
-    let l2 = Array.length needed_cells in
-    if l1 < l2
-    then
-      fail @@ sprintf "Could discover %i known cells, but %i are needed." l1 l2;
-    for i = 1 to l2 do
-      if known_cells.(l1 - i) <> needed_cells.(l2 - i)
-      then fail @@ sprintf "Enough cells are known, but their content differ."
-    done
-  in
-  let check_state_sync block known_cells expected_cells tag =
-    (* Check that we have enough cells to assert that the state is  *)
-    check_cells
-      block
-      "state sync"
-      known_cells
-      (lookup_tag tag states).known_cells;
-    check_cells
-      block
-      "state sync"
-      (lookup_tag tag states).known_cells
-      expected_cells
-  in
-  let check_state_sync block known_cells expected_cells = function
-    | Unsynced tag ->
-        check_state_sync block known_cells expected_cells tag
-    | Synced n when n <> 0 ->
-        fail
-          ~state_relevance:true
-          label
-          block
-          (sprintf
-             "State in sync with %i deep cell when jumping or going in a typed \
-              block."
-             n )
-    | _ ->
-        ()
-  in
+
   (*
   [known_cells]: cells we can pop and pass through a typed_block and a jump
   [extra_known_cells]: Cells on top of the information carried by the state.
@@ -436,7 +443,7 @@ let wt_knowncells_routine program label (t_block : typed_block) =
               ()
           | Some tag ->
               let tag_type = (lookup_tag tag states).known_cells in
-              check_cells block "push" known_cells tag_type );
+              check_cells label block "push" known_cells tag_type );
         let sync =
           match sync with Synced n -> Synced (n + 1) | sync -> sync
         in
@@ -464,10 +471,16 @@ let wt_knowncells_routine program label (t_block : typed_block) =
           (* This checks that the stack is compatible with the state we are
              passing to the routine. This is only needed if we are actually
              passing a state *)
-          check_state_sync block known_cells target.stack_type sync;
+          check_state_sync
+            program
+            label
+            block
+            known_cells
+            target.stack_type
+            sync;
         (* We check that the stack has at least the amount of cells the target
            routine expects *)
-        check_cells block "jump" known_cells target.stack_type )
+        check_cells label block "jump" known_cells target.stack_type )
       ~case_tag:(fun _reg branches ->
         match sync with
         | Synced n ->
@@ -485,13 +498,13 @@ let wt_knowncells_routine program label (t_block : typed_block) =
             in
             List.iter branch_aux branches
         | Unsynced _tag ->
-            fail_sync block )
+            fail_sync label block )
       ~typed_block:(fun { block = block'; stack_type; needed_registers } ->
         (* We check that the stack has at least the number of known cells that
            the type annotation expect. *)
-        check_cells block "typed block" known_cells stack_type;
+        check_cells label block "typed block" known_cells stack_type;
         if RegisterSet.mem state_reg needed_registers
-        then check_state_sync block known_cells stack_type sync;
+        then check_state_sync program label block known_cells stack_type sync;
         (* Inside the typed block, we are only allowed to use the cell from the
            annotation. *)
         let known_cells = stack_type in
@@ -509,69 +522,71 @@ let well_known_cells_typed program =
 (* -------------------------------------------------------------------------- *)
 (* Well-typedness with regard to knownledge of the final type. *)
 
-let well_final_typed_routine program label (t_block : typed_block) =
-  let { cfg; states } = program in
-  let check_final_types reason computed_final_type expected_final_type block =
-    let fail () =
-      let message =
-        sprintf
-          "While checking %s, in block %s : final types differ\n\
-           Computed final type : %s\n\
-           Expected final type : %s"
-          reason
-          label
-          (match computed_final_type with None -> "None" | Some _typ -> "Some")
-          (match expected_final_type with None -> "None" | Some _typ -> "Some")
-      in
-      fail ~state_relevance:true label block message
+let check_final_types label reason computed_final_type expected_final_type block
+    =
+  let fail () =
+    let message =
+      sprintf
+        "While checking %s, in block %s : final types differ\n\
+         Computed final type : %s\n\
+         Expected final type : %s"
+        reason
+        label
+        (match computed_final_type with None -> "None" | Some _typ -> "Some")
+        (match expected_final_type with None -> "None" | Some _typ -> "Some")
     in
-    if computed_final_type <> expected_final_type then fail ()
+    fail ~state_relevance:true label block message
   in
-  (* The rules for being well-typed with regard to the final type are simple :
+  if computed_final_type <> expected_final_type then fail ()
+
+
+(* The rules for being well-typed with regard to the final type are simple :
      - When we return, the final type must be known.
      - When we jump or enter a typed block, we can lose knowledge of the final
        type, but not gain it.
      - We can gain knowledge of the final type either by having it at the start
        of the block, or with a case-tag. *)
-  let rec wft_block final_type block =
-    Block.iter_unit
-      (wft_block final_type)
-      ~return:(fun _value ->
-        match final_type with
-        | None ->
-            fail label block "Tried to return with final type unknown"
-        | Some _ ->
-            () )
-      ~jump:(fun label ->
-        let target = lookup label cfg in
-        match target.final_type with
-        | Some _ as final_type' ->
-            check_final_types "jump" final_type final_type' block
-        | None ->
-            () )
-      ~case_tag:(fun _reg branches ->
-        let branch_aux (TagMultiple taglist, block) =
-          (* By matching on the state, we discover state information.
-             We can enrich the known cells with theses. *)
-          let final_type =
-            (state_info_intersection states taglist).sfinal_type
-          in
-          (* We are matching on a state, therefore state is always needed,
-             and we can discard these values. *)
-          wft_block final_type block
-        in
-        List.iter branch_aux branches )
-      ~typed_block:(fun { block = block'; final_type = final_type' } ->
-        ( match final_type' with
-        | Some _ ->
-            check_final_types "typed block" final_type final_type' block
-        | None ->
-            () );
-        wft_block final_type' block' )
-      block
-  in
+let rec wft_block program label final_type block =
+  let { cfg; states } = program in
+  let check_final_types = check_final_types label in
+  Block.iter_unit
+    (wft_block program label final_type)
+    ~return:(fun _value ->
+      match final_type with
+      | None ->
+          fail label block "Tried to return with final type unknown"
+      | Some _ ->
+          () )
+    ~jump:(fun label ->
+      let target = lookup label cfg in
+      match target.final_type with
+      | Some _ as final_type' ->
+          check_final_types "jump" final_type final_type' block
+      | None ->
+          () )
+    ~case_tag:(fun _reg branches ->
+      let branch_aux (TagMultiple taglist, block) =
+        (* By matching on the state, we discover state information.
+           We can enrich the known cells with theses. *)
+        let final_type = (state_info_intersection states taglist).sfinal_type in
+        (* We are matching on a state, therefore state is always needed,
+           and we can discard these values. *)
+        wft_block program label final_type block
+      in
+      List.iter branch_aux branches )
+    ~typed_block:(fun { block = block'; final_type = final_type' } ->
+      ( match final_type' with
+      | Some _ ->
+          check_final_types "typed block" final_type final_type' block
+      | None ->
+          () );
+      wft_block program label final_type' block' )
+    block
+
+
+let well_final_typed_routine program label (t_block : typed_block) =
   let { block; final_type } = t_block in
-  wft_block final_type block
+  wft_block program label final_type block
 
 
 let well_final_typed program =
