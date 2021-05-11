@@ -23,21 +23,23 @@ open StackLang
 module Build (L : sig
   (* A type of code labels (not necessarily strings). *)
   type label
+
   (* An injection of labels into strings. *)
-  val print: label -> string
+  val print : label -> string
+
   (* A way of iterating over all labels. *)
-  val iter: (label -> unit) -> unit
+  val iter : (label -> unit) -> unit
+
   (* A mapping of labels to code. The function call [code label] is expected
      to use the imperative API below to build the code block that corresponds
      to label [label]. *)
-  val code: label -> unit
+  val code : label -> unit
+
   (* A family of entry labels. *)
-  val entry: label Lr1.NodeMap.t
+  val entry : label Lr1.NodeMap.t
 end) : sig
-
   (* A StackLang program. *)
-  val program: program
-
+  val program : program
 end
 
 (* -------------------------------------------------------------------------- *)
@@ -52,24 +54,33 @@ end
 
 (* Group 1: Instructions with exactly one successor. *)
 
-val need: registers -> unit
-val need_list: register list -> unit
-val push: value -> unit
-val pop: pattern -> unit
-val def: pattern -> value -> unit
-val prim: register -> primitive -> unit
-val trace: string -> unit
-val comment: string -> unit
+val need : registers -> unit
+
+val need_list : register list -> unit
+
+val push : value -> unit
+
+val pop : pattern -> unit
+
+val def : pattern -> value -> unit
+
+val prim : register -> primitive -> unit
+
+val trace : string -> unit
+
+val comment : string -> unit
 
 (* [move dst src] generates a move instruction from register [src] to
    register [dst]. It is a short-hand for [def (PReg dst) (VReg src)]. *)
-val move: register -> register -> unit
+val move : register -> register -> unit
 
 (* Group 2: Instructions with zero successor. *)
 
-val die: unit -> unit
-val return: register -> unit
-val jump: label -> unit
+val die : unit -> unit
+
+val return : register -> unit
+
+val jump : label -> unit
 
 (* Group 3: Case analysis instructions. *)
 
@@ -80,24 +91,19 @@ val jump: label -> unit
    The default branch is implicitly discarded if the ordinary branches alone
    form an exhaustive case analysis. *)
 
-val case_token:
-  register ->
-  (
-    (* branch:  *) (tokpat -> (unit -> unit) -> unit) ->
-    (* default: *) ((unit -> unit) -> unit) ->
-    unit
-  ) ->
-  unit
+val case_token :
+     register
+  -> (   ((* branch:  *) tokpat -> (unit -> unit) -> unit)
+      -> (* default: *) ((unit -> unit) -> unit)
+      -> unit )
+  -> unit
 
 (* [case_tag src cases] generates a case analysis instruction on a tag, which
    is held in the register [src]. The user-provided function [cases] is
    provided with one function, [branch], which allows generating a branch
    (guarded by a pattern). *)
 
-val case_tag:
-  register ->
-  (
-    (* branch:  *) (tagpat -> (unit -> unit) -> unit) ->
-    unit
-  ) ->
-  unit
+val case_tag :
+     register
+  -> (((* branch:  *) tagpat -> (unit -> unit) -> unit) -> unit)
+  -> unit
