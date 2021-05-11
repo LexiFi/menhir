@@ -18,4 +18,4 @@
    StackLang program yields the same outcome. If this test fails, a message is
    displayed and the process is exited. *)
 
-val test: StackLang.program -> unit
+val test : StackLang.program -> unit
