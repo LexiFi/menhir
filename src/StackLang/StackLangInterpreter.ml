@@ -12,8 +12,11 @@
 (******************************************************************************)
 
 let length = List.length
+
 let map = List.map
+
 let mem = List.mem
+
 open Lexing
 open Printf
 open Grammar
@@ -33,8 +36,7 @@ open StackLang
 
 exception RuntimeError of string
 
-let error format =
-  ksprintf (fun s -> raise (RuntimeError s)) format
+let error format = ksprintf (fun s -> raise (RuntimeError s)) format
 
 (* -------------------------------------------------------------------------- *)
 
@@ -56,27 +58,17 @@ type gvalue =
   | GVDummy
   | GVTuple of gvalue list
 
-let asToken = function
-  | GVToken tok ->
-      tok
-  | _ ->
-      error "a token was expected"
+let asToken = function GVToken tok -> tok | _ -> error "a token was expected"
 
-let asTag = function
-  | GVTag tag ->
-      tag
-  | _ ->
-      error "a tag was expected"
+let asTag = function GVTag tag -> tag | _ -> error "a tag was expected"
 
 (* -------------------------------------------------------------------------- *)
 
 (* The runtime environment maps registers to ground values. *)
 
-module Env =
-  RegisterMap
+module Env = RegisterMap
 
-type env =
-  gvalue Env.t
+type env = gvalue Env.t
 
 (* Evaluating a value [v] yields a ground value. *)
 
@@ -85,50 +77,54 @@ let rec eval (env : env) (v : value) : gvalue =
   | VTag tag ->
       GVTag tag
   | VReg r ->
-      begin try
-        RegisterMap.find r env
-      with Not_found ->
-        error "undefined register: %s" r
-      end
+    begin
+      try RegisterMap.find r env with
+      | Not_found ->
+          error "undefined register: %s" r
+    end
   | VTuple vs ->
       GVTuple (map (eval env) vs)
+
 
 (* Matching a ground value [gv] against a pattern [p] extends the environment
    with new bindings. *)
 
 let rec bind p gv (env : env) : env =
-  match p, gv with
+  match (p, gv) with
   | PWildcard, _ ->
       env
   | PReg r, _ ->
       Env.add r gv env
   | PTuple ps, GVTuple gvs ->
-      if length ps = length gvs then
-        List.fold_right2 bind ps gvs env
+      if length ps = length gvs
+      then List.fold_right2 bind ps gvs env
       else
-        error "tuple pattern of arity %d cannot match tuple value of arity %d"
-          (length ps) (length gvs)
+        error
+          "tuple pattern of arity %d cannot match tuple value of arity %d"
+          (length ps)
+          (length gvs)
   | PTuple _, _ ->
       error "tuple pattern cannot match a value that is not a tuple"
+
 
 (* -------------------------------------------------------------------------- *)
 
 (* The interpreter's state is as follows. *)
 
-type state = {
-  (* Should trace instructions produce output on [stderr]? *)
-  trace: bool;
-  (* A lexer that produces terminal symbols instead of actual tokens. *)
-  lexer: lexbuf -> Terminal.t;
-  (* A lexing buffer, used by the lexer, and out of which positions are read. *)
-  lexbuf: lexbuf;
-  (* The program. *)
-  program: program;
-  (* The runtime environment. *)
-  mutable env: env;
-  (* The stack. *)
-  mutable stack: gvalue list;
-}
+type state =
+  { (* Should trace instructions produce output on [stderr]? *)
+    trace : bool
+  ; (* A lexer that produces terminal symbols instead of actual tokens. *)
+    lexer : lexbuf -> Terminal.t
+  ; (* A lexing buffer, used by the lexer, and out of which positions are read. *)
+    lexbuf : lexbuf
+  ; (* The program. *)
+    program : program
+  ; (* The runtime environment. *)
+    mutable env : env
+  ; (* The stack. *)
+    mutable stack : gvalue list
+  }
 
 (* -------------------------------------------------------------------------- *)
 
@@ -141,11 +137,13 @@ let exec_prim state p =
       (* We do not look up the registers [lexer] and [lexbuf], so it is okay
          if they are not defined. *)
       let tok = state.lexer state.lexbuf in
-      if state.trace then
-        eprintf "Lookahead token is now %s (%d-%d)\n"
+      if state.trace
+      then
+        eprintf
+          "Lookahead token is now %s (%d-%d)\n"
           (Terminal.print tok)
-          (state.lexbuf.lex_start_p.pos_cnum)
-          (state.lexbuf.lex_curr_p.pos_cnum);
+          state.lexbuf.lex_start_p.pos_cnum
+          state.lexbuf.lex_curr_p.pos_cnum;
       GVToken tok
   | PrimOCamlFieldAccess (_, _) ->
       (* We assume that this is an access to a position field in [lexbuf]. *)
@@ -157,6 +155,7 @@ let exec_prim state p =
   | PrimOCamlAction _ ->
       (* A semantic value is replaced with a dummy value. *)
       GVDummy
+
 
 (* -------------------------------------------------------------------------- *)
 
@@ -170,76 +169,68 @@ let pop state : gvalue =
   | [] ->
       error "attempt to pop something off an empty stack"
 
+
 (* -------------------------------------------------------------------------- *)
 
 (* Executing a block. *)
 
 let rec exec state block =
   match block with
-
   | INeed (rs, block) ->
-      let required  = rs
+      let required = rs
       and available = Env.domain state.env in
-      if not (StringSet.subset required available) then
-        error "incorrect NEED annotation; have %s, need %s"
+      if not (StringSet.subset required available)
+      then
+        error
+          "incorrect NEED annotation; have %s, need %s"
           (RegisterSet.print available)
-          (RegisterSet.print required)
-      ;
+          (RegisterSet.print required);
       state.env <- Env.restrict required state.env;
       exec state block
-
   | IPush (v, block) ->
       let gv = eval state.env v in
       state.stack <- gv :: state.stack;
       exec state block
-
   | IPop (p, block) ->
       let gv = pop state in
       state.env <- bind p gv state.env;
       exec state block
-
   | IDef (p, v, block) ->
       let gv = eval state.env v in
       state.env <- bind p gv state.env;
       exec state block
-
   | IPrim (r, p, block) ->
       let gv = exec_prim state p in
       state.env <- bind (PReg r) gv state.env;
       exec state block
-
   | ITrace (s, block) ->
       if state.trace then prerr_string s;
       exec state block
-
   | IComment (_, block) ->
       exec state block
-
   | IDie ->
       None (* reject *)
-
   | IReturn r ->
       let _gv = eval state.env (VReg r) in
-      Some () (* accept *)
-
+      Some ()
+      (* accept *)
   | IJump label ->
       let block = lookup label state.program.cfg in
       exec state block
-
   | ICaseToken (r, branches, odefault) ->
       let tok = asToken (eval state.env (VReg r)) in
       exec_casetoken state tok branches odefault
-
   | ICaseTag (r, branches) ->
       let tag = asTag (eval state.env (VReg r)) in
       exec_casetag state tag branches
 
+
 and exec_casetoken state tok branches odefault =
-  match branches, odefault with
+  match (branches, odefault) with
   | (TokSingle (tok', r), block) :: _, _ when Terminal.equal tok tok' ->
       state.env <- bind (PReg r) GVDummy state.env;
       exec state block
-  | (TokMultiple toks, block) :: _   , _ when TerminalSet.mem tok toks ->
+  | (TokMultiple toks, block) :: _, _ when TerminalSet.mem tok toks ->
       exec state block
   | _ :: branches, _ ->
       exec_casetoken state tok branches odefault
@@ -247,6 +238,7 @@ and exec_casetoken state tok branches odefault =
       exec state block
   | [], None ->
       error "nonexhaustive case analysis on a token (%s)" (Terminal.print tok)
+
 
 and exec_casetag state tag branches =
   match branches with
@@ -257,6 +249,7 @@ and exec_casetag state tag branches =
   | [] ->
       error "nonexhaustive case analysis on a tag (%d)" tag
 
+
 (* -------------------------------------------------------------------------- *)
 
 (* The interpretation of a program begins with an environment in which
@@ -265,9 +258,10 @@ and exec_casetag state tag branches =
 
 let interpret program label trace lexer lexbuf =
   let env =
-    List.fold_right (fun r env ->
-      Env.add r GVDummy env
-    ) EmitStackLang.required Env.empty
+    List.fold_right
+      (fun r env -> Env.add r GVDummy env)
+      EmitStackLang.required
+      Env.empty
   and stack = [] in
   let state = { trace; lexer; lexbuf; program; env; stack } in
   exec state (IJump label)

@@ -18,4 +18,4 @@ open StackLang
    and the edges are the jumps between them. If there are multiple jumps from
    one block to another, then only one edge is shown. *)
 
-val print: program -> unit
+val print : program -> unit

@@ -20,29 +20,33 @@ open StackLang
 let uniq iter =
   let encountered = ref LabelSet.empty in
   fun yield ->
-    iter begin fun label ->
-      if not (StringSet.mem label !encountered) then begin
-        encountered := StringSet.add label !encountered;
-        yield label
-      end
-    end
+    iter (fun label ->
+        if not (StringSet.mem label !encountered)
+        then begin
+          encountered := StringSet.add label !encountered;
+          yield label
+        end )
+
 
 let print program =
-  let module P = Dot.Print(struct
+  let module P =
+    Dot.Print (struct
+      type vertex = label
 
-    type vertex = label
-    let name label = label
+      let name label = label
 
-    let successors (f : ?style:style -> label:string -> vertex -> unit) label =
-      lookup label program.cfg
-      |> uniq StackLangTraverse.successors (fun target -> f ~label:"" target)
+      let successors (f : ?style:style -> label:string -> vertex -> unit) label
+          =
+        lookup label program.cfg
+        |> uniq StackLangTraverse.successors (fun target -> f ~label:"" target)
 
-    let iter (f : ?shape:shape -> ?style:style -> label:string -> vertex -> unit) =
-      program.cfg |> LabelMap.iter begin fun label _block ->
-        f ~shape:Box ~label label
-      end
 
-  end) in
+      let iter
+          (f : ?shape:shape -> ?style:style -> label:string -> vertex -> unit) =
+        program.cfg
+        |> LabelMap.iter (fun label _block -> f ~shape:Box ~label label)
+    end)
+  in
   let f = open_out (Settings.base ^ ".dot") in
   P.print f;
   close_out f

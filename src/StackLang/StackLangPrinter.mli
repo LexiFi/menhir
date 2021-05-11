@@ -13,4 +13,4 @@
 
 (* This module offers a pretty-printer for StackLang. *)
 
-val print: out_channel -> StackLang.program -> unit
+val print : out_channel -> StackLang.program -> unit
