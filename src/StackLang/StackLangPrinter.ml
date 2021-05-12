@@ -37,12 +37,16 @@ let rec value v =
       label "UNIT"
 
 
+let binding (r, v) = register r ^^ string " <- " ^^ value v
+
 let bindings bds =
-  Bindings.fold
-    (fun reg value' acc ->
-      nl ^^ register reg ^^ string " <- " ^^ value value' ^^ acc )
-    bds
-    empty
+  let bds = Bindings.to_list bds in
+  group
+  @@ align
+  @@ braces
+       ( space
+       ^^ separate (break 1 ^^ semi ^^ space) (List.map binding bds)
+       ^^ space )
 
 
 let ocamltype = function
@@ -105,7 +109,10 @@ let primitive p =
   | PrimOCamlDummyPos ->
       utf8format "<dummy position>"
   | PrimOCamlAction (bs, _) ->
-      string "(" ^^ bindings bs ^^ utf8format "<semantic action>" ^^ string ")"
+      braces
+        ( space
+        ^^ align (bindings bs ^/^ utf8format "<semantic action>")
+        ^^ space )
 
 
 let tokpat pat =
@@ -154,7 +161,7 @@ and block b =
       let rs = RegisterSet.elements rs in
       nl
       ^^ string "NEED "
-      ^^ separate (comma ^^ space) (map register rs)
+      ^^ align (group (separate (comma ^^ break 1) (map register rs)) ^^ dot)
       ^^ block b
   | IPush (v, _, b) ->
       nl ^^ string "PUSH " ^^ value v ^^ block b
@@ -172,7 +179,7 @@ and block b =
   | ITrace (s, b) ->
       nl ^^ string "TRCE " ^^ OCaml.string s ^^ block b
   | IComment (s, b) ->
-      nl ^^ string "#### " ^^ string s ^^ block b
+      nl ^^ string "#### " ^^ align (arbitrary_string s) ^^ block b
   | IDie ->
       nl ^^ string "DIE"
   | IReturn v ->
