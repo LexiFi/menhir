@@ -188,6 +188,7 @@ type nt = Nonterminal.t
 
 let optimize_stack = Settings.optimize_stack
 
+(** [top_stack_type word] is the cell info corresponding to the top of [word]  *)
 let top_stack_type word =
   Invariant.fold_top
     (fun hold_state symbol ->
@@ -210,7 +211,8 @@ let top_stack_type word =
     (Cell.full None)
     word
 
-
+(** [stack_type_of_word word] is the array of [cell_info] that represents the
+    known stack cells corresponding to invariant word [word] *)
 let stack_type_of_word word =
   MArray.rev_of_list
     (Invariant.fold
@@ -264,7 +266,7 @@ let goto_needendpos nt =
        (Invariant.gotostack nt)
 
 
-(* Values needed by the goto associated to Nonterminal [nt] *)
+(** Values needed by the goto associated to Nonterminal [nt] *)
 let goto_need nt =
   (* The [run] subroutines that we call are reached via goto transitions,
      therefore do not query the lexer. This means that [token] is needed. *)
@@ -287,7 +289,7 @@ let goto_need nt =
 
 let run_represent_state s = (not optimize_stack) || Invariant.represented s
 
-(** List of values needed by run routine associated to state [s]*)
+(** Values needed by the run routine associated to state [s] *)
 let run_need s =
   let is_start = Lr1.is_start s in
   (* Determine whether the start and end positions of the current token
@@ -331,6 +333,7 @@ let reduce_successor_need_endpos prod =
   && ((not optimize_stack) || goto_needendpos (Production.nt prod))
 
 
+(** Values needed by the reduce routine associated to production [prod] *)
 let reduce_need prod =
   let ids = Production.identifiers prod in
   let n = Array.length ids in
@@ -364,7 +367,7 @@ let reduce_need prod =
 
 
 (** Values pushed on the stack by the goto routine associated to nonterminal
-      [nt]. Only used if [gotopushes nt] is true. *)
+    [nt]. Only used if [gotopushes nt] is true. *)
 let goto_pushtuple nt =
   let ({ hold_state; hold_semv; hold_startpos; hold_endpos } as cell) =
     top_stack_type (Invariant.gotostack nt)
@@ -379,7 +382,7 @@ let goto_pushtuple nt =
 
 
 (** Values pushed on the stack by the run routine associated to state [s].
-     Only used if [runpushes s] is true. *)
+    Only used if [runpushes s] is true. *)
 let run_pushtuple s : string list * cell_info =
   let ({ hold_state; hold_semv; hold_startpos; hold_endpos } as cell) =
     top_stack_type (Invariant.stack s)
@@ -393,17 +396,24 @@ let run_pushtuple s : string list * cell_info =
   (pushlist, cell)
 
 
+(** The known stack cells when entering the goto routine associated to
+    nonterminal [_nt] *)
 let stack_type_goto _nt = [||]
 
-let stack_type_reduce production =
-  let symbols = Grammar.Production.rhs production in
-  let r = stack_type_of_word (Invariant.prodstack production) in
+(** The known stack cells when entering the reduce routine associated to
+    production [prod] *)
+let stack_type_reduce prod =
+  let symbols = Grammar.Production.rhs prod in
+  let r = stack_type_of_word (Invariant.prodstack prod) in
   assert (optimize_stack || Array.length r = Array.length symbols);
   r
 
 
+(** The known stack cells after popping state [state] *)
 let stack_type_state state = stack_type_of_word @@ Invariant.stack state
 
+(** The known stack cells when entering the run routine associated to state
+    [state] *)
 let stack_type_run state =
   let st = stack_type_of_word (Invariant.stack state) in
   let n_pushes = if runpushes state then 1 else 0 in
