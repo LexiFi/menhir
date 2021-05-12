@@ -435,7 +435,7 @@ let wt_knowncells_routine program label (t_block : typed_block) =
   They are extra in the sense that when we match on a state, known_cells become
     [Array.append state_known_cells extra_known_cells] *)
   let rec wtkc_block (known_cells : cell_info array) (sync : sync) block =
-    Block.iter_unit
+    Block.iter
       (wtkc_block known_cells sync)
       ~push:(fun value cell block ->
         ( if cell.hold_state
@@ -551,7 +551,7 @@ let check_final_types label reason computed_final_type expected_final_type block
 let rec wft_block program label final_type block =
   let { cfg; states } = program in
   let check_final_types = check_final_types label in
-  Block.iter_unit
+  Block.iter
     (wft_block program label final_type)
     ~return:(fun _value ->
       match final_type with
