@@ -126,3 +126,6 @@ let codomain bindings =
 
 let restrict bindings registers =
   RegisterMap.filter (fun reg _ -> RegisterSet.mem reg registers) bindings
+
+
+let to_list bds = fold (fun reg value acc -> (reg, value) :: acc) bds []
