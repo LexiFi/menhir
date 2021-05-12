@@ -58,6 +58,11 @@ let () =
    symbol [nt], and if the [goto] table for symbol [nt] has more than
    one target, then state [s] is represented.
 
+     (2021/05/12.) In the new code back-end, even when the [goto] table has
+     only one target, the state [s] still must be represented, because we need
+     to generate a [match] construct for the OCaml code to be well-typed. This
+     Limitation may be removed in the future.
+
    (3) If a stack cell contains more than one state and if at least
    one of these states is able to handle the [error] token, then these
    states are represented.
@@ -106,6 +111,9 @@ let () =
 
 (* Enforce condition (2) above. *)
 
+let new_code_backend =
+  not Settings.old_code_backend
+
 let () =
   Nonterminal.iter (fun nt ->
     let count =
@@ -113,7 +121,7 @@ let () =
         count + 1
       ) 0 (Symbol.N nt)
     in
-    if count > 1 then
+    if count > 1 || (count = 1 && new_code_backend) then
       Lr1.targets (fun () sources _ ->
         List.iter represent sources
       ) () (Symbol.N nt)
