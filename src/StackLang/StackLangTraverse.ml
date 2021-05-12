@@ -103,8 +103,10 @@ let wf_prim program label block rs p =
       wf_value program label block rs v
   | PrimOCamlDummyPos ->
       ()
-  | PrimOCamlAction _ ->
-      ()
+  | PrimOCamlAction (bindings, action) ->
+      wf_regs label block rs (Bindings.codomain bindings);
+      let rs = RegisterSet.union rs (Bindings.domain bindings) in
+      wf_regs label block rs (Action.vars action)
 
 
 (* [wf_block cfg label rs block] checks that the block [block] does not refer
