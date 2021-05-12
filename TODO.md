@@ -1,6 +1,9 @@
 # TODO
 
-## Preparations for upcoming work on the back-end
+## Work on the new code back-end
+
+* Avoid the dependency on `feat` except possibly for testing.
+  Note that a dependency can be marked `{with-test}`.
 
 * Can we avoid generating `match` constructs with only one branch? This
   requires ensuring that all of the required type information is available
