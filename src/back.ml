@@ -146,7 +146,7 @@ let () =
       with StackLangTraverse.StackLangError e ->
         handle_stacklang_error program e ) ;
     let program = StackLangInline.inline program in
-    (* let program = StackLangTransform.optimize program in *)
+    let program = StackLangTransform.optimize program in
     ( try
         StackLangTraverse.wf program ;
         StackLangTraverse.wt program
