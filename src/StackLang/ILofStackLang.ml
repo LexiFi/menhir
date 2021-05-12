@@ -353,7 +353,7 @@ and compile_block program bindings final_type =
       ERaise (EVar "_eRR")
   | S.IReturn value ->
       (* If there is a known final type, we need to annotate the return value
-         with it. It is unclear why, but if we dont, the program may fail to
+         with it. It is unclear why, but if we dont, the program will fail to
          type. *)
       EAnnot (compile_value bindings value, type2scheme final_type)
   | S.IJump label ->

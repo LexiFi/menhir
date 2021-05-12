@@ -3,7 +3,7 @@ open StackLangUtils
 
 type t = block
 
-let iter f aggregate terminate = function
+let reduce f aggregate = function
   | INeed (_, block)
   | IPush (_, _, block)
   | IPop (_, block)
@@ -12,9 +12,9 @@ let iter f aggregate terminate = function
   | ITrace (_, block)
   | IComment (_, block)
   | ITypedBlock { block } ->
-      f block
+      aggregate ([f block])
   | IDie | IReturn _ | IJump _ ->
-      terminate
+      aggregate []
   | ICaseToken (_reg, branches, odefault) ->
       aggregate
         ( List.map (branch_iter f) branches
@@ -79,7 +79,7 @@ let map
       ITypedBlock (typed_block t_block)
 
 
-let iter_unit
+let iter
     (f : t -> unit)
     ?(need = fun _ b -> f b)
     ?(push = fun _ _ b -> f b)
@@ -160,7 +160,7 @@ let push value cell block = IPush (value, cell, block)
 let pop pattern block = IPop (pattern, block)
 
 let def bindings block =
-  if bindings = Bindings.empty
+  if Bindings.is_empty bindings
   then block
   else
     match block with
@@ -171,7 +171,7 @@ let def bindings block =
 
 
 let sdef pattern value block =
-  let bindings = Bindings.simple pattern value in
+  let bindings = Bindings.singleton_pattern pattern value in
   def bindings block
 
 

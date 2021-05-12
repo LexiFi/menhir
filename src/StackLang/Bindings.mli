@@ -6,20 +6,23 @@ type t = private value RegisterMap.t
 val empty : t
 (** empty substitution *)
 
+val is_empty : t -> bool
+(** [is_empty b] is true if [b] is empty *)
+
 val singleton : register -> value -> t
-(** Singleton binding *)
+(** [singleton r v] Is the singleton binding [r <- v] *)
 
-val simple : pattern -> value -> t
-(** Binds a value to a pattern *)
+val singleton_pattern : pattern -> value -> t
+(** [singleton_pat p v] Is the binding of a value to a pattern. *)
 
-val extend : register -> value -> t -> t
-(** [extend reg value s] extends [s] with a rule [reg := value].
-    [restore_defs (extend reg value s) block] is equivalent to
-    [restore_defs s (IDef(PReg reg, value, block))]. *)
+val extend : t -> register -> value -> t
+(** [extend bs reg value] extends [bs] with a rule [reg <- value].
+    [def (extend bs reg value) block] is equivalent to
+    [def bs (def (singleton reg, value, block))]. *)
 
 val extend_pattern : t -> pattern -> value -> t
-(** [extend s pattern value] return [s'] such that [restore_defs s' block] is
-    equivalent to [restore_defs s (IDef(pattern, value, block))]. *)
+(** [extend bs pattern value] return [bs'] such that [defs bs' block] is
+    equivalent to [defs bs (IDef(pattern, value, block))]. *)
 
 val remove : t -> pattern -> t
 (** [remove s pattern] remove every rule of the shape [r := _] for every [r] a
@@ -38,16 +41,7 @@ val apply : t -> value -> value
     recursively.
     [IReturn (apply s value)] is equivalent to [restore_defs s (IReturn value)]. *)
 
-val apply_pattern : t -> pattern -> pattern
-(** [substitute s pattern] apply the rules of the substitution [s] to
-    [pattern] recursively. It assumes that every relevant rule has shape
-    [_ := VReg(_)]. *)
-
-val apply_reg : t -> register -> register
-(** [apply_reg s reg] if [apply s (VReg reg)] returns a value of shape
-    [VReg reg'], returns [reg']. Fails if it is not the case. *)
-
-val apply_registers : t -> registers -> registers
+(* val apply_registers : t -> registers -> registers *)
 (** [apply_registers s regs] returns the set of register [reg'] such that
     there exists [reg] in [regs] such that [reg'] is referred to in
     [apply s reg]. *)
@@ -56,9 +50,9 @@ val fold : (register -> value -> 'a -> 'a) -> t -> 'a -> 'a
 (** Fold over every rule. *)
 
 val compose : t -> t -> t
-(** [compose s1 s2] returns a substitution [s] such that :
-      [restore_defs s1 (restore_defs s2 block)] is equivalent to
-      [restore_defs s block] *)
+(** [compose b1 b2] returns a bindings [b] such that :
+      [def b1 (def b2 block)] is equivalent to
+      [def b block] *)
 
 val domain : t -> registers
 
@@ -69,3 +63,4 @@ val codomain : t -> registers
 val restrict : t -> registers -> t
 
 val to_list : t -> (register * value) list
+

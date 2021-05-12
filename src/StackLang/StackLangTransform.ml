@@ -198,7 +198,7 @@ let rec commute_pushes_block program pushes bindings final_type known_cells =
         else reg
       in
       let subst' =
-        Bindings.extend reg (VReg reg') (Bindings.remove bindings (PReg reg'))
+        Bindings.extend (Bindings.remove bindings (PReg reg')) reg (VReg reg')
       in
       let block =
         commute_pushes_block pushes subst' final_type known_cells block
@@ -290,7 +290,7 @@ and commute_pushes_icase_tag
           | [ tag ] ->
               (* In this case, we can inline the state value inside the
                  pushes. *)
-              let subst = Bindings.extend reg (VTag tag) bindings in
+              let subst = Bindings.extend bindings reg (VTag tag) in
               let tmp_subst = Bindings.singleton reg (VTag tag) in
               let pushes = List.map (pushcell_apply tmp_subst) pushes in
               (subst, pushes)
@@ -306,8 +306,10 @@ and commute_pushes_icase_tag
         (TagMultiple taglist, block)
       in
       let branches = List.map branch_aux branches in
-      ICaseTag (Bindings.apply_reg bindings reg, branches)
+      ICaseTag (reg, branches)
   | _ ->
+      (* We should never perform a case tag on a register that is bound to
+         something else than a tag. *)
       assert false
 
 
@@ -317,10 +319,21 @@ and commute_pushes_itblock
     t_block
   in
   let stack_type = pop_n_cells stack_type (List.length pushes) in
+  (* First, we will not need the registers we are defining in the binding,
+     since they are shadowed by said binding. *)
   let needed_registers =
-    RegisterSet.union
-      (needed_registers_pushes pushes)
-      (Bindings.apply_registers bindings needed_registers)
+    RegisterSet.diff needed_registers (Bindings.domain bindings)
+  in
+  (* However we need the registers referred by the bindings, even if they
+     are shadowed after the bindings. *)
+  let needed_registers =
+    RegisterSet.union needed_registers (Bindings.codomain bindings)
+  in
+  (* We also need every register refered to by the pushes, even if said
+     register is defined by the bindings, for the pushes will be restored
+     before the bindings. *)
+  let needed_registers =
+    RegisterSet.union (needed_registers_pushes pushes) needed_registers
   in
   let final_type = Option.first_value [ final_type; tb_final_type ] in
   let known_cells = longest_known_cells [ stack_type; known_cells ] in
@@ -346,7 +359,7 @@ and aux_jump pushes bindings label =
 
 
 and aux_case_token
-    program pushes subst reg branches odefault final_type known_cells =
+    program pushes bindings reg branches odefault final_type known_cells =
   let aux_branch = function
     (* Every [TokSingle] introduces a definition of a register. *)
     | TokSingle (tok, reg'), (block : block) ->
@@ -355,7 +368,7 @@ and aux_case_token
           then suffix reg' (fresh_int ())
           else reg'
         in
-        let subst = Bindings.extend reg' (VReg reg'') subst in
+        let subst = Bindings.extend bindings reg' (VReg reg'') in
         let block' =
           commute_pushes_block program pushes subst final_type known_cells block
         in
@@ -363,7 +376,13 @@ and aux_case_token
     (* [TokMultiple] does not introduce new definitions *)
     | TokMultiple terminals, block ->
         let block' =
-          commute_pushes_block program pushes subst final_type known_cells block
+          commute_pushes_block
+            program
+            pushes
+            bindings
+            final_type
+            known_cells
+            block
         in
         (TokMultiple terminals, block')
   in
@@ -372,7 +391,7 @@ and aux_case_token
     ( reg
     , branches
     , Option.map
-        (commute_pushes_block program pushes subst final_type known_cells)
+        (commute_pushes_block program pushes bindings final_type known_cells)
         odefault )
 
 
