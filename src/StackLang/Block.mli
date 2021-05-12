@@ -23,13 +23,13 @@ val map :
   -> ?typed_block:(typed_block -> typed_block)
   -> t
   -> t
-(** [block_map f block] applies [f] to every direct children of [block],
-    and return the same block with its child replaced by the return value of
-    [f]. It is possible to give special-case functions for each member of the
-    block ADT, in order to be able to replace any data contained in the block.
-    It is not possible however to change the constructor of the block. *)
+(** [Block.map f block] applies [f] to every direct child of [block], and return
+    the same block with its child replaced by the return value of [f], if the
+    optional function corresponding to the block is not specified. If it is
+    specified, then that function is called instead, allowing to change the
+    fields of each block. *)
 
-val iter_unit :
+val iter :
      (t -> unit)
   -> ?need:(registers -> t -> unit)
   -> ?push:(value -> cell_info -> t -> unit)
@@ -46,12 +46,16 @@ val iter_unit :
   -> ?typed_block:(typed_block -> unit)
   -> t
   -> unit
+(** [Block.iter f block] applies [f] to every direct children of [block], if the
+    optional function corresponding to the block is not specified.
+    If it is specified, then that function is called instead, allowing to react
+    to the fields of each block. *)
 
-val iter : (t -> 'a) -> ('a list -> 'a) -> 'a -> t -> 'a
-(** [block_iter f aggregate terminate block] applies [f] to every direct
-    children of [block]. In case of a terminal block, [terminate] is returned.
-    In case of a block with multiple children, [aggregate] is applied to the
-    list of the return value of [f]. *)
+val reduce : (t -> 'a) -> ('a list -> 'a) -> t -> 'a
+(** [block_iter f aggregate block] applies [f] to every direct
+    child of [block]. [aggregate] is called on the list of results of every
+    block : [[]] is the block is terminal, [[f b]] if it has a single child or
+    the list of [f b] for every child if it has multiple. *)
 
 val successors : (StackLang.label -> unit) -> t -> unit
 (** [successors yield block] applies the function [yield] in turn to every
