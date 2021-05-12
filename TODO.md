@@ -2,6 +2,10 @@
 
 ## Preparations for upcoming work on the back-end
 
+* Can we avoid generating `match` constructs with only one branch? This
+  requires ensuring that all of the required type information is available
+  beforehand. This may require the use of the long invariant.
+
 * A missed optimization in the current code back-end: reducing an epsilon
   production goes through a generic `reduce` function, thus forgetting the
   identity of the current state, and through a generic `goto` function, which
