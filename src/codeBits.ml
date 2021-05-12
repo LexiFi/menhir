@@ -201,6 +201,9 @@ let eletand (bindings, body) =
 let eraisenotfound =
   ERaise (EData ("Not_found", []))
 
+let eassert e =
+  EApp (EVar "assert", [ e ])
+
 (* [bottom] is an expression that has every type. Its semantics is
    irrelevant. *)
 
@@ -253,6 +256,27 @@ let arrowif flag typ body : typ =
 
 let marrow typs body : typ =
   List.fold_right arrow typs body
+
+(* Tracing. *)
+
+let eprintf format args =
+  EApp (
+    EVar "Printf.eprintf",
+    (EStringConst (format ^ "\n%!")) ::
+    args
+  )
+
+let trace (format : string) (args : expr list) : (pattern * expr) list =
+  if Settings.trace then
+    [ PUnit, eprintf format args ]
+  else
+    []
+
+let tracecomment (comment : string) (body : expr) : expr =
+  if Settings.trace then
+    blet (trace comment [], body)
+  else
+    EComment (comment, body)
 
 (* ------------------------------------------------------------------------ *)
 (* Here is a bunch of naming conventions. Our names are chosen to minimize

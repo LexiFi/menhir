@@ -286,34 +286,11 @@ let tresult =
 (* ------------------------------------------------------------------------ *)
 (* Helpers for code production. *)
 
-let eassert e =
-  EApp (EVar "assert", [ e ])
-
 (* The following assertion checks that [env.error] is [false]. *)
 
 let assertnoerror : pattern * expr =
   PUnit,
   eassert (EApp (EVar "not", [ ERecordAccess (EVar env, ferror) ]))
-
-let eprintf format args =
-  EApp (
-    EVar "Printf.fprintf",
-    (EVar "stderr") ::
-    (EStringConst (format ^ "\n%!")) ::
-    args
-  )
-
-let trace (format : string) (args : expr list) : (pattern * expr) list =
-  if Settings.trace then
-    [ PUnit, eprintf format args ]
-  else
-    []
-
-let tracecomment (comment : string) (body : expr) : expr =
-  if Settings.trace then
-    blet (trace comment [], body)
-  else
-    EComment (comment, body)
 
 let auto2scheme t =
   scheme [ tvtail; tvresult ] t

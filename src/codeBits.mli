@@ -80,6 +80,10 @@ val eletand: (pattern * expr) list * expr -> expr
 
 val eraisenotfound: expr
 
+(* [eassert] builds a runtime assertion [assert e]. *)
+
+val eassert: expr -> expr
+
 (* [bottom] is an expression that has every type. Its semantics is
    irrelevant. *)
 
@@ -109,6 +113,20 @@ val pint: int -> pattern
 val arrow: typ -> typ -> typ
 val arrowif: bool -> typ -> typ -> typ
 val marrow: typ list -> typ -> typ
+
+(* Tracing. *)
+
+(**[eprintf format args] constructs a call to [Printf.eprintf], which
+   log a tracing message onto [stderr]. *)
+val eprintf: string -> expr list -> expr
+
+(**[trace format args] returns a list of (effectful) bindings which,
+   when [--trace] is enabled, log a tracing message onto [stderr]. *)
+val trace: string -> expr list -> (pattern * expr) list
+
+(**[tracecomment c e] emits either a comment whose content is the string
+   [c] or a tracing message whose content is also [c]. *)
+val tracecomment: string -> expr -> expr
 
 (* These functions are used to generate names in menhir's namespace. *)
 val prefix: string -> string
