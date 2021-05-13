@@ -52,7 +52,13 @@ val for_all2 : ('a -> 'b -> bool) -> 'a array -> 'b array -> bool
 
 (**[fold_left2] performs left-to-right iteration over two arrays, which
    must have the same length, while carrying an accumulator. *)
-val fold_left2: ('a -> 'b1 -> 'b2 -> 'a) -> 'a -> 'b1 array -> 'b2 array -> 'a
+val fold_left2 : ('a -> 'b1 -> 'b2 -> 'a) -> 'a -> 'b1 array -> 'b2 array -> 'a
+
+(**Given a [leq_join] function on elements, [leq_join] constructs a [leq_join]
+   function on arrays. The two arrays must have the same length. The
+   specification of a [leq_join] is defined by the signature
+   [Fix.MINIMAL_SEMI_LATTICE]. *)
+val leq_join : ('a -> 'b -> 'b) -> 'a array -> 'b array -> 'b array
 
 (** Unit tests. *)
 val test : unit -> unit

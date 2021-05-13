@@ -88,6 +88,12 @@ let fold_left2 f accu a1 a2 =
   done;
   !accu
 
+let leq_join leq_join a1 a2 =
+  let n = length a1 in
+  assert (n = length a2);
+  let a = init n (fun i -> leq_join (unsafe_get a1 i) (unsafe_get a2 i)) in
+  if for_all2 (==) a2 a then a2 else a
+
 let test () =
   assert (pop [|1; 2; 3; 4|] = [|1; 2; 3|]) ;
   assert (push [|1; 2; 3|] 4 = [|1; 2; 3; 4|]) ;

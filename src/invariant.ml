@@ -84,12 +84,9 @@ module StateSetVector = struct
     Array.make height Lr1.NodeSet.empty
 
   let leq_join v1 v2 =
-    let n = Array.length v1 in
+    MArray.leq_join Lr1.NodeSet.leq_join v1 v2
     (* Because all heights are known ahead of time, we are able (and careful)
        to compare only vectors of equal length. *)
-    assert (n = Array.length v2);
-    let v = Array.init n (fun i -> Lr1.NodeSet.leq_join v1.(i) v2.(i)) in
-    if MArray.for_all2 (==) v2 v then v2 else v
 
   let print v =
     if Array.length v = 0 then
