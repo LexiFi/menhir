@@ -16,6 +16,11 @@ include Array
 let empty =
   [||]
 
+let last a =
+  let n = length a in
+  assert (n > 0);
+  unsafe_get a (n - 1)
+
 let pop a =
   let n = length a in
   assert (n > 0);
