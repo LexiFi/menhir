@@ -338,47 +338,37 @@ let () =
 (* ------------------------------------------------------------------------ *)
 (* Accessors for information about the stack. *)
 
-(* We describe a stack prefix as a list of cells, where each cell is a pair
-   of a symbol and a set of states. The top of the stack is the head of the
-   list. *)
+type cell = {
+  symbol: Symbol.t;
+  states: Lr1.NodeSet.t;
+}
 
-type cell =
-    Symbol.t * Lr1.NodeSet.t
+let cell symbol states =
+  { symbol; states }
 
 type word =
-    cell list
-
-(* This auxiliary function converts a stack-as-an-array (top of stack
-   at the right end) to a stack-as-a-list (top of stack at list head). *)
-
-let _convert a =
-  let n = Array.length a in
-  let rec loop i accu =
-    if i = n then accu else loop (i + 1) (a.(i) :: accu)
-  in
-  loop 0 []
-
-(* This auxiliary function converts a pair of stacks-as-arrays to a
-   stack-as-a-list-of-pairs. *)
-
-let convert2 a b =
-  let n = Array.length a in
-  assert (n = Array.length b);
-  let rec loop i accu =
-    if i = n then accu else loop (i + 1) ((a.(i), b.(i)) :: accu)
-  in
-  loop 0 []
+  cell array
 
 (* [stack s] describes the stack when the automaton is in state [s]. *)
 
-let stack node : word =
-  convert2 (stack_symbols node) (stack_states node)
+let stack : Lr1.node -> word =
+  Lr1.tabulate (fun node ->
+    let symbols, states = stack_symbols node, stack_states node in
+    Array.init (Array.length symbols) (fun i ->
+      cell symbols.(i) states.(i)
+    )
+  )
 
 (* [prodstack prod] describes the stack when production [prod] is about to be
    reduced. *)
 
-let prodstack prod : word =
-  convert2 (Production.rhs prod) (production_states prod)
+let prodstack : Production.index -> word =
+  Production.tabulate (fun prod ->
+    let symbols, states = Production.rhs prod, production_states prod in
+    Array.init (Array.length symbols) (fun i ->
+      cell symbols.(i) states.(i)
+    )
+  )
 
 (* [gotostack nt] is the structure of the stack when a shift
    transition over nonterminal [nt] is about to be taken. It
@@ -386,25 +376,24 @@ let prodstack prod : word =
 
 let gotostack : Nonterminal.t -> word =
   Nonterminal.tabulate (fun nt ->
+    let symbol = Symbol.N nt in
     let sources =
       Lr1.targets (fun accu sources _ ->
         List.fold_right Lr1.NodeSet.add sources accu
-      ) Lr1.NodeSet.empty (Symbol.N nt)
+      ) Lr1.NodeSet.empty symbol
     in
-    [ Symbol.N nt, sources ]
+    [| cell symbol sources |]
   )
 
 let fold f accu w =
-  List.fold_right (fun (symbol, states) accu ->
+  Array.fold_left (fun accu { symbol; states } ->
     f accu (representeds states) symbol states
-  ) w accu
+  ) accu w
 
 let fold_top f accu w =
-  match w with
-  | [] ->
-      accu
-  | (symbol, states) :: _ ->
-      f (representeds states) symbol
+  fold (fun _accu represented symbol _states ->
+    f represented symbol
+  ) accu (MArray.truncate 1 w)
 
 (* ------------------------------------------------------------------------ *)
 (* Explain how the stack should be deconstructed when an error is found.
@@ -429,47 +418,48 @@ let rewind node : instruction =
   let w = stack node in
 
   let rec rewind w =
-    match w with
-    | [] ->
+    if Array.length w = 0 then
 
-        (* I believe that every stack description either is definite
-           (that is, ends with [TailEmpty]) or contains at least one
-           represented state. Thus, if we find an empty [w], this
-           means that the stack is definitely empty. *)
+      (* I believe that every stack description either is definite
+         (that is, ends with [TailEmpty]) or contains at least one
+         represented state. Thus, if we find an empty [w], this
+         means that the stack is definitely empty. *)
 
-        Die
+      Die
 
-    | ((_, states) as cell) :: w ->
+    else
+      let { states; _ } as cell = MArray.last w in
+      let w = MArray.pop w in
 
-        if representeds states then
+      if representeds states then
 
-          (* Here is a represented state. We will pop this
-             cell and no more. *)
+        (* Here is a represented state. We will pop this
+           cell and no more. *)
 
-          DownTo ([ cell ], Represented)
+        DownTo ([| cell |], Represented)
 
-        else if handlers states then begin
+      else if handlers states then begin
 
-          (* Here is an unrepresented state that can handle
-             errors. The cell must hold a singleton set of states, so
-             we know which state to jump to, even though it isn't
-             represented. *)
+        (* Here is an unrepresented state that can handle
+           errors. The cell must hold a singleton set of states, so
+           we know which state to jump to, even though it isn't
+           represented. *)
 
-          assert (Lr1.NodeSet.cardinal states = 1);
-          let state = Lr1.NodeSet.choose states in
-          DownTo ([ cell ], UnRepresented state)
+        assert (Lr1.NodeSet.cardinal states = 1);
+        let state = Lr1.NodeSet.choose states in
+        DownTo ([| cell |], UnRepresented state)
 
-        end
-        else
+      end
+      else
 
-          (* Here is an unrepresented state that does not handle
-             errors. Pop this cell and look further. *)
+        (* Here is an unrepresented state that does not handle
+           errors. Pop this cell and look further. *)
 
-          match rewind w with
-          | Die ->
-              Die
-          | DownTo (w, st) ->
-              DownTo (cell :: w, st)
+        match rewind w with
+        | Die ->
+            Die
+        | DownTo (w, st) ->
+            DownTo (MArray.push w cell, st)
 
   in
   rewind w
