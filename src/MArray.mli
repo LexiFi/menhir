@@ -30,8 +30,12 @@ val pop : 'a array -> 'a array
 val push : 'a array -> 'a -> 'a array
 
 (**If the array [a] has length at least [k], then [truncate k a] is the suffix
-   of length [k] of the array [a]. Otherwise, [truncate k a] is [a]. *)
+   of length [k] of the array [a]. Otherwise, [truncate k a] is [a].
+   [truncate 3 [|1; 2; 3; 4; 5|] = [|3; 4; 5|]] *)
 val truncate : int -> 'a array -> 'a array
+
+(** [suffix a k] is [truncate k a]. *)
+val suffix : 'a t -> int -> 'a t
 
 (**[is_suffix equal a1 a2] tests whether [a1] is a suffix of [a2]. The
    elements are compared using the function [equal]. *)
