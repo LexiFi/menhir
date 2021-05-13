@@ -730,8 +730,6 @@ let () =
 
 module Long = struct
 
-let debug = true
-
 (* Vectors of symbols. *)
 
 module SymbolVector = struct
@@ -742,13 +740,8 @@ module SymbolVector = struct
   type property =
     Symbol.t array
 
-  let empty =
-    [||]
-
-  let truncate k v =
-    (* Keep a suffix of length [k] of [v]. *)
-    let n = Array.length v in
-    Array.sub v (n-k) k
+  let empty, push =
+    MArray.(empty, push)
 
   (* Given two arrays [v1] and [v2] of lengths [n1] and [n2], the function
      call [lcs v1 v2 n1 n2 (min n1 n2) 0] computes the greatest [k] such that
@@ -764,15 +757,9 @@ module SymbolVector = struct
     and n2 = Array.length v2 in
     let n = min n1 n2 in
     let k = lcs v1 v2 n1 n2 n 0 in
-    if debug then assert (truncate k v1 = truncate k v2);
     if k = n2 then v2
     else if k = n1 then v1
-    else truncate k v1
-
-  let push v x =
-    (* Push [x] onto the right end of [v]. *)
-    let n = Array.length v in
-    Array.init (n+1) (fun i -> if i < n then v.(i) else x)
+    else MArray.truncate k v1
 
   let print v =
     if Array.length v = 0 then
