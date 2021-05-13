@@ -181,14 +181,6 @@ val count: int -> string
 
 val nth: int -> string
 
-(* [Array.for_all] *)
-
-val array_for_all : ('a -> bool) -> 'a array -> bool
-val array_for_all2 : ('a -> 'b -> bool) -> 'a array -> 'b array -> bool
-
-val array_fold_left2:
-  ('a -> 'b1 -> 'b2 -> 'a) -> 'a -> 'b1 array -> 'b2 array -> 'a
-
 (* [List.make] *)
 
 val list_make: int -> 'a -> 'a list

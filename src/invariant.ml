@@ -17,6 +17,10 @@
 open Grammar
 module C = Conflict (* artificial dependency; ensures that [Conflict] runs first *)
 
+(* ------------------------------------------------------------------------ *)
+(* Compute the known suffix of the state, a sequence of symbols,
+   at every state. *)
+
 let stack_symbols =
   let module SS = StackSymbols.Run() in
   SS.stack_symbols
@@ -66,14 +70,18 @@ module KeyMap =
 
 module StateSetVector = struct
 
+  (* We use arrays whose right end represents the top of the stack. *)
+
+  (* The index 0 corresponds to the cell that lies deepest in the stack. *)
+
+  let empty, get, push, truncate, iter =
+    MArray.(empty, get, push, truncate, iter)
+
   type property =
     Lr1.NodeSet.t array
 
   let bottom height =
     Array.make height Lr1.NodeSet.empty
-
-  let empty =
-    [||]
 
   let leq_join v1 v2 =
     let n = Array.length v1 in
@@ -81,30 +89,13 @@ module StateSetVector = struct
        to compare only vectors of equal length. *)
     assert (n = Array.length v2);
     let v = Array.init n (fun i -> Lr1.NodeSet.leq_join v1.(i) v2.(i)) in
-    if Misc.array_for_all2 (==) v2 v then v2 else v
-
-  let push v x =
-    (* Push [x] onto the right end of [v]. *)
-    let n = Array.length v in
-    Array.init (n+1) (fun i -> if i < n then v.(i) else x)
-
-  let truncate k v =
-    (* Keep a suffix of length [k] of [v]. *)
-    let n = Array.length v in
-    Array.sub v (n-k) k
+    if MArray.for_all2 (==) v2 v then v2 else v
 
   let print v =
     if Array.length v = 0 then
       "epsilon"
     else
       Misc.separated_list_to_string Lr1.NodeSet.print "; " (Array.to_list v)
-
-  let iter =
-    Array.iter
-
-  let get =
-    (* The index 0 corresponds to the cell that lies deepest in the stack. *)
-    Array.get
 
 end
 

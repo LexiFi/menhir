@@ -42,5 +42,17 @@ val rev_of_list : 'a list -> 'a t
     [rev_to_list [|1; 2; 3; 4; 5|] = [5; 4; 3; 2; 1]] *)
 val rev_to_list : 'a t -> 'a list
 
+(**[for_all] is identical to the function by the same name in the OCaml
+   standard library. *)
+val for_all : ('a -> bool) -> 'a array -> bool
+
+(**[for_all2] is identical to the function by the same name in the OCaml
+   standard library. *)
+val for_all2 : ('a -> 'b -> bool) -> 'a array -> 'b array -> bool
+
+(**[fold_left2] performs left-to-right iteration over two arrays, which
+   must have the same length, while carrying an accumulator. *)
+val fold_left2: ('a -> 'b1 -> 'b2 -> 'a) -> 'a -> 'b1 array -> 'b2 array -> 'a
+
 (** Unit tests. *)
 val test : unit -> unit

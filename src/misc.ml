@@ -375,38 +375,6 @@ let count = function
   | 3 -> "three"
   | i -> Printf.sprintf "%d" i
 
-(* To keep compatibility with OCaml 4.02,
-   we copy [Array.for_all], which appeared
-   in 4.03. *)
-let array_for_all p a =
-  let n = Array.length a in
-  let rec loop i =
-    if i = n then true
-    else if p (Array.unsafe_get a i) then loop (succ i)
-    else false in
-  loop 0
-
-(* Similarly, we copy [Array.for_all2], which appeared in 4.11. *)
-let array_for_all2 p l1 l2 =
-  let n1 = Array.length l1
-  and n2 = Array.length l2 in
-  if n1 <> n2 then invalid_arg "Array.for_all2"
-  else let rec loop i =
-    if i = n1 then true
-    else if p (Array.unsafe_get l1 i) (Array.unsafe_get l2 i) then loop (succ i)
-    else false in
-  loop 0
-
-let array_fold_left2 f accu a1 a2 =
-  let n1 = Array.length a1
-  and n2 = Array.length a2 in
-  if n1 <> n2 then invalid_arg "Array.fold_left2";
-  let accu = ref accu in
-  for i = 0 to n1 - 1 do
-    accu := f !accu (Array.unsafe_get a1 i) (Array.unsafe_get a2 i)
-  done;
-  !accu
-
 let rec list_make n x =
   if n = 0 then [] else x :: list_make (n - 1) x
 

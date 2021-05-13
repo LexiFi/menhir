@@ -763,7 +763,7 @@ module Production = struct
       production_level.(k) <- branch.branch_production_level;
       prec_decl.(k) <- branch.branch_prec_annotation;
       positions.(k) <- [ branch.branch_position ];
-      if not (Misc.array_for_all Symbol.non_error rhs) then
+      if not (MArray.for_all Symbol.non_error rhs) then
         grammar_uses_error_token := true;
       k+1
     ) k branches in
@@ -846,7 +846,7 @@ module Production = struct
       assert false (* [nt] is not a start symbol *)
 
   let error_free prod =
-    Misc.array_for_all Symbol.non_error (rhs prod)
+    MArray.for_all Symbol.non_error (rhs prod)
 
   (* Iteration. *)
 

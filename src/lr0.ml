@@ -655,7 +655,7 @@ let union (k1, toksr1) ((k2, toksr2) as s2) =
      even more ambitious and try to not even allocate the array
      [toksr] in that case, but that seems more trouble than it
      is worth. *)
-  if Misc.array_for_all2 (==) toksr2 toksr then
+  if MArray.for_all2 (==) toksr2 toksr then
     s2
   else
     k, toksr

@@ -55,6 +55,39 @@ let rev_of_list xs =
 let rev_to_list a =
   fold_left (fun xs x -> x :: xs) [] a
 
+(* To keep compatibility with OCaml 4.02, we copy [Array.for_all],
+   which appeared in 4.03. *)
+
+let for_all p a =
+  let n = length a in
+  let rec loop i =
+    if i = n then true
+    else if p (unsafe_get a i) then loop (succ i)
+    else false in
+  loop 0
+
+(* Similarly, we copy [Array.for_all2], which appeared in 4.11. *)
+
+let for_all2 p l1 l2 =
+  let n1 = length l1
+  and n2 = length l2 in
+  if n1 <> n2 then invalid_arg "Array.for_all2"
+  else let rec loop i =
+    if i = n1 then true
+    else if p (unsafe_get l1 i) (unsafe_get l2 i) then loop (succ i)
+    else false in
+  loop 0
+
+let fold_left2 f accu a1 a2 =
+  let n1 = length a1
+  and n2 = length a2 in
+  if n1 <> n2 then invalid_arg "Array.fold_left2";
+  let accu = ref accu in
+  for i = 0 to n1 - 1 do
+    accu := f !accu (unsafe_get a1 i) (unsafe_get a2 i)
+  done;
+  !accu
+
 let test () =
   assert (pop [|1; 2; 3; 4|] = [|1; 2; 3|]) ;
   assert (push [|1; 2; 3|] 4 = [|1; 2; 3; 4|]) ;
