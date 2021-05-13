@@ -21,6 +21,13 @@ let push a x =
   let n = length a in
   init (n + 1) (fun i -> if i = n then x else a.(i))
 
+let truncate k a =
+  let n = length a in
+  if n <= k then
+    a
+  else
+    sub a (n-k) k
+
 let rev a =
   let n = length a in
   if n = 0 then
@@ -48,6 +55,8 @@ let rev_to_list a =
 let test () =
   assert (pop [|1; 2; 3; 4|] = [|1; 2; 3|]) ;
   assert (push [|1; 2; 3|] 4 = [|1; 2; 3; 4|]) ;
+  assert (truncate 2 [|1; 2; 3; 4|] = [|3; 4|]) ;
+  assert (truncate 4 [|1; 2|] = [|1; 2|]) ;
   assert (rev [|1; 2; 3; 4|] = [|4; 3; 2; 1|]) ;
   assert (rev_of_list [1; 2; 3; 4; 5] = [|5; 4; 3; 2; 1|]) ;
   assert (rev_to_list [|1; 2; 3; 4; 5|] = [5; 4; 3; 2; 1])

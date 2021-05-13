@@ -23,6 +23,10 @@ val pop : 'a t -> 'a t
     [push [|1; 2; 3|] 4 = [|1; 2; 3; 4|]] *)
 val push : 'a t -> 'a -> 'a t
 
+(**If the array [a] has length at least [k], then [truncate k a] is the suffix
+   of length [k] of the array [a]. Otherwise, [truncate k a] is [a]. *)
+val truncate : int -> 'a array -> 'a array
+
 (** Array reversal.
    [rev [|1; 2; 3; 4|] = [|4; 3; 2; 1|]]*)
 val rev : 'a t -> 'a t
