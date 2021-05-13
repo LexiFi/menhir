@@ -17,8 +17,9 @@ let empty =
   [||]
 
 let pop a =
-  if a = [||] then raise (Invalid_argument "Array.pop")
-  else sub a 0 (length a - 1)
+  let n = length a in
+  assert (n > 0);
+  sub a 0 (n - 1)
 
 let push a x =
   let n = length a in
