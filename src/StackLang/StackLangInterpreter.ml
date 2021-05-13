@@ -21,6 +21,7 @@ open Lexing
 open Printf
 open Grammar
 open StackLang
+open StackLangUtils
 
 (* -------------------------------------------------------------------------- *)
 
@@ -84,6 +85,8 @@ let rec eval (env : env) (v : value) : gvalue =
     end
   | VTuple vs ->
       GVTuple (map (eval env) vs)
+  | VUnit ->
+      GVDummy
 
 
 (* Matching a ground value [gv] against a pattern [p] extends the environment
@@ -106,6 +109,8 @@ let rec bind p gv (env : env) : env =
   | PTuple _, _ ->
       error "tuple pattern cannot match a value that is not a tuple"
 
+
+let binds = Bindings.fold (fun r v env -> bind (PReg r) (eval env v) env)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -187,7 +192,7 @@ let rec exec state block =
           (RegisterSet.print required);
       state.env <- Env.restrict required state.env;
       exec state block
-  | IPush (v, block) ->
+  | IPush (v, _, block) ->
       let gv = eval state.env v in
       state.stack <- gv :: state.stack;
       exec state block
@@ -195,9 +200,8 @@ let rec exec state block =
       let gv = pop state in
       state.env <- bind p gv state.env;
       exec state block
-  | IDef (p, v, block) ->
-      let gv = eval state.env v in
-      state.env <- bind p gv state.env;
+  | IDef (bindings, block) ->
+      state.env <- binds bindings state.env;
       exec state block
   | IPrim (r, p, block) ->
       let gv = exec_prim state p in
@@ -210,12 +214,12 @@ let rec exec state block =
       exec state block
   | IDie ->
       None (* reject *)
-  | IReturn r ->
-      let _gv = eval state.env (VReg r) in
+  | IReturn v ->
+      let _gv = eval state.env v in
       Some ()
       (* accept *)
   | IJump label ->
-      let block = lookup label state.program.cfg in
+      let block = (lookup label state.program.cfg).block in
       exec state block
   | ICaseToken (r, branches, odefault) ->
       let tok = asToken (eval state.env (VReg r)) in
@@ -223,6 +227,8 @@ let rec exec state block =
   | ICaseTag (r, branches) ->
       let tag = asTag (eval state.env (VReg r)) in
       exec_casetag state tag branches
+  | ITypedBlock { block; stack_type = _; final_type = _ } ->
+      exec state block
 
 
 and exec_casetoken state tok branches odefault =
