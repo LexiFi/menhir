@@ -25,7 +25,54 @@ type state =
 
 let current : state ref = ref Idle
 
-let exec (body : unit -> unit) : block =
+let routine_stack_type : cell_info array option ref = ref None
+
+let routine_final_type : Stretch.ocamltype option ref = ref None
+
+let routine_needed : RegisterSet.t option ref = ref None
+
+let routine_has_case_tag : bool ref = ref false
+
+let typed_exec (body : unit -> unit) =
+  current := Open identity;
+  routine_stack_type := None;
+  routine_final_type := None;
+  routine_needed := None;
+  routine_has_case_tag := false;
+  body ();
+  let has_case_tag = !routine_has_case_tag in
+  match (!current, !routine_stack_type, !routine_needed) with
+  | Idle, _, _ ->
+      (* This cannot happen, I think. *)
+      assert false
+  | Open _, _, _ ->
+      (* The user has misused our API: a block has been opened and has not
+         been properly ended by calling [die], [return], [jump], or a case
+         analysis construction. *)
+      assert false
+  | _, None, _ ->
+      (* The user must specify the type of a block *)
+      assert false
+  | _, _, None ->
+      (* The user must specify the needed registers of a block *)
+      assert false
+  | Closed block, Some stack_type, Some needed_registers ->
+      let final_type = !routine_final_type in
+      current := Idle;
+      routine_stack_type := None;
+      routine_final_type := None;
+      routine_needed := None;
+      routine_has_case_tag := false;
+      { block
+      ; stack_type
+      ; final_type
+      ; needed_registers
+      ; has_case_tag
+      ; name = None
+      }
+
+
+let exec (body : unit -> unit) =
   current := Open identity;
   body ();
   match !current with
@@ -77,23 +124,21 @@ let close i =
       assert false
 
 
+let routine_stack_type typ = routine_stack_type := Some typ
+
+let routine_final_type typ = routine_final_type := Some typ
+
+let routine_need needed = routine_needed := Some (RegisterSet.of_list needed)
+
 let need rs = extend (fun block -> INeed (rs, block))
 
 let need_list rs = need (RegisterSet.of_list rs)
 
-let push v = extend (fun block -> IPush (v, block))
+let push v cell = extend (fun block -> IPush (v, cell, block))
 
 let pop p = extend (fun block -> IPop (p, block))
 
-let def p v =
-  (* In order to avoid unnecessary clutter, we eliminate a definition of
-     the form [def x = x] on the fly. *)
-  match (p, v) with
-  | PReg dst, VReg src when dst = src ->
-      ()
-  | _, _ ->
-      extend (fun block -> IDef (p, v, block))
-
+let def p v = extend (fun block -> Block.sdef p v block)
 
 let move dst src = def (PReg dst) (VReg src)
 
@@ -151,19 +196,17 @@ let case_token r cases =
 
 
 let case_tag r cases =
+  routine_has_case_tag := true;
   let saved = !current in
   let branches = ref [] in
   let def_branch pat body = branches := (pat, exec body) :: !branches in
   cases def_branch;
   let branches = List.rev !branches in
+  (* There used to be an optimisation that does not perform the match if there
+     is only one branch. However this does not work : we need to uncover type
+     information here *)
   current := saved;
-  match branches with
-  | [ (_pat, block) ] ->
-      (* If there is only one branch, then there is no need to generate a
-         case instruction; we eliminate it on the fly. *)
-      close block
-  | _ ->
-      close (ICaseTag (r, branches))
+  close (ICaseTag (r, branches))
 
 
 module Build (L : sig
@@ -175,12 +218,14 @@ module Build (L : sig
 
   val code : label -> unit
 
-  val entry : label Lr1.NodeMap.t
+  val entry : string StringMap.t
+
+  val states : state_info TagMap.t
 end) =
 struct
   open L
 
-  let code (label : label) : block = exec (fun () -> code label)
+  let code (label : label) : typed_block = typed_exec (fun () -> code label)
 
   let cfg = ref LabelMap.empty
 
@@ -190,8 +235,8 @@ struct
 
   let cfg = !cfg
 
-  let entry = Lr1.NodeMap.map print entry
+  let entry = L.entry
 
-  let program = { cfg; entry }
+  let program = { cfg; entry; states }
 end
 (* Build *)

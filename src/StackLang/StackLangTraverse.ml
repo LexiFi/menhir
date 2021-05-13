@@ -13,43 +13,68 @@
 
 open Printf
 open StackLang
-
-let branch_iter f (_pat, block) = f block
-
-let branch_map f (pat, block) = (pat, f block)
+open StackLangUtils
+open NamingConventions
 
 (* -------------------------------------------------------------------------- *)
+
+type error =
+  { context : label
+  ; culprit : block
+  ; message : string
+  ; state_relevance : bool
+  }
+
+exception StackLangError of error
+
+let fail ?(state_relevance = false) context culprit message =
+  raise (StackLangError { context; culprit; message; state_relevance })
+
+
+let state_reg = state
 
 (* Checking that a StackLang program contains no references to undefined
    registers. *)
 
-let wf_regs label rs rs' =
+let wf_regs label culprit rs rs' =
   (* Check that [rs'] is a subset of [rs]. *)
   let stray = RegisterSet.diff rs' rs in
   if not (RegisterSet.is_empty stray)
-  then begin
-    eprintf
-      "StackLang: in block %s, reference to undefined register%s:\n  %s\n"
-      label
-      (if RegisterSet.cardinal stray > 1 then "s" else "")
-      (RegisterSet.print stray);
-    eprintf
-      "StackLang: the following registers are defined:\n  %s\n"
-      (RegisterSet.print rs);
-    exit 1
-  end
+  then
+    let message =
+      sprintf
+        "StackLang: in block %s, reference to undefined register%s:\n\
+        \  %s\n\
+         StackLang: the following registers are defined:\n\
+        \  %s\n"
+        label
+        (if RegisterSet.cardinal stray > 1 then "s" else "")
+        (RegisterSet.print stray)
+        (RegisterSet.print rs)
+    in
+    fail label culprit message
 
 
-let wf_reg label rs r = wf_regs label rs (RegisterSet.singleton r)
+let wf_reg label block rs r = wf_regs label block rs (RegisterSet.singleton r)
 
-let rec wf_value label rs v =
-  match v with
-  | VTag _ ->
+let wf_tag label culprit states tag =
+  match TagMap.find_opt tag states with
+  | None ->
+      fail ~state_relevance:true label culprit "reference to unrepresented tag"
+  | Some _ ->
       ()
+
+
+let rec wf_value program label culprit rs v =
+  match v with
+  | VTag tag ->
+      wf_tag label culprit program.states tag
   | VReg r ->
-      wf_reg label rs r
+      wf_reg label culprit rs r
   | VTuple vs ->
-      List.iter (wf_value label rs) vs
+      List.iter (wf_value program label culprit rs) vs
+  | VUnit ->
+      ()
 
 
 let rec def rs p =
@@ -70,12 +95,12 @@ let def rs p =
   RegisterSet.union rs (def RegisterSet.empty p)
 
 
-let wf_prim label rs p =
+let wf_prim program label block rs p =
   match p with
   | PrimOCamlCall (_, args) ->
-      List.iter (wf_reg label rs) args
-  | PrimOCamlFieldAccess (r, _) ->
-      wf_reg label rs r
+      List.iter (wf_value program label block rs) args
+  | PrimOCamlFieldAccess (v, _) ->
+      wf_value program label block rs v
   | PrimOCamlDummyPos ->
       ()
   | PrimOCamlAction _ ->
@@ -88,45 +113,61 @@ let wf_prim label rs p =
    blocks. [label] is the label of the current block and is used only as part
    of error messages. *)
 
-let rec wf_block cfg label rs block =
+let rec wf_block program label rs block =
+  let { cfg } = program in
+  let wf_regs = wf_regs label block rs in
+  let wf_value = wf_value program label block rs in
+  let wf_prim = wf_prim program label block rs in
   match block with
   | INeed (rs', block) ->
-      wf_regs label rs rs';
+      wf_regs rs';
       (* A [need] instruction undefines the registers that it does not
          mention, so we continue with [rs']. *)
       let rs = rs' in
-      wf_block cfg label rs block
-  | IPush (v, block) ->
-      wf_value label rs v;
-      wf_block cfg label rs block
+      wf_block program label rs block
+  | IPush (v, _cell, block) ->
+      (* TODO : check that the cell and v are in sync *)
+      wf_value v;
+      wf_block program label rs block
   | IPop (p, block) ->
       let rs = def rs p in
-      wf_block cfg label rs block
-  | IDef (p, v, block) ->
-      wf_value label rs v;
-      let rs = def rs p in
-      wf_block cfg label rs block
+      wf_block program label rs block
+  | IDef (bindings, block) ->
+      let values = Bindings.values bindings in
+      List.iter wf_value values;
+      let rs = RegisterSet.union (Bindings.domain bindings) rs in
+      wf_block program label rs block
   | IPrim (r, p, block) ->
-      wf_prim label rs p;
-      let rs = def rs (PReg r) in
-      wf_block cfg label rs block
+      wf_prim p;
+      let rs = RegisterSet.add r rs in
+      wf_block program label rs block
   | ITrace (_, block) | IComment (_, block) ->
-      wf_block cfg label rs block
+      wf_block program label rs block
   | IDie ->
       ()
-  | IReturn r ->
-      wf_reg label rs r
+  | IReturn v ->
+      wf_value v
   | IJump label' ->
       (* Check that every register that is needed at the destination label
          is defined here. *)
-      wf_regs label rs (needed (lookup label' cfg))
+      wf_regs (needed (lookup label' cfg))
   | ICaseToken (r, branches, odefault) ->
-      wf_reg label rs r;
-      List.iter (wf_branch cfg label rs) branches;
-      Option.iter (wf_block cfg label rs) odefault
+      wf_reg label (ICaseToken (r, branches, odefault)) rs r;
+      List.iter (wf_branch program label rs) branches;
+      Option.iter (wf_block program label rs) odefault
   | ICaseTag (r, branches) ->
-      wf_reg label rs r;
-      List.iter (branch_iter (wf_block cfg label rs)) branches
+      wf_reg label (ICaseTag (r, branches)) rs r;
+      List.iter
+        (fun (TagMultiple tags, _) ->
+          List.iter (wf_tag label block program.states) tags )
+        branches;
+      List.iter (branch_iter (wf_block program label rs)) branches
+  | ITypedBlock { block; needed_registers = rs' } ->
+      wf_regs rs';
+      (* A [need] instruction undefines the registers that it does not
+         mention, so we continue with [rs']. *)
+      let rs = rs' in
+      wf_block program label rs block
 
 
 and wf_branch cfg label rs (tokpat, block) =
@@ -145,148 +186,16 @@ and wf_branch cfg label rs (tokpat, block) =
    with an [INeed] instruction and use this instruction serves as a reference
    to find out which registers are initially defined. *)
 
-let wf_block cfg label block = wf_block cfg label (needed block) block
+let wf_routine program label { block; needed_registers } =
+  wf_block program label needed_registers block
+
 
 (* [wf program] checks that the program [program] contains no references to
    undefined registers. *)
 
 let wf program =
-  LabelMap.iter (wf_block program.cfg) program.cfg;
+  Program.iter (wf_routine program) program;
   Time.tick "Checking the StackLang code for well-formedness"
-
-
-(* -------------------------------------------------------------------------- *)
-
-(* [successors yield block] applies the function [yield] in turn to every
-   label that is the target of a [jump] instruction in the block [block]. *)
-
-let rec successors yield block =
-  match block with
-  | INeed (_, block)
-  | IPush (_, block)
-  | IPop (_, block)
-  | IDef (_, _, block)
-  | IPrim (_, _, block)
-  | ITrace (_, block)
-  | IComment (_, block) ->
-      successors yield block
-  | IDie | IReturn _ ->
-      ()
-  | IJump label ->
-      yield label
-  | ICaseToken (_, branches, oblock) ->
-      List.iter (branch_iter (successors yield)) branches;
-      Option.iter (successors yield) oblock
-  | ICaseTag (_, branches) ->
-      List.iter (branch_iter (successors yield)) branches
-
-
-(* -------------------------------------------------------------------------- *)
-
-(* [in_degree program] computes the in-degree of every label in the program
-   [program]. It returns a table that maps every reachable label to its
-   in-degree. Unreachable labels do not appear in the table. The entry labels
-   artifically receive an in-degree of at least 2; this ensures that they
-   cannot be inlined by the function [inline] that follows. *)
-
-let in_degree program =
-  (* Initialize a queue and a map of labels to degrees. *)
-  let queue : label Queue.t = Queue.create ()
-  and degree : int LabelMap.t ref = ref LabelMap.empty in
-
-  (* [tick label] increments the degree associated with [label]. If its
-     previous degree was zero, then [label] is enqueued for exploration. *)
-  let tick label =
-    let d =
-      try LabelMap.find label !degree with
-      | Not_found ->
-          Queue.add label queue;
-          0
-    in
-    degree := LabelMap.add label (d + 1) !degree
-  in
-
-  (* [visit () label] examines the block at address [label]. *)
-  let visit () label = lookup label program.cfg |> successors tick in
-
-  (* Initialize the queue with the entry labels. Process the queue until it
-     becomes empty. Return the final table. *)
-  Lr1.NodeMap.iter
-    (fun _s label ->
-      Queue.add label queue;
-      degree := LabelMap.add label 2 !degree )
-    program.entry;
-  Misc.qfold visit () queue;
-  !degree
-
-
-(* -------------------------------------------------------------------------- *)
-
-(* [inline degree program] transforms the program [program] by removing every
-   unreachable block and by inlining every block whose in-degree is 1. It is
-   assumed that every entry label has an in-degree of at least 2. *)
-
-let rec inline_block cfg degree block =
-  match block with
-  | INeed (rs, block) ->
-      INeed (rs, inline_block cfg degree block)
-  | IPush (v, block) ->
-      IPush (v, inline_block cfg degree block)
-  | IPop (p, block) ->
-      IPop (p, inline_block cfg degree block)
-  | IDef (p, v, block) ->
-      IDef (p, v, inline_block cfg degree block)
-  | IPrim (r, p, block) ->
-      IPrim (r, p, inline_block cfg degree block)
-  | ITrace (s, block) ->
-      ITrace (s, inline_block cfg degree block)
-  | IComment (s, block) ->
-      IComment (s, inline_block cfg degree block)
-  | IDie ->
-      IDie
-  | IReturn r ->
-      IReturn r
-  | IJump label ->
-      (* If the target label's in-degree is 1, follow the indirection;
-         otherwise, keep the [jump] instruction. *)
-      if lookup label degree = 1
-      then inline_block cfg degree (lookup label cfg)
-      else IJump label
-  | ICaseToken (r, branches, odefault) ->
-      ICaseToken
-        ( r
-        , List.map (branch_map (inline_block cfg degree)) branches
-        , Option.map (inline_block cfg degree) odefault )
-  | ICaseTag (r, branches) ->
-      ICaseTag (r, List.map (branch_map (inline_block cfg degree)) branches)
-
-
-let inline_cfg degree cfg =
-  LabelMap.fold
-    (fun label block accu ->
-      match LabelMap.find label degree with
-      | exception Not_found ->
-          (* An unreachable label. *)
-          accu
-      | d ->
-          assert (d > 0);
-          if d = 1
-          then accu
-          else LabelMap.add label (inline_block cfg degree block) accu )
-    cfg
-    LabelMap.empty
-
-
-let inline degree { cfg; entry } = { cfg = inline_cfg degree cfg; entry }
-
-(* [inline program] transforms the program [program] by removing every
-   unreachable block and by inlining away every (non-entry) label whose
-   in-degree is 1. *)
-
-let inline program =
-  let program = inline (in_degree program) program in
-  Time.tick "Inlining in StackLang";
-  program
 
 
 (* -------------------------------------------------------------------------- *)
@@ -342,7 +251,7 @@ let rec measure_block m block =
   match block with
   | INeed (_, block) ->
       measure_block m block
-  | IPush (_, block) ->
+  | IPush (_, _, block) ->
       m.total <- m.total + 1;
       m.push <- m.push + 1;
       measure_block m block
@@ -350,7 +259,7 @@ let rec measure_block m block =
       m.total <- m.total + 1;
       m.pop <- m.pop + 1;
       measure_block m block
-  | IDef (_, _, block) ->
+  | IDef (_, block) ->
       m.total <- m.total + 1;
       m.def <- m.def + 1;
       measure_block m block
@@ -382,9 +291,800 @@ let rec measure_block m block =
       m.total <- m.total + 1;
       m.casetag <- m.casetag + 1;
       List.iter (branch_iter (measure_block m)) branches
+  | ITypedBlock { block } ->
+      measure_block m block
 
+
+let measure_t_block measure { block } = measure_block measure block
 
 let measure program =
   let m = zero () in
-  LabelMap.iter (fun _ block -> measure_block m block) program.cfg;
+  Program.iter (fun _ -> measure_t_block m) program;
   m
+
+
+(* -------------------------------------------------------------------------- *)
+(* Utility functions used bellow. *)
+
+let rec pattern_shadow_state = function
+  | PReg reg when reg = state ->
+      true
+  | PTuple li ->
+      List.exists pattern_shadow_state li
+  | _ ->
+      false
+
+
+let _value_refers_to_state value = RegisterSet.mem state (Value.registers value)
+
+let get_args_map block_map =
+  StringMap.map
+    (function
+      | INeed (registers, _block) ->
+          StringSet.elements registers
+      | _ ->
+          assert false )
+    block_map
+
+
+(* -------------------------------------------------------------------------- *)
+(* Well-typedness with regard to knownledge of stack cells. *)
+
+type sync =
+  | Synced of int
+  | Unsynced of tag
+
+let rec get_state_value sync = function
+  | VReg reg when reg = state ->
+    (match sync with Synced _ -> None | Unsynced tag -> Some tag)
+  | VTag tag ->
+      Some tag
+  | VTuple li ->
+      Option.first_value (List.map (get_state_value sync) li)
+  | _ ->
+      None
+
+
+let update_sync_with_bindings bindings sync =
+  match Bindings.apply bindings (VReg state_reg) with
+  | VTag tag ->
+      Unsynced tag
+  | VReg reg when reg = state_reg ->
+      sync
+  | _ ->
+      assert false
+
+
+let wt_knowncells_routine program label (t_block : typed_block) =
+  let cfg = program.cfg in
+  let states = program.states in
+  let fail_sync block =
+    let message =
+      sprintf
+        "While checking that there is no match on an out of sync state, in \
+         block %s."
+        label
+    in
+    fail label block message
+  in
+  let check_cells block reason known_cells needed_cells =
+    let fail message =
+      let message =
+        sprintf
+          "While checking %s, in block %s : %s\n\
+           Known cells : %s\n\
+           Needed cells : %s"
+          reason
+          label
+          message
+          (StackLangPrinter.known_cells_to_string known_cells)
+          (StackLangPrinter.known_cells_to_string needed_cells)
+      in
+      fail ~state_relevance:true label block message
+    in
+    let l1 = Array.length known_cells in
+    let l2 = Array.length needed_cells in
+    if l1 < l2
+    then
+      fail @@ sprintf "Could discover %i known cells, but %i are needed." l1 l2;
+    for i = 1 to l2 do
+      if known_cells.(l1 - i) <> needed_cells.(l2 - i)
+      then fail @@ sprintf "Enough cells are known, but their content differ."
+    done
+  in
+  let check_state_sync block known_cells expected_cells tag =
+    (* Check that we have enough cells to assert that the state is  *)
+    check_cells
+      block
+      "state sync"
+      known_cells
+      (lookup_tag tag states).known_cells;
+    check_cells
+      block
+      "state sync"
+      (lookup_tag tag states).known_cells
+      expected_cells
+  in
+  let check_state_sync block known_cells expected_cells = function
+    | Unsynced tag ->
+        check_state_sync block known_cells expected_cells tag
+    | Synced n when n <> 0 ->
+        fail
+          ~state_relevance:true
+          label
+          block
+          (sprintf
+             "State in sync with %i deep cell when jumping or going in a typed \
+              block."
+             n )
+    | _ ->
+        ()
+  in
+  (*
+  [known_cells]: cells we can pop and pass through a typed_block and a jump
+  [extra_known_cells]: Cells on top of the information carried by the state.
+  They are extra in the sense that when we match on a state, known_cells become
+    [Array.append state_known_cells extra_known_cells] *)
+  let rec wtkc_block (known_cells : cell_info array) (sync : sync) block =
+    Block.iter_unit
+      (wtkc_block known_cells sync)
+      ~push:(fun value cell block ->
+        ( if cell.hold_state
+        then
+          match get_state_value sync value with
+          | None ->
+              ()
+          | Some tag ->
+              let tag_type = (lookup_tag tag states).known_cells in
+              check_cells block "push" known_cells tag_type );
+        let sync =
+          match sync with Synced n -> Synced (n + 1) | sync -> sync
+        in
+        wtkc_block (MArray.push known_cells cell) sync block )
+      ~pop:(fun pattern block' ->
+        ( if known_cells = [||]
+        then
+          let message = "Tried to pop unknown cell" in
+          fail label block message );
+        let known_cells = MArray.pop known_cells in
+        (* If the state is shadowed, then it becomes unknown. *)
+        let sync = if pattern_shadow_state pattern then Unsynced 0 else sync in
+        wtkc_block known_cells sync block' )
+      ~def:(fun bindings block ->
+        (* If the state variable is redefined, then matching on the state will
+           not give any new information. Therefore, [extra_known_cells]
+           becomes empty. However there is an issue : it is possible to trick
+           this function into not raising an error when it should. *)
+        let sync = update_sync_with_bindings bindings sync in
+        wtkc_block known_cells sync block )
+      ~jump:(fun label ->
+        let target = lookup label cfg in
+        if RegisterSet.mem state_reg target.needed_registers
+        then
+          (* This checks that the stack is compatible with the state we are
+             passing to the routine. This is only needed if we are actually
+             passing a state *)
+          check_state_sync block known_cells target.stack_type sync;
+        (* We check that the stack has at least the amount of cells the target
+           routine expects *)
+        check_cells block "jump" known_cells target.stack_type )
+      ~case_tag:(fun _reg branches ->
+        match sync with
+        | Synced n ->
+            let branch_aux (TagMultiple taglist, block) =
+              (* By matching on the state, we discover state information.
+                 We can enrich the known cells with theses. *)
+              let known_cells =
+                Array.append
+                  (state_info_intersection states taglist).known_cells
+                  (MArray.suffix known_cells n)
+              in
+              (* We are matching on a state, therefore state is always needed,
+                 and we can discard these values. *)
+              wtkc_block known_cells sync block
+            in
+            List.iter branch_aux branches
+        | Unsynced _tag ->
+            fail_sync block )
+      ~typed_block:(fun { block = block'; stack_type; needed_registers } ->
+        (* We check that the stack has at least the number of known cells that
+           the type annotation expect. *)
+        check_cells block "typed block" known_cells stack_type;
+        if RegisterSet.mem state_reg needed_registers
+        then check_state_sync block known_cells stack_type sync;
+        (* Inside the typed block, we are only allowed to use the cell from the
+           annotation. *)
+        let known_cells = stack_type in
+        wtkc_block known_cells (Synced 0) block' )
+      block
+  in
+  let { block; stack_type } = t_block in
+  wtkc_block stack_type (Synced 0) block
+
+
+let well_known_cells_typed program =
+  Program.iter (wt_knowncells_routine program) program
+
+
+(* -------------------------------------------------------------------------- *)
+(* Well-typedness with regard to knownledge of the final type. *)
+
+let well_final_typed_routine program label (t_block : typed_block) =
+  let { cfg; states } = program in
+  let check_final_types reason computed_final_type expected_final_type block =
+    let fail () =
+      let message =
+        sprintf
+          "While checking %s, in block %s : final types differ\n\
+           Computed final type : %s\n\
+           Expected final type : %s"
+          reason
+          label
+          (match computed_final_type with None -> "None" | Some _typ -> "Some")
+          (match expected_final_type with None -> "None" | Some _typ -> "Some")
+      in
+      fail ~state_relevance:true label block message
+    in
+    if computed_final_type <> expected_final_type then fail ()
+  in
+  (* The rules for being well-typed with regard to the final type are simple :
+     - When we return, the final type must be known.
+     - When we jump or enter a typed block, we can lose knowledge of the final
+       type, but not gain it.
+     - We can gain knowledge of the final type either by having it at the start
+       of the block, or with a case-tag. *)
+  let rec wft_block final_type block =
+    Block.iter_unit
+      (wft_block final_type)
+      ~return:(fun _value ->
+        match final_type with
+        | None ->
+            fail label block "Tried to return with final type unknown"
+        | Some _ ->
+            () )
+      ~jump:(fun label ->
+        let target = lookup label cfg in
+        match target.final_type with
+        | Some _ as final_type' ->
+            check_final_types "jump" final_type final_type' block
+        | None ->
+            () )
+      ~case_tag:(fun _reg branches ->
+        let branch_aux (TagMultiple taglist, block) =
+          (* By matching on the state, we discover state information.
+             We can enrich the known cells with theses. *)
+          let final_type =
+            (state_info_intersection states taglist).sfinal_type
+          in
+          (* We are matching on a state, therefore state is always needed,
+             and we can discard these values. *)
+          wft_block final_type block
+        in
+        List.iter branch_aux branches )
+      ~typed_block:(fun { block = block'; final_type = final_type' } ->
+        ( match final_type' with
+        | Some _ ->
+            check_final_types "typed block" final_type final_type' block
+        | None ->
+            () );
+        wft_block final_type' block' )
+      block
+  in
+  let { block; final_type } = t_block in
+  wft_block final_type block
+
+
+let well_final_typed program =
+  Program.iter (well_final_typed_routine program) program
+
+
+(* -------------------------------------------------------------------------- *)
+
+let wt program =
+  well_known_cells_typed program;
+  well_final_typed program
+
+
+(* -------------------------------------------------------------------------- *)
+(* Testing wt. *)
+
+(* This two infix functions are used for build example programs more easily. *)
+let ( => ) pat block = (TagMultiple pat, block)
+
+let ( := ) pat value = Block.sdef pat value
+
+open Block
+
+let good1 =
+  let c_cell = Cell.make ~typ:(Stretch.Inferred "c") true true false false in
+  let b_cell = Cell.make ~typ:(Stretch.Inferred "b") true true false false in
+  let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
+  let states =
+    TagMap.of_list
+      [ (0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
+      ; (1, { sfinal_type = None; known_cells = [| c_cell |] })
+      ; (2, { sfinal_type = None; known_cells = [||] })
+      ]
+  in
+  let cfg =
+    LabelMap.of_list
+      [ ( "f"
+        , { stack_type = [||]
+          ; final_type = None
+          ; has_case_tag = true
+          ; name = None
+          ; needed_registers = RegisterSet.of_list [ state_reg ]
+          ; block =
+              case_tag
+                state_reg
+                [ [ 0 ]
+                  => pop (PTuple [ PReg "b"; PReg state_reg ])
+                     @@ pop (PReg "a")
+                     @@ die
+                ; [ 1 ] => pop (PReg "c") @@ die
+                ; [ 2 ] => die
+                ]
+          } )
+      ; ( "g"
+        , { stack_type = [| a_cell |]
+          ; final_type = None
+          ; has_case_tag = false
+          ; name = None
+          ; needed_registers = RegisterSet.empty
+          ; block =
+              (PReg state_reg := VTag 0)
+              @@ (PReg "b" := VUnit)
+              @@ push (VReg "b") b_cell
+              @@ jump "f"
+          } )
+      ]
+  in
+  { cfg; entry = StringMap.empty; states }
+
+
+let good2 =
+  let c_cell = Cell.make ~typ:(Stretch.Inferred "c") true true false false in
+  let b_cell = Cell.make ~typ:(Stretch.Inferred "b") true true false false in
+  let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
+  let states =
+    TagMap.of_list
+      [ (0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
+      ; (1, { sfinal_type = None; known_cells = [| c_cell; b_cell |] })
+      ; (2, { sfinal_type = None; known_cells = [||] })
+      ]
+  in
+  let cfg =
+    LabelMap.of_list
+      [ ( "f"
+        , { stack_type = [| b_cell |]
+          ; final_type = None
+          ; has_case_tag = true
+          ; name = None
+          ; needed_registers = RegisterSet.of_list [ state_reg ]
+          ; block = pop (PTuple [ PReg "b"; PReg state_reg ]) @@ die
+          } )
+      ; ( "g"
+        , { stack_type = [||]
+          ; final_type = None
+          ; has_case_tag = false
+          ; name = None
+          ; needed_registers = RegisterSet.empty
+          ; block = case_tag state_reg [ [ 0; 1 ] => jump "f" ]
+          } )
+      ]
+  in
+  { cfg; entry = StringMap.empty; states }
+
+
+let good_sync =
+  let c_cell = Cell.make ~typ:(Stretch.Inferred "c") true true false false in
+  let b_cell = Cell.make ~typ:(Stretch.Inferred "b") true true false false in
+  let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
+  let states =
+    TagMap.of_list
+      [ (0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
+      ; (1, { sfinal_type = None; known_cells = [| c_cell |] })
+      ; (2, { sfinal_type = None; known_cells = [||] })
+      ]
+  in
+  let cfg =
+    LabelMap.of_list
+      [ ( "f"
+        , { stack_type = [||]
+          ; final_type = None
+          ; has_case_tag = true
+          ; name = None
+          ; needed_registers = RegisterSet.of_list [ state_reg ]
+          ; block =
+              case_tag
+                state_reg
+                [ [ 0 ]
+                  => pop (PTuple [ PReg "b"; PReg state_reg ])
+                     @@ pop (PReg "a")
+                     @@ die
+                ; [ 1 ] => pop (PReg "c") @@ die
+                ; [ 2 ] => die
+                ]
+          } )
+      ; ( "g"
+        , { stack_type = [||]
+          ; final_type = None
+          ; has_case_tag = false
+          ; name = None
+          ; needed_registers = RegisterSet.empty
+          ; block =
+              (PReg state_reg := VTag 0)
+              @@ (PReg "b" := VUnit)
+              @@ push VUnit a_cell
+              @@ push (VReg "b") b_cell
+              @@ typed_block
+                   [||]
+                   (RegisterSet.singleton state_reg)
+                   false
+                   (jump "f")
+          } )
+      ]
+  in
+  { cfg; entry = StringMap.empty; states }
+
+
+(* This is ill-typed because when we match on the state, the value of the state
+   is a value we just made-up, and therefore it does not give us any information
+   on the stack. *)
+let bad_shadow_state =
+  let c_cell = Cell.make ~typ:(Stretch.Inferred "c") true true false false in
+  let b_cell = Cell.make ~typ:(Stretch.Inferred "b") true true false false in
+  let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
+  let states =
+    TagMap.of_list
+      [ (0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
+      ; (1, { sfinal_type = None; known_cells = [| c_cell |] })
+      ; (2, { sfinal_type = None; known_cells = [||] })
+      ]
+  in
+  let cfg =
+    LabelMap.of_list
+      [ ( "f"
+        , { stack_type = [||]
+          ; final_type = None
+          ; has_case_tag = true
+          ; name = None
+          ; needed_registers = RegisterSet.of_list [ state_reg ]
+          ; block =
+              (PReg state_reg := VTag 0)
+              @@ case_tag
+                   state_reg
+                   [ [ 0 ]
+                     => pop (PTuple [ PReg "b"; PReg state_reg ])
+                        @@ pop (PReg "a")
+                        @@ die
+                   ; [ 1 ] => pop (PReg "c") @@ die
+                   ; [ 2 ] => die
+                   ]
+          } )
+      ; ( "g"
+        , { stack_type = [| a_cell |]
+          ; final_type = None
+          ; has_case_tag = false
+          ; name = None
+          ; needed_registers = RegisterSet.empty
+          ; block =
+              (PReg state_reg := VTag 0)
+              @@ (PReg "b" := VUnit)
+              @@ push (VReg "b") b_cell
+              @@ jump "f"
+          } )
+      ]
+  in
+  { cfg; entry = StringMap.empty; states }
+
+
+(* Illegal because of the [jump f] in [g] : passing state [0] requires knowing
+   2 cells, and only one is known.   *)
+let bad_sync =
+  let c_cell = Cell.make ~typ:(Stretch.Inferred "c") true true false false in
+  let b_cell = Cell.make ~typ:(Stretch.Inferred "b") true true false false in
+  let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
+  let states =
+    TagMap.of_list
+      [ (0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
+      ; (1, { sfinal_type = None; known_cells = [| c_cell |] })
+      ; (2, { sfinal_type = None; known_cells = [||] })
+      ]
+  in
+  let cfg =
+    LabelMap.of_list
+      [ ( "f"
+        , { stack_type = [| b_cell |]
+          ; final_type = None
+          ; has_case_tag = true
+          ; name = None
+          ; needed_registers = RegisterSet.of_list [ state_reg ]
+          ; block =
+              case_tag
+                state_reg
+                [ [ 0 ]
+                  => pop (PTuple [ PReg "b"; PReg state_reg ])
+                     @@ pop (PReg "a")
+                     @@ die
+                ; [ 1 ] => pop (PReg "c") @@ die
+                ; [ 2 ] => die
+                ]
+          } )
+      ; ( "g"
+        , { stack_type = [||]
+          ; final_type = None
+          ; has_case_tag = false
+          ; name = None
+          ; needed_registers = RegisterSet.empty
+          ; block =
+              (PReg state_reg := VTag 0)
+              @@ (PReg "b" := VUnit)
+              @@ push (VReg "b") b_cell
+              @@ jump "f"
+          } )
+      ]
+  in
+  { cfg; entry = StringMap.empty; states }
+
+
+(* Illegal because of the [pop c] in [f] *)
+let bad_pop =
+  let c_cell = Cell.make ~typ:(Stretch.Inferred "c") true true false false in
+  let b_cell = Cell.make ~typ:(Stretch.Inferred "b") true true false false in
+  let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
+  let states =
+    TagMap.of_list
+      [ (0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
+      ; (1, { sfinal_type = None; known_cells = [| c_cell |] })
+      ; (2, { sfinal_type = None; known_cells = [||] })
+      ]
+  in
+  let cfg =
+    LabelMap.of_list
+      [ ( "f"
+        , { stack_type = [||]
+          ; final_type = None
+          ; has_case_tag = true
+          ; name = None
+          ; needed_registers = RegisterSet.of_list [ state_reg ]
+          ; block =
+              case_tag
+                state_reg
+                [ [ 0 ]
+                  => pop (PTuple [ PReg "b"; PReg state_reg ])
+                     @@ pop (PReg "a")
+                     @@ pop (PReg "c")
+                     @@ die
+                ; [ 1 ] => pop (PReg "c") die
+                ; [ 2 ] => die
+                ]
+          } )
+      ; ( "g"
+        , { stack_type = [||]
+          ; final_type = None
+          ; has_case_tag = false
+          ; name = None
+          ; needed_registers = RegisterSet.empty
+          ; block =
+              (PReg state_reg := VTag 0)
+              @@ (PReg "b" := VUnit)
+              @@ push (VReg "b") b_cell
+              @@ jump "f"
+          } )
+      ]
+  in
+  { cfg; entry = StringMap.empty; states }
+
+
+let bad_push =
+  let c_cell = Cell.make ~typ:(Stretch.Inferred "c") true true false false in
+  let b_cell = Cell.make ~typ:(Stretch.Inferred "b") true true false false in
+  let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
+  let states =
+    TagMap.of_list
+      [ (0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
+      ; (1, { sfinal_type = None; known_cells = [| c_cell |] })
+      ; (2, { sfinal_type = None; known_cells = [||] })
+      ]
+  in
+  let cfg =
+    LabelMap.of_list
+      [ ( "f"
+        , { stack_type = [||]
+          ; final_type = None
+          ; has_case_tag = false
+          ; name = None
+          ; needed_registers = RegisterSet.empty
+          ; block = push (VTuple [ VReg "b"; VTag 0 ]) b_cell @@ die
+          } )
+      ]
+  in
+  { cfg; entry = StringMap.empty; states }
+
+
+(* Illegal because we return in [g] despite the fact that we do not know the
+   final type. *)
+let bad_final =
+  let a_type = Stretch.Inferred "a" in
+  let c_cell = Cell.make ~typ:(Stretch.Inferred "c") true true false false in
+  let b_cell = Cell.make ~typ:(Stretch.Inferred "b") true true false false in
+  let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
+  let states =
+    TagMap.of_list
+      [ (0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
+      ; (1, { sfinal_type = None; known_cells = [| c_cell |] })
+      ; (2, { sfinal_type = None; known_cells = [||] })
+      ]
+  in
+  let cfg =
+    LabelMap.of_list
+      [ ( "g"
+        , { stack_type = [||]
+          ; final_type = Some a_type
+          ; has_case_tag = false
+          ; name = None
+          ; needed_registers = RegisterSet.empty
+          ; block =
+              (PReg state_reg := VTag 0)
+              @@ (PReg "b" := VUnit)
+              @@ push (VReg "b") b_cell
+              @@ typed_block
+                   [||]
+                   (RegisterSet.of_list [ state_reg ])
+                   true
+                   (case_tag
+                      state_reg
+                      [ [ 0 ]
+                        => pop (PTuple [ PReg "b"; PReg state_reg ])
+                           @@ pop (PReg "a")
+                           @@ return (VReg "a")
+                      ; [ 1 ] => pop (PReg "c") die
+                      ; [ 2 ] => die
+                      ] )
+          } )
+      ]
+  in
+  { cfg; entry = StringMap.empty; states }
+
+
+(* Illegal because in the [0] branch, we gain knowledge of the final type, but
+   this knowledge is discarded by the typed block that follows and then we
+   return, which requires the discarded knowledge. *)
+let bad_final_2 =
+  let a_type = Stretch.Inferred "a" in
+  let c_cell = Cell.make ~typ:(Stretch.Inferred "c") true true false false in
+  let b_cell = Cell.make ~typ:(Stretch.Inferred "b") true true false false in
+  let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
+  let states =
+    TagMap.of_list
+      [ (0, { sfinal_type = Some a_type; known_cells = [| a_cell; b_cell |] })
+      ; (1, { sfinal_type = None; known_cells = [| c_cell |] })
+      ; (2, { sfinal_type = None; known_cells = [||] })
+      ]
+  in
+  let cfg =
+    LabelMap.of_list
+      [ ( "f"
+        , { stack_type = [||]
+          ; final_type = Some a_type
+          ; has_case_tag = false
+          ; name = None
+          ; needed_registers = RegisterSet.singleton state_reg
+          ; block =
+              case_tag
+                state_reg
+                [ [ 0 ]
+                  => typed_block
+                       [||]
+                       (RegisterSet.of_list [ state_reg ])
+                       false
+                       ((PReg "r" := VUnit) @@ return (VReg "r"))
+                ]
+          } )
+      ]
+  in
+  { cfg; entry = StringMap.empty; states }
+
+
+(* Illegal because in the [0] branch of [g], we gain knowledge of the final type, but
+   this knowledge is discarded by the typed block that follows and then we
+   jump to [f], which requires the discarded knowledge. *)
+let bad_final_3 =
+  let a_type = Stretch.Inferred "a" in
+  let c_cell = Cell.make ~typ:(Stretch.Inferred "c") true true false false in
+  let b_cell = Cell.make ~typ:(Stretch.Inferred "b") true true false false in
+  let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
+  let cfg =
+    LabelMap.of_list
+      [ ( "f"
+        , { stack_type = [||]
+          ; final_type = Some a_type
+          ; has_case_tag = true
+          ; name = None
+          ; needed_registers = RegisterSet.of_list [ state_reg ]
+          ; block = return VUnit
+          } )
+      ; ( "g"
+        , { stack_type = [||]
+          ; final_type = None
+          ; has_case_tag = false
+          ; name = None
+          ; needed_registers = RegisterSet.empty
+          ; block =
+              case_tag
+                state_reg
+                [ [ 0 ]
+                  => typed_block
+                       [||]
+                       (RegisterSet.of_list [ state_reg ])
+                       false
+                       (jump "f")
+                ]
+          } )
+      ]
+  in
+  let states =
+    TagMap.of_list
+      [ (0, { sfinal_type = Some a_type; known_cells = [| a_cell; b_cell |] })
+      ; (1, { sfinal_type = None; known_cells = [| c_cell |] })
+      ; (2, { sfinal_type = None; known_cells = [||] })
+      ]
+  in
+  { cfg; entry = StringMap.empty; states }
+
+
+let bad_final_4 =
+  let a_type = Stretch.Inferred "a" in
+  let c_cell = Cell.make ~typ:(Stretch.Inferred "c") true true false false in
+  let b_cell = Cell.make ~typ:(Stretch.Inferred "b") true true false false in
+  let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
+  let cfg =
+    LabelMap.of_list
+      [ ( "f"
+        , { stack_type = [||]
+          ; final_type = Some a_type
+          ; has_case_tag = true
+          ; name = None
+          ; needed_registers = RegisterSet.of_list [ state_reg ]
+          ; block = return VUnit
+          } )
+      ; ( "g"
+        , { stack_type = [||]
+          ; final_type = None
+          ; has_case_tag = false
+          ; name = None
+          ; needed_registers = RegisterSet.empty
+          ; block = jump "f"
+          } )
+      ]
+  in
+  let states =
+    TagMap.of_list
+      [ (0, { sfinal_type = Some a_type; known_cells = [| a_cell; b_cell |] })
+      ; (1, { sfinal_type = None; known_cells = [| c_cell |] })
+      ; (2, { sfinal_type = None; known_cells = [||] })
+      ]
+  in
+  { cfg; entry = StringMap.empty; states }
+
+
+let assert_fails f =
+  match f () with exception StackLangError _ -> () | _ -> assert false
+
+
+let test_wt () =
+  wt good1;
+  wt good2;
+  wt good_sync;
+  assert_fails (fun () -> wt bad_shadow_state);
+  assert_fails (fun () -> wt bad_pop);
+  assert_fails (fun () -> wt bad_push);
+  assert_fails (fun () -> wt bad_sync);
+  assert_fails (fun () -> wt bad_final);
+  assert_fails (fun () -> wt bad_final_2);
+  assert_fails (fun () -> wt bad_final_3);
+  assert_fails (fun () -> wt bad_final_4)
+
+
+let test () = test_wt ()

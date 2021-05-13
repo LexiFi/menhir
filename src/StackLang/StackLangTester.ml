@@ -63,7 +63,8 @@ let test program nt sentence =
       (Sentence.print `Abstract (Some nt, sentence));
   (* These are the two interpreters that we compare. *)
   let reference = ReferenceInterpreter.interpret nt in
-  let label = Lr1.NodeMap.find (Lr1.entry_of_nt nt) program.entry in
+  let entry_name = Grammar.Nonterminal.print true nt in
+  let label = StringMap.find entry_name program.entry in
   let candidate = StackLangInterpreter.interpret program label in
   (* Run each of them. *)
   if debug then eprintf "StackLangTester: Running the reference interpreter...";
