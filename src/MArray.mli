@@ -15,6 +15,9 @@
 
 include module type of Array
 
+(**[empty] is the empty array. *)
+val empty : 'a array
+
 (** [pop a] is [a] with its last element removed.
     [pop [|1; 2; 3; 4|] = [|1; 2; 3|]] *)
 val pop : 'a t -> 'a t

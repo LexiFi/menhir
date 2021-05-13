@@ -13,6 +13,9 @@
 
 include Array
 
+let empty =
+  [||]
+
 let pop a =
   if a = [||] then raise (Invalid_argument "Array.pop")
   else sub a 0 (length a - 1)
