@@ -37,6 +37,10 @@ let truncate k a =
   else
     sub a (n-k) k
 
+let suffix a k =
+  truncate k a
+    (* TODO keep only one of [truncate] and [suffix] *)
+
 let rec equal_segments equal a1 i1 a2 i2 n =
   n = 0 ||
   equal a1.(i1) a2.(i2) && equal_segments equal a1 (i1 + 1) a2 (i2 + 1) (n - 1)
@@ -158,4 +162,7 @@ let test () =
   assert (rev_to_list [|1; 2; 3; 4; 5|] = [5; 4; 3; 2; 1]) ;
   assert (count (fun x -> x mod 2 = 0) [| 1;2;3 |] = 1) ;
   assert (count (fun x -> x mod 2 = 0) [||] = 0) ;
+  assert (suffix [|1; 2; 3; 4; 5|] 0 = [||]) ;
+  assert (suffix [|1; 2; 3; 4; 5|] 3 = [|3; 4; 5|]) ;
+  assert (suffix [|1; 2; 3; 4; 5|] 5 = [|1; 2; 3; 4; 5|]) ;
   ()
