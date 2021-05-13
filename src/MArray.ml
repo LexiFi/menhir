@@ -13,35 +13,37 @@
 
 include Array
 
-let rev a =
-  let n = length a in
-  if n = 0 then [||]
-  else
-    let r = make n (get a 0) in
-    for i = 0 to n - 2 do
-      set r i (get a (n - i - 1))
-    done ;
-    r
-
-let rev_of_list li =
-  match li with
-  | [] ->
-      [||]
-  | e :: li ->
-      let n = 1 + List.length li in
-      let r = make n e in
-      List.iteri (fun i e -> set r (n - i - 2) e) li ;
-      r
-
 let pop a =
   if a = [||] then raise (Invalid_argument "Array.pop")
   else sub a 0 (length a - 1)
 
-let push a v =
-  let len = length a + 1 in
-  init len (fun i -> if i = len - 1 then v else get a i)
+let push a x =
+  let n = length a in
+  init (n + 1) (fun i -> if i = n then x else a.(i))
 
-let rev_to_list a = fold_left (fun li e -> e :: li) [] a
+let rev a =
+  let n = length a in
+  if n = 0 then
+    a
+  else
+    let r = make n a.(0) in
+    for i = 0 to n - 2 do
+      r.(i) <- a.(n - i - 1)
+    done;
+    r
+
+let rev_of_list xs =
+  match xs with
+  | [] ->
+      [||]
+  | x :: xs ->
+      let n = 1 + List.length xs in
+      let r = make n x in
+      List.iteri (fun i x -> r.(n - i - 2) <- x) xs ;
+      r
+
+let rev_to_list a =
+  fold_left (fun xs x -> x :: xs) [] a
 
 let test () =
   assert (pop [|1; 2; 3; 4|] = [|1; 2; 3|]) ;
