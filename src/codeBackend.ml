@@ -547,13 +547,13 @@ let curryif flag t =
    singleton tuple cell. *)
 
 let celltype tailtype cell =
-  let Invariant.{ holds_state; symbol; _ } = cell in
+  let Invariant.{ symbol; holds_state; holds_startp; holds_endp; _ } = cell in
   TypTuple (
     tailtype ::
-    if1 (Invariant.endp symbol) tposition @
+    if1 holds_endp tposition @
     if1 holds_state tstate @
     semvtype symbol @
-    if1 (Invariant.startp symbol) tposition
+    if1 holds_startp tposition
   )
 
 (* Types for stacks.
@@ -681,11 +681,11 @@ let letunless e x e1 e2 =
 
 let runcellparams stack : xparams =
   Invariant.fold_top (fun cell ->
-    let Invariant.{ holds_state; symbol; _ } = cell in
-    if1 (Invariant.endp symbol) (xvar endp) @
+    let Invariant.{ symbol; holds_state; holds_startp; holds_endp; _ } = cell in
+    if1 holds_endp (xvar endp) @
     if1 holds_state (xvar state) @
     if1 (has_semv symbol) (xvar semv) @
-    if1 (Invariant.startp symbol) (xvar startp)
+    if1 holds_startp (xvar startp)
   ) [] stack
 
 (* May the semantic action associated with production [prod] refer to the
@@ -706,7 +706,7 @@ let action_may_refer_to_value prod i =
    symbol this stack cell is associated with. *)
 
 let reducecellparams prod i cell =
-  let Invariant.{ holds_state; symbol; _ } = cell in
+  let Invariant.{ symbol; holds_state; holds_startp; holds_endp; _ } = cell in
   let ids = Production.identifiers prod in
   (* The semantic value is bound to the variable [ids.(i)]. Its type is [t]. As
      of 2016/03/11, we generate a type annotation. Indeed, because of our use of
@@ -721,24 +721,24 @@ let reducecellparams prod i cell =
     else
       PWildcard
   in
-  if1 (Invariant.endp symbol) (PVar (Printf.sprintf "_endpos_%s_" ids.(i))) @
+  if1 holds_endp (PVar (Printf.sprintf "_endpos_%s_" ids.(i))) @
   if1 holds_state (if i = 0 then PVar state else PWildcard) @
   List.map semvpat (semvtype symbol) @
-  if1 (Invariant.startp symbol) (PVar (Printf.sprintf "_startpos_%s_" ids.(i)))
+  if1 holds_startp (PVar (Printf.sprintf "_startpos_%s_" ids.(i)))
 
 (* The contents of a stack cell, exposed as individual parameters,
    again. The choice of identifiers is suitable for use in the
    definition of [error]. *)
 
 let errorcellparams (i, pat) cell =
-  let Invariant.{ holds_state; symbol; _ } = cell in
+  let Invariant.{ symbol; holds_state; holds_startp; holds_endp; _ } = cell in
   i + 1,
   ptuple (
     pat ::
-    if1 (Invariant.endp symbol) PWildcard @
+    if1 holds_endp PWildcard @
     if1 holds_state (if i = 0 then PVar state else PWildcard) @
     if1 (has_semv symbol) PWildcard @
-    if1 (Invariant.startp symbol) PWildcard
+    if1 holds_startp PWildcard
   )
 
 (* Calls to [run]. *)
@@ -870,12 +870,12 @@ let shiftbranchbody s tok s' =
     (EVar env) ::
     (EMagic (EVar stack)) ::
     Invariant.fold_top (fun cell ->
-      let Invariant.{ holds_state; symbol; _ } = cell in
+      let Invariant.{ symbol; holds_state; holds_startp; holds_endp; _ } = cell in
       assert (Symbol.equal (Symbol.T tok) symbol);
-      if1 (Invariant.endp symbol) getendp @
+      if1 holds_endp getendp @
       if1 holds_state (estatecon s) @
       if1 (has_semv (Symbol.T tok)) (EVar semv) @
-      if1 (Invariant.startp symbol) getstartp
+      if1 holds_startp getstartp
     ) [] (Invariant.stack s')
   in
 
