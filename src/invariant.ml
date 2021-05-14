@@ -55,16 +55,8 @@ let stack_height (node : Lr1.node) : int =
 
 (* Our keys are the nodes of the LR(1) automaton. *)
 
-module Key = struct
-  type t = Lr1.node
-  let n = Lr1.n
-  let encode = Lr1.number
-end
-
 module KeyMap =
-  Fix.Glue.InjectMinimalImperativeMaps
-    (Fix.Glue.ArraysAsImperativeMaps(Key))
-    (Key)
+  Lr1.ImperativeNodeMap
 
 (* Vectors of sets of states. *)
 

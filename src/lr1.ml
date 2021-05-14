@@ -733,6 +733,9 @@ end
 module NodeMap =
   Map.Make(Node)
 
+module ImperativeNodeMap =
+  Fix.Glue.ArraysAsImperativeMaps(struct let n = n end)
+
 (* -------------------------------------------------------------------------- *)
 
 (* For each production, compute where (that is, in which states) this
