@@ -309,7 +309,7 @@ let represented state =
 
 let representeds states =
   if Lr1.NodeSet.is_empty states then
-    assert false
+    false
   else
     represented (Lr1.NodeSet.choose states)
 
@@ -341,10 +341,12 @@ let () =
 type cell = {
   symbol: Symbol.t;
   states: Lr1.NodeSet.t;
+  holds_state: bool;
 }
 
 let cell symbol states =
-  { symbol; states }
+  let holds_state = representeds states in
+  { symbol; states; holds_state }
 
 type word =
   cell array
@@ -386,12 +388,12 @@ let gotostack : Nonterminal.t -> word =
   )
 
 let fold f accu w =
-  Array.fold_left (fun accu { symbol; states } ->
-    f accu (representeds states) symbol states
+  Array.fold_left (fun accu { symbol; states; holds_state } ->
+    f accu holds_state symbol states
   ) accu w
 
 let fold_top f accu w =
-  fold (fun _accu represented symbol _states ->
+  fold (fun  _accu represented symbol _states ->
     f represented symbol
   ) accu (MArray.truncate 1 w)
 
