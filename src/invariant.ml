@@ -336,137 +336,6 @@ let () =
   )
 
 (* ------------------------------------------------------------------------ *)
-(* Accessors for information about the stack. *)
-
-type cell = {
-  symbol: Symbol.t;
-  states: Lr1.NodeSet.t;
-  holds_state: bool;
-}
-
-let cell symbol states =
-  let holds_state = representeds states in
-  { symbol; states; holds_state }
-
-type word =
-  cell array
-
-let pop =
-  MArray.pop
-
-(* [stack s] describes the stack when the automaton is in state [s]. *)
-
-let stack : Lr1.node -> word =
-  Lr1.tabulate (fun node ->
-    let symbols, states = stack_symbols node, stack_states node in
-    Array.init (Array.length symbols) (fun i ->
-      cell symbols.(i) states.(i)
-    )
-  )
-
-(* [prodstack prod] describes the stack when production [prod] is about to be
-   reduced. *)
-
-let prodstack : Production.index -> word =
-  Production.tabulate (fun prod ->
-    let symbols, states = Production.rhs prod, production_states prod in
-    Array.init (Array.length symbols) (fun i ->
-      cell symbols.(i) states.(i)
-    )
-  )
-
-(* [gotostack nt] is the structure of the stack when a shift
-   transition over nonterminal [nt] is about to be taken. It
-   consists of just one cell. *)
-
-let gotostack : Nonterminal.t -> word =
-  Nonterminal.tabulate (fun nt ->
-    let symbol = Symbol.N nt in
-    let sources =
-      Lr1.targets (fun accu sources _ ->
-        List.fold_right Lr1.NodeSet.add sources accu
-      ) Lr1.NodeSet.empty symbol
-    in
-    [| cell symbol sources |]
-  )
-
-let fold_top f default w =
-  let n = Array.length w in
-  if n = 0 then
-    default
-  else
-    f w.(n-1)
-
-(* ------------------------------------------------------------------------ *)
-(* Explain how the stack should be deconstructed when an error is found.
-
-   We sometimes have a choice as to how many stack cells should be popped.
-   Indeed, several cells in the known suffix of the stack may physically hold
-   a state. If neither of these states handles errors, then we could jump to
-   either. (Indeed, if we jump to one that's nearer, it will in turn pop
-   further stack cells and jump to one that's farther.) In the interest of
-   code size, we should pop as few stack cells as possible. So, we jump to the
-   topmost represented state in the known suffix. *)
-
-type state =
-  | Represented
-  | UnRepresented of Lr1.node
-
-type instruction =
-  | Die
-  | DownTo of word * state
-
-let rewind node : instruction =
-  let w = stack node in
-
-  let rec rewind w =
-    if Array.length w = 0 then
-
-      (* I believe that every stack description either is definite
-         (that is, ends with [TailEmpty]) or contains at least one
-         represented state. Thus, if we find an empty [w], this
-         means that the stack is definitely empty. *)
-
-      Die
-
-    else
-      let { states; _ } as cell = MArray.last w in
-      let w = MArray.pop w in
-
-      if representeds states then
-
-        (* Here is a represented state. We will pop this
-           cell and no more. *)
-
-        DownTo ([| cell |], Represented)
-
-      else if handlers states then begin
-
-        (* Here is an unrepresented state that can handle
-           errors. The cell must hold a singleton set of states, so
-           we know which state to jump to, even though it isn't
-           represented. *)
-
-        assert (Lr1.NodeSet.cardinal states = 1);
-        let state = Lr1.NodeSet.choose states in
-        DownTo ([| cell |], UnRepresented state)
-
-      end
-      else
-
-        (* Here is an unrepresented state that does not handle
-           errors. Pop this cell and look further. *)
-
-        match rewind w with
-        | Die ->
-            Die
-        | DownTo (w, st) ->
-            DownTo (MArray.push w cell, st)
-
-  in
-  rewind w
-
-(* ------------------------------------------------------------------------ *)
 
 (* Machinery for the computation of which symbols must keep track of their
    start or end positions. *)
@@ -659,6 +528,137 @@ let () =
        %d out of %d symbols keep track of their end position.\n"
         (sum_over_every_symbol startp) (Terminal.n + Nonterminal.n)
         (sum_over_every_symbol endp) (Terminal.n + Nonterminal.n))
+
+(* ------------------------------------------------------------------------ *)
+(* Accessors for information about the stack. *)
+
+type cell = {
+  symbol: Symbol.t;
+  states: Lr1.NodeSet.t;
+  holds_state: bool;
+}
+
+let cell symbol states =
+  let holds_state = representeds states in
+  { symbol; states; holds_state }
+
+type word =
+  cell array
+
+let pop =
+  MArray.pop
+
+(* [stack s] describes the stack when the automaton is in state [s]. *)
+
+let stack : Lr1.node -> word =
+  Lr1.tabulate (fun node ->
+    let symbols, states = stack_symbols node, stack_states node in
+    Array.init (Array.length symbols) (fun i ->
+      cell symbols.(i) states.(i)
+    )
+  )
+
+(* [prodstack prod] describes the stack when production [prod] is about to be
+   reduced. *)
+
+let prodstack : Production.index -> word =
+  Production.tabulate (fun prod ->
+    let symbols, states = Production.rhs prod, production_states prod in
+    Array.init (Array.length symbols) (fun i ->
+      cell symbols.(i) states.(i)
+    )
+  )
+
+(* [gotostack nt] is the structure of the stack when a shift
+   transition over nonterminal [nt] is about to be taken. It
+   consists of just one cell. *)
+
+let gotostack : Nonterminal.t -> word =
+  Nonterminal.tabulate (fun nt ->
+    let symbol = Symbol.N nt in
+    let sources =
+      Lr1.targets (fun accu sources _ ->
+        List.fold_right Lr1.NodeSet.add sources accu
+      ) Lr1.NodeSet.empty symbol
+    in
+    [| cell symbol sources |]
+  )
+
+let fold_top f default w =
+  let n = Array.length w in
+  if n = 0 then
+    default
+  else
+    f w.(n-1)
+
+(* ------------------------------------------------------------------------ *)
+(* Explain how the stack should be deconstructed when an error is found.
+
+   We sometimes have a choice as to how many stack cells should be popped.
+   Indeed, several cells in the known suffix of the stack may physically hold
+   a state. If neither of these states handles errors, then we could jump to
+   either. (Indeed, if we jump to one that's nearer, it will in turn pop
+   further stack cells and jump to one that's farther.) In the interest of
+   code size, we should pop as few stack cells as possible. So, we jump to the
+   topmost represented state in the known suffix. *)
+
+type state =
+  | Represented
+  | UnRepresented of Lr1.node
+
+type instruction =
+  | Die
+  | DownTo of word * state
+
+let rewind node : instruction =
+  let w = stack node in
+
+  let rec rewind w =
+    if Array.length w = 0 then
+
+      (* I believe that every stack description either is definite
+         (that is, ends with [TailEmpty]) or contains at least one
+         represented state. Thus, if we find an empty [w], this
+         means that the stack is definitely empty. *)
+
+      Die
+
+    else
+      let { states; _ } as cell = MArray.last w in
+      let w = MArray.pop w in
+
+      if representeds states then
+
+        (* Here is a represented state. We will pop this
+           cell and no more. *)
+
+        DownTo ([| cell |], Represented)
+
+      else if handlers states then begin
+
+        (* Here is an unrepresented state that can handle
+           errors. The cell must hold a singleton set of states, so
+           we know which state to jump to, even though it isn't
+           represented. *)
+
+        assert (Lr1.NodeSet.cardinal states = 1);
+        let state = Lr1.NodeSet.choose states in
+        DownTo ([| cell |], UnRepresented state)
+
+      end
+      else
+
+        (* Here is an unrepresented state that does not handle
+           errors. Pop this cell and look further. *)
+
+        match rewind w with
+        | Die ->
+            Die
+        | DownTo (w, st) ->
+            DownTo (MArray.push w cell, st)
+
+  in
+  rewind w
 
 (* ------------------------------------------------------------------------- *)
 (* Miscellaneous. *)
