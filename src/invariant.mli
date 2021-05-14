@@ -38,7 +38,9 @@ type cell = private {
 
   symbol: Symbol.t;
   (**The symbol associated with this cell. This symbol determines the
-     presence and the type of the semantic value stored in this cell. *)
+     presence and the type of the semantic value stored in this cell.
+     It also determines whether a start position and an end position
+     are stored in this cell. *)
 
   states: Lr1.NodeSet.t;
   (**A set of possible states such that the state that is stored in this
