@@ -59,18 +59,12 @@ type cell = private {
 type word =
   cell array
 
-(* [fold] folds over a word. At each cell, [f] is applied to the
-   accumulator, to a Boolean flag that tells whether the cell holds a
-   state, to the set of possible states of the cell, and to the symbol
-   associated with the cell. The stack is visited from bottom to top. *)
+(**[pop w] is the stack [w], deprived of its top element (if it exists). *)
+val pop: word -> word
 
-val fold: ('a -> bool -> Symbol.t -> Lr1.NodeSet.t -> 'a) -> 'a -> word -> 'a
-
-(* [fold_top f accu s] is analogous to [fold], but only folds over the
-   top stack cell, if there is one, so that [f] is either not invoked
-   at all or invoked just once. *)
-
-val fold_top: (bool -> Symbol.t -> 'a) -> 'a -> word -> 'a
+(**[fold_top f default w] returns [f cell], where [cell] is the top cell
+   in the stack [w], if [w] is nonempty. Otherwise, it returns [default]. *)
+val fold_top: (cell -> 'a) -> 'a -> word -> 'a
 
 (* ------------------------------------------------------------------------- *)
 (* Information about the stack. *)

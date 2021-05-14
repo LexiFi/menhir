@@ -546,7 +546,8 @@ let curryif flag t =
    always correctly removes the top stack cell, even if it is a
    singleton tuple cell. *)
 
-let celltype tailtype holds_state symbol _ =
+let celltype tailtype cell =
+  let Invariant.{ holds_state; symbol; _ } = cell in
   TypTuple (
     tailtype ::
     if1 (Invariant.endp symbol) tposition @
@@ -569,13 +570,13 @@ let celltype tailtype holds_state symbol _ =
    description of the stack provided by module [Invariant]. *)
 
 let stacktype s =
-  Invariant.fold celltype ttail (Invariant.stack s)
+  Array.fold_left celltype ttail (Invariant.stack s)
 
 let reducestacktype prod =
-  Invariant.fold celltype ttail (Invariant.prodstack prod)
+  Array.fold_left celltype ttail (Invariant.prodstack prod)
 
 let gotostacktype nt =
-  Invariant.fold celltype ttail (Invariant.gotostack nt)
+  Array.fold_left celltype ttail (Invariant.gotostack nt)
 
 (* The type of the [run] function. As announced earlier, if [s] is the
    target of shift transitions, the type of the stack is curried, that
@@ -605,8 +606,7 @@ let gototypescheme nt =
 let reduce_expects_state_param prod =
   let nt = Production.nt prod in
   Production.length prod = 0 &&
-  Invariant.fold (fun _ holds_state _ _ -> holds_state)
-    false (Invariant.gotostack nt)
+  Invariant.((gotostack nt).(0).holds_state)
 
 (* The type of the [reduce] function. If shiftreduce optimization
    is performed for this production, then the top stack cell is
@@ -680,7 +680,8 @@ let letunless e x e1 e2 =
    choice of identifiers is suitable for use in the definition of [run]. *)
 
 let runcellparams stack : xparams =
-  Invariant.fold_top (fun holds_state symbol ->
+  Invariant.fold_top (fun cell ->
+    let Invariant.{ holds_state; symbol; _ } = cell in
     if1 (Invariant.endp symbol) (xvar endp) @
     if1 holds_state (xvar state) @
     if1 (has_semv symbol) (xvar semv) @
@@ -704,7 +705,8 @@ let action_may_refer_to_value prod i =
    symbol on the right-hand side we are focusing on, that is, which
    symbol this stack cell is associated with. *)
 
-let reducecellparams prod i holds_state symbol =
+let reducecellparams prod i cell =
+  let Invariant.{ holds_state; symbol; _ } = cell in
   let ids = Production.identifiers prod in
   (* The semantic value is bound to the variable [ids.(i)]. Its type is [t]. As
      of 2016/03/11, we generate a type annotation. Indeed, because of our use of
@@ -728,7 +730,8 @@ let reducecellparams prod i holds_state symbol =
    again. The choice of identifiers is suitable for use in the
    definition of [error]. *)
 
-let errorcellparams (i, pat) holds_state symbol _ =
+let errorcellparams (i, pat) cell =
+  let Invariant.{ holds_state; symbol; _ } = cell in
   i + 1,
   ptuple (
     pat ::
@@ -866,7 +869,8 @@ let shiftbranchbody s tok s' =
   let actuals =
     (EVar env) ::
     (EMagic (EVar stack)) ::
-    Invariant.fold_top (fun holds_state symbol ->
+    Invariant.fold_top (fun cell ->
+      let Invariant.{ holds_state; symbol; _ } = cell in
       assert (Symbol.equal (Symbol.T tok) symbol);
       if1 (Invariant.endp symbol) getendp @
       if1 holds_state (estatecon s) @
@@ -1145,12 +1149,12 @@ let reducebody prod =
      it in the pattern that is built. *)
 
   let (_ : int), pat =
-    Invariant.fold (fun (i, pat) holds_state symbol _ ->
+    Array.fold_left (fun (i, pat) cell ->
       i + 1,
       if i = length - 1 && shiftreduce prod then
         pat
       else
-        ptuple (pat :: reducecellparams prod i holds_state symbol)
+        ptuple (pat :: reducecellparams prod i cell)
     ) (0, PVar stack) (Invariant.prodstack prod)
   in
 
@@ -1407,7 +1411,7 @@ let errorbody s =
           can_die := true;
           ERaise errorval
       | Invariant.DownTo (w, st) ->
-          let _, pat = Invariant.fold errorcellparams (0, PVar stack) w in
+          let _, pat = Array.fold_left errorcellparams (0, PVar stack) w in
           blet (
             [ pat, EVar stack ],
             match st with

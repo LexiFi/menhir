@@ -38,6 +38,16 @@ module Run (T: sig end) = struct
     | Symbol.N nt -> sprintf "NT %s" (print_nterm nt)
     | Symbol.T t -> sprintf "T %s" (print_term t)
 
+  let print_cell_symbol cell =
+    let Invariant.{ symbol; _ } = cell in
+    print_symbol symbol
+
+  let print_word print_cell w =
+    (* Convert to a list whose head is the top of the stack. *)
+    Array.fold_left (fun accu cell -> print_cell cell :: accu) [] w
+    |> String.concat "; "
+    |> sprintf "[%s]%%list"
+
   let print_type ty =
     if Settings.coq_no_actions then "unit"
     else match ty with
@@ -342,12 +352,10 @@ module Run (T: sig end) = struct
     fprintf f "Definition past_symb_of_non_init_state (noninitstate:noninitstate) : list symbol :=\n";
     fprintf f "  match noninitstate with\n";
     lr1_iterx_nonfinal (fun node ->
-      let s =
-        String.concat "; " (List.tl
-          (Invariant.fold (fun l _ symb _ -> print_symbol symb::l)
-             [] (Invariant.stack node)))
-      in
-      fprintf f "  | %s => [%s]%%list\n" (print_nis node) s);
+      let w = Invariant.(pop (stack node)) in
+      fprintf f "  | %s => %s\n"
+        (print_nis node) (print_word print_cell_symbol w)
+    );
     fprintf f "  end.\n";
     fprintf f "Extract Constant past_symb_of_non_init_state => \"fun _ -> assert false\".\n\n"
 
@@ -373,16 +381,18 @@ module Run (T: sig end) = struct
            fprintf f "Extract Inlined Constant %s => \"assert false\".\n\n" id;
            id
     in
+    let print_cell_stateset_id cell =
+      let Invariant.{ states; _ } = cell in
+      get_stateset_id states
+    in
     let b = Buffer.create 256 in
     bprintf b "Definition past_state_of_non_init_state (s:noninitstate) : list (state -> bool) :=\n";
     bprintf b "  match s with\n";
     lr1_iterx_nonfinal (fun node ->
-      let s =
-        String.concat "; "
-          (Invariant.fold (fun accu _ _ states -> get_stateset_id states::accu)
-            [] (Invariant.stack node))
-      in
-      bprintf b "  | %s => [ %s ]%%list\n" (print_nis node) s);
+      let w = Invariant.stack node in
+      bprintf b "  | %s => %s\n"
+        (print_nis node) (print_word print_cell_stateset_id w)
+    );
     bprintf b "  end.\n";
     Buffer.output_buffer f b;
     fprintf f "Extract Constant past_state_of_non_init_state => \"fun _ -> assert false\".\n\n"

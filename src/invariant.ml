@@ -351,6 +351,9 @@ let cell symbol states =
 type word =
   cell array
 
+let pop =
+  MArray.pop
+
 (* [stack s] describes the stack when the automaton is in state [s]. *)
 
 let stack : Lr1.node -> word =
@@ -387,15 +390,12 @@ let gotostack : Nonterminal.t -> word =
     [| cell symbol sources |]
   )
 
-let fold f accu w =
-  Array.fold_left (fun accu { symbol; states; holds_state } ->
-    f accu holds_state symbol states
-  ) accu w
-
-let fold_top f accu w =
-  fold (fun  _accu represented symbol _states ->
-    f represented symbol
-  ) accu (MArray.truncate 1 w)
+let fold_top f default w =
+  let n = Array.length w in
+  if n = 0 then
+    default
+  else
+    f w.(n-1)
 
 (* ------------------------------------------------------------------------ *)
 (* Explain how the stack should be deconstructed when an error is found.
