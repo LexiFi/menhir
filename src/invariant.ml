@@ -18,139 +18,21 @@ open Grammar
 module C = Conflict (* artificial dependency; ensures that [Conflict] runs first *)
 
 (* ------------------------------------------------------------------------ *)
-(* Compute the known suffix of the state, a sequence of symbols,
-   at every state. *)
+(* Compute the known suffix of the stack, a sequence of symbols,
+   at every state. This is the "short invariant". *)
 
-let stack_symbols =
-  let module SS = StackSymbols.Run() in
-  SS.stack_symbols
+module SSy =
+  StackSymbols.Run()
 
-let stack_height (node : Lr1.node) : int =
-  Array.length (stack_symbols node)
+open SSy
 
 (* ------------------------------------------------------------------------ *)
-(* Above, we have computed a prefix of the stack at every state. We have
-   computed the length of this prefix and the symbols that are held in
-   this prefix of the stack. Now, compute which states may be held in this
-   prefix. *)
+(* Now, compute which states may be held in the known suffix of the stack. *)
 
-(* In order to compute this information, we perform an analysis of the
-   automaton, via a least fixed fixed point computation. *)
+module SSt =
+  StackStates.Run(SSy)
 
-(* It is worth noting that it would be possible to use an analysis based on a
-   least fixed point computation to discover at the same time the length of
-   the stack prefix, the symbols that it contains, and the states that it may
-   contain. This alternate approach, which was used until 2012/08/25, would
-   lead us to discovering a richer invariant, that is, potentially longer
-   prefixes. This extra information, however, was useless; computing it was a
-   waste of time. Hence, as of 2012/08/25, the height of the stack prefix and
-   the symbols that it contains are predicted (see above), and the least fixed
-   point computation is used only to populate these prefixes of predictable
-   length with state information. As of 2021/03/03, the submodule [Long] at
-   the end of this file computes this richer invariant. (However, it computes
-   symbols only, not sets of states.) *)
-
-(* By the way, this least fixed point analysis remains the most costly
-   computation throughout this module. *)
-
-(* Vectors of sets of states. *)
-
-module StateSetVector = struct
-
-  (* We use arrays whose right end represents the top of the stack. *)
-
-  (* The index 0 corresponds to the cell that lies deepest in the stack. *)
-
-  let empty, get, push, truncate, iter =
-    MArray.(empty, get, push, truncate, iter)
-
-  type property =
-    Lr1.NodeSet.t array
-
-  let bottom height =
-    Array.make height Lr1.NodeSet.empty
-
-  let leq_join v1 v2 =
-    MArray.leq_join Lr1.NodeSet.leq_join v1 v2
-    (* Because all heights are known ahead of time, we are able (and careful)
-       to compare only vectors of equal length. *)
-
-  let print v =
-    if Array.length v = 0 then
-      "epsilon"
-    else
-      Misc.separated_list_to_string Lr1.NodeSet.print "; " (Array.to_list v)
-
-end
-
-open StateSetVector
-
-(* Define the data flow graph. *)
-
-(* Its vertices are the nodes of the LR(1) automaton. *)
-
-module G = struct
-
-  type variable = Lr1.node
-
-  type property = StateSetVector.property
-
-  (* At each start state of the automaton, the stack is empty. *)
-
-  let foreach_root contribute =
-    Lr1.entry |> ProductionMap.iter (fun _prod root ->
-      assert (stack_height root = 0);
-      contribute root empty
-    )
-
-  (* The edges of the data flow graph are the transitions of the automaton. *)
-
-  let foreach_successor source stack contribute =
-    Lr1.transitions source |> SymbolMap.iter (fun _symbol target ->
-      (* The contribution of [source], through this edge, to [target], is the
-         stack at [source], extended with a new cell for this transition, and
-         truncated to the stack height at [target], so as to avoid obtaining a
-         vector that is longer than expected/necessary. *)
-      let cell = Lr1.NodeSet.singleton source
-      and height = stack_height target in
-      contribute target (truncate height (push stack cell))
-    )
-
-end
-
-(* Compute the least fixed point. *)
-
-let stack_states : Lr1.node -> property option =
-  let module F = Fix.DataFlow.Run(Lr1.ImperativeNodeMap)(StateSetVector)(G) in
-  F.solution
-
-(* If every state is reachable, then the least fixed point must be non-[None]
-   everywhere, so we may view it as a function that produces a vector of sets
-   of states. *)
-
-let stack_states (node : Lr1.node) : property =
-  match stack_states node with
-  | None ->
-      (* apparently this node is unreachable *)
-      assert false
-  | Some v ->
-      v
-
-(* ------------------------------------------------------------------------ *)
-(* From the above information, deduce, for each production, the states that
-   may appear in the stack when this production is reduced. *)
-
-(* We are careful to produce a vector of states whose length is exactly that
-   of the production [prod]. *)
-
-let production_states : Production.index -> property =
-  Production.tabulate (fun prod ->
-    let sites = Lr1.production_where prod in
-    let height = Production.length prod in
-    Lr1.NodeSet.fold (fun node accu ->
-      leq_join (truncate height (stack_states node)) accu
-    ) sites (bottom height)
-  )
+open SSt
 
 (* ------------------------------------------------------------------------ *)
 (* If requested, print the information that has been computed above. *)
@@ -222,7 +104,7 @@ let represents states =
 (* Enforce condition (1) above. *)
 
 let share (v : property) =
-  StateSetVector.iter (fun states ->
+  Array.iter (fun states ->
     let dummy = UnionFind.fresh false in
     Lr1.NodeSet.iter (fun state ->
       UnionFind.union dummy (represented state)
@@ -271,7 +153,7 @@ let handlers states =
 let () =
   Lr1.iter (fun node ->
     let v = stack_states node in
-    StateSetVector.iter (fun states ->
+    Array.iter (fun states ->
       if Lr1.NodeSet.cardinal states >= 2 && handlers states then
         represents states
     ) v
@@ -287,7 +169,7 @@ let () =
       if length = 0 then
         Lr1.NodeSet.iter represent sites
       else
-        let states = StateSetVector.get (production_states prod) 0 in
+        let states = (production_states prod).(0) in
         represents states
   )
 
