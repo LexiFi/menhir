@@ -33,6 +33,10 @@ val push : 'a t -> 'a -> 'a t
    of length [k] of the array [a]. Otherwise, [truncate k a] is [a]. *)
 val truncate : int -> 'a array -> 'a array
 
+(**[is_suffix a1 a2] tests whether [a1] is a suffix of [a2]. The elements
+   are compared using OCaml's generic equality. *)
+val is_suffix : 'a array -> 'a array -> bool
+
 (** Array reversal.
    [rev [|1; 2; 3; 4|] = [|4; 3; 2; 1|]]*)
 val rev : 'a t -> 'a t
