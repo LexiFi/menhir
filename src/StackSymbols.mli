@@ -35,6 +35,12 @@ module Run () : STACK_SYMBOLS
    a suffix of the sequence computed by [Long]. *)
 module Long () : STACK_SYMBOLS
 
+(* The "long invariant" was used in Menhir until 2012/08/25. However, the
+   extra information that it contains, compared to the "short invariant",
+   was useless; computing it was a waste of time. As of 2012/08/25, the
+   short invariant has been used. As of 2021/05/14, the long invariant
+   is re-introduced, for possible use in the new code back-end. *)
+
 (**This utility function prints a sequence of symbols. Every symbol is
    preceded with a space. *)
 val print_symbols: Symbol.t array -> string
