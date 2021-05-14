@@ -273,6 +273,9 @@ let predecessors : node list array Lazy.t =
 let incoming_edges (c : node) : node list =
   (Lazy.force predecessors).(c)
 
+module ImperativeNodeMap =
+  Fix.Glue.ArraysAsImperativeMaps(struct let n = n end)
+
 (* ------------------------------------------------------------------------ *)
 (* Help for building the LR(1) automaton. *)
 
