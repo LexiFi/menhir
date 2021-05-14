@@ -536,11 +536,14 @@ type cell = {
   symbol: Symbol.t;
   states: Lr1.NodeSet.t;
   holds_state: bool;
+  holds_startp: bool;
+  holds_endp: bool;
 }
 
 let cell symbol states =
   let holds_state = representeds states in
-  { symbol; states; holds_state }
+  let holds_startp, holds_endp = startp symbol, endp symbol in
+  { symbol; states; holds_state; holds_startp; holds_endp }
 
 type word =
   cell array

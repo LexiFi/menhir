@@ -50,6 +50,14 @@ type cell = private {
   holds_state: bool;
   (**Whether a state is stored in this cell. *)
 
+  holds_startp: bool;
+  (**Whether a start position is stored in this cell. This decision
+     is a function of [symbol]. *)
+
+  holds_endp: bool;
+  (**Whether an end position is stored in this cell. This decision
+     is a function of [symbol]. *)
+
 }
 
 (**A word is a representation of a stack suffix. A word is an immutable
