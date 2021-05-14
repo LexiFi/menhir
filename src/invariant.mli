@@ -88,32 +88,24 @@ val fold_top: (cell -> 'a) -> 'a -> word -> 'a
 (* ------------------------------------------------------------------------- *)
 (* Information about the stack. *)
 
-(* [stack s] is the structure of the stack at state [s]. *)
-
+(**[stack s] is the structure of the stack at state [s]. *)
 val stack: Lr1.node -> word
 
-(* [prodstack prod] is the structure of the stack when production
-   [prod] is about to be reduced. *)
+(**[prodstack prod] is the structure of the stack when production
+   [prod] is about to be reduced.
 
-(* Until 2020/11/20, it was forbidden to call this function if production
+   Until 2020/11/20, it was forbidden to call this function if production
    [prod] is never reduced. It is now possible to do so. In that case, it
    returns a word where every cell contains an empty set of states. *)
-
 val prodstack: Production.index -> word
 
-(* [gotostack nt] is the structure of the stack when a shift
+(**[gotostack nt] is the structure of the stack when a shift
    transition over nonterminal [nt] is about to be taken. It
    consists of just one cell. *)
-
 val gotostack: Nonterminal.t -> word
 
-(* [rewind s] explains how to rewind the stack when dealing with an
-   error in state [s]. It produces an instruction to either die
-   (because no state on the stack can handle errors) or pop a suffix
-   of the stack. In the latter case, one reaches a state that is
-   either represented (its identity is physically stored in the
-   bottommost cell that is popped) or unrepresented (its identity is
-   statically known). *)
+(* ------------------------------------------------------------------------- *)
+(* Information about error handling. *)
 
 type instruction =
   | Die
@@ -123,38 +115,40 @@ and state =
   | Represented
   | UnRepresented of Lr1.node
 
+(**[rewind s] explains how to rewind the stack when dealing with an
+   error in state [s]. It produces an instruction to either die
+   (because no state on the stack can handle errors) or pop a suffix
+   of the stack. In the latter case, one reaches a state that is
+   either represented (its identity is physically stored in the
+   bottommost cell that is popped) or unrepresented (its identity is
+   statically known). This function is used only in the [legacy]
+   error-handling strategy. *)
 val rewind: Lr1.node -> instruction
+
+(**[errorpeeker s] tells whether state [s] can potentially peek at an
+   error. This is the case if, in state [s], an error token may be on
+   the stream. This function is used only in the [legacy]
+   error-handling strategy. *)
+val errorpeeker: Lr1.node -> bool
 
 (* ------------------------------------------------------------------------- *)
 (* Information about which states and positions need to physically
    exist on the stack. *)
 
-(* [represented s] tells whether state [s] must have an explicit
+(**[represented s] tells whether state [s] must have an explicit
    representation, that is, whether it is pushed onto the stack. *)
-
 val represented: Lr1.node -> bool
 
-(* [startp symbol] and [endp symbol] tell whether start or end
-   positions must be recorded for symbol [symbol]. *)
-
+(**[startp symbol] tells whether a start position must be recorded for
+   the symbol [symbol]. *)
 val startp: Symbol.t -> bool
+
+(**[endp symbol] tells whether an end position must be recorded for
+   the symbol [symbol]. *)
 val endp: Symbol.t -> bool
 
-(* ------------------------------------------------------------------------- *)
-(* Information about error handling. *)
-
-(* [errorpeeker s] tells whether state [s] can potentially peek at an
-   error. This is the case if, in state [s], an error token may be on
-   the stream. *)
-
-val errorpeeker: Lr1.node -> bool
-
-(* ------------------------------------------------------------------------- *)
-(* Miscellaneous. *)
-
-(* [universal symbol] tells whether every represented state has an
+(**[universal symbol] tells whether every represented state has an
    outgoing transition along [symbol]. *)
-
 val universal: Symbol.t -> bool
 
 (* ------------------------------------------------------------------------- *)
