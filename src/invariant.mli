@@ -154,15 +154,11 @@ val universal: Symbol.t -> bool
 (* ------------------------------------------------------------------------- *)
 (* More information about the stack. *)
 
-module Long : sig
-
-  (* [Long.stack s] is the known suffix of the stack in state [s], presented
-     as an array of symbols, where the rightmost end of the array represents
-     the top of the stack (just as in the right-hand side of a production).
-     This known suffix is as long as possible, based on an analysis of the
-     automaton; it is possibly longer than the suffix obtained by [stack s],
-     whose length is always the maximum position of the items in state [s]. *)
-
-  val stack: Lr1.node -> Symbol.t array
+(**[Long()] computes a "long invariant" where the known suffix of the stack
+   is as long as possible, based on an analysis of the LR(1) automaton. It
+   is possibly longer than the suffix proposed in the "short invariant",
+   whose length is always the maximum position of the bullet in the items
+   of the state at hand. *)
+module Long () : sig
 
 end

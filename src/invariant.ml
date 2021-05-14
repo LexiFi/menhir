@@ -723,101 +723,24 @@ let () =
   Time.tick "Constructing the invariant"
 
 (* ------------------------------------------------------------------------ *)
+(* Conmpute the long invariant. *)
 
-(* The submodule [Long] computes the known suffix of the stack in each state,
-   as a vector of symbols, and it computes a suffix that is as long as
-   possible, in contrast with the above code, which computes a suffix whose
-   length is predicted by the function [stack_height]. *)
+module Long () = struct
 
-module Long = struct
+let debug = true
 
-(* Vectors of symbols. *)
+module L =
+  StackSymbols.Long()
 
-module SymbolVector = struct
+let stack_symbols node =
+  let long_symbols = L.stack_symbols node in
+  if debug then begin
+    let short_symbols = stack_symbols node in
+    assert (Array.length short_symbols <= Array.length long_symbols);
+    assert (MArray.is_suffix short_symbols long_symbols)
+  end;
+  long_symbols
 
-  (* As in the right-hand side of a production, the top of the stack
-     is the right end of the array. *)
-
-  type property =
-    Symbol.t array
-
-  let empty, push =
-    MArray.(empty, push)
-
-  (* Given two arrays [v1] and [v2] of lengths [n1] and [n2], the function
-     call [lcs v1 v2 n1 n2 (min n1 n2) 0] computes the greatest [k] such that
-     [truncate k v1] and [truncate k v2] are equal. *)
-
-  let rec lcs v1 v2 n1 n2 n k =
-    (* [n] is [min n1 n2]. *)
-    if k = n || v1.(n1 - 1 - k) <> v2.(n2 - 1 - k) then k
-    else lcs v1 v2 n1 n2 n (k + 1)
-
-  let leq_join v1 v2 =
-    let n1 = Array.length v1
-    and n2 = Array.length v2 in
-    let n = min n1 n2 in
-    let k = lcs v1 v2 n1 n2 n 0 in
-    if k = n2 then v2
-    else if k = n1 then v1
-    else MArray.truncate k v1
-
-  let print v =
-    if Array.length v = 0 then
-      "epsilon"
-    else
-      Misc.separated_list_to_string Symbol.print "; " (Array.to_list v)
-
-end
-
-open SymbolVector
-
-(* Define the data flow graph. *)
-
-module G = struct
-
-  type variable = Lr1.node
-
-  type property = SymbolVector.property
-
-  (* At each start state of the automaton, the stack is empty. *)
-
-  let foreach_root contribute =
-    Lr1.entry |> ProductionMap.iter (fun _prod root ->
-      assert (stack_height root = 0);
-      contribute root empty
-    )
-
-  (* The edges of the data flow graph are the transitions of the automaton. *)
-
-  let foreach_successor source stack contribute =
-    Lr1.transitions source |> SymbolMap.iter (fun symbol target ->
-      (* The contribution of [source], through this edge, to [target], is the
-         stack at [source], extended with a new cell for this transition. *)
-      contribute target (push stack symbol)
-    )
-
-end
-
-(* Compute the least fixed point. *)
-
-let stack : Lr1.node -> property option =
-  let module F = Fix.DataFlow.Run(KeyMap)(SymbolVector)(G) in
-  F.solution
-
-(* If every state is reachable, then the least fixed point must be non-[None]
-   everywhere, so we may view it as a function that produces a vector of
-   symbols. *)
-
-let stack (node : Lr1.node) : property =
-  match stack node with
-  | None ->
-      (* apparently this node is unreachable *)
-      assert false
-  | Some v ->
-      v
-
-(* ------------------------------------------------------------------------ *)
 (* If requested, print the information that has been computed above. *)
 
 let () =
@@ -825,11 +748,11 @@ let () =
     Lr1.iter (fun node ->
       Printf.fprintf f "longstack(%s) = %s\n"
         (Lr1.print node)
-        (print (stack node))
+        (StackSymbols.print_symbols (stack_symbols node))
     )
   )
 
-end (* module Long *)
-
 let () =
   Time.tick "Constructing the long invariant"
+
+end (* Long *)
