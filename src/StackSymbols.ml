@@ -149,7 +149,7 @@ module Long () = struct
   let stack_symbols (node : Lr0.node) : property =
     match stack_symbols node with
     | None ->
-        (* apparently this node is unreachable *)
+        (* Apparently this node is unreachable. *)
         assert false
     | Some v ->
         v
