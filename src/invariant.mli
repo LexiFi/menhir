@@ -33,9 +33,31 @@ open Grammar
 (* ------------------------------------------------------------------------- *)
 (* A representation of stack shapes. *)
 
-(* A word is a representation of a stack or stack suffix. *)
+(**A cell is a representation of a stack cell. *)
+type cell = private {
 
-type word
+  symbol: Symbol.t;
+  (**The symbol associated with this cell. This symbol determines the
+     presence and the type of the semantic value stored in this cell. *)
+
+  states: Lr1.NodeSet.t;
+  (**A set of possible states such that the state that is stored in this
+     cell (or would be stored in this cell) must be a member of this set.
+     The states in this set have the property that either all of them are
+     represented, in which case [holds_state] is [true], or none of them is
+     represented, in which case [holds_state] is [false]. *)
+
+  holds_state: bool;
+  (**Whether a state is stored in this cell. *)
+
+}
+
+(**A word is a representation of a stack suffix. A word is an immutable
+   array of cells, whose right end represents the top of the stack. Thus,
+   the index 0 in the array corresponds to the cell that lies deepest in
+   the stack. *)
+type word =
+  cell array
 
 (* [fold] folds over a word. At each cell, [f] is applied to the
    accumulator, to a Boolean flag that tells whether the cell holds a
