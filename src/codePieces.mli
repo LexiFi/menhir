@@ -66,10 +66,6 @@ val semvtypetok : Terminal.t -> typ list
 
 val semvtype : Symbol.t -> typ list
 
-(* [has_semv symbol] indicates whether [symbol] carries a semantic value. *)
-
-val has_semv : Symbol.t -> bool
-
 (* ------------------------------------------------------------------------ *)
 
 (* Patterns for tokens. *)

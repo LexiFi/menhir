@@ -49,6 +49,15 @@ type cell = private {
      represented, in which case [holds_state] is [true], or none of them is
      represented, in which case [holds_state] is [false]. *)
 
+  holds_semv: bool;
+  (**Whether a semantic value is stored in this cell. By convention, if
+     [symbol] is a nonterminal symbol, then a semantic value is stored.
+     (We do not attempt to detect the situation where the semantic value
+     could be omitted because it has type [unit], or the situation where
+     it could be omitted because it is never used.) If [symbol] is a
+     terminal symbol, then a semantic value is stored if and only if
+     the [%token] declaration was annotated with a type. *)
+
   holds_state: bool;
   (**Whether a state is stored in this cell. *)
 

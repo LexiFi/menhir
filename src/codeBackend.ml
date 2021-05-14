@@ -681,10 +681,10 @@ let letunless e x e1 e2 =
 
 let runcellparams stack : xparams =
   Invariant.fold_top (fun cell ->
-    let Invariant.{ symbol; holds_state; holds_startp; holds_endp; _ } = cell in
+    let Invariant.{ holds_semv; holds_state; holds_startp; holds_endp; _ } = cell in
     if1 holds_endp (xvar endp) @
     if1 holds_state (xvar state) @
-    if1 (has_semv symbol) (xvar semv) @
+    if1 holds_semv (xvar semv) @
     if1 holds_startp (xvar startp)
   ) [] stack
 
@@ -731,13 +731,13 @@ let reducecellparams prod i cell =
    definition of [error]. *)
 
 let errorcellparams (i, pat) cell =
-  let Invariant.{ symbol; holds_state; holds_startp; holds_endp; _ } = cell in
+  let Invariant.{ holds_semv; holds_state; holds_startp; holds_endp; _ } = cell in
   i + 1,
   ptuple (
     pat ::
     if1 holds_endp PWildcard @
     if1 holds_state (if i = 0 then PVar state else PWildcard) @
-    if1 (has_semv symbol) PWildcard @
+    if1 holds_semv PWildcard @
     if1 holds_startp PWildcard
   )
 
@@ -870,11 +870,10 @@ let shiftbranchbody s tok s' =
     (EVar env) ::
     (EMagic (EVar stack)) ::
     Invariant.fold_top (fun cell ->
-      let Invariant.{ symbol; holds_state; holds_startp; holds_endp; _ } = cell in
-      assert (Symbol.equal (Symbol.T tok) symbol);
+      let Invariant.{ holds_semv; holds_state; holds_startp; holds_endp; _ } = cell in
       if1 holds_endp getendp @
       if1 holds_state (estatecon s) @
-      if1 (has_semv (Symbol.T tok)) (EVar semv) @
+      if1 holds_semv (EVar semv) @
       if1 holds_startp getstartp
     ) [] (Invariant.stack s')
   in

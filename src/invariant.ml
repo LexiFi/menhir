@@ -535,15 +535,29 @@ let () =
 type cell = {
   symbol: Symbol.t;
   states: Lr1.NodeSet.t;
+  holds_semv: bool;
   holds_state: bool;
   holds_startp: bool;
   holds_endp: bool;
 }
 
+let has_semv symbol =
+  match symbol with
+  | Symbol.N _nt ->
+      true
+  | Symbol.T tok ->
+      match Terminal.ocamltype tok with
+      | None ->
+          (* Token has unit type and is omitted in stack cell. *)
+          false
+      | Some _ocamltype ->
+          true
+
 let cell symbol states =
+  let holds_semv = has_semv symbol in
   let holds_state = representeds states in
   let holds_startp, holds_endp = startp symbol, endp symbol in
-  { symbol; states; holds_state; holds_startp; holds_endp }
+  { symbol; states; holds_semv; holds_state; holds_startp; holds_endp }
 
 type word =
   cell array
