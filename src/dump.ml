@@ -21,7 +21,7 @@ module Make (Default : sig
 
 end) = struct
 
-let dump_node out print_stack_symbols node =
+let dump_node out stack_symbols node =
 
   (* Print the state number. *)
 
@@ -33,7 +33,7 @@ let dump_node out print_stack_symbols node =
   fprintf out
     "## Known stack suffix:\n\
      ##%s\n"
-    (print_stack_symbols node);
+    (StackSymbols.print_symbols (stack_symbols node));
 
   (* Print the items. *)
 
@@ -115,7 +115,7 @@ let dump_node out print_stack_symbols node =
 let dump filename =
   let module SS = StackSymbols.Run() in
   let out = open_out filename in
-  Lr1.iter (dump_node out SS.print_stack_symbols);
+  Lr1.iter (dump_node out SS.stack_symbols);
   close_out out;
   Time.tick "Dumping the LR(1) automaton"
 

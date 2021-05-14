@@ -11,23 +11,35 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* This module computes the known prefix of the stack, a sequence of symbols,
-   in each of the automaton's states. *)
-
 open Grammar
 
+(**This module computes the known prefix of the stack, a sequence of
+   symbols, in each of the automaton's states. The length of this
+   sequence can be predicted based on the LR(0) items present in this
+   state: it is the maximum position of the bullet over all items. *)
 module Run () : sig
 
-  (* [stack_symbols s] is the known prefix of the stack at state [s]. It
+  (**[stack_symbols s] is the known prefix of the stack at state [s]. It
      is represented as an array of symbols. By convention, the top of
      the stack is the end of the array. *)
-
   val stack_symbols: Lr1.node -> Symbol.t array
 
-  (* [print_stack_symbols s] is a printed representation of the known
-     prefix of the stack at state [s]. Every symbol is preceded with
-     a space. *)
+end
 
-  val print_stack_symbols: Lr1.node -> string
+(**This module computes the known prefix of the stack, a sequence of
+   symbols, in each of the automaton's states. The length of this
+   sequence is determined by an analysis of the paths in the LR(0)
+   automaton. At each state, the sequence computed by [Run] is always
+   a suffix of the sequence computed by [Long]. *)
+module Long () : sig
+
+  (**[stack_symbols s] is the known prefix of the stack at state [s]. It
+     is represented as an array of symbols. By convention, the top of
+     the stack is the end of the array. *)
+  val stack_symbols: Lr1.node -> Symbol.t array
 
 end
+
+(**This utility function prints a sequence of symbols. Every symbol is
+   preceded with a space. *)
+val print_symbols: Symbol.t array -> string

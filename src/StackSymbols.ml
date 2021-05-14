@@ -56,17 +56,113 @@ module Run () = struct
   let stack_symbols (node : Lr1.node) : Symbol.t array =
     stack_symbols (Lr0.core (Lr1.state node))
 
-  (* Printing. *)
+end
 
-  let buffer =
-    Buffer.create 1024
+(* ------------------------------------------------------------------------ *)
 
-  let print_stack_symbols node =
-    stack_symbols node |> Array.iter (fun symbol ->
-      Printf.bprintf buffer " %s" (Symbol.print symbol)
-    );
-    let s = Buffer.contents buffer in
-    Buffer.clear buffer;
-    s
+(* The submodule [Long] computes the known suffix of the stack in each state,
+   as a vector of symbols, and it computes a suffix that is as long as
+   possible, in contrast with the above code, which computes a suffix whose
+   length can be predicted by based on the LR(0) items in each state. *)
+
+module Long () = struct
+
+  (* Vectors of symbols. *)
+
+  module SymbolVector = struct
+
+    type property =
+      Symbol.t array
+
+    let empty, push =
+      MArray.(empty, push)
+
+    (* Given two arrays [v1] and [v2] of lengths [n1] and [n2], the function
+       call [lcs v1 v2 n1 n2 (min n1 n2) 0] computes the greatest [k] such
+       that [truncate k v1] and [truncate k v2] are equal. *)
+
+    let rec lcs v1 v2 n1 n2 n k =
+      (* [n] is [min n1 n2]. *)
+      if k = n || v1.(n1 - 1 - k) <> v2.(n2 - 1 - k) then k
+      else lcs v1 v2 n1 n2 n (k + 1)
+
+    let leq_join v1 v2 =
+      let n1 = Array.length v1
+      and n2 = Array.length v2 in
+      let n = min n1 n2 in
+      let k = lcs v1 v2 n1 n2 n 0 in
+      if k = n2 then v2
+      else if k = n1 then v1
+      else MArray.truncate k v1
+
+  end
+
+  open SymbolVector
+
+  (* Define the data flow graph. *)
+
+  (* We perform the data flow analysis at the level of the LR(0) automaton. *)
+
+  module G = struct
+
+    type variable = Lr0.node
+
+    type property = SymbolVector.property
+
+    (* At each start state of the automaton, the stack is empty. *)
+
+    let foreach_root contribute =
+      Lr0.entry |> ProductionMap.iter (fun _prod root ->
+        contribute root empty
+      )
+
+    (* The edges of the data flow graph are the transitions of the automaton. *)
+
+    let foreach_successor source stack contribute =
+      Lr0.outgoing_edges source |> SymbolMap.iter (fun symbol target ->
+        (* The contribution of [source], through this edge, to [target], is the
+           stack at [source], extended with a new cell for this transition. *)
+        contribute target (push stack symbol)
+      )
+
+  end
+
+  (* Compute the least fixed point. *)
+
+  let stack_symbols : Lr0.node -> property option =
+    let module F = Fix.DataFlow.Run(Lr0.ImperativeNodeMap)(SymbolVector)(G) in
+    F.solution
+
+  (* If every state is reachable, then the least fixed point must be non-[None]
+     everywhere, so we may view it as a function that produces a vector of
+     symbols. *)
+
+  let stack_symbols (node : Lr0.node) : property =
+    match stack_symbols node with
+    | None ->
+        (* apparently this node is unreachable *)
+        assert false
+    | Some v ->
+        v
+
+  (* Move up to the level of the LR(1) automaton. *)
+
+  let stack_symbols (node : Lr1.node) : Symbol.t array =
+    stack_symbols (Lr0.core (Lr1.state node))
 
 end
+
+(* ------------------------------------------------------------------------ *)
+
+(* Printing. *)
+
+let buffer =
+  Buffer.create 1024
+
+let print_symbols symbols =
+  symbols |> Array.iter (fun symbol ->
+    Printf.bprintf buffer " %s" (Symbol.print symbol)
+  );
+  let s = Buffer.contents buffer in
+  Buffer.clear buffer;
+  s
