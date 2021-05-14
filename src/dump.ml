@@ -28,7 +28,7 @@ let dump_node out stack_symbols node =
   fprintf out "State %d:\n"
     (Lr1.number node);
 
-  (* Print the known prefix of the stack. *)
+  (* Print the known suffix of the stack. *)
 
   fprintf out
     "## Known stack suffix:\n\

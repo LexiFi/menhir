@@ -15,7 +15,7 @@ open Grammar
 
 module type STACK_SYMBOLS = sig
 
-  (**[stack_symbols s] is the known prefix of the stack at state [s]. It
+  (**[stack_symbols s] is the known suffix of the stack at state [s]. It
      is represented as an array of symbols. By convention, the top of
      the stack is the end of the array. *)
   val stack_symbols: Lr1.node -> Symbol.t array
