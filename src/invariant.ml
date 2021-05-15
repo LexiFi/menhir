@@ -454,6 +454,7 @@ let stack : Lr1.node -> word =
 let prodstack : Production.index -> word =
   Production.tabulate (fun prod ->
     let symbols, states = production_symbols prod, production_states prod in
+    assert (Array.length symbols = Production.length prod);
     Array.init (Array.length symbols) (fun i ->
       cell symbols.(i) states.(i)
     )
@@ -465,13 +466,11 @@ let prodstack : Production.index -> word =
 
 let gotostack : Nonterminal.t -> word =
   Nonterminal.tabulate (fun nt ->
-    let symbol = Symbol.N nt in
-    let sources =
-      Lr1.targets (fun accu sources _ ->
-        List.fold_right Lr1.NodeSet.add sources accu
-      ) Lr1.NodeSet.empty symbol
-    in
-    [| cell symbol sources |]
+    let symbols, states = goto_symbols nt, goto_states nt in
+    assert (Array.length symbols = 1);
+    Array.init (Array.length symbols) (fun i ->
+      cell symbols.(i) states.(i)
+    )
   )
 
 (* ------------------------------------------------------------------------ *)
