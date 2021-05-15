@@ -626,6 +626,25 @@ let stack_symbols node =
 module SSt =
   StackStates.Run(struct include SSy let long = true end)
 
+let unrepresented node =
+  not (represented node)
+
+let equi_represented nodes =
+  Lr1.NodeSet.for_all represented nodes ||
+  Lr1.NodeSet.for_all unrepresented nodes
+
+let validate states =
+  MArray.greatest_suffix_forall equi_represented states
+
+let stack_states s =
+  validate @@ stack_states s
+
+let production_states prod =
+  validate @@ production_states prod
+
+let goto_states nt =
+  validate @@ goto_states nt
+
 let stack_states node =
   let long_states = SSt.stack_states node in
   if debug then begin
@@ -642,7 +661,7 @@ let () =
 
 (* Publish the long invariant. *)
 
-(* TODO this code is wrong; must truncate the data to ensure that
+(* must ensure that
    every set of states is equi-represented *)
 
 let stack : Lr1.node -> word =
