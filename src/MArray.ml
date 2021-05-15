@@ -46,6 +46,16 @@ let is_suffix equal a1 a2 =
   and n2 = length a2 in
   n1 <= n2 && equal_segments equal a1 0 a2 (n2 - n1) n1
 
+let rec greatest_suffix_forall p a n k =
+  if k = n || not (p a.(n - 1 - k)) then
+    k
+  else
+    greatest_suffix_forall p a n (k + 1)
+
+let greatest_suffix_forall p a =
+  let k = greatest_suffix_forall p a (length a) 0 in
+  truncate k a
+
 let rev a =
   let n = length a in
   if n = 0 then
@@ -118,6 +128,10 @@ let test () =
   assert (is_suffix (=) [||] [|0;3;4|]) ;
   assert (is_suffix (=) [|2|] [|0;2|]) ;
   assert (is_suffix (=) [|3; 4|] [|0;3;4|]) ;
+  assert (greatest_suffix_forall ((<) 4) [|1; 2; 3; 4|] = [||]) ;
+  assert (greatest_suffix_forall ((<) 2) [|1; 2; 3; 4|] = [|3; 4|]) ;
+  assert (greatest_suffix_forall ((<) 0) [|1; 2; 3; 4|] = [|1; 2; 3; 4|]) ;
+  assert (greatest_suffix_forall ((<) 0) [|1; 2; 0; 4|] = [|4|]) ;
   assert (rev [|1; 2; 3; 4|] = [|4; 3; 2; 1|]) ;
   assert (rev_of_list [1; 2; 3; 4; 5] = [|5; 4; 3; 2; 1|]) ;
   assert (rev_to_list [|1; 2; 3; 4; 5|] = [5; 4; 3; 2; 1])

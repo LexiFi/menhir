@@ -37,6 +37,10 @@ val truncate : int -> 'a array -> 'a array
    elements are compared using the function [equal]. *)
 val is_suffix : ('a -> 'a -> bool) -> 'a array -> 'a array -> bool
 
+(**[greatest_suffix_forall p a] is the greatest suffix of the array [a]
+   whose elements satisfy the predicate [p]. *)
+val greatest_suffix_forall : ('a -> bool) -> 'a array -> 'a array
+
 (** Array reversal.
    [rev [|1; 2; 3; 4|] = [|4; 3; 2; 1|]]*)
 val rev : 'a t -> 'a t
