@@ -15,10 +15,17 @@ open Grammar
 
 module type STACK_SYMBOLS = sig
 
+  (**[stack_height s] is [Array.length (stack_symbols s)]. *)
+  val stack_height: Lr1.node -> int
+
   (**[stack_symbols s] is the known suffix of the stack at state [s]. It
      is represented as an array of symbols. By convention, the top of
      the stack is the end of the array. *)
   val stack_symbols: Lr1.node -> Symbol.t array
+
+  (**[production_symbols s] is the known suffix of the stack at a point
+     where production [prod] is about to be reduced. *)
+  val production_symbols: Production.index -> Symbol.t array
 
 end
 
@@ -64,6 +71,14 @@ module Run () = struct
 
   let stack_symbols (node : Lr1.node) : Symbol.t array =
     stack_symbols (Lr0.core (Lr1.state node))
+
+  let stack_height (node : Lr1.node) : int =
+    Array.length (stack_symbols node)
+
+  (* Add a trivial definition of [production_symbols]. *)
+
+  let production_symbols =
+    Production.rhs
 
 end
 
@@ -158,6 +173,33 @@ module Long () = struct
 
   let stack_symbols (node : Lr1.node) : Symbol.t array =
     stack_symbols (Lr0.core (Lr1.state node))
+
+  let stack_height (node : Lr1.node) : int =
+    Array.length (stack_symbols node)
+
+  (* From the above information, deduce, for each production, the shape
+     of the stack when this production is reduced. *)
+
+  (* We *can* produce a vector whose length is greater than that
+     of the production [prod]. *)
+
+  let production_symbols : Production.index -> property =
+    Production.tabulate (fun prod ->
+      let nodes = Lr1.production_where prod in
+      if Lr1.NodeSet.is_empty nodes then
+        (* This production is never reduced. It is not clear what vector
+           should be returned. Using the right-hand side of the production
+           seems reasonable. *)
+        Production.rhs prod
+      else
+        (* Compute a join over the nonempty set of nodes where this
+           production is reduced. *)
+        let node = Lr1.NodeSet.choose nodes in
+        let nodes = Lr1.NodeSet.remove node nodes in
+        Lr1.NodeSet.fold (fun node accu ->
+          leq_join (stack_symbols node) accu
+        ) nodes (stack_symbols node)
+    )
 
 end
 

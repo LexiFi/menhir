@@ -15,10 +15,17 @@ open Grammar
 
 module type STACK_SYMBOLS = sig
 
+  (**[stack_height s] is [Array.length (stack_symbols s)]. *)
+  val stack_height: Lr1.node -> int
+
   (**[stack_symbols s] is the known suffix of the stack at state [s]. It
      is represented as an array of symbols. By convention, the top of
      the stack is the end of the array. *)
   val stack_symbols: Lr1.node -> Symbol.t array
+
+  (**[production_symbols s] is the known suffix of the stack at a point
+     where production [prod] is about to be reduced. *)
+  val production_symbols: Production.index -> Symbol.t array
 
 end
 
