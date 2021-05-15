@@ -609,19 +609,8 @@ let () =
 
 module Long () = struct
 
-let debug = true (* TODO *)
-
 module SSy =
   StackSymbols.Long()
-
-let stack_symbols node =
-  let long_symbols = SSy.stack_symbols node in
-  if debug then begin
-    let short_symbols = stack_symbols node in
-    assert (Array.length short_symbols <= Array.length long_symbols);
-    assert (MArray.is_suffix (=) short_symbols long_symbols)
-  end;
-  long_symbols
 
 module SSt =
   StackStates.Run(struct include SSy let long = true end)
@@ -644,15 +633,6 @@ let production_states prod =
 
 let goto_states nt =
   validate @@ goto_states nt
-
-let stack_states node =
-  let long_states = SSt.stack_states node in
-  if debug then begin
-    let short_states = stack_states node in
-    assert (Array.length short_states <= Array.length long_states);
-    assert (MArray.is_suffix Lr1.NodeSet.equal short_states long_states)
-  end;
-  long_states
 
 (* If requested, print the information that has been computed above. *)
 
