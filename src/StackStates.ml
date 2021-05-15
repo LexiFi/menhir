@@ -15,15 +15,13 @@ open Grammar
 
 module Run (S : sig
 
-  (**[stack_symbols s] is the known suffix of the stack at state [s]. It
-     is represented as an array of symbols. By convention, the top of
-     the stack is the end of the array. *)
-  val stack_symbols: Lr1.node -> Symbol.t array
+  (**[stack_height s] is the height of the known suffix of the stack
+     at state [s]. *)
+  val stack_height: Lr1.node -> int
 
 end) = struct
 
-let stack_height (node : Lr1.node) : int =
-  Array.length (S.stack_symbols node)
+open S
 
 (* We now wish to compute, at each state [s], a vector of sets of states,
    whose length is [stack_height s].  *)
