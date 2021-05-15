@@ -9,13 +9,7 @@ module RegisterMap = StringMap
 
 module TagMap : MMap.S with type key = tag
 
-module TagSet : sig
-  include Set.S with type elt = tag
-
-  val all : t
-
-  val to_string : t -> string
-end
+module TagSet = TagMap.Domain
 
 type registers = RegisterSet.t
 

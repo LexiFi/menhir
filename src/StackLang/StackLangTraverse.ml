@@ -319,16 +319,6 @@ let rec pattern_shadow_state = function
 
 let _value_refers_to_state value = RegisterSet.mem state (Value.registers value)
 
-let get_args_map block_map =
-  StringMap.map
-    (function
-      | INeed (registers, _block) ->
-          StringSet.elements registers
-      | _ ->
-          assert false )
-    block_map
-
-
 (* -------------------------------------------------------------------------- *)
 (* Well-typedness with regard to knowledge of stack cells. *)
 

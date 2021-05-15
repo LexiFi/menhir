@@ -25,11 +25,12 @@ exception StackLangError of error
 val wf : program -> unit
 (** [wf program] checks that the program [program] contains no references to
    undefined registers. This check is in principle unnecessary, but can be a
-   useful debugging aid. *)
+   useful debugging aid. Raises [StackLangError] if the check fails.*)
 
 val wt : program -> unit
 (** [wt program] checks that no impossible pop is performed and that ITypedBlock
-    have correct [stack_type] annotations. *)
+    have correct [stack_type] annotations. Raises [StackLangError] if it is not
+    the case. *)
 
 type measure
 
@@ -39,7 +40,6 @@ val measure : program -> measure
    debugging and engineering purposes. *)
 
 val print : measure -> unit
-
-val get_args_map : block RegisterMap.t -> register list RegisterMap.t
+(** [print m] print the measure [m] *)
 
 val test : unit -> unit
