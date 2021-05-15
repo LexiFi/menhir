@@ -47,13 +47,13 @@ end) : sig
   (**[stack_states s] is the known suffix of the stack at state [s]. *)
   val stack_states: Lr1.node -> property
 
-  (**[production_states s] is the known suffix of the stack at a point where
-     production [prod] is about to be reduced. If [long] is false, then the
-     length of this suffix is [Production.length prod]. If [long] is true,
-     then its length can be greater. *)
+  (**[production_states prod] is the known suffix of the stack at a state
+     where production [prod] can be reduced. In the short invariant, the
+     length of this suffix is [Production.length prod]. In the long
+     invariant, its length can be greater. *)
   val production_states: Production.index -> property
 
-  (**[goto_states s] is the known suffix of the stack at a point where an
+  (**[goto_states nt] is the known suffix of the stack at a state where an
      edge labeled [nt] has just been followed. If [long] is false, then the
      length of this suffix is [1]. If [long] is true, then its length can be
      greater. *)
