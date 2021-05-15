@@ -242,7 +242,7 @@ val extra_reductions: unit -> unit
 (* Information about which productions are reduced and where. *)
 
 (* [production_where prod] is the set of all states [s] where production
-   [prod] might be reduced. It is an error to call this functios before
+   [prod] might be reduced. It is an error to call this function before
    default conflict resolution has taken place. *)
 
 val production_where: Production.index -> NodeSet.t
