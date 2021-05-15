@@ -28,6 +28,10 @@ module Run (S : sig
      at state [s]. *)
   val stack_height: Lr1.node -> int
 
+  (**This flag indicates whether the user wishes to compute a short
+     or a long invariant. *)
+  val long: bool
+
 end) : sig
 
   (**A property is a description of the known suffix of the stack at state
@@ -43,8 +47,10 @@ end) : sig
   (**[stack_states s] is the known suffix of the stack at state [s]. *)
   val stack_states: Lr1.node -> property
 
-  (**[production_states s] is the known suffix of the stack at a point
-     where production [prod] is about to be reduced. *)
+  (**[production_states s] is the known suffix of the stack at a point where
+     production [prod] is about to be reduced. If [long] is false, then the
+     length of this suffix is [Production.length prod]. If [long] is true,
+     then its length can be greater. *)
   val production_states: Production.index -> property
 
   (**[dump prefix f] dumps the result of the analysis to the output

@@ -19,6 +19,10 @@ module Run (S : sig
      at state [s]. *)
   val stack_height: Lr1.node -> int
 
+  (**This flag indicates whether the user wishes to compute a short
+     or a long invariant. *)
+  val long: bool
+
 end) = struct
 
 open S
@@ -105,16 +109,34 @@ let stack_states (node : Lr1.node) : property =
   | Some v ->
       v
 
-(* From the above information, deduce, for each production, the states that
-   may appear in the stack when this production is reduced. *)
+(* From the above information, deduce, for each production, the shape
+   of the stack when this production is reduced. *)
 
-(* We are careful to produce a vector of states whose length is exactly that
-   of the production [prod]. *)
+(* If [long] is false, then we are careful to produce a vector of
+   states whose length is exactly that of the production [prod]. *)
+
+(* If [long] is true, then we *can* produce a vector whose length is
+   greater than that of the production [prod]. *)
 
 let production_states : Production.index -> property =
   Production.tabulate (fun prod ->
     let sites = Lr1.production_where prod in
-    let height = Production.length prod in
+    let height =
+      if long then
+        if Lr1.NodeSet.is_empty sites then
+          (* This production is never reduced. We should return a
+             vector of bottom elements, whose length should be the
+             length of the production. *)
+          Production.length prod
+        else
+          (* Compute a minimum over the sites where this production is
+             reduced. *)
+          Lr1.NodeSet.fold (fun node accu ->
+            min (stack_height node) accu
+          ) sites max_int
+      else
+        Production.length prod
+    in
     Lr1.NodeSet.fold (fun node accu ->
       leq_join (truncate height (stack_states node)) accu
     ) sites (bottom height)

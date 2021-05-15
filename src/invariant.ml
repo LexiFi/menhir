@@ -30,7 +30,7 @@ open SSy
 (* Now, compute which states may be held in the known suffix of the stack. *)
 
 module SSt =
-  StackStates.Run(SSy)
+  StackStates.Run(struct include SSy let long = false end)
 
 open SSt
 
@@ -597,17 +597,18 @@ let () =
   Time.tick "Constructing the invariant"
 
 (* ------------------------------------------------------------------------ *)
-(* Conmpute the long invariant. *)
+
+(* Compute and publish the long invariant. *)
 
 module Long () = struct
 
-let debug = true
+let debug = true (* TODO *)
 
-module L =
+module SSy =
   StackSymbols.Long()
 
-let stack_symbols node =
-  let long_symbols = L.stack_symbols node in
+let _stack_symbols node =
+  let long_symbols = SSy.stack_symbols node in
   if debug then begin
     let short_symbols = stack_symbols node in
     assert (Array.length short_symbols <= Array.length long_symbols);
@@ -615,16 +616,22 @@ let stack_symbols node =
   end;
   long_symbols
 
+module SSt =
+  StackStates.Run(struct include SSy let long = true end)
+
+let _stack_states node =
+  let long_states = SSt.stack_states node in
+  if debug then begin
+    let short_states = stack_states node in
+    assert (Array.length short_states <= Array.length long_states);
+    assert (MArray.is_suffix Lr1.NodeSet.equal short_states long_states)
+  end;
+  long_states
+
 (* If requested, print the information that has been computed above. *)
 
 let () =
-  Error.logC 3 (fun f ->
-    Lr1.iter (fun node ->
-      Printf.fprintf f "longstack(%s) = %s\n"
-        (Lr1.print node)
-        (StackSymbols.print_symbols (stack_symbols node))
-    )
-  )
+  Error.logC 3 (dump "long")
 
 let () =
   Time.tick "Constructing the long invariant"
