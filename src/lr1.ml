@@ -736,6 +736,11 @@ module NodeMap =
 module ImperativeNodeMap =
   Fix.Glue.ArraysAsImperativeMaps(struct let n = n end)
 
+let all_targets symbol =
+  targets (fun accu _sources target ->
+    NodeSet.add target accu
+  ) NodeSet.empty symbol
+
 (* -------------------------------------------------------------------------- *)
 
 (* For each production, compute where (that is, in which states) this

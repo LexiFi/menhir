@@ -180,6 +180,11 @@ val iterx: (node -> unit) -> unit
 
 val targets: ('a -> node list -> node -> 'a) -> 'a -> Symbol.t -> 'a
 
+(* [all_targets symbol] is the set of all targets of edges labeled
+   with [symbol]. *)
+
+val all_targets: Symbol.t -> NodeSet.t
+
 (* Iteration over all nodes with conflicts. [conflicts f] invokes [f toks
    node] once for every node [node] with a conflict, where [toks] are the
    tokens involved in the conflicts at that node.
