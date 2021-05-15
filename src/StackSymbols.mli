@@ -15,25 +15,31 @@ open Grammar
 
 module type STACK_SYMBOLS = sig
 
+  (**A property is a description of the known suffix of the stack at state
+     [s]. It is represented as an array of symbols. By convention, the top
+     of the stack is the end of the array. *)
+  type property =
+    Symbol.t array
+
   (**[stack_height s] is [Array.length (stack_symbols s)]. *)
   val stack_height: Lr1.node -> int
 
   (**[stack_symbols s] is the known suffix of the stack at state [s]. It
      is represented as an array of symbols. By convention, the top of
      the stack is the end of the array. *)
-  val stack_symbols: Lr1.node -> Symbol.t array
+  val stack_symbols: Lr1.node -> property
 
   (**[production_symbols s] is the known suffix of the stack at a point
      where production [prod] is about to be reduced. In the short invariant,
      the length of this suffix is [Production.length prod]. In the long
      invariant, its length can be greater. *)
-  val production_symbols: Production.index -> Symbol.t array
+  val production_symbols: Production.index -> property
 
   (**[goto_symbols s] is the known suffix of the stack at a point where an
      edge labeled [nt] has just been followed. In the short invariant, the
      length of this suffix is [1]. In the long invariant, its length can be
      greater. *)
-  val goto_symbols: Nonterminal.t -> Symbol.t array
+  val goto_symbols: Nonterminal.t -> property
 
 end
 

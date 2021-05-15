@@ -15,25 +15,31 @@ open Grammar
 
 module type STACK_SYMBOLS = sig
 
+  (**A property is a description of the known suffix of the stack at state
+     [s]. It is represented as an array of symbols. By convention, the top
+     of the stack is the end of the array. *)
+  type property =
+    Symbol.t array
+
   (**[stack_height s] is [Array.length (stack_symbols s)]. *)
   val stack_height: Lr1.node -> int
 
   (**[stack_symbols s] is the known suffix of the stack at state [s]. It
      is represented as an array of symbols. By convention, the top of
      the stack is the end of the array. *)
-  val stack_symbols: Lr1.node -> Symbol.t array
+  val stack_symbols: Lr1.node -> property
 
   (**[production_symbols s] is the known suffix of the stack at a point
      where production [prod] is about to be reduced. In the short invariant,
      the length of this suffix is [Production.length prod]. In the long
      invariant, its length can be greater. *)
-  val production_symbols: Production.index -> Symbol.t array
+  val production_symbols: Production.index -> property
 
   (**[goto_symbols s] is the known suffix of the stack at a point where an
      edge labeled [nt] has just been followed. In the short invariant, the
      length of this suffix is [1]. In the long invariant, its length can be
      greater. *)
-  val goto_symbols: Nonterminal.t -> Symbol.t array
+  val goto_symbols: Nonterminal.t -> property
 
 end
 
@@ -61,10 +67,13 @@ end
 
 module Run () = struct
 
+  type property =
+    Symbol.t array
+
   (* Compute and tabulate this information at the level of the LR(0)
      automaton. *)
 
-  let stack_symbols : Lr0.node -> Symbol.t array =
+  let stack_symbols : Lr0.node -> property =
     let dummy =
       Array.make 0 (Symbol.T Terminal.sharp)
     in
@@ -77,7 +86,7 @@ module Run () = struct
 
   (* Extend it to the LR(1) automaton. *)
 
-  let stack_symbols (node : Lr1.node) : Symbol.t array =
+  let stack_symbols (node : Lr1.node) : property =
     stack_symbols (Lr0.core (Lr1.state node))
 
   let stack_height (node : Lr1.node) : int =
@@ -134,7 +143,7 @@ module Long () = struct
 
   end
 
-  open SymbolVector
+  include SymbolVector
 
   (* Define the data flow graph. *)
 
@@ -184,7 +193,7 @@ module Long () = struct
 
   (* Move up to the level of the LR(1) automaton. *)
 
-  let stack_symbols (node : Lr1.node) : Symbol.t array =
+  let stack_symbols (node : Lr1.node) : property =
     stack_symbols (Lr0.core (Lr1.state node))
 
   let stack_height (node : Lr1.node) : int =
@@ -229,11 +238,7 @@ module Long () = struct
       let symbol = Symbol.N nt in
       (* Compute the join of the stack shapes at every target of an edge
          labeled with [nt]. *)
-      let targets =
-        Lr1.targets (fun accu _sources target ->
-          Lr1.NodeSet.add target accu
-        ) Lr1.NodeSet.empty symbol
-      in
+      let targets = Lr1.all_targets symbol in
       if Lr1.NodeSet.is_empty targets then
         (* No edge is labeled [nt]. *)
         [| symbol |]
