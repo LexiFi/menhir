@@ -386,7 +386,9 @@ let () =
         (sum_over_every_symbol endp) (Terminal.n + Nonterminal.n))
 
 (* ------------------------------------------------------------------------ *)
-(* Accessors for information about the stack. *)
+(* Constructors and accessors for information about the stack. *)
+
+(* Types. *)
 
 type cell = {
   symbol: Symbol.t;
@@ -396,6 +398,11 @@ type cell = {
   holds_startp: bool;
   holds_endp: bool;
 }
+
+type word =
+  cell array
+
+(* Constructors. *)
 
 let has_semv symbol =
   match symbol with
@@ -415,11 +422,21 @@ let cell symbol states =
   let holds_startp, holds_endp = startp symbol, endp symbol in
   { symbol; states; holds_semv; holds_state; holds_startp; holds_endp }
 
-type word =
-  cell array
+(* Accessors. *)
 
 let pop =
   MArray.pop
+
+let fold_top f default w =
+  let n = Array.length w in
+  if n = 0 then
+    default
+  else
+    f w.(n-1)
+
+(* ------------------------------------------------------------------------ *)
+
+(* Publish the short invariant. *)
 
 (* [stack s] describes the stack when the automaton is in state [s]. *)
 
@@ -436,7 +453,7 @@ let stack : Lr1.node -> word =
 
 let prodstack : Production.index -> word =
   Production.tabulate (fun prod ->
-    let symbols, states = Production.rhs prod, production_states prod in
+    let symbols, states = production_symbols prod, production_states prod in
     Array.init (Array.length symbols) (fun i ->
       cell symbols.(i) states.(i)
     )
@@ -456,13 +473,6 @@ let gotostack : Nonterminal.t -> word =
     in
     [| cell symbol sources |]
   )
-
-let fold_top f default w =
-  let n = Array.length w in
-  if n = 0 then
-    default
-  else
-    f w.(n-1)
 
 (* ------------------------------------------------------------------------ *)
 (* Explain how the stack should be deconstructed when an error is found.
