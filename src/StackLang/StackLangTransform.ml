@@ -410,11 +410,18 @@ and commute_pushes_t_block program t_block =
   }
 
 
-let rec remove_dead_branches_block possible_states block =
+let represented_states program =
+  let states = program.states in
+  TagMap.domain states
+
+
+let rec remove_dead_branches_block program possible_states block =
+  let remove_dead_branches_block = remove_dead_branches_block program in
   Block.map
     (remove_dead_branches_block possible_states)
     ~pop:(fun pattern block ->
-      let block = remove_dead_branches_block TagSet.all block in
+      let possible_states = represented_states program in
+      let block = remove_dead_branches_block possible_states block in
       (pattern, block) )
     ~case_tag:(fun reg branches ->
       let branch_aux (TagMultiple taglist, block) =
@@ -435,15 +442,18 @@ let rec remove_dead_branches_block possible_states block =
     block
 
 
-let remove_dead_branches_t_block t_block =
+let remove_dead_branches_t_block program t_block =
   let { block } = t_block in
-  { t_block with block = remove_dead_branches_block TagSet.all block }
+  let all = represented_states program in
+  { t_block with block = remove_dead_branches_block program all block }
 
 
-let remove_dead_branches = Program.map remove_dead_branches_t_block
+let remove_dead_branches program =
+  Program.map (remove_dead_branches_t_block program) program
+
 
 let commute_pushes program =
-  remove_dead_branches @@ Program.map (commute_pushes_t_block program) program
+  remove_dead_branches (Program.map (commute_pushes_t_block program) program)
 
 
 (** remove definitions of shape [x = x], or shape [_ = x] *)

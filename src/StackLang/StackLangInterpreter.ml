@@ -110,7 +110,13 @@ let rec bind p gv (env : env) : env =
       error "tuple pattern cannot match a value that is not a tuple"
 
 
-let binds = Bindings.fold (fun r v env -> bind (PReg r) (eval env v) env)
+let binds bindings env =
+  let saved_env = env in
+  Bindings.fold
+    (fun r v env -> bind (PReg r) (eval saved_env v) env)
+    bindings
+    env
+
 
 (* -------------------------------------------------------------------------- *)
 

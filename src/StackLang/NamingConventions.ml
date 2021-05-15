@@ -1,12 +1,4 @@
-(* ------------------------------------------------------------------------ *)
-(* Here is a bunch of naming conventions. Our names are chosen to minimize
-   the likelihood that a name in a semantic action is captured. In other
-   words, all global definitions as well as the parameters to [reduce]
-   are given far-fetched names, unless [--no-prefix] was specified. Note
-   that the prefix must begin with '_'. This allows avoiding warnings
-   about unused variables with ocaml 3.09 and later. *)
-
-let prefix name = if Settings.noprefix then name else "_menhir_" ^ name
+let prefix = CodeBits.prefix
 
 (** A variable used to hold a semantic value. *)
 let semv = "_v"
