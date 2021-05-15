@@ -109,6 +109,23 @@ let stack_states (node : Lr1.node) : property =
   | Some v ->
       v
 
+(* [minimum f nodes] computes the minimum of the images through [f] of
+   the nodes in the nonempty set [nodes]. *)
+
+let minimum f nodes =
+  assert (not (Lr1.NodeSet.is_empty nodes));
+  Lr1.NodeSet.fold (fun node accu ->
+    min (f node) accu
+  ) nodes max_int
+
+(* [truncate_join height f nodes] computes a join of the images through [f] of
+   the nodes in the set [nodes], truncated at height [height]. *)
+
+let truncate_join height f nodes =
+  Lr1.NodeSet.fold (fun node accu ->
+    leq_join (truncate height (f node)) accu
+  ) nodes (bottom height)
+
 (* From the above information, deduce, for each production, the shape
    of the stack when this production is reduced. *)
 
@@ -122,25 +139,32 @@ let production_states : Production.index -> property =
   Production.tabulate (fun prod ->
     let sites = Lr1.production_where prod in
     let height =
-      if long then
-        if Lr1.NodeSet.is_empty sites then
-          (* This production is never reduced. We should return a
-             vector of bottom elements, whose length should be the
-             length of the production. *)
-          Production.length prod
-        else
-          (* Compute a minimum over the sites where this production is
-             reduced. *)
-          Lr1.NodeSet.fold (fun node accu ->
-            min (stack_height node) accu
-          ) sites max_int
+      if long && not (Lr1.NodeSet.is_empty sites) then
+        minimum stack_height sites
       else
         Production.length prod
     in
-    Lr1.NodeSet.fold (fun node accu ->
-      leq_join (truncate height (stack_states node)) accu
-    ) sites (bottom height)
+    truncate_join height stack_states sites
   )
+
+(* Compute the shape of the stack when a transition on the nonterminal
+   symbol [nt] is taken. *)
+
+let goto_states : Nonterminal.t -> property =
+  Nonterminal.tabulate (fun nt ->
+    let symbol = Symbol.N nt in
+    (* Compute the join of the stack shapes at every target of an edge
+       labeled with [nt]. *)
+    let targets = Lr1.all_targets symbol in
+    let height =
+      if long && not (Lr1.NodeSet.is_empty targets) then
+        minimum stack_height targets
+      else
+        1
+    in
+    truncate_join height stack_states targets
+  )
+
 
 type property =
   Lr1.NodeSet.t array

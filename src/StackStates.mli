@@ -35,9 +35,9 @@ module Run (S : sig
 end) : sig
 
   (**A property is a description of the known suffix of the stack at state
-     [s]. It is represented as an array of symbols. By convention, the top
-     of the stack is the end of the array. Each array element is a set of
-     states that may appear in this stack cell. *)
+     [s]. It is represented as an array. By convention, the top of the stack
+     is the end of the array. Each array element is a set of states that may
+     appear in this stack cell. *)
   type property =
     Lr1.NodeSet.t array
 
@@ -52,6 +52,12 @@ end) : sig
      length of this suffix is [Production.length prod]. If [long] is true,
      then its length can be greater. *)
   val production_states: Production.index -> property
+
+  (**[goto_states s] is the known suffix of the stack at a point where an
+     edge labeled [nt] has just been followed. If [long] is false, then the
+     length of this suffix is [1]. If [long] is true, then its length can be
+     greater. *)
+  val goto_states: Nonterminal.t -> property
 
   (**[dump prefix f] dumps the result of the analysis to the output
      channel [f], in an unspecified format. The string [prefix] is
