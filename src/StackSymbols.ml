@@ -24,8 +24,16 @@ module type STACK_SYMBOLS = sig
   val stack_symbols: Lr1.node -> Symbol.t array
 
   (**[production_symbols s] is the known suffix of the stack at a point
-     where production [prod] is about to be reduced. *)
+     where production [prod] is about to be reduced. In the short invariant,
+     the length of this suffix is [Production.length prod]. In the long
+     invariant, its length can be greater. *)
   val production_symbols: Production.index -> Symbol.t array
+
+  (**[goto_symbols s] is the known suffix of the stack at a point where an
+     edge labeled [nt] has just been followed. In the short invariant, the
+     length of this suffix is [1]. In the long invariant, its length can be
+     greater. *)
+  val goto_symbols: Nonterminal.t -> Symbol.t array
 
 end
 
@@ -79,6 +87,11 @@ module Run () = struct
 
   let production_symbols =
     Production.rhs
+
+  (* Add a trivial definition of [goto_symbols]. *)
+
+  let goto_symbols nt =
+    [| Symbol.N nt |]
 
 end
 
@@ -177,6 +190,17 @@ module Long () = struct
   let stack_height (node : Lr1.node) : int =
     Array.length (stack_symbols node)
 
+  (* [join1 f nodes] computes the join of the images through [f] of the
+     nodes in the set [nodes]. Because our join does not have a bottom
+     element, this set must be nonempty. *)
+
+  let join1 f nodes =
+    let node = Lr1.NodeSet.choose nodes in
+    let nodes = Lr1.NodeSet.remove node nodes in
+    Lr1.NodeSet.fold (fun node accu ->
+      leq_join (f node) accu
+    ) nodes (f node)
+
   (* From the above information, deduce, for each production, the shape
      of the stack when this production is reduced. *)
 
@@ -189,16 +213,32 @@ module Long () = struct
       if Lr1.NodeSet.is_empty nodes then
         (* This production is never reduced. It is not clear what vector
            should be returned. Using the right-hand side of the production
-           seems reasonable. *)
+           seems reasonable. This is what the short invariant does. *)
         Production.rhs prod
       else
-        (* Compute a join over the nonempty set of nodes where this
-           production is reduced. *)
-        let node = Lr1.NodeSet.choose nodes in
-        let nodes = Lr1.NodeSet.remove node nodes in
-        Lr1.NodeSet.fold (fun node accu ->
-          leq_join (stack_symbols node) accu
-        ) nodes (stack_symbols node)
+        (* Compute a join over the set of nodes where this production
+           is reduced. *)
+        join1 stack_symbols nodes
+    )
+
+  (* Compute the shape of the stack when a transition on the nonterminal
+     symbol [nt] is taken. *)
+
+  let goto_symbols : Nonterminal.t -> property =
+    Nonterminal.tabulate (fun nt ->
+      let symbol = Symbol.N nt in
+      (* Compute the join of the stack shapes at every target of an edge
+         labeled with [nt]. *)
+      let targets =
+        Lr1.targets (fun accu _sources target ->
+          Lr1.NodeSet.add target accu
+        ) Lr1.NodeSet.empty symbol
+      in
+      if Lr1.NodeSet.is_empty targets then
+        (* No edge is labeled [nt]. *)
+        [| symbol |]
+      else
+        join1 stack_symbols targets
     )
 
 end

@@ -24,8 +24,16 @@ module type STACK_SYMBOLS = sig
   val stack_symbols: Lr1.node -> Symbol.t array
 
   (**[production_symbols s] is the known suffix of the stack at a point
-     where production [prod] is about to be reduced. *)
+     where production [prod] is about to be reduced. In the short invariant,
+     the length of this suffix is [Production.length prod]. In the long
+     invariant, its length can be greater. *)
   val production_symbols: Production.index -> Symbol.t array
+
+  (**[goto_symbols s] is the known suffix of the stack at a point where an
+     edge labeled [nt] has just been followed. In the short invariant, the
+     length of this suffix is [1]. In the long invariant, its length can be
+     greater. *)
+  val goto_symbols: Nonterminal.t -> Symbol.t array
 
 end
 
