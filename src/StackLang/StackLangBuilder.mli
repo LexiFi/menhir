@@ -49,13 +49,16 @@ end
 (* The following imperative API can be used by the function [code] above. *)
 
 val routine_stack_type : cell_info array -> unit
-(** Set the stack type of the routine *)
+(** [routine_stack_type typ] sets the stack type of the current routine to [typ].
+    It is mandatory to call it once. *)
 
 val routine_final_type : Stretch.ocamltype -> unit
 (** Set the final type of the ro1utine *)
 
 val routine_need : registers -> unit
-(** Set the needed registers of the routine *)
+(** [routine_stack_type typ] sets the type of the current routine to [typ].
+    It can be called once or never, depending on whether the routine has a
+    determined final type. *)
 
 (* Each of the functions in the first group extends a code block that is
    currently under construction. Each of the functions in the second group
