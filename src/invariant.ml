@@ -38,22 +38,7 @@ open SSt
 (* If requested, print the information that has been computed above. *)
 
 let () =
-  Error.logC 3 (fun f ->
-    Lr1.iter (fun node ->
-      Printf.fprintf f "stack(%s) = %s\n"
-        (Lr1.print node)
-        (print (stack_states node))
-    )
-  )
-
-let () =
-  Error.logC 3 (fun f ->
-    Production.iterx (fun prod ->
-      Printf.fprintf f "stack when reducing %s = %s\n"
-        (Production.print prod)
-        (print (production_states prod))
-    )
-  )
+  Error.logC 3 (dump "short")
 
 (* ------------------------------------------------------------------------ *)
 (* We now determine which states must be represented, that is,
