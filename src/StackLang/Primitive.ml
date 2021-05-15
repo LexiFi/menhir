@@ -14,10 +14,7 @@ let registers = function
            (Bindings.codomain bindings) )
         (Bindings.domain bindings)
   | PrimOCamlCall (_f, values) ->
-      List.fold_left
-        RegisterSet.union
-        RegisterSet.empty
-        (List.map Value.registers values)
+      Value.registers_of_list values
   | PrimOCamlDummyPos ->
       RegisterSet.empty
   | PrimOCamlFieldAccess (value, _fields) ->

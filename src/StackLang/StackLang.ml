@@ -40,6 +40,9 @@ type primitive =
   | PrimOCamlFieldAccess of value * field
   | PrimOCamlDummyPos
   | PrimOCamlAction of bindings * action
+      (** A PrimOcamlAction is code written by the user. We do not want to
+          rename the registers inside this code, but it is sometime needed.
+          Therefore we have a set of local bindings just before the action. *)
 
 and field = string
 
@@ -135,7 +138,7 @@ type block =
           that the case analysis is exhaustive. *)
   | ITypedBlock of typed_block
       (** ITypedBlock introduces a typed block in the middle of a routine.
-          This is used to inline a routine in another without loosing type
+          This is used to inline a routine in another without losing type
           information. *)
 
 (** A typed block is a block annotated with information :
