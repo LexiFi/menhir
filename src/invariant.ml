@@ -601,7 +601,7 @@ let stack_symbols node =
   if debug then begin
     let short_symbols = stack_symbols node in
     assert (Array.length short_symbols <= Array.length long_symbols);
-    assert (MArray.is_suffix short_symbols long_symbols)
+    assert (MArray.is_suffix (=) short_symbols long_symbols)
   end;
   long_symbols
 

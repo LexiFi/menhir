@@ -37,14 +37,14 @@ let truncate k a =
   else
     sub a (n-k) k
 
-let rec equal_segments a1 i1 a2 i2 n =
+let rec equal_segments equal a1 i1 a2 i2 n =
   n = 0 ||
-  a1.(i1) = a2.(i2) && equal_segments a1 (i1 + 1) a2 (i2 + 1) (n - 1)
+  equal a1.(i1) a2.(i2) && equal_segments equal a1 (i1 + 1) a2 (i2 + 1) (n - 1)
 
-let is_suffix a1 a2 =
+let is_suffix equal a1 a2 =
   let n1 = length a1
   and n2 = length a2 in
-  n1 <= n2 && equal_segments a1 0 a2 (n2 - n1) n1
+  n1 <= n2 && equal_segments equal a1 0 a2 (n2 - n1) n1
 
 let rev a =
   let n = length a in
@@ -114,10 +114,10 @@ let test () =
   assert (push [|1; 2; 3|] 4 = [|1; 2; 3; 4|]) ;
   assert (truncate 2 [|1; 2; 3; 4|] = [|3; 4|]) ;
   assert (truncate 4 [|1; 2|] = [|1; 2|]) ;
-  assert (is_suffix [||] [||]) ;
-  assert (is_suffix [||] [|0;3;4|]) ;
-  assert (is_suffix [|2|] [|0;2|]) ;
-  assert (is_suffix [|3; 4|] [|0;3;4|]) ;
+  assert (is_suffix (=) [||] [||]) ;
+  assert (is_suffix (=) [||] [|0;3;4|]) ;
+  assert (is_suffix (=) [|2|] [|0;2|]) ;
+  assert (is_suffix (=) [|3; 4|] [|0;3;4|]) ;
   assert (rev [|1; 2; 3; 4|] = [|4; 3; 2; 1|]) ;
   assert (rev_of_list [1; 2; 3; 4; 5] = [|5; 4; 3; 2; 1|]) ;
   assert (rev_to_list [|1; 2; 3; 4; 5|] = [5; 4; 3; 2; 1])
