@@ -100,8 +100,8 @@ val stack: Lr1.node -> word
 val prodstack: Production.index -> word
 
 (**[gotostack nt] is the structure of the stack when a shift
-   transition over nonterminal [nt] is about to be taken. It
-   consists of just one cell. *)
+   transition over nonterminal [nt] has just been taken. It
+   consists of just one cell, associated with the symbol [nt]. *)
 val gotostack: Nonterminal.t -> word
 
 (* ------------------------------------------------------------------------- *)
