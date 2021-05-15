@@ -48,4 +48,9 @@ end) : sig
      where production [prod] is about to be reduced. *)
   val production_states: Production.index -> property
 
+  (**[dump prefix f] dumps the result of the analysis to the output
+     channel [f], in an unspecified format. The string [prefix] is
+     emitted at the beginning of every line of output. *)
+  val dump: string -> out_channel -> unit
+
 end
