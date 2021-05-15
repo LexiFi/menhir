@@ -583,9 +583,7 @@ let errorpeekers =
   (* ... then compute the set of all target states of all transitions
      labeled by some symbol in the set [nt]. *)
   SymbolSet.fold (fun nt errorpeekers ->
-    Lr1.targets (fun errorpeekers _ target ->
-      Lr1.NodeSet.add target errorpeekers
-    ) errorpeekers nt
+    Lr1.NodeSet.union errorpeekers (Lr1.all_targets nt)
   ) nts Lr1.NodeSet.empty
 
 let errorpeeker node =
