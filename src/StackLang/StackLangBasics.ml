@@ -4,16 +4,8 @@ module RegisterSet = StringSet
 module RegisterMap = StringMap
 module TagMap = MMap.Make (Int)
 
-module TagSet = struct
-  include Set.Make (Int)
+module TagSet = TagMap.Domain
 
-  let all = of_list (List.init (Lr1.n + 1) Fun.id)
-
-  let to_string set =
-    Printf.sprintf
-      "{%s}"
-      (String.concat "; " (List.map string_of_int (elements set)))
-end
 
 type registers = RegisterSet.t
 
