@@ -88,21 +88,28 @@ val fold_top: (cell -> 'a) -> 'a -> word -> 'a
 (* ------------------------------------------------------------------------- *)
 (* Information about the stack. *)
 
-(**[stack s] is the structure of the stack at state [s]. *)
-val stack: Lr1.node -> word
+module type STACK = sig
 
-(**[prodstack prod] is the structure of the stack when production
-   [prod] is about to be reduced.
+  (**[stack s] is the known suffix of the stack at state [s]. *)
+  val stack: Lr1.node -> word
 
-   Until 2020/11/20, it was forbidden to call this function if production
-   [prod] is never reduced. It is now possible to do so. In that case, it
-   returns a word where every cell contains an empty set of states. *)
-val prodstack: Production.index -> word
+  (**[prodstack prod] is the known suffix of the stack at a state where
+     production [prod] can be reduced. In the short invariant, the length of
+     this suffix is [Production.length prod]. In the long invariant, its
+     length can be greater. If there are no states where [prod] can be
+     reduced, then every cell contains an empty set of states. *)
+  val prodstack: Production.index -> word
 
-(**[gotostack nt] is the structure of the stack when a shift
-   transition over nonterminal [nt] has just been taken. It
-   consists of just one cell, associated with the symbol [nt]. *)
-val gotostack: Nonterminal.t -> word
+  (**[gotostack nt] is the known suffix of the stack at a state where an
+     edge labeled [nt] has just been followed. In the short invariant, the
+     length of this suffix is [1]: indeed, it consists of just one cell,
+     associated with the symbol [nt]. In the long invariant, its length can
+     be greater. *)
+  val gotostack: Nonterminal.t -> word
+
+end
+
+include STACK
 
 (* ------------------------------------------------------------------------- *)
 (* Information about error handling. *)
@@ -159,6 +166,4 @@ val universal: Symbol.t -> bool
    is possibly longer than the suffix proposed in the "short invariant",
    whose length is always the maximum position of the bullet in the items
    of the state at hand. *)
-module Long () : sig
-
-end
+module Long () : STACK

@@ -438,6 +438,27 @@ let fold_top f default w =
 
 (* Publish the short invariant. *)
 
+module type STACK = sig
+
+  (**[stack s] is the known suffix of the stack at state [s]. *)
+  val stack: Lr1.node -> word
+
+  (**[prodstack prod] is the known suffix of the stack at a state where
+     production [prod] can be reduced. In the short invariant, the length of
+     this suffix is [Production.length prod]. In the long invariant, its
+     length can be greater. If there are no states where [prod] can be
+     reduced, then every cell contains an empty set of states. *)
+  val prodstack: Production.index -> word
+
+  (**[gotostack nt] is the known suffix of the stack at a state where an
+     edge labeled [nt] has just been followed. In the short invariant, the
+     length of this suffix is [1]: indeed, it consists of just one cell,
+     associated with the symbol [nt]. In the long invariant, its length can
+     be greater. *)
+  val gotostack: Nonterminal.t -> word
+
+end
+
 (* Suppose we have a function [foo] that maps things to vectors of foos and a
    function [bar] that maps things to vectors of bars (of matching length).
    Suppose we have a function [cell] that builds a cell out of a foo and a
@@ -593,7 +614,7 @@ let debug = true (* TODO *)
 module SSy =
   StackSymbols.Long()
 
-let _stack_symbols node =
+let stack_symbols node =
   let long_symbols = SSy.stack_symbols node in
   if debug then begin
     let short_symbols = stack_symbols node in
@@ -605,7 +626,7 @@ let _stack_symbols node =
 module SSt =
   StackStates.Run(struct include SSy let long = true end)
 
-let _stack_states node =
+let stack_states node =
   let long_states = SSt.stack_states node in
   if debug then begin
     let short_states = stack_states node in
@@ -618,6 +639,20 @@ let _stack_states node =
 
 let () =
   Error.logC 3 (dump "long")
+
+(* Publish the long invariant. *)
+
+(* TODO this code is wrong; must truncate the data to ensure that
+   every set of states is equi-represented *)
+
+let stack : Lr1.node -> word =
+  publish Lr1.tabulate stack_symbols stack_states cell
+
+let prodstack : Production.index -> word =
+  publish Production.tabulate production_symbols production_states cell
+
+let gotostack : Nonterminal.t -> word =
+  publish Nonterminal.tabulate goto_symbols goto_states cell
 
 let () =
   Time.tick "Constructing the long invariant"
