@@ -438,40 +438,29 @@ let fold_top f default w =
 
 (* Publish the short invariant. *)
 
-(* [stack s] describes the stack when the automaton is in state [s]. *)
+(* Suppose we have a function [foo] that maps things to vectors of foos and a
+   function [bar] that maps things to vectors of bars (of matching length).
+   Suppose we have a function [cell] that builds a cell out of a foo and a
+   bar. Then, we want to construct and tabulate a function that maps things to
+   vectors of cells. This is done in a generic way as follows. *)
+
+let publish tabulate foo bar cell =
+  tabulate (fun thing ->
+    let foos, bars = foo thing, bar thing in
+    assert (Array.length foos = Array.length bars);
+    Array.init (Array.length foos) (fun i ->
+      cell foos.(i) bars.(i)
+    )
+  )
 
 let stack : Lr1.node -> word =
-  Lr1.tabulate (fun node ->
-    let symbols, states = stack_symbols node, stack_states node in
-    Array.init (Array.length symbols) (fun i ->
-      cell symbols.(i) states.(i)
-    )
-  )
-
-(* [prodstack prod] describes the stack when production [prod] is about to be
-   reduced. *)
+  publish Lr1.tabulate stack_symbols stack_states cell
 
 let prodstack : Production.index -> word =
-  Production.tabulate (fun prod ->
-    let symbols, states = production_symbols prod, production_states prod in
-    assert (Array.length symbols = Production.length prod);
-    Array.init (Array.length symbols) (fun i ->
-      cell symbols.(i) states.(i)
-    )
-  )
-
-(* [gotostack nt] is the structure of the stack when a shift
-   transition over nonterminal [nt] has just been taken. It
-   consists of just one cell, associated with the symbol [nt]. *)
+  publish Production.tabulate production_symbols production_states cell
 
 let gotostack : Nonterminal.t -> word =
-  Nonterminal.tabulate (fun nt ->
-    let symbols, states = goto_symbols nt, goto_states nt in
-    assert (Array.length symbols = 1);
-    Array.init (Array.length symbols) (fun i ->
-      cell symbols.(i) states.(i)
-    )
-  )
+  publish Nonterminal.tabulate goto_symbols goto_states cell
 
 (* ------------------------------------------------------------------------ *)
 (* Explain how the stack should be deconstructed when an error is found.
