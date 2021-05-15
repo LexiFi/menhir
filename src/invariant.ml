@@ -607,53 +607,74 @@ let () =
 
 (* Compute and publish the long invariant. *)
 
+(* Fortunately, all of the building blocks are at hand, so this is easy. *)
+
+(* A caveat: it is not obvious that the sets of states computed here are
+   equi-represented. (A set is equi-represented if all of its elements are
+   represented *or* all of its elements are unrepresented.) Yet, we need
+   this property, otherwise the long invariant cannot be safely translated
+   to an OCaml GADT.
+
+   Intuition tells me that this property is likely true, because every set
+   of states that appears somewhere in the long invariant must also appear
+   somewhere in the short invariant, and we know that every set of states in
+   the short invariant is equi-represented, because we have explicitly
+   imposed this requirement.
+
+   At this time, we explicitly check at runtime that every set of states is
+   equi-represented, and we fail (abruptly) if that is not the case. Another
+   option might be to truncate the invariant so as to forget about any stack
+   cells that are not equi-represented. *)
+
 module Long () = struct
 
-module SSy =
-  StackSymbols.Long()
+  (* Compute. *)
 
-module SSt =
-  StackStates.Run(struct include SSy let long = true end)
+  module SSy =
+    StackSymbols.Long()
 
-let unrepresented node =
-  not (represented node)
+  module SSt =
+    StackStates.Run(struct include SSy let long = true end)
 
-let equi_represented nodes =
-  Lr1.NodeSet.for_all represented nodes ||
-  Lr1.NodeSet.for_all unrepresented nodes
+  (* Validate. *)
 
-let validate states =
-  MArray.greatest_suffix_forall equi_represented states
+  let unrepresented node =
+    not (represented node)
 
-let stack_states s =
-  validate @@ stack_states s
+  let equi_represented nodes =
+    Lr1.NodeSet.for_all represented nodes ||
+    Lr1.NodeSet.for_all unrepresented nodes
 
-let production_states prod =
-  validate @@ production_states prod
+  let validate states =
+    assert (Array.for_all equi_represented states);
+    states
 
-let goto_states nt =
-  validate @@ goto_states nt
+  let stack_states s =
+    validate @@ stack_states s
 
-(* If requested, print the information that has been computed above. *)
+  let production_states prod =
+    validate @@ production_states prod
 
-let () =
-  Error.logC 3 (dump "long")
+  let goto_states nt =
+    validate @@ goto_states nt
 
-(* Publish the long invariant. *)
+  (* Dump. *)
 
-(* must ensure that
-   every set of states is equi-represented *)
+  let () =
+    Error.logC 3 (dump "long")
 
-let stack : Lr1.node -> word =
-  publish Lr1.tabulate stack_symbols stack_states cell
+  (* Publish. *)
 
-let prodstack : Production.index -> word =
-  publish Production.tabulate production_symbols production_states cell
+  let stack : Lr1.node -> word =
+    publish Lr1.tabulate stack_symbols stack_states cell
 
-let gotostack : Nonterminal.t -> word =
-  publish Nonterminal.tabulate goto_symbols goto_states cell
+  let prodstack : Production.index -> word =
+    publish Production.tabulate production_symbols production_states cell
 
-let () =
-  Time.tick "Constructing the long invariant"
+  let gotostack : Nonterminal.t -> word =
+    publish Nonterminal.tabulate goto_symbols goto_states cell
+
+  let () =
+    Time.tick "Constructing the long invariant"
 
 end (* Long *)
