@@ -30,7 +30,7 @@ open SSy
 (* Now, compute which states may be held in the known suffix of the stack. *)
 
 module SSt =
-  StackStates.Run(struct include SSy let long = false end)
+  StackStates.Run(SSy)
 
 open SSt
 
@@ -459,19 +459,23 @@ module type STACK = sig
 
 end
 
-(* Suppose we have a function [foo] that maps things to vectors of foos and a
-   function [bar] that maps things to vectors of bars (of matching length).
-   Suppose we have a function [cell] that builds a cell out of a foo and a
-   bar. Then, we want to construct and tabulate a function that maps things to
-   vectors of cells. This is done in a generic way as follows. *)
+(* Suppose we have a function [foo] that maps things to vectors of foos and
+   a function [bar] that maps things to vectors of bars. Suppose we have a
+   function [cell] that builds a cell out of a foo and a bar. Then, we want
+   to construct and tabulate a function that maps things to vectors of
+   cells. This is done in a generic way as follows. *)
 
 let publish tabulate foo bar cell =
   tabulate (fun thing ->
     let foos, bars = foo thing, bar thing in
-    assert (Array.length foos = Array.length bars);
-    Array.init (Array.length foos) (fun i ->
-      cell foos.(i) bars.(i)
-    )
+    assert (Array.length foos >= Array.length bars);
+    (* We allow [bars] to be shorter than [foos]. This is required in the
+       computation of the long invariant, where [validate] can reject sets
+       of states that are not equi-represented. In that case, we truncate
+       [foos] to match [bars]. *)
+    let k = Array.length bars in
+    let foos = MArray.truncate k foos in
+    Array.init k (fun i -> cell foos.(i) bars.(i))
   )
 
 let stack : Lr1.node -> word =
@@ -615,16 +619,15 @@ let () =
    this property, otherwise the long invariant cannot be safely translated
    to an OCaml GADT.
 
-   Intuition tells me that this property is likely true, because every set
-   of states that appears somewhere in the long invariant must also appear
+   One might think that this property is likely true, because every set of
+   states that appears somewhere in the long invariant must also appear
    somewhere in the short invariant, and we know that every set of states in
    the short invariant is equi-represented, because we have explicitly
-   imposed this requirement.
+   imposed this requirement. However, this is *incorrect*: testing shows
+   that not every set of states in the long invariant is equi-represented.
 
-   At this time, we explicitly check at runtime that every set of states is
-   equi-represented, and we fail (abruptly) if that is not the case. Another
-   option might be to truncate the invariant so as to forget about any stack
-   cells that are not equi-represented. *)
+   To work around this problem, we truncate the long invariant so as to
+   forget about any stack cells that are not equi-represented. *)
 
 module Long () = struct
 
@@ -634,7 +637,10 @@ module Long () = struct
     StackSymbols.Long()
 
   module SSt =
-    StackStates.Run(struct include SSy let long = true end)
+    StackStates.Run(SSy)
+
+  open SSy (* crucial! shadows the short invariant *)
+  open SSt (* crucial! shadows the short invariant *)
 
   (* Validate. *)
 
@@ -646,8 +652,7 @@ module Long () = struct
     Lr1.NodeSet.for_all unrepresented nodes
 
   let validate states =
-    assert (Array.for_all equi_represented states);
-    states
+    MArray.greatest_suffix_forall equi_represented states
 
   let stack_states s =
     validate @@ stack_states s

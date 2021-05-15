@@ -19,9 +19,13 @@ module Run (S : sig
      at state [s]. *)
   val stack_height: Lr1.node -> int
 
-  (**This flag indicates whether the user wishes to compute a short
-     or a long invariant. *)
-  val long: bool
+  (**[production_height prod] is the height of the known suffix of the stack
+     at a state where production [prod] can be reduced. *)
+  val production_height: Production.index -> int
+
+  (**[goto_height nt] is the height of the known suffix of the stack at a
+     state where an edge labeled [nt] has just been followed. *)
+  val goto_height: Nonterminal.t -> int
 
 end) = struct
 
@@ -38,8 +42,12 @@ module StateSetVector = struct
 
   (* The index 0 corresponds to the cell that lies deepest in the stack. *)
 
-  let empty, push, truncate =
-    MArray.(empty, push, truncate)
+  let empty, push =
+    MArray.(empty, push)
+
+  let truncate k v =
+    assert (k <= Array.length v);
+    MArray.truncate k v
 
   type property =
     Lr1.NodeSet.t array
@@ -85,7 +93,6 @@ module G = struct
       let cell = Lr1.NodeSet.singleton source
       and height = stack_height target in
       let stack = push stack cell in
-      assert (height <= Array.length stack);
       contribute target (truncate height stack)
     )
 
@@ -109,15 +116,6 @@ let stack_states (node : Lr1.node) : property =
   | Some v ->
       v
 
-(* [minimum f nodes] computes the minimum of the images through [f] of
-   the nodes in the nonempty set [nodes]. *)
-
-let minimum f nodes =
-  assert (not (Lr1.NodeSet.is_empty nodes));
-  Lr1.NodeSet.fold (fun node accu ->
-    min (f node) accu
-  ) nodes max_int
-
 (* [truncate_join height f nodes] computes a join of the images through [f] of
    the nodes in the set [nodes], truncated at height [height]. *)
 
@@ -129,26 +127,21 @@ let truncate_join height f nodes =
 (* From the above information, deduce, for each production, the shape
    of the stack when this production is reduced. *)
 
-(* If [long] is false, then we are careful to produce a vector of
-   states whose length is exactly that of the production [prod]. *)
-
-(* If [long] is true, then we *can* produce a vector whose length is
-   greater than that of the production [prod]. *)
+(* We produce a vector of states whose length is [production_height prod].
+   It is up to the user to provide an appropriate height oracle. *)
 
 let production_states : Production.index -> property =
   Production.tabulate (fun prod ->
     let sites = Lr1.production_where prod in
-    let height =
-      if long && not (Lr1.NodeSet.is_empty sites) then
-        minimum stack_height sites
-      else
-        Production.length prod
-    in
+    let height = production_height prod in
     truncate_join height stack_states sites
   )
 
 (* Compute the shape of the stack when a transition on the nonterminal
    symbol [nt] is taken. *)
+
+(* We produce a vector of states whose length is [goto_height nt].
+   It is up to the user to provide an appropriate height oracle. *)
 
 let goto_states : Nonterminal.t -> property =
   Nonterminal.tabulate (fun nt ->
@@ -156,15 +149,9 @@ let goto_states : Nonterminal.t -> property =
     (* Compute the join of the stack shapes at every target of an edge
        labeled with [nt]. *)
     let targets = Lr1.all_targets symbol in
-    let height =
-      if long && not (Lr1.NodeSet.is_empty targets) then
-        minimum stack_height targets
-      else
-        1
-    in
+    let height = goto_height nt in
     truncate_join height stack_states targets
   )
-
 
 type property =
   Lr1.NodeSet.t array

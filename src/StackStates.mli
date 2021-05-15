@@ -19,18 +19,23 @@ open Grammar
 
    We assume that the known suffix of the stack, a sequence of symbols, has
    already been computed at every state. All that is needed, actually, is
-   the size of the known suffix. This size information must be consistent:
-   the size at a state [s] must be no greater than the minimum of the sizes
-   at the predecessors of [s], plus one. *)
+   the size of the known suffix, given by the function [stack_height]. This
+   size information must be consistent: the size at a state [s] must be no
+   greater than the minimum of the sizes at the predecessors of [s], plus
+   one. *)
 module Run (S : sig
 
   (**[stack_height s] is the height of the known suffix of the stack
      at state [s]. *)
   val stack_height: Lr1.node -> int
 
-  (**This flag indicates whether the user wishes to compute a short
-     or a long invariant. *)
-  val long: bool
+  (**[production_height prod] is the height of the known suffix of the stack
+     at a state where production [prod] can be reduced. *)
+  val production_height: Production.index -> int
+
+  (**[goto_height nt] is the height of the known suffix of the stack at a
+     state where an edge labeled [nt] has just been followed. *)
+  val goto_height: Nonterminal.t -> int
 
 end) : sig
 
