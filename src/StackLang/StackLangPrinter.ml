@@ -25,6 +25,8 @@ let tag t = string (string_of_tag t)
 
 let label = string
 
+let spaced_braces doc = braces (space ^^ doc ^^ space)
+
 let rec value v =
   match v with
   | VTag t ->
@@ -43,10 +45,7 @@ let bindings bds =
   let bds = Bindings.to_list bds in
   group
   @@ align
-  @@ braces
-       ( space
-       ^^ separate (break 1 ^^ semi ^^ space) (List.map binding bds)
-       ^^ space )
+  @@ spaced_braces (separate (break 1 ^^ semi ^^ space) (List.map binding bds))
 
 
 let ocamltype = function
@@ -66,6 +65,8 @@ let cell_info { typ; hold_semv; hold_state; hold_startpos; hold_endpos } =
   ^^ string "]"
 
 
+let final_type ft = OCaml.option ocamltype ft
+
 let known_cells known_cells =
   Array.fold_left (fun doc cell -> doc ^^ cell_info cell) empty known_cells
 
@@ -76,7 +77,7 @@ let state_info { known_cells = kn; sfinal_type } =
   ^^ known_cells kn
   ^^ nl
   ^^ string "Final type: "
-  ^^ PPrintOCaml.option ocamltype sfinal_type
+  ^^ final_type sfinal_type
 
 
 let states states =
@@ -109,10 +110,7 @@ let primitive p =
   | PrimOCamlDummyPos ->
       utf8format "<dummy position>"
   | PrimOCamlAction (bs, _) ->
-      braces
-        ( space
-        ^^ align (bindings bs ^/^ utf8format "<semantic action>")
-        ^^ space )
+      spaced_braces (align (bindings bs ^/^ utf8format "<semantic action>"))
 
 
 let tokpat pat =
@@ -137,32 +135,32 @@ let branch (guard, body) =
   nl ^^ bar ^^ space ^^ group (guard ^^ string " ->" ^^ nest 4 body)
 
 
-let rec typed_block { block = b; stack_type; needed_registers = rs; final_type }
-    =
+let registers rs =
   let rs = RegisterSet.elements rs in
+  align @@ group (separate (comma ^^ break 1) (map register rs)) ^^ dot
+
+
+let rec typed_block
+    { block = b; stack_type; needed_registers = rs; final_type = ft } =
   nl
-  ^^ string "TYPED { "
-  ^^ string "Final type :"
-  ^^ optional ocamltype final_type
-  ^^ nl
-  ^^ string "  Known cells : "
-  ^^ known_cells stack_type
-  ^^ nl
-  ^^ string "  Needed registers :"
-  ^^ separate (comma ^^ space) (map register rs)
-  ^^ nl
-  ^^ string "}"
+  ^^ spaced_braces
+  @@ group
+  @@ align
+       ( string "Final type :"
+       ^^ final_type ft
+       ^^ break 1
+       ^^ string "  Known cells : "
+       ^^ known_cells stack_type
+       ^^ break 1
+       ^^ string "  Needed registers :"
+       ^^ registers rs )
   ^^ block b
 
 
 and block b =
   match b with
   | INeed (rs, b) ->
-      let rs = RegisterSet.elements rs in
-      nl
-      ^^ string "NEED "
-      ^^ align (group (separate (comma ^^ break 1) (map register rs)) ^^ dot)
-      ^^ block b
+      nl ^^ string "NEED " ^^ registers rs ^^ block b
   | IPush (v, _, b) ->
       nl ^^ string "PUSH " ^^ value v ^^ block b
   | IPop (p, b) ->
@@ -208,21 +206,8 @@ and block b =
       ^^ string " OF"
       ^^ concat
            (map branch (map (fun (pat, b) -> (tagpat pat, block b)) branches))
-  | ITypedBlock { block = b; stack_type; needed_registers = rs; final_type } ->
-      let rs = RegisterSet.elements rs in
-      nl
-      ^^ string "TYPED { "
-      ^^ string "Final type :"
-      ^^ optional ocamltype final_type
-      ^^ nl
-      ^^ string "  Known cells : "
-      ^^ known_cells stack_type
-      ^^ nl
-      ^^ string "  Needed registers :"
-      ^^ separate (comma ^^ space) (map register rs)
-      ^^ nl
-      ^^ string "}"
-      ^^ block b
+  | ITypedBlock tb ->
+      nl ^^ string "TYPED " ^^ typed_block tb ^^ block b
 
 
 let entry_comment entry_labels label =

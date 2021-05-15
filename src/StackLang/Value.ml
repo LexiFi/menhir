@@ -9,3 +9,12 @@ let rec registers = function
       List.fold_left RegisterSet.union RegisterSet.empty (List.map registers li)
   | _ ->
       RegisterSet.empty
+
+
+let registers_of_list values =
+  List.fold_left
+    (fun regs v ->
+      let regs' = registers v in
+      RegisterSet.union regs regs' )
+    RegisterSet.empty
+    values
