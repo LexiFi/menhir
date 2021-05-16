@@ -306,7 +306,7 @@ let measure program =
 
 
 (* -------------------------------------------------------------------------- *)
-(* Utility functions used bellow. *)
+(* Utility functions used below. *)
 
 let rec pattern_shadow_state = function
   | PReg reg when reg = state ->
@@ -330,7 +330,7 @@ let get_args_map block_map =
 
 
 (* -------------------------------------------------------------------------- *)
-(* Well-typedness with regard to knownledge of stack cells. *)
+(* Well-typedness with regard to knowledge of stack cells. *)
 
 type sync =
   | Synced of int
@@ -481,14 +481,14 @@ let wt_knowncells_routine program label (t_block : typed_block) =
             target.stack_type
             sync;
         (* We check that the stack has at least the amount of cells the target
-           routine expects *)
+           routine expects. *)
         check_cells label block "jump" known_cells target.stack_type )
       ~case_tag:(fun _reg branches ->
         match sync with
         | Synced n ->
             let branch_aux (TagMultiple taglist, block) =
               (* By matching on the state, we discover state information.
-                 We can enrich the known cells with theses. *)
+                 We can enrich the known cells with this information. *)
               let known_cells =
                 Array.append
                   (state_info_intersection states taglist).known_cells
@@ -503,7 +503,7 @@ let wt_knowncells_routine program label (t_block : typed_block) =
             fail_sync label block )
       ~typed_block:(fun { block = block'; stack_type; needed_registers } ->
         (* We check that the stack has at least the number of known cells that
-           the type annotation expect. *)
+           the type annotation requires. *)
         check_cells label block "typed block" known_cells stack_type;
         if RegisterSet.mem state_reg needed_registers
         then check_state_sync program label block known_cells stack_type sync;
@@ -522,7 +522,7 @@ let well_known_cells_typed program =
 
 
 (* -------------------------------------------------------------------------- *)
-(* Well-typedness with regard to knownledge of the final type. *)
+(* Well-typedness with regard to knowledge of the final type. *)
 
 let check_final_types label reason computed_final_type expected_final_type block
     =
@@ -605,7 +605,7 @@ let wt program =
 (* -------------------------------------------------------------------------- *)
 (* Testing wt. *)
 
-(* This two infix functions are used for build example programs more easily. *)
+(* These two infix functions are used to build example programs more easily. *)
 let ( => ) pat block = (TagMultiple pat, block)
 
 let ( := ) pat value = Block.sdef pat value
