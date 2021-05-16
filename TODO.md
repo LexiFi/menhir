@@ -31,12 +31,12 @@
 
 ## Automaton
 
-* Although `StackSymbols` computes a known suffix of the stack that is
-  directly deduced from the LR(1) items that appear inside each state, it
-  would be possible to infer a longer known suffix in each state by performing
-  a data flow analysis. Implement this analysis and use it when displaying the
-  known suffix of the stack in a `.messages` file and/or in an `.automaton`
-  file. It could be useful in the code back-end as well.
+* After confirming that the short and long invariants agree, we could obtain
+  the short invariant simply by truncating the long invariant at the desired
+  length.
+
+* When displaying the known suffix of the stack in a `.messages` file and/or
+  in an `.automaton` file, use the *long* invariant.
 
 ## Performance
 
