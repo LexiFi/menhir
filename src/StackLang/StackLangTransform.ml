@@ -231,9 +231,9 @@ let rec commute_pushes_block program pushes bindings final_type known_cells =
       cancelled_pop += List.length pushes;
       IReturn (Bindings.apply bindings v)
   | IJump label ->
-      aux_jump pushes bindings label
+      commute_pushes_jump pushes bindings label
   | ICaseToken (reg, branches, odefault) ->
-      aux_case_token
+      commute_pushes_case_token
         program
         pushes
         bindings
@@ -354,11 +354,11 @@ and commute_pushes_itblock
     }
 
 
-and aux_jump pushes bindings label =
+and commute_pushes_jump pushes bindings label =
   restore_pushes pushes (Block.def bindings @@ Block.jump label)
 
 
-and aux_case_token
+and commute_pushes_case_token
     program pushes bindings reg branches odefault final_type known_cells =
   let aux_branch = function
     (* Every [TokSingle] introduces a definition of a register. *)
@@ -395,7 +395,7 @@ and aux_case_token
         odefault )
 
 
-and commute_pushes_t_block program t_block =
+and commute_pushes_routine program t_block =
   cancelled_pop := 0;
   eliminated_branches := 0;
   let { block; stack_type; final_type } = t_block in
@@ -453,7 +453,7 @@ let remove_dead_branches program =
 
 
 let commute_pushes program =
-  remove_dead_branches (Program.map (commute_pushes_t_block program) program)
+  remove_dead_branches (Program.map (commute_pushes_routine program) program)
 
 
 (** remove definitions of shape [x = x], or shape [_ = x] *)

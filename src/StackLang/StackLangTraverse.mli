@@ -15,9 +15,12 @@ open StackLang
 
 type error =
   { context : label
-  ; culprit : block
-  ; message : string
+        (** The name of the routine during which the error occurs. *)
+  ; culprit : block  (** The block responsible for the error. *)
+  ; message : string  (** An arbirary string that explains the error *)
   ; state_relevance : bool
+        (** indiquate whether printing the states
+            with their type information is relevant to understanding the error. *)
   }
 
 exception StackLangError of error

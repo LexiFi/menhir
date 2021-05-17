@@ -20,13 +20,18 @@ open NamingConventions
 
 type error =
   { context : label
-  ; culprit : block
-  ; message : string
+        (** The name of the routine during which the error occurs. *)
+  ; culprit : block  (** The block responsible for the error. *)
+  ; message : string  (** An arbirary string that explains the error *)
   ; state_relevance : bool
+        (** indiquate whether printing the states
+            with their type information is relevant to understanding the error. *)
   }
 
 exception StackLangError of error
 
+(** [fail ?state_relevance context culprit message] raises
+    [StackLangError { context; culprit; message; state_relevance }] *)
 let fail ?(state_relevance = false) context culprit message =
   raise (StackLangError { context; culprit; message; state_relevance })
 
@@ -41,18 +46,16 @@ let wf_regs label culprit rs rs' =
   let stray = RegisterSet.diff rs' rs in
   if not (RegisterSet.is_empty stray)
   then
-    let message =
-      sprintf
-        "StackLang: in block %s, reference to undefined register%s:\n\
-        \  %s\n\
-         StackLang: the following registers are defined:\n\
-        \  %s\n"
-        label
-        (if RegisterSet.cardinal stray > 1 then "s" else "")
-        (RegisterSet.print stray)
-        (RegisterSet.print rs)
-    in
-    fail label culprit message
+    ksprintf
+      (fail label culprit)
+      "StackLang: in block %s, reference to undefined register%s:\n\
+      \  %s\n\
+       StackLang: the following registers are defined:\n\
+      \  %s\n"
+      label
+      (if RegisterSet.cardinal stray > 1 then "s" else "")
+      (RegisterSet.print stray)
+      (RegisterSet.print rs)
 
 
 let wf_reg label block rs r = wf_regs label block rs (RegisterSet.singleton r)
@@ -337,6 +340,9 @@ let rec get_state_value sync = function
       None
 
 
+(** If the bindings shadows the state, then it has to be with a tag.
+    Then the stack is not synchronised with the state.
+    If it does not shadow anything, then the sync stays the same. *)
 let update_sync_with_bindings bindings sync =
   match Bindings.apply bindings (VReg state_reg) with
   | VTag tag ->
@@ -348,37 +354,31 @@ let update_sync_with_bindings bindings sync =
 
 
 let fail_sync label block =
-  let message =
-    sprintf
-      "While checking that there is no match on an out of sync state, in block \
-       %s."
-      label
-  in
-  fail label block message
+  ksprintf
+    (fail label block)
+    "While checking that there is no match on an out of sync state, in block \
+     %s."
+    label
 
 
 let check_cells label block reason known_cells needed_cells =
   let fail message =
-    let message =
-      sprintf
-        "While checking %s, in block %s : %s\n\
-         Known cells : %s\n\
-         Needed cells : %s"
-        reason
-        label
-        message
-        (StackLangPrinter.known_cells_to_string known_cells)
-        (StackLangPrinter.known_cells_to_string needed_cells)
-    in
-    fail ~state_relevance:true label block message
+    ksprintf
+      (fail ~state_relevance:true label block)
+      "While checking %s, in block %s : %s\nKnown cells : %s\nNeeded cells : %s"
+      reason
+      label
+      message
+      (StackLangPrinter.known_cells_to_string known_cells)
+      (StackLangPrinter.known_cells_to_string needed_cells)
   in
   let l1 = Array.length known_cells in
   let l2 = Array.length needed_cells in
   if l1 < l2
-  then fail @@ sprintf "Could discover %i known cells, but %i are needed." l1 l2;
+  then ksprintf fail "Could discover %i known cells, but %i are needed." l1 l2;
   for i = 1 to l2 do
     if known_cells.(l1 - i) <> needed_cells.(l2 - i)
-    then fail @@ sprintf "Enough cells are known, but their content differ."
+    then ksprintf fail "Enough cells are known, but their content differ."
   done
 
 
@@ -403,14 +403,11 @@ let check_state_sync program label block known_cells expected_cells = function
   | Unsynced tag ->
       check_state_sync program label block known_cells expected_cells tag
   | Synced n when n <> 0 ->
-      fail
-        ~state_relevance:true
-        label
-        block
-        (sprintf
-           "State in sync with %i deep cell when jumping or going in a typed \
-            block."
-           n )
+      ksprintf
+        (fail ~state_relevance:true label block)
+        "State in sync with %i deep cell when jumping or going in a typed \
+         block."
+        n
   | _ ->
       ()
 
@@ -421,10 +418,12 @@ let wt_knowncells_routine program label (t_block : typed_block) =
 
   (*
   [known_cells]: cells we can pop and pass through a typed_block and a jump
-  [extra_known_cells]: Cells on top of the information carried by the state.
-  They are extra in the sense that when we match on a state, known_cells become
-    [Array.append state_known_cells extra_known_cells] *)
-  let rec wtkc_block (known_cells : cell_info array) (sync : sync) block =
+  [sync]: Whether the state register is in sync with the state variable.
+  When we are unsynced this means that the state variable was bounded earlier.
+  This means that unsynced is annotated with the value of the state register.
+  If the state register is synced with the stack, we need to know with which
+   *)
+  let rec wtkc_block known_cells sync block =
     Block.iter
       (wtkc_block known_cells sync)
       ~push:(fun value cell block ->
@@ -450,10 +449,6 @@ let wt_knowncells_routine program label (t_block : typed_block) =
         let sync = if pattern_shadow_state pattern then Synced 0 else sync in
         wtkc_block known_cells sync block' )
       ~def:(fun bindings block ->
-        (* If the state variable is redefined, then matching on the state will
-           not give any new information. Therefore, [extra_known_cells]
-           becomes empty. However there is an issue : it is possible to trick
-           this function into not raising an error when it should. *)
         let sync = update_sync_with_bindings bindings sync in
         wtkc_block known_cells sync block )
       ~jump:(fun label ->
@@ -476,19 +471,18 @@ let wt_knowncells_routine program label (t_block : typed_block) =
       ~case_tag:(fun _reg branches ->
         match sync with
         | Synced n ->
-            let branch_aux (TagMultiple taglist, block) =
-              (* By matching on the state, we discover state information.
-                 We can enrich the known cells with theses. *)
-              let known_cells =
-                Array.append
-                  (state_info_intersection states taglist).known_cells
-                  (MArray.suffix known_cells n)
-              in
-              (* We are matching on a state, therefore state is always needed,
-                 and we can discard these values. *)
-              wtkc_block known_cells sync block
-            in
-            List.iter branch_aux branches
+            branches
+            |> List.iter (fun (TagMultiple taglist, block) ->
+                   (* By matching on the state, we discover state information.
+                      We can enrich the known cells with theses. *)
+                   let known_cells =
+                     Array.append
+                       (state_info_intersection states taglist).known_cells
+                       (MArray.suffix known_cells n)
+                   in
+                   (* We are matching on a state, therefore state is always
+                      needed, and we can discard these values. *)
+                   wtkc_block known_cells sync block )
         | Unsynced _tag ->
             fail_sync label block )
       ~typed_block:(fun { block = block'; stack_type; needed_registers } ->
@@ -517,17 +511,15 @@ let well_known_cells_typed program =
 let check_final_types label reason computed_final_type expected_final_type block
     =
   let fail () =
-    let message =
-      sprintf
-        "While checking %s, in block %s : final types differ\n\
-         Computed final type : %s\n\
-         Expected final type : %s"
-        reason
-        label
-        (match computed_final_type with None -> "None" | Some _typ -> "Some")
-        (match expected_final_type with None -> "None" | Some _typ -> "Some")
-    in
-    fail ~state_relevance:true label block message
+    ksprintf
+      (fail ~state_relevance:true label block)
+      "While checking %s, in block %s : final types differ\n\
+       Computed final type : %s\n\
+       Expected final type : %s"
+      reason
+      label
+      (match computed_final_type with None -> "None" | Some _typ -> "Some")
+      (match expected_final_type with None -> "None" | Some _typ -> "Some")
   in
   if computed_final_type <> expected_final_type then fail ()
 
@@ -544,18 +536,14 @@ let rec wft_block program label final_type block =
   Block.iter
     (wft_block program label final_type)
     ~return:(fun _value ->
-      match final_type with
-      | None ->
-          fail label block "Tried to return with final type unknown"
-      | Some _ ->
-          () )
+      if final_type = None
+      then fail label block "Tried to return when final type was unknown" )
     ~jump:(fun label ->
       let target = lookup label cfg in
-      match target.final_type with
-      | Some _ as final_type' ->
-          check_final_types "jump" final_type final_type' block
-      | None ->
-          () )
+      let final_type' = target.final_type in
+      Option.iter
+        (fun _ -> check_final_types "jump" final_type final_type' block)
+        final_type' )
     ~case_tag:(fun _reg branches ->
       let branch_aux (TagMultiple taglist, block) =
         (* By matching on the state, we discover state information.
@@ -595,509 +583,512 @@ let wt program =
 (* -------------------------------------------------------------------------- *)
 (* Testing wt. *)
 
-(* This two infix functions are used for build example programs more easily. *)
-let ( => ) pat block = (TagMultiple pat, block)
+module Tests () = struct
+  (* This two infix functions are used for build example programs more easily. *)
+  let ( => ) pat block = (TagMultiple pat, block)
 
-let ( := ) pat value = Block.sdef pat value
+  let ( := ) pat value = Block.sdef pat value
 
-open Block
+  open Block
 
-let t0 = tag_of_int 0
+  let t0 = tag_of_int 0
 
-let t1 = tag_of_int 1
+  let t1 = tag_of_int 1
 
-let t2 = tag_of_int 2
+  let t2 = tag_of_int 2
 
-let good1 =
-  let c_cell = Cell.make ~typ:(Stretch.Inferred "c") true true false false in
-  let b_cell = Cell.make ~typ:(Stretch.Inferred "b") true true false false in
-  let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
-  let states =
-    TagMap.of_list
-      [ (t0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
-      ; (t1, { sfinal_type = None; known_cells = [| c_cell |] })
-      ; (t2, { sfinal_type = None; known_cells = [||] })
-      ]
-  in
-  let cfg =
-    LabelMap.of_list
-      [ ( "f"
-        , { stack_type = [||]
-          ; final_type = None
-          ; has_case_tag = true
-          ; name = None
-          ; needed_registers = RegisterSet.of_list [ state_reg ]
-          ; block =
-              case_tag
-                state_reg
-                [ [ t0 ]
-                  => pop (PTuple [ PReg "b"; PReg state_reg ])
-                     @@ pop (PReg "a")
-                     @@ die
-                ; [ t1 ] => pop (PReg "c") @@ die
-                ; [ t2 ] => die
-                ]
-          } )
-      ; ( "g"
-        , { stack_type = [| a_cell |]
-          ; final_type = None
-          ; has_case_tag = false
-          ; name = None
-          ; needed_registers = RegisterSet.empty
-          ; block =
-              (PReg state_reg := VTag t0)
-              @@ (PReg "b" := VUnit)
-              @@ push (VReg "b") b_cell
-              @@ jump "f"
-          } )
-      ]
-  in
-  { cfg; entry = StringMap.empty; states }
-
-
-let good2 =
-  let c_cell = Cell.make ~typ:(Stretch.Inferred "c") true true false false in
-  let b_cell = Cell.make ~typ:(Stretch.Inferred "b") true true false false in
-  let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
-  let states =
-    TagMap.of_list
-      [ (t0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
-      ; (t1, { sfinal_type = None; known_cells = [| c_cell; b_cell |] })
-      ; (t2, { sfinal_type = None; known_cells = [||] })
-      ]
-  in
-  let cfg =
-    LabelMap.of_list
-      [ ( "f"
-        , { stack_type = [| b_cell |]
-          ; final_type = None
-          ; has_case_tag = true
-          ; name = None
-          ; needed_registers = RegisterSet.of_list [ state_reg ]
-          ; block = pop (PTuple [ PReg "b"; PReg state_reg ]) @@ die
-          } )
-      ; ( "g"
-        , { stack_type = [||]
-          ; final_type = None
-          ; has_case_tag = false
-          ; name = None
-          ; needed_registers = RegisterSet.empty
-          ; block = case_tag state_reg [ [ t0; t1 ] => jump "f" ]
-          } )
-      ]
-  in
-  { cfg; entry = StringMap.empty; states }
+  let good1 =
+    let c_cell = Cell.make ~typ:(Stretch.Inferred "c") true true false false in
+    let b_cell = Cell.make ~typ:(Stretch.Inferred "b") true true false false in
+    let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
+    let states =
+      TagMap.of_list
+        [ (t0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
+        ; (t1, { sfinal_type = None; known_cells = [| c_cell |] })
+        ; (t2, { sfinal_type = None; known_cells = [||] })
+        ]
+    in
+    let cfg =
+      LabelMap.of_list
+        [ ( "f"
+          , { stack_type = [||]
+            ; final_type = None
+            ; has_case_tag = true
+            ; name = None
+            ; needed_registers = RegisterSet.of_list [ state_reg ]
+            ; block =
+                case_tag
+                  state_reg
+                  [ [ t0 ]
+                    => pop (PTuple [ PReg "b"; PReg state_reg ])
+                       @@ pop (PReg "a")
+                       @@ die
+                  ; [ t1 ] => pop (PReg "c") @@ die
+                  ; [ t2 ] => die
+                  ]
+            } )
+        ; ( "g"
+          , { stack_type = [| a_cell |]
+            ; final_type = None
+            ; has_case_tag = false
+            ; name = None
+            ; needed_registers = RegisterSet.empty
+            ; block =
+                (PReg state_reg := VTag t0)
+                @@ (PReg "b" := VUnit)
+                @@ push (VReg "b") b_cell
+                @@ jump "f"
+            } )
+        ]
+    in
+    { cfg; entry = StringMap.empty; states }
 
 
-let good_sync =
-  let c_cell = Cell.make ~typ:(Stretch.Inferred "c") true true false false in
-  let b_cell = Cell.make ~typ:(Stretch.Inferred "b") true true false false in
-  let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
-  let states =
-    TagMap.of_list
-      [ (t0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
-      ; (t1, { sfinal_type = None; known_cells = [| c_cell |] })
-      ; (t2, { sfinal_type = None; known_cells = [||] })
-      ]
-  in
-  let cfg =
-    LabelMap.of_list
-      [ ( "f"
-        , { stack_type = [||]
-          ; final_type = None
-          ; has_case_tag = true
-          ; name = None
-          ; needed_registers = RegisterSet.of_list [ state_reg ]
-          ; block =
-              case_tag
-                state_reg
-                [ [ t0 ]
-                  => pop (PTuple [ PReg "b"; PReg state_reg ])
-                     @@ pop (PReg "a")
-                     @@ die
-                ; [ t1 ] => pop (PReg "c") @@ die
-                ; [ t2 ] => die
-                ]
-          } )
-      ; ( "g"
-        , { stack_type = [||]
-          ; final_type = None
-          ; has_case_tag = false
-          ; name = None
-          ; needed_registers = RegisterSet.empty
-          ; block =
-              (PReg state_reg := VTag t0)
-              @@ (PReg "b" := VUnit)
-              @@ push VUnit a_cell
-              @@ push (VReg "b") b_cell
-              @@ typed_block
-                   [||]
-                   (RegisterSet.singleton state_reg)
-                   false
-                   (jump "f")
-          } )
-      ]
-  in
-  { cfg; entry = StringMap.empty; states }
+  let good2 =
+    let c_cell = Cell.make ~typ:(Stretch.Inferred "c") true true false false in
+    let b_cell = Cell.make ~typ:(Stretch.Inferred "b") true true false false in
+    let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
+    let states =
+      TagMap.of_list
+        [ (t0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
+        ; (t1, { sfinal_type = None; known_cells = [| c_cell; b_cell |] })
+        ; (t2, { sfinal_type = None; known_cells = [||] })
+        ]
+    in
+    let cfg =
+      LabelMap.of_list
+        [ ( "f"
+          , { stack_type = [| b_cell |]
+            ; final_type = None
+            ; has_case_tag = true
+            ; name = None
+            ; needed_registers = RegisterSet.of_list [ state_reg ]
+            ; block = pop (PTuple [ PReg "b"; PReg state_reg ]) @@ die
+            } )
+        ; ( "g"
+          , { stack_type = [||]
+            ; final_type = None
+            ; has_case_tag = false
+            ; name = None
+            ; needed_registers = RegisterSet.empty
+            ; block = case_tag state_reg [ [ t0; t1 ] => jump "f" ]
+            } )
+        ]
+    in
+    { cfg; entry = StringMap.empty; states }
 
 
-(* This is ill-typed because when we match on the state, the value of the state
-   is a value we just made-up, and therefore it does not give us any information
-   on the stack. *)
-let bad_shadow_state =
-  let c_cell = Cell.make ~typ:(Stretch.Inferred "c") true true false false in
-  let b_cell = Cell.make ~typ:(Stretch.Inferred "b") true true false false in
-  let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
-  let states =
-    TagMap.of_list
-      [ (t0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
-      ; (t1, { sfinal_type = None; known_cells = [| c_cell |] })
-      ; (t2, { sfinal_type = None; known_cells = [||] })
-      ]
-  in
-  let cfg =
-    LabelMap.of_list
-      [ ( "f"
-        , { stack_type = [||]
-          ; final_type = None
-          ; has_case_tag = true
-          ; name = None
-          ; needed_registers = RegisterSet.of_list [ state_reg ]
-          ; block =
-              (PReg state_reg := VTag t0)
-              @@ case_tag
-                   state_reg
-                   [ [ t0 ]
-                     => pop (PTuple [ PReg "b"; PReg state_reg ])
-                        @@ pop (PReg "a")
-                        @@ die
-                   ; [ t1 ] => pop (PReg "c") @@ die
-                   ; [ t2 ] => die
-                   ]
-          } )
-      ; ( "g"
-        , { stack_type = [| a_cell |]
-          ; final_type = None
-          ; has_case_tag = false
-          ; name = None
-          ; needed_registers = RegisterSet.empty
-          ; block =
-              (PReg state_reg := VTag t0)
-              @@ (PReg "b" := VUnit)
-              @@ push (VReg "b") b_cell
-              @@ jump "f"
-          } )
-      ]
-  in
-  { cfg; entry = StringMap.empty; states }
+  let good_sync =
+    let c_cell = Cell.make ~typ:(Stretch.Inferred "c") true true false false in
+    let b_cell = Cell.make ~typ:(Stretch.Inferred "b") true true false false in
+    let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
+    let states =
+      TagMap.of_list
+        [ (t0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
+        ; (t1, { sfinal_type = None; known_cells = [| c_cell |] })
+        ; (t2, { sfinal_type = None; known_cells = [||] })
+        ]
+    in
+    let cfg =
+      LabelMap.of_list
+        [ ( "f"
+          , { stack_type = [||]
+            ; final_type = None
+            ; has_case_tag = true
+            ; name = None
+            ; needed_registers = RegisterSet.of_list [ state_reg ]
+            ; block =
+                case_tag
+                  state_reg
+                  [ [ t0 ]
+                    => pop (PTuple [ PReg "b"; PReg state_reg ])
+                       @@ pop (PReg "a")
+                       @@ die
+                  ; [ t1 ] => pop (PReg "c") @@ die
+                  ; [ t2 ] => die
+                  ]
+            } )
+        ; ( "g"
+          , { stack_type = [||]
+            ; final_type = None
+            ; has_case_tag = false
+            ; name = None
+            ; needed_registers = RegisterSet.empty
+            ; block =
+                (PReg state_reg := VTag t0)
+                @@ (PReg "b" := VUnit)
+                @@ push VUnit a_cell
+                @@ push (VReg "b") b_cell
+                @@ typed_block
+                     [||]
+                     (RegisterSet.singleton state_reg)
+                     false
+                     (jump "f")
+            } )
+        ]
+    in
+    { cfg; entry = StringMap.empty; states }
 
 
-(* Illegal because of the [jump f] in [g] : passing state [0] requires knowing
-   2 cells, and only one is known.   *)
-let bad_sync =
-  let c_cell = Cell.make ~typ:(Stretch.Inferred "c") true true false false in
-  let b_cell = Cell.make ~typ:(Stretch.Inferred "b") true true false false in
-  let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
-  let states =
-    TagMap.of_list
-      [ (t0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
-      ; (t1, { sfinal_type = None; known_cells = [| c_cell |] })
-      ; (t2, { sfinal_type = None; known_cells = [||] })
-      ]
-  in
-  let cfg =
-    LabelMap.of_list
-      [ ( "f"
-        , { stack_type = [| b_cell |]
-          ; final_type = None
-          ; has_case_tag = true
-          ; name = None
-          ; needed_registers = RegisterSet.of_list [ state_reg ]
-          ; block =
-              case_tag
-                state_reg
-                [ [ t0 ]
-                  => pop (PTuple [ PReg "b"; PReg state_reg ])
-                     @@ pop (PReg "a")
-                     @@ die
-                ; [ t1 ] => pop (PReg "c") @@ die
-                ; [ t2 ] => die
-                ]
-          } )
-      ; ( "g"
-        , { stack_type = [||]
-          ; final_type = None
-          ; has_case_tag = false
-          ; name = None
-          ; needed_registers = RegisterSet.empty
-          ; block =
-              (PReg state_reg := VTag t0)
-              @@ (PReg "b" := VUnit)
-              @@ push (VReg "b") b_cell
-              @@ jump "f"
-          } )
-      ]
-  in
-  { cfg; entry = StringMap.empty; states }
+  (* This is ill-typed because when we match on the state, the value of the state
+     is a value we just made-up, and therefore it does not give us any information
+     on the stack. *)
+  let bad_shadow_state =
+    let c_cell = Cell.make ~typ:(Stretch.Inferred "c") true true false false in
+    let b_cell = Cell.make ~typ:(Stretch.Inferred "b") true true false false in
+    let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
+    let states =
+      TagMap.of_list
+        [ (t0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
+        ; (t1, { sfinal_type = None; known_cells = [| c_cell |] })
+        ; (t2, { sfinal_type = None; known_cells = [||] })
+        ]
+    in
+    let cfg =
+      LabelMap.of_list
+        [ ( "f"
+          , { stack_type = [||]
+            ; final_type = None
+            ; has_case_tag = true
+            ; name = None
+            ; needed_registers = RegisterSet.of_list [ state_reg ]
+            ; block =
+                (PReg state_reg := VTag t0)
+                @@ case_tag
+                     state_reg
+                     [ [ t0 ]
+                       => pop (PTuple [ PReg "b"; PReg state_reg ])
+                          @@ pop (PReg "a")
+                          @@ die
+                     ; [ t1 ] => pop (PReg "c") @@ die
+                     ; [ t2 ] => die
+                     ]
+            } )
+        ; ( "g"
+          , { stack_type = [| a_cell |]
+            ; final_type = None
+            ; has_case_tag = false
+            ; name = None
+            ; needed_registers = RegisterSet.empty
+            ; block =
+                (PReg state_reg := VTag t0)
+                @@ (PReg "b" := VUnit)
+                @@ push (VReg "b") b_cell
+                @@ jump "f"
+            } )
+        ]
+    in
+    { cfg; entry = StringMap.empty; states }
 
 
-(* Illegal because of the [pop c] in [f] *)
-let bad_pop =
-  let c_cell = Cell.make ~typ:(Stretch.Inferred "c") true true false false in
-  let b_cell = Cell.make ~typ:(Stretch.Inferred "b") true true false false in
-  let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
-  let states =
-    TagMap.of_list
-      [ (t0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
-      ; (t1, { sfinal_type = None; known_cells = [| c_cell |] })
-      ; (t2, { sfinal_type = None; known_cells = [||] })
-      ]
-  in
-  let cfg =
-    LabelMap.of_list
-      [ ( "f"
-        , { stack_type = [||]
-          ; final_type = None
-          ; has_case_tag = true
-          ; name = None
-          ; needed_registers = RegisterSet.of_list [ state_reg ]
-          ; block =
-              case_tag
-                state_reg
-                [ [ t0 ]
-                  => pop (PTuple [ PReg "b"; PReg state_reg ])
-                     @@ pop (PReg "a")
-                     @@ pop (PReg "c")
-                     @@ die
-                ; [ t1 ] => pop (PReg "c") die
-                ; [ t2 ] => die
-                ]
-          } )
-      ; ( "g"
-        , { stack_type = [||]
-          ; final_type = None
-          ; has_case_tag = false
-          ; name = None
-          ; needed_registers = RegisterSet.empty
-          ; block =
-              (PReg state_reg := VTag t0)
-              @@ (PReg "b" := VUnit)
-              @@ push (VReg "b") b_cell
-              @@ jump "f"
-          } )
-      ]
-  in
-  { cfg; entry = StringMap.empty; states }
+  (* Illegal because of the [jump f] in [g] : passing state [0] requires knowing
+     2 cells, and only one is known. *)
+  let bad_sync =
+    let c_cell = Cell.make ~typ:(Stretch.Inferred "c") true true false false in
+    let b_cell = Cell.make ~typ:(Stretch.Inferred "b") true true false false in
+    let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
+    let states =
+      TagMap.of_list
+        [ (t0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
+        ; (t1, { sfinal_type = None; known_cells = [| c_cell |] })
+        ; (t2, { sfinal_type = None; known_cells = [||] })
+        ]
+    in
+    let cfg =
+      LabelMap.of_list
+        [ ( "f"
+          , { stack_type = [| b_cell |]
+            ; final_type = None
+            ; has_case_tag = true
+            ; name = None
+            ; needed_registers = RegisterSet.of_list [ state_reg ]
+            ; block =
+                case_tag
+                  state_reg
+                  [ [ t0 ]
+                    => pop (PTuple [ PReg "b"; PReg state_reg ])
+                       @@ pop (PReg "a")
+                       @@ die
+                  ; [ t1 ] => pop (PReg "c") @@ die
+                  ; [ t2 ] => die
+                  ]
+            } )
+        ; ( "g"
+          , { stack_type = [||]
+            ; final_type = None
+            ; has_case_tag = false
+            ; name = None
+            ; needed_registers = RegisterSet.empty
+            ; block =
+                (PReg state_reg := VTag t0)
+                @@ (PReg "b" := VUnit)
+                @@ push (VReg "b") b_cell
+                @@ jump "f"
+            } )
+        ]
+    in
+    { cfg; entry = StringMap.empty; states }
 
 
-let bad_push =
-  let c_cell = Cell.make ~typ:(Stretch.Inferred "c") true true false false in
-  let b_cell = Cell.make ~typ:(Stretch.Inferred "b") true true false false in
-  let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
-  let states =
-    TagMap.of_list
-      [ (t0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
-      ; (t1, { sfinal_type = None; known_cells = [| c_cell |] })
-      ; (t2, { sfinal_type = None; known_cells = [||] })
-      ]
-  in
-  let cfg =
-    LabelMap.of_list
-      [ ( "f"
-        , { stack_type = [||]
-          ; final_type = None
-          ; has_case_tag = false
-          ; name = None
-          ; needed_registers = RegisterSet.empty
-          ; block = push (VTuple [ VReg "b"; VTag t0 ]) b_cell @@ die
-          } )
-      ]
-  in
-  { cfg; entry = StringMap.empty; states }
+  (* Illegal because of the [pop c] in [f] *)
+  let bad_pop =
+    let c_cell = Cell.make ~typ:(Stretch.Inferred "c") true true false false in
+    let b_cell = Cell.make ~typ:(Stretch.Inferred "b") true true false false in
+    let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
+    let states =
+      TagMap.of_list
+        [ (t0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
+        ; (t1, { sfinal_type = None; known_cells = [| c_cell |] })
+        ; (t2, { sfinal_type = None; known_cells = [||] })
+        ]
+    in
+    let cfg =
+      LabelMap.of_list
+        [ ( "f"
+          , { stack_type = [||]
+            ; final_type = None
+            ; has_case_tag = true
+            ; name = None
+            ; needed_registers = RegisterSet.of_list [ state_reg ]
+            ; block =
+                case_tag
+                  state_reg
+                  [ [ t0 ]
+                    => pop (PTuple [ PReg "b"; PReg state_reg ])
+                       @@ pop (PReg "a")
+                       @@ pop (PReg "c")
+                       @@ die
+                  ; [ t1 ] => pop (PReg "c") die
+                  ; [ t2 ] => die
+                  ]
+            } )
+        ; ( "g"
+          , { stack_type = [||]
+            ; final_type = None
+            ; has_case_tag = false
+            ; name = None
+            ; needed_registers = RegisterSet.empty
+            ; block =
+                (PReg state_reg := VTag t0)
+                @@ (PReg "b" := VUnit)
+                @@ push (VReg "b") b_cell
+                @@ jump "f"
+            } )
+        ]
+    in
+    { cfg; entry = StringMap.empty; states }
 
 
-(* Illegal because we return in [g] despite the fact that we do not know the
-   final type. *)
-let bad_final =
-  let a_type = Stretch.Inferred "a" in
-  let c_cell = Cell.make ~typ:(Stretch.Inferred "c") true true false false in
-  let b_cell = Cell.make ~typ:(Stretch.Inferred "b") true true false false in
-  let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
-  let states =
-    TagMap.of_list
-      [ (t0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
-      ; (t1, { sfinal_type = None; known_cells = [| c_cell |] })
-      ; (t2, { sfinal_type = None; known_cells = [||] })
-      ]
-  in
-  let cfg =
-    LabelMap.of_list
-      [ ( "g"
-        , { stack_type = [||]
-          ; final_type = Some a_type
-          ; has_case_tag = false
-          ; name = None
-          ; needed_registers = RegisterSet.empty
-          ; block =
-              (PReg state_reg := VTag t0)
-              @@ (PReg "b" := VUnit)
-              @@ push (VReg "b") b_cell
-              @@ typed_block
-                   [||]
-                   (RegisterSet.of_list [ state_reg ])
-                   true
-                   (case_tag
-                      state_reg
-                      [ [ t0 ]
-                        => pop (PTuple [ PReg "b"; PReg state_reg ])
-                           @@ pop (PReg "a")
-                           @@ return (VReg "a")
-                      ; [ t1 ] => pop (PReg "c") die
-                      ; [ t2 ] => die
-                      ] )
-          } )
-      ]
-  in
-  { cfg; entry = StringMap.empty; states }
+  let bad_push =
+    let c_cell = Cell.make ~typ:(Stretch.Inferred "c") true true false false in
+    let b_cell = Cell.make ~typ:(Stretch.Inferred "b") true true false false in
+    let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
+    let states =
+      TagMap.of_list
+        [ (t0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
+        ; (t1, { sfinal_type = None; known_cells = [| c_cell |] })
+        ; (t2, { sfinal_type = None; known_cells = [||] })
+        ]
+    in
+    let cfg =
+      LabelMap.of_list
+        [ ( "f"
+          , { stack_type = [||]
+            ; final_type = None
+            ; has_case_tag = false
+            ; name = None
+            ; needed_registers = RegisterSet.empty
+            ; block = push (VTuple [ VReg "b"; VTag t0 ]) b_cell @@ die
+            } )
+        ]
+    in
+    { cfg; entry = StringMap.empty; states }
 
 
-(* Illegal because in the [t0] branch, we gain knowledge of the final type, but
-   this knowledge is discarded by the typed block that follows and then we
-   return, which requires the discarded knowledge. *)
-let bad_final_2 =
-  let a_type = Stretch.Inferred "a" in
-  let c_cell = Cell.make ~typ:(Stretch.Inferred "c") true true false false in
-  let b_cell = Cell.make ~typ:(Stretch.Inferred "b") true true false false in
-  let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
-  let states =
-    TagMap.of_list
-      [ (t0, { sfinal_type = Some a_type; known_cells = [| a_cell; b_cell |] })
-      ; (t1, { sfinal_type = None; known_cells = [| c_cell |] })
-      ; (t2, { sfinal_type = None; known_cells = [||] })
-      ]
-  in
-  let cfg =
-    LabelMap.of_list
-      [ ( "f"
-        , { stack_type = [||]
-          ; final_type = Some a_type
-          ; has_case_tag = false
-          ; name = None
-          ; needed_registers = RegisterSet.singleton state_reg
-          ; block =
-              case_tag
-                state_reg
-                [ [ t0 ]
-                  => typed_block
-                       [||]
-                       (RegisterSet.of_list [ state_reg ])
-                       false
-                       ((PReg "r" := VUnit) @@ return (VReg "r"))
-                ]
-          } )
-      ]
-  in
-  { cfg; entry = StringMap.empty; states }
+  (* Illegal because we return in [g] despite the fact that we do not know the
+     final type. *)
+  let bad_final =
+    let a_type = Stretch.Inferred "a" in
+    let c_cell = Cell.make ~typ:(Stretch.Inferred "c") true true false false in
+    let b_cell = Cell.make ~typ:(Stretch.Inferred "b") true true false false in
+    let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
+    let states =
+      TagMap.of_list
+        [ (t0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
+        ; (t1, { sfinal_type = None; known_cells = [| c_cell |] })
+        ; (t2, { sfinal_type = None; known_cells = [||] })
+        ]
+    in
+    let cfg =
+      LabelMap.of_list
+        [ ( "g"
+          , { stack_type = [||]
+            ; final_type = Some a_type
+            ; has_case_tag = false
+            ; name = None
+            ; needed_registers = RegisterSet.empty
+            ; block =
+                (PReg state_reg := VTag t0)
+                @@ (PReg "b" := VUnit)
+                @@ push (VReg "b") b_cell
+                @@ typed_block
+                     [||]
+                     (RegisterSet.of_list [ state_reg ])
+                     true
+                     (case_tag
+                        state_reg
+                        [ [ t0 ]
+                          => pop (PTuple [ PReg "b"; PReg state_reg ])
+                             @@ pop (PReg "a")
+                             @@ return (VReg "a")
+                        ; [ t1 ] => pop (PReg "c") die
+                        ; [ t2 ] => die
+                        ] )
+            } )
+        ]
+    in
+    { cfg; entry = StringMap.empty; states }
 
 
-(* Illegal because in the [t0] branch of [g], we gain knowledge of the final type, but
-   this knowledge is discarded by the typed block that follows and then we
-   jump to [f], which requires the discarded knowledge. *)
-let bad_final_3 =
-  let a_type = Stretch.Inferred "a" in
-  let c_cell = Cell.make ~typ:(Stretch.Inferred "c") true true false false in
-  let b_cell = Cell.make ~typ:(Stretch.Inferred "b") true true false false in
-  let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
-  let cfg =
-    LabelMap.of_list
-      [ ( "f"
-        , { stack_type = [||]
-          ; final_type = Some a_type
-          ; has_case_tag = true
-          ; name = None
-          ; needed_registers = RegisterSet.of_list [ state_reg ]
-          ; block = return VUnit
-          } )
-      ; ( "g"
-        , { stack_type = [||]
-          ; final_type = None
-          ; has_case_tag = false
-          ; name = None
-          ; needed_registers = RegisterSet.empty
-          ; block =
-              case_tag
-                state_reg
-                [ [ t0 ]
-                  => typed_block
-                       [||]
-                       (RegisterSet.of_list [ state_reg ])
-                       false
-                       (jump "f")
-                ]
-          } )
-      ]
-  in
-  let states =
-    TagMap.of_list
-      [ (t0, { sfinal_type = Some a_type; known_cells = [| a_cell; b_cell |] })
-      ; (t1, { sfinal_type = None; known_cells = [| c_cell |] })
-      ; (t2, { sfinal_type = None; known_cells = [||] })
-      ]
-  in
-  { cfg; entry = StringMap.empty; states }
+  (* Illegal because in the [t0] branch, we gain knowledge of the final type, but
+     this knowledge is discarded by the typed block that follows and then we
+     return, which requires the discarded knowledge. *)
+  let bad_final_2 =
+    let a_type = Stretch.Inferred "a" in
+    let c_cell = Cell.make ~typ:(Stretch.Inferred "c") true true false false in
+    let b_cell = Cell.make ~typ:(Stretch.Inferred "b") true true false false in
+    let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
+    let states =
+      TagMap.of_list
+        [ (t0, { sfinal_type = Some a_type; known_cells = [| a_cell; b_cell |] })
+        ; (t1, { sfinal_type = None; known_cells = [| c_cell |] })
+        ; (t2, { sfinal_type = None; known_cells = [||] })
+        ]
+    in
+    let cfg =
+      LabelMap.of_list
+        [ ( "f"
+          , { stack_type = [||]
+            ; final_type = Some a_type
+            ; has_case_tag = false
+            ; name = None
+            ; needed_registers = RegisterSet.singleton state_reg
+            ; block =
+                case_tag
+                  state_reg
+                  [ [ t0 ]
+                    => typed_block
+                         [||]
+                         (RegisterSet.of_list [ state_reg ])
+                         false
+                         ((PReg "r" := VUnit) @@ return (VReg "r"))
+                  ]
+            } )
+        ]
+    in
+    { cfg; entry = StringMap.empty; states }
 
 
-let bad_final_4 =
-  let a_type = Stretch.Inferred "a" in
-  let c_cell = Cell.make ~typ:(Stretch.Inferred "c") true true false false in
-  let b_cell = Cell.make ~typ:(Stretch.Inferred "b") true true false false in
-  let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
-  let cfg =
-    LabelMap.of_list
-      [ ( "f"
-        , { stack_type = [||]
-          ; final_type = Some a_type
-          ; has_case_tag = true
-          ; name = None
-          ; needed_registers = RegisterSet.of_list [ state_reg ]
-          ; block = return VUnit
-          } )
-      ; ( "g"
-        , { stack_type = [||]
-          ; final_type = None
-          ; has_case_tag = false
-          ; name = None
-          ; needed_registers = RegisterSet.empty
-          ; block = jump "f"
-          } )
-      ]
-  in
-  let states =
-    TagMap.of_list
-      [ (t0, { sfinal_type = Some a_type; known_cells = [| a_cell; b_cell |] })
-      ; (t1, { sfinal_type = None; known_cells = [| c_cell |] })
-      ; (t2, { sfinal_type = None; known_cells = [||] })
-      ]
-  in
-  { cfg; entry = StringMap.empty; states }
+  (* Illegal because in the [t0] branch of [g], we gain knowledge of the final type, but
+     this knowledge is discarded by the typed block that follows and then we
+     jump to [f], which requires the discarded knowledge. *)
+  let bad_final_3 =
+    let a_type = Stretch.Inferred "a" in
+    let c_cell = Cell.make ~typ:(Stretch.Inferred "c") true true false false in
+    let b_cell = Cell.make ~typ:(Stretch.Inferred "b") true true false false in
+    let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
+    let cfg =
+      LabelMap.of_list
+        [ ( "f"
+          , { stack_type = [||]
+            ; final_type = Some a_type
+            ; has_case_tag = true
+            ; name = None
+            ; needed_registers = RegisterSet.of_list [ state_reg ]
+            ; block = return VUnit
+            } )
+        ; ( "g"
+          , { stack_type = [||]
+            ; final_type = None
+            ; has_case_tag = false
+            ; name = None
+            ; needed_registers = RegisterSet.empty
+            ; block =
+                case_tag
+                  state_reg
+                  [ [ t0 ]
+                    => typed_block
+                         [||]
+                         (RegisterSet.of_list [ state_reg ])
+                         false
+                         (jump "f")
+                  ]
+            } )
+        ]
+    in
+    let states =
+      TagMap.of_list
+        [ (t0, { sfinal_type = Some a_type; known_cells = [| a_cell; b_cell |] })
+        ; (t1, { sfinal_type = None; known_cells = [| c_cell |] })
+        ; (t2, { sfinal_type = None; known_cells = [||] })
+        ]
+    in
+    { cfg; entry = StringMap.empty; states }
 
 
-let assert_fails f =
-  match f () with exception StackLangError _ -> () | _ -> assert false
+  let bad_final_4 =
+    let a_type = Stretch.Inferred "a" in
+    let c_cell = Cell.make ~typ:(Stretch.Inferred "c") true true false false in
+    let b_cell = Cell.make ~typ:(Stretch.Inferred "b") true true false false in
+    let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
+    let cfg =
+      LabelMap.of_list
+        [ ( "f"
+          , { stack_type = [||]
+            ; final_type = Some a_type
+            ; has_case_tag = true
+            ; name = None
+            ; needed_registers = RegisterSet.of_list [ state_reg ]
+            ; block = return VUnit
+            } )
+        ; ( "g"
+          , { stack_type = [||]
+            ; final_type = None
+            ; has_case_tag = false
+            ; name = None
+            ; needed_registers = RegisterSet.empty
+            ; block = jump "f"
+            } )
+        ]
+    in
+    let states =
+      TagMap.of_list
+        [ (t0, { sfinal_type = Some a_type; known_cells = [| a_cell; b_cell |] })
+        ; (t1, { sfinal_type = None; known_cells = [| c_cell |] })
+        ; (t2, { sfinal_type = None; known_cells = [||] })
+        ]
+    in
+    { cfg; entry = StringMap.empty; states }
 
 
-let test_wt () =
-  wt good1;
-  wt good2;
-  wt good_sync;
-  assert_fails (fun () -> wt bad_shadow_state);
-  assert_fails (fun () -> wt bad_pop);
-  assert_fails (fun () -> wt bad_push);
-  assert_fails (fun () -> wt bad_sync);
-  assert_fails (fun () -> wt bad_final);
-  assert_fails (fun () -> wt bad_final_2);
-  assert_fails (fun () -> wt bad_final_3);
-  assert_fails (fun () -> wt bad_final_4)
+  let assert_fails f =
+    match f () with exception StackLangError _ -> () | _ -> assert false
 
 
-let test () = test_wt ()
+  let test_wt () =
+    wt good1;
+    wt good2;
+    wt good_sync;
+    assert_fails (fun () -> wt bad_shadow_state);
+    assert_fails (fun () -> wt bad_pop);
+    assert_fails (fun () -> wt bad_push);
+    assert_fails (fun () -> wt bad_sync);
+    assert_fails (fun () -> wt bad_final);
+    assert_fails (fun () -> wt bad_final_2);
+    assert_fails (fun () -> wt bad_final_3);
+    assert_fails (fun () -> wt bad_final_4)
+end
+
+let test () =
+  let module Tests = Tests () in
+  Tests.test_wt ()
