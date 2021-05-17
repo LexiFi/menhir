@@ -14,6 +14,7 @@
 open Printf
 open Grammar
 open Infix
+open Invariant (* only to access [cell] fields *)
 
 module SSymbols = StackSymbols.Run ()
 
@@ -188,10 +189,18 @@ type nt = Nonterminal.t
 
 let optimize_stack = Settings.optimize_stack
 
+(* TODO remove the type [StackLang.cell_info] and use [Invariant.cell]
+   instead. This may require setting [hold_semv = typ <> None] always,
+   even when [optimize_stack] is false. *)
+
+(* TODO [top_stack_type] could be defined in two lines by using
+   [stack_type_of_word] and [suffix]. *)
+
 (** [top_stack_type word] is the cell info corresponding to the top of [word]  *)
 let top_stack_type word =
   Invariant.fold_top
-    (fun hold_state symbol ->
+    (fun cell ->
+      let { symbol; holds_state; holds_startp; holds_endp; _ } = cell in
       let typ =
         match symbol with
         | Symbol.T t ->
@@ -199,13 +208,14 @@ let top_stack_type word =
         | Symbol.N nt ->
             Nonterminal.ocamltype nt
       in
+      (* assert (holds_semv = (typ <> None)); *)
       if optimize_stack
       then
         { typ
-        ; hold_state
+        ; hold_state = holds_state
         ; hold_semv = typ <> None
-        ; hold_startpos = Invariant.startp symbol
-        ; hold_endpos = Invariant.endp symbol
+        ; hold_startpos = holds_startp
+        ; hold_endpos = holds_endp
         }
       else Cell.full typ )
     (Cell.full None)
@@ -214,9 +224,8 @@ let top_stack_type word =
 (** [stack_type_of_word word] is the array of [cell_info] that represents the
     known stack cells corresponding to invariant word [word] *)
 let stack_type_of_word word =
-  MArray.rev_of_list
-    (Invariant.fold
-       (fun acc hold_state symbol _state_set ->
+  Array.map (fun cell ->
+    let { symbol; holds_state; holds_startp; holds_endp; _ } = cell in
          let typ =
            match symbol with
            | Symbol.T t ->
@@ -224,46 +233,40 @@ let stack_type_of_word word =
            | Symbol.N nt ->
                Nonterminal.ocamltype nt
          in
-         let cell =
-           if optimize_stack
-           then
-             Cell.make
-               ?typ
-               hold_state
-               (typ <> None)
-               (Invariant.startp symbol)
-               (Invariant.endp symbol)
-           else Cell.full typ
-         in
-         cell :: acc )
-       []
-       word )
+         (* assert (holds_semv = (typ <> None)); *)
+         if optimize_stack
+         then
+           Cell.make
+             ?typ
+             holds_state
+             (typ <> None)
+             holds_startp
+             holds_endp
+         else Cell.full typ
+  ) word
 
+(* TODO could define these functions in [Invariant]? *)
+let length =
+  Array.length
+
+let top word =
+  assert (length word > 0);
+  MArray.last word
 
 let has_semantic_value s =
-  if optimize_stack
-  then
-    Invariant.fold_top
-      (fun _ symbol -> CodePieces.has_semv symbol)
-      false
-      (Invariant.stack s)
-  else true
-
+  not optimize_stack ||
+  let word = Invariant.stack s in
+  (top word).holds_semv
 
 let goto_needstartpos nt =
-  (not optimize_stack)
-  || Invariant.fold_top
-       (fun _ symbol -> Invariant.startp symbol)
-       true
-       (Invariant.gotostack nt)
-
+  not optimize_stack ||
+  let word = Invariant.gotostack nt in
+  (top word).holds_startp
 
 let goto_needendpos nt =
-  (not optimize_stack)
-  || Invariant.fold_top
-       (fun _ symbol -> Invariant.endp symbol)
-       true
-       (Invariant.gotostack nt)
+  not optimize_stack ||
+  let word = Invariant.gotostack nt in
+  (top word).holds_endp
 
 
 (** Values needed by the goto associated to Nonterminal [nt] *)
@@ -274,15 +277,13 @@ let goto_need nt =
   @
   if optimize_stack
   then
-    Invariant.fold_top
-      (fun holds_state symbol ->
+    let cell = top (Invariant.gotostack nt) in
+    let { holds_state; holds_semv; holds_startp; holds_endp; _ } = cell in
         MList.(
           if1 holds_state state
-          @ if1 (CodePieces.has_semv symbol) semv
-          @ if1 (Invariant.startp symbol) startp
-          @ if1 (Invariant.endp symbol) endp) )
-      []
-      (Invariant.gotostack nt)
+          @ if1 holds_semv semv
+          @ if1 holds_startp startp
+          @ if1 holds_endp endp )
   else [ state; semv; startp; endp ] )
   |> RegisterSet.of_list
 
@@ -304,15 +305,16 @@ let run_need s =
   if optimize_stack
   then
     Invariant.fold_top
-      (fun holds_state symbol ->
+      (fun cell ->
+        let { holds_state; holds_startp; holds_endp; _} = cell in
         MList.if1 (must_push && holds_state) state
         @ MList.if1
-            ( Invariant.startp symbol
+            ( holds_startp
             && (not (is_start || must_read_positions))
             && must_push )
             startp
         @ MList.if1
-            (Invariant.endp symbol && not (is_start || must_read_positions))
+            (holds_endp && not (is_start || must_read_positions))
             endp )
       []
       (Invariant.stack s)
