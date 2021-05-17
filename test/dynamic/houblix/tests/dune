@@ -1,22 +1,44 @@
-;; We rely on the Makefile to construct the file all.results.
 
+;; Compile the script [test.ml].
+(executable
+  (name test)
+)
+
+;; Use the script [test.ml] to generate the file [dune.auto.gen]
+;; based on the content of the directory [data].
 (rule
-  (target all.results)
-  (deps
-    (source_tree 01-Pretty)
-    (source_tree 02-Sexp)
-    (source_tree 03-Sexpbis)
-    (file ../src/houblix.exe)
-    (file Makefile))
-  (action
-    (run make -j all.results EXE=../src/houblix.exe)))
+  (target dune.auto)
+  (mode promote)
+  (deps (source_tree ../src))
+  (action (with-stdout-to %{target} (run ./test.exe)))
+)
 
-;; The contents of this file is compared against all.results.expected.
+;; Include the file [dune.auto].
+(include dune.auto)
 
-(rule
-  (alias test)
-  (deps
-    (file all.results.expected)
-    (file all.results))
-  (action
-    (diff all.results.expected all.results)))
+; ;; We rely on the Makefile to construct the file all.results.
+
+; (rule
+;  (target all.results)
+;  (deps
+;   (source_tree 01-Pretty)
+;   (source_tree 02-Sexp)
+;   (source_tree 03-Sexpbis)
+;   (file ../src/houblix.exe)
+;   (file Makefile))
+;  (action
+;   (run make -j all.results EXE=../src/houblix.exe)))
+
+; ;; The contents of this file is compared against all.results.expected.
+
+; (rule
+;  (alias test_houblix)
+;  (deps
+;   (file all.results.expected)
+;   (file all.results))
+;  (action
+;   (diff all.results.expected all.results)))
+
+(alias
+ (name test)
+ (deps test_houblix))

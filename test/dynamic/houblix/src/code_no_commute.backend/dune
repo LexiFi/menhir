@@ -1,0 +1,23 @@
+(copy_files# ../*.ml)
+
+(copy_files ../*.mll)
+
+(copy_files ../*.mly)
+
+(ocamllex lexer)
+
+(menhir
+ (modules parserTokens)
+ (flags --only-tokens))
+
+(menhir
+ (modules parser parserTypes parserTokens parserExpr)
+ (merge_into parser)
+ (infer true)
+ (flags --external-tokens ParserTokens --no-push-commute))
+
+(executable
+ (name houblix)
+ (libraries str pprint menhirLib sexplib unix sek)
+ (preprocess
+  (pps ppx_sexp_conv)))
