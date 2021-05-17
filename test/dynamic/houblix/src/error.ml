@@ -14,8 +14,8 @@ let print_error positions msg =
 
 let error_alert positions msg =
   if !exit_flag then (
-    output_string stderr (print_error positions msg);
-    exit 1 )
+    output_string stdout (print_error positions msg);
+    exit 0 )
   else raise (Error (positions, msg))
 
 let global_error kind msg =
