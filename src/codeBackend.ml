@@ -16,6 +16,7 @@
 module Run (T : sig end) = struct
 
 open Grammar
+open Invariant (* only to access [cell] fields *)
 open IL
 open CodeBits
 open CodePieces
@@ -547,7 +548,7 @@ let curryif flag t =
    singleton tuple cell. *)
 
 let celltype tailtype cell =
-  let Invariant.{ symbol; holds_state; holds_startp; holds_endp; _ } = cell in
+  let { symbol; holds_state; holds_startp; holds_endp; _ } = cell in
   TypTuple (
     tailtype ::
     if1 holds_endp tposition @
@@ -681,7 +682,7 @@ let letunless e x e1 e2 =
 
 let runcellparams stack : xparams =
   Invariant.fold_top (fun cell ->
-    let Invariant.{ holds_semv; holds_state; holds_startp; holds_endp; _ } = cell in
+    let { holds_semv; holds_state; holds_startp; holds_endp; _ } = cell in
     if1 holds_endp (xvar endp) @
     if1 holds_state (xvar state) @
     if1 holds_semv (xvar semv) @
@@ -706,7 +707,7 @@ let action_may_refer_to_value prod i =
    symbol this stack cell is associated with. *)
 
 let reducecellparams prod i cell =
-  let Invariant.{ symbol; holds_state; holds_startp; holds_endp; _ } = cell in
+  let { symbol; holds_state; holds_startp; holds_endp; _ } = cell in
   let ids = Production.identifiers prod in
   (* The semantic value is bound to the variable [ids.(i)]. Its type is [t]. As
      of 2016/03/11, we generate a type annotation. Indeed, because of our use of
@@ -731,7 +732,7 @@ let reducecellparams prod i cell =
    definition of [error]. *)
 
 let errorcellparams (i, pat) cell =
-  let Invariant.{ holds_semv; holds_state; holds_startp; holds_endp; _ } = cell in
+  let { holds_semv; holds_state; holds_startp; holds_endp; _ } = cell in
   i + 1,
   ptuple (
     pat ::
@@ -870,7 +871,7 @@ let shiftbranchbody s tok s' =
     (EVar env) ::
     (EMagic (EVar stack)) ::
     Invariant.fold_top (fun cell ->
-      let Invariant.{ holds_semv; holds_state; holds_startp; holds_endp; _ } = cell in
+      let { holds_semv; holds_state; holds_startp; holds_endp; _ } = cell in
       if1 holds_endp getendp @
       if1 holds_state (estatecon s) @
       if1 holds_semv (EVar semv) @

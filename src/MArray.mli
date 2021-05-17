@@ -23,11 +23,11 @@ val last : 'a array -> 'a
 
 (** [pop a] is [a] with its last element removed.
     [pop [|1; 2; 3; 4|] = [|1; 2; 3|]] *)
-val pop : 'a t -> 'a t
+val pop : 'a array -> 'a array
 
 (** [push a x] is [a] with [x] added at its end.
     [push [|1; 2; 3|] 4 = [|1; 2; 3; 4|]] *)
-val push : 'a t -> 'a -> 'a t
+val push : 'a array -> 'a -> 'a array
 
 (**If the array [a] has length at least [k], then [truncate k a] is the suffix
    of length [k] of the array [a]. Otherwise, [truncate k a] is [a]. *)
@@ -43,15 +43,15 @@ val greatest_suffix_forall : ('a -> bool) -> 'a array -> 'a array
 
 (** Array reversal.
    [rev [|1; 2; 3; 4|] = [|4; 3; 2; 1|]]*)
-val rev : 'a t -> 'a t
+val rev : 'a array -> 'a array
 
 (** Convert a list to an array. The list's head becomes the end of the array.
     [rev_of_list [1; 2; 3; 4; 5] = [|5; 4; 3; 2; 1|]] *)
-val rev_of_list : 'a list -> 'a t
+val rev_of_list : 'a list -> 'a array
 
 (** Convert an array to a list. The end of the array becomes the list's head.
     [rev_to_list [|1; 2; 3; 4; 5|] = [5; 4; 3; 2; 1]] *)
-val rev_to_list : 'a t -> 'a list
+val rev_to_list : 'a array -> 'a list
 
 (**[for_all] is identical to the function by the same name in the OCaml
    standard library. *)
