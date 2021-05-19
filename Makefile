@@ -414,7 +414,12 @@ COQLIB   := coq-menhirlib
 REPO     := https://gitlab.inria.fr/fpottier/menhir
 
 # The archive URL (https).
-ARCHIVE  := $(REPO)/repository/$(DATE)/archive.tar.gz
+ARCHIVE  := $(REPO)/-/archive/$(DATE)/archive.tar.gz
+# NOTE: it is not clear whether the above URL is stable in time.
+# The gitlab API documentation documents the following URL:
+# https://gitlab.inria.fr/api/v4/projects/fpottier%2Fmenhir/repository/archive.tar.gz?sha=$(DATE)
+# The documentation can be found here:
+# https://gitlab.inria.fr/help/api/repositories.html#get-file-archive
 
 # Additional options for coq-menhirlib.
 COQ_MENHIRLIB_PUBLISH_OPTIONS := \
