@@ -19,7 +19,7 @@ The following tests are currently performed:
   always succeeds.)
 
 * The subdirectory `houblix` contains a parser for a complex ML-like language.
-  The parser is compiled using the code back-end, and its output is compared
+  The parser is compiled using multiple back-ends, and its output is compared
   against a reference. Both pretty printed outputs and s-expression outputs
   are compared. The s-expression output offers the advantage of comparing the
   complete AST, positions included.
