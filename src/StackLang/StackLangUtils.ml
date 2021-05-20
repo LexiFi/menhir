@@ -62,8 +62,8 @@ let cells_intersection cells1 cells2 =
     i += 1
   done;
   let i = !i in
-  let cells1 = Array.sub cells1 (len1 - i) i in
-  let cells2 = Array.sub cells1 (len1 - i) i in
+  let cells1 = MArray.suffix cells1 i in
+  let cells2 = MArray.suffix cells2 i in
   Array.map2 Invariant.cell_intersection cells1 cells2
 
 
