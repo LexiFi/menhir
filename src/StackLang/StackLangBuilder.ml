@@ -29,44 +29,37 @@ let routine_stack_type : cell_info array option ref = ref None
 
 let routine_final_type : Stretch.ocamltype option ref = ref None
 
-let routine_needed : RegisterSet.t option ref = ref None
-
 let routine_has_case_tag : bool ref = ref false
 
 let typed_exec (body : unit -> unit) =
   current := Open identity;
   routine_stack_type := None;
   routine_final_type := None;
-  routine_needed := None;
   routine_has_case_tag := false;
   body ();
   let has_case_tag = !routine_has_case_tag in
-  match (!current, !routine_stack_type, !routine_needed) with
-  | Idle, _, _ ->
+  match (!current, !routine_stack_type) with
+  | Idle, _->
       (* This cannot happen, I think. *)
       assert false
-  | Open _, _, _ ->
+  | Open _, _ ->
       (* The user has misused our API: a block has been opened and has not
          been properly ended by calling [die], [return], [jump], or a case
          analysis construction. *)
       assert false
-  | _, None, _ ->
+  | _, None ->
       (* The user must specify the type of a block *)
       assert false
-  | _, _, None ->
-      (* The user must specify the needed registers of a block *)
-      assert false
-  | Closed block, Some stack_type, Some needed_registers ->
+  | Closed block, Some stack_type->
       let final_type = !routine_final_type in
       current := Idle;
       routine_stack_type := None;
       routine_final_type := None;
-      routine_needed := None;
       routine_has_case_tag := false;
       { block
       ; stack_type
       ; final_type
-      ; needed_registers
+      ; needed_registers= RegisterSet.empty (* to be inferred later *)
       ; has_case_tag
       ; name = None
       }
@@ -127,12 +120,6 @@ let close i =
 let routine_stack_type typ = routine_stack_type := Some typ
 
 let routine_final_type typ = routine_final_type := Some typ
-
-let routine_need needed = routine_needed := Some needed
-
-let need rs = extend (fun block -> INeed (rs, block))
-
-let need_list rs = need (RegisterSet.of_list rs)
 
 let push v cell = extend (fun block -> IPush (v, cell, block))
 
@@ -237,6 +224,6 @@ struct
 
   let entry = L.entry
 
-  let program = { cfg; entry; states }
+  let program = NeededRegisters.update { cfg; entry; states }
 end
 (* Build *)
