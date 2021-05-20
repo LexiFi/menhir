@@ -301,3 +301,7 @@ val commute_pushes: bool
 (** The undocumented flag [--unit-test] makes menhir run its unit tests instead of
    its usual behavior. *)
 val unit_test: bool
+
+(** The undocumented flag [--inlining-max-degree n] sets the value of the maximum
+    degree at which a stakclang routine will be inlined to [n]. Default is [2]. *)
+val inlining_max_degree: int
