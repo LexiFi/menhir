@@ -23,122 +23,137 @@ let () =
     let module D = Dump.Make(Default) in
     D.dump (Settings.base ^ ".automaton.resolved")
 
+
 let () =
-  if Settings.automaton_graph then
-    AutomatonGraph.print_automaton_graph()
+  if Settings.automaton_graph then AutomatonGraph.print_automaton_graph ()
+
 
 (* Let [Interpret] handle the command line options [--interpret],
    [--interpret-error], [--compile-errors], [--compare-errors]. *)
 
-let () =
-  Interpret.run()
+let () = Interpret.run ()
 
 (* If [--list-errors] is set, produce a list of erroneous input sentences, then stop. *)
 
 let () =
-  if Settings.list_errors then begin
-    let module L = LRijkstra.Run(struct
-      (* Undocumented: if [--log-automaton 2] is set, be verbose. *)
-      let verbose = Settings.logA >= 2
-      (* For my own purposes, LRijkstra can print one line of statistics to a .csv file. *)
-      let statistics = if false then Some "lr.csv" else None
-    end) in
+  if Settings.list_errors
+  then
+    let module L =
+      LRijkstra.Run (struct
+        (* Undocumented: if [--log-automaton 2] is set, be verbose. *)
+        let verbose = Settings.logA >= 2
+
+        (* For my own purposes, LRijkstra can print one line of statistics to a .csv file. *)
+        let statistics = if false then Some "lr.csv" else None
+      end)
+    in
     exit 0
-  end
+
 
 (* Define an .ml file writer . *)
 
 let write program =
-  let module P = Printer.Make (struct
-    let filename = Settings.base ^ ".ml"
-    let f = open_out filename
-    let locate_stretches =
-      (* 2017/05/09: always include line number directives in generated .ml
-         files. Indeed, they affect the semantics of [assert] instructions
-         in the semantic actions. *)
-      (* 2011/10/19: do not use [Filename.basename]. The line number
-         directives that we insert in the [.ml] file must retain their full
-         path. This does mean that the line number directives depend on how
-         menhir is invoked -- e.g. [menhir foo/bar.mly] and [cd foo && menhir
-         bar.mly] will produce different files. Nevertheless, this seems
-         useful/reasonable. *)
-      Some filename
-  end) in
+  let module P =
+    Printer.Make (struct
+      let filename = Settings.base ^ ".ml"
+
+      let f = open_out filename
+
+      let locate_stretches =
+        (* 2017/05/09: always include line number directives in generated .ml
+           files. Indeed, they affect the semantics of [assert] instructions
+           in the semantic actions. *)
+        (* 2011/10/19: do not use [Filename.basename]. The line number
+           directives that we insert in the [.ml] file must retain their full
+           path. This does mean that the line number directives depend on how
+           menhir is invoked -- e.g. [menhir foo/bar.mly] and [cd foo && menhir
+           bar.mly] will produce different files. Nevertheless, this seems
+           useful/reasonable. *)
+        Some filename
+    end)
+  in
   P.program program
+
 
 (* If requested, generate a .cmly file. *)
 
-let () =
-  if Settings.cmly then
-    Cmly_write.write (Settings.base ^ ".cmly")
+let () = if Settings.cmly then Cmly_write.write (Settings.base ^ ".cmly")
 
 (* Construct and print the code using an appropriate back-end. *)
 
-let handle_stacklang_error program
-    StackLangTraverse.{context; culprit; message; state_relevance} =
+let handle_stacklang_error program error =
+  let StackLangTraverse.{ context; culprit; message; state_relevance } =
+    error
+  in
   let open StackLang in
   let open StackLangUtils in
   let states = StackLang.(program.states) in
   let cfg = StackLang.(program.cfg) in
-  eprintf "\n%s\n" message ;
-  eprintf "Culprit :\n" ;
-  StackLangPrinter.print_block stderr culprit ;
-  eprintf "\nContext :\n" ;
+  eprintf "\n%s\n" message;
+  eprintf "Culprit :\n";
+  StackLangPrinter.print_block stderr culprit;
+  eprintf "\nContext :\n";
   let context = lookup context cfg in
-  StackLangPrinter.print_tblock stderr context ;
+  StackLangPrinter.print_tblock stderr context;
   ( match culprit with
   | IJump label ->
-      eprintf "\nWhile jumping to %s \n" label ;
+      eprintf "\nWhile jumping to %s \n" label;
       let block = lookup label cfg in
       StackLangPrinter.print_tblock stderr block
   | _ ->
-      () ) ;
-  if state_relevance then (
-    eprintf "\nStates:\n" ;
-    StackLangPrinter.print_states stderr states ) ;
+      () );
+  if state_relevance
+  then (
+    eprintf "\nStates:\n";
+    StackLangPrinter.print_states stderr states );
   exit 1
 
+
 let () =
-  if Settings.table then begin
+  if Settings.table
+  then begin
     let module B = TableBackend.Run () in
     write B.program;
     Interface.write Front.grammar ()
   end
-  else if Settings.coq then begin
+  else if Settings.coq
+  then
     let module B = CoqBackend.Run () in
     let filename = Settings.base ^ ".v" in
     let f = open_out filename in
     B.write_all f
-  end
-  else if Settings.old_code_backend then begin
+  else if Settings.old_code_backend
+  then begin
     let module B = CodeBackend.Run () in
     write (CodeInliner.inline B.program);
     Interface.write Front.grammar ()
   end
-  else begin
+  else
     let module SL = EmitStackLang.Run () in
     let program = SL.program in
     ( try
-        StackLangTraverse.wf program ;
+        StackLangTraverse.wf program;
         StackLangTraverse.wt program
-      with StackLangTraverse.StackLangError e ->
-        handle_stacklang_error program e ) ;
+      with
+    | StackLangTraverse.StackLangError e ->
+        handle_stacklang_error program e );
     let program = StackLangInline.inline program in
     let program = StackLangTransform.optimize program in
     ( try
-        StackLangTraverse.wf program ;
+        StackLangTraverse.wf program;
         StackLangTraverse.wt program
-      with StackLangTraverse.StackLangError e ->
-        handle_stacklang_error program e ) ;
-    if Settings.stacklang_dump then (
-      StackLangPrinter.print stdout program ;
-      StackLangTraverse.(print (measure program)) ) ;
-    if Settings.stacklang_graph then StackLangGraph.print program ;
-    if Settings.stacklang_test then StackLangTester.test program ;
+      with
+    | StackLangTraverse.StackLangError e ->
+        handle_stacklang_error program e );
+    if Settings.stacklang_dump
+    then (
+      StackLangPrinter.print stdout program;
+      StackLangTraverse.(print (measure program)) );
+    if Settings.stacklang_graph then StackLangGraph.print program;
+    if Settings.stacklang_test then StackLangTester.test program;
     let program = ILofStackLang.compile program in
-    write program ;
+    write program;
     Interface.write Front.grammar ()
-  end
 
-let () =
-  Time.tick "Printing"
+
+let () = Time.tick "Printing"

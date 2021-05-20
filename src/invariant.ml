@@ -11,34 +11,31 @@
 (*                                                                            *)
 (******************************************************************************)
 
- (* This module discovers information about the shape and content of the stack
-    in each of the automaton's states. *)
+(* This module discovers information about the shape and content of the stack
+   in each of the automaton's states. *)
 
 open Grammar
-module C = Conflict (* artificial dependency; ensures that [Conflict] runs first *)
+module C = Conflict
+(* artificial dependency; ensures that [Conflict] runs first *)
 
 (* ------------------------------------------------------------------------ *)
 (* Compute the known suffix of the stack, a sequence of symbols,
    at every state. This is the "short invariant". *)
 
-module SSy =
-  StackSymbols.Run()
+module SSy = StackSymbols.Run ()
 
 open SSy
 
 (* ------------------------------------------------------------------------ *)
 (* Now, compute which states may be held in the known suffix of the stack. *)
 
-module SSt =
-  StackStates.Run(SSy)
-
+module SSt = StackStates.Run (SSy)
 open SSt
 
 (* ------------------------------------------------------------------------ *)
 (* If requested, print the information that has been computed above. *)
 
-let () =
-  Error.logC 3 (dump "short")
+let () = Error.logC 3 (dump "short")
 
 (* ------------------------------------------------------------------------ *)
 (* We now determine which states must be represented, that is,
@@ -78,54 +75,48 @@ let () =
 let rep : bool UnionFind.point array =
   Array.init Lr1.n (fun _ -> UnionFind.fresh false)
 
+
 (* Getter. *)
 
-let represented state =
-  rep.(Lr1.number state)
+let represented state = rep.(Lr1.number state)
 
 (* Setters. *)
 
-let represent state =
-  UnionFind.set (represented state) true
+let represent state = UnionFind.set (represented state) true
 
-let represents states =
-  represent (Lr1.NodeSet.choose states)
+let represents states = represent (Lr1.NodeSet.choose states)
 
 (* Enforce condition (1) above. *)
 
 let share (v : property) =
-  Array.iter (fun states ->
-    let dummy = UnionFind.fresh false in
-    Lr1.NodeSet.iter (fun state ->
-      UnionFind.union dummy (represented state)
-    ) states
-  ) v
+  Array.iter
+    (fun states ->
+      let dummy = UnionFind.fresh false in
+      Lr1.NodeSet.iter
+        (fun state -> UnionFind.union dummy (represented state))
+        states )
+    v
+
 
 let () =
-  Lr1.iter (fun node ->
-    share (stack_states node)
-  );
-  Production.iter (fun prod ->
-    share (production_states prod)
-  )
+  Lr1.iter (fun node -> share (stack_states node));
+  Production.iter (fun prod -> share (production_states prod))
+
 
 (* Enforce condition (2) above. *)
 
-let new_code_backend =
-  not Settings.old_code_backend
+let new_code_backend = not Settings.old_code_backend
 
 let () =
   Nonterminal.iter (fun nt ->
-    let count =
-      Lr1.targets (fun count _ _ ->
-        count + 1
-      ) 0 (Symbol.N nt)
-    in
-    if count > 1 || (count = 1 && new_code_backend) then
-      Lr1.targets (fun () sources _ ->
-        List.iter represent sources
-      ) () (Symbol.N nt)
-  )
+      let count = Lr1.targets (fun count _ _ -> count + 1) 0 (Symbol.N nt) in
+      if count > 1 || (count = 1 && new_code_backend)
+      then
+        Lr1.targets
+          (fun () sources _ -> List.iter represent sources)
+          ()
+          (Symbol.N nt) )
+
 
 (* Enforce condition (3) above. *)
 
@@ -133,38 +124,42 @@ let handler state =
   try
     let _ = SymbolMap.find (Symbol.T Terminal.error) (Lr1.transitions state) in
     true
-  with Not_found ->
-    try
-      let _ = TerminalMap.lookup Terminal.error (Lr1.reductions state) in
-      true
-    with Not_found ->
-      false
+  with
+  | Not_found ->
+    ( try
+        let _ = TerminalMap.lookup Terminal.error (Lr1.reductions state) in
+        true
+      with
+    | Not_found ->
+        false )
 
-let handlers states =
-  Lr1.NodeSet.exists handler states
+
+let handlers states = Lr1.NodeSet.exists handler states
 
 let () =
   Lr1.iter (fun node ->
-    let v = stack_states node in
-    Array.iter (fun states ->
-      if Lr1.NodeSet.cardinal states >= 2 && handlers states then
-        represents states
-    ) v
-  )
+      let v = stack_states node in
+      Array.iter
+        (fun states ->
+          if Lr1.NodeSet.cardinal states >= 2 && handlers states
+          then represents states )
+        v )
+
 
 (* Enforce condition (4) above. *)
 
 let () =
   Production.iterx (fun prod ->
-    if Action.has_syntaxerror (Production.action prod) then
-      let sites = Lr1.production_where prod in
-      let length = Production.length prod in
-      if length = 0 then
-        Lr1.NodeSet.iter represent sites
-      else
-        let states = (production_states prod).(0) in
-        represents states
-  )
+      if Action.has_syntaxerror (Production.action prod)
+      then
+        let sites = Lr1.production_where prod in
+        let length = Production.length prod in
+        if length = 0
+        then Lr1.NodeSet.iter represent sites
+        else
+          let states = (production_states prod).(0) in
+          represents states )
+
 
 (* Define accessors. *)
 
@@ -186,23 +181,25 @@ let representeds states =
 
 let () =
   Error.logC 1 (fun f ->
-    let count =
-      Lr1.fold (fun count node ->
-        if represented node then count + 1 else count
-      ) 0
-    in
-    Printf.fprintf f "%d out of %d states are represented.\n" count Lr1.n
-  )
+      let count =
+        Lr1.fold
+          (fun count node -> if represented node then count + 1 else count)
+          0
+      in
+      Printf.fprintf f "%d out of %d states are represented.\n" count Lr1.n )
+
 
 (* If requested, show a detailed table of which states are represented. *)
 
 let () =
   Error.logC 3 (fun f ->
-    Lr1.iter (fun node ->
-      Printf.fprintf f "represented(%s) = %b\n"
-        (Lr1.print node) (represented node)
-    )
-  )
+      Lr1.iter (fun node ->
+          Printf.fprintf
+            f
+            "represented(%s) = %b\n"
+            (Lr1.print node)
+            (represented node) ) )
+
 
 (* ------------------------------------------------------------------------ *)
 
@@ -211,20 +208,25 @@ let () =
 
 open Keyword
 
-type variable =
-  Symbol.t * where (* WhereStart or WhereEnd *)
+type variable = Symbol.t * where (* WhereStart or WhereEnd *)
 
 module M : Fix.IMPERATIVE_MAPS with type key = variable = struct
   type key = variable
-  type 'data t = {
-    mutable startp: 'data SymbolMap.t;
-    mutable endp:   'data SymbolMap.t;
-  }
+
+  type 'data t =
+    { mutable startp : 'data SymbolMap.t
+    ; mutable endp : 'data SymbolMap.t
+    }
+
   open SymbolMap
-  let create() =
-    { startp = empty; endp = empty }
+
+  let create () = { startp = empty; endp = empty }
+
   let clear m =
-    m.startp <- empty; m.endp <- empty
+    m.startp <- empty;
+    m.endp <- empty
+
+
   let add (sym, where) data m =
     match where with
     | WhereStart ->
@@ -233,6 +235,8 @@ module M : Fix.IMPERATIVE_MAPS with type key = variable = struct
         m.endp <- add sym data m.endp
     | WhereSymbolStart ->
         assert false
+
+
   let find (sym, where) m =
     match where with
     | WhereStart ->
@@ -241,6 +245,8 @@ module M : Fix.IMPERATIVE_MAPS with type key = variable = struct
         find sym m.endp
     | WhereSymbolStart ->
         assert false
+
+
   let iter f m =
     iter (fun sym -> f (sym, WhereStart)) m.startp;
     iter (fun sym -> f (sym, WhereEnd)) m.endp
@@ -296,83 +302,81 @@ module F =
   FixSolver.Make(M)(Fix.Prop.Boolean)
 
 let () =
-
   (* We gather the constraints explained above in two loops. The first loop
      looks at every (non-start) production [prod]. The second loop looks at
      every (non-initial) state [s]. *)
-
   Production.iterx (fun prod ->
-
-    let nt, rhs = Production.def prod
-    and ids = Production.identifiers prod
-    and action = Production.action prod in
-    let length = Array.length rhs in
-
-    if length > 0 then begin
-      (* If [nt] keeps track of its start position, then the first symbol
-         in the right-hand side must do so as well. *)
-      F.record_VarVar (Symbol.N nt, WhereStart) (rhs.(0), WhereStart);
-      (* If [nt] keeps track of its end position, then the last symbol
-         in the right-hand side must do so as well. *)
-      F.record_VarVar (Symbol.N nt, WhereEnd) (rhs.(length - 1), WhereEnd)
-    end;
-
-    KeywordSet.iter (function
-      | SyntaxError ->
-          ()
-      | Position (Before, _, _) ->
-          (* Doing nothing here because [$endpos($0)] is dealt with in
-             the second loop. *)
-          ()
-      | Position (Left, _, _) ->
-          (* [$startpos] and [$endpos] have been expanded away. *)
-          assert false
-      | Position (_, _, FlavorLocation) ->
-          (* [$loc] and [$sloc] have been expanded away. *)
-          assert false
-      | Position (RightNamed _, WhereSymbolStart, _) ->
-          (* [$symbolstartpos(x)] does not exist. *)
-          assert false
-      | Position (RightNamed id, where, _) ->
-          (* If the semantic action mentions [$startpos($i)], then the
-             [i]-th symbol in the right-hand side must keep track of
-             its start position. Similarly for end positions. *)
-          Array.iteri (fun i id' ->
-            if id = id' then
-              F.record_ConVar true (rhs.(i), where)
-          ) ids
-    ) (Action.keywords action)
-
-  ); (* end of loop on productions *)
-
-  Lr1.iterx (fun s ->
-    (* Let [sym] be the incoming symbol of state [s]. *)
-    let sym = Option.force (Lr1.incoming_symbol s) in
-
-    (* Condition (1) in the long comment above (2015/11/11). If an epsilon
-       production [prod] can be reduced in state [s], if its left-hand side
-       [nt] keeps track of its start or end position, then [sym] must keep
-       track of its end position. *)
-    TerminalMap.iter (fun _ prods ->
-      let prod = Misc.single prods in
-      let nt, rhs = Production.def prod in
+      let nt, rhs = Production.def prod
+      and ids = Production.identifiers prod
+      and action = Production.action prod in
       let length = Array.length rhs in
-      if length = 0 then begin
-        F.record_VarVar (Symbol.N nt, WhereStart) (sym, WhereEnd);
-        F.record_VarVar (Symbol.N nt, WhereEnd) (sym, WhereEnd)
-      end
-    ) (Lr1.reductions s);
 
-    (* Condition (2) in the long comment above (2015/11/11). If a production
-       can be reduced in state [s] and mentions [$endpos($0)], then [sym]
-       must keep track of its end position. *)
-    if Lr1.has_beforeend s then
-      F.record_ConVar true (sym, WhereEnd)
+      if length > 0
+      then begin
+        (* If [nt] keeps track of its start position, then the first symbol
+           in the right-hand side must do so as well. *)
+        F.record_VarVar (Symbol.N nt, WhereStart) (rhs.(0), WhereStart);
+        (* If [nt] keeps track of its end position, then the last symbol
+           in the right-hand side must do so as well. *)
+        F.record_VarVar (Symbol.N nt, WhereEnd) (rhs.(length - 1), WhereEnd)
+      end;
 
-  )
+      KeywordSet.iter
+        (function
+          | SyntaxError ->
+              ()
+          | Position (Before, _, _) ->
+              (* Doing nothing here because [$endpos($0)] is dealt with in
+                 the second loop. *)
+              ()
+          | Position (Left, _, _) ->
+              (* [$startpos] and [$endpos] have been expanded away. *)
+              assert false
+          | Position (_, _, FlavorLocation) ->
+              (* [$loc] and [$sloc] have been expanded away. *)
+              assert false
+          | Position (RightNamed _, WhereSymbolStart, _) ->
+              (* [$symbolstartpos(x)] does not exist. *)
+              assert false
+          | Position (RightNamed id, where, _) ->
+              (* If the semantic action mentions [$startpos($i)], then the
+                 [i]-th symbol in the right-hand side must keep track of
+                 its start position. Similarly for end positions. *)
+              Array.iteri
+                (fun i id' ->
+                  if id = id' then F.record_ConVar true (rhs.(i), where) )
+                ids )
+        (Action.keywords action) );
+
+  (* end of loop on productions *)
+  Lr1.iterx (fun s ->
+      (* Let [sym] be the incoming symbol of state [s]. *)
+      let sym = Option.force (Lr1.incoming_symbol s) in
+
+      (* Condition (1) in the long comment above (2015/11/11). If an epsilon
+         production [prod] can be reduced in state [s], if its left-hand side
+         [nt] keeps track of its start or end position, then [sym] must keep
+         track of its end position. *)
+      TerminalMap.iter
+        (fun _ prods ->
+          let prod = Misc.single prods in
+          let nt, rhs = Production.def prod in
+          let length = Array.length rhs in
+          if length = 0
+          then begin
+            F.record_VarVar (Symbol.N nt, WhereStart) (sym, WhereEnd);
+            F.record_VarVar (Symbol.N nt, WhereEnd) (sym, WhereEnd)
+          end )
+        (Lr1.reductions s);
+
+      (* Condition (2) in the long comment above (2015/11/11). If a production
+         can be reduced in state [s] and mentions [$endpos($0)], then [sym]
+         must keep track of its end position. *)
+      if Lr1.has_beforeend s then F.record_ConVar true (sym, WhereEnd) )
+
 
 let track : variable -> bool option =
-  let module S = F.Solve() in
+  let module S = F.Solve () in
   S.solution
 
 let track : variable -> bool =
@@ -390,35 +394,54 @@ let for_every_symbol (f : Symbol.t -> unit) : unit =
   Terminal.iter (fun t -> f (Symbol.T t));
   Nonterminal.iter (fun nt -> f (Symbol.N nt))
 
+
 let sum_over_every_symbol (f : Symbol.t -> bool) : int =
   let c = ref 0 in
   for_every_symbol (fun sym -> if f sym then c := !c + 1);
   !c
 
+
 let () =
   Error.logC 1 (fun f ->
-    Printf.fprintf f
-      "%d out of %d symbols keep track of their start position.\n\
-       %d out of %d symbols keep track of their end position.\n"
-        (sum_over_every_symbol startp) (Terminal.n + Nonterminal.n)
-        (sum_over_every_symbol endp) (Terminal.n + Nonterminal.n))
+      Printf.fprintf
+        f
+        "%d out of %d symbols keep track of their start position.\n\
+         %d out of %d symbols keep track of their end position.\n"
+        (sum_over_every_symbol startp)
+        (Terminal.n + Nonterminal.n)
+        (sum_over_every_symbol endp)
+        (Terminal.n + Nonterminal.n) )
+
 
 (* ------------------------------------------------------------------------ *)
 (* Constructors and accessors for information about the stack. *)
 
 (* Types. *)
 
-type cell = {
-  symbol: Symbol.t;
-  states: Lr1.NodeSet.t;
-  holds_semv: bool;
-  holds_state: bool;
-  holds_startp: bool;
-  holds_endp: bool;
-}
+type cell =
+  { symbol : Symbol.t
+  ; states : Lr1.NodeSet.t
+  ; holds_semv : bool
+  ; holds_state : bool
+  ; holds_startp : bool
+  ; holds_endp : bool
+  }
 
-type word =
-  cell array
+let dummy_cell holds_state holds_semv holds_startp holds_endp =
+  { symbol = Grammar.Symbol.T Grammar.Terminal.error
+  ; states = Lr1.NodeSet.empty
+  ; holds_state
+  ; holds_semv
+  ; holds_startp
+  ; holds_endp
+  }
+
+
+let empty_cell = dummy_cell false false false false
+
+let full_cell = dummy_cell true true true true
+
+type word = cell array
 
 (* Constructors. *)
 
@@ -431,18 +454,46 @@ let has_semv symbol =
   | Symbol.N _nt ->
       true
   | Symbol.T tok ->
-      match Terminal.ocamltype tok with
-      | None ->
-          (* Token has unit type and is omitted in stack cell. *)
-          false
-      | Some _ocamltype ->
-          true
+    ( match Terminal.ocamltype tok with
+    | None ->
+        (* Token has unit type and is omitted in stack cell. *)
+        false
+    | Some _ocamltype ->
+        true )
+
 
 let cell symbol states =
   let holds_semv = has_semv symbol in
   let holds_state = representeds states in
-  let holds_startp, holds_endp = startp symbol, endp symbol in
+  let holds_startp, holds_endp = (startp symbol, endp symbol) in
   { symbol; states; holds_semv; holds_state; holds_startp; holds_endp }
+
+
+let cell_intersection c c' =
+  let { symbol; states; holds_semv; holds_state; holds_startp; holds_endp } = c
+  and { symbol = symbol'
+      ; states = states'
+      ; holds_semv = hold_semv'
+      ; holds_state = holds_state'
+      ; holds_startp = holds_startp'
+      ; holds_endp = holds_endp'
+      } =
+    c'
+  in
+  assert (
+    symbol = symbol'
+    && holds_semv = hold_semv'
+    && holds_state = holds_state'
+    && holds_startp = holds_startp'
+    && holds_endp = holds_endp' );
+  { symbol
+  ; states = Lr1.NodeSet.inter states states'
+  ; holds_semv
+  ; holds_state
+  ; holds_startp
+  ; holds_endp
+  }
+
 
 (* Accessors. *)
 
@@ -460,34 +511,30 @@ let pop =
 
 let fold_top f default w =
   let n = Array.length w in
-  if n = 0 then
-    default
-  else
-    f w.(n-1)
+  if n = 0 then default else f w.(n - 1)
+
 
 (* ------------------------------------------------------------------------ *)
 
 (* Publish the short invariant. *)
 
 module type STACK = sig
-
+  val stack : Lr1.node -> word
   (**[stack s] is the known suffix of the stack at state [s]. *)
-  val stack: Lr1.node -> word
 
+  val prodstack : Production.index -> word
   (**[prodstack prod] is the known suffix of the stack at a state where
      production [prod] can be reduced. In the short invariant, the length of
      this suffix is [Production.length prod]. In the long invariant, its
      length can be greater. If there are no states where [prod] can be
      reduced, then every cell contains an empty set of states. *)
-  val prodstack: Production.index -> word
 
+  val gotostack : Nonterminal.t -> word
   (**[gotostack nt] is the known suffix of the stack at a state where an
      edge labeled [nt] has just been followed. In the short invariant, the
      length of this suffix is [1]: indeed, it consists of just one cell,
      associated with the symbol [nt]. In the long invariant, its length can
      be greater. *)
-  val gotostack: Nonterminal.t -> word
-
 end
 
 (* Suppose we have a function [foo] that maps things to vectors of foos and
@@ -498,25 +545,28 @@ end
 
 let publish tabulate foo bar cell =
   tabulate (fun thing ->
-    let foos, bars = foo thing, bar thing in
-    assert (Array.length foos >= Array.length bars);
-    (* We allow [bars] to be shorter than [foos]. This is required in the
-       computation of the long invariant, where [validate] can reject sets
-       of states that are not equi-represented. In that case, we truncate
-       [foos] to match [bars]. *)
-    let k = Array.length bars in
-    let foos = MArray.truncate k foos in
-    Array.init k (fun i -> cell foos.(i) bars.(i))
-  )
+      let foos, bars = (foo thing, bar thing) in
+      assert (Array.length foos >= Array.length bars);
+      (* We allow [bars] to be shorter than [foos]. This is required in the
+         computation of the long invariant, where [validate] can reject sets
+         of states that are not equi-represented. In that case, we truncate
+         [foos] to match [bars]. *)
+      let k = Array.length bars in
+      let foos = MArray.truncate k foos in
+      Array.init k (fun i -> cell foos.(i) bars.(i)) )
+
 
 let stack : Lr1.node -> word =
   publish Lr1.tabulate stack_symbols stack_states cell
 
+
 let prodstack : Production.index -> word =
   publish Production.tabulate production_symbols production_states cell
 
+
 let gotostack : Nonterminal.t -> word =
   publish Nonterminal.tabulate goto_symbols goto_states cell
+
 
 (* ------------------------------------------------------------------------ *)
 (* Explain how the stack should be deconstructed when an error is found.
@@ -541,59 +591,57 @@ let rewind node : instruction =
   let w = stack node in
 
   let rec rewind w =
-    if Array.length w = 0 then
-
+    if Array.length w = 0
+    then
       (* I believe that every stack description either is definite
          (that is, ends with [TailEmpty]) or contains at least one
          represented state. Thus, if we find an empty [w], this
          means that the stack is definitely empty. *)
-
       Die
-
     else
-      let { states; _ } as cell = MArray.last w in
+      let ({ states; _ } as cell) = MArray.last w in
       let w = MArray.pop w in
 
-      if representeds states then
-
+      if representeds states
+      then
         (* Here is a represented state. We will pop this
            cell and no more. *)
-
         DownTo ([| cell |], Represented)
-
-      else if handlers states then begin
-
+      else if handlers states
+      then begin
         (* Here is an unrepresented state that can handle
            errors. The cell must hold a singleton set of states, so
            we know which state to jump to, even though it isn't
            represented. *)
-
         assert (Lr1.NodeSet.cardinal states = 1);
         let state = Lr1.NodeSet.choose states in
         DownTo ([| cell |], UnRepresented state)
-
       end
       else
-
         (* Here is an unrepresented state that does not handle
            errors. Pop this cell and look further. *)
-
         match rewind w with
         | Die ->
             Die
         | DownTo (w, st) ->
             DownTo (MArray.push w cell, st)
-
   in
+
   rewind w
+
 
 (* ------------------------------------------------------------------------- *)
 (* Miscellaneous. *)
 
 let universal symbol =
-  Lr1.fold (fun universal s ->
-    universal && (if represented s then SymbolMap.mem symbol (Lr1.transitions s) else true)
-  ) true
+  Lr1.fold
+    (fun universal s ->
+      universal
+      &&
+      if represented s then SymbolMap.mem symbol (Lr1.transitions s) else true
+      )
+    true
+
 
 (* ------------------------------------------------------------------------ *)
 (* Discover which states can peek at an error. These are the states
@@ -614,29 +662,31 @@ let universal symbol =
 let errorpeekers =
   (* First compute a set of symbols [nt]... *)
   let nts : SymbolSet.t =
-    Lr1.fold (fun nts node ->
-      try
-        let prods = TerminalMap.lookup Terminal.error (Lr1.reductions node) in
-        let prod = Misc.single prods in
-        let nt = Production.nt prod in
-        SymbolSet.add (Symbol.N nt) nts
-      with Not_found ->
-        nts
-    ) SymbolSet.empty
+    Lr1.fold
+      (fun nts node ->
+        try
+          let prods = TerminalMap.lookup Terminal.error (Lr1.reductions node) in
+          let prod = Misc.single prods in
+          let nt = Production.nt prod in
+          SymbolSet.add (Symbol.N nt) nts
+        with
+        | Not_found ->
+            nts )
+      SymbolSet.empty
   in
   (* ... then compute the set of all target states of all transitions
      labeled by some symbol in the set [nt]. *)
-  SymbolSet.fold (fun nt errorpeekers ->
-    Lr1.NodeSet.union errorpeekers (Lr1.all_targets nt)
-  ) nts Lr1.NodeSet.empty
+  SymbolSet.fold
+    (fun nt errorpeekers -> Lr1.NodeSet.union errorpeekers (Lr1.all_targets nt))
+    nts
+    Lr1.NodeSet.empty
 
-let errorpeeker node =
-  Lr1.NodeSet.mem node errorpeekers
+
+let errorpeeker node = Lr1.NodeSet.mem node errorpeekers
 
 (* ------------------------------------------------------------------------ *)
 
-let () =
-  Time.tick "Constructing the invariant"
+let () = Time.tick "Constructing the invariant"
 
 (* ------------------------------------------------------------------------ *)
 
@@ -661,56 +711,50 @@ let () =
    forget about any stack cells that are not equi-represented. *)
 
 module Long () = struct
-
   (* Compute. *)
 
-  module SSy =
-    StackSymbols.Long()
+  module SSy = StackSymbols.Long ()
 
-  module SSt =
-    StackStates.Run(SSy)
-
+  module SSt = StackStates.Run (SSy)
   open SSy (* crucial! shadows the short invariant *)
+
   open SSt (* crucial! shadows the short invariant *)
 
   (* Validate. *)
 
-  let unrepresented node =
-    not (represented node)
+  let unrepresented node = not (represented node)
 
   let equi_represented nodes =
-    Lr1.NodeSet.for_all represented nodes ||
-    Lr1.NodeSet.for_all unrepresented nodes
+    Lr1.NodeSet.for_all represented nodes
+    || Lr1.NodeSet.for_all unrepresented nodes
 
-  let validate states =
-    MArray.greatest_suffix_forall equi_represented states
 
-  let stack_states s =
-    validate @@ stack_states s
+  let validate states = MArray.greatest_suffix_forall equi_represented states
 
-  let production_states prod =
-    validate @@ production_states prod
+  let stack_states s = validate @@ stack_states s
 
-  let goto_states nt =
-    validate @@ goto_states nt
+  let production_states prod = validate @@ production_states prod
+
+  let goto_states nt = validate @@ goto_states nt
 
   (* Dump. *)
 
-  let () =
-    Error.logC 3 (dump "long")
+  let () = Error.logC 3 (dump "long")
 
   (* Publish. *)
 
   let stack : Lr1.node -> word =
     publish Lr1.tabulate stack_symbols stack_states cell
 
+
   let prodstack : Production.index -> word =
     publish Production.tabulate production_symbols production_states cell
+
 
   let gotostack : Nonterminal.t -> word =
     publish Nonterminal.tabulate goto_symbols goto_states cell
 
-  let () =
-    Time.tick "Constructing the long invariant"
 
-end (* Long *)
+  let () = Time.tick "Constructing the long invariant"
+end
+(* Long *)
