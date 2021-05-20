@@ -356,6 +356,8 @@ let no_push_commute =
 let unit_test =
   ref false
 
+let inlining_max_degree = ref 2
+
 let options = Arg.align [
   "--automaton-graph", Arg.Set automaton_graph, " (undocumented)";
   "--base", Arg.Set_string base, "<basename> Specifies a base name for the output file(s)";
@@ -385,6 +387,7 @@ let options = Arg.align [
   "--infer-protocol-supported", Arg.Unit (fun () -> exit 0), " Stop with exit code 0";
   "--infer-write-query", Arg.String enable_write_query, "<filename> Write mock .ml file";
   "--infer-read-reply", Arg.String enable_read_reply, "<filename> Read inferred .mli file";
+  "--inlining-max-degree", Arg.Set_int inlining_max_degree, " (undocumented)";
   "--inspection", Arg.Set inspection, " Generate the inspection API";
   "--interpret", Arg.Set interpret, " Interpret the sentences provided on stdin";
   "--interpret-show-cst", Arg.Set interpret_show_cst, " Show a concrete syntax tree upon acceptance";
@@ -757,3 +760,6 @@ let optimize_stack =
 
 let commute_pushes =
   not !no_push_commute
+
+let inlining_max_degree =
+  !inlining_max_degree
