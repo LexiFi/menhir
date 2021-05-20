@@ -3,6 +3,8 @@ open StackLang
 open StackLangUtils
 open Infix
 
+let state_reg = NamingConventions.state
+
 let fresh_int =
   let n = ref (-1) in
   fun () ->
@@ -423,6 +425,18 @@ let rec remove_dead_branches_block program possible_states block =
       let possible_states = represented_states program in
       let block = remove_dead_branches_block possible_states block in
       (pattern, block) )
+    ~def:(fun bindings block ->
+      let possible_states =
+        match Bindings.apply bindings (VReg state_reg) with
+        | VTag tag ->
+            TagSet.singleton tag
+        | VReg reg when state_reg = reg ->
+            possible_states
+        | _ ->
+            assert false
+      in
+      let block = remove_dead_branches_block possible_states block in
+      (bindings, block) )
     ~case_tag:(fun reg branches ->
       let branch_aux (TagMultiple taglist, block) =
         let taglist' =
@@ -532,11 +546,12 @@ let compute_has_case_tag program =
 
 let optimize program =
   remove_useless_defs
-    ( if Settings.commute_pushes
-    then
-      let program = compute_has_case_tag @@ commute_pushes program in
-      program
-    else program )
+  @@ remove_dead_branches
+       ( if Settings.commute_pushes
+       then
+         let program = compute_has_case_tag @@ commute_pushes program in
+         program
+       else program )
 
 
 let test () =

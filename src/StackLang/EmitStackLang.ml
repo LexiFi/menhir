@@ -211,6 +211,7 @@ let top_stack_type word =
     (Cell.full None)
     word
 
+
 (** [stack_type_of_word word] is the array of [cell_info] that represents the
     known stack cells corresponding to invariant word [word] *)
 let stack_type_of_word word =
@@ -240,16 +241,6 @@ let stack_type_of_word word =
        word )
 
 
-let has_semantic_value s =
-  if optimize_stack
-  then
-    Invariant.fold_top
-      (fun _ symbol -> CodePieces.has_semv symbol)
-      false
-      (Invariant.stack s)
-  else true
-
-
 let goto_needstartpos nt =
   (not optimize_stack)
   || Invariant.fold_top
@@ -266,62 +257,7 @@ let goto_needendpos nt =
        (Invariant.gotostack nt)
 
 
-(** Values needed by the goto associated to Nonterminal [nt] *)
-let goto_need nt =
-  (* The [run] subroutines that we call are reached via goto transitions,
-     therefore do not query the lexer. This means that [token] is needed. *)
-  ( [ lexer; lexbuf; token ]
-  @
-  if optimize_stack
-  then
-    Invariant.fold_top
-      (fun holds_state symbol ->
-        MList.(
-          if1 holds_state state
-          @ if1 (CodePieces.has_semv symbol) semv
-          @ if1 (Invariant.startp symbol) startp
-          @ if1 (Invariant.endp symbol) endp) )
-      []
-      (Invariant.gotostack nt)
-  else [ state; semv; startp; endp ] )
-  |> RegisterSet.of_list
-
-
 let run_represent_state s = (not optimize_stack) || Invariant.represented s
-
-(** Values needed by the run routine associated to state [s] *)
-let run_need s =
-  let is_start = Lr1.is_start s in
-  (* Determine whether the start and end positions of the current token
-     should be read from [lexbuf]. *)
-  let must_read_positions = must_read_positions_upon_entering s in
-  (* Determine whether a new cell must be pushed onto the stack. *)
-  let must_push = runpushes s in
-  let must_query_lexer = must_query_lexer_upon_entering s in
-  ( lexer :: lexbuf :: MList.if1 (not must_query_lexer) token
-  @ MList.if1 (must_push && has_semantic_value s) semv
-  @
-  if optimize_stack
-  then
-    Invariant.fold_top
-      (fun holds_state symbol ->
-        MList.if1 (must_push && holds_state) state
-        @ MList.if1
-            ( Invariant.startp symbol
-            && (not (is_start || must_read_positions))
-            && must_push )
-            startp
-        @ MList.if1
-            (Invariant.endp symbol && not (is_start || must_read_positions))
-            endp )
-      []
-      (Invariant.stack s)
-  else
-    MList.if1 must_push state
-    @ MList.if1 ((not (is_start || must_read_positions)) && must_push) startp
-    @ MList.if1 (not (is_start || must_read_positions)) endp )
-  |> RegisterSet.of_list
-
 
 let reduce_successor_need_startpos prod =
   (not @@ Production.is_start prod)
@@ -331,39 +267,6 @@ let reduce_successor_need_startpos prod =
 let reduce_successor_need_endpos prod =
   (not @@ Production.is_start prod)
   && ((not optimize_stack) || goto_needendpos (Production.nt prod))
-
-
-(** Values needed by the reduce routine associated to production [prod] *)
-let reduce_need prod =
-  let ids = Production.identifiers prod in
-  let n = Array.length ids in
-  let is_epsilon = n = 0 in
-  (* The register [endp] is also defined by the instructions that follow,
-     unless this is an epsilon production or the semantic action refers to
-     [beforeendp] -- in either of these cases, [endp] is needed (i.e., it must
-     be provided by the caller). *)
-  let has_beforeend =
-    (not (Production.is_start prod))
-    &&
-    let action = Production.action prod in
-    Action.has_beforeend action
-  in
-  ( if optimize_stack
-  then
-    [ lexer; lexbuf; token ]
-    @ MList.if1 is_epsilon state
-    @ MList.if1
-        ( (not @@ Production.is_start prod)
-        && ( is_epsilon
-             && ( goto_needendpos (Production.nt prod)
-                || goto_needstartpos (Production.nt prod) )
-           || has_beforeend ) )
-        endp
-  else
-    [ lexer; lexbuf; token ]
-    @ MList.if1 is_epsilon state
-    @ MList.if1 (is_epsilon || has_beforeend) endp )
-  |> RegisterSet.of_list
 
 
 (** Values pushed on the stack by the goto routine associated to nonterminal
@@ -500,21 +403,6 @@ module L = struct
 
     (* Determine whether the lexer should be queried for the next token. *)
     let must_query_lexer = must_query_lexer_upon_entering s in
-
-    (* At this point, the registers [lexer] and [lexbuf] are definitely needed.
-       The register [token] is needed unless we are about to query the lexer for
-       a new token. The registers [state] and [semv] are needed if we are
-       expected to push a cell onto the stack. The registers [startp] and [endp]
-       are needed unless this is an initial state or we are about to read these
-       positions from [lexbuf]. (Actually, more precisely, [startp] is not needed
-       if [must_push] is false. [endp] may still be needed even in that case.) *)
-
-    (* Note that it is not essential that the list of needed registers be tight.
-       This list could contain registers which are in fact not needed. It is
-       good practice to keep it as tight as possible, though, as this documents
-       the code that we produce (and allows us to benefit from a runtime
-       well-formedness test). *)
-    routine_need (run_need s);
     (* Log that we are entering state [s]. *)
     log "State %d:" (Lr1.number s);
     (* If necessary, read the positions of the current token from [lexbuf]. *)
@@ -619,11 +507,6 @@ module L = struct
        (i.e., it must be provided by the caller). *)
     let is_epsilon = n = 0 in
 
-    (* The register [endp] is also defined by the instructions that follow,
-       unless this is an epsilon production or the semantic action refers to
-       [beforeendp] -- in either of these cases, [endp] is needed (i.e., it must
-       be provided by the caller). *)
-    routine_need (reduce_need prod);
     (* Pop [n] stack cells and store their content in suitable registers.
        The state stored in the bottom cell (the one that is popped last)
        is stored in the register [state] and thus becomes the new current
@@ -667,16 +550,6 @@ module L = struct
       in
       if need_startpos then move startp (if n = 0 then endp else startpos ids 0);
       if need_endpos then move endp (if n = 0 then endp else endpos ids (n - 1));
-      (* We now need the registers [lexer], [lexbuf], [token], [state],
-         [startp], [endp], plus whatever registers are needed by the
-         semantic action. *)
-      need
-        (List.fold_right
-           RegisterSet.add
-           ( [ lexer; lexbuf; token; state ]
-           @ MList.if1 need_startpos startp
-           @ MList.if1 need_endpos endp )
-           (Action.vars action) );
       (* Execute the semantic action. Store its result in [semv]. *)
       prim semv (Primitive.action action);
       (* Execute a goto transition. *)
@@ -688,7 +561,6 @@ module L = struct
   (* Code for the [goto] subroutine associated with nonterminal symbol [nt]. *)
 
   let goto nt =
-    routine_need (goto_need nt);
     (* If it is up to this [goto] subroutine to push a new cell onto the stack,
        then do so now. If not, then it will be done by the [run] subroutine to
        which we are about to jump. *)

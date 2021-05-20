@@ -171,6 +171,6 @@ type states = state_info TagMap.t
    information associated to said state. *)
 type program =
   { cfg : cfg
-  ; entry : string StringMap.t
+  ; entry : string LabelMap.t
   ; states : states
   }
