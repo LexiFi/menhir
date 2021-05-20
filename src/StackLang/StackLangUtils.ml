@@ -41,6 +41,12 @@ let rec value_refers_to_register register value =
       false
 
 
+let cell_similar c1 c2 =
+  Invariant.(
+    (c1.symbol, c1.holds_semv, c1.holds_state, c1.holds_startp, c1.holds_endp)
+    = (c2.symbol, c2.holds_semv, c2.holds_state, c2.holds_startp, c2.holds_endp))
+
+
 let cells_intersection cells1 cells2 =
   let len1 = Array.length cells1 in
   let len2 = Array.length cells2 in
@@ -49,12 +55,16 @@ let cells_intersection cells1 cells2 =
   let i = ref 0 in
   while
     let i = !i in
-    i < len1 && i < len2 && cells1.(len1 - i - 1) = cells2.(len2 - i - 1)
+    i < len1
+    && i < len2
+    && cell_similar cells1.(len1 - i - 1) cells2.(len2 - i - 1)
   do
     i += 1
   done;
   let i = !i in
-  Array.sub cells1 (len1 - i) i
+  let cells1 = Array.sub cells1 (len1 - i) i in
+  let cells2 = Array.sub cells1 (len1 - i) i in
+  Array.map2 Invariant.cell_intersection cells1 cells2
 
 
 let state_info_intersection s1 s2 =
@@ -84,11 +94,12 @@ let filter_stack stack =
   Array.of_list
     (List.filter
        (function
-         | { hold_state = false
-           ; hold_semv = false
-           ; hold_startpos = false
-           ; hold_endpos = false
-           } ->
+         | Invariant.
+             { holds_state = false
+             ; holds_semv = false
+             ; holds_startp = false
+             ; holds_endp = false
+             } ->
              false
          | _ ->
              true )
@@ -140,67 +151,71 @@ let test_is_pattern_equivalent_to_value () =
          (VTuple [ VTag t1; VReg "a"; VTuple [ VTag t1; VReg "b" ] ]) )
 
 
+let cell = Invariant.dummy_cell
+
+let empty_cell = Invariant.empty_cell
+
 let test_cells_intersection () =
   (* check that [cells_intersection a a = a] *)
   assert (
     cells_intersection
-      [| Cell.make true false false false
-       ; Cell.make false false true false
-       ; Cell.empty
-       ; Cell.make false false true true
+      [| cell true false false false
+       ; cell false false true false
+       ; empty_cell
+       ; cell false false true true
       |]
-      [| Cell.make true false false false
-       ; Cell.make false false true false
-       ; Cell.empty
-       ; Cell.make false false true true
+      [| cell true false false false
+       ; cell false false true false
+       ; empty_cell
+       ; cell false false true true
       |]
-    = [| Cell.make true false false false
-       ; Cell.make false false true false
-       ; Cell.empty
-       ; Cell.make false false true true
+    = [| cell true false false false
+       ; cell false false true false
+       ; empty_cell
+       ; cell false false true true
       |] );
   (* check that if [a] is a suffix of [b] then [cells_intersection a b = a]*)
   assert (
     cells_intersection
-      [| Cell.make true false false false
-       ; Cell.make false false true false
-       ; Cell.empty
-       ; Cell.make false false true true
+      [| cell true false false false
+       ; cell false false true false
+       ; empty_cell
+       ; cell false false true true
       |]
-      [| Cell.empty; Cell.make false false true true |]
-    = [| Cell.empty; Cell.make false false true true |] );
+      [| empty_cell; cell false false true true |]
+    = [| empty_cell; cell false false true true |] );
   (* check that if the biggest common suffix of [a] and [b] is [ [||] ] then,
      [cells_intersection a b = [||]]*)
   assert (
     cells_intersection
-      [| Cell.make true false false false
-       ; Cell.make false false true false
-       ; Cell.empty
-       ; Cell.make false false true true
-       ; Cell.make false false true true
+      [| cell true false false false
+       ; cell false false true false
+       ; empty_cell
+       ; cell false false true true
+       ; cell false false true true
       |]
-      [| Cell.make true false false false
-       ; Cell.make false false true false
-       ; Cell.empty
-       ; Cell.make false false true true
-       ; Cell.make true true false false
+      [| cell true false false false
+       ; cell false false true false
+       ; empty_cell
+       ; cell false false true true
+       ; cell true true false false
       |]
     = [||] )
 
 
 let test_filter_stack () =
-  assert (filter_stack [| Cell.empty |] = [||]);
-  assert (filter_stack [| Cell.empty; Cell.empty; Cell.empty |] = [||]);
+  assert (filter_stack [| empty_cell |] = [||]);
+  assert (filter_stack [| empty_cell; empty_cell; empty_cell |] = [||]);
   assert (
     filter_stack
-      [| Cell.make true false false false
-       ; Cell.make false false true false
-       ; Cell.empty
-       ; Cell.make false false true true
+      [| cell true false false false
+       ; cell false false true false
+       ; empty_cell
+       ; cell false false true true
       |]
-    = [| Cell.make true false false false
-       ; Cell.make false false true false
-       ; Cell.make false false true true
+    = [| cell true false false false
+       ; cell false false true false
+       ; cell false false true true
       |] )
 
 

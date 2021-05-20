@@ -71,6 +71,23 @@ type cell = private {
 
 }
 
+(** [cell_intersection c c'] is the cell whose state field is the itersection of
+    [c.states] and [c'.states]. Every other cell must be equal. *)
+val cell_intersection : cell -> cell -> cell
+
+(** [dummy_cell holds_state holds_semv holds_startp holds_endp] is a cell with
+    the passed boolean fields, an empty [states] field, and the error token as a
+    symbol. For testing purposes. *)
+val dummy_cell : bool -> bool -> bool -> bool -> cell
+
+(** A cell that holds every possible field, has an empty [states] field and the
+    error token as a symbol. For testing purposes. *)
+val full_cell : cell
+
+(** A cell that holds nothing, has an empty [states] field and the error token
+    as a symbol. For testing purposes. *)
+val empty_cell : cell
+
 (**A word is a representation of a stack suffix. A word is an immutable
    array of cells, whose right end represents the top of the stack. Thus,
    the index 0 in the array corresponds to the cell that lies deepest in

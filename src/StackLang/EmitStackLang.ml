@@ -189,84 +189,26 @@ type nt = Nonterminal.t
 
 let optimize_stack = Settings.optimize_stack
 
-(* TODO remove the type [StackLang.cell_info] and use [Invariant.cell]
-   instead. This may require setting [hold_semv = typ <> None] always,
-   even when [optimize_stack] is false. *)
-
-(* TODO [top_stack_type] could be defined in two lines by using
-   [stack_type_of_word] and [suffix]. *)
-
-(** [top_stack_type word] is the cell info corresponding to the top of [word]  *)
-let top_stack_type word =
-  Invariant.fold_top
-    (fun cell ->
-      let { symbol; holds_state; holds_startp; holds_endp; _ } = cell in
-      let typ =
-        match symbol with
-        | Symbol.T t ->
-            Terminal.ocamltype t
-        | Symbol.N nt ->
-            Nonterminal.ocamltype nt
-      in
-      (* assert (holds_semv = (typ <> None)); *)
-      if optimize_stack
-      then
-        { typ
-        ; hold_state = holds_state
-        ; hold_semv = typ <> None
-        ; hold_startpos = holds_startp
-        ; hold_endpos = holds_endp
-        }
-      else Cell.full typ )
-    (Cell.full None)
-    word
-
-(** [stack_type_of_word word] is the array of [cell_info] that represents the
-    known stack cells corresponding to invariant word [word] *)
-let stack_type_of_word word =
-  Array.map (fun cell ->
-    let { symbol; holds_state; holds_startp; holds_endp; _ } = cell in
-         let typ =
-           match symbol with
-           | Symbol.T t ->
-               Terminal.ocamltype t
-           | Symbol.N nt ->
-               Nonterminal.ocamltype nt
-         in
-         (* assert (holds_semv = (typ <> None)); *)
-         if optimize_stack
-         then
-           Cell.make
-             ?typ
-             holds_state
-             (typ <> None)
-             holds_startp
-             holds_endp
-         else Cell.full typ
-  ) word
-
-(* TODO could define these functions in [Invariant]? *)
-let length =
-  Array.length
+let length = Array.length
 
 let top word =
   assert (length word > 0);
   MArray.last word
 
+
 let has_semantic_value s =
-  not optimize_stack ||
   let word = Invariant.stack s in
-  (top word).holds_semv
+  (not optimize_stack) || (top word).holds_semv
+
 
 let goto_needstartpos nt =
-  not optimize_stack ||
   let word = Invariant.gotostack nt in
-  (top word).holds_startp
+  (not optimize_stack) || (top word).holds_startp
+
 
 let goto_needendpos nt =
-  not optimize_stack ||
   let word = Invariant.gotostack nt in
-  (top word).holds_endp
+  (not optimize_stack) || (top word).holds_endp
 
 
 (** Values needed by the goto associated to Nonterminal [nt] *)
@@ -279,11 +221,11 @@ let goto_need nt =
   then
     let cell = top (Invariant.gotostack nt) in
     let { holds_state; holds_semv; holds_startp; holds_endp; _ } = cell in
-        MList.(
-          if1 holds_state state
-          @ if1 holds_semv semv
-          @ if1 holds_startp startp
-          @ if1 holds_endp endp )
+    MList.(
+      if1 holds_state state
+      @ if1 holds_semv semv
+      @ if1 holds_startp startp
+      @ if1 holds_endp endp)
   else [ state; semv; startp; endp ] )
   |> RegisterSet.of_list
 
@@ -306,16 +248,15 @@ let run_need s =
   then
     Invariant.fold_top
       (fun cell ->
-        let { holds_state; holds_startp; holds_endp; _} = cell in
+        let { holds_state; holds_startp; holds_endp; _ } = cell in
         MList.if1 (must_push && holds_state) state
         @ MList.if1
             ( holds_startp
             && (not (is_start || must_read_positions))
             && must_push )
             startp
-        @ MList.if1
-            (holds_endp && not (is_start || must_read_positions))
-            endp )
+        @ MList.if1 (holds_endp && not (is_start || must_read_positions)) endp
+        )
       []
       (Invariant.stack s)
   else
@@ -371,14 +312,14 @@ let reduce_need prod =
 (** Values pushed on the stack by the goto routine associated to nonterminal
     [nt]. Only used if [gotopushes nt] is true. *)
 let goto_pushtuple nt =
-  let ({ hold_state; hold_semv; hold_startpos; hold_endpos } as cell) =
-    top_stack_type (Invariant.gotostack nt)
+  let ({ holds_state; holds_semv; holds_startp; holds_endp } as cell) =
+    MArray.last (Invariant.gotostack nt)
   in
   let pushlist =
-    MList.if1 hold_state state
-    @ MList.if1 hold_semv semv
-    @ MList.if1 hold_startpos startp
-    @ MList.if1 hold_endpos endp
+    MList.if1 holds_state state
+    @ MList.if1 holds_semv semv
+    @ MList.if1 holds_startp startp
+    @ MList.if1 holds_endp endp
   in
   (pushlist, cell)
 
@@ -386,14 +327,14 @@ let goto_pushtuple nt =
 (** Values pushed on the stack by the run routine associated to state [s].
     Only used if [runpushes s] is true. *)
 let run_pushtuple s : string list * cell_info =
-  let ({ hold_state; hold_semv; hold_startpos; hold_endpos } as cell) =
-    top_stack_type (Invariant.stack s)
+  let ({ holds_state; holds_semv; holds_startp; holds_endp } as cell) =
+    MArray.last (Invariant.stack s)
   in
   let pushlist =
-    MList.if1 hold_state state
-    @ MList.if1 hold_semv semv
-    @ MList.if1 hold_startpos startp
-    @ MList.if1 hold_endpos endp
+    MList.if1 holds_state state
+    @ MList.if1 holds_semv semv
+    @ MList.if1 holds_startp startp
+    @ MList.if1 holds_endp endp
   in
   (pushlist, cell)
 
@@ -406,18 +347,18 @@ let stack_type_goto _nt = [||]
     production [prod] *)
 let stack_type_reduce prod =
   let symbols = Grammar.Production.rhs prod in
-  let r = stack_type_of_word (Invariant.prodstack prod) in
+  let r = Invariant.prodstack prod in
   assert (optimize_stack || Array.length r = Array.length symbols);
   r
 
 
 (** The known stack cells after popping state [state] *)
-let stack_type_state state = stack_type_of_word @@ Invariant.stack state
+let stack_type_state state = Invariant.stack state
 
 (** The known stack cells when entering the run routine associated to state
     [state] *)
 let stack_type_run state =
-  let st = stack_type_of_word (Invariant.stack state) in
+  let st = Invariant.stack state in
   let n_pushes = if runpushes state then 1 else 0 in
   let len = Array.length st in
   if len = 0 then [||] else Array.sub st 0 (len - n_pushes)
@@ -633,15 +574,15 @@ module L = struct
     for i = n - 1 downto 0 do
       let cell_info = stack_type.(i) in
       let pop_list =
-        MList.if1 cell_info.hold_state (if i = 0 then PReg state else PWildcard)
-        @ MList.if1 cell_info.hold_semv (PReg ids.(i))
-        @ MList.if1 cell_info.hold_startpos (PReg (startpos ids i))
-        @ MList.if1 cell_info.hold_endpos (PReg (endpos ids i))
+        MList.if1 cell_info.holds_state (if i = 0 then PReg state else PWildcard)
+        @ MList.if1 cell_info.holds_semv (PReg ids.(i))
+        @ MList.if1 cell_info.holds_startp (PReg (startpos ids i))
+        @ MList.if1 cell_info.holds_endp (PReg (endpos ids i))
       in
       if pop_list <> [] then pop (PTuple pop_list);
       (* If there is no semantic value in the stack, then it is of type unit
          and we need to define it ourselves *)
-      if not cell_info.hold_semv then def (PReg ids.(i)) VUnit
+      if not cell_info.holds_semv then def (PReg ids.(i)) VUnit
     done;
     (* If this is a start production, then reducing this production means
        accepting. This is done via a [return] instruction, which ends the
@@ -662,10 +603,10 @@ module L = struct
          and are later needed by [goto]. *)
       if Action.has_beforeend action then move beforeendp endp;
       let need_startpos =
-        successor_need_startpos && (is_epsilon || stack_type.(0).hold_startpos)
+        successor_need_startpos && (is_epsilon || stack_type.(0).holds_startp)
       in
       let need_endpos =
-        successor_need_endpos && (is_epsilon || stack_type.(n - 1).hold_endpos)
+        successor_need_endpos && (is_epsilon || stack_type.(n - 1).holds_endp)
       in
       if need_startpos then move startp (if n = 0 then endp else startpos ids 0);
       if need_endpos then move endp (if n = 0 then endp else endpos ids (n - 1));
