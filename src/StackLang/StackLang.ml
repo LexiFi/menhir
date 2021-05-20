@@ -74,14 +74,7 @@ type tagpat = TagMultiple of tag list
 (* -------------------------------------------------------------------------- *)
 
 (** Type representing a stack cell *)
-type cell_info =
-  { typ : Stretch.ocamltype option
-        (** Ocaml type of the semantic value. None means no type, sometime compiled as [unit]. *)
-  ; hold_semv : bool  (** Whether the semantic value is represented. *)
-  ; hold_state : bool  (** Whether the state is represented *)
-  ; hold_startpos : bool  (** Whether the start position is represented *)
-  ; hold_endpos : bool  (** Whether the end position is represented *)
-  }
+type cell_info = Invariant.cell
 
 (** information on a state. *)
 type state_info =

@@ -55,13 +55,17 @@ let ocamltype = function
       string stretch_content
 
 
-let cell_info { typ; hold_semv; hold_state; hold_startpos; hold_endpos } =
+let symbol s = string (Grammar.Symbol.print s)
+
+let cell_info
+    Invariant.{ symbol = s; holds_semv; holds_state; holds_startp; holds_endp }
+    =
   string "["
-  ^^ (match typ with None -> string "." | Some typ -> ocamltype typ)
-  ^^ OCaml.int (Bool.to_int hold_semv)
-  ^^ OCaml.int (Bool.to_int hold_state)
-  ^^ OCaml.int (Bool.to_int hold_startpos)
-  ^^ OCaml.int (Bool.to_int hold_endpos)
+  ^^ symbol s
+  ^^ OCaml.int (Bool.to_int holds_semv)
+  ^^ OCaml.int (Bool.to_int holds_state)
+  ^^ OCaml.int (Bool.to_int holds_startp)
+  ^^ OCaml.int (Bool.to_int holds_endp)
   ^^ string "]"
 
 

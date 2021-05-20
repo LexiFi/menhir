@@ -357,6 +357,8 @@ let fail_sync label block =
   fail label block message
 
 
+
+
 let check_cells label block reason known_cells needed_cells =
   let fail message =
     let message =
@@ -377,7 +379,7 @@ let check_cells label block reason known_cells needed_cells =
   if l1 < l2
   then fail @@ sprintf "Could discover %i known cells, but %i are needed." l1 l2;
   for i = 1 to l2 do
-    if known_cells.(l1 - i) <> needed_cells.(l2 - i)
+    if not (cell_similar known_cells.(l1 - i) needed_cells.(l2 - i))
     then fail @@ sprintf "Enough cells are known, but their content differ."
   done
 
@@ -428,7 +430,7 @@ let wt_knowncells_routine program label (t_block : typed_block) =
     Block.iter
       (wtkc_block known_cells sync)
       ~push:(fun value cell block ->
-        ( if cell.hold_state
+        ( if Invariant.(cell.holds_state)
         then
           match get_state_value sync value with
           | None ->
@@ -456,8 +458,8 @@ let wt_knowncells_routine program label (t_block : typed_block) =
            this function into not raising an error when it should. *)
         let sync = update_sync_with_bindings bindings sync in
         wtkc_block known_cells sync block )
-      ~jump:(fun label ->
-        let target = lookup label cfg in
+      ~jump:(fun label' ->
+        let target = lookup label' cfg in
         if RegisterSet.mem state_reg target.needed_registers
         then
           (* This checks that the stack is compatible with the state we are
@@ -608,10 +610,12 @@ let t1 = tag_of_int 1
 
 let t2 = tag_of_int 2
 
+let cell = Invariant.dummy_cell
+
 let good1 =
-  let c_cell = Cell.make ~typ:(Stretch.Inferred "c") true true false false in
-  let b_cell = Cell.make ~typ:(Stretch.Inferred "b") true true false false in
-  let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
+  let c_cell = cell true true false false in
+  let b_cell = cell true true false false in
+  let a_cell = cell false true false false in
   let states =
     TagMap.of_list
       [ (t0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
@@ -656,9 +660,9 @@ let good1 =
 
 
 let good2 =
-  let c_cell = Cell.make ~typ:(Stretch.Inferred "c") true true false false in
-  let b_cell = Cell.make ~typ:(Stretch.Inferred "b") true true false false in
-  let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
+  let c_cell = cell true true false false in
+  let b_cell = cell true true false false in
+  let a_cell = cell false true false false in
   let states =
     TagMap.of_list
       [ (t0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
@@ -690,9 +694,9 @@ let good2 =
 
 
 let good_sync =
-  let c_cell = Cell.make ~typ:(Stretch.Inferred "c") true true false false in
-  let b_cell = Cell.make ~typ:(Stretch.Inferred "b") true true false false in
-  let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
+  let c_cell = cell true true false false in
+  let b_cell = cell true true false false in
+  let a_cell = cell false true false false in
   let states =
     TagMap.of_list
       [ (t0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
@@ -745,9 +749,9 @@ let good_sync =
    is a value we just made-up, and therefore it does not give us any information
    on the stack. *)
 let bad_shadow_state =
-  let c_cell = Cell.make ~typ:(Stretch.Inferred "c") true true false false in
-  let b_cell = Cell.make ~typ:(Stretch.Inferred "b") true true false false in
-  let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
+  let c_cell = cell true true false false in
+  let b_cell = cell true true false false in
+  let a_cell = cell false true false false in
   let states =
     TagMap.of_list
       [ (t0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
@@ -795,9 +799,9 @@ let bad_shadow_state =
 (* Illegal because of the [jump f] in [g] : passing state [0] requires knowing
    2 cells, and only one is known.   *)
 let bad_sync =
-  let c_cell = Cell.make ~typ:(Stretch.Inferred "c") true true false false in
-  let b_cell = Cell.make ~typ:(Stretch.Inferred "b") true true false false in
-  let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
+  let c_cell = cell true true false false in
+  let b_cell = cell true true false false in
+  let a_cell = cell false true false false in
   let states =
     TagMap.of_list
       [ (t0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
@@ -843,9 +847,9 @@ let bad_sync =
 
 (* Illegal because of the [pop c] in [f] *)
 let bad_pop =
-  let c_cell = Cell.make ~typ:(Stretch.Inferred "c") true true false false in
-  let b_cell = Cell.make ~typ:(Stretch.Inferred "b") true true false false in
-  let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
+  let c_cell = cell true true false false in
+  let b_cell = cell true true false false in
+  let a_cell = cell false true false false in
   let states =
     TagMap.of_list
       [ (t0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
@@ -891,9 +895,9 @@ let bad_pop =
 
 
 let bad_push =
-  let c_cell = Cell.make ~typ:(Stretch.Inferred "c") true true false false in
-  let b_cell = Cell.make ~typ:(Stretch.Inferred "b") true true false false in
-  let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
+  let c_cell = cell true true false false in
+  let b_cell = cell true true false false in
+  let a_cell = cell false true false false in
   let states =
     TagMap.of_list
       [ (t0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
@@ -920,9 +924,9 @@ let bad_push =
    final type. *)
 let bad_final =
   let a_type = Stretch.Inferred "a" in
-  let c_cell = Cell.make ~typ:(Stretch.Inferred "c") true true false false in
-  let b_cell = Cell.make ~typ:(Stretch.Inferred "b") true true false false in
-  let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
+  let c_cell = cell true true false false in
+  let b_cell = cell true true false false in
+  let a_cell = cell false true false false in
   let states =
     TagMap.of_list
       [ (t0, { sfinal_type = None; known_cells = [| a_cell; b_cell |] })
@@ -966,9 +970,9 @@ let bad_final =
    return, which requires the discarded knowledge. *)
 let bad_final_2 =
   let a_type = Stretch.Inferred "a" in
-  let c_cell = Cell.make ~typ:(Stretch.Inferred "c") true true false false in
-  let b_cell = Cell.make ~typ:(Stretch.Inferred "b") true true false false in
-  let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
+  let c_cell = cell true true false false in
+  let b_cell = cell true true false false in
+  let a_cell = cell false true false false in
   let states =
     TagMap.of_list
       [ (t0, { sfinal_type = Some a_type; known_cells = [| a_cell; b_cell |] })
@@ -1005,9 +1009,9 @@ let bad_final_2 =
    jump to [f], which requires the discarded knowledge. *)
 let bad_final_3 =
   let a_type = Stretch.Inferred "a" in
-  let c_cell = Cell.make ~typ:(Stretch.Inferred "c") true true false false in
-  let b_cell = Cell.make ~typ:(Stretch.Inferred "b") true true false false in
-  let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
+  let c_cell = cell true true false false in
+  let b_cell = cell true true false false in
+  let a_cell = cell false true false false in
   let cfg =
     LabelMap.of_list
       [ ( "f"
@@ -1049,9 +1053,9 @@ let bad_final_3 =
 
 let bad_final_4 =
   let a_type = Stretch.Inferred "a" in
-  let c_cell = Cell.make ~typ:(Stretch.Inferred "c") true true false false in
-  let b_cell = Cell.make ~typ:(Stretch.Inferred "b") true true false false in
-  let a_cell = Cell.make ~typ:(Stretch.Inferred "a") false true false false in
+  let c_cell = cell true true false false in
+  let b_cell = cell true true false false in
+  let a_cell = cell false true false false in
   let cfg =
     LabelMap.of_list
       [ ( "f"
