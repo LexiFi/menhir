@@ -53,10 +53,7 @@ val routine_stack_type : cell_info array -> unit
     It is mandatory to call it once. *)
 
 val routine_final_type : Stretch.ocamltype -> unit
-(** Set the final type of the ro1utine *)
-
-val routine_need : registers -> unit
-(** [routine_stack_type typ] sets the type of the current routine to [typ].
+(** [routine_final_type typ] sets the final type of the current routine to [typ].
     It can be called once or never, depending on whether the routine has a
     determined final type. *)
 
@@ -67,10 +64,6 @@ val routine_need : registers -> unit
    independently constructed. *)
 
 (* Group 1: Instructions with exactly one successor. *)
-
-val need : registers -> unit
-
-val need_list : register list -> unit
 
 val push : value -> cell_info -> unit
 
