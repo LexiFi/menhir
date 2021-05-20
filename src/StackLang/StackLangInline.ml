@@ -2,7 +2,7 @@ open StackLang
 open StackLangUtils
 open Infix
 
-let max_degree = 1
+let max_degree = Settings.inlining_max_degree
 
 (* -------------------------------------------------------------------------- *)
 
