@@ -178,24 +178,30 @@ let typ_of_ocamltype_option typ =
   match typ with None -> tunit | Some typ -> TypTextual typ
 
 
+let typ_of_symbol = function
+  | Grammar.Symbol.T t ->
+      Grammar.Terminal.ocamltype t
+  | Grammar.Symbol.N nt ->
+      Grammar.Nonterminal.ocamltype nt
+
+
 (** [stack_type_of_cell_info tail final cell] return a [T.typ] of a stack where
     we the top stack cell is of shape [cell]. *)
-
-let stack_type_of_cell_info tail final =
-  S.(
-    function
-    | { hold_state = false
-      ; hold_semv = false
-      ; hold_startpos = false
-      ; hold_endpos = false
+let stack_type_of_cell_info tail final = function
+  | Invariant.
+      { holds_state = false
+      ; holds_semv = false
+      ; holds_startp = false
+      ; holds_endp = false
       } ->
-        tail
-    | { typ; hold_state; hold_semv; hold_startpos; hold_endpos } ->
-        TypApp
-          ( tcstack hold_state hold_semv hold_startpos hold_endpos
-          , [ tail ]
-            @ MList.if1 hold_semv (typ_of_ocamltype_option typ)
-            @ [ final ] ))
+      tail
+  | Invariant.{ symbol; holds_state; holds_semv; holds_startp; holds_endp } ->
+      let typ = typ_of_symbol symbol in
+      TypApp
+        ( tcstack holds_state holds_semv holds_startp holds_endp
+        , [ tail ]
+          @ MList.if1 holds_semv (typ_of_ocamltype_option typ)
+          @ [ final ] )
 
 
 (** [typ_stack_app tail final cells] return a value of type [T.typ] that
