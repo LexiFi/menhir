@@ -1,21 +1,24 @@
-# Houblix tests
+#### Houblix tests ####
 
-This directory contains tests on the grammar of hopix, an ml-like language
-developped for a compilation course.
-The `src` subdirectory contains the source of hopix, along with multiple
-`backends` that is directory containing a dune file specifying menhir options,
-whose name ends in `.backend`.
-The `tests` subdirectory contains tests directories, whose names end either with
-`.sexp.tests` or with `.pretty.tests`. Pretty tests are tests were a hopix is
-parsed, and then pretty printed, and the pretty printed output is compared.
-The sexp tests are the same, except that the s-expression representation of the
-AST is printed. This tests are more strict because it checks that the correct
-positions are recorded in the AST.
+This directory contains tests on the grammar of `hopix`, an ML-like language
+which has been developed for a compilation course.
 
-In the `tests` directory, there is also a `test.ml` that generates a dune.auto
-for the `tests` directory, and each `.tests` directories.
-It has no dependencies, so `ocaml test.ml` is sufficient to regenerate the dune
-files. You should call it every time you add or delete either a test or a
-backend.
+The `src` subdirectory contains the source code of `hopix`, along with multiple
+"back-ends". A back-end is a set of Menhir settings. Each back-end is described
+by a directory whose name ends in `.backend`. Each such directory contains a `dune`
+file that specifies the desired options.
 
-You can run only these tests with `dune build @test_houblix`.
+The `tests` subdirectory contains test directories, whose names end either
+with `.sexp.tests` or with `.pretty.tests`. Pretty tests are tests were a
+`hopix` source file is parsed and pretty-printed, and where the pretty-printed
+output is compared against a reference. The `sexp` tests are the same, except
+that an s-expression representation of the AST is printed. These tests are
+stricter, as they check that correct positions are recorded in the AST.
+
+The `tests` directory also contains the script `test.ml`, which generates a
+file named `dune.auto` in the `tests` directory and in each of the
+subdirectories `*.tests`. Running this script via the command `ocaml test.ml`
+is sufficient. You should run this command every time you add or delete either
+a test or a back-end.
+
+You can run the tests in this directory by typing `dune build @test_houblix`.
