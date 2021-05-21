@@ -4477,6 +4477,42 @@
 
 (rule (alias godiva) (action (diff godiva.conflicts.exp godiva.conflicts)))
 
+(rule (target gospel_uparser.opp.out) (deps gospel_uparser.mly)
+  (action
+    (with-outputs-to gospel_uparser.opp.out
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess %{read-lines:gospel_uparser.flags}
+          %{deps})))))
+
+(rule (alias gospel_uparser)
+  (action (diff gospel_uparser.opp.exp gospel_uparser.opp.out)))
+
+(rule
+  (targets gospel_uparser.out gospel_uparser.automaton
+    gospel_uparser.automaton.resolved gospel_uparser.conflicts
+    gospel_uparser.timings)
+  (deps gospel_uparser.mly)
+  (action
+    (with-outputs-to gospel_uparser.out
+      (with-accepted-exit-codes 0
+        (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
+          --timings-to gospel_uparser.timings
+          %{read-lines:gospel_uparser.flags} %{deps})))))
+
+(rule (alias gospel_uparser)
+  (action (diff gospel_uparser.exp gospel_uparser.out)))
+
+(rule (alias gospel_uparser)
+  (action (diff gospel_uparser.automaton.exp gospel_uparser.automaton)))
+
+(rule (alias gospel_uparser)
+  (action
+    (diff gospel_uparser.automaton.resolved.exp
+      gospel_uparser.automaton.resolved)))
+
+(rule (alias gospel_uparser)
+  (action (diff gospel_uparser.conflicts.exp gospel_uparser.conflicts)))
+
 (rule (target gromit.opp.out) (deps gromit.mly)
   (action
     (with-outputs-to gromit.opp.out
@@ -12508,6 +12544,7 @@
     (alias gdb.0.3-gdbmi_parser)
     (alias gettext.0.3.8-gettextPo_parser)
     (alias godiva)
+    (alias gospel_uparser)
     (alias gromit)
     (alias grune924)
     (alias heptagon.1.05.00-hept_parser)

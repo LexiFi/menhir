@@ -1,0 +1,1100 @@
+%{
+  open Ppxlib
+  open Identifier
+  open Uast
+
+  let mk_loc (s, e) = {
+    Location.loc_start = s;
+    Location.loc_end = e;
+    Location.loc_ghost = false;
+  }
+
+  let mk_pid pid l = Preid.create pid ~attrs:[] ~loc:(mk_loc l)
+  let mk_term d l = { term_desc = d; term_loc = mk_loc l }
+  let mk_pat d l = { pat_desc  = d; pat_loc  = mk_loc l }
+
+  let get_op l = Qpreid (mk_pid (mixfix "[_]") l)
+  let set_op l = Qpreid (mk_pid (mixfix "[<-]") l)
+  let sub_op l = Qpreid (mk_pid (mixfix "[_.._]") l)
+  let above_op l = Qpreid (mk_pid (mixfix "[_..]") l)
+  let below_op l = Qpreid (mk_pid (mixfix "[.._]") l)
+
+  let id_anonymous loc = Preid.create "_" ~attrs:[] ~loc
+
+  let array_get l =
+    Qdot (Qpreid (mk_pid "Array" l), mk_pid (mixfix "[_]") l)
+
+  let empty_vspec = {
+    sp_hd_ret = [];
+    sp_hd_nm = mk_pid "" (Lexing.dummy_pos, Lexing.dummy_pos);
+    sp_hd_args = [];
+    sp_pre = [];
+    sp_checks = [];
+    sp_post = [];
+    sp_xpost = [];
+    sp_writes = [];
+    sp_consumes= [];
+    sp_diverge = false;
+    sp_pure = false;
+    sp_equiv = [];
+    sp_text = "";
+  }
+
+  let empty_fspec = {
+    fun_req = [];
+    fun_ens = [];
+    fun_variant = [];
+    fun_coer = false;
+  }
+
+  let empty_tspec = {
+    ty_ephemeral = false;
+    ty_field = [];
+    ty_invariant = [];
+  }
+
+  let loc_of_qualid = function Qpreid pid | Qdot (_, pid) -> pid.pid_loc
+
+  let qualid_preid = function Qpreid p | Qdot (_, p) -> p
+%}
+%start axiom
+%start func
+%start func_spec
+%start type_spec
+%start val_spec
+%token AMPAMP
+%token AND
+%token ARROW
+%token AS
+%token <string> ATTRIBUTE
+%token AXIOM
+%token <string> BACKQUOTE_LIDENT
+%token BAR
+%token BARBAR
+%token <char> CHAR
+%token CHECKS
+%token COERCION
+%token COLON
+%token COLONCOLON
+%token COLONRIGHTBRC
+%token COMMA
+%token CONSUMES
+%token DIVERGES
+%token DOT
+%token DOTDOT
+%token ELSE
+%token ENSURES
+%token EOF
+%token EPHEMERAL
+%token EQUAL
+%token EQUIVALENT
+%token EXISTS
+%token FALSE
+%token <string> FLOAT
+%token FORALL
+%token FUN
+%token FUNCTION
+%token IF
+%token IN
+%token <string> INTEGER
+%token INVARIANT
+%token LARROW
+%token LEFTBRC
+%token LEFTBRCCOLON
+%token LEFTBRCRIGHTBRC
+%token LEFTPAR
+%token LEFTSQ
+%token LEFTSQRIGHTSQ
+%token LET
+%token <string> LIDENT
+%token LRARROW
+%token LTGT
+%token MATCH
+%token MODEL
+%token MODIFIES
+%token MUTABLE
+%token NOT
+%token OLD
+%token <string> OP1
+%token <string> OP2
+%token <string> OP3
+%token <string> OP4
+%token <string> OPPREF
+%token OR
+%token PREDICATE
+%token PURE
+%token QUESTION
+%token <string> QUOTE_LIDENT
+%token RAISES
+%token REC
+%token REQUIRES
+%token RIGHTBRC
+%token RIGHTPAR
+%token RIGHTSQ
+%token SEMICOLON
+%token STAR
+%token <string> STRING
+%token THEN
+%token TILDE
+%token TRUE
+%token <string> UIDENT
+%token UNDERSCORE
+%token VARIANT
+%token WITH
+%nonassoc IN
+%nonassoc DOT ELSE
+%nonassoc prec_named
+%right COLON
+%right ARROW LRARROW
+%right BARBAR OR
+%right AMPAMP AND
+%nonassoc NOT
+%right EQUAL LTGT OP1
+%right COLONCOLON
+%nonassoc OLD
+%left OP2
+%left OP3 STAR
+%left OP4
+%left BACKQUOTE_LIDENT
+%nonassoc prec_prefix_op
+%nonassoc LEFTSQ
+%nonassoc OPPREF
+%left BAR
+%type <Uast.axiom> axiom
+%type <Uast.function_> func
+%type <Uast.fun_spec> func_spec
+%type <Uast.type_spec> type_spec
+%type <Uast.val_spec> val_spec
+%%
+
+option_UNDERSCORE_:
+  
+    {    ( None )}
+| x = UNDERSCORE
+    {    ( Some x )}
+
+option_cast_:
+  
+    {    ( None )}
+| x = cast
+    {    ( Some x )}
+
+option_preceded_EQUAL_term__:
+  
+    {    ( None )}
+| _1 = EQUAL x = term
+    {let x =     ( x ) in
+    ( Some x )}
+
+boption_MUTABLE_:
+  
+    {    ( false )}
+| _1 = MUTABLE
+    {    ( true )}
+
+boption_REC_:
+  
+    {    ( false )}
+| _1 = REC
+    {    ( true )}
+
+loption_params_:
+  
+    {    ( [] )}
+| x = params
+    {    ( x )}
+
+loption_separated_nonempty_list_COMMA_term__:
+  
+    {    ( [] )}
+| x = separated_nonempty_list_COMMA_term_
+    {    ( x )}
+
+list_attr_:
+  
+    {    ( [] )}
+| x = attr xs = list_attr_
+    {    ( x :: xs )}
+
+list_fun_arg_:
+  
+    {    ( [] )}
+| x = fun_arg xs = list_fun_arg_
+    {    ( x :: xs )}
+
+nonempty_list_binder_var_:
+  x = binder_var
+    {    ( [ x ] )}
+| x = binder_var xs = nonempty_list_binder_var_
+    {    ( x :: xs )}
+
+nonempty_list_lident_:
+  x = lident
+    {    ( [ x ] )}
+| x = lident xs = nonempty_list_lident_
+    {    ( x :: xs )}
+
+nonempty_list_located_term_arg__:
+  x = located_term_arg_
+    {    ( [ x ] )}
+| x = located_term_arg_ xs = nonempty_list_located_term_arg__
+    {    ( x :: xs )}
+
+nonempty_list_pat_arg_:
+  x = pat_arg
+    {    ( [ x ] )}
+| x = pat_arg xs = nonempty_list_pat_arg_
+    {    ( x :: xs )}
+
+separated_nonempty_list_BAR_comma_list1_term__:
+  x = comma_list1_term_
+    {    ( [ x ] )}
+| x = comma_list1_term_ _2 = BAR xs = separated_nonempty_list_BAR_comma_list1_term__
+    {    ( x :: xs )}
+
+separated_nonempty_list_BAR_raises_:
+  x = raises
+    {    ( [ x ] )}
+| x = raises _2 = BAR xs = separated_nonempty_list_BAR_raises_
+    {    ( x :: xs )}
+
+separated_nonempty_list_BAR_separated_pair_pattern_ARROW_term__:
+  x = pattern _2 = ARROW y = term
+    {let x =     ( (x, y) ) in
+    ( [ x ] )}
+| x = pattern _2_inlined1 = ARROW y = term _2 = BAR xs = separated_nonempty_list_BAR_separated_pair_pattern_ARROW_term__
+    {let x =     ( (x, y) ) in
+    ( x :: xs )}
+
+separated_nonempty_list_COMMA_mk_pat_pat_uni___:
+  x = mk_pat_pat_uni__
+    {    ( [ x ] )}
+| x = mk_pat_pat_uni__ _2 = COMMA xs = separated_nonempty_list_COMMA_mk_pat_pat_uni___
+    {    ( x :: xs )}
+
+separated_nonempty_list_COMMA_quant_vars_:
+  x = quant_vars
+    {    ( [ x ] )}
+| x = quant_vars _2 = COMMA xs = separated_nonempty_list_COMMA_quant_vars_
+    {    ( x :: xs )}
+
+separated_nonempty_list_COMMA_ret_value_:
+  x = ret_value
+    {    ( [ x ] )}
+| x = ret_value _2 = COMMA xs = separated_nonempty_list_COMMA_ret_value_
+    {    ( x :: xs )}
+
+separated_nonempty_list_COMMA_term_:
+  x = term
+    {    ( [ x ] )}
+| x = term _2 = COMMA xs = separated_nonempty_list_COMMA_term_
+    {    ( x :: xs )}
+
+separated_nonempty_list_COMMA_typ_:
+  x = typ
+    {    ( [ x ] )}
+| x = typ _2 = COMMA xs = separated_nonempty_list_COMMA_typ_
+    {    ( x :: xs )}
+
+val_spec:
+  hd = val_spec_header bd = val_spec_body _3 = EOF
+    {  ( let sp_hd_ret, sp_hd_nm, sp_hd_args = hd in
+    { bd with sp_hd_ret; sp_hd_nm; sp_hd_args } )}
+
+axiom:
+  _1 = AXIOM id = lident _3 = COLON t = term _5 = EOF
+    {let _endpos = _endpos__5_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+  ( {ax_name = id; ax_term = t; ax_loc = mk_loc _loc} )}
+
+func:
+  _1 = FUNCTION fun_rec = boption_REC_ fun_name = func_name fun_params = loption_params_ _5 = COLON ty = typ fun_def = option_preceded_EQUAL_term__ _8 = EOF
+    {let _endpos = _endpos__8_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+  ( { fun_name; fun_rec; fun_type = Some ty; fun_params; fun_def; fun_spec = None;
+      fun_loc = mk_loc _loc } )}
+| _1 = PREDICATE fun_rec = boption_REC_ fun_name = func_name fun_params = params fun_def = option_preceded_EQUAL_term__ _6 = EOF
+    {let _endpos = _endpos__6_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+  ( { fun_name; fun_rec; fun_type = None; fun_params; fun_def; fun_spec = None;
+      fun_loc = mk_loc _loc } )}
+
+func_name:
+  _1 = lident_rich
+    {              (_1)}
+| _1 = LEFTPAR _2 = LEFTBRCRIGHTBRC _3 = RIGHTPAR
+    {let _endpos = _endpos__3_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+  ( mk_pid (mixfix "{}") _loc )}
+| _1 = LEFTPAR _2 = LEFTBRCCOLON _3 = UNDERSCORE _4 = COLONRIGHTBRC _5 = RIGHTPAR
+    {let _endpos = _endpos__5_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+  ( mk_pid (mixfix "{:_:}") _loc )}
+
+func_spec:
+  _1 = EOF
+    {      ( empty_fspec )}
+| _1 = nonempty_func_spec _2 = EOF
+    {                         ( _1 )}
+
+nonempty_func_spec:
+  _1 = REQUIRES t = term bd = func_spec
+    {  ( { bd with fun_req = t :: bd.fun_req } )}
+| _1 = ENSURES t = term bd = func_spec
+    {  ( { bd with fun_ens = t :: bd.fun_ens } )}
+| _1 = VARIANT t = term bd = func_spec
+    {  ( { bd with fun_variant = t :: bd.fun_variant } )}
+| _1 = COERCION bd = func_spec
+    {  ( { bd with fun_coer = true } )}
+
+type_spec:
+  _1 = EOF
+    {      ( empty_tspec )}
+| _1 = nonempty_type_spec _2 = EOF
+    {                         ( _1 )}
+
+nonempty_type_spec:
+  _1 = EPHEMERAL ts = type_spec
+    {  ( { ts with ty_ephemeral = true } )}
+| field = type_spec_model ts = type_spec
+    {  ( { ts with
+      ty_field = field :: ts.ty_field;
+      ty_ephemeral = ts.ty_ephemeral || field.f_mutable } )}
+| _1 = INVARIANT inv = term ts = type_spec
+    {  ( { ts with ty_invariant = inv :: ts.ty_invariant } )}
+
+type_spec_model:
+  f_mutable = boption_MUTABLE_ _2 = MODEL f_preid = lident_rich _4 = COLON f_pty = typ
+    {let _endpos = _endpos_f_pty_ in
+let _startpos = _startpos_f_mutable_ in
+let _loc = (_startpos, _endpos) in
+  ( { f_preid; f_mutable; f_pty;
+      f_loc = mk_loc _loc } )}
+
+val_spec_header:
+  ret = ret_name nm = lident_rich args = list_fun_arg_
+    {  ( ret, nm, args )}
+| nm = lident_rich args = list_fun_arg_
+    {  ( [], nm, args )}
+
+val_spec_body:
+  
+    {                   ( empty_vspec )}
+| _1 = PURE bd = val_spec_body
+    {  ( {bd with sp_pure = true} )}
+| _1 = DIVERGES bd = val_spec_body
+    {  ( {bd with sp_diverge = true} )}
+| _1 = MODIFIES xs = loption_separated_nonempty_list_COMMA_term__ bd = val_spec_body
+    {let wr =     ( xs ) in
+  ( { bd with sp_writes = wr @ bd.sp_writes } )}
+| _1 = CONSUMES xs = loption_separated_nonempty_list_COMMA_term__ bd = val_spec_body
+    {let cs =     ( xs ) in
+  ( { bd with sp_consumes = cs @ bd.sp_consumes } )}
+| _1 = REQUIRES t = term bd = val_spec_body
+    {  ( { bd with sp_pre = t :: bd.sp_pre } )}
+| _1 = CHECKS t = term bd = val_spec_body
+    {  ( { bd with sp_checks = t :: bd.sp_pre } )}
+| _1 = ENSURES t = term bd = val_spec_body
+    {  ( { bd with sp_post = t :: bd.sp_post} )}
+| _1 = RAISES r = bar_list1_raises_ bd = val_spec_body
+    {let _loc_r_ = (_startpos_r_, _endpos_r_) in
+  ( let xp = mk_loc _loc_r_, r in
+    { bd with sp_xpost = xp :: bd.sp_xpost } )}
+| _1 = EQUIVALENT e = STRING bd = val_spec_body
+    {  ( { bd with sp_equiv = e :: bd.sp_equiv} )}
+
+fun_arg:
+  _1 = LEFTPAR _2 = RIGHTPAR
+    {  ( Lunit )}
+| _1 = lident
+    {  ( Lnone _1 )}
+| _1 = TILDE _2 = lident
+    {  ( Lnamed _2 )}
+| _1 = QUESTION _2 = lident
+    {  ( Loptional _2 )}
+| _1 = LEFTSQ id = lident _3 = COLON ty = typ _5 = RIGHTSQ
+    {  ( Lghost (id, ty) )}
+
+ret_value:
+  _1 = lident
+    {  ( Lnone _1 )}
+| _1 = LEFTSQ id = lident _3 = COLON ty = typ _5 = RIGHTSQ
+    {  ( Lghost (id, ty) )}
+
+ret_name:
+  _1 = LEFTPAR _2 = comma_list_ret_value_ _3 = RIGHTPAR _4 = EQUAL
+    {  ( _2 )}
+| _1 = comma_list_ret_value_ _2 = EQUAL
+    {                              ( _1 )}
+
+raises:
+  q = uqualid _2 = ARROW t = term
+    {let _loc_q_ = (_startpos_q_, _endpos_q_) in
+  ( q, Some (mk_pat (Ptuple []) _loc_q_, t) )}
+| q = uqualid p = pat_arg _3 = ARROW t = term
+    {  ( q, Some (p, t) )}
+| q = uqualid
+    {  ( q, None)}
+
+params:
+  _1 = param
+    {         ( _1 )}
+| _1 = param _2 = params
+    {               ( _1 @ _2 )}
+
+param:
+  _1 = LEFTPAR params = nonempty_list_lident_ _3 = COLON _1_inlined1 = typ _5 = RIGHTPAR
+    {let t =
+  let _1 = _1_inlined1 in
+        (_1)
+in
+let _endpos = _endpos__5_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+  ( List.map (fun x -> mk_loc _loc, x, t) params )}
+
+cast:
+  _1 = COLON _2 = ty_arg
+    {                ( _2 )}
+
+term:
+  t = mk_term_term__
+    {                         ( t )}
+
+term_:
+  _1 = term_arg_
+    {    ( _1 )}
+| _1 = NOT _2 = term
+    {    ( Tnot _2 )}
+| _1 = OLD _2 = term
+    {    ( Told _2 )}
+| _1 = prefix_op _2 = term %prec prec_prefix_op
+    {    ( Tidapp (Qpreid _1, [_2]) )}
+| l = term _1 = ARROW r = term
+    {let o =           ( Timplies ) in
+    ( Tbinop (l, o, r) )}
+| l = term _1 = LRARROW r = term
+    {let o =           ( Tiff ) in
+    ( Tbinop (l, o, r) )}
+| l = term _1 = OR r = term
+    {let o =           ( Tor ) in
+    ( Tbinop (l, o, r) )}
+| l = term _1 = BARBAR r = term
+    {let o =           ( Tor_asym ) in
+    ( Tbinop (l, o, r) )}
+| l = term _1 = AND r = term
+    {let o =           ( Tand ) in
+    ( Tbinop (l, o, r) )}
+| l = term _1 = AMPAMP r = term
+    {let o =           ( Tand_asym ) in
+    ( Tbinop (l, o, r) )}
+| l = term o = OP1 r = term
+    {let o =
+  let _endpos = _endpos_o_ in
+  let _startpos = _startpos_o_ in
+  let _loc = (_startpos, _endpos) in
+              ( mk_pid (infix o) _loc )
+in
+    ( Tinfix (l, o, r) )}
+| l = term _1 = EQUAL r = term
+    {let o =
+  let _endpos = _endpos__1_ in
+  let _startpos = _startpos__1_ in
+  let _loc = (_startpos, _endpos) in
+              ( mk_pid (infix "=") _loc )
+in
+    ( Tinfix (l, o, r) )}
+| l = term _1 = LTGT r = term
+    {let o =
+  let _endpos = _endpos__1_ in
+  let _startpos = _startpos__1_ in
+  let _loc = (_startpos, _endpos) in
+              ( mk_pid (infix "<>") _loc )
+in
+    ( Tinfix (l, o, r) )}
+| l = term o = OP2 r = term
+    {let o =
+  let _endpos = _endpos_o_ in
+  let _startpos = _startpos_o_ in
+  let _loc = (_startpos, _endpos) in
+              ( mk_pid (infix o) _loc )
+in
+    ( Tidapp (Qpreid o, [l; r]) )}
+| l = term o = OP3 r = term
+    {let o =
+  let _endpos = _endpos_o_ in
+  let _startpos = _startpos_o_ in
+  let _loc = (_startpos, _endpos) in
+              ( mk_pid (infix o) _loc )
+in
+    ( Tidapp (Qpreid o, [l; r]) )}
+| l = term _1 = STAR r = term
+    {let o =
+  let _endpos = _endpos__1_ in
+  let _startpos = _startpos__1_ in
+  let _loc = (_startpos, _endpos) in
+              ( mk_pid (infix "*") _loc )
+in
+    ( Tidapp (Qpreid o, [l; r]) )}
+| l = term o = OP4 r = term
+    {let o =
+  let _endpos = _endpos_o_ in
+  let _startpos = _startpos_o_ in
+  let _loc = (_startpos, _endpos) in
+              ( mk_pid (infix o) _loc )
+in
+    ( Tidapp (Qpreid o, [l; r]) )}
+| l = term _2 = COLONCOLON r = term
+    {let _endpos = _endpos_r_ in
+let _startpos = _startpos_l_ in
+let _loc = (_startpos, _endpos) in
+    ( Tidapp (Qpreid (mk_pid (infix "::") _loc), [l; r]) )}
+| l = term o = BACKQUOTE_LIDENT r = term
+    {let _endpos = _endpos_r_ in
+let _startpos = _startpos_l_ in
+let _loc = (_startpos, _endpos) in
+    ( let id = mk_pid o _loc in
+      Tidapp (Qpreid id, [l; r]) )}
+| _1 = term_arg _2 = nonempty_list_located_term_arg__
+    {let _startpos = _startpos__1_ in
+    ( let join f (a, _ ,e) = mk_term (Tapply (f, a)) (_startpos, e) in
+      (List.fold_left join _1 _2).term_desc )}
+| _1 = IF _2 = term _3 = THEN _4 = term _5 = ELSE _6 = term
+    {    ( Tif (_2, _4, _6) )}
+| _1 = LET _2 = pattern _3 = EQUAL _4 = term _5 = IN _6 = term
+    {    ( let cast ty = { _4 with term_desc = Tcast (_4, ty) } in
+      let pat, def = match _2.pat_desc with
+        | Ptuple [] -> { _2 with pat_desc = Pwild }, cast (PTtuple [])
+        | Pcast ({pat_desc = (Pvar _|Pwild)} as p, ty) -> p, cast ty
+        | _ -> _2, _4 in
+      match pat.pat_desc with
+      | Pvar id -> Tlet (id, def, _6)
+      | Pwild -> Tlet (id_anonymous pat.pat_loc, def, _6)
+      | _ -> Tcase (def, [pat, _6]) )}
+| _1 = LET _2 = attrs_lident_op_id_ _3 = EQUAL _4 = term _5 = IN _6 = term
+    {    ( Tlet (_2, _4, _6) )}
+| _1 = MATCH _2 = term _3 = WITH _4 = match_cases_term_
+    {    ( Tcase (_2, _4) )}
+| _1 = MATCH _2 = comma_list2_term_ _3 = WITH _4 = match_cases_term_
+    {let _loc__2_ = (_startpos__2_, _endpos__2_) in
+    ( Tcase (mk_term (Ttuple _2) _loc__2_, _4) )}
+| _1 = quant _2 = comma_list1_quant_vars_ _3 = triggers _4 = DOT _5 = term
+    {    ( Tquant (_1, List.concat _2, _3, _5) )}
+| _1 = FUN args = quant_vars _3 = ARROW t = term
+    {    ( Tquant (Tlambda, args, [], t) )}
+| _1 = attr _2 = term %prec prec_named
+    {    ( Tattr (_1, _2) )}
+| _1 = term _2 = cast
+    {    ( Tcast (_1, _2) )}
+
+field_list1_term_:
+  fl = semicolon_list1_term_rec_field_term__
+    {                                          ( fl )}
+
+term_rec_field_term_:
+  x = lqualid _2 = EQUAL y = term
+    {let _1 =     ( (x, y) ) in
+                                    ( _1 )}
+| _1 = lqualid
+    {          ( let t = {term_desc = Tpreid _1;
+                     term_loc = loc_of_qualid _1} in
+            (_1,t)
+          )}
+
+match_cases_term_:
+  cl = bar_list1_separated_pair_pattern_ARROW_term__
+    {                                                    ( cl )}
+
+quant_vars:
+  _1 = nonempty_list_binder_var_ _2 = option_cast_
+    {                    ( List.map (fun id -> id, _2) _1 )}
+
+triggers:
+  
+    {                                                                ( [] )}
+| _1 = LEFTSQ _2 = separated_nonempty_list_BAR_comma_list1_term__ _3 = RIGHTSQ
+    {                                                                ( _2 )}
+
+attrs_lident_:
+  _1 = lident _2 = list_attr_
+    {                  ( List.fold_left (fun acc s -> Preid.add_attr acc s) _1 _2 )}
+
+attrs_lident_op_id_:
+  _1 = lident_op_id _2 = list_attr_
+    {                  ( List.fold_left (fun acc s -> Preid.add_attr acc s) _1 _2 )}
+
+attr:
+  _1 = ATTRIBUTE
+    {               ( _1 )}
+
+term_arg:
+  _1 = mk_term_term_arg__
+    {                             ( _1 )}
+
+term_dot:
+  _1 = mk_term_term_dot__
+    {                             ( _1 )}
+
+term_arg_:
+  _1 = qualid
+    {                            ( Tpreid _1 )}
+| _1 = constant
+    {                            ( Tconst _1 )}
+| _1 = TRUE
+    {                            ( Ttrue )}
+| _1 = FALSE
+    {                            ( Tfalse )}
+| o = OPPREF a = term_arg
+    {let o =
+  let _endpos = _endpos_o_ in
+  let _startpos = _startpos_o_ in
+  let _loc = (_startpos, _endpos) in
+               ( mk_pid (prefix o) _loc )
+in
+                            ( Tidapp (Qpreid o, [a]) )}
+| _1 = term_sub_
+    {                            ( _1 )}
+
+term_dot_:
+  _1 = lqualid
+    {                            ( Tpreid _1 )}
+| o = OPPREF a = term_dot
+    {let o =
+  let _endpos = _endpos_o_ in
+  let _startpos = _startpos_o_ in
+  let _loc = (_startpos, _endpos) in
+               ( mk_pid (prefix o) _loc )
+in
+                            ( Tidapp (Qpreid o, [a]) )}
+| _1 = term_sub_
+    {                            ( _1 )}
+
+term_block_:
+  _1 = LEFTPAR t = term _3 = RIGHTPAR
+    {                                                    ( t.term_desc )}
+| _1 = LEFTPAR _2 = RIGHTPAR
+    {                                                    ( Ttuple [] )}
+| _1 = LEFTSQRIGHTSQ
+    {let _endpos = _endpos__1_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+    ( Tpreid (Qpreid (mk_pid "[]"  _loc)) )}
+| _1 = LEFTBRC _2 = field_list1_term_ _3 = RIGHTBRC
+    {                                                    ( Trecord _2 )}
+| _1 = LEFTBRC _2 = term_arg _3 = WITH _4 = field_list1_term_ _5 = RIGHTBRC
+    {                                                    ( Tupdate (_2,_4) )}
+| _1 = LEFTBRCRIGHTBRC
+    {let _endpos = _endpos__1_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+    ( Tpreid (Qpreid (mk_pid (mixfix "{}") _loc)) )}
+| _1 = LEFTBRCCOLON t = term _3 = COLONRIGHTBRC
+    {let _endpos = _endpos__3_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+    ( let id = Qpreid (mk_pid (mixfix "{:_:}") _loc) in
+      Tidapp (id, [t]) )}
+
+term_sub_:
+  _1 = term_block_
+    {                                                    ( _1 )}
+| _1 = uqualid _2 = DOT _3 = mk_term_term_block__
+    {                                                    ( Tscope (_1, _3) )}
+| _1 = term_dot _2 = DOT _3 = lqualid_rich
+    {                                                    ( Tidapp (_3,[_1]) )}
+| _1 = term_arg _2 = LEFTSQ _3 = term _4 = RIGHTSQ
+    {let _loc__2_ = (_startpos__2_, _endpos__2_) in
+    ( Tidapp (get_op _loc__2_, [_1;_3]) )}
+| _1 = term_arg _2 = LEFTSQ _3 = term _4 = LARROW _5 = term _6 = RIGHTSQ
+    {let _loc__2_ = (_startpos__2_, _endpos__2_) in
+    ( Tidapp (set_op _loc__2_, [_1;_3;_5]) )}
+| _1 = term_arg _2 = LEFTSQ _3 = term _4 = DOTDOT _5 = term _6 = RIGHTSQ
+    {let _loc__2_ = (_startpos__2_, _endpos__2_) in
+    ( Tidapp (sub_op _loc__2_, [_1;_3;_5]) )}
+| _1 = term_arg _2 = LEFTSQ _3 = term _4 = DOTDOT _5 = RIGHTSQ
+    {let _loc__2_ = (_startpos__2_, _endpos__2_) in
+    ( Tidapp (above_op _loc__2_, [_1;_3]) )}
+| _1 = term_arg _2 = LEFTSQ _3 = DOTDOT _4 = term _5 = RIGHTSQ
+    {let _loc__2_ = (_startpos__2_, _endpos__2_) in
+    ( Tidapp (below_op _loc__2_, [_1;_4]) )}
+| _1 = LEFTPAR _2 = comma_list2_term_ _3 = RIGHTPAR
+    {                                                    ( Ttuple _2 )}
+| _1 = term_dot _2 = DOT _3 = LEFTPAR _4 = term _5 = RIGHTPAR
+    {let _loc__2_ = (_startpos__2_, _endpos__2_) in
+    ( Tidapp (array_get _loc__2_, [_1; _4]) )}
+| t1 = term_dot _2 = DOT _3 = LEFTPAR t2 = term _5 = LARROW t3 = term _7 = RIGHTPAR
+    {let _loc__2_ = (_startpos__2_, _endpos__2_) in
+    ( Tidapp (set_op _loc__2_, [t1;t2;t3]) )}
+
+quant:
+  _1 = FORALL
+    {          ( Tforall )}
+| _1 = EXISTS
+    {          ( Texists )}
+
+constant:
+  _1 = INTEGER
+    {          ( Parsetree.Pconst_integer (_1, None) )}
+| _1 = FLOAT
+    {        ( Parsetree.Pconst_float (_1, None) )}
+| _1 = STRING
+    {let _endpos = _endpos__1_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+         ( Pconst_string (_1, mk_loc _loc, None) )}
+| _1 = CHAR
+    {       ( Pconst_char _1 )}
+
+binder_var:
+  _1 = attrs_lident_
+    {                 ( _1 )}
+
+typ:
+  _1 = ty_arg
+    {    ( _1 )}
+| id = lident _2 = COLON aty = typ _4 = ARROW rty = typ
+    {    ( PTarrow (Lnamed id, aty, rty) )}
+| _1 = QUESTION id = lident _3 = COLON aty = typ _5 = ARROW rty = typ
+    {    ( PTarrow (Loptional id, aty, rty) )}
+| _1 = typ _2 = ARROW _3 = typ
+    {let _endpos = _endpos__3_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+    ( let l = mk_loc _loc in
+      PTarrow (Lnone (id_anonymous l), _1, _3) )}
+| _1 = ty_arg _2 = STAR _3 = ty_tuple
+    {    ( PTtuple (_1 :: _3) )}
+
+ty_tuple:
+  _1 = ty_arg
+    {    ( [_1] )}
+| _1 = ty_arg _2 = STAR _3 = ty_tuple
+    {    ( _1 :: _3 )}
+
+ty_arg:
+  _1 = lqualid
+    {    ( PTtyapp (_1, []) )}
+| _1 = quote_lident
+    {    ( PTtyvar _1 )}
+| _1 = LEFTPAR _2 = typ _3 = RIGHTPAR
+    {    ( _2 )}
+| _1 = ty_arg _2 = lqualid
+    {    ( PTtyapp (_2, [_1]) )}
+| _1 = LEFTPAR _2 = typ _3 = COMMA _4 = separated_nonempty_list_COMMA_typ_ _5 = RIGHTPAR id = lqualid
+    {    ( PTtyapp (id, _2::_4) )}
+
+mk_term_term__:
+  d = term_
+    {let _endpos = _endpos_d_ in
+let _startpos = _startpos_d_ in
+let _loc = (_startpos, _endpos) in
+                  ( mk_term d _loc )}
+
+mk_term_term_arg__:
+  d = term_arg_
+    {let _endpos = _endpos_d_ in
+let _startpos = _startpos_d_ in
+let _loc = (_startpos, _endpos) in
+                  ( mk_term d _loc )}
+
+mk_term_term_block__:
+  d = term_block_
+    {let _endpos = _endpos_d_ in
+let _startpos = _startpos_d_ in
+let _loc = (_startpos, _endpos) in
+                  ( mk_term d _loc )}
+
+mk_term_term_dot__:
+  d = term_dot_
+    {let _endpos = _endpos_d_ in
+let _startpos = _startpos_d_ in
+let _loc = (_startpos, _endpos) in
+                  ( mk_term d _loc )}
+
+mk_pat_pat_arg__:
+  _1 = pat_arg_
+    {let _endpos = _endpos__1_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+             ( mk_pat _1 _loc )}
+
+mk_pat_pat_conj__:
+  _1 = pat_conj_
+    {let _endpos = _endpos__1_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+             ( mk_pat _1 _loc )}
+
+mk_pat_pat_uni__:
+  _1 = pat_uni_
+    {let _endpos = _endpos__1_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+             ( mk_pat _1 _loc )}
+
+mk_pat_pattern__:
+  _1 = pattern_
+    {let _endpos = _endpos__1_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+             ( mk_pat _1 _loc )}
+
+pattern:
+  _1 = mk_pat_pattern__
+    {                          ( _1 )}
+
+pat_arg:
+  _1 = mk_pat_pat_arg__
+    {                          ( _1 )}
+
+pattern_:
+  _1 = pat_conj_
+    {                                        ( _1 )}
+| _1 = mk_pat_pat_conj__ _2 = BAR _3 = pattern
+    {                                        ( Por (_1,_3) )}
+
+pat_conj_:
+  _1 = pat_uni_
+    {                                        ( _1 )}
+| _1 = comma_list2_mk_pat_pat_uni___
+    {                                        ( Ptuple _1 )}
+
+pat_uni_:
+  _1 = pat_arg_
+    {                                        ( _1 )}
+| _1 = pat_arg _2 = COLONCOLON _3 = pat_arg
+    {let _endpos = _endpos__3_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+    ( Papp (Qpreid (mk_pid (infix "::") _loc),[_1;_3]) )}
+| _1 = uqualid _2 = nonempty_list_pat_arg_
+    {                                        ( Papp (_1,_2) )}
+| _1 = mk_pat_pat_uni__ _2 = AS _3 = attrs_lident_
+    {                                        ( Pas (_1,_3) )}
+| _1 = mk_pat_pat_uni__ _2 = cast
+    {                                        ( Pcast (_1, _2) )}
+
+pat_arg_:
+  _1 = pat_arg_shared_
+    {                                        ( _1 )}
+| _1 = attrs_lident_
+    {                                        ( Pvar _1 )}
+
+pat_arg_shared_:
+  _1 = UNDERSCORE
+    {                                        ( Pwild )}
+| _1 = uqualid
+    {                                        ( Papp (_1,[]) )}
+| _1 = LEFTPAR _2 = RIGHTPAR
+    {                                        ( Ptuple [] )}
+| _1 = LEFTSQRIGHTSQ
+    {let _endpos = _endpos__1_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+  ( Papp (Qpreid (mk_pid "[]"  _loc), []) )}
+| _1 = LEFTPAR _2 = pattern_ _3 = RIGHTPAR
+    {                                        ( _2 )}
+| _1 = LEFTBRC _2 = field_pattern_pattern_ _3 = RIGHTBRC
+    {                                          ( Prec _2 )}
+
+field_pattern_pattern_:
+  fl = semicolon_list1_pattern_rec_field_pattern__
+    {                                             ( fl )}
+
+pattern_rec_field_pattern_:
+  x = lqualid _2 = EQUAL y = pattern
+    {let _1 =     ( (x, y) ) in
+                                    ( _1 )}
+| _1 = lqualid
+    {          ( let p = {pat_desc = Pvar (qualid_preid _1);
+                     pat_loc = loc_of_qualid _1} in
+            (_1,p)
+          )}
+
+op_symbol:
+  _1 = OP1
+    {       ( _1 )}
+| _1 = OP2
+    {       ( _1 )}
+| _1 = OP3
+    {       ( _1 )}
+| _1 = OP4
+    {       ( _1 )}
+| _1 = STAR
+    {       ( "*" )}
+
+prefix_op:
+  _1 = op_symbol
+    {let _endpos = _endpos__1_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+            ( mk_pid (prefix _1) _loc )}
+
+lident:
+  _1 = LIDENT
+    {let _endpos = _endpos__1_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+                ( mk_pid _1 _loc )}
+
+uident:
+  _1 = UIDENT
+    {let _endpos = _endpos__1_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+                ( mk_pid _1 _loc )}
+
+quote_lident:
+  _1 = QUOTE_LIDENT
+    {let _endpos = _endpos__1_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+                ( mk_pid _1 _loc )}
+
+ident_rich:
+  _1 = uident
+    {                ( _1 )}
+| _1 = lident_rich
+    {                ( _1 )}
+
+lident_rich:
+  _1 = lident
+    {                ( _1 )}
+| _1 = lident_op_id
+    {                ( _1 )}
+
+lident_op_id:
+  _1 = LEFTPAR _2 = lident_op _3 = RIGHTPAR
+    {let _endpos = _endpos__3_ in
+let _startpos = _startpos__1_ in
+let _loc = (_startpos, _endpos) in
+                              ( mk_pid _2 _loc )}
+
+lident_op:
+  _1 = op_symbol
+    {                                              ( infix _1 )}
+| _1 = op_symbol _2 = UNDERSCORE
+    {                                              ( prefix _1 )}
+| _1 = EQUAL
+    {                                              ( infix "=" )}
+| _1 = OPPREF _2 = option_UNDERSCORE_
+    {                                              ( prefix _1 )}
+| _1 = DOT _2 = LEFTPAR _3 = RIGHTPAR
+    {                                              ( mixfix ".()" )}
+| _1 = DOT _2 = LEFTPAR _3 = LARROW _4 = RIGHTPAR
+    {                                              ( mixfix ".(<-)" )}
+| _1 = LEFTSQ _2 = UNDERSCORE _3 = RIGHTSQ
+    {                                              ( mixfix "[_]" )}
+| _1 = LEFTSQ _2 = LARROW _3 = RIGHTSQ
+    {                                              ( mixfix "[<-]" )}
+| _1 = LEFTSQ _2 = UNDERSCORE _3 = DOTDOT _4 = UNDERSCORE _5 = RIGHTSQ
+    {                                              ( mixfix "[_.._]" )}
+| _1 = LEFTSQ _2 = DOTDOT _3 = UNDERSCORE _4 = RIGHTSQ
+    {                                              ( mixfix "[.._]" )}
+| _1 = LEFTSQ _2 = UNDERSCORE _3 = DOTDOT _4 = RIGHTSQ
+    {                                              ( mixfix "[_..]" )}
+
+qualid:
+  _1 = ident_rich
+    {                          ( Qpreid _1 )}
+| _1 = uqualid _2 = DOT _3 = ident_rich
+    {                          ( Qdot (_1, _3) )}
+
+lqualid_rich:
+  _1 = lident_rich
+    {                          ( Qpreid _1 )}
+| _1 = uqualid _2 = DOT _3 = lident_rich
+    {                          ( Qdot (_1, _3) )}
+
+lqualid:
+  _1 = lident
+    {                      ( Qpreid _1 )}
+| _1 = uqualid _2 = DOT _3 = lident
+    {                      ( Qdot (_1, _3) )}
+
+uqualid:
+  _1 = uident
+    {                      ( Qpreid _1 )}
+| _1 = uqualid _2 = DOT _3 = uident
+    {                      ( Qdot (_1, _3) )}
+
+comma_list_ret_value_:
+  _1 = separated_nonempty_list_COMMA_ret_value_
+    {                                    ( _1 )}
+
+bar_list1_raises_:
+  xl = separated_nonempty_list_BAR_raises_
+    {let _1 =     ( None ) in
+                                                      ( xl )}
+| x = BAR xl = separated_nonempty_list_BAR_raises_
+    {let _1 =     ( Some x ) in
+                                                      ( xl )}
+
+bar_list1_separated_pair_pattern_ARROW_term__:
+  xl = separated_nonempty_list_BAR_separated_pair_pattern_ARROW_term__
+    {let _1 =     ( None ) in
+                                                      ( xl )}
+| x = BAR xl = separated_nonempty_list_BAR_separated_pair_pattern_ARROW_term__
+    {let _1 =     ( Some x ) in
+                                                      ( xl )}
+
+comma_list2_mk_pat_pat_uni___:
+  _1 = mk_pat_pat_uni__ _2 = COMMA _3 = comma_list1_mk_pat_pat_uni___
+    {                         ( _1 :: _3 )}
+
+comma_list2_term_:
+  _1 = term _2 = COMMA _3 = comma_list1_term_
+    {                         ( _1 :: _3 )}
+
+comma_list1_mk_pat_pat_uni___:
+  _1 = separated_nonempty_list_COMMA_mk_pat_pat_uni___
+    {                                    ( _1 )}
+
+comma_list1_quant_vars_:
+  _1 = separated_nonempty_list_COMMA_quant_vars_
+    {                                    ( _1 )}
+
+comma_list1_term_:
+  _1 = separated_nonempty_list_COMMA_term_
+    {                                    ( _1 )}
+
+semicolon_list1_pattern_rec_field_pattern__:
+  x = pattern_rec_field_pattern_
+    {let _2 =     ( None ) in
+                                              ( [x] )}
+| x = pattern_rec_field_pattern_ x_inlined1 = SEMICOLON
+    {let _2 =
+  let x = x_inlined1 in
+      ( Some x )
+in
+                                              ( [x] )}
+| x = pattern_rec_field_pattern_ _2 = SEMICOLON xl = semicolon_list1_pattern_rec_field_pattern__
+    {                                              ( x :: xl )}
+
+semicolon_list1_term_rec_field_term__:
+  x = term_rec_field_term_
+    {let _2 =     ( None ) in
+                                              ( [x] )}
+| x = term_rec_field_term_ x_inlined1 = SEMICOLON
+    {let _2 =
+  let x = x_inlined1 in
+      ( Some x )
+in
+                                              ( [x] )}
+| x = term_rec_field_term_ _2 = SEMICOLON xl = semicolon_list1_term_rec_field_term__
+    {                                              ( x :: xl )}
+
+located_term_arg_:
+  _1 = term_arg
+    {let _endpos = _endpos__1_ in
+let _startpos = _startpos__1_ in
+              ( _1, _startpos, _endpos )}
+
+%%
+
+
