@@ -176,11 +176,13 @@ promote:
 
 # [make depend] regenerates the files dune.auto. This command should
 # be run every time some tests are added or removed or renamed in the
-# subdirectories test/static/{good,bad} and test/dynamic/semantics/data.
+# subdirectories test/static/{good,bad} and test/dynamic/semantics/data
+# and test/dynamic/houblix/{tests,backends}.
 
 .PHONY: depend
 depend:
 	@ dune build @depend --auto-promote || true
+	@ cd test/dynamic/houblix/tests && dune exec ./test.exe
 
 # -------------------------------------------------------------------------
 
