@@ -1,8 +1,8 @@
-(copy_files# ../*.ml)
+(copy_files# ../../src/*.ml)
 
-(copy_files ../*.mll)
+(copy_files ../../src/*.mll)
 
-(copy_files ../*.mly)
+(copy_files ../../src/*.mly)
 
 (ocamllex lexer)
 
@@ -14,7 +14,12 @@
  (modules parser parserTypes parserTokens parserExpr)
  (merge_into parser)
  (infer true)
- (flags --external-tokens ParserTokens --no-push-commute))
+ (flags
+  --external-tokens
+  ParserTokens
+  --no-push-commute
+  --no-stack-optimization
+  --comment))
 
 (executable
  (name houblix)

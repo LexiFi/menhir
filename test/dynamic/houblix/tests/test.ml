@@ -12,7 +12,7 @@ let remove_filter_suffix files suffix =
 
 let uniques = List.sort_uniq compare
 
-let backends = filter_suffix (ls "../src") ".backend"
+let backends = filter_suffix (ls "../backends") ".backend"
 
 let tests_dirs = filter_suffix (ls ".") ".tests"
 
@@ -40,7 +40,7 @@ let rule_result file kind backend test =
 (rule
   (target %s.%s.output)
   (deps
-    (:exe ../../src/%s/houblix.exe)
+    (:exe ../../backends/%s/houblix.exe)
     (:input %s.hopix)
     %s.expected)
   (action
