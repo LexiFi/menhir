@@ -60,6 +60,10 @@ let greatest_suffix_forall p a =
   let k = greatest_suffix_forall p a (length a) 0 in
   truncate k a
 
+let rev_get a i =
+  let n = length a in
+  get a (n - i - 1)
+
 let rev a =
   let n = length a in
   if n = 0 then

@@ -16,7 +16,7 @@ open Grammar
 open Infix
 open Invariant (* only to access [cell] fields *)
 
-module SSymbols = StackSymbols.Run ()
+module Invariant = Invariant.Long ()
 
 open StackLang
 open StackLangUtils
@@ -206,7 +206,7 @@ let goto_needendpos nt =
   (not optimize_stack) || (top word).holds_endp
 
 
-let run_represent_state s = (not optimize_stack) || Invariant.represented s
+let run_represent_state s = (not optimize_stack) || represented s
 
 let reduce_successor_need_startpos prod =
   (not @@ Production.is_start prod)
@@ -247,22 +247,6 @@ let run_pushtuple s : string list * cell_info =
   in
   (pushlist, cell)
 
-
-(** The known stack cells when entering the goto routine associated to
-    nonterminal [_nt] *)
-let stack_type_goto _nt = [||]
-
-(** The known stack cells when entering the reduce routine associated to
-    production [prod] *)
-let stack_type_reduce prod =
-  let symbols = Grammar.Production.rhs prod in
-  let r = Invariant.prodstack prod in
-  assert (optimize_stack || Array.length r = Array.length symbols);
-  r
-
-
-(** The known stack cells after popping state [state] *)
-let stack_type_state state = Invariant.stack state
 
 (** The known stack cells when entering the run routine associated to state
     [state] *)
@@ -306,12 +290,12 @@ module L = struct
   let states =
     let states = ref TagMap.empty in
     Lr1.iter (fun s ->
-        if (not optimize_stack) || Invariant.represented s
+        if (not optimize_stack) || represented s
         then
           states
           @:= TagMap.add
                 (tag s)
-                { known_cells = filter_stack @@ stack_type_state s
+                { known_cells = filter_stack @@ Invariant.stack s
                 ; sfinal_type =
                     ( match Lr1.is_start_or_exit s with
                     | None ->
@@ -448,30 +432,30 @@ module L = struct
     let successor_need_endpos = reduce_successor_need_endpos prod in
     (* The array [ids] lists the identifiers that are bound by this production.
        These identifiers can be referred to by the semantic action. *)
-    let ids = Production.identifiers prod
-    and n = Array.length stack_type in
-    assert (Array.length ids = n);
+    let ids = Production.identifiers prod in
+    let n = Array.length ids in
     (* The register [state] is defined by a [pop] instruction that follows,
        unless this is an epsilon production, in which case [state] is needed
        (i.e., it must be provided by the caller). *)
     let is_epsilon = n = 0 in
-
     (* Pop [n] stack cells and store their content in suitable registers.
        The state stored in the bottom cell (the one that is popped last)
        is stored in the register [state] and thus becomes the new current
        state. *)
-    for i = n - 1 downto 0 do
-      let cell_info = stack_type.(i) in
+    for i = 0 to n - 1 do
+      let { holds_state; holds_semv; holds_startp; holds_endp } =
+        MArray.rev_get stack_type i
+      in
       let pop_list =
-        MList.if1 cell_info.holds_state (if i = 0 then PReg state else PWildcard)
-        @ MList.if1 cell_info.holds_semv (PReg ids.(i))
-        @ MList.if1 cell_info.holds_startp (PReg (startpos ids i))
-        @ MList.if1 cell_info.holds_endp (PReg (endpos ids i))
+        MList.if1 holds_state (if i = n - 1 then PReg state else PWildcard)
+        @ MList.if1 holds_semv (PReg (MArray.rev_get ids i))
+        @ MList.if1 holds_startp (PReg (startpos ids i))
+        @ MList.if1 holds_endp (PReg (endpos ids i))
       in
       if pop_list <> [] then pop (PTuple pop_list);
       (* If there is no semantic value in the stack, then it is of type unit
          and we need to define it ourselves *)
-      if not cell_info.holds_semv then def (PReg ids.(i)) VUnit
+      if not holds_semv then def (PReg (MArray.rev_get ids i)) VUnit
     done;
     (* If this is a start production, then reducing this production means
        accepting. This is done via a [return] instruction, which ends the
@@ -492,10 +476,12 @@ module L = struct
          and are later needed by [goto]. *)
       if Action.has_beforeend action then move beforeendp endp;
       let need_startpos =
-        successor_need_startpos && (is_epsilon || stack_type.(0).holds_startp)
+        successor_need_startpos
+        && (is_epsilon || (MArray.rev_get stack_type 0).holds_startp)
       in
       let need_endpos =
-        successor_need_endpos && (is_epsilon || stack_type.(n - 1).holds_endp)
+        successor_need_endpos
+        && (is_epsilon || (MArray.rev_get stack_type (n - 1)).holds_endp)
       in
       if need_startpos then move startp (if n = 0 then endp else startpos ids 0);
       if need_endpos then move endp (if n = 0 then endp else endpos ids (n - 1));
@@ -552,11 +538,11 @@ module L = struct
             routine_final_type
               (Nonterminal.ocamltype_of_start_symbol nonterminal) )
           (Grammar.Production.classify prod);
-        let stack_type = stack_type_reduce prod in
+        let stack_type = Invariant.prodstack prod in
         routine_stack_type @@ filter_stack stack_type;
         reduce stack_type prod
     | Goto nt ->
-        routine_stack_type @@ filter_stack @@ stack_type_goto nt;
+        routine_stack_type [||];
         goto nt
 
 

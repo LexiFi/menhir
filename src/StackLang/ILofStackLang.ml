@@ -415,7 +415,9 @@ and compile_block program bindings final_type block =
       blet ([ (pattern, EVar stack) ], compile_block bindings final_type block)
   | S.IDef (bindings', block) ->
       let bindings = Bindings.compose bindings bindings' in
-      compile_block bindings final_type block
+      EComment
+        ( StackLangPrinter.bindings_to_string bindings
+        , compile_block bindings final_type block )
   | S.IPrim (register, primitive, block) ->
       blet
         ( [ (PVar register, compile_primitive bindings primitive) ]

@@ -45,6 +45,9 @@ val is_suffix : ('a -> 'a -> bool) -> 'a array -> 'a array -> bool
    whose elements satisfy the predicate [p]. *)
 val greatest_suffix_forall : ('a -> bool) -> 'a array -> 'a array
 
+(** [rev_get a i] is [get (rev a) i], except it does not copy [a]. *)
+val rev_get : 'a array -> int -> 'a
+
 (** Array reversal.
    [rev [|1; 2; 3; 4|] = [|4; 3; 2; 1|]]*)
 val rev : 'a array -> 'a array
