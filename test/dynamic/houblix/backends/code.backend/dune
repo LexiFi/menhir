@@ -1,23 +1,25 @@
+;; This dune file is copied to every .backend subdirectory,
+;; with customized flags.
+
 (copy_files# ../../src/*.ml)
-
 (copy_files ../../src/*.mll)
-
 (copy_files ../../src/*.mly)
 
 (ocamllex lexer)
 
 (menhir
- (modules parserTokens)
- (flags --only-tokens))
+  (modules parserTokens)
+  (flags --only-tokens)
+)
 
 (menhir
- (modules parser parserTypes parserTokens parserExpr)
- (merge_into parser)
- (infer true)
- (flags --external-tokens ParserTokens --comment))
+  (modules parser parserTypes parserTokens parserExpr)
+  (merge_into parser)
+  (flags --external-tokens ParserTokens --comment )
+)
 
 (executable
- (name houblix)
- (libraries str pprint menhirLib sexplib unix sek)
- (preprocess
-  (pps ppx_sexp_conv)))
+  (name houblix)
+  (libraries str pprint menhirLib sexplib unix sek)
+  (preprocess (pps ppx_sexp_conv))
+)
