@@ -99,6 +99,7 @@ clean::
 	@ rm -f analysis/*.pdf
 
 # [make speed] runs the speed test in test/dynamic/speed.
+
 .PHONY: speed_calc
 speed_calc:
 	@ dune build --force --no-buffer @speed
@@ -107,9 +108,14 @@ speed_calc:
 speed_houblix:
 	@ dune build --force --no-buffer @speed_houblix
 
-
 .PHONY: speed
 speed: speed_calc speed_houblix
+
+# [make houblix] runs just the tests in test/dynamic/houblix.
+
+.PHONY: houblix
+houblix:
+	@ dune build @test_houblix
 
 # [make versions] compiles and tests Menhir under many versions of
 # OCaml, whose list is specified below.
