@@ -4682,7 +4682,7 @@
     (with-outputs-to gospel_uparser.opp.out
       (with-accepted-exit-codes 0
         (run menhir --only-preprocess %{read-lines:gospel_uparser.flags}
-          %{deps})))))
+          --stacklang-test %{deps})))))
 
 (rule (alias gospel_uparser)
   (action (diff gospel_uparser.opp.exp gospel_uparser.opp.out)))
@@ -4697,7 +4697,7 @@
       (with-accepted-exit-codes 0
         (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
           --timings-to gospel_uparser.timings
-          %{read-lines:gospel_uparser.flags} %{deps})))))
+          %{read-lines:gospel_uparser.flags} --stacklang-test %{deps})))))
 
 (rule (alias gospel_uparser)
   (action (diff gospel_uparser.exp gospel_uparser.out)))
