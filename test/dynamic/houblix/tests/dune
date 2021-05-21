@@ -1,11 +1,10 @@
-
 ;; Compile the script [test.ml].
 (executable
   (name test)
 )
 
-;; Use the script [test.ml] to generate the file [dune.auto.gen]
-;; based on the content of the directory [data].
+;; Use the script [test.ml] to generate the file [dune.auto]
+;; based on the content of the directory [src].
 (rule
   (target dune.auto)
   (mode promote)
@@ -16,29 +15,10 @@
 ;; Include the file [dune.auto].
 (include dune.auto)
 
-; ;; We rely on the Makefile to construct the file all.results.
-
-; (rule
-;  (target all.results)
-;  (deps
-;   (source_tree 01-Pretty)
-;   (source_tree 02-Sexp)
-;   (source_tree 03-Sexpbis)
-;   (file ../src/houblix.exe)
-;   (file Makefile))
-;  (action
-;   (run make -j all.results EXE=../src/houblix.exe)))
-
-; ;; The contents of this file is compared against all.results.expected.
-
-; (rule
-;  (alias test_houblix)
-;  (deps
-;   (file all.results.expected)
-;   (file all.results))
-;  (action
-;   (diff all.results.expected all.results)))
+;; Add a dependency of [test_houblix] on [test] so that all of these tests
+;; are executed as part of Menhir's [make test].
 
 (alias
- (name test)
- (deps test_houblix))
+  (name test)
+  (deps (alias test_houblix))
+)
