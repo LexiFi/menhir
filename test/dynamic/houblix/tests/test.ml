@@ -1,20 +1,27 @@
+(* This script creates [dune.auto] files in this directory and in each of the
+   subdirectories [*.tests]. *)
+
 open Printf
+
+let debug = false
 
 let ls dir = Array.to_list (Sys.readdir dir)
 
 let filter_suffix files suffix =
   List.filter (fun f -> Filename.check_suffix f suffix) files
 
-
 let remove_filter_suffix files suffix =
   List.map Filename.remove_extension @@ filter_suffix files suffix
-
-
-let uniques = List.sort_uniq compare
 
 let backends = filter_suffix (ls "../backends") ".backend"
 
 let tests_dirs = filter_suffix (ls ".") ".tests"
+
+let () =
+  if debug then begin
+    eprintf "Found %d backends.\n" (List.length backends);
+    eprintf "Found %d test subdirectories.\n" (List.length tests_dirs)
+  end
 
 let test_dir_kind dir =
   match List.rev @@ String.split_on_char '.' dir with
@@ -22,7 +29,6 @@ let test_dir_kind dir =
       kind
   | _ ->
       assert false
-
 
 type test =
   { kind : string
