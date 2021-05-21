@@ -3,13 +3,17 @@
   (name test)
 )
 
-;; Use the script [test.ml] to generate the file [dune.auto]
-;; based on the content of the directory [src].
+;; Use the script [test.ml] to generate the files [./dune.auto]
+;; and [*.tests/dune.auto].
 (rule
   (target dune.auto)
   (mode promote)
-  (deps (source_tree ../src))
-  (action (with-stdout-to %{target} (run ./test.exe)))
+  (deps
+    (source_tree .)
+    (source_tree ../src)
+    (source_tree ../backends)
+  )
+  (action (run ./test.exe))
 )
 
 ;; Include the file [dune.auto].
