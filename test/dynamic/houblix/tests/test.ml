@@ -3,6 +3,11 @@
 
 open Printf
 
+let header f =
+  fprintf f
+    ";; This file has been auto-generated. Please do not edit it.\n\
+     ;; Instead, edit [test.ml] and run [make depend].\n\n"
+
 let debug = false
 
 let ls dir = Array.to_list (Sys.readdir dir)
@@ -79,7 +84,10 @@ let rule_diff file backend test =
     backend
 
 
-let global_dune_file = open_out "dune.auto"
+let global_dune_file =
+  open_out "dune.auto"
+let () =
+  header global_dune_file
 
 let () =
   tests_dirs
@@ -87,6 +95,7 @@ let () =
          let kind = test_dir_kind dir in
          let tests = tests_of_dir dir in
          let dune_file = open_out @@ Filename.concat dir "dune.auto" in
+         header dune_file;
          tests
          |> List.iter (fun test ->
                 backends
