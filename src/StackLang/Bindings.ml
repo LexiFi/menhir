@@ -5,8 +5,8 @@ open StackLangBasics
 type t =
   value RegisterMap.t
 
-let empty, singleton, is_empty, domain, to_list =
-  RegisterMap.(empty, singleton, is_empty, domain, bindings)
+let empty, singleton, is_empty, domain, to_list, fold =
+  RegisterMap.(empty, singleton, is_empty, domain, bindings, fold)
 
 let rec apply b = function
   | VReg register ->
@@ -27,8 +27,6 @@ let add reg value b =
   | _ ->
       RegisterMap.add reg value b
 
-
-let fold = RegisterMap.fold
 
 let extend b reg value = add reg (apply b value) b
 
@@ -74,14 +72,11 @@ let rec remove_value b = function
       b
 
 
-let values bindings = fold (fun _ value li -> value :: li) bindings []
-
 let codomain bindings =
-  let values = values bindings in
-  List.fold_left
-    (fun regset value -> RegisterSet.union (Value.registers value) regset)
+  fold
+    (fun _r value regset -> RegisterSet.union (Value.registers value) regset)
+    bindings
     RegisterSet.empty
-    values
 
 
 let restrict bindings registers =

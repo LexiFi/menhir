@@ -135,8 +135,7 @@ let rec wf_block program label rs block =
       let rs = def rs p in
       wf_block program label rs block
   | IDef (bindings, block) ->
-      let values = Bindings.values bindings in
-      List.iter wf_value values;
+      List.iter (fun (_r, v) -> wf_value v) (Bindings.to_list bindings);
       let rs = RegisterSet.union (Bindings.domain bindings) rs in
       wf_block program label rs block
   | IPrim (r, p, block) ->
