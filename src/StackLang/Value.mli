@@ -1,9 +1,8 @@
 open StackLangBasics
 
-type t = value
+val registers : value -> registers
+(**[registers v] is the set of the registers that appear in the value [v]. *)
 
-val registers : t -> registers
-(** [registers v] is the set of register that appear in value [v] *)
-
-val registers_of_list : t list -> StringSet.t
-(** [registers vs] is the set of register that appear in values [vs] *)
+val registers_of_list : value list -> StringSet.t
+(**[registers_of_list vs] is the set of the registers that appear in
+   the values [vs]. *)
