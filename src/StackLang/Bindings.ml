@@ -1,83 +1,84 @@
 open StackLangBasics
 
-(* In the following, we write [b] for a set of bindings. *)
+(* In the following, we write [bs] for a set of bindings. *)
 
 type t =
   value RegisterMap.t
 
-let empty, singleton, is_empty, domain, to_list, fold =
-  RegisterMap.(empty, singleton, is_empty, domain, bindings, fold)
+let empty, is_empty, domain, to_list, fold =
+  RegisterMap.(empty, is_empty, domain, bindings, fold)
 
-let rec apply b = function
-  | VReg register ->
-      Option.value
-        (RegisterMap.find_opt register b)
-        ~default:(VReg register)
-  | VTuple li ->
-      VTuple (List.map (apply b) li)
-  | v ->
-      v
+let rec apply bs v =
+  match v with
+  | VReg r ->
+      (try RegisterMap.find r bs with Not_found -> v)
+  | VTuple vs ->
+      VTuple (List.map (apply bs) vs)
+  | VTag _
+  | VUnit
+    -> v
 
-
-let add reg value b =
-  match value with
-  (* We avoid adding identity bindings. *)
-  | VReg reg' when reg = reg' ->
-      b
+(* [add] is an internal function. *)
+let add r v bs =
+  match v with
+  (* We avoid adding identity bindings. This is not essential, but may help
+     avoid a certain amount of noise. *)
+  | VReg r' when r = r' ->
+      bs
   | _ ->
-      RegisterMap.add reg value b
+      RegisterMap.add r v bs
 
+let extend bs r v =
+  add r (apply bs v) bs
 
-let extend b reg value = add reg (apply b value) b
-
-let rec extend_pattern b pattern value =
+let rec extend_pattern bs pattern value =
   match (pattern, value) with
   | PWildcard, _ ->
-      b
+      bs
   | PReg reg, value ->
-      extend b reg value
-  | PTuple pli, VTuple vli ->
-      List.fold_left2 extend_pattern b pli vli
+      extend bs reg value
+  | PTuple ps, VTuple vs ->
+      List.fold_left2 extend_pattern bs ps vs
   | _ ->
       assert false
 
 
-let compose b1 b2 =
-  (* We fold on b2 with an accumulator starting at b1 *)
-  fold (fun reg value b -> add reg (apply b1 value) b) b2 b1
+let compose bs1 bs2 =
+  (* We fold on bs2 with an accumulator starting at bs1 *)
+  fold (fun reg value bs -> add reg (apply bs1 value) bs) bs2 bs1
 
 
 let singleton_pattern = extend_pattern empty
 
-let rec remove b pattern =
+let rec remove bs pattern =
   match pattern with
   | PReg reg ->
-      RegisterMap.remove reg b
+      RegisterMap.remove reg bs
   | PWildcard ->
-      b
-  | PTuple li ->
-      List.fold_left remove b li
+      bs
+  | PTuple ps ->
+      List.fold_left remove bs ps
 
 
-let remove_registers b registers =
-  RegisterSet.fold RegisterMap.remove registers b
+let remove_registers bs registers =
+  RegisterSet.fold RegisterMap.remove registers bs
 
 
-let rec remove_value b = function
+let rec remove_value bs = function
   | VReg reg ->
-      remove b (PReg reg)
-  | VTuple li ->
-      List.fold_left remove_value b li
+      remove bs (PReg reg)
+  | VTuple vs ->
+      List.fold_left remove_value bs vs
   | _ ->
-      b
+      bs
 
 
-let codomain bindings =
+let codomain bs =
   fold
     (fun _r value regset -> RegisterSet.union (Value.registers value) regset)
-    bindings
+    bs
     RegisterSet.empty
 
 
-let restrict bindings registers =
-  RegisterMap.filter (fun reg _ -> RegisterSet.mem reg registers) bindings
+let restrict bs registers =
+  RegisterMap.filter (fun reg _ -> RegisterSet.mem reg registers) bs
