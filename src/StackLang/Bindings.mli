@@ -34,7 +34,7 @@ val domain : t -> registers
 
 val codomain : t -> registers
 
-val restrict : t -> registers -> t
+val restrict : registers -> t -> t
 
 val to_list : t -> (register * value) list
 (**[to_list bs] is the set of bindings [bs], viewed as a list of
