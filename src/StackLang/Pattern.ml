@@ -1,11 +1,14 @@
 open StackLangBasics
+open RegisterSet
 
-type t = pattern
-
-let rec registers = function
+let rec registers accu p =
+  match p with
   | PWildcard ->
-      RegisterSet.empty
+      accu
   | PReg r ->
-      RegisterSet.singleton r
+      add r accu
   | PTuple ps ->
-      List.fold_left RegisterSet.union RegisterSet.empty (List.map registers ps)
+      List.fold_left registers accu ps
+
+let registers p =
+  registers empty p
