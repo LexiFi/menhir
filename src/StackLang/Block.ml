@@ -171,7 +171,7 @@ let def bindings block =
 
 
 let sdef pattern value block =
-  let bindings = Bindings.singleton_pattern pattern value in
+  let bindings = Bindings.singleton pattern value in
   def bindings block
 
 
