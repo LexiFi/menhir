@@ -48,9 +48,6 @@ val apply : t -> value -> value
     there exists [reg] in [regs] such that [reg'] is referred to in
     [apply s reg]. *)
 
-val fold : (register -> value -> 'a -> 'a) -> t -> 'a -> 'a
-(** Fold over every rule. *)
-
 val compose : t -> t -> t
 (** [compose b1 b2] returns a bindings [b] such that :
       [def b1 (def b2 block)] is equivalent to
@@ -60,8 +57,6 @@ val domain : t -> registers
 (**[domain b] is the domain of [b], that is, the set of registers assigned by
    [b]. *)
 
-val values : t -> value list
-
 val codomain : t -> registers
 
 val restrict : t -> registers -> t
@@ -69,3 +64,6 @@ val restrict : t -> registers -> t
 val to_list : t -> (register * value) list
 (**[to_list b] is the set of bindings [b], viewed as a list of register/value
    pairs, in an unspecified order. *)
+
+val fold : (register -> value -> 'a -> 'a) -> t -> 'a -> 'a
+(** [fold] iterates over a set of bindings, in an unspecified order. *)
