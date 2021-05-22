@@ -254,7 +254,7 @@ let rec commute_pushes_block program pushes bindings final_type known_cells =
         reg
         branches
   | ITypedBlock ({ needed_registers } as t_block) ->
-      let bindings = Bindings.restrict bindings needed_registers in
+      let bindings = Bindings.restrict needed_registers bindings in
       commute_pushes_itblock
         program
         pushes
