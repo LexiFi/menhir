@@ -365,7 +365,7 @@ let compile_primitive bindings = function
       in
       let bindings = Bindings.compose bindings bindings' in
       (* We restrict the binding to the needed values. *)
-      let bindings = Bindings.restrict bindings needed in
+      let bindings = Bindings.restrict needed bindings in
       compile_bindings bindings (Action.to_il_expr action)
 
 
@@ -388,7 +388,7 @@ and compile_block program bindings final_type block =
   let compile_block = compile_block program in
   match block with
   | S.INeed (registers, block) ->
-      let bindings = Bindings.restrict bindings registers in
+      let bindings = Bindings.restrict registers bindings in
       EComment
         ( sprintf
             "Needed registers : { %s }"
@@ -580,7 +580,7 @@ and compile_ITypedBlock program bindings = function
         ( [ (PVar block_name, compile_function t_block program) ]
         , EComment ("Not inlined because of case tag", EApp (func, args)) )
   | S.{ block; needed_registers; final_type } ->
-      let bindings = Bindings.restrict bindings needed_registers in
+      let bindings = Bindings.restrict needed_registers bindings in
       let final_type = compile_final_type_name final_type in
       compile_block program bindings final_type block
 

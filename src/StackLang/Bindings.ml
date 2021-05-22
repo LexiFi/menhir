@@ -5,8 +5,8 @@ open StackLangBasics
 type t =
   value RegisterMap.t
 
-let empty, is_empty, domain, to_list, fold =
-  RegisterMap.(empty, is_empty, domain, bindings, fold)
+let empty, is_empty, domain, to_list, fold, restrict =
+  RegisterMap.(empty, is_empty, domain, bindings, fold, restrict)
 
 let rec apply bs v =
   match v with
@@ -63,10 +63,6 @@ let remove bs rs =
 
 let codomain bs =
   fold
-    (fun _r value regset -> RegisterSet.union (Value.registers value) regset)
+    (fun _r v accu -> RegisterSet.union (Value.registers v) accu)
     bs
     RegisterSet.empty
-
-
-let restrict bs registers =
-  RegisterMap.filter (fun reg _ -> RegisterSet.mem reg registers) bs
