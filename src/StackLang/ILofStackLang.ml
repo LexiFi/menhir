@@ -338,19 +338,16 @@ let rec compile_value = function
       EUnit
 
 
-(** The compilation of StackLang to IL is parametrized by a set of bindings that
+(** The compilation of StackLang to IL is parameterized by a set of bindings that
     permit to avoid most [let] constructs. This means that when compiling a
     value, we need to first apply the bindings to it. *)
 let compile_value bindings value = compile_value (Bindings.apply bindings value)
 
 let compile_bindings bindings expr =
-  eletand
-    ( Bindings.fold
-        (fun reg value defs ->
-          (PVar reg, compile_value Bindings.empty value) :: defs )
-        bindings
-        []
-    , expr )
+  bindings
+  |> Bindings.to_list
+  |> List.map (fun (r, v) -> (PVar r, compile_value Bindings.empty v))
+  |> (fun pes -> eletand (pes, expr))
 
 
 let compile_primitive bindings = function
