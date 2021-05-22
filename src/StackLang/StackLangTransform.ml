@@ -133,7 +133,7 @@ let rec commute_pushes_block program pushes bindings final_type known_cells =
       else restore_pushes pushes (IDef (bindings, block))
   | IPop (pattern, block) ->
     (* A pop is a special kind of definition, so you may think that we need
-       to generate new substition rules from it, but there is no need
+       to generate new substitution rules from it, but there is no need
        because we only keep the pop if there is no push that can conflict
        with it. The pattern we pop into is authoritative and we remove it
        from the substitution. *)
@@ -159,7 +159,7 @@ let rec commute_pushes_block program pushes bindings final_type known_cells =
            substitution, because we need to access the value as it was when
            pushed, and add that to the substitution. *)
         let bindings = Bindings.remove_value bindings value in
-        let bindings = Bindings.extend_pattern bindings pattern value in
+        let bindings = Bindings.(compose bindings (assign pattern value)) in
         (* We have cancelled a pop ! *)
         cancelled_pop += 1;
         let block =
@@ -197,9 +197,11 @@ let rec commute_pushes_block program pushes bindings final_type known_cells =
         then suffix reg (fresh_int ())
         else reg
       in
-      let subst' =
-        Bindings.extend (Bindings.remove bindings (PReg reg')) reg (VReg reg')
-      in
+      let subst' = Bindings.(
+        compose
+          (remove bindings (PReg reg'))
+          (assign (PReg reg) (VReg reg'))
+      ) in
       let block =
         commute_pushes_block pushes subst' final_type known_cells block
       in
@@ -290,7 +292,7 @@ and commute_pushes_icase_tag
           | [ tag ] ->
               (* In this case, we can inline the state value inside the
                  pushes. *)
-              let subst = Bindings.extend bindings reg (VTag tag) in
+              let subst = Bindings.(compose bindings (assign (PReg reg) (VTag tag))) in
               let tmp_subst = Bindings.assign (PReg reg) (VTag tag) in
               let pushes = List.map (pushcell_apply tmp_subst) pushes in
               (subst, pushes)
@@ -368,7 +370,7 @@ and aux_case_token
           then suffix reg' (fresh_int ())
           else reg'
         in
-        let subst = Bindings.extend bindings reg' (VReg reg'') in
+        let subst = Bindings.(compose bindings (assign (PReg reg') (VReg reg''))) in
         let block' =
           commute_pushes_block program pushes subst final_type known_cells block
         in
