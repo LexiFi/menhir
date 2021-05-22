@@ -1,7 +1,7 @@
 open StackLangBasics
 
 (** The type of bindings. *)
-type t = private value RegisterMap.t
+type t
 
 val empty : t
 (** empty substitution *)
@@ -63,4 +63,3 @@ val codomain : t -> registers
 val restrict : t -> registers -> t
 
 val to_list : t -> (register * value) list
-
