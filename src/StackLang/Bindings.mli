@@ -11,8 +11,8 @@ val empty : t
 val is_empty : t -> bool
 (** [is_empty bs] is [true] if [bs] is empty. *)
 
-val singleton_pattern : pattern -> value -> t
-(** [singleton_pat p v] Is the binding of a value to a pattern. *)
+val singleton : pattern -> value -> t
+(** [singleton p v] represents the assignment [p <- v]. *)
 
 val extend : t -> register -> value -> t
 (** [extend bs reg value] extends [bs] with a rule [reg <- value].

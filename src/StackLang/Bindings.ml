@@ -48,7 +48,7 @@ let compose bs1 bs2 =
   fold (fun reg value bs -> add reg (apply bs1 value) bs) bs2 bs1
 
 
-let singleton_pattern = extend_pattern empty
+let singleton = extend_pattern empty
 
 let rec remove bs pattern =
   match pattern with

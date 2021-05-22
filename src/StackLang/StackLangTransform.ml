@@ -291,7 +291,7 @@ and commute_pushes_icase_tag
               (* In this case, we can inline the state value inside the
                  pushes. *)
               let subst = Bindings.extend bindings reg (VTag tag) in
-              let tmp_subst = Bindings.singleton_pattern (PReg reg) (VTag tag) in
+              let tmp_subst = Bindings.singleton (PReg reg) (VTag tag) in
               let pushes = List.map (pushcell_apply tmp_subst) pushes in
               (subst, pushes)
           | _ ->
