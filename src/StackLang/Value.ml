@@ -1,20 +1,21 @@
 open StackLangBasics
+open RegisterSet
 
-type t = value
+let rec registers accu v =
+  match v with
+  | VTag _
+  | VUnit
+    -> accu
+  | VReg r ->
+      add r accu
+  | VTuple vs ->
+      registers_of_list accu vs
 
-let rec registers = function
-  | VReg reg ->
-      RegisterSet.singleton reg
-  | VTuple li ->
-      List.fold_left RegisterSet.union RegisterSet.empty (List.map registers li)
-  | _ ->
-      RegisterSet.empty
+and registers_of_list accu vs =
+  List.fold_left registers accu vs
 
+let registers v =
+  registers empty v
 
-let registers_of_list values =
-  List.fold_left
-    (fun regs v ->
-      let regs' = registers v in
-      RegisterSet.union regs regs' )
-    RegisterSet.empty
-    values
+let registers_of_list vs =
+  registers_of_list empty vs
