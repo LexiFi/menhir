@@ -26,6 +26,9 @@ let filter pred map =
 let restrict domain map =
   filter (fun k _ -> StringSet.mem k domain) map
 
+let remove map keys =
+  StringSet.fold remove keys map
+
 let domain map =
   fold (fun key _ acu -> StringSet.add key acu) map StringSet.empty
 

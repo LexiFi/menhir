@@ -15,8 +15,8 @@ val assign : pattern -> value -> t
 (** [assign p v] represents the assignment [p <- v]. *)
 
 val remove : t -> registers -> t
-(**[remove bs regs] is the set of bindings [bs], deprived of the bindings
-   that concern the registers [regs]. *)
+(**[remove bs rs] is the set of bindings [bs], deprived of the bindings
+   that concern the registers [rs]. *)
 
 val apply : t -> value -> value
 (** [apply bs v] applies the bindings [bs], viewed as a substitution, to the
