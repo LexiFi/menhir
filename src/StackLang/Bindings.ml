@@ -5,8 +5,8 @@ open StackLangBasics
 type t =
   value RegisterMap.t
 
-let empty, is_empty, domain, to_list, fold, restrict =
-  RegisterMap.(empty, is_empty, domain, bindings, fold, restrict)
+let empty, is_empty, domain, to_list, fold, remove, restrict =
+  RegisterMap.(empty, is_empty, domain, bindings, fold, remove, restrict)
 
 let rec apply bs v =
   match v with
@@ -57,9 +57,6 @@ let assign p v =
 let compose bs1 bs2 =
   (* We fold on [bs2] with an accumulator whose initial value is [bs1]. *)
   fold (fun r v bs -> add r (apply bs1 v) bs) bs2 bs1
-
-let remove bs rs =
-  RegisterSet.fold RegisterMap.remove rs bs
 
 let codomain bs =
   fold

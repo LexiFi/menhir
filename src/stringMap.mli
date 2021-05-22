@@ -20,6 +20,9 @@ val cardinal : 'a t -> int
    intersection with) the set [s]. *)
 val restrict: StringSet.t -> 'a t -> 'a t
 
+(**[remove m keys] is the map [m] deprived of the keys in the set [keys]. *)
+val remove: 'a t -> StringSet.t -> 'a t
+
 (**[filter pred m] restricts the domain of the map [m] to
    (key, value) couples that verify [pred]. *)
 val filter: (string -> 'a -> bool) -> 'a t -> 'a t
