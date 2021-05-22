@@ -5,36 +5,39 @@ open StackLangBasics
    an OCaml [let/and] construct. *)
 type t
 
-val empty : t
-(** An empty set of bindings. *)
+(* Constructors. *)
 
-val is_empty : t -> bool
-(** [is_empty bs] is [true] if [bs] is empty. *)
+val empty : t
+(**[empty] is an empty set of bindings. *)
 
 val assign : pattern -> value -> t
-(** [assign p v] represents the assignment [p <- v]. *)
-
-val remove : t -> registers -> t
-(**[remove bs rs] is the set of bindings [bs], deprived of the bindings
-   that concern the registers [rs]. *)
-
-val apply : t -> value -> value
-(** [apply bs v] applies the bindings [bs], viewed as a substitution, to the
-    value [v]. Thus, the instruction [IReturn (apply bs v)] is equivalent to
-    the instruction [defs bs (IReturn v)]. *)
+(**[assign p v] represents the assignment [p := v]. *)
 
 val compose : t -> t -> t
-(** [compose bs1 bs2] returns a set of bindings [bs] such that
-      [def bs1 (def bs2 block)] is equivalent to
-      [def bs block] *)
+(**[compose bs1 bs2] returns a set of bindings that is equivalent to the
+   sequential composition of the bindings [bs1] and [bs2]. Thus, [IDef (bs1,
+   IDef (bs2, block))] is equivalent to [IDef (compose bs1 b2, block)]. *)
+
+val remove : t -> registers -> t
+(**[remove bs rs] is the set of bindings [bs], deprived of the bindings that
+   concern the registers [rs]. *)
+
+val restrict : registers -> t -> t
+(**[restrict rs bs] is the set of bindings [bs], restricted to the registers
+   [rs]. *)
+
+(* Accessors. *)
+
+val is_empty : t -> bool
+(**[is_empty bs] determines whether [bs] is empty. *)
 
 val domain : t -> registers
 (**[domain bs] is the domain of [bs], that is, the set of registers assigned
    by [bs]. *)
 
 val codomain : t -> registers
-
-val restrict : registers -> t -> t
+(**[codomain bs] is the codomain of [bs], that is, the set of registers
+   mentioned in the values that appear in the right-hand sides of [bs]. *)
 
 val to_list : t -> (register * value) list
 (**[to_list bs] is the set of bindings [bs], viewed as a list of
@@ -42,3 +45,8 @@ val to_list : t -> (register * value) list
 
 val fold : (register -> value -> 'a -> 'a) -> t -> 'a -> 'a
 (** [fold] iterates over a set of bindings, in an unspecified order. *)
+
+val apply : t -> value -> value
+(**[apply bs v] applies the bindings [bs], viewed as a substitution of values
+   for registers, to the value [v]. The instruction [IReturn (apply bs v)] is
+   equivalent to the instruction [IDef (bs, IReturn v)]. *)

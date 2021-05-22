@@ -59,7 +59,4 @@ let compose bs1 bs2 =
   fold (fun r v bs -> add r (apply bs1 v) bs) bs2 bs1
 
 let codomain bs =
-  fold
-    (fun _r v accu -> RegisterSet.union (Value.registers v) accu)
-    bs
-    RegisterSet.empty
+  fold (fun _r v accu -> Value.Accu.registers accu v) bs RegisterSet.empty
