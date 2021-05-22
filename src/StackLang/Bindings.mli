@@ -1,16 +1,18 @@
 open StackLangBasics
 
-(** The type of bindings. *)
+(**A set of bindings is a finite map of registers to values. It can be thought
+   of as a simultaneous assignment of values to registers; it is analogous to
+   an OCaml [let/and] construct. *)
 type t
 
 val empty : t
-(** empty substitution *)
+(** An empty set of bindings. *)
 
 val is_empty : t -> bool
-(** [is_empty b] is true if [b] is empty *)
+(** [is_empty b] is [true] if [b] is empty. *)
 
 val singleton : register -> value -> t
-(** [singleton r v] Is the singleton binding [r <- v] *)
+(** [singleton r v] Is the singleton binding [r <- v]. *)
 
 val singleton_pattern : pattern -> value -> t
 (** [singleton_pat p v] Is the binding of a value to a pattern. *)
@@ -55,6 +57,8 @@ val compose : t -> t -> t
       [def b block] *)
 
 val domain : t -> registers
+(**[domain b] is the domain of [b], that is, the set of registers assigned by
+   [b]. *)
 
 val values : t -> value list
 
@@ -63,3 +67,5 @@ val codomain : t -> registers
 val restrict : t -> registers -> t
 
 val to_list : t -> (register * value) list
+(**[to_list b] is the set of bindings [b], viewed as a list of register/value
+   pairs, in an unspecified order. *)
