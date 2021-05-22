@@ -14,17 +14,9 @@ val is_empty : t -> bool
 val assign : pattern -> value -> t
 (** [assign p v] represents the assignment [p <- v]. *)
 
-val remove : t -> pattern -> t
-(** [remove s pattern] remove every rule of the shape [r := _] for every [r] a
-    register occuring in [pattern] *)
-
-val remove_registers : t -> registers -> t
-(** [remove s regs] For every [r] in [regs], remove every rule of shape
-    [r := _] from s *)
-
-val remove_value : t -> value -> t
-(** [remove s value] For every [r] referred by [value], remove every rule of
-    shape [r := _] from s. *)
+val remove : t -> registers -> t
+(**[remove bs regs] is the set of bindings [bs], deprived of the bindings
+   that concern the registers [regs]. *)
 
 val apply : t -> value -> value
 (** [apply bs v] applies the bindings [bs], viewed as a substitution, to the

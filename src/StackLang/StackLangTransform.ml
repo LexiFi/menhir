@@ -148,7 +148,7 @@ let rec commute_pushes_block program pushes bindings final_type known_cells =
         let block' =
           commute_pushes_block
             []
-            (Bindings.remove bindings pattern)
+            (Bindings.remove bindings (Pattern.registers pattern))
             final_type
             known_cells
             block
@@ -158,7 +158,7 @@ let rec commute_pushes_block program pushes bindings final_type known_cells =
         (* We remove every register refered in the value from the
            substitution, because we need to access the value as it was when
            pushed, and add that to the substitution. *)
-        let bindings = Bindings.remove_value bindings value in
+        let bindings = Bindings.remove bindings (Value.registers value) in
         let bindings = Bindings.(compose bindings (assign pattern value)) in
         (* We have cancelled a pop ! *)
         cancelled_pop += 1;
@@ -199,7 +199,7 @@ let rec commute_pushes_block program pushes bindings final_type known_cells =
       in
       let subst' = Bindings.(
         compose
-          (remove bindings (PReg reg'))
+          (remove bindings (RegisterSet.singleton reg'))
           (assign (PReg reg) (VReg reg'))
       ) in
       let block =
