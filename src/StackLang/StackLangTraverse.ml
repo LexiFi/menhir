@@ -316,8 +316,6 @@ let rec pattern_shadow_state = function
       false
 
 
-let _value_refers_to_state value = RegisterSet.mem state (Value.registers value)
-
 (* -------------------------------------------------------------------------- *)
 (* Well-typedness with regard to knowledge of stack cells. *)
 
