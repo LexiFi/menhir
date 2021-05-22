@@ -14,15 +14,6 @@ val is_empty : t -> bool
 val assign : pattern -> value -> t
 (** [assign p v] represents the assignment [p <- v]. *)
 
-val extend : t -> register -> value -> t
-(** [extend bs reg value] extends [bs] with a rule [reg <- value].
-    [def (extend bs reg value) block] is equivalent to
-    [def bs (def (singleton reg, value, block))]. *)
-
-val extend_pattern : t -> pattern -> value -> t
-(** [extend bs pattern value] return [bs'] such that [defs bs' block] is
-    equivalent to [defs bs (IDef(pattern, value, block))]. *)
-
 val remove : t -> pattern -> t
 (** [remove s pattern] remove every rule of the shape [r := _] for every [r] a
     register occuring in [pattern] *)
