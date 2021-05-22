@@ -111,9 +111,11 @@ let rec bind p gv (env : env) : env =
 
 
 let binds bindings env =
-  let saved_env = env in
+  (* All values in the codomain of [bindings] are evaluated in [env].
+     The accumulator, which also has type [env], contains [env] and
+     is extended with the new bindings. *)
   Bindings.fold
-    (fun r v env -> bind (PReg r) (eval saved_env v) env)
+    (fun r v accu -> bind (PReg r) (eval env v) accu)
     bindings
     env
 
