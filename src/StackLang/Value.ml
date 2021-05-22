@@ -1,21 +1,25 @@
 open StackLangBasics
 open RegisterSet
 
-let rec registers accu v =
-  match v with
-  | VTag _
-  | VUnit
-    -> accu
-  | VReg r ->
-      add r accu
-  | VTuple vs ->
-      registers_of_list accu vs
+module Accu = struct
 
-and registers_of_list accu vs =
-  List.fold_left registers accu vs
+  let rec registers accu v =
+    match v with
+    | VTag _
+    | VUnit
+      -> accu
+    | VReg r ->
+        add r accu
+    | VTuple vs ->
+        registers_of_list accu vs
+
+  and registers_of_list accu vs =
+    List.fold_left registers accu vs
+
+end
 
 let registers v =
-  registers empty v
+  Accu.registers empty v
 
 let registers_of_list vs =
-  registers_of_list empty vs
+  Accu.registers_of_list empty vs
