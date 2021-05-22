@@ -1,43 +1,63 @@
-type register = string
+(* -------------------------------------------------------------------------- *)
 
-(** A tag is an integer value. A tag can be used to encode a state of an LR
-   automaton. *)
-type tag
+(**A register is a named variable. When one thinks about StackLang as an
+   imperative language, a register can be thought of as a mutable global
+   variable. In the translation of StackLang through IL to OCaml, a register
+   becomes an immutable local variable. *)
+type register =
+  string
 
 module RegisterSet = StringSet
 module RegisterMap = StringMap
 
-module TagMap : MMap.S with type key = tag
-
-module TagSet = TagMap.Domain
-
 type registers = RegisterSet.t
 
+(* -------------------------------------------------------------------------- *)
+
+(**A tag encodes a state of an LR automaton. *)
+type tag
+
+module TagMap : MMap.S with type key = tag
+module TagSet = TagMap.Domain
+
+(**[string_of_tag] converts a tag to a string. *)
 val string_of_tag : tag -> string
 
+(**[tag_of_node] converts an LR(1) state to a tag. *)
 val tag_of_node : Lr1.node -> tag
 
+(**[tag_of_int] converts an integer to a tag. It is unsafe and should be used
+   only for testing purposes. *)
 val tag_of_int : int -> tag
-(** Unsafe : only for testing purposes *)
+
+(* -------------------------------------------------------------------------- *)
 
 (** A code label is identified by its name. *)
-type label = string
+type label =
+  string
 
 (** A terminal symbol. *)
-type terminal = Grammar.Terminal.t
+type terminal =
+  Grammar.Terminal.t
 
 (** A set of terminal symbols. *)
-type terminals = Grammar.TerminalSet.t
+type terminals =
+  Grammar.TerminalSet.t
 
-(** A value is a piece of data that can be pushed onto the stack. Values
-   include tags, data loaded from a register, and tuples of values. *)
+(* -------------------------------------------------------------------------- *)
+
+(**A value is a piece of data that can be pushed onto the stack. Values
+   include the unit value, tags, data loaded from a register, tuples of
+   values. *)
 type value =
+  | VUnit
   | VTag of tag
   | VReg of register
   | VTuple of value list
-  | VUnit
 
-(** A pattern describes how to decompose and store a piece of data that is
+(* -------------------------------------------------------------------------- *)
+
+(**A pattern describes how to decompose and store a piece of data that is
    popped off the stack. Patterns include wildcards, registers, and tuples
    of patterns. *)
 type pattern =
