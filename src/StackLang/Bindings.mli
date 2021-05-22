@@ -16,7 +16,7 @@ val assign : pattern -> value -> t
 val compose : t -> t -> t
 (**[compose bs1 bs2] returns a set of bindings that is equivalent to the
    sequential composition of the bindings [bs1] and [bs2]. Thus, [IDef (bs1,
-   IDef (bs2, block))] is equivalent to [IDef (compose bs1 b2, block)]. *)
+   IDef (bs2, block))] is equivalent to [IDef (compose bs1 bs2, block)]. *)
 
 val remove : t -> registers -> t
 (**[remove bs rs] is the set of bindings [bs], deprived of the bindings that
