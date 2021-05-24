@@ -1,6 +1,5 @@
 DUNEBUILD := dune build --no-print-directory
 
 .PHONY: speed
-
 speed:
-	@ $(DUNEBUILD) --force --no-buffer @speed
+	@ $(DUNEBUILD) --force --no-buffer @speed_houblix
