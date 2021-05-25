@@ -376,7 +376,7 @@ let check_cells label block reason known_cells needed_cells =
   if l1 < l2
   then fail @@ sprintf "Could discover %i known cells, but %i are needed." l1 l2;
   for i = 1 to l2 do
-    if not (cell_similar known_cells.(l1 - i) needed_cells.(l2 - i))
+    if not (Invariant.similar known_cells.(l1 - i) needed_cells.(l2 - i))
     then fail @@ sprintf "Enough cells are known, but their content differ."
   done
 
