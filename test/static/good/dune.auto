@@ -4219,6 +4219,39 @@
     (diff framac-print_api-grammar.conflicts.exp
       framac-print_api-grammar.conflicts)))
 
+(rule (target frontc_cparser.opp.out) (deps frontc_cparser.mly)
+  (action
+    (with-outputs-to frontc_cparser.opp.out
+      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+
+(rule (alias frontc_cparser)
+  (action (diff frontc_cparser.opp.exp frontc_cparser.opp.out)))
+
+(rule
+  (targets frontc_cparser.out frontc_cparser.automaton
+    frontc_cparser.automaton.resolved frontc_cparser.conflicts
+    frontc_cparser.timings)
+  (deps frontc_cparser.mly)
+  (action
+    (with-outputs-to frontc_cparser.out
+      (with-accepted-exit-codes 0
+        (run menhir --dump --dump-resolved --explain -lg 2 -la 2 -lc 2
+          --timings-to frontc_cparser.timings %{deps})))))
+
+(rule (alias frontc_cparser)
+  (action (diff frontc_cparser.exp frontc_cparser.out)))
+
+(rule (alias frontc_cparser)
+  (action (diff frontc_cparser.automaton.exp frontc_cparser.automaton)))
+
+(rule (alias frontc_cparser)
+  (action
+    (diff frontc_cparser.automaton.resolved.exp
+      frontc_cparser.automaton.resolved)))
+
+(rule (alias frontc_cparser)
+  (action (diff frontc_cparser.conflicts.exp frontc_cparser.conflicts)))
+
 (rule (target fsharp.opp.out) (deps fsharp.mly)
   (action
     (with-outputs-to fsharp.opp.out
@@ -12536,6 +12569,7 @@
     (alias frama-c-base.20170501-logic_parser)
     (alias framac-cparser)
     (alias framac-print_api-grammar)
+    (alias frontc_cparser)
     (alias fsharp)
     (alias fslexpars)
     (alias fstar)
