@@ -424,6 +424,15 @@ let cell symbol states =
 
 (* Accessors. *)
 
+let similar cell1 cell2 =
+  Symbol.equal cell1.symbol cell2.symbol &&
+  cell1.holds_state = cell2.holds_state
+    (* The fields [holds_semv], [holds_startp] and [holds_endp]
+       do not need to be compared, because they are determined
+       by the field [symbol]. The field [states] does not need
+       to be compared because it does not influence the layout
+       of the cell; comparing the field [holds_state] suffices. *)
+
 let pop =
   MArray.pop
 

@@ -78,6 +78,11 @@ type cell = private {
 type word =
   cell array
 
+(**[similar] determines whether two stack cells have the same layout in
+   memory, that is, the same OCaml type. This is equivalent to comparing
+   all fields except [states]. *)
+val similar: cell -> cell -> bool
+
 (**[pop w] is the stack [w], deprived of its top element (if it exists). *)
 val pop: word -> word
 
