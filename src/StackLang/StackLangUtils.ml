@@ -41,12 +41,6 @@ let rec value_refers_to_register register value =
       false
 
 
-let cell_similar c1 c2 =
-  Invariant.(
-    (c1.symbol, c1.holds_semv, c1.holds_state, c1.holds_startp, c1.holds_endp)
-    = (c2.symbol, c2.holds_semv, c2.holds_state, c2.holds_startp, c2.holds_endp))
-
-
 let cells_intersection cells1 cells2 =
   let len1 = Array.length cells1 in
   let len2 = Array.length cells2 in
@@ -57,7 +51,7 @@ let cells_intersection cells1 cells2 =
     let i = !i in
     i < len1
     && i < len2
-    && cell_similar cells1.(len1 - i - 1) cells2.(len2 - i - 1)
+    && Invariant.similar cells1.(len1 - i - 1) cells2.(len2 - i - 1)
   do
     i += 1
   done;
