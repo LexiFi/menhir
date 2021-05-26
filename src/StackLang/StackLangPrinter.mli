@@ -46,3 +46,11 @@ val states_to_string : state_info TagMap.t -> string
 val print_pattern : out_channel -> pattern -> unit
 
 val pattern_to_string : pattern -> string
+
+(** [print_instruction ch b] prints the first instruction of block [b] to
+    channel [ch] *)
+val print_instruction : out_channel -> block -> unit
+
+(** [instruction_to_string b] is a string representing the first instruction of
+    the block [b] *)
+val instruction_to_string : block -> string
