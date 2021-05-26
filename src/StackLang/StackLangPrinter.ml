@@ -72,7 +72,8 @@ let cell_info
 let final_type ft = OCaml.option ocamltype ft
 
 let known_cells known_cells =
-  Array.fold_left (fun doc cell -> doc ^^ cell_info cell) empty known_cells
+  brackets
+    (Array.fold_left (fun doc cell -> doc ^^ cell_info cell) empty known_cells)
 
 
 let state_info { known_cells = kn; sfinal_type } =
@@ -144,74 +145,84 @@ let registers rs =
   align @@ group (separate (comma ^^ break 1) (map register rs)) ^^ dot
 
 
-let rec typed_block
-    { block = b; stack_type; needed_registers = rs; final_type = ft } =
+let rec typed_block_instruction
+    { stack_type; needed_registers = rs; final_type = ft } =
   nl
   ^^ spaced_braces
-  @@ group
   @@ align
+  @@ group
        ( string "Final type :"
        ^^ final_type ft
        ^^ break 1
-       ^^ string "  Known cells : "
+       ^^ string "Known cells :"
        ^^ known_cells stack_type
        ^^ break 1
-       ^^ string "  Needed registers :"
+       ^^ string "Needed registers :"
        ^^ registers rs )
-  ^^ block b
 
 
-and block b =
+and typed_block tb = typed_block_instruction tb ^^ block tb.block
+
+and instruction b =
   match b with
-  | INeed (rs, b) ->
-      nl ^^ string "NEED " ^^ registers rs ^^ block b
-  | IPush (v, _, b) ->
-      nl ^^ string "PUSH " ^^ value v ^^ block b
-  | IPop (p, b) ->
-      nl ^^ string "POP " ^^ pattern p ^^ block b
-  | IDef (bs, b) ->
-      nl ^^ string "DEF " ^^ bindings bs ^^ block b
-  | IPrim (r, p, b) ->
-      nl
-      ^^ string "PRIM "
-      ^^ register r
-      ^^ string " = "
-      ^^ primitive p
-      ^^ block b
-  | ITrace (s, b) ->
-      nl ^^ string "TRCE " ^^ OCaml.string s ^^ block b
-  | IComment (s, b) ->
-      nl ^^ string "#### " ^^ align (arbitrary_string s) ^^ block b
+  | INeed (rs, _) ->
+      nl ^^ string "NEED " ^^ registers rs
+  | IPush (v, _, _) ->
+      nl ^^ string "PUSH " ^^ value v
+  | IPop (p, _) ->
+      nl ^^ string "POP " ^^ pattern p
+  | IDef (bs, _) ->
+      nl ^^ string "DEF " ^^ bindings bs
+  | IPrim (r, p, _) ->
+      nl ^^ string "PRIM " ^^ register r ^^ string " = " ^^ primitive p
+  | ITrace (s, _) ->
+      nl ^^ string "TRACE " ^^ OCaml.string s
+  | IComment (s, _) ->
+      nl ^^ string "#### " ^^ align (arbitrary_string s)
   | IDie ->
       nl ^^ string "DIE"
   | IReturn v ->
       nl ^^ string "RET  " ^^ value v
   | IJump l ->
       nl ^^ string "JUMP " ^^ label l
-  | ICaseToken (r, branches, default) ->
-      nl
-      ^^ string "CASE "
-      ^^ register r
-      ^^ string " OF"
-      ^^ concat
-           (map
-              branch
-              ( map (fun (pat, b) -> (tokpat pat, block b)) branches
-              @
-              match default with
-              | Some b ->
-                  [ (underscore, block b) ]
-              | None ->
-                  [] ) )
-  | ICaseTag (r, branches) ->
-      nl
-      ^^ string "CASE "
-      ^^ register r
-      ^^ string " OF"
-      ^^ concat
-           (map branch (map (fun (pat, b) -> (tagpat pat, block b)) branches))
+  | ICaseToken (r, _, _) ->
+      nl ^^ string "CASE " ^^ register r ^^ string " OF"
+  | ICaseTag (r, _) ->
+      nl ^^ string "CASE " ^^ register r ^^ string " OF"
   | ITypedBlock tb ->
-      nl ^^ string "TYPED " ^^ typed_block tb ^^ block b
+      nl ^^ string "TYPED " ^^ typed_block_instruction tb
+
+
+and block b =
+  instruction b
+  ^^
+  match b with
+  | INeed (_, b)
+  | IPush (_, _, b)
+  | IPop (_, b)
+  | IDef (_, b)
+  | IPrim (_, _, b)
+  | ITrace (_, b)
+  | IComment (_, b) ->
+      block b
+  | IDie ->
+      nl ^^ string "DIE"
+  | IReturn v ->
+      nl ^^ string "RET  " ^^ value v
+  | IJump l ->
+      nl ^^ string "JUMP " ^^ label l
+  | ICaseToken (_, branches, default) ->
+      concat
+        (map
+           branch
+           ( map (fun (pat, b) -> (tokpat pat, block b)) branches
+           @
+           match default with Some b -> [ (underscore, block b) ] | None -> []
+           ) )
+  | ICaseTag (_, branches) ->
+      concat (map branch (map (fun (pat, b) -> (tagpat pat, block b)) branches))
+  | ITypedBlock { block = b } ->
+      block b
 
 
 let entry_comment entry_labels label =
@@ -278,5 +289,9 @@ let known_cells_to_string = to_string known_cells
 let print_states = to_channel states
 
 let states_to_string = to_string states
+
+let instruction_to_string = to_string instruction
+
+let print_instruction = to_channel instruction
 
 let to_string = to_string program
