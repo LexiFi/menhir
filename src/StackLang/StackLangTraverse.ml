@@ -31,8 +31,6 @@ let fail ?(state_relevance = false) context culprit message =
   raise (StackLangError { context; culprit; message; state_relevance })
 
 
-let state_reg = state
-
 (* Checking that a StackLang program contains no references to undefined
    registers. *)
 
@@ -308,23 +306,12 @@ let measure program =
 (* -------------------------------------------------------------------------- *)
 (* Utility functions used below. *)
 
-let rec pattern_shadow_state = function
-  | PReg reg when reg = state ->
-      true
-  | PTuple li ->
-      List.exists pattern_shadow_state li
-  | _ ->
-      false
-
-
-let _value_refers_to_state value = RegisterSet.mem state (Value.registers value)
+(* let _value_refers_to_state value = RegisterSet.mem state (Value.registers value) *)
 
 (* -------------------------------------------------------------------------- *)
 (* Well-typedness with regard to knowledge of stack cells. *)
 
-type sync =
-  | Synced of int
-  | Unsynced of tag
+open Sync
 
 let rec get_state_value sync = function
   | VReg reg when reg = state ->
@@ -337,16 +324,6 @@ let rec get_state_value sync = function
       None
 
 
-let update_sync_with_bindings bindings sync =
-  match Bindings.apply bindings (VReg state_reg) with
-  | VTag tag ->
-      Unsynced tag
-  | VReg reg when reg = state_reg ->
-      sync
-  | _ ->
-      assert false
-
-
 let fail_sync label block =
   let message =
     sprintf
@@ -355,8 +332,6 @@ let fail_sync label block =
       label
   in
   fail label block message
-
-
 
 
 let check_cells label block reason known_cells needed_cells =
@@ -417,18 +392,31 @@ let check_state_sync program label block known_cells expected_cells = function
       ()
 
 
-let wt_knowncells_routine program label (t_block : typed_block) =
+let wt_knowncells_routine program label tblock =
   let cfg = program.cfg in
   let states = program.states in
+  (* Printf.fprintf stderr "Starting wtkc on %s\n" label; *)
 
   (*
   [known_cells]: cells we can pop and pass through a typed_block and a jump
   [extra_known_cells]: Cells on top of the information carried by the state.
   They are extra in the sense that when we match on a state, known_cells become
     [Array.append state_known_cells extra_known_cells] *)
-  let rec wtkc_block (known_cells : cell_info array) (sync : sync) block =
+  let rec wtkc_block cells sync block =
+    (* StackLangPrinter.print_instruction stderr block;
+    StackLangPrinter.print_known_cells stderr cells; *)
+    let culprit = block in
+    let module Annotate =
+      Annotate.Curry (struct
+        let program = program
+      end)
+    in
+    let check_state_sync = check_state_sync program label culprit in
+    let check_cells = check_cells label culprit in
+    let fail = fail label culprit in
+    let fail_sync () = fail_sync label culprit in
     Block.iter
-      (wtkc_block known_cells sync)
+      (wtkc_block cells sync)
       ~push:(fun value cell block ->
         ( if Invariant.(cell.holds_state)
         then
@@ -436,76 +424,53 @@ let wt_knowncells_routine program label (t_block : typed_block) =
           | None ->
               ()
           | Some tag ->
-              let tag_type = (lookup_tag tag states).known_cells in
-              check_cells label block "push" known_cells tag_type );
-        let sync =
-          match sync with Synced n -> Synced (n + 1) | sync -> sync
-        in
-        wtkc_block (MArray.push known_cells cell) sync block )
-      ~pop:(fun pattern block' ->
-        ( if known_cells = [||]
-        then
-          let message = "Tried to pop unknown cell" in
-          fail label block message );
-        let known_cells = MArray.pop known_cells in
-        (* If the state is shadowed, then it becomes unknown. *)
-        let sync = if pattern_shadow_state pattern then Synced 0 else sync in
-        wtkc_block known_cells sync block' )
+              let tag_cells = (lookup_tag tag states).known_cells in
+              check_cells "push" cells tag_cells );
+        let cells, sync = Annotate.push cells sync value cell in
+        wtkc_block cells sync block )
+      ~pop:(fun pattern block ->
+        if Array.length cells = 0 then fail "tried to pop unknown cell";
+        let cells, sync = Annotate.pop cells sync pattern in
+        wtkc_block cells sync block )
       ~def:(fun bindings block ->
-        (* If the state variable is redefined, then matching on the state will
-           not give any new information. Therefore, [extra_known_cells]
-           becomes empty. However there is an issue : it is possible to trick
-           this function into not raising an error when it should. *)
-        let sync = update_sync_with_bindings bindings sync in
-        wtkc_block known_cells sync block )
-      ~jump:(fun label' ->
-        let target = lookup label' cfg in
+        let cells, sync = Annotate.def cells sync bindings in
+        wtkc_block cells sync block )
+      ~jump:(fun label ->
+        let cells', _sync' = Annotate.jump cells sync label in
+        let target = lookup label cfg in
         if RegisterSet.mem state_reg target.needed_registers
         then
           (* This checks that the stack is compatible with the state we are
              passing to the routine. This is only needed if we are actually
              passing a state *)
-          check_state_sync
-            program
-            label
-            block
-            known_cells
-            target.stack_type
-            sync;
+          check_state_sync cells cells' sync;
         (* We check that the stack has at least the amount of cells the target
            routine expects. *)
-        check_cells label block "jump" known_cells target.stack_type )
-      ~case_tag:(fun _reg branches ->
+        check_cells "jump" cells cells' )
+      ~case_tag:(fun reg branches ->
         match sync with
-        | Synced n ->
-            let branch_aux (TagMultiple taglist, block) =
-              (* By matching on the state, we discover state information.
-                 We can enrich the known cells with this information. *)
-              let known_cells =
-                Array.append
-                  (state_info_intersection states taglist).known_cells
-                  (MArray.suffix known_cells n)
-              in
-              (* We are matching on a state, therefore state is always needed,
-                 and we can discard these values. *)
-              wtkc_block known_cells sync block
+        | Synced _ ->
+            let branches_info = Annotate.case_tag cells sync reg branches in
+            let branch_aux (_, block) (cells, sync) =
+              wtkc_block cells sync block
             in
-            List.iter branch_aux branches
+            List.iter2 branch_aux branches branches_info
         | Unsynced _tag ->
-            fail_sync label block )
-      ~typed_block:(fun { block = block'; stack_type; needed_registers } ->
+            fail_sync () )
+      ~typed_block:(fun tblock ->
+        let { block; needed_registers } = tblock in
         (* We check that the stack has at least the number of known cells that
            the type annotation requires. *)
-        check_cells label block "typed block" known_cells stack_type;
+        let cells', sync' = Annotate.typed_block cells sync tblock in
+        check_cells "typed block" cells cells';
         if RegisterSet.mem state_reg needed_registers
-        then check_state_sync program label block known_cells stack_type sync;
+        then check_state_sync cells cells' sync;
         (* Inside the typed block, we are only allowed to use the cell from the
            annotation. *)
-        let known_cells = stack_type in
-        wtkc_block known_cells (Synced 0) block' )
+        wtkc_block cells' sync' block )
       block
   in
-  let { block; stack_type } = t_block in
+  let { block; stack_type } = tblock in
   wtkc_block stack_type (Synced 0) block
 
 
@@ -1105,3 +1070,36 @@ let test_wt () =
 
 
 let test () = test_wt ()
+
+let handle_error program error =
+  let { context; culprit; message; state_relevance } = error in
+  let open StackLang in
+  let open StackLangUtils in
+  let states = StackLang.(program.states) in
+  let cfg = StackLang.(program.cfg) in
+  eprintf "\nError : %s\n" message;
+  eprintf "Culprit :\n";
+  StackLangPrinter.print_block stderr culprit;
+  eprintf "\nContext :\n";
+  let context = lookup context cfg in
+  StackLangPrinter.print_tblock stderr context;
+  ( match culprit with
+  | IJump label ->
+      eprintf "\nWhile jumping to %s \n" label;
+      let block = lookup label cfg in
+      StackLangPrinter.print_tblock stderr block
+  | _ ->
+      () );
+  if state_relevance
+  then (
+    eprintf "\nStates:\n";
+    StackLangPrinter.print_states stderr states );
+  exit 1
+
+
+let wf program =
+  try wf program with StackLangError e -> handle_error program e
+
+
+let wt program =
+  try wt program with StackLangError e -> handle_error program e

@@ -266,6 +266,9 @@ let rec commute_pushes_block program pushes bindings final_type known_cells =
 
 and commute_pushes_icase_tag
     program pushes bindings final_type known_cells reg branches =
+  let branch_aux =
+    branch_aux program pushes bindings final_type known_cells reg
+  in
   match Bindings.apply bindings (VReg reg) with
   | VTag tag ->
       (* If the value of the state is known, then we remove the match. *)
@@ -282,37 +285,37 @@ and commute_pushes_icase_tag
             known_cells
             block )
   | VReg reg ->
-      let branch_aux (TagMultiple taglist, block) =
-        let state_info = state_info_intersection program.states taglist in
-        let known_cells =
-          longest_known_cells [ state_info.known_cells; known_cells ]
-        in
-        let subst, pushes =
-          match taglist with
-          | [ tag ] ->
-              (* In this case, we can inline the state value inside the
-                 pushes. *)
-              let subst = Bindings.extend bindings reg (VTag tag) in
-              let tmp_subst = Bindings.singleton reg (VTag tag) in
-              let pushes = List.map (pushcell_apply tmp_subst) pushes in
-              (subst, pushes)
-          | _ ->
-              (bindings, pushes)
-        in
-        let final_type =
-          Option.first_value [ state_info.sfinal_type; final_type ]
-        in
-        let block =
-          commute_pushes_block program pushes subst final_type known_cells block
-        in
-        (TagMultiple taglist, block)
-      in
       let branches = List.map branch_aux branches in
       ICaseTag (reg, branches)
   | _ ->
       (* We should never perform a case tag on a register that is bound to
          something else than a tag. *)
       assert false
+
+
+and branch_aux program pushes bindings final_type known_cells reg branch =
+  let TagMultiple taglist, block = branch in
+  let state_info = state_info_intersection program.states taglist in
+  let known_cells =
+    longest_known_cells [ state_info.known_cells; known_cells ]
+  in
+  let subst, pushes =
+    match taglist with
+    | [ tag ] ->
+        (* In this case, we can inline the state value inside the
+           pushes. *)
+        let subst = Bindings.extend bindings reg (VTag tag) in
+        let tmp_subst = Bindings.singleton reg (VTag tag) in
+        let pushes = List.map (pushcell_apply tmp_subst) pushes in
+        (subst, pushes)
+    | _ ->
+        (bindings, pushes)
+  in
+  let final_type = Option.first_value [ state_info.sfinal_type; final_type ] in
+  let block =
+    commute_pushes_block program pushes subst final_type known_cells block
+  in
+  (TagMultiple taglist, block)
 
 
 and commute_pushes_itblock
@@ -342,14 +345,9 @@ and commute_pushes_itblock
   let block =
     commute_pushes_block program pushes bindings final_type known_cells block
   in
-  let comment =
-    sprintf
-      "Known cells : %s"
-      (StackLangPrinter.known_cells_to_string known_cells)
-  in
   ITypedBlock
     { t_block with
-      block = IComment (comment, block)
+      block
     ; final_type
     ; needed_registers
     ; stack_type = known_cells
