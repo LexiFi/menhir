@@ -23,6 +23,13 @@ let empty = RegisterSet.empty
 
 let unions = List.fold_left ( + ) empty
 
+let defined_tokpat = function
+  | TokSingle (_, reg) ->
+      RegisterSet.singleton reg
+  | TokMultiple _ ->
+      RegisterSet.empty
+
+
 let rec rhs_block block valuation =
   let rhs_block block = rhs_block block valuation in
   match block with
@@ -45,20 +52,11 @@ let rec rhs_block block valuation =
   | IComment (_, block) ->
       rhs_block block
   | ICaseTag (register, branches) ->
-      List.fold_left
-        (fun acc branch -> acc + branch_iter rhs_block branch)
-        empty
-        branches
-      +^ register
+      (unions @@ List.map (branch_iter rhs_block) branches) +^ register
   | ICaseToken (register, branches, default) ->
       unions
         (List.map
-           (fun (tokpat, block) ->
-             match tokpat with
-             | TokSingle (_, reg) ->
-                 rhs_block block -^ reg
-             | TokMultiple _ ->
-                 rhs_block block )
+           (fun (tokpat, block) -> rhs_block block - defined_tokpat tokpat)
            branches )
       + Option.value ~default:empty (Option.map rhs_block default)
       +^ register
