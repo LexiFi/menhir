@@ -11,8 +11,6 @@
 (*                                                                            *)
 (******************************************************************************)
 
-open Printf
-
 (* Driver for the back-end. *)
 
 (* The automaton is now frozen and will no longer be modified. It is
@@ -81,34 +79,6 @@ let () = if Settings.cmly then Cmly_write.write (Settings.base ^ ".cmly")
 
 (* Construct and print the code using an appropriate back-end. *)
 
-let handle_stacklang_error program error =
-  let StackLangTraverse.{ context; culprit; message; state_relevance } =
-    error
-  in
-  let open StackLang in
-  let open StackLangUtils in
-  let states = StackLang.(program.states) in
-  let cfg = StackLang.(program.cfg) in
-  eprintf "\n%s\n" message;
-  eprintf "Culprit :\n";
-  StackLangPrinter.print_block stderr culprit;
-  eprintf "\nContext :\n";
-  let context = lookup context cfg in
-  StackLangPrinter.print_tblock stderr context;
-  ( match culprit with
-  | IJump label ->
-      eprintf "\nWhile jumping to %s \n" label;
-      let block = lookup label cfg in
-      StackLangPrinter.print_tblock stderr block
-  | _ ->
-      () );
-  if state_relevance
-  then (
-    eprintf "\nStates:\n";
-    StackLangPrinter.print_states stderr states );
-  exit 1
-
-
 let () =
   if Settings.table
   then begin
@@ -131,20 +101,12 @@ let () =
   else
     let module SL = EmitStackLang.Run () in
     let program = SL.program in
-    ( try
-        StackLangTraverse.wf program;
-        StackLangTraverse.wt program
-      with
-    | StackLangTraverse.StackLangError e ->
-        handle_stacklang_error program e );
+    StackLangTraverse.wf program;
+    StackLangTraverse.wt program;
     let program = StackLangInline.inline program in
     let program = StackLangTransform.optimize program in
-    ( try
-        StackLangTraverse.wf program;
-        StackLangTraverse.wt program
-      with
-    | StackLangTraverse.StackLangError e ->
-        handle_stacklang_error program e );
+    StackLangTraverse.wf program;
+    StackLangTraverse.wt program;
     if Settings.stacklang_dump
     then (
       StackLangPrinter.print stdout program;
