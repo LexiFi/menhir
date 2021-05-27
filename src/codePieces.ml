@@ -107,9 +107,10 @@ let semvtypetok tok =
   match Terminal.ocamltype tok with
   | None ->
 
-      (* Token has unit type and is omitted in stack cell. *)
+      (* Token has unit type and is omitted in stack cell,
+         unless [--represent-values] has been passed. *)
 
-      []
+      if Settings.represent_values then [ tunit ] else []
 
   | Some ocamltype ->
 

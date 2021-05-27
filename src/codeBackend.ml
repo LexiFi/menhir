@@ -885,11 +885,23 @@ let shiftbranchbody s tok s' =
    (Printf.sprintf "Shifting (%s) to state %d" (Terminal.print tok) (Lr1.number s'))
    (call_run s' actuals)
 
+(* If [--represent-values] is set and the token [tok] has no semantic value,
+   then we must bind the variable [semv] to a unit value. Otherwise, this is
+   unnecessary. *)
+
+let tok_bind_unit_if_necessary tok e =
+  if Settings.represent_values then
+    tok_bind_unit tok (PVar semv) e
+  else
+    e
+
 let shiftbranch s tok s' =
   assert (not (Terminal.pseudo tok));
   branch
     (tokpat tok (PVar semv))
-    (shiftbranchbody s tok s')
+    (tok_bind_unit_if_necessary tok
+      (shiftbranchbody s tok s')
+    )
 
 (* This generates code for pushing a new stack cell upon entering the
    [run] function for state [s]. *)

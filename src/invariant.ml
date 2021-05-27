@@ -414,7 +414,11 @@ type word =
 
 (* Constructors. *)
 
+(* If [--represent-values] is passed on the command line, then every semantic
+   value is stored. *)
+
 let has_semv symbol =
+  Settings.represent_values ||
   match symbol with
   | Symbol.N _nt ->
       true
