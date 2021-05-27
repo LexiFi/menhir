@@ -55,12 +55,6 @@ val endpos: string array -> int -> string
 
 val semvtypent : Nonterminal.t -> typ
 
-(* [semvtypetok tok] is the type of the semantic value associated with
-   token [tok]. There is no such type if the token does not have a
-   semantic value. *)
-
-val semvtypetok : Terminal.t -> typ list
-
 (* [semvtype symbol] is the type of the semantic value associated with
    [symbol]. *)
 
