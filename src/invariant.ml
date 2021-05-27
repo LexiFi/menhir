@@ -281,6 +281,9 @@ end
    property -- in particular, I would like to keep track of no positions at all,
    if the user doesn't use any position keyword. But I am suffering. *)
 
+(* If [--represent-positions] is passed on the command line, then every position
+   is stored. *)
+
 module F =
   FixSolver.Make(M)(Fix.Prop.Boolean)
 
@@ -368,9 +371,11 @@ let track : variable -> bool =
   fun x -> Option.value (track x) ~default:false
 
 let startp symbol =
+  Settings.represent_positions ||
   track (symbol, WhereStart)
 
 let endp symbol =
+  Settings.represent_positions ||
   track (symbol, WhereEnd)
 
 let for_every_symbol (f : Symbol.t -> unit) : unit =
