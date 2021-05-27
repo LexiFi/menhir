@@ -291,9 +291,6 @@ val example_log: bool
    backend that does not have gadts. *)
 val old_code_backend: bool
 
-(** The undocumented flag [--no-stack-optimization] disables stack optimisations. *)
-val optimize_stack: bool
-
 (** The undocumented flag [--no-push-commute] disables the commutation of PUSH
    instructions in StackLang. *)
 val commute_pushes: bool

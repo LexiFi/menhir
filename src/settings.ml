@@ -788,9 +788,6 @@ let example_size =
 let old_code_backend =
   !old_code_backend
 
-let optimize_stack =
-  not !no_stack_optimization
-
 let commute_pushes =
   not !no_push_commute
 
