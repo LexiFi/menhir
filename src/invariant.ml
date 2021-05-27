@@ -160,10 +160,15 @@ let () =
 
 (* Define accessors. *)
 
+(* If [--represent-states] is passed on the command line, then every state is
+   represented. The above computation is still performed. *)
+
 let represented state =
+  Settings.represent_states ||
   UnionFind.get (represented state)
 
 let representeds states =
+  Settings.represent_states ||
   if Lr1.NodeSet.is_empty states then
     false
   else
