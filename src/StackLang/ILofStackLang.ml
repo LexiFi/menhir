@@ -450,22 +450,14 @@ and compile_block program bindings final_type block =
       compile_ITypedBlock program bindings t_block
 
 
-and bind_unit_for_empty_tokens register terminal e =
-  match Grammar.Terminal.ocamltype terminal with
-  | None ->
-      blet ([ (PVar register, EUnit) ], e)
-  | Some _ ->
-      e
-
-
 and compile_case_token_branch program bindings final_type (tokpat, block) =
   match tokpat with
   | S.TokSingle (terminal, register) ->
       { branchpat = CodePieces.tokpat terminal (PVar register)
       ; branchbody =
-          bind_unit_for_empty_tokens
-            register
+          tok_bind_unit
             terminal
+            (PVar register)
             (compile_block program bindings final_type block)
       }
   | S.TokMultiple terminals ->
