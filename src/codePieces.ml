@@ -126,17 +126,6 @@ let semvtype = function
   | Symbol.N nt ->
       [ semvtypent nt ]
 
-(* [has_semv symbol] indicates whether [symbol] carries a semantic value. *)
-
-let has_semv symbol =
-  match semvtype symbol with
-  | [] ->
-      false
-  | [ _t ] ->
-      true
-  | _ ->
-      assert false
-
 (* ------------------------------------------------------------------------ *)
 
 (* Patterns for tokens. *)
@@ -146,7 +135,10 @@ let has_semv symbol =
 
 let tokpat tok pat =
   let data = TokenType.tokendata (Terminal.print tok) in
-  PData (data, MList.if1 (has_semv (Symbol.T tok)) pat)
+  PData (
+    data,
+    if Terminal.ocamltype tok = None then [] else [ pat ]
+  )
 
 (* [tokspat toks] is a pattern that matches any token in the set [toks],
    without binding its semantic value. *)
