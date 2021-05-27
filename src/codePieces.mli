@@ -67,12 +67,18 @@ val semvtype : Symbol.t -> typ list
 (* [tokpat tok pat] is a pattern that matches the token [tok] and binds
    its semantic value (if it has one) to the pattern [pat]. *)
 
-val tokpat:  Terminal.t -> pattern -> pattern
+val tokpat: Terminal.t -> pattern -> pattern
 
 (* [tokspat toks] is a pattern that matches any token in the set [toks],
    without binding its semantic value. *)
 
 val tokspat: TerminalSet.t -> pattern
+
+(* [tok_bind_unit tok pat e] binds the pattern [pat] to the unit value
+   in the expression [e] if the token [tok] has no semantic value.
+   Otherwise, it returns just [e]. *)
+
+val tok_bind_unit: Terminal.t -> pattern -> expr -> expr
 
 (* [destructuretokendef name codomain bindsemv branch] generates the
    definition of a function that destructure tokens. [name] is the

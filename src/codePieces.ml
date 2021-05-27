@@ -140,6 +140,16 @@ let tokpat tok pat =
     if Terminal.ocamltype tok = None then [] else [ pat ]
   )
 
+(* [tok_bind_unit tok pat e] binds the pattern [pat] to the unit value
+   in the expression [e] if the token [tok] has no semantic value.
+   Otherwise, it returns just [e]. *)
+
+let tok_bind_unit tok pat e =
+  if Terminal.ocamltype tok = None then
+    blet ([ (pat, EUnit) ], e)
+  else
+    e
+
 (* [tokspat toks] is a pattern that matches any token in the set [toks],
    without binding its semantic value. *)
 
