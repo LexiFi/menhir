@@ -115,6 +115,19 @@ val noprefix: bool
 
 val code_inlining: bool
 
+(**[represent_positions] forces every stack cell to contain a start position
+   and an end position. This flag is [false] by default. It influences the
+   code back-end only. *)
+val represent_positions: bool
+
+(**[represent_states] forces every stack cell to contain a state. This flag
+   is [false] by default. It influences the code back-end only. *)
+val represent_states: bool
+
+(**[represent_values] forces every stack cell to contain a semantic value.
+   This flag is [false] by default. It influences the code back-end only. *)
+val represent_values: bool
+
 (* How [ocamlc] and [ocamldep] should be invoked. *)
 
 val ocamlc: string
