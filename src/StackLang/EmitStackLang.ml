@@ -187,8 +187,6 @@ type nt = Nonterminal.t
 
 (* ------------------------------------------------------------------------ *)
 
-let optimize_stack = Settings.optimize_stack
-
 let length = Array.length
 
 let top word =
@@ -198,24 +196,22 @@ let top word =
 
 let goto_needstartpos nt =
   let word = Invariant.gotostack nt in
-  (not optimize_stack) || (top word).holds_startp
+  (top word).holds_startp
 
 
 let goto_needendpos nt =
   let word = Invariant.gotostack nt in
-  (not optimize_stack) || (top word).holds_endp
+  (top word).holds_endp
 
-
-let run_represent_state s = (not optimize_stack) || Invariant.represented s
 
 let reduce_successor_need_startpos prod =
   (not @@ Production.is_start prod)
-  && ((not optimize_stack) || goto_needstartpos (Production.nt prod))
+  && goto_needstartpos (Production.nt prod)
 
 
 let reduce_successor_need_endpos prod =
   (not @@ Production.is_start prod)
-  && ((not optimize_stack) || goto_needendpos (Production.nt prod))
+  && goto_needendpos (Production.nt prod)
 
 
 (** Values pushed on the stack by the goto routine associated to nonterminal
@@ -257,7 +253,7 @@ let stack_type_goto _nt = [||]
 let stack_type_reduce prod =
   let symbols = Grammar.Production.rhs prod in
   let r = Invariant.prodstack prod in
-  assert (optimize_stack || Array.length r = Array.length symbols);
+  assert (Array.length r = Array.length symbols);
   r
 
 
@@ -306,7 +302,7 @@ module L = struct
   let states =
     let states = ref TagMap.empty in
     Lr1.iter (fun s ->
-        if (not optimize_stack) || Invariant.represented s
+        if Invariant.represented s
         then
           states
           @:= TagMap.add
@@ -330,7 +326,7 @@ module L = struct
      represent_state tell whether to gener*)
 
   let run s =
-    let represent_state = run_represent_state s in
+    let represent_state = Invariant.represented s in
     (* Determine whether this is an initial state. *)
     let is_start = Lr1.is_start s in
 
