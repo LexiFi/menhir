@@ -61,6 +61,10 @@ val successors : (StackLang.label -> unit) -> t -> unit
 (** [successors yield block] applies the function [yield] in turn to every
    label that is the target of a [jump] instruction in the block [block]. *)
 
+val contains : t -> t -> bool
+(** [contains block subblock] is true if [subblock] is among the successors of
+    [block] *)
+
 val need : registers -> t -> t
 
 val push : value -> cell_info -> t -> t
