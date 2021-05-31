@@ -27,6 +27,8 @@ val value_refers_to_register : register -> value -> bool
 
 val cell_similar : Invariant.cell -> Invariant.cell -> bool
 
+val is_suffix : Invariant.cell array -> Invariant.cell array -> bool
+
 val state_info_intersection : state_info TagMap.t -> tag list -> state_info
 (** [state_info_intersection states tags] d *)
 

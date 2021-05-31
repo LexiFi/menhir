@@ -27,6 +27,16 @@ let label = string
 
 let spaced_braces doc = braces (space ^^ doc ^^ space)
 
+let rec grouped_separate sep docs =
+  match docs with
+  | [] ->
+      empty
+  | [ doc ] ->
+      doc
+  | doc :: docs ->
+      group (doc ^^ sep ^^ grouped_separate sep docs)
+
+
 let rec value v =
   match v with
   | VTag t ->
@@ -60,26 +70,24 @@ let symbol s = string (Grammar.Symbol.print s)
 let cell_info
     Invariant.{ symbol = s; holds_semv; holds_state; holds_startp; holds_endp }
     =
-  string "["
-  ^^ symbol s
+  symbol s
   ^^ OCaml.int (Bool.to_int holds_semv)
   ^^ OCaml.int (Bool.to_int holds_state)
   ^^ OCaml.int (Bool.to_int holds_startp)
   ^^ OCaml.int (Bool.to_int holds_endp)
-  ^^ string "]"
 
 
 let final_type ft = OCaml.option ocamltype ft
 
-let known_cells known_cells =
-  brackets
-    (Array.fold_left (fun doc cell -> doc ^^ cell_info cell) empty known_cells)
+let cells cells =
+  let cells = Array.to_list cells in
+  brackets @@ separate (semi ^^ space) (List.map cell_info cells)
 
 
 let state_info { known_cells = kn; sfinal_type } =
   nl
   ^^ string "Known_cells: "
-  ^^ known_cells kn
+  ^^ cells kn
   ^^ nl
   ^^ string "Final type: "
   ^^ final_type sfinal_type
@@ -142,7 +150,7 @@ let branch (guard, body) =
 
 let registers rs =
   let rs = RegisterSet.elements rs in
-  align @@ group (separate (comma ^^ break 1) (map register rs)) ^^ dot
+  align @@ group (grouped_separate (comma ^^ break 1) (map register rs)) ^^ dot
 
 
 let rec typed_block_instruction
@@ -155,7 +163,7 @@ let rec typed_block_instruction
        ^^ final_type ft
        ^^ break 1
        ^^ string "Known cells :"
-       ^^ known_cells stack_type
+       ^^ cells stack_type
        ^^ break 1
        ^^ string "Needed registers :"
        ^^ registers rs )
@@ -163,12 +171,16 @@ let rec typed_block_instruction
 
 and typed_block tb = typed_block_instruction tb ^^ block tb.block
 
+and partial_tblock culprit tb =
+  typed_block_instruction tb ^^ partial_block culprit tb.block
+
+
 and instruction b =
   match b with
   | INeed (rs, _) ->
       nl ^^ string "NEED " ^^ registers rs
-  | IPush (v, _, _) ->
-      nl ^^ string "PUSH " ^^ value v
+  | IPush (v, c, _) ->
+      nl ^^ string "PUSH " ^^ value v ^^ cell_info c
   | IPop (p, _) ->
       nl ^^ string "POP " ^^ pattern p
   | IDef (bs, _) ->
@@ -205,12 +217,8 @@ and block b =
   | ITrace (_, b)
   | IComment (_, b) ->
       block b
-  | IDie ->
-      nl ^^ string "DIE"
-  | IReturn v ->
-      nl ^^ string "RET  " ^^ value v
-  | IJump l ->
-      nl ^^ string "JUMP " ^^ label l
+  | IDie | IReturn _ | IJump _ ->
+      empty
   | ICaseToken (_, branches, default) ->
       concat
         (map
@@ -225,20 +233,72 @@ and block b =
       block b
 
 
+and partial_block culprit b =
+  instruction b
+  ^^
+  if culprit == b
+  then nl ^^ string "(...)"
+  else
+    match b with
+    | INeed (_, b)
+    | IPush (_, _, b)
+    | IPop (_, b)
+    | IDef (_, b)
+    | IPrim (_, _, b)
+    | ITrace (_, b)
+    | IComment (_, b) ->
+        partial_block culprit b
+    | IDie | IReturn _ | IJump _ ->
+        empty
+    | ICaseToken (_, branches, default) ->
+        concat
+          (map
+             branch
+             ( map
+                 (fun (pat, b) ->
+                   ( tokpat pat
+                   , if Block.contains b culprit
+                     then partial_block culprit b
+                     else string " (...)" ) )
+                 branches
+             @
+             match default with
+             | Some b ->
+                 [ ( underscore
+                   , if Block.contains b culprit
+                     then partial_block culprit b
+                     else string " (...)" )
+                 ]
+             | None ->
+                 [] ) )
+    | ICaseTag (_, branches) ->
+        concat
+          (map
+             branch
+             (map
+                (fun (pat, b) ->
+                  ( tagpat pat
+                  , if Block.contains b culprit
+                    then partial_block culprit b
+                    else string "(...)" ) )
+                branches ) )
+    | ITypedBlock { block = b } ->
+        partial_block culprit b
+
+
 let entry_comment entry_labels label =
   if LabelSet.mem label entry_labels
   then string "## Entry point:" ^^ nl
   else empty
 
 
-let labeled_block entry_labels (label, { block = b; stack_type = _ }) =
+let labeled_block entry_labels (label, tb) =
   entry_comment entry_labels label
   ^^ string label
   ^^ colon
-  ^^ nest 2 (block b)
+  ^^ nest 2 (typed_block tb)
   ^^ nl
   ^^ nl
-
 
 let program program =
   states program.states
@@ -282,9 +342,9 @@ let print_tblock = to_channel typed_block
 
 let tblock_to_string = to_string typed_block
 
-let print_known_cells = to_channel known_cells
+let print_known_cells = to_channel cells
 
-let known_cells_to_string = to_string known_cells
+let known_cells_to_string = to_string cells
 
 let print_states = to_channel states
 
@@ -293,5 +353,13 @@ let states_to_string = to_string states
 let instruction_to_string = to_string instruction
 
 let print_instruction = to_channel instruction
+
+let print_partial_block ~culprit = to_channel (partial_block culprit)
+
+let partial_block_to_string ~culprit = to_string (partial_block culprit)
+
+let print_partial_tblock ~culprit = to_channel (partial_tblock culprit)
+
+let partial_tblock_to_string ~culprit = to_string (partial_tblock culprit)
 
 let to_string = to_string program

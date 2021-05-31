@@ -334,7 +334,7 @@ let fail_sync label block =
   fail label block message
 
 
-let check_cells label block reason known_cells needed_cells =
+let check_cells_geq label block reason known_cells needed_cells =
   let fail message =
     let message =
       sprintf
@@ -362,13 +362,13 @@ let check_cells label block reason known_cells needed_cells =
 let check_state_sync program label block known_cells expected_cells tag =
   let states = program.states in
   (* Check that we have enough cells to assert that the state is  *)
-  check_cells
+  check_cells_geq
     label
     block
     "state sync"
     known_cells
     (lookup_tag tag states).known_cells;
-  check_cells
+  check_cells_geq
     label
     block
     "state sync"
@@ -395,6 +395,7 @@ let check_state_sync program label block known_cells expected_cells = function
 let wt_knowncells_routine program label tblock =
   let cfg = program.cfg in
   let states = program.states in
+
   (* Printf.fprintf stderr "Starting wtkc on %s\n" label; *)
 
   (*
@@ -404,7 +405,7 @@ let wt_knowncells_routine program label tblock =
     [Array.append state_known_cells extra_known_cells] *)
   let rec wtkc_block cells sync block =
     (* StackLangPrinter.print_instruction stderr block;
-    StackLangPrinter.print_known_cells stderr cells; *)
+       StackLangPrinter.print_known_cells stderr cells; *)
     let culprit = block in
     let module Annotate =
       Annotate.Curry (struct
@@ -412,8 +413,8 @@ let wt_knowncells_routine program label tblock =
       end)
     in
     let check_state_sync = check_state_sync program label culprit in
-    let check_cells = check_cells label culprit in
-    let fail = fail label culprit in
+    let check_cells_geq = check_cells_geq label culprit in
+    let fail ?state_relevance = fail ?state_relevance label culprit in
     let fail_sync () = fail_sync label culprit in
     Block.iter
       (wtkc_block cells sync)
@@ -425,7 +426,7 @@ let wt_knowncells_routine program label tblock =
               ()
           | Some tag ->
               let tag_cells = (lookup_tag tag states).known_cells in
-              check_cells "push" cells tag_cells );
+              check_cells_geq "push" cells tag_cells );
         let cells, sync = Annotate.push cells sync value cell in
         wtkc_block cells sync block )
       ~pop:(fun pattern block ->
@@ -446,12 +447,24 @@ let wt_knowncells_routine program label tblock =
           check_state_sync cells cells' sync;
         (* We check that the stack has at least the amount of cells the target
            routine expects. *)
-        check_cells "jump" cells cells' )
+        check_cells_geq "jump" cells cells' )
       ~case_tag:(fun reg branches ->
         match sync with
-        | Synced _ ->
+        | Synced n ->
             let branches_info = Annotate.case_tag cells sync reg branches in
-            let branch_aux (_, block) (cells, sync) =
+            let branch_aux (TagMultiple tags, block) (cells', sync) =
+              if not @@ is_suffix cells cells' (* If the branch is not dead *)
+              then
+                fail
+                  ~state_relevance:true
+                  (sprintf
+                     "Discovered info is not a suffix of n=%d, Known : %s, \
+                      From match : %s, in branch %s"
+                     n
+                     (StackLangPrinter.known_cells_to_string cells)
+                     (StackLangPrinter.known_cells_to_string cells')
+                     (String.concat " | " (List.map string_of_tag tags)) );
+              let cells = longest_known_cells [ cells; cells' ] in
               wtkc_block cells sync block
             in
             List.iter2 branch_aux branches branches_info
@@ -462,7 +475,7 @@ let wt_knowncells_routine program label tblock =
         (* We check that the stack has at least the number of known cells that
            the type annotation requires. *)
         let cells', sync' = Annotate.typed_block cells sync tblock in
-        check_cells "typed block" cells cells';
+        check_cells_geq "typed block" cells cells';
         if RegisterSet.mem state_reg needed_registers
         then check_state_sync cells cells' sync;
         (* Inside the typed block, we are only allowed to use the cell from the
@@ -1082,7 +1095,7 @@ let handle_error program error =
   StackLangPrinter.print_block stderr culprit;
   eprintf "\nContext :\n";
   let context = lookup context cfg in
-  StackLangPrinter.print_tblock stderr context;
+  StackLangPrinter.print_partial_tblock ~culprit stderr context;
   ( match culprit with
   | IJump label ->
       eprintf "\nWhile jumping to %s \n" label;
