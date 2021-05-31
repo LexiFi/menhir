@@ -119,12 +119,6 @@ let rec wf_block program label rs block =
   let wf_value = wf_value program label block rs in
   let wf_prim = wf_prim program label block rs in
   match block with
-  | INeed (rs', block) ->
-      wf_regs rs';
-      (* A [need] instruction undefines the registers that it does not
-         mention, so we continue with [rs']. *)
-      let rs = rs' in
-      wf_block program label rs block
   | IPush (v, _cell, block) ->
       (* TODO : check that the cell and v are in sync *)
       wf_value v;
@@ -248,8 +242,6 @@ let print m =
 
 let rec measure_block m block =
   match block with
-  | INeed (_, block) ->
-      measure_block m block
   | IPush (_, _, block) ->
       m.total <- m.total + 1;
       m.push <- m.push + 1;

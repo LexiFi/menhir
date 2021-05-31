@@ -4,7 +4,6 @@ type t = block
 
 val map :
      (t -> t)
-  -> ?need:(registers -> t -> registers * t)
   -> ?push:(value -> cell_info -> t -> value * cell_info * t)
   -> ?pop:(pattern -> t -> pattern * t)
   -> ?def:(bindings -> t -> bindings * t)
@@ -31,7 +30,6 @@ val map :
 
 val iter :
      (t -> unit)
-  -> ?need:(registers -> t -> unit)
   -> ?push:(value -> cell_info -> t -> unit)
   -> ?pop:(pattern -> t -> unit)
   -> ?def:(bindings -> t -> unit)
@@ -64,8 +62,6 @@ val successors : (StackLang.label -> unit) -> t -> unit
 val contains : t -> t -> bool
 (** [contains block subblock] is true if [subblock] is among the successors of
     [block] *)
-
-val need : registers -> t -> t
 
 val push : value -> cell_info -> t -> t
 
