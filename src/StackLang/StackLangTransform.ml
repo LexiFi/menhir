@@ -92,25 +92,6 @@ let rec commute_pushes_block program pushes bindings final_type known_cells =
        as it is defined as ill-typed by [StackLangTraverse.wt]. *)
   let commute_pushes_block = commute_pushes_block program in
   function
-  | INeed (registers, block) ->
-      (* First, we will not need the registers we are defining in the binding,
-         since they are shadowed by said binding. *)
-      let registers = RegisterSet.diff registers (Bindings.domain bindings) in
-      (* However we need the registers referred by the bindings, even if they
-         are shadowed after the bindings. *)
-      let registers =
-        RegisterSet.union registers (Bindings.codomain bindings)
-      in
-      (* We also need every register refered to by the pushes, even if said
-         register is defined by the bindings, for the pushes will be restored
-         before the bindings. *)
-      let registers =
-        RegisterSet.union (needed_registers_pushes pushes) registers
-      in
-      let block =
-        commute_pushes_block pushes bindings final_type known_cells block
-      in
-      INeed (registers, block)
   | IPush (value, cell, block) ->
       (* We save the number of cancelled pop, to check whether commuting this
          push will make any difference. Not commuting a push when there is no
@@ -519,9 +500,6 @@ let remove_useless_defs program =
 
 
 let rec compute_has_case_tag_block = function
-  | INeed (regs, block) ->
-      let block', hct = compute_has_case_tag_block block in
-      (INeed (regs, block'), hct)
   | IPush (value, cell, block) ->
       let block', hct = compute_has_case_tag_block block in
       (IPush (value, cell, block'), hct)

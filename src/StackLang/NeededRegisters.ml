@@ -29,6 +29,7 @@ let defined_tokpat = function
   | TokMultiple _ ->
       RegisterSet.empty
 
+
 (** This function computes the registers required by a block according to a
     valuation that maps labels to needed registers *)
 let rec needed_block block valuation =
@@ -63,8 +64,6 @@ let rec needed_block block valuation =
       +^ register
   | IJump label ->
       valuation label
-  | INeed _ ->
-      assert false
   | ITypedBlock _ ->
       assert false
 

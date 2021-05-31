@@ -92,11 +92,6 @@ type state_info =
    (this is where a tree branch ends). *)
 type block =
   (* Group 1: Instructions with exactly one successor. *)
-
-  (* [INeed] is a special pseudo-instruction that can  be used inside a
-     block. It indicates which registers are expected to be defined at this
-     point, and it un-defines any registers that are not explicitly listed. *)
-  | INeed of registers * block
   | IPush of value * cell_info * block
       (** [IPush] pushes a value onto the stack. *)
   | IPop of pattern * block  (** [IPop] pops a value off the stack. *)
