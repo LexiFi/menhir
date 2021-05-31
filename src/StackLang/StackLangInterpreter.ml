@@ -189,17 +189,6 @@ let pop state : gvalue =
 
 let rec exec state block =
   match block with
-  | INeed (rs, block) ->
-      let required = rs
-      and available = Env.domain state.env in
-      if not (StringSet.subset required available)
-      then
-        error
-          "incorrect NEED annotation; have %s, need %s"
-          (RegisterSet.print available)
-          (RegisterSet.print required);
-      state.env <- Env.restrict required state.env;
-      exec state block
   | IPush (v, _, block) ->
       let gv = eval state.env v in
       state.stack <- gv :: state.stack;

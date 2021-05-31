@@ -4,7 +4,6 @@ open StackLangUtils
 type t = block
 
 let reduce f aggregate = function
-  | INeed (_, block)
   | IPush (_, _, block)
   | IPop (_, block)
   | IDef (_, block)
@@ -25,7 +24,6 @@ let reduce f aggregate = function
 
 let map
     f
-    ?(need = fun registers b -> (registers, f b))
     ?(push = fun value cell b -> (value, cell, f b))
     ?(pop = fun pattern b -> (pattern, f b))
     ?(def = fun bindings b -> (bindings, f b))
@@ -41,9 +39,6 @@ let map
     ?(case_tag = fun reg branches -> (reg, List.map (branch_map f) branches))
     ?(typed_block =
       fun ({ block } as tblock) -> { tblock with block = f block }) = function
-  | INeed (regs, block) ->
-      let regs, block = need regs block in
-      INeed (regs, block)
   | IPush (value, cell, block) ->
       let value, cell, block = push value cell block in
       IPush (value, cell, block)
@@ -81,7 +76,6 @@ let map
 
 let iter
     (f : t -> unit)
-    ?(need = fun _ b -> f b)
     ?(push = fun _ _ b -> f b)
     ?(pop = fun _ b -> f b)
     ?(def = fun _ b -> f b)
@@ -97,8 +91,6 @@ let iter
         Option.iter f odefault)
     ?(case_tag = fun _ branches -> List.iter (branch_iter f) branches)
     ?(typed_block = fun { block } -> f block) = function
-  | INeed (regs, block) ->
-      need regs block
   | IPush (value, cell, block) ->
       push value cell block
   | IPop (reg, block) ->
@@ -132,7 +124,6 @@ let iter
 
 let rec successors yield block =
   match block with
-  | INeed (_, block)
   | IPush (_, _, block)
   | IPop (_, block)
   | IDef (_, block)
@@ -152,8 +143,6 @@ let rec successors yield block =
   | ITypedBlock { block; stack_type = _; final_type = _ } ->
       successors yield block
 
-
-let need register block = INeed (register, block)
 
 let push value cell block = IPush (value, cell, block)
 
