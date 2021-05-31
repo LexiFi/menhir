@@ -12,7 +12,7 @@ let reduce f aggregate = function
   | ITrace (_, block)
   | IComment (_, block)
   | ITypedBlock { block } ->
-      aggregate ([f block])
+      aggregate [ f block ]
   | IDie | IReturn _ | IJump _ ->
       aggregate []
   | ICaseToken (_reg, branches, odefault) ->
@@ -195,3 +195,27 @@ let typed_block stack_type needed_registers has_case_tag ?final_type ?name block
     =
   ITypedBlock
     { stack_type; needed_registers; has_case_tag; final_type; name; block }
+
+
+let rec contains =
+  let mem : (block * block * bool) list ref = ref [] in
+  fun block subblock ->
+    block == subblock
+    ||
+    match
+      List.find_opt
+        (fun (block', subblock', _) -> block == block' && subblock == subblock')
+        !mem
+    with
+    | Some (_, _, result) ->
+        result
+    | None ->
+        let result =
+          reduce
+            (fun successor ->
+              successor == subblock || contains successor subblock )
+            (List.exists Fun.id)
+            block
+        in
+        mem := (block, subblock, result) :: !mem;
+        result

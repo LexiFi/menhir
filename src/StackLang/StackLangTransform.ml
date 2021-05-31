@@ -199,11 +199,12 @@ let rec commute_pushes_block program pushes bindings final_type known_cells =
         then suffix reg (fresh_int ())
         else reg
       in
-      let subst' = Bindings.(
-        compose
-          (remove bindings (RegisterSet.singleton reg'))
-          (assign (PReg reg) (VReg reg'))
-      ) in
+      let subst' =
+        Bindings.(
+          compose
+            (remove bindings (RegisterSet.singleton reg'))
+            (assign (PReg reg) (VReg reg')))
+      in
       let block =
         commute_pushes_block pushes subst' final_type known_cells block
       in
@@ -301,13 +302,14 @@ and branch_aux program pushes bindings final_type known_cells reg branch =
   let known_cells =
     longest_known_cells [ state_info.known_cells; known_cells ]
   in
-  let subst, pushes =
+  (* TODO EMILE : understand why this fails, and restore *)
+  let bindings, pushes =
     match taglist with
     | [ tag ] ->
         (* In this case, we can inline the state value inside the
            pushes. *)
-        let subst = Bindings.(compose bindings (assign (PReg reg) (VTag tag))) in
         let tmp_subst = Bindings.assign (PReg reg) (VTag tag) in
+        let subst = Bindings.(compose bindings tmp_subst) in
         let pushes = List.map (pushcell_apply tmp_subst) pushes in
         (subst, pushes)
     | _ ->
@@ -315,7 +317,7 @@ and branch_aux program pushes bindings final_type known_cells reg branch =
   in
   let final_type = Option.first_value [ state_info.sfinal_type; final_type ] in
   let block =
-    commute_pushes_block program pushes subst final_type known_cells block
+    commute_pushes_block program pushes bindings final_type known_cells block
   in
   (TagMultiple taglist, block)
 
@@ -370,7 +372,9 @@ and aux_case_token
           then suffix reg' (fresh_int ())
           else reg'
         in
-        let subst = Bindings.(compose bindings (assign (PReg reg') (VReg reg''))) in
+        let subst =
+          Bindings.(compose bindings (assign (PReg reg') (VReg reg'')))
+        in
         let block' =
           commute_pushes_block program pushes subst final_type known_cells block
         in
@@ -417,15 +421,32 @@ let represented_states program =
   TagMap.domain states
 
 
-let rec remove_dead_branches_block program possible_states block =
+let rec remove_dead_branches_block program possible_states cells sync block =
   let remove_dead_branches_block = remove_dead_branches_block program in
+  let states = program.states in
+  let module Annotate =
+    Annotate.Curry (struct
+      let program = program
+    end)
+  in
   Block.map
-    (remove_dead_branches_block possible_states)
+    (remove_dead_branches_block possible_states cells sync)
+    ~push:(fun value cell block ->
+      let cells, sync = Annotate.push cells sync value cell in
+      let block = remove_dead_branches_block possible_states cells sync block in
+      (value, cell, block) )
+    ~typed_block:(fun tblock ->
+      let { block } = tblock in
+      let cells, sync = Annotate.typed_block cells sync tblock in
+      let block = remove_dead_branches_block possible_states cells sync block in
+      { tblock with block } )
     ~pop:(fun pattern block ->
       let possible_states = represented_states program in
-      let block = remove_dead_branches_block possible_states block in
+      let cells, sync = Annotate.pop cells sync pattern in
+      let block = remove_dead_branches_block possible_states cells sync block in
       (pattern, block) )
     ~def:(fun bindings block ->
+      let cells, sync = Annotate.def cells sync bindings in
       let possible_states =
         match Bindings.apply bindings (VReg state_reg) with
         | VTag tag ->
@@ -435,31 +456,49 @@ let rec remove_dead_branches_block program possible_states block =
         | _ ->
             assert false
       in
-      let block = remove_dead_branches_block possible_states block in
+      let block = remove_dead_branches_block possible_states cells sync block in
       (bindings, block) )
     ~case_tag:(fun reg branches ->
-      let branch_aux (TagMultiple taglist, block) =
+      let n = match sync with Sync.Synced n -> n | _ -> assert false in
+      let branch_aux (TagMultiple taglist, block) (cells', sync) =
         let taglist' =
-          List.filter (fun tag -> TagSet.mem tag possible_states) taglist
+          List.filter
+            (fun tag ->
+              TagSet.mem tag possible_states
+              &&
+              let cells_state = (lookup_tag tag states).known_cells in
+              let cells' = Array.append cells_state (MArray.suffix cells n) in
+              is_suffix cells' cells )
+            taglist
         in
         match taglist' with
         | [] ->
             None
         | _ :: _ ->
-            Some
-              (let possible_states = TagSet.of_list taglist' in
-               let block = remove_dead_branches_block possible_states block in
-               (TagMultiple taglist', block) )
+            if not @@ is_suffix cells cells'
+            then None
+            else
+              let possible_states = TagSet.of_list taglist' in
+              let block =
+                remove_dead_branches_block possible_states cells sync block
+              in
+              Some (TagMultiple taglist', block)
       in
-      let branches = List.filter_map branch_aux branches in
+      let branches_info = Annotate.case_tag cells sync reg branches in
+      let branches =
+        List.filter_map Fun.id (List.map2 branch_aux branches branches_info)
+      in
       (reg, branches) )
     block
 
 
 let remove_dead_branches_t_block program t_block =
-  let { block } = t_block in
+  let { block; stack_type } = t_block in
   let all = represented_states program in
-  { t_block with block = remove_dead_branches_block program all block }
+  { t_block with
+    block =
+      remove_dead_branches_block program all stack_type (Sync.Synced 0) block
+  }
 
 
 let remove_dead_branches program =
