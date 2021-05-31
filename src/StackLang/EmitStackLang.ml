@@ -187,33 +187,6 @@ type nt = Nonterminal.t
 
 (* ------------------------------------------------------------------------ *)
 
-let length = Array.length
-
-let top word =
-  assert (length word > 0);
-  MArray.last word
-
-
-let goto_needstartpos nt =
-  let word = Invariant.gotostack nt in
-  (top word).holds_startp
-
-
-let goto_needendpos nt =
-  let word = Invariant.gotostack nt in
-  (top word).holds_endp
-
-
-let reduce_successor_need_startpos prod =
-  (not @@ Production.is_start prod)
-  && goto_needstartpos (Production.nt prod)
-
-
-let reduce_successor_need_endpos prod =
-  (not @@ Production.is_start prod)
-  && goto_needendpos (Production.nt prod)
-
-
 (** Values pushed on the stack by the goto routine associated to nonterminal
     [nt]. Only used if [gotopushes nt] is true. *)
 let goto_pushtuple nt =
@@ -302,7 +275,7 @@ module L = struct
   let states =
     let states = ref TagMap.empty in
     Lr1.iter (fun s ->
-        if Invariant.represented s
+        if represented s
         then
           states
           @:= TagMap.add
@@ -440,13 +413,12 @@ module L = struct
   (* Code for the [reduce] subroutine associated with production [prod]. *)
 
   let reduce stack_type prod =
-    let successor_need_startpos = reduce_successor_need_startpos prod in
-    let successor_need_endpos = reduce_successor_need_endpos prod in
     (* The array [ids] lists the identifiers that are bound by this production.
        These identifiers can be referred to by the semantic action. *)
-    let ids = Production.identifiers prod
-    and n = Array.length stack_type in
-    assert (Array.length ids = n);
+    let ids = Production.identifiers prod in
+    let n = Array.length ids in
+    assert (n <= Array.length stack_type);
+    let stack_type = MArray.suffix stack_type n in
     (* The register [state] is defined by a [pop] instruction that follows,
        unless this is an epsilon production, in which case [state] is needed
        (i.e., it must be provided by the caller). *)
@@ -457,17 +429,19 @@ module L = struct
        is stored in the register [state] and thus becomes the new current
        state. *)
     for i = n - 1 downto 0 do
-      let cell_info = stack_type.(i) in
+      let { holds_state; holds_semv; holds_startp; holds_endp } =
+        stack_type.(i)
+      in
       let pop_list =
-        MList.if1 cell_info.holds_state (if i = 0 then PReg state else PWildcard)
-        @ MList.if1 cell_info.holds_semv (PReg ids.(i))
-        @ MList.if1 cell_info.holds_startp (PReg (startpos ids i))
-        @ MList.if1 cell_info.holds_endp (PReg (endpos ids i))
+        MList.if1 holds_state (if i = 0 then PReg state else PWildcard)
+        @ MList.if1 holds_semv (PReg ids.(i))
+        @ MList.if1 holds_startp (PReg (startpos ids i))
+        @ MList.if1 holds_endp (PReg (endpos ids i))
       in
       if pop_list <> [] then pop (PTuple pop_list);
       (* If there is no semantic value in the stack, then it is of type unit
          and we need to define it ourselves *)
-      if not cell_info.holds_semv then def (PReg ids.(i)) VUnit
+      if not holds_semv then def (PReg ids.(i)) VUnit
     done;
     (* If this is a start production, then reducing this production means
        accepting. This is done via a [return] instruction, which ends the
@@ -488,13 +462,15 @@ module L = struct
          and are later needed by [goto]. *)
       if Action.has_beforeend action then move beforeendp endp;
       let need_startpos =
-        successor_need_startpos && (is_epsilon || stack_type.(0).holds_startp)
+         is_epsilon || stack_type.(0).holds_startp
       in
       let need_endpos =
-        successor_need_endpos && (is_epsilon || stack_type.(n - 1).holds_endp)
+         is_epsilon || stack_type.(n - 1).holds_endp
       in
-      if need_startpos then move startp (if n = 0 then endp else startpos ids 0);
-      if need_endpos then move endp (if n = 0 then endp else endpos ids (n - 1));
+      if need_startpos
+      then move startp (if is_epsilon then endp else startpos ids 0);
+      if need_endpos
+      then move endp (if is_epsilon then endp else endpos ids (n - 1));
       (* Execute the semantic action. Store its result in [semv]. *)
       prim semv (Primitive.action action);
       (* Execute a goto transition. *)
@@ -584,3 +560,8 @@ module Run () = struct
 
   let () = Time.tick "Producing StackLang code"
 end
+
+(*
+- ((start_p ("" 4 45 53)) (end_p ("" 5 70 87))))))) (code_no_stack_optim)
++ ((start_p ("" 5 70 76)) (end_p ("" 5 70 87)))))))
+*)

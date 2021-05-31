@@ -101,16 +101,16 @@ let () =
   else
     let module SL = EmitStackLang.Run () in
     let program = SL.program in
-    StackLangTraverse.wf program;
-    StackLangTraverse.wt program;
     let program = StackLangInline.inline program in
     let program = StackLangTransform.optimize program in
-    StackLangTraverse.wf program;
-    StackLangTraverse.wt program;
     if Settings.stacklang_dump
     then (
-      StackLangPrinter.print stdout program;
-      StackLangTraverse.(print (measure program)) );
+      let file = open_out (Settings.base ^ ".stacklang") in
+      StackLangPrinter.print file program;
+      StackLangTraverse.(print (measure program));
+      close_out file );
+    StackLangTraverse.wf program;
+    StackLangTraverse.wt program;
     if Settings.stacklang_graph then StackLangGraph.print program;
     if Settings.stacklang_test then StackLangTester.test program;
     let program = ILofStackLang.compile program in
