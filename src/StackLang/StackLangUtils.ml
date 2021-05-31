@@ -40,6 +40,20 @@ let rec value_refers_to_register register value =
   | _ ->
       false
 
+let cells_similar cs1 cs2 =
+  assert (Array.(length cs1 = length cs2));
+  Array.for_all2 Invariant.similar cs1 cs2
+
+
+let is_suffix cs1 cs2 =
+  MArray.(
+    let n1 = length cs1
+    and n2 = length cs2 in
+    let short, long = if n1 < n2 then (cs1, cs2) else (cs2, cs1) in
+    let short_n = min n1 n2 in
+    let new_long = suffix long short_n in
+    cells_similar short new_long)
+
 
 let cells_intersection cells1 cells2 =
   let len1 = Array.length cells1 in

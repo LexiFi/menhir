@@ -70,4 +70,3 @@ val pop: 'a t -> 'a
    was created. This should be seldom useful, but can be convenient. *)
 
 val default: 'a t -> 'a
-

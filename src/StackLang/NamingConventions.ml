@@ -34,7 +34,7 @@ let startpos ids i =
   Keyword.(posvar (RightNamed ids.(i)) WhereStart FlavorPosition)
 
 
-(** sprintf "_endpos_%s_" ids.(i) *)
+(** sprintf "_endpos_%s_" (MArray.rev_get ids i) *)
 let endpos ids i = Keyword.(posvar (RightNamed ids.(i)) WhereEnd FlavorPosition)
 
 let lexer = prefix "lexer"
